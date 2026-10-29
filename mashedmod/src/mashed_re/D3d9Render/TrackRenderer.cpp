@@ -41,6 +41,7 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B knobs (default OFF)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
+#include "PickupIconCube.h"          // [iconcube] D5-ICONCUBE-SPIN (MASHED_ICONCUBE)
 #include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710 (MASHED_REG_CARS)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
@@ -264,6 +265,28 @@ void aib_own_fwd_xz(int v, float* fx, float* fz) {
 }
 // [u9770] MASHED_REG_LATE (default OFF): see the [mode 7 M1] block in UpdateRace.
 bool RegLate() { static const bool s_on = [] { const char* e = std::getenv("MASHED_REG_LATE"); return e && e[0] && e[0] != '0'; }(); return s_on; }
+// [D5-ICONCUBE-SPIN] MASHED_PICKUPS_PREGO (default OFF): FUN_0040fc00 runs on the pre-race ticks too and calls
+// FUN_0040da50 (0x0040fc75, cars register at 0x0040dad0), FUN_0045bba0 (0x0040fcd0, FUN_00459000 inside) and
+// FUN_00485070 (0x0040fd07) with no guard. Under the knob the countdown frames run the same three.
+// PREREG verify/iconcube_20261028/PREREG2_D5-ICONCUBE-SPIN.md.
+// [D5-ICONCUBE-SPIN run 20] FUN_0040d470 (0x0040fc7c) sits between the first two with no branch, and reaches the
+// refdist producer FUN_00442a60 (0x0040d4f3 -> 0x004483c2 -> 0x004469b6). Without it the first racing AI tick reads
+// 0x008989b0[v] == 0.0, which opens FUN_00414c30's type-7 gate (0x00414e2f / 0x00414e42) on a pre-GO pickup.
+// MASHED_PICKUPS_PREGO_NO_REFDIST (diagnostic) drops the call. PREREG verify/iconcube_20261028/PREREG3_D5-ICONCUBE-SPIN.md.
+extern "C" void __cdecl RaceComputeDistancesTick(int site);   // Race/SpectatorDistances.cpp
+bool PickupsPreGo() { static const bool s_on = [] { const char* e = std::getenv("MASHED_PICKUPS_PREGO"); return e && e[0] && e[0] != '0'; }(); return s_on; }
+void PreGoRegistryTick() {
+    static const bool s_noRd = [] { const char* e = std::getenv("MASHED_PICKUPS_PREGO_NO_REFDIST"); return e && e[0] && e[0] != '0'; }();
+    Race::CarsReg_FrameTick();        // FUN_0040da50 0x0040fc75
+    if (!s_noRd) RaceComputeDistancesTick(2);   // FUN_0040d470 0x0040fc7c (site 2 labels MASHED_REFDIST_TRACE rows)
+    Gameplay::Pickups_FrameTick();    // FUN_0045bba0 0x0040fcd0
+    Race::Registry_FrameTick();       // FUN_00485070 0x0040fd07
+}
+// [D5-ICONCUBE-SPIN] MASHED_CAM_REPLAY_GO (DIAGNOSTIC, default OFF): the first replay row whose ba8c is 6, or -1.
+int CamReplayGoRow();
+// [D5-ICONCUBE-SPIN amendment A] false when MASHED_CAM_REPLAY_GO is set and the consumed row's ff4 equals the
+// previous row's (no FUN_0040fc00 add on that original frame); true otherwise.
+bool CamReplayRowRunsFc00(int row);
 // ---------------------------------------------------------------------------
 // [D3 2026-10-05] U-9188 legs A and B. DEFAULT OFF: with MASHED_AI_YAWW unset
 // every entry point here returns on its first line and nothing is written.
@@ -3219,6 +3242,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // General_Anim_Filename .ANM flight path (track piz); flown under the
     // per-frame HAnim transform (see LoadCopters + the Render copter pass).
     LoadCopters(dev, piz, piz_path, log);
+    // [iconcube] FUN_004587a0 @ 0x004587a0's IconCube models + pool writes (MASHED_ICONCUBE, default OFF)
+    IconCube_OnTrackLoad(amb_world_, log);
 
     // [camribbon] The camera-path ribbon (FUN_00426d00's node corners) comes from the original's
     // node-record build by default (Race::PathNodes_CameraNodes = FUN_00478660 BuildNode, the
@@ -5306,6 +5331,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (!subClock || Ai::Ai_ClockLateEnabled()) Ai::Ai_RaceTimerCountdownTick(units, false);
         CarParts_FrameTick(units);                         // [librwrest] FUN_0040fc00 -> 0x0040fc75
         CopterTick(units);                                 // [librwrest] FUN_0040fc00 -> 0x0040fcb9
+        if (PickupsPreGo()) PreGoRegistryTick();           // [D5-ICONCUBE-SPIN] 0x0040fc75 / 0x0040fcd0 / 0x0040fd07
         HudSlideBillboardTimerTail();                      // FUN_0040fc00 -> 0x0040fd11
         if (ba8c == 6) {
             countdown_ = 0.f;
@@ -5443,7 +5469,12 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (countdown_ > 0.f)
             Ai::Ai_RaceTimerCountdownTick(static_cast<int>(in.dt * 3000.0f + 0.5f),
                                           !ai_cars_.empty() && countdown_ <= 113.0f / 60.0f);
-        if (countdown_ > 0.f) { CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f)); return; }
+        if (countdown_ > 0.f) {
+            CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f));
+            if (PickupsPreGo() && CamReplayRowRunsFc00(cam_replay_row_))
+                PreGoRegistryTick();   // [D5-ICONCUBE-SPIN] FUN_0040fc00's pre-GO registry chain
+            return;
+        }
     }
 
     RaceRefDistTraceFrame();   // [U-9683] frame ordinal for MASHED_REFDIST_TRACE (measurement only)
@@ -7613,6 +7644,21 @@ void TrackRenderer::StartRound() {
         a.lane = (static_cast<float>(i) - 1.0f) * 3.0f;   // -3, 0, +3
     }
     countdown_ = 3.0f;   // 3-2-1 freeze before GO
+    // [D5-ICONCUBE-SPIN] MASHED_CAM_REPLAY_GO (DIAGNOSTIC, default OFF, inert without MASHED_CAM_REPLAY): end the
+    // countdown on the frame that consumes the trace's first ba8c == 6 row G (frames 0..G-1 count down, frame G is GO).
+    {
+        static const bool s_repGo = (std::getenv("MASHED_CAM_REPLAY_GO") != nullptr);
+        static bool s_repGoDone = false;
+        if (s_repGo && !s_repGoDone) {
+            s_repGoDone = true;
+            const int g = CamReplayGoRow();
+            if (g > 0) countdown_ = (static_cast<float>(g) + 0.5f) / 60.0f;
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "[D5-ICONCUBE-SPIN] MASHED_CAM_REPLAY_GO: go row %d, countdown_ %.9g\n", g, countdown_);
+                std::fclose(lf);
+            }
+        }
+    }
     Ai::Ai_RaceTimerRoundStart(round_no_);   // [a5timer] MASHED_A5_RACE_TIMER_RUN (default ON): round 1's DAT_007f0ff8 seed
     // [D-11073 leg 1b, PREREG_LEG1B.md addendum B] Under MASHED_SUBSTATE every round re-enters
     // the sub-state machine. The original's next round goes case 8 (FUN_00414220) -> 2 -> the
@@ -8300,6 +8346,7 @@ struct CamReplay {
     bool has_q = false;
     int c_ba8c = -1;            // [rfx] the HUD replay reads the trace's ba8c / dtb columns
     int c_f101c = -1;           // [rfx2] the object shadows' frame parity (DAT_007f101c)
+    int c_ff4 = -1;             // [D5-ICONCUBE-SPIN] DAT_007f0ff4 (FUN_0040fc00 adds units per call)
 };
 // [d1r1] the consumed row's transplant values, read by Render under MASHED_CAM_REPLAY_BASIS /
 // MASHED_CAR_REPLAY (diagnostic knobs, default OFF)
@@ -8365,6 +8412,7 @@ CamReplay& CamReplayState() {
             if (r.c_vwy < 0) r.has_m = false;
             r.c_ba8c = col("ba8c");
             r.c_f101c = col("f101c");
+            r.c_ff4 = col("ff4");
         }
         while (ok && std::fgets(line, sizeof(line), f)) {
             split(line, f2);
@@ -8384,6 +8432,22 @@ CamReplay& CamReplayState() {
         return r;
     }();
     return R;
+}
+bool CamReplayRowRunsFc00(int row) {
+    static const bool s_repGo = (std::getenv("MASHED_CAM_REPLAY_GO") != nullptr);
+    if (!s_repGo) return true;
+    const CamReplay& R = CamReplayState();
+    if (!R.on || R.c_ff4 < 0 || row < 0 || static_cast<std::size_t>(row) >= R.rows.size()) return true;
+    const double cur = R.rows[static_cast<std::size_t>(row)][static_cast<std::size_t>(R.c_ff4)];
+    const double prev = row > 0 ? R.rows[static_cast<std::size_t>(row - 1)][static_cast<std::size_t>(R.c_ff4)] : 0.0;
+    return cur != prev;
+}
+int CamReplayGoRow() {
+    const CamReplay& R = CamReplayState();
+    if (!R.on || R.c_ba8c < 0) return -1;
+    for (std::size_t k = 0; k < R.rows.size(); ++k)
+        if (static_cast<int>(R.rows[k][static_cast<std::size_t>(R.c_ba8c)]) == 6) return static_cast<int>(k);
+    return -1;
 }
 }  // namespace
 
@@ -10448,6 +10512,10 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             LibRw::RaceSubmit_AddInstanceStates(p.rw_model, (const float*)&inst, LibRw::kInstAfterWorld,
                                                 p.hook_cull, p.hook_zwrite);
     }
+
+    // [iconcube] FUN_00458b10 @ 0x00458b10's cube loop (FUN_0045b990), drawn after the world FX
+    // (LibRw::kInstAfterFx). MASHED_ICONCUBE, default OFF.
+    IconCube_Submit(eye, at);
 
     dev->SetTexture(0, nullptr);
     MARK(d_car);     // player + AI cars (librw instances)
