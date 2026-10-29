@@ -1,0 +1,8 @@
+rva	verdict	why	installed	off_sigs	on_sigs	off_calls	on_calls	spawned_pids	samples_sha256	attempts	utc
+0x0056bb30	C4-CLEAN		True	1	1	6	6	2316/17852	1de8892e737e41625589e8849a2216d9da81dd0817a4dc0c286d229aa3aa4354	1	2026-10-29T01:00:50Z
+0x0056bce0	C4-CLEAN		True	1	1	6	6	4036/13684	c281a8b63c526b94f6152e2433a923d8a9e4dd9d850daa6e48b33f1d0c1b3a1a	1	2026-10-29T00:48:59Z
+0x0056cf90	HOLD	orig-not-observed,modded-not-observed	True	0	0	0	0	7664/5660	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-29T00:53:56Z
+0x0056cf90_census	HOLD	orig-not-observed,modded-not-observed	True	0	0	0	0	8660/6180	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-29T01:02:32Z
+0x0056ed60	C4-CLEAN		True	1	1	6	6	19460/9260	1ba8a93c9aecbd55df996123f2101ac6691514611c87490a6546a56f9acd79c3	1	2026-10-29T00:55:00Z
+0x0056fad0	HOLD	orig-not-observed,modded-not-observed	True	0	0	0	0	8584/608	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-29T00:56:59Z
+0x0056fad0_census	HOLD	orig-not-observed,modded-not-observed	True	0	0	0	0	7700/18368	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-29T01:04:32Z

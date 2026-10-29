@@ -26,6 +26,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-29  0x0056bce0  FUN_0056bce0  C3->C4  verify/wsbsolvrgn_20261028/RESULT_D4-WSB-C4-SOLV-RGN.md (Quick Battle racediff C4-CLEAN 6/6 calls + leg R RunRegion 0x10 CLEAN 48/48, hook installed alone, gates unchanged)
+2026-10-29  0x0056ed60  FUN_0056ed60  C3->C4  verify/wsbsolvrgn_20261028/RESULT_D4-WSB-C4-SOLV-RGN.md (Quick Battle racediff C4-CLEAN 6/6 calls + leg R RunRegion 0x2c CLEAN 48/48, hook installed alone, gates unchanged)
+2026-10-29  0x0056bb30  FUN_0056bb30  C3->C4  verify/wsbsolvrgn_20261028/RESULT_D4-WSB-C4-SOLV-RGN.md (Quick Battle racediff C4-CLEAN 6/6 calls + leg A no store outside its frame, hook installed alone, gates unchanged)
 2026-10-28  D-11084  DEFERRED  added to Active  L-48 (a): D4-WSB-MAPPED-DISP group D4-WSB-DEF-TAIL, evidence verify/d4wsb_deferred_20261028/RESULT_D4-WSB-DEFER-GROUPS.md (2 RVAs)
 2026-10-28  D-11083  DEFERRED  added to Active  L-48 (a): D4-WSB-MAPPED-DISP group D4-WSB-DEF-NARROW, evidence verify/d4wsb_deferred_20261028/RESULT_D4-WSB-DEFER-GROUPS.md (9 RVAs)
 2026-10-28  D-11082  DEFERRED  added to Active  L-48 (a): D4-WSB-MAPPED-DISP group D4-WSB-DEF-SOLV, evidence verify/d4wsb_deferred_20261028/RESULT_D4-WSB-DEFER-GROUPS.md (14 RVAs)
