@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "../D3d9Render/DrawRec.h"
+#include "../Gameplay/PickupGlow.h"
 #include "../Math/RwLutTables.h"
 #include "../Piz/PizReader.h"
 #include "../Render/RfxEmitter.h"
@@ -1190,11 +1191,60 @@ static void DrawObjShadows(rw::Camera* cam) {
     rw::SetRenderState(rw::DESTBLEND, sv_db);
 }
 
+// ---- [D5-ICONCUBE-GLOW] the pickup glow (Gameplay/PickupGlow.h) ---------------------------------------
+namespace {
+
+// FUN_004587a0's FUN_0040bb30("puglow") (string 0x005ce5cc, 0x004587b4..0x004587c0): FX.TXD of SFX.piz, where
+// the texture is named "PUGlow" (case-insensitive, as the beam / car_shadow lookups above). Loaded on first
+// use only, so the knob-off build never decodes it.
+rw::Texture* PuGlowTexture() {
+    static rw::Texture* s_tex = nullptr;
+    static bool s_tried = false;
+    if (s_tried) return s_tex;
+    s_tried = true;
+    Piz::Archive a;
+    if (!a.Load("original/TOASTART/Common/SFX.piz")) return nullptr;
+    for (std::uint32_t i = 0; i < a.count(); ++i) {
+        if (_stricmp(a.entry(i).name, "FX.TXD") != 0) continue;
+        std::uint32_t len = 0;
+        const std::uint8_t* b = a.blob(i, &len);
+        Txd::Dictionary d;
+        if (!b || !d.Decode(b, len)) return nullptr;
+        for (std::uint32_t t = 0; t < d.count(); ++t)
+            if (_stricmp(d.texture(t).name, "puglow") == 0) {
+                s_tex = static_cast<rw::Texture*>(TextureFromTxdTexture(d.texture(t)));
+                break;
+            }
+        break;
+    }
+    if (!s_tex) std::fprintf(stderr, "[puglow] FX.TXD has no PUGlow texture\n");
+    return s_tex;
+}
+
+// FUN_00458b10 @ 0x00458b10, its glow half: RwRenderStateSet(8 ZWRITEENABLE, 0) (0x00458b22..0x00458b26),
+// (6 ZTESTENABLE, 1) (0x00458b2e..0x00458b32), FUN_004770a0(&DAT_0068b968) (0x00458b35..0x00458b3a), then
+// (8, 1) (0x00458b45..0x00458b49) and (6, 1) (0x00458b52..0x00458b56). The cube half (FUN_004e6680 per live
+// entry, 0x00458b5c..) is D5-ICONCUBE-SPIN's. Nothing is set when the glow is off.
+void DrawPickupGlow(rw::Camera* cam) {
+    Rfx::Emitter* e = static_cast<Rfx::Emitter*>(Gameplay::PickupGlow_Emitter());
+    if (!e) return;
+    if (!e->tank.texture) e->tank.texture = PuGlowTexture();   // FUN_004770c0's FUN_004e8090(material, puglow)
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    RaceFx_DrawEmitter(&e->tank, cam);
+    rw::SetRenderState(rw::ZWRITEENABLE, 1);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+}
+
+}  // namespace
+
 void RaceFx_DrawWorldFx(void* rw_camera) {
     rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
     DrawObjShadows(cam);     // FUN_0040bde0 -> FUN_00487de0 (first)
     DrawLensSmall(cam);      // FUN_004891f0 (FUN_00410b30, after FUN_0040bde0)
-    DrawHeadlights(cam);     // FUN_00413a00 / FUN_00413a40 (FUN_00410b30, after FUN_0040bde0)
+    // FUN_0045b990 (0x00410c46, after FUN_004891f0 0x00410c23) -> FUN_0045a130, then FUN_00458b10 (0x0045b996)
+    DrawPickupGlow(cam);
+    DrawHeadlights(cam);     // FUN_00413a00 / FUN_00413a40 (FUN_00410b30 0x00410c53 / 0x00410c5b)
 }
 
 // =============================================================================================

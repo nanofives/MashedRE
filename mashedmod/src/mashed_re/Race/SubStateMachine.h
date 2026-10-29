@@ -9,9 +9,9 @@ extern "C" __declspec(dllexport) void __cdecl SubStateRollCountdown414180(void);
 #ifdef MASHED_STANDALONE
 // Exe-side bindings for the callees the exe cannot reach at their RVA. Set by TrackRenderer.
 struct SubStateHost {
-    int           (*car_alive)(int v);       // FUN_0046c7b0 -> s_host.car_alive (NAMED DEVIATION)
     void          (*ai_tick)();              // FUN_00418860 -> AiBridgeSnapshot + Ai_Standalone_Tick
     unsigned char (*player_accel_byte)();    // v == 0 accel byte for FUN_0046d7f0 (stand-in binding)
+    void          (*player_settle)();        // [D3-SUBSTATE-SETTLE-ORDER] the port's spawn-settle, before 0x00410470
 };
 void SubState_SetHost(const SubStateHost& h);
 #endif

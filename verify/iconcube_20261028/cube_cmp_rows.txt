@@ -1,0 +1,47 @@
+ORIG verify/d1r1_20261016/evidence/training_orig_row_00884.draws.json: 2 frame(s)
+  f0 #224/242 mine     rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(1.88177,0.66941,-3.09719) theta=163.0000 offY=0.00e+00 prev=PUGlow next=mortar
+  f0 #225/242 mortar   rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(16.80000,-0.62400,0.80000) theta=163.0000 offY=0.00e+00 prev=mine next=oil
+  f0 #226/242 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(-1.00933,0.27000,-20.21970) theta=163.0000 offY=0.00e+00 prev=mortar next=OrangeDisplay
+  f1 #224/242 mine     rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(1.88177,0.66941,-3.09719) theta=164.0000 offY=0.00e+00 prev=PUGlow next=mortar
+  f1 #225/242 mortar   rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(16.80000,-0.62400,0.80000) theta=164.0000 offY=0.00e+00 prev=mine next=oil
+  f1 #226/242 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(-1.00933,0.27000,-20.21970) theta=164.0000 offY=0.00e+00 prev=mortar next=OrangeDisplay
+STAND D:/MashedWT/D5-ICONCUBE-SPIN_data/rep_off/d1r2/stand_row_00884.draws.json: 1 frame(s)
+  f0 no cube draws (219 draws)
+  pair f0: orig ['mine', 'mortar', 'oil'] stand [] order DIFF
+STAND D:/MashedWT/D5-ICONCUBE-SPIN_data/rep_on/d1r2/stand_row_00884.draws.json: 1 frame(s)
+  f0 #219/222 mine     rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(1.88177,0.66941,-3.09719) theta=44.0000 offY=0.00e+00 prev=RWObjShad next=mortar
+  f0 #220/222 mortar   rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(16.80000,-0.62400,0.80000) theta=-15.0000 offY=0.00e+00 prev=mine next=oil
+  f0 #221/222 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(-1.00933,0.27000,-20.21970) theta=-15.0000 offY=0.00e+00 prev=mortar next=None
+  pair f0: orig ['mine', 'mortar', 'oil'] stand ['mine', 'mortar', 'oil'] order SAME
+    mine    /mine     dpos=1.09e-09 dtheta=-119.0000 rs DIFF [1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1]
+    mortar  /mortar   dpos=3.71e-08 dtheta=-178.0000 rs DIFF [1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1]
+    oil     /oil      dpos=4.04e-08 dtheta=-178.0000 rs DIFF [1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1]
+
+ORIG verify/d1r1_20261016/evidence/training_orig_row_00924.draws.json: 2 frame(s)
+  f0 #231/257 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(-1.00933,0.27000,-20.21970) theta=-157.0000 offY=0.00e+00 prev=PUGlow next=mine
+  f1 #231/257 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(-1.00933,0.27000,-20.21970) theta=-156.0000 offY=0.00e+00 prev=PUGlow next=mine
+STAND D:/MashedWT/D5-ICONCUBE-SPIN_data/rep_off/d1r2/stand_row_00924.draws.json: 1 frame(s)
+  f0 no cube draws (215 draws)
+  pair f0: orig ['oil'] stand [] order DIFF
+STAND D:/MashedWT/D5-ICONCUBE-SPIN_data/rep_on/d1r2/stand_row_00924.draws.json: 1 frame(s)
+  f0 #215/217 mine     rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(1.88177,0.66941,-3.09719) theta=84.0000 offY=0.00e+00 prev=Blads next=oil
+  f0 #216/217 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(-1.00933,0.27000,-20.21970) theta=25.0000 offY=0.00e+00 prev=mine next=None
+  pair f0: orig ['oil'] stand ['mine', 'oil'] order DIFF
+    oil     /mine     dpos=1.71e+01 dtheta=-119.0000 rs DIFF [1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1]
+
+ORIG verify/d1r1_20261016/evidence/training_orig_row_00959.draws.json: 2 frame(s)
+  f0 #216/233 mortar   rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(16.80000,-0.62400,0.80000) theta=-122.0000 offY=0.00e+00 prev=PUGlow next=oil
+  f0 #217/233 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(-1.00933,0.27000,-20.21970) theta=-122.0000 offY=0.00e+00 prev=mortar next=OrangeDisplay
+  f1 #216/233 mortar   rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(16.80000,-0.62400,0.80000) theta=-121.0000 offY=0.00e+00 prev=PUGlow next=oil
+  f1 #217/233 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 0] t=(-1.00933,0.27000,-20.21970) theta=-121.0000 offY=0.00e+00 prev=mortar next=OrangeDisplay
+STAND D:/MashedWT/D5-ICONCUBE-SPIN_data/rep_off/d1r2/stand_row_00959.draws.json: 1 frame(s)
+  f0 no cube draws (213 draws)
+  pair f0: orig ['mortar', 'oil'] stand [] order DIFF
+STAND D:/MashedWT/D5-ICONCUBE-SPIN_data/rep_on/d1r2/stand_row_00959.draws.json: 1 frame(s)
+  f0 #213/216 mine     rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(1.88177,0.66941,-3.09719) theta=119.0000 offY=0.00e+00 prev=Blads next=mortar
+  f0 #214/216 mortar   rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(16.80000,-0.62400,0.80000) theta=60.0000 offY=0.00e+00 prev=mine next=oil
+  f0 #215/216 oil      rs=[1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1] t=(-1.00933,0.27000,-20.21970) theta=60.0000 offY=0.00e+00 prev=mortar next=None
+  pair f0: orig ['mortar', 'oil'] stand ['mine', 'mortar', 'oil'] order DIFF
+    mortar  /mine     dpos=1.49e+01 dtheta=-119.0000 rs DIFF [1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1]
+    oil     /mortar   dpos=2.10e+01 dtheta=-178.0000 rs DIFF [1, 1, 4, 0, 0, 5, 0, 5, 6, 2, 0, 1]
+

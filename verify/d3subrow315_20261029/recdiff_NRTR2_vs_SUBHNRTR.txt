@@ -1,0 +1,4 @@
+A arms/D2_NRTR_2.rec.msd: 1627 records, first moving at record 1 (frame_idx 1)
+B arms/D2_SUBHNRTR_1.rec.msd: 1643 records, first moving at record 1 (frame_idx 1)
+record before first moving: identical
+no difference on 1626 aligned records

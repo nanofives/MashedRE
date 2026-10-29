@@ -1774,8 +1774,12 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         if (walk) RenderWalkPass(g_walk, kInstInWorld, fr, sticky, true);
         bool car_seen = false;
         bool fx_done = false;
+        // [iconcube] pass 1 draws the kInstAfterFx copies after the world FX; with none queued it
+        // draws nothing and the sequence is the single pass it was
+        for (int pass = 0; pass < 2; ++pass) {
         for (std::size_t ii = 0; ii < g_insts.size(); ++ii) {
             const Inst& in = g_insts[ii];
+            if ((in.kind == kInstAfterFx) != (pass == 1)) continue;
             // [rfx] the car FX marker (RaceSubmit_AddCarFxMarker): FUN_0041ebb0 draws the car
             // shadow and beam right after the car loop (0x00410bb4), before the copters
             // (FUN_00425e40, 0x00410c08)
@@ -1998,6 +2002,7 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                 f->updateObjects();
             }
         }
+        if (pass == 1) break;
         // [rfx 2026-10-16] the car shadow and headlight beam (LibRw/RwRaceFx.h): FUN_0041ebb0
         // @ 0x0041ebb0 runs after the four car renders (FUN_00410b30, 0x00410bb9); here only when
         // no marker was queued.
@@ -2005,6 +2010,7 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         // [rfx2] FUN_0040bde0 @ 0x0040bde0 (the object shadows FUN_00487de0 first), which
         // FUN_00410b30 calls after the copters (FUN_00425e40 at 0x00410c08, FUN_0040bde0 next)
         RaceFx_DrawWorldFx(g_cam);
+        }
         rw_mashed_skip_empty_meshes = false;
         rw_mashed_keep_vertex_alpha = false;
     }

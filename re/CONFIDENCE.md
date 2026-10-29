@@ -84,6 +84,18 @@ Every row in `hooks.csv` carries a confidence label `C0..C4`. Promotion is one-w
 - The function is hooked through `RH_ScopedInstall` and runtime-toggleable.
 - **Promotion to C4 requires:** the `diff-original` skill has produced a clean Frida CSV diff between original and modded behavior on at least one canonical scenario. No stubs in the implementation.
 
+- **Write-set leg for C4 (user decisions L-38, L-40, L-54, 2026-10-27..29):** a function that stores outside its
+  own frame needs, next to the clean race diff, a write-set compare against the original that actually compared
+  memory:
+  - **Heap writers:** a heap-tracked shadow leg (`MASHED_SHADOW_PRIVATE=1`) that is CLEAN with **more than 0 heap
+    pages compared**, or a CLEAN region compare of the written struct with heap tracking on. A leg that compared 0
+    pages is not evidence (L-38: four rows demoted 2026-10-27 because tracking was off).
+  - **Writers whose sampled calls land only in the caller's stack, or write nothing in the sampled calls:** stay C3
+    until a scenario makes them write to compared memory (L-40; e.g. a car-contact scenario).
+  - **Statically empty write-set:** a function with no store outside its own frame (a pure wrapper; checked
+    statically, e.g. the SCOPE store list) can reach C4 on a clean race diff alone, because there is nothing to
+    compare (L-54). Its callee's level does not cap it. Precedent: `0x0056bb30` (2026-10-29, wraps `0x0056ba30`).
+
 ### C4 — Verified
 - All F-DoD criteria satisfied (see `ROADMAP.md`).
 - The function is canonical reference material; lower-confidence callers can lean on it.

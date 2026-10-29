@@ -1,0 +1,2 @@
+ticks 14218  particles 70608 (state 1: 70488, state 2: 120, state-2 sizes bit-exact 94)  count mismatches 0  particle mismatches 0
+A4 PASS 

@@ -1,0 +1,7 @@
+training_00884: 640x480  differing pixels 7017
+  box x 494..635 y 168..271  pixels 7017
+  crop x 470..640 y 144..296
+training_00924: 640x480  differing pixels 0
+training_00959: 640x480  differing pixels 533
+  box x 281..316 y 51..79  pixels 533
+  crop x 257..341 y 27..104

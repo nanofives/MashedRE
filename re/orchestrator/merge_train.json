@@ -1,12 +1,12 @@
 {
-  "_doc": "merge_train.ps1 config. Gate references = pre-flip defaults (2026-10-24). The D3-CF-U9779 flip refs (G-CTRL ef5f2e10/57f7ff83/b4f4b55a, B c37d4c0c/0a8f9806/7013671d) were reverted when its train bounced on the 13-track table (train 20261024_220701, 8 RED rows vs 0 in the reference); they return with the flip merge per the decided-flip protocol. Script paths are relative to the merged tree. Sources: account2 survey 2026-10-24 (re/orchestrator/MERGE_TRAIN.md). 2026-10-28 run 17: B K1 e85ea6fb -> 9fcdbd3a for the D3-CF-SNAP-FLIP decided flip (L-43; verify/snapflip_20261028/RESULT_D3-CF-SNAP-FLIP.md, MASHED_SNAP_POST default ON, MASHED_NO_SNAP_POST=1 reproduces the old e85ea6fb). 2026-10-28 run 18: run13_reference hbtexanimrefs_20261027 -> hbfullcheck_20261028 (L-46 = a, SNAP_POST coverage move accepted; the file lands with orch/HB-FULLCHECK-R17 5ffdef24e, which merges first).",
+  "_doc": "merge_train.ps1 config. Gate references = pre-flip defaults (2026-10-24). The D3-CF-U9779 flip refs (G-CTRL ef5f2e10/57f7ff83/b4f4b55a, B c37d4c0c/0a8f9806/7013671d) were reverted when its train bounced on the 13-track table (train 20261024_220701, 8 RED rows vs 0 in the reference); they return with the flip merge per the decided-flip protocol. Script paths are relative to the merged tree. Sources: account2 survey 2026-10-24 (re/orchestrator/MERGE_TRAIN.md). 2026-10-28 run 17: B K1 e85ea6fb -> 9fcdbd3a for the D3-CF-SNAP-FLIP decided flip (L-43; verify/snapflip_20261028/RESULT_D3-CF-SNAP-FLIP.md, MASHED_SNAP_POST default ON, MASHED_NO_SNAP_POST=1 reproduces the old e85ea6fb). 2026-10-28 run 18: run13_reference hbtexanimrefs_20261027 -> hbfullcheck_20261028 (L-46 = a, SNAP_POST coverage move accepted; the file lands with orch/HB-FULLCHECK-R17 5ffdef24e, which merges first). 2026-10-29 run 22: D5-PREGO-CUBE-FLIP decided flip (L-56 = a, MASHED_PICKUPS_PREGO + MASHED_ICONCUBE default ON): G-CTRL gates.csv 364350ae -> 306186d4, run13_reference hbfullcheck_20261028 (a3c14c41) -> pregocubeflip_20261029/tracks_score.txt (the flip's 7770c056 draw table re-scored with cite C32-ICONCUBE-NONGO, 9 IconCube rows RED -> CITED, every draw count unchanged, file cf3307d2). Revert both if the flip pass bounces.",
   "integration_branch": "orch/integration",
   "batch_max": 3,
   "root": "D:/MashedWT/mtrain_root",
   "root13": "D:/MashedWT/mtrain_root13",
   "data": "D:/MashedWT/mtrain_data",
   "runner": "verify/savelink_20261023/run_arms.py",
-  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["5943c5f1", "364350ae", "52052890"], "retries": 1 },
+  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["5943c5f1", "306186d4", "52052890"], "retries": 1 },
   "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["3a03670c", "9fcdbd3a", "53778664"] },
   "full_set_paths": ["mashedmod/src/mashed_re/Vehicle/", "mashedmod/src/mashed_re/Ai/", "mashedmod/src/mashed_re/Collision/"],
   "full": {
@@ -19,7 +19,7 @@
     "d2_max_reruns": 2,
     "run13": "verify/rsky_20261016/run13.py",
     "run13_cites": "verify/rres_20261016/cites_rres.json",
-    "run13_reference": "verify/hbfullcheck_20261028/tracks_score.txt"
+    "run13_reference": "verify/pregocubeflip_20261029/tracks_score.txt"
   },
   "text_only_globs": ["*.md", "*.txt", "verify/*", "re/analysis/*"],
   "conflict_union": ["mashedmod/build.bat", "mashedmod/exe_sources.rsp", "mashedmod/asi_sources.rsp", "re/analysis/CHANGELOG.md"],

@@ -1,0 +1,40 @@
+01_Egypt 00740 matched
+01_Egypt 00780 matched
+01_Egypt 00815 matched
+02_Neustein 01094 matched
+02_Neustein 01134 matched
+02_Neustein 01169 matched
+03_Arctic 01051 orig k=7 port k=6 state equal
+03_Arctic 01091 orig k=7 port k=6 state equal
+03_Arctic 01126 orig k=7 port k=6 state equal
+04_Highway 00853 orig k=11 port k=10 state equal
+04_Highway 00893 orig k=11 port k=10 state equal
+04_Highway 00928 orig k=11 port k=10 state equal
+05_Sands 01084 orig k=9 port k=8 state equal
+05_Sands 01124 orig k=9 port k=8 state equal
+05_Sands 01159 matched
+06_SuperG 00743 matched
+06_SuperG 00783 matched
+06_SuperG 00818 matched
+07_Roundabout 01091 matched
+07_Roundabout 01131 matched
+07_Roundabout 01166 matched
+08_Storm 00928 matched
+08_Storm 00968 matched
+08_Storm 01003 matched
+09_Forest 00820 matched
+09_Forest 00860 matched
+09_Forest 00895 matched
+10_Dump 00735 matched
+10_Dump 00775 matched
+10_Dump 00810 orig k=9 port k=8 state equal
+11_Warzone 00584 orig k=14 port k=13 state equal
+11_Warzone 00624 matched
+11_Warzone 00659 matched
+12_City 00761 orig k=10 port k=9 state equal
+12_City 00801 matched
+12_City 00836 matched
+13_Training 00884 orig k=5 port k=4 state equal
+13_Training 00924 orig k=5 port k=4 state equal
+13_Training 00959 orig k=4 port k=5 state equal
+rows 39 PUGlow matched (no MISSING/EXTRA row) 25 count-split rows 14 of which state equal 14

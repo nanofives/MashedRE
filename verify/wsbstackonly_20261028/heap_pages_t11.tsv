@@ -1,0 +1,2 @@
+rva	readout	n	ndiff	pages_o	pages_n	heap_o	heap_n	heap_pages_total	image_pages_total	stack_max	noise_max	ovf_max	ret_max	flag_lines	patchbyte
+0x00568990_t11	DIVERGENT	24	24	0..0	0..0	3..9	3..10	147	-147	0	0	0	1	0	installed=e9 uninstalled=83 A/B-IS-REAL

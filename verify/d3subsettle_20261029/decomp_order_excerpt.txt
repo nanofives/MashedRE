@@ -1,0 +1,118 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=3
+// FUN_004111c0 @ 0x004111c0  size=1498  (MASHED.exe)
+// undefined FUN_004111c0(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Top-level race state-machine tick. Dispatcher on `DAT_0063ba8c` (states 1..0xb).
+   This is the parent… */
+
+void FUN_004111c0(void)
+[...]
+  case 3:
+    DAT_007f0fc8 = 0;
+    uStack_10 = 0x41128d;
+    FUN_004102f0();
+    uStack_10 = 0x411292;
+    FUN_0040fc00();
+    return;
+  case 4:
+    DAT_007f0fc8 = 0;
+    uStack_10 = 0x4112aa;
+    FUN_0040dbd0();
+    FUN_0040fc00();
+    return;
+  case 5:
+    FUN_004103a0();
+    FUN_0040fc00();
+    return;
+  case 6:
+    uStack_10 = 0x4112d2;
+    FUN_00411170();
+    FUN_0040fc00();
+    return;
+  case 7:
+    FUN_00410860();
+    FUN_0040fc00();
+[...]
+// FUN_004103a0 @ 0x004103a0  size=360  (MASHED.exe)
+// undefined FUN_004103a0(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Lap-finish / race-completion monitor. `in_EAX` carries the per-frame delta. */
+
+void FUN_004103a0(void)
+
+{
+  int in_EAX;
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 *puVar4;
+  int iVar5;
+  float local_4;
+  
+  local_4 = 0.0;
+  iVar1 = FUN_00429860();
+  if (iVar1 != 0) {
+    iVar1 = FUN_00430820();
+    if (iVar1 == 0) {
+      iVar1 = FUN_0042f6a0();
+      if (iVar1 == 2) {
+        FUN_0040e560();
+      }
+    }
+  }
+  DAT_005f29b8 = DAT_005f29b8 - in_EAX;
+  DAT_007f1014 = (uint)(DAT_007f1018 < DAT_007f0ff4);
+  FUN_00426c90(**(undefined4 **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  FUN_00418860();
+  iVar1 = 0;
+  iVar5 = 0x34;
+  do {
+    if (*(int *)(PTR_PTR_005f2770 + iVar5) != 0) {
+      iVar2 = FUN_0046c7b0(iVar1);
+      if (iVar2 == 1) {
+        FUN_0046baa0(iVar1);
+        FUN_0046d7f0(iVar1);
+      }
+    }
+    iVar5 = iVar5 + 4;
+    iVar1 = iVar1 + 1;
+  } while (iVar5 < 0x44);
+  FUN_0041da90(&local_4);
+  if (_DAT_005ccdf4 <= local_4) {
+    iVar1 = 0;
+    puVar4 = &DAT_007f0a08;
+    iVar5 = 0x34;
+    do {
+      if (*(int *)(PTR_PTR_005f2770 + iVar5) != 0) {
+        iVar2 = FUN_0046c7b0(iVar1);
+        if (iVar2 == 1) {
+          FUN_0046d780(iVar1);
+          uVar3 = FUN_0046c750(iVar1);
+          puVar4[-1] = uVar3;
+          uVar3 = FUN_0046c730(iVar1);
+          *puVar4 = uVar3;
+        }
+      }
+      iVar5 = iVar5 + 4;
+      iVar1 = iVar1 + 1;
+      puVar4 = puVar4 + 3;
+    } while (iVar5 < 0x44);
+    DAT_005f29b8 = 0;
+    iVar1 = FUN_0042f6a0();
+    if (iVar1 == 2) {
+      FUN_00429840(1);
+      FUN_00411d60();
+    }
+    DAT_0063ba8c = 6;
+  }
+  iVar1 = FUN_0042f6a0();
+  if (iVar1 == 2) {
+    FUN_00411ae0(0,0);
+  }
+  return;
+}
+
+
+
