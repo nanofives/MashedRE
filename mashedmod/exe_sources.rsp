@@ -221,6 +221,7 @@
 "Race\RoundGrid.cpp"
 "Race\WorldRegistry.cpp"
 "Gameplay\PickupTick.cpp"
+"Gameplay\PickupGlow.cpp"
 "Gameplay\Thresholds_ah4.cpp"
 "Race\CarRegistrant.cpp"
 "Math\RwLutTables.cpp"
