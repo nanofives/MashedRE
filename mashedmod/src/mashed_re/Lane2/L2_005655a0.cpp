@@ -31,7 +31,7 @@ typedef void           code;
 // decompilation (verbatim; no semantic edits). Size 468 B. Plate:
 // hooks.csv row 0x005655a0. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
-#define _DAT_005cc320 (*(const unsigned int*)0x005cc320u)   // .rdata, undefined4
+#define _DAT_005cc320 (*(const float*)0x005cc320u)   // .rdata, undefined4 -- HAND (D4-WSB-PORT-BVH amendment 1): float, read by x87 fmul/fdiv
 extern "C" void __cdecl L2_FUN_005655a0(float * param_1, float * param_2);
 static void __cdecl L2_FUN_005655a0_impl(float * param_1, float * param_2)
 {

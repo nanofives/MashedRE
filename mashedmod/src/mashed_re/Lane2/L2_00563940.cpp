@@ -33,8 +33,8 @@ typedef void           code;
 // hooks.csv row 0x00563940. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
 #define DAT_005d757c (*(const float*)0x005d757cu)   // .rdata, float
-#define _DAT_005cc320 (*(const unsigned int*)0x005cc320u)   // .rdata, undefined4
-#define _DAT_005cc32c (*(const unsigned int*)0x005cc32cu)   // .rdata, undefined4
+#define _DAT_005cc320 (*(const float*)0x005cc320u)   // .rdata, undefined4 -- HAND (D4-WSB-PORT-BVH amendment 1): float, read by x87 fmul/fdiv
+#define _DAT_005cc32c (*(const float*)0x005cc32cu)   // .rdata, undefined4 -- HAND (D4-WSB-PORT-BVH amendment 1): float, read by x87 fmul/fdiv
 static inline void L2T_FUN_00565c20(float * a0, float * a1, float * a2) { reinterpret_cast<void(__cdecl*)(float *, float *, float *)>(0x00565c20u)(a0, a1, a2); }   // 0x00565c20 (original, not ported)
 static inline void L2T_FUN_005663a0(float * a0, float * a1) { reinterpret_cast<void(__cdecl*)(float *, float *)>(0x005663a0u)(a0, a1); }   // 0x005663a0 (original, not ported)
 extern "C" void __cdecl L2_FUN_00563940(int param_1);

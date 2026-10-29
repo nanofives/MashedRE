@@ -31,7 +31,7 @@ typedef void           code;
 // decompilation (verbatim; no semantic edits). Size 1486 B. Plate:
 // hooks.csv row 0x0055f800. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
-#define _DAT_005cc56c (*(const unsigned int*)0x005cc56cu)   // .rdata, undefined4
+#define _DAT_005cc56c (*(const float*)0x005cc56cu)   // .rdata, undefined4 -- HAND (D4-WSB-PORT-BVH amendment 1): float, read by x87 fmul/fdiv
 static inline void L2T_FUN_0055f480(int a0, int a1, int a2) { reinterpret_cast<void(__cdecl*)(int, int, int)>(0x0055f480u)(a0, a1, a2); }   // 0x0055f480 (original, not ported)
 static inline unsigned int L2T_FUN_0055f520(unsigned int * a0) { return reinterpret_cast<unsigned int(__cdecl*)(unsigned int *)>(0x0055f520u)(a0); }   // 0x0055f520 (original, not ported)
 static inline int L2T_FUN_0055f670(unsigned int * a0) { return reinterpret_cast<int(__cdecl*)(unsigned int *)>(0x0055f670u)(a0); }   // 0x0055f670 (original, not ported)
