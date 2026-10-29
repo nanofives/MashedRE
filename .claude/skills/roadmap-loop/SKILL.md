@@ -119,6 +119,14 @@ On stop: close every child (`list_children`, then `close_child` each), `roadmap.
 `roadmap.ps1 snapshot "orch: ledger snapshot run <N>"`, then write the kickoff below.
 `race/first-frame-parity` moves only when Mariano says. Never push. Never redeploy the shared .asi.
 
+**LAN release (Mariano 2026-10-29).** Right after `race/first-frame-parity` is fast-forwarded, whoever did it runs
+`py -3.12 scripts/lan_release/release_due.py`. On DUE (3 commits changing `mashedmod/` since the published build,
+or 1 once it is 24 h old), run `bash scripts/lan_release/publish.sh` with `run_in_background` and a 7200000 ms
+timeout. It builds the ref from a clean `git archive` with `MASHED_NO_DEPLOY=1`, uploads only the changed files to
+http://mariano-server.local:8088/mashed/ and deletes the server's old copies. Name the release (label + sha) in the
+REPORT. On NOT_DUE do nothing. On ERROR or a failed publish, put it in the REPORT and do not retry in the same run.
+Detail: CLAUDE.md "LAN release of the standalone".
+
 ## Kickoff template (end of every run)
 ```
 /loop Roadmap loop run <N+1>. Read C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/.claude/skills/roadmap-loop/SKILL.md and act as the L0 conductor it describes.
