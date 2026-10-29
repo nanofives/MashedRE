@@ -99,3 +99,22 @@ Arm S continues to its end on `.asi 427c8545` (rows 6-24). Then the new `.asi` g
 re-run as written above for `0055f800 00563940 005655a0 00565c20`. Their first-pass verdicts are kept in the RESULT as
 superseded and are not used. The other 20 rows keep their first-pass result (their TUs are unchanged by `1f09a4b77`).
 Read-out unchanged. Default gates run on the final build.
+
+## Amendment 2 (2026-10-29, after the amendment-1 re-run, before any further run)
+
+Amendment-1 re-run on `.asi 9ae3c140`: `0x0055f800` CLEAN n=1, `0x005655a0` CLEAN n=24, `0x00563940` DIVERGENT 4/4
+(1-ULP values, e.g. `438505a4` vs `438505a5`), `0x00565c20` DIVERGENT 24/24 with large values (sample 0, the only one
+with an untouched pre-state: radius original `3f0069c0`, port `58d07606`).
+
+Cause of `0x00565c20`, read from disassembly and source: the original builds the displacement as one 3-float array at
+`[esp+4..0xc]` (fstp at `0x00565c30`, `0x00565c3a`, `0x00565c49`) and passes its address (`lea eax,[esp+4]` at
+`0x00565c44`) to `0x004c3ac0`. Ghidra shows it as three scalars `local_c/local_8/local_4`, and the port passed
+`&local_c`, so `Vec3Magnitude` read two locals MSVC had not placed after it. A scan of every `Lane2/L2_*.cpp` for `(&local_`
+finds no other site.
+
+Change (commit `4c0f9cec1`): `0x00565c20` keeps the displacement as `float lv[3]`. Nothing else. New build
+`MASHED_NO_DEPLOY=1`: `mashed_re.exe` `f026b40b...bbb4`, `mashed_re_dev.asi` `18f76050...42d3`.
+
+Re-run: arm S as written above for `00565c20` only, on the new `.asi`. `0x00563940` is not re-run: its divergence is the
+float-rounding class, which this PREREG leaves at C2 without an x87 amendment. No x87 trial in this step. The other 23
+rows keep their result (their TUs are unchanged by `4c0f9cec1`). Read-out unchanged. Default gates run on this build.
