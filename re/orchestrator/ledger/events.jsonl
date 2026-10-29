@@ -985,3 +985,40 @@
 {"at":"2026-10-28T20:42:24Z","id":"D5-PARTMORPH-PRODUCER","from":"merge-queued","to":"merged","owner":"cmvsi6cfp010hp727t8w4g1n5","note":"merge train 20261028_171345: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
 {"at":"2026-10-28T20:56:24Z","id":"D5-ICONCUBE-GLOW","from":"blocked","to":"open","owner":"","note":"unblocked: D5-RFX-EMITTERS merged c4291ecfc (run 19); run 20"}
 {"at":"2026-10-28T21:12:31Z","id":"D5-RFX-RECLASS","from":"merge-queued","to":"merged","owner":"cmvsi6cfp010hp727t8w4g1n5","note":"merge train 20261028_174342: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-28T21:16:39Z","id":"D3-SUBSTATE-FLIP","from":"blocked","to":"open","owner":"","note":"run 20: PH3 merged (MASHED_P3_RESET_PAIR); decided flip L-45/D-11073, standalone-only (audio endpoint absent)"}
+{"at":"2026-10-28T21:17:59Z","id":"HB-RECLASS-UROW","from":"open","to":"claimed","owner":"cmvsm8p2q0ifnp7278kvb515n","note":""}
+{"at":"2026-10-28T21:18:08Z","id":"D3-SUBSTATE-FLIP","from":"open","to":"claimed","owner":"cmvsm8b6x0iclp727zvin4gim","note":""}
+{"at":"2026-10-28T21:18:14Z","id":"D5-ICONCUBE-SPIN","from":"open","to":"claimed","owner":"cmvsm8xcx0iinp727lxx412yw","note":""}
+{"at":"2026-10-28T21:18:15Z","id":"D5-ICONCUBE-GLOW","from":"open","to":"claimed","owner":"cmvsm8zhl0ijlp7271cvt7qet","note":""}
+{"at":"2026-10-28T21:19:15Z","id":"D5-ICONCUBE-SPIN","from":"claimed","to":"working","owner":"cmvsm8xcx0iinp727lxx412yw","note":"run 20: narrow MASHED_PICKUPS_PREGO, static read of the original AI first tick"}
+{"at":"2026-10-28T21:20:38Z","id":"D3-SUBSTATE-FLIP","from":"claimed","to":"working","owner":"cmvsm8b6x0iclp727zvin4gim","note":"flip MASHED_SUBSTATE + MASHED_P3_RESET_PAIR default ON, gates x2"}
+{"at":"2026-10-28T21:20:42Z","id":"D5-ICONCUBE-GLOW","from":"claimed","to":"working","owner":"cmvsm8zhl0ijlp7271cvt7qet","note":"static read of glow chain + rfx emitters"}
+{"at":"2026-10-28T21:21:36Z","id":"HB-RECLASS-UROW","from":"claimed","to":"review","owner":"cmvsm8p2q0ifnp7278kvb515n","note":""}
+{"at":"2026-10-28T21:21:59Z","id":"HB-RECLASS-UROW","from":"review","to":"merge-queued","owner":"cmvsm8p2q0ifnp7278kvb515n","note":"orch/HB-RECLASS-UROW"}
+{"at":"2026-10-28T21:50:01Z","id":"D4-WSB-C4-SOLV-RGN","from":"blocked","to":"open","owner":"","note":"run 20: audio endpoint back (Philips FTV OK), parent reopened; boot check first; PREREG eb1a8b9ce"}
+{"at":"2026-10-28T21:50:02Z","id":"D4-WSB-STACKONLY-C3","from":"blocked","to":"open","owner":"","note":"run 20: audio endpoint back (Philips FTV OK), parent reopened; PREREG fa8ab1fbb"}
+{"at":"2026-10-28T21:51:25Z","id":"D4-WSB-C4-SOLV-RGN","from":"open","to":"claimed","owner":"cmvsnf6d60mrzp727b9390ptn","note":""}
+{"at":"2026-10-28T21:52:08Z","id":"D4-WSB-C4-SOLV-RGN","from":"claimed","to":"working","owner":"cmvsnf6d60mrzp727b9390ptn","note":"run 20: re-pickup, boot check first"}
+{"at":"2026-10-28T23:56:28Z","id":"HB-RECLASS-UROW","from":"merge-queued","to":"merged","owner":"cmvsm8p2q0ifnp7278kvb515n","note":"merge train 20261028_203140: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664"}
+{"at":"2026-10-29T00:21:32Z","id":"D5-ICONCUBE-GLOW","from":"working","to":"review","owner":"cmvsm8zhl0ijlp7271cvt7qet","note":"GREEN: glow on rfx emitters behind MASHED_RFX_EMITTERS (OFF); gates + 13-track unchanged; orig-side P1-P3 pending (audio endpoint)"}
+{"at":"2026-10-29T00:24:47Z","id":"D5-ICONCUBE-GLOW","from":"review","to":"merge-queued","owner":"cmvsm8zhl0ijlp7271cvt7qet","note":"orch/D5-ICONCUBE-GLOW"}
+{"at":"2026-10-29T00:47:56Z","id":"D5-ICONCUBE-SPIN","from":"working","to":"review","owner":"cmvsm8xcx0iinp727lxx412yw","note":"run 20 DECISION: PREGO + 0x0040fc7c refdist producer holds step/ptrace/B/D2/13 tracks; G-CTRL gates.csv 364350ae->306186d4 (4 frame-0 rows); flip PREGO+ICONCUBE is a user decision"}
+{"at":"2026-10-29T00:48:12Z","id":"D5-ICONCUBE-GLOW","from":"merge-queued","to":"merged","owner":"cmvsm8zhl0ijlp7271cvt7qet","note":"merge train 20261028_212610: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-29T00:48:41Z","id":"D5-ICONCUBE-SPIN","from":"review","to":"merge-queued","owner":"cmvsm8xcx0iinp727lxx412yw","note":"orch/D5-ICONCUBE-SPIN"}
+{"at":"2026-10-29T00:48:42Z","id":"D5-ICONCUBE-SPIN","from":"merge-queued","to":"decision","owner":"cmvsm8xcx0iinp727lxx412yw","note":"L-52"}
+{"at":"2026-10-29T00:50:28Z","id":"D5-ICONCUBE-SPIN","from":"decision","to":"red-merge","owner":"cmvsm8xcx0iinp727lxx412yw","note":"merge train 20261028_214847: conflict needs a hand merge (frida-sweep recipe): verify/iconcube_20261028/RUNLOG_gates.txt"}
+{"at":"2026-10-29T00:52:39Z","id":"D3-SUBSTATE-FLIP","from":"working","to":"review","owner":"cmvsm8b6x0iclp727zvin4gim","note":"DECISION: not flipped, D2 out of band under the flip (0.2016/0.2591 OUT/1791.85 OUT x6); amendment 1 clock fix knob-gated on branch; default gates = refs"}
+{"at":"2026-10-29T00:52:41Z","id":"D3-SUBSTATE-FLIP","from":"review","to":"decision","owner":"cmvsm8b6x0iclp727zvin4gim","note":"L-53"}
+{"at":"2026-10-29T01:00:22Z","id":"D5-ICONCUBE-SPIN","from":"red-merge","to":"merge-queued","owner":"cmvsm8xcx0iinp727lxx412yw","note":"orch/D5-ICONCUBE-SPIN"}
+{"at":"2026-10-29T01:13:57Z","id":"D4-WSB-C4-SOLV-RGN","from":"working","to":"review","owner":"cmvsnf6d60mrzp727b9390ptn","note":"GREEN: 0056bce0 0056ed60 0056bb30 C3->C4; 0056cf90 0056fad0 stay C3 (0 racediff calls QB+census); gates unchanged; sha dcc0f2bba"}
+{"at":"2026-10-29T01:14:28Z","id":"D4-WSB-C4-SOLV-RGN","from":"review","to":"merge-queued","owner":"cmvsnf6d60mrzp727b9390ptn","note":"orch/D4-WSB-C4-SOLV-RGN"}
+{"at":"2026-10-29T01:14:47Z","id":"D5-ICONCUBE-SPIN","from":"merge-queued","to":"merged","owner":"cmvsm8xcx0iinp727lxx412yw","note":"merge train 20261028_220123: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-29T01:15:20Z","id":"D4-WSB-STACKONLY-C3","from":"open","to":"claimed","owner":"cmvsup9jo0z77p727g1ajpz1o","note":""}
+{"at":"2026-10-29T01:16:00Z","id":"D4-WSB-STACKONLY-C3","from":"claimed","to":"working","owner":"cmvsup9jo0z77p727g1ajpz1o","note":"run 20: re-pickup, arm S City first"}
+{"at":"2026-10-29T01:36:54Z","id":"D4-WSB-C4-SOLV-RGN","from":"merge-queued","to":"merged","owner":"cmvsnf6d60mrzp727b9390ptn","note":"merge train 20261028_221514: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-29T01:40:04Z","id":"D4-WSB-C4-SOLV-TRK1","from":"open","to":"claimed","owner":"cmvsvkmta0zw9p7278vgluzug","note":""}
+{"at":"2026-10-29T01:42:02Z","id":"D4-WSB-C4-SOLV-TRK1","from":"claimed","to":"working","owner":"cmvsvkmta0zw9p7278vgluzug","note":"worktree created, writing PREREG"}
+{"at":"2026-10-29T01:45:37Z","id":"D4-WSB-STACKONLY-C3","from":"working","to":"review","owner":"cmvsup9jo0z77p727g1ajpz1o","note":"run 20: 0056b7a0 C3->C4 (Warzone write-set CLEAN + racediff C4-CLEAN), 00568990 DIVERGENT stays C3 U-9798, 0055bae0/0055c000 unchanged; gates unchanged; sha 80096c7cb"}
+{"at":"2026-10-29T01:46:13Z","id":"D4-WSB-STACKONLY-C3","from":"review","to":"merge-queued","owner":"cmvsup9jo0z77p727g1ajpz1o","note":"orch/D4-WSB-STACKONLY-C3"}
+{"at":"2026-10-29T01:58:11Z","id":"D4-WSB-C4-SOLV-TRK1","from":"working","to":"blocked","owner":"cmvsvkmta0zw9p7278vgluzug","note":"BLOCKED audio endpoint: endpoint gone at 01:56:44Z before arm N; leg B done (6 HEAP-CLEAN, 00567f00 CLEAN-NO-PAGES, 005685f0 NO_LOG NOT-EXEC); racediff not run; no level change. Re-pickup steps in RESULT."}
+{"at":"2026-10-29T02:12:08Z","id":"D4-WSB-STACKONLY-C3","from":"merge-queued","to":"merged","owner":"cmvsup9jo0z77p727g1ajpz1o","note":"merge train 20261028_225953: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664"}
