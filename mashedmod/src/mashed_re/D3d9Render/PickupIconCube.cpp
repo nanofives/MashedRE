@@ -58,9 +58,12 @@ const float kZero      = 0.0f;     // [0x005d757c]
 }  // namespace
 
 bool IconCube_Enabled() {
+    // [D5-PREGO-CUBE-FLIP 2026-10-29] default ON with MASHED_PICKUPS_PREGO (decision L-52,
+    // verify/pregocubeflip_20261029/RESULT_D5-PREGO-CUBE-FLIP.md); MASHED_NO_ICONCUBE=1 (or MASHED_ICONCUBE=0) opts out.
     static const bool s_on = [] {
+        const char* no = std::getenv("MASHED_NO_ICONCUBE");
         const char* s = std::getenv("MASHED_ICONCUBE");
-        return s && s[0] && s[0] != '0';
+        return !(no && no[0] && no[0] != '0') && !(s && s[0] == '0');
     }();
     return s_on && Gameplay::PickupsOrig_Enabled();
 }

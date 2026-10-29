@@ -265,7 +265,7 @@ void aib_own_fwd_xz(int v, float* fx, float* fz) {
 }
 // [u9770] MASHED_REG_LATE (default OFF): see the [mode 7 M1] block in UpdateRace.
 bool RegLate() { static const bool s_on = [] { const char* e = std::getenv("MASHED_REG_LATE"); return e && e[0] && e[0] != '0'; }(); return s_on; }
-// [D5-ICONCUBE-SPIN] MASHED_PICKUPS_PREGO (default OFF): FUN_0040fc00 runs on the pre-race ticks too and calls
+// [D5-ICONCUBE-SPIN] MASHED_PICKUPS_PREGO (default ON since D5-PREGO-CUBE-FLIP): FUN_0040fc00 runs on the pre-race ticks too and calls
 // FUN_0040da50 (0x0040fc75, cars register at 0x0040dad0), FUN_0045bba0 (0x0040fcd0, FUN_00459000 inside) and
 // FUN_00485070 (0x0040fd07) with no guard. Under the knob the countdown frames run the same three.
 // PREREG verify/iconcube_20261028/PREREG2_D5-ICONCUBE-SPIN.md.
@@ -274,7 +274,14 @@ bool RegLate() { static const bool s_on = [] { const char* e = std::getenv("MASH
 // 0x008989b0[v] == 0.0, which opens FUN_00414c30's type-7 gate (0x00414e2f / 0x00414e42) on a pre-GO pickup.
 // MASHED_PICKUPS_PREGO_NO_REFDIST (diagnostic) drops the call. PREREG verify/iconcube_20261028/PREREG3_D5-ICONCUBE-SPIN.md.
 extern "C" void __cdecl RaceComputeDistancesTick(int site);   // Race/SpectatorDistances.cpp
-bool PickupsPreGo() { static const bool s_on = [] { const char* e = std::getenv("MASHED_PICKUPS_PREGO"); return e && e[0] && e[0] != '0'; }(); return s_on; }
+// [D5-PREGO-CUBE-FLIP 2026-10-29] default ON with MASHED_ICONCUBE (decision L-52,
+// verify/pregocubeflip_20261029/RESULT_D5-PREGO-CUBE-FLIP.md); MASHED_NO_PICKUPS_PREGO=1 (or MASHED_PICKUPS_PREGO=0)
+// opts out: no pre-GO registry chain, the pre-flip default.
+bool PickupsPreGo() {
+    static const bool s_on = [] { const char* no = std::getenv("MASHED_NO_PICKUPS_PREGO"); const char* e = std::getenv("MASHED_PICKUPS_PREGO");
+                                  return !(no && no[0] && no[0] != '0') && !(e && e[0] == '0'); }();
+    return s_on;
+}
 void PreGoRegistryTick() {
     static const bool s_noRd = [] { const char* e = std::getenv("MASHED_PICKUPS_PREGO_NO_REFDIST"); return e && e[0] && e[0] != '0'; }();
     Race::CarsReg_FrameTick();        // FUN_0040da50 0x0040fc75
@@ -3242,7 +3249,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // General_Anim_Filename .ANM flight path (track piz); flown under the
     // per-frame HAnim transform (see LoadCopters + the Render copter pass).
     LoadCopters(dev, piz, piz_path, log);
-    // [iconcube] FUN_004587a0 @ 0x004587a0's IconCube models + pool writes (MASHED_ICONCUBE, default OFF)
+    // [iconcube] FUN_004587a0 @ 0x004587a0's IconCube models + pool writes (MASHED_ICONCUBE, default ON since D5-PREGO-CUBE-FLIP)
     IconCube_OnTrackLoad(amb_world_, log);
 
     // [camribbon] The camera-path ribbon (FUN_00426d00's node corners) comes from the original's
@@ -10514,7 +10521,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     // [iconcube] FUN_00458b10 @ 0x00458b10's cube loop (FUN_0045b990), drawn after the world FX
-    // (LibRw::kInstAfterFx). MASHED_ICONCUBE, default OFF.
+    // (LibRw::kInstAfterFx). MASHED_ICONCUBE, default ON since D5-PREGO-CUBE-FLIP (MASHED_NO_ICONCUBE=1 opts out).
     IconCube_Submit(eye, at);
 
     dev->SetTexture(0, nullptr);
