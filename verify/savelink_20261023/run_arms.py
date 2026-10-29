@@ -436,6 +436,7 @@ STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT
 # D3-SUBSTATE-PREGO-ALIVE (verify/d3subprego_20261029): the D3-SUBSTATE-FLIP seed as knobs (both default OFF)
 STACK['SUB'] = ['MASHED_SUBSTATE=1', 'MASHED_P3_RESET_PAIR=1']
 STACK['SUBNS'] = STACK['SUB'] + ['MASHED_NO_SUBSTATE_SETTLE_FIRST=1']   # D3-SUBSTATE-SETTLE-ORDER: same-exe control (settle in the first race StepCar)
+STACK['SUBH'] = STACK['SUB'] + ['MASHED_DRIVE_HOLD_MS=42000']   # amendment 1: the 30 s demo hold + ~776 phase-3 frames
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
