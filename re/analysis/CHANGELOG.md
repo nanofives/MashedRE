@@ -26,6 +26,20 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-29  0056a450  FUN_0056a450  C2->C3  shadow A/B CLEAN n=24 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00568d20  FUN_00568d20  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00568cf0  FUN_00568cf0  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00568c80  FUN_00568c80  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00568c40  FUN_00568c40  C2->C3  shadow A/B CLEAN n=2 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00568860  FUN_00568860  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  005687d0  FUN_005687d0  C2->C3  shadow A/B CLEAN n=2 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  005687a0  FUN_005687a0  C2->C3  shadow A/B CLEAN n=2 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00567c40  FUN_00567c40  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  005676f0  FUN_005676f0  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00567630  FUN_00567630  C2->C3  shadow A/B CLEAN n=2 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  00567350  FUN_00567350  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  005672c0  FUN_005672c0  C2->C3  shadow A/B CLEAN n=2 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
+2026-10-29  005663a0  FUN_005663a0  C2->C3  shadow A/B CLEAN n=24 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
 2026-10-28  D-11073  DEFERRED  rewritten, stays Active  re-pickup rewritten: phase 3 merged (D3-SUBSTATE-PH3, verify/d3subph3_20261028/RESULT_d3subph3.md), only the decided D3-SUBSTATE-FLIP remains
 2026-10-28  U-9203  UNCERTAINTIES  Active->struck  the frame-0 camera transient was one skipped reset branch in RaceCamera (a reset must take the pair-switch branch) plus DAT_007f1008/_DAT_007f100c stored after the chain instead of before; fixed behind default-OFF MASHED_P3_RESET_PAIR, port vs original over 809 phase-3 camera calls x/z within 2.1e-5, length 809 = 809, all five PREREG predictions PASS. Default stays OFF until the D3-SUBSTATE-FLIP decision (evidence: verify/d3subph3_20261028/RESULT_d3subph3.md)
 2026-10-28  004769a0  ParticleEmitter_SetPosition  C3->C3  exe_file=mashedmod/src/mashed_re/Render/RfxEmitter.cpp (D5-RFX-RECLASS, verify/rfx_emitters_20261028/RESULT_D5-RFX-EMITTERS.md)
