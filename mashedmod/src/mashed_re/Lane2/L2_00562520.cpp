@@ -33,8 +33,8 @@ typedef void           code;
 // ---------------------------------------------------------------------------
 // idiom: (*(DAT_007d3ff8+0x114))(...) is __cdecl per MenuDrawLoopTwin.cpp vt20 / RwIm2DBridge.cpp
 static inline unsigned int L2_slot_007d3ff8_0x114_3(unsigned int a0, unsigned int a1, unsigned int a2) { return reinterpret_cast<unsigned int(__cdecl*)(unsigned int, unsigned int, unsigned int)>(*reinterpret_cast<unsigned int*>(*reinterpret_cast<unsigned int*>(0x007d3ff8u) + 0x114))(a0, a1, a2); }
-extern "C" void __cdecl L2_FUN_00562520(int param_1, int param_2);
-static void __cdecl L2_FUN_00562520_impl(int param_1, int param_2)
+extern "C" int * __cdecl L2_FUN_00562520(int param_1, int param_2);
+static int * __cdecl L2_FUN_00562520_impl(int param_1, int param_2)
 {
   int *piVar1;
   uint uVar2;
@@ -44,10 +44,11 @@ static void __cdecl L2_FUN_00562520_impl(int param_1, int param_2)
   *piVar1 = param_1;
   piVar1[2] = uVar2;
   piVar1[1] = param_2;
-  return;
+  // HAND (D4-WSB-PORT-BVH): EAX at ret 0x0056255b = slot call result (0x00562547).
+  return piVar1;
 }
-extern "C" void __cdecl L2_FUN_00562520(int param_1, int param_2) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_00562520", 0x00562520u, ShadowAB::kPhaseRace);
-    ShadowAB::RunTracked(ab, L2_FUN_00562520_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
+extern "C" int * __cdecl L2_FUN_00562520(int param_1, int param_2) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00562520", 0x00562520u, ShadowAB::kPhaseAny);
+    return ShadowAB::RunTracked(ab, L2_FUN_00562520_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
 }
 RH_ScopedInstall(L2_FUN_00562520, 0x00562520);

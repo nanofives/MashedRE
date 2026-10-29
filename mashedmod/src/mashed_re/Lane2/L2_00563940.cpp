@@ -12,6 +12,7 @@
 #include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
+#include <cmath>
 
 namespace {
 inline float f32bits(unsigned int u) { float f; std::memcpy(&f, &u, 4); return f; }
@@ -62,7 +63,8 @@ static void __cdecl L2_FUN_00563940_impl(int param_1)
               *(float *)(iVar4 + 8 + uVar10 * 0xc);
       fVar8 = pfVar2[1] - *(float *)(iVar4 + 4 + uVar10 * 0xc);
       fVar7 = *pfVar2 - *(float *)(iVar4 + uVar10 * 0xc);
-      fVar3 = SQRT(fVar3 * fVar3 + fVar8 * fVar8 + fVar7 * fVar7);
+      // HAND (D4-WSB-PORT-BVH): Ghidra SQRT = fsqrt at 0x005639a0 on the float sum.
+      fVar3 = sqrtf(fVar3 * fVar3 + fVar8 * fVar8 + fVar7 * fVar7);
       bVar6 = fVar3 != DAT_005d757c;
       *pfVar1 = fVar3;
       if (bVar6) {

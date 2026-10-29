@@ -37,7 +37,7 @@ static int __cdecl L2_FUN_00563de0_impl(int param_1, int param_2)
   return (param_1 + 2 + param_2 * 2) * 8;
 }
 extern "C" int __cdecl L2_FUN_00563de0(int param_1, int param_2) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_00563de0", 0x00563de0u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00563de0", 0x00563de0u, ShadowAB::kPhaseAny);
     return ShadowAB::RunTracked(ab, L2_FUN_00563de0_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
 }
 RH_ScopedInstall(L2_FUN_00563de0, 0x00563de0);

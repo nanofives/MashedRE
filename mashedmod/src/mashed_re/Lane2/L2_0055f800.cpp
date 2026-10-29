@@ -36,7 +36,7 @@ static inline void L2T_FUN_0055f480(int a0, int a1, int a2) { reinterpret_cast<v
 static inline unsigned int L2T_FUN_0055f520(unsigned int * a0) { return reinterpret_cast<unsigned int(__cdecl*)(unsigned int *)>(0x0055f520u)(a0); }   // 0x0055f520 (original, not ported)
 static inline int L2T_FUN_0055f670(unsigned int * a0) { return reinterpret_cast<int(__cdecl*)(unsigned int *)>(0x0055f670u)(a0); }   // 0x0055f670 (original, not ported)
 static inline void L2T_FUN_00564100(unsigned int * a0, unsigned char a1, unsigned int a2) { reinterpret_cast<void(__cdecl*)(unsigned int *, unsigned char, unsigned int)>(0x00564100u)(a0, a1, a2); }   // 0x00564100 (original, not ported)
-static inline void L2T_FUN_00564130(int a0, unsigned int a1, unsigned int a2) { reinterpret_cast<void(__cdecl*)(int, unsigned int, unsigned int)>(0x00564130u)(a0, a1, a2); }   // 0x00564130 (original, not ported)
+static inline unsigned int L2T_FUN_00564130(int a0, unsigned int a1, unsigned int a2) { return reinterpret_cast<unsigned int(__cdecl*)(int, unsigned int, unsigned int)>(0x00564130u)(a0, a1, a2); }   // HAND: EAX return, see L2_00564130.cpp   // 0x00564130 (original, not ported)
 static inline void L2T_FUN_00567350(unsigned int a0, int * a1, unsigned int * a2, unsigned int * a3, int a4, int a5, int a6) { reinterpret_cast<void(__cdecl*)(unsigned int, int *, unsigned int *, unsigned int *, int, int, int)>(0x00567350u)(a0, a1, a2, a3, a4, a5, a6); }   // 0x00567350 (original, not ported)
 static inline void L2T_FUN_005676f0(int a0, int * a1, int * a2, unsigned int * a3, int a4, int a5, int a6, int a7) { reinterpret_cast<void(__cdecl*)(int, int *, int *, unsigned int *, int, int, int, int)>(0x005676f0u)(a0, a1, a2, a3, a4, a5, a6, a7); }   // 0x005676f0 (original, not ported)
 static inline char L2T_FUN_00567c40(void) { return reinterpret_cast<char(__cdecl*)()>(0x00567c40u)(); }   // 0x00567c40 (original, not ported)
@@ -111,7 +111,7 @@ static int __cdecl L2_FUN_0055f800_impl(int param_1, unsigned int param_2, unsig
   *(uint *)(param_1 + 0x420) = *(int *)(param_1 + 0x420) + 0xf + param_3[3] * 4 & 0xfffffff0;
   *(uint *)(param_1 + 0xbc) = param_3[3];
   *(undefined4 *)(param_1 + 0xb8) = 0;
-  uVar2 = L2T_FUN_00568d20((int)(puVar7), (unsigned int)(param_3[8]));
+  uVar2 = (undefined4)L2T_FUN_00568d20((int)(puVar7), (unsigned int)(param_3[8]));   // HAND: pointer return stored as a dword
   *(undefined4 *)(param_1 + 0xc0) = uVar2;
   puVar4 = puVar7;
   if ((*param_3 & 8) != 0) {
@@ -232,7 +232,7 @@ static int __cdecl L2_FUN_0055f800_impl(int param_1, unsigned int param_2, unsig
   return param_1;
 }
 extern "C" int __cdecl L2_FUN_0055f800(int param_1, unsigned int param_2, unsigned int * param_3, float param_4) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f800", 0x0055f800u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f800", 0x0055f800u, ShadowAB::kPhaseAny);
     return ShadowAB::RunTracked(ab, L2_FUN_0055f800_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
 }
 RH_ScopedInstall(L2_FUN_0055f800, 0x0055f800);

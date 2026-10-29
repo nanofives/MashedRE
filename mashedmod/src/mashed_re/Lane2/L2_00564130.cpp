@@ -33,15 +33,16 @@ typedef void           code;
 // ---------------------------------------------------------------------------
 // idiom: (*(DAT_007d3ff8+0x108))(...) is __cdecl per MenuDrawLoopTwin.cpp vt20 / RwIm2DBridge.cpp
 static inline unsigned int L2_slot_007d3ff8_0x108_2(unsigned int a0, unsigned int a1) { return reinterpret_cast<unsigned int(__cdecl*)(unsigned int, unsigned int)>(*reinterpret_cast<unsigned int*>(*reinterpret_cast<unsigned int*>(0x007d3ff8u) + 0x108))(a0, a1); }
-extern "C" void __cdecl L2_FUN_00564130(int param_1, unsigned int param_2, unsigned int param_3);
-static void __cdecl L2_FUN_00564130_impl(int param_1, unsigned int param_2, unsigned int param_3)
+extern "C" unsigned int __cdecl L2_FUN_00564130(int param_1, unsigned int param_2, unsigned int param_3);
+static unsigned int __cdecl L2_FUN_00564130_impl(int param_1, unsigned int param_2, unsigned int param_3)
 {
   uint uVar1;
   byte bVar2;
   
   uVar1 = L2_slot_007d3ff8_0x108_2((unsigned int)(param_1 + param_2), (unsigned int)(param_3));
   if (uVar1 == 0) {
-    return;
+    // HAND (D4-WSB-PORT-BVH): EAX = slot result (0) at ret 0x00564159.
+    return uVar1;
   }
   bVar2 = (byte)param_2 - (char)(uVar1 % param_2);
   param_3 = (uint)bVar2;
@@ -50,10 +51,11 @@ static void __cdecl L2_FUN_00564130_impl(int param_1, unsigned int param_2, unsi
     bVar2 = (byte)param_2;
   }
   *(byte *)(param_3 + uVar1 + -1) = bVar2;
-  return;
+  // HAND (D4-WSB-PORT-BVH): EAX = (pad & 0xff) + result at 0x00564170..0x00564179, ret 0x00564180.
+  return param_3 + uVar1;
 }
-extern "C" void __cdecl L2_FUN_00564130(int param_1, unsigned int param_2, unsigned int param_3) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_00564130", 0x00564130u, ShadowAB::kPhaseRace);
-    ShadowAB::RunTracked(ab, L2_FUN_00564130_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
+extern "C" unsigned int __cdecl L2_FUN_00564130(int param_1, unsigned int param_2, unsigned int param_3) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00564130", 0x00564130u, ShadowAB::kPhaseAny);
+    return ShadowAB::RunTracked(ab, L2_FUN_00564130_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
 }
 RH_ScopedInstall(L2_FUN_00564130, 0x00564130);

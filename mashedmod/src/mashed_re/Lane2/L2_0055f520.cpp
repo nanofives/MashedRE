@@ -130,7 +130,7 @@ static unsigned int __cdecl L2_FUN_0055f520_impl(unsigned int * param_1)
   return uVar5;
 }
 extern "C" unsigned int __cdecl L2_FUN_0055f520(unsigned int * param_1) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f520", 0x0055f520u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f520", 0x0055f520u, ShadowAB::kPhaseAny);
     return ShadowAB::RunTracked(ab, L2_FUN_0055f520_impl, SHADOW_STACK_WINDOW(), param_1);
 }
 RH_ScopedInstall(L2_FUN_0055f520, 0x0055f520);

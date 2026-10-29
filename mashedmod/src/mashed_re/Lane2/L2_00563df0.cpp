@@ -31,8 +31,8 @@ typedef void           code;
 // decompilation (verbatim; no semantic edits). Size 114 B. Plate:
 // hooks.csv row 0x00563df0. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl L2_FUN_00563df0(int param_1, unsigned int param_2, unsigned int param_3);
-static void __cdecl L2_FUN_00563df0_impl(int param_1, unsigned int param_2, unsigned int param_3)
+extern "C" uint * __cdecl L2_FUN_00563df0(int param_1, unsigned int param_2, unsigned int param_3);
+static uint * __cdecl L2_FUN_00563df0_impl(int param_1, unsigned int param_2, unsigned int param_3)
 {
   uint *puVar1;
   uint uVar2;
@@ -55,10 +55,11 @@ static void __cdecl L2_FUN_00563df0_impl(int param_1, unsigned int param_2, unsi
   }
   *(undefined2 *)(puVar1[2] + 2 + uVar2 * 8) = 0xffff;
   *(short *)(puVar1 + 3) = (short)param_2;
-  return;
+  // HAND (D4-WSB-PORT-BVH): EAX = [param_1+8] loaded at 0x00563dfa, live to ret 0x00563e61.
+  return puVar1;
 }
-extern "C" void __cdecl L2_FUN_00563df0(int param_1, unsigned int param_2, unsigned int param_3) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_00563df0", 0x00563df0u, ShadowAB::kPhaseRace);
-    ShadowAB::RunTracked(ab, L2_FUN_00563df0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
+extern "C" uint * __cdecl L2_FUN_00563df0(int param_1, unsigned int param_2, unsigned int param_3) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00563df0", 0x00563df0u, ShadowAB::kPhaseAny);
+    return ShadowAB::RunTracked(ab, L2_FUN_00563df0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
 }
 RH_ScopedInstall(L2_FUN_00563df0, 0x00563df0);

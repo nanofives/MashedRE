@@ -34,17 +34,18 @@ typedef void           code;
 // idiom: (*(DAT_007d3ff8+0x108))(...) is __cdecl per MenuDrawLoopTwin.cpp vt20 / RwIm2DBridge.cpp
 static inline unsigned int L2_slot_007d3ff8_0x108_2(unsigned int a0, unsigned int a1) { return reinterpret_cast<unsigned int(__cdecl*)(unsigned int, unsigned int)>(*reinterpret_cast<unsigned int*>(*reinterpret_cast<unsigned int*>(0x007d3ff8u) + 0x108))(a0, a1); }
 static inline int L2T_FUN_0055f800(int a0, unsigned int a1, unsigned int * a2, float a3) { return reinterpret_cast<int(__cdecl*)(int, unsigned int, unsigned int *, float)>(0x0055f800u)(a0, a1, a2, a3); }   // 0x0055f800 (original, not ported)
-extern "C" void __cdecl L2_FUN_0055f450(unsigned int param_1, unsigned int param_2, unsigned int param_3);
-static void __cdecl L2_FUN_0055f450_impl(unsigned int param_1, unsigned int param_2, unsigned int param_3)
+extern "C" int __cdecl L2_FUN_0055f450(unsigned int param_1, unsigned int param_2, unsigned int param_3);
+static int __cdecl L2_FUN_0055f450_impl(unsigned int param_1, unsigned int param_2, unsigned int param_3)
 {
   undefined4 uVar1;
   
   uVar1 = L2_slot_007d3ff8_0x108_2((unsigned int)(0x424), (unsigned int)(0x30900));
-  L2T_FUN_0055f800((int)(uVar1), (unsigned int)(param_1), (unsigned int *)(param_2), (float)(param_3));
-  return;
+  // HAND (D4-WSB-PORT-BVH): EAX at 0x0055f47d is the return of the call at 0x0055f475, and arg 4
+  // is the raw dword (push ecx at 0x0055f46d), not a numeric int->float conversion.
+  return L2T_FUN_0055f800((int)(uVar1), (unsigned int)(param_1), (unsigned int *)(param_2), f32bits(param_3));
 }
-extern "C" void __cdecl L2_FUN_0055f450(unsigned int param_1, unsigned int param_2, unsigned int param_3) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f450", 0x0055f450u, ShadowAB::kPhaseRace);
-    ShadowAB::RunTracked(ab, L2_FUN_0055f450_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
+extern "C" int __cdecl L2_FUN_0055f450(unsigned int param_1, unsigned int param_2, unsigned int param_3) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f450", 0x0055f450u, ShadowAB::kPhaseAny);
+    return ShadowAB::RunTracked(ab, L2_FUN_0055f450_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
 }
 RH_ScopedInstall(L2_FUN_0055f450, 0x0055f450);

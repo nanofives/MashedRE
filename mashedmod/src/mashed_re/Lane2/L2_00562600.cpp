@@ -33,7 +33,7 @@ typedef void           code;
 // ---------------------------------------------------------------------------
 #define DAT_005e52a8 (*(const unsigned char*)0x005e52a8u)   // .rdata, undefined
 static inline void L2T_FUN_0055c380(unsigned int * a0, unsigned int a1) { reinterpret_cast<void(__cdecl*)(unsigned int *, unsigned int)>(0x0055c380u)(a0, a1); }   // 0x0055c380 (original, not ported)
-static inline void L2T_FUN_00564130(int a0, unsigned int a1, unsigned int a2) { reinterpret_cast<void(__cdecl*)(int, unsigned int, unsigned int)>(0x00564130u)(a0, a1, a2); }   // 0x00564130 (original, not ported)
+static inline unsigned int L2T_FUN_00564130(int a0, unsigned int a1, unsigned int a2) { return reinterpret_cast<unsigned int(__cdecl*)(int, unsigned int, unsigned int)>(0x00564130u)(a0, a1, a2); }   // HAND: EAX return, see L2_00564130.cpp   // 0x00564130 (original, not ported)
 extern "C" int __cdecl L2_FUN_00562600(unsigned int param_1, unsigned int param_2);
 static int __cdecl L2_FUN_00562600_impl(unsigned int param_1, unsigned int param_2)
 {
@@ -47,7 +47,7 @@ static int __cdecl L2_FUN_00562600_impl(unsigned int param_1, unsigned int param
   return iVar1;
 }
 extern "C" int __cdecl L2_FUN_00562600(unsigned int param_1, unsigned int param_2) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_00562600", 0x00562600u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00562600", 0x00562600u, ShadowAB::kPhaseAny);
     return ShadowAB::RunTracked(ab, L2_FUN_00562600_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
 }
 RH_ScopedInstall(L2_FUN_00562600, 0x00562600);

@@ -108,7 +108,7 @@ static int __cdecl L2_FUN_0055f670_impl(unsigned int * param_1)
   return iVar1;
 }
 extern "C" int __cdecl L2_FUN_0055f670(unsigned int * param_1) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f670", 0x0055f670u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_0055f670", 0x0055f670u, ShadowAB::kPhaseAny);
     return ShadowAB::RunTracked(ab, L2_FUN_0055f670_impl, SHADOW_STACK_WINDOW(), param_1);
 }
 RH_ScopedInstall(L2_FUN_0055f670, 0x0055f670);
