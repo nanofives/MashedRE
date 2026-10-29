@@ -58,3 +58,23 @@ Arms: `D2_SUB_1..3`, `D2_SUBNS_1`, `D2_DEF_1..3`, `H_DEF`, `B_DEF_K0/K1/K26`; re
 Verdicts: P2 PASS and P3 PASS = GREEN. P3 FAIL = RED. P2 FAIL with P1/P3 PASS = DECISION (the order is not the whole
 of D2's shift). Report only: whether P2's values equal the opt-out's 0.1942 / 0.2492 / 1896.74 exactly; line count
 against `d2_min_lines` 1600; `B_SUB_K0` / `H_SUB` against the PREGO SUB hashes (1d5bf4f9; 8284be46 / c33e1c11 / 31fe043e).
+
+## Amendment 1 (committed after D2_SUB_1 on exe 298e7e4f / bba24d7bf, before any arm below)
+
+D2_SUB_1 measured: P1 PASS (first rows `3000/0`, `2800/2`, `2600/2`, the opt-out's charge sequence). Score 0.2032 in /
+0.2488 in / 1833.06 OUT at 924 lines. Its rows equal the opt-out `D2_DEF_1` (PREGO post, `launchrev release` lines
+removed) on rows 1..314; row 315 differs in the last digits (ftot z -5273.72 against -5273.65). The opt-out log cut to
+its first 924 lines scores 0.2033 / 0.2489 / 1832.63 OUT: the same as D2_SUB_1. The game log shows why the log is short:
+`[leg2] phase 3 released after 776 frames`, and the demo leaves the race at a fixed 30000 ms after race entry
+(exe_main.cpp `s_drive_hold ... el >= 30000`), so phase 3 takes ~13 s out of the driving window.
+
+Added, harness only: `MASHED_DRIVE_HOLD_MS` (exe_main.cpp, default 30000 = unchanged; values <= 0 or unset keep 30000).
+New stack `SUBH` = `SUB` + `MASHED_DRIVE_HOLD_MS=42000` (30000 + ~776/60 s), D2 wall 110 s (`A4_D2_WALL`).
+
+| id | arm | prediction |
+|---|---|---|
+| P5 | `D2_SUBH_1..3` | motion_diag >= 1600 lines and slip1500, slip2000, drvmed all `in` the band on 3 of 3 |
+| P3' | default, knob off, final exe | as P3 (H_DEF, B_DEF_K0/K1/K26, D2_DEF_1..3) |
+
+P2 is still scored as registered (the 30000 ms window). The verdict rule is unchanged: P2 FAIL = DECISION, whatever P5
+shows. P5 is the evidence for the decision's options.
