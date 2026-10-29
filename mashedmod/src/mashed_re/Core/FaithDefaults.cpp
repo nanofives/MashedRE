@@ -57,6 +57,10 @@ const FaithKnob kFaith[] = {
     // shared A6b / A5 / A4 bodies are bit-identical to the original on every sampled call (402 / 3214 / 5403).
     { "A6B_ACOS_CRT", "1" },       { "A6B_NORM_LUT", "1" },        { "A5_RING_ORDER", "1" },     { "A5_DOT_ORDER", "1" },
     { "A5_AIR_F32", "1" },         { "A5_CONTACT_INT", "1" },      { "A5_SPIN_FILD", "1" },      { "A4_DOT_ORDER", "1" },
+    // [D3-SUBSTATE-FLIP 2026-10-29, D-11073, Mariano's decisions L-53 / L-55 / L-57] the sub-state machine FUN_0040dbd0 /
+    // FUN_004103a0 and the phase-3 reset pair, as stack SUB (verify/d3subflip_20261029/RESULT_D3-SUBSTATE-FLIP.md).
+    // MASHED_NO_SUBSTATE=1 / MASHED_NO_P3_RESET_PAIR=1 opt out.
+    { "SUBSTATE", "1" },           { "P3_RESET_PAIR", "1" },
 };
 
 bool Set(const char* var) {

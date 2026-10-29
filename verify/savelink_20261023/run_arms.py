@@ -475,7 +475,9 @@ for name in sys.argv[1:]:
         files = []
         if name.startswith('P_'):
             e['MASHED_BATCH_DUMP'] = os.path.join(OUT, name + '.batch.csv'); files.append(e['MASHED_BATCH_DUMP'])
-        run(name, e, files, 0, exe_for(tag), wall=int(os.environ.get('A4_D2_WALL', '90')))   # D3-SUBSTATE-FLIP: A4_D2_WALL (default 90)
+        # D3-SUBSTATE-FLIP: A4_D2_WALL wins; else 110 s for a stack with a hold above 30 s (the D2-BAND-42S wall), else 90
+        wall0 = '110' if int(e.get('MASHED_DRIVE_HOLD_MS', '0') or 0) > 30000 else '90'
+        run(name, e, files, 0, exe_for(tag), wall=int(os.environ.get('A4_D2_WALL', wall0)))
     elif name.startswith('W_') or name.startswith('WL_'):
         tag = tag_of(name.split('_', 1)[1])
         e = base_env(18000 if name.startswith('WL_') else 3600)
