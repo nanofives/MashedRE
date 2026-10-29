@@ -72,6 +72,12 @@ run_in_background and a 7200000 ms timeout (a -Full pass runs past 30 min, and a
 timeout kills it): pwsh -NoProfile -File <ORCH>\re\orchestrator\merge_train.ps1 [-Full]
 Repeat until it prints "branch: (nothing queued)" or a RED. Do not fix anything. Final message: the last REPORT block it printed.
 ```
+When to pass `-Full` (run 20): a queue that touches `mashedmod/src` or another build input, and every decided
+flip, runs WITH `-Full` (a default can live outside `full_set_paths`). A text-only queue (trackers, docs, `verify/`
+evidence, `re/` tools that no build reads) runs WITHOUT it. `-Full` on a text-only row runs D2 x3 and the 13 tracks
+for nothing and holds `mashed_lock` past an hour. Queue the two kinds in separate passes. Known gap: the train's own
+text-only check counts any `.py` under `re/tools/` or `verify/` as a build input, so such a pass still builds and
+runs the default gates (kept on purpose: gate scorers live there).
 
 ### Decided default flips (MERGE_TRAIN.md "Decided default flips")
 A row that flips a default on a user decision changes the gate hashes. It records its expected new
@@ -112,6 +118,14 @@ rounds with no ledger transition (`events.jsonl` unchanged); your context past ~
 On stop: close every child (`list_children`, then `close_child` each), `roadmap.ps1 status`,
 `roadmap.ps1 snapshot "orch: ledger snapshot run <N>"`, then write the kickoff below.
 `race/first-frame-parity` moves only when Mariano says. Never push. Never redeploy the shared .asi.
+
+**LAN release (Mariano 2026-10-29).** Right after `race/first-frame-parity` is fast-forwarded, whoever did it runs
+`py -3.12 scripts/lan_release/release_due.py`. On DUE (3 commits changing `mashedmod/` since the published build,
+or 1 once it is 24 h old), run `bash scripts/lan_release/publish.sh` with `run_in_background` and a 7200000 ms
+timeout. It builds the ref from a clean `git archive` with `MASHED_NO_DEPLOY=1`, uploads only the changed files to
+http://mariano-server.local:8088/mashed/ and deletes the server's old copies. Name the release (label + sha) in the
+REPORT. On NOT_DUE do nothing. On ERROR or a failed publish, put it in the REPORT and do not retry in the same run.
+Detail: CLAUDE.md "LAN release of the standalone".
 
 ## Kickoff template (end of every run)
 ```

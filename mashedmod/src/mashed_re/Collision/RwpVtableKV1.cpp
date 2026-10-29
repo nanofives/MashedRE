@@ -6,6 +6,8 @@
 //
 // SCOPE — this TU ports ONE of the four Batch-B candidates. Read the deferral note below
 // before adding the other three; they are NOT safe to transcribe from decomp as-is.
+// D4-WSB-PORT-SOLV-KV (2026-10-29): the other three plus 0x0056a7a0 are now ported from
+// disassembly in RwpVtableKV12.cpp (frames recovered from the call-site pushes).
 //
 // ---------------------------------------------------------------------------------------
 // WHY ONLY 0x0056a450 (deferral rationale — do not "finish" this TU without disasm work)
@@ -78,6 +80,12 @@
 //      is what will prove x87 faithfulness. Until it passes, treat this port as UNVERIFIED
 //      (the VECCAP-2 lesson: building clean proves nothing about bit-identity).
 #include "../Core/HookSystem.h"
+#ifndef MASHED_STANDALONE
+// D4-WSB-PORT-SOLV (2026-10-29): .asi-only shadow A/B wrapper for 0x0056a450 (bottom of this
+// TU). The exe keeps the unwrapped FUN_0056a450 so mashed_re.exe compiles the same body.
+#include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
+#endif
 
 namespace mashed_re {
 namespace Collision {
@@ -100,7 +108,11 @@ struct Kv11Frame { int w[53]; };
 //             elimination / back-substitution sweep over param_2 bodies.
 //             Leaf: no callees.
 // ---------------------------------------------------------------------------
+#ifdef MASHED_STANDALONE
 extern "C" void __cdecl FUN_0056a450(Kv11Frame f)
+#else
+static void __cdecl FUN_0056a450_impl(Kv11Frame f)
+#endif
 {
   float *pfVar1;
   float *pfVar2;
@@ -256,6 +268,19 @@ extern "C" void __cdecl FUN_0056a450(Kv11Frame f)
   }
   return;
 }
+
+#ifndef MASHED_STANDALONE
+// --- 0x0056a450 shadow A/B (D4-WSB-PORT-SOLV) -------------------------------------------
+// In-process original-vs-port comparison at the real call site (0x560a9c, CALL [ESP+0x14c]);
+// arm with MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// Page-level write tracking (Core/ShadowTrack.h): the body writes param_1's accumulator, the
+// jacobian rows at param_4 and the LDL output, so EFFECTS are compared, not a return.
+// The 53-dword frame is passed by value to both bodies, so each one mutates its own copy.
+extern "C" void __cdecl FUN_0056a450(Kv11Frame f) {
+    SHADOW_AB_COUNTER(ab, "FUN_0056a450", 0x0056a450u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_0056a450_impl, SHADOW_STACK_WINDOW(), f);
+}
+#endif
 
 // --- gta-reversed-style hook registration — KV BATCH B (partial). ---
 RH_ScopedInstall(FUN_0056a450, 0x0056a450);

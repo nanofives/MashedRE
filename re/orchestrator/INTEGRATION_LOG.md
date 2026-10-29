@@ -1,5 +1,12 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-29 15:56 D3-SUBSTATE-SETTLE-ORDER (orch/D3-SUBSTATE-SETTLE-ORDER): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_151322
+- 2026-10-29 15:12 D3-SUBSTATE-PREGO-ALIVE (orch/D3-SUBSTATE-PREGO-ALIVE), D4-WSB-PORT-SOLV-KV (orch/D4-WSB-PORT-SOLV-KV): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_144346
+- 2026-10-29 14:41 HB-LAN-RELEASE (orch/MASHED-LAN-RELEASE): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_135407
+- 2026-10-29 13:52 D5-PREGO-CUBE-FLIP (orch/D5-PREGO-CUBE-FLIP): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_131332
+- 2026-10-29 04:00 D4-WSB-C4-SOLV-TRK2 (orch/D4-WSB-C4-SOLV-TRK2): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_034750
+- 2026-10-29 03:46 D4-WSB-PORT-SOLV (orch/D4-WSB-PORT-SOLV): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_032021
+- 2026-10-28 23:12 D4-WSB-STACKONLY-C3 (orch/D4-WSB-STACKONLY-C3): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261028_225953
 - 2026-10-28 22:36 D4-WSB-C4-SOLV-RGN (orch/D4-WSB-C4-SOLV-RGN): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_221514
 - 2026-10-28 22:14 D5-ICONCUBE-SPIN (orch/D5-ICONCUBE-SPIN): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_220123
 - 2026-10-28 21:48 D5-ICONCUBE-GLOW (orch/D5-ICONCUBE-GLOW): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_212610

@@ -360,6 +360,29 @@ Loaded automatically from `.claude\skills\`:
 - No backwards-compatibility shims when changing internal APIs; this is a solo greenfield codebase.
 
 
+## LAN release of the standalone (mini-server)
+
+`scripts/lan_release/` (2026-10-29, copied from SimGolf's, itself SimCity's and TD5RE's): `publish_mashed.bat`
+(`publish.sh`) builds `mashed_re.exe` from a clean `git archive` of a committed ref (default
+`race/first-frame-parity`; `mashedmod/` + `scripts/` + `re/tools/dual_copy_allowlist.txt`) into
+`mashedmod/build/lan_build` with `MASHED_NO_DEPLOY=1`, so the shared `original\mashed_re_dev.asi` is never touched.
+`stage_lan_release.py` stages `mashedmod/build/lan_release`: `mashed_re.exe` plus `original\` = `TOASTART\` (minus
+`PC\MOVIES\backup\`) + `toastaudio\` + `MASHED.exe` (read as data only, the `.unpatched` anchor copy) + `gamesave.bin`
+(seed, installed once), and a sha256 `manifest.json`. `deploy_lan_release.sh` pushes only changed files over SSH to the
+td5re-files nginx, http://mariano-server.local:8088/mashed/ (`/home/mariano/td5re-release/mashed`), and **deletes every
+server file the new manifest no longer lists** (old copies; refused when over half would go, `PRUNE_FORCE=1` overrides).
+Player PCs: `update.bat` in an empty folder fetches `mashed_update.ps1` and the build, removes old files under
+`original\`, and makes a "Mashed (RE)" shortcut. The exe writes `videocfg.bin`, `mashed_re_gamesave.bin`,
+`mashed_re.log` and `log\` beside itself; the updater never touches them.
+
+**Release rule (Mariano, 2026-10-29): after a few commits, rebuild and upload, and delete old copies.** Whoever
+fast-forwards `race/first-frame-parity` (the roadmap loop, `.claude/skills/roadmap-loop/SKILL.md`) runs
+`py -3.12 scripts/lan_release/release_due.py` right after, and on DUE runs `bash scripts/lan_release/publish.sh`
+(background, 7200000 ms timeout). DUE = 3 first-parent commits on `race/first-frame-parity` that change `mashedmod/`
+since the commit named in the server manifest's label, or 1 once that build is 24 h old. The upload deletes the old
+copies on the server, and `publish.sh` wipes the previous local build first. Each release is appended to
+`log/orch/lan_releases.tsv`.
+
 ## Happy info pane
 Keep `.happy/project-info.json` (the Happy right-sidebar Project Info pane) current: whenever a standing, glance-worthy fact for this folder changes (status, counts, key dates/names), proactively overwrite that JSON and bump `updatedAt`. Shape: `{ title, updatedAt, sections:[{ heading, fields:[{ label, value, kind }] }] }`, kind = text|number|date|list.
 
