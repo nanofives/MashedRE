@@ -437,6 +437,13 @@ STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT
 STACK['SUB'] = ['MASHED_SUBSTATE=1', 'MASHED_P3_RESET_PAIR=1']
 STACK['SUBNS'] = STACK['SUB'] + ['MASHED_NO_SUBSTATE_SETTLE_FIRST=1']   # D3-SUBSTATE-SETTLE-ORDER: same-exe control (settle in the first race StepCar)
 STACK['SUBH'] = STACK['SUB'] + ['MASHED_DRIVE_HOLD_MS=42000']   # amendment 1: the 30 s demo hold + ~776 phase-3 frames
+# D3-SUBSTATE-ROW315 (verify/d3subrow315_20261029): RTR = the A5 race-timer log + the slot-0 record dump, NRTR = the A5 timer
+# opt-out (A5 reads 0) + the record dump. Both write files only.
+_REC = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd']
+STACK['RTR'] = ['MASHED_A5_RACE_TIMER_LOG=1'] + _REC
+STACK['SUBHRTR'] = STACK['SUBH'] + STACK['RTR']
+STACK['NRTR'] = ['MASHED_NO_A5_RACE_TIMER=1'] + _REC
+STACK['SUBHNRTR'] = STACK['SUBH'] + STACK['NRTR']
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
