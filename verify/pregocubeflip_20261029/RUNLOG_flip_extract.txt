@@ -1,0 +1,35 @@
+=== H_DEF pid=4500 exe=195e0412
+    exit=0 self_exited=True secs=253
+=== B_DEF_K0 pid=18504 exe=195e0412
+    exit=0 self_exited=True secs=23
+=== B_DEF_K1 pid=10912 exe=195e0412
+    exit=0 self_exited=True secs=22
+=== B_DEF_K26 pid=19032 exe=195e0412
+    exit=0 self_exited=True secs=23
+=== H_NOPGIC pid=6284 exe=195e0412
+    exit=0 self_exited=True secs=244
+=== B_NOPGIC_K0 pid=4948 exe=195e0412
+    exit=0 self_exited=True secs=22
+=== B_NOPGIC_K1 pid=19668 exe=195e0412
+    exit=0 self_exited=True secs=22
+=== B_NOPGIC_K26 pid=13644 exe=195e0412
+    exit=0 self_exited=True secs=22
+=== D2_DEF_1 pid=16520 exe=195e0412
+    exit=0 self_exited=False secs=90
+=== D2_DEF_2 pid=2204 exe=195e0412
+    exit=0 self_exited=False secs=90
+=== D2_DEF_3 pid=8040 exe=195e0412
+    exit=0 self_exited=False secs=90
+[01_Egypt] exit=0
+[02_Neustein] exit=0
+[03_Arctic] exit=0
+[04_Highway] exit=0
+[05_Sands] exit=0
+[06_SuperG] exit=0
+[07_Roundabout] exit=0
+[08_Storm] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+[13_Training] exit=0

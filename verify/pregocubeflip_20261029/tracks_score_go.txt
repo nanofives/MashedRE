@@ -1,0 +1,16 @@
+track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red verdict
+05_Sands        1084   334      308     22923   20576   89.8% |   17    17    0 CITED
+05_Sands        1124   337      291     23037   20434   88.7% |   21    21    0 CITED
+05_Sands        1159   305      256     17558   14374   81.9% |   18    18    0 CITED
+06_SuperG        743   369      346     26410   24510   92.8% |   18    18    0 CITED
+06_SuperG        783   370      346     26417   24513   92.8% |   19    19    0 CITED
+06_SuperG        818   224      187     15002   13646   91.0% |   30    30    0 CITED
+11_Warzone       584   364      332     25239   24036   95.2% |   21    21    0 CITED
+11_Warzone       624   353      334     24908   24130   96.9% |   16    16    0 CITED
+11_Warzone       659   336      302     21884   20701   94.6% |   24    24    0 CITED
+13_Training      884   242      222     18128   17692   97.6% |   14    14    0 CITED
+13_Training      924   257      216     18358   17630   96.0% |   16    16    0 CITED
+13_Training      959   233      214     18079   17505   96.8% |   17    17    0 CITED
+
+INSTRUMENT GATES: PASS
+
