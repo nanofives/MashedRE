@@ -1,0 +1,4 @@
+M1 colour index +1: rc=1  ticks 14218  particles 70608 (state 1: 70488, state 2: 120, state-2 sizes bit-exact 0)  count mismatches 0  particle mismatches 70608
+M2 state-1 pos from PRE: rc=1  ticks 14218  particles 70608 (state 1: 70488, state 2: 120, state-2 sizes bit-exact 94)  count mismatches 0  particle mismatches 5
+M3 state-1 size in double: rc=0  ticks 14218  particles 70608 (state 1: 70488, state 2: 120, state-2 sizes bit-exact 94)  count mismatches 0  particle mismatches 0
+NEGCTL FAIL (1 mutant(s) passed)
