@@ -5252,7 +5252,6 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         static bool s_hostSet = false;
         if (!s_hostSet) {
             SubStateHost h{};
-            h.car_alive = [](int v) { return aib_alive(v); };
             h.ai_tick = [] {
                 TrackRenderer* t = s_subTr;
                 if (!t || !(g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))) return;
@@ -5292,10 +5291,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 SubStateCameraChain(true);                 // FUN_0040d470(1) -> FUN_00446520(cam, 1)
             }
             {                                              // 0x00410320..0x00410343 hold alive cars
+                // 0x00410330 FUN_0046c7b0(v) == 1: the record's +0x4 (VehicleSlotGetter), not aib_alive, which is 0 before
+                // the first AI tick (D3-SUBSTATE-PREGO-ALIVE, L-53 (a)).
                 const std::uintptr_t tbl = static_cast<std::uintptr_t>(*reinterpret_cast<int*>(0x005f2770u));
                 for (int v = 0, off = 0x34; off < 0x44; off += 4, ++v)
-                    if (tbl && *reinterpret_cast<int*>(tbl + static_cast<std::uintptr_t>(off)) != 0 && aib_alive(v) == 1)
-                        VehiclePhysicsStateReset(v);       // FUN_0046baa0
+                    if (tbl && *reinterpret_cast<int*>(tbl + static_cast<std::uintptr_t>(off)) != 0 &&
+                        VehicleSlotGetter(static_cast<std::uint32_t>(v)) == 1u)
+                        VehiclePhysicsStateReset(v);       // 0x0041033e FUN_0046baa0
             }
             s29b8 = s29b8 - static_cast<int>(static_cast<unsigned>(units * 0x44c) / 0x3cu);   // 0x00410345..
             ++sub_p3_frames_;
@@ -5336,6 +5338,12 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // default ON, and its add runs on race frames only). Phase 3's 0x0040e5a2 zero is above; the state-5 zero is
         // VehicleStep's mode-5 branch (MASHED_MODE5_RESET).
         if (!subClock || Ai::Ai_ClockLateEnabled()) Ai::Ai_RaceTimerCountdownTick(units, false);
+        // [D3-SUBSTATE-FLIP amendment 1, ported by D3-SUBSTATE-PREGO-ALIVE] FUN_0040fc00's DAT_007f0ff4 add (0x0040fe5e, every
+        // tick but sub-state 7, 0x0040fe46) on the sub-state frames. The late clock's add runs on race frames only and this block
+        // returns before the stand-in's countdown add, so the clock reached GO at 0 and FUN_00416250's fresh-steer arm (0x00416608)
+        // took the decay arm (verify/d3subflip_20261028/PREREG_D3-SUBSTATE-FLIP.md on orch/D3-SUBSTATE-FLIP).
+        // MASHED_NO_AI_COUNTDOWN_CLOCK=1 removes it, as for the stand-in.
+        if (subClock && Ai::Ai_ClockLateEnabled() && Ai::Ai_CountdownClockEnabled()) Ai::Ai_AdvanceCountdownClock(units);
         CarParts_FrameTick(units);                         // [librwrest] FUN_0040fc00 -> 0x0040fc75
         CopterTick(units);                                 // [librwrest] FUN_0040fc00 -> 0x0040fcb9
         if (PickupsPreGo()) PreGoRegistryTick();           // [D5-ICONCUBE-SPIN] 0x0040fc75 / 0x0040fcd0 / 0x0040fd07
