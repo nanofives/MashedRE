@@ -168,4 +168,4 @@ fresh-root H_SFD) while it was still queued. Its lock holder and game PID 16020 
 (RUNLOG line present). Nothing else was killed. No .asi deploy. `original\` untouched. The merge train and D5-ICONCUBE-GLOW
 held the lock at times, and this step queued behind them.
 
-Default gates on the committed branch exe d11b2297: RUN4_PLACEHOLDER
+Default gates on the committed branch exe d11b2297 (arms4, after the queue cleared): G-CTRL 5943c5f1 / 364350ae / 52052890, B 3a03670c / 9fcdbd3a / 53778664 = merge_train.json refs.
