@@ -1,0 +1,9 @@
+rva	readout	n	ndiff	pages_o	pages_n	heap_o	heap_n	heap_pages_total	image_pages_total	stack_max	noise_max	ovf_max	ret_max	flag_lines	patchbyte
+0x005675d0_heap	HEAP-CLEAN	24	0	2..2	2..2	2..2	2..2	48	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x00567c00_heap	HEAP-CLEAN	24	0	1..1	1..1	1..1	1..1	24	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x00567c60_heap	HEAP-CLEAN	24	0	4..4	4..4	4..4	4..4	96	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x00567f00_heap	CLEAN-NO-PAGES	24	0	0..0	0..0	0..0	0..0	0	0	0	0	0	0	0	installed=e9 uninstalled=51 A/B-IS-REAL
+0x005684c0_heap	HEAP-CLEAN	24	0	3..3	3..3	3..3	3..3	72	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x00568560_heap	HEAP-CLEAN	24	0	3..3	3..3	3..3	3..3	72	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x0056bdf0_heap	HEAP-CLEAN	24	0	1..1	1..1	1..1	1..1	24	0	0	0	0	0	0	installed=e9 uninstalled=53 A/B-IS-REAL
+0x005685f0_heap	NO_LOG														
