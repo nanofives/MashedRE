@@ -1,5 +1,125 @@
 # RESULT D5-ICONCUBE-SPIN (D-11076 cube half, L-45)
 
+## Run 20 (2026-10-28): why the original's AI ignores the pre-GO pickups, and the narrowed PREGO
+
+PREREG `verify/iconcube_20261028/PREREG3_D5-ICONCUBE-SPIN.md` (`8a579edca`, committed alone). Code `feb397610` on
+the merge of `orch/integration` @ `327fd83c6` (`79ce65c98`). Tested exe `mashed_re_r20.exe` (`c72777db`, built from
+`feb397610` with `MASHED_NO_DEPLOY=1`). Standalone only: the original was not booted. Original behaviour is from the
+static body and the original captures already on disk.
+
+**Verdict: DECISION.** With the refdist producer added to the pre-GO chain, `MASHED_PICKUPS_PREGO` ON leaves G-CTRL's
+step and ptrace files, all three B files, D2 x3 and the 13-track table byte-identical to the default. Only G-CTRL's
+`gates.csv` measurement file differs: 4 frame-0 rows, where the dumped `refdist` is now the pre-GO value, the
+original's behaviour. The cube draw stays exact (R6 = run 19's R5 byte for byte). The knob stays default OFF. Flipping
+it (with `MASHED_ICONCUBE`) is a user decision, and the flip moves the G-CTRL `gates.csv` ref `364350ae` -> `306186d4`.
+
+### 20.1 Static cause (cited)
+
+- **The original registers the pickups before GO, as run 19 found.** Original FUN_00414c30 probe captures
+  `verify/d3_mode7_m4_20261010/o_c30a.msd.c30.tsv` / `o_c30b.msd.c30.tsv` (Training, 4 cars, mode 10), decoded with
+  `verify/iconcube_20261028/c30_slots.py`. On the first `ba8c == 6` tick (rows n 2209..2211, 2416..2418) the registry
+  holds 5 type-7 slots, one at (1.8818, 0.6694, -3.0972) r 0.5, the mine the port's cars took in run 19. So narrowing
+  the registration would not match the original.
+- **The gate is FUN_00442cc0 in FUN_00414c30's type-7 path.** `0x00414e19 cmp [ebx+4],7`, `0x00414e2f call
+  FUN_00442cc0(v)`, `0x00414e34 fcomp [0x005d757c]` (0.0), `0x00414e42 jp 0x00414d5a` (next slot when refdist !=
+  0.0). FUN_00414490 (`0x00414e69`), the only call that can return 2 (mode 7), runs only when `0x008989b0[v] == 0.0`.
+- **The original's refdist is nonzero on every pre-GO tick and on the first racing tick.** Same captures: first
+  `ba8c == 6` tick v1 / v2 / v3 = `0x3fc6d696` / `0x3feaa0bd` / `0x402ff88e` (1.55342364 / 1.83303034 / 2.74954557),
+  the same words as the `ba8c` 3 and 4 ticks before it. `sub` is empty (FUN_00414490 not called), `ret` 0.
+- **The producer runs pre-GO in the original.** FUN_0040fc00
+  (`verify/rfx2_20261016/evidence/decomp/headlight_disasm_40fc00.txt`): the only branch before the chain is
+  `0x0040fc69 je 0x0040fc74`, which skips FUN_00425a40 (`0x0040fc6c`) alone. `0x0040fc75 call FUN_0040da50` and
+  `0x0040fc7c call FUN_0040d470` follow with no branch. FUN_0040d470 -> `0x0040d4f3` FUN_00448220 -> `0x004483c2`
+  FUN_00446520 -> `0x004469b6` FUN_00442a60, the `0x008989b0` producer (`verify/d3_u9683_20261016/xrefs_order.txt`).
+- **The port's pre-GO chain (run 19) skipped `0x0040fc7c`**, and no other port site runs the producer before GO. So
+  the port's first racing AI tick read `0x008989b0[v] == 0.0` and the type-7 gate opened.
+
+### 20.2 Change
+
+`PreGoRegistryTick` (`D3d9Render/TrackRenderer.cpp`) now runs `CarsReg_FrameTick` (0x0040fc75),
+`RaceComputeDistancesTick(2)` (0x0040fc7c), `Pickups_FrameTick` (0x0040fcd0), `Registry_FrameTick` (0x0040fd07).
+`MASHED_PICKUPS_PREGO_NO_REFDIST` (diagnostic) drops the new call. `MASHED_REFDIST_TRACE` labels site 2 rows `G`.
+Knob OFF: no new call.
+
+### 20.3 Gates (`verify/iconcube_20261028/run_arms.py`, SHA-256 first 8 hex, log `RUNLOG_gates_r20.txt`)
+
+| arm set | G-CTRL step / gates / ptrace | B K0 / K1 / K26 |
+|---|---|---|
+| knob OFF (`H_DEF`, `B_DEF_K*`) | 5943c5f1 / 364350ae / 52052890 | 3a03670c / 9fcdbd3a / 53778664 |
+| PREGO (`H_PG`, `B_PG_K*`) | 5943c5f1 / **306186d4** / 52052890 | 3a03670c / 9fcdbd3a / 53778664 |
+| PREGO + NO_REFDIST (`H_PGNR`, `B_PGNR_K*`) | 67763abd / 5250011e / 6457cb73 | b9f43d6b / 74c23a4b / 079a708f |
+
+- **G-OFF PASS** (equal to `merge_train.json`). **G-NR PASS** (run 19's PREGO hashes, all 6 files).
+- **P-M7 PASS**: `H_PG.step.csv` is byte-identical to `H_DEF.step.csv`, so cars 2 and 3 read mode 0 and car 2's
+  look (-1.41216886, -10.0070553) on the first racing tick.
+- **P-RD PASS**: `H_PGRD.rd.tsv` has 180 pre-GO producer rows (site `G`). The first AI-entry row reads
+  `0;3fc6d551;3feaa2cf;402ffa19` (1.5533849 / 1.83309352 / 2.74963975). Report-only against the original's
+  `3fc6d696 / 3feaa0bd / 402ff88e`: not bit-equal, within 4.0e-5. The second racing tick carries an offset of the
+  same size with the knob OFF (`H_RDT`, port `3fc65a56` vs original `3fc6592f` at n 2212), so it comes from the
+  existing grid or record inputs, not this change. Knob OFF the first AI-entry row reads `0;0;0;0` (`H_RDT`).
+- **G-PG-SIM FAIL strict, on `gates.csv` only.** `diff H_DEF.gates.csv H_PG.gates.csv` (in `r20_extract.txt`) is the
+  4 frame-0 rows, one per car, and in them only the `other_idx` (0 -> 3) and `refdist` (0 -> 1.5533849 / 1.83309352 /
+  2.74963975) columns change. That file is `MASHED_U9186_GATES`, the dump of FUN_00442a60's inputs per car per frame.
+  Under PREGO the producer has already run before the first racing frame, so the dumped value is the pre-GO one. Every
+  later row is equal, and no simulated value changed (step, ptrace, B equal).
+- Beyond the PREREG's condition (it ran them only if G-PG-SIM held), and run because the only difference was those 4
+  rows, both with `MASHED_PICKUPS_PREGO=1`:
+  - **D2 x3** (`run_arms.py D2_PG_{1,2,3}`, solo lock, 1630 / 1631 / 1630 lines): 0.1942 / 0.2492 / 1896.74, all
+    "in" on all three (`score_d2_pg_r20.txt`), the band reference.
+  - **13 tracks** (`run13.py run ... MASHED_PICKUPS_PREGO`, solo lock, all 13 exit 0, private root): table
+    byte-identical to `verify/hbfullcheck_20261028/tracks_score.txt` (same SHA-256 `a3c14c41...`), INSTRUMENT GATES:
+    PASS (`tracks_score_pg_r20.txt`).
+  - (b) vsum and (e) read the B step files, which are byte-identical to the default's, so their results are the same.
+- **Cube draw re-check R6** (run 19's R5 recipe on the run-20 exe: `MASHED_ICONCUBE` + PREGO + `MASHED_CAM_REPLAY_GO`,
+  report-only): the three draw lists are byte-identical to R5's. Every cube on rows 884 / 924 / 959 matches the
+  original in set, order, texture, translation (<= 4.04e-8) and angle (dtheta 0.0000). The mine is collected at pickup
+  tick 904 by car 2, as in R5 (`cube_cmp_rows_r20.txt`). Element 12 of `rs` (D3DRS_LIGHTING) still reads 1 on every
+  standalone draw (scene-wide librw, run 18 section 2).
+
+### 20.4 Not claimed, follow-ups
+
+- No C-level change. No Frida diff (the original does not boot), no tracker edit.
+- No default flip. Candidate decision: flip `MASHED_PICKUPS_PREGO` and `MASHED_ICONCUBE` default ON together.
+  Evidence: this section and run 19 R5. Cost: the G-CTRL `gates.csv` ref moves `364350ae` -> `306186d4`. Every other
+  merge-train ref stays.
+- Knob OFF, the default build's first racing AI tick reads refdist 0 for every car where the original reads nonzero
+  (`H_RDT` vs the c30 captures). In the G-CTRL / B recipes this changes no simulated value, because the empty pre-GO
+  registry hides it from the type-7 gate. Other first-tick refdist readers (FUN_00415200 / FUN_00415220 fire gates,
+  AiLeaderTimer) were not checked. Candidate U-row for the lead (tracker rows go through re-classify).
+- `MASHED_CAM_REPLAY_GO` stays a diagnostic.
+
+### 20.5 Raw data (`D:/MashedWT/D5-ICONCUBE-SPIN_data`, not committed)
+
+| file | SHA-256 |
+|---|---|
+| mashed_re_r20.exe | c72777db54e906f9381d5169e067cee263357c6a71f78f552de46099f0ea861d |
+| arms20/H_DEF.step.csv = H_PG.step.csv = H_PGRD.step.csv | 5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415 |
+| arms20/H_DEF.gates.csv | 364350aea89110f291569f42fd7ae0de19704a6b3c95e6f29d7e26b4af9ce7e4 |
+| arms20/H_PG.gates.csv (= H_PGRD.gates.csv) | 306186d44ce7193b93b53a12e1658b871e90bb276480c2add7d8c9f7c08e6a2e |
+| arms20/H_DEF.ptrace.log = H_PG.ptrace.log | 520528908f8dc61f538902ad09a8ccb5ca46fe23d112859a436da6ace7eab757 |
+| arms20/H_PGNR.step.csv | 67763abdf9bc6c12ade8a356946e78b41f70f001b2dfeeb380bc3dc7f1c1f16e |
+| arms20/H_PGNR.gates.csv | 5250011e30e3b7cf0bfd00bc3909fb2d3a8aa52b90b527c5b95533259c0ef47f |
+| arms20/H_PGNR.ptrace.log | 6457cb73f45c4f383aea0631727274fd009a2a7769e2c337a6b8389de225270b |
+| arms20/B_DEF_K0.step.csv = B_PG_K0.step.csv | 3a03670c3991b702af9fd44b1d49dbdb4f91d6be00876723cb1ba7891895b83f |
+| arms20/B_DEF_K1.step.csv = B_PG_K1.step.csv | 9fcdbd3a6901025544e377132c575910aa5cd001faba802c1e7e8a9ac0d2886f |
+| arms20/B_DEF_K26.step.csv = B_PG_K26.step.csv | 5377866478b33a9827ae5c343b8861189f8f0a838785bf2b83da5f6118931e2d |
+| arms20/B_PGNR_K0.step.csv | b9f43d6b36644bd934fa58adf7f20effd1ccb36e2309c5c1e888d383346711c9 |
+| arms20/B_PGNR_K1.step.csv | 74c23a4b66fdaaad8d5a4f875553dbd210aec54acfb6f85d6e34ff2d9f8c2f94 |
+| arms20/B_PGNR_K26.step.csv | 079a708f09f4c613b53a2a89ed3330fd4e23d6fac6d7be906d9ab938b3d36ff7 |
+| arms20/H_PGRD.rd.tsv | 9ca87b92f93da5bbc6d29016e7724e8ff70ecea07748cb45f302a41579bb9740 |
+| arms20/H_RDT.rd.tsv | 2402cb89b1b41ea01b19a32d267912d66dcf0393f9b85c64c1915b3a58c3f6e4 |
+| arms20/D2_PG_1.motion_diag.log = D2_PG_3 | acab2155e8831f83b223b08e59e1e65dafad8c03f454d8cf22c6192b093bbd07 |
+| arms20/D2_PG_2.motion_diag.log | c9d721d7ac717523f69558983ca147fd932ca23cd6570bb0b14cfd2edde6e37c |
+| tracks_score_pg.txt (13-track dirs in tracks_pg/) | a3c14c418b1cb6ad8e3e97306bca2ebfbf733f98446b51fec1fb81231b936ae0 |
+| r20/R6/d1r2/stand_row_00884.draws.json (= r19/R5) | 0956b2ed05e7788bc3d683cfb64085383c72e727bfc6bc77ccbc48384fe66472 |
+| r20/R6/d1r2/stand_row_00924.draws.json (= r19/R5) | fcda03dd26890ec0094cf105a99c4d1a7850b11dbf603b6e7e4b07a6be08c8cf |
+| r20/R6/d1r2/stand_row_00959.draws.json (= r19/R5) | e6170cb1750448ea53b029ae6f3d52166bb9f673911648b128178429a8801828 |
+| r20/R6_pkcb.tsv | 01ba5ed15cfdbf05f27e90d9d17241ceaf1f7229a486b25e9a67ea97875b9847 |
+
+Run scripts: `run20.sh`, `run20full.sh`, `run20r6.sh`. Comparison tools: `c30_slots.py`, `stepcmp.py`, `cube_cmp.py`.
+
+---
+
 ## Run 19 (2026-10-28): pre-GO pickup tick and replay GO alignment
 
 PREREG `verify/iconcube_20261028/PREREG2_D5-ICONCUBE-SPIN.md` (`17d522868`, committed alone), amendment A

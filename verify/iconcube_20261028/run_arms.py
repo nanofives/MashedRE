@@ -428,6 +428,9 @@ STACK['V3'] = []   # knob deleted (D4-DC-39b0-L13)
 # dcmath4680 (PREREG_dcmath4680.md): NOOL = the 0x004c4680 opt-out (std::sqrt stand-in), PR = the pontoon OP3 replay on a W_ arm
 STACK['IC'] = ['MASHED_ICONCUBE']   # [iconcube] D5-ICONCUBE-SPIN knob ON (G-ON-SIM)
 STACK['PG'] = ['MASHED_PICKUPS_PREGO']   # [iconcube PREREG2] pre-GO registry chain ON (G-PG-SIM)
+STACK['PGNR'] = STACK['PG'] + ['MASHED_PICKUPS_PREGO_NO_REFDIST']   # [iconcube PREREG3] run 19's PREGO (G-NR)
+STACK['PGRD'] = STACK['PG'] + ['MASHED_REFDIST_TRACE=@OUT@\@NAME@.rd.tsv']   # [iconcube PREREG3] P-RD witness
+STACK['RDT'] = ['MASHED_REFDIST_TRACE=@OUT@\@NAME@.rd.tsv']   # [iconcube PREREG3] knob-OFF refdist witness
 STACK['NOOL'] = []   # opt-out deleted (D4-DC-39b0-L13)
 # dcmath4d20 (PREREG_dcmath4d20.md): CR = the race camera's RotateAboutAxis through the shared 0x004c4d20 body + slot +0x14 vectors
 STACK['CR'] = []   # knob deleted (D4-DC-39b0-L13)
