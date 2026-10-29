@@ -59,3 +59,20 @@ an Event-1000 fault at `0x005baf48` appears: stop, BLOCKED "audio endpoint", no 
 
 `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on this build's `mashed_re.exe`, test slot +
 machine lock, must equal `re/orchestrator/merge_train.json` `gctrl.ref` / `b.ref`. A mismatch is a RED for the step.
+
+## Amendment 1 (2026-10-29, after rows 1-2 of arm S, before any re-run)
+
+Arm S rows 1-2 ran on build `.asi 60bec0a8`: `0x005663a0` CLEAN 24/24 `A/B-IS-REAL installed=e9 uninstalled=8b`,
+`0x005672c0` NO_LOG (race running for the full 60 s hold, no `shadow_ab.log` written). Cause, read from source: the
+generated wrappers use `SHADOW_AB_COUNTER(..., ShadowAB::kPhaseRace)`, and `Core/ShadowAB.h:159` skips the sample while
+`*(u8*)0x00771968 < 3`. The census puts 12 of the 14 rows in phase `race_load` (phase 2), so they cannot sample.
+Row 3 (`0x00567350`) was stopped mid-boot (its PID and my runner PIDs killed by PID). Its data is not used.
+
+Change (commit `f866c7dcc`, harness gate only, bodies unchanged): the 12 race_load wrappers use `kPhaseAny`.
+`0x005663a0` and `0x0056a450` (census `race_run`) keep `kPhaseRace`. New build `MASHED_NO_DEPLOY=1`:
+`mashed_re.exe` `c150342c...1ad2`, `mashed_re_dev.asi` `b99d6d3a...dc8f`.
+
+Re-run: arm S as written above, on the new `.asi`, rows `005672c0 00567350 00567630 005676f0 00567c40 005687a0
+005687d0 00568860 00568c40 00568c80 00568cf0 00568d20 0056a450`. `0x005663a0` keeps its row-1 result (its wrapper
+and body are unchanged by `f866c7dcc`). Read-out unchanged. The SAMPLES_DONE guard stays 24: a race_load row that
+samples fewer than 24 calls runs the full hold, and any n > 0 with the CLEAN verdict is read as written.
