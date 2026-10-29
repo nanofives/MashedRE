@@ -38,21 +38,22 @@ static void __cdecl L2_FUN_00565c20_impl(float * param_1, float * param_2, float
 {
   float10 fVar1;
   float10 fVar2;
-  float local_c;
-  float local_8;
-  float local_4;
+  // HAND (D4-WSB-PORT-BVH amendment 2): Ghidra split the float[3] at [esp+4..0xc] (fstp at 0x00565c30,
+  // 0x00565c3a, 0x00565c49; lea eax,[esp+4] at 0x00565c44 passes its address) into three scalars.
+  // Separate locals are not contiguous under MSVC, so the port keeps them as one array.
+  float lv[3];
   
-  local_c = *param_3 - *param_2;
-  local_8 = param_3[1] - param_2[1];
-  local_4 = param_3[2] - param_2[2];
-  fVar1 = (float10)Vec3Magnitude((float *)(&local_c));
+  lv[0] = *param_3 - *param_2;
+  lv[1] = param_3[1] - param_2[1];
+  lv[2] = param_3[2] - param_2[2];
+  fVar1 = (float10)Vec3Magnitude((float *)(lv));
   if ((float10)param_2[3] < fVar1) {
     fVar2 = fVar1 + fVar1;
-    *param_1 = (float)(((fVar1 - (float10)param_2[3]) / fVar2) * (float10)local_c +
+    *param_1 = (float)(((fVar1 - (float10)param_2[3]) / fVar2) * (float10)lv[0] +
                       (float10)*param_2);
-    param_1[1] = (float)(((fVar1 - (float10)param_2[3]) / fVar2) * (float10)local_8 +
+    param_1[1] = (float)(((fVar1 - (float10)param_2[3]) / fVar2) * (float10)lv[1] +
                         (float10)param_2[1]);
-    param_1[2] = (float)(((fVar1 - (float10)param_2[3]) / fVar2) * (float10)local_4 +
+    param_1[2] = (float)(((fVar1 - (float10)param_2[3]) / fVar2) * (float10)lv[2] +
                         (float10)param_2[2]);
     param_1[3] = (float)((fVar1 + (float10)param_2[3]) * (float10)_DAT_005cc32c);
     return;
