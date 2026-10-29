@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-29 17:25 D4-WSB-C4-SOLV-TRK1 (orch/D4-WSB-C4-SOLV-TRK1), D2-BAND-42S (orch/D2-BAND-42S): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_171513
 - 2026-10-29 16:00 D3-SUBSTATE-ROW315 (orch/D3-SUBSTATE-ROW315): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_155811
 - 2026-10-29 15:56 D3-SUBSTATE-SETTLE-ORDER (orch/D3-SUBSTATE-SETTLE-ORDER): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_151322
 - 2026-10-29 15:12 D3-SUBSTATE-PREGO-ALIVE (orch/D3-SUBSTATE-PREGO-ALIVE), D4-WSB-PORT-SOLV-KV (orch/D4-WSB-PORT-SOLV-KV): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_144346
