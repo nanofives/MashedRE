@@ -1,0 +1,7 @@
+[d2ref] A5 race timer step 0: DAT_007f0ff8 = 44200
+[d2ref] A5 race timer step 600: DAT_007f0ff8 = 74100
+[d2ref] A5 race timer step 1200: DAT_007f0ff8 = 104100
+[leg2] phase 3 released after 776 frames -> DAT_0063ba8c=4
+[d2ref] A5 race timer step 0: DAT_007f0ff8 = 44400
+[d2ref] A5 race timer step 600: DAT_007f0ff8 = 74350
+[d2ref] A5 race timer step 1200: DAT_007f0ff8 = 104350
