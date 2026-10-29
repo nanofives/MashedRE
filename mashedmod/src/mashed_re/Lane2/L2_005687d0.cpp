@@ -39,7 +39,7 @@ static int __cdecl L2_FUN_005687d0_impl(int param_1)
          *(int *)(param_1 + 0x34) * 0x140 + 0x120;
 }
 extern "C" int __cdecl L2_FUN_005687d0(int param_1) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_005687d0", 0x005687d0u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_005687d0", 0x005687d0u, ShadowAB::kPhaseAny);   // census phase race_load (phase 2): kPhaseRace never samples it
     return ShadowAB::RunTracked(ab, L2_FUN_005687d0_impl, SHADOW_STACK_WINDOW(), param_1);
 }
 RH_ScopedInstall(L2_FUN_005687d0, 0x005687d0);
