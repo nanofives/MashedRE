@@ -433,6 +433,8 @@ STACK['NOOL'] = []   # opt-out deleted (D4-DC-39b0-L13)
 STACK['CR'] = []   # knob deleted (D4-DC-39b0-L13)
 STACK['GR'] = []   # knob deleted (D4-DC-4d20-FLIP): the grid spawn basis always runs through the shared RwMatrixRotate
 STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT'] = STACK['GR'] + STACK['GT']   # + the at-row bits
+# D3-SUBSTATE-PREGO-ALIVE (verify/d3subprego_20261029): the D3-SUBSTATE-FLIP seed as knobs (both default OFF)
+STACK['SUB'] = ['MASHED_SUBSTATE=1', 'MASHED_P3_RESET_PAIR=1']
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
@@ -457,7 +459,7 @@ for name in sys.argv[1:]:
         files = []
         if name.startswith('P_'):
             e['MASHED_BATCH_DUMP'] = os.path.join(OUT, name + '.batch.csv'); files.append(e['MASHED_BATCH_DUMP'])
-        run(name, e, files, 0, exe_for(tag), wall=90)
+        run(name, e, files, 0, exe_for(tag), wall=int(os.environ.get('A4_D2_WALL', '90')))   # D3-SUBSTATE-FLIP: A4_D2_WALL (default 90)
     elif name.startswith('W_') or name.startswith('WL_'):
         tag = tag_of(name.split('_', 1)[1])
         e = base_env(18000 if name.startswith('WL_') else 3600)

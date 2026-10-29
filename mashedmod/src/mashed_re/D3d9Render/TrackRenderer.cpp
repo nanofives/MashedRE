@@ -5329,6 +5329,12 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // default ON, and its add runs on race frames only). Phase 3's 0x0040e5a2 zero is above; the state-5 zero is
         // VehicleStep's mode-5 branch (MASHED_MODE5_RESET).
         if (!subClock || Ai::Ai_ClockLateEnabled()) Ai::Ai_RaceTimerCountdownTick(units, false);
+        // [D3-SUBSTATE-FLIP amendment 1, ported by D3-SUBSTATE-PREGO-ALIVE] FUN_0040fc00's DAT_007f0ff4 add (0x0040fe5e, every
+        // tick but sub-state 7, 0x0040fe46) on the sub-state frames. The late clock's add runs on race frames only and this block
+        // returns before the stand-in's countdown add, so the clock reached GO at 0 and FUN_00416250's fresh-steer arm (0x00416608)
+        // took the decay arm (verify/d3subflip_20261028/PREREG_D3-SUBSTATE-FLIP.md on orch/D3-SUBSTATE-FLIP).
+        // MASHED_NO_AI_COUNTDOWN_CLOCK=1 removes it, as for the stand-in.
+        if (subClock && Ai::Ai_ClockLateEnabled() && Ai::Ai_CountdownClockEnabled()) Ai::Ai_AdvanceCountdownClock(units);
         CarParts_FrameTick(units);                         // [librwrest] FUN_0040fc00 -> 0x0040fc75
         CopterTick(units);                                 // [librwrest] FUN_0040fc00 -> 0x0040fcb9
         if (PickupsPreGo()) PreGoRegistryTick();           // [D5-ICONCUBE-SPIN] 0x0040fc75 / 0x0040fcd0 / 0x0040fd07
