@@ -1022,3 +1022,31 @@
 {"at":"2026-10-29T01:46:13Z","id":"D4-WSB-STACKONLY-C3","from":"review","to":"merge-queued","owner":"cmvsup9jo0z77p727g1ajpz1o","note":"orch/D4-WSB-STACKONLY-C3"}
 {"at":"2026-10-29T01:58:11Z","id":"D4-WSB-C4-SOLV-TRK1","from":"working","to":"blocked","owner":"cmvsvkmta0zw9p7278vgluzug","note":"BLOCKED audio endpoint: endpoint gone at 01:56:44Z before arm N; leg B done (6 HEAP-CLEAN, 00567f00 CLEAN-NO-PAGES, 005685f0 NO_LOG NOT-EXEC); racediff not run; no level change. Re-pickup steps in RESULT."}
 {"at":"2026-10-29T02:12:08Z","id":"D4-WSB-STACKONLY-C3","from":"merge-queued","to":"merged","owner":"cmvsup9jo0z77p727g1ajpz1o","note":"merge train 20261028_225953: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664"}
+{"at":"2026-10-29T04:21:02Z","id":"D3-SUBSTATE-FLIP","from":"decision","to":"open","owner":"","note":"L-53(a): re-run after D3-SUBSTATE-PREGO-ALIVE lands, D2 x3 + 13 tracks + amendment 1, decided flip in its own pass (6c5fb3389 is evidence)"}
+{"at":"2026-10-29T04:22:19Z","id":"D5-PREGO-CUBE-FLIP","from":"open","to":"claimed","owner":"cmvt1e2uw14mfp727hb5wpmqi","note":""}
+{"at":"2026-10-29T04:22:37Z","id":"D3-SUBSTATE-PREGO-ALIVE","from":"open","to":"claimed","owner":"cmvt1eol014t1p727pve2hmls","note":""}
+{"at":"2026-10-29T04:24:35Z","id":"D3-SUBSTATE-PREGO-ALIVE","from":"claimed","to":"working","owner":"cmvt1eol014t1p727pve2hmls","note":"worktree created; reading FLIP evidence"}
+{"at":"2026-10-29T04:28:36Z","id":"D5-PREGO-CUBE-FLIP","from":"claimed","to":"working","owner":"cmvt1e2uw14mfp727hb5wpmqi","note":"flip built (195e0412), gates next"}
+{"at":"2026-10-29T04:33:18Z","id":"D3-SUBSTATE-PREGO-ALIVE","from":"working","to":"working","owner":"cmvt1eol014t1p727pve2hmls","note":"PREREG 14872d1a0; change ac4efceff built; control D2_SUB on pre exe queued on solo lock"}
+{"at":"2026-10-29T04:53:34Z","id":"D4-WSB-C4-SOLV-TRK1","from":"blocked","to":"open","owner":"","note":"audio endpoint back (Philips FTV OK, run 21 L0 04:3xZ); leg B done, re-run racediff on a build after D5-PREGO-CUBE-FLIP merges (mashedmod changes since 272043875)"}
+{"at":"2026-10-29T04:54:45Z","id":"D4-WSB-C4-SOLV-TRK2","from":"open","to":"claimed","owner":"cmvt2k0ni198vp727zz3fx4vy","note":""}
+{"at":"2026-10-29T04:57:47Z","id":"D4-WSB-C4-SOLV-TRK2","from":"claimed","to":"working","owner":"cmvt2k0ni198vp727zz3fx4vy","note":"worktree + build"}
+{"at":"2026-10-29T04:58:16Z","id":"D4-WSB-PORT-SOLV","from":"open","to":"claimed","owner":"cmvt2oibn19ktp727p7ot3hjh","note":""}
+{"at":"2026-10-29T05:02:30Z","id":"D4-WSB-PORT-SOLV","from":"claimed","to":"working","owner":"cmvt2oibn19ktp727p7ot3hjh","note":"worktree created; surveying"}
+{"at":"2026-10-29T05:20:10Z","id":"D4-WSB-C4-SOLV-TRK2","from":"working","to":"working","owner":"cmvt2k0ni198vp727zz3fx4vy","note":"boot check PASS; leg B running"}
+{"at":"2026-10-29T05:20:47Z","id":"D3-SUBSTATE-PREGO-ALIVE","from":"working","to":"review","owner":"cmvt1eol014t1p727pve2hmls","note":"DECISION: alive change measured no-op (state5 alive=1, D2_SUB byte-identical to control and FLIP, 0.2016/0.2591 OUT/1791.85 OUT x3); default gates = refs incl. D2 and 13 tracks; cause candidate = settle-after-release order on the sub-state GO frame"}
+{"at":"2026-10-29T05:21:13Z","id":"D3-SUBSTATE-PREGO-ALIVE","from":"review","to":"decision","owner":"cmvt1eol014t1p727pve2hmls","note":"L-55"}
+{"at":"2026-10-29T05:21:14Z","id":"D3-SUBSTATE-FLIP","from":"open","to":"blocked","owner":"","note":"waits on D3-SUBSTATE-PREGO-ALIVE"}
+{"at":"2026-10-29T05:23:23Z","id":"D5-PREGO-CUBE-FLIP","from":"working","to":"review","owner":"cmvt1e2uw14mfp727hb5wpmqi","note":"DECISION: G-CTRL/B/D2 as expected; 13-track table a3c14c41 -> 7770c056, 9 RED IconCube rows (cleared by CAM_REPLAY_GO, restored by NO_ICONCUBE)"}
+{"at":"2026-10-29T05:23:24Z","id":"D5-PREGO-CUBE-FLIP","from":"review","to":"decision","owner":"cmvt1e2uw14mfp727hb5wpmqi","note":"L-56"}
+{"at":"2026-10-29T05:24:53Z","id":"D4-WSB-C4-SOLV-TRK1","from":"open","to":"open","owner":"","note":"waits on L-56 / D5-PREGO-CUBE-FLIP merge"}
+{"at":"2026-10-29T06:03:29Z","id":"D4-WSB-PORT-SOLV","from":"working","to":"review","owner":"cmvt2oibn19ktp727p7ot3hjh","note":"14/18 C2->C3 (shadow CLEAN), gates equal; 4 KV rows 0056a7a0/aae0/ac40/adb0 not ported, need disasm frame recovery (handoff in RESULT)"}
+{"at":"2026-10-29T06:04:07Z","id":"D4-WSB-PORT-SOLV","from":"review","to":"merge-queued","owner":"cmvt2oibn19ktp727p7ot3hjh","note":"orch/D4-WSB-PORT-SOLV"}
+{"at":"2026-10-29T06:18:41Z","id":"D4-WSB-C4-SOLV-TRK2","from":"working","to":"review","owner":"cmvt2k0ni198vp727zz3fx4vy","note":"GREEN: 10 C3->C4, 0056c8e0 DIVERGENT + 0056dd40 no-pages stay C3, gates unchanged"}
+{"at":"2026-10-29T06:19:01Z","id":"D4-WSB-C4-SOLV-TRK2","from":"review","to":"merge-queued","owner":"cmvt2k0ni198vp727zz3fx4vy","note":"orch/D4-WSB-C4-SOLV-TRK2"}
+{"at":"2026-10-29T06:19:17Z","id":"D4-WSB-PORT-BVH","from":"open","to":"claimed","owner":"cmvt5kmv100rfp715oyopdm3b","note":""}
+{"at":"2026-10-29T06:19:23Z","id":"D4-WSB-PORT-BVH","from":"claimed","to":"blocked","owner":"cmvt5kmv100rfp715oyopdm3b","note":"audio endpoint: Get-PnpDevice -Class AudioEndpoint -PresentOnly listed none at run 21 L1 pre-launch check (2026-10-29); not started, no retry"}
+{"at":"2026-10-29T06:19:57Z","id":"D4-WSB-C4-SOLV-TRK2","from":"merge-queued","to":"review","owner":"cmvt2k0ni198vp727zz3fx4vy","note":"GREEN, dequeued by L0 to keep text-only pass separate from PORT-SOLV -Full pass; re-enqueue after"}
+{"at":"2026-10-29T06:46:53Z","id":"D4-WSB-PORT-SOLV","from":"merge-queued","to":"merged","owner":"cmvt2oibn19ktp727p7ot3hjh","note":"merge train 20261029_032021: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-29T06:47:39Z","id":"D4-WSB-C4-SOLV-TRK2","from":"review","to":"merge-queued","owner":"cmvt2k0ni198vp727zz3fx4vy","note":"orch/D4-WSB-C4-SOLV-TRK2"}
+{"at":"2026-10-29T07:00:43Z","id":"D4-WSB-C4-SOLV-TRK2","from":"merge-queued","to":"merged","owner":"cmvt2k0ni198vp727zz3fx4vy","note":"merge train 20261029_034750: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664"}
