@@ -1,0 +1,7 @@
+D2_DEF_1.motion_diag.log: slip1500=0.2016 in slip2000=0.2591 OUT drvmed=1791.8500 OUT n=('125', '175', '448') H1 398/400 median 1453.1
+D2_DEF_2.motion_diag.log: slip1500=0.2016 in slip2000=0.2591 OUT drvmed=1791.8500 OUT n=('125', '175', '448') H1 398/400 median 1453.1
+D2_DEF_3.motion_diag.log: slip1500=0.2016 in slip2000=0.2591 OUT drvmed=1791.8500 OUT n=('125', '175', '448') H1 398/400 median 1453.1
+D2_DEF_4.motion_diag.log: slip1500=0.2016 in slip2000=0.2591 OUT drvmed=1791.8500 OUT n=('125', '175', '448') H1 398/400 median 1453.1
+D2_DEF_5.motion_diag.log: slip1500=0.2016 in slip2000=0.2591 OUT drvmed=1791.8500 OUT n=('125', '175', '448') H1 398/400 median 1453.1
+D2_DEF_6.motion_diag.log: slip1500=0.2016 in slip2000=0.2591 OUT drvmed=1791.8500 OUT n=('125', '175', '448') H1 398/400 median 1453.1
+D2_NOSUB_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9

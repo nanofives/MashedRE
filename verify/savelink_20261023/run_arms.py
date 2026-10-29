@@ -433,6 +433,12 @@ STACK['NOOL'] = []   # opt-out deleted (D4-DC-39b0-L13)
 STACK['CR'] = []   # knob deleted (D4-DC-39b0-L13)
 STACK['GR'] = []   # knob deleted (D4-DC-4d20-FLIP): the grid spawn basis always runs through the shared RwMatrixRotate
 STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT'] = STACK['GR'] + STACK['GT']   # + the at-row bits
+# D3-SUBSTATE-FLIP (verify/d3subflip_20261028): the flip's opt-outs. NOSUB = both (must give the pre-flip default),
+# NOP3R = the sub-state machine without the phase-3 reset branch
+STACK['NOSUB'] = ['MASHED_NO_SUBSTATE=1', 'MASHED_NO_P3_RESET_PAIR=1']; STACK['NOP3R'] = ['MASHED_NO_P3_RESET_PAIR=1']
+STACK['NCC'] = ['MASHED_NO_AI_COUNTDOWN_CLOCK=1']   # amendment 1's opt-out (= the first flip build's sub-state clock)
+STACK['L697'] = ['MASHED_DET_FRAMES=1897']          # the B window + the flip's 697-frame pre-race growth (report only)
+STACK['SFD'] = ['MASHED_SUBFLIP_DIAG=1']             # diagnostic log only (G-CTRL dump-length split)
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
@@ -457,7 +463,7 @@ for name in sys.argv[1:]:
         files = []
         if name.startswith('P_'):
             e['MASHED_BATCH_DUMP'] = os.path.join(OUT, name + '.batch.csv'); files.append(e['MASHED_BATCH_DUMP'])
-        run(name, e, files, 0, exe_for(tag), wall=90)
+        run(name, e, files, 0, exe_for(tag), wall=int(os.environ.get('A4_D2_WALL', '90')))   # D3-SUBSTATE-FLIP: A4_D2_WALL (default 90)
     elif name.startswith('W_') or name.startswith('WL_'):
         tag = tag_of(name.split('_', 1)[1])
         e = base_env(18000 if name.startswith('WL_') else 3600)
