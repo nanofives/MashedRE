@@ -70,3 +70,12 @@ band (the scorer reads `band.json` from its own folder). The 30 s files are not 
 GREEN = the O42 band is built from 8 valid runs and the SUBH / DEFH in-or-out is stated. RED = fewer than 8 valid O42
 runs after the re-run rule. BLOCKED = audio endpoint. Which window the flip uses (O42 or O50) is the lead's call. This
 step does not make it.
+
+## Amendment 1 (2026-10-29 16:20, after o42_r1..r7 ran, only o42_r1 scored)
+
+The hold is wall-clock, so a slow stretch shortens the driving window. o42_r3 captured 2085 frames against 2518-2552 for
+r1, r2, r4..r7: its lock line reads "draining the current holder" at boot, and its car first moves at +23 s against +18 s on
+the others (`o42_r3.txt`). Rule added before r3 or any later run is scored: **a run is valid when its capture frames are
+within 5% of the arm's median capture frames.** An invalid run is re-run once as `r<N>b` and the re-run replaces it in the
+band. The invalid run is scored and reported, never banded. A second invalid run for the same N is reported RED. Applies to
+O42 and O50 alike. The 30 s band's eight runs all pass this rule (2335-2336 frames on the four u9763 runs).
