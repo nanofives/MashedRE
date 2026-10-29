@@ -1,0 +1,16 @@
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_1-2.motion_diag.log: slip1500=0.1970 in slip2000=0.2528 in drvmed=1894.8000 in n=('350', '569', '1293') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_1-3.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1920.4800 in n=('376', '647', '1425') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_1.motion_diag.log: slip1500=0.1966 in slip2000=0.2517 in drvmed=1920.4800 in n=('354', '607', '1338') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_2-2.motion_diag.log: slip1500=0.1966 in slip2000=0.2523 in drvmed=1901.5600 in n=('354', '574', '1302') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_2-3.motion_diag.log: slip1500=0.1930 in slip2000=0.2514 in drvmed=1920.2500 in n=('385', '650', '1437') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_2.motion_diag.log: slip1500=0.1966 in slip2000=0.2514 in drvmed=1916.0200 in n=('354', '595', '1323') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_3-3.motion_diag.log: slip1500=0.1930 in slip2000=0.2514 in drvmed=1920.4800 in n=('385', '651', '1438') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-FLIP_data/run22/arms_b/D2_DEFH_3.motion_diag.log: slip1500=0.1930 in slip2000=0.2514 in drvmed=1920.4800 in n=('385', '651', '1438') H1 398/400 median 1333.9
+D2_DEFH_1 1546 lines
+D2_DEFH_2 1531 lines
+D2_DEFH_3 1646 lines
+D2_DEFH_1-2 1501 lines
+D2_DEFH_2-2 1510 lines
+D2_DEFH_1-3 1633 lines
+D2_DEFH_2-3 1645 lines
+D2_DEFH_3-3 1646 lines
