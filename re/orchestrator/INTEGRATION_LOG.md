@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 13:08 HB-LAN-REAL-MOVIES (orch/HB-LAN-REAL-MOVIES): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261030_125159
 - 2026-10-30 12:49 D4-DC-77b0-DECODE (orch/D4-DC-77b0-DECODE), D4-DC-77b0-WRITERS (orch/D4-DC-77b0-WRITERS), D5-DEFER-D11083-SITES (orch/D5-DEFER-D11083-SITES): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_124708
 - 2026-10-30 12:44 D5-INTROMOVIES-FLIP (orch/D5-INTROMOVIES-FLIP), D4-DC-77b0-NOTE (orch/D4-DC-77b0-NOTE): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_121541
 - 2026-10-30 11:10 D5-PARTMORPH-MEASURE (orch/D5-PARTMORPH-MEASURE): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_104227
