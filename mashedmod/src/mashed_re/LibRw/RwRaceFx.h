@@ -16,10 +16,6 @@
 namespace mashed_re {
 namespace LibRw {
 
-// MASHED_CAR_SHADOW=0 / MASHED_CAR_BEAM=0 turn the two passes off (default ON).
-bool RaceFx_CarShadowEnabled();
-bool RaceFx_BeamEnabled();
-
 // The vehicle descriptor family the shadow tables are indexed by: *(desc+0x80) / 6, the
 // descriptor table at 0x005f37a8 (stride 0x84, 78 entries, six per family), from the car piz's
 // base name. -1 when the name is not one of the 13 families.
@@ -47,8 +43,6 @@ struct CarFxInput {
 // 0x1a, 0x1c, 0x1b (headlights), 0x37, 0x38 (tail), 0x39, 0x3a (brake), in that slot order; their
 // frame origins in the body frame and whether the model has each one.
 void RaceFx_SetCarLightParts(const float pos[8][3], const bool have[8]);
-// MASHED_HEADLIGHT=0 turns the Headlight sprites (FUN_00413a00 / FUN_00413a40) off (default ON).
-bool RaceFx_HeadlightEnabled();
 // Per-model data, set at car load: the descriptor family and parts 25 / 28's frame origins.
 void RaceFx_SetCarModel(int family, const float part25[3], const float part28[3], bool parts_ok);
 // Queue car `slot` (0..3) for this frame; consumed and cleared by RaceFx_DrawCarFx.
@@ -64,8 +58,7 @@ void RaceFx_DrawCarFx(void* rw_camera);
 // one RpPTank matrix particle per shadowed visible object to DAT_00703068 (FUN_00487d00); the
 // shadow matrix is FUN_00487280 @ 0x00487280's (a ray along the course light's at-vector into the
 // collision world); FUN_00487d70 @ 0x00487d70 draws the batch with cull off and ZWRITE off, first in
-// FUN_0040bde0 (after the copters, FUN_00410b30). MASHED_OBJ_SHADOW=0 turns it off (default ON).
-bool RaceFx_ObjShadowEnabled();
+// FUN_0040bde0 (after the copters, FUN_00410b30).
 // One object at track load, in the original's creation order (FUN_00480340 @ 0x00480340: the
 // RWP_Object descriptors by index, then each one's MTS records). ltm = the frame LTM (D3DMATRIX
 // memory order: rows right, up, at, pos), bbox = DAT_006c9a88's six floats (sup.xyz, inf.xyz),
@@ -99,8 +92,6 @@ void RaceFx_DrawWorldFx(void* rw_camera);
 // position, element count, enabled, k, tables); FUN_00488e70 @ 0x00488e70 fills the small batch
 // DAT_007030a8 (one camera-facing particle per element) and FUN_004883b0 @ 0x004883b0 the big one
 // DAT_007030ac (16 particles per light, mirrored in y), ONCE (DAT_007030b4) after the list changes.
-// MASHED_LENSFLARE=0 turns both off (default ON).
-bool RaceFx_LensEnabled();
 struct LensLight { int type; float pos[3]; float k; };
 // The list in creation order (TrackRenderer: City's 0x0044b100, Arctic's 0x00448940); `bob` = the
 // index of the light whose k FUN_00448ef0 rewrites each tick (-1 none).
@@ -158,8 +149,6 @@ void RaceFx_ReplayHudRow(int ba8c, float dtb);
 // car's hull (part 0x3b) into a 256x256 A8R8G8B8 camera texture from `carpos + lightAt * -4` (parallel,
 // view window 0.75, cleared to 0,0,0,0) and FUN_00422570 @ 0x00422570 collects up to 0x40 collision triangles
 // around the car whose texture coordinates are the RT camera's view matrix x,y; FUN_004228f0 draws them.
-// MASHED_CAR_SHADOW_RT=0 turns the pass off (default ON).
-bool RaceFx_ShadowRtEnabled();
 // DAT_00657490 (course+0x10638), written at the end of Course::CreateFromDescription (0x00479330): 1 unless
 // Course_Id is 0, 0x1a or 0x24 (Arctic, City, Storm).
 void RaceFx_SetShadowCourse(int course_id);
