@@ -69,7 +69,7 @@ PASSes.
 - Named gaps carried from D5-PARTMORPH-PRODUCER section 4 (car-load state 0 at `0x00420482`, the result
   camera's own motion, the match-end sub-state) are unchanged.
 
-## 5. Decision D-11077 (filed with `roadmap.ps1 decision`)
+## 5. Decision D-11077 (filed as L-62 with `roadmap.ps1 decision`)
 
 Flip `MASHED_PARTMORPH` + `MASHED_CAR_STATE0` default ON (`MASHED_FLIP_D11077` 0 -> 1 in FaithDefaults.cpp)?
 - (a) flip now: G-CTRL / B unchanged (measured, F1), so the merge train's hash gates pass. The flip pass
