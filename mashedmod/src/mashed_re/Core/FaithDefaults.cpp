@@ -22,7 +22,7 @@ namespace {
 struct FaithKnob { const char* name; const char* value; };
 
 // D-11077 (MASHED_PARTMORPH + MASHED_CAR_STATE0) is prepared below and stays 0 until Mariano's decision flips it.
-#define MASHED_FLIP_D11077 1
+#define MASHED_FLIP_D11077 0
 
 // Order and values = STACK['FAITH'] in verify/d2off_20261020/run_arms.py (bare names there are set to "1").
 const FaithKnob kFaith[] = {
