@@ -4,6 +4,7 @@
 #include "AudioCharacterBankPaths.h"
 #include "AudioWire.h"
 #include "AudioEngineInternal.h"
+#include "../DllGuard.h"
 
 #include <windows.h>
 #include <dsound.h>
@@ -216,7 +217,16 @@ bool Init(void* hwnd) {
             return false;
         }
     }
-    HRESULT hr = DirectSoundCreate8(nullptr, &g_ds, nullptr);
+    // D5-SHIM-GUARD-DSOUND: no static DSOUND.dll import (a dsound.dll beside the
+    // exe was bound by name at process load). Resolve DirectSoundCreate8 from the
+    // System32 copy only. On failure audio stays off: no fallback to the default
+    // search.
+    using DirectSoundCreate8Fn = HRESULT(WINAPI*)(LPCGUID, LPDIRECTSOUND8*, LPUNKNOWN);
+    HMODULE dsmod = mashed_re::DllGuardLoadSystem32("dsound.dll");
+    auto dsCreate8 = dsmod ? reinterpret_cast<DirectSoundCreate8Fn>(GetProcAddress(dsmod, "DirectSoundCreate8"))
+                           : nullptr;
+    if (!dsCreate8) { logf("Init: dsound.dll System32 load failed - audio disabled"); return false; }
+    HRESULT hr = dsCreate8(nullptr, &g_ds, nullptr);
     if (FAILED(hr) || !g_ds) { g_ds = nullptr; logf("Init: DirectSoundCreate8 failed hr=%#lx", hr); return false; }
     // PRIORITY lets us set the primary format; the window may be null in odd
     // headless cases — fall back to the desktop window.

@@ -141,6 +141,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <delayimp.h>   // D5-SHIM-GUARD: __pfnDliNotifyHook2
+#include "DllGuard.h"   // D5-SHIM-GUARD(-DSOUND): System32-only loads
 #include <psapi.h>      // B17: GetMappedFileName — identify MEM_MAPPED squatters
 #include <cstdint>
 #include <cstdlib>      // B19a: std::free for WIC-decoded BGRA buffers
@@ -244,19 +245,15 @@ extern "C" void __cdecl TextGradientV2V3Override(float x, float y, float w, floa
 // cwd are never searched for them. Only these two names are touched; the
 // process-wide search order (and the relative LoadLibraryEx of
 // original\MASHED.exe) is unchanged. The resolved path goes to mashed_re.log.
+// dsound.dll (D5-SHIM-GUARD-DSOUND) is not a delay-load: it is loaded the
+// same way in WinMain, before the boot movies (see DllGuard.h).
 // ===========================================================================
 namespace {
 FARPROC WINAPI DllGuardDelayHook(unsigned notify, PDelayLoadInfo info) {
     if (notify != dliNotePreLoadLibrary || info == nullptr || info->szDll == nullptr) return nullptr;
     if (_stricmp(info->szDll, "d3d9.dll") != 0 && _stricmp(info->szDll, "dinput8.dll") != 0)
         return nullptr;
-    HMODULE mod = LoadLibraryExA(info->szDll, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-    char path[MAX_PATH] = "(load failed)";
-    if (mod != nullptr) GetModuleFileNameA(mod, path, MAX_PATH);
-    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-        std::fprintf(lf, "dllguard: %s -> %s\n", info->szDll, path);
-        std::fclose(lf);
-    }
+    HMODULE mod = mashed_re::DllGuardLoadSystem32(info->szDll);
     // Fail closed: a NULL return would let the helper fall back to the default
     // search (exe dir first), the hazard this guard exists for.
     if (mod == nullptr)
@@ -9545,6 +9542,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // B11: DirectInput8 keyboard. Failure is non-fatal — render loop still
     // works; the window title just won't reflect key state.
     (void)InitDirectInput(hInstance);
+
+    // D5-SHIM-GUARD-DSOUND: dsound.dll from System32 only, before its first user.
+    // DSOUND.dll is no longer a static import (Audio::Init resolves
+    // DirectSoundCreate8 with GetProcAddress), and the movie graphs below
+    // (MpegVideoTexture's audio-pin Render) let DirectShow load dsound.dll by
+    // name, which searches the exe dir first. Loading it here first makes every
+    // later by-name load return this module. Fail closed like the delay-load hook:
+    // without the System32 copy the exe stops, as the static import used to.
+    if (mashed_re::DllGuardLoadSystem32("dsound.dll") == nullptr) {
+        DestroyWindow(g_hwnd);
+        UnregisterClassA(kClassName, hInstance);
+        return 5;
+    }
 
     // [D5-INTROMOVIES] boot movies (FUN_00402750 0x00402838 / 0x0040283f), before
     // the menu music starts. MASHED_INTRO_MOVIES=1 (default ON, L-63; MASHED_NO_INTRO_MOVIES=1 opts out).
