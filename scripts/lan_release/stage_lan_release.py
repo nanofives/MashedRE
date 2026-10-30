@@ -9,8 +9,6 @@ The folder is what a player PC keeps:
     TOASTART\, toastaudio\    the user's own Mashed: Fully Loaded install (TOASTART\PC\MOVIES\backup\ left out:
                               dev copies of the intro movies that skip_intro replaced;
                               the staged PC\MOVIES\<name>.mpg of each is that backup copy, the real movie, L-63)
-    MASHED.exe                read as DATA only (LoadLibraryEx AS_DATAFILE, RWTEXDICTIONARY/404, exe_main.cpp
-                              LoadLoadIconFromExe); the pristine MASHED.exe.unpatched when present
     gamesave.bin              the save the exe replays at boot (never written by the standalone); a seed file:
                               the updater installs it once and never replaces it
   Play Mashed.bat             starts the exe (the updater also makes a "Mashed (RE)" shortcut)
@@ -18,10 +16,13 @@ The folder is what a player PC keeps:
   README.txt
   manifest.json               {label, generated, files: [{path, size, sha256, seed}]}
 
-Left out of original\: every exe, dll, asi, shim, log, trace and backup the dev install carries (launch.exe,
-d3d9/dinput8 proxies, mashed_re_dev.asi*, MASHED.exe.pre*, *_selftest.log, ...). The exe writes its own files beside
-itself (videocfg.bin on first run, mashed_re_gamesave.bin, mashed_re.log, log\); none is in the manifest, so the
-updater never touches them.
+Left out of original\: every exe, dll, asi, shim, log, trace and backup the dev install carries (MASHED.exe and
+its .unpatched / .pre* copies, launch.exe, d3d9/dinput8 proxies, mashed_re_dev.asi*, *_selftest.log, ...). The release
+carries no original binary: the one resource the standalone took from MASHED.exe, the loading-disc texture
+RWTEXDICTIONARY/404, is embedded in mashed_re.exe (mashedmod/assets/mashed_re.rc, D5-ICON-ASSET, L-64 (b)).
+The exe writes its own files beside itself (videocfg.bin on first run, mashed_re_gamesave.bin, mashed_re.log, log\);
+none is in the manifest, so the updater never touches them (and it removes a MASHED.exe an earlier release left in
+original\, since the manifest no longer lists it).
 Files are hard-linked from the sources when they share a volume (no extra disk), copied otherwise.
 The stage folder lives under mashedmod/build (gitignored); never stage into a tracked folder.
 
@@ -102,10 +103,6 @@ def main():
                         full = real
                 place(full, os.path.join(out, rel)); wanted.add(rel)
 
-    exe_src = os.path.join(a.install, "MASHED.exe.unpatched")
-    if not os.path.isfile(exe_src):
-        exe_src = os.path.join(a.install, "MASHED.exe")
-    place(exe_src, os.path.join(out, "original", "MASHED.exe")); wanted.add(os.path.join("original", "MASHED.exe"))
     save = os.path.join(a.install, "gamesave.bin")
     if os.path.isfile(save):
         place(save, os.path.join(out, "original", "gamesave.bin")); wanted.add(os.path.join("original", "gamesave.bin"))

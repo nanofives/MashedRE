@@ -8561,19 +8561,19 @@ bool LoadPngAssetToSlot(const char* piz_path, const char* entry_name,
     return ok;
 }
 
-// Load the "loadicon" spinning-disc texture from MASHED.exe's embedded
-// resource RWTEXDICTIONARY/404 (LOAD_LIBRARY_AS_DATAFILE — no code runs).
+// Load the "loadicon" spinning-disc texture, resource RWTEXDICTIONARY/404.
+// MASHED.exe carries it (FUN_004921d0 -> FUN_004997b0(0x194,"RWTEXDICTIONARY")).
+// D5-ICON-ASSET (L-64 (b), 2026-10-30): the bytes are copied once by
+// re/tools/extract_loadicon_asset.py into mashedmod/assets/loadicon_404.txd and
+// embedded in this exe by assets/mashed_re.rc under the same type and id, so
+// the lookup runs on our own module and original\MASHED.exe is never opened
+// (it used to be LoadLibraryExA(..., LOAD_LIBRARY_AS_DATAFILE)).
 // The resource is the 0x23 TXD variant: 256x128 8bpp direct-intensity, pixels
 // at +0x43c (identical decode to FGDC20.TXD). Expanded to white-RGB / alpha=
 // intensity. Returns true on success.
-bool LoadLoadIconFromExe() {
+bool LoadLoadIconResource() {
     std::FILE* log = std::fopen(kLogPath, "a");
-    HMODULE hExe = LoadLibraryExA("original\\MASHED.exe", nullptr,
-                                  LOAD_LIBRARY_AS_DATAFILE);
-    if (!hExe) {
-        if (log) { std::fprintf(log, "\nloadicon: LoadLibraryEx(MASHED.exe) failed\n"); std::fclose(log); }
-        return false;
-    }
+    HMODULE hExe = GetModuleHandleA(nullptr);
     bool ok = false;
     HRSRC hr = FindResourceA(hExe, MAKEINTRESOURCEA(404), "RWTEXDICTIONARY");
     if (hr) {
@@ -8622,7 +8622,6 @@ bool LoadLoadIconFromExe() {
     } else if (log) {
         std::fprintf(log, "\nloadicon: FindResource(404,RWTEXDICTIONARY) failed\n");
     }
-    FreeLibrary(hExe);
     if (log) std::fclose(log);
     return ok;
 }
@@ -9657,7 +9656,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         LoadStandingsAssets();                    // Finding 14 in-race standings art
         g_carsel_ready = LoadCarColorSprites();   // #25 color-select car previews
         g_inputicons_ready = LoadInputIcons();    // #10 keyboard/joypad row icons
-        g_loadicon_ready = LoadLoadIconFromExe(); // loading-screen spinning disc
+        g_loadicon_ready = LoadLoadIconResource(); // loading-screen spinning disc
         g_bige_ready = LoadPngAssetToSlot(        // Empire 'E' trademark icon
             "original/TOASTART/Common/Font36.piz", "BIGE.BMP",
             kSlotBigE, kHandleBigE, nullptr, nullptr);

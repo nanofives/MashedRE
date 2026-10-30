@@ -226,7 +226,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%build_objs.ps1" -Targ
     -SrcRoot "%SRC%" -ObjDir "%OUT%\obj\exe" -Rsp "%ROOT%exe_sources.rsp" ^
     -ClFlags "/EHa /W3 /O2 /DMASHED_STANDALONE" -RepoRoot "%ROOT%.." -X87List "%ROOT%x87_tus.txt"
 if errorlevel 1 (popd & echo [ERROR] exe compile failed & exit /b 1)
+REM D5-ICON-ASSET (L-64 (b), 2026-10-30): the loading-disc texture RWTEXDICTIONARY/404 is embedded from
+REM assets\loadicon_404.txd (re/tools/extract_loadicon_asset.py), so the exe no longer opens original\MASHED.exe.
+rc /nologo /fo"%OUT%\mashed_re.res" "%ROOT%assets\mashed_re.rc"
+if errorlevel 1 (popd & echo [ERROR] exe resource compile failed & exit /b 1)
 cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj\exe\link.rsp" ^
+    "%OUT%\mashed_re.res" ^
     "%OUT%\QhullBridge_exe.obj" ^
     "%OUT%\RwBridge_exe.obj" ^
     "%OUT%\RwRasterBridge_exe.obj" ^
