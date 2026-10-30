@@ -57,16 +57,6 @@ int CarVehicleGroupId(const char* piz_base) {
     return -1;
 }
 
-bool CarDirtEnabled() {
-    static const bool on = !EnvOff("MASHED_CAR_DIRT");
-    return on;
-}
-
-bool CarVisEnabled() {
-    static const bool on = !EnvOff("MASHED_CAR_VIS");
-    return on;
-}
-
 // FUN_00420870 @ 0x00420870, the per-part loop at 0x00420a0d..0x00420b27: part ebp = 0..0x7f, the
 // atomic is [esi+ebp*4] (esi = the car record), skipped when null (`je 0x420b20`, 0x00420a1d).
 // S = *(rec+0x298) (&DAT_0063dc78), F = *(rec+0x294) (&DAT_0063dc74). The result starts as 0
@@ -143,18 +133,13 @@ std::uint32_t CarVisFlags(int course_id, bool brake) {
     return 0x8u | (lit ? 0xc0u : 0u) | (brake ? 0x800u : 0u);
 }
 
-// [carlod 2026-10-16] DEFAULT ON together with the per-part visibility (MASHED_CAR_VIS), opt-out
-// MASHED_CAR_ENV=0; MASHED_CAR_ENV=1 forces it on even with MASHED_CAR_VIS=0. rtex held it opt-in:
+// [carlod 2026-10-16] DEFAULT ON together with the per-part visibility, opt-out
+// MASHED_CAR_ENV=0. rtex held it opt-in:
 // with every car LOD drawn the env second pass also ran on the duplicate glass atomics the original
 // never draws (an uncited EXTRA CarGloss row, Arctic 1051 pixels +0.60). With CarPartVisible and
 // the glass pass it passes PREREG_carlod rules 1-6 (verify/carlod_20261016/RESULT_carlod.md).
 bool CarEnvEnabled() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_CAR_ENV");
-        if (e && e[0] == '1' && e[1] == '\0') return true;
-        if (e && e[0] == '0' && e[1] == '\0') return false;
-        return CarVisEnabled();
-    }();
+    static const bool on = !EnvOff("MASHED_CAR_ENV");
     return on;
 }
 

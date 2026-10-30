@@ -4232,7 +4232,7 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
         // FUN_0040cea0 @ 0x0040cea0: dirt.piz, FUN_00404e00(course) / FUN_00404e20(course, veh)
         const char* bn = LibRw::CarDirtBodyName(course_id_);
         const char* wn = LibRw::CarDirtWheelName(course_id_, veh);
-        if (LibRw::CarDirtEnabled() && bn && wn) {
+        if (bn && wn) {
             Piz::Archive dp;
             std::uint8_t* bimg = nullptr;
             std::uint8_t* wimg = nullptr;
@@ -10219,7 +10219,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             return !(e && e[0] == '0' && e[1] == '\0');
         }();
         // [carlod] the record state and flags FUN_00420870 @ 0x00420870 tests per part
-        // (LibRw/RwCarFx.h); null (every atomic draws, the old behaviour) with MASHED_CAR_VIS=0.
+        // (LibRw/RwCarFx.h); null (every atomic draws) without the part-19 model.
         // MASHED_CAR_BRAKE_ROWS=row:mask[,row:mask...] (MEASUREMENT ONLY, default unset): the
         // matched-pose instrument's input for flag 0x800, the controller's brake byte, which the
         // default AI cars do not produce (RwCarFx.cpp CarVisFlags). Bit i of the mask = slot i,
@@ -10257,7 +10257,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             if (f) std::fprintf(f, "row,slot,byte_now,used,rows,flags\n");
             return f; }();
         auto carvis = [&](int slot, const D3DMATRIX& m, LibRw::CarVis* out) -> const LibRw::CarVis* {
-            if (!LibRw::CarVisEnabled() || !car_part19_ok_) return nullptr;
+            if (!car_part19_ok_) return nullptr;
             std::uint8_t cur = 0;
             if (s_brake_wire && slot >= 0 && slot < 4) {
                 if (slot == 0) cur = player_brake_byte_;
@@ -10466,7 +10466,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 }
             }
             const float sun = s_relight ? g.shade : -1.f;
-            // [carlod] FUN_00420870's record state / flags for this copy (null with MASHED_CAR_VIS=0)
+            // [carlod] FUN_00420870's record state / flags for this copy (null without the part-19 model)
             LibRw::CarVis cv;
             const LibRw::CarVis* pv = carvis(slot, m, &cv);
             // [partmorph] FUN_00420870 -> FUN_0041f770 @ 0x0041f770 (MASHED_PARTMORPH=1): the part 0x12 morph

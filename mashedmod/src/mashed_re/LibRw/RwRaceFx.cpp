@@ -187,9 +187,6 @@ void DrawBatch(const Batch& b, rw::Texture* tex, int src, int dst) {
 
 }  // namespace
 
-bool RaceFx_CarShadowEnabled() { static const bool on = !EnvOff("MASHED_CAR_SHADOW"); return on; }
-bool RaceFx_BeamEnabled()      { static const bool on = !EnvOff("MASHED_CAR_BEAM");   return on; }
-
 int RaceFx_FamilyOfPiz(const char* piz_path) {
     // The 13 family names of the descriptor table at 0x005f37a8 (the first 16 bytes of every
     // 0x84-byte entry; entries 6k..6k+5 share family k, FUN_0041f330 @ 0x0041f330).
@@ -228,11 +225,9 @@ static bool       g_hl_have[4] = {};
 
 void RaceFx_DrawCarFx(void* rw_camera) {
     for (int i = 0; i < 4; ++i) { g_hl_cars[i] = g_cars[i]; g_hl_have[i] = g_have[i]; }
-    const bool want_shadow = RaceFx_CarShadowEnabled();
-    const bool want_beam = RaceFx_BeamEnabled();
     bool any = false;
     for (bool h : g_have) any = any || h;
-    if (!any || (!want_shadow && !want_beam)) { for (bool& h : g_have) h = false; return; }
+    if (!any) return;
     LoadTextures();
     rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
 
@@ -251,7 +246,7 @@ void RaceFx_DrawCarFx(void* rw_camera) {
             if (cam->frustumTestSphere(&sp) == rw::Camera::SPHEREOUTSIDE) continue;
         }
         // ---- FUN_0041faf0 @ 0x0041faf0: the headlight beam (runs first, 0x004200c8) ----------
-        if (want_beam && c.lights && g_parts_ok && beam.n < 4) {
+        if (c.lights && g_parts_ok && beam.n < 4) {
             const M body = FromD3D(c.body);
             // A, B = LTMs of part 25 / part 28's frames (rec+0x64 / rec+0x70 -> +4 -> RwFrameGetLTM,
             // 0x0041fb45..0x0041fb7b): the parts' frames are translations under the body frame.
@@ -284,7 +279,7 @@ void RaceFx_DrawCarFx(void* rw_camera) {
             p.rgba[3] = FtolByte(dot * 32.0);
         }
         // ---- FUN_0041fcc0 @ 0x0041fcc0: the car shadow --------------------------------------
-        if (want_shadow && shadow.n < 4) {
+        if (shadow.n < 4) {
             const int f = (g_family >= 0 && g_family < 13) ? g_family : 1;
             M m = FromD3D(c.root);                       // 0x0041fd3c..0x0041fd58
             RotX90Pre(m);                                // 0x0041fd6e
@@ -668,7 +663,7 @@ void HlRecord(std::vector<HlRec>& out, const float* ppos, const float* pat, cons
 }
 
 void DrawHeadlights(rw::Camera* cam) {
-    if (!RaceFx_HeadlightEnabled() || !cam || !cam->getFrame() || !cam->frameBuffer) return;
+    if (!cam || !cam->getFrame() || !cam->frameBuffer) return;
     // the camera frame's modelling matrix (FUN_00467210(0): frame + 0x10); the race camera is a
     // root frame, so this is its LTM too (witness: modelling == LTM)
     const rw::Matrix& cm = cam->getFrame()->matrix;
@@ -968,7 +963,7 @@ void DrawBills(const std::vector<Bill>& bs, rw::Camera* cam, rw::Texture* tex) {
 // The small batch, FUN_004891f0 @ 0x004891f0 (FUN_00410b30, after FUN_0040bde0): ZWRITE off, Z test
 // on around the PTank render; cull NONE and fog off as recorded on the original at that point.
 void DrawLensSmall(rw::Camera* cam) {
-    if (!RaceFx_LensEnabled() || g_lens_small.empty()) return;
+    if (g_lens_small.empty()) return;
     rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE);
     rw::int32 sv_fog = rw::GetRenderState(rw::FOGENABLE);
     rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND), sv_db = rw::GetRenderState(rw::DESTBLEND);
@@ -989,7 +984,6 @@ void DrawLensSmall(rw::Camera* cam) {
 
 }  // namespace
 
-bool RaceFx_LensEnabled() { static const bool on = !EnvOff("MASHED_LENSFLARE"); return on; }
 static bool g_lens_after_sky = false;
 bool RaceFx_LensAfterSky() { return g_lens_after_sky; }
 void RaceFx_SetLensLights(const LensLight* l, int n, int bob, bool after_sky) {
@@ -1023,7 +1017,7 @@ void RaceFx_BeginFrame(void* rw_camera) {
     }
 }
 void RaceFx_DrawLensBig(void* rw_camera, int mode) {
-    if (!RaceFx_LensEnabled() || g_lens_big.empty()) return;
+    if (g_lens_big.empty()) return;
     rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
     rw::int32 sv_zt = rw::GetRenderState(rw::ZTESTENABLE), sv_zw = rw::GetRenderState(rw::ZWRITEENABLE);
     rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE), sv_fog = rw::GetRenderState(rw::FOGENABLE);
@@ -1063,17 +1057,14 @@ void RaceFx_DrawLensBig(void* rw_camera, int mode) {
     rw::SetRenderState(rw::VERTEXALPHA, sv_va);
 }
 
-bool RaceFx_HeadlightEnabled() { static const bool on = !EnvOff("MASHED_HEADLIGHT"); return on; }
 void RaceFx_SetCarLightParts(const float pos[8][3], const bool have[8]) {
     std::memcpy(g_lp, pos, sizeof(g_lp));
     for (int k = 0; k < 8; ++k) g_lp_have[k] = have[k];
 }
 
-bool RaceFx_ObjShadowEnabled() { static const bool on = !EnvOff("MASHED_OBJ_SHADOW"); return on; }
-
 void RaceFx_SetObjShadows(const ObjShadowIn* objs, int n, const float light[16], const ObjShadowSoup& soup) {
     g_objshad.clear();
-    if (!RaceFx_ObjShadowEnabled() || !objs || n <= 0 || !light) return;
+    if (!objs || n <= 0 || !light) return;
     float Linv[16];
     InvertAffine(light, Linv);
     g_objshad.resize(static_cast<std::size_t>(n));
@@ -1101,7 +1092,7 @@ void RaceFx_SetObjShadows(const ObjShadowIn* objs, int n, const float light[16],
 void RaceFx_SetObjShadowFrame(std::uint32_t f101c) { g_objshad_frame = f101c; }
 
 static void DrawObjShadows(rw::Camera* cam) {
-    if (g_objshad.empty() || !RaceFx_ObjShadowEnabled()) return;
+    if (g_objshad.empty()) return;
     if (!cam || !cam->getFrame()) return;
     // ---- FUN_00481a30 @ 0x00481a30, per object i ---------------------------------------------
     // [UNCERTAIN U-9710] the original runs this in the tick, against the camera frame's modelling
@@ -2100,8 +2091,6 @@ void ShadowCollect(int slot, const float pos[3], const double cp[3], const doubl
 
 }  // namespace
 
-bool RaceFx_ShadowRtEnabled() { static const bool on = !EnvOff("MASHED_CAR_SHADOW_RT"); return on; }
-
 void RaceFx_SetShadowCourse(int course_id) {
     g_shadow_gate = !(course_id == 0 || course_id == 0x1a || course_id == 0x24);   // end of 0x00479330
 }
@@ -2124,7 +2113,7 @@ void RaceFx_SetCarSun(int slot, float sun) {
 }
 
 bool RaceFx_ShadowActive(int slot) {
-    return slot >= 0 && slot < 4 && g_have[slot] && RaceFx_ShadowRtEnabled() && g_shadow_gate && g_slight_ok &&
+    return slot >= 0 && slot < 4 && g_have[slot] && g_shadow_gate && g_slight_ok &&
            g_cars[slot].hull_v && g_cars[slot].hull_t && g_cars[slot].hull_nt > 0;
 }
 

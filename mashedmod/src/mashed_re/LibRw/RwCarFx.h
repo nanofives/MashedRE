@@ -30,9 +30,7 @@ bool CarEnvIsEnvPart(int part);
 // +0, id at +0x80; ids run car*6 + variant) for variant 0, or -1.
 int CarVehicleGroupId(const char* piz_base);
 
-// MASHED_CAR_DIRT=0 turns the dirt half off (default ON). The env half follows the per-part
-// visibility below (default ON; MASHED_CAR_ENV=0 turns it off, =1 forces it on; RwCarFx.cpp).
-bool CarDirtEnabled();
+// The env half is default ON (MASHED_CAR_ENV=0 turns it off; RwCarFx.cpp).
 bool CarEnvEnabled();
 
 // [carlod 2026-10-16] per-part visibility (U-9079), the third half of the car set-up. Each frame
@@ -50,8 +48,6 @@ int CarLodState(double d2);
 // the controller's brake byte is set (`brake`; the standalone has no such byte for AI cars, see
 // RwCarFx.cpp).
 std::uint32_t CarVisFlags(int course_id, bool brake);
-// MASHED_CAR_VIS=0 turns the per-part visibility off (every atomic draws, the old behaviour).
-bool CarVisEnabled();
 // The glass atomics FUN_00420870 leaves without a RENDER bit are drawn by FUN_00420050 @
 // 0x00420050 right after the clump render (`call 0x4e6680`, 0x00420162), one by one through
 // the atomic's own render callback (`call [eax+0x48]`, 0x0042019d / 0x004201d1). `which` 0 is the
