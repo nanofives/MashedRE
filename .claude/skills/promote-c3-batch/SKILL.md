@@ -378,7 +378,7 @@ After the user has run every session in the batch and each session has:
 
 That skill:
 - Merges every queued branch onto main, resolving the three known text-file conflicts (`build.bat`, `hooks_registry.py`, `CHANGELOG.md`) mechanically.
-- Rebuilds the canonical `mashed_re_dev.asi` from the merged state.
+- Rebuilds the canonical `mashed_re_dev.asi` from the merged state. Dev-only and it stays after D5: the `.asi` is out of the shipping matrix but not removed, because diff-original still loads it.
 - Runs `run_diff_parallel.py` against ALL promoted hooks in the merged build — the integration diff that catches cross-hook regressions (symbol clashes, overlapping JMP patches, struct-definition drift, include ordering).
 - Commits the merge only if every hook is GREEN.
 

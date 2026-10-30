@@ -20,6 +20,8 @@ Left out of original\: every exe, dll, asi, shim, log, trace and backup the dev 
 its .unpatched / .pre* copies, launch.exe, d3d9/dinput8 proxies, mashed_re_dev.asi*, *_selftest.log, ...). The release
 carries no original binary: the one resource the standalone took from MASHED.exe, the loading-disc texture
 RWTEXDICTIONARY/404, is embedded in mashed_re.exe (mashedmod/assets/mashed_re.rc, D5-ICON-ASSET, L-64 (b)).
+The dev harness (d3d9 shim, dinput8 loader, mashed_re_dev.asi) stays in the repo after D5 but is never shipped, so this
+exclusion is permanent.
 The exe writes its own files beside itself (videocfg.bin on first run, mashed_re_gamesave.bin, mashed_re.log, log\);
 none is in the manifest, so the updater never touches them (and it removes a MASHED.exe an earlier release left in
 original\, since the manifest no longer lists it).
