@@ -1192,3 +1192,72 @@
 {"at":"2026-10-30T11:10:22Z","id":"D5-INTROMOVIES-I1B","from":"merge-queued","to":"merged","owner":"cmvut0j9x2l0lp7157h887p70","note":"merge train 20261030_080913: not run: text-only change (no build input touched)"}
 {"at":"2026-10-30T11:11:16Z","id":"D5-PARTMORPH-FLIPPREP","from":"done","to":"merge-queued","owner":"cmvuq0hvg2iknp715ya9xvolu","note":"orch/D5-PARTMORPH-FLIPPREP"}
 {"at":"2026-10-30T11:40:57Z","id":"D5-PARTMORPH-FLIPPREP","from":"merge-queued","to":"merged","owner":"cmvuq0hvg2iknp715ya9xvolu","note":"merge train 20261030_081154: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T13:03:19Z","id":"D5-PARTMORPH-MEASURE","from":"open","to":"claimed","owner":"cmvuzg6w82szlp7153kxakyyd","note":""}
+{"at":"2026-10-30T13:04:49Z","id":"D5-PARTMORPH-MEASURE","from":"claimed","to":"working","owner":"cmvuzg6w82szlp7153kxakyyd","note":"worktree created, building ON exe"}
+{"at":"2026-10-30T13:06:05Z","id":"D4-DC-77b0-NOTE","from":"open","to":"claimed","owner":"cmvuzjv212tibp715b5rzdjwa","note":""}
+{"at":"2026-10-30T13:06:22Z","id":"D5-KNOBS-INVENTORY","from":"open","to":"claimed","owner":"cmvuzk5yk2tllp715cm7zytcb","note":""}
+{"at":"2026-10-30T13:06:51Z","id":"D5-DEPS-IMPORTS","from":"open","to":"claimed","owner":"cmvuzk6th2tlxp715cbewcjfe","note":""}
+{"at":"2026-10-30T13:06:53Z","id":"D5-SHIM-STATIC","from":"open","to":"claimed","owner":"cmvuzk7tr2tmfp7151qj326ru","note":""}
+{"at":"2026-10-30T13:08:58Z","id":"D4-DC-77b0-NOTE","from":"claimed","to":"working","owner":"cmvuzjv212tibp715b5rzdjwa","note":"allowlist line 38 comment fix"}
+{"at":"2026-10-30T13:09:17Z","id":"D5-SHIM-STATIC","from":"claimed","to":"working","owner":"cmvuzk7tr2tmfp7151qj326ru","note":"static grep audit"}
+{"at":"2026-10-30T13:09:19Z","id":"D5-DEPS-IMPORTS","from":"claimed","to":"working","owner":"cmvuzk6th2tlxp715cbewcjfe","note":"static PE import dump"}
+{"at":"2026-10-30T13:09:23Z","id":"D5-KNOBS-INVENTORY","from":"claimed","to":"working","owner":"cmvuzk5yk2tllp715cm7zytcb","note":"static env-knob inventory"}
+{"at":"2026-10-30T13:09:46Z","id":"D4-DC-77b0-NOTE","from":"working","to":"review","owner":"cmvuzjv212tibp715b5rzdjwa","note":""}
+{"at":"2026-10-30T13:10:11Z","id":"D4-DC-77b0-NOTE","from":"review","to":"merge-queued","owner":"cmvuzjv212tibp715b5rzdjwa","note":"orch/D4-DC-77b0-NOTE"}
+{"at":"2026-10-30T13:10:33Z","id":"D5-SHIM-STATIC","from":"working","to":"review","owner":"cmvuzk7tr2tmfp7151qj326ru","note":""}
+{"at":"2026-10-30T13:10:36Z","id":"D5-DEPS-IMPORTS","from":"working","to":"review","owner":"cmvuzk6th2tlxp715cbewcjfe","note":""}
+{"at":"2026-10-30T13:10:58Z","id":"D5-DEPS-IMPORTS","from":"review","to":"merge-queued","owner":"cmvuzk6th2tlxp715cbewcjfe","note":"orch/D5-DEPS-IMPORTS"}
+{"at":"2026-10-30T13:13:39Z","id":"D5-SHIM-STATIC","from":"review","to":"merge-queued","owner":"cmvuzk7tr2tmfp7151qj326ru","note":"orch/D5-SHIM-STATIC"}
+{"at":"2026-10-30T13:13:44Z","id":"D5-KNOBS-INVENTORY","from":"working","to":"review","owner":"cmvuzk5yk2tllp715cm7zytcb","note":""}
+{"at":"2026-10-30T13:14:04Z","id":"D5-KNOBS-INVENTORY","from":"review","to":"merge-queued","owner":"cmvuzk5yk2tllp715cm7zytcb","note":"orch/D5-KNOBS-INVENTORY"}
+{"at":"2026-10-30T13:16:44Z","id":"D5-DEPS-IMPORTS","from":"merge-queued","to":"merged","owner":"cmvuzk6th2tlxp715cbewcjfe","note":"merge train 20261030_101519: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T13:16:45Z","id":"D5-SHIM-STATIC","from":"merge-queued","to":"merged","owner":"cmvuzk7tr2tmfp7151qj326ru","note":"merge train 20261030_101519: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T13:16:47Z","id":"D5-KNOBS-INVENTORY","from":"merge-queued","to":"merged","owner":"cmvuzk5yk2tllp715cm7zytcb","note":"merge train 20261030_101519: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T13:41:19Z","id":"D5-PARTMORPH-MEASURE","from":"working","to":"review","owner":"cmvuzg6w82szlp7153kxakyyd","note":"GREEN: gates hold, run13 2431afb1 unchanged, flip committed f7ab92e0c"}
+{"at":"2026-10-30T13:41:40Z","id":"D5-PARTMORPH-MEASURE","from":"review","to":"merge-queued","owner":"cmvuzg6w82szlp7153kxakyyd","note":"orch/D5-PARTMORPH-MEASURE"}
+{"at":"2026-10-30T14:10:12Z","id":"D5-PARTMORPH-MEASURE","from":"merge-queued","to":"merged","owner":"cmvuzg6w82szlp7153kxakyyd","note":"merge train 20261030_104227: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T14:11:35Z","id":"D5-INTROMOVIES-FLIP","from":"open","to":"claimed","owner":"cmvv1vxem2wubp715bkinynrr","note":""}
+{"at":"2026-10-30T14:13:43Z","id":"D5-INTROMOVIES-FLIP","from":"claimed","to":"working","owner":"cmvv1vxem2wubp715bkinynrr","note":"worktree created, flipping MASHED_INTRO_MOVIES default ON, measuring gates"}
+{"at":"2026-10-30T15:14:19Z","id":"D5-INTROMOVIES-FLIP","from":"working","to":"review","owner":"cmvv1vxem2wubp715bkinynrr","note":"hash-neutral: G-CTRL/B/D2/run13 unchanged on the ON build; D-11062 struck, U-9799 filed; sha 2e10820ee"}
+{"at":"2026-10-30T15:14:38Z","id":"D5-INTROMOVIES-FLIP","from":"review","to":"merge-queued","owner":"cmvv1vxem2wubp715bkinynrr","note":"orch/D5-INTROMOVIES-FLIP"}
+{"at":"2026-10-30T15:14:58Z","id":"D4-DC-77b0-NOTE","from":"merge-queued","to":"merge-queued","owner":"cmvuzjv212tibp715b5rzdjwa","note":"orch/D4-DC-77b0-NOTE"}
+{"at":"2026-10-30T15:15:25Z","id":"D4-DC-77b0-DECODE","from":"open","to":"claimed","owner":"cmvv462by2zhzp715a3r3nqdk","note":""}
+{"at":"2026-10-30T15:15:27Z","id":"D4-DC-77b0-WRITERS","from":"open","to":"claimed","owner":"cmvv463f32zi9p715outm0yc7","note":""}
+{"at":"2026-10-30T15:15:27Z","id":"D5-DEFER-D11083-SITES","from":"open","to":"claimed","owner":"cmvv466te2zjjp715fezye5rp","note":""}
+{"at":"2026-10-30T15:17:46Z","id":"D4-DC-77b0-WRITERS","from":"claimed","to":"working","owner":"cmvv463f32zi9p715outm0yc7","note":"static writer tables rows 20/23"}
+{"at":"2026-10-30T15:17:46Z","id":"D4-DC-77b0-DECODE","from":"claimed","to":"working","owner":"cmvv462by2zhzp715a3r3nqdk","note":"static decode FUN_00407e20 + 0x00897ffc call sites"}
+{"at":"2026-10-30T15:17:47Z","id":"D5-DEFER-D11083-SITES","from":"claimed","to":"working","owner":"cmvv466te2zjjp715fezye5rp","note":"static owner walk via decomp_pc --create"}
+{"at":"2026-10-30T15:24:31Z","id":"D5-DEFER-D11083-SITES","from":"working","to":"review","owner":"cmvv466te2zjjp715fezye5rp","note":""}
+{"at":"2026-10-30T15:24:50Z","id":"D5-DEFER-D11083-SITES","from":"review","to":"merge-queued","owner":"cmvv466te2zjjp715fezye5rp","note":"orch/D5-DEFER-D11083-SITES"}
+{"at":"2026-10-30T15:26:47Z","id":"D4-DC-77b0-DECODE","from":"working","to":"review","owner":"cmvv462by2zhzp715a3r3nqdk","note":""}
+{"at":"2026-10-30T15:27:06Z","id":"D4-DC-77b0-DECODE","from":"review","to":"merge-queued","owner":"cmvv462by2zhzp715a3r3nqdk","note":"orch/D4-DC-77b0-DECODE"}
+{"at":"2026-10-30T15:28:24Z","id":"D4-DC-77b0-WRITERS","from":"working","to":"review","owner":"cmvv463f32zi9p715outm0yc7","note":""}
+{"at":"2026-10-30T15:28:44Z","id":"D4-DC-77b0-WRITERS","from":"review","to":"merge-queued","owner":"cmvv463f32zi9p715outm0yc7","note":"orch/D4-DC-77b0-WRITERS"}
+{"at":"2026-10-30T15:44:52Z","id":"D5-INTROMOVIES-FLIP","from":"merge-queued","to":"merged","owner":"cmvv1vxem2wubp715bkinynrr","note":"merge train 20261030_121541: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T15:44:53Z","id":"D4-DC-77b0-NOTE","from":"merge-queued","to":"merged","owner":"cmvuzjv212tibp715b5rzdjwa","note":"merge train 20261030_121541: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T15:46:02Z","id":"D4-DC-77b0-DECODE","from":"merge-queued","to":"merge-queued","owner":"cmvv462by2zhzp715a3r3nqdk","note":"orch/D4-DC-77b0-DECODE"}
+{"at":"2026-10-30T15:46:03Z","id":"D4-DC-77b0-WRITERS","from":"merge-queued","to":"merge-queued","owner":"cmvv463f32zi9p715outm0yc7","note":"orch/D4-DC-77b0-WRITERS"}
+{"at":"2026-10-30T15:46:05Z","id":"D5-DEFER-D11083-SITES","from":"merge-queued","to":"merge-queued","owner":"cmvv466te2zjjp715fezye5rp","note":"orch/D5-DEFER-D11083-SITES"}
+{"at":"2026-10-30T15:46:24Z","id":"D4-DC-77b0-LAPLONG","from":"open","to":"claimed","owner":"cmvv59wt333bjp7156svud7am","note":""}
+{"at":"2026-10-30T15:47:20Z","id":"HB-LAN-REAL-MOVIES","from":"open","to":"claimed","owner":"cmvv5b77u33lvp715egh7z0s3","note":""}
+{"at":"2026-10-30T15:48:49Z","id":"D4-DC-77b0-LAPLONG","from":"claimed","to":"working","owner":"cmvv59wt333bjp7156svud7am","note":"reading round-end rule path; searching env-only lap recipe"}
+{"at":"2026-10-30T15:49:12Z","id":"D4-DC-77b0-DECODE","from":"merge-queued","to":"merged","owner":"cmvv462by2zhzp715a3r3nqdk","note":"merge train 20261030_124708: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T15:49:15Z","id":"D4-DC-77b0-WRITERS","from":"merge-queued","to":"merged","owner":"cmvv463f32zi9p715outm0yc7","note":"merge train 20261030_124708: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T15:49:18Z","id":"D5-DEFER-D11083-SITES","from":"merge-queued","to":"merged","owner":"cmvv466te2zjjp715fezye5rp","note":"merge train 20261030_124708: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T15:49:35Z","id":"HB-LAN-REAL-MOVIES","from":"claimed","to":"working","owner":"cmvv5b77u33lvp715egh7z0s3","note":"stage real movies"}
+{"at":"2026-10-30T15:50:19Z","id":"HB-LAN-REAL-MOVIES","from":"working","to":"review","owner":"cmvv5b77u33lvp715egh7z0s3","note":"staged real movies"}
+{"at":"2026-10-30T15:50:36Z","id":"HB-LAN-REAL-MOVIES","from":"review","to":"merge-queued","owner":"cmvv5b77u33lvp715egh7z0s3","note":"orch/HB-LAN-REAL-MOVIES"}
+{"at":"2026-10-30T16:08:09Z","id":"HB-LAN-REAL-MOVIES","from":"merge-queued","to":"merged","owner":"cmvv5b77u33lvp715egh7z0s3","note":"merge train 20261030_125159: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-10-30T16:10:50Z","id":"D5-SHIM-R6-ICON","from":"open","to":"decision","owner":"","note":"L-64"}
+{"at":"2026-10-30T16:10:51Z","id":"D5-SHIM-GUARD","from":"open","to":"decision","owner":"","note":"L-65"}
+{"at":"2026-10-30T16:11:14Z","id":"D4-DC-77b0-RUNTIME-PARKED","from":"open","to":"blocked","owner":"","note":"parked: original-side boots, needs an audio endpoint"}
+{"at":"2026-10-30T16:12:29Z","id":"D5-KNOBS-D-TRIAGE-1","from":"open","to":"claimed","owner":"cmvv66w9u35grp715s3xy9t72","note":""}
+{"at":"2026-10-30T16:13:50Z","id":"D5-KNOBS-D-TRIAGE-1","from":"claimed","to":"working","owner":"cmvv66w9u35grp715s3xy9t72","note":"triage knobs d first half"}
+{"at":"2026-10-30T16:14:51Z","id":"D5-SHIM-R6-ICON","from":"decision","to":"done","owner":"","note":"answered L-64 (b): work moved to D5-ICON-ASSET"}
+{"at":"2026-10-30T16:14:52Z","id":"D5-SHIM-GUARD","from":"decision","to":"open","owner":"","note":"L-65 answered (Mariano 2026-10-30): decide after D5-SHIM-CONSUMERS. If it ends with the shims deleted from the repo -> no guard, close this row done. If the shims stay -> add the startup guard (pre-load d3d9 and dinput8 from System32, or SetDefaultDllDirectories), gates -Full. Apply without asking again; note the outcome in the REPORT. Starts only after D5-SHIM-CONSUMERS is merged."}
+{"at":"2026-10-30T16:21:45Z","id":"D5-KNOBS-D-TRIAGE-1","from":"working","to":"review","owner":"cmvv66w9u35grp715s3xy9t72","note":""}
+{"at":"2026-10-30T16:22:10Z","id":"D5-KNOBS-D-TRIAGE-1","from":"review","to":"merge-queued","owner":"cmvv66w9u35grp715s3xy9t72","note":"orch/D5-KNOBS-D-TRIAGE-1"}
+{"at":"2026-10-30T16:28:25Z","id":"D4-DC-77b0-LAPLONG","from":"working","to":"review","owner":"cmvv59wt333bjp7156svud7am","note":"GREEN: MASHED_NO_ELIM=1 on the LAP recipe keeps the round open; lap 0->1 (+1, node wrap) on Egypt/Highway/City, laps non-decreasing all cars; gates unchanged"}
+{"at":"2026-10-30T16:28:49Z","id":"D4-DC-77b0-LAPLONG","from":"review","to":"merge-queued","owner":"cmvv59wt333bjp7156svud7am","note":"orch/D4-DC-77b0-LAPLONG"}
+{"at":"2026-10-30T16:30:59Z","id":"D5-KNOBS-D-TRIAGE-1","from":"merge-queued","to":"merged","owner":"cmvv66w9u35grp715s3xy9t72","note":"merge train 20261030_132940: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T16:31:00Z","id":"D4-DC-77b0-LAPLONG","from":"merge-queued","to":"merged","owner":"cmvv59wt333bjp7156svud7am","note":"merge train 20261030_132940: not run: text-only change (no build input touched)"}
