@@ -1261,3 +1261,69 @@
 {"at":"2026-10-30T16:28:49Z","id":"D4-DC-77b0-LAPLONG","from":"review","to":"merge-queued","owner":"cmvv59wt333bjp7156svud7am","note":"orch/D4-DC-77b0-LAPLONG"}
 {"at":"2026-10-30T16:30:59Z","id":"D5-KNOBS-D-TRIAGE-1","from":"merge-queued","to":"merged","owner":"cmvv66w9u35grp715s3xy9t72","note":"merge train 20261030_132940: not run: text-only change (no build input touched)"}
 {"at":"2026-10-30T16:31:00Z","id":"D4-DC-77b0-LAPLONG","from":"merge-queued","to":"merged","owner":"cmvv59wt333bjp7156svud7am","note":"merge train 20261030_132940: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T16:36:24Z","id":"D5-ICON-ASSET","from":"open","to":"claimed","owner":"cmvv726q037t3p715cioun7mu","note":""}
+{"at":"2026-10-30T16:36:26Z","id":"D5-KNOBS-B1-RENDERFX","from":"open","to":"claimed","owner":"cmvv728yv37tnp7158t11yi1m","note":""}
+{"at":"2026-10-30T16:36:45Z","id":"D4-DC-77b0-STATE5CALLS","from":"open","to":"claimed","owner":"cmvv72oun37zbp71532s4200u","note":""}
+{"at":"2026-10-30T16:36:46Z","id":"D5-SHIM-CONSUMERS","from":"open","to":"claimed","owner":"cmvv72lu237ybp71550hvj7p7","note":""}
+{"at":"2026-10-30T16:36:49Z","id":"D5-KNOBS-D-TRIAGE-2","from":"open","to":"claimed","owner":"cmvv72o4c37z5p715fmvt2wjz","note":""}
+{"at":"2026-10-30T16:36:51Z","id":"D5-DEPS-LOCAL","from":"open","to":"claimed","owner":"cmvv72qjt3807p715y6u7818i","note":""}
+{"at":"2026-10-30T16:39:33Z","id":"D5-KNOBS-D-TRIAGE-2","from":"claimed","to":"working","owner":"cmvv72o4c37z5p715fmvt2wjz","note":"triage rows 64-126"}
+{"at":"2026-10-30T16:39:40Z","id":"D5-ICON-ASSET","from":"claimed","to":"working","owner":"cmvv726q037t3p715cioun7mu","note":"worktree created, reading exe_main icon loader"}
+{"at":"2026-10-30T16:39:43Z","id":"D5-KNOBS-B1-RENDERFX","from":"claimed","to":"working","owner":"cmvv728yv37tnp7158t11yi1m","note":"worktree created, auditing knobs"}
+{"at":"2026-10-30T16:39:50Z","id":"D5-DEPS-LOCAL","from":"claimed","to":"working","owner":"cmvv72qjt3807p715y6u7818i","note":"staging LAN layout, module list"}
+{"at":"2026-10-30T16:39:51Z","id":"D4-DC-77b0-STATE5CALLS","from":"claimed","to":"working","owner":"cmvv72oun37zbp71532s4200u","note":"step 1 static: decomp 0040fc00/425a40/418860 vs SubStateMachine.cpp"}
+{"at":"2026-10-30T16:39:53Z","id":"D5-SHIM-CONSUMERS","from":"claimed","to":"working","owner":"cmvv72lu237ybp71550hvj7p7","note":"mapping shim consumers"}
+{"at":"2026-10-30T16:39:56Z","id":"D5-DEPS-LOCAL","from":"working","to":"working","owner":"cmvv72qjt3807p715y6u7818i","note":"staging LAN layout, module list"}
+{"at":"2026-10-30T16:41:54Z","id":"D5-DEPS-LOCAL","from":"working","to":"review","owner":"cmvv72qjt3807p715y6u7818i","note":""}
+{"at":"2026-10-30T16:42:09Z","id":"D5-DEPS-LOCAL","from":"review","to":"merge-queued","owner":"cmvv72qjt3807p715y6u7818i","note":"orch/D5-DEPS-LOCAL"}
+{"at":"2026-10-30T16:42:50Z","id":"D5-SHIM-CONSUMERS","from":"working","to":"review","owner":"cmvv72lu237ybp71550hvj7p7","note":"SHIM VERDICT: d3d9 STAYS, dinput8 STAYS"}
+{"at":"2026-10-30T16:43:02Z","id":"D5-SHIM-CONSUMERS","from":"review","to":"merge-queued","owner":"cmvv72lu237ybp71550hvj7p7","note":"orch/D5-SHIM-CONSUMERS"}
+{"at":"2026-10-30T16:45:01Z","id":"D4-DC-77b0-STATE5CALLS","from":"working","to":"review","owner":"cmvv72oun37zbp71532s4200u","note":"static GREEN: exe runs 1 AiPreTickRubberBand per state-5 step, no FUN_00425a40 leg; text-only"}
+{"at":"2026-10-30T16:45:16Z","id":"D4-DC-77b0-STATE5CALLS","from":"review","to":"merge-queued","owner":"cmvv72oun37zbp71532s4200u","note":"orch/D4-DC-77b0-STATE5CALLS"}
+{"at":"2026-10-30T16:45:23Z","id":"D5-DEPS-LOCAL","from":"merge-queued","to":"merged","owner":"cmvv72qjt3807p715y6u7818i","note":"merge train 20261030_134312: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T16:45:25Z","id":"D5-SHIM-CONSUMERS","from":"merge-queued","to":"merged","owner":"cmvv72lu237ybp71550hvj7p7","note":"merge train 20261030_134312: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T16:45:51Z","id":"D4-DC-77b0-STATE5-ORIGREAD","from":"open","to":"blocked","owner":"","note":"needs the audio endpoint for an original-side boot (none on LIVING-PC run 25)"}
+{"at":"2026-10-30T16:47:52Z","id":"D5-SHIM-GUARD","from":"open","to":"claimed","owner":"cmvv7h0om3ao7p715et84n2p2","note":""}
+{"at":"2026-10-30T16:49:17Z","id":"D4-DC-77b0-STATE5CALLS","from":"merge-queued","to":"merged","owner":"cmvv72oun37zbp71532s4200u","note":"merge train 20261030_134722: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T16:50:16Z","id":"D5-SHIM-GUARD","from":"claimed","to":"working","owner":"cmvv7h0om3ao7p715et84n2p2","note":"guard: worktree created"}
+{"at":"2026-10-30T16:50:54Z","id":"D5-KNOBS-D-TRIAGE-2","from":"working","to":"review","owner":"cmvv72o4c37z5p715fmvt2wjz","note":"63/63 verdicts"}
+{"at":"2026-10-30T16:51:05Z","id":"D5-KNOBS-D-TRIAGE-2","from":"review","to":"merge-queued","owner":"cmvv72o4c37z5p715fmvt2wjz","note":"orch/D5-KNOBS-D-TRIAGE-2"}
+{"at":"2026-10-30T16:52:04Z","id":"D5-KNOBS-PENDING-4","from":"open","to":"decision","owner":"","note":"L-66"}
+{"at":"2026-10-30T16:53:58Z","id":"D5-KNOBS-D-TRIAGE-2","from":"merge-queued","to":"merged","owner":"cmvv72o4c37z5p715fmvt2wjz","note":"merge train 20261030_135218: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T16:59:06Z","id":"D5-KNOBS-INVENTORY-FIX","from":"open","to":"claimed","owner":"cmvv7vcz93cazp715ei2nldoo","note":""}
+{"at":"2026-10-30T16:59:08Z","id":"D5-KNOBS-THROTTLEK-CHECK","from":"open","to":"claimed","owner":"cmvv7veyn3cb5p715l748qsoe","note":""}
+{"at":"2026-10-30T16:59:09Z","id":"D5-SHIM-AUTOLOAD-SWEEP","from":"open","to":"claimed","owner":"cmvv7vh3f3cbhp7152dkvhyup","note":""}
+{"at":"2026-10-30T17:01:11Z","id":"D5-KNOBS-INVENTORY-FIX","from":"claimed","to":"working","owner":"cmvv7vcz93cazp715ei2nldoo","note":"inventory fix vs kFaith"}
+{"at":"2026-10-30T17:01:13Z","id":"D5-KNOBS-THROTTLEK-CHECK","from":"claimed","to":"working","owner":"cmvv7veyn3cb5p715l748qsoe","note":"static trace"}
+{"at":"2026-10-30T17:01:18Z","id":"D5-SHIM-AUTOLOAD-SWEEP","from":"claimed","to":"working","owner":"cmvv7vh3f3cbhp7152dkvhyup","note":"static spawner sweep"}
+{"at":"2026-10-30T17:02:06Z","id":"D5-KNOBS-INVENTORY-FIX","from":"working","to":"review","owner":"cmvv7vcz93cazp715ei2nldoo","note":""}
+{"at":"2026-10-30T17:02:10Z","id":"D5-KNOBS-THROTTLEK-CHECK","from":"working","to":"review","owner":"cmvv7veyn3cb5p715l748qsoe","note":""}
+{"at":"2026-10-30T17:02:24Z","id":"D5-KNOBS-INVENTORY-FIX","from":"review","to":"merge-queued","owner":"cmvv7vcz93cazp715ei2nldoo","note":"orch/D5-KNOBS-INVENTORY-FIX"}
+{"at":"2026-10-30T17:02:25Z","id":"D5-KNOBS-THROTTLEK-CHECK","from":"review","to":"merge-queued","owner":"cmvv7veyn3cb5p715l748qsoe","note":"orch/D5-KNOBS-THROTTLEK-CHECK"}
+{"at":"2026-10-30T17:04:30Z","id":"D5-KNOBS-INVENTORY-FIX","from":"merge-queued","to":"merged","owner":"cmvv7vcz93cazp715ei2nldoo","note":"merge train 20261030_140309: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T17:04:31Z","id":"D5-KNOBS-THROTTLEK-CHECK","from":"merge-queued","to":"merged","owner":"cmvv7veyn3cb5p715l748qsoe","note":"merge train 20261030_140309: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T17:07:18Z","id":"D5-SHIM-AUTOLOAD-SWEEP","from":"working","to":"review","owner":"cmvv7vh3f3cbhp7152dkvhyup","note":""}
+{"at":"2026-10-30T17:07:27Z","id":"D5-SHIM-AUTOLOAD-SWEEP","from":"review","to":"merge-queued","owner":"cmvv7vh3f3cbhp7152dkvhyup","note":"orch/D5-SHIM-AUTOLOAD-SWEEP"}
+{"at":"2026-10-30T17:09:58Z","id":"D5-SHIM-AUTOLOAD-SWEEP","from":"merge-queued","to":"merged","owner":"cmvv7vh3f3cbhp7152dkvhyup","note":"merge train 20261030_140832: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T17:12:07Z","id":"D5-ICON-ASSET","from":"working","to":"review","owner":"cmvv726q037t3p715cioun7mu","note":"GREEN: icon embedded via mashed_re.rc, exe never opens MASHED.exe, stage drops it; disc BMPs byte-identical; G-CTRL/B hold; @57f88f370"}
+{"at":"2026-10-30T17:25:42Z","id":"D5-ICON-ASSET","from":"review","to":"merge-queued","owner":"cmvv726q037t3p715cioun7mu","note":"orch/D5-ICON-ASSET"}
+{"at":"2026-10-30T17:30:37Z","id":"D5-KNOBS-B1-RENDERFX","from":"working","to":"review","owner":"cmvv728yv37tnp7158t11yi1m","note":"GREEN: 8 knobs deleted, gates unchanged, lint 0 NEW; NO_PICKUP_GLOW + NO_ICONCUBE left out"}
+{"at":"2026-10-30T17:41:04Z","id":"D5-SHIM-GUARD","from":"working","to":"review","owner":"cmvv7h0om3ao7p715et84n2p2","note":"GREEN: delay-load + System32 notify hook; dummy proxies ignored; gates unchanged"}
+{"at":"2026-10-30T17:41:21Z","id":"D5-SHIM-GUARD","from":"review","to":"merge-queued","owner":"cmvv7h0om3ao7p715et84n2p2","note":"orch/D5-SHIM-GUARD"}
+{"at":"2026-10-30T17:47:28Z","id":"HB-ARCTIC-NOLIGHT-CAP","from":"open","to":"blocked","owner":"","note":"needs the audio endpoint for an original-side boot"}
+{"at":"2026-10-30T17:47:30Z","id":"D5-SHIM-DINPUT8-SPAWNERS","from":"open","to":"blocked","owner":"","note":"smoke needs original-side boots (audio endpoint)"}
+{"at":"2026-10-30T17:47:30Z","id":"D5-KNOBS-PENDING-4","from":"decision","to":"done","owner":"","note":"L-66 answered 2026-10-30: (a) flip rows D5-FLIP-MUSIC-NOCDAUDIO / D5-FLIP-RFLAME-SORT / D5-FLIP-SAVE-FIRSTRUN, (b) TERRAIN_NOLIGHT dev knob + HB-ARCTIC-NOLIGHT-CAP"}
+{"at":"2026-10-30T17:50:08Z","id":"D5-KNOBS-B1-RENDERFX","from":"review","to":"merge-queued","owner":"cmvv728yv37tnp7158t11yi1m","note":"orch/D5-KNOBS-B1-RENDERFX"}
+{"at":"2026-10-30T17:50:17Z","id":"D5-KNOBS-B2-TRACKRENDER","from":"open","to":"claimed","owner":"cmvv9pcr43g97p715keu9a8zt","note":""}
+{"at":"2026-10-30T17:51:51Z","id":"D5-KNOBS-B2-TRACKRENDER","from":"claimed","to":"working","owner":"cmvv9pcr43g97p715keu9a8zt","note":"worktree created, confirming defaults"}
+{"at":"2026-10-30T18:09:45Z","id":"D5-ICON-ASSET","from":"merge-queued","to":"merged","owner":"cmvv726q037t3p715cioun7mu","note":"merge train 20261030_144218: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T18:09:46Z","id":"D5-SHIM-GUARD","from":"merge-queued","to":"merged","owner":"cmvv7h0om3ao7p715et84n2p2","note":"merge train 20261030_144218: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T18:21:11Z","id":"D5-KNOBS-B2-TRACKRENDER","from":"working","to":"review","owner":"cmvv9pcr43g97p715keu9a8zt","note":"GREEN: 10 knobs deleted, 3 pontoon opt-outs kept (gate runner OPT/NOP/NOPC stacks); G-CTRL/B unchanged, 13-track identical"}
+{"at":"2026-10-30T18:21:30Z","id":"D5-KNOBS-B2-TRACKRENDER","from":"review","to":"merge-queued","owner":"cmvv9pcr43g97p715keu9a8zt","note":"orch/D5-KNOBS-B2-TRACKRENDER"}
+{"at":"2026-10-30T18:22:05Z","id":"D5-KNOBS-B3-AI-RACE","from":"open","to":"claimed","owner":"cmvvau6b23j3vp7158wz2o937","note":""}
+{"at":"2026-10-30T18:23:50Z","id":"D5-KNOBS-B3-AI-RACE","from":"claimed","to":"working","owner":"cmvvau6b23j3vp7158wz2o937","note":"worktree created, grepping knob users"}
+{"at":"2026-10-30T18:55:13Z","id":"D5-KNOBS-B1-RENDERFX","from":"merge-queued","to":"merged","owner":"cmvv728yv37tnp7158t11yi1m","note":"merge train 20261030_152217: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T18:55:14Z","id":"D5-KNOBS-B2-TRACKRENDER","from":"merge-queued","to":"merged","owner":"cmvv9pcr43g97p715keu9a8zt","note":"merge train 20261030_152217: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T19:01:13Z","id":"D5-KNOBS-B3-AI-RACE","from":"working","to":"review","owner":"cmvvau6b23j3vp7158wz2o937","note":"GREEN: 7 of 11 knobs deleted, 4 kept (run_arms.py stacks NOCC/NOD2/NOCL5/NOL5/NCC); G-CTRL/B unchanged, (b)(e) 3/3, D2 DEFH 3/3"}
+{"at":"2026-10-30T19:01:33Z","id":"D5-KNOBS-B3-AI-RACE","from":"review","to":"merge-queued","owner":"cmvvau6b23j3vp7158wz2o937","note":"orch/D5-KNOBS-B3-AI-RACE"}
+{"at":"2026-10-30T19:30:16Z","id":"D5-KNOBS-B3-AI-RACE","from":"merge-queued","to":"merged","owner":"cmvvau6b23j3vp7158wz2o937","note":"merge train 20261030_160222: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
