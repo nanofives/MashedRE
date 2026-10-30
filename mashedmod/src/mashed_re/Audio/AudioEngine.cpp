@@ -427,7 +427,8 @@ void MusicStartBankWaveLoop(const char* waveSub, float volume) {
 }
 }  // namespace
 
-// [D4-WSJ-MUSIC] MASHED_MUSIC_NO_RACE_CDAUDIO=1, default OFF: no cdaudio.rws stream in Race / Results.
+// [D4-WSJ-MUSIC] MASHED_MUSIC_NO_RACE_CDAUDIO=1: no cdaudio.rws stream in Race / Results. Default ON in the standalone since
+// D5-FLIP-MUSIC-NOCDAUDIO (L-66 a, seeded by Core/FaithDefaults.cpp); MASHED_NO_MUSIC_NO_RACE_CDAUDIO=1 or MASHED_MUSIC_NO_RACE_CDAUDIO=0 opts out.
 // The original has no reader of the `CDAUDIO` row string (0x00604170) and no path builder that can yield
 // cdaudio.rws (0x004625ec / 0x00462991 / 0x0045d470 only); its race tick (FUN_00466b50 case 3/7) starts no music
 // voice. verify/wsjmusic_20261026/RESULT_D4-WSJ-MUSIC.md.
