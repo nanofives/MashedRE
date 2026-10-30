@@ -1,0 +1,26 @@
+L_City.pathprog.csv rows=25804 frames=6451 sha256=cc11713782f8aac5d156c5da69a7b44d11cbd012028572a6c54fbbab617b805c
+  v=0 laps 0->0 values=[0] increments_at=[] decreases=0 jumps>1=0 distinct_nodes=1 NONDEC
+  v=1 laps -1->0 values=[-1, 0] increments_at=[19] decreases=0 jumps>1=0 distinct_nodes=2 NONDEC
+  v=2 laps -1->0 values=[-1, 0] increments_at=[30] decreases=0 jumps>1=0 distinct_nodes=2 NONDEC
+  v=3 laps -1->0 values=[-1, 0] increments_at=[34] decreases=0 jumps>1=0 distinct_nodes=2 NONDEC
+L_Egypt.pathprog.csv rows=25944 frames=6486 sha256=42f3a72e6bc9206f65c521fd8a74864fb0a73249beb70a7282c1f52310b2e0f7
+  v=0 laps -1->-1 values=[-1] increments_at=[] decreases=0 jumps>1=0 distinct_nodes=1 NONDEC
+  v=1 laps -1->0 values=[-1, 0] increments_at=[19] decreases=0 jumps>1=0 distinct_nodes=4 NONDEC
+  v=2 laps -1->0 values=[-1, 0] increments_at=[24] decreases=0 jumps>1=0 distinct_nodes=5 NONDEC
+  v=3 laps -1->0 values=[-1, 0] increments_at=[34] decreases=0 jumps>1=0 distinct_nodes=3 NONDEC
+L_Egypt_G.pathprog.csv rows=3144 frames=786 sha256=6f43760aa355255c4817240bb57a0bd1d9e0581caaeb1e2cd7b395c2998ee30b
+  v=0 laps -1->-1 values=[-1] increments_at=[] decreases=0 jumps>1=0 distinct_nodes=1 NONDEC
+  v=1 laps -1->0 values=[-1, 0] increments_at=[19] decreases=0 jumps>1=0 distinct_nodes=4 NONDEC
+  v=2 laps -1->0 values=[-1, 0] increments_at=[24] decreases=0 jumps>1=0 distinct_nodes=5 NONDEC
+  v=3 laps -1->0 values=[-1, 0] increments_at=[34] decreases=0 jumps>1=0 distinct_nodes=3 NONDEC
+L_Highway.pathprog.csv rows=25388 frames=6347 sha256=c77da208f8bd250bb06b07f1c886a3d4df5059404a621baf8a6ee150ca8e7696
+  v=0 laps 0->0 values=[0] increments_at=[] decreases=0 jumps>1=0 distinct_nodes=1 NONDEC
+  v=1 laps -1->0 values=[-1, 0] increments_at=[19] decreases=0 jumps>1=0 distinct_nodes=5 NONDEC
+  v=2 laps -1->0 values=[-1, 0] increments_at=[30] decreases=0 jumps>1=0 distinct_nodes=4 NONDEC
+  v=3 laps -1->0 values=[-1, 0] increments_at=[34] decreases=0 jumps>1=0 distinct_nodes=4 NONDEC
+L_Training.pathprog.csv rows=25284 frames=6321 sha256=1765a04dfad1436ae80de6f5f8b969cafb0e4798e430d64b2ed1087bbc1550b6
+  v=0 laps -1->0 values=[-1, 0] increments_at=[22] decreases=0 jumps>1=0 distinct_nodes=4 NONDEC
+  v=1 laps -1->0 values=[-1, 0] increments_at=[19] decreases=0 jumps>1=0 distinct_nodes=7 NONDEC
+  v=2 laps -1->0 values=[-1, 0] increments_at=[28] decreases=0 jumps>1=0 distinct_nodes=7 NONDEC
+  v=3 laps -1->0 values=[-1, 0] increments_at=[34] decreases=0 jumps>1=0 distinct_nodes=8 NONDEC
+ALL NONDECREASING
