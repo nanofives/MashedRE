@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 15:55 D5-KNOBS-B1-RENDERFX (orch/D5-KNOBS-B1-RENDERFX), D5-KNOBS-B2-TRACKRENDER (orch/D5-KNOBS-B2-TRACKRENDER): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_152217
 - 2026-10-30 15:09 D5-ICON-ASSET (orch/D5-ICON-ASSET), D5-SHIM-GUARD (orch/D5-SHIM-GUARD): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_144218
 - 2026-10-30 14:09 D5-SHIM-AUTOLOAD-SWEEP (orch/D5-SHIM-AUTOLOAD-SWEEP): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_140832
 - 2026-10-30 14:04 D5-KNOBS-INVENTORY-FIX (orch/D5-KNOBS-INVENTORY-FIX), D5-KNOBS-THROTTLEK-CHECK (orch/D5-KNOBS-THROTTLEK-CHECK): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_140309
