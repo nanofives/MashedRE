@@ -1,5 +1,12 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 00:18 HB-RUN13-PHASE3-START (orch/HB-RUN13-PHASE3-START): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_235103
+- 2026-10-29 23:04 D5-DEFER-D11083 (orch/D5-DEFER-D11083): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_230309
+- 2026-10-29 23:02 D4-WSB-SOLV-KV-ARMU (orch/D4-WSB-SOLV-KV-ARMU), D5-DEFER-CALLERWALK (orch/D5-DEFER-CALLERWALK): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_224245
+- 2026-10-29 22:30 D4-DC-77b0-BODYDIFF (orch/D4-DC-77b0-BODYDIFF): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_222840
+- 2026-10-29 22:27 D4-SDONE-COUNT (orch/D4-SDONE-COUNT), D5-DEFERRED-SWEEP (orch/D5-DEFERRED-SWEEP): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_222626
+- 2026-10-29 19:10 D4-WSB-PORT-BVH (orch/D4-WSB-PORT-BVH), D4-WSB-PORT-BROAD-1 (orch/D4-WSB-PORT-BROAD-1): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_184133
+- 2026-10-29 17:25 D4-WSB-C4-SOLV-TRK1 (orch/D4-WSB-C4-SOLV-TRK1), D2-BAND-42S (orch/D2-BAND-42S): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_171513
 - 2026-10-29 16:00 D3-SUBSTATE-ROW315 (orch/D3-SUBSTATE-ROW315): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_155811
 - 2026-10-29 15:56 D3-SUBSTATE-SETTLE-ORDER (orch/D3-SUBSTATE-SETTLE-ORDER): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_151322
 - 2026-10-29 15:12 D3-SUBSTATE-PREGO-ALIVE (orch/D3-SUBSTATE-PREGO-ALIVE), D4-WSB-PORT-SOLV-KV (orch/D4-WSB-PORT-SOLV-KV): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_144346

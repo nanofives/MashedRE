@@ -1,0 +1,9 @@
+== 0x00558ca0: 2 direct call sites
+  00451387 -> KILL@0045138c mov eax, dword ptr [0x636ad4]
+  004796de -> KILL@004796e7 mov eax, dword ptr [esp + 0x38]
+== 0x00559b50: 1 direct call sites
+  0055dcb4 -> READ32@0055dcc0 mov dword ptr [esi], eax
+== 0x00559be0: 1 direct call sites
+  0055b068 -> KILL@0055b070 mov eax, 1
+== 0x0055ad20: 1 direct call sites
+  0047f8b1 -> KILL@0047f8bc call

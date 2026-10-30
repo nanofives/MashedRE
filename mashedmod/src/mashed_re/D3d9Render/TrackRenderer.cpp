@@ -294,6 +294,11 @@ int CamReplayGoRow();
 // [D5-ICONCUBE-SPIN amendment A] false when MASHED_CAM_REPLAY_GO is set and the consumed row's ff4 equals the
 // previous row's (no FUN_0040fc00 add on that original frame); true otherwise.
 bool CamReplayRowRunsFc00(int row);
+// [HB-RUN13-PHASE3-START] MASHED_CAM_REPLAY_P3 (DIAGNOSTIC, default OFF): true when the knob is set and a
+// MASHED_CAM_REPLAY trace is loaded. CamReplayConsumeRow: advance the trace one row without feeding the camera
+// (returns the row index, -2 when exhausted).
+bool CamReplayP3On();
+int CamReplayConsumeRow();
 // ---------------------------------------------------------------------------
 // [D3 2026-10-05] U-9188 legs A and B. DEFAULT OFF: with MASHED_AI_YAWW unset
 // every entry point here returns on its first line and nothing is written.
@@ -8278,9 +8283,20 @@ void TrackRenderer::SubStateCameraChain(bool reset) {
             cam_ticks_ = s_replay[rf];
         else
             cam_ticks_ += (1.0 / 60.0) * 3000000.0;                // DAT_007f1030 rate, as UpdateRace
-        race_cam_.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, reset);
+        // [HB-RUN13-PHASE3-START] MASHED_CAM_REPLAY_P3 (DIAGNOSTIC, default OFF, inert without MASHED_CAM_REPLAY):
+        // every capfix / d1r1 trace starts on this chain's first call (row 0 ba8c 3, reset 1; row 1 the same frame's
+        // reset-0 call), so the replay consumes one row per call from the phase-3 entry, not from the port's GO.
+        // Knob OFF: the line below, unchanged.
+        if (CamReplayP3On())
+            RaceCamUpdate(cc, reset);
+        else
+            race_cam_.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, reset);
         const float* p = race_cam_.pos();                          // +0x40..+0x48
         std::memcpy(reinterpret_cast<void*>(0x00897fe4u), p, 12);  // 0x004481c9 copy -> +4..+0xc
+    } else if (CamReplayP3On()) {
+        // [HB-RUN13-PHASE3-START] camera_probe.py writes a row on every FUN_00446520 return, cam[7] or not, so a
+        // gated-off call still takes its row (no trace row has c7 != 0; this keeps the 1:1 call mapping anyway)
+        cam_replay_row_ = CamReplayConsumeRow();
     }
     static std::FILE* s_tf = [] { const char* e = std::getenv("MASHED_LEG2_TRACE");
                                   std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
@@ -8499,6 +8515,16 @@ bool CamReplayRowRunsFc00(int row) {
     const double cur = R.rows[static_cast<std::size_t>(row)][static_cast<std::size_t>(R.c_ff4)];
     const double prev = row > 0 ? R.rows[static_cast<std::size_t>(row - 1)][static_cast<std::size_t>(R.c_ff4)] : 0.0;
     return cur != prev;
+}
+bool CamReplayP3On() {
+    static const bool s_p3 = [] { const char* e = std::getenv("MASHED_CAM_REPLAY_P3"); return e && e[0] && e[0] != '0'; }();
+    return s_p3 && CamReplayState().on;
+}
+int CamReplayConsumeRow() {
+    CamReplay& R = CamReplayState();
+    if (!R.on) return -1;
+    if (R.next < R.rows.size()) return static_cast<int>(R.next++);
+    return -2;
 }
 int CamReplayGoRow() {
     const CamReplay& R = CamReplayState();

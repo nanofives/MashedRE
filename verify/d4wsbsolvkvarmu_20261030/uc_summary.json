@@ -1,0 +1,245 @@
+{
+ "anchor": "bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e",
+ "seed": 20261029,
+ "cases_per_fn": 300,
+ "adaptive": 300,
+ "big": 300,
+ "unicorn_errors": 0,
+ "fistp_probe": {
+  "0056a7a0": {
+   "fistp_exec": 0,
+   "m4_sensitive": 0,
+   "cases_with_sensitive": 0,
+   "op_min": null,
+   "op_max": null
+  },
+  "0056aae0": {
+   "fistp_exec": 0,
+   "m4_sensitive": 0,
+   "cases_with_sensitive": 0,
+   "op_min": null,
+   "op_max": null
+  },
+  "0056ac40": {
+   "fistp_exec": 0,
+   "m4_sensitive": 0,
+   "cases_with_sensitive": 0,
+   "op_min": null,
+   "op_max": null
+  },
+  "0056adb0": {
+   "fistp_exec": 5,
+   "m4_sensitive": 0,
+   "cases_with_sensitive": 0,
+   "op_min": 1.3152508472558111e-05,
+   "op_max": 0.13960117101669312
+  },
+  "0056adb0A": {
+   "fistp_exec": 10,
+   "m4_sensitive": 0,
+   "cases_with_sensitive": 0,
+   "op_min": 0.00027123806648887694,
+   "op_max": 0.28737252950668335
+  },
+  "0056adb0B": {
+   "fistp_exec": 15,
+   "m4_sensitive": 4,
+   "cases_with_sensitive": 4,
+   "op_min": 0.04607127979397774,
+   "op_max": 2.6946873664855957
+  }
+ },
+ "variants": {
+  "port": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0B": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   }
+  },
+  "M1": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 156,
+    "diff": 144,
+    "first": "case 1 arena+0x4"
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 211,
+    "diff": 89,
+    "first": "case 301 arena+0x4c"
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 68,
+    "diff": 232,
+    "first": "case 900 arena+0x50"
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 70,
+    "diff": 230,
+    "first": "case 1200 arena+0x84"
+   },
+   "0056adb0B": {
+    "cases": 300,
+    "match": 26,
+    "diff": 274,
+    "first": "case 1500 arena+0x60"
+   }
+  },
+  "M2": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 216,
+    "diff": 84,
+    "first": "case 601 ret o=41d8ee83 n=41d8ee84"
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 299,
+    "diff": 1,
+    "first": "case 1245 arena+0x18"
+   },
+   "0056adb0B": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   }
+  },
+  "M3": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 259,
+    "diff": 41,
+    "first": "case 303 arena+0x24"
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 120,
+    "diff": 180,
+    "first": "case 900 arena+0x84"
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 134,
+    "diff": 166,
+    "first": "case 1200 arena+0x80"
+   },
+   "0056adb0B": {
+    "cases": 300,
+    "match": 71,
+    "diff": 229,
+    "first": "case 1500 arena+0x48"
+   }
+  },
+  "M4": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0B": {
+    "cases": 300,
+    "match": 297,
+    "diff": 3,
+    "first": "case 1661 arena+0x18"
+   }
+  }
+ },
+ "verdict": "GREEN"
+}
