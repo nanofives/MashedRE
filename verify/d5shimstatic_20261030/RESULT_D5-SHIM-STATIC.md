@@ -46,3 +46,36 @@ Residual risks: see the [UNCERTAIN] rows (R11, R12). Both need a run or a PE imp
 - Import table of the built `mashed_re.exe` not dumped (needs a build/tool run). A PE import dump would settle that no `d3d9_real`/`dinput8_real` import exists. Static source grep says none.
 - R11 and R12 need a read of the TUs named there.
 - No tracker, `.ps1` or source edit was made.
+
+---
+
+# Addendum 2 (lead review round): uncapped sweep, R11/R12 resolved, import table
+
+## A. Uncapped sweep
+`mashedmod/src`, pattern `d3d9_real|dinput8_real|MASHED_FPS|mashed_re_dev|\.unpatched|MASHED\.exe|Ultimate-ASI|d3d9\.dll|dinput8\.dll`, no head limit, shims excluded: 502 files, almost all provenance comments (`Anchored to MASHED.exe SHA-256`, `read off MASHED.exe.unpatched`), same kind as R16. To separate code from comments I ran a second uncapped pass for string literals and `GetModuleHandle` of those names (`^[^/]*("..." | GetModuleHandle("MASHED"|"d3d9"|"dinput8"))`). It returns every non-comment hit in `mashedmod/src`:
+
+| # | file:line | Hit | In exe target? | Standalone runs without it? |
+|---|---|---|---|---|
+| R20 | `dinput8_shim/dinput8_shim.cpp:25-30` | `/EXPORT:...=dinput8_real.*` linker forwarders | No (shim DLL) | n/a, R17 |
+| R21 | `dinput8_shim/dinput8_shim.cpp:57, 87, 96` | `mashed_qol.asi`, `mashed_re_dev.asi`, `..\mashedmod\build\mashed_re_dev.asi` autoload paths | No | n/a, R17 |
+| R22 | `d3d9_shim/d3d9_shim.cpp:362, 372, 374, 464, 750` | `MASHED_FPS_CAP`, `_CAP_RACE`, `_LOG`, `MASHED_FPS_OSD` env reads, `d3d9_real.dll` path | No | n/a, R17. Note `MASHED_FPS_OSD` was not in R17 |
+| R6 | `exe_main.cpp:8571, 8574` | `LoadLibraryExA("original\\MASHED.exe", AS_DATAFILE)` | Yes | Needs the file only (see R6) |
+| R23 | `Harness/NegCtl.cpp:46` | `#error` if linked into the exe ("dev-.asi-only harness; must never be linked into mashed_re.exe") | Guard, not a dependency | Yes. Build-time barrier |
+
+No `GetModuleHandle` of `MASHED`, `d3d9` or `dinput8` exists anywhere. The only `GetModuleHandleA` in `exe_main.cpp` are `:9278` (nullptr, own module) and `:9405` (`user32.dll`). Code-level `mashed_re_dev` or `d3d9_real` strings appear only in the two shim TUs.
+Dev-only comment markers inside shared TUs, for the record: `Compat/StreamHandlerDispatchGuard.cpp:41` ("Dev-only compat hook ... NOT for the shipping greenfield exe"), `Core/HookSystem.h:3`, `Core/HookSystem.cpp:66-70` (ten boot-patch byte ranges), `Core/ShadowTrack.h:17,92-93,586`. These are asi-side. The exe uses `Stubs\HookSystemNoOp.cpp` (`exe_sources.rsp:133`), whose header (`HookSystemNoOp.cpp:1-5`) says `RH_ScopedInstall` initializers still call `HookSystem::Register` and are no-ops in the exe, so no patch-range or RVA-hook code runs.
+
+## B. R11 resolved: `Compat\StandaloneRvaThunks.cpp` (read in full, 68 lines)
+It does not read `MASHED.exe`. `StandaloneThunks_MapRange` (`:20-40`) walks 64 KB granules with `VirtualQuery` and `VirtualAlloc`s free ones RWX or re-protects committed ones. `StandaloneThunks_Install` (`:42-62`) writes a 5-byte `E9` jump into that memory pointing at an exe-owned function (`Standalone_ScreenWidth` returns 800, `Standalone_ScreenHeight` 600, `Standalone_CreditsNoOp`, `:16-18`). Call sites `exe_main.cpp:9597-9612` map `0x00420000..0x0047ffff` and `0x005c0000..` and install six thunks (`0x0042b8b0`, `0x0042b8c0`, `0x0042d5a0`, `0x00472f40`, `0x004730b0`, `0x00472c60`). These are MASHED RVA addresses used as fixed addresses inside the exe's own address space. Nothing in this path assumes a patched or present original image. Verdict: self-contained. Dev dependence: none. (Hardcoded 800x600 here matches R4.)
+
+## C. R12 resolved: `exe_main.cpp:542-552, 8940-9037` data-section emulation
+`kMashedDataBase = 0x00500000`, `kMashedDataSize = 0x00500000` (`:550-551`). The loop at `:8949-8951` VirtualQuerys each 64 KB granule and allocates the free ones, the comment at `:542-546` says the pages hold "zeroed memory rather than AV". The loop logs covered/blocked granules and sets `g_mashed_data_mapped` (`:8997`, `:9034-9037`). It copies nothing from `MASHED.exe`. The `.rdata` scale constants (1/640, 1/480) are written by exe code (`:9594`, `scale_ok` at `:9599`), not read from the original file. Verdict: self-contained, no read of the original image or its patched bytes.
+
+## D. Import question settled (using `git show orch/D5-DEPS-IMPORTS:verify/d5depsimports_20261030/RESULT_D5-DEPS-IMPORTS.md`, exe sha8 `25c9ad64`)
+- The import table lists KERNEL32, USER32, GDI32, ole32, d3d9, DINPUT8, DSOUND only. No `d3d9_real`, `dinput8_real`, `mashed_re_dev` or any `.asi` import. Delay-load imports: none. That settles the static-import part of R1/R2/R14: the exe has no import of a shim-only DLL name.
+- `GetProcAddress`/`LoadLibrary` in the exe (D5-DEPS-IMPORTS runtime-loaded list): `LoadLibraryExA("original\MASHED.exe")` (R6), `GetProcAddress(user32, "SetProcessDpiAwarenessContext")` (`exe_main.cpp:9407`), ntdll `NtQueryInformationThread` (harness), `CorExitProcess` probe (`Boot/Boot.cpp:78`). No runtime load of a shim name. The shim `LoadLibraryW` calls (`d3d9_shim.cpp:752`, `dinput8_shim.cpp:58/88/97`) are in the shim DLLs.
+- **Could the d3d9 / DINPUT8 imports resolve to a shim placed beside the exe? Yes, by name.** Both are bare-name imports, so the loader's normal search order applies and the application directory comes before System32. That is an inference from standard Windows loader behavior plus the project's own note, not something I tested here: `build.bat:199-207` records that a proxy `d3d9.dll`/`dinput8.dll` beside `mashed_re.exe` is bound instead of System32's and fails ("missing dinput8_real.DLL"), and `build.bat:279-290` renames such copies away. So the exe does not depend on the shim, but it is exposed to a stray one. The same applies to `DSOUND.dll` (import `DirectSoundCreate8`, ordinal 11): no dsound proxy exists in `mashedmod/src` (no `dsound_shim` directory in the grep), so no current exposure.
+- The `[UNCERTAIN]` markers on R11 and R12 are closed by B and C. The 150-line cap is closed by A.
+
+## Revised verdict
+Exe needs the dev harness: **NO**. Evidence: exe import table (D5-DEPS-IMPORTS), `exe_sources.rsp` has no shim/asi TU and carries `Stubs\HookSystemNoOp.cpp`, `Harness/NegCtl.cpp:46` blocks harness linkage, the thunk and data-emulation paths are self-contained, and the single read of `MASHED.exe` (R6) is a resource-only data-file load. Remaining non-code exposure: a stray `d3d9.dll`/`dinput8.dll` beside the exe is bound by name (R1 guard), and R6 needs `original\MASHED.exe` present.
