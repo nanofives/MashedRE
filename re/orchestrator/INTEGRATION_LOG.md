@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 00:18 HB-RUN13-PHASE3-START (orch/HB-RUN13-PHASE3-START): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_235103
 - 2026-10-29 23:04 D5-DEFER-D11083 (orch/D5-DEFER-D11083): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_230309
 - 2026-10-29 23:02 D4-WSB-SOLV-KV-ARMU (orch/D4-WSB-SOLV-KV-ARMU), D5-DEFER-CALLERWALK (orch/D5-DEFER-CALLERWALK): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_224245
 - 2026-10-29 22:30 D4-DC-77b0-BODYDIFF (orch/D4-DC-77b0-BODYDIFF): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_222840
