@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-30  D-11077  DEFERRED  Active->struck  part 0x12/0x14 law ported behind MASHED_PARTMORPH (D5-PARTMORPH 9db830bea), producer ported behind MASHED_CAR_STATE0 (D5-PARTMORPH-PRODUCER 18ddec8b5), both default OFF; the flip is ledger D5-PARTMORPH-FLIPPREP, not this row (evidence: verify/partmorph_20261028/RESULT_D5-PARTMORPH.md; verify/d5deferredsweep_20261030/RESULT_D5-DEFERRED-SWEEP.md)
+2026-10-30  D-11076  DEFERRED  Active->struck  cube half ported (D5-ICONCUBE-SPIN c8cfcdc11, MASHED_ICONCUBE default ON since 1b70ca47a), glow half ported on the rfx emitters (D5-ICONCUBE-GLOW 2f7a1bfdb, MASHED_RFX_EMITTERS default OFF; the glow flip and A6 parity live in a ledger or decision row, not here) (evidence: verify/iconcube_20261028/RESULT_D5-ICONCUBE-GLOW.md; verify/d5deferredsweep_20261030/RESULT_D5-DEFERRED-SWEEP.md)
 2026-10-29  0x005675d0  FUN_005675d0  C3->C4  verify/wsbc4trk1_20261028/RESULT_D4-WSB-C4-SOLV-TRK1.md (Quick Battle racediff C4-CLEAN 6/6 calls + heap-tracked shadow HEAP-CLEAN 24/0, 24 heap pages, hook installed alone, exe/asi 409ac992/ee83d072 after the L-56 flip, gates unchanged)
 2026-10-29  0x00567c00  FUN_00567c00  C3->C4  verify/wsbc4trk1_20261028/RESULT_D4-WSB-C4-SOLV-TRK1.md (Quick Battle racediff C4-CLEAN 6/6 calls + heap-tracked shadow HEAP-CLEAN 24/0, 24 heap pages, hook installed alone, gates unchanged)
 2026-10-29  0x00567c60  FUN_00567c60  C3->C4  verify/wsbc4trk1_20261028/RESULT_D4-WSB-C4-SOLV-TRK1.md (Quick Battle racediff C4-CLEAN 6/6 calls + heap-tracked shadow HEAP-CLEAN 24/0, 96 heap pages, hook installed alone, gates unchanged)
