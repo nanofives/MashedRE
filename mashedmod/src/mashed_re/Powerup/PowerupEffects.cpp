@@ -370,10 +370,12 @@ void RFlame_Step(PowerupSystem& sys, float dt);   // fwd: the emission stepper h
 static FlameSpark s_sparks[100] = {};
 const FlameSpark* RFlame_Pool() { return s_sparks; }
 
-// MASHED_RFLAME_SORT=1 (d3rflame 2026-10-24, default OFF): run the per-group
+// MASHED_RFLAME_SORT=1 (d3rflame 2026-10-24): run the per-group
 // sorter FUN_0045ac40 ahead of each group's 5-spark scan, as the original's tick
 // does (CALL 0x0045ac40 @0x0045af41). OFF = the fixed index order the port
-// scanned in before, unchanged.
+// scanned in before, unchanged. Default ON in the standalone since
+// D5-FLIP-RFLAME-SORT (L-66 a, seeded by Core/FaithDefaults.cpp);
+// MASHED_NO_RFLAME_SORT=1 or MASHED_RFLAME_SORT=0 opts out.
 static bool RFlameSortOn() {
     static int v = -1;
     if (v < 0) {
