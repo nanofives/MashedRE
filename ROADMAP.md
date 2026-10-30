@@ -2924,8 +2924,11 @@ Named D4 work items (added 2026-09-26, previously implicit):
   standalone must read and write a `gamesave.bin` the original accepts.
 - ~~**D1-residue R1-R2**~~ **CLOSED 2026-10-24** (R1 P0-1, R2 L-7 on `verify/d1r2_stills_20261024/RESULT_d1r2_stills.md`, R3 2026-10-16). Open separately: D1-SHADOWS.
 - **Burn the dual-copy allowlist down to zero** (added 2026-09-29). `re/tools/dual_copy_allowlist.txt`
-  currently holds **110** entries — 72 `DUP-IN-TARGET`, 27 `DUP-INSTALL`, 11 `CROSS-TARGET`. Each is
-  an RVA with more than one body, which is how five defects shipped in `mashed_re.exe` while
+  held **110** entries when this item was added (72 `DUP-IN-TARGET`, 27 `DUP-INSTALL`, 11 `CROSS-TARGET`);
+  **since 2026-10-30 (`verify/d4sdonecount_20261030/RESULT_D4-SDONE-COUNT.md`) it holds 16 live lines, all
+  `CROSS-TARGET`** (`0x004177b0` plus the 15 RFX emitter RVAs at `dual_copy_allowlist.txt:63-77`).
+  `scripts/lint_rva_bodies.py` prints `16 finding(s): CROSS-TARGET=16  |  allowlisted=16 NEW=0`.
+  Each is an RVA with more than one body, which is how five defects shipped in `mashed_re.exe` while
   `hooks.csv` said C4 (`re/analysis/DUAL_COPY_AUDIT_2026-09-29.md`,
   `re/analysis/DUAL_COPY_FIX_2026-09-29.md`).
   **The fix per entry is consolidation, not re-verification:** collapse the pair into ONE shared TU
@@ -2989,6 +2992,8 @@ Named D4 work items (added 2026-09-26, previously implicit):
 
 **Gate:** every subsystem S-DONE under the clarified S-DoD, **and
 `re/tools/dual_copy_allowlist.txt` is empty**.
+The lint reads `allowlisted=16 NEW=0` (2026-10-30). The only blockers are `D4-DC-77b0` (`0x004177b0`, 1 line) and
+`D4-DC-RFX-CORE` (the 15 RFX emitter RVAs, `:63-77`).
 
 ### D5 — v1.0 ship
 
