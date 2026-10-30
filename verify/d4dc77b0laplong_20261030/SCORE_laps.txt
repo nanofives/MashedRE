@@ -1,0 +1,16 @@
+L_City_NE.pathprog.csv rows=25804 frames=6451 sha256=995943bccadcd4d2ad830388e1dae4a1fb6f756bb7f2d10d863380115ad23272
+  v=0 laps 0->0 values=[0] increments_at=[] decreases=0 jumps>1=0 distinct_nodes=1 NONDEC
+  v=1 laps -1->2 values=[-1, 0, 1, 2] increments_at=[19, 2740, 5379] decreases=0 jumps>1=0 distinct_nodes=115 NONDEC
+  v=2 laps -1->2 values=[-1, 0, 1, 2] increments_at=[30, 2537, 5072] decreases=0 jumps>1=0 distinct_nodes=115 NONDEC
+  v=3 laps -1->2 values=[-1, 0, 1, 2] increments_at=[34, 2595, 5038] decreases=0 jumps>1=0 distinct_nodes=115 NONDEC
+L_Egypt_NE.pathprog.csv rows=25944 frames=6486 sha256=294a72e6d16470a69bf5de26f9efab1c99d8ac46650510ef9d93726fe15857f8
+  v=0 laps -1->0 values=[-1, 0] increments_at=[2282] decreases=0 jumps>1=0 distinct_nodes=11 NONDEC
+  v=1 laps -1->5 values=[-1, 0, 1, 2, 3, 4, 5] increments_at=[19, 1481, 2637, 3864, 4964, 6068] decreases=0 jumps>1=0 distinct_nodes=40 NONDEC
+  v=2 laps -1->6 values=[-1, 0, 1, 2, 3, 4, 5, 6] increments_at=[24, 970, 1875, 2820, 3909, 4991, 6176] decreases=0 jumps>1=0 distinct_nodes=40 NONDEC
+  v=3 laps -1->5 values=[-1, 0, 1, 2, 3, 4, 5] increments_at=[34, 1260, 2295, 3299, 4603, 5720] decreases=0 jumps>1=0 distinct_nodes=40 NONDEC
+L_Highway_NE.pathprog.csv rows=25388 frames=6347 sha256=e80bb97434cb71d9f825ef0d2f0e1ee5a4163bccc2b6d8921165cd824a2b0179
+  v=0 laps 0->0 values=[0] increments_at=[] decreases=0 jumps>1=0 distinct_nodes=1 NONDEC
+  v=1 laps -1->1 values=[-1, 0, 1] increments_at=[19, 4667] decreases=0 jumps>1=0 distinct_nodes=127 NONDEC
+  v=2 laps -1->2 values=[-1, 0, 1, 2] increments_at=[30, 2616, 5678] decreases=0 jumps>1=0 distinct_nodes=127 NONDEC
+  v=3 laps -1->2 values=[-1, 0, 1, 2] increments_at=[34, 2659, 5812] decreases=0 jumps>1=0 distinct_nodes=127 NONDEC
+ALL NONDECREASING
