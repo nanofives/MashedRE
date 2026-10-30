@@ -71,6 +71,11 @@ const FaithKnob kFaith[] = {
     // Measured ON: verify/d5partmorphflip_20261030/RESULT_D5-PARTMORPH-FLIPPREP.md and RESULT_D5-PARTMORPH-MEASURE.md.
     { "PARTMORPH", "1" },          { "CAR_STATE0", "1" },
 #endif
+    // [D5-FLIP-RFLAME-SORT 2026-10-30, Mariano's decision L-66 (a)] the R_FLAME per-group sorter FUN_0045ac40 ahead of each
+    // group's 5-spark scan, as the original's tick FUN_0045ae80 runs it (CALL 0x0045ac40 @0x0045af41), Powerup/PowerupEffects.cpp
+    // (verify/d3rflame_20261024/RESULT_D3-CF-RFLAME.md). MASHED_NO_RFLAME_SORT=1 or MASHED_RFLAME_SORT=0 opts out.
+    // Measured ON: verify/d5fliprflame_20261030/RESULT_D5-FLIP-RFLAME-SORT.md.
+    { "RFLAME_SORT", "1" },
     // [D5-INTROMOVIES-FLIP 2026-10-30, D-11062, Mariano's decision L-63] the boot movies of FUN_00402750 (0x00402838 /
     // 0x0040283f), RunBootIntroMovies in exe_main.cpp (verify/intromovies_20261030/RESULT_D5-INTROMOVIES-I1B.md).
     // MASHED_NO_INTRO_MOVIES=1 or MASHED_INTRO_MOVIES=0 opts out.

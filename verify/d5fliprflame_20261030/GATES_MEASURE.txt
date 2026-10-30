@@ -1,0 +1,122 @@
+# D5-FLIP-RFLAME-SORT gate outputs, exe mashed_re_on.exe 0daf8b94 (LIVING-PC 2026-10-30)
+
+## arm lines (measure.log)
+=== H_DEF pid=18272 exe=0daf8b94
+    exit=0 self_exited=True secs=553
+    H_DEF.step.csv lines=13962 sha8=8284be46
+    H_DEF.gates.csv lines=54085 sha8=ba407a16
+    H_DEF.ptrace.log lines=27042 sha8=31fe043e
+=== B_DEF_K0 pid=18580 exe=0daf8b94
+    exit=0 self_exited=True secs=40
+    B_DEF_K0.step.csv lines=762 sha8=1d5bf4f9
+=== B_DEF_K1 pid=9060 exe=0daf8b94
+    exit=0 self_exited=True secs=40
+    B_DEF_K1.step.csv lines=762 sha8=1d5bf4f9
+=== B_DEF_K26 pid=12700 exe=0daf8b94
+    exit=0 self_exited=True secs=40
+    B_DEF_K26.step.csv lines=762 sha8=1d5bf4f9
+=== H_PUD pid=18544 exe=0daf8b94
+    exit=0 self_exited=True secs=510
+    H_PUD.step.csv lines=13962 sha8=8284be46
+    H_PUD.gates.csv lines=54085 sha8=ba407a16
+    H_PUD.ptrace.log lines=27042 sha8=31fe043e
+=== B_PUD_K0 pid=4296 exe=0daf8b94
+    exit=0 self_exited=True secs=41
+    B_PUD_K0.step.csv lines=762 sha8=1d5bf4f9
+=== D2_DEFH_1 pid=18108 exe=0daf8b94
+    exit=0 self_exited=False secs=110
+    D2_DEFH_1.motion_diag.log lines=1639 sha8=e1029fa7
+=== D2_DEFH_2 pid=3548 exe=0daf8b94
+    exit=0 self_exited=False secs=110
+    D2_DEFH_2.motion_diag.log lines=1638 sha8=fe38081b
+=== D2_DEFH_3 pid=5744 exe=0daf8b94
+    exit=0 self_exited=False secs=110
+    D2_DEFH_3.motion_diag.log lines=1591 sha8=e1187a86
++ echo 'D2 rerun 1: D2_DEFH_3'
+D2 rerun 1: D2_DEFH_3
+=== D2_DEFH_3 pid=15812 exe=0daf8b94
+    exit=0 self_exited=False secs=110
+    D2_DEFH_3.motion_diag.log lines=1639 sha8=e1029fa7
++ echo 'short after reruns: '
+short after reruns: 
+[01_Egypt] exit=0
+[02_Neustein] exit=0
+[03_Arctic] exit=0
+[04_Highway] exit=0
+[05_Sands] exit=0
+[06_SuperG] exit=0
+[07_Roundabout] exit=0
+[08_Storm] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+[13_Training] exit=0
++ echo 'rowdiff rc=0'
+rowdiff rc=0
++ grep 'INSTRUMENT GATES' D:/MashedWT/D5-FLIP-RFLAME-SORT_data/tracks_score.txt
+INSTRUMENT GATES: PASS
+
+## RUNLOG
+2026-10-30 19:03:49 H_DEF exe=0daf8b94 pid=18272 exit=0 self_exited=True secs=553 
+2026-10-30 19:19:55 B_DEF_K0 exe=0daf8b94 pid=18580 exit=0 self_exited=True secs=40 
+2026-10-30 19:20:34 B_DEF_K1 exe=0daf8b94 pid=9060 exit=0 self_exited=True secs=40 
+2026-10-30 19:21:14 B_DEF_K26 exe=0daf8b94 pid=12700 exit=0 self_exited=True secs=40 
+2026-10-30 19:39:10 H_PUD exe=0daf8b94 pid=18544 exit=0 self_exited=True secs=510 
+2026-10-30 19:39:50 B_PUD_K0 exe=0daf8b94 pid=4296 exit=0 self_exited=True secs=41 
+2026-10-30 19:41:41 D2_DEFH_1 exe=0daf8b94 pid=18108 exit=0 self_exited=False secs=110 
+2026-10-30 19:43:32 D2_DEFH_2 exe=0daf8b94 pid=3548 exit=0 self_exited=False secs=111 
+2026-10-30 19:45:23 D2_DEFH_3 exe=0daf8b94 pid=5744 exit=0 self_exited=False secs=110 
+2026-10-30 19:47:13 D2_DEFH_3 exe=0daf8b94 pid=15812 exit=0 self_exited=False secs=110 
+
+## raw SHA-256
+0daf8b9478fefc76da3e4a583276be2b80cfd7e6a9107d364f0d36bfb3935147 *mashed_re_on.exe
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 *arms/H_DEF.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb *arms/H_DEF.gates.csv
+31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 *arms/H_DEF.ptrace.log
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *arms/B_DEF_K0.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *arms/B_DEF_K1.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *arms/B_DEF_K26.step.csv
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 *arms/H_PUD.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb *arms/H_PUD.gates.csv
+31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 *arms/H_PUD.ptrace.log
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *arms/B_PUD_K0.step.csv
+02173d5cb0f959962bf7482ad1b03fc3e519fca8621c9f0a27aaf74995558548 *arms/H_PUD.pustep.csv
+ee8d241907417494319d6b7dc1d24e7386db37698ca97124512a084deb58fdc8 *arms/B_PUD_K0.pustep.csv
+e1029fa7ee9a07e8036f2762b9b24e69bc31635c636fe6aef85cceac268e907a *arms/D2_DEFH_1.motion_diag.log
+fe38081b72afd4ea1ad2c44aa451677598a7c7368bffedb4b6099b13c7042d84 *arms/D2_DEFH_2.motion_diag.log
+e1029fa7ee9a07e8036f2762b9b24e69bc31635c636fe6aef85cceac268e907a *arms/D2_DEFH_3.motion_diag.log
+2431afb1da35f95db9bb01535f071da5400d53fb2cc2550210465c0404be27c3 *tracks_score.txt
+
+## (b) vsum
+B_DEF_K0               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K1               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K26              3/3  car1 A PASS | car2 A PASS | car3 A PASS
+
+## (e) ai_speed_env --check B_DEF_K0
+D:/MashedWT/D5-FLIP-RFLAME-SORT_data/arms/B_DEF_K0.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2254.8 (n=124) wmax=3527.0
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2648.1 (n=179) wmax=3904.0
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2691.4 (n=154) wmax=4507.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+
+## D2 score_d2_v2.py port
+D:/MashedWT/D5-FLIP-RFLAME-SORT_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1917.1000 in n=('382', '647', '1431') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-RFLAME-SORT_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1919.6200 in n=('381', '647', '1430') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-RFLAME-SORT_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1917.1000 in n=('382', '647', '1431') H1 398/400 median 1333.9
+
+## R_FLAME reachability (pu_reach.py)
+D:/MashedWT/D5-FLIP-RFLAME-SORT_data/arms/H_PUD.pustep.csv: rows=26852 frames=13479
+  slot 1 held OIL rows=13373 fire_rows=0
+  slot 2 held PMINE rows=13479 fire_rows=0
+  R_FLAME held rows=0 fire rows=0
+D:/MashedWT/D5-FLIP-RFLAME-SORT_data/arms/B_PUD_K0.pustep.csv: rows=452 frames=279
+  slot 1 held OIL rows=173 fire_rows=0
+  slot 2 held PMINE rows=279 fire_rows=0
+  R_FLAME held rows=0 fire rows=0
+
+## run13 score (tracks_score.txt, sha256 2431afb1 = tracks_score_sub_p3.txt)
+INSTRUMENT GATES: PASS
+row diff vs reference: 0 bytes

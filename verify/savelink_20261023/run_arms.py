@@ -452,6 +452,7 @@ STACK['RTR'] = ['MASHED_A5_RACE_TIMER_LOG=1'] + _REC
 STACK['SUBHRTR'] = STACK['SUBH'] + STACK['RTR']
 STACK['NRTR'] = ['MASHED_NO_A5_RACE_TIMER=1'] + _REC
 STACK['SUBHNRTR'] = STACK['SUBH'] + STACK['NRTR']
+STACK['PUD'] = ['MASHED_PU_STEPDUMP=@OUT@/@NAME@.pustep.csv']   # D5-FLIP-RFLAME-SORT: power-up step dump only (R_FLAME reachability witness)
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
