@@ -29,6 +29,8 @@ backbuffer the shim already presents 1:1.
 COUPLING: 640x480 must equal the d3d9 shim's kForceBackBufferWidth/Height
 (mashedmod/src/d3d9_shim/d3d9_shim.cpp). If the shim's forced backbuffer changes,
 update WIDTH/HEIGHT below to match.
+The coupling survives D5: the d3d9 shim and the original-side capture lane stay as dev harness (not shipped), so this
+patch and the shim retire together or not at all (verify/d5shimconsumers_20261030/RESULT_D5-SHIM-CONSUMERS.md section 2).
 
 Idempotent + self-checking. `--restore` reverts. Operates on original/MASHED.exe;
 original/MASHED.exe.unpatched (the SHA anchor) is never touched.
