@@ -1185,8 +1185,7 @@ bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
 // past the arguments; Roundabout's original drawing `Sky3` / `Sky4` is the witness.] Slots 0..3
 // are loaded by CreateFromDescription (0x00479330, "Loading SkyDome [%s] into sky[%d]"); a slot
 // outside 0..3 would write other name-table entries and is not parsed.
-// MASHED_NO_SKYSLOTS=1 restores the pre-rsky parse: the two-argument form only, every line in one slot.
-static bool parse_slot_name_cmd(const char* line, const char* key, int max_slot, bool old_form,
+static bool parse_slot_name_cmd(const char* line, const char* key, int max_slot,
                                 char* name, std::size_t name_cap, int* slot) {
     const char* p = line;
     while (*p == ' ' || *p == '\t') ++p;
@@ -1198,13 +1197,11 @@ static bool parse_slot_name_cmd(const char* line, const char* key, int max_slot,
     ++p;
     while (*p == ' ' || *p == '\t') ++p;
     int idx = 0;
-    bool has_idx = false;
     if (*p != '"') {
         char* end = nullptr;
         const double v = std::strtod(p, &end);
         if (end == p) return false;
         idx = static_cast<int>(v);          // ftol: truncation toward zero
-        has_idx = true;
         p = end;
         while (*p == ' ' || *p == '\t') ++p;
         if (*p != ',') return false;
@@ -1216,10 +1213,6 @@ static bool parse_slot_name_cmd(const char* line, const char* key, int max_slot,
     std::size_t n = 0;
     while (p[n] && p[n] != '"') ++n;
     if (p[n] != '"' || n == 0 || n >= name_cap || n >= 64) return false;
-    if (old_form) {
-        if (!has_idx) return false;
-        idx = 0;
-    }
     if (idx < 0 || idx > max_slot) return false;
     std::memcpy(name, p, n);
     name[n] = '\0';
@@ -1227,14 +1220,13 @@ static bool parse_slot_name_cmd(const char* line, const char* key, int max_slot,
     return true;
 }
 static bool parse_sky_filename(const char* line, char* name, std::size_t name_cap, int* slot) {
-    static const bool s_old = std::getenv("MASHED_NO_SKYSLOTS") != nullptr;
-    return parse_slot_name_cmd(line, "Sky_Filename", 3, s_old, name, name_cap, slot);
+    return parse_slot_name_cmd(line, "Sky_Filename", 3, name, name_cap, slot);
 }
 // [rsky U-9715] `Object_Bsp_Filename( slot , "x.bsp" )`, handler 0x0047a610: the same two-branch shape as
 // Sky_Filename (0x0047a1e0) with the name filed under `names + (slot + 0xe) * 0x40` and the count at
 // course_desc + 4 incremented. Forest's COURSE.LUA is the only one that calls it (13 of 13 read).
 static bool parse_object_bsp_filename(const char* line, char* name, std::size_t name_cap, int* slot) {
-    return parse_slot_name_cmd(line, "Object_Bsp_Filename", 15, false, name, name_cap, slot);
+    return parse_slot_name_cmd(line, "Object_Bsp_Filename", 15, name, name_cap, slot);
 }
 // [txdscope U-9724] `Texture_Dictionary_Filename( "x.txd" )`, handler 0x0047a6f0 (registered at 0x00440c2e, string
 // 0x005cdf70): copies argument 0 over the course description base (+0x0), so the last call wins. One string argument,
@@ -1588,8 +1580,8 @@ const CamManTrack kCamMan[] = {
 // ticks it with the slot's units argument (times `mult`, FUN_004751d0) and puts the current texture
 // on course clump `clump` (FUN_00475060 on [course + 0x10110 + 4*clump]). Forest WATER.DFF ships
 // material texture wet_watercol00, which this replaces with water00..water31 every frame.
-// Default ON since L-42 (2026-10-27, verify/hbtexanimrefs_20261027/RESULT_HB-TEXANIM-REFS.md); MASHED_NO_TEXANIM=1
-// opts out. (Was MASHED_TEXANIM=1, default OFF, PREREG verify/hbforestwater_20261027/PREREG.md.)
+// Default ON since L-42 (2026-10-27, verify/hbtexanimrefs_20261027/RESULT_HB-TEXANIM-REFS.md); the MASHED_NO_TEXANIM
+// opt-out was deleted in D5-KNOBS-B2-TRACKRENDER. (Was MASHED_TEXANIM=1, default OFF, PREREG verify/hbforestwater_20261027/PREREG.md.)
 struct TexAnimTrack { int course_id; int clump; int mult; std::uint32_t slot0, slot1; };
 const TexAnimTrack kTexAnim[] = {
     { 34, 0, 1, 0x0044dea0u, 0x0044ded0u },   // forest   ring DAT_00895948 (0x0044dec5), clump +0x10110
@@ -1597,13 +1589,6 @@ const TexAnimTrack kTexAnim[] = {
     { 30, 9, 1, 0x00451280u, 0x004513b0u },   // training ring DAT_0088ff90 (0x004512ad), clump +0x10134
     { 33, 0, 2, 0x004527f0u, 0x00452b20u },   // warzone  ring DAT_00684c50 (0x00452a9e), clump +0x10110
 };
-bool TexAnimOn() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_NO_TEXANIM");
-        return !(e && e[0] == '1' && e[1] == '\0');
-    }();
-    return on;
-}
 
 // Arctic ship tables (decomp 0x00448770 / 0x00448880 / 0x00448cb0 / 0x00448e20; floats read from the
 // image by verify/rprops_20261016/dump_ship_tables.py).
@@ -1746,8 +1731,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
 
     // GRAPH*.BSP (name varies: GRAPH.BSP / GRAPHICS.BSP). Textures: [txdscope U-9724] only the
     // dictionary COURSE.LUA names (Texture_Dictionary_Filename) is decoded, as the original binds
-    // only that one for the whole track load (see the selection after this loop). The legacy
-    // every-TXD search (DUMP.TXD + CITY.TXD coexist in dump.piz) stays behind MASHED_NO_TXDSCOPE.
+    // only that one for the whole track load (see the selection after this loop). Every TXD is still
+    // collected here (DUMP.TXD + CITY.TXD coexist in dump.piz) and narrowed after the loop.
     const std::uint8_t* world_blob = nullptr; std::uint32_t world_len = 0;
     std::vector<std::pair<const std::uint8_t*, std::uint32_t>> txds;
     std::vector<std::string> txd_names;   // piz entry name of txds[i]
@@ -1822,9 +1807,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // piz holds no image file the 0x004c61b0 read fallback could supply). Every shipped track holds one
     // TXD except Dump (DUMP.TXD + CITY.TXD; 90 CITY names are not in DUMP.TXD, e.g. `trainroof`).
     // Named file absent from the piz: no dictionary (FUN_0042a6b0 returns 0). No Texture_Dictionary_Filename
-    // call (none shipped): the legacy every-TXD behaviour. MASHED_NO_TXDSCOPE=1 restores it throughout.
+    // call (none shipped): the legacy every-TXD behaviour.
     {
-        static const bool s_all = std::getenv("MASHED_NO_TXDSCOPE") != nullptr;
         char texdic[64] = {};
         for (std::uint32_t i = 0; i < piz.count(); ++i) {
             const char* n = piz.entry(i).name;
@@ -1845,7 +1829,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             }
             break;
         }
-        if (!s_all && texdic[0]) {
+        if (texdic[0]) {
             std::string want = texdic;
             if (want.find('.') == std::string::npos) want += ".txd";
             std::vector<std::pair<const std::uint8_t*, std::uint32_t>> named;
@@ -1857,8 +1841,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                              named.empty() ? " (named file absent: no dictionary)" : "");
             txds.swap(named);
         } else if (log) {
-            std::fprintf(log, "  TXDSCOPE off (%s): every TXD of the piz, %zu\n",
-                         s_all ? "MASHED_NO_TXDSCOPE" : "no Texture_Dictionary_Filename call", txds.size());
+            std::fprintf(log, "  TXDSCOPE off (no Texture_Dictionary_Filename call): every TXD of the piz, %zu\n",
+                         txds.size());
         }
     }
     if (!world_blob) return fail("GRAPH*.BSP not found");
@@ -2592,8 +2576,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // [rsky U-9714] one Prop per sky slot: the handler 0x0047a1e0 files the name
                         // under `names + (slot+1)*0x40` and CreateFromDescription (0x00479330, the
                         // "Loading SkyDome [%s] into sky[%d]" loop) loads slots 0..3 into course+0x100f0.
-                        static const bool s_no_skyfix_ld = std::getenv("MASHED_NO_SKYFIX") != nullptr;
-                        load_prop(sk, &skies_[sky_slot], /*d3d9_batches=*/true, s_no_skyfix_ld);
+                        load_prop(sk, &skies_[sky_slot], /*d3d9_batches=*/true, /*bake_frames=*/false);
                     } else if (parse_object_bsp_filename(line.c_str(), sk, sizeof(sk), &sky_slot)) {
                         // [rsky U-9715] kept for Load's tail; only slot 0 is ever used
                         if (sky_slot == 0) std::snprintf(obj_bsp_name_, sizeof(obj_bsp_name_), "%s", sk);
@@ -2636,9 +2619,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 // FUN_0047d100(FUN_0047ce40(1000), 0) and FUN_0047d100(FUN_0047ce40(2000), 0) clear the RENDER bit
                 // (FUN_004b5240, atomic+2 bit 4) of the RWP objects labelled 1000 (Tower) and 2000 (Deck), so the
                 // original never draws them and they cast no shadow (FUN_00481a30 tests the bit). Their bodies stay
-                // (no exe consumer). Default ON; MASHED_NO_PONTOON_HIDE=1 keeps them drawn (pre-pontoon behaviour).
-                static const bool s_no_pn_hide = std::getenv("MASHED_NO_PONTOON_HIDE") != nullptr;
-                if (course_id_ == 33 && !s_no_pn_hide)
+                // (no exe consumer).
+                if (course_id_ == 33)
                     for (int d = 0; d < 32; ++d)
                         if (rwp[d].have && rwp[d].inst.size() == 1 && (rwp[d].label == 1000 || rwp[d].label == 2000)) {
                             rwp_hidden[d] = true;
@@ -2834,13 +2816,9 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             // measurement cannot see it, and none is claimed here.
             static const bool s_skip_excluded =
                 std::getenv("MASHED_TRACK_SKIP_EXCLUDED") != nullptr;
-            // [rsky U-9715] MASHED_NO_OBJBSP=1 keeps the pre-rsky Forest: no object world, the tree
-            // clumps drawn once at the origin.
-            static const bool s_no_objbsp = std::getenv("MASHED_NO_OBJBSP") != nullptr;
             // [rhooks U-9713] On a covered track an excluded clump is drawn ONLY where the original's
             // hook slots or the switch table draw it (Render/TrackHookSlots.cpp); one they never draw
             // as itself is not a prop. Its Mts copy groups and LOD geometry are loaded below.
-            // MASHED_NO_HOOKSLOTS=1 keeps the pre-rhooks handling (HookTrackFor returns nullptr).
             const mashed_re::Render::HookTrack* hook = mashed_re::Render::HookTrackFor(course_id_);
             if (log)
                 std::fprintf(log, "  HOOKSLOT course_id=%d covered=%d (%s)\n", course_id_, hook ? 1 : 0,
@@ -2866,7 +2844,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 // copy is, and every tree draw they have is a Trees.bsp sector's material mesh. The trees are the
                 // object world's (RaceSubmit_SetObjectWorld), so these clumps are loaded by the original and
                 // drawn by nothing.
-                if (course_id_ == 34 && c.idx >= 2 && c.idx <= 5 && obj_bsp_name_[0] && !s_no_objbsp) {
+                if (course_id_ == 34 && c.idx >= 2 && c.idx <= 5 && obj_bsp_name_[0]) {
                     if (log)
                         std::fprintf(log, "  FOREST-TREE-CLUMP course_id=%d clump=%d dff=%s not drawn "
                                           "(in no world; sets of its first atomic are never rendered)\n",
@@ -2905,8 +2883,6 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     // copies of the same citation drift (memory
                     // `duplicate-rva-implementations-drift`).
                     // Diagnosis: re/analysis/SEA_LEVEL_2026-09-29.md
-                    static const bool s_no_sea_tile =
-                        std::getenv("MASHED_NO_SEA_TILE") != nullptr;
                     // RETROFIT 2026-10-01: the 5x5 loop that used to sit here was
                     // a second body for the grid. It now comes from the REAL port
                     // of the node, Render/ArcticTrackNodeSlot0.cpp
@@ -2942,7 +2918,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                             p.hook_cull = 1;   // rwCULLMODECULLNONE
                         }
                     }
-                    if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
+                    if (course_id_ == 0 && c.idx == 2) {
                         // The 25 tiles are drawn by Arctic slot 2 (0x00449030,
                         // RpClumpRender per tile) after the world, not by the world pass.
                         p.rw_kind = LibRw::kInstAfterWorld;
@@ -3089,17 +3065,15 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             // [hbforest] slot 0's texture ring (kTexAnim), on every prop built from that course clump.
             texanim_models_.clear();
             texanim_mult_ = 1;
-            if (TexAnimOn()) {
-                for (const auto& ta : kTexAnim) {
-                    if (ta.course_id != course_id_) continue;
-                    const int n = LibRw::RaceSubmit_TexAnimCreate(dicts.data(), dicts.size(), "water");
-                    for (const Prop& q : props_)
-                        if (q.clump_idx == ta.clump && q.rw_model >= 0) texanim_models_.push_back(q.rw_model);
-                    if (n == 0) texanim_models_.clear();
-                    texanim_mult_ = ta.mult;
-                    if (log) std::fprintf(log, "  TEXANIM course_id=%d clump=%d textures=%d models=%zu mult=%d\n",
-                                          course_id_, ta.clump, n, texanim_models_.size(), ta.mult);
-                }
+            for (const auto& ta : kTexAnim) {
+                if (ta.course_id != course_id_) continue;
+                const int n = LibRw::RaceSubmit_TexAnimCreate(dicts.data(), dicts.size(), "water");
+                for (const Prop& q : props_)
+                    if (q.clump_idx == ta.clump && q.rw_model >= 0) texanim_models_.push_back(q.rw_model);
+                if (n == 0) texanim_models_.clear();
+                texanim_mult_ = ta.mult;
+                if (log) std::fprintf(log, "  TEXANIM course_id=%d clump=%d textures=%d models=%zu mult=%d\n",
+                                      course_id_, ta.clump, n, texanim_models_.size(), ta.mult);
             }
             Track::Pontoon_Shutdown();
             if (course_id_ == 33 && Track::Pontoon_AnimOn()) {
@@ -3207,7 +3181,6 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             }
             // [rhooks U-9717] SetClumpAnim records: FUN_004756e0 runs only when both the course clump
             // slot and the anim slot are non-null (`if (param_1 != 0 && param_2 != 0)`).
-            static const bool s_no_clumpanim = std::getenv("MASHED_NO_CLUMPANIM") != nullptr;
             {
                 std::vector<ClumpAnim> keep;
                 for (auto& ca : clump_anims_) {
@@ -3217,7 +3190,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     const bool have_anim = ca.anim_idx >= 0 && ca.anim_idx < 16 &&
                                            !anim_names[ca.anim_idx].empty();
                     bool ok = false;
-                    if (!s_no_clumpanim && pi < props_.size() && have_anim &&
+                    if (pi < props_.size() && have_anim &&
                         props_[pi].instances.size() == 1) {
                         std::uint32_t al = 0;
                         const std::uint8_t* ab = find_entry(anim_names[ca.anim_idx].c_str(), &al);
@@ -3229,7 +3202,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                      have_anim ? anim_names[ca.anim_idx].c_str() : "-", ca.type,
                                      pi < props_.size() ? static_cast<int>(pi) : -1,
                                      ok ? (ca.type == 0 ? "animated FUN_004752f0" : "animated FUN_004b47e0")
-                                        : (s_no_clumpanim ? "off (MASHED_NO_CLUMPANIM)" : "not animated"));
+                                        : "not animated");
                     if (ok) {
                         ca.prop = pi;
                         keep.push_back(std::move(ca));
@@ -3537,8 +3510,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // names + 0x380) loads the object BSP with the world-BSP loader; the stream is the same RpWorld.
     obj_world_ready_ = false;
     {
-        static const bool s_no_objbsp_ld = std::getenv("MASHED_NO_OBJBSP") != nullptr;
-        if (obj_bsp_name_[0] && !s_no_objbsp_ld) {
+        if (obj_bsp_name_[0]) {
             const std::uint8_t* ob = nullptr; std::uint32_t ol = 0;
             for (std::uint32_t i = 0; i < piz.count() && !ob; ++i)
                 if (_stricmp(piz.entry(i).name, obj_bsp_name_) == 0) ob = piz.blob(i, &ol);
@@ -4049,15 +4021,14 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
     // (FUN_0042a6b0 at 0x004204c0), makes it current for the DFF read (FUN_004c5c80 at 0x004204ce; DFF load
     // FUN_0042a5d0 at 0x0042050f) and reads the env names from it (FUN_004c5c00 at 0x00420595). A car piz
     // also holds a `PS2/<CAR>.TXD` (decodes to 0 textures); the
-    // PC dictionary is the entry without a path. MASHED_NO_TXDSCOPE=1 keeps every TXD of the piz.
-    static const bool s_all_txd = std::getenv("MASHED_NO_TXDSCOPE") != nullptr;
+    // PC dictionary is the entry without a path.
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
         const char* n = piz.entry(i).name;
         const std::size_t ln = std::strlen(n);
         if (_stricmp(n, dff_entry) == 0) {
             dff = piz.blob(i, &dff_len);
         } else if (ln > 4 && _stricmp(n + ln - 4, ".TXD") == 0 &&
-                   (s_all_txd || std::strpbrk(n, "/\\") == nullptr)) {
+                   std::strpbrk(n, "/\\") == nullptr) {
             std::uint32_t bl = 0;
             const std::uint8_t* b = piz.blob(i, &bl);
             if (b) txds.emplace_back(b, bl);
@@ -9450,8 +9421,6 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     long long _mk  = _rt0;
     auto MARK = [&](double& acc){ if (s_rprof) { long long n = RT();
         acc += RMs(_mk, n); _mk = n; } };
-    // F3 A/B verification toggle: suppress all UV-scroll texture transforms.
-    static const bool s_uvscroll_off = std::getenv("MASHED_NO_UVSCROLL") != nullptr;
     // P3 same-view parity: MASHED_CAM_POSE=ex,ey,ez,ax,ay,az pins the camera to a
     // fixed world-space eye/at (overrides orbit/chase/free), so the standalone can
     // render a track from the ORIGINAL's exact captured pose and an in-race diff is
@@ -9854,9 +9823,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // count) would put the two renderers at different scroll phases, which is
     // indistinguishable from a shading bug -- that is precisely how D-S3-SEA read
     // for several rounds. `t` is the single source of truth; it is not re-derived.
-    // Honours MASHED_NO_UVSCROLL so the kill-switch still disables BOTH paths
-    // together and stays usable as the positive control that found this.
-    LibRw::RaceSubmit_SetAnimTime(s_uvscroll_off ? 0.f : t);
+    LibRw::RaceSubmit_SetAnimTime(t);
 
     // sky clump first: unfogged, no depth write (renderer-gap closure)
     bool any_sky = false;
@@ -9878,8 +9845,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         //   B  0x00426d20 / 0x00426d90 (generic, the draw at 0x00426da2): identity, rotate about Y by
         //      the global at 0x0066d720 (never written, 0), translate to the camera position.
         // Arctic's recorded frame shows both (86-triangle `sky`, 0.265 apart in y); TRAINING and City
-        // show one. MASHED_NO_SKYFIX=1 keeps the single translate-only copy with the baked root offset.
-        static const bool s_no_skyfix = std::getenv("MASHED_NO_SKYFIX") != nullptr;
+        // show one.
         // [HB-ARCTIC-SKY] Copy A is not a race-frame draw in the original: FUN_004492b0 renders it
         // between FUN_004c1a00 / FUN_004c19f0 of camera FUN_004840d0(0) = DAT_006ce81c[0], which
         // FUN_00483ed0 builds on a 128x128 camera-texture raster (FUN_00484000(0,0x80,0x80,0x600) @
@@ -9890,23 +9856,22 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         static const bool s_sky_rtt_a = std::getenv("MASHED_NO_ARCTIC_SKY_RTT") == nullptr;
         D3DMATRIX skym[2];
         int nsky = 0;
-        if (!s_no_skyfix && course_id_ == 0 && !s_sky_rtt_a) {   // A: Arctic only (slot 4 of record "arctic")
+        if (course_id_ == 0 && !s_sky_rtt_a) {   // A: Arctic only (slot 4 of record "arctic")
             MatIdentity(&skym[nsky]);
             skym[nsky]._11 = -1.f; skym[nsky]._22 = -1.f;
             skym[nsky]._41 = eye[0]; skym[nsky]._42 = eye[1]; skym[nsky]._43 = eye[2];
             ++nsky;
         }
-        MatIdentity(&skym[nsky]);                        // B (and the pre-rprops single copy)
+        MatIdentity(&skym[nsky]);                        // B
         skym[nsky]._41 = eye[0]; skym[nsky]._42 = eye[1]; skym[nsky]._43 = eye[2];
         ++nsky;
-        // MASHED_SKY_D3D9=1 keeps the sky on the legacy D3D9 draw (fixed matrices, old route);
-        // MASHED_NO_SKYFIX=1 restores the whole pre-rprops sky: that route, one translate-only copy.
+        // MASHED_SKY_D3D9=1 keeps the sky on the legacy D3D9 draw (fixed matrices, old route).
         static const bool s_sky_d3d9 = std::getenv("MASHED_SKY_D3D9") != nullptr;
         // [rsky U-9714] every loaded sky slot, ascending (FUN_00426d90 @ 0x00426d90 walks the four
         // handles at 0x00656f48..0x00656f54 and RpClumpRenders each non-null one).
         bool any_sky_rw = false;
         for (const Prop& sk : skies_) any_sky_rw = any_sky_rw || sk.rw_model >= 0;
-        if (!s_sky_d3d9 && !s_no_skyfix && LibRw::RaceSubmit_Active() && any_sky_rw) {
+        if (!s_sky_d3d9 && LibRw::RaceSubmit_Active() && any_sky_rw) {
             // The librw path draws the sky before its world, depth and fog off (RwRaceSubmit.cpp).
             for (int si = 0; si < nsky; ++si)
                 for (const Prop& sk : skies_)
@@ -9921,7 +9886,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 if (b.empty()) continue;
                 dev->SetTexture(0, sky_.textures[mi]);
                 // F3: scroll the UV-animated sky material (SKY.DFF "bmp_Sky_M").
-                const bool scroll = !s_uvscroll_off && mi < sky_.mat_scroll.size() &&
+                const bool scroll = mi < sky_.mat_scroll.size() &&
                     (sky_.mat_scroll[mi].du != 0.f || sky_.mat_scroll[mi].dv != 0.f);
                 if (scroll) {
                     D3DMATRIX tm; MatIdentity(&tm);
