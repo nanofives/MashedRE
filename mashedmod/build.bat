@@ -206,6 +206,10 @@ REM crashes at process load with STATUS_DLL_INIT_FAILED (0xC0000142).
 REM Mitigation: either run mashed_re.exe from a directory without those
 REM shim DLLs, or rename them (mv d3d9.dll d3d9.dll.bak) before the run.
 REM This file's exe target intentionally does NOT depend on the shim DLLs.
+REM D5-SHIM-GUARD (2026-10-30): d3d9.dll and dinput8.dll are /DELAYLOAD-ed and
+REM exe_main.cpp's __pfnDliNotifyHook2 loads them with LOAD_LIBRARY_SEARCH_SYSTEM32,
+REM so the standalone no longer binds a proxy beside it. The rename loop below
+REM stays as belt and braces for the build dir.
 echo === Building mashed_re.exe (B9: frontend + HUD + math + vehicle clusters) ===
 pushd "%SRC%"
 REM /EHa (not /EHsc) for the exe target: the standalone boot chain relies on
@@ -235,6 +239,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj
     "%OUT%\RwRaceFx_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
+    /DELAYLOAD:d3d9.dll /DELAYLOAD:dinput8.dll ^
     user32.lib d3d9.lib dsound.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
