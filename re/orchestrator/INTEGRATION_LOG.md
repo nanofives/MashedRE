@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 18:54 D5-KNOBS-RUNARMS-STACKS (orch/D5-KNOBS-RUNARMS-STACKS), D5-SHIM-RWBRIDGE-COMMENT (orch/D5-SHIM-RWBRIDGE-COMMENT): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_181349
 - 2026-10-30 17:41 D5-KNOBS-INV-FIX2 (orch/D5-KNOBS-INV-FIX2): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_174037
 - 2026-10-30 17:03 D5-DOC-LAN-RELEASE (orch/D5-DOC-LAN-RELEASE), D5-SHIM-DOCS (orch/D5-SHIM-DOCS), D5-DEPS-LOCAL-FOLLOWUP (orch/D5-DEPS-LOCAL-FOLLOWUP): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261030_164237
 - 2026-10-30 16:30 D5-KNOBS-B3-AI-RACE (orch/D5-KNOBS-B3-AI-RACE): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_160222
