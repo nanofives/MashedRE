@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 13:49 D4-DC-77b0-STATE5CALLS (orch/D4-DC-77b0-STATE5CALLS): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_134722
 - 2026-10-30 13:45 D5-DEPS-LOCAL (orch/D5-DEPS-LOCAL), D5-SHIM-CONSUMERS (orch/D5-SHIM-CONSUMERS): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_134312
 - 2026-10-30 13:30 D5-KNOBS-D-TRIAGE-1 (orch/D5-KNOBS-D-TRIAGE-1), D4-DC-77b0-LAPLONG (orch/D4-DC-77b0-LAPLONG): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_132940
 - 2026-10-30 13:08 HB-LAN-REAL-MOVIES (orch/HB-LAN-REAL-MOVIES): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261030_125159
