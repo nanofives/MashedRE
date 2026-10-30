@@ -165,10 +165,8 @@ static inline void A4CallA6a(int* self, int car, float dt, int* wheelBlock, std:
 static inline void A4CallA6b(int* self, float dt, std::uint8_t* input, int* wheelBlock, void*)   { A4LiveA6b(self, dt, input, wheelBlock); }
 #endif
 
-// [dcphys2 2026-10-22] MASHED_A4_DOT_ORDER=1 (default OFF in the exe; the .asi seeds it ON): the slide dot in the
-// original's association, (+0x9d8*+0x9b4 + +0x9d4*+0x9b0) + +0x9dc*+0x9b8 (0x004706db..0x00470701). The default keeps
-// Ghidra's print order, which C++ groups (+0x9dc*+0x9b8 + +0x9d4*+0x9b0) + +0x9d8*+0x9b4.
-static bool A4DotOrder() { static const bool s = [] { const char* e = std::getenv("MASHED_A4_DOT_ORDER"); return e && e[0] == '1'; }(); return s; }
+// [dcphys2 2026-10-22] the slide dot in the original's association, (+0x9d8*+0x9b4 + +0x9d4*+0x9b0) + +0x9dc*+0x9b8
+// (0x004706db..0x00470701), not Ghidra's print order. Its knob MASHED_A4_DOT_ORDER was deleted by D5-KNOBS-E1-PHYS-A4A5.
 
 // ===========================================================================
 // 0x00470670  VehicleControlIntegrate(self, dt, input[], xform)
@@ -206,9 +204,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
         Fb(v, 0xb0c) = 0.0f;
     } else {
         // slide measure = (1 - |fwd . vel| / speed) * speed   (+0xb0c)
-        float dot = A4DotOrder()
-                  ? (Fb(v, 0x9d8) * Fb(v, 0x9b4) + Fb(v, 0x9d4) * Fb(v, 0x9b0)) + Fb(v, 0x9dc) * Fb(v, 0x9b8)
-                  : Fb(v, 0x9dc) * Fb(v, 0x9b8) + Fb(v, 0x9d4) * Fb(v, 0x9b0) + Fb(v, 0x9d8) * Fb(v, 0x9b4);
+        float dot = (Fb(v, 0x9d8) * Fb(v, 0x9b4) + Fb(v, 0x9d4) * Fb(v, 0x9b0)) + Fb(v, 0x9dc) * Fb(v, 0x9b8);
         if (dot < vc::kZero) dot = -dot;
         Fb(v, 0xb0c) = (vc::kOne - dot / Fb(v, 0x9e4)) * Fb(v, 0x9e4);
     }

@@ -37,16 +37,9 @@ namespace Vehicle {
 
 using namespace fi;
 
-// [u9772] MASHED_A5_FD0_LIVE=1 (default OFF): A5 (0x0046ddb0), FUN_00442ce0 and FUN_00442c80 test the live
-// DAT_007f0fd0 word, as the original does, instead of g_playerCount (= the car count, VehiclePhysics_Init).
-#ifdef MASHED_STANDALONE
-static int Fd0Word() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A5_FD0_LIVE"); return e && e[0] == '1'; }();
-    return s ? *reinterpret_cast<const int*>(0x007f0fd0u) : g_playerCount;
-}
-#else
+// [u9772] A5 (0x0046ddb0), FUN_00442ce0 and FUN_00442c80 test the live DAT_007f0fd0 word, as the original does, in
+// both targets. MASHED_A5_FD0_LIVE (the g_playerCount stand-in as its opt-out) was deleted by D5-KNOBS-E1-PHYS-A4A5.
 static int Fd0Word() { return *reinterpret_cast<const int*>(0x007f0fd0u); }   // DAT_007f0fd0
-#endif
 
 // ── [dcphys2] target thunks ────────────────────────────────────────────────────
 #ifdef MASHED_STANDALONE
@@ -119,28 +112,24 @@ static bool A5SuspLut() {
     return s;
 }
 
-// [dcphys2 2026-10-22] MASHED_A5_DOT_ORDER=1 (default OFF in the exe; the .asi seeds it ON): A5's 3-term dots in the
-// original's association. Both were written in Ghidra's print order, c*z + a*x + b*y, which C++ groups (c*z + a*x) + b*y;
+// [dcphys2 2026-10-22] A5's 3-term dots in the original's association (MASHED_A5_DOT_ORDER, deleted by
+// D5-KNOBS-E1-PHYS-A4A5 with the three below; the bodies they selected are the only ones left). Both were written in Ghidra's print order, c*z + a*x + b*y, which C++ groups (c*z + a*x) + b*y;
 // the original adds the first two products it loads:
 //   drafting dot    (dN.y*o.y + dN.x*o.x) + dN.z*o.z     0x0046dff6..0x0046e013 (dN = [esp+0x30..0x38], o = [esp+0x24..0x2c])
 //   steer projection (r.y*dv.y + r.x*dv.x) + r.z*dv.z     wheel 0 0x0046e419..0x0046e43b, wheel 1 0x0046e4d1..0x0046e4f1,
 //                                                         wheel 2 0x0046e589..; dv = [esp+0x18..0x20] (0x0046e39d / 3b3 / 3f2)
-// [dcphys2 2026-10-22] MASHED_A5_AIR_F32=1 (default OFF in the exe; the .asi seeds it ON): Phase 6's not-all-grounded
+// [dcphys2 2026-10-22] (MASHED_A5_AIR_F32) Phase 6's not-all-grounded
 // suspension force as the original rounds it at PC_24: f = (load / dt) * _DAT_0088e5f0, F = f * n, every step to float
 // (0x0046e927 FLD +0x18, 0x0046e92a FDIV dt, 0x0046e931 FMUL, 0x0046e937..0x0046e94c three FMUL / FSTP), and f is what
-// 0x0046e957 compares with 65536.0. OFF keeps the former double chain.
-static bool A5AirF32() { static const bool s = [] { const char* e = std::getenv("MASHED_A5_AIR_F32"); return e && e[0] == '1'; }(); return s; }
-// [dcphys2 2026-10-22] MASHED_A5_CONTACT_INT=1 (default OFF in the exe; the .asi seeds it ON): Phase 6's per-wheel
+// 0x0046e957 compares with 65536.0.
+// [dcphys2 2026-10-22] (MASHED_A5_CONTACT_INT) Phase 6's per-wheel
 // contact test as the original makes it, an integer compare of the word with 0 (0x0046e761 CMP [ESI-0x5c],EBP with
 // EBP = 0, 0x0046e764 JE), as Phase 5 already reads the same word (0x0046e4c5). The float compare it replaces takes
 // 0x80000000 (-0.0) for "no contact"; the original takes it for contact. Measured on Warzone (verify/dcphys2_20261022).
-static bool A5ContactInt() { static const bool s = [] { const char* e = std::getenv("MASHED_A5_CONTACT_INT"); return e && e[0] == '1'; }(); return s; }
-// [dcphys2 2026-10-22] MASHED_A5_SPIN_FILD=1 (default OFF in the exe; the .asi seeds it ON): the jitter scale reads
+// [dcphys2 2026-10-22] (MASHED_A5_SPIN_FILD) the jitter scale reads
 // record +0x2c as an INTEGER (0x0046e824 MOV EAX,[EDI+0x2c], 0x0046e82f FILD, 0x0046e833 FMUL [ESI], 0x0046e835 FMUL
 // _DAT_005cc328 = 0.01). The port read the word as float bits, so +0x2c = 50 gave a denormal and a jitter of 0 where the
 // original stores 50 * 0.25 * 0.01 = 0.125 (Warzone, verify/dcphys2_20261022).
-static bool A5SpinFild() { static const bool s = [] { const char* e = std::getenv("MASHED_A5_SPIN_FILD"); return e && e[0] == '1'; }(); return s; }
-static bool A5DotOrder() { static const bool s = [] { const char* e = std::getenv("MASHED_A5_DOT_ORDER"); return e && e[0] == '1'; }(); return s; }
 
 // 0x0046ddb0
 void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
@@ -238,9 +227,7 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
                 if (kSpeedMin <= mag) {
                     mashed_re::Math::LutNormalize(othervel, othervel);
                     mashed_re::Math::LutNormalize(deltaNorm, delta);
-                    const float dot = A5DotOrder()
-                        ? (deltaNorm[1] * othervel[1] + deltaNorm[0] * othervel[0]) + deltaNorm[2] * othervel[2]
-                        : deltaNorm[2] * othervel[2] + deltaNorm[0] * othervel[0] + deltaNorm[1] * othervel[1];
+                    const float dot = (deltaNorm[1] * othervel[1] + deltaNorm[0] * othervel[0]) + deltaNorm[2] * othervel[2];
                     if (kDraftDot < dot) {
                         const float dd = mashed_re::Math::LutLength(delta);
                         if (dd < kDraftDist) {
@@ -358,9 +345,7 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
             if (self[ws[wi].act] == 0) {
                 self[ws[wi].outSlot] = 0;
             } else {
-                float proj = (A5DotOrder()
-                              ? (vF(self, ws[wi].rax + 1) * dv[1] + vF(self, ws[wi].rax) * dv[0]) + vF(self, ws[wi].rax + 2) * dv[2]
-                              : vF(self, ws[wi].rax + 2) * dv[2] + vF(self, ws[wi].rax) * dv[0] + vF(self, ws[wi].rax + 1) * dv[1])
+                float proj = ((vF(self, ws[wi].rax + 1) * dv[1] + vF(self, ws[wi].rax) * dv[0]) + vF(self, ws[wi].rax + 2) * dv[2])
                              * kSteerProj;
                 if (clamp < proj) proj = clamp;
                 if (proj < -clamp) proj = -clamp;
@@ -375,12 +360,11 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
         unsigned int ring = (unsigned int)(self[0x2fb] + 1) & 0xf;
         self[0x2fb] = (int)ring;
         // steer-feedback normal of 3 suspension-force vectors -> self ring slot
-        // [d2off] MASHED_A5_RING_ORDER=1 (default OFF): the original's register order, EAX = &scratch[0], ECX (p1) =
-        // &scratch[6], EDX (p2) = &scratch[3] (0x0046e6f3..0x0046e728); the port's order gives the opposite sign.
-        static const bool s_ringOrder = [] { const char* e = std::getenv("MASHED_A5_RING_ORDER"); return e && e[0] == '1'; }();
+        // [d2off] the original's register order, EAX = &scratch[0], ECX (p1) = &scratch[6], EDX (p2) = &scratch[3]
+        // (0x0046e6f3..0x0046e728); the former port order (0, 3, 6) gave the opposite sign. MASHED_A5_RING_ORDER, which
+        // selected between them, was deleted by D5-KNOBS-E1-PHYS-A4A5.
         float* const sc = A5Scratch();
-        if (s_ringOrder) A5FaceNormal(&sc[0], &sc[6], &sc[3], vFP(self, ring * 3 + 0x2cb));
-        else             A5FaceNormal(&sc[0], &sc[3], &sc[6], vFP(self, ring * 3 + 0x2cb));
+        A5FaceNormal(&sc[0], &sc[6], &sc[3], vFP(self, ring * 3 + 0x2cb));
         int slot = ring * 3 + 0x2cd;
         if (vF(self, slot) < kZero) vF(self, slot) = vF(self, slot) * kQuarter;
     }
@@ -389,7 +373,7 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
     int wheel = 0;
     do {
         float* pf = vFP(self, 0x7d + wheel * 0x31);   // wheel block (float view)
-        if (A5ContactInt() ? (asI(pf[-0x17]) == 0) : (pf[-0x17] == 0.0f)) {   // wheel NOT in contact (0x0046e761)
+        if (asI(pf[-0x17]) == 0) {   // wheel NOT in contact (0x0046e761)
             pf[10] = 0.0f; pf[9] = 0.0f; pf[8] = 0.0f;
         } else {
             int key = asI(pf[-1]);                     // surface key (integer compare)
@@ -410,7 +394,7 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
                 if (key == kSurf0p2)
                     pf[0] = kJit0p2;
             }
-            if (self[0xb] != 0) pf[0] = (A5SpinFild() ? (float)self[0xb] : vF(self, 0xb)) * pf[0] * kSpinScale;   // 0x0046e82f
+            if (self[0xb] != 0) pf[0] = (float)self[0xb] * pf[0] * kSpinScale;   // 0x0046e82f
             float f = pf[-0x1a] * pf[0];
             pf[0] = f;
             pf[1] = k0p6 * f;
@@ -457,17 +441,12 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
                     pf[9]  = (float)(proj * (double)pf[0xc]);
                     pf[10] = (float)(proj * (double)pf[0xd]);
                 }
-            } else if (A5AirF32()) {
+            } else {
                 const float f = (pf[6] / dt) * A5SuspScale();
                 pf[8]  = f * pf[3];
                 pf[9]  = f * pf[4];
                 pf[10] = f * pf[5];
                 fVar17 = f;
-            } else {
-                fVar17 = ((double)pf[6] / (double)dt) * (double)A5SuspScale();
-                pf[8]  = (float)(fVar17 * (double)pf[3]);
-                pf[9]  = (float)(fVar17 * (double)pf[4]);
-                pf[10] = (float)(fVar17 * (double)pf[5]);
             }
             if ((self[0x2c8] == 0) && ((double)kAirThr < fVar17)) self[0x2c8] = 1;
         }

@@ -5468,11 +5468,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // (o_tg1 at rest: 29.999977 / 29.73 / 29.457 / 29.18). Run it on every countdown frame (the GO frame after
         // the settle and the release above). Measured: run only from the GO frame, the exe's AI rows read 0.0,
         // then 29.507563 for all three cars, and converge on the third call (verify/d3bB2_20261017 B_SLP_K1).
-        {
-            static const bool s_tickFirstPP = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
-                                                   return (e && e[0] == '1') || Vehicle::VehiclePhysics_A4OrderEnabled(); }();   // [a4order] implies it
-            if (s_tickFirstPP) Race::PathProg_FrameTick();
-        }
+        // [a4order] the A4 order implies it, so it runs unconditionally since D5-KNOBS-E1-PHYS-A4A5 deleted MASHED_A4_ORDER.
+        Race::PathProg_FrameTick();
         // [d1r2] The original runs the director on every pre-race frame (sub-states
         // 3/4/5: FUN_0040fc00 -> FUN_0040d470 -> FUN_00446520, main block when cam[7]
         // == 0), not from GO; MASHED_SUBSTATE does the same in SubStateCameraChain.
@@ -5626,11 +5623,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             if (SubState_Enabled()) HudSlideBillboardTimerTail();
     };
     {
-        // [a4order 2026-10-17] MASHED_A4_ORDER=1 implies this order: the A4 loop of FUN_00470c70 reads the commands the
-        // AI tick wrote this frame (0x00425a73 before 0x00425a8d), and the AI cars' A4 now runs before the player's step.
-        static const bool s_aiTickFirst = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
-                                               return (e && e[0] == '1') || Vehicle::VehiclePhysics_A4OrderEnabled(); }();
-        if (s_aiTickFirst && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) ai_tick_phase();
+        // [a4order 2026-10-17] the A4 order implies this order: the A4 loop of FUN_00470c70 reads the commands the
+        // AI tick wrote this frame (0x00425a73 before 0x00425a8d), and the AI cars' A4 runs before the player's step.
+        // Unconditional since D5-KNOBS-E1-PHYS-A4A5 deleted MASHED_A4_ORDER (MASHED_AI_TICK_FIRST, ORed with it here
+        // and above, no longer selects anything).
+        if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) ai_tick_phase();
     }
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
     // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead
@@ -5659,13 +5656,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         bool gok = false;
         GroundHeight(car_pos_[0], car_pos_[2], &gok);
         io.grounded = gok ? 1 : 0;
-        // [a4order 2026-10-17] MASHED_A4_ORDER=1 (default OFF, U-9746). FUN_00470c70 runs the gate + A4 of EVERY car
+        // [a4order 2026-10-17] (U-9746; MASHED_A4_ORDER deleted by D5-KNOBS-E1-PHYS-A4A5) FUN_00470c70 runs the gate + A4 of EVERY car
         // (0x00470f80..0x00471099, FUN_00470670 at 0x00471076) and the refresh (0x004710a1..0x004710da) before the
         // first FUN_004709a0 (0x00471137), so a car<->car impulse from the player's substeps (0x00470bcd) reaches an AI
         // car after that car's A4. Here: the AI cars' gate + A4, with the io the opponent loop below builds for
         // them (same skips, same shock throttle), before the player's step; their StepCar then runs only the substeps.
         for (OuterCar& c : s_outer) c.have = false;   // [u9778 / substep]
-        if (Vehicle::VehiclePhysics_A4OrderEnabled()) {
+        {
             Vehicle::VehiclePhysics_A4PreBegin();
             static const bool s_noOppA4 = (std::getenv("MASHED_MEASURE_NOOPP") != nullptr);
             if (ai_tick_ran && !s_noOppA4) {

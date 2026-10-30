@@ -36,8 +36,9 @@ float g_a8WheelLe4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
 float g_a8WheelLd4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
 A6aWheelDump g_a6aDump[4] = {};      // [U-9147] A6a block-#4 capture, diag only
 A6aFrameDump g_a6aFrame   = {};      // [U-9147] A6a frame-level inputs, diag only
-// [u9777] zero stand-ins for DAT_008989b0 / DAT_008989c8 (no writer); MASHED_A5_RUBBER_LIVE=1 makes A5's two readers use the
-// live addresses Race/SpectatorDistances.cpp fills (ForceIntegrator.cpp RubberRefDist / RubberRefCar).
+// [u9777] zero stand-ins for DAT_008989b0 / DAT_008989c8 (no writer). A5's two leaves read the live addresses
+// Race/SpectatorDistances.cpp fills (ForceIntegratorLeaves.cpp RubberRefDist / RubberRefCar); only forceint_selftest.cpp
+// still writes these (MASHED_A5_RUBBER_LIVE deleted by D5-KNOBS-E1-PHYS-A4A5).
 float g_rubberBand[16] = {0};        // DAT_008989b0
 int   g_rubberRefCar   = 0;          // DAT_008989c8
 int*  g_vehicleArrayBase = nullptr;  // DAT_008815a0
