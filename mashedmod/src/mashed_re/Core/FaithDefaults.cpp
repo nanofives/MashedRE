@@ -26,12 +26,15 @@ struct FaithKnob { const char* name; const char* value; };
 
 // Order and values = STACK['FAITH'] in verify/d2off_20261020/run_arms.py (bare names there are set to "1").
 const FaithKnob kFaith[] = {
-    { "AI_COUNTDOWN_CLOCK", "1" }, { "POS_MODEL", "1" },           { "PATHPROG", "1" },          { "ROUND_GRID", "1" },
-    { "ROUND_GRID_ORDER", "1" },   { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
-    { "AI_TICK_FIRST", "1" },      { "PATHPROG_LATE", "1" },       { "REASSERT_KEEP_NORMAL", "1" }, { "SPAWN_BASIS_RW", "1" },
-    { "FIX_5CEA60", "1" },         { "UP_TRINORMAL", "1" },        { "RW_SSE_POINTS", "1" },     { "RING_DBUF", "1" },
+    // [D5-KNOBS-D-SEEDED6 2026-10-30] POS_MODEL, ROUND_GRID_ORDER, PATHPROG_LATE, SPAWN_BASIS_RW, RING_DBUF and
+    // STEER_ACOS_CRT left this list with their read sites: the seeded path is the only one in the source
+    // (verify/d5knobsd_seeded6_20261030/RESULT_D5-KNOBS-D-SEEDED6.md).
+    { "AI_COUNTDOWN_CLOCK", "1" }, { "PATHPROG", "1" },          { "ROUND_GRID", "1" },
+    { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
+    { "AI_TICK_FIRST", "1" },      { "REASSERT_KEEP_NORMAL", "1" },
+    { "FIX_5CEA60", "1" },         { "UP_TRINORMAL", "1" },        { "RW_SSE_POINTS", "1" },
     { "FWD_AT", "1" },             { "ROTATE_LUT", "1" },
-    { "ROTATE_PC24", "1" },        { "HEADING_FWD_LIVE", "1" },    { "AI_LUT", "7" },            { "STEER_ACOS_CRT", "1" },
+    { "ROTATE_PC24", "1" },        { "HEADING_FWD_LIVE", "1" },    { "AI_LUT", "7" },
     { "AI_FWD_ATROW", "1" },       { "STEER_SCALE_RDATA", "1" },   { "REGISTRY", "1" },          { "PICKUPS_ORIG", "1" },
     { "REG_CARS", "1" },           { "REG_CALLBACKS", "1" },       { "MODE7", "1" },             { "CC_PC24", "1" },
     { "REG_LATE", "1" },           { "A6A_GEAR_ORDER", "1" },

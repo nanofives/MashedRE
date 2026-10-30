@@ -15,8 +15,10 @@
 //   part 5 MASHED_POS_CONTACTS=1 no ReassertContacts between A4 and the substep loop (FUN_00470c70
 //                               0x0047109f..0x00471106 writes no wheel state / normal / +0x9e0)
 //   MASHED_POS_MODEL=1          all five
-// Header-only so VehiclePhysicsRun.cpp, WheelContactSolver.cpp and TrackRenderer.cpp read the
-// same knobs without a new cross-TU extern (all three are exe-only, exe_sources.rsp).
+// [D5-KNOBS-D-SEEDED6 2026-10-30] MASHED_POS_MODEL was seeded ON by Core/FaithDefaults.cpp, so all five parts
+// ran by default and the five sub-knobs (and MASHED_RW_WHEELPOS, ORed with part 2) could add nothing. The knobs
+// and PosModelAll / Seed / Wheels / Trans / Order / Contacts were deleted: each caller runs the ON branch.
+// What is left is the env helper for the part-1 diagnostics MASHED_POS_SEED_MIN (VehiclePhysicsRun.cpp).
 #pragma once
 
 #include <cstdlib>
@@ -28,12 +30,6 @@ inline bool PosModelEnvOn(const char* name) {
     const char* e = std::getenv(name);
     return e && e[0] == '1';
 }
-inline bool PosModelAll()    { static const bool s = PosModelEnvOn("MASHED_POS_MODEL");  return s; }
-inline bool PosModelSeed()   { static const bool s = PosModelAll() || PosModelEnvOn("MASHED_POS_SEED");   return s; }
-inline bool PosModelWheels() { static const bool s = PosModelAll() || PosModelEnvOn("MASHED_POS_WHEELS"); return s; }
-inline bool PosModelTrans()  { static const bool s = PosModelAll() || PosModelEnvOn("MASHED_POS_TRANS");  return s; }
-inline bool PosModelOrder()  { static const bool s = PosModelAll() || PosModelEnvOn("MASHED_POS_ORDER");  return s; }
-inline bool PosModelContacts() { static const bool s = PosModelAll() || PosModelEnvOn("MASHED_POS_CONTACTS"); return s; }
 
 }  // namespace Vehicle
 }  // namespace mashed_re

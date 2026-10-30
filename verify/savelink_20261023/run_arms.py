@@ -20,20 +20,25 @@ ROOT = os.path.normpath(os.environ.get('A4_ROOT', 'D:/MashedWT/kfdot_root'))
 # and NOPGIC with the knobs they set (MASHED_NO_PONTOON_ANIM / _STATE / _CARRY, MASHED_NO_AI_COUNTDOWN_CLOCK,
 # MASHED_NO_D2LAT_REFRESH, MASHED_NO_GRID_DIR, MASHED_NO_AI_CLOCK_LATE, MASHED_NO_AI_LUT, MASHED_NO_PICKUPS_PREGO,
 # MASHED_NO_ICONCUBE): verify/d5knobsrunarms_20261030/RESULT_D5-KNOBS-RUNARMS-STACKS.md.
+# D5-KNOBS-D-SEEDED6 (2026-10-30) deleted six knobs the exe seeded ON (position model fix B parts 1-5 and the RW wheel
+# arm, round-grid stage B order, late path progress, the RW spawn basis, the ring double buffer, the CRT steer acos):
+# their paths are unconditional, so the names are gone from the stacks below. Stacks B, SB, DB, A64 and PM are empty
+# (= DEF), FNPM = FAITH, and RGB / SPL / TGTPL / SPLSB / SPLSBKN / SBKN equal the stack they extended:
+# verify/d5knobsd_seeded6_20261030/RESULT_D5-KNOBS-D-SEEDED6.md.
 STACK = {'DEF': [],
          'NOHA': ['MASHED_NO_HEADING_ASSIST'],
          # the AI RW-LUT lookahead stacked on the new default (report only, not flipped)
          'L5': ['MASHED_AI_LUT=5'],
          # d3bB2: the U-9684 stacks (verify/d3_u9684_20261013/run_arms.py) on the dflip default
          'PP': ['MASHED_PATHPROG'], 'TGT': ['MASHED_PATHPROG', 'MASHED_TGT3'],
-         'RG': ['MASHED_PATHPROG', 'MASHED_ROUND_GRID', 'MASHED_ROUND_GRID_ORDER'],
-         'TGTRG': ['MASHED_PATHPROG', 'MASHED_ROUND_GRID', 'MASHED_ROUND_GRID_ORDER', 'MASHED_TGT3']}
-# d3bB2 exploration: fix B (MASHED_POS_MODEL = parts 1-5, verify/d2posmodel_20261016 + d2engage_20261016) under the
+         'RG': ['MASHED_PATHPROG', 'MASHED_ROUND_GRID'],
+         'TGTRG': ['MASHED_PATHPROG', 'MASHED_ROUND_GRID', 'MASHED_TGT3']}
+# d3bB2 exploration: fix B (parts 1-5, verify/d2posmodel_20261016 + d2engage_20261016; unconditional since SEEDED6) under the
 # U-9684 stacks, so the parked player's first-step settle (FUN_004704c0's FUN_0046f6c0(0), 0x00470638) gives it the
 # original's grid progress 29.999977 (d2engage G-PROG)
 STACK['CC'] = ['MASHED_AI_COUNTDOWN_CLOCK']           # d3bB2 PREREG section 1
-STACK['CCB'] = ['MASHED_AI_COUNTDOWN_CLOCK', 'MASHED_POS_MODEL', 'MASHED_PATHPROG', 'MASHED_ROUND_GRID',
-                'MASHED_ROUND_GRID_ORDER', 'MASHED_TGT3']   # report: the knob on the full U-9684 chain
+STACK['CCB'] = ['MASHED_AI_COUNTDOWN_CLOCK', 'MASHED_PATHPROG', 'MASHED_ROUND_GRID',
+                'MASHED_TGT3']   # report: the knob on the full U-9684 chain
 STACK['CCBL'] = STACK['CCB'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']   # + the port's car-car pair log
 STACK['CCBL5'] = STACK['CCBL'] + ['MASHED_AI_LUT=5']                          # + the d3b AI RW-LUT lookahead
 STACK['CC5'] = STACK['CC'] + ['MASHED_AI_LUT=5']
@@ -53,7 +58,7 @@ STACK['CCET'] = STACK['CCE'] + ['MASHED_AI_TICK_FIRST']
 STACK['EL'] = STACK['E'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
 STACK['DEFL'] = ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']
 STACK['SLP'] = STACK['SL'] + ['MASHED_PATHPROG_TRACE=@OUT@\\@NAME@.pathprog.csv']
-STACK['B'] = ['MASHED_POS_MODEL']
+STACK['B'] = []   # was fix B's umbrella knob (SEEDED6: unconditional)
 # a4order part 2 (PREREG_a4order.md section 3): MASHED_A4_ORDER implies MASHED_AI_TICK_FIRST
 _A4 = ['MASHED_A4_ORDER', 'MASHED_A4_ORDER_TRACE=@OUT@\\@NAME@.a4.txt']
 STACK['A'] = _A4
@@ -75,7 +80,7 @@ STACK['CLR5'] = STACK['CLR'] + ['MASHED_AI_LUT=5']
 # d2ref (PREREG_d2ref.md): the D2 refresh chain on the 6242c84b6 default
 STACK['R'] = ['MASHED_D2LAT_REFRESH']; STACK['G'] = ['MASHED_GRID_DIR']; STACK['RG'] = STACK['R'] + STACK['G']
 STACK['RY'] = STACK['R'] + ['MASHED_D2LAT_SPAWN_YAW=-1.5707964']
-STACK['RGB'] = STACK['RG'] + ['MASHED_POS_MODEL']
+STACK['RGB'] = list(STACK['RG'])
 # d2ref amendment 1: U-9751 (A5 race timer) alone and on the two refresh pairs, with the timer log
 _T = ['MASHED_A5_RACE_TIMER', 'MASHED_A5_RACE_TIMER_LOG']
 STACK['T5'] = _T; STACK['RGT'] = STACK['RG'] + _T; STACK['RYT'] = STACK['RY'] + _T
@@ -89,16 +94,16 @@ STACK['TPPGC'] = STACK['TPPG'] + ['MASHED_COUNTDOWN_SPAWN']; STACK['SCS'] = STAC
 STACK['TGTE'] = STACK['TGT'] + ['MASHED_AI_CONTACT_EVENT']   # cev PREREG section 2
 STACK['TGTEL'] = STACK['TGTE'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt',
                                   'MASHED_TGT3_TRACE=@OUT@\\@NAME@.tgt3.csv']
-STACK['SPL'] = STACK['S'] + ['MASHED_PATHPROG_LATE']; STACK['SPLE'] = [k for k in STACK['SPL'] if k != 'MASHED_AI_CONTACT_EVENT']   # cev amendment 2
+STACK['SPL'] = list(STACK['S']); STACK['SPLE'] = [k for k in STACK['SPL'] if k != 'MASHED_AI_CONTACT_EVENT']   # cev amendment 2
 STACK['SPLL'] = STACK['SPL'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
-STACK['TGTPL'] = STACK['TGT'] + ['MASHED_PATHPROG_LATE']
-STACK['SB'] = ['MASHED_SPAWN_BASIS_RW']; STACK['SPLSB'] = STACK['SPL'] + ['MASHED_SPAWN_BASIS_RW']   # lk21 PREREG section 2
+STACK['TGTPL'] = list(STACK['TGT'])
+STACK['SB'] = []; STACK['SPLSB'] = list(STACK['SPL'])   # lk21 PREREG section 2
 STACK['SPLSBR1'] = STACK['SPLSB'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
 STACK['SPLUT'] = STACK['SPL'] + ['MASHED_UP_TRINORMAL']; STACK['SPLSBUT'] = STACK['SPLSB'] + ['MASHED_UP_TRINORMAL']   # lk21 amendment 1
 STACK['SPLSBUTR1'] = STACK['SPLSBUT'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
 STACK['KN'] = ['MASHED_REASSERT_KEEP_NORMAL']; STACK['SPLKN'] = STACK['SPL'] + STACK['KN']   # u9754 PREREG section 2
 STACK['SPLKNR1'] = STACK['SPLKN'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
-STACK['SPLSBKN'] = STACK['SPLKN'] + ['MASHED_SPAWN_BASIS_RW']; STACK['SBKN'] = ['MASHED_SPAWN_BASIS_RW'] + STACK['KN']   # u9754 amendment 1
+STACK['SPLSBKN'] = list(STACK['SPLKN']); STACK['SBKN'] = list(STACK['KN'])   # u9754 amendment 1
 STACK['SPLSBKNR1'] = STACK['SPLSBKN'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
 STACK['SY'] = ['MASHED_SPAWN_Y_LINE']; STACK['SPLSBKNSY'] = STACK['SPLSBKN'] + STACK['SY']   # u9755 PREREG section 2
 STACK['SPLSBKNSYR1'] = STACK['SPLSBKNSY'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']; STACK['TPPGSY'] = STACK['TPPG'] + STACK['SY']
@@ -110,8 +115,8 @@ STACK['SSD'] = ['MASHED_SPAWN_SOLVER_DIAG=@OUT@\\@NAME@.ssd.txt']; STACK['SPLSBK
 STACK['F60'] = ['MASHED_FIX_5CEA60']; STACK['F44'] = ['MASHED_FIX_5CEA44']; STACK['F6044'] = STACK['F60'] + STACK['F44']   # u9756 PREREG section 2
 STACK['SPLSBKNF60'] = STACK['SPLSBKN'] + STACK['F60']; STACK['SPLSBKNF60SSD'] = STACK['SPLSBKNF60'] + STACK['SSD']
 STACK['SPLSBKNF60R1'] = STACK['SPLSBKNF60'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
-# u9152 PREREG section 2: the original's +0x928 / +0x968 double buffer (MASHED_RING_DBUF) and the exhausted-retry discard
-STACK['DB'] = ['MASHED_RING_DBUF']; STACK['DBX'] = STACK['DB'] + ['MASHED_RING_DBUF_DISCARD']
+# u9152 PREREG section 2: the original's +0x928 / +0x968 double buffer (unconditional since SEEDED6) and the exhausted-retry discard
+STACK['DB'] = []; STACK['DBX'] = STACK['DB'] + ['MASHED_RING_DBUF_DISCARD']
 STACK['SPLSBKNF60DB'] = STACK['SPLSBKNF60'] + STACK['DB']; STACK['SPLSBKNF60DBX'] = STACK['SPLSBKNF60'] + STACK['DBX']
 STACK['SPLSBKNF60DBR1'] = STACK['SPLSBKNF60DB'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
 STACK['SPLSBKNF60DBL'] = STACK['SPLSBKNF60DB'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']; STACK['SPLSBKNF60L'] = STACK['SPLSBKNF60'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']
@@ -128,7 +133,7 @@ STACK['BQ1'] = STACK['SPLSBKNF60R1'] + ['MASHED_BATCH_DUMP=@OUT@\\@NAME@.bq.csv'
 STACK['SSE'] = ['MASHED_RW_SSE_POINTS']; STACK['UTBQ1SSE'] = STACK['UTBQ1'] + STACK['SSE']; STACK['BQ1SSE'] = STACK['BQ1'] + STACK['SSE']
 # u9760 PREREG section 2: MASHED_A5_SUSP_LUT (A5 Phase 6 all-grounded force, 0x0046e895..0x0046e925)
 STACK['A5L'] = ['MASHED_A5_SUSP_LUT']
-STACK['XR1'] = STACK['SPLSBKNF60R1'] + ['MASHED_UP_TRINORMAL', 'MASHED_RW_SSE_POINTS', 'MASHED_RING_DBUF', 'MASHED_FWD_AT']
+STACK['XR1'] = STACK['SPLSBKNF60R1'] + ['MASHED_UP_TRINORMAL', 'MASHED_RW_SSE_POINTS', 'MASHED_FWD_AT']
 STACK['XA5LR1'] = STACK['XR1'] + STACK['A5L']
 STACK['XFS'] = STACK['XR1'] + ['MASHED_FORCE_SPLIT=@OUT@/@NAME@.fs.csv']; STACK['XA5LFS'] = STACK['XA5LR1'] + ['MASHED_FORCE_SPLIT=@OUT@/@NAME@.fs.csv']   # u9760 split
 STACK['A6L'] = ['MASHED_A6A_LUT']; STACK['XA6FS'] = STACK['XFS'] + STACK['A6L']; STACK['XA5A6FS'] = STACK['XA5LFS'] + STACK['A6L']   # u9760 amendment 1
@@ -174,7 +179,7 @@ for _s in (1, 2, 3):
     STACK['EXR%d' % _s] = STACK['EX'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]
 STACK['EXL7'] = STACK['EX'] + ['MASHED_AI_LUT=7']; STACK['L7'] = ['MASHED_AI_LUT=7']   # d3bc: + FUN_00415e20's LUT normalize (bit 2)
 STACK['EXL7R1'] = STACK['EXL7'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']   # d3bc
-STACK['A64'] = ['MASHED_STEER_ACOS_CRT']; STACK['L7A'] = STACK['L7'] + STACK['A64']; STACK['EXL7A'] = STACK['EXL7'] + STACK['A64']   # d3bc PREREG section 1; amendment 4: A64 was MASHED_STEER_ACOS64 (double acos) until 555738fd9
+STACK['A64'] = []; STACK['L7A'] = STACK['L7'] + STACK['A64']; STACK['EXL7A'] = STACK['EXL7'] + STACK['A64']   # d3bc PREREG section 1; amendment 4: A64 was MASHED_STEER_ACOS64 (double acos) until 555738fd9, then the CRT acos knob (unconditional since SEEDED6)
 STACK['EXL7AR1'] = STACK['EXL7A'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
 STACK['F2'] = ['MASHED_AI_FWD_ATROW']; STACK['L7AF'] = STACK['L7A'] + STACK['F2']; STACK['EXL7AF'] = STACK['EXL7A'] + STACK['F2']   # d3bc amendment 1
 STACK['EXL7AFR1'] = STACK['EXL7AF'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
@@ -311,8 +316,8 @@ STACK['RD'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']  
 STACK['RDS'] = STACK['RD'] + ['MASHED_SPAWN_Y_LOG=@OUT@/@NAME@.sy.txt', 'MASHED_SETTLE_DIAG=@OUT@/@NAME@.settle.txt']
 STACK['FAITH'] = [k for k in STACK['FULLGO'] if not k.startswith(('MASHED_RECDUMP', 'MASHED_MODE7_TRACE'))] + ['MASHED_A5_FD0_LIVE=1', 'MASHED_A5_DRAFT_LUT=1', 'MASHED_FIX_5CEA44']   # d2off PREREG: the full faithful stack
 STACK['FD'] = STACK['FAITH'] + STACK['RD']
-STACK['FNPM'] = [k for k in STACK['FAITH'] if k != 'MASHED_POS_MODEL']   # FAITH without the position model
-STACK['PM'] = ['MASHED_POS_MODEL']
+STACK['FNPM'] = list(STACK['FAITH'])   # was FAITH without the position model (SEEDED6: no longer expressible)
+STACK['PM'] = []
 STACK['FAITH2'] = STACK['FAITH'] + ['MASHED_COLL_LUT=1', 'MASHED_A5_RING_ORDER=1']   # amendment 1
 STACK['FD2'] = STACK['FAITH2'] + STACK['RD']
 STACK['FRO'] = STACK['FAITH'] + ['MASHED_A5_RING_ORDER=1']

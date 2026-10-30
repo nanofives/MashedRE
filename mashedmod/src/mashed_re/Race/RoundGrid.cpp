@@ -185,8 +185,8 @@ float GridDir_PortYaw(float lx, float lz) {
     const float s = static_cast<float>(std::sin(static_cast<double>(r)));
     const float c = static_cast<float>(std::cos(static_cast<double>(r)));
     const float yaw = static_cast<float>(std::atan2(static_cast<double>(c), static_cast<double>(s)));
-    // The at row for axis (0,1,0) from the shared RwMatrixRotate body. Used by BodyOrient_Init under
-    // MASHED_SPAWN_BASIS_RW only.
+    // The at row for axis (0,1,0) from the shared RwMatrixRotate body. Used by BodyOrient_Init (its
+    // MASHED_SPAWN_BASIS_RW knob was deleted by D5-KNOBS-D-SEEDED6).
     float atX, atZ;
     GridRotateAt(deg, &atX, &atZ);
     if (std::FILE* tf = GridRotateTrace()) {
@@ -227,14 +227,6 @@ bool GridDir_Anchor(float A[3], float lat[2], float dir[2], float* yawPort, int*
     return GridDir_YawAt(v, yawPort);
 }
 
-bool RoundGrid_OrderEnabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_ROUND_GRID_ORDER");
-        return s && s[0] && s[0] != '0';
-    }();
-    return s_on && RoundGrid_Enabled();
-}
-
 // FUN_0040e590, DAT_008a94d0 == 4 path (decomp verify/d3_bulk_20261011/roundgrid/stageb/FUN_0040e590_decomp.txt):
 //   C  switch case 4: code 2 -> 3, 1 -> 2, -1 -> 1, -2 -> 0, else 1000 (unassigned); local_44 = 1 iff none assigned
 //   D  mode-4 fill: each car whose code is not 2/1/-1/-2 takes the first value 0..3 no car holds now
@@ -264,7 +256,7 @@ void RoundGrid_AssignMode4(const int c[4], int out[4]) {
 }
 
 bool RoundGrid_SlotOrder(int out[4]) {
-    if (!RoundGrid_OrderEnabled()) return false;
+    if (!RoundGrid_Enabled()) return false;            // MASHED_ROUND_GRID_ORDER deleted (D5-KNOBS-D-SEEDED6)
     RoundGrid_AssignMode4(s_codes, out);
     if (std::FILE* f = Trace()) {
         std::fprintf(f, "round-order codes=%d,%d,%d,%d slots=%d,%d,%d,%d\n", s_codes[0], s_codes[1], s_codes[2], s_codes[3],

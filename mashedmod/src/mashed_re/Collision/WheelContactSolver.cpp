@@ -25,13 +25,12 @@
 #include "CollisionWorld.h"           // [d2bsp] fix W
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
+#include <cstdlib>   // getenv
 #include <cfloat>    // [u9776] _controlfp_s (MASHED_WCS_COMBINE_PC24)
 #include <cstring>   // [u9776] memcpy (MASHED_WCS_TRILOG .tq.csv)
 #include <string>
 #include "../Vehicle/VehicleRecordBase.h"   // [u9773] slot index for MASHED_WCS_POSLOG
 #include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
-#include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B part 2 knob, default-OFF
 #include "../Math/RwLutTables.h"     // [lk21] LutSqrt (FUN_004c3b30), MASHED_UP_TRINORMAL
 
 namespace mashed_re {
@@ -165,29 +164,23 @@ void WheelContactSolver(int* self, void* world, int substep)
     // The car-vs-WORLD half of the chain (CarWorldContacts.cpp:407) is what U-9154
     // wires; the wheel half is a separately calibrated substitute and is NOT changed
     // by this session.
-    // RE-PICKUP: once the standalone's suspension travel feeds the real depth, drop
-    // the scratch and write straight to g_wheelContactPos. `MASHED_RW_WHEELPOS=1`
-    // runs that arm now, for measurement.
-    // [d2posmodel 2026-10-16] fix B part 2 (MASHED_POS_WHEELS / MASHED_POS_MODEL,
-    // PosModelKnobs.h) is this same arm. SolveWheelContacts publishes the current body basis
-    // into iVar12's rows before this call under that knob, so the transform is real.
-    static const bool s_rwWheelPos = (std::getenv("MASHED_RW_WHEELPOS") != nullptr) ||
-                                     mashed_re::Vehicle::PosModelWheels();
-    float rwWheelPos[12];
-    Rw_VtableDispatch(s_rwWheelPos ? g_wheelContactPos : rwWheelPos,
-                      g_suspScratch, 4, iVar12);                           // &DAT_0088e620 <- transform susp pos
-    (void)rwWheelPos;
+    // [d2posmodel 2026-10-16] fix B part 2: the dispatch writes straight to g_wheelContactPos.
+    // SolveWheelContacts publishes the current body basis into iVar12's rows before this call,
+    // so the transform is real. The knobs that chose this arm (MASHED_RW_WHEELPOS,
+    // MASHED_POS_WHEELS, MASHED_POS_MODEL, seeded ON by FaithDefaults) and the scratch target
+    // were deleted by D5-KNOBS-D-SEEDED6.
+    Rw_VtableDispatch(g_wheelContactPos, g_suspScratch, 4, iVar12);   // &DAT_0088e620 <- transform susp pos
     // FUN_0046c5f0() — register-arg TriangleFaceNormal. [lk21 2026-10-18] The args ARE resolvable from the
     // disassembly and it DOES write state: 0x0046f79b `lea esi,[edi+0x9c8]`, ECX = 0x0088e644 (wheel 3), EDX =
     // 0x0088e638 (wheel 2), EAX = 0x0088e620 (wheel 0), call 0x0046f7b0: record +0x9c8..+0x9d0 = the normal of the
     // three transformed suspension points, cross / FUN_004c3b30 (LUT sqrt). The port seeds +0x9c8 with the basis
     // up row (VehiclePhysicsRun.cpp, U-9156), which is that normal without the LUT magnitude (0.99999 here).
-    // MASHED_UP_TRINORMAL=1 (default OFF; the points are the real transform only under MASHED_POS_MODEL /
-    // MASHED_RW_WHEELPOS) writes it here, as the original does. verify/lk21_20261018/PREREG_lk21.md amendment 1.
+    // MASHED_UP_TRINORMAL=1 (seeded ON by FaithDefaults) writes it here from the transformed points, as the
+    // original does. verify/lk21_20261018/PREREG_lk21.md amendment 1.
     {
         static const bool s_upTri = [] { const char* e = std::getenv("MASHED_UP_TRINORMAL"); return e && e[0] == '1'; }();
         if (s_upTri) {
-            const float* p = s_rwWheelPos ? g_wheelContactPos : rwWheelPos;
+            const float* p = g_wheelContactPos;
             const float* a = p;        // EAX 0x0088e620
             const float* b = p + 9;    // ECX 0x0088e644 (param_1)
             const float* c = p + 6;    // EDX 0x0088e638 (param_2)

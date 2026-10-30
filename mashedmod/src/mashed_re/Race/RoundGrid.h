@@ -32,14 +32,14 @@ bool RoundGrid_AnchorAt(int node, float A[3], float lat[2], float dir[2]);
 // [u9755] FUN_00408b00's grid point (x, y, z) for slot 0..3 at `node`, in its operation order (FUN_004704c0's param_2..4).
 bool RoundGrid_GridPoint(int node, int slot, float out[3]);
 
-// Stage B (MASHED_ROUND_GRID_ORDER, default OFF, needs MASHED_ROUND_GRID): FUN_0040e590's per-car grid slot value
+// Stage B (runs whenever MASHED_ROUND_GRID is on: the MASHED_ROUND_GRID_ORDER knob, seeded ON by FaithDefaults, was
+// deleted by D5-KNOBS-D-SEEDED6): FUN_0040e590's per-car grid slot value
 // (mode DAT_008a94d0 = 4, rule 0, DAT_0067ea64 = 0: sections C/D/E + `local_44 ? i + 4 : local_2c[i]`) from the
 // kept codes; the codes then reset to -1000 (FUN_0040b250, before the placement loop). Formation slot = value & 3
-// (FUN_00408b00 cases 0..3 and 4..7 are the same four offsets). Returns false when the knob is off.
+// (FUN_00408b00 cases 0..3 and 4..7 are the same four offsets). Returns false when MASHED_ROUND_GRID is off.
 bool RoundGrid_SlotOrder(int slotValue[4]);
 // The assignment itself (pure), exposed for the replay.
 void RoundGrid_AssignMode4(const int codes[4], int slotValue[4]);
-bool RoundGrid_OrderEnabled();
 
 // [gridyaw 2026-10-16] Default ON since d2ref 2026-10-17 (opt-out deleted, D5-KNOBS-RUNARMS-STACKS): the grid frame FUN_00408b00
 // builds, for the node the port grids at (verify/gridyaw_20261016/PREREG_gridyaw.md section 2, A1.3).

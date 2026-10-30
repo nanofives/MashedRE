@@ -38,7 +38,6 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "../Ai/AiLeafTargets.h"   // D3 bulk G-AILEAF: FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
 #include "../Race/RoundGrid.h"      // round-restart grid Stage A (MASHED_ROUND_GRID)
 #include "../Race/HeadingAssist.h"  // [d3b] FUN_0046c7d0 steer-0 heading assist (MASHED_HEADING_ASSIST)
-#include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B knobs (default OFF)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
 #include "PickupIconCube.h"          // [iconcube] D5-ICONCUBE-SPIN (MASHED_ICONCUBE)
@@ -5262,7 +5261,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                                                      return e && e[0] && e[0] != '0'; }();
             if (!s_noSettleFirst) h.player_settle = [] {
                 TrackRenderer* t = s_subTr;
-                if (!t || !(Vehicle::PosModelOrder() && Vehicle::VehiclePhysics_Enabled())) return;
+                if (!t || !Vehicle::VehiclePhysics_Enabled()) return;
                 Vehicle::PlayerCarIO sio;
                 sio.pos[0] = t->car_pos_[0]; sio.pos[1] = t->car_pos_[1]; sio.pos[2] = t->car_pos_[2];
                 sio.vel[0] = t->car_vel_[0]; sio.vel[1] = t->car_vel_[1]; sio.vel[2] = t->car_vel_[2];
@@ -5275,7 +5274,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 sio.grounded = sgok ? 1 : 0;
                 for (int k = 0; k < 3; ++k) sio.drive_delta[k] = 0.f;
                 Vehicle::VehiclePhysics_SpawnSettle(0, s_subDt, sio);
-                if (Vehicle::PosModelTrans()) { t->car_pos_[0] = sio.pos[0]; t->car_pos_[1] = sio.pos[1]; t->car_pos_[2] = sio.pos[2]; }
+                t->car_pos_[0] = sio.pos[0]; t->car_pos_[1] = sio.pos[1]; t->car_pos_[2] = sio.pos[2];
             };
             SubState_SetHost(h);
             s_hostSet = true;
@@ -5438,14 +5437,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
         if (countdown_ <= 0.f) {
             Audio::SfxPlay("go", 0.9f);                      // real "GO!" SFX
-            // [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER, default OFF): the player's
+            // [d2engage 2026-10-16] fix B part 4 (its MASHED_POS_ORDER knob was deleted by D5-KNOBS-D-SEEDED6): the player's
             // spawn-settle step is the exe's stand-in for the original's pre-release hold ticks, so
             // it runs BEFORE the release (FUN_004103a0: 0x0041043a / 0x00410441, then 0x0041049b),
-            // not after it inside the first StepPlayer below. With the seed on, a post-release settle
+            // not after it inside the first StepPlayer below. With the seed (part 1), a post-release settle
             // opened A6a's front-wheel gate under +0xbf8 == 2 and spent one 200-unit decrement of
             // the 3000 charge: engagement at d=14, the original d=15. PREREG_d2engage.md 0.1-0.3.
             // The io is the one StepPlayer builds below (the settle zeroes the inputs itself).
-            if (Vehicle::PosModelOrder() && Vehicle::VehiclePhysics_Enabled()) {
+            if (Vehicle::VehiclePhysics_Enabled()) {
                 Vehicle::PlayerCarIO sio;
                 sio.pos[0] = car_pos_[0]; sio.pos[1] = car_pos_[1]; sio.pos[2] = car_pos_[2];
                 sio.vel[0] = car_vel_[0]; sio.vel[1] = car_vel_[1]; sio.vel[2] = car_vel_[2];
@@ -5458,7 +5457,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 sio.grounded = sgok ? 1 : 0;
                 for (int k = 0; k < 3; ++k) sio.drive_delta[k] = 0.f;
                 Vehicle::VehiclePhysics_SpawnSettle(0, in.dt, sio);
-                if (Vehicle::PosModelTrans()) { car_pos_[0] = sio.pos[0]; car_pos_[1] = sio.pos[1]; car_pos_[2] = sio.pos[2]; }
+                car_pos_[0] = sio.pos[0]; car_pos_[1] = sio.pos[1]; car_pos_[2] = sio.pos[2];
             }
             Vehicle::LaunchRev_Release();
         }
@@ -5757,18 +5756,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // original's own internal->world factor _DAT_005cc948 * _DAT_005cea80.
         // REPLACES `pos += {cos,0,sin(car_yaw_)} * io.drive_speed * dt`, which
         // forced the path to follow the nose and so could not express a slide.
-        // [d2posmodel 2026-10-16] fix B part 3 (MASHED_POS_TRANS): the physics position is the
+        // [d2posmodel 2026-10-16] fix B part 3: the physics position is the
         // car's position. StepCar returns it in io.pos (velocity integral per substep plus the
         // 0x0046f6c0 contact-normal corrections, y included), in this file's convention
         // (physics y + car_ground_off_), so y is no longer snapped to GroundHeight + offset.
         // The off-mesh test and the recovery below are unchanged; a recovery re-seeds the
         // physics y from the ground (StepCar's adapter IN), as the spawn does.
-        const bool posTrans = Vehicle::PosModelTrans();
-        const float nx = posTrans ? io.pos[0] : car_pos_[0] + io.drive_delta[0];
-        const float nz = posTrans ? io.pos[2] : car_pos_[2] + io.drive_delta[2];
+        const float nx = io.pos[0];
+        const float nz = io.pos[2];
         bool nok = false;
-        const float ngy = GroundHeight(nx, nz, &nok);
-        if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = posTrans ? io.pos[1] : ngy + car_ground_off_; }
+        GroundHeight(nx, nz, &nok);
+        if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = io.pos[1]; }
         else {
             // [G4][U-A8-OFFTRACK] off-mesh recovery.
             //
@@ -6129,12 +6127,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             a.yaw = io.yaw;
             yaww::Hit(yaww::W_3334, v);        // A-COV: the mandatory coverage control
             yaww::Post(v, a.yaw);              // leg B, second program point
-            const bool posTrans = Vehicle::PosModelTrans();   // [d2posmodel] fix B part 3, as the player
-            const float nx = posTrans ? io.pos[0] : a.pos[0] + io.drive_delta[0];
-            const float nz = posTrans ? io.pos[2] : a.pos[2] + io.drive_delta[2];
+            const float nx = io.pos[0];   // [d2posmodel] fix B part 3, as the player
+            const float nz = io.pos[2];
             bool nok = false;
-            const float ngy = GroundHeight(nx, nz, &nok);
-            if (nok) { a.pos[0] = nx; a.pos[2] = nz; a.pos[1] = posTrans ? io.pos[1] : ngy + car_ground_off_; }
+            GroundHeight(nx, nz, &nok);
+            if (nok) { a.pos[0] = nx; a.pos[2] = nz; a.pos[1] = io.pos[1]; }
             else {
                 // off-mesh: the same ring-probe relocation the player uses (RecoverOffMesh).
                 float ry; float rad = 0.f;
@@ -6258,9 +6255,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // [U-9685] arm R: FUN_0040da50's FUN_00408610 loop sits between the AI path (0x0040fc6c) and the producer
     // path (0x0040fc7c) in FUN_0040fc00, so it runs here, before the producer call below.
     if (!(Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
-    // [cev] MASHED_PATHPROG_LATE: the wholesale tick at the same place (after FUN_00425a40 0x0040fc6c, before the
-    // producer 0x0040fc7c); same gates_ guard as the UpdateRace site it replaces.
-    if (Race::PathProg_Late() && !gates_.empty()) Race::PathProg_FrameTick();
+    // [cev] the wholesale tick at the same place (after FUN_00425a40 0x0040fc6c, before the producer 0x0040fc7c); same
+    // gates_ guard as the UpdateRace site it replaced (MASHED_PATHPROG_LATE deleted by D5-KNOBS-D-SEEDED6).
+    if (!gates_.empty()) Race::PathProg_FrameTick();
     if (RegLate() && !gates_.empty()) Race::CarsReg_FrameTick();          // [u9770] FUN_0040da50 0x0040fc75
     if (!gates_.empty()) RaceComputeDistancesTick(1);
     if (RegLate() && !gates_.empty()) {                                   // [u9770] FUN_0045bba0 0x0040fcd0, FUN_00485070 0x0040fd07
@@ -7632,7 +7629,7 @@ void TrackRenderer::StartRound() {
         }
         *yaw = gdOn ? gdYaw : std::atan2(dir[1], dir[0]);
     };
-    // [round grid Stage B] per-car formation slot (default-OFF MASHED_ROUND_GRID_ORDER): FUN_0040e590's slot value
+    // [round grid Stage B] per-car formation slot (under MASHED_ROUND_GRID, D5-KNOBS-D-SEEDED6): FUN_0040e590's slot value
     // & 3; otherwise slot == spawn order as before.
     int kSlot[4] = { 0, 1, 2, 3 };
     {
@@ -8696,9 +8693,8 @@ void TrackRenderer::UpdateRace(float dt) {
     // call is at the end of UpdateCar (after the opponent block), not here. verify/d3_u9683_20261016.
 
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
-    // race_pct 0x008a96ec), before the AI tick like the bridge below. Default-OFF MASHED_PATHPROG.
-    // [cev] MASHED_PATHPROG_LATE moves it after the opponents' physics (end of UpdateCar).
-    if (!Race::PathProg_Late()) Race::PathProg_FrameTick();
+    // race_pct 0x008a96ec) runs after the opponents' physics, at the end of UpdateCar ([cev]; the MASHED_PATHPROG_LATE
+    // knob that kept it here was deleted by D5-KNOBS-D-SEEDED6).
     // [PATHPROG split] MASHED_PP_PUBLISH bit 0x8: the shadow-row tick at the wholesale knob's placement, before the AI tick.
     if (Race::PathProg_PublishMask() & 0x8u) Race::PathProg_RacePctTick();
 
