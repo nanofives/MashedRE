@@ -21,8 +21,8 @@ namespace {
 
 struct FaithKnob { const char* name; const char* value; };
 
-// D-11077 (MASHED_PARTMORPH + MASHED_CAR_STATE0) is prepared below and stays 0 until Mariano's decision flips it.
-#define MASHED_FLIP_D11077 0
+// D-11077 (MASHED_PARTMORPH + MASHED_CAR_STATE0): flipped ON by D5-PARTMORPH-MEASURE (L-62 b, Mariano 2026-10-30).
+#define MASHED_FLIP_D11077 1
 
 // Order and values = STACK['FAITH'] in verify/d2off_20261020/run_arms.py (bare names there are set to "1").
 const FaithKnob kFaith[] = {
@@ -65,10 +65,10 @@ const FaithKnob kFaith[] = {
     // MASHED_NO_SUBSTATE=1 / MASHED_NO_P3_RESET_PAIR=1 opt out.
     { "SUBSTATE", "1" },           { "P3_RESET_PAIR", "1" },
 #if MASHED_FLIP_D11077
-    // [D5-PARTMORPH-FLIPPREP 2026-10-30, D-11077, prepared, NOT flipped] FUN_0041f770's part 0x12 morph / part 0x14
+    // [D5-PARTMORPH-FLIPPREP 2026-10-30, D-11077, flipped by D5-PARTMORPH-MEASURE] FUN_0041f770's part 0x12 morph / part 0x14
     // wobble (verify/partmorph_20261028/RESULT_D5-PARTMORPH.md) and its record-state-0 producer
     // (verify/partmorph_20261028/RESULT_D5-PARTMORPH-PRODUCER.md). MASHED_NO_PARTMORPH=1 / MASHED_NO_CAR_STATE0=1 opt out.
-    // Measured ON: verify/d5partmorphflip_20261030/RESULT_D5-PARTMORPH-FLIPPREP.md.
+    // Measured ON: verify/d5partmorphflip_20261030/RESULT_D5-PARTMORPH-FLIPPREP.md and RESULT_D5-PARTMORPH-MEASURE.md.
     { "PARTMORPH", "1" },          { "CAR_STATE0", "1" },
 #endif
 };
