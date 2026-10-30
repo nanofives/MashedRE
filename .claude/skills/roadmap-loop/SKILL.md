@@ -22,7 +22,13 @@ Rules every child reads: `$ORCH\re\orchestrator\WORKER_RULES.md`. Decisions: `lo
 3. Plan the wave: group the `ready` rows by `section`, lowest wave first. One lead per section.
 
 ## Caps (decision 5)
-- 3 live leads, 4 live workers in total, 8 workers per run. Leads get at most 2 workers each.
+- 4 live leads, 6 live workers in total, 12 workers per run. Leads get at most 3 workers each
+  (Mariano 2026-10-29, raised from 3 / 4 / 8 / 2).
+- Test slots are machine-wide (LIVING-PC: 6, shared with SimGolf / SimCity). Text-only and static legs take no
+  slot; prefer them when `test-slot --status` shows the slots full. A train's D2 arms still need the machine alone.
+- Keep the pool fed: when the ready rows cannot fill the live-worker cap, spawn a scoping lead that cuts new
+  standalone or text-only steps into the ledger (roadmap.ps1 add) from ROADMAP.md, DEFERRED.md and the open
+  RESULT follow-ups. It ports nothing itself.
 - A `solo` row starts only when no other worker is live. Tell its lead so.
 - Exactly one merge train child at a time.
 
@@ -131,5 +137,5 @@ Detail: CLAUDE.md "LAN release of the standalone".
 ```
 /loop Roadmap loop run <N+1>. Read C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/.claude/skills/roadmap-loop/SKILL.md and act as the L0 conductor it describes.
 Last run: <merged ids> merged into orch/integration @ <sha>; <blocked/red ids>; decisions open: <ids>.
-Start with roadmap.ps1 status. Sections to lead first: <sections with ready rows>. Caps 3 leads / 4 workers / 8 per run.
+Start with roadmap.ps1 status. Sections to lead first: <sections with ready rows>. Caps 4 leads / 6 workers / 12 per run, 3 per lead.
 ```
