@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-29 22:27 D4-SDONE-COUNT (orch/D4-SDONE-COUNT), D5-DEFERRED-SWEEP (orch/D5-DEFERRED-SWEEP): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_222626
 - 2026-10-29 19:10 D4-WSB-PORT-BVH (orch/D4-WSB-PORT-BVH), D4-WSB-PORT-BROAD-1 (orch/D4-WSB-PORT-BROAD-1): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261029_184133
 - 2026-10-29 17:25 D4-WSB-C4-SOLV-TRK1 (orch/D4-WSB-C4-SOLV-TRK1), D2-BAND-42S (orch/D2-BAND-42S): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_171513
 - 2026-10-29 16:00 D3-SUBSTATE-ROW315 (orch/D3-SUBSTATE-ROW315): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_155811
