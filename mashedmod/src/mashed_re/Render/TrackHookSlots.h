@@ -53,7 +53,7 @@ struct HookTrack {
 };
 
 // The decoded record for course_id, or nullptr when the track is not covered (its excluded clumps keep the
-// pre-rhooks handling) or MASHED_NO_HOOKSLOTS is set.
+// pre-rhooks handling).
 const HookTrack* HookTrackFor(int course_id);
 
 // True when the covered track draws course clump `clump` as itself (a Clump or Switch entry); `pass` gets the

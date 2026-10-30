@@ -135,8 +135,6 @@ const HookTrack kTracks[] = {
 }  // namespace
 
 const HookTrack* HookTrackFor(int course_id) {
-    static const bool s_off = std::getenv("MASHED_NO_HOOKSLOTS") != nullptr;
-    if (s_off) return nullptr;
     for (const HookTrack& t : kTracks)
         if (t.course_id == course_id) return &t;
     return nullptr;

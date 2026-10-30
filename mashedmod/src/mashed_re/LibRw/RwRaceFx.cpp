@@ -345,20 +345,19 @@ namespace {
 // the `fx.txd` dictionary only (loaded by FUN_0040bbb0, which ends with FUN_004c5c80(0)); badges.txd,
 // TrackImages.txd and Interface.txd are separate dictionaries that this lookup never walks (RWObjShad
 // 0x0040bcbd, Headlight 0x00459297, lensflare-fs8 0x00402908 / 0x00454f22 / 0x00458484). All five names asked
-// for here exist only in FX.TXD, so the scope does not change a result. MASHED_NO_TXDSCOPE=1 keeps every TXD.
+// for here exist only in FX.TXD, so the scope does not change a result.
 std::vector<rw::Texture*> g_sfx_tex;
 bool                      g_sfx_tried = false;
 rw::Texture* SfxTexture(const char* name) {
     if (!g_sfx_tried) {
         g_sfx_tried = true;
-        static const bool s_all_txd = std::getenv("MASHED_NO_TXDSCOPE") != nullptr;
         Piz::Archive a;
         if (a.Load("original/TOASTART/Common/SFX.piz")) {
             for (std::uint32_t i = 0; i < a.count(); ++i) {
                 const char* n = a.entry(i).name;
                 const std::size_t ln = std::strlen(n);
                 if (ln < 4 || _stricmp(n + ln - 4, ".TXD") != 0) continue;
-                if (!s_all_txd && _stricmp(n, "FX.TXD") != 0) continue;
+                if (_stricmp(n, "FX.TXD") != 0) continue;
                 std::uint32_t len = 0;
                 const std::uint8_t* b = a.blob(i, &len);
                 Txd::Dictionary d;
