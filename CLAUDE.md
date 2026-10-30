@@ -366,9 +366,13 @@ Loaded automatically from `.claude\skills\`:
 (`publish.sh`) builds `mashed_re.exe` from a clean `git archive` of a committed ref (default
 `race/first-frame-parity`; `mashedmod/` + `scripts/` + `re/tools/dual_copy_allowlist.txt`) into
 `mashedmod/build/lan_build` with `MASHED_NO_DEPLOY=1`, so the shared `original\mashed_re_dev.asi` is never touched.
-`stage_lan_release.py` stages `mashedmod/build/lan_release`: `mashed_re.exe` plus `original\` = `TOASTART\` (minus
-`PC\MOVIES\backup\`) + `toastaudio\` + `MASHED.exe` (read as data only, the `.unpatched` anchor copy) + `gamesave.bin`
-(seed, installed once), and a sha256 `manifest.json`. `deploy_lan_release.sh` pushes only changed files over SSH to the
+`stage_lan_release.py` stages `mashedmod/build/lan_release`: `mashed_re.exe` plus `original\` = `TOASTART\` + `toastaudio\` + `gamesave.bin`
+(seed, installed once), and a sha256 `manifest.json`. The stage ships no `MASHED.exe` and no other original binary: the
+loading-disc texture (RWTEXDICTIONARY/404) is embedded in `mashed_re.exe`, and `mashedmod/build.bat` compiles
+`mashedmod/assets/mashed_re.rc` with `rc.exe` and links the `.res` (D5-ICON-ASSET). `PC\MOVIES\backup\` is not copied as
+a folder: for each `PC\MOVIES\<name>.mpg` the stage takes the file of that name from `backup\` (the real boot movie) in
+place of the `skip_intro` stub. The updater removes a `MASHED.exe` an earlier release left in `original\` (it is no
+longer in the manifest). `deploy_lan_release.sh` pushes only changed files over SSH to the
 td5re-files nginx, http://mariano-server.local:8088/mashed/ (`/home/mariano/td5re-release/mashed`), and **deletes every
 server file the new manifest no longer lists** (old copies; refused when over half would go, `PRUNE_FORCE=1` overrides).
 Player PCs: `update.bat` in an empty folder fetches `mashed_update.ps1` and the build, removes old files under
