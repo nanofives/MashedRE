@@ -1687,11 +1687,7 @@ static bool StepChunkHead(StepCtx& c) {
     // pre-clamp |W1| (1835.50), a damp x1.081 and a post-impact car x1.077
     // (verify/d2lateral_20261016/PREREG_d2lateral.md A2.1-A2.3).
     // [d2ref flip 2026-10-17] default ON (user decision, with MASHED_GRID_DIR and MASHED_A5_RACE_TIMER; D2 3/3 only as the
-    // three together, verify/d2ref_20261017); MASHED_NO_D2LAT_REFRESH=1 opts out.
-    static const bool s_d2latRefresh = [] {
-        const char* no = std::getenv("MASHED_NO_D2LAT_REFRESH");
-        return !(no && no[0] && no[0] != '0');
-    }();
+    // three together, verify/d2ref_20261017). The opt-out MASHED_NO_D2LAT_REFRESH was deleted (D5-KNOBS-RUNARMS-STACKS).
     const int chunkL = c.chunkL = (chunkRem < 0x32) ? chunkRem : 0x32;               // 0x00470f50..0x00470f61
     const float a4Dt = c.a4Dt = (s_fixL && !s_fixLFrameMs) ? (float)chunkL : frameMs;   // 0x0047105a
     a4Skip = false;
@@ -1714,13 +1710,8 @@ static bool StepChunkHead(StepCtx& c) {
         g_a4Skip[slot] = false;
     }
     if (a4Skip && !preDone) {
-        if (s_d2latRefresh) {
-            F(r, off::kSpeed) = Math::LutLength(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
-            F(r, 0x9e8)       = Math::LutLength(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
-        } else {
-            F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
-            F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
-        }
+        F(r, off::kSpeed) = Math::LutLength(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
+        F(r, 0x9e8)       = Math::LutLength(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
     }
     SdLine(c, "preA4");
     // [d2settle fix C 2026-10-16] the original's per-frame speed refresh, now on EVERY frame.
@@ -1778,7 +1769,7 @@ static bool StepChunkHead(StepCtx& c) {
         if (!PosModelContacts() && !preOnly) ReassertContacts(r, *c.cs);
         if (preDone) {
             // [a4order] the refresh below belongs to the frame boundary (0x004710a1..0x004710da); made in the pre-phase
-        } else if (s_d2latRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
+        } else if (!a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
             F(r, off::kSpeed) = Math::LutLength(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c8
             F(r, 0x9e8)       = Math::LutLength(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710da
         } else if (!s_noSpeedRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {

@@ -274,14 +274,9 @@ bool RegLate() { static const bool s_on = [] { const char* e = std::getenv("MASH
 // 0x008989b0[v] == 0.0, which opens FUN_00414c30's type-7 gate (0x00414e2f / 0x00414e42) on a pre-GO pickup.
 // MASHED_PICKUPS_PREGO_NO_REFDIST (diagnostic) drops the call. PREREG verify/iconcube_20261028/PREREG3_D5-ICONCUBE-SPIN.md.
 extern "C" void __cdecl RaceComputeDistancesTick(int site);   // Race/SpectatorDistances.cpp
-// [D5-PREGO-CUBE-FLIP 2026-10-29] default ON with MASHED_ICONCUBE (decision L-52,
-// verify/pregocubeflip_20261029/RESULT_D5-PREGO-CUBE-FLIP.md); MASHED_NO_PICKUPS_PREGO=1 (or MASHED_PICKUPS_PREGO=0)
-// opts out: no pre-GO registry chain, the pre-flip default.
-bool PickupsPreGo() {
-    static const bool s_on = [] { const char* no = std::getenv("MASHED_NO_PICKUPS_PREGO"); const char* e = std::getenv("MASHED_PICKUPS_PREGO");
-                                  return !(no && no[0] && no[0] != '0') && !(e && e[0] == '0'); }();
-    return s_on;
-}
+// [D5-PREGO-CUBE-FLIP 2026-10-29] default ON with the IconCube (decision L-52,
+// verify/pregocubeflip_20261029/RESULT_D5-PREGO-CUBE-FLIP.md). The opt-outs MASHED_NO_PICKUPS_PREGO / MASHED_PICKUPS_PREGO=0
+// were deleted (D5-KNOBS-RUNARMS-STACKS), so the pre-GO registry chain always runs.
 void PreGoRegistryTick() {
     static const bool s_noRd = [] { const char* e = std::getenv("MASHED_PICKUPS_PREGO_NO_REFDIST"); return e && e[0] && e[0] != '0'; }();
     Race::CarsReg_FrameTick();        // FUN_0040da50 0x0040fc75
@@ -3030,9 +3025,9 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     }
                     // [pontoon 2026-10-16] Warzone's boat (clump 1, the 0x00684d18 object's clump): the original draws
                     // its three atomics one by one at their frame LTMs (slot 2 FUN_00452130 @ 0x00452130, clump list order
-                    // = DFF atomics 2, 1, 0), which the ported RpHAnim update moves (Track/WarzonePontoon.cpp). Behind
-                    // MASHED_PONTOON_ANIM (default ON since dflip, MASHED_NO_PONTOON_ANIM=1 opts out): one unbaked model per atomic, same hook entry, queued 2, 1, 0.
-                    if (course_id_ == 33 && c.idx == 1 && Track::Pontoon_AnimOn()) {
+                    // = DFF atomics 2, 1, 0), which the ported RpHAnim update moves (Track/WarzonePontoon.cpp). Default ON
+                    // since dflip (opt-out deleted, D5-KNOBS-RUNARMS-STACKS): one unbaked model per atomic, same hook entry, queued 2, 1, 0.
+                    if (course_id_ == 33 && c.idx == 1) {
                         bool split = true;
                         Prop parts[3];
                         for (int k = 0; k < 3 && split; ++k) {
@@ -3061,7 +3056,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             }
             // [pontoon 2026-10-16] slot 0 0x004527f0's object part: FUN_0047ce40(1000) / (2000) are the RWP objects
             // with BaseLabel 1000 (Tower) / 2000 (Deck), their body matrices the first Mts record (flags 0, captured);
-            // FUN_00451760(&obj, clump 1, General_Anim 0). Default ON since dflip (opt-outs MASHED_NO_PONTOON_ANIM / _STATE / _CARRY).
+            // FUN_00451760(&obj, clump 1, General_Anim 0). Default ON since dflip (opt-outs deleted, D5-KNOBS-RUNARMS-STACKS).
             // [hbforest] slot 0's texture ring (kTexAnim), on every prop built from that course clump.
             texanim_models_.clear();
             texanim_mult_ = 1;
@@ -3076,7 +3071,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                       course_id_, ta.clump, n, texanim_models_.size(), ta.mult);
             }
             Track::Pontoon_Shutdown();
-            if (course_id_ == 33 && Track::Pontoon_AnimOn()) {
+            if (course_id_ == 33) {
                 const char* boat = nullptr;
                 for (const auto& c : clumps) if (c.idx == 1) boat = c.dff;
                 std::uint32_t dl = 0, al = 0;
@@ -4863,7 +4858,7 @@ void TrackRenderer::UpdatePontoonParts() {
 }
 
 // [pontoon 2026-10-16] FUN_00451ad0 @ 0x00451b26's in-place carry reached car v: move the physics pose (ring, basis,
-// adapter positions) and this file's position / heading state with it (MASHED_PONTOON_CARRY only).
+// adapter positions) and this file's position / heading state with it. Default ON since dflip.
 void TrackRenderer::PontoonCarried(int v, const float* m) {
     float pos[3], yaw = 0.f;
     Vehicle::VehiclePhysics_CarryTo(v, m, car_ground_off_, pos, &yaw);
@@ -4879,7 +4874,7 @@ void TrackRenderer::PontoonCarried(int v, const float* m) {
 
 void TrackRenderer::CopterTick(int units) {
     // [pontoon 2026-10-16] FUN_0040fc00 -> FUN_00426ab0 (0x0040fc94) runs the course's slot 1 at 0x00426ae3 before the
-    // clump anims (FUN_00426700): Warzone's 0x00452b20 -> FUN_00451d80. Inactive with MASHED_NO_PONTOON_ANIM=1.
+    // clump anims (FUN_00426700): Warzone's 0x00452b20 -> FUN_00451d80.
     if (course_id_ == 33) Track::Pontoon_Tick(units);
     if (!texanim_models_.empty()) {                     // [hbforest] slot 1: FUN_004751d0 then FUN_00475060
         LibRw::RaceSubmit_TexAnimTick(units * texanim_mult_);
@@ -4986,7 +4981,7 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             car_pos_[2] = g0[2];
             car_pos_[1] = gy + car_ground_off_;
             car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
-            {   // [gridyaw] MASHED_GRID_DIR (default ON since d2ref 2026-10-17, MASHED_NO_GRID_DIR=1 opts out): FUN_00408b00's yaw at node snap(0) replaces the gate stand-in
+            {   // [gridyaw] grid dir (default ON since d2ref 2026-10-17, opt-out deleted): FUN_00408b00's yaw at node snap(0) replaces the gate stand-in
                 float gdA[3], gdL[2], gdD[2], gdY = 0.f; int gdN = -1;
                 if (Race::GridDir_Anchor(gdA, gdL, gdD, &gdY, &gdN)) car_yaw_ = gdY;
             }
@@ -5356,16 +5351,15 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // [a5timer] MASHED_A5_RACE_TIMER_RUN: the 0x0040fe64 add where Ai_AdvanceClock did not make it (the late clock is
         // default ON, and its add runs on race frames only). Phase 3's 0x0040e5a2 zero is above; the state-5 zero is
         // VehicleStep's mode-5 branch (MASHED_MODE5_RESET).
-        if (!subClock || Ai::Ai_ClockLateEnabled()) Ai::Ai_RaceTimerCountdownTick(units, false);
+        Ai::Ai_RaceTimerCountdownTick(units, false);
         // [D3-SUBSTATE-FLIP amendment 1, ported by D3-SUBSTATE-PREGO-ALIVE] FUN_0040fc00's DAT_007f0ff4 add (0x0040fe5e, every
         // tick but sub-state 7, 0x0040fe46) on the sub-state frames. The late clock's add runs on race frames only and this block
         // returns before the stand-in's countdown add, so the clock reached GO at 0 and FUN_00416250's fresh-steer arm (0x00416608)
         // took the decay arm (verify/d3subflip_20261028/PREREG_D3-SUBSTATE-FLIP.md on orch/D3-SUBSTATE-FLIP).
-        // MASHED_NO_AI_COUNTDOWN_CLOCK=1 removes it, as for the stand-in.
-        if (subClock && Ai::Ai_ClockLateEnabled() && Ai::Ai_CountdownClockEnabled()) Ai::Ai_AdvanceCountdownClock(units);
+        if (subClock) Ai::Ai_AdvanceCountdownClock(units);
         CarParts_FrameTick(units);                         // [librwrest] FUN_0040fc00 -> 0x0040fc75
         CopterTick(units);                                 // [librwrest] FUN_0040fc00 -> 0x0040fcb9
-        if (PickupsPreGo()) PreGoRegistryTick();           // [D5-ICONCUBE-SPIN] 0x0040fc75 / 0x0040fcd0 / 0x0040fd07
+        PreGoRegistryTick();                               // [D5-ICONCUBE-SPIN] 0x0040fc75 / 0x0040fcd0 / 0x0040fd07
         HudSlideBillboardTimerTail();                      // FUN_0040fc00 -> 0x0040fd11
         if (ba8c == 6) {
             countdown_ = 0.f;
@@ -5409,8 +5403,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
         // [d3bB2 2026-10-17] FUN_0040fc00's clock add on the pre-GO ticks (0x0040fe5e), default ON since
-        // a4order 2026-10-17 (MASHED_NO_AI_COUNTDOWN_CLOCK=1 opts out). Same gate as the race-frame Ai_AdvanceClock below.
-        if (Ai::Ai_CountdownClockEnabled() && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
+        // a4order 2026-10-17 (opt-out deleted, D5-KNOBS-RUNARMS-STACKS). Same gate as the race-frame Ai_AdvanceClock below.
+        if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
             Ai::Ai_AdvanceCountdownClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
         // [U-9174, D2 attempt 15] START-LINE LAUNCH REV-CHARGE. The original runs
         // FUN_0046d7f0(car, 50) per active car on every pre-race state-tick
@@ -5505,7 +5499,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                                           !ai_cars_.empty() && countdown_ <= 113.0f / 60.0f);
         if (countdown_ > 0.f) {
             CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f));
-            if (PickupsPreGo() && CamReplayRowRunsFc00(cam_replay_row_))
+            if (CamReplayRowRunsFc00(cam_replay_row_))
                 PreGoRegistryTick();   // [D5-ICONCUBE-SPIN] FUN_0040fc00's pre-GO registry chain
             return;
         }
@@ -6174,7 +6168,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
         // [u9749] MASHED_RECDUMP (diagnostic, default OFF): one record per race frame after every car's physics
         if (phys) Vehicle::VehiclePhysics_RecDumpFrame();
-        // [u9745ov] default ON since c2k93 (MASHED_NO_AI_CLOCK_LATE=1 opts out): FUN_0040fc00's DAT_007f0ff4 / DAT_007f0ff8 add, at the end of the
+        // [u9745ov] default ON since c2k93 (opt-out deleted, D5-KNOBS-RUNARMS-STACKS): FUN_0040fc00's DAT_007f0ff4 / DAT_007f0ff8 add, at the end of the
         // frame (0x0040fe4f..0x0040fe64), after the AI tick, the physics and the drain above
         // [u9779] MASHED_ROUND_END7: sub-state 7 skips the add (0x0040fe46 / 0x0040fe4d)
         if (ai_tick_ran && !s_roundEnd7) Ai::Ai_AdvanceClockLate(static_cast<int>(in.dt * 3000.0f + 0.5f));
@@ -7594,7 +7588,7 @@ void TrackRenderer::StartRound() {
     // FUN_0040e590 -> FUN_00409290(&DAT_0063ba80) -> FUN_00408b00 anchor = node centre / dir / corner axis
     // (FIX_BRIEF.md section 4 A2/A3). Same formation table; only A, lat, dir change.
     float gA[3] = { g0[0], g0[1], g0[2] };
-    // [gridyaw 2026-10-16] MASHED_GRID_DIR (default ON since d2ref 2026-10-17, MASHED_NO_GRID_DIR=1 opts out): FUN_00408b00's whole frame at the node the port grids at.
+    // [gridyaw 2026-10-16] grid dir (default ON since d2ref 2026-10-17, opt-out deleted): FUN_00408b00's whole frame at the node the port grids at.
     // Without MASHED_ROUND_GRID that node is snap(0) (the port grids every round at the start line, U-9686), and
     // A / lat / dir come from its record as above; with it, the round-grid node. Either way the yaw is the
     // original's law (LUT 2-D normalize, clamp, acos, RwMatrixRotate about Y), not atan2 of the raw direction,
@@ -7607,7 +7601,7 @@ void TrackRenderer::StartRound() {
         if (Race::RoundGrid_Anchor(A, L2, D2, &nd)) {
             gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
             lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
-            if (Race::GridDir_Enabled()) gdOn = Race::GridDir_YawAt(nd, &gdYaw);
+            gdOn = Race::GridDir_YawAt(nd, &gdYaw);
             gdNode = nd;
         } else if (Race::GridDir_Anchor(A, L2, D2, &gdYaw, &nd)) {
             gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
@@ -10561,7 +10555,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     // [iconcube] FUN_00458b10 @ 0x00458b10's cube loop (FUN_0045b990), drawn after the world FX
-    // (LibRw::kInstAfterFx). MASHED_ICONCUBE, default ON since D5-PREGO-CUBE-FLIP (MASHED_NO_ICONCUBE=1 opts out).
+    // (LibRw::kInstAfterFx). Default ON since D5-PREGO-CUBE-FLIP (opt-out deleted, D5-KNOBS-RUNARMS-STACKS).
     IconCube_Submit(eye, at);
 
     dev->SetTexture(0, nullptr);

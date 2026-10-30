@@ -324,9 +324,6 @@ struct State {
 };
 State& S() { static State s; return s; }
 
-bool g_replay = false;   // RunReplay: STATE and CARRY live on the replay's scratch cars
-bool StateLive() { return g_replay || Pontoon_StateOn(); }
-bool CarryLive() { return g_replay || Pontoon_CarryOn(); }
 
 float* CarMat(int v) { return S().host.car_matrix ? S().host.car_matrix(v) : nullptr; }
 int CarCount() { return S().host.car_count ? S().host.car_count() : 0; }
@@ -379,10 +376,8 @@ void Coupling(Obj& o) {
         if (m) {
             alignas(16) float before[16];
             std::memcpy(before, m, 64);
-            const bool carry = CarryLive();
-            float scratch[16];
-            in = BoxCarry(o, m, carry ? m : scratch);                       // 0x00451b26 FUN_00451990(obj, car, car)
-            if (in && carry && S().host.car_carried) S().host.car_carried(v, m);
+            in = BoxCarry(o, m, m);                       // 0x00451b26 FUN_00451990(obj, car, car)
+            if (in && S().host.car_carried) S().host.car_carried(v, m);
         }
         if (in) {
             Marker(v, 0);                                                   // 0x00451b42
@@ -390,7 +385,7 @@ void Coupling(Obj& o) {
         } else {
             WordI()[v] = 0;                                                 // 0x00451b5b
             if (o.b4[v] != 0) {                                             // 0x00451b66
-                if (CarryLive() && S().host.car_record) {             // 0x00451b9d FUN_0046bf50(obj+0xa8, v)
+                if (S().host.car_record) {                             // 0x00451b9d FUN_0046bf50(obj+0xa8, v)
                     unsigned char* r = S().host.car_record(v);
                     std::int32_t rwp = 0;
                     if (r) std::memcpy(&rwp, r + 0x14, 4);
@@ -461,9 +456,9 @@ void StateMachine(Obj& o, int units) {
         UpdateMatrices(o.hier);
         Sample(o);
         CopyM94(o);
-        if (StateLive()) Trigger(o);                                        // FUN_00451820
+        Trigger(o);                                                         // FUN_00451820
         o.a4 = k1;
-        if (StateLive()) Coupling(o);                                       // FUN_00451ad0
+        Coupling(o);                                                        // FUN_00451ad0
         break;
     case 1: {
         const float a = o.a4 - UnitsF(units) * k388;
@@ -475,7 +470,7 @@ void StateMachine(Obj& o, int units) {
         o.c8 = 0.f;
         UpdateMatrices(o.hier);
         Sample(o);
-        if (StateLive()) Coupling(o);                                       // FUN_00451ad0
+        Coupling(o);                                                        // FUN_00451ad0
         break;
     }
     case 2: {
@@ -486,7 +481,7 @@ void StateMachine(Obj& o, int units) {
         AddAnimTime(ip, d);                                                 // FUN_004b47c0
         UpdateMatrices(o.hier);
         Sample(o);
-        if (StateLive()) Coupling(o);                                       // FUN_00451ad0
+        Coupling(o);                                                        // FUN_00451ad0
         const std::int32_t* w = WordI();
         if (w[0] == 0 && w[1] == 0 && w[2] == 0 && w[3] == 0 && k2 < o.c8) o.state = 3;
         break;
@@ -504,7 +499,7 @@ void StateMachine(Obj& o, int units) {
         }
         UpdateMatrices(o.hier);
         Sample(o);
-        if (StateLive()) Coupling(o);                                       // FUN_00451ad0
+        Coupling(o);                                                        // FUN_00451ad0
         break;
     }
     case 4: {
@@ -514,7 +509,7 @@ void StateMachine(Obj& o, int units) {
         AddAnimTime(ip, d);
         UpdateMatrices(o.hier);
         Sample(o);
-        if (StateLive()) Coupling(o);                                       // FUN_00451ad0
+        Coupling(o);                                                        // FUN_00451ad0
         break;
     }
     case 5: {
@@ -523,7 +518,7 @@ void StateMachine(Obj& o, int units) {
         CopyM94(o);
         const int vis = S().host.sphere_visible ? S().host.sphere_visible(sph) : 0;
         if (vis == 0) { Deactivate(o); o.c8 = 0.f; }
-        if (StateLive()) Coupling(o);                                       // FUN_00451ad0
+        Coupling(o);                                                        // FUN_00451ad0
         break;
     }
     default:
@@ -695,8 +690,6 @@ std::FILE* Trace() {
     return f;
 }
 
-bool Env(const char* n) { const char* e = std::getenv(n); return e && e[0] && e[0] != '0'; }
-
 // The dff/anm blobs kept for a clean re-init after a replay.
 std::vector<std::uint8_t> g_dff, g_anm; float g_tower[16], g_deck[16];
 
@@ -705,16 +698,6 @@ bool InitFrom(const std::uint8_t* dff, std::size_t dlen, const std::uint8_t* anm
 void RunReplay(const char* path);
 
 }  // namespace
-
-// [dflip 2026-10-17] default ON; an opt-out also turns off every knob that implies it.
-namespace {
-bool NoAnim()  { return Env("MASHED_NO_PONTOON_ANIM"); }
-bool NoState() { return NoAnim() || Env("MASHED_NO_PONTOON_STATE"); }
-bool NoCarry() { return NoState() || Env("MASHED_NO_PONTOON_CARRY"); }
-}  // namespace
-bool Pontoon_CarryOn() { static const bool on = Env("MASHED_PONTOON_CARRY") || !NoCarry(); return on; }
-bool Pontoon_StateOn() { static const bool on = Pontoon_CarryOn() || Env("MASHED_PONTOON_STATE") || !NoState(); return on; }
-bool Pontoon_AnimOn()  { static const bool on = Pontoon_StateOn() || Env("MASHED_PONTOON_ANIM") || !NoAnim(); return on; }
 
 void Pontoon_SetHost(const PontoonHost& h) { S().host = h; }
 bool Pontoon_Active() { return S().active; }
@@ -763,7 +746,6 @@ bool InitFrom(const std::uint8_t* dff, std::size_t dlen, const std::uint8_t* anm
 
 bool Pontoon_Init(const std::uint8_t* dff, std::size_t dlen, const std::uint8_t* anm, std::size_t alen,
                   const float tower[16], const float deck[16]) {
-    if (!Pontoon_AnimOn()) return false;
     Pc24 pc;
     g_dff.assign(dff, dff + dlen); g_anm.assign(anm, anm + alen);
     std::memcpy(g_tower, tower, 64); std::memcpy(g_deck, deck, 64);
@@ -771,8 +753,7 @@ bool Pontoon_Init(const std::uint8_t* dff, std::size_t dlen, const std::uint8_t*
     if (std::FILE* f = Trace()) {
         std::fprintf(f, "pontoon init ok=%d box %08x %08x %08x %08x %08x %08x anim frames %d dur %08x state=%d carry=%d\n",
                      ok ? 1 : 0, BF(O().box[0]), BF(O().box[1]), BF(O().box[2]), BF(O().box[3]), BF(O().box[4]),
-                     BF(O().box[5]), S().anim.numFrames, BF(S().anim.duration), Pontoon_StateOn() ? 1 : 0,
-                     Pontoon_CarryOn() ? 1 : 0);
+                     BF(O().box[5]), S().anim.numFrames, BF(S().anim.duration), 1, 1);
         std::fflush(f);
     }
     if (ok) {
@@ -884,7 +865,6 @@ void RunReplay(const char* path) {
     h.car_record = [](int v) -> unsigned char* { return (v >= 0 && v < 4) ? g_rrec[v] : nullptr; };
     h.sphere_visible = [](const float*) { return 1; };
     S().host = h;
-    g_replay = true;
     std::string ln; static char buf[1 << 16];
     long rows = 0, bad = 0;
     bool first = true;
@@ -984,7 +964,6 @@ void RunReplay(const char* path) {
     }
     std::fprintf(out, "# rows %ld rows_with_diff %ld\n", rows, bad);
     std::fclose(in); std::fclose(out);
-    g_replay = false;
     S().host = saved;
 }
 

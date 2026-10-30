@@ -8,12 +8,10 @@
 namespace mashed_re {
 namespace Track {
 
-// Knobs. CARRY implies STATE implies ANIM. Default ON since dflip 2026-10-17 (user decision; the exit hand-off
-// approximation U-9738 accepted). Opt-outs: MASHED_NO_PONTOON_CARRY=1 (STATE + ANIM stay), MASHED_NO_PONTOON_STATE=1
-// (ANIM stays), MASHED_NO_PONTOON_ANIM=1 (everything off = the pre-dflip default). The positive knobs still force on.
-bool Pontoon_AnimOn();    // MASHED_PONTOON_ANIM=1: object init + tick + animated draw (words not written)
-bool Pontoon_StateOn();   // MASHED_PONTOON_STATE=1: trigger + the words 0x0088ff50 / 0x00684de0 / 0x00684dac live
-bool Pontoon_CarryOn();   // MASHED_PONTOON_CARRY=1: in-box carry + exit velocity (FUN_0046bf50 record branch)
+// Object init + tick + animated draw, the trigger + the words 0x0088ff50 / 0x00684de0 / 0x00684dac, and the in-box
+// carry + exit velocity (FUN_0046bf50 record branch) always run. Default ON since dflip 2026-10-17 (user decision; the
+// exit hand-off approximation U-9738 accepted). The knobs MASHED_PONTOON_ANIM / _STATE / _CARRY and their opt-outs
+// MASHED_NO_PONTOON_* were deleted (D5-KNOBS-RUNARMS-STACKS).
 
 // What the object needs from the exe's car physics (the original's FUN_0040e340 / FUN_0046d4a0 / record fields).
 struct PontoonHost {

@@ -41,9 +41,8 @@ bool RoundGrid_SlotOrder(int slotValue[4]);
 void RoundGrid_AssignMode4(const int codes[4], int slotValue[4]);
 bool RoundGrid_OrderEnabled();
 
-// [gridyaw 2026-10-16] Default ON since d2ref 2026-10-17 (MASHED_NO_GRID_DIR=1 opts out): the grid frame FUN_00408b00 builds, for the node the port
-// grids at (verify/gridyaw_20261016/PREREG_gridyaw.md section 2, A1.3).
-bool GridDir_Enabled();
+// [gridyaw 2026-10-16] Default ON since d2ref 2026-10-17 (opt-out deleted, D5-KNOBS-RUNARMS-STACKS): the grid frame FUN_00408b00
+// builds, for the node the port grids at (verify/gridyaw_20261016/PREREG_gridyaw.md section 2, A1.3).
 // FUN_00408b00's yaw law on a record direction (x, z) = FUN_00426cc0(node) +0 / +8, in the original's degrees.
 float GridDir_LawDeg(float lx, float lz);
 // The same, as the port's yaw (fwd = (cos, 0, sin)): RwMatrixRotate(Y, deg) at = (sin r, 0, cos r), yaw = atan2.
