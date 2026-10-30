@@ -235,9 +235,11 @@ int RunSmoke(HWND hwnd, int width, int height, int frames) {
     LogLine("ok: presented %d frames in %.3f s = %.1f fps",
             presented, secs, secs > 0.0 ? presented / secs : 0.0);
     // This rate is EXPECTED to be uncapped, and that is not a defect. The
-    // standalone deliberately binds System32's d3d9, NOT the dev d3d9 shim that
-    // hosts MASHED_FPS_CAP (see build.bat's RUNTIME NOTE), and showRaster(0)
-    // requests no vsync. Frame pacing for the real standalone comes from its own
+    // standalone binds System32's d3d9, NOT the dev d3d9 shim that hosts
+    // MASHED_FPS_CAP. d3d9.dll is /DELAYLOAD-ed and exe_main.cpp's
+    // __pfnDliNotifyHook2 loads it with LOAD_LIBRARY_SEARCH_SYSTEM32 (see
+    // build.bat's RUNTIME NOTE, D5-SHIM-GUARD), so a shim copy beside the exe is
+    // never picked up. showRaster(0) requests no vsync. Frame pacing for the real standalone comes from its own
     // QPC 60 Hz accumulator, which this probe bypasses.
 
     // The non-degenerate check: prove librw actually wrote the framebuffer.
