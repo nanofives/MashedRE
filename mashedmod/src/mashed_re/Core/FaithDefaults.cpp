@@ -71,6 +71,10 @@ const FaithKnob kFaith[] = {
     // Measured ON: verify/d5partmorphflip_20261030/RESULT_D5-PARTMORPH-FLIPPREP.md and RESULT_D5-PARTMORPH-MEASURE.md.
     { "PARTMORPH", "1" },          { "CAR_STATE0", "1" },
 #endif
+    // [D5-INTROMOVIES-FLIP 2026-10-30, D-11062, Mariano's decision L-63] the boot movies of FUN_00402750 (0x00402838 /
+    // 0x0040283f), RunBootIntroMovies in exe_main.cpp (verify/intromovies_20261030/RESULT_D5-INTROMOVIES-I1B.md).
+    // MASHED_NO_INTRO_MOVIES=1 or MASHED_INTRO_MOVIES=0 opts out.
+    { "INTRO_MOVIES", "1" },
 };
 
 bool Set(const char* var) {

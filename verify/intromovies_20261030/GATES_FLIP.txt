@@ -1,0 +1,64 @@
+# D5-INTROMOVIES-FLIP gate outputs (exe 8e03a2db, MASHED_INTRO_MOVIES default ON)
+## quiet check
+quiet at 11:45:32
+6 test slots on LIVING-PC
+slot 0: pid 12696 since 10-30 11:45 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\I19: C:/Users/maria/AppData/Local/Programs/Python/Python312/python.exe -m port.test.framegate --all --jobs 2 --no-probe --gl auto --out log/roadm
+slot 1: pid 14988 since 10-30 11:44 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S7_w4_root: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_app_present.py -m  -v -p no:cacheprovider
+slot 2: pid 19056 since 10-30 10:34 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S7_12_root: C:/Users/maria/AppData/Local/Programs/Python/Python312/python.exe -m port.test.live equiv --all --jobs 3 --out C:/Users/maria/Desktop/Proyec
+slot 3: free (or held by an untracked process)
+slot 4: free (or held by an untracked process)
+slot 5: free (or held by an untracked process)
+## gates_sha
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 *D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/H_DEF.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb *D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/H_DEF.gates.csv
+31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 *D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/H_DEF.ptrace.log
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/B_DEF_K0.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/B_DEF_K1.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/B_DEF_K26.step.csv
+## vsum B
+B_DEF_K0               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K1               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K26              3/3  car1 A PASS | car2 A PASS | car3 A PASS
+## ai_speed_env --check B_DEF_K0
+D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/B_DEF_K0.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2254.8 (n=124) wmax=3527.0
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2648.1 (n=179) wmax=3904.0
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2691.4 (n=154) wmax=4507.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+## D2 lengths
+short after reruns: 
+   1636 D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_1.motion_diag.log
+   1639 D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_2.motion_diag.log
+   1638 D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_3.motion_diag.log
+   4913 total
+## D2 score (score_d2_v2.py port)
+D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1920.2500 in n=('379', '647', '1428') H1 398/400 median 1333.9
+D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1917.1000 in n=('382', '647', '1431') H1 398/400 median 1333.9
+D:/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1919.6200 in n=('381', '647', '1430') H1 398/400 median 1333.9
+## run13
+2431afb1da35f95db9bb01535f071da5400d53fb2cc2550210465c0404be27c3 */d/MashedWT/D5-INTROMOVIES-FLIP_data/tracks_score.txt
+rowdiff bytes: 0
+INSTRUMENT GATES: PASS
+## INTRO lines per gate log
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/B_DEF_K0.log:4
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/B_DEF_K1.log:4
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/B_DEF_K26.log:4
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_1.log:4
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_1.motion_diag.log:0
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_2.log:4
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_2.motion_diag.log:0
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_3.log:4
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/D2_DEFH_3.motion_diag.log:0
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/H_DEF.log:4
+/d/MashedWT/D5-INTROMOVIES-FLIP_data/arms/H_DEF.ptrace.log:0
+## opt-out boots
+[mashed-lock] HELD 'mashed_machine' pid=18240 (D5-INTROMOVIES-FLIP-optout)
+NO_INTRO pid=18988
+NO_INTRO: log_lines=155 INTRO_lines=0
+INTRO0 pid=8976
+INTRO0: log_lines=155 INTRO_lines=0
+NO_FAITH pid=22312
+NO_FAITH: log_lines=155 INTRO_lines=0
+[mashed-lock] released 'mashed_machine' pid=18240
