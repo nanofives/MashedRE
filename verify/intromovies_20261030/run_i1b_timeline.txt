@@ -1,0 +1,14 @@
+2026-10-30 07:09:29 driver start
+2026-10-30 07:41:01 IDLE window reached after 1892s
+2026-10-30 07:41:01 requesting test slot
+2026-10-30 07:41:01 test slot held
+2026-10-30 07:41:02 INNER lock+slot held, pid=8592 prio=16384
+2026-10-30 07:41:32 pre-arm load mean=45.0% max=59.5% other_games=0
+2026-10-30 07:41:32 START py -3.12 verify/intromovies_20261028/run_intro.py I1b I1c
+2026-10-30 07:46:16 END rc=0 secs=284
+2026-10-30 07:46:16 START py -3.12 verify/intromovies_20261028/run_intro.py I0 I2 I3
+2026-10-30 07:48:14 END rc=0 secs=118
+2026-10-30 07:48:14 START py -3.12 verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26
+2026-10-30 07:56:16 END rc=1 secs=482
+2026-10-30 07:56:16 INNER done
+2026-10-30 07:56:16 driver end rc=0
