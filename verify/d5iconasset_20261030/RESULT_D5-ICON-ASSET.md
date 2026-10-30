@@ -61,7 +61,7 @@ that root for the arm, then put back.
 
 The control shows the capture sees the disc: the old exe without MASHED.exe loses exactly the disc cells and
 nothing else. The frame 30 vs frame 45 pair (2164 px, same cells) shows the disc's spin phase is in the frame too.
-`disc_crops.png` puts the 140x140 crop at x 500-640, y 20-160 of seven arms side by side (order base_full_f30,
+`D:/MashedWT/D5-ICON-ASSET_data/disc_crops.png` (not committed, verify/**/*.png is gitignored, SHA-256 in `raw_sha256.txt`) puts the 140x140 crop at x 500-640, y 20-160 of seven arms side by side (order base_full_f30,
 new_full_f30, new_noexe_f30, base_noexe_f30, base_full_f45, new_full_f45, new_noexe_f45_r2). Full table:
 `imgdiff.txt`.
 
@@ -97,7 +97,7 @@ drawing the disc with no MASHED.exe anywhere. Nothing was published, deployed or
 ## 6. Raw data (D:/MashedWT/D5-ICON-ASSET_data, not committed)
 
 `raw_sha256.txt` has the full SHA-256 of every cited raw file: the 10 capture BMPs, both exes
-(`base/mashed_re.exe`, `new/mashed_re.exe`), the six gate files and the re-extracted `new_embedded_404.txd`. Logs:
+(`base/mashed_re.exe`, `new/mashed_re.exe`), the six gate files, the re-extracted `new_embedded_404.txd` and `disc_crops.png`. Logs:
 `build_base.log`, `build_new.log`, `gates_run.log`, `stage.log`, `imgdiff.txt`.
 
 ## 7. For the lead
