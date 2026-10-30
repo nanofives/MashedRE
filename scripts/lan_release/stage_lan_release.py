@@ -7,7 +7,8 @@ The folder is what a player PC keeps:
   original\                   the game data the exe reads, by the same relative paths as in the repo
                               ("original/TOASTART/...", exe_main.cpp WinMain finds it beside the exe):
     TOASTART\, toastaudio\    the user's own Mashed: Fully Loaded install (TOASTART\PC\MOVIES\backup\ left out:
-                              dev copies of the intro movies that skip_intro replaced)
+                              dev copies of the intro movies that skip_intro replaced;
+                              the staged PC\MOVIES\<name>.mpg of each is that backup copy, the real movie, L-63)
     MASHED.exe                read as DATA only (LoadLibraryEx AS_DATAFILE, RWTEXDICTIONARY/404, exe_main.cpp
                               LoadLoadIconFromExe); the pristine MASHED.exe.unpatched when present
     gamesave.bin              the save the exe replays at boot (never written by the standalone); a seed file:
@@ -39,6 +40,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 APP_FILES = ["mashed_re.exe"]
 DATA_DIRS = ["TOASTART", "toastaudio"]
 DATA_SKIP_DIRS = {"toastart/pc/movies/backup"}          # lower-case, relative to original\
+MOVIES_DIR = "toastart/pc/movies"                        # its backup\<name>.mpg is the real movie
 SKIP_SUFFIXES = (".log", ".bak", ".tmp", ".dl_tmp")
 CLIENT_FILES = ["mashed_update.ps1", "update.bat", "Play Mashed.bat", "README.txt"]
 SEED = {"original/gamesave.bin"}
@@ -94,6 +96,10 @@ def main():
                     continue
                 full = os.path.join(root, fn)
                 rel = os.path.join("original", os.path.relpath(full, a.install))
+                if rel_root == MOVIES_DIR:
+                    real = os.path.join(root, "backup", fn)
+                    if os.path.isfile(real):        # the real boot movie, not the skip_intro stub
+                        full = real
                 place(full, os.path.join(out, rel)); wanted.add(rel)
 
     exe_src = os.path.join(a.install, "MASHED.exe.unpatched")
