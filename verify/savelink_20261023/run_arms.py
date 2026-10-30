@@ -433,10 +433,17 @@ STACK['NOOL'] = []   # opt-out deleted (D4-DC-39b0-L13)
 STACK['CR'] = []   # knob deleted (D4-DC-39b0-L13)
 STACK['GR'] = []   # knob deleted (D4-DC-4d20-FLIP): the grid spawn basis always runs through the shared RwMatrixRotate
 STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT'] = STACK['GR'] + STACK['GT']   # + the at-row bits
+# D3-SUBSTATE-FLIP (verify/d3subflip_20261028): the flip's opt-outs. NOSUB = both (must give the pre-flip default),
+# NOP3R = the sub-state machine without the phase-3 reset branch
+STACK['NOSUB'] = ['MASHED_NO_SUBSTATE=1', 'MASHED_NO_P3_RESET_PAIR=1']; STACK['NOP3R'] = ['MASHED_NO_P3_RESET_PAIR=1']
+STACK['NCC'] = ['MASHED_NO_AI_COUNTDOWN_CLOCK=1']   # amendment 1's opt-out (= the first flip build's sub-state clock)
+STACK['L697'] = ['MASHED_DET_FRAMES=1897']          # the B window + the flip's 697-frame pre-race growth (report only)
+STACK['SFD'] = ['MASHED_SUBFLIP_DIAG=1']             # diagnostic log only (G-CTRL dump-length split)
 # D3-SUBSTATE-PREGO-ALIVE (verify/d3subprego_20261029): the D3-SUBSTATE-FLIP seed as knobs (both default OFF)
 STACK['SUB'] = ['MASHED_SUBSTATE=1', 'MASHED_P3_RESET_PAIR=1']
 STACK['SUBNS'] = STACK['SUB'] + ['MASHED_NO_SUBSTATE_SETTLE_FIRST=1']   # D3-SUBSTATE-SETTLE-ORDER: same-exe control (settle in the first race StepCar)
 STACK['SUBH'] = STACK['SUB'] + ['MASHED_DRIVE_HOLD_MS=42000']   # amendment 1: the 30 s demo hold + ~776 phase-3 frames
+STACK['NOPGIC'] = ['MASHED_NO_PICKUPS_PREGO=1', 'MASHED_NO_ICONCUBE=1']   # D3-SUBSTATE-FLIP run 22: the L-56 opt-outs (report only)
 STACK['DEFH'] = ['MASHED_DRIVE_HOLD_MS=42000']   # D2-BAND-42S (verify/d2band42_20261029): the default under the 42 s hold
 # D3-SUBSTATE-ROW315 (verify/d3subrow315_20261029): RTR = the A5 race-timer log + the slot-0 record dump, NRTR = the A5 timer
 # opt-out (A5 reads 0) + the record dump. Both write files only.
@@ -469,7 +476,9 @@ for name in sys.argv[1:]:
         files = []
         if name.startswith('P_'):
             e['MASHED_BATCH_DUMP'] = os.path.join(OUT, name + '.batch.csv'); files.append(e['MASHED_BATCH_DUMP'])
-        run(name, e, files, 0, exe_for(tag), wall=int(os.environ.get('A4_D2_WALL', '90')))   # D3-SUBSTATE-FLIP: A4_D2_WALL (default 90)
+        # D3-SUBSTATE-FLIP: A4_D2_WALL wins; else 110 s for a stack with a hold above 30 s (the D2-BAND-42S wall), else 90
+        wall0 = '110' if int(e.get('MASHED_DRIVE_HOLD_MS', '0') or 0) > 30000 else '90'
+        run(name, e, files, 0, exe_for(tag), wall=int(os.environ.get('A4_D2_WALL', wall0)))
     elif name.startswith('W_') or name.startswith('WL_'):
         tag = tag_of(name.split('_', 1)[1])
         e = base_env(18000 if name.startswith('WL_') else 3600)

@@ -5169,8 +5169,26 @@ extern "C" int  __cdecl RaceRefDistAfterAi();
 extern "C" void __cdecl RaceRefDistTraceFrame();
 extern "C" void __cdecl RaceRefDistTraceAiEntry();
 
+// [D3-SUBSTATE-FLIP diag] MASHED_SUBFLIP_DIAG counters (UpdateCar below)
+static unsigned s_sfCalls_ = 0, s_sfLastAi_ = 0; static int s_sfBa_ = -1; static bool s_sfGap_ = false;
 void TrackRenderer::UpdateCar(const DriveInput& in) {
     if (!car_ready_ || in.dt <= 0.f) return;
+    // [D3-SUBSTATE-FLIP diag] MASHED_SUBFLIP_DIAG (default OFF, log only): UpdateCar call index at every DAT_0063ba8c
+    // change and at every start / end of a stretch of calls with no AI tick, plus the wall tick, to place G-CTRL's
+    // run-to-run dump-length split (verify/d3subflip_20261028/RESULT_D3-SUBSTATE-FLIP.md). No state is written.
+    static const bool s_sfDiag = [] { const char* e = std::getenv("MASHED_SUBFLIP_DIAG"); return e && e[0] && e[0] != '0'; }();
+    if (s_sfDiag) {
+        ++s_sfCalls_;
+        const int ba = *reinterpret_cast<int*>(0x0063ba8cu);
+        const bool gap = s_sfLastAi_ != 0 && s_sfCalls_ - 1 != s_sfLastAi_;
+        if (ba != s_sfBa_ || gap != s_sfGap_ || (s_sfCalls_ % 1000) == 0)
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "[subflip] call=%u ba8c=%d gap=%d last_ai=%u countdown=%.4f wall=%lu\n", s_sfCalls_, ba,
+                             gap ? 1 : 0, s_sfLastAi_, countdown_, static_cast<unsigned long>(GetTickCount()));
+                std::fclose(lf);
+            }
+        s_sfBa_ = ba; s_sfGap_ = gap;
+    }
     // [D5-PARTMORPH-PRODUCER] FUN_0040fc00 runs the director FUN_0040d470(0) at 0x0040fc7c on every tick, after
     // FUN_0040da50 (0x0040fc75); the latch runs on every exit of this tick (the countdown frames return early).
     struct CarState0Guard { TrackRenderer* t; ~CarState0Guard() { t->CarState0Latch(); } } s0guard{this};
@@ -5586,6 +5604,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     bool ai_tick_ran = false;
     auto ai_tick_phase = [&]() {
         ai_tick_ran = true;
+        s_sfLastAi_ = s_sfCalls_;   // [D3-SUBSTATE-FLIP diag]
         g_aiTrack = this;   // bind the AI host (held_powerup reads pw_ through it)
             {   // [mode 7 M3] FUN_00458920's bound callees (only used under MASHED_REG_CALLBACKS)
                 g_pkcbTrack = this;

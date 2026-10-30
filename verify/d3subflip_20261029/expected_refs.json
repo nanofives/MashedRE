@@ -1,0 +1,50 @@
+{
+  "_doc": "D3-SUBSTATE-FLIP run 22 (D-11073, L-53/L-55/L-57). Refs measured on exe 34b53a28 (branch commit 4c5c28a4e: MASHED_SUBSTATE + MASHED_P3_RESET_PAIR seeded in Core/FaithDefaults.cpp). Opt-out MASHED_NO_SUBSTATE=1 MASHED_NO_P3_RESET_PAIR=1 reproduces old_refs exactly on the same exe. RESULT: verify/d3subflip_20261029/RESULT_D3-SUBSTATE-FLIP.md",
+  "gctrl": {
+    "arm": "H_DEF",
+    "ref": [
+      "8284be46",
+      "ba407a16",
+      "31fe043e"
+    ],
+    "old_ref": [
+      "5943c5f1",
+      "306186d4",
+      "52052890"
+    ],
+    "runs": 2,
+    "note": "step / ptrace = ROW315's H_SUB. gates.csv ba407a16 differs from ROW315's 2b19135b only by the L-56 flip (H_NOPGIC on this exe = 8284be46 / 2b19135b / 31fe043e): frame-0 rows 1-4, ref_idx 0 -> 3 and exp_dist."
+  },
+  "b": {
+    "arms": [
+      "B_DEF_K0",
+      "B_DEF_K1",
+      "B_DEF_K26"
+    ],
+    "ref": [
+      "1d5bf4f9",
+      "1d5bf4f9",
+      "1d5bf4f9"
+    ],
+    "old_ref": [
+      "3a03670c",
+      "9fcdbd3a",
+      "53778664"
+    ],
+    "runs": "K0 x2, K1 x1, K26 x1",
+    "note": "the three ring phases collapse to one trajectory under the flip (run 20 RESULT section 4): B loses its K1 / K26 power."
+  },
+  "full": {
+    "d2_arms": [
+      "D2_DEFH_1",
+      "D2_DEFH_2",
+      "D2_DEFH_3"
+    ],
+    "d2_score": "verify/d2band42_20261029/score_d2_v2.py",
+    "d2_min_lines": 1600,
+    "d2_wall_s": 110,
+    "d2_note": "stack DEFH = MASHED_DRIVE_HOLD_MS=42000. run_arms.py gives a hold stack a 110 s wall by default (no .ps1 change). Old: D2_DEF_1..3, verify/d2rebase_20261019/score_d2_v2.py, 90 s.",
+    "run13_reference": "verify/run13p3_20261029/tracks_score_sub_p3.txt (2431afb1, HB-RUN13-PHASE3-START arm B). Run 23 refresh: the branch carries MASHED_CAM_REPLAY_P3=1 in the run13 recipe, so the train's 13-track pass under the seeded MASHED_SUBSTATE should reproduce it. Old: verify/pregocubeflip_20261029/tracks_score.txt (cf3307d2).",
+    "run13_note": "Run 23: RUN13_PRE_FRAMES default back to 0 (stock budget max shot + 350, the budget 2431afb1 was measured on). RUN13_PRE_FRAMES=800 restores the run 22 padding."
+  }
+}
