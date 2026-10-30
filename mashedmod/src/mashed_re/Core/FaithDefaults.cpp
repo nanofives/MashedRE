@@ -80,6 +80,12 @@ const FaithKnob kFaith[] = {
     // verify/d5flipmusic_20261030/RESULT_D5-FLIP-MUSIC-NOCDAUDIO.md. MASHED_NO_MUSIC_NO_RACE_CDAUDIO=1 or
     // MASHED_MUSIC_NO_RACE_CDAUDIO=0 opts out.
     { "MUSIC_NO_RACE_CDAUDIO", "1" },
+    // [D5-FLIP-SAVE-FIRSTRUN 2026-10-30, Mariano's decision L-66 a] the two first-run save writers of Race/GameFlow.cpp
+    // (0x00409e30 counter 1 on a missing file, FUN_00496530's gather-byte clear 0x00496568 per active slot), see
+    // verify/spanwriters_20261027/RESULT_D4-FU-SPANINIT-WRITERS.md. Measured ON:
+    // verify/d5flipsavefirstrun_20261030/RESULT_D5-FLIP-SAVE-FIRSTRUN.md. MASHED_NO_SAVE_FIRSTRUN_WRITERS=1 or
+    // MASHED_SAVE_FIRSTRUN_WRITERS=0 opts out.
+    { "SAVE_FIRSTRUN_WRITERS", "1" },
 };
 
 bool Set(const char* var) {

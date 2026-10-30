@@ -243,7 +243,8 @@ bool KeepImageMode() {
     return s_on == 1;
 }
 
-// [D4-FU-SPANINIT-WRITERS 2026-10-27] MASHED_SAVE_FIRSTRUN_WRITERS (default OFF, =1 on): two original
+// [D4-FU-SPANINIT-WRITERS 2026-10-27, default ON since D5-FLIP-SAVE-FIRSTRUN 2026-10-30 via Core/FaithDefaults.cpp,
+// MASHED_NO_SAVE_FIRSTRUN_WRITERS=1 or =0 opts out] MASHED_SAVE_FIRSTRUN_WRITERS: two original
 // writers the first-run save carries, verify/spanwriters_20261027/PREREG_D4-FU-SPANINIT-WRITERS.md.
 //  (a) 0x00409e30 MOV [0x008a95ac],1, case 16 of the save state machine (switch 0x00409b00 on
 //      [0x008a9588], table 0x00409e40), reached from FUN_0043dfd0 0x0043e069 -> FUN_0040acd0 when
