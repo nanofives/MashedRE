@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-29 23:04 D5-DEFER-D11083 (orch/D5-DEFER-D11083): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_230309
 - 2026-10-29 23:02 D4-WSB-SOLV-KV-ARMU (orch/D4-WSB-SOLV-KV-ARMU), D5-DEFER-CALLERWALK (orch/D5-DEFER-CALLERWALK): G-CTRL 5943c5f1/306186d4/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261029_224245
 - 2026-10-29 22:30 D4-DC-77b0-BODYDIFF (orch/D4-DC-77b0-BODYDIFF): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_222840
 - 2026-10-29 22:27 D4-SDONE-COUNT (orch/D4-SDONE-COUNT), D5-DEFERRED-SWEEP (orch/D5-DEFERRED-SWEEP): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261029_222626
