@@ -85,6 +85,9 @@ def run_one(exe, root, out, t, knobs, att):
         "MASHED_CAM_REPLAY_SHOTS": ",".join(str(k) for k in shots),
         "MASHED_PLAYERTRACE_OUT": str(sd / "ptrace.log"),
         "MASHED_CAM_REPLAY_BASIS": "1", "MASHED_CAR_REPLAY": "1", "MASHED_DBG_D3DREC": "1",
+        # [HB-RUN13-PHASE3-START] consume trace rows from the port's phase-3 entry (every trace starts there). Inert with
+        # MASHED_SUBSTATE off; the knob argument MASHED_CAM_REPLAY_P3=0 turns it off.
+        "MASHED_CAM_REPLAY_P3": "1",
     })
     for k in knobs:
         a, _, b = k.partition("=")
