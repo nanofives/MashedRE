@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 08:40 D5-PARTMORPH-FLIPPREP (orch/D5-PARTMORPH-FLIPPREP): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_081154
 - 2026-10-30 08:10 D4-DC-77b0-LAP (orch/D4-DC-77b0-LAP), D5-INTROMOVIES-I1B (orch/D5-INTROMOVIES-I1B): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_080913
 - 2026-10-30 05:40 D4-DC-77b0-VALSRC (orch/D4-DC-77b0-VALSRC): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_053842
 - 2026-10-30 05:37 D3-SUBSTATE-FLIP (orch/D3-SUBSTATE-FLIP): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_050949
