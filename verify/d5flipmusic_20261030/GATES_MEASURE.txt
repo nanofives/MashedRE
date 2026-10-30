@@ -1,0 +1,49 @@
+# D5-FLIP-MUSIC-NOCDAUDIO gate outputs (ON exe 54fd54d7, private roots, LIVING-PC 2026-10-30)
+## gates_sha.txt
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 *D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/H_DEF.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb *D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/H_DEF.gates.csv
+31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 *D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/H_DEF.ptrace.log
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/B_DEF_K0.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/B_DEF_K1.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/B_DEF_K26.step.csv
+## vsum_b.txt
+B_DEF_K0               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K1               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K26              3/3  car1 A PASS | car2 A PASS | car3 A PASS
+## e_check.txt
+D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/B_DEF_K0.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2254.8 (n=124) wmax=3527.0
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2648.1 (n=179) wmax=3904.0
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2691.4 (n=154) wmax=4507.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+## d2_reruns.txt
+short after reruns: 
+   1641 D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/D2_DEFH_1.motion_diag.log
+   1641 D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/D2_DEFH_2.motion_diag.log
+   1639 D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/D2_DEFH_3.motion_diag.log
+   4921 total
+## score_d2.txt
+D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.1930 in slip2000=0.2515 in drvmed=1917.1000 in n=('384', '647', '1433') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1930 in slip2000=0.2515 in drvmed=1917.1000 in n=('384', '647', '1433') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1917.1000 in n=('382', '647', '1431') H1 398/400 median 1333.9
+## tracks_score.txt sha256 vs reference
+2431afb1da35f95db9bb01535f071da5400d53fb2cc2550210465c0404be27c3 */d/MashedWT/D5-FLIP-MUSIC-NOCDAUDIO_data/tracks_score.txt
+2431afb1da35f95db9bb01535f071da5400d53fb2cc2550210465c0404be27c3 *verify/run13p3_20261029/tracks_score_sub_p3.txt
+## tracks_rowdiff.txt (empty = no ^NN_ row moved)
+INSTRUMENT GATES: PASS
+## run13 attempts
+[01_Egypt] OK after 1 attempt(s)
+[02_Neustein] OK after 1 attempt(s)
+[03_Arctic] OK after 1 attempt(s)
+[04_Highway] OK after 1 attempt(s)
+[05_Sands] OK after 1 attempt(s)
+[06_SuperG] OK after 1 attempt(s)
+[07_Roundabout] OK after 1 attempt(s)
+[08_Storm] OK after 1 attempt(s)
+[09_Forest] OK after 1 attempt(s)
+[10_Dump] OK after 1 attempt(s)
+[11_Warzone] OK after 1 attempt(s)
+[12_City] OK after 1 attempt(s)
+[13_Training] OK after 1 attempt(s)

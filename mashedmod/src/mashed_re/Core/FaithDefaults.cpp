@@ -75,6 +75,11 @@ const FaithKnob kFaith[] = {
     // 0x0040283f), RunBootIntroMovies in exe_main.cpp (verify/intromovies_20261030/RESULT_D5-INTROMOVIES-I1B.md).
     // MASHED_NO_INTRO_MOVIES=1 or MASHED_INTRO_MOVIES=0 opts out.
     { "INTRO_MOVIES", "1" },
+    // [D5-FLIP-MUSIC-NOCDAUDIO 2026-10-30, Mariano's decision L-66 a] no cdaudio.rws stream in Race / Results: the original's
+    // race tick FUN_00466b50 (case 3/7) starts no music voice (verify/wsjmusic_20261026/RESULT_D4-WSJ-MUSIC.md). Measured ON:
+    // verify/d5flipmusic_20261030/RESULT_D5-FLIP-MUSIC-NOCDAUDIO.md. MASHED_NO_MUSIC_NO_RACE_CDAUDIO=1 or
+    // MASHED_MUSIC_NO_RACE_CDAUDIO=0 opts out.
+    { "MUSIC_NO_RACE_CDAUDIO", "1" },
 };
 
 bool Set(const char* var) {
