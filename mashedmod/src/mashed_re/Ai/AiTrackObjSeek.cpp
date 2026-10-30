@@ -133,9 +133,9 @@ RH_ScopedInstall(AiTrackObjSeek, 0x00414f00);
 
 #ifdef MASHED_STANDALONE
 // ===========================================================================
-// exe call-site wrapper for the LAB_00416462 / 0x00417fc8 mode-10 blocks (Ai/AiStandalone.cpp). Default ON; MASHED_NO_SEEK414F00=1
-// skips the call (the pre-seek414f00 behaviour). MASHED_SEEK_TRACE=<abs path> appends one line per 600 calls and one per ret=1, the
-// knob-took witness: calls > 0 on course 0x21 with the knob on, none with it off.
+// exe call-site wrapper for the LAB_00416462 / 0x00417fc8 mode-10 blocks (Ai/AiStandalone.cpp). Always on (the
+// MASHED_NO_SEEK414F00 opt-out was deleted in D5-KNOBS-B3 2026-10-30). MASHED_SEEK_TRACE=<abs path> appends one line per 600 calls
+// and one per ret=1.
 // ===========================================================================
 namespace {
 long s_seekCalls = 0, s_seekGate1 = 0, s_seekRet1 = 0;
@@ -151,11 +151,6 @@ std::FILE* SeekTrace() {
 } // namespace
 
 namespace Ai {
-
-bool Seek414f00_Enabled() {
-    static const bool s_on = (std::getenv("MASHED_NO_SEEK414F00") == nullptr);
-    return s_on;
-}
 
 int AiTrackObjSeek_Exe(int v, float cand[2]) {
     std::uint32_t c[2];

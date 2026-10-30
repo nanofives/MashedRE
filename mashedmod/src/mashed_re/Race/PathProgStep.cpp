@@ -222,7 +222,7 @@ unsigned PathProg_PublishMask() {
 float PathProg_NodeProgress(int v) {
     if (v < 0 || v >= 4) return 0.0f;
     float f = 0.0f;
-    if (RacePctOrig_Enabled() && !PathProg_Enabled())
+    if (!PathProg_Enabled())
         std::memcpy(&f, s_shadow[v] + 0xc8, 4);
     else
         std::memcpy(&f, reinterpret_cast<const void*>(0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu + 0xc8u), 4);
@@ -230,7 +230,7 @@ float PathProg_NodeProgress(int v) {
 }
 
 void PathProg_RaceInit() {                               // FUN_00407a60
-    if (RacePctOrig_Enabled() && !PathProg_Enabled()) {   // arm R: initialise the shadow rows the same way
+    if (!PathProg_Enabled()) {   // arm R: initialise the shadow rows the same way
         const unsigned mask = PathProg_PublishMask();
         for (int v = 0; v < 4; ++v) {
             std::memset(s_shadow[v], 0, sizeof s_shadow[v]);
@@ -310,7 +310,7 @@ void PathProg_FrameTick() {                              // FUN_0040da50's FUN_0
 }
 
 void PathProg_RacePctTick() {
-    if (!RacePctOrig_Enabled() || PathProg_Enabled() || PathNodes_TriCount() == 0) return;
+    if (PathProg_Enabled() || PathNodes_TriCount() == 0) return;
     EnsureLut();
     PcScope pc;
     for (int v = 0; v < 4; ++v) {
@@ -340,7 +340,7 @@ void PathProg_RacePctTick() {
     if (!s_logged) {
         s_logged = true;
         if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness that arm R is live
-            std::fprintf(lf, "[U-9685] race_pct from the verbatim step on a shadow row (opt-out MASHED_NO_RACEPCT_FUN408610)\n");
+            std::fprintf(lf, "[U-9685] race_pct from the verbatim step on a shadow row\n");
             std::fclose(lf);
         }
     }

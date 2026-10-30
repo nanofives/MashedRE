@@ -1096,13 +1096,13 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
             }
         }
     }
-    // ---- [seek414f00] LAB_00416462: the mode-10 block, call 0x00416478 (default ON, MASHED_NO_SEEK414F00 opts out) ----
+    // ---- [seek414f00] LAB_00416462: the mode-10 block, call 0x00416478 (always on) ----
     // Every path that did not return above reaches it (mode 1/2/3/9 via 0x0041645e, mode 7 by its jump to 0x00416462):
     //   if ((FUN_00426c00() == 0x21) && (FUN_00414f00(param_1,&local_24,&local_2c,param_2) != 0)) {
     //     local_24 = local_2c; local_20 = local_28; local_48 = 10; }
     // FUN_00414f00 reads the course-0x21 track-object words 0x00684de0 / 0x0088ff50[v] / 0x00684dac (Ai/AiTrackObjSeek.cpp), which no exe
     // TU writes yet, so here it returns 0 at its first gate. PREREG: verify/seek414f00_20261016/PREREG_seek414f00.md.
-    if (s_host.track_index() == 0x21 && Seek414f00_Enabled()) {
+    if (s_host.track_index() == 0x21) {
         float cand[2] = { 0.0f, 0.0f };
         if (AiTrackObjSeek_Exe(v, cand) != 0) {
             tx = cand[0]; tz = cand[1];                                   // 0x0041647f..0x00416484
@@ -1137,9 +1137,8 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         // resolves `last` and the body returns 0 at exit site 105.
 #ifdef MASHED_STANDALONE
         {
-            static const bool s_wireB2 = (std::getenv("MASHED_NO_WIRE_B2") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_WIRE_B2 is now a no-op
             // `if (local_48 == 0)`: mode was always 0 before D-11072 P3; with MASHED_TGT3 it can be 3.
-            if (s_wireB2 && mode == 0) {
+            if (mode == 0) {
                 int candXZ[2] = {0, 0};
                 int tgtXZ[2]  = {0, 0};          // &local_24, the param the body ignores
                 if (v >= 0 && v < 4) { ++g_wireReached[v]; g_b2Ret[v] = -1; g_b2Los[v] = -1; }
@@ -1447,8 +1446,8 @@ void ControlStepM8(std::uintptr_t spline, int v, std::uint8_t* ctrl)
     int mode = 0;
 #ifdef MASHED_STANDALONE
     // [seek414f00] the mode-10 block of FUN_00417da0, call 0x00417fc8 (same shape as ControlStep's LAB_00416462 block; default
-    // ON, MASHED_NO_SEEK414F00 opts out). The targeting chain before it stays omitted, as described above.
-    if (s_host.track_index() == 0x21 && Seek414f00_Enabled()) {
+    // always on). The targeting chain before it stays omitted, as described above.
+    if (s_host.track_index() == 0x21) {
         float cand[2] = { 0.0f, 0.0f };
         if (AiTrackObjSeek_Exe(v, cand) != 0) { tx = cand[0]; tz = cand[1]; mode = 10; }
     }
@@ -2216,8 +2215,8 @@ void Ai_AdvanceCountdownClock(int units)
 }
 
 // [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN (U-9790, decision L-17 (a)): DAT_007f0ff8 runs through the pre-GO ticks,
-// as in the original. [a5timer flip 2026-10-26] default ON (decision L-23 = B); MASHED_NO_A5_RACE_TIMER_RUN=1 opts out (the
-// D2 control: the timer stays at 0 before GO, the pre-flip default). Original chain:
+// as in the original. [a5timer flip 2026-10-26] default ON (decision L-23 = B); the MASHED_NO_A5_RACE_TIMER_RUN opt-out
+// (the timer stayed at 0 before GO) was deleted in D5-KNOBS-B3 2026-10-30. Original chain:
 //   - round 1's phase-3 entry zeroes it (FUN_004102f0 first frame -> FUN_0040e590, store at 0x0040e5a2);
 //   - FUN_0040fc00 adds the tick budget at the end of every tick except race sub-state 7 (0x0040fe46 / 0x0040fe64), so it
 //     counts through phase 3 (the QPC-length intro), state 4 and the 112 state-5 ticks;
@@ -2232,22 +2231,14 @@ void Ai_AdvanceCountdownClock(int units)
 // RESULT_D3-CF-U9775.md section 1), 180 the stand-in ticks before GO.
 static constexpr int kA5RtPhase3Seed = 44200 - 180 * 50;
 
-bool Ai_RaceTimerRunEnabled()
-{
-    static const bool s = [] { const char* no = std::getenv("MASHED_NO_A5_RACE_TIMER_RUN");
-                               return !(no && no[0] && no[0] != '0'); }();
-    return s;
-}
-
 void Ai_RaceTimerRoundStart(int roundNo)
 {
-    if (!Ai_RaceTimerRunEnabled() || roundNo != 1) return;   // rounds 2+ skip phase 3 (0x0041026d else arm): no zeroing
+    if (roundNo != 1) return;   // rounds 2+ skip phase 3 (0x0041026d else arm): no zeroing
     I32(kFrame0ff8) = kA5RtPhase3Seed;                       // 0x0040e5a2 zero + the phase-3 ticks the stand-in lacks
 }
 
 void Ai_RaceTimerCountdownTick(int units, bool state5WithAi)
 {
-    if (!Ai_RaceTimerRunEnabled()) return;
     I32(kFrame0ff8) += units;                                // FUN_0040fc00 0x0040fe64
     // FUN_00418560 0x00418598, after the add (PREREG amendment 1): an AI race's first racing tick reads 0. u9745ov matched the
     // original's FUN_004177b0 band-0 roll (DAT_007f0ff8 * (1/3000) > 1.0) at window call 61 with 0 there; zeroing before
