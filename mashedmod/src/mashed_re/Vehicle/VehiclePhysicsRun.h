@@ -102,7 +102,7 @@ struct PlayerCarIO {
     // them from `steer` (the player path). The original's A4 FUN_00470670 reads the
     // bytes directly (0x00470732 / 0x00470754), so for the AI this is the faithful feed.
     int raw_steer = 0;
-    // [d2posmodel 2026-10-16] fix B part 3 (MASHED_POS_TRANS, PosModelKnobs.h). The caller's
+    // [d2posmodel 2026-10-16] fix B part 3 (PosModelKnobs.h; knob deleted by D5-KNOBS-D-SEEDED6). The caller's
     // pos[1] is its render/game y (TrackRenderer: ground + car_ground_off_); the physics y is
     // pos[1] - ground_off, which at a spawn is the ground under the car centre, the original's
     // FUN_004704c0 convention (decomp: local_8 = param_3 - FUN_0046d400(x, y, z, world), and
@@ -127,8 +127,8 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io);
 // opponents). The caller supplies the descriptor input (io.input[4]/[5] throttle +
 // io.steer) and persists vel/yaw/pos per car. StepPlayer == StepCar(0, ...).
 void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io);
-// [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER): run only slot's one-shot spawn-settle step
-// (no-op once it has run). With part 3 on, io.pos returns the settled position, as from StepCar.
+// [d2engage 2026-10-16] fix B part 4: run only slot's one-shot spawn-settle step
+// (no-op once it has run). io.pos returns the settled position (part 3), as from StepCar.
 void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io);
 // [u9747] FUN_004704c0's two state matrices (+0x928 / +0x968) from the grid pose (caller convention: pos[1] = physics y +
 // groundOff). Used by MASHED_COUNTDOWN_SPAWN on countdown frames.

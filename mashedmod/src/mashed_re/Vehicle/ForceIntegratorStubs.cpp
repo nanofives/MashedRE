@@ -120,7 +120,7 @@ float Fi_RandRange(float lo, float hi) {
 // Revert for A/B only (v3 rule: a flag may only turn the ported behaviour OFF):
 // MASHED_GAMEMODE_STUB=0 restores the pre-2026-09-29 constant.
 // [d2engage 2026-10-16] g_fiGameModeHold != 0 overrides the stub for the duration of one pre-release
-// hold tick (VehiclePhysicsRun.cpp spawn settle, MASHED_POS_ORDER only). DAT_0063ba8c is 5 on
+// hold tick (VehiclePhysicsRun.cpp spawn settle, fix B part 4). DAT_0063ba8c is 5 on
 // FUN_004103a0's countdown ticks and becomes 6 at 0x004104e3, after the release (PREREG_d2engage.md 1(c)).
 int g_fiGameModeHold = 0;
 // [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): 7 while the MASHED_ROUND_END7 round-end flag is up, the value

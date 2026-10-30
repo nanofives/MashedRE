@@ -19,7 +19,7 @@
 #include <cstdio>
 #include <vector>
 #include "D2SinkProbe.h"                     // [D2 attempt 19] diagnostic, default-OFF
-#include "PosModelKnobs.h"                   // [d2posmodel] fix B knobs, default-OFF
+#include "PosModelKnobs.h"                   // [d2posmodel] fix B: knobs deleted (D5-KNOBS-D-SEEDED6), PosModelEnvOn only
 #include "../Math/RwLutTables.h"             // [d2lateral] Math::LutLength (0x004c3ac0), knob-gated
 #include "../Race/SubStateCallees.h"         // [d2posmodel] VehiclePhysicsStateReset (0x0046baa0)
 #include "../Ai/AiStandalone.h"              // [d3bB2] Ai_ContactEventPush (MASHED_AI_CONTACT_EVENT)
@@ -468,46 +468,15 @@ static void ReassertContacts(unsigned char* r, const ContactScratch& cs) {
 // This does NOT move the storage — g_bodyBasis stays the authority — it publishes it,
 // which is the minimum U-9152 owes the contact chain.
 //
-// [PREREG_CARCAR leg 2, 2026-10-06] IT ALSO PUBLISHES THE OTHER SLOT, +0x9a8's.
-//
-// The +0x928 block is a DOUBLE buffer with two selectors, +0x9a8 and +0x9ac. The
-// ORIGINAL keeps BOTH halves live: measured over four committed captures and two cars
-// (verify/d2_b0c_20261002/orig_sl1.msd, verify/d2_wheelstate_20261002/orig_ws1.msd,
-// verify/d2_writer_20261001/orig_bp1.msd, verify/d3_spect_20261005/s1.msd) +0x9a8 == 0
-// and +0x9ac == 1 on every frame, and each slot's translation row is all-zero on exactly
-// 1 of 2334 / 2332 / 2334 / 3286 frames. At orig_sl1 frame 1167 slot 0 reads
-// (-0.9237, 0.4913, -0.2017) and slot 1 (-0.9611, 0.4910, -0.2139).
-//
-// The port wrote slot +0x9ac's half only, so slot +0x9a8's was the memset zero for the
-// whole run -- measured 0.0 on 7775 of 7775 rows of verify/d3_carcar_20261005/P1.csv.
-// THREE sites already read it and were therefore handed a ZERO MATRIX:
-//     Vehicle/VehicleControl.cpp:103          A4's wheelBlock   (0x0047068e)
-//     Vehicle/PhysicsChainHooks.cpp:536       same expression   (0x0047068e)
-//     Vehicle/PhysicsChainHooks.cpp:2749      A6b's wheelBlock
-// So this is NOT an inert addition and was pre-registered as not inert before it ran;
-// it changes what A4 and A6b are handed. BodyOrientationIntegrate.cpp:171-179 already
-// flagged the reconciliation as owed.
-//
-// DEVIATION, STATED, NOT HIDDEN. The original's two halves differ by one substep,
-// because A9 (0x0046e9e0) writes `dst = src + delta` into the half the selectors do not
-// currently point at. The port keeps ONE pose in caller-owned storage (U-9152), so it
-// publishes the SAME pose into both halves: the port's two slots are identical where the
-// original's are one substep apart. Closing that needs A9's double-buffer write, which
-// is a different and much larger change. What this does achieve is that every reader of
-// either selector gets a real basis + position instead of zeros.
-//
-// Default-ON with the A/B revert MASHED_RING_SLOT0=0, per the v3 flag rule (a flag may
-// only turn the ported behaviour OFF). The existing +0x9ac write below is left EXACTLY
-// as it was so the knob-off path is byte-identical to the pre-leg build.
-static bool RingSlot0Enabled() {
-    static const bool s_on = [] {
-        const char* e = std::getenv("MASHED_RING_SLOT0");
-        return !(e && e[0] == '0');
-    }();
-    return s_on;
-}
+// [PREREG_CARCAR leg 2, 2026-10-06] the port also published the same pose into the other half (+0x9a8's), behind
+// MASHED_RING_SLOT0 (default ON, =0 reverted). [u9152] the ring double buffer (below) writes the dst half only and
+// returns before that copy, so with MASHED_RING_DBUF (seeded ON by FaithDefaults) the copy never ran. D5-KNOBS-D-SEEDED6
+// deleted MASHED_RING_DBUF and, with it, the unreachable copy and RingSlot0Enabled / MASHED_RING_SLOT0. The measurement
+// that motivated leg 2 (the +0x9a8 half was the memset zero, read by A4 0x0047068e and A6b) is in git history before
+// this commit.
 
-// [u9152 2026-10-18] MASHED_RING_DBUF=1 (default OFF, verify/u9152_20261018/PREREG_u9152.md): the original's
+// [u9152 2026-10-18] verify/u9152_20261018/PREREG_u9152.md (its MASHED_RING_DBUF knob, seeded ON by FaithDefaults, was
+// deleted by D5-KNOBS-D-SEEDED6): the original's
 // double-buffer discipline for the +0x928 / +0x968 halves, decoded from the disassembly:
 //   FUN_004709a0 0x00470a6f..0x00470a8f  src = rec + [+0x9a8]*0x40 + 0x928 (EDI), dst = rec + [+0x9ac]*0x40 + 0x928 (EBX)
 //   FUN_0046e9e0 (A9)                    dst = src + velocity / omega step, then FUN_004c4680(dst, dst) at 0x0046ef5e
@@ -518,8 +487,8 @@ static bool RingSlot0Enabled() {
 //                                        and the 0x40 bytes at +0x928 are copied over +0x968 (rep movsd, ESI = +0x928)
 // So after a 2-substep frame +0x9a8 = 0 holds the newest pose and +0x968 the previous substep's, and during a substep
 // the +0x9a8 half is the PRE-substep pose (read there by the car-car proximity test 0x00470b44.. and FUN_00469df0).
-// The port keeps one pose (U-9152) and published it into both halves. Under the knob it publishes only the dst half
-// and swaps the selectors as above. MASHED_RING_DBUF_DISCARD=1 (needs MASHED_RING_DBUF) also drops the pose of a
+// The port keeps one pose (U-9152). It publishes only the dst half and swaps the selectors as above (it published the
+// pose into both halves before u9152). MASHED_RING_DBUF_DISCARD=1 (probe, default OFF) also drops the pose of a
 // substep whose retries ran out, as the skipped swap does in the original (the next substep starts from the old src).
 // [u9758 2026-10-18] MASHED_FWD_AT (default ON since the fwdsse flip 2026-10-19, user decision; MASHED_NO_FWD_AT=1 opts
 // out; verify/u9758_20261018/PREREG_u9758.md): record +0x9d4..+0x9dc as the
@@ -539,13 +508,9 @@ static void WriteForwardAt(unsigned char* r, const float* m) {
         F(r, off::kForward + 4 * c) = 0.f * m[c] + 0.f * m[4 + c] + 1.f * m[8 + c];
 }
 
-static bool RingDbuf() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_RING_DBUF"); return e && e[0] == '1'; }();
-    return s;
-}
 static bool RingDbufDiscard() {
     static const bool s = [] { const char* e = std::getenv("MASHED_RING_DBUF_DISCARD"); return e && e[0] == '1'; }();
-    return s && RingDbuf();
+    return s;
 }
 // 0x00470c31..0x00470c41: +0x9ac = +0x9a8; +0x9a8 = (+0x9a8 - 1) & 1
 static void RingSwapSelectors(unsigned char* r) {
@@ -575,16 +540,6 @@ static void SyncContactRingMatrix(unsigned char* r, const float* basis, const fl
     m[15] = 0.f;
 
     // [u9152] the original writes the dst half only (A9, 0x0046e9e0); the src half keeps the pre-substep pose.
-    if (RingDbuf()) return;
-
-    // [PREREG_CARCAR leg 2] the other half, self[0x26a].
-    if (!RingSlot0Enabled()) return;
-    const int sel0 = I(r, 0x9a8);
-    if (sel0 < 0 || sel0 > 1 || sel0 == sel) return;
-    float* m0 = reinterpret_cast<float*>(r + (std::size_t)sel0 * 0x40 + 0x928);
-    for (int i = 0; i < 12; ++i) m0[i] = basis[i];
-    m0[12] = pos[0]; m0[13] = pos[1]; m0[14] = pos[2];
-    m0[15] = 0.f;
 }
 
 // Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
@@ -648,18 +603,18 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     centre[0] = io.pos[0];
     centre[1] = (nGY > 0) ? (sumGY / nGY) : io.pos[1];
     centre[2] = io.pos[2];
-    // [d2posmodel 2026-10-16] fix B part 3 (MASHED_POS_TRANS): the ring translation IS the
+    // [d2posmodel 2026-10-16] fix B part 3: the ring translation IS the
     // car's position, so the solver starts from the physics position (io.pos is in physics
     // convention inside StepCar with part 3 on), not from a ground-level seat. The original's
     // 0x0046f6c0 reads the translation 0x0046e9e0 just wrote (iVar12 + 0x30..0x38).
-    if (PosModelTrans()) centre[1] = io.pos[1];
-    // [d2posmodel] fix B part 2 (MASHED_POS_WHEELS): the solver's second RW query
+    centre[1] = io.pos[1];
+    // [d2posmodel] fix B part 2: the solver's second RW query
     // (WheelContactSolver.cpp, &DAT_0088e620 <- the 4 suspension points through iVar12)
     // needs the ring's rotation rows to be the CURRENT body basis. The port publishes them
     // only after the solver (SyncContactRingMatrix in the substep), so the rows here would
     // be one substep old; the D0-c / D0-e arms of d2settle published them first for the
     // same reason (RINGY block below). Rows only: the translation is `centre` above.
-    if (PosModelWheels() && bodyUp) {
+    if (bodyUp) {
         const float* basis = bodyUp - 4;   // bodyUp is basis + 4 (StepCar's call site)
         float* m = reinterpret_cast<float*>(r + (std::size_t)sel * 0x40 + 0x928);
         for (int i = 0; i < 12; ++i) m[i] = basis[i];
@@ -770,7 +725,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     // re-publishes it into the ring (above, and SyncContactRingMatrix), so carry the ring's rotation rows back into it.
     {
         static const bool s_triBack = [] { const char* e = std::getenv("MASHED_WCS_TRINORMAL"); return e && e[0] == '1'; }();
-        if (s_triBack && PosModelWheels() && bodyUp) {
+        if (s_triBack && bodyUp) {
             float* basisW = const_cast<float*>(bodyUp) - 4;
             const float* m = reinterpret_cast<const float*>(r + (std::size_t)I(r, 0x9ac) * 0x40 + 0x928);
             for (int i = 0; i < 12; ++i) basisW[i] = m[i];
@@ -801,7 +756,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     // the bVar16 block) is the original's only per-tick vertical position authority; the
     // port used to discard it (SyncContactRingMatrix overwrote it with io.pos). All three
     // axes: the correction is along the contact normal, so z moves on a sloped tri.
-    if (PosModelTrans()) { io.pos[0] = centre[0]; io.pos[1] = centre[1]; io.pos[2] = centre[2]; }
+    io.pos[0] = centre[0]; io.pos[1] = centre[1]; io.pos[2] = centre[2];
 
     // 5. apply the cached result (states + real per-wheel normals + grounded count).
     ReassertContacts(r, cs);
@@ -922,7 +877,7 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     VehiclePhysics_StepCar(0, dt, io);
 }
 
-// [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER, PREREG_d2engage.md 1). Runs ONLY the
+// [d2engage 2026-10-16] fix B part 4 (PREREG_d2engage.md 1). Runs ONLY the
 // spawn-settle block of StepCar for `slot` (if it has not run yet), so the caller can place it
 // before LaunchRev_Release on the GO frame: the settle stands in for the original's pre-release
 // hold ticks (FUN_004103a0: FUN_0046baa0 0x0041043a, charge 0x00410441, release 0x0041049b, then
@@ -1075,7 +1030,6 @@ struct StepCtx {
     ContactScratch* cs = nullptr;            // the contact cache this step solves into and re-asserts from
     bool            preOnly = false;         // [a4order] VehiclePhysics_A4Pre call (return after the A4 block)
     bool            preDone = false;         // [a4order] this frame's gate + A4 ran in the pre-phase
-    bool            posTrans = false;        // [d2posmodel] fix B part 3
     bool            sdOn = false;            // [d2settle D0-a] settle diag window (slot 0, first 6 steps)
     bool            a4Skip = false;          // [car2pickup] this chunk's +0xaec gate verdict
     double          t_phys0 = 0.0;           // PERF (MASHED_PHYS_PROF)
@@ -1245,7 +1199,7 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         s.steer = 0.f; s.raw_steer = 1;  // raw_steer so the zero bytes are used verbatim
         s.vel[0] = s.vel[1] = s.vel[2] = 0.f;
         s.speed = 0.f;
-        // [d2posmodel 2026-10-16] fix B part 1 (MASHED_POS_SEED): FUN_0046baa0 before the
+        // [d2posmodel 2026-10-16] fix B part 1: FUN_0046baa0 before the
         // first solver call. The original runs it at the tail of the spawn FUN_004704c0
         // (after its own 0x0046f6c0(0) at 0x00470638), in the race-start loop of FUN_0040e590
         // (0x0040ed6e), and on every pre-race hold tick (0x0041033e in FUN_004102f0 case 3,
@@ -1257,9 +1211,8 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         // (TrackRenderer.cpp countdown branch returns first), so this settle step is its one
         // pre-GO physics tick and the seed goes in front of it. STATED: the original seeds
         // on EVERY hold tick and steps ~N of them; the exe steps one. The exe's round
-        // restarts do not re-run any record reset (FUN_0040e590 per round), with or without
-        // this knob.
-        if (PosModelSeed()) {
+        // restarts do not re-run any record reset (FUN_0040e590 per round).
+        {
             // [d2posmodel amendment 2] DIAGNOSTIC ONLY, default OFF, for the D2 bisect of
             // RESULT_d2posmodel.md: MASHED_POS_SEED_MIN=1 writes only the d2settle D0-e seed set
             // (int 1 at the four states, 0 at the four fv) plus 4.0f at +0x9e0, instead of the
@@ -1287,18 +1240,18 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
                 }
             }
         }
-        // [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER): this step is a pre-release hold
+        // [d2engage 2026-10-16] fix B part 4: this step is a pre-release hold
         // tick, so FUN_0040e350 reads the countdown sub-state 5, not the in-race 6 the stub returns
         // (DAT_0063ba8c = 6 is written at 0x004104e3, after the release). A6a's `== 6` decrement
         // site then does not run on it, as on the original's hold frames (orig_solo3 idx 878-885:
         // +0xbf4 = 3000 with the front-wheel gate open). PREREG_d2engage.md 0.1 / 1(c).
-        if (PosModelOrder() && slot == 0 && std::getenv("MASHED_MOTION_DIAG")) {
+        if (slot == 0 && std::getenv("MASHED_MOTION_DIAG")) {
             if (std::FILE* lf = std::fopen("motion_diag.log", "a")) {   // marker: no sp=/b14= tokens
                 std::fprintf(lf, "settle slot=0 order=1 settleOnly=%d\n", settleOnly ? 1 : 0);
                 std::fclose(lf);
             }
         }
-        if (PosModelOrder()) g_fiGameModeHold = 5;
+        g_fiGameModeHold = 5;
         g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
         StepCarImpl(slot, dt, s, cs);   // [substep] the settle's inner step: per-car order, this car's cache
         g_inSpawnSettle = false;
@@ -1324,9 +1277,9 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
             }
         }
         // [d2posmodel] fix B part 3: the settle step's MOTION is the original's first-tick
-        // move (the 0x0046f6c0 translation), so with part 3 on its position is kept. Its
-        // velocity is still discarded below, as before.
-        if (PosModelTrans()) { io.pos[0] = s.pos[0]; io.pos[1] = s.pos[1]; io.pos[2] = s.pos[2]; }
+        // move (the 0x0046f6c0 translation), so its position is kept. Its velocity is still
+        // discarded below, as before.
+        io.pos[0] = s.pos[0]; io.pos[1] = s.pos[1]; io.pos[2] = s.pos[2];
         for (std::size_t o = 0; o < 12; o += 4) {
             F(r, off::kVelocity + o) = 0.f;   // +0x9b0..+0x9b8 linear
             F(r, 0x9bc + o)          = 0.f;   // +0x9bc..+0x9c4 angular
@@ -1341,17 +1294,16 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         // physics, so the first real step enters reset (states 1, fv 0, +0x9e0 4.0, vel 0, ...).
         // It writes neither +0xbf4 nor +0xbf8 (d2posmodel PREREG 0.3), so the charge the release
         // reads is unchanged. Every slot: the original's loop covers every alive car.
-        if (PosModelOrder()) VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
+        VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
     }
     if (settleOnly) return false;   // [d2engage] VehiclePhysics_SpawnSettle: the settle block only
     // =====================================================================
 
-    // [d2posmodel 2026-10-16] fix B part 3 adapter IN (MASHED_POS_TRANS). Inside StepCar
+    // [d2posmodel 2026-10-16] fix B part 3 adapter IN. Inside StepCar
     // io.pos is the PHYSICS position from here to the adapter OUT. Taken from g_physPos when
     // the caller round-tripped the last OUT bit for bit, else re-seeded from the caller
     // (teleport): x, z as given, y = pos[1] - ground_off.
-    const bool posTrans = c.posTrans = PosModelTrans();
-    if (posTrans) {
+    {
         const bool posKept = g_outPosValid[slot] &&
             std::memcmp(io.pos, g_outPos[slot], sizeof(g_outPos[slot])) == 0;
         if (posKept) { io.pos[0] = g_physPos[slot][0]; io.pos[1] = g_physPos[slot][1]; io.pos[2] = g_physPos[slot][2]; }
@@ -1749,18 +1701,15 @@ static bool StepChunkHead(StepCtx& c) {
             RecDumpWrite("MASHED_RECDUMP_A4", g_recDumpA4F, g_recDumpA4Tried, slot);
         if (!a4Skip && !preDone)   // 0x00471042 / 0x00471048: jge past the A4 call
             VehicleControlIntegrate(reinterpret_cast<int*>(r), a4Dt, input, basis, slot);
-        // [d2engage 2026-10-16] fix B part 5 (MASHED_POS_CONTACTS): the original writes no wheel
+        // [d2engage 2026-10-16] fix B part 5: the original writes no wheel
         // state, contact normal or +0x9e0 between the A4 loop and the substep loop. FUN_00470c70
         // 0x0047109f..0x00471106 holds only the speed refresh (0x004710bc..0x004710da) and
         // FUN_0046dc20 (0x004710f4, VehicleOOBDebugDraw: reads +0x9f0, writes the debug queue
-        // 0x007e9de0 only). This call also reads the g_c* cache of whichever car's solver ran last
-        // (slot 0's first step: the initial grounded=false, which zeroes the FUN_0046baa0 seeds).
-        // The port's A6a writes no wheel state, so the "A6a can clear states" reason below has no
-        // writer. PREREG_d2engage.md 0.4. With the knob on, every remaining ReassertContacts call
-        // reads the cache its own car's SolveWheelContacts set in the same call.
-        // [a4order] port-only (it reads the solver cache of the car that stepped last), so it stays next to this
-        // car's substeps: not in the pre-phase, still in the real step.
-        if (!PosModelContacts() && !preOnly) ReassertContacts(r, *c.cs);
+        // 0x007e9de0 only). So no ReassertContacts runs here. The port's call that stood here (removed
+        // with MASHED_POS_CONTACTS by D5-KNOBS-D-SEEDED6) read the g_c* cache of whichever car's solver
+        // ran last (slot 0's first step: the initial grounded=false, which zeroed the FUN_0046baa0 seeds),
+        // and the port's A6a writes no wheel state. PREREG_d2engage.md 0.4. Every remaining
+        // ReassertContacts call reads the cache its own car's SolveWheelContacts set in the same call.
         if (preDone) {
             // [a4order] the refresh below belongs to the frame boundary (0x004710a1..0x004710da); made in the pre-phase
         } else if (!a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
@@ -1804,7 +1753,7 @@ static bool SubstepDue(StepCtx& c) { return c.chunkI > 0 && c.guard++ < 64; }   
 // One substep of one car: FUN_004709a0's per-car body (0x004709f0..0x00470c41).
 static void StepSubstep(StepCtx& c) {
     const int slot = c.slot; PlayerCarIO& io = *c.io; unsigned char* const r = c.r; float* const basis = c.basis;
-    float (&posDelta)[3] = c.posDelta; std::uint8_t (&input)[8] = c.input; const bool posTrans = c.posTrans;
+    float (&posDelta)[3] = c.posDelta; std::uint8_t (&input)[8] = c.input;
     const bool sdOn = c.sdOn; const char* const s_settleDiag = SettleDiagPath(); const int s_sdN = g_sdN;
     int& chunkI = c.chunkI; const int guard = c.guard; int& d2sSub = c.d2sSub; float& remMs = c.remMs;
     g_sdSolverLog = sdOn ? s_settleDiag : nullptr;   // [d2settle D0-a] this car's window (StepBegin sets the same)
@@ -1939,9 +1888,8 @@ static void StepSubstep(StepCtx& c) {
         io.pos[0] += k * F(r, off::kVelocity + 0);
         io.pos[2] += k * F(r, off::kVelocity + 8);
         // [d2posmodel] fix B part 3: y too. The original stores all three components
-        // (0x0046ea5f / 0x0046ea69 / 0x0046ea73). Without part 3 the caller snaps y to
-        // the ground every frame.
-        if (posTrans) io.pos[1] += k * F(r, off::kVelocity + 4);
+        // (0x0046ea5f / 0x0046ea69 / 0x0046ea73).
+        io.pos[1] += k * F(r, off::kVelocity + 4);
     }
 
     // ORIENTATION: omega from the wheel-force arm (record +0x10 == 0, which the
@@ -2154,18 +2102,16 @@ static void StepSubstep(StepCtx& c) {
     committed = true;
     break;
     }   // end retry
-    // [u9152] MASHED_RING_DBUF: a committed substep swaps the selectors (0x00470c31..0x00470c41). Retries that ran
-    // out leave 0x00470ab3 for 0x00470c47 with no swap, so the next substep integrates from the same src half:
+    // [u9152] a committed substep swaps the selectors (0x00470c31..0x00470c41). Retries that ran out leave
+    // 0x00470ab3 for 0x00470c47 with no swap, so the next substep integrates from the same src half:
     // under MASHED_RING_DBUF_DISCARD the port drops this substep's pose to match (velocity writes stay, as there).
-    if (RingDbuf()) {
-        if (committed) {
-            RingSwapSelectors(r);
-        } else if (RingDbufDiscard()) {
-            io.pos[0] = savedPos[0]; io.pos[1] = savedPos[1]; io.pos[2] = savedPos[2];
-            posDelta[0] = savedDelta[0]; posDelta[1] = savedDelta[1]; posDelta[2] = savedDelta[2];
-            std::memcpy(basis, savedBasis, sizeof(savedBasis));
-            io.yaw = savedYaw;
-        }
+    if (committed) {
+        RingSwapSelectors(r);
+    } else if (RingDbufDiscard()) {
+        io.pos[0] = savedPos[0]; io.pos[1] = savedPos[1]; io.pos[2] = savedPos[2];
+        posDelta[0] = savedDelta[0]; posDelta[1] = savedDelta[1]; posDelta[2] = savedDelta[2];
+        std::memcpy(basis, savedBasis, sizeof(savedBasis));
+        io.yaw = savedYaw;
     }
     D2Sink::Mark("sub_end", r, d2sSub, 0, chunkMs, remMs);
     ++d2sSub;
@@ -2211,9 +2157,9 @@ static void StepChunkTail(StepCtx& c) {
 
 static void StepEnd(StepCtx& c) {
     const int slot = c.slot; PlayerCarIO& io = *c.io; unsigned char* const r = c.r; float (&posDelta)[3] = c.posDelta;
-    std::uint8_t (&input)[8] = c.input; const bool posTrans = c.posTrans, preDone = c.preDone, sdOn = c.sdOn;
+    std::uint8_t (&input)[8] = c.input; const bool preDone = c.preDone, sdOn = c.sdOn;
     const char* const s_settleDiag = SettleDiagPath(); const int s_sdN = g_sdN;
-    if (RingDbuf()) RingFrameEnd(r);   // [u9152] 0x00471195..0x004711af, after the last chunk
+    RingFrameEnd(r);   // [u9152] 0x00471195..0x004711af, after the last chunk
 
     // WS-A contacts telemetry: per-wheel contact NORMAL (+0x200) + LOAD (+0x20c, A5
     // Phase-5 weight-transfer slot) + STATE (+0x198), to prove they VARY with terrain
@@ -2559,12 +2505,10 @@ static void StepEnd(StepCtx& c) {
     g_outValid[slot] = true;
     // [d2posmodel] fix B part 3 adapter OUT: hand back the physics position in the caller's
     // convention, and remember both for next frame's keep test (adapter IN above).
-    if (posTrans) {
-        std::memcpy(g_physPos[slot], io.pos, sizeof(g_physPos[slot]));
-        io.pos[1] += io.ground_off;
-        std::memcpy(g_outPos[slot], io.pos, sizeof(g_outPos[slot]));
-        g_outPosValid[slot] = true;
-    }
+    std::memcpy(g_physPos[slot], io.pos, sizeof(g_physPos[slot]));
+    io.pos[1] += io.ground_off;
+    std::memcpy(g_outPos[slot], io.pos, sizeof(g_outPos[slot]));
+    g_outPosValid[slot] = true;
     g_a4GateDone[slot] = false;                                    // next frame's gate is due
     if (preDone) g_a4PreDone[slot] = false;                        // [a4order] consumed
 

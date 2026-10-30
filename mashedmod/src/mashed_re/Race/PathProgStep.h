@@ -11,9 +11,9 @@ void PathProg_RaceInit();
 
 // FUN_0040da50's FUN_00408610 loop, once per frame, before the AI tick. No-op unless enabled.
 void PathProg_FrameTick();
-// [cev] MASHED_PATHPROG_LATE=1 (default OFF): run PathProg_FrameTick after every car's physics (the end of
-// UpdateCar, where arm R's tick runs) instead of in UpdateRace, which runs before the opponents' physics.
-bool PathProg_Late();
+// [cev] The caller runs it after every car's physics (the end of UpdateCar, where arm R's tick runs), not in
+// UpdateRace, which runs before the opponents' physics. The MASHED_PATHPROG_LATE knob (seeded ON) and PathProg_Late()
+// were deleted by D5-KNOBS-D-SEEDED6.
 
 // [U-9685] Arm R (MASHED_RACEPCT_FUN408610, see PathNodes.h): once per race frame at the end of UpdateCar,
 // the verbatim step runs on a private shadow row per car and only race_pct (+0xcc) is written into the

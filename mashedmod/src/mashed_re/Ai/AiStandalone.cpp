@@ -186,7 +186,7 @@ const float  kSteerThrHi   =  1.0f;                 // (float)_DAT_005cd0c8 = +1
 // _DAT_005cc970 is a DOUBLE 0x404ca5dc20000000 ~= 57.29578 (rad->deg), NOT 2^-63 (that
 // was the low dword 0x20000000 read as a float). acos()[0,pi] * this -> degrees [0,180].
 const double kSteerScale   = 57.2957802;            // _DAT_005cc970 (0x404ca5dc20000000)
-const double kSteerScaleExact = 57.295780181884765625;   // _DAT_005cc970 bit-exact (0x404ca5dc20000000), MASHED_STEER_ACOS64
+const double kSteerScaleExact = 57.295780181884765625;   // _DAT_005cc970 bit-exact (0x404ca5dc20000000), the standalone steer acos
 const float kWrap         =  360.0f;                // _DAT_005ccac4 (0x43b40000)
 
 // ---------------------------------------------------------------------------
@@ -261,7 +261,8 @@ float SteerAngleErrorFwd(int v, float targetX, float targetZ)
         if (kSteerThrHi < d) d = kSteerClampHi;
         float a;
 #ifdef MASHED_STANDALONE
-        // [d3bc 2026-10-19] MASHED_STEER_ACOS_CRT (default OFF). `std::acos(d)` with a float d is acosf. The original
+        // [d3bc 2026-10-19] Standalone (its MASHED_STEER_ACOS_CRT knob, seeded ON by FaithDefaults, was deleted by
+        // D5-KNOBS-D-SEEDED6; the .asi keeps the acos below). `std::acos(d)` with a float d is acosf. The original
         // pushes d as a double (FSTP qword 0x00415eb2 / 0x00415f94) into the CRT acos FUN_004a3384. Under the race
         // loop's PC_24 its CW helper FUN_004a70a5 loads (cw & 0x300) | 0x7f (0x004a70a9..0x004a70b7), keeping the
         // precision bits, so 1+x, 1-x, their product and FSQRT round to float (0x004a33a8..0x004a33b2); FPATAN
@@ -269,15 +270,15 @@ float SteerAngleErrorFwd(int v, float targetX, float targetZ)
         // 57.295780181884765625, not 57.2957802), FMUL qword 0x00415eba / 0x00415f9c, rounded to float. Offline
         // (verify/d3bc_20261019/emucrt.py), with the LUT normalize, this gives the original's stored error on every row
         // of four captures (1054/1054); a plain double acos misses 43.
-        static const bool s_acosCrt = [] { const char* e = std::getenv("MASHED_STEER_ACOS_CRT"); return e && e[0] && e[0] != '0'; }();
-        if (s_acosCrt) {
+        {
             const float p1 = 1.0f + d, m1 = 1.0f - d;                    // FLD1 / FADD ST(1), FLD1 / FSUB ST(2)
             const float s  = std::sqrt(p1 * m1);                          // FMULP, FSQRT (float sqrt overload)
             const double t = std::atan2(static_cast<double>(s), static_cast<double>(d));   // FXCH, FPATAN
             a = static_cast<float>(t * kSteerScaleExact);
-        } else
+        }
+#else
+        a = static_cast<float>(std::acos(d) * kSteerScale);       // FUN_004a3384 * 0x005cc970
 #endif
-            a = static_cast<float>(std::acos(d) * kSteerScale);   // FUN_004a3384 * 0x005cc970
         if (nz < 0.0f) a = -a;
         while (a <= 0.0f) a += kWrap;
         return a;
