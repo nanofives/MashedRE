@@ -1,0 +1,6 @@
+// mashed_re.exe resources (D5-ICON-ASSET, L-64 (b), 2026-10-30).
+// RWTEXDICTIONARY/404 is MASHED.exe's loading-disc texture dictionary, copied byte-for-byte by
+// re/tools/extract_loadicon_asset.py (33932 bytes, SHA-256 2A4E7403...7AF0B2). Same type, id and language
+// (0x0809, en-GB) as in MASHED.exe, so exe_main.cpp LoadLoadIcon finds it in its own module.
+LANGUAGE 9, 2
+404 RWTEXDICTIONARY "loadicon_404.txd"

@@ -1,0 +1,10 @@
+base_full_f30: loadicon: 256x128 decode+upload OK
+base_full_f45: loadicon: 256x128 decode+upload OK
+base_noexe_f30: loadicon: LoadLibraryEx(MASHED.exe) failed
+new_full_f30: loadicon: 256x128 decode+upload OK
+new_full_f45: loadicon: 256x128 decode+upload OK
+new_noexe_f30: loadicon: 256x128 decode+upload OK
+new_noexe_f45: loadicon: 256x128 decode+upload OK
+new_noexe_f45_r2: loadicon: 256x128 decode+upload OK
+new_noexe_f45_r3: loadicon: 256x128 decode+upload OK
+stage_f30: loadicon: 256x128 decode+upload OK
