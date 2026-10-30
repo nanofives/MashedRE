@@ -18,8 +18,10 @@ Both runs, in full:
 ```
 [rva-lint] 16 finding(s): CROSS-TARGET=16  |  allowlisted=16 NEW=0
 [rva-lint] OK -- no NEW duplicate bodies (16 known, tracked in re\tools\dual_copy_allowlist.txt)
-``` identical to the above.
-```
+`````
+
+(after) identical to the above.
 
 Gates G-CTRL / B: not run, no build input changed.
+
 
