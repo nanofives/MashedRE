@@ -1,0 +1,92 @@
+# D5-PARTMORPH-FLIPPREP gate outputs (PREREG 8fc13e336; EXE_ON 2e37dc2f = commit c230b7d7e, EXE_OFF b3647709 = commit 5bd46a48c)
+## EXE_ON arms (run_arms.py sha8)
+=== H_DEF pid=10172 exe=2e37dc2f
+    H_DEF.step.csv lines=13962 sha8=8284be46
+    H_DEF.gates.csv lines=54085 sha8=ba407a16
+    H_DEF.ptrace.log lines=27042 sha8=31fe043e
+=== B_DEF_K0 pid=19264 exe=2e37dc2f
+    B_DEF_K0.step.csv lines=762 sha8=1d5bf4f9
+=== B_DEF_K1 pid=5024 exe=2e37dc2f
+    B_DEF_K1.step.csv lines=762 sha8=1d5bf4f9
+=== B_DEF_K26 pid=3316 exe=2e37dc2f
+    B_DEF_K26.step.csv lines=762 sha8=1d5bf4f9
+=== H_LOG pid=17828 exe=2e37dc2f
+    H_LOG.step.csv lines=13962 sha8=8284be46
+    H_LOG.gates.csv lines=54085 sha8=ba407a16
+    H_LOG.ptrace.log lines=27042 sha8=31fe043e
+=== B_LOG_K0 pid=6288 exe=2e37dc2f
+    B_LOG_K0.step.csv lines=762 sha8=1d5bf4f9
+=== B_NOB_K0 pid=19188 exe=2e37dc2f
+    B_NOB_K0.step.csv lines=762 sha8=1d5bf4f9
+=== B_NOPM_K0 pid=12800 exe=2e37dc2f
+    B_NOPM_K0.step.csv lines=762 sha8=1d5bf4f9
+=== B_NOS0_K0 pid=17320 exe=2e37dc2f
+    B_NOS0_K0.step.csv lines=762 sha8=1d5bf4f9
+## EXE_OFF arms
+=== H_DEF pid=18328 exe=b3647709
+    H_DEF.step.csv lines=13962 sha8=8284be46
+    H_DEF.gates.csv lines=54085 sha8=ba407a16
+    H_DEF.ptrace.log lines=27042 sha8=31fe043e
+=== B_DEF_K0 pid=17072 exe=b3647709
+    B_DEF_K0.step.csv lines=762 sha8=1d5bf4f9
+=== B_DEF_K1 pid=23196 exe=b3647709
+    B_DEF_K1.step.csv lines=762 sha8=1d5bf4f9
+=== B_DEF_K26 pid=18052 exe=b3647709
+    B_DEF_K26.step.csv lines=762 sha8=1d5bf4f9
+=== B_LOG_K0 pid=9888 exe=b3647709
+    B_LOG_K0.step.csv lines=762 sha8=1d5bf4f9
+## EXE_OFF B_LOG_K0 log files
+B_LOG_K0.log
+B_LOG_K0.step.csv
+## law_check H_LOG
+rows=55296 state0_rows=53204 slots=[0, 1, 2, 3]
+vtx lines=39904 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 PASS
+## s0_check H_LOG
+L rows=14398 D rows=57596
+L rows by (sub, pre): {(3, 1): 763, (4, 1): 1, (5, 1): 112, (6, 0): 220, (7, 0): 13302}
+L model mismatches=0  n-consistency mismatches=0
+D state mismatches=0  D decision-id mismatches=0
+D rows with state 0 by slot: {0: 13301, 1: 13301, 2: 13301, 3: 13301}
+all0 windows=1 [(1096, 14397, 7)]
+slots drawn with state 0 on all0 decisions: [0, 1, 2, 3]
+PASS
+## law_check B_LOG_K0
+rows=2496 state0_rows=404 slots=[0, 1, 2, 3]
+vtx lines=304 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 FAIL
+## s0_check B_LOG_K0
+L rows=1198 D rows=4796
+L rows by (sub, pre): {(3, 1): 763, (4, 1): 1, (5, 1): 112, (6, 0): 220, (7, 0): 102}
+L model mismatches=0  n-consistency mismatches=0
+D state mismatches=0  D decision-id mismatches=0
+D rows with state 0 by slot: {0: 101, 1: 101, 2: 101, 3: 101}
+all0 windows=1 [(1096, 1197, 7)]
+slots drawn with state 0 on all0 decisions: [0, 1, 2, 3]
+PASS
+## B_NOB_K0 logs
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOB_K0.log
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOB_K0.step.csv
+## B_NOPM_K0 logs
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOPM_K0.log
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOPM_K0.s0.csv
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOPM_K0.step.csv
+## s0_check B_NOPM_K0
+L rows=1198 D rows=4796
+L rows by (sub, pre): {(3, 1): 763, (4, 1): 1, (5, 1): 112, (6, 0): 220, (7, 0): 102}
+L model mismatches=0  n-consistency mismatches=0
+D state mismatches=0  D decision-id mismatches=0
+D rows with state 0 by slot: {0: 101, 1: 101, 2: 101, 3: 101}
+all0 windows=1 [(1096, 1197, 7)]
+slots drawn with state 0 on all0 decisions: [0, 1, 2, 3]
+PASS
+B_NOPM_K0.s0.csv == B_LOG_K0.s0.csv
+## B_NOS0_K0 logs
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOS0_K0.log
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOS0_K0.pm.csv
+D:/MashedWT/D5-PARTMORPH-FLIPPREP_data/arms_on/B_NOS0_K0.step.csv
+## law_check --dormant B_NOS0_K0
+rows=2496 state0_rows=0 slots=[0, 1, 2, 3]
+G5 PASS

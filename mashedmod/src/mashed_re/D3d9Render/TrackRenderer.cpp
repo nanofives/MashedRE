@@ -4415,6 +4415,7 @@ int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPar
 // [partmorph] D-11077. MASHED_PARTMORPH=1 (default OFF) ports FUN_0041f770 @ 0x0041f770, which
 // FUN_00420870 @ 0x00420870 calls once per car per frame (after FUN_0041f710): the part 0x12 morph
 // position and part 0x14's frame wobble. Decode: verify/partmorph_20261028/PREREG_D5-PARTMORPH.md.
+// The D-11077 default flip is prepared in Core/FaithDefaults.cpp (MASHED_FLIP_D11077); flipped, MASHED_NO_PARTMORPH=1 opts out.
 bool PartMorphEnabled() {
     static const bool on = [] {
         const char* e = std::getenv("MASHED_PARTMORPH");
@@ -4560,6 +4561,7 @@ float PartMorphStep(const TrackRenderer::CarPartState& cp, const TrackRenderer::
 // 0x00446541, keeps them when DAT_007f0fd0 == 5 && FUN_00405890(), else runs the 1/2 loop (0x00446965 /
 // 0x00446975, the port's CarLodState) and sets car 0 to 0 (0x004469aa) when FUN_0042f6a0() == 2 or DAT_007f0fd0
 // is 5, 10 or 9 (0x00446985..0x004469a8). cam[7] is 0 in the port, so FUN_00446520's last branch is unreachable.
+// The D-11077 default flip is prepared in Core/FaithDefaults.cpp (MASHED_FLIP_D11077); flipped, MASHED_NO_CAR_STATE0=1 opts out.
 bool CarState0Enabled() {
     static const bool on = [] {
         const char* e = std::getenv("MASHED_CAR_STATE0");
