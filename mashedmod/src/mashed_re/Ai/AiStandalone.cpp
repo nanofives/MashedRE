@@ -138,7 +138,7 @@ Host s_host = {
 
 inline float bits_to_f(std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; }
 
-// [d3b 2026-10-16] MASHED_AI_LUT=<mask> (exe only). Default 5 since c2k93 2026-10-17 (MASHED_NO_AI_LUT=1 = exact sqrt).
+// [d3b 2026-10-16] MASHED_AI_LUT=<mask> (exe only). Default 5 since c2k93 2026-10-17 (MASHED_AI_LUT=0 = exact sqrt).
 // 0x1: FUN_00443dc0 phase 6 normalizes with FUN_004c3c60 (both calls, decomp
 //      verify/d3b_20261016/decomp_00443dc0.txt) and phase 8 takes both lengths from FUN_004c3bf0.
 // 0x2: FUN_00415e20 normalizes its bearing and its forward vector with FUN_004c39b0.
@@ -148,12 +148,10 @@ int s_aiLutOverride = -1;
 inline int AiLutMask() {
 #ifdef MASHED_STANDALONE
     // [c2k93 2026-10-17] default 5 (user decision, U-9752): bit 0x1 + bit 0x4, the original's RW LUT bodies in
-    // FUN_00443dc0. MASHED_NO_AI_LUT=1 opts out (exact sqrt, the pre-flip default); MASHED_AI_LUT=<mask> still overrides.
+    // FUN_00443dc0. MASHED_AI_LUT=<mask> overrides. The opt-out MASHED_NO_AI_LUT was deleted (D5-KNOBS-RUNARMS-STACKS).
     static const int s_mask = [] {
         const char* e = std::getenv("MASHED_AI_LUT");
-        if (e) return std::atoi(e);
-        const char* no = std::getenv("MASHED_NO_AI_LUT");
-        return (no && no[0] && no[0] != '0') ? 0 : 5;
+        return e ? std::atoi(e) : 5;
     }();
     return s_aiLutOverride >= 0 ? s_aiLutOverride : s_mask;
 #else
@@ -2150,24 +2148,15 @@ void Ai_Standalone_Tick()
 // and DAT_007f0ff4 advances by 50 per frame (verify/d3_ai_20260926/o_inputs). Before
 // this, nothing in mashed_re.exe wrote these three, so the FUN_00416250 steer timer
 // (el = DAT_007f0ff4 - start, fresh steer when el >= 200) never issued a fresh steer.
-// [u9745ov 2026-10-17] Default ON since c2k93 2026-10-17 (MASHED_NO_AI_CLOCK_LATE=1 opts out): the original's order inside FUN_0040fc00 is the 0x0040fc63
+// [u9745ov 2026-10-17] Default ON since c2k93 2026-10-17 (opt-out deleted, D5-KNOBS-RUNARMS-STACKS): the original's order inside FUN_0040fc00 is the 0x0040fc63
 // store, then FUN_00425a40 (0x0040fc6c: AI tick, every car's physics, the event drain), then the rest of the frame, and
 // only at the end the DAT_007f0ff4 / DAT_007f0ff8 add (0x0040fe4f..0x0040fe64, before RET at 0x0040fe6c). So every reader
 // in a frame sees the value before that frame's add. Measured (verify/u9745ov_20261017): the FUN_004177b0 band-0 roll reads
 // DAT_007f0ff8 * (1/3000) > 1.0 and fires at window call 61 on the original (o_reg_r13, r15, r18, r19, r20) and at call
-// 60 on the port; car 2's commands after it ran one call ahead of o_reg_r13. Under the knob Ai_AdvanceClock stores only
-// DAT_007f1008 and Ai_AdvanceClockLate makes the add at the end of the race frame.
-bool Ai_ClockLateEnabled()
-{
-    // [c2k93 2026-10-17] default ON (user decision, U-9750); MASHED_NO_AI_CLOCK_LATE=1 opts out (the add before the tick)
-    static const bool s = [] { const char* no = std::getenv("MASHED_NO_AI_CLOCK_LATE");
-                               return !(no && no[0] && no[0] != '0'); }();
-    return s;
-}
-
+// 60 on the port; car 2's commands after it ran one call ahead of o_reg_r13. Ai_AdvanceClock stores only DAT_007f1008
+// and Ai_AdvanceClockLate makes the add at the end of the race frame.
 void Ai_AdvanceClockLate(int units)
 {
-    if (!Ai_ClockLateEnabled()) return;
     I32(0x007f0ff4u) += units;           // 0x0040fe5e
     I32(kFrame0ff8)  += units;           // 0x0040fe64
 }
@@ -2175,10 +2164,6 @@ void Ai_AdvanceClockLate(int units)
 void Ai_AdvanceClock(int units)
 {
     I32(kOverrideStep) = units;          // DAT_007f1008
-    if (!Ai_ClockLateEnabled()) {        // [u9745ov] knob off: the add stays here, before the tick
-        I32(0x007f0ff4u) += units;       // 0x0040fe5e
-        I32(kFrame0ff8)  += units;
-    }
     // [D-11073 leg 1a] _DAT_007f100c = (float)units * _DAT_005cc948, stored at 0x0040fc57,
     // i.e. just BEFORE the 0x0040fc63 store above in the original. No-op unless
     // MASHED_SUBSTATE (default OFF). Its only consumer in the exe is the FUN_0041d930 tail
@@ -2187,7 +2172,7 @@ void Ai_AdvanceClock(int units)
 }
 
 // [d3bB2 2026-10-17] The AI clock on the countdown stand-in frames. Default ON since a4order 2026-10-17
-// (user decision, U-9744); MASHED_NO_AI_COUNTDOWN_CLOCK=1 opts out. FUN_0040fc00 adds its tick budget to DAT_007f0ff4 on every tick except race
+// (user decision, U-9744; opt-out deleted, D5-KNOBS-RUNARMS-STACKS). FUN_0040fc00 adds its tick budget to DAT_007f0ff4 on every tick except race
 // sub-state 7 (0x0040fe46 cmp [0x0063ba8c],7 / 0x0040fe4f..0x0040fe5e), so the original's clock runs
 // through phase 3 and states 4 / 5 before GO: on all 31 labelled original captures it starts at 0 on
 // the first probed FUN_00416250 call, counts 50 per call, and reads 38850..46400 at the first racing
@@ -2202,13 +2187,6 @@ void Ai_AdvanceClock(int units)
 // it is left as it was. Every other reader of DAT_007f0ff4 on the race path takes a difference with
 // a stored stamp; the two absolute readers are off this path (0x00470df2 runs only when
 // [0x007f0fd0] is 1 or 2, 0x00470dd2..0x00470dde; 0x00429424 formats a string for 0x004987b0).
-bool Ai_CountdownClockEnabled()
-{
-    static const bool s = [] { const char* no = std::getenv("MASHED_NO_AI_COUNTDOWN_CLOCK");
-                               return !(no && no[0] && no[0] != '0'); }();   // [a4order] default ON
-    return s;
-}
-
 void Ai_AdvanceCountdownClock(int units)
 {
     I32(0x007f0ff4u) += units;           // 0x0040fe5e

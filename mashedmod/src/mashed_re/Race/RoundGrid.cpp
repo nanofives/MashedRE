@@ -135,15 +135,9 @@ bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node) {
     return ok;
 }
 
-// ---- [gridyaw 2026-10-16] MASHED_GRID_DIR: FUN_00408b00's grid frame at the node the port grids at ----
-bool GridDir_Enabled() {
-    static const bool s_on = [] {
-        // [d2ref flip 2026-10-17] default ON (user decision); MASHED_NO_GRID_DIR=1 opts out (the gate0 -> gate1 stand-in)
-        const char* no = std::getenv("MASHED_NO_GRID_DIR");
-        return !(no && no[0] && no[0] != '0');
-    }();
-    return s_on;
-}
+// ---- [gridyaw 2026-10-16] FUN_00408b00's grid frame at the node the port grids at ----
+// [d2ref flip 2026-10-17] default ON (user decision). The opt-out MASHED_NO_GRID_DIR (the gate0 -> gate1 stand-in) was
+// deleted (D5-KNOBS-RUNARMS-STACKS), so it always runs.
 
 // FUN_00408b00 (verify/grid_orig_ts/FUN_00408b00_decomp.txt): local_68/local_64 = L.x / L.z; FUN_004c3c60 2-D
 // normalizes them in place (LUT); FUN_004726b0(&(0.0, 1.0), &local_68) = the 2-D dot, clamped to
@@ -226,7 +220,6 @@ bool GridDir_YawAt(int node, float* yawPort) {
 }
 
 bool GridDir_Anchor(float A[3], float lat[2], float dir[2], float* yawPort, int* node) {
-    if (!GridDir_Enabled()) return false;
     std::int32_t v = 0;                                                // DAT_0063ba80 at race init (0x0040fef0)
     SnapNodeToSafeStartLines(&v);                                      // FUN_00409290
     if (node) *node = v;

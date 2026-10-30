@@ -16,11 +16,12 @@ OUT = os.path.normpath(os.environ.get('A4_OUT', 'D:/MashedWT/kfdot_data/arms'))
 EXE_NEW = os.environ.get('A4_EXE', os.path.join(W, r'mashedmod\build\mashed_re.exe'))
 EXE_BASE = EXE_NEW
 ROOT = os.path.normpath(os.environ.get('A4_ROOT', 'D:/MashedWT/kfdot_root'))
-OPTOUT = ['MASHED_NO_HEADING_ASSIST', 'MASHED_NO_PONTOON_CARRY', 'MASHED_NO_PONTOON_STATE', 'MASHED_NO_PONTOON_ANIM']
+# D5-KNOBS-RUNARMS-STACKS (2026-10-30) retired the report-only opt-out stacks OPT, NOP, NOPC, NOCC, NOD2, NOCL5, NOL5, NCC
+# and NOPGIC with the knobs they set (MASHED_NO_PONTOON_ANIM / _STATE / _CARRY, MASHED_NO_AI_COUNTDOWN_CLOCK,
+# MASHED_NO_D2LAT_REFRESH, MASHED_NO_GRID_DIR, MASHED_NO_AI_CLOCK_LATE, MASHED_NO_AI_LUT, MASHED_NO_PICKUPS_PREGO,
+# MASHED_NO_ICONCUBE): verify/d5knobsrunarms_20261030/RESULT_D5-KNOBS-RUNARMS-STACKS.md.
 STACK = {'DEF': [],
-         # every dflip opt-out: must give the pre-dflip default (964c31f04)
-         'OPT': OPTOUT,
-         'NOHA': ['MASHED_NO_HEADING_ASSIST'], 'NOPC': ['MASHED_NO_PONTOON_CARRY'], 'NOP': ['MASHED_NO_PONTOON_ANIM'],
+         'NOHA': ['MASHED_NO_HEADING_ASSIST'],
          # the AI RW-LUT lookahead stacked on the new default (report only, not flipped)
          'L5': ['MASHED_AI_LUT=5'],
          # d3bB2: the U-9684 stacks (verify/d3_u9684_20261013/run_arms.py) on the dflip default
@@ -53,8 +54,6 @@ STACK['EL'] = STACK['E'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI
 STACK['DEFL'] = ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']
 STACK['SLP'] = STACK['SL'] + ['MASHED_PATHPROG_TRACE=@OUT@\\@NAME@.pathprog.csv']
 STACK['B'] = ['MASHED_POS_MODEL']
-# a4order part 1: the countdown clock is default ON; NOCC is the opt-out (= the pre-a4order default, dflip)
-STACK['NOCC'] = ['MASHED_NO_AI_COUNTDOWN_CLOCK']
 # a4order part 2 (PREREG_a4order.md section 3): MASHED_A4_ORDER implies MASHED_AI_TICK_FIRST
 _A4 = ['MASHED_A4_ORDER', 'MASHED_A4_ORDER_TRACE=@OUT@\\@NAME@.a4.txt']
 STACK['A'] = _A4
@@ -154,10 +153,6 @@ STACK['KT'] = STACK['TGT'] + ['MASHED_AI_TICK_FIRST']; STACK['KTE'] = STACK['KT'
 STACK['KTEL'] = STACK['KTE'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
 STACK['ELR'] =STACK['EL'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3']   # cev: event + pair logs + car 3 records
 STACK['RGX'] = STACK['RG'] + ['MASHED_A5_RACE_TIMER']   # RGT without the diagnostic log: the (b) / G-CTRL arms
-# d2ref flip: the three opt-outs (-> the 6242c84b6 default)
-STACK['NOD2'] = ['MASHED_NO_D2LAT_REFRESH', 'MASHED_NO_GRID_DIR', 'MASHED_NO_A5_RACE_TIMER']
-# c2k93 flip: opt-outs (both -> the previous default; LUT only -> the CL arm)
-STACK['NOCL5'] = ['MASHED_NO_AI_CLOCK_LATE', 'MASHED_NO_AI_LUT']; STACK['NOL5'] = ['MASHED_NO_AI_LUT']
 STACK['SACLR2'] =STACK['SACLR'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']
 # u9745ov (after the flip: the player assist is default): SA + the slot-2 record dumps
 STACK['SAR2F'] = STACK['SA'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_A4=@OUT@\\@NAME@.a4rec.msd', 'MASHED_RECDUMP_SLOT=2']   # after the flip: the opt-out (= the pre-flip default)
@@ -436,14 +431,12 @@ STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT
 # D3-SUBSTATE-FLIP (verify/d3subflip_20261028): the flip's opt-outs. NOSUB = both (must give the pre-flip default),
 # NOP3R = the sub-state machine without the phase-3 reset branch
 STACK['NOSUB'] = ['MASHED_NO_SUBSTATE=1', 'MASHED_NO_P3_RESET_PAIR=1']; STACK['NOP3R'] = ['MASHED_NO_P3_RESET_PAIR=1']
-STACK['NCC'] = ['MASHED_NO_AI_COUNTDOWN_CLOCK=1']   # amendment 1's opt-out (= the first flip build's sub-state clock)
 STACK['L697'] = ['MASHED_DET_FRAMES=1897']          # the B window + the flip's 697-frame pre-race growth (report only)
 STACK['SFD'] = ['MASHED_SUBFLIP_DIAG=1']             # diagnostic log only (G-CTRL dump-length split)
 # D3-SUBSTATE-PREGO-ALIVE (verify/d3subprego_20261029): the D3-SUBSTATE-FLIP seed as knobs (both default OFF)
 STACK['SUB'] = ['MASHED_SUBSTATE=1', 'MASHED_P3_RESET_PAIR=1']
 STACK['SUBNS'] = STACK['SUB'] + ['MASHED_NO_SUBSTATE_SETTLE_FIRST=1']   # D3-SUBSTATE-SETTLE-ORDER: same-exe control (settle in the first race StepCar)
 STACK['SUBH'] = STACK['SUB'] + ['MASHED_DRIVE_HOLD_MS=42000']   # amendment 1: the 30 s demo hold + ~776 phase-3 frames
-STACK['NOPGIC'] = ['MASHED_NO_PICKUPS_PREGO=1', 'MASHED_NO_ICONCUBE=1']   # D3-SUBSTATE-FLIP run 22: the L-56 opt-outs (report only)
 STACK['DEFH'] = ['MASHED_DRIVE_HOLD_MS=42000']   # D2-BAND-42S (verify/d2band42_20261029): the default under the 42 s hold
 # D3-SUBSTATE-ROW315 (verify/d3subrow315_20261029): RTR = the A5 race-timer log + the slot-0 record dump, NRTR = the A5 timer
 # opt-out (A5 reads 0) + the record dump. Both write files only.
