@@ -30,11 +30,11 @@ const FaithKnob kFaith[] = {
     { "ROUND_GRID_ORDER", "1" },   { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
     { "AI_TICK_FIRST", "1" },      { "PATHPROG_LATE", "1" },       { "REASSERT_KEEP_NORMAL", "1" }, { "SPAWN_BASIS_RW", "1" },
     { "FIX_5CEA60", "1" },         { "UP_TRINORMAL", "1" },        { "RW_SSE_POINTS", "1" },     { "RING_DBUF", "1" },
-    { "FWD_AT", "1" },             { "ROTATE_LUT", "1" },          { "A6A_LC0", "1" },
+    { "FWD_AT", "1" },             { "ROTATE_LUT", "1" },
     { "ROTATE_PC24", "1" },        { "HEADING_FWD_LIVE", "1" },    { "AI_LUT", "7" },            { "STEER_ACOS_CRT", "1" },
     { "AI_FWD_ATROW", "1" },       { "STEER_SCALE_RDATA", "1" },   { "REGISTRY", "1" },          { "PICKUPS_ORIG", "1" },
     { "REG_CARS", "1" },           { "REG_CALLBACKS", "1" },       { "MODE7", "1" },             { "CC_PC24", "1" },
-    { "A4_ORDER", "1" },           { "REG_LATE", "1" },            { "A6A_GEAR_ORDER", "1" },    { "A5_FD0_LIVE", "1" },
+    { "REG_LATE", "1" },           { "A6A_GEAR_ORDER", "1" },
     { "A5_DRAFT_LUT", "1" },       { "FIX_5CEA44", "1" },
     // [f5flip 2026-10-20, Mariano's decision] u9774's five (verify/u9774_20261020/RESULT_u9774.md). MASHED_COLL_LUT is
     // not seeded here: it is default ON at its own site since L-26 (Collision/ContactDeps.h, MASHED_NO_COLL_LUT=1 opts out).
@@ -44,13 +44,11 @@ const FaithKnob kFaith[] = {
     { "WCS_TRINORMAL", "1" },
     // [cpcflip 2026-10-20, Mariano's decision] u9776's PC_24 scope around the alignment's FUN_004c52f0 (verify/u9776_20261020/RESULT_u9776.md).
     { "WCS_COMBINE_PC24", "1" },
-    // [rbflip 2026-10-21, Mariano's decision] u9777's live rubber-band leaves for A5 (verify/u9777_20261020/RESULT_u9777.md).
-    { "A5_RUBBER_LIVE", "1" },
     // [fflip 2026-10-21, Mariano's decision] brecipe's live mode word / fd0 and live slot table for the AI host
     // (verify/brecipe_20261021/RESULT_brecipe.md), flipped with the canonical recipe swap to rule 0 / game mode 10.
     { "MODE_LIVE", "1" },          { "SLOT_TYPE_LIVE", "1" },
     // [soflip 2026-10-21, Mariano's decision] substep's FUN_004709a0 order, substep-outer / car-inner
-    // (verify/substep_20261021/RESULT_substep.md); steps only the cars the seeded A4_ORDER pre-phase stepped.
+    // (verify/substep_20261021/RESULT_substep.md); steps only the cars the A4-order pre-phase stepped.
     { "SUBSTEP_OUTER", "1" },
     // [dotflip 2026-10-22, Mariano's decision] dcphys's A6a dot association (verify/dcphys_20261021/RESULT_dcphys.md):
     // the shared A6a body is bit-identical to the original on 6551/6551 sampled calls with it, and misses on 25..174 per
@@ -58,8 +56,10 @@ const FaithKnob kFaith[] = {
     { "A6A_DOT_ORDER", "1" },
     // [p2flip 2026-10-22, Mariano's decision] dcphys2's P2 stack (verify/dcphys2_20261022/RESULT_dcphys2.md): with it the
     // shared A6b / A5 / A4 bodies are bit-identical to the original on every sampled call (402 / 3214 / 5403).
-    { "A6B_ACOS_CRT", "1" },       { "A6B_NORM_LUT", "1" },        { "A5_RING_ORDER", "1" },     { "A5_DOT_ORDER", "1" },
-    { "A5_AIR_F32", "1" },         { "A5_CONTACT_INT", "1" },      { "A5_SPIN_FILD", "1" },      { "A4_DOT_ORDER", "1" },
+    { "A6B_ACOS_CRT", "1" },       { "A6B_NORM_LUT", "1" },
+    // [D5-KNOBS-E1-PHYS-A4A5 2026-10-30] A6A_LC0, A4_ORDER, A5_FD0_LIVE, A5_RUBBER_LIVE (rbflip) and P2's A5_RING_ORDER,
+    // A5_DOT_ORDER, A5_AIR_F32, A5_CONTACT_INT, A5_SPIN_FILD, A4_DOT_ORDER left this list with their read sites: the
+    // seeded path is the only one in the source (verify/d5knobse1phys_20261030/RESULT_D5-KNOBS-E1-PHYS-A4A5.md).
     // [D3-SUBSTATE-FLIP 2026-10-29, D-11073, Mariano's decisions L-53 / L-55 / L-57] the sub-state machine FUN_0040dbd0 /
     // FUN_004103a0 and the phase-3 reset pair, as stack SUB (verify/d3subflip_20261029/RESULT_D3-SUBSTATE-FLIP.md).
     // MASHED_NO_SUBSTATE=1 / MASHED_NO_P3_RESET_PAIR=1 opt out.

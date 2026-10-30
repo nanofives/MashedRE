@@ -1,8 +1,8 @@
 // Mashed RE — the two rubber-band leaves A5 (0x0046ddb0) calls: 0x00442ce0 and 0x00442c80. ONE body each, both targets.
 // [dcphys2 2026-10-22] moved verbatim out of Vehicle/ForceIntegrator.cpp.
 // [dcleaf 2026-10-22] this TU is in BOTH rsp files. Only the input thunks below differ by target (#ifdef MASHED_STANDALONE):
-// the game-mode word, DAT_007f0fd0, refdist 0x008989b0[car] and the reference car 0x008989c8. The exe keeps its knob forms
-// unchanged; the .asi reads the live words, as the original does. The .asi installs both bodies (RH_ScopedInstall at the end)
+// the game-mode word. DAT_007f0fd0, refdist 0x008989b0[car] and the reference car 0x008989c8 are the live words in both
+// (D5-KNOBS-E1-PHYS-A4A5 deleted the exe's knob forms). The .asi installs both bodies (RH_ScopedInstall at the end)
 // with an in-process A/B (MASHED_LEAF_SELFTEST) against the original. The former .asi copy of 0x00442c80
 // (Util/UtilMid.cpp:ModeGatedPlayerCheck) is deleted. FUN_0046dbe0 is Vehicle/VehicleState.cpp:VehicleRacePositionGet in both
 // targets (the exe's private CarContactCount copy is deleted).
@@ -24,34 +24,17 @@ namespace Vehicle {
 
 using namespace fi;
 
-#ifdef MASHED_STANDALONE
-// [u9772] MASHED_A5_FD0_LIVE=1 (FAITH seed, Core/FaithDefaults.cpp): A5 (0x0046ddb0), FUN_00442ce0 and FUN_00442c80 test the live
-// DAT_007f0fd0 word, as the original does, instead of g_playerCount (= the car count, VehiclePhysics_Init).
-static int Fd0Word() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A5_FD0_LIVE"); return e && e[0] == '1'; }();
-    return s ? *reinterpret_cast<const int*>(0x007f0fd0u) : g_playerCount;
-}
-
-// [u9777] MASHED_A5_RUBBER_LIVE=1 (default ON since rbflip 2026-10-21 through the FAITH seed, MASHED_NO_A5_RUBBER_LIVE=1 opts out; verify/u9777_20261020/PREREG_u9777.md): the two leaves read the live
-// FUN_00442a60 outputs, refdist 0x008989b0[car] (0x00442ca2, 0x00442d0f) and the reference car 0x008989c8 (0x00442d2f), as
-// the original does, instead of g_rubberBand / g_rubberRefCar (all zero, no writer). Race/SpectatorDistances.cpp fills both.
-static bool A5RubberLive() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A5_RUBBER_LIVE"); return e && e[0] == '1'; }();
-    return s;
-}
-static float RubberRefDist(int car) {
-    return A5RubberLive() ? reinterpret_cast<const float*>(0x008989b0u)[car] : g_rubberBand[car];
-}
-static int RubberRefCar() {
-    return A5RubberLive() ? *reinterpret_cast<const int*>(0x008989c8u) : g_rubberRefCar;
-}
-static inline int  LeafGameMode()     { return Fi_GameMode(); }   // FUN_0040e350 stand-in (U-9784)
-static inline void LeafGameModeTick() { Fi_GameModeTick(); }      // FUN_0040e340 stand-in (no-op)
-#else
-// .asi: the words the original reads.
+// Both targets read the words the original reads. [u9772] DAT_007f0fd0, not g_playerCount, and [u9777] the live
+// FUN_00442a60 outputs, refdist 0x008989b0[car] and the reference car 0x008989c8, not g_rubberBand / g_rubberRefCar (all
+// zero, no writer); in the standalone Race/SpectatorDistances.cpp fills both. Their exe opt-outs MASHED_A5_FD0_LIVE and
+// MASHED_A5_RUBBER_LIVE were deleted by D5-KNOBS-E1-PHYS-A4A5.
 static inline int   Fd0Word()            { return *reinterpret_cast<const int*>(0x007f0fd0u); }        // 0x00442c8a, 0x00442ce1
 static inline float RubberRefDist(int c) { return reinterpret_cast<const float*>(0x008989b0u)[c]; }    // 0x00442ca2, 0x00442d0f
 static inline int   RubberRefCar()       { return *reinterpret_cast<const int*>(0x008989c8u); }        // 0x00442d2f
+#ifdef MASHED_STANDALONE
+static inline int  LeafGameMode()     { return Fi_GameMode(); }   // FUN_0040e350 stand-in (U-9784)
+static inline void LeafGameModeTick() { Fi_GameModeTick(); }      // FUN_0040e340 stand-in (no-op)
+#else
 static inline int   LeafGameMode()       { return reinterpret_cast<int (__cdecl*)()>(0x0040e350u)(); } // call at 0x00442c80
 // FUN_0040e340 is `mov eax,[0x008a94d0]; ret` (0x0040e340..0x0040e345): a getter; 0x00442d06 discards EAX.
 static inline void  LeafGameModeTick()   { reinterpret_cast<int (__cdecl*)()>(0x0040e340u)(); }

@@ -63,14 +63,13 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
 namespace {
 struct A6aAsiDefaults {
     A6aAsiDefaults() {
-        const char* const ks[] = { "A6A_LC0", "A6A_GEAR_ORDER", "A6A_SPIN_ORDER", "A6A_DRIVE_NORM_LUT", "A6A_DOT_ORDER",
+        const char* const ks[] = { "A6A_GEAR_ORDER", "A6A_SPIN_ORDER", "A6A_DRIVE_NORM_LUT", "A6A_DOT_ORDER",
                                    // [dcphys2] A6b: what the deleted verbatim copy computed (Vehicle/AeroStabilize.cpp)
                                    "A6B_ACOS_CRT", "A6B_NORM_LUT",
-                                   // [dcphys2] A5 (Vehicle/ForceIntegrator.cpp): the drafting test in float / LUT and the
-                                   // face-normal operands in the original's registers (0x0046e6f3..0x0046e728)
-                                   "A5_DRAFT_LUT", "A5_RING_ORDER", "A5_DOT_ORDER", "A5_AIR_F32", "A5_CONTACT_INT", "A5_SPIN_FILD",
-                                   // [dcphys2] A4 (Vehicle/VehicleControl.cpp): the slide dot (0x004706db..0x00470701)
-                                   "A4_DOT_ORDER" };
+                                   // [dcphys2] A5 (Vehicle/ForceIntegrator.cpp): the drafting test in float / LUT
+                                   "A5_DRAFT_LUT" };
+        // [D5-KNOBS-E1-PHYS-A4A5 2026-10-30] A6A_LC0, A5_RING_ORDER, A5_DOT_ORDER, A5_AIR_F32, A5_CONTACT_INT, A5_SPIN_FILD
+        // and A4_DOT_ORDER left this list: their read sites are deleted and the seeded path is the only one.
         char on[64], no[64];
         for (const char* k : ks) {
             std::strcpy(on, "MASHED_");    std::strcat(on, k);

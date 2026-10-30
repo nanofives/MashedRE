@@ -179,7 +179,7 @@ bool          g_outPosValid[16] = { false };
 // frame; g_a4GateDone = this frame's gate already ran for the slot.
 bool          g_a4Skip[16]     = { false };
 bool          g_a4GateDone[16] = { false };
-// [a4order 2026-10-17] MASHED_A4_ORDER=1 (default OFF, U-9746): FUN_00470c70 runs the gate + A4 loop for EVERY car
+// [a4order 2026-10-17] (U-9746; MASHED_A4_ORDER, which selected it, deleted by D5-KNOBS-E1-PHYS-A4A5) FUN_00470c70 runs the gate + A4 loop for EVERY car
 // (0x00470f80..0x00471099, FUN_00470670 at 0x00471076) and the refresh loop (0x004710a1..0x004710da) before the
 // first substep call (FUN_004709a0 at 0x00471137). The port steps the cars one at a time, so the AI cars' gate + A4
 // are run by VehiclePhysics_A4Pre before the player's StepCar, and their own StepCar later skips them.
@@ -932,12 +932,6 @@ void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io) {
     g_settleOnly = true;
     VehiclePhysics_StepCar(slot, dt, io);
     g_settleOnly = false;
-}
-
-// [a4order 2026-10-17] MASHED_A4_ORDER=1, default OFF (U-9746). See g_a4PreOnly above.
-bool VehiclePhysics_A4OrderEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A4_ORDER"); return e && e[0] == '1'; }();
-    return s;
 }
 
 // [D4-FX-INPUTS] MASHED_DEAD_COAST, default ON since the L-34 flip (2026-10-27, verify/fxflip_20261027/RESULT_D4-FX-FLIP-DEADCOAST.md);

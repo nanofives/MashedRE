@@ -133,12 +133,12 @@ void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io);
 // [u9747] FUN_004704c0's two state matrices (+0x928 / +0x968) from the grid pose (caller convention: pos[1] = physics y +
 // groundOff). Used by MASHED_COUNTDOWN_SPAWN on countdown frames.
 void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw, float groundOff, const float* physY = nullptr);
-// [a4order 2026-10-17] MASHED_A4_ORDER=1 (default OFF, U-9746): FUN_00470c70's order, every car's gate + A4
+// [a4order 2026-10-17] (U-9746) FUN_00470c70's order, every car's gate + A4
 // (0x00470f80..0x00471099) and refresh (0x004710a1..0x004710da) before any substep (0x00471137). Per frame, before
 // the player's StepCar: A4PreBegin(), A4Pre(slot, dt, io) for each AI car with the io its StepCar will get, then
 // A4PreEnd(). The car's StepCar later runs its substeps without the gate and A4. A car's first step, a frame
-// budget over 0x32 and MASHED_A8_A4_FIRST=0 keep the per-car order.
-bool VehiclePhysics_A4OrderEnabled();
+// budget over 0x32 and MASHED_A8_A4_FIRST=0 keep the per-car order. Always on: MASHED_A4_ORDER and
+// VehiclePhysics_A4OrderEnabled() were deleted by D5-KNOBS-E1-PHYS-A4A5.
 // [D4-FX-INPUTS] MASHED_DEAD_COAST (default ON since L-34, MASHED_NO_DEAD_COAST=1 opts out; PREREG_deadcoast.md): a killed car keeps
 // its physics. Kill = FUN_00422fd0's FUN_0046c5c0 (+0x4 = 0) and FUN_0046c790(v, 1) (+0x10 = 1); FUN_00470c70 /
 // FUN_004709a0 still step a car with +0x10 == 1, on the zero block 0x007f19b8. MarkKilled / ClearKilled write the two
