@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-30 14:04 D5-KNOBS-INVENTORY-FIX (orch/D5-KNOBS-INVENTORY-FIX), D5-KNOBS-THROTTLEK-CHECK (orch/D5-KNOBS-THROTTLEK-CHECK): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_140309
 - 2026-10-30 13:53 D5-KNOBS-D-TRIAGE-2 (orch/D5-KNOBS-D-TRIAGE-2): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_135218
 - 2026-10-30 13:49 D4-DC-77b0-STATE5CALLS (orch/D4-DC-77b0-STATE5CALLS): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_134722
 - 2026-10-30 13:45 D5-DEPS-LOCAL (orch/D5-DEPS-LOCAL), D5-SHIM-CONSUMERS (orch/D5-SHIM-CONSUMERS): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261030_134312
