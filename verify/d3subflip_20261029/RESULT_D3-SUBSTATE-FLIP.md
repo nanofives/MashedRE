@@ -171,3 +171,46 @@ Every run went through `test-slot` and `mashed_lock.py run` (D2 with `--solo`). 
 step's runners. Two kills, both of this step's own PIDs: run13's python (15328) after Egypt had failed on the stock
 budget (its game child had already exited), and each D2 arm at its 110 s wall (the recipe). No MASHED.exe was launched,
 no audio endpoint check was needed, `original\` was not touched, and nothing was deployed.
+
+## 10. Addendum, run 23 (2026-10-30): refresh onto orch/integration @ a587ccd9e
+
+Verdict: **GREEN on the refresh. G-CTRL and B on the refreshed tree equal this step's expected refs.** D2 arms and the
+13 tracks were not run (the train runs them, alone).
+
+- **Merge.** `orch/integration` @ `a587ccd9e` (carries HB-RUN13-PHASE3-START: knob `MASHED_CAM_REPLAY_P3` in
+  `TrackRenderer.cpp`, env line in `run13.py`) merged with `git -c merge.autoStash=false` as `8c3db7bed`. No conflicts:
+  the two `run_one` hunks in `run13.py` do not overlap. `git merge-base --is-ancestor a587ccd9e HEAD` passes.
+- **run13 knob wiring.** The recipe env in `verify/rsky_20261016/run13.py` sets `MASHED_CAM_REPLAY_P3=1` on every
+  track (from the merge). `CamReplayP3On()` (`TrackRenderer.cpp`) reads only that variable and the loaded
+  `MASHED_CAM_REPLAY` trace, and the `SubStateCameraChain` branch it gates runs only with `MASHED_SUBSTATE` on.
+  `Core/FaithDefaults.cpp` seeds `MASHED_SUBSTATE=1` and `MASHED_P3_RESET_PAIR=1` with `_putenv_s` before any site reads
+  them, so the flipped default takes the phase-3 replay start with no extra env, the same state as HB-RUN13-PHASE3-START
+  arm B (env knobs). One change on this run: `RUN13_PRE_FRAMES` default `800` -> `0`, so the 13-track budget is the stock
+  `max shot + 350`, the budget `2431afb1` was measured on. `RUN13_PRE_FRAMES=800` restores the run 22 padding.
+  [UNCERTAIN] The 13-track table on this exe was not run here, so `2431afb1` on the seeded default is still the train's
+  check.
+- **Exe.** `d5369073` (`mashedmod\build.bat` with `MASHED_NO_DEPLOY=1`, from the worktree at `8c3db7bed` plus the
+  `run13.py` edit, which is not a build input). No .asi deployed.
+- **Gates** (`run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, private root `D:/MashedWT/D3-SUBSTATE-FLIP_root`,
+  under `test-slot` and `mashed_lock.py run`), `RUNLOG_gates_run23.txt`:
+
+| arm | produced | expected (`expected_refs.json`) |
+|---|---|---|
+| H_DEF step / gates / ptrace | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0 / K1 / K26 | 1d5bf4f9 / 1d5bf4f9 / 1d5bf4f9 | 1d5bf4f9 x3 |
+
+- **merge_train.json for the flip pass:** section 5 stands, with `full.run13_reference` ->
+  `verify/run13p3_20261029/tracks_score_sub_p3.txt` (2431afb1). `expected_refs.json` now says so. merge_train.json not
+  edited, nothing enqueued, no .ps1 edited.
+
+Raw data (`D:/MashedWT/D3-SUBSTATE-FLIP_data/`):
+
+| file | SHA-256 |
+|---|---|
+| mashed_re_run23_d5369073.exe | d536907384e2174a54b7d0be92b3d1ecd9b9628b739a832e4d5e75e366f515fc |
+| run23/arms/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| run23/arms/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| run23/arms/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| run23/arms/B_DEF_K0.step.csv (K1, K26 identical) | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 |
+| build_run23.log | 463798b13db0906004d8a9e047c1e9d22b2ddec9c649eed45f64a3e5757b1531 |
+| run23/gates_run.log | 54bc8f98f95a4eaa67741474bc0884c1ba04fde954520a812b43306d0094f724 |

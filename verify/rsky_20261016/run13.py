@@ -70,7 +70,10 @@ def run_one(exe, root, out, t, knobs, att):
     # [D3-SUBSTATE-FLIP run 22] + RUN13_PRE_FRAMES (default 800): the replay trace is consumed only from GO, and with
     # MASHED_SUBSTATE default ON phase 3 + state 5 hold ~600-880 frames before it (Egypt: 598 + 112). The stock
     # budget left no room for that, so every Egypt attempt ended before its last shot.
-    frames = (frames or (max(shots) + 350)) + int(os.environ.get("RUN13_PRE_FRAMES", "800")) + 150 * (att - 1)
+    # [D3-SUBSTATE-FLIP run 23] default back to 0: with MASHED_CAM_REPLAY_P3=1 (below) rows are consumed from the phase-3
+    # entry, and HB-RUN13-PHASE3-START measured the flip candidate 2431afb1 on the stock budget. RUN13_PRE_FRAMES=800
+    # restores the run 22 padding.
+    frames = (frames or (max(shots) + 350)) + int(os.environ.get("RUN13_PRE_FRAMES", "0")) + 150 * (att - 1)
     sd = out / d / "stand"
     sd.mkdir(parents=True, exist_ok=True)
     for f in ("cam_dump.csv", "librw_dump.csv"):
