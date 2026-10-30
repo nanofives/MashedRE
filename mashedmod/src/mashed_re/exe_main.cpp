@@ -140,6 +140,7 @@
 #include <d3d9.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
+#include <delayimp.h>   // D5-SHIM-GUARD: __pfnDliNotifyHook2
 #include <psapi.h>      // B17: GetMappedFileName — identify MEM_MAPPED squatters
 #include <cstdint>
 #include <cstdlib>      // B19a: std::free for WIC-decoded BGRA buffers
@@ -228,6 +229,42 @@ extern "C" void __cdecl TextGradientV2V3Override(float x, float y, float w, floa
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "psapi.lib")
+#pragma comment(lib, "delayimp.lib")
+
+// ===========================================================================
+// D5-SHIM-GUARD — resolve d3d9.dll / dinput8.dll from System32 only.
+//
+// A static import is bound by the loader before any user code (TLS callback
+// included), searching the exe's own directory first, so a dev proxy
+// (mashedmod\build_d3d9_shim.bat / build_dinput8_shim.bat output) or any
+// stray d3d9.dll / dinput8.dll beside mashed_re.exe used to be bound by name
+// (verify/d5shimstatic_20261030 R1/R14). build.bat links both DLLs with
+// /DELAYLOAD, and this delay-load hook loads them with
+// LOAD_LIBRARY_SEARCH_SYSTEM32 at their first call, so the exe directory and
+// cwd are never searched for them. Only these two names are touched; the
+// process-wide search order (and the relative LoadLibraryEx of
+// original\MASHED.exe) is unchanged. The resolved path goes to mashed_re.log.
+// ===========================================================================
+namespace {
+FARPROC WINAPI DllGuardDelayHook(unsigned notify, PDelayLoadInfo info) {
+    if (notify != dliNotePreLoadLibrary || info == nullptr || info->szDll == nullptr) return nullptr;
+    if (_stricmp(info->szDll, "d3d9.dll") != 0 && _stricmp(info->szDll, "dinput8.dll") != 0)
+        return nullptr;
+    HMODULE mod = LoadLibraryExA(info->szDll, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    char path[MAX_PATH] = "(load failed)";
+    if (mod != nullptr) GetModuleFileNameA(mod, path, MAX_PATH);
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "dllguard: %s -> %s\n", info->szDll, path);
+        std::fclose(lf);
+    }
+    // Fail closed: a NULL return would let the helper fall back to the default
+    // search (exe dir first), the hazard this guard exists for.
+    if (mod == nullptr)
+        RaiseException(VcppException(ERROR_SEVERITY_ERROR, ERROR_MOD_NOT_FOUND), 0, 0, nullptr);
+    return reinterpret_cast<FARPROC>(mod);
+}
+}  // namespace
+extern "C" const PfnDliHook __pfnDliNotifyHook2 = DllGuardDelayHook;
 
 // ===========================================================================
 // B17 — image-pad: own the low MASHED arena via the exe IMAGE itself.
