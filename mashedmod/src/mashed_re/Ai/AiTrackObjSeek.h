@@ -8,8 +8,6 @@ extern "C" __declspec(dllexport) int __cdecl AiTrackObjSeek(void* param_1, void*
 
 #ifdef MASHED_STANDALONE
 namespace Ai {
-// MASHED_NO_SEEK414F00 unset (default ON).
-bool Seek414f00_Enabled();
 // The exe's mode-10 call: runs the body for vehicle v, writes cand on a 1, counts calls for MASHED_SEEK_TRACE.
 int AiTrackObjSeek_Exe(int v, float cand[2]);
 }  // namespace Ai

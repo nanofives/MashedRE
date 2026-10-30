@@ -17,7 +17,7 @@ bool PathProg_Late();
 
 // [U-9685] Arm R (MASHED_RACEPCT_FUN408610, see PathNodes.h): once per race frame at the end of UpdateCar,
 // the verbatim step runs on a private shadow row per car and only race_pct (+0xcc) is written into the
-// real row 0x008a9620 + v*0x30c. No-op unless RacePctOrig_Enabled() and not PathProg_Enabled().
+// real row 0x008a9620 + v*0x30c. No-op under PathProg_Enabled().
 void PathProg_RacePctTick();
 
 // [PATHPROG split] MASHED_PP_PUBLISH=<mask> (default 0): 0x1 lap counter, 0x2 node progress, 0x4 the rest of the row are

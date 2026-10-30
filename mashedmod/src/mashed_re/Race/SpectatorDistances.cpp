@@ -324,16 +324,11 @@ void MaybeReplay() {
 // [U-9683] Producer order vs the AI tick, verify/d3_u9683_20261016/PREREG_u9683.md.
 // DEFAULT-ON 2026-10-16: the producer call runs at the end of UpdateCar (after every car's physics
 // and the progress tick) instead of in UpdateRace (before the AI tick of the frame), which is the
-// producer's place in the original's per-frame order. Opt-out MASHED_NO_REFDIST_AFTER_AI (the
-// previous order); MASHED_REFDIST_AFTER_AI is now a no-op. MASHED_REFDIST_TRACE is a
+// producer's place in the original's per-frame order (the MASHED_NO_REFDIST_AFTER_AI opt-out was
+// deleted in D5-KNOBS-B3 2026-10-30). MASHED_REFDIST_TRACE is a
 // measurement-only witness: one row per producer call (P) and per AI tick entry (T), no game
 // state written.
 namespace {
-bool RefDistAfterAiOn() {
-    static const bool s_on = (std::getenv("MASHED_NO_REFDIST_AFTER_AI") == nullptr);
-    return s_on;
-}
-
 long s_rdFrame = 0;   // bumped once per UpdateCar race frame, before player physics (no dependence on the order under test)
 
 std::FILE* RdTrace() {
@@ -361,29 +356,14 @@ void RdRow(char kind, int site) {
 }
 }  // namespace
 
-// Default-ON entry point. Called once per race tick from TrackRenderer, at the site named by
-// `site` (0 = UpdateRace, 1 = after the AI block). extern "C" with a flat name: the caller lives
+// Entry point. Called from TrackRenderer at the site named by `site` (1 = after the AI block,
+// 2 = the FUN_0040d470 call; the value only labels MASHED_REFDIST_TRACE rows). extern "C" with a flat name: the caller lives
 // in mashed_re::D3d9Render and cannot re-open mashed_re::Race from there.
 void ComputeDistancesTickImpl(int site) {
     static bool s_replayed = false;
     if (!s_replayed) { s_replayed = true; MaybeReplay(); }   // [U-9219] env-gated, no state written
-    static const bool s_on = (std::getenv("MASHED_NO_REFDIST") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_REFDIST is now a no-op
-    if (!s_on) return;
     ComputeDistances();
     RdRow('P', site);
-}
-
-bool RefDistAfterAi() {
-    static bool s_logged = false;
-    const bool on = RefDistAfterAiOn();
-    if (on && !s_logged) {
-        s_logged = true;
-        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness of which order is live
-            std::fprintf(lf, "[U-9683] refdist producer runs after the AI block (opt-out MASHED_NO_REFDIST_AFTER_AI)\n");
-            std::fclose(lf);
-        }
-    }
-    return on;
 }
 
 void RefDistTraceFrame() { ++s_rdFrame; }
@@ -397,7 +377,6 @@ extern "C" void __cdecl RaceComputeDistancesTick(int site) {
     mashed_re::Race::ComputeDistancesTickImpl(site);
 }
 
-extern "C" int __cdecl RaceRefDistAfterAi() { return mashed_re::Race::RefDistAfterAi() ? 1 : 0; }
 
 extern "C" void __cdecl RaceRefDistTraceFrame() { mashed_re::Race::RefDistTraceFrame(); }
 

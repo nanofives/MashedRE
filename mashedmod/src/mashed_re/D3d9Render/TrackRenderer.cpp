@@ -3285,7 +3285,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 // from this same AI BSP + LAPDATA.LUA; default-OFF MASHED_PATHPROG.
                 // PREREG verify/d3_modes37_20261009/PREREG_PATHPROG.md.
                 Collision::CarCarContact_MaybeReplay();   // [u9769] MASHED_CC_REPLAY (env-gated, diagnostic)
-                if (Race::PathProg_Enabled() || Race::RacePctOrig_Enabled()) {   // [U-9685] arm R needs the course block too
+                {   // [U-9685] arm R (always on) needs the course block too
                     const std::uint8_t* lb = nullptr; std::uint32_t ll = 0;
                     for (std::uint32_t j = 0; j < piz.count(); ++j)
                         if (_strnicmp(piz.entry(j).name, "LAPDATA", 7) == 0) { lb = piz.blob(j, &ll); break; }
@@ -5167,7 +5167,6 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
 
 // [U-9683] Race/SpectatorDistances.cpp (declared again at the RaceComputeDistancesTick use in UpdateRace).
 extern "C" void __cdecl RaceComputeDistancesTick(int site);
-extern "C" int  __cdecl RaceRefDistAfterAi();
 extern "C" void __cdecl RaceRefDistTraceFrame();
 extern "C" void __cdecl RaceRefDistTraceAiEntry();
 
@@ -6290,18 +6289,18 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
     }
     }
-    // [U-9683] default-ON (opt-out MASHED_NO_REFDIST_AFTER_AI): the producer's place in the original's frame order, after
+    // [U-9683] the producer's place in the original's frame order, after
     // every car's physics (player above, opponents in the block just closed) and after
     // PathProg_FrameTick (UpdateRace). Same coverage as the UpdateRace call it replaces:
     // UpdateRace returns before that call when gates_ is empty.
     // [U-9685] arm R: FUN_0040da50's FUN_00408610 loop sits between the AI path (0x0040fc6c) and the producer
     // path (0x0040fc7c) in FUN_0040fc00, so it runs here, before the producer call below.
-    if (Race::RacePctOrig_Enabled() && !(Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
+    if (!(Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
     // [cev] MASHED_PATHPROG_LATE: the wholesale tick at the same place (after FUN_00425a40 0x0040fc6c, before the
     // producer 0x0040fc7c); same gates_ guard as the UpdateRace site it replaces.
     if (Race::PathProg_Late() && !gates_.empty()) Race::PathProg_FrameTick();
     if (RegLate() && !gates_.empty()) Race::CarsReg_FrameTick();          // [u9770] FUN_0040da50 0x0040fc75
-    if (RaceRefDistAfterAi() && !gates_.empty()) RaceComputeDistancesTick(1);
+    if (!gates_.empty()) RaceComputeDistancesTick(1);
     if (RegLate() && !gates_.empty()) {                                   // [u9770] FUN_0045bba0 0x0040fcd0, FUN_00485070 0x0040fd07
         Gameplay::Pickups_FrameTick();
         Race::Registry_FrameTick();
@@ -6671,8 +6670,7 @@ extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint3
 // extern "C" like its neighbours above: this TU is inside
 // namespace mashed_re::D3d9Render, so a `namespace mashed_re { namespace Race ...`
 // block here would declare mashed_re::D3d9Render::mashed_re::Race instead.
-extern "C" void __cdecl RaceComputeDistancesTick(int site);   // site 0 = UpdateRace, 1 = after the AI block [U-9683]
-extern "C" int  __cdecl RaceRefDistAfterAi();                 // [U-9683] MASHED_REFDIST_AFTER_AI
+extern "C" void __cdecl RaceComputeDistancesTick(int site);   // site 1 = after the AI block [U-9683]
 extern "C" void __cdecl RaceRefDistTraceFrame();              // [U-9683] measurement-only, MASHED_REFDIST_TRACE
 extern "C" void __cdecl RaceRefDistTraceAiEntry();
 // [GATEFIRE GF1] FUN_004148b0's standalone arm (Ai/AiLeaderTimer.cpp, now a shared TU
@@ -8732,17 +8730,15 @@ void TrackRenderer::UpdateRace(float dt) {
     // below relies on. PREREG: verify/d3_u9186_20261008/PREREG_H3.md
     // [U-9683] The original runs the producer AFTER the AI tick, physics and progress of the
     // frame (FUN_0040fc00: FUN_00425a40 0x0040fc6c, FUN_0040da50 0x0040fc75, FUN_0040d470
-    // 0x0040fc7c), so its consumer reads the previous frame's value. DEFAULT-ON 2026-10-16: the
-    // call is at the end of UpdateCar (after the opponent block); opt-out
-    // MASHED_NO_REFDIST_AFTER_AI restores this site. verify/d3_u9683_20261016.
-    if (!RaceRefDistAfterAi()) RaceComputeDistancesTick(0);
+    // 0x0040fc7c), so its consumer reads the previous frame's value. Since 2026-10-16 the
+    // call is at the end of UpdateCar (after the opponent block), not here. verify/d3_u9683_20261016.
 
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
     // race_pct 0x008a96ec), before the AI tick like the bridge below. Default-OFF MASHED_PATHPROG.
     // [cev] MASHED_PATHPROG_LATE moves it after the opponents' physics (end of UpdateCar).
     if (!Race::PathProg_Late()) Race::PathProg_FrameTick();
     // [PATHPROG split] MASHED_PP_PUBLISH bit 0x8: the shadow-row tick at the wholesale knob's placement, before the AI tick.
-    if (Race::RacePctOrig_Enabled() && (Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
+    if (Race::PathProg_PublishMask() & 0x8u) Race::PathProg_RacePctTick();
 
     // [mode 7 M1] FUN_0040fc00's FUN_00485070 (0x0040fd07): pair pass + publish. No registrant
     // exists yet, so with MASHED_REGISTRY it publishes cc = 0 every frame. Position relative to the

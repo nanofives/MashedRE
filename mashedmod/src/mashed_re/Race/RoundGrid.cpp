@@ -46,7 +46,7 @@ bool RoundGrid_Enabled() {
     }();
     // [PATHPROG split] the progress it reads is live under wholesale MASHED_PATHPROG or under the shadow-row tick with
     // MASHED_PP_PUBLISH bit 0x2 (node progress published); both build the course block.
-    return s_on && (PathProg_Enabled() || (RacePctOrig_Enabled() && (PathProg_PublishMask() & 0x2u)));
+    return s_on && (PathProg_Enabled() || (PathProg_PublishMask() & 0x2u));
 }
 
 void RoundGrid_RaceInit() {
