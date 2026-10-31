@@ -124,20 +124,42 @@ A C4 request may carry evidence type `match` or `libid` instead of a `diff-origi
 | field | `match` | `libid` |
 |---|---|---|
 | tool command | the exact `match.py` command line | the exact `libmatch.py` command line |
+| relocheck result | `re/tools/match/relocheck.py <src>` line for the RVA: `OK`, plus the names it lists as unchecked | n/a |
 | compiler build | `cl` 13.00.9176 / `c2` 13.00.9178 (XP DDK) | same, or the DDK `libcmt.lib` member's `@comp.id` |
 | flags | recorded flags (game code `/O2 /GS /Ob1`, C) | recorded flags (Lua `/O2 /Ob1 /G5`, qhull `/O2 /G5`) |
 | matched source path + sha | reconstructed source file + sha256 | vendored library source file + sha256 |
 | port body file | the TU in `mashed_re.exe` (and the `.asi` TU where hooked) that compiles that same source | the TU that compiles that vendored source |
 
 Checks before stamping C4:
-- `match`: the tool reports 100% (byte-identical after relocation masking) for that RVA; the port body file is the
+- `match`: the tool reports 100% (byte-identical after relocation masking) for that RVA **and** relocheck reports OK
+  (a 100% source with relocheck BAD is refused: it can store to the wrong global); the port body file is the
   matched source or includes it (`exe_file == file`, lint clean, physics TU in `x87_tus.txt`); the merge-train gates
   are unchanged after the swap (cite the gate hashes). A matched source the port does not compile, or a naked
   inline-asm transcription, is refused.
+- `match`, callerless body (no exe caller): accepted, and `notes` gets `exe-callers=0`. The unchanged gates then show
+  only that the swap changed nothing the default build runs, not that the body ran (rubric, "Callerless bodies").
 - `libid`: status `identical` and not `ambiguous` in the libmatch TSV; the port body file compiles that vendored
-  source. A CRT row served by the platform CRT is refused (see the rubric); keep it at its level.
+  source. CRT rows never take `libid` C4: see "CRT rows (L-67)" below.
 - The Write-set leg is not asked for on these routes.
 - `hooks.csv` `notes` gets `c4=match` or `c4=libid` plus the source sha; the CHANGELOG evidence column cites the RESULT.
+
+### CRT rows (L-67, Mariano 2026-10-31): waive, never promote
+
+The port links the platform CRT by design, so CRT rows are waived at library level and come out of the P-DoD count.
+They are **not C4** and keep their confidence level. Exe link unchanged. For each CRT row (MATCH-LIB runs this
+over the CRT rows and the 197 CRT functions filed under other subsystems):
+
+1. `status` = `waived-platform-crt`. The confidence cell is not changed.
+2. `notes` starts `identified, waived: platform CRT (L-67)` when libmatch reports the row `identical` to a DDK
+   `libcmt.lib` member, followed by the provenance: libmatch command, member name, `@comp.id`. An `ambiguous` row
+   lists every candidate member. A row that is not identical starts `waived: platform CRT (L-67)`.
+3. A CRT function filed under another subsystem (boot, d3dx9-shader-compiler, render, util, save, audio, frontend) is
+   refiled to the CRT bucket its address range already uses (`third-party-library[msvc-crt-main]`, `-tail` or
+   `[msvc-crt]`). Refuse the refile when the libmatch row is not `identical` or `ambiguous`: the subsystem then has
+   no evidence, and the row stays where it is.
+4. Changelog line per row: `date  RVA  name  Cn->Cn  waived-platform-crt (L-67) evidence: <RESULT>`.
+
+Lua and qhull rows are not waived: they take `libid` C4 when the port compiles the vendored source.
 
 ## CSV row format reminder
 
