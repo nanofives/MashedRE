@@ -1,0 +1,65 @@
+# D5-FLIP-SAVE-FIRSTRUN gate outputs (ON exe da73061f, private roots, LIVING-PC 2026-10-30)
+## gates_sha.txt
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 *D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/H_DEF.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb *D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/H_DEF.gates.csv
+31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 *D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/H_DEF.ptrace.log
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/B_DEF_K0.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/B_DEF_K1.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 *D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/B_DEF_K26.step.csv
+## vsum_b.txt
+B_DEF_K0               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K1               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K26              3/3  car1 A PASS | car2 A PASS | car3 A PASS
+## e_check.txt
+D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/B_DEF_K0.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2254.8 (n=124) wmax=3527.0
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2648.1 (n=179) wmax=3904.0
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2691.4 (n=154) wmax=4507.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+## d2_reruns.txt
+D2 rerun 1: D2_DEFH_1
+D2_DEFH_2
+D2_DEFH_3
+D2 rerun 2: D2_DEFH_1
+D2_DEFH_2
+short after reruns: D2_DEFH_1
+D2_DEFH_2
+    856 D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_1.motion_diag.log
+   1399 D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_2.motion_diag.log
+   1610 D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_3.motion_diag.log
+   3865 total
+D2 d2short rerun 1: D2_DEFH_1
+D2_DEFH_2
+D2 d2short rerun 2: D2_DEFH_2
+short after d2short: 
+   1644 D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_1.motion_diag.log
+   1643 D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_2.motion_diag.log
+   1610 D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_3.motion_diag.log
+   4897 total
+## score_d2_first.txt
+D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.2027 in slip2000=0.2448 OUT drvmed=1765.2500 OUT n=('224', '215', '661') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1984 in slip2000=0.2507 in drvmed=1873.5500 OUT n=('339', '500', '1191') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1935 in slip2000=0.2509 in drvmed=1920.2500 in n=('373', '634', '1402') H1 398/400 median 1333.9
+## score_d2.txt
+D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.1930 in slip2000=0.2514 in drvmed=1920.2500 in n=('385', '649', '1436') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1930 in slip2000=0.2515 in drvmed=1919.6200 in n=('385', '648', '1435') H1 398/400 median 1333.9
+D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1935 in slip2000=0.2509 in drvmed=1920.2500 in n=('373', '634', '1402') H1 398/400 median 1333.9
+## savefile_check.txt
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root13/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/original/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root13/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/original/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root13/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/original/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root13/mashed_re_gamesave.bin': No such file or directory
+ls: cannot access 'D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_root/original/mashed_re_gamesave.bin': No such file or directory
+## tracks_rowdiff.txt
+## tracks_score.txt sha256
+2431afb1da35f95db9bb01535f071da5400d53fb2cc2550210465c0404be27c3 *D:/MashedWT/D5-FLIP-SAVE-FIRSTRUN_data/tracks_score.txt
+INSTRUMENT GATES: PASS

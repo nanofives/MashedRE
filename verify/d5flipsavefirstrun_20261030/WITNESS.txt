@@ -1,0 +1,7 @@
+W_DEF  rc=0 size=151456 sha=f003d0db 0x24efc=1 gather[0x24f54..57]=00 01 01 01 input slots: game controllers 0, types 2 0 0 0, active 1
+W_K0   rc=0 size=151456 sha=604d373f 0x24efc=0 gather[0x24f54..57]=01 01 01 01 input slots: game controllers 0, types 2 0 0 0, active 1
+W_NO   rc=0 size=151456 sha=604d373f 0x24efc=0 gather[0x24f54..57]=01 01 01 01 input slots: game controllers 0, types 2 0 0 0, active 1
+W_DEF vs W_K0: 2 differ at 0x24efc 0x24f54
+W_DEF vs W_NO: 2 differ at 0x24efc 0x24f54
+W_K0 vs W_NO: 0 differ at 
+WITNESS DONE

@@ -39,6 +39,15 @@ for st in "$@"; do
       echo "short after reruns: $(short_d2)" | tee -a $D/d2_reruns.txt
       wc -l $D/arms/D2_DEFH_*.motion_diag.log | tee -a $D/d2_reruns.txt
       py -3.12 $W/verify/d2band42_20261029/score_d2_v2.py port $D/arms/D2_DEFH_1.motion_diag.log $D/arms/D2_DEFH_2.motion_diag.log $D/arms/D2_DEFH_3.motion_diag.log > $D/score_d2.txt 2>&1 ;;
+    d2short)  # re-run only the arms still under 1600 lines (machine was loaded during the first d2 stage)
+      for i in 1 2 3; do
+        s=$(short_d2); [ -z "$s" ] && break
+        echo "D2 d2short rerun $i: $s" | tee -a $D/d2_reruns.txt
+        arms --solo $s
+      done
+      echo "short after d2short: $(short_d2)" | tee -a $D/d2_reruns.txt
+      wc -l $D/arms/D2_DEFH_*.motion_diag.log | tee -a $D/d2_reruns.txt
+      py -3.12 $W/verify/d2band42_20261029/score_d2_v2.py port $D/arms/D2_DEFH_1.motion_diag.log $D/arms/D2_DEFH_2.motion_diag.log $D/arms/D2_DEFH_3.motion_diag.log > $D/score_d2.txt 2>&1 ;;
     run13)
       tok=$(py -3.12 $LOCK solo-begin --label D5-FLIP-SAVE-FIRSTRUN-13 --ttl 14400 --owner-pid $$ | sed -n 's/^TOKEN //p')
       export MASHED_LOCK_SOLO_TOKEN=$tok
