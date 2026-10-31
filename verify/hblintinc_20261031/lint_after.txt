@@ -1,0 +1,54 @@
+[rva-lint] 48 finding(s): CROSS-TARGET=33, DUP-IN-TARGET=15  |  allowlisted=16 NEW=32
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004177b0  exe-only Race/RuleEngine.cpp  vs  asi-only Ai/AiPreTick.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004769a0  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004769d0  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004769f0  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a10  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a30  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a40  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a80  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476ae0  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476b30  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476b90  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476be0  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476c10  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476c60  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476cb0  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476d00  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint] ERROR DUP-IN-TARGET 0x00408a50  [exe] two bodies: Ai/AiLeafTargets.cpp:261 (AL_408a50), Ai/AiTargetClosest.cpp:120 (TG_408a50), Frontend/Leaves.cpp:44 (PerCarRaceProgressGet)
+[rva-lint] ERROR DUP-IN-TARGET 0x0040e370  [exe] two bodies: Ai/AiTargetClosest.cpp:120 (TG_40e370), Match/MatchS02_0040e370.cpp:11 (FUN_0040e370)
+[rva-lint] ERROR DUP-IN-TARGET 0x0040e470  [exe] two bodies: Ai/AiLeafTargets.cpp:261 (AL_40e470), Ai/AiTargetClosest.cpp:120 (TG_40e470)
+[rva-lint] ERROR DUP-IN-TARGET 0x004233e0  [exe] two bodies: Ai/AiLeafTargets.cpp:261 (AL_4233e0), Ai/HeadingAtan2.cpp:30 (float __cdecl)
+[rva-lint] ERROR DUP-IN-TARGET 0x00426090  [exe] two bodies: Frontend/GlobalGetters_s4.cpp:180 (GlobalDat0066ce58Get), Race/PathProgStep.cpp:154 (PP_426090)
+[rva-lint] ERROR DUP-IN-TARGET 0x00426bb0  [exe] two bodies: Ai/AiLeafTargets.cpp:261 (AL_426bb0), Ai/AiTargetClosest.cpp:120 (TG_426bb0), Race/PathProgStep.cpp:154 (PP_426bb0)
+[rva-lint] ERROR DUP-IN-TARGET 0x00426cb0  [exe] two bodies: Frontend/MenuNearLeaves_s6.cpp:47 (SlotIndexToPtr), Race/PathProgStep.cpp:154 (PP_426cb0)
+[rva-lint] ERROR DUP-IN-TARGET 0x00426cf0  [exe] two bodies: Frontend/BatchAA_s1.cpp:104 (), Race/PathProgStep.cpp:154 (PP_426cf0)
+[rva-lint] ERROR DUP-IN-TARGET 0x00426d00  [exe] two bodies: Frontend/BatchAA_s6.cpp:93 (FrontendArraySlotGet), Race/PathProgStep.cpp:154 (PP_426d00)
+[rva-lint] ERROR DUP-IN-TARGET 0x0046d4a0  [exe] two bodies: Gameplay/PickupTick.cpp:187 (PK_46d4a0), Vehicle/VehicleRecordPtr.cpp:47 (PtrCompute881ec8)
+[rva-lint] ERROR DUP-IN-TARGET 0x004c39b0  [exe] two bodies: Ai/AiLeafTargets.cpp:261 (AL_4c39b0), Ai/AiTargetClosest.cpp:227 (TG_4c39b0), Gameplay/PickupTick.cpp:186 (PK_4c39b0), Math/RwV3dNormalize.cpp:109 (), Race/PathProgStep.cpp:154 (PP_4c39b0), Race/WorldRegistry.cpp:116 (RG_4c39b0)
+[rva-lint] ERROR DUP-IN-TARGET 0x004c3ac0  [exe] two bodies: Ai/AiLeafTargets.cpp:261 (AL_4c3ac0), Ai/AiTargetClosest.cpp:120 (TG_4c3ac0), Gameplay/PickupTick.cpp:186 (PK_4c3ac0)
+[rva-lint] ERROR DUP-IN-TARGET 0x004c3b30  [exe] two bodies: Ai/AiTargetClosest.cpp:120 (TG_4c3b30), Math/RwLutTables.cpp:52 (LutSqrt)
+[rva-lint] ERROR DUP-IN-TARGET 0x004c3b90  [exe] two bodies: Collision/CollisionWorld.cpp:233 (BW_4c3b90), Math/RwMatrixOrthoNormalize.cpp:31 (RwMatrixOrthoNormalizeLut), Race/PathProgStep.cpp:154 (PP_4c3b90)
+[rva-lint] ERROR DUP-IN-TARGET 0x00547450  [exe] two bodies: Collision/CollisionWorld.cpp:233 (BW_547450), Race/PathProgStep.cpp:154 (PP_547450)
+[rva-lint] ERROR CROSS-TARGET 0x00407580  exe-only Gameplay/PickupTick.cpp  vs  asi-only Gameplay/SubsystemARecordKey.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00407b00  exe-only Race/PathProgStep.cpp  vs  asi-only Gameplay/RangeTable_ah1.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00407b70  exe-only Race/PathProgStep.cpp  vs  asi-only Gameplay/RangeTable_ah1.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00407d70  exe-only Race/PathProgStep.cpp  vs  asi-only Gameplay/RangeTable_ah1.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00407db0  exe-only Race/PathProgStep.cpp  vs  asi-only Gameplay/RangeTable_ah1.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00408590  exe-only Race/PathProgStep.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00408af0  exe-only Ai/AiLeafTargets.cpp  vs  asi-only Ai/PromoLoop_round1.cpp
+[rva-lint] ERROR CROSS-TARGET 0x0040e470  exe-only Ai/AiLeafTargets.cpp, Ai/AiTargetClosest.cpp  vs  asi-only Frontend/RaceResults.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00426bb0  exe-only Ai/AiLeafTargets.cpp, Ai/AiTargetClosest.cpp, Race/PathProgStep.cpp  vs  asi-only Util/PromoLoop_round31.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00426cc0  exe-only Race/PathProgStep.cpp  vs  asi-only Vehicle/PromoLoop_round2.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00442cc0  exe-only Ai/AiTargetClosest.cpp  vs  asi-only Ai/PromoLoop_round1.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00443300  exe-only Ai/AiLeafTargets.cpp  vs  asi-only Ai/AiSplineHooks.cpp
+[rva-lint] ERROR CROSS-TARGET 0x004576b0  exe-only Gameplay/PickupTick.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint] ERROR CROSS-TARGET 0x0045c330  exe-only Gameplay/PickupTick.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00484a50  exe-only Race/WorldRegistry.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00484c70  exe-only Ai/AiTargetClosest.cpp  vs  asi-only Util/PromoLoop_round20.cpp
+[rva-lint] ERROR CROSS-TARGET 0x00484c90  exe-only Race/WorldRegistry.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+
+[rva-lint] FAILED: 32 NEW duplicate-body finding(s).
+[rva-lint] One RVA must have ONE body per target. Either share a single TU between the two source lists, or -- if the divergence is deliberate and judged against the original -- add the key above to
+[rva-lint]   re\tools\dual_copy_allowlist.txt
+[rva-lint] with a citation. Seed a fresh list with --seed.
