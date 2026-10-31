@@ -29,9 +29,11 @@ const FaithKnob kFaith[] = {
     // [D5-KNOBS-D-SEEDED6 2026-10-30] POS_MODEL, ROUND_GRID_ORDER, PATHPROG_LATE, SPAWN_BASIS_RW, RING_DBUF and
     // STEER_ACOS_CRT left this list with their read sites: the seeded path is the only one in the source
     // (verify/d5knobsd_seeded6_20261030/RESULT_D5-KNOBS-D-SEEDED6.md).
+    // [D5-KNOBS-AI-TICK-FIRST 2026-10-31] AI_TICK_FIRST left this list: it had no reader after D5-KNOBS-E1-PHYS-A4A5
+    // made the AI tick phase unconditional before the player's step (verify/d5knobsaitf_20261031/RESULT_D5-KNOBS-AI-TICK-FIRST.md).
     { "AI_COUNTDOWN_CLOCK", "1" }, { "PATHPROG", "1" },          { "ROUND_GRID", "1" },
     { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
-    { "AI_TICK_FIRST", "1" },      { "REASSERT_KEEP_NORMAL", "1" },
+    { "REASSERT_KEEP_NORMAL", "1" },
     { "FIX_5CEA60", "1" },         { "UP_TRINORMAL", "1" },        { "RW_SSE_POINTS", "1" },
     { "FWD_AT", "1" },             { "ROTATE_LUT", "1" },
     { "ROTATE_PC24", "1" },        { "HEADING_FWD_LIVE", "1" },    { "AI_LUT", "7" },
