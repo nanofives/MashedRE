@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-31 19:10 MATCH-L68-SWAP (orch/MATCH-L68-SWAP), MATCH-L69-SWAP (orch/MATCH-L69-SWAP): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_182843
 - 2026-10-31 18:27 MATCH-RC-CALLERLESS-FIX (orch/MATCH-RC-CALLERLESS-FIX), MATCH-S02-RC (orch/MATCH-S02-RC), MATCH-LIB (orch/MATCH-LIB): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_175253
 - 2026-10-31 17:52 D5-KNOBS-E3-GEOM-AI (orch/D5-KNOBS-E3-GEOM-AI): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_170905
 - 2026-10-31 17:07 HB-LINT-INC-SCAN (orch/HB-LINT-INC-SCAN): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261031_165028
