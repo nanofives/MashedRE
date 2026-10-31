@@ -43,16 +43,7 @@ void CallRegistrant(unsigned char* rec) {
 }
 }  // namespace
 
-bool CarsReg_Enabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_REG_CARS");
-        return s && s[0] && s[0] != '0';
-    }();
-    return s_on && Registry_Enabled();
-}
-
 void CarsReg_FrameTick() {
-    if (!CarsReg_Enabled()) return;
     for (int v = 0; v < 4; ++v) {
         if (IsCarSlotActive(v) == 0) continue;                                     // *(PTR_005f2770 + 0x34 + v*4)
         if (VehicleSlotGetter(static_cast<std::uint32_t>(v)) != 1u) continue;      // 0x0040daa0 (FUN_0046c770 arm: U-9210)

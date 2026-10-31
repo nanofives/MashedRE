@@ -4,7 +4,7 @@
 
 namespace Ai {
 
-// MASHED_AILEAF (default OFF) AND MASHED_PATHPROG (the progress producer): run the two targeting-chain leaves of FUN_00416250 at their call sites
+// MASHED_AILEAF (default OFF; the progress producer always runs since D5-KNOBS-E4-MODE-REG): run the two targeting-chain leaves of FUN_00416250 at their call sites
 // 0x004162f7 / 0x0041633f instead of the stub (mode 0).
 bool AiLeaf_Enabled();
 

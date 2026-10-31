@@ -12,7 +12,7 @@
 namespace mashed_re {
 namespace Gameplay {
 
-// MASHED_RFX_EMITTERS=1 (default OFF, not in FaithDefaults) AND PickupsOrig_Enabled().
+// MASHED_RFX_EMITTERS=1 (default OFF, not in FaithDefaults) (the original-layout pickup pool is always on since D5-KNOBS-E4-MODE-REG).
 // MASHED_NO_PICKUP_GLOW=1 keeps the emitter layer on and the glow off.
 bool PickupGlow_Enabled();
 

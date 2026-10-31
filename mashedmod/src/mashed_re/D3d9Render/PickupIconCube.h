@@ -1,7 +1,7 @@
 // Mashed RE — the pickup IconCube (D5-ICONCUBE-SPIN, D-11076 cube half). Exe-only TU.
 // PREREG: verify/iconcube_20261028/PREREG_D5-ICONCUBE-SPIN.md.
 //
-// Default ON since D5-PREGO-CUBE-FLIP (opt-out deleted, D5-KNOBS-RUNARMS-STACKS), gated by MASHED_PICKUPS_ORIG: one IconCube copy per live pool entry
+// Default ON since D5-PREGO-CUBE-FLIP (opt-out deleted, D5-KNOBS-RUNARMS-STACKS): one IconCube copy per live pool entry
 // (FUN_00458b10 @ 0x00458b10), skinned by the entry's type (FUN_00458dd0 @ 0x00458dd0 /
 // FUN_00458630 @ 0x00458630) and posed from the pool state FUN_00458a40 @ 0x00458a40 leaves
 // (Gameplay/PickupTick_naked.inc). Reads the pool only; makes no RNG call. The PUGlow glow
@@ -13,8 +13,6 @@
 
 namespace mashed_re {
 namespace D3d9Render {
-
-bool IconCube_Enabled();
 
 // FUN_004587a0 @ 0x004587a0, the parts the port lacks: the pool writes +0x08 = 1.0 and
 // +0x0c..+0x14 = (0, 1, 0) on the 25 entries, and IconCube.dff + PowerUpIcons.txd

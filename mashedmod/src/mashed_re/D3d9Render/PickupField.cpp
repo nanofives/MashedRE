@@ -2,7 +2,7 @@
 #include "PickupField.h"
 #include "DrawRec.h"                       // d1r1 per-draw recorder label
 #include "../Gameplay/PickupPoolSpawn.h"   // the real 0x00458e00 body
-#include "../Gameplay/PickupTick.h"        // [mode 7 M3] stand-down under MASHED_REG_CALLBACKS
+#include "../Gameplay/PickupTick.h"        // [mode 7 M3] pool entry state
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -254,64 +254,17 @@ void PickupField::Reset() {
     collected_ = 0; held_ = -1; held_type_ = -1; phase_ = 0.f;
 }
 
-bool PickupField::Update(float dt, const float carPos[3]) {
+void PickupField::Update(float dt, const float carPos[3]) {
     if (dt <= 0.f || dt > 0.25f) dt = 0.016f;
     phase_ += dt;
-    // [mode 7 M3] MASHED_REG_CALLBACKS: collection happens in the registry callback FUN_00458920
-    // (Gameplay/PickupTick.cpp) on the original-layout pool; this field only draws, each orb showing
-    // its pool entry's state (+0x20 == 1 live). PREREG verify/d3_mode7_m3_20261010/PREREG_M3.md section 2.
-    if (mashed_re::Gameplay::PickupCallbacks_Enabled()) {
-        for (Orb& o : orbs_)
-            if (o.poolIdx >= 0) o.active = mashed_re::Gameplay::PickupsOrig_EntryState(o.poolIdx) == 1;
-        return false;
-    }
-    bool got = false;
-    const float pickR = worldR_ * 0.04f;       // collection radius
-    const float pickR2 = pickR * pickR;
-    for (size_t i = 0; i < orbs_.size(); ++i) {
-        Orb& o = orbs_[i];
-        if (!o.active) {
-            o.cooldown -= dt;
-            if (o.cooldown <= 0.f) o.active = true;
-            continue;
-        }
-        if (!carPos) continue;
-        const float dx = carPos[0] - o.pos[0];
-        const float dz = carPos[2] - o.pos[2];
-        const float dy = carPos[1] - o.pos[1];
-        if (dx*dx + dz*dz <= pickR2 && std::fabs(dy) <= pickR * 2.f) {
-            o.active = false;
-            o.cooldown = o.respawn;            // real per-pickup respawn time
-            ++collected_;
-            held_ = (o.gameType >= 0) ? KindFromType(o.gameType)
-                                      : static_cast<int>(i % kKindCount);
-            held_type_ = o.gameType;           // faithful real type code (HUD)
-            got = true;
-        }
-    }
-    return got;
+    // [mode 7 M3] collection happens in the registry callback FUN_00458920 (Gameplay/PickupTick.cpp) on the
+    // original-layout pool; this field only draws, each orb showing its pool entry's state (+0x20 == 1 live).
+    // PREREG verify/d3_mode7_m3_20261010/PREREG_M3.md section 2. The field's own collection path (MASHED_REG_CALLBACKS
+    // OFF) and CollectAt were deleted by D5-KNOBS-E4-MODE-REG.
+    for (Orb& o : orbs_)
+        if (o.poolIdx >= 0) o.active = mashed_re::Gameplay::PickupsOrig_EntryState(o.poolIdx) == 1;
 }
 
-bool PickupField::CollectAt(const float carPos[3], int* type) {
-    if (!carPos) return false;
-    if (mashed_re::Gameplay::PickupCallbacks_Enabled()) return false;   // [mode 7 M3] see Update
-    const float pickR = worldR_ * 0.04f;       // same collection radius as Update
-    const float pickR2 = pickR * pickR;
-    for (size_t i = 0; i < orbs_.size(); ++i) {
-        Orb& o = orbs_[i];
-        if (!o.active) continue;
-        const float dx = carPos[0] - o.pos[0];
-        const float dz = carPos[2] - o.pos[2];
-        const float dy = carPos[1] - o.pos[1];
-        if (dx*dx + dz*dz <= pickR2 && std::fabs(dy) <= pickR * 2.f) {
-            o.active = false;
-            o.cooldown = o.respawn;
-            if (type) *type = o.gameType;
-            return true;
-        }
-    }
-    return false;
-}
 
 int PickupField::ActiveOrbCount() const {
     int n = 0;

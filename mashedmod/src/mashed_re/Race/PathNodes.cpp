@@ -338,17 +338,6 @@ int          PathNodes_TriCount()     { return static_cast<int>(s_triNode.size()
 const float* PathNodes_Tri(int t)     { return s_triVerts.data() + static_cast<std::size_t>(t) * 9u; }
 unsigned     PathNodes_TriNode(int t) { return s_triNode[static_cast<std::size_t>(t)]; }
 
-bool PathProg_Enabled() {
-    static const bool s_on = (std::getenv("MASHED_PATHPROG") != nullptr);
-    return s_on;
-}
-
-// [U-9685] True only when the course block was actually built (a track with an AI BSP), so the bridge is not
-// stood down on a track where the step has nothing to walk.
-bool RacePctOrig_Active() {
-    return !s_triNode.empty();
-}
-
 void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen) {
     std::memset(reinterpret_cast<void*>(kCourse), 0, kZeroLen);    // FUN_0047a0f0 -> FUN_004b6520
     s_routeCursor = 0;                                              // DAT_006bf1dc = 0
