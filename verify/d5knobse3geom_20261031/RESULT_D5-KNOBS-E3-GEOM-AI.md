@@ -161,5 +161,31 @@ Folder `D:/MashedWT/D5-KNOBS-E3-GEOM-AI_data/` (sha256):
   0x004099a0..0x00412100 and 20 port body swaps), none of them a file this branch edits. The refreshed tree builds
   (`=== Build OK ===`, 0 `error C` / `LNK`), rva-lint 0 NEW, exe sha256 `16f37188` (the gated exe was `17aecd53`,
   built before the MATCH-S02 swaps), and the 10 names still occur 0 times in the source reads and in the exe. The
-  gates were not re-run on the refreshed exe, and the merge train gates the merged tree. D5-KNOBS-AI-TICK-FIRST had
-  not merged at refresh time.
+  gates were not re-run on that exe. D5-KNOBS-AI-TICK-FIRST had not merged at refresh time.
+- **Refresh 2 (after the merge-train bounce).** Train `20261031_150246` hit a conflict in `Core/FaithDefaults.cpp`
+  against `orch/integration` @ `85daef8d2` (MATCH-S03, D5-KNOBS-AI-TICK-FIRST and MATCH-S04 merged first). The branch
+  merged that head (merge `0554333c6`, `git -c merge.autoStash=false`). The one conflict was the `kFaith` hunk, resolved
+  as the union of the deletions: the AI-TICK-FIRST comment and deletion of `AI_TICK_FIRST` are kept, and this branch's
+  10 names stay out. The resolved line carries only `REASSERT_KEEP_NORMAL`, then this branch's comment, then
+  `REGISTRY` / `PICKUPS_ORIG`. `TrackRenderer.cpp` and `VehiclePhysicsRun.cpp` merged without conflict. None of the
+  10 names nor `AI_TICK_FIRST` occurs as a quoted knob name or `MASHED_` read in `mashedmod/src` (only in comments) or
+  as a string in the exe. Build `=== Build OK ===`, 0 `error C` / `LNK`, exe sha256 `f693fe62`, .asi `3371c1dc`.
+  rva-lint rc 0, `16 finding(s): CROSS-TARGET=16 | allowlisted=16 NEW=0`. The gates were re-run on this exe with the
+  same driver (data folder `D:/MashedWT/D5-KNOBS-E3-GEOM-AI_data/refresh2/`, test-slot + `mashed_lock.py`, refs from
+  `merge_train.json` at `85daef8d2`, unchanged):
+
+  | Gate | Exe `f693fe62` | Ref | |
+  |---|---|---|---|
+  | G-CTRL H_DEF step / gates / ptrace | `8284be46` / `ba407a16` / `31fe043e` | same | same |
+  | B_DEF_K0 / K1 / K26 step | `1d5bf4f9` x3 | `1d5bf4f9` x3 | same |
+  | (b) `vsum.py` | 3 arms at 3/3 (`vsum_b.txt` sha256 `6b0c8fea`, same file as the first pass) | 3/3 | same |
+  | (e) `ai_speed_env.py --check B_DEF_K0` | 3 `(e) PASS`, launch 1425.7 / 2052.5 / 2055.0 | 3, same launch | same |
+  | D2 DEFH_1..3 | drvmed 1919.62 / 1917.10 / 1917.10, slip1500 0.1933 / 0.1930 / 0.1930, all `in`, H1 398/400. motion_diag 1638 / 1641 / 1640 lines (arm 3 gave 1220 on the first pass and was re-run once per HB-D2RERUN, short log kept as `D2_DEFH_3.motion_diag.short1.log`) | 3/3 in band | same (3/3) |
+  | 13 tracks | 39 rows identical to `run13p3_20261029/tracks_score_sub_p3.txt`, INSTRUMENT GATES: PASS, file sha256 `2431afb1`, every track OK on attempt 1 | `2431afb1` | same |
+
+  Arm 1's drvmed is 1919.62 here against 1917.10 on the first pass, in band both times. Committed copies are in
+  `refresh2/` (`vsum_b.txt`, `e_check.txt`, `score_d2.txt`, `tracks_score.txt`). Raw files (sha256): `H_DEF.step.csv`
+  8284be46..., `H_DEF.gates.csv` ba407a16..., `H_DEF.ptrace.log` 31fe043e..., `B_DEF_K*.step.csv` 1d5bf4f9...,
+  `D2_DEFH_1.motion_diag.log` fe38081b, `D2_DEFH_2.motion_diag.log` e078ab49, `D2_DEFH_3.motion_diag.log` dea61fb2,
+  `score_d2.txt` a96a21e4, `e_check.txt` 93f10387, `build.log` e076125b, `lint.txt` e9dd7a25, `gates_run.log`
+  aadc846b, `gates.sh` d0427a69 (the first-pass driver with `DATA` pointed at `refresh2`).
