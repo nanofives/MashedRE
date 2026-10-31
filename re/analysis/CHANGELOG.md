@@ -26,6 +26,62 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-31  00521990  FUN_00521990  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00522ab0  FUN_00522ab0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00522b00  FUN_00522b00  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00522cc0  FUN_00522cc0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00528e00  zcalloc  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052a890  FUN_0052a890  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052a9c0  FUN_0052a9c0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052b7e0  FUN_0052b7e0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052bf20  FUN_0052bf20  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052c630  FUN_0052c630  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052c660  FUN_0052c660  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004f1f90  FUN_004f1f90  C2->C2  waived-library (L-70), refiled third-party-library[renderware]->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004d1000  zcalloc  (none)->C1  added by libid, waived-library (L-70) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004fa6f0  zcalloc  (none)->C1  added by libid, waived-library (L-70) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051f350  FUN_0051f350  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520850  png_destroy_struct  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520960  FUN_00520960  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520990  FUN_00520990  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520a00  FUN_00520a00  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520b60  FUN_00520b60  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00521000  FUN_00521000  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00523110  LoadBE523110  C3->C3  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00523140  png_crc_read  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00528200  FUN_00528200  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00528ba0  FUN_00528ba0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516bb0  png_write_data  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516bd0  png_flush_data  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516cc0  png_zalloc  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516d30  png_reset_crc  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005173d0  Set5173d0  C3->C3  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005175d0  FUN_005175d0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00517e00  FUN_00517e00  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005183a0  FUN_005183a0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005183c0  FUN_005183c0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005184b0  FUN_005184b0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005184f0  FUN_005184f0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00519af0  FUN_00519af0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00519e30  FUN_00519e30  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051c100  FUN_0051c100  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051c9f0  FUN_0051c9f0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051ca60  StoreBE51ca60  C3->C3  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051cb70  FUN_0051cb70  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005150e0  FUN_005150e0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515660  FUN_00515660  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515680  FUN_00515680  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005156b0  FUN_005156b0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515710  FUN_00515710  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515740  FUN_00515740  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005157c0  FUN_005157c0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515aa0  FUN_00515aa0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515d50  FUN_00515d50  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515ee0  FUN_00515ee0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005161a0  FUN_005161a0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516320  FUN_00516320  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516370  FUN_00516370  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516430  FUN_00516430  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-31  0x0040ad20  FrontendGlobalGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
 2026-10-31  0x0040ad30  UtilSet8a95ac  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
 2026-10-31  0x0040b250  UtilReset8a9500  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md

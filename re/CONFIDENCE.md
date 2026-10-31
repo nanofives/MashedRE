@@ -152,7 +152,14 @@ diff is not the evidence. Both are recorded in `hooks.csv` `notes` and in the `r
     util, save, audio, frontend; `verify/libidentity_20261030/RESULT_LIB-IDENTITY.md` finding 2) is refiled to the
     CRT subsystem (`third-party-library[msvc-crt-main]`, `-tail` or `[msvc-crt]`, the bucket its address range
     already uses) with the same status and notes.
-  Lua and qhull are vendored and use `libid` as above. The waiver covers the CRT only.
+  Lua and qhull are vendored and use `libid` as above. The CRT waiver (L-67) covers the CRT only.
+- **libpng 1.0.12 and zlib 1.1.3: waived at library level (L-70, Mariano 2026-10-31).** The 42 libpng and 14 zlib
+  functions whose bytes are identical to the DDK build (`verify/matchlib_20261031/pngzlib/`, `/O2 /G5`) are refiled to
+  `third-party-library[libpng-1.0.12]` / `third-party-library[zlib-1.1.3]`, status `waived-library`, and come out of the
+  P-DoD count like the CRT rows. The port links no libpng / zlib built from that source, so they are not `libid` C4.
+  They keep their level, `notes` starts `identified, waived: vendored library <lib> (L-70)` and carries the libid
+  identity as provenance; an identical address with no row gets a C1 row. Helper: `libid_reclass.py waive-lib`.
+  The 4 older `third-party-library[libpng]` rows are not identical and are not touched.
 
 **How the Write-set leg relates.** The Write-set leg is a **frida-route leg** only: it exists because a clean race diff
 cannot show stores that land outside the sampled memory. It is not an extra requirement of `match` or `libid`. Byte

@@ -122,3 +122,29 @@ def test_missing_evidence_refused(mod, monkeypatch, tmp_path):
     (tmp_path / "ev.md").unlink()
     with pytest.raises(SystemExit):
         run(mod, monkeypatch, tmp_path, "crt-waive")
+
+
+def test_waive_lib_png(mod, monkeypatch, tmp_path):
+    (tmp_path / "hooks.csv").write_bytes((HOOKS + "00516bb0,png_write_data,util,C2,mapped,,,,old,\r\n"
+                                          "005150e0,FUN_005150e0,third-party-library[d3dx9-backward-extension],C2,mapped,,,,,\r\n").encode())
+    H2 = "rva\thooks_name\tsubsystem\tconfidence\tstatus\tlibrary_object\tlib_function\tlib_size\tfirst_diff\tcategory\tnote\n"
+    rowsx = [["0x00516bb0", "x", "", "", "identical-unlisted", "pngwio.obj", "_png_write_data", "32", "", "", ""],
+             ["0x005150e0", "x", "", "", "identical-unlisted", "pngwrite.obj", "_png_write_flush", "211", "", "", ""],
+             ["0x00523110", "x", "", "", "identical-unlisted", "pngrutil.obj", "_png_get_int_32", "39", "", "", ""],
+             ["0x00523110", "x", "", "", "identical-unlisted", "pngrutil.obj", "_png_get_uint_32", "39", "", "", ""],
+             ["0x005208c0", "x", "", "", "differs", "pngmem.obj", "_png_malloc", "56", "0x0", "", ""]]
+    (tmp_path / "p.tsv").write_text(H2 + "".join("\t".join(x) + "\n" for x in rowsx), encoding="utf-8")
+    monkeypatch.setattr("sys.argv", ["libid_reclass.py", "waive-lib", "--library", "libpng-1.0.12", "--tsv", "p.tsv",
+                                     "--evidence", "ev.md", "--date", "2026-10-31"])
+    log = mod.main()
+    assert len(log) == 3            # 2 refiled rows + 1 added (0x00523110, ambiguous)
+    r = rows(tmp_path)
+    assert r["00516bb0"][2] == "third-party-library[libpng-1.0.12]" and r["00516bb0"][4] == "waived-library"
+    assert r["00516bb0"][3] == "C2" and r["00516bb0"][8].endswith("| old")
+    assert r["005150e0"][2] == "third-party-library[libpng-1.0.12]"
+    assert r["00523110"][3] == "C1" and "_png_get_int_32 / _png_get_uint_32" in r["00523110"][8]
+    assert "005208c0" not in r
+    assert mod.main() == []
+    with pytest.raises(SystemExit):
+        monkeypatch.setattr("sys.argv", ["libid_reclass.py", "waive-lib", "--library", "lua-4.0", "--tsv", "p.tsv", "--evidence", "ev.md"])
+        mod.main()

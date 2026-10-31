@@ -1,5 +1,9 @@
 # MATCH-LIB: library identicals under libid, CRT L-67 waiver, missing library rows, libpng / zlib (2026-10-31)
 
+**Rebuilt 2026-10-31 (run 27) on `orch/MATCH-S02-RC` @ 85958bad5** from the old `orch/MATCH-LIB` @ 28aa6a524 (renamed
+`orch/MATCH-LIB-old-28aa6a524`): its two LIB-specific commits were cherry-picked without the old S02-RC commits, and L-70 (a) was added
+(section "L-70 (a)" below). L-68 check: this step promotes 0 rows to C4, so the callerless ruling changes nothing here.
+
 Tracker and text only. No `mashedmod/` change, no build, no MASHED.exe run, no Frida, no Ghidra write, no `original\` write.
 Identity input: `verify/libidentity_20261030/libidentity_functions.tsv` (LIB-IDENTITY, anchor `MASHED.exe.unpatched`).
 Rubric: `re/CONFIDENCE.md` "C4 routes by byte match" (libid + L-67). Tracker edits through the re-classify skill's new
@@ -16,7 +20,8 @@ GREEN for (2), (3) and (4). (1) promoted **0** rows: no library group meets the 
 - (2) L-67: 450 CRT rows set `waived-platform-crt`, 108 of them refiled from other subsystems, and 34 CRT rows added.
 - (3) 13 Lua / qhull rows added (the 16 TSV entries; 2 addresses carry 2 names each) and 1 Lua row refiled from `render`.
 - (4) libpng 1.0.12 and zlib 1.1.3 fetched from the official project sites and measured: 42 libpng and 14 zlib addresses
-  identical, 0 of the 4 `[libpng]` rows. Measurement only, no tracker change.
+  identical, 0 of the 4 `[libpng]` rows.
+- (5) L-70 (a): those 42 + 14 are refiled and waived (below).
 
 ## Counts
 
@@ -99,6 +104,21 @@ Where the identical addresses sit in hooks.csv (`/O2 /G5`; `verify/matchlib_2026
 RenderWare's `rtpng` build) were not swept, and the same 9178 -> 9466 compiler question as LIB-IDENTITY applies. No
 refile was made for these: neither library has a subsystem bucket or a re-classify rule yet.
 
+## L-70 (a): libpng / zlib refiled and waived (Mariano 2026-10-31)
+
+New helper operation `libid_reclass.py waive-lib` (self-test now 7/7 PASS), run once per library, a second run writes nothing:
+
+| library | identical addresses | rows refiled | rows added (C1) | new subsystem |
+|---|---|---|---|---|
+| libpng 1.0.12 | 42 (43 TSV entries, 0x00523110 ambiguous `_png_get_int_32` / `_png_get_uint_32`) | 42 (28 from `util`, 14 from `third-party-library[d3dx9-backward-extension]`) | 0 | `third-party-library[libpng-1.0.12]` |
+| zlib 1.1.3 | 14 (0x004d1000, 0x004fa6f0, 0x00528e00 are `_zcalloc` copies) | 12 | 2 (`_zcalloc` at 0x004d1000, 0x004fa6f0) | `third-party-library[zlib-1.1.3]` |
+
+All 56 rows: status `waived-library`, out of the P-DoD count, confidence kept (libpng: 39 C2 + 3 C3 (0x00523110, 0x005173d0, 0x0051ca60);
+zlib: 12 C2 + 2 C1), none C4. Notes start `identified, waived: vendored library <lib> (L-70)` and carry the libid identity
+(object, function, `/O2 /G5`, compiler, TSV path) as provenance. 56 CHANGELOG lines. The 4 older
+`third-party-library[libpng]` rows are not identical and were not touched. Rubric text in `re/CONFIDENCE.md` and the
+re-classify skill.
+
 ## Needs a decision (lead)
 
 1. **qhull libid C4 (116 rows).** The gate needs the port to compile `mashedmod/deps/qhull-2002.1` with DDK cl
@@ -109,8 +129,7 @@ refile was made for these: neither library has a subsystem bucket or a re-classi
    default-OFF knob if the gate hashes move.
 2. **Lua (87 rows).** C4 by libid would need the port to link Lua 4.0 itself, an architecture choice (the port reads
    the game's Lua data with its own code today). No recommendation to do it for C4 alone.
-3. **libpng / zlib rows.** 42 + 14 identical addresses are filed under `util`, `d3dx9-backward-extension` and
-   `renderware`. Refiling them needs a subsystem name and a rule (as L-67 gave the CRT). Not done here.
+3. ~~libpng / zlib rows~~ Answered by L-70 (a), done below.
 
 ## Files
 

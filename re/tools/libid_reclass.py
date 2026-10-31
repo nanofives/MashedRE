@@ -5,6 +5,7 @@
   libid_reclass.py add-rows   --tsv <tsv> --library lua-4.0|qhull-2002.1|msvc-crt --evidence <RESULT>
                               [--lib <libcmt.lib>] [--not-c4 "<why>"] [--date] [--dry-run]
   libid_reclass.py refile-lib --tsv <tsv> --library lua-4.0|qhull-2002.1 --evidence <RESULT> [--date] [--dry-run]
+  libid_reclass.py waive-lib  --tsv <pngzlib sweep tsv> --library libpng-1.0.12|zlib-1.1.3 --evidence <RESULT> [--date] [--dry-run]
 
 The TSV is libmatch's output (verify/libidentity_20261030/libidentity_functions.tsv layout: library, rva, hooks_name,
 subsystem, confidence, status, library_object, lib_function, lib_size, first_diff, category, note).
@@ -21,6 +22,13 @@ add-rows   Inserts a C1 row (appended to hooks.csv) for every TSV `identical-unl
            functions with the same bytes, MASM local labels) becomes FUN_<rva>, with the candidates in notes.
 refile-lib Moves a Lua / qhull row filed under a non-library subsystem to the library's subsystem when the TSV lists
            its address as `identical-unlisted` with one candidate. Confidence and status are kept.
+
+waive-lib  (L-70, Mariano 2026-10-31) Every `identical-unlisted` address of the sweep TSV (verify/matchlib_20261031/pngzlib/,
+           layout: rva, hooks_name, subsystem, confidence, status, library_object, lib_function, ...): the hooks.csv row at
+           that address is refiled to `third-party-library[libpng-1.0.12]` / `[zlib-1.1.3]`, status `waived-library`
+           (confidence kept), notes start `identified, waived: vendored library (L-70)` with the libid identity as
+           provenance. An address with no row gets a C1 row, same waiver. Like the CRT waiver, the rows leave the P-DoD
+           count and never take libid C4 (the port links no libpng / zlib built from that source).
 
 Every operation prepends one CHANGELOG line per row below <!-- ENTRIES -->. Refuses: a missing evidence file, a
 hooks.csv that does not round-trip through the csv module byte for byte, a CRT refile whose identity is not
@@ -43,6 +51,11 @@ LIBS = {
     "qhull-2002.1": ("third-party-library[qhull-2002.1]", "qhull 2002.1 /Og /Oi /Ot /Oy /Ob2 /GF /G5"),
 }
 QHULL_CONT = (0x00591710, 0x0059b455)
+WAIVED_LIB = "waived-library"
+PNGZLIB = {
+    "libpng-1.0.12": ("third-party-library[libpng-1.0.12]", "libpng 1.0.12 /O2 /G5"),
+    "zlib-1.1.3": ("third-party-library[zlib-1.1.3]", "zlib 1.1.3 /O2 /G5"),
+}
 COMPILER = "XP DDK cl 13.00.9176 / c2 13.00.9178"
 
 
@@ -264,12 +277,50 @@ def op_refile_lib(rows, hi, col, tsv_rows, library, tsv, date, ev):
     return log, skipped
 
 
+def op_waive_lib(rows, hi, col, tsv_rows, library, tsv, date, ev):
+    sub_new, flags = PNGZLIB[library]
+    unl = defaultdict(list)
+    for t in tsv_rows:
+        if t["status"] == "identical-unlisted":
+            unl[int(t["rva"], 16)].append(t)
+    log, skipped = [], 0
+    S, ST, N, C, NM = col["subsystem"], col["status"], col["notes"], col["confidence"], col["name"]
+    have = set()
+    for i, va, r in data_rows(rows, hi):
+        if va not in unl:
+            continue
+        have.add(va)
+        if r[ST] == WAIVED_LIB and r[S] == sub_new:
+            skipped += 1
+            continue
+        cs = candidates(unl[va])
+        what = ("libid identical-ambiguous, candidates " + " / ".join(c[0] for c in cs)) if len(cs) > 1             else f"libid identical {unl[va][0]['library_object']} {cs[0][0]}"
+        old = r[S]
+        r[N] = (f"identified, waived: vendored library {library} (L-70); {what} ({flags}, {COMPILER}; {tsv})"
+                + (" | " + r[N] if r[N] else ""))
+        r[S], r[ST] = sub_new, WAIVED_LIB
+        log.append(f"{date}  {va:08x}  {r[NM]}  {r[C]}->{r[C]}  {WAIVED_LIB} (L-70), refiled {old}->{sub_new} evidence: {ev}")
+    width = len(rows[hi])
+    for va in sorted(set(unl) - have):
+        cs = candidates(unl[va])
+        name = row_name(va, cs)
+        what = ("libid identical-ambiguous, candidates " + " / ".join(c[0] for c in cs)) if len(cs) > 1             else f"libid identical {unl[va][0]['library_object']} {cs[0][0]}"
+        r = [""] * width
+        r[col["rva"]], r[col["name"]], r[col["confidence"]] = f"{va:08x}", name, "C1"
+        r[S], r[ST] = sub_new, WAIVED_LIB
+        r[N] = (f"identified, waived: vendored library {library} (L-70); {what} ({flags}, {COMPILER}; {tsv}); "
+                "C1 by libid, row added MATCH-LIB")
+        rows.append(r)
+        log.append(f"{date}  {va:08x}  {name}  (none)->C1  added by libid, {WAIVED_LIB} (L-70) evidence: {ev}")
+    return log, skipped
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("op", choices=["crt-waive", "add-rows", "refile-lib"])
+    ap.add_argument("op", choices=["crt-waive", "add-rows", "refile-lib", "waive-lib"])
     ap.add_argument("--tsv", required=True)
     ap.add_argument("--evidence", required=True)
-    ap.add_argument("--library", choices=["lua-4.0", "qhull-2002.1", "msvc-crt"])
+    ap.add_argument("--library", choices=["lua-4.0", "qhull-2002.1", "msvc-crt", "libpng-1.0.12", "zlib-1.1.3"])
     ap.add_argument("--lib", help="libcmt.lib, for each member's @comp.id (CRT notes)")
     ap.add_argument("--not-c4", default="")
     ap.add_argument("--date", default=datetime.date.today().isoformat())
@@ -287,6 +338,8 @@ def main():
         sys.exit("REFUSED: --library is required")
     if a.op == "refile-lib" and a.library == "msvc-crt":
         sys.exit("REFUSED: CRT rows are refiled by crt-waive")
+    if (a.op == "waive-lib") != (a.library in PNGZLIB):
+        sys.exit("REFUSED: waive-lib takes --library libpng-1.0.12|zlib-1.1.3 and nothing else does")
     if a.op == "add-rows" and not crt and not a.not_c4.strip():
         sys.exit("REFUSED: a Lua / qhull add needs --not-c4 (why the row is not libid C4)")
     if crt and not (a.lib and pathlib.Path(a.lib).is_file()):
@@ -303,6 +356,8 @@ def main():
         log, skipped = op_crt_waive(rows, hi, col, tsv_rows, cids, tsv, a.date, ev)
     elif a.op == "add-rows":
         log = op_add_rows(rows, hi, col, tsv_rows, a.library, cids, tsv, a.date, ev, a.not_c4.strip())
+    elif a.op == "waive-lib":
+        log, skipped = op_waive_lib(rows, hi, col, tsv_rows, a.library, tsv, a.date, ev)
     else:
         log, skipped = op_refile_lib(rows, hi, col, tsv_rows, a.library, tsv, a.date, ev)
     refiled = sum(1 for l in log if "refiled" in l)
