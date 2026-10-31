@@ -1,0 +1,8 @@
+rva	class	reason
+0x00414f00	a?	x87 operand order: x and z parts of a V3 subtract are fld b; fsubr a in the original, fld a; fsub b in ours (y matches); ~20 rewrites + 197 permuter compiles did not move it
+0x0044c4f0	a?	1 store scheduled after 2 pushes; 4 spellings + 2 permuter runs (148 variants each) did not move it
+0x00475a00	a?	SIB base/index order of 2 stores (orig [edi+edx], ours [edx+edi]); registers and operations identical (regs 100%); 9 source forms + 126 permuter compiles
+0x00457100	a?/b	one block 0x0045722e..0x00457291: operand order of local*global multiplies and push/fstp interleave; literal-vs-named constant choice moves it partly
+0x0045cd30	b	pointer kept in EDX across the call to 0x0045c820 not reproduced; loop induction set, frame size (0x14 vs 4) and switch-block placement open
+0x0045e990	a?	2 spots where the original moves integer loads/stores into the fsub->fstp window (x87 latency scheduling); the 6 x87-free repeated blocks match
+0x004783f0	a?/c	one block issues one fld before lea/lea/push; 6 reshapes, /G6 /GB, 580 permuter compiles did not reproduce it, but moving an unrelated store does reorder it; Ghidra size also cuts the last 7 instructions

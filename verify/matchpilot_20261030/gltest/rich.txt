@@ -1,0 +1,6 @@
+commands (tools/vc7ddk/bin): cl /nologo /c /O2 /Foplain.obj a.c ; cl /nologo /c /O2 /GL /Fogl.obj a.c ;
+ link /nologo /NODEFAULTLIB /ENTRY:entry /SUBSYSTEM:CONSOLE [/LTCG] /OUT:{plain,gl}.exe {plain,gl}.obj
+Rich header (prodid, build, count):
+plain.exe: [(28, 9178, 1), (61, 9210, 1)]
+gl.exe: [(43, 9178, 1), (61, 9210, 1)]
+MASHED.exe.unpatched: [(18, 8444, 6), (42, 8803, 3), (48, 9044, 349), (39, 9162, 3), (64, 9466, 57), (37, 8755, 2), (29, 9178, 49), (28, 9178, 8), (25, 9210, 19), (1, 0, 188), (29, 9466, 18), (28, 9466, 373), (69, 9466, 1), (61, 9466, 1)]
