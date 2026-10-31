@@ -156,5 +156,10 @@ Folder `D:/MashedWT/D5-KNOBS-E3-GEOM-AI_data/` (sha256):
   no longer turn the LUT normalize / PC_24 scope on inside MASHED.exe, and `MASHED_NO_RW_SSE_POINTS=1` no longer selects
   the x87 order. `git grep` finds no script under `re/frida/` or `scripts/` that sets them. No hook body's C-level
   moves, and no tracker row was touched.
-- **Refresh.** `orch/integration` was still `f6d48c932` (the branch base) when the gates finished, so there was nothing
-  to merge. D5-KNOBS-AI-TICK-FIRST had not merged. The gated exe is the branch's tree.
+- **Refresh.** After the gates the branch merged `orch/integration` @ `5cf5cdd63` (merge `f1ff8a8a9`, no conflict).
+  Upstream had merged MATCH-S02 and MATCH-RUBRIC: 33 `mashedmod/` files (matched sources for slice
+  0x004099a0..0x00412100 and 20 port body swaps), none of them a file this branch edits. The refreshed tree builds
+  (`=== Build OK ===`, 0 `error C` / `LNK`), rva-lint 0 NEW, exe sha256 `16f37188` (the gated exe was `17aecd53`,
+  built before the MATCH-S02 swaps), and the 10 names still occur 0 times in the source reads and in the exe. The
+  gates were not re-run on the refreshed exe, and the merge train gates the merged tree. D5-KNOBS-AI-TICK-FIRST had
+  not merged at refresh time.
