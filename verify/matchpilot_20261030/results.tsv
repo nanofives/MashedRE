@@ -1,0 +1,51 @@
+rva	size	subsystem	group	stratum	raw_g2s%	best%	regs%	ops%	source	class	reason
+0x00404e50	33	save	save	small	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x00407a40	17	ai	ai	small	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x00422af0	21	render	render	small	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x00426d00	22	frontend	frontend	small	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x00426df0	7	frontend	frontend	small	50.0	100.0	100.0	100.0	f_small_a.c	-	
+0x00429840	24	ai	ai	small	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x00431b20	15	audio	audio	small	10.0	100.0	100.0	100.0	f_small_a.c	-	
+0x0045c850	16	gameplay	race	small	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x0045cc50	47	audio	audio	small	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x0046bce0	54	gameplay	race	small	86.7	100.0	100.0	100.0	a1_0046bce0.c	-	
+0x0046cbe0	44	vehicle	physics	small	83.3	100.0	100.0	100.0	f_small_a.c	-	
+0x0046dbe0	17	vehicle	physics	small	100.0	100.0	100.0	100.0	f_0046dbe0.c	-	
+0x00475ef0	49	render	render	small	75.0	100.0	100.0	100.0	a1_00475ef0.c	-	
+0x00482820	56	vehicle	physics	small	76.0	100.0	100.0	100.0	a2_00482820.c	-	
+0x00498d20	53	save	save	small	87.5	100.0	100.0	100.0	a2_00498d20.c	-	
+0x00414f00	274	ai	ai	medium	50.5	95.8	95.8	96.8	a1_00414f00.c	a?	x87 operand order: x and z parts of a V3 subtract are fld b; fsubr a in the original, fld a; fsub b in ours (y matches); ~20 rewrites + 197 permuter compiles did not move it
+0x00419090	96	gameplay	race	medium	57.9	100.0	100.0	100.0	a6_00419090.c	-	
+0x0041c380	130	render	render	medium	47.4	100.0	100.0	100.0	a7_0041c380.c	-	
+0x00422470	94	frontend	frontend	medium	compile	100.0	100.0	100.0	m_00422470.c	-	
+0x00422b50	75	ai	ai	medium	25.8	100.0	100.0	100.0	a5_00422b50.c	-	
+0x00423e60	127	frontend	frontend	medium	50.0	100.0	100.0	100.0	f_00423e60.c	-	
+0x004298e0	226	hud	frontend	medium	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x0043df00	204	frontend	frontend	medium	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x0044c4f0	250	render	render	medium	23.3	98.8	98.8	98.8	a2_0044c4f0.c	a?	1 store scheduled after 2 pushes; 4 spellings + 2 permuter runs (148 variants each) did not move it
+0x00456760	279	vehicle	physics	medium	47.9	100.0	100.0	100.0	a3_00456760.c	-	
+0x00459400	128	gameplay	race	medium	20.3	100.0	100.0	100.0	a7_00459400.c	-	
+0x0045d250	220	audio	audio	medium	65.0	100.0	100.0	100.0	a4_0045d250.c	-	
+0x004645c0	171	audio	audio	medium	65.0	100.0	100.0	100.0	a1_004645c0.c	-	
+0x0046c5f0	210	vehicle	physics	medium	50.0	100.0	100.0	100.0	a5_0046c5f0.c	-	
+0x0046d510	84	ai	ai	medium	92.9	100.0	100.0	100.0	a2_0046d510.c	-	
+0x00475a00	91	render	render	medium	93.1	93.1	100.0	100.0	a3_00475a00.c	a?	SIB base/index order of 2 stores (orig [edi+edx], ours [edx+edi]); registers and operations identical (regs 100%); 9 source forms + 126 permuter compiles
+0x00483ca0	102	vehicle	physics	medium	29.8	100.0	100.0	100.0	a4_00483ca0.c	-	
+0x00498d60	219	save	save	medium	67.6	100.0	100.0	100.0	a6_00498d60.c	-	
+0x00499170	128	save	save	medium	92.2	100.0	100.0	100.0	a5_00499170.c	-	
+0x00499740	100	save	save	medium	compile	100.0	100.0	100.0	a6_00499740.c	-	
+0x00410510	812	save	save	large	37.6	100.0	100.0	100.0	a5_00410510.c	-	
+0x00423040	556	frontend	frontend	large	53.3	100.0	100.0	100.0	a6_00423040.c	-	
+0x00424920	608	frontend	frontend	large	100.0	100.0	100.0	100.0	g2s_raw	-	
+0x004260e0	525	render	render	large	10.3	100.0	100.0	100.0	a7_004260e0.c	-	
+0x0042b310	548	frontend	frontend	large	57.1	100.0	100.0	100.0	a7_0042b310.c	-	
+0x00430290	987	save	save	large	41.3	100.0	100.0	100.0	a3_00430290.c	-	
+0x00432080	417	vehicle	physics	large	36.4	100.0	100.0	100.0	a1_00432080.c	-	
+0x00457100	1285	gameplay	race	large	17.8	97.7	97.7	96.8	a2_00457100.c	a?/b	one block 0x0045722e..0x00457291: operand order of local*global multiplies and push/fstp interleave; literal-vs-named constant choice moves it partly
+0x0045cd30	563	audio	audio	large	29.1	51.4	62.6	82.7	a6_0045cd30.c	b	pointer kept in EDX across the call to 0x0045c820 not reproduced; loop induction set, frame size (0x14 vs 4) and switch-block placement open
+0x0045e990	1610	audio	audio	large	44.6	99.3	99.3	99.3	a1_0045e990.c	a?	2 spots where the original moves integer loads/stores into the fsub->fstp window (x87 latency scheduling); the 6 x87-free repeated blocks match
+0x004715a0	456	ai	ai	large	46.3	100.0	100.0	100.0	a3_004715a0.c	-	
+0x004783f0	482	ai	ai	large	19.3	90.8	90.8	93.0	a4_004783f0.c	a?/c	one block issues one fld before lea/lea/push; 6 reshapes, /G6 /GB, 580 permuter compiles did not reproduce it, but moving an unrelated store does reorder it; Ghidra size also cuts the last 7 instructions
+0x00478cf0	824	track	race	large	69.7	100.0	100.0	100.0	a4_00478cf0.c	-	
+0x0047f4c0	523	physics	physics	large	58.0	100.0	100.0	100.0	a5_0047f4c0.c	-	
+0x00493710	430	render	render	large	68.3	100.0	100.0	100.0	a2_00493710.c	-	
