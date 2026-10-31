@@ -19,13 +19,8 @@
 // ref: re/analysis/hud_frontend_d3/0x0040ad20.md
 // ---------------------------------------------------------------------------
 
-// 0x0040ad20
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendGlobalGet() {
-    // 0x008a95ac: global read address (cited at RVA 0x0040ad20)
-    return *reinterpret_cast<const std::uint32_t*>(0x008a95acu);
-}
-
-RH_ScopedInstall(FrontendGlobalGet, 0x0040ad20);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
+// MATCH-S02: the body of 0x0040ad20 (FrontendGlobalGet) moved to Match/MatchS02_0040ad20.cpp,
+// which compiles the byte-matched source re/match/s02/0040ad20.c.
 
 // ---------------------------------------------------------------------------
 // FrontendArrayGet  --  0x0040b6c0
@@ -39,11 +34,5 @@ RH_ScopedInstall(FrontendGlobalGet, 0x0040ad20);  // re-enabled 2026-05-24 (pre-
 // ref: re/analysis/hud_frontend_d3/0x0040b6c0.md
 // ---------------------------------------------------------------------------
 
-// 0x0040b6c0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendArrayGet(int param_1) {
-    // 0x0040b6c3: indexed array base address 0x008a94f0
-    const std::uint32_t* arr = reinterpret_cast<const std::uint32_t*>(0x008a94f0u);
-    return arr[static_cast<std::uint32_t>(param_1)];
-}
-
-RH_ScopedInstall(FrontendArrayGet, 0x0040b6c0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
+// MATCH-S02: the body of 0x0040b6c0 (FrontendArrayGet) moved to Match/MatchS02_0040b6c0.cpp,
+// which compiles the byte-matched source re/match/s02/0040b6c0.c.

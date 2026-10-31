@@ -163,30 +163,5 @@ extern "C" __declspec(dllexport) void __cdecl PerCarSnapshotInit(void) {
 }
 RH_ScopedInstall(PerCarSnapshotInit, 0x004248b0);  // re-enabled 2026-05-24 c3-vehicle
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00411d60  ReplayCheckTimer
-// Body (0x00411d60..0x00411d87): 39 bytes, no callees except GetRaceSubMode (C3).
-//
-// Ghidra decomp:
-//   if (FUN_0042f6a0() == 2 &&
-//       DAT_0063bb14 != 0 &&
-//       *(int *)(DAT_0063bb14 + 0x194) == 0) {
-//       DAT_007f0ff4 = 0;
-//   }
-//
-// Purpose: In Time Trial mode (mode==2), if the current-lap replay buffer exists
-// and its first-frame-written flag (+0x194) is not yet set, zero the global tick
-// counter. Effect: holds tick=0 until the first replay frame is written.
-//
-// At quiescent main menu: mode != 2 → first gate fails → no write.
-// Callee: GetRaceSubMode (0x0042f6a0, C3).  Not a live-state mutator at menu.
-// Anti-island: caller chain through replay-record path (Replay.cpp, C3).
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) void __cdecl ReplayCheckTimer(void) {
-    if (GetRaceSubMode_() != 2) return;
-    const std::uint32_t cur_ptr = rd32(kDat_0063bb14);
-    if (cur_ptr == 0u) return;
-    if (*reinterpret_cast<const std::int32_t*>(cur_ptr + kOffset_0x194) != 0) return;
-    rw32(kDat_007f0ff4) = 0u;
-}
-RH_ScopedInstall(ReplayCheckTimer, 0x00411d60);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S02: the body of 0x00411d60 (ReplayCheckTimer) moved to Match/MatchS02_00411d60.cpp,
+// which compiles the byte-matched source re/match/s02/00411d60.c.
