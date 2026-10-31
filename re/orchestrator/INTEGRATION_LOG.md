@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-31 11:39 HB-BUILDBAT-DSOUNDLIB (orch/HB-BUILDBAT-DSOUNDLIB): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_101859
 - 2026-10-30 22:06 D5-FLIP-SAVE-FIRSTRUN (orch/D5-FLIP-SAVE-FIRSTRUN): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_213512
 - 2026-10-30 20:51 D5-FLIP-RFLAME-SORT (orch/D5-FLIP-RFLAME-SORT), D5-KNOBS-D-SEEDED6 (orch/D5-KNOBS-D-SEEDED6): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_201658
 - 2026-10-30 19:30 D5-KNOBS-E1-PHYS-A4A5 (orch/D5-KNOBS-E1-PHYS-A4A5), D5-FLIP-MUSIC-NOCDAUDIO (orch/D5-FLIP-MUSIC-NOCDAUDIO), D5-SHIM-GUARD-DSOUND (orch/D5-SHIM-GUARD-DSOUND): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261030_185615
