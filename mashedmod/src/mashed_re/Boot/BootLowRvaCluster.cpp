@@ -158,62 +158,9 @@ static std::uint32_t* const g_DAT_00636af8 =
 
 
 
-// ============================================================================
-// VtableTeardown_114c0  --  0x004114c0
-//
-// Original: FUN_004114c0 (26 bytes). `undefined4 FUN_004114c0(void)`.
-// Single vtable-dispatched call; hard-coded return 1.
-//
-// Body (verbatim from analysis note 0x004114c0.md):
-//   (*(*(DAT_007d3ff8 + 0x10c)))(DAT_008a94a8);   // vtable call: obj@DAT_007d3ff8, slot +0x10c
-//   return 1;
-//
-// Constants cited:
-//   0x004114c0 decomp  0x007d3ff8  — global holding vtable-pointer
-//   0x004114c0 decomp  0x10c       — vtable byte offset (dword slot 67)
-//   0x004114c0 decomp  0x008a94a8  — argument global passed to the vtable method
-//   0x004114c0 decomp  1           — hard-coded return value
-//
-// No stubs. Vtable slot +0x10c semantics unknown; recorded as teardown-side
-// dispatch per C1 plate annotation. No new uncertainties.
-// ============================================================================
-
-// Globals for VtableTeardown_114c0
-// DAT_007d3ff8 — pointer-to-vtable; reading *DAT_007d3ff8 gives the vtable base pointer.
-static void** const g_DAT_007d3ff8 =
-    reinterpret_cast<void**>(0x007d3ff8u);
-// DAT_008a94a8 — argument passed to the vtable method (opaque global handle).
-static void* const* const g_DAT_008a94a8 =
-    reinterpret_cast<void* const*>(0x008a94a8u);
-
-// Vtable-method typedef: void(__cdecl*)(void* arg) — observed signature from body.
-using VtableSlot10c_t = void (__cdecl*)(void*);
-
-// 0x004114c0
-extern "C" __declspec(dllexport)
-std::int32_t __cdecl VtableTeardown_114c0()
-{
-    // 0x004114c0 decomp: (*(*(DAT_007d3ff8 + 0x10c)))(DAT_008a94a8)
-    // Step 1: load vtable base from *DAT_007d3ff8
-    std::uintptr_t vtable_base =
-        *reinterpret_cast<std::uintptr_t*>(
-            *reinterpret_cast<std::uintptr_t*>(0x007d3ff8u));
-
-    // Step 2: index the vtable at byte offset +0x10c (= dword slot 67)
-    VtableSlot10c_t fn = *reinterpret_cast<VtableSlot10c_t*>(vtable_base + 0x10cu);
-
-    // Step 3: call with DAT_008a94a8 as the argument
-    fn(*reinterpret_cast<void**>(0x008a94a8u));
-
-    // 0x004114c0 decomp: return 1 (hard-coded teardown-succeeded signal)
-    return 1;
-}
-
-// MASS-DISABLED 2026-05-24 needs-canonical-vtable-state: RH_ScopedInstall(VtableTeardown_114c0, 0x004114c0);
-// Phase A2 audit 2026-05-24: function derefs *DAT_007d3ff8 (renderer vtable
-// global). At diff-attach time the global may be NULL or stale; calling
-// dereferences uninitialised state. Canonical-scenario at teardown is the
-// proper validation. NO-ENTRY in registry — synthetic test infeasible.
+// MATCH-L68-SWAP: the body of 0x004114c0 (VtableTeardown_114c0) moved to Match/MatchS02_004114c0.cpp,
+// which compiles the byte-matched source re/match/s02/004114c0.c. The old body here added one dereference
+// (it called [[[0x007d3ff8]]+0x10c]; the original calls [[0x007d3ff8]+0x10c]). No install, no exe callers.
 
 
 // ============================================================================
