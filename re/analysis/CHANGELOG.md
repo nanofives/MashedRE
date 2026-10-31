@@ -26,6 +26,25 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-31  0x0040ad20  FrontendGlobalGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040ad30  UtilSet8a95ac  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b250  UtilReset8a9500  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b430  UtilFieldAdd8a94f0  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b620  SlotSortByModeScore  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b6b0  ModeScoreGetBySlot  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b7a0  HotkeyStringBaseGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b7b0  PlayerHotkeyTableGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b810  TimerGlobalsReset  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040d250  DoubleDerefIndexedGetter  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x00411d60  ReplayCheckTimer  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b6c0  FrontendArrayGet  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b6d0  UtilArrayGet8a94e0  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040e340  GetLiveCarCount  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040bb70  SpriteLookupTableA  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040bb90  SpriteLookupTableB  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040e3a0  PlayerColorTableGet  C3->C3 raw-address forwarder stubs, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040dfc0  HudIngameDispatch  C3->C3 raw-address forwarder stubs, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040e370  IsCarSlotActive  C3->C3 exe-callers>0 but second exe body TG_40e370 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
 2026-10-31 | rubric | MATCH-RC-CALLERLESS-FIX: correction to the MATCH-RUBRIC 'Callerless bodies' clause (L-68, Mariano 2026-10-31): a match row is C4 only when mashed_re.exe calls the swapped-in body. exe-callers=0 swaps keep the swap and match evidence, stay below C4, note 'match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)'. re/CONFIDENCE.md and re-classify SKILL.md edited. No merged match-route C4 exists on orch/integration (hooks.csv has 0 c4=match rows), so no demotions | verify/matchcallerlessfix_20261031/RESULT_MATCH-RC-CALLERLESS-FIX.md
 2026-10-30  D-11062  DEFERRED  Active->struck  the boot movies of FUN_00402750 (FUN_00495350 four logo movies, FUN_00494c80 small.mpg build-only) are ported as RunBootIntroMovies and MASHED_INTRO_MOVIES is default ON (L-63, Mariano 2026-10-30), default gates unchanged on the ON build; movie audio untested, carried as U-9799 (evidence: verify/intromovies_20261030/RESULT_D5-INTROMOVIES-FLIP.md)
 2026-10-30  U-9799  UNCERTAINTIES  filed  boot movie audio untested (no audio endpoint on LIVING-PC; audio_hr 0x80040256 / 0x00000001), named residue of D-11062 at the MASHED_INTRO_MOVIES flip (L-63), verify/intromovies_20261030/RESULT_D5-INTROMOVIES-FLIP.md
