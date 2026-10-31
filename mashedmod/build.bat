@@ -208,7 +208,9 @@ REM shim DLLs, or rename them (mv d3d9.dll d3d9.dll.bak) before the run.
 REM This file's exe target intentionally does NOT depend on the shim DLLs.
 REM D5-SHIM-GUARD (2026-10-30): d3d9.dll and dinput8.dll are /DELAYLOAD-ed and
 REM exe_main.cpp's __pfnDliNotifyHook2 loads them with LOAD_LIBRARY_SEARCH_SYSTEM32,
-REM so the standalone no longer binds a proxy beside it. The rename loop below
+REM so the standalone no longer binds a proxy beside it. dsound.dll is no longer
+REM imported either (D5-SHIM-GUARD-DSOUND: DllGuard.h, loaded from System32 in
+REM WinMain), so dsound.lib is off the link line. The rename loop below
 REM stays as belt and braces for the build dir.
 echo === Building mashed_re.exe (B9: frontend + HUD + math + vehicle clusters) ===
 pushd "%SRC%"
@@ -245,7 +247,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
     /DELAYLOAD:d3d9.dll /DELAYLOAD:dinput8.dll ^
-    user32.lib d3d9.lib dsound.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"
+    user32.lib d3d9.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
