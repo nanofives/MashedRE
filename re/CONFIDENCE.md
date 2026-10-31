@@ -100,6 +100,48 @@ Every row in `hooks.csv` carries a confidence label `C0..C4`. Promotion is one-w
 - All F-DoD criteria satisfied (see `ROADMAP.md`).
 - The function is canonical reference material; lower-confidence callers can lean on it.
 
+### C4 routes by byte match (user decision, Mariano 2026-10-31)
+
+A C4 row is reached by **one** of three routes. The frida route is everything above (clean `diff-original` plus the
+Write-set leg). The two routes below are static: they certify that the port *is* the original's source, so a runtime
+diff is not the evidence. Both are recorded in `hooks.csv` `notes` and in the `re-classify` evidence fields (`match`,
+`libid`). Tools: `re/tools/match/`. Measurements: `verify/matchpilot_20261030/RESULT_MATCH-PILOT.md`,
+`verify/libidentity_20261030/RESULT_LIB-IDENTITY.md`.
+
+- **`match` (game code).** C4 only when all three hold:
+  1. The reconstructed source is **byte-identical** under `re/tools/match/match.py` (relocated operands masked) with
+     the XP DDK compiler, `cl` 13.00.9176 / `c2` 13.00.9178 (`tools/vc7ddk`), and the recorded flags (game code
+     `/O2 /GS /Ob1`, as C, x87; `/G5` breaks game code).
+  2. `mashed_re.exe` uses **that source as the function's body**: one body per RVA (the `lint_rva_bodies.py` rule),
+     both targets where the RVA is hooked, and physics TUs listed in `mashedmod/x87_tus.txt`. A matched source that
+     the exe does not compile is not C4.
+  3. The merge-train gates are **unchanged** after the body is swapped in (`gctrl.ref` / `b.ref` in
+     `re/orchestrator/merge_train.json`). A body swap that moves a gate hash is a real port divergence, not a failure
+     of the rule: file it as an L-n decision.
+
+  A matched source alone is not C4. A naked inline-asm transcription is not match evidence (it matches by
+  construction); an inline `__asm` block inside a compiled C body is.
+- **`libid` (vendored library code: Lua 4.0, qhull 2002.1).** C4 when the library object's function is **identical**
+  to the image (`re/tools/match/libmatch.py`: every byte equal except relocation sites, relocations into the same
+  function checked, ambiguous names excluded) **and** the port gets the function from that same vendored library
+  source, built with the recorded flags (Lua `/O2 /Ob1 /G5`, qhull `/O2 /G5`). Identity without the port using the
+  source is not C4.
+- **CRT rows.** `libid` does not apply to a CRT function the port gets from the platform CRT: the port links the
+  platform CRT by design, so the "same vendored source" condition is false even when the DDK `libcmt.lib` member is
+  identical to the original's bytes. Such a row could use `libid` only if the build linked that DDK member (it does
+  not). It stays on the frida route, or is waived at library level by a user decision (L-n filed by MATCH-RUBRIC).
+  Record the identity in `notes` (`libid-identical, port=platform CRT`) as a witness, not as C4.
+
+**How the Write-set leg relates.** The Write-set leg is a **frida-route leg** only: it exists because a clean race diff
+cannot show stores that land outside the sampled memory. It is not an extra requirement of `match` or `libid`. Byte
+identity discharges it for the function's **own** stores: identical bytes (same instructions, same operands up to
+relocation) compiled into the exe as the body perform identical stores for identical inputs, so there is nothing left
+to compare in the body. What identity does **not** cover, and what gate (3) therefore carries: (a) callees, which are
+whatever the exe links at the masked call target and keep their own level; (b) global and heap state, because a
+relocation is masked and a store through a global of the wrong address or layout in the port is invisible to the match;
+(c) inputs from state the port computes differently. Where a matched row has callees or globals that no gate exercises,
+say so in `notes`: the row is still C4 by this route, but it is not evidence for those callees or globals.
+
 ## Which copy the evidence covers (clause added 2026-09-29)
 
 **C3/C4 evidence names the copy it covers.** The project builds two targets from two

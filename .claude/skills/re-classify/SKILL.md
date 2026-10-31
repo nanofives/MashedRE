@@ -35,6 +35,7 @@ For each promotion request, the skill **must** check the corresponding gate from
 | C2 | decomp read end-to-end; `re/analysis/<sub>/<func>.md` exists with shape (args/return/reads/writes), every const/offset cited; NO-GUESSING |
 | C3 | semantics stated; reimplementation lives at `mashedmod/src/mashed_re/...`; build is clean; hooked via `RH_ScopedInstall`; runtime-toggleable; at least one caller AND one callee at C2+ |
 | C4 | `diff-original` CSV produced; clean diff vs original; no stubs in this function's body |
+| C4 (static) | `match` or `libid` evidence, see "Evidence types `match` and `libid`" below; no stubs in the body |
 
 For each refusal, the skill states **exactly which gate criterion failed** and what evidence would unblock it.
 
@@ -114,6 +115,29 @@ py -3.12 re\tools\uncertainty_resolve.py resolve --reason "<why>" --evidence "<r
   and a cell containing ` | ` or a newline. Nothing is written unless every ID passes.
 - Only `## Active uncertainties` is touched. Line endings are preserved per line (the file mixes LF and CRLF).
 - Self-test: `py -3.12 -m pytest re/tools/tests/test_uncertainty_resolve.py` (fake repo root, real trackers untouched).
+
+## Evidence types `match` and `libid` (C4 by byte match, 2026-10-31)
+
+A C4 request may carry evidence type `match` or `libid` instead of a `diff-original` CSV. Gate text: `re/CONFIDENCE.md`,
+"C4 routes by byte match". Required fields; refuse and name the missing one if any is absent:
+
+| field | `match` | `libid` |
+|---|---|---|
+| tool command | the exact `match.py` command line | the exact `libmatch.py` command line |
+| compiler build | `cl` 13.00.9176 / `c2` 13.00.9178 (XP DDK) | same, or the DDK `libcmt.lib` member's `@comp.id` |
+| flags | recorded flags (game code `/O2 /GS /Ob1`, C) | recorded flags (Lua `/O2 /Ob1 /G5`, qhull `/O2 /G5`) |
+| matched source path + sha | reconstructed source file + sha256 | vendored library source file + sha256 |
+| port body file | the TU in `mashed_re.exe` (and the `.asi` TU where hooked) that compiles that same source | the TU that compiles that vendored source |
+
+Checks before stamping C4:
+- `match`: the tool reports 100% (byte-identical after relocation masking) for that RVA; the port body file is the
+  matched source or includes it (`exe_file == file`, lint clean, physics TU in `x87_tus.txt`); the merge-train gates
+  are unchanged after the swap (cite the gate hashes). A matched source the port does not compile, or a naked
+  inline-asm transcription, is refused.
+- `libid`: status `identical` and not `ambiguous` in the libmatch TSV; the port body file compiles that vendored
+  source. A CRT row served by the platform CRT is refused (see the rubric); keep it at its level.
+- The Write-set leg is not asked for on these routes.
+- `hooks.csv` `notes` gets `c4=match` or `c4=libid` plus the source sha; the CHANGELOG evidence column cites the RESULT.
 
 ## CSV row format reminder
 
