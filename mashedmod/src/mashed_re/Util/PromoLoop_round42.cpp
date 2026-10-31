@@ -18,11 +18,8 @@
 
 #include <cstdint>
 
-// 0x0041f300  imul 0x2ac; [eax+0x0063dc6c]
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table63dc6cGet(std::uint32_t param_1) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0063dc6cu + param_1 * 0x2acu);  // cited at 0x0041f300
-}
-RH_ScopedInstall(Table63dc6cGet, 0x0041f300);
+// MATCH-S04: the body of 0x0041f300 (Table63dc6cGet) moved to Match/MatchS04_0041f300.cpp,
+// which compiles the byte-matched source re/match/s04/0041f300.c.
 
 // 0x00407a40  imul 0x30c; [eax+0x008a9640]
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Table8a9640Get(std::uint32_t param_1) {

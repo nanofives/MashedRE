@@ -15,11 +15,8 @@
 
 #include <cstdint>
 
-// 0x0041f100  imul 0x2ac; fld [eax+0x0063dc64]
-extern "C" __declspec(dllexport) float __cdecl FloatTable63dc64Get(std::uint32_t param_1) {
-    return *reinterpret_cast<const float*>(0x0063dc64u + param_1 * 0x2acu);  // cited at 0x0041f100
-}
-RH_ScopedInstall(FloatTable63dc64Get, 0x0041f100);
+// MATCH-S04: the body of 0x0041f100 (FloatTable63dc64Get) moved to Match/MatchS04_0041f100.cpp,
+// which compiles the byte-matched source re/match/s04/0041f100.c.
 
 // 0x0044e050  imul 0xf8; fld [eax+0x008900a8]
 extern "C" __declspec(dllexport) float __cdecl FloatTable8900a8Get(std::uint32_t param_1) {

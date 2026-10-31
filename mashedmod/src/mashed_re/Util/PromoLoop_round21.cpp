@@ -44,17 +44,8 @@
 //   U-1894: semantic of the 4-dword struct (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x0041f030
-extern "C" __declspec(dllexport) void __cdecl TriggerStructRead(int param_1, std::uint32_t* param_2) {
-    // 0x0063dc38 base + 0x2ac stride cited at 0x0041f030 body.
-    const std::uint32_t off = static_cast<std::uint32_t>(param_1) * 0x2acu;
-    param_2[0] = *reinterpret_cast<const std::uint32_t*>(0x0063dc38u + off);
-    param_2[1] = *reinterpret_cast<const std::uint32_t*>(0x0063dc3cu + off);
-    param_2[2] = *reinterpret_cast<const std::uint32_t*>(0x0063dc40u + off);
-    param_2[3] = *reinterpret_cast<const std::uint32_t*>(0x0063dc44u + off);
-}
-
-RH_ScopedInstall(TriggerStructRead, 0x0041f030);
+// MATCH-S04: the body of 0x0041f030 (TriggerStructRead) moved to Match/MatchS04_0041f030.cpp,
+// which compiles the byte-matched source re/match/s04/0041f030.c.
 
 // ---------------------------------------------------------------------------
 // WorldMatrixCopy  --  0x0041f260   (subsystem: util)
@@ -79,16 +70,5 @@ RH_ScopedInstall(TriggerStructRead, 0x0041f030);
 // Callers: FUN_00421d20 (util C2), FUN_0040d8f0 (gameplay C2), and others. Leaf.
 // ---------------------------------------------------------------------------
 
-// 0x0041f260
-extern "C" __declspec(dllexport) void __cdecl WorldMatrixCopy(int param_1, std::uint32_t* param_2) {
-    // 0x0063dc4c base + 0x2ac stride, +4 sub, +0x10 matrix cited at 0x0041f260 body.
-    const std::uint32_t off = static_cast<std::uint32_t>(param_1) * 0x2acu;
-    const std::uint32_t p0  = *reinterpret_cast<const std::uint32_t*>(0x0063dc4cu + off);
-    const std::uint32_t sub = *reinterpret_cast<const std::uint32_t*>(p0 + 4u);
-    const std::uint32_t* src = reinterpret_cast<const std::uint32_t*>(sub + 0x10u);
-    for (int k = 0; k < 16; k++) {
-        param_2[k] = src[k];
-    }
-}
-
-RH_ScopedInstall(WorldMatrixCopy, 0x0041f260);
+// MATCH-S04: the body of 0x0041f260 (WorldMatrixCopy) moved to Match/MatchS04_0041f260.cpp,
+// which compiles the byte-matched source re/match/s04/0041f260.c.

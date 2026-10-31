@@ -37,8 +37,5 @@ extern "C" __declspec(dllexport) void __cdecl GhostVec4Set63c6b0(std::uint32_t i
 }
 RH_ScopedInstall(GhostVec4Set63c6b0, 0x0041a550);
 
-// 0x0041ef60
-extern "C" __declspec(dllexport) void __cdecl PlayerFieldSet63dc78(std::uint32_t idx, std::uint32_t val) {
-    *reinterpret_cast<std::uint32_t*>(0x0063dc78u + idx * 0x2acu) = val;   // IMUL 0x2ac ; MOV [EAX+0x63dc78]
-}
-RH_ScopedInstall(PlayerFieldSet63dc78, 0x0041ef60);
+// MATCH-S04: the body of 0x0041ef60 (PlayerFieldSet63dc78) moved to Match/MatchS04_0041ef60.cpp,
+// which compiles the byte-matched source re/match/s04/0041ef60.c.

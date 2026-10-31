@@ -28,8 +28,5 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Table8aa300Get(std::uint3
 }
 RH_ScopedInstall(Table8aa300Get, 0x0045dd50);
 
-// 0x0041f320  8B 44 24 04 8B 04 85 30 D8 63 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table63d830Get(std::uint32_t param_1) {
-    return reinterpret_cast<const std::uint32_t*>(0x0063d830u)[param_1];  // cited at 0x0041f320
-}
-RH_ScopedInstall(Table63d830Get, 0x0041f320);
+// MATCH-S04: the body of 0x0041f320 (Table63d830Get) moved to Match/MatchS04_0041f320.cpp,
+// which compiles the byte-matched source re/match/s04/0041f320.c.

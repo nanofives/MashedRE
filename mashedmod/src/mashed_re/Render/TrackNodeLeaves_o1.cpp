@@ -66,35 +66,8 @@
 // ref: re/analysis/render_promote_c2_track_node/0x0041e870.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e870
-extern "C" __declspec(dllexport) void __cdecl TrackNodeRecordScan(int param_1)
-{
-    // Step 1: clear the global current track-descriptor pointer. [entry]
-    *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u) = 0u;
-
-    // Step 2: read iteration count; if zero or negative, return immediately. [0x0041e870 body]
-    std::int32_t count = *reinterpret_cast<std::int32_t*>(0x005f37a0u);
-    if (count <= 0) {
-        return;
-    }
-
-    // Step 3: scan array; last matching record wins. [0x0041e870 body]
-    // Array base: s_training_005f33f8 (0x005f33f8); stride: 0x48 (72 bytes/record).
-    const std::uintptr_t array_base  = 0x005f33f8u;
-    const std::uintptr_t record_stride = 0x48u;
-    const std::uintptr_t id_field_off  = 0x10u;  // int field at record+0x10
-
-    for (std::int32_t i = 0; i < count; ++i) {
-        std::uintptr_t record = array_base + static_cast<std::uint32_t>(i) * record_stride;
-        if (*reinterpret_cast<std::int32_t*>(record + id_field_off) == param_1) {
-            // Last match wins: overwrite with current matching record pointer.
-            *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u) = record;
-        }
-    }
-    // Returns void; side effect is DAT_0063d7e4 = last matching record, or NULL.
-}
-
-RH_ScopedInstall(TrackNodeRecordScan, 0x0041e870);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e870 (TrackNodeRecordScan) moved to Match/MatchS04_0041e870.cpp,
+// which compiles the byte-matched source re/match/s04/0041e870.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeFnPtrGet14  --  0x0041e9d0
@@ -119,15 +92,8 @@ RH_ScopedInstall(TrackNodeRecordScan, 0x0041e870);  // re-enabled 2026-05-24 c3-
 // Analysis note: re/analysis/render_promote_c2_track_node/0x0041e9d0.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e9d0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet14() {
-    // Read the current track-descriptor record pointer from DAT_0063d7e4.
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Return the dword at record+0x14.
-    return *reinterpret_cast<std::uint32_t*>(record + 0x14u);
-}
-
-RH_ScopedInstall(TrackNodeFnPtrGet14, 0x0041e9d0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e9d0 (TrackNodeFnPtrGet14) moved to Match/MatchS04_0041e9d0.cpp,
+// which compiles the byte-matched source re/match/s04/0041e9d0.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeFnPtrGet44  --  0x0041ea90
@@ -152,15 +118,8 @@ RH_ScopedInstall(TrackNodeFnPtrGet14, 0x0041e9d0);  // re-enabled 2026-05-24 c3-
 // Analysis note: re/analysis/render_promote_c2_track_node/0x0041ea90.md
 // ---------------------------------------------------------------------------
 
-// 0x0041ea90
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet44() {
-    // Read the current track-descriptor record pointer from DAT_0063d7e4.
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Return the dword at record+0x44.
-    return *reinterpret_cast<std::uint32_t*>(record + 0x44u);
-}
-
-RH_ScopedInstall(TrackNodeFnPtrGet44, 0x0041ea90);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041ea90 (TrackNodeFnPtrGet44) moved to Match/MatchS04_0041ea90.cpp,
+// which compiles the byte-matched source re/match/s04/0041ea90.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch14  --  0x0041e8b0
@@ -197,18 +156,8 @@ RH_ScopedInstall(TrackNodeFnPtrGet44, 0x0041ea90);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_node/0x0041e8b0.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e8b0
-extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch14()
-{
-    // Read the current track-descriptor record pointer from DAT_0063d7e4. [0x0041e8b0]
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Read the function pointer at record+0x14 and call through it. [0x0041e8b0 body]
-    typedef void(__cdecl* fn_t)();
-    fn_t fn = *reinterpret_cast<fn_t*>(record + 0x14u);
-    fn();
-}
-
-RH_ScopedInstall(TrackNodeDispatch14, 0x0041e8b0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e8b0 (TrackNodeDispatch14) moved to Match/MatchS04_0041e8b0.cpp,
+// which compiles the byte-matched source re/match/s04/0041e8b0.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch44  --  0x0041e970
@@ -239,18 +188,8 @@ RH_ScopedInstall(TrackNodeDispatch14, 0x0041e8b0);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_node/0x0041e970.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e970
-extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch44()
-{
-    // Read the current track-descriptor record pointer from DAT_0063d7e4. [0x0041e970]
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Read the function pointer at record+0x44 and call through it. [0x0041e970 body]
-    typedef void(__cdecl* fn_t)();
-    fn_t fn = *reinterpret_cast<fn_t*>(record + 0x44u);
-    fn();
-}
-
-RH_ScopedInstall(TrackNodeDispatch44, 0x0041e970);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e970 (TrackNodeDispatch44) moved to Match/MatchS04_0041e970.cpp,
+// which compiles the byte-matched source re/match/s04/0041e970.c.
 // ---------------------------------------------------------------------------
 // TrackNodeFnPtrGet18  --  0x0041e9e0
 //
@@ -278,15 +217,8 @@ RH_ScopedInstall(TrackNodeDispatch44, 0x0041e970);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_node/0x0041e9e0.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e9e0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet18() {
-    // Read the current track-descriptor record pointer from DAT_0063d7e4.  [0x0041e9e3]
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Return the dword at record+0x18.  [0x0041e9e9]
-    return *reinterpret_cast<std::uint32_t*>(record + 0x18u);
-}
-
-RH_ScopedInstall(TrackNodeFnPtrGet18, 0x0041e9e0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e9e0 (TrackNodeFnPtrGet18) moved to Match/MatchS04_0041e9e0.cpp,
+// which compiles the byte-matched source re/match/s04/0041e9e0.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch18  --  0x0041e8c0
@@ -323,17 +255,8 @@ RH_ScopedInstall(TrackNodeFnPtrGet18, 0x0041e9e0);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_node/0x0041e8c0.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e8c0
-extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch18() {
-    // Read the current track-descriptor record pointer from DAT_0063d7e4.  [0x0041e8c2]
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Read fn-ptr at record+0x18 and call through it.  [0x0041e8c6]
-    typedef void (__cdecl *FnPtr_t)();
-    FnPtr_t fn = *reinterpret_cast<FnPtr_t*>(record + 0x18u);
-    fn();
-}
-
-RH_ScopedInstall(TrackNodeDispatch18, 0x0041e8c0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e8c0 (TrackNodeDispatch18) moved to Match/MatchS04_0041e8c0.cpp,
+// which compiles the byte-matched source re/match/s04/0041e8c0.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch24  --  0x0041e8f0
@@ -367,17 +290,8 @@ RH_ScopedInstall(TrackNodeDispatch18, 0x0041e8c0);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_node/0x0041e8f0.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e8f0
-extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch24() {
-    // Read the current track-descriptor record pointer from DAT_0063d7e4.  [0x0041e8f0]
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Read fn-ptr at record+0x24 and call through it.  [dispatch]
-    typedef void (__cdecl *FnPtr_t)();
-    FnPtr_t fn = *reinterpret_cast<FnPtr_t*>(record + 0x24u);
-    fn();
-}
-
-RH_ScopedInstall(TrackNodeDispatch24, 0x0041e8f0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e8f0 (TrackNodeDispatch24) moved to Match/MatchS04_0041e8f0.cpp,
+// which compiles the byte-matched source re/match/s04/0041e8f0.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeFieldCmp10  --  0x0041e9b0
@@ -407,17 +321,8 @@ RH_ScopedInstall(TrackNodeDispatch24, 0x0041e8f0);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_node/0x0041e9b0.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e9b0
-extern "C" __declspec(dllexport) int __cdecl TrackNodeFieldCmp10(int param_1) {
-    // Read the current track-descriptor record pointer from DAT_0063d7e4.  [0x0041e9b3]
-    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
-    // Read int at record+0x10; compare to param_1.  [0x0041e9ba]
-    std::int32_t field_val = *reinterpret_cast<std::int32_t*>(record + 0x10u);
-    // Return 1 if equal, 0 otherwise.
-    return (field_val == param_1) ? 1 : 0;
-}
-
-RH_ScopedInstall(TrackNodeFieldCmp10, 0x0041e9b0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e9b0 (TrackNodeFieldCmp10) moved to Match/MatchS04_0041e9b0.cpp,
+// which compiles the byte-matched source re/match/s04/0041e9b0.c.
 
 // ---------------------------------------------------------------------------
 // TrackNodeRecordFind  --  0x0041e980
@@ -458,29 +363,6 @@ RH_ScopedInstall(TrackNodeFieldCmp10, 0x0041e9b0);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_node/0x0041e980.md
 // ---------------------------------------------------------------------------
 
-// 0x0041e980
-extern "C" __declspec(dllexport) char* __cdecl TrackNodeRecordFind(int param_1) {
-    // Read iteration count; if zero or negative, return NULL immediately.  [loop guard]
-    std::int32_t count = *reinterpret_cast<std::int32_t*>(0x005f37a0u);
-    if (count <= 0) {
-        return nullptr;
-    }
-
-    // Scan array; return FIRST matching record pointer (early-exit).
-    // Array base: s_training_005f33f8 (0x005f33f8); stride: 0x48 (72 bytes/record).
-    const std::uintptr_t array_base    = 0x005f33f8u;
-    const std::uintptr_t record_stride = 0x48u;
-    const std::uintptr_t id_field_off  = 0x10u;  // int field at record+0x10
-
-    for (std::int32_t i = 0; i < count; ++i) {
-        std::uintptr_t record = array_base + static_cast<std::uint32_t>(i) * record_stride;
-        if (*reinterpret_cast<std::int32_t*>(record + id_field_off) == param_1) {
-            // First match: return immediately (no global write).
-            return reinterpret_cast<char*>(record);
-        }
-    }
-    return nullptr;
-}
-
-RH_ScopedInstall(TrackNodeRecordFind, 0x0041e980);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S04: the body of 0x0041e980 (TrackNodeRecordFind) moved to Match/MatchS04_0041e980.cpp,
+// which compiles the byte-matched source re/match/s04/0041e980.c.
 
