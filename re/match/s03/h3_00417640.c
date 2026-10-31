@@ -11,8 +11,8 @@
    permuter (0 variants generated). d[0] -= o form made it worse (81.6%).
    Class: (a) compiler-version x87 scheduling (both spots: the original schedules an fld earlier, above an
    integer op, than 13.00.9176/9178 does). */
-#ifndef MATCH_PORT
 typedef struct Rec74 { int f0; char pad[0x70]; } Rec74;
+#ifndef MATCH_PORT
 extern Rec74 DAT_0089a52c[];
 extern float DAT_005cc72c;
 extern float DAT_005cc568;

@@ -28,7 +28,7 @@ int FUN_0040e470(int p0);
 float FUN_00442cc0(int p0);
 int FUN_0046d4a0(int *p0, int p1);
 #endif
-int FUN_004148b0(int unused1, int unused2, int *out, int car)
+int FUN_004148b0(int unused1, float *unused2, int *out, int car)
 {
   int n;
   int i;

@@ -25,7 +25,6 @@
    their caller (no /GL). caller_0041a060 and caller_00419530 are stand-ins for the real callers
    0x0041a060 / 0x00419530 (not matched, only there to give the statics their real call sites).
    Port: Rec6c / Rec54 / RGBA / Pair8 field names are mechanical (offsets), no semantics claimed. */
-#ifndef MATCH_PORT
 typedef struct Pair8 { int a; int b; } Pair8;
 typedef struct RGBA { unsigned char r, g, b, a; } RGBA;
 typedef struct Rec6c {
@@ -56,6 +55,7 @@ typedef struct Rec54 {
   int  f4c;
   int  f50;
 } Rec54;
+#ifndef MATCH_PORT
 extern Pair8 DAT_005f32b0[];
 extern Rec6c DAT_0063c018[4];
 extern Rec54 DAT_0063bf30[2];

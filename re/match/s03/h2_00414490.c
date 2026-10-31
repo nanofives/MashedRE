@@ -1,6 +1,9 @@
 // FLAGS: /O2 /GS /Ob1
 // MATCH: 0x00414490 FUN_00414490
-/* h2 0x00414490 (214 B). */
+/* h2 0x00414490 (214 B). Best: 100% BYTE-IDENTICAL (--bytes). Start (g2s) 82.6%.
+   Two V3 locals (h from FUN_0046d510, d = target - pos with y zeroed), both normalised by FUN_004c39b0
+   (float return discarded). The dot product only matches as `h.z*d.z + (d.y*h.y + h.x*d.x)`; all five
+   unparenthesised orders gave 94.2% (h.x*d.x and h.z*d.z products swapped). Class: none (exact). */
 typedef struct { float x, y, z; } V3;
 #ifndef MATCH_PORT
 extern int DAT_0088fc88[];
@@ -24,7 +27,7 @@ int FUN_00414490(int car, float *pos, int p3, float *target, int p5, float *out)
   d.z = target[1] - pos[1];
   FUN_004c39b0(&h, &h);
   FUN_004c39b0(&d, &d);
-  if (h.x * d.x + d.y * h.y + h.z * d.z > DAT_005cd090) {
+  if (h.z * d.z + (d.y * h.y + h.x * d.x) > DAT_005cd090) {
     out[0] = target[0];
     out[1] = target[1];
     return 1;

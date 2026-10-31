@@ -2,7 +2,7 @@
 
     py -3.12 verify/matchs03_20261031/collect.py
 
-Columns: rva, pct, byte_identical, file, sha256 (of the source file), command.
+Columns: rva, pct, byte_identical, file, sha256 (of the source, CRLF->LF normalized), command.
 """
 import hashlib, pathlib, re, subprocess, sys
 
@@ -28,7 +28,7 @@ for src in sorted((W / "re" / "match" / "s03").glob("*.c")):
 rows = []
 for rva, lst in sorted(best.items()):
     (sc, rel) = max(lst, key=lambda t: (t[0][2] == "y", t[0][1]))
-    sha = hashlib.sha256((W / rel).read_bytes()).hexdigest()
+    sha = hashlib.sha256((W / rel).read_bytes().replace(b"\r\n", b"\n")).hexdigest()   # LF-normalized (autocrlf)
     rows.append(f"{rva}\t{sc[1]:.1f}\t{sc[2]}\t{rel}\t{sha}\tpy -3.12 re/tools/match/match.py {rel} --bytes")
 OUT.write_text("rva\tpct\tbyte_identical\tfile\tsha256\tcommand\n" + "\n".join(rows) + "\n", encoding="utf-8")
 n = sum(1 for r in rows if r.split("\t")[2] == "y")

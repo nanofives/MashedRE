@@ -9,8 +9,8 @@
    live in ESI -> EDI). A first stand-in where ctx stayed live gave ctx=EDI / entry=ESI (50%).
    Port note: when #included, the real FUN_004128f0 port must be static in the same TU, defined first.
    Class: none (exact for 0x00413a00). */
-#ifndef MATCH_PORT
 typedef struct { int d[11]; } Ent2c;
+#ifndef MATCH_PORT
 extern Ent2c DAT_0089bea0[];
 extern int DAT_0063bc58;
 extern int DAT_008a94a0;

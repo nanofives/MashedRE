@@ -5,8 +5,8 @@
    0x0089d4a0 (quad -> two triangles: b, b+1, b+3, b, b+2, b+3 with b = i*4), stores written in index
    order (cl reorders them), then DAT_0063bc54 = FUN_0040bb30("headlight") (cdecl, string at 0x005cd040).
    Class: none (exact). */
-#ifndef MATCH_PORT
 typedef struct { short v[6]; } Idx6;
+#ifndef MATCH_PORT
 extern Idx6 DAT_0089d4a0[4096];
 extern int DAT_0063bc54;
 int FUN_0040bb30(const char *name);

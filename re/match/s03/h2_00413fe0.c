@@ -4,9 +4,9 @@
    for (i < 4) over the 0x74-stride table at 0x0089a4c0 (dword fields 11,12,13,1,2,3,4,18,23,24,25,26 zeroed in
    that order; cl strength-reduces to a pointer at +0x30) plus a 0x14-stride table at 0x008032d4 (+0 = 1000).
    Class: none (exact). */
-#ifndef MATCH_PORT
 typedef struct { int d[29]; } Rec74;
 typedef struct { int v; int p[4]; } Ent20;
+#ifndef MATCH_PORT
 extern Rec74 DAT_0089a4c0[4];
 extern Ent20 DAT_008032d4[4];
 extern int DAT_0089a36c;

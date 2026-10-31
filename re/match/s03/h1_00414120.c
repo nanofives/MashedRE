@@ -4,7 +4,6 @@
    Key: 0x0089a378..0x0089a4b3 must be ONE struct object. As separate globals (int or float, 2D, 1D,
    [][3], V3 struct rows, do-while) cl 13.00.9176 distributes the loop into rep stosd + rep movsd (6.2%).
    +0x4 is a float (stored as immediate 0, not via the edx zero). */
-#ifndef MATCH_PORT
 typedef struct G0089a378 {
     int a;             /* 0x0089a378 */
     float b;           /* 0x0089a37c */
@@ -12,6 +11,7 @@ typedef struct G0089a378 {
     int B[13][3];      /* 0x0089a384 */
     int A[13][3];      /* 0x0089a420 */
 } G0089a378;
+#ifndef MATCH_PORT
 extern G0089a378 DAT_0089a378;
 extern int DAT_005f2a70[13][3];
 #endif
