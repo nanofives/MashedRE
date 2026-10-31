@@ -1,0 +1,18 @@
+[rva-lint] 16 finding(s): CROSS-TARGET=16  |  allowlisted=16 NEW=0
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004177b0  exe-only Race/RuleEngine.cpp  vs  asi-only Ai/AiPreTick.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004769a0  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004769d0  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x004769f0  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a10  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a30  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a40  exe-only Render/RfxEmitter.cpp  vs  asi-only Render/FrameHelpers_q2.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476a80  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476ae0  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476b30  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476b90  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476be0  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476c10  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476c60  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476cb0  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint]   WARN (allowlisted) CROSS-TARGET 0x00476d00  exe-only Render/RfxEmitter.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+[rva-lint] OK -- no NEW duplicate bodies (16 known, tracked in re\tools\dual_copy_allowlist.txt)
