@@ -76,7 +76,6 @@ Mariano chose (a): merge the scanner and allowlist the 32 new keys. Branch refre
   Generated from the scanner's own findings, so key text matches the lint exactly.
 - `py -3.12 scripts/lint_rva_bodies.py` (the lint step at `mashedmod/build.bat:35`): `48 finding(s) ... allowlisted=48 NEW=0`, rc=0.
   The full `build.bat` compile was not run (text/tools pass); only the lint it invokes. `original\mashed_re_dev.asi` untouched.
-- 32 burn-down ledger rows added, section "D4 dual-copy", ids `D4-DC-INC-<rva8hex>`, wave 5. Where one RVA has both a
-  DUP-IN-TARGET and a CROSS-TARGET key (0x0040e470, 0x00426bb0) a single row covers both keys.
+- 32 burn-down ledger rows added, section "D4 dual-copy", ids `D4-DC-INC-<rva8hex>`, wave 5. The two RVAs with both a DUP-IN-TARGET and a CROSS-TARGET key (0x0040e470, 0x00426bb0) get a second row suffixed `-X` for the CROSS-TARGET key.
 - Gates not run (no behaviour change, no source body touched).
 - Needs Mariano: nothing (.ps1/.bat untouched).
