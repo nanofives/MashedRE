@@ -80,20 +80,31 @@ std::uint32_t Name5ea0c8(std::uint32_t i) {
 #define DAT_636AD0     (*reinterpret_cast<std::int32_t*>(0x00636ad0u))
 #endif
 
-// 0x00404e00
-extern "C" __declspec(dllexport) std::uint32_t __cdecl IdxPtr404e00(std::uint32_t p1) {
-    std::int32_t idx = TAB_639CC8(p1);                                             // [EAX*4+0x639cc8]
-    if (idx == -1) return 0;                                                       // CMP -1 / JNZ ; XOR EAX,EAX
-    return NAME_5EA0B8(static_cast<std::uint32_t>(idx));                           // [EAX*4+0x5ea0b8]
-}
+// 0x00404e00 / 0x00404e20: MATCH-S01 (2026-10-31). Both bodies are re/match/s01/00404e00.c, byte-identical to the
+// original under re/tools/match/match.py (verify/matchs01_20261031/RESULT_MATCH-S01.md), compiled here unchanged.
+// With MASHED_RE_PORT the file takes its tables from this TU: the original addresses in the .asi, the standalone
+// tables above in the exe (the replaced bodies read the same storage; they also bounds-checked the index, which the
+// original does not).
+#define MASHED_RE_PORT 1
+extern "C" {
+#define FUN_00404e00 IdxPtr404e00
+#define FUN_00404e20 IdxPtr404e20
+__declspec(dllexport) char* __cdecl IdxPtr404e00(int body);
+__declspec(dllexport) char* __cdecl IdxPtr404e20(int car, int wheel);
+#ifdef MASHED_STANDALONE
+#define DAT_00639cc8 (Tables().body)
+#define DAT_00636c08 (Tables().wheel)
+#define PTR_s_DirtBody_005ea0b8 ((char**)kBodyNames)
+#define PTR_s_DirtAdWheel_005ea0c8 ((char**)kWheelNames)
+#else
+#define DAT_00639cc8 ((int*)0x00639cc8u)
+#define DAT_00636c08 ((int*)0x00636c08u)
+#define PTR_s_DirtBody_005ea0b8 ((char**)0x005ea0b8u)
+#define PTR_s_DirtAdWheel_005ea0c8 ((char**)0x005ea0c8u)
+#endif
+#include "../../../../re/match/s01/00404e00.c"
+}  // extern "C"
 RH_ScopedInstall(IdxPtr404e00, 0x00404e00);
-
-// 0x00404e20
-extern "C" __declspec(dllexport) std::uint32_t __cdecl IdxPtr404e20(std::uint32_t p1, std::uint32_t p2) {
-    std::int32_t idx = TAB_636C08(p1 * 0x4eu + p2);                                // IMUL 0x4e ; ADD ; [EAX*4+0x636c08]
-    if (idx == -1) return 0;
-    return NAME_5EA0C8(static_cast<std::uint32_t>(idx));                           // [EAX*4+0x5ea0c8]
-}
 RH_ScopedInstall(IdxPtr404e20, 0x00404e20);
 
 // 0x0041f360

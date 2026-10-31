@@ -38,15 +38,8 @@
 // U-4200 (semantic meaning) non-blocking.
 // ---------------------------------------------------------------------------
 
-// 0x00408ad0
-extern "C" __declspec(dllexport) float __cdecl RaceScoreFloatGetBySlot(int param_1)
-{
-    // Read 32-bit float from DAT_008a96ec + param_1 * 0x30c. [0x00408ad3]
-    return *reinterpret_cast<float*>(
-        0x008a96ecu + static_cast<unsigned>(param_1) * 0x30cu);
-}
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00408ad0 RaceScoreFloatGetBySlot
 
-RH_ScopedInstall(RaceScoreFloatGetBySlot, 0x00408ad0);
 
 // ---------------------------------------------------------------------------
 // EntryTableScanByKey  --  0x00401570
@@ -59,28 +52,8 @@ RH_ScopedInstall(RaceScoreFloatGetBySlot, 0x00408ad0);
 //   index 0xe == +0x38 [0x0040157e]; stride 0x1a*4 = 0x68 [0x00401582]
 // ---------------------------------------------------------------------------
 
-// 0x00401570
-extern "C" __declspec(dllexport) void __cdecl EntryTableScanByKey(int param_1)
-{
-    // Output pointer global; initialized to base of table. [0x00401576]
-    auto& out_ptr = *reinterpret_cast<std::uint32_t**>(0x00636ac0u);
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00401570 EntryTableScanByKey
 
-    constexpr std::uintptr_t table_base = 0x00636578u;  // [0x00401573]
-    constexpr std::uintptr_t table_end  = 0x00636ac0u;  // exclusive [0x00401589]
-    constexpr std::size_t    stride     = 0x68u;        // = 0x1a*4 [0x00401582]
-
-    out_ptr = reinterpret_cast<std::uint32_t*>(table_base);
-
-    for (std::uintptr_t p = table_base; p < table_end; p += stride) {
-        // entry[+0x38] cited at 0x0040157e (index 0xe in undefined4 units).
-        std::int32_t key = *reinterpret_cast<std::int32_t*>(p + 0x38u);
-        if (key == param_1) {
-            out_ptr = reinterpret_cast<std::uint32_t*>(p);
-        }
-    }
-}
-
-RH_ScopedInstall(EntryTableScanByKey, 0x00401570);
 
 // ---------------------------------------------------------------------------
 // DoubleDerefIndexedGetter  --  0x0040d250

@@ -35,21 +35,5 @@ extern "C" void __cdecl GetTableEntry0066d658(int i, std::uint16_t* lo, std::uin
 // Callers: FUN_0040e590 (FUN_00409290(&DAT_0063ba80)), FUN_00424eb0.
 // ---------------------------------------------------------------------------
 
-// 0x00409290
-extern "C" __declspec(dllexport) void __cdecl SnapNodeToSafeStartLines(std::int32_t* p) {
-    const std::int32_t count = static_cast<std::int32_t>(GetDat0066d6e0());   // 0x00409295
-    if (count == 0) return;                                                    // 0x0040929e
-    std::int16_t first = 0;                                                    // ebp, 0x0040929c
-    for (std::int32_t i = 0; i < count; ++i) {                                 // 0x004092aa, 0x004092e0
-        std::uint16_t lo = 0, hi = 0;
-        GetTableEntry0066d658(i, &lo, &hi);                                    // 0x004092bb
-        const std::int16_t lo16 = static_cast<std::int16_t>(lo);
-        const std::int16_t hi16 = static_cast<std::int16_t>(hi);
-        if (i == 0) first = lo16;                                              // 0x004092c7
-        if (*p < lo16) { *p = lo16; return; }                                  // 0x004092d2, 0x004092f5
-        if (*p <= hi16) return;                                                // 0x004092db
-    }
-    *p = first;                                                                // 0x004092e7
-}
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00409290 SnapNodeToSafeStartLines
 
-RH_ScopedInstall(SnapNodeToSafeStartLines, 0x00409290);
