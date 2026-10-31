@@ -123,12 +123,8 @@ extern "C" void __cdecl HudSlideBillboardTimerTail(void)
 // C7 05 84 D5 63 00 00 00 00 00 C7 05 88 D5 63 00 00 00 00 00 C3
 // ===========================================================================
 
-// 0x0041d910
-extern "C" __declspec(dllexport) void __cdecl Clear63d584Pair(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0063d584u) = 0u;  // cited at 0x0041d910
-    *reinterpret_cast<std::uint32_t*>(0x0063d588u) = 0u;  // cited at 0x0041d91a
-}
-RH_ScopedInstall(Clear63d584Pair, 0x0041d910);
+// MATCH-S04: the body of 0x0041d910 (Clear63d584Pair) moved to Match/MatchS04_0041d910.cpp,
+// which compiles the byte-matched source re/match/s04/0041d910.c.
 
 // ===========================================================================
 // 0x0041da90  DeltaTimeOutGet  (FUN_0041da90, 17 B; caller FUN_004103a0)
@@ -139,14 +135,8 @@ RH_ScopedInstall(Clear63d584Pair, 0x0041d910);
 // against _DAT_005ccdf4 (1.86f). U-3585 (data semantics) answered by RESULT_LEG0.md.
 // ===========================================================================
 
-// 0x0041da90
-extern "C" __declspec(dllexport) void __cdecl DeltaTimeOutGet(std::uint32_t* param_1) {
-    // null guard + 0x0063d588 cited at 0x0041da90 body.
-    if (param_1 != nullptr) {
-        *param_1 = *reinterpret_cast<const std::uint32_t*>(0x0063d588u);   // 0x0041da98
-    }
-}
-RH_ScopedInstall(DeltaTimeOutGet, 0x0041da90);
+// MATCH-S04: the body of 0x0041da90 (DeltaTimeOutGet) moved to Match/MatchS04_0041da90.cpp,
+// which compiles the byte-matched source re/match/s04/0041da90.c.
 
 // ===========================================================================
 // 0x0041ae20  Copy41ae20  (FUN_0041ae20, 52 B, __thiscall; caller FUN_0041b520)

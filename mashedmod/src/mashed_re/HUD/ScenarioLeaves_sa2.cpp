@@ -55,12 +55,6 @@
 // Forward declarations for callees (RVAs into MASHED.exe)
 // ---------------------------------------------------------------------------
 
-// 0x0041b770  FUN_0041b770 — __fastcall(record*): copies a mode-indexed vec3 from
-//             &DAT_005f334c into the record at +0x150. Receives the record pointer
-//             in ECX (asm 0x0041c060: MOV ECX,ESI; CALL 0x0041b770). [C2]
-static auto* const s_F0041b770 =
-    reinterpret_cast<void(__fastcall*)(int)>(0x0041b770);
-
 // 0x004c51a0  FUN_004c51a0 — RwMatrixTranslate(float* mat, float* vec, int combineOp). [C1]
 static auto* const s_F004c51a0 =
     reinterpret_cast<void(__cdecl*)(float*, float*, int)>(0x004c51a0);
@@ -150,30 +144,8 @@ static const std::uintptr_t k_006c2fa8 = 0x006c2fa8u; // per-node output B/flag
 // ref: re/analysis/bucket_util_0040e4b0_0042f790/0x0041c010.md
 // ---------------------------------------------------------------------------
 
-// 0x0041c010
-extern "C" __declspec(dllexport) void __cdecl HudConstTableInitAndSweep(void)
-{
-    std::uint32_t local_18[6] = {
-        0x3ee66666u, 0x3ea8f5c3u, 0x3f800000u,   // ( 0.45, 0.33, 1.0)
-        0xbee66666u, 0x3ea8f5c3u, 0x3f800000u,   // (-0.45, 0.33, 1.0)
-    };
-    std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(k_005f334c);
-    std::uint32_t* src = local_18;
-    for (int i = 6; i != 0; i--) {
-        *dst = *src;
-        src++;
-        dst++;
-    }
-    // Sweep the two 0x16c-byte records, ECX = record pointer (__fastcall).
-    unsigned char* cur = reinterpret_cast<unsigned char*>(k_0063cab8);
-    do {
-        s_F0041b770(reinterpret_cast<int>(cur));
-        cur += 0x16c;
-    } while (reinterpret_cast<std::uintptr_t>(cur) < k_0063cd90);
-    *reinterpret_cast<std::int32_t*>(k_0063cda0) = 0;
-}
-
-RH_ScopedInstall(HudConstTableInitAndSweep, 0x0041c010);
+// MATCH-S04: the body of 0x0041c010 (HudConstTableInitAndSweep) moved to Match/MatchS04_0041b770.cpp,
+// which compiles the byte-matched source re/match/s04/0041b770.c (it also holds 0x0041b770).
 
 // ---------------------------------------------------------------------------
 // HudSlideBillboardTick  --  0x0041d930

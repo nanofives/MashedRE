@@ -21,11 +21,8 @@
 
 #include <cstdint>
 
-// 0x0041efe0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl BitExtract63dc74(std::int32_t i) {
-    return (*reinterpret_cast<std::uint8_t*>(0x0063dc74u + static_cast<std::uint32_t>(i) * 0x2acu) >> 3) & 1u;  // MOVZX ; SHR 3 ; AND 1
-}
-RH_ScopedInstall(BitExtract63dc74, 0x0041efe0);
+// MATCH-S04: the body of 0x0041efe0 (BitExtract63dc74) moved to Match/MatchS04_0041efe0.cpp,
+// which compiles the byte-matched source re/match/s04/0041efe0.c.
 
 // 0x004298c0
 extern "C" __declspec(dllexport) void __cdecl Clear67d99c_x4(void) {

@@ -51,6 +51,13 @@ RwpSolverBroadphase3
 RwpSolverCore14
 RwpSolverCore15
 RwpSolverCore17
+# MATCH-S04 2026-10-31: port bodies compiled from byte-matched game code that uses float (re/match/s04/)
+MatchS04_0041b770
+MatchS04_0041cbc0
+MatchS04_0041d910
+MatchS04_0041db80
+MatchS04_0041f100
+MatchS04_0041f260
 # D-11073 leg 2 (2026-10-09): verbatim x87 transcription of FUN_00445aa0 et al. (fpatan/fsin inline);
 # bit-identity measured by run_diff in the same session, not assumed.
 CameraEntries

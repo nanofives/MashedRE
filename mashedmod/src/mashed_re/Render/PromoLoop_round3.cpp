@@ -74,14 +74,8 @@ RH_ScopedInstall(VehicleDword67ea80Get, 0x0042fe70);
 // Caller: FUN_00426c90 (lap-line conditional, C2).
 // ---------------------------------------------------------------------------
 
-// 0x0041ea80
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackDescField40Get(void) {
-    // 0x0063d7e4 base + 0x40 offset cited at 0x0041ea80 body.
-    const std::uint8_t* obj = *reinterpret_cast<std::uint8_t* const*>(0x0063d7e4u);
-    return *reinterpret_cast<const std::uint32_t*>(obj + 0x40u);
-}
-
-RH_ScopedInstall(TrackDescField40Get, 0x0041ea80);
+// MATCH-S04: the body of 0x0041ea80 (TrackDescField40Get) moved to Match/MatchS04_0041ea80.cpp,
+// which compiles the byte-matched source re/match/s04/0041ea80.c.
 
 // ---------------------------------------------------------------------------
 // RwGlobal7d4598Set  --  0x004cbc60   (subsystem: render)

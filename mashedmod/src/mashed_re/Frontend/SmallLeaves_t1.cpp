@@ -114,24 +114,8 @@ RH_ScopedInstall(DoubleDerefIndexedGetter, 0x0040d250);
 //   each write cited at 0x0041e083..0x0041e0c0. U-4209 non-blocking.
 // ---------------------------------------------------------------------------
 
-// 0x0041e080
-extern "C" __declspec(dllexport) void __cdecl ScoreboardStateZeroInit()
-{
-    *reinterpret_cast<std::uint32_t*>(0x0063d798u) = 0u;    // [0x0041e083]
-    *reinterpret_cast<std::uint32_t*>(0x0063d79cu) = 0u;    // [0x0041e089]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7a0u) = 0u;    // [0x0041e08f]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7c4u) = 0u;    // [0x0041e095]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7d0u) = 0u;    // [0x0041e09b]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7d4u) = 0u;    // [0x0041e0a1]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7d8u) = 0u;    // [0x0041e0a7]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7dcu) = 0u;    // [0x0041e0ad]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7b0u) = 0u;    // [0x0041e0b3]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7b4u) = 0u;    // [0x0041e0b8]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7ccu) = 0x47u; // [0x0041e0be]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7b8u) = 0u;    // [0x0041e0c0]
-}
-
-RH_ScopedInstall(ScoreboardStateZeroInit, 0x0041e080);
+// MATCH-S04: the body of 0x0041e080 (ScoreboardStateZeroInit) moved to Match/MatchS04_0041e080.cpp,
+// which compiles the byte-matched source re/match/s04/0041e080.c.
 
 // ---------------------------------------------------------------------------
 // CopyTable005f2a70To0089a384  --  0x00414120
