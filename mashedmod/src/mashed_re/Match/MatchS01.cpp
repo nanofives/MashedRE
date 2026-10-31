@@ -28,6 +28,7 @@
 //   0x00408a50 PerCarRaceProgressGet    Frontend/Leaves.cpp
 //   0x00408ad0 RaceScoreFloatGetBySlot  Frontend/SmallLeaves_t1.cpp
 //   0x00409290 SnapNodeToSafeStartLines Race/RoundGridSnap.cpp
+//   0x00407600 PlayerPositionPtr        Render/SlotObjectAccessors.cpp (ShadowAB wrapper retired, MATCH-L69-SWAP)
 // Evidence: verify/matchs01_20261031/RESULT_MATCH-S01.md.
 
 #include "../Core/HookSystem.h"
@@ -54,6 +55,7 @@ extern "C" {
 #define FUN_00408a50 PerCarRaceProgressGet
 #define FUN_00408ad0 RaceScoreFloatGetBySlot
 #define FUN_00409290 SnapNodeToSafeStartLines
+#define FUN_00407600 PlayerPositionPtr
 __declspec(dllexport) void __cdecl CupSpinSpeedAndColor(void);
 __declspec(dllexport) void __cdecl EntryTableScanByKey(int key);
 __declspec(dllexport) void __cdecl EntityTableSelectUpdate(int key);
@@ -65,6 +67,7 @@ __declspec(dllexport) void __cdecl UtilTableInit8a9620(void);
 __declspec(dllexport) float __cdecl PerCarRaceProgressGet(int i);
 __declspec(dllexport) float __cdecl RaceScoreFloatGetBySlot(int i);
 __declspec(dllexport) void __cdecl SnapNodeToSafeStartLines(int* v);
+__declspec(dllexport) char* __cdecl PlayerPositionPtr(int i);
 
 // ---- globals at their original addresses ----------------------------------------------------------------
 #define DAT_007f0ff0 (*(int*)0x007f0ff0u)
@@ -77,6 +80,7 @@ __declspec(dllexport) void __cdecl SnapNodeToSafeStartLines(int* v);
 #define DAT_0063a5d0 (*(int*)0x0063a5d0u)
 #define DAT_0063a5d4 (*(int*)0x0063a5d4u)
 #define DAT_008a9620 ((CarBlk8a9620*)0x008a9620u)
+#define DAT_00639d80 ((Rec639d80*)0x00639d80u)
 
 // ---- callees: what the replaced bodies called ------------------------------------------------------------
 #define FUN_0042f6a0 ((int(__cdecl*)(void))0x0042f6a0u)
@@ -88,6 +92,7 @@ __declspec(dllexport) void __cdecl SnapNodeToSafeStartLines(int* v);
 #define FUN_004c1a00 ((int(__cdecl*)(void*))0x004c1a00u)
 #define FUN_004c1bb0 ((void(__cdecl*)(void*, Rgba4026d0*, int))0x004c1bb0u)
 #define FUN_004c1be0 ((void(__cdecl*)(void*, int, int))0x004c1be0u)
+#define FUN_0047d150 ((char*(__cdecl*)(int))0x0047d150u)   // 0x00407600's callee, as the replaced body called it
 #define FUN_00426bc0() ((int)GetDat0066d6e0())
 #define FUN_00426bd0(i, lo, hi) GetTableEntry0066d658((i), (std::uint16_t*)(lo), (std::uint16_t*)(hi))
 
@@ -98,6 +103,7 @@ __declspec(dllexport) void __cdecl SnapNodeToSafeStartLines(int* v);
 #include "../../../../re/match/s01/00405890.c"
 #include "../../../../re/match/s01/00407a60.c"
 #include "../../../../re/match/s01/00409290.c"
+#include "../../../../re/match/s01/00407600.c"
 
 }  // extern "C"
 
@@ -112,3 +118,4 @@ RH_ScopedInstall(UtilTableInit8a9620, 0x00407a60);
 RH_ScopedInstall(PerCarRaceProgressGet, 0x00408a50);
 RH_ScopedInstall(RaceScoreFloatGetBySlot, 0x00408ad0);
 RH_ScopedInstall(SnapNodeToSafeStartLines, 0x00409290);
+RH_ScopedInstall(PlayerPositionPtr, 0x00407600);
