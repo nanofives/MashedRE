@@ -294,3 +294,4 @@
 "Render\TrackHookSlots.cpp"
 "Vehicle\CarMaterialTables.cpp"
 "Core\FaithDefaults.cpp"
+"Match\MatchS01.cpp"

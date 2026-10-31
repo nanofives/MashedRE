@@ -58,13 +58,5 @@ static float* const g_CupFloat_636af4 =
 // Caller: FUN_00433240 (C2).
 // Leaf-exemption applies (no callees).
 // ===========================================================================
-// 0x00402f80
-extern "C" __declspec(dllexport) void __cdecl CupFloatInit()
-{
-    *g_CupFloat_636ae8 = 0u;
-    *g_CupFloat_636af0 = 0u;
-    *g_CupFloat_636af4 = 40.0f;     // 0x42200000
-    *g_CupFloat_636aec = 60.0f;     // 0x42700000
-}
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00402f80 CupFloatInit
 
-RH_ScopedInstall(CupFloatInit, 0x00402f80);  // C3 evidence: void_write_observe GREEN 10/10

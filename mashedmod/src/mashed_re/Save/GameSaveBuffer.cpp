@@ -145,85 +145,28 @@ static inline void writeU32at(std::uintptr_t a, std::uint32_t v) {
     *reinterpret_cast<std::uint32_t*>(a) = v;
 }
 
-// ─── 0x00404E80  Save::DeserializeFromBuffer ──────────────────────────────────
-// void(void): unpacks save_buf back into live game state.
-// 0x00404E80
-extern "C" __declspec(dllexport) void __cdecl DeserializeFromBuffer() {
-    // 1. Championship table restore: DAT_00827D98 → DAT_007F0A40 (0x148 dwords).
-    // 0x00404E82..0x00404E91: MOV ECX,0x148; MOV ESI,0x827D98; MOV EDI,0x7F0A40; REP MOVSD
-    std::memcpy(
-        reinterpret_cast<void*>(kTrackTable),
-        reinterpret_cast<const void*>(kTrackTableCopy),
-        kTrackTableDwords * sizeof(std::uint32_t));
-
-    // 2. Stride-scatter loop: DAT_007F0F54[ECX] (byte) → DAT_007F105C + ECX*0x4C (dword).
-    // 0x00404EA0..0x00404EB2: MOVZX EDX,[007F0F54+ECX]; MOV [007F105C+ECX*4C],EDX
-    for (int ecx = 0; ecx < kStrideCount; ++ecx) {
-        const std::uint8_t  bval  = *reinterpret_cast<const std::uint8_t*>(kPackedBytes + static_cast<std::uint32_t>(ecx));
-        const std::uint32_t dval  = static_cast<std::uint32_t>(bval);  // zero-extend
-        writeU32at(kStrideBase + static_cast<std::uint32_t>(ecx) * kStrideStep, dval);
-    }
-
-    // 3. State counter restore: DAT_008A95AC = DAT_00828254.
-    // 0x00404EC1: MOV EAX,[00828254]; MOV [008A95AC],EAX
-    writeU32at(kSaveStateCounter, readU32at(kSaveStateCounterCopy));
-
-    // 4. Profile deserialize: if *DAT_008A94A8 != NULL → REP MOVSD 0x928F dwords
-    //    from save_buf+4 (0x0080335C) to *DAT_008A94A8. [UNCERTAIN U-3560]
-    // 0x00404EB4: MOV EDI,[008A94A8]; CMP EDI,0; JZ skip
-    // 0x00404EC8: MOV ECX,0x928F; MOV ESI,0x80335C; REP MOVSD
-    const std::uintptr_t profile_ptr = readU32at(kProfilePtrPtr);
-    if (profile_ptr != 0u) {
-        std::memcpy(
-            reinterpret_cast<void*>(profile_ptr),
-            reinterpret_cast<const void*>(kSaveBufProfile),
-            kProfileDwords * sizeof(std::uint32_t));
-    }
-}
+// ─── 0x00404E80 / 0x00404EE0  Save::DeserializeFromBuffer / SerializeToBuffer ─────
+// MATCH-S01 (2026-10-31): both bodies are re/match/s01/00404e80.c, byte-identical to the original under
+// re/tools/match/match.py (verify/matchs01_20261031/RESULT_MATCH-S01.md). The file is compiled here unchanged; with
+// MASHED_RE_PORT it takes its globals from this TU's per-target bases above (the original addresses in the .asi,
+// the standalone storage in the exe), the same bases the replaced C++ bodies used.
+#define MASHED_RE_PORT 1
+extern "C" {
+#define FUN_00404e80 DeserializeFromBuffer
+#define FUN_00404ee0 SerializeToBuffer
+__declspec(dllexport) void __cdecl DeserializeFromBuffer(void);
+__declspec(dllexport) void __cdecl SerializeToBuffer(void);
+#define DAT_007f0a40 (*(Blk520*)kTrackTable)
+#define DAT_00827d98 (*(Blk520*)kTrackTableCopy)
+#define DAT_007f105c ((Rec4c*)kStrideBase)
+#define DAT_007f0f54 ((unsigned char*)kPackedBytes)
+#define DAT_008a95ac (*(int*)kSaveStateCounter)
+#define DAT_00828254 (*(int*)kSaveStateCounterCopy)
+#define DAT_008a94a8 (*(Blk2423c**)kProfilePtrPtr)
+#define DAT_0080335c (*(Blk2423c*)kSaveBufProfile)
+#define DAT_00803358 (*(unsigned int*)kSaveBufBase)
+#include "../../../../re/match/s01/00404e80.c"
+}  // extern "C"
 
 RH_ScopedInstall(DeserializeFromBuffer, 0x00404e80);  // re-enabled 2026-05-24 batch-save-a
-
-// ─── 0x00404EE0  Save::SerializeToBuffer ──────────────────────────────────────
-// void(void): packs live state into save_buf; writes DEADBEEF magic.
-// 0x00404ee0
-extern "C" __declspec(dllexport) void __cdecl SerializeToBuffer() {
-    // 1. Stride-gather loop: DAT_007F105C + ECX*0x4C (byte, low byte of dword)
-    //    → DAT_007F0F54[ECX]. [UNCERTAIN U-3558]
-    // 0x00404EF0: XOR ECX,ECX; MOV EAX,0x7F105C;
-    //   loop body: MOVZX EDX,[EAX]; MOV [7F0F54+ECX],DL; ADD EAX,0x4C; INC ECX; CMP EAX,0x7F13EB+1; JL
-    for (int ecx = 0; ecx < kStrideCount; ++ecx) {
-        // Read the low byte at kStrideBase + ecx*0x4C.
-        const std::uint8_t bval = *reinterpret_cast<const std::uint8_t*>(
-            kStrideBase + static_cast<std::uint32_t>(ecx) * kStrideStep);
-        *reinterpret_cast<std::uint8_t*>(kPackedBytes + static_cast<std::uint32_t>(ecx)) = bval;
-    }
-
-    // 2. Championship table snapshot: DAT_007F0A40 → DAT_00827D98 (0x148 dwords).
-    // 0x00404F0F: MOV ESI,0x7F0A40; MOV EDI,0x827D98; MOV ECX,0x148; REP MOVSD
-    std::memcpy(
-        reinterpret_cast<void*>(kTrackTableCopy),
-        reinterpret_cast<const void*>(kTrackTable),
-        kTrackTableDwords * sizeof(std::uint32_t));
-
-    // 3. State counter save: DAT_00828254 = DAT_008A95AC.
-    // 0x00404F23: MOV EAX,[008A95AC]; MOV [00828254],EAX
-    writeU32at(kSaveStateCounterCopy, readU32at(kSaveStateCounter));
-
-    // 4. Profile serialize: if *DAT_008A94A8 != NULL → REP MOVSD 0x928F dwords
-    //    from *DAT_008A94A8 to save_buf+4. [UNCERTAIN U-3558 U-3559]
-    // 0x00404F21: MOV ESI,[008A94A8]; CMP ESI,0; JZ skip
-    // 0x00404F2F: MOV EDI,0x80335C; REP MOVSD
-    const std::uintptr_t profile_ptr = readU32at(kProfilePtrPtr);
-    if (profile_ptr != 0u) {
-        std::memcpy(
-            reinterpret_cast<void*>(kSaveBufProfile),
-            reinterpret_cast<const void*>(profile_ptr),
-            kProfileDwords * sizeof(std::uint32_t));
-    }
-
-    // 5. Magic write: MOV DWORD PTR [0x00803358], 0xDEADBEEF.
-    // 0x00404F37: C7 05 58 33 80 00 EF BE AD DE
-    writeU32at(kSaveBufBase, kDeadBeef);
-}
-
 RH_ScopedInstall(SerializeToBuffer, 0x00404ee0);  // re-enabled 2026-05-24 batch-save-a

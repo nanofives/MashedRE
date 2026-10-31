@@ -364,26 +364,5 @@ RH_ScopedInstall(VehicleDamageAccum, 0x00422b50);
 // ref: re/analysis/boot_hud_promote_ae1/0x00401340.md
 // ===========================================================================
 
-// 0x00401340
-extern "C" __declspec(dllexport) void __cdecl CupSpinSpeedAndColor(void)
-{
-    std::int32_t srcInt = *reinterpret_cast<std::int32_t*>(k_007f0ff0);
-    float mul = *reinterpret_cast<float*>(k_005cc328);
-    *reinterpret_cast<float*>(k_00636574) =
-        static_cast<float>(-srcInt) * mul;
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00401340 CupSpinSpeedAndColor
 
-    int iVar1 = s_F004b4080(*reinterpret_cast<int*>(k_00636564));
-    int iVar2 = s_F0042f6a0();
-    if (iVar2 == 3) {
-        *reinterpret_cast<std::uint32_t*>(iVar1 + 4) = 0xff0a66d8u;
-        return;
-    }
-    iVar2 = s_F0042f6a0();
-    if (iVar2 == 4) {
-        *reinterpret_cast<std::uint32_t*>(iVar1 + 4) = 0xfff5f0f0u;
-        return;
-    }
-    *reinterpret_cast<std::uint32_t*>(iVar1 + 4) = 0xff14c5ffu;
-}
-
-RH_ScopedInstall(CupSpinSpeedAndColor, 0x00401340);

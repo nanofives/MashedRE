@@ -117,6 +117,15 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
     if not p.exists():
         return bodies, installs
     lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+    # MATCH-S01 (2026-10-31): a TU that `#include`s a `.c` file (the C4-by-match port TUs compile the
+    # matched sources under re/match/ this way) carries that file's bodies. One level, `.c` only, appended
+    # after the TU's own lines so the TU's line numbers stay as they are.
+    for ln in list(lines):
+        mi = re.match(r'\s*#\s*include\s+"([^"]+\.c)"', ln)
+        if mi:
+            inc = (p.parent / mi.group(1)).resolve()
+            if inc.exists():
+                lines += [""] + inc.read_text(encoding="utf-8", errors="replace").splitlines()
     # def_line -> (rva, name). When several RVA comments precede ONE definition
     # (a header block listing related addresses), only the CLOSEST one is that
     # definition's anchor -- the convention is `// 0x00467650` directly above.

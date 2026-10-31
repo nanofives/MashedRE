@@ -111,51 +111,8 @@ static FUN_004c1be0_t const s_FUN_004c1be0 =
 // [UNCERTAIN U-0170]: whether 0xff000000 is a color, mask, or arbitrary u32.
 // ============================================================================
 
-// 0x004026d0
-extern "C" __declspec(dllexport)
-void __cdecl BootQueueFlush(std::int32_t param_1)
-{
-    // 0x004026d0 decomp: local_4 = 0xff000000 [UNCERTAIN U-0170]
-    std::uint32_t local_4 = 0xff000000u;
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x004026d0 
 
-    // 0x004026d0 decomp: if (0 < param_1) do { ... } while (param_1 != 0);
-    if (0 < param_1) {
-        do {
-            // uVar1 = FUN_004671a0(0, &local_4, 3)
-            std::uint32_t uVar1 = s_FUN_004671a0_3(
-                0u,
-                reinterpret_cast<void*>(&local_4),
-                3u);
-
-            // 0x004026fe add esp,4 pops only the leading 0, leaving (&local_4, 3) pushed at 0x004026f0/0x004026f6;
-            // 0x00402701 push eax; 0x00402702 call 0x4c1bb0 -> FUN_004c1bb0(uVar1, &local_4, 3). The decomp shows
-            // FUN_004c1bb0(uVar1) only. [followup/a2-stubat 2026-10-12: the 1-arg call was the port defect.]
-            s_FUN_004c1bb0(uVar1, reinterpret_cast<void*>(&local_4), 3u);
-
-            // uVar1 = FUN_004671a0(0) — re-fetch handle
-            uVar1 = s_FUN_004671a0_1(0u);
-
-            // iVar2 = FUN_004c1a00(uVar1) — query state (Stub S-0173)
-            const std::int32_t iVar2 = s_FUN_004c1a00(uVar1);
-
-            if (iVar2 != 0) {
-                // uVar1 = FUN_004671a0(0); FUN_004c19f0(uVar1) — flush (Stub S-0174)
-                uVar1 = s_FUN_004671a0_1(0u);
-                s_FUN_004c19f0(uVar1);
-            }
-
-            // uVar1 = FUN_004671a0(0, 0, 1) — mode-1 alloc (Stub S-0175)
-            uVar1 = s_FUN_004671a0_3(0u, nullptr, 1u);
-            // 0x00402736 add esp,4 leaves (0, 1) from 0x0040272b/0x0040272d; 0x00402739 push eax;
-            // 0x0040273a call 0x4c1be0 -> FUN_004c1be0(uVar1, 0, 1); 0x0040273f add esp,0xc.
-            s_FUN_004c1be0(uVar1, nullptr, 1u);
-
-            param_1--;
-        } while (param_1 != 0);
-    }
-}
-
-RH_ScopedInstall(BootQueueFlush, 0x004026d0);  // re-enabled 2026-05-24 phase-a2 GREEN int_scalar(count=0)
 
 
 // ============================================================================
@@ -197,19 +154,8 @@ static std::uint32_t* const g_DAT_00636af4 =
 static std::uint32_t* const g_DAT_00636af8 =
     reinterpret_cast<std::uint32_t*>(0x00636af8u);  // cluster+0x10 ← 0
 
-// 0x00402f50
-extern "C" __declspec(dllexport)
-void __cdecl BootDefaultParamsInit()
-{
-    // 0x00402f50 decomp: writes in source order (+0, +8, +0x10, +0xc, +4)
-    *g_DAT_00636ae8 = 0u;                   // cluster+0   = 0
-    *g_DAT_00636af0 = 0u;                   // cluster+8   = 0
-    *g_DAT_00636af8 = 0u;                   // cluster+0x10 = 0
-    *g_DAT_00636af4 = 0x42200000u;          // cluster+0xc = 40.0f [UNCERTAIN U-0171]
-    *g_DAT_00636aec = 0x42700000u;          // cluster+4   = 60.0f [UNCERTAIN U-0171]
-}
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00402f50 
 
-RH_ScopedInstall(BootDefaultParamsInit, 0x00402f50);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe
 
 
 // ============================================================================

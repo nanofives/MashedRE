@@ -76,3 +76,5 @@ WarzonePontoon
 # HB-6 (2026-10-26): disasm-order x87 bodies of 0x00566200 / 0x005667c0 (VECCAP-2), reached only under
 # MASHED_LEAVES1_X87=1 (default OFF). Measured by re/tools/veccap/replay_c3.py; verify/hb6_20261026/RESULT_HB-6.md.
 RwpSolverLeaves1X87
+# MATCH-S01 2026-10-31: port bodies compiled from byte-matched x87 game code (re/match/s01/)
+MatchS01
