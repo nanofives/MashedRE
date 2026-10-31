@@ -138,22 +138,21 @@ Host s_host = {
 
 inline float bits_to_f(std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; }
 
-// [d3b 2026-10-16] MASHED_AI_LUT=<mask> (exe only). Default 5 since c2k93 2026-10-17 (MASHED_AI_LUT=0 = exact sqrt).
+// [d3b 2026-10-16] the AI LUT mask (exe only). 5 since c2k93 2026-10-17, 7 through the FAITH seed (d3bc bit 0x2), and
+// since D5-KNOBS-E3-GEOM-AI 2026-10-31 the constant 7 with no env read (MASHED_AI_LUT and its seed are deleted).
 // 0x1: FUN_00443dc0 phase 6 normalizes with FUN_004c3c60 (both calls, decomp
 //      verify/d3b_20261016/decomp_00443dc0.txt) and phase 8 takes both lengths from FUN_004c3bf0.
 // 0x2: FUN_00415e20 normalizes its bearing and its forward vector with FUN_004c39b0.
 // All three are RW fast-sqrt LUT bodies in the original (verify/d3b_20261016/decomp_math.txt).
-// s_aiLutOverride >= 0 replaces the env mask (the look replay runs both modes in one process).
+// s_aiLutOverride >= 0 replaces the mask (the look replay runs both modes in one process).
 int s_aiLutOverride = -1;
 inline int AiLutMask() {
 #ifdef MASHED_STANDALONE
-    // [c2k93 2026-10-17] default 5 (user decision, U-9752): bit 0x1 + bit 0x4, the original's RW LUT bodies in
-    // FUN_00443dc0. MASHED_AI_LUT=<mask> overrides. The opt-out MASHED_NO_AI_LUT was deleted (D5-KNOBS-RUNARMS-STACKS).
-    static const int s_mask = [] {
-        const char* e = std::getenv("MASHED_AI_LUT");
-        return e ? std::atoi(e) : 5;
-    }();
-    return s_aiLutOverride >= 0 ? s_aiLutOverride : s_mask;
+    // [c2k93 2026-10-17] bit 0x1 + bit 0x4 (user decision, U-9752), the original's RW LUT bodies in FUN_00443dc0, and
+    // [d3bc] bit 0x2, FUN_00415e20's LUT normalize (the FAITH value 7). The opt-out MASHED_NO_AI_LUT was deleted by
+    // D5-KNOBS-RUNARMS-STACKS, MASHED_AI_LUT=<mask> and the seed by D5-KNOBS-E3-GEOM-AI.
+    constexpr int kMask = 7;
+    return s_aiLutOverride >= 0 ? s_aiLutOverride : kMask;
 #else
     return 0;
 #endif
@@ -313,7 +312,7 @@ void CatmullRom(std::uintptr_t spline, int idx, float t, float* outX, float* out
     const float t2 = t0 * t0;
 #ifdef MASHED_STANDALONE
     if (AiLutMask() & 4) {
-        // [d3b 2026-10-16] MASHED_AI_LUT bit 0x4: the listing's operand order (0x00443373..0x004433cf,
+        // [d3b 2026-10-16] AI LUT mask bit 0x4: the listing's operand order (0x00443373..0x004433cf,
         // verify/d3b_20261016/disasm.py), PC_24 so each x87 op rounds to float:
         //   t3 = t2*t; A = ((2*P0 - 5*P1) + 4*P2) - P3; B = ((3*P1 - P0) - 3*P2) + P3
         //   out = (((A*t2 + B*t3) + (P2 - P0)*t) + 2*P1) * 0.5
@@ -352,7 +351,7 @@ void CatmullRom(std::uintptr_t spline, int idx, float t, float* outX, float* out
 // which uses a fast-rsqrt LUT; std::sqrt is bit-equivalent for nav use).
 // [d3b 2026-10-16] The "bit-equivalent" claim does not hold: the LUT length of 16.011608 is
 // 4.0009765625 where sqrt gives 4.0014505 (memory exe-rw-sqrt-is-exact-not-lut). Kept as the
-// MASHED_AI_LUT-unset path; LookNormalize2 / LookLen2 below route to the LUT under the knob.
+// mask-bit-clear path; LookNormalize2 / LookLen2 below route to the LUT under the mask.
 inline void Normalize2(float* v) {
     const float m2 = v[0]*v[0] + v[1]*v[1];
     if (m2 > 0.0f) { const float inv = 1.0f / std::sqrt(m2); v[0] *= inv; v[1] *= inv; }
@@ -681,14 +680,16 @@ const float kSteerSplit    = 180.0f;     // _DAT_005cd09c  (err<180 one way, >18
 const float kSteerMagScale = 0.0030034f; // _DAT_005cd0e8  fresh: err*speed*this
 // [d3bc 2026-10-19] the .rdata dword at 0x005cd0e8 is 0x3b449ba6 = 0.003f (MASHED.exe.unpatched), not 0.0030034f.
 // With bit-equal err and speed, 0.003f gives the original's fresh-steer byte on 54/54 (car 2), 76/76 (car 3) and 48/48
-// (car 1) rows of verify/d3bc_20261019's captures; 0.0030034f misses 6. MASHED_STEER_SCALE_RDATA=1 (default OFF) uses it
-// in FUN_00416250's two products (0x00416648..0x00416656 / 0x0041675c..0x00416770); the mode-4/9/8 variants keep theirs.
+// (car 1) rows of verify/d3bc_20261019's captures; 0.0030034f misses 6. The standalone uses it in FUN_00416250's two
+// products (0x00416648..0x00416656 / 0x0041675c..0x00416770); the mode-4/9/8 variants keep theirs. [D5-KNOBS-E3-GEOM-AI
+// 2026-10-31] the knob MASHED_STEER_SCALE_RDATA (seeded ON by the FAITH set, exe-only) is deleted; the .asi keeps
+// kSteerMagScale as before.
 inline float SteerMagScale416250() {
 #ifdef MASHED_STANDALONE
-    static const bool s_on = [] { const char* e = std::getenv("MASHED_STEER_SCALE_RDATA"); return e && e[0] && e[0] != '0'; }();
-    if (s_on) return 0.003f;
-#endif
+    return 0.003f;
+#else
     return kSteerMagScale;
+#endif
 }
 const float kSteerExtra    = 0.05f;      // _DAT_005cc9a0  *this when rate1<=20
 const float kSteerMagClamp = 255.0f;     // _DAT_005cd04c  steer-byte clamp (max)
@@ -1926,7 +1927,7 @@ void VehicleStep(int v)
 // [d3b 2026-10-16] Look replay (measurement only, PREREG_d3b.md G-REPLAY-LOOK).
 // MASHED_AI_LOOK_REPLAY=<original aistep csv>[;<csv>...], MASHED_AI_LOOK_REPLAY_OUT=<csv>.
 // Each recorded row's (spline, v, own_x, own_z) runs through SplineLookahead twice, mode 0 with
-// MASHED_AI_LUT bit 0x1 clear and mode 1 with it set. Each mode keeps its own FUN_00443dc0
+// AI LUT mask bit 0x1 clear and mode 1 with it set. Each mode keeps its own FUN_00443dc0
 // index-continuity word (0x008032d4 + v*0x14), starting at 1000 per file (the FUN_00413fe0 reset
 // value). Every word the call writes (that index, FUN_00416230's 0x0089a500 + v*0x74, the
 // step-locals mirror) is restored afterwards, so the live run continues as if nothing ran.
@@ -1941,7 +1942,7 @@ void LookReplayOnce()
     if (!in || !outp) return;
     std::FILE* o = std::fopen(outp, "w");
     if (!o) return;
-    const char* mk = std::getenv("MASHED_AI_LOOK_REPLAY_MASK");   // mode 1's MASHED_AI_LUT mask (default 1)
+    const char* mk = std::getenv("MASHED_AI_LOOK_REPLAY_MASK");   // mode 1's AI LUT mask (default 1)
     const int s_replayMask = mk ? std::atoi(mk) : 1;
     std::fprintf(o, "file,n,frame,v,spline,ai_mode,c4,orig_x,orig_z,ex_x,ex_z,lut_x,lut_z,eq_ex,eq_lut,"
                     "march_orig,march_ex,march_lut\n");

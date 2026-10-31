@@ -75,7 +75,7 @@ inline void Vec3Norm(float dst[3], const float src[3]) {
 
 // The original's pair at every camera site: FUN_004c4d20(m, axis, deg, 0) then FUN_004c3df0(dst, src, 1, m)
 // (0x00441892/0x004418ab, 0x004418cc/0x004418da, 0x00441968/0x00441976, 0x00447557/0x00447570), through the shared bodies
-// (Math/RwMatrixRotate.cpp under its ROTATE_LUT / ROTATE_PC24 knobs, and the slot +0x14 vectors stand-in). The axis goes in
+// (Math/RwMatrixRotate.cpp with its LUT normalize and PC_24 scope, and the slot +0x14 vectors stand-in). The axis goes in
 // unnormalized: the shared body normalizes it. [D4-DC-39b0-L13 2026-10-25, Mariano L-15 = B] always on; the port-only
 // std::cos / std::sin Rodrigues stand-in and MASHED_CAM_ROTATE_RW are deleted.
 inline void RotateAboutAxis(float v[3], const float axis_in[3], float deg) {

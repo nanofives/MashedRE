@@ -26,7 +26,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>   // getenv
-#include <cfloat>    // [u9776] _controlfp_s (MASHED_WCS_COMBINE_PC24)
+#include <cfloat>    // [u9776] _controlfp_s (FUN_004c52f0 at PC_24)
 #include <cstring>   // [u9776] memcpy (MASHED_WCS_TRILOG .tq.csv)
 #include <string>
 #include "../Vehicle/VehicleRecordBase.h"   // [u9773] slot index for MASHED_WCS_POSLOG
@@ -64,7 +64,6 @@ static const float kStateCmp  = -0.005f;    // _DAT_005ceaa0
 static const float kSpring2   = -2.0f;      // _DAT_005cc34c
 static const double kFwdLo    = -0.1;       // _DAT_005cea98 (double)
 static const double kFwdHi    =  0.1;       // _DAT_005cea90 (double)
-static const float kHiProj    = 0.998901f;  // _DAT_005cea88
 static const float kRadToDeg  = 57.29578f;  // _DAT_005cc98c
 static const float kRotClamp  = 2.5f;       // _DAT_005cd088
 static const float kFricVel   = 1000.0f;    // _DAT_005cc9fc
@@ -80,14 +79,12 @@ static const float kSentActive= asF(0x00000001);  // 1.4013e-45 (contact-active 
 // (_DAT_006146fc/00614700/00614704)
 
 // 0x0046f6c0
-// [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default ON since trinflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_TRINORMAL=1 opts out, verify/u9773_20261020/PREREG_u9773.md amendments 2-3): the 3-wheel
+// [u9773 2026-10-20, trinflip] (verify/u9773_20261020/PREREG_u9773.md amendments 2-3) the 3-wheel
 // alignment as the original runs it (0x0046fd57..0x00470018): the tri-normal, local_ac = (int)+0x9e0 at entry (_ftol
 // FUN_004a2c48 at 0x0046f712, not a tick count), the dot grouping, _DAT_005cea88 = 0.999f, the CRT acos FUN_004a3384 and
-// FUN_004c52f0(ring, m, 2) (RwMatrixCombine, Collision/RwpSolverMath2.cpp) in place of the stubs.
-static bool WcsTriNormal() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_WCS_TRINORMAL"); return e && e[0] == '1'; }();
-    return s;
-}
+// FUN_004c52f0(ring, m, 2) (RwMatrixCombine, Collision/RwpSolverMath2.cpp) in place of the stubs. This was
+// MASHED_WCS_TRINORMAL (seeded ON by the FAITH set); D5-KNOBS-E3-GEOM-AI 2026-10-31 deleted the knob and its stub path
+// (Sys_TickCount local_ac, the reversed dot, kHiProj 0.998901f, Math_Acos, Rw_SetRotation).
 extern "C" unsigned int* __cdecl FUN_004c52f0(unsigned int* dst, unsigned int* src, int op);   // RwMatrixCombine
 
 void WheelContactSolver(int* self, void* world, int substep)
@@ -128,7 +125,7 @@ void WheelContactSolver(int* self, void* world, int substep)
     int* iVar12 = self + self[0x26b] * 0x10 + 0x24a;   // wheel-ring matrix block
     g_activeContactCount = 0;                          // DAT_0088e650
     float local_98[3] = { 0.0f, 0.0f, 0.0f };          // contact-query scratch
-    int local_ac = WcsTriNormal() ? (int)vF(self, 0x278) : Sys_TickCount();   // 0x0046f6e2 / 0x0046f712 _ftol(+0x9e0)
+    int local_ac = (int)vF(self, 0x278);   // 0x0046f6e2 / 0x0046f712 _ftol(+0x9e0)
 
     // --- per-wheel init: clear skip flags, reset contact result, susp positions
     int*   puVar11 = g_wheelSkipFlags;
@@ -356,10 +353,9 @@ void WheelContactSolver(int* self, void* world, int substep)
             }
             // FUN_0046c5f0 at 0x0046fd57: EAX = &pts[a], ECX = &pts[b], EDX = &pts[c] (pts = the per-wheel contact points at
             // [esp+0xac] = local_70), ESI = &local_e0 (esp+0x3c), which the alignment below reads.
-            // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default ON since trinflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_TRINORMAL=1 opts out, verify/u9773_20261020/PREREG_u9773.md amendment 2) makes
-            // the call, in FUN_0046c5f0's form (LUT sqrt FUN_004c3b30); without it local_e0 stays 0 and the alignment is skipped.
-            const bool s_triNormal = WcsTriNormal();
-            if (s_triNormal) {
+            // [u9773 2026-10-20] (verify/u9773_20261020/PREREG_u9773.md amendment 2) the original makes
+            // the call, in FUN_0046c5f0's form (LUT sqrt FUN_004c3b30).
+            {
                 const float* a = local_70 + triA * 3; const float* b = local_70 + triB * 3; const float* c = local_70 + triC * 3;
                 const float f2 = (a[2] - b[2]) * (a[1] - c[1]) - (a[1] - b[1]) * (a[2] - c[2]);
                 const float f3 = (a[0] - b[0]) * (a[2] - c[2]) - (a[2] - b[2]) * (a[0] - c[0]);
@@ -392,9 +388,7 @@ void WheelContactSolver(int* self, void* world, int substep)
             float cx = local_e0[2] * vF(self, 0x273) - local_e0[1] * vF(self, 0x274);
             float cy = local_e0[0] * vF(self, 0x274) - local_e0[2] * vF(self, 0x272);
             float cz = local_e0[1] * vF(self, 0x272) - local_e0[0] * vF(self, 0x273);
-            float dotp = WcsTriNormal()
-                ? (local_e0[0] * vF(self, 0x272) + local_e0[1] * vF(self, 0x273)) + local_e0[2] * vF(self, 0x274)   // 0x0046fdaa..ca
-                : local_e0[2] * vF(self, 0x274) + local_e0[1] * vF(self, 0x273) + local_e0[0] * vF(self, 0x272);
+            float dotp = (local_e0[0] * vF(self, 0x272) + local_e0[1] * vF(self, 0x273)) + local_e0[2] * vF(self, 0x274);   // 0x0046fdaa..ca
             {   // [u9773] MASHED_WCS_TRILOG=<path> (diagnostic, default OFF): the 3-wheel alignment's inputs
                 static std::FILE* s_tl = [] { const char* e = std::getenv("MASHED_WCS_TRILOG"); return e ? std::fopen(e, "w") : nullptr; }();
                 if (s_tl) {
@@ -406,15 +400,13 @@ void WheelContactSolver(int* self, void* world, int substep)
                 }
             }
             if (((cx != kZero) || (cy != kZero) || (cz != kZero)) &&
-                ((dotp < (WcsTriNormal() ? 0.999f : kHiProj)) || (local_ac < 3))) {   // _DAT_005cea88 = 0x3f7fbe77
+                ((dotp < 0.999f) || (local_ac < 3))) {   // _DAT_005cea88 = 0x3f7fbe77
                 float c = kZero - 1.0f;   // _DAT_005cc33c = -1.0
                 if ((-1.0f <= dotp) && (c = dotp, kOne < dotp)) c = kOne;
-                double ang = (double)Math_Acos((double)c) * (double)kRadToDeg;
-                if (WcsTriNormal()) {   // FUN_004a3384 under PC_24 (the d3bc form), then fmul [0x005cc98c] at 0x0046ff9b
-                    const float p1 = 1.0f + c, m1 = 1.0f - c;
-                    const float sq = std::sqrt(p1 * m1);
-                    ang = std::atan2(static_cast<double>(sq), static_cast<double>(c)) * static_cast<double>(kRadToDeg);
-                }
+                // FUN_004a3384 under PC_24 (the d3bc form), then fmul [0x005cc98c] at 0x0046ff9b
+                const float p1 = 1.0f + c, m1 = 1.0f - c;
+                const float sq = std::sqrt(p1 * m1);
+                const double ang = std::atan2(static_cast<double>(sq), static_cast<double>(c)) * static_cast<double>(kRadToDeg);
                 float angf = (float)ang;
                 if ((substep != 0) && (kRotClamp < angf)) angf = kRotClamp;
                 float axis[3] = { cx, cy, cz };
@@ -427,16 +419,15 @@ void WheelContactSolver(int* self, void* world, int substep)
                                               std::string p = std::string(e) + ".tq.csv"; return std::fopen(p.c_str(), "w"); }();
                 unsigned int pre[16];
                 if (s_tq) std::memcpy(pre, reinterpret_cast<const void*>(iVar12), sizeof(pre));
-                if (WcsTriNormal()) {
-                    // [u9776 2026-10-20] MASHED_WCS_COMBINE_PC24=1 (default ON since cpcflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_COMBINE_PC24=1 opts out; PREREG_u9776.md amendment 1): the original runs
-                    // FUN_004c52f0's device multiply 0x005cb2a0 at PC_24; the standalone's x87 is at PC_53 (+1 ulp at call 149).
-                    static const bool s_cpc = [] { const char* e = std::getenv("MASHED_WCS_COMBINE_PC24"); return e && e[0] == '1'; }();
+                {
+                    // [u9776 2026-10-20, cpcflip; MASHED_WCS_COMBINE_PC24 deleted by D5-KNOBS-E3-GEOM-AI] PREREG_u9776.md amendment 1:
+                    // the original runs FUN_004c52f0's device multiply 0x005cb2a0 at PC_24; the standalone's x87 is at PC_53
+                    // (+1 ulp at call 149).
                     unsigned int cw0 = 0, cwt = 0;
-                    if (s_cpc) { _controlfp_s(&cw0, 0, 0); _controlfp_s(&cwt, _PC_24, _MCW_PC); }
+                    _controlfp_s(&cw0, 0, 0); _controlfp_s(&cwt, _PC_24, _MCW_PC);
                     FUN_004c52f0(reinterpret_cast<unsigned int*>(iVar12), reinterpret_cast<unsigned int*>(m), 2);   // 0x0046ffff
-                    if (s_cpc) _controlfp_s(&cwt, cw0 & _MCW_PC, _MCW_PC);
+                    _controlfp_s(&cwt, cw0 & _MCW_PC, _MCW_PC);
                 }
-                else Rw_SetRotation(iVar12, m, 2);
                 if (s_tq) {
                     auto hx = [&](const void* p, int n) { const unsigned int* q = static_cast<const unsigned int*>(p);
                         for (int k = 0; k < n; ++k) std::fprintf(s_tq, "%s%08x", k ? ";" : ",", q[k]); };

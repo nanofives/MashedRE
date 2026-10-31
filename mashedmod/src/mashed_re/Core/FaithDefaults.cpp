@@ -34,17 +34,14 @@ const FaithKnob kFaith[] = {
     { "AI_COUNTDOWN_CLOCK", "1" }, { "PATHPROG", "1" },          { "ROUND_GRID", "1" },
     { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
     { "REASSERT_KEEP_NORMAL", "1" },
-    { "RW_SSE_POINTS", "1" },
-    { "FWD_AT", "1" },             { "ROTATE_LUT", "1" },
-    { "ROTATE_PC24", "1" },        { "HEADING_FWD_LIVE", "1" },    { "AI_LUT", "7" },
-    { "AI_FWD_ATROW", "1" },       { "STEER_SCALE_RDATA", "1" },   { "REGISTRY", "1" },          { "PICKUPS_ORIG", "1" },
+    // [D5-KNOBS-E3-GEOM-AI 2026-10-31] RW_SSE_POINTS, FWD_AT, ROTATE_LUT, ROTATE_PC24, HEADING_FWD_LIVE, AI_LUT (the mask is
+    // the constant 7), AI_FWD_ATROW, STEER_SCALE_RDATA, WCS_TRINORMAL (trinflip) and WCS_COMBINE_PC24 (cpcflip) left this list
+    // with their read sites: the seeded path is the only one in the source
+    // (verify/d5knobse3geom_20261031/RESULT_D5-KNOBS-E3-GEOM-AI.md).
+    { "REGISTRY", "1" },          { "PICKUPS_ORIG", "1" },
     { "REG_CARS", "1" },           { "REG_CALLBACKS", "1" },       { "MODE7", "1" },             { "CC_PC24", "1" },
     { "REG_LATE", "1" },
     { "A5_DRAFT_LUT", "1" },
-    // [trinflip 2026-10-20, Mariano's decision, after wheelcite C27b] u9773's 3-wheel alignment (verify/u9773_20261020/RESULT_u9773.md).
-    { "WCS_TRINORMAL", "1" },
-    // [cpcflip 2026-10-20, Mariano's decision] u9776's PC_24 scope around the alignment's FUN_004c52f0 (verify/u9776_20261020/RESULT_u9776.md).
-    { "WCS_COMBINE_PC24", "1" },
     // [fflip 2026-10-21, Mariano's decision] brecipe's live mode word / fd0 and live slot table for the AI host
     // (verify/brecipe_20261021/RESULT_brecipe.md), flipped with the canonical recipe swap to rule 0 / game mode 10.
     { "MODE_LIVE", "1" },          { "SLOT_TYPE_LIVE", "1" },
