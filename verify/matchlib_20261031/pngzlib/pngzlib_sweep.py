@@ -1,5 +1,5 @@
 import pathlib, sys, tempfile
-W = pathlib.Path(r"C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-LIB")
+W = pathlib.Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(W / "re/tools/match"))
 import coffpe, libmatch, period_cc
 S = pathlib.Path(r"C:\Users\maria\Desktop\Proyectos\Mashed\tools\_download\pngzlib\src")
