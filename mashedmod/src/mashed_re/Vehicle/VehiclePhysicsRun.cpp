@@ -822,7 +822,7 @@ void VehiclePhysics_CarryTo(int slot, const float* m, float ground_off, float ca
 // state matrices at race start (DAT_00881ec8 = +0x928 and DAT_00881f08 = +0x968: FUN_004c51a0 translation at 0x004705fe /
 // 0x0047060a, FUN_004c4d20 Y rotation at 0x0047061c / 0x0047062e), so a car's record carries its grid pose through the
 // countdown. The port wrote the record only at a car's first StepCar, so every record read (0,0,0) before GO, and the
-// countdown path progress (FUN_0040da50 under MASHED_AI_TICK_FIRST) was computed at the origin. Writes the pose only: the
+// countdown path progress (FUN_0040da50, run on countdown frames) was computed at the origin. Writes the pose only: the
 // basis seed, contacts and the rest of FUN_004704c0 stay with the first StepCar as before.
 // [u9756] MASHED_SPAWN_SOLVER_DIAG=<path> (DIAGNOSTIC ONLY, default OFF, verify/u9756_20261018/PREREG_u9756.md): once per
 // slot, at its first countdown seeding, run the original's per-countdown-frame tail on a copy of the spawned record:

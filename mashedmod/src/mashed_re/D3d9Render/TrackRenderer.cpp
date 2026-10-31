@@ -5415,7 +5415,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Vehicle::LaunchRev_PreRaceTick(in.dt, in.accel);
         // [u9747 2026-10-18] MASHED_COUNTDOWN_SPAWN (default ON since the u9747 flip; MASHED_NO_COUNTDOWN_SPAWN=1 opts out; U-9747). Two pieces of the original's pre-GO state the
         // countdown stand-in did not have, both read by FUN_0040da50's path-progress loop (PathProg_FrameTick, which
-        // MASHED_AI_TICK_FIRST runs on countdown frames):
+        // runs on every countdown frame):
         //  - the AI tick's alive-poke: FUN_00418860 (0x004188ae..0x004188db) sets slot state 2 (FUN_0040e480) for each AI
         //    car with FUN_0046c7b0 == 1 in an AI round; the original's AI tick runs on its pre-GO ticks (749 probe calls
         //    before the window on o_reg_r13), the port's first on GO, so IsCarSlotActive (0x0040e370) read 0 for cars 1..3;
@@ -5461,7 +5461,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
             Vehicle::LaunchRev_Release();
         }
-        // [d3bB2] MASHED_AI_TICK_FIRST: the GO frame's AI tick now runs before UpdateRace, so it reads the path
+        // [d3bB2] The GO frame's AI tick runs before UpdateRace, so it reads the path
         // progress the producer left before it. The original runs FUN_0040da50's FUN_00408610 loop from
         // FUN_0040fc00 (0x0040fc75) on every pre-GO tick, so its first racing AI tick reads converged values
         // (o_tg1 at rest: 29.999977 / 29.73 / 29.457 / 29.18). Run it on every countdown frame (the GO frame after
@@ -5556,13 +5556,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // StepPlayer below): what FUN_0040da50 @ 0x0040dae0 reads for flag 0x800 of slot 0
     player_brake_byte_ = static_cast<std::uint8_t>((accel < 0.f ? -accel : 0.f) * 255.f);
 
-    // [d3bB2 2026-10-17] The AI tick phase as one unit, so MASHED_AI_TICK_FIRST=1 (default OFF) can run it
-    // before the player's physics. The original's FUN_00425a40 runs FUN_00418860 (the AI tick, 0x00425a73) and
+    // [d3bB2 2026-10-17] The AI tick phase as one unit, so it can run before the player's physics. The original's
+    // FUN_00425a40 runs FUN_00418860 (the AI tick, 0x00425a73) and
     // FUN_00424eb0 (0x00425a82) BEFORE FUN_00470c70 (0x00425a8d), the physics of every car, player first
     // (FUN_004709a0 slot 0..15). The exe steps the player here, before the AI tick, so on a frame where the
     // player's step makes a car<->car contact the AI tick already reads the impulse, one tick before the
-    // original's (d3bB2: FUN_00414a70 returns 1 for car 2 at window call 22, the original's at 23). Knob OFF:
-    // the phase runs where it always ran, below.
+    // original's (d3bB2: FUN_00414a70 returns 1 for car 2 at window call 22, the original's at 23). It runs before
+    // the player's step unconditionally (below); MASHED_AI_TICK_FIRST, its knob, was deleted by D5-KNOBS-AI-TICK-FIRST.
     bool ai_tick_ran = false;
     auto ai_tick_phase = [&]() {
         ai_tick_ran = true;
@@ -5624,8 +5624,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     {
         // [a4order 2026-10-17] the A4 order implies this order: the A4 loop of FUN_00470c70 reads the commands the
         // AI tick wrote this frame (0x00425a73 before 0x00425a8d), and the AI cars' A4 runs before the player's step.
-        // Unconditional since D5-KNOBS-E1-PHYS-A4A5 deleted MASHED_A4_ORDER (MASHED_AI_TICK_FIRST, ORed with it here
-        // and above, no longer selects anything).
+        // Unconditional since D5-KNOBS-E1-PHYS-A4A5 deleted MASHED_A4_ORDER (MASHED_AI_TICK_FIRST, ORed with it, was
+        // deleted by D5-KNOBS-AI-TICK-FIRST).
         if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) ai_tick_phase();
     }
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
@@ -5990,7 +5990,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const int ng = static_cast<int>(gates_.size());
     const bool faithful_nav = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
     if (faithful_nav) {
-        if (!ai_tick_ran) ai_tick_phase();   // [d3bB2] MASHED_AI_TICK_FIRST runs it before StepPlayer instead
+        if (!ai_tick_ran) ai_tick_phase();   // [d3bB2] ran above, before StepPlayer, under the same condition
         const bool phys = Vehicle::VehiclePhysics_Enabled();
         yaww::Flags(faithful_nav, phys);   // A-REACH witnesses the branch, not prose
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
