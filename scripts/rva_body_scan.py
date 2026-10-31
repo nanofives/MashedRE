@@ -63,6 +63,8 @@ RE_RVA_COMMENT = re.compile(r"^\s*(?://+|/\*|\*)[\s─-╿\-=*#|+>•]*"
 RE_NOT_A_DEF = re.compile(r"^\s*(?:if|for|while|switch|do|else|return|case|"
                           r"#|//|/\*|\*|\}|struct\b|class\b|enum\b|typedef\b)")
 RE_DEF = re.compile(r"^[A-Za-z_~].*\)")   # starts at col 0-ish with a name, has ')'
+# A matched source compiled as the body (C4 by match): `#include "<...>/re/match/<...>.c"`.
+RE_MATCH_INCLUDE = re.compile(r'^\s*#\s*include\s+"((?:\.\./)*re/match/[^"]+\.c)"')
 RE_INSTALL = re.compile(r"RH_ScopedInstall\s*\(\s*([A-Za-z_][\w:<>]*)\s*,\s*"
                         r"(0x[0-9a-fA-F]{6,8})\s*\)")
 
@@ -122,6 +124,7 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
     # definition's anchor -- the convention is `// 0x00467650` directly above.
     # Without this the scanner reports mid-function address annotations as bodies.
     claimed: dict[int, tuple[int, str]] = {}
+    inc_claims: dict[int, dict[int, str]] = {}   # include line -> {rva: name} (C4-by-match swaps)
 
     for i, ln in enumerate(lines):
         m = RE_RVA_COMMENT.match(ln)
@@ -137,6 +140,21 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
             if j >= len(lines):
                 continue
             cand = lines[j]
+            # C4-by-match body swap (MATCH-S03, 2026-10-31): the port TU compiles a matched source
+            # from re/match/ through `#include`, with the RVA comment directly above the include.
+            # The included file holds the definition, so the include line IS the body here.
+            mi = RE_MATCH_INCLUDE.match(cand)
+            if mi:
+                # only the run of RVA comment lines directly above the include (no blank or other
+                # comment line in between), so a disassembly block further up is not bound to it
+                if not all(RE_RVA_COMMENT.match(lines[k]) for k in range(i + 1, j)):
+                    continue
+                hm = RE_RVA_HEADER.match(ln)
+                # every RVA comment of the comment block directly above the include is a body of it
+                # (one matched file may hold a static callee and its caller)
+                inc_claims.setdefault(j, {})[rva] = (hm.group(2) if hm and int(hm.group(1), 16) == rva
+                                                     else "match:" + mi.group(1))
+                continue
             if RE_NOT_A_DEF.match(cand) or not RE_DEF.search(cand):
                 continue
             # The signature may span lines; require an opening brace within 6 lines.
@@ -167,6 +185,9 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
 
     for j, (rva, name) in claimed.items():
         bodies.setdefault(rva, (name, j + 1))
+    for j, d in inc_claims.items():
+        for rva, name in d.items():
+            bodies.setdefault(rva, (name, j + 1))
 
     # ------------------------------------------------------------------
     # SECOND PASS (U-9156 2026-09-30): bodies whose RVA comment is NOT
