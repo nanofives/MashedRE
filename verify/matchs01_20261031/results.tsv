@@ -1,0 +1,129 @@
+rva	size	exact_pct	verdict	source	source_sha256_12	swapped_into	exe_tu	asi_tu
+0x00401000	482	100.0	BYTES-OK	re/match/s01/00401000.c	78878418ee3c			
+0x004011f0	325	100.0	BYTES-OK	re/match/s01/004011f0.c	d5c9082233d5			
+0x00401340	162	100.0	BYTES-OK	re/match/s01/00401340.c	4cc502680817	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x004013f0	181	100.0	BYTES-OK	re/match/s01/004013f0.c	ed00d0acd62e			
+0x004014b0	182	100.0	BYTES-OK	re/match/s01/raw/004014b0.c	b7d3414f59fa			
+0x00401570	37	100.0	BYTES-OK	re/match/s01/00401570.c	f6c4c27d79e7	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x004015a0	126	94.0	BYTES-OK	re/match/s01/004015a0.c	a35df7b9e412			
+0x00401630	87	100.0	BYTES-OK	re/match/s01/raw/00401630.c	aa213fc7cd16			
+0x00401690	820	60.2	partial(bad 713/1280)	re/match/s01/00401690.c	6dd87dddae8c			
+0x004019d0	973	76.0	partial(bad 437/968)	re/match/s01/004019d0.c	d54a7f38a508			
+0x00401da0	309	93.5	partial(bad 51/309)	re/match/s01/00401da0.c	57505b90cfff			
+0x00401ee0	40	100.0	BYTES-OK	re/match/s01/00401570.c	f6c4c27d79e7	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00401f10	202	100.0	BYTES-OK	re/match/s01/00401f10.c	4bc137574845			
+0x00401fe0	600	46.4	partial(bad 350/603)	re/match/s01/00401fe0.c	12d9445de827			Render/PromoLoop_standins_r5.cpp
+0x00402240	89	100.0	BYTES-OK	re/match/s01/raw/00402240.c	2548c8c1b9c9			Render/PromoLoop_standins_r3.cpp
+0x004022a0	744	50.7	partial(bad 394/750)	re/match/s01/004022a0.c	8be68fae9ce6			Render/PromoLoop_standins_r5.cpp
+0x00402590	89	100.0	BYTES-OK	re/match/s01/raw/00402590.c	e015f7088060			Render/PromoLoop_standins_r3.cpp
+0x004025f0	208	96.2	BYTES-OK	re/match/s01/00401690.c	6dd87dddae8c			
+0x004026d0	120	100.0	BYTES-OK	re/match/s01/004026d0.c	a1d8bf177d5f	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00402750	722	100.0	BYTES-OK	re/match/s01/00402750.c	61a884e6a8dd			
+0x00402a40	293	100.0	BYTES-OK	re/match/s01/raw/00402a40.c	cb156bafc5d6			
+0x00402b70	960	99.4	partial(bad 6/963)	re/match/s01/00402b70.c	88e73e77ebd1			
+0x00402f40	6	100.0	BYTES-OK	re/match/s01/raw/00402f40.c	d78a5799ad83			Util/PromoLoop_round15.cpp
+0x00402f50	48	100.0	BYTES-OK	re/match/s01/00402f50.c	eebb012c3b0d	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00402f80	41	100.0	BYTES-OK	re/match/s01/00402f50.c	eebb012c3b0d	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00402fb0	148	100.0	BYTES-OK	re/match/s01/00402fb0.c	9c1bf19e0a5d			
+0x00403050	125	100.0	BYTES-OK	re/match/s01/00403050.c	7baf3cfa732e			Frontend/SkeletonAndScatter_t6.cpp
+0x004030d0	137	100.0	BYTES-OK	re/match/s01/004030d0.c	d675ae657c96			
+0x00403160	230	100.0	BYTES-OK	re/match/s01/00403160.c	549fb2edecc3			HUD/HudBatch.cpp
+0x00403250	583	100.0	BYTES-OK	re/match/s01/00403250.c	3a5fb1e4d3a3			
+0x004034a0	412	100.0	BYTES-OK	re/match/s01/004034a0.c	6259359c5500			
+0x00403640	24	100.0	BYTES-OK	re/match/s01/raw/00403640.c	0f0d7d92e489			
+0x00403660	54	100.0	BYTES-OK	re/match/s01/00403660.c	73afb49e936f			
+0x004036a0	612	77.4	partial(bad 296/612)	re/match/s01/004036a0.c	0ab02e84fb9c			
+0x00403910	170	100.0	BYTES-OK	re/match/s01/004036a0.c	0ab02e84fb9c			
+0x004039c0	23	100.0	BYTES-OK	re/match/s01/raw/004039c0.c	98b01e6ac809			
+0x004039e0	7	100.0	BYTES-OK	re/match/s01/raw/004039e0.c	fc28bbb397a9			Util/PromoLoop_round35.cpp
+0x004039f0	611	97.1	partial(bad 39/611)	re/match/s01/004039f0.c	e1a41cbd946f			
+0x00403c60	207	100.0	BYTES-OK	re/match/s01/00403c60.c	ec3fd6b2c799			
+0x00403d30	124	100.0	BYTES-OK	re/match/s01/00403d30.c	7ad9c668de0e			Render/LowRvaMixed_q3.cpp
+0x00403db0	278	100.0	BYTES-OK	re/match/s01/00403db0.c	f07065e68e72			
+0x00403ed0	206	100.0	BYTES-OK	re/match/s01/00403ed0.c	2489b147995c			Render/LowRvaMixed_q3.cpp
+0x00403fa0	529	100.0	BYTES-OK	re/match/s01/00403fa0.c	0804fb405df5			
+0x004041c0	343	100.0	BYTES-OK	re/match/s01/004041c0.c	67aa7f1cb16f			
+0x00404320	802	98.3	BYTES-OK	re/match/s01/00403fa0.c	0804fb405df5			Render/PerModeRender.cpp
+0x00404650	79	100.0	BYTES-OK	re/match/s01/00404650.c	48c9db3f3f89			
+0x004046a0	377	96.8	partial(bad 6/377)	re/match/s01/004046a0.c	a5de8bdbec42		Race/RuleEngine.cpp	
+0x00404820	13	100.0	BYTES-OK	re/match/s01/raw/00404820.c	1f39279116fa			
+0x00404830	1474	100.0	BYTES-OK	re/match/s01/00404830.c	a3edc5d8d984			
+0x00404e00	27	100.0	BYTES-OK	re/match/s01/00404e00.c	f680b9ad3694	Vehicle/CarMaterialTables.cpp	Vehicle/CarMaterialTables.cpp	Vehicle/CarMaterialTables.cpp
+0x00404e20	36	100.0	BYTES-OK	re/match/s01/00404e00.c	f680b9ad3694	Vehicle/CarMaterialTables.cpp	Vehicle/CarMaterialTables.cpp	Vehicle/CarMaterialTables.cpp
+0x00404e50	33	100.0	BYTES-OK	re/match/s01/00404e50.c	d283cf95a747	Save/GameSave.cpp	Save/GameSave.cpp	Save/GameSave.cpp
+0x00404e80	87	100.0	BYTES-OK	re/match/s01/00404e80.c	4cb254427170	Save/GameSaveBuffer.cpp	Save/GameSaveBuffer.cpp	Save/GameSaveBuffer.cpp
+0x00404ee0	92	89.3	BYTES-OK	re/match/s01/00404e80.c	4cb254427170	Save/GameSaveBuffer.cpp	Save/GameSaveBuffer.cpp	Save/GameSaveBuffer.cpp
+0x00404f50	33	100.0	BYTES-OK	re/match/s01/00404e50.c	d283cf95a747	Save/GameSave.cpp	Save/GameSave.cpp	Save/GameSave.cpp
+0x00404f80	20	100.0	BYTES-OK	re/match/s01/00404e50.c	d283cf95a747	Save/GameSave.cpp	Save/GameSave.cpp	Save/GameSave.cpp
+0x00404fa0	1063	94.6	partial(bad 221/1069)	re/match/s01/00404fa0.c	6271d9baa617			
+0x004053d0	45	100.0	BYTES-OK	re/match/s01/004053d0.c	49fc57eeb837			Render/LowRvaSetters_o2.cpp
+0x00405400	23	100.0	BYTES-OK	re/match/s01/004053d0.c	49fc57eeb837			Util/PromoLoop_round53.cpp
+0x00405420	11	100.0	BYTES-OK	re/match/s01/004053d0.c	49fc57eeb837			Render/PromoLoop_round11.cpp
+0x00405430	39	100.0	BYTES-OK	re/match/s01/004053d0.c	49fc57eeb837			Util/PromoLoop_sessionB.cpp
+0x00405460	223	100.0	BYTES-OK	re/match/s01/00405460.c	9f80d47d632d			
+0x00405540	495	88.1	partial(bad 256/487)	re/match/s01/00405540.c	2b9bda0e5c31			
+0x00405730	80	96.2	partial(bad 5/80)	re/match/s01/00405730.c	b764c8090e32			
+0x00405780	257	100.0	BYTES-OK	re/match/s01/00405780.c	ad311a822cab			
+0x00405890	26	100.0	BYTES-OK	re/match/s01/00405890.c	fc8176cbbcd4	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x004058b0	15	100.0	BYTES-OK	re/match/s01/raw/004058b0.c	fb333a46703f			Util/PromoLoop_sessionB.cpp
+0x004058c0	25	100.0	BYTES-OK	re/match/s01/004058c0.c	0b90af8ccbe1			Util/PromoLoop_sessionB.cpp
+0x004058e0	62	100.0	BYTES-OK	re/match/s01/raw/004058e0.c	b19594edeff2			
+0x00405920	398	99.2	partial(bad 7/398)	re/match/s01/00405920.c	1b18f386ba03			
+0x00405ab0	1192	96.9	partial(bad 42/1192)	re/match/s01/00405920.c	1b18f386ba03			
+0x00405f60	261	100.0	BYTES-OK	re/match/s01/00405920.c	1b18f386ba03			
+0x00406070	192	100.0	BYTES-OK	re/match/s01/00405920.c	1b18f386ba03			
+0x00406130	46	100.0	BYTES-OK	re/match/s01/raw/00406130.c	09b386c9f910			
+0x00406160	522	88.7	partial(bad 186/519)	re/match/s01/00406160.c	6b7a5d06b48d			
+0x00406370	153	100.0	BYTES-OK	re/match/s01/raw/00406370.c	66efc64802a1			Util/PromoLoop_round68.cpp
+0x00406410	174	100.0	BYTES-OK	re/match/s01/00405920.c	1b18f386ba03			
+0x004064c0	1167	99.4	partial(bad 19/1167)	re/match/s01/004064c0.c	c30d1f1aa5e2			
+0x00406950	115	100.0	BYTES-OK	re/match/s01/00406950.c	4d3898a80d8f			
+0x004069d0	264	84.0	partial(bad 51/264)	re/match/s01/004069d0.c	7ea676630a7d			
+0x00406ae0	508	91.8	partial(bad 166/508)	re/match/s01/00405920.c	1b18f386ba03			
+0x00406ce0	1532	71.6	partial(bad 746/1514)	re/match/s01/00406ce0.c	c3a6c446a95c			
+0x004072e0	198	100.0	BYTES-OK	re/match/s01/004072e0.c	ea210bb033b5			
+0x004073b0	237	100.0	BYTES-OK	re/match/s01/004073b0.c	12e26f39d6cc			
+0x004074a0	167	100.0	BYTES-OK	re/match/s01/004074a0.c	6f6c142f71f5			
+0x00407550	35	100.0	BYTES-OK	re/match/s01/00407550.c	94cebc92ad9c			Gameplay/SubsystemARecordFind.cpp
+0x00407580	17	100.0	BYTES-OK	re/match/s01/raw/00407580.c	24b4105789cf			Gameplay/SubsystemARecordKey.cpp
+0x004075a0	6	100.0	BYTES-OK	re/match/s01/raw/004075a0.c	a45a65ca9459			Util/PromoLoop_round33.cpp
+0x004075b0	70	100.0	BYTES-OK	re/match/s01/004075b0.c	0df8173e0c80			Util/PromoLoop_sessionB.cpp
+0x00407600	29	100.0	BYTES-OK	re/match/s01/00407600.c	ff782ec5f39d		Render/SlotObjectAccessors.cpp	Render/SlotObjectAccessors.cpp
+0x00407620	29	100.0	BYTES-OK	re/match/s01/raw/00407620.c	89843e45f897			Util/PromoLoop_sessionB.cpp
+0x00407640	42	100.0	BYTES-OK	re/match/s01/raw/00407640.c	3b348a75bdc4			Util/PromoLoop_round69.cpp
+0x004077e0	18	100.0	BYTES-OK	re/match/s01/004077e0.c	2231219a6230			Util/PromoLoop_round61.cpp
+0x00407800	498	99.3	partial(bad 8/498)	re/match/s01/00407800.c	917f552cbc7b			
+0x00407a00	24	100.0	BYTES-OK	re/match/s01/raw/00407a00.c	6b830cc6b896			Gameplay/RangeTable_ah1.cpp
+0x00407a20	17	100.0	BYTES-OK	re/match/s01/raw/00407a20.c	43658a004810			Gameplay/RangeTable_ah1.cpp
+0x00407a40	17	100.0	BYTES-OK	re/match/s01/raw/00407a40.c	24abcff9c4ce			Util/PromoLoop_round42.cpp
+0x00407a60	40	100.0	BYTES-OK	re/match/s01/00407a60.c	77a4ab457649	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00407b00	99	100.0	BYTES-OK	re/match/s01/00407b00.c	d7319ffbae23			Gameplay/RangeTable_ah1.cpp
+0x00407b70	98	100.0	BYTES-OK	re/match/s01/00407b70.c	5cca1b125717			Gameplay/RangeTable_ah1.cpp
+0x00407be0	225	67.6	partial(bad 76/223)	re/match/s01/00407be0.c	611c17cf9920			
+0x00407cd0	157	100.0	BYTES-OK	re/match/s01/00407cd0.c	7f0a987da6d5			
+0x00407d70	60	100.0	BYTES-OK	re/match/s01/00407d70.c	7bdb66dedc0e			Gameplay/RangeTable_ah1.cpp
+0x00407db0	111	100.0	BYTES-OK	re/match/s01/00407db0.c	773f65b9023b			Gameplay/RangeTable_ah1.cpp
+0x00407e20	1895	76.6	partial(bad 1539/1878)	re/match/s01/00407e20.c	73cb98ae39f3			
+0x00408590	121	94.9	partial(bad 12/121)	re/match/s01/00408590.c	0982fd47f1a6			Util/PromoLoop_sessionB.cpp
+0x00408610	1066	95.8	partial(bad 32/1073)	re/match/s01/00408610.c	172fa482e134			
+0x00408a50	17	100.0	BYTES-OK	re/match/s01/00407a60.c	77a4ab457649	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00408a70	96	100.0	BYTES-OK	re/match/s01/00408a70.c	7a4e5cbe619f			Frontend/MenuMixed.cpp
+0x00408ad0	17	100.0	BYTES-OK	re/match/s01/00407a60.c	77a4ab457649	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00408af0	16	100.0	BYTES-OK	re/match/s01/raw/00408af0.c	90b7e88ed489			Ai/PromoLoop_round1.cpp
+0x00408b00	1883	90.2	partial(bad 214/1932)	re/match/s01/00408b00.c	17f067d63102			
+0x00409290	110	100.0	BYTES-OK	re/match/s01/00409290.c	e8bdd4962d2d	Match/MatchS01.cpp	Match/MatchS01.cpp	Match/MatchS01.cpp
+0x00409300	48	100.0	BYTES-OK	re/match/s01/00409300.c	666bf1cdd151			Gameplay/RangeTable_ah1.cpp
+0x00409330	120	100.0	BYTES-OK	re/match/s01/00409330.c	046e48cd7b90			Gameplay/RangeTable_ah1.cpp
+0x004093b0	496	100.0	BYTES-OK	re/match/s01/004093b0.c	175f78adc5d8			
+0x004095a0	211	98.6	BYTES-OK	re/match/s01/004095a0.c	bc240e580faf			
+0x00409680	20	100.0	BYTES-OK	re/match/s01/raw/00409680.c	dc1ec0b9fc61			Render/LowRvaSetters_o2.cpp
+0x004096a0	99	100.0	BYTES-OK	re/match/s01/raw/004096a0.c	64b1a2ff90e1			
+0x00409710	119	100.0	BYTES-OK	re/match/s01/raw/00409710.c	84b7546cdf44			
+0x00409790	248	100.0	BYTES-OK	re/match/s01/00409790.c	8055600260cf			
+0x004098a0	6	100.0	BYTES-OK	re/match/s01/raw/004098a0.c	e441b6c9e178			Util/PromoLoop_round40.cpp
+0x004098b0	28	100.0	BYTES-OK	re/match/s01/raw/004098b0.c	d5ae6451eec6			Util/UtilBatch.cpp
+0x004098d0	33	100.0	BYTES-OK	re/match/s01/raw/004098d0.c	af0089eeed93			
+0x00409900	44	100.0	BYTES-OK	re/match/s01/raw/00409900.c	4ac67f3c5241			Util/UtilBatch.cpp
+0x00409930	31	100.0	BYTES-OK	re/match/s01/raw/00409930.c	a763e9b0f554			Util/UtilBatch.cpp
+0x00409950	26	100.0	BYTES-OK	re/match/s01/raw/00409950.c	4ce99ad611e6			
+0x00409970	41	100.0	BYTES-OK	re/match/s01/raw/00409970.c	d2bbaf3461ad			
