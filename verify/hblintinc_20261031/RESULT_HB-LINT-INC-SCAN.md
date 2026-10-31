@@ -67,3 +67,16 @@ changes (rc=0).
 - Whether these are real defects or deliberate verbatim naked copies is not judged here. Each is a follow-up.
 - Needs Mariano / lead decision: either land the scanner with 32 allowlist entries (allowlist is a tracker-adjacent file, not touched here) or fix the dual copies first. Merging this branch alone breaks the build lint.
 - No .ps1/.bat edits needed.
+
+## Update 2026-10-31: L-71 answered (a), allowlist landed
+Mariano chose (a): merge the scanner and allowlist the 32 new keys. Branch refreshed onto current orch/integration
+(merge 7474eb86c, no conflicts).
+- `re/tools/dual_copy_allowlist.txt`: +32 keys (15 DUP-IN-TARGET, 17 CROSS-TARGET), each with file:line of every body.
+  For bodies pulled in from a `.inc`, the line is the `#include` line in the including TU (the scanner's anchor).
+  Generated from the scanner's own findings, so key text matches the lint exactly.
+- `py -3.12 scripts/lint_rva_bodies.py` (the lint step at `mashedmod/build.bat:35`): `48 finding(s) ... allowlisted=48 NEW=0`, rc=0.
+  The full `build.bat` compile was not run (text/tools pass); only the lint it invokes. `original\mashed_re_dev.asi` untouched.
+- 32 burn-down ledger rows added, section "D4 dual-copy", ids `D4-DC-INC-<rva8hex>`, wave 5. Where one RVA has both a
+  DUP-IN-TARGET and a CROSS-TARGET key (0x0040e470, 0x00426bb0) a single row covers both keys.
+- Gates not run (no behaviour change, no source body touched).
+- Needs Mariano: nothing (.ps1/.bat untouched).
