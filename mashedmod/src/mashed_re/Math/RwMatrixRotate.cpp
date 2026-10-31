@@ -47,16 +47,21 @@ extern "C" float __cdecl FastInvSqrt(float x);
 extern "C" float* __cdecl RwMatrixRotateInner(float* matrix, const float* axis_n,
                                               float one_minus_cos, float sin_a, int mode);
 
-// [u9764 2026-10-19] MASHED_ROTATE_LUT=1 (default OFF, verify/u9764_20261019/PREREG_u9764.md amendment 1): normalize the
+// [u9764 2026-10-19] (verify/u9764_20261019/PREREG_u9764.md amendment 1) kRotateLut: normalize the
 // axis through the RW LUT inverse sqrt the original calls (0x004c4d5d `call 0x004c3b90`). In the standalone the RW LUT is
 // never built, so FastInvSqrt returns 1/sqrt(x) (Math/RwSqrt.cpp); LutInvSqrt is the same table rebuilt in-process.
-static bool RotateLut() { static const bool s = [] { const char* e = std::getenv("MASHED_ROTATE_LUT"); return e && e[0] == '1'; }(); return s; }
 
-// [u9766 2026-10-19] MASHED_ROTATE_PC24=1 (default OFF, verify/u9766_20261019/PREREG_u9766.md amendment 1): run the x87
+// [u9766 2026-10-19] (verify/u9766_20261019/PREREG_u9766.md amendment 1) kRotatePc24: run the x87
 // section (FSIN / FCOS / 1 - cos here, and RwMatrixRotateInner's inline FPU stream) at 24-bit precision control, as the
 // original's race thread does. The inner's bit-identity was measured in the .asi, inside MASHED.exe at PC_24; the standalone
 // runs at the CRT default, so register-width intermediates round differently. Same scope as Ai/AiLeafTargets.cpp PcScope.
-static bool RotatePc24() { static const bool s = [] { const char* e = std::getenv("MASHED_ROTATE_PC24"); return e && e[0] == '1'; }(); return s; }
+// [D5-KNOBS-E3-GEOM-AI 2026-10-31] the knobs MASHED_ROTATE_LUT / MASHED_ROTATE_PC24 are deleted. The standalone had both ON
+// through the FAITH seed (Core/FaithDefaults.cpp, exe-only); the dev .asi never seeded them, so it keeps both OFF.
+#ifdef MASHED_STANDALONE
+static constexpr bool kRotateLut = true, kRotatePc24 = true;
+#else
+static constexpr bool kRotateLut = false, kRotatePc24 = false;
+#endif
 struct RotatePcScope {
     unsigned int old = 0; bool on;
     explicit RotatePcScope(bool b) : on(b) { if (on) { _controlfp_s(&old, 0, 0); unsigned int t; _controlfp_s(&t, _PC_24, _MCW_PC); } }
@@ -115,14 +120,14 @@ void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, i
 
     // Normalize the axis (same sum-of-squares association as the original: (x²+y²)+z²).
     const float len2 = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2];
-    const float invLen = RotateLut() ? mashed_re::Math::LutInvSqrt(len2) : FastInvSqrt(len2);
+    const float invLen = kRotateLut ? mashed_re::Math::LutInvSqrt(len2) : FastInvSqrt(len2);
     float axis_n[3];
     axis_n[0] = invLen * axis[0];
     axis_n[1] = axis[1] * invLen;
     axis_n[2] = axis[2] * invLen;
 
     // Hardware FSIN / FCOS + (1 - cos), mirroring 0x004c4d91..0x004c4da7 exactly.
-    RotatePcScope pc(RotatePc24());   // [u9766] covers the asm below and RwMatrixRotateInner
+    RotatePcScope pc(kRotatePc24);   // [u9766] covers the asm below and RwMatrixRotateInner
     float s             = 0.0f;
     float one_minus_cos = 0.0f;
     __asm {

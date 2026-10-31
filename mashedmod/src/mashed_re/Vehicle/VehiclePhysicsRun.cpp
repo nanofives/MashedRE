@@ -490,18 +490,14 @@ static void ReassertContacts(unsigned char* r, const ContactScratch& cs) {
 // The port keeps one pose (U-9152). It publishes only the dst half and swaps the selectors as above (it published the
 // pose into both halves before u9152). MASHED_RING_DBUF_DISCARD=1 (probe, default OFF) also drops the pose of a
 // substep whose retries ran out, as the skipped swap does in the original (the next substep starts from the old src).
-// [u9758 2026-10-18] MASHED_FWD_AT (default ON since the fwdsse flip 2026-10-19, user decision; MASHED_NO_FWD_AT=1 opts
-// out; verify/u9758_20261018/PREREG_u9758.md): record +0x9d4..+0x9dc as the
+// [u9758 2026-10-18, fwdsse flip 2026-10-19; the knob MASHED_FWD_AT and its opt-out deleted by D5-KNOBS-E3-GEOM-AI
+// 2026-10-31; verify/u9758_20261018/PREREG_u9758.md]: record +0x9d4..+0x9dc as the
 // original writes it. Write watch o_fw1 (car 1, +0x9d4 / +0x9dc): every write is FUN_004c3df0(rec + 0x9d4, &DAT_00614708,
 // 1, matrix) with DAT_00614708 = (0, 0, 1) (.data, bytes 00000000 00000000 0000803f), i.e. the matrix's `at` row:
 //   A5 FUN_0046ddb0 0x0046ddba..0x0046ddc9, matrix = its arg 2 = A4's rec + [+0x9a8]*0x40 + 0x928, once per frame
 //   FUN_0046d510 0x0046d525..0x0046d53a, matrix = rec + 0x928, from the AI callers (returns 0x00414605 / 0x00414aad / ...)
 // None of them runs inside the substep loop. The port wrote (cos yaw, 0, sin yaw) at frame entry and after every substep's
-// orientation step. Under the knob: the basis `at` row at frame entry and after the heading is taken, none in the substep.
-static bool FwdAt() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_NO_FWD_AT"); return !(e && e[0] == '1'); }();
-    return s;
-}
+// orientation step. Now: the basis `at` row at frame entry and after the heading is taken, none in the substep.
 // FUN_004c3df0 with (0, 0, 1): 0 * right + 0 * up + 1 * at, per component
 static void WriteForwardAt(unsigned char* r, const float* m) {
     for (int c = 0; c < 3; ++c)
@@ -720,12 +716,12 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     const float sdGcIn = F(r, 0x9e0);
     Collision::WheelContactSolver(self, world, substep);
     std::memcpy(Collision::g_suspScratch, savedScratch, sizeof(savedScratch));
-    // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default ON since trinflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_TRINORMAL=1 opts out): the solver's 3-wheel alignment rotates the +0x928 ring
+    // [u9773 2026-10-20, trinflip; the knob MASHED_WCS_TRINORMAL deleted by D5-KNOBS-E3-GEOM-AI] the solver's 3-wheel
+    // alignment rotates the +0x928 ring
     // (Rw_SetRotation at 0x0046fd..), which in the original IS the body basis. The port keeps the basis separately and
     // re-publishes it into the ring (above, and SyncContactRingMatrix), so carry the ring's rotation rows back into it.
     {
-        static const bool s_triBack = [] { const char* e = std::getenv("MASHED_WCS_TRINORMAL"); return e && e[0] == '1'; }();
-        if (s_triBack && bodyUp) {
+        if (bodyUp) {
             float* basisW = const_cast<float*>(bodyUp) - 4;
             const float* m = reinterpret_cast<const float*>(r + (std::size_t)I(r, 0x9ac) * 0x40 + 0x928);
             for (int i = 0; i < 12; ++i) basisW[i] = m[i];
@@ -1346,7 +1342,7 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         F(r, off::kVelocity + 8) = io.vel[2];
         F(r, off::kSpeed)        = io.speed;
     }
-    if (FwdAt() && g_bodyBasisOk[slot]) {
+    if (g_bodyBasisOk[slot]) {
         WriteForwardAt(r, g_bodyBasis[slot]);   // [u9758] the `at` row, as A5 / FUN_0046d510 write it
     } else {
         F(r, off::kForward + 0)  = std::cos(io.yaw);
@@ -1566,12 +1562,7 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
     // Keep io.yaw the basis heading from here on: it feeds record +0x9d4 (above) and
     // SolveWheelContacts' wheel placement, both of which must see the BODY heading.
     io.yaw = BodyOrient_Heading(basis);
-    if (FwdAt()) {
-        WriteForwardAt(r, basis);   // [u9758] A5 0x0046ddc9: the frame-start pose's `at` row
-    } else {
-        F(r, off::kForward + 0) = std::cos(io.yaw);
-        F(r, off::kForward + 8) = std::sin(io.yaw);
-    }
+    WriteForwardAt(r, basis);   // [u9758] A5 0x0046ddc9: the frame-start pose's `at` row
 
     // A8 position accumulator: the frame's world-space position delta, summed over
     // the substeps exactly as FUN_0046e9e0 accumulates it into the matrix
@@ -1899,11 +1890,7 @@ static void StepSubstep(StepCtx& c) {
         float w[3];
         BodyOrient_OmegaFromSteer(r, chunkMs, input, w);
         BodyOrient_IntegrateStep(basis, w);
-        io.yaw = BodyOrient_Heading(basis);
-        if (!FwdAt()) {   // [u9758] the original writes no +0x9d4 inside the substep loop
-            F(r, off::kForward + 0) = std::cos(io.yaw);
-            F(r, off::kForward + 8) = std::sin(io.yaw);
-        }
+        io.yaw = BodyOrient_Heading(basis);   // [u9758] the original writes no +0x9d4 inside the substep loop
     }
     D2Sink::Mark("sub_orient", r, d2sSub, pass, chunkMs, remMs);   // 0x0046e9e0
 
