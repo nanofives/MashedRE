@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-31 16:37 MATCH-S01 (orch/MATCH-S01): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_160356
 - 2026-10-31 16:02 MATCH-S04 (orch/MATCH-S04): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_150246
 - 2026-10-31 15:01 MATCH-S03 (orch/MATCH-S03), D5-KNOBS-AI-TICK-FIRST (orch/D5-KNOBS-AI-TICK-FIRST): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_142553
 - 2026-10-31 14:24 MATCH-S02 (orch/MATCH-S02), MATCH-RUBRIC (orch/MATCH-RUBRIC): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_131735
