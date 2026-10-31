@@ -254,26 +254,16 @@ void VehicleTerrainContactSolver(int* param_1, void* param_2)
                             Rw_MatrixFromAxisAngle(local_40, vFP(param_1, 0x26f), kAxisAngle90, 0);
                             Rw_TransformPoints(local_a, pfVar8 + 5, 1, local_40);
                             Vec3Normalize(local_a, local_a);
-                            double fVar9 = Vec3Mag(vFP(param_1, 0x26f));
-                            // [u9756] _DAT_005cea44 is 0.27777779f (0x3e8e38e4); kTer_VelScale2 holds 0.277779f.
-                            // MASHED_FIX_5CEA44=1 (default OFF) uses the binary's value.
-                            static const float s_velScale2 = [] { const char* e = std::getenv("MASHED_FIX_5CEA44");
-                                                                  return (e && e[0] == '1') ? 0.27777779f : kTer_VelScale2; }();
-                            // [u9774 2026-10-20] MASHED_TER_SPIN_F32=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 3):
-                            // the original's float steps at PC_24, 0x0046906b..0x004690a1: ((|w| * 360) * [edi-0x18]) * _DAT_005cea44,
-                            // then each component * that float. The port's double form rounds once at the end.
-                            static const bool s_spinF32 = [] { const char* e = std::getenv("MASHED_TER_SPIN_F32"); return e && e[0] == '1'; }();
-                            if (s_spinF32) {
-                                float sf = static_cast<float>(fVar9) * kTer_VelScale;
-                                sf = sf * pfVar8[-1];
-                                sf = sf * s_velScale2;
-                                local_a[0] = local_a[0] * sf; local_a[1] = local_a[1] * sf; local_a[2] = local_a[2] * sf;
-                            } else {
-                            fVar9 = fVar9 * (double)kTer_VelScale * (double)pfVar8[-1] * (double)s_velScale2;
-                            local_a[0] = (float)((double)local_a[0] * fVar9);
-                            local_a[1] = (float)((double)local_a[1] * fVar9);
-                            local_a[2] = (float)((double)local_a[2] * fVar9);
-                            }
+                            const double fVar9 = Vec3Mag(vFP(param_1, 0x26f));
+                            // [u9756] kTer_VelScale2 = _DAT_005cea44 = 0.27777779f (0x3e8e38e4).
+                            // [u9774 2026-10-20] the original's float steps at PC_24, 0x0046906b..0x004690a1:
+                            // ((|w| * 360) * [edi-0x18]) * _DAT_005cea44, then each component * that float
+                            // (verify/u9774_20261020/PREREG_u9774.md amendment 3). Their knobs MASHED_FIX_5CEA44 and
+                            // MASHED_TER_SPIN_F32 (seeded ON) were deleted by D5-KNOBS-E2-PHYS-A6FIX.
+                            float sf = static_cast<float>(fVar9) * kTer_VelScale;
+                            sf = sf * pfVar8[-1];
+                            sf = sf * kTer_VelScale2;
+                            local_a[0] = local_a[0] * sf; local_a[1] = local_a[1] * sf; local_a[2] = local_a[2] * sf;
                         }
                         pfVar8[0] = vF(param_1, 0x26c) + local_a[0];
                         pfVar8[1] = vF(param_1, 0x26d) + local_a[1];

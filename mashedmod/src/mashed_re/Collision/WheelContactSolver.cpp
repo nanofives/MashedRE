@@ -31,7 +31,7 @@
 #include <string>
 #include "../Vehicle/VehicleRecordBase.h"   // [u9773] slot index for MASHED_WCS_POSLOG
 #include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
-#include "../Math/RwLutTables.h"     // [lk21] LutSqrt (FUN_004c3b30), MASHED_UP_TRINORMAL
+#include "../Math/RwLutTables.h"     // [lk21] LutSqrt (FUN_004c3b30), the up tri-normal
 
 namespace mashed_re {
 namespace Collision {
@@ -55,9 +55,9 @@ unsigned g_wcsVelWrites[3] = { 0u, 0u, 0u };
 // constants (raw value @ address)
 // _DAT_005cea60 is 0.2778f (0x3e8e3bcd in the anchored binary); 0.277779f (0x3e8e390d) was a transcription slip. It scales
 // the suspension mounts into the contact points (and fv's reset), so the depths drift 7e-7 on a slope (u9756, wheel-0 x
-// 1.26e-5 off against o_sp2). [u9756] MASHED_FIX_5CEA60 uses the binary's value; default ON since the f60flip (2026-10-18,
-// user decision), MASHED_NO_FIX_5CEA60=1 restores the old 0.277779f.
-static const float kWTorque   = [] { const char* e = std::getenv("MASHED_NO_FIX_5CEA60"); return (e && e[0] == '1') ? 0.277779f : 0.2778f; }();
+// 1.26e-5 off against o_sp2). [u9756] the binary's value, default since the f60flip (2026-10-18, user decision). Its
+// opt-out MASHED_NO_FIX_5CEA60 was deleted by D5-KNOBS-E2-PHYS-A6FIX.
+static const float kWTorque   = 0.2778f;    // _DAT_005cea60 0x3e8e3bcd
 static const float kReset10   = 10.0f;      // literal 0x41200000
 static const float kState2Lo  = 0.02f;      // _DAT_005ce18c
 static const float kStateCmp  = -0.005f;    // _DAT_005ceaa0
@@ -175,26 +175,23 @@ void WheelContactSolver(int* self, void* world, int substep)
     // 0x0088e638 (wheel 2), EAX = 0x0088e620 (wheel 0), call 0x0046f7b0: record +0x9c8..+0x9d0 = the normal of the
     // three transformed suspension points, cross / FUN_004c3b30 (LUT sqrt). The port seeds +0x9c8 with the basis
     // up row (VehiclePhysicsRun.cpp, U-9156), which is that normal without the LUT magnitude (0.99999 here).
-    // MASHED_UP_TRINORMAL=1 (seeded ON by FaithDefaults) writes it here from the transformed points, as the
-    // original does. verify/lk21_20261018/PREREG_lk21.md amendment 1.
+    // [lk21] it is written here from the transformed points, as the original does (verify/lk21_20261018/PREREG_lk21.md
+    // amendment 1). Its knob MASHED_UP_TRINORMAL (seeded ON) was deleted by D5-KNOBS-E2-PHYS-A6FIX.
     {
-        static const bool s_upTri = [] { const char* e = std::getenv("MASHED_UP_TRINORMAL"); return e && e[0] == '1'; }();
-        if (s_upTri) {
-            const float* p = g_wheelContactPos;
-            const float* a = p;        // EAX 0x0088e620
-            const float* b = p + 9;    // ECX 0x0088e644 (param_1)
-            const float* c = p + 6;    // EDX 0x0088e638 (param_2)
-            const float f2 = (a[2] - b[2]) * (a[1] - c[1]) - (a[1] - b[1]) * (a[2] - c[2]);
-            const float f3 = (a[0] - b[0]) * (a[2] - c[2]) - (a[2] - b[2]) * (a[0] - c[0]);
-            const float f1 = (a[1] - b[1]) * (a[0] - c[0]) - (a[0] - b[0]) * (a[1] - c[1]);
-            const float l2 = f2 * f2 + f3 * f3 + f1 * f1;
-            if (0.0f <= l2) {                                                    // DAT_005d757c <= fVar4
-                const float l = mashed_re::Math::LutSqrt(l2);                    // FUN_004c3b30
-                if (l != 0.0f) {
-                    const float inv = 1.0f / l;                                  // _DAT_005cc320 / fVar5 (PC_24)
-                    float* up = reinterpret_cast<float*>(self) + 0x272;          // ESI = self + 0x9c8
-                    up[0] = f2 * inv; up[1] = f3 * inv; up[2] = inv * f1;
-                }
+        const float* p = g_wheelContactPos;
+        const float* a = p;        // EAX 0x0088e620
+        const float* b = p + 9;    // ECX 0x0088e644 (param_1)
+        const float* c = p + 6;    // EDX 0x0088e638 (param_2)
+        const float f2 = (a[2] - b[2]) * (a[1] - c[1]) - (a[1] - b[1]) * (a[2] - c[2]);
+        const float f3 = (a[0] - b[0]) * (a[2] - c[2]) - (a[2] - b[2]) * (a[0] - c[0]);
+        const float f1 = (a[1] - b[1]) * (a[0] - c[0]) - (a[0] - b[0]) * (a[1] - c[1]);
+        const float l2 = f2 * f2 + f3 * f3 + f1 * f1;
+        if (0.0f <= l2) {                                                    // DAT_005d757c <= fVar4
+            const float l = mashed_re::Math::LutSqrt(l2);                    // FUN_004c3b30
+            if (l != 0.0f) {
+                const float inv = 1.0f / l;                                  // _DAT_005cc320 / fVar5 (PC_24)
+                float* up = reinterpret_cast<float*>(self) + 0x272;          // ESI = self + 0x9c8
+                up[0] = f2 * inv; up[1] = f3 * inv; up[2] = inv * f1;
             }
         }
     }
