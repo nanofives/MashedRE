@@ -63,13 +63,14 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
 namespace {
 struct A6aAsiDefaults {
     A6aAsiDefaults() {
-        const char* const ks[] = { "A6A_GEAR_ORDER", "A6A_SPIN_ORDER", "A6A_DRIVE_NORM_LUT", "A6A_DOT_ORDER",
+        const char* const ks[] = { "A6A_DRIVE_NORM_LUT",
                                    // [dcphys2] A6b: what the deleted verbatim copy computed (Vehicle/AeroStabilize.cpp)
                                    "A6B_ACOS_CRT", "A6B_NORM_LUT",
                                    // [dcphys2] A5 (Vehicle/ForceIntegrator.cpp): the drafting test in float / LUT
                                    "A5_DRAFT_LUT" };
         // [D5-KNOBS-E1-PHYS-A4A5 2026-10-30] A6A_LC0, A5_RING_ORDER, A5_DOT_ORDER, A5_AIR_F32, A5_CONTACT_INT, A5_SPIN_FILD
         // and A4_DOT_ORDER left this list: their read sites are deleted and the seeded path is the only one.
+        // [D5-KNOBS-E2-PHYS-A6FIX 2026-10-31] A6A_GEAR_ORDER, A6A_SPIN_ORDER and A6A_DOT_ORDER left it the same way.
         char on[64], no[64];
         for (const char* k : ks) {
             std::strcpy(on, "MASHED_");    std::strcat(on, k);
@@ -585,8 +586,8 @@ __declspec(naked) void A5_Entry() {
 // [dcphys 2026-10-21] ONE body, shared with mashed_re.exe: Vehicle/Integrate2.cpp (Vehicle_Integrate2). The
 // verbatim naked-x87 transcription that lived here (C4 72/72, with 14 float10 / _ftol2 shims) was deleted after
 // the shared body read bit-identical to it on every sampled call (nvs = 0 on 2 x 1376 calls, track 0) and, with
-// MASHED_A6A_DOT_ORDER=1, bit-identical to the original on every sampled call where the verbatim copy was not
-// (verify/dcphys_20261021). What stays here is the .asi's harness: the trampoline into the original, the A/B
+// MASHED_A6A_DOT_ORDER=1 (the only path since D5-KNOBS-E2-PHYS-A6FIX), bit-identical to the original on every sampled
+// call where the verbatim copy was not (verify/dcphys_20261021). What stays here is the .asi's harness: the trampoline into the original, the A/B
 // (full 0xd04 record + a no-op control) and the entry.
 // ===========================================================================
 namespace {
