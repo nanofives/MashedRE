@@ -40,7 +40,7 @@ constexpr std::int32_t kCC_BounceTimer = 0x1e0;
 constexpr float kTer_DepthThresh  = 0.42f;      // _DAT_005cea48  0x3ed70a3d
 constexpr float kTer_DepthMin     = -0.1f;      // _DAT_005cd0fc  0xbdcccccd
 constexpr float kTer_VelScale     = 360.0f;     // _DAT_005ccac4  0x43b40000
-constexpr float kTer_VelScale2    = 0.277779f;  // _DAT_005cea44  0x3e8e38e4
+constexpr float kTer_VelScale2    = 0.27777779f;// _DAT_005cea44  0x3e8e38e4 (was 0.277779f until D5-KNOBS-E2-PHYS-A6FIX)
 constexpr float kTer_MagThresh    = 9.99999e-5f;// _DAT_005cd03c  0x38d1b717
 constexpr float kArm_SandSpWheel  = 3.6f;       // s_Afff_SandSpWheel_005cc753._1_4_ @0x005cc754 = 0x40666666
 constexpr float kAxisAngle90      = 90.0f;      // literal 0x42b40000 (FUN_004c4d20 angle arg)

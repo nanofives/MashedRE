@@ -1,21 +1,23 @@
 # MATCH-S01: C4 by byte match, slice 0x00401000..0x00409970 (2026-10-31)
 
-Branch `orch/MATCH-S01` (worktree `.worktrees/MATCH-S01`, off `orch/MATCH-MERGE` @ 440e64e02). No tracker, ledger
-(other than this row), `original/`, master-Ghidra or `.ps1`/`.bat` write. No re-classify: MATCH-RUBRIC is not merged.
+Branch `orch/MATCH-S01` (worktree `.worktrees/MATCH-S01`, off `orch/MATCH-MERGE` @ 440e64e02, `orch/integration` @
+5cf5cdd63 merged in, MATCH-RUBRIC + MATCH-S02 included). No tracker, `original/`, master-Ghidra or `.ps1`/`.bat` write. No re-classify (a separate row does it).
 
 ## Verdict
 
-**HANDOFF: static legs and body swap done and committed, default gates NOT RUN.** The gate run waited 2 h for
-`mashed_machine` (other workers' solo windows and merge-train priority passes held it from 11:58 to 13:58) and hit
-the tool's maximum background time without starting. Nothing about the swap has been measured at runtime yet.
+**GREEN for the worker legs: build OK, one-body lint clean (NEW=0), relocheck OK on all 18 swapped RVAs (0
+unchecked relocations). Default gates: train-run only.** The worker's own gate run waited 2 h for `mashed_machine`
+(11:58-13:58, other workers' solo windows and merge-train priority passes) and never started. After the merge the
+machine was again in a merge-train solo window (14:46), so per the lead the G-CTRL/B gates are left to the merge
+train's `-Full` pass on the merged tree. Merged-tree exe sha8 `04ea8761` (below).
 
 - **103 of 128** slice functions are byte-identical to `MASHED.exe.unpatched` (whole obj symbol, relocations
   masked, at least Ghidra's body size): 32 straight from the converter (`re/match/s01/raw/`), 71 by hand
   (`re/match/s01/*.c`). 25 are partial (46.4-99.4%), classes below.
 - **18 RVAs now use the matched source as their port body in both targets** (one body per RVA, lint clean). These
-  are the re-classify candidates once MATCH-RUBRIC lands (table "Swapped").
+  are the re-classify candidates (rubric route `match`, conditions 1 and 2 met, 3 = the train gates; table "Swapped").
 - The other 85 byte-identical RVAs have no body in `mashed_re.exe` (the exe does not carry a port of them), so
-  condition (b) of the rubric cannot hold yet. They are matched-only. Two exe-body RVAs were not swapped:
+  rubric condition 2 cannot hold yet. They are matched-only. Two exe-body RVAs were not swapped:
   0x00407600 (byte-identical, its port body is a ShadowAB wrapper, see "Not swapped") and 0x004046a0 (96.8%).
 
 ## Commands, compiler, flags
@@ -37,26 +39,29 @@ range; their notes: `verify/matchs01_20261031/notes/a1..a6.md`, brief `AGENT_BRI
 
 ## Swapped (18 RVAs): matched source = port body, both targets
 
-| rva | port symbol | matched source (git blob) | port TU (exe + asi) |
-|---|---|---|---|
-| 0x00401340 | CupSpinSpeedAndColor | re/match/s01/00401340.c (1801bf5a41d1) | Match/MatchS01.cpp |
-| 0x00401570 | EntryTableScanByKey | re/match/s01/00401570.c (838e45f26d66) | Match/MatchS01.cpp |
-| 0x00401ee0 | EntityTableSelectUpdate | re/match/s01/00401570.c (838e45f26d66) | Match/MatchS01.cpp |
-| 0x004026d0 | BootQueueFlush | re/match/s01/004026d0.c (4ccf7f7b7bbd) | Match/MatchS01.cpp |
-| 0x00402f50 | BootDefaultParamsInit | re/match/s01/00402f50.c (86154861ff22) | Match/MatchS01.cpp |
-| 0x00402f80 | CupFloatInit | re/match/s01/00402f50.c (86154861ff22) | Match/MatchS01.cpp |
-| 0x00405890 | Pred405890 | re/match/s01/00405890.c (7835c4fd9709) | Match/MatchS01.cpp |
-| 0x00407a60 | UtilTableInit8a9620 | re/match/s01/00407a60.c (b3322a7374cc) | Match/MatchS01.cpp |
-| 0x00408a50 | PerCarRaceProgressGet | re/match/s01/00407a60.c (b3322a7374cc) | Match/MatchS01.cpp |
-| 0x00408ad0 | RaceScoreFloatGetBySlot | re/match/s01/00407a60.c (b3322a7374cc) | Match/MatchS01.cpp |
-| 0x00409290 | SnapNodeToSafeStartLines | re/match/s01/00409290.c (58010819e9a3) | Match/MatchS01.cpp |
-| 0x00404e00 | IdxPtr404e00 | re/match/s01/00404e00.c (713f4f48dfa1) | Vehicle/CarMaterialTables.cpp |
-| 0x00404e20 | IdxPtr404e20 | re/match/s01/00404e00.c (713f4f48dfa1) | Vehicle/CarMaterialTables.cpp |
-| 0x00404e50 | SaveLoad | re/match/s01/00404e50.c (5ba70f49b767) | Save/GameSave.cpp |
-| 0x00404f50 | SaveWrite | re/match/s01/00404e50.c (5ba70f49b767) | Save/GameSave.cpp |
-| 0x00404f80 | SaveFileExists | re/match/s01/00404e50.c (5ba70f49b767) | Save/GameSave.cpp |
-| 0x00404e80 | DeserializeFromBuffer | re/match/s01/00404e80.c (bb04df1f4a9c) | Save/GameSaveBuffer.cpp |
-| 0x00404ee0 | SerializeToBuffer | re/match/s01/00404e80.c (bb04df1f4a9c) | Save/GameSaveBuffer.cpp |
+Machine form: `swaps.tsv` (MATCH-S02 format) and `relocheck.tsv`. exe callers = calls by name in exe TUs other than the
+port TU (text scan; calls that reach the RVA through `Compat/StandaloneRvaThunks` are not counted). `0` = no by-name caller.
+
+| rva | port symbol | best % (by) | relocheck (checked/unchecked) | matched source (blob) | port TU (exe + asi) | exe callers |
+|---|---|---|---|---|---|---|
+| 0x00401340 | CupSpinSpeedAndColor | 100.0 (insn) | OK (7/0) | re/match/s01/00401340.c (c90b761df14b) | Match/MatchS01.cpp | 0 |
+| 0x00401570 | EntryTableScanByKey | 100.0 (insn) | OK (4/0) | re/match/s01/00401570.c (fe3c96dcac42) | Match/MatchS01.cpp | 0 |
+| 0x00401ee0 | EntityTableSelectUpdate | 100.0 (insn) | OK (4/0) | re/match/s01/00401570.c (fe3c96dcac42) | Match/MatchS01.cpp | 0 |
+| 0x004026d0 | BootQueueFlush | 100.0 (insn) | OK (8/0) | re/match/s01/004026d0.c (4ccf7f7b7bbd) | Match/MatchS01.cpp | 0 |
+| 0x00402f50 | BootDefaultParamsInit | 100.0 (insn) | OK (7/0) | re/match/s01/00402f50.c (1095d4c11682) | Match/MatchS01.cpp | exe_main.cpp |
+| 0x00402f80 | CupFloatInit | 100.0 (insn) | OK (4/0) | re/match/s01/00402f50.c (1095d4c11682) | Match/MatchS01.cpp | 0 |
+| 0x00404e00 | IdxPtr404e00 | 100.0 (insn) | OK (2/0) | re/match/s01/00404e00.c (c8074b0b893d) | Vehicle/CarMaterialTables.cpp | LibRw/RwCarFx.cpp |
+| 0x00404e20 | IdxPtr404e20 | 100.0 (insn) | OK (2/0) | re/match/s01/00404e00.c (c8074b0b893d) | Vehicle/CarMaterialTables.cpp | LibRw/RwCarFx.cpp |
+| 0x00404e50 | SaveLoad | 100.0 (insn) | OK (4/0) | re/match/s01/00404e50.c (e3c9a06649ab) | Save/GameSave.cpp | Race/GameFlow.cpp |
+| 0x00404e80 | DeserializeFromBuffer | 100.0 (insn) | OK (9/0) | re/match/s01/00404e80.c (cc39d420a214) | Save/GameSaveBuffer.cpp | 0 |
+| 0x00404ee0 | SerializeToBuffer | 89.3 (bytes) | OK (10/0) | re/match/s01/00404e80.c (cc39d420a214) | Save/GameSaveBuffer.cpp | 0 |
+| 0x00404f50 | SaveWrite | 100.0 (insn) | OK (4/0) | re/match/s01/00404e50.c (e3c9a06649ab) | Save/GameSave.cpp | Race/GameFlow.cpp |
+| 0x00404f80 | SaveFileExists | 100.0 (insn) | OK (2/0) | re/match/s01/00404e50.c (e3c9a06649ab) | Save/GameSave.cpp | Race/GameFlow.cpp |
+| 0x00405890 | Pred405890 | 100.0 (insn) | OK (2/0) | re/match/s01/00405890.c (a149fc2f1d70) | Match/MatchS01.cpp | 0 |
+| 0x00407a60 | UtilTableInit8a9620 | 100.0 (insn) | OK (2/0) | re/match/s01/00407a60.c (d7efc90aca08) | Match/MatchS01.cpp | 0 |
+| 0x00408a50 | PerCarRaceProgressGet | 100.0 (insn) | OK (1/0) | re/match/s01/00407a60.c (d7efc90aca08) | Match/MatchS01.cpp | 0 |
+| 0x00408ad0 | RaceScoreFloatGetBySlot | 100.0 (insn) | OK (1/0) | re/match/s01/00407a60.c (d7efc90aca08) | Match/MatchS01.cpp | D3d9Render/TrackRenderer.cpp |
+| 0x00409290 | SnapNodeToSafeStartLines | 100.0 (insn) | OK (2/0) | re/match/s01/00409290.c (58010819e9a3) | Match/MatchS01.cpp | Race/RoundGrid.cpp |
 
 How the swap works (commits c73f918c3, adab10e4b):
 - Each matched file keeps its own `extern` / prototype block inside `#ifndef MASHED_RE_PORT`. `match.py` compiles
@@ -72,8 +77,14 @@ How the swap works (commits c73f918c3, adab10e4b):
   both targets + installs): exactly the 11 `MatchS01.cpp` RVAs moved; nothing else changed.
 - `Match/MatchS01.cpp` is in both rsp lists and in `x87_tus.txt` (the matched code is x87 code. None of the 9
   source TUs was x87; the only float arithmetic swapped is 0x00401340's one multiply).
-- `scripts/rva_body_scan.py` now follows `#include "*.c"` (one level, appended after the TU's lines), so the
-  one-body lint and the `exe_file` backfill see these bodies. Build lint: `CROSS-TARGET=16 allowlisted=16 NEW=0`.
+- One-body lint: the merged `scripts/rva_body_scan.py` binds each `// MATCH:` line of an included `re/match/` source
+  to the including TU (MATCH-S02's third pass). This branch's earlier include-appending pass was dropped in the merge
+  so only one mechanism remains. Every swapped RVA binds to one TU in each target (table above). Lint on the merged
+  tree: `CROSS-TARGET=16 allowlisted=16 NEW=0`.
+- relocheck (rubric condition 1): the 10 swapped sources declare their globals with `MGLOBAL(T, name, 0x<addr>)` /
+  `MGLOBALA(...)` inside the `#ifndef MASHED_RE_PORT` block (expands to the same `extern` as before, so the match
+  compile is unchanged: all 18 still byte-identical). `re/tools/match/relocheck.py` reports OK for all 18 with 0
+  unchecked relocations (`relocheck.tsv`). The port compile skips that block and keeps its own name map.
 - Source fixes made while matching that also fix the port:
   - 0x00404ee0: the original writes the counter at 0x00828254 after the 0x520-byte block copy to 0x00827d98, and
     0x00828254 is inside that block (+0x4bc). The source keeps that order (also byte-identical), so a compiler
@@ -82,34 +93,29 @@ How the swap works (commits c73f918c3, adab10e4b):
     matched bodies do not either.
   - 0x00402f50: zeroes all five dwords (inlined memset) before the two float stores. The final state is the same as before.
 
-Build: `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"`, Build OK, shared .asi not deployed.
-Gated exe (frozen copy) sha256 `274d4930611722539a710bf79827373fa92781268f99dc339ef37098bca4923c`, asi
-`f56fc6ec652fc2e3e8e8f0546d32515ffc8beb2a3b1823f3b93fb1663f265ce5` (built at adab10e4b; later commits are evidence only).
+Merge: `git -c merge.autoStash=false merge orch/integration` (5cf5cdd63). Conflicts were only in the two rsp lists,
+both sides appending lines (MatchS01.cpp and the 19 MatchS02 TUs). Both were kept. `SmallLeaves_t1.cpp`,
+`UtilLeaves_ac.cpp` and `rva_body_scan.py` merged automatically.
+
+Build (merged tree): `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmoduild.bat"`, Build OK, rva-lint NEW=0, asm-lint OK,
+shared .asi not deployed. Frozen copy `D:/MashedWT/MATCH-S01_data/exe2/`: exe sha256
+`04ea876117feb9c54eeecd7e375ed024082e1d3c35efb37a9f9d4e6ad9963fcd` (sha8 `04ea8761`), asi
+`99baa2b759cf04008fc661974e52a1c3be6b8505c4d0d175c5458c5b8aa8c682`. The pre-merge build (`exe/`, sha8 `274d4930`)
+is superseded.
 
 ## Gates
 
-Not run (see verdict). Refs (`re/orchestrator/merge_train.json`): G-CTRL `8284be46/ba407a16/31fe043e`,
-B `1d5bf4f9` x3. A gate move from a body swap is a port divergence: file it as DECISION, do not fix it in this row.
+**Train-run only.** No worker gate run happened: the first attempt waited 2 h for the lock without starting, and
+after the merge the machine was in a merge-train solo window (since 14:46). The merge train's `-Full` pass runs
+H_DEF + B_DEF_K0/K1/K26 on the merged tree. Refs (`re/orchestrator/merge_train.json`): G-CTRL
+`8284be46/ba407a16/31fe043e`, B `1d5bf4f9` x3. A gate move from a body swap is a port divergence (L-n decision).
+The bisect unit is the port TU: `Match/MatchS01.cpp` (11 RVAs), `Save/GameSave.cpp` (3), `Save/GameSaveBuffer.cpp`
+(2), `Vehicle/CarMaterialTables.cpp` (2). The private root `D:/MashedWT/MATCH-S01_root` is ready if a worker run
+is wanted later (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` under
+`mashed_lock.py run`, `A4_EXE` = the frozen exe).
 
-## HANDOFF (next session, one step)
-
-From the worktree root, sandbox disabled, `run_in_background` with a 7200000 ms timeout, and only when
-`mashed_lock.py status` is free (no SOLO window):
-
-```
-export A4_EXE=D:/MashedWT/MATCH-S01_data/exe/mashed_re.exe A4_ROOT=D:/MashedWT/MATCH-S01_root A4_OUT=D:/MashedWT/MATCH-S01_data/arms
-test-slot bash -c 'py -3.12 <orch-wt>/re/orchestrator/mashed_lock.py run --label MATCH-S01 --wait 7200 -- py -3.12 verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26'
-```
-
-The exe in `D:/MashedWT/MATCH-S01_data/exe/` is the frozen build of adab10e4b (sha256 above). The private root
-`D:/MashedWT/MATCH-S01_root` is ready. Hash `H_DEF.step.csv`, `H_DEF.gates.csv`, `H_DEF.ptrace.log` and
-`B_DEF_K*.step.csv` (SHA-256, first 8 hex) against the refs. Equal means GREEN: fill this section, `roadmap.ps1 set
-MATCH-S01 review`. Different means DECISION. The bisect unit is the three port TUs: revert `Match/MatchS01.cpp`
-(11 RVAs), the GameSave pair, or the CarMaterialTables pair. When the lead's queue is free, the merge train's own
-gate pass (it rebuilds and runs the same arms) is an equivalent way to get these hashes.
-
-On TaskStop of a queued run: the `py` waiter children survive the killed bash. Kill them by PID (label MATCH-S01),
-or they stay queued on the lock.
+Process note: a TaskStop of a queued run leaves its `py` waiter children on the lock queue. Kill them by PID
+(label MATCH-S01).
 
 ## Not swapped
 
@@ -145,10 +151,11 @@ header gives the residual and what was tried.
   0x00408ad0, 0x00404e00, 0x00404e20, 0x00404f80) stores outside its frame.
 - 0x00404830 matched (`00404830.c`). The exe's copy is generated data (`Vehicle/CarMaterialTables_dirt.inc`), not a body.
 
-## For the re-classify step (after MATCH-RUBRIC merges)
+## For the re-classify step (separate row)
 
-For each of the 18 swapped RVAs: evidence = this file + `results.tsv` row (`BYTES-OK`, match.py `--bytes`, DDK
-13.00.9176/9178, `/O2 /GS /Ob1`, C, x87) + the source blob above + port TU + the gate line. `hooks.csv` `file` /
+For each of the 18 swapped RVAs: evidence = this file + its `swaps.tsv` row (match.py `--bytes` BYTES-OK, DDK
+13.00.9176/9178, `/O2 /GS /Ob1`, C, x87; relocheck OK, 0 unchecked; source and port-TU blobs) + the merge train's
+gate line. Rows with `exe callers = 0` in the table get `exe-callers=0` in `notes` (rubric "Callerless bodies"). `hooks.csv` `file` /
 `exe_file` change to the port TU in the table. The 85 matched-only RVAs: record the match (source path) without C4.
 
 ## Raw data (not committed), D:/MashedWT/MATCH-S01_data/

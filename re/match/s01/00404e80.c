@@ -8,15 +8,17 @@ typedef struct { int d[0x148]; } Blk520;
 typedef struct { int d[0x928f]; } Blk2423c;
 typedef struct { int v; int pad[18]; } Rec4c;
 #ifndef MASHED_RE_PORT
-extern Blk520 DAT_007f0a40;
-extern Blk520 DAT_00827d98;
-extern Rec4c DAT_007f105c[12];
-extern unsigned char DAT_007f0f54[12];
-extern int DAT_008a95ac;
-extern int DAT_00828254;
-extern Blk2423c *DAT_008a94a8;
-extern Blk2423c DAT_0080335c;
-extern unsigned int DAT_00803358;
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+MGLOBAL(Blk520, DAT_007f0a40, 0x007f0a40);
+MGLOBAL(Blk520, DAT_00827d98, 0x00827d98);
+MGLOBALA(Rec4c, DAT_007f105c, 12, 0x007f105c);
+MGLOBALA(unsigned char, DAT_007f0f54, 12, 0x007f0f54);
+MGLOBAL(int, DAT_008a95ac, 0x008a95ac);
+MGLOBAL(int, DAT_00828254, 0x00828254);
+MGLOBAL(Blk2423c *, DAT_008a94a8, 0x008a94a8);
+MGLOBAL(Blk2423c, DAT_0080335c, 0x0080335c);
+MGLOBAL(unsigned int, DAT_00803358, 0x00803358);
 #endif
 
 // 0x00404e80

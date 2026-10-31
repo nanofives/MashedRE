@@ -212,30 +212,17 @@ static bool A6aDriveNormLut() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_DRIVE_NORM_LUT"); return e && e[0] == '1'; }();
     return s;
 }
-// [u9771 2026-10-19] MASHED_A6A_GEAR_ORDER=1 (default OFF, verify/u9771_20261019/PREREG_u9771.md amendment 2).
-static bool A6aGearOrder() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_GEAR_ORDER"); return e && e[0] == '1'; }();
-    return s;
-}
-// [u9774 2026-10-20] MASHED_A6A_SPIN_ORDER=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 1): the spin arm's
-// factor in the original's grouping, 0x00468077..0x004680ae: (+0x9e8 * _DAT_005cea18) * max(+0x9e4 * _DAT_005cea14, 8) * 360.
-static bool A6aSpinOrder() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_SPIN_ORDER"); return e && e[0] == '1'; }();
-    return s;
-}
-// [dcphys 2026-10-21] MASHED_A6A_DOT_ORDER=1 (verify/dcphys_20261021/PREREG_dcphys.md; default ON since dotflip 2026-10-22,
-// Mariano's decision, seeded by Core/FaithDefaults.cpp in the exe and A6aAsiDefaults in the .asi; opt-out
-// MASHED_NO_A6A_DOT_ORDER=1): A6a's three 3-term
-// dot products in the original's association. This body (and the .asi's former verbatim copy, which agreed with it on
-// every call) wrote them as Ghidra prints them, c*z + a*x + b*y, which C++ groups (c*z + a*x) + b*y. The original adds
-// the first two products it loads, then the third (x87 at PC_24 rounds each step as an SSE float step does):
+// [u9771 2026-10-19] the gear table's products are in the original's association (verify/u9771_20261019/PREREG_u9771.md
+// amendment 2). [u9774 2026-10-20] the spin arm's factor is in the original's grouping, 0x00468077..0x004680ae:
+// (+0x9e8 * _DAT_005cea18) * max(+0x9e4 * _DAT_005cea14, 8) * 360 (verify/u9774_20261020/PREREG_u9774.md amendment 1).
+// [dcphys 2026-10-21] A6a's three 3-term dot products are in the original's association (verify/dcphys_20261021/
+// PREREG_dcphys.md). Ghidra prints them c*z + a*x + b*y, which C++ groups (c*z + a*x) + b*y. The original adds the first
+// two products it loads, then the third (x87 at PC_24 rounds each step as an SSE float step does):
 //   drive arm 0x00467be9..0x00467c0c  (+0x9d8*n1 + +0x9d4*n0) + +0x9dc*n2
 //   block #5  0x0046837d..0x00468394  (d0*f0 + d1*f1) + d2*f2
 //   clamp #6  0x00468771..0x00468793  (+0x9d8*+0x9b4 + +0x9d4*+0x9b0) + +0x9dc*+0x9b8
-static bool A6aDotOrder() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_DOT_ORDER"); return e && e[0] == '1'; }();
-    return s;
-}
+// Their knobs MASHED_A6A_GEAR_ORDER, MASHED_A6A_SPIN_ORDER and MASHED_A6A_DOT_ORDER (seeded ON in both targets) were
+// deleted by D5-KNOBS-E2-PHYS-A6FIX: the original's association is the only path.
 static inline float A6Len(const float* t) {
     if (A6aLut()) return mashed_re::Math::LutSqrt((t[0] * t[0] + t[1] * t[1]) + t[2] * t[2]);
     return Vec3Mag3(t);
@@ -319,17 +306,11 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     float fVar5 = k1500 - Rf(v, 0xb0c);
     if (fVar5 < k500) fVar5 = k500;
     int iVar11 = 0;
-    // [u9771] MASHED_A6A_GEAR_ORDER (default OFF): the original's association, 0x0046768b..0x00467739:
+    // [u9771] the original's association, 0x0046768b..0x00467739:
     //   fVar4 = (c498 * 0.5) * (fVar5 * k), fVar5' = (fVar5 * k) * (c49c * 0.5), k = _DAT_005ce1e8.
-    float fVar4;
-    if (A6aGearOrder()) {
-        const float fk = fVar5 * k6p667e4;
-        fVar4 = (Rf(v, 0x498) * kHalf) * fk;
-        fVar5 = fk * (Rf(v, 0x49c) * kHalf);
-    } else {
-        fVar4 = Rf(v, 0x498) * kHalf * fVar5 * k6p667e4;
-        fVar5 = fVar5 * k6p667e4 * Rf(v, 0x49c) * kHalf;
-    }
+    const float fk = fVar5 * k6p667e4;
+    const float fVar4 = (Rf(v, 0x498) * kHalf) * fk;
+    fVar5 = fk * (Rf(v, 0x49c) * kHalf);
     for (int j = 0; j < 5; ++j) {
         float g = Rf(v, 0x478 + j * 4);
         if (g != kZero) {
@@ -439,8 +420,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 float n[3]; { float src[3] = { Rf(v,0x9b0), Rf(v,0x9b4), Rf(v,0x9b8) };
                     // [u9771] MASHED_A6A_DRIVE_NORM_LUT (default OFF): the original normalises with FUN_004c39b0 (RW LUT).
                     if (A6aDriveNormLut()) mashed_re::Math::LutNormalize(n, src); else Vec3Norm3(n, src); }
-                float fwd = A6aDotOrder() ? ((Rf(v,0x9d8)*n[1] + Rf(v,0x9d4)*n[0]) + Rf(v,0x9dc)*n[2])   // [dcphys] 0x00467be9..0x00467c0c
-                                          : (Rf(v,0x9dc)*n[2] + Rf(v,0x9d4)*n[0] + Rf(v,0x9d8)*n[1]);
+                float fwd = (Rf(v,0x9d8)*n[1] + Rf(v,0x9d4)*n[0]) + Rf(v,0x9dc)*n[2];   // [dcphys] 0x00467be9..0x00467c0c
                 fwd = fwd*fwd; fwd = fwd*fwd; fwd = fwd*fwd;
                 if (fwd < 0.0f) fwd = -fwd;
                 if (fwd < k0p25) fwd = k0p25;
@@ -623,8 +603,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 le0 = dst[0]; ldc = dst[1]; ld8 = dst[2];
                 float f = Rf(v,0x9e4) * k0p008;
                 if (f < k8) f = k8;
-                f = A6aSpinOrder() ? (Rf(v,0x9e8) * k0p019877) * f * k360   // [u9774] 0x00468077..0x004680ae
-                                   : f * Rf(v,0x9e8) * k0p019877 * k360;
+                f = (Rf(v,0x9e8) * k0p019877) * f * k360;   // [u9774] 0x00468077..0x004680ae
                 le0 = le0*f - Rf(v,0x9b0); ldc = ldc*f - Rf(v,0x9b4); ld8 = ld8*f - Rf(v,0x9b8);
                 le4 = Mag3(le0, ldc, ld8);
             } else {
@@ -703,8 +682,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             float inv = 1.0f / Rp(p,-0xb);
             float d0 = Rp(p,-9)*inv, d1 = Rp(p,-8)*inv, d2 = Rp(p,-7)*inv;
             float f0 = Rp(p,0x1c), f1 = Rp(p,0x1d), f2 = Rp(p,0x1e);
-            float dot = A6aDotOrder() ? ((d0*f0 + d1*f1) + d2*f2)   // [dcphys] 0x0046837d..0x00468394
-                                      : (d2*f2 + d1*f1 + d0*f0);
+            float dot = (d0*f0 + d1*f1) + d2*f2;   // [dcphys] 0x0046837d..0x00468394
             float c8 = d0*dot, c4 = d1*dot, c0 = d2*dot;
             float ac = f0 - c8, a8 = f1 - c4, a4 = f2 - c0;
             float x84 = a4*c4 - a8*c0, x80 = ac*c0 - a4*c8, x7c = a8*c8 - ac*c4;
@@ -898,9 +876,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     g_a6aFrame.grip = 0.f; g_a6aFrame.kVel = 0.f; g_a6aFrame.kAv = 1.f;
     g_a6aFrame.arm = -1; g_a6aFrame.clampRan = 0;
     if (speed != 0.0f && Ri(v, 0x9e0) == 0x40800000) {
-        float fwdDot = A6aDotOrder()   // [dcphys] 0x00468771..0x00468793
-                     ? ((Rf(v,0x9d8)*Rf(v,0x9b4) + Rf(v,0x9d4)*Rf(v,0x9b0)) + Rf(v,0x9dc)*Rf(v,0x9b8))
-                     : (Rf(v,0x9dc)*Rf(v,0x9b8) + Rf(v,0x9d4)*Rf(v,0x9b0) + Rf(v,0x9d8)*Rf(v,0x9b4));
+        float fwdDot = (Rf(v,0x9d8)*Rf(v,0x9b4) + Rf(v,0x9d4)*Rf(v,0x9b0)) + Rf(v,0x9dc)*Rf(v,0x9b8);   // [dcphys] 0x00468771..0x00468793
         float fx = Rf(v,0x9b0) - fwdDot*Rf(v,0x9d4);   // lateral velocity
         float fy = Rf(v,0x9b4) - fwdDot*Rf(v,0x9d8);
         float fz = Rf(v,0x9b8) - fwdDot*Rf(v,0x9dc);

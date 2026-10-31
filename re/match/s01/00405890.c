@@ -1,8 +1,10 @@
 // FLAGS: /O2 /GS /Ob1
 // MATCH-S01. Int return: the zero path returns the tested EAX itself.
 #ifndef MASHED_RE_PORT
-extern int DAT_0063a5d0;
-extern int DAT_0063a5d4;
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+MGLOBAL(int, DAT_0063a5d0, 0x0063a5d0);
+MGLOBAL(int, DAT_0063a5d4, 0x0063a5d4);
 #endif
 
 // 0x00405890

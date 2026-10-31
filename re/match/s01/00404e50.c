@@ -3,8 +3,10 @@
 // buffer at 0x00803358, the file read / write / exists helpers 0x004b3b70 / 0x004b3bb0 / 0x00550b00, then
 // FUN_004099e0(0). The name is a named global (not a literal) so the port can bind it per target.
 #ifndef MASHED_RE_PORT
-extern char s_gamesave_bin_005cc8e0[];
-extern unsigned char DAT_00803358[0x24fa0];
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+MGLOBALA(char, s_gamesave_bin_005cc8e0, 13, 0x005cc8e0);
+MGLOBALA(unsigned char, DAT_00803358, 0x24fa0, 0x00803358);
 int FUN_004b3b70(char *path, void *buf, unsigned int size);
 int FUN_004b3bb0(char *path, void *buf, unsigned int size);
 int FUN_00550b00(char *path);

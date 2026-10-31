@@ -4,10 +4,12 @@
 typedef struct { unsigned char r, g, b, a; } Rgba401340;
 typedef struct { int f0; Rgba401340 col; } Obj4b4080;
 #ifndef MASHED_RE_PORT
-extern int DAT_007f0ff0;
-extern void *DAT_00636564;
-extern const float DAT_005cc328;
-extern float DAT_00636574;
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+MGLOBAL(int, DAT_007f0ff0, 0x007f0ff0);
+MGLOBAL(void *, DAT_00636564, 0x00636564);
+MGLOBAL(const float, DAT_005cc328, 0x005cc328);
+MGLOBAL(float, DAT_00636574, 0x00636574);
 int FUN_0042f6a0(void);
 Obj4b4080 *FUN_004b4080(void *p);
 #endif

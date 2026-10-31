@@ -64,20 +64,8 @@
 // Pure read — no side effects. U-4203 non-blocking.
 // ---------------------------------------------------------------------------
 
-// 0x0040d250
-extern "C" __declspec(dllexport) std::uint32_t __cdecl DoubleDerefIndexedGetter()
-{
-    // MOV EAX,[0x005f2770] — load the pointer-to-pointer stored at the global.
-    // PTR_PTR_005f2770: the global holds a pointer; we dereference it. [0x0040d250]
-    std::uint32_t** table = *reinterpret_cast<std::uint32_t***>(0x005f2770u);
-    // MOV ECX,[0x0063ba7c] — index. [0x0040d255]
-    std::uint32_t idx = *reinterpret_cast<std::uint32_t*>(0x0063ba7cu);
-    // MOV EDX,[EAX + ECX*4]; MOV EAX,[EDX] — table[idx] is a pointer; read *ptr.
-    // [0x0040d25b, 0x0040d25e]
-    return *table[idx];
-}
-
-RH_ScopedInstall(DoubleDerefIndexedGetter, 0x0040d250);
+// MATCH-S02: the body of 0x0040d250 (DoubleDerefIndexedGetter) moved to Match/MatchS02_0040d250.cpp,
+// which compiles the byte-matched source re/match/s02/0040d250.c.
 
 // ---------------------------------------------------------------------------
 // ScoreboardStateZeroInit  --  0x0041e080

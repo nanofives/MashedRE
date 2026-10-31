@@ -59,12 +59,8 @@
 //   DAT_008a95ac = param_1 ; ret    — 9-byte leaf setter.
 // ---------------------------------------------------------------------------
 
-// 0x0040ad30
-extern "C" __declspec(dllexport) void __cdecl UtilSet8a95ac(std::uint32_t v) {
-    *reinterpret_cast<std::uint32_t*>(0x008a95acu) = v;
-}
-
-RH_ScopedInstall(UtilSet8a95ac, 0x0040ad30);
+// MATCH-S02: the body of 0x0040ad30 (UtilSet8a95ac) moved to Match/MatchS02_0040ad30.cpp,
+// which compiles the byte-matched source re/match/s02/0040ad30.c.
 
 // ---------------------------------------------------------------------------
 // FUN_0040b250  --  0x0040b250   (void(void) score/timer reset)
@@ -74,19 +70,8 @@ RH_ScopedInstall(UtilSet8a95ac, 0x0040ad30);
 //   order: 9500, 9504, 9508, 9520, 9524, 9528, 950c, 952c. 51-byte leaf.
 // ---------------------------------------------------------------------------
 
-// 0x0040b250
-extern "C" __declspec(dllexport) void __cdecl UtilReset8a9500() {
-    *reinterpret_cast<std::uint32_t*>(0x008a9500u) = 0xfffffc18u;   // -1000
-    *reinterpret_cast<std::uint32_t*>(0x008a9504u) = 0xfffffc18u;
-    *reinterpret_cast<std::uint32_t*>(0x008a9508u) = 0xfffffc18u;
-    *reinterpret_cast<std::uint32_t*>(0x008a9520u) = 0xfffffc18u;
-    *reinterpret_cast<std::uint32_t*>(0x008a9524u) = 0xfffffc18u;
-    *reinterpret_cast<std::uint32_t*>(0x008a9528u) = 0xfffffc18u;
-    *reinterpret_cast<std::uint32_t*>(0x008a950cu) = 0xfffffc18u;
-    *reinterpret_cast<std::uint32_t*>(0x008a952cu) = 0xfffffc18u;
-}
-
-RH_ScopedInstall(UtilReset8a9500, 0x0040b250);
+// MATCH-S02: the body of 0x0040b250 (UtilReset8a9500) moved to Match/MatchS02_0040b250.cpp,
+// which compiles the byte-matched source re/match/s02/0040b250.c.
 
 // ---------------------------------------------------------------------------
 // FUN_0040b430  --  0x0040b430   (void(int idx, int delta) indexed accumulator)
@@ -97,16 +82,8 @@ RH_ScopedInstall(UtilReset8a9500, 0x0040b250);
 //   46-byte leaf. (0x008a94fc == (&0x008a94f0)[3].)  U-0489 data-semantic only.
 // ---------------------------------------------------------------------------
 
-// 0x0040b430
-extern "C" __declspec(dllexport) void __cdecl UtilFieldAdd8a94f0(int idx, int delta) {
-    if (idx > 3) {
-        *reinterpret_cast<int*>(0x008a94fcu) += delta;
-    } else {
-        reinterpret_cast<int*>(0x008a94f0u)[idx] += delta;
-    }
-}
-
-RH_ScopedInstall(UtilFieldAdd8a94f0, 0x0040b430);
+// MATCH-S02: the body of 0x0040b430 (UtilFieldAdd8a94f0) moved to Match/MatchS02_0040b430.cpp,
+// which compiles the byte-matched source re/match/s02/0040b430.c.
 
 // ---------------------------------------------------------------------------
 // FUN_0040b6d0  --  0x0040b6d0   (int(int idx) array getter)
@@ -116,12 +93,8 @@ RH_ScopedInstall(UtilFieldAdd8a94f0, 0x0040b430);
 //   U-0491 data-semantic only.
 // ---------------------------------------------------------------------------
 
-// 0x0040b6d0
-extern "C" __declspec(dllexport) int __cdecl UtilArrayGet8a94e0(int idx) {
-    return reinterpret_cast<int*>(0x008a94e0u)[idx];
-}
-
-RH_ScopedInstall(UtilArrayGet8a94e0, 0x0040b6d0);
+// MATCH-S02: the body of 0x0040b6d0 (UtilArrayGet8a94e0) moved to Match/MatchS02_0040b6d0.cpp,
+// which compiles the byte-matched source re/match/s02/0040b6d0.c.
 
 // ---------------------------------------------------------------------------
 // sub_004292c0  --  0x004292c0   (void(uint32* p, uint32 v) indirect store)

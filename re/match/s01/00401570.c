@@ -3,8 +3,10 @@
 // pointer right after it (0x00636ac0). The loop end is the array end (a relocated address), compared signed (jl).
 typedef struct { int f00[14]; int key; int f3c[11]; } Entry636578;   /* 0x68 bytes, key at +0x38 */
 #ifndef MASHED_RE_PORT
-extern Entry636578 DAT_00636578[13];
-extern Entry636578 *DAT_00636ac0;
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+MGLOBALA(Entry636578, DAT_00636578, 13, 0x00636578);
+MGLOBAL(Entry636578 *, DAT_00636ac0, 0x00636ac0);
 void FUN_00401da0(void);
 void FUN_004e6680(Entry636578 *e);
 #endif

@@ -10,7 +10,9 @@ typedef struct {
   int f0d0[143];
 } CarBlk8a9620;   /* 0x30c bytes */
 #ifndef MASHED_RE_PORT
-extern CarBlk8a9620 DAT_008a9620[4];
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+MGLOBALA(CarBlk8a9620, DAT_008a9620, 4, 0x008a9620);
 void *memset(void *, int, unsigned int);
 #endif
 #pragma intrinsic(memset)
