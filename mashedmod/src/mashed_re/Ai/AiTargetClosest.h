@@ -4,8 +4,8 @@
 
 namespace Ai {
 
-// MASHED_TGT3 (default OFF) AND MASHED_PATHPROG: the progress FUN_00414a70 reads has no other
-// producer in the exe, so the knob is inert without it.
+// MASHED_TGT3 (default OFF). The progress FUN_00414a70 reads comes from the path-progress step FUN_00408610
+// (Race/PathProgStep.cpp), which always runs since D5-KNOBS-E4-MODE-REG deleted MASHED_PATHPROG.
 bool TargetClosest_Enabled();
 
 // 0x00414a70 FUN_00414a70(spline, &look, &cand, v), verbatim naked, run at x87 PC_24.
@@ -16,9 +16,9 @@ int TargetClosest(int v, const float look[2], float cand[2]);
 // the naked body; report to MASHED_TGT3_REPLAY_OUT. Called once after the course block is built.
 void TargetClosest_MaybeReplay();
 
-// [mode 7 M4] FUN_00414c30 (+ FUN_00414490). MASHED_MODE7 (default OFF) AND the M3 set (PickupCallbacks_Enabled).
-// Returns 0 / 1 (mode 3) / 2 (mode 7); cand = the target xz. Hosts: FUN_0040e350 and the held-powerup word.
-bool ModeSeven_Enabled();
+// [mode 7 M4] FUN_00414c30 (+ FUN_00414490). Always runs (MASHED_MODE7 and the M3 set's knobs were deleted by
+// D5-KNOBS-E4-MODE-REG). Returns 0 / 1 (mode 3) / 2 (mode 7); cand = the target xz. Hosts: FUN_0040e350 and the
+// held-powerup word.
 void ModeSeven_SetHost(int (*sub_mode)(), int (*held)(int));
 int  ModeSeven(unsigned int spline, int v, const float look[2], float cand[2]);
 // G-M4-REPLAY: MASHED_C30_REPLAY=<a.c30.tsv>[;...], report to MASHED_C30_REPLAY_OUT.

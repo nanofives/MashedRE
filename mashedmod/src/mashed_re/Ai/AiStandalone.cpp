@@ -1078,14 +1078,14 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
             return;                                                       // 0x0041640d
         }
     }
-    // ---- [mode 7 M4] LAB_004163b7: FUN_00414c30, call 0x004163c3 (default-OFF MASHED_MODE7) ----
+    // ---- [mode 7 M4] LAB_004163b7: FUN_00414c30, call 0x004163c3 (MASHED_MODE7 deleted, D5-KNOBS-E4-MODE-REG) ----
     // Reached when FUN_00414a70 returned 0 (always without MASHED_TGT3) or returned 1 with LOS failing,
     // i.e. exactly when mode is still 0 here (its return 2 left above).
     //   iVar5 = FUN_00414c30(param_1,&local_24,&local_2c,param_2);
     //   1 + FUN_00416060 -> look = cand, mode 3 (LAB_004163e6);  2 + FUN_00416060 -> look = cand, mode 7
     //   (goto LAB_00416462, skipping FUN_004150e0, which is stubbed 0 here anyway).
     // PREREG: verify/d3_mode7_m4_20261010/PREREG_M4.md.
-    if (mode == 0 && ModeSeven_Enabled() && v >= 0 && v < 4) {
+    if (mode == 0 && v >= 0 && v < 4) {
         float cand[2] = { 0.0f, 0.0f };
         const float lk[2] = { tx, tz };
         const int r7 = ModeSeven(static_cast<unsigned int>(spline), v, lk, cand);

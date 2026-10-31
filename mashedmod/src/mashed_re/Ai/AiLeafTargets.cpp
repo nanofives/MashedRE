@@ -30,7 +30,7 @@
 #include "AiLeafTargets.h"
 #include "../Math/RwLutTables.h"
 #include "../Vehicle/VehicleRecordBase.h"
-#include "../Race/PathNodes.h"            // PathProg_Enabled: the progress producer FUN_00414570 / FUN_00415880 read
+#include "../Race/PathNodes.h"            // the progress producer FUN_00414570 / FUN_00415880 read
 
 #include <float.h>
 #include <cmath>
@@ -336,10 +336,10 @@ bool AiLeaf_Enabled() {
         const char* s = std::getenv("MASHED_AILEAF");
         return s && s[0] && s[0] != '0';
     }();
-    // Inputs with no exe writer unless MASHED_PATHPROG: the per-car progress 0x008a96e8 + v*0x30c (FUN_00408a50)
-    // and the node count 0x0066d6d8 (FUN_00426bb0). Without them FUN_00414570's "ahead in race" test admits every
-    // live car (progress 0 - 0 < 5 - 0), so the knob is inert without PATHPROG, as MASHED_TGT3 is.
-    return s_on && mashed_re::Race::PathProg_Enabled();
+    // Inputs: the per-car progress 0x008a96e8 + v*0x30c (FUN_00408a50) and the node count 0x0066d6d8 (FUN_00426bb0),
+    // written by the path-progress step and the course block, which always run since D5-KNOBS-E4-MODE-REG deleted
+    // MASHED_PATHPROG.
+    return s_on;
 }
 
 int AiLeaf_414570(unsigned int spline, int v, const float look[2], float cand[2]) {

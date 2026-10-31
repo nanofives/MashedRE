@@ -57,16 +57,12 @@ const float kZero      = 0.0f;     // [0x005d757c]
 
 }  // namespace
 
-bool IconCube_Enabled() {
-    // [D5-PREGO-CUBE-FLIP 2026-10-29] default ON with the pre-GO registry chain (decision L-52,
-    // verify/pregocubeflip_20261029/RESULT_D5-PREGO-CUBE-FLIP.md). The opt-outs MASHED_NO_ICONCUBE / MASHED_ICONCUBE=0
-    // were deleted (D5-KNOBS-RUNARMS-STACKS).
-    return Gameplay::PickupsOrig_Enabled();
-}
+// [D5-PREGO-CUBE-FLIP 2026-10-29] default ON with the pre-GO registry chain (decision L-52,
+// verify/pregocubeflip_20261029/RESULT_D5-PREGO-CUBE-FLIP.md). The opt-outs MASHED_NO_ICONCUBE / MASHED_ICONCUBE=0
+// were deleted (D5-KNOBS-RUNARMS-STACKS), and IconCube_Enabled() with MASHED_PICKUPS_ORIG (D5-KNOBS-E4-MODE-REG).
 
 void IconCube_OnTrackLoad(std::uint32_t ambient, std::FILE* log) {
     s_ready = false;
-    if (!IconCube_Enabled()) return;
 
     // FUN_004587a0: per entry +0x08 = 0x3f800000, +0x0c = 0, +0x10 = 0x3f800000, +0x14 = 0.
     // +0x04 (the angle) is not written.
@@ -123,7 +119,7 @@ void IconCube_OnTrackLoad(std::uint32_t ambient, std::FILE* log) {
 
 // FUN_00458b10 @ 0x00458b10, the cube loop (after the glow flush, under RwRenderStateSet(8,1)(6,1)).
 void IconCube_Submit(const float eye[3], const float at[3]) {
-    if (!s_ready || !IconCube_Enabled()) return;
+    if (!s_ready) return;
     const float fwd[3] = { at[0] - eye[0], at[1] - eye[1], at[2] - eye[2] };
     const std::int32_t cnt = *reinterpret_cast<const std::int32_t*>(kCount);
     for (std::int32_t i = cnt - 1; i >= 0; --i) {   // DAT_0068b9a8 down to 1, entry n-1

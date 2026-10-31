@@ -5,9 +5,7 @@
 namespace mashed_re {
 namespace Race {
 
-// MASHED_REG_CARS (default OFF) AND MASHED_REGISTRY.
-bool CarsReg_Enabled();
-
+// Always on: MASHED_REG_CARS was deleted by D5-KNOBS-E4-MODE-REG.
 // FUN_0040da50's FUN_00420870 -> FUN_0041f710 per car (0x0040dad0), before the pickup tick and the publish.
 void CarsReg_FrameTick();
 

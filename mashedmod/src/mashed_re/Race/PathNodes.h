@@ -11,27 +11,21 @@ namespace mashed_re {
 namespace Track { class World; }
 namespace Race {
 
-// Default-OFF knob MASHED_PATHPROG (env). Read once.
-bool PathProg_Enabled();
-
-// [U-9685] Arm R, verify/d3_u9685_20261016/PREREG_u9685.md: the original's race_pct writer on a private
-// shadow row, with only race_pct published (no live lap counter, no live node progress).
-// Always on since 2026-10-16 (PREREG decision 1; the MASHED_NO_RACEPCT_FUN408610 opt-out was deleted in
-// D5-KNOBS-B3 2026-10-30). Active() = the course block exists (track has an AI BSP).
-bool RacePctOrig_Active();
+// The course block and the path-progress step always run: MASHED_PATHPROG, arm R's shadow-row step
+// (verify/d3_u9685_20261016/PREREG_u9685.md) and RacePctOrig_Active() were deleted by D5-KNOBS-E4-MODE-REG.
 
 // Rebuilds the course block exactly as the original's track load does:
 //   FUN_0047a0f0  zero 0x16264 bytes at 0x00657498, run the LAPDATA.LUA handlers
 //   FUN_00478660  node records 0x00663658 + i*0x4c and count 0x0066d6d8 from the AI BSP
 //   FUN_004783f0  per-variation distance (+0x0) and angle (+0x6000) tables
-// `lap` is the raw LAPDATA.LUA text. No-op unless PathProg_Enabled().
+// `lap` is the raw LAPDATA.LUA text.
 // MASHED_PATHPROG_DUMP=<path> writes the 0x16278-byte block after the build (gate G-P1).
 void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen);
 
 // [camribbon] The camera-path ribbon: FUN_00478660's node records (the same BuildNode that
 // PathNodes_Build runs, under the same PC_24 scope) kept as dir (record +0x00), c0 (+0x18, what
 // FUN_00426d00(n,0) returns) and c3 (+0x3c, FUN_00426d00(n,3)) for every AI node. Unlike
-// PathNodes_Build it is NOT gated by MASHED_PATHPROG and it does not write the course block at
+// PathNodes_Build it does not write the course block at
 // 0x00657498, so the default build can use it. One node per AI BSP material (world+0x14).
 void PathNodes_CameraNodes(const Track::World& ai, std::vector<RaceCamNode>& out);
 

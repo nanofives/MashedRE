@@ -54,13 +54,10 @@ public:
     void InitReal(const std::vector<Spawn>& spawns, float worldRadius);
     void Reset();
 
-    // Advance bob/spin + respawn timers; collect orbs the player drives through.
-    // Returns true on the frame an orb is collected (host may play an SFX).
-    bool Update(float dt, const float carPos[3]);
-    // [D3 WS-D G-D2] collect an orb for ANOTHER car (an AI slot) without touching
-    // the player's held slot: same radius test as Update. On a hit, *type = the
-    // orb's real MASHED code (-1 for an index-only orb) and returns true.
-    bool CollectAt(const float carPos[3], int* type);
+    // Advance bob/spin and mirror each orb's pool entry state (+0x20 == 1 live). Collection is the registry
+    // callback FUN_00458920's (Gameplay/PickupTick.cpp); the field's own collection and CollectAt were deleted
+    // by D5-KNOBS-E4-MODE-REG.
+    void Update(float dt, const float carPos[3]);
     void Render(IDirect3DDevice9* dev, const float camEye[3], const float camAt[3]);
 
     int  collected() const { return collected_; }
@@ -73,7 +70,7 @@ public:
     bool enabled() const { return !orbs_.empty(); }
     // [D3 2026-09-26] orb-ownership diagnostic (D3_POWERUPS_2026-09-26.md section 6
     // item 2): orb count, active orbs, XZ distance from pos to the nearest active orb
-    // (-1 if none) and the collection radius CollectAt/Update use.
+    // (-1 if none) and the old collection radius.
     int   OrbCount() const { return static_cast<int>(orbs_.size()); }
     int   ActiveOrbCount() const;
     float NearestActiveOrbDist(const float pos[3]) const;

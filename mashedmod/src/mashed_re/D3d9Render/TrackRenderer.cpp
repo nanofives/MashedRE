@@ -32,16 +32,16 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "DrawRec.h"                // d1r1: per-draw recorder names (MASHED_DBG_D3DREC)
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
 #include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
-#include "../Race/PathNodes.h"    // D-11072 P1: course block (MASHED_PATHPROG)
-#include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (MASHED_PATHPROG)
+#include "../Race/PathNodes.h"    // D-11072 P1: course block (always on)
+#include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (always on)
 #include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
 #include "../Ai/AiLeafTargets.h"   // D3 bulk G-AILEAF: FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
 #include "../Race/RoundGrid.h"      // round-restart grid Stage A (MASHED_ROUND_GRID)
 #include "../Race/HeadingAssist.h"  // [d3b] FUN_0046c7d0 steer-0 heading assist (MASHED_HEADING_ASSIST)
-#include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
-#include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
+#include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry
+#include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000
 #include "PickupIconCube.h"          // [iconcube] D5-ICONCUBE-SPIN (MASHED_ICONCUBE)
-#include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710 (MASHED_REG_CARS)
+#include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
 #include "../Race/CameraApply.h"      // d1r2: the director tail's frame build (render camera)
@@ -224,22 +224,17 @@ static void BoxWrite(Powerup::PowerupSystem& pw, int s, int v, const char* cls) 
     BoxTrace(cls, s, v, pw.BoxState(s));
     pw.SetBoxState(s, v);
 }
-// [brecipe] MASHED_MODE_LIVE (default OFF): the AI host reads the two live words the original reads,
+// [brecipe] the AI host reads the two live words the original reads,
 // FUN_0042f6a0 = mov eax,[0x0067e9fc] (0x0042f6a0) and DAT_007f0fd0, and SetRaceRule writes rule_ into
 // 0x007f0fd0, so the rule engine, the AI dispatch (FUN_00418560's fd0 4/9 / 8 arms) and the live readers
 // share one value. The game mode word is written by the race launch (MenuLaunchRace) or, on the
-// MASHED_ROUND route, from MASHED_GAME_MODE (exe_main.cpp). Knob OFF: the stand-ins 3 and 0.
-static bool ModeLiveEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_MODE_LIVE"); return e && e[0] && e[0] != '0'; }();
-    return s;
-}
+// MASHED_ROUND route, from MASHED_GAME_MODE (exe_main.cpp). The knob MASHED_MODE_LIVE and its stand-ins 3 and 0 were
+// deleted by D5-KNOBS-E4-MODE-REG.
 int aib_round_type() {                                   // FUN_0042f6a0
-    if (ModeLiveEnabled()) return *reinterpret_cast<const int*>(0x0067e9fcu);
-    return 3;                                            // AI-enabled round (stand-in)
+    return *reinterpret_cast<const int*>(0x0067e9fcu);
 }
 int aib_game_mode_fd0() {                                // DAT_007f0fd0
-    if (ModeLiveEnabled()) return *reinterpret_cast<const int*>(0x007f0fd0u);
-    return 0;
+    return *reinterpret_cast<const int*>(0x007f0fd0u);
 }
 int aib_track_index()      { return g_aib.course; }
 // [D3 2026-09-26] FUN_00443080 = MOV EAX,[0x00897ffc]. MEASURED 0 on every AI step of
@@ -262,8 +257,6 @@ void aib_own_fwd_xz(int v, float* fx, float* fz) {
     }
     *fx = g_aib.fwd[v][0]; *fz = g_aib.fwd[v][1];
 }
-// [u9770] MASHED_REG_LATE (default OFF): see the [mode 7 M1] block in UpdateRace.
-bool RegLate() { static const bool s_on = [] { const char* e = std::getenv("MASHED_REG_LATE"); return e && e[0] && e[0] != '0'; }(); return s_on; }
 // [D5-ICONCUBE-SPIN] MASHED_PICKUPS_PREGO (default ON since D5-PREGO-CUBE-FLIP): FUN_0040fc00 runs on the pre-race ticks too and calls
 // FUN_0040da50 (0x0040fc75, cars register at 0x0040dad0), FUN_0045bba0 (0x0040fcd0, FUN_00459000 inside) and
 // FUN_00485070 (0x0040fd07) with no guard. Under the knob the countdown frames run the same three.
@@ -667,9 +660,9 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     // blocked on unproduced globals (RESULT_A360.md). Placed here because the
     // original's caller FUN_004111c0 runs it at race reset, which is this path.
     RaceAiDifficultyResetTail();
-    // [D-11072 P2] FUN_00407a60, which the original's FUN_004111c0 runs at race reset (MASHED_PATHPROG).
+    // [D-11072 P2] FUN_00407a60, which the original's FUN_004111c0 runs at race reset.
     Race::PathProg_RaceInit();
-    // [mode 7 M1] FUN_00484c90, which FUN_004111c0 runs at race reset (MASHED_REGISTRY).
+    // [mode 7 M1] FUN_00484c90, which FUN_004111c0 runs at race reset.
     Race::Registry_RaceInit();
     Ai::Ai_SetHost(&h);
     return true;
@@ -3249,10 +3242,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             Track::World aw;
             if (ab && aw.Parse(ab, al)) {
                 // [D-11072 P1] the original's course block (node records, route, tables)
-                // from this same AI BSP + LAPDATA.LUA; default-OFF MASHED_PATHPROG.
+                // from this same AI BSP + LAPDATA.LUA (MASHED_PATHPROG deleted, D5-KNOBS-E4-MODE-REG).
                 // PREREG verify/d3_modes37_20261009/PREREG_PATHPROG.md.
                 Collision::CarCarContact_MaybeReplay();   // [u9769] MASHED_CC_REPLAY (env-gated, diagnostic)
-                {   // [U-9685] arm R (always on) needs the course block too
+                {   // the path-progress step needs the course block
                     const std::uint8_t* lb = nullptr; std::uint32_t ll = 0;
                     for (std::uint32_t j = 0; j < piz.count(); ++j)
                         if (_strnicmp(piz.entry(j).name, "LAPDATA", 7) == 0) { lb = piz.blob(j, &ll); break; }
@@ -5333,13 +5326,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         } else if (ba8c == 5) {
             SubStateHeldCountdown5_C(units);               // 0x004112bb (units in EAX)
         }
-        // [D3-SUBSTATE-PH3] MASHED_P3_RESET_PAIR (default OFF): FUN_0040fc00 stores DAT_007f1008 = units and
-        // _DAT_007f100c (0x0040fc57) at its top, BEFORE FUN_0040d470(0), so the original's second call on phase 3's
-        // first frame reads 50 (measured, RESULT_d3subph3.md). Here the stores come from Ai_AdvanceClock below the chain,
-        // which left that one call at 0. Same values, written again below. Knob OFF: no store here.
-        static const bool s_p3ResetPair = [] { const char* e = std::getenv("MASHED_P3_RESET_PAIR");
-                                               return e && e[0] && e[0] != '0'; }();
-        if (s_p3ResetPair && ba8c >= 3 && ba8c <= 5) {
+        // [D3-SUBSTATE-PH3] FUN_0040fc00 stores DAT_007f1008 = units and _DAT_007f100c (0x0040fc57) at its top, BEFORE
+        // FUN_0040d470(0), so the original's second call on phase 3's first frame reads 50 (measured, RESULT_d3subph3.md).
+        // Here the stores come from Ai_AdvanceClock below the chain, which left that one call at 0. Same values, written
+        // again below. Its knob MASHED_P3_RESET_PAIR was deleted by D5-KNOBS-E4-MODE-REG.
+        if (ba8c >= 3 && ba8c <= 5) {
             *reinterpret_cast<int*>(0x007f1008u) = units;  // FUN_0040fc00: DAT_007f1008 = units
             SubState_StoreStep(units);                     // 0x0040fc57 _DAT_007f100c
         }
@@ -5568,7 +5559,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         ai_tick_ran = true;
         s_sfLastAi_ = s_sfCalls_;   // [D3-SUBSTATE-FLIP diag]
         g_aiTrack = this;   // bind the AI host (held_powerup reads pw_ through it)
-            {   // [mode 7 M3] FUN_00458920's bound callees (only used under MASHED_REG_CALLBACKS)
+            {   // [mode 7 M3] FUN_00458920's bound callees
                 g_pkcbTrack = this;
                 Gameplay::PickupCbHost h{};
                 h.slot_empty = pkcb_slot_empty; h.grant = pkcb_grant; h.sub_mode = pkcb_sub_mode;
@@ -6252,23 +6243,20 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // every car's physics (player above, opponents in the block just closed) and after
     // PathProg_FrameTick (UpdateRace). Same coverage as the UpdateRace call it replaces:
     // UpdateRace returns before that call when gates_ is empty.
-    // [U-9685] arm R: FUN_0040da50's FUN_00408610 loop sits between the AI path (0x0040fc6c) and the producer
-    // path (0x0040fc7c) in FUN_0040fc00, so it runs here, before the producer call below.
-    if (!(Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
     // [cev] the wholesale tick at the same place (after FUN_00425a40 0x0040fc6c, before the producer 0x0040fc7c); same
     // gates_ guard as the UpdateRace site it replaced (MASHED_PATHPROG_LATE deleted by D5-KNOBS-D-SEEDED6).
     if (!gates_.empty()) Race::PathProg_FrameTick();
-    if (RegLate() && !gates_.empty()) Race::CarsReg_FrameTick();          // [u9770] FUN_0040da50 0x0040fc75
+    if (!gates_.empty()) Race::CarsReg_FrameTick();                       // [u9770] FUN_0040da50 0x0040fc75
     if (!gates_.empty()) RaceComputeDistancesTick(1);
-    if (RegLate() && !gates_.empty()) {                                   // [u9770] FUN_0045bba0 0x0040fcd0, FUN_00485070 0x0040fd07
+    if (!gates_.empty()) {                                                // [u9770] FUN_0045bba0 0x0040fcd0, FUN_00485070 0x0040fd07
         Gameplay::Pickups_FrameTick();
         Race::Registry_FrameTick();
     }
     yaww::Frame();   // U-9188 leg A/B per-frame emit; no-op unless MASHED_AI_YAWW
 
     // power-up pickups: collect orbs the player drives through (respawn loop).
-    if (pickups_.Update(in.dt, car_pos_))
-        Gameplay::PickupCb_NoteFieldCollect(0, pickups_.held_type());   // [mode 7 M3] trace only
+    // [mode 7 M3] the field only draws and mirrors the pool state; collection is FUN_00458920's (registry callback).
+    pickups_.Update(in.dt, car_pos_);
     // power-up DISPATCH, every frame (FUN_0045bba0; G-D1).
     TickPowerupDispatch(in.dt);
     // power-up EFFECTS: advance boost/shield timers, missiles, mines.
@@ -7327,16 +7315,8 @@ void TrackRenderer::TickPowerupDispatch(float dt) {
             pu_slot0_was_armed_ = pw_.Armed(0);
         }
     }
-    // slots 1..3 ownership (G-D2).
-    for (int s = 1; s < Powerup::PowerupSystem::kSlots; ++s) {
-        if (!cars[s].alive || pw_.Armed(s)) continue;
-        int code = -1;
-        if (pickups_.CollectAt(cars[s].pos, &code)) {
-            Gameplay::PickupCb_NoteFieldCollect(s, code);   // [mode 7 M3] trace only
-            if (code < 0) code = Powerup::kMissile;
-            pw_.Activate(s, code);
-        }
-    }
+    // slots 1..3 ownership (G-D2): the registry callback FUN_00458920 grants them (PickupField's CollectAt loop
+    // was deleted by D5-KNOBS-E4-MODE-REG).
 
     // [D3 2026-09-26] orb diagnostic (D3_POWERUPS section 6 item 2): once per 60
     // dispatcher ticks, under MASHED_PU_STEPDUMP=<p>, append to <p>.orbs.csv the orb
@@ -7805,7 +7785,7 @@ void TrackRenderer::InitPickups() {
 // live, rules oracle round-resets=1 — so StartRound() now mirrors that.)
 void TrackRenderer::SetRaceRule(int rule) {
     rule_ = rule;
-    if (ModeLiveEnabled()) *reinterpret_cast<int*>(0x007f0fd0u) = rule;   // [brecipe] one source for DAT_007f0fd0
+    *reinterpret_cast<int*>(0x007f0fd0u) = rule;   // [brecipe] one source for DAT_007f0fd0
     rule_engine_on_ = RuleEngineEnabled();
     rulep_ = Race::RuleEngine::Persist{};             // FUN_00414060: slots=-1.0
     rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
@@ -8695,44 +8675,19 @@ void TrackRenderer::UpdateRace(float dt) {
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
     // race_pct 0x008a96ec) runs after the opponents' physics, at the end of UpdateCar ([cev]; the MASHED_PATHPROG_LATE
     // knob that kept it here was deleted by D5-KNOBS-D-SEEDED6).
-    // [PATHPROG split] MASHED_PP_PUBLISH bit 0x8: the shadow-row tick at the wholesale knob's placement, before the AI tick.
-    if (Race::PathProg_PublishMask() & 0x8u) Race::PathProg_RacePctTick();
 
     // [mode 7 M1] FUN_0040fc00's FUN_00485070 (0x0040fd07): pair pass + publish. No registrant
-    // exists yet, so with MASHED_REGISTRY it publishes cc = 0 every frame. Position relative to the
+    // exists yet, so it publishes cc = 0 every frame. Position relative to the
     // AI tick is an M4 question (PREREG_MODE7.md section 3).
     // [mode 7 M2a] FUN_0045bba0's FUN_00459000 (0x0040fcd0) registers the live pickups first.
     // [mode 7 M2b] the cars register first, from FUN_0040da50 (0x0040dad0), as in FUN_0040fc00's order.
-    // [u9770] MASHED_REG_LATE (default OFF): FUN_0040fc00 runs all three after FUN_00425a40 (AI tick + physics, 0x0040fc6c):
-    // FUN_0040da50 at 0x0040fc75, FUN_0045bba0 at 0x0040fcd0, FUN_00485070 at 0x0040fd07. Under the knob they run after the
-    // opponents' physics (the [U-9683] site), so a pickup the car reaches on call k is held at the AI tick of row k+1.
-    if (!RegLate()) {
-        Race::CarsReg_FrameTick();
-        Gameplay::Pickups_FrameTick();
-        Race::Registry_FrameTick();
-    }
+    // [u9770] FUN_0040fc00 runs all three after FUN_00425a40 (AI tick + physics, 0x0040fc6c): FUN_0040da50 at 0x0040fc75,
+    // FUN_0045bba0 at 0x0040fcd0, FUN_00485070 at 0x0040fd07. They run after the opponents' physics (the [U-9683] site in
+    // UpdateCar), so a pickup the car reaches on call k is held at the AI tick of row k+1. The early placement here and
+    // its knob MASHED_REG_LATE were deleted by D5-KNOBS-E4-MODE-REG.
 
-    // [D-11072 bridge write] Mirror the monotone arcpct into the original per-car
-    // race_pct slot 0x008a96ec + v*0x30c, behind a default-OFF knob. UpdateRace runs
-    // before Ai_Standalone_Tick (:3462), so AiPreTickRubberBand's live read at
-    // AiStandalone.cpp:1468 sees this value the same frame. Writes all 4 cars (the
-    // original writes race_pct for every participant; AiPreTickRubberBand loops v=0..3).
-    // NOT a C-level change: a bridged write is not a behavioural diff.
-    // PREREG: verify/d3_racepos_20261006/PREREG_BRIDGE.md section 3a.
-    {
-        static const bool s_racepctBridge =
-            (std::getenv("MASHED_NO_RACEPCT_BRIDGE") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_RACEPCT_BRIDGE is now a no-op
-        // With MASHED_PATHPROG the faithful producer FUN_00408610 owns 0x008a96ec; the bridge stands down.
-        // [U-9685] arm R (MASHED_RACEPCT_FUN408610) publishes the verbatim step's race_pct at the end of UpdateCar.
-        if (s_racepctBridge && !Race::PathProg_Enabled() && !Race::RacePctOrig_Active() && total_len_ > 1e-3f) {
-            for (int v = 0; v < kRaceCars; ++v) {
-                const float ap =
-                    std::fmod(race_[v].arcprog, total_len_) / total_len_ * 100.f;
-                *reinterpret_cast<float*>(
-                    0x008a96ecu + static_cast<std::uintptr_t>(v) * 0x30cu) = ap;
-            }
-        }
-    }
+    // [D-11072 bridge write] The arcpct mirror into race_pct 0x008a96ec + v*0x30c (MASHED_NO_RACEPCT_BRIDGE) was deleted by
+    // D5-KNOBS-E4-MODE-REG: the faithful producer FUN_00408610 (PathProg_FrameTick) owns that slot unconditionally.
 
     // [G4] lap-progress diagnostic (env MASHED_LAP_DIAG -> mashed_re.log, ~1/s).
     {

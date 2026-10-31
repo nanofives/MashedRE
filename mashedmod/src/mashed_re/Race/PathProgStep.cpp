@@ -198,50 +198,17 @@ bool FromHex(const std::string& h, std::uint8_t* out, std::size_t n) {
 
 }  // namespace
 
-namespace {
-// [U-9685] Arm R: the step's persistent per-car state (it reads its own previous row every call), kept off
-// the real block so only race_pct reaches the game's array.
-std::uint8_t s_shadow[4][0xc3u * 4u];
-}  // namespace
-
-// [PATHPROG split, verify/d3_pathprog_a_20261016/PREREG_pathprog_a.md] MASHED_PP_PUBLISH=<mask> (hex, default 0 = the U-9685 default):
-// which fields of the shadow row the tick also writes into the real row, besides race_pct.
-//   0x1 lap counter +0x28   0x2 node progress +0xc8   0x4 the rest of the row   0x8 run in UpdateRace (before the AI tick)
-unsigned PathProg_PublishMask() {
-    static const unsigned s_mask = [] {
-        const char* e = std::getenv("MASHED_PP_PUBLISH");
-        return (e && e[0]) ? static_cast<unsigned>(std::strtoul(e, nullptr, 0)) : 0u;
-    }();
-    return s_mask;
-}
-
 // [d3b 2026-10-16] FUN_00408a50(v) as the steer-0 heading assist (Race/HeadingAssist.cpp, FUN_0046c7d0
-// 0x0046c997) reads it: the node progress +0xc8 of car v's row. With arm R (the default) the step keeps
-// its row on s_shadow, so that is the value the original's step would have left; with wholesale
-// MASHED_PATHPROG it is the real row. Neither publishes anything, so reading it changes no other path.
+// 0x0046c997) reads it: the node progress +0xc8 of car v's row 0x008a9620 + v*0x30c. Reading it changes no other path.
+// (Arm R's shadow row, MASHED_PP_PUBLISH and MASHED_PATHPROG were deleted by D5-KNOBS-E4-MODE-REG.)
 float PathProg_NodeProgress(int v) {
     if (v < 0 || v >= 4) return 0.0f;
     float f = 0.0f;
-    if (!PathProg_Enabled())
-        std::memcpy(&f, s_shadow[v] + 0xc8, 4);
-    else
-        std::memcpy(&f, reinterpret_cast<const void*>(0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu + 0xc8u), 4);
+    std::memcpy(&f, reinterpret_cast<const void*>(0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu + 0xc8u), 4);
     return f;
 }
 
 void PathProg_RaceInit() {                               // FUN_00407a60
-    if (!PathProg_Enabled()) {   // arm R: initialise the shadow rows the same way
-        const unsigned mask = PathProg_PublishMask();
-        for (int v = 0; v < 4; ++v) {
-            std::memset(s_shadow[v], 0, sizeof s_shadow[v]);
-            *reinterpret_cast<std::int32_t*>(s_shadow[v] + 0x28) = -1;
-            const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
-            if (mask & 0x4u) std::memset(reinterpret_cast<void*>(blk), 0, sizeof s_shadow[v]);       // as the live init
-            if (mask & 0x1u) *reinterpret_cast<std::int32_t*>(blk + 0x28) = -1;
-        }
-        return;
-    }
-    if (!PathProg_Enabled()) return;
     for (int v = 0; v < 4; ++v) {
         const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
         std::memset(reinterpret_cast<void*>(blk), 0, 0xc3u * 4u);
@@ -257,7 +224,7 @@ void PathProg_RaceInit() {                               // FUN_00407a60
 // deleted by D5-KNOBS-D-SEEDED6.
 
 void PathProg_FrameTick() {                              // FUN_0040da50's FUN_00408610 loop
-    if (!PathProg_Enabled() || PathNodes_TriCount() == 0) return;
+    if (PathNodes_TriCount() == 0) return;
     EnsureLut();
     PcScope pc;
     // [u9747 2026-10-18] MASHED_PATHPROG_GATE_LOG=<path> (diagnostic, default OFF): both gates and the record's position
@@ -307,46 +274,10 @@ void PathProg_FrameTick() {                              // FUN_0040da50's FUN_0
     ++s_fr;
 }
 
-void PathProg_RacePctTick() {
-    if (PathProg_Enabled() || PathNodes_TriCount() == 0) return;
-    EnsureLut();
-    PcScope pc;
-    for (int v = 0; v < 4; ++v) {
-        if (IsCarSlotActive(v) == 0) continue;               // the same two predicates as PathProg_FrameTick
-        if (VehicleSlotGetter(static_cast<std::uint32_t>(v)) != 1u) continue;
-        std::uint32_t rec = 0;
-        PtrCompute881ec8(&rec, static_cast<std::uint32_t>(v));
-        std::uint8_t* const blk = reinterpret_cast<std::uint8_t*>(0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu);
-        std::uint8_t saved[sizeof s_shadow[0]];
-        std::memcpy(saved, blk, sizeof saved);                // the row the rest of the port sees
-        std::memcpy(blk, s_shadow[v], sizeof saved);          // the step's own persistent row
-        Step()(reinterpret_cast<void*>(rec), nullptr, v);
-        std::memcpy(s_shadow[v], blk, sizeof saved);
-        std::uint8_t after[sizeof s_shadow[0]];
-        std::memcpy(after, blk, sizeof after);
-        std::memcpy(blk, saved, sizeof saved);
-        const unsigned mask = PathProg_PublishMask();
-        if (mask & 0x4u) {                                    // the rest of the row (everything but the three fields below)
-            for (std::size_t o = 0; o < sizeof after; ++o)
-                if (!((o >= 0x28 && o < 0x2c) || (o >= 0xc8 && o < 0xd0))) blk[o] = after[o];
-        }
-        if (mask & 0x1u) std::memcpy(blk + 0x28, after + 0x28, 4);   // lap counter
-        if (mask & 0x2u) std::memcpy(blk + 0xc8, after + 0xc8, 4);   // node progress (0x008a96e8)
-        std::memcpy(blk + 0xcc, after + 0xcc, 4);             // +0xcc = 0x008a96ec: race_pct, always published
-    }
-    static bool s_logged = false;
-    if (!s_logged) {
-        s_logged = true;
-        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness that arm R is live
-            std::fprintf(lf, "[U-9685] race_pct from the verbatim step on a shadow row\n");
-            std::fclose(lf);
-        }
-    }
-}
 
 void PathProg_MaybeReplay() {
     const char* in = std::getenv("MASHED_PATHPROG_REPLAY");
-    if (!in || !PathProg_Enabled()) return;
+    if (!in) return;
     const char* outp = std::getenv("MASHED_PATHPROG_REPLAY_OUT");
     std::FILE* f = std::fopen(in, "r");
     if (!f) return;

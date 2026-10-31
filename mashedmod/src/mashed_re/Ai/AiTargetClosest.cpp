@@ -24,7 +24,7 @@
 #include "../Race/PathNodes.h"
 #include "../Math/RwLutTables.h"
 #include "../Vehicle/VehicleRecordBase.h"
-#include "../Gameplay/PickupTick.h"   // [mode 7 M4] PickupCallbacks_Enabled
+#include "../Gameplay/PickupTick.h"   // [mode 7 M4]
 #include <map>
 
 #include <float.h>
@@ -276,7 +276,7 @@ bool TargetClosest_Enabled() {
         const char* s = std::getenv("MASHED_TGT3");
         return s && s[0] && s[0] != '0';
     }();
-    return s_on && mashed_re::Race::PathProg_Enabled();
+    return s_on;
 }
 
 int TargetClosest(int v, const float look[2], float cand[2]) {
@@ -454,14 +454,6 @@ std::string RegSlotsHex(int d8, std::string* objs) {
 }  // namespace
 
 void ModeSeven_SetHost(int (*sub_mode)(), int (*held)(int)) { s_m7SubMode = sub_mode; s_m7Held = held; }
-
-bool ModeSeven_Enabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_MODE7");
-        return s && s[0] && s[0] != '0';
-    }();
-    return s_on && mashed_re::Gameplay::PickupCallbacks_Enabled();
-}
 
 int ModeSeven(unsigned int spline, int v, const float look[2], float cand[2]) {
     if (v < 0 || v > 3 || !Rec(0)) return 0;

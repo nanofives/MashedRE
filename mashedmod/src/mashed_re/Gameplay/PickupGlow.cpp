@@ -50,7 +50,7 @@ bool On() {
         const char* n = std::getenv("MASHED_NO_PICKUP_GLOW");
         return e && e[0] == '1' && !(n && n[0] == '1');
     }();
-    return on && mashed_re::Gameplay::PickupsOrig_Enabled();
+    return on;
 }
 
 // FUN_004587a0's FUN_004770c0(&DAT_0068b968, 0x817, 0x19, puglow) (0x004587c5..0x004587d2). The texture is

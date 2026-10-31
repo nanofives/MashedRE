@@ -125,7 +125,7 @@ bool          s_cbReplay = false;     // G-M3-REPLAY: inputs come from the captu
 int           s_rpBa8c = 6;
 std::uint32_t s_rpA8 = 0;
 std::vector<std::string> s_wit;       // calls made by the current FUN_00458920 call, in order
-long s_grants = 0, s_bursts = 0, s_sfx = 0, s_pfCollects = 0;
+long s_grants = 0, s_bursts = 0, s_sfx = 0, s_pfCollects = 0;   // s_pfCollects: always 0 since D5-KNOBS-E4-MODE-REG (no PickupField collection path)
 }  // namespace
 
 extern "C" {
@@ -228,14 +228,6 @@ std::vector<std::string> Split(const std::string& s, char d) {
 
 }  // namespace
 
-bool PickupsOrig_Enabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_PICKUPS_ORIG");
-        return s && s[0] && s[0] != '0';
-    }();
-    return s_on && Race::Registry_Enabled();
-}
-
 // ---- mode 7 leg M3 ----
 namespace {
 typedef void (__cdecl* cb_fn)(void*, void*);
@@ -309,24 +301,11 @@ void CbTraceTick(float dt) {
     }
 }
 
-bool PickupCallbacks_Enabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_REG_CALLBACKS");
-        return s && s[0] && s[0] != '0';
-    }();
-    return s_on && PickupsOrig_Enabled() && Race::CarsReg_Enabled();
-}
-
 void Pickups_SetCbHost(const PickupCbHost& host) { s_cbHost = host; }
 
 int PickupsOrig_EntryState(int i) {
-    if (!PickupsOrig_Enabled() || i < 0 || i >= kMax) return -1;
+    if (i < 0 || i >= kMax) return -1;
     return *reinterpret_cast<const std::int32_t*>(kPool + i * kStride + 0x20);
-}
-
-void PickupCb_NoteFieldCollect(int car, int type) {
-    ++s_pfCollects;
-    if (std::FILE* tr = CbTrace()) std::fprintf(tr, "PF\t0\t%ld\t%d\t%d\n", s_tick, car, type);
 }
 
 void Pickups_Callback(void* a, void* b) {
@@ -462,14 +441,12 @@ void PickupCb_MaybeReplay() {
 }
 
 void PickupsOrig_OnSpawn(unsigned char* entry) {
-    if (!PickupsOrig_Enabled()) return;
     BindAll();
     FakeObj* o = *reinterpret_cast<FakeObj**>(entry);
     FrameIdentity(o->frame);                       // FUN_004c15c0 at 0x00458ebd
 }
 
 void Pickups_FrameTick() {
-    if (!PickupsOrig_Enabled()) return;
     EnsureLut();
     BindAll();
     const float dt = static_cast<float>(static_cast<double>(*reinterpret_cast<const std::int32_t*>(0x007f1008u)) *

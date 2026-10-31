@@ -7,7 +7,7 @@
 namespace mashed_re {
 namespace Race {
 
-// MASHED_ROUND_GRID (default OFF) AND MASHED_PATHPROG (progress + course block producer).
+// MASHED_ROUND_GRID (default OFF). The progress + course block producer always runs since D5-KNOBS-E4-MODE-REG.
 bool RoundGrid_Enabled();
 
 // Race init: DAT_0063ba80 = 0 (FUN_004111c0 0x0040fef0).

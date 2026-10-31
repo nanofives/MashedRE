@@ -31,20 +31,21 @@ const FaithKnob kFaith[] = {
     // (verify/d5knobsd_seeded6_20261030/RESULT_D5-KNOBS-D-SEEDED6.md).
     // [D5-KNOBS-AI-TICK-FIRST 2026-10-31] AI_TICK_FIRST left this list: it had no reader after D5-KNOBS-E1-PHYS-A4A5
     // made the AI tick phase unconditional before the player's step (verify/d5knobsaitf_20261031/RESULT_D5-KNOBS-AI-TICK-FIRST.md).
-    { "AI_COUNTDOWN_CLOCK", "1" }, { "PATHPROG", "1" },          { "ROUND_GRID", "1" },
+    { "AI_COUNTDOWN_CLOCK", "1" }, { "ROUND_GRID", "1" },
     { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
-    { "REASSERT_KEEP_NORMAL", "1" },
     // [D5-KNOBS-E3-GEOM-AI 2026-10-31] RW_SSE_POINTS, FWD_AT, ROTATE_LUT, ROTATE_PC24, HEADING_FWD_LIVE, AI_LUT (the mask is
     // the constant 7), AI_FWD_ATROW, STEER_SCALE_RDATA, WCS_TRINORMAL (trinflip) and WCS_COMBINE_PC24 (cpcflip) left this list
     // with their read sites: the seeded path is the only one in the source
     // (verify/d5knobse3geom_20261031/RESULT_D5-KNOBS-E3-GEOM-AI.md).
-    { "REGISTRY", "1" },          { "PICKUPS_ORIG", "1" },
-    { "REG_CARS", "1" },           { "REG_CALLBACKS", "1" },       { "MODE7", "1" },             { "CC_PC24", "1" },
-    { "REG_LATE", "1" },
+    // [D5-KNOBS-E4-MODE-REG 2026-10-31] PATHPROG (with arm R's shadow-row tick, MASHED_PP_PUBLISH and the race_pct bridge),
+    // REASSERT_KEEP_NORMAL, REGISTRY, PICKUPS_ORIG, REG_CARS, REG_CALLBACKS, MODE7, REG_LATE, MODE_LIVE and P3_RESET_PAIR
+    // left this list with their read sites: the seeded path is the only one in the source
+    // (verify/d5knobse4mode_20261031/RESULT_D5-KNOBS-E4-MODE-REG.md).
+    { "CC_PC24", "1" },
     { "A5_DRAFT_LUT", "1" },
     // [fflip 2026-10-21, Mariano's decision] brecipe's live mode word / fd0 and live slot table for the AI host
     // (verify/brecipe_20261021/RESULT_brecipe.md), flipped with the canonical recipe swap to rule 0 / game mode 10.
-    { "MODE_LIVE", "1" },          { "SLOT_TYPE_LIVE", "1" },
+    { "SLOT_TYPE_LIVE", "1" },
     // [soflip 2026-10-21, Mariano's decision] substep's FUN_004709a0 order, substep-outer / car-inner
     // (verify/substep_20261021/RESULT_substep.md); steps only the cars the A4-order pre-phase stepped.
     { "SUBSTEP_OUTER", "1" },
@@ -61,8 +62,8 @@ const FaithKnob kFaith[] = {
     // seeded path is the only one in the source (verify/d5knobse1phys_20261030/RESULT_D5-KNOBS-E1-PHYS-A4A5.md).
     // [D3-SUBSTATE-FLIP 2026-10-29, D-11073, Mariano's decisions L-53 / L-55 / L-57] the sub-state machine FUN_0040dbd0 /
     // FUN_004103a0 and the phase-3 reset pair, as stack SUB (verify/d3subflip_20261029/RESULT_D3-SUBSTATE-FLIP.md).
-    // MASHED_NO_SUBSTATE=1 / MASHED_NO_P3_RESET_PAIR=1 opt out.
-    { "SUBSTATE", "1" },           { "P3_RESET_PAIR", "1" },
+    // MASHED_NO_SUBSTATE=1 opts out (the reset pair's MASHED_P3_RESET_PAIR was deleted by D5-KNOBS-E4-MODE-REG).
+    { "SUBSTATE", "1" },
 #if MASHED_FLIP_D11077
     // [D5-PARTMORPH-FLIPPREP 2026-10-30, D-11077, flipped by D5-PARTMORPH-MEASURE] FUN_0041f770's part 0x12 morph / part 0x14
     // wobble (verify/partmorph_20261028/RESULT_D5-PARTMORPH.md) and its record-state-0 producer

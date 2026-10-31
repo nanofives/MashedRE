@@ -6,13 +6,11 @@
 namespace mashed_re {
 namespace Race {
 
-// MASHED_REGISTRY (default OFF).
-bool Registry_Enabled();
-
-// FUN_00484c90 (race reset, FUN_004111c0). No-op unless enabled.
+// Always on: MASHED_REGISTRY was deleted by D5-KNOBS-E4-MODE-REG.
+// FUN_00484c90 (race reset, FUN_004111c0).
 void Registry_RaceInit();
 
-// FUN_0040fc00's FUN_00485070 call (0x0040fd07): pair pass + publish. No-op unless enabled.
+// FUN_0040fc00's FUN_00485070 call (0x0040fd07): pair pass + publish.
 void Registry_FrameTick();
 
 // FUN_00484cf0(desc): desc = {pos x, y, z, radius, type, data, +0x18, callback} (8 dwords).

@@ -73,10 +73,9 @@ void __cdecl RG_CbDispatch(void* a, void* b) {
     const int ib = static_cast<int>((reinterpret_cast<std::uintptr_t>(b) - kSlots) / kStride);
     if (s_replay) { s_cbLog.push_back({g_rg_cbTarget, ia, ib}); return; }   // G-M1 replay: record only
     ++s_cbLive;
-    // [mode 7 M3] MASHED_REG_CALLBACKS: run the pickup callback FUN_00458920 (Gameplay/PickupTick.cpp).
+    // [mode 7 M3] run the pickup callback FUN_00458920 (Gameplay/PickupTick.cpp).
     // The exe registers only cars (no callback) and pickups, so no other target is expected; one is counted,
     // not run (FUN_00486630 / FUN_0047cd50 are not ported, PREREG_M3.md section 0.2).
-    if (!mashed_re::Gameplay::PickupCallbacks_Enabled()) return;
     if (g_rg_cbTarget == 0x00458920u) mashed_re::Gameplay::Pickups_Callback(a, b);
     else ++s_cbUnported;
 }
@@ -159,21 +158,11 @@ bool FromHex(const std::string& h, std::uint8_t* out, std::size_t n) {
 
 long Registry_UnportedCallbacks() { return s_cbUnported; }
 
-bool Registry_Enabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_REGISTRY");
-        return s && s[0] && s[0] != '0';
-    }();
-    return s_on;
-}
-
 void Registry_RaceInit() {
-    if (!Registry_Enabled()) return;
     reinterpret_cast<void_fn>(&RG_484c90)();
 }
 
 void Registry_FrameTick() {
-    if (!Registry_Enabled()) return;
     EnsureLut();
     // G-M2a-LIVE trace: MASHED_REGISTRY_TRACE=<csv>, one row per slot [0, cc) at publish time.
     {
@@ -210,7 +199,6 @@ void Registry_FrameTick() {
 }
 
 int Registry_Register(const std::uint32_t desc[8]) {
-    if (!Registry_Enabled()) return 0;
     EnsureLut();
     PcScope pc;
     return reinterpret_cast<reg_fn>(&RG_484cf0)(desc);
