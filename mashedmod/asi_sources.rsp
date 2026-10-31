@@ -448,7 +448,6 @@
 "Vehicle\PhysicsBodySetLinearVelocity.cpp"
 "Save\ReplayGetSize.cpp"
 "Save\ReplayGetTimeAtIdx.cpp"
-"Save\ReplayTimeFormat.cpp"
 "Render\RwComReleaseThunk.cpp"
 "Rws\RwsStreamRead.cpp"
 "Audio\AudioChainWalk.cpp"
@@ -578,3 +577,5 @@
 "Match\MatchS02_0040e3a0.cpp"
 "Match\MatchS02_0040dfc0.cpp"
 "Match\MatchS02_0040cf40.cpp"
+"Match\MatchS02_004114c0.cpp"
+"Match\MatchS02_00411350.cpp"
