@@ -42,33 +42,14 @@
 
 #include <cstdint>
 
-// 0x0040b6b0
-// Returns DAT_008a9530[param_1] — per-slot mode-score array element.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ModeScoreGetBySlot(std::uint32_t param_1) {
-    return reinterpret_cast<std::uint32_t*>(0x008a9530)[param_1];
-}
-RH_ScopedInstall(ModeScoreGetBySlot, 0x0040b6b0);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S02: the body of 0x0040b6b0 (ModeScoreGetBySlot) moved to Match/MatchS02_0040b6b0.cpp,
+// which compiles the byte-matched source re/match/s02/0040b6b0.c.
 
-// 0x0040b7a0
-// Returns DAT_0063b8ec — hotkey string base global.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl HotkeyStringBaseGet() {
-    return *reinterpret_cast<std::uint32_t*>(0x0063b8ec);
-}
-RH_ScopedInstall(HotkeyStringBaseGet, 0x0040b7a0);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S02: the body of 0x0040b7a0 (HotkeyStringBaseGet) moved to Match/MatchS02_0040b7a0.cpp,
+// which compiles the byte-matched source re/match/s02/0040b7a0.c.
 
-// 0x0040b7b0
-// 4-table dispatch: returns one of four per-player arrays indexed by param_1,
-// selected by param_2. Returns 0 for out-of-range param_2.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PlayerHotkeyTableGet(std::uint32_t param_1, std::uint32_t param_2) {
-    switch (param_2) {
-        case 0: return reinterpret_cast<std::uint32_t*>(0x008a9530)[param_1];   // 0x0040b7c4
-        case 1: return reinterpret_cast<std::uint32_t*>(0x008a9560)[param_1];   // 0x0040b7cc
-        case 2: return reinterpret_cast<std::uint32_t*>(0x008a9540)[param_1];   // 0x0040b7da
-        case 3: return reinterpret_cast<std::uint32_t*>(0x008a9550)[param_1];   // 0x0040b7e8
-        default: return 0;
-    }
-}
-RH_ScopedInstall(PlayerHotkeyTableGet, 0x0040b7b0);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S02: the body of 0x0040b7b0 (PlayerHotkeyTableGet) moved to Match/MatchS02_0040b7b0.cpp,
+// which compiles the byte-matched source re/match/s02/0040b7b0.c.
 
 // 0x00429870
 // Lap time comparison: returns 1 if time_A < time_B, else 0.
@@ -199,33 +180,5 @@ RH_ScopedInstall(IsMultiplayerMode, 0x00430760);  // re-enabled 2026-05-24 c3-fr
 //   automated diff run.  Manual / behavioral verification only at C3 gate.
 // ---------------------------------------------------------------------------
 
-// 0x0040b620
-extern "C" __declspec(dllexport) void __cdecl SlotSortByModeScore(int* param_1) {
-    // Build local score and index arrays (4 slots).
-    std::int32_t score[4];
-    for (int i = 0; i < 4; i++) {
-        // Activity flag: DAT_007f1a14 + i*0x10 (stride 0x10, int32 per slot).
-        std::int32_t flag = *reinterpret_cast<std::int32_t*>(0x007f1a14u + i * 0x10);
-        if (flag == -1) {
-            score[i] = -100;
-        } else {
-            // Mode score: DAT_008a9530 + i*4 (stride 4, int32 per slot).
-            score[i] = *reinterpret_cast<std::int32_t*>(0x008a9530u + i * 4);
-        }
-        // Fill output with identity permutation.
-        param_1[i] = i;
-    }
-
-    // Bubble sort: descending by score.
-    for (int pass = 0; pass < 4; pass++) {
-        for (int j = 0; j < 3; j++) {
-            if (score[param_1[j]] < score[param_1[j + 1]]) {
-                int tmp = param_1[j];
-                param_1[j] = param_1[j + 1];
-                param_1[j + 1] = tmp;
-            }
-        }
-    }
-}
-
-RH_ScopedInstall(SlotSortByModeScore, 0x0040b620);  // re-enabled 2026-06-12 promote-round-19 (outbuf_only harness-ext)
+// MATCH-S02: the body of 0x0040b620 (SlotSortByModeScore) moved to Match/MatchS02_0040b620.cpp,
+// which compiles the byte-matched source re/match/s02/0040b620.c.

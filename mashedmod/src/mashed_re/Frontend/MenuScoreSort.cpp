@@ -94,37 +94,5 @@ RH_ScopedInstall(SplitScreenTrackAssignment, 0x00430830);  // re-ported 2026-10-
 // ref: re/analysis/frontend_promote_menus_b/0040e3a0.md
 // ---------------------------------------------------------------------------
 
-// 0x004a332b — non-returning abort helper (called via function pointer; not linked as extern).
-// Invoked only on the unreachable default case (invalid player index).
-// Error code 0xfffffff2 = -14 signed, cited at 0x0040e427.
-typedef void (__cdecl *AbortFn_t)(std::int32_t);
-static const AbortFn_t s_AbortFn = reinterpret_cast<AbortFn_t>(0x004a332bu);
-
-// 0x0040e3a0
-extern "C" __declspec(dllexport) void __cdecl PlayerColorTableGet(int param_1, std::uint8_t* param_2) {
-    switch (param_1) {
-    case 0:
-        param_2[0] = 0x98u; param_2[1] = 0x3au; param_2[2] = 0x3du; param_2[3] = 0xffu;
-        break;
-    case 1:
-        param_2[0] = 0x4eu; param_2[1] = 0x89u; param_2[2] = 0xaeu; param_2[3] = 0xffu;
-        break;
-    case 2:
-        param_2[0] = 0x61u; param_2[1] = 0x76u; param_2[2] = 0x56u; param_2[3] = 0xffu;
-        break;
-    case 3:
-        param_2[0] = 0xdbu; param_2[1] = 0xc3u; param_2[2] = 0x62u; param_2[3] = 0xffu;
-        break;
-    case 4:
-        param_2[0] = 0xebu; param_2[1] = 0xa7u; param_2[2] = 0xa7u; param_2[3] = 0xffu;
-        break;
-    case 5:
-        param_2[0] = 0x00u; param_2[1] = 0x00u; param_2[2] = 0x00u; param_2[3] = 0xffu;
-        break;
-    default:
-        s_AbortFn(static_cast<std::int32_t>(0xfffffff2u)); // -14; original abort at 0x004a332b
-        break;
-    }
-}
-
-RH_ScopedInstall(PlayerColorTableGet, 0x0040e3a0);  // re-enabled 2026-05-24 phase-a2 GREEN (12/12 6 distinct)
+// MATCH-S02: the body of 0x0040e3a0 (PlayerColorTableGet) moved to Match/MatchS02_0040e3a0.cpp,
+// which compiles the byte-matched source re/match/s02/0040e3a0.c.

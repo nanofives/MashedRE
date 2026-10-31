@@ -47,14 +47,8 @@
 // ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e340.md
 // ---------------------------------------------------------------------------
 
-// 0x0040e340
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetLiveCarCount() {
-    // Return DAT_008a94d0.
-    // 0x008a94d0 cited at 0x0040e340 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x008a94d0u);
-}
-
-RH_ScopedInstall(GetLiveCarCount, 0x0040e340);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S02: the body of 0x0040e340 (GetLiveCarCount) moved to Match/MatchS02_0040e340.cpp,
+// which compiles the byte-matched source re/match/s02/0040e340.c.
 
 // ---------------------------------------------------------------------------
 // IsCarSlotActive  --  0x0040e370
@@ -82,21 +76,5 @@ RH_ScopedInstall(GetLiveCarCount, 0x0040e340);  // re-enabled 2026-05-24 c3-rend
 // ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e370.md
 // ---------------------------------------------------------------------------
 
-// 0x0040e370
-extern "C" __declspec(dllexport) std::uint32_t __cdecl IsCarSlotActive(int param_1) {
-    // Bounds check: param_1 must be in 0..3.
-    // 3 cited at 0x0040e370 body.
-    if (3 < param_1) {
-        return 0u;
-    }
-    // Double-deref: read pointer from 0x005f2770, then index by param_1*4 + 0x34.
-    // 0x005f2770 base cited at 0x0040e370 body.
-    // 0x34 offset cited at 0x0040e370 body.
-    // 4 stride cited at 0x0040e370 body.
-    std::uint32_t* base = *reinterpret_cast<std::uint32_t**>(0x005f2770u);
-    std::uint32_t val = *reinterpret_cast<const std::uint32_t*>(
-        reinterpret_cast<std::uintptr_t>(base) + static_cast<unsigned>(param_1) * 4u + 0x34u);
-    return val != 0u ? 1u : 0u;
-}
-
-RH_ScopedInstall(IsCarSlotActive, 0x0040e370);  // re-enabled 2026-05-24 phase-a2-strict GREEN bounds-only test
+// MATCH-S02: the body of 0x0040e370 (IsCarSlotActive) moved to Match/MatchS02_0040e370.cpp,
+// which compiles the byte-matched source re/match/s02/0040e370.c.

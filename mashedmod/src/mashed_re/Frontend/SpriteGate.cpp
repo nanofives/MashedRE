@@ -2,8 +2,8 @@
 // Analysis notes: re/analysis/sprite_gate_c3/
 //
 // Covers:
-//   0x0040bb70  SpriteLookupTableA  — forwarder: FUN_004c5c00(DAT_0063b900, param_1)
-//   0x0040bb90  SpriteLookupTableB  — forwarder: FUN_004c5c00(DAT_0063b904, param_1)
+//   0x0040bb70  SpriteLookupTableA  — moved to Match/MatchS02_0040bb70.cpp (MATCH-S02)
+//   0x0040bb90  SpriteLookupTableB  — moved to Match/MatchS02_0040bb90.cpp (MATCH-S02)
 //   0x0042ee00  SpriteSlotGate      — calls SpriteLookupTableA_orig for slot 0/1/2, else 0
 //   0x00430a10  HudSlotTypePlayer0  — game-mode → slot-type-0 (leaf, reads DAT_0067e9fc)
 //   0x00430a60  HudSlotTypePlayer1  — game-mode → slot-type-1 (leaf)
@@ -16,63 +16,11 @@
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
-// ---------------------------------------------------------------------------
-// Callee: FUN_004c5c00 — case-insensitive linked-list string search
-// Analysis: re/analysis/sprite_gate_c3/0x004c5c00.md (C2 drift-promote)
-// Signature: void* (int list_head_ptr, const char* key)
-// Returns ptr to (node-8) on match, or NULL.
-// ---------------------------------------------------------------------------
-using FUN_004c5c00_t = void* (__cdecl*)(std::int32_t, const char*);
-static FUN_004c5c00_t const s_FUN_004c5c00 =
-    reinterpret_cast<FUN_004c5c00_t>(0x004c5c00);
+// MATCH-S02: the body of 0x0040bb70 (SpriteLookupTableA) moved to Match/MatchS02_0040bb70.cpp,
+// which compiles the byte-matched source re/match/s02/0040bb70.c.
 
-// ---------------------------------------------------------------------------
-// SpriteLookupTableA  --  0x0040bb70
-//
-// Original: FUN_0040bb70 (20 bytes, 0x0040bb70..0x0040bb84)
-// Signature: void* (const char* key)
-//   Calls FUN_004c5c00(DAT_0063b900, key).
-//   DAT_0063b900 = sprite linked-list head A (global at 0x0063b900).
-// Returns: matched node pointer or NULL.
-//
-// Ghidra decomp (re/analysis/frontend_promote_menus_b/0040bb70.md):
-//   FUN_004c5c00(DAT_0063b900, param_1)
-// ref: re/analysis/frontend_promote_menus_b/0040bb70.md
-// ref: re/analysis/sprite_gate_c3/0x004c5c00.md
-// ---------------------------------------------------------------------------
-
-// 0x0040bb70
-extern "C" __declspec(dllexport) void* __cdecl SpriteLookupTableA(const char* key) {
-    // 0x0040bb74: DAT_0063b900 — sprite table A linked-list head
-    const std::int32_t tableA = *reinterpret_cast<const std::int32_t*>(0x0063b900u);
-    return s_FUN_004c5c00(tableA, key);
-}
-
-RH_ScopedInstall(SpriteLookupTableA, 0x0040bb70);  // re-enabled 2026-05-24 batch-frontend
-
-// ---------------------------------------------------------------------------
-// SpriteLookupTableB  --  0x0040bb90
-//
-// Original: FUN_0040bb90 (20 bytes, 0x0040bb90..0x0040bba4)
-// Signature: void* (const char* key)
-//   Calls FUN_004c5c00(DAT_0063b904, key).
-//   DAT_0063b904 = sprite linked-list head B (global at 0x0063b904; offset +4 from A).
-// Returns: matched node pointer or NULL.
-//
-// Ghidra decomp (re/analysis/frontend_promote_menus_b/0040bb90.md):
-//   FUN_004c5c00(DAT_0063b904, param_1)
-// ref: re/analysis/frontend_promote_menus_b/0040bb90.md
-// ref: re/analysis/sprite_gate_c3/0x004c5c00.md
-// ---------------------------------------------------------------------------
-
-// 0x0040bb90
-extern "C" __declspec(dllexport) void* __cdecl SpriteLookupTableB(const char* key) {
-    // 0x0040bb94: DAT_0063b904 — sprite table B linked-list head (offset +4 from A)
-    const std::int32_t tableB = *reinterpret_cast<const std::int32_t*>(0x0063b904u);
-    return s_FUN_004c5c00(tableB, key);
-}
-
-RH_ScopedInstall(SpriteLookupTableB, 0x0040bb90);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S02: the body of 0x0040bb90 (SpriteLookupTableB) moved to Match/MatchS02_0040bb90.cpp,
+// which compiles the byte-matched source re/match/s02/0040bb90.c.
 
 // ---------------------------------------------------------------------------
 // SpriteSlotGate  --  0x0042ee00
