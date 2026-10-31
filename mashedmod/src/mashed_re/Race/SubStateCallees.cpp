@@ -123,12 +123,8 @@ extern "C" void __cdecl HudSlideBillboardTimerTail(void)
 // C7 05 84 D5 63 00 00 00 00 00 C7 05 88 D5 63 00 00 00 00 00 C3
 // ===========================================================================
 
-// 0x0041d910
-extern "C" __declspec(dllexport) void __cdecl Clear63d584Pair(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0063d584u) = 0u;  // cited at 0x0041d910
-    *reinterpret_cast<std::uint32_t*>(0x0063d588u) = 0u;  // cited at 0x0041d91a
-}
-RH_ScopedInstall(Clear63d584Pair, 0x0041d910);
+// MATCH-S04: the body of 0x0041d910 (Clear63d584Pair) moved to Match/MatchS04_0041d910.cpp,
+// which compiles the byte-matched source re/match/s04/0041d910.c.
 
 // ===========================================================================
 // 0x0041da90  DeltaTimeOutGet  (FUN_0041da90, 17 B; caller FUN_004103a0)
@@ -139,14 +135,8 @@ RH_ScopedInstall(Clear63d584Pair, 0x0041d910);
 // against _DAT_005ccdf4 (1.86f). U-3585 (data semantics) answered by RESULT_LEG0.md.
 // ===========================================================================
 
-// 0x0041da90
-extern "C" __declspec(dllexport) void __cdecl DeltaTimeOutGet(std::uint32_t* param_1) {
-    // null guard + 0x0063d588 cited at 0x0041da90 body.
-    if (param_1 != nullptr) {
-        *param_1 = *reinterpret_cast<const std::uint32_t*>(0x0063d588u);   // 0x0041da98
-    }
-}
-RH_ScopedInstall(DeltaTimeOutGet, 0x0041da90);
+// MATCH-S04: the body of 0x0041da90 (DeltaTimeOutGet) moved to Match/MatchS04_0041da90.cpp,
+// which compiles the byte-matched source re/match/s04/0041da90.c.
 
 // ===========================================================================
 // 0x0041ae20  Copy41ae20  (FUN_0041ae20, 52 B, __thiscall; caller FUN_0041b520)
@@ -160,15 +150,27 @@ RH_ScopedInstall(DeltaTimeOutGet, 0x0041da90);
 // Doubling a float is exact in both x87 and SSE.
 // ===========================================================================
 
-// 0x0041ae20
+// Both bodies = the matched source re/match/s03/h1_0041ae20.c (byte-identical under
+// re/tools/match/match.py, cl 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1; MATCH-S03). In it
+// FUN_0041ae20 is a file-static callee (the period compiler passes its record in ECX); Copy41ae20
+// below is only the exported __fastcall entry the .asi installs at 0x0041ae20, forwarding ECX.
+#define MATCH_PORT 1
+#define DAT_005f3304 (reinterpret_cast<Vec3_41ae20*>(0x005f3304u))
+#define DAT_0063c8d0 (reinterpret_cast<Rec41ae20*>(0x0063c8d0u))
+#define FUN_0041b520 Update41b520
+extern "C" __declspec(dllexport) void __cdecl Update41b520(void);
+extern "C" {
+// 0x0041ae20  FUN_0041ae20
+// 0x0041b520  Update41b520
+#include "../../../../re/match/s03/h1_0041ae20.c"
+}
+#undef FUN_0041b520
+#undef DAT_0063c8d0
+#undef DAT_005f3304
+#undef MATCH_PORT
+
 extern "C" __declspec(dllexport) void __fastcall Copy41ae20(char* self) {
-    std::uint32_t i = *reinterpret_cast<std::uint32_t*>(self + 0x64);
-    const std::uint32_t* rec = reinterpret_cast<const std::uint32_t*>(0x005f3304u + i * 12u);
-    std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(self + 0x50);
-    dst[0] = rec[0]; dst[1] = rec[1]; dst[2] = rec[2];
-    *reinterpret_cast<std::uint32_t*>(self + 0x70) = 0;
-    float* f = reinterpret_cast<float*>(self + 0x50);
-    *f = *f + *f;
+    FUN_0041ae20(reinterpret_cast<Rec41ae20*>(self));
 }
 RH_ScopedInstall(Copy41ae20, 0x0041ae20);
 
@@ -184,12 +186,7 @@ RH_ScopedInstall(Copy41ae20, 0x0041ae20);
 // original clobbers EAX/ECX/EDX; so does this (all caller-saved).
 // ===========================================================================
 
-// 0x0041b520
-extern "C" __declspec(dllexport) void __cdecl Update41b520(void)
-{
-    for (std::uintptr_t rec = 0x0063c8d0u; rec < 0x0063caa0u; rec += 0x74u)   // 0x0041b52d
-        Copy41ae20(reinterpret_cast<char*>(rec));                              // 0x0041b525
-}
+// (0x0041b520 Update41b520: body is the matched source included above.)
 RH_ScopedInstall(Update41b520, 0x0041b520);
 
 // ===========================================================================

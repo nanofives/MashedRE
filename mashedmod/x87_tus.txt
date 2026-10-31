@@ -51,6 +51,13 @@ RwpSolverBroadphase3
 RwpSolverCore14
 RwpSolverCore15
 RwpSolverCore17
+# MATCH-S04 2026-10-31: port bodies compiled from byte-matched game code that uses float (re/match/s04/)
+MatchS04_0041b770
+MatchS04_0041cbc0
+MatchS04_0041d910
+MatchS04_0041db80
+MatchS04_0041f100
+MatchS04_0041f260
 # D-11073 leg 2 (2026-10-09): verbatim x87 transcription of FUN_00445aa0 et al. (fpatan/fsin inline);
 # bit-identity measured by run_diff in the same session, not assumed.
 CameraEntries
@@ -76,3 +83,5 @@ WarzonePontoon
 # HB-6 (2026-10-26): disasm-order x87 bodies of 0x00566200 / 0x005667c0 (VECCAP-2), reached only under
 # MASHED_LEAVES1_X87=1 (default OFF). Measured by re/tools/veccap/replay_c3.py; verify/hb6_20261026/RESULT_HB-6.md.
 RwpSolverLeaves1X87
+# MATCH-S01 2026-10-31: port bodies compiled from byte-matched x87 game code (re/match/s01/)
+MatchS01

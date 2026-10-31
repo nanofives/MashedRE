@@ -49,18 +49,8 @@
 // bit-identical leaf.
 // ---------------------------------------------------------------------------
 
-// 0x00407a60
-extern "C" __declspec(dllexport) void __cdecl UtilTableInit8a9620() {
-    std::uint32_t* p = reinterpret_cast<std::uint32_t*>(0x008a9648u);
-    do {
-        std::uint32_t* fill = p - 10;                       // p - 0x28 bytes
-        for (int i = 0; i < 0xc3; ++i) fill[i] = 0u;        // zero 0xc3 dwords
-        *p = 0xffffffffu;                                   // sentinel at +0x28
-        p += 0xc3;                                          // stride 0xc3 dwords
-    } while (reinterpret_cast<std::uint32_t>(p) < 0x008aa278u);
-}
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00407a60 UtilTableInit8a9620
 
-RH_ScopedInstall(UtilTableInit8a9620, 0x00407a60);
 
 // ---------------------------------------------------------------------------
 // FUN_0040ad30  --  0x0040ad30   (void(uint32) global setter)

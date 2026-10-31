@@ -118,7 +118,10 @@ COOKIE = "DAT_00616038"   # /GS cookie (written by the CRT init at 0x004a5825); 
 
 def partial(m):
     """Ghidra's `X._A_B_` (B bytes at offset A of X) as a cast."""
-    t = {1: "uchar", 2: "ushort", 4: "uint", 8: "ulonglong"}[int(m[3])]
+    n = int(m[3])
+    if n not in (1, 2, 4, 8):    # odd widths (3 bytes, MATCH-S03): low n bytes of a dword, hand work decides
+        return f"((*(uint *)((char *)&{m[1]} + {int(m[2])})) & 0x{(1 << 8 * n) - 1:x})"
+    t = {1: "uchar", 2: "ushort", 4: "uint", 8: "ulonglong"}[n]
     return f"(*({t} *)((char *)&{m[1]} + {int(m[2])}))"
 
 

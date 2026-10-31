@@ -225,70 +225,38 @@ extern "C" __declspec(dllexport) void __cdecl SaveStatusClear(std::uint32_t para
 RH_ScopedInstall(SaveStatusClear, 0x004099e0);  // re-enabled 2026-05-24 batch-save-b
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x00404e50  SaveLoad
-// SAVE_LOAD_FN. Calls FUN_004b3b70(filename, buf, size) then SaveStatusClear(0).
-// Always returns 0 regardless of I/O result.
-// Disasm (0x00404e50..0x00404e70):
-//   PUSH 0x24fa0     @00404e50
-//   PUSH 0x803358    @00404e55
-//   PUSH 0x5cc8e0    @00404e5a
-//   CALL 004b3b70    @00404e5f
-//   PUSH 0           @00404e64
-//   CALL 004099e0    @00404e66
-//   ADD ESP,0x10     @00404e6b
-//   XOR EAX,EAX      @00404e6e
-//   RET              @00404e70
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl SaveLoad() {
-    gFileRead(kGameSaveFilename, kGameSaveBuf, kGameSaveSize);
-    SaveStatusClear(0);
-    return 0;
-}
+// [moved below: C4-by-match port body] 0x00404e50 SaveLoad
 
-RH_ScopedInstall(SaveLoad, 0x00404e50);  // re-enabled 2026-05-24 batch-save-a
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x00404f50  SaveWrite
-// SAVE_WRITE_FN. Mirror of SaveLoad but calls FUN_004b3bb0 (write wrapper).
-// Disasm (0x00404f50..0x00404f70):
-//   PUSH 0x24fa0     @00404f50
-//   PUSH 0x803358    @00404f55
-//   PUSH 0x5cc8e0    @00404f5a
-//   CALL 004b3bb0    @00404f5f
-//   PUSH 0           @00404f64
-//   CALL 004099e0    @00404f66
-//   ADD ESP,0x10     @00404f6b
-//   XOR EAX,EAX      @00404f6e
-//   RET              @00404f70
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl SaveWrite() {
-    gFileWrite(kGameSaveFilename, kGameSaveBuf, kGameSaveSize);
-    SaveStatusClear(0);
-    return 0;
-}
+// [moved below: C4-by-match port body] 0x00404f50 SaveWrite
 
-RH_ScopedInstall(SaveWrite, 0x00404f50);  // re-enabled 2026-05-24 batch-save-a
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x00404f80  SaveFileExists
-// Calls FUN_00550b00(filename); normalizes result to 0 or 1 via NEG/SBB/NEG.
-// Disasm (0x00404f80..0x00404f93):
-//   PUSH 0x5cc8e0    @00404f80
-//   CALL 00550b00    @00404f85
-//   ADD ESP,0x4      @00404f8a
-//   NEG EAX          @00404f8d
-//   SBB EAX,EAX      @00404f8f
-//   NEG EAX          @00404f91
-//   RET              @00404f93
-// NEG/SBB/NEG idiom: any non-zero → 1; zero → 0.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl SaveFileExists() {
-    const int raw = gFileExists(kGameSaveFilename);
-    // NEG/SBB/NEG: normalize to {0,1}
-    return (raw != 0) ? 1 : 0;
-}
+// 0x00404e50 / 0x00404f50 / 0x00404f80: MATCH-S01 (2026-10-31). The three bodies are re/match/s01/00404e50.c,
+// byte-identical to the original under re/tools/match/match.py (verify/matchs01_20261031/RESULT_MATCH-S01.md),
+// compiled here unchanged. With MASHED_RE_PORT the file binds to this TU's per-target names: the file name, buffer
+// and file helpers of the replaced bodies (original addresses in the .asi, the standalone ones in the exe).
+#define MASHED_RE_PORT 1
+extern "C" {
+#define FUN_00404e50 SaveLoad
+#define FUN_00404f50 SaveWrite
+#define FUN_00404f80 SaveFileExists
+__declspec(dllexport) int __cdecl SaveLoad(void);
+__declspec(dllexport) int __cdecl SaveWrite(void);
+__declspec(dllexport) int __cdecl SaveFileExists(void);
+#define s_gamesave_bin_005cc8e0 ((char*)kGameSaveFilename)
+#define DAT_00803358 ((unsigned char*)kGameSaveBuf)
+#define FUN_004b3b70 gFileRead
+#define FUN_004b3bb0 gFileWrite
+#define FUN_00550b00 gFileExists
+#define FUN_004099e0 SaveStatusClear
+#include "../../../../re/match/s01/00404e50.c"
+}  // extern "C"
+RH_ScopedInstall(SaveLoad, 0x00404e50);
+RH_ScopedInstall(SaveWrite, 0x00404f50);
+RH_ScopedInstall(SaveFileExists, 0x00404f80);
 
-RH_ScopedInstall(SaveFileExists, 0x00404f80);  // re-enabled 2026-05-24 batch-save-a
 
 #ifdef MASHED_STANDALONE
 // ─────────────────────────────────────────────────────────────────────────────

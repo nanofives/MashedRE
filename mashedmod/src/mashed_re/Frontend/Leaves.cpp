@@ -40,13 +40,5 @@
 // ref: re/analysis/promote_c2_vehicle_lowrva/0x00408a50.md
 // ---------------------------------------------------------------------------
 
-// 0x00408a50
-extern "C" __declspec(dllexport) float __cdecl PerCarRaceProgressGet(int param_1) {
-    // Read *(float*)(0x008a96e8 + param_1 * 0x30c).
-    // Base 0x008a96e8 cited at 0x00408a50 body; stride 0x30c cited at 0x00408a50 body.
-    const std::uintptr_t base = 0x008a96e8u;
-    const std::uintptr_t stride = 0x30cu;
-    return *reinterpret_cast<const float*>(base + static_cast<unsigned>(param_1) * stride);
-}
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00408a50 PerCarRaceProgressGet
 
-RH_ScopedInstall(PerCarRaceProgressGet, 0x00408a50);  // re-enabled 2026-05-24 c3-frontend-a

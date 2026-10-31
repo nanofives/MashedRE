@@ -21,13 +21,8 @@
 
 #include <cstdint>
 
-// 0x0041ef80
-extern "C" __declspec(dllexport) void __cdecl FlagToggle63dc74(std::uint32_t idx, int set) {
-    std::uint32_t* f = reinterpret_cast<std::uint32_t*>(0x0063dc74u + idx * 0x2acu);   // 0x63d9e0 + idx*0x2ac + 0x294
-    if (set) *f |= 0x400u;                                                              // OR ECX,0x400
-    else     *f &= 0xfffffbffu;                                                         // AND ECX,0xfffffbff
-}
-RH_ScopedInstall(FlagToggle63dc74, 0x0041ef80);
+// MATCH-S04: the body of 0x0041ef80 (FlagToggle63dc74) moved to Match/MatchS04_0041ef80.cpp,
+// which compiles the byte-matched source re/match/s04/0041ef80.c.
 
 // [rtex 2026-10-16] GatedSwitch636ad0 (FUN_0041f360) moved, unchanged for the .asi, to
 // Vehicle/CarMaterialTables.cpp, which both targets compile (the standalone's car env set-up

@@ -205,21 +205,8 @@ RH_ScopedInstall(MenuSlotFlagSetCurrent, 0x0043aee0);
 // ref: re/analysis/frontend_c1_to_c2_s1/00401ee0.md
 // ---------------------------------------------------------------------------
 
-// 0x00401ee0
-extern "C" __declspec(dllexport) void __cdecl EntityTableSelectUpdate(
-    std::uint32_t param_1)
-{
-    s_F00401570(param_1);
-    s_F00401da0();
-    // *DAT_00636ac0 — read pointer at 0x636ac0, then deref it. [0x00401ef2/f8]
-    std::int32_t* entry = *reinterpret_cast<std::int32_t**>(k_SelectedEntryPtr);
-    std::int32_t value = *entry;
-    if (value != 0) {
-        s_F004e6680(static_cast<std::uint32_t>(value));
-    }
-}
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00401ee0 EntityTableSelectUpdate
 
-RH_ScopedInstall(EntityTableSelectUpdate, 0x00401ee0);
 
 // ---------------------------------------------------------------------------
 // RaceRankThreePlayers  --  0x0040d590

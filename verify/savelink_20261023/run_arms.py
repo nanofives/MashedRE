@@ -25,6 +25,10 @@ ROOT = os.path.normpath(os.environ.get('A4_ROOT', 'D:/MashedWT/kfdot_root'))
 # their paths are unconditional, so the names are gone from the stacks below. Stacks B, SB, DB, A64 and PM are empty
 # (= DEF), FNPM = FAITH, and RGB / SPL / TGTPL / SPLSB / SPLSBKN / SBKN equal the stack they extended:
 # verify/d5knobsd_seeded6_20261030/RESULT_D5-KNOBS-D-SEEDED6.md.
+# D5-KNOBS-AI-TICK-FIRST (2026-10-31) deleted MASHED_AI_TICK_FIRST (no reader since D5-KNOBS-E1-PHYS-A4A5 made the AI tick
+# phase run before the player's step unconditionally), so the name is gone from the stacks below. T is empty (= DEF),
+# SmT = S, CCET = CCE, TE = E, TCS = CS, KT = TGT, and TPPT keeps PATHPROG + its traces:
+# verify/d5knobsaitf_20261031/RESULT_D5-KNOBS-AI-TICK-FIRST.md.
 STACK = {'DEF': [],
          'NOHA': ['MASHED_NO_HEADING_ASSIST'],
          # the AI RW-LUT lookahead stacked on the new default (report only, not flipped)
@@ -46,15 +50,15 @@ STACK['CCBD'] = STACK['CCB'] + ['MASHED_GRID_DIR']                            # 
 STACK['CCBDL'] = STACK['CCBD'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']
 STACK['CCD'] = STACK['CC'] + ['MASHED_GRID_DIR']
 # PREREG amendment 1: S = the knob + the U-9684 chain + GRID_DIR + both new knobs; SmE / SmT drop one of them
-_S = STACK['CCBD'] + ['MASHED_AI_CONTACT_EVENT', 'MASHED_AI_TICK_FIRST']
+_S = STACK['CCBD'] + ['MASHED_AI_CONTACT_EVENT']
 STACK['S'] = _S
 STACK['SmE'] = [k for k in _S if k != 'MASHED_AI_CONTACT_EVENT']
-STACK['SmT'] = [k for k in _S if k != 'MASHED_AI_TICK_FIRST']
+STACK['SmT'] = list(_S)   # was S minus MASHED_AI_TICK_FIRST (deleted)
 for _t in ('S', 'SmE', 'SmT'):
     STACK[_t + 'L'] = STACK[_t] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt',
                                    'MASHED_TGT3_TRACE=@OUT@\\@NAME@.tgt3.csv']
-STACK['E'] = ['MASHED_AI_CONTACT_EVENT']; STACK['T'] = ['MASHED_AI_TICK_FIRST']; STACK['CCE'] = ['MASHED_AI_COUNTDOWN_CLOCK', 'MASHED_AI_CONTACT_EVENT']
-STACK['CCET'] = STACK['CCE'] + ['MASHED_AI_TICK_FIRST']
+STACK['E'] = ['MASHED_AI_CONTACT_EVENT']; STACK['T'] = []; STACK['CCE'] = ['MASHED_AI_COUNTDOWN_CLOCK', 'MASHED_AI_CONTACT_EVENT']
+STACK['CCET'] = list(STACK['CCE'])   # was CCE + MASHED_AI_TICK_FIRST (deleted)
 STACK['EL'] = STACK['E'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
 STACK['DEFL'] = ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']
 STACK['SLP'] = STACK['SL'] + ['MASHED_PATHPROG_TRACE=@OUT@\\@NAME@.pathprog.csv']
@@ -63,7 +67,7 @@ STACK['B'] = []   # was fix B's umbrella knob (SEEDED6: unconditional)
 _A4 = ['MASHED_A4_ORDER', 'MASHED_A4_ORDER_TRACE=@OUT@\\@NAME@.a4.txt']
 STACK['A'] = _A4
 STACK['AE'] = _A4 + ['MASHED_AI_CONTACT_EVENT']
-STACK['TE'] = ['MASHED_AI_TICK_FIRST', 'MASHED_AI_CONTACT_EVENT']
+STACK['TE'] = ['MASHED_AI_CONTACT_EVENT']
 STACK['SA'] = _S + _A4                                         # S + the A4 order
 STACK['SAP'] = STACK['SA'] + ['MASHED_PLAYERTRACE']            # + the player trace (G-COAST2 cause)
 # u9749: record dumps (MSD1) of slot 0 / slot 2, end of frame and at the A4 site
@@ -85,11 +89,11 @@ STACK['RGB'] = list(STACK['RG'])
 _T = ['MASHED_A5_RACE_TIMER', 'MASHED_A5_RACE_TIMER_LOG']
 STACK['T5'] = _T; STACK['RGT'] = STACK['RG'] + _T; STACK['RYT'] = STACK['RY'] + _T
 STACK['SR3'] = STACK['S'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_AI_DIAG']   # c3k44
-STACK['TPPT'] = ['MASHED_AI_TICK_FIRST', 'MASHED_PATHPROG', 'MASHED_PATHPROG_TRACE=@OUT@\\@NAME@.pathprog.csv',
+STACK['TPPT'] = ['MASHED_PATHPROG', 'MASHED_PATHPROG_TRACE=@OUT@\\@NAME@.pathprog.csv',
                  'MASHED_TGT3_TRACE=@OUT@\\@NAME@.tgt3.csv']   # u9747: tick first + path progress, traced
 STACK['TPPG'] = STACK['TPPT'] + ['MASHED_PATHPROG_GATE_LOG=@OUT@\\@NAME@.gate.txt']
 STACK['NOCS'] = ['MASHED_NO_COUNTDOWN_SPAWN']   # after the flip: the opt-out (= the 438566c88 default)
-STACK['CS'] = ['MASHED_COUNTDOWN_SPAWN']; STACK['TCS'] = ['MASHED_AI_TICK_FIRST', 'MASHED_COUNTDOWN_SPAWN']
+STACK['CS'] = ['MASHED_COUNTDOWN_SPAWN']; STACK['TCS'] = ['MASHED_COUNTDOWN_SPAWN']
 STACK['TPPGC'] = STACK['TPPG'] + ['MASHED_COUNTDOWN_SPAWN']; STACK['SCS'] = STACK['S'] + ['MASHED_COUNTDOWN_SPAWN']
 STACK['TGTE'] = STACK['TGT'] + ['MASHED_AI_CONTACT_EVENT']   # cev PREREG section 2
 STACK['TGTEL'] = STACK['TGTE'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt',
@@ -154,7 +158,7 @@ STACK['RLOLC'] = STACK['RLO'] + STACK['LC']; STACK['XW0RLOLC'] = STACK['XW0RLO']
 STACK['P24'] = ['MASHED_ROTATE_PC24']; STACK['RLOLCP'] = STACK['RLOLC'] + STACK['P24']; STACK['XW0RLOLCP'] = STACK['XW0RLOLC'] + STACK['P24']   # u9766 amendment 1
 STACK['F'] = ['MASHED_HEADING_FWD_LIVE']; STACK['RLOLCPF'] = STACK['RLOLCP'] + STACK['F']; STACK['XW0RLOLCPF'] = STACK['XW0RLOLCP'] + STACK['F']   # u9767 PREREG section 1
 STACK['SPLR1'] = STACK['SPL'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']   # lk21
-STACK['KT'] = STACK['TGT'] + ['MASHED_AI_TICK_FIRST']; STACK['KTE'] = STACK['KT'] + ['MASHED_AI_CONTACT_EVENT']   # cev amendment 1
+STACK['KT'] = list(STACK['TGT']); STACK['KTE'] = STACK['KT'] + ['MASHED_AI_CONTACT_EVENT']   # cev amendment 1
 STACK['KTEL'] = STACK['KTE'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
 STACK['ELR'] =STACK['EL'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3']   # cev: event + pair logs + car 3 records
 STACK['RGX'] = STACK['RG'] + ['MASHED_A5_RACE_TIMER']   # RGT without the diagnostic log: the (b) / G-CTRL arms

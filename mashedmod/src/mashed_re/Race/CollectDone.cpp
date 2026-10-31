@@ -10,10 +10,4 @@
 
 #include <cstdint>
 
-// 0x00405890
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred405890(void) {
-    const std::uint32_t total = *reinterpret_cast<const std::uint32_t*>(0x0063a5d0u);   // 0x00405890 MOV EAX,[0x0063a5d0]
-    const std::uint32_t done  = *reinterpret_cast<const std::uint32_t*>(0x0063a5d4u);   // 0x0040589a MOV EDX,[0x0063a5d4]
-    return mashed_re::Race::CollectDoneBody405890(total, done);
-}
-RH_ScopedInstall(Pred405890, 0x00405890);
+// [moved to Match/MatchS01.cpp: C4-by-match port body] 0x00405890 Pred405890
