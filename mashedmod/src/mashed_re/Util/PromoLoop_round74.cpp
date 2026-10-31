@@ -34,26 +34,8 @@ RH_ScopedInstall(Fill6870b4, 0x00453f30);
 // unchanged for the .asi, to Vehicle/CarMaterialTables.cpp, which both targets compile: the
 // standalone's car dirt set-up calls them, and an RVA keeps one body (build.bat rva-lint).
 
-// 0x0041ede0
-extern "C" __declspec(dllexport) void __cdecl Flag0041ede0(std::int32_t p1, std::int32_t p2, std::int32_t p3) {
-    std::uint32_t* f = reinterpret_cast<std::uint32_t*>(0x0063dc74u + static_cast<std::uint32_t>(p1) * 0x2acu);
-    std::uint32_t v;
-    v = (p2 == 0) ? (*f & 0xffffffefu) : (*f | 0x10u); *f = v;
-    v = (p3 == 0) ? (*f & 0xffffffdfu) : (*f | 0x20u); *f = v;
-    if (v & 0x10u) *f = v | 0x1000u;
-    if (*f & 0x20u) *f = *f | 0x2000u;
-}
-RH_ScopedInstall(Flag0041ede0, 0x0041ede0);
+// MATCH-S04: the body of 0x0041ede0 (Flag0041ede0) moved to Match/MatchS04_0041ede0.cpp,
+// which compiles the byte-matched source re/match/s04/0041ede0.c.
 
-// 0x0041eeb0
-extern "C" __declspec(dllexport) void __cdecl Flag0041eeb0(std::int32_t p1, std::int32_t p2, std::int32_t p3, std::int32_t p4) {
-    std::uint32_t* f = reinterpret_cast<std::uint32_t*>(0x0063dc74u + static_cast<std::uint32_t>(p1) * 0x2acu);
-    std::uint32_t v;
-    v = (p2 == 0) ? (*f & 0xffffffbfu) : (*f | 0x40u);  *f = v;
-    v = (p3 == 0) ? (*f & 0xffffff7fu) : (*f | 0x80u);  *f = v;
-    v = (p4 == 0) ? (*f & 0xfffff7ffu) : (*f | 0x800u); *f = v;
-    if (v & 0x400u) *f = v & 0xfffff73fu;
-    if (*f & 0x10u) *f = *f & 0xffffffbfu;
-    if (*f & 0x20u) *f = *f & 0xfffff77fu;
-}
-RH_ScopedInstall(Flag0041eeb0, 0x0041eeb0);
+// MATCH-S04: the body of 0x0041eeb0 (Flag0041eeb0) moved to Match/MatchS04_0041eeb0.cpp,
+// which compiles the byte-matched source re/match/s04/0041eeb0.c.

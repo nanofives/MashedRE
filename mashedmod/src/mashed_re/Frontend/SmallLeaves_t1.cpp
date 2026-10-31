@@ -102,24 +102,8 @@ RH_ScopedInstall(EntryTableScanByKey, 0x00401570);
 //   each write cited at 0x0041e083..0x0041e0c0. U-4209 non-blocking.
 // ---------------------------------------------------------------------------
 
-// 0x0041e080
-extern "C" __declspec(dllexport) void __cdecl ScoreboardStateZeroInit()
-{
-    *reinterpret_cast<std::uint32_t*>(0x0063d798u) = 0u;    // [0x0041e083]
-    *reinterpret_cast<std::uint32_t*>(0x0063d79cu) = 0u;    // [0x0041e089]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7a0u) = 0u;    // [0x0041e08f]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7c4u) = 0u;    // [0x0041e095]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7d0u) = 0u;    // [0x0041e09b]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7d4u) = 0u;    // [0x0041e0a1]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7d8u) = 0u;    // [0x0041e0a7]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7dcu) = 0u;    // [0x0041e0ad]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7b0u) = 0u;    // [0x0041e0b3]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7b4u) = 0u;    // [0x0041e0b8]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7ccu) = 0x47u; // [0x0041e0be]
-    *reinterpret_cast<std::uint32_t*>(0x0063d7b8u) = 0u;    // [0x0041e0c0]
-}
-
-RH_ScopedInstall(ScoreboardStateZeroInit, 0x0041e080);
+// MATCH-S04: the body of 0x0041e080 (ScoreboardStateZeroInit) moved to Match/MatchS04_0041e080.cpp,
+// which compiles the byte-matched source re/match/s04/0041e080.c.
 
 // ---------------------------------------------------------------------------
 // CopyTable005f2a70To0089a384  --  0x00414120
@@ -132,24 +116,21 @@ RH_ScopedInstall(ScoreboardStateZeroInit, 0x0041e080);
 //   0x9c (156) total bytes [0x00414153]. U-4206 non-blocking.
 // ---------------------------------------------------------------------------
 
-// 0x00414120
-extern "C" __declspec(dllexport) void __cdecl CopyTable005f2a70To0089a384()
-{
-    // Zero the three header dwords. [0x00414125, 0x0041412b, 0x00414131]
-    *reinterpret_cast<std::uint32_t*>(0x0089a37cu) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x0089a378u) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x0089a380u) = 0u;
-
-    // Iterate 0..0x9c step 4 (39 iterations; 156 bytes / 4).
-    // [0x0041413d, 0x00414143, 0x00414149, 0x00414153]
-    auto* dst_zero = reinterpret_cast<std::uint32_t*>(0x0089a420u);
-    auto* src      = reinterpret_cast<std::uint32_t*>(0x005f2a70u);
-    auto* dst_copy = reinterpret_cast<std::uint32_t*>(0x0089a384u);
-
-    for (std::size_t i = 0; i < 0x9cu / 4u; ++i) {
-        dst_zero[i] = 0u;
-        dst_copy[i] = src[i];
-    }
+// MATCH-S03 (2026-10-31): the body is the matched source re/match/s03/h1_00414120.c (byte-identical
+// under re/tools/match/match.py --bytes, cl 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1); MATCH_PORT maps
+// its two names onto the same addresses as before.
+#define MATCH_PORT 1
+#define DAT_0089a378 (*reinterpret_cast<G0089a378*>(0x0089a378u))
+#define DAT_005f2a70 (reinterpret_cast<const int(*)[3]>(0x005f2a70u))
+#define FUN_00414120 CopyTable005f2a70To0089a384
+extern "C" __declspec(dllexport) void __cdecl CopyTable005f2a70To0089a384(void);
+extern "C" {
+// 0x00414120  CopyTable005f2a70To0089a384
+#include "../../../../re/match/s03/h1_00414120.c"
 }
+#undef FUN_00414120
+#undef DAT_005f2a70
+#undef DAT_0089a378
+#undef MATCH_PORT
 
 RH_ScopedInstall(CopyTable005f2a70To0089a384, 0x00414120);

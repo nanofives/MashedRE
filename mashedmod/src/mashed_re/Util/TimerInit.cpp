@@ -6,85 +6,17 @@
 #include <cstdint>
 #include <cstring>
 
-// 0x0041d820 — TimerSlotClear
-//
-// Writes constant 0 to DAT_0063d558.
-// 10-byte body: no branches, no calls. Single MOV + RET.
-//
-// Asm:
-//   0041d820: C7 05 58 D5 63 00 00 00 00 00  MOV DWORD PTR [0x0063d558], 0x0
-//   0041d82a: C3                             RET
-//
-// Only caller: FUN_004111c0 (large init function at 0x004111c0).
-// DAT_0063d558 is also the upper-bound sentinel of the loop in
-// FUN_0041d730 (0x0041d730). [UNCERTAIN U-1XXX — role unclear;
-// does not affect correctness of this single-write reimplementation.]
-extern "C" __declspec(dllexport) void __cdecl TimerSlotClear() {
-    *reinterpret_cast<std::uint32_t*>(0x0063d558) = 0u;
-}
+// MATCH-S04: the body of 0x0041d820 (TimerSlotClear) moved to Match/MatchS04_0041d820.cpp,
+// which compiles the byte-matched source re/match/s04/0041d820.c.
 
-// 0x0041e130 — TimerTrackSetter
-//
-// Writes param_1 (undefined4) to DAT_0063d7e0.
-// 9-byte body: no branches, no calls. Single MOV + RET.
-//
-// Asm:
-//   0041e130: 8B 44 24 04  MOV EAX, DWORD PTR [ESP+0x4]   ; param_1
-//   0041e134: A3 E0 D7 63 00  MOV [0x0063d7e0], EAX
-//   0041e139: C3              RET
-//
-// Callers: FUN_004111c0 (0x004111c0) and FUN_0040e560 (0x0040e560).
-// [UNCERTAIN U-1XXX — type and semantics of DAT_0063d7e0 unconfirmed;
-// does not affect offset/write correctness.]
-extern "C" __declspec(dllexport) void __cdecl TimerTrackSetter(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x0063d7e0) = param_1;
-}
+// MATCH-S04: the body of 0x0041e130 (TimerTrackSetter) moved to Match/MatchS04_0041e130.cpp,
+// which compiles the byte-matched source re/match/s04/0041e130.c.
 
-RH_ScopedInstall(TimerSlotClear,   0x0041d820);  // re-enabled 2026-05-24 phase-a2 GREEN (sentinel->0 observed)
-RH_ScopedInstall(TimerTrackSetter, 0x0041e130);  // re-enabled 2026-05-24 c3-safe
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0041eda0  TimerBitFieldSet  void(int slot, int flag)
-//
-// Sets or clears bit 3 of the dword at 0x0063dc74 + slot*0x2ac.
-//   if flag != 0: dword |= 0x00000008  (set bit 3)
-//   if flag == 0: dword &= 0xfffffff7  (clear bit 3)
-// ─────────────────────────────────────────────────────────────────────────────
-static constexpr std::uintptr_t kTimerBitFieldBase   = 0x0063dc74;
-static constexpr std::uint32_t  kTimerSlotStride      = 0x0000002ac;  // 684 bytes
+// MATCH-S04: the body of 0x0041eda0 (TimerBitFieldSet) moved to Match/MatchS04_0041eda0.cpp,
+// which compiles the byte-matched source re/match/s04/0041eda0.c.
 
-extern "C" __declspec(dllexport) void __cdecl TimerBitFieldSet(int slot, int flag) {
-    auto* field = reinterpret_cast<std::uint32_t*>(
-        kTimerBitFieldBase + static_cast<std::uint32_t>(slot) * kTimerSlotStride);
-    if (flag != 0) {
-        *field |= 0x00000008u;
-    } else {
-        *field &= 0xfffffff7u;
-    }
-}
-
-RH_ScopedInstall(TimerBitFieldSet, 0x0041eda0);  // re-enabled 2026-05-24 c3-safe
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0041f000  TimerSlotDataCopy  void(int slot, int* dst)
-//
-// Copies 6 consecutive dwords (24 bytes) from the per-slot source array
-// at 0x0063dc10 + slot*0x2ac into the caller-supplied buffer *dst.
-// Loop: iVar1 from 6 downto 0 (7 iters but writes 6 dwords — Ghidra loop is
-// iVar1 = 6; iVar1 != 0; --iVar1; *(dst++) = *(src++)).
-// ─────────────────────────────────────────────────────────────────────────────
-static constexpr std::uintptr_t kTimerSlotDataBase = 0x0063dc10;
-// Same stride 0x2ac reused (both arrays share stride within the same slot block).
-
-extern "C" __declspec(dllexport) void __cdecl TimerSlotDataCopy(int slot, int* dst) {
-    const auto* src = reinterpret_cast<const std::uint32_t*>(
-        kTimerSlotDataBase + static_cast<std::uint32_t>(slot) * kTimerSlotStride);
-    auto* out = reinterpret_cast<std::uint32_t*>(dst);
-    for (int i = 6; i != 0; --i) {
-        *out++ = *src++;
-    }
-}
-
-RH_ScopedInstall(TimerSlotDataCopy, 0x0041f000);  // re-enabled 2026-05-24 phase-a1 int_copy_outbuf GREEN
+// MATCH-S04: the body of 0x0041f000 (TimerSlotDataCopy) moved to Match/MatchS04_0041f000.cpp,
+// which compiles the byte-matched source re/match/s04/0041f000.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00420d40  TimerStructArrayClear  void(void)
@@ -235,36 +167,6 @@ RH_ScopedInstall(TimerGlobalZero, 0x00425b10);  // re-enabled 2026-05-24 phase-a
 // (TimerDwordClear / TimerGlobalZero / TimerInitThunk above already cover
 // those RVAs).  See git history.
 
-// ---------------------------------------------------------------------------
-// 0x0041cbc0  FloatTableInit
-// Pure leaf; copies 12 hardcoded float values (as raw dwords) to
-// 0x005f337c via counted pointer loop (iVar1 from 0xc down to 0).
-// Also writes 0 to DAT_0063d270.
-// No branches, no external calls.
-// Caller: FUN_004111c0 (0x004111c0).
-//
-// The 12 values form 4 groups of 3 floats:
-//   Group 0: {0x3ef5c28f, 0x3e800000, 0x3f800000}  (~0.480, 0.250, 1.000)
-//   Group 1: {0x3ef5c28f, 0x3e19999a, 0x3f800000}  (~0.480, ~0.150, 1.000)
-//   Group 2: {0x3ef5c28f, 0x3d4ccccd, 0x3f800000}  (~0.480, ~0.050, 1.000)
-//   Group 3: {0x3ef5c28f, 0xbd4ccccd, 0x3f800000}  (~0.480, ~-0.050, 1.000)
-// ---------------------------------------------------------------------------
-static constexpr std::uintptr_t kFloatTableDst = 0x005f337cu;
-static constexpr std::uintptr_t kDat0063d270   = 0x0063d270u;
-
-static const std::uint32_t kFloatTable[12] = {
-    0x3ef5c28fu, 0x3e800000u, 0x3f800000u,  // group 0
-    0x3ef5c28fu, 0x3e19999au, 0x3f800000u,  // group 1
-    0x3ef5c28fu, 0x3d4ccccdu, 0x3f800000u,  // group 2
-    0x3ef5c28fu, 0xbd4ccccdu, 0x3f800000u,  // group 3
-};
-
-extern "C" __declspec(dllexport) void __cdecl FloatTableInit() {
-    std::memcpy(reinterpret_cast<void*>(kFloatTableDst),
-                kFloatTable,
-                sizeof(kFloatTable));
-    *reinterpret_cast<std::uint32_t*>(kDat0063d270) = 0u;
-}
-
-RH_ScopedInstall(FloatTableInit, 0x0041cbc0);  // re-enabled 2026-05-24 c3-safe
+// MATCH-S04: the body of 0x0041cbc0 (FloatTableInit) moved to Match/MatchS04_0041cbc0.cpp,
+// which compiles the byte-matched source re/match/s04/0041cbc0.c.
 

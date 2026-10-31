@@ -46,14 +46,5 @@
 // Caller: FUN_0040d040 Course::ValidateCarsFinished (util, C2). Leaf (no calls).
 // ---------------------------------------------------------------------------
 
-// 0x0041efc0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CarGetLapProgress(int param_1) {
-    // 0x0063dc48 base + 0x2ac stride cited at 0x0041efc0 body.
-    const std::int32_t ptr = *reinterpret_cast<const std::int32_t*>(
-        0x0063dc48u + static_cast<std::uint32_t>(param_1) * 0x2acu);
-    // +0x80 field cited at 0x0041efc0 body.
-    return *reinterpret_cast<const std::uint32_t*>(
-        static_cast<std::uint32_t>(ptr) + 0x80u);
-}
-
-RH_ScopedInstall(CarGetLapProgress, 0x0041efc0);
+// MATCH-S04: the body of 0x0041efc0 (CarGetLapProgress) moved to Match/MatchS04_0041efc0.cpp,
+// which compiles the byte-matched source re/match/s04/0041efc0.c.

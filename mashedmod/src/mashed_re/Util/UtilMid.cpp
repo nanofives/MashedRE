@@ -252,80 +252,12 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl GameStateSlotsFill() {
 
 RH_ScopedInstall(GameStateSlotsFill, 0x00429aa0);  // re-enabled 2026-05-24 batch-util
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0041d730  PlayerSlotConfigInit
-//
-// 225-byte slot-init: zeros 0x10 bytes at each slot in [0x0063d298, 0x0063d558)
-// stride 0x160, then for each of 4 config pairs (DAT_007f1a14/18 etc.) that
-// is != -1, appends a player-index constant into the indexed slot.
-// Ends with a do-while around FUN_0041cdb0 (used as address compare).
-//
-// Callees:
-//   0x004b6520 FUN_004b6520 (C2 ZeroFillWrapper)
-//   0x0041cdb0 FUN_0041cdb0 (NOT in hooks.csv — drift; using raw RVA)
-//
-// Analysis: re/analysis/timer_d3_cont1_b/0x0041d730.md
-// Drift-promote note: FUN_0041cdb0 missing from hooks.csv. We call it via
-// raw RVA; the function exists in MASHED.exe.
-// ─────────────────────────────────────────────────────────────────────────────
+// MATCH-S04: the body of 0x0041d730 (PlayerSlotConfigInit) moved to Match/MatchS04_0041cdb0.cpp,
+// which compiles the byte-matched source re/match/s04/0041cdb0.c (it also holds 0x0041cdb0).
+// Its install stays off there (MASS-DISABLED 2026-05-24 needs-canonical-slot-state).
 namespace {
-constexpr std::uintptr_t kSlotInitBase   = 0x0063d298;
-constexpr std::uintptr_t kSlotInitBound  = 0x0063d558;
-constexpr std::uint32_t  kSlotInitStride = 0x00000160;
-constexpr std::uintptr_t kFn_004b6520    = 0x004b6520;  // ZeroFillWrapper(ptr, count)
-constexpr std::uintptr_t kFn_0041cdb0    = 0x0041cdb0;  // unknown return-ptr fn
-
-// Config pairs — first/second dword of each pair, 0x10 stride between pairs.
-struct ConfigPair { std::uintptr_t first; std::uintptr_t second; };
-constexpr ConfigPair kConfigPairs[4] = {
-    {0x007f1a14, 0x007f1a18},  // pair 0 → player 0
-    {0x007f1a24, 0x007f1a28},  // pair 1 → player 1
-    {0x007f1a34, 0x007f1a38},  // pair 2 → player 2
-    {0x007f1a44, 0x007f1a48},  // pair 3 → player 3
-};
+constexpr std::uintptr_t kFn_004b6520    = 0x004b6520;  // ZeroFillWrapper(ptr, count); PendingOpQueueFlush below
 } // namespace
-
-extern "C" __declspec(dllexport) void __cdecl PlayerSlotConfigInit() {
-    auto fn_zerofill = as_fn<Fn_void_pi_t>(kFn_004b6520);
-    auto fn_terminus = as_fn<Fn_i_v_t>(kFn_0041cdb0);
-
-    // Pass 1: zero 0x10 bytes at start of each slot in [base, bound) stride 0x160
-    for (std::uintptr_t ptr = kSlotInitBase;
-         static_cast<std::int32_t>(ptr) < static_cast<std::int32_t>(kSlotInitBound);
-         ptr += kSlotInitStride) {
-        fn_zerofill(reinterpret_cast<void*>(ptr), 0x10);
-    }
-
-    // Pass 2: for each config pair (i=0..3), if both members != -1:
-    //   slot_idx = *(int*)pair.second;
-    //   slot_ptr = base + slot_idx * 0x160;
-    //   write_off = *(int*)(slot_ptr + 0x0c);  // running offset stored in slot
-    //   *(int*)(slot_ptr + write_off) = i;     // append player constant
-    //   *(int*)(slot_ptr + 0x0c) = write_off + 4;
-    for (int i = 0; i < 4; ++i) {
-        const std::int32_t first  = *reinterpret_cast<const std::int32_t*>(kConfigPairs[i].first);
-        const std::int32_t second = *reinterpret_cast<const std::int32_t*>(kConfigPairs[i].second);
-        if (first == -1 || second == -1) continue;
-
-        const std::uintptr_t slot_ptr = kSlotInitBase + static_cast<std::uintptr_t>(second) * kSlotInitStride;
-        auto* off_ptr = reinterpret_cast<std::int32_t*>(slot_ptr + 0x0c);
-        const std::int32_t write_off = *off_ptr;
-        *reinterpret_cast<std::int32_t*>(slot_ptr + static_cast<std::uintptr_t>(write_off)) = i;
-        *off_ptr = write_off + 4;
-    }
-
-    // Pass 3: do-while calling fn_terminus() until (return + 0x160) >= bound.
-    int rv;
-    do {
-        rv = fn_terminus();
-    } while (rv + static_cast<int>(kSlotInitStride) < static_cast<int>(kSlotInitBound));
-}
-
-// MASS-DISABLED 2026-05-24 needs-canonical-slot-state: RH_ScopedInstall(PlayerSlotConfigInit, 0x0041d730);
-// Phase A2 audit 2026-05-24: synthetic diff AV/AV — both crash inside the
-// function with the same address. Banned as crash_equal GREEN per phase-A1
-// rule. Function depends on player-slot state setup not present at diff
-// attach time.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00492d30  GameTickStateMachine7

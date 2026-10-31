@@ -332,6 +332,10 @@ RH_ScopedInstall(SubStateHeldCountdown5, 0x004103a0);
 // the record left unwritten (the original would read the neighbouring data). The RNG is the port's
 // verbatim FUN_00534870 ring through Ai::Ai_RandRange (the FUN_00472650 law).
 // ===========================================================================
+// MATCH-S03 (2026-10-31): the body is now the matched source re/match/s03/h2_00414180.c (byte-identical
+// under re/tools/match/match.py, cl 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1). MATCH_PORT maps its names:
+// the .asi onto the live image, the exe onto the embedded rows and the port RNG as before. Dropped with
+// the old exe arm: the idx-outside-0..10 guard (the matched body has none, as the original).
 #ifdef MASHED_STANDALONE
 namespace {
 const std::int32_t kCdRows[11][2] = {                          // 0x005f2d80, stride 8
@@ -339,56 +343,53 @@ const std::int32_t kCdRows[11][2] = {                          // 0x005f2d80, st
 const std::int32_t kRec0Val[11] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };   // 0x005f2eb4, stride 4
 }
 #endif
+#define MATCH_PORT 1
+#define DAT_0089a368 (*reinterpret_cast<int*>(0x0089a368u))
+#define DAT_0089a370 (*reinterpret_cast<float*>(0x0089a370u))
+#define DAT_0089a360 (*reinterpret_cast<float*>(0x0089a360u))
+#define DAT_007f0fd0 (*reinterpret_cast<int*>(0x007f0fd0u))
+#define DAT_0089a4c0 (reinterpret_cast<Rec74*>(0x0089a4c0u))
+#ifdef MASHED_STANDALONE
+#define DAT_005cd08c 9.9f                                       // [0x005cd08c] = 0x411e6666
+#define DAT_005f2d80 (reinterpret_cast<const IPair*>(kCdRows))
+#define DAT_005f2eb4 kRec0Val
+#define FUN_00472650 ::Ai::Ai_RandRange
+#else
+#define DAT_005cd08c (*reinterpret_cast<const float*>(0x005cd08cu))
+#define DAT_005f2d80 (reinterpret_cast<const IPair*>(0x005f2d80u))
+#define DAT_005f2eb4 (reinterpret_cast<const int*>(0x005f2eb4u))
+#define FUN_00472650 (reinterpret_cast<float(__cdecl*)(float, float)>(0x00472650u))
+#endif
+extern "C" {
+// 0x00414180  FUN_00414180
+#include "../../../../re/match/s03/h2_00414180.c"
+}
+#undef FUN_00472650
+#undef DAT_005f2eb4
+#undef DAT_005f2d80
+#undef DAT_005cd08c
+#undef DAT_0089a4c0
+#undef DAT_007f0fd0
+#undef DAT_0089a360
+#undef DAT_0089a370
+#undef DAT_0089a368
+#undef MATCH_PORT
 
-// 0x00414180
 extern "C" __declspec(dllexport) void __cdecl SubStateRollCountdown414180(void)
 {
 #ifdef MASHED_STANDALONE
     const std::int32_t pre368 = G32(0x0089a368u), pre370 = G32(0x0089a370u);
     const std::uint32_t draws0 = ::Ai::Ai_RandDrawCount();
-    int cdLog[4] = { -999, -999, -999, -999 };
 #endif
-    G32(0x0089a368u) = 0;                                       // 0x00414185
-    G32(0x0089a370u) = 0;                                       // 0x0041418f
-    int v = 0;
-    for (std::uintptr_t rec = 0x0089a4c0u; rec < 0x0089a690u; rec += 0x74u, ++v) {   // 0x00414199
-        const float d360 = *reinterpret_cast<const float*>(0x0089a360u);
-        const long idx = static_cast<long>(d360);               // 0x004141a6 _ftol2
-#ifdef MASHED_STANDALONE
-        if (idx < 0 || idx > 10) {
-            ExeOnce("FUN_00414180 idx outside the embedded 0x005f2d80 rows 0..10");
-            continue;
-        }
-        float st0 = ::Ai::Ai_RandRange(static_cast<float>(kCdRows[idx][0]),
-                                                static_cast<float>(kCdRows[idx][1]));   // 0x004141d5
-        const std::int32_t rec0 = kRec0Val[idx];
-#else
-        const std::int32_t lo = G32(0x005f2d80u + static_cast<std::uintptr_t>(idx) * 8u);   // 0x004141b4
-        const std::int32_t hi = G32(0x005f2d84u + static_cast<std::uintptr_t>(idx) * 8u);   // 0x004141ad
-        float st0 = reinterpret_cast<float(__cdecl*)(float, float)>(0x00472650u)(
-            static_cast<float>(lo), static_cast<float>(hi));    // 0x004141d5 (float10 in ST0)
-        const std::int32_t rec0 = G32(0x005f2eb4u + static_cast<std::uintptr_t>(idx) * 4u); // 0x004141fe
-#endif
-        const std::int32_t fd0 = G32(0x007f0fd0u);              // 0x004141da
-        if (fd0 == 4 || fd0 == 9 || fd0 == 8)                   // 0x004141e2..0x004141ef
-#ifdef MASHED_STANDALONE
-            st0 = 9.9f;                                         // 0x004141f3 [0x005cd08c] = 0x411e6666
-#else
-            st0 = *reinterpret_cast<const float*>(0x005cd08cu); // 0x004141f3
-#endif
-        G32(rec + 0x38u) = static_cast<std::int32_t>(static_cast<long>(st0));   // 0x004141f9 / 0x00414205
-        G32(rec)         = rec0;                                // 0x00414208
-#ifdef MASHED_STANDALONE
-        cdLog[v] = G32(rec + 0x38u);
-#endif
-    }
+    FUN_00414180();
 #ifdef MASHED_STANDALONE
     if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
         std::fprintf(lf, "[substate] FUN_00414180 draws_before=%u pre368=%d pre370=0x%08x idx=%ld "
                          "cd=%d,%d,%d,%d rec0=%d fd0=%d\n",
                      draws0, pre368, static_cast<unsigned>(pre370),
                      static_cast<long>(*reinterpret_cast<const float*>(0x0089a360u)),
-                     cdLog[0], cdLog[1], cdLog[2], cdLog[3], G32(0x0089a4c0u), G32(0x007f0fd0u));
+                     G32(0x0089a4c0u + 0x38u), G32(0x0089a534u + 0x38u), G32(0x0089a5a8u + 0x38u),
+                     G32(0x0089a61cu + 0x38u), G32(0x0089a4c0u), G32(0x007f0fd0u));
         std::fclose(lf);
     }
 #endif

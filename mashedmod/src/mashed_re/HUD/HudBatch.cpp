@@ -6,7 +6,7 @@
 //   (preserved in original\MASHED.exe.unpatched)
 //
 // Hooks in this file:
-//   0x0041db80  Sub0041db80_HudThresholdDispatch   leaf (vtable+0x48 only)
+//   0x0041db80  (moved to Match/MatchS04_0041db80.cpp, MATCH-S04 byte-matched source)
 //   0x005554d0  FontText_StringWidthAccumulator    pure leaf
 //   0x00403160  Sub00403160_SubMode0BViewport      MULTI (C2+ callees)
 //   0x0041bc50  (moved to HudDispatch.cpp, U-9675)
@@ -35,99 +35,8 @@
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
-// ===========================================================================
-// 0x0041db80  Sub0041db80_HudThresholdDispatch
-//
-// Original: FUN_0041db80 (9-byte Ghidra body bounds artifact; decomp expands
-// beyond the 9-byte boundary -- see U-0579 in 0x0041db80.md).
-// void(void). Reads int32_t DAT_0063d588 and compares against 5 .rdata
-// thresholds at 0x005cc35c, 0x005cd238, 0x005cd234, 0x005cd230, 0x005ccdf4.
-// Dispatches up to 6 HUD render objects via vtable[0x48] (pointers stored at
-// 0x0063d55c..0x0063d570 consecutively).
-//
-// Leaf for the C2->C3 promotion rule: the only callees are vtable indirections
-// (no named direct callees). Bit-identity is observable at the main menu by
-// reading DAT_0063d588 and the threshold table, since the LUT is at quiescent
-// state (all guards/objects null) -> both orig and reimpl take same branches
-// and return without side-effects.
-// ===========================================================================
-
-// 0x0041db80
-//
-// SHORT-THUNK STRUCTURE (verified from binary at 0x0041db80):
-//   0x0041db80: b8 5c d5 63 00     MOV EAX, 0x0063d55c   ; pass obj-array base
-//   0x0041db85: e9 26 ff ff ff     JMP 0x0041dab0        ; shared body
-//
-// Body 0x0041dab0 (ESI = EAX = 0x0063d55c), re-ported from the bytes 2026-10-12.
-// Every compare is `fld [esi+0x2c]; fcomp [thr]; fnstsw ax; test ah,5; jp/jnp`.
-// test ah,5 has odd parity only when C0 alone is set, i.e. c < thr (ordered);
-// an unordered compare sets C0 and C2 and takes the jp. So "jp skips" <=> !(c < thr),
-// which the C `<` on floats reproduces (false for NaN).
-// The counter [esi+0x2c] (= 0x0063d588) and every object slot are re-read at
-// each use: the dispatched functions can write them.
-//
-//   0x0041dab3..0x0041dac1  c < [0x005cc35c]: call obj[+0x00], obj[+0x14]
-//   0x0041dad3..0x0041dae1  c < [0x005cd238]: return (jnp 0x0041db78)
-//   0x0041dae7..0x0041daf5  c < [0x005cd234]: call obj[+0x04]; goto tail
-//   0x0041db03..0x0041db11  c < [0x005cd230]: call obj[+0x04], obj[+0x08]; goto tail
-//   0x0041db26..0x0041db34  c < [0x005ccdf4]: call obj[+0x04], obj[+0x08], obj[+0x0c]
-//   tail 0x0041db4e..0x0041db5c  fcomp [0x005ccdf4]; test ah,1; jne return
-//                                (C0 set: c < thr OR unordered)
-//   0x0041db5e..0x0041db6c  c < [0x005cc35c]: call obj[+0x10]
-//
-// Each call is `push obj; call [obj+0x48]` with the caller cleaning the stack
-// (add esp at 0x0041dad0/0x0041dafe/0x0041db21/0x0041db4b/0x0041db75). The
-// function pointer lives at obj+0x48 itself (no vtable hop).
-//
-// Old port (pre 2026-10-12): ran the second block when c < [0x005cd238]
-// (inverted; the bytes run it when !(c < [0x005cd238])) and cached the counter once.
-extern "C" __declspec(dllexport)
-void __cdecl Sub0041db80_HudThresholdDispatch()
-{
-    const std::uintptr_t base = 0x0063d55cu;   // 0x0041db80 mov eax,0x63d55c
-    auto c = [base]() -> float {
-        return *reinterpret_cast<volatile const float*>(base + 0x2cu);
-    };
-    auto thr = [](std::uintptr_t a) -> float {
-        return *reinterpret_cast<volatile const float*>(a);
-    };
-
-    typedef void (__cdecl* DispatchFn)(std::uint32_t);
-    auto dispatch_at = [base](std::uintptr_t off) {
-        const std::uint32_t obj = *reinterpret_cast<volatile const std::uint32_t*>(base + off);
-        const DispatchFn fn = *reinterpret_cast<const DispatchFn*>(
-            static_cast<std::uintptr_t>(obj) + 0x48u);
-        fn(obj);
-    };
-
-    // 0x0041dab3: fcomp [0x005cc35c]; jp 0x0041dad3
-    if (c() < thr(0x005cc35cu)) {
-        dispatch_at(0x00u);   // 0x0041dac3
-        dispatch_at(0x14u);   // 0x0041dac9
-    }
-    // 0x0041dad3: fcomp [0x005cd238]; jnp 0x0041db78 (return)
-    if (c() < thr(0x005cd238u))
-        return;
-    // 0x0041dae7: fcomp [0x005cd234]; jp 0x0041db03
-    if (c() < thr(0x005cd234u)) {
-        dispatch_at(0x04u);   // 0x0041daf7
-    } else if (c() < thr(0x005cd230u)) {   // 0x0041db03; jp 0x0041db26
-        dispatch_at(0x04u);   // 0x0041db13
-        dispatch_at(0x08u);   // 0x0041db1a
-    } else if (c() < thr(0x005ccdf4u)) {   // 0x0041db26; jp 0x0041db4e
-        dispatch_at(0x04u);   // 0x0041db36
-        dispatch_at(0x08u);   // 0x0041db3d
-        dispatch_at(0x0cu);   // 0x0041db44
-    }
-    // 0x0041db4e: fcomp [0x005ccdf4]; test ah,1; jne return (C0: c < thr or unordered)
-    if (!(c() >= thr(0x005ccdf4u)))
-        return;
-    // 0x0041db5e: fcomp [0x005cc35c]; jp return
-    if (c() < thr(0x005cc35cu))
-        dispatch_at(0x10u);   // 0x0041db6e
-}
-
-RH_ScopedInstall(Sub0041db80_HudThresholdDispatch, 0x0041db80);  // re-enabled 2026-05-24 batch-mixed
+// MATCH-S04: the body of 0x0041db80 (Sub0041db80_HudThresholdDispatch) moved to Match/MatchS04_0041db80.cpp,
+// which compiles the byte-matched source re/match/s04/0041db80.c.
 
 
 // ===========================================================================

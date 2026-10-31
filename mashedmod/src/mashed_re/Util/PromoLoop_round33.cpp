@@ -21,11 +21,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Global63a5d0Get(void) {
 }
 RH_ScopedInstall(Global63a5d0Get, 0x004075a0);
 
-// 0x0041e140  A1 E0 D7 63 00 C3  (mov eax,[0x0063d7e0]; ret)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global63d7e0Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0063d7e0u);  // cited at 0x0041e140
-}
-RH_ScopedInstall(Global63d7e0Get, 0x0041e140);
+// MATCH-S04: the body of 0x0041e140 (Global63d7e0Get) moved to Match/MatchS04_0041e140.cpp,
+// which compiles the byte-matched source re/match/s04/0041e140.c.
 
 // 0x0047ce70  A1 B0 6E 6C 00 C3  (mov eax,[0x006c6eb0]; ret)
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Global6c6eb0Get(void) {

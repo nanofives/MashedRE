@@ -428,14 +428,8 @@ RH_ScopedInstall(Init5b0c70, 0x005b0c70);
 
 // ===== round 93 =====
 
-// 0x0041ee50  gameplay — byte-verified: flag set/clear on *(0x63dc74 + i*0x2ac)
-//   if(p2==0) clear 0x1000 else set 0x1000 ; if(p3) set 0x2000 else clear 0x2000
-extern "C" __declspec(dllexport) void __cdecl Flag41ee50(std::uint32_t i, std::uint32_t p2, std::uint32_t p3) {
-    std::uint32_t* f = reinterpret_cast<std::uint32_t*>(0x0063dc74u + i * 0x2acu);
-    if (p2 == 0) *f &= 0xffffefffu; else *f |= 0x1000u;
-    if (p3) *f |= 0x2000u; else *f &= 0xffffdfffu;
-}
-RH_ScopedInstall(Flag41ee50, 0x0041ee50);
+// MATCH-S04: the body of 0x0041ee50 (Flag41ee50) moved to Match/MatchS04_0041ee50.cpp,
+// which compiles the byte-matched source re/match/s04/0041ee50.c.
 
 // 0x00471530  particle — byte-verified: strided clear [0x690ab0,0x691500) step 0x84 (byte@-0x80 + dword@0) + [0x691484]=0
 extern "C" __declspec(dllexport) void __cdecl ClearTable471530(void) {
@@ -482,11 +476,8 @@ extern "C" __declspec(dllexport) void __cdecl ByteFlag474d80(char* p, std::uint3
 }
 RH_ScopedInstall(ByteFlag474d80, 0x00474d80);
 
-// 0x0041f0d0  gameplay — byte-verified: void fn(i,out): if(out) *out = *(u32*)(0x63dc74 + i*0x2ac) & 0x400
-extern "C" __declspec(dllexport) void __cdecl MaskGet41f0d0(std::uint32_t i, std::uint32_t* out) {
-    if (out) *out = *reinterpret_cast<std::uint32_t*>(0x0063dc74u + i * 0x2acu) & 0x400u;
-}
-RH_ScopedInstall(MaskGet41f0d0, 0x0041f0d0);
+// MATCH-S04: the body of 0x0041f0d0 (MaskGet41f0d0) moved to Match/MatchS04_0041f0d0.cpp,
+// which compiles the byte-matched source re/match/s04/0041f0d0.c.
 
 // ===== round 95 =====
 
@@ -706,15 +697,8 @@ RH_ScopedInstall(Set4c5c80, 0x004c5c80);
 // ABI matches the original for both early_window (Frida thiscall) and auto-install.
 // Export resolves under the decorated name @Name@4 (set in hooks_registry).
 
-// 0x0041b770  render thiscall — byte-verified: i=this[0x164]; rec=&tbl_0x5f334c[i*3];
-//   this[0x150]=rec[0]; this[0x154]=rec[1]; this[0x158]=rec[2]
-extern "C" __declspec(dllexport) void __fastcall Copy41b770(char* self) {
-    std::uint32_t i = *reinterpret_cast<std::uint32_t*>(self + 0x164);
-    const std::uint32_t* rec = reinterpret_cast<const std::uint32_t*>(0x005f334cu + i * 12u);
-    std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(self + 0x150);
-    dst[0] = rec[0]; dst[1] = rec[1]; dst[2] = rec[2];
-}
-RH_ScopedInstall(Copy41b770, 0x0041b770);
+// MATCH-S04: the body of 0x0041b770 (Copy41b770) moved to Match/MatchS04_0041b770.cpp,
+// which compiles the byte-matched source re/match/s04/0041b770.c.
 
 // [MOVED 2026-10-09, D-11073 leg 1a] Copy41ae20 (FUN_0041ae20) and Update41b520
 // (FUN_0041b520) -> Race/SubStateCallees.cpp (built into both targets).
@@ -840,83 +824,11 @@ RH_ScopedInstall(Init418a30, 0x00418a30);
 // EAX-input bitmask-builder twins: count=[eax+0xc]; field=0x800000<<(count-1); then
 // for i<count: field |= 1<<( tbl_0x7f1a1c[[eax+i*4]<<4] + i*6 ). Verbatim naked-asm.
 
-// 0x0041b720  render — field at [eax+0x168]
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Bits41b720(void) {
-    __asm {
-        push edi
-        mov edi, dword ptr [eax + 0xc]
-        lea ecx, [edi - 1]
-        mov edx, 0x800000
-        shl edx, cl
-        mov dword ptr [eax + 0x168], edx
-        xor edx, edx
-        test edi, edi
-        jle L7b_done
-        push ebx
-        push esi
-        xor esi, esi
-        mov edi, edi
-    L7b_loop:
-        mov ecx, dword ptr [eax + edx*4]
-        shl ecx, 4
-        mov ecx, dword ptr [ecx + 0x7f1a1c]
-        add ecx, esi
-        mov ebx, 1
-        shl ebx, cl
-        mov ecx, dword ptr [eax + 0x168]
-        add esi, 6
-        or ecx, ebx
-        inc edx
-        cmp edx, edi
-        mov dword ptr [eax + 0x168], ecx
-        jl L7b_loop
-        pop esi
-        pop ebx
-    L7b_done:
-        pop edi
-        ret
-    }
-}
-RH_ScopedInstall(Bits41b720, 0x0041b720);
+// MATCH-S04: the body of 0x0041b720 (Bits41b720) moved to Match/MatchS04_0041b720.cpp,
+// which compiles the byte-matched source re/match/s04/0041b720.c.
 
-// 0x0041cdb0  render — field at [eax+0x15c]
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Bits41cdb0(void) {
-    __asm {
-        push edi
-        mov edi, dword ptr [eax + 0xc]
-        lea ecx, [edi - 1]
-        mov edx, 0x800000
-        shl edx, cl
-        mov dword ptr [eax + 0x15c], edx
-        xor edx, edx
-        test edi, edi
-        jle Lcd_done
-        push ebx
-        push esi
-        xor esi, esi
-        mov edi, edi
-    Lcd_loop:
-        mov ecx, dword ptr [eax + edx*4]
-        shl ecx, 4
-        mov ecx, dword ptr [ecx + 0x7f1a1c]
-        add ecx, esi
-        mov ebx, 1
-        shl ebx, cl
-        mov ecx, dword ptr [eax + 0x15c]
-        add esi, 6
-        or ecx, ebx
-        inc edx
-        cmp edx, edi
-        mov dword ptr [eax + 0x15c], ecx
-        jl Lcd_loop
-        pop esi
-        pop ebx
-    Lcd_done:
-        pop edi
-        ret
-    }
-}
-RH_ScopedInstall(Bits41cdb0, 0x0041cdb0);
+// MATCH-S04: the body of 0x0041cdb0 (Bits41cdb0) moved to Match/MatchS04_0041cdb0.cpp,
+// which compiles the byte-matched source re/match/s04/0041cdb0.c.
 
 // ===== round 110 =====
 // 0x004840f0  vehicle — byte-verified reg-conv (EAX=ptr, EDX=idx): registers the ptr

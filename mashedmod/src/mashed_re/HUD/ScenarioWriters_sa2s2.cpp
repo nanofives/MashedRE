@@ -206,40 +206,31 @@ RH_ScopedInstall(RaceFinalizeOnce, 0x004331a0);
 // ref: re/analysis/ai_update_d2/0x00415020.md
 // ===========================================================================
 
-// 0x00415020
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AiLastPlaceFrustration(int param_1)
-{
-    int iVar3 = -1;
-    float fVar4 = s_F00442cc0(param_1);
-    if (fVar4 == *reinterpret_cast<float*>(k_005d757c)) {
-        for (int iVar2 = 0; iVar2 < 4; iVar2++) {
-            if (s_F0040e470(iVar2) == 1) {
-                iVar3 = iVar2;
-            }
-        }
-        if (iVar3 != -1) {
-            float fVar5 = s_F00442cc0(iVar3);
-            float thresh = *reinterpret_cast<float*>(k_005cd088);
-            int off = param_1 * 0x74;
-            *reinterpret_cast<float*>(k_0089a4e8 + off) = fVar5;
-            if (thresh < fVar5) {
-                int t = *reinterpret_cast<int*>(k_0089a4e4 + off) +
-                        *reinterpret_cast<int*>(k_007f1008);
-                *reinterpret_cast<int*>(k_0089a4e4 + off) = t;
-                if (72000 < t) {
-                    return 1;
-                }
-            }
-            if (*reinterpret_cast<float*>(k_005cc320) <= fVar5) {
-                return 0;
-            }
-            *reinterpret_cast<std::uint32_t*>(k_0089a4e4 + off) = 0;
-            return 0;
-        }
-    }
-    *reinterpret_cast<std::uint32_t*>(k_0089a4e4 + param_1 * 0x74) = 0;
-    return 0;
+// MATCH-S03 (2026-10-31): the body is the matched source re/match/s03/h2_00415020.c (byte-identical
+// under re/tools/match/match.py, cl 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1); MATCH_PORT maps its names.
+#define MATCH_PORT 1
+#define DAT_0089a4c0 (reinterpret_cast<Rec74*>(0x0089a4c0u))
+#define DAT_005d757c (*reinterpret_cast<const float*>(k_005d757c))
+#define DAT_005cd088 (*reinterpret_cast<const float*>(k_005cd088))
+#define DAT_005cc320 (*reinterpret_cast<const float*>(k_005cc320))
+#define DAT_007f1008 (*reinterpret_cast<const int*>(k_007f1008))
+#define FUN_0040e470 s_F0040e470
+#define FUN_00442cc0 s_F00442cc0
+#define FUN_00415020 AiLastPlaceFrustration
+extern "C" __declspec(dllexport) int __cdecl AiLastPlaceFrustration(int car);
+extern "C" {
+// 0x00415020  AiLastPlaceFrustration
+#include "../../../../re/match/s03/h2_00415020.c"
 }
+#undef FUN_00415020
+#undef FUN_00442cc0
+#undef FUN_0040e470
+#undef DAT_007f1008
+#undef DAT_005cc320
+#undef DAT_005cd088
+#undef DAT_005d757c
+#undef DAT_0089a4c0
+#undef MATCH_PORT
 
 RH_ScopedInstall(AiLastPlaceFrustration, 0x00415020);
 
