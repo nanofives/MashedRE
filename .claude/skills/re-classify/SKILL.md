@@ -136,8 +136,11 @@ Checks before stamping C4:
   matched source or includes it (`exe_file == file`, lint clean, physics TU in `x87_tus.txt`); the merge-train gates
   are unchanged after the swap (cite the gate hashes). A matched source the port does not compile, or a naked
   inline-asm transcription, is refused.
-- `match`, callerless body (no exe caller): accepted, and `notes` gets `exe-callers=0`. The unchanged gates then show
-  only that the swap changed nothing the default build runs, not that the body ran (rubric, "Callerless bodies").
+- `match`, callerless body (no exe caller, `exe-callers=0`): **NOT C4** (L-68, Mariano 2026-10-31). Count the exe
+  callers of the swapped-in body yourself. With 0, keep the swap and the match evidence, leave the level where it is,
+  and write `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)` in `notes`. No
+  `c4=match` token. A merged `match` C4 found with `exe-callers=0` is demoted to its previous level with that note.
+  Rubric, "Callerless bodies".
 - `libid`: status `identical` and not `ambiguous` in the libmatch TSV; the port body file compiles that vendored
   source. CRT rows never take `libid` C4: see "CRT rows (L-67)" below.
 - The Write-set leg is not asked for on these routes.
