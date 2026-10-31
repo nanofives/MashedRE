@@ -1327,3 +1327,65 @@
 {"at":"2026-10-30T19:01:13Z","id":"D5-KNOBS-B3-AI-RACE","from":"working","to":"review","owner":"cmvvau6b23j3vp7158wz2o937","note":"GREEN: 7 of 11 knobs deleted, 4 kept (run_arms.py stacks NOCC/NOD2/NOCL5/NOL5/NCC); G-CTRL/B unchanged, (b)(e) 3/3, D2 DEFH 3/3"}
 {"at":"2026-10-30T19:01:33Z","id":"D5-KNOBS-B3-AI-RACE","from":"review","to":"merge-queued","owner":"cmvvau6b23j3vp7158wz2o937","note":"orch/D5-KNOBS-B3-AI-RACE"}
 {"at":"2026-10-30T19:30:16Z","id":"D5-KNOBS-B3-AI-RACE","from":"merge-queued","to":"merged","owner":"cmvvau6b23j3vp7158wz2o937","note":"merge train 20261030_160222: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T19:36:12Z","id":"D5-FLIP-MUSIC-NOCDAUDIO","from":"open","to":"claimed","owner":"cmvvdhg713nd9p7150s1vlhkj","note":""}
+{"at":"2026-10-30T19:36:31Z","id":"D5-SHIM-GUARD-DSOUND","from":"open","to":"claimed","owner":"cmvvdhtaq3nh3p7158wzcpq6h","note":""}
+{"at":"2026-10-30T19:36:35Z","id":"D5-KNOBS-RUNARMS-STACKS","from":"open","to":"claimed","owner":"cmvvdhvde3nhnp7152mtpsmg9","note":""}
+{"at":"2026-10-30T19:36:45Z","id":"D5-DOC-LAN-RELEASE","from":"open","to":"claimed","owner":"cmvvdhydl3nijp715vavhu3oc","note":""}
+{"at":"2026-10-30T19:36:48Z","id":"D5-SHIM-DOCS","from":"open","to":"claimed","owner":"cmvvdi0vy3njdp715jc8cjasp","note":""}
+{"at":"2026-10-30T19:36:50Z","id":"D5-DEPS-LOCAL-FOLLOWUP","from":"open","to":"claimed","owner":"cmvvdi3lx3nk7p715pb7qqb6g","note":""}
+{"at":"2026-10-30T19:38:59Z","id":"D5-FLIP-MUSIC-NOCDAUDIO","from":"claimed","to":"working","owner":"cmvvdhg713nd9p7150s1vlhkj","note":"worktree created; measuring knob ON"}
+{"at":"2026-10-30T19:39:21Z","id":"D5-SHIM-GUARD-DSOUND","from":"claimed","to":"working","owner":"cmvvdhtaq3nh3p7158wzcpq6h","note":"worktree created, reading prior guard"}
+{"at":"2026-10-30T19:39:29Z","id":"D5-KNOBS-RUNARMS-STACKS","from":"claimed","to":"working","owner":"cmvvdhvde3nhnp7152mtpsmg9","note":"retiring run_arms stacks + knob deletes"}
+{"at":"2026-10-30T19:39:35Z","id":"D5-DEPS-LOCAL-FOLLOWUP","from":"claimed","to":"working","owner":"cmvvdi3lx3nk7p715pb7qqb6g","note":"writing deps table"}
+{"at":"2026-10-30T19:40:04Z","id":"D5-DEPS-LOCAL-FOLLOWUP","from":"working","to":"review","owner":"cmvvdi3lx3nk7p715pb7qqb6g","note":""}
+{"at":"2026-10-30T19:40:13Z","id":"D5-DOC-LAN-RELEASE","from":"claimed","to":"working","owner":"cmvvdhydl3nijp715vavhu3oc","note":"editing CLAUDE.md"}
+{"at":"2026-10-30T19:40:13Z","id":"D5-DOC-LAN-RELEASE","from":"working","to":"review","owner":"cmvvdhydl3nijp715vavhu3oc","note":""}
+{"at":"2026-10-30T19:40:26Z","id":"D5-SHIM-DOCS","from":"claimed","to":"working","owner":"cmvvdi0vy3njdp715jc8cjasp","note":"edits done"}
+{"at":"2026-10-30T19:40:27Z","id":"D5-SHIM-DOCS","from":"working","to":"review","owner":"cmvvdi0vy3njdp715jc8cjasp","note":""}
+{"at":"2026-10-30T19:40:49Z","id":"D5-DOC-LAN-RELEASE","from":"review","to":"merge-queued","owner":"cmvvdhydl3nijp715vavhu3oc","note":"orch/D5-DOC-LAN-RELEASE"}
+{"at":"2026-10-30T19:40:51Z","id":"D5-SHIM-DOCS","from":"review","to":"merge-queued","owner":"cmvvdi0vy3njdp715jc8cjasp","note":"orch/D5-SHIM-DOCS"}
+{"at":"2026-10-30T19:41:00Z","id":"D5-DEPS-LOCAL-FOLLOWUP","from":"review","to":"merge-queued","owner":"cmvvdi3lx3nk7p715pb7qqb6g","note":"orch/D5-DEPS-LOCAL-FOLLOWUP"}
+{"at":"2026-10-30T20:03:58Z","id":"D5-DOC-LAN-RELEASE","from":"merge-queued","to":"merged","owner":"cmvvdhydl3nijp715vavhu3oc","note":"merge train 20261030_164237: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-10-30T20:04:00Z","id":"D5-SHIM-DOCS","from":"merge-queued","to":"merged","owner":"cmvvdi0vy3njdp715jc8cjasp","note":"merge train 20261030_164237: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-10-30T20:04:02Z","id":"D5-DEPS-LOCAL-FOLLOWUP","from":"merge-queued","to":"merged","owner":"cmvvdi3lx3nk7p715pb7qqb6g","note":"merge train 20261030_164237: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-10-30T20:08:47Z","id":"D5-KNOBS-INV-FIX2","from":"open","to":"claimed","owner":"cmvven8k53slnp715dyi0lfwj","note":""}
+{"at":"2026-10-30T20:08:48Z","id":"D5-SHIM-RWBRIDGE-COMMENT","from":"open","to":"claimed","owner":"cmvvenano3slvp715fnpa5yim","note":""}
+{"at":"2026-10-30T20:08:50Z","id":"D5-KNOBS-E1-PHYS-A4A5","from":"open","to":"claimed","owner":"cmvvencz53smhp715nb62f99u","note":""}
+{"at":"2026-10-30T20:10:58Z","id":"D5-KNOBS-INV-FIX2","from":"claimed","to":"working","owner":"cmvven8k53slnp715dyi0lfwj","note":"text-only inventory default fix"}
+{"at":"2026-10-30T20:11:04Z","id":"D5-SHIM-RWBRIDGE-COMMENT","from":"claimed","to":"working","owner":"cmvvenano3slvp715fnpa5yim","note":"comment reword"}
+{"at":"2026-10-30T20:11:18Z","id":"D5-KNOBS-E1-PHYS-A4A5","from":"claimed","to":"working","owner":"cmvvencz53smhp715nb62f99u","note":"grep arms, delete 10 A4/A5 opt-outs"}
+{"at":"2026-10-30T20:11:37Z","id":"D5-KNOBS-INV-FIX2","from":"working","to":"review","owner":"cmvven8k53slnp715dyi0lfwj","note":""}
+{"at":"2026-10-30T20:13:11Z","id":"D5-KNOBS-INV-FIX2","from":"review","to":"merge-queued","owner":"cmvven8k53slnp715dyi0lfwj","note":"orch/D5-KNOBS-INV-FIX2"}
+{"at":"2026-10-30T20:27:04Z","id":"D5-KNOBS-RUNARMS-STACKS","from":"working","to":"review","owner":"cmvvdhvde3nhnp7152mtpsmg9","note":"GREEN: 9 stacks retired, 10 knobs deleted; G-CTRL/B unchanged, D2 3/3, lint 0 NEW"}
+{"at":"2026-10-30T20:28:49Z","id":"D5-KNOBS-RUNARMS-STACKS","from":"review","to":"merge-queued","owner":"cmvvdhvde3nhnp7152mtpsmg9","note":"orch/D5-KNOBS-RUNARMS-STACKS"}
+{"at":"2026-10-30T20:39:48Z","id":"D5-KNOBS-RUNARMS-STACKS","from":"merge-queued","to":"done","owner":"cmvvdhvde3nhnp7152mtpsmg9","note":"GREEN, held out of the text-only pass; L0 re-enqueues for a -Full pass (sha c35733faf)"}
+{"at":"2026-10-30T20:41:37Z","id":"D5-KNOBS-INV-FIX2","from":"merge-queued","to":"merged","owner":"cmvven8k53slnp715dyi0lfwj","note":"merge train 20261030_174037: not run: text-only change (no build input touched)"}
+{"at":"2026-10-30T20:42:28Z","id":"D5-KNOBS-RUNARMS-STACKS","from":"done","to":"merge-queued","owner":"cmvvdhvde3nhnp7152mtpsmg9","note":"orch/D5-KNOBS-RUNARMS-STACKS"}
+{"at":"2026-10-30T20:45:18Z","id":"D5-SHIM-RWBRIDGE-COMMENT","from":"working","to":"review","owner":"cmvvenano3slvp715fnpa5yim","note":""}
+{"at":"2026-10-30T20:45:43Z","id":"D5-SHIM-RWBRIDGE-COMMENT","from":"review","to":"merge-queued","owner":"cmvvenano3slvp715fnpa5yim","note":"orch/D5-SHIM-RWBRIDGE-COMMENT"}
+{"at":"2026-10-30T21:20:55Z","id":"D5-KNOBS-E1-PHYS-A4A5","from":"working","to":"review","owner":"cmvvencz53smhp715nb62f99u","note":"GREEN: 10 knobs deleted, gates unchanged, 13 tracks identical"}
+{"at":"2026-10-30T21:21:13Z","id":"D5-KNOBS-E1-PHYS-A4A5","from":"review","to":"merge-queued","owner":"cmvvencz53smhp715nb62f99u","note":"orch/D5-KNOBS-E1-PHYS-A4A5"}
+{"at":"2026-10-30T21:45:08Z","id":"D5-FLIP-MUSIC-NOCDAUDIO","from":"working","to":"review","owner":"cmvvdhg713nd9p7150s1vlhkj","note":"GREEN: knob ON moved nothing (G-CTRL/B/D2/run13 = refs); flip committed 9586d5b91; audio witness not run (lock queue)"}
+{"at":"2026-10-30T21:45:26Z","id":"D5-SHIM-GUARD-DSOUND","from":"working","to":"review","owner":"cmvvdhtaq3nh3p7158wzcpq6h","note":"GREEN: DSOUND static import removed (System32 load in WinMain before movies + GetProcAddress in Audio::Init); dummy not bound; gates match"}
+{"at":"2026-10-30T21:45:33Z","id":"D5-FLIP-MUSIC-NOCDAUDIO","from":"review","to":"merge-queued","owner":"cmvvdhg713nd9p7150s1vlhkj","note":"orch/D5-FLIP-MUSIC-NOCDAUDIO"}
+{"at":"2026-10-30T21:45:42Z","id":"D5-FLIP-RFLAME-SORT","from":"open","to":"claimed","owner":"cmvvi420x41ajp715z0icnuc4","note":""}
+{"at":"2026-10-30T21:45:53Z","id":"D5-SHIM-GUARD-DSOUND","from":"review","to":"merge-queued","owner":"cmvvdhtaq3nh3p7158wzcpq6h","note":"orch/D5-SHIM-GUARD-DSOUND"}
+{"at":"2026-10-30T21:47:21Z","id":"D5-FLIP-RFLAME-SORT","from":"claimed","to":"working","owner":"cmvvi420x41ajp715z0icnuc4","note":"worktree created, measuring knob ON"}
+{"at":"2026-10-30T21:54:38Z","id":"D5-KNOBS-RUNARMS-STACKS","from":"merge-queued","to":"merged","owner":"cmvvdhvde3nhnp7152mtpsmg9","note":"merge train 20261030_181349: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T21:54:40Z","id":"D5-SHIM-RWBRIDGE-COMMENT","from":"merge-queued","to":"merged","owner":"cmvvenano3slvp715fnpa5yim","note":"merge train 20261030_181349: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T22:30:51Z","id":"D5-KNOBS-E1-PHYS-A4A5","from":"merge-queued","to":"merged","owner":"cmvvencz53smhp715nb62f99u","note":"merge train 20261030_185615: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T22:30:52Z","id":"D5-FLIP-MUSIC-NOCDAUDIO","from":"merge-queued","to":"merged","owner":"cmvvdhg713nd9p7150s1vlhkj","note":"merge train 20261030_185615: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T22:30:54Z","id":"D5-SHIM-GUARD-DSOUND","from":"merge-queued","to":"merged","owner":"cmvvdhtaq3nh3p7158wzcpq6h","note":"merge train 20261030_185615: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T22:32:41Z","id":"D5-KNOBS-D-SEEDED6","from":"open","to":"claimed","owner":"cmvvjshm1469pp715pc76urb9","note":""}
+{"at":"2026-10-30T22:34:46Z","id":"D5-KNOBS-D-SEEDED6","from":"claimed","to":"working","owner":"cmvvjshm1469pp715pc76urb9","note":"surveying setters of 6 seeded knobs"}
+{"at":"2026-10-30T22:58:42Z","id":"D5-FLIP-RFLAME-SORT","from":"working","to":"review","owner":"cmvvi420x41ajp715z0icnuc4","note":"GREEN: knob ON, nothing moved (G-CTRL/B/D2/run13 on ref); gates do not reach R_FLAME (PU_STEPDUMP witness). Commit 0fddfb467."}
+{"at":"2026-10-30T22:59:05Z","id":"D5-FLIP-RFLAME-SORT","from":"review","to":"merge-queued","owner":"cmvvi420x41ajp715z0icnuc4","note":"orch/D5-FLIP-RFLAME-SORT"}
+{"at":"2026-10-30T22:59:14Z","id":"D5-FLIP-SAVE-FIRSTRUN","from":"open","to":"claimed","owner":"cmvvkqlw74969p715ycevaecr","note":""}
+{"at":"2026-10-30T23:00:49Z","id":"D5-FLIP-SAVE-FIRSTRUN","from":"claimed","to":"working","owner":"cmvvkqlw74969p715ycevaecr","note":"measuring knob ON"}
+{"at":"2026-10-30T23:15:44Z","id":"D5-KNOBS-D-SEEDED6","from":"working","to":"review","owner":"cmvvjshm1469pp715pc76urb9","note":"GREEN: 6 seeded knobs + 6 ORed sub-knobs + dead RING_SLOT0 deleted; gates unchanged; branch @ 145842a2f"}
+{"at":"2026-10-30T23:16:09Z","id":"D5-KNOBS-D-SEEDED6","from":"review","to":"merge-queued","owner":"cmvvjshm1469pp715pc76urb9","note":"orch/D5-KNOBS-D-SEEDED6"}
+{"at":"2026-10-30T23:52:09Z","id":"D5-FLIP-RFLAME-SORT","from":"merge-queued","to":"merged","owner":"cmvvi420x41ajp715z0icnuc4","note":"merge train 20261030_201658: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-30T23:52:12Z","id":"D5-KNOBS-D-SEEDED6","from":"merge-queued","to":"merged","owner":"cmvvjshm1469pp715pc76urb9","note":"merge train 20261030_201658: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-31T00:33:29Z","id":"D5-FLIP-SAVE-FIRSTRUN","from":"working","to":"review","owner":"cmvvkqlw74969p715ycevaecr","note":"GREEN, nothing moved; witness: default writes 0x24efc=1 / 0x24f54=0"}
+{"at":"2026-10-31T00:33:52Z","id":"D5-FLIP-SAVE-FIRSTRUN","from":"review","to":"merge-queued","owner":"cmvvkqlw74969p715ycevaecr","note":"orch/D5-FLIP-SAVE-FIRSTRUN"}
+{"at":"2026-10-31T01:06:42Z","id":"D5-FLIP-SAVE-FIRSTRUN","from":"merge-queued","to":"merged","owner":"cmvvkqlw74969p715ycevaecr","note":"merge train 20261030_213512: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
