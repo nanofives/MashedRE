@@ -94,7 +94,7 @@
 #include "AiStandalone.h"
 #include "../Race/SubStateCallees.h"   // [D-11073 leg 1a] SubState_StoreStep
 #ifdef MASHED_STANDALONE
-#include "AiTargetClosest.h"            // [D-11072 P3] FUN_00414a70 (MASHED_TGT3)
+#include "AiTargetClosest.h"            // [D-11072 P3] FUN_00414a70
 #include "AiLeafTargets.h"              // [D3 bulk G-AILEAF] FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
 #include "AiTrackObjSeek.h"              // [seek414f00] FUN_00414f00, the mode-10 blocks
 #include "../Math/RwLutTables.h"        // [d3b] FUN_004c3c60 / 004c3bf0 / 004c39b0 with the real RW LUT
@@ -1033,7 +1033,7 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 
     int mode = 0;                     // targeting chain FUN_00414570.. STUBBED (all return 0)
 #ifdef MASHED_STANDALONE
-    // ---- [D-11072 P3] FUN_00414a70 arm, call 0x00416394..0x0041640f (default-OFF MASHED_TGT3) ----
+    // ---- [D-11072 P3] FUN_00414a70 arm, call 0x00416394..0x0041640f (MASHED_TGT3 deleted, D5-KNOBS-E5-REST) ----
     // FUN_00414570 and FUN_00415880 stay stubbed: the original returns 0 from them on 6696 of
     // 6696 calls (o_wobj2), so FUN_00414a70 is reached every call there too.
     //   iVar5 = FUN_00414a70(param_1,&local_24,&local_2c,param_2);
@@ -1063,7 +1063,7 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         }
     }
     if (v >= 0 && v < 4) { g_tg3Ret[v] = -1; g_tg3Los[v] = -1; }
-    if (mode == 0 && TargetClosest_Enabled() && v >= 0 && v < 4) {
+    if (mode == 0 && v >= 0 && v < 4) {
         float cand[2] = { 0.0f, 0.0f };
         const float lk[2] = { tx, tz };
         const int r = TargetClosest(v, lk, cand);
@@ -1079,7 +1079,7 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         }
     }
     // ---- [mode 7 M4] LAB_004163b7: FUN_00414c30, call 0x004163c3 (MASHED_MODE7 deleted, D5-KNOBS-E4-MODE-REG) ----
-    // Reached when FUN_00414a70 returned 0 (always without MASHED_TGT3) or returned 1 with LOS failing,
+    // Reached when FUN_00414a70 returned 0 or returned 1 with LOS failing,
     // i.e. exactly when mode is still 0 here (its return 2 left above).
     //   iVar5 = FUN_00414c30(param_1,&local_24,&local_2c,param_2);
     //   1 + FUN_00416060 -> look = cand, mode 3 (LAB_004163e6);  2 + FUN_00416060 -> look = cand, mode 7
@@ -1137,7 +1137,7 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         // resolves `last` and the body returns 0 at exit site 105.
 #ifdef MASHED_STANDALONE
         {
-            // `if (local_48 == 0)`: mode was always 0 before D-11072 P3; with MASHED_TGT3 it can be 3.
+            // `if (local_48 == 0)`: mode was always 0 before D-11072 P3; since then it can be 3.
             if (mode == 0) {
                 int candXZ[2] = {0, 0};
                 int tgtXZ[2]  = {0, 0};          // &local_24, the param the body ignores
@@ -2167,9 +2167,8 @@ void Ai_AdvanceClock(int units)
 {
     I32(kOverrideStep) = units;          // DAT_007f1008
     // [D-11073 leg 1a] _DAT_007f100c = (float)units * _DAT_005cc948, stored at 0x0040fc57,
-    // i.e. just BEFORE the 0x0040fc63 store above in the original. No-op unless
-    // MASHED_SUBSTATE (default OFF). Its only consumer in the exe is the FUN_0041d930 tail
-    // partial (TrackRenderer.cpp), behind the same knob.
+    // i.e. just BEFORE the 0x0040fc63 store above in the original. Runs in the standalone, no-op in the
+    // .asi (SubState_Enabled). Its only consumer in the exe is the FUN_0041d930 tail partial (TrackRenderer.cpp).
     SubState_StoreStep(units);
 }
 

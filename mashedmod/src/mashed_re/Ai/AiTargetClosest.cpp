@@ -48,8 +48,8 @@ const std::uint32_t g_tg_c_5d757c = 0x00000000u;   // 0.0
 // [*(0x007d3ff8) + *(0x007d3ffc)] = sqrt table root
 struct { const std::uint32_t* sqrt_; const std::uint32_t* inv_; } g_tg_lutptrs = { nullptr, nullptr };
 
-// Per-call outcome for the step dump (TrackRenderer::AiStepDump, columns ret14a70 / tg3_los,
-// emitted only when MASHED_TGT3 is set). -1 = not evaluated on this call.
+// Per-call outcome for the step dump (TrackRenderer::AiStepDump, columns ret14a70 / tg3_los, always emitted since
+// D5-KNOBS-E5-REST deleted MASHED_TGT3). -1 = not evaluated on this call.
 int g_tg3Ret[4] = {-1, -1, -1, -1};
 int g_tg3Los[4] = {-1, -1, -1, -1};
 }
@@ -270,14 +270,6 @@ std::FILE* Trace() {
 }
 
 }  // namespace
-
-bool TargetClosest_Enabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_TGT3");
-        return s && s[0] && s[0] != '0';
-    }();
-    return s_on;
-}
 
 int TargetClosest(int v, const float look[2], float cand[2]) {
     if (v < 0 || v > 3 || !Rec(0)) return 0;

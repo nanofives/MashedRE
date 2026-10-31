@@ -4,9 +4,9 @@
 
 namespace Ai {
 
-// MASHED_TGT3 (default OFF). The progress FUN_00414a70 reads comes from the path-progress step FUN_00408610
-// (Race/PathProgStep.cpp), which always runs since D5-KNOBS-E4-MODE-REG deleted MASHED_PATHPROG.
-bool TargetClosest_Enabled();
+// FUN_00414a70 always runs in the AI arm (MASHED_TGT3, seeded ON, was deleted by D5-KNOBS-E5-REST). The progress it
+// reads comes from the path-progress step FUN_00408610 (Race/PathProgStep.cpp), which always runs since
+// D5-KNOBS-E4-MODE-REG deleted MASHED_PATHPROG.
 
 // 0x00414a70 FUN_00414a70(spline, &look, &cand, v), verbatim naked, run at x87 PC_24.
 // Returns 0 / 1 (cand written by FUN_00414300) / 2. `look` and `cand` are {x, z}.

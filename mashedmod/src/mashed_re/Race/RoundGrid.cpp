@@ -38,25 +38,18 @@ std::FILE* Trace() {
 }
 }  // namespace
 
-bool RoundGrid_Enabled() {
-    static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_ROUND_GRID");
-        return s && s[0] && s[0] != '0';
-    }();
-    // The progress it reads is live: the path-progress step always runs (MASHED_PATHPROG deleted, D5-KNOBS-E4-MODE-REG).
-    return s_on;
-}
+// [D5-KNOBS-E5-REST 2026-10-31] MASHED_ROUND_GRID (seeded ON by Core/FaithDefaults.cpp) was deleted with its opt-out:
+// Stage A and Stage B always run. The progress they read is live: the path-progress step always runs (MASHED_PATHPROG
+// deleted, D5-KNOBS-E4-MODE-REG).
 
 void RoundGrid_RaceInit() {
-    if (!RoundGrid_Enabled()) return;
-    I32(kNode) = 0;                                                    // 0x0040fef0 mov [0x0063ba80], ebx (0)
+    I32(kNode) = 0;                                                   // 0x0040fef0 mov [0x0063ba80], ebx (0)
     if (std::FILE* f = Trace()) { std::fprintf(f, "race-init node=0\n"); std::fflush(f); }
 }
 
 namespace { int s_codes[4] = { -1000, -1000, -1000, -1000 }; }   // FUN_0040b180 seed 0xfffffc18
 
 void RoundGrid_RoundEnd(const bool alive[4], int exeWinner, const int codes[4]) {
-    if (!RoundGrid_Enabled()) return;
     for (int i = 0; i < 4; ++i) s_codes[i] = codes[i];
     // FUN_00410860 0x00410890..0x004108b3: the LAST slot i in 0..3 that is active and whose FUN_0046c7b0 == 1.
     int surv = 0;                                                      // ebx starts 0 (0x00410880)
@@ -119,7 +112,6 @@ bool RoundGrid_GridPoint(int n, int slot, float out[3]) {
 }
 
 bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node) {
-    if (!RoundGrid_Enabled()) return false;
     std::int32_t v = I32(kNode);
     SnapNodeToSafeStartLines(&v);                                      // FUN_00409290(&DAT_0063ba80)
     I32(kNode) = v;
@@ -254,7 +246,6 @@ void RoundGrid_AssignMode4(const int c[4], int out[4]) {
 }
 
 bool RoundGrid_SlotOrder(int out[4]) {
-    if (!RoundGrid_Enabled()) return false;            // MASHED_ROUND_GRID_ORDER deleted (D5-KNOBS-D-SEEDED6)
     RoundGrid_AssignMode4(s_codes, out);
     if (std::FILE* f = Trace()) {
         std::fprintf(f, "round-order codes=%d,%d,%d,%d slots=%d,%d,%d,%d\n", s_codes[0], s_codes[1], s_codes[2], s_codes[3],

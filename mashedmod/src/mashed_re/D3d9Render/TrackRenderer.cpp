@@ -31,19 +31,19 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "DrawRec.h"                // d1r1: per-draw recorder names (MASHED_DBG_D3DREC)
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
-#include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
+#include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial
 #include "../Race/PathNodes.h"    // D-11072 P1: course block (always on)
 #include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (always on)
-#include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
+#include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70
 #include "../Ai/AiLeafTargets.h"   // D3 bulk G-AILEAF: FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
-#include "../Race/RoundGrid.h"      // round-restart grid Stage A (MASHED_ROUND_GRID)
+#include "../Race/RoundGrid.h"      // round-restart grid Stage A / B
 #include "../Race/HeadingAssist.h"  // [d3b] FUN_0046c7d0 steer-0 heading assist (MASHED_HEADING_ASSIST)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000
 #include "PickupIconCube.h"          // [iconcube] D5-ICONCUBE-SPIN (MASHED_ICONCUBE)
 #include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710
-#include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
-#include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
+#include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0
+#include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries
 #include "../Race/CameraApply.h"      // d1r2: the director tail's frame build (render camera)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
 extern "C" void __cdecl UtilZeroTable8964c0();                                // 0x004425d0
@@ -137,24 +137,22 @@ static bool NoElim() {
     return s_p && s_p[0] && s_p[0] != '0';
 }
 int aib_alive(int v)       { return (v >= 0 && v <= 3) ? g_aib.alive[v] : 0; }
-// [brecipe] MASHED_SLOT_TYPE_LIVE (default OFF): FUN_0040e470 reads the live slot table, as the original does
+// [brecipe] FUN_0040e470 reads the live slot table, as the original does
 // (0x0040e474 mov ecx,[0x5f2770] / 0x0040e47a mov eax,[ecx+eax*4+0x34]). The B captures' table is 1,2,2,2
-// (scenario_launch.py FUN_0040e480 pokes, measured in o_ep_1); the stand-in gives the player 0, which
-// LeaderInRange (FUN_00415190, AiStandalone.cpp) never matches on its `== 1` test. Knob OFF: the stand-in.
-static bool SlotTypeLiveEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_SLOT_TYPE_LIVE"); return e && e[0] && e[0] != '0'; }();
-    return s;
-}
+// (scenario_launch.py FUN_0040e480 pokes, measured in o_ep_1). [D5-KNOBS-E5-REST 2026-10-31] MASHED_SLOT_TYPE_LIVE
+// (seeded ON) was deleted with its stand-in (player 0, AI 2, which LeaderInRange FUN_00415190 never matched on its
+// `== 1` test). v outside 0..3 keeps the stand-in's value.
 int aib_veh_type(int v) {
-    if (SlotTypeLiveEnabled() && v >= 0 && v <= 3) {
+    if (v >= 0 && v <= 3) {
         const std::uintptr_t p = *reinterpret_cast<const std::uintptr_t*>(0x005f2770u);   // 0x0040e474
         return p ? *reinterpret_cast<const int*>(p + 0x34u + static_cast<std::uintptr_t>(v) * 4u) : 0;   // 0x0040e47a
     }
-    return v == 0 ? 0 : 2;                                // 0 = player(human); else AI
+    return v == 0 ? 0 : 2;
 }
-// [D-11073 leg 1b] Under default-OFF MASHED_SUBSTATE the port keeps a real DAT_0063ba8c
-// (written by the sub-state block in Update and by SubStateEnter4 / SubStateHeldCountdown5,
-// Race/SubStateMachine.cpp); FUN_0040e350 returns the race sub-state. Knob OFF: 6, as before.
+// [D-11073 leg 1b] The port keeps a real DAT_0063ba8c (written by the sub-state block in Update and by
+// SubStateEnter4 / SubStateHeldCountdown5, Race/SubStateMachine.cpp); FUN_0040e350 returns the race sub-state, 6 while
+// it is 0. [D5-KNOBS-E5-REST 2026-10-31] MASHED_SUBSTATE (seeded ON) and its opt-out were deleted: the sub-state
+// machine always runs.
 // [u9779] MASHED_ROUND_END7. FUN_00411170 writes DAT_0063ba8c = 7 at 0x004111a6 when
 // FUN_00410d10 (call 0x0041118f) returns non-zero and FUN_00410510 (call 0x00411198) returns 0, i.e. on
 // a round end that is not a match end. Under the knob the rule engine's r == 0 round end raises this
@@ -189,10 +187,8 @@ bool RaceTailLateEnabled() {
 }
 int aib_game_sub_mode() {                                // race (FUN_0040e350)
     if (s_roundEnd7) return 7;                           // [u9779] MASHED_ROUND_END7 only
-    if (SubState_Enabled()) {
-        const int s = *reinterpret_cast<const int*>(0x0063ba8cu);
-        if (s != 0) return s;
-    }
+    const int s = *reinterpret_cast<const int*>(0x0063ba8cu);
+    if (s != 0) return s;
     return 6;
 }
 int pkcb_sub_mode()        { return aib_game_sub_mode(); }   // [mode 7 M3] the same FUN_0040e350 host
@@ -646,13 +642,11 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     // traced ([UNCERTAIN] U-D3-DIFF360: next, reference_to 0x0089a360 WRITE sites).
     Ai::Ai_ResetRace();
     Ai::F32(0x0089a360u) = 2.5f;
-    // [D-11073 leg 2] MASHED_SUBSTATE only: race setup's FUN_004425d0 (called from 0x0040ff31,
+    // [D-11073 leg 2] race setup's FUN_004425d0 (called from 0x0040ff31,
     // zeroes the camera-entry table and the FUN_00442600 guard) and the state-1 spawn's
     // DAT_005f29b8 = 100000 (0x004100d3), which sends round 1's state-2 tail into phase 3.
-    if (SubState_Enabled()) {
-        UtilZeroTable8964c0();
-        *reinterpret_cast<int*>(0x005f29b8u) = 100000;
-    }
+    UtilZeroTable8964c0();
+    *reinterpret_cast<int*>(0x005f29b8u) = 100000;
     // [GATEFIRE idx364 2026-10-08] FUN_00414060 step 6, default-OFF behind
     // MASHED_A364_RESET (Race/AiDifficultyReset.cpp). This is the SAME function
     // whose step 5 produces the 2.5 seeded on the line above — the port now owns
@@ -1646,7 +1640,7 @@ namespace { int s_fxPairC5[4] = { -1, -1, -1, -1 }; int s_fxPairFrame[4] = { -1,
 namespace { int s_fxPairProbe[2][4] = { { -1, -1, -1, -1 }, { -1, -1, -1, -1 } };   // [D4-FX-INPUTS] ctrl byte 5 before UpdateRace / at UpdateCar's end
 void FxPairProbe(int k) { static const bool s_on = std::getenv("MASHED_FX_PAIRLOG") != nullptr; if (!s_on || !g_aib.loaded) return; for (int v = 1; v <= 3; ++v) s_fxPairProbe[k][v] = Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
     Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride)) * Ai::kCtrlBlockStride + 5u); } }
-namespace {   // [u9778 / substep] MASHED_SUBSTEP_OUTER: an AI car's io as the A4 pre-phase built it, and its result
+namespace {   // [u9778 / substep] StepCarsOuter: an AI car's io as the A4 pre-phase built it, and its result
 struct OuterCar { bool have = false; Vehicle::PlayerCarIO in, out; };
 OuterCar s_outer[16];
 long  s_outerMismatch = 0;
@@ -4370,17 +4364,11 @@ int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPar
     return n;
 }
 
-// [partmorph] D-11077. MASHED_PARTMORPH=1 (default OFF) ports FUN_0041f770 @ 0x0041f770, which
+// [partmorph] D-11077. Ports FUN_0041f770 @ 0x0041f770, which
 // FUN_00420870 @ 0x00420870 calls once per car per frame (after FUN_0041f710): the part 0x12 morph
 // position and part 0x14's frame wobble. Decode: verify/partmorph_20261028/PREREG_D5-PARTMORPH.md.
-// The D-11077 default flip (Core/FaithDefaults.cpp, MASHED_FLIP_D11077 = 1, D5-PARTMORPH-MEASURE) seeds this ON; MASHED_NO_PARTMORPH=1 opts out.
-bool PartMorphEnabled() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_PARTMORPH");
-        return e && e[0] == '1' && e[1] == '\0';
-    }();
-    return on;
-}
+// Default ON since the D-11077 flip (D5-PARTMORPH-MEASURE). [D5-KNOBS-E5-REST 2026-10-31] MASHED_PARTMORPH and its opt-out
+// were deleted: it always runs.
 
 // MASHED_DBG_PARTSTATE0=<slot>, DIAGNOSTIC ONLY (default unset = -1): the slot whose record state is
 // forced to 0 (carvis), so FUN_0041f770's gate opens on the standalone.
@@ -4511,7 +4499,7 @@ float PartMorphStep(const TrackRenderer::CarPartState& cp, const TrackRenderer::
     return morph;
 }
 
-// [D5-PARTMORPH-PRODUCER] MASHED_CAR_STATE0=1 (default OFF): the producer of record state 0 (rec+0x298, setter
+// [D5-PARTMORPH-PRODUCER] The producer of record state 0 (rec+0x298, setter
 // FUN_0041ef60 @ 0x0041ef60). Decode: verify/partmorph_20261028/PREREG_D5-PARTMORPH-PRODUCER.md section 1.
 // FUN_0040d470 always reaches FUN_00448220 here (DAT_00639d78, DAT_007f10a1 / DAT_007f1561 / DAT_0063ba88 and
 // DAT_007f1a50 are 0 in the standalone). FUN_00448220's tail (0x004486d7..0x004486e5, push ebx = 0) sets all four
@@ -4519,14 +4507,8 @@ float PartMorphStep(const TrackRenderer::CarPartState& cp, const TrackRenderer::
 // 0x00446541, keeps them when DAT_007f0fd0 == 5 && FUN_00405890(), else runs the 1/2 loop (0x00446965 /
 // 0x00446975, the port's CarLodState) and sets car 0 to 0 (0x004469aa) when FUN_0042f6a0() == 2 or DAT_007f0fd0
 // is 5, 10 or 9 (0x00446985..0x004469a8). cam[7] is 0 in the port, so FUN_00446520's last branch is unreachable.
-// The D-11077 default flip (Core/FaithDefaults.cpp, MASHED_FLIP_D11077 = 1, D5-PARTMORPH-MEASURE) seeds this ON; MASHED_NO_CAR_STATE0=1 opts out.
-bool CarState0Enabled() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_CAR_STATE0");
-        return e && e[0] == '1' && e[1] == '\0';
-    }();
-    return on;
-}
+// Default ON since the D-11077 flip (D5-PARTMORPH-MEASURE). [D5-KNOBS-E5-REST 2026-10-31] MASHED_CAR_STATE0 and its opt-out
+// were deleted: it always runs.
 struct CarState0Decision { int id = -1; bool all0 = false; bool car0 = false; };
 CarState0Decision s_s0_cur, s_s0_prev;   // this tick's decision / the one the draw reads (tick N-1)
 int s_s0_ticks = 0;
@@ -4551,7 +4533,6 @@ int CarState0Apply(int slot, int lod) {
 }  // namespace
 
 void TrackRenderer::CarState0Latch() {
-    if (!CarState0Enabled()) return;
     s_s0_prev = s_s0_cur;
     CarState0Decision d;
     d.id = s_s0_ticks++;
@@ -5223,8 +5204,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // FUN_0040fc00 partials = Ai_AdvanceClock (incl. the 0x0040fc57 step store) + the
     // FUN_0041d930 tail. Cars are held exactly as the stand-in holds them, and the frame
     // returns before any physics. countdown_ is zeroed on the exit frame so every
-    // countdown_ consumer sees GO at E+114. Knob OFF: this block is skipped entirely.
-    if (SubState_Enabled() && countdown_ > 0.f) {
+    // countdown_ consumer sees GO at E+114. Always (MASHED_SUBSTATE deleted, D5-KNOBS-E5-REST).
+    if (countdown_ > 0.f) {
         car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
         static TrackRenderer* s_subTr = nullptr;
@@ -5358,35 +5339,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         return;
     }
 
-    // [rfx 2026-10-16, rfx2] ADAPTER for the HUD's start-light clock (MASHED_SUBSTATE off; under
-    // it the ported FUN_0040dbd0 / FUN_0041d930 tail run instead). The clock arithmetic is the
-    // original's: the state-4 tick zeroes DAT_0063d584 / DAT_0063d588 (FUN_0040dbd0 ->
-    // FUN_0041d910 @ 0x0041d910) and the SAME tick's FUN_0040fc00 adds the step (FUN_0041d930
-    // tail, 0x0041da5f..0x0041da76), so the first rendered value is one step, not 0; every later
-    // tick adds it again, after GO too. The step is FUN_0040fc00's store at 0x0040fc57,
-    // (float)units * [0x005cc948] (0x39aec33e), units = the tick budget FUN_004111c0 pushes
-    // (0x32 at all three call sites) = this port's (int)(dt * 3000 + 0.5): 0x3c888888 at 60 Hz.
-    // [UNCERTAIN U-9704] Only the zeroing MOMENT is a stand-in: the original's is the state 3 -> 4
-    // transition of FUN_004102f0 (0x00410387: the cursor path FUN_00405460 has ended and
-    // DAT_00897fe0, cleared by FUN_00445aa0, is 0), which exists only under MASHED_SUBSTATE. Here
-    // it is placed 113 ticks before the stand-in GO (one state-4 tick + the 112 state-5 ticks
-    // FUN_004103a0 takes to reach 1.86 s, 0x004104e3). Nothing else in the exe reads the two
-    // globals with MASHED_SUBSTATE off.
-    if (!SubState_Enabled() && LibRw::RaceFx_HudEnabled()) {
-        const float lead = 113.0f / 60.0f;
-        if (countdown_ > lead && countdown_ - in.dt <= lead) {
-            *reinterpret_cast<std::uint32_t*>(0x0063d584u) = 0u;   // 0x0041d910
-            *reinterpret_cast<std::uint32_t*>(0x0063d588u) = 0u;   // 0x0041d91a
-        }
-        if (countdown_ - in.dt <= lead) {
-            std::uint32_t kbits = 0x39aec33eu;                     // _DAT_005cc948
-            float k;
-            std::memcpy(&k, &kbits, sizeof k);
-            const float step = static_cast<float>(static_cast<int>(in.dt * 3000.0f + 0.5f)) * k;  // 0x0040fc57
-            *reinterpret_cast<std::int32_t*>(0x0063d584u) += 1;                                 // 0x0041da71
-            *reinterpret_cast<float*>(0x0063d588u) = *reinterpret_cast<float*>(0x0063d588u) + step;  // 0x0041da76
-        }
-    }
+    // [rfx 2026-10-16, rfx2] The HUD start-light clock adapter for MASHED_SUBSTATE off (the 113-tick stand-in zeroing of
+    // DAT_0063d584 / DAT_0063d588, U-9704) was deleted with the knob (D5-KNOBS-E5-REST): the ported FUN_0040dbd0 /
+    // FUN_0041d930 tail always run.
     // Countdown freeze (3-2-1-GO): cars are held still until it elapses.
     if (countdown_ > 0.f) {
         countdown_ -= in.dt;
@@ -5608,9 +5563,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00
             // (call at 0x0040fd11), after the step store (0x0040fc57, Ai_AdvanceClock above) and
             // after the AI tick, and FUN_004111c0 runs FUN_0040fc00 after the sub-state handler.
-            // The port has no handler yet (leg 1b). Default OFF; nothing in the exe reads either
-            // global in leg 1a (PREREG_LEG1A.md section 2).
-            if (SubState_Enabled()) HudSlideBillboardTimerTail();
+            // Always since D5-KNOBS-E5-REST deleted MASHED_SUBSTATE (PREREG_LEG1A.md section 2).
+            HudSlideBillboardTimerTail();
     };
     {
         // [a4order 2026-10-17] the A4 order implies this order: the A4 loop of FUN_00470c70 reads the commands the
@@ -5679,7 +5633,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     GroundHeight(a.pos[0], a.pos[2], &aok);
                     aio.grounded = aok ? 1 : 0;
                     Vehicle::VehiclePhysics_A4Pre(v, in.dt, aio);
-                    if (Vehicle::VehiclePhysics_OuterEnabled() && v < 16) {
+                    if (v < 16) {
                         s_outer[v].have = true; s_outer[v].in = aio;   // [u9778 / substep]
                     }
                 }
@@ -5702,13 +5656,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
             Race::HeadingAssist_Player(static_cast<int>(in.dt * 3000.0f + 0.5f), s0, s1);
         }
-        // [substep 2026-10-21] MASHED_SUBSTEP_OUTER=1 (verify/substep_20261021/PREREG_substep.md): FUN_004709a0 steps
+        // [substep 2026-10-21] always (verify/substep_20261021/PREREG_substep.md; MASHED_SUBSTEP_OUTER deleted by
+        // D5-KNOBS-E5-REST): FUN_004709a0 steps
         // every car per substep (0x00471137 -> 0x00470c47..0x00470c53), so the player and the pre-phase's AI cars step
         // here together, by StepCar's phase functions in FUN_00470c70's order (VehiclePhysics_StepCarsOuter); the
         // opponent loop below takes each AI car's result instead of stepping it. (u9778's fiber form, deleted in soflip,
         // stepped the same cars with the same snapshot / restore.)
         bool outerRan = false;
-        if (Vehicle::VehiclePhysics_OuterEnabled()) {
+        {
             int outerSlots[16]; Vehicle::PlayerCarIO outerIo[16]; int outerN = 0;
             outerSlots[outerN] = 0; outerIo[outerN] = io; ++outerN;
             for (int v = 1; v < 16; ++v)
@@ -7087,8 +7042,7 @@ void TrackRenderer::AiStepDump() {
                          // OUTPUT pose; these two are the only entry-side columns.
                          // APPENDED, so every column above keeps its position.
                          // -1 = ControlStep did not run for this car before the dump.
-                         ",c4_in,c5_in%s\n",
-                     Ai::TargetClosest_Enabled() ? ",ret14a70,tg3_los" : "");   // [D-11072 P3]
+                         ",c4_in,c5_in,ret14a70,tg3_los\n");   // [D-11072 P3] (MASHED_TGT3 deleted, D5-KNOBS-E5-REST)
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -7211,9 +7165,9 @@ void TrackRenderer::AiStepDump() {
                      // [W-SHAPE] the entry pose, snapshotted at the top of ControlStep
                      // in that same tick, before any ctrl store on any path.
                      g_c4In[v], g_c5In[v]);
-        // [D-11072 P3] per-call FUN_00414a70 outcome, appended ONLY with MASHED_TGT3 so the
-        // knob-OFF dump stays byte-identical (G-P3-OFF). -1 = not evaluated.
-        if (Ai::TargetClosest_Enabled()) std::fprintf(lf, ",%d,%d", g_tg3Ret[v], g_tg3Los[v]);
+        // [D-11072 P3] per-call FUN_00414a70 outcome (always since D5-KNOBS-E5-REST deleted MASHED_TGT3).
+        // -1 = not evaluated.
+        std::fprintf(lf, ",%d,%d", g_tg3Ret[v], g_tg3Los[v]);
         std::fputc('\n', lf);
     }
     std::fflush(lf);
@@ -7558,13 +7512,13 @@ void TrackRenderer::StartRound() {
             }
         }
     }
-    // ---- [round grid Stage A] anchor at the restart node (default-OFF MASHED_ROUND_GRID + MASHED_PATHPROG):
+    // ---- [round grid Stage A] anchor at the restart node (MASHED_ROUND_GRID deleted by D5-KNOBS-E5-REST, always):
     // FUN_0040e590 -> FUN_00409290(&DAT_0063ba80) -> FUN_00408b00 anchor = node centre / dir / corner axis
     // (FIX_BRIEF.md section 4 A2/A3). Same formation table; only A, lat, dir change.
     float gA[3] = { g0[0], g0[1], g0[2] };
     // [gridyaw 2026-10-16] grid dir (default ON since d2ref 2026-10-17, opt-out deleted): FUN_00408b00's whole frame at the node the port grids at.
-    // Without MASHED_ROUND_GRID that node is snap(0) (the port grids every round at the start line, U-9686), and
-    // A / lat / dir come from its record as above; with it, the round-grid node. Either way the yaw is the
+    // That node is the round-grid node; GridDir_Anchor's snap(0) (the start line, U-9686) is the fallback when
+    // RoundGrid_Anchor finds no record. A / lat / dir come from the record as above. Either way the yaw is the
     // original's law (LUT 2-D normalize, clamp, acos, RwMatrixRotate about Y), not atan2 of the raw direction,
     // which is 0.11 deg off on Training (verify/gridyaw_20261016/PREREG_gridyaw.md A1.2).
     float gdYaw = 0.f;
@@ -7609,8 +7563,8 @@ void TrackRenderer::StartRound() {
         }
         *yaw = gdOn ? gdYaw : std::atan2(dir[1], dir[0]);
     };
-    // [round grid Stage B] per-car formation slot (under MASHED_ROUND_GRID, D5-KNOBS-D-SEEDED6): FUN_0040e590's slot value
-    // & 3; otherwise slot == spawn order as before.
+    // [round grid Stage B] per-car formation slot (always, D5-KNOBS-D-SEEDED6 / D5-KNOBS-E5-REST): FUN_0040e590's slot
+    // value & 3.
     int kSlot[4] = { 0, 1, 2, 3 };
     {
         int sv[4];
@@ -7662,12 +7616,12 @@ void TrackRenderer::StartRound() {
         }
     }
     Ai::Ai_RaceTimerRoundStart(round_no_);   // [a5timer] MASHED_A5_RACE_TIMER_RUN (default ON): round 1's DAT_007f0ff8 seed
-    // [D-11073 leg 1b, PREREG_LEG1B.md addendum B] Under MASHED_SUBSTATE every round re-enters
+    // [D-11073 leg 1b, PREREG_LEG1B.md addendum B] Every round re-enters
     // the sub-state machine. The original's next round goes case 8 (FUN_00414220) -> 2 -> the
     // state-2 tail, and because FUN_004103a0 zeroed DAT_005f29b8 at 0x004104c0 it takes the
     // else arm: DAT_0063ba8c = 4, DAT_005f29b8 = 12000 (no phase 3). The countdown block's
-    // ba8c == 0 entry performs exactly that tail. Knob OFF: nothing here runs.
-    if (SubState_Enabled()) *reinterpret_cast<int*>(0x0063ba8cu) = 0;
+    // ba8c == 0 entry performs exactly that tail.
+    *reinterpret_cast<int*>(0x0063ba8cu) = 0;
     Audio::SfxPlay("threetwoone", 0.9f);   // real countdown SFX (permdict)
     race_cam_.Reset();   // force_reset path on the first camera tick
     // clear any in-flight power-up effects from the previous round
@@ -7701,7 +7655,7 @@ void TrackRenderer::StartMatch() {
     // 0x00420420) and the race frame counter at the race clock reset (0x0040ff17)
     for (CarGloss& g : car_gloss_) g = CarGloss{};
     gloss_frame_ = 0;
-    Race::RoundGrid_RaceInit();   // [round grid Stage A] 0x0040fef0 DAT_0063ba80 = 0 (MASHED_ROUND_GRID)
+    Race::RoundGrid_RaceInit();   // [round grid Stage A] 0x0040fef0 DAT_0063ba80 = 0
     rule_engine_on_ = RuleEngineEnabled();
     for (int i = 0; i < kRaceCars; ++i) {
         // score_delta_ (DAT_008a9520) stays 0 here. FUN_0040b180 writes
@@ -8882,7 +8836,7 @@ void TrackRenderer::UpdateRace(float dt) {
                     if (race_[i].alive) { round_winner_ = i; break; }
                 if (round_winner_ < 0) round_winner_ = 0;  // all dead: equalized
                 // [round grid Stage A] FUN_00410860 0x004108c5: DAT_0063ba80 = __ftol(progress[last alive])
-                // (default-OFF MASHED_ROUND_GRID + MASHED_PATHPROG; FIX_BRIEF.md section 4 A1)
+                // (FIX_BRIEF.md section 4 A1)
                 {
                     bool al[4] = { false, false, false, false };
                     for (int i = 0; i < kRaceCars && i < 4; ++i) al[i] = race_[i].alive;
@@ -10018,13 +9972,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
 
     MARK(d_other);   // copters
     // [rfx 2026-10-16] the in-race HUD's inputs, from this standalone's own state (LibRw/RwRaceFx.h).
-    // State: the real DAT_0063ba8c under MASHED_SUBSTATE; with the stand-in countdown, its first part
-    // stands for phase 3 (no HUD, FUN_0040dfc0 returns below 5), its last 113 frames for states 4/5
-    // (the adapter in Update), racing for 6.
+    // State: the real DAT_0063ba8c when it is non-zero; while it is 0, the countdown's first part stands for phase 3
+    // (no HUD, FUN_0040dfc0 returns below 5), its last 113 frames for states 4/5, racing for 6.
     {
         LibRw::HudInputs h;
         const int ba8c = *reinterpret_cast<const int*>(0x0063ba8cu);
-        if (SubState_Enabled() && ba8c != 0) h.state = ba8c;
+        if (ba8c != 0) h.state = ba8c;
         else h.state = (countdown_ > 113.0f / 60.0f) ? 3 : (countdown_ > 0.f ? 5 : 6);
         h.timer = *reinterpret_cast<const float*>(0x0063d588u);
         h.team_play = *reinterpret_cast<const int*>(0x0067ea64u);
@@ -10186,8 +10139,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             static const bool s_lod_prev = [] { const char* e = std::getenv("MASHED_CAR_LOD_EYE");
                                                 return !(e && e[0] == 'l'); }();
             out->state = LibRw::CarLodState(part19_d2(slot, m, s_lod_prev ? eye_prev_ : last_eye_));
-            // [D5-PARTMORPH-PRODUCER] MASHED_CAR_STATE0=1 (default OFF): the director's state 0 (CarState0Apply)
-            if (CarState0Enabled()) out->state = CarState0Apply(slot, out->state);
+            // [D5-PARTMORPH-PRODUCER] the director's state 0 (CarState0Apply)
+            out->state = CarState0Apply(slot, out->state);
             // [partmorph] MASHED_DBG_PARTSTATE0=<slot>, DIAGNOSTIC ONLY, default unset: that slot's record
             // state is 0, which only FUN_00448220 / FUN_00446520's car-0 branch produce in the original
             // (the result cameras) and the standalone does not port; it makes FUN_0041f770 run.
@@ -10372,10 +10325,10 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             // [carlod] FUN_00420870's record state / flags for this copy (null without the part-19 model)
             LibRw::CarVis cv;
             const LibRw::CarVis* pv = carvis(slot, m, &cv);
-            // [partmorph] FUN_00420870 -> FUN_0041f770 @ 0x0041f770 (MASHED_PARTMORPH=1): the part 0x12 morph
+            // [partmorph] FUN_00420870 -> FUN_0041f770 @ 0x0041f770: the part 0x12 morph
             // position for this copy and part 0x14's frame pose (PartMorphStep)
             float morph = -1.f;
-            if (PartMorphEnabled() && car_parts_[slot].ok && np < 20)
+            if (car_parts_[slot].ok && np < 20)
                 morph = PartMorphStep(car_parts_[slot], cm, slot, m, pv ? pv->state : 0, &poses[np], &np);
             if (car_env_ok_ && cm.env_ok) {
                 // 0x00420870 decomp: rec+0x280 -= (v.z + v.x) * [0x005cd2ac] (0.0003), v from

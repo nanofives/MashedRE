@@ -2911,7 +2911,8 @@ void CookCtrlByteAFromKeyboard() {
     }
 }
 
-// [D5-INTROMOVIES] MASHED_INTRO_MOVIES=1 (default ON since L-63, seeded by Core/FaithDefaults.cpp; D-11062, L-45),
+// [D5-INTROMOVIES] always (default ON since L-63; D-11062, L-45; MASHED_INTRO_MOVIES and its opt-out deleted by
+// D5-KNOBS-E5-REST),
 // verify/intromovies_20261028/PREREG_D5-INTROMOVIES.md. The boot movies of FUN_00402750:
 // 0x00402838 call FUN_00495350 (four logo movies), then 0x0040283f call FUN_00494c80 (small.mpg).
 // FUN_00495350: local_18 = {1,2,3,4}; FUN_00494a80(0, idx, 0) -> FUN_004944c0(idx) opens the path
@@ -2942,7 +2943,7 @@ static int IntroEnvInt(const char* name) {
     return GetEnvironmentVariableA(name, b, sizeof(b)) > 0 ? std::atoi(b) : 0;
 }
 void RunBootIntroMovies() {
-    if (IntroEnvInt("MASHED_INTRO_MOVIES") != 1 || !g_device) return;
+    if (!g_device) return;
     static const char* const kMoviePath[5] = {      // 0x006147c4 table
         "original/toastart/pc/movies/frontend.mpg",
         "original/toastart/pc/movies/empire.mpg",
@@ -9554,7 +9555,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     }
 
     // [D5-INTROMOVIES] boot movies (FUN_00402750 0x00402838 / 0x0040283f), before
-    // the menu music starts. MASHED_INTRO_MOVIES=1 (default ON, L-63; MASHED_NO_INTRO_MOVIES=1 opts out).
+    // the menu music starts. Always (L-63; the MASHED_INTRO_MOVIES knob was deleted by D5-KNOBS-E5-REST).
     RunBootIntroMovies();
 
     // Real audio backend (DirectSound). Non-fatal: if no audio device is

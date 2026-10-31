@@ -149,13 +149,13 @@ void VehiclePhysics_ClearKilled(int slot);
 void VehiclePhysics_A4PreBegin();
 void VehiclePhysics_A4Pre(int slot, float dt, PlayerCarIO io);
 void VehiclePhysics_A4PreEnd();
-// [substep 2026-10-21] MASHED_SUBSTEP_OUTER=1 (verify/substep_20261021/PREREG_substep.md): FUN_004709a0 (called once per
+// [substep 2026-10-21] (verify/substep_20261021/PREREG_substep.md; knob MASHED_SUBSTEP_OUTER deleted by D5-KNOBS-E5-REST,
+// it always runs): FUN_004709a0 (called once per
 // substep at 0x00471137) steps cars 0..15 inside (0x00470c47..0x00470c53), so the substeps interleave across cars.
 // StepCarsOuter steps the player and the A4 pre-phase's AI cars by StepCar's phase functions in FUN_00470c70's order:
 // every car's pre-part and A4 / refresh, then substep rounds with cars 0..15 inside, then every car's tail. slots
 // ascending; returns false (nothing stepped) on a bad list. (u9778's fiber form, MASHED_SUBSTEP_INTERLEAVE, was deleted
 // in soflip: StepCarsOuter's MASHED_SUBSTEP_OUTER_ORDER=fiber control reproduces its order.)
-bool VehiclePhysics_OuterEnabled();
 bool VehiclePhysics_StepCarsOuter(int n, const int* slots, float dt, PlayerCarIO* ios);
 // [D3-CF-SNAP-RETIRE 2026-10-28] OuterSnapshot / OuterRestore deleted (L-43): a car StepCarsOuter stepped keeps the result.
 // [u9749] MASHED_RECDUMP=<path> (diagnostic, default OFF): one MSD1 record of slot MASHED_RECDUMP_SLOT (default 0) per
