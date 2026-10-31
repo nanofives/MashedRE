@@ -1,0 +1,314 @@
+rva	hooks_name	subsystem	confidence	status	library_object	lib_function	lib_size	first_diff	category	note
+0x0057c4b0	FUN_0057c4b0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0057c5b0	qh_fprintf	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setsize	91	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.64; +0x0 lib[push edi] orig[sub esp, 0x3e8] (same-insn-start)
+0x0057c650	FUN_0057c650	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0057c670	FUN_0057c670	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0057ca30	FUN_0057ca30	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0057cae0	FUN_0057cae0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_addhash	67	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.82; +0x1 lib[mov eax, dword ptr [esp + 0x10]] orig[mov edx, dword ptr [esp + 0x10]] (same-insn-start)
+0x0057cb30	qh_check_bestdist	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_check_bestdist	864	0x27b	register allocation (same instruction, different registers)	mnemonic similarity 1.00; +0x27b lib[mov esi, dword ptr [esp + 0x28]] orig[mov ebp, dword ptr [esp + 0x30]] (same-insn-start)
+0x0057ce90	FUN_0057ce90	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_check_maxout	1097	0x16	prologue / stack-frame or argument-load order	mnemonic similarity 0.81; +0x16 lib[push edi] orig[xor ebx, ebx] (same-insn-start)
+0x0057d370	FUN_0057d370	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0057d580	FUN_0057d580	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_check_points	844	0xc	prologue / stack-frame or argument-load order	mnemonic similarity 0.77; +0xc lib[push edi] orig[xor ebx, ebx] (same-insn-start)
+0x0057d990	FUN_0057d990	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_checkconvex	1228	0x5e	branch displacement (earlier size difference)	mnemonic similarity 0.99; +0x5e lib[je 0x4c5] orig[je 0x4c8] (same-insn-start)
+0x0057de60	FUN_0057de60	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_checkfacet	2202	0x3b9	register allocation (same instruction, different registers)	mnemonic similarity 0.95; +0x3b9 lib[mov eax, dword ptr [edi + 0xc]] orig[mov al, byte ptr [edi + 0xf]] (same-insn-start)
+0x0057e750	FUN_0057e750	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_checkflipped_all	202			masked 56 B
+0x0057e820	FUN_0057e820	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_checkpolygon	1087	0x13	register allocation (same instruction, different registers)	mnemonic similarity 0.96; +0x13 lib[xor ebp, ebp] orig[xor ebx, ebx] (same-insn-start)
+0x0057ec70	FUN_0057ec70	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_checkvertex	264			masked 64 B
+0x0057ed80	FUN_0057ed80	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_clearcenters	128			masked 44 B
+0x0057ee00	FUN_0057ee00	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0057f030	FUN_0057f030	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_delridge	77			masked 28 B
+0x0057f080	FUN_0057f080	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_delvertex	52			masked 20 B
+0x0057f0c0	FUN_0057f0c0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_facet3vertex	316	0xa	prologue / stack-frame or argument-load order	mnemonic similarity 0.98; +0xa lib[xor ebp, ebp] orig[push edi] (same-insn-start)
+0x0057f200	FUN_0057f200	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_findgood	726			masked 128 B
+0x0057f4e0	FUN_0057f4e0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_findgood_all	611	0x3	register allocation (same instruction, different registers)	mnemonic similarity 0.97; +0x3 lib[push ebp] orig[push ebx] (same-insn-start)
+0x0057f750	FUN_0057f750	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_furthestnext	138	0x14	branch displacement (earlier size difference)	mnemonic similarity 0.75; +0x14 lib[je 0x87] orig[je 0x109] (same-insn-start)
+0x0057f860	FUN_0057f860	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_furthestout	211	0x12	prologue / stack-frame or argument-load order	mnemonic similarity 0.91; +0x12 lib[mov dword ptr [esp + 0x10], 0] orig[push edi] (same-insn-start)
+0x0057f940	FUN_0057f940	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_infiniteloop	34			masked 16 B
+0x0057f970	FUN_0057f970	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_initbuild	1214	0x7	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.62; +0x7 lib[sub esp, 0x14] orig[sub esp, 0x18] (same-insn-start)
+0x00580090	FUN_00580090	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_initialhull	782			masked 256 B
+0x005803a0	FUN_005803a0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_initialvertices	1084	0x4	register allocation (same instruction, different registers)	mnemonic similarity 0.94; +0x4 lib[push esi] orig[push ebp] (same-insn-start)
+0x005808a0	FUN_005808a0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00580ac0	FUN_00580ac0	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_matchduplicates	992			masked 192 B
+0x00580ea0	FUN_00580ea0	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_nearcoplanar	278			masked 64 B
+0x00580fc0	FUN_00580fc0	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_nearvertex	343			masked 48 B
+0x00581120	FUN_00581120	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_newhashtable	72			masked 12 B
+0x00581170	FUN_00581170	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_nextridge3d	108			masked 0 B
+0x005811e0	FUN_005811e0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_outcoplanar	176	0x1d	register allocation (same instruction, different registers)	mnemonic similarity 0.93; +0x1d lib[push edi] orig[push ebx] (same-insn-start)
+0x00581290	FUN_00581290	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_point_add	134	0x5a	prologue / stack-frame or argument-load order	mnemonic similarity 0.87; +0x5a lib[pop edi] orig[mov dword ptr [esp + 0x18], 0] (same-insn-start)
+0x00581320	FUN_00581320	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00581540	FUN_00581540	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x005815f0	FUN_005815f0	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_prependfacet	140			masked 44 B
+0x00581680	FUN_00581680	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_printhashtable	367	0x8	register allocation (same instruction, different registers)	mnemonic similarity 0.99; +0x8 lib[push edi] orig[push ebx] (same-insn-start)
+0x005817f0	FUN_005817f0	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_printlists	314			masked 108 B
+0x00581930	FUN_00581930	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_resetlists	258			masked 68 B
+0x00581a40	FUN_00581a40	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_triangulate	1410	0x14	prologue / stack-frame or argument-load order	mnemonic similarity 0.91; +0x14 lib[push edi] orig[mov esi, 1] (same-insn-start)
+0x00581ff0	FUN_00581ff0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_triangulate_facet	635	0x7	prologue / stack-frame or argument-load order	mnemonic similarity 0.87; +0x7 lib[push esi] orig[xor ebp, ebp] (same-insn-start)
+0x00582220	FUN_00582220	third-party-library[qhull-2002.1]	C2	identical	poly2.obj	_qh_triangulate_link	206			masked 56 B
+0x005822f0	FUN_005822f0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_triangulate_mirror	144	0xa	prologue / stack-frame or argument-load order	mnemonic similarity 0.77; +0xa lib[push ebp] orig[cmp eax, 3] (same-insn-start)
+0x00582390	FUN_00582390	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00582420	FUN_00582420	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_vertexintersect_new	113	0x10	register allocation (same instruction, different registers)	mnemonic similarity 0.85; +0x10 lib[mov esi, dword ptr [esp + 0x14]] orig[mov ecx, dword ptr [esp + 0x14]] (same-insn-start)
+0x005824a0	FUN_005824a0	third-party-library[qhull-2002.1]	C2	differs	poly2.obj	_qh_vertexneighbors	176	0x37	prologue / stack-frame or argument-load order	mnemonic similarity 0.97; +0x37 lib[test ebx, ebx] orig[push esi] (same-insn-start)
+0x00582550	FUN_00582550	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00582680	FUN_00582680	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setappend	74			masked 4 B
+0x005826d0	FUN_005826d0	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setappend_set	161	0x5	prologue / stack-frame or argument-load order	mnemonic similarity 0.63; +0x5 lib[test ecx, ecx] orig[push ebp] (same-insn-start)
+0x005827f0	FUN_005827f0	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setappend2ndlast	76			masked 4 B
+0x00582840	FUN_00582840	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setcheck	155	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.81; +0x0 lib[push esi] orig[push edi] (same-insn-start)
+0x00582930	FUN_00582930	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00582a20	FUN_00582a20	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setcopy	82	0x2d	prologue / stack-frame or argument-load order	mnemonic similarity 0.82; +0x2d lib[add esp, 4] orig[lea esi, [edi + 4]] (same-insn-start)
+0x00582a60	FUN_00582a60	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setdel	91	0x8	branch displacement (earlier size difference)	mnemonic similarity 0.91; +0x8 lib[je 0x57] orig[je 0x56] (same-insn-start)
+0x00582ac0	FUN_00582ac0	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setdellast	68			masked 0 B
+0x00582b10	FUN_00582b10	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setdelnth	117	0x6	prologue / stack-frame or argument-load order	mnemonic similarity 0.68; +0x6 lib[push edi] orig[mov eax, dword ptr [esi]] (same-insn-start)
+0x00582bf0	FUN_00582bf0	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setdelnthsorted	133	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.62; +0x1 lib[push esi] orig[push ebp] (same-insn-start)
+0x00582ce0	FUN_00582ce0	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setdelsorted	90			masked 0 B
+0x00582d40	FUN_00582d40	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setequal	86			masked 0 B
+0x00582da0	FUN_00582da0	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setequal_except	113	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.93; +0x1 lib[mov edx, dword ptr [esp + 4]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+0x00582e10	FUN_00582e10	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setequal_skip	86			masked 0 B
+0x00582e70	FUN_00582e70	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setfree	96			masked 24 B
+0x00582ed0	FUN_00582ed0	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setfreelong	48			masked 8 B
+0x00582f00	FUN_00582f00	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setin	44			masked 0 B
+0x00582f30	FUN_00582f30	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setindex	62	0x13	prologue / stack-frame or argument-load order	mnemonic similarity 0.78; +0x13 lib[cmp ecx, eax] orig[push esi] (same-insn-start)
+0x00582f70	FUN_00582f70	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setlarger	190	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.68; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+0x00583070	FUN_00583070	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setlast	37	0x7	branch displacement (earlier size difference)	mnemonic similarity 0.75; +0x7 lib[je 0x22] orig[je 0x20] (same-insn-start)
+0x005830a0	FUN_005830a0	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setnew	163			masked 36 B
+0x00583150	FUN_00583150	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setnew_delnthsorted	360	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.65; +0x0 lib[push ebx] orig[push ecx] (same-insn-start)
+0x00583330	FUN_00583330	third-party-library[qhull-2002.1]	C2	identical	qset.obj	_qh_setprint	131			masked 32 B
+0x005833c0	FUN_005833c0	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_setreplace	115	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.69; +0x0 lib[mov ecx, dword ptr [esp + 8]] orig[push ebx] (same-insn-start)
+0x005834a0	FUN_005834a0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00583560	FUN_00583560	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x005836a0	FUN_005836a0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00583960	FUN_00583960	third-party-library[qhull-2002.1]	C2	differs	qset.obj	_qh_settempfree_all	114	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.79; +0x0 lib[mov eax, dword ptr [0x30]] orig[mov ecx, dword ptr [0x7dc910]] (same-insn-start)
+0x00583a40	FUN_00583a40	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00583c50	FUN_00583c50	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00583e40	FUN_00583e40	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00583f10	FUN_00583f10	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00583f80	FUN_00583f80	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00584070	FUN_00584070	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_premerge	440			masked 172 B
+0x00584230	FUN_00584230	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_postmerge	501	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.99; +0x0 lib[mov eax, dword ptr [0x180]] orig[push ecx] (same-insn-start)
+0x00584430	FUN_00584430	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_all_merges	680			masked 208 B
+0x005846e0	FUN_005846e0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_appendmergeset	404	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.95; +0x0 lib[push esi] orig[push ebx] (same-insn-start)
+0x00584880	FUN_00584880	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_basevertices	198	0x8	register allocation (same instruction, different registers)	mnemonic similarity 0.91; +0x8 lib[push eax] orig[push esi] (same-insn-start)
+0x00584950	FUN_00584950	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_checkzero	752	0x8	prologue / stack-frame or argument-load order	mnemonic similarity 0.98; +0x8 lib[xor ebx, ebx] orig[push ebp] (same-insn-start)
+0x00584c50	FUN_00584c50	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_degen_redundant_facet	527	0x31	branch displacement (earlier size difference)	mnemonic similarity 0.68; +0x31 lib[je 0xde] orig[je 0xda] (same-insn-start)
+0x00584d80	FUN_00584d80	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_degen_redundant_neighbors	840	0x6	prologue / stack-frame or argument-load order	mnemonic similarity 0.71; +0x6 lib[mov ebx, dword ptr [esp + 8]] orig[push ebp] (same-insn-start)
+0x00584f40	FUN_00584f40	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_find_newvertex	885	0x7	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.83; +0x7 lib[sub esp, 0xc] orig[sub esp, 0x10] (same-insn-start)
+0x00585380	FUN_00585380	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x00585660	FUN_00585660	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_flippedmerges	616	0x11	instruction selection or scheduling	mnemonic similarity 0.88; +0x11 lib[mov edi, 4] orig[xor edi, edi] (same-insn-start)
+0x00585890	FUN_00585890	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_forcedmerges	720	0x24f	register allocation (same instruction, different registers)	mnemonic similarity 1.00; +0x24f lib[mov edi, dword ptr [esp + 0x1c]] orig[mov esi, dword ptr [esp + 0x14]] (same-insn-start)
+0x00585b60	FUN_00585b60	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_getmergeset	447	0x32	register allocation (same instruction, different registers)	mnemonic similarity 0.94; +0x32 lib[push esi] orig[push ebx] (same-insn-start)
+0x00585d70	FUN_00585d70	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_getmergeset_initial	366	0xa	prologue / stack-frame or argument-load order	mnemonic similarity 0.94; +0xa lib[inc edx] orig[push ebx] (same-insn-start)
+0x00585ee0	FUN_00585ee0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_makeridges	343	0x15	branch displacement (earlier size difference)	mnemonic similarity 0.95; +0x15 lib[je 0x153] orig[je 0x158] (same-insn-start)
+0x00586040	FUN_00586040	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mark_dupridges	436	0x26	register allocation (same instruction, different registers)	mnemonic similarity 0.85; +0x26 lib[push esi] orig[push ebx] (same-insn-start)
+0x00586190	FUN_00586190	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_maydropneighbor	724	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.68; +0x0 lib[mov ecx, dword ptr [0x828]] orig[push ecx] (same-insn-start)
+0x00586340	FUN_00586340	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_merge_degenredundant	755			masked 224 B
+0x00586640	FUN_00586640	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_merge_nonconvex	606	0xd	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.99; +0xd lib[sub esp, 0x14] orig[sub esp, 0x10] (same-insn-start)
+0x005868a0	FUN_005868a0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergecycle	541	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.74; +0x2 lib[sub esp, 8] orig[sub esp, 0x10] (same-insn-start)
+0x00586b90	FUN_00586b90	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_mergecycle_all	510			masked 92 B
+0x00586d90	FUN_00586d90	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_mergecycle_facets	234			masked 76 B
+0x00586e80	FUN_00586e80	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_mergecycle_neighbors	576			masked 120 B
+0x005870c0	FUN_005870c0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergecycle_ridges	727	0x39	register allocation (same instruction, different registers)	mnemonic similarity 0.95; +0x39 lib[mov edx, dword ptr [0x828]] orig[mov ecx, dword ptr [0x914648]] (same-insn-start)
+0x00587370	FUN_00587370	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergecycle_vneighbors	374	0x20	register allocation (same instruction, different registers)	mnemonic similarity 0.92; +0x20 lib[mov eax, dword ptr [0x828]] orig[mov ecx, dword ptr [0x914648]] (same-insn-start)
+0x005874f0	FUN_005874f0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergefacet	1287	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.85; +0x2 lib[sub esp, 8] orig[sub esp, 0x10] (same-insn-start)
+0x00587ad0	FUN_00587ad0	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_mergefacet2d	336			masked 24 B
+0x00587c20	FUN_00587c20	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergeneighbors	258	0xa	register allocation (same instruction, different registers)	mnemonic similarity 0.94; +0xa lib[push esi] orig[push ebp] (same-insn-start)
+0x00587d30	FUN_00587d30	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_mergeridges	197			masked 24 B
+0x00587e00	FUN_00587e00	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergesimplex	1044	0xa	instruction selection or scheduling	mnemonic similarity 0.75; +0xa lib[xor esi, esi] orig[test eax, eax] (same-insn-start)
+0x005882e0	FUN_005882e0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergevertex_neighbors	249	0x5	register allocation (same instruction, different registers)	mnemonic similarity 0.79; +0x5 lib[push ebp] orig[push ebx] (same-insn-start)
+0x00588440	FUN_00588440	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_mergevertices	351	0x44	branch displacement (earlier size difference)	mnemonic similarity 0.92; +0x44 lib[je 0xf6] orig[je 0xed] (same-insn-start)
+0x005885a0	FUN_005885a0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_neighbor_intersections	310	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.95; +0x0 lib[push ebp] orig[push ebx] (same-insn-start)
+0x005886e0	FUN_005886e0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_reducevertices	379	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.75; +0x2 lib[sub esp, 8] orig[sub esp, 0x14] (same-insn-start)
+0x005888f0	FUN_005888f0	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_remove_extravertices	412			masked 84 B
+0x00588a90	FUN_00588a90	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_rename_sharedvertex	478	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.69; +0x0 lib[push ecx] orig[sub esp, 8] (same-insn-start)
+0x00588ce0	FUN_00588ce0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_renameridgevertex	289	0x1a	register allocation (same instruction, different registers)	mnemonic similarity 0.81; +0x1a lib[mov ebp, eax] orig[mov ebx, eax] (same-insn-start)
+0x00588e70	FUN_00588e70	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_renamevertex	527			masked 124 B
+0x00589080	FUN_00589080	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_test_appendmerge	784	0x33	branch displacement (earlier size difference)	mnemonic similarity 0.98; +0x33 lib[je 0x3c] orig[je 0x41] (same-insn-start)
+0x005893a0	FUN_005893a0	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_test_vneighbors	346	0x38	register allocation (same instruction, different registers)	mnemonic similarity 0.94; +0x38 lib[push edi] orig[push ebx] (same-insn-start)
+0x00589500	FUN_00589500	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_tracemerge	330			masked 108 B
+0x00589650	FUN_00589650	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_updatetested	232			masked 28 B
+0x00589740	FUN_00589740	third-party-library[qhull-2002.1]	C2	differs	merge.obj	_qh_vertexridges	242	0x15	register allocation (same instruction, different registers)	mnemonic similarity 0.64; +0x15 lib[mov edi, dword ptr [esp + 0x14]] orig[mov esi, dword ptr [esp + 0x14]] (same-insn-start)
+0x00589890	FUN_00589890	third-party-library[qhull-2002.1]	C2	identical	merge.obj	_qh_willdelete	56			masked 20 B
+0x005898d0	FUN_005898d0	third-party-library[qhull-2002.1]	C2	differs	global.obj	_qh_freebuffers	501	0x126	branch displacement (earlier size difference)	mnemonic similarity 0.93; +0x126 lib[je 0x130] orig[je 0x136] (same-insn-start)
+0x00589b00	FUN_00589b00	third-party-library[qhull-2002.1]	C2	differs	global.obj	_qh_freebuild	703	0xb8	branch displacement (earlier size difference)	mnemonic similarity 0.97; +0xb8 lib[je 0x209] orig[je 0x204] (same-insn-start)
+0x00589dc0	FUN_00589dc0	third-party-library[qhull-2002.1]	C2	identical	global.obj	_qh_freeqhull	88			masked 40 B
+0x00589e20	FUN_00589e20	third-party-library[qhull-2002.1]	C2	differs	global.obj	_qh_init_B	257	0x24	branch displacement (earlier size difference)	mnemonic similarity 0.61; +0x24 lib[jne 0x2a] orig[jne 0xa0] (same-insn-start)
+0x00589fa0	FUN_00589fa0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0058d6d0	FUN_0058d6d0	third-party-library[qhull-2002.1]	C2	identical	global.obj	_qh_initqhull_buffers	319			masked 148 B
+0x0058d810	FUN_0058d810	third-party-library[qhull-2002.1]	C2	differs	global.obj	_qh_initqhull_globals	2706	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.64; +0x2 lib[sub esp, 0xe4] orig[sub esp, 0x1ac] (same-insn-start)
+0x0058e7b0	FUN_0058e7b0	third-party-library[qhull-2002.1]	C2	differs	global.obj	_qh_initqhull_start	395	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.86; +0x0 lib[push edi] orig[push esi] (same-insn-start)
+0x0058e940	FUN_0058e940	third-party-library[qhull-2002.1]	C2	differs	global.obj	_qh_initthresholds	1183	0x9	register allocation (same instruction, different registers)	mnemonic similarity 0.77; +0x9 lib[mov eax, dword ptr [0x200]] orig[mov ecx, dword ptr [0x914020]] (same-insn-start)
+0x0058ed00	FUN_0058ed00	third-party-library[qhull-2002.1]	C2	differs	global.obj	_qh_option	237	0xf	register allocation (same instruction, different registers)	mnemonic similarity 0.66; +0xf lib[push eax] orig[push edi] (same-insn-start)
+0x0058edf0	FUN_0058edf0	third-party-library[qhull-2002.1]	C2	identical	global.obj	_qh_strtod	40			masked 4 B
+0x0058ee20	FUN_0058ee20	third-party-library[qhull-2002.1]	C2	identical	global.obj	_qh_strtol	42			masked 4 B
+0x0058ee50	FUN_0058ee50	third-party-library[qhull-2002.1]	C2	differs	mem.obj	_qh_memalloc	418	0xd	prologue / stack-frame or argument-load order	mnemonic similarity 0.95; +0xd lib[push edi] orig[mov eax, dword ptr [0x7dc900]] (same-insn-start)
+0x0058f010	FUN_0058f010	third-party-library[qhull-2002.1]	C2	differs	mem.obj	_qh_memfree	130	0x7	prologue / stack-frame or argument-load order	mnemonic similarity 0.90; +0x7 lib[je 0x80] orig[push edi] (same-insn-start)
+0x0058f0a0	FUN_0058f0a0	third-party-library[qhull-2002.1]	C2	differs	mem.obj	_qh_memfreeshort	132	0x26	branch displacement (earlier size difference)	mnemonic similarity 0.94; +0x26 lib[je 0x3a] orig[je 0x41] (same-insn-start)
+0x0058f140	FUN_0058f140	third-party-library[qhull-2002.1]	C2	identical	mem.obj	_qh_meminit	26			masked 8 B
+0x0058f160	FUN_0058f160	third-party-library[qhull-2002.1]	C2	differs	mem.obj	_qh_meminitbuffers	199	0x5d	prologue / stack-frame or argument-load order	mnemonic similarity 0.95; +0x5d lib[push 4] orig[mov eax, dword ptr [0x7d3ff8]] (same-insn-start)
+0x0058f240	FUN_0058f240	third-party-library[qhull-2002.1]	C2	differs	mem.obj	_qh_memsetup	243	0x72	prologue / stack-frame or argument-load order	mnemonic similarity 0.94; +0x72 lib[push edx] orig[mov eax, dword ptr [0x7d3ff8]] (same-insn-start)
+0x0058f360	FUN_0058f360	third-party-library[qhull-2002.1]	C2	identical	mem.obj	_qh_memsize	137			masked 56 B
+0x0058f3f0	FUN_0058f3f0	third-party-library[qhull-2002.1]	C2	identical	mem.obj	_qh_memstatistics	299			masked 124 B
+0x0058f520	FUN_0058f520	third-party-library[qhull-2002.1]	C2	differs	user.obj	_qh_new_qhull	364	0x9d	branch displacement (earlier size difference)	mnemonic similarity 0.97; +0x9d lib[jne 0x158] orig[jne 0x15e] (same-insn-start)
+0x0058f6a0	FUN_0058f6a0	third-party-library[qhull-2002.1]	C2	differs	user.obj	_qh_errexit	569	0x5	prologue / stack-frame or argument-load order	mnemonic similarity 0.97; +0x5 lib[test eax, eax] orig[push esi] (same-insn-start)
+0x0058f8e0	FUN_0058f8e0	third-party-library[qhull-2002.1]	C2	identical	user.obj	_qh_errprint	357			masked 140 B
+0x0058fa50	FUN_0058fa50	third-party-library[qhull-2002.1]	C2	identical	user.obj	_qh_printfacetlist	140			masked 32 B
+0x0058fae0	FUN_0058fae0	third-party-library[qhull-2002.1]	C2	identical	qhull.obj	_qh_qhull	601			masked 292 B
+0x0058fd40	FUN_0058fd40	third-party-library[qhull-2002.1]	C2	differs	qhull.obj	_qh_addpoint	1160	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.92; +0x2 lib[sub esp, 0x10] orig[sub esp, 0x1c] (same-insn-start)
+0x005901f0	FUN_005901f0	third-party-library[qhull-2002.1]	C2	differs	qhull.obj	_qh_build_withrestart	494	0x5	prologue / stack-frame or argument-load order	mnemonic similarity 0.95; +0x5 lib[mov dword ptr [0x7d0], 1] orig[push edi] (same-insn-start)
+0x005903e0	FUN_005903e0	third-party-library[qhull-2002.1]	C2	differs	qhull.obj	_qh_buildhull	476	0x1d	prologue / stack-frame or argument-load order	mnemonic similarity 0.96; +0x1d lib[push esi] orig[mov eax, dword ptr [0x91459c]] (same-insn-start)
+0x005905d0	FUN_005905d0	third-party-library[qhull-2002.1]	C2	identical	qhull.obj	_qh_buildtracing	815			masked 292 B
+0x00590900	FUN_00590900	third-party-library[qhull-2002.1]	C2	identical	qhull.obj	_qh_errexit2	48			masked 12 B
+0x00590930	FUN_00590930	third-party-library[qhull-2002.1]	C2	differs	qhull.obj	_qh_findhorizon	1076	0xf	prologue / stack-frame or argument-load order	mnemonic similarity 0.93; +0xf lib[xor ebx, ebx] orig[push esi] (same-insn-start)
+0x00590dc0	FUN_00590dc0	third-party-library[qhull-2002.1]	C2	differs	qhull.obj	_qh_nextfurthest	600	0x1a	branch displacement (earlier size difference)	mnemonic similarity 0.98; +0x1a lib[je 0x109] orig[je 0x258] (same-insn-start)
+0x00591020	FUN_00591020	third-party-library[qhull-2002.1]	C2	identical	qhull.obj	_qh_partitionall	923			masked 228 B
+0x005913c0	FUN_005913c0	third-party-library[qhull-2002.1]	C2	identical	qhull.obj	_qh_partitioncoplanar	839			masked 272 B
+0x00591710	FUN_00591710	third-party-library[qhull-2002.1-continuation]	C2	differs	qhull.obj	_qh_partitionpoint	763	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.79; +0x0 lib[mov eax, dword ptr [0x7fc]] orig[push ecx] (same-insn-start)
+0x00591a80	FUN_00591a80	third-party-library[qhull-2002.1-continuation]	C2	differs	qhull.obj	_qh_partitionvisible	512	0x36	prologue / stack-frame or argument-load order	mnemonic similarity 0.99; +0x36 lib[mov dword ptr [ebp], 0] orig[push edi] (same-insn-start)
+0x00591c80	FUN_00591c80	third-party-library[qhull-2002.1-continuation]	C2	identical	qhull.obj	_qh_precision	93			masked 44 B
+0x00591ce0	FUN_00591ce0	third-party-library[qhull-2002.1-continuation]	C2	differs	qhull.obj	_qh_printsummary	2286	0x10	register allocation (same instruction, different registers)	mnemonic similarity 1.00; +0x10 lib[mov dword ptr [esp + 0x10], eax] orig[mov dword ptr [esp + 0xc], eax] (same-insn-start)
+0x005925d0	FUN_005925d0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_copypoints	89	0x9	prologue / stack-frame or argument-load order	mnemonic similarity 0.90; +0x9 lib[imul esi, dword ptr [esp + 0x18]] orig[mov eax, dword ptr [0x7d3ff8]] (same-insn-start)
+0x00592640	FUN_00592640	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_crossproduct	68	0x24	register allocation (same instruction, different registers)	mnemonic similarity 0.86; +0x24 lib[fld dword ptr [eax]] orig[fld dword ptr [ecx + 8]] (same-insn-start)
+0x00592690	FUN_00592690	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_determinant	308			masked 40 B
+0x005927d0	FUN_005927d0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_detjoggle	398	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.78; +0x2 lib[sub esp, 0xc] orig[sub esp, 8] (same-insn-start)
+0x005929c0	FUN_005929c0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_detroundoff	1408	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.90; +0x0 lib[push 0x654] orig[push ebp] (same-insn-start)
+0x00592fc0	FUN_00592fc0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_detsimplex	236	0x11	register allocation (same instruction, different registers)	mnemonic similarity 0.96; +0x11 lib[push esi] orig[push ebp] (same-insn-start)
+0x005930b0	FUN_005930b0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_distnorm	38			masked 0 B
+0x005930e0	FUN_005930e0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_divzero	182			masked 16 B
+0x005931a0	FUN_005931a0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_facetarea	281	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.93; +0x1 lib[push esi] orig[push ebp] (same-insn-start)
+0x005932c0	FUN_005932c0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_facetarea_simplex	516	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.98; +0x2 lib[sub esp, 0xc] orig[sub esp, 8] (same-insn-start)
+0x005934d0	FUN_005934d0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_facetcenter	100			masked 24 B
+0x00593540	FUN_00593540	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_findgooddist	482	0xc	prologue / stack-frame or argument-load order	mnemonic similarity 0.95; +0xc lib[mov dword ptr [esp + 0xc], 0xff7fffff] orig[push edi] (same-insn-start)
+0x00593730	FUN_00593730	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_getarea	364			masked 116 B
+0x005938a0	FUN_005938a0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_gram_schmidt	232			masked 24 B
+0x00593990	FUN_00593990	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_inthresholds	201			masked 32 B
+0x00593a60	FUN_00593a60	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_joggleinput	716	0xa	register allocation (same instruction, different registers)	mnemonic similarity 0.87; +0xa lib[push esi] orig[push ebx] (same-insn-start)
+0x00593de0	FUN_00593de0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_maxabsval	79			masked 4 B
+0x00593e30	FUN_00593e30	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_maxmin	518	0x8	instruction selection or scheduling	mnemonic similarity 0.89; +0x8 lib[mov dword ptr [0x7ec], 0] orig[test eax, eax] (same-insn-start)
+0x00594080	FUN_00594080	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_maxouter	94			masked 40 B
+0x005940e0	FUN_005940e0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_maxsimplex	937	0x198	register allocation (same instruction, different registers)	mnemonic similarity 0.97; +0x198 lib[mov eax, dword ptr [esp + 0x24]] orig[mov edx, dword ptr [esp + 0x24]] (same-insn-start)
+0x00594490	FUN_00594490	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_orientoutside	93	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.88; +0x0 lib[push ecx] orig[mov ecx, dword ptr [0x91458c]] (same-insn-start)
+0x005944f0	FUN_005944f0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_outerinner	254	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.74; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+0x00594660	FUN_00594660	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_pointdist	62			masked 4 B
+0x005946a0	FUN_005946a0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_printmatrix	128			masked 24 B
+0x00594720	FUN_00594720	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_printpoints	159			masked 48 B
+0x005947c0	FUN_005947c0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_projectinput	760	0x2	prologue / stack-frame or argument-load order	mnemonic similarity 0.93; +0x2 lib[push ebp] orig[mov ebx, dword ptr [0x914024]] (same-insn-start)
+0x00594b50	FUN_00594b50	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_projectpoints	276	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.94; +0x2 lib[sub esp, 0xc] orig[sub esp, 8] (same-insn-start)
+0x00594c70	FUN_00594c70	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_rand	84			masked 12 B
+0x00594cd0	FUN_00594cd0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_srand	43			masked 12 B
+0x00594d00	FUN_00594d00	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x00594d70	FUN_00594d70	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_randommatrix	157			masked 16 B
+0x00594e10	FUN_00594e10	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x00594ec0	FUN_00594ec0	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x00594fe0	FUN_00594fe0	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x00595090	FUN_00595090	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x00595240	FUN_00595240	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_scalepoints	710	0x11	instruction selection or scheduling	mnemonic similarity 0.79; +0x11 lib[cmp eax, edi] orig[test eax, eax] (same-insn-start)
+0x005955a0	FUN_005955a0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_sethalfspace	615	0x9	prologue / stack-frame or argument-load order	mnemonic similarity 0.77; +0x9 lib[push ebx] orig[mov edx, dword ptr [ebp + 0x18]] (same-insn-start)
+0x00595870	FUN_00595870	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_sethalfspace_all	201	0x1c	prologue / stack-frame or argument-load order	mnemonic similarity 0.92; +0x1c lib[push ebx] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+0x00595950	FUN_00595950	third-party-library[qhull-2002.1-continuation]	C2	identical	geom2.obj	_qh_sharpnewfacets	289			masked 56 B
+0x00595a80	FUN_00595a80	third-party-library[qhull-2002.1-continuation]	C2	differs	geom2.obj	_qh_voronoi_center	1048	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.66; +0x2 lib[sub esp, 0x20] orig[sub esp, 0x24] (same-insn-start)
+0x00595f10	FUN_00595f10	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_distplane	436	0xdb	register allocation (same instruction, different registers)	mnemonic similarity 0.88; +0xdb lib[mov ecx, dword ptr [ebx + 8]] orig[mov edx, dword ptr [ebx + 8]] (same-insn-start)
+0x005960d0	FUN_005960d0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_findbest	1039	0x20e	register allocation (same instruction, different registers)	mnemonic similarity 0.99; +0x20e lib[mov ecx, dword ptr [esp + 0x34]] orig[mov eax, dword ptr [esp + 0x34]] (same-insn-start)
+0x005964e0	FUN_005964e0	third-party-library[qhull-2002.1-continuation]	C2	identical	geom.obj	_qh_findbesthorizon	879			masked 144 B
+0x00596850	FUN_00596850	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_findbestnew	827	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.99; +0x2 lib[sub esp, 0x18] orig[sub esp, 0x14] (same-insn-start)
+0x00596b90	FUN_00596b90	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_backnormal	571	0x7	register allocation (same instruction, different registers)	mnemonic similarity 0.74; +0x7 lib[push ebx] orig[push ebp] (same-insn-start)
+0x00596d40	FUN_00596d40	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x00596f60	FUN_00596f60	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_getangle	142	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.88; +0x0 lib[sub esp, 8] orig[push ecx] (same-insn-start)
+0x00596ff0	FUN_00596ff0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_getcenter	161	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.97; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+0x00597090	FUN_00597090	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x00597210	FUN_00597210	third-party-library[qhull-2002.1-continuation]	C2	identical	geom.obj	_qh_getdistance	273			masked 12 B
+0x00597330	FUN_00597330	third-party-library[qhull-2002.1-continuation]	C2	identical	geom.obj	_qh_normalize	28			masked 4 B
+0x00597350	FUN_00597350	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_normalize2	745	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.96; +0x1 lib[push esi] orig[push ebx] (same-insn-start)
+0x00597650	FUN_00597650	third-party-library[qhull-2002.1-continuation]	C2	identical	geom.obj	_qh_projectpoint	111			masked 28 B
+0x005976c0	FUN_005976c0	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_setfacetplane	1346	0x1c	register allocation (same instruction, different registers)	mnemonic similarity 0.99; +0x1c lib[mov dword ptr [esp + 0x14], ebp] orig[mov dword ptr [esp + 0x18], ebp] (same-insn-start)
+0x00597c10	FUN_00597c10	third-party-library[qhull-2002.1-continuation]	C2	differs	geom.obj	_qh_sethyperplane_det	1121	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.98; +0x0 lib[push ecx] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+0x00598070	FUN_00598070	third-party-library[qhull-2002.1-continuation]	C2	identical	geom.obj	_qh_sethyperplane_gauss	335			masked 76 B
+0x005981c0	FUN_005981c0	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatA	783			masked 508 B
+0x005984d0	FUN_005984d0	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatB	1197			masked 768 B
+0x00598980	FUN_00598980	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatC	1298			masked 840 B
+0x00598ea0	FUN_00598ea0	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatD	1001			masked 640 B
+0x00599290	FUN_00599290	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatE	515			masked 340 B
+0x005994a0	FUN_005994a0	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatE2	689			masked 452 B
+0x00599760	FUN_00599760	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatF	1166			masked 760 B
+0x00599bf0	FUN_00599bf0	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatG	878			masked 544 B
+0x00599f60	FUN_00599f60	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatH	1075			masked 700 B
+0x0059a3a0	FUN_0059a3a0	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatI	887			masked 568 B
+0x0059a720	FUN_0059a720	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_allstatistics	17			masked 4 B
+0x0059a740	FUN_0059a740	third-party-library[qhull-2002.1-continuation]	C2	differs	stat.obj	_qh_collectstatistics	1179	0x15e	prologue / stack-frame or argument-load order	mnemonic similarity 0.99; +0x15e lib[cmp esi, ebp] orig[push ebx] (same-insn-start)
+0x0059abe0	FUN_0059abe0	third-party-library[qhull-2002.1-continuation]	C2	differs	stat.obj	_qh_initstatistics	362	0xaf	register allocation (same instruction, different registers)	mnemonic similarity 0.78; +0xaf lib[xor eax, eax] orig[xor ecx, ecx] (same-insn-start)
+0x0059acd0	FUN_0059acd0	third-party-library[qhull-2002.1-continuation]	C2	differs	stat.obj	_qh_newstats	176	0x7	prologue / stack-frame or argument-load order	mnemonic similarity 0.98; +0x7 lib[push esi] orig[mov cl, byte ptr [eax + 0x91360c]] (same-insn-start)
+0x0059ad80	FUN_0059ad80	third-party-library[qhull-2002.1-continuation]	C2	identical	stat.obj	_qh_printallstatistics	48			masked 16 B
+0x0059adb0	FUN_0059adb0	third-party-library[qhull-2002.1-continuation]	C2	differs	stat.obj	_qh_printstatistics	618	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.86; +0x0 lib[push ebp] orig[push ecx] (same-insn-start)
+0x0059b0e0	FUN_0059b0e0	third-party-library[qhull-2002.1-continuation]	C2	differs	stat.obj	_qh_printstatlevel	356	0xd	branch displacement (earlier size difference)	mnemonic similarity 0.90; +0xd lib[jge 0x162] orig[jge 0x196] (same-insn-start)
+0x0059b280	FUN_0059b280	third-party-library[qhull-2002.1-continuation]	C2	not-compared						no library function paired
+0x0059b360	FUN_0059b360	third-party-library[qhull-2002.1-continuation]	C2	identical	poly.obj	_qh_appendfacet	117			masked 48 B
+0x0059b3e0	FUN_0059b3e0	third-party-library[qhull-2002.1-continuation]	C2	identical	poly.obj	_qh_appendvertex	117			masked 40 B
+0x0059b460	FUN_0059b460	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_attachnewfacets	623			masked 116 B
+0x0059b6d0	FUN_0059b6d0	third-party-library[qhull-2002.1]	C2	differs	poly.obj	_qh_checkflipped	214	0xf	branch displacement (earlier size difference)	mnemonic similarity 0.92; +0xf lib[je 0x18] orig[je 0x19] (same-insn-start)
+0x0059b7b0	FUN_0059b7b0	third-party-library[qhull-2002.1]	C2	differs	poly.obj	_qh_delfacet	352	0x4b	prologue / stack-frame or argument-load order	mnemonic similarity 0.69; +0x4b lib[push esi] orig[mov edx, dword ptr [0x9145a8]] (same-insn-start)
+0x0059b9a0	FUN_0059b9a0	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_deletevisible	263			masked 108 B
+0x0059bab0	FUN_0059bab0	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_facetintersect	365			masked 44 B
+0x0059bc20	FUN_0059bc20	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_gethash	268			masked 28 B
+0x0059bd30	FUN_0059bd30	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_makenewplanes	98			masked 28 B
+0x0059bda0	FUN_0059bda0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0059c1a0	FUN_0059c1a0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0059c470	FUN_0059c470	third-party-library[qhull-2002.1]	C2	differs	poly.obj	_qh_matchneighbor	874	0x43	register allocation (same instruction, different registers)	mnemonic similarity 0.98; +0x43 lib[mov dword ptr [esp + 0x20], ebx] orig[mov dword ptr [esp + 0x1c], ebx] (same-insn-start)
+0x0059c7f0	FUN_0059c7f0	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_matchnewfacets	775			masked 224 B
+0x0059cb00	FUN_0059cb00	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_matchvertices	185			masked 16 B
+0x0059cbc0	FUN_0059cbc0	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_newfacet	222			masked 80 B
+0x0059cca0	FUN_0059cca0	third-party-library[qhull-2002.1]	C2	differs	poly.obj	_qh_newridge	204	0x84	instruction selection or scheduling	mnemonic similarity 0.94; +0x84 lib[xor eax, edx] orig[mov ecx, eax] (same-insn-start)
+0x0059cd70	FUN_0059cd70	third-party-library[qhull-2002.1]	C2	differs	poly.obj	_qh_pointid	106	0x4	prologue / stack-frame or argument-load order	mnemonic similarity 0.90; +0x4 lib[test eax, eax] orig[push esi] (same-insn-start)
+0x0059cde0	FUN_0059cde0	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_removefacet	127			masked 52 B
+0x0059ce60	FUN_0059ce60	third-party-library[qhull-2002.1]	C2	identical	poly.obj	_qh_removevertex	107			masked 36 B
+0x0059ced0	FUN_0059ced0	third-party-library[qhull-2002.1]	C2	differs	poly.obj	_qh_updatevertices	649	0x29	branch displacement (earlier size difference)	mnemonic similarity 0.86; +0x29 lib[je 0x1f0] orig[je 0x1ee] (same-insn-start)
+0x0059d1d0	FUN_0059d1d0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0059d400	FUN_0059d400	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0059d6b0	FUN_0059d6b0	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_detvnorm	2241	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.73; +0x2 lib[sub esp, 0x48] orig[sub esp, 0x24] (same-insn-start)
+0x0059dc80	FUN_0059dc80	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_detvridge	202	0x9	register allocation (same instruction, different registers)	mnemonic similarity 0.90; +0x9 lib[push eax] orig[push esi] (same-insn-start)
+0x0059dd80	FUN_0059dd80	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_detvridge3	452	0x9	register allocation (same instruction, different registers)	mnemonic similarity 0.98; +0x9 lib[push ebp] orig[push esi] (same-insn-start)
+0x0059df50	FUN_0059df50	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_eachvoronoi	652			masked 84 B
+0x0059e1e0	FUN_0059e1e0	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_facet2point	165			masked 24 B
+0x0059e290	FUN_0059e290	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_facetvertices	345	0x11	prologue / stack-frame or argument-load order	mnemonic similarity 0.67; +0x11 lib[mov ebp, dword ptr [esp + 0x14]] orig[push esi] (same-insn-start)
+0x0059e500	FUN_0059e500	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_markkeep	453			masked 96 B
+0x0059e740	FUN_0059e740	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x0059eb00	FUN_0059eb00	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_order_vertexneighbors	285	0x2c	prologue / stack-frame or argument-load order	mnemonic similarity 0.97; +0x2c lib[push ebx] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+0x0059ec20	FUN_0059ec20	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printafacet	1968	0x14	branch displacement (earlier size difference)	mnemonic similarity 0.75; +0x14 lib[jne 0x27] orig[jne 0xa7] (same-insn-start)
+0x0059f5d0	FUN_0059f5d0	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x005a0e00	qh_printcenter	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printcenter	344	0x6	prologue / stack-frame or argument-load order	mnemonic similarity 0.91; +0x6 lib[cmp ecx, 1] orig[push ebx] (same-insn-start)
+0x005a0f70	FUN_005a0f70	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printcentrum	615	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.69; +0x0 lib[push ebp] orig[sub esp, 0x6c] (same-insn-start)
+0x005a1300	qh_printend	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printend	406	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.89; +0x0 lib[mov eax, dword ptr [0x818]] orig[push ecx] (same-insn-start)
+0x005a14a0	FUN_005a14a0	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printend4geom	510	0x1d	branch displacement (earlier size difference)	mnemonic similarity 0.75; +0x1d lib[jne 0x30] orig[jne 0xb0] (same-insn-start)
+0x005a1720	qh_printincidences	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printextremes	236			masked 56 B
+0x005a1810	qh_printextremes_2d	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printextremes_2d	381	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.99; +0x2 lib[sub esp, 0x1c] orig[sub esp, 0x10] (same-insn-start)
+0x005a1990	qh_printextremes	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printextremes_d	268	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.92; +0x0 lib[sub esp, 8] orig[push ecx] (same-insn-start)
+0x005a1aa0	qh_printfacet	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printfacet	40			masked 8 B
+0x005a1ad0	qh_printfacet3vertex	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x005a1c80	FUN_005a1c80	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printfacet2geom_points	243			masked 56 B
+0x005a1d80	FUN_005a1d80	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printfacet3geom_nonsimplicial	581	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.77; +0x2 lib[sub esp, 0x2c] orig[sub esp, 0x28] (same-insn-start)
+0x005a2070	FUN_005a2070	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printfacet3geom_points	427			masked 100 B
+0x005a2220	FUN_005a2220	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printfacet3geom_simplicial	559	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.76; +0x2 lib[sub esp, 0x28] orig[sub esp, 0x24] (same-insn-start)
+0x005a2500	qh_printfacet2math	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printfacet3math	358			masked 88 B
+0x005a2670	FUN_005a2670	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printfacet4geom_nonsimplicial	499			masked 120 B
+0x005a2870	FUN_005a2870	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printfacet4geom_simplicial	456			masked 104 B
+0x005a2a40	qh_printfacetNvertex_nonsimplicial	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printfacetNvertex_nonsimplicial	278	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.93; +0x0 lib[push esi] orig[push ebp] (same-insn-start)
+0x005a2b60	FUN_005a2b60	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printfacetNvertex_simplicial	242			masked 56 B
+0x005a2c60	FUN_005a2c60	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printfacetheader	1484	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.75; +0x0 lib[push esi] orig[push ebp] (same-insn-start)
+0x005a34e0	qh_printfacetridges	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x005a3990	FUN_005a3990	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printfacets	1279	0x53	branch displacement (earlier size difference)	mnemonic similarity 0.98; +0x53 lib[je 0x4ec] orig[je 0x4f1] (same-insn-start)
+0x005a3ea0	qh_printhelp_singularity	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printhelp_degenerate	222			masked 100 B
+0x005a3f80	qh_printhelp_degenerate	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printhelp_singular	583	0x10	prologue / stack-frame or argument-load order	mnemonic similarity 0.79; +0x10 lib[push edi] orig[mov esi, dword ptr [ebp + 8]] (same-insn-start)
+0x005a4240	FUN_005a4240	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printhyperplaneintersection	767	0x22	register allocation (same instruction, different registers)	mnemonic similarity 0.86; +0x22 lib[fst dword ptr [esp + 0x18]] orig[fst dword ptr [esp + 0x14]] (same-insn-start)
+0x005a4590	FUN_005a4590	third-party-library[qhull-2002.1]	C2	not-compared						no library function paired
+0x005a4740	qh_printneighborhood	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printneighborhood	255	0x9	branch displacement (earlier size difference)	mnemonic similarity 0.65; +0x9 lib[je 0xfd] orig[je 0x180] (same-insn-start)
+0x005a48d0	qh_printpoints_out	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printpoints_out	674	0xa1	branch displacement (earlier size difference)	mnemonic similarity 0.66; +0xa1 lib[je 0x157] orig[je 0x245] (same-insn-start)
+0x005a4c60	qh_printridge	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printridge	147	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.70; +0x0 lib[push esi] orig[push ebx] (same-insn-start)
+0x005a4d40	qh_printvdiagram	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printvdiagram	192	0x4	prologue / stack-frame or argument-load order	mnemonic similarity 0.95; +0x4 lib[sub esp, 8] orig[push ebx] (same-insn-start)
+0x005a4e00	qh_eachvoronoi_all	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printvdiagram2	208			masked 24 B
+0x005a4ed0	qh_printvertex	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printvertex	328			masked 88 B
+0x005a5020	FUN_005a5020	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printvneighbors	659	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.95; +0x2 lib[sub esp, 0x1c] orig[sub esp, 0x18] (same-insn-start)
+0x005a52c0	FUN_005a52c0	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_printvoronoi	1009	0x9	prologue / stack-frame or argument-load order	mnemonic similarity 0.94; +0x9 lib[mov ebx, dword ptr [esp + 0x28]] orig[push ebp] (same-insn-start)
+0x005a56e0	FUN_005a56e0	third-party-library[qhull-2002.1]	C2	identical	io.obj	_qh_printvnorm	176			masked 56 B
+0x005a5820	FUN_005a5820	third-party-library[qhull-2002.1]	C2	differs	io.obj	_qh_setfeasible	216	0x33	instruction selection or scheduling	mnemonic similarity 0.95; +0x33 lib[lea ecx, [ebx*4]] orig[mov edx, dword ptr [0x7d3ff8]] (same-insn-start)
+0x00585360	(not in hooks.csv)			identical-unlisted	merge.obj	_qh_comparevisit	23			
+0x00585d20	(not in hooks.csv)			identical-unlisted	merge.obj	_qh_compareangle	35			
+0x00585d50	(not in hooks.csv)			identical-unlisted	merge.obj	_qh_comparemerge	23			
+0x0059dd50	(not in hooks.csv)			identical-unlisted	io.obj	_qh_compare_facetvisit	39			
+0x0059e720	(not in hooks.csv)			identical-unlisted	io.obj	_qh_compare_facetmerge	32			
+0x005a5790	(not in hooks.csv)			identical-unlisted	io.obj	_qh_printvridge	129			
