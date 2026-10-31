@@ -1,3 +1,4 @@
+// FLAGS: /O2 /GS /Ob1
 typedef struct { int team; int pad[3]; } Slot;      /* stride 0x10 at 0x007f1a18 */
 typedef struct { int score; int pad[0x4d]; } Rec;   /* stride 0x138 at 0x00899f7c */
 extern Slot DAT_007f1a18[4];

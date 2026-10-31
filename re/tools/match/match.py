@@ -278,6 +278,27 @@ def score_function(addr: int, secs, syms, sym: str, size: int | None = None):
     return acc, regs, ops, a, b, full, sm
 
 
+def byte_compare(addr: int, secs, syms, sym: str):
+    """Whole obj symbol (code + jump/index tables + any tail after them) against the same number of original
+    bytes, relocation sites (4 bytes each) masked on both sides. Independent of Ghidra's body size, so it settles
+    functions whose epilogue follows a switch table. Returns (n_bytes, differing unmasked byte offsets)."""
+    mine, relocs, full, local = function_from_obj(secs, syms, sym)
+    while mine and mine[-1] in (0xCC, 0x90):
+        mine = mine[:-1]
+    orig = original_bytes(addr, len(mine))
+    masked = {r + k for r in relocs for k in range(4)}
+    bad = [i for i in range(len(mine)) if i not in masked and mine[i] != orig[i]]
+    # relocations to labels in this same section (jump tables, internal jumps): the original's absolute target
+    # must sit at the same offset from the function start as ours (stored addend added)
+    for site, tgt in local.items():
+        if site + 4 <= len(mine):
+            ours = tgt + int.from_bytes(mine[site:site + 4], "little")
+            theirs = int.from_bytes(orig[site:site + 4], "little") - addr
+            if ours != theirs:
+                bad.append(site)
+    return len(mine), sorted(bad)
+
+
 def parse_annotations(text: str):
     return [(int(a, 16), s) for a, s in re.findall(r"//\s*MATCH:\s*(?:MASHED\.exe\s+)?(0x[0-9a-fA-F]+)\s+(\S+)", text)]
 
@@ -288,12 +309,12 @@ def file_flags(text: str):
 
 
 def file_lang(text: str):
-    m = re.search(r"//\s*LANG\s+(c\+\+|c)\b", text)
-    return m.group(1) if m else "c"
+    m = re.search(r"//\s*LANG\s+(c\+\+(?:cpp)?|cpp|c)(?![\w+])", text)
+    return ("c++" if m.group(1) != "c" else "c") if m else "c"
 
 
 def compare(src: pathlib.Path, flags: str = "", show: bool = False, only: int | None = None, quiet: bool = False,
-            toolchain: str | None = None):
+            toolchain: str | None = None, bytes_mode: bool = False):
     text = src.read_text()
     anns = parse_annotations(text)
     lang = file_lang(text)
@@ -310,12 +331,17 @@ def compare(src: pathlib.Path, flags: str = "", show: bool = False, only: int | 
         acc, regs, ops, a, b, full, sm = score_function(addr, secs, syms, sym)
         results.append({"addr": addr, "sym": sym, "full": full, "acc": acc, "regs": regs, "ops": ops,
                         "n_mine": len(a), "n_orig": len(b), "flags": fl, "toolchain": tc, "a": a, "b": b, "sm": sm})
+        results[-1]["bytes_n"], results[-1]["bytes_bad"] = byte_compare(addr, secs, syms, sym)
         if quiet:
             continue
         print(f"0x{addr:08x} {full}: {100 * acc:.1f}% (regs {100 * regs:.1f}%, ops {100 * ops:.1f}%)"
               f"  {len(a)}/{len(b)} ins  flags={fl} tc={tc}")
         if show or acc < 1:
             print_diff(a, b, sm, show)
+        if bytes_mode:
+            n, bad = results[-1]["bytes_n"], results[-1]["bytes_bad"]
+            print(f"   bytes: {n} B whole symbol, {len(bad)} differing unmasked bytes"
+                  + (f" (first at +0x{bad[0]:x})" if bad else " -> BYTE-IDENTICAL (relocations masked)"))
     return results
 
 
@@ -336,8 +362,9 @@ def main():
     ap.add_argument("--show", action="store_true")
     ap.add_argument("--only", default="")
     ap.add_argument("--toolchain", default=None)
+    ap.add_argument("--bytes", action="store_true", help="also compare the whole obj symbol byte for byte")
     a = ap.parse_args()
-    res = compare(pathlib.Path(a.src), a.flags, a.show, int(a.only, 16) if a.only else None, toolchain=a.toolchain)
+    res = compare(pathlib.Path(a.src), a.flags, a.show, int(a.only, 16) if a.only else None, toolchain=a.toolchain, bytes_mode=a.bytes)
     return 0 if res and all(r["acc"] == 1 for r in res) else 1
 
 
