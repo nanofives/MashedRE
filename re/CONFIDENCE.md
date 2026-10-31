@@ -100,6 +100,71 @@ Every row in `hooks.csv` carries a confidence label `C0..C4`. Promotion is one-w
 - All F-DoD criteria satisfied (see `ROADMAP.md`).
 - The function is canonical reference material; lower-confidence callers can lean on it.
 
+### C4 routes by byte match (user decision, Mariano 2026-10-31)
+
+A C4 row is reached by **one** of three routes. The frida route is everything above (clean `diff-original` plus the
+Write-set leg). The two routes below are static: they certify that the port *is* the original's source, so a runtime
+diff is not the evidence. Both are recorded in `hooks.csv` `notes` and in the `re-classify` evidence fields (`match`,
+`libid`). Tools: `re/tools/match/`. Measurements: `verify/matchpilot_20261030/RESULT_MATCH-PILOT.md`,
+`verify/libidentity_20261030/RESULT_LIB-IDENTITY.md`.
+
+- **`match` (game code).** C4 only when all three hold:
+  1. The reconstructed source is **byte-identical** under `re/tools/match/match.py` (relocated operands masked) with
+     the XP DDK compiler, `cl` 13.00.9176 / `c2` 13.00.9178 (`tools/vc7ddk`), and the recorded flags (game code
+     `/O2 /GS /Ob1`, as C, x87; `/G5` breaks game code), **and** `re/tools/match/relocheck.py` reports OK for that
+     function. `match.py` masks every relocation, so 100% alone does not show that each global, callee or constant
+     is the right one: MATCH-S02 found two sources at 100% that stored to swapped arrays (0x0040b250, 0x0040b810;
+     `verify/matchs02_20261031/RESULT_MATCH-S02.md`). relocheck resolves each relocation (`MGLOBAL` names, `FUN_<rva>`
+     callees, own constants and strings) against the original's operand and lists the rest (imports, CRT helpers,
+     file-static data) as unchecked by name. Those unchecked names go in the evidence.
+  2. `mashed_re.exe` uses **that source as the function's body**: one body per RVA (the `lint_rva_bodies.py` rule),
+     both targets where the RVA is hooked, and physics TUs listed in `mashedmod/x87_tus.txt`. A matched source that
+     the exe does not compile is not C4.
+  3. The merge-train gates are **unchanged** after the body is swapped in (`gctrl.ref` / `b.ref` in
+     `re/orchestrator/merge_train.json`). A body swap that moves a gate hash is a real port divergence, not a failure
+     of the rule: file it as an L-n decision.
+
+  A matched source alone is not C4. A naked inline-asm transcription is not match evidence (it matches by
+  construction); an inline `__asm` block inside a compiled C body is.
+
+  **Callerless bodies.** A `match` row can be C4 when the swapped-in body has **no caller in the exe** (17 of
+  MATCH-S02's 19 swaps). The frida-route rule that the body must execute (strict C4, 2026-10-16) does not apply
+  here, because the evidence is the static identity, not a run. For such a row gate (3) proves only that the swap
+  changed nothing the default build executes. It does **not** exercise the body, its callees or the state it reads.
+  Its C4 rests on (1) + (2): byte identity, relocheck OK and one body per RVA. Record `exe-callers=0` in `notes`, so
+  no parity or D-criterion argument cites the row as run evidence.
+- **`libid` (vendored library code: Lua 4.0, qhull 2002.1).** C4 when the library object's function is **identical**
+  to the image (`re/tools/match/libmatch.py`: every byte equal except relocation sites, relocations into the same
+  function checked, ambiguous names excluded) **and** the port gets the function from that same vendored library
+  source, built with the recorded flags (Lua `/O2 /Ob1 /G5`, qhull `/O2 /G5`). Identity without the port using the
+  source is not C4.
+- **CRT rows: waived at library level (L-67, Mariano 2026-10-31).** The port links the platform CRT by design, so
+  `libid`'s "same vendored source" condition is false for every CRT function, even when the DDK `libcmt.lib` member
+  is byte-identical to the original. CRT rows are therefore **not C4** and come **out of the P-DoD count**. The exe
+  link is unchanged. They keep their confidence level (C2 today), and through `re-classify`:
+  - the `status` cell becomes `waived-platform-crt` (one token, as the column holds);
+  - `notes` starts `identified, waived: platform CRT (L-67)` for a row whose function is byte-identical to a DDK
+    `libcmt.lib` member, followed by the libid evidence as provenance (libmatch command, member, `@comp.id`), and
+    `waived: platform CRT (L-67)` for the others. An `ambiguous` identity (the same bytes as several members) records
+    all the candidate names;
+  - a CRT function filed under another subsystem (MATCH-LIB's 197 rows tagged boot, d3dx9-shader-compiler, render,
+    util, save, audio, frontend; `verify/libidentity_20261030/RESULT_LIB-IDENTITY.md` finding 2) is refiled to the
+    CRT subsystem (`third-party-library[msvc-crt-main]`, `-tail` or `[msvc-crt]`, the bucket its address range
+    already uses) with the same status and notes.
+  Lua and qhull are vendored and use `libid` as above. The waiver covers the CRT only.
+
+**How the Write-set leg relates.** The Write-set leg is a **frida-route leg** only: it exists because a clean race diff
+cannot show stores that land outside the sampled memory. It is not an extra requirement of `match` or `libid`. Byte
+identity discharges it for the function's **own** stores: identical bytes (same instructions, same operands up to
+relocation) compiled into the exe as the body perform identical stores for identical inputs, so there is nothing left
+to compare in the body. relocheck then checks the address behind each named global, callee and constant. What
+identity plus relocheck does **not** cover, and what gate (3) therefore carries: (a) callees, which keep their own
+level (relocheck proves the call goes to the right RVA, not what the port's body there does); (b) relocations relocheck
+lists as unchecked (imports, CRT helpers, file-static data), and the layout and contents of the port's globals and heap
+behind a correct address; (c) inputs from state the port computes differently. Where a matched row has callees or
+globals that no gate exercises (always so for a callerless body), say so in `notes`: the row is still C4 by this route,
+but it is not evidence for those callees or globals.
+
 ## Which copy the evidence covers (clause added 2026-09-29)
 
 **C3/C4 evidence names the copy it covers.** The project builds two targets from two
