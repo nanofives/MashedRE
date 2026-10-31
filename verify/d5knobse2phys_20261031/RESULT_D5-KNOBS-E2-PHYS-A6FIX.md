@@ -134,3 +134,8 @@ Folder `D:/MashedWT/D5-KNOBS-E2-PHYS-A6FIX_data/` (sha256):
 - **.asi.** `A6A_GEAR_ORDER` / `A6A_SPIN_ORDER` / `A6A_DOT_ORDER` keep the .asi default (ON). The only .asi change is that
   `MASHED_NO_<name>=1` no longer selects the old association there. The other 7 knobs are in exe-only TUs. No hook body's
   C-level moves, and no tracker row was touched.
+- **Refresh.** After the gates the branch merged `orch/integration` @ `0116b9fec` (merge `148df58bb`). Upstream changed
+  one source-tree file, `mashedmod/build.bat` (HB-BUILDBAT-DSOUNDLIB: the unreferenced `dsound.lib` left the exe link
+  line). The refreshed tree builds (`=== Build OK ===`, 0 `error C` / `LNK`), exe sha256 `2ba2d8e7` (the gated exe was
+  `48a7b0b7`, built before the link-line change). The gates were not re-run on the refreshed exe, and the merge train
+  gates the merged tree. D5-KNOBS-AI-TICK-FIRST had not merged at refresh time.
