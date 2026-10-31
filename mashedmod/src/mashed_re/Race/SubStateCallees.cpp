@@ -63,23 +63,26 @@ inline char* SscRecBase() {
                                        static_cast<unsigned>(off)))
 
 // ===========================================================================
-// MASHED_SUBSTATE knob + the two timer partials
+// SubState_Enabled + the two timer partials
 // ===========================================================================
 
+// [D5-KNOBS-E5-REST 2026-10-31] MASHED_SUBSTATE and its opt-out MASHED_NO_SUBSTATE were deleted. The standalone seeded it
+// ON (Core/FaithDefaults.cpp), so it is true there; the .asi never seeded it, so it stays false there. No env read.
 bool SubState_Enabled()
 {
+#ifdef MASHED_STANDALONE
     static const bool s_on = [] {
-        const bool on = (std::getenv("MASHED_SUBSTATE") != nullptr);
-        if (on) {
-            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                std::fprintf(lf, "[substate] MASHED_SUBSTATE=1: step store 0x0040fc57 + "
-                                 "FUN_0041d930 tail 0x0041da5f..0x0041da76 live\n");
-                std::fclose(lf);
-            }
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(lf, "[substate] on: step store 0x0040fc57 + "
+                             "FUN_0041d930 tail 0x0041da5f..0x0041da76 live\n");
+            std::fclose(lf);
         }
-        return on;
+        return true;
     }();
     return s_on;
+#else
+    return false;
+#endif
 }
 
 // PARTIAL of FUN_0040fc00 (0x0040fc00), step store only:

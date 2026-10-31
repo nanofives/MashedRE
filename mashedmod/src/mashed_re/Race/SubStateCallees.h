@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-// MASHED_SUBSTATE (default OFF). Gates the two timer writes below. Read once.
+// True in the standalone, false in the .asi (MASHED_SUBSTATE deleted by D5-KNOBS-E5-REST). Gates the two timer writes below.
 bool SubState_Enabled();
 
 // PARTIAL of FUN_0040fc00: the step store at 0x0040fc57,
@@ -35,5 +35,5 @@ void SubState_InputsDump(float countdown, const int alive[4], const float pos[4]
 
 // [D-11073 leg 1b, PREREG_LEG1B.md section 3] MEASUREMENT-ONLY knob MASHED_SUBSTATE_CD=<n>:
 // writes 0x0089a4f8 + v*0x74 = n (v = 0..3) where FUN_00414180 (unported) would have written
-// it. No-op unless both MASHED_SUBSTATE and MASHED_SUBSTATE_CD are set. Not a port.
+// it. No-op unless MASHED_SUBSTATE_CD is set (and in the .asi). Not a port.
 void SubState_SeedCd();

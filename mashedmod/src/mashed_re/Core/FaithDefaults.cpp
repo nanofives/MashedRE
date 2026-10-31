@@ -21,9 +21,6 @@ namespace {
 
 struct FaithKnob { const char* name; const char* value; };
 
-// D-11077 (MASHED_PARTMORPH + MASHED_CAR_STATE0): flipped ON by D5-PARTMORPH-MEASURE (L-62 b, Mariano 2026-10-30).
-#define MASHED_FLIP_D11077 1
-
 // Order and values = STACK['FAITH'] in verify/d2off_20261020/run_arms.py (bare names there are set to "1").
 const FaithKnob kFaith[] = {
     // [D5-KNOBS-D-SEEDED6 2026-10-30] POS_MODEL, ROUND_GRID_ORDER, PATHPROG_LATE, SPAWN_BASIS_RW, RING_DBUF and
@@ -31,8 +28,12 @@ const FaithKnob kFaith[] = {
     // (verify/d5knobsd_seeded6_20261030/RESULT_D5-KNOBS-D-SEEDED6.md).
     // [D5-KNOBS-AI-TICK-FIRST 2026-10-31] AI_TICK_FIRST left this list: it had no reader after D5-KNOBS-E1-PHYS-A4A5
     // made the AI tick phase unconditional before the player's step (verify/d5knobsaitf_20261031/RESULT_D5-KNOBS-AI-TICK-FIRST.md).
-    { "AI_COUNTDOWN_CLOCK", "1" }, { "ROUND_GRID", "1" },
-    { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
+    // [D5-KNOBS-E5-REST 2026-10-31] ROUND_GRID, TGT3, SLOT_TYPE_LIVE, SUBSTEP_OUTER, SUBSTATE, PARTMORPH, CAR_STATE0 (the
+    // MASHED_FLIP_D11077 block) and INTRO_MOVIES left this list with their read sites, and GRID_DIR, which had no reader
+    // since D5-KNOBS-RUNARMS-STACKS: the seeded path is the only one in the source
+    // (verify/d5knobse5rest_20261031/RESULT_D5-KNOBS-E5-REST.md).
+    { "AI_COUNTDOWN_CLOCK", "1" },
+    { "AI_CONTACT_EVENT", "1" },
     // [D5-KNOBS-E3-GEOM-AI 2026-10-31] RW_SSE_POINTS, FWD_AT, ROTATE_LUT, ROTATE_PC24, HEADING_FWD_LIVE, AI_LUT (the mask is
     // the constant 7), AI_FWD_ATROW, STEER_SCALE_RDATA, WCS_TRINORMAL (trinflip) and WCS_COMBINE_PC24 (cpcflip) left this list
     // with their read sites: the seeded path is the only one in the source
@@ -43,12 +44,6 @@ const FaithKnob kFaith[] = {
     // (verify/d5knobse4mode_20261031/RESULT_D5-KNOBS-E4-MODE-REG.md).
     { "CC_PC24", "1" },
     { "A5_DRAFT_LUT", "1" },
-    // [fflip 2026-10-21, Mariano's decision] brecipe's live mode word / fd0 and live slot table for the AI host
-    // (verify/brecipe_20261021/RESULT_brecipe.md), flipped with the canonical recipe swap to rule 0 / game mode 10.
-    { "SLOT_TYPE_LIVE", "1" },
-    // [soflip 2026-10-21, Mariano's decision] substep's FUN_004709a0 order, substep-outer / car-inner
-    // (verify/substep_20261021/RESULT_substep.md); steps only the cars the A4-order pre-phase stepped.
-    { "SUBSTEP_OUTER", "1" },
     // [p2flip 2026-10-22, Mariano's decision] dcphys2's P2 stack (verify/dcphys2_20261022/RESULT_dcphys2.md): with it the
     // shared A6b / A5 / A4 bodies are bit-identical to the original on every sampled call (402 / 3214 / 5403).
     { "A6B_ACOS_CRT", "1" },       { "A6B_NORM_LUT", "1" },
@@ -60,26 +55,11 @@ const FaithKnob kFaith[] = {
     // [D5-KNOBS-E1-PHYS-A4A5 2026-10-30] A6A_LC0, A4_ORDER, A5_FD0_LIVE, A5_RUBBER_LIVE (rbflip) and P2's A5_RING_ORDER,
     // A5_DOT_ORDER, A5_AIR_F32, A5_CONTACT_INT, A5_SPIN_FILD, A4_DOT_ORDER left this list with their read sites: the
     // seeded path is the only one in the source (verify/d5knobse1phys_20261030/RESULT_D5-KNOBS-E1-PHYS-A4A5.md).
-    // [D3-SUBSTATE-FLIP 2026-10-29, D-11073, Mariano's decisions L-53 / L-55 / L-57] the sub-state machine FUN_0040dbd0 /
-    // FUN_004103a0 and the phase-3 reset pair, as stack SUB (verify/d3subflip_20261029/RESULT_D3-SUBSTATE-FLIP.md).
-    // MASHED_NO_SUBSTATE=1 opts out (the reset pair's MASHED_P3_RESET_PAIR was deleted by D5-KNOBS-E4-MODE-REG).
-    { "SUBSTATE", "1" },
-#if MASHED_FLIP_D11077
-    // [D5-PARTMORPH-FLIPPREP 2026-10-30, D-11077, flipped by D5-PARTMORPH-MEASURE] FUN_0041f770's part 0x12 morph / part 0x14
-    // wobble (verify/partmorph_20261028/RESULT_D5-PARTMORPH.md) and its record-state-0 producer
-    // (verify/partmorph_20261028/RESULT_D5-PARTMORPH-PRODUCER.md). MASHED_NO_PARTMORPH=1 / MASHED_NO_CAR_STATE0=1 opt out.
-    // Measured ON: verify/d5partmorphflip_20261030/RESULT_D5-PARTMORPH-FLIPPREP.md and RESULT_D5-PARTMORPH-MEASURE.md.
-    { "PARTMORPH", "1" },          { "CAR_STATE0", "1" },
-#endif
     // [D5-FLIP-RFLAME-SORT 2026-10-30, Mariano's decision L-66 (a)] the R_FLAME per-group sorter FUN_0045ac40 ahead of each
     // group's 5-spark scan, as the original's tick FUN_0045ae80 runs it (CALL 0x0045ac40 @0x0045af41), Powerup/PowerupEffects.cpp
     // (verify/d3rflame_20261024/RESULT_D3-CF-RFLAME.md). MASHED_NO_RFLAME_SORT=1 or MASHED_RFLAME_SORT=0 opts out.
     // Measured ON: verify/d5fliprflame_20261030/RESULT_D5-FLIP-RFLAME-SORT.md.
     { "RFLAME_SORT", "1" },
-    // [D5-INTROMOVIES-FLIP 2026-10-30, D-11062, Mariano's decision L-63] the boot movies of FUN_00402750 (0x00402838 /
-    // 0x0040283f), RunBootIntroMovies in exe_main.cpp (verify/intromovies_20261030/RESULT_D5-INTROMOVIES-I1B.md).
-    // MASHED_NO_INTRO_MOVIES=1 or MASHED_INTRO_MOVIES=0 opts out.
-    { "INTRO_MOVIES", "1" },
     // [D5-FLIP-MUSIC-NOCDAUDIO 2026-10-30, Mariano's decision L-66 a] no cdaudio.rws stream in Race / Results: the original's
     // race tick FUN_00466b50 (case 3/7) starts no music voice (verify/wsjmusic_20261026/RESULT_D4-WSJ-MUSIC.md). Measured ON:
     // verify/d5flipmusic_20261030/RESULT_D5-FLIP-MUSIC-NOCDAUDIO.md. MASHED_NO_MUSIC_NO_RACE_CDAUDIO=1 or

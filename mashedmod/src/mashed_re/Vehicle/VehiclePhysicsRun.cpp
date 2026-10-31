@@ -373,7 +373,7 @@ inline std::size_t wheelMountZOff(int w) { return kMountZ0      + (std::size_t)w
 // re-assert restores the same states + normals without re-running the broadphase).
 // [substep 2026-10-21] One struct per owner. The per-car StepCar (knob off) uses the single shared instance
 // g_cShared, as the four file-statics it replaces were: a car's pre-part re-assert there reads whichever car solved last.
-// MASHED_SUBSTEP_OUTER gives each slot its own (g_cSlot), since the cars' substeps interleave.
+// StepCarsOuter gives each slot its own (g_cSlot), since the cars' substeps interleave.
 struct ContactScratch {
     bool  onMesh[4]    = { false, false, false, false };
     float normal[4][3] = { {0,1,0}, {0,1,0}, {0,1,0}, {0,1,0} };
@@ -1006,7 +1006,7 @@ void VehiclePhysics_A4PreEnd() {
 //   StepChunkTail   the MASHED_A8_A4_FIRST=0 opt-out A4, rem -= chunk (0x00471143..0x00471151)
 //   StepEnd         the frame tail: ring frame end (0x00471195..0x004711af), safety clamp, drive_delta, adapter OUT
 // StepCtx holds every local that crosses a phase boundary. VehiclePhysics_StepCar runs the phases one car at a time
-// (the default); VehiclePhysics_StepCarsOuter (MASHED_SUBSTEP_OUTER) runs them substep-outer / car-inner.
+// (the default); VehiclePhysics_StepCarsOuter (always, MASHED_SUBSTEP_OUTER deleted) runs them substep-outer / car-inner.
 namespace {
 struct StepCtx {
     int             slot = 0;
@@ -2508,11 +2508,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     StepCarImpl(slot, dt, io, &g_cShared);
 }
 
-// [substep 2026-10-21] MASHED_SUBSTEP_OUTER=1, default OFF (verify/substep_20261021/PREREG_substep.md).
-bool VehiclePhysics_OuterEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_SUBSTEP_OUTER"); return e && e[0] == '1'; }();
-    return s;
-}
+// [substep 2026-10-21] verify/substep_20261021/PREREG_substep.md. [D5-KNOBS-E5-REST 2026-10-31] MASHED_SUBSTEP_OUTER
+// (seeded ON) was deleted with VehiclePhysics_OuterEnabled: TrackRenderer always hands the cars to StepCarsOuter.
 
 namespace {
 StepCtx g_outer[16];

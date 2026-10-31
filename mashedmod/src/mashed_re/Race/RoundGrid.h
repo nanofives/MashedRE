@@ -7,8 +7,8 @@
 namespace mashed_re {
 namespace Race {
 
-// MASHED_ROUND_GRID (default OFF). The progress + course block producer always runs since D5-KNOBS-E4-MODE-REG.
-bool RoundGrid_Enabled();
+// Stage A and Stage B always run: MASHED_ROUND_GRID (seeded ON) was deleted by D5-KNOBS-E5-REST. The progress + course
+// block producer always runs since D5-KNOBS-E4-MODE-REG.
 
 // Race init: DAT_0063ba80 = 0 (FUN_004111c0 0x0040fef0).
 void RoundGrid_RaceInit();
@@ -32,11 +32,11 @@ bool RoundGrid_AnchorAt(int node, float A[3], float lat[2], float dir[2]);
 // [u9755] FUN_00408b00's grid point (x, y, z) for slot 0..3 at `node`, in its operation order (FUN_004704c0's param_2..4).
 bool RoundGrid_GridPoint(int node, int slot, float out[3]);
 
-// Stage B (runs whenever MASHED_ROUND_GRID is on: the MASHED_ROUND_GRID_ORDER knob, seeded ON by FaithDefaults, was
-// deleted by D5-KNOBS-D-SEEDED6): FUN_0040e590's per-car grid slot value
+// Stage B (always: the MASHED_ROUND_GRID_ORDER knob was deleted by D5-KNOBS-D-SEEDED6, MASHED_ROUND_GRID by
+// D5-KNOBS-E5-REST): FUN_0040e590's per-car grid slot value
 // (mode DAT_008a94d0 = 4, rule 0, DAT_0067ea64 = 0: sections C/D/E + `local_44 ? i + 4 : local_2c[i]`) from the
 // kept codes; the codes then reset to -1000 (FUN_0040b250, before the placement loop). Formation slot = value & 3
-// (FUN_00408b00 cases 0..3 and 4..7 are the same four offsets). Returns false when MASHED_ROUND_GRID is off.
+// (FUN_00408b00 cases 0..3 and 4..7 are the same four offsets). Returns true.
 bool RoundGrid_SlotOrder(int slotValue[4]);
 // The assignment itself (pure), exposed for the replay.
 void RoundGrid_AssignMode4(const int codes[4], int slotValue[4]);
@@ -48,9 +48,9 @@ float GridDir_LawDeg(float lx, float lz);
 // The same, as the port's yaw (fwd = (cos, 0, sin)): RwMatrixRotate(Y, deg) at = (sin r, 0, cos r), yaw = atan2.
 float GridDir_PortYaw(float lx, float lz);
 // Node snap(0) (FUN_00409290 on DAT_0063ba80 = 0, the race-init value): A / lat / dir as RoundGrid_AnchorAt and the
-// law's port yaw. False (caller keeps the gate frame) when the knob is off or the course block has no nodes.
+// law's port yaw. False (caller keeps the gate frame) when the course block has no nodes.
 bool GridDir_Anchor(float A[3], float lat[2], float dir[2], float* yawPort, int* node);
-// Port yaw from node n's record (the RoundGrid_Anchor path when both knobs are on). False if n has no record.
+// Port yaw from node n's record (the RoundGrid_Anchor path). False if n has no record.
 bool GridDir_YawAt(int node, float* yawPort);
 
 // G-RG-SNAP: MASHED_ROUND_GRID_REPLAY=<rows.tsv> (re/tools/roundgrid_unicorn.py) replays FUN_00409290 rows;

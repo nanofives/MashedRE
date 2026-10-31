@@ -516,7 +516,7 @@ public:
     // [d1r2] race_cam_.Update with the host inputs, or the MASHED_CAM_REPLAY row.
     void  RaceCamUpdate(const Race::RaceCamCar* cc, bool reset);
     void  SubStateCameraChain(bool reset);
-    // [D5-PARTMORPH-PRODUCER] MASHED_CAR_STATE0: the director's record-state-0 decision for this tick
+    // [D5-PARTMORPH-PRODUCER] the director's record-state-0 decision for this tick
     // (FUN_0040d470 -> FUN_00448220 / FUN_00446520), latched at the end of UpdateCar.
     void  CarState0Latch();
     int   sub_p3_frames_ = 0;   // phase-3 frames this round (leg-2 trace / measurement knob)
