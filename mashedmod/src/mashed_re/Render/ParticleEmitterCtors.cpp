@@ -44,22 +44,28 @@ using fn_fill_t  = void(__cdecl*)(std::uint32_t clump, std::uint32_t* buf);
 using fn_index_t = int (__cdecl*)(std::uint32_t handle, int a, int b);
 using fn_zero_t  = void(__cdecl*)(void* self, int len);
 
-// __cdecl impl reached by the naked shim below (which delivers EBX/EAX as
-// ordinary stack args). Faithful transcription of the listing above.
-void __cdecl ParticleEmitterCtorA_impl(std::uint8_t* self, std::uint32_t clump) {
-    std::uint32_t buf[17];                                        // [ESP+8] buffer
-    reinterpret_cast<fn_fill_t>(0x004b3fc0)(clump, buf);          // CALL 0x004b3fc0
-    *reinterpret_cast<std::uint32_t*>(self + 0x5c) = clump;       // [EBX+0x5c] = clump
-    *reinterpret_cast<std::uint32_t*>(self + 0x60) =
-        reinterpret_cast<std::uint32_t*>(clump)[1];               // [EBX+0x60] = *(clump+4)
-    reinterpret_cast<fn_zero_t>(0x004b6520)(self, 0x50);          // CALL 0x004b6520
-    for (int i = 0; i < 0x11; ++i) {                             // 17 iterations
-        std::uint32_t handle = buf[i];                           // MOV EDI,[ESP+ESI*4+8]
-        int idx = reinterpret_cast<fn_index_t>(0x004b5190)(handle, 0, 0);  // CALL 0x004b5190
-        *reinterpret_cast<std::uint32_t*>(self + idx * 4) = handle;        // [EBX+EAX*4] = EDI
-    }
-}
 }  // namespace
+
+// The body = the matched source re/match/s03/h1_0041ad60.c (byte-identical under
+// re/tools/match/match.py, cl 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1; MATCH-S03). There it is a
+// file-static callee (the period compiler takes rec in EBX and obj in EAX); the naked shim below is
+// only the register entry the .asi installs, delivering EBX/EAX as (rec, obj).
+#define MATCH_PORT 1
+#define DAT_0063c8d0 (reinterpret_cast<Rec41ad60*>(0x0063c8d0u))
+#define FUN_004b3fc0 (reinterpret_cast<void(__cdecl*)(int, int*)>(0x004b3fc0u))
+#define FUN_004b5190 (reinterpret_cast<int(__cdecl*)(int, int, int)>(0x004b5190u))
+#define FUN_004b6520 (reinterpret_cast<void(__cdecl*)(void*, int)>(0x004b6520u))
+#define FUN_0041ad60 ParticleEmitterCtorA_impl
+extern "C" {
+// 0x0041ad60  ParticleEmitterCtorA_impl
+#include "../../../../re/match/s03/h1_0041ad60.c"
+}
+#undef FUN_0041ad60
+#undef FUN_004b6520
+#undef FUN_004b5190
+#undef FUN_004b3fc0
+#undef DAT_0063c8d0
+#undef MATCH_PORT
 
 // Register-implicit-this entry: `this` in EBX, `clump` in EAX. The naked shim
 // repackages the two register inputs as __cdecl stack args (clump deeper, self

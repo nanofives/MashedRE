@@ -48,64 +48,26 @@
 // ref: re/analysis/bucket_00412130/0x00413bc0.md ; listing 0x00413bc0..0x00413c6c
 // ---------------------------------------------------------------------------
 
-// 0x00413bc0
+// MATCH-S03 (2026-10-31): the body is the matched source re/match/s03/h2_00413bc0.c (byte-identical
+// under re/tools/match/match.py, cl 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1), replacing the naked-asm
+// transcription. There FUN_00413bc0 is a file-static callee (the period compiler passes out in ECX and
+// idx in ESI); the naked shim below is only the register entry the .asi installs.
+#define MATCH_PORT 1
+#define DAT_005cd060 (*reinterpret_cast<const float*>(0x005cd060u))
+extern "C" {
+// 0x00413bc0  FUN_00413bc0
+#include "../../../../re/match/s03/h2_00413bc0.c"
+}
+#undef DAT_005cd060
+#undef MATCH_PORT
+
 extern "C" __declspec(dllexport) __declspec(naked) void __cdecl HudUvRect413bc0()
 {
     __asm {
-        // ESI = index, ECX = out pointer (set by caller / harness trampoline).
-        test esi, esi
-        jl   default_quad                       // ESI < 0
-        cmp  esi, 5
-        jge  default_quad                       // ESI >= 5
-        cmp  esi, 3
-        je   inset_quad                          // ESI == 3 -> inset override
-
-        // ── grid case (ESI in {0,1,2,4}) ──────────────────────────────────
-        mov  eax, esi
-        and  eax, 3                              // col = ESI & 3
-        mov  edx, esi
-        sar  edx, 2                              // row = ESI >> 2 (ESI>=0)
-        push edx                                 // [esp+4] scratch = row
-        push eax                                 // [esp]   scratch = col
-        // out[0] = col * cell
-        fild dword ptr [esp]
-        fmul dword ptr ds:[0x005cd060]
-        fstp dword ptr [ecx]
-        // out[1] = row * cell
-        fild dword ptr [esp+4]
-        fmul dword ptr ds:[0x005cd060]
-        fstp dword ptr [ecx+4]
-        // out[2] = (col+1) * cell
-        mov  eax, [esp]
-        inc  eax
-        mov  [esp], eax
-        fild dword ptr [esp]
-        fmul dword ptr ds:[0x005cd060]
-        fstp dword ptr [ecx+8]
-        // out[3] = (row+1) * cell
-        mov  eax, [esp+4]
-        inc  eax
-        mov  [esp+4], eax
-        fild dword ptr [esp+4]
-        fmul dword ptr ds:[0x005cd060]
-        fstp dword ptr [ecx+0xc]
+        push esi                     // idx (arg2)
+        push ecx                     // out (arg1)
+        call FUN_00413bc0
         add  esp, 8
-        ret
-
-    inset_quad:
-        mov  eax, 0x3f7eb852                     // 0.995f
-        mov  dword ptr [ecx],     0x3e828f5c     // 0.255f
-        mov  dword ptr [ecx+4],   0x3e828f5c     // 0.255f
-        mov  dword ptr [ecx+8],   eax
-        mov  dword ptr [ecx+0xc], eax
-        ret
-
-    default_quad:
-        mov  eax, 0x3f800000                     // 1.0f
-        mov  dword ptr [ecx],     0
-        mov  dword ptr [ecx+4],   0
-        mov  dword ptr [ecx+8],   eax
-        mov  dword ptr [ecx+0xc], eax
         ret
     }
 }

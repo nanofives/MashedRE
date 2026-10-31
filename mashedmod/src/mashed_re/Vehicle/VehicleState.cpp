@@ -203,9 +203,17 @@ RH_ScopedInstall(VehicleCarStateRead, 0x0046cbb0);  // re-enabled 2026-05-24 pha
 // Called by ai_path_following functions as a "race angle" metric.
 // U-2173: float semantic unknown.  U-2174: array element count unknown.
 // ─────────────────────────────────────────────────────────────────────────────
-static constexpr std::uintptr_t kCarRaceArrayBase = 0x0089a880u;
-
-extern "C" __declspec(dllexport) float __cdecl VehicleRaceAngleGet(int carIdx) {
-    return *reinterpret_cast<const float*>(kCarRaceArrayBase + carIdx * 4u);
+// Body = the matched source re/match/s03/h1_00417730.c (byte-identical under re/tools/match/match.py,
+// cl 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1; MATCH-S03). MATCH_PORT maps its names onto the port.
+#define MATCH_PORT 1
+#define DAT_0089a880 (reinterpret_cast<float*>(0x0089a880u))
+#define FUN_00417730 VehicleRaceAngleGet
+extern "C" __declspec(dllexport) float __cdecl VehicleRaceAngleGet(int carIdx);
+extern "C" {
+// 0x00417730  VehicleRaceAngleGet
+#include "../../../../re/match/s03/h1_00417730.c"
 }
+#undef FUN_00417730
+#undef DAT_0089a880
+#undef MATCH_PORT
 RH_ScopedInstall(VehicleRaceAngleGet, 0x00417730);  // re-enabled 2026-05-24 c3-vehicle
