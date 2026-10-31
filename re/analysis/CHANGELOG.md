@@ -26,6 +26,580 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-31  00521990  FUN_00521990  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00522ab0  FUN_00522ab0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00522b00  FUN_00522b00  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00522cc0  FUN_00522cc0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00528e00  zcalloc  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052a890  FUN_0052a890  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052a9c0  FUN_0052a9c0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052b7e0  FUN_0052b7e0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052bf20  FUN_0052bf20  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052c630  FUN_0052c630  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0052c660  FUN_0052c660  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004f1f90  FUN_004f1f90  C2->C2  waived-library (L-70), refiled third-party-library[renderware]->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004d1000  zcalloc  (none)->C1  added by libid, waived-library (L-70) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004fa6f0  zcalloc  (none)->C1  added by libid, waived-library (L-70) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051f350  FUN_0051f350  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520850  png_destroy_struct  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520960  FUN_00520960  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520990  FUN_00520990  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520a00  FUN_00520a00  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00520b60  FUN_00520b60  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00521000  FUN_00521000  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00523110  LoadBE523110  C3->C3  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00523140  png_crc_read  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00528200  FUN_00528200  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00528ba0  FUN_00528ba0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516bb0  png_write_data  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516bd0  png_flush_data  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516cc0  png_zalloc  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516d30  png_reset_crc  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005173d0  Set5173d0  C3->C3  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005175d0  FUN_005175d0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00517e00  FUN_00517e00  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005183a0  FUN_005183a0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005183c0  FUN_005183c0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005184b0  FUN_005184b0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005184f0  FUN_005184f0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00519af0  FUN_00519af0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00519e30  FUN_00519e30  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051c100  FUN_0051c100  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051c9f0  FUN_0051c9f0  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051ca60  StoreBE51ca60  C3->C3  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0051cb70  FUN_0051cb70  C2->C2  waived-library (L-70), refiled util->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005150e0  FUN_005150e0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515660  FUN_00515660  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515680  FUN_00515680  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005156b0  FUN_005156b0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515710  FUN_00515710  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515740  FUN_00515740  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005157c0  FUN_005157c0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515aa0  FUN_00515aa0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515d50  FUN_00515d50  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00515ee0  FUN_00515ee0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005161a0  FUN_005161a0  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516320  FUN_00516320  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516370  FUN_00516370  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00516430  FUN_00516430  C2->C2  waived-library (L-70), refiled third-party-library[d3dx9-backward-extension]->third-party-library[libpng-1.0.12] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0x0040ad20  FrontendGlobalGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040ad30  UtilSet8a95ac  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b250  UtilReset8a9500  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b430  UtilFieldAdd8a94f0  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b620  SlotSortByModeScore  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b6b0  ModeScoreGetBySlot  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b7a0  HotkeyStringBaseGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b7b0  PlayerHotkeyTableGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b810  TimerGlobalsReset  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040d250  DoubleDerefIndexedGetter  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x00411d60  ReplayCheckTimer  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b6c0  FrontendArrayGet  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040b6d0  UtilArrayGet8a94e0  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040e340  GetLiveCarCount  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040bb70  SpriteLookupTableA  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040bb90  SpriteLookupTableB  C4->C4 frida route only, no match route, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040e3a0  PlayerColorTableGet  C3->C3 raw-address forwarder stubs, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040dfc0  HudIngameDispatch  C3->C3 raw-address forwarder stubs, exe-callers=0 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31  0x0040e370  IsCarSlotActive  C3->C3 exe-callers>0 but second exe body TG_40e370 (L-68); evidence: verify/matchs02rc_20261031/RESULT_MATCH-S02-RC.md
+2026-10-31 | rubric | MATCH-RC-CALLERLESS-FIX: correction to the MATCH-RUBRIC 'Callerless bodies' clause (L-68, Mariano 2026-10-31): a match row is C4 only when mashed_re.exe calls the swapped-in body. exe-callers=0 swaps keep the swap and match evidence, stay below C4, note 'match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)'. re/CONFIDENCE.md and re-classify SKILL.md edited. No merged match-route C4 exists on orch/integration (hooks.csv has 0 c4=match rows), so no demotions | verify/matchcallerlessfix_20261031/RESULT_MATCH-RC-CALLERLESS-FIX.md
+2026-10-31  004b7020  FUN_004b7020  C3->C3  refiled render->third-party-library[lua-4.0] by libid evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00585360  qh_comparevisit  (none)->C1  added by libid (qhull-2002.1) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00585d20  qh_compareangle  (none)->C1  added by libid (qhull-2002.1) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00585d50  qh_comparemerge  (none)->C1  added by libid (qhull-2002.1) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0059dd50  qh_compare_facetvisit  (none)->C1  added by libid (qhull-2002.1) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  0059e720  qh_compare_facetmerge  (none)->C1  added by libid (qhull-2002.1) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005a5790  qh_printvridge  (none)->C1  added by libid (qhull-2002.1) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b7450  errormessage  (none)->C1  added by libid (lua-4.0) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b79a0  f_call  (none)->C1  added by libid (lua-4.0) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b7a20  f_parser  (none)->C1  added by libid (lua-4.0) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004c0000  math_atan2  (none)->C1  added by libid (lua-4.0) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004c00b0  FUN_004c00b0  (none)->C1  added by libid (lua-4.0) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004c04f0  math_randomseed  (none)->C1  added by libid (lua-4.0) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004c0560  FUN_004c0560  (none)->C1  added by libid (lua-4.0) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2fc0  FUN_004a2fc0  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a30d0  _floor_pentium4  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a35e0  FUN_004a35e0  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3ce9  FUN_004a3ce9  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3fb0  _unwind_handler  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5a0c  _cropzeros  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5a57  _positive  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5e5e  __initstdio  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a6f53  FUN_004a6f53  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7165  _check_overflow_exit  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a767c  _floor_default  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8ac2  FUN_004a8ac2  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac660  _except_handler3  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad3f0  fdiv_main_routine  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad507  _adj_fdiv_r  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad9a6  _fdivp_sti_st  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad9b9  _fdivrp_sti_st  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad9cc  _adj_fdiv_m32  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ada18  _adj_fdiv_m64  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ada64  _adj_fdiv_m16i  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ada98  _adj_fdiv_m32i  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adacc  _adj_fdivr_m32  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adb18  _adj_fdivr_m64  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adb64  _adj_fdivr_m16i  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adb98  _adj_fdivr_m32i  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adbcc  _safe_fdiv  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adbe1  _safe_fdivr  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adeae  _fprem1_common  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae0b4  _adj_fprem1  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1375  __init_time  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c20d0  _ceil_pentium4  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2940  exp  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c297c  _CIexp  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c4080  FUN_005c4080  (none)->C1  added by libid, waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a332b  CrtExitNoReturn_j5  C3->C3  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3440  CrtStackProbe  C3->C3  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4b6e  __amsg_exit  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4b93  CrtFastErrorExit  C3->C3  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a59bf  CrtSehEpilog  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8a04  FUN_004a8a04  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa3fe  __heap_init  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004abbea  FUN_004abbea  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004abe86  FUN_004abe86  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac04a  FUN_004ac04a  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a31b1  CrtExitProcess_j5  C3->C3  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a333c  __exit  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a40fe  ___onexitinit  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a415e  _atexit  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a774d  __mtinitlocks  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a87f7  FUN_004a87f7  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa3e4  ___heap_select  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa44f  ___sbh_heap_init  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aba4d  __FF_MSGBANNER  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2cbd  printf  C2->C2  waived-platform-crt (L-67), refiled render->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a45fb  _malloc  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a460d  _free  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004abd1a  FUN_004abd1a  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae29f  ___crtInitCritSecAndSpinCount  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af2b6  ___initmbctable  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004affe0  FUN_004affe0  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005a7b40  AudioCtxSwap5a7b40  C3->C3  waived-platform-crt (L-67), refiled audio->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4126  __onexit  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5de3  FUN_004a5de3  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aac76  ___sbh_alloc_block  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aaf72  __callnewh  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac45c  ___crtMessageBoxA  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2c48  FUN_004a2c48  C3->C3  waived-platform-crt (L-67), refiled frontend->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4541  FsopenSafe  C2->C2  waived-platform-crt (L-67), refiled save->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a43b9  FUN_004a43b9  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4170  __alldiv  C2->C2  waived-platform-crt (L-67), refiled util->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4220  __allmul  C2->C2  waived-platform-crt (L-67), refiled util->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3b84  FUN_004a3b84  C2->C2  waived-platform-crt (L-67), refiled util->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a42c5  FUN_004a42c5  C2->C2  waived-platform-crt (L-67), refiled render->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1ea0  _longjmp  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3620  CRT::atan  C2->C2  waived-platform-crt (L-67), refiled util->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2b60  sprintf  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a45cf  __nh_malloc  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa497  ___sbh_find_block  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa4c2  ___sbh_free_block  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae28f  ___crtInitCritSecNoSpinCount@8  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af166  __setmbcp  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004affaf  FUN_004affaf  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4554  __heap_alloc  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aed77  FUN_004aed77  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aeda6  setSBCS  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a407e  __onexit_lk  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad33b  __controlfp  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad351  __fcloseall  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa7da  ___sbh_alloc_new_region  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa891  ___sbh_alloc_new_group  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af601  FUN_004af601  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af56c  FUN_004af56c  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4fc1  write_char  C2->C2  waived-platform-crt (L-67), refiled render->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4ff4  write_multi_char  C2->C2  waived-platform-crt (L-67), refiled render->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5018  write_string  C2->C2  waived-platform-crt (L-67), refiled render->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4da0  __aulldvrm  C2->C2  waived-platform-crt (L-67), refiled render->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b302f  __stricmp  C2->C2  waived-platform-crt (L-67), refiled util->third-party-library[msvc-crt-main] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005ca2d0  __aullshr  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1d63  _fseek  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1dac  __ftol  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1dd3  FID_conflict:_fwprintf  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1e31  FID_conflict:_ungetc  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1f1c  __setjmp3  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2090  FUN_005c2090  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c21e2  _frexp  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c229b  _rand  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2435  FID_conflict:__time32  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2470  shortsort  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c24e0  FUN_005c24e0  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2770  FUN_005c2770  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c278f  FUN_005c278f  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c281e  FUN_005c281e  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c28e7  FUN_005c28e7  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c29cb  _clock  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2a45  _localtime  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2bc5  strtoxl  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2d84  _strtol  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2d9b  FUN_005c2d9b  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2dd9  FUN_005c2dd9  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2e79  __beginthread  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2f0a  FUN_005c2f0a  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2f26  _wcscmp  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c2f58  FUN_005c2f58  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c302a  __ftell_lk  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c318c  __rt_probe_read4@4  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c326b  FID_conflict:__floor_default  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c3340  __cintrindisp2  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c337e  __cintrindisp1  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c33bb  __ctrandisp2  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c3551  __ctrandisp1  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c3584  __fload  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c35c0  __inc  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c4180  FUN_005c4180  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c4440  _gmtime  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c4547  ___mbtowc_mt  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c4607  _mbtowc  C2->C2  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004fcbca  FUN_004fcbca  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004fcc18  FUN_004fcc18  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004fccbc  FUN_004fccbc  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004fced0  FUN_004fced0  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b6b10  __stricmp  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2d30  FUN_004a2d30  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2d70  FUN_004a2d70  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2dcd  FUN_004a2dcd  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2f92  FUN_004a2f92  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a2fd0  FUN_004a2fd0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3090  FUN_004a3090  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3370  FUN_004a3370  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a338d  FUN_004a338d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3480  FUN_004a3480  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3678  FUN_004a3678  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a371d  FUN_004a371d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a37cd  FUN_004a37cd  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3860  FUN_004a3860  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a38e6  FUN_004a38e6  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3907  FUN_004a3907  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a391c  FUN_004a391c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a39c0  FUN_004a39c0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a39d4  FUN_004a39d4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a39dd  FUN_004a39dd  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3a90  FUN_004a3a90  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3bda  FUN_004a3bda  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3bdf  FUN_004a3bdf  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3c1c  FUN_004a3c1c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3c2a  FUN_004a3c2a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3c5a  FUN_004a3c5a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3c61  FUN_004a3c61  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3cb3  FUN_004a3cb3  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3d0d  FUN_004a3d0d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3d7e  FUN_004a3d7e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3df8  FUN_004a3df8  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3e20  FUN_004a3e20  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3e41  FUN_004a3e41  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3e8d  FUN_004a3e8d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3ede  FUN_004a3ede  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3f90  FUN_004a3f90  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a3fd2  FUN_004a3fd2  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a403a  FUN_004a403a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a405d  FUN_004a405d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4066  FUN_004a4066  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4254  FUN_004a4254  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a42bb  FUN_004a42bb  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a431c  FUN_004a431c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4368  FUN_004a4368  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a43b1  FUN_004a43b1  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a44e5  FUN_004a44e5  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4537  FUN_004a4537  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4739  FUN_004a4739  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a48a1  FUN_004a48a1  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a48e6  FUN_004a48e6  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a49cf  FUN_004a49cf  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4a11  FUN_004a4a11  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4a1b  FUN_004a4a1b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4b22  FUN_004a4b22  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4b64  FUN_004a4b64  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4e40  FUN_004a4e40  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a4ea8  FUN_004a4ea8  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a59d0  FUN_004a59d0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5a71  FUN_004a5a71  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5aaf  FUN_004a5aaf  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5acc  FUN_004a5acc  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5b7a  FUN_004a5b7a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5bee  FUN_004a5bee  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5c8a  FUN_004a5c8a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5cf2  FUN_004a5cf2  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5d92  FUN_004a5d92  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5f1b  FUN_004a5f1b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5f4a  FUN_004a5f4a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5f6d  FUN_004a5f6d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5f9c  FUN_004a5f9c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a5fbf  FUN_004a5fbf  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a6047  FUN_004a6047  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a6071  FUN_004a6071  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a60a6  FUN_004a60a6  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a6100  FUN_004a6100  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a6119  FUN_004a6119  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a6e60  FUN_004a6e60  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a6ec7  FUN_004a6ec7  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7030  FUN_004a7030  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7047  FUN_004a7047  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7090  FUN_004a7090  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a70a5  FUN_004a70a5  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a70bc  FUN_004a70bc  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a70d5  FUN_004a70d5  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7118  FUN_004a7118  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a712e  FUN_004a712e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a713b  FUN_004a713b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7179  FUN_004a7179  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a721c  FUN_004a721c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7286  FUN_004a7286  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a73e8  FUN_004a73e8  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7940  FUN_004a7940  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a795e  FUN_004a795e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7c2c  FUN_004a7c2c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7e12  FUN_004a7e12  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7e3c  FUN_004a7e3c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7e51  FUN_004a7e51  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7eac  FUN_004a7eac  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a7f66  FUN_004a7f66  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a820b  FUN_004a820b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a842d  FUN_004a842d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8455  FUN_004a8455  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8482  FUN_004a8482  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8520  FUN_004a8520  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8573  FUN_004a8573  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a85d2  FUN_004a85d2  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8690  FUN_004a8690  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a875f  FUN_004a875f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a876c  FUN_004a876c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a877a  FUN_004a877a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a879e  FUN_004a879e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8815  FUN_004a8815  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8828  FUN_004a8828  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8899  FUN_004a8899  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a89ef  FUN_004a89ef  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a89fb  FUN_004a89fb  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8a73  FUN_004a8a73  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8ae0  FUN_004a8ae0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8b93  FUN_004a8b93  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8bae  FUN_004a8bae  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8bf3  FUN_004a8bf3  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8c10  FUN_004a8c10  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8d53  FUN_004a8d53  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8db7  FUN_004a8db7  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8f33  FUN_004a8f33  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a8f9a  FUN_004a8f9a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a905a  FUN_004a905a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a923c  FUN_004a923c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a92de  FUN_004a92de  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9313  FUN_004a9313  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9340  FUN_004a9340  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a938c  FUN_004a938c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a93f9  FUN_004a93f9  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a949b  FUN_004a949b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a951e  FUN_004a951e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9595  FUN_004a9595  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a95b9  FUN_004a95b9  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a95e4  FUN_004a95e4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9641  FUN_004a9641  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a966f  FUN_004a966f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a970f  FUN_004a970f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a973b  FUN_004a973b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a974d  FUN_004a974d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9858  FUN_004a9858  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9a58  FUN_004a9a58  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9cc9  FUN_004a9cc9  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004a9e81  FUN_004a9e81  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa00c  FUN_004aa00c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa03a  FUN_004aa03a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa060  FUN_004aa060  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa0d5  FUN_004aa0d5  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa246  FUN_004aa246  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa24f  FUN_004aa24f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa2c2  FUN_004aa2c2  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa3db  FUN_004aa3db  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aa997  FUN_004aa997  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ab32d  FUN_004ab32d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ab40e  FUN_004ab40e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ab5db  FUN_004ab5db  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ab662  FUN_004ab662  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ab686  FUN_004ab686  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ab82b  FUN_004ab82b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ab8b2  FUN_004ab8b2  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aba86  FUN_004aba86  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac248  FUN_004ac248  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac2bc  FUN_004ac2bc  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac343  FUN_004ac343  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac367  FUN_004ac367  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac3ab  FUN_004ac3ab  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac3d5  FUN_004ac3d5  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac435  FUN_004ac435  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac71d  FUN_004ac71d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac738  FUN_004ac738  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac777  FUN_004ac777  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac7b1  FUN_004ac7b1  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac7f0  FUN_004ac7f0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac82a  FUN_004ac82a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac869  FUN_004ac869  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac931  FUN_004ac931  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac953  FUN_004ac953  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac985  FUN_004ac985  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ac9d2  FUN_004ac9d2  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aca44  FUN_004aca44  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aca5f  FUN_004aca5f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aca78  FUN_004aca78  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004acaf3  FUN_004acaf3  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004acc4b  FUN_004acc4b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004acc61  FUN_004acc61  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004acc77  FUN_004acc77  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004accba  FUN_004accba  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad03d  FUN_004ad03d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad0b4  FUN_004ad0b4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad16e  FUN_004ad16e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad1e9  FUN_004ad1e9  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad27b  FUN_004ad27b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ad309  FUN_004ad309  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004adbf6  FUN_004adbf6  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004addfc  FUN_004addfc  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae17b  FUN_004ae17b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae279  FUN_004ae279  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae28c  FUN_004ae28c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae32a  FUN_004ae32a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae3f4  FUN_004ae3f4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae4b6  FUN_004ae4b6  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae4da  FUN_004ae4da  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae5ac  FUN_004ae5ac  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae5fa  FUN_004ae5fa  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae62c  FUN_004ae62c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae6f4  FUN_004ae6f4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004ae820  FUN_004ae820  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aea3e  FUN_004aea3e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aec1d  FUN_004aec1d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aed66  FUN_004aed66  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aef61  FUN_004aef61  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aefc7  FUN_004aefc7  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af340  FUN_004af340  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af3c8  FUN_004af3c8  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af3e4  FUN_004af3e4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af400  FUN_004af400  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af418  FUN_004af418  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af430  FUN_004af430  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af4ac  FUN_004af4ac  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af52b  FUN_004af52b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af5df  FUN_004af5df  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af74e  FUN_004af74e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af7ee  FUN_004af7ee  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004af80a  FUN_004af80a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004afa30  FUN_004afa30  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004afae2  FUN_004afae2  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004afb6a  FUN_004afb6a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004afb6f  FUN_004afb6f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004afbf0  FUN_004afbf0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004afed7  FUN_004afed7  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aff1c  FUN_004aff1c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004aff2c  FUN_004aff2c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004afff1  FUN_004afff1  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0068  FUN_004b0068  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b008f  FUN_004b008f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b044b  FUN_004b044b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b046c  FUN_004b046c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b04ca  FUN_004b04ca  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b04f8  FUN_004b04f8  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0525  FUN_004b0525  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0609  FUN_004b0609  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0a43  FUN_004b0a43  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0cd7  FUN_004b0cd7  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0d05  FUN_004b0d05  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0e40  FUN_004b0e40  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b0e7e  FUN_004b0e7e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b11e5  FUN_004b11e5  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b13d4  FUN_004b13d4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1433  FUN_004b1433  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1600  FUN_004b1600  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b16d9  FUN_004b16d9  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1918  FUN_004b1918  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1ae0  FUN_004b1ae0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1b26  FUN_004b1b26  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1b86  FUN_004b1b86  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1ba0  FUN_004b1ba0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1c1c  FUN_004b1c1c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1c3a  FUN_004b1c3a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1d1d  FUN_004b1d1d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1d52  FUN_004b1d52  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1d6f  FUN_004b1d6f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1e09  FUN_004b1e09  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b1e80  FUN_004b1e80  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b20a0  FUN_004b20a0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2171  FUN_004b2171  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b21a8  FUN_004b21a8  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b222e  FUN_004b222e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2283  FUN_004b2283  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2440  FUN_004b2440  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b24f8  FUN_004b24f8  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b26c0  FUN_004b26c0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2700  FUN_004b2700  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b274e  FUN_004b274e  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b27b9  FUN_004b27b9  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b28f4  FUN_004b28f4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b293d  FUN_004b293d  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2b0c  FUN_004b2b0c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2bdd  FUN_004b2bdd  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2e15  FUN_004b2e15  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2eb0  FUN_004b2eb0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b2efe  FUN_004b2efe  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3098  FUN_004b3098  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3117  FUN_004b3117  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3155  FUN_004b3155  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b317f  FUN_004b317f  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b319b  FUN_004b319b  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3525  FUN_004b3525  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3572  FUN_004b3572  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b35d3  FUN_004b35d3  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3788  FUN_004b3788  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b37ea  FUN_004b37ea  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b391a  FUN_004b391a  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3a60  FUN_004b3a60  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3ac1  FUN_004b3ac1  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3aec  FUN_004b3aec  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3eb0  FUN_004b3eb0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3f50  FUN_004b3f50  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3f90  FUN_004b3f90  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  004b3fc0  FUN_004b3fc0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00502a0f  FUN_00502a0f  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00502da6  FUN_00502da6  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005044f1  FUN_005044f1  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  00510d27  FUN_00510d27  C2->C2  waived-platform-crt (L-67), refiled third-party-library[d3dx9-shader-compiler]->third-party-library[msvc-crt] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0140  FUN_005c0140  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c01f0  FUN_005c01f0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0250  FUN_005c0250  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c02a0  FUN_005c02a0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c02c0  FUN_005c02c0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0320  FUN_005c0320  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0360  FUN_005c0360  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0490  FUN_005c0490  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0600  FUN_005c0600  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c06e0  FUN_005c06e0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0730  FUN_005c0730  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c07f0  FUN_005c07f0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0c20  FUN_005c0c20  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0c90  FUN_005c0c90  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0d40  FUN_005c0d40  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0dc0  FUN_005c0dc0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0e00  FUN_005c0e00  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0e40  FUN_005c0e40  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0e70  FUN_005c0e70  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0ec0  FUN_005c0ec0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c0ef0  FUN_005c0ef0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1140  FUN_005c1140  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1380  FUN_005c1380  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c13c0  FUN_005c13c0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1420  FUN_005c1420  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1480  FUN_005c1480  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c14c0  FUN_005c14c0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1520  FUN_005c1520  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1540  FUN_005c1540  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1770  FUN_005c1770  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c17d0  FUN_005c17d0  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1920  FUN_005c1920  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1926  FUN_005c1926  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c192c  FUN_005c192c  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1a40  FUN_005c1a40  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1cb7  FUN_005c1cb7  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005c1cd4  FUN_005c1cd4  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
+2026-10-31  005cb432  FUN_005cb432  C2->C2  waived-platform-crt (L-67) evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-30  D-11062  DEFERRED  Active->struck  the boot movies of FUN_00402750 (FUN_00495350 four logo movies, FUN_00494c80 small.mpg build-only) are ported as RunBootIntroMovies and MASHED_INTRO_MOVIES is default ON (L-63, Mariano 2026-10-30), default gates unchanged on the ON build; movie audio untested, carried as U-9799 (evidence: verify/intromovies_20261030/RESULT_D5-INTROMOVIES-FLIP.md)
 2026-10-30  U-9799  UNCERTAINTIES  filed  boot movie audio untested (no audio endpoint on LIVING-PC; audio_hr 0x80040256 / 0x00000001), named residue of D-11062 at the MASHED_INTRO_MOVIES flip (L-63), verify/intromovies_20261030/RESULT_D5-INTROMOVIES-FLIP.md
 2026-10-29  U-9589  UNCERTAINTIES  Active->struck  esp depth at every listed site follows from the call frames read from disassembly in verify/d4wsbsolvkv_20261029/RESULT_D4-WSB-PORT-SOLV-KV.md (69 words into 0x0056adb0 add esp 0x114 at 0x0056b645, 15 into 0x0056ac40 add esp 0x3c at 0x0056af84/0x0056b185, 56 into 0x0056aae0 add esp 0xe0 at 0x0056b0e3, 39 into 0x0056a7a0 inside add esp 0x9c at 0x0056ac13), and the port built on those frames matches the original bytes on all 1800 Arm U cases with M1..M4 detected (evidence: verify/d4wsbsolvkvarmu_20261030/RESULT_D4-WSB-SOLV-KV-ARMU.md)

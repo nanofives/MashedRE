@@ -1,0 +1,15 @@
+rva	hooks_name	subsystem	confidence	status	library_object	lib_function	lib_size	first_diff	category	note
+0x004d1000	(not in hooks.csv)			identical-unlisted	zutil.obj	_zcalloc	19			
+0x004f1f90	(not in hooks.csv)			identical-unlisted	gzio.obj	_gztell	18			
+0x004fa6f0	(not in hooks.csv)			identical-unlisted	zutil.obj	_zcalloc	19			
+0x00521990	(not in hooks.csv)			identical-unlisted	deflate.obj	_deflateEnd	170			
+0x00522ab0	(not in hooks.csv)			identical-unlisted	inflate.obj	_inflateReset	66			
+0x00522b00	(not in hooks.csv)			identical-unlisted	inflate.obj	_inflateEnd	72			
+0x00522cc0	(not in hooks.csv)			identical-unlisted	inflate.obj	_inflateInit_	26			
+0x00528e00	(not in hooks.csv)			identical-unlisted	zutil.obj	_zcalloc	19			
+0x0052a890	(not in hooks.csv)			identical-unlisted	adler32.obj	_adler32	302			
+0x0052a9c0	(not in hooks.csv)			identical-unlisted	infblock.obj	_inflate_blocks_reset	123			
+0x0052b7e0	(not in hooks.csv)			identical-unlisted	infcodes.obj	_inflate_codes_new	57			
+0x0052bf20	(not in hooks.csv)			identical-unlisted	infcodes.obj	_inflate_codes_free	20			
+0x0052c630	(not in hooks.csv)			identical-unlisted	inftrees.obj	_inflate_trees_fixed	46			
+0x0052c660	(not in hooks.csv)			identical-unlisted	infutil.obj	_inflate_flush	306			

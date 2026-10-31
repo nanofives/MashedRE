@@ -136,8 +136,11 @@ Checks before stamping C4:
   matched source or includes it (`exe_file == file`, lint clean, physics TU in `x87_tus.txt`); the merge-train gates
   are unchanged after the swap (cite the gate hashes). A matched source the port does not compile, or a naked
   inline-asm transcription, is refused.
-- `match`, callerless body (no exe caller): accepted, and `notes` gets `exe-callers=0`. The unchanged gates then show
-  only that the swap changed nothing the default build runs, not that the body ran (rubric, "Callerless bodies").
+- `match`, callerless body (no exe caller, `exe-callers=0`): **NOT C4** (L-68, Mariano 2026-10-31). Count the exe
+  callers of the swapped-in body yourself. With 0, keep the swap and the match evidence, leave the level where it is,
+  and write `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)` in `notes`. No
+  `c4=match` token. A merged `match` C4 found with `exe-callers=0` is demoted to its previous level with that note.
+  Rubric, "Callerless bodies".
 - `libid`: status `identical` and not `ambiguous` in the libmatch TSV; the port body file compiles that vendored
   source. CRT rows never take `libid` C4: see "CRT rows (L-67)" below.
 - The Write-set leg is not asked for on these routes.
@@ -160,6 +163,49 @@ over the CRT rows and the 197 CRT functions filed under other subsystems):
 4. Changelog line per row: `date  RVA  name  Cn->Cn  waived-platform-crt (L-67) evidence: <RESULT>`.
 
 Lua and qhull rows are not waived: they take `libid` C4 when the port compiles the vendored source.
+
+Run it with the helper, never by hand (added MATCH-LIB 2026-10-31):
+
+```
+py -3.12 re\tools\libid_reclass.py crt-waive --tsv <libmatch tsv> --lib <main>\tools\vc7ddk\lib\wxp\i386\libcmt.lib --evidence <RESULT>
+```
+
+It applies steps 1-4 to every `third-party-library[msvc-crt*` row and every row at a TSV `identical-unlisted` CRT
+address (the refile), reads each member's `@comp.id` from `--lib`, and skips rows already `waived-platform-crt`
+(a second run writes nothing). Bucket by address: `0x004a0000..0x004b4000` -> `-main`, `0x005c0000..0x005d0000` ->
+`-tail`, anything else -> `[msvc-crt]`.
+
+### Library rows from libid: add missing rows, refile misfiled ones (no C4)
+
+A libmatch TSV also lists library functions that are identical at an address with **no** hooks.csv row, or at a row
+filed under a game subsystem. Helper (same file, same idempotence, one CHANGELOG line per row):
+
+```
+py -3.12 re\tools\libid_reclass.py add-rows   --tsv <tsv> --library lua-4.0|qhull-2002.1 --not-c4 "<why not libid C4>" --evidence <RESULT>
+py -3.12 re\tools\libid_reclass.py add-rows   --tsv <tsv> --library msvc-crt --lib <libcmt.lib> --evidence <RESULT>
+py -3.12 re\tools\libid_reclass.py refile-lib --tsv <tsv> --library lua-4.0|qhull-2002.1 --evidence <RESULT>
+```
+
+- **add-rows** appends a **C1** row per address (C1 gate: the identity names the function, the library fixes the
+  subsystem). Lua / qhull: status `mapped`, notes `C1 by libid: identical <obj> <fn> (<flags>, <compiler>; <tsv>)`
+  plus the mandatory `not C4: <why>`. CRT: status `waived-platform-crt` with the L-67 notes. A name the bytes do not
+  determine (several functions identical there, MASM local labels, C++ mangled names) becomes `FUN_<rva>` with every
+  candidate in notes. CHANGELOG `(none)->C1`.
+- **refile-lib** moves a Lua / qhull row filed under a game subsystem to the library subsystem when its address is
+  identical to exactly one library function. Confidence, status and file are kept; notes get the identity first.
+- Neither operation promotes. A libid C4 still needs the gate above (the port compiles that vendored source with the
+  recorded flags).
+### libpng / zlib identical rows (L-70)
+
+```
+py -3.12 re/tools/libid_reclass.py waive-lib --library libpng-1.0.12|zlib-1.1.3 --tsv verify/matchlib_20261031/pngzlib/<lib>_O2_G5.tsv --evidence <RESULT>
+```
+
+Refiles the row at every `identical-unlisted` address to `third-party-library[libpng-1.0.12]` / `[zlib-1.1.3]`, status
+`waived-library`, confidence kept, notes `identified, waived: vendored library <lib> (L-70)` plus the libid identity. An
+address with no row gets a C1 row. Never C4 (the port links no libpng / zlib from that source). Idempotent.
+
+- Self-test: `py -3.12 -m pytest re/tools/tests/test_libid_reclass.py` (fake repo root, real trackers untouched).
 
 ## CSV row format reminder
 

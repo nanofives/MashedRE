@@ -127,12 +127,13 @@ diff is not the evidence. Both are recorded in `hooks.csv` `notes` and in the `r
   A matched source alone is not C4. A naked inline-asm transcription is not match evidence (it matches by
   construction); an inline `__asm` block inside a compiled C body is.
 
-  **Callerless bodies.** A `match` row can be C4 when the swapped-in body has **no caller in the exe** (17 of
-  MATCH-S02's 19 swaps). The frida-route rule that the body must execute (strict C4, 2026-10-16) does not apply
-  here, because the evidence is the static identity, not a run. For such a row gate (3) proves only that the swap
-  changed nothing the default build executes. It does **not** exercise the body, its callees or the state it reads.
-  Its C4 rests on (1) + (2): byte identity, relocheck OK and one body per RVA. Record `exe-callers=0` in `notes`, so
-  no parity or D-criterion argument cites the row as run evidence.
+  **Callerless bodies (L-68 ruling, Mariano 2026-10-31).** A `match` row is C4 **only when `mashed_re.exe` actually
+  calls the swapped-in body.** A swap with **no caller in the exe** (`exe-callers=0`) keeps the swap and its match
+  evidence but stays **below C4** (at its current level): it is matched and swapped, pending a caller. Gate (3) cannot
+  help here, because with no caller the unchanged gates show only that the swap changed nothing the default build
+  runs. `notes` gets `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)`. When
+  a caller lands, re-count the exe callers and re-classify to C4 with the gates unchanged. A merged `match` C4 whose
+  body has `exe-callers=0` is demoted to its previous level with the same note.
 - **`libid` (vendored library code: Lua 4.0, qhull 2002.1).** C4 when the library object's function is **identical**
   to the image (`re/tools/match/libmatch.py`: every byte equal except relocation sites, relocations into the same
   function checked, ambiguous names excluded) **and** the port gets the function from that same vendored library
@@ -151,7 +152,14 @@ diff is not the evidence. Both are recorded in `hooks.csv` `notes` and in the `r
     util, save, audio, frontend; `verify/libidentity_20261030/RESULT_LIB-IDENTITY.md` finding 2) is refiled to the
     CRT subsystem (`third-party-library[msvc-crt-main]`, `-tail` or `[msvc-crt]`, the bucket its address range
     already uses) with the same status and notes.
-  Lua and qhull are vendored and use `libid` as above. The waiver covers the CRT only.
+  Lua and qhull are vendored and use `libid` as above. The CRT waiver (L-67) covers the CRT only.
+- **libpng 1.0.12 and zlib 1.1.3: waived at library level (L-70, Mariano 2026-10-31).** The 42 libpng and 14 zlib
+  functions whose bytes are identical to the DDK build (`verify/matchlib_20261031/pngzlib/`, `/O2 /G5`) are refiled to
+  `third-party-library[libpng-1.0.12]` / `third-party-library[zlib-1.1.3]`, status `waived-library`, and come out of the
+  P-DoD count like the CRT rows. The port links no libpng / zlib built from that source, so they are not `libid` C4.
+  They keep their level, `notes` starts `identified, waived: vendored library <lib> (L-70)` and carries the libid
+  identity as provenance; an identical address with no row gets a C1 row. Helper: `libid_reclass.py waive-lib`.
+  The 4 older `third-party-library[libpng]` rows are not identical and are not touched.
 
 **How the Write-set leg relates.** The Write-set leg is a **frida-route leg** only: it exists because a clean race diff
 cannot show stores that land outside the sampled memory. It is not an extra requirement of `match` or `libid`. Byte
@@ -162,8 +170,8 @@ identity plus relocheck does **not** cover, and what gate (3) therefore carries:
 level (relocheck proves the call goes to the right RVA, not what the port's body there does); (b) relocations relocheck
 lists as unchecked (imports, CRT helpers, file-static data), and the layout and contents of the port's globals and heap
 behind a correct address; (c) inputs from state the port computes differently. Where a matched row has callees or
-globals that no gate exercises (always so for a callerless body), say so in `notes`: the row is still C4 by this route,
-but it is not evidence for those callees or globals.
+globals that no gate exercises, say so in `notes`: the row is still C4 by this route (it has an exe caller), but it
+is not evidence for those callees or globals. A callerless body is not C4 at all (L-68).
 
 ## Which copy the evidence covers (clause added 2026-09-29)
 
