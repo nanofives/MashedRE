@@ -1,6 +1,6 @@
 # RESULT D5-DEAD-COUNTDOWN-STANDIN (2026-11-01)
 
-Verdict: **PENDING (gates queued)**
+Verdict: **GREEN (gates unchanged)**
 
 Step: delete the countdown stand-in in `TrackRenderer::UpdateCar` (the ledger title says `TrackRenderer::Update`, but the
 block is in `UpdateCar`, `mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:5114`). It became unreachable when
@@ -62,12 +62,41 @@ Left in place (not deleted here, so the diff stays one dead block):
 
 ## 4. Gates
 
-Pending. `gates.sh` (H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26 under mashed_lock) was queued at 14:05 and killed by the LIVING-PC
-reboot at 14:23 before the lock was granted. Resubmitted 14:52 with exe `c51c6da7`, waiting behind a D4 SOLO window and a
-merge-train hold. Refs (`re/orchestrator/merge_train.json`): G-CTRL `8284be46/ba407a16/31fe043e`, B `1d5bf4f9` x3.
+`gates.sh` ran `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` under `mashed_lock.py run`, exe
+`c51c6da7`, private root `D:/MashedWT/D5-DEAD-COUNTDOWN-STANDIN_root`. The first submission (14:05) was killed by the LIVING-PC
+reboot at 14:23 before the lock was granted, so it ran no arm. It was resubmitted at 14:52, got the lock at about 15:40 and
+finished at 15:57:06 with lock/arms rc 0. Every arm exited by itself with exit 0 (H_DEF 280 s, B arms 12 to 14 s).
+
+| Gate | This branch | Ref (`re/orchestrator/merge_train.json`) | |
+|---|---|---|---|
+| G-CTRL (H_DEF step / gates / ptrace) | `8284be46/ba407a16/31fe043e` | `8284be46/ba407a16/31fe043e` | unchanged |
+| B (K0 / K1 / K26 step) | `1d5bf4f9/1d5bf4f9/1d5bf4f9` | `1d5bf4f9/1d5bf4f9/1d5bf4f9` | unchanged |
+| (b) `vsum.py` | 3/3 on all three B arms (car1..3 A PASS) | | |
+| (e) `ai_speed_env.py --check` B_DEF_K0 | v1 / v2 / v3 PASS | | |
+
+Line counts: H_DEF.step.csv 13962, H_DEF.gates.csv 54085, H_DEF.ptrace.log 27042, each B step.csv 762.
+The arms run only `mashed_re.exe`, not the original, so no original-side launch happened and the runner emitted no audio
+check line.
 
 ## 5. Raw files (not committed)
 
 Folder `D:/MashedWT/D5-DEAD-COUNTDOWN-STANDIN_data/` (sha256):
 
-Pending (no arm has run yet).
+| file | sha256 |
+|---|---|
+| `arms/H_DEF.step.csv` | `8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198` |
+| `arms/H_DEF.gates.csv` | `ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb` |
+| `arms/H_DEF.ptrace.log` | `31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3` |
+| `arms/B_DEF_K0.step.csv` | `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457` |
+| `arms/B_DEF_K1.step.csv` | `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457` |
+| `arms/B_DEF_K26.step.csv` | `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457` |
+| `vsum_b.txt` | `6b0c8feada572b7600d357e6cc3ee1302fa5bb25d59b34fbb6d4f01a9ee2956a` |
+| `e_check.txt` | `7ab3355e97ac453609feb1aa98b74c9267e31e8941016f5e364d5febaa8d5051` |
+| `build.log` | `22b7dc8b81e96219ac799c03ebd7fc63deeec63ab80478a3eddf39720418b0c3` |
+| `lint.txt` | `74fada50805d9dc79713be62c0b4b501b314dce16fad6a2ae5c12cc1133f4d77` |
+
+## 6. Follow-up
+
+The five callees left without a caller (section 2) are a candidate step: check each one's hooks.csv row, .asi use and
+dual-copy allowlist entry, then delete.
+
