@@ -85,3 +85,29 @@ Order: S, then C0, K0, M1, M2, then G. A row whose 60 s hold gives fewer than 5 
   order), not a harness fault.
 - Masked dword counts are reported per row. A mask that covers a dword the body also writes hides that write (LIMITS
   in the header); the RESULT says so for any row where `mask` is large against the pages touched.
+
+## Amendment 1 (committed before pass 2, after pass-1 arm S)
+
+Pass 1 (`.asi fdb0e4d1`): `0x0055ded0` CLEAN 24/24, `0x0055dca0` CLEAN 1/1, `0x0055dc70` CLEAN 1/1, `0x0057c300`
+CLEAN 24/24, `0x0057c500` DIVERGENT 7/24. C0 CLEAN 1/1, K0 DIVERGENT 19/24 (M1/M2 still running at this writing).
+
+Every `0x0057c500` divergent sample differs in 16 dwords of the `0x54` block, each a pointer into the second paired
+block (`0x70`) at offset `+0x8` on one side and `+0x10` on the other (sample 6: A `0f51fa10` = A_1 + 0x8, B
+`0f51f8b0` = B_1 + 0x10). The `0x70` block comes from `0x00564130`, which both sides run as the original (the port
+calls it through a raw-RVA thunk). `0x00564130` takes `size + align` from slot `+0x108` and returns
+`raw + (align - raw % align)`, pad = align when the remainder is 0, pad byte at `ret - 1`
+(`L2_00564130.cpp`, hand fixes `0x00564170..0x00564179`). A block at `...a08` gives `+0x8`, one at `...8a0` gives
+`+0x10`. The offset depends on the block address, so pairing by offset cannot match it.
+
+Change (harness only, `ShadowTrack.h`, same knob): in the port's run, when the k-th request matches the original's
+k-th (slot and arguments), the wrapper asks the allocator again until the block address mod 16 equals the original's
+(at most 8 extra blocks), then frees the misses through slot `+0x10c` (`(ptr)`, `L2_0057c550.cpp`
+`0x0057c577..0x0057c584`). It runs inside the wrapper, so its heap writes land in the mask. The `[al]` line adds
+`pin=<extra blocks>/<misses>`. A pin miss leaves the sample to the offset rule (it diverges if the offsets differ).
+
+Build `MASHED_NO_DEPLOY=1`: `mashed_re.exe` `28ad585e15ea555237be55a3b1712f6edd9492f7f9baaf23b188142031b05649`,
+`mashed_re_dev.asi` `63299e3c7a535dc6190c34b86d3768da57490c40e61a4068ba14736e22dc8f70`, rva-lint 0 NEW.
+
+Pass 2 on this build, same env and read-out as above: S (5 rows), C0, K0, M1, M2, then the `HOLD=180` re-run of every
+row with fewer than 5 samples, then G on exe `28ad585e`. Pass 1 stays as the measurement that found the padding
+(`shadow_summary_pass1.tsv`, raw `D:/MashedWT/HB-SHADOW-ALLOC-COMPARE_data/pass1/`). Read-out is on pass 2.
