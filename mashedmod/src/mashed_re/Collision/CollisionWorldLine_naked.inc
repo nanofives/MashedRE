@@ -762,7 +762,7 @@ extern "C" __declspec(naked) void BW_538d60() {
         fstp dword ptr [esp + 0x14]                      // 0053983b
         mov ecx, dword ptr [esp + 0x14]                  // 0053983f
         push ecx                                         // 00539843
-        call BW_4c3b90                                   // 00539844
+        call RwLutInvSqrt_cd                             // 00539844
         fld dword ptr [esp + 0x5c]                       // 00539849
         fmul st, st(1)                                   // 0053984d
         mov edx, dword ptr [esp + 0x5bc]                 // 0053984f

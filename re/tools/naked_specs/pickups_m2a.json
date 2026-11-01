@@ -14,29 +14,14 @@
       "name": "PK_4584e0",
       "start": "0x004584e0",
       "size": 138
-    },
-    {
-      "name": "PK_4576b0",
-      "start": "0x004576b0",
-      "size": 56
-    },
-    {
-      "name": "PK_4c3ac0",
-      "start": "0x004c3ac0",
-      "size": 112
-    },
-    {
-      "name": "PK_4c39b0",
-      "start": "0x004c39b0",
-      "size": 271
     }
   ],
   "calls": {
     "0x00458a40": "PK_458a40",
     "0x004584e0": "PK_4584e0",
-    "0x004576b0": "PK_4576b0",
-    "0x004c3ac0": "PK_4c3ac0",
-    "0x004c39b0": "PK_4c39b0",
+    "0x004576b0": "AnyActive4576b0",
+    "0x004c3ac0": "RwLutLength_cd",
+    "0x004c39b0": "RwLutNormalize_cd",
     "0x004c1340": "PK_FrameTranslate",
     "0x004c1520": "PK_FrameRotate",
     "0x00458d00": "PK_TypeReroll",
@@ -66,9 +51,5 @@
     "0x007f100c": "g_pk_dt"
   },
   "patch": {
-    "0x004c39b7": "lea edx, g_pk_lutptrs",
-    "0x004c39be": "mov esi, 0",
-    "0x004c3af2": "lea eax, g_pk_lutptrs",
-    "0x004c3af7": "mov ecx, 0"
   }
 }

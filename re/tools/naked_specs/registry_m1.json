@@ -16,11 +16,6 @@
       "size": 427
     },
     {
-      "name": "RG_484a50",
-      "start": "0x00484a50",
-      "size": 108
-    },
-    {
       "name": "RG_485070",
       "start": "0x00485070",
       "size": 52
@@ -34,25 +29,15 @@
       "name": "RG_484f70",
       "start": "0x00484f70",
       "size": 254
-    },
-    {
-      "name": "RG_484c90",
-      "start": "0x00484c90",
-      "size": 83
-    },
-    {
-      "name": "RG_4c39b0",
-      "start": "0x004c39b0",
-      "size": 271
     }
   ],
   "calls": {
     "0x004847d0": "RG_4847d0",
     "0x00484ac0": "RG_484ac0",
-    "0x00484a50": "RG_484a50",
+    "0x00484a50": "Insert484a50",
     "0x00484de0": "RG_484de0",
     "0x00484f70": "RG_484f70",
-    "0x004c39b0": "RG_4c39b0",
+    "0x004c39b0": "RwLutNormalize_cd",
     "0x00467210": "RG_CamFrame",
     "0x00443090": "RG_Center",
     "0x004a2c48": "RG_Ftol2",
@@ -72,8 +57,6 @@
     "0x005d757c": "g_rg_c_5d757c"
   },
   "patch": {
-    "0x004c39b7": "lea edx, g_rg_lutptrs",
-    "0x004c39be": "mov esi, 0",
     "0x00484edb": [
       "mov dword ptr [g_rg_cbTarget], ebp",
       "call RG_CbDispatch"

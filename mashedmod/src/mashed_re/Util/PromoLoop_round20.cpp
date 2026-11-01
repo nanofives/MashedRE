@@ -6,7 +6,7 @@
 //
 // Included in this file (subsystem per hooks.csv noted per function):
 //   0x00495270  HWNDGet              — render; out = game window handle
-//   0x00484c70  WorldObjectsBaseGet  — ai; *out = count, returns array base
+//   [MOVED 2026-11-01, D4-DC-INC-ai] WorldObjectsBaseGet (FUN_00484c70) -> Util/WorldObjectsBase.cpp
 //   [MOVED 2026-10-09, D-11073 leg 1a] DeltaTimeOutGet (FUN_0041da90) -> Race/SubStateCallees.cpp
 //
 // All bodies byte-verified in original\MASHED.exe.unpatched 2026-06-12.
@@ -48,33 +48,4 @@ extern "C" __declspec(dllexport) void __cdecl HWNDGet(std::uint32_t* param_1) {
 }
 
 RH_ScopedInstall(HWNDGet, 0x00495270);
-
-// ---------------------------------------------------------------------------
-// WorldObjectsBaseGet  --  0x00484c70   (subsystem: ai)
-//
-// Original: FUN_00484c70 (18 bytes, 0x00484c70..0x00484c81)
-// Bytes: 8B 44 24 04 / 8B 0D D8 70 6E 00 / 89 08 / B8 B8 CC 6D 00 / C3
-//   (mov eax,[esp+4]; mov ecx,[0x006e70d8]; mov [eax],ecx;
-//    mov eax,0x006dccb8; ret)
-// Signature: undefined4* FUN_00484c70(undefined4* param_1)
-//
-// Writes the world-object count to *param_1 and RETURNS the array base. The
-// diff folds the return (fold_ret) so both the out (count) and the returned
-// base are verified.
-//
-// Constants (cited from function body at 0x00484c70):
-//   0x006e70d8 — world-object count (written to *param_1)
-//   0x006dccb8 — world-objects array base (returned; stride 0x8c per caller)
-//
-// Caller: FUN_00414c30 (ai obstacle-avoidance, C2). Leaf.
-// ---------------------------------------------------------------------------
-
-// 0x00484c70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl WorldObjectsBaseGet(std::uint32_t* param_1) {
-    // 0x006e70d8 count + 0x006dccb8 base cited at 0x00484c70 body.
-    *param_1 = *reinterpret_cast<const std::uint32_t*>(0x006e70d8u);
-    return 0x006dccb8u;
-}
-
-RH_ScopedInstall(WorldObjectsBaseGet, 0x00484c70);
 

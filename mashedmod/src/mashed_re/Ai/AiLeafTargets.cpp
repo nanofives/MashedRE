@@ -4,10 +4,13 @@
 // FUN_00416250's targeting chain (calls 0x004162f7 / 0x0041633f), plus FUN_0046d570, verbatim naked x87.
 // Generated from the anchored bytes by re/tools/gen_naked_asm.py (spec re/tools/naked_specs/aileaf_g1.json
 // -> AiLeafTargets_naked.inc). Also verbatim in that file, private to this TU (AL_ prefix) so the replay
-// can serve every host input: FUN_00443440 (spline curvature), FUN_00443300, FUN_004233e0, FUN_00408af0,
-// FUN_00408a50, FUN_00426bb0, FUN_0040e470, FUN_004c39b0, FUN_004c3ac0 (RW LUT base patched).
+// can serve every host input: FUN_00443440 (spline curvature), FUN_00426bb0, FUN_004c39b0,
+// FUN_004c3ac0 (RW LUT base patched). FUN_00443300, FUN_004233e0, FUN_00408af0 and FUN_0040e470 were AL_ copies
+// too until D4-DC-INC-ai (2026-11-01); the .inc now calls the one body each (declared above the #include).
 //
 // Host bindings (cdecl, callee-saved registers preserved by the compiler):
+//   PerCarRaceProgressGet  FUN_00408a50 -> the one port body (Match/MatchS01.cpp, C4 by byte match,
+//                 re/match/s01/00407a60.c). HB-LINT-408A50 dropped the verbatim AL_408a50 copy.
 //   AL_VehPtr     FUN_0046d4a0 -> PtrCompute881ec8 (exe-rebound record array)
 //   AL_Speed      FUN_0046d6d0 -> record +0x9e4
 //   AL_Fwd        FUN_0046d510 -> the record's +0x928 matrix `at` row (does NOT store record +0x9d4,
@@ -44,6 +47,7 @@
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);            // 0x0046d4a0
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);                         // 0x0046c7b0
 extern "C" int __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::uint32_t* a, std::uint32_t* b); // 0x0046cbb0
+extern "C" float __cdecl PerCarRaceProgressGet(int i);                                              // 0x00408a50
 
 // ---- exe-safe .rdata / .data copies (values read from the anchored image) ------------------------
 extern "C" {
@@ -257,6 +261,13 @@ __declspec(naked) void AL_Acos() {
 }
 
 }  // extern "C"
+
+// D4-DC-INC-ai (2026-11-01): four callees of the .inc are no longer private AL_ copies. Each is the ONE
+// body both targets compile (re/tools/naked_specs/aileaf_g1.json maps the call to it):
+extern "C" std::uint32_t __cdecl CarSlotStateGet(int slot);                     // FUN_0040e470, Ai/CarSlotState.cpp
+extern "C" std::uint32_t __cdecl AiVehicleFieldPtrGet(int v);                   // FUN_00408af0, Ai/AiVehicleFieldGetters.cpp
+extern "C" float __cdecl HeadingAtan2ToGameAngle(float p1, float p2, float dummy); // FUN_004233e0, Ai/HeadingAtan2.cpp
+extern "C" void __cdecl AiSplineEval_x87(int base, int seg, float t, float* out); // FUN_00443300, Ai/AiSplineEval.cpp
 
 #include "AiLeafTargets_naked.inc"
 

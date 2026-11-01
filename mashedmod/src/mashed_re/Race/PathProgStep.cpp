@@ -4,9 +4,11 @@
 // whose +0xc8 (0x008a96e8) is the node progress FUN_00414a70 reads through FUN_00408a50, and
 // whose +0xcc (0x008a96ec) is the race_pct that MASHED_RACEPCT_BRIDGE approximates.
 //
-// The step and its 17 callees are VERBATIM naked transcriptions generated from the anchored
+// The step and 12 of its 17 callees are VERBATIM naked transcriptions generated from the anchored
 // bytes by re/tools/gen_naked_asm.py (spec re/tools/naked_specs/pathprog_p2.json ->
-// PathProgStep_naked.inc). Only these are C++ here, each with the original's stack contract:
+// PathProgStep_naked.inc). The other five (FUN_00407b00 / 7b70 / 7d70 / 7db0 / 8590) call the one body
+// each shares with the .asi since D4-DC-INC-ai (declared above the #include). Only these are C++ here,
+// each with the original's stack contract:
 //   PP_StateGet     FUN_0046cbb0 (vehicle state words) -> the exe-rebound VehicleCarStateRead
 //   PP_Ftol2        FUN_004a2c48 (_ftol2: truncate ST0 into EDX:EAX, touches only EAX/EDX)
 //   PP_SphereQuery  FUN_00538c80 case 3 -> FUN_00539ec0 with callback FUN_00407a90, as a walk
@@ -80,7 +82,7 @@ __declspec(naked) void PP_Nop()     { __asm { ret } }
 __declspec(naked) void PP_ErrPass() { __asm { xor eax, eax
                                               ret } }
 
-void PP_547450();   // generated below (sphere vs triangle)
+void BW_547450();   // FUN_00547450 (sphere vs triangle): the one exe body is Collision/CollisionWorld_naked.inc (D4-DC-INC-batch3)
 
 // FUN_00538c80(world, sphere{x,y,z,r,..,..,type=3}, FUN_00407a90, &{v, world}) -> FUN_00539ec0.
 // The original visits sectors left-first (= stream order) and, inside a sector, triangles in
@@ -90,7 +92,7 @@ void PP_547450();   // generated below (sphere vs triangle)
 void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int32_t* data) {
     const std::int32_t v = data[0];
     typedef int (__cdecl* tri_fn)(float*, const float*, const float*, const float*, float*, float*);
-    const tri_fn test = reinterpret_cast<tri_fn>(&PP_547450);
+    const tri_fn test = reinterpret_cast<tri_fn>(&BW_547450);
     const int n = mashed_re::Race::PathNodes_TriCount();
     // [PATHPROG split, PREREG amendment A3] MEASUREMENT ONLY: MASHED_PP_SPHERE_DUMP=<file> logs, for car 0 (the player) on its
     // first 6 queries, every triangle the sphere hits (stream index, node id, sphere centre); MASHED_PP_SPHERE_FIRST makes
@@ -150,6 +152,14 @@ void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int3
 }
 
 }  // extern "C"
+
+// D4-DC-INC-ai (2026-11-01): five callees of the .inc are no longer private PP_ copies. Each is the ONE body both
+// targets compile (re/tools/naked_specs/pathprog_p2.json maps the call to it):
+extern "C" int __cdecl RangeTableFindGroup(int value);                          // FUN_00407b00, Gameplay/RangeTable_ah1.cpp
+extern "C" std::uint32_t __cdecl RangeTableMemberTest(int value, int slot);     // FUN_00407b70, Gameplay/RangeTable_ah1.cpp
+extern "C" int __cdecl RangeTableCountGroup(int slot);                          // FUN_00407d70, Gameplay/RangeTable_ah1.cpp
+extern "C" int __cdecl RangeTableGroupOffset(int slot, int value);              // FUN_00407db0, Gameplay/RangeTable_ah1.cpp
+extern "C" void __cdecl Dot408590(void);                                        // FUN_00408590, Race/PathProgDot.cpp
 
 #include "PathProgStep_naked.inc"
 

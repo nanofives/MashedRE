@@ -13,6 +13,8 @@
 // The two bodies and six leaves are generated from the anchored bytes by re/tools/gen_naked_asm.py
 // (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). C++ here, each with the
 // original's cdecl stack contract (callee-saved EBX/ESI/EDI/EBP preserved by the compiler):
+//   PerCarRaceProgressGet  FUN_00408a50 -> the one port body (Match/MatchS01.cpp, C4 by byte match,
+//              re/match/s01/00407a60.c). HB-LINT-408A50 dropped the verbatim TG_408a50 copy.
 //   TG_VehPtr  FUN_0046d4a0 -> PtrCompute881ec8 (exe-rebound record array)
 //   TG_Speed   FUN_0046d6d0 -> record +0x9e4 (0x00881f84 in the array-base convention)
 //   TG_Fwd     FUN_0046d510 -> (0,0,1) by the record's +0x928 matrix = its `at` row. The original
@@ -37,6 +39,7 @@
 #include <vector>
 
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);   // 0x0046d4a0
+extern "C" float __cdecl PerCarRaceProgressGet(int i);                                     // 0x00408a50
 
 // ---- exe-safe .rdata copies (values read from the anchored image) -------------------------
 extern "C" {
@@ -117,11 +120,15 @@ std::uint32_t __cdecl TG_Fwd(std::uint32_t* out, std::uint32_t idx) {         //
 
 }  // extern "C"
 
+// D4-DC-INC-ai (2026-11-01): the TG_40e470 copy is gone, target_p3.json maps the call to the one body.
+extern "C" std::uint32_t __cdecl CarSlotStateGet(int slot);                     // FUN_0040e470, Ai/CarSlotState.cpp
+
 #include "AiTargetClosest_naked.inc"
 
 // ---- mode 7 leg M4: FUN_00414c30 + FUN_00414490 (PREREG verify/d3_mode7_m4_20261010/PREREG_M4.md) ----
 // Verbatim naked (spec re/tools/naked_specs/mode7_m4.json -> AiModeSeven_naked.inc): FUN_00414c30, FUN_00414490,
-// FUN_00484c70, FUN_00442cc0, FUN_004c39b0 (LUT patched). Bindings, cdecl:
+// FUN_004c39b0 (LUT patched). FUN_00484c70 / FUN_00442cc0 are the one shared bodies (D4-DC-INC-ai, declared
+// above that #include). Bindings, cdecl:
 //   TG_SubMode      FUN_0040e350 -> the exe host (aib_game_sub_mode)
 //   TG_HeldWord     the held-powerup read at 0x004144b3 ([0x0088fc88 + v*0xb4]) -> the exe's PowerupSystem
 //   TG_414300_m4    FUN_00414300 -> P3's verbatim TG_414300 (replay: the captured return / cand, arguments checked)
@@ -223,6 +230,10 @@ int __cdecl TG_414490_w(int v, float* own, void* look, float* tgt, std::uint32_t
 }
 
 }  // extern "C"
+
+// D4-DC-INC-ai (2026-11-01): TG_484c70 / TG_442cc0 copies gone, mode7_m4.json maps the calls to the one bodies.
+extern "C" std::uint32_t __cdecl WorldObjectsBaseGet(std::uint32_t* count);    // FUN_00484c70, Util/WorldObjectsBase.cpp
+extern "C" float __cdecl AiVehicleFloat4Get(int v);                             // FUN_00442cc0, Ai/AiVehicleFieldGetters.cpp
 
 #include "AiModeSeven_naked.inc"
 
