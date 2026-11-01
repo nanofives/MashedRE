@@ -26,6 +26,15 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  004576b0  AnyActive4576b0  C3->C3  refile: ONE body, Gameplay/PickupPredicates.cpp (both targets), exe copy deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  0045c330  PredNot45c330  C3->C3  refile: ONE body, Gameplay/PickupPredicates.cpp (both targets), exe copy deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  00484a50  FUN_00484a50  C3->C3  refile: ONE body, Race/WorldObjectLinks.cpp (both targets), exe copy deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  00484c90  FUN_00484c90  C3->C3  refile: ONE body, Race/WorldObjectLinks.cpp (both targets), exe copy deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  004c39b0  RwV3dNormalize  C2->C2  refile: exe naked copies deleted, lanes call Math/RwV3dNormalize.cpp (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  004c3ac0  Vec3Magnitude  C4->C4  refile: exe naked copies deleted, lanes call Math/RwLutTables.cpp LutLength (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  004c3b30  FastSqrt  C4->C4  refile: exe naked copy deleted, lanes call Math/RwLutTables.cpp LutSqrt (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  004c3b90  FastInvSqrt  C4->C4  refile: exe naked copies deleted, lanes call Math/RwLutTables.cpp LutInvSqrt (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
+2026-11-01  00547450  FUN_00547450  C2->C2  refile: ONE exe body, Collision/CollisionWorld.cpp (BW_547450), PP_547450 deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
 2026-11-01  0x00402f50  FUN_00402f50  C3->C4  route match (c4=match), exe-callers=1 (exe_main.cpp:9225); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
 2026-11-01  0x00404e00  IdxPtr404e00  C3->C4  route match (c4=match), exe-callers=1 (LibRw/RwCarFx.cpp:34); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
 2026-11-01  0x00404e20  IdxPtr404e20  C3->C4  route match (c4=match), exe-callers=1 (LibRw/RwCarFx.cpp:40); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
