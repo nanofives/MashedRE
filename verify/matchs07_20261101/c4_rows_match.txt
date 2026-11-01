@@ -1,0 +1,10 @@
+0042b920 | 0x0042b920 _FUN_0042b920: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=0 unchecked=0 | 45885397ef493a839c3bad8269ea3bd295dc57fc57929a866f42f536a5438302
+00431b00 | 0x00431b00 _FUN_00431b00: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=1 unchecked=0 | 5f65560b828ccc36ad2732513f4f4306ebbfaf42b9266e348c354cec3518df0c
+00431ae0 | 0x00431ae0 _FUN_00431ae0: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=1 unchecked=0 | afb4d2929c52dcb00529bd90c0855cced3879d6fa280939c8024c7d7ceca414e
+00431af0 | 0x00431af0 _FUN_00431af0: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=1 unchecked=0 | 4cdc3fe4fa00fb21b9f210ef0d5ba8532ea9270a81f062c80edd96416b8f1200
+0042f6a0 | 0x0042f6a0 _FUN_0042f6a0: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=1 unchecked=0 | cb45a162332dc46cc1aeb974c6ff55df588fdf66193069b83993267c940d78c9
+0042d3e0 | 0x0042d3e0 _FUN_0042d3e0: 100.0% (regs 100.0%, ops 100.0%)  20/20 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=2 unchecked=0 | 7540a074aff1e188bf9fc8da4cd66c420b225ee4156cbfba0e75c247ec38062c
+0042bb60 | 0x0042bb60 _FUN_0042bb60: 95.9% (regs 95.9%, ops 95.9%)  123/118 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=14 unchecked=0 | ffb5d458da844b4ffe55ed88bf4efaba3aa3af45b1df8562dd217ae58c0deaf8
+0042fa00 | 0x0042fa00 _FUN_0042fa00: 100.0% (regs 100.0%, ops 100.0%)  56/56 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=9 unchecked=0 | 0e56e1dc02cd6401f97082a681cc86f5240dd5def8d21112ec9bea8514e60bfd
+0042fe30 | 0x0042fe30 _FUN_0042fe30: 100.0% (regs 100.0%, ops 100.0%)  6/6 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=2 unchecked=0 | f16dc932849d3596dc97f8ca52c6b7246160bc739d6c1b19e1c7718b53efa47b
+0042c1d0 | 0x0042c1d0 _FUN_0042c1d0: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk  | OK checked=1 unchecked=0 | f64ffab8bfa84762d65b17b4b89e63c6b94e3d9b37f79512ff5d9a486b38aa68

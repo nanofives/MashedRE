@@ -16,17 +16,11 @@
 
 #include <cstdint>
 
-// 0x0042b900  A1 A4 EC 67 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global67eca4Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0067eca4u);  // cited at 0x0042b900
-}
-RH_ScopedInstall(Global67eca4Get, 0x0042b900);
+// MATCH-S07: the body of 0x0042b900 (Global67eca4Get) moved to Match/MatchS07_0042b900.cpp,
+// which compiles the byte-matched source re/match/s07/0042b900.c.
 
-// 0x00430820  A1 6C ED 67 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global67ed6cGet(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0067ed6cu);  // cited at 0x00430820
-}
-RH_ScopedInstall(Global67ed6cGet, 0x00430820);
+// MATCH-S07: the body of 0x00430820 (Global67ed6cGet) moved to Match/MatchS07_00430820.cpp,
+// which compiles the byte-matched source re/match/s07/00430820.c.
 
 // 0x00492d10  A1 68 19 77 00 C3
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Global771968Get(void) {
@@ -34,11 +28,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Global771968Get(void) {
 }
 RH_ScopedInstall(Global771968Get, 0x00492d10);
 
-// 0x00431b30  D9 05 A8 EA 67 00 C3  (FLD m32 -> ST0; true float load)
-extern "C" __declspec(dllexport) float __cdecl Float67eaa8Get(void) {
-    return *reinterpret_cast<const float*>(0x0067eaa8u);  // cited at 0x00431b30
-}
-RH_ScopedInstall(Float67eaa8Get, 0x00431b30);
+// MATCH-S07: the body of 0x00431b30 (Float67eaa8Get) moved to Match/MatchS07_00431b30.cpp,
+// which compiles the byte-matched source re/match/s07/00431b30.c.
 
 // 0x00452eb0  D9 05 E0 4D 68 00 C3  (FLD m32; powerup pursuit range)
 extern "C" __declspec(dllexport) float __cdecl PowerupRangeGet(void) {

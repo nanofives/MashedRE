@@ -35,41 +35,5 @@
 // ref: re/analysis/promote_c2_frontend_menus/0x0042d300.md
 // ---------------------------------------------------------------------------
 
-// Centiseconds per minute (6000) — cited at 0x0042d300 body.
-static constexpr int kCsecPerMinute = 6000;
-// Centiseconds per second (100) — cited at 0x0042d300 body.
-static constexpr int kCsecPerSecond = 100;
-// Seconds per minute (60 = 0x3c) — cited at 0x0042d300 body (remainder formula).
-static constexpr int kSecPerMinute  = 60;
-
-// 0x0042d300
-extern "C" __declspec(dllexport) void __cdecl TimeDiffDecompose(
-    int time_a, int time_b,
-    std::uint32_t* sign_out,
-    int*           min_out,
-    int*           sec_out,
-    float*         csec_out)
-{
-    int diff = time_a - time_b;
-
-    // Sign classification.
-    *sign_out = 0u;        // assume positive (time_a > time_b)
-    if (diff == 0) {
-        *sign_out = 2u;    // equal
-    } else if (diff < 0) {
-        diff = -diff;      // take absolute value
-        *sign_out = 1u;    // negative (time_a was faster)
-    }
-
-    // Decompose into minutes + seconds + centiseconds.
-    int minutes = diff / kCsecPerMinute;
-    int seconds = (diff % kCsecPerMinute) / kCsecPerSecond;
-
-    *min_out  = minutes;
-    *sec_out  = seconds;
-    // Centiseconds remainder: diff - (minutes * 60 + seconds) * 100
-    // Formula cited from 0x0042d300 body.
-    *csec_out = static_cast<float>(diff - (minutes * kSecPerMinute + seconds) * kCsecPerSecond);
-}
-
-RH_ScopedInstall(TimeDiffDecompose, 0x0042d300);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S07: the body of 0x0042d300 (TimeDiffDecompose) moved to Match/MatchS07_0042d300.cpp,
+// which compiles the byte-matched source re/match/s07/0042d300.c.

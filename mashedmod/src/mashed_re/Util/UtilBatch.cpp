@@ -29,26 +29,8 @@
 
 #include <cstdint>
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0042c2f0  SetDat0067ecb8  void __cdecl(uint32_t param_1)
-//
-// Single-write setter. Writes param_1 to DAT_0067ecb8.
-// 9-byte body. No branches, no callees.
-//
-// Asm (from re/analysis/game_state_d2/0x0042c2f0.md):
-//   8B 44 24 04   MOV EAX, [ESP+0x4]   ; param_1
-//   A3 B8 EC 67 00  MOV [0x0067ecb8], EAX
-//   C3            RET
-//
-// Paired setter for getter FUN_0042c2e0 (0x0042c2e0, already C3 as
-// GetDat0067ecb8). Called from FUN_004929d0 cases 1 and 4 with arg 0
-// after FUN_0042b940 — clears the pending-event flag.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) void __cdecl SetDat0067ecb8(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x0067ecb8) = param_1;
-}
-
-RH_ScopedInstall(SetDat0067ecb8, 0x0042c2f0);  // re-enabled 2026-05-24 batch-util
+// MATCH-S07: the body of 0x0042c2f0 (SetDat0067ecb8) moved to Match/MatchS07_0042c2f0.cpp,
+// which compiles the byte-matched source re/match/s07/0042c2f0.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004098b0  LoadingState1Enter  void __cdecl(void)

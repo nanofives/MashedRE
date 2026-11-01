@@ -35,34 +35,8 @@
 //     eax = 0 ; if edx != 0: al = (ecx == 0)  (0x0042ecf9..0x0042ed02).
 // ---------------------------------------------------------------------------
 
-// 0x0042ebe0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendPlayerSlotCheck(int param_1) {
-    std::uint32_t found = 0;                                                       // 0x0042ebe4
-    for (std::uint32_t base = 0x007f0a48u;                                         // 0x0042ebe6
-         static_cast<std::int32_t>(base) < 0x007f0c28;                           // 0x0042ed58 jl
-         base += 0x1e0u) {                                                         // 0x0042ed53
-        std::uintptr_t col;
-        if (param_1 == 10)      col = base - 4u;                                   // 0x0042ebf5
-        else if (param_1 == 11) col = base;                                        // 0x0042ebff
-        else if (param_1 == 12) col = base + 0xcu;                                 // 0x0042ec08
-        else continue;                                                             // 0x0042ec06 -> 0x0042ed53
-        for (std::uint32_t row = 0; row < 10u; ++row) {
-            if (*reinterpret_cast<const std::uint32_t*>(col + row * 0x30u) == 0) {
-                found = 1;                                                         // 0x0042ece8
-                goto tail;
-            }
-        }
-    }
-tail:
-    {
-        const std::uint32_t flag = *reinterpret_cast<const std::uint32_t*>(
-            static_cast<std::uint32_t>(0x007f0a44u + static_cast<std::uint32_t>(param_1) * 0x30u));   // 0x0042ecf3
-        if (flag == 0) return 0u;                                                  // 0x0042ecfe
-        return found == 0 ? 1u : 0u;                                               // 0x0042ed02 sete
-    }
-}
-
-RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);  // re-ported 2026-10-12 reearn/fstate
+// MATCH-S07: the body of 0x0042ebe0 (FrontendPlayerSlotCheck) moved to Match/MatchS07_0042ebe0.cpp,
+// which compiles the byte-matched source re/match/s07/0042ebe0.c.
 
 // ---------------------------------------------------------------------------
 // FrontendCursorUpdate  --  0x0042f7b0

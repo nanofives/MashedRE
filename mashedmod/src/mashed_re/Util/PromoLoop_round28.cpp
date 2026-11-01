@@ -15,11 +15,8 @@
 
 #include <cstdint>
 
-// 0x00431b40  8B 44 24 04 A3 A8 EA 67 00 C3  (mov eax,[esp+4]; mov [0x0067eaa8],eax; ret)
-extern "C" __declspec(dllexport) void __cdecl Set67eaa8(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x0067eaa8u) = param_1;  // cited at 0x00431b40
-}
-RH_ScopedInstall(Set67eaa8, 0x00431b40);
+// MATCH-S07: the body of 0x00431b40 (Set67eaa8) moved to Match/MatchS07_00431b40.cpp,
+// which compiles the byte-matched source re/match/s07/00431b40.c.
 
 // 0x0049a2e0  8B 44 24 04 A3 6C 39 77 00 C3
 extern "C" __declspec(dllexport) void __cdecl Set77396c(std::uint32_t param_1) {
@@ -33,12 +30,8 @@ extern "C" __declspec(dllexport) void __cdecl Set773978(std::uint32_t param_1) {
 }
 RH_ScopedInstall(Set773978, 0x0049a740);
 
-// 0x0042f7a0  C7 05 70 EA 67 00 00 00 00 00 C3  (mov dword [0x0067ea70],0; ret)
-//   Resets the ghost-mode flag read by GhostMode::IsActive (0x0042f790, round 8).
-extern "C" __declspec(dllexport) void __cdecl GhostFlagReset(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0067ea70u) = 0u;  // cited at 0x0042f7a0
-}
-RH_ScopedInstall(GhostFlagReset, 0x0042f7a0);
+// MATCH-S07: the body of 0x0042f7a0 (GhostFlagReset) moved to Match/MatchS07_0042f7a0.cpp,
+// which compiles the byte-matched source re/match/s07/0042f7a0.c.
 
 // 0x00452160  A1 AC 4D 68 00 83 C0 30 C3  (mov eax,[0x00684dac]; add eax,0x30; ret)
 //   Returns the powerup-target pointer field: *(0x00684dac) + 0x30.

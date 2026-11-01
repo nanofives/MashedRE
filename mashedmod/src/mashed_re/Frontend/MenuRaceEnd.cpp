@@ -33,17 +33,8 @@ extern "C" std::uint32_t __cdecl GetRaceSubMode();
 // ref: re/analysis/promote_c2_frontend_menus/0x0042fe30.md
 // ---------------------------------------------------------------------------
 
-// 0x0042fe30
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RaceEndFlagIfEndMode() {
-    std::uint32_t iVar1 = GetRaceSubMode();
-    std::uint32_t uVar2 = 1u;
-    if (iVar1 != 0xbu) {
-        uVar2 = *reinterpret_cast<const std::uint32_t*>(0x0067ea74u);
-    }
-    return uVar2;
-}
-
-RH_ScopedInstall(RaceEndFlagIfEndMode, 0x0042fe30);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x0042fe30 (RaceEndFlagIfEndMode) moved to Match/MatchS07_0042fe30.cpp,
+// which compiles the byte-matched source re/match/s07/0042fe30.c.
 
 // ---------------------------------------------------------------------------
 // RaceEndAltFlagIfEndMode  --  0x0042fe50
@@ -66,11 +57,5 @@ RH_ScopedInstall(RaceEndFlagIfEndMode, 0x0042fe30);  // re-enabled 2026-05-24 ba
 // ref: re/analysis/promote_c2_frontend_menus/0x0042fe50.md
 // ---------------------------------------------------------------------------
 
-// 0x0042fe50
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RaceEndAltFlagIfEndMode() {
-    std::uint32_t iVar1 = GetRaceSubMode();
-    std::uint32_t mask = -static_cast<std::uint32_t>(iVar1 != 0xbu); // 0xFFFFFFFF if mode!=0xb, else 0
-    return mask & *reinterpret_cast<const std::uint32_t*>(0x0067ea78u);
-}
-
-RH_ScopedInstall(RaceEndAltFlagIfEndMode, 0x0042fe50);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x0042fe50 (RaceEndAltFlagIfEndMode) moved to Match/MatchS07_0042fe50.cpp,
+// which compiles the byte-matched source re/match/s07/0042fe50.c.
