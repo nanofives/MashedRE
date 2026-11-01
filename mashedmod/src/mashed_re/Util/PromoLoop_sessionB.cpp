@@ -2412,34 +2412,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum5b6b00(void
 }
 RH_ScopedInstall(Accum5b6b00, 0x005b6b00);
 
-// 0x00420de0  FUN_00420de0 (vehicle, __fastcall float accumulate + min-clamp)
-// void __fastcall f(ECX=idx, EDX=base, [esp+4]=val):
-//   st0 = val + base[idx]            (80-bit sum)
-//   base[idx] = (float32)st0         (fst keeps st0)
-//   if (st0 > 50.0)  base[idx] = 50.0f    (fcomp vs .rdata 0x5cd120 == 50.0f)
-// The compare is on the 80-bit sum (fst stored the rounded f32 but st0 retains
-// the unrounded value), so a plain-C `float v = ...; if (v>50.f)` would diverge
-// at the boundary. Reimpl is a VERBATIM naked x87 port. Exported __cdecl reading
-// stack args (idx,base,val) — only the COMPUTATION must match, not the ABI; the
-// early_window harness drives the original via a fastcall trampoline.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum420de0(void)
-{
-    __asm {
-        mov  edx, dword ptr [esp+8]         // base (arg2)
-        mov  ecx, dword ptr [esp+4]         // idx  (arg1)
-        fld  dword ptr [esp+0x0c]           // val  (arg3)
-        fadd dword ptr [edx+ecx*4]
-        fst  dword ptr [edx+ecx*4]
-        fcomp dword ptr ds:[05CD120h]
-        fnstsw ax
-        test ah, 41h
-        jne  L_AC_DONE
-        mov  dword ptr [edx+ecx*4], 042480000h   // 50.0f
-    L_AC_DONE:
-        ret
-    }
-}
-RH_ScopedInstall(Accum420de0, 0x00420de0);
+// MATCH-S05: the body of 0x00420de0 (Accum420de0) moved to Match/MatchS05_00420de0.cpp,
+// which compiles the byte-matched source re/match/s05/00420de0.c.
 
 // 0x004938e0  FUN_004938e0 (util, linked-list walk-to-self then global-offset write)
 // void f(int* p, uint32 value):
@@ -2466,47 +2440,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Walk4938e0(void)
 }
 RH_ScopedInstall(Walk4938e0, 0x004938e0);
 
-// 0x004223f0  FUN_004223f0 (gameplay, integer noise-hash -> float; register args EAX=a, ECX=b)
-// float f(EAX a, ECX b):
-//   if (a) b &= a;
-//   x = (b<<13) ^ b;
-//   h = ((((x*x)*0x3d73 + 0xc0ae5) * x) - 0x2df722f3) & 0x7fffffff;
-//   return (float)((double80)fild(h) [+ .rdata 0x5cc94c if h<0, dead] * .rdata 0x5cd314);
-// h is always >=0 after the &0x7fffffff so the fadd branch is dead, kept for fidelity.
-// Exported __cdecl(a,b)->float reading stack args + a scratch slot; EXACT integer +
-// fild/fmul of the same .rdata consts. VERBATIM naked port (no fld-st(N) juggling).
-extern "C" __declspec(dllexport) __declspec(naked) float __cdecl Hash4223f0(void)
-{
-    __asm {
-        push ecx                          // scratch slot; now [esp+8]=a, [esp+0x0c]=b
-        mov  eax, dword ptr [esp+8]        // a
-        mov  ecx, dword ptr [esp+0x0c]     // b
-        test eax, eax
-        je   L_HS1
-        and  ecx, eax
-    L_HS1:
-        mov  eax, ecx
-        shl  eax, 0x0d
-        xor  eax, ecx
-        mov  ecx, eax
-        imul ecx, eax
-        imul ecx, ecx, 0x3d73
-        add  ecx, 0x0c0ae5
-        imul ecx, eax
-        sub  ecx, 0x2df722f3
-        and  ecx, 0x7fffffff
-        test ecx, ecx
-        mov  dword ptr [esp], ecx
-        fild dword ptr [esp]
-        jge  L_HS2
-        fadd dword ptr ds:[05CC94Ch]
-    L_HS2:
-        fmul dword ptr ds:[05CD314h]
-        pop  ecx
-        ret
-    }
-}
-RH_ScopedInstall(Hash4223f0, 0x004223f0);
+// MATCH-S05: the body of 0x004223f0 (Hash4223f0) moved to Match/MatchS05_00422470.cpp,
+// which compiles the byte-matched source re/match/s05/00422470.c.
 
 // 0x005ae170  FUN_005ae170 (audio, bounded case-insensitive compare; custom inline-ASCII toupper)
 // int f(char* s1, char* s2, int n): for up to n chars, fold each to a CUSTOM upper
@@ -3517,27 +3452,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl InitRange4725f0(
 }
 RH_ScopedInstall(InitRange4725f0, 0x004725f0);
 
-// 0x004215c0  FUN_004215c0 (frontend, NEAR-LEAF: fastcall float-accumulate wrapper)
-// void f(arg1, float arg2, arg3): base = 0x63e4b8 + arg1*0x24; calls __fastcall FUN_00420de0
-// (ecx=arg3 idx, edx=base, [esp+4]=arg2 val) which does base[arg3] = min(arg2+base[arg3], 50.0).
-// Callee C3. Verbatim naked port; `call rel32` -> `mov eax,0x420de0; call eax` (callee is
-// __fastcall: ecx/edx set before the call exactly as the original).
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum4215c0(void)
-{
-    __asm {
-        mov  eax, dword ptr [esp+8]          // arg2 (val)
-        mov  ecx, dword ptr [esp+0x0c]       // arg3 (idx) -> ecx for fastcall
-        push eax
-        mov  eax, dword ptr [esp+8]          // arg1
-        lea  edx, [eax+eax*8]
-        lea  edx, [edx*4+063E4B8h]           // base = 0x63e4b8 + arg1*0x24
-        mov  eax, 0420DE0h
-        call eax
-        pop  ecx
-        ret
-    }
-}
-RH_ScopedInstall(Accum4215c0, 0x004215c0);
+// MATCH-S05: the body of 0x004215c0 (Accum4215c0) moved to Match/MatchS05_00420de0.cpp,
+// which compiles the byte-matched source re/match/s05/00420de0.c.
 
 // 0x00462760  FUN_00462760 (gameplay, NEAR-LEAF: predicate over a 4-entry pointer array)
 // int f(void): for each p in array 0x69045c[0..3]: if (p==0 || GetD70(p)==0 || GetD70(p)==2 ||
@@ -3677,18 +3593,8 @@ RH_ScopedInstall(ZeroFill48a830, 0x0048a830);
 // RVA would be a duplicate install. C2->C3 promoted via the EXISTING ZeroFillWrapper
 // export + a non-degenerate near_leaf_memset2 early_window diff (registry zero_fill_wrapper).
 
-// 0x00420d80  FUN_00420d80 (gameplay, IndexedFloatPairSum) — PURE LEAF (no calls)
-// Disasm (capstone, original): mov eax,[esp+4]; lea eax,[eax+eax*8]   ; eax = idx*9
-//   fld dword [eax*4 + 0x63e4b8]    ; st0 = *(float*)(0x63e4b8 + idx*36)
-//   lea eax,[eax*4 + 0x63e4b8]; fadd dword [eax+4]  ; st0 += *(float*)(...+4); ret
-// => float f(int idx){ const float* p=(float*)(0x63e4b8 + idx*36); return p[0]+p[1]; }
-extern "C" __declspec(dllexport) float __cdecl IndexedFloatPairSum420d80(int idx)
-{
-    const float* p = reinterpret_cast<const float*>(
-        0x0063e4b8u + static_cast<unsigned>(idx) * 36u);
-    return p[0] + p[1];
-}
-RH_ScopedInstall(IndexedFloatPairSum420d80, 0x00420d80);
+// MATCH-S05: the body of 0x00420d80 (IndexedFloatPairSum420d80) moved to Match/MatchS05_00420d80.cpp,
+// which compiles the byte-matched source re/match/s05/00420d80.c.
 
 // 0x0044e070  FUN_0044e070 (audio, DoubleIndexedFloatMul) — PURE LEAF (no calls)
 // Disasm (capstone, original): mov eax,[esp+4]; imul eax,eax,0xf8  ; eax = idx*0xf8
@@ -4624,41 +4530,9 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl StructInit418a00
 }
 RH_ScopedInstall(StructInit418a00_RegAbi, 0x00418a00);  // ABI fixed 2026-07-26 (was __cdecl -> live boot AV)
 
-// 0x00421060 FUN_00421060 (gameplay, StructZero421060) — NEAR-LEAF zero-init, ESI=arg.
-//   memset(p, 0, 8)                       (0x00421060 push 8; push esi; call C3 ZeroFillWrapper 0x4b6520)
-//   *(u32*)(p+0x08) = 0                    (0x00421068 xor eax,eax; 0x0042106d mov [esi+8],eax)
-//   *(u32*)(p+0x0c) = 0                    (0x00421070 mov [esi+0xc],eax)
-//   *(u32*)(p+0x10) = 0                    (0x00421073 mov [esi+0x10],eax)
-//   *(u32*)(p+0x14) = 0                    (0x00421076 mov [esi+0x14],eax)
-//   => zeroes p[0 .. 0x18). Behavioral C reimpl as __cdecl(p) (memset inlined; ESI driven
-//   via the diff's esi-trampoline). Verified with a boundary echo (buf > 0x18, tail kept).
-extern "C" __declspec(dllexport) void __cdecl StructZero421060(unsigned char *p)
-{
-    *(unsigned int *)(p + 0x00) = 0u;
-    *(unsigned int *)(p + 0x04) = 0u;
-    *(unsigned int *)(p + 0x08) = 0u;
-    *(unsigned int *)(p + 0x0c) = 0u;
-    *(unsigned int *)(p + 0x10) = 0u;
-    *(unsigned int *)(p + 0x14) = 0u;
-}
-
-// Register-ABI shim — this, NOT StructZero421060, is installed at 0x00421060.
-// ABI fixed 2026-07-26 alongside crasher #6 (0x00418a00), which is the identical
-// pattern. The original reads its pointer ONLY from ESI (0x00421062 `PUSH ESI`,
-// 0x0042106d/0x00421070/0x00421073/0x00421076 `MOV [ESI+n],EAX`) and pushes nothing,
-// so the __cdecl install was reading a caller stack-garbage word as `p`. This one does
-// NOT AV alone (0x00421060 isolated: 3/3 BOOTS 16 s) — it was fixed on the disassembly
-// evidence, not because it crashed; a wrong ABI that happens to land on writable
-// garbage is still a wrong ABI.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl StructZero421060_RegAbi(void) {
-    __asm {
-        push esi                // p (register arg in the original)
-        call StructZero421060
-        add  esp, 4
-        ret
-    }
-}
-RH_ScopedInstall(StructZero421060_RegAbi, 0x00421060);
+// MATCH-S05: the body of 0x00421060 (StructZero421060) moved to Match/MatchS05_00421060.cpp,
+// which compiles the byte-matched source re/match/s05/00421060.c (the register-ABI shim
+// StructZero421060_RegAbi and its RH_ScopedInstall moved with it).
 
 // ===== round 248 (2026-06-23) — NEAR-LEAF lane: vehicle-slot-getter family =====
 // Four C2 near-leaves whose ONLY callees are the pure bounds-checked static-table

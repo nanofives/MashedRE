@@ -58,6 +58,13 @@ MatchS04_0041d910
 MatchS04_0041db80
 MatchS04_0041f100
 MatchS04_0041f260
+# MATCH-S05 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s05/)
+MatchS05_00420d80
+MatchS05_00420de0
+MatchS05_00422470
+MatchS05_004224d0
+MatchS05_00425ab0
+MatchS05_00425b10
 # D-11073 leg 2 (2026-10-09): verbatim x87 transcription of FUN_00445aa0 et al. (fpatan/fsin inline);
 # bit-identity measured by run_diff in the same session, not assumed.
 CameraEntries

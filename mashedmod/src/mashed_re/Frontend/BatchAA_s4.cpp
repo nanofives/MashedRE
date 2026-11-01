@@ -99,22 +99,5 @@ RH_ScopedInstall(ModeCodeLookup, 0x0042a9c0);
 // Pure leaf — no branches, no callees.
 // ---------------------------------------------------------------------------
 
-// 0x00425b70
-extern "C" __declspec(dllexport) void __cdecl SlotFieldSetter(int param_1, std::uint32_t param_2)
-{
-    // stride = 0x13 dwords = 0x13 * 4 = 0x4c bytes
-    constexpr std::uintptr_t base = 0x008992a0u; // [cited at note: DAT_008992a0]
-    constexpr std::size_t    stride = 0x13u;     // dwords per slot
-
-    auto slot = static_cast<std::size_t>(static_cast<std::uint32_t>(param_1));
-
-    // array[slot]+0x04 = param_2  [DAT_008992a4 base]
-    auto* field04 = reinterpret_cast<std::uint32_t*>(base + 4u + slot * stride * 4u);
-    *field04 = param_2;
-
-    // array[slot]+0x00 = 0  [DAT_008992a0 base]
-    auto* field00 = reinterpret_cast<std::uint32_t*>(base + slot * stride * 4u);
-    *field00 = 0u;
-}
-
-RH_ScopedInstall(SlotFieldSetter, 0x00425b70);
+// MATCH-S05: the body of 0x00425b70 (SlotFieldSetter) moved to Match/MatchS05_00425b70.cpp,
+// which compiles the byte-matched source re/match/s05/00425b70.c.

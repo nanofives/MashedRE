@@ -28,21 +28,5 @@
 
 extern "C" std::int32_t __cdecl GetRaceSubMode();   // 0x0042f6a0
 
-// ---------------------------------------------------------------------------
-// 0x00423b80  PlayerScoreAccC
-// undefined4(int param_1)
-// Per-player score accessor #3. Twin of PlayerScoreAccA/B with base 0x00899f74.
-// Guard: if GetRaceSubMode() == 4, return 0.
-// Returns (&DAT_00899f74)[param_1 * 0x4e] — byte offset param_1 * 0x138.
-// Array base: 0x00899f74 (cited at 0x00423b95 in decomp).
-// Source addresses: 0x00423b86 (GetRaceSubMode call), 0x00423b8c (guard == 4),
-//                   0x00423b95 (array read base 0x00899f74 stride 0x4e).
-// ---------------------------------------------------------------------------
-// 0x00423b80
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PlayerScoreAccC(std::int32_t param_1) {
-    std::int32_t iVar1 = GetRaceSubMode();          // @ 0x00423b86
-    if (iVar1 == 4) return 0u;                      // @ 0x00423b8c
-    // @ 0x00423b95: (&DAT_00899f74)[param_1 * 0x4e] — dword array, stride 0x4e dwords
-    return reinterpret_cast<std::uint32_t*>(0x00899f74u)[param_1 * 0x4e];
-}
-RH_ScopedInstall(PlayerScoreAccC, 0x00423b80);
+// MATCH-S05: the body of 0x00423b80 (PlayerScoreAccC) moved to Match/MatchS05_00423b80.cpp,
+// which compiles the byte-matched source re/match/s05/00423b80.c.

@@ -678,42 +678,5 @@ RH_ScopedInstall(FrontendC2RoundI, 0x00408a70);  // re-enabled 2026-05-24 c3-fro
 // 0x42480000 = 50.0f IEEE-754 (cited at 0x00422fd0 body).
 static constexpr std::uint32_t k50f_bits = 0x42480000u;
 
-// 0x00422fd0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendRaceResultsDispatch(
-    int param_1)
-{
-    // Bounds check: >= 0x10 → no-op (cited at 0x00422fd0 body).
-    if (param_1 < 0x10) {
-        // Kill car.  (0x00422fd0 body: FUN_0046c5c0(param_1))
-        s_FUN_0046c5c0(param_1);
-
-        // Set status flag to 1.  (0x00422fd0 body: FUN_0046c790(param_1, 1))
-        s_FUN_0046c790(param_1, 1);
-
-        // Set float slot 0 to 50.0f.
-        // (0x00422fd0 body: FUN_004215c0(param_1, 0x42480000, 0))
-        s_FUN_004215c0(param_1, k50f_bits, 0);
-
-        // Set float slot 1 to 50.0f.
-        // (0x00422fd0 body: FUN_004215c0(param_1, 0x42480000, 1))
-        s_FUN_004215c0(param_1, k50f_bits, 1);
-
-        // Set car state to 2.  (0x00422fd0 body: FUN_0045ba00(param_1, 2))
-        s_FUN_0045ba00(param_1, 2);
-
-        // Conditional secondary handler.
-        // (0x00422fd0 body: if (DAT_007f0fd0 != 7))
-        std::uint32_t game_mode = *reinterpret_cast<std::uint32_t*>(kGameModeDat);
-        if (game_mode != 7u) {
-            // (0x00422fd0 body: if (FUN_0040e470(param_1) == 1))
-            if (s_CarSlotStateGet(param_1) == 1u) {
-                // (0x00422fd0 body: thunk_FUN_00419760(param_1, 1))
-                s_thunk_FUN_00419760(param_1, 1);
-            }
-        }
-    }
-
-    return 0u;  // always 0 (cited at 0x00422fd0 body: return 0)
-}
-
-RH_ScopedInstall(FrontendRaceResultsDispatch, 0x00422fd0);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S05: the body of 0x00422fd0 (FrontendRaceResultsDispatch) moved to Match/MatchS05_00422fd0.cpp,
+// which compiles the byte-matched source re/match/s05/00422fd0.c.

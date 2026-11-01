@@ -22,63 +22,8 @@
 
 #include <cstdint>
 
-// ---------------------------------------------------------------------------
-// Forward declarations for callees
-// ---------------------------------------------------------------------------
-
-// 0x0042f500  GetDat0067ea64  — C4 (GameState/StateAccessors.cpp); call the ported
-// export directly instead of trampolining to the raw original RVA (account2 rewire).
-// Returns DAT_0067ea64 — team-mode flag (0 = no teams).
-extern "C" std::uint32_t __cdecl GetDat0067ea64(void);
-
-// 0x0042f6a0  GetRaceSubMode  — C3 (GameState/StateAccessors.cpp)
-// uint32_t __cdecl GetRaceSubMode(void)
-// Returns DAT_0067e9fc — RaceSubMode register.
-static auto* const s_GetRaceSubMode =
-    reinterpret_cast<std::int32_t(__cdecl*)(void)>(0x0042f6a0);
-
-// ---------------------------------------------------------------------------
-// Constants shared across the four team-aggregation getters
-// ---------------------------------------------------------------------------
-
-// Block-2 per-player data array rooted at DAT_00899f20.
-// stride: 0x4e dwords (0x138 bytes) per player slot.  [cited from 0x00423f04]
-static const unsigned k_Block2Root   = 0x00899f20u;
-static const unsigned k_Block2Stride = 0x4eu;          // dwords per player
-
-// Team-ID array rooted at DAT_007f1a18.
-// stride: 0x10 bytes per slot.  Bytes: shl eax,4 @0x00423eef + mov edx,[eax+0x7f1a18]
-// @0x00423ef2; the unrolled compares read 0x007f1a18/28/38/48 (@0x00423f06/18/2b/3e).
-// (Re-port 2026-10-12: the old port used 4, which the negctl re-earn caught RED.)
-static const unsigned k_TeamIdRoot   = 0x007f1a18u;
-static const unsigned k_TeamIdStride = 0x10u;        // bytes per player
-
-static const int k_PlayerCount = 4;
-
-// Shared body of the four getters past their gates (0x00423eed..0x00423f5e and the
-// three byte-identical copies). Slot k contributes when team[k] == team[param_1] and
-// k != param_1, in order k = 0,1,2,3 (the bytes test the team first, then the index).
-static std::int32_t TeamAggregate(int param_1, unsigned field_dword_offset)
-{
-    const std::int32_t* const block = reinterpret_cast<const std::int32_t*>(k_Block2Root);
-    const std::int32_t myTeam = *reinterpret_cast<const std::int32_t*>(
-        k_TeamIdRoot + static_cast<unsigned>(param_1) * k_TeamIdStride);
-    std::int32_t sum = block[k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset];
-    for (int k = 0; k < k_PlayerCount; ++k) {
-        const std::int32_t kTeam = *reinterpret_cast<const std::int32_t*>(
-            k_TeamIdRoot + static_cast<unsigned>(k) * k_TeamIdStride);
-        if (kTeam == myTeam && k != param_1) {
-            sum += block[k_Block2Stride * static_cast<unsigned>(k) + field_dword_offset];
-        }
-    }
-    return sum;
-}
-
-static std::int32_t Block2Field(int param_1, unsigned field_dword_offset)
-{
-    return reinterpret_cast<const std::int32_t*>(k_Block2Root)
-        [k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset];
-}
+// MATCH-S05: the callee declarations, constants and the TeamAggregate / Block2Field helpers that
+// served the five bodies below were removed with them (no other user in this TU).
 
 // ---------------------------------------------------------------------------
 // PlayerBlock2Field00Get  --  0x00423ee0
@@ -105,18 +50,8 @@ static std::int32_t Block2Field(int param_1, unsigned field_dword_offset)
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423ee0.md
 // ---------------------------------------------------------------------------
 
-// 0x00423ee0
-extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field00Get(
-    int param_1)
-{
-    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
-    if (GetDat0067ea64() == 0) {
-        return Block2Field(param_1, 0u);
-    }
-    return TeamAggregate(param_1, 0u);
-}
-
-RH_ScopedInstall(PlayerBlock2Field00Get, 0x00423ee0);
+// MATCH-S05: the body of 0x00423ee0 (PlayerBlock2Field00Get) moved to Match/MatchS05_00423ee0.cpp,
+// which compiles the byte-matched source re/match/s05/00423ee0.c.
 
 // ---------------------------------------------------------------------------
 // PlayerBlock2Field04Get  --  0x00423f60
@@ -139,23 +74,8 @@ RH_ScopedInstall(PlayerBlock2Field00Get, 0x00423ee0);
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423f60.md
 // ---------------------------------------------------------------------------
 
-// 0x00423f60
-extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field04Get(
-    int param_1)
-{
-    // RaceSubMode == 4 gate. [0x00423f60..0x00423f6c]
-    if (s_GetRaceSubMode() == 4) {
-        return 0;
-    }
-
-    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
-    if (GetDat0067ea64() == 0) {
-        return Block2Field(param_1, 1u);
-    }
-    return TeamAggregate(param_1, 1u);
-}
-
-RH_ScopedInstall(PlayerBlock2Field04Get, 0x00423f60);
+// MATCH-S05: the body of 0x00423f60 (PlayerBlock2Field04Get) moved to Match/MatchS05_00423f60.cpp,
+// which compiles the byte-matched source re/match/s05/00423f60.c.
 
 // ---------------------------------------------------------------------------
 // PlayerBlock2Field50Get  --  0x00423ff0
@@ -177,18 +97,8 @@ RH_ScopedInstall(PlayerBlock2Field04Get, 0x00423f60);
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423ff0.md
 // ---------------------------------------------------------------------------
 
-// 0x00423ff0
-extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field50Get(
-    int param_1)
-{
-    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
-    if (GetDat0067ea64() == 0) {
-        return Block2Field(param_1, 0x14u);
-    }
-    return TeamAggregate(param_1, 0x14u);
-}
-
-RH_ScopedInstall(PlayerBlock2Field50Get, 0x00423ff0);
+// MATCH-S05: the body of 0x00423ff0 (PlayerBlock2Field50Get) moved to Match/MatchS05_00423ff0.cpp,
+// which compiles the byte-matched source re/match/s05/00423ff0.c.
 
 // ---------------------------------------------------------------------------
 // PlayerBlock2Field08Get  --  0x00424070
@@ -212,23 +122,8 @@ RH_ScopedInstall(PlayerBlock2Field50Get, 0x00423ff0);
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_00424070.md
 // ---------------------------------------------------------------------------
 
-// 0x00424070
-extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field08Get(
-    int param_1)
-{
-    // RaceSubMode == 4 gate. [0x00424070..0x0042407c]
-    if (s_GetRaceSubMode() == 4) {
-        return 0;
-    }
-
-    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
-    if (GetDat0067ea64() == 0) {
-        return Block2Field(param_1, 2u);
-    }
-    return TeamAggregate(param_1, 2u);
-}
-
-RH_ScopedInstall(PlayerBlock2Field08Get, 0x00424070);
+// MATCH-S05: the body of 0x00424070 (PlayerBlock2Field08Get) moved to Match/MatchS05_00424070.cpp,
+// which compiles the byte-matched source re/match/s05/00424070.c.
 
 // ---------------------------------------------------------------------------
 // GetDat008994c0  --  0x004241b0
@@ -248,11 +143,5 @@ RH_ScopedInstall(PlayerBlock2Field08Get, 0x00424070);
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_004241b0.md
 // ---------------------------------------------------------------------------
 
-// 0x004241b0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat008994c0()
-{
-    // Load and return DAT_008994c0.  [0x004241b1]
-    return *reinterpret_cast<std::uint32_t*>(0x008994c0u);
-}
-
-RH_ScopedInstall(GetDat008994c0, 0x004241b0);
+// MATCH-S05: the body of 0x004241b0 (GetDat008994c0) moved to Match/MatchS05_004241b0.cpp,
+// which compiles the byte-matched source re/match/s05/004241b0.c.

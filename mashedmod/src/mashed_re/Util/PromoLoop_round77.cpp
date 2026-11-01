@@ -14,10 +14,5 @@
 
 #include <cstdint>
 
-// 0x00421080
-extern "C" __declspec(dllexport) void __cdecl Fill63e5a4(void) {
-    for (std::uint32_t p = 0x0063e5a4u; static_cast<std::int32_t>(p) < 0x0063fba4; p += 0x2cu)
-        *reinterpret_cast<std::uint32_t*>(p) = 0xbf800000u;     // MOV [EAX],0xbf800000
-    *reinterpret_cast<std::uint32_t*>(0x0063fb88u) = 0;         // MOV [0x0063fb88],0
-}
-RH_ScopedInstall(Fill63e5a4, 0x00421080);
+// MATCH-S05: the body of 0x00421080 (Fill63e5a4) moved to Match/MatchS05_00421080.cpp,
+// which compiles the byte-matched source re/match/s05/00421080.c.
