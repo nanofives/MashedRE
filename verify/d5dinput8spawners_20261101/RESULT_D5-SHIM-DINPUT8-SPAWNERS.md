@@ -161,3 +161,9 @@ Not run: no `mashedmod/` file changed (Python harness, `verify/` and one diff on
   the dev asi.
 - Shim removal step 3 is then blocked only by `scripts/mashed_launch.ps1` (QoL asi) and the 25
   historical `verify/` spawners, which are dated evidence and are not re-run.
+
+## 8. L-74 answered (A)
+
+- Mariano answered L-74 with (A): apply the diff. Applied `ps1_spawners.diff` with `git apply -p2` (check clean) to `scripts/bisect_asi_boot.ps1` and `scripts/bisect_hook_index.ps1`. Both scripts parse (`[scriptblock]::Create` under pwsh). Tooling only, no game run, gates not run.
+- Commit: see branch tip (`git log -1 orch/D5-SHIM-DINPUT8-SPAWNERS`).
+
