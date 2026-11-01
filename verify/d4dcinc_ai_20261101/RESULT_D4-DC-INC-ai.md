@@ -1,10 +1,47 @@
 # RESULT D4-DC-INC-ai: one body each for 12 RVAs the .inc-aware scanner exposed (13 allowlist keys)
 
-**Verdict: GREEN.** Both default gates are byte-identical to the `merge_train.json` refs. All 13 keys are gone from `re/tools/dual_copy_allowlist.txt` (48 findings to 35,
-NEW=0). Every RVA has exactly one body, in a TU compiled into both targets.
+**Verdict: GREEN.** Both default gates are byte-identical to the `merge_train.json` refs, before and after the re-merge
+onto `orch/integration` @ `dc960a8f7` (section below). All 13 keys are gone from `re/tools/dual_copy_allowlist.txt`
+(48 findings to 35 on the old base, 34 after the re-merge, NEW=0). Every RVA has exactly one body, in a TU compiled into
+both targets.
 
 Base `orch/integration` @ `0e3d71a75`. Branch `orch/D4-DC-INC-ai`. Rows: D4-DC-INC-0040e470, -0040e470-X, -004233e0,
 -00408af0, -00443300, -00442cc0, -00484c70, -00408590, -00407580, -00407b00, -00407b70, -00407d70, -00407db0.
+
+## Re-merge onto orch/integration @ dc960a8f7 (2026-11-01, after the merge train's red-merge bounce)
+
+**GREEN at merge `ffa02610b`.** HB-LINT-408A50 landed first. It removed AL_408a50 / TG_408a50 from `aileaf_g1.json`
+and `target_p3.json` and mapped 0x00408a50 to `PerCarRaceProgressGet`. This branch removed four other AL_ funcs and
+TG_40e470 from the same specs. That made textual conflicts in both specs, in `AiLeafTargets.cpp` (header comment) and in
+`AiLeafTargets_naked.inc`.
+
+Resolution:
+- Both specs take the union of the two sides: every func either side removed is removed, and every call mapping either
+  side added is kept.
+- The `AiLeafTargets.cpp` comment lists only the AL_ copies that remain.
+- The five naked `.inc` files were regenerated from the merged specs, not hand-merged. First, integration's own
+  `aileaf_g1.json` / `target_p3.json` at `dc960a8f7` were confirmed to reproduce its committed `.inc` files byte for
+  byte (modulo CRLF).
+- `AiModeSeven_naked.inc`, `PathProgStep_naked.inc` and `PickupCollect_naked.inc` regenerate identical to this
+  branch's previous tip.
+- No body or rsp line changed in the merge beyond integration's own changes. MATCH-0040E370-NAKED had not landed when
+  this merge was made (integration tip `dc960a8f7`).
+
+| Check | Result |
+|---|---|
+| `scripts/lint_rva_bodies.py` in the worktree | 34 findings (CROSS 22, DUP 12), NEW=0 (integration's 0x00408a50 key is gone too) |
+| `scripts/lan_release/archive_lint.py --ref orch/D4-DC-INC-ai` (`ffa02610b`) | include-closure 0 unresolved PASS, rva-lint 34 / NEW=0 PASS, asm-lint (806 files) PASS |
+| `MASHED_NO_DEPLOY=1 mashedmod\build.bat` | Build OK, `mashed_re.exe` sha256 `d5a68833ff46104c8f38f439022a5ac3ec7c96029c5b562f75e06b5f590eef33` |
+| H_DEF step / gates / ptrace | 8284be46 / ba407a16 / 31fe043e, same as ref |
+| B_DEF_K0 / K1 / K26 step | 1d5bf4f9 x3, same as ref |
+
+Gate run setup:
+- Private root `D:/MashedWT/D4-DC-INC-ai_root`.
+- Output `D:/MashedWT/D4-DC-INC-ai_data/arms2`; run log `D:/MashedWT/D4-DC-INC-ai_data/gates_run2.log`.
+- Wrapped in `mashed_lock.py run` around `bash -c 'test-slot ...'`. All four arms self-exited, exit 0.
+
+The raw files have the same sha256 as the first run listed under Gates below. The sections below describe the
+pre-merge tip `02dda4b80`. Their per-RVA content is unchanged by the merge.
 
 ## Method
 
