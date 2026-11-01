@@ -133,3 +133,20 @@ re-run as written above for `0055b080` and `0055b060` only. Their pass-1 verdict
 Read-out unchanged: CLEAN promotes, anything else leaves the row at C2 with no further fix in this step. If
 `0055b080` is CLEAN on the re-run, the 4 pass-1 samples are reported as a `0x00546b10` port finding, not fixed here.
 Default gates are re-run on the final build.
+
+## Amendment 2 (2026-11-01, recovery after the 14:23 local reboot, before any further arm)
+
+State at the reboot (`D:/MashedWT/D4-WSB-PORT-BROAD-2_data/drive_pb2.log`, `pass2.log`):
+
+- Pass 1 on `.asi 23d17c78` finished rows 1-16 (`shadow_summary_pass1.tsv`, identical to `shadow_summary.tsv` at that
+  point). Row 17 `0x0055ddd0` never launched: the audio endpoints dropped while it queued (`post endpoints: <none>` at
+  17:14:42Z, BLOCKED audio endpoint, no shadow log, no data folder). Row 18 `0x0055ded0` never ran.
+- The pass-2 script (`run_pass2.sh`) had already put `.asi a7275505` (Amendment 1 build) into the private root and queued
+  `0055ddd0 0055ded0 0055b080 0055b060`. Its first launch was BLOCKED audio endpoint (none present, 17:23:20Z), then the
+  machine rebooted. No pass-2 arm produced a shadow log. The final gate run (`gates_final`) never started.
+
+Change (harness order only): rows 17-18 run on `.asi a7275505` instead of `23d17c78`, in the same invocation as the
+`0055b080` / `0055b060` re-runs. The two builds differ only in `L2_0055b080.cpp` (`git diff e498a8356 4e1812a6e --
+mashedmod/`), and arm S installs one hook alone per boot (`MASHED_HOOK_ONLY`), so the code installed for `0055ddd0` and
+`0055ded0` is the same source as in pass 1. Every other rule (audio check per launch, U-9677 re-run, read-out, gates on
+the final `mashed_re.exe` `285749aa`) is unchanged. VB-CABLE endpoints present at 17:52Z after the reboot.
