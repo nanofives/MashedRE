@@ -160,6 +160,13 @@ extern "C" std::uint32_t __cdecl RangeTableMemberTest(int value, int slot);     
 extern "C" int __cdecl RangeTableCountGroup(int slot);                          // FUN_00407d70, Gameplay/RangeTable_ah1.cpp
 extern "C" int __cdecl RangeTableGroupOffset(int slot, int value);              // FUN_00407db0, Gameplay/RangeTable_ah1.cpp
 extern "C" void __cdecl Dot408590(void);                                        // FUN_00408590, Race/PathProgDot.cpp
+// D4-DC-INC-pathprog (2026-11-01): six more leaf callees, same pattern (their PP_ copies are gone from the .inc):
+extern "C" void* __cdecl GlobalDat0066ce58Get();                               // FUN_00426090, Frontend/GlobalGetters_s4.cpp
+extern "C" std::uint32_t __cdecl Global66d6d8Get(void);                        // FUN_00426bb0, Camera/CameraPathCount.cpp
+extern "C" std::uint8_t* __cdecl SlotIndexToPtr(int slot);                     // FUN_00426cb0, Frontend/MenuNearLeaves_s6.cpp
+extern "C" std::uint32_t __cdecl VehicleTable4cPtrGet(int idx);                // FUN_00426cc0, Vehicle/VehicleTable4c.cpp
+extern "C" std::uint32_t* __cdecl GetDat0066d6e4(void);                        // FUN_00426cf0, Frontend/BatchAA_s1.cpp
+extern "C" std::uint8_t* __cdecl FrontendArraySlotGet(int row, int col);       // FUN_00426d00, Frontend/BatchAA_s6.cpp
 
 #include "PathProgStep_naked.inc"
 

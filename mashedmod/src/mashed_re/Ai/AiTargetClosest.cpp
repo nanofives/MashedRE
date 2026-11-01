@@ -122,6 +122,7 @@ std::uint32_t __cdecl TG_Fwd(std::uint32_t* out, std::uint32_t idx) {         //
 
 // D4-DC-INC-ai (2026-11-01): the TG_40e470 copy is gone, target_p3.json maps the call to the one body.
 extern "C" std::uint32_t __cdecl CarSlotStateGet(int slot);                     // FUN_0040e470, Ai/CarSlotState.cpp
+extern "C" std::uint32_t __cdecl Global66d6d8Get(void);                        // FUN_00426bb0, Camera/CameraPathCount.cpp (D4-DC-INC-pathprog)
 
 #include "AiTargetClosest_naked.inc"
 

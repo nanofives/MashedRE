@@ -24,16 +24,18 @@
 // Since D4-DC-INC-ai (2026-11-01) this TU is in BOTH exe_sources.rsp and asi_sources.rsp: FUN_00407b00/b70/d70/db0
 // here are the one body each (Race/PathProgStep_naked.inc's PP_ copies were deleted, pathprog_p2.json maps the
 // calls here). The callee below is the only line that differs by target: the .asi calls the original, the exe
-// calls its verbatim copy of it (the original's VA holds nothing in the standalone).
+// calls the one body of FUN_00426090 (the original's VA holds nothing in the standalone). Since
+// D4-DC-INC-pathprog (2026-11-01) that is Frontend/GlobalGetters_s4.cpp's GlobalDat0066ce58Get (`return 0x0066ce58`,
+// both targets); the exe's private PP_426090 copy is gone.
 #ifdef MASHED_STANDALONE
-extern "C" void PP_426090();   // Race/PathProgStep_naked.inc: `mov eax, 0x0066ce58 / ret` (FUN_00426090 verbatim)
+extern "C" void* __cdecl GlobalDat0066ce58Get();   // Frontend/GlobalGetters_s4.cpp, FUN_00426090
 #endif
 
 namespace {
 // FUN_00426090 (0x00426090, C3): returns &DAT_0066ce58 (range-table base).
 inline int FUN_00426090() {
 #ifdef MASHED_STANDALONE
-    return reinterpret_cast<int(*)()>(&PP_426090)();
+    return reinterpret_cast<int>(GlobalDat0066ce58Get());
 #else
     return reinterpret_cast<int(*)()>(0x00426090u)();
 #endif

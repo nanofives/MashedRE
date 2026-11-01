@@ -8,7 +8,7 @@
 //   0x00442410  CameraSlotFieldPtrGet — camera; pointer-return field getter
 //   0x00442420  CameraSlotFloatGet    — camera; float-field getter (same record array)
 //   0x00423b20  CarSnapshotDwordGet   — vehicle; per-car snapshot dword getter
-//   0x00426cc0  VehicleTable4cPtrGet  — vehicle; pointer-return table getter
+//   [MOVED 2026-11-01, D4-DC-INC-pathprog] VehicleTable4cPtrGet (FUN_00426cc0) -> Vehicle/VehicleTable4c.cpp
 //   0x00442df0  RaceFloat898980Get    — vehicle; collision-impact float getter
 //
 // All five bodies byte-verified in original\MASHED.exe.unpatched 2026-06-12
@@ -113,30 +113,6 @@ RH_ScopedInstall(CameraSlotFloatGet, 0x00442420);
 
 // MATCH-S05: the body of 0x00423b20 (CarSnapshotDwordGet) moved to Match/MatchS05_00423b20.cpp,
 // which compiles the byte-matched source re/match/s05/00423b20.c.
-
-// ---------------------------------------------------------------------------
-// VehicleTable4cPtrGet  --  0x00426cc0   (subsystem: vehicle)
-//
-// Original: FUN_00426cc0 (13 bytes, 0x00426cc0..0x00426ccc)
-// Bytes: 8B 44 24 04 / 6B C0 4C / 05 58 36 66 00 / C3
-//   mov eax,[esp+4]; imul eax,eax,0x4c; add eax,0x00663658; ret
-// Signature: undefined * FUN_00426cc0(int param_1)
-//
-// POINTER-RETURN getter: returns the ORIGINAL-image VA; never dereferences.
-// Sibling of FUN_00426cb0 (base 0x00663664 = this base + 0xc, same 0x4c stride).
-//
-// Constants (cited from function body at 0x00426cc0):
-//   0x00663658 — table base
-//   0x4c       — per-entry stride (76 bytes)
-// ---------------------------------------------------------------------------
-
-// 0x00426cc0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleTable4cPtrGet(int param_1) {
-    // 0x00663658 base + 0x4c stride cited at 0x00426cc0 body.
-    return 0x00663658u + static_cast<std::uint32_t>(param_1) * 0x4cu;
-}
-
-RH_ScopedInstall(VehicleTable4cPtrGet, 0x00426cc0);
 
 // ---------------------------------------------------------------------------
 // RaceFloat898980Get  --  0x00442df0   (subsystem: vehicle)
