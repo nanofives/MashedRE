@@ -106,3 +106,20 @@ New witnesses (replace W2):
   B_DEF_K0 / H_DEF frame-0 value, and every AI car still has rows at frame 10. Prediction: holds.
 
 Verdict rules unchanged, with W2' and W4 in place of W2.
+
+## Amendment 2 (L-75 answered (b), before the original capture)
+
+Capture: three original boots (statediff is one car per boot), the ORIGREAD recipe with `--statediff-car 1`, `2`, `3`:
+`scenario_launch.py --track 0 --mode 10 --cars 4 --rule 0 --poke-ctrl-slots --hold 30 --statediff-out <msd> --statediff-car N`,
+private root `D:\MashedWT\D4-DC-77b0-STATE5-LEG2_root`, under `mashed_lock.py run`, audio endpoint check before each boot.
+
+Quantity: per AI car, the countdown displacement of its record position (+0x958, +0x960) = value on the exit frame minus
+value on the first held frame. Exit frame = the last frame before the first race frame. First race frame = the first
+frame where car 0's ... is not available in these captures, so it is the frame where the car's own +0x958/+0x960 series
+starts its GO motion, cross-checked against the 112-tick state-5 window. First held frame = frame 2 (as car 0 in
+o_t0_r1.msd). Port: exit `a.pos` (run 2 log) minus default frame-0 own_x / own_z (spawn, held):
+car 1 dz = -0.142, car 2 dz = -0.186, car 3 dz = -0.090, dx = 0 for all three (to 1e-6).
+
+AGREES: for every AI car, |dx_orig - dx_port| <= 0.05 and |dz_orig - dz_port| <= 0.05.
+MISMATCH: otherwise. The band 0.05 is under the smallest port offset (0.090), so a held-still original (displacement 0)
+reads MISMATCH on every car.
