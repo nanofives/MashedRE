@@ -73,11 +73,14 @@ import time
 import tempfile
 import uuid
 
-LOCK_DIR = tempfile.gettempdir()
+# MASHED_LOCK_DIR redirects every lock/solo/priority file (HB-MASHEDLOCK-RACE: the
+# concurrency self-test must not touch the live files other sessions hold).
+LOCK_DIR = os.environ.get('MASHED_LOCK_DIR') or tempfile.gettempdir()
 DEFAULT_NAME = 'mashed_machine'
 EMPTY_GRACE_SEC = 10     # an empty/unparsable lock file younger than this is a writer mid-create
 SOLO_ENV = 'MASHED_LOCK_SOLO_TOKEN'
 SOLO_TTL_SEC = 4 * 3600  # default solo window when not bound to a live PID
+REMOVE_TRIES = 8         # HB-MASHEDLOCK-RACE: Windows sharing violations on remove clear in ms
 PRIO_GRACE_SEC = 300     # a priority marker outlives its requester's wait by this much
 
 
@@ -177,6 +180,38 @@ def _read_owner(path):
         return {}
 
 
+def _remove(path, tries=REMOVE_TRIES):
+    """HB-MASHEDLOCK-RACE: remove `path`, tolerating the races between concurrent
+    readers/removers. True when the file is gone (including already gone), False when
+    it is still there after `tries` attempts (Windows PermissionError/WinError 32 while
+    another process has it open, or any other OSError). Never raises OSError."""
+    for i in range(tries):
+        try:
+            os.remove(path)
+            return True
+        except FileNotFoundError:
+            return True
+        except OSError:
+            time.sleep(0.01 * (i + 1))
+    return not os.path.exists(path)
+
+
+def _remove_if_same(path, o):
+    """Remove `path` only if it still holds the record `o` we judged stale, so a lock
+    re-created by another process between our read and our remove is not broken."""
+    if _read_owner(path) != o:
+        return False
+    return _remove(path)
+
+
+def _young(path):
+    """True when `path` was modified within EMPTY_GRACE_SEC (a writer mid-create)."""
+    try:
+        return time.time() - os.path.getmtime(path) <= EMPTY_GRACE_SEC
+    except OSError:
+        return False
+
+
 def _solo_path(name):
     return os.path.join(LOCK_DIR, name + '_solo.lock')
 
@@ -192,11 +227,10 @@ def prio_pending(name=DEFAULT_NAME, ignore_pid=None):
     pat = os.path.join(glob.escape(LOCK_DIR), glob.escape(name) + '_prio_*.lock')
     for path in glob.glob(pat):
         o = _read_owner(path)
+        if not o and _young(path):
+            continue   # marker being written (prio_mark opens with 'w'), not stale
         if (not o) or (not _pid_alive(o.get('pid'))) or (o.get('expires') or 0) < time.time():
-            try:
-                os.remove(path)
-            except OSError:
-                pass
+            _remove_if_same(path, o)
             continue
         if ignore_pid is not None and o.get('pid') == ignore_pid:
             continue
@@ -212,10 +246,7 @@ def prio_mark(name, label, ttl):
 
 
 def prio_clear(name):
-    try:
-        os.remove(_prio_path(name))
-    except OSError:
-        pass
+    _remove(_prio_path(name))
 
 
 def solo_owner(name=DEFAULT_NAME):
@@ -225,19 +256,29 @@ def solo_owner(name=DEFAULT_NAME):
     if not os.path.exists(path):
         return None
     o = _read_owner(path)
+    if not o:
+        # HB-MASHEDLOCK-RACE: empty/unparsable/unreadable. A writer between its O_EXCL
+        # create and its write looks exactly like this, so it is a busy window, not a
+        # stale one, until EMPTY_GRACE_SEC has passed.
+        if _young(path):
+            return dict(_BUSY_SOLO)
     dead = _owner_dead(o)
     expired = (o.get('expires') or 0) < time.time()
     if not o or dead or expired:
-        try:
-            os.remove(path)
-        except FileNotFoundError:
-            pass
-        return None
+        if _remove_if_same(path, o):
+            return None
+        if not os.path.exists(path):
+            return None
+        return dict(_BUSY_SOLO)   # could not remove (sharing violation): retry, not stale
     return o
 
 
+_BUSY_SOLO = {'token': None, 'label': '(solo window busy or unreadable)', 'at': '?'}
+
+
 def _solo_admits_me(owner):
-    return owner is not None and os.environ.get(SOLO_ENV) == owner.get('token')
+    tok = owner.get('token') if owner else None
+    return bool(tok) and os.environ.get(SOLO_ENV) == tok
 
 
 def solo_begin(label='', name=DEFAULT_NAME, ttl=SOLO_TTL_SEC, pid=None, wait=1800,
@@ -287,12 +328,10 @@ def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None):
     log(f"SOLO OPEN '{name}' ({label}) ttl={ttl}s; draining the current holder")
     gpath = _lock_path(name)
     while os.path.exists(gpath):
-        if _holder_stale(gpath, _read_owner(gpath)):
-            try:
-                os.remove(gpath)
-            except FileNotFoundError:
-                pass
-            break
+        go = _read_owner(gpath)
+        if _holder_stale(gpath, go):
+            if _remove_if_same(gpath, go) or not os.path.exists(gpath):
+                break
         time.sleep(poll)
     log(f"SOLO HELD '{name}'")
     return token
@@ -303,10 +342,7 @@ def solo_end(token, name=DEFAULT_NAME, quiet=False):
     o = _read_owner(path) if os.path.exists(path) else {}
     ok = bool(o) and o.get('token') == token
     if ok:
-        try:
-            os.remove(path)
-        except FileNotFoundError:
-            pass
+        _remove(path)
     if not quiet:
         print(f"[mashed-lock] {'SOLO CLOSED' if ok else 'solo not held by that token:'} "
               f"'{name}'", flush=True)
@@ -381,10 +417,9 @@ class MashedLock:
                 if _holder_stale(self.path, owner):
                     self._log(f"breaking STALE '{self.name}' (pid={opid} alive="
                               f"{_pid_alive(opid)} age={int(age)}s)")
-                    try:
-                        os.remove(self.path)
-                    except FileNotFoundError:
-                        pass
+                    if _remove_if_same(self.path, owner) or not os.path.exists(self.path):
+                        continue
+                    time.sleep(self.poll)   # could not remove right now: retry, do not spin
                     continue
                 if time.time() - start > self.wait:
                     raise TimeoutError(
@@ -400,11 +435,13 @@ class MashedLock:
         if not self._held:
             return
         owner = _read_owner(self.path)
+        for _ in range(REMOVE_TRIES):   # a transient unreadable read must not leak our lock
+            if owner or not os.path.exists(self.path):
+                break
+            time.sleep(0.02)
+            owner = _read_owner(self.path)
         if owner.get('pid') == os.getpid():
-            try:
-                os.remove(self.path)
-            except FileNotFoundError:
-                pass
+            _remove(self.path)
         self._held = False
         self._log(f"released '{self.name}' pid={os.getpid()}")
 
@@ -456,8 +493,7 @@ def _cli():
         return 0 if solo_end(opt('--token'), name=name) else 1
     if cmd == 'break':
         if os.path.exists(path):
-            os.remove(path)
-            print(f"broke '{name}'")
+            print(f"broke '{name}'" if _remove(path) else f"could not remove '{name}' (in use)")
         else:
             print(f"'{name}' already free")
         return 0
