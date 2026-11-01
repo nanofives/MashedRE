@@ -263,7 +263,7 @@
 "Util\SineOscillators.cpp"
 "Math\MatrixOrthoResidual.cpp"
 "Render\TrackLoaderMicros_p3.cpp"
-"Render\FrameHelpers_q2.cpp"
+"Render\RfxEmitter.cpp"
 "Render\LowRvaMixed_q3.cpp"
 "Render\D3D9Helpers_q5.cpp"
 "Render\TextureLoader_q6.cpp"

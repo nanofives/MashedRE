@@ -444,19 +444,7 @@ RH_ScopedInstall(WheelGet46d2e0, 0x0046d2e0);
 
 // ===== round 94 =====
 
-// 0x00476a80  render — byte-verified: copy 8 dwords from p (null->&DAT_006132a4) to globals 0x692534..0x692550
-extern "C" __declspec(dllexport) void __cdecl Copy476a80(std::uint32_t* p) {
-    if (!p) p = reinterpret_cast<std::uint32_t*>(0x006132a4u);
-    *reinterpret_cast<std::uint32_t*>(0x00692534u)=p[0];
-    *reinterpret_cast<std::uint32_t*>(0x00692538u)=p[1];
-    *reinterpret_cast<std::uint32_t*>(0x0069253cu)=p[2];
-    *reinterpret_cast<std::uint32_t*>(0x00692540u)=p[3];
-    *reinterpret_cast<std::uint32_t*>(0x00692544u)=p[4];
-    *reinterpret_cast<std::uint32_t*>(0x00692548u)=p[5];
-    *reinterpret_cast<std::uint32_t*>(0x0069254cu)=p[6];
-    *reinterpret_cast<std::uint32_t*>(0x00692550u)=p[7];
-}
-RH_ScopedInstall(Copy476a80, 0x00476a80);
+// D4-DC-RFX-CORE: the Copy476a80 body moved to Render/RfxEmitter.cpp (one body for both targets).
 
 // 0x00474d80  render — byte-verified: void fn(p,set): if(p){ b=*(u8*)(p+2); set?b|=4:b&=~4; *(u8*)(p+2)=b; }
 extern "C" __declspec(dllexport) void __cdecl ByteFlag474d80(char* p, std::uint32_t set) {
@@ -482,59 +470,11 @@ extern "C" __declspec(dllexport) void __cdecl ClearColl47c0b0(void) {
 }
 RH_ScopedInstall(ClearColl47c0b0, 0x0047c0b0);
 
-// 0x00476ae0  render — byte-verified: base=*(*(p1+4)+DAT_007dc57c); base[0xb8]=p2[0]; base[0xbc]=p2[1]; base[0x40]|=0x4000
-extern "C" __declspec(dllexport) void __cdecl Batch476ae0(std::uint32_t* p1, std::uint32_t* p2) {
-    if (!p2) p2=(std::uint32_t*)0x00613288u;
-    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4) + *(std::uint32_t*)0x007dc57cu);
-    *(std::uint32_t*)(b+0xb8)=p2[0]; *(std::uint32_t*)(b+0xbc)=p2[1]; *(std::uint32_t*)(b+0x40)|=0x4000u;
-}
-RH_ScopedInstall(Batch476ae0, 0x00476ae0);
-
-// 0x00476b90  render — byte-verified: base=...; copy 16 dwords p2->base+0xf8; base[0x40]|=0x8000
-extern "C" __declspec(dllexport) void __cdecl Batch476b90(std::uint32_t* p1, std::uint32_t* p2) {
-    if (!p2) p2=(std::uint32_t*)0x00692558u;
-    char* base=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4) + *(std::uint32_t*)0x007dc57cu);
-    std::uint32_t* d=(std::uint32_t*)(base+0xf8);
-    for (int k=0;k<16;k++) d[k]=p2[k];
-    *(std::uint32_t*)(base+0x40)|=0x8000u;
-}
-RH_ScopedInstall(Batch476b90, 0x00476b90);
-
-// 0x00476be0  render — byte-verified: base=...; base[0xc0]=v; base[0x40]|=0x20000
-extern "C" __declspec(dllexport) void __cdecl Batch476be0(std::uint32_t* p1, std::uint32_t v) {
-    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4) + *(std::uint32_t*)0x007dc57cu);
-    *(std::uint32_t*)(b+0xc0)=v; *(std::uint32_t*)(b+0x40)|=0x20000u;
-}
-RH_ScopedInstall(Batch476be0, 0x00476be0);
+// D4-DC-RFX-CORE: the Batch476ae0 / Batch476b90 / Batch476be0 bodies moved to Render/RfxEmitter.cpp.
 
 // ===== round 96 (more per-batch state setters) =====
 
-// 0x00476c10  particle — base=*(*(p1+4)+DAT_007dc57c); base[0xd8/dc/e0/e4]=p2[0..3]; base[0x40]|=0x80000
-extern "C" __declspec(dllexport) void __cdecl Batch476c10(std::uint32_t* p1, std::uint32_t* p2) {
-    if (!p2) p2=(std::uint32_t*)0x00613294u;
-    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4)+*(std::uint32_t*)0x007dc57cu);
-    *(std::uint32_t*)(b+0xd8)=p2[0]; *(std::uint32_t*)(b+0xdc)=p2[1];
-    *(std::uint32_t*)(b+0xe0)=p2[2]; *(std::uint32_t*)(b+0xe4)=p2[3];
-    *(std::uint32_t*)(b+0x40)|=0x80000u;
-}
-RH_ScopedInstall(Batch476c10, 0x00476c10);
-
-// 0x00476c60  particle — base=...; copy 8 dwords p2->base+0xd8; base[0x40]|=0x100000
-extern "C" __declspec(dllexport) void __cdecl Batch476c60(std::uint32_t* p1, std::uint32_t* p2) {
-    if (!p2) p2=(std::uint32_t*)0x006132a4u;
-    char* base=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4)+*(std::uint32_t*)0x007dc57cu);
-    std::uint32_t* d=(std::uint32_t*)(base+0xd8);
-    for (int k=0;k<8;k++) d[k]=p2[k];
-    *(std::uint32_t*)(base+0x40)|=0x100000u;
-}
-RH_ScopedInstall(Batch476c60, 0x00476c60);
-
-// 0x00476cb0  particle — base=...; base[0xa4]=p2; base[0xa8]=p3; base[0x40]|=0x10000000
-extern "C" __declspec(dllexport) void __cdecl Batch476cb0(std::uint32_t* p1, std::uint32_t p2, std::uint32_t p3) {
-    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4)+*(std::uint32_t*)0x007dc57cu);
-    *(std::uint32_t*)(b+0xa4)=p2; *(std::uint32_t*)(b+0xa8)=p3; *(std::uint32_t*)(b+0x40)|=0x10000000u;
-}
-RH_ScopedInstall(Batch476cb0, 0x00476cb0);
+// D4-DC-RFX-CORE: the Batch476c10 / Batch476c60 / Batch476cb0 bodies moved to Render/RfxEmitter.cpp.
 
 // ===== round 97 =====
 
@@ -1668,14 +1608,7 @@ extern "C" __declspec(dllexport) void __cdecl Counter5b11d0(std::uint8_t* p) {
 RH_ScopedInstall(Counter5b11d0, 0x005b11d0);
 
 // ===== round 147 ===== (arg-or-default memcpy to absolute dest)
-// 0x00476a10 — void fn(src): if(src==0) src=0x692558; memcpy(0x6924e8, src, 16 dwords).
-extern "C" __declspec(dllexport) void __cdecl Copy476a10(std::uint8_t* src) {
-    if (src == 0) src = reinterpret_cast<std::uint8_t*>(0x00692558);
-    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(0x006924e8);
-    std::uint32_t* s = reinterpret_cast<std::uint32_t*>(src);
-    for (int i = 0; i < 16; i++) d[i] = s[i];
-}
-RH_ScopedInstall(Copy476a10, 0x00476a10);
+// D4-DC-RFX-CORE: the Copy476a10 body moved to Render/RfxEmitter.cpp (one body for both targets).
 
 // ===== round 148 ===== (byte-indexed table bit-clear)
 // 0x005b1180 — void fn(p): if(p[1]!=p[3]){ off=(u8)p[1]+(u8)p[0]; if(off>=(u8)p[3]) off-=p[3];
@@ -2116,25 +2049,7 @@ extern "C" __declspec(dllexport) void __cdecl StateInsert5b0f90(std::uint8_t* p,
 RH_ScopedInstall(StateInsert5b0f90, 0x005b0f90);
 
 // ===== round 167 ===== (multi-deref global setter)
-// 0x00476b30 — void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g);
-//   obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40] |= 0x2000.
-extern "C" __declspec(dllexport) void __cdecl Set476b30(std::uint8_t* p1, std::uint8_t* p2) {
-    std::uint32_t val = *reinterpret_cast<std::uint32_t*>(p2 ? p2 : reinterpret_cast<std::uint8_t*>(0x00613290));
-    std::uint32_t g = *reinterpret_cast<std::uint32_t*>(0x007dc57c);
-    std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(p1 + 4);
-    std::uint8_t* obj = *reinterpret_cast<std::uint8_t**>(e + g);
-    *reinterpret_cast<std::uint32_t*>(obj + 0xc4) = val;
-    std::uint8_t* x = *reinterpret_cast<std::uint8_t**>(e + 0x18);
-    std::uint8_t* y = *reinterpret_cast<std::uint8_t**>(x + 0x20);
-    std::uint8_t* n = *reinterpret_cast<std::uint8_t**>(y);
-    if (n != 0) {
-        std::uint8_t* obj2 = *reinterpret_cast<std::uint8_t**>(e + g);
-        *reinterpret_cast<std::uint32_t*>(n + 4) = *reinterpret_cast<std::uint32_t*>(obj2 + 0xc4);
-    }
-    std::uint8_t* obj3 = *reinterpret_cast<std::uint8_t**>(e + g);
-    *reinterpret_cast<std::uint32_t*>(obj3 + 0x40) |= 0x2000;
-}
-RH_ScopedInstall(Set476b30, 0x00476b30);
+// D4-DC-RFX-CORE: the Set476b30 body moved to Render/RfxEmitter.cpp (one body for both targets).
 
 // ===== round 168 ===== (list-node const init: store *arg2 + float consts)
 // 0x00482730 — void fn(p, arg2): s=p[0x18]; count=s[0x24]; if(count<=0) return; arr=s[0x20];
@@ -3652,55 +3567,7 @@ extern "C" __declspec(dllexport) void __cdecl FloatClamp3Level45ca30(void)
 }
 RH_ScopedInstall(FloatClamp3Level45ca30, 0x0045ca30);
 
-// 0x00476d00  FUN_00476d00 (render, MultiArrayScatter) — PURE LEAF (no calls)
-// void f(struct* p): if (p[0xc] >= p[8]) return; else scatter source globals into
-// up to 7 optional arrays (each gated on a non-null ptr field) indexed by the
-// counter p[0xc], then increment the counter. capstone-verified. memcpy/float copy
-// match the original rep-movsd / fld-fstp (source floats are normal -> exact).
-extern "C" __declspec(dllexport) void __cdecl MultiArrayScatter476d00(unsigned char* p)
-{
-    const int counter = *reinterpret_cast<int*>(p + 0xc);
-    if (counter >= *reinterpret_cast<int*>(p + 8)) return;
-    unsigned char* a0 = *reinterpret_cast<unsigned char**>(p + 0x10);
-    if (a0) {
-        int* d = reinterpret_cast<int*>(a0 + counter * 12);
-        d[0] = *reinterpret_cast<int*>(0x00692528u);
-        d[1] = *reinterpret_cast<int*>(0x0069252cu);
-        d[2] = *reinterpret_cast<int*>(0x00692530u);
-    }
-    unsigned char* a1 = *reinterpret_cast<unsigned char**>(p + 0x14);
-    if (a1) {
-        int* d = reinterpret_cast<int*>(a1 + counter * 8);
-        d[0] = *reinterpret_cast<int*>(0x006924dcu);
-        d[1] = *reinterpret_cast<int*>(0x006924e0u);
-    }
-    unsigned char* a2 = *reinterpret_cast<unsigned char**>(p + 0x18);
-    if (a2) *reinterpret_cast<int*>(a2 + counter * 4) = *reinterpret_cast<int*>(0x00692554u);
-    unsigned char* a3 = *reinterpret_cast<unsigned char**>(p + 0x1c);
-    if (a3) {  // rep movsd 0x10 dwords from 0x6924e8
-        int* d = reinterpret_cast<int*>(a3 + counter * 64);
-        const int* s = reinterpret_cast<const int*>(0x006924e8u);
-        for (int k = 0; k < 0x10; k++) d[k] = s[k];
-    }
-    unsigned char* a4 = *reinterpret_cast<unsigned char**>(p + 0x20);
-    if (a4) *reinterpret_cast<float*>(a4 + counter * 4) = *reinterpret_cast<float*>(0x006924d8u);
-    unsigned char* a5 = *reinterpret_cast<unsigned char**>(p + 0x24);
-    if (a5) {
-        int* d = reinterpret_cast<int*>(a5 + counter * 16);
-        d[0] = *reinterpret_cast<int*>(0x00692598u);
-        d[1] = *reinterpret_cast<int*>(0x0069259cu);
-        d[2] = *reinterpret_cast<int*>(0x006925a0u);
-        d[3] = *reinterpret_cast<int*>(0x006925a4u);
-    }
-    unsigned char* a6 = *reinterpret_cast<unsigned char**>(p + 0x28);
-    if (a6) {  // rep movsd 8 dwords from 0x692534
-        int* d = reinterpret_cast<int*>(a6 + counter * 32);
-        const int* s = reinterpret_cast<const int*>(0x00692534u);
-        for (int k = 0; k < 8; k++) d[k] = s[k];
-    }
-    *reinterpret_cast<int*>(p + 0xc) = counter + 1;
-}
-RH_ScopedInstall(MultiArrayScatter476d00, 0x00476d00);
+// D4-DC-RFX-CORE: the MultiArrayScatter476d00 body moved to Render/RfxEmitter.cpp (one body for both targets).
 
 // 0x004c0e50  FUN_004c0e50 (render, DllHeadInsert) — PURE LEAF (no calls)
 // void f(struct* p): intrusive doubly-linked-list head-insert. node = p[0xa0];
