@@ -80,7 +80,7 @@ __declspec(naked) void PP_Nop()     { __asm { ret } }
 __declspec(naked) void PP_ErrPass() { __asm { xor eax, eax
                                               ret } }
 
-void PP_547450();   // generated below (sphere vs triangle)
+void BW_547450();   // FUN_00547450 (sphere vs triangle): the one exe body is Collision/CollisionWorld_naked.inc (D4-DC-INC-batch3)
 
 // FUN_00538c80(world, sphere{x,y,z,r,..,..,type=3}, FUN_00407a90, &{v, world}) -> FUN_00539ec0.
 // The original visits sectors left-first (= stream order) and, inside a sector, triangles in
@@ -90,7 +90,7 @@ void PP_547450();   // generated below (sphere vs triangle)
 void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int32_t* data) {
     const std::int32_t v = data[0];
     typedef int (__cdecl* tri_fn)(float*, const float*, const float*, const float*, float*, float*);
-    const tri_fn test = reinterpret_cast<tri_fn>(&PP_547450);
+    const tri_fn test = reinterpret_cast<tri_fn>(&BW_547450);
     const int n = mashed_re::Race::PathNodes_TriCount();
     // [PATHPROG split, PREREG amendment A3] MEASUREMENT ONLY: MASHED_PP_SPHERE_DUMP=<file> logs, for car 0 (the player) on its
     // first 6 queries, every triangle the sphere hits (stream index, node id, sphere centre); MASHED_PP_SPHERE_FIRST makes

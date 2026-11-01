@@ -19,3 +19,12 @@ float LutNormalize2D(float* out, const float* in);  // FUN_004c3c60 (2-D normali
 
 }  // namespace Math
 }  // namespace mashed_re
+
+// cdecl entry points for the verbatim naked transcriptions (D4-DC-INC-batch3, 2026-11-01). The naked specs
+// (re/tools/naked_specs/*.json "calls") map 0x004c3b30 / 0x004c3b90 / 0x004c3ac0 / 0x004c39b0 here, so each RVA
+// has the one body above instead of a private naked copy per lane. Arg on the stack, result in ST0, as the
+// originals. RwLutNormalize_cd is defined in Math/RwV3dNormalize.cpp, the others in Math/RwLutTables.cpp.
+extern "C" float __cdecl RwLutSqrt_cd(float x);
+extern "C" float __cdecl RwLutInvSqrt_cd(float x);
+extern "C" float __cdecl RwLutLength_cd(const float* v);
+extern "C" float __cdecl RwLutNormalize_cd(float* out, const float* in);

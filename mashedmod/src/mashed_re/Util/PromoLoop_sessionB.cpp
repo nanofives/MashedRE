@@ -331,16 +331,7 @@ RH_ScopedInstall(FloatSub4058b0, 0x004058b0);
 
 // ===== round 89 =====
 
-// 0x004576b0  particle — byte-verified: 33 C0 8B 0C 85 00 A3 68 00 85 C9 75 25 40 83 F8 02 7C EF 83 F8 04 7D 17 C1 E0 04 05 54 A2 68 00 83 38 00 75 0D 83 C0 10 3D 94 A2 68 00 7C F1 33 C0 C3 B8 01 00 00 00 C3
-//   "any active?" over 4 slots (0x68a300,0x68a304 then 0x68a274,0x68a284) -> return 1 if any nonzero
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AnyActive4576b0(void) {
-    for (std::uint32_t i = 0; i < 2; i++)
-        if (*reinterpret_cast<std::int32_t*>(0x0068a300u + i * 4u)) return 1u;
-    for (std::uint32_t p = 0x0068a274u; p < 0x0068a294u; p += 0x10u)
-        if (*reinterpret_cast<std::int32_t*>(p)) return 1u;
-    return 0u;
-}
-RH_ScopedInstall(AnyActive4576b0, 0x004576b0);
+// [moved] 0x004576b0 AnyActive4576b0 moved to Gameplay/PickupPredicates.cpp (D4-DC-INC-batch3, 2026-11-01): one body, both targets.
 
 // 0x004075b0  gameplay — byte-verified (70B): IMUL i,0xec; rec=*(0x639d90+i*0xec); t=*(rec+4);
 //   out[0..2]=t[0x40/44/48]; out[3]=0x40000000(2.0f); return (*(0x639dc8+i*0xec)==0)?1:0
@@ -731,48 +722,7 @@ extern "C" __declspec(dllexport) void __cdecl Reset413fe0(void) {
 RH_ScopedInstall(Reset413fe0, 0x00413fe0);
 
 // ===== round 106 =====
-// 0x00484a50  world-objects — byte-verified register-conv (EAX=container, ECX=item)
-//   cross-link insert. Verbatim naked __asm port (bit-identical by construction).
-//   Guards on [eax+0x1b4] & [eax+0x190]<0x64; stores ecx into eax[count]; tracks
-//   [ecx+0x10] into [eax+0x1ac]/[eax+0x1b0]; registers eax into ecx[0x24+cnt2]; ret 1/0.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Insert484a50(void) {
-    __asm {
-        mov edx, dword ptr [eax + 0x1b4]
-        test edx, edx
-        jne L_ret0
-        mov edx, dword ptr [eax + 0x190]
-        cmp edx, 0x64
-        jl L_ins
-    L_ret0:
-        xor eax, eax
-        ret
-    L_ins:
-        mov dword ptr [eax + edx*4], ecx
-        inc dword ptr [eax + 0x190]
-        mov edx, dword ptr [eax + 0x1b0]
-        test edx, edx
-        jne L_b
-        mov edx, dword ptr [eax + 0x1ac]
-        test edx, edx
-        jne L_c
-        mov edx, dword ptr [ecx + 0x10]
-        mov dword ptr [eax + 0x1ac], edx
-    L_c:
-        mov edx, dword ptr [eax + 0x1ac]
-        cmp edx, dword ptr [ecx + 0x10]
-        je L_b
-        mov dword ptr [eax + 0x1b0], 1
-        mov edx, dword ptr [ecx + 0x10]
-        mov dword ptr [eax + 0x1ac], edx
-    L_b:
-        mov edx, dword ptr [ecx + 0x64]
-        mov dword ptr [ecx + edx*4 + 0x24], eax
-        inc dword ptr [ecx + 0x64]
-        mov eax, 1
-        ret
-    }
-}
-RH_ScopedInstall(Insert484a50, 0x00484a50);
+// [moved] 0x00484a50 Insert484a50 moved to Race/WorldObjectLinks.cpp (D4-DC-INC-batch3, 2026-11-01): one body, both targets.
 
 // ===== round 107 =====
 // ECX-input (thiscall) const-field setters — verbatim naked-asm ports.
@@ -1946,28 +1896,7 @@ extern "C" __declspec(dllexport) void __cdecl Calc5b93a0(std::uint8_t* p, std::u
 RH_ScopedInstall(Calc5b93a0, 0x005b93a0);
 
 // ===== round 158 ===== (strided record-array zeroer + record-index field)
-// 0x00484c90 — void fn(): for p=0x6dccbc; p<0x6e70cc; p+=0x8c (idx 0,1,2,..):
-//   *(u16*)(p+0x1c)=idx; zero [p-4],[p],[p+4],[p+8],[p+0xc],[p+0x10],[p+0x18]; zero 9 dwords
-//   at [p+0x64]. Then *0x6e70d8=0; *0x6e70cc=0.
-extern "C" __declspec(dllexport) void __cdecl Zero484c90(void) {
-    int idx = 0;
-    for (std::uint8_t* p = reinterpret_cast<std::uint8_t*>(0x006dccbc);
-         reinterpret_cast<std::uintptr_t>(p) < 0x006e70cc; p += 0x8c) {
-        *reinterpret_cast<std::uint16_t*>(p + 0x1c) = static_cast<std::uint16_t>(idx);
-        *reinterpret_cast<std::uint32_t*>(p - 4) = 0;
-        *reinterpret_cast<std::uint32_t*>(p) = 0;
-        *reinterpret_cast<std::uint32_t*>(p + 4) = 0;
-        *reinterpret_cast<std::uint32_t*>(p + 8) = 0;
-        *reinterpret_cast<std::uint32_t*>(p + 0xc) = 0;
-        *reinterpret_cast<std::uint32_t*>(p + 0x10) = 0;
-        *reinterpret_cast<std::uint32_t*>(p + 0x18) = 0;
-        for (int k = 0; k < 9; k++) reinterpret_cast<std::uint32_t*>(p + 0x64)[k] = 0;
-        idx++;
-    }
-    *reinterpret_cast<std::uint32_t*>(0x006e70d8) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x006e70cc) = 0;
-}
-RH_ScopedInstall(Zero484c90, 0x00484c90);
+// [moved] 0x00484c90 Zero484c90 moved to Race/WorldObjectLinks.cpp (D4-DC-INC-batch3, 2026-11-01): one body, both targets.
 
 // ===== round 159 ===== (paired vec3 array fill: copy src into arr1, zero arr2)
 // 0x004899c0 — void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4];
@@ -4812,24 +4741,7 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl SlotAliveState45c
 }
 RH_ScopedInstall(SlotAliveState45cab0, 0x0045cab0);
 
-// 0x0045c330 FUN_0045c330 (gameplay) — PredNot45c330.
-//   bool f(int idx): return Pred45bff0(idx)==0;  (NEG/SBB/INC = "x==0 ? 1 : 0")
-//   Disasm (0x0045c330..0x0045c342) verbatim.
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl PredNot45c330(int /*idx*/)
-{
-    __asm {
-        mov   eax, dword ptr [esp+4]
-        push  eax
-        mov   eax, 045BFF0h                 ; Pred45bff0
-        call  eax
-        add   esp, 4
-        neg   eax
-        sbb   eax, eax
-        inc   eax
-        ret
-    }
-}
-RH_ScopedInstall(PredNot45c330, 0x0045c330);
+// [moved] 0x0045c330 PredNot45c330 moved to Gameplay/PickupPredicates.cpp (D4-DC-INC-batch3, 2026-11-01): one body, both targets.
 
 // ===== round 165 ===== (2D fixed-point delta, round-toward-zero bias)
 // 0x005c6b60 — first row released by the U-9023 skip-band correction (a448e116); it had

@@ -80,6 +80,15 @@ float LutLength(const float* v) {
     return LutSqrt(mag2);
 }
 
+// The cdecl call-throughs the naked lanes call (RwLutTables.h). D4-DC-INC-batch3 deleted the private naked copies
+// TG_4c3b30, BW_4c3b90 / PP_4c3b90 and AL_ / TG_ / PK_4c3ac0. Each copy read the same rebuilt tables (its spec
+// patched [0x007d3ff8] to a per-lane pointer pair set from RwLutSqrtTable / RwLutInvSqrtTable) and ran the same
+// integer index arithmetic, then FLD of the dword: the result bits are those of LutSqrt / LutInvSqrt. LutLength
+// rounds each product and sum to float (SSE2 TU), which is what the x87 copies did at the lanes' default PC_24.
+extern "C" float __cdecl RwLutSqrt_cd(float x) { return LutSqrt(x); }
+extern "C" float __cdecl RwLutInvSqrt_cd(float x) { return LutInvSqrt(x); }
+extern "C" float __cdecl RwLutLength_cd(const float* v) { return LutLength(v); }
+
 // The 2-D normalize the original runs at 0x004c3c60 (decomp: local_8 = p[1]*p[1] + p[0]*p[0] stored as a
 // float; both LUTs indexed by (bits + 0x800) >> 12; out = (scale * p[0], p[1] * scale)); the degenerate-length
 // error report (FUN_004d7ff0 / FUN_004d8480) changes no output and is omitted. Returns the length.

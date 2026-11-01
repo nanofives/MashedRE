@@ -367,6 +367,8 @@
 "Util\PromoLoop_round76.cpp"
 "Util\PromoLoop_round77.cpp"
 "Util\PromoLoop_sessionB.cpp"
+"Gameplay\PickupPredicates.cpp"
+"Race\WorldObjectLinks.cpp"
 "Powerup\PowerupTypeSearch.cpp"
 "Frontend\KvFind.cpp"
 "Render\RainCameraScale.cpp"

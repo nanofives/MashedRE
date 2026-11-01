@@ -34,6 +34,7 @@
 #include "PickupTick.h"
 #include "PickupGlow.h"
 #include "PickupPoolSpawn.h"
+#include "PickupPredicates.h"     // [D4-DC-INC-batch3] AnyActive4576b0 / PredNot45c330, one body each, both targets
 #include "../Race/WorldRegistry.h"
 #include "../Race/CarRegistrant.h"
 #include "../Math/RwLutTables.h"
