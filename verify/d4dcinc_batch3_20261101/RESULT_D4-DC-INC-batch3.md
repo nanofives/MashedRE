@@ -1,6 +1,6 @@
 # RESULT D4-DC-INC-batch3: one body each for 9 RVAs the .inc-aware scanner exposed, 1 row left open
 
-**Verdict: @VERDICT@.** 9 of the 10 rows are done. Their allowlist keys are gone from `re/tools/dual_copy_allowlist.txt`:
+**Verdict: GREEN for 9 rows, 1 row blocked.** 9 of the 10 rows are done. Their allowlist keys are gone from `re/tools/dual_copy_allowlist.txt`:
 34 findings on the base become 25, NEW=0. Row D4-DC-INC-0046d4a0 is left **blocked**. Making it one body changes what
 the exe reads (section below), so it needs a knob and a PREREG, not a burn-down.
 
@@ -115,12 +115,23 @@ Scanner view after the change: 0x004576b0, 0x0045c330, 0x00484a50, 0x00484c90 bi
 ## Build
 
 `MASHED_NO_DEPLOY=1 mashedmod\build.bat` in the worktree: `=== Build OK ===`. Log `D:/MashedWT/D4-DC-INC-batch3_data/build4.log`.
-`mashed_re.exe` sha256 `@EXESHA@`.
+`mashed_re.exe` sha256 `d26bb3349bf49e14e7bb706626daa830033d91c0f80f2b148a7b499a6bde4a5c`, `mashed_re_dev.asi` `c69a1ab9df8cceb77006a4581dc59bff485db4c733856d5f27e60bc9c7a47c06`.
 `original\mashed_re_dev.asi` was not touched.
 
 ## Gates
 
-@GATES@
+The worktree exe (`mashed_re.exe` sha256 above, built from the tree committed at `21f303c3b`) was run with
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`:
+- private root `D:/MashedWT/D4-DC-INC-batch3_root` (`A4_ROOT`), output `A4_OUT=D:/MashedWT/D4-DC-INC-batch3_data/arms`
+- wrapped in `test-slot` around `mashed_lock.py run --solo --label D4-DC-INC-batch3`
+
+A first plain `run` waited about 35 min behind back-to-back solo windows from other sessions and was stopped before it
+took the lock. The solo run's four arms self-exited, exit 0. Refs come from `re/orchestrator/merge_train.json`.
+
+| Arm | Expected | Got | |
+|---|---|---|---|
+| H_DEF step / gates / ptrace | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e | same |
+| B_DEF_K0 / K1 / K26 step | 1d5bf4f9 x3 | 1d5bf4f9 / 1d5bf4f9 / 1d5bf4f9 | same |
 
 ## Merge notes for the train
 
@@ -145,6 +156,10 @@ evidence directly.
 
 ## Raw data (not committed)
 
-- `D:/MashedWT/D4-DC-INC-batch3_data/build4.log`, `dumpbin_exe.txt`, `gates_run1.log`
+- `D:/MashedWT/D4-DC-INC-batch3_data/build4.log`, `dumpbin_exe.txt`
 - private root `D:/MashedWT/D4-DC-INC-batch3_root` (robocopy of `original\`, 265 files, 0 errors)
-@RAW@
+- `D:/MashedWT/D4-DC-INC-batch3_data/arms/H_DEF.step.csv` `8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198`
+- `D:/MashedWT/D4-DC-INC-batch3_data/arms/H_DEF.gates.csv` `ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb`
+- `D:/MashedWT/D4-DC-INC-batch3_data/arms/H_DEF.ptrace.log` `31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3`
+- `D:/MashedWT/D4-DC-INC-batch3_data/arms/B_DEF_K{0,1,26}.step.csv` `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457`
+- gate run log `D:/MashedWT/D4-DC-INC-batch3_data/gates_run2.log` (`gates_run1.log` is the stopped plain run, no arm started)
