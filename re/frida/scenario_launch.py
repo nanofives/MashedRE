@@ -2982,6 +2982,85 @@ function a5ProbeArm(recBaseHex, car, cap){
 }
 function a5ProbeDrain(){ const r = A5P.rows; A5P.rows = []; return r; }
 
+// --- VALSRC rows 20 / 23 + 0x00897ffc runtime legs (D4-DC-77b0-RUNTIME-PARKED, 2026-11-01) ---------
+// (1) Entry hook on FUN_004177b0 (2..4 calls per frame, not a hot path). Per call it reads the return-address RVA,
+// 0x0063ba8c, the four cells *(*(0x005f2770) + 0x34 + 4v) (0x005f275c..0x005f2768 in the image), 0x00897ffc,
+// 0x0067e9fc (FUN_0042f6a0's word) and 0x007f0fd0. Rows are run-length: one row per run of identical tuples, with the
+// call count, first / last tick 0x007f0ff4 and first / last SD.frames. (2) Hardware WRITE watchpoints (debug registers
+// 0..3) on 0x0063ba8c, 0x00897ffc, 0x005f275c and 0x0067e9fc, armed on every thread at arm time. Each hit logs the pc
+// after the store, the ACCURATE backtrace (first 8 image RVAs), the four watched dwords and the tick. Read-only: no
+// write to the game, no code patch besides the Interceptor trampoline.
+const VS = { armed:false, runs:[], key:null, cur:null, n:0, w:[], nw:0, err:null };
+function vsRva(x){ return '0x' + ((x >>> 0) >>> 0).toString(16); }
+function vsProbeArm(){
+  if (VS.armed) return 'already armed';
+  try {
+    const tk = ga(0x007f0ff4), ss = ga(0x0063ba8c), tb = ga(0x005f2770), ffc = ga(0x00897ffc),
+          rt = ga(0x0067e9fc), fd0 = ga(0x007f0fd0);
+    const base = modBase();
+    const cells = function(){
+      const p = tb.readU32() >>> 0;
+      if (p === 0) return ['', '', '', ''];
+      const q = base.add(p - IMG + 0x34);
+      return [0, 1, 2, 3].map(function(v){ return q.add(4 * v).readS32(); });
+    };
+    Interceptor.attach(ga(0x004177b0), {
+      onEnter(){
+        try {
+          VS.n++;
+          const ra = this.returnAddress.sub(base).add(IMG).toString(16);
+          const t = tk.readS32();
+          const tup = [ra, ss.readS32()].concat(cells()).concat([ffc.readS32(), rt.readS32(), fd0.readS32()]);
+          const key = tup.join(',');
+          if (key !== VS.key) {
+            if (VS.cur && VS.runs.length < 100000) VS.runs.push(VS.cur.join(','));
+            VS.key = key;
+            VS.cur = [VS.n, 1, t, t, SD.frames, SD.frames].concat(tup);
+          } else { VS.cur[1]++; VS.cur[3] = t; VS.cur[5] = SD.frames; }
+        } catch(e){ if (!VS.err) VS.err = 'B ' + e; }
+      }
+    });
+    const W = [ss, ffc, ga(0x005f275c), rt];
+    Process.setExceptionHandler(function(d){
+      if (d.type !== 'single-step') return false;
+      try {
+        const c = d.context;
+        let acc = '';
+        try {
+          acc = Thread.backtrace(c, Backtracer.ACCURATE).map(function(p){ return p.toUInt32() >>> 0; })
+                  .filter(function(x){ return x >= 0x401000 && x < 0x5c0000; }).slice(0, 8).map(vsRva).join('|');
+        } catch(e){ acc = 'bt-err'; }
+        // Stack scan as well: the first 4 dwords within [esp, esp+0x100) that fall in .text (candidate return addresses,
+        // stale dwords possible), because the ACCURATE walk stops at the store's own frame for leaf writers.
+        const sc = [];
+        for (let k = 0; k < 64 && sc.length < 4; k++) {
+          const x = c.esp.add(k * 4).readU32() >>> 0;
+          if (x >= 0x401000 && x < 0x5c0000) sc.push(vsRva(x));
+        }
+        VS.nw++;
+        if (VS.w.length < 200000)
+          VS.w.push([VS.nw, SD.frames, tk.readS32(), vsRva(c.pc.toUInt32())].concat(W.map(function(a){ return a.readS32(); })).concat([acc, sc.join('|')]).join(','));
+      } catch(e){ if (!VS.err) VS.err = 'hit ' + e; }
+      return true;
+    });
+    let n = 0;
+    Process.enumerateThreads().forEach(function(t){
+      for (let k = 0; k < 4; k++) {
+        try { t.setHardwareWatchpoint(k, W[k], 4, 'w'); if (k === 0) n++; }
+        catch(e){ if (!VS.err) VS.err = 'arm tid ' + t.id + ' ' + e.message; }
+      }
+    });
+    VS.armed = true;
+    return 'valsrc-probe armed: 0x4177b0 entry (run-length) + write watch 0x63ba8c 0x897ffc 0x5f275c 0x67e9fc on ' + n + ' threads';
+  } catch(e){ return 'ERR ' + e; }
+}
+function vsProbeDrain(){
+  const r = VS.runs; VS.runs = [];
+  if (VS.cur) { r.push(VS.cur.join(',')); VS.cur = null; VS.key = null; }
+  return r;
+}
+function vsWatchDrain(){ const r = VS.w; VS.w = []; return r; }
+
 // --- phase-3 camera-call probe (D3-SUBSTATE-PH3, U-9203, 2026-10-28) -----------------------------
 // FUN_00446520(cam, force_reset) entry + leave, the first N calls after arming: caller, reset arg, the sub-state and
 // timer globals, cam dwords +0x00..+0x5c at entry and leave, the spring block +0x964..+0x9a0 at leave, entry 0's
@@ -4121,6 +4200,10 @@ rpc.exports = {
   a5ProbeArm: function(b, c, n){ return a5ProbeArm(b, c, n); },
   a5ProbeDrain: function(){ return a5ProbeDrain(); },
   a5ProbeErr: function(){ return '' + A5P.err; },
+  vsProbeArm: function(){ return vsProbeArm(); },
+  vsProbeDrain: function(){ return vsProbeDrain(); },
+  vsWatchDrain: function(){ return vsWatchDrain(); },
+  vsProbeErr: function(){ return '' + VS.err + ' calls=' + VS.n + ' hits=' + VS.nw; },
   ccProbeArm: function(c){ return ccProbeArm(c); },
   ccProbeDrain: function(){ return ccProbeDrain(); },
   ccProbeErr: function(){ return '' + CCP.err; },
@@ -4967,6 +5050,11 @@ def main():
     ap.add_argument("--a5-probe", type=int, default=0,
                     help="[u9771] FUN_0046ddb0 (A5) entry+leave on the --statediff-car record: velocity, angular velocity, +0x9e4, "
                          "+0x9e8, +0x9e0 at entry, velocity at leave, first N calls. Writes <out>.a5probe.csv.")
+    ap.add_argument("--valsrc-probe", action="store_true",
+                    help="[D4-DC-77b0-RUNTIME-PARKED] FUN_004177b0 entry hook (run-length rows of return RVA, 0x0063ba8c, the "
+                         "four 0x005f2770 slot cells, 0x00897ffc, 0x0067e9fc, 0x007f0fd0) and hardware write watchpoints on "
+                         "0x0063ba8c / 0x00897ffc / 0x005f275c / 0x0067e9fc. Writes <out>.vs.csv and <out>.vsw.csv. Uses all "
+                         "four debug registers, so not with --watch-write. Requires --statediff-out.")
     ap.add_argument("--p3cam-probe", type=int, default=0,
                     help="[D3-SUBSTATE-PH3, U-9203] N: entry+leave hook on FUN_00446520 (race camera), first N calls: "
                          "caller, reset arg, sub-state/timer globals, cam +0x00..+0x5c in and out, +0x964..+0x9a0 out, entry 0 "
@@ -5264,6 +5352,8 @@ def main():
                 print("  [statediff]", E.p3cam_probe_arm(args.p3cam_probe))
             if args.a5_probe:
                 print("  [statediff]", E.a5_probe_arm("0x008815a0", args.statediff_car, args.a5_probe))
+            if args.valsrc_probe:
+                print("  [statediff]", E.vs_probe_arm())
             if args.snap_probe:
                 _n0, _ns = (int(x) for x in args.snap_probe.split(":"))
                 print("  [statediff]", E.snap_probe_arm(_n0, _ns))
@@ -6011,6 +6101,20 @@ def main():
                             for r in _ar: f.write(r + chr(10))
                         print(f"  [statediff] a5-probe {len(_ar)} rows -> {_af} (err {E.a5_probe_err()})")
                     except Exception as _e: print("  [statediff] a5 drain failed:", _e)
+                if args.valsrc_probe:
+                    try:
+                        _vr = E.vs_probe_drain()
+                        _vf = outp.with_suffix(outp.suffix + ".vs.csv")
+                        with open(_vf, "w", newline="") as f:
+                            f.write("call0,ncalls,tick0,tick1,sdf0,sdf1,ret,ba8c,c0,c1,c2,c3,ffc,rt,fd0" + chr(10))
+                            for r in _vr: f.write(r + chr(10))
+                        _vw = E.vs_watch_drain()
+                        _wf = outp.with_suffix(outp.suffix + ".vsw.csv")
+                        with open(_wf, "w", newline="") as f:
+                            f.write("hit,sdframe,tick,pc,ba8c,ffc,c0,rt,bt,stack" + chr(10))
+                            for r in _vw: f.write(r + chr(10))
+                        print(f"  [statediff] valsrc-probe {len(_vr)} runs -> {_vf}, {len(_vw)} watch hits -> {_wf} (err {E.vs_probe_err()})")
+                    except Exception as _e: print("  [statediff] valsrc drain failed:", _e)
                 if args.snap_probe:
                     try:
                         _n0, _ns = (int(x) for x in args.snap_probe.split(":"))

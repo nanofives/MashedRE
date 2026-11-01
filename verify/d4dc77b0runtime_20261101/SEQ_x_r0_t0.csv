@@ -1,0 +1,5 @@
+hit,call,site,old,new
+4,1,?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z+0x50d,0,3
+6,1,?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z+0x63c,3,4
+7,1,_SubStateEnter4+0xb1,4,5
+8,225,_SubStateHeldCountdown5_C+0x229,5,6
