@@ -12,6 +12,8 @@ Original side (MASHED.exe.unpatched, the SHA-256 anchor):
          'imp'   call/jmp [IAT slot] -> "dll!name"
   Linear capstone sweep per node; an undecodable byte advances one byte. Indirect calls through
   registers or vtables held in heap objects are NOT edges (stated as a limit in the RESULT).
+  Run of 2026-11-01: 'tab' found 0 edges (no indexed disp32 into .rdata/.data of consecutive node
+  starts); topdown_rank.py adds the pointer_callers_2026-10-11.tsv installer edges instead.
 
 Port side (mashed_re.exe built from orch/integration 0e3d71a75, its /MAP):
   nodes  every map symbol (public + static), range = [addr, next symbol addr)
@@ -20,6 +22,7 @@ Port side (mashed_re.exe built from orch/integration 0e3d71a75, its /MAP):
          is not a root, so an RVA reached only through the hook registry is not "called".
          Two reach sets: 'reach' (all edges) and 'reach_nothunk' (no edge out of
          StandaloneRvaThunks.obj, the by-address thunk table; MATCH-S01 did not count those).
+         On the 0e3d71a75 build both sets are equal (5,947 symbols), so topdown_rank.py uses 'reach'.
 """
 import bisect
 import csv
