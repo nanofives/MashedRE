@@ -3,12 +3,8 @@ extern "C" void AL_414570();
 extern "C" void AL_415880();
 extern "C" void AL_46d570();
 extern "C" void AL_443440();
-extern "C" void AL_443300();
-extern "C" void AL_4233e0();
-extern "C" void AL_408af0();
 extern "C" void AL_408a50();
 extern "C" void AL_426bb0();
-extern "C" void AL_40e470();
 extern "C" void AL_4c39b0();
 extern "C" void AL_4c3ac0();
 
@@ -94,7 +90,7 @@ extern "C" __declspec(naked) void AL_414570() {
         test eax, eax                                    // 00414651
         je L_4146cb                                      // 00414653
         push esi                                         // 00414655
-        call AL_40e470                                   // 00414656
+        call CarSlotStateGet                             // 00414656
         add esp, 4                                       // 0041465b
         cmp eax, 1                                       // 0041465e
         jne L_4146cb                                     // 00414661
@@ -375,7 +371,7 @@ extern "C" __declspec(naked) void AL_415880() {
         test eax, eax                                    // 00415978
         je L_415a1a                                      // 0041597a
         push esi                                         // 00415980
-        call AL_40e470                                   // 00415981
+        call CarSlotStateGet                             // 00415981
         add esp, 4                                       // 00415986
         cmp eax, 1                                       // 00415989
         jne L_415a1a                                     // 0041598c
@@ -465,7 +461,7 @@ extern "C" __declspec(naked) void AL_415880() {
         call AL_4c39b0                                   // 00415a8f
         fstp st                                          // 00415a94
         push edi                                         // 00415a96
-        call AL_408af0                                   // 00415a97
+        call AiVehicleFieldPtrGet                        // 00415a97
         fld dword ptr [eax + 4]                          // 00415a9c
         fmul dword ptr [esp + 0x68]                      // 00415a9f
         add esp, 0x18                                    // 00415aa3
@@ -490,7 +486,7 @@ extern "C" __declspec(naked) void AL_415880() {
         call AL_Fwd                                      // 00415adc
         mov edx, dword ptr [ebp + 0x89a4e0]              // 00415ae1
         push edx                                         // 00415ae7
-        call AL_408af0                                   // 00415ae8
+        call AiVehicleFieldPtrGet                        // 00415ae8
         fld dword ptr [eax + 4]                          // 00415aed
         mov edi, dword ptr [esp + 0x80]                  // 00415af0
         fmul dword ptr [esp + 0x50]                      // 00415af7
@@ -506,7 +502,7 @@ extern "C" __declspec(naked) void AL_415880() {
         fstp dword ptr [esp + 0x28]                      // 00415b12
         call AL_Fwd                                      // 00415b16
         push edi                                         // 00415b1b
-        call AL_408af0                                   // 00415b1c
+        call AiVehicleFieldPtrGet                        // 00415b1c
         fld dword ptr [esp + 0x2c]                       // 00415b21
         fcomp dword ptr [g_al_c_5cc9c0]                  // 00415b25
         mov ecx, eax                                     // 00415b2b
@@ -585,7 +581,7 @@ extern "C" __declspec(naked) void AL_415880() {
         call AL_4c39b0                                   // 00415bf2
         fstp st                                          // 00415bf7
         push edi                                         // 00415bf9
-        call AL_408af0                                   // 00415bfa
+        call AiVehicleFieldPtrGet                        // 00415bfa
         fld dword ptr [eax + 4]                          // 00415bff
         fmul dword ptr [esp + 0x5c]                      // 00415c02
         lea edx, [esp + 0x20]                            // 00415c06
@@ -796,7 +792,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push 0x3c23d70a                                  // 004434ea
         push ebx                                         // 004434ef
         push esi                                         // 004434f0
-        call AL_443300                                   // 004434f1
+        call AiSplineEval_x87                            // 004434f1
         fld dword ptr [esp + 0x2c]                       // 004434f6
         fsub dword ptr [edi]                             // 004434fa
         lea eax, [ebx - 1]                               // 004434fc
@@ -822,7 +818,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push 0x3f7d70a4                                  // 0044353b
         push eax                                         // 00443540
         push esi                                         // 00443541
-        call AL_443300                                   // 00443542
+        call AiSplineEval_x87                            // 00443542
         fld dword ptr [esp + 0x44]                       // 00443547
         fsub dword ptr [edi]                             // 0044354b
         add esp, 0x10                                    // 0044354d
@@ -850,7 +846,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push ebx                                         // 00443596
         push esi                                         // 00443597
         mov dword ptr [esp + 0x1c], 0x3f800000           // 00443598
-        call AL_443300                                   // 004435a0
+        call AiSplineEval_x87                            // 004435a0
         fld dword ptr [esp + 0x68]                       // 004435a5
         fsub dword ptr [edi]                             // 004435a9
         lea edx, [esp + 0x3c]                            // 004435ab
@@ -868,7 +864,7 @@ extern "C" __declspec(naked) void AL_443440() {
         fmul dword ptr [esp + 0x30]                      // 004435d3
         faddp st(1), st                                  // 004435d7
         fstp dword ptr [esp + 0x6c]                      // 004435d9
-        call AL_443300                                   // 004435dd
+        call AiSplineEval_x87                            // 004435dd
         fld dword ptr [esp + 0x4c]                       // 004435e2
         add esp, 0x20                                    // 004435e6
         fsub dword ptr [edi]                             // 004435e9
@@ -899,7 +895,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push ecx                                         // 00443640
         push ebx                                         // 00443641
         push esi                                         // 00443642
-        call AL_443300                                   // 00443643
+        call AiSplineEval_x87                            // 00443643
         fld dword ptr [esp + 0x68]                       // 00443648
         fsub dword ptr [edi]                             // 0044364c
         fstp dword ptr [esp + 0x20]                      // 0044364e
@@ -924,7 +920,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push eax                                         // 0044368e
         push ebx                                         // 0044368f
         push esi                                         // 00443690
-        call AL_443300                                   // 00443691
+        call AiSplineEval_x87                            // 00443691
         fld dword ptr [esp + 0x3c]                       // 00443696
         fsub dword ptr [edi]                             // 0044369a
         fstp dword ptr [esp + 0x20]                      // 0044369c
@@ -983,7 +979,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push eax                                         // 0044374b
         push ecx                                         // 0044374c
         push esi                                         // 0044374d
-        call AL_443300                                   // 0044374e
+        call AiSplineEval_x87                            // 0044374e
         fld dword ptr [esp + 0x2c]                       // 00443753
         fsub dword ptr [esp + 0x4c]                      // 00443757
         fstp dword ptr [esp + 0x3c]                      // 0044375b
@@ -994,7 +990,7 @@ extern "C" __declspec(naked) void AL_443440() {
         mov ecx, dword ptr [esp + 0x40]                  // 0044376f
         push ecx                                         // 00443773
         push edx                                         // 00443774
-        call AL_4233e0                                   // 00443775
+        call HeadingAtan2ToGameAngle                     // 00443775
         fstp dword ptr [esp + 0x64]                      // 0044377a
         fld dword ptr [ebp + 0x10]                       // 0044377e
         mov eax, dword ptr [esp + 0x54]                  // 00443781
@@ -1038,7 +1034,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push ecx                                         // 0044380f
         push ebx                                         // 00443810
         push esi                                         // 00443811
-        call AL_443300                                   // 00443812
+        call AiSplineEval_x87                            // 00443812
         fld dword ptr [esp + 0x2c]                       // 00443817
         fsub dword ptr [esp + 0x44]                      // 0044381b
         mov eax, dword ptr [esp + 0x30]                  // 0044381f
@@ -1160,7 +1156,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push edx                                         // 004439b3
         push ebx                                         // 004439b4
         push esi                                         // 004439b5
-        call AL_443300                                   // 004439b6
+        call AiSplineEval_x87                            // 004439b6
         fld dword ptr [esp + 0x2c]                       // 004439bb
         fsub dword ptr [esp + 0x44]                      // 004439bf
         fstp dword ptr [esp + 0x3c]                      // 004439c3
@@ -1171,7 +1167,7 @@ extern "C" __declspec(naked) void AL_443440() {
         mov eax, dword ptr [esp + 0x40]                  // 004439d7
         push eax                                         // 004439db
         push ecx                                         // 004439dc
-        call AL_4233e0                                   // 004439dd
+        call HeadingAtan2ToGameAngle                     // 004439dd
         fstp dword ptr [esp + 0x54]                      // 004439e2
         fld dword ptr [esp + 0x30]                       // 004439e6
         add esp, 0x18                                    // 004439ea
@@ -1204,7 +1200,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push eax                                         // 00443a3f
         push ebx                                         // 00443a40
         push esi                                         // 00443a41
-        call AL_443300                                   // 00443a42
+        call AiSplineEval_x87                            // 00443a42
         fld dword ptr [esp + 0x2c]                       // 00443a47
         fsub dword ptr [esp + 0x44]                      // 00443a4b
         mov eax, dword ptr [ebp + 0x18]                  // 00443a4f
@@ -1326,7 +1322,7 @@ extern "C" __declspec(naked) void AL_443440() {
         push ecx                                         // 00443be2
         push ebx                                         // 00443be3
         push esi                                         // 00443be4
-        call AL_443300                                   // 00443be5
+        call AiSplineEval_x87                            // 00443be5
         fld dword ptr [esp + 0x2c]                       // 00443bea
         fsub dword ptr [esp + 0x44]                      // 00443bee
         fstp dword ptr [esp + 0x3c]                      // 00443bf2
@@ -1337,7 +1333,7 @@ extern "C" __declspec(naked) void AL_443440() {
         mov edx, dword ptr [esp + 0x40]                  // 00443c06
         push edx                                         // 00443c0a
         push eax                                         // 00443c0b
-        call AL_4233e0                                   // 00443c0c
+        call HeadingAtan2ToGameAngle                     // 00443c0c
         fstp dword ptr [esp + 0x24]                      // 00443c11
         fld dword ptr [esp + 0x64]                       // 00443c15
         add esp, 0x18                                    // 00443c19
@@ -1434,195 +1430,6 @@ extern "C" __declspec(naked) void AL_443440() {
     }
 }
 
-// 0x00443300  AL_443300  (307 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void AL_443300() {
-    __asm {
-        mov ecx, dword ptr [esp + 8]                     // 00443300
-        push ebx                                         // 00443304
-        mov ebx, dword ptr [esp + 8]                     // 00443305
-        push ebp                                         // 00443309
-        dec ecx                                          // 0044330a
-        test ecx, ecx                                    // 0044330b
-        push esi                                         // 0044330d
-        push edi                                         // 0044330e
-        jge L_443317                                     // 0044330f
-        add ecx, dword ptr [ebx + 0x200]                 // 00443311
-    L_443317:
-        mov eax, dword ptr [ebx + 0x200]                 // 00443317
-        lea edi, [ebx + ecx*8]                           // 0044331d
-        inc ecx                                          // 00443320
-        cmp ecx, eax                                     // 00443321
-        jl L_443327                                      // 00443323
-        sub ecx, eax                                     // 00443325
-    L_443327:
-        lea esi, [ebx + ecx*8]                           // 00443327
-        inc ecx                                          // 0044332a
-        cmp ecx, eax                                     // 0044332b
-        jl L_443331                                      // 0044332d
-        sub ecx, eax                                     // 0044332f
-    L_443331:
-        lea edx, [ebx + ecx*8]                           // 00443331
-        inc ecx                                          // 00443334
-        cmp ecx, eax                                     // 00443335
-        jl L_44333b                                      // 00443337
-        sub ecx, eax                                     // 00443339
-    L_44333b:
-        fld dword ptr [esp + 0x1c]                       // 0044333b
-        fld dword ptr [esp + 0x1c]                       // 0044333f
-        fcomp dword ptr [g_al_c_5cc320]                  // 00443343
-        fnstsw ax                                        // 00443349
-        test ah, 0x41                                    // 0044334b
-        jne L_44335a                                     // 0044334e
-        fstp st                                          // 00443350
-        fld dword ptr [g_al_c_5cc320]                    // 00443352
-        jmp L_443373                                     // 00443358
-    L_44335a:
-        fld dword ptr [esp + 0x1c]                       // 0044335a
-        fcomp dword ptr [g_al_c_5d757c]                  // 0044335e
-        fnstsw ax                                        // 00443364
-        test ah, 5                                       // 00443366
-        jp L_443373                                      // 00443369
-        fstp st                                          // 0044336b
-        fld dword ptr [g_al_c_5d757c]                    // 0044336d
-    L_443373:
-        fld st                                           // 00443373
-        mov ebp, dword ptr [esp + 0x20]                  // 00443375
-        fmul st, st(1)                                   // 00443379
-        lea eax, [ebx + ecx*8 + 4]                       // 0044337b
-        fld st                                           // 0044337f
-        fmul st, st(2)                                   // 00443381
-        fld dword ptr [edi]                              // 00443383
-        fadd st, st                                      // 00443385
-        fld dword ptr [esi]                              // 00443387
-        fmul dword ptr [g_al_c_5cc358]                   // 00443389
-        fsubp st(1), st                                  // 0044338f
-        fld dword ptr [edx]                              // 00443391
-        fmul dword ptr [g_al_c_5cc35c]                   // 00443393
-        faddp st(1), st                                  // 00443399
-        fsub dword ptr [ebx + ecx*8]                     // 0044339b
-        fmul st, st(2)                                   // 0044339e
-        fld dword ptr [esi]                              // 004433a0
-        fmul dword ptr [g_al_c_5cc31c]                   // 004433a2
-        fsub dword ptr [edi]                             // 004433a8
-        fld dword ptr [edx]                              // 004433aa
-        fmul dword ptr [g_al_c_5cc31c]                   // 004433ac
-        fsubp st(1), st                                  // 004433b2
-        fadd dword ptr [ebx + ecx*8]                     // 004433b4
-        fmul st, st(2)                                   // 004433b7
-        faddp st(1), st                                  // 004433b9
-        fld dword ptr [edx]                              // 004433bb
-        fsub dword ptr [edi]                             // 004433bd
-        fmul st, st(4)                                   // 004433bf
-        faddp st(1), st                                  // 004433c1
-        fld dword ptr [esi]                              // 004433c3
-        fadd st, st                                      // 004433c5
-        faddp st(1), st                                  // 004433c7
-        fmul dword ptr [g_al_c_5cc32c]                   // 004433c9
-        fstp dword ptr [ebp]                             // 004433cf
-        fld dword ptr [edi + 4]                          // 004433d2
-        fadd st, st                                      // 004433d5
-        fld dword ptr [esi + 4]                          // 004433d7
-        fmul dword ptr [g_al_c_5cc358]                   // 004433da
-        fsubp st(1), st                                  // 004433e0
-        fld dword ptr [edx + 4]                          // 004433e2
-        fmul dword ptr [g_al_c_5cc35c]                   // 004433e5
-        faddp st(1), st                                  // 004433eb
-        fsub dword ptr [eax]                             // 004433ed
-        fmul st, st(2)                                   // 004433ef
-        fld dword ptr [esi + 4]                          // 004433f1
-        fmul dword ptr [g_al_c_5cc31c]                   // 004433f4
-        fsub dword ptr [edi + 4]                         // 004433fa
-        fld dword ptr [edx + 4]                          // 004433fd
-        fmul dword ptr [g_al_c_5cc31c]                   // 00443400
-        fsubp st(1), st                                  // 00443406
-        fadd dword ptr [eax]                             // 00443408
-        fmul st, st(2)                                   // 0044340a
-        faddp st(1), st                                  // 0044340c
-        fld dword ptr [edx + 4]                          // 0044340e
-        fsub dword ptr [edi + 4]                         // 00443411
-        pop edi                                          // 00443414
-        fmul st, st(4)                                   // 00443415
-        faddp st(1), st                                  // 00443417
-        fld dword ptr [esi + 4]                          // 00443419
-        pop esi                                          // 0044341c
-        fadd st, st                                      // 0044341d
-        faddp st(1), st                                  // 0044341f
-        fmul dword ptr [g_al_c_5cc32c]                   // 00443421
-        fstp dword ptr [ebp + 4]                         // 00443427
-        pop ebp                                          // 0044342a
-        pop ebx                                          // 0044342b
-        fstp st                                          // 0044342c
-        fstp st                                          // 0044342e
-        fstp st                                          // 00443430
-        ret                                              // 00443432
-    }
-}
-
-// 0x004233e0  AL_4233e0  (157 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void AL_4233e0() {
-    __asm {
-        fld dword ptr [esp + 8]                          // 004233e0
-        fcomp dword ptr [g_al_c_5d757c]                  // 004233e4
-        fld dword ptr [esp + 4]                          // 004233ea
-        fnstsw ax                                        // 004233ee
-        test ah, 0x44                                    // 004233f0
-        jnp L_423460                                     // 004233f3
-        fdiv dword ptr [esp + 8]                         // 004233f5
-        fld1                                             // 004233f9
-        fpatan                                           // 004233fb
-        fmul qword ptr [g_al_c_5ccae0]                   // 004233fd
-        fchs                                             // 00423403
-        fsubr dword ptr [g_al_c_5cd09c]                  // 00423405
-        fld dword ptr [esp + 8]                          // 0042340b
-        fcomp dword ptr [g_al_c_5d757c]                  // 0042340f
-        fnstsw ax                                        // 00423415
-        test ah, 0x41                                    // 00423417
-        jne L_423422                                     // 0042341a
-        fadd dword ptr [g_al_c_5cd09c]                   // 0042341c
-    L_423422:
-        fcom dword ptr [g_al_c_5ccac4]                   // 00423422
-        fnstsw ax                                        // 00423428
-        test ah, 1                                       // 0042342a
-        jne L_423435                                     // 0042342d
-        fsub dword ptr [g_al_c_5ccac4]                   // 0042342f
-    L_423435:
-        fld dword ptr [esp + 4]                          // 00423435
-        fcomp dword ptr [g_al_c_5d757c]                  // 00423439
-        fnstsw ax                                        // 0042343f
-        test ah, 0x44                                    // 00423441
-        jp L_42345f                                      // 00423444
-        fld dword ptr [esp + 8]                          // 00423446
-        fcomp dword ptr [g_al_c_5d757c]                  // 0042344a
-        fnstsw ax                                        // 00423450
-        test ah, 0x44                                    // 00423452
-        jp L_42345f                                      // 00423455
-        fstp st                                          // 00423457
-        fld dword ptr [g_al_c_5d757c]                    // 00423459
-    L_42345f:
-        ret                                              // 0042345f
-    L_423460:
-        fcomp dword ptr [g_al_c_5d757c]                  // 00423460
-        fnstsw ax                                        // 00423466
-        test ah, 5                                       // 00423468
-        jp L_423475                                      // 0042346b
-        fld dword ptr [g_al_c_5cd324]                    // 0042346d
-        jmp L_423435                                     // 00423473
-    L_423475:
-        fld dword ptr [g_al_c_5ccad0]                    // 00423475
-        jmp L_423435                                     // 0042347b
-    }
-}
-
-// 0x00408af0  AL_408af0  (16 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void AL_408af0() {
-    __asm {
-        mov eax, dword ptr [esp + 4]                     // 00408af0
-        imul eax, eax, 0x30c                             // 00408af4
-        add eax, 0x8a96dc                                // 00408afa
-        ret                                              // 00408aff
-    }
-}
-
 // 0x00408a50  AL_408a50  (17 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
 extern "C" __declspec(naked) void AL_408a50() {
     __asm {
@@ -1638,16 +1445,6 @@ extern "C" __declspec(naked) void AL_426bb0() {
     __asm {
         mov eax, dword ptr ds:[0x0066d6d8]               // 00426bb0
         ret                                              // 00426bb5
-    }
-}
-
-// 0x0040e470  AL_40e470  (15 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void AL_40e470() {
-    __asm {
-        mov eax, dword ptr [esp + 4]                     // 0040e470
-        mov ecx, dword ptr ds:[0x005f2770]               // 0040e474
-        mov eax, dword ptr [ecx + eax*4 + 0x34]          // 0040e47a
-        ret                                              // 0040e47e
     }
 }
 

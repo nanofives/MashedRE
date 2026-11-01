@@ -1,13 +1,8 @@
 // forward declarations (inline asm cannot call a symbol declared later)
 extern "C" void PP_408610();
 extern "C" void PP_407e20();
-extern "C" void PP_408590();
-extern "C" void PP_407b00();
-extern "C" void PP_407b70();
 extern "C" void PP_407be0();
 extern "C" void PP_407cd0();
-extern "C" void PP_407d70();
-extern "C" void PP_407db0();
 extern "C" void PP_426cb0();
 extern "C" void PP_426cc0();
 extern "C" void PP_426d00();
@@ -132,12 +127,12 @@ extern "C" __declspec(naked) void PP_408610() {
         jl L_408740                                      // 0040875d
         mov eax, dword ptr [esi + 0xd0]                  // 0040875f
         push eax                                         // 00408765
-        call PP_407b00                                   // 00408766
+        call RangeTableFindGroup                         // 00408766
         mov edi, dword ptr [esi + 0x20]                  // 0040876b
         mov ebx, eax                                     // 0040876e
         push ebx                                         // 00408770
         push edi                                         // 00408771
-        call PP_407b70                                   // 00408772
+        call RangeTableMemberTest                        // 00408772
         add esp, 0xc                                     // 00408777
         test eax, eax                                    // 0040877a
         je L_408796                                      // 0040877c
@@ -148,7 +143,7 @@ extern "C" __declspec(naked) void PP_408610() {
     L_408796:
         push edi                                         // 00408796
         mov dword ptr [esi + 0xd4], edi                  // 00408797
-        call PP_407b00                                   // 0040879d
+        call RangeTableFindGroup                         // 0040879d
         add esp, 4                                       // 004087a2
         mov dword ptr [esi + 0xdc], eax                  // 004087a5
     L_4087ab:
@@ -224,7 +219,7 @@ extern "C" __declspec(naked) void PP_408610() {
         push esi                                         // 004088aa
         mov dword ptr [esi + 0xe8], eax                  // 004088ab
         mov dword ptr [esi + 0xec], ecx                  // 004088b1
-        call PP_408590                                   // 004088b7
+        call Dot408590                                   // 004088b7
         mov eax, dword ptr [esi + 0x20]                  // 004088bc
         add esp, 8                                       // 004088bf
         cmp eax, ebx                                     // 004088c2
@@ -613,7 +608,7 @@ extern "C" __declspec(naked) void PP_407e20() {
         fdivr dword ptr [esp + 0x58]                     // 00408094
         fiadd dword ptr [esp + 0x14]                     // 00408098
         fstp dword ptr [esp + 0x20]                      // 0040809c
-        call PP_407d70                                   // 004080a0
+        call RangeTableCountGroup                        // 004080a0
         mov dword ptr [esp + 0x58], eax                  // 004080a5
         fild dword ptr [esp + 0x58]                      // 004080a9
         add esp, 4                                       // 004080ad
@@ -622,7 +617,7 @@ extern "C" __declspec(naked) void PP_407e20() {
         test ah, 0x41                                    // 004080b6
         jp L_4080d4                                      // 004080b9
         push ebx                                         // 004080bb
-        call PP_407d70                                   // 004080bc
+        call RangeTableCountGroup                        // 004080bc
         mov dword ptr [esp + 0x58], eax                  // 004080c1
         fild dword ptr [esp + 0x58]                      // 004080c5
         add esp, 4                                       // 004080c9
@@ -972,12 +967,12 @@ extern "C" __declspec(naked) void PP_407e20() {
         mov dword ptr [ebx], ebp                         // 00408538
         mov dword ptr [ebx + 0xc], ecx                   // 0040853a
         mov dword ptr [ebx + 4], edx                     // 0040853d
-        call PP_407d70                                   // 00408540
+        call RangeTableCountGroup                        // 00408540
         push eax                                         // 00408545
         push ebp                                         // 00408546
         push esi                                         // 00408547
         mov dword ptr [esp + 0x68], eax                  // 00408548
-        call PP_407db0                                   // 0040854c
+        call RangeTableGroupOffset                       // 0040854c
         fld dword ptr [ebx + 4]                          // 00408551
         fld st                                           // 00408554
         add esp, 0x10                                    // 00408556
@@ -997,159 +992,6 @@ extern "C" __declspec(naked) void PP_407e20() {
         fstp st                                          // 00408581
         add esp, 0x34                                    // 00408583
         ret                                              // 00408586
-    }
-}
-
-// 0x00408590  PP_408590  (121 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_408590() {
-    __asm {
-        push esi                                         // 00408590
-        mov esi, dword ptr [esp + 8]                     // 00408591
-        mov eax, dword ptr [esi + 0x20]                  // 00408595
-        push edi                                         // 00408598
-        push eax                                         // 00408599
-        call PP_426cc0                                   // 0040859a
-        fld dword ptr [eax + 4]                          // 0040859f
-        mov edi, dword ptr [esp + 0x14]                  // 004085a2
-        mov ecx, dword ptr [esi + 0x20]                  // 004085a6
-        fmul dword ptr [edi + 0x24]                      // 004085a9
-        push ecx                                         // 004085ac
-        fstp dword ptr [esp + 0x14]                      // 004085ad
-        call PP_426cc0                                   // 004085b1
-        fld dword ptr [edi + 0x20]                       // 004085b6
-        mov edx, dword ptr [esi + 0x20]                  // 004085b9
-        fmul dword ptr [eax]                             // 004085bc
-        push edx                                         // 004085be
-        fadd dword ptr [esp + 0x18]                      // 004085bf
-        fstp dword ptr [esp + 0x18]                      // 004085c3
-        call PP_426cc0                                   // 004085c7
-        fld dword ptr [eax + 8]                          // 004085cc
-        fmul dword ptr [edi + 0x28]                      // 004085cf
-        add esp, 0xc                                     // 004085d2
-        fadd dword ptr [esp + 0xc]                       // 004085d5
-        fst dword ptr [esi + 0xac]                       // 004085d9
-        fcomp dword ptr [g_pp_c_5d757c]                  // 004085df
-        fnstsw ax                                        // 004085e5
-        test ah, 5                                       // 004085e7
-        jp L_4085fc                                      // 004085ea
-        mov eax, dword ptr [esi + 0xa8]                  // 004085ec
-        inc eax                                          // 004085f2
-        pop edi                                          // 004085f3
-        mov dword ptr [esi + 0xa8], eax                  // 004085f4
-        pop esi                                          // 004085fa
-        ret                                              // 004085fb
-    L_4085fc:
-        pop edi                                          // 004085fc
-        mov dword ptr [esi + 0xa8], 0                    // 004085fd
-        pop esi                                          // 00408607
-        ret                                              // 00408608
-    }
-}
-
-// 0x00407b00  PP_407b00  (99 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_407b00() {
-    __asm {
-        push ebx                                         // 00407b00
-        push ebp                                         // 00407b01
-        push esi                                         // 00407b02
-        push edi                                         // 00407b03
-        call PP_426090                                   // 00407b04
-        mov ebp, dword ptr [esp + 0x14]                  // 00407b09
-        mov edi, eax                                     // 00407b0d
-        xor ecx, ecx                                     // 00407b0f
-        xor eax, eax                                     // 00407b11
-        lea ebx, [edi + 8]                               // 00407b13
-    L_407b16:
-        mov edx, dword ptr [edi + ecx*4]                 // 00407b16
-        cmp edx, -1                                      // 00407b19
-        je L_407b4d                                      // 00407b1c
-        cmp edx, -0xa                                    // 00407b1e
-        je L_407b4d                                      // 00407b21
-        mov esi, dword ptr [edi + ecx*4 + 4]             // 00407b23
-        cmp esi, 0x100                                   // 00407b27
-        jne L_407b3f                                     // 00407b2d
-        cmp ebp, edx                                     // 00407b2f
-        je L_407b5e                                      // 00407b31
-        cmp ebp, dword ptr [ebx]                         // 00407b33
-        je L_407b5e                                      // 00407b35
-        add ecx, 2                                       // 00407b37
-        add ebx, 8                                       // 00407b3a
-        jmp L_407b16                                     // 00407b3d
-    L_407b3f:
-        cmp ebp, edx                                     // 00407b3f
-        jl L_407b47                                      // 00407b41
-        cmp ebp, esi                                     // 00407b43
-        jle L_407b5e                                     // 00407b45
-    L_407b47:
-        inc ecx                                          // 00407b47
-        add ebx, 4                                       // 00407b48
-        jmp L_407b16                                     // 00407b4b
-    L_407b4d:
-        mov edx, dword ptr [edi + ecx*4 + 4]             // 00407b4d
-        inc ecx                                          // 00407b51
-        add ebx, 4                                       // 00407b52
-        cmp edx, -2                                      // 00407b55
-        je L_407b5e                                      // 00407b58
-        mov eax, ecx                                     // 00407b5a
-        jmp L_407b16                                     // 00407b5c
-    L_407b5e:
-        pop edi                                          // 00407b5e
-        pop esi                                          // 00407b5f
-        pop ebp                                          // 00407b60
-        pop ebx                                          // 00407b61
-        ret                                              // 00407b62
-    }
-}
-
-// 0x00407b70  PP_407b70  (98 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_407b70() {
-    __asm {
-        push esi                                         // 00407b70
-        push edi                                         // 00407b71
-        call PP_426090                                   // 00407b72
-        mov edx, dword ptr [esp + 0x10]                  // 00407b77
-        mov esi, dword ptr [eax + edx*4]                 // 00407b7b
-        cmp esi, -1                                      // 00407b7e
-        lea ecx, [eax + edx*4]                           // 00407b81
-        je L_407bc5                                      // 00407b84
-        mov edi, dword ptr [esp + 0xc]                   // 00407b86
-        lea esi, [eax + edx*4 + 8]                       // 00407b8a
-        mov edi, edi                                     // 00407b8e
-    L_407b90:
-        mov eax, dword ptr [ecx]                         // 00407b90
-        cmp eax, -0xa                                    // 00407b92
-        je L_407bc5                                      // 00407b95
-        mov edx, dword ptr [ecx + 4]                     // 00407b97
-        cmp edx, 0x100                                   // 00407b9a
-        jne L_407bb2                                     // 00407ba0
-        cmp edi, eax                                     // 00407ba2
-        je L_407bca                                      // 00407ba4
-        cmp edi, dword ptr [esi]                         // 00407ba6
-        je L_407bca                                      // 00407ba8
-        add esi, 8                                       // 00407baa
-        add ecx, 8                                       // 00407bad
-        jmp L_407bc0                                     // 00407bb0
-    L_407bb2:
-        cmp edi, eax                                     // 00407bb2
-        jl L_407bba                                      // 00407bb4
-        cmp edi, edx                                     // 00407bb6
-        jle L_407bca                                     // 00407bb8
-    L_407bba:
-        add esi, 4                                       // 00407bba
-        add ecx, 4                                       // 00407bbd
-    L_407bc0:
-        cmp dword ptr [ecx], -1                          // 00407bc0
-        jne L_407b90                                     // 00407bc3
-    L_407bc5:
-        pop edi                                          // 00407bc5
-        xor eax, eax                                     // 00407bc6
-        pop esi                                          // 00407bc8
-        ret                                              // 00407bc9
-    L_407bca:
-        pop edi                                          // 00407bca
-        mov eax, 1                                       // 00407bcb
-        pop esi                                          // 00407bd0
-        ret                                              // 00407bd1
     }
 }
 
@@ -1367,96 +1209,6 @@ extern "C" __declspec(naked) void PP_407cd0() {
         pop ebp                                          // 00407d6a
         pop ebx                                          // 00407d6b
         ret                                              // 00407d6c
-    }
-}
-
-// 0x00407d70  PP_407d70  (60 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_407d70() {
-    __asm {
-        call PP_426090                                   // 00407d70
-        mov ecx, dword ptr [esp + 4]                     // 00407d75
-        lea ecx, [eax + ecx*4]                           // 00407d79
-        mov eax, dword ptr [ecx + 4]                     // 00407d7c
-        xor edx, edx                                     // 00407d7f
-        cmp eax, -0xa                                    // 00407d81
-        je L_407da8                                      // 00407d84
-    L_407d86:
-        mov eax, dword ptr [ecx + 4]                     // 00407d86
-        cmp eax, -1                                      // 00407d89
-        je L_407da8                                      // 00407d8c
-        cmp eax, 0x100                                   // 00407d8e
-        jne L_407d9b                                     // 00407d93
-        inc edx                                          // 00407d95
-        add ecx, 8                                       // 00407d96
-        jmp L_407da2                                     // 00407d99
-    L_407d9b:
-        sub eax, dword ptr [ecx]                         // 00407d9b
-        add edx, eax                                     // 00407d9d
-        add ecx, 4                                       // 00407d9f
-    L_407da2:
-        cmp dword ptr [ecx + 4], -0xa                    // 00407da2
-        jne L_407d86                                     // 00407da6
-    L_407da8:
-        lea eax, [edx + 1]                               // 00407da8
-        ret                                              // 00407dab
-    }
-}
-
-// 0x00407db0  PP_407db0  (111 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_407db0() {
-    __asm {
-        push ecx                                         // 00407db0
-        push ebx                                         // 00407db1
-        push ebp                                         // 00407db2
-        push esi                                         // 00407db3
-        push edi                                         // 00407db4
-        call PP_426090                                   // 00407db5
-        mov edx, dword ptr [esp + 0x18]                  // 00407dba
-        mov ebx, dword ptr [esp + 0x1c]                  // 00407dbe
-        mov ecx, eax                                     // 00407dc2
-        mov eax, dword ptr [ecx + 4]                     // 00407dc4
-        lea edx, [ecx + edx*4]                           // 00407dc7
-        mov ecx, dword ptr [edx + 4]                     // 00407dca
-        xor edi, edi                                     // 00407dcd
-        cmp ecx, -0xa                                    // 00407dcf
-        mov dword ptr [esp + 0x10], eax                  // 00407dd2
-        mov eax, ebx                                     // 00407dd6
-        je L_407e19                                      // 00407dd8
-        lea ebx, [ebx]                                   // 00407dda
-    L_407de0:
-        mov ecx, dword ptr [edx + 4]                     // 00407de0
-        cmp ecx, -1                                      // 00407de3
-        je L_407e19                                      // 00407de6
-        cmp ecx, 0x100                                   // 00407de8
-        jne L_407df6                                     // 00407dee
-        inc edi                                          // 00407df0
-        add edx, 8                                       // 00407df1
-        jmp L_407e13                                     // 00407df4
-    L_407df6:
-        mov esi, dword ptr [edx]                         // 00407df6
-        cmp ebx, esi                                     // 00407df8
-        jl L_407e0c                                      // 00407dfa
-        cmp ebx, ecx                                     // 00407dfc
-        jg L_407e0c                                      // 00407dfe
-        cmp esi, dword ptr [esp + 0x10]                  // 00407e00
-        jle L_407e0c                                     // 00407e04
-        mov ebp, edi                                     // 00407e06
-        sub ebp, esi                                     // 00407e08
-        add eax, ebp                                     // 00407e0a
-    L_407e0c:
-        sub ecx, esi                                     // 00407e0c
-        add edi, ecx                                     // 00407e0e
-        add edx, 4                                       // 00407e10
-    L_407e13:
-        cmp dword ptr [edx + 4], -0xa                    // 00407e13
-        jne L_407de0                                     // 00407e17
-    L_407e19:
-        pop edi                                          // 00407e19
-        pop esi                                          // 00407e1a
-        pop ebp                                          // 00407e1b
-        pop ebx                                          // 00407e1c
-        pop ecx                                          // 00407e1d
-        ret                                              // 00407e1e
     }
 }
 
