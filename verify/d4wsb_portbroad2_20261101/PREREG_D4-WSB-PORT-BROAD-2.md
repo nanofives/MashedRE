@@ -108,3 +108,28 @@ or if an Event-1000 fault at `0x005baf48` appears: stop, BLOCKED "audio endpoint
 `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on this build's `mashed_re.exe`, test slot +
 machine lock, must equal `re/orchestrator/merge_train.json` `gctrl.ref` / `b.ref` (G-CTRL `8284be46/ba407a16/31fe043e`,
 B `1d5bf4f9/1d5bf4f9/1d5bf4f9` at `0e3d71a75`). A mismatch is a RED for the step.
+
+## Amendment 1 (2026-11-01, during arm S row 13, before any re-run)
+
+Arm S pass 1 on `.asi 23d17c78`:
+
+- `0x0055b060`: NO_LOG. The transcript shows `scenario_launch pid=24152` then `error: could not attach` (the launcher
+  never attached, so no shadow sample was taken). This is a launch failure, not a hook outcome. The row is re-run once,
+  as written above. A second launch failure leaves it at C2 (NO_LOG).
+- `0x0055b080`: DIVERGENT 4/24 (samples 16-19), return equal, 9/9 heap pages, 1 page differs: 1-2 dwords at
+  `+0x770/+0x774` and `+0x780/+0x784` of one heap page, each a 1-ulp difference (e.g. `bbfc4cb0` vs `bbfc4caf`). The
+  dwords are adjacent pairs at a 16-byte stride, the layout of the quaternion table that `0x00546b10` writes from this
+  body (`param_4 != 0` branch, `FUN_00546b10(quat[idx], matrix[idx])`). The generator bound that call to the port in
+  `Collision/RwpSolverMath2.cpp`, whose X / Z branch callees build SSE2; U-9220 already measured the Y branch RED in SSE2.
+  Every other float expression of the TU was checked against the listing before pass 1.
+
+Change (commit below, `L2_0055b080.cpp` only): the `0x00546b10` call goes through a raw-RVA thunk to the original
+instead of the port. Nothing else. New build `MASHED_NO_DEPLOY=1`: `mashed_re.exe` `285749aa80bbc25f...4d61` (exe sources
+unchanged, the link is not bit-reproducible), `mashed_re_dev.asi` `a7275505f8bb01de...76d5` (0 errors, rva-lint 0 NEW).
+
+Arm S continues to its end on `.asi 23d17c78` (rows 13-18). Then the new `.asi` goes into the private root and arm S is
+re-run as written above for `0055b080` and `0055b060` only. Their pass-1 verdicts stay in the RESULT as superseded
+(`shadow_summary_pass1.tsv`). The other 16 rows keep their pass-1 result (their TUs are unchanged by this commit).
+Read-out unchanged: CLEAN promotes, anything else leaves the row at C2 with no further fix in this step. If
+`0055b080` is CLEAN on the re-run, the 4 pass-1 samples are reported as a `0x00546b10` port finding, not fixed here.
+Default gates are re-run on the final build.
