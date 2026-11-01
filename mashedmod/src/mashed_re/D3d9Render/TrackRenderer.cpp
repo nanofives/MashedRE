@@ -5179,10 +5179,20 @@ void TrackRenderer::St5Leg2(int units, float dt, float accel, bool exitCall) {
         Vehicle::VehiclePhysics_A4PreBegin();
         if (aiOn) {
             for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
-                const AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
+                AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
                 const int v = ci + 1;
                 if (round_mode_ && !race_[ci + 1].alive) continue;
                 if (a.spin > 0.f) continue;
+                // [amendment 1] leg 1's hold loop ran FUN_0046baa0 on this car (0x0041043a: slot-table entry != 0 at
+                // 0x00410425 and FUN_0046c7b0 == 1 at 0x0041042c), which zeroes the record velocity (0x0046babb). The exe
+                // carries that velocity in a.vel (the block top zeroes only car_vel_ and cur_speed), so zero it here.
+                {
+                    const std::uintptr_t tbl = static_cast<std::uintptr_t>(*reinterpret_cast<int*>(0x005f2770u));
+                    if (tbl && *reinterpret_cast<int*>(tbl + 0x34u + static_cast<std::uintptr_t>(v) * 4u) != 0 &&
+                        VehicleSlotGetter(static_cast<std::uint32_t>(v)) == 1u) {
+                        a.vel[0] = a.vel[1] = a.vel[2] = 0.f;
+                    }
+                }
                 const std::uint8_t* blk = reinterpret_cast<const std::uint8_t*>(
                     Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
                         Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride))
@@ -5237,18 +5247,28 @@ void TrackRenderer::St5Leg2(int units, float dt, float accel, bool exitCall) {
             if (nok) { a.pos[0] = o.pos[0]; a.pos[2] = o.pos[2]; a.pos[1] = o.pos[1]; }
         }
     }
+    static float s_first0[3] = {};   // [amendment 1] W2': car 0's record position after the first leg-2 physics step
+    if (s_calls == 1 && phys)
+        for (int c = 0; c < 3; ++c) s_first0[c] = Vehicle::VehiclePhysics_RecordF32(0, 0x958 + 4 * c);
     // FUN_00422ba0 (0x00425a95): the race frame's event drain, same gate.
     if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
     // FUN_004252c0 (0x00425a9d): no exe port (AiStandalone.cpp:2247). Not run.
     if (exitCall) {
         float post0[3] = {};
         if (phys) for (int c = 0; c < 3; ++c) post0[c] = Vehicle::VehiclePhysics_RecordF32(0, 0x958 + 4 * c);
-        std::uint32_t b0[3], b1[3];
-        std::memcpy(b0, s_pre0, sizeof b0); std::memcpy(b1, post0, sizeof b1);
+        std::uint32_t b0[3], b1[3], bf[3];
+        std::memcpy(b0, s_pre0, sizeof b0); std::memcpy(b1, post0, sizeof b1); std::memcpy(bf, s_first0, sizeof bf);
         if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-            std::fprintf(lf, "[st5leg2] exit calls=%d rec0_958 pre=%08x/%08x/%08x post=%08x/%08x/%08x same=%d "
-                             "car_pos=(%.9g,%.9g,%.9g)\n", s_calls, b0[0], b0[1], b0[2], b1[0], b1[1], b1[2],
-                         (b0[0] == b1[0] && b0[1] == b1[1] && b0[2] == b1[2]) ? 1 : 0, car_pos_[0], car_pos_[1], car_pos_[2]);
+            std::fprintf(lf, "[st5leg2] exit calls=%d rec0_958 pre=%08x/%08x/%08x first=%08x/%08x/%08x post=%08x/%08x/%08x "
+                             "same=%d first_eq_post=%d car_pos=(%.9g,%.9g,%.9g)\n", s_calls, b0[0], b0[1], b0[2],
+                         bf[0], bf[1], bf[2], b1[0], b1[1], b1[2],
+                         (b0[0] == b1[0] && b0[1] == b1[1] && b0[2] == b1[2]) ? 1 : 0,
+                         (bf[0] == b1[0] && bf[1] == b1[1] && bf[2] == b1[2]) ? 1 : 0, car_pos_[0], car_pos_[1], car_pos_[2]);
+            for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci)
+                std::fprintf(lf, "[st5leg2] exit ai%d pos=(%.9g,%.9g,%.9g) vel=(%.9g,%.9g,%.9g)\n", ci + 1,
+                             ai_cars_[static_cast<std::size_t>(ci)].pos[0], ai_cars_[static_cast<std::size_t>(ci)].pos[1],
+                             ai_cars_[static_cast<std::size_t>(ci)].pos[2], ai_cars_[static_cast<std::size_t>(ci)].vel[0],
+                             ai_cars_[static_cast<std::size_t>(ci)].vel[1], ai_cars_[static_cast<std::size_t>(ci)].vel[2]);
             std::fclose(lf);
         }
         s_calls = 0;
