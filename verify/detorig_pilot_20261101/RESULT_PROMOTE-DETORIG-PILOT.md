@@ -5,6 +5,9 @@ Branch `orch/PROMOTE-DETORIG-PILOT`. Review: **TEXT-ONLY** (harness under `re/fr
 
 ## Verdict
 
+Pilot DoD **not met.** Whole-image snapshots never matched (0/15 in every pair), and the negative control was
+not measured at equal load length. Delivered: the harness, the scorer, and the measured causes listed below.
+
 **Partial.** Under the harness, the race state of MASHED.exe repeats exactly when the track load takes the same
 number of main-thread clock calls. The load does not always take the same number: 113, 118, 119, 122 and 215
 calls were measured, and runs whose load length differs diverge. The whole image never repeats byte for byte.
@@ -23,7 +26,10 @@ the negative-control pairs). `off_e` / `off_f` / `neg_b` also ran with the clock
 (`--rebase`, see step 4). The re-base did not remove the divergence and adds a run-dependent jump in
 `0x00771984`. It is now opt-in and off.
 
-Load-hold runs (`off_g`, `off_h`, `neg_c`): queued on the game lock at the time of this commit, not yet run.
+Load-hold runs (`off_g`, `off_h`, `neg_c`): **not run.** They were queued at 19:15 and cancelled by this worker at
+20:30 still waiting on the game lock (solo windows and a pending merge train). No MASHED.exe was spawned.
+To run them: `bash D:/MashedWT/PROMOTE-DETORIG-PILOT_data/run_arm.sh off_g --timeout 400` (same for `off_h`,
+then `neg_c --negctl 1`), each under `test-slot`, then `detorig_report.py` on off_g/off_h and off_g/neg_c.
 
 Before this harness (runs `off_a` / `off_b`, timeline anchored at the warp): **0/15 on all three verdicts**,
 974 car-record dwords and both RNG states differing, frame counts 2 frames apart.
@@ -145,7 +151,7 @@ byte at both RVAs is `0xE9` at the anchor and at all 15 checkpoints. In OFF runs
 - `neg_b` (rebase, +1 on the RW RNG word at the ring cursor at the anchor): RACE-STATE 0/15 against off_e and
   off_f (RW ring differs from checkpoint 0 on). Its load took 215 calls against 119 / 113, so this pair does
   not separate the control from the load-length divergence either.
-- `neg_c` (load hold, RW RNG word +1): queued, not yet run. **No negative control has yet been measured at
+- `neg_c` (load hold, RW RNG word +1): not run (see above). **No negative control has yet been measured at
   equal load length**, so the harness's ability to see a changed value in RACE-STATE is not shown by this pilot.
 
 ## Limits and open items
