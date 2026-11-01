@@ -609,6 +609,7 @@ constexpr int           kMaxMask      = 16384;
 constexpr std::uintptr_t kRwGlobalsPtr = 0x007d3ff8;    // DAT_007d3ff8 = RwGlobals*
 constexpr std::uint32_t kSlotMalloc   = 0x108;           // (size, hint)
 constexpr std::uint32_t kSlotCalloc   = 0x114;           // (n, size, hint)
+constexpr std::uint32_t kSlotFree     = 0x10c;           // (ptr): L2_0057c550.cpp 0x0057c577..0x0057c584
 
 struct AllocCall { std::uint32_t slot, a0, a1, a2, size, ret; };
 struct AllocLog  { AllocCall c[kMaxAllocs]; int n; int ovf; };
@@ -616,7 +617,8 @@ struct AllocState {                                      // .asi .data: untracke
     bool            on = false;
     int             run = -1;                            // 0 = original's window, 1 = port's, -1 = none
     std::uintptr_t  g = 0;
-    std::uint32_t   real_malloc = 0, real_calloc = 0;
+    std::uint32_t   real_malloc = 0, real_calloc = 0, real_free = 0;   // free = slot +0x10c (ptr), read, never swapped
+    int             pin_tries = 0, pin_miss = 0;         // [Amendment 1] residue pin (port's run)
     AllocLog        log[2];
     int             npairs = 0;
     std::uintptr_t* mask = nullptr;  int nmask = 0;  int mask_ovf = 0;
@@ -653,12 +655,36 @@ inline bool AllocMine() {
     const State& s = S();
     return AS().run >= 0 && s.active && GetCurrentThreadId() == s.tid;
 }
+// [Amendment 1] RESIDUE PIN, port's run only. An allocator layered on the slot can derive its
+// result from the block ADDRESS: 0x00564130 takes size+align from slot +0x108 and returns
+// raw + (align - raw % align) (pad = align when the remainder is 0) with the pad byte at ret-1, so
+// a block at ...a08 hands back +0x8 and one at ...8a0 hands back +0x10 (0x0057c500, arm S). When
+// the port's k-th request matches the original's k-th, the wrapper re-asks the allocator until the
+// block's address mod 16 equals the original's (at most kPinTries extra blocks), then frees the
+// misses through slot +0x10c. All of it runs inside the wrapper, so its writes land in the mask.
+constexpr int kPinTries = 8;
+template <typename Call>
+inline std::uint32_t AllocPinned(std::uint32_t slot, std::uint32_t a0, std::uint32_t a1, std::uint32_t a2, Call call) {
+    AllocState& a = AS();
+    std::uint32_t r = call();
+    const int k = a.log[1].n;
+    if (a.run != 1 || !r || k >= a.log[0].n) return r;
+    const AllocCall& A = a.log[0].c[k];
+    if (A.slot != slot || A.a0 != a0 || A.a1 != a1 || A.a2 != a2 || !A.ret) return r;
+    std::uint32_t held[kPinTries]; int nh = 0;
+    while (r && (r & 0xf) != (A.ret & 0xf) && nh < kPinTries) { held[nh++] = r; r = call(); }
+    typedef void (__cdecl* Free)(std::uint32_t);
+    for (int i = 0; i < nh; ++i) reinterpret_cast<Free>(a.real_free)(held[i]);
+    a.pin_tries += nh;
+    if (r && (r & 0xf) != (A.ret & 0xf)) ++a.pin_miss;
+    return r;
+}
 inline std::uint32_t __cdecl AllocWrapMalloc(std::uint32_t a0, std::uint32_t a1) {
     typedef std::uint32_t (__cdecl* F)(std::uint32_t, std::uint32_t);
     const F real = reinterpret_cast<F>(AS().real_malloc);
     if (!AllocMine()) return real(a0, a1);
     const int np0 = AllocSnap();
-    const std::uint32_t r = real(a0, a1);
+    const std::uint32_t r = AllocPinned(kSlotMalloc, a0, a1, 0, [&] { return real(a0, a1); });
     AllocNote(kSlotMalloc, a0, a1, 0, a0, r, np0);
     return r;
 }
@@ -667,7 +693,7 @@ inline std::uint32_t __cdecl AllocWrapCalloc(std::uint32_t a0, std::uint32_t a1,
     const F real = reinterpret_cast<F>(AS().real_calloc);
     if (!AllocMine()) return real(a0, a1, a2);
     const int np0 = AllocSnap();
-    const std::uint32_t r = real(a0, a1, a2);
+    const std::uint32_t r = AllocPinned(kSlotCalloc, a0, a1, a2, [&] { return real(a0, a1, a2); });
     AllocNote(kSlotCalloc, a0, a1, a2, a0 * a1, r, np0);
     return r;
 }
@@ -676,7 +702,7 @@ inline std::uint32_t __cdecl AllocWrapCalloc(std::uint32_t a0, std::uint32_t a1,
 inline bool AllocArm() {
     static const bool want = EnvOn("MASHED_SHADOW_ALLOC");
     AllocState& a = AS();
-    a.on = false; a.run = -1; a.npairs = 0; a.nmask = 0; a.mask_ovf = 0;
+    a.on = false; a.run = -1; a.npairs = 0; a.nmask = 0; a.mask_ovf = 0; a.pin_tries = 0; a.pin_miss = 0;
     a.log[0].n = a.log[0].ovf = a.log[1].n = a.log[1].ovf = 0;
     if (!want) return false;
     if (!a.snap) {
@@ -690,6 +716,7 @@ inline bool AllocArm() {
     std::uint32_t* sm = reinterpret_cast<std::uint32_t*>(a.g + kSlotMalloc);
     std::uint32_t* sc = reinterpret_cast<std::uint32_t*>(a.g + kSlotCalloc);
     a.real_malloc = *sm; a.real_calloc = *sc;
+    a.real_free = *reinterpret_cast<const std::uint32_t*>(a.g + kSlotFree);
     *sm = reinterpret_cast<std::uint32_t>(&AllocWrapMalloc);
     *sc = reinterpret_cast<std::uint32_t>(&AllocWrapCalloc);
     a.on = true;
@@ -1092,7 +1119,8 @@ auto RunTracked(Counter& c, F impl, void* stackwin, A... args) -> decltype(impl(
         if (r.blk_dw) dp += wsprintfA(det + dp, " blk@%08x:%08x/%08x", static_cast<unsigned>(r.blk_first), r.blk_o, r.blk_n);
         // the pairs on their own line (Record's line buffer is 512): slot:a0,a1,a2 -> original/port
         char al[480];
-        int ap = wsprintfA(al, "[al] fn=%s sample=%d nA=%d nB=%d", c.name, c.n, as.log[0].n, as.log[1].n);
+        int ap = wsprintfA(al, "[al] fn=%s sample=%d nA=%d nB=%d pin=%d/%d", c.name, c.n, as.log[0].n, as.log[1].n,
+                           as.pin_tries, as.pin_miss);
         for (int k = 0; k < as.log[0].n && k < 6; ++k)
             ap += wsprintfA(al + ap, " %x:%x,%x,%x->%08x/%08x", as.log[0].c[k].slot, as.log[0].c[k].a0, as.log[0].c[k].a1,
                             as.log[0].c[k].a2, as.log[0].c[k].ret, k < as.log[1].n ? as.log[1].c[k].ret : 0u);
