@@ -109,3 +109,19 @@ or if an Event-1000 fault at `0x005baf48` appears: stop, BLOCKED "audio endpoint
 `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on this build's `mashed_re.exe`, test slot +
 machine lock, must equal `re/orchestrator/merge_train.json` `gctrl.ref` / `b.ref` (G-CTRL `8284be46/ba407a16/31fe043e`,
 B `1d5bf4f9/1d5bf4f9/1d5bf4f9` at `0e3d71a75`). A mismatch is a RED for the step.
+
+## Amendment 1 (2026-11-01, recovery run, committed before the re-runs it governs)
+
+LIVING-PC rebooted at 14:23 local (17:23Z) during run 28, while arm S row 1 (`0x00574920`) was in its window. That
+attempt took no sample (summary row NO_LOG at 17:23:17Z; the post-run endpoint list was empty because the machine was
+shutting down). Its partial output is kept as `D:/MashedWT/D4-WSB-PORT-NARROW-TAIL_data/00574920/shadow_transcript_reboot_cut.txt`
+and is not evidence. Arm S restarted from row 1 for all 12 armed rows, same build (`.asi 343d8591`), same env.
+
+The default gates finished before the reboot (14:12-14:14 local, exe `26f6e7d6`, every arm self-exited) and are not
+re-run: they are complete runs on this step's exe.
+
+Launch-failure rule (same as D4-WSB-PORT-BROAD-2 amendment 1): a row whose transcript shows `scenario_launch pid=N`
+followed by `error: could not attach` took no sample, so its NO_LOG is a launch failure, not a hook outcome. It is
+re-run once after the 12-row pass, same build and env. A second launch failure leaves the row at C2 (NO_LOG).
+
+- Recovery pass row 1 `0x00574920`: transcript `scenario_launch pid=17208` then `error: could not attach`. Re-run once.
