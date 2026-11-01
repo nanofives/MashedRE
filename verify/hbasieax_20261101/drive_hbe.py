@@ -40,9 +40,17 @@ def crashes(since):
     return [x.strip() for x in r.stdout.splitlines() if x.strip()]
 
 
+def train_pending():
+    # [HB-ASI-EAX-57C420] L0 standing rule (2026-11-01): no solo window while the merge train is PRIORITY-PENDING.
+    r = subprocess.run([sys.executable, str(LOCK), "status"], capture_output=True, text=True, errors="replace")
+    return any(ln.startswith("PRIORITY-PENDING") and "merge-train" in ln for ln in r.stdout.splitlines())
+
+
 def main():
     if sys.argv[1] == "--inner":   # runs inside the solo window, right before the runner's boots
         leg, rva = sys.argv[2], sys.argv[3]
+        if train_pending():
+            note(f"{leg} {rva} merge train PRIORITY-PENDING inside the window: yield, no launch"); return 4
         ep = endpoints()
         note(f"{leg} {rva} pre-launch endpoints (inside the window): {ep or '<none>'}")
         if not ep:
@@ -50,7 +58,11 @@ def main():
         return subprocess.run([sys.executable, str(RUNNER[leg]), rva], cwd=str(WT)).returncode
     leg, rvas = sys.argv[1], sys.argv[2:]
     for i, rva in enumerate(rvas, 1):
-        for attempt in range(1, 4):
+        attempt = 0
+        while attempt < 3:
+            while train_pending():
+                time.sleep(30)
+            attempt += 1
             note(f"[{i}/{len(rvas)}] {leg} {rva} attempt {attempt}: queueing a solo window")
             # one solo window per row: the wait for other holders/windows happens here, outside the
             # runner's own 1800 s timer (row 3's first attempt spent its timer queued on the lock).
@@ -60,6 +72,8 @@ def main():
                                  "--", sys.executable, str(Path(__file__).resolve()), "--inner", leg, rva], cwd=str(WT)).returncode
             if rc == 3:
                 return 3
+            if rc == 4:   # yielded to the merge train before any launch: not an attempt
+                attempt -= 1; continue
             cr = crashes(t0)
             ep = endpoints()
             note(f"[{i}/{len(rvas)}] {leg} {rva} post endpoints: {ep or '<none>'} crash events: {cr or 'none'}")
