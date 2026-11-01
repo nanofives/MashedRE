@@ -5,8 +5,8 @@
 //   (preserved in original\MASHED.exe.unpatched)
 //
 // Included in this file (subsystem per hooks.csv noted per function):
-//   0x00408af0  AiVehicleFieldPtrGet    — ai;  pointer-return field getter
-//   0x00442cc0  AiVehicleFloat4Get      — ai;  bounds-checked per-vehicle float getter
+//   [MOVED 2026-11-01, D4-DC-INC-ai] AiVehicleFieldPtrGet (FUN_00408af0) and AiVehicleFloat4Get
+//   (FUN_00442cc0) -> Ai/AiVehicleFieldGetters.cpp, one body each for both targets
 //   0x00414030  AiSplineBankTimerReset  — ai;  spline-bank timer reset (writes 1000)
 //   0x0040e350  GetRenderSubMode        — ai (used by vehicle/render too); global getter
 //   0x00429300  HudOverlayFloatGet      — hud; float getter (kept here as the
@@ -24,72 +24,6 @@
 #include "../Core/HookSystem.h"
 
 #include <cstdint>
-
-// ---------------------------------------------------------------------------
-// AiVehicleFieldPtrGet  --  0x00408af0
-//
-// Original: FUN_00408af0 (15 bytes, 0x00408af0..0x00408aff)
-// Signature: undefined * FUN_00408af0(int param_1)
-//   param_1: vehicle index
-// Body:
-//   return &DAT_008a96dc + param_1 * 0x30c;
-//
-// POINTER-RETURN getter: returns the ORIGINAL-image VA as a constant
-// expression; never dereferences. Bit-identity compares the returned address.
-//
-// Constants (cited from function body at 0x00408af0):
-//   0x008a96dc — field base inside per-vehicle record (= 0x008a9640 + 0x9c)
-//   0x30c      — per-vehicle record stride (780 bytes)
-//
-// Callers: FUN_00415220, FUN_00415880, FUN_00416250, FUN_00416a30, FUN_00417da0.
-//
-// Uncertainties (non-blocking):
-//   U-7562: meaning of the float3 at +0x9c (data-semantic).
-// ---------------------------------------------------------------------------
-
-// 0x00408af0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AiVehicleFieldPtrGet(int param_1) {
-    // 0x008a96dc base + 0x30c stride cited at 0x00408af0 body.
-    return 0x008a96dcu + static_cast<std::uint32_t>(param_1) * 0x30cu;
-}
-
-RH_ScopedInstall(AiVehicleFieldPtrGet, 0x00408af0);
-
-// ---------------------------------------------------------------------------
-// AiVehicleFloat4Get  --  0x00442cc0
-//
-// Original: FUN_00442cc0 (23 bytes, 0x00442cc0..0x00442cd6)
-// Signature: float10 FUN_00442cc0(int param_1)
-//   param_1: vehicle index
-// Body:
-//   if (param_1 < 4) return *(float *)(&DAT_008989b0 + param_1 * 4);
-//   return (float10)DAT_005d757c;
-//
-// Constants (cited from function body at 0x00442cc0):
-//   0x008989b0 — base of 4-entry per-vehicle float array (stride 4)
-//   0x005d757c — project-wide 0.0 float; returned for param_1 >= 4
-//   4          — vehicle-count bound
-//
-// Callers: FUN_004148b0, FUN_00414c30, FUN_00415020, FUN_00415220,
-//          FUN_00415190, FUN_00415200.
-//
-// Uncertainties (non-blocking):
-//   U-7601: semantic of the stored float (data-semantic).
-// ---------------------------------------------------------------------------
-
-// 0x00442cc0
-extern "C" __declspec(dllexport) float __cdecl AiVehicleFloat4Get(int param_1) {
-    // 4 bound cited at 0x00442cc0 body (signed compare).
-    if (param_1 < 4) {
-        // 0x008989b0 base, stride 4 cited at 0x00442cc0 body.
-        return *reinterpret_cast<const float*>(
-            0x008989b0u + static_cast<std::uint32_t>(param_1) * 4u);
-    }
-    // 0x005d757c (0.0 float) cited at 0x00442cc0 body.
-    return *reinterpret_cast<const float*>(0x005d757cu);
-}
-
-RH_ScopedInstall(AiVehicleFloat4Get, 0x00442cc0);
 
 // ---------------------------------------------------------------------------
 // AiSplineBankTimerReset  --  0x00414030

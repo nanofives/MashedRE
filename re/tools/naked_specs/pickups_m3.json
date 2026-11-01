@@ -3,13 +3,11 @@
     { "name": "PK_458920", "start": "0x00458920", "size": 276 },
     { "name": "PK_458570", "start": "0x00458570", "size": 185 },
     { "name": "PK_45c330", "start": "0x0045c330", "size": 19 },
-    { "name": "PK_46d4a0", "start": "0x0046d4a0", "size": 46 },
-    { "name": "PK_405890", "start": "0x00405890", "size": 26 },
-    { "name": "PK_407580", "start": "0x00407580", "size": 17 }
+    { "name": "PK_46d4a0", "start": "0x0046d4a0", "size": 46 }
   ],
   "calls": {
-    "0x00405890": "PK_405890",
-    "0x00407580": "PK_407580",
+    "0x00405890": "Pred405890",
+    "0x00407580": "SubsystemARecordKey",
     "0x0040e350": "PK_SubMode",
     "0x0045c330": "PK_45c330",
     "0x0045bff0": "PK_SlotEmpty",

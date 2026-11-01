@@ -1,0 +1,12 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=17324 (MATCH-0040E370-NAKED); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=18896 (D5-INTROMOVIES-AUDIO)
+movies placed: {'empire': 'F89F7D92D51A4184', 'supersonic': '33A6DE9296B65F87', 'renderware': '177DDB4D65223B09', 'intro': 'DBB08D35C970109C', 'small': 'E709EF15FDED167C'}
+  11:44:21 audio check OK: OK Altavoces (VB-Audio Virtual Cable) | OK CABLE Output (VB-Audio Virtual Cable) | OK CABLE In 16 Ch (VB-Audio Virtual Cable)
+[1/4] O1 PASS pid=11860 launch_offset=3.408
+  11:46:22 audio check OK: OK Altavoces (VB-Audio Virtual Cable) | OK CABLE Output (VB-Audio Virtual Cable) | OK CABLE In 16 Ch (VB-Audio Virtual Cable)
+[2/4] S1 PASS pid=19236 launch_offset=4.02
+  11:48:24 audio check OK: OK Altavoces (VB-Audio Virtual Cable) | OK CABLE Output (VB-Audio Virtual Cable) | OK CABLE In 16 Ch (VB-Audio Virtual Cable)
+[3/4] O2 PASS pid=9224 launch_offset=3.332
+  11:50:32 audio check OK: OK Altavoces (VB-Audio Virtual Cable) | OK CABLE Output (VB-Audio Virtual Cable) | OK CABLE In 16 Ch (VB-Audio Virtual Cable)
+[4/4] S2 PASS pid=14312 launch_offset=5.538
+[mashed-lock] released 'mashed_machine' pid=18896
