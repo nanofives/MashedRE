@@ -257,6 +257,19 @@ function Try-Batch($items) {
     # (D3-CF-SNAP-FLIP's default lives in D3d9Render/TrackRenderer.cpp and merged without D2 / 13 tracks).
     $needFull = $Full -or (@($changed | Where-Object { $f = $_; @($CFG.full_set_paths | Where-Object { $f.StartsWith($_) }).Count -gt 0 }).Count -gt 0)
     Say "  changed $($changed.Count) file(s); text-only=$textOnly full-set=$needFull"
+    # HB-LINT-408A50: lint the tree the LAN release builds from, a clean git archive of HEAD with the paths in
+    # scripts/lan_release/archive_paths.txt. Every batch, text-only included (merge_train.json counts *.txt as
+    # text-only, and re/tools/dual_copy_allowlist.txt is a build input). The worktree lint below sees files the
+    # archive does not: 0e3d71a75 passed it and failed publish.sh on DUP-IN-TARGET 0x00408a50.
+    $alPy = Join-Path $wt 'scripts/lan_release/archive_lint.py'
+    if (Test-Path $alPy) {
+      $alog = Join-Path $DATA 'archive_lint.txt'
+      Push-Location $wt
+      try { $al = & py.exe -3.12 $alPy --ref HEAD 2>&1; $arc = $LASTEXITCODE } finally { Pop-Location }
+      $al | Set-Content $alog
+      if ($arc -ne 0) { $r.ok = $false; $r.why = "archive_lint: $(($al | Select-Object -Last 1)) ($alog)"; return $r }
+      Say "  archive lint OK: $(($al | Select-Object -Last 1))"
+    } else { Say "  WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree" }
     if ($textOnly) { $r.gates = 'not run: text-only change (no build input touched)'; return $r }
     # build both targets, never deploy
     $blog = Join-Path $DATA 'build.log'
