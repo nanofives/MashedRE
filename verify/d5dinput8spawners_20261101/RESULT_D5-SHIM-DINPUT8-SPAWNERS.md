@@ -90,6 +90,13 @@ Until it is applied these two still need the proxy.
 retired files (the six `observe_*`, which exit before reaching them). No spawner added or changed
 on `orch/integration` since the sweep's base d6448c31e matches the spawn + `MASHED.exe` pattern.
 
+Re-checked at the end of the smokes (2026-11-01 17:10) against `orch/integration` (43 commits past
+this branch's base 0e3d71a75): 8 `re/` / `scripts/` `.py`/`.ps1` files added or changed there.
+None is a spawner without `MASHED_RE_NO_AUTO_HOOK` or `dev_asi`, and none pops the var except
+`re/frida/scenario_launch.py`, which is the pre-rewrite text (f497e49f5 touched another part of
+it). `git merge-tree` of this branch with `orch/integration` is clean, and the merged
+`scenario_launch.py` has 0 pops (var forced to 1 at 5130, `dev_asi.spawn_original` at 5145).
+
 ## 4. Smokes (original-side, no dinput8 proxy)
 
 Private root `D:\MashedWT\D5-SHIM-DINPUT8-SPAWNERS_root\original` = robocopy of `original\` **without
