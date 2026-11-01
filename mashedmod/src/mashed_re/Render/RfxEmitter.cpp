@@ -13,10 +13,11 @@
 // the plugin registration); the exe has none, so it reads 0 there and Create places the plugin pointer at
 // atomic + 0.
 //
-// The null-pointer defaults are literals: 0x00613288 / 0x00613290 / 0x00613294 / 0x006132a4 are file-backed
-// .data with NO writer in the original (decomp_pc.py --datarefs, verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
-// section 2), and the exe's image-pad holds 0 there. The two BSS defaults keep their addresses: 0x00692558
-// (the matrix template, written only by FUN_004770c0 0x004771cd) and 0x006925a8 (no writer: 0).
+// The null-pointer defaults 0x00613288 / 0x00613290 / 0x00613294 / 0x006132a4 are file-backed .data with NO
+// direct writer in the original (decomp_pc.py --datarefs, verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+// section 2). The .asi reads them at their addresses, as the original does; the exe's image-pad holds 0 there, so
+// under MASHED_STANDALONE the same body points at the file-backed values instead. The two BSS defaults keep their
+// addresses in both targets: 0x00692558 (the matrix template, written by FUN_004770c0) and 0x006925a8 (no writer: 0).
 //
 // [D5-RFX-EMITTERS 2026-10-28] Create / Flush / SelectCallbacks / Instance were transcribed from the disassembly
 // of original/MASHED.exe.unpatched and checked dword for dword against those bytes run in Unicorn
@@ -39,12 +40,25 @@ namespace {
 float F(std::uint32_t u) { float f; std::memcpy(&f, &u, 4); return f; }
 std::uint32_t U(float f) { std::uint32_t u; std::memcpy(&u, &f, 4); return u; }
 
-// Image constants (file-backed .data, read from the anchored binary, no writer).
-std::uint32_t k00613288[2] = {0x3f800000u, 0x3f800000u};              // 1.0, 1.0
-std::uint32_t k00613290    = 0xffffffffu;
-std::uint32_t k00613294[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};      // 0, 0, 1, 1
-std::uint32_t k006132a4[8] = {0u, 0x3f800000u, 0x3f800000u, 0x3f800000u,
+// The null-pointer defaults. The .asi reads the original's own .data, as the original does (the negctl fixtures
+// that hold these rows at C3 seed these addresses and require the read). The exe's image-pad is zero-filled there,
+// so the exe points at the file-backed values (read from the anchored binary; no writer in the original).
+#ifdef MASHED_STANDALONE
+std::uint32_t s00613288[2] = {0x3f800000u, 0x3f800000u};              // 1.0, 1.0
+std::uint32_t s00613290    = 0xffffffffu;
+std::uint32_t s00613294[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};      // 0, 0, 1, 1
+std::uint32_t s006132a4[8] = {0u, 0x3f800000u, 0x3f800000u, 0x3f800000u,
                               0x3f800000u, 0u, 0u, 0u};               // 0,1,1,1,1,0,0,0
+std::uint32_t* const k00613288 = s00613288;
+std::uint32_t* const k00613290 = &s00613290;
+std::uint32_t* const k00613294 = s00613294;
+std::uint32_t* const k006132a4 = s006132a4;
+#else
+std::uint32_t* const k00613288 = reinterpret_cast<std::uint32_t*>(0x00613288u);
+std::uint32_t* const k00613290 = reinterpret_cast<std::uint32_t*>(0x00613290u);
+std::uint32_t* const k00613294 = reinterpret_cast<std::uint32_t*>(0x00613294u);
+std::uint32_t* const k006132a4 = reinterpret_cast<std::uint32_t*>(0x006132a4u);
+#endif
 const std::int32_t k006132c4 = 5, k006132c8 = 6;
 const float        k005cc32c = 0.5f;
 
@@ -113,7 +127,7 @@ RH_ScopedInstall(ParticleEmitter_SetVelocity, 0x004769d0);  // re-enabled 2026-0
 // 0x004769f0
 extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetColour(std::uint32_t* param_1)
 {
-    G(0x00692554u) = param_1 ? param_1[0] : k00613290;
+    G(0x00692554u) = param_1 ? param_1[0] : *k00613290;
 }
 RH_ScopedInstall(ParticleEmitter_SetColour, 0x004769f0);  // re-enabled 2026-05-24 c3-render-b
 
@@ -174,7 +188,7 @@ RH_ScopedInstall(Batch476ae0, 0x00476ae0);
 // re-reads the atomic and [0x007dc57c], as the original does.
 extern "C" __declspec(dllexport) void __cdecl Set476b30(std::uint8_t* p1, std::uint8_t* p2)
 {
-    std::uint32_t val = p2 ? *reinterpret_cast<std::uint32_t*>(p2) : k00613290;
+    std::uint32_t val = *reinterpret_cast<std::uint32_t*>(p2 ? p2 : reinterpret_cast<std::uint8_t*>(k00613290));
     std::uint32_t g = G(kPlugOff);
     std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(p1 + 4);
     std::uint8_t* obj = *reinterpret_cast<std::uint8_t**>(e + g);
