@@ -160,3 +160,8 @@ the regenerated `PathProgStep_naked.inc` / `AiLeafTargets_naked.inc` / `AiTarget
 `hooks.csv`, `CHANGELOG.md` and the allowlist. Whichever merges second gets textual conflicts there. Resolution: take the
 union of both spec edits (drop both sets of funcs, map both sets of calls, drop batch3's LUT `patch` entries) and
 regenerate the three `.inc` files from the merged specs with `re/tools/gen_naked_asm.py`. Do not hand-merge the `.inc`.
+
+**Second merge, run 29:** integration moved to `a147e22d3` (D4-DC-77b0-STATE5-ORIGREAD) while the gates ran, and was
+merged in cleanly. It changes `re/frida/scenario_launch.py`, `INTEGRATION_LOG.md` and files under `verify/` only. No
+`mashedmod/`, `re/tools/dual_copy_allowlist.txt` or `re/match` input changed, so the build, lint and gates above stand
+for this tip. batch3 was still unmerged at this point.
