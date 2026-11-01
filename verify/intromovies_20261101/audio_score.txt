@@ -1,0 +1,39 @@
+## O1  pid=11860 alive_at_wall=True exe_sha16=B9977DAB70607720 rec=118.5s launch at 3.41s
+noise floor (pre-launch max RMS) 0.00001, peak RMS 0.6151, first sound 4.6s after launch, sounding 95.5s
+segments (s after launch, >= 1 s): 4.6-11.9, 12.4-21.4, 30.1-93.4, 99.1-115.1
+
+## S1  pid=19236 alive_at_wall=True exe_sha16=19E494FE89CEA511 rec=119.2s launch at 4.02s
+noise floor (pre-launch max RMS) 0.00001, peak RMS 0.6137, first sound 5.7s after launch, sounding 99.4s
+segments (s after launch, >= 1 s): 5.7-22.5, 31.2-94.5, 95.2-115.1
+    INTRO movie idx=1 empire.mpg: complete frames=212 ms=8000 video=720x480 tex=720x480 pow2=0 audio_hr=0x00000000
+    INTRO movie idx=2 supersonic.mpg: complete frames=258 ms=9703 video=720x576 tex=720x576 pow2=0 audio_hr=0x00000000
+    INTRO movie idx=3 renderware.mpg: complete frames=218 ms=8187 video=640x480 tex=640x480 pow2=0 audio_hr=0x00000001
+    INTRO movie idx=4 intro.mpg: complete frames=1698 ms=63922 video=640x480 tex=640x480 pow2=0 audio_hr=0x00000000
+    INTRO small.mpg: BUILT (graph built, not run) video=160x128
+
+## O2  pid=9224 alive_at_wall=True exe_sha16=B9977DAB70607720 rec=118.5s launch at 3.33s
+noise floor (pre-launch max RMS) 0.00001, peak RMS 0.6422, first sound 4.3s after launch, sounding 96.0s
+segments (s after launch, >= 1 s): 4.3-21.0, 29.7-92.9, 98.4-115.1
+
+## S2  pid=14312 alive_at_wall=True exe_sha16=19E494FE89CEA511 rec=120.6s launch at 5.54s
+noise floor (pre-launch max RMS) 0.00001, peak RMS 0.6299, first sound 2.5s after launch, sounding 102.3s
+segments (s after launch, >= 1 s): 2.5-19.3, 28.1-91.3, 92.0-115.0
+    INTRO movie idx=1 empire.mpg: complete frames=191 ms=8266 video=720x480 tex=720x480 pow2=0 audio_hr=0x00000000
+    INTRO movie idx=2 supersonic.mpg: complete frames=233 ms=9703 video=720x576 tex=720x576 pow2=0 audio_hr=0x00000000
+    INTRO movie idx=3 renderware.mpg: complete frames=189 ms=8219 video=640x480 tex=640x480 pow2=0 audio_hr=0x00000001
+    INTRO movie idx=4 intro.mpg: complete frames=1654 ms=64016 video=640x480 tex=640x480 pow2=0 audio_hr=0x00000000
+    INTRO small.mpg: BUILT (graph built, not run) video=160x128
+
+## envelope correlation (log-RMS, best lag in +-10 s, 85 s span)
+| pair | lag s (S later = +) | r |
+|---|---|---|
+| O1 vs S1 | +1.7 (onset-aligned residual +0.0) | 0.997 |
+| O1 vs O2 | -0.5 (onset-aligned residual -0.1) | 0.988 |
+| O1 vs S2 | +0.0 (onset-aligned residual +0.0) | 0.996 |
+| S1 vs O2 | -2.2 (onset-aligned residual -0.1) | 0.990 |
+| S1 vs S2 | -1.7 (onset-aligned residual +0.0) | 0.997 |
+| O2 vs S2 | +0.5 (onset-aligned residual +0.1) | 0.988 |
+O1 movie-span RMS 0.2068 = -13.69 dBFS
+S1 movie-span RMS 0.2068 = -13.69 dBFS
+O2 movie-span RMS 0.2069 = -13.68 dBFS
+S2 movie-span RMS 0.2067 = -13.69 dBFS

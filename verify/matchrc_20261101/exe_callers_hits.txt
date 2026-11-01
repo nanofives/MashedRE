@@ -1,0 +1,362 @@
+=== CupSpinSpeedAndColor (3)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:47: #define FUN_00401340 CupSpinSpeedAndColor
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:59: __declspec(dllexport) void __cdecl CupSpinSpeedAndColor(void);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:110: RH_ScopedInstall(CupSpinSpeedAndColor, 0x00401340);
+=== EntryTableScanByKey (3)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:48: #define FUN_00401570 EntryTableScanByKey
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:60: __declspec(dllexport) void __cdecl EntryTableScanByKey(int key);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:111: RH_ScopedInstall(EntryTableScanByKey, 0x00401570);
+=== EntityTableSelectUpdate (3)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:49: #define FUN_00401ee0 EntityTableSelectUpdate
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:61: __declspec(dllexport) void __cdecl EntityTableSelectUpdate(int key);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:112: RH_ScopedInstall(EntityTableSelectUpdate, 0x00401ee0);
+=== BootQueueFlush (3)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:50: #define FUN_004026d0 BootQueueFlush
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:62: __declspec(dllexport) void __cdecl BootQueueFlush(int n);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:113: RH_ScopedInstall(BootQueueFlush, 0x004026d0);
+=== BootDefaultParamsInit (5)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:51: #define FUN_00402f50 BootDefaultParamsInit
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:63: __declspec(dllexport) void __cdecl BootDefaultParamsInit(void);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:114: RH_ScopedInstall(BootDefaultParamsInit, 0x00402f50);
+  mashedmod/src/mashed_re/exe_main.cpp:9050: extern "" void          __cdecl BootDefaultParamsInit();
+  mashedmod/src/mashed_re/exe_main.cpp:9225: BootDefaultParamsInit();
+=== CupFloatInit (3)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:52: #define FUN_00402f80 CupFloatInit
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:64: __declspec(dllexport) void __cdecl CupFloatInit(void);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:115: RH_ScopedInstall(CupFloatInit, 0x00402f80);
+=== IdxPtr404e00 (5)
+  mashedmod/src/mashed_re/LibRw/RwCarFx.cpp:10: extern "" std::uint32_t __cdecl IdxPtr404e00(std::uint32_t p1);
+  mashedmod/src/mashed_re/LibRw/RwCarFx.cpp:34: static_cast<std::uintptr_t>(IdxPtr404e00(static_cast<std::uint32_t>(course_id))));
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:90: #define FUN_00404e00 IdxPtr404e00
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:92: __declspec(dllexport) char* __cdecl IdxPtr404e00(int body);
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:107: RH_ScopedInstall(IdxPtr404e00, 0x00404e00);
+=== IdxPtr404e20 (5)
+  mashedmod/src/mashed_re/LibRw/RwCarFx.cpp:11: extern "" std::uint32_t __cdecl IdxPtr404e20(std::uint32_t p1, std::uint32_t p2);
+  mashedmod/src/mashed_re/LibRw/RwCarFx.cpp:40: IdxPtr404e20(static_cast<std::uint32_t>(course_id), static_cast<std::uint32_t>(vehicle_id))));
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:91: #define FUN_00404e20 IdxPtr404e20
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:93: __declspec(dllexport) char* __cdecl IdxPtr404e20(int car, int wheel);
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:108: RH_ScopedInstall(IdxPtr404e20, 0x00404e20);
+=== SaveLoad (6)
+  mashedmod/src/mashed_re/Race/GameFlow.cpp:196: extern "" int __cdecl SaveLoad();
+  mashedmod/src/mashed_re/Race/GameFlow.cpp:205: SaveLoad();
+  mashedmod/src/mashed_re/Save/GameSave.cpp:242: #define FUN_00404e50 SaveLoad
+  mashedmod/src/mashed_re/Save/GameSave.cpp:245: __declspec(dllexport) int __cdecl SaveLoad(void);
+  mashedmod/src/mashed_re/Save/GameSave.cpp:256: RH_ScopedInstall(SaveLoad, 0x00404e50);
+  mashedmod/src/mashed_re/Save/GameSave.cpp:334: SaveLoad();
+=== DeserializeFromBuffer (3)
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:155: #define FUN_00404e80 DeserializeFromBuffer
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:157: __declspec(dllexport) void __cdecl DeserializeFromBuffer(void);
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:171: RH_ScopedInstall(DeserializeFromBuffer, 0x00404e80);
+=== SerializeToBuffer (3)
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:156: #define FUN_00404ee0 SerializeToBuffer
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:158: __declspec(dllexport) void __cdecl SerializeToBuffer(void);
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:172: RH_ScopedInstall(SerializeToBuffer, 0x00404ee0);
+=== SaveWrite (6)
+  mashedmod/src/mashed_re/Race/GameFlow.cpp:195: extern "" int __cdecl SaveWrite();
+  mashedmod/src/mashed_re/Race/GameFlow.cpp:200: static void WriteSaveImage(unsigned char*) { SaveWrite(); }
+  mashedmod/src/mashed_re/Save/GameSave.cpp:243: #define FUN_00404f50 SaveWrite
+  mashedmod/src/mashed_re/Save/GameSave.cpp:246: __declspec(dllexport) int __cdecl SaveWrite(void);
+  mashedmod/src/mashed_re/Save/GameSave.cpp:257: RH_ScopedInstall(SaveWrite, 0x00404f50);
+  mashedmod/src/mashed_re/Save/GameSave.cpp:317: SaveWrite();
+=== SaveFileExists (7)
+  mashedmod/src/mashed_re/Race/GameFlow.cpp:197: extern "" int __cdecl SaveFileExists();
+  mashedmod/src/mashed_re/Race/GameFlow.cpp:204: if (!SaveFileExists()) return 0;
+  mashedmod/src/mashed_re/Save/GameSave.cpp:244: #define FUN_00404f80 SaveFileExists
+  mashedmod/src/mashed_re/Save/GameSave.cpp:247: __declspec(dllexport) int __cdecl SaveFileExists(void);
+  mashedmod/src/mashed_re/Save/GameSave.cpp:258: RH_ScopedInstall(SaveFileExists, 0x00404f80);
+  mashedmod/src/mashed_re/Save/GameSave.cpp:310: const int existsBefore = SaveFileExists();
+  mashedmod/src/mashed_re/Save/GameSave.cpp:328: const int existsAfter = SaveFileExists();
+=== Pred405890 (5)
+  mashedmod/src/mashed_re/Gameplay/PickupCollect_naked.inc:6: extern "" unsigned int Pred405890(void);
+  mashedmod/src/mashed_re/Gameplay/PickupCollect_naked.inc:25: call Pred405890
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:53: #define FUN_00405890 Pred405890
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:65: __declspec(dllexport) int __cdecl Pred405890(void);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:116: RH_ScopedInstall(Pred405890, 0x00405890);
+=== UtilTableInit8a9620 (3)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:54: #define FUN_00407a60 UtilTableInit8a9620
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:66: __declspec(dllexport) void __cdecl UtilTableInit8a9620(void);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:117: RH_ScopedInstall(UtilTableInit8a9620, 0x00407a60);
+=== RaceScoreFloatGetBySlot (6)
+  mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:55: extern "" float __cdecl RaceScoreFloatGetBySlot(int param_1);
+  mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:7815: return RaceScoreFloatGetBySlot(car);
+  mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:8242: c.race_pct = RaceScoreFloatGetBySlot(i);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:56: #define FUN_00408ad0 RaceScoreFloatGetBySlot
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:68: __declspec(dllexport) float __cdecl RaceScoreFloatGetBySlot(int i);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:119: RH_ScopedInstall(RaceScoreFloatGetBySlot, 0x00408ad0);
+=== SnapNodeToSafeStartLines (7)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:57: #define FUN_00409290 SnapNodeToSafeStartLines
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:69: __declspec(dllexport) void __cdecl SnapNodeToSafeStartLines(int* v);
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:120: RH_ScopedInstall(SnapNodeToSafeStartLines, 0x00409290);
+  mashedmod/src/mashed_re/Race/RoundGrid.cpp:18: extern "" void __cdecl SnapNodeToSafeStartLines(std::int32_t* p);
+  mashedmod/src/mashed_re/Race/RoundGrid.cpp:116: SnapNodeToSafeStartLines(&v);
+  mashedmod/src/mashed_re/Race/RoundGrid.cpp:214: SnapNodeToSafeStartLines(&v);
+  mashedmod/src/mashed_re/Race/RoundGrid.cpp:307: SnapNodeToSafeStartLines(&v);
+=== FUN_00401340 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:47: #define FUN_00401340 CupSpinSpeedAndColor
+  re/match/s01/00401340.c:19: void FUN_00401340(void)
+=== FUN_00401570 (3)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:48: #define FUN_00401570 EntryTableScanByKey
+  re/match/s01/00401570.c:16: void FUN_00401570(int key)
+  re/match/s01/00401570.c:34: FUN_00401570(key);
+=== FUN_00401ee0 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:49: #define FUN_00401ee0 EntityTableSelectUpdate
+  re/match/s01/00401570.c:32: void FUN_00401ee0(int key)
+=== FUN_004026d0 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:50: #define FUN_004026d0 BootQueueFlush
+  re/match/s01/004026d0.c:15: void FUN_004026d0(int n)
+=== FUN_00402f50 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:51: #define FUN_00402f50 BootDefaultParamsInit
+  re/match/s01/00402f50.c:15: void FUN_00402f50(void)
+=== FUN_00402f80 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:52: #define FUN_00402f80 CupFloatInit
+  re/match/s01/00402f50.c:24: void FUN_00402f80(void)
+=== FUN_00404e00 (2)
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:90: #define FUN_00404e00 IdxPtr404e00
+  re/match/s01/00404e00.c:15: char *FUN_00404e00(int body)
+=== FUN_00404e20 (2)
+  mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp:91: #define FUN_00404e20 IdxPtr404e20
+  re/match/s01/00404e00.c:25: char *FUN_00404e20(int car, int wheel)
+=== FUN_00404e50 (2)
+  mashedmod/src/mashed_re/Save/GameSave.cpp:242: #define FUN_00404e50 SaveLoad
+  re/match/s01/00404e50.c:18: int FUN_00404e50(void)
+=== FUN_00404e80 (2)
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:155: #define FUN_00404e80 DeserializeFromBuffer
+  re/match/s01/00404e80.c:26: void FUN_00404e80(void)
+=== FUN_00404ee0 (2)
+  mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:156: #define FUN_00404ee0 SerializeToBuffer
+  re/match/s01/00404e80.c:42: void FUN_00404ee0(void)
+=== FUN_00404f50 (2)
+  mashedmod/src/mashed_re/Save/GameSave.cpp:243: #define FUN_00404f50 SaveWrite
+  re/match/s01/00404e50.c:27: int FUN_00404f50(void)
+=== FUN_00404f80 (2)
+  mashedmod/src/mashed_re/Save/GameSave.cpp:244: #define FUN_00404f80 SaveFileExists
+  re/match/s01/00404e50.c:36: int FUN_00404f80(void)
+=== FUN_00405890 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:53: #define FUN_00405890 Pred405890
+  re/match/s01/00405890.c:12: int FUN_00405890(void)
+=== FUN_00407a60 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:54: #define FUN_00407a60 UtilTableInit8a9620
+  re/match/s01/00407a60.c:22: void FUN_00407a60(void)
+=== FUN_00408ad0 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:56: #define FUN_00408ad0 RaceScoreFloatGetBySlot
+  re/match/s01/00407a60.c:41: float FUN_00408ad0(int i)
+=== FUN_00409290 (2)
+  mashedmod/src/mashed_re/Match/MatchS01.cpp:57: #define FUN_00409290 SnapNodeToSafeStartLines
+  re/match/s01/00409290.c:10: void FUN_00409290(int *v)
+=== VehicleRaceAngleGet (3)
+  mashedmod/src/mashed_re/Vehicle/VehicleState.cpp:210: #define FUN_00417730 VehicleRaceAngleGet
+  mashedmod/src/mashed_re/Vehicle/VehicleState.cpp:211: extern "" __declspec(dllexport) float __cdecl VehicleRaceAngleGet(int carIdx);
+  mashedmod/src/mashed_re/Vehicle/VehicleState.cpp:219: RH_ScopedInstall(VehicleRaceAngleGet, 0x00417730);
+=== FUN_00417730 (2)
+  mashedmod/src/mashed_re/Vehicle/VehicleState.cpp:210: #define FUN_00417730 VehicleRaceAngleGet
+  re/match/s03/h1_00417730.c:8: float FUN_00417730(int i)
+=== FUN_0041ae20 (3)
+  mashedmod/src/mashed_re/Race/SubStateCallees.cpp:176: FUN_0041ae20(reinterpret_cast<Rec41ae20*>(self));
+  re/match/s03/h1_0041ae20.c:21: static void FUN_0041ae20(Rec41ae20 *rec)
+  re/match/s03/h1_0041ae20.c:32: FUN_0041ae20(&DAT_0063c8d0[i]);
+=== Copy41ae20 (3)
+  mashedmod/src/mashed_re/Race/SubStateCallees.cpp:175: extern "" __declspec(dllexport) void __fastcall Copy41ae20(char* self) {
+  mashedmod/src/mashed_re/Race/SubStateCallees.cpp:178: RH_ScopedInstall(Copy41ae20, 0x0041ae20);
+  mashedmod/src/mashed_re/Race/SubStateCallees.h:23: extern "" __declspec(dllexport) void          __fastcall Copy41ae20(char* self);
+=== Update41b520 (5)
+  mashedmod/src/mashed_re/Race/SubStateCallees.cpp:163: #define FUN_0041b520 Update41b520
+  mashedmod/src/mashed_re/Race/SubStateCallees.cpp:164: extern "" __declspec(dllexport) void __cdecl Update41b520(void);
+  mashedmod/src/mashed_re/Race/SubStateCallees.cpp:193: RH_ScopedInstall(Update41b520, 0x0041b520);
+  mashedmod/src/mashed_re/Race/SubStateCallees.h:24: extern "" __declspec(dllexport) void          __cdecl    Update41b520(void);
+  mashedmod/src/mashed_re/Race/SubStateMachine.cpp:157: Update41b520();
+=== FUN_0041b520 (2)
+  mashedmod/src/mashed_re/Race/SubStateCallees.cpp:163: #define FUN_0041b520 Update41b520
+  re/match/s03/h1_0041ae20.c:28: void FUN_0041b520(void)
+=== ParticleEmitterCtorA_impl (2)
+  mashedmod/src/mashed_re/Render/ParticleEmitterCtors.cpp:58: #define FUN_0041ad60 ParticleEmitterCtorA_impl
+  mashedmod/src/mashed_re/Render/ParticleEmitterCtors.cpp:78: call ParticleEmitterCtorA_impl
+=== ParticleEmitterCtorA (2)
+  mashedmod/src/mashed_re/Render/ParticleEmitterCtors.cpp:74: extern "" __declspec(dllexport) __declspec(naked) void ParticleEmitterCtorA() {
+  mashedmod/src/mashed_re/Render/ParticleEmitterCtors.cpp:83: RH_ScopedInstall(ParticleEmitterCtorA, 0x0041ad60);
+=== FUN_0041ad60 (2)
+  mashedmod/src/mashed_re/Render/ParticleEmitterCtors.cpp:58: #define FUN_0041ad60 ParticleEmitterCtorA_impl
+  re/match/s03/h1_0041ad60.c:21: static void FUN_0041ad60(Rec41ad60 *rec, int obj)
+=== FUN_00414180 (2)
+  mashedmod/src/mashed_re/Race/SubStateMachine.cpp:384: FUN_00414180();
+  re/match/s03/h2_00414180.c:23: void FUN_00414180(void)
+=== SubStateRollCountdown414180 (4)
+  mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:5260: SubStateRollCountdown414180();
+  mashedmod/src/mashed_re/Race/SubStateMachine.cpp:378: extern "" __declspec(dllexport) void __cdecl SubStateRollCountdown414180(void)
+  mashedmod/src/mashed_re/Race/SubStateMachine.cpp:397: RH_ScopedInstall(SubStateRollCountdown414180, 0x00414180);
+  mashedmod/src/mashed_re/Race/SubStateMachine.h:7: extern "" __declspec(dllexport) void __cdecl SubStateRollCountdown414180(void);
+=== AiLastPlaceFrustration (3)
+  mashedmod/src/mashed_re/HUD/ScenarioWriters_sa2s2.cpp:219: #define FUN_00415020 AiLastPlaceFrustration
+  mashedmod/src/mashed_re/HUD/ScenarioWriters_sa2s2.cpp:220: extern "" __declspec(dllexport) int __cdecl AiLastPlaceFrustration(int car);
+  mashedmod/src/mashed_re/HUD/ScenarioWriters_sa2s2.cpp:235: RH_ScopedInstall(AiLastPlaceFrustration, 0x00415020);
+=== FUN_00415020 (2)
+  mashedmod/src/mashed_re/HUD/ScenarioWriters_sa2s2.cpp:219: #define FUN_00415020 AiLastPlaceFrustration
+  re/match/s03/h2_00415020.c:17: int FUN_00415020(int car)
+=== FUN_00413bc0 (2)
+  mashedmod/src/mashed_re/HUD/ScenarioLeaves_sa1.cpp:69: call FUN_00413bc0
+  re/match/s03/h2_00413bc0.c:13: static void FUN_00413bc0(float *out, int idx)
+=== HudUvRect413bc0 (2)
+  mashedmod/src/mashed_re/HUD/ScenarioLeaves_sa1.cpp:64: extern "" __declspec(dllexport) __declspec(naked) void __cdecl HudUvRect413bc0()
+  mashedmod/src/mashed_re/HUD/ScenarioLeaves_sa1.cpp:75: RH_ScopedInstall(HudUvRect413bc0, 0x00413bc0);
+=== CopyTable005f2a70To0089a384 (3)
+  mashedmod/src/mashed_re/Frontend/SmallLeaves_t1.cpp:98: #define FUN_00414120 CopyTable005f2a70To0089a384
+  mashedmod/src/mashed_re/Frontend/SmallLeaves_t1.cpp:99: extern "" __declspec(dllexport) void __cdecl CopyTable005f2a70To0089a384(void);
+  mashedmod/src/mashed_re/Frontend/SmallLeaves_t1.cpp:109: RH_ScopedInstall(CopyTable005f2a70To0089a384, 0x00414120);
+=== FUN_00414120 (2)
+  mashedmod/src/mashed_re/Frontend/SmallLeaves_t1.cpp:98: #define FUN_00414120 CopyTable005f2a70To0089a384
+  re/match/s03/h1_00414120.c:19: void FUN_00414120(void)
+=== Clear63d584Pair (4)
+  mashedmod/src/mashed_re/Match/MatchS04_0041d910.cpp:8: #define FUN_0041d910 Clear63d584Pair
+  mashedmod/src/mashed_re/Match/MatchS04_0041d910.cpp:13: RH_ScopedInstall(Clear63d584Pair, 0x0041d910);
+  mashedmod/src/mashed_re/Race/SubStateCallees.h:21: extern "" __declspec(dllexport) void          __cdecl    Clear63d584Pair(void);
+  mashedmod/src/mashed_re/Race/SubStateMachine.cpp:125: Clear63d584Pair();
+=== Copy41b770 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041b770.cpp:12: #define FUN_0041b770 Copy41b770
+  mashedmod/src/mashed_re/Match/MatchS04_0041b770.cpp:19: RH_ScopedInstall(Copy41b770, 0x0041b770);
+=== DeltaTimeOutGet (4)
+  mashedmod/src/mashed_re/Match/MatchS04_0041da90.cpp:8: #define FUN_0041da90 DeltaTimeOutGet
+  mashedmod/src/mashed_re/Match/MatchS04_0041da90.cpp:13: RH_ScopedInstall(DeltaTimeOutGet, 0x0041da90);
+  mashedmod/src/mashed_re/Race/SubStateCallees.h:22: extern "" __declspec(dllexport) void          __cdecl    DeltaTimeOutGet(std::uint32_t* param_1);
+  mashedmod/src/mashed_re/Race/SubStateMachine.cpp:245: DeltaTimeOutGet(reinterpret_cast<std::uint32_t*>(&t));
+=== FUN_0041b770 (3)
+  mashedmod/src/mashed_re/Match/MatchS04_0041b770.cpp:12: #define FUN_0041b770 Copy41b770
+  re/match/s04/0041b770.c:46: MATCH_STATIC void MATCH_ECX FUN_0041b770(Emit0041b770 *e)
+  re/match/s04/0041b770.c:64: FUN_0041b770(&DAT_0063cab8[i]);
+=== FUN_0041bc50 (5)
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:11: #define FUN_0041bc50 HudRec29DispatchBody
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:21: extern "" __declspec(naked) void __cdecl FUN_0041bc50()
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:30: RH_ScopedInstall(FUN_0041bc50, 0x0041bc50);
+  re/match/s04/0041bc50.c:42: static void FUN_0041bc50(Rec0041bc50 *r)
+  re/match/s04/0041bc50.c:108: FUN_0041bc50(&DAT_0063cab8[i]);
+=== FUN_0041c010 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041b770.cpp:13: #define FUN_0041c010 HudConstTableInitAndSweep
+  re/match/s04/0041b770.c:52: void FUN_0041c010(void)
+=== FUN_0041c0c0 (6)
+  mashedmod/src/mashed_re/Match/MatchS02_0040dfc0.cpp:12: #define FUN_0041c0c0 MatchS02_0040dfc0_Call0041c0c0
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:12: #define FUN_0041c0c0 HudDispatchSlot2
+  re/match/s02/0040dfc0.c:37: void FUN_0041c0c0(void);
+  re/match/s02/0040dfc0.c:109: FUN_0041c0c0();
+  re/match/s02/0040dfc0.c:136: FUN_0041c0c0();
+  re/match/s04/0041bc50.c:104: void FUN_0041c0c0(void)
+=== FUN_0041c2d0 (7)
+  mashedmod/src/mashed_re/HUD/HudDispatch.cpp:228: extern "" std::uint32_t __cdecl FUN_0041c2d0();
+  mashedmod/src/mashed_re/HUD/HudDispatch.cpp:243: call FUN_0041c2d0
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:12: #define FUN_0041c2d0 HudDispatchDraw4Body
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:22: extern "" __declspec(naked) unsigned int __cdecl FUN_0041c2d0()
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:31: RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);
+  re/match/s04/0041c2d0.c:35: static void FUN_0041c2d0(MatchObj0041c2d0 **o)
+  re/match/s04/0041c2d0.c:46: FUN_0041c2d0(DAT_0063cda4);
+=== FUN_0041c300 (6)
+  mashedmod/src/mashed_re/Match/MatchS02_0040dfc0.cpp:13: #define FUN_0041c300 MatchS02_0040dfc0_Call0041c300
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:13: #define FUN_0041c300 HudDispatchMode5
+  re/match/s02/0040dfc0.c:38: void FUN_0041c300(void);
+  re/match/s02/0040dfc0.c:77: FUN_0041c300();
+  re/match/s02/0040dfc0.c:119: FUN_0041c300();
+  re/match/s04/0041c2d0.c:43: void FUN_0041c300(void)
+=== FUN_0041c320 (3)
+  mashedmod/src/mashed_re/Match/MatchS04_0041c320.cpp:12: #define FUN_0041c320 ParticleEmitterCtorC_impl
+  re/match/s04/0041c320.c:47: static void FUN_0041c320(Clump_0041c320 *c, Emit0041c320 *e)
+  re/match/s04/0041c320.c:73: FUN_0041c320(i == 0 ? d : FUN_004e6ab0(d), e);
+=== FUN_0041c9a0 (2)
+  re/match/s04/0041c9a0.c:46: static void FUN_0041c9a0(Rec0041c9a0 *r)
+  re/match/s04/0041c9a0.c:88: FUN_0041c9a0(&DAT_0063ce20[i]);
+=== FUN_0041cb10 (1)
+  re/match/s04/0041c320.c:63: void FUN_0041cb10(void)
+=== FUN_0041cbc0 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041cbc0.cpp:8: #define FUN_0041cbc0 FloatTableInit
+  re/match/s04/0041cbc0.c:33: void FUN_0041cbc0(void)
+=== FUN_0041ccc0 (6)
+  mashedmod/src/mashed_re/Match/MatchS02_0040dfc0.cpp:14: #define FUN_0041ccc0 MatchS02_0040dfc0_Call0041ccc0
+  mashedmod/src/mashed_re/Match/MatchS04_0041c9a0.cpp:11: #define FUN_0041ccc0 HudSlotLoopCcc0
+  re/match/s02/0040dfc0.c:39: void FUN_0041ccc0(void);
+  re/match/s02/0040dfc0.c:68: FUN_0041ccc0();
+  re/match/s02/0040dfc0.c:96: FUN_0041ccc0();
+  re/match/s04/0041c9a0.c:83: void FUN_0041ccc0(void)
+=== FUN_0041cd20 (3)
+  mashedmod/src/mashed_re/Match/MatchS04_0041cd20.cpp:12: #define FUN_0041cd20 ParticleEmitterCtorD_impl
+  re/match/s04/0041cd20.c:42: static void FUN_0041cd20(Clump_0041cd20 *c, Emit0041cd20 *e)
+  re/match/s04/0041cd20.c:71: FUN_0041cd20(FUN_0042a5d0(s_teameppanel_dff_005cd208, 0, 0), e);
+=== FUN_0041d6e0 (1)
+  re/match/s04/0041cd20.c:64: void FUN_0041d6e0(void)
+=== FUN_0041d820 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041d820.cpp:8: #define FUN_0041d820 TimerSlotClear
+  re/match/s04/0041d820.c:30: void FUN_0041d820(void)
+=== FUN_0041d910 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041d910.cpp:8: #define FUN_0041d910 Clear63d584Pair
+  re/match/s04/0041d910.c:31: void FUN_0041d910(void)
+=== FUN_0041da90 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041da90.cpp:8: #define FUN_0041da90 DeltaTimeOutGet
+  re/match/s04/0041da90.c:30: void FUN_0041da90(undefined4 *param_1)
+=== FUN_0041e080 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041e080.cpp:8: #define FUN_0041e080 ScoreboardStateZeroInit
+  re/match/s04/0041e080.c:55: void FUN_0041e080(void)
+=== FUN_0041e130 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041e130.cpp:8: #define FUN_0041e130 TimerTrackSetter
+  re/match/s04/0041e130.c:30: void FUN_0041e130(undefined4 param_1)
+=== FUN_0041eda0 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041eda0.cpp:8: #define FUN_0041eda0 TimerBitFieldSet
+  re/match/s04/0041eda0.c:46: void FUN_0041eda0(int i, int on)
+=== FUN_0041f000 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041f000.cpp:8: #define FUN_0041f000 TimerSlotDataCopy
+  re/match/s04/0041f000.c:46: void FUN_0041f000(int i, S24_0041f000 *out)
+=== FUN_0041f090 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041f090.cpp:8: #define FUN_0041f090 GetPlayerStateBits
+  re/match/s04/0041f090.c:46: void FUN_0041f090(int i, uint *a, uint *b)
+=== FUN_0041f1c0 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041f1c0.cpp:8: #define FUN_0041f1c0 GetEventFlag
+  re/match/s04/0041f1c0.c:30: undefined4 FUN_0041f1c0(int param_1,int param_2)
+=== FloatTableInit (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041cbc0.cpp:8: #define FUN_0041cbc0 FloatTableInit
+  mashedmod/src/mashed_re/Match/MatchS04_0041cbc0.cpp:13: RH_ScopedInstall(FloatTableInit, 0x0041cbc0);
+=== GetEventFlag (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041f1c0.cpp:8: #define FUN_0041f1c0 GetEventFlag
+  mashedmod/src/mashed_re/Match/MatchS04_0041f1c0.cpp:13: RH_ScopedInstall(GetEventFlag, 0x0041f1c0);
+=== GetPlayerStateBits (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041f090.cpp:8: #define FUN_0041f090 GetPlayerStateBits
+  mashedmod/src/mashed_re/Match/MatchS04_0041f090.cpp:13: RH_ScopedInstall(GetPlayerStateBits, 0x0041f090);
+=== HudConstTableInitAndSweep (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041b770.cpp:13: #define FUN_0041c010 HudConstTableInitAndSweep
+  mashedmod/src/mashed_re/Match/MatchS04_0041b770.cpp:20: RH_ScopedInstall(HudConstTableInitAndSweep, 0x0041c010);
+=== HudDispatchDraw4Body (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:12: #define FUN_0041c2d0 HudDispatchDraw4Body
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:26: call HudDispatchDraw4Body
+=== HudDispatchMode5 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:13: #define FUN_0041c300 HudDispatchMode5
+  mashedmod/src/mashed_re/Match/MatchS04_0041c2d0.cpp:32: RH_ScopedInstall(HudDispatchMode5, 0x0041c300);
+=== HudDispatchSlot2 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:12: #define FUN_0041c0c0 HudDispatchSlot2
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:31: RH_ScopedInstall(HudDispatchSlot2, 0x0041c0c0);
+=== HudRec29DispatchBody (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:11: #define FUN_0041bc50 HudRec29DispatchBody
+  mashedmod/src/mashed_re/Match/MatchS04_0041bc50.cpp:25: call HudRec29DispatchBody
+=== HudSlotLoopCcc0 (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041c9a0.cpp:11: #define FUN_0041ccc0 HudSlotLoopCcc0
+  mashedmod/src/mashed_re/Match/MatchS04_0041c9a0.cpp:16: RH_ScopedInstall(HudSlotLoopCcc0, 0x0041ccc0);
+=== ParticleEmitterCtorC (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041c320.cpp:55: extern "" __declspec(naked) void __cdecl ParticleEmitterCtorC()
+  mashedmod/src/mashed_re/Match/MatchS04_0041c320.cpp:65: RH_ScopedInstall(ParticleEmitterCtorC, 0x0041c320);
+=== ParticleEmitterCtorC_impl (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041c320.cpp:12: #define FUN_0041c320 ParticleEmitterCtorC_impl
+  mashedmod/src/mashed_re/Match/MatchS04_0041c320.cpp:60: call ParticleEmitterCtorC_impl
+=== ParticleEmitterCtorD (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041cd20.cpp:51: extern "" __declspec(naked) void __cdecl ParticleEmitterCtorD()
+  mashedmod/src/mashed_re/Match/MatchS04_0041cd20.cpp:61: RH_ScopedInstall(ParticleEmitterCtorD, 0x0041cd20);
+=== ParticleEmitterCtorD_impl (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041cd20.cpp:12: #define FUN_0041cd20 ParticleEmitterCtorD_impl
+  mashedmod/src/mashed_re/Match/MatchS04_0041cd20.cpp:56: call ParticleEmitterCtorD_impl
+=== ScoreboardStateZeroInit (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041e080.cpp:8: #define FUN_0041e080 ScoreboardStateZeroInit
+  mashedmod/src/mashed_re/Match/MatchS04_0041e080.cpp:13: RH_ScopedInstall(ScoreboardStateZeroInit, 0x0041e080);
+=== TimerBitFieldSet (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041eda0.cpp:8: #define FUN_0041eda0 TimerBitFieldSet
+  mashedmod/src/mashed_re/Match/MatchS04_0041eda0.cpp:13: RH_ScopedInstall(TimerBitFieldSet, 0x0041eda0);
+=== TimerSlotClear (4)
+  mashedmod/src/mashed_re/Match/MatchS04_0041d820.cpp:8: #define FUN_0041d820 TimerSlotClear
+  mashedmod/src/mashed_re/Match/MatchS04_0041d820.cpp:13: RH_ScopedInstall(TimerSlotClear, 0x0041d820);
+  mashedmod/src/mashed_re/exe_main.cpp:9049: extern "" void          __cdecl TimerSlotClear();
+  mashedmod/src/mashed_re/exe_main.cpp:9274: TimerSlotClear();
+=== TimerSlotDataCopy (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041f000.cpp:8: #define FUN_0041f000 TimerSlotDataCopy
+  mashedmod/src/mashed_re/Match/MatchS04_0041f000.cpp:13: RH_ScopedInstall(TimerSlotDataCopy, 0x0041f000);
+=== TimerTrackSetter (2)
+  mashedmod/src/mashed_re/Match/MatchS04_0041e130.cpp:8: #define FUN_0041e130 TimerTrackSetter
+  mashedmod/src/mashed_re/Match/MatchS04_0041e130.cpp:13: RH_ScopedInstall(TimerTrackSetter, 0x0041e130);

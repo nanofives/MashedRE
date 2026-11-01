@@ -1,5 +1,7 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-01 13:49 HB-ARCTIC-NOLIGHT-CAP (orch/HB-ARCTIC-NOLIGHT-CAP), MATCH-TOPDOWN-MAP (orch/MATCH-TOPDOWN-MAP): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261101_134552
+- 2026-11-01 13:43 MATCH-S01-RC (orch/MATCH-S01-RC), D5-INTROMOVIES-AUDIO (orch/D5-INTROMOVIES-AUDIO): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_131537
 - 2026-11-01 12:33 HB-LINT-408A50 (orch/HB-LINT-408A50): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_114821
 - 2026-10-31 20:54 D5-KNOBS-E5-REST (orch/D5-KNOBS-E5-REST): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_202514
 - 2026-10-31 19:41 D5-KNOBS-E4-MODE-REG (orch/D5-KNOBS-E4-MODE-REG): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261031_191117

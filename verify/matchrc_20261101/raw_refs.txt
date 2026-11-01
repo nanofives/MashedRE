@@ -1,0 +1,69 @@
+RVA 00401570 mashedmod\src\mashed_re\Frontend\MenuLeaves_af4.cpp:43: reinterpret_cast<void(__cdecl*)(std::uint32_t)>(0x00401570);
+RVA 00408ad0 mashedmod\src\mashed_re\Frontend\MenuLeaves_af4.cpp:56: reinterpret_cast<float(__cdecl*)(int)>(0x00408ad0);
+RVA 0041c0c0 mashedmod\src\mashed_re\Match\MatchS02_0040dfc0.cpp:34: reinterpret_cast<void (__cdecl*)()>(0x0041c0c0u)();
+RVA 0041c300 mashedmod\src\mashed_re\Match\MatchS02_0040dfc0.cpp:37: reinterpret_cast<void (__cdecl*)()>(0x0041c300u)();
+RVA 0041ccc0 mashedmod\src\mashed_re\Match\MatchS02_0040dfc0.cpp:40: reinterpret_cast<void (__cdecl*)()>(0x0041ccc0u)();
+STR Copy41b770 mashedmod\src\mashed_re\Match\MatchS04_0041b770.cpp:14: #pragma comment(linker, "/EXPORT:@Copy41b770@4=@Copy41b770@4")
+STR HudConstTableInitAndSweep mashedmod\src\mashed_re\Match\MatchS04_0041b770.cpp:15: #pragma comment(linker, "/EXPORT:HudConstTableInitAndSweep=_HudConstTableInitAndSweep")
+STR HudDispatchSlot2 mashedmod\src\mashed_re\Match\MatchS04_0041bc50.cpp:13: #pragma comment(linker, "/EXPORT:HudDispatchSlot2=_HudDispatchSlot2")
+STR FUN_0041bc50 mashedmod\src\mashed_re\Match\MatchS04_0041bc50.cpp:20: #pragma comment(linker, "/EXPORT:FUN_0041bc50=_FUN_0041bc50")
+STR HudDispatchMode5 mashedmod\src\mashed_re\Match\MatchS04_0041c2d0.cpp:14: #pragma comment(linker, "/EXPORT:HudDispatchMode5=_HudDispatchMode5")
+STR FUN_0041c2d0 mashedmod\src\mashed_re\Match\MatchS04_0041c2d0.cpp:21: #pragma comment(linker, "/EXPORT:FUN_0041c2d0=_FUN_0041c2d0")
+STR ParticleEmitterCtorC mashedmod\src\mashed_re\Match\MatchS04_0041c320.cpp:54: #pragma comment(linker, "/EXPORT:ParticleEmitterCtorC=_ParticleEmitterCtorC")
+STR HudSlotLoopCcc0 mashedmod\src\mashed_re\Match\MatchS04_0041c9a0.cpp:12: #pragma comment(linker, "/EXPORT:HudSlotLoopCcc0=_HudSlotLoopCcc0")
+STR FloatTableInit mashedmod\src\mashed_re\Match\MatchS04_0041cbc0.cpp:9: #pragma comment(linker, "/EXPORT:FloatTableInit=_FloatTableInit")
+STR ParticleEmitterCtorD mashedmod\src\mashed_re\Match\MatchS04_0041cd20.cpp:50: #pragma comment(linker, "/EXPORT:ParticleEmitterCtorD=_ParticleEmitterCtorD")
+STR TimerSlotClear mashedmod\src\mashed_re\Match\MatchS04_0041d820.cpp:9: #pragma comment(linker, "/EXPORT:TimerSlotClear=_TimerSlotClear")
+STR Clear63d584Pair mashedmod\src\mashed_re\Match\MatchS04_0041d910.cpp:9: #pragma comment(linker, "/EXPORT:Clear63d584Pair=_Clear63d584Pair")
+STR DeltaTimeOutGet mashedmod\src\mashed_re\Match\MatchS04_0041da90.cpp:9: #pragma comment(linker, "/EXPORT:DeltaTimeOutGet=_DeltaTimeOutGet")
+STR ScoreboardStateZeroInit mashedmod\src\mashed_re\Match\MatchS04_0041e080.cpp:9: #pragma comment(linker, "/EXPORT:ScoreboardStateZeroInit=_ScoreboardStateZeroInit")
+STR TimerTrackSetter mashedmod\src\mashed_re\Match\MatchS04_0041e130.cpp:9: #pragma comment(linker, "/EXPORT:TimerTrackSetter=_TimerTrackSetter")
+STR TimerBitFieldSet mashedmod\src\mashed_re\Match\MatchS04_0041eda0.cpp:9: #pragma comment(linker, "/EXPORT:TimerBitFieldSet=_TimerBitFieldSet")
+STR TimerSlotDataCopy mashedmod\src\mashed_re\Match\MatchS04_0041f000.cpp:9: #pragma comment(linker, "/EXPORT:TimerSlotDataCopy=_TimerSlotDataCopy")
+STR GetPlayerStateBits mashedmod\src\mashed_re\Match\MatchS04_0041f090.cpp:9: #pragma comment(linker, "/EXPORT:GetPlayerStateBits=_GetPlayerStateBits")
+STR GetEventFlag mashedmod\src\mashed_re\Match\MatchS04_0041f1c0.cpp:9: #pragma comment(linker, "/EXPORT:GetEventFlag=_GetEventFlag")
+STR SaveWrite mashedmod\src\mashed_re\Race\GameFlow.cpp:608: sayf("G-BYTES  SaveWrite vs fwrite: %u of %u matching, sizes %u / %u (want %u)\n",
+STR SaveLoad mashedmod\src\mashed_re\Race\GameFlow.cpp:633: sayf("G-LIVE   GameSave_LastReadBytes=%u (want %u) -> load %s through SaveLoad\n",
+STR FUN_00414180 mashedmod\src\mashed_re\Race\SubStateCallees.cpp:534: "FUN_00414180 stand-in, measurement only\n", n);
+STR FUN_0041e080 mashedmod\src\mashed_re\Race\SubStateMachine.cpp:129: ExeOnce("FUN_0040dbd0 case 2 -> FUN_0041e080");
+RVA 0041e080 mashedmod\src\mashed_re\Race\SubStateMachine.cpp:131: reinterpret_cast<void(__cdecl*)()>(0x0041e080u)();      // FUN_0041e080
+STR FUN_00414180 mashedmod\src\mashed_re\Race\SubStateMachine.cpp:387: std::fprintf(lf, "[substate] FUN_00414180 draws_before=%u pre368=%d pre370=0x%08x idx=%ld "
+STR BootDefaultParamsInit mashedmod\src\mashed_re\exe_main.cpp:9226: std::fprintf(log, "  [2] BootDefaultParamsInit OK\n");
+STR BootDefaultParamsInit mashedmod\src\mashed_re\exe_main.cpp:9228: std::fprintf(log, "  [2] BootDefaultParamsInit AV'd (target 0x00636ae8 not in wedge)\n");
+STR TimerSlotClear mashedmod\src\mashed_re\exe_main.cpp:9275: std::fprintf(log, "  [6] TimerSlotClear OK; readback "
+STR TimerSlotClear mashedmod\src\mashed_re\exe_main.cpp:9279: std::fprintf(log, "  [6] TimerSlotClear AV'd (target 0x0063d558 not in wedge)\n");
+RVA 0041ae20 re\match\s03\h1_0041ae20.c:4: /* h1 MATCH-S03: 0x0041ae20 takes the record in ECX (static callee, register arg), copies the 12-byte
+RVA 0041b520 re\match\s03\h1_0041ae20.c:5: vector DAT_005f3304[rec+0x64] into rec+0x50, zeroes rec+0x70, doubles rec+0x50. 0x0041b520 walks
+RVA 00413bc0 re\match\s03\h2_00413bc0.c:3: /* h2 0x00413bc0 (173 B). Best: 100% BYTE-IDENTICAL (--bytes, relocations masked), first try. Start (g2s) 57.6%.
+RVA 00414180 re\match\s03\h2_00414180.c:3: /* h2 0x00414180 (155 B). Best: 100% BYTE-IDENTICAL (--bytes, relocations masked). Start (g2s) 58.5%.
+RVA 00415020 re\match\s03\h2_00415020.c:3: /* h2 0x00415020 (183 B). Best: 100% BYTE-IDENTICAL (--bytes, relocations masked), first try. Start (g2s) 72.1%.
+RVA 0041b770 re\match\s04\0041b770.c:2: /* MATCH-S04 0x0041b770 (39 B): 100.0% exact (regs 100, ops 100), by hand. Raw converter: 27.3%.
+RVA 0041bc50 re\match\s04\0041bc50.c:2: /* MATCH-S04 0x0041bc50: 100% by hand (regs 100%), whole 603 B symbol byte-identical. Raw converter 84.7%:
+RVA 0041c0c0 re\match\s04\0041bc50.c:3: the record arrives in EAX (in_EAX, pilot finding 1), so FUN_0041bc50 is `static` and its real caller 0x0041c0c0
+RVA 0041c0c0 re\match\s04\0041bc50.c:6: its int is set, in the order the binary shows. This file holds 0x0041c0c0 (the caller). Note: the other
+RVA 0041bc50 re\match\s04\0041bc50.c:7: helper's 0041c0c0.c also holds 0x0041bc50 (same bytes); keep one copy in the port. Residual: none. */
+RVA 0041bc50 re\match\s04\0041bc50.c:8: /* MATCH-S04 0x0041bc50: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+RVA 0041c2d0 re\match\s04\0041c2d0.c:2: /* MATCH-S04 0x0041c2d0 (35 B), same file text as 0041c300.c: 0x0041c2d0 (35 B) + its caller 0x0041c300 (20 B): both 100.0% (regs 100, ops 100), by hand. This f
+RVA 0041c2d0 re\match\s04\0041c2d0.c:2: /* MATCH-S04 0x0041c2d0 (35 B), same file text as 0041c300.c: 0x0041c2d0 (35 B) + its caller 0x0041c300 (20 B): both 100.0% (regs 100, ops 100), by hand. This f
+RVA 0041c300 re\match\s04\0041c2d0.c:2: /* MATCH-S04 0x0041c2d0 (35 B), same file text as 0041c300.c: 0x0041c2d0 (35 B) + its caller 0x0041c300 (20 B): both 100.0% (regs 100, ops 100), by hand. This f
+RVA 0041c2d0 re\match\s04\0041c2d0.c:2: /* MATCH-S04 0x0041c2d0 (35 B), same file text as 0041c300.c: 0x0041c2d0 (35 B) + its caller 0x0041c300 (20 B): both 100.0% (regs 100, ops 100), by hand. This f
+RVA 0041c300 re\match\s04\0041c2d0.c:3: Raw: 66.7% / 84.2%. 0x0041c300 passes &DAT_0063cda4 in EAX and tail-jumps into 0x0041c2d0, which reads the
+RVA 0041c2d0 re\match\s04\0041c2d0.c:3: Raw: 66.7% / 84.2%. 0x0041c300 passes &DAT_0063cda4 in EAX and tail-jumps into 0x0041c2d0, which reads the
+RVA 0041c2d0 re\match\s04\0041c2d0.c:4: pointer from EAX (Ghidra in_EAX). Pilot finding 1: 0x0041c2d0 is `static`, defined before its caller, taking a
+RVA 0041c320 re\match\s04\0041c320.c:2: /* MATCH-S04 0x0041c320 (91 B): 100.0% exact (regs 100, ops 100), by hand. Raw converter: 51.6%.
+RVA 0041c9a0 re\match\s04\0041c9a0.c:2: /* MATCH-S04 0x0041c9a0: 100% by hand (regs 100%), whole 348 B symbol byte-identical including the switch tables
+RVA 0041ccc0 re\match\s04\0041c9a0.c:4: 1), so FUN_0041c9a0 is `static` and its real caller 0x0041ccc0 (4 records of 0x114 bytes at 0x0063ce20, flag at
+RVA 0041ccc0 re\match\s04\0041c9a0.c:7: rebases it to i - 2). This file holds 0x0041ccc0 (the caller). Note: the other helper's 0041ccc0.c has a
+RVA 0041c9a0 re\match\s04\0041c9a0.c:9: /* MATCH-S04 0x0041c9a0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+RVA 0041cbc0 re\match\s04\0041cbc0.c:2: /* MATCH-S04 h4 0x0041cbc0 (133 B): 100.0% exact (regs 100, ops 100), BYTE-IDENTICAL, by hand. Raw converter: 61.5%.
+RVA 0041cd20 re\match\s04\0041cd20.c:2: /* MATCH-S04 0x0041cd20 (139 B): 100.0% exact (regs 100, ops 100), by hand. Raw converter: 44.2%.
+RVA 0041d820 re\match\s04\0041d820.c:2: /* MATCH-S04 0x0041d820: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+RVA 0041d910 re\match\s04\0041d910.c:2: /* MATCH-S04 0x0041d910: 100% (regs 100%) by hand from the raw converter (25%). What moved it: DAT_0063d588
+RVA 0041da90 re\match\s04\0041da90.c:2: /* MATCH-S04 0x0041da90: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+RVA 0041e080 re\match\s04\0041e080.c:2: /* MATCH-S04 0x0041e080: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+RVA 0041e130 re\match\s04\0041e130.c:2: /* MATCH-S04 0x0041e130: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+RVA 0041eda0 re\match\s04\0041eda0.c:2: /* MATCH-S04 0x0041eda0: 100% (regs 100%), raw g2s 61.5%. Written by hand on a typed record: Rec *p = &DAT_0063d9e0[i] taken once (the original adds the base in
+RVA 0041f000 re\match\s04\0041f000.c:2: /* MATCH-S04 0x0041f000: 100% (regs 100%), raw g2s 33.3%. Written by hand on a typed record: Rec *p = &DAT_0063d9e0[i] taken once (the original adds the base in
+RVA 0041f090 re\match\s04\0041f090.c:2: /* MATCH-S04 0x0041f090: 100% (regs 100%), raw g2s 52.9%. Written by hand on a typed record: Rec *p = &DAT_0063d9e0[i] taken once (the original adds the base in
+RVA 0041f1c0 re\match\s04\0041f1c0.c:2: /* MATCH-S04 0x0041f1c0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+files scanned: 505
