@@ -236,12 +236,5 @@ extern "C" __declspec(dllexport) uint32_t __cdecl ReadAiCheckpointField(int para
 RH_ScopedInstall(ReadAiCheckpointField, 0x00407a00);  // c3_batch_ah s2; C2->C3 scenario-attach 2026-06-08 (int_pair, 2 distinct, sentinel 0x008a9914)
 
 // ---------------------------------------------------------------------------
-// 0x00407a20  FUN_00407a20  (0x10 bytes)  undefined4(int idx)
-// Row-base getter over the per-AI table at &DAT_008a9648 (= per-AI row base
-// 0x008a9620 + 0x28, the lap-counter column). Row stride 0xc3 dwords.
-//   return (&DAT_008a9648)[idx*0xc3];
-// Bit-faithful port of verified pool7 decomp.
-extern "C" __declspec(dllexport) uint32_t __cdecl GetAiLapCounter(int param_1) {
-    return reinterpret_cast<uint32_t*>(0x008a9648u)[param_1 * 0xc3];
-}
-RH_ScopedInstall(GetAiLapCounter, 0x00407a20);  // c3_batch_ah s2; DEFER mode-limited (lap counter @0x008a9648 stays 0 in Quick-Battle arena; needs a circuit/lap race scenario)
+// FUN_00407a20 GetAiLapCounter: MATCH-TOPDOWN-T13 moved the body to Match/MatchS01_00407a20.cpp,
+// which compiles the byte-matched source re/match/s01/00407a20.c (one body per RVA, both targets).

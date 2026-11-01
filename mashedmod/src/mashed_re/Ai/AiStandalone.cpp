@@ -115,6 +115,7 @@ extern "C" void __cdecl CarSlotStateSet(int, std::uint32_t);
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   // 0x0046c7b0 (u9747 countdown poke)
 // FUN_00417180: the one body, Ai/AiBankSwitch.cpp (same reason for global scope).
 extern "C" void __cdecl AiBankSwitch(int);
+extern "C" unsigned int GetAiLapCounter(int);   // Match/MatchS01_00407a20.cpp (0x00407a20 matched)
 // FUN_00417640: the one body, Ai/AiPostStepBrake.cpp.
 extern "C" void __cdecl AiPostStepPowerupBrake(int, std::uint8_t*);
 
@@ -1687,7 +1688,7 @@ void AiPreTickRubberBand()
     for (int v = 0; v < 4; ++v) {
         const float spd = GearConstGet();                        // FUN_0046dd80
         GearConstSet(v, spd);                                    // FUN_0046dd90 (round-trip)
-        const int   a20 = I32(0x008a9648u + static_cast<std::uintptr_t>(v) * 0x30cu); // FUN_00407a20 lap counter
+        const int   a20 = static_cast<int>(GetAiLapCounter(v));     // FUN_00407a20 lap counter (matched body, MATCH-TOPDOWN-T13)
         const float a20f = static_cast<float>(a20);
         const float ra = F32(0x008a96ecu + static_cast<std::uintptr_t>(v) * 0x30cu);  // FUN_00408ad0
         fd0 = I32(kGameModeFd0);

@@ -86,3 +86,4 @@ RwpSolverLeaves1X87
 # MATCH-S01 2026-10-31: port bodies compiled from byte-matched x87 game code (re/match/s01/)
 MatchS01
 MatchS02_00411350
+MatchPilot_0046c5f0

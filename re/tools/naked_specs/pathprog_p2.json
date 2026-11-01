@@ -6,7 +6,6 @@
     {"name": "PP_407b00", "start": "0x00407b00", "size": 99},
     {"name": "PP_407b70", "start": "0x00407b70", "size": 98},
     {"name": "PP_407be0", "start": "0x00407be0", "size": 225},
-    {"name": "PP_407cd0", "start": "0x00407cd0", "size": 157},
     {"name": "PP_407d70", "start": "0x00407d70", "size": 60},
     {"name": "PP_407db0", "start": "0x00407db0", "size": 111},
     {"name": "PP_426cb0", "start": "0x00426cb0", "size": 13},
