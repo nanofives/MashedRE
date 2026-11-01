@@ -126,7 +126,7 @@ void __cdecl PK_GlowSize(const float* p) {              // FUN_004769d0
     if (On()) mashed_re::Rfx::SetSize(p);
 }
 void __cdecl PK_GlowRotate(std::uint32_t bits) {        // FUN_00476a30: the float argument, as its bits
-    if (On()) mashed_re::Rfx::Stage().rot = bits;
+    if (On()) mashed_re::Rfx::SetRotateBits(bits);
 }
 void __cdecl PK_GlowSubmit(void* batch) {               // FUN_00476d00
     if (On() && BatchOk(batch)) mashed_re::Rfx::Submit(Glow());
@@ -158,10 +158,13 @@ void PickupGlow_DbgPost() {
     DumpPool("POST");
     const Rfx::PTank& t = Glow().tank;
     for (int k = 0; k < t.count; ++k) {
-        const std::size_t i = static_cast<std::size_t>(k);
+        const std::uint32_t* P = Rfx::TankElem(t, t.pos, k);
+        const std::uint32_t* S = Rfx::TankElem(t, t.size, k);
+        const std::uint32_t* C = Rfx::TankElem(t, t.col, k);
+        const std::uint32_t* R = Rfx::TankElem(t, t.rot, k);
+        if (!P || !S || !C || !R) break;
         std::fprintf(s_dbg, "P\t%ld\t%d\t%08x\t%08x\t%08x\t%08x\t%08x\t%08x\t%08x\n", s_dbgTick, k,
-                     t.pos[i * 3], t.pos[i * 3 + 1], t.pos[i * 3 + 2], t.size[i * 2], t.size[i * 2 + 1], t.col[i],
-                     t.rot[i]);
+                     P[0], P[1], P[2], S[0], S[1], C[0], R[0]);
     }
     std::fprintf(s_dbg, "N\t%ld\t%d\n", s_dbgTick, t.count);
     if ((s_dbgTick % 600) == 0) std::fflush(s_dbg);

@@ -1218,10 +1218,10 @@ rw::Texture* PuGlowTexture() {
 void DrawPickupGlow(rw::Camera* cam) {
     Rfx::Emitter* e = static_cast<Rfx::Emitter*>(Gameplay::PickupGlow_Emitter());
     if (!e) return;
-    if (!e->tank.texture) e->tank.texture = PuGlowTexture();   // FUN_004770c0's FUN_004e8090(material, puglow)
+    if (!Rfx::Texture(*e)) Rfx::SetTexture(*e, PuGlowTexture());   // FUN_004770c0's FUN_004e8090(material, puglow)
     rw::SetRenderState(rw::ZWRITEENABLE, 0);
     rw::SetRenderState(rw::ZTESTENABLE, 1);
-    RaceFx_DrawEmitter(&e->tank, cam);
+    RaceFx_DrawEmitter(e, cam);
     rw::SetRenderState(rw::ZWRITEENABLE, 1);
     rw::SetRenderState(rw::ZTESTENABLE, 1);
 }
@@ -2297,18 +2297,19 @@ bool RaceFx_EmittersEnabled() {
 // +0xa4 / +0xa8, vertex alpha +0xac (RS 0xc). The colour dword FUN_00537b20 writes is drawn as a D3DCOLOR
 // (R = byte 0, B = byte 2): the pickup type-19 glow, dword 0xffff0000, is blue on the original's capture
 // (re/analysis/PICKUPS_LOOK_PLACEMENT_2026-09-29.md, section 1.1).
-bool RaceFx_DrawEmitter(const void* tank_v, void* rw_camera) {
-    if (!RaceFx_EmittersEnabled() || !tank_v) return false;
-    const Rfx::PTank& tank = *static_cast<const Rfx::PTank*>(tank_v);
+bool RaceFx_DrawEmitter(const void* emitter_v, void* rw_camera) {
+    if (!RaceFx_EmittersEnabled() || !emitter_v) return false;
+    const Rfx::Emitter& em = *static_cast<const Rfx::Emitter*>(emitter_v);
+    const Rfx::PTank& tank = em.tank;
     if (tank.count == 0) return false;
     rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
-    rw::Texture* tex = static_cast<rw::Texture*>(const_cast<void*>(tank.texture));
+    rw::Texture* tex = static_cast<rw::Texture*>(const_cast<void*>(Rfx::Texture(em)));
     if (!cam || !cam->getFrame() || !tex) return false;
     const rw::Matrix* L = cam->getFrame()->getLTM();
     const float r[3] = {-L->right.x, -L->right.y, -L->right.z};   // 0x005381c0..0x005381d0
     const float u[3] = {L->up.x, L->up.y, L->up.z};               // 0x005381d3..0x005381e2
     Rfx::Streams st;
-    if (!Rfx::Instance(tank, r, u, st)) {
+    if (!Rfx::Instance(tank, em.c4_set, r, u, st)) {
         static bool s_logged = false;
         if (!s_logged) {
             s_logged = true;
