@@ -26,6 +26,12 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  00426cf0  GetDat0066d6e4  C3->C3  refile: ONE body, Frontend/BatchAA_s1.cpp (both targets), exe copy deleted (D4-DC-INC-pathprog)  evidence: verify/d4dcinc_pathprog_20261101/RESULT_D4-DC-INC-pathprog.md
+2026-11-01  00426bb0  CameraPath::GetCount  C3->C3  refile: ONE body, Camera/CameraPathCount.cpp (both targets), exe copy deleted (D4-DC-INC-pathprog)  evidence: verify/d4dcinc_pathprog_20261101/RESULT_D4-DC-INC-pathprog.md
+2026-11-01  00426cc0  VehicleTable4cPtrGet  C4->C4  refile: ONE body, Vehicle/VehicleTable4c.cpp (both targets), exe copy deleted (D4-DC-INC-pathprog)  evidence: verify/d4dcinc_pathprog_20261101/RESULT_D4-DC-INC-pathprog.md
+2026-11-01  00426090  GlobalDat0066ce58Get  C3->C3  refile: ONE body, Frontend/GlobalGetters_s4.cpp (both targets), exe copy deleted (D4-DC-INC-pathprog)  evidence: verify/d4dcinc_pathprog_20261101/RESULT_D4-DC-INC-pathprog.md
+2026-11-01  00426cb0  FUN_00426cb0  C3->C3  refile: ONE body, Frontend/MenuNearLeaves_s6.cpp (both targets), exe copy deleted (D4-DC-INC-pathprog)  evidence: verify/d4dcinc_pathprog_20261101/RESULT_D4-DC-INC-pathprog.md
+2026-11-01  00426d00  FrontendArraySlotGet  C3->C3  refile: ONE body, Frontend/BatchAA_s6.cpp (both targets), exe copy deleted (D4-DC-INC-pathprog)  evidence: verify/d4dcinc_pathprog_20261101/RESULT_D4-DC-INC-pathprog.md
 2026-11-01  00407580  SubsystemARecordKey  C3->C3  refile: ONE body, Gameplay/SubsystemARecordKey.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
 2026-11-01  00407b00  FUN_00407b00  C3->C3  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
 2026-11-01  00407b70  FUN_00407b70  C3->C3  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
