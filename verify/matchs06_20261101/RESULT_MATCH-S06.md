@@ -1,10 +1,10 @@
 # RESULT MATCH-S06, 2026-11-01
 
-**Verdict: @VERDICT@.** Slice 0x00426070..0x0042ae10 (128 game functions, `verify/matchscope_20261031/slices.tsv`).
+**Verdict: GREEN.** Slice 0x00426070..0x0042ae10 (128 game functions, `verify/matchscope_20261031/slices.tsv`).
 122/128 sources are byte-identical under `re/tools/match/match.py` (XP DDK cl 13.00.9176 / c2 13.00.9178,
 `/O2 /GS /Ob1`, C, x87), and every one of the 122 has `relocheck.py` OK. 104 of them are now the port's only body
 (102 wrapper TUs `Match/MatchS06_<va8>.cpp`; 0x00426460 and 0x00429240 sit in their holder's wrapper): 85 in
-`mashed_re.exe` and the .asi, 19 in the .asi only. Gates on this build: @GATES@.
+`mashed_re.exe` and the .asi, 19 in the .asi only. Gates on this build: G-CTRL `8284be46/ba407a16/31fe043e`, B `1d5bf4f9/1d5bf4f9/1d5bf4f9` = merge_train.json refs (unchanged).
 **C4 candidates: 10 rows** (9 C3 -> C4, plus 0x00426cc0 already C4 by the frida route gaining the match route).
 The other 75 exe swaps have no exe caller reachable from `WinMain` (L-68).
 
@@ -119,7 +119,18 @@ all in new bodies). The remaining 75 exe swaps: 0 sites or no path from `WinMain
 
 ## Gates (this build)
 
-@GATETABLE@
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on exe `09d01899` (commit ab947d820, copied
+out to `D:/MashedWT/MATCH-S06_data/exe_g1`), private root `D:/MashedWT/MATCH-S06_root`, test slot +
+`mashed_lock.py run --solo --label MATCH-S06-gates` (a plain waiter sat 35 min behind merge-train priority and other
+solo windows, so it was stopped and replaced by a solo request). Every arm exit 0, self-exited.
+
+| arm | file | sha8 | ref |
+|---|---|---|---|
+| H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0, K1, K26 | step.csv | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
+
+H_DEF 199 s (13962 step lines), each B arm 12-13 s (762 lines). No gate hash moved, so no DECISION, including for the
+four swaps that move the port toward the original (none of them has an exe caller).
 
 The merge train's `-Full` pass was not run here: `mashedmod/src` is in `full_set_paths`, so the train runs it on
 enqueue.
@@ -127,7 +138,7 @@ enqueue.
 ## C4 re-classify text (apply after the merge, through re-classify; not applied here)
 
 All rows: route `match` (c4=match), toolchain ddk (cl 13.00.9176 / c2 13.00.9178), flags `/O2 /GS /Ob1`, gates
-unchanged on this branch's build (@GATESHORT@), evidence `verify/matchs06_20261101/RESULT_MATCH-S06.md`. Source
+unchanged on this branch's build (G-CTRL 8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3), evidence `verify/matchs06_20261101/RESULT_MATCH-S06.md`. Source
 blob ids (sha256/16) from `results.tsv`.
 
 | rva | name | level | exe_file (new) | notes text |
@@ -169,5 +180,10 @@ and the PathProgDot / RangeTable_ah1 references) and build4's first try (asi: `F
 8586b5b47aa06edaa04f1cb88376182ab123223059bb9887307e8e610610af72  decomp.json
 6a4028d33670bb4c3b00b6b4319924c364bf4e257799be3cce106e221eb09f9d  bodies.tsv (pre-swap body scan)
 072259da465dec074a1fa8ce9d15180475f5d3997091fe44ab90bc85a05dfb70  build4.log
-@RAWGATES@
+09d01899b049130c2fe8800d1cb41d57eb99e6c119eb78b180425c6f6b007431  exe_g1/mashed_re.exe
+4bb83fdede355edd5079bf558c5a20b5834ee0e515a936048e4522a547fb8937  gates_g1.log
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198  arms_g1/H_DEF.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  arms_g1/H_DEF.gates.csv
+31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3  arms_g1/H_DEF.ptrace.log
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  arms_g1/B_DEF_K0.step.csv, B_DEF_K1.step.csv, B_DEF_K26.step.csv
 ```
