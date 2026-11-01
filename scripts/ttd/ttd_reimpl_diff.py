@@ -133,15 +133,19 @@ def asi_outputs(in_bits, export, wait_phase=1, timeout=90.0, verbose=True):
 
     env = dict(os.environ)
     env["MASHED_MUTE"] = "1"                      # never wake the speakers on a harness run
-    env.pop("MASHED_RE_NO_AUTO_HOOK", None)       # we WANT the dinput8 proxy to load the .asi
+    # D5-SHIM-DINPUT8-SPAWNERS: the asi is Module.loaded and InjectHooks called before the first
+    # resume (re/frida/dev_asi.py), with MASHED_RE_NO_AUTO_HOOK=1 so the dinput8 proxy maps nothing.
+    sys.path.insert(0, str(ROOT / "re" / "frida"))
+    import dev_asi
 
     dev = frida.get_local_device()
-    pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+    _p, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, cwd=ORIG, device=dev,
+                                            asi_path=ASI, resume=False)
+    pid = _p.pid
     meta = {"pid": pid, "export": export}
     if verbose:
         print(f"  [asi] spawned pid={pid} (muted); waiting for the RW engine")
     try:
-        sess = dev.attach(pid)
         scr = sess.create_script(ASI_AGENT)
         scr.on("message", lambda m, d: None)
         scr.load()

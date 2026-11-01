@@ -21,6 +21,8 @@
 import os, sys, time, argparse, subprocess
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 try: import psutil
 except ImportError: psutil = None
 
@@ -5075,14 +5077,14 @@ def main():
         env["MASHED_RE_DEV"] = "1"
         env["MASHED_PHYS_C4_SELFTEST"] = "1"
         env.pop("MASHED_HOOK_ONLY", None)
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
     elif args.hooks:
         env["MASHED_RE_DEV"] = "1"
         env["MASHED_HOOK_ONLY"] = args.hooks
         env["MASHED_PHYS_C4_SELFTEST"] = "1"
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
-    else:
-        env["MASHED_RE_NO_AUTO_HOOK"] = "1"     # stock original, no installed hooks
+    # D5-SHIM-DINPUT8-SPAWNERS: MASHED_RE_NO_AUTO_HOOK=1 on every arm, so the dinput8 proxy
+    # never maps the asi. The hooks arm gets it from dev_asi below (Module.load +
+    # InjectHooks before the first resume, which honours MASHED_HOOK_ONLY).
+    env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     if os.environ.get("MASHED_NO_SELFTEST", "").strip() not in ("", "0"):
         # Control run: hooks installed LIVE but the in-process shadow A/B NOT armed. Used to
         # tell "the port crashes" from "the A/B harness crashes" (Lane 3 first run, 2026-09-10).
@@ -5095,12 +5097,17 @@ def main():
         env.pop("MASHED_PHYS_C4_SELFTEST", None)
     _keep_display_awake()
     dev = frida.get_local_device()
-    proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+    sess = None
+    if args.hooks:
+        proc, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, device=dev)
+        print(f"  [hooks] asi loaded before resume: {_asi.get('path')}")
+    else:
+        proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
     pid = proc.pid
     print(f"=== scenario_launch  pid={pid}  track={args.track} mode={args.mode} cars={args.cars} ===")
     print("  attaching ASAP...")
-    sess = None
     for _ in range(200):
+        if sess is not None: break
         try: sess = dev.attach(pid); break
         except Exception: time.sleep(0.1)
     if sess is None:
@@ -5172,8 +5179,8 @@ def main():
         # 1) wait for the menu (main loop live, phase 1)
         if wait_phase(1, 40, "menu (phase 1)") is None: raise SystemExit
         time.sleep(0.5)
-        # asi:ExportName counters could not resolve at attach time (dinput8 had not
-        # loaded mashed_re_dev.asi yet). The menu being up means it is loaded now.
+        # asi:ExportName counters: the asi is mapped before resume now (dev_asi), so the
+        # first arm already resolves; re-arming at the menu is kept and harmless.
         if "asi:" in _count_csv:
             print("  [counters/asi]", E.rearm_asi())
         # 2) write the selection globals

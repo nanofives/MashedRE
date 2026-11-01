@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 from hooks_registry import HOOKS
 from run_diff import STANDIN_KEYS, agent_source, pin_gamesave, drive_to_race, wait_race_sentinel
+import dev_asi
 
 
 def _find_original(script_root: Path) -> Path:
@@ -38,7 +39,7 @@ def _find_original(script_root: Path) -> Path:
     return candidate  # let the later check produce a clear error
 
 
-MASHED_EXE = _find_original(ROOT)
+MASHED_EXE = dev_asi.original_exe(_find_original(ROOT))
 # MASHED_VERIFY_ASI: Module.load this file instead. From a worktree the dinput8 shim auto-loads the SHARED
 # original\mashed_re_dev.asi, a different file from <worktree>/mashedmod/build/..., so the loader maps a second
 # copy and rel32 points at the first (0x004922e0, 2026-10-11). Point this at the deployed copy to verify it.
@@ -166,21 +167,20 @@ def main():
         sys.exit(f"FATAL: {_shim} missing (d3d9 windowed shim). "
                  f"Run `mashedmod\\build_d3d9_shim.bat`, then retry. "
                  f"Refusing to spawn MASHED without the shim — it would go fullscreen.")
-    print(f"spawning {MASHED_EXE} via subprocess (auto-hook ENABLED)")
-    # Registry AppCompat shim includes RUNASINVOKER → no elevation needed.
-    env = {k: v for k, v in os.environ.items() if k != 'MASHED_RE_NO_AUTO_HOOK'}
-    proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env)
-    print(f"  pid = {proc.pid}")
-
-    time.sleep(0.2)
+    print(f"spawning {MASHED_EXE} (hooks installed from boot: {ASI_PATH.name} loaded before resume)")
+    # D5-SHIM-DINPUT8-SPAWNERS: the asi used to come from the dinput8 proxy (and, from a
+    # worktree, as a SECOND copy next to the agent's Module.load, 0x004922e0 2026-10-11).
+    # dev_asi Module.loads ASI_PATH and calls InjectHooks before the first resume, with
+    # MASHED_RE_NO_AUTO_HOOK=1 so the proxy maps nothing. The agent's own Module.load of
+    # the same path then returns this one copy.
     device = frida.get_local_device()
     try:
-        session = device.attach(proc.pid)
+        proc, session, _asi = dev_asi.spawn_original(MASHED_EXE, hooks=True, env=dict(os.environ),
+                                                     device=device, asi_path=ASI_PATH)
     except Exception as e:
-        print(f"attach failed: {e}")
-        try: proc.kill()
-        except Exception: pass
+        print(f"spawn/load failed: {e}")
         return 4
+    print(f"  pid = {proc.pid}")
 
     # scenario 'race' + race_sentinel (bworld 2026-10-12): the same drive as run_diff.py, so a hook whose vectors need
     # a loaded track (0x00426dc0 reads DAT_00656ee8) is verified in a race, not AV'd at the menu. Exit 6 = no race.
@@ -246,14 +246,14 @@ def write_report(name, config, out_path):
         if post['bytes_changed']:
             pass_flags.append('first 8 bytes mutated by patcher')
         elif post['opcode_ok'] and post['rel32_ok']:
-            # Not a defect: dinput8 auto-loads the .asi at process start, so
+            # Not a defect: the .asi is loaded before the first resume (dev_asi), so
             # RH_ScopedInstall has ALREADY written the JMP before this harness
             # snapshots PRE. Module.load then finds nothing left to patch, and
             # bytes-unchanged is the expected reading. What matters is that the
             # site holds a correct JMP to the reimpl, which opcode_ok + rel32_ok
             # already assert. Flagging this FAIL made install verification look
             # broken for every hook installed the normal way (orch-iter21).
-            pass_flags.append('JMP already installed pre-load (dinput8 autoload); site verified')
+            pass_flags.append('JMP already installed pre-load (asi loaded before resume); site verified')
         else:
             fail_flags.append('bytes unchanged after Module.load and site holds no valid JMP')
     else:

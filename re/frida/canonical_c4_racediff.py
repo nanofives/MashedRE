@@ -17,6 +17,8 @@
 import json, os, shutil, subprocess, sys, time, bisect
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 # MASHED_ROOT: boot a copied install (worktree lanes; the root CONTAINS original/).
@@ -149,18 +151,16 @@ def run(mode, rvas, targets, flo, fhi):
     if canon.exists(): shutil.copy2(str(canon), str(ORIG / "videocfg.bin"))
     env = dict(os.environ); env["MASHED_RE_DEV"] = "1"
     env["MASHED_HOOK_ONLY"] = (",".join("0x%08x" % r for r in rvas) if mode == "on" else "__none__")
-    NPG, DET = 0x00000200, 0x00000008
     dev = frida.get_local_device()
     proc = sess = None
+    # D5-SHIM-DINPUT8-SPAWNERS: frida spawn with the asi Module.loaded and InjectHooks called
+    # before the first resume (dev_asi), in place of Popen + the dinput8 proxy's autoload.
     for _ in range(5):
-        proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
-            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            creationflags=NPG | DET)
-        time.sleep(0.2)
-        try: sess = dev.attach(proc.pid); break
-        except Exception:
-            try: proc.kill()
-            except Exception: pass
+        try:
+            proc, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, cwd=ORIG, device=dev)
+            break
+        except Exception as e:
+            print(f"  [{mode}] spawn/load failed: {e}"); proc = sess = None
             time.sleep(1.0)
     if sess is None: print(f"  [{mode}] attach failed"); return {}, {}
     scr = sess.create_script(CAP)

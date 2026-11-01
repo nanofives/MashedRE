@@ -6,6 +6,15 @@
 # waits for the .asi, reads the first bytes at 0x005abf80 (E9 => our inline-JMP
 # hook is live; otherwise the original mov runs), then attaches an Interceptor at
 # the ORIGINAL body offset to log *(arg0+0xc) and *(*(arg0+0xc)+0x1c).
+# RETIRED 2026-11-01 (D5-SHIM-DINPUT8-SPAWNERS). This harness received mashed_re_dev.asi only
+# through the dinput8 proxy autoload, which D5 shim removal takes out, and nothing live calls it.
+# It refuses to run. Supported paths: re/frida/run_diff_parallel.py <hook> (diff-original path1),
+# re/frida/run_verify_hook.py <hook> (path2), re/frida/scenario_launch.py --hooks (booted game).
+# A new spawner loads the asi with re/frida/dev_asi.py. Source kept for reference only.
+import sys as _retired_sys
+_retired_sys.exit("RETIRED 2026-11-01 (D5-SHIM-DINPUT8-SPAWNERS): use re/frida/run_diff_parallel.py / "
+                  "run_verify_hook.py / scenario_launch.py --hooks; see "
+                  "verify/d5dinput8spawners_20261101/RESULT_D5-SHIM-DINPUT8-SPAWNERS.md")
 import frida, sys, time
 
 EXE = r"C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe"

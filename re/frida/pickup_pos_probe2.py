@@ -25,6 +25,8 @@
 import argparse, json, math, os, shutil, subprocess, sys, time
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -288,15 +290,22 @@ def main():
     # and the GAME calls it, in context. Precedent: the ability_select_render note
     # in hooks_registry.py, which accepts exactly this evidence for the same reason.
     if args.hooks:
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
         env["MASHED_HOOK_ONLY"] = args.hooks
-    else:
-        env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    env["MASHED_RE_NO_AUTO_HOOK"] = "1"         # the asi comes from dev_asi below, never the proxy
     env["MASHED_ORIG_BBDUMP_REQ"] = str(req)   # arms the shim's draw counters + dump
 
     dev = frida.get_local_device()
     proc = sess = None
     for _ in range(5):
+        if args.hooks:
+            # D5-SHIM-DINPUT8-SPAWNERS: Module.load + InjectHooks before the first resume.
+            try:
+                proc, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, cwd=ORIG,
+                                                          device=dev, priority_class=ABOVE)
+                break
+            except Exception as e:
+                print("  spawn/load failed:", e); proc = sess = None
+                time.sleep(1.0); continue
         proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             creationflags=NPG | DET | ABOVE)

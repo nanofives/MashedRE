@@ -11,6 +11,8 @@
 import argparse, os, subprocess, sys, time, shutil
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -93,13 +95,24 @@ def boot(env_extra=None):
     env = dict(os.environ)
     env.setdefault("MASHED_WIN_POS", "primary-bl")
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    hooks_on = False
     if env_extra:
         env.update(env_extra)
-        if env_extra.get("MASHED_HOOK_ONLY"):   # installed hooks (scenario_launch.py's --hooks env)
-            env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+        hooks_on = bool(env_extra.get("MASHED_HOOK_ONLY"))   # installed hooks (scenario_launch.py's --hooks env)
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     dev = frida.get_local_device()
     proc = sess = None
     for _ in range(5):
+        if hooks_on:
+            # D5-SHIM-DINPUT8-SPAWNERS: the asi is Module.loaded and InjectHooks called before
+            # the first resume (dev_asi), not loaded by the dinput8 proxy.
+            try:
+                proc, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, cwd=ORIG,
+                                                          device=dev, priority_class=ABOVE)
+                break
+            except Exception as e:
+                print("  spawn/load failed:", e); proc = sess = None
+                time.sleep(1.0); continue
         proc = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL, creationflags=NPG | DET | ABOVE)
