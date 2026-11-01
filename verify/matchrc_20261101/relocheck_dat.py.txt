@@ -1,0 +1,25 @@
+"""relocheck.py with one addition: a plain `DAT_<va8>` global in the source counts as MGLOBAL(DAT_<va8>, 0x<va8>).
+The S03 sources declare their globals as plain externs named by address (no MGLOBAL), so stock relocheck lists them
+as unchecked. The port binds each of those names to that same address (#define DAT_<va8> ... 0x<va8>u), so this
+checks the original's operand at every such relocation against the address the port uses.
+usage: py -3.12 relocheck_dat.py <repo>/re/tools/match <src.c> [...]"""
+import pathlib, re, sys
+sys.path.insert(0, sys.argv[1])
+import relocheck
+
+class G:
+    def __init__(self, base): self.base = base
+    def findall(self, text):
+        out = list(self.base.findall(text))
+        for a in sorted(set(re.findall(r"\bDAT_([0-9a-fA-F]{8})\b", text))):
+            out.append(("DAT_" + a, "0x" + a))
+        return out
+
+relocheck.RE_G = G(relocheck.RE_G)
+for a in sys.argv[2:]:
+    for r in relocheck.check(pathlib.Path(a)):
+        addr, verdict = r[0], r[1]
+        bad, unchecked = r[2], r[3]
+        n = r[4] if len(r) > 4 else 0
+        print("%#010x\t%s\tchecked=%d\tunchecked=%d\t%s\t%s%s" % (addr, verdict, n, len(unchecked), pathlib.Path(a).name,
+              ("  bad: " + "; ".join(bad)) if bad else "", ("  unchecked: " + ",".join(unchecked)) if unchecked else ""))
