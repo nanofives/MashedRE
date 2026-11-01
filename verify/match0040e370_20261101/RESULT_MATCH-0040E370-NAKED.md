@@ -53,3 +53,36 @@ The merge train's `-Full` pass (D2 x3, 13 tracks) was not run here: `mashedmod/s
 
 hooks.csv row 0040e370: C3 -> C4, notes `c4=match` with the fields above. CHANGELOG line prepended below
 `<!-- ENTRIES -->`. No STUBS / UNCERTAINTIES / DEFERRED rows changed.
+
+## Re-merge after the red-merge (resumed after the 2026-11-01 14:23 reboot)
+
+The merge train (run 20261101_123803) stopped this branch with a conflict in `AiTargetClosest.cpp`,
+`dual_copy_allowlist.txt` and `target_p3.json`: HB-LINT-408A50 had landed on `orch/integration` and edits the same
+lines (it bound call 0x00408a50 to `PerCarRaceProgressGet` and removed `TG_408a50`). The hand merge was not on disk
+after the reboot (no MERGE_HEAD), so it was redone on `orch/integration` ca02bde58 (merge commit 6ed02dcb3):
+
+- `target_p3.json`: both bindings kept, `0x00408a50 -> PerCarRaceProgressGet` and `0x0040e370 -> IsCarSlotActive`.
+  Funcs: TG_414a70, TG_414300 and four leaves (TG_426bb0, TG_40e470, TG_4c3ac0, TG_4c3b30).
+- `AiTargetClosest_naked.inc`: regenerated from the spec with `gen_naked_asm.py` (from the main checkout, which holds
+  `original/MASHED.exe.unpatched`). Against `orch/integration` the diff is only this row's: `TG_40e370` declaration and
+  34-byte body gone, `call IsCarSlotActive` at 00414ad5.
+- `AiTargetClosest.cpp`: both `extern "C"` declarations, header comment "two bodies and four leaves".
+- `dual_copy_allowlist.txt`: both keys gone (`00408a50` by HB-LINT-408A50, `0040e370` by this row).
+- `CHANGELOG.md`: both sides' lines kept.
+
+Merged build (`set MASHED_NO_DEPLOY=1&& mashedmod\build.bat`, Build OK, .asi not deployed): exe sha256
+`8234392d9ef49e222f2d98b63ffcf1b2fab0a78ffcdff129f0a5290522d685d7`, asi
+`9e34f1f69921d55fe2caed1a886ab6291d5483967daa463315489ecfdb27ef03`. rva-lint 46 known (CROSS-TARGET 33,
+DUP-IN-TARGET 13), NEW 0. Static exe callers of `IsCarSlotActive`: 8 (unchanged), `TG_40e370` not in the map.
+`PerCarRaceProgressGet` call sites from the naked code: `_TG_414a70+0x46`, `+0x72`.
+
+Merged-build evidence (exe `8234392d`, private root `D:/MashedWT/MATCH-0040E370-NAKED_root`, test slot +
+`mashed_lock.py run --solo`, 2026-11-01 15:53):
+
+| leg | result |
+|---|---|
+| G-P3-REPLAY (PC_24, run_p3_replay.ps1 recipe) | `pairs=5490 exact=5490 ret_mismatch=0 cand_mismatch=0 cand_touched_on_ret!=1=0 orig_ret0=5391 orig_ret1=63 orig_ret2=36`, identical to before the merge. Raw `p3_replay_pc24_merged.txt` sha256 `9eb2ee48194bb6feb8635fd7fe772fcc2254bcffcc86f95addf1f2bc612baebb` |
+| gates | H_DEF `8284be46/ba407a16/31fe043e`, B_DEF_K0/K1/K26 `1d5bf4f9` x3 = merge_train.json refs. Every arm exit 0, self-exited. Raw under `arms2/`, same sha256 as the table above |
+
+**Verdict after the re-merge: GREEN, gates unchanged.** The C4 row (hooks.csv 0040e370 C3->C4, c4=match) committed in
+23703c125 stands on the merged build: one body, exe-callers=8, gates unchanged.
