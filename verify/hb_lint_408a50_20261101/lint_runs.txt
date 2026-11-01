@@ -1,0 +1,132 @@
+### archive_lint --ref e03f1bdc3 (paths read from the ref)
+[archive-lint] ref e03f1bdc3 = e03f1bdc3  paths ['mashedmod', 'scripts', 're/tools/dual_copy_allowlist.txt', 're/match']  from e03f1bdc3:scripts/lan_release/archive_paths.txt
+[1/3] include-closure (0 unresolved) PASS
+    [rva-lint] 47 finding(s): CROSS-TARGET=33, DUP-IN-TARGET=14  |  allowlisted=47 NEW=0
+    [rva-lint] OK -- no NEW duplicate bodies (47 known, tracked in re\tools\dual_copy_allowlist.txt)
+[2/3] lint_rva_bodies.py PASS
+    [asm-lint] OK -- no bare absolute asm operand in 802 source files
+[3/3] lint_inline_asm_abs.py PASS
+[archive-lint] OK -- clean git archive of e03f1bdc3
+exit=0
+
+### archive_lint --ref e03f1bdc3 --paths (publish.sh's OLD 3-path list, control)
+[archive-lint] ref e03f1bdc3 = e03f1bdc3  paths ['mashedmod', 'scripts', 're/tools/dual_copy_allowlist.txt']  from --paths
+[1/3] include-closure (84 unresolved) FAIL
+    [rva-lint] ERROR MISSING-INCLUDE Frontend/SmallLeaves_t1.cpp:102  "../../../../re/match/s03/h1_00414120.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE HUD/ScenarioLeaves_sa1.cpp:59  "../../../../re/match/s03/h2_00413bc0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE HUD/ScenarioWriters_sa2s2.cpp:223  "../../../../re/match/s03/h2_00415020.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:99  "../../../../re/match/s01/00401340.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:100  "../../../../re/match/s01/00401570.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:101  "../../../../re/match/s01/004026d0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:102  "../../../../re/match/s01/00402f50.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:103  "../../../../re/match/s01/00405890.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:104  "../../../../re/match/s01/00407a60.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:105  "../../../../re/match/s01/00409290.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS01.cpp:106  "../../../../re/match/s01/00407600.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040ad20.cpp:11  "../../../../re/match/s02/0040ad20.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040ad30.cpp:11  "../../../../re/match/s02/0040ad30.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b250.cpp:11  "../../../../re/match/s02/0040b250.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b430.cpp:11  "../../../../re/match/s02/0040b430.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b620.cpp:11  "../../../../re/match/s02/0040b620.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b6b0.cpp:11  "../../../../re/match/s02/0040b6b0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b6c0.cpp:11  "../../../../re/match/s02/0040b6c0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b6d0.cpp:11  "../../../../re/match/s02/0040b6d0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b7a0.cpp:11  "../../../../re/match/s02/0040b7a0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b7b0.cpp:11  "../../../../re/match/s02/0040b7b0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040b810.cpp:11  "../../../../re/match/s02/0040b810.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040bb70.cpp:18  "../../../../re/match/s02/0040bb70.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040bb90.cpp:18  "../../../../re/match/s02/0040bb90.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040cf40.cpp:22  "../../../../re/match/s02/0040cf40.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040d250.cpp:11  "../../../../re/match/s02/0040d250.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040dfc0.cpp:65  "../../../../re/match/s02/0040dfc0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040e340.cpp:11  "../../../../re/match/s02/0040e340.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040e370.cpp:11  "../../../../re/match/s02/0040e370.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_0040e3a0.cpp:17  "../../../../re/match/s02/0040e3a0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_00411350.cpp:21  "../../../../re/match/s02/00411350.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_004114c0.cpp:13  "../../../../re/match/s02/004114c0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS02_00411d60.cpp:12  "../../../../re/match/s02/00411d60.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041b720.cpp:16  "../../../../re/match/s04/0041b720.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041b770.cpp:17  "../../../../re/match/s04/0041b770.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041bc50.cpp:15  "../../../../re/match/s04/0041bc50.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041c2d0.cpp:16  "../../../../re/match/s04/0041c2d0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041c320.cpp:21  "../../../../re/match/s04/0041c320.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041c9a0.cpp:14  "../../../../re/match/s04/0041c9a0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041cbc0.cpp:11  "../../../../re/match/s04/0041cbc0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041cd20.cpp:20  "../../../../re/match/s04/0041cd20.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041cdb0.cpp:20  "../../../../re/match/s04/0041cdb0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041d820.cpp:11  "../../../../re/match/s04/0041d820.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041d910.cpp:11  "../../../../re/match/s04/0041d910.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041da90.cpp:11  "../../../../re/match/s04/0041da90.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041db80.cpp:13  "../../../../re/match/s04/0041db80.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e080.cpp:11  "../../../../re/match/s04/0041e080.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e130.cpp:11  "../../../../re/match/s04/0041e130.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e140.cpp:11  "../../../../re/match/s04/0041e140.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e870.cpp:11  "../../../../re/match/s04/0041e870.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e8b0.cpp:11  "../../../../re/match/s04/0041e8b0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e8c0.cpp:11  "../../../../re/match/s04/0041e8c0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e8f0.cpp:11  "../../../../re/match/s04/0041e8f0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e970.cpp:11  "../../../../re/match/s04/0041e970.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e980.cpp:11  "../../../../re/match/s04/0041e980.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e9b0.cpp:11  "../../../../re/match/s04/0041e9b0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e9d0.cpp:11  "../../../../re/match/s04/0041e9d0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041e9e0.cpp:11  "../../../../re/match/s04/0041e9e0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041ea80.cpp:11  "../../../../re/match/s04/0041ea80.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041ea90.cpp:11  "../../../../re/match/s04/0041ea90.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041eda0.cpp:11  "../../../../re/match/s04/0041eda0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041ede0.cpp:11  "../../../../re/match/s04/0041ede0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041ee50.cpp:11  "../../../../re/match/s04/0041ee50.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041eeb0.cpp:11  "../../../../re/match/s04/0041eeb0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041ef60.cpp:11  "../../../../re/match/s04/0041ef60.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041ef80.cpp:11  "../../../../re/match/s04/0041ef80.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041efc0.cpp:11  "../../../../re/match/s04/0041efc0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041efe0.cpp:11  "../../../../re/match/s04/0041efe0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f000.cpp:11  "../../../../re/match/s04/0041f000.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f030.cpp:11  "../../../../re/match/s04/0041f030.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f090.cpp:11  "../../../../re/match/s04/0041f090.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f0d0.cpp:11  "../../../../re/match/s04/0041f0d0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f100.cpp:11  "../../../../re/match/s04/0041f100.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f1c0.cpp:11  "../../../../re/match/s04/0041f1c0.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f260.cpp:11  "../../../../re/match/s04/0041f260.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f300.cpp:11  "../../../../re/match/s04/0041f300.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Match/MatchS04_0041f320.cpp:11  "../../../../re/match/s04/0041f320.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Race/SubStateCallees.cpp:168  "../../../../re/match/s03/h1_0041ae20.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Race/SubStateMachine.cpp:365  "../../../../re/match/s03/h2_00414180.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Render/ParticleEmitterCtors.cpp:61  "../../../../re/match/s03/h1_0041ad60.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Save/GameSave.cpp:254  "../../../../re/match/s01/00404e50.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Save/GameSaveBuffer.cpp:168  "../../../../re/match/s01/00404e80.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Vehicle/CarMaterialTables.cpp:105  "../../../../re/match/s01/00404e00.c" does not resolve
+    [rva-lint] ERROR MISSING-INCLUDE Vehicle/VehicleState.cpp:214  "../../../../re/match/s03/h1_00417730.c" does not resolve
+    [rva-lint] FAILED: 84 include(s) the scanner could not follow, so their bodies are invisible and the duplicate check is unsound.
+    [rva-lint] Build from a tree that has them (scripts/lan_release/archive_paths.txt lists what a clean `git archive` build needs).
+[2/3] lint_rva_bodies.py FAIL
+    [asm-lint] OK -- no bare absolute asm operand in 802 source files
+[3/3] lint_inline_asm_abs.py PASS
+[archive-lint] FAILED (2 step(s)) -- clean git archive of e03f1bdc3
+exit=1
+
+### archive_lint --ref 0e3d71a75 --paths (old list, reproduces publish failure)
+[archive-lint] ref 0e3d71a75 = 0e3d71a75  paths ['mashedmod', 'scripts', 're/tools/dual_copy_allowlist.txt']  from --paths
+[1/3] include-closure (84 unresolved) FAIL
+    [rva-lint] 47 finding(s): CROSS-TARGET=33, DUP-IN-TARGET=14  |  allowlisted=46 NEW=1
+    [rva-lint] ERROR DUP-IN-TARGET 0x00408a50  [exe] two bodies: Ai/AiLeafTargets.cpp:261 (AL_408a50), Ai/AiTargetClosest.cpp:120 (TG_408a50)
+    
+    [rva-lint] FAILED: 1 NEW duplicate-body finding(s).
+    [rva-lint] One RVA must have ONE body per target. Either share a single TU between the two source lists, or -- if the divergence is deliberate and judged against the original -- add the key above to
+    [rva-lint]   re\tools\dual_copy_allowlist.txt
+    [rva-lint] with a citation. Seed a fresh list with --seed.
+[2/3] lint_rva_bodies.py FAIL
+    [asm-lint] OK -- no bare absolute asm operand in 802 source files
+[3/3] lint_inline_asm_abs.py PASS
+[archive-lint] FAILED (2 step(s)) -- clean git archive of 0e3d71a75
+exit=1
+
+### worktree lint_rva_bodies.py
+[rva-lint] 47 finding(s): CROSS-TARGET=33, DUP-IN-TARGET=14  |  allowlisted=47 NEW=0
+[rva-lint] OK -- no NEW duplicate bodies (47 known, tracked in re\tools\dual_copy_allowlist.txt)
+exit=0
+
+### test_rva_body_scan.py
+OK -- 9/9
+
+### publish.sh path read at the ref
+mashedmod scripts re/tools/dual_copy_allowlist.txt re/match

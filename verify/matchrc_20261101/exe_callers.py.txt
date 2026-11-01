@@ -1,0 +1,127 @@
+"""Static exe-caller scan: for each name, list references in code that mashed_re.exe compiles.
+
+Walks every TU in mashedmod/exe_sources.rsp and its quoted #includes (recursively), strips comments and string
+literals, evaluates #if/#ifdef/#ifndef/#else/#endif with MASHED_STANDALONE defined plus the TU's own simple
+#defines, and prints each active-code hit of each name as file:line: text. Unknown #if expressions are taken as
+active and the hit is tagged [cond?].
+usage: exe_callers.py <repo_root> name1 name2 ...
+"""
+import os, re, sys
+
+root = sys.argv[1]
+names = sys.argv[2:]
+src = os.path.join(root, 'mashedmod', 'src', 'mashed_re')
+rsp = os.path.join(root, 'mashedmod', 'exe_sources.rsp')
+tus = [l.strip().strip('"') for l in open(rsp) if l.strip()]
+
+def strip(text):
+    out, i, n = [], 0, len(text)
+    while i < n:
+        c = text[i]
+        if text.startswith('//', i):
+            j = text.find('\n', i); j = n if j < 0 else j
+            i = j
+        elif text.startswith('/*', i):
+            j = text.find('*/', i + 2); j = n if j < 0 else j + 2
+            out.append('\n' * text.count('\n', i, j)); i = j
+        elif c == '"' or c == "'":
+            j = i + 1
+            while j < n and text[j] != c:
+                if text[j] == '\\': j += 1
+                if j < n and text[j] == '\n': break
+                j += 1
+            out.append(c + c); i = j + 1
+        else:
+            out.append(c); i += 1
+    return ''.join(out)
+
+name_re = re.compile(r'\b(' + '|'.join(map(re.escape, names)) + r')\b')
+hits = {nm: [] for nm in names}
+seen_files = set()
+
+def ev(expr, defs):
+    e = expr.strip()
+    e2 = re.sub(r'defined\s*\(\s*(\w+)\s*\)', lambda m: '1' if m.group(1) in defs else '0', e)
+    e2 = re.sub(r'defined\s+(\w+)', lambda m: '1' if m.group(1) in defs else '0', e2)
+    e2 = e2.replace('&&', ' and ').replace('||', ' or ')
+    e2 = re.sub(r'!(?!=)', ' not ', e2)
+    def rep(m):
+        w = m.group(0)
+        if w in ('and', 'or', 'not'): return w
+        if w in defs: return str(defs[w]) if defs[w] not in (None, '') else '1'
+        return '0'
+    e2 = re.sub(r'[A-Za-z_]\w*', rep, e2)
+    try:
+        return bool(eval(e2)), True
+    except Exception:
+        return True, False
+
+def walk(path, defs, tu, depth=0):
+    key = (os.path.normcase(os.path.abspath(path)), tu)
+    if key in seen_files or depth > 20 or not os.path.exists(path): return
+    seen_files.add(key)
+    raw = open(path, encoding='utf-8', errors='replace').read()
+    text = strip(raw)
+    lines = text.split('\n')
+    stack = []  # (active, taken, known)
+    def active():
+        return all(s[0] for s in stack)
+    def known():
+        return all(s[2] for s in stack)
+    for ln, line in enumerate(lines, 1):
+        s = line.strip()
+        m = re.match(r'#\s*(\w+)\s*(.*)', s)
+        if m:
+            d, rest = m.group(1), m.group(2)
+            if d in ('if', 'ifdef', 'ifndef'):
+                if d == 'ifdef': v, k = rest.split()[0] in defs, True
+                elif d == 'ifndef': v, k = rest.split()[0] not in defs, True
+                else: v, k = ev(rest, defs)
+                stack.append([v, v, k]); continue
+            if d == 'elif':
+                if stack:
+                    if stack[-1][1]: stack[-1][0] = False
+                    else:
+                        v, k = ev(rest, defs); stack[-1][0] = v; stack[-1][1] = v; stack[-1][2] = k
+                continue
+            if d == 'else':
+                if stack: stack[-1][0] = not stack[-1][1]; stack[-1][1] = True
+                continue
+            if d == 'endif':
+                if stack: stack.pop()
+                continue
+            if not active(): continue
+            if d == 'define':
+                mm = re.match(r'(\w+)(?:\s+(.*))?$', rest)
+                if mm and '(' not in mm.group(1): defs[mm.group(1)] = (mm.group(2) or '').strip()
+                if name_re.search(rest):
+                    for nm in name_re.findall(rest):
+                        hits[nm].append((path, ln, '#define ' + rest.strip(), tu, known()))
+                continue
+            if d == 'undef':
+                defs.pop(rest.strip(), None); continue
+            if d == 'include':
+                mm = re.match(r'"([^"]+)"', raw.split('\n')[ln - 1].strip()[len('#include'):].strip()) if False else None
+                mm = re.search(r'#\s*include\s*"([^"]+)"', raw.split('\n')[ln - 1])
+                if mm:
+                    walk(os.path.join(os.path.dirname(path), mm.group(1)), defs, tu, depth + 1)
+                continue
+            if d == 'pragma':
+                continue
+            continue
+        if not active(): continue
+        for nm in set(name_re.findall(line)):
+            hits[nm].append((path, ln, s, tu, known()))
+
+for tu in tus:
+    p = os.path.join(src, tu)
+    walk(p, {'MASHED_STANDALONE': '1', '_WIN32': '1', '_MSC_VER': '1944', '__cplusplus': '1'}, tu)
+
+rel = lambda p: os.path.relpath(p, root).replace('\\', '/')
+for nm in names:
+    uniq = {}
+    for (p, ln, s, tu, k) in hits[nm]:
+        uniq.setdefault((rel(p), ln), (s, k))
+    print('=== %s (%d)' % (nm, len(uniq)))
+    for (p, ln), (s, k) in sorted(uniq.items()):
+        print('  %s:%d: %s%s' % (p, ln, s[:150], '' if k else '  [cond?]'))

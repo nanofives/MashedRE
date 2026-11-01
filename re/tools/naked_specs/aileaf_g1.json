@@ -7,7 +7,6 @@
     {"name": "AL_443300", "start": "0x00443300", "size": 307},
     {"name": "AL_4233e0", "start": "0x004233e0", "size": 157},
     {"name": "AL_408af0", "start": "0x00408af0", "size": 16},
-    {"name": "AL_408a50", "start": "0x00408a50", "size": 17},
     {"name": "AL_426bb0", "start": "0x00426bb0", "size": 6},
     {"name": "AL_40e470", "start": "0x0040e470", "size": 15},
     {"name": "AL_4c39b0", "start": "0x004c39b0", "size": 271},
@@ -15,7 +14,7 @@
   ],
   "calls": {
     "0x00443440": "AL_443440", "0x00443300": "AL_443300", "0x004233e0": "AL_4233e0",
-    "0x00408af0": "AL_408af0", "0x00408a50": "AL_408a50", "0x00426bb0": "AL_426bb0",
+    "0x00408af0": "AL_408af0", "0x00408a50": "PerCarRaceProgressGet", "0x00426bb0": "AL_426bb0",
     "0x0040e470": "AL_40e470", "0x004c39b0": "AL_4c39b0", "0x004c3ac0": "AL_4c3ac0",
     "0x0046d4a0": "AL_VehPtr", "0x0046d6d0": "AL_Speed", "0x0046d510": "AL_Fwd",
     "0x0046c7b0": "AL_Alive", "0x0046cbb0": "AL_State", "0x0046cc10": "AL_FloatAsInt",

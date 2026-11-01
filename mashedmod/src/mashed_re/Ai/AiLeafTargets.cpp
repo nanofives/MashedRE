@@ -5,9 +5,11 @@
 // Generated from the anchored bytes by re/tools/gen_naked_asm.py (spec re/tools/naked_specs/aileaf_g1.json
 // -> AiLeafTargets_naked.inc). Also verbatim in that file, private to this TU (AL_ prefix) so the replay
 // can serve every host input: FUN_00443440 (spline curvature), FUN_00443300, FUN_004233e0, FUN_00408af0,
-// FUN_00408a50, FUN_00426bb0, FUN_0040e470, FUN_004c39b0, FUN_004c3ac0 (RW LUT base patched).
+// FUN_00426bb0, FUN_0040e470, FUN_004c39b0, FUN_004c3ac0 (RW LUT base patched).
 //
 // Host bindings (cdecl, callee-saved registers preserved by the compiler):
+//   PerCarRaceProgressGet  FUN_00408a50 -> the one port body (Match/MatchS01.cpp, C4 by byte match,
+//                 re/match/s01/00407a60.c). HB-LINT-408A50 dropped the verbatim AL_408a50 copy.
 //   AL_VehPtr     FUN_0046d4a0 -> PtrCompute881ec8 (exe-rebound record array)
 //   AL_Speed      FUN_0046d6d0 -> record +0x9e4
 //   AL_Fwd        FUN_0046d510 -> the record's +0x928 matrix `at` row (does NOT store record +0x9d4,
@@ -44,6 +46,7 @@
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);            // 0x0046d4a0
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);                         // 0x0046c7b0
 extern "C" int __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::uint32_t* a, std::uint32_t* b); // 0x0046cbb0
+extern "C" float __cdecl PerCarRaceProgressGet(int i);                                              // 0x00408a50
 
 // ---- exe-safe .rdata / .data copies (values read from the anchored image) ------------------------
 extern "C" {

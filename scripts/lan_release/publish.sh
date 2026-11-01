@@ -41,9 +41,15 @@ if [ "$NO_BUILD" = 0 ]; then
     echo "[+] Clean build of $REF $sha: $subject"
     rm -rf "$BUILD"
     mkdir -p "$BUILD"
-    # build.bat runs ../scripts/lint_*.py (they import helpers beside them, e.g. rva_body_scan.py) and reads
-    # re/tools/dual_copy_allowlist.txt besides mashedmod/. scripts/ is 2.8 MB, so it goes whole.
-    git archive "$REF" mashedmod scripts re/tools/dual_copy_allowlist.txt | tar -x -C "$BUILD"
+    # What the build reads outside mashedmod/ (../scripts/lint_*.py, the dual-copy allowlist, the re/match/
+    # sources the C4-by-match TUs #include) is listed in scripts/lan_release/archive_paths.txt, read AT THE REF.
+    # The merge train runs scripts/lan_release/archive_lint.py on the same list (HB-LINT-408A50: the
+    # hard-coded list here had no re/match/, so the lint lost a body the train's full worktree still saw).
+    paths="$(git show "$REF:scripts/lan_release/archive_paths.txt" 2>/dev/null | sed 's/#.*//' | tr -d '\r' | xargs || true)"
+    [ -n "$paths" ] || paths="mashedmod scripts re/tools/dual_copy_allowlist.txt re/match"
+    echo "[+] Archive paths: $paths"
+    # shellcheck disable=SC2086
+    git archive "$REF" $paths | tar -x -C "$BUILD"
     export MASHED_NO_DEPLOY=1
     cmd //c "$(cygpath -w "$BUILD/mashedmod/build.bat")"
 fi
