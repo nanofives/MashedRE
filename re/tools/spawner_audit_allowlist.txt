@@ -1,0 +1,38 @@
+# Live re/ and scripts/ MASHED.exe spawners that lack MASHED_RE_NO_AUTO_HOOK / dev_asi.
+# One repo-relative path per line, forward slashes, reason after '#'.
+# Reviewed 2026-11-01 (D5-SHIM-STEP3-VERIFYSPAWNERS) against orch/D5-SHIM-DINPUT8-SPAWNERS.
+# Tags: stock-only = never wants the asi, harmless once dinput8.dll is gone.
+#       self-loads-asi = Module.load of mashed_re_dev.asi in the file, independent of the proxy.
+#       not-an-exe-spawn = Popen/Start-Process of something other than MASHED.exe.
+#       NEEDS-DEV-ASI = hooks-ON behaviour came from the proxy autoload, breaks silently at
+#                       proxy removal. Allowlisted only so the guard is green: migrate to re/frida/dev_asi.py
+#                       or retire, then delete the line.
+
+# stock-only
+re/frida/probe_prompt_calls.py            # stock-only: Frida probe of original, no asi
+re/frida/run_trace_boot_crash.py          # stock-only: boot-crash tracer, plain MASHED.exe
+re/tools/focus_pause_check.py             # stock-only: no_focus_pause measurement on the original
+re/frida/patch_skip_powerups.py           # stock-only: retired patch experiment (skip_powerups is RETIRED)
+scripts/fix_boot_elevated.ps1             # stock-only: boot AV fixer, IFEO/Layers values only
+scripts/mashed_shot.ps1                   # stock-only: screenshot of a plain launch
+scripts/observe_runtime.ps1               # stock-only: plain-launch observation, NO Frida
+scripts/ttd/record_menu.ps1               # stock-only: Start-Process of the TTD recorder, not of MASHED.exe directly
+
+# self-loads-asi
+re/frida/bisect_save_hooks.py             # self-loads-asi: Module.load + InjectHooks (line 46-49)
+re/frida/launch_with_crash_catch.py       # self-loads-asi: Module.load (line 63)
+re/frida/test_bypass5.py                  # self-loads-asi: Module.load + InjectHooks (line 49-52)
+re/frida/mass_canonical_observe_wave2.py  # self-loads-asi: loads the asi after spawn (line 84-88)
+
+# not-an-exe-spawn
+re/frida/run_diff_parallel.py             # not-an-exe-spawn: Popen of run_diff.py, which is covered
+re/tools/orig_rampwatch.py                # not-an-exe-spawn: Popen of scenario_launch.py, which is covered
+scripts/diag.py                           # not-an-exe-spawn: spawns mashed_re.exe (standalone), no asi
+re/frida/catch_standalone_phys_crash.py   # not-an-exe-spawn: spawns mashed_re.exe (standalone), no asi
+
+# NEEDS-DEV-ASI (decision: migrate or retire)
+re/frida/auto_count_at_menu.py            # NEEDS-DEV-ASI: Popen MASHED.exe then Interceptor counts of registry hooks
+re/frida/catch_crash_eip.py               # NEEDS-DEV-ASI: crash EIP catcher on a game that relied on autoload
+re/frida/canon_observe_refused.py         # NEEDS-DEV-ASI: observes hooks installed by autoload
+re/frida/probe_005ab100.py                # NEEDS-DEV-ASI: verifies the hook at 0x005ab100 is installed
+re/frida/mass_canonical_observe_wave3.py  # NEEDS-DEV-ASI: wave 3 hook observation, no asi load in file
