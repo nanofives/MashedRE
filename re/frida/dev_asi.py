@@ -233,3 +233,42 @@ def spawn_original(mashed_exe, hooks=True, env=None, argv=None, cwd=None,
             pass
         session = None
     return proc, session, info
+
+
+def _boot_cli(argv):
+    """`py -3.12 re/frida/dev_asi.py boot [--seconds N] [--no-hooks] [--exe PATH]`
+
+    For the .ps1 boot bisects (scripts/bisect_asi_boot.ps1, bisect_hook_index.ps1):
+    spawn the original with the asi loaded before resume, detach Frida (the inline
+    JMPs stay), wait N seconds, then print one line and exit:
+        BOOTS <t>              alive at the threshold (this pid is killed), exit 0
+        DIED <t> 0x<code>      exited first with that code, exit 1
+    The MASHED_HOOK_* env of the caller reaches InstallAll unchanged."""
+    import argparse
+    ap = argparse.ArgumentParser(prog='dev_asi.py boot')
+    ap.add_argument('--seconds', type=float, default=20.0)
+    ap.add_argument('--no-hooks', action='store_true')
+    ap.add_argument('--exe', default=None)
+    a = ap.parse_args(argv)
+    root = Path(__file__).resolve().parents[2]
+    exe = Path(a.exe) if a.exe else original_exe(root / 'original' / 'MASHED.exe')
+    proc, _s, _i = spawn_original(exe, hooks=not a.no_hooks, keep_session=False)
+    t0 = time.time()
+    try:
+        code = proc.wait(timeout=a.seconds)
+    except Exception:
+        code = None
+    t = round(time.time() - t0, 2)
+    if code is None:
+        proc.kill()
+        print(f'BOOTS {t}', flush=True)
+        return 0
+    print(f'DIED {t} 0x{code & 0xFFFFFFFF:08X}', flush=True)
+    return 1
+
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == 'boot':
+        sys.exit(_boot_cli(sys.argv[2:]))
+    sys.exit('usage: dev_asi.py boot [--seconds N] [--no-hooks] [--exe PATH]')
