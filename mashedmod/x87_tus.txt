@@ -51,6 +51,18 @@ RwpSolverBroadphase3
 RwpSolverCore14
 RwpSolverCore15
 RwpSolverCore17
+# MATCH-S08 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s08/)
+MatchS08_004331a0
+MatchS08_0043c000
+MatchS08_00442420
+MatchS08_00442cc0
+MatchS08_00442df0
+MatchS08_00443300
+MatchS08_00449880
+MatchS08_0044dff0
+MatchS08_0044e020
+MatchS08_0044e050
+MatchS08_0044e070
 # MATCH-S04 2026-10-31: port bodies compiled from byte-matched game code that uses float (re/match/s04/)
 MatchS04_0041b770
 MatchS04_0041cbc0

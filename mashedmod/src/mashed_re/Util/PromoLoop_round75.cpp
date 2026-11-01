@@ -19,15 +19,8 @@
 
 #include <cstdint>
 
-// 0x004495d0
-extern "C" __declspec(dllexport) int __cdecl GlobalFieldGet896278(void) {
-    return *reinterpret_cast<int*>(*reinterpret_cast<int*>(0x00896278u) + 4) + 0x40;  // [[0x896278]+4] + 0x40
-}
-RH_ScopedInstall(GlobalFieldGet896278, 0x004495d0);
+// MATCH-S08: the body of 0x004495d0 (GlobalFieldGet896278) moved to Match/MatchS08_004495d0.cpp,
+// which compiles the byte-matched source re/match/s08/004495d0.c.
 
-// 0x0044e020
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FloatLt44e020(std::int32_t idx) {
-    return (*reinterpret_cast<float*>(0x008900b0u + static_cast<std::uint32_t>(idx) * 0xf8u)
-            < *reinterpret_cast<float*>(0x005ce2d8u)) ? 1u : 0u;                       // FLD/FCOMP < threshold
-}
-RH_ScopedInstall(FloatLt44e020, 0x0044e020);
+// MATCH-S08: the body of 0x0044e020 (FloatLt44e020) moved to Match/MatchS08_0044e020.cpp,
+// which compiles the byte-matched source re/match/s08/0044e020.c.

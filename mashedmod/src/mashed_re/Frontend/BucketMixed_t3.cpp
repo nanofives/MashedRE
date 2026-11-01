@@ -88,30 +88,8 @@
 using Im2DQuad_t = void(__cdecl*)(int);
 static auto* const s_MenuIm2DQuad = reinterpret_cast<Im2DQuad_t>(0x0042aae0);
 
-// 0x00432ad0
-extern "C" __declspec(dllexport) void __cdecl MenuDimOverlayFadeStep() {
-    auto* pCounter = reinterpret_cast<std::int32_t*>(0x00898a90u);
-    auto* pAlpha   = reinterpret_cast<std::int32_t*>(0x0067eca8u);
-
-    std::int32_t v = *pCounter;
-    if (v < 1) {
-        *pCounter = 0;
-        return;
-    }
-    if (v > 0x1ff) {
-        v = 0x1ff;
-        *pCounter = v;
-    }
-
-    std::int32_t saved = *pAlpha;
-    std::int32_t capped = (v > 0xff) ? 0xff : v;
-    *pAlpha = capped;
-    s_MenuIm2DQuad(0);
-    *pAlpha = saved;
-    *pCounter = v - 0x10;
-}
-
-RH_ScopedInstall(MenuDimOverlayFadeStep, 0x00432ad0);
+// MATCH-S08: the body of 0x00432ad0 (MenuDimOverlayFadeStep) moved to Match/MatchS08_00432ad0.cpp,
+// which compiles the byte-matched source re/match/s08/00432ad0.c.
 
 
 // ---------------------------------------------------------------------------

@@ -49,13 +49,8 @@
 // reported as raw offset in the note).
 // ---------------------------------------------------------------------------
 
-// 0x00442410
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CameraSlotFieldPtrGet(int param_1) {
-    // 0x008964fc base + 0xd8 stride cited at 0x00442410 body.
-    return 0x008964fcu + static_cast<std::uint32_t>(param_1) * 0xd8u;
-}
-
-RH_ScopedInstall(CameraSlotFieldPtrGet, 0x00442410);
+// MATCH-S08: the body of 0x00442410 (CameraSlotFieldPtrGet) moved to Match/MatchS08_00442410.cpp,
+// which compiles the byte-matched source re/match/s08/00442410.c.
 
 // ---------------------------------------------------------------------------
 // CameraSlotFloatGet  --  0x00442420   (subsystem: camera)
@@ -78,14 +73,8 @@ RH_ScopedInstall(CameraSlotFieldPtrGet, 0x00442410);
 // Uncertainties (non-blocking): semantic of the +0x110 float (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00442420
-extern "C" __declspec(dllexport) float __cdecl CameraSlotFloatGet(int param_1) {
-    // 0x00896570 base + 0xd8 stride cited at 0x00442420 body.
-    return *reinterpret_cast<const float*>(
-        0x00896570u + static_cast<std::uint32_t>(param_1) * 0xd8u);
-}
-
-RH_ScopedInstall(CameraSlotFloatGet, 0x00442420);
+// MATCH-S08: the body of 0x00442420 (CameraSlotFloatGet) moved to Match/MatchS08_00442420.cpp,
+// which compiles the byte-matched source re/match/s08/00442420.c.
 
 // ---------------------------------------------------------------------------
 // CarSnapshotDwordGet  --  0x00423b20   (subsystem: vehicle)
@@ -156,10 +145,5 @@ RH_ScopedInstall(VehicleTable4cPtrGet, 0x00426cc0);
 //   U-1854: writer of DAT_00898980 not statically xref'd (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00442df0
-extern "C" __declspec(dllexport) float __cdecl RaceFloat898980Get(void) {
-    // FLD [0x00898980] cited at 0x00442df0 (instruction bytes above).
-    return *reinterpret_cast<const float*>(0x00898980u);
-}
-
-RH_ScopedInstall(RaceFloat898980Get, 0x00442df0);
+// MATCH-S08: the body of 0x00442df0 (RaceFloat898980Get) moved to Match/MatchS08_00442df0.cpp,
+// which compiles the byte-matched source re/match/s08/00442df0.c.

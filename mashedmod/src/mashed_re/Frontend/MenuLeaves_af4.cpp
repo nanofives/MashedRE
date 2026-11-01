@@ -169,18 +169,8 @@ static const std::uintptr_t k_ToastString = 0x005f6560u;
 // ref: re/analysis/bucket_0041dc30/0x0043aee0.md
 // ---------------------------------------------------------------------------
 
-// 0x0043aee0
-extern "C" __declspec(dllexport) void __cdecl MenuSlotFlagSetCurrent(void)
-{
-    if (s_F004307a0() != 0 &&
-        *reinterpret_cast<std::int32_t*>(k_OverrideFlag) != 0) {
-        std::int32_t slot = *reinterpret_cast<std::int32_t*>(k_CurrentSlot);
-        // (&DAT_007f0a40)[slot * 0xc] — int array, stride 0xc ints. [0x0043aef7]
-        reinterpret_cast<std::int32_t*>(k_SlotFlagBase)[slot * 0xc] = 1;
-    }
-}
-
-RH_ScopedInstall(MenuSlotFlagSetCurrent, 0x0043aee0);
+// MATCH-S08: the body of 0x0043aee0 (MenuSlotFlagSetCurrent) moved to Match/MatchS08_0043aee0.cpp,
+// which compiles the byte-matched source re/match/s08/0043aee0.c.
 
 // ---------------------------------------------------------------------------
 // EntityTableSelectUpdate  --  0x00401ee0

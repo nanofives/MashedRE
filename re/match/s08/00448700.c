@@ -42,7 +42,7 @@ void FUN_00448700(undefined4 param_1,undefined4 param_2)
   
   iVar1 = 100;
   do {
-    FUN_004464c0(&DAT_00897fe0);
+    FUN_004464c0((undefined4)&DAT_00897fe0);
     iVar1 = iVar1 + -1;
   } while (iVar1 != 0);
   DAT_00897ffc = param_1;
