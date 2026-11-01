@@ -160,6 +160,8 @@ extern "C" std::uint32_t __cdecl RangeTableMemberTest(int value, int slot);     
 extern "C" int __cdecl RangeTableCountGroup(int slot);                          // FUN_00407d70, Gameplay/RangeTable_ah1.cpp
 extern "C" int __cdecl RangeTableGroupOffset(int slot, int value);              // FUN_00407db0, Gameplay/RangeTable_ah1.cpp
 extern "C" void __cdecl Dot408590(void);                                        // FUN_00408590, Race/PathProgDot.cpp
+// MATCH-TOPDOWN-T13: FUN_00407cd0 is the byte-matched C body (exe only), not a generated PP_ copy.
+extern "C" int __cdecl PP_407cd0(int v, int start);                             // FUN_00407cd0, Match/MatchS01_00407cd0.cpp
 
 #include "PathProgStep_naked.inc"
 

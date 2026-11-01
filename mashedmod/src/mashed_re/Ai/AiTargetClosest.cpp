@@ -133,7 +133,7 @@ extern "C" std::uint32_t __cdecl CarSlotStateGet(int slot);                     
 // Verbatim naked (spec re/tools/naked_specs/mode7_m4.json -> AiModeSeven_naked.inc): FUN_00414c30, FUN_00414490,
 // FUN_004c39b0 (LUT patched). FUN_00484c70 / FUN_00442cc0 are the one shared bodies (D4-DC-INC-ai, declared
 // above that #include). Bindings, cdecl:
-//   TG_SubMode      FUN_0040e350 -> the exe host (aib_game_sub_mode)
+//   TG_SubMode      FUN_0040e350 -> the matched body GetRenderSubMode (MATCH-TOPDOWN-T13; was the host aib_game_sub_mode)
 //   TG_HeldWord     the held-powerup read at 0x004144b3 ([0x0088fc88 + v*0xb4]) -> the exe's PowerupSystem
 //   TG_414300_m4    FUN_00414300 -> P3's verbatim TG_414300 (replay: the captured return / cand, arguments checked)
 //   TG_414490_w     FUN_00414490 -> TG_414490, return recorded
@@ -188,9 +188,12 @@ std::vector<std::string> SplitB(const std::string& s, char d) {
 extern "C" {
 
 void TG_414490();                                                                 // AiModeSeven_naked.inc
+unsigned int GetRenderSubMode(void);                                            // Match/MatchS02_0040e350.cpp
 int __cdecl TG_SubMode() {                                                       // FUN_0040e350
     if (s_m7Replay) return s_m7RpBa8c;
-    return s_m7SubMode ? s_m7SubMode() : 6;
+    // MATCH-TOPDOWN-T13: the matched body (raw DAT_0063ba8c), not the host aib_game_sub_mode (0 -> 6, 7 on
+    // round end). TG_414490 only compares the value with 0xb and 0xa, and no exe TU stores either.
+    return static_cast<int>(GetRenderSubMode());
 }
 std::uint32_t __cdecl TG_HeldWord(int v) {                                       // [0x0088fc88 + v*0xb4]
     if (s_m7Replay) return s_m7RpHeld;

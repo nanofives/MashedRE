@@ -68,28 +68,8 @@ extern "C" __declspec(dllexport) void __cdecl AiSplineBankTimerReset(int param_1
 
 RH_ScopedInstall(AiSplineBankTimerReset, 0x00414030);
 
-// ---------------------------------------------------------------------------
-// GetRenderSubMode  --  0x0040e350
-//
-// Original: FUN_0040e350 (5 bytes, 0x0040e350..0x0040e355)
-// Signature: undefined4 FUN_0040e350(void)
-// Body: return DAT_0063ba8c;
-//
-// Constants (cited from function body at 0x0040e350):
-//   0x0063ba8c — game-mode state global (FUN_00411170 writes 7 at "race over";
-//                other observed compares: 4, 5, 8, 9)
-//
-// Name matches the fn-ptr binding citation in Render/PerModeRender.cpp:43
-// (that binding is a file-local static, not an export — no clash).
-// ---------------------------------------------------------------------------
-
-// 0x0040e350
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetRenderSubMode(void) {
-    // 0x0063ba8c cited at 0x0040e350 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x0063ba8cu);
-}
-
-RH_ScopedInstall(GetRenderSubMode, 0x0040e350);
+// GetRenderSubMode (FUN_0040e350): MATCH-TOPDOWN-T13 moved the body to Match/MatchS02_0040e350.cpp,
+// which compiles the byte-matched source re/match/s02/0040e350.c (one body per RVA, both targets).
 
 // ---------------------------------------------------------------------------
 // HudOverlayFloatGet  --  0x00429300   (subsystem: hud)

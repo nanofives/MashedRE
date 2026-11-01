@@ -3,7 +3,6 @@
     {"name": "PP_408610", "start": "0x00408610", "size": 1073},
     {"name": "PP_407e20", "start": "0x00407e20", "size": 1895},
     {"name": "PP_407be0", "start": "0x00407be0", "size": 225},
-    {"name": "PP_407cd0", "start": "0x00407cd0", "size": 157},
     {"name": "PP_426cb0", "start": "0x00426cb0", "size": 13},
     {"name": "PP_426cc0", "start": "0x00426cc0", "size": 13},
     {"name": "PP_426d00", "start": "0x00426d00", "size": 22},
