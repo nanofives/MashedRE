@@ -5109,6 +5109,152 @@ extern "C" void __cdecl RaceComputeDistancesTick(int site);
 extern "C" void __cdecl RaceRefDistTraceFrame();
 extern "C" void __cdecl RaceRefDistTraceAiEntry();
 
+// [D4-DC-77b0-STATE5-LEG2] MASHED_ST5_LEG2 (default OFF). FUN_004111c0 case 5 = FUN_004103a0 (leg 1, SubStateHeldCountdown5_C)
+// then FUN_0040fc00, whose FUN_00425a40 call at 0x0040fc6c is taken on every case-5 call of the canonical scenario (112/112,
+// TRAINING and Egypt: verify/d4dc77b0st5orig_20261101). FUN_00425a40 (0x00425a40):
+//   FUN_00423b00(); if (DAT_007f1a50 == 1) { if (DAT_007f1a54 != 4 || (DAT_007f1a74 == 0 && DAT_007f1a70 == 0)) return 0;
+//   DAT_007f1a78 += 1; } FUN_00418860(); FUN_00424eb0(u, &DAT_00803324); FUN_00470c70(u, &DAT_00803324); FUN_00422ba0(u);
+//   FUN_004252c0(u); return 1;
+// Each callee maps to the exe piece the race frame uses for it (UpdateCar below). FUN_004252c0 has no exe port (not run).
+// PREREG: verify/d4dc77b0st5leg2_20261101/PREREG_D4-DC-77b0-STATE5-LEG2.md.
+static bool St5Leg2Enabled() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_ST5_LEG2"); return e && e[0] && e[0] != '0'; }();
+    return s_on;
+}
+void TrackRenderer::St5Leg2(int units, float dt, float accel, bool exitCall) {
+    auto G = [](std::uintptr_t a) -> int& { return *reinterpret_cast<int*>(a); };
+    static int s_calls = 0;
+    static float s_pre0[3] = {};
+    // FUN_00423b00 (0x00423b00): its four callees run only when DAT_007f1a50 == 1. Not ported; logged once if ever seen.
+    if (G(0x007f1a50u) == 1) {
+        static bool s_logged = false;
+        if (!s_logged) {
+            s_logged = true;
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "[st5leg2] DAT_007f1a50 == 1: FUN_00423b00's callees are not ported\n");
+                std::fclose(lf);
+            }
+        }
+        if (G(0x007f1a54u) != 4 || (G(0x007f1a74u) == 0 && G(0x007f1a70u) == 0)) return;   // FUN_00425a40 return 0
+        G(0x007f1a78u) = G(0x007f1a78u) + 1;
+    }
+    ++s_calls;
+    const bool phys = Vehicle::VehiclePhysics_Enabled();
+    if (s_calls == 1 && phys)
+        for (int c = 0; c < 3; ++c) s_pre0[c] = Vehicle::VehiclePhysics_RecordF32(0, 0x958 + 4 * c);
+    // FUN_00418860 (0x00425a73): the host call leg 1 makes at 0x0041040e, same guard.
+    const bool aiOn = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
+    if (aiOn) {
+        g_aiTrack = this;
+        AiBridgeSnapshot();
+        Ai::Ai_Standalone_Tick();
+    }
+    // FUN_00424eb0 (0x00425a82): the race frame's pieces, the round-end-7 loop and the FUN_0046c7d0 loop for the AI slots.
+    if (s_roundEnd7 && phys) {
+        const int n = 1 + static_cast<int>(ai_cars_.size());
+        for (int v = 0; v < kRaceCars && v < n; ++v) {
+            if (!race_[v].alive) continue;
+            unsigned char* r = Vehicle::VehiclePhysics_RecordPtr(v);
+            if (!r) continue;
+            float* vel = reinterpret_cast<float*>(r + 0x9b0);
+            for (int c = 0; c < 3; ++c) vel[c] = vel[c] * 0.85f;   // _DAT_005ce264 (0x0046c57f..0x0046c5af)
+        }
+    }
+    Race::HeadingAssist_Frame(units);
+    // FUN_00470c70 (0x00425a8d): the physics of every car, in the race frame's form (A4 pre-phase for the AI cars, then
+    // the outer substep loop). Player input: leg 1's cooked accel byte (FUN_0046d7f0's input), no brake, no steer.
+    if (phys) {
+        Vehicle::PlayerCarIO io;
+        io.pos[0] = car_pos_[0]; io.pos[1] = car_pos_[1]; io.pos[2] = car_pos_[2];
+        io.vel[0] = car_vel_[0]; io.vel[1] = car_vel_[1]; io.vel[2] = car_vel_[2];
+        io.yaw = car_yaw_; io.speed = car_speed_;
+        for (int k = 0; k < 8; ++k) io.input[k] = 0;
+        io.input[4] = static_cast<unsigned char>((accel > 0.f ? accel : 0.f) * 255.f);
+        io.steer = 0.f;
+        io.ground_off = car_ground_off_;
+        bool gok = false;
+        GroundHeight(car_pos_[0], car_pos_[2], &gok);
+        io.grounded = gok ? 1 : 0;
+        for (OuterCar& c : s_outer) c.have = false;
+        Vehicle::VehiclePhysics_A4PreBegin();
+        if (aiOn) {
+            for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
+                const AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
+                const int v = ci + 1;
+                if (round_mode_ && !race_[ci + 1].alive) continue;
+                if (a.spin > 0.f) continue;
+                const std::uint8_t* blk = reinterpret_cast<const std::uint8_t*>(
+                    Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
+                        Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride))
+                    * Ai::kCtrlBlockStride);
+                Vehicle::PlayerCarIO aio;
+                aio.pos[0] = a.pos[0]; aio.pos[1] = a.pos[1]; aio.pos[2] = a.pos[2];
+                aio.vel[0] = a.vel[0]; aio.vel[1] = a.vel[1]; aio.vel[2] = a.vel[2];
+                aio.yaw = a.yaw; aio.speed = a.cur_speed;
+                for (int k = 0; k < 8; ++k) aio.input[k] = blk[k];
+                aio.steer = 0.f;
+                aio.raw_steer = 1;
+                aio.ground_off = car_ground_off_;
+                bool aok = false;
+                GroundHeight(a.pos[0], a.pos[2], &aok);
+                aio.grounded = aok ? 1 : 0;
+                Vehicle::VehiclePhysics_A4Pre(v, dt, aio);
+                if (v < 16) { s_outer[v].have = true; s_outer[v].in = aio; }
+            }
+        }
+        Vehicle::VehiclePhysics_A4PreEnd();
+        if (Race::HeadingAssist_Mask() & 0x2u) Race::HeadingAssist_Player(units, 0, 0);   // steer 0 -> bytes 0 / 0
+        int slots[16]; Vehicle::PlayerCarIO ios[16]; int n = 0;
+        slots[n] = 0; ios[n] = io; ++n;
+        for (int v = 1; v < 16; ++v)
+            if (s_outer[v].have) { slots[n] = v; ios[n] = s_outer[v].in; ++n; }
+        if (n > 1 && Vehicle::VehiclePhysics_StepCarsOuter(n, slots, dt, ios)) {
+            io = ios[0];
+            for (int k = 1; k < n; ++k) s_outer[slots[k]].out = ios[k];
+        } else {
+            for (OuterCar& c : s_outer) c.have = false;
+            Vehicle::VehiclePhysics_StepPlayer(dt, io);
+        }
+        car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
+        car_speed_ = io.speed;
+        car_yaw_ = io.yaw;
+        {
+            bool nok = false;
+            GroundHeight(io.pos[0], io.pos[2], &nok);
+            if (nok) { car_pos_[0] = io.pos[0]; car_pos_[2] = io.pos[2]; car_pos_[1] = io.pos[1]; }
+        }
+        for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
+            AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
+            const int v = ci + 1;
+            if (v >= 16 || !s_outer[v].have) continue;
+            const Vehicle::PlayerCarIO& o = s_outer[v].out;
+            s_outer[v].have = false;
+            a.vel[0] = o.vel[0]; a.vel[1] = o.vel[1]; a.vel[2] = o.vel[2];
+            a.cur_speed = o.speed;
+            a.yaw = o.yaw;
+            bool nok = false;
+            GroundHeight(o.pos[0], o.pos[2], &nok);
+            if (nok) { a.pos[0] = o.pos[0]; a.pos[2] = o.pos[2]; a.pos[1] = o.pos[1]; }
+        }
+    }
+    // FUN_00422ba0 (0x00425a95): the race frame's event drain, same gate.
+    if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
+    // FUN_004252c0 (0x00425a9d): no exe port (AiStandalone.cpp:2247). Not run.
+    if (exitCall) {
+        float post0[3] = {};
+        if (phys) for (int c = 0; c < 3; ++c) post0[c] = Vehicle::VehiclePhysics_RecordF32(0, 0x958 + 4 * c);
+        std::uint32_t b0[3], b1[3];
+        std::memcpy(b0, s_pre0, sizeof b0); std::memcpy(b1, post0, sizeof b1);
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(lf, "[st5leg2] exit calls=%d rec0_958 pre=%08x/%08x/%08x post=%08x/%08x/%08x same=%d "
+                             "car_pos=(%.9g,%.9g,%.9g)\n", s_calls, b0[0], b0[1], b0[2], b1[0], b1[1], b1[2],
+                         (b0[0] == b1[0] && b0[1] == b1[1] && b0[2] == b1[2]) ? 1 : 0, car_pos_[0], car_pos_[1], car_pos_[2]);
+            std::fclose(lf);
+        }
+        s_calls = 0;
+    }
+}
+
 // [D3-SUBSTATE-FLIP diag] MASHED_SUBFLIP_DIAG counters (UpdateCar below)
 static unsigned s_sfCalls_ = 0, s_sfLastAi_ = 0; static int s_sfBa_ = -1; static bool s_sfGap_ = false;
 void TrackRenderer::UpdateCar(const DriveInput& in) {
@@ -5270,6 +5416,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
             return;
         }
+        bool st5Leg2 = false;                              // [D4-DC-77b0-STATE5-LEG2] set by the case-5 arm below
         if (ba8c == 3) {                                   // case 3: FUN_004102f0 (EMULATED, units in EBX)
             if (s29b8 == 100000) {                         // 0x004102f8 entry block, first frame only
                 VehicleSeedWritePair(0, 0);                // 0x00448700: 100 x FUN_004464c0, +0x1c/+0x20 = 0
@@ -5305,7 +5452,21 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             *reinterpret_cast<int*>(0x007f0fc8u) = 0;      // 0x0041129b
             SubStateEnter4();                              // 0x004112a5
         } else if (ba8c == 5) {
+            // [D4-DC-77b0-STATE5-LEG2] MASHED_ST5_LEG2: leg 2 runs on every call that entered case 5, the exit call
+            // included (leg 1 stores 6 at 0x004104e3 before FUN_0040fc00 runs). Default OFF.
             SubStateHeldCountdown5_C(units);               // 0x004112bb (units in EAX)
+            st5Leg2 = St5Leg2Enabled();
+            if (st5Leg2) {
+                static int s_leg1 = 0;
+                ++s_leg1;
+                if (ba8c != 5) {
+                    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                        std::fprintf(lf, "[st5leg2] leg1 calls=%d\n", s_leg1);
+                        std::fclose(lf);
+                    }
+                    s_leg1 = 0;
+                }
+            }
         }
         // [D3-SUBSTATE-PH3] FUN_0040fc00 stores DAT_007f1008 = units and _DAT_007f100c (0x0040fc57) at its top, BEFORE
         // FUN_0040d470(0), so the original's second call on phase 3's first frame reads 50 (measured, RESULT_d3subph3.md).
@@ -5315,9 +5476,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             *reinterpret_cast<int*>(0x007f1008u) = units;  // FUN_0040fc00: DAT_007f1008 = units
             SubState_StoreStep(units);                     // 0x0040fc57 _DAT_007f100c
         }
-        if (ba8c >= 3 && ba8c <= 5) SubStateCameraChain(false);   // FUN_0040fc00 -> FUN_0040d470(0) (L81-85)
         const bool subClock = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
-        if (subClock)
+        if (st5Leg2) {                                     // [D4-DC-77b0-STATE5-LEG2] FUN_0040fc00 order:
+            if (subClock) Ai::Ai_AdvanceClock(units);      //   0x0040fc57 / 0x0040fc63, then
+            St5Leg2(units, in.dt, s_subAccel, ba8c != 5);  //   FUN_00425a40 at 0x0040fc6c, before FUN_0040d470(0)
+        }
+        if (ba8c >= 3 && ba8c <= 5) SubStateCameraChain(false);   // FUN_0040fc00 -> FUN_0040d470(0) (L81-85)
+        if (subClock && !st5Leg2)
             Ai::Ai_AdvanceClock(units);                    // FUN_0040fc00 0x0040fc57 / 0x0040fc63
         // [a5timer] MASHED_A5_RACE_TIMER_RUN: the 0x0040fe64 add where Ai_AdvanceClock did not make it (the late clock is
         // default ON, and its add runs on race frames only). Phase 3's 0x0040e5a2 zero is above; the state-5 zero is
