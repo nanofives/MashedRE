@@ -111,6 +111,19 @@ def main(argv) -> int:
             print(f"{key(check, rva, files)}   # {detail}")
         return 0
 
+    # HB-LINT-408A50: an unresolved re/match/ or .inc include hides bodies, so every
+    # count below would be wrong. Fail before reporting them (typical cause: a tree
+    # built from a `git archive` that left out re/match/).
+    missing = sorted(set(S.MISSING_INCLUDES))
+    if missing:
+        for rel, line, inc in missing:
+            print(f"[rva-lint] ERROR MISSING-INCLUDE {rel}:{line}  \"{inc}\" does not resolve")
+        print(f"[rva-lint] FAILED: {len(missing)} include(s) the scanner could not follow, "
+              "so their bodies are invisible and the duplicate check is unsound.")
+        print("[rva-lint] Build from a tree that has them (scripts/lan_release/archive_paths.txt "
+              "lists what a clean `git archive` build needs).")
+        return 1
+
     new = [f for f in found if key(f[0], f[1], f[2]) not in allow]
     old = [f for f in found if key(f[0], f[1], f[2]) in allow]
 

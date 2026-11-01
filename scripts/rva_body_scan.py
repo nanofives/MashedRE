@@ -102,6 +102,14 @@ def load_targets() -> dict[str, set[str]]:
     return {"exe": exe, "asi": asi}
 
 
+# HB-LINT-408A50 (2026-11-01): an `#include` of a re/match/ source or a local .inc that does not
+# resolve used to be skipped in silence. The LAN publish (scripts/lan_release/publish.sh) built
+# from a `git archive` without re/match/, so the scanner lost MatchS01.cpp's body of 0x00408a50,
+# reported the other two as a NEW pair the 3-file allowlist key did not match, and the train
+# (full worktree) never saw it. Every such miss is recorded here; lint_rva_bodies.py fails on it.
+MISSING_INCLUDES: list[tuple[str, int, str]] = []   # (TU rel or included file, 1-based line, include text)
+
+
 def _is_comment_or_blank(ln: str) -> bool:
     s = ln.strip()
     return (not s) or s.startswith("//") or s.startswith("/*") or s.startswith("*")
@@ -130,6 +138,7 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
             continue
         inc = (p.parent / mi.group(1)).resolve()
         if not inc.is_file():
+            MISSING_INCLUDES.append((rel, i + 1, mi.group(1)))
             continue
         for mln in inc.read_text(encoding="utf-8", errors="replace").splitlines():
             mm = RE_MATCH_LINE.match(mln)
@@ -154,7 +163,14 @@ def _scan_inc(p: pathlib.Path, lines: list[str], bodies: dict, seen: set,
         if not mi:
             continue
         inc = (p.parent / mi.group(1)).resolve()
-        if not inc.is_file() or inc in seen:
+        if not inc.is_file():
+            try:
+                where = p.resolve().relative_to(SRC.resolve()).as_posix()
+            except ValueError:
+                where = str(p)
+            MISSING_INCLUDES.append((where, i + 1, mi.group(1)))
+            continue
+        if inc in seen:
             continue
         seen.add(inc)
         ilines = inc.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -325,6 +341,7 @@ def scan_all() -> dict:
     Returns {'targets': {...}, 'bodies': {rel -> {rva: (name, line)}},
              'installs': {rel -> {rva: [(sym, line)]}}}
     """
+    MISSING_INCLUDES.clear()
     targets = load_targets()
     all_tus = sorted(targets["exe"] | targets["asi"])
     bodies, installs = {}, {}
@@ -334,7 +351,8 @@ def scan_all() -> dict:
             bodies[rel] = b
         if ins:
             installs[rel] = ins
-    return {"targets": targets, "bodies": bodies, "installs": installs}
+    return {"targets": targets, "bodies": bodies, "installs": installs,
+            "missing": sorted(set(MISSING_INCLUDES))}
 
 
 def rva_to_tus(scan: dict, target: str) -> dict[int, list[str]]:
