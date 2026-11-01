@@ -26,6 +26,21 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  0x004769a0  ParticleEmitter_SetPosition  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x004769d0  ParticleEmitter_SetVelocity  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x004769f0  ParticleEmitter_SetColour  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476a10  FUN_00476a10  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476a30  ParticleEmitter_SetScalar  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476a40  ParticleEmitter_SetRGBA  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476a80  Copy476a80  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476ae0  Batch476ae0  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476b30  FUN_00476b30  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476b90  Batch476b90  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476be0  Batch476be0  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476c10  Batch476c10  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476c60  Batch476c60  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476cb0  Batch476cb0  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+2026-11-01  0x00476d00  FUN_00476d00  C3->C3 file moved to Render/RfxEmitter.cpp (one shared body, CROSS-TARGET row removed); evidence: verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
 2026-11-01  0x00402f50  FUN_00402f50  C3->C4  route match (c4=match), exe-callers=1 (exe_main.cpp:9225); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
 2026-11-01  0x00404e00  IdxPtr404e00  C3->C4  route match (c4=match), exe-callers=1 (LibRw/RwCarFx.cpp:34); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
 2026-11-01  0x00404e20  IdxPtr404e20  C3->C4  route match (c4=match), exe-callers=1 (LibRw/RwCarFx.cpp:40); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
