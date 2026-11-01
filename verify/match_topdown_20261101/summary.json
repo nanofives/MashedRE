@@ -1,0 +1,50 @@
+{
+ "orig_nodes": 5948,
+ "orig_edges": 18450,
+ "edge_kinds": {
+  "call": 15907,
+  "tail": 451,
+  "pc": 1062,
+  "ptr": 462,
+  "imp": 568
+ },
+ "game_nodes": 2541,
+ "platform_nodes": 3407,
+ "matched": 461,
+ "matched_game": 417,
+ "matched_by_slice": {
+  "PILOT": 43,
+  "S01": 101,
+  "S02": 109,
+  "S04": 117,
+  "S03": 91
+ },
+ "exe_bodies": 805,
+ "exe_bodies_reached": 184,
+ "exe_body_unmapped": 228,
+ "game_exe_bodies_reached": 139,
+ "matched_with_exe_body": 110,
+ "matched_reached": 23,
+ "matched_unreached": 438,
+ "matched_no_exe_body": 351,
+ "matched_swapped_in_exe": 53,
+ "matched_swapped_reached": 0,
+ "roots_maximal": 269,
+ "units": 148,
+ "units_ready": 63,
+ "ranked": 269,
+ "covered": 417,
+ "gaps_with_value": 196,
+ "tops_with_matched_below": [
+  "0x00492d30",
+  "0x004929d0",
+  "0x00410b30",
+  "0x0043c5b0",
+  "0x0040dfc0",
+  "0x00455b50",
+  "0x00409a80",
+  "0x00404320",
+  "0x00429290",
+  "0x004538b0"
+ ]
+}
