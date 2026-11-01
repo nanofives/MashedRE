@@ -128,4 +128,29 @@ root only; `original/mashed_re_dev.asi` was not touched.
 
 ## Tracker transaction (re-classify)
 
-PENDING: filled in by the re-classify step below.
+- `hooks.csv`: `0x0055ded0`, `0x0055dca0`, `0x0055dc70`, `0x0057c300`, `0x0057c500` C2 -> **C3 impl**, `scenario`
+  `shadow_tracked:track0-mode10-cars4`, `frida_diff` `shadow_ab:verify/hb_shadowalloc_20261101/shadow_summary.tsv`,
+  dated note appended. No C4: no race diff with the hook installed (CONFIDENCE.md write-set leg, L-38/L-40/L-54).
+- C3 gate per row (Lane-2 port under `mashedmod/src/mashed_re/Lane2/`, clean build, `RH_ScopedInstall`, opt-in and
+  runtime-toggleable, a caller at C2+, callees at C2+ or run-time slot dispatch):
+
+  | RVA | caller | callees |
+  |---|---|---|
+  | `0x0055dc70` | `0x0047f4c0` C2 (call at `0x0047f53b`) | `0x0055dca0`, slot `+0x108` |
+  | `0x0055dca0` | `0x0055dc70` (call at `0x0055dc92`) | `0x00559b50` C3, `0x0055f450` C3, slots `+0x108` / `+0x114` |
+  | `0x0055ded0` | `0x0057c300` (call at `0x0057c320`) | slot `+0x108` only |
+  | `0x0057c300` | `0x004218b0` C3 | `0x0055ded0`, slot `+0x108` |
+  | `0x0057c500` | `0x004218d0` C3 | `0x00564130` C2, slot `+0x108` |
+
+- `UNCERTAINTIES.md` via `re/tools/uncertainty_resolve.py`: U-9337 (`0x0055dc70`), U-9531 (`0x0055dca0`), U-9534
+  (`0x0055ded0`) resolved. Hand-read of the disassembly (`D:/MashedWT/D4-WSB-PORT-BROAD-2_data/dis_<rva>.txt`): every
+  listed indirect call loads RwGlobals from `[0x007d3ff8]` right before it (`0x0055dc70`; `0x0055dcd7`, `0x0055dcf3`,
+  `0x0055dd11`; `0x0055deff`, `0x0055df65`) and calls slot `+0x108` or `+0x114`, and this step's recorders swapped into
+  those slots logged every call with the pushed arguments. Every one is caller-cleans: `add esp, 0x18` at `0x0055dc97`
+  (2 slot pushes + 4 for `0x0055dca0`), `add esp, 0x38` at `0x0055dd2b` (the 14 pushes from `0x0055dcaf` on),
+  `add esp, 8` at `0x0055df14` and `0x0055df70`. That fixes the esp depth at `0x0055dc82` / `0x0055dc86` /
+  `0x0055dc8b` (entry - 8, entry - 0xc) and at `0x0055df43` (the loop `0x0055df28..0x0055df41` pushes nothing).
+  U-9341 / U-9342 (`0x0057c500` / `0x0057c300`) were already resolved by D4-WSB-PORT-NARROW-TAIL.
+- `STUBS.md`: no stub in the five TUs, nothing filed. `re/analysis/CHANGELOG.md`: 5 promotion lines + 3 U-row lines
+  below `<!-- ENTRIES -->`.
+- Open after this step: none on these five rows.
