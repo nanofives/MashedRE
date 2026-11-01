@@ -376,42 +376,9 @@ extern "C" __declspec(dllexport) void __cdecl RaceRankThreePlayers(
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_00425c00.md
 // ---------------------------------------------------------------------------
 
-// 0x00425c00
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CopterClumpRegister(
-    const char* copterName)
-{
-    s_F004c5c80(*reinterpret_cast<std::uint32_t*>(k_RenderCtx));
-
-    std::int32_t* slot = nullptr;
-    std::int32_t* scan = reinterpret_cast<std::int32_t*>(k_CopterArrayBase);
-    int idx = 0;
-    do {
-        if (*scan == 0) {
-            slot = reinterpret_cast<std::int32_t*>(k_CopterArrayBase) +
-                   idx * k_CopterStride;
-            break;
-        }
-        scan += k_CopterStride;
-        ++idx;
-    } while (reinterpret_cast<std::uintptr_t>(scan) < k_CopterArrayEnd);
-
-    char buf[64];
-    s_F004a2b60(buf, "%s%s%s%s", "ToastArt/common/perm/", "Copters/",
-                copterName, ".dff");
-
-    std::uint32_t handle = s_F004781b0(buf, 0);
-    *slot = static_cast<std::int32_t>(handle);
-    s_F00425b90(slot);
-    s_F004c5c80(0);
-    return 1;
-}
-
-// NOT installed yet: verification-blocked. Faithful transcription, but calling
-// it at the diff-attach menu is unsafe — it loads a copter clump off disk
-// (FUN_004781b0), consumes a slot non-idempotently, and dereferences a NULL
-// slot pointer if the array is full (same as the original). Enable once an
-// isolated asset-load harness exists.
-// RH_ScopedInstall(CopterClumpRegister, 0x00425c00);
+// MATCH-S05: the body of 0x00425c00 (CopterClumpRegister) moved to Match/MatchS05_00425c00.cpp,
+// which compiles the byte-matched source re/match/s05/00425c00.c (install=0, as before: calling it at the
+// diff-attach menu loads a copter clump off disk and consumes a slot non-idempotently).
 
 // ---------------------------------------------------------------------------
 // TitleBuildInfoRender  --  0x00428bf0

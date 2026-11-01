@@ -26,7 +26,9 @@ extern "C" void RG_484cf0();                                                    
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);          // 0x0046c7b0
 extern "C" std::uint32_t __cdecl IsCarSlotActive(int param_1);                         // 0x0040e370
 
-#include "CarRegistrant_naked.inc"
+// MATCH-S05: the body of 0x0041f710 (CR_41f710, was CarRegistrant_naked.inc) moved to Match/MatchS05_0041f710.cpp,
+// which compiles the byte-matched source re/match/s05/0041f710.c. CR_41f710 there takes the record in EAX.
+extern "C" void CR_41f710();
 
 namespace mashed_re {
 namespace Race {

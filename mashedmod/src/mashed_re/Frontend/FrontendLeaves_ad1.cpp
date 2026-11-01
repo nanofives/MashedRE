@@ -69,43 +69,5 @@
 // trampolining through the original image.
 extern "C" std::uint32_t __cdecl GetDat0067ea64();   // 0x0042f500
 
-// 0x004241c0
-extern "C" __declspec(dllexport) std::int32_t __cdecl TeamBlockOneGet(std::int32_t param_1)
-{
-    // Step 1: if not team mode, return block-1 field directly. [0x004241c0]
-    if (GetDat0067ea64() == 0) {
-        // (&DAT_00899e80)[param_1 * 0x4e] — stride 0x4e int32s.
-        return reinterpret_cast<const std::int32_t*>(0x00899e80u)[param_1 * 0x4e];
-    }
-
-    // Step 2: load team-ID of param_1. [0x004241c0 + team-id load]
-    const std::int32_t iVar1 =
-        reinterpret_cast<const std::int32_t*>(0x007f1a18u)[param_1 * 4];
-
-    // Step 3: seed accumulator with param_1's own block-1 field.
-    std::int32_t iVar2 =
-        reinterpret_cast<const std::int32_t*>(0x00899e80u)[param_1 * 0x4e];
-
-    // Active-slot array: 4 separate globals (not strided uniformly).
-    static const std::uintptr_t kActiveSlots[4] = {
-        0x007f1a14u, 0x007f1a24u, 0x007f1a34u, 0x007f1a44u
-    };
-    static const std::uintptr_t kTeamIdBase = 0x007f1a18u;
-
-    // Step 4: accumulate partner contributions.
-    for (std::int32_t k = 0; k < 4; ++k) {
-        if (k == param_1) continue;
-        const std::int32_t partnerTeamId =
-            reinterpret_cast<const std::int32_t*>(kTeamIdBase)[k * 4];
-        if (partnerTeamId != iVar1) continue;
-        const std::int32_t partnerActiveSlot =
-            *reinterpret_cast<const std::int32_t*>(kActiveSlots[k]);
-        if (partnerActiveSlot == -1) continue;
-        iVar2 += reinterpret_cast<const std::int32_t*>(0x00899e80u)[k * 0x4e];
-    }
-
-    // Step 5: return accumulated value.
-    return iVar2;
-}
-
-RH_ScopedInstall(TeamBlockOneGet, 0x004241c0);
+// MATCH-S05: the body of 0x004241c0 (TeamBlockOneGet) moved to Match/MatchS05_004241c0.cpp,
+// which compiles the byte-matched source re/match/s05/004241c0.c.

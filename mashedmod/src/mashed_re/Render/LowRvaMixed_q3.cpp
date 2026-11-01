@@ -63,16 +63,8 @@ static auto* const s_FUN_00401f10 =
 // ref: re/analysis/c0_promotion_render_a/0x00422af0.md
 // ---------------------------------------------------------------------------
 
-// 0x00422af0
-extern "C" __declspec(dllexport) void __cdecl SlotWordSet(
-    int param_1, std::uint32_t param_2)
-{
-    // Write param_2 to per-slot word at DAT_00641320 + param_1 * 0xf40.
-    // Base 0x00641320, stride 0xf40 cited at 0x00422af0 body.
-    *reinterpret_cast<std::uint32_t*>(0x00641320u + static_cast<unsigned>(param_1) * 0xf40u) = param_2;
-}
-
-RH_ScopedInstall(SlotWordSet, 0x00422af0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S05: the body of 0x00422af0 (SlotWordSet) moved to Match/MatchS05_00422af0.cpp,
+// which compiles the byte-matched source re/match/s05/00422af0.c.
 
 // ---------------------------------------------------------------------------
 // SlotQuadSet  --  0x00422ac0
@@ -98,21 +90,8 @@ RH_ScopedInstall(SlotWordSet, 0x00422af0);  // re-enabled 2026-05-24 c3-render-a
 // ref: re/analysis/c0_promotion_render_a/0x00422ac0.md
 // ---------------------------------------------------------------------------
 
-// 0x00422ac0
-extern "C" __declspec(dllexport) void __cdecl SlotQuadSet(
-    int param_1, const std::uint32_t* param_2)
-{
-    // stride = param_1 * 0xf40, cited at 0x00422ac4
-    const unsigned stride = static_cast<unsigned>(param_1) * 0xf40u;
-    // Base 0x006412e8, cited at 0x00422ac9
-    auto* base = reinterpret_cast<std::uint32_t*>(0x006412e8u + stride);
-    base[0] = param_2[0];   // DAT_006412e8 + stride + 0
-    base[1] = param_2[1];   // DAT_006412ec + stride + 4
-    base[2] = param_2[2];   // DAT_006412f0 + stride + 8
-    base[3] = param_2[3];   // DAT_006412f4 + stride + 12
-}
-
-RH_ScopedInstall(SlotQuadSet, 0x00422ac0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S05: the body of 0x00422ac0 (SlotQuadSet) moved to Match/MatchS05_00422ac0.cpp,
+// which compiles the byte-matched source re/match/s05/00422ac0.c.
 
 // ---------------------------------------------------------------------------
 // FUN_00403d30  --  0x00403d30
