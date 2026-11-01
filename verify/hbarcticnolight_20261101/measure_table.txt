@@ -1,0 +1,6 @@
+| pose | basis = OPENSEA | water mask % | original | OPENSEA original | DEF | NL4 | d DEF | d NL4 | bar 4.5 DEF / NL4 | frame mean abs dL DEF / NL4 | DEF vs NL4 px differ % | DEF vs DEF2 px differ % |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| e1 | yes | 46.06 | 17.0 | 17.2 | 19.6 | 19.6 | 2.6 | 2.6 | PASS / PASS | 4.1 / 4.1 | 0.000 | 0.000 |
+| w1 | yes | 24.48 | 21.1 | 21.1 | 23.9 | 23.9 | 2.8 | 2.8 | PASS / PASS | 2.5 / 2.5 | 0.000 | 0.000 |
+| w2 | yes | 48.02 | 19.6 | 19.7 | 21.7 | 21.7 | 2.0 | 2.0 | PASS / PASS | 3.6 / 3.6 | 0.000 | 0.000 |
+| n1 | yes | 52.41 | 15.8 | 15.8 | 17.8 | 17.8 | 2.0 | 2.0 | PASS / PASS | 2.9 / 2.9 | 0.000 | 0.000 |

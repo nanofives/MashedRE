@@ -1,0 +1,26 @@
+"""Raw (unpreprocessed) grep over exe TUs + their quoted includes: RVA hex literals (non-comment lines) and
+names inside string literals. usage: raw_refs.py <repo_root> <rvas_file> <names_file>"""
+import os, re, sys
+root, rvaf, namef = sys.argv[1:4]
+src = os.path.join(root, 'mashedmod', 'src', 'mashed_re')
+tus = [l.strip().strip('"') for l in open(os.path.join(root, 'mashedmod', 'exe_sources.rsp')) if l.strip()]
+files, todo = set(), [os.path.normpath(os.path.join(src, t)) for t in tus]
+while todo:
+    p = todo.pop()
+    if p in files or not os.path.exists(p): continue
+    files.add(p)
+    for m in re.finditer(r'#\s*include\s*"([^"]+)"', open(p, encoding='utf-8', errors='replace').read()):
+        todo.append(os.path.normpath(os.path.join(os.path.dirname(p), m.group(1))))
+rvas = open(rvaf).read().split()
+names = open(namef).read().split()
+rva_re = re.compile(r'0x(' + '|'.join(rvas) + r')(?![0-9a-fA-F])', re.I)
+str_re = re.compile(r'"[^"\n]*\b(' + '|'.join(map(re.escape, names)) + r')\b[^"\n]*"')
+for p in sorted(files):
+    for ln, line in enumerate(open(p, encoding='utf-8', errors='replace'), 1):
+        code = line.split('//')[0]
+        if 'RH_ScopedInstall' in code: continue
+        for m in rva_re.finditer(code):
+            print('RVA %s %s:%d: %s' % (m.group(1), os.path.relpath(p, root), ln, line.strip()[:160]))
+        for m in str_re.finditer(code):
+            print('STR %s %s:%d: %s' % (m.group(1), os.path.relpath(p, root), ln, line.strip()[:160]))
+print('files scanned:', len(files))

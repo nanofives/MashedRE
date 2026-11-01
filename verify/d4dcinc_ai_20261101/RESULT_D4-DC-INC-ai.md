@@ -40,7 +40,16 @@ Gate run setup:
 - Output `D:/MashedWT/D4-DC-INC-ai_data/arms2`; run log `D:/MashedWT/D4-DC-INC-ai_data/gates_run2.log`.
 - Wrapped in `mashed_lock.py run` around `bash -c 'test-slot ...'`. All four arms self-exited, exit 0.
 
-The raw files have the same sha256 as the first run listed under Gates below. The sections below describe the
+The raw files have the same sha256 as the first run listed under Gates below.
+
+**Second re-merge, onto `orch/integration` @ `ca02bde58`, at `8cdafe6b9`:**
+- Integration moved while the gates ran (MATCH-S01-RC, D5-INTROMOVIES-AUDIO, HB-ARCTIC-NOLIGHT-CAP, MATCH-TOPDOWN-MAP).
+- Those merges change no build input: `git diff ffa02610b 8cdafe6b9 -- mashedmod scripts re/tools re/match` is empty.
+  The exe and the gate hashes above therefore stand for this tip.
+- `git merge-tree` showed one conflict, `re/analysis/CHANGELOG.md`, where both sides prepended below
+  `<!-- ENTRIES -->`. All entries were kept, integration's first.
+- `hooks.csv` merged on its own. Against integration it differs only in this branch's 12 rows.
+- `archive_lint.py --ref` at `8cdafe6b9`: 3/3 PASS, 34 findings, NEW=0. The sections below describe the
 pre-merge tip `02dda4b80`. Their per-RVA content is unchanged by the merge.
 
 ## Method
