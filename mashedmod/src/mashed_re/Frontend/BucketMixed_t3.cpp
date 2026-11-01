@@ -56,48 +56,8 @@
 //   0x0067e7b8 0x0067e800
 // ---------------------------------------------------------------------------
 
-namespace {
-
-inline void advance_flag(std::uintptr_t addr) {
-    // (X != 1) - 1 & 2: X==1 -> 2; else -> 0.
-    auto p = reinterpret_cast<std::uint32_t*>(addr);
-    *p = ((*p != 1u) - 1u) & 2u;
-}
-
-inline void advance_flag_options(std::uintptr_t addr) {
-    // Special case: preserve 1 if already 1; else clear to 0.
-    auto p = reinterpret_cast<std::uint32_t*>(addr);
-    if (*p != 1u) {
-        *p = 0u;
-    }
-}
-
-}  // namespace
-
-// 0x00431d90
-extern "C" __declspec(dllexport) void __cdecl FrontendPanelFlagAdvance() {
-    advance_flag(0x0067e7d8u);
-    advance_flag_options(0x0067e7b0u);  // options panel: special preserve-1
-    advance_flag(0x0067e7f0u);
-    advance_flag(0x0067e7d0u);
-    advance_flag(0x0067e7a8u);
-    advance_flag(0x0067e7c0u);
-    advance_flag(0x0067e7c8u);
-    advance_flag(0x0067e7f8u);
-    advance_flag(0x0067e838u);
-    advance_flag(0x0067e828u);
-    advance_flag(0x0067e830u);
-    advance_flag(0x0067e820u);
-    advance_flag(0x0067e7e0u);
-    advance_flag(0x0067e7e8u);
-    advance_flag(0x0067e808u);
-    advance_flag(0x0067e810u);
-    advance_flag(0x0067e818u);
-    advance_flag(0x0067e7b8u);
-    advance_flag(0x0067e800u);
-}
-
-RH_ScopedInstall(FrontendPanelFlagAdvance, 0x00431d90);
+// MATCH-S07: the body of 0x00431d90 (FrontendPanelFlagAdvance) moved to Match/MatchS07_00431d90.cpp,
+// which compiles the byte-matched source re/match/s07/00431d90.c.
 
 
 // ---------------------------------------------------------------------------

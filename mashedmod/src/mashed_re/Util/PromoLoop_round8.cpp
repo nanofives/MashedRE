@@ -87,13 +87,8 @@ RH_ScopedInstall(Util897fe0Get, 0x004430b0);
 // Caller: Course::Finish 0x0040d270 (C2). Resolves S-2225 (already resolved).
 // ---------------------------------------------------------------------------
 
-// 0x0042f790
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GhostModeIsActive(void) {
-    // 0x0067ea70 cited at 0x0042f792.
-    return *reinterpret_cast<const std::uint32_t*>(0x0067ea70u);
-}
-
-RH_ScopedInstall(GhostModeIsActive, 0x0042f790);
+// MATCH-S07: the body of 0x0042f790 (GhostModeIsActive) moved to Match/MatchS07_0042f790.cpp,
+// which compiles the byte-matched source re/match/s07/0042f790.c.
 
 // ---------------------------------------------------------------------------
 // CourseGetLeaderIndex  --  0x00431d70   (subsystem: util)
@@ -108,13 +103,8 @@ RH_ScopedInstall(GhostModeIsActive, 0x0042f790);
 // Caller: Course::ValidateCarsFinished 0x0040d040 (C2).
 // ---------------------------------------------------------------------------
 
-// 0x00431d70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CourseGetLeaderIndex(void) {
-    // 0x0067ea94 cited at 0x00431d72.
-    return *reinterpret_cast<const std::uint32_t*>(0x0067ea94u);
-}
-
-RH_ScopedInstall(CourseGetLeaderIndex, 0x00431d70);
+// MATCH-S07: the body of 0x00431d70 (CourseGetLeaderIndex) moved to Match/MatchS07_00431d70.cpp,
+// which compiles the byte-matched source re/match/s07/00431d70.c.
 
 // ---------------------------------------------------------------------------
 // RwGlobal6182b0Set  --  0x004cc7e0   (subsystem: render)

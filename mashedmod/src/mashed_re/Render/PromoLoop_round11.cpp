@@ -67,13 +67,8 @@ RH_ScopedInstall(RwCapsBlockPtrGet, 0x004cae90);
 //   U-4344: block layout (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x0042f520
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ViewportBlockPtrGet(void) {
-    // 0x00899150 cited at 0x0042f520 body.
-    return 0x00899150u;
-}
-
-RH_ScopedInstall(ViewportBlockPtrGet, 0x0042f520);
+// MATCH-S07: the body of 0x0042f520 (ViewportBlockPtrGet) moved to Match/MatchS07_0042f520.cpp,
+// which compiles the byte-matched source re/match/s07/0042f520.c.
 
 // ---------------------------------------------------------------------------
 // DynamicObjectListGetBase  --  0x00485370   (subsystem: vehicle)

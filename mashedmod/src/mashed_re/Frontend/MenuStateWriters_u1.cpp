@@ -15,13 +15,6 @@
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
-// Forward declaration for the alt-init callee (guard == 0 path).
-// 0x0042bf30  FUN_0042bf30 — C2; called only when DAT_0067eab0 == 0.
-// ---------------------------------------------------------------------------
-static auto* const s_AltInit =
-    reinterpret_cast<void(__cdecl*)()>(0x0042bf30);
-
-// ---------------------------------------------------------------------------
 // MenuStateParamStore  --  0x0042bfb0
 //
 // Original: FUN_0042bfb0 (0x0042bfb0..0x0042c002)
@@ -48,25 +41,5 @@ static auto* const s_AltInit =
 // ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042bfb0.md
 // ---------------------------------------------------------------------------
 
-// 0x0042bfb0
-extern "C" __declspec(dllexport) void __cdecl MenuStateParamStore(
-    std::uint32_t param_1, std::uint32_t param_2, std::uint32_t param_3,
-    std::uint32_t param_4, std::uint32_t param_5, std::uint32_t param_6)
-{
-    // Guard: DAT_0067eab0 == 0 → alt-init and return. [0x0042bfb0]
-    if (*reinterpret_cast<const std::int32_t*>(0x0067eab0u) == 0) {
-        s_AltInit();
-        return;
-    }
-
-    // Store the 6-tuple into the contiguous block. [0x0042bfb0 store path]
-    *reinterpret_cast<std::uint32_t*>(0x0067e918u) = param_1;
-    *reinterpret_cast<std::uint32_t*>(0x0067e91cu) = param_2;
-    *reinterpret_cast<std::uint32_t*>(0x0067e920u) = param_3;
-    *reinterpret_cast<std::uint32_t*>(0x0067e924u) = param_4;
-    *reinterpret_cast<std::uint32_t*>(0x0067e928u) = param_5;
-    *reinterpret_cast<std::uint32_t*>(0x0067e92cu) = param_6;
-    *reinterpret_cast<std::uint32_t*>(0x0067e930u) = 1u;  // flag
-}
-
-RH_ScopedInstall(MenuStateParamStore, 0x0042bfb0);
+// MATCH-S07: the body of 0x0042bfb0 (MenuStateParamStore) moved to Match/MatchS07_0042bfb0.cpp,
+// which compiles the byte-matched source re/match/s07/0042bfb0.c.

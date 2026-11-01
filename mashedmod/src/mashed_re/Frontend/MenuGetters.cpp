@@ -19,12 +19,8 @@
 // ref: re/analysis/frontend_promote_menus_a/0x0042b930.md
 // ---------------------------------------------------------------------------
 
-// 0x0042b930
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuAlphaGet() {
-    return *reinterpret_cast<std::uint32_t*>(0x0067ecb0u);
-}
-
-RH_ScopedInstall(MenuAlphaGet, 0x0042b930);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x0042b930 (MenuAlphaGet) moved to Match/MatchS07_0042b930.cpp,
+// which compiles the byte-matched source re/match/s07/0042b930.c.
 
 // ---------------------------------------------------------------------------
 // MenuGroupCount  --  0x0042ac00

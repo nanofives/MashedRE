@@ -136,13 +136,5 @@ RH_ScopedInstall(UtilInit898a90, 0x0042aab0);
 //   47-byte leaf. Buffer base 0x008989e0; 12-byte elements; p1,p2 in {0,1}.
 // ---------------------------------------------------------------------------
 
-// 0x00430b00
-extern "C" __declspec(dllexport) void __cdecl TimeDisplaySetEntry(
-        int param_1, int param_2, std::uint32_t v3, std::uint32_t v4, std::uint32_t v5) {
-    int off = (param_2 + param_1 * 2) * 0xc;
-    *reinterpret_cast<std::uint32_t*>(0x008989e0u + off) = v3;
-    *reinterpret_cast<std::uint32_t*>(0x008989e4u + off) = v4;
-    *reinterpret_cast<std::uint32_t*>(0x008989e8u + off) = v5;
-}
-
-RH_ScopedInstall(TimeDisplaySetEntry, 0x00430b00);
+// MATCH-S07: the body of 0x00430b00 (TimeDisplaySetEntry) moved to Match/MatchS07_00430b00.cpp,
+// which compiles the byte-matched source re/match/s07/00430b00.c.
