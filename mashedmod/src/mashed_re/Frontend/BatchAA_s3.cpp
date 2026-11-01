@@ -39,13 +39,8 @@
 // ref: re/analysis/frontend_c1_to_c2_s5/FUN_00427c90.md
 // ---------------------------------------------------------------------------
 
-// 0x00427c90
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067d84c() {
-    // DAT_0067d84c — read at 0x00427c90 per decompiler. [ref 0x00427c90]
-    return *reinterpret_cast<const std::uint32_t*>(0x0067d84cu);
-}
-
-RH_ScopedInstall(GetDat0067d84c, 0x00427c90);
+// MATCH-S06: the body of 0x00427c90 (GetDat0067d84c) moved to Match/MatchS06_00427c90.cpp,
+// which compiles the byte-matched source re/match/s06/00427c90.c.
 
 // ---------------------------------------------------------------------------
 // TeamBlockZeroGet  --  0x00424100

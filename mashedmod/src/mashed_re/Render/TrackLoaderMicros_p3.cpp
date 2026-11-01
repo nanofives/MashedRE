@@ -79,13 +79,8 @@ RH_ScopedInstall(TrackPhysWorld1Get, 0x00426060);  // re-enabled 2026-05-24 c3-r
 // ref: re/analysis/render_promote_c2_track_loader/0x00426070.md
 // ---------------------------------------------------------------------------
 
-// 0x00426070
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackPhysWorld2Get()
-{
-    return *reinterpret_cast<std::uint32_t*>(0x00656ee8u);
-}
-
-RH_ScopedInstall(TrackPhysWorld2Get, 0x00426070);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S06: the body of 0x00426070 (TrackPhysWorld2Get) moved to Match/MatchS06_00426070.cpp,
+// which compiles the byte-matched source re/match/s06/00426070.c.
 
 // ---------------------------------------------------------------------------
 // TrackPhysWorld3Get  --  0x004260c0
@@ -114,13 +109,8 @@ RH_ScopedInstall(TrackPhysWorld2Get, 0x00426070);  // re-enabled 2026-05-24 c3-r
 // ref: re/analysis/render_promote_c2_track_loader/0x004260c0.md
 // ---------------------------------------------------------------------------
 
-// 0x004260c0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackPhysWorld3Get()
-{
-    return *reinterpret_cast<std::uint32_t*>(0x00657490u);
-}
-
-RH_ScopedInstall(TrackPhysWorld3Get, 0x004260c0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S06: the body of 0x004260c0 (TrackPhysWorld3Get) moved to Match/MatchS06_004260c0.cpp,
+// which compiles the byte-matched source re/match/s06/004260c0.c.
 
 // ---------------------------------------------------------------------------
 // TrackLoaderFloatGet  --  0x00426e00
@@ -207,19 +197,5 @@ RH_ScopedInstall(TrackLoaderFloatGet, 0x00426e00);  // re-enabled 2026-05-24 c3-
 // ref: re/analysis/render_promote_c2_track_loader/0x00426cd0.md
 // ---------------------------------------------------------------------------
 
-// 0x00426cd0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackSlotArrayReset()
-{
-    // Write 0xFFFFFFFF to 6 consecutive dwords starting at DAT_0066d6e4.
-    // [0x00426cd0 body: puVar2 = &DAT_0066d6e4; loop 6 times]
-    std::uint32_t* slot = reinterpret_cast<std::uint32_t*>(0x0066d6e4u);
-    slot[0] = 0xFFFFFFFFu;  // track slot[0]  [0x0066d6e4]
-    slot[1] = 0xFFFFFFFFu;  // track slot[1]  [0x0066d6e8]
-    slot[2] = 0xFFFFFFFFu;  // track slot[2]  [0x0066d6ec]
-    slot[3] = 0xFFFFFFFFu;  // track slot[3]  [0x0066d6f0]
-    slot[4] = 0xFFFFFFFFu;  // track slot[4]  [0x0066d6f4]
-    slot[5] = 0xFFFFFFFFu;  // track slot[5]  [0x0066d6f8]
-    return 1u;
-}
-
-RH_ScopedInstall(TrackSlotArrayReset, 0x00426cd0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S06: the body of 0x00426cd0 (TrackSlotArrayReset) moved to Match/MatchS06_00426cd0.cpp,
+// which compiles the byte-matched source re/match/s06/00426cd0.c.

@@ -204,17 +204,8 @@ RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);  // re-enabled 2026
 // Packed-string-table directory lookup.
 // ===========================================================================
 
-// 0x00427780
-extern "C" __declspec(dllexport)
-const std::uint8_t* __cdecl FontText_StringTableLookup(int index) {
-    std::uint8_t* base = reinterpret_cast<std::uint8_t*>(0x0066d828u);
-    // First N*4 bytes are an int-offset directory; lookup returns
-    // base + *(int*)(base + index*4).
-    std::int32_t off = *reinterpret_cast<const std::int32_t*>(base + index * 4);
-    return base + off;
-}
-
-RH_ScopedInstall(FontText_StringTableLookup, 0x00427780);  // re-enabled 2026-05-24 batch-mixed
+// MATCH-S06: the body of 0x00427780 (FontText_StringTableLookup) moved to Match/MatchS06_00427780.cpp,
+// which compiles the byte-matched source re/match/s06/00427780.c.
 
 
 // ===========================================================================

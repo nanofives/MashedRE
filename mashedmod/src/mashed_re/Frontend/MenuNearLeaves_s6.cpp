@@ -43,14 +43,8 @@
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
 // ---------------------------------------------------------------------------
 
-// 0x00426cb0
-extern "C" __declspec(dllexport) std::uint8_t* __cdecl SlotIndexToPtr(int param_1)
-{
-    // Map slot index to pointer: base 0x00663664, stride 0x4c. [0x00426cb0]
-    return reinterpret_cast<std::uint8_t*>(0x00663664u) + param_1 * 0x4c;
-}
-
-RH_ScopedInstall(SlotIndexToPtr, 0x00426cb0);
+// MATCH-S06: the body of 0x00426cb0 (SlotIndexToPtr) moved to Match/MatchS06_00426cb0.cpp,
+// which compiles the byte-matched source re/match/s06/00426cb0.c.
 
 // ---------------------------------------------------------------------------
 // HandleArrayRelease  --  0x00426d90

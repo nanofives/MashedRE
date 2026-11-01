@@ -156,13 +156,8 @@ RH_ScopedInstall(GlobalDat00646e58Get, 0x00426020);  // c3-batch-s-s4
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426080.md
 // ---------------------------------------------------------------------------
 
-// 0x00426080
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GlobalDat00656ed8Get() {
-    // Return value of DAT_00656ed8 cited at 0x00426080 body.
-    return *reinterpret_cast<std::uint32_t*>(0x00656ed8u);
-}
-
-RH_ScopedInstall(GlobalDat00656ed8Get, 0x00426080);  // c3-batch-s-s4
+// MATCH-S06: the body of 0x00426080 (GlobalDat00656ed8Get) moved to Match/MatchS06_00426080.cpp,
+// which compiles the byte-matched source re/match/s06/00426080.c.
 
 // ---------------------------------------------------------------------------
 // GlobalDat0066ce58Get  --  0x00426090
@@ -176,10 +171,5 @@ RH_ScopedInstall(GlobalDat00656ed8Get, 0x00426080);  // c3-batch-s-s4
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426090.md
 // ---------------------------------------------------------------------------
 
-// 0x00426090
-extern "C" __declspec(dllexport) void* __cdecl GlobalDat0066ce58Get() {
-    // Returns &DAT_0066ce58 cited at 0x00426090 body.
-    return reinterpret_cast<void*>(0x0066ce58u);
-}
-
-RH_ScopedInstall(GlobalDat0066ce58Get, 0x00426090);  // c3-batch-s-s4
+// MATCH-S06: the body of 0x00426090 (GlobalDat0066ce58Get) moved to Match/MatchS06_00426090.cpp,
+// which compiles the byte-matched source re/match/s06/00426090.c.

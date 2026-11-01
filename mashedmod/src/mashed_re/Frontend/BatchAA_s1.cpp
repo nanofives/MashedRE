@@ -92,21 +92,8 @@ static inline float u32_to_float(std::uint32_t bits) {
     return f;
 }
 
-// ---------------------------------------------------------------------------
-// 0x00426cf0  FUN_00426cf0
-// undefined4 * FUN_00426cf0(void)
-// Pure leaf: returns address of global DAT_0066d6e4.
-// No branches. No callees. No side effects.
-// Decomp (verbatim): return &DAT_0066d6e4;
-// Source: re/analysis/frontend_c1_to_c2_s5/FUN_00426cf0.md
-// ---------------------------------------------------------------------------
-// 0x00426cf0
-extern "C" __declspec(dllexport)
-std::uint32_t* __cdecl GetDat0066d6e4(void) {
-    // 0x00426cf0: return &DAT_0066d6e4
-    return reinterpret_cast<std::uint32_t*>(0x0066d6e4u);
-}
-RH_ScopedInstall(GetDat0066d6e4, 0x00426cf0);
+// MATCH-S06: the body of 0x00426cf0 () moved to Match/MatchS06_00426cf0.cpp,
+// which compiles the byte-matched source re/match/s06/00426cf0.c.
 
 // ---------------------------------------------------------------------------
 // 0x0041ded0  FUN_0041ded0

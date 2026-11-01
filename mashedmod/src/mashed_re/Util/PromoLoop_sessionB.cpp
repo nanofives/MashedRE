@@ -66,12 +66,8 @@ RH_ScopedInstall(Clear4842b0, 0x004842b0);
 
 
 
-// 0x0042a9f0  render — byte-verified: A0 A8 EC 67 00 C3
-//   MOV AL,[0x0067eca8] ; RET   (read_global u8; caller FUN_00492e90 C2)
-extern "C" __declspec(dllexport) std::uint8_t __cdecl GetFadeAlpha(void) {
-    return *reinterpret_cast<std::uint8_t*>(0x0067eca8u);
-}
-RH_ScopedInstall(GetFadeAlpha, 0x0042a9f0);
+// MATCH-S06: the body of 0x0042a9f0 (GetFadeAlpha) moved to Match/MatchS06_0042a9f0.cpp,
+// which compiles the byte-matched source re/match/s06/0042a9f0.c.
 
 // 0x005be930  audio — byte-verified: 8B 44 24 04 33 C9 89 48 0C 89 48 10 C3
 //   MOV EAX,[ESP+4] ; XOR ECX,ECX ; MOV [EAX+0xc],ECX ; MOV [EAX+0x10],ECX ; RET
