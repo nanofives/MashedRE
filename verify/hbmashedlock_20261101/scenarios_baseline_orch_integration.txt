@@ -1,0 +1,11 @@
+[1/9] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/9] new-solo-waits-while-priority-pending FAIL (marker=True solo_opened=False)
+[3/9] ordinary-acquire-ignores-linger FAIL (ordinary acquire 0.0 s, solo still waiting=False)
+[4/9] new-solo-not-opened-during-priority-hold FAIL (T2_GOT=1793575780.443 T2_DONE=1793575781.451 S_OPEN=1793575780.086)
+[5/9] new-solo-waits-through-linger FAIL (S_OPEN - T2_DONE = -1.37 s, linger 3 s)
+[6/9] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/9] solo-open-unblocked-without-claims PASS (0.02 s)
+[8/9] solo-begin-default-ttl-le-1h FAIL (ttl=14400s)
+[9/9] run-solo-default-ttl-le-1h FAIL (ttl=43200s)
+scenarios: 3/9 PASS
+FAIL
