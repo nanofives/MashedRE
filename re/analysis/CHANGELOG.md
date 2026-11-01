@@ -26,6 +26,54 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  0x00402f50  FUN_00402f50  C3->C4  route match (c4=match), exe-callers=1 (exe_main.cpp:9225); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00404e00  IdxPtr404e00  C3->C4  route match (c4=match), exe-callers=1 (LibRw/RwCarFx.cpp:34); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00404e20  IdxPtr404e20  C3->C4  route match (c4=match), exe-callers=1 (LibRw/RwCarFx.cpp:40); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00404e50  SaveLoad  C4->C4  adds route match (c4=match) next to the frida route, exe-callers=1 (Race/GameFlow.cpp:205); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00404f50  SaveWrite  C4->C4  adds route match (c4=match) next to the frida route, exe-callers=1 (Race/GameFlow.cpp:200); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00404f80  SaveFileExists  C4->C4  adds route match (c4=match) next to the frida route, exe-callers=1 (Race/GameFlow.cpp:204); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00405890  Pred405890  C3->C4  route match (c4=match), exe-callers=1 (Gameplay/PickupCollect_naked.inc:25); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00409290  SnapNodeToSafeStartLines  C3->C4  route match (c4=match), exe-callers=3 (Race/RoundGrid.cpp:116/214/307); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00408ad0  RaceScoreFloatGetBySlot  C2->C2 (not C4) match holds and exe-callers=2, held by open U-4200 (Blocks C3 of 0x00408ad0); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00401340  CupSpinSpeedAndColor  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00401570  EntryTableScanByKey  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00401ee0  EntityTableSelectUpdate  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x004026d0  FUN_004026d0  C4->C4 frida route only, no match route: exe-callers=0 (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00402f80  CupFloatInit  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00404e80  Save::DeserializeFromBuffer  C4->C4 frida route only, no match route: exe-callers=0 (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00404ee0  Save::SerializeToBuffer  C4->C4 frida route only, no match route: exe-callers=0 (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00407a60  FUN_00407a60  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041b520  FUN_0041b520  C3->C4  route match (c4=match), exe-callers=1 (Race/SubStateMachine.cpp:157); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041ae20  FUN_0041ae20  C3->C4  route match (c4=match), exe-callers=1 (re/match/s03/h1_0041ae20.c:32 in 0x0041b520's body); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00414180  SubStateRollCountdown414180  C3->C3 (not C4) match holds and exe-callers=1, held by open stub S-3669 (.asi arm calls 0x00472650 raw); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00417730  VehicleRaceAngleGet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041ad60  ParticleEmitterCtorA  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00415020  AiLastPlaceFrustration  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00413bc0  HudUvRect413bc0  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x00414120  CopyTable005f2a70To0089a384  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041d820  TimerFlagClear  C3->C4  route match (c4=match), exe-callers=1 (exe_main.cpp:9274); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041d910  Clear63d584Pair  C3->C4  route match (c4=match), exe-callers=1 (Race/SubStateMachine.cpp:125); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041da90  DeltaTimeOutGet  C3->C4  route match (c4=match), exe-callers=1 (Race/SubStateMachine.cpp:245); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041c2d0  FUN_0041c2d0  C4->C4 frida route only, no match route: exe-callers=0 (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041b770  FUN_0041b770  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041c010  HudConstTableInitAndSweep  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041bc50  FUN_0041bc50  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041c0c0  HudDispatchSlot2  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041c300  HudDispatchMode5  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041c320  ParticleEmitterCtorC  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041cb10  FUN_0041cb10  C2->C2 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041c9a0  FUN_0041c9a0  C2->C2 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041ccc0  HudSlotLoopCcc0  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041cbc0  FloatTableInit  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041cd20  ParticleEmitterCtorD  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041d6e0  FUN_0041d6e0  C2->C2 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041e080  ScoreboardStateZeroInit  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041e130  TimerStateSet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041eda0  TimerBitFieldSet  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041f000  TimerSlotDataCopy  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041f090  GetPlayerStateBits  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  0x0041f1c0  GetEventFlag  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  U-9799  UNCERTAINTIES  Active->struck  boot movie audio plays on the standalone as on the original with VB-CABLE: audio_hr 0 on empire/supersonic/intro, S_FALSE on renderware (no audio stream, silent in the original too), all 4 movies in band, loopback envelope r 0.996-0.997 vs original (0.988 original repeat), level -13.69 dBFS both (evidence: verify/intromovies_20261101/RESULT_D5-INTROMOVIES-AUDIO.md)
 2026-11-01  00407580  SubsystemARecordKey  C3->C3  refile: ONE body, Gameplay/SubsystemARecordKey.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
 2026-11-01  00407b00  FUN_00407b00  C3->C3  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
 2026-11-01  00407b70  FUN_00407b70  C3->C3  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
