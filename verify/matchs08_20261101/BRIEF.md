@@ -45,7 +45,7 @@ One file per function: `re/match/s08/<va8>.c` (va8 = 8 hex digits, lowercase, no
    the real callee; name it `FUN_<its va8>` too, and say in the header comment that the file holds it.
 - No `__asm`, no emitted bytes, no `#pragma` other than `#pragma intrinsic`. No `#include`.
 - The file MUST ALSO compile as C++ (the port includes it into a .cpp). Check every file with
-  `cmd /c "D:\MashedWT\MATCH-S08_data	ools\cxxcheck.bat re\match\s08\<va8>.c"` from the **PowerShell** tool (from Git Bash `cmd //c` hangs on this machine) (VS2022 /TP, MATCH_PORT;
+  `cmd /c "D:\MashedWT\MATCH-S08_data\tools\cxxcheck.bat re\match\s08\<va8>.c"` from the **PowerShell** tool (from Git Bash `cmd //c` hangs on this machine) (VS2022 /TP, MATCH_PORT;
   the `vswhere` line in its output is noise; any `error C` line is a failure). Typical fixes: explicit casts for
   void*/int->pointer conversions, real function-pointer types instead of Ghidra's `code`, `0` vs `NULL`, prototypes
   with the right arity. Casts that do not change the DDK score are free; if a C++ fix costs match %, keep the
