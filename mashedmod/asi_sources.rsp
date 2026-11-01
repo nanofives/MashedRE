@@ -302,6 +302,8 @@
 "Ai\AiSplineEval.cpp"
 "Race\PathProgDot.cpp"
 "Util\WorldObjectsBase.cpp"
+"Camera\CameraPathCount.cpp"
+"Vehicle\VehicleTable4c.cpp"
 "Ai\AiPostStepBrake.cpp"
 "Ai\AiTrackObjSeek.cpp"
 "Vehicle\PromoLoop_round2.cpp"

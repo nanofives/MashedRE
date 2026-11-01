@@ -3,12 +3,6 @@ extern "C" void PP_408610();
 extern "C" void PP_407e20();
 extern "C" void PP_407be0();
 extern "C" void PP_407cd0();
-extern "C" void PP_426cb0();
-extern "C" void PP_426cc0();
-extern "C" void PP_426d00();
-extern "C" void PP_426bb0();
-extern "C" void PP_426090();
-extern "C" void PP_426cf0();
 extern "C" void PP_4c39b0();
 extern "C" void PP_4c3b90();
 extern "C" void PP_547450();
@@ -19,7 +13,7 @@ extern "C" __declspec(naked) void PP_408610() {
         sub esp, 0x34                                    // 00408610
         push ebx                                         // 00408613
         push edi                                         // 00408614
-        call PP_426cf0                                   // 00408615
+        call GetDat0066d6e4                              // 00408615
         mov edi, dword ptr [esp + 0x48]                  // 0040861a
         mov ebx, eax                                     // 0040861e
         lea eax, [esp + 0x10]                            // 00408620
@@ -234,7 +228,7 @@ extern "C" __declspec(naked) void PP_408610() {
         test ah, 5                                       // 004088e3
         jp L_4089e4                                      // 004088e6
         xor ebp, ebp                                     // 004088ec
-        call PP_426bb0                                   // 004088ee
+        call Global66d6d8Get                             // 004088ee
         mov edi, eax                                     // 004088f3
         cmp edi, ebx                                     // 004088f5
         jle L_40890e                                     // 004088f7
@@ -353,7 +347,7 @@ extern "C" __declspec(naked) void PP_408610() {
         test ah, 0x41                                    // 004089f3
         jne L_408a3a                                     // 004089f6
         xor edi, edi                                     // 004089f8
-        call PP_426bb0                                   // 004089fa
+        call Global66d6d8Get                             // 004089fa
         mov ecx, eax                                     // 004089ff
         xor eax, eax                                     // 00408a01
         cmp ecx, ebx                                     // 00408a03
@@ -399,10 +393,10 @@ extern "C" __declspec(naked) void PP_407e20() {
         push esi                                         // 00407e29
         push edi                                         // 00407e2a
         push ebp                                         // 00407e2b
-        call PP_426cb0                                   // 00407e2c
+        call SlotIndexToPtr                              // 00407e2c
         push ebp                                         // 00407e31
         mov edi, eax                                     // 00407e32
-        call PP_426cc0                                   // 00407e34
+        call VehicleTable4cPtrGet                        // 00407e34
         mov esi, dword ptr [esp + 0x5c]                  // 00407e39
         fld dword ptr [esi]                              // 00407e3d
         add esp, 8                                       // 00407e3f
@@ -462,10 +456,10 @@ extern "C" __declspec(naked) void PP_407e20() {
         fchs                                             // 00407ee2
         push edi                                         // 00407ee4
         fstp dword ptr [esp + 0x24]                      // 00407ee5
-        call PP_426cb0                                   // 00407ee9
+        call SlotIndexToPtr                              // 00407ee9
         push edi                                         // 00407eee
         mov ebx, eax                                     // 00407eef
-        call PP_426cc0                                   // 00407ef1
+        call VehicleTable4cPtrGet                        // 00407ef1
         fld dword ptr [esi]                              // 00407ef6
         fsub dword ptr [ebx]                             // 00407ef8
         add esp, 0x10                                    // 00407efa
@@ -541,10 +535,10 @@ extern "C" __declspec(naked) void PP_407e20() {
         add esp, 4                                       // 00407fcb
     L_407fce:
         push ebp                                         // 00407fce
-        call PP_426cb0                                   // 00407fcf
+        call SlotIndexToPtr                              // 00407fcf
         push ebp                                         // 00407fd4
         mov ebx, eax                                     // 00407fd5
-        call PP_426cc0                                   // 00407fd7
+        call VehicleTable4cPtrGet                        // 00407fd7
         fld dword ptr [esi]                              // 00407fdc
         fsub dword ptr [ebx]                             // 00407fde
         add esp, 8                                       // 00407fe0
@@ -636,13 +630,13 @@ extern "C" __declspec(naked) void PP_407e20() {
         call PP_407cd0                                   // 004080f3
         push edi                                         // 004080f8
         mov dword ptr [esp + 0x34], eax                  // 004080f9
-        call PP_426cb0                                   // 004080fd
+        call SlotIndexToPtr                              // 004080fd
         mov edx, dword ptr [eax]                         // 00408102
         mov eax, dword ptr [eax + 8]                     // 00408104
         push ebp                                         // 00408107
         mov dword ptr [esp + 0x6c], edx                  // 00408108
         mov dword ptr [esp + 0x28], eax                  // 0040810c
-        call PP_426cb0                                   // 00408110
+        call SlotIndexToPtr                              // 00408110
         mov ecx, dword ptr [eax]                         // 00408115
         mov edx, dword ptr [eax + 8]                     // 00408117
         mov dword ptr [esp + 0x40], ecx                  // 0040811a
@@ -675,10 +669,10 @@ extern "C" __declspec(naked) void PP_407e20() {
         fmul dword ptr [esp + 0x50]                      // 0040817b
         faddp st(1), st                                  // 0040817f
         fstp dword ptr [ebx + 0x20]                      // 00408181
-        call PP_426cb0                                   // 00408184
+        call SlotIndexToPtr                              // 00408184
         mov edx, dword ptr [esp + 0x44]                  // 00408189
         push edx                                         // 0040818d
-        call PP_426cb0                                   // 0040818e
+        call SlotIndexToPtr                              // 0040818e
         fld dword ptr [esp + 0x50]                       // 00408193
         mov ecx, dword ptr [eax]                         // 00408197
         mov edx, dword ptr [eax + 8]                     // 00408199
@@ -711,14 +705,14 @@ extern "C" __declspec(naked) void PP_407e20() {
         fmul dword ptr [esp + 0x64]                      // 004081fa
         faddp st(1), st                                  // 004081fe
         fstp dword ptr [ebx + 0x24]                      // 00408200
-        call PP_426d00                                   // 00408203
+        call FrontendArraySlotGet                        // 00408203
         mov edx, dword ptr [eax]                         // 00408208
         mov eax, dword ptr [eax + 8]                     // 0040820a
         push 2                                           // 0040820d
         push ebp                                         // 0040820f
         mov dword ptr [esp + 0x94], edx                  // 00408210
         mov dword ptr [esp + 0x50], eax                  // 00408217
-        call PP_426d00                                   // 0040821b
+        call FrontendArraySlotGet                        // 0040821b
         fld dword ptr [eax + 8]                          // 00408220
         fld dword ptr [eax]                              // 00408223
         add esp, 0x40                                    // 00408225
@@ -760,14 +754,14 @@ extern "C" __declspec(naked) void PP_407e20() {
     L_40829f:
         push 0                                           // 0040829f
         push edi                                         // 004082a1
-        call PP_426d00                                   // 004082a2
+        call FrontendArraySlotGet                        // 004082a2
         mov ecx, dword ptr [eax]                         // 004082a7
         mov edx, dword ptr [eax + 8]                     // 004082a9
         push 0                                           // 004082ac
         push ebp                                         // 004082ae
         mov dword ptr [esp + 0x64], ecx                  // 004082af
         mov dword ptr [esp + 0x20], edx                  // 004082b3
-        call PP_426d00                                   // 004082b7
+        call FrontendArraySlotGet                        // 004082b7
         fld dword ptr [eax + 8]                          // 004082bc
         fld dword ptr [eax]                              // 004082bf
         lea eax, [esp + 0x3c]                            // 004082c1
@@ -806,7 +800,7 @@ extern "C" __declspec(naked) void PP_407e20() {
         fstp st                                          // 0040832e
     L_408330:
         push edi                                         // 00408330
-        call PP_426cc0                                   // 00408331
+        call VehicleTable4cPtrGet                        // 00408331
         mov edx, dword ptr [eax]                         // 00408336
         mov ecx, dword ptr [eax + 4]                     // 00408338
         mov dword ptr [esp + 0x28], edx                  // 0040833b
@@ -815,7 +809,7 @@ extern "C" __declspec(naked) void PP_407e20() {
         push edi                                         // 00408344
         mov dword ptr [esp + 0x34], ecx                  // 00408345
         mov dword ptr [esp + 0x2c], edx                  // 00408349
-        call PP_426d00                                   // 0040834d
+        call FrontendArraySlotGet                        // 0040834d
         mov ecx, dword ptr [eax]                         // 00408352
         mov edx, dword ptr [eax + 4]                     // 00408354
         mov eax, dword ptr [eax + 8]                     // 00408357
@@ -824,7 +818,7 @@ extern "C" __declspec(naked) void PP_407e20() {
         mov dword ptr [esp + 0x68], ecx                  // 0040835d
         mov dword ptr [esp + 0x6c], edx                  // 00408361
         mov dword ptr [esp + 0x24], eax                  // 00408365
-        call PP_426d00                                   // 00408369
+        call FrontendArraySlotGet                        // 00408369
         fld dword ptr [eax + 4]                          // 0040836e
         fld dword ptr [eax + 8]                          // 00408371
         add esp, 0x14                                    // 00408374
@@ -887,7 +881,7 @@ extern "C" __declspec(naked) void PP_407e20() {
     L_408433:
         push 2                                           // 00408433
         push edi                                         // 00408435
-        call PP_426d00                                   // 00408436
+        call FrontendArraySlotGet                        // 00408436
         mov ecx, dword ptr [eax]                         // 0040843b
         mov edx, dword ptr [eax + 4]                     // 0040843d
         mov eax, dword ptr [eax + 8]                     // 00408440
@@ -896,7 +890,7 @@ extern "C" __declspec(naked) void PP_407e20() {
         mov dword ptr [esp + 0x64], ecx                  // 00408446
         mov dword ptr [esp + 0x68], edx                  // 0040844a
         mov dword ptr [esp + 0x20], eax                  // 0040844e
-        call PP_426d00                                   // 00408452
+        call FrontendArraySlotGet                        // 00408452
         fld dword ptr [eax + 4]                          // 00408457
         fld dword ptr [eax + 8]                          // 0040845a
         mov ebp, dword ptr [esp + 0x5c]                  // 0040845d
@@ -1002,7 +996,7 @@ extern "C" __declspec(naked) void PP_407be0() {
         push ebp                                         // 00407be1
         push esi                                         // 00407be2
         push edi                                         // 00407be3
-        call PP_426090                                   // 00407be4
+        call GlobalDat0066ce58Get                        // 00407be4
         mov ebp, dword ptr [esp + 0x18]                  // 00407be9
         mov edi, dword ptr [esp + 0x14]                  // 00407bed
         lea edx, [ebp*4]                                 // 00407bf1
@@ -1131,7 +1125,7 @@ extern "C" __declspec(naked) void PP_407cd0() {
         push ebp                                         // 00407cd1
         push esi                                         // 00407cd2
         push edi                                         // 00407cd3
-        call PP_426090                                   // 00407cd4
+        call GlobalDat0066ce58Get                        // 00407cd4
         mov esi, dword ptr [esp + 0x18]                  // 00407cd9
         mov edx, eax                                     // 00407cdd
         mov eax, dword ptr [esp + 0x14]                  // 00407cdf
@@ -1209,62 +1203,6 @@ extern "C" __declspec(naked) void PP_407cd0() {
         pop ebp                                          // 00407d6a
         pop ebx                                          // 00407d6b
         ret                                              // 00407d6c
-    }
-}
-
-// 0x00426cb0  PP_426cb0  (13 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_426cb0() {
-    __asm {
-        mov eax, dword ptr [esp + 4]                     // 00426cb0
-        imul eax, eax, 0x4c                              // 00426cb4
-        add eax, 0x663664                                // 00426cb7
-        ret                                              // 00426cbc
-    }
-}
-
-// 0x00426cc0  PP_426cc0  (13 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_426cc0() {
-    __asm {
-        mov eax, dword ptr [esp + 4]                     // 00426cc0
-        imul eax, eax, 0x4c                              // 00426cc4
-        add eax, 0x663658                                // 00426cc7
-        ret                                              // 00426ccc
-    }
-}
-
-// 0x00426d00  PP_426d00  (22 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_426d00() {
-    __asm {
-        mov ecx, dword ptr [esp + 4]                     // 00426d00
-        mov eax, dword ptr [esp + 8]                     // 00426d04
-        imul ecx, ecx, 0x4c                              // 00426d08
-        lea edx, [eax + eax*2]                           // 00426d0b
-        lea eax, [ecx + edx*4 + 0x663670]                // 00426d0e
-        ret                                              // 00426d15
-    }
-}
-
-// 0x00426bb0  PP_426bb0  (6 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_426bb0() {
-    __asm {
-        mov eax, dword ptr ds:[0x0066d6d8]               // 00426bb0
-        ret                                              // 00426bb5
-    }
-}
-
-// 0x00426090  PP_426090  (6 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_426090() {
-    __asm {
-        mov eax, 0x66ce58                                // 00426090
-        ret                                              // 00426095
-    }
-}
-
-// 0x00426cf0  PP_426cf0  (6 bytes, verbatim; generated by re/tools/gen_naked_asm.py)
-extern "C" __declspec(naked) void PP_426cf0() {
-    __asm {
-        mov eax, 0x66d6e4                                // 00426cf0
-        ret                                              // 00426cf5
     }
 }
 

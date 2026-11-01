@@ -27,8 +27,10 @@
 namespace {
 
 #ifdef MASHED_STANDALONE
-extern "C" void PP_426cc0();                                    // Race/PathProgStep_naked.inc (exe-only TU)
-void* s_fn_426cc0 = reinterpret_cast<void*>(&PP_426cc0);
+// Since D4-DC-INC-pathprog (2026-11-01) the exe binds the one body of FUN_00426cc0 (Vehicle/VehicleTable4c.cpp,
+// both targets) in place of the deleted PP_426cc0 copy. The .asi binding below is unchanged.
+extern "C" std::uint32_t __cdecl VehicleTable4cPtrGet(int param_1);
+void* s_fn_426cc0 = reinterpret_cast<void*>(&VehicleTable4cPtrGet);
 #else
 void* s_fn_426cc0 = reinterpret_cast<void*>(0x00426cc0u);       // the original inside MASHED.exe
 #endif

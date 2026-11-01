@@ -9,7 +9,7 @@
 //   0x0042f760  Global67f19cGet — [0x0067f19c] (caller 004631f0 audio C2)
 //   0x0042f770  Global67f1a0Get — [0x0067f1a0] (caller 004631f0 audio C2)
 //   0x0042f780  Global67f1a4Get — [0x0067f1a4] (caller 004631f0 audio C2)
-//   0x00426bb0  Global66d6d8Get — [0x0066d6d8] (caller 00408610 gameplay C2)
+//   [MOVED 2026-11-01, D4-DC-INC-pathprog] Global66d6d8Get (FUN_00426bb0) -> Camera/CameraPathCount.cpp
 //   0x0045bfe0  Global80332cGet — [0x0080332c] (caller 00406160 gameplay C2)
 
 #include "../Core/HookSystem.h"
@@ -33,12 +33,6 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Global67f1a4Get(void) {
     return *reinterpret_cast<const std::uint32_t*>(0x0067f1a4u);  // cited at 0x0042f780
 }
 RH_ScopedInstall(Global67f1a4Get, 0x0042f780);
-
-// 0x00426bb0  A1 D8 D6 66 00 C3  (mov eax,[0x0066d6d8]; ret) — path-count int
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global66d6d8Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0066d6d8u);  // cited at 0x00426bb0
-}
-RH_ScopedInstall(Global66d6d8Get, 0x00426bb0);
 
 // 0x0045bfe0  A1 2C 33 80 00 C3  (mov eax,[0x0080332c]; ret)
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Global80332cGet(void) {

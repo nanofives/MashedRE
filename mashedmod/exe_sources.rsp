@@ -16,6 +16,8 @@
 "Ai\AiSplineEval.cpp"
 "Race\PathProgDot.cpp"
 "Util\WorldObjectsBase.cpp"
+"Camera\CameraPathCount.cpp"
+"Vehicle\VehicleTable4c.cpp"
 "Gameplay\SubsystemARecordKey.cpp"
 "Gameplay\RangeTable_ah1.cpp"
 "Ai\AiPostStepBrake.cpp"
