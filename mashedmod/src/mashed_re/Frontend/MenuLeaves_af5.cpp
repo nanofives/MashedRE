@@ -72,13 +72,8 @@ static auto* const s_SplineEditorTick =
 // ref: re/analysis/bucket_0041dc30/0x00431b70.md
 // ---------------------------------------------------------------------------
 
-// 0x00431b70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuFlagDat007f0f10Get(void) {
-    // return DAT_007f0f10;  (0x007f0f10)
-    return *reinterpret_cast<std::uint32_t*>(0x007f0f10u);
-}
-
-RH_ScopedInstall(MenuFlagDat007f0f10Get, 0x00431b70);  // c3-batch-af-s5
+// MATCH-S07: the body of 0x00431b70 (MenuFlagDat007f0f10Get) moved to Match/MatchS07_00431b70.cpp,
+// which compiles the byte-matched source re/match/s07/00431b70.c.
 
 // ---------------------------------------------------------------------------
 // FUN_004298c0 (zeroes _DAT_0067d99c / DAT_0067d994 / DAT_0067d98c / DAT_008991bc) was

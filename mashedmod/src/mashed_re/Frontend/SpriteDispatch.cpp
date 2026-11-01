@@ -70,15 +70,8 @@ static void* const kSlotPtrs[10] = {
     reinterpret_cast<void*>(0x005cd838u),   // slot 9  (0x0042fab0 case 9)
 };
 
-// 0x0042fab0
-extern "C" __declspec(dllexport) void __cdecl SpriteSlotDispatch(int slot) {
-    if (slot < 0 || slot > 9) {
-        return;  // default case: fall-through (no-op), cited at 0x0042fb46
-    }
-    s_FUN_0040bb90(kSlotPtrs[slot]);
-}
-
-RH_ScopedInstall(SpriteSlotDispatch, 0x0042fab0);  // re-enabled 2026-05-24 phase-a1 sprite_table_dispatch GREEN
+// MATCH-S07: the body of 0x0042fab0 (SpriteSlotDispatch) moved to Match/MatchS07_0042fab0.cpp,
+// which compiles the byte-matched source re/match/s07/0042fab0.c.
 
 
 // ---------------------------------------------------------------------------
@@ -105,21 +98,5 @@ static constexpr std::uintptr_t kAnimFrame      = 0x0067f17cu;
 // Sprite pointer table base: 0x005f79d8.  (cited at 0x0042e59d)
 static constexpr std::uintptr_t kSpritePtrTable = 0x005f79d8u;
 
-// 0x0042e590
-extern "C" __declspec(dllexport) void __cdecl SpriteAnimFrameThunk(
-    int sprite_slot,
-    float x1, float y1, float x2, float y2,
-    std::uint32_t color, int uv_param, int frame_idx, int flag)
-{
-    // Compute lookup index: sprite_slot + 2 * DAT_0067f17c.
-    int anim_frame = *reinterpret_cast<int*>(kAnimFrame);
-    int idx = sprite_slot + 2 * anim_frame;
-
-    // Look up sprite pointer: sprite_ptr_table[idx]  (0x0042e59d)
-    void* sprite_ptr = reinterpret_cast<void* const*>(kSpritePtrTable)[idx];
-
-    // Tail-call FUN_0040bb70 with sprite_ptr replacing sprite_slot as first arg.
-    s_FUN_0040bb70(sprite_ptr, x1, y1, x2, y2, color, uv_param, frame_idx, flag);
-}
-
-RH_ScopedInstall(SpriteAnimFrameThunk, 0x0042e590);  // re-enabled 2026-05-24 phase-a1 sprite_table_dispatch GREEN
+// MATCH-S07: the body of 0x0042e590 (SpriteAnimFrameThunk) moved to Match/MatchS07_0042e590.cpp,
+// which compiles the byte-matched source re/match/s07/0042e590.c.

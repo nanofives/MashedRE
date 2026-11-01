@@ -10,7 +10,6 @@
 //   (preserved in original\MASHED.exe.unpatched)
 
 #include "../Core/HookSystem.h"
-#include "MenuEntryZero.h"
 
 #include <cstdint>
 
@@ -24,12 +23,8 @@
 // ref: re/analysis/promote_c2_frontend_menus/0x0042fe80.md
 // ---------------------------------------------------------------------------
 
-// 0x0042fe80
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetRaceEndFlag() {
-    return *reinterpret_cast<std::uint32_t*>(0x0067ea90u);
-}
-
-RH_ScopedInstall(GetRaceEndFlag, 0x0042fe80);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x0042fe80 (GetRaceEndFlag) moved to Match/MatchS07_0042fe80.cpp,
+// which compiles the byte-matched source re/match/s07/0042fe80.c.
 
 // ---------------------------------------------------------------------------
 // GetFrameCounterPlus73  --  0x0042f0b0
@@ -41,12 +36,8 @@ RH_ScopedInstall(GetRaceEndFlag, 0x0042fe80);  // re-enabled 2026-05-24 batch-fr
 // ref: re/analysis/promote_c2_frontend_menus/0x0042f0b0.md
 // ---------------------------------------------------------------------------
 
-// 0x0042f0b0
-extern "C" __declspec(dllexport) int __cdecl GetFrameCounterPlus73() {
-    return *reinterpret_cast<std::int32_t*>(0x0067f17cu) + 0x49;
-}
-
-RH_ScopedInstall(GetFrameCounterPlus73, 0x0042f0b0);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S07: the body of 0x0042f0b0 (GetFrameCounterPlus73) moved to Match/MatchS07_0042f0b0.cpp,
+// which compiles the byte-matched source re/match/s07/0042f0b0.c.
 
 // ---------------------------------------------------------------------------
 // MenuEntryArrayInit  --  0x0042d3e0
@@ -62,9 +53,7 @@ RH_ScopedInstall(GetFrameCounterPlus73, 0x0042f0b0);  // re-enabled 2026-05-24 c
 // ref: re/analysis/promote_c2_frontend_menus/0x0042d3e0.md
 // ---------------------------------------------------------------------------
 
-// 0x0042d3e0
-extern "C" __declspec(dllexport) void __cdecl MenuEntryArrayInit() {
-    mashed_re::Frontend::MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(0x00898ac0u), 30);
-}
-
-RH_ScopedInstall(MenuEntryArrayInit, 0x0042d3e0);  // re-enabled 2026-05-24 c3-frontend-a; body corrected 2026-10-16 (dualcopy4)
+// MATCH-S07: the body of 0x0042d3e0 (MenuEntryArrayInit) moved to Match/MatchS07_0042d3e0.cpp,
+// which compiles the byte-matched source re/match/s07/0042d3e0.c.
+// It writes the same 14 stores per entry as Frontend/MenuEntryZero.h:MenuEntryZeroBody, which stays only as the helper the
+// exe's Frontend/MenuNavSM.cpp:RecordsZero runs on its own g_records (port memory, not this RVA's body).

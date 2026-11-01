@@ -23,17 +23,5 @@
 
 #include <cstdint>
 
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067ecb4() {
-    return *reinterpret_cast<std::uint32_t*>(0x0067ecb4);
-}
-RH_ScopedInstall(GetDat0067ecb4, 0x0042c2d0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
-
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067ecb8() {
-    return *reinterpret_cast<std::uint32_t*>(0x0067ecb8);
-}
-RH_ScopedInstall(GetDat0067ecb8, 0x0042c2e0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
-
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067ea64() {
-    return *reinterpret_cast<std::uint32_t*>(0x0067ea64);
-}
-RH_ScopedInstall(GetDat0067ea64, 0x0042f500);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
+// MATCH-S07: the bodies of 0x0042c2d0 (GetDat0067ecb4), 0x0042c2e0 (GetDat0067ecb8) and 0x0042f500
+// (GetDat0067ea64) moved to Match/MatchS07_<va8>.cpp, which compile the byte-matched sources re/match/s07/<va8>.c.

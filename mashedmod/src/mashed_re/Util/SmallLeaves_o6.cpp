@@ -45,11 +45,5 @@
 // ref: re/analysis/promote_c1_low_ab1/0x00430790.md
 // ---------------------------------------------------------------------------
 
-// 0x00430790
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067f17c() {
-    // Return DAT_0067f17c.
-    // 0x0067f17c cited at 0x00430790 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x0067f17cu);
-}
-
-RH_ScopedInstall(GetDat0067f17c, 0x00430790);  // re-enabled 2026-05-24 c3-safe
+// MATCH-S07: the body of 0x00430790 (GetDat0067f17c) moved to Match/MatchS07_00430790.cpp,
+// which compiles the byte-matched source re/match/s07/00430790.c.

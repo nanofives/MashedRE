@@ -1611,23 +1611,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Clear4e4350(std::uint32_t
 }
 RH_ScopedInstall(Clear4e4350, 0x004e4350);
 
-// ===== round 140 ===== (abs-array scan -> dirty flag)
-// 0x0042c150 — void fn(): for p=0x67ea14; p<0x67ea44; p+=0x18: count nonzero among
-//   [p-4],[p],[p+4],[p+8],[p+0xc],[p+0x10]; if(count!=0) *(u32*)0x67eab4 = 0xff.
-extern "C" __declspec(dllexport) void __cdecl Scan42c150(void) {
-    int cnt = 0;
-    for (std::uint8_t* p = reinterpret_cast<std::uint8_t*>(0x0067ea14);
-         reinterpret_cast<std::uintptr_t>(p) < 0x0067ea44; p += 0x18) {
-        if (*reinterpret_cast<int*>(p - 4)) cnt++;
-        if (*reinterpret_cast<int*>(p)) cnt++;
-        if (*reinterpret_cast<int*>(p + 4)) cnt++;
-        if (*reinterpret_cast<int*>(p + 8)) cnt++;
-        if (*reinterpret_cast<int*>(p + 0xc)) cnt++;
-        if (*reinterpret_cast<int*>(p + 0x10)) cnt++;
-    }
-    if (cnt != 0) *reinterpret_cast<std::uint32_t*>(0x0067eab4) = 0xff;
-}
-RH_ScopedInstall(Scan42c150, 0x0042c150);
+// MATCH-S07: the body of 0x0042c150 (Scan42c150) moved to Match/MatchS07_0042c150.cpp,
+// which compiles the byte-matched source re/match/s07/0042c150.c.
 
 // ===== round 141 ===== (global 2-level list search)
 // 0x004850b0 — int fn(key): g=*(u8**)0x6e71cc; node=*(u8**)(g+4); if(node==0) return -1;
@@ -3078,39 +3063,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init458f80(void)
 }
 RH_ScopedInstall(Init458f80, 0x00458f80);
 
-// 0x0042c1f0  FUN_0042c1f0 (gameplay, NEAR-LEAF: count nonzero callee results -> all-zero?)
-// int f(void): edi=0; for esi=0..5 { if (FUN_00496900(esi)) edi++; } return (edi==0)?1:0.
-// Callee 0x00496900 (C3, tail-jmp to 0x497450) returns table[esi*0x200+0x7e96fc]!=0 for esi<=3
-// else 0. So this returns 1 iff table[0..3] are all zero. Verbatim naked port; `call rel32`
-// to the callee -> `mov eax,0x496900; call eax` (callee unhooked at suspended-spawn).
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Count42c1f0(void)
-{
-    __asm {
-        push esi
-        push edi
-        xor  edi, edi
-        xor  esi, esi
-    L_NLC_LOOP:
-        push esi
-        mov  eax, 0496900h                    // callee 0x00496900 (absolute)
-        call eax
-        add  esp, 4
-        test eax, eax
-        je   L_NLC_SKIP
-        inc  edi
-    L_NLC_SKIP:
-        inc  esi
-        cmp  esi, 6
-        jl   L_NLC_LOOP
-        xor  eax, eax
-        test edi, edi
-        pop  edi
-        sete al
-        pop  esi
-        ret
-    }
-}
-RH_ScopedInstall(Count42c1f0, 0x0042c1f0);
+// MATCH-S07: the body of 0x0042c1f0 (Count42c1f0) moved to Match/MatchS07_0042c1f0.cpp,
+// which compiles the byte-matched source re/match/s07/0042c1f0.c.
 
 // 0x005aa1e0  FUN_005aa1e0 (audio, NEAR-LEAF: logical-NOT of a 16-byte memcmp)
 // int f(arg1_unused, arg2, arg3): a=*arg2, b=arg3; return !FUN_005adf30(a,b). Callee 0x5adf30
@@ -3610,26 +3564,8 @@ RH_ScopedInstall(Search40bb30, 0x0040bb30);
 // (couldn't find an observe target that changes). Left C2; needs deeper per-callee analysis or
 // the booted lane. Not promoted (no degenerate-GREEN).
 
-// 0x0042c280  FUN_0042c280 (gameplay, NEAR-LEAF: one-shot init wrapper, fixed consts)
-// void f(void): FUN_0042bf30(0x27f, 0xff210000, 0, 0, 0, 0). Callee 0x42bf30 (C3): if
-// (*0x67eab0==0) { store the 6 args to 0x67eab4/bc/c0/c8/cc/d0; 0x67eab0=1; 0x67eab8=0;
-// 0x67ead4=0; if (*0x67ea5c) { 0x67ead4=1; 0x67ea5c=0; } }. Verbatim naked port.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init42c280(void)
-{
-    __asm {
-        push 0
-        push 0
-        push 0
-        push 0
-        push 0FF210000h
-        push 027Fh
-        mov  eax, 042BF30h
-        call eax
-        add  esp, 0x18
-        ret
-    }
-}
-RH_ScopedInstall(Init42c280, 0x0042c280);
+// MATCH-S07: the body of 0x0042c280 (Init42c280) moved to Match/MatchS07_0042c280.cpp,
+// which compiles the byte-matched source re/match/s07/0042c280.c.
 
 // 0x0048ade0  FUN_0048ade0 (particle, NEAR-LEAF: zero-fill wrapper)
 // void f(void): FUN_004b6480(0x7151f0, 0x200) -> clears a 0x200-bit (0x40-byte) array at
