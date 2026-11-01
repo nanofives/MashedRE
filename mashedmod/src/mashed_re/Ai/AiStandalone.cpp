@@ -117,6 +117,7 @@ extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   
 extern "C" void __cdecl AiBankSwitch(int);
 // FUN_00417640: the one body, Ai/AiPostStepBrake.cpp.
 extern "C" void __cdecl AiPostStepPowerupBrake(int, std::uint8_t*);
+extern "C" float __cdecl VehicleRaceAngleGet(int carIdx);   // 0x00417730, matched body (Vehicle/VehicleState.cpp)
 
 namespace Ai {
 
@@ -1715,7 +1716,7 @@ void AiPreTickRubberBand()
     // ---- phase 3: mode-9 speed scaling, vehicle 1 ----
     if (fd0 == 9) {
         float mult = 1.0f;
-        const float ang = F32(0x0089a880u + 4u);              // FUN_00417730(1)
+        const float ang = VehicleRaceAngleGet(1);              // FUN_00417730(1) (MATCH-TOPDOWN-T08: the matched body)
         if (ang < kMode9Thresh1) mult = 0.95f;
         if (ang < kMode9Thresh2) mult = 0.9f;
         if (ang < kMode9Thresh3) mult = 0.25f;
@@ -1729,7 +1730,7 @@ void AiPreTickRubberBand()
     if (fd0 == 4) {
         for (int v = 1; v < 4; ++v) {
             float mult = 1.0f;
-            const float ang = F32(0x0089a880u + static_cast<std::uintptr_t>(v) * 4u);
+            const float ang = VehicleRaceAngleGet(v);           // FUN_00417730(v) (MATCH-TOPDOWN-T08: the matched body)
             if (!(ang <= kMode9Thresh2)) {                     // 0.75 (shared address)
                 mult = (kBrakeMinSpeed - F32(0x0089a360u)) * kMode4Mul1 * kMode4Mul2a + kSteerDeadband;
             }

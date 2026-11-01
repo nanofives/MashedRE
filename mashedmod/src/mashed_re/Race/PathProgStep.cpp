@@ -34,6 +34,7 @@ extern "C" int          __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::u
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);         // 0x0046c7b0
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);   // 0x0046d4a0
 extern "C" std::uint32_t __cdecl IsCarSlotActive(int param_1);                        // 0x0040e370
+extern "C" void          __cdecl UtilTableInit8a9620(void);                           // 0x00407a60 (Match/MatchS01.cpp)
 
 // ---- exe-safe .rdata copies (values read from the anchored image) -------------------------
 extern "C" {
@@ -218,12 +219,10 @@ float PathProg_NodeProgress(int v) {
     return f;
 }
 
+// MATCH-TOPDOWN-T01 (L-72): calls the byte-matched FUN_00407a60 body (re/match/s01/00407a60.c, Match/MatchS01.cpp)
+// instead of a second copy. Same writes: 4 blocks of 0x30c bytes at 0x008a9620 zeroed, +0x28 = -1.
 void PathProg_RaceInit() {                               // FUN_00407a60
-    for (int v = 0; v < 4; ++v) {
-        const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
-        std::memset(reinterpret_cast<void*>(blk), 0, 0xc3u * 4u);
-        *reinterpret_cast<std::int32_t*>(blk + 0x28) = -1;
-    }
+    UtilTableInit8a9620();
 }
 
 // [cev 2026-10-18] FUN_0040fc00 runs the physics frame FUN_00425a40 (0x0040fc6c) before FUN_0040da50 (0x0040fc75), so the
