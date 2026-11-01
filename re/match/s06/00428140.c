@@ -44,7 +44,8 @@ int FUN_00556e90(int font, void *c0, void *c1, void *c2, void *c3);
 void FUN_00556ca0(int font, short *text, float size, float *pos, int font2);
 typedef void (*RenderStateFn)(int, int);
 
-// MATCH: 0x00427680 FUN_00427680
+#ifndef __cplusplus
+// MATCH-HELD: 0x00427680 (static copy for the DDK register convention; port body: re/match/s06/00427680.c)
 static void FUN_00427680(short *text, float *out, float x, float y, int align, float scale)
 {
     float w = (float)FUN_0042b8b0();
@@ -69,7 +70,11 @@ static void FUN_00427680(short *text, float *out, float x, float y, int align, f
     }
     out[1] = (1.0f - (y * (h * 0.0020833334f)) / h * DAT_0067d834) - scale * 0.025f;
 }
-// MATCH: 0x004277a0 FUN_004277a0
+#else
+void FUN_00427680(short *text, float *out, float x, float y, int align, float scale);   /* port: one body, bound by the wrapper's #define */
+#endif
+#ifndef __cplusplus
+// MATCH-HELD: 0x004277a0 (static copy for the DDK register convention; port body: re/match/s06/004277a0.c)
 static void FUN_004277a0(short *src, short *dst)
 {
     short n = *src++;
@@ -87,6 +92,9 @@ static void FUN_004277a0(short *src, short *dst)
     }
     dst[n] = 0;
 }
+#else
+void FUN_004277a0(short *src, short *dst);   /* port: one body, bound by the wrapper's #define */
+#endif
 // MATCH: 0x00428140 FUN_00428140
 void FUN_00428140(int id, float x, float y, RwRGBA color, float scale, int align, int alpha)
 {

@@ -37,11 +37,15 @@ void *memcpy(void *, const void *, unsigned int);
 }
 #endif
 #pragma intrinsic(memcpy)
-// MATCH: 0x0055deb0 FUN_0055deb0
+#ifndef __cplusplus
+// MATCH-HELD: 0x0055deb0 (copy defined before its caller for the DDK register use; port body: Collision/RwpIntegrator.cpp)
 uint FUN_0055deb0(int p0)
 {
   return *(uint *)(p0 + 4);
 }
+#else
+uint FUN_0055deb0(int p0);   /* port: one body, bound by the wrapper's #define */
+#endif
 // MATCH: 0x004292d0 FUN_004292d0
 void FUN_004292d0(int param_1, void *param_2)
 {

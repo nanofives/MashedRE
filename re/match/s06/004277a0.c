@@ -28,6 +28,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 MGLOBAL(int, DAT_0067d838, 0x0067d838);
 MGLOBAL(int, DAT_0067d83c, 0x0067d83c);
 MGLOBAL(float, DAT_008991c0, 0x008991c0);
@@ -39,7 +44,7 @@ float *FUN_00556e90(int a, void *b, void *c, void *d, void *e);
 int FUN_005555b0(int a, short *text, float size, float *pos, int align, int f);
 
 // MATCH: 0x004277a0 FUN_004277a0
-static void FUN_004277a0(unsigned short *src, short *dst)
+MATCH_STATIC void FUN_004277a0(unsigned short *src, short *dst)
 {
     short n = *src++;
     short i;
@@ -57,6 +62,7 @@ static void FUN_004277a0(unsigned short *src, short *dst)
     dst[n] = 0;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched, not shipped): text source in EAX, buffer in EBX, as 0x004278f7..0x004278fb do */
 void FUN_004277a0_standin(int id)
 {
@@ -65,3 +71,4 @@ void FUN_004277a0_standin(int id)
     FUN_00552d10();
     FUN_005555b0(DAT_0067d838, text, 1.0f, &DAT_008991c0, 0, DAT_0067d83c);
 }
+#endif

@@ -33,6 +33,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 #ifndef __cplusplus
 static int DAT_0067d960;
 #else
@@ -47,7 +52,7 @@ void FUN_00428bf0(int a, int b);
 void FUN_00428d30(int a, int b);
 
 // MATCH: 0x00429240 FUN_00429240
-static void FUN_00429240(int a, int b)
+MATCH_STATIC void FUN_00429240(int a, int b)
 {
   switch (DAT_0067d960) {
   case 0:

@@ -26,8 +26,13 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 // MATCH: 0x0042ad90 FUN_0042ad90
-static int FUN_0042ad90(int *list, int key, int nth)
+MATCH_STATIC int FUN_0042ad90(int *list, int key, int nth)
 {
   int cnt;
   int i;
@@ -38,9 +43,11 @@ static int FUN_0042ad90(int *list, int key, int nth)
   return -1;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched): the real callers sit at 0x0043d4b5 and later (EBX = 0xff000000, EDI = 0) */
 int caller_0042ad90(int *list, int *list2)
 {
   int a = FUN_0042ad90(list, 0xff000000, 0);
   return a + FUN_0042ad90(list2, 0xff000000, 0);
 }
+#endif

@@ -32,6 +32,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 MGLOBAL(int, DAT_0067d838, 0x0067d838);
 MGLOBAL(float, DAT_0067d830, 0x0067d830);
 MGLOBAL(float, DAT_0067d834, 0x0067d834);
@@ -42,7 +47,7 @@ float FUN_005554d0(int font, short *text, float size);
 void FUN_005555b0(int a, short *text, float size, float *pos, int align, int f);
 
 // MATCH: 0x00427680 FUN_00427680
-static void FUN_00427680(short *text, float *out, float x, float y, int align, float size)
+MATCH_STATIC void FUN_00427680(short *text, float *out, float x, float y, int align, float size)
 {
     float sw = (float)FUN_0042b8b0();
     float sh = (float)FUN_0042b8c0();
@@ -63,6 +68,7 @@ static void FUN_00427680(short *text, float *out, float x, float y, int align, f
     out[1] = 1.0f - ((0.0020833334f * sh) * y) / sh * DAT_0067d834 - size * 0.025f;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched, not shipped): out in ESI, text in EDI, as 0x00427e94 does */
 void FUN_00427680_caller(float x, float y, int align, float size)
 {
@@ -72,3 +78,4 @@ void FUN_00427680_caller(float x, float y, int align, float size)
     FUN_00427680(text, pos, x, y, align, size);
     FUN_005555b0(DAT_0067d838, text, size, pos, align, 0);
 }
+#endif

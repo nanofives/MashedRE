@@ -32,7 +32,8 @@ MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 float FUN_005554d0(int font, short *text, float size);
 short *FUN_00427780(int id);
 
-// MATCH: 0x004277a0 FUN_004277a0
+#ifndef __cplusplus
+// MATCH-HELD: 0x004277a0 (static copy for the DDK register convention; port body: re/match/s06/004277a0.c)
 static void FUN_004277a0(short *src, short *dst)
 {
     short n = *src++;
@@ -50,6 +51,9 @@ static void FUN_004277a0(short *src, short *dst)
     }
     dst[n] = 0;
 }
+#else
+void FUN_004277a0(short *src, short *dst);   /* port: one body, bound by the wrapper's #define */
+#endif
 // MATCH: 0x004282a0 FUN_004282a0
 float FUN_004282a0(int id, float scale)
 {

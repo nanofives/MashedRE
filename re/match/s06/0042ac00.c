@@ -25,8 +25,13 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 // MATCH: 0x0042ac00 FUN_0042ac00
-static int FUN_0042ac00(int *p)
+MATCH_STATIC int FUN_0042ac00(int *p)
 {
   int n = 0;
   if (p == 0)
@@ -42,9 +47,11 @@ static int FUN_0042ac00(int *p)
   return n;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched): the real callers sit at 0x0042fbac and later (EDX = list) */
 int caller_0042ac00(int *a, int *b)
 {
   int x = FUN_0042ac00(a);
   return x + FUN_0042ac00(b);
 }
+#endif

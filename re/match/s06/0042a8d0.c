@@ -1,6 +1,8 @@
 // FLAGS: /O2 /GS /Ob1
 /* MATCH-S06 0x0042a8d0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs06_20261101/results.tsv. */
+   unchanged; globals moved to MGLOBAL. Score: see verify/matchs06_20261101/results.tsv.
+   C++ check fixed (sw3, 2026-11-01): code typed (void *, void *); casts (char *) on the pcVar3 init and (void *) on
+   param_1. Codegen unchanged (100%). */
 /* ---- MATCH-S06 preamble (same text in every re/match/s06 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -25,7 +27,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
-typedef int code();
+typedef int code(void *, void *);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(undefined1, DAT_0067dca8, 0x0067dca8);
 MGLOBAL(undefined1, DAT_005cd75c, 0x005cd75c);
@@ -37,9 +39,9 @@ undefined1 * FUN_0042a8d0(undefined4 param_1)
   char cVar2;
   char *pcVar3;
   
-  pcVar3 = &DAT_0067dca8;
+  pcVar3 = (char *)&DAT_0067dca8;
   (**(code **)(DAT_007d3ff8 + 0xcc))(&DAT_0067dca8,&DAT_005cd75c);
-  (**(code **)(DAT_007d3ff8 + 0xd4))(&DAT_0067dca8,param_1);
+  (**(code **)(DAT_007d3ff8 + 0xd4))(&DAT_0067dca8,(void *)param_1);
   cVar2 = DAT_0067dca8;
   while (cVar2 != '\0') {
     if (*pcVar3 == '/') {

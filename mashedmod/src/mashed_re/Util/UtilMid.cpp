@@ -135,27 +135,6 @@ extern "C" __declspec(dllexport) int __cdecl StricmpThunk(const char* s1, const 
 // control word, as in the original.
 // ─────────────────────────────────────────────────────────────────────────────
 namespace {
-// fld dword [a]; call 0x004a2c48
-std::uint32_t X87FtolLoad(std::uintptr_t a) {
-    std::uint32_t r;
-    __asm {
-        mov  ecx, a
-        fld  dword ptr [ecx]
-        mov  eax, 0x004a2c48
-        call eax
-        mov  r, eax
-    }
-    return r;
-}
-// fld dword [src]; fstp dword [dst]   (x87 float copy, not a dword move)
-void X87FloatCopy(std::uintptr_t dst, std::uintptr_t src) {
-    __asm {
-        mov  ecx, src
-        mov  edx, dst
-        fld  dword ptr [ecx]
-        fstp dword ptr [edx]
-    }
-}
 // 0x0043c137: fld [0x005cc320]; fsub [0x0067e840]; fmul [0x005cd04c]; call 0x004a2c48
 std::uint32_t X87TimerElapsedFtol() {
     std::uint32_t r;
@@ -188,69 +167,8 @@ std::uint32_t X87TimerScaledFtol() {
 }
 } // namespace
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00429aa0  GameStateSlotsFill
-//
-// Re-ported from the bytes 2026-10-12. idx = FUN_00430790() (= DAT_0067f17c,
-// 0x00430790) is fetched before every store; the predicate is FUN_00430820()
-// (= DAT_0067ed6c, 0x00430820).
-//
-// Path A (predicate != 0):
-//   0x00429ab1 fld [idx*0xc+0x00614718]; call 0x004a2c48; mov [0x0067d990],eax
-//   0x00429aca fld [idx*0xc+0x0061471c]; call 0x004a2c48; mov [0x0067d998],eax
-//   0x00429ae3 fld [idx*0xc+0x00614720]; fstp [0x0067d9a0]
-// Path B (predicate == 0):
-//   0x00429af6 mov eax,[idx*4+0x007f0db4]; mov [0x0067d990],eax
-//   0x00429b07 mov ecx,[idx*4+0x007f0de8]; mov [0x0067d998],ecx
-//   0x00429b19 fld [idx*4+0x007f0e1c]; fstp [0x0067d9a0]
-// EAX at both `ret`s (0x00429af0 / 0x00429b26) is the third idx.
-//
-// Old port (pre 2026-10-12): called 0x004a2c48 as a no-arg cdecl without
-// loading ST0 (so path A stored the conversion of a stale ST0), and copied the
-// two float stores as dwords.
-// ─────────────────────────────────────────────────────────────────────────────
-namespace {
-constexpr std::uintptr_t kFn_00430820 = 0x00430820;  // predicate (= DAT_0067ed6c)
-constexpr std::uintptr_t kFn_00430790 = 0x00430790;  // index     (= DAT_0067f17c)
-
-constexpr std::uintptr_t kDat_0067d990 = 0x0067d990;
-constexpr std::uintptr_t kDat_0067d998 = 0x0067d998;
-constexpr std::uintptr_t kDat_0067d9a0 = 0x0067d9a0;
-
-constexpr std::uintptr_t kDat_00614718 = 0x00614718;  // path-A table, stride 0xc
-constexpr std::uintptr_t kDat_007f0db4 = 0x007f0db4;  // path-B array slot 0
-constexpr std::uintptr_t kDat_007f0de8 = 0x007f0de8;  // path-B array slot 1
-constexpr std::uintptr_t kDat_007f0e1c = 0x007f0e1c;  // path-B array slot 2
-} // namespace
-
-extern "C" __declspec(dllexport) std::int32_t __cdecl GameStateSlotsFill() {
-    auto fn_predicate = as_fn<Fn_i_v_t>(kFn_00430820);
-    auto fn_index     = as_fn<Fn_i_v_t>(kFn_00430790);
-    std::int32_t idx;
-
-    if (fn_predicate() != 0) {                                     // 0x00429aa5
-        idx = fn_index();                                          // 0x00429aa9
-        *reinterpret_cast<std::uint32_t*>(kDat_0067d990) =
-            X87FtolLoad(kDat_00614718 + static_cast<std::uintptr_t>(idx) * 0xcu);
-        idx = fn_index();                                          // 0x00429ac2
-        *reinterpret_cast<std::uint32_t*>(kDat_0067d998) =
-            X87FtolLoad(kDat_00614718 + 4u + static_cast<std::uintptr_t>(idx) * 0xcu);
-        idx = fn_index();                                          // 0x00429adb
-        X87FloatCopy(kDat_0067d9a0, kDat_00614718 + 8u + static_cast<std::uintptr_t>(idx) * 0xcu);
-    } else {
-        idx = fn_index();                                          // 0x00429af1
-        *reinterpret_cast<std::uint32_t*>(kDat_0067d990) =
-            reinterpret_cast<const std::uint32_t*>(kDat_007f0db4)[idx];
-        idx = fn_index();                                          // 0x00429b02
-        *reinterpret_cast<std::uint32_t*>(kDat_0067d998) =
-            reinterpret_cast<const std::uint32_t*>(kDat_007f0de8)[idx];
-        idx = fn_index();                                          // 0x00429b14
-        X87FloatCopy(kDat_0067d9a0, kDat_007f0e1c + static_cast<std::uintptr_t>(idx) * 4u);
-    }
-    return idx;
-}
-
-RH_ScopedInstall(GameStateSlotsFill, 0x00429aa0);  // re-enabled 2026-05-24 batch-util
+// MATCH-S06: the body of 0x00429aa0 (GameStateSlotsFill) moved to Match/MatchS06_00429aa0.cpp,
+// which compiles the byte-matched source re/match/s06/00429aa0.c.
 
 // MATCH-S04: the body of 0x0041d730 (PlayerSlotConfigInit) moved to Match/MatchS04_0041cdb0.cpp,
 // which compiles the byte-matched source re/match/s04/0041cdb0.c (it also holds 0x0041cdb0).
@@ -401,48 +319,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GameTickStateMachine7() {
 
 // MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(GameTickStateMachine7, 0x00492d30);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x004295a0  HudDualLabelRender
-//
-// Re-ported from the bytes 2026-10-12 (0x004295a0..0x0042961c).
-// FUN_0040dc80 takes NO arguments: its whole body is `fld [0x0063b910]; ret`
-// (0x0040dc80). The pushes around each call are the FUN_00427e00 argument
-// frame, built before the FUN_0040dc80 call and completed after it:
-//   0x004295a3..0x004295d4  local dwords: [esp] = 0xff000000, [esp+4] = 0xff0000ff
-//   0x004295a5/c4/c9/ca     push 2; push 1.0f; push 0xff000000; push 63.0f (0x427c0000)
-//   0x004295d9 call 0x0040dc80; fadd [0x005cc31c]; push; fstp [esp]; push 0xff
-//   0x004295ed call 0x00427e00(0xff, y+[0x005cc31c], 63.0f, 0xff000000, 1.0f, 2)
-//   0x004295f9..0x00429601  push 2; push 1.0f; push 0xff0000ff; push 60.0f (0x42700000)
-//   0x00429606 call 0x0040dc80; push; fstp [esp]; push 0xff
-//   0x00429614 call 0x00427e00(0xff, y, 60.0f, 0xff0000ff, 1.0f, 2); add esp,0x20
-// EAX at ret (0x0042961c) is the second FUN_00427e00's EAX.
-//
-// Old port (pre 2026-10-12): passed six args to FUN_0040dc80 and only two to
-// FUN_00427e00, so its args 3-6 were stack garbage.
-// ─────────────────────────────────────────────────────────────────────────────
-namespace {
-constexpr std::uintptr_t kFn_0040dc80_RVA = 0x0040dc80;
-constexpr std::uintptr_t kFn_00427e00_RVA = 0x00427e00;
-constexpr std::uintptr_t kDat_005cc31c    = 0x005cc31c;
-
-typedef float         (__cdecl* Fn_HudLabelY_t)();   // ST0 return
-typedef std::uint32_t (__cdecl* Fn_HudLabelRender_t)(
-    std::uint32_t, float, std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t);
-} // namespace
-
-extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDualLabelRender() {
-    auto fn_y      = as_fn<Fn_HudLabelY_t>(kFn_0040dc80_RVA);
-    auto fn_render = as_fn<Fn_HudLabelRender_t>(kFn_00427e00_RVA);
-
-    // 0x004295d9 / 0x004295de: y + [0x005cc31c], rounded to float by the fstp
-    const float y1 = fn_y() + *reinterpret_cast<const float*>(kDat_005cc31c);
-    fn_render(0xffu, y1, 0x427c0000u /*63.0f*/, 0xff000000u, 0x3f800000u /*1.0f*/, 2u);  // 0x004295ed
-
-    const float y2 = fn_y();                                                              // 0x00429606
-    return fn_render(0xffu, y2, 0x42700000u /*60.0f*/, 0xff0000ffu, 0x3f800000u /*1.0f*/, 2u);  // 0x00429614
-}
-
-RH_ScopedInstall(HudDualLabelRender, 0x004295a0);  // re-enabled 2026-05-24 batch-util
+// MATCH-S06: the body of 0x004295a0 (HudDualLabelRender) moved to Match/MatchS06_004295a0.cpp,
+// which compiles the byte-matched source re/match/s06/004295a0.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00442440  TransformMatrixUpdate

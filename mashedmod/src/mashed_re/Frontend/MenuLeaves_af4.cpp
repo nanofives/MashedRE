@@ -9,7 +9,7 @@
 //   0x00401ee0  EntityTableSelectUpdate — table-select + RW matrix update glue
 //   0x0040d590  RaceRankThreePlayers    — three-way position ranking, score deltas
 //   0x00425c00  CopterClumpRegister     — copter clump asset registration
-//   0x00428bf0  TitleBuildInfoRender    — build-date title-screen draw variant
+//   0x00428bf0  TitleBuildInfoRender    — MOVED to Match/MatchS06_00428bf0.cpp (MATCH-S06)
 //
 // Analysis notes:
 //   re/analysis/bucket_0041dc30/0x0043aee0.md
@@ -79,47 +79,6 @@ static auto* const s_F00425b90 =
 static auto* const s_F004a2b60 =
     reinterpret_cast<int(__cdecl*)(char*, const char*, ...)>(0x004a2b60);
 
-// 0x00427c90  FUN_00427c90 — title-screen branch-condition getter.
-static auto* const s_F00427c90 =
-    reinterpret_cast<std::int32_t(__cdecl*)(void)>(0x00427c90);
-
-// 0x004671a0  FUN_004671a0 — render-list handle getter; called with 1 or 3 args.
-static auto* const s_F004671a0 =
-    reinterpret_cast<std::uint32_t(__cdecl*)(int, ...)>(0x004671a0);
-
-// 0x004c1bb0 / 0x004c1a00 / 0x004c19f0 / 0x004c1be0 — render-list helpers.
-static auto* const s_F004c1bb0 =
-    reinterpret_cast<void(__cdecl*)(std::uint32_t)>(0x004c1bb0);
-static auto* const s_F004c1a00 =
-    reinterpret_cast<std::int32_t(__cdecl*)(std::uint32_t)>(0x004c1a00);
-static auto* const s_F004c19f0 =
-    reinterpret_cast<void(__cdecl*)(std::uint32_t)>(0x004c19f0);
-static auto* const s_F004c1be0 =
-    reinterpret_cast<void(__cdecl*)(std::uint32_t)>(0x004c1be0);
-
-// 0x004a3480  _strrchr — last occurrence of a char in a C string.
-static auto* const s_strrchr =
-    reinterpret_cast<char*(__cdecl*)(const char*, int)>(0x004a3480);
-
-// 0x00428320  FUN_00428320 — text-width/setup (string, float-bits).
-static auto* const s_F00428320 =
-    reinterpret_cast<void(__cdecl*)(const char*, std::uint32_t)>(0x00428320);
-
-// 0x00428760  FUN_00428760 — sprite draw (handle, x,y,w,h floats, align int).
-static auto* const s_F00428760 =
-    reinterpret_cast<void(__cdecl*)(std::uint32_t, std::uint32_t, std::uint32_t,
-                                    std::uint32_t, std::uint32_t, int)>(0x00428760);
-
-// 0x00428450  FUN_00428450 — layout adjust (int, int).
-static auto* const s_F00428450 =
-    reinterpret_cast<void(__cdecl*)(int, int)>(0x00428450);
-
-// 0x00427e00  FUN_00427e00 — sprite/text draw by item ID
-//             (id, x,y floats, color, scale-bits, align int).
-static auto* const s_F00427e00 =
-    reinterpret_cast<void(__cdecl*)(std::uint32_t, std::uint32_t, std::uint32_t,
-                                    std::uint32_t, std::uint32_t, int)>(0x00427e00);
-
 // ---------------------------------------------------------------------------
 // Global addresses (cited from the decompilation)
 // ---------------------------------------------------------------------------
@@ -145,11 +104,6 @@ static const std::uintptr_t k_RenderCtx = 0x00644150u;
 static const std::uintptr_t k_CopterArrayBase = 0x00899260u;
 static const std::uintptr_t k_CopterArrayEnd  = 0x008994c0u;
 static const int            k_CopterStride    = 0x13;   // ints per slot
-
-// 0x00771964  DAT_00771964 — title sprite handle.
-static const std::uintptr_t k_TitleSprite = 0x00771964u;
-// 0x005f6560  "Toast Toast Toast ..." source string for _strrchr.
-static const std::uintptr_t k_ToastString = 0x005f6560u;
 
 // ---------------------------------------------------------------------------
 // MenuSlotFlagSetCurrent  --  0x0043aee0
@@ -413,72 +367,5 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CopterClumpRegister(
 // isolated asset-load harness exists.
 // RH_ScopedInstall(CopterClumpRegister, 0x00425c00);
 
-// ---------------------------------------------------------------------------
-// TitleBuildInfoRender  --  0x00428bf0
-//
-// Original: FUN_00428bf0 (0x00428bf0..0x00428d27)
-// Signature: void FUN_00428bf0(void)
-//
-// Verbatim transcription (alternate title-screen draw path):
-//   if (FUN_00427c90() != 0) {
-//     color = {0,0,0,0xff};
-//     h = FUN_004671a0(0,&color,3); FUN_004c1bb0(h);
-//     FUN_004a2b60(buf,"Build date : %s, %s\n","Jun 14 2004","11:39:38");
-//     h = FUN_004671a0(0);
-//     if (FUN_004c1a00(h) != 0) {
-//       p = _strrchr(s_Toast..._005f6560, 'T');
-//       FUN_00428320(p, 0x3f800000);                       // scale 1.0f
-//       FUN_00428760(DAT_00771964, 320.0,260.0,480.0,240.0, 2);
-//       FUN_00428450(0x20, 0xffffffe0);                    // (32, -32)
-//       FUN_00427e00(0x222, 580.0,140.0, 0xffffffff, 0.75f, 1);
-//       h = FUN_004671a0(0); FUN_004c19f0(h);
-//     }
-//     h = FUN_004671a0(0,0,1); FUN_004c1be0(h);
-//   }
-//
-// The build-date strings are the original MASHED.exe __DATE__/__TIME__ literals
-// ("Jun 14 2004","11:39:38"); they are hard-coded here so the formatted bytes
-// match the original rather than this build's compile date.
-//
-// Constants cited (float bit patterns):
-//   0x43a00000=320.0 0x43820000=260.0 0x43f00000=480.0 0x43700000=240.0
-//   0x44110000=580.0 0x430c0000=140.0 0x3f400000=0.75 0x3f800000=1.0
-//   0x222 text item ID; 0xffffffff white; align flags 1/2.
-//
-// ref: re/analysis/frontend_c1_to_c2_s5/FUN_00428bf0.md
-// ---------------------------------------------------------------------------
-
-// 0x00428bf0
-extern "C" __declspec(dllexport) void __cdecl TitleBuildInfoRender(void)
-{
-    if (s_F00427c90() != 0) {
-        // color bytes at &local_88: [0]=0,[1]=0,[2]=0,[3]=0xff. [0x00428c.. ]
-        unsigned char color[4] = { 0, 0, 0, 0xff };
-        std::uint32_t h = s_F004671a0(0, &color, 3);
-        s_F004c1bb0(h);
-
-        char buf[128];
-        s_F004a2b60(buf, "Build date : %s, %s\n", "Jun 14 2004", "11:39:38");
-
-        h = s_F004671a0(0);
-        if (s_F004c1a00(h) != 0) {
-            char* p = s_strrchr(reinterpret_cast<const char*>(k_ToastString), 0x54);
-            s_F00428320(p, 0x3f800000u);                 // 1.0f
-            s_F00428760(*reinterpret_cast<std::uint32_t*>(k_TitleSprite),
-                        0x43a00000u, 0x43820000u, 0x43f00000u, 0x43700000u, 2);
-            s_F00428450(0x20, static_cast<int>(0xffffffe0));
-            s_F00427e00(0x222, 0x44110000u, 0x430c0000u, 0xffffffffu,
-                        0x3f400000u, 1);
-            h = s_F004671a0(0);
-            s_F004c19f0(h);
-        }
-        h = s_F004671a0(0, 0, 1);
-        s_F004c1be0(h);
-    }
-}
-
-// NOT installed yet: verification-blocked. Faithful transcription, but it is a
-// render-list draw path gated by FUN_00427c90() with no scalar observable, and
-// issuing its draws during a menu observation could destabilize the render
-// list. Enable once a draw-capture harness exists.
-// RH_ScopedInstall(TitleBuildInfoRender, 0x00428bf0);
+// MATCH-S06: the body of 0x00428bf0 (TitleBuildInfoRender) moved to Match/MatchS06_00428bf0.cpp,
+// which compiles the byte-matched source re/match/s06/00428bf0.c.

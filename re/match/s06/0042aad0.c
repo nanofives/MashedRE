@@ -25,17 +25,24 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 MGLOBAL(int, DAT_008990e4, 0x008990e4);
 // MATCH: 0x0042aad0 FUN_0042aad0
-static void FUN_0042aad0(unsigned char *col)
+MATCH_STATIC void FUN_0042aad0(unsigned char *col)
 {
   col[3] = 0x30;
   DAT_008990e4 = 1;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched): the real callers sit at 0x0043b0a8 and later */
 void caller_0042aad0(unsigned char *a, unsigned char *b)
 {
   FUN_0042aad0(a);
   FUN_0042aad0(b);
 }
+#endif

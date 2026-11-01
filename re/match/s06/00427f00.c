@@ -41,7 +41,8 @@ void FUN_00556ca0(int font, short *text, float size, float *pos, int font2);
 typedef void (*RenderStateFn)(int, int);
 
 typedef int (*StrLenFn)(char *);
-// MATCH: 0x00427680 FUN_00427680
+#ifndef __cplusplus
+// MATCH-HELD: 0x00427680 (static copy for the DDK register convention; port body: re/match/s06/00427680.c)
 static void FUN_00427680(short *text, float *out, float x, float y, int align, float scale)
 {
     float w = (float)FUN_0042b8b0();
@@ -66,7 +67,11 @@ static void FUN_00427680(short *text, float *out, float x, float y, int align, f
     }
     out[1] = (1.0f - (y * (h * 0.0020833334f)) / h * DAT_0067d834) - scale * 0.025f;
 }
-// MATCH: 0x00427840 FUN_00427840
+#else
+void FUN_00427680(short *text, float *out, float x, float y, int align, float scale);   /* port: one body, bound by the wrapper's #define */
+#endif
+#ifndef __cplusplus
+// MATCH-HELD: 0x00427840 (static copy for the DDK register convention; port body: re/match/s06/00427840.c)
 static void FUN_00427840(short *dst, char *src)
 {
     int n = (*(StrLenFn *)(DAT_007d3ff8 + 0xf4))(src);
@@ -74,6 +79,9 @@ static void FUN_00427840(short *dst, char *src)
         *dst++ = (unsigned char)*src++;
     *dst = 0;
 }
+#else
+void FUN_00427840(short *dst, char *src);   /* port: one body, bound by the wrapper's #define */
+#endif
 // MATCH: 0x00427f00 FUN_00427f00
 void FUN_00427f00(char *str, float x, float y, unsigned int color, float scale, int align)
 {

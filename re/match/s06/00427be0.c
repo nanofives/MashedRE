@@ -37,7 +37,8 @@ void FUN_00552d70(void);
 float *FUN_00556e90(int a, void *b, void *c, void *d, void *e);
 int FUN_005555b0(int a, short *text, float size, float *pos, int align, int f);
 
-// MATCH: 0x00427840 FUN_00427840
+#ifndef __cplusplus
+// MATCH-HELD: 0x00427840 (static copy for the DDK register convention; port body: re/match/s06/00427840.c)
 static void FUN_00427840(short *dst, const unsigned char *src)
 {
     int n = (*(RwStrlenFn *)(DAT_007d3ff8 + 0xf4))(src);
@@ -46,6 +47,9 @@ static void FUN_00427840(short *dst, const unsigned char *src)
         *dst++ = *src++;
     *dst = 0;
 }
+#else
+void FUN_00427840(short *dst, const unsigned char *src);   /* port: one body, bound by the wrapper's #define */
+#endif
 
 // MATCH: 0x00427be0 FUN_00427be0
 void FUN_00427be0(const unsigned char *str, int color, float size)

@@ -57,7 +57,8 @@ void *memset(void *, int, unsigned int);
 #endif
 #pragma intrinsic(strcpy)
 #pragma intrinsic(memset)
-// MATCH: 0x00427880 FUN_00427880
+#ifndef __cplusplus
+// MATCH-HELD: 0x00427880 (static copy for the DDK register convention; port body: re/match/s06/00427880.c)
 static int FUN_00427880(char *name)
 {
     int font = 0;
@@ -70,6 +71,9 @@ static int FUN_00427880(char *name)
     }
     return font;
 }
+#else
+int FUN_00427880(char *name);   /* port: one body, bound by the wrapper's #define */
+#endif
 
 // MATCH: 0x00427ca0 FUN_00427ca0
 void FUN_00427ca0(void)

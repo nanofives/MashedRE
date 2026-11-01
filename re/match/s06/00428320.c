@@ -31,7 +31,8 @@ MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 float FUN_005554d0(int font, short *text, float size);
 typedef int (*StrLenFn)(char *);
 
-// MATCH: 0x00427840 FUN_00427840
+#ifndef __cplusplus
+// MATCH-HELD: 0x00427840 (static copy for the DDK register convention; port body: re/match/s06/00427840.c)
 static void FUN_00427840(short *dst, char *src)
 {
     int n = (*(StrLenFn *)(DAT_007d3ff8 + 0xf4))(src);
@@ -39,6 +40,9 @@ static void FUN_00427840(short *dst, char *src)
         *dst++ = (unsigned char)*src++;
     *dst = 0;
 }
+#else
+void FUN_00427840(short *dst, char *src);   /* port: one body, bound by the wrapper's #define */
+#endif
 // MATCH: 0x00428320 FUN_00428320
 float FUN_00428320(char *str, float scale)
 {

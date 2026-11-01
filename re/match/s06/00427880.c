@@ -25,6 +25,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 MGLOBAL(int, DAT_0067d838, 0x0067d838);
 
 void *FUN_004cc230(int type, int mode, const char *name);
@@ -33,7 +38,7 @@ int FUN_00554390(void *stream);
 int FUN_004cc160(void *stream, void *a);
 
 // MATCH: 0x00427880 FUN_00427880
-static int FUN_00427880(const char *name)
+MATCH_STATIC int FUN_00427880(const char *name)
 {
     int result = 0;
     void *s = FUN_004cc230(2, 1, name);
@@ -46,6 +51,7 @@ static int FUN_00427880(const char *name)
     return result;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched, not shipped): passes name in EAX as 0x00427d41 does */
 void FUN_00427880_caller(const char *src)
 {
@@ -55,3 +61,4 @@ void FUN_00427880_caller(const char *src)
     name[i] = 0;
     DAT_0067d838 = FUN_00427880(name);
 }
+#endif

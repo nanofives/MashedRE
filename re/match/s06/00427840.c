@@ -26,6 +26,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 typedef int (*RwStrlenFn)(const unsigned char *s);
 MGLOBAL(char *, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_0067d838, 0x0067d838);
@@ -39,7 +44,7 @@ float *FUN_00556e90(int a, void *b, void *c, void *d, void *e);
 int FUN_005555b0(int a, short *text, float size, float *pos, int align, int f);
 
 // MATCH: 0x00427840 FUN_00427840
-static void FUN_00427840(short *dst, const unsigned char *src)
+MATCH_STATIC void FUN_00427840(short *dst, const unsigned char *src)
 {
     int n = (*(RwStrlenFn *)(DAT_007d3ff8 + 0xf4))(src);
     int i;
@@ -48,6 +53,7 @@ static void FUN_00427840(short *dst, const unsigned char *src)
     *dst = 0;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched, not shipped): text in EAX, buffer in ECX, as 0x00427bf2..0x00427c04 do */
 void FUN_00427840_standin(const unsigned char *str)
 {
@@ -55,3 +61,4 @@ void FUN_00427840_standin(const unsigned char *str)
     FUN_00427840(text, str);
     FUN_005555b0(DAT_0067d838, text, 1.0f, &DAT_008991c0, 0, DAT_0067d83c);
 }
+#endif

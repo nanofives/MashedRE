@@ -839,20 +839,8 @@ extern "C" __declspec(dllexport) void __cdecl Fill449880(void) {
 }
 RH_ScopedInstall(Fill449880, 0x00449880);
 
-// ===== round 113b (per-side-convention fix of the reverted 113) =====
-// 0x0042ac50  frontend — byte-verified reg-conv scalar compute (orig: EAX=a idx,
-//   ECX=c val -> layout coord). Reimpl is plain __cdecl(a,c): verified via per-side
-//   convention (orig reg-trampoline vs reimpl cdecl). NOT RH_ScopedInstall'd — the
-//   install ABI (EAX/ECX) differs from cdecl; a standalone port would read its own
-//   args. C3 evidence = formula match under force-call.
-//   even(a): 0xf0 - ((c - (c>>31)) >>a 1) - (((a-1)>>1)*c);  odd(a): 0xf0 - ((a-1)>>1)*c
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Calc42ac50(std::uint32_t a, std::uint32_t c) {
-    std::uint32_t term = ((a - 1u) >> 1) * c;
-    if (a & 1u) return 0xf0u - term;
-    int ic = static_cast<int>(c);
-    int d = (ic - (ic >> 31)) >> 1;
-    return static_cast<std::uint32_t>(0xf0 - d) - term;
-}
+// MATCH-S06: the body of 0x0042ac50 (Calc42ac50) moved to Match/MatchS06_0042ac50.cpp,
+// which compiles the byte-matched source re/match/s06/0042ac50.c.
 
 // ===== round 114 =====
 // 0x0041e150  gameplay — byte-verified reg+stack conv (EAX=struct ptr, [esp+4]=out):
@@ -3223,78 +3211,11 @@ extern "C" __declspec(dllexport) int __cdecl Calc412130(void)
 }
 RH_ScopedInstall(Calc412130, 0x00412130);
 
-// 0x00429b30  FUN_00429b30 (gameplay, NEAR-LEAF: one-shot float init via two C3 getters)
-// void f(void): if (GetRaceSubMode()(*0x67e9fc)==2) return; if (*0x8991b0 != 0) return;
-//   v=(short)FUN_0042b8c0()(*0x67ea56); *0x8991b0=0x3f; *0x8991b4 = -([0x5cd6c8] / (float)v).
-// Both callees C3 pure getters. Straight x87 (fild/fdivr/fchs). Verbatim naked port; calls ->
-// `mov eax,abs; call eax`.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init429b30(void)
-{
-    __asm {
-        push ecx
-        mov  eax, 042F6A0h
-        call eax
-        cmp  eax, 2
-        je   L_IN9_END
-        mov  eax, dword ptr ds:[08991B0h]
-        test eax, eax
-        jne  L_IN9_END
-        mov  eax, 042B8C0h
-        call eax
-        movsx eax, ax
-        mov  dword ptr [esp], eax
-        mov  dword ptr ds:[08991B0h], 03Fh
-        fild dword ptr [esp]
-        fdivr dword ptr ds:[05CD6C8h]
-        fchs
-        fstp dword ptr ds:[08991B4h]
-    L_IN9_END:
-        pop  ecx
-        ret
-    }
-}
-RH_ScopedInstall(Init429b30, 0x00429b30);
+// MATCH-S06: the body of 0x00429b30 (Init429b30) moved to Match/MatchS06_00429b30.cpp,
+// which compiles the byte-matched source re/match/s06/00429b30.c.
 
-// 0x00429b70  FUN_00429b70 (frontend, NEAR-LEAF: sibling of 0x429b30, submode in {3,4,5} gate)
-// void f(void): if (GetRaceSubMode() in {3,4,5} && *0x8991b0==0) { v=(short)FUN_0042b8c0();
-//   *0x8991b0=0xeb; *0x8991b8=0; *0x8991b4 = -([0x5cd6c8] / (float)v); }. Both callees C3
-//   getters. Straight x87. Verbatim naked port; calls -> `mov eax,abs; call eax`.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init429b70(void)
-{
-    __asm {
-        push ecx
-        mov  eax, 042F6A0h
-        call eax
-        cmp  eax, 3
-        je   L_IN7_C
-        mov  eax, 042F6A0h
-        call eax
-        cmp  eax, 4
-        je   L_IN7_C
-        mov  eax, 042F6A0h
-        call eax
-        cmp  eax, 5
-        jne  L_IN7_END
-    L_IN7_C:
-        mov  eax, dword ptr ds:[08991B0h]
-        test eax, eax
-        jne  L_IN7_END
-        mov  eax, 042B8C0h
-        call eax
-        movsx eax, ax
-        mov  dword ptr [esp], eax
-        mov  dword ptr ds:[08991B0h], 0EBh
-        mov  dword ptr ds:[08991B8h], 0
-        fild dword ptr [esp]
-        fdivr dword ptr ds:[05CD6C8h]
-        fchs
-        fstp dword ptr ds:[08991B4h]
-    L_IN7_END:
-        pop  ecx
-        ret
-    }
-}
-RH_ScopedInstall(Init429b70, 0x00429b70);
+// MATCH-S06: the body of 0x00429b70 (Init429b70) moved to Match/MatchS06_00429b70.cpp,
+// which compiles the byte-matched source re/match/s06/00429b70.c.
 
 // 0x00472560  FUN_00472560 (gameplay, NEAR-LEAF: record + table builder via C3 setter)
 // void f(_, arg2, _, arg4): rec=arg2*0x10+0x691500; flag=(arg4==0)?1:0; for esi=0..3:

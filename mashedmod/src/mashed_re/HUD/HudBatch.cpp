@@ -11,7 +11,7 @@
 //   0x00403160  Sub00403160_SubMode0BViewport      MULTI (C2+ callees)
 //   0x0041bc50  (moved to HudDispatch.cpp, U-9675)
 //   0x00427780  FontText_StringTableLookup         pure leaf (packed string lookup)
-//   0x00427840  FontText_UTF16WidenCopy            __fastcall EAX=src, ECX=dst
+//   0x00427840  (moved to Match/MatchS06_00427840.cpp, MATCH-S06 byte-matched source)
 //   0x004c57a0  FontCtxMatrix_AllocInit            implicit-EAX-return; vtable+0x118 alloc
 //
 // Refusals (kept in PROMOTION_QUEUE.md note):
@@ -211,64 +211,12 @@ RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);  // re-enabled 2026
 // ===========================================================================
 // 0x00427840  FontText_UTF16WidenCopy
 //
-// Original: FUN_00427840 (0x35 bytes).
-// Non-standard fastcall: EAX = byte* src, ECX = ushort* dst.
-// Gets the byte length by calling the function pointer at obj+0xf4 (where
-// obj = *(0x007d3ff8)) WITH src as its argument: len = (*(obj+0xf4))(src).
-// Then widens each src byte to ushort (zero-extend) and null-terminates dst.
-//
-// We implement as __declspec(naked) to preserve EAX=src, ECX=dst.
-//
-// 2026-05-27 FIX: the prior reimpl OMITTED the `push src` argument before the
-// `call [obj+0xf4]`, so the length-getter measured a stale stack slot (NULL) ->
-// strlen(NULL) crash on the title screen (~94s). The two `mov eax`/`mov eax,[eax]`
-// loads are CORRECT and required: s_VtableRootAddr holds the constant 0x007d3ff8,
-// so the first mov loads that address and the second derefs it to obj. Fix =
-// push src + add esp,4. See re/analysis/menu_crash_scoping/REPORT.md.
+// Original: FUN_00427840 (0x35 bytes). Register convention: EAX = byte* src, ECX = ushort* dst.
 // ===========================================================================
 
-// File-static pointer-global for forced memref (see 0x004c57a0 notes).
-static volatile std::uint32_t* const s_VtableRootAddr_00427840 =
-    reinterpret_cast<volatile std::uint32_t*>(0x007d3ff8u);
-
-// 0x00427840
-extern "C" __declspec(dllexport) __declspec(naked)
-void __cdecl FontText_UTF16WidenCopy()
-{
-    __asm {
-        // EAX = src (byte*), ECX = dst (ushort*). Mirrors FUN_00427840:
-        // EDI=src, ESI=dst, EAX=len.
-        push esi
-        push edi
-        mov  edi, eax                       // EDI = src        (orig 0x427842)
-        mov  eax, dword ptr [s_VtableRootAddr_00427840]  // EAX = 0x007d3ff8 (const addr held in the C var)
-        mov  eax, dword ptr [eax]           // EAX = *(0x007d3ff8) = obj
-        push edi                            // arg = src        (orig 0x427849: PUSH EDI)
-        mov  esi, ecx                       // ESI = dst        (orig 0x42784a)
-        call dword ptr [eax+0xf4]           // len = (*(obj+0xf4))(src)  (orig 0x42784c)
-        add  esp, 4                         // clean pushed arg (orig 0x427852)
-
-        test eax, eax                       // if len <= 0 -> just null-terminate
-        jle  null_term
-
-copy_loop:
-        movzx cx, byte ptr [edi]            // load src byte zero-extended (orig 0x00427860 MOVZX CX,[EDI]: 16-bit,
-                                            // ECX bits 16..31 keep the length getter's value, as in the original)
-        mov  word ptr [esi], cx             // store as ushort              (orig MOV [ESI],CX)
-        add  esi, 2
-        inc  edi
-        dec  eax
-        jnz  copy_loop
-
-null_term:
-        pop  edi
-        mov  word ptr [esi], 0              // null terminate dst
-        pop  esi
-        ret
-    }
-}
-
-RH_ScopedInstall(FontText_UTF16WidenCopy, 0x00427840);  // re-enabled 2026-05-24 batch-mixed
+// MATCH-S06: the body of 0x00427840 (FontText_UTF16WidenCopy) moved to Match/MatchS06_00427840.cpp,
+// which compiles the byte-matched source re/match/s06/00427840.c (cdecl FontText_UTF16WidenCopyBody behind
+// the EAX/ECX register adapter FontText_UTF16WidenCopy).
 
 
 // ===========================================================================

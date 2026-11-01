@@ -27,6 +27,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 typedef void (*RwStrFn)(char *dst, const char *src);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(float, DAT_005cc94c, 0x005cc94c);
@@ -46,7 +51,7 @@ uint FUN_004b5190(int p0, int p1, int p2);
 int FUN_004e6e00(int p0);
 
 // MATCH: 0x00426460 FUN_00426460
-static void FUN_00426460(int param_1)
+MATCH_STATIC void FUN_00426460(int param_1)
 {
   int i;
   int n;

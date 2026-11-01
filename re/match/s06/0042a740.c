@@ -1,6 +1,9 @@
 // FLAGS: /O2 /GS /Ob1
 /* MATCH-S06 0x0042a740: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs06_20261101/results.tsv. */
+   unchanged; globals moved to MGLOBAL. Score: see verify/matchs06_20261101/results.tsv.
+   C++ check fixed (sw3, 2026-11-01): code typed (void *, void *); FUN_0042a530 (void *, void *); FUN_004cc230 returns
+   int, p2 void *; FUN_004cc5e0 (int, int, undefined4, undefined4); FUN_00558df0 returns undefined4, p0 void *;
+   FUN_004cc160 (int, int). Prototypes only, codegen unchanged (100%). */
 /* ---- MATCH-S06 preamble (same text in every re/match/s06 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -27,17 +30,17 @@ typedef unsigned char undefined;
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-typedef int code();
+typedef int code(void *, void *);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(undefined *, PTR_DAT_005f65bc, 0x005f65bc);
 MGLOBAL(void *, PTR_s_UVAnim_00623df0, 0x00623df0);
 MGLOBAL(undefined1, DAT_0067e2a8, 0x0067e2a8);
 MGLOBAL(undefined1, DAT_0067e4a8, 0x0067e4a8);
-undefined4 FUN_0042a530(undefined4 p0, undefined4 p1);
-bool FUN_004cc160(undefined4 * p0, undefined4 * p1);
-undefined4 * FUN_004cc230(undefined4 p0, int p1, undefined4 * p2);
-undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 * p2, uint * p3);
-int * FUN_00558df0(int p0, int p1);
+undefined4 FUN_0042a530(void *p0, void *p1);
+bool FUN_004cc160(int p0, int p1);
+int FUN_004cc230(undefined4 p0, int p1, void *p2);
+undefined4 FUN_004cc5e0(int p0, int p1, undefined4 p2, undefined4 p3);
+undefined4 FUN_00558df0(void *p0, int p1);
 char * _strchr(char * p0, int p1);
 // MATCH: 0x0042a740 FUN_0042a740
 undefined4 FUN_0042a740(char *param_1,undefined4 param_2,undefined4 param_3)

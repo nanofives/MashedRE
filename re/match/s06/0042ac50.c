@@ -26,14 +26,21 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 // MATCH: 0x0042ac50 FUN_0042ac50
-static int FUN_0042ac50(unsigned int n, int w)
+MATCH_STATIC int FUN_0042ac50(unsigned int n, int w)
 {
   int r; if (!(n & 1)) r = 0xf0 - w / 2; else r = 0xf0; return r - (n - 1) / 2 * w;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not matched): the real callers sit at 0x0042fbb6 and later */
 int caller_0042ac50(unsigned int n, int w)
 {
   return FUN_0042ac50(n, w) + FUN_0042ac50(n + 1, w);
 }
+#endif

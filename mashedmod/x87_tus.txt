@@ -81,7 +81,45 @@ ViewportScaledRectDraw
 # listings, run at PC_24 by Pontoon_Tick). verify/pontoon_20261016/PREREG_pontoon.md.
 WarzonePontoon
 # MATCH-S06 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s06/)
+MatchS06_004264d0
+MatchS06_00426d20
+MatchS06_00426de0
+MatchS06_00426df0
+MatchS06_00426e10
+MatchS06_004270f0
+MatchS06_00427580
+MatchS06_00427680
+MatchS06_004278d0
+MatchS06_00427990
+MatchS06_00427ad0
+MatchS06_00427be0
+MatchS06_00427e00
+MatchS06_00427f00
+MatchS06_00427ff0
+MatchS06_00428140
+MatchS06_00428320
+MatchS06_00428590
+MatchS06_00428610
+MatchS06_00428760
+MatchS06_004288a0
+MatchS06_00428a30
+MatchS06_00428bf0
+MatchS06_00428d30
+MatchS06_00429300
+MatchS06_004295a0
+MatchS06_00429620
+MatchS06_00429660
+MatchS06_00429820
+MatchS06_00429870
+MatchS06_004298c0
+MatchS06_004299d0
+MatchS06_00429a30
 MatchS06_00429a70
+MatchS06_00429aa0
+MatchS06_00429b30
+MatchS06_00429b70
+MatchS06_00429e10
+MatchS06_0042aae0
 # HB-6 (2026-10-26): disasm-order x87 bodies of 0x00566200 / 0x005667c0 (VECCAP-2), reached only under
 # MASHED_LEAVES1_X87=1 (default OFF). Measured by re/tools/veccap/replay_c3.py; verify/hb6_20261026/RESULT_HB-6.md.
 RwpSolverLeaves1X87
