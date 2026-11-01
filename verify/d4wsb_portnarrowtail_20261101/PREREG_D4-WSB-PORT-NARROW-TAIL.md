@@ -125,3 +125,5 @@ followed by `error: could not attach` took no sample, so its NO_LOG is a launch 
 re-run once after the 12-row pass, same build and env. A second launch failure leaves the row at C2 (NO_LOG).
 
 - Recovery pass row 1 `0x00574920`: transcript `scenario_launch pid=17208` then `error: could not attach`. Re-run once.
+- Recovery pass row 11 `0x0057c500`: transcript `scenario_launch pid=1772` then `error: could not attach`. Re-run once
+  under the same rule (listed here before that re-run).
