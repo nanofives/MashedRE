@@ -86,6 +86,10 @@ MatchS07_00431b60
 # bodies stay SSE2. Measured: replay_c3.py on 1200 real race calls at CW 0x007f, SSE2 RED 243/1200,
 # x87 GREEN 1200/1200 (log/diff/00546c50_rwp_mat2quat_y.replay.csv).
 RwpSolverMath2QuatY
+# D4-WSB-55B080-ULP (2026-11-01): 0x00546b10 / 0x00546bf0 / 0x00546cb0, split from RwpSolverMath2 like QuatY.
+# SSE2 build: 0x0055b080 shadow DIVERGENT 4/24, 1-ulp in the quaternion 0x00546b10 writes
+# (verify/d4wsb_portbroad2_20261101/shadow_summary_pass1.tsv). Re-measure: verify/d4wsb55b080ulp_20261101/.
+RwpSolverMath2Quat
 # drawstream (2026-10-12): 0x00430b90 re-ported from the listing, ST-resident values as double.
 # Measured by run_diff at the harness CW and at 0x007f (--x87-cw=0x7f); see
 # re/analysis/negctl/session_20261012b/drawstream_RESULT.md.
