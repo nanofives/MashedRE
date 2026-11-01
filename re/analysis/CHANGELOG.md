@@ -73,6 +73,7 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-01  0x0041f000  TimerSlotDataCopy  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
 2026-11-01  0x0041f090  GetPlayerStateBits  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
 2026-11-01  0x0041f1c0  GetEventFlag  C3->C3 (not C4) match evidence kept, exe-callers=0, pending a caller (L-68); evidence: verify/matchrc_20261101/RESULT_MATCH-S01-RC.md
+2026-11-01  U-9799  UNCERTAINTIES  Active->struck  boot movie audio plays on the standalone as on the original with VB-CABLE: audio_hr 0 on empire/supersonic/intro, S_FALSE on renderware (no audio stream, silent in the original too), all 4 movies in band, loopback envelope r 0.996-0.997 vs original (0.988 original repeat), level -13.69 dBFS both (evidence: verify/intromovies_20261101/RESULT_D5-INTROMOVIES-AUDIO.md)
 2026-10-31  00521990  FUN_00521990  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-31  00522ab0  FUN_00522ab0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-31  00522b00  FUN_00522b00  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
