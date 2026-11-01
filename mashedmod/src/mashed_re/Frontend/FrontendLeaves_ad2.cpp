@@ -32,12 +32,8 @@
 // ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426de0.md
 // ---------------------------------------------------------------------------
 
-// 0x00426de0
-extern "C" __declspec(dllexport) float __cdecl FrontendFloatGet426de0(void) {
-    return *reinterpret_cast<float*>(0x0064435Cu);
-}
-
-RH_ScopedInstall(FrontendFloatGet426de0, 0x00426de0);
+// MATCH-S06: the body of 0x00426de0 (FrontendFloatGet426de0) moved to Match/MatchS06_00426de0.cpp,
+// which compiles the byte-matched source re/match/s06/00426de0.c.
 
 // ---------------------------------------------------------------------------
 // FrontendFloatGet426df0  --  0x00426df0
@@ -48,12 +44,8 @@ RH_ScopedInstall(FrontendFloatGet426de0, 0x00426de0);
 // ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426df0.md
 // ---------------------------------------------------------------------------
 
-// 0x00426df0
-extern "C" __declspec(dllexport) float __cdecl FrontendFloatGet426df0(void) {
-    return *reinterpret_cast<float*>(0x00644360u);
-}
-
-RH_ScopedInstall(FrontendFloatGet426df0, 0x00426df0);
+// MATCH-S06: the body of 0x00426df0 (FrontendFloatGet426df0) moved to Match/MatchS06_00426df0.cpp,
+// which compiles the byte-matched source re/match/s06/00426df0.c.
 
 // ---------------------------------------------------------------------------
 // FrontendQuadParamInit427580  --  0x00427580
@@ -70,16 +62,5 @@ RH_ScopedInstall(FrontendFloatGet426df0, 0x00426df0);
 // ref: re/analysis/frontend_c1_to_c2_s5/FUN_00427580.md
 // ---------------------------------------------------------------------------
 
-// 0x00427580
-extern "C" __declspec(dllexport) void __cdecl FrontendQuadParamInit427580(void) {
-    *reinterpret_cast<std::uint32_t*>(0x008991C0u) = 0x3E660000u;
-    *reinterpret_cast<float*>(0x008991C8u) =
-        *reinterpret_cast<float*>(0x0067D830u) * *reinterpret_cast<float*>(0x005CD5F8u);
-    *reinterpret_cast<float*>(0x008991CCu) =
-        *reinterpret_cast<float*>(0x0067D834u) * *reinterpret_cast<float*>(0x005CD5F4u);
-    *reinterpret_cast<float*>(0x008991C4u) =
-        *reinterpret_cast<float*>(0x005CD5F0u) -
-        *reinterpret_cast<float*>(0x0067D834u) * *reinterpret_cast<float*>(0x005CD5F4u);
-}
-
-RH_ScopedInstall(FrontendQuadParamInit427580, 0x00427580);
+// MATCH-S06: the body of 0x00427580 (FrontendQuadParamInit427580) moved to Match/MatchS06_00427580.cpp,
+// which compiles the byte-matched source re/match/s06/00427580.c.

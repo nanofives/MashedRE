@@ -73,8 +73,10 @@ static inline std::uint32_t CallSlotState(int idx) {
 }
 
 // ---------------------------------------------------------------------------
-// 0x0042ac90  MenuEntryGet
-// ONE body for both builds (U-9667, 2026-10-12). MenuEntryWalk below is the
+// MenuEntryWalk: the standalone's walk over its own nav-slot tables (MATCH-S06 2026-11-01: the export
+// MenuEntryGet = 0x0042ac90 is now the byte-matched source in Match/MatchS06_0042ac90.cpp, which reads the
+// three globals itself; MenuEntryWalk stays for MenuNavSM.cpp, whose table and cursor are port state).
+// History: ONE body for both builds (U-9667, 2026-10-12). MenuEntryWalk below is the
 // table walk; the .asi export reads the three globals and calls it, and the
 // standalone's select path (MenuNavSM.cpp Nav_Select / Nav_SelectAction) calls
 // it with the nav slot's table and cursor. The standalone used to run its own
@@ -131,17 +133,8 @@ std::uint32_t MenuEntryWalk(const std::uint32_t* table, std::int32_t cursor) {
 } // namespace Frontend
 } // namespace mashed_re
 
-// 0x0042ac90
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuEntryGet() {
-    const std::int32_t slot = *reinterpret_cast<std::int32_t*>(kSlotIndex);              // 0x0042ac90
-    const auto* table = *reinterpret_cast<const std::uint32_t* const*>(
-        kPtrTableBase + static_cast<std::uintptr_t>(slot) * 0x40);                       // 0x0042ac99
-    const std::int32_t cursor = *reinterpret_cast<std::int32_t*>(
-        kCursorTableBase + static_cast<std::uintptr_t>(slot) * 0x40);                    // 0x0042ac9f
-    return mashed_re::Frontend::MenuEntryWalk(table, cursor);
-}
-
-RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
+// MATCH-S06: the body of 0x0042ac90 (MenuEntryGet) moved to Match/MatchS06_0042ac90.cpp,
+// which compiles the byte-matched source re/match/s06/0042ac90.c.
 // Re-enabled 2026-10-12 (U-9660): the MASS-DISABLE below was a harness limit, not a game fault. The fixture it asked
 // for now exists (re/frida/negctl_fixtures/z_fix_u9660.py: slot index, per-slot table pointer, cursor and decoy
 // slots seeded), and the port reads GREEN 16/16 against it with self-baseline GREEN. Original note kept below.

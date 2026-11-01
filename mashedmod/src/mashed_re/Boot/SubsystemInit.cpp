@@ -5,7 +5,7 @@
 // Covers:
 //   0x00492270  SubsystemInit          — 3-callee gate: RW_INIT_FN(0) + DisplayInit + ViewportInit
 //   0x004921d0  DisplayInit            — display init: RW video-mode + LoadIcon TXD
-//   0x00428590  ViewportInit           — viewport bg-color + DAT_0067d974 = π/2 + RW cam ops
+//   0x00428590  ViewportInit           — MOVED to Match/MatchS06_00428590.cpp (MATCH-S06)
 //   0x00492e60  SetDefaultViewWindow   — RwCameraSetViewWindow(0.8, 0.8)
 //
 // Deferred:
@@ -40,9 +40,6 @@ static FUN_00493710_t const s_FUN_00493710 =
 // FUN_004921d0 — DisplayInit (defined below in this TU; forward ref for use in 0x00492270).
 // Declared extern "C" because it is exported from this TU.
 extern "C" __declspec(dllexport) void __cdecl DisplayInit();
-
-// FUN_00428590 — ViewportInit (defined below in this TU; forward ref).
-extern "C" __declspec(dllexport) std::int32_t __cdecl ViewportInit();
 
 // FUN_004c2f00 — RwEngineGetCurrentMode (C3; implemented in Boot/VideoConfig.cpp).
 // Returns current RW video-mode index as short.
@@ -120,40 +117,9 @@ static FUN_004c5c00_t const s_FUN_004c5c00 =
 //   FUN_004671a0(0, 0, 1)          — (slot=0, 0, op=1)
 //   FUN_004671a0(0xffffffff, ptr)  — (sentinel, RwV2d-ptr) in SetDefaultViewWindow
 // Using variadic-style: cdecl with maximal arg shape; callers only consume what they pass.
-using FUN_004671a0_3arg_t = std::uint32_t (__cdecl*)(std::uint32_t, void*, std::uint32_t);
-using FUN_004671a0_1arg_t = std::uint32_t (__cdecl*)(std::uint32_t);
 using FUN_004671a0_2arg_t = std::uint32_t (__cdecl*)(std::uint32_t, void*);
-static FUN_004671a0_3arg_t const s_FUN_004671a0_3 =
-    reinterpret_cast<FUN_004671a0_3arg_t>(0x004671a0u);
-static FUN_004671a0_1arg_t const s_FUN_004671a0_1 =
-    reinterpret_cast<FUN_004671a0_1arg_t>(0x004671a0u);
 static FUN_004671a0_2arg_t const s_FUN_004671a0_2 =
     reinterpret_cast<FUN_004671a0_2arg_t>(0x004671a0u);
-
-// FUN_004c1bb0 — RW cam op A: void(uint32 handle).
-using FUN_004c1bb0_t = void (__cdecl*)(std::uint32_t);
-static FUN_004c1bb0_t const s_FUN_004c1bb0 =
-    reinterpret_cast<FUN_004c1bb0_t>(0x004c1bb0u);
-
-// FUN_004c1a00 — RW cam op B / test predicate: int32(uint32 handle).
-using FUN_004c1a00_t = std::int32_t (__cdecl*)(std::uint32_t);
-static FUN_004c1a00_t const s_FUN_004c1a00 =
-    reinterpret_cast<FUN_004c1a00_t>(0x004c1a00u);
-
-// FUN_00428450 — camera parameter setter (C2): void(int32, int32).
-using FUN_00428450_t = void (__cdecl*)(std::int32_t, std::int32_t);
-static FUN_00428450_t const s_FUN_00428450 =
-    reinterpret_cast<FUN_00428450_t>(0x00428450u);
-
-// FUN_004c19f0 — RW cam op C: void(uint32 handle).
-using FUN_004c19f0_t = void (__cdecl*)(std::uint32_t);
-static FUN_004c19f0_t const s_FUN_004c19f0 =
-    reinterpret_cast<FUN_004c19f0_t>(0x004c19f0u);
-
-// FUN_004c1be0 — RW cam op D: void(uint32 handle).
-using FUN_004c1be0_t = void (__cdecl*)(std::uint32_t);
-static FUN_004c1be0_t const s_FUN_004c1be0 =
-    reinterpret_cast<FUN_004c1be0_t>(0x004c1be0u);
 
 // FUN_004c1c80 — RwCameraSetViewWindow candidate (C2): void(uint32 handle).
 using FUN_004c1c80_t = void (__cdecl*)(std::uint32_t);
@@ -167,12 +133,6 @@ static void** const g_DAT_0077195c =
     reinterpret_cast<void**>(0x0077195cu);       // 0x00492255: global TXD ptr
 static void** const g_DAT_00771960 =
     reinterpret_cast<void**>(0x00771960u);       // 0x00492269: global LoadIcon-texture ptr
-
-// ---------------------------------------------------------------------------
-// Global written by ViewportInit — from analysis note 0x00428590.md.
-// ---------------------------------------------------------------------------
-static std::uint32_t* const g_DAT_0067d974 =
-    reinterpret_cast<std::uint32_t*>(0x0067d974u); // 0x004285c5: receives π/2 float bits
 
 // ---------------------------------------------------------------------------
 // SubsystemInit  --  0x00492270
@@ -308,75 +268,8 @@ extern "C" __declspec(dllexport) void __cdecl DisplayInit() {
 
 RH_ScopedInstall(DisplayInit, 0x004921d0);  // re-enabled 2026-05-24 batch-boot
 
-
-// ---------------------------------------------------------------------------
-// ViewportInit  --  0x00428590
-//
-// Original: FUN_00428590 (128 bytes, 0x00428590–0x0042860f).
-// Decompiled body (verbatim from analysis note 0x00428590.md):
-//   local_4 = 0xff000000
-//   uVar1 = FUN_004671a0(0, &local_4, 3)
-//   FUN_004c1bb0(uVar1)
-//   uVar1 = FUN_004671a0(0)
-//   iVar2 = FUN_004c1a00(uVar1)
-//   if iVar2 != 0:
-//     _DAT_0067d974 = 0x3fc90fdb  (IEEE 754 = π/2 = 1.5707963f)
-//     FUN_00428450(0x20, 0xffffffe0)
-//     uVar1 = FUN_004671a0(0); FUN_004c19f0(uVar1)
-//   uVar1 = FUN_004671a0(0, 0, 1); FUN_004c1be0(uVar1)
-//   return 1
-//
-// Constants cited (from analysis table):
-//   0x00428590  0xff000000  — local_4 (ARGB black: alpha=0xff, RGB=0x000000)
-//   0x004285c5  0x3fc90fdb  — IEEE 754 float = 1.5707963 (π/2)
-//   0x004285d2  0x20        — first arg to FUN_00428450 (32 dec)
-//   0x004285d2  0xffffffe0  — second arg to FUN_00428450 (-32 signed)
-//   0x0067d974  DAT_        — global float written with π/2 bits
-//
-// Callers: SubsystemInit (0x00492270). Callees: FUN_004671a0 C2, FUN_00428450 C2.
-// ---------------------------------------------------------------------------
-
-// 0x00428590
-extern "C" __declspec(dllexport) std::int32_t __cdecl ViewportInit() {
-    // 0x00428590: local_4 = 0xff000000 (ARGB: alpha=0xff, RGB=0x000000 = black).
-    std::uint32_t local_4 = 0xff000000u;
-
-    // uVar1 = FUN_004671a0(0, &local_4, 3)
-    std::uint32_t uVar1 = s_FUN_004671a0_3(0u,
-                                            reinterpret_cast<void*>(&local_4),
-                                            3u);
-
-    // FUN_004c1bb0(uVar1) — RW cam op A.
-    s_FUN_004c1bb0(uVar1);
-
-    // uVar1 = FUN_004671a0(0)
-    uVar1 = s_FUN_004671a0_1(0u);
-
-    // iVar2 = FUN_004c1a00(uVar1) — RW cam op B (test/predicate).
-    const std::int32_t iVar2 = s_FUN_004c1a00(uVar1);
-
-    if (iVar2 != 0) {
-        // 0x004285c5: _DAT_0067d974 = 0x3fc90fdb (IEEE 754 float = π/2 = 1.5707963).
-        *g_DAT_0067d974 = 0x3fc90fdbu;
-
-        // 0x004285d2: FUN_00428450(0x20, 0xffffffe0) → (32, -32).
-        s_FUN_00428450(0x20, static_cast<std::int32_t>(0xffffffe0u));
-
-        // uVar1 = FUN_004671a0(0); FUN_004c19f0(uVar1) — RW cam op C.
-        uVar1 = s_FUN_004671a0_1(0u);
-        s_FUN_004c19f0(uVar1);
-    }
-
-    // uVar1 = FUN_004671a0(0, 0, 1); FUN_004c1be0(uVar1) — RW cam op D.
-    uVar1 = s_FUN_004671a0_3(0u, nullptr, 1u);
-    s_FUN_004c1be0(uVar1);
-
-    // Return 1.
-    return 1;
-}
-
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(ViewportInit, 0x00428590);
-
+// MATCH-S06: the body of 0x00428590 (ViewportInit) moved to Match/MatchS06_00428590.cpp,
+// which compiles the byte-matched source re/match/s06/00428590.c.
 
 // ---------------------------------------------------------------------------
 // SetDefaultViewWindow  --  0x00492e60

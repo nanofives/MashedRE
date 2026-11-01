@@ -57,31 +57,8 @@
 // literal (0x2d overwrites 0x16 in if-body); Frida GREEN will confirm.
 // ---------------------------------------------------------------------------
 
-// 0x0042a9c0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ModeCodeLookup()
-{
-    // [0x0042a9c0] Read mode global.
-    std::int32_t mode = *reinterpret_cast<std::int32_t*>(0x007f0fd0u);
-
-    std::uint32_t uVar1 = 0u; // mirrors "undefined4 uVar1" — safe default for UB branch
-
-    // Replicate the Ghidra comma-expression chain literally:
-    //   if (mode==10 || mode==9 || mode==8 || (uVar1=0x16, mode==5) || mode==7)
-    //       uVar1 = 0x2d;
-    //
-    // In the decomp the sub-expression `(uVar1 = 0x16, mode == 5)` is part of the
-    // OR chain evaluated left-to-right; if mode==5 the if-body then sets uVar1=0x2d.
-    // If mode==7 the RHS of the last OR short-circuits before the comma expression.
-    if ((mode == 10) || (mode == 9) || (mode == 8) ||
-        (mode == 7) || (uVar1 = 0x16u, mode == 5))
-    {
-        uVar1 = 0x2du; // [0x0042a9e4] overwrites 0x16 for mode==5 too
-    }
-
-    return uVar1; // [0x0042a9e7]
-}
-
-RH_ScopedInstall(ModeCodeLookup, 0x0042a9c0);
+// MATCH-S06: the body of 0x0042a9c0 (ModeCodeLookup) moved to Match/MatchS06_0042a9c0.cpp,
+// which compiles the byte-matched source re/match/s06/0042a9c0.c.
 
 // ---------------------------------------------------------------------------
 // SlotFieldSetter  --  0x00425b70
