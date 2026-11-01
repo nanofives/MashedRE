@@ -13,6 +13,8 @@
 // The two bodies and six leaves are generated from the anchored bytes by re/tools/gen_naked_asm.py
 // (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). C++ here, each with the
 // original's cdecl stack contract (callee-saved EBX/ESI/EDI/EBP preserved by the compiler):
+//   PerCarRaceProgressGet  FUN_00408a50 -> the one port body (Match/MatchS01.cpp, C4 by byte match,
+//              re/match/s01/00407a60.c). HB-LINT-408A50 dropped the verbatim TG_408a50 copy.
 //   TG_VehPtr  FUN_0046d4a0 -> PtrCompute881ec8 (exe-rebound record array)
 //   TG_Speed   FUN_0046d6d0 -> record +0x9e4 (0x00881f84 in the array-base convention)
 //   TG_Fwd     FUN_0046d510 -> (0,0,1) by the record's +0x928 matrix = its `at` row. The original
@@ -37,6 +39,7 @@
 #include <vector>
 
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);   // 0x0046d4a0
+extern "C" float __cdecl PerCarRaceProgressGet(int i);                                     // 0x00408a50
 
 // ---- exe-safe .rdata copies (values read from the anchored image) -------------------------
 extern "C" {
