@@ -1,0 +1,55 @@
+ConstantGetter22	0x001300c0	1	_PromptStripResolve+0x6d
+DefaultParam_SetField00	0x00130c10	1	?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ+0x1d5
+DefaultParam_SetField04	0x00130bf0	1	?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ+0x1da
+DefaultParam_SetField08	0x00130c00	1	?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ+0x1df
+FUN_0042f020	0x00130810	0	
+FrontendModeDispatch	0x00130700	0	
+FrontendPageIdDispatch	0x00130df0	0	
+FrontendPanelFlagAdvance	0x00130cc0	1	_FrontendPageIdDispatch+0x0
+FrontendPlayerSlotCheck	0x00130640	0	
+GetDat0067ea64	0x001308d0	9	_PlayerBlock2Field00Get+0x0;_PlayerBlock2Field04Get+0xf;_PlayerBlock2Field08Get+0xf;_PlayerBlock2Field50Get+0x0;_PlayerScoreTeamAccBaseB+0xc;_PlayerScoreTeamAccCumB+0xc
+GetDat0067ecb4	0x001304d0	0	
+GetDat0067ecb8	0x001304e0	0	
+GetDat0067f17c	0x00130a90	0	
+GetFrameCounterPlus73	0x001308c0	0	
+GetRaceEndFlag	0x00130a80	0	
+GetRaceSubMode	0x001308f0	3	_RaceEndFlagIfEndMode+0x0;_RaceEndAltFlagIfEndMode+0x0;_ReplayCheckTimer+0x0
+HudRectEmitter5	0x00130220	0	
+HudSlotTypePlayer0	0x00130aa0	0	
+HudSlotTypePlayer1	0x00130af0	0	
+HudSlotTypePlayer2	0x00130b30	0	
+MenuAlphaGet	0x001300d0	0	
+MenuButtonDetectA	0x0012f830	0	
+MenuButtonDetectB	0x0012f9d0	0	
+MenuButtonDetectC	0x0012fb70	0	
+MenuButtonDetectD	0x0012fd60	0	
+MenuButtonDetectE	0x0012ff50	0	
+MenuEntryArrayInit	0x001305d0	2	?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ+0x28c;?VerifyDataSectionWedgeViaReimpl@?A0x8b8cd3e4@@YAXXZ+0x1a0
+MenuFlagDat007f0f10Get	0x00130cb0	0	
+MenuModeSync	0x00130900	0	
+MenuReadinessCheckB	0x0012f6e0	0	
+MenuReadinessCheckC	0x0012f780	0	
+MenuSlotCount	0x00130bb0	0	
+MenuStateParamStore	0x00130440	0	
+MenuTeamBalance	0x001300f0	2	?RenderFrame@?A0x8b8cd3e4@@YA_NXZ+0x5b51;_WinMain@16+0x142f
+MenuTeamSelectTick	0x001309b0	1	?RenderFrame@?A0x8b8cd3e4@@YA_NXZ+0x5aa4
+Post0042bf30	0x001303b0	0	
+RaceEndAltFlagIfEndMode	0x00130a60	0	
+RaceEndConstGet	0x001300b0	0	
+RaceEndFlagIfEndMode	0x00130a40	1	_PickupPoolSpawn+0x9
+RaceInterruptFlagGet	0x001304a0	0	
+RaceStateArrayZero	0x001304b0	1	?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ+0x23a
+RaceTransitionBufZero	0x00130580	0	
+ScreenHeightGet	0x00130070	0	
+ScreenWidthGet	0x00130060	0	
+SinGlobalProduct431b20	0x00130c20	0	
+SinGlobalProduct431b50	0x00130c50	0	
+SinGlobalProduct431b60	0x00130c80	0	
+SpriteSlotGate	0x001306b0	0	
+StatePhaseIsFinal	0x001300a0	0	
+StatePhaseIsIdle	0x00130080	0	
+StatePhaseIsTwo	0x00130090	0	
+StatePhaseSubSet	0x001300e0	0	
+TimeDiffDecompose	0x001304f0	0	
+TimeDisplaySetEntry	0x00130b70	0	
+Vehicle0HandleGet	0x001308e0	0	

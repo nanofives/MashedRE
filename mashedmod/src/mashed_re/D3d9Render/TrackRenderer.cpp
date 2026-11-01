@@ -5195,8 +5195,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     }
 
     // [D-11073 leg 1b, PREREG_LEG1B.md section 3] RACE SUB-STATES 4 AND 5, default-OFF
-    // MASHED_SUBSTATE. Replaces the countdown stand-in below (countdown_ -= dt,
-    // LaunchRev_PreRaceTick / _Release) with FUN_004111c0's own phases, in its order:
+    // MASHED_SUBSTATE. Replaced the countdown stand-in (countdown_ -= dt,
+    // LaunchRev_PreRaceTick / _Release; deleted by D5-DEAD-COUNTDOWN-STANDIN) with FUN_004111c0's own phases, in its order:
     //   frame E      state-2 tail: DAT_005f29b8 = 12000, DAT_0063ba8c = 4 (no FUN_0040fc00)
     //   frame E+1    case 4: DAT_007f0fc8 = 0; FUN_0040dbd0; FUN_0040fc00 partials
     //   E+2..E+113   case 5: FUN_004103a0 (AI tick, per-car FUN_0046baa0 + FUN_0046d7f0,
@@ -5228,7 +5228,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 const float a = s_subAccel > 0.f ? s_subAccel : 0.f;   // LaunchRev_PreRaceTick's cook
                 return static_cast<unsigned char>(a * 255.f);
             };
-            // [D3-SUBSTATE-SETTLE-ORDER] the stand-in GO frame's pre-release settle (d2engage fix B part 4, below), called by
+            // [D3-SUBSTATE-SETTLE-ORDER] the stand-in GO frame's pre-release settle (d2engage fix B part 4, stand-in deleted), called by
             // FUN_004103a0's exit call between its hold loop and its release loop (0x00410470). Same io, same gate.
             // MASHED_NO_SUBSTATE_SETTLE_FIRST=1 leaves the settle to the first race StepCar, as before.
             static const bool s_noSettleFirst = [] { const char* e = std::getenv("MASHED_NO_SUBSTATE_SETTLE_FIRST");
@@ -5325,7 +5325,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Ai::Ai_RaceTimerCountdownTick(units, false);
         // [D3-SUBSTATE-FLIP amendment 1, ported by D3-SUBSTATE-PREGO-ALIVE] FUN_0040fc00's DAT_007f0ff4 add (0x0040fe5e, every
         // tick but sub-state 7, 0x0040fe46) on the sub-state frames. The late clock's add runs on race frames only and this block
-        // returns before the stand-in's countdown add, so the clock reached GO at 0 and FUN_00416250's fresh-steer arm (0x00416608)
+        // returned before the (since deleted) stand-in's countdown add, so the clock reached GO at 0 and FUN_00416250's fresh-steer arm (0x00416608)
         // took the decay arm (verify/d3subflip_20261028/PREREG_D3-SUBSTATE-FLIP.md on orch/D3-SUBSTATE-FLIP).
         if (subClock) Ai::Ai_AdvanceCountdownClock(units);
         CarParts_FrameTick(units);                         // [librwrest] FUN_0040fc00 -> 0x0040fc75
@@ -5339,113 +5339,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         return;
     }
 
-    // [rfx 2026-10-16, rfx2] The HUD start-light clock adapter for MASHED_SUBSTATE off (the 113-tick stand-in zeroing of
-    // DAT_0063d584 / DAT_0063d588, U-9704) was deleted with the knob (D5-KNOBS-E5-REST): the ported FUN_0040dbd0 /
-    // FUN_0041d930 tail always run.
-    // Countdown freeze (3-2-1-GO): cars are held still until it elapses.
-    if (countdown_ > 0.f) {
-        countdown_ -= in.dt;
-        car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
-        for (auto& a : ai_cars_) a.cur_speed = 0.f;
-        // [d3bB2 2026-10-17] FUN_0040fc00's clock add on the pre-GO ticks (0x0040fe5e), default ON since
-        // a4order 2026-10-17 (opt-out deleted, D5-KNOBS-RUNARMS-STACKS). Same gate as the race-frame Ai_AdvanceClock below.
-        if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
-            Ai::Ai_AdvanceCountdownClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
-        // [U-9174, D2 attempt 15] START-LINE LAUNCH REV-CHARGE. The original runs
-        // FUN_0046d7f0(car, 50) per active car on every pre-race state-tick
-        // (0x00410441) and FUN_0046d780(car) once when the 1.86 s timer elapses
-        // (0x0041049b) — the writer of veh+0xbf8 is 0x0046d7a2 inside the latter.
-        // The cars are still frozen above; this only accumulates the integer charge
-        // at veh+0xbf4, which A6a reads after GO. Confirmed on the running original,
-        // two boots: verify/d2_writer_20261001/RESULT_STEP1.md.
-        Vehicle::LaunchRev_PreRaceTick(in.dt, in.accel);
-        // [u9747 2026-10-18] MASHED_COUNTDOWN_SPAWN (default ON since the u9747 flip; MASHED_NO_COUNTDOWN_SPAWN=1 opts out; U-9747). Two pieces of the original's pre-GO state the
-        // countdown stand-in did not have, both read by FUN_0040da50's path-progress loop (PathProg_FrameTick, which
-        // runs on every countdown frame):
-        //  - the AI tick's alive-poke: FUN_00418860 (0x004188ae..0x004188db) sets slot state 2 (FUN_0040e480) for each AI
-        //    car with FUN_0046c7b0 == 1 in an AI round; the original's AI tick runs on its pre-GO ticks (749 probe calls
-        //    before the window on o_reg_r13), the port's first on GO, so IsCarSlotActive (0x0040e370) read 0 for cars 1..3;
-        //  - each car's grid pose in its record (FUN_004704c0's two state matrices, VehiclePhysics_SeedSpawnPose).
-        // Measured without it (verify/u9747_20261018 gate log): cars 1..3 inactive through the countdown, every record at
-        // (0,0,0), countdown progress 29.507563 for the player and 0 for the AI rows.
-        {
-            // [u9747 flip 2026-10-18] default ON (user decision); MASHED_NO_COUNTDOWN_SPAWN=1 opts out
-            static const bool s_cdSpawn = [] { const char* no = std::getenv("MASHED_NO_COUNTDOWN_SPAWN");
-                                               return !(no && no[0] && no[0] != '0'); }();
-            if (s_cdSpawn && Vehicle::VehiclePhysics_Enabled()) {
-                if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) Ai::Ai_CountdownAlivePoke();
-                Vehicle::VehiclePhysics_SeedSpawnPose(0, car_pos_, car_yaw_, car_ground_off_, s_spawnYOk[0] ? &s_spawnY[0] : nullptr);
-                for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci)
-                    Vehicle::VehiclePhysics_SeedSpawnPose(ci + 1, ai_cars_[static_cast<std::size_t>(ci)].pos,
-                                                          ai_cars_[static_cast<std::size_t>(ci)].yaw, car_ground_off_,
-                                                        (ci < 3 && s_spawnYOk[ci + 1]) ? &s_spawnY[ci + 1] : nullptr);
-            }
-        }
-        if (countdown_ <= 0.f) {
-            Audio::SfxPlay("go", 0.9f);                      // real "GO!" SFX
-            // [d2engage 2026-10-16] fix B part 4 (its MASHED_POS_ORDER knob was deleted by D5-KNOBS-D-SEEDED6): the player's
-            // spawn-settle step is the exe's stand-in for the original's pre-release hold ticks, so
-            // it runs BEFORE the release (FUN_004103a0: 0x0041043a / 0x00410441, then 0x0041049b),
-            // not after it inside the first StepPlayer below. With the seed (part 1), a post-release settle
-            // opened A6a's front-wheel gate under +0xbf8 == 2 and spent one 200-unit decrement of
-            // the 3000 charge: engagement at d=14, the original d=15. PREREG_d2engage.md 0.1-0.3.
-            // The io is the one StepPlayer builds below (the settle zeroes the inputs itself).
-            if (Vehicle::VehiclePhysics_Enabled()) {
-                Vehicle::PlayerCarIO sio;
-                sio.pos[0] = car_pos_[0]; sio.pos[1] = car_pos_[1]; sio.pos[2] = car_pos_[2];
-                sio.vel[0] = car_vel_[0]; sio.vel[1] = car_vel_[1]; sio.vel[2] = car_vel_[2];
-                sio.yaw = car_yaw_; sio.speed = car_speed_;
-                for (int k = 0; k < 8; ++k) sio.input[k] = 0;
-                sio.steer = 0.f;
-                sio.ground_off = car_ground_off_;
-                bool sgok = false;
-                GroundHeight(car_pos_[0], car_pos_[2], &sgok);
-                sio.grounded = sgok ? 1 : 0;
-                for (int k = 0; k < 3; ++k) sio.drive_delta[k] = 0.f;
-                Vehicle::VehiclePhysics_SpawnSettle(0, in.dt, sio);
-                car_pos_[0] = sio.pos[0]; car_pos_[1] = sio.pos[1]; car_pos_[2] = sio.pos[2];
-            }
-            Vehicle::LaunchRev_Release();
-        }
-        // [d3bB2] The GO frame's AI tick runs before UpdateRace, so it reads the path
-        // progress the producer left before it. The original runs FUN_0040da50's FUN_00408610 loop from
-        // FUN_0040fc00 (0x0040fc75) on every pre-GO tick, so its first racing AI tick reads converged values
-        // (o_tg1 at rest: 29.999977 / 29.73 / 29.457 / 29.18). Run it on every countdown frame (the GO frame after
-        // the settle and the release above). Measured: run only from the GO frame, the exe's AI rows read 0.0,
-        // then 29.507563 for all three cars, and converge on the third call (verify/d3bB2_20261017 B_SLP_K1).
-        // [a4order] the A4 order implies it, so it runs unconditionally since D5-KNOBS-E1-PHYS-A4A5 deleted MASHED_A4_ORDER.
-        Race::PathProg_FrameTick();
-        // [d1r2] The original runs the director on every pre-race frame (sub-states
-        // 3/4/5: FUN_0040fc00 -> FUN_0040d470 -> FUN_00446520, main block when cam[7]
-        // == 0), not from GO; MASHED_SUBSTATE does the same in SubStateCameraChain.
-        // So the stand-in countdown advances race_cam_ too, and the first frame of a
-        // round snaps (Reset() at round start). Render-side: race_cam_'s only sim
-        // reader is EliminationCheck on required_zoom_, which Update recomputes from
-        // the current cars (RaceCamera.cpp:359-362) and which runs only after GO.
-        // The frame that reaches GO skips this: UpdateRace below advances it once.
-        static const bool s_cd_cam_optout =
-            GetEnvironmentVariableA("MASHED_NO_RACE_CAM_BASIS", nullptr, 0) != 0;
-        if (countdown_ > 0.f && !s_cd_cam_optout) {
-            Race::RaceCamCar cc[kRaceCars] = {};
-            FillRaceCamCars(cc);
-            cam_ticks_ += static_cast<double>(in.dt) * 3000000.0;   // DAT_007f1030 rate
-            RaceCamUpdate(cc, false);
-        }
-        // [librwrest] the original runs FUN_0040fc00 (so FUN_00425d50's copter clock) in the
-        // pre-race sub-states too; the GO frame ticks once, below
-        // [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN (default ON since L-23, U-9790): FUN_0040fc00's DAT_007f0ff8 add at the end of
-        // the pre-GO tick (0x0040fe64); on the stand-in's state-5 window (the 113 / 60 s before GO, as the HUD state)
-        // an AI race's FUN_00418560 zeroes it (0x00418598), so its GO frame reads 0. The GO frame takes the race-frame add.
-        if (countdown_ > 0.f)
-            Ai::Ai_RaceTimerCountdownTick(static_cast<int>(in.dt * 3000.0f + 0.5f),
-                                          !ai_cars_.empty() && countdown_ <= 113.0f / 60.0f);
-        if (countdown_ > 0.f) {
-            CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f));
-            if (CamReplayRowRunsFc00(cam_replay_row_))
-                PreGoRegistryTick();   // [D5-ICONCUBE-SPIN] FUN_0040fc00's pre-GO registry chain
-            return;
-        }
-    }
+    // [D5-DEAD-COUNTDOWN-STANDIN] The countdown stand-in that followed here (countdown_ -= dt, the pre-GO clock add,
+    // LaunchRev_PreRaceTick / _Release, the countdown-spawn pieces, the GO-frame settle, PathProg_FrameTick, the pre-GO
+    // camera, race-timer, copter and registry ticks) was deleted: it had the same countdown_ > 0 guard as the sub-state
+    // block above, which returns on every path, and nothing between them writes countdown_.
 
     RaceRefDistTraceFrame();   // [U-9683] frame ordinal for MASHED_REFDIST_TRACE (measurement only)
     float accel = in.accel, steer = in.steer;

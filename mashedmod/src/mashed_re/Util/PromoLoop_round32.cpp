@@ -15,11 +15,8 @@
 
 #include <cstdint>
 
-// 0x0042d390  A1 6C EA 67 00 C3  (mov eax,[0x0067ea6c]; ret) — race-state field
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global67ea6cGet(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0067ea6cu);  // cited at 0x0042d390
-}
-RH_ScopedInstall(Global67ea6cGet, 0x0042d390);
+// MATCH-S07: the body of 0x0042d390 (Global67ea6cGet) moved to Match/MatchS07_0042d390.cpp,
+// which compiles the byte-matched source re/match/s07/0042d390.c.
 
 // 0x00499710  A1 84 95 7E 00 C3  (mov eax,[0x007e9584]; ret) — window handle global
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Global7e9584Get(void) {

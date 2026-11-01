@@ -111,14 +111,8 @@ RH_ScopedInstall(CameraSlotFloatGet, 0x00442420);
 //   U-2176: writer not statically xref'd (indirected via stride alias).
 // ---------------------------------------------------------------------------
 
-// 0x00423b20
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSnapshotDwordGet(int param_1) {
-    // 0x008995ec base + 0x138 byte stride cited at 0x00423b20 body.
-    return *reinterpret_cast<const std::uint32_t*>(
-        0x008995ecu + static_cast<std::uint32_t>(param_1) * 0x138u);
-}
-
-RH_ScopedInstall(CarSnapshotDwordGet, 0x00423b20);
+// MATCH-S05: the body of 0x00423b20 (CarSnapshotDwordGet) moved to Match/MatchS05_00423b20.cpp,
+// which compiles the byte-matched source re/match/s05/00423b20.c.
 
 // ---------------------------------------------------------------------------
 // VehicleTable4cPtrGet  --  0x00426cc0   (subsystem: vehicle)

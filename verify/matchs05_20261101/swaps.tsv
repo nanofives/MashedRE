@@ -1,0 +1,60 @@
+rva	wrapper	targets	source	source_blob_sha256_16	match%	by	body	old_body	exe_callers
+0x0041f710	MatchS05_0041f710.cpp	exe	re/match/s05/0041f710.c	226667aa4d05a1de	100.0	insn	replaced	Race/CarRegistrant.cpp[E]:('CR_41f710', 29)	1 (CallRegistrant <- CarsReg_FrameTick <- TrackRenderer::UpdateCar)
+0x00420d40	MatchS05_00420d40.cpp	exe+asi	re/match/s05/00420d40.c	f2efecda4fa5e76c	100.0	insn	replaced	Util/TimerInit.cpp[EA]:('TimerStructArrayClear', 42)	0
+0x00420d80	MatchS05_00420d80.cpp	asi	re/match/s05/00420d80.c	ac9d0ae9b803d192	100.0	insn	replaced	Util/PromoLoop_sessionB.cpp[A]:('IndexedFloatPairSum420d80', 3685)	n/a (asi only)
+0x00420da0	MatchS05_00420da0.cpp	asi	re/match/s05/00420da0.c	5730890f51898e75	100.0	insn	replaced	Util/PromoLoop_round59.cpp[A]:('TblRetPtrout63e4b8_0', 27)	n/a (asi only)
+0x00420dc0	MatchS05_00420dc0.cpp	asi	re/match/s05/00420dc0.c	77546d7bce40e45f	100.0	insn	replaced	Util/PromoLoop_round59.cpp[A]:('TblRetPtrout63e4b8_4', 35)	n/a (asi only)
+0x00420de0	MatchS05_00420de0.cpp	asi	re/match/s05/00420de0.c	023df0efbde75449	100.0	insn	replaced	Util/PromoLoop_sessionB.cpp[A]:('Accum420de0', 2425)	n/a (asi only)
+0x004215c0	MatchS05_00420de0.cpp	asi	re/match/s05/00420de0.c	023df0efbde75449	100.0	insn	replaced	Util/PromoLoop_sessionB.cpp[A]:('Accum4215c0', 3525)	n/a (asi only)
+0x004215e0	MatchS05_00420de0.cpp	asi	re/match/s05/00420de0.c	023df0efbde75449	100.0	insn	NEW	-	n/a (asi only)
+0x00421060	MatchS05_00421060.cpp	asi	re/match/s05/00421060.c	4e4bff4abe97fdb0	100.0	insn	replaced	Util/PromoLoop_sessionB.cpp[A]:('StructZero421060', 4635)	n/a (asi only)
+0x00421690	MatchS05_00421060.cpp	asi	re/match/s05/00421060.c	4e4bff4abe97fdb0	100.0	insn	NEW	-	n/a (asi only)
+0x00421080	MatchS05_00421080.cpp	asi	re/match/s05/00421080.c	a1e2ee20db904129	100.0	bytes	replaced	Util/PromoLoop_round77.cpp[A]:('Fill63e5a4', 18)	n/a (asi only)
+0x004218b0	MatchS05_004218b0.cpp	asi	re/match/s05/004218b0.c	ed61eac1c57f0769	100.0	insn	replaced	Physics/PromoLoop_standins_r7.cpp[A]:('PhysBodyCreateAttach', 44)	n/a (asi only)
+0x004218d0	MatchS05_004218b0.cpp	asi	re/match/s05/004218b0.c	ed61eac1c57f0769	100.0	insn	replaced	Physics/PromoLoop_standins_r7.cpp[A]:('PhysWorldBodyBuild', 56)	n/a (asi only)
+0x00421930	MatchS05_00421930.cpp	exe+asi	re/match/s05/00421930.c	36d6806670c09318	100.0	insn	replaced	Render/SlotObjectAccessors.cpp[EA]:('BodyGeometryFirstDword', 177)	0
+0x004222c0	MatchS05_004222c0.cpp	exe+asi	re/match/s05/004222c0.c	787b84b366ad8e7d	100.0	insn	replaced	Util/TimerInit.cpp[EA]:('TimerInitThunk', 119)	0
+0x004223f0	MatchS05_00422470.cpp	asi	re/match/s05/00422470.c	ff777e12e3101da7	100.0	insn	replaced	Util/PromoLoop_sessionB.cpp[A]:('Hash4223f0', 2478)	n/a (asi only)
+0x00422470	MatchS05_00422470.cpp	asi	re/match/s05/00422470.c	ff777e12e3101da7	100.0	insn	NEW	-	n/a (asi only)
+0x004224d0	MatchS05_004224d0.cpp	asi	re/match/s05/004224d0.c	385b6b2de37b72d8	100.0	insn	replaced	Frontend/MenuSlotInit.cpp[A]:('MenuSlotInit', 33)	n/a (asi only)
+0x00422a80	MatchS05_00422a80.cpp	exe+asi	re/match/s05/00422a80.c	8e65091f9ccce754	100.0	insn	replaced	Frontend/SlotZeroers_s1.cpp[EA]:('SlotBlockZero', 64)	0
+0x00422aa0	MatchS05_00422aa0.cpp	exe+asi	re/match/s05/00422aa0.c	8080666961cdbd01	100.0	insn	replaced	Frontend/SlotZeroers_s1.cpp[EA]:('SlotFieldSet', 101)	0
+0x00422ac0	MatchS05_00422ac0.cpp	asi	re/match/s05/00422ac0.c	83dfb366929af1dc	100.0	insn	replaced	Render/LowRvaMixed_q3.cpp[A]:('SlotQuadSet', 102)	n/a (asi only)
+0x00422af0	MatchS05_00422af0.cpp	asi	re/match/s05/00422af0.c	aa9a5fffbdd40774	100.0	insn	replaced	Render/LowRvaMixed_q3.cpp[A]:('SlotWordSet', 67)	n/a (asi only)
+0x00422b10	MatchS05_00422b10.cpp	exe+asi	re/match/s05/00422b10.c	253068310e9fc2d8	100.0	insn	replaced	Util/TimerInit.cpp[EA]:('TimerDwordClear', 136)	0
+0x00422b30	MatchS05_00422b30.cpp	exe+asi	re/match/s05/00422b30.c	e3e887180f2727c7	100.0	insn	replaced	Frontend/TimerReset.cpp[EA]:('TimerArrayClear', 25)	0
+0x00422fd0	MatchS05_00422fd0.cpp	asi	re/match/s05/00422fd0.c	f3ce1d0d2354e482	100.0	insn	replaced	Frontend/MenuMixed.cpp[A]:('FrontendRaceResultsDispatch', 682)	n/a (asi only)
+0x00423270	MatchS05_00423270.cpp	exe+asi	re/match/s05/00423270.c	189ae5a463de3f7e	100.0	insn	replaced	Frontend/SlotZeroers_s1.cpp[EA]:('TabCycler', 263)	1 dead (FrontendInputDispatch, itself 0)
+0x00423320	MatchS05_00423320.cpp	exe+asi	re/match/s05/00423320.c	08df15d611f7e866	100.0	insn	replaced	Frontend/SlotZeroers_s1.cpp[EA]:('CursorMover', 338)	1 dead (FrontendInputDispatch, itself 0)
+0x00423480	MatchS05_00423480.cpp	exe+asi	re/match/s05/00423480.c	6cf80204a8bfd599	100.0	bytes	replaced	HUD/ScenarioLeaves_sa2.cpp[EA]:('AiFilenameBuild', 259)	0
+0x004235b0	MatchS05_004235b0.cpp	asi	re/match/s05/004235b0.c	d48d968f49285da4	100.0	insn	replaced	Render/LowRvaSetters_o2.cpp[A]:('AiPizLoad', 313)	n/a (asi only)
+0x00423630	MatchS05_00423630.cpp	asi	re/match/s05/00423630.c	7071143a07ec7310	100.0	insn	replaced	Render/LowRvaSetters_o2.cpp[A]:('AiDataBufInit', 189)	n/a (asi only)
+0x00423b00	MatchS05_00423b00.cpp	exe+asi	re/match/s05/00423b00.c	2bac9a1ac0d26a63	100.0	insn	replaced	Frontend/MenuLeaves_af5.cpp[EA]:('FrontendInputDispatch', 139)	0
+0x00423b20	MatchS05_00423b20.cpp	asi	re/match/s05/00423b20.c	cf09685d11b1396f	100.0	insn	replaced	Vehicle/PromoLoop_round2.cpp[A]:('CarSnapshotDwordGet', 115)	n/a (asi only)
+0x00423b40	MatchS05_00423b40.cpp	asi	re/match/s05/00423b40.c	f56cbc63e1fa3b2e	100.0	insn	replaced	Frontend/SlotZeroers_s2.cpp[A]:('PlayerScoreAccA', 57)	n/a (asi only)
+0x00423b60	MatchS05_00423b60.cpp	asi	re/match/s05/00423b60.c	3ee4424a64e71988	100.0	insn	replaced	Frontend/SlotZeroers_s2.cpp[A]:('PlayerScoreAccB', 73)	n/a (asi only)
+0x00423b80	MatchS05_00423b80.cpp	asi	re/match/s05/00423b80.c	04e25f61862e640f	100.0	insn	replaced	Frontend/BatchAA_s2.cpp[A]:('PlayerScoreAccC', 42)	n/a (asi only)
+0x00423ba0	MatchS05_00423ba0.cpp	asi	re/match/s05/00423ba0.c	96899fed6119a5b8	100.0	insn	replaced	Frontend/SlotZeroers_s2.cpp[A]:('PlayerScoreAccD', 89)	n/a (asi only)
+0x00423bc0	MatchS05_00423bc0.cpp	asi	re/match/s05/00423bc0.c	6f4c324f82c171a6	100.0	insn	replaced	Frontend/SlotZeroers_s2.cpp[A]:('PlayerScoreTeamAccC', 121)	n/a (asi only)
+0x00423c40	MatchS05_00423c40.cpp	asi	re/match/s05/00423c40.c	97338bbb419166ce	100.0	insn	replaced	Frontend/SlotZeroers_s2.cpp[A]:('PlayerScoreTeamAccBase', 171)	n/a (asi only)
+0x00423cc0	MatchS05_00423cc0.cpp	exe+asi	re/match/s05/00423cc0.c	901daab75a6d55ac	100.0	insn	replaced	Frontend/MenuMiscLeaves_t2.cpp[EA]:('PlayerScoreTeamAccGatedB', 86)	0
+0x00423d50	MatchS05_00423d50.cpp	exe+asi	re/match/s05/00423d50.c	f619e4847ea05b80	100.0	insn	replaced	Frontend/MenuMiscLeaves_t2.cpp[EA]:('PlayerScoreTeamAccBaseB', 142)	0
+0x00423dd0	MatchS05_00423dd0.cpp	exe+asi	re/match/s05/00423dd0.c	deb88b333abc52a6	100.0	insn	replaced	Frontend/MenuMiscLeaves_t2.cpp[EA]:('PlayerScoreTeamAccGatedC', 196)	0
+0x00423e60	MatchS05_00423e60.cpp	exe+asi	re/match/s05/00423e60.c	5390502ca66b7e6a	100.0	insn	replaced	Frontend/MenuMiscLeaves_t2.cpp[EA]:('PlayerScoreTeamAccCumB', 250)	0
+0x00423ee0	MatchS05_00423ee0.cpp	exe+asi	re/match/s05/00423ee0.c	8e988acb72b043ed	100.0	insn	replaced	Frontend/MenuLeaves_s3.cpp[EA]:('PlayerBlock2Field00Get', 109)	0
+0x00423f60	MatchS05_00423f60.cpp	exe+asi	re/match/s05/00423f60.c	f495b94ec6aaa3a1	100.0	insn	replaced	Frontend/MenuLeaves_s3.cpp[EA]:('PlayerBlock2Field04Get', 143)	0
+0x00423ff0	MatchS05_00423ff0.cpp	exe+asi	re/match/s05/00423ff0.c	29e731139314d948	100.0	insn	replaced	Frontend/MenuLeaves_s3.cpp[EA]:('PlayerBlock2Field50Get', 181)	0
+0x00424070	MatchS05_00424070.cpp	exe+asi	re/match/s05/00424070.c	48364e8ed872d5e5	100.0	insn	replaced	Frontend/MenuLeaves_s3.cpp[EA]:('PlayerBlock2Field08Get', 216)	0
+0x00424100	MatchS05_00424100.cpp	exe+asi	re/match/s05/00424100.c	0ba00f8ef37103a3	100.0	insn	replaced	Frontend/BatchAA_s3.cpp[EA]:('TeamBlockZeroGet', 88)	0
+0x004241b0	MatchS05_004241b0.cpp	exe+asi	re/match/s05/004241b0.c	9c39a5743560faf5	100.0	insn	replaced	Frontend/MenuLeaves_s3.cpp[EA]:('GetDat008994c0', 252)	0
+0x004241c0	MatchS05_004241c0.cpp	asi	re/match/s05/004241c0.c	6c7ce729d16a91df	100.0	insn	replaced	Frontend/FrontendLeaves_ad1.cpp[A]:('TeamBlockOneGet', 73)	n/a (asi only)
+0x004248b0	MatchS05_004248b0.cpp	exe+asi	re/match/s05/004248b0.c	2d5482be399bfedb	100.0	insn	replaced	Vehicle/SmallLeaves_q4.cpp[EA]:('PerCarSnapshotInit', 152)	0
+0x00424920	MatchS05_00424920.cpp	exe+asi	re/match/s05/00424920.c	cdaf80b4368b8636	100.0	insn	replaced	Frontend/MenuMiscLeaves_t2.cpp[EA]:('EndOfRoundAccumulator', 296)	0
+0x00425ab0	MatchS05_00425ab0.cpp	asi	re/match/s05/00425ab0.c	1ccf5c490bdedd8a	100.0	insn	replaced	Render/LowRvaSetters_o2.cpp[A]:('EntryHeaderClear', 253)	n/a (asi only)
+0x00425b10	MatchS05_00425b10.cpp	exe+asi	re/match/s05/00425b10.c	cb76b3bfde50f026	100.0	insn	replaced	Util/TimerInit.cpp[EA]:('TimerGlobalZero', 154)	0
+0x00425b70	MatchS05_00425b70.cpp	exe+asi	re/match/s05/00425b70.c	ae6e66f31e2e505d	100.0	insn	replaced	Frontend/BatchAA_s4.cpp[EA]:('SlotFieldSetter', 103)	0
+0x00425c00	MatchS05_00425c00.cpp	exe+asi	re/match/s05/00425c00.c	e068305cadfd85e8	100.0	insn	replaced	Frontend/MenuLeaves_af4.cpp[EA]:('CopterClumpRegister', 380)	0
+0x00425ee0	MatchS05_00425ee0.cpp	exe+asi	re/match/s05/00425ee0.c	a5ea2839822a9535	100.0	insn	replaced	Frontend/GlobalGetters_s4.cpp[EA]:('SlotWordPtrGet', 48)	0
+0x00425ef0	MatchS05_00425ef0.cpp	exe+asi	re/match/s05/00425ef0.c	58e8cda759e4eb70	100.0	insn	replaced	Frontend/GlobalGetters_s4.cpp[EA]:('ActiveSlotCount', 86)	0
+0x00426020	MatchS05_00426020.cpp	exe+asi	re/match/s05/00426020.c	b35a2f315a132d8b	100.0	insn	replaced	Frontend/GlobalGetters_s4.cpp[EA]:('GlobalDat00646e58Get', 140)	0
+0x00426060	MatchS05_00426060.cpp	asi	re/match/s05/00426060.c	3e0a2f24a14e83ec	100.0	insn	replaced	Render/TrackLoaderMicros_p3.cpp[A]:('TrackPhysWorld1Get', 51)	n/a (asi only)

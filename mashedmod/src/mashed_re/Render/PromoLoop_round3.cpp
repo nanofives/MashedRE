@@ -48,13 +48,8 @@
 //   U-0397: writer/meaning of DAT_0067ea80 (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x0042fe70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleDword67ea80Get(void) {
-    // 0x0067ea80 cited at 0x0042fe70 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x0067ea80u);
-}
-
-RH_ScopedInstall(VehicleDword67ea80Get, 0x0042fe70);
+// MATCH-S07: the body of 0x0042fe70 (VehicleDword67ea80Get) moved to Match/MatchS07_0042fe70.cpp,
+// which compiles the byte-matched source re/match/s07/0042fe70.c.
 
 // ---------------------------------------------------------------------------
 // TrackDescField40Get  --  0x0041ea80   (subsystem: ai)

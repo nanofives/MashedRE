@@ -4,18 +4,12 @@
     {"name": "AL_415880", "start": "0x00415880", "size": 1137},
     {"name": "AL_46d570", "start": "0x0046d570", "size": 228},
     {"name": "AL_443440", "start": "0x00443440", "size": 2254},
-    {"name": "AL_443300", "start": "0x00443300", "size": 307},
-    {"name": "AL_4233e0", "start": "0x004233e0", "size": 157},
-    {"name": "AL_408af0", "start": "0x00408af0", "size": 16},
-    {"name": "AL_426bb0", "start": "0x00426bb0", "size": 6},
-    {"name": "AL_40e470", "start": "0x0040e470", "size": 15},
-    {"name": "AL_4c39b0", "start": "0x004c39b0", "size": 271},
-    {"name": "AL_4c3ac0", "start": "0x004c3ac0", "size": 112}
+    {"name": "AL_426bb0", "start": "0x00426bb0", "size": 6}
   ],
   "calls": {
-    "0x00443440": "AL_443440", "0x00443300": "AL_443300", "0x004233e0": "AL_4233e0",
-    "0x00408af0": "AL_408af0", "0x00408a50": "PerCarRaceProgressGet", "0x00426bb0": "AL_426bb0",
-    "0x0040e470": "AL_40e470", "0x004c39b0": "AL_4c39b0", "0x004c3ac0": "AL_4c3ac0",
+    "0x00443440": "AL_443440", "0x00443300": "AiSplineEval_x87", "0x004233e0": "HeadingAtan2ToGameAngle",
+    "0x00408af0": "AiVehicleFieldPtrGet", "0x00408a50": "PerCarRaceProgressGet", "0x00426bb0": "AL_426bb0",
+    "0x0040e470": "CarSlotStateGet", "0x004c39b0": "RwLutNormalize_cd", "0x004c3ac0": "RwLutLength_cd",
     "0x0046d4a0": "AL_VehPtr", "0x0046d6d0": "AL_Speed", "0x0046d510": "AL_Fwd",
     "0x0046c7b0": "AL_Alive", "0x0046cbb0": "AL_State", "0x0046cc10": "AL_FloatAsInt",
     "0x004a3384": "AL_Acos", "0x004a2c48": "AL_Ftol",
@@ -36,10 +30,6 @@
   },
   "patch": {
     "0x004158c4": "mov eax, dword ptr [eax*4 + g_al_tab_5f2fc0]",
-    "0x0046d588": ["imul esi, esi, 0xd04", "add esi, dword ptr [g_al_recdelta]"],
-    "0x004c39b7": "lea edx, g_al_lutptrs",
-    "0x004c39be": "mov esi, 0",
-    "0x004c3af2": "lea eax, g_al_lutptrs",
-    "0x004c3af7": "mov ecx, 0"
+    "0x0046d588": ["imul esi, esi, 0xd04", "add esi, dword ptr [g_al_recdelta]"]
   }
 }

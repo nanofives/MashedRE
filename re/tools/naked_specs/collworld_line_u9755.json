@@ -3,7 +3,7 @@
     {"name": "BW_538d60", "start": "0x00538d60", "size": 2961}
   ],
   "calls": {
-    "0x004c3b90": "BW_4c3b90"
+    "0x004c3b90": "RwLutInvSqrt_cd"
   },
   "indirect_calls_ok": true,
   "consts": {

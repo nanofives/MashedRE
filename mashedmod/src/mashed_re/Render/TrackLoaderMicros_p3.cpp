@@ -47,13 +47,8 @@
 // ref: re/analysis/render_promote_c2_track_loader/0x00426060.md
 // ---------------------------------------------------------------------------
 
-// 0x00426060
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackPhysWorld1Get()
-{
-    return *reinterpret_cast<std::uint32_t*>(0x0065742cu);
-}
-
-RH_ScopedInstall(TrackPhysWorld1Get, 0x00426060);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S05: the body of 0x00426060 (TrackPhysWorld1Get) moved to Match/MatchS05_00426060.cpp,
+// which compiles the byte-matched source re/match/s05/00426060.c.
 
 // ---------------------------------------------------------------------------
 // TrackPhysWorld2Get  --  0x00426070

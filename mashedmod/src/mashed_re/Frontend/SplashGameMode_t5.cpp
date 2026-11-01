@@ -112,13 +112,8 @@ RH_ScopedInstall(AspectRatioGlobalGet, 0x00493fc0);
 // ref: re/analysis/race_results/00431d80.md
 // ===========================================================================
 
-// 0x00431d80
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TiebreakFlagGet(void) {
-    // Read DAT_0067ea7c (cited at 0x00431d80 body).
-    return *reinterpret_cast<volatile std::uint32_t*>(0x0067ea7cu);
-}
-
-RH_ScopedInstall(TiebreakFlagGet, 0x00431d80);
+// MATCH-S07: the body of 0x00431d80 (TiebreakFlagGet) moved to Match/MatchS07_00431d80.cpp,
+// which compiles the byte-matched source re/match/s07/00431d80.c.
 
 // ===========================================================================
 // EntityScoreFieldAdd  --  0x0046c700

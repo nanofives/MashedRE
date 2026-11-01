@@ -1,0 +1,30 @@
+CR_41f710Body	0x00128360	1	_CR_41f710+0x1
+TimerStructArrayClear	0x001283f0	0	
+BodyGeometryFirstDword	0x00128440	0	
+TimerInitThunk	0x00128460	0	
+SlotBlockZero	0x00128470	0	
+SlotFieldSet	0x00128490	0	
+TimerDwordClear	0x001284b0	0	
+TimerArrayClear	0x001284d0	0	
+TabCycler	0x001284f0	1	_FrontendInputDispatch+0xf
+CursorMover	0x00128580	1	_FrontendInputDispatch+0x14
+AiFilenameBuild	0x00128620	0	
+FrontendInputDispatch	0x00128710	0	
+PlayerScoreTeamAccGatedB	0x00128740	0	
+PlayerScoreTeamAccBaseB	0x001287d0	0	
+PlayerScoreTeamAccGatedC	0x00128850	0	
+PlayerScoreTeamAccCumB	0x001288e0	0	
+PlayerBlock2Field00Get	0x00128960	0	
+PlayerBlock2Field04Get	0x001289e0	0	
+PlayerBlock2Field50Get	0x00128a70	0	
+PlayerBlock2Field08Get	0x00128af0	0	
+TeamBlockZeroGet	0x00128b80	0	
+GetDat008994c0	0x00128c40	0	
+PerCarSnapshotInit	0x00128c50	0	
+EndOfRoundAccumulator	0x00128de0	0	
+TimerGlobalZero	0x00128fb0	0	
+SlotFieldSetter	0x00128ff0	0	
+CopterClumpRegister	0x00129010	0	
+SlotWordPtrGet	0x001290b0	0	
+ActiveSlotCount	0x001290c0	0	
+GlobalDat00646e58Get	0x00129180	0	

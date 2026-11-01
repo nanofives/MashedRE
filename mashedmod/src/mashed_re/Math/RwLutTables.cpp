@@ -56,8 +56,8 @@ float LutSqrt(float x) {
     return FromBits(T().sqrt_[(biased >> 12) & 0xfffu] + ((biased >> 1) & 0x3fc00000u));
 }
 
-// [pontoon 2026-10-16] FUN_004c3b90's arithmetic with the real LUT (0x004c3b9e: 0 -> 0; 0x004c3bb4 +0x800;
-// 0x004c3bc2 index (>> 12) & 0xfff into the second table [devBase+4]; 0x004c3bd2..dc + ((~biased >> 1) & 0x3fc00000)).
+// [pontoon 2026-10-16] FUN_004c3b90's arithmetic with the real LUT (0x004c3b9e: 0 -> 0; 0x004c3bb4 +0x800; index
+// (>> 12) & 0xfff at 0x004c3bc2 into the second table [devBase+4]; 0x004c3bd2..dc + ((~biased >> 1) & 0x3fc00000)).
 float LutInvSqrt(float x) {
     const std::uint32_t b = Bits(x);
     if (b == 0u) return x;
@@ -79,6 +79,15 @@ float LutLength(const float* v) {
     const float mag2 = (v[0] * v[0] + v[1] * v[1]) + v[2] * v[2];
     return LutSqrt(mag2);
 }
+
+// The cdecl call-throughs the naked lanes call (RwLutTables.h). D4-DC-INC-batch3 deleted the private naked copies
+// TG_4c3b30, BW_4c3b90 / PP_4c3b90 and AL_ / TG_ / PK_4c3ac0. Each copy read the same rebuilt tables (its spec
+// patched [0x007d3ff8] to a per-lane pointer pair set from RwLutSqrtTable / RwLutInvSqrtTable) and ran the same
+// integer index arithmetic, then FLD of the dword: the result bits are those of LutSqrt / LutInvSqrt. LutLength
+// rounds each product and sum to float (SSE2 TU), which is what the x87 copies did at the lanes' default PC_24.
+extern "C" float __cdecl RwLutSqrt_cd(float x) { return LutSqrt(x); }
+extern "C" float __cdecl RwLutInvSqrt_cd(float x) { return LutInvSqrt(x); }
+extern "C" float __cdecl RwLutLength_cd(const float* v) { return LutLength(v); }
 
 // The 2-D normalize the original runs at 0x004c3c60 (decomp: local_8 = p[1]*p[1] + p[0]*p[0] stored as a
 // float; both LUTs indexed by (bits + 0x800) >> 12; out = (scale * p[0], p[1] * scale)); the degenerate-length

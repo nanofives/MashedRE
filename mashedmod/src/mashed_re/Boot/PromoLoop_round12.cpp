@@ -61,13 +61,8 @@ RH_ScopedInstall(HudCounterReset, 0x0041b510);
 // Caller: 0x004924f0 (boot, C3).
 // ---------------------------------------------------------------------------
 
-// 0x00431b10
-extern "C" __declspec(dllexport) void __cdecl BootParamSet2(void) {
-    // 0x007f0f10 := 2 cited at 0x00431b12.
-    *reinterpret_cast<std::uint32_t*>(0x007f0f10u) = 2u;
-}
-
-RH_ScopedInstall(BootParamSet2, 0x00431b10);
+// MATCH-S07: the body of 0x00431b10 (BootParamSet2) moved to Match/MatchS07_00431b10.cpp,
+// which compiles the byte-matched source re/match/s07/00431b10.c.
 
 // ---------------------------------------------------------------------------
 // TexStageCacheGet  --  0x004d6e60   (subsystem: render)

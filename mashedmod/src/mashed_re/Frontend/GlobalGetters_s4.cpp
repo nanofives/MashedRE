@@ -44,14 +44,8 @@
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00425ee0.md
 // ---------------------------------------------------------------------------
 
-// 0x00425ee0
-extern "C" __declspec(dllexport) std::uint32_t* __cdecl SlotWordPtrGet(int param_1) {
-    // Returns &DAT_00899294 + param_1 * 0x13.
-    // 0x00899294 cited at 0x00425ee3; stride 0x13 (int32 words) cited at 0x00425ee8.
-    return reinterpret_cast<std::uint32_t*>(0x00899294u) + static_cast<unsigned>(param_1) * 0x13u;
-}
-
-RH_ScopedInstall(SlotWordPtrGet, 0x00425ee0);  // c3-batch-s-s4
+// MATCH-S05: the body of 0x00425ee0 (SlotWordPtrGet) moved to Match/MatchS05_00425ee0.cpp,
+// which compiles the byte-matched source re/match/s05/00425ee0.c.
 
 // ---------------------------------------------------------------------------
 // ActiveSlotCount  --  0x00425ef0
@@ -82,46 +76,8 @@ RH_ScopedInstall(SlotWordPtrGet, 0x00425ee0);  // c3-batch-s-s4
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00425ef0.md
 // ---------------------------------------------------------------------------
 
-// 0x00425ef0
-extern "C" __declspec(dllexport) int __cdecl ActiveSlotCount() {
-    int iVar1 = 0;
-
-    // Slot 0: word_A at 0x008992a4 (+0x44), word_B at 0x00899260 (+0x00)
-    if ((*reinterpret_cast<std::int32_t*>(0x008992a4u) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x00899260u) != 0)) { iVar1 = iVar1 + 1; }
-
-    // Slot 1: word_A at 0x008992f0, word_B at 0x008992ac
-    if ((*reinterpret_cast<std::int32_t*>(0x008992f0u) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x008992acu) != 0)) { iVar1 = iVar1 + 1; }
-
-    // Slot 2: word_A at 0x0089933c, word_B at 0x008992f8
-    if ((*reinterpret_cast<std::int32_t*>(0x0089933cu) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x008992f8u) != 0)) { iVar1 = iVar1 + 1; }
-
-    // Slot 3: word_A at 0x00899388, word_B at 0x00899344
-    if ((*reinterpret_cast<std::int32_t*>(0x00899388u) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x00899344u) != 0)) { iVar1 = iVar1 + 1; }
-
-    // Slot 4: word_A at 0x008993d4, word_B at 0x00899390
-    if ((*reinterpret_cast<std::int32_t*>(0x008993d4u) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x00899390u) != 0)) { iVar1 = iVar1 + 1; }
-
-    // Slot 5: word_A at 0x00899420, word_B at 0x008993dc
-    if ((*reinterpret_cast<std::int32_t*>(0x00899420u) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x008993dcu) != 0)) { iVar1 = iVar1 + 1; }
-
-    // Slot 6: word_A at 0x0089946c, word_B at 0x00899428
-    if ((*reinterpret_cast<std::int32_t*>(0x0089946cu) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x00899428u) != 0)) { iVar1 = iVar1 + 1; }
-
-    // Slot 7: word_A at 0x008994b8, word_B at 0x00899474
-    if ((*reinterpret_cast<std::int32_t*>(0x008994b8u) != 0) &&
-        (*reinterpret_cast<std::int32_t*>(0x00899474u) != 0)) { iVar1 = iVar1 + 1; }
-
-    return iVar1;
-}
-
-RH_ScopedInstall(ActiveSlotCount, 0x00425ef0);  // c3-batch-s-s4
+// MATCH-S05: the body of 0x00425ef0 (ActiveSlotCount) moved to Match/MatchS05_00425ef0.cpp,
+// which compiles the byte-matched source re/match/s05/00425ef0.c.
 
 // ---------------------------------------------------------------------------
 // GlobalDat00646e58Get  --  0x00426020
@@ -136,13 +92,8 @@ RH_ScopedInstall(ActiveSlotCount, 0x00425ef0);  // c3-batch-s-s4
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426020.md
 // ---------------------------------------------------------------------------
 
-// 0x00426020
-extern "C" __declspec(dllexport) void* __cdecl GlobalDat00646e58Get() {
-    // Returns &DAT_00646e58 cited at 0x00426020 body.
-    return reinterpret_cast<void*>(0x00646e58u);
-}
-
-RH_ScopedInstall(GlobalDat00646e58Get, 0x00426020);  // c3-batch-s-s4
+// MATCH-S05: the body of 0x00426020 (GlobalDat00646e58Get) moved to Match/MatchS05_00426020.cpp,
+// which compiles the byte-matched source re/match/s05/00426020.c.
 
 // ---------------------------------------------------------------------------
 // GlobalDat00656ed8Get  --  0x00426080

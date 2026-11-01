@@ -60,18 +60,8 @@ static auto* const s_ZeroFillWrapper =
 // ref: re/analysis/frontend_c1_to_c2_s2/0x00422a80.md
 // ---------------------------------------------------------------------------
 
-// 0x00422a80
-extern "C" __declspec(dllexport) void __cdecl SlotBlockZero(int param_1)
-{
-    // Compute destination: &DAT_006403e8 + param_1 * 0xf40. [0x00422a8d]
-    void* dst = reinterpret_cast<void*>(
-        0x006403e8u + static_cast<std::uint32_t>(param_1) * 0xf40u);
-
-    // Zero 0xf40 bytes via ZeroFillWrapper. [0x00422a8d]
-    s_ZeroFillWrapper(dst, 0xf40u);
-}
-
-RH_ScopedInstall(SlotBlockZero, 0x00422a80);
+// MATCH-S05: the body of 0x00422a80 (SlotBlockZero) moved to Match/MatchS05_00422a80.cpp,
+// which compiles the byte-matched source re/match/s05/00422a80.c.
 
 // ---------------------------------------------------------------------------
 // SlotFieldSet  --  0x00422aa0
@@ -97,17 +87,8 @@ RH_ScopedInstall(SlotBlockZero, 0x00422a80);
 // ref: re/analysis/frontend_c1_to_c2_s2/0x00422aa0.md
 // ---------------------------------------------------------------------------
 
-// 0x00422aa0
-extern "C" __declspec(dllexport) void __cdecl SlotFieldSet(
-    int param_1, std::uint32_t param_2)
-{
-    // Write param_2 to field at DAT_0064131c + param_1 * 0xf40. [0x00422aa5]
-    // DAT_0064131c = DAT_006403e8 + 0xf34 (field at offset +0xf34 within 0xf40-byte slot).
-    *reinterpret_cast<std::uint32_t*>(
-        0x0064131cu + static_cast<std::uint32_t>(param_1) * 0xf40u) = param_2;
-}
-
-RH_ScopedInstall(SlotFieldSet, 0x00422aa0);
+// MATCH-S05: the body of 0x00422aa0 (SlotFieldSet) moved to Match/MatchS05_00422aa0.cpp,
+// which compiles the byte-matched source re/match/s05/00422aa0.c.
 
 // ---------------------------------------------------------------------------
 // FrontendDirInput  --  0x00423040
@@ -259,48 +240,8 @@ RH_ScopedInstall(FrontendDirInput, 0x00423040);
 // ref: re/analysis/frontend_c1_to_c2_s2/0x00423270.md
 // ---------------------------------------------------------------------------
 
-// 0x00423270
-extern "C" __declspec(dllexport) void __cdecl TabCycler()
-{
-    std::int32_t context = *reinterpret_cast<std::int32_t*>(0x007f1a54u);
-
-    // Select per-context bounds. [0x0042327d..0x004232bc]
-    int lo = 0;
-    int hi = 8;  // default [0x0042327d]
-    if (context >= 1 && context <= 6) {
-        lo = 2;  // low bound for all non-default contexts [0x004232bc]
-        switch (context) {
-            case 1: hi = 3; break;  // [0x0042328d]
-            case 2: hi = 4; break;  // [0x0042329b]
-            case 3: hi = 3; break;  // [0x004232a9]
-            case 4: hi = 5; break;  // [0x004232b4]
-            case 5: hi = 3; break;  // [0x004232b8]
-            case 6: hi = 5; break;  // [0x004232b4]
-        }
-    }
-
-    std::int32_t* pTab    = reinterpret_cast<std::int32_t*>(0x007f1a64u);
-    std::uint8_t  tabR    = *reinterpret_cast<std::uint8_t*>(0x007f1071u);
-    std::uint8_t  tabL    = *reinterpret_cast<std::uint8_t*>(0x007f1070u);
-    std::uint8_t  debR    = *reinterpret_cast<std::uint8_t*>(0x007f1531u);
-    std::uint8_t  debL    = *reinterpret_cast<std::uint8_t*>(0x007f1530u);
-
-    // Tab-right: increment with wrap. [0x004232be]
-    if (tabR && !debR) {
-        std::int32_t v = *pTab + 1;
-        if (v > hi) v = lo;
-        *pTab = v;
-    }
-
-    // Tab-left: decrement with wrap. [0x004232d8]
-    if (tabL && !debL) {
-        std::int32_t v = *pTab - 1;
-        if (v < lo) v = hi;
-        *pTab = v;
-    }
-}
-
-RH_ScopedInstall(TabCycler, 0x00423270);
+// MATCH-S05: the body of 0x00423270 (TabCycler) moved to Match/MatchS05_00423270.cpp,
+// which compiles the byte-matched source re/match/s05/00423270.c.
 // Harness extension landed 2026-05-26: 'state_machine_observe' arg_type covers this.
 
 // ---------------------------------------------------------------------------
@@ -334,62 +275,6 @@ RH_ScopedInstall(TabCycler, 0x00423270);
 // ref: re/analysis/frontend_c1_to_c2_s2/0x00423320.md
 // ---------------------------------------------------------------------------
 
-// 0x00423320
-extern "C" __declspec(dllexport) void __cdecl CursorMover()
-{
-    std::uint32_t* pCursor = reinterpret_cast<std::uint32_t*>(0x007f1a90u);
-    std::int32_t   tab     = *reinterpret_cast<std::int32_t*>(0x007f1a64u);
-
-    std::uint32_t uVar1 = *pCursor;
-
-    // Up/down guarded by tab != 2. [0x00423331]
-    if (tab != 2) {
-        // UP (DAT_007f1072 && !DAT_007f1532): [0x00423345]
-        if (*reinterpret_cast<std::uint8_t*>(0x007f1072u) &&
-            !*reinterpret_cast<std::uint8_t*>(0x007f1532u)) {
-            // uVar1 = cursor - 4; clamp at 0. [0x00423345]
-            std::int32_t v = static_cast<std::int32_t>(uVar1) - 4;
-            if (v < 0) v = static_cast<std::int32_t>(uVar1);
-            uVar1 = static_cast<std::uint32_t>(v);
-        }
-        *pCursor = uVar1;
-
-        // DOWN (DAT_007f1073 && !DAT_007f1533): [0x00423365]
-        if (*reinterpret_cast<std::uint8_t*>(0x007f1073u) &&
-            !*reinterpret_cast<std::uint8_t*>(0x007f1533u)) {
-            // uVar1 = cursor + 4; clamp at 0x7f. [0x00423365]
-            std::int32_t v = static_cast<std::int32_t>(uVar1) + 4;
-            if (v > 0x7f) v = static_cast<std::int32_t>(uVar1);
-            uVar1 = static_cast<std::uint32_t>(v);
-        }
-    }
-    *pCursor = uVar1;
-
-    // LEFT (DAT_007f1074 && !DAT_007f1534): horizontal wrap within row. [0x00423389]
-    if (*reinterpret_cast<std::uint8_t*>(0x007f1074u) &&
-        !*reinterpret_cast<std::uint8_t*>(0x007f1534u)) {
-        std::uint32_t v = uVar1 - 1u;
-        if ((v & 3u) == 3u) {
-            // Wrapped past column 0: jump to column 3 of same row.
-            *pCursor = uVar1 + 3u;
-        } else {
-            *pCursor = v;
-        }
-        uVar1 = *pCursor;
-    }
-
-    // RIGHT (DAT_007f1075 && !DAT_007f1535): horizontal wrap within row. [0x00423389+]
-    if (*reinterpret_cast<std::uint8_t*>(0x007f1075u) &&
-        !*reinterpret_cast<std::uint8_t*>(0x007f1535u)) {
-        std::uint32_t v = uVar1 + 1u;
-        if ((v & 3u) == 0u) {
-            // Wrapped past column 3: jump back to column 0 of same row.
-            *pCursor = uVar1 - 3u;
-        } else {
-            *pCursor = v;
-        }
-    }
-}
-
-RH_ScopedInstall(CursorMover, 0x00423320);
+// MATCH-S05: the body of 0x00423320 (CursorMover) moved to Match/MatchS05_00423320.cpp,
+// which compiles the byte-matched source re/match/s05/00423320.c.
 // Harness extension landed 2026-05-26: 'state_machine_observe' arg_type covers this.

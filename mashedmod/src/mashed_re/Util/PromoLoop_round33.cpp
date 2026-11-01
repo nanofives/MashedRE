@@ -36,8 +36,5 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Global772ffcGet(void) {
 }
 RH_ScopedInstall(Global772ffcGet, 0x00496910);
 
-// 0x0042b950  C7 05 0C 1A 7F 00 00 10 00 00 C3  (mov dword [0x007f1a0c],0x1000; ret)
-extern "C" __declspec(dllexport) void __cdecl Set7f1a0c_1000(void) {
-    *reinterpret_cast<std::uint32_t*>(0x007f1a0cu) = 0x1000u;  // cited at 0x0042b950
-}
-RH_ScopedInstall(Set7f1a0c_1000, 0x0042b950);
+// MATCH-S07: the body of 0x0042b950 (Set7f1a0c_1000) moved to Match/MatchS07_0042b950.cpp,
+// which compiles the byte-matched source re/match/s07/0042b950.c.

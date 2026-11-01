@@ -84,57 +84,8 @@ RH_ScopedInstall(GetDat0067d84c, 0x00427c90);
 // trampolining through the original image.
 extern "C" std::uint32_t __cdecl GetDat0067ea64();   // 0x0042f500
 
-// 0x00424100
-extern "C" __declspec(dllexport) std::int32_t __cdecl TeamBlockZeroGet(std::int32_t param_1)
-{
-    // Step 1: if not team mode, return block-0 field directly. [0x00424100]
-    if (GetDat0067ea64() == 0) {
-        // (&DAT_008999a0)[param_1 * 0x4e] — stride 0x4e int32s [0x0042411c]
-        return reinterpret_cast<const std::int32_t*>(0x008999a0u)[param_1 * 0x4e];
-    }
-
-    // Step 2: load team-ID of param_1. [0x00424113]
-    // (&DAT_007f1a18)[param_1 * 4] — note: param_1 * 4 applied to int* base =
-    // actual byte offset param_1 * 16 from base; stride 4 bytes per player index.
-    // Analysis note: "(&DAT_007f1a18)[param_1 * 4]" — int array indexed by param_1*4.
-    const std::int32_t iVar1 =
-        reinterpret_cast<const std::int32_t*>(0x007f1a18u)[param_1 * 4];
-
-    // Step 3: seed accumulator with param_1's own block-0 field. [0x0042411c]
-    std::int32_t iVar2 =
-        reinterpret_cast<const std::int32_t*>(0x008999a0u)[param_1 * 0x4e];
-
-    // Active-slot array (one entry per player, not strided — 4 separate globals).
-    // Addresses from analysis note: 0x007f1a14, 0x007f1a24, 0x007f1a34, 0x007f1a44.
-    static const std::uintptr_t kActiveSlots[4] = {
-        0x007f1a14u, 0x007f1a24u, 0x007f1a34u, 0x007f1a44u
-    };
-    // Team-ID array base: player 0 at 0x007f1a18, stride 4 bytes (1 int per player).
-    // Note: team-IDs of players 0..3 are at 0x007f1a18, 0x007f1a28, 0x007f1a38,
-    // 0x007f1a48 (stride 0x10 = 4 * sizeof(int)? re-check: param_1*4 used as index
-    // into int*, so player k team-ID is at base[k*4]).
-    static const std::uintptr_t kTeamIdBase = 0x007f1a18u;
-
-    // Step 4: accumulate partner contributions. [0x00424125..0x00424168]
-    for (std::int32_t k = 0; k < 4; ++k) {
-        if (k == param_1) continue;
-        // Team-ID of partner k: (&DAT_007f1a18)[k * 4]. [0x00424113 pattern]
-        const std::int32_t partnerTeamId =
-            reinterpret_cast<const std::int32_t*>(kTeamIdBase)[k * 4];
-        if (partnerTeamId != iVar1) continue;
-        // Active-slot guard: active-slot of k != -1. [0x00424125..0x00424158]
-        const std::int32_t partnerActiveSlot =
-            *reinterpret_cast<const std::int32_t*>(kActiveSlots[k]);
-        if (partnerActiveSlot == -1) continue;
-        // Add partner's block-0 field. [block-0 stride 0x4e]
-        iVar2 += reinterpret_cast<const std::int32_t*>(0x008999a0u)[k * 0x4e];
-    }
-
-    // Step 5: return accumulated value.
-    return iVar2;
-}
-
-RH_ScopedInstall(TeamBlockZeroGet, 0x00424100);
+// MATCH-S05: the body of 0x00424100 (TeamBlockZeroGet) moved to Match/MatchS05_00424100.cpp,
+// which compiles the byte-matched source re/match/s05/00424100.c.
 
 // ---------------------------------------------------------------------------
 // SetDat00912a20  --  0x00556cc0

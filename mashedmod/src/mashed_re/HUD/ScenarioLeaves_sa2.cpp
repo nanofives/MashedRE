@@ -255,58 +255,8 @@ RH_ScopedInstall(HudSlideBillboardTick, 0x0041d930);
 // ref: re/analysis/ai_path_following/0x00423480.md
 // ---------------------------------------------------------------------------
 
-// 0x00423480
-extern "C" __declspec(dllexport) void* __cdecl AiFilenameBuild(void)
-{
-    char local_24[32];   // empty source buffer (clears DAT_00644110)
-    char local_44[32];   // receives "AI%d.AI"
-    for (int z = 0; z < 32; z++) { local_24[z] = '\0'; local_44[z] = '\0'; }
-
-    int n = s_F00426c00();
-    s_F004a2b60(local_44, "AI%d.AI", n);
-
-    // Copy empty local_24 to DAT_00644110 — writes a single null terminator.
-    char* fileSlot = reinterpret_cast<char*>(k_00644110);
-    int i = 0;
-    char c;
-    do {
-        c = local_24[i];
-        fileSlot[i] = c;
-        i++;
-    } while (c != '\0');
-
-    // strlen(local_44) + 1 (includes the terminator).
-    char* e = local_44;
-    do {
-        c = *e;
-        e++;
-    } while (c != '\0');
-    std::uint32_t len = static_cast<std::uint32_t>(e - local_44);
-
-    // strcat scan from DAT_0064410c+3 — exits at 0x00644110 (just cleared).
-    char* d = reinterpret_cast<char*>(k_0064410c + 3);
-    char* q;
-    do {
-        q = d + 1;
-        d = d + 1;
-    } while (*q != '\0');
-
-    // memcpy(d, local_44, len) — rep movsd then movsb.
-    char* s = local_44;
-    for (std::uint32_t w = len >> 2; w != 0; w--) {
-        *reinterpret_cast<std::uint32_t*>(d) = *reinterpret_cast<std::uint32_t*>(s);
-        s += 4;
-        d += 4;
-    }
-    for (std::uint32_t w = len & 3; w != 0; w--) {
-        *d = *s;
-        s++;
-        d++;
-    }
-    return reinterpret_cast<void*>(k_00644110);
-}
-
-RH_ScopedInstall(AiFilenameBuild, 0x00423480);
+// MATCH-S05: the body of 0x00423480 (AiFilenameBuild) moved to Match/MatchS05_00423480.cpp,
+// which compiles the byte-matched source re/match/s05/00423480.c.
 
 // ---------------------------------------------------------------------------
 // CameraPathNodeContainTest  --  0x0047c160   (NOT INSTALLED — see header)

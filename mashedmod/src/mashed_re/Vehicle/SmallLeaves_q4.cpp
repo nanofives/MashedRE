@@ -127,41 +127,8 @@ inline std::uint32_t& rw32(std::uintptr_t a) { return *reinterpret_cast<std::uin
 
 } // namespace
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x004248b0  PerCarSnapshotInit
-// Body (0x004248b0..0x0042491f): 111 bytes, pure leaf (callees_depth1: []).
-//
-// Copies 7 dword fields from the live car block (0x008994c0 region) into the
-// snapshot block (0x008999a0 region) for 4 cars (stride 0x138), and increments
-// the lap counter (field +0x00) by 1 in the snapshot.
-//
-// Ghidra decomp (iVar1 = 0; loop stride 0x138; bound 0x4E0):
-//   *(&DAT_00899a94 + iVar1) = *(&DAT_008995b4 + iVar1);
-//   *(&DAT_00899a40 + iVar1) = *(&DAT_00899560 + iVar1);
-//   *(&DAT_00899a98 + iVar1) = *(&DAT_008995b8 + iVar1);
-//   *(&DAT_00899a44 + iVar1) = *(&DAT_00899564 + iVar1);
-//   *(&DAT_00899a90 + iVar1) = *(&DAT_008995b0 + iVar1);
-//   *(&DAT_00899a48 + iVar1) = *(&DAT_00899568 + iVar1);
-//   *(&DAT_00899a9c + iVar1) = *(&DAT_008995bc + iVar1);
-//   *(&DAT_008999a0 + iVar1) = *(&DAT_008994c0 + iVar1) + 1;
-//   iVar1 += 0x138; while (iVar1 < 0x4e0);
-//
-// Caller: FUN_004331a0 (race-end init, C2). Pure leaf — callee-gate exempt.
-// U-1510: meanings of 7 dwords (non-blocking). U-1511: D-3117 carried.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) void __cdecl PerCarSnapshotInit(void) {
-    for (std::uint32_t off = 0u; off < kLoopTotal; off += kCarStride) {
-        rw32(kDstF4 + off) = rd32(kSrcF4 + off);   // field +0xd4
-        rw32(kDstF0 + off) = rd32(kSrcF0 + off);   // field +0x80 (per DAT_00899560)
-        rw32(kDstF5 + off) = rd32(kSrcF5 + off);   // field +0xd8
-        rw32(kDstF1 + off) = rd32(kSrcF1 + off);   // field +0x84
-        rw32(kDstF3 + off) = rd32(kSrcF3 + off);   // field +0xd0
-        rw32(kDstF2 + off) = rd32(kSrcF2 + off);   // field +0x88
-        rw32(kDstF6 + off) = rd32(kSrcF6 + off);   // field +0xdc
-        rw32(kDstLap + off) = rd32(kSrcLap + off) + 1u; // lap+1
-    }
-}
-RH_ScopedInstall(PerCarSnapshotInit, 0x004248b0);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S05: the body of 0x004248b0 (PerCarSnapshotInit) moved to Match/MatchS05_004248b0.cpp,
+// which compiles the byte-matched source re/match/s05/004248b0.c.
 
 // MATCH-S02: the body of 0x00411d60 (ReplayCheckTimer) moved to Match/MatchS02_00411d60.cpp,
 // which compiles the byte-matched source re/match/s02/00411d60.c.

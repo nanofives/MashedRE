@@ -107,36 +107,5 @@ static inline void af6_set_flag(std::uintptr_t addr) {
     *reinterpret_cast<std::uint32_t*>(addr) = 1u;
 }
 
-// 0x00431f30
-extern "C" __declspec(dllexport) void __cdecl FrontendPageIdDispatch(std::int32_t param_1)
-{
-    s_PanelFlagAdvance_af6();   // FUN_00431d90()
-
-    switch (param_1) {
-    case 4:    af6_set_flag(0x0067e7a8u); break;   // original uses `break` here
-    case 5:    af6_set_flag(0x0067e7c8u); return;
-    case 6:
-    case 7:    af6_set_flag(0x0067e7b8u); return;
-    case 8:    af6_set_flag(0x0067e808u); af6_set_flag(0x0067e828u); return;
-    case 9:
-    case 0x10: af6_set_flag(0x0067e7e0u); return;
-    case 10:   af6_set_flag(0x0067e7b0u); return;
-    case 0xc:  af6_set_flag(0x0067e7d0u); return;
-    case 0xf:  af6_set_flag(0x0067e7d8u); return;
-    case 0x11: af6_set_flag(0x0067e7e8u); return;
-    case 0x12:
-    case 0x18: af6_set_flag(0x0067e7f0u); return;
-    case 0x13: af6_set_flag(0x0067e7f8u); return;
-    case 0x14: af6_set_flag(0x0067e800u); return;
-    case 0x1c: af6_set_flag(0x0067e810u); return;
-    case 0x1d: af6_set_flag(0x0067e818u); return;
-    case 0x1e: af6_set_flag(0x0067e820u); return;
-    case 0x1f:
-    case 0x21: af6_set_flag(0x0067e830u); return;
-    case 0x20: af6_set_flag(0x0067e838u); return;
-    default:   break;
-    }
-    return;
-}
-
-RH_ScopedInstall(FrontendPageIdDispatch, 0x00431f30);
+// MATCH-S07: the body of 0x00431f30 (FrontendPageIdDispatch) moved to Match/MatchS07_00431f30.cpp,
+// which compiles the byte-matched source re/match/s07/00431f30.c.

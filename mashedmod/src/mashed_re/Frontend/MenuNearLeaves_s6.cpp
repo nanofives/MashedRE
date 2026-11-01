@@ -181,14 +181,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl PathBuilderLoad(char* par
 // ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042b920.md
 // ---------------------------------------------------------------------------
 
-// 0x0042b920
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ConstantGetter22()
-{
-    // Returns 0x16 = 22 unconditionally. [0x0042b920]
-    return 0x16u;
-}
-
-RH_ScopedInstall(ConstantGetter22, 0x0042b920);
+// MATCH-S07: the body of 0x0042b920 (ConstantGetter22) moved to Match/MatchS07_0042b920.cpp,
+// which compiles the byte-matched source re/match/s07/0042b920.c.
 
 // ---------------------------------------------------------------------------
 // FUN_0042bde0 (5-call HUD rect emitter via ChromeBaseDraw 0x00472c60) was ported here

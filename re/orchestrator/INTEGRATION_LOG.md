@@ -1,5 +1,12 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-01 19:10 MATCH-S07 (orch/MATCH-S07): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_183121
+- 2026-11-01 18:30 MATCH-S05 (orch/MATCH-S05): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_174537
+- 2026-11-01 17:44 D4-WSB-PORT-BROAD-2 (orch/D4-WSB-PORT-BROAD-2): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_165639
+- 2026-11-01 16:55 HB-MASHEDLOCK-RACE (orch/HB-MASHEDLOCK-RACE): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_163944
+- 2026-11-01 16:32 D5-DEAD-COUNTDOWN-STANDIN (orch/D5-DEAD-COUNTDOWN-STANDIN), D4-DC-INC-004576b0 (orch/D4-DC-INC-batch3), D4-DC-INC-0045c330 (orch/D4-DC-INC-batch3): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_160532
+- 2026-11-01 16:04 D4-DC-77b0-STATE5-ORIGREAD (orch/D4-DC-77b0-STATE5-ORIGREAD): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_155115
+- 2026-11-01 15:16 D4-DC-INC-0040e470 (orch/D4-DC-INC-ai): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_144714
 - 2026-11-01 13:49 HB-ARCTIC-NOLIGHT-CAP (orch/HB-ARCTIC-NOLIGHT-CAP), MATCH-TOPDOWN-MAP (orch/MATCH-TOPDOWN-MAP): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261101_134552
 - 2026-11-01 13:43 MATCH-S01-RC (orch/MATCH-S01-RC), D5-INTROMOVIES-AUDIO (orch/D5-INTROMOVIES-AUDIO): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_131537
 - 2026-11-01 12:33 HB-LINT-408A50 (orch/HB-LINT-408A50): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_114821
