@@ -26,6 +26,18 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  00407580  SubsystemARecordKey  C3->C3  refile: ONE body, Gameplay/SubsystemARecordKey.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00407b00  FUN_00407b00  C3->C3  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00407b70  FUN_00407b70  C3->C3  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00407d70  RangeTableCountGroup  C3->C3  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00407db0  RangeTableGroupOffset  C4->C4  refile: ONE body, Gameplay/RangeTable_ah1.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00408590  FUN_00408590  C3->C3  refile: ONE body, Race/PathProgDot.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00408af0  AiVehicleFieldPtrGet  C3->C3  refile: ONE body, Ai/AiVehicleFieldGetters.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  0040e470  CarSlotStateGet  C3->C3  refile: ONE body, Ai/CarSlotState.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  004233e0  HeadingAtan2ToGameAngle  C3->C3  refile: ONE body, Ai/HeadingAtan2.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00442cc0  AiVehicleFloat4Get  C3->C3  refile: ONE body, Ai/AiVehicleFieldGetters.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00443300  FUN_00443300  C3->C3  refile: ONE body, Ai/AiSplineEval.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
+2026-11-01  00484c70  WorldObjectsBaseGet  C3->C3  refile: ONE body, Util/WorldObjectsBase.cpp (both targets), exe copy deleted (D4-DC-INC-ai)  evidence: verify/d4dcinc_ai_20261101/RESULT_D4-DC-INC-ai.md
 2026-10-31  00521990  FUN_00521990  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-31  00522ab0  FUN_00522ab0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-31  00522b00  FUN_00522b00  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
