@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  0x0040e370  IsCarSlotActive  C3->C4  c4=match (one body: naked TG_40e370 replaced by a call to the matched body, DUP-IN-TARGET:0040e370 burned down; match.py 100% + relocheck OK, exe-callers=8, G-P3-REPLAY 5490/5490, gates unchanged G-CTRL 8284be46/ba407a16/31fe043e B 1d5bf4f9 x3) evidence: verify/match0040e370_20261101/RESULT_MATCH-0040E370-NAKED.md
 2026-10-31  00521990  FUN_00521990  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-31  00522ab0  FUN_00522ab0  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md
 2026-10-31  00522b00  FUN_00522b00  C2->C2  waived-library (L-70), refiled util->third-party-library[zlib-1.1.3] evidence: verify/matchlib_20261031/RESULT_MATCH-LIB.md

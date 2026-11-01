@@ -10,8 +10,10 @@
 // FUN_00416250 commits mode 3 (look = cand) on 1 + LOS, and on 2 takes the immediate return at
 // 0x004163f6..0x00416405 (ctrl[4] = 0, ctrl[5] = 0xff).
 //
-// The two bodies and six leaves are generated from the anchored bytes by re/tools/gen_naked_asm.py
-// (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). C++ here, each with the
+// The two bodies and five leaves are generated from the anchored bytes by re/tools/gen_naked_asm.py
+// (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). FUN_0040e370 is not
+// generated: the call at 0x00414ad5 goes to IsCarSlotActive, the byte-matched body in
+// Match/MatchS02_0040e370.cpp (one body per RVA). C++ here, each with the
 // original's cdecl stack contract (callee-saved EBX/ESI/EDI/EBP preserved by the compiler):
 //   TG_VehPtr  FUN_0046d4a0 -> PtrCompute881ec8 (exe-rebound record array)
 //   TG_Speed   FUN_0046d6d0 -> record +0x9e4 (0x00881f84 in the array-base convention)
@@ -37,6 +39,7 @@
 #include <vector>
 
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);   // 0x0046d4a0
+extern "C" int __cdecl IsCarSlotActive(int param_1);                                        // 0x0040e370
 
 // ---- exe-safe .rdata copies (values read from the anchored image) -------------------------
 extern "C" {
