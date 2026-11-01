@@ -26,7 +26,10 @@ MAIN_LOG = WT.parents[1] / 'log'      # <main>/log (ttd captures live there)
 RVA = '0x0042b770'                    # MenuButtonDetectE, installed by the default asi
 
 FAMILIES = [
-    ('run_verify_hook', [PY, 're/frida/run_verify_hook.py', 'menu_button_detect_e'], {}, 240),
+    # run_verify_hook defaults to the worktree's own build output; point it at the root's
+    # asi (the one every other family loads) so the smoke needs no build.
+    ('run_verify_hook', [PY, 're/frida/run_verify_hook.py', 'menu_button_detect_e'],
+     {'MASHED_VERIFY_ASI': str(root / 'original' / 'mashed_re_dev.asi')}, 240),
     ('canonical_c4', [PY, 're/frida/canonical_c4_verify.py', RVA, '--seconds', '20'], {}, 240),
     ('c4_scenario', [PY, 're/frida/c4_detect_e_scenario.py', '--arm', 'on',
                      '--out', str(data / 'c4_detect_e')], {}, 420),

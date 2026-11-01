@@ -53,7 +53,12 @@ try {
         r.preloaded = false; r.base = m.base.toString(); r.path = m.path;
         r.installed = false;
         if (INSTALL) {
-            new NativeFunction(m.getExportByName('InjectHooks'), 'void', [])();
+            // exceptions:'propagate': InstallAll's LoudLog (HookSystem.cpp:55) calls
+            // OutputDebugStringA, which raises DBG_PRINTEXCEPTION_C and catches it in its
+            // own SEH frame. Frida's default ('steal') takes that first-chance exception
+            // and throws "system error", so every full install (no MASHED_HOOK_ONLY) died.
+            new NativeFunction(m.getExportByName('InjectHooks'), 'void', [],
+                               { exceptions: 'propagate' })();
             r.installed = true;
         }
     }

@@ -5,7 +5,7 @@ which found 46 live spawners that get `mashed_re_dev.asi` only through the `orig
 proxy (22 never set `MASHED_RE_NO_AUTO_HOOK`, 24 pop it for the hooks-ON arm). Branch
 `orch/D5-SHIM-DINPUT8-SPAWNERS` from `orch/integration` 0e3d71a75.
 
-**VERDICT: HANDOFF. All 46 live spawners are dealt with in code: 28 rewritten to load the asi themselves (`re/frida/dev_asi.py`), 16 retired, 2 `.ps1` as an exact diff for Mariano. Static re-scan: 0 live `.py` spawners still pop the var. The shared helper passed its original-side smoke in a root with no dinput8 proxy. The 8 per-family smokes were NOT run: the machine lock was held by D4-DC-INC-pathprog plus a 12 h solo window (D4-WSB-PORT-BROAD-2), and the lead stopped the wait. GREEN needs those 8 smokes (command in section 4).**
+**VERDICT: GREEN (resumed 2026-11-01 after the 14:23 reboot). All 46 live spawners are dealt with in code: 28 rewritten to load the asi themselves (`re/frida/dev_asi.py`), 16 retired, 2 `.ps1` as an exact diff for Mariano (decision, not applied). Static re-scan: 0 live `.py` spawners still pop the var. All 8 per-family smokes and the `.ps1` boot CLI PASS original-side in a root with no dinput8 proxy (section 4). The smokes found one helper bug, fixed here: every FULL install (no `MASHED_HOOK_ONLY`: run_verify_hook, ttd, the boot CLI) died in `InjectHooks` with Frida's `Error: system error` (section 1, last bullet).**
 
 ## 1. What changed
 
@@ -26,6 +26,21 @@ One shared helper, `re/frida/dev_asi.py`, replaces the proxy for every Python sp
 - `SpawnedProc` gives the `poll/wait/kill` subset of `Popen` over a frida pid (psutil).
 - `py -3.12 re/frida/dev_asi.py boot [--seconds N] [--no-hooks] [--exe PATH]` prints `BOOTS t` or
   `DIED t 0xCODE` for the .ps1 boot bisects.
+- **Fix found by the smokes:** `InjectHooks` is called through
+  `NativeFunction(..., { exceptions: 'propagate' })`. A full `InstallAll` reaches `LoudLog`
+  (`HookSystem.cpp:54-63`) for every refused site (`BOOT-PATCH REFUSED` `:121`,
+  `DUAL-INSTALL REFUSED` `:146`). After the fix, the root's `hook_dual_install.log` gained
+  `DUAL-INSTALL REFUSED` lines for registry entries whose target already starts with E9
+  (e.g. `0x00493540` `thunk_LaunchLangGate`, `0x0041EA80` `GlobalField63d7e4_40`), the same kind
+  of line the log accumulated (47 MB) under the proxy. `LoudLog` calls
+  `OutputDebugStringA` (`HookSystem.cpp:55`). With no debugger attached, that API raises
+  `DBG_PRINTEXCEPTION_C` and catches it in its own SEH frame. Frida's default (`steal`) takes the
+  first-chance exception and throws `Error: system error`, so every full install failed. The
+  proxy path never had Frida on the stack. Diagnostic (`diag_inject.py`, suspended spawn, never
+  resumed): full install `error: system error`, no exception handler hit. `MASHED_HOOK_ONLY=0x0042b770`
+  gives `installed: true`. `LoadLibraryW` of the asi alone returns a handle with GetLastError 0 in
+  both full and minimal env (`diag_load.txt`). Single-RVA installs never reach `LoudLog`, which
+  is why the helper smoke and 5 families passed before the fix.
 
 `mashed_qol.asi` (the proxy's other load) is not handled: it is inert unless `MASHED_NO_SAVE` /
 `MASHED_UNLOCK` / `MASHED_SPEED` are set, and no diff spawner sets them. The player launcher
@@ -85,36 +100,35 @@ only through dev_asi. Audio check (VB-Audio endpoints present) before each boot.
 | # | smoke | status | evidence |
 |---|---|---|---|
 | 0 | helper: `smoke_dev_asi.py <root> 0x0042b770 15` (`MASHED_HOOK_ONLY=0x0042b770`, var deliberately popped from the caller env to prove the helper forces it) | **PASS** | asi loaded before resume from `<root>\original\mashed_re_dev.asi`, `installed=true`, one asi module in the process, `dinput8` = `C:\WINDOWS\SYSTEM32\DINPUT8.dll` (system, not a proxy), `mashed_qol.asi` absent, byte at 0x0042b770 = `0xE9`, rel32 target `0x5da953c0` inside the asi, pid alive at 15 s. A first run with `MASHED_HOOK_ONLY=0x42b770` installed nothing: the token must be `0x%08x` (`HookSystem.cpp:238-241`). Fixed in the smoke, not a helper bug |
-| 1 | run_verify_hook (path2) | NOT RUN | lock |
-| 2 | canonical_c4 (`canonical_c4_verify.py`) | NOT RUN | lock |
-| 3 | c4_*_scenario (`c4_detect_e_scenario.py --arm on`) | NOT RUN | lock |
-| 4 | scenario_launch (`--hooks 0x0042b770 --hold 10`) | NOT RUN | lock |
-| 5 | statenav (`--hooks`, `MASHED_HOOK_ONLY=0x0042b770`) | NOT RUN | lock |
-| 6 | phys_c4 (`phys_c4_telemetry.py hooked`) | NOT RUN | lock |
-| 7 | Popen probes (`pickup_pos_probe2.py --hooks`) | NOT RUN | lock |
-| 8 | ttd (`ttd_reimpl_diff.py ... --reimpl asi:FastSqrt`) | NOT RUN | lock |
-| 9 | `.ps1` boot CLI (`dev_asi.py boot --seconds 20`) | NOT RUN | lock (not in the driver; run by hand) |
+| 1 | run_verify_hook (path2) | **PASS** (run 6) | path2 report: PRE/POST `e9 4b 9c 07 5e`, opcode 0xE9 OK, rel32 `0x5e079c4b` OK, "JMP already installed pre-load (asi loaded before resume); site verified", reimpl interceptor fired 1/1, FAIL (none). Run 4: the script defaults to the worktree's own `mashedmod/build` asi and this worktree has no build, so the driver now passes the script's existing `MASHED_VERIFY_ASI` override = the root asi. Run 5: `system error` (the helper bug) |
+| 2 | canonical_c4 (`canonical_c4_verify.py`) | **PASS** (run 4, and run 6 after the fix as control) | OFF alive, ON alive, `0x0042b770 installed=True survived=True` (calls=0 at the menu in 20 s, so the C4 verdict itself is HOLD. This smoke tests the spawner, not the hook) |
+| 3 | c4_*_scenario (`c4_detect_e_scenario.py --arm on`) | **PASS** (run 4) | arm on: entry `mashed_re_dev.asi+0x153c0`, JMP 0xE9 live, `verdict=DONE` |
+| 4 | scenario_launch (`--hooks 0x0042b770 --hold 10`) | **PASS** (run 5) | "VERDICT: launcher reached a running race and spawned a car. [OK]". Run 4: `frida.TransportError: timeout was reached` in `device.attach` right after spawn. The helper killed its pid, and the same spawn+attach passed for every other family and on the re-run, so it was transient |
+| 5 | statenav (`--hooks`, `MASHED_HOOK_ONLY=0x0042b770`) | **PASS** (run 4) | `[hooks] dev .asi ARMED (<root>\original\mashed_re_dev.asi)`, menu navigation to Quick Battle |
+| 6 | phys_c4 (`phys_c4_telemetry.py hooked`) | **PASS** (run 4) | `A4 @0x00470670 first byte = 0xe9 (JMP-LIVE)` |
+| 7 | Popen probes (`pickup_pos_probe2.py --hooks 0x0042b770`) | **PASS** (run 4) | first spawn attempt succeeded (no `spawn/load failed` line), track TRAINING, CAPTURED, 219 draw calls |
+| 8 | ttd (`ttd_reimpl_diff.py ... --reimpl asi:FastSqrt`) | **PASS** (run 6) | `ok-auto` at phase 1, 128/128 bit-identical vs the TTD capture. Runs 4 and 5: `system error` (helper bug, full install) |
+| 9 | `.ps1` boot CLI (`dev_asi.py boot --seconds 20`) | **PASS** (run 6) | `BOOTS 20.01` with a full install (no `MASHED_HOOK_ONLY`). Runs 4 and 5: `system error` (helper bug) |
 
-The driver queued at 13:22 and never got the lock (`family_smokes_run1.txt` holds only WAITING lines).
-It was stopped and its 4 own PIDs (lock waiter, py launcher, sh, tee) killed; it never spawned a
-MASHED.exe.
+Runs (all `mashed_lock.py run --solo --label D5-SHIM-DINPUT8-SPAWNERS`, audio check first: 3 VB-Audio
+endpoints every run): run 4 = all 8 families + boot CLI, run 5 = run_verify_hook, scenario_launch,
+ttd + boot CLI, run 6 = run_verify_hook, canonical_c4, ttd + boot CLI after the `dev_asi.py` fix. The
+fix only changes how Frida treats an exception raised inside `InjectHooks`. Families 3 to 7 raised
+none (they install one RVA), so their run-4 results stand, and canonical_c4 re-passed after the fix.
+No MASHED.exe of this step was left running (0 under the private root after run 6). A first
+non-solo queue (run 2) starved behind back-to-back solo windows and was stopped. Its 5 own PIDs were
+killed, and it never spawned a game. Run 3 got the window, but `subprocess` could not exec the
+extensionless `test-slot` shim, so nothing ran.
 
-Static checks done instead: every rewritten file compiles (`py_compile`), every retired file exits 1
-with the RETIRED line, and the re-scan in section 3.
-
-**Command to finish this step once the lock is free** (from the worktree, audio check first):
+**Command** (from the worktree; `verify/d5dinput8spawners_20261101/smokes.sh` = audio check, then
+`test-slot py -3.12 verify/d5dinput8spawners_20261101/run_family_smokes.py <root> <data> [families]`, then
+`MASHED_ROOT=<root> test-slot py -3.12 re/frida/dev_asi.py boot --seconds 20`):
 
 ```
-pwsh -NoProfile -Command "Get-PnpDevice -Class AudioEndpoint -PresentOnly | ? FriendlyName -like '*VB-Audio*'"
-py -3.12 C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/re/orchestrator/mashed_lock.py run --label D5-SHIM-DINPUT8-SPAWNERS -- py -3.12 verify/d5dinput8spawners_20261101/run_family_smokes.py D:/MashedWT/D5-SHIM-DINPUT8-SPAWNERS_root D:/MashedWT/D5-SHIM-DINPUT8-SPAWNERS_data
-MASHED_ROOT=D:/MashedWT/D5-SHIM-DINPUT8-SPAWNERS_root py -3.12 C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/re/orchestrator/mashed_lock.py run --label D5-SHIM-DINPUT8-SPAWNERS -- py -3.12 re/frida/dev_asi.py boot --seconds 20
+py -3.12 C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/re/orchestrator/mashed_lock.py run --solo --wait 7000 --label D5-SHIM-DINPUT8-SPAWNERS -- "C:/Program Files/Git/bin/bash.exe" verify/d5dinput8spawners_20261101/smokes.sh [family ...]
 ```
 
-The driver prints `[N/8] <family> PASS|FAIL rc=.. s=..` and writes `smoke_<family>.log` per family
-into the data dir. `rc=0` is the driver's PASS; each log's own verdict line (path2 report, C4 verdict,
-`[hooks] asi loaded before resume`) still needs reading before GREEN. The root
-`D:\MashedWT\D5-SHIM-DINPUT8-SPAWNERS_root` (no dinput8) is kept for it. A U-9677 piz-collision AV
-(`MASHED.exe+0x1509b4` / `+0xe66db`) in any family is a re-run.
+The private root `D:\MashedWT\D5-SHIM-DINPUT8-SPAWNERS_root` (no dinput8) is kept.
 
 ## 5. Gates
 
@@ -128,12 +142,15 @@ Not run: no `mashedmod/` file changed (Python harness, `verify/` and one diff on
 - `smoke_dev_asi.log` SHA-256 `0ed8060f4d99a5d8f34ee53313b49a71e4bfe4def4793173153c1ff1095b74d6` (helper smoke, PASS run)
 - `survey_out.md` SHA-256 `48dfb9218656eda31b82b52690d26657648400a8014cc5d5fdcbe9afb8572c10` (worker survey of the 44 `.py` spawners: spawn mechanism, lines, families, callers)
 - `family_smokes_run1.txt` SHA-256 `69b3e821bfb628ea69a10af75ad144527ec963e3bd425b5bf5121598e63ffcfb` (queued run, lock WAITING lines only)
+- `family_smokes_run4.txt` `9e20e9d03bb0be05fbe68267efd560ddbbb8c4fceb92768cbd00c8a021fa5967`, `_run5.txt` `4bc87f169d69683fcd9567f8dcaa2419f313b2f0df65004a7a927d0a2200c91c`, `_run6.txt` `134c38b5308730ee02d76c7b27254208abdb994cc2bfc8b06badbcf00f88f4da` (driver lines)
+- passing logs: `smoke_run_verify_hook.log` `dbccd29c7b2f0e7f845d7e39910eeffc0908679b7af2af7aab9a7bc3dd646848`, `smoke_canonical_c4.log` `65fee0c84da225adc1f081219bf940ff828ac27dbade80b9daf3fb4ea5c763b8`, `smoke_c4_scenario.log` `1f0e648be8072b9a33275aab8217d3ce51401096487551b96df0c6d16cf90329`, `smoke_scenario_launch.log` `d83c44e2e7b75bcd64bf02ffce41ba73ef80e8a0bbf44b096554b7f32712a3b5`, `smoke_statenav.log` `66a1f349ddd18414e6a210098e1f1c1b7e434febb8de91afc01d18c1c4132eb5`, `smoke_phys_c4.log` `50f47e2c6be7aecec98ca9229e24d460d0fe5801f9cb12480007387c59285590`, `smoke_popen_probes.log` `32d3017d65c6c950b08c94f63f7ab8496a74ec99d539bb91eaa10b6b8e6befd7`, `smoke_ttd.log` `df578d906612887ba3064a1b38b727e9f02135e2771d1ae61679cc6da8ad7b66`, `smoke_boot_cli.log` `a2be3cfc3eb7e3509bc6905e4b59be6d7ad96547a96941eb0fbaaa2299cd3a1f`
+- failing logs kept: `smoke_run_verify_hook_run4.log` `ae4dca95...`, `_run5.log` `b6edd17d...`, `smoke_scenario_launch_run4.log` `091c7f4a...`, `smoke_ttd_run4.log` / `_run5.log` `d9670e69...`, `smoke_boot_cli_run4.log` `9f5e75da...`, `_run5.log` `e03bad90...`
+- `diag_load.txt` `18be368b1f77db6972cfbc1d31b4be5f54997beaa5cbee6440557a4a73ab5595`, `diag_inject.txt` `f4c10d2a7a72fcef49731900688c9aa3e7cf2a54c32cc352695cb3d70c06eb30` (script committed as `diag_inject.py`)
 
 ## 7. Next
 
-- Run the 8 family smokes + the boot CLI (section 4 command) when the lock is free. Any FAIL is a
-  bug in that family's rewrite, fixed on this branch.
-- Mariano: apply `ps1_spawners.diff` (or retire the two bisects). After that 0 live spawners use
-  the proxy for the dev asi.
+- Mariano (decision): apply `ps1_spawners.diff` (or retire the two bisects). The boot CLI it
+  calls passed here (`BOOTS 20.01`, full install). After that 0 live spawners use the proxy for
+  the dev asi.
 - Shim removal step 3 is then blocked only by `scripts/mashed_launch.ps1` (QoL asi) and the 25
   historical `verify/` spawners, which are dated evidence and are not re-run.
