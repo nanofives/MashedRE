@@ -23,6 +23,7 @@ except ImportError: psutil = None
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+EXE = dev_asi.original_exe(EXE); ORIG = EXE.parent   # MASHED_ROOT private roots (dev_asi)
 LOG  = ROOT / "log"
 
 # targets. rva -> {name(.asi export), kind, ...}

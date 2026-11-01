@@ -31,6 +31,7 @@ def _orig(root):
     c = root / "original" / "MASHED.exe"
     return c if c.exists() else root.parent.parent / "original" / "MASHED.exe"
 EXE = _orig(ROOT); ORIG = EXE.parent
+EXE = dev_asi.original_exe(EXE); ORIG = EXE.parent   # MASHED_ROOT private roots (dev_asi)
 LOG = (ROOT / "log") if (ROOT / "log").exists() else (ROOT.parent.parent / "log")
 
 AGENT = r'''

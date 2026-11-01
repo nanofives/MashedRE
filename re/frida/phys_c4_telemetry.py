@@ -22,6 +22,7 @@ import dev_asi
 ROOT = Path(__file__).resolve().parent.parent.parent
 ORIG = ROOT / "original"
 EXE  = ORIG / "MASHED.exe"
+EXE = dev_asi.original_exe(EXE); ORIG = EXE.parent   # MASHED_ROOT private roots (dev_asi)
 LOG  = ROOT / "log"
 NAV  = (Path(__file__).resolve().parent / "nav_agent.js").read_text(encoding="utf-8")
 

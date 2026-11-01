@@ -38,6 +38,7 @@ def _orig(root):
     return root.parent.parent / "original" / "MASHED.exe"
 EXE = _orig(ROOT)
 ORIG = EXE.parent
+EXE = dev_asi.original_exe(EXE); ORIG = EXE.parent   # MASHED_ROOT private roots (dev_asi)
 LOG = (ROOT / "log") if (ROOT / "log").exists() else (ROOT.parent.parent / "log")
 
 IMGBASE = 0x00400000
