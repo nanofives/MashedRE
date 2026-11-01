@@ -41,7 +41,7 @@ in by hand would change state the exe reads as 0 today (behaviour change: defaul
 | rva | outcome | matched source | match.py | relocheck | exe body | exe callers | reason |
 |---|---|---|---|---|---|---|---|
 | 0x004053d0 | left | `re/match/s01/004053d0.c` | 100.0% 12/12, 45 B identical | OK checked=0 unchecked=5 | none (asi `Render/LowRvaSetters_o2.cpp` TrackDataSlotSet) | 0 | writes the clip-module slot `0x00639d70/74/78`; the exe has no camera-path clip module and relies on those reading 0 (`TrackRenderer.cpp:5294`, `Race/CameraEntries.cpp:29-30`). Its call site is inside the 0x00426e10 dispatch. A call would be a behaviour change |
-| 0x004095a0 | left | `re/match/s01/004095a0.c` | 98.6% insn 74/73, 214 B identical | OK checked=4 unchecked=6 | none | 0 | builds `"toastart/common/led/LE%d.LED"` into `0x0063b7f0` (no exe reference to `0x0063b7f0`); only caller 0x00409710 (below) |
+| 0x004095a0 | left | `re/match/s01/004095a0.c` | 98.6% insn 74/73, 214 B identical | OK checked=4 unchecked=6 | none | 0 | builds `"toastart/common/led/LE%d.LED"` into `0x0063b7f0` (no exe reference to `0x0063b7f0`); original callers 0x00409710 (below) and 0x004096a0 (no exe body, no exe mention) |
 | 0x00409680 | left | `re/match/s01/raw/00409680.c` | 100.0% 7/7, 20 B identical | OK checked=0 unchecked=1 | none (asi `Render/LowRvaSetters_o2.cpp` LedArrayInit) | 0 | fills 0x480 dwords at `0x0063a5f0` with 0xbf800000; the exe's camera override table is port-owned (`Race/RaceCamera.cpp:93` reads the on-disk image), no exe TU reads `0x0063a5f0` |
 | 0x00409710 | left | `re/match/s01/raw/00409710.c` | 100.0% 42/42, 119 B identical | OK checked=8 unchecked=2 | none | 0 | loads `LE%d.LED` from `led.piz` into `0x0063a5f0` through the original piz/RW stream calls (0x00495280 / 0x004952f0 platform file I/O, 0x004cc230 / 0x004cc5e0 / 0x004cbd30 / 0x004cc160); the exe loads that table itself into port storage (`RaceCamera.cpp`) |
 | 0x00412050 | left | `re/match/s02/00412050.c` | 100.0% 49/49, 165 B identical | OK checked=11 unchecked=0 | none | 0 | creates 12 x 2 objects through 0x0047fad0 / 0x0047cdc0 (no exe body, deep gaps) from `DAT_0063bc40`, writes `0x0063bb5c[6]`; no exe reference to either address |
@@ -52,6 +52,9 @@ in by hand would change state the exe reads as 0 today (behaviour change: defaul
 | 0x0041ea90 | left | `re/match/s04/0041ea90.c` | 100.0% 3/3, 9 B identical | OK checked=1 unchecked=0 | none (asi `Match/MatchS04_0041ea90.cpp`) | 0 | slot thunk through `[0x0063d7e4]`, same as 0x0041e8b0 |
 | 0x004260e0 | left | `re/match/pilot/a7_004260e0.c` | 100.0% 211/211, 525 B identical | OK checked=10 unchecked=15 | none | 0 | builds a `ToastArt/tracks/...` path in `0x008991e0` (no exe reference); the `dos` arm copies the original `.rdata` string `0x005cd4ac`, zero in the exe. The exe builds track paths in port code |
 | 0x004715a0 | left | `re/match/pilot/a3_004715a0.c` | 93.4% insn 136/127, 477 B identical | OK checked=2 unchecked=9 | none | 0 | rebuilds 8 scenario records at `0x0086ece0` from `0x0086cbc4` through 0x0047ce40 (no exe body); the exe keeps scenarios in port vectors (`TrackRenderer.cpp:2575-2596`, `scen_seqs` / `scen_objs`), no exe reference to either table |
+
+Original callers are from the map's call graph (`D:/MashedWT/MATCH-TOPDOWN-MAP_data/cg.json`, `orig_edges`): every
+unlock RVA except 0x004095a0 has 0x00426e10 as its only caller.
 
 Connector, for the record (not T05 swap candidates):
 
