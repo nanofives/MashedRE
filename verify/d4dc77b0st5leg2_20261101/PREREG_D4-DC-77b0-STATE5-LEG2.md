@@ -76,3 +76,33 @@ Exe from this branch, `MASHED_NO_DEPLOY=1`, private root `D:\MashedWT\D4-DC-77b0
 - G0 equal, W1 equal, W2 holds, no crash: DECISION row recommending the flip (it moves gate hashes, so never GREEN).
 - G0 equal, but W1 or W2 fails or a knob-ON arm crashes: DECISION row recommending no flip, with the measured failure
   and the next step named.
+
+## Amendment 1 (after run 1, before run 2)
+
+Run 1 (exe `3097a90c`, commit f07d9320c), as measured:
+- G0 equal to the refs: G-CTRL 8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3.
+- K1: G-CTRL 2eb711b3/c9abe7ef/83706807, B d6acc2f3 x3.
+- W1 holds: `[st5leg2] leg1 calls=112`, `exit calls=112` (H_ST5L2.log).
+- W2 as written fails: car 0's record +0x958/+0x95c/+0x960 was 00000000 x3 before the first leg-2 step (the sub-state
+  path never seeds it) and 3f003d64/3ede7414/bfffdd6e after the last. That last value equals the original's countdown
+  value on o_t0_r1.msd frames 2..848 bit for bit (bytes 643d003f/1474de3e/6eddffbf).
+- Defect found: the AI cars were not held. At GO (B_ST5L2_K0 step dump frame 0) own_z = -22.41 / -24.95 / -19.13 with
+  rec_9e4 = 7044.65 / 3089.95 / 7563.92. Default B_DEF_K0 frame 0: own_z = -0.90 / 0.20 / 1.30, rec_9e4 = 0. Cars 1 and 3
+  leave the dump after frame 0, and the round ends at 14.6 s (default 18.3 s). Cause (code read): the block top zeroes
+  car_vel_ and each a.cur_speed but not a.vel, and leg 2's physics takes aio.vel = a.vel, so the AI velocity built up over
+  112 ticks. On the original, leg 1's hold loop runs FUN_0046baa0 on each held car (0x0041043a, gated at 0x00410425 /
+  0x0041042c), which zeroes the record velocity (0x0046babb) before FUN_0040fc00 runs leg 2.
+
+Change: in leg 2, before an AI car's io is built, a.vel = 0 for each car that passes the same hold gate (slot-table entry
+!= 0, FUN_0046c7b0 == 1). Knob ON only. Log only: car 0's record position after the first leg-2 step, and the AI cars'
+pos / vel on the exit call.
+
+Run 2: rebuild, then G0 and K1 again (same arm names, new exe).
+
+New witnesses (replace W2):
+- W2' (car 0): record +0x958..+0x960 after the first leg-2 step equals it after the last, bit for bit, and both equal
+  3f003d64/3ede7414/bfffdd6e (the original's value). Prediction: holds (run 1 already ended on that value).
+- W4 (AI held): in B_ST5L2_K0 and H_ST5L2, at step-dump frame 0 every AI car's own_x / own_z is within 0.5 of its
+  B_DEF_K0 / H_DEF frame-0 value, and every AI car still has rows at frame 10. Prediction: holds.
+
+Verdict rules unchanged, with W2' and W4 in place of W2.
