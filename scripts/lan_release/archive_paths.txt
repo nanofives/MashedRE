@@ -1,0 +1,13 @@
+# What a clean `git archive <ref>` build of mashed_re.exe needs, one repo path per line.
+# Read from the REF being built by scripts/lan_release/publish.sh (the LAN release) and by
+# scripts/lan_release/archive_lint.py (the merge train's clean-archive lint), so the two
+# can never disagree. Add a path here the moment the build starts reading something outside it.
+#   mashedmod                          sources, rsp lists, build.bat
+#   scripts                            build.bat runs ../scripts/lint_*.py (with their helpers)
+#   re/tools/dual_copy_allowlist.txt   read by lint_rva_bodies.py
+#   re/match                           C4-by-match sources `#include`d by 84 port TUs (MATCH-S01..);
+#                                      missing it made the lint lose bodies (HB-LINT-408A50)
+mashedmod
+scripts
+re/tools/dual_copy_allowlist.txt
+re/match
