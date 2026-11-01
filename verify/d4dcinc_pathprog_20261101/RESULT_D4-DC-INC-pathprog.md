@@ -9,6 +9,10 @@ edited `pathprog_p2.json`, the regenerated `.inc` files, both rsp lists and the 
 `orch/D4-DC-INC-ai`. Branch `orch/D4-DC-INC-pathprog`. Rows: D4-DC-INC-00426090, -00426bb0, -00426bb0-X, -00426cb0,
 -00426cf0, -00426d00, -00426cc0. All 7 were still flagged on the base: the ai batch did not touch these RVAs.
 
+**Run 29 (recovery after the 14:23 reboot): the ai batch has merged, and this branch now carries `orch/integration`
+@ `c82901f6a`.** See "Run 29 re-merge" at the end for the rebuild, lint and gate re-run on the merged tree. The base
+note above is history.
+
 ## Method
 
 The same method as D4-DC-INC-ai. The exe-only copies were private verbatim naked copies that `re/tools/gen_naked_asm.py`
@@ -107,3 +111,52 @@ still attached, all pre-existing: U-8961 and U-5771 (0x00426cf0, meaning of DAT_
 
 The C3/C4 evidence stays valid. The two moved bodies are the same source in a new TU, compiled with the same flags. The
 four unmoved bodies are not edited. The .asi install of all six is unchanged.
+
+## Run 29 re-merge (2026-11-01, after the LIVING-PC reboot)
+
+The run-28 worker died in the 14:23 reboot. The worktree was clean, and every commit of this batch (`b75e62c8b`,
+`830a988f9`, `46c880a89`) was intact. `orch/D4-DC-INC-ai` merged GREEN into `orch/integration` (`6e38f3483`), and
+`git -c merge.autoStash=false merge orch/integration` (`c82901f6a`) was a clean merge. It added only one
+`INTEGRATION_LOG.md` line, because the branch already carried the ai tip `b034f3bbe`. The earlier merges of the ai tip
+(`21980efd1`, `a4aff1fa2`, `f63424629`) brought in integration build inputs the run-28 gates never saw (HB-LINT-408A50,
+MATCH-S01-RC, D5-INTROMOVIES-AUDIO, HB-ARCTIC-NOLIGHT-CAP, MATCH-TOPDOWN-MAP), so the merged tree was rebuilt and gated
+again.
+
+**Build** (worktree, `MASHED_NO_DEPLOY=1 mashedmod\build.bat`): `=== Build OK ===`. `mashed_re.exe` sha256
+`ede37d6e1ae7a1ccbd0380f24688f494b82c30ceac351434352dd20c2b59c890`. Log `D:/MashedWT/D4-DC-INC-pathprog_data/build_r29.log`
+sha256 `dc569a73da8aabcece73ad95ddb9f1d9bcf557751503161bccb19a95d957cbe3`.
+
+**Lint**
+
+| Tree | Findings | NEW |
+|---|---|---|
+| worktree build (build.bat's own lint) | 27 (CROSS 20, DUP 7) | 0 |
+| clean `git archive HEAD` of `scripts/lan_release/archive_paths.txt` (`mashedmod scripts re/tools/dual_copy_allowlist.txt re/match`) | 27 | 0 |
+
+28 to 27 against run 28: the 0x00408a50 key is gone on integration (HB-LINT-408A50). None of the 7 keys of this batch
+is in the allowlist (`grep 0042(6090|6bb0|6cb0|6cc0|6cf0|6d00)` = 0 lines).
+
+**Gates** (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, `A4_ROOT=D:/MashedWT/D4-DC-INC-pathprog_root`,
+`A4_OUT=D:/MashedWT/D4-DC-INC-pathprog_data/arms_r29`, as `test-slot py -3.12 mashed_lock.py run --solo --label
+D4-DC-INC-pathprog -- py -3.12 run_arms.py ...`). All four arms self-exited, exit 0. Refs from `re/orchestrator/merge_train.json`.
+
+| Arm | Expected | Got | |
+|---|---|---|---|
+| H_DEF step / gates / ptrace | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e | same |
+| B_DEF_K0 / K1 / K26 step | 1d5bf4f9 x3 | 1d5bf4f9 / 1d5bf4f9 / 1d5bf4f9 | same |
+
+Raw data (not committed), sha256:
+- `D:/MashedWT/D4-DC-INC-pathprog_data/arms_r29/H_DEF.step.csv` `8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198`
+- `D:/MashedWT/D4-DC-INC-pathprog_data/arms_r29/H_DEF.gates.csv` `ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb`
+- `D:/MashedWT/D4-DC-INC-pathprog_data/arms_r29/H_DEF.ptrace.log` `31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3`
+- `D:/MashedWT/D4-DC-INC-pathprog_data/arms_r29/B_DEF_K{0,1,26}.step.csv` `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457`
+- run log `D:/MashedWT/D4-DC-INC-pathprog_data/gates_r29.log` `5d7ce7c58250d497509701ef7b63d972e0c74a2d9415c481da3ff609d6592898`
+
+**Overlap with the queued `orch/D4-DC-INC-batch3` @ `65ecb9496` (read-only diff against integration, not merged here).**
+The two batches remove disjoint RVAs. batch3 drops 0x004c39b0 / 0x004c3ac0 / 0x004c3b30 / 0x004c3b90 / 0x00547450 and
+the pickup / registry copies. This batch drops 0x00426090 / bb0 / cb0 / cc0 / cf0 / d00. No body is edited twice. Both
+edit `pathprog_p2.json`, `aileaf_g1.json` and `target_p3.json` on adjacent lines (the `funcs` list and the `calls` map),
+the regenerated `PathProgStep_naked.inc` / `AiLeafTargets_naked.inc` / `AiTargetClosest_naked.inc`, both rsp lists,
+`hooks.csv`, `CHANGELOG.md` and the allowlist. Whichever merges second gets textual conflicts there. Resolution: take the
+union of both spec edits (drop both sets of funcs, map both sets of calls, drop batch3's LUT `patch` entries) and
+regenerate the three `.inc` files from the merged specs with `re/tools/gen_naked_asm.py`. Do not hand-merge the `.inc`.
