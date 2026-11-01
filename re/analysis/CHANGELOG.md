@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  0x0041f710  FUN_0041f710  C2->C4  route match (c4=match), exe-callers=1 (Match/MatchS05_0041f710.cpp via CR_41f710 <- Race::CarsReg_FrameTick); evidence: verify/matchs05_20261101/RESULT_MATCH-S05.md, verify/matchs05rc_20261101/RESULT_MATCH-S05-RC.md
 2026-11-01  004576b0  AnyActive4576b0  C3->C3  refile: ONE body, Gameplay/PickupPredicates.cpp (both targets), exe copy deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
 2026-11-01  0045c330  PredNot45c330  C3->C3  refile: ONE body, Gameplay/PickupPredicates.cpp (both targets), exe copy deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
 2026-11-01  00484a50  FUN_00484a50  C3->C3  refile: ONE body, Race/WorldObjectLinks.cpp (both targets), exe copy deleted (D4-DC-INC-batch3)  evidence: verify/d4dcinc_batch3_20261101/RESULT_D4-DC-INC-batch3.md
