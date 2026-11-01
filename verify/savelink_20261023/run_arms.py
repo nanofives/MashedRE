@@ -311,6 +311,11 @@ for _s in (2, 3): STACK['TLG%dF' % _s] = STACK['TLG%d' % _s] + STACK['FL']
 STACK['FLD'] = STACK['FL'] + ['MASHED_A5_DRAFT_LUT=1']   # + u9771's float/LUT drafting test
 STACK['FULLGOFD'] = STACK['FULLGO'] + STACK['FLD']
 for _s in (2, 3): STACK['TLG%dFD' % _s] = STACK['TLG%d' % _s] + STACK['FLD']
+# D4-DC-INC-0046d4a0-KNOB PREREG (verify/d4dc_0046d4a0_knob_20261101/): the bump arm's record-pointer call through the one
+# shared body; PK46W / DEFW add the per-call witness of both forms (MASHED_PK_ONEBODY_46D4A0_WIT)
+STACK['PK46'] = ['MASHED_PK_ONEBODY_46D4A0']
+STACK['PK46W'] = STACK['PK46'] + ['MASHED_PK_ONEBODY_46D4A0_WIT=@OUT@\\@NAME@.pk46.tsv']
+STACK['DEFW'] = ['MASHED_PK_ONEBODY_46D4A0_WIT=@OUT@\\@NAME@.pk46.tsv']
 
 
 STACK['ORAND'] = ['MASHED_OWN_RAND_564310=1', 'MASHED_OWN_RAND_LOG=@OUT@/@NAME@.rand.txt']   # D4-WSB-RAND-D11064 PREREG P2

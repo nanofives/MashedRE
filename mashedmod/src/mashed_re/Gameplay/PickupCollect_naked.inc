@@ -105,7 +105,7 @@ extern "C" __declspec(naked) void PK_458570() {
         lea ecx, [esp + 8]                               // 00458574
         push ecx                                         // 00458578
         mov dword ptr [esp + 8], 0                       // 00458579
-        call PK_46d4a0                                   // 00458581
+        call PK_46d4a0_sel                               // 00458581
         mov edx, dword ptr [esp + 0xc]                   // 00458586
         add edx, 0x30                                    // 0045858a
         mov eax, dword ptr [edx]                         // 0045858d
