@@ -23,8 +23,8 @@
 // Mode 7 leg M3 (PREREG verify/d3_mode7_m3_20261010/PREREG_M3.md): the registry's pickup callback.
 // Verbatim naked (spec re/tools/naked_specs/pickups_m3.json -> PickupCollect_naked.inc): FUN_00458920,
 // FUN_00458570 (EAX = car, ESI = out; its ST0 is discarded at 0x004589e2 and its out buffer is a dead
-// local), FUN_0045c330, FUN_0046d4a0, FUN_00405890, FUN_00407580; FUN_004c3ac0 / FUN_004c39b0 are the
-// PK_ bodies above. C bindings, cdecl:
+// local), FUN_0045c330, FUN_0046d4a0; FUN_004c3ac0 / FUN_004c39b0 are the PK_ bodies above. FUN_00405890 and
+// FUN_00407580 are the one shared bodies (declared above the #include). C bindings, cdecl:
 //   PK_SubMode       FUN_0040e350 -> the exe's FUN_0040e350 host (aib_game_sub_mode, TrackRenderer.cpp)
 //   PK_SlotEmpty     FUN_0045bff0 ([0x0088fc88 + v*0xb4] == 0) -> !PowerupSystem::Armed(v)
 //   PK_Grant         FUN_0045c010(v, type) -> PowerupSystem::Activate(v, type) at the exe thread's PC_53
@@ -183,6 +183,14 @@ __declspec(naked) void PK_458570_w() {
 }
 
 }  // extern "C"
+
+// Callees of PickupCollect_naked.inc that are ONE body shared with the .asi (pickups_m3.json maps the calls):
+//   FUN_00405890: PK_405890 deleted by dualcopy4 (2026-10-16). It was a verbatim naked third copy of the rule-5
+//     predicate; the one body is Race/CollectDone.h:CollectDoneBody405890, read from the two original globals by
+//     Race/CollectDone.cpp:Pred405890, which PK_458920 calls. (The spec maps it since D4-DC-INC-ai.)
+//   FUN_00407580: PK_407580 deleted by D4-DC-INC-ai (2026-11-01); Gameplay/SubsystemARecordKey.cpp, both targets.
+extern "C" unsigned int Pred405890(void);                                       // Race/CollectDone.cpp
+extern "C" int __cdecl SubsystemARecordKey(int index);                          // Gameplay/SubsystemARecordKey.cpp
 
 #include "PickupTick_naked.inc"
 #include "PickupCollect_naked.inc"

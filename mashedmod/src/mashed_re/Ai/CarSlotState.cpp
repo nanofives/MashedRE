@@ -1,4 +1,5 @@
-// Mashed RE — car-slot state setter: ONE body for both build targets (fwd494fd0, 2026-10-16).
+// Mashed RE — car-slot state setter and getter: ONE body each for both build targets
+// (setter fwd494fd0 2026-10-16, getter D4-DC-INC-ai 2026-11-01).
 //
 // Before this file the RVA had two bodies that could drift apart, which is the dual-copy class
 // (re/analysis/DUAL_COPY_AUDIT_2026-09-29.md, ROADMAP D4):
@@ -12,6 +13,13 @@
 // that address; read from original/MASHED.exe.unpatched file offset 0x1f2770, see the note at
 // AiStandalone.cpp's forwarder). The original has no guard because the pointer is never 0 once the process has
 // loaded; the guarded path is therefore unreachable inside MASHED.exe and cannot change a result there.
+//
+// The GETTER (FUN_0040e470) carries NO guard, on purpose. Its exe callers are the verbatim AI leaves
+// (AiLeafTargets_naked.inc, AiTargetClosest_naked.inc), which ran private verbatim copies (AL_40e470 /
+// TG_40e470: `mov eax,[esp+4] / mov ecx,[0x005f2770] / mov eax,[ecx+eax*4+0x34]`) with no guard either, and
+// their exe replay points 0x005f2770 at a table first (AiLeafTargets.cpp, the fake slot-state table). A guard
+// here would change what those callers read when the pointer is 0. Body, install and C3 evidence moved
+// unchanged from Frontend/RaceResults.cpp (.asi-only).
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -47,3 +55,33 @@ extern "C" __declspec(dllexport) void __cdecl CarSlotStateSet(int param_1, std::
 }
 
 RH_ScopedInstall(CarSlotStateSet, 0x0040e480);
+
+// ---------------------------------------------------------------------------
+// CarSlotStateGet  --  FUN_0040e470  (15 bytes, 0x0040e470..0x0040e47e)
+//
+// Signature: undefined4 FUN_0040e470(int param_1)
+//   param_1: car slot index (0-3)
+// Returns *(PTR_PTR_005f2770 + param_1*4 + 0x34). No branches, no side-effects.
+//
+// Uncertainties:
+//   U-1300: value semantics (what value 2 means) — does not affect reimpl.
+//
+// ref: re/analysis/race_results/0040e470.md
+// ---------------------------------------------------------------------------
+
+static inline std::uint32_t* SlotStateAddr(int param_1) {
+    // 0x005f2770: base pointer-to-pointer (cited at 0x0040e470 body)
+    std::uint32_t* base = *reinterpret_cast<std::uint32_t**>(0x005f2770u);
+    // 0x34 = 52: fixed offset after param_1*4 stride (cited at 0x0040e470 body)
+    return reinterpret_cast<std::uint32_t*>(
+        reinterpret_cast<std::uintptr_t>(base) + static_cast<unsigned>(param_1) * 4u + 0x34u);
+}
+
+// 0x0040e470
+extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotStateGet(int param_1) {
+    // Return value at PTR_PTR_005f2770[param_1 * 4 + 0x34].
+    // 0x005f2770 base cited at 0x0040e470 body; 0x34 offset cited at 0x0040e470 body.
+    return *SlotStateAddr(param_1);
+}
+
+RH_ScopedInstall(CarSlotStateGet, 0x0040e470);  // re-enabled 2026-05-24 c3-render-a
