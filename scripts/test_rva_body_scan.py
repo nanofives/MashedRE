@@ -115,6 +115,13 @@ extern "C" void __cdecl CtxSetOne(unsigned *ctx, unsigned v) { Store(ctx, v); }
 """
 
 
+# HB-LINT-408A50: an include the scanner cannot follow must be RECORDED, never skipped in
+# silence (a git archive without re/match/ hid MatchS01.cpp's body of 0x00408a50).
+MISSING_INC = """#include "../../../../re/match/s99/00000000.c"
+#include "Nowhere_naked.inc"
+"""
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory() as td:
         root = pathlib.Path(td)
@@ -126,6 +133,7 @@ def main() -> int:
         (root / "Vehicle" / "NegData.cpp").write_text(NEG_DATA, encoding="utf-8")
         (root / "Vehicle" / "NegDecl.cpp").write_text(NEG_DECL, encoding="utf-8")
         (root / "Vehicle" / "OneLiner.cpp").write_text(ONELINER, encoding="utf-8")
+        (root / "Vehicle" / "MissingInc.cpp").write_text(MISSING_INC, encoding="utf-8")
 
         old_src = S.SRC
         S.SRC = root
@@ -137,6 +145,10 @@ def main() -> int:
             nd = S.scan_tu("Vehicle/NegData.cpp")[0]
             ne = S.scan_tu("Vehicle/NegDecl.cpp")[0]
             ol = S.scan_tu("Vehicle/OneLiner.cpp")[0]
+            S.MISSING_INCLUDES.clear()
+            S.scan_tu("Vehicle/MissingInc.cpp")
+            mi = sorted(S.MISSING_INCLUDES)
+            S.MISSING_INCLUDES.clear()
         finally:
             S.SRC = old_src
 
@@ -144,6 +156,10 @@ def main() -> int:
     check("the MISSED shape is anchored (header comment far above the definition)",
           {hex(k): v[0] for k, v in un.items()},
           {"0x46b1c0": "VehicleBuildContactHull"})
+    check("an unresolved re/match/ or .inc include is recorded, not skipped",
+          mi,
+          [("Vehicle/MissingInc.cpp", 1, "../../../../re/match/s99/00000000.c"),
+           ("Vehicle/MissingInc.cpp", 2, "Nowhere_naked.inc")])
     check("the classic shape still anchors",
           {hex(k): v[0] for k, v in an.items()},
           {"0x46b1c0": "VehicleSlotAabbExpand"})
@@ -160,7 +176,7 @@ def main() -> int:
     if FAILED:
         print(f"FAILED: {len(FAILED)} check(s): {', '.join(FAILED)}")
         return 1
-    print("OK -- 8/8")
+    print("OK -- 9/9")
     return 0
 
 
