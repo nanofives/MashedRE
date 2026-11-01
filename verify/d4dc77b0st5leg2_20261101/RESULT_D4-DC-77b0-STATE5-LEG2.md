@@ -123,3 +123,55 @@ Raw (not committed), `D:/MashedWT/D4-DC-77b0-STATE5-LEG2_data/`. Exe `mashed_re.
 | arms/RUNLOG.txt (run 1) | 676a05e62310b44df46d4d67b1184b073dd8fc5efb2791f141f776b8a5e8f099 |
 
 Original-side input, from `D:/MashedWT/D4-DC-77b0-STATE5-ORIGREAD_data/` (hashes in the ORIGREAD RESULT): `o_t0_r1.msd`.
+
+## Follow-up: L-75 answered (b), original AI capture (2026-11-01), outcome MISMATCH
+
+PREREG amendment 2 (`25d6afb5a`, committed alone before the boots) set the band. Three original boots, ORIGREAD recipe
+plus `--statediff-car 1 / 2 / 3`, private root `D:\MashedWT\D4-DC-77b0-STATE5-LEG2_root` (MASHED.exe sha256 b9977dab...),
+one `mashed_lock.py run` hold, VB-Audio first in `Get-PnpDevice -Class AudioEndpoint -PresentOnly` before each boot.
+All three exited 0, no crash, no piz collision. Summary: `SUMMARY_orig_ai_hold.csv` (this folder).
+
+Original, record +0x958/+0x960 per AI car (o_c1/2/3.msd):
+
+| car | held value from frame 2 (x, z) | last held frame | dx, dz over the hold | first moving frame: z, vel z |
+|---|---|---|---|---|
+| 1 | -1.10121727, -0.901938975 | 801 | 0, 0 | 802: -0.910264313, -180 |
+| 2 | 1.1367228, 0.20244953 | 821 | 0, 0 | 822: 0.18949911, -280 |
+| 3 | -0.465431273, 1.29945505 | 868 | 0, 0 | 869: 1.28650463, -280 |
+
+Frames 2 to the last held frame (800 / 820 / 867 frames, which contain the 112-tick sub-state-5 window) give bit-identical
++0x958/+0x960 and +0x9b0..+0x9b8 = 0. The original does not move a held AI car during the countdown. Frame 1 to 2 is a
+one-time settle (z +9.2e-5, y -0.00295), the same as car 0 in o_t0_r1.msd.
+
+Port, knob ON (run 2): dz = -0.142 / -0.186 / -0.090, dx = 0. Differences against the original: |dz| 0.142 / 0.186 / 0.090,
+all above the 0.05 band. **MISMATCH on all three cars.** No flip committed.
+
+Cross-check: the original's first moving frame equals the DEFAULT exe's first race tick bit for bit (car 1 z -0.910264313,
+vel z -180; car 2 0.18949911, -280; car 3 1.28650463, -280; B_DEF_K0 step dump frame 1). So for the AI cars, the default
+build already matches the original at GO, and the knob moves them away from it. Car 0 (W2') matches with the knob
+ON as well, but car 0 has no throttle in this recipe.
+
+What explains part of it (code, not measured): with the knob ON the exe's AI cars get the ctrl block's throttle in
+leg 2's physics on every held tick. The amendment-1 velocity zero runs before the step, not after it, so each tick's
+two substeps still move the car. Over 112 ticks that adds up to the measured drift. On the original the held car's position
+does not change at all, so something there keeps a held car's integrated position fixed (candidates, unverified:
+FUN_0046baa0 resets more than velocity, A4's +0xaec countdown skip at 0x00470fe0.., or the A6a drive gate). [UNCERTAIN]:
+which one. Missing: a watch-write on an AI record's +0x958 during sub-state 5 on the original (zero writes vs writes of
+the same value).
+
+Raw (not committed), `D:/MashedWT/D4-DC-77b0-STATE5-LEG2_data/orig/`:
+
+| file | SHA-256 |
+|---|---|
+| o_c1.msd | 6337c44553e7051be0fd6ededf3c628a999f9fc82d7adc58238cb620279f5b10 |
+| o_c1.log | fcb16b74320db2eaf0a153c4cd51d5bc173002f9769ce38716b5ccb3caba3962 |
+| o_c1.msd.provenance.json | b76abd89d8839cebb6767ea67634510f9b6d4ec1a985545704b4f24313713050 |
+| o_c2.msd | dfd048a251d79b477c9d8d42065571b414e09ba47f0913a50db7df7d48a8495f |
+| o_c2.log | c32da288a63ad57a4545f1a73475dcfbbe430c240c7b6da98eeb11774384a1b7 |
+| o_c2.msd.provenance.json | 7f3176c37906c15b8fea7dbf5ce4dc984d7b3045e5f4d456ccdedbb1a61be94e |
+| o_c3.msd | 4b621b3cabb4e28f5d17d45aadb17b87dde0f659557b8192d4b1acd328cd3ee2 |
+| o_c3.log | 622be3e35fb7ae8a712dafebf3904c8b6f632132a63d090dd2f264768e23f0a9 |
+| o_c3.msd.provenance.json | 8bbfb98aa6887fd58f37035e9bc06a1a90bf083b3d6555a94966a74ffed54a1b |
+
+Gates: not re-run (no build input changed since run 2; default exe dd27c937, G-CTRL 8284be46/ba407a16/31fe043e,
+B 1d5bf4f9 x3).
