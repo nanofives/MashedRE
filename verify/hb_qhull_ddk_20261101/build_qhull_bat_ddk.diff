@@ -1,0 +1,74 @@
+diff --git a/mashedmod/deps/qhull-2002.1/build_qhull.bat b/mashedmod/deps/qhull-2002.1/build_qhull.bat
+index 63b593d30..4b2841ebc 100644
+--- a/mashedmod/deps/qhull-2002.1/build_qhull.bat
++++ b/mashedmod/deps/qhull-2002.1/build_qhull.bat
+@@ -9,11 +9,16 @@ REM the STOCK upstream qhull-2002.1 (the version banner in the binary is
+ REM unmodified, so RWP used stock sources) and reimplement only the game-side
+ REM RwpQHullWrapper bridge clean-room from our own decomp.
+ REM
+-REM BIT-IDENTITY LEVER: qhull is famously FP-rounding sensitive. The original
+-REM was built ~2004 with MSVC (x87). We compile the qhull TUs with /arch:IA32
+-REM (x87, NOT SSE2) + /fp:precise to reproduce the original's rounding. This is
+-REM the same "build x87, no /arch:SSE2" convention used for the RW-math leaves
+-REM (memory: project-wsa2-rwmath-bitident).
++REM BIT-IDENTITY (HB-QHULL-DDK, 2026-11-01): the qhull TUs are compiled with the
++REM period compiler, XP DDK cl 13.00.9176 / c2 13.00.9178 (tools\vc7ddk, gitignored,
++REM main checkout), at /O2 /G5 /Ob2 /GF against the DDK's own CRT headers. 116 of the
++REM 116 LIB-IDENTITY qhull rows (and the 6 rows MATCH-LIB added) are then byte-identical
++REM to MASHED.exe (re\tools\match\libmatch.py; verify\hb_qhull_ddk_20261101). x87
++REM code is the 13.00 default. The VS2022 /Ox /arch:IA32 /fp:precise build it
++REM replaces matched 0 of 116. No fallback to VS2022 when the DDK is missing: that
++REM would silently ship non-matching bytes. MASHED_DDK overrides the DDK root.
++REM The archive is still made by VS2022 lib.exe, and the objects link into both
++REM targets with VS2022 link.exe.
+ REM
+ REM Only the LIBRARY subset is compiled. The CLI drivers (qconvex/qdelaun/
+ REM qhalf/qvoronoi/rbox/unix) and examples (user_eg/user_eg2) each carry their
+@@ -26,26 +31,39 @@ set SRC=%HERE%src
+ set OBJ=%HERE%obj
+ set OUTLIB=%HERE%qhull_2002_1.lib
+ 
++if "%MASHED_DDK%"=="" (set DDK=C:\Users\maria\Desktop\Proyectos\Mashed\tools\vc7ddk) else (set DDK=%MASHED_DDK%)
++if not exist "%DDK%\bin\cl.exe" (echo [ERROR] XP DDK compiler not found at %DDK%\bin ^(set MASHED_DDK^) & exit /b 1)
++
+ if not exist "%OBJ%" mkdir "%OBJ%"
+ 
+ call %VCVARS% >nul
+ if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
+ 
+-REM /arch:IA32 -> x87 code (match original 2004 build); /fp:precise -> no
+-REM contraction/reordering; /Ox -> optimize (qhull is heavy); /wd4996 silence
+-REM CRT deprecation; /D_CRT_SECURE_NO_WARNINGS for str*/fopen.
+-set CFLAGS=/nologo /c /arch:IA32 /fp:precise /Ox /W1 /wd4996 /wd4244 /wd4305 /D_CRT_SECURE_NO_WARNINGS
++REM /O2 = /Og /Oi /Ot /Oy /Ob2 /Gs /GF /Gy in 13.00. /G5 stops 9178 splitting
++REM read-modify-write memory ops. /Ob1 gives 112 of 116, /G6 13, /Ox /G5 112
++REM (verify\libidentity_20261030\RESULT_LIB-IDENTITY.md). /Zl drops the objects'
++REM /DEFAULTLIB:"LIBC" (VS2022 ships no LIBC.lib, LNK1104). It changes no code byte.
++set CFLAGS=/nologo /c /W0 /O2 /G5 /Ob2 /GF /Zl
+ 
+ pushd "%SRC%"
+-cl %CFLAGS% /Fo"%OBJ%\\" ^
++setlocal
++set INCLUDE=%DDK%\inc\crt
++set CL=
++set _CL_=
++set PATH=%DDK%\bin;%PATH%
++"%DDK%\bin\cl.exe" %CFLAGS% /Fo"%OBJ%\\" ^
+     geom.c geom2.c global.c io.c mem.c merge.c ^
+     poly.c poly2.c qhull.c qset.c stat.c user.c
+-if errorlevel 1 (echo [ERROR] qhull compile failed & popd & exit /b 1)
++if errorlevel 1 (echo [ERROR] qhull compile failed & endlocal & popd & exit /b 1)
++endlocal
+ popd
+ 
+-lib /nologo /OUT:"%OUTLIB%" "%OBJ%\geom.obj" "%OBJ%\geom2.obj" "%OBJ%\global.obj" "%OBJ%\io.obj" "%OBJ%\mem.obj" "%OBJ%\merge.obj" "%OBJ%\poly.obj" "%OBJ%\poly2.obj" "%OBJ%\qhull.obj" "%OBJ%\qset.obj" "%OBJ%\stat.obj" "%OBJ%\user.obj"
++REM The DDK headers call sprintf / fprintf as externals. The UCRT defines them inline,
++REM so the .asi link (LNK2019 _sprintf in qh_option) needs legacy_stdio_definitions.lib.
++REM Merging it into the archive keeps build.bat's link lines unchanged.
++lib /nologo /OUT:"%OUTLIB%" "%OBJ%\geom.obj" "%OBJ%\geom2.obj" "%OBJ%\global.obj" "%OBJ%\io.obj" "%OBJ%\mem.obj" "%OBJ%\merge.obj" "%OBJ%\poly.obj" "%OBJ%\poly2.obj" "%OBJ%\qhull.obj" "%OBJ%\qset.obj" "%OBJ%\stat.obj" "%OBJ%\user.obj" legacy_stdio_definitions.lib
+ if errorlevel 1 (echo [ERROR] lib failed & exit /b 1)
+ 
+-echo === qhull_2002_1.lib OK ===
++echo === qhull_2002_1.lib OK (XP DDK cl 13.00.9176 / c2 13.00.9178) ===
+ dir /b "%OUTLIB%"
+ endlocal
