@@ -6,13 +6,10 @@
 
 #define MATCH_PORT 1
 #define FUN_00431f30 FrontendPageIdDispatch
-#define FUN_00431d90 MatchS07_00431f30_Call00431d90
-// Callee of the matched source: the old Frontend/MenuLeaves_af6.cpp body called FUN_00431d90 through its original
-// address (s_PanelFlagAdvance_af6, a __cdecl void() function-pointer cast to 0x00431d90), so the forwarder makes
-// that same call.
-extern "C" void MatchS07_00431f30_Call00431d90(void) {
-    reinterpret_cast<void (__cdecl*)(void)>(0x00431d90u)();
-}
+// Callee of the matched source: FUN_00431d90 binds to its port body FrontendPanelFlagAdvance
+// (Match/MatchS07_00431d90.cpp, both targets). The old Frontend/MenuLeaves_af6.cpp body called it through its
+// original address (s_PanelFlagAdvance_af6); the port body is the matched source of that same RVA.
+#define FUN_00431d90 FrontendPanelFlagAdvance
 #pragma comment(linker, "/EXPORT:FrontendPageIdDispatch=_FrontendPageIdDispatch")
 extern "C" {
 #include "../../../../re/match/s07/00431f30.c"
