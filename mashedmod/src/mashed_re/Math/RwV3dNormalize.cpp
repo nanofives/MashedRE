@@ -104,6 +104,16 @@ float mashed_re::Math::LutNormalize(float* out, const float* in)
     return NormalizeBody(out, in, RwLutSqrtTable(), RwLutInvSqrtTable());
 }
 
+// [D4-DC-INC-batch3 2026-11-01] The cdecl call-through the naked lanes call (RwLutTables.h). It replaces five private
+// naked copies of the original (AL_ / TG_ / PK_ / PP_ / RG_4c39b0). Each copy read the rebuilt tables through its
+// lane's pointer pair, so the LUT words are the same. Its products and sums ran on x87 inside the lane's PcScope
+// (default PC_24), which rounds each operation to a 24-bit significand, as NormalizeBody's SSE2 float operations do.
+// Its degenerate-length report called the lane's ErrPass / Nop stubs (xor eax, eax / ret), which change no output.
+extern "C" float __cdecl RwLutNormalize_cd(float* out, const float* in)
+{
+    return mashed_re::Math::LutNormalize(out, in);
+}
+
 // 0x004c39b0
 // Normalises in[3] into out[3]; returns the original magnitude (= |in|).
 extern "C" __declspec(dllexport)
