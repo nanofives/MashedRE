@@ -56,8 +56,8 @@ float LutSqrt(float x) {
     return FromBits(T().sqrt_[(biased >> 12) & 0xfffu] + ((biased >> 1) & 0x3fc00000u));
 }
 
-// [pontoon 2026-10-16] FUN_004c3b90's arithmetic with the real LUT (0x004c3b9e: 0 -> 0; 0x004c3bb4 +0x800;
-// 0x004c3bc2 index (>> 12) & 0xfff into the second table [devBase+4]; 0x004c3bd2..dc + ((~biased >> 1) & 0x3fc00000)).
+// [pontoon 2026-10-16] FUN_004c3b90's arithmetic with the real LUT (0x004c3b9e: 0 -> 0; 0x004c3bb4 +0x800; index
+// (>> 12) & 0xfff at 0x004c3bc2 into the second table [devBase+4]; 0x004c3bd2..dc + ((~biased >> 1) & 0x3fc00000)).
 float LutInvSqrt(float x) {
     const std::uint32_t b = Bits(x);
     if (b == 0u) return x;

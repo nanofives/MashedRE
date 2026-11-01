@@ -4,5 +4,5 @@
 
 #include <cstdint>
 
-extern "C" std::uint32_t __cdecl AnyActive4576b0(void);         // 0x004576b0
-extern "C" int __cdecl PredNot45c330(int idx);                   // 0x0045c330
+extern "C" __declspec(dllexport) std::uint32_t __cdecl AnyActive4576b0(void);         // 0x004576b0
+extern "C" __declspec(dllexport) int __cdecl PredNot45c330(int idx);                   // 0x0045c330
