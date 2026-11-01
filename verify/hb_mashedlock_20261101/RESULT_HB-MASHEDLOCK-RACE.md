@@ -30,3 +30,14 @@ Private temp lock dir via MASHED_LOCK_DIR. Workers mix acquire, status reads, so
 exception, any game-lock overlap, or a hung worker. `--impl` runs the same hammer on another copy,
 for example `git show orch/integration:re/orchestrator/mashed_lock.py`, as a baseline.
 Checks done: `py_compile` of both files only.
+
+## Correction (lead check, same day)
+The self-test section above named the wrong file. `re/orchestrator/mashed_lock_selftest.py` is the
+pre-existing 14-scenario test and is unchanged (it passes on old and new code, so it shows no
+regression but does not discriminate the race). The multi-process hammer is the new file
+`re/orchestrator/mashed_lock_concurrency_test.py`:
+`py -3.12 re/orchestrator/mashed_lock_concurrency_test.py [--procs 8] [--secs 12] [--impl <mashed_lock.py>]`.
+Baseline: `git show orch/integration:re/orchestrator/mashed_lock.py > old.py`, then `--impl old.py`
+(the hammer redirects TEMP too, so old code also stays in the private dir). Status: written and
+`py_compile`d, not run by this worker. The lead runs it 5 times plus the old-code baseline.
+Verdict: GREEN-pending-run.
