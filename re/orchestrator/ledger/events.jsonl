@@ -2114,3 +2114,9 @@
 {"at":"2026-11-02T01:01:53Z","id":"MATCH-0040E370-NAKED","from":"working","to":"review","owner":"cmvy4jx35406jp71h9e49af4t","note":"SOURCE -Full ready @ d2bacf645 (shared branch/sha with MATCH-TOPDOWN-T13)"}
 {"at":"2026-11-02T01:01:54Z","id":"MATCH-TOPDOWN-T13","from":"working","to":"review","owner":"cmvy4jx35406jp71h9e49af4t","note":"SOURCE -Full ready @ d2bacf645 (shared branch/sha with MATCH-0040E370-NAKED)"}
 {"at":"2026-11-02T01:03:43Z","id":"MATCH-TOPDOWN-T07","from":"merge-queued","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"merge train 20261101_220136: not run: text-only change (no build input touched)"}
+{"at":"2026-11-02T01:06:47Z","id":"HB-MASHEDLOCK-SOLO-PRIORITY","from":"review","to":"merge-queued","owner":"cmvyfwqvo0oarn01byjqmv6il","note":"orch/HB-MASHEDLOCK-SOLO-PRIORITY"}
+{"at":"2026-11-02T01:20:32Z","id":"HB-MASHEDLOCK-EARLY-PRIORITY","from":"working","to":"review","owner":"cmvyjd2e6076mqu1cjt4pa003","note":"e3f44578e: train prio-hold at pass start, prio-release in finally; concurrency 16/16 x3, base control reproduces starvation; text-only"}
+{"at":"2026-11-02T01:20:33Z","id":"MATCH-S08","from":"working","to":"review","owner":"cmvycr0x700t1n01bwkfutkao","note":"SOURCE -Full ready @ 56a88ebf4: 93/128 matched, 29 swapped (9 exe), 4 C4 candidates, gates unchanged"}
+{"at":"2026-11-02T01:20:45Z","id":"HB-MASHEDLOCK-SOLO-PRIORITY","from":"merge-queued","to":"merged","owner":"cmvyfwqvo0oarn01byjqmv6il","note":"merge train 20261101_220728: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T01:21:03Z","id":"HB-MASHEDLOCK-EARLY-PRIORITY","from":"review","to":"review","owner":"cmvyjd2e6076mqu1cjt4pa003","note":"TEXT-ONLY ready @ e3f44578e (contains HB-MASHEDLOCK-SOLO-PRIORITY b52d95787)"}
+{"at":"2026-11-02T01:21:21Z","id":"HB-MASHEDLOCK-EARLY-PRIORITY","from":"review","to":"merge-queued","owner":"cmvyjd2e6076mqu1cjt4pa003","note":"orch/HB-MASHEDLOCK-EARLY-PRIORITY"}
