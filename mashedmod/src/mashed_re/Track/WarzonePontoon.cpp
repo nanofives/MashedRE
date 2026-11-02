@@ -39,6 +39,11 @@ extern "C" unsigned int* __cdecl FUN_004c52f0(unsigned int* dst, unsigned int* s
 extern "C" unsigned int __cdecl WarzonePontoonBoxCarry(int obj, void* in, void* out);   // Match/MatchS09_00451990.cpp
 extern "C" void __cdecl WarzonePontoonDeactivate(int obj);                              // Match/MatchS09_00451cc0.cpp
 extern "C" void __cdecl WarzonePontoonTrackBody(int obj, void* in, void* out);          // Match/MatchS09_00451a50.cpp
+// MATCH-S09-FU bodies: 0x00451ce0 (Sample) and 0x00451690 (LoopCb). Sample's callee is Save/VfsStream.cpp
+// VfsStreamGetType (the port's one body of that RVA, `return *(p + 8)`), LoopCb's are the extern "C" forwarders at the end
+// of this file (WarzonePontoonSubAnimTime, WarzonePontoonUpdateMatrices).
+extern "C" void __cdecl WarzonePontoonSample(void* obj);                                // Match/MatchS09_00451ce0.cpp
+extern "C" unsigned int __cdecl WarzonePontoonLoopCb(unsigned int interp, int obj);     // Match/MatchS09_00451690.cpp
 namespace mashed_re { namespace Math {
 void* RwMatrixMultiplyCPUDispatch(void* out, const void* A, const void* B);   // 0x004c4600 (Math/RwMatrixMultiplyCpu.cpp)
 } }
@@ -224,11 +229,16 @@ struct NodeInfo { int id; int index; int flags; Frame* frame; };
 struct Hier {
     int flags = 0x3000;          // FUN_004b4760 |= 0x3000 (captured 0x00003000)
     int numNodes = 0;
+    float* matArray = nullptr;   // +0x08 = &mats[0] (InitFrom); the matched 0x00451ce0 reads it through 0x00550bc0
+                                 // (`mov eax, [eax + 8]`) and takes node 1's matrix at + 0x40 (re/match/s09/00451ce0.c)
+    std::uint32_t pad0c[5] = {}; // +0x0c..+0x1c, not read by the port
+    Interp* interp = nullptr;    // +0x20: the matched 0x00451690 passes *(hier + 0x20) to 0x0052df70 (re/match/s09/00451690.c)
     alignas(16) float mats[4][16];
     NodeInfo info[4];
     Frame* parentFrame = nullptr;
-    Interp* interp = nullptr;
 };
+static_assert(offsetof(Hier, matArray) == 0x08 && offsetof(Hier, interp) == 0x20,
+              "0x00451ce0 reads hier + 0x08 (via 0x00550bc0), 0x00451690 reads hier + 0x20");
 
 // 0x00532a60 (inlined in 0x00533ec0 when the apply callback is 0x00532a60): keyframe quaternion + translation -> matrix.
 void KfToMatrix(float* m, const IF* f) {
@@ -401,16 +411,9 @@ void Coupling(Obj& o) {
     }
 }
 
-// 0x00451ce0 FUN_00451ce0: sample node 1.
-void Sample(Obj& o) {
-    float* n1 = o.hier->mats[1];                                            // FUN_00550bc0(hier) + 0x40
-    o.pos[0] = n1[12]; o.pos[1] = n1[13]; o.pos[2] = n1[14];
-    o.m94 = n1;
-    o.mov[0] = n1[12] - o.m54[12];
-    o.mov[1] = n1[13] - o.m54[13];
-    o.mov[2] = n1[14] - o.m54[14];
-    o.mov[0] = o.mov[0] * k360; o.mov[1] = o.mov[1] * k360; o.mov[2] = o.mov[2] * k360;
-}
+// MATCH-S09-FU: the body of 0x00451ce0 (Sample) moved to Match/MatchS09_00451ce0.cpp,
+// which compiles the byte-matched source re/match/s09/00451ce0.c.
+void Sample(Obj& o) { WarzonePontoonSample(&o); }
 
 // 0x00452170: the reset callback FUN_00451680 installs at +0xc4.
 void ResetCb(Obj*, int) {
@@ -423,12 +426,10 @@ void ResetCb(Obj*, int) {
 // which compiles the byte-matched source re/match/s09/00451cc0.c.
 void Deactivate(Obj& o) { WarzonePontoonDeactivate(reinterpret_cast<int>(&o)); }
 
-// 0x00451690: the anim loop callback (SubAnimTime by +0x44, update, state 5).
+// MATCH-S09-FU: the body of 0x00451690 (the anim loop callback) moved to Match/MatchS09_00451690.cpp,
+// which compiles the byte-matched source re/match/s09/00451690.c. It returns param_1 (the interpolator, non-zero).
 int LoopCb(Interp* ip, Obj* o) {
-    SubAnimTime(ip, o->d44);
-    UpdateMatrices(o->hier);
-    o->state = 5;
-    return 1;                                                               // returns param_1 (non-zero)
+    return static_cast<int>(WarzonePontoonLoopCb(reinterpret_cast<unsigned int>(ip), reinterpret_cast<int>(o)));
 }
 
 inline float UnitsF(int units) {
@@ -706,6 +707,7 @@ bool InitFrom(const std::uint8_t* dff, std::size_t dlen, const std::uint8_t* anm
     o.d44 = 0.f;
     s.interp.numNodes = 4;
     s.hier.interp = &s.interp;
+    s.hier.matArray = s.hier.mats[0];                                       // read by the matched 0x00451ce0 (Hier +0x08)
     o.hier = &s.hier;                                                       // +0x50 FUN_004b4790: attach, SetCurrentAnim, update
     SetCurrentAnim(&s.interp, &s.anim);
     UpdateMatrices(&s.hier);
@@ -958,3 +960,15 @@ void RunReplay(const char* path) {
 
 }  // namespace Track
 }  // namespace mashed_re
+
+// MATCH-S09-FU callee binds of the matched 0x00451690 body (forwarders, not bodies of those RVAs).
+// The call to 0x0052df70: forwards to SubAnimTime above (its transcription). The matched caller discards the result.
+extern "C" unsigned int __cdecl WarzonePontoonSubAnimTime(int* interp, float delta) {
+    mashed_re::Track::SubAnimTime(reinterpret_cast<mashed_re::Track::Interp*>(interp), delta);
+    return 1;
+}
+// The call to 0x00533ec0: forwards to UpdateMatrices above (its transcription). The matched caller discards the result.
+extern "C" unsigned int __cdecl WarzonePontoonUpdateMatrices(unsigned int* hier) {
+    mashed_re::Track::UpdateMatrices(reinterpret_cast<mashed_re::Track::Hier*>(hier));
+    return 1;
+}

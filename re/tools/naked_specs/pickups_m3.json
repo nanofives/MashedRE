@@ -1,6 +1,5 @@
 {
   "funcs": [
-    { "name": "PK_458920", "start": "0x00458920", "size": 276 },
     { "name": "PK_458570", "start": "0x00458570", "size": 185 },
     { "name": "PK_46d4a0", "start": "0x0046d4a0", "size": 46 }
   ],
