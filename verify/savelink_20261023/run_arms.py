@@ -457,6 +457,14 @@ STACK['SUBHNRTR'] = STACK['SUBH'] + STACK['NRTR']
 STACK['PUD'] = ['MASHED_PU_STEPDUMP=@OUT@/@NAME@.pustep.csv']   # D5-FLIP-RFLAME-SORT: power-up step dump only (R_FLAME reachability witness)
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
+# D4-DC-77b0-STATE5-LEG2 (verify/d4dc77b0st5leg2_20261101): FUN_00425a40's body on the sub-state-5 calls (default OFF)
+STACK['ST5L2'] = ['MASHED_ST5_LEG2=1']
+# D4-DC-77b0-ST5-HOLD: the same plus the leg-2 ctrl-byte log (MASHED_ST5_HOLD_DIAG, log only)
+STACK['ST5L2D'] = STACK['ST5L2'] + ['MASHED_ST5_HOLD_DIAG=1']
+# record dumps of car N (port MSD1), default and knob ON: +0xbf4 / +0xbf8 around the release
+for _c in (1, 2, 3):
+    STACK[f'RD{_c}'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
+    STACK[f'ST5L2RD{_c}'] = STACK['ST5L2'] + STACK[f'RD{_c}']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
