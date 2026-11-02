@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-02 03:53 MATCH-T01G-FU (orch/MATCH-T01G-FU): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261102_030710
 - 2026-11-02 03:05 MATCH-RC-FU (orch/MATCH-RC-FU): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261102_023655
 - 2026-11-02 02:35 MATCH-RC-T13N (orch/MATCH-RC-T13N), PROMOTE-DETORIG-LOADHOLD (orch/PROMOTE-DETORIG-LOADHOLD): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261102_021726
 - 2026-11-02 02:14 MATCH-S06-FU (orch/MATCH-S06-FU): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261102_013154
