@@ -46,6 +46,14 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-02  0x00407a20  GetAiLapCounter  C4->C4  route match added (c4=match), exe-callers=1; evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
+2026-11-02  0x00407cd0  FUN_00407cd0 (PP_407cd0)  C2->C4  route match (c4=match), exe-callers=4 (PP_407e20); evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
+2026-11-02  0x0040e350  GetRenderSubMode  C3->C4  route match (c4=match), exe-callers=2 (TG_SubMode, Ai::ModeSeven); evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
+2026-11-02  0x0046c5f0  FUN_0046c5f0 (Collision::TriangleFaceNormal)  C2->C4  route match (c4=match), exe-callers=1 (VehicleWheelForceIntegrate); evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
+2026-11-02  0x00407a60  FUN_00407a60  C3->C4  route match (c4=match), exe-callers=2 (PathProg_RaceInit, PathProg_MaybeReplay), supersedes the exe-callers=0 hold; evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
+2026-11-02  0x00417730  VehicleRaceAngleGet  C3->C4  route match (c4=match), exe-callers=2 (AiPreTickRubberBand), supersedes the exe-callers=0 hold; evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
+2026-11-02  0x0042a9c0  ModeCodeLookup  C4->C4  L-84 answer (a): stays C4, Nav_DevGoto counts as an exe caller (L-68), no level change; evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
+2026-11-02  0x0042ad90  FUN_0042ad90  C4->C4  L-84 answer (a): stays C4, Nav_DevGoto counts as an exe caller (L-68), no level change; evidence: verify/rcT13N_20261102/RESULT_MATCH-RC-T13N.md
 2026-11-01  0x0040dfc0  HudIngameDispatch  C3->C4  route match (c4=match), exe-callers=2 (LibRw/RwRaceFx.cpp:1874, :1877), L-77 (a); stand-in callee 0x00426ba0 and no-op callees (U-9704) named in notes; evidence: verify/matchrc_20261101/RESULT_MATCH-RC-T03.md
 2026-11-01  0057c420  FUN_0057c420  C2->C3  port returns FUN_0055bd80's EAX (0x0057c435..0x0057c43d) under an .asi-only RunTracked wrapper; shadow A/B CLEAN n=24 ndiff=0, return compared (ret=0 x24) A/B-IS-REAL (census scenario, hook alone); callers 0047d180/0047d240/00480100 C2, callee 0055bd80 C3  evidence: verify/hbasieax_20261101/RESULT_HB-ASI-EAX-57C420.md
 2026-11-01  0055bd80  FUN_0055bd80  C2->C3  port returns the desc+0x10 slot EAX (0x0055bdca..0x0055bdd4, was void); shadow A/B CLEAN n=24 ndiff=0, return compared (ret=0 x24) A/B-IS-REAL (census scenario, hook alone, no race-load exit); caller 0057c420 C3, callee 004c4600 C3; U-9800 resolved  evidence: verify/hbasieax_20261101/RESULT_HB-ASI-EAX-57C420.md
