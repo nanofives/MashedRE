@@ -65,6 +65,7 @@ static void FUN_0046c5f0(float *a, float *c, float *b, float *out)
     }
 }
 
+#ifndef MATCH_PORT  /* MATCH-TOPDOWN-T13: the port compiles 0x0046c5f0 only; 0x0046da80 is unmatched (50.6%) */
 // MATCH: 0x0046da80 _FUN_0046da80
 int FUN_0046da80(int i, int p)
 {
@@ -97,3 +98,4 @@ int FUN_0046da80(int i, int p)
     FUN_00480d60(i, 8);
     return r;
 }
+#endif  /* MATCH_PORT */
