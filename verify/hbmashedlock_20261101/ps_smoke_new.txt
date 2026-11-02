@@ -1,0 +1,7 @@
+[1/5] ps-priority-hold-then-linger PASS (held=1 linger=1)
+[machine-lock] WAITING to open solo 'mashed_machine' -- priority claim pending (other)
+[2/5] ps-solo-waits-through-linger PASS (4.2 s)
+[3/5] ps-solo-default-ttl-le-1h PASS (ttl=3600)
+[4/5] ps-dead-hold-is-stale PASS 
+[5/5] ps-priority-solo-ignores-marker PASS (0 s)
+PASS

@@ -39,7 +39,8 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
 - Game runs: private root `D:\MashedWT\<step>_root` (robocopy of `original\` with
   `original\` inside), `MASHED_ROOT` pointing at it, sandbox disabled, and wrap the boot in
   the lock: `py -3.12 <orch-wt>\re\orchestrator\mashed_lock.py run --label <step> -- <cmd>`
-  (`run --solo` for a wall-clock-bound step such as D2 arms). Kill only PIDs you spawned.
+  (`run --solo` for a wall-clock-bound step such as D2 arms; the window expires after 1 h unless you
+  pass `--ttl <s>`, and a new solo open waits while the merge train has a priority claim). Kill only PIDs you spawned.
 - In PowerShell call `py.exe`, not `py` (a `~/bin/py` sh shim hangs pwsh).
 - Piz-collision crashes (`MASHED.exe+0x1509b4`, `+0xe66db`, U-9677) are re-runs, not findings.
 

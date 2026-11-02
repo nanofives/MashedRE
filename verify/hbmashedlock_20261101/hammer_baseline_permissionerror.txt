@@ -1,0 +1,16 @@
+  File "C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\4e1e94bc-b71c-41e1-aa49-ce9508d8e8b3\scratchpad\old_mashed_lock.py", line 449, in __enter__
+    return self.acquire()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\4e1e94bc-b71c-41e1-aa49-ce9508d8e8b3\scratchpad\old_mashed_lock.py", line 370, in acquire
+    return self._acquire()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\4e1e94bc-b71c-41e1-aa49-ce9508d8e8b3\scratchpad\old_mashed_lock.py", line 403, in _acquire
+    fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\maria\\AppData\\Local\\Temp\\mashed_lock_conc_ism5424g\\mashed_machine.lock'
+
+FAIL
+impl=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\4e1e94bc-b71c-41e1-aa49-ce9508d8e8b3\scratchpad\old_mashed_lock.py
+procs=8 secs=12.0 lockdir=C:\Users\maria\AppData\Local\Temp\mashed_lock_conc_mn7m1yrh
+acquires=35 solo_windows=12 status_reads=25 timeouts=0 overlaps=0 errors=0 hung_workers=0
+PASS
