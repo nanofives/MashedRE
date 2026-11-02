@@ -1,0 +1,100 @@
+# MATCH-S12 h1 notes
+
+0x00475a00  91  93.1%  100%  cxx:ok  b  [edx+edi] vs [edi+edx] SIB swap on both stores, many forms tried
+0x00475a60  74  100%  100%  cxx:ok  -  file-static DAT_0069160c fixed the load order
+0x00475ea0  67  100%  100%  cxx:ok  -  loop ends as relocated DAT_x+0x80, signed compare
+0x00474fb0  28  100%  100%  cxx:ok  -  callback declared as a function
+0x00474fd0  50  100%  100%  cxx:ok  -  {callback,data} block + int result local
+0x00475010  45  100%  100%  cxx:ok  -  {callback,data} block, data=&param_2
+0x004758d0  24  100%  100%  cxx:ok  -  callback declared as a function
+0x00475ef0  49  100% (bytes)  100%  cxx:ok  -  whole symbol byte-identical, Ghidra size short; array global + relocated loop end
+0x00475f30  32  100%  100%  cxx:ok  -  static callee with EAX out-pointer + stand-in caller
+0x00475f50  58  100%  100%  cxx:ok  -  static callee with ESI out-pointer + stand-in caller
+0x00475d30  81  100%  100%  cxx:?  -  RwGlobals +0x20 slot via struct, plain for loop
+0x004756e0  132  100%  100%  cxx:?  -  64-byte local as float[16] (no /GS cookie)
+0x00475830  160  100%  100%  cxx:?  -  struct-typed args, float global
+0x00475d30  81  100%  100%  cxx:ok  -  RwGlobals +0x20 slot via struct, plain for loop (cxx re-checked)
+0x004756e0  132  100%  100%  cxx:ok  -  64-byte local as float[16] (no /GS cookie) (cxx re-checked)
+0x00475830  160  100%  100%  cxx:ok  -  struct-typed args, float global (cxx re-checked)
+0x00475210  182  93.1%  93.1%  cxx:ok  b  y/z sums load out.y/z before param_1->y/z (4 ins), every operand order tried
+0x00476390  146  100%  100%  cxx:ok  -  bytes-identical (Ghidra size short of pop/pop/ret); typed 0x40 records + (int) ptr compares
+0x00476430  5  100%  100%  cxx:ok  -  jmp thunk as tail call to extern FUN_00475ef0
+0x004762c0  93  100%  100%  cxx:?  -  cdecl float callees, intrinsic sin/cos, radius in a double local
+0x00476320  103  91.7%  91.7%  cxx:?  b  z add operand order + return-pop order after FUN_004c39b0
+0x00476440  147  100%  100%  cxx:?  -  typed 0xd8/0x40 records, index loop for the first walk
+0x004764e0  16  100%  100%  cxx:?  -  ECX/EDX static callee + stand-in caller
+0x004769a0  39  100%  100%  cxx:?  -  destination globals file-static
+0x004769d0  31  100%  100%  cxx:?  -  destination globals file-static
+0x004769f0  30  100%  100%  cxx:?  -  null-default pointer, one dword copy
+0x00476a10  30  100%  100%  cxx:?  -  64-byte struct copy
+0x00476ae0  68  100%  100%  cxx:?  -  RW plugin data ptr, 8-byte struct copy
+0x00476b30  92  100%  100%  cxx:?  -  typed plugin-data chain
+0x00476b90  71  100%  100%  cxx:?  -  64-byte struct copy into plugin data
+0x00476be0  46  100%  100%  cxx:?  -  offset-first plugin address
+0x00476c10  79  100%  100%  cxx:?  -  16-byte struct copy into plugin data
+0x00476c60  71  100%  100%  cxx:?  -  32-byte struct copy into plugin data
+0x00476cb0  68  100%  100%  cxx:?  -  offset-first plugin address
+cxx re-check (resumed run): all 15 cxx:? files pass, no edits: 004762c0 00476320 00476440 004764e0 004769a0 004769d0 004769f0 00476a10 00476ae0 00476b30 00476b90 00476be0 00476c10 00476c60 00476cb0 = cxx:ok
+0x00476650  182  100%  100%  cxx:ok  -  bytes-identical (191 B, size short of call 0x004764f0); index loop keeps &rec[i]; holds statics
+0x00476710  153  100%  100%  cxx:ok  -  bytes-identical (162 B, size short of tail jmp); EDX=1 tail call into static 0x004764f0
+0x004767c0  150  100%  100%  cxx:ok  -  bytes-identical (159 B, size short of tail jmp); EDX=0 tail call into static 0x004764f0
+0x004770a0  31  90.0  100.0  cxx:ok  (b)  SIB base/index swap [ecx+eax] vs [eax+ecx] on the plugin-offset load; all forms tried
+0x004773f0  84  100.0  100.0  cxx:ok  -  EAX-arg static callee, RwMatrixSetIdentityMacro shape; 0x004773f0 holds 0x00477730
+0x00477450  56  100.0  100.0  cxx:ok  -  EAX-arg static callee, memcpy intrinsic; 0x00477450 holds 0x00477760
+0x00477490  106  100.0  100.0  cxx:ok  -  ESI-arg static callee with real caller; 0x00477490 holds 0x004773f0, 0x004777d0
+0x00477500  118  100.0  100.0  cxx:ok  -  EAX-arg static callee with real caller; 0x00477500 holds 0x00477810
+0x00477580  43  100.0  100.0  cxx:ok  -  ESI-arg static callee with real caller; 0x00477580 holds 0x00477870
+0x00477730  48  100.0  100.0  cxx:ok  -  signed pointer compares; 0x00477730 holds 0x004773f0
+0x00477760  110  100.0  100.0  cxx:ok  -  goto to shared call; 0x00477760 holds 0x00477450
+0x00477810  94  100.0  100.0  cxx:ok  -  render-state bracket around Decal loops; 0x00477810 holds 0x00477500
+0x00477870  96  100.0(bytes)  100.0  cxx:ok  -  Ghidra size short of tail, 99 B symbol BYTE-IDENTICAL; 0x00477870 holds 0x00477580
+0x004778e0  56  100.0  100.0  cxx:ok  -  ESI-arg static callee with real caller; 0x004778e0 holds 0x00477920
+0x00477920  228  93.3  93.3  cxx:ok  (b)  age stored local-first vs ours memory-first (fst/fstp order); 0x00477920 holds 0x004778e0
+0x004775b0  365  100.0(bytes)  100.0  cxx:ok  -  indexed loops put the IV on +0x44; 372 B symbol BYTE-IDENTICAL; 0x004775b0 holds 0x004773f0
+0x00476df0  680  100.0(bytes)  100.0  cxx:ok  -  Ghidra size short of tail, 687 B symbol BYTE-IDENTICAL; typed struct copies per lock
+0x004770c0  801  100.0  100.0  cxx:ok  -  float-typed globals (immediate 1.0f/0.0f stores), DAT_00692564 |= after the float stores
+0x004783f0  482  90.8%  90.8%  cxx:ok  b  node-base lea scheduling (after 1st fld in orig) not reproduced; loop-pad size follows
+0x00477f00  70  96.4%  96.4%  cxx:ok  a  param_2 load scheduled before first fld; dot-order/struct/permuter tried
+0x00478030  130  100%  100%  cxx:ok  -  matched (8-corner loop over min/max box)
+0x004780c0  80  100%  100%  cxx:ok  -  matched
+0x00478110  156  100%  100%  cxx:ok  -  matched (reverse-zeroed local array, combined if)
+0x00478200  25  100% (bytes)  100%  cxx:ok  -  Ghidra size stops at noreturn exit call, whole obj symbol byte-identical
+0x004785e0  121  97.8%  97.8%  cxx:ok  a  one fld st(0) scheduled after the norm-arg load/test; scalar/array/order/caller/permuter tried
+0x00477b60  117  100%  100%  cxx:ok  -  matched (ret var = 0, ret = i+1 before bit set, break)
+# MATCH-S12 h5 notes
+0x00478cd0  19  100.0  100.0  cxx:ok  -  tail call; 2-arg callee/caller picks ecx/edx
+0x004790e0  17  100.0  100.0  cxx:ok  -  static register-arg (EAX) fn + stand-in caller
+0x00479030  174  100.0  100.0  cxx:ok  -  hand-typed; byte-identical 174 B (no Ghidra size)
+0x00478cf0  824  100.0  100.0  cxx:ok  -  byte-identical 827 B (Ghidra size short); callee names + loop guard shape
+# MATCH-S12 helper h6 notes
+
+Findings:
+- Track family 0x0047a0f0..0x0047aa20: FUN_004b7090 returns x87; Ghidra splits the __ftol (FUN_004a2c48) into a
+  separate no-arg call. Declare FUN_004b7090 `double` and write `(int)FUN_004b7090(...)`. Fixes the whole family.
+- Counter increments `g = g + 1` that the original does as load/inc/store: read the global into a local first.
+- `&param_N` in Ghidra where param_N lives in a register: a separate dword local the compiler placed in the dead
+  arg home slot. Pass &local, keep param_N as a value (0x0047a0f0, 0x0047a020).
+- Functions without a pc_funcs.csv row (match.py "no Ghidra size"): scored with compare() and an explicit size
+  (scratch/h6/msz.py), --bytes byte-identical.
+
+0x0047a280  155  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a3a0  155  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a4a0  155  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a610  155  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a8b0  155  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a1e0  154  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a320  121  95.2  95.2  cxx:ok  b  count-pointer add hoisted above the copy loop
+0x0047a180  38  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a720  42  100.0  100.0  cxx:ok  -  ftol fix
+0x0047aa20  47  100.0  100.0  cxx:ok  -  ftol fix
+0x0047a790  56  100.0  100.0  cxx:ok  -  ftol fix + counter read into a local
+0x0047a0f0  59  100.0  100.0  cxx:ok  -  &param_2 is a separate dword local in the dead arg slot
+0x0047a130  65  100.0  100.0  cxx:ok  -  float globals stored 0.0f, callback passed as a function
+0x0047a750  64  100.0  100.0  cxx:ok  -  no Ghidra size, byte-identical over 64 B (explicit size)
+0x0047a7d0  31  100.0  100.0  cxx:ok  -  no Ghidra size, byte-identical over 31 B, counter via local
+0x0047a7f0  31  100.0  100.0  cxx:ok  -  no Ghidra size, byte-identical over 31 B, counter via local
+0x0047a440  88  100.0  100.0  cxx:ok  -  no Ghidra size, byte-identical over 88 B (explicit size)
+0x0047a950  93  100.0  100.0  cxx:ok  -  no Ghidra size, byte-identical over 93 B (explicit size)
+0x0047a810  103  100.0  100.0  cxx:ok  -  no Ghidra size, byte-identical over 103 B (explicit size)
+0x0047a9b0  112  100.0  100.0  cxx:ok  -  no Ghidra size, byte-identical over 112 B (explicit size)
+0x0047a020  196  98.0  98.0  cxx:ok  b  over the real 199 B (Ghidra size cuts the epilogue, match.py 92.2%): +0xf4 store scheduled 2nd in original, 5th in ours under every order tried
