@@ -69,7 +69,7 @@ right after the preamble: `#ifdef __cplusplus` / `#define MATCH_STATIC` / `#else
   stack through), but a C++-linkage declaration will not link: report it, or make the caller's declaration match.
 - "targets": an old body in a TU listed in both rsp files can still be exe-less (`#ifndef MASHED_STANDALONE`).
   Check the preprocessor guards around the old body and report exe / asi / both accordingly.
-- Use `py -3.12 D:/MashedWT/MATCH-S09_data/tools/excise.py` / `mkwrap.py` / `wrapcheck.bat` (S08 copies; they write
+- Use `py -3.12 D:/MashedWT/MATCH-S09_data/tools/excise.py` / `mkwrap.py` / `wrapcheck.bat` (S09 copies; they write
   `MatchS09_` names). Export Git Bash `MSYS_NO_PATHCONV=1` before running `cmd //c` or Python with `/` flags.
 - Other helpers edit other TUs at the same time: touch only the TUs named in your task.
 
@@ -82,7 +82,7 @@ right after the preamble: `#ifdef __cplusplus` / `#define MATCH_STATIC` / `#else
   callee already has a port body elsewhere, report it (two bodies) instead of swapping.
 - `mashedmod/src/mashed_re/Util/PromoLoop_*.cpp` and `Render/PromoLoop_*.cpp` are .asi-only promotion TUs; a body
   there is asi-only (targets=asi).
-- Other MATCH slices (S05, S06) work on other branches; this branch only. Do not touch other RVAs' bodies in a TU
+- Other MATCH slices (S08, S10, top-down rows) work on other branches; this branch only. Do not touch other RVAs' bodies in a TU
   beyond what excise removes.
 
 ## Round 2: held static callees (a matched file that defines another RVA's function)
@@ -93,22 +93,27 @@ second body of it. Convert the in-file callee to a HELD copy:
 1. Replace its `// MATCH: 0x<callee> FUN_<callee>` line with `// HELD: 0x<callee> (body elsewhere; this copy exists
    only so the DDK compiles the caller as the original; not compiled in the port)`.
 2. Wrap the callee's definition in `#ifndef MATCH_PORT` ... `#else` <prototype with the same signature> `#endif`.
-3. In the wrapper, `--bind FUN_<callee>=<the callee's port symbol>` (its existing body: an S07 wrapper, the old TU, or
+3. In the wrapper, `--bind FUN_<callee>=<the callee's port symbol>` (its existing body: an S0x wrapper, the old TU, or
    another slice's body found by rva_body_scan). Never bind to a raw address when a port body exists.
 4. Re-verify: `match.py` still 100% for the caller's `// MATCH:` line (the HELD line is not compared), `relocheck.py`
    OK, the C++ check passes.
 When the callee has NO port body anywhere and is in this slice's matched set, keep its `// MATCH:` line (the file
 becomes its only body) and say so.
 
-## S08 additions
+## S09 additions
 - Run `wrapcheck.bat` from the **PowerShell** tool: `cmd /c "D:\MashedWT\MATCH-S09_data\tools\wrapcheck.bat mashedmod\src\mashed_re\Match\MatchS09_<va8>.cpp"`
   (from Git Bash `cmd //c` hangs on this machine). Python from Git Bash is fine with `MSYS_NO_PATHCONV=1`.
-- This branch is cut from orch/integration: MATCH-S07 is merged (its Match/MatchS07_*.cpp bodies are here), MATCH-S06 is NOT. A held callee binds to the
-  body `rva_body_scan` finds on THIS branch (old TU or an S01-S05 `Match/MatchS0x_*.cpp` wrapper). If the held
-  callee has no port body on this branch and the old body called it by raw address, use a raw-address forwarder.
+- This branch is cut from orch/integration 035dc5bff: MATCH-S01..S07 are merged (their `Match/MatchS0x_*.cpp` bodies are
+  here), MATCH-S08 is NOT (merge-queued on another branch). A held callee binds to the body `rva_body_scan` finds on
+  THIS branch. If the held callee has no port body on this branch and the old body called it by raw address, use a
+  raw-address forwarder.
 - Raw `0x0040e470` forwarders: bind `FUN_0040e470` to `CarSlotStateGet` (`Ai/CarSlotState.cpp`, both targets), as
-  S05/S06/S07 did.
-- Physics / gameplay leaves (`Vehicle/ForceIntegratorLeaves.cpp`, AI spline) run in the gate scenario: be strict on
-  SAFE (bit-identical inputs, same float order is guaranteed by the matched source only if the old body reads the same
-  memory). Report `x87=yes` for every float function; the lead lists them in `mashedmod/x87_tus.txt`.
-- Do not swap 0x0043d7c0, 0x00434720, 0x0043bf30 (top-down rows held by another worker).
+  S05..S08 did.
+- Many S09 sources hold callees in-file (pilot finding 1: register-passed args; see
+  `verify/matchs09_20261102/helper_notes.txt`, lines `0x<file> holds 0x<callee>`). Several files hold each other's
+  callees with full `// MATCH:` lines (e.g. 00454170.c and 00454790.c). Before swapping a file, list every `// MATCH:`
+  line in it: each one must become the ONLY port body of its RVA, or be converted to HELD (round 2). A held callee
+  that is below 100% (e.g. 0x00458570 at 90.0% inside 00458920.c) must be HELD, never a body.
+- Gameplay leaves that run in the gate scenario (pickups, powerups): be strict on SAFE. Report `x87=yes` for every
+  float function; the lead lists them in `mashedmod/x87_tus.txt`.
+- Do NOT edit `mashedmod/*.rsp`, `mashedmod/x87_tus.txt`, `re/tools/dual_copy_allowlist.txt`: the lead does.
