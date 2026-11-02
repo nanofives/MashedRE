@@ -15,6 +15,7 @@
 // hull builder 0x0046b1c0 that used to live in this TU moved to Vehicle/VehicleContactHull.cpp (exe only), because
 // that RVA stays split by target (U-9155) and this TU is now also in the .asi.
 #include "ForceIntegrator.h"
+#include "RecordBlockState.h"   // [MATCH-PORTSTATE-RECORDS A1] knob (exe-only body; called only under MASHED_STANDALONE)
 #include "../Math/RwLutTables.h"   // [d2settle U-9181] Math::LutSqrt = 0x004c3b30
 #include <cstdint>
 #include <cstddef>   // std::ptrdiff_t (exe build's stricter include set surfaces this)
@@ -123,12 +124,19 @@ static inline char* A3Record(int slot) {
 }
 static inline int        A3HandlingType() { return HandlingTypeIndex(); }
 static inline const int* A3Table()        { return &kHandlingTable[0].key; }
-static inline void A3PublishHandling(float param, float /*spring*/, float /*k1*/, float /*k2*/) {
+static inline void A3PublishHandling(float param, float spring, float k1, float k2) {
     // [U-9147 2026-09-29] _DAT_00613108. It used to be `(void)h_param` with the comment
     // "consumed by later subsystems, not this record write" — true, and the later
     // subsystem is BodyOrient_OmegaFromSteer, which hardcoded 100.0f and so never saw
     // the override at all. Publish it instead of discarding it.
     g_handlingTorque = param;
+    // [MATCH-PORTSTATE-RECORDS A1] MASHED_PORTSTATE_RECORDS (default OFF): also the original's four stores, so the
+    // rubber band's FUN_0046dd80 / FUN_0046dd90 round trip (AiStandalone.cpp GearConstGet / GearConstSet) writes k2
+    // back into the now-live record +0x154 instead of the pad's 0 (0x0046b562 / 0x0046b5cd).
+    if (mashed_re::Vehicle::PortStateRecords_On()) {
+        *reinterpret_cast<float*>(0x00613108u) = param;  *reinterpret_cast<float*>(0x00613114u) = spring;
+        *reinterpret_cast<float*>(0x00613130u) = k1;     *reinterpret_cast<float*>(0x0061313cu) = k2;
+    }
 }
 #else
 static inline char* A3Record(int slot) {                                                    // DAT_008815a0
