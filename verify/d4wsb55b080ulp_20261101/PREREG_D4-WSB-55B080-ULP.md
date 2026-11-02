@@ -81,3 +81,36 @@ No level change predicted. `hooks.csv` `file` column of `0x00546b10` / `0x00546b
 Committed: this PREREG, the RESULT, `shadow_summary.tsv`, the two runner copies. Raw (not committed):
 `D:/MashedWT/D4-WSB-55B080-ULP_data/` (per-row `shadow_ab.log`, transcripts, build logs, gate outputs), listed with
 SHA-256 in the RESULT.
+
+## Amendment 1 (2026-11-01, after S1 / S2 / S3, before S1a / S2a / Ca / G)
+
+Two harness defects make S1 and S2 vacuous for the quaternion. Neither is read as evidence.
+
+1. **S1 env.** `run_shadow10.py` / `drive_ulp.py` did not set `MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_STW=1`, which the
+   PORT-BROAD-2 PREREG sets on every boot (its "Env on every boot" line). Without `MASHED_SHADOW_PRIVATE` the page tracker
+   in `Core/ShadowTrack.h` (`priv_on`, line ~456) protects no heap page, so the quaternion table (heap) is not compared.
+   S1's log shows `pages=o:0,n:0` on all 24 samples where pass 1 had 9 and pass 2 had 7. S1 (CLEAN 24/24) is void.
+2. **S2 wrapper.** The generated `0x00546b10` wrapper used `ShadowAB::Run`, which compares only the return
+   (`Core/ShadowAB.h:38`). The return is 1 on every non-null pair (`mov ebx,1` at `0x00546b28`, `mov eax,ebx` at
+   `0x00546b59` / `0x00546bba` / `0x00546be0`), so S2 (CLEAN 48/48) never compared the output. The same holds for the row's
+   existing C3 evidence (48/48 via `Run`, `log/shadow_ab/shadow_ab_20260910_001251_16x_00407600.log`). Fix in this commit:
+   the wrapper calls `RunRegion` over the 0x10-byte quaternion at `param_1` (null args take the plain path, as before).
+   Inert unless `MASHED_SHADOW_AB` is armed, so no default change.
+
+S3 (`0x00546bf0`): the full 60 s race ran, no sample, so the X branch is not exercised in this scenario (reported as such).
+S4 runs as planned on the first `.asi` (its wrapper is `RunRegion`, not affected by either defect).
+
+Re-run arms, env on every boot `MASHED_SHADOW_AB=1 MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_STW=1`, same scenario and
+runner (env added in the runner's invocation, nothing else changed), new `.asi` built from this commit:
+
+| arm | build | hook | prediction |
+|---|---|---|---|
+| S1a | this commit, x87 | `0x0055b080` | CLEAN 24/24 with heap pages tracked (`pages` > 0, as pass 2) |
+| S2a | this commit, x87 | `0x00546b10` (RunRegion) | CLEAN, `fields=0/4` on every sample |
+| Ca1 | this commit, `RwpSolverMath2Quat` removed from `x87_tus.txt` (SSE2), never committed | `0x00546b10` | DIVERGENT on >= 1 sample, `fields` 1-4 of 4 |
+| Ca2 | same control | `0x0055b080` | DIVERGENT on >= 1 sample (reproduces pass 1) |
+| G | this commit's exe | default gates | equal to `merge_train.json` |
+
+Read-out as in the main PREREG, with S1a / S2a / Ca1 / Ca2 in place of S1 / S2 / C. If a control arm is CLEAN, the
+paired fix arm is uninformative and the RESULT says so. Row keys carry `SHADOW_TAG` suffixes `a1` (fix) and `ctl`
+(control) so the void S1 / S2 rows stay in `shadow_summary.tsv`.
