@@ -455,6 +455,7 @@ STACK['SUBHRTR'] = STACK['SUBH'] + STACK['RTR']
 STACK['NRTR'] = ['MASHED_NO_A5_RACE_TIMER=1'] + _REC
 STACK['SUBHNRTR'] = STACK['SUBH'] + STACK['NRTR']
 STACK['PUD'] = ['MASHED_PU_STEPDUMP=@OUT@/@NAME@.pustep.csv']   # D5-FLIP-RFLAME-SORT: power-up step dump only (R_FLAME reachability witness)
+STACK['S7FU'] = ['MASHED_CARSLOT_ASSIGN_SLOTSTATE=1', 'MASHED_ABILITY_CURSOR_MATCHED=1']   # MATCH-S07-FU: both default-OFF swap knobs on
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
