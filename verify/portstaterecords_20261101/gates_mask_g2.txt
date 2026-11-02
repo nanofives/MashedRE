@@ -1,0 +1,6 @@
+header equal: True
+rows off/on: 54084 54084
+P3 off: rows with a nonzero abs column: 0
+P3 on : rows with abs != rec: 0  rows with a nonzero abs column: 54084
+P4 masked: differing cells: 0  row count equal: True
+rc 0
