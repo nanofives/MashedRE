@@ -213,12 +213,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CondGet5c4d30(void* p) {
 }
 RH_ScopedInstall(CondGet5c4d30, 0x005c4d30);
 
-// 0x0045bff0  gameplay — byte-verified: 8B 44 24 04 69 C0 B4 00 00 00 8B 90 88 FC 88 00 33 C9 85 D2 0F 94 C1 8B C1 C3
-//   fn(i): return (*(u32*)(0x0088fc88 + i*0xb4) == 0) ? 1 : 0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred45bff0(std::uint32_t i) {
-    return (*reinterpret_cast<std::uint32_t*>(0x0088fc88u + i * 0xb4u) == 0) ? 1u : 0u;
-}
-RH_ScopedInstall(Pred45bff0, 0x0045bff0);
+// MATCH-S10: the body of 0x0045bff0 (Pred45bff0) moved to Match/MatchS10_0045bff0.cpp,
+// which compiles the byte-matched source re/match/s10/0045bff0.c.
 
 // 0x00497450  input — byte-verified: 8B 44 24 04 83 F8 03 7E 03 33 C0 C3 C1 E0 09 8B 90 FC 96 7E 00 33 C9 85 D2 0F 95 C1 8B C1 C3
 //   CMP EAX,3 ; JLE predicate (i<=3) ; else fall-through XOR EAX,EAX;RET (i>3 -> 0)
@@ -335,24 +331,11 @@ RH_ScopedInstall(ItemPosRet4075b0, 0x004075b0);
 
 // ===== round 90 =====
 
-// 0x0045c4e0  gameplay — byte-verified: 8B 54 24 0C 56 33 C0 85 D2 7E 14 ... 39 31 74 0B 40 83 C1 28 3B C2 7C F4 83 C8 FF 5E C3
-//   int fn(key, table*, count): for i in [0,count): if(table[i*10]==key) return i ; return -1  (caller 0045cb20/0045cbe0 C2)
-extern "C" __declspec(dllexport) int __cdecl ArgSearch45c4e0(int key, int* table, int count) {
-    for (int i = 0; i < count; i++)
-        if (table[i * 10] == key) return i;
-    return -1;
-}
-RH_ScopedInstall(ArgSearch45c4e0, 0x0045c4e0);
+// MATCH-S10: the body of 0x0045c4e0 (ArgSearch45c4e0) moved to Match/MatchS10_0045c4e0.cpp,
+// which compiles the byte-matched source re/match/s10/0045c4e0.c.
 
-// 0x0045df70  gameplay — byte-verified (71B): steps global float DAT_006036c0 toward `target` by DAT_005cc9a4
-//   if (g < target) g += step ; if (target < g) g -= step   (caller 0045dfc0 C2)
-extern "C" __declspec(dllexport) void __cdecl FloatStep45df70(float target) {
-    float* g = reinterpret_cast<float*>(0x006036c0u);
-    float step = *reinterpret_cast<float*>(0x005cc9a4u);
-    if (*g < target) *g += step;
-    if (target < *g) *g -= step;
-}
-RH_ScopedInstall(FloatStep45df70, 0x0045df70);
+// MATCH-S10: the body of 0x0045df70 (FloatStep45df70) moved to Match/MatchS10_0045df70.cpp,
+// which compiles the byte-matched source re/match/s10/0045df70.c.
 
 // ===== round 91 (struct-const-init family) =====
 
@@ -562,11 +545,8 @@ extern "C" __declspec(dllexport) void __cdecl Tbl4a2bf7(void) {
 }
 RH_ScopedInstall(Tbl4a2bf7, 0x004a2bf7);
 
-// 0x0045c810  util — byte-verified: INC dword[0x0068d54c]; RET  (increment global counter)
-extern "C" __declspec(dllexport) void __cdecl Inc45c810(void) {
-    ++*reinterpret_cast<std::uint32_t*>(0x0068d54cu);
-}
-RH_ScopedInstall(Inc45c810, 0x0045c810);
+// MATCH-S10: the body of 0x0045c810 (Inc45c810) moved to Match/MatchS10_0045c810.cpp,
+// which compiles the byte-matched source re/match/s10/0045c810.c.
 
 // ===== round 102 =====
 // indexed_global_field_read family: return *(*(base_glob) + *(idx_glob) + off)
@@ -1439,20 +1419,8 @@ extern "C" __declspec(dllexport) void __cdecl Insert4c5bc0(std::uint8_t* list, s
 RH_ScopedInstall(Insert4c5bc0, 0x004c5bc0);
 
 // ===== round 138 ===== (4-entry global ptr-table match predicate)
-// 0x0045c510 — u32 fn(arg1, arg2): for idx in 0..3: e=*(int**)(0x88f680 + idx*4);
-//   if(e && e[0xc]==1 && e[0x28]==arg1 && arg2[4]==idx) return 1; return 0.
-//   (orig loads arg2 then arg1 across two pushes -> arg1 first stack arg, arg2 second.)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Match45c510(std::uint32_t arg1, std::uint8_t* arg2) {
-    for (int idx = 0; idx < 4; idx++) {
-        std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(0x0088f680 + idx * 4);
-        if (e && *reinterpret_cast<int*>(e + 0xc) == 1
-              && *reinterpret_cast<std::uint32_t*>(e + 0x28) == arg1
-              && *reinterpret_cast<int*>(arg2 + 4) == idx)
-            return 1;
-    }
-    return 0;
-}
-RH_ScopedInstall(Match45c510, 0x0045c510);
+// MATCH-S10: the body of 0x0045c510 (Match45c510) moved to Match/MatchS10_0045c510.cpp,
+// which compiles the byte-matched source re/match/s10/0045c510.c.
 
 // ===== round 139 ===== (global-record clear + conditional return)
 // 0x004e4350 — u32 fn(arg1, arg2): rec = *(u8**)0x7d716c + arg2; if(rec[0xc] != 0)
@@ -2923,24 +2891,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Add40b6e0(void)
 }
 RH_ScopedInstall(Add40b6e0, 0x0040b6e0);
 
-// 0x0045c7f0  FUN_0045c7f0 (gameplay, NEAR-LEAF: getter-compare then tail-call getter)
-// int f(void): if (GetRenderSubMode()(=*0x63ba8c) == *0x88fbc0) return that; else tail-call
-// Flag63b908Get()(=*0x63b908). Both callees C3 pure getters. Verbatim naked port; `call rel32`
-// -> `mov eax,abs;call eax`; tail `jmp rel32` -> `mov eax,abs; jmp eax`.
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Sub45c7f0(void)
-{
-    __asm {
-        mov  eax, 040E350h
-        call eax
-        cmp  eax, dword ptr ds:[088FBC0h]
-        je   L_SC7_RET
-        mov  eax, 040E450h
-        jmp  eax
-    L_SC7_RET:
-        ret
-    }
-}
-RH_ScopedInstall(Sub45c7f0, 0x0045c7f0);
+// MATCH-S10: the body of 0x0045c7f0 (Sub45c7f0) moved to Match/MatchS10_0045c7f0.cpp,
+// which compiles the byte-matched source re/match/s10/0045c7f0.c.
 
 // 0x00430250  FUN_00430250 (frontend, NEAR-LEAF: pointer-array search via C3 getter)
 // int f(int key, int gate): if(gate==0) return 0; arr=FUN_0040d430()(=*0x5f2770, 0xd ptrs);
@@ -3100,52 +3052,8 @@ RH_ScopedInstall(InitRange4725f0, 0x004725f0);
 // MATCH-S05: the body of 0x004215c0 (Accum4215c0) moved to Match/MatchS05_00420de0.cpp,
 // which compiles the byte-matched source re/match/s05/00420de0.c.
 
-// 0x00462760  FUN_00462760 (gameplay, NEAR-LEAF: predicate over a 4-entry pointer array)
-// int f(void): for each p in array 0x69045c[0..3]: if (p==0 || GetD70(p)==0 || GetD70(p)==2 ||
-//   GetD6c(p)==2) return 1; return 0. Callees 0x5a89b0(=p[0xd70]), 0x5a89a0(=p[0xd6c]) C3 getters.
-// Verbatim naked port; `call rel32` -> `mov eax,abs; call eax`.
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Pred462760(void)
-{
-    __asm {
-        push esi
-        mov  esi, 069045Ch
-    L_PRD_LOOP:
-        mov  eax, dword ptr [esi]
-        test eax, eax
-        je   L_PRD_RET1
-        push eax
-        mov  eax, 05A89B0h
-        call eax
-        add  esp, 4
-        test eax, eax
-        je   L_PRD_RET1
-        mov  eax, dword ptr [esi]
-        push eax
-        mov  eax, 05A89B0h
-        call eax
-        add  esp, 4
-        cmp  eax, 2
-        je   L_PRD_RET1
-        mov  ecx, dword ptr [esi]
-        push ecx
-        mov  eax, 05A89A0h
-        call eax
-        add  esp, 4
-        cmp  eax, 2
-        je   L_PRD_RET1
-        add  esi, 4
-        cmp  esi, 069046Ch
-        jl   L_PRD_LOOP
-        xor  eax, eax
-        pop  esi
-        ret
-    L_PRD_RET1:
-        mov  eax, 1
-        pop  esi
-        ret
-    }
-}
-RH_ScopedInstall(Pred462760, 0x00462760);
+// MATCH-S10: the body of 0x00462760 (Pred462760) moved to Match/MatchS10_00462760.cpp,
+// which compiles the byte-matched source re/match/s10/00462760.c.
 
 // 0x0040bb30  FUN_0040bb30 (boot, NEAR-LEAF: global-list string-search wrapper)
 // void* f(query): return FUN_004c5c00(*0x63b8f8, query). Callee 0x4c5c00 (C3) = circular-list
@@ -4210,45 +4118,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl MaxScoreFlags40b
 }
 RH_ScopedInstall(MaxScoreFlags40b9a0, 0x0040b9a0);
 
-// 0x0045cab0 FUN_0045cab0 (gameplay) — SlotAliveAndState45cab0.
-//   bool f(uint idx): CarStatePairGet(idx,&state,&secondary); if(state!=0) return 0;
-//   else return VehicleSlotGetter(idx)==1.  Disasm (0x0045cab0..0x0045caed) verbatim.
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl SlotAliveState45cab0(unsigned int /*idx*/)
-{
-    __asm {
-        sub   esp, 8
-        push  esi
-        mov   esi, dword ptr [esp+10h]      ; arg idx (sub 8 + push esi + ret = +0x10)
-        lea   eax, [esp+8]
-        push  eax
-        lea   ecx, [esp+8]
-        push  ecx
-        push  esi
-        mov   eax, 046CBB0h                 ; CarStatePairGet
-        call  eax
-        mov   eax, dword ptr [esp+10h]      ; state out
-        add   esp, 0Ch
-        test  eax, eax
-        jz    Lc_ret1path
-        xor   eax, eax
-        pop   esi
-        add   esp, 8
-        ret
-    Lc_ret1path:
-        push  esi
-        mov   eax, 046C7B0h                 ; VehicleSlotGetter
-        call  eax
-        add   esp, 4
-        dec   eax
-        neg   eax
-        sbb   eax, eax
-        inc   eax
-        pop   esi
-        add   esp, 8
-        ret
-    }
-}
-RH_ScopedInstall(SlotAliveState45cab0, 0x0045cab0);
+// MATCH-S10: the body of 0x0045cab0 (SlotAliveState45cab0) moved to Match/MatchS10_0045cab0.cpp,
+// which compiles the byte-matched source re/match/s10/0045cab0.c.
 
 // [moved] 0x0045c330 PredNot45c330 moved to Gameplay/PickupPredicates.cpp (D4-DC-INC-batch3, 2026-11-01): one body, both targets.
 

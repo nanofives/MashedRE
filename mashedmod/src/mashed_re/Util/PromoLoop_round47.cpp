@@ -20,12 +20,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Table688304Get(std::uint3
 }
 RH_ScopedInstall(Table688304Get, 0x00454a30);
 
-// 0x0045c850  8B 44 24 04 C7 04 85 9C F0 88 00 00 00 00 00 C3
-//   mov eax,[esp+4]; mov dword [eax*4 + 0x0088f09c],0; ret
-extern "C" __declspec(dllexport) void __cdecl Table88f09cClear(std::uint32_t param_1) {
-    reinterpret_cast<std::uint32_t*>(0x0088f09cu)[param_1] = 0;  // cited at 0x0045c850
-}
-RH_ScopedInstall(Table88f09cClear, 0x0045c850);
+// MATCH-S10: the body of 0x0045c850 (Table88f09cClear) moved to Match/MatchS10_0045c850.cpp,
+// which compiles the byte-matched source re/match/s10/0045c850.c.
 
 // 0x004894f0  8B 44 24 04 33 C9 89 48 54 89 48 08 89 48 0C C3
 //   mov eax,[esp+4]; xor ecx,ecx; mov [eax+0x54],ecx; mov [eax+8],ecx; mov [eax+0xc],ecx; ret

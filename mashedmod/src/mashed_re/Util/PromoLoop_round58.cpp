@@ -51,11 +51,5 @@ RH_ScopedInstall(CondGet691500, 0x00472500);
 // offsets 0x9a8 / 0x928 reproduce 0x00881f48 / 0x00881ec8 exactly. The disassembly
 // transcription above is retained because it is this RVA's primary citation.
 
-// 0x0045caf0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl EqPredicate7f1a18(std::int32_t p1, std::int32_t p2) {
-    if (*reinterpret_cast<std::int32_t*>(0x008aa254u) < 2 && p2 >= 0)           // global < 2 ; p2 >= 0
-        return (*reinterpret_cast<std::uint32_t*>(0x007f1a18u + static_cast<std::uint32_t>(p1) * 0x10u) ==
-                *reinterpret_cast<std::uint32_t*>(0x007f1a18u + static_cast<std::uint32_t>(p2) * 0x10u)) ? 1u : 0u;
-    return 0;
-}
-RH_ScopedInstall(EqPredicate7f1a18, 0x0045caf0);
+// MATCH-S10: the body of 0x0045caf0 (EqPredicate7f1a18) moved to Match/MatchS10_0045caf0.cpp,
+// which compiles the byte-matched source re/match/s10/0045caf0.c.

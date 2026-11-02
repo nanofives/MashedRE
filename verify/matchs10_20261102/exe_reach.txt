@@ -1,0 +1,7 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+_FUN_0045ba00	NOT-IN-MAP	-	-	-	-
+_FUN_0045c330	NOT-IN-MAP	-	-	-	-
+_FUN_0045db50	NOT-IN-MAP	-	-	-	-
+_PredNot45c330	0x001635b0	1	yes	yes	_PredNot45c330 <- _PK_458920 <- ?PickupCb_MaybeReplay@Gameplay@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+_RaceResultIndexedStore	0x00163590	0	no	yes	
+_FloatSliderStep	0x001635d0	0	no	yes	

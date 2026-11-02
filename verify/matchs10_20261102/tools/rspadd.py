@@ -1,11 +1,11 @@
 """Add MATCH-S10 wrapper TUs to the rsp lists (CRLF, quoted, backslashed).
     py -3.12 rspadd.py exe|asi|both <va8> ...
-The S10 block sits right after the "Util\\CameraEntryDispatch.cpp" line, not at the end of the file: the other MATCH slices
+The S10 block sits right after the "Util\\FloatSliderStep.cpp" line, not at the end of the file: the other MATCH slices
 append at the end, and a mid-file block keeps the merges of the slices apart. Entries stay sorted inside the block."""
 import sys, pathlib
 
 BS = chr(92)
-ANCHOR = f'"Gameplay{BS}PickupPoolSpawn.cpp"'
+ANCHOR = f'"Util{BS}FloatSliderStep.cpp"'
 t, vas = sys.argv[1], sys.argv[2:]
 for tgt in (["exe", "asi"] if t == "both" else [t]):
     p = pathlib.Path(f"mashedmod/{tgt}_sources.rsp")

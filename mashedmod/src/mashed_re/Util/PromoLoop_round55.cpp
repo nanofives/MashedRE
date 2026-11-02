@@ -48,11 +48,5 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Table6c71d8Get(std::int32
 }
 RH_ScopedInstall(Table6c71d8Get, 0x0047d130);
 
-// 0x0045c860
-extern "C" __declspec(dllexport) void __cdecl Clear88f0a0x4(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0088f0a0u) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0088f0a4u) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0088f0a8u) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0088f0acu) = 0;
-}
-RH_ScopedInstall(Clear88f0a0x4, 0x0045c860);
+// MATCH-S10: the body of 0x0045c860 (Clear88f0a0x4) moved to Match/MatchS10_0045c860.cpp,
+// which compiles the byte-matched source re/match/s10/0045c860.c.
