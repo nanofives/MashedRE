@@ -69,6 +69,14 @@ Census scenario (track 0, mode 10, 4 cars, 60 s hold), `--hooks 0x<rva>` (hook i
 | B_DEF_K1 | step.csv | `1d5bf4f9` | `1d5bf4f9` |
 | B_DEF_K26 | step.csv | `1d5bf4f9` | `1d5bf4f9` |
 
+**Merged tip.** After the tracker commit `3b41ae1e9`, `orch/integration` @ `96640c25a` (which now carries
+narrow-tail through HB-SHADOW-ALLOC-COMPARE) was merged in at `d2de24e78`, so the train meets no tracker conflict.
+Conflicts: `hooks.csv` `0057c500` / `0057c300` taken from integration (C3, superseding the narrow-tail text this
+branch held), `CHANGELOG.md` union. No conflict in any build input of this step. The merged tip builds clean
+(`MASHED_NO_DEPLOY=1`, rva-lint 0 NEW): exe `a0e194261bad1f39...`, `.asi` `00fe07837328cbae...`. The gates above ran
+on `171d4d72` (pre-merge). They were not re-run on the merged exe: a merge train was PRIORITY-PENDING (L0 rule), and
+the train gates the merged result itself.
+
 ## Run log and lock
 
 - First arm launch (22:54Z): the driver queued a solo window behind other holders. L0 asked for no new solo window while
