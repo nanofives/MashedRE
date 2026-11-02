@@ -2283,3 +2283,4 @@
 {"at":"2026-11-02T10:33:53Z","id":"MATCH-S09","from":"red-merge","to":"working","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":"re-merge onto 9d208ac35"}
 {"at":"2026-11-02T11:04:24Z","id":"MATCH-S08-FU","from":"merge-queued","to":"merged","owner":"cmvyy8uso1e9jpa1caattir89","note":"merge train 20261102_073244: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
 {"at":"2026-11-02T11:05:08Z","id":"MATCH-PORTSTATE-COURSE","from":"review","to":"merged","owner":"cmvykxe730379pa1cuhbxktew","note":"merged via head MATCH-PORTSTATE-GAMEFLOW @ 9d208ac35 (run 30 pass 7)"}
+{"at":"2026-11-02T11:18:03Z","id":"MATCH-S09","from":"working","to":"review","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":"SOURCE -Full ready @ 632669f29 (re-merged onto 9ae1b8f74, gates = refs)"}

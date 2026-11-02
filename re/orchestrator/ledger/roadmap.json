@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-11-02T11:05:08Z",
+  "updated": "2026-11-02T11:18:03Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -5154,20 +5154,20 @@
       "id": "MATCH-S09",
       "section": "MATCH",
       "title": "C4 by byte match, slice MATCH-S09: game functions 0x00451690..0x0045b990 (129 functions, 0 library rows skipped inside). Select, g2s, match, bounded permute, body swap, build, gates. Needs MATCH-MERGE merged; re-classify C4 also needs MATCH-RUBRIC merged",
-      "stage": "working",
+      "stage": "review",
       "owner": "cmvyr4pln0s7ppa1cgjk5v3cr",
       "parent": "cmvyqpnqa0prnpa1cjzfd8ny4",
       "branch": "orch/MATCH-S09",
       "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\MATCH-S09",
-      "evidence": "verify/matchs09_20261102/RESULT_MATCH-S09.md",
+      "evidence": "verify/matchs09_20261102/RESULT_MATCH-S09-REMERGE.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 4,
       "next": "",
-      "note": "re-merge onto 9d208ac35",
-      "updated": "2026-11-02T10:33:53Z"
+      "note": "SOURCE -Full ready @ 632669f29 (re-merged onto 9ae1b8f74, gates = refs)",
+      "updated": "2026-11-02T11:18:03Z"
     },
     {
       "id": "MATCH-S10",
