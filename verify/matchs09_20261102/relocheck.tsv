@@ -104,7 +104,6 @@
 0x004587a0	OK	checked=17	unchecked=2	004587a0.c	  unchecked: @__security_check_cookie@4,___security_cookie
 0x00458880	OK	checked=7	unchecked=0	00458880.c	
 0x004588c0	OK	checked=2	unchecked=0	004588c0.c	
-0x00458570	BAD	checked=4	unchecked=0	00458920.c	+0x86 _DAT_005ce54c: ours 0x005ce54c vs orig 0xc1decad8; +0x99 _FUN_004c3ac0: ours 0x004c3ac0 vs orig 0xe89b9c82; +0xa4 _FUN_004c39b0: ours 0x004c39b0 vs orig 0xe89bdc1c
 0x00458920	OK	checked=10	unchecked=0	00458920.c	
 0x004584e0	OK	checked=4	unchecked=0	00458a40.c	
 0x00458a40	OK	checked=8	unchecked=0	00458a40.c	
@@ -115,7 +114,6 @@
 0x00458dd0	OK	checked=3	unchecked=0	00458dd0.c	
 0x00458e00	OK	checked=10	unchecked=0	00458e00.c	
 0x00458f20	OK	checked=1	unchecked=0	00458f20.c	
-0x00458f20	OK	checked=1	unchecked=0	00458f80.c	
 0x00458f80	OK	checked=1	unchecked=0	00458f80.c	
 0x00458fa0	OK	checked=1	unchecked=0	00458fa0.c	
 0x00458fd0	OK	checked=2	unchecked=0	00458fd0.c	
