@@ -520,10 +520,15 @@ function armOracle(){
         OR.lastOrder = exOrder;
       } catch(e){ OR.err = 'ord.leave '+e; } }
     });
+    // MATCH-T13-SEED (read-only): entry course id DAT_00644158 (FUN_00426c00) and DAT_0089a360 (FUN_004173a0,
+    // raw u32); exit raw timer bits, DAT_005ea0ac and the 0x90 bytes at 0x00636b80 (checkpoint table).
     Interceptor.attach(ga(0x004046a0), {
+      onEnter(){ try { this.course = ga(0x00644158).readS32(); this.d360 = ga(0x0089a360).readU32(); } catch(e){ OR.err = 'seed10.enter '+e; } },
       onLeave(){ try { if (OR.seed10.length < 40) OR.seed10.push({atSeg: OR.seg.calls,
         segRet1: OR.seg.ret1, rule: ga(0x007f0fd0).readS32(), timer: ga(0x007f0fe4).readFloat(),
-        state: ga(0x0063ba8c).readS32()}); } catch(e){ OR.err = 'seed10 '+e; } }
+        state: ga(0x0063ba8c).readS32(), course: this.course, d360raw: this.d360,
+        timerRaw: ga(0x007f0fe4).readU32(), ea0acRaw: ga(0x005ea0ac).readU32(),
+        tbl: Array.from(new Uint8Array(ga(0x00636b80).readByteArray(0x90))).map(function(b){ return ('0' + b.toString(16)).slice(-2); }).join('')}); } catch(e){ OR.err = 'seed10 '+e; } }
     });
     OR.armed = true;
     return 'oracle armed (0x00410d10 + 0x00410510 + 0x004177b0 + seed 0x004046a0)';

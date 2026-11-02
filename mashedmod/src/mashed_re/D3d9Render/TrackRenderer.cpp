@@ -56,6 +56,9 @@ extern "C" float __cdecl RaceScoreFloatGetBySlot(int param_1);                 /
 extern "C" void __cdecl SplineCubicBlend3(float t, float* out, float* p0, float* p1, float* p2,
                                           float* p3);                           // 0x00482ae0
 #include "../Vehicle/VehicleRecordBase.h"
+// [MATCH-T13-SEED] 0x004173a0, the matched body (Match/MatchS03_004173a0.cpp).
+extern "C" float Float89a360Get(void);
+
 namespace mashed_re { namespace Frontend {   // [u9779] FUN_0040d590's one body (Frontend/MenuLeaves_af4.cpp)
 struct Rank3Callees { float (*pct)(int); void (*kill)(std::uint32_t); void (*add)(std::uint32_t, int); };
 void RaceRankThree(std::uint32_t, std::uint32_t, std::uint32_t, int, const Rank3Callees&);
@@ -7613,6 +7616,38 @@ void TrackRenderer::UpdatePowerups(float dt) {
     }
 }
 
+namespace {
+// [MATCH-T13-SEED] FUN_004046a0 (0x004046a0) reads its difficulty through FUN_004173a0 (= DAT_0089a360, the exe
+// holds 2.5f after the AI race reset). The port fed a literal 0.f, so f = 1.0 on courses 0xb / 0x1a / 0x27
+// where the original's f = 1.0 - DAT_0089a360 * 0.1. MASHED_RULE10_SEED_DIFF=1 passes the matched body
+// (Match/MatchS03_004173a0.cpp) instead. Default OFF: verify/t13seed_20261102/PREREG_MATCH-T13-SEED.md.
+// MASHED_RULE10_SEED_LOG=1 (or the knob) writes one [rule10-seed] line per seed call to mashed_re.log.
+bool Rule10SeedDiffEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RULE10_SEED_DIFF"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+bool Rule10SeedLogEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RULE10_SEED_LOG"); return (e && e[0] && e[0] != '0') || Rule10SeedDiffEnabled(); }();
+    return s;
+}
+std::uint32_t F32Bits(float v) { std::uint32_t u; std::memcpy(&u, &v, 4); return u; }
+float Rule10SeedCall(const char* site, int courseId, float* bonus) {
+    const float diff = Rule10SeedDiffEnabled() ? Float89a360Get() : 0.f;   // 0x004046a0: fVar7 = FUN_004173a0()
+    const float t = Race::RuleEngine::Rule10Seed(courseId, diff, bonus);
+    if (Rule10SeedLogEnabled()) {
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            const float b = bonus ? *bonus : 0.f;
+            std::fprintf(lf, "[rule10-seed] site=%s course=%d knob=%d diff=%.9g diff_raw=%08x live360_raw=%08x "
+                             "timer=%.9g timer_raw=%08x bonus=%.9g bonus_raw=%08x\n",
+                         site, courseId, Rule10SeedDiffEnabled() ? 1 : 0, diff, F32Bits(diff),
+                         *reinterpret_cast<const std::uint32_t*>(0x0089a360u), t, F32Bits(t), b, F32Bits(b));
+            std::fclose(lf);
+        }
+    }
+    return t;
+}
+}  // namespace
+
 void TrackRenderer::StartRound() {
     if (gates_.size() < 4 || !car_ready_) return;
     // [pontoon 2026-10-16] FUN_004111c0's race / round reset runs the course's slots 7 (0x0040fefe) and 6 (0x00410195):
@@ -7651,7 +7686,7 @@ void TrackRenderer::StartRound() {
     // timer unconditionally (30.0 default branch) and rebuilds the 6-entry
     // checkpoint table with every hit flag (0x00636b90 + i*0x14) = 0, so the
     // hit mask and lap latch clear with it.
-    rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
+    rulep_.timer = Rule10SeedCall("round", course_id_, &rule10_bonus_);
     rule10_hit_mask_ = 0;
     rule10_lap_seen_ = -1;
     // [D-11056] re-arm the rule-5 collectible feed each round (collectTotal
@@ -7946,7 +7981,7 @@ void TrackRenderer::SetRaceRule(int rule) {
     *reinterpret_cast<int*>(0x007f0fd0u) = rule;   // [brecipe] one source for DAT_007f0fd0
     rule_engine_on_ = RuleEngineEnabled();
     rulep_ = Race::RuleEngine::Persist{};             // FUN_00414060: slots=-1.0
-    rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
+    rulep_.timer = Rule10SeedCall("setrule", course_id_, &rule10_bonus_);
     rule10_hit_mask_ = 0;
     rule10_lap_seen_ = -1;
     match_draw_ = false;
