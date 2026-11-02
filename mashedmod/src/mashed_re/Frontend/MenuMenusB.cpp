@@ -11,7 +11,6 @@
 //   (preserved in original\MASHED.exe.unpatched)
 
 #include "../Core/HookSystem.h"
-#include "MenuMeasure.h"
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
@@ -60,15 +59,10 @@ static auto* const s_FUN_00417740 =
     reinterpret_cast<int(__cdecl*)(int)>(0x00417740u);
 
 // ---------------------------------------------------------------------------
-// MenuMenusBA: the body is Frontend/MenuMeasure.cpp, shared with the exe (D4-DC-82a0, 2026-10-25).
-// This TU supplies the .asi's cells: the original's callees at their absolute addresses and the
-// addresses of the two globals the body reads (font context at 0x004282dd, divisor at 0x004282f1).
-// ---------------------------------------------------------------------------
-extern "C" void*        g_menuBa_Lookup   = reinterpret_cast<void*>(0x00427780u);
-extern "C" void*        g_menuBa_Remap    = reinterpret_cast<void*>(0x004277a0u);
-extern "C" void*        g_menuBa_Measure  = reinterpret_cast<void*>(0x005554d0u);
-extern "C" const void*  g_menuBa_FontCell = reinterpret_cast<const void*>(0x0067d838u);
-extern "C" const float* g_menuBa_DivCell  = reinterpret_cast<const float*>(0x0067d830u);
+// MenuMenusBA (0x004282a0): since MATCH-S06-FU the one body of both targets is the byte-matched source
+// re/match/s06/004282a0.c, compiled by Match/MatchS06_004282a0.cpp, which binds the .asi's globals and callees
+// itself ([0x0067d838], [0x0067d830], FontText_StringTableLookup, TextCtrlCodeRemapBody, the original's 0x005554d0).
+// The cells this TU used to define for the naked body (D4-DC-82a0) are gone.
 
 // ---------------------------------------------------------------------------
 // MenuMenusBB (0x00427ad0): moved to Frontend/MenuMenusBB.cpp (drawstream 2026-10-12), an x87 TU. Under
