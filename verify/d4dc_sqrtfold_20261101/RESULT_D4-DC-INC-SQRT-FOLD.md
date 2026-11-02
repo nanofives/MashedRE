@@ -1,5 +1,64 @@
 # RESULT D4-DC-INC-SQRT-FOLD
 
+## Flip follow-up, 2026-11-02 (L-86 answered (a)): HANDOFF
+
+**The flip is committed, but run13 and the post-flip gates are NOT measured.** The display on this PC was asleep for the
+whole window: every `diag.py probe-render` from 09:50 to 10:25 local (18 probes, private root) failed D3D9 CreateDevice
+`0x8876086A` on HAL, HAL/SW and REF. That is an environment block, not a finding.
+
+Done:
+- `12efef518`: merged `orch/integration` @ `bf8abf3d0` (167 commits) with `git -c merge.autoStash=false`. One conflict in
+  `verify/savelink_20261023/run_arms.py` (adjacent STACK lines), resolved by keeping both sides. Build OK.
+- `7e9e9869e`: the flip. `SqrtFoldOn()` (`Math/RwLutTables.cpp`) is now true unless `MASHED_NO_SQRT_FOLD` is set to a
+  value other than 0. `MASHED_SQRT_FOLD=1`, the old opt-in, is a no-op. The comments in `Math/RwLutTables.h`, `Math/RwSqrt.cpp`
+  and `Math/Vec3.cpp` name the RVAs (FastSqrt 0x004c3b30, FastInvSqrt 0x004c3b90, Vec3Magnitude 0x004c3ac0) inside the tagged
+  comment. A first try put them on their own `// 0x004c3b30` lines. rva-lint then bound the `FastSqrt` call-through as a second
+  body next to `Math/RwLutTables.cpp:54 LutSqrt` (2 NEW DUP-IN-TARGET findings), so that try was reworded before the commit.
+  `run_arms.py` gains `NSQF` = `MASHED_NO_SQRT_FOLD=1`.
+- Allowlist: `re/tools/dual_copy_allowlist.txt` has **no key** for 0x004c3ac0 / 0x004c3b30 / 0x004c3b90. The batch3 rows
+  removed them, and the scanner never bound these hooks (`// Original: 0x...` headers). So there is nothing to retire.
+- Build at `7e9e9869e` (`MASHED_NO_DEPLOY=1`): `mashed_re.exe` `021ef8fa095cfb2de946236dabf4c1c05e07c4c026c934c78b58a80383fa6a89`,
+  `mashed_re_dev.asi` `c4366804bcb0b008d29946c958f461b47f9056048f02cb13b76a4c4d18c8056c`.
+  `scripts/lan_release/archive_lint.py --ref orch/D4-DC-INC-SQRT-FOLD`: OK (rva-lint 2 findings, 2 allowlisted, NEW=0, asm-lint
+  1133 files PASS).
+
+Measured offline from the knob-ON arms of the first run (build `1ab4669f`, base `96640c25a`, files byte-identical to the B ref):
+
+| Check (merge-train `full` set) | Input | Result | Ref |
+|---|---|---|---|
+| (e) E launch, `re/tools/ai_speed_env.py --check` | `arms/B_SQF_K0.step.csv` (`1d5bf4f9`) | launch 1425.7 / 2052.5 / 2055.0, (e) PASS 3/3 | `e_launch` 1425.7 / 2052.5 / 2055.0: same |
+| (b) `verify/savelink_20261023/vsum.py` | `arms/B_SQF_K{0,1,26}.step.csv` | 3/3 on all three arms | 3/3 x3: same |
+
+These two checks read only the B step.csv, so they hold for any build whose B arms hash `1d5bf4f9` x3. They were not re-run on
+the post-merge build.
+
+Gate-neutral claim for the flip, from measured data only: on the pre-merge base, knob ON gave G-CTRL `8284be46 / ba407a16 /
+31fe043e`, B `1d5bf4f9` x3, D2 3/3 in band, E launch same, (b) 3/3. The merge brings in 167 integration commits whose own gates
+were the same refs (`merge_train.json`). The combination (merged base + fold ON) has not been run.
+
+**Remaining runs (exact), from the worktree, once `diag.py probe-render` passes with `MASHED_ROOT=D:\MashedWT\D4-DC-INC-SQRT-FOLD_root`:**
+1. Post-flip default gates, expected G-CTRL `8284be46 / ba407a16 / 31fe043e`, B `1d5bf4f9` x3:
+   `py.exe -3.12 <orch-wt>\re\orchestrator\mashed_lock.py run --label D4-DC-INC-SQRT-FOLD -- py.exe -3.12 verify\savelink_20261023\run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`
+   with `A4_EXE=<wt>\mashedmod\build\mashed_re.exe`, `A4_ROOT=D:\MashedWT\D4-DC-INC-SQRT-FOLD_root`, `A4_OUT=D:\MashedWT\D4-DC-INC-SQRT-FOLD_data\arms_flip`.
+   Then `vsum.py` and `ai_speed_env.py --check` on the new B files (expect as above).
+2. run13 (now the default = fold ON), table identical to `verify/run13p3_20261029/tracks_score_sub_p3.txt` and INSTRUMENT GATES PASS:
+   `mashed_lock.py run --solo --ttl 14400 --label D4-DC-INC-SQRT-FOLD -- py.exe -3.12 verify\rsky_20261016\run13.py run --exe <wt>\mashedmod\build\mashed_re.exe --root D:\MashedWT\D4-DC-INC-SQRT-FOLD_root --out D:\MashedWT\D4-DC-INC-SQRT-FOLD_data\tracks13`,
+   then `run13.py score --out ...\tracks13 --cite verify\rres_20261016\cites_rres.json`.
+3. Optional: D2 x3 (`D2_DEFH_1..3`, `--solo`), score with `verify/d2band42_20261029/score_d2_v2.py`, at least 1600 motion_diag lines.
+
+The merge train's `-Full` run (review as SOURCE -Full FLIP) also covers 1 to 3.
+
+Raw files of this follow-up (`D:/MashedWT/D4-DC-INC-SQRT-FOLD_data/`, not committed):
+
+| File | SHA-256 |
+|---|---|
+| e_check_sqf.txt | `dca388aae767aaf50d9cb7d39350cb495a3966b9cedbdfbee6d68719c6d49c20` |
+| vsum_b_sqf.txt | `4b7b9546fe63cf7878e30860aab64e19e2d7850b2c0422924df590158de2097b` |
+| build_merge.log | `90fd9b1a4953008bfcee656cb4344f10b35c019afd44d658f0d040dfd3f3d158` |
+| build_flip.log (final, NEW=0) | `bbc0ba43586816c0218e7675eac2d5a14c7baba09b73134d26fdaccc9feaa4bc` |
+
+## First run, 2026-11-01
+
 Verdict: **DECISION**. Knob OFF leaves every gate on its ref. Knob ON leaves G-CTRL and B unchanged, and D2 scores 3/3 in band.
 Flipping the default is filed as a roadmap decision.
 
