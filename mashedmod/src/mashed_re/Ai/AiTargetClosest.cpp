@@ -10,8 +10,9 @@
 // FUN_00416250 commits mode 3 (look = cand) on 1 + LOS, and on 2 takes the immediate return at
 // 0x004163f6..0x00416405 (ctrl[4] = 0, ctrl[5] = 0xff).
 //
-// The two bodies and one leaf (TG_426bb0) are generated from the anchored bytes by re/tools/gen_naked_asm.py
-// (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). FUN_0040e370 is not
+// The two bodies are generated from the anchored bytes by re/tools/gen_naked_asm.py
+// (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). FUN_00426bb0 goes to
+// Global66d6d8Get (Match/MatchS06_00426bb0.cpp, MATCH-S06). FUN_0040e370 is not
 // generated: the call at 0x00414ad5 goes to IsCarSlotActive, the byte-matched body in
 // Match/MatchS02_0040e370.cpp (one body per RVA). FUN_0040e470 / FUN_004c3ac0 / FUN_004c3b30 go to
 // their one port bodies (CarSlotStateGet, RwLutLength_cd, RwLutSqrt_cd, D4-DC-INC-batch3). C++ here, each with the

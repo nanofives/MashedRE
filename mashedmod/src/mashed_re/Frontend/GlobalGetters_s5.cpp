@@ -25,12 +25,8 @@
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_004260a0.md
 // ---------------------------------------------------------------------------
 
-// 0x004260a0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat00657438() {
-    return *reinterpret_cast<std::uint32_t*>(0x00657438u);
-}
-
-RH_ScopedInstall(GetDat00657438, 0x004260a0);
+// MATCH-S06: the body of 0x004260a0 (GetDat00657438) moved to Match/MatchS06_004260a0.cpp,
+// which compiles the byte-matched source re/match/s06/004260a0.c.
 
 // ---------------------------------------------------------------------------
 // GetDat0065743c  --  0x004260b0
@@ -43,12 +39,8 @@ RH_ScopedInstall(GetDat00657438, 0x004260a0);
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_004260b0.md
 // ---------------------------------------------------------------------------
 
-// 0x004260b0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0065743c() {
-    return *reinterpret_cast<std::uint32_t*>(0x0065743cu);
-}
-
-RH_ScopedInstall(GetDat0065743c, 0x004260b0);
+// MATCH-S06: the body of 0x004260b0 (GetDat0065743c) moved to Match/MatchS06_004260b0.cpp,
+// which compiles the byte-matched source re/match/s06/004260b0.c.
 
 // ---------------------------------------------------------------------------
 // GetDat0066d6e0  --  0x00426bc0
@@ -60,12 +52,8 @@ RH_ScopedInstall(GetDat0065743c, 0x004260b0);
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426bc0.md
 // ---------------------------------------------------------------------------
 
-// 0x00426bc0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0066d6e0() {
-    return *reinterpret_cast<std::uint32_t*>(0x0066d6e0u);
-}
-
-RH_ScopedInstall(GetDat0066d6e0, 0x00426bc0);
+// MATCH-S06: the body of 0x00426bc0 (GetDat0066d6e0) moved to Match/MatchS06_00426bc0.cpp,
+// which compiles the byte-matched source re/match/s06/00426bc0.c.
 
 // ---------------------------------------------------------------------------
 // GetTableEntry0066d658  --  0x00426bd0
@@ -82,19 +70,5 @@ RH_ScopedInstall(GetDat0066d6e0, 0x00426bc0);
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426bd0.md
 // ---------------------------------------------------------------------------
 
-// 0x00426bd0
-extern "C" __declspec(dllexport) void __cdecl GetTableEntry0066d658(
-    int param_1,
-    std::uint16_t* param_2,
-    std::uint16_t* param_3)
-{
-    // Read two consecutive 16-bit fields from the packed 4-byte record at
-    // table[param_1].  Each record occupies 4 bytes at stride * param_1.
-    // DAT_0066d658 = low uint16; DAT_0066d65a (= +2) = high uint16.
-    const std::uint8_t* base = reinterpret_cast<const std::uint8_t*>(0x0066d658u);
-    const std::uint8_t* entry = base + static_cast<std::uint32_t>(param_1) * 4u;
-    *param_2 = *reinterpret_cast<const std::uint16_t*>(entry);
-    *param_3 = *reinterpret_cast<const std::uint16_t*>(entry + 2u);
-}
-
-RH_ScopedInstall(GetTableEntry0066d658, 0x00426bd0);
+// MATCH-S06: the body of 0x00426bd0 (GetTableEntry0066d658) moved to Match/MatchS06_00426bd0.cpp,
+// which compiles the byte-matched source re/match/s06/00426bd0.c.

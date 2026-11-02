@@ -124,13 +124,8 @@ RH_ScopedInstall(UtilSlotIndexCondGet, 0x0040dc90);
 //   U-3587: state-value semantics (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00429860
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RaceStateFlagGet(void) {
-    // 0x008991bc cited at 0x00429860 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x008991bcu);
-}
-
-RH_ScopedInstall(RaceStateFlagGet, 0x00429860);
+// MATCH-S06: the body of 0x00429860 (RaceStateFlagGet) moved to Match/MatchS06_00429860.cpp,
+// which compiles the byte-matched source re/match/s06/00429860.c.
 
 // ---------------------------------------------------------------------------
 // RaceStateLatchSet  --  0x00429840   (subsystem: ai)
@@ -155,15 +150,5 @@ RH_ScopedInstall(RaceStateFlagGet, 0x00429860);
 //   U-3587: state-value semantics (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00429840
-extern "C" __declspec(dllexport) void __cdecl RaceStateLatchSet(std::uint32_t param_1) {
-    // branch structure + 0x008991bc cited at 0x00429840 body.
-    if (param_1 != 0u) {
-        if (*reinterpret_cast<const std::uint32_t*>(0x008991bcu) != 0u) {
-            return;
-        }
-    }
-    *reinterpret_cast<std::uint32_t*>(0x008991bcu) = param_1;
-}
-
-RH_ScopedInstall(RaceStateLatchSet, 0x00429840);
+// MATCH-S06: the body of 0x00429840 (RaceStateLatchSet) moved to Match/MatchS06_00429840.cpp,
+// which compiles the byte-matched source re/match/s06/00429840.c.

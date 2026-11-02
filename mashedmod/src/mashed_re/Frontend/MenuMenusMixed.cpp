@@ -10,16 +10,8 @@
 
 #include <cstdint>
 
-// ---------------------------------------------------------------------------
-// Forward declarations for callees (not yet fully reimplemented; we call originals)
-// ---------------------------------------------------------------------------
-
-// 0x0040ce80  FUN_0040ce80  — double-deref field reader at PTR_PTR_005f2770
-// Analysis: re/analysis/promote_c1_low_ab1/0x0040ce80.md  (C2 note)
-// Signature: undefined4 FUN_0040ce80(int param_1)
-// Pure read: *(PTR_PTR_005f2770[param_1] + 4). No side-effects.
-static auto* const s_FUN_0040ce80 =
-    reinterpret_cast<std::uint32_t(__cdecl*)(int)>(0x0040ce80);
+// MATCH-S06: the callee pointer s_FUN_0040ce80 went with the body (the matched source binds
+// FUN_0040ce80 -> PtrTable5f2770Get, Util/PromoLoop_round49.cpp).
 
 // ---------------------------------------------------------------------------
 // MenuTableSearch  --  0x0042a940
@@ -52,37 +44,5 @@ static auto* const s_FUN_0040ce80 =
 // ref: re/analysis/frontend_promote_menus_a/0x0042a940.md
 // ---------------------------------------------------------------------------
 
-// 0x0042a940
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuTableSearch(
-    std::uint32_t param_1)
-{
-    // Step 1: compute search key via callee FUN_0040ce80.
-    // Cited at 0x0042a944: calls 0x0040ce80(param_1).
-    int key = static_cast<int>(s_FUN_0040ce80(static_cast<int>(param_1)));
-
-    // Step 2: initialise table position counter (int units) and load first key.
-    // 0x005f6748: first key in stride-3 table (cited at 0x0042a944).
-    int pos = 0;
-    int entry = *reinterpret_cast<std::int32_t*>(0x005f6748u);
-
-    // Step 3: linear table scan.
-    while (true) {
-        // End-of-table sentinel: -1 (0xffffffff). Cited at 0x0042a94c.
-        if (entry == -1) {
-            return 0u;
-        }
-        // Key match: break to return value.
-        if (entry == key) {
-            break;
-        }
-        // Advance to next entry: next key is at 0x005f6754 + pos*4 (cited at 0x0042a953).
-        entry = *reinterpret_cast<std::int32_t*>(0x005f6754u + static_cast<unsigned>(pos) * 4u);
-        // Stride is 3 int32 units (cited at 0x0042a955).
-        pos += 3;
-    }
-
-    // Step 4: return value field at 0x005f6750 + pos*4 (cited at 0x0042a966).
-    return *reinterpret_cast<std::uint32_t*>(0x005f6750u + static_cast<unsigned>(pos) * 4u);
-}
-
-RH_ScopedInstall(MenuTableSearch, 0x0042a940);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S06: the body of 0x0042a940 (MenuTableSearch) moved to Match/MatchS06_0042a940.cpp,
+// which compiles the byte-matched source re/match/s06/0042a940.c.

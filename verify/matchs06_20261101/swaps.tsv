@@ -1,0 +1,129 @@
+rva	port_symbol	wrapper	targets	kind	conf	best%	source_sha256_16	exe_direct_sites	reach_WinMain	old_body
+0x00426070	TrackPhysWorld2Get	Match/MatchS06_00426070.cpp	asi	replace	C3	100.0	5b465226174899bc	-	-	Render/TrackLoaderMicros_p3.cpp[A]:('TrackPhysWorld2Get', 83)
+0x00426080	GlobalDat00656ed8Get	Match/MatchS06_00426080.cpp	both	replace	C3	100.0	c3238ecb31ef3c6b	0	no	Frontend/GlobalGetters_s4.cpp[EA]:('GlobalDat00656ed8Get', 160)
+0x00426090	GlobalDat0066ce58Get	Match/MatchS06_00426090.cpp	both	replace	C3	100.0	9571180ac6d961b5	8	yes	Frontend/GlobalGetters_s4.cpp[EA]:('GlobalDat0066ce58Get', 180);Race/PathProgStep.cpp[E]:('PP_426090', 154)
+0x004260a0	GetDat00657438	Match/MatchS06_004260a0.cpp	both	replace	C3	100.0	ea02621d5215c112	0	no	Frontend/GlobalGetters_s5.cpp[EA]:('GetDat00657438', 29)
+0x004260b0	GetDat0065743c	Match/MatchS06_004260b0.cpp	both	replace	C3	100.0	71837d592ef84708	0	no	Frontend/GlobalGetters_s5.cpp[EA]:('GetDat0065743c', 47)
+0x004260c0	TrackPhysWorld3Get	Match/MatchS06_004260c0.cpp	asi	replace	C3	100.0	e954faeab7fc6f9a	-	-	Render/TrackLoaderMicros_p3.cpp[A]:('TrackPhysWorld3Get', 118)
+0x004260e0	FUN_004260e0	Match/MatchS06_004260e0.cpp	both	new	C2	100.0	6ea4befcdaed64e7	0	no	-
+0x004262f0	FUN_004262f0	Match/MatchS06_004262f0.cpp	both	new	C2	100.0	00f1739a22942bc1	0	no	-
+0x00426340	FUN_00426340	Match/MatchS06_00426340.cpp	asi	new	C2	100.0	4a48800cb863af72	-	-	-
+0x00426460	FUN_00426460	Match/MatchS06_004264d0.cpp	asi	new	C2	100.0	b6c4a0426e02d61a	-	-	-
+0x004264d0	FUN_004264d0	Match/MatchS06_004264d0.cpp	asi	new	C2	100.0	b6c4a0426e02d61a	-	-	-
+0x00426630	-	-	-	not-swapped	C3	100.0	f75de7976d2c0e4a	-	-	-
+0x00426640	-	-	-	not-swapped	C2	100.0	24a39d858448ab58	-	-	-
+0x00426670	WorldRenderDispatch_Begin	Match/MatchS06_00426670.cpp	asi	replace	C3	100.0	479b1739b08fb74b	-	-	Render/FrameWorldPasses.cpp[A]:('WorldRenderDispatch_Begin', 80)
+0x004266b0	WorldRenderDispatch_End	Match/MatchS06_004266b0.cpp	asi	replace	C3	100.0	4360e872acfeaafb	-	-	Render/FrameWorldPasses.cpp[A]:('WorldRenderDispatch_End', 130)
+0x004266f0	-	-	-	not-swapped	C3	100.0	cef8ed117eb927b7	-	-	-
+0x00426700	-	-	-	not-swapped	C2	100.0	5e502d21de74d250	-	-	-
+0x00426780	-	-	-	not-swapped	C2	100.0	3063e0f59839b52e	-	-	-
+0x00426810	-	-	-	not-swapped	C2	97.9	01fa1aa366551876	-	-	-
+0x00426ab0	-	-	-	not-swapped	C2	100.0	f87a17ae1f150f80	-	-	-
+0x00426b40	-	-	-	not-swapped	C2	100.0	5a48a61d621526da	-	-	-
+0x00426ba0	HudDrawEnabled	Match/MatchS06_00426ba0.cpp	both	replace	C3	100.0	ad63cf7885cd0aad	0	no	HUD/HudDispatch.cpp[EA]:('HudDrawEnabled', 256)
+0x00426bb0	Global66d6d8Get	Match/MatchS06_00426bb0.cpp	both	replace	C3	100.0	534c18317f3903fc	5	yes	Ai/AiLeafTargets.cpp[E]:('AL_426bb0', 261);Ai/AiTargetClosest.cpp[E]:('TG_426bb0', 120);Race/PathProgStep.cpp[E]:('PP_426bb0', 154);Util/PromoLoop_round31.cpp[A]:('Global66d6d8Get', 38)
+0x00426bc0	GetDat0066d6e0	Match/MatchS06_00426bc0.cpp	both	replace	C3	100.0	99e0ccb62b7f8306	1	yes	Frontend/GlobalGetters_s5.cpp[EA]:('GetDat0066d6e0', 64)
+0x00426bd0	GetTableEntry0066d658	Match/MatchS06_00426bd0.cpp	both	replace	C3	100.0	d40fd1269c1cbfda	1	yes	Frontend/GlobalGetters_s5.cpp[EA]:('GetTableEntry0066d658', 86)
+0x00426c00	GameStateFlagGet	Match/MatchS06_00426c00.cpp	both	replace	C3	100.0	6641c45e0fcc1cc7	0	no	Boot/GameStateCluster.cpp[EA]:('GameStateFlagGet', 55)
+0x00426c10	TimerDispatch10	Match/MatchS06_00426c10.cpp	both	replace	C4	100.0	ae2b618b4e8c5172	0	no	Util/UtilBatch.cpp[A]:('TimerDispatch10', 172)
+0x00426c30	TimerDispatch30	Match/MatchS06_00426c30.cpp	both	replace	C4	100.0	f086bb0fa493fb3b	0	no	Util/UtilBatch.cpp[A]:('TimerDispatch30', 208)
+0x00426c50	-	-	-	not-swapped	C2	100.0	49155af912b33d6c	-	-	-
+0x00426c70	TimerDispatch70	Match/MatchS06_00426c70.cpp	both	replace	C4	100.0	d36f0429ade1e639	0	no	Util/UtilBatch.cpp[A]:('TimerDispatch70', 241)
+0x00426c90	-	-	-	not-swapped	C2	100.0	6af39488ca3ceb4f	-	-	-
+0x00426cb0	SlotIndexToPtr	Match/MatchS06_00426cb0.cpp	both	replace	C3	100.0	b1418ef203d3c181	7	yes	Frontend/MenuNearLeaves_s6.cpp[EA]:('SlotIndexToPtr', 47);Race/PathProgStep.cpp[E]:('PP_426cb0', 154)
+0x00426cc0	VehicleTable4cPtrGet	Match/MatchS06_00426cc0.cpp	both	replace	C4	100.0	ac6a326bf8033df7	4	yes	Race/PathProgStep.cpp[E]:('PP_426cc0', 154);Vehicle/PromoLoop_round2.cpp[A]:('VehicleTable4cPtrGet', 140)
+0x00426cd0	TrackSlotArrayReset	Match/MatchS06_00426cd0.cpp	asi	replace	C3	100.0	2defa9dfef1c6ae9	-	-	Render/TrackLoaderMicros_p3.cpp[A]:('TrackSlotArrayReset', 211)
+0x00426cf0	GetDat0066d6e4	Match/MatchS06_00426cf0.cpp	both	replace	C3	100.0	da93cbc2cce54ab3	1	yes	Frontend/BatchAA_s1.cpp[EA]:('', 104);Race/PathProgStep.cpp[E]:('PP_426cf0', 154)
+0x00426d00	FrontendArraySlotGet	Match/MatchS06_00426d00.cpp	both	replace	C3	100.0	116d7d449582f588	8	yes	Frontend/BatchAA_s6.cpp[EA]:('FrontendArraySlotGet', 93);Race/PathProgStep.cpp[E]:('PP_426d00', 154)
+0x00426d20	FUN_00426d20	Match/MatchS06_00426d20.cpp	both	new	C2	100.0	6e87dc12dec754ee	0	no	-
+0x00426d90	HandleArrayRelease	Match/MatchS06_00426d90.cpp	both	replace	C2	100.0	6f7448aea98e1452	0	no	Frontend/MenuNearLeaves_s6.cpp[EA]:('HandleArrayRelease', 77)
+0x00426dc0	FrontendRaycastForward	Match/MatchS06_00426dc0.cpp	both	replace	C3	100.0	bb2671cd2334ca88	0	no	Frontend/BatchAA_s1.cpp[EA]:('', 279)
+0x00426de0	FrontendFloatGet426de0	Match/MatchS06_00426de0.cpp	both	replace	C3	100.0	9fbcc4c893fd922e	0	no	Frontend/FrontendLeaves_ad2.cpp[EA]:('FrontendFloatGet426de0', 36)
+0x00426df0	FrontendFloatGet426df0	Match/MatchS06_00426df0.cpp	both	replace	C3	100.0	ddb660fbd8446cc8	0	no	Frontend/FrontendLeaves_ad2.cpp[EA]:('FrontendFloatGet426df0', 52)
+0x00426e00	-	-	-	not-swapped	C3	100.0	20a6cfd1791a832a	-	-	-
+0x00426e10	FUN_00426e10	Match/MatchS06_00426e10.cpp	asi	new	C2	100.0	59b582c9615d258e	-	-	-
+0x004270f0	FUN_004270f0	Match/MatchS06_004270f0.cpp	asi	new	C2	100.0	4b6733763e1bd9b0	-	-	-
+0x004273e0	-	-	-	not-swapped	C2	90.4	9d33c9f2cf45c1a3	-	-	-
+0x004274d0	LangIndexSeedFromCli	Match/MatchS06_004274d0.cpp	asi	replace	C3	100.0	0f8905344b879f80	-	-	Frontend/SkeletonAndScatter_t6.cpp[A]:('LangIndexSeedFromCli', 102)
+0x004274e0	-	-	-	NOT-SAFE	C2	100.0	59d2d25807a8707a	-	-	Frontend/SkeletonAndScatter_t6.cpp[A]:('LocalizationFileLoad', 185)
+0x00427580	FrontendQuadParamInit427580	Match/MatchS06_00427580.cpp	both	replace	C3	100.0	349be48af9799989	0	no	Frontend/FrontendLeaves_ad2.cpp[EA]:('FrontendQuadParamInit427580', 74)
+0x004275d0	FUN_004275d0	Match/MatchS06_004275d0.cpp	asi	new	C2	100.0	06f9fcdad7ed4c33	-	-	-
+0x00427620	-	-	-	not-swapped	C2	100.0	ae160279b79c3f3f	-	-	-
+0x00427680	FUN_00427680	Match/MatchS06_00427680.cpp	both	new	C2	100.0	e07fb012ea9d3879	4	no	-
+0x00427780	FontText_StringTableLookup	Match/MatchS06_00427780.cpp	both	replace	C4	100.0	a05678760ae44052	6	no	HUD/HudBatch.cpp[A]:('', 208)
+0x004277a0	TextCtrlCodeRemapBody	Match/MatchS06_004277a0.cpp	both	replace	C3	100.0	7626770994960946	7	no	Frontend/TextCtrlCodeRemap.cpp[A]:('TextCtrlCodeRemap', 46)
+0x00427840	FontText_UTF16WidenCopyBody	Match/MatchS06_00427840.cpp	both	replace	C3	100.0	3fd51435d1d4d438	4	no	HUD/HudBatch.cpp[A]:('', 244)
+0x00427880	FUN_00427880	Match/MatchS06_00427880.cpp	both	new	C2	100.0	34aad399d0e3c83a	1	no	-
+0x004278d0	FUN_004278d0	Match/MatchS06_004278d0.cpp	both	new	C2	100.0	ae4a1c365c837141	0	no	-
+0x00427990	FUN_00427990	Match/MatchS06_00427990.cpp	both	new	C2	100.0	b4628e0fb7cf862c	0	no	-
+0x00427ad0	MenuMenusBB	Match/MatchS06_00427ad0.cpp	both	replace	C3	100.0	6167302b14644109	0	no	Frontend/MenuMenusBB.cpp[A]:('MenuMenusBB', 39)
+0x00427be0	FUN_00427be0	Match/MatchS06_00427be0.cpp	both	new	C2	100.0	aee4a0cd3dd4df72	0	no	-
+0x00427c90	GetDat0067d84c	Match/MatchS06_00427c90.cpp	both	replace	C3	100.0	45be055911b3a4c2	2	no	Frontend/BatchAA_s3.cpp[EA]:('GetDat0067d84c', 43)
+0x00427ca0	FUN_00427ca0	Match/MatchS06_00427ca0.cpp	both	new	C2	100.0	a9f1a47cf309d961	0	no	-
+0x00427e00	FUN_00427e00	Match/MatchS06_00427e00.cpp	both	new	C2	100.0	179ec35a70c428de	35	no	-
+0x00427f00	FUN_00427f00	Match/MatchS06_00427f00.cpp	both	new	C2	100.0	2886ddcde5cb0f69	0	no	-
+0x00427ff0	FUN_00427ff0	Match/MatchS06_00427ff0.cpp	both	new	C2	100.0	d7e9c7ecfc9139d3	0	no	-
+0x00428140	FUN_00428140	Match/MatchS06_00428140.cpp	both	new	C2	100.0	b67d362ffeff2a18	0	no	-
+0x004282a0	-	-	-	NOT-SAFE	C3	100.0	23ff5a8f05fb886d	-	-	Frontend/MenuMeasure.cpp[EA]:('MenuMenusBA', 70)
+0x00428320	TextWidthMeasureB	Match/MatchS06_00428320.cpp	both	replace	C3	100.0	1d91bc0b13a11e3b	2	no	Frontend/TextMeasure.cpp[EA]:('TextWidthMeasureB', 69)
+0x00428390	FrontendStateSet	Match/MatchS06_00428390.cpp	asi	replace	C3	100.0	1bfe03cebac0a1f3	-	-	Frontend/SkeletonAndScatter_t6.cpp[A]:('FrontendStateSet', 207)
+0x004283a0	-	-	-	not-swapped	C2	100.0	60a0a9f98ea50ce0	-	-	-
+0x00428400	-	-	-	not-swapped	C2	100.0	ad90096657a638ec	-	-	-
+0x00428450	-	-	-	not-swapped	C3	84.6	113960bd5e4f7c03	-	-	HUD/TextCluster.cpp[A]:('HudSpinCoinAnim', 180)
+0x00428590	ViewportInit	Match/MatchS06_00428590.cpp	both	replace	C2	100.0	491bb50ca8d3253d	0	no	Boot/SubsystemInit.cpp[EA]:('ViewportInit', 340)
+0x00428610	ViewportScaledRectDraw	Match/MatchS06_00428610.cpp	both	replace	C3	100.0	138c3e0cd30b36a7	1	no	Frontend/ViewportScaledRectDraw.cpp[EA]:('ViewportScaledRectDraw', 48)
+0x00428760	ViewportScaledRectDraw_Arg7Zero	Match/MatchS06_00428760.cpp	both	replace	C3	100.0	68222b5abae61d7f	6	no	Render/PromoLoop_round256.cpp[A]:('ViewportScaledRectDraw_Arg7Zero', 81)
+0x004288a0	FUN_004288a0	Match/MatchS06_004288a0.cpp	both	new	C2	100.0	4aa5da03032d3f0c	1	no	-
+0x00428a30	FUN_00428a30	Match/MatchS06_00428a30.cpp	both	new	C2	100.0	961185a248b9ad59	1	no	-
+0x00428bf0	TitleBuildInfoRender	Match/MatchS06_00428bf0.cpp	both	replace	C2	100.0	2359dc67d7dca1ba	1	no	Frontend/MenuLeaves_af4.cpp[EA]:('TitleBuildInfoRender', 452)
+0x00428d30	FUN_00428d30	Match/MatchS06_00428d30.cpp	both	new	C2	100.0	e7df7536600130c8	1	no	-
+0x00429240	FUN_00429240	Match/MatchS06_00429290.cpp	both	new	C2	100.0	220866e9df918d82	0	no	-
+0x00429290	FUN_00429290	Match/MatchS06_00429290.cpp	both	new	C2	100.0	220866e9df918d82	0	no	-
+0x004292c0	UtilWritePtr	Match/MatchS06_004292c0.cpp	both	replace	C3	100.0	1f748409fd8d1c0b	0	no	Util/UtilLeaves_ac.cpp[EA]:('UtilWritePtr', 107)
+0x004292d0	FUN_004292d0	Match/MatchS06_004292d0.cpp	both	new	C2	100.0	f938e00a44c2d5cc	0	no	-
+0x00429300	HudOverlayFloatGet	Match/MatchS06_00429300.cpp	both	replace	C3	100.0	6e97e771979430e8	1	no	Ai/PromoLoop_round1.cpp[A]:('HudOverlayFloatGet', 186)
+0x00429310	-	-	-	not-swapped	C2	98.3	f33a85a3567273a5	-	-	-
+0x004295a0	HudDualLabelRender	Match/MatchS06_004295a0.cpp	both	replace	C4	100.0	bc7bac2e287380a1	3	no	Util/UtilMid.cpp[A]:('HudDualLabelRender', 433)
+0x00429620	FUN_00429620	Match/MatchS06_00429620.cpp	both	new	C2	100.0	72c1ed56214a7847	1	no	-
+0x00429660	FUN_00429660	Match/MatchS06_00429660.cpp	both	new	C2	100.0	ac3e3141131ba8b7	2	no	-
+0x00429820	Clear8991b0Pair	Match/MatchS06_00429820.cpp	both	replace	C3	100.0	c6d8fc5ead872037	0	no	Util/PromoLoop_round39.cpp[A]:('Clear8991b0Pair', 18)
+0x00429840	RaceStateLatchSet	Match/MatchS06_00429840.cpp	asi	replace	C3	100.0	67aa7add99a39287	-	-	Util/PromoLoop_round9.cpp[A]:('RaceStateLatchSet', 159)
+0x00429860	RaceStateFlagGet	Match/MatchS06_00429860.cpp	asi	replace	C3	100.0	01807faa05640deb	-	-	Util/PromoLoop_round9.cpp[A]:('RaceStateFlagGet', 128)
+0x00429870	LapTimeALessThanB	Match/MatchS06_00429870.cpp	both	replace	C3	100.0	04c41a58482c7e54	0	no	Frontend/MenuScoreGetters.cpp[EA]:('LapTimeALessThanB', 57)
+0x004298c0	Clear67d99c_x4	Match/MatchS06_004298c0.cpp	both	replace	C3	100.0	cfb98b9390430599	0	no	Util/PromoLoop_round70.cpp[A]:('Clear67d99c_x4', 28)
+0x004298e0	-	-	-	not-swapped	C2	100.0	13e6c843280943aa	-	-	-
+0x004299d0	TimeRecordWriteTrackBest	Match/MatchS06_004299d0.cpp	both	replace	C3	100.0	dd9311085122d532	0	no	Util/TimeRecordWrite_ag.cpp[A]:('TimeRecordWriteTrackBest', 15)
+0x00429a30	MenuMenusBE	Match/MatchS06_00429a30.cpp	both	replace	C3	100.0	b0471b12cc0ea4e3	0	no	Frontend/MenuMenusB.cpp[A]:('MenuMenusBE', 402)
+0x00429a70	LapFracGetBySlot	Match/MatchS06_00429a70.cpp	both	replace	C3	100.0	8b47f663399ce43f	0	no	Frontend/MenuScoreGetters.cpp[EA]:('LapFracGetBySlot', 73)
+0x00429a80	LapLapsGetBySlot	Match/MatchS06_00429a80.cpp	both	replace	C3	100.0	4645d4eb18f3ecd6	0	no	Frontend/MenuScoreGetters.cpp[EA]:('LapLapsGetBySlot', 80)
+0x00429a90	LapSecsGetBySlot	Match/MatchS06_00429a90.cpp	both	replace	C3	100.0	21f309a2ed1fe0ca	0	no	Frontend/MenuScoreGetters.cpp[EA]:('LapSecsGetBySlot', 94)
+0x00429aa0	GameStateSlotsFill	Match/MatchS06_00429aa0.cpp	both	replace	C3	100.0	20857b2d0cc12b4d	0	no	Util/UtilMid.cpp[A]:('GameStateSlotsFill', 226)
+0x00429b30	Init429b30	Match/MatchS06_00429b30.cpp	both	replace	C3	100.0	6e7ff478e7fddb36	0	no	Util/PromoLoop_sessionB.cpp[A]:('Init429b30', 3359)
+0x00429b70	Init429b70	Match/MatchS06_00429b70.cpp	both	replace	C3	100.0	1ba40d2d67bb2a9e	0	no	Util/PromoLoop_sessionB.cpp[A]:('Init429b70', 3390)
+0x00429bd0	-	-	-	not-swapped	C2	99.4	5d1ab837aa9baf73	-	-	-
+0x00429e10	FUN_00429e10	Match/MatchS06_00429e10.cpp	both	new	C2	100.0	7c32f9364e779f0b	0	no	-
+0x0042a470	FUN_0042a470	Match/MatchS06_0042a470.cpp	both	new	C2	100.0	164205b3885e918e	5	no	-
+0x0042a530	FUN_0042a530	Match/MatchS06_0042a530.cpp	both	new	C2	100.0	3495f5cb2fbd84fc	6	no	-
+0x0042a5d0	FUN_0042a5d0	Match/MatchS06_0042a5d0.cpp	both	new	C2	100.0	3353bcf64cad4190	0	no	-
+0x0042a640	PathBuilderLoad	Match/MatchS06_0042a640.cpp	both	replace	C2	100.0	2c748d97e4feb828	0	no	Frontend/MenuNearLeaves_s6.cpp[EA]:('PathBuilderLoad', 131)
+0x0042a6b0	FUN_0042a6b0	Match/MatchS06_0042a6b0.cpp	both	new	C2	100.0	de322f4a1be94922	1	no	-
+0x0042a740	FUN_0042a740	Match/MatchS06_0042a740.cpp	both	new	C2	100.0	eac4fba828300533	0	no	-
+0x0042a7f0	FUN_0042a7f0	Match/MatchS06_0042a7f0.cpp	both	new	C2	100.0	f2447e5d34e745a4	0	no	-
+0x0042a860	FUN_0042a860	Match/MatchS06_0042a860.cpp	both	new	C2	100.0	254b538d5c88c725	0	no	-
+0x0042a8d0	FUN_0042a8d0	Match/MatchS06_0042a8d0.cpp	both	new	C2	100.0	76d253c098cb3c41	0	no	-
+0x0042a920	PostTrophyEvent	Match/MatchS06_0042a920.cpp	asi	replace	C4	100.0	495d441b75c3bded	-	-	Save/CareerEvents.cpp[A]:('PostTrophyEvent', 41)
+0x0042a940	MenuTableSearch	Match/MatchS06_0042a940.cpp	asi	replace	C3	100.0	a28864ee72014e3d	-	-	Frontend/MenuMenusMixed.cpp[A]:('MenuTableSearch', 56)
+0x0042a980	MenuTableSearchAlt	Match/MatchS06_0042a980.cpp	asi	replace	C3	100.0	1436c98937d885b3	-	-	Frontend/BatchAA_s5.cpp[A]:('MenuTableSearchAlt', 62)
+0x0042a9c0	ModeCodeLookup	Match/MatchS06_0042a9c0.cpp	both	replace	C3	100.0	bf321af12b82ee41	2	yes	Frontend/BatchAA_s4.cpp[EA]:('ModeCodeLookup', 61)
+0x0042a9f0	GetFadeAlpha	Match/MatchS06_0042a9f0.cpp	asi	replace	C3	100.0	2d7d423b58f40cc4	-	-	Util/PromoLoop_sessionB.cpp[A]:('GetFadeAlpha', 71)
+0x0042aa00	-	-	-	not-swapped	C3	76.8	579f9d091f9f1a93	-	-	Frontend/MenuGetters.cpp[EA]:('MenuCursorStep', 107)
+0x0042aab0	UtilInit898a90	Match/MatchS06_0042aab0.cpp	both	replace	C3	100.0	19b9ef36a8d56703	0	no	Util/UtilLeaves_ac.cpp[EA]:('UtilInit898a90', 121)
+0x0042aad0	MenuDimSetBody	Match/MatchS06_0042aad0.cpp	both	replace	C4	100.0	a2f09dc6dbe6050b	1	no	Frontend/MenuChrome.cpp[EA]:('MenuDimSet', 41)
+0x0042aae0	MenuIm2DQuad	Match/MatchS06_0042aae0.cpp	both	replace	C4	100.0	67e3f416d0aaf151	0	no	Frontend/MenuChrome.cpp[EA]:('MenuIm2DQuad', 104)
+0x0042ac00	MenuGroupCount	Match/MatchS06_0042ac00.cpp	both	replace	C3	100.0	e0d54ea01880633e	0	no	Frontend/MenuGetters.cpp[EA]:('MenuGroupCount', 67)
+0x0042ac50	Calc42ac50	Match/MatchS06_0042ac50.cpp	both	replace	C3	100.0	9ca2ddb4ff05bcf9	0	no	Util/PromoLoop_sessionB.cpp[A]:('Calc42ac50', 903)
+0x0042ac90	MenuEntryGet	Match/MatchS06_0042ac90.cpp	both	replace	C3	100.0	4ef4f9ac17a3ae94	0	no	Frontend/MenuNav.cpp[EA]:('MenuEntryGet', 135)
+0x0042ad10	-	-	-	not-swapped	C2	100.0	59004439e1a6e7b2	-	-	-
+0x0042ad90	Find42ad90	Match/MatchS06_0042ad90.cpp	both	replace	C3	100.0	8adb7c60c907c133	9	yes	Frontend/KvFind.cpp[EA]:('Find42ad90', 18)
+0x0042add0	-	-	-	not-swapped	C3	100.0	e232a93a9e58ea68	-	-	-
+0x0042ae10	MenuReadinessCheckA	Match/MatchS06_0042ae10.cpp	both	replace	C4	100.0	42219c6360aa5026	0	no	Frontend/MenuStateMachine.cpp[EA]:('MenuReadinessCheckA', 91)

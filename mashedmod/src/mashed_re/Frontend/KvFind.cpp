@@ -14,16 +14,5 @@
 // Anchored to MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E (original\MASHED.exe.unpatched).
 #include <cstdint>
 
-// 0x0042ad90
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n) {
-    if (arr == 0) return 0xffffffff;
-    std::uint32_t* a = reinterpret_cast<std::uint32_t*>(arr);
-    std::uint32_t ecx = 0, esi = 0, eax = a[0];
-    if (eax == 0xff070000) return 0xffffffff;
-    for (;;) {
-        if (eax == key) { if (n == esi) return a[ecx + 1]; esi++; }
-        eax = a[ecx + 1]; ecx++;
-        if (eax == 0xff070000) break;
-    }
-    return 0xffffffff;
-}
+// MATCH-S06: the body of 0x0042ad90 (Find42ad90) moved to Match/MatchS06_0042ad90.cpp,
+// which compiles the byte-matched source re/match/s06/0042ad90.c.

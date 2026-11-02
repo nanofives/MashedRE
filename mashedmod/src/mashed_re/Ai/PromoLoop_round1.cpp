@@ -71,35 +71,5 @@ RH_ScopedInstall(AiSplineBankTimerReset, 0x00414030);
 // GetRenderSubMode (FUN_0040e350): MATCH-TOPDOWN-T13 moved the body to Match/MatchS02_0040e350.cpp,
 // which compiles the byte-matched source re/match/s02/0040e350.c (one body per RVA, both targets).
 
-// ---------------------------------------------------------------------------
-// HudOverlayFloatGet  --  0x00429300   (subsystem: hud)
-//
-// Original: FUN_00429300 (bytes DB 05 B8 91 89 00 C3 at 0x00429300 =
-//   FILD dword ptr [0x008991B8]; RET — verified against
-//   original\MASHED.exe.unpatched file offset 0x29300, 2026-06-12)
-// Signature: float10 FUN_00429300(void)
-// Body: return (float)(int)DAT_008991b8;   // SIGNED-INT load, x87 convert
-//
-// NOTE: the global holds an INTEGER (FILD converts int32 -> float). A raw
-// float load here is WRONG (caught RED in the race diff: orig=923.0f vs
-// denormal-bits-923 from the reimpl).
-//
-// The caller (FUN_00429620) passes an arg the body never reads (decomp shows
-// void params; calling-convention mismatch noted in the analysis). __cdecl is
-// caller-clean, so the ignored arg is ABI-safe.
-//
-// Constants (cited from instruction at 0x00429300):
-//   0x008991b8 — int32 source (written at race-overlay setup; U-2279 suggests
-//                a counter/timer — consistent with the observed value 923)
-//
-// Uncertainties (non-blocking):
-//   U-2279: meaning of the value (data-semantic).
-// ---------------------------------------------------------------------------
-
-// 0x00429300
-extern "C" __declspec(dllexport) float __cdecl HudOverlayFloatGet(void) {
-    // FILD [0x008991b8] cited at 0x00429300 (instruction bytes above).
-    return static_cast<float>(*reinterpret_cast<const std::int32_t*>(0x008991b8u));
-}
-
-RH_ScopedInstall(HudOverlayFloatGet, 0x00429300);
+// MATCH-S06: the body of 0x00429300 (HudOverlayFloatGet) moved to Match/MatchS06_00429300.cpp,
+// which compiles the byte-matched source re/match/s06/00429300.c.

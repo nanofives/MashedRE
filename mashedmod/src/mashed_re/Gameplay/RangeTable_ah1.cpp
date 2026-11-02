@@ -26,14 +26,14 @@
 // calls here). The callee below is the only line that differs by target: the .asi calls the original, the exe
 // calls its verbatim copy of it (the original's VA holds nothing in the standalone).
 #ifdef MASHED_STANDALONE
-extern "C" void PP_426090();   // Race/PathProgStep_naked.inc: `mov eax, 0x0066ce58 / ret` (FUN_00426090 verbatim)
+extern "C" void GlobalDat0066ce58Get();   // Match/MatchS06_00426090.cpp (MATCH-S06: the byte-matched FUN_00426090, replaces the naked PP_426090)
 #endif
 
 namespace {
 // FUN_00426090 (0x00426090, C3): returns &DAT_0066ce58 (range-table base).
 inline int FUN_00426090() {
 #ifdef MASHED_STANDALONE
-    return reinterpret_cast<int(*)()>(&PP_426090)();
+    return reinterpret_cast<int(*)()>(&GlobalDat0066ce58Get)();
 #else
     return reinterpret_cast<int(*)()>(0x00426090u)();
 #endif

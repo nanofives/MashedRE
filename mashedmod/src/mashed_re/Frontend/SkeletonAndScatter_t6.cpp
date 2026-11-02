@@ -79,36 +79,8 @@ static auto* const s_FUN_00402fb0 = reinterpret_cast<void(__cdecl*)()>(0x00402fb
 static auto* const s_FUN_00428760 = reinterpret_cast<
     void(__cdecl*)(std::uint32_t, float, float, float, float, int)>(0x00428760);
 
-// ───────────────────────────────────────────────────────────────────────────
-// 0x004274d0  LangIndexSeedFromCli
-//
-// Original: FUN_004274d0 (15 bytes, 0x004274d0..0x004274de)
-// Signature: uint32_t FUN_004274d0(void)
-//
-// Body (pure leaf, no calls):
-//   MOV EAX, [0x007719e8]                  // @ 0x004274d2
-//   MOV [0x007f0f60], EAX                  // @ 0x004274d8
-//   MOV EAX, 1
-//   RET
-//
-// Reads:  DAT_007719e8 (cli-language-index)  [0x004274d2]
-// Writes: DAT_007f0f60 (language selector)   [0x004274d8]
-// Returns: 1 (always)                        [decomp constant]
-// Pure leaf — no callees.
-//
-// ref: re/analysis/skeleton_prep_game_state/004274d0.md
-// ───────────────────────────────────────────────────────────────────────────
-// 0x004274d0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl LangIndexSeedFromCli()
-{
-    // Read CLI-set language index. [0x004274d2]
-    std::uint32_t v = *reinterpret_cast<const std::uint32_t*>(0x007719e8u);
-    // Write to language selector global. [0x004274d8]
-    *reinterpret_cast<std::uint32_t*>(0x007f0f60u) = v;
-    // Always returns 1. [decomp constant]
-    return 1u;
-}
-RH_ScopedInstall(LangIndexSeedFromCli, 0x004274d0);
+// MATCH-S06: the body of 0x004274d0 (LangIndexSeedFromCli) moved to Match/MatchS06_004274d0.cpp,
+// which compiles the byte-matched source re/match/s06/004274d0.c.
 
 // ───────────────────────────────────────────────────────────────────────────
 // 0x004274e0  LocalizationFileLoad
@@ -188,28 +160,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl LocalizationFileLoad() {
 }
 RH_ScopedInstall(LocalizationFileLoad, 0x004274e0);
 
-// ───────────────────────────────────────────────────────────────────────────
-// 0x00428390  FrontendStateSet
-//
-// Original: FUN_00428390 (9 bytes, 0x00428390..0x00428398)
-// Signature: void FUN_00428390(uint32_t param_1)
-//
-// Body (pure leaf):
-//   MOV EAX, [ESP+4]              // param_1
-//   MOV [0x0067d960], EAX         // @ 0x00428392
-//   RET
-//
-// Writes: DAT_0067d960 = param_1  [0x00428392]
-//
-// ref: re/analysis/skeleton_prep_game_state/00428390.md
-// ───────────────────────────────────────────────────────────────────────────
-// 0x00428390
-extern "C" __declspec(dllexport) void __cdecl FrontendStateSet(std::uint32_t param_1)
-{
-    // Pure global setter. [0x00428392]
-    *reinterpret_cast<std::uint32_t*>(0x0067d960u) = param_1;
-}
-RH_ScopedInstall(FrontendStateSet, 0x00428390);
+// MATCH-S06: the body of 0x00428390 (FrontendStateSet) moved to Match/MatchS06_00428390.cpp,
+// which compiles the byte-matched source re/match/s06/00428390.c.
 
 // ───────────────────────────────────────────────────────────────────────────
 // 0x0042fa00  PlayerSlotEdgeAdjust: DELETED (dualcopy4, 2026-10-16, ROADMAP D4)

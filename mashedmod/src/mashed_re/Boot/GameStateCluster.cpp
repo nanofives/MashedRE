@@ -51,13 +51,8 @@
 // Callees: none (leaf exemption applies).
 // ---------------------------------------------------------------------------
 
-// 0x00426c00
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GameStateFlagGet() {
-    // 0x00426c01: read and return DAT_00644158.
-    return *reinterpret_cast<const std::uint32_t*>(0x00644158u);
-}
-
-RH_ScopedInstall(GameStateFlagGet, 0x00426c00);  // re-enabled 2026-05-24 phase-a2 GREEN read_global
+// MATCH-S06: the body of 0x00426c00 (GameStateFlagGet) moved to Match/MatchS06_00426c00.cpp,
+// which compiles the byte-matched source re/match/s06/00426c00.c.
 
 
 // MATCH-S07: the body of 0x0042b8e0 (StatePhaseIsTwo) moved to Match/MatchS07_0042b8e0.cpp,

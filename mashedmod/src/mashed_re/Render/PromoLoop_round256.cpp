@@ -59,33 +59,8 @@ extern "C" __declspec(dllexport) int __cdecl Fwd4768c0_63bd50()
 
 RH_ScopedInstall(Fwd4768c0_63bd50, 0x00413bb0);
 
-// ---------------------------------------------------------------------------
-// ViewportScaledRectDraw_Arg7Zero  --  0x00428760
-//
-// Six forwarded arguments plus a HARD-CODED trailing 0, cleaned with
-// `add esp,0x1c` at 0x00428785 — 28 bytes, i.e. SEVEN arguments, which is what
-// fixes the arity. The prologue reloads each argument at a different ESP depth
-// as the pushes accumulate (0x00428760..0x0042877f), so the mapping has to be
-// worked rather than pattern-matched:
-//   [esp+0x18]->a6, [esp+0x14]->a5, [esp+0x10]->a4, then after 2/3/4 pushes
-//   [esp+0x14] addresses a3, a2, a1 in turn.
-// Push order is 0, a6, a5, a4, a3, a2, a1 — so the callee sees
-// (a1, a2, a3, a4, a5, a6, 0). 5 callers.
-// ---------------------------------------------------------------------------
-
-typedef int(__cdecl* ViewportScaledRectDraw7_t)(std::uint32_t, std::uint32_t, std::uint32_t,
-                                      std::uint32_t, std::uint32_t, std::uint32_t,
-                                      std::uint32_t);
-
-// 0x00428760
-extern "C" __declspec(dllexport) int __cdecl ViewportScaledRectDraw_Arg7Zero(
-    std::uint32_t a1, std::uint32_t a2, std::uint32_t a3,
-    std::uint32_t a4, std::uint32_t a5, std::uint32_t a6)
-{
-    return reinterpret_cast<ViewportScaledRectDraw7_t>(0x00428610u)(a1, a2, a3, a4, a5, a6, 0u);
-}
-
-RH_ScopedInstall(ViewportScaledRectDraw_Arg7Zero, 0x00428760);
+// MATCH-S06: the body of 0x00428760 (ViewportScaledRectDraw_Arg7Zero) moved to Match/MatchS06_00428760.cpp,
+// which compiles the byte-matched source re/match/s06/00428760.c.
 
 // ---------------------------------------------------------------------------
 // ClumpForAllAtomics_Cb4b5560  --  0x004b5580
