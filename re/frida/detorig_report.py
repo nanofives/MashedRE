@@ -11,6 +11,9 @@
 #               frames before the warp) plus both RNG states, the race clock 0x007f0ff4, the frame index
 #               0x007f101c and the checkpoint's N, compared with PTR dwords and 0x007f102c (RESIDUE) excluded.
 #
+#   RULE:<name> an UNEXPLAINED dword that a writer-specific rule accounts for at every checkpoint where it
+#               differs (PROMOTE-DETORIG-LOADHOLD, writers cited in RULES below).
+#
 #   py -3.12 re/frida/detorig_report.py DIR_A DIR_B [--list N]
 import argparse, json, struct, sys
 from collections import Counter
@@ -28,6 +31,49 @@ def modperiod(vals):
         if len({(a - b) % p for a, b in vals}) == 1:
             return p
     return None
+
+
+W = lambda va: (va - DATA_LO) // 4
+
+
+def rule_ring4(wa, wb, k, i):
+    # FUN_004dcbb0 stores the fill offset of dynamic-VB ring slot DAT_007d70c8 at [slot*4 + 0x007d70cc]
+    # (0x004dccc8) and its capacity at [slot*4 + 0x007d70dc]; FUN_004dc8a0 advances the slot mod 4. The slot
+    # index is a boot-phase counter (MODOFFSET/4), so equal fills land in different slots. Explained when
+    # both 4-slot arrays agree after rotating each run to its own current slot.
+    va = DATA_LO + 4 * i
+    if not (0x007d70cc <= va < 0x007d70ec):
+        return False
+    sa, sb = wa[k][W(0x007d70c8)] & 3, wb[k][W(0x007d70c8)] & 3
+    for base in (0x007d70cc, 0x007d70dc):
+        if [wa[k][W(base) + (sa + j) % 4] for j in range(4)] != [wb[k][W(base) + (sb + j) % 4] for j in range(4)]:
+            return False
+    return True
+
+
+def rule_acc60(wa, wb, k, i):
+    # FUN_004926c0 adds the QPC delta (FUN_004950b0 units, 4,500 per virtual QPC call: 15,000 counts x
+    # 3,000,000 / 10,000,000) of each frame to DAT_00771994 (0x00492731), counts frames in DAT_00771978
+    # (0x00492737), and at 0x3c stores the average in DAT_0077197c and zeroes both (0x00492758 / 0x00492762).
+    # The counter is a boot-phase counter (MODOFFSET/60), so the two runs sum different frame windows.
+    # Explained when the counters differ at this checkpoint and the values are whole virtual QPC steps.
+    va = DATA_LO + 4 * i
+    if va not in (0x00771994, 0x0077197c):
+        return False
+    if wa[k][W(0x00771978)] == wb[k][W(0x00771978)]:
+        return False
+    q = 4500 if va == 0x00771994 else 75
+    return wa[k][i] % q == 0 and wb[k][i] % q == 0
+
+
+def rule_winmsg(wa, wb, k, i):
+    # The main loop passes the 28-byte MSG at 0x007e95a0 to PeekMessageA (IAT 0x005cc270, call at 0x0049969d).
+    # Windows fills it from the thread's message queue: +0x10 time and +0x14 / +0x18 cursor position are the
+    # OS's real-time values, not computed by the game.
+    return 0x007e95a0 <= DATA_LO + 4 * i < 0x007e95bc
+
+
+RULES = [("RING4", rule_ring4), ("ACC60", rule_acc60), ("WINMSG", rule_winmsg)]
 
 
 def load(d):
@@ -50,6 +96,9 @@ def report(A, B, nlist=20):
         vals = [(wa[k][i], wb[k][i]) for k in range(K)]
         if all(a == b for a, b in vals): continue
         if all(a == b or is_ptr_pair(a, b) for a, b in vals): cls[i] = "PTR"; continue
+        rule = next((name for name, fn in RULES
+                     if all(wa[k][i] == wb[k][i] or is_ptr_pair(wa[k][i], wb[k][i]) or fn(wa, wb, k, i) for k in range(K))), None)
+        if rule: cls[i] = "RULE:" + rule; continue
         if len({a for a, _ in vals}) == 1 and len({b for _, b in vals}) == 1: cls[i] = "RESIDUE"; continue
         if len({(a - b) & 0xffffffff for a, b in vals}) == 1: cls[i] = "OFFSET"; continue
         p = modperiod(vals)
@@ -60,6 +109,7 @@ def report(A, B, nlist=20):
     per_k = [sum(1 for i in unexpl if wa[k][i] != wb[k][i] and not is_ptr_pair(wa[k][i], wb[k][i])) for k in range(K)]
     out["raw_identical"] = sum(raw_same)
     out["class_counts"] = dict(Counter(c.split("/")[0] for c in cls.values()))
+    out["by_class_and_page"] = dict(Counter(f"{c.split('/')[0]} {region_of(DATA_LO + 4 * i)}" for i, c in cls.items()).most_common())
     out["modoffset_periods"] = dict(Counter(c.split("/")[1] for c in cls.values() if c.startswith("MODOFFSET")))
     out["unexplained_per_checkpoint"] = per_k
     out["normalized_identical"] = sum(1 for u in per_k if u == 0)
