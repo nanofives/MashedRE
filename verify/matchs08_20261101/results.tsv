@@ -26,7 +26,7 @@ rva	size	subsystem	conf	exe_body	raw_g2s%	best%	regs%	by	source	source_sha256_16
 0x0043bf30	197	frontend	C2	-	100.0	100.0	100.0	insn	re/match/s08/0043bf30.c	1645f3f0e4654860
 0x0043c000	1451	util	C4	-	46.7	100.0	100.0	insn	re/match/s08/0043c000.c	863776fb5874218e
 0x0043c5b0	3292	frontend	C4	-	compile	40.5	61.1	insn	re/match/s08/0043c5b0.c	3623fab4ba02a046
-0x0043d2a0	1303	frontend	C2	-	compile	-	-	-	-	-
+0x0043d2a0	1303	frontend	C2	-	compile	54.0	64.7	insn	re/match/s08/0043d2a0.c	084dd691f551b85e
 0x0043d7c0	1791	util	C2	-	30.1	100.0	100.0	bytes	re/match/s08/0043d7c0.c	356d539dff48f60b
 0x0043df00	204	frontend	C2	-	100.0	100.0	100.0	insn	re/match/s08/0043df00.c	da03bcdc8289d991
 0x0043dfd0	10938	frontend	C2	RaceModes.cpp	17.1	17.7	46.9	insn	re/match/s08/0043dfd0.c	4b77045181862349
@@ -70,7 +70,7 @@ rva	size	subsystem	conf	exe_body	raw_g2s%	best%	regs%	by	source	source_sha256_16
 0x004464c0	92	util	C4	None	compile	100.0	100.0	insn	re/match/s08/004464c0.c	d80ff5035e737afc
 0x00446520	7412	util	C2	SlotObjectAccessors.cpp	compile	94.9	94.9	insn	re/match/s08/00446520.c	e3bb44629d1689c3
 0x00448220	1248	frontend	C2	-	22.6	97.0	97.0	insn	re/match/s08/00448220.c	e49610911f8988ad
-0x00448700	43	vehicle	C2	VehicleSeed.cpp	100.0	100.0	100.0	insn	re/match/s08/00448700.c	d06705a62fca77f7
+0x00448700	43	vehicle	C2	VehicleSeed.cpp	100.0	100.0	100.0	insn	re/match/s08/00448700.c	1fa3ff69673af9ad
 0x00448730	52	render	C2	-	57.1	100.0	100.0	insn	re/match/s08/00448730.c	8c8c237c9c2068a4
 0x00448770	165	render	C2	-	80.9	100.0	100.0	insn	re/match/s08/00448770.c	de6017ab9248e148
 0x00448820	93	render	C2	-	100.0	100.0	100.0	insn	re/match/s08/00448820.c	9bc5bbc72c26a1d7
