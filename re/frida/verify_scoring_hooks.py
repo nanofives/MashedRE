@@ -70,14 +70,13 @@ def main():
     baseline = "--baseline" in sys.argv
     tag = "baseline" if baseline else "hooked"
 
-    # HOOKS LIVE unless --baseline: spawn WITHOUT MASHED_RE_NO_AUTO_HOOK so the
-    # .asi auto-installs. --baseline sets it so the original scoring runs.
-    env = dict(os.environ)
-    if baseline: env["MASHED_RE_NO_AUTO_HOOK"] = "1"
-    else: env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+    # HOOKS LIVE unless --baseline: dev_asi Module.loads the asi and calls InjectHooks
+    # before the first resume (no dinput8 proxy). --baseline never maps the asi.
     dev = frida.get_local_device()
-    pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
-    sess = dev.attach(pid)
+    _proc, sess, _info = statenav.dev_asi.spawn_original(
+        statenav.dev_asi.original_exe(EXE), hooks=not baseline, env=dict(os.environ),
+        device=dev, resume=False)
+    pid = _proc.pid
     scr = sess.create_script(AGENT); scr.on("message", lambda m, d: None); scr.load()
     scr.exports_sync.init()
     E = scr.exports_sync

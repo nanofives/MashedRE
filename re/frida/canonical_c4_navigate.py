@@ -31,6 +31,8 @@ import ctypes, json, os, sys, time
 from ctypes import wintypes
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 try:
     import psutil
 except ImportError:
@@ -171,8 +173,10 @@ def run(candidates_csv, rvas, count_rvas, nav, settle, dwell, seconds, shot=None
     env["MASHED_RE_DEV"]    = "1"
     env["MASHED_HOOK_ONLY"] = candidates_csv
     dev = frida.get_local_device()
-    pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
-    sess = dev.attach(pid)
+    # D5-SHIM-DINPUT8-SPAWNERS: the asi is Module.loaded and InjectHooks called before the
+    # first resume (dev_asi, MASHED_HOOK_ONLY honoured), not loaded by the dinput8 proxy.
+    _p, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, cwd=ORIG, device=dev, resume=False)
+    pid = _p.pid
     st = {"crash": None}
     def on_msg(m, d):
         if m.get("type") == "error": return

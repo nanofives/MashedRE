@@ -16,11 +16,14 @@
 import json, os, sys, time
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 try: import psutil
 except ImportError: psutil = None
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+EXE = dev_asi.original_exe(EXE); ORIG = EXE.parent   # MASHED_ROOT private roots (dev_asi)
 LOG  = ROOT / "log"
 
 # targets. rva -> {name(.asi export), kind, ...}
@@ -124,8 +127,10 @@ send({kind:'ready'});
 def run(mode, nav, settle, dwell, seconds):
     env = dict(os.environ); env["MASHED_RE_DEV"]="1"
     env["MASHED_HOOK_ONLY"] = ",".join(TARGETS.keys()) if mode=="on" else "__none__"
-    dev = frida.get_local_device(); pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
-    sess = dev.attach(pid)
+    # D5-SHIM-DINPUT8-SPAWNERS: the asi is Module.loaded and InjectHooks called before the
+    # first resume (dev_asi, MASHED_HOOK_ONLY honoured), not loaded by the dinput8 proxy.
+    dev = frida.get_local_device(); _p, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, cwd=ORIG, device=dev, resume=False)
+    pid = _p.pid
     def on_msg(m, d):
         if m.get("type")=="error": print("   agent err:", m.get("description")); return
         p=m.get("payload",{})
