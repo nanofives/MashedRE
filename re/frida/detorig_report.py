@@ -73,7 +73,18 @@ def rule_winmsg(wa, wb, k, i):
     return 0x007e95a0 <= DATA_LO + 4 * i < 0x007e95bc
 
 
-RULES = [("RING4", rule_ring4), ("ACC60", rule_acc60), ("WINMSG", rule_winmsg)]
+def rule_stackrow(wa, wb, k, i):
+    # FUN_00469aa0 copies 16 stack dwords [esp+0x20+4*j] into row DAT_007e9de0 of the 256 x 0x40 ring at
+    # 0x007ec9e4 (loop 0x00469d90..0x00469daa, index +1 mod 0x100 at 0x00469db7). The function writes only
+    # [esp+0x20..0x44] (0x00469c42..0x00469c87), so row fields +0x28..+0x3c hold whatever earlier calls left
+    # on the stack. OFF leaves 0x00470948 in +0x2c (return address of the call 0x00468980 at 0x00470943,
+    # watch hits at 0x00469daa, run off_w); with the A4 / A6b hooks live the replacement leaves 0x008845d4
+    # (run on_w). Contents of an uninitialised stack slot, not a computed value.
+    off = (DATA_LO + 4 * i - 0x007ec9e4)
+    return 0 <= off < 0x100 * 0x40 and 0x28 <= off % 0x40 <= 0x3c
+
+
+RULES = [("RING4", rule_ring4), ("ACC60", rule_acc60), ("WINMSG", rule_winmsg), ("STACKROW", rule_stackrow)]
 
 
 def load(d):
