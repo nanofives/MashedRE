@@ -1,7 +1,9 @@
 # RESULT hand-merge MATCH-0040E370-NAKED + MATCH-TOPDOWN-T13 (one branch), 2026-11-01
 
-**Verdict: GREEN, gates unchanged.** Both red-merge rows sit on one branch, `orch/MATCH-0040E370-NAKED`, rebased by merge onto
-`orch/integration` 6d9d01a7f (MATCH-S05 and MATCH-S07 merged). One build, one gate run. Shared branch and sha for both
+**Verdict: GREEN, gates unchanged.** Both red-merge rows sit on one branch, `orch/MATCH-0040E370-NAKED`, merged onto
+`orch/integration` 96640c25a (MATCH-S05, S07, S06, TOPDOWN-T03, D4-DC-RFX-CORE, HB-SHADOW-ALLOC-COMPARE in). The tip build
+is **9938a5672** (exe `f137a9a0`), one gate run on it, below in "Third merge". The first two merges were built and gated
+on 6d9d01a7f too (exe `18f01a41`). That evidence stays below as history. Shared branch and sha for both
 ledger rows. Row evidence stays in each row's RESULT
 (`verify/match0040e370_20261101/RESULT_MATCH-0040E370-NAKED.md`,
 `verify/match_topdown_20261101/RESULT_MATCH-TOPDOWN-T13.md`); this file covers the merge.
@@ -106,3 +108,46 @@ train's `-Full` pass is the train's leg on enqueue.
 
 NAKED's re-classify (hooks.csv 0040e370 C3 -> C4, c4=match, commit 23703c125) stands. T13's prepared re-classify
 (4 rows, its RESULT's last table) is a post-merge leg and is not applied here.
+
+## Third merge (integration moved while the gates were queued)
+
+While the first gate run waited for the machine lock, the train merged MATCH-S06, MATCH-TOPDOWN-T03, D4-DC-RFX-CORE and
+HB-SHADOW-ALLOC-COMPARE, and the branch conflicted again (`AiTargetClosest_naked.inc`, `PathProgStep_naked.inc`,
+`dual_copy_allowlist.txt`, `CHANGELOG.md`). **9938a5672** merges `orch/integration` 96640c25a:
+
+- MATCH-S06 hand-edited both generated .inc files: `TG_426bb0` and the six `PP_426xxx` copies removed, their calls
+  bound to S06's matched bodies (`Global66d6d8Get`, `SlotIndexToPtr`, `VehicleTable4cPtrGet`, `FrontendArraySlotGet`,
+  `GlobalDat0066ce58Get`, `GetDat0066d6e4`). It did not touch the specs, so a regenerate would have brought those
+  copies back.
+- The .inc files are integration's text minus this branch's two rows: `TG_40e370` (declaration + 34-byte body, the
+  call at 00414ad5 -> `IsCarSlotActive`) and `PP_407cd0` (declaration + 157-byte body, the 4 call sites kept). The
+  diff against integration is exactly those lines.
+- `target_p3.json` (funcs `TG_414a70`, `TG_414300`) and `pathprog_p2.json` (funcs `PP_408610`, `PP_407e20`,
+  `PP_407be0`) now also carry S06's bindings. Check: `gen_naked_asm.py` on each spec, then compare with the committed
+  .inc ignoring comment, blank and `extern "C" void` lines. Instructions identical for both files. So the specs and the
+  .inc agree again, and a later regenerate keeps S06's and this branch's swaps.
+- `AiTargetClosest.cpp` header: two generated bodies, 0x00426bb0 -> `Global66d6d8Get` (S06). Allowlist = integration's
+  minus `DUP-IN-TARGET:0040e370`. CHANGELOG both sides.
+
+Build at 9938a5672 (`set MASHED_NO_DEPLOY=1&& mashedmoduild.bat`, Build OK, .asi not deployed): exe sha256
+`f137a9a03350e3124a543d7fb30dcc09f8145e8c39a7c52336f243299ca4f294`, asi
+`14995b0e9c089b61a8f8daa8cd3b70338d8ce4bc5a8631180402cb7ebe5b91b7`. `[rva-lint] 2 finding(s): CROSS-TARGET=1,
+DUP-IN-TARGET=1 | allowlisted=2 NEW=0`, `[asm-lint] OK`, `archive_lint --ref HEAD` OK (9938a5672).
+
+Exe callers on this build (`exe_callsites.txt`, rewritten for this build): `IsCarSlotActive` 8, `GetAiLapCounter` 1,
+`PP_407cd0` 4, `GetRenderSubMode` 2, `Collision::TriangleFaceNormal` 1 (and `CR_41f710Body` 1). The only `PP_407cd0`
+in the map is `MatchS01_00407cd0.obj`. No `TG_40e370`, `TG_426bb0` or `PP_426xxx` symbol.
+
+Gates on exe `f137a9a0` (same runner, root and lock as above, `D:/MashedWT/MATCH-0040E370-NAKED_data/m4/gates.sh`),
+every arm exit 0, self-exited:
+
+| arm | sha8 | ref |
+|---|---|---|
+| H_DEF (174 s) step / gates / ptrace | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0 / K1 / K26 | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
+
+Raw (`D:/MashedWT/MATCH-0040E370-NAKED_data/m4`, not committed): arm sha256 as in the table above (same files, same
+hashes), `gates.log` `589b5500431ff0dac19921844b0fe4001e39115f105bcafc6b239aa50bad8edf`, `build4.log`.
+
+After this merge `orch/integration` gained one more merge (D5-SHIM-DINPUT8-SPAWNERS, 06b983a2a). `git merge-tree` of
+this branch into it is clean.
