@@ -157,29 +157,8 @@ static void** const g_DAT_00771960 =
 //   (this batch), ViewportInit C2->C3 (this batch).
 // ---------------------------------------------------------------------------
 
-// 0x00492270
-// [followup/a2-stubat 2026-10-12] The two callees are reached through their ORIGINAL addresses, as the bytes do
-// (0x0049227f call 0x4921d0, 0x00492284 call 0x428590). The previous body called this TU's own DisplayInit /
-// ViewportInit directly, so the installed hook ran the ViewportInit port body, whose RH_ScopedInstall is
-// MASS-DISABLED (unverified), in place of the original 0x00428590, and no stub at either address could see the
-// calls. Through the address, an installed DisplayInit hook is still reached via its JMP.
-using SubsystemInitCallee_t = void (__cdecl*)();
-extern "C" __declspec(dllexport) std::int32_t __cdecl SubsystemInit() {
-    // 0x00492270 push 0; 0x00492272 call 0x493710; 0x00492277 add esp,4
-    const std::int32_t iVar1 = s_FUN_00493710(0);
-    // 0x0049227a test eax,eax; 0x0049227c jne; 0x0049227e ret (EAX = 0 here)
-    if (iVar1 == 0) {
-        return 0;
-    }
-    // 0x0049227f call 0x4921d0
-    reinterpret_cast<SubsystemInitCallee_t>(0x004921d0u)();
-    // 0x00492284 call 0x428590
-    reinterpret_cast<SubsystemInitCallee_t>(0x00428590u)();
-    // 0x00492289 mov eax, 1
-    return 1;
-}
-
-RH_ScopedInstall(SubsystemInit, 0x00492270);  // re-enabled 2026-05-24 batch-boot
+// MATCH-S15: the body of 0x00492270 (SubsystemInit) moved to Match/MatchS15_00492270.cpp,
+// which compiles the byte-matched source re/match/s15/00492270.c.
 
 
 // ---------------------------------------------------------------------------
@@ -216,57 +195,8 @@ RH_ScopedInstall(SubsystemInit, 0x00492270);  // re-enabled 2026-05-24 batch-boo
 //   FUN_00498bc0 C2, FUN_00498bd0 C3, FUN_004997b0 C3, FUN_004c5c00 C2.
 // ---------------------------------------------------------------------------
 
-// 0x004921d0
-extern "C" __declspec(dllexport) void __cdecl DisplayInit() {
-    // Stack locals matching Ghidra's observed layout: local_18[24], local_1c, local_20.
-    std::uint8_t local_18[24];
-    void*        local_1c = nullptr;
-    std::uint32_t local_20 = 0;
-
-    // 0x004921d0: sVar1 = FUN_004c2f00() — get current RW video mode index (short).
-    const std::int16_t sVar1 = s_FUN_004c2f00();
-
-    // FUN_004c2ed0(local_18, (int)sVar1) — fills local_18[24] with mode info.
-    s_FUN_004c2ed0(local_18, static_cast<std::int32_t>(sVar1));
-
-    // uVar2 = FUN_00498bc0() — screen width getter.
-    const std::uint32_t uVar2 = s_FUN_00498bc0();
-
-    // uVar3 = FUN_00498bd0() — screen height getter.
-    const std::uint32_t uVar3 = s_FUN_00498bd0();
-
-    // FUN_00467110(uVar2, uVar3) — viewport-dim setter (Stub S-3902; passthrough).
-    s_FUN_00467110(uVar2, uVar3);
-
-    // FUN_0042b890(uVar2) — width store (Stub S-3903; passthrough).
-    s_FUN_0042b890(uVar2);
-
-    // FUN_0042b8a0(uVar3) — height store (Stub S-3904; passthrough).
-    s_FUN_0042b8a0(uVar3);
-
-    // FUN_0042d560() — post-dim init step (C1, passthrough).
-    s_FUN_0042d560();
-
-    // FUN_0042f660() — DefaultViewportCameraInit (C1, passthrough).
-    s_FUN_0042f660();
-
-    // 0x00492227: local_20=0, local_1c=0 then FUN_004997b0(0x194, "RWTEXDICTIONARY", &local_1c, &local_20)
-    local_20 = 0;
-    local_1c = nullptr;
-    s_FUN_004997b0(0x194u, "RWTEXDICTIONARY",
-                   reinterpret_cast<void**>(&local_1c),
-                   &local_20);
-
-    // 0x00492255: DAT_0077195c = FUN_004b3eb0(local_1c, local_20, 0, 0) (Stub S-3905).
-    *g_DAT_0077195c = s_FUN_004b3eb0(local_1c, local_20, 0, 0);
-
-    // 0x00492269: if DAT_0077195c != 0: DAT_00771960 = FUN_004c5c00(DAT_0077195c, "LoadIcon")
-    if (*g_DAT_0077195c != nullptr) {
-        *g_DAT_00771960 = s_FUN_004c5c00(*g_DAT_0077195c, "LoadIcon");
-    }
-}
-
-RH_ScopedInstall(DisplayInit, 0x004921d0);  // re-enabled 2026-05-24 batch-boot
+// MATCH-S15: the body of 0x004921d0 (DisplayInit) moved to Match/MatchS15_004921d0.cpp,
+// which compiles the byte-matched source re/match/s15/004921d0.c.
 
 // MATCH-S06: the body of 0x00428590 (ViewportInit) moved to Match/MatchS06_00428590.cpp,
 // which compiles the byte-matched source re/match/s06/00428590.c.

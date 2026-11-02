@@ -26,8 +26,8 @@ typedef unsigned char bool;
 typedef unsigned int undefined4;
 MGLOBAL(int, DAT_006147d8, 0x006147d8);
 MGLOBAL(undefined4, DAT_00771a10, 0x00771a10);
-void FUN_004938e0();
-undefined4 FUN_00493fc0(void);
+void FUN_004938e0(undefined4 p0);
+undefined4 FUN_00493fc0(undefined4 p0);
 void FUN_004942b0(void);
 // MATCH: 0x00494480 FUN_00494480
 undefined4 FUN_00494480(void)

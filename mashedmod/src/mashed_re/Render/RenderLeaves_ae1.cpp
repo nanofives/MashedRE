@@ -64,39 +64,8 @@
 // Pure leaf (no callees). ref: re/analysis/skeleton_prep_boot_winmain_a/00492440.md
 // ---------------------------------------------------------------------------
 
-// 0x00492440
-extern "C" __declspec(dllexport) void __cdecl RenderStatsAccumulate(void* param_1)
-{
-    std::uint8_t* p = static_cast<std::uint8_t*>(param_1);
-
-    auto field = [p](std::uint32_t off) -> std::int32_t& {
-        return *reinterpret_cast<std::int32_t*>(p + off);
-    };
-
-    std::int32_t iVar1 = field(0x20);   // A sample
-    std::int32_t iVar2 = field(0x24);   // B sample
-
-    field(0x2c) += iVar1;               // A accumulator
-    field(0x30) += iVar2;               // B accumulator
-
-    if (field(0x28) > 0x3b) {           // 60-frame window complete
-        field(0x34) = field(0x2c) / 0x3c;   // A average over 60 frames
-        field(0x2c) = 0;                     // reset A accumulator
-        field(0x38) = field(0x30) / 0x3c;   // B average over 60 frames
-        field(0x30) = 0;                     // reset B accumulator
-        field(0x28) = 0;                     // reset frame counter
-    }
-    field(0x28) += 1;                   // advance frame counter (unconditional)
-
-    if (field(0x3c) < iVar1) {          // track A maximum
-        field(0x3c) = iVar1;
-    }
-    if (field(0x40) < iVar2) {          // track B maximum
-        field(0x40) = iVar2;
-    }
-}
-
-RH_ScopedInstall(RenderStatsAccumulate, 0x00492440);
+// MATCH-S15: the body of 0x00492440 (RenderStatsAccumulate) moved to Match/MatchS15_00492440.cpp,
+// which compiles the byte-matched source re/match/s15/00492440.c.
 
 // ---------------------------------------------------------------------------
 // Vec3Equal — 0x004b46b0

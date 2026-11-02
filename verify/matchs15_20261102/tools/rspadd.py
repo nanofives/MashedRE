@@ -5,7 +5,7 @@ append at the end, and a mid-file block keeps the merges of the slices apart. En
 import sys, pathlib
 
 BS = chr(92)
-ANCHOR = f'"Frontend{BS}DrawQuadPrimitives.cpp"'
+ANCHOR = f'"Boot{BS}LaunchHandshake.cpp"'
 t, vas = sys.argv[1], sys.argv[2:]
 for tgt in (["exe", "asi"] if t == "both" else [t]):
     p = pathlib.Path(f"mashedmod/{tgt}_sources.rsp")

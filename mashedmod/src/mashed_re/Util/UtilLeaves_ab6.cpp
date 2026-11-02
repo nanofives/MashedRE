@@ -181,14 +181,8 @@ RH_ScopedInstall(UtilTableRead46b4f0, 0x0046b4f0);
 // = 30 entries. No params, no callees.
 // ---------------------------------------------------------------------------
 
-// 0x004904d0
-extern "C" __declspec(dllexport) void __cdecl UtilZeroTable86a4a0() {
-    for (std::uint32_t a = 0x0086a4a0u; (std::int32_t)a < 0x0086ae00; a += 0x50u) {
-        *reinterpret_cast<std::uint32_t*>(a) = 0u;
-    }
-}
-
-RH_ScopedInstall(UtilZeroTable86a4a0, 0x004904d0);
+// MATCH-S15: the body of 0x004904d0 (UtilZeroTable86a4a0) moved to Match/MatchS15_004904d0.cpp,
+// which compiles the byte-matched source re/match/s15/004904d0.c.
 
 // ---------------------------------------------------------------------------
 // FUN_004d8560  --  0x004d8560   (int(void) constant)

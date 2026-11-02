@@ -46,18 +46,14 @@ static inline void StridedClear(std::uint32_t base, std::uint32_t step, std::uin
         *reinterpret_cast<std::uint32_t*>(p) = 0;
 }
 
-// 0x0048f680
-extern "C" __declspec(dllexport) void __cdecl StridedClear76a100(void) { StridedClear(0x0076a100u, 0x38u, 0x0076d900u); }
-RH_ScopedInstall(StridedClear76a100, 0x0048f680);
+// MATCH-S15: the body of 0x0048f680 (StridedClear76a100) moved to Match/MatchS15_0048f680.cpp,
+// which compiles the byte-matched source re/match/s15/0048f680.c.
 
-// 0x0048f6b0
-extern "C" __declspec(dllexport) void __cdecl StridedClear766a00(void) { StridedClear(0x00766a00u, 0x20u, 0x00766f00u); }
-RH_ScopedInstall(StridedClear766a00, 0x0048f6b0);
+// MATCH-S15: the body of 0x0048f6b0 (StridedClear766a00) moved to Match/MatchS15_0048f6b0.cpp,
+// which compiles the byte-matched source re/match/s15/0048f6b0.c.
 
-// 0x0048f6e0
-extern "C" __declspec(dllexport) void __cdecl StridedClear770718(void) { StridedClear(0x00770718u, 0x24u, 0x00771528u); }
-RH_ScopedInstall(StridedClear770718, 0x0048f6e0);
+// MATCH-S15: the body of 0x0048f6e0 (StridedClear770718) moved to Match/MatchS15_0048f6e0.cpp,
+// which compiles the byte-matched source re/match/s15/0048f6e0.c.
 
-// 0x0048f710
-extern "C" __declspec(dllexport) void __cdecl StridedClear769f50(void) { StridedClear(0x00769f50u, 0x24u, 0x0076a0b8u); }
-RH_ScopedInstall(StridedClear769f50, 0x0048f710);
+// MATCH-S15: the body of 0x0048f710 (StridedClear769f50) moved to Match/MatchS15_0048f710.cpp,
+// which compiles the byte-matched source re/match/s15/0048f710.c.
