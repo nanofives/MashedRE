@@ -41,6 +41,10 @@
 //   negctl          negative control at the race anchor: 1 = +1 on the RW RNG word at the cursor, else a VA bumped by one
 //   loadSleepMs     real ms slept in each main-thread clock call between the warp and phase 3 (load hold)
 //   rebase          set T / Q at the race anchor to the values of an anchor at N = warpAt + 200
+//   watch           [va, ...] (at most 2): hardware WRITE watchpoints on every thread from the race anchor on;
+//                   each hit sends {kind:'watch', pc, bt, value, n} (pc = the instruction after the store)
+//   callLog         log every main-thread clock call from the warp to the race anchor (PROMOTE-DETORIG-LOADHOLD):
+//                   64 bytes per call = [N, kind (0 tgt, 1 qpc), esp[0..13]], sent with the race anchor
 'use strict';
 const CFG = DETORIG_CFG;
 const IMG = 0x400000;
@@ -51,8 +55,10 @@ const K = (x) => { keep.push(x); return x; };
 
 // ---------------------------------------------------------------- data block
 // +0x00 T  +0x04 step  +0x08 due  +0x0c MAIN  +0x10 Qlo  +0x14 Qhi  +0x18 qstep  +0x1c onDue
-// +0x20 tgt calls  +0x24 qpc calls  +0x28 forwarded  +0x30 N
+// +0x20 tgt calls  +0x24 qpc calls  +0x28 forwarded  +0x30 N  +0x34 log on  +0x38 log index
 const D = K(Memory.alloc(Process.pageSize));
+const LOGCAP = 4096, LOGREC = 64;
+const LOG = K(Memory.alloc(LOGCAP * LOGREC));
 D.writeU32(CFG.t0 >>> 0);
 D.add(4).writeU32(CFG.step >>> 0);
 D.add(8).writeU32(0xffffffff);
@@ -77,22 +83,44 @@ const CELLS = K(Memory.alloc(Process.pageSize));
 let cellOff = 0;
 function cell(v) { const c = CELLS.add(cellOff); cellOff += 4; c.writePointer(v); return c; }
 
+// Call log (cfg.callLog): while [log on] != 0 and the index is below LOGCAP, record N, kind and 14 stack
+// dwords from the stub's entry esp (esp[0] = the clock call's return address). Stack reads only.
+function logBlock(kind) {
+  const b = [0x83, 0x3d, ...d(0x34), 0x00, 0x74, 0x00];                       // cmp [logon],0; je skip
+  const jeAt = b.length - 1;
+  b.push(0x56, 0x57, 0x51,                                                     // push esi; push edi; push ecx
+         0x8b, 0x3d, ...d(0x38), 0x81, 0xff, ...u32(LOGCAP), 0x73, 0x00);      // mov edi,[idx]; cmp edi,CAP; jae done
+  const jaeAt = b.length - 1;
+  b.push(0xff, 0x05, ...d(0x38), 0xc1, 0xe7, 0x06, 0x81, 0xc7, ...u32(LOG),  // inc [idx]; shl edi,6; add edi,LOG
+         0x8b, 0x0d, ...d(0x30), 0x89, 0x0f, 0xc7, 0x47, 0x04, ...u32(kind),   // mov ecx,[N]; mov [edi],ecx; mov [edi+4],kind
+         0x8d, 0x74, 0x24, 0x0c, 0x83, 0xc7, 0x08, 0xb9, 14, 0, 0, 0, 0xfc, 0xf3, 0xa5); // lea esi,[esp+12]; add edi,8; mov ecx,14; cld; rep movsd
+  b[jaeAt] = b.length - (jaeAt + 1);
+  b.push(0x59, 0x5f, 0x5e);                                                    // done: pop ecx; pop edi; pop esi
+  b[jeAt] = b.length - (jeAt + 1);
+  return b;                                                                    // skip:
+}
+// main-thread test with a rel32 jne (the log block makes the main-thread path longer than a rel8 reach)
+function mainTest() { return [0x64, 0xa1, 0x24, 0, 0, 0, 0x3b, 0x05, ...d(0xc), 0x0f, 0x85, 0, 0, 0, 0]; }
+function patchRel32(b, at) { const r = b.length - (at + 4); b[at] = r & 0xff; b[at + 1] = (r >>> 8) & 0xff; b[at + 2] = (r >>> 16) & 0xff; b[at + 3] = (r >>> 24) & 0xff; }
+
 // timeGetTime / GetTickCount: stdcall, no args, value in eax.
 function tgtStub(realCell) {
-  const b = [0x64, 0xa1, 0x24, 0, 0, 0, 0x3b, 0x05, ...d(0xc), 0x75, 0x00];   // mov eax,fs:[24]; cmp eax,[MAIN]; jne real
-  const jneAt = b.length - 1;
+  const b = mainTest();                                                        // mov eax,fs:[24]; cmp eax,[MAIN]; jne real
+  const jneAt = b.length - 4;
+  b.push(...logBlock(0));
   b.push(0xa1, ...d(0), 0x8b, 0x0d, ...d(4), 0x01, 0x0d, ...d(0),              // mov eax,[T]; mov ecx,[step]; add [T],ecx
          0xff, 0x05, ...d(0x20), 0xff, 0x05, ...d(0x30),                         // inc [tgt]; inc [N]
          0x8b, 0x0d, ...d(0x30), 0x3b, 0x0d, ...d(8), 0x73, 0x01, 0xc3,          // mov ecx,[N]; cmp ecx,[due]; jae slow; ret
          0x50, 0xff, 0x15, ...d(0x1c), 0x58, 0xc3);                              // slow: push eax; call [onDue]; pop eax; ret
-  b[jneAt] = b.length - (jneAt + 1);
+  patchRel32(b, jneAt);
   b.push(0xf0, 0xff, 0x05, ...d(0x28), 0xff, 0x25, ...u32(realCell));            // real: lock inc [fwd]; jmp [cell]
   return emit(b);
 }
 // QueryPerformanceCounter: stdcall (LARGE_INTEGER*), BOOL in eax.
 function qpcStub(realCell) {
-  const b = [0x64, 0xa1, 0x24, 0, 0, 0, 0x3b, 0x05, ...d(0xc), 0x75, 0x00];
-  const jneAt = b.length - 1;
+  const b = mainTest();
+  const jneAt = b.length - 4;
+  b.push(...logBlock(1));
   b.push(0x8b, 0x44, 0x24, 0x04,                                                 // mov eax,[esp+4]
          0x8b, 0x0d, ...d(0x10), 0x89, 0x08, 0x8b, 0x0d, ...d(0x14), 0x89, 0x48, 0x04, // *eax = Q
          0x8b, 0x0d, ...d(0x18), 0x01, 0x0d, ...d(0x10), 0x83, 0x15, ...d(0x14), 0x00, // Q += qstep
@@ -100,7 +128,7 @@ function qpcStub(realCell) {
          0x8b, 0x0d, ...d(0x30), 0x3b, 0x0d, ...d(8), 0x72, 0x06,                // mov ecx,[N]; cmp ecx,[due]; jb fast
          0xff, 0x15, ...d(0x1c),                                                 // call [onDue]
          0xb8, 1, 0, 0, 0, 0xc2, 0x04, 0x00);                                    // fast: mov eax,1; ret 4
-  b[jneAt] = b.length - (jneAt + 1);
+  patchRel32(b, jneAt);
   b.push(0xf0, 0xff, 0x05, ...d(0x28), 0xff, 0x25, ...u32(realCell));
   return emit(b);
 }
@@ -204,6 +232,32 @@ const onDue = K(new NativeCallback(() => {
 }, 'void', []));
 D.add(0x1c).writePointer(onDue);
 
+// ---------------------------------------------------------------- write watch (cfg.watch), port of scenario_launch.py's
+// --watch-write: debug-register write watchpoints, armed on every thread at the race anchor. No code patch.
+let watchHits = 0;
+function watchArm() {
+  const addrs = (CFG.watch || []).slice(0, 2).map((va) => ga(va));
+  if (!addrs.length) return 'no watch';
+  Process.setExceptionHandler((det) => {
+    if (det.type !== 'single-step' && det.type !== 'breakpoint') return false;
+    try {
+      const c = det.context;
+      if (watchHits++ < 2000) {
+        let bt = '';
+        try { bt = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 12).map((p) => '0x' + (p.toUInt32() >>> 0).toString(16)).join('|'); } catch (e) { bt = 'bt-err'; }
+        send({ kind: 'watch', n: N(), tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
+               values: addrs.map((a) => '0x' + a.readU32().toString(16)) });
+      }
+    } catch (e) { /* keep running */ }
+    return true;
+  });
+  let n = 0;
+  Process.enumerateThreads().forEach((t) => {
+    addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, 'w'); if (k === 0) n++; } catch (e) { } });
+  });
+  return 'watch armed on ' + n + ' threads: ' + addrs.map((a) => a.toString()).join(',');
+}
+
 // ---------------------------------------------------------------- install
 const SLOTS = [[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
 function install() {
@@ -221,6 +275,7 @@ function install() {
   schedule(CFG.warpAt, () => {
     warpN = N();
     const pins = warp();
+    if (CFG.callLog) D.add(0x34).writeU32(1);
     send({ kind: 'warp', n: warpN, pins });
     setActive(1);
     // The track load (phase 2) takes a run-dependent number of main-thread clock calls (2 frames apart
@@ -235,6 +290,11 @@ function install() {
         schedule(N() + 1, watch); return;
       }
       raceN = N();
+      if (CFG.callLog) {
+        D.add(0x34).writeU32(0);
+        const cnt = D.add(0x38).readU32();
+        send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
+      }
       const pins3 = pinRngs();
       // Re-base the clock: the load takes 118 or 122 main-thread calls (measured 2026-11-01), so without this the
       // race starts at a run-dependent Q. T / Q become the values of an anchor at N = warpAt + 200.
@@ -249,6 +309,7 @@ function install() {
       else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
       send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, frames_7f101c: ga(0x007f101c).readU32(),
              clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness() });
+      if (CFG.watch && CFG.watch.length) send({ kind: 'info', msg: watchArm() });
       for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
       CFG.ckpts.forEach((dn, k) => schedule(raceN + dn, () => checkpoint(k)));
       schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => { setDue(0xffffffff); send({ kind: 'done', n: N() }); });
