@@ -1,7 +1,8 @@
 # RESULT HB-GATE-FLAKE-GAMEFLOW (2026-11-02)
 
 Verdict: **cause found from existing logs. The fix is built but NOT verified on the exe**, because the display was asleep
-from about 09:20 and every boot returned D3D9 `0x8876086A`. Arm status is in "Arms" below.
+from about 09:20 and every boot returned D3D9 `0x8876086A`. Arm status is in "Arms" below and the next steps are
+in "Handoff".
 
 **Cause: a real keyboard Enter pressed somewhere on the machine reaches a deterministic G-CTRL arm.** The exe's
 keyboard is opened `DISCL_BACKGROUND | DISCL_NONEXCLUSIVE` (`exe_main.cpp` InitDirectInput), so it reports keys
@@ -84,9 +85,22 @@ Prediction ids are the PREREG's Q1..Q7. **No arm in this step has reached the si
 |---|---|---|---|
 | 1 | 09:21 | fd02: H_PSGOR7P H_R7P H_PSGO-r1 H_DEF-r1 H_PSGO-r2. new: H_TK H_TKD H_DEF B_DEF_K0/K1/K26 H_NAKOFF H_PSGOTK | all 13 exit 3 in 1-8 s, `InitD3D9: CreateDevice ... fail hr=0x8876086A` on all 8 device paths. Display asleep (L0 notice, `diag.py probe-render` BLOCKED). Not data, kept under `failed_sandboxed/` (the folder name records my first wrong reading, which was the sandbox) |
 | 2 | 09:33 | new: B_DEF_K0 (PowerShell probe) | exit 3, same hr |
-| poll | 09:36 onward | `poll_and_run.sh`: `probe-render` every 300 s, 10 tries, runs every set on the first pass | see "Poll outcome" |
+| poll | 09:36, 09:42, 09:47 | `poll_and_run.sh`: `probe-render` every 300 s | BLOCKED `0x8876086A` all 3. Poller stopped by hand after probe 3, so no arm starts unattended after this session closes |
 
-Rerun count so far: 0 completed arms, 14 failed boots (INFRA). Hashes: none.
+Rerun count: 0 completed arms, 14 failed boots (INFRA) plus 4 BLOCKED probes. Hashes: none.
+
+## Handoff
+
+- Branch `orch/HB-GATE-FLAKE-GAMEFLOW`, worktree `.worktrees/HB-GATE-FLAKE-GAMEFLOW`.
+- The exes are already built and copied out: `exe_new` = `88356f08` (this branch), `exe_fd02` = `fd0211e9`.
+- The root `D:/MashedWT/HB-GATE-FLAKE-GAMEFLOW_root` is ready. Its `videocfg.bin` is copied from the GAMEFLOW root.
+- When `py -3.12 scripts/diag.py probe-render` passes, run `bash D:/MashedWT/HB-GATE-FLAKE-GAMEFLOW_data/poll_and_run.sh`
+  in the background. It wraps every set in `test-slot` and `mashed_lock`, takes about 35 min of lock time, and writes
+  `gates_new.log`, `gates_fd02.log` and `gates_new2.log`.
+- Score Q1..Q7 into the "Arms" table, then set the row to review.
+- GREEN needs Q4 + Q7. Q6 is the strong form (the injected press reproduces g1's hashes). If Q6 moves the hashes
+  without matching g1 exactly, the cause still stands as long as the step file diverges at frame 4528 and the log
+  shows `R7X EXIT det_frame=5406`.
 
 **Arms still to run** (one command, after `py -3.12 scripts/diag.py probe-render` passes):
 `bash D:/MashedWT/HB-GATE-FLAKE-GAMEFLOW_data/poll_and_run.sh`. It runs:
