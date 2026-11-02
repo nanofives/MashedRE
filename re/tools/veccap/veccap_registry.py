@@ -157,7 +157,7 @@ FUNCS = {
     #     is the bit-exact oracle. ---
     'rwp_mat2quat_x': {
         'rva': 0x00546BF0, 'export': 'FUN_00546bf0', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
-        'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'sources': ['Collision/RwpSolverMath2Quat.cpp'], 'live_capture': False, 'degenerate_stubs': False,
         'record': True, 'rw_lut': True,
     },
     'rwp_mat2quat_y': {
@@ -167,7 +167,7 @@ FUNCS = {
     },
     'rwp_mat2quat_z': {
         'rva': 0x00546CB0, 'export': 'FUN_00546cb0', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
-        'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'sources': ['Collision/RwpSolverMath2Quat.cpp'], 'live_capture': False, 'degenerate_stubs': False,
         'record': True, 'rw_lut': True,
     },
 }

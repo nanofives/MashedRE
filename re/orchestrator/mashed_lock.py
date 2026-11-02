@@ -81,6 +81,20 @@
 #   - default expiry SOLO_TTL_SEC = 1 h for both `run --solo` and `solo-begin` (was 12 h /
 #     4 h). One default gate run (G-CTRL + B) took 10-23 min in the 2026-11-01 train logs.
 #     A longer step passes --ttl explicitly.
+#
+# PASS-WIDE PRIORITY HOLD, added 2026-11-02 (HB-MASHEDLOCK-EARLY-PRIORITY). Every 2026-11-01
+# starvation had one shape: the train merged and built for 4-8 min before its first
+# `run --priority` wrote a marker, and a worker opened a solo window in that gap (EAX 20:49
+# before the 20:57 claim, PATHPROG-REMERGE 21:29 before 21:33). The train now writes the
+# held=true record above for ITS OWN pwsh PID at the start of each pass:
+#   mashed_lock.py prio-hold --owner-pid <pid> --label X [--ttl S]
+#   mashed_lock.py prio-release --owner-pid <pid> [--linger S]
+# Same file and meaning as the per-acquire hold (<name>_priolinger_<pid>.lock): new
+# non-priority solo opens wait, ordinary game-lock acquires do not, an open window is not
+# touched, priority solo opens ignore it. Stale once the owner PID is dead (owner_start
+# guards reuse). prio-release turns it into a PRIO_SOLO_LINGER_SEC linger (a back-to-back
+# pass re-registers within it), --linger 0 removes it; it only touches the record of that
+# owner PID.
 
 import glob
 import json
@@ -272,20 +286,49 @@ def _linger_path(name, pid=None):
     return os.path.join(LOCK_DIR, f"{name}_priolinger_{pid or os.getpid()}.lock")
 
 
-def prio_linger_mark(name, label, secs=None, held=False):
+def prio_linger_mark(name, label, secs=None, held=False, pid=None):
     """HB-MASHEDLOCK-SOLO-PRIORITY: held=True when a priority acquirer takes the game lock
     (stale only once this PID is dead), held=False when it releases: for `secs` more, new
     non-priority solo opens keep waiting, so the holder's next call in the same pass is not
-    overtaken by a window. Expiry alone ends the released form (the PID usually exits)."""
+    overtaken by a window. Expiry alone ends the released form (the PID usually exits).
+    `pid` (HB-MASHEDLOCK-EARLY-PRIORITY) writes the record for another live process, the
+    merge train's pwsh, instead of this one. Returns False when the write failed."""
     secs = (24 * 3600 if held else PRIO_SOLO_LINGER_SEC) if secs is None else secs
+    pid = pid or os.getpid()
     try:
-        with open(_linger_path(name), 'w', encoding='utf-8') as f:
-            f.write(json.dumps({'pid': os.getpid(), 'at': _now_iso(), 'epoch': int(time.time()),
+        with open(_linger_path(name, pid), 'w', encoding='utf-8') as f:
+            f.write(json.dumps({'pid': pid, 'at': _now_iso(), 'epoch': int(time.time()),
                                 'expires': int(time.time() + secs), 'label': label,
-                                'held': bool(held), 'owner_start': _pid_start(os.getpid()),
+                                'held': bool(held), 'owner_start': _pid_start(pid),
                                 'host': socket.gethostname()}))
+        return True
     except OSError:
-        pass   # best effort: a missing record only reopens the pre-fix gap
+        return False   # best effort: a missing record only reopens the pre-fix gap
+
+
+def prio_hold(name, label, owner_pid, ttl=24 * 3600):
+    """HB-MASHEDLOCK-EARLY-PRIORITY: pass-wide hold for `owner_pid` (the merge train's pwsh),
+    written at the start of a pass, before merge and build. New non-priority solo opens wait
+    until prio_release or the owner's death. Never touches an open window or the game lock."""
+    if not _pid_alive(owner_pid):
+        return False
+    return prio_linger_mark(name, label, secs=ttl, held=True, pid=owner_pid)
+
+
+def prio_release(name, owner_pid, linger=None):
+    """End `owner_pid`'s pass-wide hold: a `linger` s (default PRIO_SOLO_LINGER_SEC) released
+    record, or removal when linger is 0. Only that owner's own record is touched. True when
+    no held record of that owner remains."""
+    path = _linger_path(name, owner_pid)
+    o = _read_owner(path)
+    if not o:
+        return not os.path.exists(path) or _remove(path)
+    if o.get('pid') != owner_pid:
+        return False
+    linger = PRIO_SOLO_LINGER_SEC if linger is None else linger
+    if linger <= 0:
+        return _remove(path)
+    return prio_linger_mark(name, o.get('label') or '', secs=linger, held=False, pid=owner_pid)
 
 
 def prio_lingering(name=DEFAULT_NAME, ignore_pid=None):
@@ -586,6 +629,23 @@ def _cli():
                          owner_pid=int(opt('--owner-pid')) if opt('--owner-pid') else None)
         print(f"TOKEN {tok}")
         return 0
+    if cmd == 'prio-hold':
+        if not opt('--owner-pid'):
+            sys.exit("prio-hold needs --owner-pid <pid>")
+        opid = int(opt('--owner-pid'))
+        ok = prio_hold(name, opt('--label', 'cli'), opid, ttl=int(opt('--ttl', 24 * 3600)))
+        print(f"PRIORITY-HOLD '{name}' owner_pid={opid}" if ok else
+              f"prio-hold FAILED '{name}' owner_pid={opid} (dead PID or unwritable)", flush=True)
+        return 0 if ok else 1
+    if cmd == 'prio-release':
+        if not opt('--owner-pid'):
+            sys.exit("prio-release needs --owner-pid <pid>")
+        opid = int(opt('--owner-pid'))
+        lg = int(opt('--linger')) if opt('--linger') is not None else None
+        ok = prio_release(name, opid, linger=lg)
+        print(f"PRIORITY-RELEASED '{name}' owner_pid={opid}" if ok else
+              f"prio-release FAILED '{name}' owner_pid={opid}", flush=True)
+        return 0 if ok else 1
     if cmd == 'solo-end':
         if not opt('--token'):
             sys.exit("solo-end needs --token <hex>")
@@ -617,7 +677,7 @@ def _cli():
                     prio_linger_mark(name, label)
         with MashedLock(label=label, name=name, wait=wait, priority=prio):
             return subprocess.call(sub)
-    sys.exit(f"unknown command '{cmd}' (status|break|run|solo-begin|solo-end)")
+    sys.exit(f"unknown command '{cmd}' (status|break|run|solo-begin|solo-end|prio-hold|prio-release)")
 
 
 if __name__ == '__main__':

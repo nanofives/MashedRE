@@ -1,0 +1,19 @@
+measure: id=0x59 scale=0.70 ret=29.79607582 bits=41ee5e5d
+measure: id=0x59 scale=0.60 ret=25.53949356 bits=41cc50e2
+measure: id=0x59 scale=0.80 ret=34.05265808 bits=420835ec
+measure: id=0x5a scale=0.70 ret=26.91258430 bits=41d74cf9
+measure: id=0x5a scale=0.60 ret=23.06793022 bits=41b88b1f
+measure: id=0x5a scale=0.80 ret=30.75723839 bits=41f60ed3
+measure: id=0x25f scale=0.70 ret=89.38822937 bits=42b2c6c6
+measure: id=0x25f scale=0.60 ret=76.61848450 bits=42993caa
+measure: id=0x25f scale=0.80 ret=102.15797424 bits=42cc50e2
+measure: table id=0x59 scale=0.70 ret=29.79607582 bits=41ee5e5d
+measure: table id=0x59 scale=0.72 ret=30.64739418 bits=41f52ddd
+measure: table id=0x59 scale=0.60 ret=25.53949356 bits=41cc50e2
+measure: table id=0x1b2 scale=0.70 ret=45.17469788 bits=4234b2e4
+measure: table id=0x1b2 scale=0.72 ret=46.46540833 bits=4239dc94
+measure: table id=0x1b2 scale=0.60 ret=38.72116852 bits=421ae27a
+measure: table id=0x1b1 scale=0.70 ret=75.93193817 bits=4297dd27
+measure: table id=0x1b1 scale=0.72 ret=78.10141754 bits=429c33ed
+measure: table id=0x1b1 scale=0.60 ret=65.08451843 bits=42822b46
+measure: toggle id=0x59 arrow_x=411.000000 bits=43cd8000

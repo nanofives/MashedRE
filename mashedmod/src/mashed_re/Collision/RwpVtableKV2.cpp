@@ -75,7 +75,7 @@ typedef unsigned int   undefined4;
 #define MASHED_PTR_00624058 (*reinterpret_cast<void**>(0x00624058u))   // table 0x0062403c + 0x1c
 
 // --- Ported elsewhere in the island: declaration matches the definition exactly. ---
-extern "C" void __cdecl FUN_0055bd80(int param_1,int param_2,undefined4 param_3,undefined4 param_4); // K5
+extern "C" undefined4 __cdecl FUN_0055bd80(int param_1,int param_2,undefined4 param_3,undefined4 param_4); // K5, slot EAX
 extern "C" void __cdecl FUN_004c51a0(float *param_1,float *param_2,int param_3);                     // K2 RwMatrixTranslate
 
 // --- Un-ported callees -> RVA-forwarding thunks (RwpSolverCore23.cpp idiom). ---
@@ -134,13 +134,20 @@ extern "C" int * __cdecl FUN_0057c3f0(int *param_1)
 // ---------------------------------------------------------------------------
 // 0x0057c420  body behind the slot-+0x18 thunk at 0x0057c590 (correction 1). Forwards to
 //             the K5 gated matrix-combine FUN_0055bd80 with the shape's owner and its
-//             descriptor, combineOp literal 1 (PUSH 1 @0x0057c429).
+//             descriptor, combineOp literal 1 (PUSH 1 @0x0057c429). Returns FUN_0055bd80's EAX:
+//             CALL 0x0055bd80 @0x0057c435, ADD ESP,0x10 @0x0057c43a, RET @0x0057c43d, no EAX write
+//             between. The direct callers 0x0047d213 / 0x0047d30e / 0x00480263 push it as the third
+//             argument of 0x0055ab30, which tests it @0x0055ab69..0x0055ab6f. [HB-ASI-EAX-57C420
+//             2026-11-01] typed undefined4 (was void).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_0057c420(int param_1,undefined4 param_2)
+#ifdef MASHED_STANDALONE
+extern "C" undefined4 __cdecl FUN_0057c420(int param_1,undefined4 param_2)
+#else
+static undefined4 __cdecl FUN_0057c420_impl(int param_1,undefined4 param_2)
+#endif
 {
-  FUN_0055bd80(**(int **)(param_1 + 0x10),
-               (*(int **)(param_1 + 0x10))[2], 1, param_2);             // 0x0057c435
-  return;
+  return FUN_0055bd80(**(int **)(param_1 + 0x10),
+                      (*(int **)(param_1 + 0x10))[2], 1, param_2);      // 0x0057c435
 }
 
 // ---------------------------------------------------------------------------
@@ -272,7 +279,8 @@ extern "C" undefined4 __cdecl FUN_00562a10(undefined4 param_1,undefined4 param_2
 // scenario_launch.py). Page-level write tracking (Core/ShadowTrack.h): every page the call writes plus the
 // caller's 4 KB stack window is compared, pre-state restored between the two runs. Phase: census race_run
 // rows (0x0057c440, 0x0057c2b0) kPhaseRace, census menu row (0x0057c270) kPhaseAny.
-// 0x0057c420 is deliberately NOT wrapped: its body is void, but three callers read its EAX (see RESULT).
+// [HB-ASI-EAX-57C420 2026-11-01] 0x0057c420 is wrapped too, now that its body returns the EAX its callers
+// read (RunTracked compares the return with the writes). kPhaseAny: 0x0047d240 places bodies at race load.
 extern "C" int __cdecl FUN_0057c440(int param_1) {
     SHADOW_AB_COUNTER(ab, "FUN_0057c440", 0x0057c440u, ShadowAB::kPhaseRace);
     return ShadowAB::RunTracked(ab, FUN_0057c440_impl, SHADOW_STACK_WINDOW(), param_1);
@@ -280,6 +288,10 @@ extern "C" int __cdecl FUN_0057c440(int param_1) {
 extern "C" int __cdecl FUN_0057c2b0(int param_1) {
     SHADOW_AB_COUNTER(ab, "FUN_0057c2b0", 0x0057c2b0u, ShadowAB::kPhaseRace);
     return ShadowAB::RunTracked(ab, FUN_0057c2b0_impl, SHADOW_STACK_WINDOW(), param_1);
+}
+extern "C" undefined4 __cdecl FUN_0057c420(int param_1,undefined4 param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_0057c420", 0x0057c420u, ShadowAB::kPhaseAny);
+    return ShadowAB::RunTracked(ab, FUN_0057c420_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
 }
 extern "C" undefined4 __cdecl FUN_0057c270(void) {
     SHADOW_AB_COUNTER(ab, "FUN_0057c270", 0x0057c270u, ShadowAB::kPhaseAny);
