@@ -2,7 +2,7 @@
 
 PREREG `PREREG_D4-WSB-55B080-ULP.md` committed alone at `a8f035b49`, before every arm. Amendment 1 at `f6c5c841b` (with
 its one-file harness fix), after S1 / S2 / S3 and before S1a / S2a / Ca / G. Branch `orch/D4-WSB-55B080-ULP` off
-`orch/integration` @ `6d9d01a7f`. Fix commit `e56e0cb3d`. `orch/integration` merged back in at `ab71bb207` (no conflict).
+`orch/integration` @ `6d9d01a7f`. Fix commit `e56e0cb3d`. `orch/integration` merged back in at `ab71bb207` (no conflict). Second re-merge at `13ae4bac3` (integration `066dc991a`, no conflict, no build input changed: empty diff under `mashedmod/` and `re/tools/dual_copy_allowlist.txt`).
 
 ## Cause
 
