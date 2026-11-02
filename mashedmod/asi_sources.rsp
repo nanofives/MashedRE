@@ -645,6 +645,7 @@
 "Collision\RwpSolverLeaves1X87.cpp"
 "Collision\RwpSolverMath2.cpp"
 "Collision\RwpSolverMath2QuatY.cpp"
+"Collision\RwpSolverMath2Quat.cpp"
 "Collision\RwpSolverBroadphase3.cpp"
 "Collision\RwpSolverCore4.cpp"
 "Collision\RwpSolverGlue5.cpp"

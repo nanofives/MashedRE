@@ -36,10 +36,11 @@ typedef void           code;
 #define _DAT_005cc558 (*(const float*)0x005cc558u)   // .rdata 3a83126f (0.001f); hand fix: read as float (fdivr dword [0x5cc558] at 0x0055b426)
 #define _DAT_005cd0c8 (*(const double*)0x005cd0c8u)   // .rdata qword 3ff0000000000000 (1.0); hand fix: read as double (fld qword [0x5cd0c8] at 0x0055b19e)
 extern "C" void __cdecl FUN_004c51a0(float *, float *, int);   // 0x004c51a0 (ported)
-// PREREG amendment 1 (2026-11-01): 0x00546b10 called through a raw-RVA thunk to the original, not its port. Arm S pass 1
-// was DIVERGENT 4/24, 1-ulp differences on adjacent dwords at 16-byte stride (the quaternion table this call writes);
-// binding the original isolates this body. The port (Collision/RwpSolverMath2.cpp) keeps its own row.
-static inline unsigned int L2T_FUN_00546b10(float * a0, float * a1) { return reinterpret_cast<unsigned int(__cdecl*)(float *, float *)>(0x00546b10u)(a0, a1); }   // 0x00546b10 (original thunk)
+// D4-WSB-55B080-ULP (2026-11-01): 0x00546b10 bound to its port again. D4-WSB-PORT-BROAD-2 amendment 1 had routed it through
+// a raw-RVA thunk to the original (arm S pass 1 DIVERGENT 4/24, 1-ulp in the quaternion table). Cause: the port was
+// compiled SSE2, so 0.5/s and the m[i]-m[j] terms stayed 53-bit where the original rounds at the thread's PC_24. The
+// port now lives in Collision/RwpSolverMath2Quat.cpp, compiled x87 (x87_tus.txt).
+extern "C" unsigned int __cdecl FUN_00546b10(float *, float *);   // 0x00546b10 (ported)
 static inline int * L2T_FUN_0055b4a0(int * a0, float * a1) { return reinterpret_cast<int *(__cdecl*)(int *, float *)>(0x0055b4a0u)(a0, a1); }   // 0x0055b4a0 (original, not ported)
 extern "C" int * __cdecl L2_FUN_0055b080(int * param_1, int param_2, int param_3, unsigned int * param_4);
 static int * __cdecl L2_FUN_0055b080_impl(int * param_1, int param_2, int param_3, unsigned int * param_4)
@@ -125,7 +126,7 @@ static int * __cdecl L2_FUN_0055b080_impl(int * param_1, int param_2, int param_
       param_4 = param_4 + 1;
       puVar4 = puVar4 + 1;
     }
-    L2T_FUN_00546b10((float *)(param_1[1] * 0x10 + (*(int **)(*param_1 + 0x10))[4]), (float *)(param_1[1] * 0x40 + **(int **)(*param_1 + 0x10)));
+    FUN_00546b10((float *)(param_1[1] * 0x10 + (*(int **)(*param_1 + 0x10))[4]), (float *)(param_1[1] * 0x40 + **(int **)(*param_1 + 0x10)));
   }
   FUN_004c51a0((float *)(param_1[1] * 0x40 + **(int **)(*param_1 + 0x10)), (float *)(param_1 + 2), (int)(1));
   // hand fix: `fstp dword ptr [ebx+0x1c]` at 0x0055b42e stores the float bits; the generator wrote a numeric float->int conversion
