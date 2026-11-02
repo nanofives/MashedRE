@@ -1,0 +1,171 @@
+# MATCH-S16 helper h1 notes (2026-11-02)
+
+Techniques that worked in this slice:
+- __thiscall without C++: `__fastcall f(T *self, int edx_unused, <stack args>)` gives the same entry and `ret N`
+  (0x00494ac0, 0x00494c60). For a CALL to a thiscall callee where EDX holds nothing useful, declare the callee's
+  stack args as `float` / 4-byte struct types: __fastcall only puts DWORD-or-smaller integer args in EDX, so
+  nothing is loaded into EDX and the pushes match (0x00494c80: `push 0` from `0.0f`, `push &hr` from a
+  struct {int *p}).
+- 0x00494b65 is a mid-function label: the real entry is 0x00494b50 (99 B), file holds FUN_00494b50,
+  byte-identical, but 0x00494b50 has no row in re/console/pc_funcs.csv so match.py refuses it ("no Ghidra size").
+- `pow` as a name makes 9176 use the _CIpow intrinsic: call the CRT entry as FUN_004a2d30.
+- switch with an explicit `case 0:` (own body) next to `default:` keeps the table based at 0 (0x00495150).
+- C++ EH functions (0x00494820, 0x004944c0): match.py C++ mode with /EHs and an inline-destructor smart pointer
+  emits the EH prologue (scratch/h1/x2_full.cpp.c, 44.3%), but that needs FLAGS/LANG outside the required
+  form and the preamble's C++ MGLOBAL references do not compile under the DDK (`&` on constant).
+
+0x004944b0  9  100.0  100.0  cxx:ok  -  fastcall ptr-in/ptr-out zeroing helper
+0x00494a80  55  100.0  100.0  cxx:ok  -  cdecl 3 args, callee arities fixed
+0x00494ac0  93  100.0  100.0  cxx:ok  -  thiscall ctor as __fastcall + unused EDX param; base ctor same
+0x00494b65  78  100.0(bytes, as 0x00494b50)  -  cxx:ok  c  wrong boundary: real entry 0x00494b50 (99 B), file holds FUN_00494b50 byte-identical; no pc_funcs row for 0x00494b50
+0x00494bc0  146  100.0  100.0  cxx:ok  -  six COM release-and-clear blocks
+0x00494c60  30  100.0  100.0  cxx:ok  -  scalar deleting dtor, thiscall as fastcall
+0x00494ee0  5  100.0  100.0  cxx:ok  -  tail-call thunk to 0x004d8560
+0x00494ef0  5  100.0  100.0  cxx:ok  -  tail-call thunk to 0x00493f70
+0x00494f00  5  100.0  100.0  cxx:ok  -  tail-call thunk to 0x00494a80 (3 args)
+0x00494f10  5  100.0  100.0  cxx:ok  -  tail-call thunk to 0x00494480
+0x00494f20  5  100.0  100.0  cxx:ok  -  tail-call thunk to 0x00494460
+0x00494f40  125  100.0(bytes, 133 B symbol; insn 85.0 past Ghidra size)  85.0  cxx:ok  -  in 00495080.c: static, ramp in EAX; pow as FUN_004a2d30, float local exponent, (float)(pow*scale)
+0x00494fd0  172  100.0  100.0  cxx:ok  -  in 00495080.c: static, device in ESI; gamma ramp get/set with /GS
+0x00495080  38  100.0  100.0  cxx:ok  -  real caller of the two statics
+0x004950b0  81  100.0  100.0  cxx:ok  -  QPC * 3000000 / freq through a 64-bit union local
+0x00495120  43  100.0  100.0  cxx:ok  -  QPF into 0x00771e70/74
+0x00495150  118  100.0  100.0  cxx:ok  -  explicit case 0 keeps the 0-based jump table
+0x004951e0  5  100.0  100.0  cxx:ok  -  tail-call thunk to 0x00495780
+0x004951f0  122  100.0  100.0  cxx:ok  -  condition through an int flag puts the failure block first
+0x00494820  594  37.0  52.6  cxx:ok  c  C++ EH frame + thiscall; C++ mode experiment 44.3% (regs 69.8%)
+0x00494c80  601  100.0  100.0  cxx:ok  -  stdcall A2W helper, hr copied before dtors, float/struct call-site proto for thiscall ctor
+0x004944c0  864  59.2  54.4  cxx:ok  c  C++ EH frame with inline smart-pointer dtors; body follows 0x00494c80
+0x00495080 holds 0x00494fd0
+0x00495080 holds 0x00494f40
+0x00494b65 holds 0x00494b50
+# MATCH-S16 helper h2 notes (2026-11-02)
+
+Running log (written per function as each one was finished):
+- 0x00495280: variadic logger FUN_00496400 needs its real arity, plus if/else with one call per branch.
+- 0x00495530: DirectInput8Create is called through its linker thunk FUN_0049b300 (__stdcall, 5 args).
+- 0x004957a0 / 0x00495830: two separate early-return ifs. A combined `&&` moves the return-0 block to the end.
+- 0x00495e80 / 0x00495fe0 / 0x00495870: JoyDev = a 0x448-byte struct array at 0x00771e88 (4 entries).
+- 0x00495350: RGBA local with an initializer (single-byte stores put bl in the first store). sx/sy are separate float locals. The pointer compare is signed (int).
+- 0x004955d0: per-instruction score is 97.7% only because Ghidra's size stops 3 epilogue instructions early. match.py --bytes reports the 419-byte whole symbol BYTE-IDENTICAL.
+- 0x00496100: Ghidra's 8-way body is the compiler unrolling one plain 256-iteration loop. The test is keys[i] & 0x80 (jns).
+- 0x00495870: matched in 00495fe0.c as a static callee (ESI arg). One fxch is left over.
+
+0x00495280  99    100.0  100.0  cxx:ok  -    variadic logger arity, if/else with one call per branch
+0x00495530  70    100.0  100.0  cxx:ok  -    DInput8Create via thunk FUN_0049b300 (stdcall, 5 args)
+0x00495580  42    100.0  100.0  cxx:ok  -    COM Release through a stdcall fn-ptr
+0x004955c0  5     100.0  100.0  cxx:ok  -    jmp tail call to FUN_00495580 (prototype only)
+0x004957a0  136   100.0  100.0  cxx:ok  -    separate early returns, pair8 struct copy
+0x00495830  53    100.0  100.0  cxx:ok  -    separate early returns, intrinsic strcpy
+0x00495e80  94    100.0  100.0  cxx:ok  -    JoyDev[4] walk, intrinsic memset, stdcall COM calls
+0x00495fe0  42    100.0  100.0  cxx:ok  -    JoyDev walk calling static FUN_00495870 (ESI arg)
+0x00496040  90    100.0  100.0  cxx:ok  -    EnumDevices vtable call, FUN_00495520 called twice
+0x004960e0  30    100.0  100.0  cxx:ok  -    if/else vtable +0x1c/+0x20
+0x00495350  402   100.0  100.0  cxx:ok  -    RGBA initializer, split float locals, signed ptr compare
+0x004955d0  416   100.0  100.0  cxx:ok  -    whole symbol byte-identical (--bytes). Ghidra size short by the epilogue (97.7% per-ins)
+0x00496100  531   100.0  100.0  cxx:ok  -    plain 256 loop (compiler unrolls x8), & 0x80 test
+0x00495870  1544  98.4   98.4   cxx:ok  (b)  one fxch before y*scale in the normalise branch (x87 operand order). 6 rewrites + 2 permuter runs did not move it
+0x00495fe0 holds 0x00495870
+# MATCH-S16 helper h3 (2026-11-02)
+
+0x00496320  78  100.0  100.0  cxx:ok  -  three early-return hr<0 checks
+0x00496370  55  100.0  100.0  cxx:ok  -  DirectInput keyboard Unacquire/Release via fn-ptr types
+0x004963d0  5  100.0  100.0  cxx:ok  -  tail call, jmp to 0x00496370
+0x004963e0  24  100.0  100.0  cxx:ok  -  fputs to log FILE* (stock bytes)
+0x00496400  104  100.0  100.0  cxx:ok  -  variadic log printf, /GS 512-byte buffer (stock bytes)
+0x00496470  29  100.0  100.0  cxx:ok  -  fclose log FILE*
+0x004967e0  284  98.8  98.8  cxx:ok  (b)  one `and eax,1` after shr 7 (bit 7 of 0x00773058) not reproduced
+0x00496900  5  100.0  100.0  cxx:ok  -  tail call, jmp to 0x00497450
+0x00496c10  202  100.0  100.0  cxx:ok  -  StretchRect + quad, static callee 0x004969a0 (ECX/EAX/EBX args)
+0x00496d20  54  100.0  100.0  cxx:ok  -  two RpWorldForAllWorldSectors calls
+0x00496e40  121  100.0  100.0  cxx:ok  -  two create/register sequences
+0x00496ec0  320  100.0  100.0  cxx:ok  -  RwMatrixSetIdentity shape + invert + transpose to view matrix
+0x00497000  96  100.0  100.0  cxx:ok  -  projection matrix, `-q * near` spelling
+0x00497060  300  100.0  100.0  cxx:ok  -  D3DXMatrixIdentity chained shape, stdcall multiply, 4 copies
+0x004969a0  612  66.0  78.0  cxx:ok  (b)  in 00496c10.c, frame 0x9c vs 0xa0, FP/global-load order around 1/nearPlane
+0x00496530  687  100.0  100.0  cxx:ok  -  in 004967e0.c, static with EBX player arg
+0x00496c10 holds 0x004969a0
+0x004967e0 holds 0x00496530
+0x00497190  25  100.0  100.0  cxx:ok  -  static EAX-arg sprintf wrapper + stand-in caller
+0x004971b0  115  100.0  100.0  cxx:ok  -  static EAX-index config load + stand-in caller
+0x004971b0 holds 0x00497190
+0x00497230  115  100.0  100.0  cxx:ok  -  static EAX-index config save + stand-in caller
+0x00497230 holds 0x00497190
+0x004972b0  85  100.0  100.0  cxx:ok  -  bytes-identical 88 B symbol (Ghidra size stops before epilogue; per-ins 91.7)
+0x00497310  294  100.0  100.0  cxx:ok  -  binding lookup, switch 9..12 + jump table; unsigned binding fixed sar->shr
+0x00497450  31  100.0  100.0  cxx:ok  -  first hand pass
+0x00497470  62  100.0  100.0  cxx:ok  -  static EAX/ECX/EDX (id, hDlg, player) + stand-in caller
+0x00497b10  74  100.0  100.0  cxx:ok  -  static EAX/EDI/ESI (action, hDlg, id) + stand-in caller
+0x004982a0  191  100.0  100.0  cxx:ok  -  backup struct needs 8-align + char array (and esp,-8 frame and /GS cookie)
+0x004982a0 holds 0x00497230
+0x004982a0 holds 0x00497190
+0x004974b0  488  100.0  100.0  cxx:ok  -  static EAX hDlg + stand-in; index loop over 4 records (pointer walk gave a down counter)
+0x00498510  653  95.3  95.3  cxx:ok  b  one mov ecx,0x80 scheduled earlier in the restore struct copy (11 B); 7 forms + permuter tried
+0x00498510 holds 0x004971b0
+0x00498510 holds 0x00497190
+0x00497b60  1135  75.6  97.1  cxx:ok  b  register permutation only (hDlg EBP/GetDlgItem ESI/ShowWindow EDI in the original vs ESI/EDI/EBP ours); permuter 740
+
+## Final (h4)
+0x00497190  25  100.0  100.0  cxx:ok  -  static EAX-arg sprintf wrapper + stand-in caller
+0x004971b0  115  100.0  100.0  cxx:ok  -  static EAX-index config load + stand-in caller
+0x00497230  115  100.0  100.0  cxx:ok  -  static EAX-index config save + stand-in caller
+0x004972b0  85  100.0  100.0  cxx:ok  -  bytes-identical 88 B symbol (Ghidra size stops before epilogue, per-ins 91.7)
+0x00497310  294  100.0  100.0  cxx:ok  -  binding lookup, switch 9..12 + jump table, unsigned binding (shr)
+0x00497450  31  100.0  100.0  cxx:ok  -  first hand pass
+0x00497470  62  100.0  100.0  cxx:ok  -  static EAX/ECX/EDX (id, hDlg, player) + stand-in caller
+0x00497b10  74  100.0  100.0  cxx:ok  -  static EAX/EDI/ESI (action, hDlg, id) + stand-in caller
+0x004982a0  191  100.0  100.0  cxx:ok  -  backup struct needs 8-byte align + char array (and esp,-8 frame, /GS cookie)
+0x004974b0  488  100.0  100.0  cxx:ok  -  static EAX hDlg + stand-in, index loop over 4 records
+0x00498510  653  95.3  95.3  cxx:ok  b  one mov ecx,0x80 placed earlier in the restore struct copy (11 B), 7 forms + permuter tried
+0x00497b60  1135  75.6  97.1  cxx:ok  b  register permutation only (hDlg/GetDlgItem/ShowWindow in EBP/ESI/EDI vs ours ESI/EDI/EBP), permuter 740
+0x004971b0 holds 0x00497190
+0x00497230 holds 0x00497190
+0x004982a0 holds 0x00497230
+0x004982a0 holds 0x00497190
+0x00498510 holds 0x004971b0
+0x00498510 holds 0x00497190
+0x004987b0  90  100.0  100.0  cxx:ok  -  vsprintf+OutputDebugStringA, varargs via &fmt+4
+0x00498810  69  86.7  100.0  cxx:ok  b  static EAX callee; 2 regs swapped (edx/eax vs eax/ecx), 8 forms + permuter no move
+0x00498860  171  100.0  100.0  cxx:ok  -  _ftime64/_ctime64 name; ctime result in a temp
+0x00498860 holds 0x00498810
+0x00498910  50  100.0  100.0  cxx:ok  -  inlined strcpy of literal
+0x00498950  90  100.0  100.0  cxx:ok  -  fopen/fread/fclose
+0x004989b0  77  100.0  100.0  cxx:ok  -  fopen/fwrite/fclose
+0x00498a00  344  100.0  100.0  cxx:ok  -  instr 96.7% (Ghidra size stops before epilogue), whole obj symbol byte-identical; static, Mode* in EBX
+0x00498c00  276  100.0  100.0  cxx:ok  -  mode count in a temp; DAT_007731f8 file-static
+0x00498d20  53  100.0  100.0  cxx:ok  -  static, HWND in EAX
+0x00498d60  219  100.0  100.0  cxx:ok  -  static; pilot shape
+0x00498e40  86  100.0  100.0  cxx:ok  -  result=i; break; count in loop condition
+0x00498ea0  183  91.1  97.8  cxx:ok  b  lea ebx scheduled after push, 3 base/index swaps; 10 forms + permuter no move
+0x00499170  128  100.0  100.0  cxx:ok  -  static, HWND in EAX
+0x004991f0  454  100.0  100.0  cxx:ok  -  DlgProc: default first in msg switch, break + trailing return 1; byte-identical incl. jump tables
+0x00498f60  516  100.0  100.0  cxx:ok  -  static, HWND in EAX; check boxes as if/else SendMessageA pairs (tail-merged)
+0x00499400  653  90.1  92.3  cxx:ok  b  inner listing loop: DAT_00773408 load before the line[64] fill, offset counter via edi; permuter 186 no move
+0x004991f0 holds 0x00498a00 0x00498c00 0x00498d20 0x00498d60 0x00498e40 0x00498ea0 0x00498f60 0x00499170 0x00499400 (same text in all 10 files)
+0x00498910 holds 0x00498950 0x004989b0 (same text in all 3 files)
+0x00499690  89  100  100  cxx:ok  -  MSG global as struct, relocheck OK
+0x00499740  100  100  100  cxx:ok  -  relocheck OK
+0x004997b0  102  100  100  cxx:ok  -  relocheck OK
+0x00499820  97  100  100  cxx:ok  -  WndProc __stdcall switch, relocheck OK
+0x00499ba0  278  100  100  cxx:ok  -  strcpy/memset intrinsics, string globals via MGLOBALA, relocheck OK
+0x00499ce0  166  100  100  cxx:ok  -  inline D3DXMatrixIdentity chain on matrix global, relocheck OK
+0x0049a0a0  32  100  100  cxx:ok  -  switch, case-order tail calls, relocheck OK
+0x0049a0e0  99  100  100  cxx:ok  -  compare written as >= 0x101 (D3DCAPS9 shader-version low word), relocheck OK
+0x0049a150  32  100  100  cxx:ok  -  case 2 calls a second ICF-folded empty fn (FUN_0045b350_icf, unchecked) to stop case merge, relocheck OK
+0x0049b300  -  -  -  -  c  jmp [IAT] linker import thunk, no file
+0x00499d90  779  43.9  43.9  cxx:ok  a  record loop unrolled x4 in original, x8 by 9176 (as S01 0x00401690); prologue/remainder loop/tail identical; relocheck n/a (offsets shift)
+0x00499890  784  100  100  cxx:ok  -  Platform SDK GetVersionEx sample shape (switch on platform), relocheck OK
+
+## Final (h6)
+0x00499690  89  100  100  cxx:ok  -  MSG global as struct
+0x00499740  100  100  100  cxx:ok  -  GS cookie + LoadStringA/SetWindowTextA
+0x004997b0  102  100  100  cxx:ok  -  resource find/load/size/lock
+0x00499820  97  100  100  cxx:ok  -  __stdcall WndProc switch, DefWindowProcA tail jump
+0x00499ba0  278  100  100  cxx:ok  -  strcpy/memset intrinsics, string globals via MGLOBALA
+0x00499ce0  166  100  100  cxx:ok  -  D3DXMatrixIdentity chained-assignment order
+0x0049a0a0  32  100  100  cxx:ok  -  switch with tail calls
+0x0049a0e0  99  100  100  cxx:ok  -  compare spelled >= 0x101
+0x0049a150  32  100  100  cxx:ok  -  case 2 calls a second ICF-folded empty function (FUN_0045b350_icf, relocheck unchecked) so the cases stay separate
+0x0049b300  5  -  -  -  c  jmp [IAT] linker import thunk, no file
+0x00499d90  779  43.9  43.9  cxx:ok  a  original unrolls the record loop x4, 9176 unrolls it x8 (same as S01 0x00401690). Everything else is identical
+0x00499890  784  100  100  cxx:ok  -  Platform SDK GetVersionEx sample shape

@@ -1,6 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S16 0x00495280: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs16_20261102/results.tsv. */
+/* MATCH-S16 0x00495280 (h2): 100% (regs 100%). Hand-written from the raw converter: real arity for the variadic logger FUN_00496400, if/else with one call per branch (a ?: argument gave a select through eax), OK branch first. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -34,5 +33,10 @@ void FUN_00495280(char *param_1)
 
   FUN_00402b70(local_44, param_1);
   FUN_00496400("Opening piz file %s\n", local_44);
-  FUN_004963e0(FUN_004b6570(local_44) ? "\tOK\n" : "\tFAILED\n");
+  if (FUN_004b6570(local_44) != 0) {
+    FUN_004963e0("\tOK\n");
+  }
+  else {
+    FUN_004963e0("\tFAILED\n");
+  }
 }
