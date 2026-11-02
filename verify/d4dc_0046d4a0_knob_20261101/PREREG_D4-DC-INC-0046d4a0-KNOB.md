@@ -58,9 +58,30 @@ So the pointer `FUN_0046d4a0` returns changes the values `FUN_00458570` computes
 Any G-DEF miss is RED for this branch (the knob commit must not move the default). A G-ON miss is RED for the flip: the
 RESULT then lists the first divergent frame and no flip is filed.
 
+## 3a. Amendment 1 (committed before its arms): G-EXEC failed on the gate scenario
+
+Section 2's ten arms ran (exe `5e0df7b4`, commit `910c5e6f2`). G-DEF, G-ON and G-WIT-INERT matched the refs, but neither
+witness file was created: the selector opens it on its first call, so `H_PK46W` and `H_DEFW` made 0 calls. The gate
+recipe (Training, round rule 0, game mode 10, `[fflip 2026-10-21] recipe F`) never reaches the bump arm, so G-ON is
+vacuous there. The 12 live bumps of `M3B_ON` (`verify/d3_mode7_m3_20261010/RESULT_M3.md` section 3, ticks 3691..3702,
+car 3 holding 9 over pool 3) ran on the earlier recipe, round rule 4 without game mode 10.
+
+Added arms (`_R4` = `MASHED_ROUND_RULE=4`, `-MASHED_GAME_MODE`, both with the witness, so the knob is the only difference):
+
+| Arm | Stack | Knob |
+|---|---|---|
+| `H_DEFR4W` | `DEFW` + `_R4` | OFF + witness |
+| `H_PK46R4W` | `PK46W` + `_R4` | ON + witness |
+
+| Gate | Prediction |
+|---|---|
+| **G-EXEC-R4** | `H_PK46R4W.pk46.tsv` and `H_DEFR4W.pk46.tsv` have at least 1 call row each, the same count, the same `idx` sequence. If 0, G-ON stays vacuous: the RESULT reports it and no flip is filed |
+| **G-ON-R4** | `H_PK46R4W` step / gates / ptrace hashes = `H_DEFR4W`'s, byte for byte (no ref exists for this recipe) |
+| **G-READS-R4** | as G-READS, on every row of both files |
+
 ## 4. The flip (filed as a decision, not done here)
 
-On G-DEF + G-ON + G-EXEC PASS: map `"0x0046d4a0"` in `pickups_m3.json` to `PtrCompute881ec8`, drop `PK_46d4a0` from the
+On G-DEF + G-ON + G-EXEC PASS (or, per amendment 1, G-DEF + G-ON + G-EXEC-R4 + G-ON-R4 PASS): map `"0x0046d4a0"` in `pickups_m3.json` to `PtrCompute881ec8`, drop `PK_46d4a0` from the
 spec's `funcs`, regenerate the `.inc`, delete `PK_46d4a0_sel` and the knob, and remove the allowlist key
 `DUP-IN-TARGET:0046d4a0`. Expected default hashes after the flip: unchanged, G-CTRL `8284be46 / ba407a16 / 31fe043e`,
 B `1d5bf4f9` x3. D4-DC-INC-0046d4a0 closes with the flip.

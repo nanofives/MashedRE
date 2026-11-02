@@ -316,6 +316,10 @@ for _s in (2, 3): STACK['TLG%dFD' % _s] = STACK['TLG%d' % _s] + STACK['FLD']
 STACK['PK46'] = ['MASHED_PK_ONEBODY_46D4A0']
 STACK['PK46W'] = STACK['PK46'] + ['MASHED_PK_ONEBODY_46D4A0_WIT=@OUT@\\@NAME@.pk46.tsv']
 STACK['DEFW'] = ['MASHED_PK_ONEBODY_46D4A0_WIT=@OUT@\\@NAME@.pk46.tsv']
+# PREREG amendment 1: the M3B_ON recipe (round rule 4, no game mode 10; verify/d3_mode7_m3_20261010 had 12 live bumps)
+_R4 = ['MASHED_ROUND_RULE=4', '-MASHED_GAME_MODE']
+STACK['PK46R4W'] = STACK['PK46W'] + _R4
+STACK['DEFR4W'] = STACK['DEFW'] + _R4
 
 
 STACK['ORAND'] = ['MASHED_OWN_RAND_564310=1', 'MASHED_OWN_RAND_LOG=@OUT@/@NAME@.rand.txt']   # D4-WSB-RAND-D11064 PREREG P2
