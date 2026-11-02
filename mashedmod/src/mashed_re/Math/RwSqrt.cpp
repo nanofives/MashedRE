@@ -98,8 +98,8 @@ static float FastInvSqrtTwoForm(float x) {
     return result;
 }
 
-// [D4-DC-INC-SQRT-FOLD 2026-11-01] MASHED_SQRT_FOLD=1 (default OFF, Math/RwLutTables.h): the one body,
-// Math::LutInvSqrt. Unset: the form above (live table in the .asi, 1/std::sqrt in the exe).
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] hook of 0x004c3b90, default ON since 2026-11-02 (L-86 (a), Math/RwLutTables.h): the one body,
+// Math::LutInvSqrt. MASHED_NO_SQRT_FOLD=1: the form above (live table in the .asi, 1/std::sqrt in the exe).
 extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
     if (!mashed_re::Math::SqrtFoldOn()) return FastInvSqrtTwoForm(x);
     const float r = mashed_re::Math::LutInvSqrt(x);
@@ -145,7 +145,9 @@ static float FastSqrtTwoForm(float x) {
     return result;
 }
 
-// [D4-DC-INC-SQRT-FOLD 2026-11-01] MASHED_SQRT_FOLD=1: Math::LutSqrt, as FastInvSqrt above.
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] hook of 0x004c3b30, default ON since 2026-11-02 (L-86 (a)): Math::LutSqrt, as
+// FastInvSqrt above.
+// MASHED_NO_SQRT_FOLD=1: the form above (std::sqrt in the exe).
 extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
     if (!mashed_re::Math::SqrtFoldOn()) return FastSqrtTwoForm(x);
     const float r = mashed_re::Math::LutSqrt(x);

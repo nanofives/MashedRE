@@ -111,9 +111,10 @@ float LutNormalize2D(float* out, const float* in) {
     return len;
 }
 
-// [D4-DC-INC-SQRT-FOLD 2026-11-01] the knob and its log (RwLutTables.h).
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] the knob and its log (RwLutTables.h). Default ON since 2026-11-02 (L-86 (a)):
+// MASHED_NO_SQRT_FOLD=1 opts out. MASHED_SQRT_FOLD=1, the pre-flip opt-in, is a no-op.
 bool SqrtFoldOn() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_SQRT_FOLD"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_SQRT_FOLD"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 

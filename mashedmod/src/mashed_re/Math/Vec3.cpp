@@ -65,8 +65,8 @@ static float Vec3MagnitudeTwoForm(const float* v) {
     return result;
 }
 
-// [D4-DC-INC-SQRT-FOLD 2026-11-01] MASHED_SQRT_FOLD=1 (default OFF, Math/RwLutTables.h): the one body,
-// Math::LutLength ((x*x + y*y) + z*z, SSE2 as above, then the LUT sqrt). Unset: the form above.
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] hook of 0x004c3ac0, default ON since 2026-11-02 (L-86 (a), Math/RwLutTables.h): the one body,
+// Math::LutLength ((x*x + y*y) + z*z, SSE2 as above, then the LUT sqrt). MASHED_NO_SQRT_FOLD=1: the form above.
 extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {
     if (!mashed_re::Math::SqrtFoldOn()) return Vec3MagnitudeTwoForm(v);
     const float r = mashed_re::Math::LutLength(v);

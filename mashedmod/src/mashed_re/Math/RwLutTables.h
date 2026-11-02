@@ -17,8 +17,9 @@ float LutNormalize(float* out, const float* in);   // FUN_004c39b0 with the real
 float LutLength(const float* v);                   // FUN_004c3ac0 (RwV3dLength) with the real LUT, PC_24
 float LutNormalize2D(float* out, const float* in);  // FUN_004c3c60 (2-D normalize) with the real LUT, PC_24
 
-// [D4-DC-INC-SQRT-FOLD 2026-11-01] MASHED_SQRT_FOLD=1 (default OFF): FastSqrt / FastInvSqrt / Vec3Magnitude
-// (Math/RwSqrt.cpp, Math/Vec3.cpp) return LutSqrt / LutInvSqrt / LutLength, one C form per RVA
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] default ON since 2026-11-02 (L-86 (a), MASHED_NO_SQRT_FOLD=1 opts out):
+// FastSqrt 0x004c3b30 / FastInvSqrt 0x004c3b90 / Vec3Magnitude 0x004c3ac0 (Math/RwSqrt.cpp, Math/Vec3.cpp) return
+// LutSqrt / LutInvSqrt / LutLength, one C form per RVA
 // (verify/d4dc_sqrtfold_20261101/PREREG_D4-DC-INC-SQRT-FOLD.md). SqrtFoldNote is the knob's diagnostic log
 // (MASHED_SQRT_FOLD_LOG=<path>): hook 0 FastSqrt, 1 FastInvSqrt, 2 Vec3Magnitude; a no-op without the log.
 bool SqrtFoldOn();
