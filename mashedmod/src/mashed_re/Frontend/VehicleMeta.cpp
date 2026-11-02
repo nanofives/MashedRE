@@ -37,52 +37,5 @@
 // Analysis: re/analysis/hud_frontend_d4/0x0042ef40.md
 // ---------------------------------------------------------------------------
 
-// 0x0042ef40
-extern "C" __declspec(dllexport) int __cdecl VehicleUnlockFlagGet(int param_1, int param_2) {
-    static const std::uintptr_t kArrayBase = 0x007f0e50u;
-    static const int             kStride    = 0xc;
-
-    // Compute byte address for the given slot type.
-    // Offsets match exactly what the decompiler shows for each case/branch.
-    const std::uint8_t* record =
-        reinterpret_cast<const std::uint8_t*>(kArrayBase + param_1 * kStride);
-
-    std::uint8_t flag_byte;
-
-    switch (param_2) {
-    case 2:
-    default:
-        // param_2==2 or any unrecognised value uses byte offset 0.
-        // 0x007f0e50 + param_1*0xc  (cited at 0x0042ef6e)
-        flag_byte = record[0];
-        break;
-
-    case 3:
-    case 0x3e9:  // 1001 — cited at 0x0042ef85
-        // 0x007f0e51 + param_1*0xc  (byte +1)  (cited at 0x0042ef78)
-        flag_byte = record[1];
-        break;
-
-    case 4:
-    case 0x3ea:  // 1002 — cited at 0x0042ef98
-        // 0x007f0e52 + param_1*0xc  (byte +2)  (cited at 0x0042ef8e)
-        flag_byte = record[2];
-        break;
-
-    case 5:
-    case 0x3ed:  // 1005 — cited at 0x0042efb3
-        // 0x007f0e55 + param_1*0xc  (byte +5)  (cited at 0x0042efa5)
-        flag_byte = record[5];
-        break;
-
-    case 10:
-    case 0x3f3:  // 1011 — cited at 0x0042efc5
-        // 0x007f0e5b + param_1*0xc  (byte +11)  (cited at 0x0042efbd)
-        flag_byte = record[11];
-        break;
-    }
-
-    return (flag_byte == 0x01u) ? 1 : 0;
-}
-
-RH_ScopedInstall(VehicleUnlockFlagGet, 0x0042ef40);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S07: the body of 0x0042ef40 (VehicleUnlockFlagGet) moved to Match/MatchS07_0042ef40.cpp,
+// which compiles the byte-matched source re/match/s07/0042ef40.c.

@@ -95,25 +95,8 @@ static std::int32_t CallCursorMover(std::int32_t player_idx, std::int32_t direct
 // ref: re/analysis/game_mode_cont2/0x00431d00.md
 // ---------------------------------------------------------------------------
 
-// 0x00431d00
-extern "C" __declspec(dllexport) void __cdecl CarSelectReset() {
-    // Global writes in order (body 0x00431d00)
-    *reinterpret_cast<std::int32_t*>(kGlobal_ea74) = 1;
-    *reinterpret_cast<std::int32_t*>(kGlobal_ea90) = 1;
-    *reinterpret_cast<std::int32_t*>(kGlobal_ea94) = 0;
-    *reinterpret_cast<std::int32_t*>(kGlobal_ea98) = 1;
-    *reinterpret_cast<std::int32_t*>(kGlobal_ea9c) = 2;
-    *reinterpret_cast<std::int32_t*>(kGlobal_eaa0) = 3;
-    *reinterpret_cast<std::int32_t*>(kGlobal_eaac) = 0;
-
-    // FUN_00431b80 call triple (chained pattern)
-    // Call 1: player_idx=0, direction from ESI (which caller had set; use 0)
-    const std::int32_t uVar1 = CallCursorMover(0, 0);
-    // Call 2: player_idx=uVar1, direction 0
-    CallCursorMover(uVar1, 0);
-    // Call 3: player_idx=0, direction 0
-    CallCursorMover(0, 0);
-}
+// MATCH-S07: the body of 0x00431d00 (CarSelectReset) moved to Match/MatchS07_00431d00.cpp,
+// which compiles the byte-matched source re/match/s07/00431b80.c (with 0x00431b80).
 
 // ---------------------------------------------------------------------------
 // CarSelectCycleColour  --  Player Colour Select (page id 0x18) LEFT/RIGHT arm.

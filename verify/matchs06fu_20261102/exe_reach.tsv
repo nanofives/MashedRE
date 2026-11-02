@@ -1,0 +1,2 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+MenuMenusBA	0x00181a50	3	yes	yes	_MenuMenusBA <- ?MeasureMenuMessage@?A0x63cc1045@@YAMHM@Z <- ?RenderFrame@?A0x63cc1045@@YA_NXZ <- _WinMain@16
