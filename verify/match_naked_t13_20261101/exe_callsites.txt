@@ -1,0 +1,6 @@
+_IsCarSlotActive	0x0014f570	8	?CarParts_FrameTick@TrackRenderer@D3d9Render@mashed_re@@AAEXH@Z+0x29;_RaceComputeDistancesTick+0x48;?PathProg_FrameTick@Race@mashed_re@@YAXXZ+0x112;?PathProg_FrameTick@Race@mashed_re@@YAXXZ+0x156;?HeadingAssist_Frame@Race@mashed_re@@YAXH@Z+0x15;?HeadingAssist_Player@Race@mashed_re@@YAXHEE@Z+0xc;_TG_414a70+0x65;?CarsReg_FrameTick@Race@mashed_re@@YAXXZ+0x11
+_GetAiLapCounter	0x0014eff0	1	?AiPreTickRubberBand@?A0x239e2eba@Ai@@YAXXZ+0x37
+_PP_407cd0	0x0014f000	4	_PP_407e20+0x17f;_PP_407e20+0x18f;_PP_407e20+0x2c6;_PP_407e20+0x2d3
+_GetRenderSubMode	0x0014f350	2	?ModeSeven@Ai@@YAHIHQBMQAM@Z+0x3e7;_TG_SubMode+0xf
+?TriangleFaceNormal@Collision@mashed_re@@YAXPBM00PAM@Z	0x0014f360	1	?VehicleWheelForceIntegrate@Vehicle@mashed_re@@YAXPAHMPAX@Z+0xe5c
+_CR_41f710Body	0x00127850	1	_CR_41f710+0x1
