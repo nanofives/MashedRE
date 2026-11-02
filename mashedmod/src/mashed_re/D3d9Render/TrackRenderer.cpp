@@ -241,13 +241,14 @@ int aib_track_index()      { return g_aib.course; }
 // 6259/6259). This returned 1, which (a) skipped FUN_00416250's sub-state-6 block, the
 // one that calls the fire decision, (b) stepped the PLAYER through the AI tick
 // (FUN_00418860's `|| FUN_00443080() == 1`) and (c) forced DAT_0089a368 = 2 every frame.
-// [D4-DC-77b0-MATCHEND-SUBSTATE] MASHED_MATCHEND_SUBSTATE (default OFF): FUN_00410510's match-end stores (0xb at
+// [D4-DC-77b0-MATCHEND-SUBSTATE] MASHED_MATCHEND_SUBSTATE (default ON since D4-FLIP-MATCHEND-ST3PRETICK 2026-11-02,
+// L-80 (a); MASHED_NO_MATCHEND_SUBSTATE=1 opts out, MASHED_MATCHEND_SUBSTATE=1 is still accepted, a no-op): FUN_00410510's match-end stores (0xb at
 // 0x00410645, FUN_00448700(1, w) at 0x0041067e / 0x00410811), FUN_004111c0 case 0xb (0x00410ab0..0x00410b25, 9 at
 // 0x00410b02) and, here, FUN_00443080 read live. The original measured 0 here on every racing frame and 1 at every
 // FUN_004177b0 entry in 0xb (verify/d4dc77b0runtime_20261101, leg 3). The cell's only exe writer is VehicleSeedWritePair.
 // verify/d4dc77b0matchend_20261101/PREREG_D4-DC-77b0-MATCHEND-SUBSTATE.md. Knob OFF: 0, as before.
 bool MatchEndSubstateEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_MATCHEND_SUBSTATE"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_MATCHEND_SUBSTATE"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 int aib_ai_target_enable() {
@@ -5573,15 +5574,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     std::fclose(lf);
                 }
             }
-            // [D4-DC-77b0-ST3-PRETICK] MASHED_ST3_PRETICK (default OFF). FUN_004111c0 case 3 is FUN_004102f0() then
+            // [D4-DC-77b0-ST3-PRETICK] MASHED_ST3_PRETICK (default ON since D4-FLIP-MATCHEND-ST3PRETICK 2026-11-02,
+            // L-83 (a); MASHED_NO_ST3_PRETICK=1 opts out, MASHED_ST3_PRETICK=1 is still accepted, a no-op). FUN_004111c0 case 3 is FUN_004102f0() then
             // FUN_0040fc00(), which stores DAT_007f1008 / _DAT_007f100c (0x0040fc63 / 0x0040fc57) and calls FUN_00425a40
             // (0x0040fc6c) while DAT_005f29c0 != 0. FUN_00425a40 calls FUN_00418860 first (0x00425a73). Measured on the
             // original (verify/d4dc77b0runtime_20261101): FUN_004177b0 entered from 0x00418905 once per case-3 tick, reading
             // 3, and once reading 4 on the release tick (0x00410367 above). The exe made no AI tick before state 5.
             // Only FUN_00418860 here: the rest of FUN_00425a40 on case-3 ticks is not run.
             // verify/d4dc77b0st3pretick_20261101/PREREG_D4-DC-77b0-ST3-PRETICK.md.
-            static const bool s_st3Pretick = [] { const char* e = std::getenv("MASHED_ST3_PRETICK");
-                                                  return e && e[0] && e[0] != '0'; }();
+            static const bool s_st3Pretick = [] { const char* e = std::getenv("MASHED_NO_ST3_PRETICK");
+                                                  return !(e && e[0] && e[0] != '0'); }();
             if (s_st3Pretick && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) {
                 static int s_st3Calls[2] = {0, 0};
                 Ai::Ai_AdvanceClock(units);                // 0x0040fc57 / 0x0040fc63 (written again below, same values)
