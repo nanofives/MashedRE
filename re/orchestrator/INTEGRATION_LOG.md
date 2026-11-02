@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-01 22:34 HB-MASHEDLOCK-EARLY-PRIORITY (orch/HB-MASHEDLOCK-EARLY-PRIORITY): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_222125
 - 2026-11-01 22:20 HB-MASHEDLOCK-SOLO-PRIORITY (orch/HB-MASHEDLOCK-SOLO-PRIORITY): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_220728
 - 2026-11-01 22:03 MATCH-TOPDOWN-T07 (orch/MATCH-TOPDOWN-T07): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261101_220136
 - 2026-11-01 21:59 MATCH-TOPDOWN-T04 (orch/MATCH-TOPDOWN-T04), MATCH-TOPDOWN-T05 (orch/MATCH-TOPDOWN-T05), MATCH-TOPDOWN-T06 (orch/MATCH-TOPDOWN-T06): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261101_215703

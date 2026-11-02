@@ -107,6 +107,19 @@ function Reclaim-DeadTrains {
     Remove-Wt $d.FullName | Out-Null
   }
 }
+# HB-MASHEDLOCK-EARLY-PRIORITY: the pass holds its mashed_lock priority from before the first merge to the end of
+# the gates, for THIS pwsh PID (<name>_priolinger_<pid>.lock, held=true). New non-priority solo opens wait on it;
+# ordinary acquires, windows already open and the train's own priority calls do not. The 2026-11-01 starvations
+# were all a solo window opened during the 4-8 min of merge+build before the first `run --priority` claim.
+# Best effort: a failed write only reopens the old gap, so it warns and the pass goes on.
+function Enter-PassPriority {
+  try { $o = & py.exe -3.12 $LOCKPY prio-hold --owner-pid $PID --label "merge-train:$TS" 2>&1; Say "priority: $(($o | Select-Object -Last 1)) rc=$LASTEXITCODE" }
+  catch { Say "WARN priority hold not registered: $($_.Exception.Message)" }
+}
+function Exit-PassPriority {
+  try { $o = & py.exe -3.12 $LOCKPY prio-release --owner-pid $PID 2>&1; Say "priority: $(($o | Select-Object -Last 1)) rc=$LASTEXITCODE" }
+  catch { Say "WARN priority release failed (stale once this PID exits): $($_.Exception.Message)" }
+}
 function Get-BranchWorktrees([string]$branch) {
   $wl = (Git -C $MAIN worktree list --porcelain) -join "`n"
   @([regex]::Matches($wl, "worktree (.+)\nHEAD \w+\nbranch refs/heads/$([regex]::Escape($branch))(?=\n|$)") | ForEach-Object { $_.Groups[1].Value })
@@ -400,6 +413,38 @@ if ($SelfTest) {
   $wrappedBody = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Body.Extent.Text -match 'Try-Batch \$batch' }, $true))
   Check ($dots.Count -eq 0 -and $wrappedBody.Count -eq 0 -and $sbParams.Count -eq 1 -and $sbParams[0] -eq 'Body') "AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: $($sbParams -join ','))"
 
+  # --- HB-MASHEDLOCK-EARLY-PRIORITY: the pass-wide priority hold, against a private MASHED_LOCK_DIR (never the live lock)
+  $hp = $top.Count -eq 1 -and $top[0].Body.Statements.Count -gt 0 -and $top[0].Body.Statements[0].Extent.Text -eq 'Enter-PassPriority'
+  $inner = @($top | ForEach-Object { $_.Finally.FindAll({ param($n) $n -is [System.Management.Automation.Language.TryStatementAst] -and $n.Body.Extent.Text -match '\bClear-Temps\b' -and $null -ne $n.Finally -and $n.Finally.Extent.Text -match '\bExit-PassPriority\b' }, $true) })
+  Check ($hp -and $inner.Count -eq 1) "AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=$hp inner=$($inner.Count))"
+  $oldLd = $env:MASHED_LOCK_DIR; $env:MASHED_LOCK_DIR = Join-Path $DATA 'lockdir'
+  New-Item -ItemType Directory -Force -Path $env:MASHED_LOCK_DIR | Out-Null
+  $hf = Join-Path $env:MASHED_LOCK_DIR "mashed_machine_priolinger_$PID.lock"
+  $sf = Join-Path $env:MASHED_LOCK_DIR 'mashed_machine_solo.lock'
+  $kid = $null
+  try {
+    $during = $null; $threw = $false
+    try { try { Enter-PassPriority; $during = Get-Content -LiteralPath $hf -Raw | ConvertFrom-Json; throw 'forced failure' } finally { try { Clear-Temps } finally { Exit-PassPriority } } } catch { $threw = $_.Exception.Message -eq 'forced failure' }
+    $after = Get-Content -LiteralPath $hf -Raw | ConvertFrom-Json
+    Check ($during.held -and [int]$during.pid -eq $PID -and $threw -and -not $after.held -and [int]$after.pid -eq $PID) "priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=$($after.held))"
+    Remove-Item -LiteralPath $hf -Force
+    Enter-PassPriority
+    $st = & py.exe -3.12 $LOCKPY status
+    Check ([bool]($st -match "PRIORITY-HOLD 'mashed_machine' pid=$PID ")) "priority hold: status shows PRIORITY-HOLD pid=$PID"
+    $kid = Start-Process py.exe -ArgumentList @('-3.12', $LOCKPY, 'solo-begin', '--label', 'selftest-worker', '--ttl', '60', '--wait', '60') -PassThru -NoNewWindow -RedirectStandardOutput (Join-Path $DATA 'solo_kid.txt')
+    Start-Sleep -Seconds 3
+    $blocked = -not (Test-Path -LiteralPath $sf)
+    $orc = & py.exe -3.12 $LOCKPY run --label selftest-ordinary --wait 5 -- py.exe -3.12 -c "print('ordinary ok')"
+    $ordinary = [bool]($orc -match 'ordinary ok')
+    & py.exe -3.12 $LOCKPY prio-release --owner-pid $PID --linger 0 | Out-Null
+    $opened = $false; foreach ($i in 1..40) { if (Test-Path -LiteralPath $sf) { $opened = $true; break }; Start-Sleep -Milliseconds 250 }
+    Check ($blocked -and $ordinary -and $opened) "priority hold: a new non-priority solo open waits while held (blocked=$blocked), an ordinary acquire does not (ok=$ordinary), the solo opens after release (opened=$opened)"
+  } finally {
+    if ($kid -and -not $kid.HasExited) { Stop-Process -Id $kid.Id -Force -ErrorAction SilentlyContinue }   # only the PID this test spawned
+    Remove-Item -LiteralPath $hf, $sf -Force -ErrorAction SilentlyContinue
+    $env:MASHED_LOCK_DIR = $oldLd
+  }
+
   # --- HB-D2RERUN: fake arm runner, D2_DEF_2 comes back short (1485 lines) on the first run
   $f = $CFG.full; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
   $script:runs = @{}
@@ -446,7 +491,10 @@ if ($Plan) { exit 0 }
 
 # ---- 2. run the batch; on RED, one at a time ----------------------------------------
 # HB-TRAINFIX: steps 2 and 3 run inside a script-scope try/finally (see Clear-Temps), never a dot-sourcing wrapper
+# HB-MASHEDLOCK-EARLY-PRIORITY: the priority hold opens first thing inside it and the finally releases it, so every
+# exit (GREEN, RED, conflict, bounce, throw) ends it. Queue empty and -Plan exit above, before any hold exists.
 try {
+Enter-PassPriority
 $res = Try-Batch $batch
 $merged = @(); $bounced = @()
 if ($res.ok) { $merged = $batch }
@@ -503,7 +551,7 @@ if ($merged.Count) {
   Remove-Temp $wt
   foreach ($br in @($merged | ForEach-Object { $_.branch } | Select-Object -Unique)) { Cleanup-Step $br $INT }
 }
-} finally { Clear-Temps }
+} finally { try { Clear-Temps } finally { Exit-PassPriority } }
 
 $final = (Git rev-parse --short $INT) | Select-Object -First 1
 $report = @(

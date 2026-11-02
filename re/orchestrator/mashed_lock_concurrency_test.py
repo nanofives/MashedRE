@@ -10,6 +10,11 @@
 # priority claim, a new solo open waits while the claim is pending and through the linger after
 # its release, ordinary acquires ignore the linger, a priority solo open does not wait on another
 # priority marker, and both default expiries (solo_begin, `run --solo`) are at most 1 h.
+# Cases 10-16 (HB-MASHEDLOCK-EARLY-PRIORITY) drive the `prio-hold` / `prio-release` CLI the merge
+# train calls at the start and end of a pass: a control without the hold reproduces the
+# 2026-11-01 starvation (a solo opened during merge+build delays the gate), the hold keeps a new
+# solo out until release, ordinary acquires, priority solo opens and an already-open window are
+# unaffected, release touches only its owner's record, and a dead owner's hold is stale.
 #
 # Workers loop over: game-lock acquire/hold/release, status reads (solo_owner, prio_pending),
 # solo windows (short ttl so expiry removal races, some left to expire), a solo file whose
@@ -168,7 +173,7 @@ def scenarios(impl):
         return 1
     name = ml.DEFAULT_NAME
     ev = os.path.join(lockdir, 'events.txt')
-    TOTAL = 9
+    TOTAL = 16
     res = []
     kids = []
 
@@ -280,6 +285,117 @@ def scenarios(impl):
                              env=dict(os.environ, MASHED_LOCK_DIR=lockdir), timeout=60).stdout
         rttl = next((int(ln.split()[1]) for ln in out.splitlines() if ln.startswith('TTL ')), None)
         check('run-solo-default-ttl-le-1h', rttl is not None and 0 < rttl <= 3600, f"(ttl={rttl}s)")
+        clear_lingers()
+
+        # 10-11. HB-MASHEDLOCK-EARLY-PRIORITY, the 2026-11-01 starvation shape: a fake train
+        #        merges and builds for 2 s without the game lock, then takes it with priority
+        #        (the gate). A worker opens a non-priority solo 0.5 s into the build. Control
+        #        (no pass-wide hold, the b52d95787 train): the window opens and the gate waits
+        #        for it. With prio-hold at the start of the pass: the window opens only after
+        #        the train's prio-release.
+        def train_pass(tag, hold):
+            kid("import subprocess\nml.PRIO_SOLO_LINGER_SEC=0\nme=str(os.getpid())\n"
+                "if %r: subprocess.call([sys.executable,%r,'prio-hold','--owner-pid',me,'--label','train-%s'])\n"
+                "log('%s_HOLD')\n"
+                "while '%s_TRY' not in open(ev).read(): time.sleep(0.05)\n"
+                "time.sleep(1.0)\n"
+                "l=ml.MashedLock('train-gate',poll=0.1,quiet=True,priority=1,wait=60)\n"
+                "l.acquire();log('%s_GOT');time.sleep(0.3);l.release();log('%s_GATE')\n"
+                "if %r: subprocess.call([sys.executable,%r,'prio-release','--owner-pid',me,'--linger','0'])\n"
+                "log('%s_REL')\n" % (hold, impl, tag, tag, tag, tag, tag, hold, impl, tag))
+            kid("while '%s_HOLD' not in open(ev).read(): time.sleep(0.05)\n"
+                "log('%s_TRY')\n"
+                "t=ml.solo_begin('worker-%s',ttl=60,poll=0.1,quiet=True,wait=60);log('%s_SOPEN')\n"
+                "time.sleep(2.5);ml.solo_end(t,quiet=True);log('%s_SEND')\n" % (tag, tag, tag, tag, tag))
+            _wait_for(lambda: tag + '_SEND' in _sc_events(ev) and tag + '_REL' in _sc_events(ev), 120)
+            return _sc_events(ev)
+        e = train_pass('C0', False)
+        g = lambda k: e.get(k)
+        check('control-no-hold-reproduces-starvation',
+              None not in (g('C0_SOPEN'), g('C0_GOT'), g('C0_SEND'))
+              and g('C0_SOPEN') < g('C0_GOT') and g('C0_GOT') >= g('C0_SEND'),
+              f"(solo open +{round(g('C0_SOPEN') - g('C0_HOLD'), 2) if g('C0_SOPEN') else None} s, "
+              f"gate got +{round(g('C0_GOT') - g('C0_HOLD'), 2) if g('C0_GOT') else None} s, after the window closed)")
+        clear_lingers()
+        e = train_pass('H1', True)
+        g = lambda k: e.get(k)
+        check('pass-hold-keeps-new-solo-out-of-merge-build-and-gate',
+              None not in (g('H1_SOPEN'), g('H1_GOT'), g('H1_GATE'), g('H1_TRY'))
+              and g('H1_TRY') < g('H1_GOT') < g('H1_SOPEN') and g('H1_SOPEN') > g('H1_GATE'),
+              f"(gate got +{round(g('H1_GOT') - g('H1_HOLD'), 2) if g('H1_GOT') else None} s, "
+              f"solo open +{round(g('H1_SOPEN') - g('H1_HOLD'), 2) if g('H1_SOPEN') else None} s, "
+              f"after gate done +{round(g('H1_GATE') - g('H1_HOLD'), 2) if g('H1_GATE') else None} s)")
+        clear_lingers()
+
+        # 12. an ordinary (non-solo) acquire is not blocked by the pass-wide hold
+        me = os.getpid()
+        ml.prio_hold(name, 'hold-12', me)
+        t0 = time.time()
+        try:
+            h = ml.MashedLock('O12', poll=0.05, quiet=True, wait=10).acquire()
+            got = round(time.time() - t0, 2)
+            h.release()
+        except TimeoutError:
+            got = None
+        check('pass-hold-ordinary-acquire-not-blocked', got is not None and got < 5.0, f"({got} s)")
+
+        # 13. a priority solo open (the train's own 13-track window) ignores the hold
+        t0 = time.time()
+        out = subprocess.run([sys.executable, impl, 'solo-begin', '--priority', '--label', 'p13',
+                              '--ttl', '60', '--wait', '10'], capture_output=True, text=True,
+                             env=dict(os.environ, MASHED_LOCK_DIR=lockdir), timeout=120).stdout
+        dt = round(time.time() - t0, 2)
+        ptok = next((ln.split()[1] for ln in out.splitlines() if ln.startswith('TOKEN ')), None)
+        if ptok:
+            ml.solo_end(ptok, name=name, quiet=True)
+        check('pass-hold-priority-solo-not-blocked', bool(ptok) and dt < 30.0, f"({dt} s)")
+        ml.prio_release(name, me, linger=0)
+
+        # 14. a window ALREADY open is untouched by a later prio-hold, and its token child
+        #     still takes the game lock
+        tok = ml.solo_begin('W14', name=name, ttl=60, poll=0.1, quiet=True, wait=5)
+        before = ml._read_owner(ml._solo_path(name))
+        out = subprocess.run([sys.executable, impl, 'prio-hold', '--owner-pid', str(me), '--label', 'h14'],
+                             capture_output=True, text=True,
+                             env=dict(os.environ, MASHED_LOCK_DIR=lockdir), timeout=120).stdout
+        after = ml._read_owner(ml._solo_path(name))
+        kid("l=ml.MashedLock('W14-child',poll=0.1,quiet=True,wait=10)\n"
+            "l.acquire();log('W14_GOT');l.release()\n", {'MASHED_LOCK_SOLO_TOKEN': tok})
+        wc = _wait_for(lambda: 'W14_GOT' in _sc_events(ev), 60)
+        ended = ml.solo_end(tok, name=name, quiet=True)
+        check('pass-hold-leaves-open-window',
+              'PRIORITY-HOLD' in out and before == after and wc and ended,
+              f"(hold={'PRIORITY-HOLD' in out} window_unchanged={before == after} token_child_got={wc} solo_end={ended})")
+
+        # 15. release only touches the owner's own record; default release lingers held=false
+        sleeper = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])
+        kids.append(sleeper)
+        other_ok = ml.prio_release(name, sleeper.pid, linger=0)
+        mine = [o for o in ml.prio_lingering(name) if o.get('pid') == me]
+        ml.prio_release(name, me)
+        lg = ml._read_owner(ml._linger_path(name, me))
+        left = (lg.get('expires') or 0) - time.time()
+        dead = subprocess.Popen([sys.executable, '-c', 'pass'])
+        dead.wait(10)
+        refused = not ml.prio_hold(name, 'dead', dead.pid) and not os.path.exists(ml._linger_path(name, dead.pid))
+        check('pass-hold-release-own-only-and-lingers',
+              other_ok and len(mine) == 1 and mine[0].get('held') and lg and not lg.get('held')
+              and 0 < left <= ml.PRIO_SOLO_LINGER_SEC and refused,
+              f"(other release kept mine={len(mine) == 1} linger_left={round(left)}s dead_pid_refused={refused})")
+        sleeper.kill()
+        clear_lingers()
+
+        # 16. the owner dies without releasing (killed train): the hold is stale, a new solo opens
+        k = kid("import subprocess\nsubprocess.call([sys.executable,%r,'prio-hold','--owner-pid',str(os.getpid()),"
+                "'--label','dies'])\nlog('D16_HOLD')\n" % impl)
+        k.wait(120)
+        had = 'D16_HOLD' in _sc_events(ev)
+        t0 = time.time()
+        tok = ml.solo_begin('after-death', name=name, ttl=60, poll=0.05, quiet=True, wait=30)
+        dt = round(time.time() - t0, 2)
+        ml.solo_end(tok, name=name, quiet=True)
+        check('pass-hold-stale-when-owner-dies', had and dt < 2.0 and not ml.prio_lingering(name),
+              f"(new solo open {dt} s after the owner exited)")
     except Exception:
         traceback.print_exc()
         while len(res) < TOTAL:
