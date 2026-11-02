@@ -3322,33 +3322,23 @@ static float DeriveMenuMeasureDiv() {
     return hi - lo;                               // FUN_00553cf0: max - min
 }
 
-// The exe's cells for the shared menu-width body (Frontend/MenuMeasure.cpp, D4-DC-82a0).
-// Each callee keeps the original's ABI, so the body is the same instructions in both targets.
-//   Lookup  (cdecl, result in EAX): the message id itself; the text is read by Remap.
-//   Remap   (EAX = id, EBX = 0x400-byte buffer): GetMenuMessage over g_msg_dat, which applies
-//           the FUN_004277a0 control-code remap; an unknown id leaves an empty string.
-//   Measure (cdecl, ST0): FUN_005554d0 (0x005554d0..0x005555aa) over g_font: sum over 16-bit codes
+// The exe's binding for the shared menu-width body (Match/MatchS06_004282a0.cpp, the byte-matched
+// source re/match/s06/004282a0.c since MATCH-S06-FU; Frontend/MenuMeasure.h). Plain cdecl C functions
+// standing in the body's three callee slots, and the addresses of its two globals:
+//   FUN_00427780 slot (MenuBa_ExeLookup): the message id itself; the text is read by the remap slot.
+//   FUN_004277a0 slot (MenuBa_ExeRemap): GetMenuMessage over g_msg_dat, which applies the
+//           control-code remap; an unknown id leaves an empty string.
+//   FUN_005554d0 slot (MenuBa_ExeMeasure) over g_font: sum over 16-bit codes
 //           of (rec+0x00 width + [ctx+0x0c] tracking) for codes with a glyph (ASCII LUT ctx+0x24
 //           below 0x80, ext table ctx+0x12c for code-[ctx+0x124] < [ctx+0x128], no advance
 //           otherwise), times the size argument (0x0055559f). The font argument is unused.
 //   Font cell: a zero dword. Div cell: [0x0067d830] as derived by DeriveMenuMeasureDiv.
-static void __cdecl ExeMenuMeasureText(int id, wchar_t* out) {
-    GetMenuMessage(id, out, 0x200);
+extern "C" short* MenuBa_ExeLookup(int id) {
+    return reinterpret_cast<short*>(static_cast<std::intptr_t>(id));
 }
-extern "C" __declspec(naked) void ExeMenuMeasureLookup() {
-    __asm {
-        mov eax, dword ptr [esp + 4]
-        ret
-    }
-}
-extern "C" __declspec(naked) void ExeMenuMeasureRemap() {
-    __asm {
-        push ebx
-        push eax
-        call ExeMenuMeasureText
-        add  esp, 8
-        ret
-    }
+extern "C" void MenuBa_ExeRemap(short* src, short* dst) {
+    GetMenuMessage(static_cast<int>(reinterpret_cast<std::intptr_t>(src)),
+                   reinterpret_cast<wchar_t*>(dst), 0x200);
 }
 static float __cdecl ExeMenuMeasureGlyphs(const void* /*font*/, const wchar_t* buf, float size) {
     const float trk = g_font.tracking();
@@ -3364,9 +3354,10 @@ static float __cdecl ExeMenuMeasureGlyphs(const void* /*font*/, const wchar_t* b
 }
 static const std::uint32_t s_menuMeasureFont = 0;
 static float s_menuMeasureDiv = 0.f;
-extern "C" void*        g_menuBa_Lookup   = reinterpret_cast<void*>(&ExeMenuMeasureLookup);
-extern "C" void*        g_menuBa_Remap    = reinterpret_cast<void*>(&ExeMenuMeasureRemap);
-extern "C" void*        g_menuBa_Measure  = reinterpret_cast<void*>(&ExeMenuMeasureGlyphs);
+extern "C" float MenuBa_ExeMeasure(int font, short* text, float size) {
+    return ExeMenuMeasureGlyphs(reinterpret_cast<const void*>(static_cast<std::intptr_t>(font)),
+                                reinterpret_cast<const wchar_t*>(text), size);
+}
 extern "C" const void*  g_menuBa_FontCell = &s_menuMeasureFont;
 extern "C" const float* g_menuBa_DivCell  = &s_menuMeasureDiv;
 
@@ -3381,7 +3372,7 @@ float MeasureMenuMessage(int id, float scale) {
     unsigned int cw = 0, t = 0;
     _controlfp_s(&cw, 0, 0);
     _controlfp_s(&t, _PC_24, _MCW_PC);
-    const float r = MenuMenusBA(static_cast<std::uint32_t>(id), scale);
+    const float r = MenuMenusBA(id, scale);
     _controlfp_s(&t, cw & _MCW_PC, _MCW_PC);
     return r;
 }
