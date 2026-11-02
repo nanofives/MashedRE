@@ -468,6 +468,11 @@ for _c in (1, 2, 3):
     STACK[f'ST5L2RD{_c}'] = STACK['ST5L2'] + STACK[f'RD{_c}']
 STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
 STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
+# MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)); PSG = all three port-state knobs (the selector
+# 0x0040ce80 needs the seeded course table), PSGO = the GAMEFLOW knob alone; the *A stacks race Arctic (Course_Id 0, row 3)
+_PSG = ['MASHED_PORTSTATE_COURSE', 'MASHED_PORTSTATE_RECORDS', 'MASHED_PORTSTATE_GAMEFLOW']
+STACK['PSG'] = _PSG; STACK['PSGO'] = ['MASHED_PORTSTATE_GAMEFLOW']
+STACK['DEFA'] = ['MASHED_TRACK_VIEW=Arctic']; STACK['PSGA'] = _PSG + ['MASHED_TRACK_VIEW=Arctic']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

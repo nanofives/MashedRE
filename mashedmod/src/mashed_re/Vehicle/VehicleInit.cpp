@@ -16,6 +16,9 @@
 // that RVA stays split by target (U-9155) and this TU is now also in the .asi.
 #include "ForceIntegrator.h"
 #include "RecordBlockState.h"   // [MATCH-PORTSTATE-RECORDS A1] knob (exe-only body; called only under MASHED_STANDALONE)
+#ifdef MASHED_STANDALONE
+#include "../Race/GameModeState.h"   // [MATCH-PORTSTATE-GAMEFLOW] knob (exe-only body)
+#endif
 #include "../Math/RwLutTables.h"   // [d2settle U-9181] Math::LutSqrt = 0x004c3b30
 #include <cstdint>
 #include <cstddef>   // std::ptrdiff_t (exe build's stricter include set surfaces this)
@@ -122,7 +125,14 @@ static int HandlingTypeIndex() {
 static inline char* A3Record(int slot) {
     return reinterpret_cast<char*>(g_vehicleArrayBase) + (std::ptrdiff_t)slot * 0xd04;
 }
-static inline int        A3HandlingType() { return HandlingTypeIndex(); }
+// [MATCH-PORTSTATE-GAMEFLOW] With MASHED_PORTSTATE_GAMEFLOW (and the course table seeded, MASHED_PORTSTATE_COURSE)
+// the selector is the original's 0x0046b56c..0x0046b585 over the published index words (Race/GameModeState.cpp),
+// the same chain as the .asi arm below. Knob OFF (or table not seeded): the measured constant.
+static inline int A3HandlingType() {
+    int t;
+    if (mashed_re::Race::GameModeState_HandlingType(&t)) return t;
+    return HandlingTypeIndex();
+}
 static inline const int* A3Table()        { return &kHandlingTable[0].key; }
 static inline void A3PublishHandling(float param, float spring, float k1, float k2) {
     // [U-9147 2026-09-29] _DAT_00613108. It used to be `(void)h_param` with the comment

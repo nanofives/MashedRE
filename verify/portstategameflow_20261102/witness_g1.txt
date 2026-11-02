@@ -1,0 +1,18 @@
+[portstate-gameflow] phase 0 -> 1 (mode=0 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] phase 1 -> 2 (mode=10 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] course=30 k=0 mode=10 row=0 qbrow=0 sel=0 ld=0 v_rec_id=30 v_key=6
+[portstate-gameflow] phase 2 -> 3 (mode=10 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] a3 mode=10 v=0 type=6
+[portstate-gameflow] phase 0 -> 1 (mode=0 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] phase 1 -> 2 (mode=10 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] course=30 k=0 mode=10 row=0 qbrow=0 sel=0 ld=0 v_rec_id=-1 v_key=-1
+[portstate-gameflow] phase 2 -> 3 (mode=10 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] phase 0 -> 1 (mode=0 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] phase 1 -> 2 (mode=10 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] course=0 k=3 mode=10 row=3 qbrow=3 sel=3 ld=3 v_rec_id=0 v_key=18
+[portstate-gameflow] phase 2 -> 3 (mode=10 row=3 qbrow=3 sel=3 ld=3)
+[portstate-gameflow] a3 mode=10 v=3 type=18
+[portstate-gameflow] phase 0 -> 1 (mode=0 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] phase 1 -> 2 (mode=10 row=0 qbrow=0 sel=0 ld=0)
+[portstate-gameflow] course=30 k=0 mode=10 row=0 qbrow=0 sel=0 ld=0 v_rec_id=-1 v_key=-1
+[portstate-gameflow] phase 2 -> 3 (mode=10 row=0 qbrow=0 sel=0 ld=0)

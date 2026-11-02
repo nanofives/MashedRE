@@ -18,8 +18,5 @@
 // MATCH-S04: the body of 0x0041f100 (FloatTable63dc64Get) moved to Match/MatchS04_0041f100.cpp,
 // which compiles the byte-matched source re/match/s04/0041f100.c.
 
-// 0x0044e050  imul 0xf8; fld [eax+0x008900a8]
-extern "C" __declspec(dllexport) float __cdecl FloatTable8900a8Get(std::uint32_t param_1) {
-    return *reinterpret_cast<const float*>(0x008900a8u + param_1 * 0xf8u);  // cited at 0x0044e050
-}
-RH_ScopedInstall(FloatTable8900a8Get, 0x0044e050);
+// MATCH-S08: the body of 0x0044e050 (FloatTable8900a8Get) moved to Match/MatchS08_0044e050.cpp,
+// which compiles the byte-matched source re/match/s08/0044e050.c.

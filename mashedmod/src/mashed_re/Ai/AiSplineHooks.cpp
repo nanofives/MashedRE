@@ -60,7 +60,7 @@
 #include <cstdlib>
 #include <windows.h>
 
-// The installed body, AiSplineEval_x87, lives in Ai/AiSplineEval.cpp (both targets, D4-DC-INC-ai 2026-11-01).
+// The installed body, AiSplineEval_x87, is the byte-matched source in Match/MatchS08_00443300.cpp (both targets, MATCH-S08).
 extern "C" void __cdecl AiSplineEval_x87(int splineBase, int segIdx, float t, float* outXZ);   // FUN_00443300
 
 namespace {

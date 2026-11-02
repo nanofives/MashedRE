@@ -277,17 +277,8 @@ RH_ScopedInstall(StoreDistSq47cdc0, 0x0047cdc0);
 
 
 
-// 0x0044dff0  gameplay — byte-verified: 8B 44 24 04 69 C0 F8 00 00 00 8B 88 80 00 89 00 8B 51 04 8B 44 24 08 83 C2 40 8B 0A 89 08 8B 4A 04 89 48 04 8B 52 08 89 50 08 C3
-//   fn(i,out): rec=*(u32*)(0x00890080 + i*0xf8) ; t=*(u32*)(rec+4) ;
-//              out[0]=*(u32*)(t+0x40) ; out[1]=*(u32*)(t+0x44) ; out[2]=*(u32*)(t+0x48)  (item world-pos; caller 00461650 C2)
-extern "C" __declspec(dllexport) void __cdecl ItemWorldPos44dff0(std::uint32_t i, std::uint32_t* out) {
-    std::uint32_t rec = *reinterpret_cast<std::uint32_t*>(0x00890080u + i * 0xf8u);
-    std::uint32_t t = *reinterpret_cast<std::uint32_t*>(rec + 4);
-    out[0] = *reinterpret_cast<std::uint32_t*>(t + 0x40);
-    out[1] = *reinterpret_cast<std::uint32_t*>(t + 0x44);
-    out[2] = *reinterpret_cast<std::uint32_t*>(t + 0x48);
-}
-RH_ScopedInstall(ItemWorldPos44dff0, 0x0044dff0);
+// MATCH-S08: the body of 0x0044dff0 (ItemWorldPos44dff0) moved to Match/MatchS08_0044dff0.cpp,
+// which compiles the byte-matched source re/match/s08/0044dff0.c.
 
 // 0x00405430  gameplay — byte-verified: A1 78 9D 63 00 85 C0 74 15 A1 70 9D 63 00 D9 05 74 9D 63 00 D8 58 0C DF E0 F6 C4 41 75 03 33 C0 C3 B8 01 00 00 00 C3
 //   fn(): if (*(int*)0x639d78 == 0) return 0 ; return (*(float*)0x639d74 <= *(float*)(*(u32*)0x639d70 + 0xc)) ? 1 : 0
@@ -768,16 +759,8 @@ extern "C" __declspec(dllexport) void __cdecl Copy4b65c0(std::uint32_t* dst) {
 }
 RH_ScopedInstall(Copy4b65c0, 0x004b65c0);
 
-// ===== round 112 =====
-// 0x00449880  particle — byte-verified: void fn(): f=(float)*0x5f96d0 + (float)*0x5cc320
-//   (FLD;FADD;FSTP->float32); fill 0x683ec8[0..0xff] (0x100 dwords) with bits(f).
-extern "C" __declspec(dllexport) void __cdecl Fill449880(void) {
-    float f = *reinterpret_cast<float*>(0x005f96d0u) + *reinterpret_cast<float*>(0x005cc320u);
-    std::uint32_t fb = *reinterpret_cast<std::uint32_t*>(&f);
-    std::uint32_t* t = reinterpret_cast<std::uint32_t*>(0x00683ec8u);
-    for (unsigned i = 0; i < 0x100u; i++) t[i] = fb;
-}
-RH_ScopedInstall(Fill449880, 0x00449880);
+// MATCH-S08: the body of 0x00449880 (Fill449880) moved to Match/MatchS08_00449880.cpp,
+// which compiles the byte-matched source re/match/s08/00449880.c.
 
 // MATCH-S06: the body of 0x0042ac50 (Calc42ac50) moved to Match/MatchS06_0042ac50.cpp,
 // which compiles the byte-matched source re/match/s06/0042ac50.c.
@@ -3240,23 +3223,8 @@ RH_ScopedInstall(ZeroFill48a830, 0x0048a830);
 // MATCH-S05: the body of 0x00420d80 (IndexedFloatPairSum420d80) moved to Match/MatchS05_00420d80.cpp,
 // which compiles the byte-matched source re/match/s05/00420d80.c.
 
-// 0x0044e070  FUN_0044e070 (audio, DoubleIndexedFloatMul) — PURE LEAF (no calls)
-// Disasm (capstone, original): mov eax,[esp+4]; imul eax,eax,0xf8  ; eax = idx*0xf8
-//   mov ecx,[eax+0x89008c]; mov edx,[eax+0x890090]   ; ecx,edx from idx-tables
-//   lea eax,[edx+ecx*4]; fld dword [eax*4+0x894de0]   ; st0 = floatTbl[edx+ecx*4]
-//   fmul dword [0x5cc8f4]; ret                        ; st0 *= K (=1/6, 0x3e2aaaab)
-// => float f(int idx){ int b=idx*0xf8; int c=*(int*)(b+0x89008c); int d=*(int*)(b+0x890090);
-//                      int e=d+c*4; return *(float*)(0x894de0+e*4) * *(float*)0x5cc8f4; }
-extern "C" __declspec(dllexport) float __cdecl DoubleIndexedFloatMul44e070(int idx)
-{
-    const unsigned b = static_cast<unsigned>(idx) * 0xf8u;
-    const int c = *reinterpret_cast<const int*>(b + 0x0089008cu);
-    const int d = *reinterpret_cast<const int*>(b + 0x00890090u);
-    const unsigned e = static_cast<unsigned>(d) + static_cast<unsigned>(c) * 4u;
-    return *reinterpret_cast<const float*>(0x00894de0u + e * 4u)
-         * *reinterpret_cast<const float*>(0x005cc8f4u);
-}
-RH_ScopedInstall(DoubleIndexedFloatMul44e070, 0x0044e070);
+// MATCH-S08: the body of 0x0044e070 (DoubleIndexedFloatMul44e070) moved to Match/MatchS08_0044e070.cpp,
+// which compiles the byte-matched source re/match/s08/0044e070.c.
 
 // 0x004cb740  FUN_004cb740 (render, StructTagEquals) — PURE LEAF (no calls)
 // Tagged-union dword equality. Common: compare a/b at [0,4,8,c]; then tag=a[0]
