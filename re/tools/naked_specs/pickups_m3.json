@@ -1,8 +1,7 @@
 {
   "funcs": [
     { "name": "PK_458920", "start": "0x00458920", "size": 276 },
-    { "name": "PK_458570", "start": "0x00458570", "size": 185 },
-    { "name": "PK_46d4a0", "start": "0x0046d4a0", "size": 46 }
+    { "name": "PK_458570", "start": "0x00458570", "size": 185 }
   ],
   "calls": {
     "0x00405890": "Pred405890",
@@ -11,7 +10,7 @@
     "0x0045c330": "PredNot45c330",
     "0x0045bff0": "PK_SlotEmpty",
     "0x00458570": "PK_458570_w",
-    "0x0046d4a0": "PK_46d4a0_sel",
+    "0x0046d4a0": "PtrCompute881ec8",
     "0x004c3ac0": "RwLutLength_cd",
     "0x004c39b0": "RwLutNormalize_cd",
     "0x004588c0": "PK_Burst",

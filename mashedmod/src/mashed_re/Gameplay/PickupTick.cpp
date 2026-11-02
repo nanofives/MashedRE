@@ -23,8 +23,8 @@
 // Mode 7 leg M3 (PREREG verify/d3_mode7_m3_20261010/PREREG_M3.md): the registry's pickup callback.
 // Verbatim naked (spec re/tools/naked_specs/pickups_m3.json -> PickupCollect_naked.inc): FUN_00458920,
 // FUN_00458570 (EAX = car, ESI = out; its ST0 is discarded at 0x004589e2 and its out buffer is a dead
-// local), FUN_0045c330, FUN_0046d4a0; FUN_004c3ac0 / FUN_004c39b0 are the PK_ bodies above. FUN_00405890 and
-// FUN_00407580 are the one shared bodies (declared above the #include). C bindings, cdecl:
+// local), FUN_0045c330; FUN_004c3ac0 / FUN_004c39b0 are the PK_ bodies above. FUN_00405890,
+// FUN_00407580 and FUN_0046d4a0 are the one shared bodies (declared above the #include). C bindings, cdecl:
 //   PK_SubMode       FUN_0040e350 -> the exe's FUN_0040e350 host (aib_game_sub_mode, TrackRenderer.cpp)
 //   PK_SlotEmpty     FUN_0045bff0 ([0x0088fc88 + v*0xb4] == 0) -> !PowerupSystem::Armed(v)
 //   PK_Grant         FUN_0045c010(v, type) -> PowerupSystem::Activate(v, type) at the exe thread's PC_53
@@ -182,39 +182,15 @@ __declspec(naked) void PK_458570_w() {
     }
 }
 
-// [D4-DC-INC-0046d4a0-KNOB] the record-pointer call at 0x00458581 (FUN_00458570, the bump arm). pickups_m3.json maps it
-// here. Knob OFF (default): PK_46d4a0, the verbatim naked copy, which reads the absolutes 0x00881f48 / 0x00881ec8 +
-// idx*0xd04 (blank image pad in the exe). MASHED_PK_ONEBODY_46D4A0=1: the one shared body
-// Vehicle/VehicleRecordPtr.cpp:PtrCompute881ec8 (the record array the exe rebinds, g_vehicleArrayBase), the form the
-// AI lanes already call. FUN_00458570's result is dead (ST0 popped at 0x004589e2, its out buffer is a local the
-// caller never reads), so either form leaves the pool entry unchanged. PREREG verify/d4dc_0046d4a0_knob_20261101/.
-// MASHED_PK_ONEBODY_46D4A0_WIT=<path>: per call, both forms' pointer and the +0x30/+0x34/+0x38 dwords each reads
-// (diagnostic, either knob state; the selected form is still the one returned).
-void PK_46d4a0();
+// 0x0046d4a0 at the call site 0x00458581 (FUN_00458570, the bump arm): pickups_m3.json maps the call to the one shared
+// body Vehicle/VehicleRecordPtr.cpp:PtrCompute881ec8 (the record array the exe rebinds, g_vehicleArrayBase), the form
+// the AI lanes already call. The verbatim naked copy PK_46d4a0, its selector and MASHED_PK_ONEBODY_46D4A0 were deleted
+// by D4-DC-INC-0046d4a0-REPLAYORDER (L-82 (a), Mariano 2026-11-02). FUN_00458570 zeroes its out slot (0x00458579),
+// ignores the return and reads [slot + 0x30] (0x00458586..0x0045858d); its ST0 is popped at 0x004589e2 and its out
+// buffer is a local the caller never reads, so the pool entry is unchanged by either pointer. The original never
+// returns 0 for idx < 0x10 (0x0046d4a4..0x0046d4c8); the exe body returns 0 only before VehiclePhysics_Init, which
+// is why the M3 callback replay now runs after it (TrackRenderer::UpdateCar). verify/d4dc_0046d4a0_replayorder_20261102/.
 std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);   // Vehicle/VehicleRecordPtr.cpp
-std::uint32_t __cdecl PK_46d4a0_sel(std::uint32_t* out, std::uint32_t idx) {     // call site 0x00458581
-    typedef std::uint32_t (__cdecl* rec_fn)(std::uint32_t*, std::uint32_t);
-    static const bool on = [] { const char* v = std::getenv("MASHED_PK_ONEBODY_46D4A0"); return v && v[0] == '1'; }();
-    static std::FILE* const wit = [] {
-        const char* p = std::getenv("MASHED_PK_ONEBODY_46D4A0_WIT");
-        std::FILE* f = p ? std::fopen(p, "w") : nullptr;
-        if (f) std::fprintf(f, "# n\tknob\tidx\tnaked_ret\tnaked_ptr\tnaked_x30\tnaked_x34\tnaked_x38\tone_ret\tone_ptr\tone_x30\tone_x34\tone_x38\n");
-        return f;
-    }();
-    if (wit) {
-        static long n = 0;
-        std::uint32_t pn = 0, po = 0;
-        const std::uint32_t rn = reinterpret_cast<rec_fn>(&PK_46d4a0)(&pn, idx);
-        const std::uint32_t ro = PtrCompute881ec8(&po, idx);
-        const std::uint32_t* xn = rn ? reinterpret_cast<const std::uint32_t*>(pn + 0x30u) : nullptr;
-        const std::uint32_t* xo = ro ? reinterpret_cast<const std::uint32_t*>(po + 0x30u) : nullptr;
-        std::fprintf(wit, "%ld\t%d\t%u\t%u\t%08x\t%08x\t%08x\t%08x\t%u\t%08x\t%08x\t%08x\t%08x\n", ++n, on ? 1 : 0, idx,
-                     rn, pn, xn ? xn[0] : 0u, xn ? xn[1] : 0u, xn ? xn[2] : 0u,
-                     ro, po, xo ? xo[0] : 0u, xo ? xo[1] : 0u, xo ? xo[2] : 0u);
-        std::fflush(wit);
-    }
-    return on ? PtrCompute881ec8(out, idx) : reinterpret_cast<rec_fn>(&PK_46d4a0)(out, idx);
-}
 
 }  // extern "C"
 
