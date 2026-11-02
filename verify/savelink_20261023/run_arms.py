@@ -459,6 +459,8 @@ STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_202
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 # D4-DC-77b0-STATE5-LEG2 (verify/d4dc77b0st5leg2_20261101): FUN_00425a40's body on the sub-state-5 calls (default OFF)
 STACK['ST5L2'] = ['MASHED_ST5_LEG2=1']
+# D4-DC-77b0-ST5-HOLD: the same plus the leg-2 ctrl-byte log (MASHED_ST5_HOLD_DIAG, log only)
+STACK['ST5L2D'] = STACK['ST5L2'] + ['MASHED_ST5_HOLD_DIAG=1']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

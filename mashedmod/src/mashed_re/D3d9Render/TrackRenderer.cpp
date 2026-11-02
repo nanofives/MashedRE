@@ -1516,6 +1516,13 @@ bool RoundEnd7PhysActive() {
     static const bool s = [] { const char* e = std::getenv("MASHED_NO_R7_PHYS"); return !(e && e[0] && e[0] != '0'); }();
     return s && s_roundEnd7;
 }
+// [D4-DC-77b0-ST5-HOLD] MASHED_ST5_LEG2 only: true while St5Leg2 runs a sub-state-5 (non-exit) call. The original's leg 2
+// then sees FUN_0040e350 = DAT_0063ba8c = 5, so FUN_00470c70 / FUN_004709a0 hand the cars 0x007f19b8 and FUN_0046e9e0
+// adds a zero position increment (0x0046ea1e..0x0046ea4c). verify/d4dc77b0st5hold_20261101/PREREG_D4-DC-77b0-ST5-HOLD.md.
+static bool s_st5LegHold = false;
+bool SubStateModeGateActive() {
+    return RoundEnd7PhysActive() || s_st5LegHold;
+}
 
 // ---- [rprops U-9695] per-track prop placement ---------------------------------------------------
 // The ported RW leaves the original's frame ops go through (Math/RwMatrixRotate.cpp,
@@ -5121,6 +5128,11 @@ static bool St5Leg2Enabled() {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_ST5_LEG2"); return e && e[0] && e[0] != '0'; }();
     return s_on;
 }
+// [D4-DC-77b0-ST5-HOLD] MASHED_ST5_HOLD_DIAG (default OFF, log only): per leg-2 call, each AI car's ctrl bytes and position.
+static bool St5HoldDiag() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_ST5_HOLD_DIAG"); return e && e[0] && e[0] != '0'; }();
+    return s_on;
+}
 void TrackRenderer::St5Leg2(int units, float dt, float accel, bool exitCall) {
     auto G = [](std::uintptr_t a) -> int& { return *reinterpret_cast<int*>(a); };
     static int s_calls = 0;
@@ -5139,6 +5151,14 @@ void TrackRenderer::St5Leg2(int units, float dt, float accel, bool exitCall) {
         G(0x007f1a78u) = G(0x007f1a78u) + 1;
     }
     ++s_calls;
+    // [D4-DC-77b0-ST5-HOLD] FUN_0040fc00 runs FUN_00425a40 with DAT_0063ba8c = 5 on the case-5 calls (FUN_0040e350 =
+    // `return DAT_0063ba8c`, 0x0040e350) and with 6 on the exit call (leg 1's store at 0x004104e3). Original watch-write:
+    // on held frames FUN_0046e9e0 rewrites +0x958/+0x960 unchanged (0x0046ea62 / 0x0046ea76) on the block 0x007f19b8.
+    struct ModeHold {
+        bool on;
+        explicit ModeHold(bool o) : on(o) { if (on) { Vehicle::g_fiGameModeHold = 5; s_st5LegHold = true; } }
+        ~ModeHold() { if (on) { Vehicle::g_fiGameModeHold = 0; s_st5LegHold = false; } }
+    } modeHold(!exitCall);
     const bool phys = Vehicle::VehiclePhysics_Enabled();
     if (s_calls == 1 && phys)
         for (int c = 0; c < 3; ++c) s_pre0[c] = Vehicle::VehiclePhysics_RecordF32(0, 0x958 + 4 * c);
@@ -5202,6 +5222,13 @@ void TrackRenderer::St5Leg2(int units, float dt, float accel, bool exitCall) {
                 aio.vel[0] = a.vel[0]; aio.vel[1] = a.vel[1]; aio.vel[2] = a.vel[2];
                 aio.yaw = a.yaw; aio.speed = a.cur_speed;
                 for (int k = 0; k < 8; ++k) aio.input[k] = blk[k];
+                if (St5HoldDiag())   // [D4-DC-77b0-ST5-HOLD] log only: the ctrl bytes leg 2 hands this car
+                    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                        std::fprintf(lf, "[st5hold] call=%d car=%d slot=%d blk=%02x%02x%02x%02x%02x%02x%02x%02x pos=(%.9g,%.9g,%.9g)\n",
+                                     s_calls, v, Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride),
+                                     blk[0], blk[1], blk[2], blk[3], blk[4], blk[5], blk[6], blk[7], a.pos[0], a.pos[1], a.pos[2]);
+                        std::fclose(lf);
+                    }
                 aio.steer = 0.f;
                 aio.raw_steer = 1;
                 aio.ground_off = car_ground_off_;
