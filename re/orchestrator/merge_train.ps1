@@ -446,25 +446,25 @@ if ($SelfTest) {
   }
 
   # --- HB-D2RERUN: fake arm runner, D2_DEF_2 comes back short (1485 lines) on the first run
-  $f = $CFG.full; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
+  $f = $CFG.full; $A1 = $f.d2_arms[0]; $A2 = $f.d2_arms[1]; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
   $script:runs = @{}
   function Run-Arms([string]$wt, [string[]]$arms, [string]$out, [switch]$Solo) {
     foreach ($a in $arms) {
       $script:runs[$a] = 1 + [int]$script:runs[$a]
-      $lines = switch ($script:Scenario) { 'short-once' { if ($a -eq 'D2_DEF_2' -and $script:runs[$a] -eq 1) { 1485 } else { 1700 } } 'short-always' { if ($a -eq 'D2_DEF_2') { 1485 } else { 1700 } } default { 1700 } }
+      $lines = switch ($script:Scenario) { 'short-once' { if ($a -eq $A2 -and $script:runs[$a] -eq 1) { 1485 } else { 1700 } } 'short-always' { if ($a -eq $A2) { 1485 } else { 1700 } } default { 1700 } }
       Write-Lf (Join-Path $out "$a.motion_diag.log") @(1..$lines | ForEach-Object { "row $_" })
     }
     return 0
   }
   $script:Scenario = 'short-once'
   $r = Run-D2Arms 'unused' $f $out
-  Check ($r.short.Count -eq 0 -and $script:runs['D2_DEF_2'] -eq 2 -and $script:runs['D2_DEF_1'] -eq 1) "short-once: D2_DEF_2 rerun once (2 runs), others not rerun, 0 arms short"
+  Check ($r.short.Count -eq 0 -and $script:runs[$A2] -eq 2 -and $script:runs[$A1] -eq 1) "short-once: $A2 rerun once (2 runs), others not rerun, 0 arms short"
   $script:runs = @{}; $script:Scenario = 'short-always'
   $r = Run-D2Arms 'unused' $f $out
-  Check ($r.short.Count -eq 1 -and $script:runs['D2_DEF_2'] -eq (1 + $r.maxRe)) "short-always: reruns bounded at $($r.maxRe), arm still reported short (runs=$($script:runs['D2_DEF_2']))"
+  Check ($r.short.Count -eq 1 -and $script:runs[$A2] -eq (1 + $r.maxRe)) "short-always: reruns bounded at $($r.maxRe), arm still reported short (runs=$($script:runs[$A2]))"
   $script:runs = @{}; $script:Scenario = 'ok'
   $r = Run-D2Arms 'unused' $f $out
-  Check ($r.short.Count -eq 0 -and $script:runs['D2_DEF_2'] -eq 1) 'full-length logs: no rerun'
+  Check ($r.short.Count -eq 0 -and $script:runs[$A2] -eq 1) 'full-length logs: no rerun'
 
   Say "SELFTEST done: $fails failure(s)"
   Write-Output "SELFTEST $(if ($fails) { 'FAIL' } else { 'PASS' }) ($fails failure(s)) log $LOG"
