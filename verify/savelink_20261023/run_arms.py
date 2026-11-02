@@ -457,6 +457,10 @@ STACK['SUBHNRTR'] = STACK['SUBH'] + STACK['NRTR']
 STACK['PUD'] = ['MASHED_PU_STEPDUMP=@OUT@/@NAME@.pustep.csv']   # D5-FLIP-RFLAME-SORT: power-up step dump only (R_FLAME reachability witness)
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
+# D4-DC-INC-SQRT-FOLD (verify/d4dc_sqrtfold_20261101): FastSqrt / FastInvSqrt / Vec3Magnitude as the LUT helpers + the
+# fold's call / differ log. SQFH = the same under the D2 42 s hold
+STACK['SQF'] = ['MASHED_SQRT_FOLD=1', 'MASHED_SQRT_FOLD_LOG=@OUT@/@NAME@.sqf.txt']
+STACK['SQFH'] = STACK['SQF'] + STACK['DEFH']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

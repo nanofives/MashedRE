@@ -15,6 +15,8 @@
 #include "RwLutTables.h"
 
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 namespace mashed_re {
@@ -107,6 +109,34 @@ float LutNormalize2D(float* out, const float* in) {
     out[0] = scale * in[0];
     out[1] = in[1] * scale;
     return len;
+}
+
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] the knob and its log (RwLutTables.h).
+bool SqrtFoldOn() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_SQRT_FOLD"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+
+static const char* SqrtFoldLogPath() {
+    static const char* p = [] { const char* e = std::getenv("MASHED_SQRT_FOLD_LOG"); return (e && e[0]) ? e : nullptr; }();
+    return p;
+}
+
+bool SqrtFoldLogOn() { return SqrtFoldLogPath() != nullptr; }
+
+// One line per hook each time its call count reaches a power of two: calls so far, and how many of them returned
+// bits that differ from the pre-fold form (the std::sqrt fallback in the exe, the live table in the .asi).
+void SqrtFoldNote(int hook, float folded, float twoForm) {
+    static const char* const kName[3] = { "FastSqrt", "FastInvSqrt", "Vec3Magnitude" };
+    static unsigned long long s_calls[3], s_differ[3];
+    if (hook < 0 || hook > 2) return;
+    const unsigned long long n = ++s_calls[hook];
+    if (Bits(folded) != Bits(twoForm)) ++s_differ[hook];
+    if ((n & (n - 1)) != 0) return;
+    if (FILE* f = std::fopen(SqrtFoldLogPath(), "a")) {
+        std::fprintf(f, "%s calls=%llu differ=%llu\n", kName[hook], n, s_differ[hook]);
+        std::fclose(f);
+    }
 }
 
 }  // namespace Math
