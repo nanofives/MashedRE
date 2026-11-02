@@ -1,11 +1,7 @@
-// Mashed RE — the two rubber-band leaves A5 (0x0046ddb0) calls: 0x00442ce0 and 0x00442c80. ONE body each, both targets.
-// [dcphys2 2026-10-22] moved verbatim out of Vehicle/ForceIntegrator.cpp.
-// [dcleaf 2026-10-22] this TU is in BOTH rsp files. Only the input thunks below differ by target (#ifdef MASHED_STANDALONE):
-// the game-mode word. DAT_007f0fd0, refdist 0x008989b0[car] and the reference car 0x008989c8 are the live words in both
-// (D5-KNOBS-E1-PHYS-A4A5 deleted the exe's knob forms). The .asi installs both bodies (RH_ScopedInstall at the end)
-// with an in-process A/B (MASHED_LEAF_SELFTEST) against the original. The former .asi copy of 0x00442c80
-// (Util/UtilMid.cpp:ModeGatedPlayerCheck) is deleted. FUN_0046dbe0 is Vehicle/VehicleState.cpp:VehicleRacePositionGet in both
-// targets (the exe's private CarContactCount copy is deleted).
+// Mashed RE - .asi install + MASHED_LEAF_SELFTEST A/B for the two rubber-band leaves A5 (0x0046ddb0) calls: 0x00442ce0
+// and 0x00442c80. [MATCH-S08-FU 2026-11-02] Their bodies are the byte-matched sources in Match/MatchS08_00442ce0.cpp and
+// Match/MatchS08_00442c80.cpp (both targets), which also define the C++ names mashed_re::Vehicle::RubberBandGrip /
+// RubberBandGate. This TU keeps only the .asi entries below (in both rsp files; the exe part is empty).
 // Original call sites (scan of .text): 0x00442c80 from 0x0041340a and 0x0046e233; 0x00442ce0 from 0x0046e20f.
 // Anchored MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
 #include <cstdlib>
@@ -19,68 +15,6 @@
 
 extern "C" std::uint32_t __cdecl VehicleRacePositionGet(int param_1);   // FUN_0046dbe0, Vehicle/VehicleState.cpp
 
-namespace mashed_re {
-namespace Vehicle {
-
-using namespace fi;
-
-// Both targets read the words the original reads. [u9772] DAT_007f0fd0, not g_playerCount, and [u9777] the live
-// FUN_00442a60 outputs, refdist 0x008989b0[car] and the reference car 0x008989c8, not g_rubberBand / g_rubberRefCar (all
-// zero, no writer); in the standalone Race/SpectatorDistances.cpp fills both. Their exe opt-outs MASHED_A5_FD0_LIVE and
-// MASHED_A5_RUBBER_LIVE were deleted by D5-KNOBS-E1-PHYS-A4A5.
-static inline int   Fd0Word()            { return *reinterpret_cast<const int*>(0x007f0fd0u); }        // 0x00442c8a, 0x00442ce1
-static inline float RubberRefDist(int c) { return reinterpret_cast<const float*>(0x008989b0u)[c]; }    // 0x00442ca2, 0x00442d0f
-static inline int   RubberRefCar()       { return *reinterpret_cast<const int*>(0x008989c8u); }        // 0x00442d2f
-#ifdef MASHED_STANDALONE
-static inline int  LeafGameMode()     { return Fi_GameMode(); }   // FUN_0040e350 stand-in (U-9784)
-static inline void LeafGameModeTick() { Fi_GameModeTick(); }      // FUN_0040e340 stand-in (no-op)
-#else
-static inline int   LeafGameMode()       { return reinterpret_cast<int (__cdecl*)()>(0x0040e350u)(); } // call at 0x00442c80
-// FUN_0040e340 is `mov eax,[0x008a94d0]; ret` (0x0040e340..0x0040e345): a getter; 0x00442d06 discards EAX.
-static inline void  LeafGameModeTick()   { reinterpret_cast<int (__cdecl*)()>(0x0040e340u)(); }
-#endif
-
-// ---- 0x00442ce0: catch-up / rubber-band grip multiplier (resolves U-2687) ----
-// Every path returns factor * band + 1.0 (FMUL [esp+0x10] = arg 3, FADD _DAT_005cc320); the default factor is the zeroed
-// local (0x00442cfe, FLD at 0x00442dc8). Arg 2 is never read.
-float RubberBandGrip(int car, float current, float band)
-{
-    const int fd0 = Fd0Word();                                // DAT_007f0fd0
-    if ((fd0 == 4) || (fd0 == 9) || (fd0 == 8)) return kOne;
-    LeafGameModeTick();   // FUN_0040e340 (0x00442d06; result discarded)
-    (void)current;
-    if (RubberRefDist(car) == kZero) {                        // 0x00442d0f (TEST AH,0x44 / JP: equal only)
-        int i1 = static_cast<int>(VehicleRacePositionGet(car));            // 0x00442d28
-        int i2 = static_cast<int>(VehicleRacePositionGet(RubberRefCar())); // 0x00442d2f / 0x00442d35
-        if (i1 == 0) {
-            if (i2 == 3) return k0p6 * band + kOne;          // _DAT_005cc318
-            if (i2 == 2) return kHalf * band + kOne;         // _DAT_005cc32c
-            if (i2 == 1) return kQuarter * band + kOne;      // _DAT_005cc564
-        } else if (i1 == 1) {
-            if (i2 == 3) return kHalf * band + kOne;
-            if (i2 == 2) return kQuarter * band + kOne;
-        } else if ((i1 == 2) && (i2 == 3)) {
-            return kQuarter * band + kOne;
-        }
-    }
-    return 0.0f * band + kOne;
-}
-
-// ---- 0x00442c80: rubber-band activation gate (resolves U-3563) ----
-// mode == 6 (0x00442c85), fd0 not 4 / 9 / 8 (0x00442c8f..0x00442c9c), refdist > 7.0 (FCOMP _DAT_005cc9b8, TEST AH,0x41).
-int RubberBandGate(int car)
-{
-    int mode = LeafGameMode();
-    const int fd0 = Fd0Word();                                // DAT_007f0fd0
-    if ((mode == 6) && (fd0 != 4) && (fd0 != 9) &&
-        (fd0 != 8) && (kRubberThr < RubberRefDist(car))) {   // 0x00442ca2..0x00442cb4
-        return 1;
-    }
-    return 0;
-}
-
-}  // namespace Vehicle
-}  // namespace mashed_re
 
 #ifndef MASHED_STANDALONE
 // ===========================================================================================================================
