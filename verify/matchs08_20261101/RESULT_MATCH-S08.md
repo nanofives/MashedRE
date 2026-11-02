@@ -1,11 +1,11 @@
 # RESULT MATCH-S08, 2026-11-01
 
-**Verdict: GATES_VERDICT.** Slice 0x00432260..0x00451680 (128 game functions). **93/128** sources are
+**Verdict: GREEN.** Slice 0x00432260..0x00451680 (128 game functions). **93/128** sources are
 byte-identical under `re/tools/match/match.py` (XP DDK cl 13.00.9176 / c2 13.00.9178, `/O2 /GS /Ob1`, C, x87), and
 every one of the 93 has `relocheck.py` OK (`relocheck.tsv`; the 2 BAD lines there are the in-file copy of S07's
 0x00430910 at 61.7% inside `004322c0.c` / `004323c0.c`, not a slice row). **29** of them are now the port's only
 body (29 wrapper TUs `Match/MatchS08_<va8>.cpp`): 9 in `mashed_re.exe` (all also in the .asi), 20 in the .asi only.
-Gates on the merged build: GATES_LINE.
+Gates on the merged build: G-CTRL `8284be46/ba407a16/31fe043e`, B `1d5bf4f9/1d5bf4f9/1d5bf4f9` = merge_train.json refs (unchanged).
 **C4 candidates: 4 rows** with an exe caller reachable from `WinMain` (table below). The other 5 exe swaps have no
 exe caller (L-68).
 
@@ -144,7 +144,14 @@ trace was taken). 0x00442cc0 and 0x00443300 sit under `*_MaybeReplay` paths.
 
 ## Gates
 
-GATES_SECTION
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on exe `66fa7228`, private root
+`D:/MashedWT/MATCH-S08_root`, test slot + `mashed_lock.py run --solo` (2026-11-01 22:19, opened after
+`mashed_lock.py status` showed no PRIORITY-PENDING). Every arm exit 0, self-exited.
+
+| arm | file | sha8 | ref |
+|---|---|---|---|
+| H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0, K1, K26 | step.csv | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
 
 The merge train's `-Full` pass (D2 x3, 13 tracks) was not run here: `mashedmod/src` is in `full_set_paths`, so the
 train runs it on enqueue.
@@ -180,4 +187,12 @@ exe sha256 `66fa722898bbb146d28f447bcf556c1785bec31b60618bb15ca9492c31cce18f`, a
 
 ## Raw files (not committed; `D:/MashedWT/MATCH-S08_data`)
 
-RAW_TABLE
+| file | sha256 |
+|---|---|
+| arms/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms/B_DEF_K0.step.csv, B_DEF_K1.step.csv, B_DEF_K26.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 (all three) |
+| decomp.json (decomp_pc.py --port --callees, 2 entries via --create) | ccfc48c4b017e156d4668cbbfd3144658b8b68054024a5db13c6e2720167fea1 |
+| build1.log (Build OK) | 7d9cb5f24afdd45042c86193afc90a39c4a2b785fef11433a35505a6fda8e413 |
+| gates.log, g2s/, notes/h1..h11.md, swap_w1..w4.txt, scratch/ | run logs, raw converter output, helper reports |
