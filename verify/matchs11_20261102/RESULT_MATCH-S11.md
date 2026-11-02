@@ -155,7 +155,7 @@ mashedmod/build/mashed_re.map <symbols>` (direct `call`/`jmp rel32` graph from t
 (D3DERR_NOTAVAILABLE) on all three device types (HAL/HW, HAL/SW, REF). Probe: `B_DEF_K0` through
 `mashed_lock.py run` + test slot on this build (exe `6ced2511`, private root `D:/MashedWT/MATCH-S11_root`), once every
 ~4.5 min for the 30 min bound: 12:54, 12:58, 13:03, 13:07, 13:12, 13:16, 13:21, all failed, no step.csv
-(`display_poll.log`). The lock was free (`mashed_lock.py status` before the first probe).
+(`display_poll.txt`). The lock was free (`mashed_lock.py status` before the first probe).
 
 Owed before review: `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on this exe, compared with
 `merge_train.json` (`gctrl.ref` `8284be46/ba407a16/31fe043e`, `b.ref` `1d5bf4f9` x3), and the merge train's `-Full`
