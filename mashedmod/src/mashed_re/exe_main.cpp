@@ -2879,8 +2879,14 @@ void CookCtrlByteAFromKeyboard() {
     static const int s_pad_press_at = [] { const char* e = std::getenv("MASHED_R7_INPUT_PAD_PRESS"); return e ? std::atoi(e) : 0; }();
     static int s_r7_frame = 0;
     s_r7_frame = g_track.RoundEnd7ExitActive() ? s_r7_frame + 1 : 0;
+    // [D4-DC-77b0-MATCHEND-SUBSTATE] MASHED_MATCHEND_PRESS=<n> (arm test only): the same one-frame press on the n-th cook
+    // frame with 0x0063ba8c == 0xb (written only under MASHED_MATCHEND_SUBSTATE).
+    static const int s_me_press_at = [] { const char* e = std::getenv("MASHED_MATCHEND_PRESS"); return e ? std::atoi(e) : 0; }();
+    static int s_me_frame = 0;
+    s_me_frame = (*reinterpret_cast<const int*>(0x0063ba8cu) == 0xb) ? s_me_frame + 1 : 0;
     PollJoypadButtons();
-    const bool test_press = s_press_at > 0 && s_r7_frame == s_press_at;
+    const bool test_press = (s_press_at > 0 && s_r7_frame == s_press_at) ||
+                            (s_me_press_at > 0 && s_me_frame == s_me_press_at);
     const bool pad_test_press = s_pad_press_at > 0 && s_r7_frame == s_pad_press_at;
     constexpr std::uint32_t kBindAction4 = 0x1cu;                  // 0x00498698 mov [esi+0x10], 0x1c
     constexpr std::uint32_t kPadBindAction4 = 0u;                  // 0x00498640 mov [esi+0x10], 0

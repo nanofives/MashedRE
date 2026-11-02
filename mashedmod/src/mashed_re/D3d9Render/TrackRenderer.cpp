@@ -238,7 +238,75 @@ int aib_track_index()      { return g_aib.course; }
 // 6259/6259). This returned 1, which (a) skipped FUN_00416250's sub-state-6 block, the
 // one that calls the fire decision, (b) stepped the PLAYER through the AI tick
 // (FUN_00418860's `|| FUN_00443080() == 1`) and (c) forced DAT_0089a368 = 2 every frame.
-int aib_ai_target_enable() { return 0; }
+// [D4-DC-77b0-MATCHEND-SUBSTATE] MASHED_MATCHEND_SUBSTATE (default OFF): FUN_00410510's match-end stores (0xb at
+// 0x00410645, FUN_00448700(1, w) at 0x0041067e / 0x00410811), FUN_004111c0 case 0xb (0x00410ab0..0x00410b25, 9 at
+// 0x00410b02) and, here, FUN_00443080 read live. The original measured 0 here on every racing frame and 1 at every
+// FUN_004177b0 entry in 0xb (verify/d4dc77b0runtime_20261101, leg 3). The cell's only exe writer is VehicleSeedWritePair.
+// verify/d4dc77b0matchend_20261101/PREREG_D4-DC-77b0-MATCHEND-SUBSTATE.md. Knob OFF: 0, as before.
+bool MatchEndSubstateEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_MATCHEND_SUBSTATE"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+int aib_ai_target_enable() {
+    if (MatchEndSubstateEnabled()) return *reinterpret_cast<const int*>(0x00897ffcu);   // 0x00443080 mov eax,[0x00897ffc]
+    return 0;
+}
+namespace {
+bool s_matchEndFresh = false;   // the 0x00410645 frame runs case 6, not case 0xb
+void MatchEndLog(const char* what, int a, float f) {
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "MATCHEND %s %d b91c=%.9g\n", what, a, f);
+        std::fclose(lf);
+    }
+}
+// FUN_00410510's conclusion LAB_0041062a with ESI = the result (r != 0), stores only.
+// Not ported: 0x0041062a FUN_0045bed0, 0x0041062f FUN_0045bf30, 0x00410635 FUN_00458f80(0) (powerup teardown),
+// 0x00410825..0x00410830 FUN_00426c00() == 0x26 -> FUN_0044df80(0).
+void MatchEndConclude(int esi) {
+    *reinterpret_cast<int*>(0x0063ba8cu) = 0xb;                    // 0x00410645
+    *reinterpret_cast<int*>(0x0063b90cu) = 1;                      // 0x0041064f (ebx = 1, 0x00410640)
+    *reinterpret_cast<std::uint32_t*>(0x0063b910u) = 0x442f0000u;  // 0x00410655 (700.0f)
+    *reinterpret_cast<int*>(0x0063b918u) = 0;                      // 0x0041065f
+    *reinterpret_cast<int*>(0x0063b91cu) = 0;                      // 0x00410669
+    if (esi == -1) {                                               // 0x00410673 je 0x0041080f
+        VehicleSeedWritePair(1u, 0u);                              // 0x00410811 FUN_00448700(1, 0)
+        *reinterpret_cast<int*>(0x0063b914u) = 1;                  // 0x00410819 (ebx)
+        *reinterpret_cast<int*>(0x007f0fccu) = 0;                  // 0x0041081f (ebp)
+    } else {
+        const int w = esi - 1;                                     // 0x00410679
+        VehicleSeedWritePair(1u, static_cast<std::uint32_t>(w));   // 0x0041067e FUN_00448700(1, w)
+        *reinterpret_cast<int*>(0x0063b914u) = w;                  // 0x0041068d
+        *reinterpret_cast<int*>(0x007f0fccu) = (w == 0) ? 1 : 0;   // 0x00410688 sete / 0x00410693
+    }
+    s_matchEndFresh = true;
+    MatchEndLog("0xb esi", esi, 0.f);
+}
+// FUN_004111c0 case 0xb after its FUN_0040fc00 call (0x00410ab0..0x00410b25). Not ported: case 9 (FUN_0040ddb0, 0xa at
+// 0x0040ddf5) and the ctrl shadow copy into 0x007f14f8 (0x007f1501 / 0x007f1502 stay 0 in the exe).
+void MatchEndCaseB() {
+    int& ba8c = *reinterpret_cast<int*>(0x0063ba8cu);
+    if (ba8c != 0xb) return;
+    if (s_matchEndFresh) { s_matchEndFresh = false; return; }
+    float& acc = *reinterpret_cast<float*>(0x0063b91cu);
+    // fld / fadd / fst: the stored sum is rounded to float, fcomp compares the unrounded one (exact in a double)
+    const double sum = static_cast<double>(acc) + static_cast<double>(*reinterpret_cast<const float*>(0x007f100cu));   // 0x00410ab0 / 0x00410ab6
+    acc = static_cast<float>(sum);                                                     // 0x00410abc
+    if (sum < static_cast<double>(*reinterpret_cast<const float*>(0x005cc574u))) return;   // 0x00410ac2..0x00410acd (2.0f; unordered goes on)
+    for (std::uintptr_t p = 0x007f1a14u; p < 0x007f1a54u; p += 0x10u) {               // 0x00410acf, 0x00410b1a..0x00410b23
+        const int idx = *reinterpret_cast<const int*>(p);
+        if (idx == -1) continue;                                                       // 0x00410ad8
+        const std::uintptr_t o = static_cast<std::uintptr_t>(idx * 0x4c);              // 0x00410add
+        const auto b = [o](std::uintptr_t a) { return *reinterpret_cast<const std::uint8_t*>(a + o); };
+        const bool hit = (b(0x007f1042u) != 0 && b(0x007f1502u) == 0) ||               // 0x00410ae0 / 0x00410ae8
+                         (b(0x007f1041u) != 0 && b(0x007f1501u) == 0);                 // 0x00410af0 / 0x00410af8
+        if (!hit) continue;
+        ba8c = 9;                                                                      // 0x00410b02
+        *reinterpret_cast<int*>(0x0063b908u) = 1;                                      // 0x00410b0c FUN_0040e460(1)
+        *reinterpret_cast<int*>(0x0063b90cu) = 0;                                      // 0x00410b14 (edx)
+        MatchEndLog("9 idx", idx, acc);
+    }
+}
+}  // namespace
 void aib_own_fwd_xz(int v, float* fx, float* fz) {
     if (v < 0 || v > 3) { *fx = *fz = 0.f; return; }
     // [d3bc 2026-10-19] (seeded ON by the FAITH set, the knob MASHED_AI_FWD_ATROW deleted by D5-KNOBS-E3-GEOM-AI
@@ -6325,6 +6393,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     TickPowerupDispatch(in.dt);
     // power-up EFFECTS: advance boost/shield timers, missiles, mines.
     UpdatePowerups(in.dt);
+    // [D4-DC-77b0-MATCHEND-SUBSTATE] FUN_004111c0 case 0xb's tail, after this frame's AI tick and physics (its FUN_0040fc00
+    // call). Acts only while 0x0063ba8c is 0xb, which only MatchEndConclude (MASHED_MATCHEND_SUBSTATE) writes.
+    MatchEndCaseB();
     // [u9779] MASHED_RACE_TAIL_LATE (default ON since 2026-10-24): the race tail (camera, elimination, rule engine) here, after every
     // car's physics and the late path-progress tick, instead of between the player's physics and the opponent loop.
     // FUN_004111c0's sub-state-6 case calls FUN_00411170 (0x004112cd: FUN_00410d10, the 0x004111a6 write of 7) BEFORE
@@ -8933,6 +9004,7 @@ void TrackRenderer::UpdateRace(float dt) {
                              scores_[2], scores_[3]);
                 std::fclose(lf);
             }
+            if (r != 0 && MatchEndSubstateEnabled()) MatchEndConclude(r);   // [D4-DC-77b0-MATCHEND-SUBSTATE] LAB_0041062a
             if (r > 0) {                       // match over, winner r-1
                 match_winner_ = r - 1;
             } else if (r == -1) {              // over with no winner (draw /
