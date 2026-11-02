@@ -2384,3 +2384,11 @@
 {"at":"2026-11-02T14:19:14Z","id":"D4-DC-77b0-ST5-C4ACCEL","from":"open","to":"claimed","owner":"cmvzch01t2ftqpa1ck16owwcd","note":""}
 {"at":"2026-11-02T14:21:25Z","id":"D4-DC-77b0-ST5-C4ACCEL","from":"claimed","to":"working","owner":"cmvzch01t2ftqpa1ck16owwcd","note":"static: find exe c4 writer under leg 2"}
 {"at":"2026-11-02T14:30:58Z","id":"D4-DC-77b0-ST5-C4ACCEL","from":"working","to":"handoff","owner":"cmvzch01t2ftqpa1ck16owwcd","note":"static fix + PREREG committed; arms blocked (display asleep); commands in RESULT"}
+{"at":"2026-11-02T14:44:35Z","id":"MATCH-S09-FU","from":"working","to":"blocked","owner":"cmvz7tapm1ozrpa1cakokmk88","note":"built @ 86a3e7017, gates not run: display D3DERR_NOTAVAILABLE (RESULT @ 98501779a)"}
+{"at":"2026-11-02T14:50:35Z","id":"MATCH-S11","from":"open","to":"claimed","owner":"cmvzdiru92h8mpa1cagt3tkc4","note":""}
+{"at":"2026-11-02T14:50:36Z","id":"MATCH-S11","from":"claimed","to":"working","owner":"cmvzdiru92h8mpa1cagt3tkc4","note":"static leg: select, g2s"}
+{"at":"2026-11-02T14:51:49Z","id":"MATCH-PORTSTATE-GAMEFLOW-FU","from":"working","to":"blocked","owner":"cmvzan77b25fapa1cdcocfs23","note":"built @ e86684a29, gates not run: display D3DERR_NOTAVAILABLE"}
+{"at":"2026-11-02T14:56:58Z","id":"MATCH-S11","from":"working","to":"working","owner":"cmvzdiru92h8mpa1cagt3tkc4","note":"static leg: 17/128 raw at 100%, 9 helpers hand-matching (started 11:50)"}
+{"at":"2026-11-02T15:20:36Z","id":"MATCH-S10","from":"working","to":"blocked","owner":"cmvz9p9651ykrpa1c5dus55p1","note":"built @ cf19b66b2, gates not run: display D3DERR_NOTAVAILABLE (110/128 matched, 22 swapped, C4 candidate 0x0045c330 after gates; RESULT verify/matchs10_20261102/RESULT_MATCH-S10.md @ 116654248)"}
+{"at":"2026-11-02T16:21:53Z","id":"MATCH-S11","from":"working","to":"blocked","owner":"cmvzdiru92h8mpa1cagt3tkc4","note":"built @ 64be93909, gates not run: display D3DERR_NOTAVAILABLE"}
+{"at":"2026-11-02T16:22:03Z","id":"MATCH-S11","from":"blocked","to":"blocked","owner":"cmvzdiru92h8mpa1cagt3tkc4","note":"built @ b514b8ce7, gates not run: display D3DERR_NOTAVAILABLE"}
