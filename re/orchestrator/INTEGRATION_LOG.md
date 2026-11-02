@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-01 21:59 MATCH-TOPDOWN-T04 (orch/MATCH-TOPDOWN-T04), MATCH-TOPDOWN-T05 (orch/MATCH-TOPDOWN-T05), MATCH-TOPDOWN-T06 (orch/MATCH-TOPDOWN-T06): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261101_215703
 - 2026-11-01 21:56 D5-SHIM-DINPUT8-SPAWNERS (orch/D5-SHIM-DINPUT8-SPAWNERS): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_212449
 - 2026-11-01 21:23 HB-SHADOW-ALLOC-COMPARE (orch/HB-SHADOW-ALLOC-COMPARE): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_205241
 - 2026-11-01 20:49 D4-DC-RFX-CORE (orch/D4-DC-RFX-CORE), MATCH-S06 (orch/MATCH-S06), MATCH-TOPDOWN-T03 (orch/MATCH-TOPDOWN-T03): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_191148
