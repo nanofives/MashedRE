@@ -1,0 +1,269 @@
+# S0: pre-change .asi (narrow-tail build, sha256 343d85914ede226a931a074875f63ab945a47b468a6f53432f665607a901a390)
+== _FUN_0057c420 0x100aefb0
+  100aefb0 mov eax, dword ptr [esp + 4]
+  100aefb4 push dword ptr [esp + 8]
+  100aefb8 push 1
+  100aefba mov eax, dword ptr [eax + 0x10]
+  100aefbd push dword ptr [eax + 8]
+  100aefc0 push dword ptr [eax]
+  100aefc2 call 0x10068600  ; _FUN_0055bd80
+  100aefc7 add esp, 0x10
+  100aefca ret 
+== _FUN_0055bd80 0x10068600
+  10068600 push dword ptr [esp + 0x10]
+  10068604 lea eax, [esp + 4]
+  10068608 push dword ptr [esp + 0x10]
+  1006860c add eax, 4
+  1006860f push dword ptr [esp + 0x10]
+  10068613 push dword ptr [esp + 0x10]
+  10068617 push eax
+  10068618 push 0x100682c0
+  1006861d push 0x10164e9c
+  10068622 call 0x10067c80  ; ??$RunTracked@P6AXHHII@ZHHII@ShadowAB@@YAXAAUCounter@0@P6AXHHII@ZPAXHHII@Z
+  10068627 add esp, 0x1c
+  1006862a ret 
+== ?FUN_0055bd80_impl@Collision@mashed_re@@YAXHHII@Z 0x100682c0
+  100682c0 sub esp, 0x44
+  100682c3 mov eax, dword ptr [0x10176ec0]
+  100682c8 xor eax, esp
+  100682ca mov dword ptr [esp + 0x40], eax
+  100682ce mov ecx, dword ptr [esp + 0x4c]
+  100682d2 mov edx, ecx
+  100682d4 push esi
+  100682d5 mov esi, dword ptr [esp + 0x4c]
+  100682d9 mov eax, dword ptr [esi + 0x5c]
+  100682dc test byte ptr [eax + 0x40], 2
+  100682e0 jne 0x10068302
+  100682e2 test dword ptr [esi + 0xc], 0x20000
+  100682e9 jne 0x10068302
+  100682eb mov edx, esi
+  100682ed test ecx, ecx
+  100682ef je 0x10068302
+  100682f1 push ecx
+  100682f2 lea eax, [esp + 8]
+  100682f6 push esi
+  100682f7 push eax
+  100682f8 call 0x1005c020  ; _FUN_004c4600
+  100682fd add esp, 0xc
+  10068300 mov edx, eax
+  10068302 push dword ptr [esp + 0x58]
+  10068306 mov eax, dword ptr [esi + 0x5c]
+  10068309 push dword ptr [esp + 0x58]
+  1006830d push edx
+  1006830e mov eax, dword ptr [eax + 0x10]
+  10068311 push esi
+  10068312 call eax
+  10068314 mov ecx, dword ptr [esp + 0x54]
+  10068318 add esp, 0x10
+  1006831b pop esi
+  1006831c xor ecx, esp
+  1006831e call 0x1011cb7a  ; @__security_check_cookie@4
+  10068323 add esp, 0x44
+  10068326 ret 
+== ??$RunTracked@P6AXHHII@ZHHII@ShadowAB@@YAXAAUCounter@0@P6AXHHII@ZPAXHHII@Z 0x10067c80 unarmed path at 0x1006815a
+  1006815a push dword ptr [ebp + 0x20]
+  1006815d push dword ptr [ebp + 0x1c]
+  10068160 push dword ptr [ebp + 0x18]
+  10068163 push dword ptr [ebp + 0x14]
+  10068166 call dword ptr [ebp - 0x424]
+  1006816c add esp, 0x10
+  1006816f mov ecx, dword ptr [ebp - 0xc]
+  10068172 mov dword ptr fs:[0], ecx
+  10068179 pop ecx
+  1006817a pop edi
+  1006817b pop esi
+  1006817c mov ecx, dword ptr [ebp - 0x10]
+  1006817f xor ecx, ebp
+  10068181 call 0x1011cb7a  ; @__security_check_cookie@4
+  10068186 mov esp, ebp
+  10068188 pop ebp
+  10068189 ret 
+
+# S1: this step's .asi (sha256 056a6929fd63388610811d88806a068d071cd11bf9da716ff09c0dcee34dd0c0)
+== _FUN_0057c420 0x100b0d20
+  100b0d20 push dword ptr [esp + 8]
+  100b0d24 lea eax, [esp + 4]
+  100b0d28 push dword ptr [esp + 8]
+  100b0d2c add eax, 4
+  100b0d2f push eax
+  100b0d30 push 0x100b0b30
+  100b0d35 push 0x10175594
+  100b0d3a call 0x100aff90  ; ??$RunTracked@P6AIHI@ZHI@ShadowAB@@YAIAAUCounter@0@P6AIHI@ZPAXHI@Z
+  100b0d3f add esp, 0x14
+  100b0d42 ret 
+== ?FUN_0057c420_impl@Collision@mashed_re@@YAIHI@Z 0x100b0b30
+  100b0b30 mov eax, dword ptr [esp + 4]
+  100b0b34 push dword ptr [esp + 8]
+  100b0b38 push 1
+  100b0b3a mov eax, dword ptr [eax + 0x10]
+  100b0b3d push dword ptr [eax + 8]
+  100b0b40 push dword ptr [eax]
+  100b0b42 call 0x100693a0  ; _FUN_0055bd80
+  100b0b47 add esp, 0x10
+  100b0b4a ret 
+== _FUN_0055bd80 0x100693a0
+  100693a0 push dword ptr [esp + 0x10]
+  100693a4 lea eax, [esp + 4]
+  100693a8 push dword ptr [esp + 0x10]
+  100693ac add eax, 4
+  100693af push dword ptr [esp + 0x10]
+  100693b3 push dword ptr [esp + 0x10]
+  100693b7 push eax
+  100693b8 push 0x10069060
+  100693bd push 0x1017456c
+  100693c2 call 0x100683b0  ; ??$RunTracked@P6AIHHII@ZHHII@ShadowAB@@YAIAAUCounter@0@P6AIHHII@ZPAXHHII@Z
+  100693c7 add esp, 0x1c
+  100693ca ret 
+== ?FUN_0055bd80_impl@Collision@mashed_re@@YAIHHII@Z 0x10069060
+  10069060 sub esp, 0x44
+  10069063 mov eax, dword ptr [0x10186800]
+  10069068 xor eax, esp
+  1006906a mov dword ptr [esp + 0x40], eax
+  1006906e mov ecx, dword ptr [esp + 0x4c]
+  10069072 mov edx, ecx
+  10069074 push esi
+  10069075 mov esi, dword ptr [esp + 0x4c]
+  10069079 mov eax, dword ptr [esi + 0x5c]
+  1006907c test byte ptr [eax + 0x40], 2
+  10069080 jne 0x100690a2
+  10069082 test dword ptr [esi + 0xc], 0x20000
+  10069089 jne 0x100690a2
+  1006908b mov edx, esi
+  1006908d test ecx, ecx
+  1006908f je 0x100690a2
+  10069091 push ecx
+  10069092 lea eax, [esp + 8]
+  10069096 push esi
+  10069097 push eax
+  10069098 call 0x1005ccf0  ; _FUN_004c4600
+  1006909d add esp, 0xc
+  100690a0 mov edx, eax
+  100690a2 push dword ptr [esp + 0x58]
+  100690a6 mov eax, dword ptr [esi + 0x5c]
+  100690a9 push dword ptr [esp + 0x58]
+  100690ad push edx
+  100690ae mov eax, dword ptr [eax + 0x10]
+  100690b1 push esi
+  100690b2 call eax
+  100690b4 mov ecx, dword ptr [esp + 0x54]
+  100690b8 add esp, 0x10
+  100690bb pop esi
+  100690bc xor ecx, esp
+  100690be call 0x1012c33a  ; @__security_check_cookie@4
+  100690c3 add esp, 0x44
+  100690c6 ret 
+== ??$RunTracked@P6AIHI@ZHI@ShadowAB@@YAIAAUCounter@0@P6AIHI@ZPAXHI@Z 0x100aff90 unarmed path at 0x100b04d0
+  100b04d0 push dword ptr [ebp + 0x18]
+  100b04d3 push dword ptr [ebp + 0x14]
+  100b04d6 call dword ptr [ebp - 0x42c]
+  100b04dc add esp, 8
+  100b04df mov ecx, dword ptr [ebp - 0xc]
+  100b04e2 mov dword ptr fs:[0], ecx
+  100b04e9 pop ecx
+  100b04ea pop edi
+  100b04eb pop esi
+  100b04ec mov ecx, dword ptr [ebp - 0x10]
+  100b04ef xor ecx, ebp
+  100b04f1 call 0x1012c33a  ; @__security_check_cookie@4
+  100b04f6 mov esp, ebp
+  100b04f8 pop ebp
+  100b04f9 ret 
+== ??$RunTracked@P6AIHHII@ZHHII@ShadowAB@@YAIAAUCounter@0@P6AIHHII@ZPAXHHII@Z 0x100683b0 unarmed path at 0x10068930
+  10068930 push dword ptr [ebp + 0x20]
+  10068933 push dword ptr [ebp + 0x1c]
+  10068936 push dword ptr [ebp + 0x18]
+  10068939 push dword ptr [ebp + 0x14]
+  1006893c call dword ptr [ebp - 0x42c]
+  10068942 add esp, 0x10
+  10068945 mov ecx, dword ptr [ebp - 0xc]
+  10068948 mov dword ptr fs:[0], ecx
+  1006894f pop ecx
+  10068950 pop edi
+  10068951 pop esi
+  10068952 mov ecx, dword ptr [ebp - 0x10]
+  10068955 xor ecx, ebp
+  10068957 call 0x1012c33a  ; @__security_check_cookie@4
+  1006895c mov esp, ebp
+  1006895e pop ebp
+  1006895f ret 
+
+# S1: this step's exe (sha256 171d4d726c62378579dfb1e462110e3ffae6580e5b7c162ae3eea17ec50247fe)
+== _FUN_0057c420 0x101590
+  00101590 mov eax, dword ptr [esp + 4]
+  00101594 push dword ptr [esp + 8]
+  00101598 push 1
+  0010159a mov eax, dword ptr [eax + 0x10]
+  0010159d push dword ptr [eax + 8]
+  001015a0 push dword ptr [eax]
+  001015a2 call 0xbf360  ; _FUN_0055bd80
+  001015a7 add esp, 0x10
+  001015aa ret 
+== _FUN_0055bd80 0xbf360
+  000bf360 push dword ptr [esp + 0x10]
+  000bf364 lea eax, [esp + 4]
+  000bf368 push dword ptr [esp + 0x10]
+  000bf36c add eax, 4
+  000bf36f push dword ptr [esp + 0x10]
+  000bf373 push dword ptr [esp + 0x10]
+  000bf377 push eax
+  000bf378 push 0xbefe0
+  000bf37d push 0x28ce94
+  000bf382 call 0xbe320  ; ??$RunTracked@P6AIHHII@ZHHII@ShadowAB@@YAIAAUCounter@0@P6AIHHII@ZPAXHHII@Z
+  000bf387 add esp, 0x1c
+  000bf38a ret 
+== ?FUN_0055bd80_impl@Collision@mashed_re@@YAIHHII@Z 0xbefe0
+  000befe0 sub esp, 0x44
+  000befe3 mov eax, dword ptr [0x2a0d80]
+  000befe8 xor eax, esp
+  000befea mov dword ptr [esp + 0x40], eax
+  000befee mov ecx, dword ptr [esp + 0x4c]
+  000beff2 mov edx, ecx
+  000beff4 push esi
+  000beff5 mov esi, dword ptr [esp + 0x4c]
+  000beff9 mov eax, dword ptr [esi + 0x5c]
+  000beffc test byte ptr [eax + 0x40], 2
+  000bf000 jne 0xbf022
+  000bf002 test dword ptr [esi + 0xc], 0x20000
+  000bf009 jne 0xbf022
+  000bf00b mov edx, esi
+  000bf00d test ecx, ecx
+  000bf00f je 0xbf022
+  000bf011 push ecx
+  000bf012 lea eax, [esp + 8]
+  000bf016 push esi
+  000bf017 push eax
+  000bf018 call 0xb1ad0  ; _FUN_004c4600
+  000bf01d add esp, 0xc
+  000bf020 mov edx, eax
+  000bf022 push dword ptr [esp + 0x58]
+  000bf026 mov eax, dword ptr [esi + 0x5c]
+  000bf029 push dword ptr [esp + 0x58]
+  000bf02d push edx
+  000bf02e mov eax, dword ptr [eax + 0x10]
+  000bf031 push esi
+  000bf032 call eax
+  000bf034 mov ecx, dword ptr [esp + 0x54]
+  000bf038 add esp, 0x10
+  000bf03b pop esi
+  000bf03c xor ecx, esp
+  000bf03e call 0x1cea51  ; @__security_check_cookie@4
+  000bf043 add esp, 0x44
+  000bf046 ret 
+== ??$RunTracked@P6AIHHII@ZHHII@ShadowAB@@YAIAAUCounter@0@P6AIHHII@ZPAXHHII@Z 0xbe320 unarmed path at 0xbe8ac
+  000be8ac push dword ptr [ebp + 0x20]
+  000be8af push dword ptr [ebp + 0x1c]
+  000be8b2 push dword ptr [ebp + 0x18]
+  000be8b5 push dword ptr [ebp + 0x14]
+  000be8b8 call dword ptr [ebp - 0x42c]
+  000be8be add esp, 0x10
+  000be8c1 mov ecx, dword ptr [ebp - 0xc]
+  000be8c4 mov dword ptr fs:[0], ecx
+  000be8cb pop ecx
+  000be8cc pop edi
+  000be8cd pop esi
+  000be8ce mov ecx, dword ptr [ebp - 0x10]
+  000be8d1 xor ecx, ebp
+  000be8d3 call 0x1cea51  ; @__security_check_cookie@4
+  000be8d8 mov esp, ebp
+  000be8da pop ebp
+  000be8db ret 

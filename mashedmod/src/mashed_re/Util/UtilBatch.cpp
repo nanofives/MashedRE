@@ -16,7 +16,7 @@
 //
 // Candidates NOT in this file (already implemented in TimerState.cpp /
 // TimerInit.cpp — drift-fix only via re-classify):
-//   0x00413f90  TimerGetBasePtr       (TimerState.cpp)
+//   0x00413f90  TimerGetBasePtr       (Match/MatchS08FU_00413f90.cpp; was TimerState.cpp)
 //   0x00422120  TimerInitLoop         (TimerInit.cpp)
 //
 // Candidates skipped (refused — see PROMOTION_QUEUE note):

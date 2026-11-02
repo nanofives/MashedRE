@@ -45,8 +45,8 @@ sys.path.insert(0, str(ROOT / "re" / "frida"))
 import statenav
 from statenav import Nav, shoot, _open_handle, _exit_code
 
-EXE = statenav.EXE
-ORIG = statenav.ORIG
+EXE = statenav.dev_asi.original_exe(statenav.EXE)
+ORIG = EXE.parent
 # C4PB2_GAMEROOT=<dir holding MASHED.exe>: run a private install copy instead of original/ (crash1509b4).
 if os.environ.get('C4PB2_GAMEROOT'):
     ORIG = Path(os.environ['C4PB2_GAMEROOT']); EXE = ORIG / "MASHED.exe"
@@ -276,9 +276,9 @@ def main():
 
     env = dict(os.environ)
     if arm == "off":
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None); env["MASHED_HOOK_ONLY"] = "__none__"
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = "__none__"
     elif arm == "on":
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None); env["MASHED_HOOK_ONLY"] = RVAS
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = RVAS
     elif arm == "stock":
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = "__none__"
     else:
@@ -297,9 +297,13 @@ def main():
         print(msg, flush=True); rec["log"].append(msg)
 
     dev = frida.get_local_device()
-    pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+    # D5-SHIM-DINPUT8-SPAWNERS: off/on load the asi before the first resume (dev_asi:
+    # Module.load + InjectHooks, MASHED_HOOK_ONLY honoured), not through the dinput8 proxy.
+    _p, sess, _asi = statenav.dev_asi.spawn_original(EXE, hooks=arm in ("off", "on"), env=env,
+                                                     cwd=ORIG, device=dev, resume=False)
+    pid = _p.pid; rec["dev_asi"] = _asi
     rec["pid"] = pid; log(f"  spawned pid={pid} arm={arm}")
-    sess = dev.attach(pid); hproc = _open_handle(pid)
+    hproc = _open_handle(pid)
     def on_msg(m, d):
         p = m.get("payload") if isinstance(m, dict) else None
         if isinstance(p, dict) and p.get("kind") == "crash":

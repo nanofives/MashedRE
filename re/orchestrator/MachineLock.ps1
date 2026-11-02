@@ -13,10 +13,16 @@
 
 #
 # Exclusive (solo) mode, same files and token as mashed_lock.py (2026-10-24):
-#   $tok = Enter-SoloLock -Label 'd2arms' [-TtlSec 14400] [-BindPid $PID]
+#   $tok = Enter-SoloLock -Label 'd2arms' [-TtlSec 3600] [-BindPid $PID] [-Priority]
 #   try { ... boots take mashed_machine as usual ... } finally { Exit-SoloLock $tok }
 # While a solo window is open, Acquire-Lock waits unless $env:MASHED_LOCK_SOLO_TOKEN
 # equals the window's token (Enter-SoloLock sets it for this process and children).
+# HB-MASHEDLOCK-SOLO-PRIORITY (2026-11-01), same rule as mashed_lock.py: a NEW non-priority
+# solo open waits while a priority marker is pending, while a -Priority handle holds the game
+# lock, and for 120 s after its Release-Lock (<Name>_priolinger_<pid>.lock: held=true from
+# acquire to release, stale only when that PID is dead, then held=false with an expiry).
+# A window already open is never touched. Default TtlSec 3600 (was 14400).
+$script:PrioSoloLingerSec = 120
 
 # HB-LOCKBREAK (2026-10-25): no max-age rule. A live holder is never broken for age (the
 # old 30 min rule broke D3-CF-K357's 11-arm hold, pid 18904 alive, at age 1801 s). PID
@@ -40,12 +46,23 @@ function Get-SoloOwner([string]$Name = 'mashed_machine') {
 }
 
 function Enter-SoloLock {
-  param([string]$Name = 'mashed_machine', [string]$Label = '', [int]$TtlSec = 14400,
-        [int]$BindPid = 0, [int]$TimeoutSec = 1800, [int]$PollSec = 3)
+  param([string]$Name = 'mashed_machine', [string]$Label = '', [int]$TtlSec = 3600,
+        [int]$BindPid = 0, [int]$TimeoutSec = 1800, [int]$PollSec = 3, [switch]$Priority)
   $p = Get-SoloLockPath $Name
   $tok = [guid]::NewGuid().ToString('N')
   $start = Get-Date
+  $notedPrio = $false
   while ($true) {
+    if (-not $Priority) {
+      $blk = @(Get-PrioPending $Name $PID) + @(Get-PrioLinger $Name $PID)
+      if ($blk.Count -gt 0) {
+        if (-not $notedPrio) {
+          Write-Host "[machine-lock] WAITING to open solo '$Name' -- priority claim pending ($($blk[0].label))" -ForegroundColor Yellow
+          $notedPrio = $true
+        }
+        Start-Sleep -Seconds $PollSec; $start = Get-Date; continue   # bounded by the marker/linger expiry
+      }
+    }
     try {
       $now = [int][double]::Parse((Get-Date -UFormat %s))
       $fs = [System.IO.File]::Open($p, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write)
@@ -90,6 +107,23 @@ function Get-PrioPending([string]$Name = 'mashed_machine', [int]$IgnorePid = 0) 
     $o = $null; try { $o = Get-Content $f.FullName -Raw | ConvertFrom-Json } catch {}
     if (-not $o -or -not (Test-PidAlive ([int]$o.pid)) -or ([int]$o.expires -lt $now)) {
       Remove-Item $f.FullName -Force -ErrorAction SilentlyContinue; continue
+    }
+    if ($IgnorePid -and [int]$o.pid -eq $IgnorePid) { continue }
+    $out += $o
+  }
+  return $out
+}
+
+function Get-PrioLinger([string]$Name = 'mashed_machine', [int]$IgnorePid = 0) {
+  $now = [int][double]::Parse((Get-Date -UFormat %s))
+  $out = @()
+  foreach ($f in @(Get-ChildItem -Path $env:TEMP -Filter "${Name}_priolinger_*.lock" -ErrorAction SilentlyContinue)) {
+    $o = $null; try { $o = Get-Content $f.FullName -Raw | ConvertFrom-Json } catch {}
+    if (-not $o -or ([int]$o.expires -lt $now) -or ($o.held -and -not (Test-PidAlive ([int]$o.pid)))) {
+      if ($o -or ((Get-Date) - $f.LastWriteTime).TotalSeconds -gt $script:EmptyGraceSec) {
+        Remove-Item $f.FullName -Force -ErrorAction SilentlyContinue
+      }
+      continue
     }
     if ($IgnorePid -and [int]$o.pid -eq $IgnorePid) { continue }
     $out += $o
@@ -143,7 +177,9 @@ function Acquire-Lock {
        label = $Label; host = $env:COMPUTERNAME } | ConvertTo-Json -Compress | Set-Content -LiteralPath $prioPath -Encoding utf8
   }
   try {
-    return (Acquire-LockBody -Name $Name -Label $Label -TimeoutSec $TimeoutSec -PollSec $PollSec -Force:$Force -Quiet:$Quiet -Priority:$Priority)
+    $h = Acquire-LockBody -Name $Name -Label $Label -TimeoutSec $TimeoutSec -PollSec $PollSec -Force:$Force -Quiet:$Quiet -Priority:$Priority
+    if ($Priority) { Write-PrioLinger $Name $Label 86400 $true }   # before the marker goes
+    return $h
   } finally {
     if ($Priority) { Remove-Item $prioPath -Force -ErrorAction SilentlyContinue }
   }
@@ -182,7 +218,7 @@ function Acquire-LockBody {
       $bytes = [Text.Encoding]::UTF8.GetBytes($json)
       $fs.Write($bytes, 0, $bytes.Length); $fs.Close()
       if (-not $Quiet) { Write-Host "[machine-lock] HELD '$Name' pid=$PID ($Label)" -ForegroundColor DarkGray }
-      return [pscustomobject]@{ Name = $Name; Path = $path; Pid = $PID }
+      return [pscustomobject]@{ Name = $Name; Path = $path; Pid = $PID; Label = $Label; Priority = [bool]$Priority }
     } catch [System.IO.IOException] {
       $owner = $null; try { $owner = Get-Content $path -Raw | ConvertFrom-Json } catch {}
       $opid = if ($owner) { [int]$owner.pid } else { 0 }
@@ -211,4 +247,16 @@ function Release-Lock($handle) {
       Remove-Item $handle.Path -Force -ErrorAction SilentlyContinue
     }
   }
+  if ($handle.Priority) {   # HB-MASHEDLOCK-SOLO-PRIORITY: new solo opens keep yielding briefly
+    Write-PrioLinger $handle.Name $handle.Label $script:PrioSoloLingerSec $false
+  }
+}
+
+function Write-PrioLinger([string]$Name, [string]$Label, [int]$Secs, [bool]$Held) {
+  $n = [int][double]::Parse((Get-Date -UFormat %s))
+  try {
+    @{ pid = $PID; at = (Get-Date).ToString('o'); epoch = $n; expires = $n + $Secs; held = $Held;
+       owner_start = (Get-PidStart $PID); label = $Label; host = $env:COMPUTERNAME } | ConvertTo-Json -Compress |
+      Set-Content -LiteralPath (Join-Path $env:TEMP "${Name}_priolinger_$PID.lock") -Encoding utf8
+  } catch {}
 }

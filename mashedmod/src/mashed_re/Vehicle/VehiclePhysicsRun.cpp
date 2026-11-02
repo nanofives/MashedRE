@@ -24,10 +24,11 @@
 #include "../Race/SubStateCallees.h"         // [d2posmodel] VehiclePhysicsStateReset (0x0046baa0)
 #include "../Ai/AiStandalone.h"              // [d3bB2] Ai_ContactEventPush (MASHED_AI_CONTACT_EVENT)
 #include "../Audio/AudioWire.h"              // [D4-WSJ-WIRE] audio-side event ring (MASHED_AUDIO_WIRE)
+#include "RecordBlockState.h"                // [MATCH-PORTSTATE-RECORDS] record block port-state (knob)
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
-namespace mashed_re { namespace D3d9Render { bool RoundEnd7PhysActive(); } }   // [D3-CF-U9779] TrackRenderer.cpp
+namespace mashed_re { namespace D3d9Render { bool RoundEnd7PhysActive(); bool SubStateModeGateActive(); } }   // [D3-CF-U9779] TrackRenderer.cpp
 namespace mashed_re {
 namespace Vehicle {
 
@@ -125,7 +126,11 @@ constexpr float       kSuspNum = 3000.0f;      // _DAT_005ccd08
 // re/analysis/data/A8_substep_budget_20260825.md (Q2).
 constexpr int         kMaxSubstep = 25;        // 0x19 (FUN_004709a0 inner chunk)
 
-unsigned char g_records[16 * kRec];            // the 0xd04 record array (mirror of DAT_008815a0)
+unsigned char g_recordsStore[16 * kRec];       // the 0xd04 record array (mirror of DAT_008815a0)
+// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default OFF): the records ARE the original's block
+// at 0x008815a0 (16 x 0xd04), not a copy of it. OFF: the exe's own store above.
+unsigned char* const g_records = PortStateRecords_On() ? reinterpret_cast<unsigned char*>(0x008815a0u)
+                                                       : g_recordsStore;
 bool          g_inited = false;
 
 // A8 (2026-08-25): persistent integrated BODY ORIENTATION basis per car — the
@@ -307,7 +312,7 @@ bool VehiclePhysics_Enabled() {
 }
 
 void VehiclePhysics_Init(int carCount, int trackType) {
-    std::memset(g_records, 0, sizeof(g_records));
+    std::memset(g_records, 0, 16 * kRec);
     for (int s = 0; s < 16; ++s) g_bodyBasisOk[s] = false;   // A8: basis reseeds at first step
     for (int s = 0; s < 16; ++s) g_settled[s] = false;       // U-D3-DRIVE spawn settle
     for (int s = 0; s < 16; ++s) g_startBoosted[s] = false;  // U-D3-DRIVE-FORCE start boost
@@ -1237,11 +1242,12 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
                 std::fclose(lf);
             }
         }
+        const int prevModeHold = g_fiGameModeHold;   // [D4-DC-77b0-ST5-HOLD] 0 unless St5Leg2 holds mode 5
         g_fiGameModeHold = 5;
         g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
         StepCarImpl(slot, dt, s, cs);   // [substep] the settle's inner step: per-car order, this car's cache
         g_inSpawnSettle = false;
-        g_fiGameModeHold = 0;
+        g_fiGameModeHold = prevModeHold;
         // [d2settle D0-a] MASHED_SETTLE_DIAG=<path>: what the settle step produced before it
         // is discarded. DIAGNOSTIC ONLY, default-OFF, writes nothing when unset.
         if (const char* sd = std::getenv("MASHED_SETTLE_DIAG")) {
@@ -1364,7 +1370,7 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
     // [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): FUN_004709a0 (0x00470a1b..0x00470a4f) and FUN_00470c70
     // (0x00470fd6..0x00470ff9) hand FUN_0046e9e0 and A4 the block 0x007f19b8 when FUN_0040e350() is not 6 / 0xb / 0xa.
     // Read in place (the exe maps the original's 0x007f1038 block region; o_r7_1 read 0x4c zero bytes there).
-    if (D3d9Render::RoundEnd7PhysActive()) {
+    if (D3d9Render::SubStateModeGateActive()) {   // [D4-DC-77b0-ST5-HOLD] also St5Leg2's mode-5 calls
         const int gm = Fi_GameMode();
         if (gm != 6 && gm != 0xb && gm != 0xa)
             std::memcpy(input, reinterpret_cast<const void*>(static_cast<std::uintptr_t>(0x007f19b8u)), sizeof(input));
@@ -1855,7 +1861,7 @@ static void StepSubstep(StepCtx& c) {
         float k = chunkMs * kPosDtK * kSuspDtK;
         // [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): the 0x0046ea1e..0x0046ea4c gate, applied only while the
         // MASHED_ROUND_END7 flag is up (the d2engage hold tick's mode 5 stays outside it, as before).
-        if (D3d9Render::RoundEnd7PhysActive()) {
+        if (D3d9Render::SubStateModeGateActive()) {   // [D4-DC-77b0-ST5-HOLD] also St5Leg2's mode-5 calls
             const int gm = Fi_GameMode();
             if (gm != 6 && gm != 0xb && gm != 0xa) k = 0.f;   // 0x0046ea3c / 0x0046ea44 / 0x0046ea4c: increments = 0
         }

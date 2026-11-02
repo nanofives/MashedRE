@@ -1,0 +1,102 @@
+0x00432260	OK	checked=3	unchecked=0	00432260.c	
+0x00432290	OK	checked=2	unchecked=0	00432290.c	
+0x0042f6b0	OK	checked=10	unchecked=0	004322c0.c	
+0x00430830	OK	checked=10	unchecked=0	004322c0.c	
+0x00430910	BAD	checked=5	unchecked=0	004322c0.c	+0x48 _DAT_0067f184: ours 0x0067f184 vs orig 0x84a125eb; +0x75 _DAT_0067f17c: ours 0x0067f17c vs orig 0x7c0d8bae; +0x82 _DAT_007f0a40: ours 0x007f0a40 vs orig 0x4095048b
+0x004322c0	OK	checked=18	unchecked=0	004322c0.c	
+0x0042f6b0	OK	checked=10	unchecked=0	004323c0.c	
+0x00430830	OK	checked=10	unchecked=0	004323c0.c	
+0x00430910	BAD	checked=5	unchecked=0	004323c0.c	+0x48 _DAT_0067f184: ours 0x0067f184 vs orig 0x84a125eb; +0x75 _DAT_0067f17c: ours 0x0067f17c vs orig 0x7c0d8bae; +0x82 _DAT_007f0a40: ours 0x007f0a40 vs orig 0x4095048b
+0x004323c0	OK	checked=13	unchecked=0	004323c0.c	
+0x00432450	OK	checked=10	unchecked=0	00432450.c	
+0x004324a0	OK	checked=16	unchecked=0	004324a0.c	
+0x0042ac50	OK	checked=0	unchecked=0	004325c0.c	
+0x004325c0	OK	checked=24	unchecked=3	004325c0.c	  unchecked: __ftol
+0x00432800	OK	checked=57	unchecked=0	00432800.c	
+0x00432ad0	OK	checked=9	unchecked=0	00432ad0.c	
+0x004331a0	OK	checked=20	unchecked=0	004331a0.c	
+0x00433240	OK	checked=10	unchecked=0	00433240.c	
+0x00436810	OK	checked=6	unchecked=0	00436810.c	
+0x004391b0	OK	checked=8	unchecked=0	004391b0.c	
+0x0043aee0	OK	checked=4	unchecked=0	0043aee0.c	
+0x0043bf30	OK	checked=28	unchecked=0	0043bf30.c	
+0x0043c000	OK	checked=180	unchecked=23	0043c000.c	  unchecked: __ftol
+0x0043d7c0	OK	checked=165	unchecked=3	0043d7c0.c	  unchecked: __ftol,__imp__PostQuitMessage@4
+0x0043df00	OK	checked=27	unchecked=0	0043df00.c	
+0x00441490	OK	checked=3	unchecked=0	00441490.c	
+0x00441700	OK	checked=4	unchecked=0	00441700.c	
+0x00441760	OK	checked=8	unchecked=0	00441760.c	
+0x004417e0	OK	checked=1	unchecked=0	004417e0.c	
+0x00441820	OK	checked=15	unchecked=0	00441820.c	
+0x00441990	OK	checked=24	unchecked=0	00441990.c	
+0x00441c80	OK	checked=6	unchecked=0	00441c80.c	
+0x00442410	OK	checked=1	unchecked=0	00442410.c	
+0x00442420	OK	checked=1	unchecked=0	00442420.c	
+0x004425d0	OK	checked=3	unchecked=0	004425d0.c	
+0x00442600	OK	checked=33	unchecked=2	00442600.c	  unchecked: __ftol
+0x00442a20	OK	checked=3	unchecked=0	00442a20.c	
+0x00442c80	OK	checked=4	unchecked=0	00442c80.c	
+0x00442cc0	OK	checked=2	unchecked=0	00442cc0.c	
+0x00442ce0	OK	checked=19	unchecked=0	00442ce0.c	
+0x00442df0	OK	checked=1	unchecked=0	00442df0.c	
+0x00443080	OK	checked=1	unchecked=0	00443080.c	
+0x00443090	OK	checked=1	unchecked=0	00443090.c	
+0x004430a0	OK	checked=1	unchecked=0	004430a0.c	
+0x004430b0	OK	checked=1	unchecked=0	004430b0.c	
+0x004430c0	OK	checked=2	unchecked=0	004430c0.c	
+0x004430e0	OK	checked=16	unchecked=2	004430e0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00443210	OK	checked=10	unchecked=0	00443210.c	
+0x00443300	OK	checked=14	unchecked=0	00443300.c	
+0x00443d10	OK	checked=10	unchecked=2	00443d10.c	  unchecked: __ftol
+0x00444ff0	OK	checked=197	unchecked=4	00444ff0.c	  unchecked: @__security_check_cookie@4,___security_cookie,__ftol
+0x004464c0	OK	checked=6	unchecked=0	004464c0.c	
+0x00448700	OK	checked=4	unchecked=0	00448700.c	
+0x00448730	OK	checked=8	unchecked=0	00448730.c	
+0x00448770	OK	checked=14	unchecked=0	00448770.c	
+0x00448820	OK	checked=7	unchecked=0	00448820.c	
+0x00448880	OK	checked=15	unchecked=0	00448880.c	
+0x00448940	OK	checked=58	unchecked=0	00448940.c	
+0x00448cb0	OK	checked=26	unchecked=0	00448cb0.c	
+0x00448dc0	OK	checked=7	unchecked=0	00448dc0.c	
+0x00448e20	OK	checked=17	unchecked=0	00448e20.c	
+0x00448ef0	OK	checked=13	unchecked=0	00448ef0.c	
+0x004491e0	OK	checked=6	unchecked=0	004491e0.c	
+0x004492b0	OK	checked=32	unchecked=0	004492b0.c	
+0x004495d0	OK	checked=1	unchecked=0	004495d0.c	
+0x004496a0	OK	checked=6	unchecked=0	004496a0.c	
+0x00449710	OK	checked=6	unchecked=0	00449710.c	
+0x00449880	OK	checked=3	unchecked=0	00449880.c	
+0x00449b30	OK	checked=12	unchecked=0	00449b30.c	
+0x00449ba0	OK	checked=1	unchecked=0	00449ba0.c	
+0x00449bb0	OK	checked=6	unchecked=0	00449bb0.c	
+0x0044aaa0	OK	checked=9	unchecked=0	0044aaa0.c	
+0x0044ab20	OK	checked=9	unchecked=0	0044ab20.c	
+0x0044b000	OK	checked=2	unchecked=0	0044b000.c	
+0x0044bbc0	OK	checked=3	unchecked=0	0044bbc0.c	
+0x0044bc30	OK	checked=9	unchecked=0	0044bc30.c	
+0x0044c370	OK	checked=1	unchecked=0	0044c370.c	
+0x0044c5f0	OK	checked=12	unchecked=0	0044c5f0.c	
+0x0044c740	OK	checked=9	unchecked=0	0044c740.c	
+0x0044c8b0	OK	checked=5	unchecked=1	0044c8b0.c	  unchecked: _RwFrameAddChild
+0x0044c920	OK	checked=9	unchecked=0	0044c920.c	
+0x0044ca40	OK	checked=2	unchecked=0	0044ca40.c	
+0x0044caa0	OK	checked=7	unchecked=0	0044caa0.c	
+0x0044cb00	OK	checked=7	unchecked=0	0044cb00.c	
+0x0044d5e0	OK	checked=9	unchecked=0	0044d5e0.c	
+0x0044d6e0	OK	checked=1	unchecked=0	0044d6e0.c	
+0x0044df80	OK	checked=7	unchecked=0	0044df80.c	
+0x0044dfe0	OK	checked=0	unchecked=0	0044dfe0.c	
+0x0044dff0	OK	checked=1	unchecked=0	0044dff0.c	
+0x0044e020	OK	checked=2	unchecked=0	0044e020.c	
+0x0044e050	OK	checked=1	unchecked=0	0044e050.c	
+0x0044e070	OK	checked=4	unchecked=0	0044e070.c	
+0x0044e190	OK	checked=8	unchecked=0	0044e190.c	
+0x0044e240	OK	checked=11	unchecked=0	0044e190.c	
+0x0044e2d0	OK	checked=4	unchecked=0	0044e190.c	
+0x0044e310	OK	checked=4	unchecked=0	0044e190.c	
+0x0044e680	OK	checked=9	unchecked=0	0044e680.c	
+0x0044ecc0	OK	checked=6	unchecked=0	0044ecc0.c	
+0x0044f830	OK	checked=11	unchecked=0	0044f830.c	
+0x00450300	OK	checked=33	unchecked=0	00450300.c	
+0x00451060	OK	checked=3	unchecked=0	00451060.c	
+0x00451680	OK	checked=0	unchecked=0	00451680.c	

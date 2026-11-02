@@ -30,10 +30,5 @@
 // MATCH-S07: the body of 0x00432230 (RecEq231) moved to Match/MatchS07_00432230.cpp,
 // which compiles the byte-matched source re/match/s07/00432230.c.
 
-// 0x00432260
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RecEq232(void) {
-    std::int32_t g = *reinterpret_cast<std::int32_t*>(0x0067e9f8u);
-    std::uint32_t rec = 0x0067ed3cu + static_cast<std::uint32_t>(g) * 0x40u;
-    return (*reinterpret_cast<std::int32_t*>(rec + 0) == 0x13 && *reinterpret_cast<std::int32_t*>(rec + 4) == 2) ? 1u : 0u;
-}
-RH_ScopedInstall(RecEq232, 0x00432260);
+// MATCH-S08: the body of 0x00432260 (RecEq232) moved to Match/MatchS08_00432260.cpp,
+// which compiles the byte-matched source re/match/s08/00432260.c.

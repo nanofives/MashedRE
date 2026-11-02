@@ -1,0 +1,10 @@
+rva	wrapper	targets	x87	port_symbol	install	source	source_blob_sha	source_sha256_16_git	old_body
+0x0042b960	MatchS07_0042b960.cpp	exe+asi	no	CarSlotInit1P	1	re/match/s07/0042b960.c	818948bfec3cdea6b79cc85d68bf3c9a8c398ec4	cf2f34df58ad3d13	Frontend/MenuButtonDetect.cpp
+0x0042b9e0	MatchS07_0042b9e0.cpp	exe+asi	no	CarSlotAssign	1	re/match/s07/0042b9e0.c	8ab770762db903fccd2f4277614041e8a113c115	337d24edcf662f53	Frontend/MenuButtonDetect.cpp
+0x0042d290	MatchS07_0042d290.cpp	asi	yes	MenusLapTimeFmt	1	re/match/s07/0042d290.c	dc3aceaf8ea7d77c38a670fe6fdb1cbf5d873f09	f443364de93f5c2b	Frontend/MenuMixed.cpp
+0x0042f7b0	MatchS07_0042f7b0.cpp	exe+asi	no	FrontendCursorUpdate	1	re/match/s07/0042f7b0.c	46fcbc646731dbfad1b99ed0e80e940fc341b81f	a47e3d40aec6d10f	Frontend/MenuHelpers.cpp
+0x0042ef40	MatchS07_0042ef40.cpp	exe+asi	no	VehicleUnlockFlagGet	1	re/match/s07/0042ef40.c	8542f6f44cba5f8b0b9f0b538875900cf8e99c92	622b12a291f7a811	Frontend/VehicleMeta.cpp
+0x00431d00	MatchS07_00431d00.cpp	exe+asi	no	CarSelectReset	0	re/match/s07/00431b80.c	fe64595f370215c6ae0c52ba7a53710104f1e8b5	1db01b2bf705361a	Frontend/GameModeCarSelect.cpp
+0x00431b80	MatchS07_00431d00.cpp	exe+asi	no	FUN_00431b80 (static in wrapper)	0	re/match/s07/00431b80.c	fe64595f370215c6ae0c52ba7a53710104f1e8b5	1db01b2bf705361a	(none: new body)
+0x0042e3a0	MatchS07_0042e3a0.cpp	exe+asi	yes	MenuChromeShellA	1	re/match/s07/0042e3a0.c	e2995dcfb1d016469bec028398a1ebf97abbebe6	8504f65795442e32	Frontend/MenuSpriteDispatch.cpp
+0x0042fb70	MatchS07_0042fb70.cpp	exe+asi	yes	MenuSpriteDispatchB	1	re/match/s07/0042fb70.c	f25b8f25515adaf3cebca82d3b5c371130f54e83	745bccb662fe8b1f	Frontend/MenuSpriteDispatch.cpp

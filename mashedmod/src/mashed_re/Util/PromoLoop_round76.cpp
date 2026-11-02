@@ -12,8 +12,5 @@
 
 #include <cstdint>
 
-// 0x0044c370
-extern "C" __declspec(dllexport) int __cdecl GlobalFieldGet896000(void) {
-    return *reinterpret_cast<int*>(*reinterpret_cast<int*>(0x00896000u) + 4) + 0x40;  // [[0x896000]+4] + 0x40
-}
-RH_ScopedInstall(GlobalFieldGet896000, 0x0044c370);
+// MATCH-S08: the body of 0x0044c370 (GlobalFieldGet896000) moved to Match/MatchS08_0044c370.cpp,
+// which compiles the byte-matched source re/match/s08/0044c370.c.
