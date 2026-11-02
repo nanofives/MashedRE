@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-01  0x0040dfc0  HudIngameDispatch  C3->C4  route match (c4=match), exe-callers=2 (LibRw/RwRaceFx.cpp:1874, :1877), L-77 (a); stand-in callee 0x00426ba0 and no-op callees (U-9704) named in notes; evidence: verify/matchrc_20261101/RESULT_MATCH-RC-T03.md
 2026-11-01  0055dc70  FUN_0055dc70  C2->C3  allocator-aware shadow A/B CLEAN n=1 (60 s) + n=1 (180 s re-run) ndiff=0 A/B-IS-REAL installed=e9 uninstalled=a1; caller 0x0047f4c0 C2, callee 0x0055dca0 C2 + RwGlobals slot +0x108; U-9337 resolved (HB-SHADOW-ALLOC-COMPARE)  evidence: verify/hb_shadowalloc_20261101/RESULT_HB-SHADOW-ALLOC-COMPARE.md
 2026-11-01  0057c500  RWP37WorldCreate  C2->C3  allocator-aware shadow A/B CLEAN n=24 ndiff=0 A/B-IS-REAL installed=e9 uninstalled=a1 (re-run after a launch failure); caller 0x004218d0 C3, callee 0x00564130 C2 + RwGlobals slot +0x108 (HB-SHADOW-ALLOC-COMPARE)  evidence: verify/hb_shadowalloc_20261101/RESULT_HB-SHADOW-ALLOC-COMPARE.md
 2026-11-01  0057c300  RWP37BodyCreate  C2->C3  allocator-aware shadow A/B CLEAN n=24 ndiff=0 A/B-IS-REAL installed=e9 uninstalled=a1; caller 0x004218b0 C3, callee 0x0055ded0 C2 + RwGlobals slot +0x108 (HB-SHADOW-ALLOC-COMPARE)  evidence: verify/hb_shadowalloc_20261101/RESULT_HB-SHADOW-ALLOC-COMPARE.md
