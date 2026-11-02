@@ -1,0 +1,235 @@
+##### re/match/s05/0041f710.c sha256=226667aa4d05a1de321387e0121574472e14a0deeb1a95ea7b3964dbac7e2532
+0x0041f710 _FUN_0041f710: 100.0% (regs 100.0%, ops 100.0%)  22/22 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 88 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0041f710	OK	checked=1	unchecked=0	0041f710.c	
+##### re/match/s05/00420d40.c sha256=f2efecda4fa5e76c11bee2e50582f73ef9823708b53aed846a527ba81b1f5514
+0x00420d40 _FUN_00420d40: 100.0% (regs 100.0%, ops 100.0%)  20/20 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 55 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00420d40	OK	checked=3	unchecked=0	00420d40.c	
+##### re/match/s05/00420d80.c sha256=ac9d0ae9b803d192bfa11f2b530cc585798151f86d3589e4082cf7f9a2045a69
+0x00420d80 _FUN_00420d80: 100.0% (regs 100.0%, ops 100.0%)  6/6 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 25 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00420d80	OK	checked=2	unchecked=0	00420d80.c	
+##### re/match/s05/00420da0.c sha256=5730890f51898e751e166e5267ed80080956e067c25bf4e06c80eaad205b5135
+0x00420da0 _FUN_00420da0: 100.0% (regs 100.0%, ops 100.0%)  10/10 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00420da0	OK	checked=1	unchecked=0	00420da0.c	
+##### re/match/s05/00420dc0.c sha256=77546d7bce40e45fc69c2246bcb158c34213bf2e226e4ce09ea10fe37746fbc0
+0x00420dc0 _FUN_00420dc0: 100.0% (regs 100.0%, ops 100.0%)  10/10 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 31 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00420dc0	OK	checked=1	unchecked=0	00420dc0.c	
+##### re/match/s05/00420de0.c sha256=023df0efbde754495b44bd8769278da3f508f925fe9b9922cf5d74df722afae5
+0x00420de0 _FUN_00420de0: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 31 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004215c0 _FUN_004215c0: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004215e0 _FUN_004215e0: 100.0% (regs 100.0%, ops 100.0%)  21/21 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 65 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00420de0	OK	checked=1	unchecked=0	00420de0.c	
+0x004215c0	OK	checked=2	unchecked=0	00420de0.c	
+0x004215e0	OK	checked=4	unchecked=0	00420de0.c	
+##### re/match/s05/00421060.c sha256=4e4bff4abe97fdb0f94c40f9dba0603f44c56a7d00d63c1e768e1869dd09fa68
+0x00421060 _FUN_00421060: 100.0% (regs 100.0%, ops 100.0%)  10/10 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 26 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00421690 _FUN_00421690: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 22 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00421060	OK	checked=1	unchecked=0	00421060.c	
+0x00421690	OK	checked=2	unchecked=0	00421060.c	
+##### re/match/s05/00421080.c sha256=a1e2ee20db904129ec4821a7e3af1ca04d6bd0de2e5f1af2707508525e2017b4
+0x00421080 _FUN_00421080: 80.0% (regs 80.0%, ops 80.0%)  10/8 ins  flags=/O2 /GS /Ob1 tc=ddk
+   ! mov dword ptr [0], 0                         | 
+   ! ret                                          | 
+   bytes: 43 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00421080	OK	checked=3	unchecked=0	00421080.c	
+##### re/match/s05/004218b0.c sha256=ed61eac1c57f07696f5e1b59f105e33b28450dd579b0cb05bc7a6b9439e4f56d
+0x004218b0 _FUN_004218b0: 100.0% (regs 100.0%, ops 100.0%)  13/13 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 31 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004218d0 _FUN_004218d0: 100.0% (regs 100.0%, ops 100.0%)  35/35 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 87 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004218b0	OK	checked=2	unchecked=0	004218b0.c	
+0x004218d0	OK	checked=7	unchecked=0	004218b0.c	
+##### re/match/s05/00421930.c sha256=36d6806670c0931853aa38a94879975385203daaf93551cad051e15df8d69f2d
+0x00421930 _FUN_00421930: 100.0% (regs 100.0%, ops 100.0%)  17/17 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 35 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00421930	OK	checked=1	unchecked=0	00421930.c	
+##### re/match/s05/004222c0.c sha256=787b84b366ad8e7d364d82c931b0f8ad9a788eab4699e63bde77c236bb0662e0
+0x004222c0 _FUN_004222c0: 100.0% (regs 100.0%, ops 100.0%)  1/1 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 5 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004222c0	OK	checked=1	unchecked=0	004222c0.c	
+##### re/match/s05/00422470.c sha256=ff777e12e3101da737084a7932a4cae5545518348a62bdcb1474dae5b346b367
+0x004223f0 _FUN_004223f0: 100.0% (regs 100.0%, ops 100.0%)  22/22 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 72 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422470 _FUN_00422470: 100.0% (regs 100.0%, ops 100.0%)  32/32 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 94 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004223f0	OK	checked=2	unchecked=0	00422470.c	
+0x00422470	OK	checked=4	unchecked=2	00422470.c	  unchecked: __ftol,_floor
+##### re/match/s05/004224d0.c sha256=385b6b2de37b72d8e8d308371317c5d0988433a3c764c252566ea6203f22f0a3
+0x004224d0 _FUN_004224d0: 100.0% (regs 100.0%, ops 100.0%)  37/37 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 158 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004224d0	OK	checked=3	unchecked=0	004224d0.c	
+##### re/match/s05/00422a80.c sha256=8e65091f9ccce754146a34b0609584814683a2ae8118b366f40edb6880dec34d
+0x00422a80 _FUN_00422a80: 100.0% (regs 100.0%, ops 100.0%)  8/8 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422a80	OK	checked=2	unchecked=0	00422a80.c	
+##### re/match/s05/00422aa0.c sha256=8080666961cdbd0118a85aec2d1f752d1fd6a52566ecbeb1ee8889a71a07635a
+0x00422aa0 _FUN_00422aa0: 100.0% (regs 100.0%, ops 100.0%)  5/5 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 21 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422aa0	OK	checked=1	unchecked=0	00422aa0.c	
+##### re/match/s05/00422ac0.c sha256=83dfb366929af1dc0e4536927966d2ba3a7fd5a83750d2e3374ce7c7a6784288
+0x00422ac0 _FUN_00422ac0: 100.0% (regs 100.0%, ops 100.0%)  13/13 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 42 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422ac0	OK	checked=1	unchecked=0	00422ac0.c	
+##### re/match/s05/00422af0.c sha256=aa9a5fffbdd4077423c884644d56688e61a7b0bf447b80b50fcc7fbb4efd9ab2
+0x00422af0 _FUN_00422af0: 100.0% (regs 100.0%, ops 100.0%)  5/5 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 21 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422af0	OK	checked=1	unchecked=0	00422af0.c	
+##### re/match/s05/00422b10.c sha256=253068310e9fc2d89f3556c4b5b2eacf5d02d5e88491824fda85dad1b1bd588e
+0x00422b10 _FUN_00422b10: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 17 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422b10	OK	checked=1	unchecked=0	00422b10.c	
+##### re/match/s05/00422b30.c sha256=e3e887180f2727c71e4511880d6dbc6560b647ca08c10bef523c0b4a7ab4a53e
+0x00422b30 _FUN_00422b30: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 17 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422b30	OK	checked=1	unchecked=0	00422b30.c	
+##### re/match/s05/00422fd0.c sha256=f3ce1d0d2354e48230ce0bf1d711b4a187665ee288efb09707efe0f5e6730be6
+0x00422fd0 _FUN_00422fd0: 100.0% (regs 100.0%, ops 100.0%)  36/36 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 99 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00422fd0	OK	checked=8	unchecked=0	00422fd0.c	
+##### re/match/s05/00423270.c sha256=189ae5a463de3f7e2509943ee99454d65d8f898c42c769fd5258f9b71a9a39e9
+0x00423270 _FUN_00423270: 100.0% (regs 100.0%, ops 100.0%)  50/50 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 164 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423270	OK	checked=11	unchecked=0	00423270.c	
+##### re/match/s05/00423320.c sha256=08df15d611f7e866169b5b0fff9bf89658e31c4250f76e6a2411069fe9d8ba7b
+0x00423320 _FUN_00423320: 100.0% (regs 100.0%, ops 100.0%)  55/55 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 180 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423320	OK	checked=21	unchecked=0	00423320.c	
+##### re/match/s05/00423480.c sha256=6cf80204a8bfd5999372a992e06b08fb673dfeed86b8b4158af508046f98e83a
+0x00423480 _FUN_00423480: 96.8% (regs 96.8%, ops 96.8%)  63/61 ins  flags=/O2 /GS /Ob1 tc=ddk
+   ! add esp, 0x44                                | 
+   ! jmp 0xb3                                     | 
+   bytes: 179 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423480	OK	checked=6	unchecked=2	00423480.c	  unchecked: @__security_check_cookie@4,___security_cookie
+##### re/match/s05/004235b0.c sha256=d48d968f49285da4f2647aab99447074ad8b3731e572407fa1f3f299b0005574
+0x004235b0 _FUN_004235b0: 100.0% (regs 100.0%, ops 100.0%)  41/41 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 117 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004235b0	OK	checked=10	unchecked=0	004235b0.c	
+##### re/match/s05/00423630.c sha256=7071143a07ec7310b0cf183cb41b2ab15efecfd4fb9fe35d57797f6fa1c3f5d3
+0x00423630 _FUN_00423630: 100.0% (regs 100.0%, ops 100.0%)  15/15 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 53 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423630	OK	checked=5	unchecked=0	00423630.c	
+##### re/match/s05/00423b00.c sha256=2bac9a1ac0d26a63e6e46661fdfee084a1a788bab9ce467a820358e3d7288f85
+0x00423b00 _FUN_00423b00: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423b00	OK	checked=5	unchecked=0	00423b00.c	
+##### re/match/s05/00423b20.c sha256=cf09685d11b1396f4a905473c90c35ef945077e7fdf33b4c136a066d3a80dea2
+0x00423b20 _FUN_00423b20: 100.0% (regs 100.0%, ops 100.0%)  4/4 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 17 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423b20	OK	checked=1	unchecked=0	00423b20.c	
+##### re/match/s05/00423b40.c sha256=f56cbc63e1fa3b2eceacc993545460ca1d11e5ae7ff8be6c50e921116ee30767
+0x00423b40 _FUN_00423b40: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423b40	OK	checked=2	unchecked=0	00423b40.c	
+##### re/match/s05/00423b60.c sha256=3ee4424a64e719885bcf12a4b27eb052056be5511f95ca24ba1b336b06ac1af1
+0x00423b60 _FUN_00423b60: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423b60	OK	checked=2	unchecked=0	00423b60.c	
+##### re/match/s05/00423b80.c sha256=04e25f61862e640f7cf25562a0f9a0699326d360f9fb360ddb109deb3d7f286f
+0x00423b80 _FUN_00423b80: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423b80	OK	checked=2	unchecked=0	00423b80.c	
+##### re/match/s05/00423ba0.c sha256=96899fed6119a5b80f699983191c6a5ff600db57b81930c23f6cc14b1461d044
+0x00423ba0 _FUN_00423ba0: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 30 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423ba0	OK	checked=2	unchecked=0	00423ba0.c	
+##### re/match/s05/00423bc0.c sha256=6f4c324f82c171a69ab33773b305dac94045a1b7729d53a7b2c17f1cf16d9f2f
+0x00423bc0 _FUN_00423bc0: 100.0% (regs 100.0%, ops 100.0%)  34/34 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 127 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423bc0	OK	checked=12	unchecked=0	00423bc0.c	
+##### re/match/s05/00423c40.c sha256=97338bbb419166ce0b2fbdcaddf32f750c8b7f2b57ee29d7026cd3de847d0c05
+0x00423c40 _FUN_00423c40: 100.0% (regs 100.0%, ops 100.0%)  34/34 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 127 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423c40	OK	checked=12	unchecked=0	00423c40.c	
+##### re/match/s05/00423cc0.c sha256=901daab75a6d55ac6db24898343988995ac62055fd80a5030a8d0e0113a46026
+0x00423cc0 _FUN_00423cc0: 100.0% (regs 100.0%, ops 100.0%)  39/39 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 140 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423cc0	OK	checked=13	unchecked=0	00423cc0.c	
+##### re/match/s05/00423d50.c sha256=f619e4847ea05b80a9c2e5ff32fae9842aef2841ae3f1ff782b9b7eea4e97bd0
+0x00423d50 _FUN_00423d50: 100.0% (regs 100.0%, ops 100.0%)  34/34 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 127 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423d50	OK	checked=12	unchecked=0	00423d50.c	
+##### re/match/s05/00423dd0.c sha256=deb88b333abc52a6e6e1af07612795a5bc4fb65546912ce63b78b35b9fd734d5
+0x00423dd0 _FUN_00423dd0: 100.0% (regs 100.0%, ops 100.0%)  39/39 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 140 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423dd0	OK	checked=13	unchecked=0	00423dd0.c	
+##### re/match/s05/00423e60.c sha256=5390502ca66b7e6a123a63051326e291d83a695ad8a2bdb0fa1adc71a988692c
+0x00423e60 _FUN_00423e60: 100.0% (regs 100.0%, ops 100.0%)  34/34 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 127 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423e60	OK	checked=12	unchecked=0	00423e60.c	
+##### re/match/s05/00423ee0.c sha256=8e988acb72b043ed6e70456123dae1da15f7bc8c1c88382dbd92a70a405f4e22
+0x00423ee0 _FUN_00423ee0: 100.0% (regs 100.0%, ops 100.0%)  34/34 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 127 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423ee0	OK	checked=12	unchecked=0	00423ee0.c	
+##### re/match/s05/00423f60.c sha256=f495b94ec6aaa3a1c00c1ede5b1aae1eb3397b5e5fbdb3e1945bb8c129a58268
+0x00423f60 _FUN_00423f60: 100.0% (regs 100.0%, ops 100.0%)  39/39 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 140 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423f60	OK	checked=13	unchecked=0	00423f60.c	
+##### re/match/s05/00423ff0.c sha256=29e731139314d9481b11c0dd42f7de8798e0732f5594154521a8bff421cd683e
+0x00423ff0 _FUN_00423ff0: 100.0% (regs 100.0%, ops 100.0%)  34/34 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 127 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00423ff0	OK	checked=12	unchecked=0	00423ff0.c	
+##### re/match/s05/00424070.c sha256=48364e8ed872d5e5c9bd562028760f7d23c1c5f54fd527aaed14801bc0e5e6f2
+0x00424070 _FUN_00424070: 100.0% (regs 100.0%, ops 100.0%)  39/39 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 140 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00424070	OK	checked=13	unchecked=0	00424070.c	
+##### re/match/s05/00424100.c sha256=0ba00f8ef37103a33d17acfed8de14cfafbf834e6234e8ea4f5b8b98e43dac45
+0x00424100 _FUN_00424100: 100.0% (regs 100.0%, ops 100.0%)  48/48 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 172 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00424100	OK	checked=16	unchecked=0	00424100.c	
+##### re/match/s05/004241b0.c sha256=9c39a5743560faf558d6a6bfc83af49d5072fe8477c8e889096dbea730f18718
+0x004241b0 _FUN_004241b0: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 6 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004241b0	OK	checked=1	unchecked=0	004241b0.c	
+##### re/match/s05/004241c0.c sha256=6c7ce729d16a91df26f13f7db5e11b696b6fb7e6cbc5f2c91de5694f2a14b21a
+0x004241c0 _FUN_004241c0: 100.0% (regs 100.0%, ops 100.0%)  48/48 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 172 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004241c0	OK	checked=16	unchecked=0	004241c0.c	
+##### re/match/s05/004248b0.c sha256=2d5482be399bfedbf1455e25529cb9f46575456a47651a6d533cb21f7b6a40c0
+0x004248b0 _FUN_004248b0: 100.0% (regs 100.0%, ops 100.0%)  22/22 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 112 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004248b0	OK	checked=16	unchecked=0	004248b0.c	
+##### re/match/s05/00424920.c sha256=cdaf80b4368b8636cbe2c34cc6901f8038b038c35439f54754c68a03b6ec0644
+0x00424920 _FUN_00424920: 100.0% (regs 100.0%, ops 100.0%)  129/129 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 608 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00424920	OK	checked=96	unchecked=0	00424920.c	
+##### re/match/s05/00425ab0.c sha256=1ccf5c490bdedd8ae27bbbbdd700cc6dd6c6adec2326086ca8202c4bc2752729
+0x00425ab0 _FUN_00425ab0: 100.0% (regs 100.0%, ops 100.0%)  18/18 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 88 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00425ab0	OK	checked=16	unchecked=0	00425ab0.c	
+##### re/match/s05/00425b10.c sha256=cb76b3bfde50f026dfd05e8cdbab15d643fdd2cc40e15d9461cf28c657f1e35f
+0x00425b10 _FUN_00425b10: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 81 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00425b10	OK	checked=8	unchecked=0	00425b10.c	
+##### re/match/s05/00425b70.c sha256=ae6e66f31e2e505dc01080f78da66faa7e2d4b79b9cfa90285018bbb28311848
+0x00425b70 _FUN_00425b70: 100.0% (regs 100.0%, ops 100.0%)  6/6 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 28 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00425b70	OK	checked=2	unchecked=0	00425b70.c	
+##### re/match/s05/00425c00.c sha256=e068305cadfd85e8966ddaa965ec7d831ba746dd7047dc75257ac29dc842f8f0
+0x00425c00 _FUN_00425c00: 100.0% (regs 100.0%, ops 100.0%)  47/47 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 156 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00425c00	OK	checked=12	unchecked=2	00425c00.c	  unchecked: @__security_check_cookie@4,___security_cookie
+##### re/match/s05/00425ee0.c sha256=a5ea2839822a9535d110aa8ed4bced8c255ce97050f00dc6c9f1a9e6af058dcd
+0x00425ee0 _FUN_00425ee0: 100.0% (regs 100.0%, ops 100.0%)  4/4 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 13 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00425ee0	OK	checked=1	unchecked=0	00425ee0.c	
+##### re/match/s05/00425ef0.c sha256=58e8cda759e4eb705b195e59080181c421ceb05b42b127184f622a6b92d79ee4
+0x00425ef0 _FUN_00425ef0: 100.0% (regs 100.0%, ops 100.0%)  58/58 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 175 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00425ef0	OK	checked=16	unchecked=0	00425ef0.c	
+##### re/match/s05/00426020.c sha256=b35a2f315a132d8b1e8d69f9f3a1f9758ecaa4509e971e8f2b5421f26adccf28
+0x00426020 _FUN_00426020: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 6 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00426020	OK	checked=1	unchecked=0	00426020.c	
+##### re/match/s05/00426060.c sha256=3e0a2f24a14e83ec31fa8c82072371827da4ecafc343c47cf7442f8613538432
+0x00426060 _FUN_00426060: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 6 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00426060	OK	checked=1	unchecked=0	00426060.c	
