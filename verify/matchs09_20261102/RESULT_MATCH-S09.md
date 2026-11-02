@@ -1,12 +1,12 @@
 # RESULT MATCH-S09, 2026-11-02
 
-**Verdict: @VERDICT@.** Slice 0x00451690..0x0045b990 (129 game functions). **107/129** sources are byte-identical
+**Verdict: GREEN.** Slice 0x00451690..0x0045b990 (129 game functions). **107/129** sources are byte-identical
 under `re/tools/match/match.py` (XP DDK cl 13.00.9176 / c2 13.00.9178, `/O2 /GS /Ob1`, C, x87), and every one of
 the 107 has `relocheck.py` OK in its best source file (`relocheck.tsv`; the 19 BAD lines there all belong to
 functions below 100%, where the instruction streams do not line up, so the offsets compare the wrong operands).
 **19** of them are now the port's only body (19 wrapper TUs `Match/MatchS09_<va8>.cpp`): 5 in `mashed_re.exe`
 (2 of them also in the .asi), 14 in the .asi only.
-Gates on this build: @GATES@.
+Gates on this build: G-CTRL `8284be46/ba407a16/31fe043e`, B `1d5bf4f9/1d5bf4f9/1d5bf4f9` = merge_train.json refs (unchanged).
 **C4 candidates: 5 rows**, each with an exe caller chain from `WinMain` (table below). The 14 asi-only swaps have
 no exe caller (L-68).
 
@@ -137,7 +137,15 @@ the gates give no evidence those paths ran. 0x004576b0 sits under `Pickups_Maybe
 
 ## Gates
 
-@GATETABLE@
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on exe `f6225ef7`, private root
+`D:/MashedWT/MATCH-S09_root` (`MASHED_ROOT`), `mashed_lock.py run --solo` (opened after `mashed_lock.py status`;
+it queued behind the merge train's and another step's solo windows, arms ran 2026-11-02 04:1x..04:25) + test slot.
+Every arm exit 0, self-exited.
+
+| arm | file | sha8 | ref (merge_train.json) |
+|---|---|---|---|
+| H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0, K1, K26 | step.csv | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
 
 The merge train's `-Full` pass (D2 x3, 13 tracks) was not run here: `mashedmod/src` is in `full_set_paths`, so the
 train runs it on enqueue. Its 13-track set is the run that would execute the pontoon swaps (Warzone).
@@ -169,8 +177,18 @@ a caller lands (L-68 ruling)`.
 ## Build
 
 `set MASHED_NO_DEPLOY=1&& mashedmod\build.bat`, Build OK, .asi not deployed (`original\mashed_re_dev.asi` still
-dated 2026-10-24). @BUILDHASH@
+dated 2026-10-24). exe sha256 `f6225ef709290bb93abc12c339b557db4e6bbb78c5ae1f3bb24ef1d3197687a5`, asi
+`2638e440daf569d75d665fc2a16a7a149f15c2442f2f087869e10b96c029440d`.
 
 ## Raw files (not committed; `D:/MashedWT/MATCH-S09_data`)
 
-@RAW@
+| file | sha256 |
+|---|---|
+| arms/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms/B_DEF_K0.step.csv, B_DEF_K1.step.csv, B_DEF_K26.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 (all three) |
+| decomp.json (decomp_pc.py --port --callees, 10 entries via --create merged in) | e247cfbe8c8e84e302c5bfe070b22d19d998829478c691aaf088319b95f8f444 |
+| decomp_create.json | 50da9908e52d7ad95b728a46ba1683aee97188e5af72a411bd1490e3cb58d603 |
+| build1.log (Build OK) | 970c75e19a863f264696d35d00ad063307004897d42d5002bcab7c19a9a26177 |
+| gates.log, gates.sh, g2s/, notes/h1..h10.md, swap_w1..w3.txt, exe_reach.txt, bodies_pre.tsv, bodies.tsv, scratch/ | run logs, raw converter output, helper reports |
