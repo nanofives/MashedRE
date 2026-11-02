@@ -532,7 +532,7 @@ if ($SelfTest) {
     $env:MASHED_LOCK_DIR = $oldLd
   }
 
-  # --- HB-D2RERUN: fake arm runner, D2_DEF_2 comes back short (1485 lines) on the first run
+  # --- HB-D2RERUN: fake arm runner, the second d2_arms arm comes back short (1485 lines) on the first run
   # The arm names come from merge_train.json (D2_DEF_n until run 23, D2_DEFH_n since); the second arm is the short one.
   $f = $CFG.full; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
   $script:d2Short = $f.d2_arms[1]; $d2First = $f.d2_arms[0]
