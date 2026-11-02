@@ -89,16 +89,5 @@ RH_ScopedInstall(GetDat00912a20, 0x00556cd0);
 // ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426d00.md
 // ---------------------------------------------------------------------------
 
-// 0x00426d00
-extern "C" __declspec(dllexport) std::uint8_t* __cdecl FrontendArraySlotGet(
-    int param_1, int param_2)
-{
-    // &DAT_00663670 + param_2 * 0xc + param_1 * 0x4c
-    // Base 0x00663670 cited from body; strides 0x4c (76) and 0xc (12) cited
-    // from decomp multipliers.
-    return reinterpret_cast<std::uint8_t*>(0x00663670u)
-           + param_2 * 0xc
-           + param_1 * 0x4c;
-}
-
-RH_ScopedInstall(FrontendArraySlotGet, 0x00426d00);
+// MATCH-S06: the body of 0x00426d00 (FrontendArraySlotGet) moved to Match/MatchS06_00426d00.cpp,
+// which compiles the byte-matched source re/match/s06/00426d00.c.

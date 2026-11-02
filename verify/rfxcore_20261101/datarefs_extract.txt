@@ -1,0 +1,72 @@
+// 0x00613288  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   WRITES: (none)
+// 0x0061328c  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   WRITES: (none)
+// 0x00613290  DATA in .data
+//   type undefined4 len 4  value FFFFFFFFh
+//   WRITES: (none)
+// 0x00613294  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   WRITES: (none)
+// 0x006132a4  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   WRITES: (none)
+// 0x006132c4  DATA in .data
+//   type undefined4 len 4  value 00000005h
+//   WRITES: (none)
+// 0x006132c8  DATA in .data
+//   type undefined4 len 4  value 00000006h
+//   WRITES: (none)
+// 0x007dc57c  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   WRITES (1):
+//     0x00534ac4 in FUN_00534a80  [WRITE]  MOV [0x007dc57c],EAX
+// 0x00692558  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   WRITES (1):
+//     0x004771cd in FUN_004770c0  [WRITE]  MOV dword ptr [0x00692558],0x3f800000
+// 0x006925a8  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   WRITES: (none)
+// 0x00613298  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   2 reference(s) total
+//   WRITES: (none)
+// 0x0061329c  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   2 reference(s) total
+//   WRITES: (none)
+// 0x006132a0  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   2 reference(s) total
+//   WRITES: (none)
+// 0x006132a8  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   2 reference(s) total
+//   WRITES: (none)
+// 0x006132ac  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   1 reference(s) total
+//   WRITES: (none)
+// 0x006132b0  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   1 reference(s) total
+//   WRITES: (none)
+// 0x006132b4  DATA in .data
+//   type undefined4 len 4  value 3F800000h
+//   1 reference(s) total
+//   WRITES: (none)
+// 0x006132b8  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   1 reference(s) total
+//   WRITES: (none)
+// 0x006132bc  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   1 reference(s) total
+//   WRITES: (none)
+// 0x006132c0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   1 reference(s) total
+//   WRITES: (none)

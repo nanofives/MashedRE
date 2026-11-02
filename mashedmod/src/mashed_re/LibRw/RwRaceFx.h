@@ -176,10 +176,11 @@ void RaceFx_ShadowResetCache();
 // MASHED_RFX_EMITTERS=1 enables (default OFF, not in FaithDefaults). The one consumer is the pickup glow
 // (D5-ICONCUBE-GLOW: Gameplay/PickupGlow.cpp fills it from FUN_00459000, RaceFx_DrawWorldFx draws it).
 bool RaceFx_EmittersEnabled();
-// FUN_004770a0 @ 0x004770a0 on a flushed batch (`tank` = Rfx::PTank, its texture an rw::Texture*): nothing
-// when the knob is off, tank.count == 0, or Rfx::Instance rejects the batch's callbacks. Draws with the
-// render state the caller has set (Z, cull, fog) plus the batch's texture, blend and vertex alpha.
-bool RaceFx_DrawEmitter(const void* tank, void* rw_camera);
+// FUN_004770a0 @ 0x004770a0 on a flushed batch (`emitter` = Rfx::Emitter, its material texture an
+// rw::Texture*): nothing when the knob is off, the plugin count is 0, or Rfx::Instance rejects the batch's
+// callbacks. Draws with the render state the caller has set (Z, cull, fog) plus the batch's texture, blend
+// and vertex alpha.
+bool RaceFx_DrawEmitter(const void* emitter, void* rw_camera);
 
 }  // namespace LibRw
 }  // namespace mashed_re

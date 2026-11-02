@@ -24,14 +24,8 @@
 // MATCH-S04: the body of 0x0041efe0 (BitExtract63dc74) moved to Match/MatchS04_0041efe0.cpp,
 // which compiles the byte-matched source re/match/s04/0041efe0.c.
 
-// 0x004298c0
-extern "C" __declspec(dllexport) void __cdecl Clear67d99c_x4(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0067d99cu) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0067d994u) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0067d98cu) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x008991bcu) = 0;
-}
-RH_ScopedInstall(Clear67d99c_x4, 0x004298c0);
+// MATCH-S06: the body of 0x004298c0 (Clear67d99c_x4) moved to Match/MatchS06_004298c0.cpp,
+// which compiles the byte-matched source re/match/s06/004298c0.c.
 
 // MATCH-S07: the body of 0x00432230 (RecEq231) moved to Match/MatchS07_00432230.cpp,
 // which compiles the byte-matched source re/match/s07/00432230.c.

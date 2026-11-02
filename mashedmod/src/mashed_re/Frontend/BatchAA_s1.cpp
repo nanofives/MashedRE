@@ -44,12 +44,6 @@ typedef void (__cdecl *PFN_ChromeBaseDraw)(float x, float y, float w, float h, s
 static const PFN_ChromeBaseDraw g_ChromeBaseDraw =
     reinterpret_cast<PFN_ChromeBaseDraw>(0x00472c60u);
 
-// 0x00479100  FUN_00479100  (C2) — raycast + vertex-color sample on collision mesh; returns 0/1 in EAX
-// (0x00479150 xor eax,eax / 0x004792ec, 0x00479304, 0x0047931a mov eax,1).
-typedef std::uint32_t (__cdecl *PFN_FUN_00479100)(void* self, std::uint32_t p1, std::uint32_t p2, std::uint32_t p3);
-static const PFN_FUN_00479100 g_FUN_00479100 =
-    reinterpret_cast<PFN_FUN_00479100>(0x00479100u);
-
 // ---------------------------------------------------------------------------
 // Font context globals  (cited from re/analysis/hud_promote_c2_b/0x00552840.md)
 // ---------------------------------------------------------------------------
@@ -79,21 +73,8 @@ static inline float u32_to_float(std::uint32_t bits) {
     return f;
 }
 
-// ---------------------------------------------------------------------------
-// 0x00426cf0  FUN_00426cf0
-// undefined4 * FUN_00426cf0(void)
-// Pure leaf: returns address of global DAT_0066d6e4.
-// No branches. No callees. No side effects.
-// Decomp (verbatim): return &DAT_0066d6e4;
-// Source: re/analysis/frontend_c1_to_c2_s5/FUN_00426cf0.md
-// ---------------------------------------------------------------------------
-// 0x00426cf0
-extern "C" __declspec(dllexport)
-std::uint32_t* __cdecl GetDat0066d6e4(void) {
-    // 0x00426cf0: return &DAT_0066d6e4
-    return reinterpret_cast<std::uint32_t*>(0x0066d6e4u);
-}
-RH_ScopedInstall(GetDat0066d6e4, 0x00426cf0);
+// MATCH-S06: the body of 0x00426cf0 () moved to Match/MatchS06_00426cf0.cpp,
+// which compiles the byte-matched source re/match/s06/00426cf0.c.
 
 // ---------------------------------------------------------------------------
 // 0x0041ded0  FUN_0041ded0
@@ -175,22 +156,5 @@ RH_ScopedInstall(FontCtx_SetRotation, 0x00552840);
 // MATCH-S07: the body of 0x0042bde0 (HudRectEmitter5) moved to Match/MatchS07_0042bde0.cpp,
 // which compiles the byte-matched source re/match/s07/0042bde0.c.
 
-// ---------------------------------------------------------------------------
-// 0x00426dc0  FUN_00426dc0
-// void FUN_00426dc0(undefined4 param_1, undefined4 param_2, undefined4 param_3)
-// 3-arg forwarder: prepends &DAT_00646e58 and calls FUN_00479100. Listing 0x00426dc0..0x00426ddc:
-// push [esp+0xc]; push [esp+8]; push [esp+4]; push 0x646e58; call 0x479100; add esp,0x10; ret -- EAX is
-// FUN_00479100's return, which the sole caller tests (0x0041f630 test eax,eax). bworld 2026-10-12: the export
-// returned void and EAX survived only by codegen; it now returns the callee's value.
-// DAT_00646e58 (0x00646e58): global struct/object; passed by address as arg 0.
-// Decomp (verbatim): FUN_00479100(&DAT_00646e58, param_1, param_2, param_3); return;
-// Source: re/analysis/frontend_c1_to_c2_s5/FUN_00426dc0.md
-// ---------------------------------------------------------------------------
-// 0x00426dc0
-extern "C" __declspec(dllexport)
-std::uint32_t __cdecl FrontendRaycastForward(std::uint32_t param_1, std::uint32_t param_2, std::uint32_t param_3) {
-    // 0x00426dc0: return FUN_00479100(&DAT_00646e58, param_1, param_2, param_3)
-    void* self = reinterpret_cast<void*>(0x00646e58u);  // &DAT_00646e58 @ 0x00646e58
-    return g_FUN_00479100(self, param_1, param_2, param_3);
-}
-RH_ScopedInstall(FrontendRaycastForward, 0x00426dc0);
+// MATCH-S06: the body of 0x00426dc0 (FrontendRaycastForward) moved to Match/MatchS06_00426dc0.cpp,
+// which compiles the byte-matched source re/match/s06/00426dc0.c.
