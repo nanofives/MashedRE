@@ -5,7 +5,7 @@
 namespace mashed_re {
 namespace Vehicle {
 
-// MASHED_PORTSTATE_RECORDS (default OFF, read once). ON: the port's vehicle records (VehiclePhysicsRun g_records)
+// MASHED_PORTSTATE_RECORDS (default ON since L-88, opt-out MASHED_NO_PORTSTATE_RECORDS=1, read once). ON: the port's vehicle records (VehiclePhysicsRun g_records)
 // live at the original's 0x008815a0 (16 x 0xd04) and the car visual records (Race/CarRegistrant s_rec) at
 // 0x0063d9e0 (4 x 0x2ac), so the original addresses hold the port's state. OFF: the exe's own static stores.
 bool PortStateRecords_On();

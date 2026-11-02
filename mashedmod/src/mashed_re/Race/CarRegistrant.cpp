@@ -36,7 +36,7 @@ namespace Race {
 
 namespace {
 alignas(4) unsigned char s_recStore[4][0x2ac];
-// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default OFF): the four records ARE the original's
+// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default ON since L-88, opt-out MASHED_NO_PORTSTATE_RECORDS=1): the four records ARE the original's
 // 0x0063d9e0 + v*0x2ac. Only the three fields below are written either way (the exe builds no RW car object).
 unsigned char (*const s_rec)[0x2ac] = Vehicle::PortStateRecords_On()
     ? reinterpret_cast<unsigned char (*)[0x2ac]>(0x0063d9e0u) : s_recStore;

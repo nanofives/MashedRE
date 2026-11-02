@@ -140,7 +140,7 @@ static inline void A3PublishHandling(float param, float spring, float k1, float 
     // subsystem is BodyOrient_OmegaFromSteer, which hardcoded 100.0f and so never saw
     // the override at all. Publish it instead of discarding it.
     g_handlingTorque = param;
-    // [MATCH-PORTSTATE-RECORDS A1] MASHED_PORTSTATE_RECORDS (default OFF): also the original's four stores, so the
+    // [MATCH-PORTSTATE-RECORDS A1] MASHED_PORTSTATE_RECORDS (default ON since L-88, opt-out MASHED_NO_PORTSTATE_RECORDS=1): also the original's four stores, so the
     // rubber band's FUN_0046dd80 / FUN_0046dd90 round trip (AiStandalone.cpp GearConstGet / GearConstSet) writes k2
     // back into the now-live record +0x154 instead of the pad's 0 (0x0046b562 / 0x0046b5cd).
     if (mashed_re::Vehicle::PortStateRecords_On()) {

@@ -127,7 +127,7 @@ constexpr float       kSuspNum = 3000.0f;      // _DAT_005ccd08
 constexpr int         kMaxSubstep = 25;        // 0x19 (FUN_004709a0 inner chunk)
 
 unsigned char g_recordsStore[16 * kRec];       // the 0xd04 record array (mirror of DAT_008815a0)
-// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default OFF): the records ARE the original's block
+// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default ON since L-88, opt-out MASHED_NO_PORTSTATE_RECORDS=1): the records ARE the original's block
 // at 0x008815a0 (16 x 0xd04), not a copy of it. OFF: the exe's own store above.
 unsigned char* const g_records = PortStateRecords_On() ? reinterpret_cast<unsigned char*>(0x008815a0u)
                                                        : g_recordsStore;
