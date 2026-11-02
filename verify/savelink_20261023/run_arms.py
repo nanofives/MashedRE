@@ -248,6 +248,10 @@ def base_env(frames):
     e.update(MASHED_MUTE='1', MASHED_TRACK_VIEW='Training', MASHED_CAR='1', MASHED_ROUND='1',
              MASHED_ROUND_RULE='0', MASHED_GAME_MODE='10', MASHED_WIN_POS='primary-bl', MASHED_DETERMINISTIC='1',
              MASHED_DET_FRAMES=str(frames))
+    # HB-GATE-FLAKE-GAMEFLOW (2026-11-02): the exe's keyboard is DISCL_BACKGROUND, so a key pressed in any window
+    # reaches a deterministic arm (one Enter moved all three G-CTRL hashes). Exes from before the knob ignore it.
+    # An arm drops it with '-MASHED_DET_NO_AMBIENT_KEYS'. verify/harness_20261102/RESULT_HB-GATE-FLAKE-GAMEFLOW.md
+    e['MASHED_DET_NO_AMBIENT_KEYS'] = '1'
     return e
 
 
@@ -473,6 +477,13 @@ STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car reco
 _PSG = ['MASHED_PORTSTATE_COURSE', 'MASHED_PORTSTATE_RECORDS', 'MASHED_PORTSTATE_GAMEFLOW']
 STACK['PSG'] = _PSG; STACK['PSGO'] = ['MASHED_PORTSTATE_GAMEFLOW']
 STACK['DEFA'] = ['MASHED_TRACK_VIEW=Arctic']; STACK['PSGA'] = _PSG + ['MASHED_TRACK_VIEW=Arctic']
+# HB-GATE-FLAKE-GAMEFLOW: reproduce the g1 H_PSGO outlier. R7P = the R7 test press at r7frame 4308 (the frame the
+# g1 Enter landed on); TK = an ambient Enter (DIK 0x1c) reported by the device for det_frames 5406..5415, as g1's log
+# shows, with the drop knob removed; TKD = the same press with the drop knob (base_env) kept; NAKOFF = no drop knob.
+STACK['R7P'] = ['MASHED_R7_INPUT_PRESS=4308']; STACK['PSGOR7P'] = STACK['PSGO'] + STACK['R7P']
+STACK['TK'] = ['-MASHED_DET_NO_AMBIENT_KEYS', 'MASHED_DET_TEST_KEY=0x1c@5406+10']
+STACK['TKD'] = ['MASHED_DET_TEST_KEY=0x1c@5406+10']; STACK['NAKOFF'] = ['-MASHED_DET_NO_AMBIENT_KEYS']
+STACK['PSGOTK'] = STACK['PSGO'] + STACK['TK']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
