@@ -220,15 +220,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred45bff0(std::uint32_t 
 }
 RH_ScopedInstall(Pred45bff0, 0x0045bff0);
 
-// 0x00497450  input — byte-verified: 8B 44 24 04 83 F8 03 7E 03 33 C0 C3 C1 E0 09 8B 90 FC 96 7E 00 33 C9 85 D2 0F 95 C1 8B C1 C3
-//   CMP EAX,3 ; JLE predicate (i<=3) ; else fall-through XOR EAX,EAX;RET (i>3 -> 0)
-//   fn(i): if ((int)i <= 3) return (*(u32*)(0x007e96fc + i*0x200) != 0) ? 1 : 0 ; return 0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred497450(std::uint32_t i) {
-    if (static_cast<std::int32_t>(i) <= 3)
-        return (*reinterpret_cast<std::uint32_t*>(0x007e96fcu + i * 0x200u) != 0) ? 1u : 0u;
-    return 0;
-}
-RH_ScopedInstall(Pred497450, 0x00497450);
+// MATCH-PORTSTATE-GAMEFLOW-FU: the body of 0x00497450 (Pred497450) moved to Match/MatchGFFU_00497450.cpp
+// (byte-matched re/match/gffu/00497450.c).
 
 // ===== round 86 =====
 // Mashed RE — promote-round round 86 (global swap-return + 3-byte-globals + indexed float-square).
@@ -2903,25 +2896,8 @@ RH_ScopedInstall(Calc413fa0, 0x00413fa0);
 // has NO static caller (no direct call, no address-as-data ref) -> cannot satisfy the
 // caller-C2+ gate, so NOT promoted (left C2).
 
-// 0x0040b6e0  FUN_0040b6e0 (gameplay, NEAR-LEAF: conditional global accumulate)
-// void f(int arg): if (FUN_0042f6a0()(=GetRaceSubMode,*0x67e9fc) != 2) *(int*)0x63b8ec += arg.
-// Callee C3 pure getter. Verbatim naked port; `call rel32`->`mov eax,abs;call eax`.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Add40b6e0(void)
-{
-    __asm {
-        mov  eax, 042F6A0h
-        call eax
-        cmp  eax, 2
-        je   L_ADD_END
-        mov  ecx, dword ptr ds:[063B8ECh]
-        mov  eax, dword ptr [esp+4]
-        add  ecx, eax
-        mov  dword ptr ds:[063B8ECh], ecx
-    L_ADD_END:
-        ret
-    }
-}
-RH_ScopedInstall(Add40b6e0, 0x0040b6e0);
+// MATCH-PORTSTATE-GAMEFLOW-FU: the body of 0x0040b6e0 (Add40b6e0) moved to Match/MatchS02_0040b6e0.cpp
+// (byte-matched re/match/s02/0040b6e0.c).
 
 // 0x0045c7f0  FUN_0045c7f0 (gameplay, NEAR-LEAF: getter-compare then tail-call getter)
 // int f(void): if (GetRenderSubMode()(=*0x63ba8c) == *0x88fbc0) return that; else tail-call

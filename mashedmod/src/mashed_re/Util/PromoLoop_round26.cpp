@@ -29,20 +29,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwGlobal7d459cGet(void) {
 }
 RH_ScopedInstall(RwGlobal7d459cGet, 0x004cbc90);
 
-// 0x0040e450  Flag63b908Get -- A1 08 B9 63 00 C3 (mov eax,[0x0063b908]; ret)
-//   race-end gate flag read in STATE_FN case 3. Caller FUN_0045c7f0 (audio, C2).
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Flag63b908Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0063b908u);  // cited at 0x0040e450
-}
-RH_ScopedInstall(Flag63b908Get, 0x0040e450);
-
-// 0x0040e460  Flag63b908Set -- 8B 44 24 04 A3 08 B9 63 00 C3
-//   (mov eax,[esp+4]; mov [0x0063b908],eax; ret). Setter paired with
-//   Flag63b908Get. Caller FUN_00410860 (util, C2). U-0499 data-semantic.
-extern "C" __declspec(dllexport) void __cdecl Flag63b908Set(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x0063b908u) = param_1;  // cited at 0x0040e460
-}
-RH_ScopedInstall(Flag63b908Set, 0x0040e460);
+// MATCH-PORTSTATE-GAMEFLOW-FU: the bodies of 0x0040e450 (Flag63b908Get) and 0x0040e460 (Flag63b908Set) moved to
+// Match/MatchS02_0040e450.cpp / Match/MatchS02_0040e460.cpp (byte-matched re/match/s02/0040e450.c, 0040e460.c).
 
 // 0x0040e4a0  ElapsedTimeGet -- A1 B8 29 5F 00 C3 (mov eax,[0x005f29b8]; ret)
 //   elapsed-time global, used as a countdown compare. Caller FUN_00418560

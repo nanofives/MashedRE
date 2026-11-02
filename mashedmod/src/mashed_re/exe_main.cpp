@@ -179,6 +179,7 @@
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
+#include "Race/GameModeMachine.h"           // [MATCH-PORTSTATE-GAMEFLOW-FU] 0x004929d0 racing-phase tick (knob)
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 #include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default ON, L-27)
@@ -10239,6 +10240,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // default — nothing requests a race yet) this is a no-op, so the menu is
         // unaffected; the wiring is in place for when the frontend launches a race.
         mashed_re::Race::GameFlow_Update(0.016f);
+        // [MATCH-PORTSTATE-GAMEFLOW-FU] MASHED_PORTSTATE_GAMEFLOW_FU (default OFF): the original game-mode machine
+        // 0x004929d0 in phases 3 / 7, else its entry call 0x004927c0 (Race/GameModeMachine.cpp). OFF = no-op.
+        mashed_re::Race::GameModeMachine_Tick();
         if (!RenderFrame()) {
             // Unrecoverable device loss; bail out.
             break;
