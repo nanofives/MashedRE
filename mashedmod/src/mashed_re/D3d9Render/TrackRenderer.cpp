@@ -17,6 +17,7 @@
 #include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
 #include "../Render/TrackHookSlots.h"        // [rhooks U-9713] per-track hook-slot draw model
 #include "../Track/CourseTableState.h"     // [MATCH-PORTSTATE-COURSE] course table port-state (knob)
+#include "../Race/GameModeState.h"        // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
 #include "../Vehicle/RecordBlockState.h"  // [MATCH-PORTSTATE-RECORDS] car record block port-state (knob)
 #include "../Track/KfInterpolate.h"          // [kfdot] 0x00532b80, the one body
 #include "../Track/WarzonePontoon.h"         // [pontoon] Warzone track object 0x00684d18 (MASHED_PONTOON_*)
@@ -3413,6 +3414,9 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // [MATCH-PORTSTATE-COURSE, L-78 (c)] MASHED_PORTSTATE_COURSE (default OFF): the original's course tables
     // 0x005f2570 / 0x005f2728 / 0x005f33f8 / 0x005f37a0 seeded and 0x0063d7e4 selected by the matched 0x0041e870.
     mashed_re::Track::CourseTableState_OnCourseLoad(course_id_);
+    // [MATCH-PORTSTATE-GAMEFLOW, L-78 (c)] MASHED_PORTSTATE_GAMEFLOW (default OFF): the course index words
+    // 0x0067f17c / 0x0067ea94 / 0x0063ba7c / 0x0063ba78 hold the loaded course's row (Race/GameModeState.cpp).
+    mashed_re::Race::GameModeState_OnCourseLoad(course_id_);
 
     // render-world soup for spawn validation (visible-surface heights)
     for (const auto& s : world.sectors) {

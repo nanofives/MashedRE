@@ -33,6 +33,8 @@
 "Vehicle\VehicleContactHull.cpp"
 "Vehicle\VehiclePhysicsRun.cpp"
 "Vehicle\RecordBlockState.cpp"
+"Race\GameModeState.cpp"
+"Util\PromoLoop_round49.cpp"
 "Vehicle\D2SinkProbe.cpp"
 "Vehicle\LaunchRevCharge.cpp"
 "Vehicle\VehicleCouplingBridge.cpp"

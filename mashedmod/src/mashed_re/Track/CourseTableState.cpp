@@ -93,6 +93,14 @@ std::int32_t I32(std::uintptr_t a) { return *reinterpret_cast<const std::int32_t
 
 } // namespace
 
+int CourseTableState_IndexOf(int course_id) {
+    for (int k = 0; k < 13; ++k) {
+        const std::uint32_t off = kCoursePtrs[k] - static_cast<std::uint32_t>(kRecsAddr);   // record = 5 dwords
+        if (static_cast<std::int32_t>(kCourseRecs[off / 4u]) == course_id) return k;
+    }
+    return -1;
+}
+
 void CourseTableState_OnCourseLoad(int course_id) {
     static const bool s_on = (std::getenv("MASHED_PORTSTATE_COURSE") != nullptr);
     if (!s_on) return;

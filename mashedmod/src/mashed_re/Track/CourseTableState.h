@@ -11,5 +11,10 @@ namespace Track {
 // original's hook record. Knob OFF it returns before touching anything.
 void CourseTableState_OnCourseLoad(int course_id);
 
+// [MATCH-PORTSTATE-GAMEFLOW] The row k (0..12) of the original's course pointer table 0x005f2728 whose record's
+// dword 0 (the value 0x0040d250 returns for row k) equals course_id, read from the transcribed tables below, so
+// it holds with either knob value. -1 when no row matches.
+int CourseTableState_IndexOf(int course_id);
+
 } // namespace Track
 } // namespace mashed_re
