@@ -7,6 +7,8 @@
 "Track\PowerupMarkers.cpp"
 "Track\TrackData.cpp"
 "Track\WarzonePontoon.cpp"
+"Track\CourseTableState.cpp"
+"Match\MatchS04_0041e870.cpp"
 "Track\KfInterpolate.cpp"
 "D3d9Render\TrackRenderer.cpp"
 "Ai\AiStandalone.cpp"

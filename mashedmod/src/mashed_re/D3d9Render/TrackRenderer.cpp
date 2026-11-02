@@ -16,6 +16,7 @@
 #include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
 #include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
 #include "../Render/TrackHookSlots.h"        // [rhooks U-9713] per-track hook-slot draw model
+#include "../Track/CourseTableState.h"     // [MATCH-PORTSTATE-COURSE] course table port-state (knob)
 #include "../Track/KfInterpolate.h"          // [kfdot] 0x00532b80, the one body
 #include "../Track/WarzonePontoon.h"         // [pontoon] Warzone track object 0x00684d18 (MASHED_PONTOON_*)
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
@@ -3407,6 +3408,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         g_aib.course  = course_id_;
         g_aib.loaded  = s_gate_ribbon ? false : Ai_BridgeLoad(course_id_, piz_path);
     }
+
+    // [MATCH-PORTSTATE-COURSE, L-78 (c)] MASHED_PORTSTATE_COURSE (default OFF): the original's course tables
+    // 0x005f2570 / 0x005f2728 / 0x005f33f8 / 0x005f37a0 seeded and 0x0063d7e4 selected by the matched 0x0041e870.
+    mashed_re::Track::CourseTableState_OnCourseLoad(course_id_);
 
     // render-world soup for spawn validation (visible-surface heights)
     for (const auto& s : world.sectors) {
