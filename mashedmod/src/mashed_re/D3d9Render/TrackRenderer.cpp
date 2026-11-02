@@ -5301,6 +5301,30 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     std::fclose(lf);
                 }
             }
+            // [D4-DC-77b0-ST3-PRETICK] MASHED_ST3_PRETICK (default OFF). FUN_004111c0 case 3 is FUN_004102f0() then
+            // FUN_0040fc00(), which stores DAT_007f1008 / _DAT_007f100c (0x0040fc63 / 0x0040fc57) and calls FUN_00425a40
+            // (0x0040fc6c) while DAT_005f29c0 != 0. FUN_00425a40 calls FUN_00418860 first (0x00425a73). Measured on the
+            // original (verify/d4dc77b0runtime_20261101): FUN_004177b0 entered from 0x00418905 once per case-3 tick, reading
+            // 3, and once reading 4 on the release tick (0x00410367 above). The exe made no AI tick before state 5.
+            // Only FUN_00418860 here: the rest of FUN_00425a40 on case-3 ticks is not run.
+            // verify/d4dc77b0st3pretick_20261101/PREREG_D4-DC-77b0-ST3-PRETICK.md.
+            static const bool s_st3Pretick = [] { const char* e = std::getenv("MASHED_ST3_PRETICK");
+                                                  return e && e[0] && e[0] != '0'; }();
+            if (s_st3Pretick && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) {
+                static int s_st3Calls[2] = {0, 0};
+                Ai::Ai_AdvanceClock(units);                // 0x0040fc57 / 0x0040fc63 (written again below, same values)
+                g_aiTrack = this;
+                AiBridgeSnapshot();
+                Ai::Ai_Standalone_Tick();                  // FUN_00418860
+                ++s_st3Calls[ba8c == 3 ? 0 : 1];
+                if (ba8c != 3) {
+                    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                        std::fprintf(lf, "[st3pretick] ticks state3=%d state4=%d\n", s_st3Calls[0], s_st3Calls[1]);
+                        std::fclose(lf);
+                    }
+                    s_st3Calls[0] = s_st3Calls[1] = 0;
+                }
+            }
         } else if (ba8c == 4) {
             *reinterpret_cast<int*>(0x007f0fc8u) = 0;      // 0x0041129b
             SubStateEnter4();                              // 0x004112a5
