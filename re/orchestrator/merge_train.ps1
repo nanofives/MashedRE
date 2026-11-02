@@ -351,6 +351,12 @@ function Resolve-Batch($items, $first) {
   }
   return $o
 }
+function Tracker-Lint([string]$wt, [string]$baseRef) {
+  $tlog = Join-Path $DATA 'tracker_lint.txt'
+  $o = & py.exe -3.12 (Join-Path $HERE 'tracker_lint.py') --repo $wt --base $baseRef 2>&1; $rc = $LASTEXITCODE
+  $o | Set-Content $tlog
+  return @{ ok = ($rc -eq 0); rc = $rc; last = (($o | Select-Object -Last 1) -as [string]); log = $tlog; out = @($o) }
+}
 function Try-Batch($items) {
   $wt = New-Temp $base
   $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false }
@@ -379,6 +385,12 @@ function Try-Batch($items) {
       if ($arc -ne 0) { $r.ok = $false; $r.why = "archive_lint: $(($al | Select-Object -Last 1)) ($alog)"; return $r }
       Say "  archive lint OK: $(($al | Select-Object -Last 1))"
     } else { Say "  WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree" }
+    # HB-TRAIN-HOOKSCSV-TEXTONLY: hooks.csv is text-only (nothing in the build or the gate scorers reads it), so a
+    # re-classify row skips build + gates. The tracker lint (the train's own copy, next to this script) runs on every
+    # batch instead and fails on a malformed hooks.csv / UNCERTAINTIES.md row the base does not already have.
+    $tl = Tracker-Lint $wt $base
+    if (-not $tl.ok) { $r.ok = $false; $r.why = "tracker_lint: $($tl.last) ($($tl.log))"; return $r }
+    Say "  tracker lint OK: $($tl.last)"
     if ($textOnly) { $r.gates = 'not run: text-only change (no build input touched)'; return $r }
     # build both targets, never deploy
     $blog = Join-Path $DATA 'build.log'
@@ -531,6 +543,49 @@ if ($SelfTest) {
     Remove-Item -LiteralPath $hf, $sf -Force -ErrorAction SilentlyContinue
     $env:MASHED_LOCK_DIR = $oldLd
   }
+
+  # --- HB-TRAIN-HOOKSCSV-TEXTONLY: a hooks.csv-only re-classify batch is text-only, and the tracker lint still
+  # bounces a malformed row. Runs the real Try-Batch on the fake repo (no archive_lint.py there, so no build is reached
+  # on a text-only batch). The base carries one 9-column row, like the 4 pre-existing NCOL rows of the live hooks.csv.
+  function Put([string]$rel, [string]$text) { [IO.File]::WriteAllBytes((Join-Path $fake $rel), [Text.Encoding]::UTF8.GetBytes($text)) }
+  $hdr = "rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes,exe_file`n# RVA: comment row,,,,,,,`n"
+  $hbase = $hdr + "00401000,FunA,boot,C3,impl,a.cpp,,,n,a.cpp`n00401010,FunB,boot,C2,mapped,,,,n,`n00401020,FunC,boot,C4,verified,c.cpp,,,short row`n"
+  $ubase = "# U`n| U-0001 | semantic | x | y | z | n/a | nothing |`n| U-0002 | semantic | x | y | z | n/a | nothing |`n"
+  Put 'hooks.csv' $hbase; Put 'UNCERTAINTIES.md' $ubase
+  Git -C $fake add hooks.csv UNCERTAINTIES.md | Out-Null; Git -C $fake commit -q -m 'trackers base' | Out-Null
+  $cases = [ordered]@{
+    'rc-ok'     = @{ h = ($hbase -replace '00401000,FunA,boot,C3', '00401000,FunA,boot,C4'); u = $ubase; log = $true; want = $true }
+    'bad-ncol'  = @{ h = ($hbase + "00401030,FunD,boot,C2,mapped,,,,n,,extra`n"); u = $ubase; want = $false; key = 'NCOL rva=00401030' }
+    'bad-conf'  = @{ h = ($hbase -replace '00401010,FunB,boot,C2', '00401010,FunB,boot,C5'); u = $ubase; want = $false; key = 'CONF rva=00401010' }
+    'bad-dup'   = @{ h = ($hbase + "00401010,FunB2,boot,C2,mapped,,,,n,`n"); u = $ubase; want = $false; key = 'DUP rva=00401010' }
+    'bad-quote' = @{ h = ($hbase + "00401040,FunE,boot,C2,mapped,,,,`"open quote,`n"); u = $ubase; want = $false; key = 'PARSE' }
+    'bad-udup'  = @{ h = $hbase; u = ($ubase + "| U-0002 | semantic | dup | y | z | n/a | nothing |`n"); want = $false; key = 'UDUP U-0002' }
+  }
+  foreach ($k in $cases.Keys) {
+    $c = $cases[$k]
+    Git -C $fake checkout -q -b "step-$k" integration | Out-Null
+    Put 'hooks.csv' $c.h; Put 'UNCERTAINTIES.md' $c.u
+    if ($c.log) { Put 're\analysis\CHANGELOG.md' "# log`nbase`nentry a`nentry b`nre-classify $k`n" }
+    Git -C $fake commit -q -am "step $k" | Out-Null
+    Git -C $fake checkout -q integration | Out-Null
+  }
+  $base = (Git -C $fake rev-parse integration) | Select-Object -First 1
+  foreach ($k in $cases.Keys) {
+    $c = $cases[$k]
+    $res = Try-Batch @(@{ id = "T-$k"; branch = "step-$k" })
+    $tlo = if (Test-Path (Join-Path $DATA 'tracker_lint.txt')) { Get-Content (Join-Path $DATA 'tracker_lint.txt') -Raw } else { '' }
+    if ($c.want) {
+      Check ($res.ok -and $res.gates -match '^not run: text-only' -and $tlo -match 'pre-existing=1 NEW=0') "tracker: $k (hooks.csv + CHANGELOG only) is text-only, no build, lint OK with the base's 9-column row pre-existing (ok=$($res.ok) gates='$($res.gates)')"
+    } else {
+      Check ((-not $res.ok) -and $res.why -match '^tracker_lint: ' -and $tlo -match [regex]::Escape("NEW $($c.key)")) "tracker: $k bounced by the tracker lint with NEW $($c.key) (why='$($res.why)')"
+    }
+    Remove-Temp $res.wt
+  }
+  $oldGlobs = @('*.md', '*.txt', 'verify/*', 're/analysis/*')
+  Check ((-not (Like-Any 'hooks.csv' $oldGlobs)) -and (Like-Any 'hooks.csv' $CFG.text_only_globs)) 'control: hooks.csv was not text-only under the old globs, is under merge_train.json'
+  $src = @('mashedmod/src/mashed_re/Ai/AiStandalone.cpp', 'mashedmod/build.bat', 're/tools/dual_copy_allowlist.txt.bak', 'scripts/lint_rva_bodies.py', 're/match/s01.c', 're/orchestrator/tracker_lint.py', 're/frida/hooks_registry.py', 're/tools/hooks.csv')
+  $leak = @($src | Where-Object { Like-Any $_ $CFG.text_only_globs })
+  Check ($leak.Count -eq 0) "control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: $($leak -join ','))"
 
   # --- HB-D2RERUN: fake arm runner, the second d2_arms arm comes back short (1485 lines) on the first run
   # The arm names come from merge_train.json (D2_DEF_n until run 23, D2_DEFH_n since); the second arm is the short one.
