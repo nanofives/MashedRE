@@ -46,6 +46,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-02  S-3714  STUBS  Active->struck  native port, no call_original (0x00546bf0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
+2026-11-02  S-3715  STUBS  Active->struck  native port, no call_original (0x00546c50 RwpSolverMath2QuatY.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
+2026-11-02  S-3716  STUBS  Active->struck  native port, no call_original (0x00546cb0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
 2026-11-02  0x00443300  FUN_00443300  C3->C3  match identical, swapped, exe-callers=0 under default (callers only under env MASHED_AILEAF_REPLAY); C4 when a caller lands (L-68 ruling); evidence: verify/rcs08_20261102/RESULT_MATCH-RC-S08.md
 2026-11-02  0x00442cc0  AiVehicleFloat4Get  C3->C3  match identical, swapped, exe-callers=0 under default (caller only under env MASHED_C30_REPLAY); C4 when a caller lands (L-68 ruling); evidence: verify/rcs08_20261102/RESULT_MATCH-RC-S08.md
 2026-11-02  0x00448700  VehicleSeedWritePair  C2->C4  route match (c4=match), exe-callers=3 (UpdateCar <- RenderFrame <- WinMain, MatchEndConclude); evidence: verify/rcs08_20261102/RESULT_MATCH-RC-S08.md

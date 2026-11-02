@@ -13,7 +13,7 @@ passthroughs to the original. Current source shows all three are native ports:
 - No `// STUB S-3714/3715/3716` comment exists anywhere in `mashedmod/src` (only analysis notes cite the IDs).
 All three rows are STALE: close as resolved, evidence = the source above.
 
-## Why no edit was made
+## Why the first pass made no edit (superseded)
 The re-classify skill documents helpers for DEFERRED (`deferred_close.py`) and UNCERTAINTIES
 (`uncertainty_resolve.py`) only. It has no documented operation that strikes a STUBS.md row. The step rules forbid
 hand-edits and ad-hoc scripts, so STUBS.md and CHANGELOG are untouched on this branch.
@@ -29,3 +29,9 @@ Also: update the Status summary count (open rows minus 3, struck plus 3) and add
   shadow A/B; a C3 reclassification is a separate step needing the shadow evidence (`verify/d4wsb55b080ulp_20261101/shadow_summary.tsv`).
 - Analysis notes `replay_record_cont1/0x00546b10.md` and `bucket_vehicle_004922e0_0057c500/0x00546b10.md`
   and `re/account2_stub_resolve_queue.md` lines 347-349 still cite the IDs (history, left alone).
+
+## Applied 2026-11-02 (lead approval: re-classify "drops STUBS rows")
+S-3714, S-3715, S-3716 struck in STUBS.md with the RESOLVED text above (S-0171 convention, CRLF kept,
+one-off edit of those three rows only). Three `STUBS Active->struck` lines added under `<!-- ENTRIES -->` in
+re/analysis/CHANGELOG.md. The "Status summary" count (1,107 open / 149 struck) is a 2026-08-15 census
+snapshot already stale by later strikes, so it was not touched (recompute is its own step). hooks.csv untouched.
