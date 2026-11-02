@@ -7,10 +7,14 @@ LOCK=/c/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/re/orch
 D='D:/MashedWT/MATCH-S06-FU_data'
 R='D:/MashedWT/MATCH-S06-FU_root'
 cd "$W"
+mkdir -p "$D/arms_g1" "$D/measure"
+ARMS="${1:-M G0}"
+if [[ " $ARMS " == *" M "* ]]; then
 echo "=== arm M ==="
 py -3.12 "$LOCK" run --label MATCH-S06-FU -- py -3.12 verify/matchs06fu_20261102/tools/run_measure.py "$R" "$D/measure" \
   base="$D/exe_base/mashed_re.exe" g1="$D/exe_g1/mashed_re.exe"
 echo "arm M exit=$?"
+fi
 echo "=== arm G0 ==="
 A4_OUT="$D/arms_g1" A4_EXE="$D/exe_g1/mashed_re.exe" A4_ROOT="$R" \
   py -3.12 "$LOCK" run --label MATCH-S06-FU -- py -3.12 verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26
