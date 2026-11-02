@@ -11,6 +11,26 @@ per-lane docs plus `git log` cover the other half.
 
 **Ordering: NEWEST FIRST.** One entry per line, starting `YYYY-MM-DD`. New entries are
 **prepended immediately below the `<!-- ENTRIES -->` marker**, never appended to the end.
+2026-11-01  0x00426090  GlobalDat0066ce58Get  C3->C4  route match (c4=match), exe-callers=8 (RangeTableMemberTest ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00426bb0  CameraPath::GetCount  C3->C4  route match (c4=match), exe-callers=5 (TG_414a70 ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00426bc0  GetDat0066d6e0  C3->C4  route match (c4=match), exe-callers=1 (SnapNodeToSafeStartLines ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00426bd0  GetTableEntry0066d658  C3->C4  route match (c4=match), exe-callers=1 (SnapNodeToSafeStartLines ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00426cb0  FUN_00426cb0  C3->C4  route match (c4=match), exe-callers=7 (PP_407e20 ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00426cc0  VehicleTable4cPtrGet  C4->C4  adds route match (c4=match) next to the frida route, exe-callers=4 (PP_407e20 ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00426cf0  GetDat0066d6e4  C3->C4  route match (c4=match), exe-callers=1 (PP_408610 ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00426d00  FrontendArraySlotGet  C3->C4  route match (c4=match), exe-callers=8 (PP_407e20 ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042a9c0  ModeCodeLookup  C3->C4  route match (c4=match), exe-callers=2 (PromptStripResolve ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042ad90  FUN_0042ad90  C3->C4  route match (c4=match), exe-callers=9 (Frontend::Nav_DevGoto ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042b920  ConstantGetter22  C3->C4  route match (c4=match), exe-callers=1 (PromptStripResolve ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00431b00  FUN_00431b00  C3->C4  route match (c4=match), exe-callers=1 (ExecuteFrontendBootChain ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00431ae0  FUN_00431ae0  C3->C4  route match (c4=match), exe-callers=1 (ExecuteFrontendBootChain ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x00431af0  FUN_00431af0  C3->C4  route match (c4=match), exe-callers=1 (ExecuteFrontendBootChain ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042c1d0  FUN_0042c1d0  C3->C4  route match (c4=match), exe-callers=1 (ExecuteFrontendBootChain ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042d3e0  MenuEntryArrayInit  C3->C4  route match (c4=match), exe-callers=2 (ExecuteFrontendBootChain ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042bb60  FUN_0042bb60  C3->C4  route match (c4=match), exe-callers=2 (RenderFrame ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042fa00  MenuTeamSelectTick  C3->C4  route match (c4=match), exe-callers=1 (RenderFrame ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042f6a0  GetRaceSubMode  C3->C4  route match (c4=match), exe-callers=3 (RaceEndFlagIfEndMode ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
+2026-11-01  0x0042fe30  RaceEndFlagIfEndMode  C4->C4  adds route match (c4=match) next to the frida route, exe-callers=1 (PickupPoolSpawn ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
 Several skill docs said "append" while the file was prepend-ordered; that mismatch is part
 of how `2dee9c67` (2026-07-30) came to *overwrite* the file, destroying 477 entries
 (recovered 2026-08-15).
