@@ -39,7 +39,8 @@ def run_once(lo, hi, tag, round_s, timeout_s):
     """True = round COMPLETED (this hook subset is innocent)."""
     log = os.path.join(SCRATCH, "bisect_%s.log" % tag)
     env = dict(os.environ)
-    env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+    # statenav loads the asi itself (re/frida/dev_asi.py) and forces MASHED_RE_NO_AUTO_HOOK=1;
+    # the dinput8 proxy is not involved (D5-SHIM-DINPUT8-SPAWNERS).
     if lo is not None:
         env["MASHED_HOOK_LO"] = str(lo)
         env["MASHED_HOOK_HI"] = str(hi)

@@ -751,7 +751,7 @@ int              g_team_balance = -1;
 int              g_team_assign  = -1;
 extern "C" void          __cdecl MenuTeamSelectTick();  // 0x0042fa00, Frontend/MenuNav.cpp
 extern "C" int           __cdecl MenuTeamBalance();     // 0x0042bb60, Frontend/MenuNav.cpp
-extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Frontend/MenuButtonDetect.cpp
+extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Match/MatchS07_0042b9e0.cpp (matched body; MASHED_CARSLOT_ASSIGN_SLOTSTATE)
 // Ability Select's per-frame input step -- the exact sibling of
 // MenuTeamSelectTick. FUN_0043c000 calls it under the screen-15 panel flag:
 //   0x0043c17d  mov eax, dword ptr [0x67e7d8]
@@ -763,7 +763,11 @@ extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Frontend/
 // sets DAT_0067e7e0 = 1 for 9 / 0x10 (screen 16). Already implemented and C3 as
 // FrontendCursorUpdate; that TU is in BOTH build lists, so the exe calls the
 // established copy and no second install is created (the U-9065 shape).
-extern "C" void          __cdecl FrontendCursorUpdate();  // 0x0042f7b0, Frontend/MenuHelpers.cpp
+extern "C" void          __cdecl FrontendCursorUpdate();  // 0x0042f7b0, Match/MatchS07_0042f7b0.cpp (matched body)
+// MATCH-S07-FU: the exe keeps the pre-swap step (Frontend/MenuHelpers.cpp, decrement guard `> 0`) unless
+// MASHED_ABILITY_CURSOR_MATCHED is set, which calls the matched body (guard `!= 0`, the original's). Default OFF;
+// PREREG verify/matchs07fu_20261101/PREREG_MATCH-S07-FU.md.
+extern "C" void          __cdecl FrontendCursorUpdatePreSwap();
 // [#1/#5] Player Colour Select (screen 4 / page 0x18) LEFT/RIGHT colour cursor —
 // faithful case-0x18 arm of FUN_0043dfd0 (writes 0x0067ea98+p*4, then
 // FUN_00431b80). Frontend/GameModeCarSelect.cpp.
@@ -2879,8 +2883,14 @@ void CookCtrlByteAFromKeyboard() {
     static const int s_pad_press_at = [] { const char* e = std::getenv("MASHED_R7_INPUT_PAD_PRESS"); return e ? std::atoi(e) : 0; }();
     static int s_r7_frame = 0;
     s_r7_frame = g_track.RoundEnd7ExitActive() ? s_r7_frame + 1 : 0;
+    // [D4-DC-77b0-MATCHEND-SUBSTATE] MASHED_MATCHEND_PRESS=<n> (arm test only): the same one-frame press on the n-th cook
+    // frame with 0x0063ba8c == 0xb (written only under MASHED_MATCHEND_SUBSTATE).
+    static const int s_me_press_at = [] { const char* e = std::getenv("MASHED_MATCHEND_PRESS"); return e ? std::atoi(e) : 0; }();
+    static int s_me_frame = 0;
+    s_me_frame = (*reinterpret_cast<const int*>(0x0063ba8cu) == 0xb) ? s_me_frame + 1 : 0;
     PollJoypadButtons();
-    const bool test_press = s_press_at > 0 && s_r7_frame == s_press_at;
+    const bool test_press = (s_press_at > 0 && s_r7_frame == s_press_at) ||
+                            (s_me_press_at > 0 && s_me_frame == s_me_press_at);
     const bool pad_test_press = s_pad_press_at > 0 && s_r7_frame == s_pad_press_at;
     constexpr std::uint32_t kBindAction4 = 0x1cu;                  // 0x00498698 mov [esi+0x10], 0x1c
     constexpr std::uint32_t kPadBindAction4 = 0u;                  // 0x00498640 mov [esi+0x10], 0
@@ -6398,7 +6408,12 @@ bool RenderFrame() {
                             std::fclose(lf);
                         }
                     }
-                    FrontendCursorUpdate();
+                    {
+                        static const bool s_abilMatched =
+                            (std::getenv("MASHED_ABILITY_CURSOR_MATCHED") != nullptr);
+                        if (s_abilMatched) FrontendCursorUpdate();        // matched body (MATCH-S07-FU knob)
+                        else               FrontendCursorUpdatePreSwap(); // pre-swap step (default)
+                    }
                 }
                 // consume cols 0 and 1 for every profile the tick could have
                 // read, mirroring the original's post-consume latch. Both

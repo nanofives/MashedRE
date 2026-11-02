@@ -119,13 +119,8 @@
 //   0x4c       — per-entry stride (76 bytes)
 // ---------------------------------------------------------------------------
 
-// 0x00426cc0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleTable4cPtrGet(int param_1) {
-    // 0x00663658 base + 0x4c stride cited at 0x00426cc0 body.
-    return 0x00663658u + static_cast<std::uint32_t>(param_1) * 0x4cu;
-}
-
-RH_ScopedInstall(VehicleTable4cPtrGet, 0x00426cc0);
+// MATCH-S06: the body of 0x00426cc0 (VehicleTable4cPtrGet) moved to Match/MatchS06_00426cc0.cpp,
+// which compiles the byte-matched source re/match/s06/00426cc0.c.
 
 // ---------------------------------------------------------------------------
 // RaceFloat898980Get  --  0x00442df0   (subsystem: vehicle)

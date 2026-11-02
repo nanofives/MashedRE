@@ -1,0 +1,144 @@
+0x00426070	OK	checked=1	unchecked=0	00426070.c	
+0x00426080	OK	checked=1	unchecked=0	00426080.c	
+0x00426090	OK	checked=1	unchecked=0	00426090.c	
+0x004260a0	OK	checked=1	unchecked=0	004260a0.c	
+0x004260b0	OK	checked=1	unchecked=0	004260b0.c	
+0x004260c0	OK	checked=1	unchecked=0	004260c0.c	
+0x004260e0	OK	checked=25	unchecked=0	004260e0.c	
+0x004262f0	OK	checked=9	unchecked=0	004262f0.c	
+0x00426340	OK	checked=18	unchecked=2	00426340.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00426460	OK	checked=4	unchecked=0	004264d0.c	
+0x004264d0	OK	checked=22	unchecked=2	004264d0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00426630	OK	checked=1	unchecked=0	00426630.c	
+0x00426640	OK	checked=5	unchecked=0	00426640.c	
+0x00426670	OK	checked=6	unchecked=0	00426670.c	
+0x004266b0	OK	checked=6	unchecked=0	004266b0.c	
+0x004266f0	OK	checked=1	unchecked=0	004266f0.c	
+0x00426700	OK	checked=3	unchecked=0	00426700.c	
+0x00426780	OK	checked=4	unchecked=0	00426780.c	
+0x00426810	BAD	checked=20	unchecked=3	00426810.c	+0x1be _DAT_005f6174: ours 0x005f6175 vs orig 0x15b60f34; +0x1f9 _DAT_005f6170: ours 0x005f6172 vs orig 0x35244488; +0x200 _DAT_005f6174: ours 0x005f6176 vs orig 0x005f6172  unchecked: __ftol
+0x00426ab0	OK	checked=19	unchecked=0	00426ab0.c	
+0x00426b40	OK	checked=14	unchecked=0	00426b40.c	
+0x00426ba0	OK	checked=1	unchecked=0	00426ba0.c	
+0x00426bb0	OK	checked=1	unchecked=0	00426bb0.c	
+0x00426bc0	OK	checked=1	unchecked=0	00426bc0.c	
+0x00426bd0	OK	checked=2	unchecked=0	00426bd0.c	
+0x00426c00	OK	checked=1	unchecked=0	00426c00.c	
+0x00426c10	OK	checked=4	unchecked=0	00426c10.c	
+0x00426c30	OK	checked=3	unchecked=0	00426c30.c	
+0x00426c50	OK	checked=3	unchecked=0	00426c50.c	
+0x00426c70	OK	checked=3	unchecked=0	00426c70.c	
+0x00426c90	OK	checked=3	unchecked=0	00426c90.c	
+0x00426cb0	OK	checked=1	unchecked=0	00426cb0.c	
+0x00426cc0	OK	checked=1	unchecked=0	00426cc0.c	
+0x00426cd0	OK	checked=1	unchecked=0	00426cd0.c	
+0x00426cf0	OK	checked=1	unchecked=0	00426cf0.c	
+0x00426d00	OK	checked=1	unchecked=0	00426d00.c	
+0x00426d20	OK	checked=6	unchecked=0	00426d20.c	
+0x00426d90	OK	checked=2	unchecked=0	00426d90.c	
+0x00426dc0	OK	checked=2	unchecked=0	00426dc0.c	
+0x00426de0	OK	checked=1	unchecked=0	00426de0.c	
+0x00426df0	OK	checked=1	unchecked=0	00426df0.c	
+0x00426e00	OK	checked=1	unchecked=0	00426e00.c	
+0x00426e10	OK	checked=89	unchecked=2	00426e10.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x004270f0	OK	checked=59	unchecked=0	004270f0.c	
+0x004273e0	BAD	checked=9	unchecked=0	004273e0.c	+0x35 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x358b0c24; +0x44 _DAT_005cc560: ours 0x005cc560 vs orig 0x03688a00
+0x004274d0	OK	checked=2	unchecked=0	004274d0.c	
+0x004274e0	OK	checked=12	unchecked=0	004274e0.c	
+0x00427580	OK	checked=10	unchecked=0	00427580.c	
+0x004275d0	OK	checked=10	unchecked=0	004275d0.c	
+0x00427620	OK	checked=14	unchecked=0	00427620.c	
+0x00427680	OK	checked=19	unchecked=0	00427680.c	
+0x00427780	OK	checked=2	unchecked=0	00427780.c	
+0x004277a0	OK	checked=0	unchecked=0	004277a0.c	
+0x00427840	OK	checked=1	unchecked=0	00427840.c	
+0x00427880	OK	checked=4	unchecked=0	00427880.c	
+0x004277a0	OK	checked=0	unchecked=0	004278d0.c	
+0x004278d0	OK	checked=11	unchecked=2	004278d0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x004277a0	OK	checked=0	unchecked=0	00427990.c	
+0x00427990	OK	checked=17	unchecked=2	00427990.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x004277a0	OK	checked=0	unchecked=0	00427ad0.c	
+0x00427ad0	OK	checked=17	unchecked=2	00427ad0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00427840	OK	checked=1	unchecked=0	00427be0.c	
+0x00427be0	OK	checked=10	unchecked=2	00427be0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00427c90	OK	checked=1	unchecked=0	00427c90.c	
+0x00427880	OK	checked=4	unchecked=0	00427ca0.c	
+0x00427ca0	OK	checked=29	unchecked=2	00427ca0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00427680	OK	checked=19	unchecked=0	00427e00.c	
+0x004277a0	OK	checked=0	unchecked=0	00427e00.c	
+0x00427e00	OK	checked=13	unchecked=2	00427e00.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00427680	OK	checked=19	unchecked=0	00427f00.c	
+0x00427840	OK	checked=1	unchecked=0	00427f00.c	
+0x00427f00	OK	checked=11	unchecked=2	00427f00.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00427680	OK	checked=19	unchecked=0	00427ff0.c	
+0x004277a0	OK	checked=0	unchecked=0	00427ff0.c	
+0x00427ff0	OK	checked=17	unchecked=2	00427ff0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00427680	OK	checked=19	unchecked=0	00428140.c	
+0x004277a0	OK	checked=0	unchecked=0	00428140.c	
+0x00428140	OK	checked=15	unchecked=2	00428140.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x004277a0	OK	checked=0	unchecked=0	004282a0.c	
+0x004282a0	OK	checked=7	unchecked=2	004282a0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00427840	OK	checked=1	unchecked=0	00428320.c	
+0x00428320	OK	checked=6	unchecked=2	00428320.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x00428390	OK	checked=1	unchecked=0	00428390.c	
+0x004283a0	OK	checked=15	unchecked=0	004283a0.c	
+0x00428400	OK	checked=10	unchecked=0	00428400.c	
+0x00428450	BAD	checked=16	unchecked=0	00428450.c	+0x64 const __real@42900000: ours 00009042 vs orig@0x4c89c8bf 3c6f75747369646520696d6167653e; +0x6d _FUN_0042b8c0: ours 0x0042b8c0 vs orig 0x60505cd1; +0x7e const __real@3b088889: ours 8988083b vs orig@0xd65c2dd8 3c6f75747369646520696d6167653e; +0x88 const __real@42200000: ours 00002042 vs orig@0x382444db 3c6f75747369646520696d6167653e; +0x8e const __real@44000000: ours 00000044 vs orig@0x005cd658 00009042; +0xa0 const __real@42a00000: ours 0000a042 vs orig@0x0c244cd8 3c6f75747369646520696d6167653e; +0xca const __real@00000000: ours 00000000 vs orig@0x1dd80824 3c6f75747369646520696d6167653e; +0xe6 _DAT_00771960: ours 0x00771960 vs orig 0xa13f0000; +0x110 _FUN_00450b10: ours 0x00450b10 vs orig 0xe898d6b4; +0x116 _DAT_0067d974: ours 0x0067d974 vs orig 0x05d90002; +0x11c const __real@3dcccccd: ours cdcccc3d vs orig@0x05d80067 3c6f75747369646520696d6167653e; +0x126 _DAT_0067d974: ours 0x0067d974 vs orig 0x1dd95e1c
+0x00428590	OK	checked=10	unchecked=0	00428590.c	
+0x00428610	OK	checked=9	unchecked=0	00428610.c	
+0x00428760	OK	checked=1	unchecked=0	00428760.c	
+0x004288a0	OK	checked=17	unchecked=0	004288a0.c	
+0x00428a30	OK	checked=34	unchecked=3	00428a30.c	  unchecked: @__security_check_cookie@4,___security_cookie,_strrchr
+0x00428bf0	OK	checked=19	unchecked=3	00428bf0.c	  unchecked: @__security_check_cookie@4,___security_cookie,_strrchr
+0x00428d30	OK	checked=46	unchecked=0	00428d30.c	
+0x00429240	OK	checked=4	unchecked=0	00429290.c	
+0x00429290	OK	checked=5	unchecked=0	00429290.c	
+0x004292c0	OK	checked=0	unchecked=0	004292c0.c	
+0x0055deb0	OK	checked=0	unchecked=0	004292d0.c	
+0x004292d0	OK	checked=1	unchecked=0	004292d0.c	
+0x00429300	OK	checked=1	unchecked=0	00429300.c	
+0x00429310	OK	checked=46	unchecked=0	00429310.c	
+0x004295a0	OK	checked=5	unchecked=0	004295a0.c	
+0x00429620	OK	checked=5	unchecked=1	00429620.c	  unchecked: __ftol
+0x00429660	OK	checked=25	unchecked=0	00429660.c	
+0x00429820	OK	checked=2	unchecked=0	00429820.c	
+0x00429840	OK	checked=2	unchecked=0	00429840.c	
+0x00429860	OK	checked=1	unchecked=0	00429860.c	
+0x00429870	OK	checked=6	unchecked=0	00429870.c	
+0x004298c0	OK	checked=4	unchecked=0	004298c0.c	
+0x004298e0	OK	checked=10	unchecked=0	004298e0.c	
+0x004299d0	OK	checked=12	unchecked=0	004299d0.c	
+0x00429a30	OK	checked=9	unchecked=0	00429a30.c	
+0x00429a70	OK	checked=1	unchecked=0	00429a70.c	
+0x00429a80	OK	checked=1	unchecked=0	00429a80.c	
+0x00429a90	OK	checked=1	unchecked=0	00429a90.c	
+0x00429aa0	OK	checked=19	unchecked=2	00429aa0.c	  unchecked: __ftol
+0x00429b30	OK	checked=6	unchecked=0	00429b30.c	
+0x00429b70	OK	checked=9	unchecked=0	00429b70.c	
+0x00429bd0	BAD	checked=35	unchecked=0	00429bd0.c	+0x14e _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x3ff8158b
+0x00429e10	OK	checked=100	unchecked=0	00429e10.c	
+0x0042a470	OK	checked=14	unchecked=0	0042a470.c	
+0x0042a530	OK	checked=9	unchecked=0	0042a530.c	
+0x0042a5d0	OK	checked=10	unchecked=1	0042a5d0.c	  unchecked: _strchr
+0x0042a640	OK	checked=10	unchecked=1	0042a640.c	  unchecked: _strchr
+0x0042a6b0	OK	checked=12	unchecked=1	0042a6b0.c	  unchecked: _strchr
+0x0042a740	OK	checked=14	unchecked=1	0042a740.c	  unchecked: __strchr
+0x0042a7f0	OK	checked=10	unchecked=1	0042a7f0.c	  unchecked: _strchr
+0x0042a860	OK	checked=10	unchecked=1	0042a860.c	  unchecked: _strchr
+0x0042a8d0	OK	checked=6	unchecked=0	0042a8d0.c	
+0x0042a920	OK	checked=2	unchecked=0	0042a920.c	
+0x0042a940	OK	checked=3	unchecked=0	0042a940.c	
+0x0042a980	OK	checked=3	unchecked=0	0042a980.c	
+0x0042a9c0	OK	checked=1	unchecked=0	0042a9c0.c	
+0x0042a9f0	OK	checked=1	unchecked=0	0042a9f0.c	
+0x0042aa00	BAD	checked=12	unchecked=0	0042aa00.c	+0xe _DAT_0067ed78: ours 0x0067ed74 vs orig 0x8b06e0c1; +0x1e _DAT_0067ed78: ours 0x0067ed40 vs orig 0x5e5f0e75
+0x0042aab0	OK	checked=2	unchecked=0	0042aab0.c	
+0x0042aad0	OK	checked=1	unchecked=0	0042aad0.c	
+0x0042aae0	OK	checked=26	unchecked=0	0042aae0.c	
+0x0042ac00	OK	checked=0	unchecked=0	0042ac00.c	
+0x0042ac50	OK	checked=0	unchecked=0	0042ac50.c	
+0x0042ac90	OK	checked=3	unchecked=0	0042ac90.c	
+0x0042ad10	OK	checked=9	unchecked=0	0042ad10.c	
+0x0042ad90	OK	checked=0	unchecked=0	0042ad90.c	
+0x0042add0	OK	checked=2	unchecked=0	0042add0.c	
+0x0042ae10	OK	checked=11	unchecked=0	0042ae10.c	

@@ -1,0 +1,40 @@
+[mtrain 21:58:21] SELFTEST fake repo C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821
+[mtrain 21:58:23]   union-resolved: re/analysis/CHANGELOG.md
+[mtrain 21:58:23]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 21:58:23]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 21:58:23]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 21:58:23]   SELFTEST contrast: Set-Content writes 2 CR byte(s) for 2 lines on this host
+[mtrain 21:58:25] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-1125 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-1125: removed
+[mtrain 21:58:28] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_215821/.worktrees/step-clean rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\step-clean: removed
+[mtrain 21:58:29]   cleanup step-clean: worktree and branch removed
+[mtrain 21:58:31] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_215821/.worktrees/step-dirty rc=1 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\step-dirty: refused (likely dirty): fatal: 'C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\step-dirty' contains modified 
+[mtrain 21:58:31]   cleanup step-dirty: worktree removal refused (C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_215821/.worktrees/step-dirty), worktree and branch kept
+[mtrain 21:58:32]   cleanup step-ahead: git branch --delete refused, branch kept: error: the branch 'step-ahead' is not fully merged
+[mtrain 21:58:32]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 21:58:32]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 21:58:32]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 21:58:33] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-b8ef
+[mtrain 21:58:35] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-b8ef rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-b8ef: removed
+[mtrain 21:58:35]   SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+[mtrain 21:58:35] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-4e89
+[mtrain 21:58:37] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-4e89 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-4e89: removed
+[mtrain 21:58:37]   SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+[mtrain 21:58:37] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-fb70 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-fb70: removed
+[mtrain 21:58:37]   SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+[mtrain 21:58:38] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-716b rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-716b: removed
+[mtrain 21:58:38] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-c253
+[mtrain 21:58:38] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-c253 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821\.worktrees\mtrain-20261101_215821-c253: removed
+[mtrain 21:58:38]   SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+[mtrain 21:58:39]   cleanup step-out: worktree C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_215821-outside-wt is not under .worktrees\, worktree and branch kept
+[mtrain 21:58:39]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 21:58:40] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821-outside-wt rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_215821-outside-wt: removed
+[mtrain 21:58:40]   SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+[mtrain 21:58:40]   SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+[mtrain 21:58:40]   SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+[mtrain 21:58:40]   SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+[mtrain 21:58:40]   SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+[mtrain 21:58:40]   SELFTEST FAIL: short-once: D2_DEF_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 21:58:40]   SELFTEST FAIL: short-always: reruns bounded at 2, arm still reported short (runs=)
+[mtrain 21:58:40]   SELFTEST FAIL: full-length logs: no rerun
+[mtrain 21:58:40] SELFTEST done: 3 failure(s)
+SELFTEST FAIL (3 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261101_215821\merge_train.log

@@ -21,6 +21,8 @@
 import os, sys, time, json, argparse, subprocess
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 try: import psutil
 except ImportError: psutil = None
 
@@ -272,15 +274,18 @@ def main():
             env["MASHED_RE_DEV"] = "1"
             env["MASHED_HOOK_ONLY"] = args.hooks            # install ONLY these .asi hooks live
             env["MASHED_PHYS_C4_SELFTEST"] = "1"            # in-process A/B selftest -> phys_c4_*_selftest.log
-            env.pop("MASHED_RE_NO_AUTO_HOOK", None)         # let dinput8 auto-load the .asi
             print(f"  hooks LIVE: MASHED_HOOK_ONLY={args.hooks}  + physics A/B self-test ON")
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"   # the proxy never maps the asi (D5-SHIM-DINPUT8-SPAWNERS)
+        sess = None
+        if args.hooks:
+            # Module.load + InjectHooks before the first resume (dev_asi).
+            proc, sess, _asi = dev_asi.spawn_original(exe, hooks=True, env=env, device=dev)
         else:
-            env["MASHED_RE_NO_AUTO_HOOK"] = "1"             # stock original behavior (no installed hooks)
-        proc = subprocess.Popen([str(exe)], cwd=str(exe.parent), env=env)
+            proc = subprocess.Popen([str(exe)], cwd=str(exe.parent), env=env)
         pid = proc.pid; we_launched = True
         print(f"  launched {exe.name} pid={pid} (fps={args.fps}); attaching ASAP...")
-        sess = None
         for _ in range(200):  # ~20s of retries; attach the instant frida can
+            if sess is not None: break
             try:
                 sess = dev.attach(pid); break
             except Exception:

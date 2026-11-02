@@ -151,29 +151,8 @@ static constexpr std::uintptr_t kSlot3       = 0x007f1a34;
 static constexpr std::uintptr_t kSlot4       = 0x007f1a44;
 static constexpr std::uintptr_t kModeSel     = 0x007f1a0c;
 
-// 0x0042b960
-extern "C" __declspec(dllexport) void __cdecl CarSlotInit1P() {
-    std::int32_t idx = 0;                                   // 0x0042b960 `xor ecx, ecx`
-    for (std::uintptr_t prev = kTableB_base; prev < kScanBound; prev += kStride, ++idx) {
-        if (*reinterpret_cast<const char*>(prev - (kTableB_base - kTableA_base)) != '\0' &&
-            *reinterpret_cast<const char*>(prev) == '\0') {
-            break;                                          // 0x0042b97d je 0x0042b98a
-        }
-    }
-
-    *reinterpret_cast<std::int32_t*>(kSlot1)  = idx;        // 0x0042b991
-    *reinterpret_cast<std::uint32_t*>(kSlot2) = 0xffffffffu;// 0x0042b997
-    *reinterpret_cast<std::uint32_t*>(kSlot3) = 0xffffffffu;// 0x0042b99c
-    *reinterpret_cast<std::uint32_t*>(kSlot4) = 0xffffffffu;// 0x0042b9a1
-    *reinterpret_cast<std::int32_t*>(kModeSel) = 1;         // 0x0042b9a6
-
-    CallSlotWrite(0, 1);                                    // 0x0042b9b0
-    CallSlotWrite(1, 0);                                    // 0x0042b9b9
-    CallSlotWrite(2, 0);                                    // 0x0042b9c2
-    CallSlotWrite(3, 0);                                    // 0x0042b9cb
-}
-
-RH_ScopedInstall(CarSlotInit1P, 0x0042b960);  // re-ported 2026-10-12 (negctl re-earn)
+// MATCH-S07: the body of 0x0042b960 (CarSlotInit1P) moved to Match/MatchS07_0042b960.cpp,
+// which compiles the byte-matched source re/match/s07/0042b960.c.
 
 // ---------------------------------------------------------------------------
 // 0x0042b9e0  CarSlotAssign
@@ -203,134 +182,8 @@ static constexpr std::uintptr_t kCarIdTableBase  = 0x007f1a1c; // car-ID table (
 static constexpr std::uintptr_t kCarIdTableBound = 0x7f1a5b;   // assignment loop upper bound
 // kModeSel already defined above (0x007f1a0c)
 
-// 0x0042b9e0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotAssign() {
-    // Step 1: reset all 4 player slots to 0
-    for (int iVar5 = 0; iVar5 < 4; iVar5++) {
-        CallSlotWrite(iVar5, 0);
-    }
-
-    // Step 2: count valid car options
-    std::int32_t iVar5 = 0xc; // starts at 12 (total option fields)
-    const std::int32_t* piVar2 = reinterpret_cast<const std::int32_t*>(kCarOptionBase);
-    do {
-        // Check 6 offsets: [-3], [0], [3], [6], [9], [0xc] in int* units
-        static const int offsets[] = { -3, 0, 3, 6, 9, 0xc };
-        for (int o : offsets) {
-            if (piVar2[o] < 1) iVar5 -= 1;
-        }
-        piVar2 = reinterpret_cast<const std::int32_t*>(
-            reinterpret_cast<std::uintptr_t>(piVar2) + kCarOptionStride * 4);
-    } while (reinterpret_cast<std::uintptr_t>(piVar2) < kCarOptionBound);
-
-    if (iVar5 < 2) return 1; // fewer than 2 valid options -> early OK
-
-    // Step 3: collision detection
-    bool bVar1 = false;
-    const std::int32_t* piVar2b = reinterpret_cast<const std::int32_t*>(kCarChoiceBase);
-    while (reinterpret_cast<std::uintptr_t>(piVar2b) < kCollOuterBound) {
-        const std::int32_t* piVar6 = piVar2b + 3;
-        while (reinterpret_cast<std::uintptr_t>(piVar6) < kCollInnerBound) {
-            if (*piVar2b == *piVar6 && *piVar2b > 0) bVar1 = true;
-            piVar6 += 3;
-        }
-        piVar2b += 3;
-    }
-    if (bVar1) return 0; // collision detected
-
-    // Step 4: clear slot table to 0xffffffff
-    std::uint32_t* puVar3 = reinterpret_cast<std::uint32_t*>(kSlotTableBase);
-    do {
-        *puVar3 = 0xffffffffu;
-        puVar3 = reinterpret_cast<std::uint32_t*>(
-            reinterpret_cast<std::uintptr_t>(puVar3) + 16);
-    } while (reinterpret_cast<std::uintptr_t>(puVar3) < kSlotTableBound);
-
-    // Step 5: assign car IDs to player slots
-    // Outer do-while: advances player-slot pointer piVar2c and player index local_4.
-    // Inner do-while: steps car-ID iVar4 from 1..6 until a match is found.
-    // When iVar4 == 7 or piVar2c exceeds bound: DAT_007f1a0c=2, return 0x1000.
-    std::int32_t local_4 = 0; // player index
-    std::int32_t* piVar2c = reinterpret_cast<std::int32_t*>(kCarIdTableBase);
-    std::int32_t iVar4 = 1; // car ID starts at 1
-    std::int32_t local_8 = 0; // 0=no-match, 1=matched, 2=exhausted
-
-    do {
-        if (local_8 == 2) {
-            *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-            return 0x1000u;
-        }
-        local_8 = 0;
-
-        // Inner scan: find player whose car choice == iVar4
-        const std::int32_t* piVar6 = reinterpret_cast<const std::int32_t*>(kCarChoiceBase);
-        std::int32_t iVar5b = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar6) < kCollInnerBound) {
-            if (*piVar6 == iVar4) {
-                // write slot index and car-ID-1 into current player record
-                *(piVar2c - 2) = iVar5b;  // piVar2c[-2] = choice array index
-                *piVar2c = iVar4 - 1;     // piVar2c[0]  = car-ID-1
-                CallSlotWrite(local_4, 1);
-                local_8 = 1;
-            }
-            piVar6 += 3;
-            iVar5b += 1;
-        }
-
-        iVar4 += 1;
-        if (iVar4 == 7) { local_8 = 2; continue; }
-
-    } while (local_8 == 0);  // continue scanning if no match this round
-
-    // Advance to next player slot (only reached when local_8 == 1 or 2)
-    if (local_8 == 2) {
-        *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-        return 0x1000u;
-    }
-
-    local_4 += 1;
-    piVar2c += 4;
-    if (reinterpret_cast<std::uintptr_t>(piVar2c) > kCarIdTableBound) {
-        *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-        return 0x1000u;
-    }
-
-    // Continue outer assignment loop for remaining players
-    do {
-        if (local_8 == 2) {
-            *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-            return 0x1000u;
-        }
-        local_8 = 0;
-
-        const std::int32_t* piVar6 = reinterpret_cast<const std::int32_t*>(kCarChoiceBase);
-        std::int32_t iVar5b = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar6) < kCollInnerBound) {
-            if (*piVar6 == iVar4) {
-                *(piVar2c - 2) = iVar5b;
-                *piVar2c = iVar4 - 1;
-                CallSlotWrite(local_4, 1);
-                local_8 = 1;
-            }
-            piVar6 += 3;
-            iVar5b += 1;
-        }
-
-        iVar4 += 1;
-        if (iVar4 == 7) { local_8 = 2; continue; }
-
-        if (local_8 != 0) {
-            local_4 += 1;
-            piVar2c += 4;
-            if (reinterpret_cast<std::uintptr_t>(piVar2c) > kCarIdTableBound) {
-                *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-                return 0x1000u;
-            }
-        }
-    } while (true);
-}
-
-RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S07: the body of 0x0042b9e0 (CarSlotAssign) moved to Match/MatchS07_0042b9e0.cpp,
+// which compiles the byte-matched source re/match/s07/0042b9e0.c.
 
 // MATCH-S07: the body of 0x0042b540 (MenuButtonDetectD) moved to Match/MatchS07_0042b540.cpp,
 // which compiles the byte-matched source re/match/s07/0042b540.c.

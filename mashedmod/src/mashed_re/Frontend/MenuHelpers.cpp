@@ -95,8 +95,17 @@
 // ref: re/analysis/race_hud_capture_20260902.md (Finding 29)
 // ---------------------------------------------------------------------------
 
-// 0x0042f7b0
-extern "C" __declspec(dllexport) void __cdecl FrontendCursorUpdate() {
+// MATCH-S07: the body of 0x0042f7b0 (FrontendCursorUpdate) moved to Match/MatchS07_0042f7b0.cpp,
+// which compiles the byte-matched source re/match/s07/0042f7b0.c.
+
+#ifdef MASHED_STANDALONE
+// Pre-swap Ability Select step, kept ONLY for the default-OFF knob MASHED_ABILITY_CURSOR_MATCHED (MATCH-S07-FU,
+// PREREG verify/matchs07fu_20261101/PREREG_MATCH-S07-FU.md). It is not a port of the original function: it is the
+// text the exe ran before the swap, and it differs from the matched body in one place, the decrement guard (`> 0`
+// here, the original's `!= 0` per re/match/s07/0042f7b0.c, so the original decrements an entry that is already
+// negative and this copy leaves it). exe_main.cpp calls it while the knob is unset and FrontendCursorUpdate (the
+// matched body) when the knob is set. Exe only. Delete it when the flip is decided (a roadmap decision row).
+extern "C" void __cdecl FrontendCursorUpdatePreSwap() {
     if (*reinterpret_cast<std::int32_t*>(0x0067eab0u) != 0) {
         return;
     }
@@ -160,8 +169,7 @@ extern "C" __declspec(dllexport) void __cdecl FrontendCursorUpdate() {
         piVar1 += 0x30 / sizeof(std::int32_t);  // 12 ints
     }
 }
-
-RH_ScopedInstall(FrontendCursorUpdate, 0x0042f7b0);  // re-enabled 2026-05-24 c3-frontend-b
+#endif
 
 // ---------------------------------------------------------------------------
 // LocalPlayerSlotCheck  --  0x00436810

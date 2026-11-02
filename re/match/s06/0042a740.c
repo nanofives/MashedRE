@@ -1,0 +1,73 @@
+// FLAGS: /O2 /GS /Ob1
+/* MATCH-S06 0x0042a740: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+   unchanged; globals moved to MGLOBAL. Score: see verify/matchs06_20261101/results.tsv.
+   C++ check fixed (sw3, 2026-11-01): code typed (void *, void *); FUN_0042a530 (void *, void *); FUN_004cc230 returns
+   int, p2 void *; FUN_004cc5e0 (int, int, undefined4, undefined4); FUN_00558df0 returns undefined4, p0 void *;
+   FUN_004cc160 (int, int). Prototypes only, codegen unchanged (100%). */
+/* ---- MATCH-S06 preamble (same text in every re/match/s06 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
+typedef unsigned char undefined;
+typedef unsigned char undefined1;
+typedef unsigned int undefined4;
+typedef unsigned int uint;
+typedef int code(void *, void *);
+MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
+MGLOBAL(undefined *, PTR_DAT_005f65bc, 0x005f65bc);
+MGLOBAL(void *, PTR_s_UVAnim_00623df0, 0x00623df0);
+MGLOBAL(undefined1, DAT_0067e2a8, 0x0067e2a8);
+MGLOBAL(undefined1, DAT_0067e4a8, 0x0067e4a8);
+undefined4 FUN_0042a530(void *p0, void *p1);
+bool FUN_004cc160(int p0, int p1);
+int FUN_004cc230(undefined4 p0, int p1, void *p2);
+undefined4 FUN_004cc5e0(int p0, int p1, undefined4 p2, undefined4 p3);
+undefined4 FUN_00558df0(void *p0, int p1);
+char * _strchr(char * p0, int p1);
+// MATCH: 0x0042a740 FUN_0042a740
+undefined4 FUN_0042a740(char *param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  char *pcVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 uVar4;
+  
+  uVar4 = 0;
+  (**(code **)(DAT_007d3ff8 + 0xcc))(&DAT_0067e4a8,param_1);
+  pcVar1 = _strchr(param_1,0x2e);
+  if (pcVar1 == (char *)0x0) {
+    (**(code **)(DAT_007d3ff8 + 0xd4))(&DAT_0067e4a8,PTR_DAT_005f65bc);
+  }
+  iVar2 = FUN_0042a530(&DAT_0067e2a8,&DAT_0067e4a8);
+  if (iVar2 != 0) {
+    iVar2 = FUN_004cc230(2,1,&DAT_0067e2a8);
+    if (iVar2 != 0) {
+      iVar3 = FUN_004cc5e0(iVar2,0x2b,param_2,param_3);
+      if (iVar3 != 0) {
+        uVar4 = FUN_00558df0(&PTR_s_UVAnim_00623df0,iVar2);
+      }
+      FUN_004cc160(iVar2,0);
+    }
+    return uVar4;
+  }
+  return 0;
+}

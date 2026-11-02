@@ -10,15 +10,8 @@
 
 #include <cstdint>
 
-// ---------------------------------------------------------------------------
-// Forward declarations for callees
-// ---------------------------------------------------------------------------
-
-// 0x0040ce80  FUN_0040ce80  — C2 (promote_c1_low_ab1/0x0040ce80.md)
-// Signature: undefined4 FUN_0040ce80(int param_1)
-// Pure read: double-deref field reader at PTR_PTR_005f2770.  No side-effects.
-static auto* const s_FUN_0040ce80 =
-    reinterpret_cast<std::int32_t(__cdecl*)(std::int32_t)>(0x0040ce80);
+// MATCH-S06: the callee pointer s_FUN_0040ce80 went with the body (the matched source binds
+// FUN_0040ce80 -> PtrTable5f2770Get, Util/PromoLoop_round49.cpp).
 
 // ---------------------------------------------------------------------------
 // MenuTableSearchAlt  --  0x0042a980
@@ -58,39 +51,5 @@ static auto* const s_FUN_0040ce80 =
 // ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042a980.md
 // ---------------------------------------------------------------------------
 
-// 0x0042a980
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuTableSearchAlt(
-    std::int32_t param_1)
-{
-    // Step 1: derive search key. [0x0042a984]
-    std::int32_t key = s_FUN_0040ce80(param_1);
-
-    // Step 2-3: initialise word-index counter and load first key from table.
-    // DAT_005f6748 is the first key in the stride-3 table. [0x0042a98b]
-    std::int32_t iVar3 = 0;
-    std::int32_t iVar1 = *reinterpret_cast<std::int32_t*>(0x005f6748u);
-
-    // Step 4: linear scan of sentinel-terminated table.
-    while (true) {
-        // Sentinel: -1 (0xffffffff) → not found. [0x0042a990]
-        if (iVar1 == -1) {
-            return 0u;
-        }
-        // Key match → break to return value. [0x0042a996]
-        if (iVar1 == key) {
-            break;
-        }
-        // Advance: next key at 0x5f6754 + iVar3*4. [0x0042a999]
-        iVar1 = *reinterpret_cast<std::int32_t*>(
-            0x005f6754u + static_cast<unsigned>(iVar3) * 4u);
-        // Stride 3 int32 units per entry. [0x0042a99b]
-        iVar3 += 3;
-    }
-
-    // Step 5: return value field at offset +4 from base 0x5f6748.
-    // Address: 0x5f674c + iVar3*4. [0x0042a9aa]
-    return *reinterpret_cast<std::uint32_t*>(
-        0x005f674cu + static_cast<unsigned>(iVar3) * 4u);
-}
-
-RH_ScopedInstall(MenuTableSearchAlt, 0x0042a980);
+// MATCH-S06: the body of 0x0042a980 (MenuTableSearchAlt) moved to Match/MatchS06_0042a980.cpp,
+// which compiles the byte-matched source re/match/s06/0042a980.c.

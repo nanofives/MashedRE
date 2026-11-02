@@ -86,8 +86,11 @@ PathNodes
 MatchS07_0042aff0
 MatchS07_0042b180
 MatchS07_0042bde0
+MatchS07_0042d290
 MatchS07_0042d300
+MatchS07_0042e3a0
 MatchS07_0042f8d0
+MatchS07_0042fb70
 MatchS07_0042fe90
 MatchS07_00430b30
 MatchS07_00431b20
@@ -98,6 +101,10 @@ MatchS07_00431b60
 # bodies stay SSE2. Measured: replay_c3.py on 1200 real race calls at CW 0x007f, SSE2 RED 243/1200,
 # x87 GREEN 1200/1200 (log/diff/00546c50_rwp_mat2quat_y.replay.csv).
 RwpSolverMath2QuatY
+# D4-WSB-55B080-ULP (2026-11-01): 0x00546b10 / 0x00546bf0 / 0x00546cb0, split from RwpSolverMath2 like QuatY.
+# SSE2 build: 0x0055b080 shadow DIVERGENT 4/24, 1-ulp in the quaternion 0x00546b10 writes
+# (verify/d4wsb_portbroad2_20261101/shadow_summary_pass1.tsv). Re-measure: verify/d4wsb55b080ulp_20261101/.
+RwpSolverMath2Quat
 # drawstream (2026-10-12): 0x00430b90 re-ported from the listing, ST-resident values as double.
 # Measured by run_diff at the harness CW and at 0x007f (--x87-cw=0x7f); see
 # re/analysis/negctl/session_20261012b/drawstream_RESULT.md.
@@ -111,9 +118,50 @@ ViewportScaledRectDraw
 # pontoon (2026-10-16): the Warzone track object 0x00684d18 (RtAnim/RpHAnim/RW matrix leaves transcribed from the
 # listings, run at PC_24 by Pontoon_Tick). verify/pontoon_20261016/PREREG_pontoon.md.
 WarzonePontoon
+# MATCH-S06 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s06/)
+MatchS06_004264d0
+MatchS06_00426d20
+MatchS06_00426de0
+MatchS06_00426df0
+MatchS06_00426e10
+MatchS06_004270f0
+MatchS06_00427580
+MatchS06_00427680
+MatchS06_004278d0
+MatchS06_00427990
+MatchS06_00427ad0
+MatchS06_00427be0
+MatchS06_00427e00
+MatchS06_00427f00
+MatchS06_00427ff0
+MatchS06_00428140
+MatchS06_00428320
+MatchS06_00428590
+MatchS06_00428610
+MatchS06_00428760
+MatchS06_004288a0
+MatchS06_00428a30
+MatchS06_00428bf0
+MatchS06_00428d30
+MatchS06_00429300
+MatchS06_004295a0
+MatchS06_00429620
+MatchS06_00429660
+MatchS06_00429820
+MatchS06_00429870
+MatchS06_004298c0
+MatchS06_004299d0
+MatchS06_00429a30
+MatchS06_00429a70
+MatchS06_00429aa0
+MatchS06_00429b30
+MatchS06_00429b70
+MatchS06_00429e10
+MatchS06_0042aae0
 # HB-6 (2026-10-26): disasm-order x87 bodies of 0x00566200 / 0x005667c0 (VECCAP-2), reached only under
 # MASHED_LEAVES1_X87=1 (default OFF). Measured by re/tools/veccap/replay_c3.py; verify/hb6_20261026/RESULT_HB-6.md.
 RwpSolverLeaves1X87
 # MATCH-S01 2026-10-31: port bodies compiled from byte-matched x87 game code (re/match/s01/)
 MatchS01
 MatchS02_00411350
+MatchPilot_0046c5f0
