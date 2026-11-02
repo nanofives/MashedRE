@@ -32,6 +32,7 @@
 "Vehicle\VehicleInit.cpp"
 "Vehicle\VehicleContactHull.cpp"
 "Vehicle\VehiclePhysicsRun.cpp"
+"Vehicle\RecordBlockState.cpp"
 "Vehicle\D2SinkProbe.cpp"
 "Vehicle\LaunchRevCharge.cpp"
 "Vehicle\VehicleCouplingBridge.cpp"

@@ -24,6 +24,7 @@
 #include "../Race/SubStateCallees.h"         // [d2posmodel] VehiclePhysicsStateReset (0x0046baa0)
 #include "../Ai/AiStandalone.h"              // [d3bB2] Ai_ContactEventPush (MASHED_AI_CONTACT_EVENT)
 #include "../Audio/AudioWire.h"              // [D4-WSJ-WIRE] audio-side event ring (MASHED_AUDIO_WIRE)
+#include "RecordBlockState.h"                // [MATCH-PORTSTATE-RECORDS] record block port-state (knob)
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
@@ -125,7 +126,11 @@ constexpr float       kSuspNum = 3000.0f;      // _DAT_005ccd08
 // re/analysis/data/A8_substep_budget_20260825.md (Q2).
 constexpr int         kMaxSubstep = 25;        // 0x19 (FUN_004709a0 inner chunk)
 
-unsigned char g_records[16 * kRec];            // the 0xd04 record array (mirror of DAT_008815a0)
+unsigned char g_recordsStore[16 * kRec];       // the 0xd04 record array (mirror of DAT_008815a0)
+// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default OFF): the records ARE the original's block
+// at 0x008815a0 (16 x 0xd04), not a copy of it. OFF: the exe's own store above.
+unsigned char* const g_records = PortStateRecords_On() ? reinterpret_cast<unsigned char*>(0x008815a0u)
+                                                       : g_recordsStore;
 bool          g_inited = false;
 
 // A8 (2026-08-25): persistent integrated BODY ORIENTATION basis per car — the
@@ -307,7 +312,7 @@ bool VehiclePhysics_Enabled() {
 }
 
 void VehiclePhysics_Init(int carCount, int trackType) {
-    std::memset(g_records, 0, sizeof(g_records));
+    std::memset(g_records, 0, 16 * kRec);
     for (int s = 0; s < 16; ++s) g_bodyBasisOk[s] = false;   // A8: basis reseeds at first step
     for (int s = 0; s < 16; ++s) g_settled[s] = false;       // U-D3-DRIVE spawn settle
     for (int s = 0; s < 16; ++s) g_startBoosted[s] = false;  // U-D3-DRIVE-FORCE start boost

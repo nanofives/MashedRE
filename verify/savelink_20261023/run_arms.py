@@ -458,6 +458,7 @@ STACK['PUD'] = ['MASHED_PU_STEPDUMP=@OUT@/@NAME@.pustep.csv']   # D5-FLIP-RFLAME
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
+STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
