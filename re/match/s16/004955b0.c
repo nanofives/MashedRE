@@ -25,8 +25,13 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 undefined4 FUN_00495530(void);
+#ifdef __cplusplus /* port: C++ bool returns in AL only; the DDK built this unsigned char as neg/sbb/neg = full-width EAX 0/1 */
+#define MATCH_RET_004955b0 unsigned int
+#else
+#define MATCH_RET_004955b0 bool
+#endif
 // MATCH: 0x004955b0 FUN_004955b0
-bool FUN_004955b0(void)
+MATCH_RET_004955b0 FUN_004955b0(void)
 
 {
   int iVar1;

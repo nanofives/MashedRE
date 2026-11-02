@@ -41,6 +41,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 typedef void *HWND; typedef void *HINSTANCE; typedef unsigned int UINT; typedef unsigned int WPARAM;
 typedef long LPARAM; typedef long LRESULT; typedef int INT_PTR; typedef const char *LPCSTR;
 typedef INT_PTR (__stdcall *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
@@ -115,7 +120,8 @@ void FUN_00496400(const char *fmt, ...);
 int FUN_00498950(void);
 int FUN_004989b0(void);
 
-// MATCH: 0x00498a00 FUN_00498a00
+// HELD: 0x00498a00 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 static void FUN_00498a00(Mode *m, char *out)
 {
   char buf[128] = "";
@@ -133,8 +139,12 @@ static void FUN_00498a00(Mode *m, char *out)
     strcat(buf, "[Fullscreen antialiasing mode 1]");
   FUN_004a2b60(out, s_fmt_005d0170, m->w, m->h, m->bpp, buf);
 }
+#else
+MATCH_STATIC void FUN_00498a00(Mode *m, char *out);
+#endif
 
-// MATCH: 0x00498c00 FUN_00498c00
+// HELD: 0x00498c00 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 void FUN_00498c00(void)
 {
   int i, j, n;
@@ -156,16 +166,24 @@ void FUN_00498c00(void)
   FUN_004c2e70(DAT_0077340c);
   FUN_004c2f30(DAT_00773200);
 }
+#else
+void FUN_00498c00(void);
+#endif
 
-// MATCH: 0x00498d20 FUN_00498d20
+// HELD: 0x00498d20 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 static void FUN_00498d20(HWND hDlg)
 {
   HWND c = GetDlgItem(hDlg, 0x3e9);
   LRESULT sel = SendMessageA(c, 0x147, 0, 0);
   DAT_00773200 = SendMessageA(c, 0x150, sel, 0);
 }
+#else
+MATCH_STATIC void FUN_00498d20(HWND hDlg);
+#endif
 
-// MATCH: 0x00498d60 FUN_00498d60
+// HELD: 0x00498d60 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 static void FUN_00498d60(HWND wnd)
 {
   char text[64];
@@ -181,8 +199,12 @@ static void FUN_00498d60(HWND wnd)
     }
   }
 }
+#else
+MATCH_STATIC void FUN_00498d60(HWND wnd);
+#endif
 
-// MATCH: 0x00498e40 FUN_00498e40
+// HELD: 0x00498e40 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 int FUN_00498e40(void)
 {
   int result = 0;
@@ -196,8 +218,12 @@ int FUN_00498e40(void)
   }
   return result;
 }
+#else
+int FUN_00498e40(void);
+#endif
 
-// MATCH: 0x00498ea0 FUN_00498ea0
+// HELD: 0x00498ea0 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 void FUN_00498ea0(void)
 {
   DAT_0077338c = DAT_0077340c;
@@ -210,8 +236,12 @@ void FUN_00498ea0(void)
   DAT_0077339c = DAT_00773408[DAT_0077340c][DAT_00773200].bpp;
   DAT_007733a0 = DAT_00773408[DAT_0077340c][DAT_00773200].flags & 1;
 }
+#else
+void FUN_00498ea0(void);
+#endif
 
-// MATCH: 0x00498f60 FUN_00498f60
+// HELD: 0x00498f60 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 static void FUN_00498f60(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   HWND sub, mode;
@@ -251,9 +281,12 @@ static void FUN_00498f60(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
   SendMessageA(mode, 0x14e, DAT_00773418[DAT_00773200], 0);
   SetFocus(mode);
 }
+#else
+MATCH_STATIC void FUN_00498f60(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
 
 // MATCH: 0x00499170 FUN_00499170
-static void FUN_00499170(HWND hDlg)
+MATCH_STATIC void FUN_00499170(HWND hDlg)
 {
   HWND a = GetDlgItem(hDlg, 1000);
   HWND b = GetDlgItem(hDlg, 0x3e9);
@@ -268,7 +301,8 @@ static void FUN_00499170(HWND hDlg)
   }
 }
 
-// MATCH: 0x004991f0 FUN_004991f0
+// HELD: 0x004991f0 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 INT_PTR __stdcall FUN_004991f0(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch (msg) {
@@ -326,8 +360,12 @@ INT_PTR __stdcall FUN_004991f0(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
   }
   return 1;
 }
+#else
+INT_PTR __stdcall FUN_004991f0(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
 
-// MATCH: 0x00499400 FUN_00499400
+// HELD: 0x00499400 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 int FUN_00499400(int showDialog)
 {
   int i, j;
@@ -386,3 +424,6 @@ int FUN_00499400(int showDialog)
   DAT_005ea098 = DAT_007733ac;
   return 1;
 }
+#else
+int FUN_00499400(int showDialog);
+#endif

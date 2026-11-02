@@ -18,17 +18,11 @@
 // MATCH-S07: the body of 0x00431b40 (Set67eaa8) moved to Match/MatchS07_00431b40.cpp,
 // which compiles the byte-matched source re/match/s07/00431b40.c.
 
-// 0x0049a2e0  8B 44 24 04 A3 6C 39 77 00 C3
-extern "C" __declspec(dllexport) void __cdecl Set77396c(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x0077396cu) = param_1;  // cited at 0x0049a2e0
-}
-RH_ScopedInstall(Set77396c, 0x0049a2e0);
+// MATCH-S16: the body of 0x0049a2e0 (Set77396c) moved to Match/MatchS16_0049a2e0.cpp,
+// which compiles the byte-matched source re/match/s16/0049a2e0.c.
 
-// 0x0049a740  8B 44 24 04 A3 78 39 77 00 C3
-extern "C" __declspec(dllexport) void __cdecl Set773978(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x00773978u) = param_1;  // cited at 0x0049a740
-}
-RH_ScopedInstall(Set773978, 0x0049a740);
+// MATCH-S16: the body of 0x0049a740 (Set773978) moved to Match/MatchS16_0049a740.cpp,
+// which compiles the byte-matched source re/match/s16/0049a740.c.
 
 // MATCH-S07: the body of 0x0042f7a0 (GhostFlagReset) moved to Match/MatchS07_0042f7a0.cpp,
 // which compiles the byte-matched source re/match/s07/0042f7a0.c.

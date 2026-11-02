@@ -101,55 +101,11 @@ static constexpr std::uintptr_t kJoypadCountAddr  = 0x00772fac;
 static constexpr std::uintptr_t kJoypadArrayBase  = 0x00771eb4;
 static constexpr std::size_t    kJoypadSlotStride = 0x448;
 
-// ---------------------------------------------------------------------------
-// 0x00499720  GetInputHinst — undefined4(void)
-// ---------------------------------------------------------------------------
-// Pure leaf, 5 bytes:
-//   MOV EAX, dword ptr [0x007e9580]
-//   RET
-// Returns the HINSTANCE stored at kInputHinstAddr. Consumer FUN_00498510 passes
-// the value as LoadStringA's first argument.
-//
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetInputHinst() {
-    return *reinterpret_cast<const std::uint32_t*>(kInputHinstAddr);
-}
+// MATCH-S16: the body of 0x00499720 (GetInputHinst) moved to Match/MatchS16_00499720.cpp,
+// which compiles the byte-matched source re/match/s16/00499720.c.
 
-RH_ScopedInstall(GetInputHinst, 0x00499720);  // re-enabled 2026-05-24 c3-input
-
-// ---------------------------------------------------------------------------
-// 0x00495530  CreateDInputObject — undefined4(void)
-// ---------------------------------------------------------------------------
-// IDirectInput8A interface creation wrapper. 70 bytes in original.
-//
-// Steps (analysis note 00495530.md):
-//   1. Log "Creating DInput object\n".
-//   2. hinst = GetModuleHandleA(NULL).
-//   3. hr = DirectInput8Create(hinst, 0x800, &IID_IDirectInput8A,
-//                              &DAT_00771e78, NULL).
-//   4. if (hr < 0) { log "Failed\n"; return 0; }
-//   5. return 1;
-//
-// DAT_00771e78 is the output IDirectInput8A* sink (resolved U-0267 in analysis).
-//
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CreateDInputObject() {
-    game_printf_dbg(reinterpret_cast<const char*>(kLogStrCreating));
-
-    HINSTANCE hinst = GetModuleHandleA(nullptr);
-    int hr = game_dinput8_create(
-        hinst,
-        0x0800u,
-        reinterpret_cast<const void*>(kIidDInput8A),
-        reinterpret_cast<void**>(kDInput8OutAddr),
-        nullptr);
-
-    if (hr < 0) {
-        game_printf_dbg(reinterpret_cast<const char*>(kLogStrFailed));
-        return 0;
-    }
-    return 1;
-}
-
-RH_ScopedInstall(CreateDInputObject, 0x00495530);  // re-enabled 2026-05-24 c3-input
+// MATCH-S16: the body of 0x00495530 (CreateDInputObject) moved to Match/MatchS16_00495530.cpp,
+// which compiles the byte-matched source re/match/s16/00495530.c.
 
 // FUN_004955b0 (bool predicate: FUN_00495530() != 0) is DInputInitPredicate in
 // Boot/RwEngineInit.cpp. CreateDInputObjectBool, a forwarder to it that installed a second
@@ -235,52 +191,5 @@ extern "C" __declspec(dllexport) void __cdecl BitArrayClear(
 
 RH_ScopedInstall(BitArrayClear, 0x004b6480);  // re-enabled 2026-05-24 c3-input
 
-// ---------------------------------------------------------------------------
-// 0x00495830  JoypadStrcpy — int(int slot_idx, int dst_ptr)
-// ---------------------------------------------------------------------------
-// Bounds-checked strcpy from the start of joypad-slot `slot_idx` to caller
-// buffer `dst_ptr` (passed as raw int — same as the original's signature).
-// Returns 1 on success, 0 on early-out.
-//
-// Decomp (analysis note 00495830.md, 52 bytes):
-//   if (slot_idx < DAT_00772fac && dst_ptr != 0) {
-//     src = &DAT_00771eb4 + slot_idx * 0x448;
-//     do {
-//       *(char*)(dst_ptr + (src - original_src)) = *src;
-//       src += 1;
-//     } while (last byte != '\0');
-//     return 1;
-//   }
-//   return 0;
-//
-// The original uses an offset trick (param_2 - (int)pcVar2) so the loop can
-// use a single induction pointer for both src reads and dst writes; that's a
-// compiler optimisation, not a semantic requirement.  We restore the natural
-// shape: walk src and dst in parallel until the NUL is copied.
-//
-extern "C" __declspec(dllexport) std::int32_t __cdecl JoypadStrcpy(
-    std::int32_t slot_idx, std::int32_t dst_ptr)
-{
-    const std::int32_t count =
-        *reinterpret_cast<const std::int32_t*>(kJoypadCountAddr);
-
-    if (slot_idx >= count) return 0;
-    if (dst_ptr == 0)      return 0;
-
-    const char* src =
-        reinterpret_cast<const char*>(kJoypadArrayBase) +
-        static_cast<std::size_t>(slot_idx) * kJoypadSlotStride;
-    char* dst = reinterpret_cast<char*>(static_cast<std::uintptr_t>(dst_ptr));
-
-    char c;
-    do {
-        c = *src;
-        *dst = c;
-        ++src;
-        ++dst;
-    } while (c != '\0');
-
-    return 1;
-}
-
-RH_ScopedInstall(JoypadStrcpy, 0x00495830);  // re-enabled 2026-05-24 c3-input
+// MATCH-S16: the body of 0x00495830 (JoypadStrcpy) moved to Match/MatchS16_00495830.cpp,
+// which compiles the byte-matched source re/match/s16/00495830.c.

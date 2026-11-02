@@ -23,6 +23,7 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 typedef void *HWND;
 typedef int BOOL;
 typedef unsigned int UINT;
@@ -32,13 +33,16 @@ typedef long LRESULT;
 typedef unsigned long DWORD;
 typedef struct tagPOINT { long x; long y; } POINT;
 typedef struct tagMSG { HWND hwnd; UINT message; WPARAM wParam; LPARAM lParam; DWORD time; POINT pt; } MSG;
+#endif
 MGLOBAL(MSG, DAT_007e95a0, 0x007e95a0);
 MGLOBAL(int, DAT_0077391c, 0x0077391c);
 MGLOBAL(int, DAT_00773918, 0x00773918);
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 __declspec(dllimport) BOOL __stdcall PeekMessageA(MSG *lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg);
 __declspec(dllimport) BOOL __stdcall TranslateMessage(const MSG *lpMsg);
 __declspec(dllimport) LRESULT __stdcall DispatchMessageA(const MSG *lpMsg);
 __declspec(dllimport) BOOL __stdcall WaitMessage(void);
+#endif
 // MATCH: 0x00499690 FUN_00499690
 int FUN_00499690(void)
 {

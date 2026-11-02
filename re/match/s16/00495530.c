@@ -22,13 +22,17 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 typedef void *HMODULE;
 typedef const char *LPCSTR;
+#endif
 MGLOBAL(undefined1, DAT_005d0a8c, 0x005d0a8c);
 MGLOBAL(undefined4, DAT_00771e78, 0x00771e78);
 long __stdcall FUN_0049b300(HMODULE hinst, unsigned long ver, void *riid, void *out, void *outer);
 void FUN_004987b0(char *p0);
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 __declspec(dllimport) HMODULE __stdcall GetModuleHandleA(LPCSTR p0);
+#endif
 // MATCH: 0x00495530 FUN_00495530
 int FUN_00495530(void)
 {

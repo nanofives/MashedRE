@@ -39,14 +39,8 @@
 //   U-1509: meaning of the slot-active value (data-semantic, in the callee).
 // ---------------------------------------------------------------------------
 
-// 0x00496900
-extern "C" __declspec(dllexport) std::uint32_t __cdecl SlotActiveThunk(int player_idx) {
-    // 0x00497450 target cited at 0x00496900 thunk body (E9 rel32 = 0xB4B).
-    using Fn = std::uint32_t(__cdecl*)(int);
-    return reinterpret_cast<Fn>(0x00497450u)(player_idx);
-}
-
-RH_ScopedInstall(SlotActiveThunk, 0x00496900);
+// MATCH-S16: the body of 0x00496900 (SlotActiveThunk) moved to Match/MatchS16_00496900.cpp,
+// which compiles the byte-matched source re/match/s16/00496900.c.
 
 // ---------------------------------------------------------------------------
 // InteractionCooldownSet  --  0x00415860   (subsystem: ai)

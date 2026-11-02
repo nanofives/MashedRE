@@ -26,19 +26,20 @@ typedef unsigned char bool;
 typedef unsigned char undefined;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-undefined4 * FUN_004d4170(void);
+/* C++-compat (MATCH-S16 swap): every callee typed int-in/int-out, FUN_004d4f90 with its 4 cdecl args */
+int FUN_004d4170(void);
 void FUN_004d41e0(int p0);
-int * FUN_004d4380(int * p0);
-int * FUN_004d4dd0(int * p0);
-int * FUN_004d4f90(uint * p0, int * p1, int p2);
-undefined * * FUN_004eb9d0(void);
+int FUN_004d4380(int p0);
+int FUN_004d4dd0(int p0);
+int FUN_004d4f90(int p0, int p1, int p2, int p3);
+int FUN_004eb9d0(void);
 // MATCH: 0x00496db0 FUN_00496db0
 int FUN_00496db0(void)
 
 {
   int iVar1;
   int iVar2;
-  undefined4 uVar3;
+  int uVar3;
   
   iVar1 = FUN_004d4170();
   if (iVar1 != 0) {

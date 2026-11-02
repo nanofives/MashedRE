@@ -31,12 +31,8 @@
 // ref: re/analysis/promote_c2_video_display/00498bf0.md
 static constexpr std::uintptr_t kDisplayActive_00773204 = 0x00773204u;
 
-// 0x00498bf0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl DisplayActiveFlagGet() {
-    return *reinterpret_cast<const std::uint32_t*>(kDisplayActive_00773204);
-}
-
-RH_ScopedInstall(DisplayActiveFlagGet, 0x00498bf0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S16: the body of 0x00498bf0 (DisplayActiveFlagGet) moved to Match/MatchS16_00498bf0.cpp,
+// which compiles the byte-matched source re/match/s16/00498bf0.c.
 
 
 // ─── 0x004c19f0  RwVtableSlot07Call ───────────────────────────────────────────

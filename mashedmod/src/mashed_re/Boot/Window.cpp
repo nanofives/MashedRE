@@ -73,67 +73,8 @@ static constexpr unsigned int kMsgQuit = 0x12u;
 // Cited at: argument to PeekMessageA inside MsgPump.
 static constexpr unsigned int kPmRemove = 1u;
 
-// ---------------------------------------------------------------------------
-// 0x004996f0  WindowShow  — void(int nCmdShow)
-// ---------------------------------------------------------------------------
-// Two-call wrapper:
-//   ShowWindow(DAT_007e9584, param_1);
-//   UpdateWindow(DAT_007e9584);
-//
-// 31 bytes in original. Trivial passthrough.
-//
-// Side effects:
-//   - ShowWindow may toggle window visibility according to nCmdShow.
-//   - UpdateWindow triggers WM_PAINT if the update region is non-empty.
-//
-// Frida verification strategy (path1):
-//   arg_type='int_scalar'; pass standard nCmdShow values. Both sides call the
-//   same Win32 APIs against the same HWND; reimpl wrapper returns void, so
-//   void_match in the diff harness produces GREEN on bit-identical no-error.
-//
-extern "C" __declspec(dllexport) void __cdecl WindowShow(int nCmdShow) {
-    HWND hwnd = *reinterpret_cast<HWND*>(kHwndAddr);
-    ShowWindow(hwnd, nCmdShow);
-    UpdateWindow(hwnd);
-}
+// MATCH-S16: the body of 0x004996f0 (WindowShow) moved to Match/MatchS16_004996f0.cpp,
+// which compiles the byte-matched source re/match/s16/004996f0.c.
 
-RH_ScopedInstall(WindowShow, 0x004996f0);  // re-enabled 2026-05-24 c3-boot-b
-
-// ---------------------------------------------------------------------------
-// 0x00499690  WindowMsgPump  — bool(void)
-// ---------------------------------------------------------------------------
-// Single-iteration Win32 message pump (disasm 0x00499690..0x004996e8):
-//   if (PeekMessageA(&DAT_007e95a0, NULL, 0, 0, PM_REMOVE) != 0) {   // 0x00499690..0x004996a5
-//       if (DAT_007e95a4 == WM_QUIT) return 1;                       // 0x004996a7..0x004996b5
-//       TranslateMessage(&DAT_007e95a0);                             // 0x004996b6
-//       DispatchMessageA(&DAT_007e95a0);                             // 0x004996c1
-//   }
-//   if (DAT_0077391c == 0) WaitMessage();                            // 0x004996cc..0x004996d5
-//   return (DAT_00773918 != 0);                                      // 0x004996db..0x004996e5
-//
-// Re-ported from the bytes 2026-10-12 (negctl re-earn, bootio). The old port returned the quit
-// flag on WM_QUIT (the original returns the constant 1, `mov eax,1` at 0x004996b0) and skipped
-// the WaitMessage gate after a dispatch (the original falls through to 0x004996cc). The
-// no_focus_pause boot patch (0x004996d3 JNZ->JMP) makes the patched reference skip WaitMessage
-// at any active-flag value; the fixture keeps the active flag 1, where both agree.
-//
-// 0x00499690
-extern "C" __declspec(dllexport) int __cdecl WindowMsgPump() {
-    MSG* msg = reinterpret_cast<MSG*>(kMsgBufAddr);
-    if (PeekMessageA(msg, nullptr, 0, 0, kPmRemove) != 0) {
-        const unsigned int msg_id = *reinterpret_cast<const unsigned int*>(kMsgMessageAddr);
-        if (msg_id == kMsgQuit) {
-            return 1;                                       // 0x004996b0
-        }
-        TranslateMessage(msg);
-        DispatchMessageA(msg);
-    }
-    const unsigned int active = *reinterpret_cast<const unsigned int*>(kActiveFlagAddr);
-    if (active == 0) {
-        WaitMessage();                                      // 0x004996d5
-    }
-    const unsigned int quit = *reinterpret_cast<const unsigned int*>(kQuitFlagAddr);
-    return quit != 0;                                       // 0x004996e5 setne al
-}
-
-RH_ScopedInstall(WindowMsgPump, 0x00499690);  // re-enabled 2026-05-24 c3-boot-b
+// MATCH-S16: the body of 0x00499690 (WindowMsgPump) moved to Match/MatchS16_00499690.cpp,
+// which compiles the byte-matched source re/match/s16/00499690.c.

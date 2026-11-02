@@ -5,7 +5,7 @@ append at the end, and a mid-file block keeps the merges of the slices apart. En
 import sys, pathlib
 
 BS = chr(92)
-ANCHOR = f'"Frontend{BS}DrawQuadPrimitives.cpp"'
+ANCHOR = f'"Boot{BS}VideoConfig.cpp"'
 t, vas = sys.argv[1], sys.argv[2:]
 for tgt in (["exe", "asi"] if t == "both" else [t]):
     p = pathlib.Path(f"mashedmod/{tgt}_sources.rsp")
@@ -17,4 +17,4 @@ for tgt in (["exe", "asi"] if t == "both" else [t]):
     block = set(lines[i:j]) | {f'"Match{BS}MatchS16_{v.lower().replace("0x", "")}.cpp"' for v in vas}
     lines[i:j] = sorted(block)
     p.write_bytes("\r\n".join(lines).encode("utf-8"))
-    print(f"{p}: {len(block)} S11 entries after {ANCHOR}")
+    print(f"{p}: {len(block)} S16 entries after {ANCHOR}")

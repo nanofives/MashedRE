@@ -25,6 +25,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 typedef struct _iobuf_h4 { char *_ptr; int _cnt; char *_base; int _flag; int _file; int _charbuf; int _bufsiz; char *_tmpfname; } FILE_h4;
 MGLOBALA(char, DAT_007730e4, 0x14, 0x007730e4);
 MGLOBALA(char, s_contcfg_d_bin_005d000c, 14, 0x005d000c);
@@ -46,7 +51,7 @@ static char *FUN_00497190(int idx)
 }
 
 // MATCH: 0x004971b0 FUN_004971b0
-static int FUN_004971b0(int idx)
+MATCH_STATIC int FUN_004971b0(int idx)
 {
     char *name = FUN_00497190(idx);
     FILE_h4 *f;
@@ -62,8 +67,10 @@ static int FUN_004971b0(int idx)
     return 0;
 }
 
+#ifndef __cplusplus
 /* stand-in caller (not the real caller): keeps the statics and their EAX convention */
 int h4_standin_004971b0(int idx)
 {
     return FUN_004971b0(idx);
 }
+#endif

@@ -29,12 +29,8 @@
 
 
 
-// 0x00495520  input — byte-verified: A1 78 1E 77 00 C3
-//   MOV EAX,[0x00771e78] ; RET   (read_global u32; direct caller FUN_00496040 C2)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Get771e78(void) {
-    return *reinterpret_cast<std::uint32_t*>(0x00771e78u);
-}
-RH_ScopedInstall(Get771e78, 0x00495520);
+// MATCH-S16: the body of 0x00495520 (Get771e78) moved to Match/MatchS16_00495520.cpp,
+// which compiles the byte-matched source re/match/s16/00495520.c.
 
 // 0x004842b0  debug-overlay — byte-verified: 33 C0 / A3.. x4 / C3
 //   XOR EAX,EAX ; MOV [0x6cfc88],EAX ; MOV [0x6cf068],EAX ; MOV [0x6cf06c],EAX ;
@@ -220,15 +216,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred45bff0(std::uint32_t 
 }
 RH_ScopedInstall(Pred45bff0, 0x0045bff0);
 
-// 0x00497450  input — byte-verified: 8B 44 24 04 83 F8 03 7E 03 33 C0 C3 C1 E0 09 8B 90 FC 96 7E 00 33 C9 85 D2 0F 95 C1 8B C1 C3
-//   CMP EAX,3 ; JLE predicate (i<=3) ; else fall-through XOR EAX,EAX;RET (i>3 -> 0)
-//   fn(i): if ((int)i <= 3) return (*(u32*)(0x007e96fc + i*0x200) != 0) ? 1 : 0 ; return 0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred497450(std::uint32_t i) {
-    if (static_cast<std::int32_t>(i) <= 3)
-        return (*reinterpret_cast<std::uint32_t*>(0x007e96fcu + i * 0x200u) != 0) ? 1u : 0u;
-    return 0;
-}
-RH_ScopedInstall(Pred497450, 0x00497450);
+// MATCH-S16: the body of 0x00497450 (Pred497450) moved to Match/MatchS16_00497450.cpp,
+// which compiles the byte-matched source re/match/s16/00497450.c.
 
 // ===== round 86 =====
 // Mashed RE — promote-round round 86 (global swap-return + 3-byte-globals + indexed float-square).
@@ -491,22 +480,8 @@ RH_ScopedInstall(ClearVB491bd0, 0x00491bd0);
 
 // ===== round 98 =====
 
-// 0x00497000  render — byte-verified: build 16-dword projection matrix at out from camera struct p2
-//   out[0]=p2[0x70]; out[5]=p2[0x74]; out[10]=fv=p2[0x84]/(p2[0x84]-p2[0x80]); out[0xb]=-(fv*p2[0x80]);
-//   out[0xe]=1.0f; rest 0
-extern "C" __declspec(dllexport) void __cdecl Proj497000(std::uint32_t* out, char* p2) {
-    out[0]=*reinterpret_cast<std::uint32_t*>(p2+0x70);
-    out[1]=0; out[2]=0; out[3]=0; out[4]=0;
-    out[5]=*reinterpret_cast<std::uint32_t*>(p2+0x74);
-    out[6]=0; out[7]=0; out[8]=0; out[9]=0;
-    float fv = *reinterpret_cast<float*>(p2+0x84) / (*reinterpret_cast<float*>(p2+0x84) - *reinterpret_cast<float*>(p2+0x80));
-    *reinterpret_cast<float*>(out+10) = fv;
-    float f1 = *reinterpret_cast<float*>(p2+0x80);
-    out[0xc]=0; out[0xd]=0;
-    *reinterpret_cast<std::uint32_t*>(out+0xe)=0x3f800000u; out[0xf]=0;
-    *reinterpret_cast<float*>(out+0xb) = -(fv*f1);
-}
-RH_ScopedInstall(Proj497000, 0x00497000);
+// MATCH-S16: the body of 0x00497000 (Proj497000) moved to Match/MatchS16_00497000.cpp,
+// which compiles the byte-matched source re/match/s16/00497000.c.
 
 // ===== round 99 =====
 
@@ -654,15 +629,8 @@ RH_ScopedInstall(Reset413fe0, 0x00413fe0);
 // ===== round 107 =====
 // ECX-input (thiscall) const-field setters — verbatim naked-asm ports.
 
-// 0x004944b0  util — byte-verified: mov eax,ecx; mov dword[eax],0; ret  (*this = 0; return this)
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Zero4944b0(void) {
-    __asm {
-        mov eax, ecx
-        mov dword ptr [eax], 0
-        ret
-    }
-}
-RH_ScopedInstall(Zero4944b0, 0x004944b0);
+// MATCH-S16: the body of 0x004944b0 (Zero4944b0) moved to Match/MatchS16_004944b0.cpp,
+// which compiles the byte-matched source re/match/s16/004944b0.c.
 
 // 0x0049c800  particle — byte-verified: mov dword[ecx+0x68],0; ret  (this->field68 = 0)
 extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Zero49c800(void) {
@@ -1367,31 +1335,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Split41e170_RegA
 }
 RH_ScopedInstall(Split41e170_RegAbi, 0x0041e170);  // ABI fixed 2026-07-27 (was __cdecl)
 
-// ===== round 134 ===== (bounded 2D-grid multi-out getter)
-// 0x004957a0 — u32 fn(i, j, out1, out2, out3): if(i>=*0x772fac || j>=*0x771e80) return 0;
-//   idx=i*0x89+j; if(out1){out1[0]=tbl150[idx*8]; out1[1]=tbl154[idx*8];}
-//   if(out2){out2[0]=tbl1d0[idx*8]; out2[1]=tbl1d4[idx*8];} idx3=i*0x112+j;
-//   if(out3) out3[0]=tbl290[idx3*4]; return 1.
-//   NB: original reads out2/out3 via post-`push esi/edi` [esp+0x18]/[esp+0x1c] which map
-//   to pre-push +0x10/+0x14 -> they are args 4 and 5, not 6 and 7.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Grid4957a0(
-        std::uint32_t i, std::uint32_t j, int* out1, int* out2, int* out3) {
-    if (static_cast<int>(i) >= *reinterpret_cast<int*>(0x00772fac)) return 0;
-    if (static_cast<int>(j) >= *reinterpret_cast<int*>(0x00771e80)) return 0;
-    int idx = static_cast<int>(i) * 0x89 + static_cast<int>(j);
-    if (out1) {
-        out1[0] = *reinterpret_cast<int*>(0x00772150 + idx * 8);
-        out1[1] = *reinterpret_cast<int*>(0x00772154 + idx * 8);
-    }
-    if (out2) {
-        out2[0] = *reinterpret_cast<int*>(0x007721d0 + idx * 8);
-        out2[1] = *reinterpret_cast<int*>(0x007721d4 + idx * 8);
-    }
-    int idx3 = static_cast<int>(i) * 0x112 + static_cast<int>(j);
-    if (out3) out3[0] = *reinterpret_cast<int*>(0x00772290 + idx3 * 4);
-    return 1;
-}
-RH_ScopedInstall(Grid4957a0, 0x004957a0);
+// MATCH-S16: the body of 0x004957a0 (Grid4957a0) moved to Match/MatchS16_004957a0.cpp,
+// which compiles the byte-matched source re/match/s16/004957a0.c.
 
 // [REVERTED 2026-06-15] round 135 FUN_00528e30 (0x00528e30) is in the statically-linked
 // libpng/zlib band (0x516000-0x529fff, right after zcalloc/zcfree) -> library-skip per user

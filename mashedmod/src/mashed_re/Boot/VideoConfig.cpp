@@ -48,13 +48,8 @@ static FUN_004c2c90_t const s_FUN_004c2c90 =
 // Single global read; returns DAT_00616028 (render width in pixels).
 // ---------------------------------------------------------------------------
 
-// 0x00498bc0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VideoGetRenderWidth() {
-    // 0x00498bc0: MOV EAX, [DAT_00616028] — render width
-    return *reinterpret_cast<const std::uint32_t*>(0x00616028u);
-}
-
-RH_ScopedInstall(VideoGetRenderWidth, 0x00498bc0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S16: the body of 0x00498bc0 (VideoGetRenderWidth) moved to Match/MatchS16_00498bc0.cpp,
+// which compiles the byte-matched source re/match/s16/00498bc0.c.
 
 // ---------------------------------------------------------------------------
 // VideoGetRenderHeight  --  0x00498bd0
@@ -64,13 +59,8 @@ RH_ScopedInstall(VideoGetRenderWidth, 0x00498bc0);  // re-enabled 2026-05-24 c3-
 // Sibling of VideoGetRenderWidth at +4; returns DAT_0061602c (render height).
 // ---------------------------------------------------------------------------
 
-// 0x00498bd0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VideoGetRenderHeight() {
-    // 0x00498bd0: MOV EAX, [DAT_0061602c] — render height
-    return *reinterpret_cast<const std::uint32_t*>(0x0061602cu);
-}
-
-RH_ScopedInstall(VideoGetRenderHeight, 0x00498bd0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S16: the body of 0x00498bd0 (VideoGetRenderHeight) moved to Match/MatchS16_00498bd0.cpp,
+// which compiles the byte-matched source re/match/s16/00498bd0.c.
 
 // ---------------------------------------------------------------------------
 // FUN_00498bf0 (A1 04 32 77 00 / C3: MOV EAX,[0x00773204]; RET -- cursor/display gate,

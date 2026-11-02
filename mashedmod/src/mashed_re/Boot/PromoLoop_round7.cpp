@@ -47,13 +47,8 @@
 //   U-8947: purpose of DAT_00773818 (data-semantic; renumbered from U-3012).
 // ---------------------------------------------------------------------------
 
-// 0x00499730
-extern "C" __declspec(dllexport) std::uint32_t __cdecl BootPtr773818Get(void) {
-    // 0x00773818 cited at 0x00499730 body (mov eax, imm32).
-    return 0x00773818u;
-}
-
-RH_ScopedInstall(BootPtr773818Get, 0x00499730);
+// MATCH-S16: the body of 0x00499730 (BootPtr773818Get) moved to Match/MatchS16_00499730.cpp,
+// which compiles the byte-matched source re/match/s16/00499730.c.
 
 // ---------------------------------------------------------------------------
 // TimerQpfStore  --  0x00495120   (subsystem: util)
@@ -81,18 +76,5 @@ RH_ScopedInstall(BootPtr773818Get, 0x00499730);
 // (not a stub). No uncertainties.
 // ---------------------------------------------------------------------------
 
-// 0x00495120
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TimerQpfStore(void) {
-    LARGE_INTEGER freq;
-    // Original calls QueryPerformanceFrequency via IAT 0x005cc030 and ignores
-    // its return (cited at 0x00495120 body).
-    QueryPerformanceFrequency(&freq);
-    // 0x00771e70 / 0x00771e74 cited at 0x00495120 body.
-    *reinterpret_cast<std::uint32_t*>(0x00771e70u) =
-        static_cast<std::uint32_t>(freq.LowPart);
-    *reinterpret_cast<std::uint32_t*>(0x00771e74u) =
-        static_cast<std::uint32_t>(freq.HighPart);
-    return 1u;
-}
-
-RH_ScopedInstall(TimerQpfStore, 0x00495120);
+// MATCH-S16: the body of 0x00495120 (TimerQpfStore) moved to Match/MatchS16_00495120.cpp,
+// which compiles the byte-matched source re/match/s16/00495120.c.

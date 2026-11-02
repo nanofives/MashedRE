@@ -150,35 +150,5 @@ RH_ScopedInstall(RwStreamWriteChunked, 0x004cc6e0);  // re-enabled 2026-05-24 c3
 using HinstFn_t = HINSTANCE (__cdecl*)();
 static HinstFn_t const s_FUN_00499720 = reinterpret_cast<HinstFn_t>(0x00499720u);
 
-// 0x004997b0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Win32ResourceLoader(
-    std::uint16_t param_1,   // numeric resource ID
-    LPCSTR        param_2,   // resource type string
-    void**        param_3,   // output: locked resource pointer (may be NULL)
-    DWORD*        param_4)   // output: resource size in bytes (may be NULL)
-{
-    // Step 1: get module handle, cited at 0x004997b0 body entry.
-    HMODULE hModule = s_FUN_00499720();
-
-    // Step 2: locate the resource; nameId cast to LPCSTR per analysis note.
-    HRSRC hResInfo = FindResourceA(hModule,
-                                   reinterpret_cast<LPCSTR>(static_cast<UINT_PTR>(param_1)),
-                                   param_2);
-    if (hResInfo == nullptr) return 0u;   // Step 3
-
-    // Step 4: load.
-    HGLOBAL hResData = LoadResource(hModule, hResInfo);
-    if (hResData == nullptr) return 0u;   // Step 5
-
-    // Step 6: size output.
-    if (param_4 != nullptr)
-        *param_4 = SizeofResource(hModule, hResInfo);
-
-    // Step 7: lock output.
-    if (param_3 != nullptr)
-        *param_3 = LockResource(hResData);
-
-    return 1u;   // Step 8
-}
-
-RH_ScopedInstall(Win32ResourceLoader, 0x004997b0);  // re-enabled 2026-05-24 batch-util
+// MATCH-S16: the body of 0x004997b0 (Win32ResourceLoader) moved to Match/MatchS16_004997b0.cpp,
+// which compiles the byte-matched source re/match/s16/004997b0.c.

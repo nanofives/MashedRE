@@ -23,15 +23,19 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 typedef void *HMODULE;
 typedef void *HRSRC;
 typedef void *HGLOBAL;
 typedef unsigned long DWORD;
+#endif
 HMODULE FUN_00499720(void);
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 __declspec(dllimport) HRSRC __stdcall FindResourceA(HMODULE hModule, const char *lpName, const char *lpType);
 __declspec(dllimport) HGLOBAL __stdcall LoadResource(HMODULE hModule, HRSRC hResInfo);
 __declspec(dllimport) void *__stdcall LockResource(HGLOBAL hResData);
 __declspec(dllimport) DWORD __stdcall SizeofResource(HMODULE hModule, HRSRC hResInfo);
+#endif
 // MATCH: 0x004997b0 FUN_004997b0
 int FUN_004997b0(unsigned short param_1, const char *param_2, void **param_3, DWORD *param_4)
 {

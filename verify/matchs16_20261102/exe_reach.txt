@@ -1,0 +1,6 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+_VideoGetRenderWidth	0x001614b0	0	no	yes	
+_VideoGetRenderHeight	0x001614c0	0	no	yes	
+_DisplayActiveFlagGet	0x001614d0	0	no	yes	
+_WindowMsgPump	0x001614e0	0	no	yes	
+_WindowShow	0x00161540	0	no	yes	

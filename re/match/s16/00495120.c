@@ -26,7 +26,12 @@ typedef unsigned char bool;
 typedef union { struct { uint LowPart; int HighPart; } s; __int64 QuadPart; } LargeInt;
 MGLOBAL(uint, DAT_00771e70, 0x00771e70);
 MGLOBAL(int, DAT_00771e74, 0x00771e74);
+#ifdef __cplusplus
+/* port: windows.h already declares QueryPerformanceFrequency(LARGE_INTEGER *); same layout as LargeInt */
+#define QueryPerformanceFrequency(p) (QueryPerformanceFrequency)((LARGE_INTEGER *)(p))
+#else
 __declspec(dllimport) int __stdcall QueryPerformanceFrequency(LargeInt *lpFrequency);
+#endif
 // MATCH: 0x00495120 FUN_00495120
 undefined4 FUN_00495120(void)
 {

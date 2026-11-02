@@ -23,11 +23,15 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 typedef void *HWND;
 typedef int BOOL;
+#endif
 MGLOBAL(HWND, DAT_007e9584, 0x007e9584);
+#ifndef MATCH_PORT /* port: the Win32 types and imports below come from <windows.h> (Core/HookSystem.h) */
 __declspec(dllimport) BOOL __stdcall ShowWindow(HWND p0, int p1);
 __declspec(dllimport) BOOL __stdcall UpdateWindow(HWND p0);
+#endif
 // MATCH: 0x004996f0 FUN_004996f0
 void FUN_004996f0(int param_1)
 
