@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-02 00:39 D4-WSB-55B080-ULP (orch/D4-WSB-55B080-ULP), D4-DC-77b0-ST5-HOLD (orch/D4-DC-77b0-ST5-HOLD), D4-DC-77b0-MATCHEND-SUBSTATE (orch/D4-DC-77b0-MATCHEND-SUBSTATE): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261102_001912
 - 2026-11-02 00:18 HB-ASI-EAX-57C420 (orch/HB-ASI-EAX-57C420): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261101_233753
 - 2026-11-01 23:35 MATCH-RC-T03 (orch/MATCH-RC-T03), MATCH-RC-S06S07 (orch/MATCH-RC-S06S07): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_231430
 - 2026-11-01 23:13 PROMOTE-DETORIG-PILOT (orch/PROMOTE-DETORIG-PILOT), MATCH-TOPDOWN-T11 (orch/MATCH-TOPDOWN-T11): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261101_225626
