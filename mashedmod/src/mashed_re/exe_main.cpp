@@ -2108,6 +2108,10 @@ void ModalGo(int step) {
     }
 }
 
+// [MATCH-T13-SEED-WRITER] Race/AiDifficultyReset.cpp, MASHED_DIFF360_LIVE (default OFF).
+extern "C" bool __cdecl RaceDiff360Live_Enabled();
+extern "C" void __cdecl RaceDiff360Live_TableInit(const char* site);
+
 // Race launch shared by the two menu launch points (U-9667, 2026-10-12):
 // FUN_0043dfd0 action 0xff260000 on Challenge Select (screens 6/7) for game
 // modes 2..5 (LAB_0043f371, FUN_0043d2a0(0,2) + DAT_0067e914=1), and action
@@ -2124,6 +2128,11 @@ static void MenuLaunchRace(int launchMode) {
         // [brecipe] the launch mode is also the live game mode word DAT_0067e9fc, which the AI host's FUN_0042f6a0
         // then reads (TrackRenderer.cpp aib_round_type). MASHED_MODE_LIVE was deleted by D5-KNOBS-E4-MODE-REG.
         *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = launchMode;
+        // [MATCH-T13-SEED-WRITER] MASHED_DIFF360_LIVE=1: FUN_00413fa0 indexes the difficulty table by FUN_00430790
+        // (= DAT_0067f17c). The exe keeps that row in Nav_ChallengeRow() (U-9667) and never stored it at 0x0067f17c, so
+        // the knob binds it here, next to the game mode word. Default OFF.
+        if (RaceDiff360Live_Enabled())
+            *reinterpret_cast<std::int32_t*>(0x0067f17cu) = mashed_re::Frontend::Nav_ChallengeRow();
         // [#5 2026-09-07] 0x0067ea98 is the port's player-0 COLOUR cursor
         // (moved by CarSelectCycleColour -> FUN_00431b80), NOT the car
         // index — the old comment conflated the two. Drive cfg.cars[0].colour
@@ -9796,6 +9805,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                             if (GetEnvironmentVariableA("MASHED_GAME_MODE", gm, sizeof(gm)) > 0) g = std::atoi(gm);
                             if (!(g >= 2 && g <= 10)) g = 3;
                             *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = g;
+                        }
+                        // [MATCH-T13-SEED-WRITER] dev inputs for the PREREG arms, MASHED_DIFF360_LIVE=1 only. This route has
+                        // no frontend, so nothing writes DAT_0067f17c or runs FUN_00414120. MASHED_DIFF360_ROW=<0..12> writes
+                        // the row (as scenario_launch.py writes DAT_0067f17c), MASHED_DIFF360_INIT_TABLE=1 runs the table
+                        // init once (as its T13SEED_INIT_DIFF_TABLE=1 calls FUN_00414120 at the menu). Both CONTRIVED.
+                        if (RaceDiff360Live_Enabled()) {
+                            char dr[8] = {};
+                            if (GetEnvironmentVariableA("MASHED_DIFF360_ROW", dr, sizeof(dr)) > 0) {
+                                const int row = std::atoi(dr);
+                                if (row >= 0 && row <= 12) *reinterpret_cast<std::int32_t*>(0x0067f17cu) = row;
+                            }
+                            if (GetEnvironmentVariableA("MASHED_DIFF360_INIT_TABLE", nullptr, 0) > 0)
+                                RaceDiff360Live_TableInit("tableinit_dev");
                         }
                         g_track.StartMatch();
                         // [D3 2026-09-26] place the power-up orbs, as the frontend

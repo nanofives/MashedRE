@@ -78,6 +78,9 @@ void RaceRankThree(std::uint32_t, std::uint32_t, std::uint32_t, int, const Rank3
 // a flat name because the call site below sits inside
 // namespace mashed_re::D3d9Render and cannot re-open mashed_re::Race.
 extern "C" void __cdecl RaceAiDifficultyResetTail();
+// [MATCH-T13-SEED-WRITER] the DAT_0089a360 producer chain behind MASHED_DIFF360_LIVE (default OFF), Race/AiDifficultyReset.cpp.
+extern "C" void __cdecl RaceDiff360Live_RaceInit();
+extern "C" void __cdecl RaceDiff360Live_RoundEnd37c();
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -308,6 +311,9 @@ void MatchEndCaseB() {
         *reinterpret_cast<int*>(0x0063b90cu) = 0;                                      // 0x00410b14 (edx)
         MatchEndLog("9 idx", idx, acc);
     }
+    // [MATCH-T13-SEED-WRITER] DAT_0063ba8c = 9 is what sends the original to FUN_0040ddb0 (case 9, 0x0040ddf0), whose
+    // first call is FUN_00417750 (0x0040ddb0). MASHED_DIFF360_LIVE=1 runs that function's DAT_0089a37c term once here.
+    if (ba8c == 9) RaceDiff360Live_RoundEnd37c();
 }
 }  // namespace
 void aib_own_fwd_xz(int v, float* fx, float* fz) {
@@ -7908,6 +7914,9 @@ void TrackRenderer::StartMatch() {
         elim_order_[i] = -1;
     }
     SeedMatchScores();
+    // [MATCH-T13-SEED-WRITER] FUN_004111c0 calls FUN_00414060 at 0x0040ffc7, after FUN_0040b180 (0x0040ffb8, SeedMatchScores)
+    // and before the rule-10 seed calls (0x00410071 / 0x00410214). MASHED_DIFF360_LIVE=1 only.
+    RaceDiff360Live_RaceInit();
     elim_count_ = 0;
     s_boxRaceInit = true;   // [D3-CF-BOX] the race-start box writes of FUN_004111c0
     StartRound();
