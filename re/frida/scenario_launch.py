@@ -5250,6 +5250,20 @@ def main():
             } };""")
             pl.on("message", lambda m, d: None); pl.load()
             print("  [preload]", pl.exports_sync.run()); pl.unload()
+        if os.environ.get("T13SEED_INIT_DIFF_TABLE"):
+            # MATCH-T13-SEED (CONTRIVED, PREREG amendment 1): the warp skips the championship launch FUN_0043dfd0,
+            # which calls FUN_00414120 at 0x0043fead (DAT_0089a384[0..38] = 0x005f2a70[], DAT_0089a37c = 0). Run it once
+            # here so FUN_00414060's default branch (0x00414066) reads the table it reads in a championship.
+            it = sess.create_script("""
+            const D = (Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0]).base.toUInt32() - 0x00400000;
+            rpc.exports = { run: function () {
+              new NativeFunction(ptr(0x00414120 + D), 'void', [], 'mscdecl')();
+              const t = []; for (let i = 0; i < 39; i++) t.push(ptr(0x0089a384 + D + i * 4).readS32());
+              return { tbl: t.join(','), a37c: ptr(0x0089a37c + D).readFloat(), f17c: ptr(0x0067f17c + D).readS32(),
+                       mode: ptr(0x0067e9fc + D).readS32() };
+            } };""")
+            it.on("message", lambda m, d: None); it.load()
+            print("  [init-diff-table]", it.exports_sync.run()); it.unload()
         if args.statediff_out:
             # Arm BEFORE the phase poke so frame 0 = the very first phase-3 tick.
             print("  [statediff]", E.sd_arm(args.statediff_car, args.statediff_aictrl))
