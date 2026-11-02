@@ -1,0 +1,30 @@
+off_g vs off_h: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 27, 'PTR': 3403, 'MODOFFSET': 97, 'OFFSET': 6, 'RULE:ACC60': 1, 'RULE:WINMSG': 5} periods {'60': 97}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+on_c vs on_d: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 29, 'OFFSET': 7, 'PTR': 3842, 'MODOFFSET': 97, 'RULE:ACC60': 2, 'RULE:WINMSG': 5} periods {'60': 97}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+off_g vs on_c: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 31, 'OFFSET': 7, 'PTR': 3840, 'MODOFFSET': 98, 'RULE:ACC60': 2, 'RULE:RING4': 2, 'RULE:WINMSG': 6, 'RULE:STACKROW': 79} periods {'60': 97, '4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+off_g vs on_d: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 30, 'OFFSET': 7, 'PTR': 3829, 'MODOFFSET': 98, 'RULE:ACC60': 1, 'RULE:RING4': 2, 'RULE:WINMSG': 6, 'RULE:STACKROW': 79} periods {'60': 97, '4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+off_h vs on_c: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 35, 'OFFSET': 7, 'PTR': 3836, 'MODOFFSET': 98, 'RULE:ACC60': 2, 'RULE:RING4': 2, 'RULE:WINMSG': 5, 'RULE:STACKROW': 79} periods {'60': 97, '4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+off_h vs on_d: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 32, 'OFFSET': 7, 'PTR': 3825, 'MODOFFSET': 98, 'RULE:ACC60': 1, 'RULE:RING4': 2, 'RULE:WINMSG': 2, 'RULE:STACKROW': 79} periods {'60': 97, '4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+off_i vs off_g: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 23, 'PTR': 3431, 'MODOFFSET': 97, 'RULE:ACC60': 2, 'OFFSET': 6, 'RULE:WINMSG': 5} periods {'60': 97}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+off_g vs neg_c: raw 0/15, normalized 0/15, race-state 0/15
+  classes {'UNEXPLAINED': 34977, 'TOGGLE': 1577, 'MODOFFSET': 578, 'RESIDUE': 24, 'PTR': 2932, 'RULE:ACC60': 2, 'RULE:WINMSG': 4, 'RULE:STACKROW': 1377} periods {'3': 133, '19': 2, '5': 26, '6': 9, '7': 25, '8': 5, '2': 54, '10': 5, '11': 3, '9': 2, '12': 35, '14': 1, '15': 2, '13': 2, '4': 69, '36260': 1, '21816': 1, '46392': 1, '65283': 2, '28': 4, '29': 4, '30': 1, '65281': 6, '65282': 3, '33': 1, '65280': 3, '1768592': 144, '50': 8, '1300': 1, '450': 1, '1600': 1, '160': 1, '63': 1, '3000': 1, '100': 1, '16100': 2, '1003': 1, '255': 5, '4500': 1, '4450': 1, '7151': 1, '600': 1, '128': 1, '256': 4, '257': 2}
+  unexplained per checkpoint [377, 1951, 4985, 6492, 9570, 17813, 18708, 23625, 25292, 26847, 30912, 31640, 31672, 32319, 29493]
+off_h vs neg_c: raw 0/15, normalized 0/15, race-state 0/15
+  classes {'UNEXPLAINED': 34977, 'TOGGLE': 1577, 'MODOFFSET': 578, 'RESIDUE': 25, 'PTR': 2928, 'RULE:ACC60': 2, 'RULE:WINMSG': 4, 'RULE:STACKROW': 1377} periods {'3': 133, '19': 2, '5': 26, '6': 9, '7': 25, '8': 5, '2': 54, '10': 5, '11': 3, '9': 2, '12': 35, '14': 1, '15': 2, '13': 2, '4': 69, '36260': 1, '21816': 1, '46392': 1, '65283': 2, '28': 4, '29': 4, '30': 1, '65281': 6, '65282': 3, '33': 1, '65280': 3, '1768592': 144, '50': 8, '1300': 1, '450': 1, '1600': 1, '160': 1, '63': 1, '3000': 1, '100': 1, '16100': 2, '1003': 1, '255': 5, '4500': 1, '4450': 1, '7151': 1, '600': 1, '128': 1, '256': 4, '257': 2}
+  unexplained per checkpoint [377, 1951, 4985, 6492, 9570, 17812, 18707, 23625, 25292, 26847, 30912, 31640, 31672, 32319, 29493]
+off_w vs on_w: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 35, 'OFFSET': 7, 'PTR': 3833, 'MODOFFSET': 98, 'RULE:ACC60': 2, 'RULE:RING4': 2, 'RULE:WINMSG': 2, 'RULE:STACKROW': 79} periods {'60': 97, '4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
