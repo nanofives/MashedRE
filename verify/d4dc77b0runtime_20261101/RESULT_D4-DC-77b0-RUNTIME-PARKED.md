@@ -230,3 +230,32 @@ Raw (not committed), `D:/MashedWT/D4-DC-77b0-RUNTIME-PARKED_data/`:
 Not run. This step changes no build input. The code changes are `re/frida/scenario_launch.py` (a Python/Frida harness)
 and Python scripts under `verify/`. None is compiled into `mashed_re.exe` or `mashed_re_dev.asi`. The exe probed here was
 built from the unchanged `orch/integration` tree, so G-CTRL and B stay at the `merge_train.json` refs.
+
+## Re-merge onto orch/integration 6a997bfa3 (2026-11-02, LIVING-PC)
+
+Merge train 20261101_212449 hit a conflict in `re/frida/scenario_launch.py` against D4-DC-77b0-STATE5-ORIGREAD.
+Hand merge `a36d8a97b` (`git -c merge.autoStash=false merge orch/integration`). All 5 hunks kept both sides: the
+VALSRC probe (`vsProbeArm` / `vsProbeDrain` / `vsWatchDrain`, `--valsrc-probe`, `<out>.vs.csv` / `<out>.vsw.csv`) and
+ORIGREAD's sub-state-5 probe (`st5ProbeArm` / `st5ProbeDrain`, `--st5-probe N`, `<out>.st5.csv`). Both attach an entry
+hook on FUN_004177b0. Two `Interceptor.attach` on one address are allowed in Frida, and the two probes are separate options.
+Checks: `py_compile` OK, the extracted `AGENT` JS passes `node --check`. No other file conflicted.
+
+Build inputs: `git diff --name-only 6a997bfa3 a36d8a97b` lists only `re/frida/scenario_launch.py` outside `verify/`,
+so the merged tree compiles exactly what orch/integration 6a997bfa3 compiles. Rebuilt anyway (`MASHED_NO_DEPLOY=1`,
+Build OK), `mashed_re.exe` sha256 `a2e1c8aad8eebba55ff99b9fc510417a3a0c6ef5529eed80462fbac7f9f1692a`.
+
+Gates: **not measured.** Two attempts of `run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` (under `mashed_lock.py`,
+`MASHED_ROOT` = `D:\MashedWT\D4-DC-77b0-RUNTIME-PARKED_root`) exited with code 3 after 1 to 4 s per arm. `mashed_re.log` shows
+`InitD3D9: adapter mode 3840x2160 fmt=22 refresh=60` and every `CreateDevice` combination failing with
+`hr=0x8876086A` (D3DERR_NOTAVAILABLE). This is machine-wide on LIVING-PC since about 09:20 local (12:20Z): the same failure is in
+the newest `mashed_re.log` of `mtrain_root` (merge train), `MATCH-PORTSTATE-RECORDS_root`, `HB-GATE-FLAKE-GAMEFLOW_root` and
+`D4-FLIP-MATCHEND-ST3PRETICK_root`. The last successful `CreateDevice` seen (`MATCH-S09-REMERGE_root`, 08:17 local) reported
+`refresh=120`, so the display mode changed between those times. Since the merged tree's build inputs equal 6a997bfa3's, the
+refs in `merge_train.json` (G-CTRL `8284be46/ba407a16/31fe043e`, B `1d5bf4f9` x3) hold by construction. The merge train
+re-measures them on enqueue. The original-side smoke of the merged harness was not run for the same reason (the d3d9 shim
+also needs a device).
+
+Raw (not committed), `D:/MashedWT/D4-DC-77b0-RUNTIME-PARKED_data/`:
+- `gates_remerge2.log` sha256 `81e5438296a7e092c90e4f6261c7a8245005e60e9992737cf6284f0f169159c6`
+- `gates_remerge2_mashed_re.log` sha256 `780ccd1d97ecb2e8f1e863bbe50717b61882ecb7eb79ca48351e846883ece03a`
+- `build_remerge.log`, `gates_remerge.log` (first attempt, same failure)
