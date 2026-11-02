@@ -79,3 +79,31 @@ For each T13 row left on the record block (`RESULT_MATCH-TOPDOWN-T13.md`): 0x004
 port's value, which blocker remains, and whether a swap is sound (L-72: every global the matched source reads is live
 in the exe, and an exe caller exists). No re-classify is prepared unless a row becomes a sound swap with an exe
 caller in the default build.
+
+## Addendum A1 (2026-11-01, after run g1, committed alone before run g2)
+
+Run g1 (exe `282046ead`): P1 held (H_DEF 8284be46 / ba407a16 / 31fe043e, B_DEF 1d5bf4f9 x3), P2 held (witness base
+008815a0 / 0063d9e0), **P4 failed**: H_PSR step cd061e1a, ptrace 118260d1, B_PSR df54a9a9 x3. First divergent row in
+both B_PSR_K0 and H_PSR: frame 2, car 1, `rec_9e4` 370.513153 -> 370.685852 (speed), then position.
+
+Cause, read from source: `AiPreTickRubberBand` (`Ai/AiStandalone.cpp:1688-1689`, FUN_0046dd80 / FUN_0046dd90) writes
+`F32(0x0061313c)` into record `+0x154` of cars 0..3 every frame. In the original A3 (0x0046b540) publishes k2 to
+`0x0061313c` (0x0046b562 `mov [0x61313c],0x3fc00000`, 0x0046b5cd `fstp [0x61313c]`) and copies it to `+0x154`
+(0x0046b5ee). The exe's standalone `A3PublishHandling` (`Vehicle/VehicleInit.cpp:126`) publishes only
+`g_handlingTorque` (the `0x00613108` value), so `0x0061313c` stays 0 in the exe and the round trip writes 0.0 over the
+car's k2. The PREREG's "no reader of +0x154" was wrong: the record field is read by the port physics (the read site
+was not located by name; the measured move on the first post-write frame is the evidence). This is a gap in the
+migrated state, not a faithful behaviour change: the original never writes 0 there.
+
+Fix (same knob): with `MASHED_PORTSTATE_RECORDS` ON, the standalone `A3PublishHandling` also writes the four handling
+globals the original's A3 writes, `0x00613108` = param, `0x00613114` = spring, `0x00613130` = k1, `0x0061313c` = k2
+(the `#else` branch's stores, `VehicleInit.cpp:145-148`). Knob OFF unchanged. No exe TU reads `0x00613108` /
+`0x00613114` / `0x00613130` by absolute address (`PhysicsChainHooks.cpp` is asi-only), and `0x0061313c` is read only by
+`GearConstGet`.
+
+Predictions for run g2 (same arms): **P1** and **P2** as before. **P4'**: `H_PSR` step 8284be46 / ptrace 31fe043e,
+`B_PSR` 1d5bf4f9 x3, masked gates equal. Reason: the exe's `HandlingTypeIndex()` is one value for every car, so every
+car's k2 is the same and the per-frame round trip writes back the value `VehicleInit` stored. Exception named in
+advance: the mode-9 (car 1) and mode-4 (cars 1..3) scaling arms (`AiStandalone.cpp:1716-1747`) multiply it when the
+game-mode word reads 9 or 4. If P4' fails, the knob stays OFF and the move is filed as a decided-flip decision with
+the first divergent row and the `+0x154` values.
