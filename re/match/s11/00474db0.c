@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(int, int);
+#else
 typedef int code();
+#endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 void FUN_004b6520(undefined4 p0, undefined4 p1);
 // MATCH: 0x00474db0 FUN_00474db0

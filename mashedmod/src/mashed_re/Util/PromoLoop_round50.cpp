@@ -15,17 +15,11 @@
 
 #include <cstdint>
 
-// 0x00472550  return (&DAT_00691508)[i*4]  (stride 0x10)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table691508Get(std::uint32_t param_1) {
-    return *reinterpret_cast<const std::uint32_t*>(0x00691508u + param_1 * 0x10u);  // cited at 0x00472550
-}
-RH_ScopedInstall(Table691508Get, 0x00472550);
+// MATCH-S11: the body of 0x00472550 (Table691508Get) moved to Match/MatchS11_00472550.cpp,
+// which compiles the byte-matched source re/match/s11/00472550.c.
 
-// 0x00472520  (&DAT_0069150c)[i*4] = val  (stride 0x10)
-extern "C" __declspec(dllexport) void __cdecl Table69150cSet(std::uint32_t param_1, std::uint32_t param_2) {
-    *reinterpret_cast<std::uint32_t*>(0x0069150cu + param_1 * 0x10u) = param_2;  // cited at 0x00472520
-}
-RH_ScopedInstall(Table69150cSet, 0x00472520);
+// MATCH-S11: the body of 0x00472520 (Table69150cSet) moved to Match/MatchS11_00472520.cpp,
+// which compiles the byte-matched source re/match/s11/00472520.c.
 
 // 0x00488390  (&DAT_0086ae38)[i*0xe] = val  (stride 0x38)
 extern "C" __declspec(dllexport) void __cdecl Table86ae38Set(std::uint32_t param_1, std::uint32_t param_2) {

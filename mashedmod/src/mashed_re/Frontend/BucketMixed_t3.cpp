@@ -177,56 +177,8 @@ inline std::uint32_t tri_color_swap(std::uint32_t argb) {
 
 }  // namespace
 
-// 0x00472dc0
-extern "C" __declspec(dllexport) void __cdecl Im2DTriangleDraw(
-        float x1, float y1, float x2, float y2,
-        float x3, float y3, std::uint32_t argb) {
-
-    // Coord scaling — cited at 0x00472dc0 body. Each coord re-fetches the
-    // screen-dimension getter (matches the original's 6 interleaved calls and
-    // the verified sibling ChromeBaseDraw at 0x00472c60); the getters return a
-    // stable global so the order is bit-irrelevant.
-    const float kx = *reinterpret_cast<float*>(kScaleX);
-    const float ky = *reinterpret_cast<float*>(kScaleY);
-
-    const float fVar1 = static_cast<float>(static_cast<int>(tri_screen_width()))  * x1 * kx;
-    const float fVar2 = static_cast<float>(static_cast<int>(tri_screen_height())) * y1 * ky;
-    const float fVar3 = static_cast<float>(static_cast<int>(tri_screen_width()))  * x2 * kx;
-    const float fVar4 = static_cast<float>(static_cast<int>(tri_screen_height())) * y2 * ky;
-    const float fVar5 = static_cast<float>(static_cast<int>(tri_screen_width()))  * x3 * kx;
-    const float fVar6 = static_cast<float>(static_cast<int>(tri_screen_height())) * y3 * ky;
-
-    // Write XY for each of 3 vertices.
-    auto vfloat = [](std::uintptr_t a, float v) {
-        *reinterpret_cast<float*>(a) = v;
-    };
-
-    vfloat(kIm2DVBufBase + 0 * kIm2DVStride + 0x00, fVar1);  // V0 X
-    vfloat(kIm2DVBufBase + 0 * kIm2DVStride + 0x04, fVar2);  // V0 Y
-    vfloat(kIm2DVBufBase + 1 * kIm2DVStride + 0x00, fVar3);  // V1 X
-    vfloat(kIm2DVBufBase + 1 * kIm2DVStride + 0x04, fVar4);  // V1 Y
-    vfloat(kIm2DVBufBase + 2 * kIm2DVStride + 0x00, fVar5);  // V2 X
-    vfloat(kIm2DVBufBase + 2 * kIm2DVStride + 0x04, fVar6);  // V2 Y (= DAT_00898a5c)
-
-    // Loop writing Z, W, color for each of 3 vertices (per orig: stride 7 dwords).
-    const std::uint32_t z = tri_z_field();
-    const std::uint32_t c = tri_color_swap(argb);
-    for (int i = 0; i < 3; i++) {
-        std::uintptr_t v = kIm2DVBufBase + i * kIm2DVStride;
-        *reinterpret_cast<std::uint32_t*>(v + 0x08) = z;             // Z
-        *reinterpret_cast<std::uint32_t*>(v + 0x0c) = 0x3f800000u;   // W = 1.0f
-        *reinterpret_cast<std::uint32_t*>(v + 0x10) = c;             // color
-    }
-
-    // Render states.
-    tri_set_state(1, 0);
-    tri_set_state(12, 1);
-    tri_set_state(10, 5);
-    tri_set_state(11, 6);
-
-    // Draw 3-vert primitive.
-    tri_draw_3verts();
-}
+// MATCH-S11: the body of 0x00472dc0 (Im2DTriangleDraw) moved to Match/MatchS11_00472dc0.cpp,
+// which compiles the byte-matched source re/match/s11/00472dc0.c.
 
 // RH_ScopedInstall(Im2DTriangleDraw, 0x00472dc0);
 // STAGED at C2-impl (NOT promoted by c3-batch-t-s3 2026-05-26).

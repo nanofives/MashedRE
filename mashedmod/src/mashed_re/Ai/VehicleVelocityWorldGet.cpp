@@ -34,21 +34,5 @@ constexpr std::uint32_t  kByteStride     = 0xd04u;        // 0x341 dwords
 typedef void(__cdecl* fn_4c3df0_t)(void*, void*, int, void*);
 } // namespace
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046d510  VehicleVelocityWorldGet(out_vec3, vehicleIdx) -> 1 in-range / 0 OOB
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleVelocityWorldGet(std::uint32_t* outVec,
-                                                                     std::uint32_t vehicleIdx) {
-    if (vehicleIdx > 0xfu) return 0;
-    const std::uintptr_t off = static_cast<std::uintptr_t>(vehicleIdx) * kByteStride;
-    reinterpret_cast<fn_4c3df0_t>(0x004c3df0u)(
-        reinterpret_cast<void*>(kVelX_881f74 + off),     // dst = velocity float3
-        reinterpret_cast<void*>(kMatrix_614708),         // matrix
-        1,                                               // count
-        reinterpret_cast<void*>(kVehBase_881ec8 + off)); // src = per-vehicle struct base
-    outVec[0] = *reinterpret_cast<const std::uint32_t*>(kVelX_881f74 + off);
-    outVec[1] = *reinterpret_cast<const std::uint32_t*>(kVelY_881f78 + off);
-    outVec[2] = *reinterpret_cast<const std::uint32_t*>(kVelZ_881f7c + off);
-    return 1;
-}
-RH_ScopedInstall(VehicleVelocityWorldGet, 0x0046d510);
+// MATCH-S11: the body of 0x0046d510 (VehicleVelocityWorldGet) moved to Match/MatchS11_0046d510.cpp,
+// which compiles the byte-matched source re/match/s11/0046d510.c.
