@@ -3329,7 +3329,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Race::RoundGrid_MaybeReplay();    // [round grid Stage A] G-RG-SNAP (env-gated)
                     Race::Registry_MaybeReplay();     // [mode 7 M1] G-M1-REG / G-M1-PASS (env-gated)
                     Gameplay::Pickups_MaybeReplay();  // [mode 7 M2a] G-M2a-REPLAY (env-gated)
-                    Gameplay::PickupCb_MaybeReplay(); // [mode 7 M3] G-M3-REPLAY (env-gated)
+                    // Gameplay::PickupCb_MaybeReplay() [mode 7 M3] moved to UpdateCar, after VehiclePhysics_Init
+                    // (D4-DC-INC-0046d4a0-REPLAYORDER, L-82 (a)).
                 }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
@@ -5453,6 +5454,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 col_mat_.size() == col_tris_.size() / 3 ? col_mat_.data() : nullptr);
             s_pinit_pre = true;
         }
+    }
+    // [D4-DC-INC-0046d4a0-REPLAYORDER, L-82 (a)] G-M3-REPLAY (MASHED_PKCB_REPLAY, env-gated, no-op unset) runs once here,
+    // after VehiclePhysics_Init has set g_vehicleArrayBase. At track load it ran before the record array existed, so the
+    // one-body 0x0046d4a0 (PtrCompute881ec8) returned 0 there and FUN_00458570 then read [0 + 0x30] (0x00458586..0x0045858d).
+    // The original's FUN_0046d4a0 never returns 0 for idx < 0x10 (0x0046d4a4..0x0046d4c8).
+    {
+        static bool s_pkcbReplayed = false;
+        if (!s_pkcbReplayed) { s_pkcbReplayed = true; Gameplay::PickupCb_MaybeReplay(); }
     }
 
     // [D-11073 leg 1b step 2] MASHED_L1B_INPUTS (default OFF): measurement-only per-frame
