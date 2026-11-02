@@ -287,28 +287,8 @@ RH_ScopedInstall(HudSlideBillboardTick, 0x0041d930);
 // ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x0047c160.md
 // ---------------------------------------------------------------------------
 
-// 0x0047c160
-extern "C" __declspec(dllexport) void __cdecl CameraPathNodeContainTest(int param_1)
-{
-    int iVar1 = s_F004c0ed0(*reinterpret_cast<std::int32_t*>(param_1 + 4));
-    int iVar3 = 0;
-    if (0 < *reinterpret_cast<std::int32_t*>(k_006c2fe8)) {
-        std::uint32_t* puVar6 = reinterpret_cast<std::uint32_t*>(k_006c1228); // node records
-        unsigned char* puVar4 = reinterpret_cast<unsigned char*>(k_006c27a8); // output A (byte ptr)
-        std::int32_t*  puVar5 = reinterpret_cast<std::int32_t*>(k_006c2fa8);   // output B/flag
-        do {
-            *puVar5 = 0;
-            int iVar2 = s_F004c1b40(param_1, puVar6 + 0x4e);
-            if (iVar2 != 0) {
-                s_F0047bb10(puVar6, iVar1 + 0x30, puVar4, puVar5);
-            }
-            iVar3 = iVar3 + 1;
-            puVar5 = puVar5 + 1;       // +1 dword
-            puVar4 = puVar4 + 0x80;    // +0x80 bytes
-            puVar6 = puVar6 + 0x56;    // +0x56 dwords
-        } while (iVar3 < *reinterpret_cast<std::int32_t*>(k_006c2fe8));
-    }
-}
+// MATCH-S13: the body of 0x0047c160 (CameraPathNodeContainTest) moved to Match/MatchS13_0047c160.cpp,
+// which compiles the byte-matched source re/match/s13/0047c160.c.
 
 // NOT installed — verification-blocked (needs a valid-entity-pointer arg_type).
 // RH_ScopedInstall(CameraPathNodeContainTest, 0x0047c160);

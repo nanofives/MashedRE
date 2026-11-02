@@ -463,15 +463,8 @@ extern "C" void __cdecl RwpSolverContextSet(unsigned* ctx, unsigned value)
     g_b5cInSelfTest = false;
 }
 
-// ---------------------------------------------------------------------------
-// 0x0047ea40  RwpMgr — physics-scene step wrapper. `FUN_0047e9c0(param_1,param_2);
-// return param_1;`. FUN_0047e9c0 is the DEFERRED 12-stage RWP solver pipeline (extern).
-// ---------------------------------------------------------------------------
-extern "C" int __cdecl RwpSceneStepWrapper(int solverCtx, unsigned arg2)
-{
-    FUN_0047e9c0(solverCtx, arg2);                            // 0x0047ea45
-    return solverCtx;
-}
+// MATCH-S13: the body of 0x0047ea40 (RwpSceneStepWrapper) moved to Match/MatchS13_0047ea40.cpp,
+// which compiles the byte-matched source re/match/s13/0047ea40.c.
 
 // --- gta-reversed-style hook registration (inert on the exe via HookSystemNoOp;
 //     installs the inline-JMP under the .asi for the diff-original A/B acceptance) ---
@@ -485,7 +478,6 @@ RH_ScopedInstall(RwpBodyMatrixRefresh,  0x0055b800);
 RH_ScopedInstall(RwpBodyRefreshGate,    0x0055dff0);
 RH_ScopedInstall(FUN_0055c000,          0x0055c000);
 RH_ScopedInstall(RwpSolverContextSet,   0x0055e200);
-RH_ScopedInstall(RwpSceneStepWrapper,   0x0047ea40);
 
 }  // namespace Collision
 }  // namespace mashed_re
