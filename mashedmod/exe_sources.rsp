@@ -264,6 +264,7 @@
 "Race\SubStateCallees.cpp"
 "Race\SubStateMachine.cpp"
 "Race\CameraEntries.cpp"
+"Match\MatchT01G_004111c0.cpp"
 "Match\MatchS07_0042aeb0.cpp"
 "Match\MatchS07_0042af50.cpp"
 "Match\MatchS07_0042aff0.cpp"
