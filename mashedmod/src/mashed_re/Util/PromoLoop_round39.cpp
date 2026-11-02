@@ -14,9 +14,5 @@
 
 #include <cstdint>
 
-// 0x00429820  C7 05 B0 91 89 00 00 00 00 00 C7 05 B4 91 89 00 00 00 00 00 C3
-extern "C" __declspec(dllexport) void __cdecl Clear8991b0Pair(void) {
-    *reinterpret_cast<std::uint32_t*>(0x008991b0u) = 0u;  // cited at 0x00429820
-    *reinterpret_cast<std::uint32_t*>(0x008991b4u) = 0u;  // cited at 0x0042982a
-}
-RH_ScopedInstall(Clear8991b0Pair, 0x00429820);
+// MATCH-S06: the body of 0x00429820 (Clear8991b0Pair) moved to Match/MatchS06_00429820.cpp,
+// which compiles the byte-matched source re/match/s06/00429820.c.

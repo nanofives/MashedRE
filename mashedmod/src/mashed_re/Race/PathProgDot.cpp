@@ -27,8 +27,8 @@
 namespace {
 
 #ifdef MASHED_STANDALONE
-extern "C" void PP_426cc0();                                    // Race/PathProgStep_naked.inc (exe-only TU)
-void* s_fn_426cc0 = reinterpret_cast<void*>(&PP_426cc0);
+extern "C" void VehicleTable4cPtrGet();                         // Match/MatchS06_00426cc0.cpp (MATCH-S06: replaces the naked PP_426cc0)
+void* s_fn_426cc0 = reinterpret_cast<void*>(&VehicleTable4cPtrGet);
 #else
 void* s_fn_426cc0 = reinterpret_cast<void*>(0x00426cc0u);       // the original inside MASHED.exe
 #endif

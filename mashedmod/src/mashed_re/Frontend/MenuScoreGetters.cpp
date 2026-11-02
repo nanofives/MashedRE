@@ -51,36 +51,16 @@
 // MATCH-S02: the body of 0x0040b7b0 (PlayerHotkeyTableGet) moved to Match/MatchS02_0040b7b0.cpp,
 // which compiles the byte-matched source re/match/s02/0040b7b0.c.
 
-// 0x00429870
-// Lap time comparison: returns 1 if time_A < time_B, else 0.
-// time = laps*0x3c + secs + frac (float).
-extern "C" __declspec(dllexport) std::uint32_t __cdecl LapTimeALessThanB() {
-    std::uint32_t laps_a = *reinterpret_cast<std::uint32_t*>(0x0067d98c);   // 0x00429878
-    std::uint32_t secs_a = *reinterpret_cast<std::uint32_t*>(0x0067d994);   // 0x00429883
-    float         frac_a = *reinterpret_cast<float*>(0x0067d99c);           // 0x0042988e
-    std::uint32_t laps_b = *reinterpret_cast<std::uint32_t*>(0x0067d990);   // 0x00429898
-    std::uint32_t secs_b = *reinterpret_cast<std::uint32_t*>(0x0067d998);   // 0x004298a3
-    float         frac_b = *reinterpret_cast<float*>(0x0067d9a0);           // 0x004298ae
+// MATCH-S06: the body of 0x00429870 (LapTimeALessThanB) moved to Match/MatchS06_00429870.cpp,
+// which compiles the byte-matched source re/match/s06/00429870.c.
 
-    float time_a = static_cast<float>(laps_a * 0x3c + secs_a) + frac_a;
-    float time_b = static_cast<float>(laps_b * 0x3c + secs_b) + frac_b;
-    return (time_a < time_b) ? 1u : 0u;
-}
-RH_ScopedInstall(LapTimeALessThanB, 0x00429870);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S06: the body of 0x00429a70 (LapFracGetBySlot) moved to Match/MatchS06_00429a70.cpp,
+// which compiles the byte-matched source re/match/s06/00429a70.c.
 
-// 0x00429a70
-// Returns (float)DAT_0067d99c[param_1] — indexed read of lap frac array (float).
-extern "C" __declspec(dllexport) float __cdecl LapFracGetBySlot(std::uint32_t param_1) {
-    return reinterpret_cast<float*>(0x0067d99c)[param_1];
-}
-RH_ScopedInstall(LapFracGetBySlot, 0x00429a70);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S06: the body of 0x00429a80 (LapLapsGetBySlot) moved to Match/MatchS06_00429a80.cpp,
+// which compiles the byte-matched source re/match/s06/00429a80.c.
 
-// 0x00429a80
-// Returns DAT_0067d98c[param_1] — indexed read of lap laps array.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl LapLapsGetBySlot(std::uint32_t param_1) {
-    return reinterpret_cast<std::uint32_t*>(0x0067d98c)[param_1];
-}
-RH_ScopedInstall(LapLapsGetBySlot, 0x00429a80);  // re-enabled 2026-05-24 c3-frontend-a// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // LapSecsGetBySlot  --  0x00429a90
 //
 // Original: FUN_00429a90 (12 bytes, 0x00429a90..0x00429a9b)
@@ -90,12 +70,8 @@ RH_ScopedInstall(LapLapsGetBySlot, 0x00429a80);  // re-enabled 2026-05-24 c3-fro
 // ref: re/analysis/frontend_promote_menus_b/00429a90.md
 // ---------------------------------------------------------------------------
 
-// 0x00429a90
-extern "C" __declspec(dllexport) std::uint32_t __cdecl LapSecsGetBySlot(int param_1) {
-    return reinterpret_cast<std::uint32_t*>(0x0067d994u)[param_1];
-}
-
-RH_ScopedInstall(LapSecsGetBySlot, 0x00429a90);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S06: the body of 0x00429a90 (LapSecsGetBySlot) moved to Match/MatchS06_00429a90.cpp,
+// which compiles the byte-matched source re/match/s06/00429a90.c.
 
 // ---------------------------------------------------------------------------
 // IsMultiplayerMode  --  0x00430760

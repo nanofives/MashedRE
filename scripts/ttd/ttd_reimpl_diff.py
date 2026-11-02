@@ -126,22 +126,28 @@ def asi_outputs(in_bits, export, wait_phase=1, timeout=90.0, verbose=True):
         import frida
     except ImportError:
         sys.exit("frida not installed -- the asi: backend needs it (py -3.12 -m pip install frida)")
-    if not EXE.exists():
-        sys.exit(f"missing {EXE}")
-    if not ASI.exists():
-        sys.exit(f"missing {ASI} -- run mashedmod\\build.bat (it deploys the .asi to original\\)")
+    # D5-SHIM-DINPUT8-SPAWNERS: the asi is Module.loaded and InjectHooks called before the first
+    # resume (re/frida/dev_asi.py), with MASHED_RE_NO_AUTO_HOOK=1 so the dinput8 proxy maps nothing.
+    sys.path.insert(0, str(ROOT / "re" / "frida"))
+    import dev_asi
+    exe = dev_asi.original_exe(EXE)          # MASHED_ROOT private roots
+    asi = exe.parent / ASI.name
+    if not exe.exists():
+        sys.exit(f"missing {exe}")
+    if not asi.exists():
+        sys.exit(f"missing {asi} -- run mashedmod\\build.bat (it deploys the .asi to original\\)")
 
     env = dict(os.environ)
     env["MASHED_MUTE"] = "1"                      # never wake the speakers on a harness run
-    env.pop("MASHED_RE_NO_AUTO_HOOK", None)       # we WANT the dinput8 proxy to load the .asi
 
     dev = frida.get_local_device()
-    pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+    _p, sess, _asi = dev_asi.spawn_original(exe, hooks=True, env=env, cwd=exe.parent, device=dev,
+                                            asi_path=asi, resume=False)
+    pid = _p.pid
     meta = {"pid": pid, "export": export}
     if verbose:
         print(f"  [asi] spawned pid={pid} (muted); waiting for the RW engine")
     try:
-        sess = dev.attach(pid)
         scr = sess.create_script(ASI_AGENT)
         scr.on("message", lambda m, d: None)
         scr.load()
@@ -167,7 +173,7 @@ def asi_outputs(in_bits, export, wait_phase=1, timeout=90.0, verbose=True):
                   f"(wanted >={wait_phase}). Calling anyway; a LUT-dependent leaf may "
                   f"take its CPU fallback and diverge for that reason, not a port defect.")
 
-        status = scr.exports_sync.init(export, str(ASI))
+        status = scr.exports_sync.init(export, str(asi))
         meta["init"] = status
         if not str(status).startswith("ok"):
             mods = ""

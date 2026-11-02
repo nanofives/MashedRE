@@ -1,0 +1,13 @@
+rva	verdict	n	ndiff	proof	detail	pid	log_sha256	utc
+0x0055dc70	CLEAN	1	0	A/B-IS-REAL installed=e9 uninstalled=a1		20152	05c7f611d3ca5176337669e793958f614696bdddf36c94194b55817d33138cbe	2026-11-01T21:15:53Z
+0x0055dc70_h180	CLEAN	1	0	A/B-IS-REAL installed=e9 uninstalled=a1		4812	d71fe2da9df8bb0d6771c49588e79e11f0b50e96d9e4c03a18c7bd2136d73872	2026-11-01T21:51:29Z
+0x0055dca0	CLEAN	1	0	A/B-IS-REAL installed=e9 uninstalled=8b		20852	3b497a0fbac474ab73e1fcfb6213b76f1d18bc7b741b515938791a9797c4ca31	2026-11-01T21:12:25Z
+0x0055dca0_h180	CLEAN	1	0	A/B-IS-REAL installed=e9 uninstalled=8b		24172	d074b022cd3885058c5dfefd7e4037f0800c5950575de1015b923336c7585f66	2026-11-01T21:47:33Z
+0x0055ddd0_c0	CLEAN	1	0	A/B-IS-REAL installed=e9 uninstalled=8b		26440	d29eaaa7ab55878aaa7d15d02eece512fe2456bad89d2eeba8dc69118fbd849d	2026-11-01T21:26:55Z
+0x0055ddd0_c0_h180	CLEAN	1	0	A/B-IS-REAL installed=e9 uninstalled=8b		22736	1cfd871562ef61f8b4cb69560abe5f3a8ee6b3b18e2e591a83a65f0d97d1d49c	2026-11-01T22:00:39Z
+0x0055ded0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=53		16608	b1ed4f5e2eeb46fab1e7a59502b00cffde95ec3f303b4447ed4afb152917633b	2026-11-01T21:10:04Z
+0x0055ded0_m1	DIVERGENT	24	24	A/B-IS-REAL installed=e9 uninstalled=53	pages=o:4,n:4,diff:0 stack=0 noise=0 ovf=0 ret=0 heap=o:4,n:4 rv=0f532520 alloc=n:1,mm:0,mask:6,movf:0,blk:1,mut:1 blk@0f52c750:00000000/00000001 x1; pages=o:4,n:4,diff:0 stack=0 noise=0 ovf=0 ret=0 h	2584	05a064f8f46365e7257c422d821b752abaacdbcb9591b5dd8dfbb6260876d4d9	2026-11-01T21:35:17Z
+0x0055ded0_m2	DIVERGENT	24	24	A/B-IS-REAL installed=e9 uninstalled=53	pages=o:3,n:3,diff:1 stack=0 noise=0 ovf=0 ret=0 heap=o:3,n:3 rv=0f4f2920 @0f4f2000+600 ndw=1 v=600:0f4ebe08/0f4ebe08/0f4ebe0c alloc=n:1,mm:0,mask:6,movf:0,blk:0,mut:2 x1; pages=o:3,n:3,diff:1 stack=0	17620	0de773462cc516cc303df11dc9ee657ac567ccb5887107cb214b384d2a0b915f	2026-11-01T21:35:38Z
+0x0055ded0_off	DIVERGENT	24	20	A/B-IS-REAL installed=e9 uninstalled=53	pages=o:4,n:4,diff:4 stack=0 noise=0 ovf=0 ret=0 heap=o:4,n:4 rv=0f3f34e8 @0f3f3000+4f8 ndw=1 v=4f8:0f327100/0f4df2e8/0f4df378 x1; pages=o:4,n:4,diff:4 stack=0 noise=0 ovf=0 ret=0 heap=o:4,n:4 rv=0f3f	21432	518e8bf778846aa2281f26fa8eb466b2f4d8a33c52f5b7c7c1771e0e7ca5d8bf	2026-11-01T21:35:00Z
+0x0057c300	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		26104	5ebc34ae4f607ac3dff47c1f8e1ea58fa03aa4077e8dca52abc4182558fa663e	2026-11-01T21:16:15Z
+0x0057c500	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		22056	cf13956697b6e4bcf5a91384873f94e110e669973771ed763a03ea87b403583c	2026-11-01T21:39:04Z

@@ -54,6 +54,13 @@
 //      touched by this TU).
 //   H. FUN_0057b9a0's body is 7 bytes (FLD 6 + RET 1) — 5-byte JMP fits.
 #include "../Core/HookSystem.h"
+#ifndef MASHED_STANDALONE
+// D4-WSB-PORT-NARROW-TAIL (2026-11-01): .asi-only shadow A/B wrappers for 0x0057c440, 0x0057c2b0 and
+// 0x0057c270 (bottom of this TU), as D4-WSB-PORT-SOLV did for 0x0056a450. The exe keeps the unwrapped
+// FUN_ bodies, so mashed_re.exe compiles the same code.
+#include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
+#endif
 
 namespace mashed_re {
 namespace Collision {
@@ -141,7 +148,11 @@ extern "C" void __cdecl FUN_0057c420(int param_1,undefined4 param_2)
 //             indexed 64-byte RwMatrix into the shape's matrix slot, then translates it by
 //             the NEGATED offset triple and clears the orthonormal flags (note E).
 // ---------------------------------------------------------------------------
+#ifdef MASHED_STANDALONE
 extern "C" int __cdecl FUN_0057c440(int param_1)
+#else
+static int __cdecl FUN_0057c440_impl(int param_1)
+#endif
 {
   int        *piVar1;
   undefined4 *puVar2;
@@ -172,9 +183,17 @@ extern "C" int __cdecl FUN_0057c440(int param_1)
 //             0x0057c440 body, then — when [p1+0x30] is non-null — flags the atomic at
 //             [[p1+0x30]+4] via FUN_004c0e50. Returns p1.
 // ---------------------------------------------------------------------------
+#ifdef MASHED_STANDALONE
 extern "C" int __cdecl FUN_0057c2b0(int param_1)
+#else
+static int __cdecl FUN_0057c2b0_impl(int param_1)
+#endif
 {
+#ifdef MASHED_STANDALONE
   FUN_0057c440(param_1);
+#else
+  FUN_0057c440_impl(param_1);       // .asi: the port body of 0x0057c440, as the exe calls it (call 0x57c440 at 0x0057c2b6)
+#endif
   if (*(int *)(param_1 + 0x30) != 0) {
     Fwd_004c0e50(*(undefined4 *)(*(int *)(param_1 + 0x30) + 4));
   }
@@ -191,7 +210,11 @@ extern "C" int __cdecl FUN_0057c2b0(int param_1)
 // standalone target this literal is meaningless; the standalone path must bind the table to
 // the local FUN_0057c2b0 instead. Not resolved here — flagged for the KV lane-end review.
 // ---------------------------------------------------------------------------
+#ifdef MASHED_STANDALONE
 extern "C" undefined4 __cdecl FUN_0057c270(void)
+#else
+static undefined4 __cdecl FUN_0057c270_impl(void)
+#endif
 {
   MASHED_DAT_007dc8d8 = Fwd_RpAtomicRegisterPlugin(4,0x901,
                             reinterpret_cast<void *>(0x0057c2e0u),      // LAB_0057c2e0
@@ -242,6 +265,27 @@ extern "C" undefined4 __cdecl FUN_00562a10(undefined4 param_1,undefined4 param_2
   (void)param_1; (void)param_2;
   return param_3;                                                       // 0x00562a10
 }
+
+#ifndef MASHED_STANDALONE
+// --- 0x0057c440 / 0x0057c2b0 / 0x0057c270 shadow A/B (D4-WSB-PORT-NARROW-TAIL) ------------------
+// In-process original-vs-port comparison at the real call site; arm with MASHED_SHADOW_AB=1 (or --hooks in
+// scenario_launch.py). Page-level write tracking (Core/ShadowTrack.h): every page the call writes plus the
+// caller's 4 KB stack window is compared, pre-state restored between the two runs. Phase: census race_run
+// rows (0x0057c440, 0x0057c2b0) kPhaseRace, census menu row (0x0057c270) kPhaseAny.
+// 0x0057c420 is deliberately NOT wrapped: its body is void, but three callers read its EAX (see RESULT).
+extern "C" int __cdecl FUN_0057c440(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_0057c440", 0x0057c440u, ShadowAB::kPhaseRace);
+    return ShadowAB::RunTracked(ab, FUN_0057c440_impl, SHADOW_STACK_WINDOW(), param_1);
+}
+extern "C" int __cdecl FUN_0057c2b0(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_0057c2b0", 0x0057c2b0u, ShadowAB::kPhaseRace);
+    return ShadowAB::RunTracked(ab, FUN_0057c2b0_impl, SHADOW_STACK_WINDOW(), param_1);
+}
+extern "C" undefined4 __cdecl FUN_0057c270(void) {
+    SHADOW_AB_COUNTER(ab, "FUN_0057c270", 0x0057c270u, ShadowAB::kPhaseAny);
+    return ShadowAB::RunTracked(ab, FUN_0057c270_impl, SHADOW_STACK_WINDOW());
+}
+#endif
 
 // --- gta-reversed-style hook registration — KV BATCH A. The two 5-byte thunks
 //     (0x0057c590 / 0x0057c5a0) are deliberately NOT installed; their bodies are. ---

@@ -250,11 +250,5 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchMode10() {
 RH_ScopedInstall(HudDispatchMode10, 0x0041a3e0);  // 2026-10-12 ported from bytes (work/hud-dispatch)
 
 
-// 0x00426ba0  HudDrawEnabled   (6 bytes)
-//   0x00426ba0 mov eax,[0x0066d704] ; 0x00426ba5 ret
-// 0x00426ba0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDrawEnabled() {
-    return *reinterpret_cast<const std::uint32_t*>(0x0066d704u);              // 0x00426ba0
-}
-
-RH_ScopedInstall(HudDrawEnabled, 0x00426ba0);  // 2026-10-12 ported from bytes (work/hud-dispatch)
+// MATCH-S06: the body of 0x00426ba0 (HudDrawEnabled) moved to Match/MatchS06_00426ba0.cpp,
+// which compiles the byte-matched source re/match/s06/00426ba0.c.

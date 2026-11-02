@@ -1,0 +1,45 @@
+== run 1
+[1/9] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/9] new-solo-waits-while-priority-pending PASS (marker=True solo_returned=False window_file=False)
+[3/9] ordinary-acquire-ignores-linger PASS (ordinary acquire 0.0 s, solo still waiting=True)
+[4/9] new-solo-not-opened-during-priority-hold PASS (T2_GOT=1793576169.739 T2_DONE=1793576170.752 S_OPEN=1793576173.028)
+[5/9] new-solo-waits-through-linger PASS (S_OPEN - T2_DONE = 2.28 s, linger 3 s)
+[6/9] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/9] solo-open-unblocked-without-claims PASS (0.01 s)
+[8/9] solo-begin-default-ttl-le-1h PASS (ttl=3600s)
+[9/9] run-solo-default-ttl-le-1h PASS (ttl=3600s)
+scenarios: 9/9 PASS
+impl=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-MASHEDLOCK-SOLO-PRIORITY\re\orchestrator\mashed_lock.py
+procs=8 secs=12.0 lockdir=C:\Users\maria\AppData\Local\Temp\mashed_lock_conc_4hs9hw0r
+acquires=43 solo_windows=15 status_reads=44 timeouts=0 overlaps=0 errors=0 hung_workers=0
+PASS
+== run 2
+[1/9] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/9] new-solo-waits-while-priority-pending PASS (marker=True solo_returned=False window_file=False)
+[3/9] ordinary-acquire-ignores-linger PASS (ordinary acquire 0.0 s, solo still waiting=True)
+[4/9] new-solo-not-opened-during-priority-hold PASS (T2_GOT=1793576212.78 T2_DONE=1793576213.784 S_OPEN=1793576216.035)
+[5/9] new-solo-waits-through-linger PASS (S_OPEN - T2_DONE = 2.25 s, linger 3 s)
+[6/9] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/9] solo-open-unblocked-without-claims PASS (0.01 s)
+[8/9] solo-begin-default-ttl-le-1h PASS (ttl=3600s)
+[9/9] run-solo-default-ttl-le-1h PASS (ttl=3600s)
+scenarios: 9/9 PASS
+impl=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-MASHEDLOCK-SOLO-PRIORITY\re\orchestrator\mashed_lock.py
+procs=8 secs=12.0 lockdir=C:\Users\maria\AppData\Local\Temp\mashed_lock_conc_gm7t6jht
+acquires=39 solo_windows=9 status_reads=17 timeouts=0 overlaps=0 errors=0 hung_workers=0
+PASS
+== run 3
+[1/9] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/9] new-solo-waits-while-priority-pending PASS (marker=True solo_returned=False window_file=False)
+[3/9] ordinary-acquire-ignores-linger PASS (ordinary acquire 0.0 s, solo still waiting=True)
+[4/9] new-solo-not-opened-during-priority-hold PASS (T2_GOT=1793576258.974 T2_DONE=1793576259.984 S_OPEN=1793576262.05)
+[5/9] new-solo-waits-through-linger PASS (S_OPEN - T2_DONE = 2.07 s, linger 3 s)
+[6/9] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/9] solo-open-unblocked-without-claims PASS (0.01 s)
+[8/9] solo-begin-default-ttl-le-1h PASS (ttl=3600s)
+[9/9] run-solo-default-ttl-le-1h PASS (ttl=3600s)
+scenarios: 9/9 PASS
+impl=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-MASHEDLOCK-SOLO-PRIORITY\re\orchestrator\mashed_lock.py
+procs=8 secs=12.0 lockdir=C:\Users\maria\AppData\Local\Temp\mashed_lock_conc_ix1scwjp
+acquires=17 solo_windows=3 status_reads=7 timeouts=1 overlaps=0 errors=0 hung_workers=0
+PASS

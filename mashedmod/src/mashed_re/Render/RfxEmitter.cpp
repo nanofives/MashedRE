@@ -1,32 +1,77 @@
-// Render/RfxEmitter.cpp — see RfxEmitter.h. EXE-ONLY, no RenderWare include (the test exe links it alone).
+// Render/RfxEmitter.cpp — see RfxEmitter.h. ONE body per RVA for both build targets (D4-DC-RFX-CORE).
 //
-// [D5-RFX-EMITTERS 2026-10-28] Transcribed from the disassembly of original/MASHED.exe.unpatched and checked
-// dword for dword against those bytes run in Unicorn (verify/rfx_emitters_20261028/emit_unicorn.py).
+// Before this TU each of the 15 staging / batch / submit RVAs had two bodies that could drift apart, the
+// dual-copy class (re/analysis/DUAL_COPY_AUDIT_2026-09-29.md, ROADMAP D4): the .asi's C3 hooks
+// (Render/FrameHelpers_q2.cpp, Util/PromoLoop_sessionB.cpp) on the original's raw globals, and the exe's
+// D5-RFX-EMITTERS core on its own storage (a Staging struct, std::vector arrays, the PTank by value). This TU
+// is in BOTH exe_sources.rsp and asi_sources.rsp. RH_ScopedInstall installs the 15 in the .asi and is a no-op
+// in the exe, so the exe runs the very bodies the .asi's Frida evidence judges.
+//
+// Layouts are the original's: the staging globals at their absolute addresses (in the exe the image-pad
+// owns 0x006924d8 .. 0x006925a8, exe_main.cpp B17), the batch struct by offset (Batch), the plugin block as
+// *(atomic + [0x007dc57c]) (PTank). [0x007dc57c] has one writer in the original, FUN_00534a80 (0x00534ac4,
+// the plugin registration); the exe has none, so it reads 0 there and Create places the plugin pointer at
+// atomic + 0.
+//
+// The null-pointer defaults 0x00613288 / 0x00613290 / 0x00613294 / 0x006132a4 are file-backed .data with NO
+// direct writer in the original (decomp_pc.py --datarefs, verify/rfxcore_20261101/RESULT_D4-DC-RFX-CORE.md
+// section 2). The .asi reads them at their addresses, as the original does; the exe's image-pad holds 0 there, so
+// under MASHED_STANDALONE the same body points at the file-backed values instead. The two BSS defaults keep their
+// addresses in both targets: 0x00692558 (the matrix template, written by FUN_004770c0) and 0x006925a8 (no writer: 0).
+//
+// [D5-RFX-EMITTERS 2026-10-28] Create / Flush / SelectCallbacks / Instance were transcribed from the disassembly
+// of original/MASHED.exe.unpatched and checked dword for dword against those bytes run in Unicorn
+// (verify/rfx_emitters_20261028/emit_unicorn.py); re-run on this core in verify/rfxcore_20261101/.
 // Arrays hold raw dwords so every copy is a bit copy, as the original's MOVs and REP MOVSD are.
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+//   (preserved in original\MASHED.exe.unpatched)
 
 #include "RfxEmitter.h"
 
+#include "../Core/HookSystem.h"
+
+#include <cstdio>
 #include <cstring>
 
-namespace mashed_re {
-namespace Rfx {
 namespace {
-
-Staging g_stage;
 
 float F(std::uint32_t u) { float f; std::memcpy(&f, &u, 4); return f; }
 std::uint32_t U(float f) { std::uint32_t u; std::memcpy(&u, &f, 4); return u; }
 
-// Image constants (file-backed .data, read from the anchored binary).
-const std::uint32_t k00613288[2] = {0x3f800000u, 0x3f800000u};              // 1.0, 1.0
-const std::uint32_t k00613290    = 0xffffffffu;
-const std::uint32_t k00613294[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};      // 0, 0, 1, 1
-const std::uint32_t k006132a4[8] = {0u, 0x3f800000u, 0x3f800000u, 0x3f800000u,
-                                    0x3f800000u, 0u, 0u, 0u};               // 0,1,1,1,1,0,0,0
-const std::int32_t  k006132c4 = 5, k006132c8 = 6;
-const float         k005cc32c = 0.5f;
-// DAT_006925a8 (FUN_004769a0's default) is BSS with no writer (decomp_pc.py --datarefs: 0 writes): zero.
-const std::uint32_t k006925a8[3] = {0u, 0u, 0u};
+// The null-pointer defaults. The .asi reads the original's own .data, as the original does (the negctl fixtures
+// that hold these rows at C3 seed these addresses and require the read). The exe's image-pad is zero-filled there,
+// so the exe points at the file-backed values (read from the anchored binary; no writer in the original).
+#ifdef MASHED_STANDALONE
+std::uint32_t s00613288[2] = {0x3f800000u, 0x3f800000u};              // 1.0, 1.0
+std::uint32_t s00613290    = 0xffffffffu;
+std::uint32_t s00613294[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};      // 0, 0, 1, 1
+std::uint32_t s006132a4[8] = {0u, 0x3f800000u, 0x3f800000u, 0x3f800000u,
+                              0x3f800000u, 0u, 0u, 0u};               // 0,1,1,1,1,0,0,0
+std::uint32_t* const k00613288 = s00613288;
+std::uint32_t* const k00613290 = &s00613290;
+std::uint32_t* const k00613294 = s00613294;
+std::uint32_t* const k006132a4 = s006132a4;
+#else
+std::uint32_t* const k00613288 = reinterpret_cast<std::uint32_t*>(0x00613288u);
+std::uint32_t* const k00613290 = reinterpret_cast<std::uint32_t*>(0x00613290u);
+std::uint32_t* const k00613294 = reinterpret_cast<std::uint32_t*>(0x00613294u);
+std::uint32_t* const k006132a4 = reinterpret_cast<std::uint32_t*>(0x006132a4u);
+#endif
+const std::int32_t k006132c4 = 5, k006132c8 = 6;
+const float        k005cc32c = 0.5f;
+
+constexpr std::uintptr_t kTemplate = 0x00692558u;   // DAT_00692558, 16 dwords
+constexpr std::uintptr_t kPlugOff  = 0x007dc57cu;   // DAT_007dc57c, the PTank plugin offset
+
+std::uint32_t& G(std::uintptr_t a) { return *reinterpret_cast<std::uint32_t*>(a); }
+
+// *(*(p1 + 4) + [0x007dc57c]): the plugin block of the batch's atomic.
+std::uint8_t* Plugin(const void* batch) {
+    const std::uint8_t* atomic = *reinterpret_cast<std::uint8_t* const*>(static_cast<const std::uint8_t*>(batch) + 4);
+    return *reinterpret_cast<std::uint8_t* const*>(atomic + G(kPlugOff));
+}
 
 // x87 FSINCOS under the precision control the original runs at (PC_24, D3D's FPU state). The exe's default
 // control word is PC_53, so it is set for the one instruction and restored.
@@ -53,13 +98,261 @@ void SinCos24(float a, float* s, float* c) {
 #endif
 }
 
-void Resize(std::vector<std::uint32_t>& v, bool on, std::size_t n) {
-    v.assign(on ? n : 0, 0u);
+}  // namespace
+
+// ===========================================================================
+// Staging setters (FUN_00476d00 copies the globals they fill)
+// ===========================================================================
+
+// 0x004769a0
+extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetPosition(float* param_1)
+{
+    if (param_1 == nullptr) param_1 = reinterpret_cast<float*>(0x006925a8u);   // DAT_006925a8 (BSS, no writer)
+    const std::uint32_t* s = reinterpret_cast<const std::uint32_t*>(param_1);
+    G(0x00692528u) = s[0];
+    G(0x0069252cu) = s[1];
+    G(0x00692530u) = s[2];
+}
+RH_ScopedInstall(ParticleEmitter_SetPosition, 0x004769a0);  // re-enabled 2026-05-24 c3-render-b
+
+// 0x004769d0
+extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetVelocity(float* param_1)
+{
+    const std::uint32_t* s = param_1 ? reinterpret_cast<const std::uint32_t*>(param_1) : k00613288;
+    G(0x006924dcu) = s[0];
+    G(0x006924e0u) = s[1];
+}
+RH_ScopedInstall(ParticleEmitter_SetVelocity, 0x004769d0);  // re-enabled 2026-05-24 c3-render-b
+
+// 0x004769f0
+extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetColour(std::uint32_t* param_1)
+{
+    G(0x00692554u) = param_1 ? param_1[0] : *k00613290;
+}
+RH_ScopedInstall(ParticleEmitter_SetColour, 0x004769f0);  // re-enabled 2026-05-24 c3-render-b
+
+// 0x00476a10 (default: the template, 0x00476a1a)
+extern "C" __declspec(dllexport) void __cdecl Copy476a10(std::uint8_t* src)
+{
+    if (src == nullptr) src = reinterpret_cast<std::uint8_t*>(kTemplate);
+    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(0x006924e8u);
+    const std::uint32_t* s = reinterpret_cast<const std::uint32_t*>(src);
+    for (int i = 0; i < 16; i++) d[i] = s[i];
+}
+RH_ScopedInstall(Copy476a10, 0x00476a10);
+
+// 0x00476a30 (no null guard: the value itself)
+extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetScalar(std::uint32_t param_1)
+{
+    G(0x006924d8u) = param_1;
+}
+RH_ScopedInstall(ParticleEmitter_SetScalar, 0x00476a30);  // re-enabled 2026-05-24 c3-render-b
+
+// 0x00476a40
+extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetRGBA(std::uint32_t* param_1)
+{
+    const std::uint32_t* s = param_1 ? param_1 : k00613294;
+    G(0x00692598u) = s[0];
+    G(0x0069259cu) = s[1];
+    G(0x006925a0u) = s[2];
+    G(0x006925a4u) = s[3];
+}
+RH_ScopedInstall(ParticleEmitter_SetRGBA, 0x00476a40);  // re-enabled 2026-05-24 c3-render-b
+
+// 0x00476a80
+extern "C" __declspec(dllexport) void __cdecl Copy476a80(std::uint32_t* p)
+{
+    const std::uint32_t* s = p ? p : k006132a4;
+    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(0x00692534u);
+    for (int i = 0; i < 8; i++) d[i] = s[i];
+}
+RH_ScopedInstall(Copy476a80, 0x00476a80);
+
+// ===========================================================================
+// Batch setters: p1 = the batch, plugin = *(*(p1 + 4) + [0x007dc57c]); each ORs one dirty bit at +0x40
+// ===========================================================================
+
+// 0x00476ae0
+extern "C" __declspec(dllexport) void __cdecl Batch476ae0(std::uint32_t* p1, std::uint32_t* p2)
+{
+    if (!p2) p2 = k00613288;
+    std::uint8_t* b = Plugin(p1);
+    *reinterpret_cast<std::uint32_t*>(b + 0xb8) = p2[0];
+    *reinterpret_cast<std::uint32_t*>(b + 0xbc) = p2[1];
+    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x4000u;
+}
+RH_ScopedInstall(Batch476ae0, 0x00476ae0);
+
+// 0x00476b30: val = *(p2 ? p2 : 0x00613290); plugin +0xc4 = val; material 0 (atomic +0x18 -> +0x20 -> [0])
+// +4 = plugin +0xc4 when the material exists (0x00476b74); plugin +0x40 |= 0x2000. Every plugin access
+// re-reads the atomic and [0x007dc57c], as the original does.
+extern "C" __declspec(dllexport) void __cdecl Set476b30(std::uint8_t* p1, std::uint8_t* p2)
+{
+    std::uint32_t val = *reinterpret_cast<std::uint32_t*>(p2 ? p2 : reinterpret_cast<std::uint8_t*>(k00613290));
+    std::uint32_t g = G(kPlugOff);
+    std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(p1 + 4);
+    std::uint8_t* obj = *reinterpret_cast<std::uint8_t**>(e + g);
+    *reinterpret_cast<std::uint32_t*>(obj + 0xc4) = val;
+    std::uint8_t* x = *reinterpret_cast<std::uint8_t**>(e + 0x18);
+    std::uint8_t* y = *reinterpret_cast<std::uint8_t**>(x + 0x20);
+    std::uint8_t* n = *reinterpret_cast<std::uint8_t**>(y);
+    if (n != nullptr) {
+        std::uint8_t* obj2 = *reinterpret_cast<std::uint8_t**>(e + G(kPlugOff));
+        *reinterpret_cast<std::uint32_t*>(n + 4) = *reinterpret_cast<std::uint32_t*>(obj2 + 0xc4);
+    }
+    std::uint8_t* obj3 = *reinterpret_cast<std::uint8_t**>(e + G(kPlugOff));
+    *reinterpret_cast<std::uint32_t*>(obj3 + 0x40) |= 0x2000u;
+}
+RH_ScopedInstall(Set476b30, 0x00476b30);
+
+// 0x00476b90 (default: the template, 0x00476b9a)
+extern "C" __declspec(dllexport) void __cdecl Batch476b90(std::uint32_t* p1, std::uint32_t* p2)
+{
+    if (!p2) p2 = reinterpret_cast<std::uint32_t*>(kTemplate);
+    std::uint8_t* b = Plugin(p1);
+    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(b + 0xf8);
+    for (int k = 0; k < 16; k++) d[k] = p2[k];
+    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x8000u;
+}
+RH_ScopedInstall(Batch476b90, 0x00476b90);
+
+// 0x00476be0
+extern "C" __declspec(dllexport) void __cdecl Batch476be0(std::uint32_t* p1, std::uint32_t v)
+{
+    std::uint8_t* b = Plugin(p1);
+    *reinterpret_cast<std::uint32_t*>(b + 0xc0) = v;
+    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x20000u;
+}
+RH_ScopedInstall(Batch476be0, 0x00476be0);
+
+// 0x00476c10
+extern "C" __declspec(dllexport) void __cdecl Batch476c10(std::uint32_t* p1, std::uint32_t* p2)
+{
+    if (!p2) p2 = k00613294;
+    std::uint8_t* b = Plugin(p1);
+    *reinterpret_cast<std::uint32_t*>(b + 0xd8) = p2[0];
+    *reinterpret_cast<std::uint32_t*>(b + 0xdc) = p2[1];
+    *reinterpret_cast<std::uint32_t*>(b + 0xe0) = p2[2];
+    *reinterpret_cast<std::uint32_t*>(b + 0xe4) = p2[3];
+    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x80000u;
+}
+RH_ScopedInstall(Batch476c10, 0x00476c10);
+
+// 0x00476c60
+extern "C" __declspec(dllexport) void __cdecl Batch476c60(std::uint32_t* p1, std::uint32_t* p2)
+{
+    if (!p2) p2 = k006132a4;
+    std::uint8_t* b = Plugin(p1);
+    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(b + 0xd8);
+    for (int k = 0; k < 8; k++) d[k] = p2[k];
+    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x100000u;
+}
+RH_ScopedInstall(Batch476c60, 0x00476c60);
+
+// 0x00476cb0
+extern "C" __declspec(dllexport) void __cdecl Batch476cb0(std::uint32_t* p1, std::uint32_t p2, std::uint32_t p3)
+{
+    std::uint8_t* b = Plugin(p1);
+    *reinterpret_cast<std::uint32_t*>(b + 0xa4) = p2;
+    *reinterpret_cast<std::uint32_t*>(b + 0xa8) = p3;
+    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x10000000u;
+}
+RH_ScopedInstall(Batch476cb0, 0x00476cb0);
+
+// ===========================================================================
+// Submit: if (count < capacity) copy the staging globals into each present batch array at [count], ++count.
+// A pure leaf. The copies are dword MOVs / REP MOVSD in the original, so bit copies here.
+// ===========================================================================
+
+// 0x00476d00
+extern "C" __declspec(dllexport) void __cdecl MultiArrayScatter476d00(unsigned char* p)
+{
+    const int counter = *reinterpret_cast<int*>(p + 0xc);
+    if (counter >= *reinterpret_cast<int*>(p + 8)) return;
+    unsigned char* a0 = *reinterpret_cast<unsigned char**>(p + 0x10);
+    if (a0) {
+        int* d = reinterpret_cast<int*>(a0 + counter * 12);
+        d[0] = *reinterpret_cast<int*>(0x00692528u);
+        d[1] = *reinterpret_cast<int*>(0x0069252cu);
+        d[2] = *reinterpret_cast<int*>(0x00692530u);
+    }
+    unsigned char* a1 = *reinterpret_cast<unsigned char**>(p + 0x14);
+    if (a1) {
+        int* d = reinterpret_cast<int*>(a1 + counter * 8);
+        d[0] = *reinterpret_cast<int*>(0x006924dcu);
+        d[1] = *reinterpret_cast<int*>(0x006924e0u);
+    }
+    unsigned char* a2 = *reinterpret_cast<unsigned char**>(p + 0x18);
+    if (a2) *reinterpret_cast<int*>(a2 + counter * 4) = *reinterpret_cast<int*>(0x00692554u);
+    unsigned char* a3 = *reinterpret_cast<unsigned char**>(p + 0x1c);
+    if (a3) {  // rep movsd 0x10 dwords from 0x6924e8
+        int* d = reinterpret_cast<int*>(a3 + counter * 64);
+        const int* s = reinterpret_cast<const int*>(0x006924e8u);
+        for (int k = 0; k < 0x10; k++) d[k] = s[k];
+    }
+    unsigned char* a4 = *reinterpret_cast<unsigned char**>(p + 0x20);
+    if (a4) {  // fld dword [0x006924d8] / fstp dword [ecx + edx*4] (0x00476d8e / 0x00476d94): an x87 round
+               // trip, exact for every float but a signalling NaN, which it quiets; a plain copy would not
+        float* d = reinterpret_cast<float*>(a4 + counter * 4);
+        __asm {
+            mov  ecx, d
+            fld  dword ptr ds:[0x006924d8]
+            fstp dword ptr [ecx]
+        }
+    }
+    unsigned char* a5 = *reinterpret_cast<unsigned char**>(p + 0x24);
+    if (a5) {
+        int* d = reinterpret_cast<int*>(a5 + counter * 16);
+        d[0] = *reinterpret_cast<int*>(0x00692598u);
+        d[1] = *reinterpret_cast<int*>(0x0069259cu);
+        d[2] = *reinterpret_cast<int*>(0x006925a0u);
+        d[3] = *reinterpret_cast<int*>(0x006925a4u);
+    }
+    unsigned char* a6 = *reinterpret_cast<unsigned char**>(p + 0x28);
+    if (a6) {  // rep movsd 8 dwords from 0x692534
+        int* d = reinterpret_cast<int*>(a6 + counter * 32);
+        const int* s = reinterpret_cast<const int*>(0x00692534u);
+        for (int k = 0; k < 8; k++) d[k] = s[k];
+    }
+    *reinterpret_cast<int*>(p + 0xc) = counter + 1;
+}
+RH_ScopedInstall(MultiArrayScatter476d00, 0x00476d00);
+
+// ===========================================================================
+// The exe's side: create, flush, the instance callbacks (no .asi install)
+// ===========================================================================
+
+namespace mashed_re {
+namespace Rfx {
+namespace {
+
+// Size v to n elements of `per` dwords when `on`; returns the storage pointer (nullptr when off).
+std::uint32_t* Alloc(std::vector<std::uint32_t>& v, bool on, std::size_t n, std::size_t per) {
+    v.assign(on ? n * per : 0, 0u);
+    return v.empty() ? nullptr : v.data();
+}
+
+// FUN_00535700(atomic, out, flag, mode): {ptr, stride} of the plugin array for `flag`; {0, 0} when the
+// plugin's data flags (desc +0x58 = +0xa0) lack it (0x00535715..0x0053572d). A non-zero desc +0x54 (+0x9c)
+// replaces the stride (0x005357c0..0x005357c8). Under mode 0x40000000 a non-null lock ORs flag | mode into
+// +0x3c (0x005357cb..0x005357ed).
+Lock LockArray(PTank& t, std::uint32_t flag, std::uint32_t mode) {
+    Lock out{nullptr, 0};
+    if ((t.data_flags & flag) == 0) return out;
+    const Lock* l = nullptr;
+    switch (flag) {
+    case 1: l = &t.pos; break;     case 8: l = &t.mat; break;      case 0x10: l = &t.nrm; break;
+    case 4: l = &t.size; break;    case 2: l = &t.col; break;      case 0x40: l = &t.col4; break;
+    case 0x20: l = &t.rot; break;  case 0x80: l = &t.uv2; break;   case 0x100: l = &t.uv4; break;
+    default: break;
+    }
+    if (l) out = *l;
+    if (t.stride_all != 0) out.stride = t.stride_all;
+    if (out.ptr && (mode & 0x40000000u) == 0x40000000u) t.lock_bits |= flag | mode;
+    return out;
 }
 
 }  // namespace
-
-Staging& Stage() { return g_stage; }
 
 // 0x00534b60
 std::uint32_t PTankNormaliseFlags(std::uint32_t f) {
@@ -97,11 +390,30 @@ void Create(Emitter& e, std::uint32_t flags, std::int32_t cap, const void* textu
     if (flags & 0x400) d |= 0x20000;
     if (flags & 0x800) d |= 0x80000;
     if (flags & 0x1000) d |= 0x100000;
-    e = Emitter();                                   // FUN_004b6520(param_1, 0x40)
+    e.batch = Batch{};                               // FUN_004b6520(param_1, 0x40)
+    e.tank = PTank{};
+    e.mat0 = Emitter::Material{};
+    e.c4_set = false;
+    std::memset(e.geo, 0, sizeof(e.geo));
+    std::memset(e.atom, 0, sizeof(e.atom));
+
+    // The stand-in atomic: the plugin pointer at +[0x007dc57c] (0 in the exe), the geometry at +0x18.
+    const std::uint32_t off = G(kPlugOff);
+    e.ok = off + 4 <= sizeof(e.atom) && (off & 3) == 0 && off != 0x18;
+    if (!e.ok) {
+        std::fprintf(stderr, "[rfx] plugin offset [0x007dc57c] = 0x%x does not fit the stand-in atomic\n", off);
+        return;
+    }
+    std::uint8_t* atom = reinterpret_cast<std::uint8_t*>(e.atom);
+    *reinterpret_cast<PTank**>(atom + off) = &e.tank;
+    *reinterpret_cast<std::uint32_t**>(atom + 0x18) = e.geo;
+    e.mat_list[0] = &e.mat0;
+    *reinterpret_cast<Emitter::Material***>(reinterpret_cast<std::uint8_t*>(e.geo) + 0x20) = e.mat_list;
+    e.batch.atomic = atom;
 
     // FUN_00534b60(cap, d, 0) -> FUN_00534d00: +0 / +4 / +0xa0 / +0x40 / +0x3c (0x00534d67..0x00534d80).
     // Not transcribed: the ARRAY-layout allocation (0x0053510c..). The port sizes each array max_count
-    // elements by its data flag, at the element sizes FUN_00476df0 copies.
+    // elements by its data flag, packed (stride = the element size FUN_00476df0 copies).
     PTank& t = e.tank;
     t.max_count = cap;
     t.count = 0;
@@ -109,28 +421,28 @@ void Create(Emitter& e, std::uint32_t flags, std::int32_t cap, const void* textu
     t.dirty = 0xffffffffu;
     t.lock_bits = 0;
     const std::size_t n = cap > 0 ? static_cast<std::size_t>(cap) : 0;
-    Resize(t.pos, (t.data_flags & 1) != 0, n * 3);
-    Resize(t.size, (t.data_flags & 4) != 0, n * 2);
-    Resize(t.col, (t.data_flags & 2) != 0, n);
-    Resize(t.mat, (t.data_flags & 8) != 0, n * 16);
-    Resize(t.rot, (t.data_flags & 0x20) != 0, n);
-    Resize(t.uv2, (t.data_flags & 0x80) != 0, n * 4);
-    Resize(t.uv4, (t.data_flags & 0x100) != 0, n * 8);
+    t.pos  = {Alloc(e.t_pos,  (t.data_flags & 1) != 0, n, 3),     12};
+    t.size = {Alloc(e.t_size, (t.data_flags & 4) != 0, n, 2),     8};
+    t.col  = {Alloc(e.t_col,  (t.data_flags & 2) != 0, n, 1),     4};
+    t.mat  = {Alloc(e.t_mat,  (t.data_flags & 8) != 0, n, 16),    64};
+    t.rot  = {Alloc(e.t_rot,  (t.data_flags & 0x20) != 0, n, 1),  4};
+    t.uv2  = {Alloc(e.t_uv2,  (t.data_flags & 0x80) != 0, n, 4),  16};
+    t.uv4  = {Alloc(e.t_uv4,  (t.data_flags & 0x100) != 0, n, 8), 32};
 
     // the matrix template DAT_00692558 (FUN_004770c0 decomp); +0x0c / +0x1c / +0x2c / +0x3c are left as they are
-    std::uint32_t* m = g_stage.tmpl;
+    std::uint32_t* m = reinterpret_cast<std::uint32_t*>(kTemplate);
     m[3] |= 0x20003u;
     m[10] = 0x3f800000u; m[5] = 0x3f800000u; m[0] = 0x3f800000u;
     m[4] = 0; m[2] = 0; m[1] = 0; m[9] = 0; m[8] = 0; m[6] = 0; m[14] = 0; m[13] = 0; m[12] = 0;
 
-    e.flags = flags;
+    e.batch.flags = flags;
     if (static_cast<std::int8_t>(flags) < 0) SetBatchB8(e, nullptr);
     if (flags & 0x100) SetBatchColour(e, nullptr);
     if (flags & 0x200) SetBatchMatrix(e, nullptr);
     if (flags & 0x400) SetBatchC0(e, 0);
     if (flags & 0x800) SetBatchUv2(e, nullptr);
     if (flags & 0x1000) SetBatchUv4(e, nullptr);
-    t.texture = texture;                             // FUN_004e8090(material 0, param_4)
+    e.mat0.texture = texture;                        // FUN_004e8090(material 0, param_4)
     t.vtx_alpha = 1;
     t.src_blend = k006132c4;
     t.dst_blend = k006132c8;
@@ -138,123 +450,63 @@ void Create(Emitter& e, std::uint32_t flags, std::int32_t cap, const void* textu
     t.dirty |= 0x800000u;
     t.count = 0;
     // FUN_004c0b30 / FUN_004e7e30: a fresh frame (identity LTM) on the atomic.
-    e.capacity = cap;
-    Resize(e.pos, (flags & 1) != 0, n * 3);          // FUN_00474db0(cap, 0xc)
-    Resize(e.size, (flags & 2) != 0, n * 2);         // (cap, 8)
-    Resize(e.col, (flags & 4) != 0, n);              // (cap, 4)
-    Resize(e.mat, (flags & 8) != 0, n * 16);         // (cap, 0x40)
-    Resize(e.rot, (flags & 0x10) != 0, n);           // (cap, 4)
-    Resize(e.uv2, (flags & 0x20) != 0, n * 4);       // (cap * 2, 8)
-    Resize(e.uv4, (flags & 0x40) != 0, n * 8);       // (cap * 4, 8)
+    Batch& b = e.batch;
+    b.capacity = cap;
+    b.pos  = Alloc(e.b_pos,  (flags & 1) != 0, n, 3);      // FUN_00474db0(cap, 0xc)
+    b.size = Alloc(e.b_size, (flags & 2) != 0, n, 2);      // (cap, 8)
+    b.col  = Alloc(e.b_col,  (flags & 4) != 0, n, 1);      // (cap, 4)
+    b.mat  = Alloc(e.b_mat,  (flags & 8) != 0, n, 16);     // (cap, 0x40)
+    b.rot  = Alloc(e.b_rot,  (flags & 0x10) != 0, n, 1);   // (cap, 4)
+    b.uv2  = Alloc(e.b_uv2,  (flags & 0x20) != 0, n, 4);   // (cap * 2, 8)
+    b.uv4  = Alloc(e.b_uv4,  (flags & 0x40) != 0, n, 8);   // (cap * 4, 8)
 }
 
-// 0x004769a0
-void SetPos(const float* p) {
-    const std::uint32_t* s = p ? reinterpret_cast<const std::uint32_t*>(p) : k006925a8;
-    g_stage.pos[0] = s[0]; g_stage.pos[1] = s[1]; g_stage.pos[2] = s[2];
-}
-// 0x004769d0
-void SetSize(const float* p) {
-    const std::uint32_t* s = p ? reinterpret_cast<const std::uint32_t*>(p) : k00613288;
-    g_stage.size[0] = s[0]; g_stage.size[1] = s[1];
-}
-// 0x004769f0
-void SetColour(const std::uint32_t* p) { g_stage.col = p ? *p : k00613290; }
-// 0x00476a10 (default: the template, 0x00476a1a)
-void SetMatrix(const std::uint32_t* p) {
-    std::memcpy(g_stage.mat, p ? p : g_stage.tmpl, sizeof(g_stage.mat));
-}
-// 0x00476a30 (no null guard: the value itself)
-void SetRotate(float r) { g_stage.rot = U(r); }
-// 0x00476a40
-void SetUv2(const float* p) {
-    std::memcpy(g_stage.uv2, p ? static_cast<const void*>(p) : k00613294, sizeof(g_stage.uv2));
-}
-// 0x00476a80
-void SetUv4(const float* p) {
-    std::memcpy(g_stage.uv4, p ? static_cast<const void*>(p) : k006132a4, sizeof(g_stage.uv4));
+void SetRotate(float r) { ParticleEmitter_SetScalar(U(r)); }
+
+void SetBatchColour(Emitter& e, const std::uint32_t* rgba) {
+    Set476b30(reinterpret_cast<std::uint8_t*>(&e.batch),
+              reinterpret_cast<std::uint8_t*>(const_cast<std::uint32_t*>(rgba)));
+    e.c4_set = true;
 }
 
-// 0x00476ae0
-void SetBatchB8(Emitter& e, const std::uint32_t* v) {
-    const std::uint32_t* s = v ? v : k00613288;
-    e.tank.f_b8[0] = s[0]; e.tank.f_b8[1] = s[1];
-    e.tank.dirty |= 0x4000;
-}
-// 0x00476b30 (+ material 0 +4 at 0x00476b74; the port's material always exists)
-void SetBatchColour(Emitter& e, const std::uint32_t* v) {
-    e.tank.f_c4 = v ? *v : k00613290;
-    e.tank.f_c4_set = true;
-    e.tank.material_colour = e.tank.f_c4;
-    e.tank.dirty |= 0x2000;
-}
-// 0x00476b90 (default: the template, 0x00476b9a)
-void SetBatchMatrix(Emitter& e, const std::uint32_t* v) {
-    std::memcpy(e.tank.f_f8, v ? v : g_stage.tmpl, sizeof(e.tank.f_f8));
-    e.tank.dirty |= 0x8000;
-}
-// 0x00476be0
-void SetBatchC0(Emitter& e, std::uint32_t v) {
-    e.tank.f_c0 = v;
-    e.tank.dirty |= 0x20000;
-}
-// 0x00476c10
-void SetBatchUv2(Emitter& e, const std::uint32_t* v) {
-    std::memcpy(e.tank.f_d8, v ? v : k00613294, 4 * sizeof(std::uint32_t));
-    e.tank.dirty |= 0x80000;
-}
-// 0x00476c60
-void SetBatchUv4(Emitter& e, const std::uint32_t* v) {
-    std::memcpy(e.tank.f_d8, v ? v : k006132a4, 8 * sizeof(std::uint32_t));
-    e.tank.dirty |= 0x100000;
-}
-// 0x00476cb0
-void SetBlend(Emitter& e, std::int32_t src, std::int32_t dst) {
-    e.tank.src_blend = src;
-    e.tank.dst_blend = dst;
-    e.tank.dirty |= 0x10000000u;
-}
-
-// 0x00476d00
-void Submit(Emitter& e) {
-    if (e.count >= e.capacity) return;
-    const std::size_t i = static_cast<std::size_t>(e.count);
-    if (!e.pos.empty()) std::memcpy(&e.pos[i * 3], g_stage.pos, 12);
-    if (!e.size.empty()) std::memcpy(&e.size[i * 2], g_stage.size, 8);
-    if (!e.col.empty()) e.col[i] = g_stage.col;
-    if (!e.mat.empty()) std::memcpy(&e.mat[i * 16], g_stage.mat, 64);
-    if (!e.rot.empty()) e.rot[i] = g_stage.rot;
-    if (!e.uv2.empty()) std::memcpy(&e.uv2[i * 4], g_stage.uv2, 16);
-    if (!e.uv4.empty()) std::memcpy(&e.uv4[i * 8], g_stage.uv4, 32);
-    ++e.count;
-}
-
-// 0x00476df0. Each array goes through FUN_00535700 (lock, 0x40000000) and one FUN_00535910 (unlock) ends
-// the batch. A lock on a flag the PTank lacks returns a null pointer, which the original then writes
-// through; the port skips that copy (no caller pairs such flags).
+// 0x00476df0. plugin +0x40 |= 0x800000, plugin +4 = count; then each present batch array goes through
+// FUN_00535700 (lock, mode 0x40000000) and is copied element by element at the lock's stride; one
+// FUN_00535910 (unlock: +0x40 |= +0x3c, +0x3c = 0) ends the batch and the count is cleared. A lock on a flag
+// the PTank lacks returns a null pointer, which the original then writes through; the port skips that copy
+// (no caller pairs such flags).
 void Flush(Emitter& e) {
-    PTank& t = e.tank;
+    if (!e.ok) return;
+    Batch& b = e.batch;
+    PTank& t = *reinterpret_cast<PTank*>(Plugin(&b));
     t.dirty |= 0x800000u;
-    t.count = e.count;
-    if (e.count == 0) return;
-    const std::size_t n = static_cast<std::size_t>(e.count);
-    auto copy = [&](const std::vector<std::uint32_t>& src, std::vector<std::uint32_t>& dst,
-                    std::uint32_t lock, std::size_t per) {
-        if (src.empty()) return;
-        if ((t.data_flags & lock) == 0 || dst.empty()) return;
-        t.lock_bits |= lock | 0x40000000u;
-        std::memcpy(dst.data(), src.data(), n * per * 4);
+    t.count = b.count;
+    if (b.count == 0) return;
+    const int n = b.count;
+    auto copy = [&](const std::uint32_t* src, std::uint32_t flag, std::size_t per) {
+        if (!src) return;
+        const Lock l = LockArray(t, flag, 0x40000000u);
+        if (!l.ptr) return;
+        std::uint8_t* dst = reinterpret_cast<std::uint8_t*>(l.ptr);
+        for (int i = 0; i < n; ++i, dst += l.stride)
+            std::memcpy(dst, src + static_cast<std::size_t>(i) * per, per * 4);
     };
-    copy(e.pos, t.pos, 1, 3);
-    copy(e.size, t.size, 4, 2);
-    copy(e.col, t.col, 2, 1);
-    copy(e.mat, t.mat, 8, 16);
-    copy(e.rot, t.rot, 0x20, 1);
-    copy(e.uv2, t.uv2, 0x80, 4);
-    copy(e.uv4, t.uv4, 0x100, 8);
+    copy(b.pos, 1, 3);
+    copy(b.size, 4, 2);
+    copy(b.col, 2, 1);
+    copy(b.mat, 8, 16);
+    copy(b.rot, 0x20, 1);
+    copy(b.uv2, 0x80, 4);
+    copy(b.uv4, 0x100, 8);
     t.dirty |= t.lock_bits;                          // FUN_00535910
     t.lock_bits = 0;
-    e.count = 0;
+    b.count = 0;
+}
+
+const std::uint32_t* TankElem(const PTank& t, const Lock& l, int i) {
+    if (!l.ptr) return nullptr;
+    const std::uint32_t stride = t.stride_all != 0 ? t.stride_all : l.stride;
+    return reinterpret_cast<const std::uint32_t*>(reinterpret_cast<const std::uint8_t*>(l.ptr) +
+                                                  static_cast<std::size_t>(i) * stride);
 }
 
 // 0x00536780
@@ -286,12 +538,12 @@ Callbacks SelectCallbacks(std::uint32_t f) {
     return c;
 }
 
-bool Instance(const PTank& t, const float r[3], const float u[3], Streams& out) {
+bool Instance(const PTank& t, bool c4_known, const float r[3], const float u[3], Streams& out) {
     const Callbacks cb = SelectCallbacks(t.data_flags);
     if (cb.pos != 0x00536e90 && cb.pos != 0x00536fe0) return false;
     if (cb.uv != 0 && cb.uv != 0x00537d70 && cb.uv != 0x00537e60) return false;
     if (cb.col != 0x00537b20 && cb.col != 0x00537d20) return false;
-    if (cb.col == 0x00537d20 && !t.f_c4_set) return false;   // +0xc4 initial value not transcribed
+    if (cb.col == 0x00537d20 && !c4_known) return false;   // +0xc4 initial value not transcribed
     if (cb.normal != 0) return false;
     const int n = t.count;
     if (n <= 0) { out.xyz.clear(); out.uv.clear(); out.argb.clear(); return true; }
@@ -300,8 +552,10 @@ bool Instance(const PTank& t, const float r[3], const float u[3], Streams& out) 
     out.argb.assign(static_cast<std::size_t>(n) * 4, 0u);
     float* o = out.xyz.data();
     for (int i = 0; i < n; ++i, o += 12) {
-        const float px = F(t.pos[i * 3]), py = F(t.pos[i * 3 + 1]), pz = F(t.pos[i * 3 + 2]);
-        const float sx = F(t.size[i * 2]), sy = F(t.size[i * 2 + 1]);
+        const std::uint32_t* P = TankElem(t, t.pos, i);
+        const std::uint32_t* S = TankElem(t, t.size, i);
+        const float px = F(P[0]), py = F(P[1]), pz = F(P[2]);
+        const float sx = F(S[0]), sy = F(S[1]);
         float Xx, Xy, Xz, Yx, Yy, Yz;
         if (cb.pos == 0x00536e90) {
             // 0x00536ed0..0x00536f11
@@ -312,7 +566,7 @@ bool Instance(const PTank& t, const float r[3], const float u[3], Streams& out) 
         } else {
             // 0x00537042..0x00537133: fsincos, then the rotated pair scaled by size * 0.5
             float s, c;
-            SinCos24(F(t.rot[i]), &s, &c);
+            SinCos24(F(*TankElem(t, t.rot, i)), &s, &c);
             const float ns = -s;
             const float r0x = (ns * u[0]) + (c * r[0]);
             const float r0y = (ns * u[1]) + (c * r[1]);
@@ -332,7 +586,7 @@ bool Instance(const PTank& t, const float r[3], const float u[3], Streams& out) 
     // uv: (u0,v1) (u1,v1) (u1,v0) (u0,v0) from a per-particle (u0,v0,u1,v1) (0x00537d70) or plugin +0xd8
     // (0x00537e60)
     for (int i = 0; i < n && cb.uv; ++i) {
-        const std::uint32_t* q = (cb.uv == 0x00537d70) ? &t.uv2[static_cast<std::size_t>(i) * 4] : t.f_d8;
+        const std::uint32_t* q = (cb.uv == 0x00537d70) ? TankElem(t, t.uv2, i) : t.f_d8;
         float* w = &out.uv[static_cast<std::size_t>(i) * 8];
         w[0] = F(q[0]); w[1] = F(q[3]);
         w[2] = F(q[2]); w[3] = F(q[3]);
@@ -341,7 +595,7 @@ bool Instance(const PTank& t, const float r[3], const float u[3], Streams& out) 
     }
     // colour: the RGBA bytes b0..b3 packed b3<<24 | b0<<16 | b1<<8 | b2 on all four vertices
     for (int i = 0; i < n; ++i) {
-        const std::uint32_t v = (cb.col == 0x00537b20) ? t.col[static_cast<std::size_t>(i)] : t.f_c4;
+        const std::uint32_t v = (cb.col == 0x00537b20) ? *TankElem(t, t.col, i) : t.f_c4;
         const std::uint32_t b0 = v & 0xff, b1 = (v >> 8) & 0xff, b2 = (v >> 16) & 0xff, b3 = v >> 24;
         const std::uint32_t argb = (b3 << 24) | (b0 << 16) | (b1 << 8) | b2;
         for (int k = 0; k < 4; ++k) out.argb[static_cast<std::size_t>(i) * 4 + k] = argb;

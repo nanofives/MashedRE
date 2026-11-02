@@ -15,6 +15,8 @@
 import json, os, sys, time
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 try:
     import psutil
 except ImportError:
@@ -93,9 +95,11 @@ def main():
 
     print(f"spawning MASHED.exe  ONLY=[{candidates}]  watch={seconds}s")
     device = frida.get_local_device()
-    pid = device.spawn(str(EXE), cwd=str(ORIG), env=env)
+    # D5-SHIM-DINPUT8-SPAWNERS: the asi is Module.loaded and InjectHooks called before the
+    # first resume (dev_asi, MASHED_HOOK_ONLY honoured), not loaded by the dinput8 proxy.
+    _p, session, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, cwd=ORIG, device=device, resume=False)
+    pid = _p.pid
     print(f"  pid={pid}")
-    session = device.attach(pid)
 
     state = {"crash": None, "ready": False}
     def on_message(msg, data):

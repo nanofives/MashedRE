@@ -48,12 +48,13 @@ function Test-Range([int]$lo, [int]$hi, [switch]$WithManifest) {
   if ($WithManifest) { $env:MASHED_HOOK_MANIFEST = $Manifest } else { Remove-Item Env:\MASHED_HOOK_MANIFEST -EA SilentlyContinue }
   $died = 0
   for ($i=1; $i -le $Runs; $i++) {
-    $p = Start-Process -FilePath $Exe -WorkingDirectory $Wd -PassThru
-    $sw = [Diagnostics.Stopwatch]::StartNew()
-    $exited = $p.WaitForExit($Seconds * 1000)     # trap: never poll HasExited
-    $t = [math]::Round($sw.Elapsed.TotalSeconds,2)
-    if ($exited) { $died++; $code = $p.ExitCode; $last = "DIED ${t}s 0x$('{0:X8}' -f $code)" }
-    else { Stop-Process -Id $p.Id -Force; $last = "BOOTS ${t}s" }
+    # D5-SHIM-DINPUT8-SPAWNERS: the dev asi no longer comes from the dinput8 proxy. dev_asi.py boot
+    # spawns MASHED with MASHED_RE_NO_AUTO_HOOK=1, Module.loads the asi + InjectHooks before resume
+    # (MASHED_HOOK_LO/HI/MANIFEST from this env reach InstallAll), waits, kills only its own pid.
+    $line = & py.exe -3.12 (Join-Path $Repo 're\frida\dev_asi.py') boot --seconds $Seconds --exe $Exe | Select-Object -Last 1
+    if ($line -match '^DIED (\S+) (0x[0-9A-F]{8})') { $died++; $last = "DIED $($Matches[1])s $($Matches[2])" }
+    elseif ($line -match '^BOOTS (\S+)') { $last = "BOOTS $($Matches[1])s" }
+    else { $died++; $last = "ERROR $line" }
     Start-Sleep -Milliseconds 1500
   }
   Remove-Item Env:\MASHED_HOOK_LO,Env:\MASHED_HOOK_HI -EA SilentlyContinue
