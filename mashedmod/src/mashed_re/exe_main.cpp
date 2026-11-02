@@ -178,6 +178,7 @@
 #include "Frontend/RowMovers.h"             // FrontendModeIndexFor: 0x004309b0 (challenge launch gate)
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
+#include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 #include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default ON, L-27)
@@ -2121,6 +2122,10 @@ void ModalGo(int step) {
 static void MenuLaunchRace(int launchMode) {
     char piz[160];
     RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
+    // [MATCH-PORTSTATE-GAMEFLOW] knob ON: the mode word is written before the course load, as the original's
+    // frontend does (0x0043dfd0), and the phase word leaves the frontend (0x004929d0 case 1 -> 2).
+    mashed_re::Race::GameModeState_PreLoad(launchMode);
+    mashed_re::Race::GameModeState_SetPhase(2);
     if (g_track.Load(g_device, piz, kLogPath)) {
         mashed_re::Race::RaceConfig cfg;
         cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
@@ -9739,6 +9744,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                          g_settings.insults_on, g_settings.gamma, g_settings.autosave);
             std::fclose(lf);
         }
+        // [MATCH-PORTSTATE-GAMEFLOW] knob ON: phase 1, the original main-loop init 0x00492770 (0x0049278e), before
+        // the dev-race route below can move it to 2 / 3.
+        mashed_re::Race::GameModeState_SetPhase(1);
         // R4: MASHED_TRACK_VIEW=<1 | track name | piz path> -> fly-through.
         // A bare name (no slash, no .piz) resolves to TRACKS/<name>.piz.
         {
@@ -9756,6 +9764,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     std::snprintf(path, sizeof(path), "%s", tv);
                 }
                 CreateDirectoryA("verify\\r4", nullptr);
+                // [MATCH-PORTSTATE-GAMEFLOW] knob ON, race route (MASHED_ROUND): the game mode word before the course
+                // load (the value the R6 block below writes after it) and phase 2 (0x004929d0 case 1 -> 2).
+                if (mashed_re::Race::GameModeState_On() && GetEnvironmentVariableA("MASHED_ROUND", nullptr, 0) > 0) {
+                    char gm[8] = {};
+                    int g = -1;
+                    if (GetEnvironmentVariableA("MASHED_GAME_MODE", gm, sizeof(gm)) > 0) g = std::atoi(gm);
+                    if (!(g >= 2 && g <= 10)) g = 3;
+                    mashed_re::Race::GameModeState_PreLoad(g);
+                    mashed_re::Race::GameModeState_SetPhase(2);
+                }
                 g_track_view = g_track.Load(g_device, path, kLogPath);
                 // R5: MASHED_CAR=<1 | vehicle piz path> -> spawn the Advantage
                 // car (or the named vehicle's *0.DFF) on the collision ground.
@@ -9798,6 +9816,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                             *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = g;
                         }
                         g_track.StartMatch();
+                        mashed_re::Race::GameModeState_SetPhase(3);   // [MATCH-PORTSTATE-GAMEFLOW] case 2 -> 3
                         // [D3 2026-09-26] place the power-up orbs, as the frontend
                         // race path does (RaceSession.cpp:152). Without it this dev
                         // race had ZERO orbs, measured by the MASHED_PU_STEPDUMP orb

@@ -1,0 +1,30 @@
+0x004927c0  none
+0x0042c2e0  exe+asi  GetDat0067ecb8  Match/MatchS07_0042c2e0.cpp
+0x0042c2d0  exe+asi  GetDat0067ecb4  Match/MatchS07_0042c2d0.cpp
+0x0042b940  exe+asi  StatePhaseSubSet  Match/MatchS07_0042b940.cpp
+0x0042c2f0  asi      SetDat0067ecb8  Match/MatchS07_0042c2f0.cpp
+0x0042b930  exe+asi  MenuAlphaGet  Match/MatchS07_0042b930.cpp
+0x0042b8d0  exe+asi  StatePhaseIsIdle  Match/MatchS07_0042b8d0.cpp
+0x0040d440  asi      Course_LoadCurrent_40d440  Track/CourseLoadDispatch.cpp
+0x0042c1d0  exe+asi  RaceStateArrayZero  Match/MatchS07_0042c1d0.cpp
+0x0042c220  none
+0x0042c280  asi      Init42c280  Match/MatchS07_0042c280.cpp
+0x0042c1c0  exe+asi  RaceInterruptFlagGet  Match/MatchS07_0042c1c0.cpp
+0x0042f6a0  exe+asi  GetRaceSubMode  Match/MatchS07_0042f6a0.cpp
+0x0040e350  asi      GetRenderSubMode  Ai/PromoLoop_round1.cpp
+0x005c9d00  none
+0x00432080  asi      RaceEndCheckFinish  Match/MatchS07_00432080.cpp
+0x0040e450  asi      Flag63b908Get  Util/PromoLoop_round26.cpp
+0x0042b910  exe+asi  RaceEndConstGet  Match/MatchS07_0042b910.cpp
+0x004331a0  exe+asi  RaceFinalizeOnce  HUD/ScenarioWriters_sa2s2.cpp
+0x0040b6e0  asi      Add40b6e0  Util/PromoLoop_sessionB.cpp
+0x0040b540  asi      PlayerScoreRankOrder  Gameplay/ScoreMasks_ah3.cpp
+0x0042f500  exe+asi  GetDat0067ea64  Match/MatchS07_0042f500.cpp
+0x0040b6d0  exe+asi  UtilArrayGet8a94e0  Match/MatchS02_0040b6d0.cpp
+0x0040b430  exe+asi  UtilFieldAdd8a94f0  Match/MatchS02_0040b430.cpp
+0x0040b700  none
+0x00448700  exe+asi  VehicleSeedWritePair  Vehicle/VehicleSeed.cpp
+0x0040e460  asi      Flag63b908Set  Util/PromoLoop_round26.cpp
+0x0042b8f0  exe+asi  StatePhaseIsFinal  Match/MatchS07_0042b8f0.cpp
+0x0042b8e0  exe+asi  StatePhaseIsTwo  Match/MatchS07_0042b8e0.cpp
+0x0040d270  none

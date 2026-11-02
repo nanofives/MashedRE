@@ -16,6 +16,9 @@
 #include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
 #include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
 #include "../Render/TrackHookSlots.h"        // [rhooks U-9713] per-track hook-slot draw model
+#include "../Track/CourseTableState.h"     // [MATCH-PORTSTATE-COURSE] course table port-state (knob)
+#include "../Race/GameModeState.h"        // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
+#include "../Vehicle/RecordBlockState.h"  // [MATCH-PORTSTATE-RECORDS] car record block port-state (knob)
 #include "../Track/KfInterpolate.h"          // [kfdot] 0x00532b80, the one body
 #include "../Track/WarzonePontoon.h"         // [pontoon] Warzone track object 0x00684d18 (MASHED_PONTOON_*)
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
@@ -3483,6 +3486,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         g_aib.loaded  = s_gate_ribbon ? false : Ai_BridgeLoad(course_id_, piz_path);
     }
 
+    // [MATCH-PORTSTATE-COURSE, L-78 (c)] MASHED_PORTSTATE_COURSE (default OFF): the original's course tables
+    // 0x005f2570 / 0x005f2728 / 0x005f33f8 / 0x005f37a0 seeded and 0x0063d7e4 selected by the matched 0x0041e870.
+    mashed_re::Track::CourseTableState_OnCourseLoad(course_id_);
+    // [MATCH-PORTSTATE-GAMEFLOW, L-78 (c)] MASHED_PORTSTATE_GAMEFLOW (default OFF): the course index words
+    // 0x0067f17c / 0x0067ea94 / 0x0063ba7c / 0x0063ba78 hold the loaded course's row (Race/GameModeState.cpp).
+    mashed_re::Race::GameModeState_OnCourseLoad(course_id_);
+
     // render-world soup for spawn validation (visible-surface heights)
     for (const auto& s : world.sectors) {
         const std::uint32_t vbase =
@@ -6309,6 +6319,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
         // [u9749] MASHED_RECDUMP (diagnostic, default OFF): one record per race frame after every car's physics
         if (phys) Vehicle::VehiclePhysics_RecDumpFrame();
+        // [MATCH-PORTSTATE-RECORDS] MASHED_PORTSTATE_RECORDS witness (knob ON only; reads, writes nothing)
+        if (phys) Vehicle::PortStateRecords_FrameWitness();
         // [u9745ov] default ON since c2k93 (opt-out deleted, D5-KNOBS-RUNARMS-STACKS): FUN_0040fc00's DAT_007f0ff4 / DAT_007f0ff8 add, at the end of the
         // frame (0x0040fe4f..0x0040fe64), after the AI tick, the physics and the drain above
         // [u9779] MASHED_ROUND_END7: sub-state 7 skips the add (0x0040fe46 / 0x0040fe4d)
