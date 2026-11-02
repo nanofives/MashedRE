@@ -20,10 +20,13 @@
 import os, shutil, struct, subprocess, sys, time
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 ORIG = ROOT / "original"
 EXE  = ORIG / "MASHED.exe"
+EXE = dev_asi.original_exe(EXE); ORIG = EXE.parent   # MASHED_ROOT private roots (dev_asi)
 NAV  = (Path(__file__).resolve().parent / "nav_agent.js").read_text(encoding="utf-8")
 
 A4   = 0x00470670
@@ -120,20 +123,18 @@ def main():
     env = dict(os.environ)
     env["MASHED_RE_DEV"] = "1"
     env["MASHED_HOOK_ONLY"] = "ZZ_NO_HOOK_INSTALLED_ZZ"   # .asi loads, installs NOTHING
-    env.pop("MASHED_RE_NO_AUTO_HOOK", None)
-    NPG, DET = 0x00000200, 0x00000008
+    HOOKS_ON = True                                          # load the asi (dev_asi below)
     dev = frida.get_local_device()
 
     def spawn_attach():
-        p = subprocess.Popen([str(EXE)], cwd=str(ORIG), env=env,
-            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            creationflags=NPG | DET)
-        time.sleep(0.2)
-        try: return p, dev.attach(p.pid)
-        except Exception:
-            try: p.kill()
-            except Exception: pass
-            return p, None
+        # D5-SHIM-DINPUT8-SPAWNERS: frida spawn; the asi is Module.loaded and InjectHooks called
+        # before the first resume (dev_asi), in place of Popen + the dinput8 proxy's autoload.
+        try:
+            p, s, _asi = dev_asi.spawn_original(EXE, hooks=HOOKS_ON, env=env, cwd=ORIG, device=dev)
+            return p, s
+        except Exception as e:
+            print("  spawn/load failed:", e)
+            return None, None
 
     proc = sess = None
     for attempt in range(5):

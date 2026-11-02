@@ -1,0 +1,90 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+FUN_004260e0	0x00149480	0	no	no	
+FUN_004262f0	0x00149680	0	no	no	
+FUN_00426d20	0x00149810	0	no	no	
+FUN_00427680	0x00149970	4	no	no	_FUN_00427e00+0x9c;_FUN_00427f00+0x8d;_FUN_00427ff0+0xa7;_FUN_00428140+0x83
+FUN_00427880	0x00149c50	1	no	no	_FUN_00427ca0+0x8c
+FUN_004278d0	0x00149ca0	0	no	no	
+FUN_00427990	0x00149d50	0	no	no	
+FUN_00427be0	0x00149fa0	0	no	no	
+FUN_00427ca0	0x0014a060	0	no	no	
+FUN_00427e00	0x0014a180	35	no	no	_FUN_004288a0+0x73;_FUN_004288a0+0xf3;_FUN_004288a0+0x16e;_FUN_004288a0+0x19e;_FUN_004288a0+0x1ce;_FUN_004288a0+0x1fe;_FUN_004288a0+0x22e;_FUN_00428a30+0x174
+FUN_00427f00	0x0014a280	0	no	no	
+FUN_00427ff0	0x0014a370	0	no	no	
+FUN_00428140	0x0014a4e0	0	no	no	
+FUN_004288a0	0x0014a940	1	no	no	_FUN_00428a30+0x136
+FUN_00428a30	0x0014ab80	1	no	no	_FUN_00429290+0x2e
+FUN_00428d30	0x0014ae90	1	no	no	_FUN_00429290+0x4c
+FUN_00429290	0x0014b370	0	no	no	
+FUN_004292d0	0x0014b400	0	no	no	
+FUN_00429620	0x0014b4e0	1	no	no	_FUN_00429660+0x20
+FUN_00429660	0x0014b530	2	no	no	_FUN_00429e10+0x35a;_FUN_00429e10+0x458
+FUN_00429e10	0x0014baa0	0	no	no	
+FUN_0042a470	0x0014c1e0	5	no	no	_FUN_0042a530+0x19;_FUN_0042a530+0x31;_FUN_0042a530+0x49;_FUN_0042a530+0x61;_FUN_0042a530+0x79
+FUN_0042a530	0x0014c2b0	6	no	no	_FUN_0042a5d0+0x56;_PathBuilderLoad+0x56;_FUN_0042a6b0+0x56;_FUN_0042a740+0x58;_FUN_0042a7f0+0x56;_FUN_0042a860+0x56
+FUN_0042a5d0	0x0014c370	0	no	no	
+FUN_0042a6b0	0x0014c470	1	no	no	_FUN_00427ca0+0x7c
+FUN_0042a740	0x0014c500	0	no	no	
+FUN_0042a7f0	0x0014c5c0	0	no	no	
+FUN_0042a860	0x0014c640	0	no	no	
+FUN_0042a8d0	0x0014c6c0	0	no	no	
+Find42ad90	0x0014ca30	9	yes	no	_Find42ad90 <- ?Nav_DevGoto@Frontend@mashed_re@@YAXH@Z <- _WinMain@16
+FontText_StringTableLookup	0x00149ab0	6	no	yes	_FUN_004278d0+0x21;_FUN_00427990+0x47;_MenuMenusBB+0x21;_FUN_00427e00+0x21;_FUN_00427ff0+0x2c;_FUN_00428140+0x21
+FontText_UTF16WidenCopy	0x00149b70	0	no	yes	
+FontText_UTF16WidenCopyBody	0x00149b80	4	no	no	_FontText_UTF16WidenCopy+0x2;_FUN_00427be0+0x21;_FUN_00427f00+0x32;_TextWidthMeasureB+0x21
+FrontendArraySlotGet	0x001497f0	8	yes	yes	_FrontendArraySlotGet <- _PP_407e20 <- _PP_408610 <- ?PathProg_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+FrontendFloatGet426de0	0x00149900	0	no	yes	
+FrontendFloatGet426df0	0x00149910	0	no	yes	
+FrontendQuadParamInit427580	0x00149920	0	no	yes	
+FrontendRaycastForward	0x001498e0	0	no	yes	
+GameStateFlagGet	0x00149740	0	no	yes	
+GameStateSlotsFill	0x0014b940	0	no	yes	
+GetDat00657438	0x00149460	0	no	yes	
+GetDat0065743c	0x00149470	0	no	yes	
+GetDat0066d6e0	0x00149700	1	yes	yes	_GetDat0066d6e0 <- _SnapNodeToSafeStartLines <- ?RoundGrid_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+GetDat0066d6e4	0x001497e0	1	yes	yes	_GetDat0066d6e4 <- _PP_408610 <- ?PathProg_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+GetDat0067d84c	0x0014a050	2	no	yes	_FUN_00428a30+0x15;_TitleBuildInfoRender+0x14
+GetTableEntry0066d658	0x00149710	1	yes	yes	_GetTableEntry0066d658 <- _SnapNodeToSafeStartLines <- ?RoundGrid_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+Global66d6d8Get	0x001496f0	5	yes	yes	_Global66d6d8Get <- _TG_414a70 <- ?TargetClosest_MaybeReplay@Ai@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+GlobalDat00656ed8Get	0x00149440	0	no	yes	
+GlobalDat0066ce58Get	0x00149450	8	yes	yes	_GlobalDat0066ce58Get <- _RangeTableMemberTest <- _PP_408610 <- ?PathProg_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+HandleArrayRelease	0x001498b0	0	no	no	
+HudDrawEnabled	0x001496e0	0	no	yes	
+HudDualLabelRender	0x0014b440	3	no	yes	_FUN_00429e10+0x28c;_FUN_00429e10+0x2a4;_FUN_00429e10+0x3d0
+HudOverlayFloatGet	0x0014b420	1	no	yes	_FUN_00429620+0x1
+Init429b30	0x0014b9e0	0	no	yes	
+Init429b70	0x0014ba30	0	no	yes	
+LapFracGetBySlot	0x0014b910	0	no	yes	
+LapLapsGetBySlot	0x0014b920	0	no	yes	
+LapSecsGetBySlot	0x0014b930	0	no	yes	
+LapTimeALessThanB	0x0014b7b0	0	no	yes	
+MenuDimSet	0x0014c780	0	no	yes	
+MenuDimSetBody	0x0014c790	1	no	no	_MenuDimSet+0x3
+MenuEntryGet	0x0014c9a0	0	no	yes	
+MenuIm2DQuad	0x0014c7b0	0	no	yes	
+MenuMenusBB	0x00149e90	0	no	yes	
+MenuMenusBE	0x0014b8c0	0	no	yes	
+MenuReadinessCheckA	0x0014ca80	0	no	yes	
+ModeCodeLookup	0x0014c720	2	yes	yes	_ModeCodeLookup <- _PromptStripResolve <- ?PromptStripAppend@?A0xb231a419@1Frontend@mashed_re@@YAXHHH@Z <- ?Nav_DevGoto@Frontend@mashed_re@@YAXH@Z <- _WinMain@16
+PathBuilderLoad	0x0014c3f0	0	no	no	
+SlotIndexToPtr	0x001497c0	7	yes	yes	_SlotIndexToPtr <- _PP_407e20 <- _PP_408610 <- ?PathProg_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+TextCtrlCodeRemap	0x00149ac0	0	no	yes	
+TextCtrlCodeRemapBody	0x00149ad0	7	no	no	_TextCtrlCodeRemap+0x2;_FUN_004278d0+0x2a;_FUN_00427990+0x50;_MenuMenusBB+0x2a;_FUN_00427e00+0x2a;_FUN_00427ff0+0x35;_FUN_00428140+0x2a
+TextWidthMeasureB	0x0014a650	2	no	no	_FUN_00428a30+0x11f;_TitleBuildInfoRender+0x91
+TimeRecordWriteTrackBest	0x0014b850	0	no	yes	
+TimerDispatch10	0x00149750	0	no	yes	
+TimerDispatch30	0x00149780	0	no	yes	
+TimerDispatch70	0x001497a0	0	no	yes	
+TitleBuildInfoRender	0x0014ad40	1	no	no	_FUN_00429290+0x3d
+UtilInit898a90	0x0014c760	0	no	yes	
+UtilWritePtr	0x0014b3f0	0	no	yes	
+VehicleTable4cPtrGet	0x001497d0	4	yes	yes	_VehicleTable4cPtrGet <- _PP_407e20 <- _PP_408610 <- ?PathProg_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+ViewportInit	0x0014a6e0	0	no	no	
+ViewportScaledRectDraw	0x0014a760	1	no	yes	_ViewportScaledRectDraw_Arg7Zero+0x2c
+ViewportScaledRectDraw_Arg7Zero	0x0014a900	6	no	yes	_FUN_004288a0+0x3f;_FUN_004288a0+0x132;_TitleBuildInfoRender+0xce;_FUN_00428d30+0xc5;_FUN_00428d30+0x1c6;_FUN_00428d30+0x3e8
+Clear8991b0Pair	0x0014b790	0	no	yes	
+Clear67d99c_x4	0x0014b820	0	no	yes	
+@MenuGroupCount@8	0x0014c910	0	no	yes	
+Calc42ac50	0x0014c960	0	no	no	
+FUN_00429240	inlined	0	no	no	not a separate symbol in the exe (inlined into FUN_00429290, itself 0 sites)
+MenuGroupCountBody	inlined	0	no	no	inlined into @MenuGroupCount@8

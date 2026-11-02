@@ -27,9 +27,7 @@
 namespace {
 
 #ifdef MASHED_STANDALONE
-// Since D4-DC-INC-pathprog (2026-11-01) the exe binds the one body of FUN_00426cc0 (Vehicle/VehicleTable4c.cpp,
-// both targets) in place of the deleted PP_426cc0 copy. The .asi binding below is unchanged.
-extern "C" std::uint32_t __cdecl VehicleTable4cPtrGet(int param_1);
+extern "C" void VehicleTable4cPtrGet();                         // Match/MatchS06_00426cc0.cpp (MATCH-S06: replaces the naked PP_426cc0)
 void* s_fn_426cc0 = reinterpret_cast<void*>(&VehicleTable4cPtrGet);
 #else
 void* s_fn_426cc0 = reinterpret_cast<void*>(0x00426cc0u);       // the original inside MASHED.exe

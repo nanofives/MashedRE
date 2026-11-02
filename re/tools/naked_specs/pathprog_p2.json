@@ -2,8 +2,7 @@
   "funcs": [
     {"name": "PP_408610", "start": "0x00408610", "size": 1073},
     {"name": "PP_407e20", "start": "0x00407e20", "size": 1895},
-    {"name": "PP_407be0", "start": "0x00407be0", "size": 225},
-    {"name": "PP_407cd0", "start": "0x00407cd0", "size": 157}
+    {"name": "PP_407be0", "start": "0x00407be0", "size": 225}
   ],
   "calls": {
     "0x00407b00": "RangeTableFindGroup", "0x00407b70": "RangeTableMemberTest", "0x00407be0": "PP_407be0",

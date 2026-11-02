@@ -11,7 +11,6 @@
 //   (preserved in original\MASHED.exe.unpatched)
 
 #include "../Core/HookSystem.h"
-#include "MenuMeasure.h"
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
@@ -59,21 +58,11 @@ static auto* const s_FUN_00472c60 =
 static auto* const s_FUN_00417740 =
     reinterpret_cast<int(__cdecl*)(int)>(0x00417740u);
 
-// 0x00430790  FUN_00430790 — returns DAT_0067f17c (current player slot index) (C2)
-// Analysis: re/analysis/promote_c1_low_ab1/0x00430790.md
-static auto* const s_FUN_00430790 =
-    reinterpret_cast<int(__cdecl*)()>(0x00430790u);
-
 // ---------------------------------------------------------------------------
-// MenuMenusBA: the body is Frontend/MenuMeasure.cpp, shared with the exe (D4-DC-82a0, 2026-10-25).
-// This TU supplies the .asi's cells: the original's callees at their absolute addresses and the
-// addresses of the two globals the body reads (font context at 0x004282dd, divisor at 0x004282f1).
-// ---------------------------------------------------------------------------
-extern "C" void*        g_menuBa_Lookup   = reinterpret_cast<void*>(0x00427780u);
-extern "C" void*        g_menuBa_Remap    = reinterpret_cast<void*>(0x004277a0u);
-extern "C" void*        g_menuBa_Measure  = reinterpret_cast<void*>(0x005554d0u);
-extern "C" const void*  g_menuBa_FontCell = reinterpret_cast<const void*>(0x0067d838u);
-extern "C" const float* g_menuBa_DivCell  = reinterpret_cast<const float*>(0x0067d830u);
+// MenuMenusBA (0x004282a0): since MATCH-S06-FU the one body of both targets is the byte-matched source
+// re/match/s06/004282a0.c, compiled by Match/MatchS06_004282a0.cpp, which binds the .asi's globals and callees
+// itself ([0x0067d838], [0x0067d830], FontText_StringTableLookup, TextCtrlCodeRemapBody, the original's 0x005554d0).
+// The cells this TU used to define for the naked body (D4-DC-82a0) are gone.
 
 // ---------------------------------------------------------------------------
 // MenuMenusBB (0x00427ad0): moved to Frontend/MenuMenusBB.cpp (drawstream 2026-10-12), an x87 TU. Under
@@ -174,60 +163,5 @@ extern "C" __declspec(dllexport) void __cdecl MenuMenusBD(std::int32_t* param_1)
 
 RH_ScopedInstall(MenuMenusBD, 0x0040b460);  // re-enabled 2026-05-24 c3-frontend-a
 
-// ---------------------------------------------------------------------------
-// MenuMenusBE  --  0x00429a30
-//
-// Original: FUN_00429a30  (body 0x00429a30..0x00429a66)
-// Signature: void FUN_00429a30(void)
-//   No parameters.
-//
-// Logic:
-//   iVar1 = FUN_00430790();                       // get player slot index
-//   (&DAT_007f0db4)[iVar1] = DAT_0067d98c;        // store laps
-//   iVar1 = FUN_00430790();
-//   (&DAT_007f0de8)[iVar1] = DAT_0067d994;        // store secs
-//   iVar1 = FUN_00430790();
-//   (&DAT_007f0e1c)[iVar1] = _DAT_0067d99c;       // store frac (float)
-//
-// FUN_00430790 is called 3 times — it reads the same global DAT_0067f17c
-// each time, so iVar1 is identical across all 3 calls.
-//
-// Globals:
-//   DAT_0067d98c  current lap laps  (0x00429a3e)
-//   DAT_0067d994  current lap secs  (0x00429a4d)
-//   _DAT_0067d99c current lap frac  (0x00429a5c)
-//   DAT_007f0db4  per-player laps array  (0x00429a40)
-//   DAT_007f0de8  per-player secs array  (0x00429a4f)
-//   DAT_007f0e1c  per-player frac array  (0x00429a5e)
-//
-// ref: re/analysis/frontend_promote_menus_b/00429a30.md
-// ---------------------------------------------------------------------------
-
-// Global addresses (cited from 0x00429a30 body):
-static constexpr std::uintptr_t kMenuBe_LapsVal     = 0x0067d98cu;  // 0x00429a3e
-static constexpr std::uintptr_t kMenuBe_SecsVal     = 0x0067d994u;  // 0x00429a4d
-static constexpr std::uintptr_t kMenuBe_FracVal     = 0x0067d99cu;  // 0x00429a5c
-static constexpr std::uintptr_t kMenuBe_LapsArr     = 0x007f0db4u;  // 0x00429a40
-static constexpr std::uintptr_t kMenuBe_SecsArr     = 0x007f0de8u;  // 0x00429a4f
-static constexpr std::uintptr_t kMenuBe_FracArr     = 0x007f0e1cu;  // 0x00429a5e
-
-// 0x00429a30
-extern "C" __declspec(dllexport) void __cdecl MenuMenusBE(void)
-{
-    // Call 1: store laps (0x00429a30..0x00429a44)
-    int iVar1 = s_FUN_00430790();
-    std::int32_t laps_val = *reinterpret_cast<const std::int32_t*>(kMenuBe_LapsVal);
-    reinterpret_cast<std::int32_t*>(kMenuBe_LapsArr)[iVar1] = laps_val;
-
-    // Call 2: store secs (0x00429a45..0x00429a53)
-    iVar1 = s_FUN_00430790();
-    std::int32_t secs_val = *reinterpret_cast<const std::int32_t*>(kMenuBe_SecsVal);
-    reinterpret_cast<std::int32_t*>(kMenuBe_SecsArr)[iVar1] = secs_val;
-
-    // Call 3: store frac (0x00429a54..0x00429a62)
-    iVar1 = s_FUN_00430790();
-    float frac_val = *reinterpret_cast<const float*>(kMenuBe_FracVal);
-    reinterpret_cast<float*>(kMenuBe_FracArr)[iVar1] = frac_val;
-}
-
-RH_ScopedInstall(MenuMenusBE, 0x00429a30);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S06: the body of 0x00429a30 (MenuMenusBE) moved to Match/MatchS06_00429a30.cpp,
+// which compiles the byte-matched source re/match/s06/00429a30.c.

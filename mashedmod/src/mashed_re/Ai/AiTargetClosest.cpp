@@ -10,8 +10,12 @@
 // FUN_00416250 commits mode 3 (look = cand) on 1 + LOS, and on 2 takes the immediate return at
 // 0x004163f6..0x00416405 (ctrl[4] = 0, ctrl[5] = 0xff).
 //
-// The two bodies and six leaves are generated from the anchored bytes by re/tools/gen_naked_asm.py
-// (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). C++ here, each with the
+// The two bodies are generated from the anchored bytes by re/tools/gen_naked_asm.py
+// (spec re/tools/naked_specs/target_p3.json -> AiTargetClosest_naked.inc). FUN_00426bb0 goes to
+// Global66d6d8Get (Match/MatchS06_00426bb0.cpp, MATCH-S06). FUN_0040e370 is not
+// generated: the call at 0x00414ad5 goes to IsCarSlotActive, the byte-matched body in
+// Match/MatchS02_0040e370.cpp (one body per RVA). FUN_0040e470 / FUN_004c3ac0 / FUN_004c3b30 go to
+// their one port bodies (CarSlotStateGet, RwLutLength_cd, RwLutSqrt_cd, D4-DC-INC-batch3). C++ here, each with the
 // original's cdecl stack contract (callee-saved EBX/ESI/EDI/EBP preserved by the compiler):
 //   PerCarRaceProgressGet  FUN_00408a50 -> the one port body (Match/MatchS01.cpp, C4 by byte match,
 //              re/match/s01/00407a60.c). HB-LINT-408A50 dropped the verbatim TG_408a50 copy.
@@ -39,6 +43,7 @@
 #include <vector>
 
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);   // 0x0046d4a0
+extern "C" int __cdecl IsCarSlotActive(int param_1);                                        // 0x0040e370
 extern "C" float __cdecl PerCarRaceProgressGet(int i);                                     // 0x00408a50
 
 // ---- exe-safe .rdata copies (values read from the anchored image) -------------------------
@@ -122,7 +127,8 @@ std::uint32_t __cdecl TG_Fwd(std::uint32_t* out, std::uint32_t idx) {         //
 
 // D4-DC-INC-ai (2026-11-01): the TG_40e470 copy is gone, target_p3.json maps the call to the one body.
 extern "C" std::uint32_t __cdecl CarSlotStateGet(int slot);                     // FUN_0040e470, Ai/CarSlotState.cpp
-extern "C" std::uint32_t __cdecl Global66d6d8Get(void);                        // FUN_00426bb0, Camera/CameraPathCount.cpp (D4-DC-INC-pathprog)
+
+extern "C" void Global66d6d8Get();                                              // FUN_00426bb0, Match/MatchS06_00426bb0.cpp (MATCH-S06; target_p3.json maps the call)
 
 #include "AiTargetClosest_naked.inc"
 
@@ -130,7 +136,7 @@ extern "C" std::uint32_t __cdecl Global66d6d8Get(void);                        /
 // Verbatim naked (spec re/tools/naked_specs/mode7_m4.json -> AiModeSeven_naked.inc): FUN_00414c30, FUN_00414490,
 // FUN_004c39b0 (LUT patched). FUN_00484c70 / FUN_00442cc0 are the one shared bodies (D4-DC-INC-ai, declared
 // above that #include). Bindings, cdecl:
-//   TG_SubMode      FUN_0040e350 -> the exe host (aib_game_sub_mode)
+//   TG_SubMode      FUN_0040e350 -> the matched body GetRenderSubMode (MATCH-TOPDOWN-T13; was the host aib_game_sub_mode)
 //   TG_HeldWord     the held-powerup read at 0x004144b3 ([0x0088fc88 + v*0xb4]) -> the exe's PowerupSystem
 //   TG_414300_m4    FUN_00414300 -> P3's verbatim TG_414300 (replay: the captured return / cand, arguments checked)
 //   TG_414490_w     FUN_00414490 -> TG_414490, return recorded
@@ -185,9 +191,12 @@ std::vector<std::string> SplitB(const std::string& s, char d) {
 extern "C" {
 
 void TG_414490();                                                                 // AiModeSeven_naked.inc
+unsigned int GetRenderSubMode(void);                                            // Match/MatchS02_0040e350.cpp
 int __cdecl TG_SubMode() {                                                       // FUN_0040e350
     if (s_m7Replay) return s_m7RpBa8c;
-    return s_m7SubMode ? s_m7SubMode() : 6;
+    // MATCH-TOPDOWN-T13: the matched body (raw DAT_0063ba8c), not the host aib_game_sub_mode (0 -> 6, 7 on
+    // round end). TG_414490 only compares the value with 0xb and 0xa, and no exe TU stores either.
+    return static_cast<int>(GetRenderSubMode());
 }
 std::uint32_t __cdecl TG_HeldWord(int v) {                                       // [0x0088fc88 + v*0xb4]
     if (s_m7Replay) return s_m7RpHeld;

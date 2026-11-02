@@ -8,7 +8,7 @@
 //   0x00442410  CameraSlotFieldPtrGet — camera; pointer-return field getter
 //   0x00442420  CameraSlotFloatGet    — camera; float-field getter (same record array)
 //   0x00423b20  CarSnapshotDwordGet   — vehicle; per-car snapshot dword getter
-//   [MOVED 2026-11-01, D4-DC-INC-pathprog] VehicleTable4cPtrGet (FUN_00426cc0) -> Vehicle/VehicleTable4c.cpp
+//   0x00426cc0  VehicleTable4cPtrGet  — vehicle; pointer-return table getter
 //   0x00442df0  RaceFloat898980Get    — vehicle; collision-impact float getter
 //
 // All five bodies byte-verified in original\MASHED.exe.unpatched 2026-06-12
@@ -49,13 +49,8 @@
 // reported as raw offset in the note).
 // ---------------------------------------------------------------------------
 
-// 0x00442410
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CameraSlotFieldPtrGet(int param_1) {
-    // 0x008964fc base + 0xd8 stride cited at 0x00442410 body.
-    return 0x008964fcu + static_cast<std::uint32_t>(param_1) * 0xd8u;
-}
-
-RH_ScopedInstall(CameraSlotFieldPtrGet, 0x00442410);
+// MATCH-S08: the body of 0x00442410 (CameraSlotFieldPtrGet) moved to Match/MatchS08_00442410.cpp,
+// which compiles the byte-matched source re/match/s08/00442410.c.
 
 // ---------------------------------------------------------------------------
 // CameraSlotFloatGet  --  0x00442420   (subsystem: camera)
@@ -78,14 +73,8 @@ RH_ScopedInstall(CameraSlotFieldPtrGet, 0x00442410);
 // Uncertainties (non-blocking): semantic of the +0x110 float (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00442420
-extern "C" __declspec(dllexport) float __cdecl CameraSlotFloatGet(int param_1) {
-    // 0x00896570 base + 0xd8 stride cited at 0x00442420 body.
-    return *reinterpret_cast<const float*>(
-        0x00896570u + static_cast<std::uint32_t>(param_1) * 0xd8u);
-}
-
-RH_ScopedInstall(CameraSlotFloatGet, 0x00442420);
+// MATCH-S08: the body of 0x00442420 (CameraSlotFloatGet) moved to Match/MatchS08_00442420.cpp,
+// which compiles the byte-matched source re/match/s08/00442420.c.
 
 // ---------------------------------------------------------------------------
 // CarSnapshotDwordGet  --  0x00423b20   (subsystem: vehicle)
@@ -115,6 +104,25 @@ RH_ScopedInstall(CameraSlotFloatGet, 0x00442420);
 // which compiles the byte-matched source re/match/s05/00423b20.c.
 
 // ---------------------------------------------------------------------------
+// VehicleTable4cPtrGet  --  0x00426cc0   (subsystem: vehicle)
+//
+// Original: FUN_00426cc0 (13 bytes, 0x00426cc0..0x00426ccc)
+// Bytes: 8B 44 24 04 / 6B C0 4C / 05 58 36 66 00 / C3
+//   mov eax,[esp+4]; imul eax,eax,0x4c; add eax,0x00663658; ret
+// Signature: undefined * FUN_00426cc0(int param_1)
+//
+// POINTER-RETURN getter: returns the ORIGINAL-image VA; never dereferences.
+// Sibling of FUN_00426cb0 (base 0x00663664 = this base + 0xc, same 0x4c stride).
+//
+// Constants (cited from function body at 0x00426cc0):
+//   0x00663658 — table base
+//   0x4c       — per-entry stride (76 bytes)
+// ---------------------------------------------------------------------------
+
+// MATCH-S06: the body of 0x00426cc0 (VehicleTable4cPtrGet) moved to Match/MatchS06_00426cc0.cpp,
+// which compiles the byte-matched source re/match/s06/00426cc0.c.
+
+// ---------------------------------------------------------------------------
 // RaceFloat898980Get  --  0x00442df0   (subsystem: vehicle)
 //
 // Original: FUN_00442df0 (7 bytes, 0x00442df0..0x00442df6)
@@ -132,10 +140,5 @@ RH_ScopedInstall(CameraSlotFloatGet, 0x00442420);
 //   U-1854: writer of DAT_00898980 not statically xref'd (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00442df0
-extern "C" __declspec(dllexport) float __cdecl RaceFloat898980Get(void) {
-    // FLD [0x00898980] cited at 0x00442df0 (instruction bytes above).
-    return *reinterpret_cast<const float*>(0x00898980u);
-}
-
-RH_ScopedInstall(RaceFloat898980Get, 0x00442df0);
+// MATCH-S08: the body of 0x00442df0 (RaceFloat898980Get) moved to Match/MatchS08_00442df0.cpp,
+// which compiles the byte-matched source re/match/s08/00442df0.c.

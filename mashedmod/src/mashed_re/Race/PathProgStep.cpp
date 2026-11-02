@@ -34,6 +34,7 @@ extern "C" int          __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::u
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);         // 0x0046c7b0
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);   // 0x0046d4a0
 extern "C" std::uint32_t __cdecl IsCarSlotActive(int param_1);                        // 0x0040e370
+extern "C" void          __cdecl UtilTableInit8a9620(void);                           // 0x00407a60 (Match/MatchS01.cpp)
 
 // ---- exe-safe .rdata copies (values read from the anchored image) -------------------------
 extern "C" {
@@ -160,13 +161,16 @@ extern "C" std::uint32_t __cdecl RangeTableMemberTest(int value, int slot);     
 extern "C" int __cdecl RangeTableCountGroup(int slot);                          // FUN_00407d70, Gameplay/RangeTable_ah1.cpp
 extern "C" int __cdecl RangeTableGroupOffset(int slot, int value);              // FUN_00407db0, Gameplay/RangeTable_ah1.cpp
 extern "C" void __cdecl Dot408590(void);                                        // FUN_00408590, Race/PathProgDot.cpp
-// D4-DC-INC-pathprog (2026-11-01): six more leaf callees, same pattern (their PP_ copies are gone from the .inc):
-extern "C" void* __cdecl GlobalDat0066ce58Get();                               // FUN_00426090, Frontend/GlobalGetters_s4.cpp
-extern "C" std::uint32_t __cdecl Global66d6d8Get(void);                        // FUN_00426bb0, Camera/CameraPathCount.cpp
-extern "C" std::uint8_t* __cdecl SlotIndexToPtr(int slot);                     // FUN_00426cb0, Frontend/MenuNearLeaves_s6.cpp
-extern "C" std::uint32_t __cdecl VehicleTable4cPtrGet(int idx);                // FUN_00426cc0, Vehicle/VehicleTable4c.cpp
-extern "C" std::uint32_t* __cdecl GetDat0066d6e4(void);                        // FUN_00426cf0, Frontend/BatchAA_s1.cpp
-extern "C" std::uint8_t* __cdecl FrontendArraySlotGet(int row, int col);       // FUN_00426d00, Frontend/BatchAA_s6.cpp
+// MATCH-TOPDOWN-T13: FUN_00407cd0 is the byte-matched C body (exe only), not a generated PP_ copy.
+extern "C" int __cdecl PP_407cd0(int v, int start);                             // FUN_00407cd0, Match/MatchS01_00407cd0.cpp
+// MATCH-S06 removed the naked PP_ copies of six leaf callees; pathprog_p2.json maps each call to the byte-matched
+// body (re/match/s06/<rva>.c). Declared here because gen_naked_asm.py emits no prototypes (D4-DC-INC-PATHPROG-REMERGE).
+extern "C" void GlobalDat0066ce58Get();                                         // FUN_00426090, Match/MatchS06_00426090.cpp
+extern "C" void Global66d6d8Get();                                              // FUN_00426bb0, Match/MatchS06_00426bb0.cpp
+extern "C" void SlotIndexToPtr();                                               // FUN_00426cb0, Match/MatchS06_00426cb0.cpp
+extern "C" void VehicleTable4cPtrGet();                                         // FUN_00426cc0, Match/MatchS06_00426cc0.cpp
+extern "C" void GetDat0066d6e4();                                               // FUN_00426cf0, Match/MatchS06_00426cf0.cpp
+extern "C" void FrontendArraySlotGet();                                         // FUN_00426d00, Match/MatchS06_00426d00.cpp
 
 #include "PathProgStep_naked.inc"
 
@@ -225,12 +229,10 @@ float PathProg_NodeProgress(int v) {
     return f;
 }
 
+// MATCH-TOPDOWN-T01 (L-72): calls the byte-matched FUN_00407a60 body (re/match/s01/00407a60.c, Match/MatchS01.cpp)
+// instead of a second copy. Same writes: 4 blocks of 0x30c bytes at 0x008a9620 zeroed, +0x28 = -1.
 void PathProg_RaceInit() {                               // FUN_00407a60
-    for (int v = 0; v < 4; ++v) {
-        const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
-        std::memset(reinterpret_cast<void*>(blk), 0, 0xc3u * 4u);
-        *reinterpret_cast<std::int32_t*>(blk + 0x28) = -1;
-    }
+    UtilTableInit8a9620();
 }
 
 // [cev 2026-10-18] FUN_0040fc00 runs the physics frame FUN_00425a40 (0x0040fc6c) before FUN_0040da50 (0x0040fc75), so the

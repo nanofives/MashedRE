@@ -1,0 +1,11 @@
+site,changed,old,new,hits,first,last,bt_first
+_CarSlotStateSet+0x16,same,,0/0/1/0,1,0,0,
+_WinMain@16+0x12b4,rt,0,10,1,0,0,
+?StartRound@TrackRenderer@D3d9Render@mashed_re@@QAEXXZ+0xc61,same,,0/0/1/10,1,1,1,
+?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z+0x50d,ba8c,0,3,1,1,1,
+_VehicleSeedWritePair+0x25,same,,3/0/1/10,1,1,1,
+?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z+0x63c,ba8c,3,4,1,1,1,
+_SubStateEnter4+0xb1,ba8c,4,5,5,1,3981,
+_SubStateHeldCountdown5_C+0x229,ba8c,5,6,5,225,4205,
+?StartRound@TrackRenderer@D3d9Render@mashed_re@@QAEXXZ+0xc61,ba8c,6,0,4,966,3981,
+?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z+0x52d,ba8c,0,4,4,966,3981,

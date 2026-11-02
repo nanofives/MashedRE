@@ -1,0 +1,3 @@
+_CR_41f710Body	0x001279a0	1	_CR_41f710+0x1
+_CR_41f710	0x00127990	1	?CarsReg_FrameTick@Race@mashed_re@@YAXXZ+0x67
+?CarsReg_FrameTick@Race@mashed_re@@YAXXZ	0x00148330	2	?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z+0x73a;?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z+0x3065

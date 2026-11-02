@@ -1,0 +1,9 @@
+0x0042b960	OK	checked=11	unchecked=0	0042b960.c	
+0x0042b9e0	OK	checked=14	unchecked=0	0042b9e0.c	
+0x0042d290	OK	checked=10	unchecked=1	0042d290.c	  unchecked: __ftol
+0x0042f7b0	OK	checked=4	unchecked=0	0042f7b0.c	
+0x0042ef40	OK	checked=5	unchecked=0	0042ef40.c	
+0x00431b80	OK	checked=29	unchecked=0	00431b80.c	
+0x00431d00	OK	checked=10	unchecked=0	00431b80.c	
+0x0042e3a0	OK	checked=17	unchecked=0	0042e3a0.c	
+0x0042fb70	OK	checked=40	unchecked=1	0042fb70.c	  unchecked: __ftol

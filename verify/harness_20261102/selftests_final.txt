@@ -1,0 +1,65 @@
+[1/2] ps-Get-PrioLinger-sees-train-hold PASS (PRIORITY-HOLD 'mashed_machine' owner_pid=17212; count=1)
+[2/2] ps-Get-PrioLinger-empty-after-release PASS (count=0)
+=== mashed_lock_selftest
+[1/14] default-acquire-unchanged PASS 
+[2/14] priority-marker-visible-while-waiting PASS 
+[3/14] order-A-then-T-then-B PASS ['A', 'T', 'B']
+[4/14] marker-cleared-after-acquire PASS 
+[5/14] worker-cannot-retake-ahead-of-train PASS ['W0', 'T', 'W1', 'W2']
+[6/14] stale-markers-expire PASS 
+[7/14] live-holder-age-1801-not-broken PASS TIMEOUT owner=7708
+[8/14] legacy-record-live-pid-week-old-not-broken PASS TIMEOUT
+[9/14] pid-reuse-start-mismatch-is-broken PASS 
+[10/14] solo-drain-waits-on-live-then-breaks-dead PASS still=True out=TOKEN 0c874b
+[11/14] dead-holder-still-broken PASS 
+[12/14] empty-file-grace-then-broken PASS TIMEOUT
+[13/14] ps-live-holder-age-1801-not-broken PASS TIMEOUT
+[14/14] ps-holder-not-broken-by-python PASS TIMEOUT owner_start=1793582333.5
+=== merge_train -SelfTest
+[mtrain 22:19:04] SELFTEST fake repo C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903
+[mtrain 22:19:05]   union-resolved: re/analysis/CHANGELOG.md
+[mtrain 22:19:05]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 22:19:06]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 22:19:06]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 22:19:06]   SELFTEST contrast: Set-Content writes 2 CR byte(s) for 2 lines on this host
+[mtrain 22:19:06] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-30ca rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-30ca: removed
+[mtrain 22:19:08] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_221903/.worktrees/step-clean rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\step-clean: removed
+[mtrain 22:19:08]   cleanup step-clean: worktree and branch removed
+[mtrain 22:19:09] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_221903/.worktrees/step-dirty rc=1 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\step-dirty: refused (likely dirty): fatal: 'C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\step-dirty' contains modified 
+[mtrain 22:19:09]   cleanup step-dirty: worktree removal refused (C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_221903/.worktrees/step-dirty), worktree and branch kept
+[mtrain 22:19:09]   cleanup step-ahead: git branch --delete refused, branch kept: error: the branch 'step-ahead' is not fully merged
+[mtrain 22:19:09]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 22:19:09]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 22:19:09]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 22:19:09] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-bc44
+[mtrain 22:19:10] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-bc44 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-bc44: removed
+[mtrain 22:19:10]   SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+[mtrain 22:19:10] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-6c64
+[mtrain 22:19:10] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-6c64 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-6c64: removed
+[mtrain 22:19:10]   SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+[mtrain 22:19:11] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-352a rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-352a: removed
+[mtrain 22:19:11]   SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+[mtrain 22:19:12] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-75ec rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-75ec: removed
+[mtrain 22:19:12] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-cf9b
+[mtrain 22:19:13] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-cf9b rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903\.worktrees\mtrain-20261101_221903-cf9b: removed
+[mtrain 22:19:13]   SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+[mtrain 22:19:13]   cleanup step-out: worktree C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261101_221903-outside-wt is not under .worktrees\, worktree and branch kept
+[mtrain 22:19:13]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 22:19:14] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903-outside-wt rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261101_221903-outside-wt: removed
+[mtrain 22:19:14]   SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+[mtrain 22:19:14]   SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+[mtrain 22:19:14]   SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+[mtrain 22:19:14]   SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+[mtrain 22:19:14]   SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+[mtrain 22:19:14]   SELFTEST PASS: AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=True inner=1)
+[mtrain 22:19:14] priority: PRIORITY-HOLD 'mashed_machine' owner_pid=21620 rc=0
+[mtrain 22:19:15] priority: PRIORITY-RELEASED 'mashed_machine' owner_pid=21620 rc=0
+[mtrain 22:19:15]   SELFTEST PASS: priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=False)
+[mtrain 22:19:15] priority: PRIORITY-HOLD 'mashed_machine' owner_pid=21620 rc=0
+[mtrain 22:19:16]   SELFTEST PASS: priority hold: status shows PRIORITY-HOLD pid=21620
+[mtrain 22:19:23]   SELFTEST PASS: priority hold: a new non-priority solo open waits while held (blocked=True), an ordinary acquire does not (ok=True), the solo opens after release (opened=True)
+[mtrain 22:19:23]   SELFTEST FAIL: short-once: D2_DEF_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 22:19:23]   SELFTEST FAIL: short-always: reruns bounded at 2, arm still reported short (runs=)
+[mtrain 22:19:23]   SELFTEST FAIL: full-length logs: no rerun
+[mtrain 22:19:23] SELFTEST done: 3 failure(s)
+SELFTEST FAIL (3 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261101_221903\merge_train.log

@@ -90,7 +90,8 @@ def run_set(indices, idx2, tag, round_s, timeout_s, use_range=None, stock=False)
     """
     log = os.path.join(SCRATCH, "bset_%s.log" % tag)
     env = dict(os.environ)
-    env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+    # statenav loads the asi itself (re/frida/dev_asi.py) and forces MASHED_RE_NO_AUTO_HOOK=1;
+    # the dinput8 proxy is not involved (D5-SHIM-DINPUT8-SPAWNERS).
     env.pop("MASHED_HOOK_LO", None)
     env.pop("MASHED_HOOK_HI", None)
     env.pop("MASHED_HOOK_ONLY", None)
@@ -118,7 +119,7 @@ def run_set(indices, idx2, tag, round_s, timeout_s, use_range=None, stock=False)
     argv = [sys.executable, "-u", STATENAV,
             "--round", str(round_s), "--shot-dir", "verify/bset_%s" % tag]
     if not stock:
-        # statenav sets MASHED_RE_NO_AUTO_HOOK=1 itself when --hooks is absent, so the stock
+        # statenav never maps the asi when --hooks is absent (dev_asi), so the stock
         # control runs the SAME navigation through the SAME driver with no hooks armed.
         argv.insert(3, "--hooks")
 

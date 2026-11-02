@@ -1,0 +1,4 @@
+4297c77a4c20b797feb67f175d6bf16bdd724396b971e292242a526572d38bda *re/match/s05/0041f710.c
+0x0041f710 _FUN_0041f710: 100.0% (regs 100.0%, ops 100.0%)  22/22 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 88 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0041f710	OK	checked=1	unchecked=0	0041f710.c	

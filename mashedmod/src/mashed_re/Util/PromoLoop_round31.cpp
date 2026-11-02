@@ -9,7 +9,7 @@
 //   0x0042f760  Global67f19cGet — [0x0067f19c] (caller 004631f0 audio C2)
 //   0x0042f770  Global67f1a0Get — [0x0067f1a0] (caller 004631f0 audio C2)
 //   0x0042f780  Global67f1a4Get — [0x0067f1a4] (caller 004631f0 audio C2)
-//   [MOVED 2026-11-01, D4-DC-INC-pathprog] Global66d6d8Get (FUN_00426bb0) -> Camera/CameraPathCount.cpp
+//   0x00426bb0  Global66d6d8Get — [0x0066d6d8] (caller 00408610 gameplay C2)
 //   0x0045bfe0  Global80332cGet — [0x0080332c] (caller 00406160 gameplay C2)
 
 #include "../Core/HookSystem.h"
@@ -24,6 +24,9 @@
 
 // MATCH-S07: the body of 0x0042f780 (Global67f1a4Get) moved to Match/MatchS07_0042f780.cpp,
 // which compiles the byte-matched source re/match/s07/0042f780.c.
+
+// MATCH-S06: the body of 0x00426bb0 (Global66d6d8Get) moved to Match/MatchS06_00426bb0.cpp,
+// which compiles the byte-matched source re/match/s06/00426bb0.c.
 
 // 0x0045bfe0  A1 2C 33 80 00 C3  (mov eax,[0x0080332c]; ret)
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Global80332cGet(void) {

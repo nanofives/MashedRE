@@ -1,0 +1,298 @@
+{
+ "a": "D:/MashedWT/PROMOTE-DETORIG-LOADHOLD_data/off_i",
+ "b": "D:/MashedWT/PROMOTE-DETORIG-LOADHOLD_data/off_g",
+ "checkpoints": 15,
+ "raw_identical": 0,
+ "class_counts": {
+  "TOGGLE": 2,
+  "RESIDUE": 23,
+  "PTR": 3431,
+  "MODOFFSET": 97,
+  "RULE:ACC60": 2,
+  "OFFSET": 6,
+  "RULE:WINMSG": 5
+ },
+ "by_class_and_page": {
+  "PTR other page 0x0063d000": 467,
+  "PTR other page 0x00703000": 235,
+  "PTR other page 0x0063c000": 221,
+  "PTR other page 0x007ed000": 192,
+  "PTR other page 0x007eb000": 191,
+  "PTR other page 0x00636000": 149,
+  "PTR other page 0x007ee000": 119,
+  "PTR other page 0x0068f000": 116,
+  "PTR other page 0x0063e000": 112,
+  "PTR other page 0x006c7000": 108,
+  "PTR other page 0x007ec000": 102,
+  "PTR other page 0x00720000": 96,
+  "PTR other page 0x00688000": 92,
+  "PTR other page 0x007ea000": 92,
+  "PTR other page 0x00722000": 87,
+  "PTR other page 0x007f0000": 76,
+  "PTR other page 0x0068a000": 67,
+  "PTR other page 0x007ef000": 63,
+  "PTR other page 0x0086a000": 60,
+  "PTR other page 0x006cf000": 59,
+  "PTR other page 0x0068b000": 52,
+  "PTR other page 0x00704000": 48,
+  "MODOFFSET other page 0x00868000": 48,
+  "MODOFFSET other page 0x00869000": 48,
+  "PTR other page 0x00692000": 43,
+  "PTR other page 0x0063b000": 42,
+  "PTR other page 0x007d7000": 37,
+  "PTR other page 0x0063f000": 32,
+  "PTR other page 0x007d4000": 31,
+  "PTR other page 0x007dc000": 29,
+  "PTR other page 0x006fb000": 28,
+  "PTR other page 0x006fc000": 28,
+  "PTR other page 0x00766000": 24,
+  "PTR other page 0x00618000": 20,
+  "PTR other page 0x00640000": 20,
+  "PTR other page 0x00899000": 20,
+  "PTR other page 0x006fa000": 19,
+  "PTR other page 0x00656000": 15,
+  "PTR other page 0x00686000": 15,
+  "PTR other page 0x0068d000": 13,
+  "PTR other page 0x00691000": 13,
+  "PTR other page 0x00771000": 13,
+  "PTR other page 0x00657000": 11,
+  "PTR other page 0x006dd000": 11,
+  "PTR other page 0x0076d000": 10,
+  "PTR other page 0x007dd000": 10,
+  "PTR other page 0x006fd000": 9,
+  "PTR pickup slots 0x0088fbe0": 9,
+  "PTR other page 0x00693000": 8,
+  "PTR other page 0x006fe000": 8,
+  "PTR car records 0x008815a0 (4 x 0xd04)": 8,
+  "PTR other page 0x00773000": 7,
+  "PTR other page 0x00617000": 6,
+  "PTR other page 0x00644000": 6,
+  "PTR other page 0x00690000": 6,
+  "PTR other page 0x00912000": 6,
+  "PTR other page 0x00641000": 5,
+  "PTR other page 0x00642000": 5,
+  "PTR other page 0x00643000": 5,
+  "PTR other page 0x0076a000": 5,
+  "PTR other page 0x00770000": 5,
+  "RULE:WINMSG other page 0x007e9000": 5,
+  "PTR other page 0x00684000": 4,
+  "PTR other page 0x006c9000": 4,
+  "PTR other page 0x007d3000": 4,
+  "PTR other page 0x007d6000": 4,
+  "RESIDUE other page 0x007dc000": 4,
+  "PTR other page 0x008aa000": 4,
+  "PTR other page 0x00685000": 3,
+  "RESIDUE other page 0x00771000": 3,
+  "RESIDUE other page 0x007dd000": 3,
+  "PTR other page 0x007de000": 3,
+  "PTR other page 0x00616000": 2,
+  "RESIDUE other page 0x00636000": 2,
+  "RESIDUE other page 0x0067d000": 2,
+  "PTR other page 0x006dc000": 2,
+  "PTR other page 0x00706000": 2,
+  "RULE:ACC60 other page 0x00771000": 2,
+  "OFFSET other page 0x00771000": 2,
+  "RESIDUE other page 0x00772000": 2,
+  "OFFSET other page 0x007dc000": 2,
+  "RESIDUE other page 0x007de000": 2,
+  "PTR other page 0x007e9000": 2,
+  "PTR other page 0x008ab000": 2,
+  "TOGGLE other page 0x00614000": 1,
+  "RESIDUE other page 0x00616000": 1,
+  "PTR other page 0x00623000": 1,
+  "PTR other page 0x006ce000": 1,
+  "MODOFFSET other page 0x00771000": 1,
+  "TOGGLE other page 0x00771000": 1,
+  "PTR other page 0x00772000": 1,
+  "RESIDUE other page 0x00773000": 1,
+  "RESIDUE other page 0x007d4000": 1,
+  "OFFSET other page 0x007d7000": 1,
+  "OFFSET frame timer block 0x007f0ff0..0x007f1034": 1,
+  "RESIDUE frame timer block 0x007f0ff0..0x007f1034": 1,
+  "PTR other page 0x00803000": 1,
+  "PTR other page 0x0086e000": 1,
+  "RESIDUE other page 0x008ab000": 1,
+  "PTR other page 0x008cd000": 1,
+  "PTR other page 0x008ed000": 1,
+  "PTR other page 0x00911000": 1,
+  "PTR other page 0x00914000": 1
+ },
+ "modoffset_periods": {
+  "60": 97
+ },
+ "unexplained_per_checkpoint": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "normalized_identical": 15,
+ "unexplained_by_page": {},
+ "unexplained_sample": [],
+ "residue": [
+  {
+   "va": "0x616038",
+   "a": "c61f5e65",
+   "b": "43efd599"
+  },
+  {
+   "va": "0x636ae8",
+   "a": "4045554a",
+   "b": "4024443b"
+  },
+  {
+   "va": "0x636afc",
+   "a": "4194ccdf",
+   "b": "41780018"
+  },
+  {
+   "va": "0x67d858",
+   "a": "8b80bb19",
+   "b": "328543ee"
+  },
+  {
+   "va": "0x67d974",
+   "a": "41b15de4",
+   "b": "41b3c44b"
+  },
+  {
+   "va": "0x771990",
+   "a": "0000003b",
+   "b": "00000030"
+  },
+  {
+   "va": "0x77199c",
+   "a": "000bf633",
+   "b": "00045f5f"
+  },
+  {
+   "va": "0x771e78",
+   "a": "00bf9f1c",
+   "b": "00bd2d9c"
+  },
+  {
+   "va": "0x772fb4",
+   "a": "00bf9f1c",
+   "b": "00bd2d9c"
+  },
+  {
+   "va": "0x772fb8",
+   "a": "00bfd4bc",
+   "b": "00bd376c"
+  },
+  {
+   "va": "0x77391c",
+   "a": "00000001",
+   "b": "00000000"
+  },
+  {
+   "va": "0x7d4108",
+   "a": "00c0f4c0",
+   "b": "00bd4920"
+  },
+  {
+   "va": "0x7dcae0",
+   "a": "00000b70",
+   "b": "0000085c"
+  },
+  {
+   "va": "0x7dcb50",
+   "a": "00000b0c",
+   "b": "00000b58"
+  },
+  {
+   "va": "0x7dcb54",
+   "a": "00000be4",
+   "b": "00000b38"
+  },
+  {
+   "va": "0x7dcdf0",
+   "a": "265a3e16",
+   "b": "fdbe5d28"
+  },
+  {
+   "va": "0x7dd618",
+   "a": "00000920",
+   "b": "00000a7c"
+  },
+  {
+   "va": "0x7dd61c",
+   "a": "00000bc8",
+   "b": "000008f8"
+  },
+  {
+   "va": "0x7dd620",
+   "a": "00000ba8",
+   "b": "0000064c"
+  },
+  {
+   "va": "0x7de100",
+   "a": "e42c2765",
+   "b": "bb21d083"
+  },
+  {
+   "va": "0x7de104",
+   "a": "01dd6a70",
+   "b": "01dd6a6f"
+  },
+  {
+   "va": "0x7f102c",
+   "a": "8c2b8e87",
+   "b": "333d7d8f"
+  },
+  {
+   "va": "0x8ab6c4",
+   "a": "00bbe420",
+   "b": "00b7e420"
+  }
+ ],
+ "race_state_identical": 15,
+ "race_state_diffs": {},
+ "witness": {
+  "a": [
+   [
+    "468980",
+    217
+   ],
+   [
+    "470670",
+    81
+   ]
+  ],
+  "b": [
+   [
+    "468980",
+    217
+   ],
+   [
+    "470670",
+    81
+   ]
+  ]
+ },
+ "race_anchor": {
+  "a": {
+   "n": 718,
+   "dn_warp": 118,
+   "frames_7f101c": 0,
+   "clk_7f0ff0": 9350
+  },
+  "b": {
+   "n": 718,
+   "dn_warp": 118,
+   "frames_7f101c": 0,
+   "clk_7f0ff0": 7800
+  }
+ }
+}

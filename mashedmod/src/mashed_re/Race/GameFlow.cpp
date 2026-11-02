@@ -1,5 +1,6 @@
 // GameFlow scaffold impl (2026-06-15). See GameFlow.h.
 #include "GameFlow.h"
+#include "GameModeState.h"                 // [MATCH-PORTSTATE-GAMEFLOW] phase word 0x00771968 (knob)
 #include "../Audio/AudioEngine.h"
 #include "../Save/GameSaveFormat.h"        // [WS-G5] real gamesave.bin format
 #include "../Frontend/MenuNavSM.h"          // [WS-G5] feed save image to menu state
@@ -342,6 +343,7 @@ bool GameFlow_IsPaused() { return g_paused && g_mode == GameMode::InRace; }
 void GameFlow_SetPaused(bool paused) {
     if (g_mode != GameMode::InRace) { g_paused = false; return; }
     g_paused = paused;
+    GameModeState_SetPhase(paused ? 7 : 3);   // 0x004929d0 case 3 -> 7 (FUN_0042c1c0 != 0), case 7 -> 3 (== 0)
     // The original ducks nothing extra on pause here (mode 7 keeps the race
     // stream running; see re/analysis/audio_music_state_dispatch_20260711.md), so
     // audio state is left as-is.
@@ -355,6 +357,7 @@ void GameFlow_RequestRace(const RaceConfig& cfg,
     g_pendingDev   = dev;
     g_mode = GameMode::LoadingRace;
     g_loadFrames = 0;
+    GameModeState_SetPhase(2);                // 0x004929d0 case 1 -> 2 (the launch)
     log("RequestRace -> LoadingRace");
 }
 
@@ -363,6 +366,7 @@ void GameFlow_RequestExit() {
     g_paused = false;                 // leaving the race clears the pause state
     g_session.End();
     g_mode = GameMode::Frontend;
+    GameModeState_SetPhase(1);                // back in the frontend: 0x004929d0 case 4 -> 1
     // 0x00466b50 mode dispatch: exit-to-menu-shaped modes (0/6) snap the
     // FUN_0045dbe0-driven envelope to 0 (dir=2) -- see
     // re/analysis/audio_music_state_dispatch_20260711.md.
@@ -374,6 +378,7 @@ void GameFlow_RequestResults() {
     if (g_mode != GameMode::InRace) return;
     g_paused = false;                 // the match resolved; drop any pause
     g_mode = GameMode::Results;       // session stays active (scene + scores held)
+    GameModeState_SetPhase(5);                // 0x004929d0 case 3 -> 5 (round end)
     // 0x00466b50 mode 5 (stream-drain/post-race) snaps the FUN_0045dbe0
     // envelope to 0 once all 4 audio streams report state 3 for >=3 frames;
     // no win/lose distinction found in that branch (see U-9017).
@@ -390,6 +395,7 @@ void GameFlow_Update(float dt) {
             if (++g_loadFrames > 30) {
                 g_session.Begin(g_pending, g_pendingTrack, g_pendingDev);
                 g_mode = GameMode::InRace;
+                GameModeState_SetPhase(3);    // 0x004929d0 case 2 -> 3 (course loaded, 0x00492a5b)
                 // 0x00466b50 modes 3/7 (CreateStream 0x00462dd0 + per-car
                 // opponent-AI loop) are the heaviest per-frame audio body --
                 // the strongest race-loop signal in the mode dispatch.

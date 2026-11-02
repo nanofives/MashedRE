@@ -1,0 +1,764 @@
+veh_records 0040ca19  ->008856ac  mov ebp, 0x8856ac                                
+veh_records 0040cc45  ->0088229c  cmp ebp, 0x88229c                                
+score_blk   004132b2  ->0089a8a0  add eax, 0x89a8a0                                
+score_blk   0041333c  ->0089a8a0  add edx, 0x89a8a0                                
+score_blk   00413612  ->0089a8a0  add eax, 0x89a8a0                                
+score_blk   00413675  ->0089a8a0  add edx, 0x89a8a0                                
+score_blk   004136da  ->0089a8a0  add ecx, 0x89a8a0                                
+score_blk   0041373e  ->0089a8a0  add eax, 0x89a8a0                                
+score_blk   00413913  ->0089a8a0  add ecx, 0x89a8a0                                
+score_blk   0041399e  ->0089a8a0  add eax, 0x89a8a0                                
+score_blk   00413fe2  ->0089a36c  mov dword ptr [0x89a36c], ecx                    
+score_blk   00413fed  ->0089a4f0  mov eax, 0x89a4f0                                
+score_blk   00414021  ->0089a6c0  cmp eax, 0x89a6c0                                
+score_blk   00414066  ->0089a384  fild dword ptr [eax*4 + 0x89a384]                
+score_blk   0041406d  ->0089a37c  fld dword ptr [0x89a37c]                         
+score_blk   004140f4  ->0089a360  fstp dword ptr [0x89a360]                        
+score_blk   004140fa  ->0089a870  mov dword ptr [0x89a870], eax                    
+score_blk   004140ff  ->0089a874  mov dword ptr [0x89a874], eax                    
+score_blk   00414104  ->0089a878  mov dword ptr [0x89a878], eax                    
+score_blk   00414109  ->0089a364  mov dword ptr [0x89a364], 0xffffffff             
+score_blk   00414113  ->0089a87c  mov dword ptr [0x89a87c], eax                    
+score_blk   00414122  ->0089a37c  mov dword ptr [0x89a37c], 0                      
+score_blk   0041412c  ->0089a378  mov dword ptr [0x89a378], edx                    
+score_blk   00414132  ->0089a380  mov dword ptr [0x89a380], edx                    
+score_blk   00414156  ->0089a420  mov dword ptr [eax + 0x89a420], edx              
+score_blk   0041415c  ->0089a384  mov dword ptr [eax + 0x89a384], esi              
+score_blk   00414185  ->0089a368  mov dword ptr [0x89a368], 0                      
+score_blk   0041418f  ->0089a370  mov dword ptr [0x89a370], 0                      
+score_blk   00414199  ->0089a4c0  mov esi, 0x89a4c0                                
+score_blk   004141a0  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   0041420d  ->0089a690  cmp esi, 0x89a690                                
+score_blk   00414236  ->0089a364  mov dword ptr [0x89a364], ebx                    
+score_blk   00414256  ->0089a368  mov eax, dword ptr [0x89a368]                    
+score_blk   00414266  ->0089a380  fld dword ptr [0x89a380]                         
+score_blk   00414273  ->0089a380  fstp dword ptr [0x89a380]                        
+score_blk   0041427e  ->0089a380  fld dword ptr [0x89a380]                         
+score_blk   0041428b  ->0089a380  fstp dword ptr [0x89a380]                        
+score_blk   00414297  ->0089a380  fld dword ptr [0x89a380]                         
+score_blk   004142a4  ->0089a380  fstp dword ptr [0x89a380]                        
+score_blk   004142b0  ->0089a380  fld dword ptr [0x89a380]                         
+score_blk   004142bd  ->0089a380  fstp dword ptr [0x89a380]                        
+score_blk   004142c8  ->0089a380  fld dword ptr [0x89a380]                         
+score_blk   004142d5  ->0089a380  fstp dword ptr [0x89a380]                        
+score_blk   004142e1  ->0089a380  fld dword ptr [0x89a380]                         
+score_blk   004142ed  ->0089a380  fstp dword ptr [0x89a380]                        
+score_blk   004147d2  ->0089a4c0  fild dword ptr [edi + 0x89a4c0]                  
+score_blk   004148b0  ->0089a368  mov eax, dword ptr [0x89a368]                    
+score_blk   004148c3  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   004148d4  ->0089a364  mov eax, dword ptr [0x89a364]                    
+score_blk   004148fd  ->0089a374  mov eax, dword ptr [0x89a374]                    
+score_blk   00414907  ->0089a4c4  mov edx, dword ptr [esi + 0x89a4c4]              
+score_blk   00414977  ->0089a4c8  mov ebx, dword ptr [esi + 0x89a4c8]              
+score_blk   0041498c  ->0089a4c8  mov dword ptr [esi + 0x89a4c8], ebx              
+score_blk   004149aa  ->0089a4c8  mov eax, dword ptr [esi + 0x89a4c8]              
+score_blk   004149ba  ->0089a4c4  mov eax, dword ptr [esi + 0x89a4c4]              
+score_blk   004149c1  ->0089a4c8  mov dword ptr [esi + 0x89a4c8], 0                
+score_blk   004149cb  ->0089a4c4  mov dword ptr [esi + 0x89a4c4], eax              
+score_blk   004149eb  ->0089a4c8  mov eax, dword ptr [esi + 0x89a4c8]              
+score_blk   004149fd  ->0089a4c8  mov dword ptr [esi + 0x89a4c8], eax              
+score_blk   00414a2b  ->0089a4c8  cmp dword ptr [esi + 0x89a4c8], 0x1194           
+score_blk   00414a3e  ->0089a4c8  mov eax, dword ptr [esi + 0x89a4c8]              
+score_blk   00414a48  ->0089a4c4  mov eax, dword ptr [esi + 0x89a4c4]              
+score_blk   00414a4f  ->0089a4c8  mov dword ptr [esi + 0x89a4c8], 0                
+score_blk   00414a59  ->0089a4c4  mov dword ptr [esi + 0x89a4c4], eax              
+score_blk   0041507b  ->0089a4e8  fst dword ptr [ecx + 0x89a4e8]                   
+score_blk   00415088  ->0089a4e4  mov edx, dword ptr [ecx + 0x89a4e4]              
+score_blk   00415097  ->0089a4e4  mov dword ptr [ecx + 0x89a4e4], edx              
+score_blk   004150b7  ->0089a4e4  mov dword ptr [ecx + 0x89a4e4], 0                
+score_blk   004150c8  ->0089a4e4  mov dword ptr [ebx + 0x89a4e4], 0                
+score_blk   00415254  ->0089a51c  mov eax, dword ptr [esi + 0x89a51c]              
+score_blk   00415264  ->0089a51c  mov dword ptr [esi + 0x89a51c], eax              
+score_blk   00415271  ->0089a524  mov dword ptr [esi + 0x89a524], edx              
+score_blk   0041527e  ->0089a520  mov dword ptr [esi + 0x89a520], 0xbb8            
+score_blk   00415288  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   00415294  ->0089a520  mov dword ptr [esi + 0x89a520], eax              
+score_blk   0041529c  ->0089a520  mov dword ptr [esi + 0x89a520], 0                
+score_blk   004152d1  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   004152df  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   00415335  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   00415371  ->0089a520  mov dword ptr [esi + 0x89a520], 0x2ee            
+score_blk   00415383  ->0089a528  mov eax, dword ptr [esi + 0x89a528]              
+score_blk   004153a3  ->0089a528  mov dword ptr [esi + 0x89a528], 0                
+score_blk   004153b5  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   004153c3  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   0041540f  ->0089a528  mov dword ptr [esi + 0x89a528], 1                
+score_blk   00415421  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   0041542f  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   00415499  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   004154a7  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   00415598  ->0089a520  mov dword ptr [esi + 0x89a520], 0x1f4            
+score_blk   004155aa  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   004155b8  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   00415628  ->0089a520  mov dword ptr [esi + 0x89a520], 0x1770           
+score_blk   0041563a  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   00415644  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   004156a7  ->0089a520  mov dword ptr [esi + 0x89a520], 0x5dc            
+score_blk   004156b9  ->0089a528  mov eax, dword ptr [esi + 0x89a528]              
+score_blk   004156c7  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   004156d5  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   00415734  ->0089a520  mov dword ptr [esi + 0x89a520], 0xbb8            
+score_blk   00415746  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   00415754  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   004157a0  ->0089a528  mov eax, dword ptr [esi + 0x89a528]              
+score_blk   004157aa  ->0089a524  mov eax, dword ptr [esi + 0x89a524]              
+score_blk   004157b5  ->0089a528  mov dword ptr [esi + 0x89a528], edx              
+score_blk   004157c3  ->0089a520  mov eax, dword ptr [esi + 0x89a520]              
+score_blk   004157fb  ->0089a528  mov dword ptr [esi + 0x89a528], 1                
+score_blk   0041580e  ->0089a520  mov dword ptr [esi + 0x89a520], 0x2328           
+score_blk   00415867  ->0089a508  mov dword ptr [eax + 0x89a508], 0x7530           
+score_blk   00415893  ->0089a508  sub dword ptr [ebp + 0x89a508], eax              
+score_blk   0041589b  ->0089a508  mov dword ptr [ebp + 0x89a508], 0                
+score_blk   004158a5  ->0089a368  mov eax, dword ptr [0x89a368]                    
+score_blk   004158ae  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   004158b9  ->0089a374  mov ecx, dword ptr [0x89a374]                    
+score_blk   004158f1  ->0089a508  mov eax, dword ptr [ebp + 0x89a508]              
+score_blk   00415a24  ->0089a4dc  mov eax, dword ptr [ebp + 0x89a4dc]              
+score_blk   00415a34  ->0089a4e0  cmp edi, dword ptr [ebp + 0x89a4e0]              
+score_blk   00415a44  ->0089a4dc  mov dword ptr [ebp + 0x89a4dc], esi              
+score_blk   00415aca  ->0089a4dc  mov dword ptr [ebp + 0x89a4dc], esi              
+score_blk   00415ad0  ->0089a4e0  mov eax, dword ptr [ebp + 0x89a4e0]              
+score_blk   00415ae1  ->0089a4e0  mov edx, dword ptr [ebp + 0x89a4e0]              
+score_blk   00415b5c  ->0089a4e0  mov ecx, dword ptr [ebp + 0x89a4e0]              
+score_blk   00415b90  ->0089a4dc  mov dword ptr [ebp + 0x89a4dc], esi              
+score_blk   00415cdb  ->0089a4dc  mov dword ptr [ebp + 0x89a4dc], 1                
+score_blk   00415ce5  ->0089a4e0  mov dword ptr [ebp + 0x89a4e0], edi              
+score_blk   0041623b  ->0089a500  mov dword ptr [eax + 0x89a500], ecx              
+score_blk   0041656a  ->0089a51c  mov dword ptr [eax + 0x89a51c], ecx              
+score_blk   00416570  ->0089a520  mov dword ptr [eax + 0x89a520], ecx              
+score_blk   00416576  ->0089a524  mov dword ptr [eax + 0x89a524], ecx              
+score_blk   00416590  ->0089a52c  mov dword ptr [edi + 0x89a52c], ecx              
+score_blk   00416608  ->0089a4ec  cmp dword ptr [edi + 0x89a4ec], 1                
+score_blk   00416616  ->0089a4f0  sub eax, dword ptr [edi + 0x89a4f0]              
+score_blk   00416638  ->0089a4f4  fimul dword ptr [edi + 0x89a4f4]                 
+score_blk   004166a4  ->0089a4f4  mov dword ptr [edi + 0x89a4f4], eax              
+score_blk   004166aa  ->0089a4ec  mov dword ptr [edi + 0x89a4ec], 1                
+score_blk   004166b4  ->0089a4f0  mov dword ptr [edi + 0x89a4f0], edx              
+score_blk   0041671d  ->0089a4ec  cmp dword ptr [edi + 0x89a4ec], 2                
+score_blk   0041672b  ->0089a4f0  sub eax, dword ptr [edi + 0x89a4f0]              
+score_blk   0041674d  ->0089a4f4  fimul dword ptr [edi + 0x89a4f4]                 
+score_blk   004167bf  ->0089a4f4  mov dword ptr [edi + 0x89a4f4], eax              
+score_blk   004167c5  ->0089a4ec  mov dword ptr [edi + 0x89a4ec], 2                
+score_blk   004167cf  ->0089a4f0  mov dword ptr [edi + 0x89a4f0], edx              
+score_blk   004168a4  ->0089a4e8  fld dword ptr [edi + 0x89a4e8]                   
+score_blk   004168bb  ->0089a4e8  fld dword ptr [edi + 0x89a4e8]                   
+score_blk   004169e0  ->0089a368  cmp dword ptr [0x89a368], 1                      
+score_blk   00416cba  ->0089a51c  mov dword ptr [eax + 0x89a51c], ecx              
+score_blk   00416cc0  ->0089a520  mov dword ptr [eax + 0x89a520], ecx              
+score_blk   00416cc6  ->0089a524  mov dword ptr [eax + 0x89a524], ecx              
+score_blk   00416d4e  ->0089a4ec  cmp dword ptr [ebx + 0x89a4ec], 1                
+score_blk   00416d5c  ->0089a4f0  sub eax, dword ptr [ebx + 0x89a4f0]              
+score_blk   00416d7e  ->0089a4f4  fimul dword ptr [ebx + 0x89a4f4]                 
+score_blk   00416dea  ->0089a4f4  mov dword ptr [ebx + 0x89a4f4], eax              
+score_blk   00416df0  ->0089a4ec  mov dword ptr [ebx + 0x89a4ec], 1                
+score_blk   00416dfa  ->0089a4f0  mov dword ptr [ebx + 0x89a4f0], edx              
+score_blk   00416e68  ->0089a4ec  cmp dword ptr [ebx + 0x89a4ec], 2                
+score_blk   00416e76  ->0089a4f0  sub eax, dword ptr [ebx + 0x89a4f0]              
+score_blk   00416e98  ->0089a4f4  fimul dword ptr [ebx + 0x89a4f4]                 
+score_blk   00416f0a  ->0089a4f4  mov dword ptr [ebx + 0x89a4f4], eax              
+score_blk   00416f10  ->0089a4ec  mov dword ptr [ebx + 0x89a4ec], 2                
+score_blk   00416f1a  ->0089a4f0  mov dword ptr [ebx + 0x89a4f0], edx              
+score_blk   00416ff2  ->0089a4e8  fld dword ptr [esi + 0x89a4e8]                   
+score_blk   00417003  ->0089a4e8  lea esi, [esi + 0x89a4e8]                        
+score_blk   00417130  ->0089a368  cmp dword ptr [0x89a368], 1                      
+score_blk   0041718a  ->0089a500  mov eax, dword ptr [esi + 0x89a500]              
+score_blk   004171a5  ->0089a4cc  mov ecx, dword ptr [esi + 0x89a4cc]              
+score_blk   004171ad  ->0089a504  mov dword ptr [esi + 0x89a504], ebp              
+score_blk   004171b5  ->0089a4d0  mov edx, dword ptr [esi + 0x89a4d0]              
+score_blk   004171c0  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], edx              
+score_blk   004171c8  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   004171e1  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   004171ea  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], eax              
+score_blk   00417200  ->0089a4cc  mov dword ptr [esi + 0x89a4cc], edi              
+score_blk   00417206  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   0041720c  ->0089a4cc  cmp dword ptr [esi + 0x89a4cc], ebx              
+score_blk   00417214  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   0041721d  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], eax              
+score_blk   00417233  ->0089a4cc  mov dword ptr [esi + 0x89a4cc], ebp              
+score_blk   00417239  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   00417249  ->0089a4cc  cmp dword ptr [esi + 0x89a4cc], 3                
+score_blk   00417252  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   0041725b  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], eax              
+score_blk   00417271  ->0089a4cc  mov dword ptr [esi + 0x89a4cc], ebx              
+score_blk   00417277  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   00417287  ->0089a500  mov dword ptr [esi + 0x89a500], ebx              
+score_blk   0041728d  ->0089a504  mov eax, dword ptr [esi + 0x89a504]              
+score_blk   004172a7  ->0089a504  mov dword ptr [esi + 0x89a504], eax              
+score_blk   004172b1  ->0089a504  mov dword ptr [esi + 0x89a504], ebx              
+score_blk   004172b7  ->0089a368  cmp dword ptr [0x89a368], ebx                    
+score_blk   004172bf  ->0089a4cc  mov dword ptr [esi + 0x89a4cc], ebx              
+score_blk   004172c5  ->0089a368  cmp dword ptr [0x89a368], edi                    
+score_blk   004172cd  ->0089a4cc  mov dword ptr [esi + 0x89a4cc], ebx              
+score_blk   004172d3  ->0089a368  cmp dword ptr [0x89a368], ebp                    
+score_blk   004172db  ->0089a4cc  cmp dword ptr [esi + 0x89a4cc], edi              
+score_blk   004172ed  ->0089a4cc  mov dword ptr [esi + 0x89a4cc], edi              
+score_blk   00417339  ->0089a4d0  mov edx, dword ptr [esi + 0x89a4d0]              
+score_blk   00417342  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], edx              
+score_blk   00417370  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   00417395  ->0089a4fc  mov dword ptr [edx + 0x89a4fc], ecx              
+score_blk   004173a0  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   004173b0  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   004173d2  ->0089a4fc  mov dword ptr [edx + 0x89a4fc], ecx              
+score_blk   00417671  ->0089a52c  cmp dword ptr [eax + 0x89a52c], 0xa              
+score_blk   00417734  ->0089a880  fld dword ptr [eax*4 + 0x89a880]                 
+score_blk   00417744  ->0089a870  fld dword ptr [eax*4 + 0x89a870]                 
+score_blk   00417770  ->0089a380  fld dword ptr [0x89a380]                         
+score_blk   00417778  ->0089a37c  fadd dword ptr [0x89a37c]                        
+score_blk   0041777e  ->0089a37c  fstp dword ptr [0x89a37c]                        
+score_blk   00417784  ->0089a378  mov edx, dword ptr [0x89a378]                    
+score_blk   0041778d  ->0089a378  mov dword ptr [0x89a378], edx                    
+score_blk   00417793  ->0089a380  mov dword ptr [0x89a380], 0                      
+score_blk   004177a2  ->0089a420  inc dword ptr [eax*4 + 0x89a420]                 
+score_blk   004177c4  ->0089a368  mov dword ptr [0x89a368], ebp                    
+score_blk   0041780f  ->0089a880  fst dword ptr [esi*4 + 0x89a880]                 
+score_blk   00417842  ->0089a870  fld dword ptr [0x89a870]                         
+score_blk   00417856  ->0089a874  fld dword ptr [0x89a874]                         
+score_blk   0041786a  ->0089a878  fld dword ptr [0x89a878]                         
+score_blk   0041787e  ->0089a87c  fld dword ptr [0x89a87c]                         
+score_blk   00417891  ->0089a870  fld dword ptr [0x89a870]                         
+score_blk   004178a4  ->0089a870  fstp dword ptr [0x89a870]                        
+score_blk   004178ac  ->0089a874  fld dword ptr [0x89a874]                         
+score_blk   004178bf  ->0089a874  fstp dword ptr [0x89a874]                        
+score_blk   004178c7  ->0089a878  fld dword ptr [0x89a878]                         
+score_blk   004178da  ->0089a878  fstp dword ptr [0x89a878]                        
+score_blk   004178e2  ->0089a87c  fld dword ptr [0x89a87c]                         
+score_blk   004178f5  ->0089a87c  fstp dword ptr [0x89a87c]                        
+score_blk   004179d4  ->0089a360  fsub dword ptr [0x89a360]                        
+score_blk   00417a03  ->0089a360  fsub dword ptr [0x89a360]                        
+score_blk   00417adc  ->0089a368  mov dword ptr [0x89a368], ebx                    
+score_blk   00417af5  ->0089a368  cmp dword ptr [0x89a368], ebp                    
+score_blk   00417afd  ->0089a36c  mov eax, dword ptr [0x89a36c]                    
+score_blk   00417b0d  ->0089a36c  mov dword ptr [0x89a36c], eax                    
+score_blk   00417b14  ->0089a368  mov dword ptr [0x89a368], 1                      
+score_blk   00417b1e  ->0089a36c  mov dword ptr [0x89a36c], ebx                    
+score_blk   00417b24  ->0089a360  fld dword ptr [0x89a360]                         
+score_blk   00417b3f  ->0089a370  fld dword ptr [0x89a370]                         
+score_blk   00417c1b  ->0089a370  fstp dword ptr [0x89a370]                        
+score_blk   00417c21  ->0089a374  mov dword ptr [0x89a374], edx                    
+score_blk   00417c27  ->0089a4c4  mov eax, 0x89a4c4                                
+score_blk   00417c38  ->0089a694  cmp eax, 0x89a694                                
+score_blk   00417c43  ->0089a368  cmp dword ptr [0x89a368], ebx                    
+score_blk   00417c8a  ->0089a368  mov dword ptr [0x89a368], 1                      
+score_blk   00417c94  ->0089a4c0  mov eax, 0x89a4c0                                
+score_blk   00417ca5  ->0089a690  cmp eax, 0x89a690                                
+score_blk   00417cde  ->0089a368  mov dword ptr [0x89a368], ebp                    
+score_blk   004180ba  ->0089a51c  mov dword ptr [eax + 0x89a51c], ecx              
+score_blk   004180c0  ->0089a520  mov dword ptr [eax + 0x89a520], ecx              
+score_blk   004180c6  ->0089a524  mov dword ptr [eax + 0x89a524], ecx              
+score_blk   004180e0  ->0089a52c  mov dword ptr [edi + 0x89a52c], ecx              
+score_blk   00418158  ->0089a4ec  cmp dword ptr [edi + 0x89a4ec], 1                
+score_blk   00418166  ->0089a4f0  sub eax, dword ptr [edi + 0x89a4f0]              
+score_blk   00418188  ->0089a4f4  fimul dword ptr [edi + 0x89a4f4]                 
+score_blk   004181f4  ->0089a4f4  mov dword ptr [edi + 0x89a4f4], eax              
+score_blk   004181fa  ->0089a4ec  mov dword ptr [edi + 0x89a4ec], 1                
+score_blk   00418204  ->0089a4f0  mov dword ptr [edi + 0x89a4f0], edx              
+score_blk   0041826d  ->0089a4ec  cmp dword ptr [edi + 0x89a4ec], 2                
+score_blk   0041827b  ->0089a4f0  sub eax, dword ptr [edi + 0x89a4f0]              
+score_blk   0041829d  ->0089a4f4  fimul dword ptr [edi + 0x89a4f4]                 
+score_blk   0041830f  ->0089a4f4  mov dword ptr [edi + 0x89a4f4], eax              
+score_blk   00418315  ->0089a4ec  mov dword ptr [edi + 0x89a4ec], 2                
+score_blk   0041831f  ->0089a4f0  mov dword ptr [edi + 0x89a4f0], edx              
+score_blk   004183f4  ->0089a4e8  fld dword ptr [edi + 0x89a4e8]                   
+score_blk   0041840b  ->0089a4e8  fld dword ptr [edi + 0x89a4e8]                   
+score_blk   004185ab  ->0089a4f8  mov ecx, dword ptr [ebp + 0x89a4f8]              
+score_blk   004185f1  ->0089a4d0  mov ecx, dword ptr [esi + 0x89a4d0]              
+score_blk   00418604  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   0041860a  ->0089a4cc  mov ecx, dword ptr [esi + 0x89a4cc]              
+score_blk   00418619  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   0041862d  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   00418633  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   00418649  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   0041865d  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   00418663  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   00418689  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   0041869d  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   004186a3  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   004186c9  ->0089a4d0  mov ecx, dword ptr [esi + 0x89a4d0]              
+score_blk   004186dd  ->0089a4d0  mov dword ptr [esi + 0x89a4d0], ebx              
+score_blk   004186e3  ->0089a4d0  mov eax, dword ptr [esi + 0x89a4d0]              
+score_blk   004187d5  ->0089a4fc  mov eax, dword ptr [esi + 0x89a4fc]              
+score_blk   004187e8  ->0089a4fc  mov dword ptr [esi + 0x89a4fc], eax              
+score_blk   004187f0  ->0089a4fc  mov dword ptr [esi + 0x89a4fc], ebx              
+score_blk   004187f6  ->0089a50c  mov dl, byte ptr [esi + 0x89a50c]                
+score_blk   004187fc  ->0089a510  mov al, byte ptr [esi + 0x89a510]                
+score_blk   00418802  ->0089a514  mov cl, byte ptr [esi + 0x89a514]                
+score_blk   0041880a  ->0089a518  mov dl, byte ptr [esi + 0x89a518]                
+score_blk   00418824  ->0089a50c  mov dword ptr [esi + 0x89a50c], eax              
+score_blk   0041882e  ->0089a510  mov dword ptr [esi + 0x89a510], ecx              
+score_blk   00418834  ->0089a514  mov dword ptr [esi + 0x89a514], edx              
+score_blk   0041883a  ->0089a518  mov dword ptr [esi + 0x89a518], eax              
+car_visual  0041ec0f  ->0063d9e0  add edi, 0x63d9e0                                
+car_visual  0041eccd  ->0063d9e0  add esi, 0x63d9e0                                
+car_visual  0041edae  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041edee  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041ee5e  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041eebe  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041ef6e  ->0063dc78  mov dword ptr [eax + 0x63dc78], ecx              
+car_visual  0041ef8e  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041efca  ->0063dc48  mov ecx, dword ptr [eax + 0x63dc48]              
+car_visual  0041efea  ->0063dc74  movzx eax, byte ptr [eax + 0x63dc74]             
+car_visual  0041f010  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041f03e  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041f06a  ->0063da38  mov ecx, dword ptr [eax + 0x63da38]              
+car_visual  0041f09e  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041f0e2  ->0063dc74  mov edx, dword ptr [ecx + 0x63dc74]              
+car_visual  0041f10a  ->0063dc64  fld dword ptr [eax + 0x63dc64]                   
+car_visual  0041f12a  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041f1d0  ->0063d9e0  mov eax, dword ptr [eax*4 + 0x63d9e0]            
+car_visual  0041f1ef  ->0063d9e0  mov eax, dword ptr [eax*4 + 0x63d9e0]            
+car_visual  0041f22a  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041f26b  ->0063d9e0  add eax, 0x63d9e0                                
+car_visual  0041f2a0  ->0063d9e0  mov eax, dword ptr [eax*4 + 0x63d9e0]            
+car_visual  0041f2cf  ->0063d9e0  mov esi, dword ptr [eax*4 + 0x63d9e0]            
+car_visual  0041f30a  ->0063dc6c  mov eax, dword ptr [eax + 0x63dc6c]              
+car_visual  00420061  ->0063d9e0  add esi, 0x63d9e0                                
+car_visual  0042029e  ->0063d9e0  add esi, 0x63d9e0                                
+car_visual  00420444  ->0063d9e0  add edi, 0x63d9e0                                
+car_visual  0042089b  ->0063d9e0  add esi, 0x63d9e0                                
+score_blk   00422b38  ->00899e80  mov edi, 0x899e80                                
+score_blk   00422b88  ->008995bc  mov ecx, dword ptr [edi + 0x8995bc]              
+score_blk   00422b8e  ->008995bc  lea eax, [edi + 0x8995bc]                        
+score_blk   00422e27  ->008995ec  mov dword ptr [ebp + 0x8995ec], edx              
+score_blk   00422e2d  ->008995f0  mov dword ptr [ebp + 0x8995f0], eax              
+score_blk   00422e33  ->008995f0  mov dword ptr [ecx + 0x8995f0], eax              
+score_blk   00422e3f  ->008995ec  mov dword ptr [ecx + 0x8995ec], edx              
+score_blk   00422e4a  ->008995cc  mov dword ptr [esi + 0x8995cc], eax              
+score_blk   00422e53  ->008995cc  mov dword ptr [edi + 0x8995cc], eax              
+score_blk   00422e94  ->008995dc  fst dword ptr [esi + 0x8995dc]                   
+score_blk   00422e9a  ->008995dc  fstp dword ptr [edi + 0x8995dc]                  
+score_blk   00422eae  ->008995f4  mov dword ptr [ebp + 0x8995f4], 0                
+score_blk   00422eb9  ->008995f4  mov dword ptr [ecx + 0x8995f4], edx              
+score_blk   00423b2a  ->008995ec  mov eax, dword ptr [eax + 0x8995ec]              
+score_blk   00423b57  ->00899a94  mov eax, dword ptr [eax + 0x899a94]              
+score_blk   00423b77  ->00899a98  mov eax, dword ptr [eax + 0x899a98]              
+score_blk   00423b97  ->00899f74  mov eax, dword ptr [eax + 0x899f74]              
+score_blk   00423bb7  ->00899f78  mov eax, dword ptr [eax + 0x899f78]              
+score_blk   00423be0  ->00899a9c  mov eax, dword ptr [eax + 0x899a9c]              
+score_blk   00423bf2  ->00899a9c  add eax, dword ptr [0x899a9c]                    
+score_blk   00423c05  ->00899bd4  add eax, dword ptr [0x899bd4]                    
+score_blk   00423c18  ->00899d0c  add eax, dword ptr [0x899d0c]                    
+score_blk   00423c2b  ->00899e44  add eax, dword ptr [0x899e44]                    
+score_blk   00423c38  ->00899a9c  mov eax, dword ptr [ecx + 0x899a9c]              
+score_blk   00423c60  ->00899a40  mov eax, dword ptr [eax + 0x899a40]              
+score_blk   00423c72  ->00899a40  add eax, dword ptr [0x899a40]                    
+score_blk   00423c85  ->00899b78  add eax, dword ptr [0x899b78]                    
+score_blk   00423c98  ->00899cb0  add eax, dword ptr [0x899cb0]                    
+score_blk   00423cab  ->00899de8  add eax, dword ptr [0x899de8]                    
+score_blk   00423cb8  ->00899a40  mov eax, dword ptr [ecx + 0x899a40]              
+score_blk   00423ced  ->00899a44  mov eax, dword ptr [eax + 0x899a44]              
+score_blk   00423cff  ->00899a44  add eax, dword ptr [0x899a44]                    
+score_blk   00423d12  ->00899b7c  add eax, dword ptr [0x899b7c]                    
+score_blk   00423d25  ->00899cb4  add eax, dword ptr [0x899cb4]                    
+score_blk   00423d38  ->00899dec  add eax, dword ptr [0x899dec]                    
+score_blk   00423d45  ->00899a44  mov eax, dword ptr [ecx + 0x899a44]              
+score_blk   00423d70  ->00899a90  mov eax, dword ptr [eax + 0x899a90]              
+score_blk   00423d82  ->00899a90  add eax, dword ptr [0x899a90]                    
+score_blk   00423d95  ->00899bc8  add eax, dword ptr [0x899bc8]                    
+score_blk   00423da8  ->00899d00  add eax, dword ptr [0x899d00]                    
+score_blk   00423dbb  ->00899e38  add eax, dword ptr [0x899e38]                    
+score_blk   00423dc8  ->00899a90  mov eax, dword ptr [ecx + 0x899a90]              
+score_blk   00423dfd  ->00899a48  mov eax, dword ptr [eax + 0x899a48]              
+score_blk   00423e0f  ->00899a48  add eax, dword ptr [0x899a48]                    
+score_blk   00423e22  ->00899b80  add eax, dword ptr [0x899b80]                    
+score_blk   00423e35  ->00899cb8  add eax, dword ptr [0x899cb8]                    
+score_blk   00423e48  ->00899df0  add eax, dword ptr [0x899df0]                    
+score_blk   00423e55  ->00899a48  mov eax, dword ptr [ecx + 0x899a48]              
+score_blk   00423e80  ->00899f7c  mov eax, dword ptr [eax + 0x899f7c]              
+score_blk   00423e92  ->00899f7c  add eax, dword ptr [0x899f7c]                    
+score_blk   00423ea5  ->0089a0b4  add eax, dword ptr [0x89a0b4]                    
+score_blk   00423eb8  ->0089a1ec  add eax, dword ptr [0x89a1ec]                    
+score_blk   00423ecb  ->0089a324  add eax, dword ptr [0x89a324]                    
+score_blk   00423ed8  ->00899f7c  mov eax, dword ptr [ecx + 0x899f7c]              
+score_blk   00423f00  ->00899f20  mov eax, dword ptr [eax + 0x899f20]              
+score_blk   00423f12  ->00899f20  add eax, dword ptr [0x899f20]                    
+score_blk   00423f25  ->0089a058  add eax, dword ptr [0x89a058]                    
+score_blk   00423f38  ->0089a190  add eax, dword ptr [0x89a190]                    
+score_blk   00423f4b  ->0089a2c8  add eax, dword ptr [0x89a2c8]                    
+score_blk   00423f58  ->00899f20  mov eax, dword ptr [ecx + 0x899f20]              
+score_blk   00423f8d  ->00899f24  mov eax, dword ptr [eax + 0x899f24]              
+score_blk   00423f9f  ->00899f24  add eax, dword ptr [0x899f24]                    
+score_blk   00423fb2  ->0089a05c  add eax, dword ptr [0x89a05c]                    
+score_blk   00423fc5  ->0089a194  add eax, dword ptr [0x89a194]                    
+score_blk   00423fd8  ->0089a2cc  add eax, dword ptr [0x89a2cc]                    
+score_blk   00423fe5  ->00899f24  mov eax, dword ptr [ecx + 0x899f24]              
+score_blk   00424010  ->00899f70  mov eax, dword ptr [eax + 0x899f70]              
+score_blk   00424022  ->00899f70  add eax, dword ptr [0x899f70]                    
+score_blk   00424035  ->0089a0a8  add eax, dword ptr [0x89a0a8]                    
+score_blk   00424048  ->0089a1e0  add eax, dword ptr [0x89a1e0]                    
+score_blk   0042405b  ->0089a318  add eax, dword ptr [0x89a318]                    
+score_blk   00424068  ->00899f70  mov eax, dword ptr [ecx + 0x899f70]              
+score_blk   0042409d  ->00899f28  mov eax, dword ptr [eax + 0x899f28]              
+score_blk   004240af  ->00899f28  add eax, dword ptr [0x899f28]                    
+score_blk   004240c2  ->0089a060  add eax, dword ptr [0x89a060]                    
+score_blk   004240d5  ->0089a198  add eax, dword ptr [0x89a198]                    
+score_blk   004240e8  ->0089a2d0  add eax, dword ptr [0x89a2d0]                    
+score_blk   004240f5  ->00899f28  mov eax, dword ptr [ecx + 0x899f28]              
+score_blk   00424124  ->008999a0  mov eax, dword ptr [eax + 0x8999a0]              
+score_blk   00424145  ->008999a0  add eax, dword ptr [0x8999a0]                    
+score_blk   00424160  ->00899ad8  add eax, dword ptr [0x899ad8]                    
+score_blk   0042417b  ->00899c10  add eax, dword ptr [0x899c10]                    
+score_blk   00424196  ->00899d48  add eax, dword ptr [0x899d48]                    
+score_blk   004241a5  ->008999a0  mov eax, dword ptr [ecx + 0x8999a0]              
+score_blk   004241e4  ->00899e80  mov eax, dword ptr [eax + 0x899e80]              
+score_blk   00424205  ->00899e80  add eax, dword ptr [0x899e80]                    
+score_blk   00424220  ->00899fb8  add eax, dword ptr [0x899fb8]                    
+score_blk   0042423b  ->0089a0f0  add eax, dword ptr [0x89a0f0]                    
+score_blk   00424256  ->0089a228  add eax, dword ptr [0x89a228]                    
+score_blk   00424265  ->00899e80  mov eax, dword ptr [ecx + 0x899e80]              
+score_blk   004248be  ->00899a94  mov dword ptr [eax + 0x899a94], edx              
+score_blk   004248ca  ->00899a40  mov dword ptr [eax + 0x899a40], ecx              
+score_blk   004248d6  ->00899a98  mov dword ptr [eax + 0x899a98], edx              
+score_blk   004248e2  ->00899a44  mov dword ptr [eax + 0x899a44], ecx              
+score_blk   004248ee  ->00899a90  mov dword ptr [eax + 0x899a90], edx              
+score_blk   004248fa  ->00899a48  mov dword ptr [eax + 0x899a48], ecx              
+score_blk   00424900  ->008995bc  mov ecx, dword ptr [eax + 0x8995bc]              
+score_blk   00424907  ->00899a9c  mov dword ptr [eax + 0x899a9c], ecx              
+score_blk   0042490d  ->008999a0  mov dword ptr [eax + 0x8999a0], edx              
+score_blk   00424920  ->00899a40  mov eax, dword ptr [0x899a40]                    
+score_blk   00424925  ->00899f20  mov ecx, dword ptr [0x899f20]                    
+score_blk   0042492d  ->00899f74  mov edx, dword ptr [0x899f74]                    
+score_blk   00424933  ->00899f24  mov eax, dword ptr [0x899f24]                    
+score_blk   00424938  ->00899f20  mov dword ptr [0x899f20], ecx                    
+score_blk   0042493e  ->00899a94  mov ecx, dword ptr [0x899a94]                    
+score_blk   00424946  ->00899f78  mov ecx, dword ptr [0x899f78]                    
+score_blk   0042494c  ->00899f74  mov dword ptr [0x899f74], edx                    
+score_blk   00424952  ->00899a44  mov edx, dword ptr [0x899a44]                    
+score_blk   0042495a  ->00899f28  mov edx, dword ptr [0x899f28]                    
+score_blk   00424960  ->00899f24  mov dword ptr [0x899f24], eax                    
+score_blk   00424965  ->00899a98  mov eax, dword ptr [0x899a98]                    
+score_blk   0042496c  ->00899f70  mov eax, dword ptr [0x899f70]                    
+score_blk   00424971  ->00899f78  mov dword ptr [0x899f78], ecx                    
+score_blk   00424977  ->00899a48  mov ecx, dword ptr [0x899a48]                    
+score_blk   0042497f  ->00899f7c  mov ecx, dword ptr [0x899f7c]                    
+score_blk   00424985  ->00899f28  mov dword ptr [0x899f28], edx                    
+score_blk   0042498b  ->00899a90  mov edx, dword ptr [0x899a90]                    
+score_blk   00424993  ->00899e80  mov edx, dword ptr [0x899e80]                    
+score_blk   00424999  ->00899f70  mov dword ptr [0x899f70], eax                    
+score_blk   0042499e  ->00899a9c  mov eax, dword ptr [0x899a9c]                    
+score_blk   004249a5  ->0089a058  mov eax, dword ptr [0x89a058]                    
+score_blk   004249aa  ->00899f7c  mov dword ptr [0x899f7c], ecx                    
+score_blk   004249b0  ->008999a0  mov ecx, dword ptr [0x8999a0]                    
+score_blk   004249b8  ->0089a0ac  mov ecx, dword ptr [0x89a0ac]                    
+score_blk   004249be  ->00899e80  mov dword ptr [0x899e80], edx                    
+score_blk   004249c4  ->00899b78  mov edx, dword ptr [0x899b78]                    
+score_blk   004249cc  ->0089a05c  mov edx, dword ptr [0x89a05c]                    
+score_blk   004249d2  ->0089a058  mov dword ptr [0x89a058], eax                    
+score_blk   004249d7  ->00899bcc  mov eax, dword ptr [0x899bcc]                    
+score_blk   004249de  ->0089a0b0  mov eax, dword ptr [0x89a0b0]                    
+score_blk   004249e3  ->0089a0ac  mov dword ptr [0x89a0ac], ecx                    
+score_blk   004249e9  ->00899b7c  mov ecx, dword ptr [0x899b7c]                    
+score_blk   004249f1  ->0089a060  mov ecx, dword ptr [0x89a060]                    
+score_blk   004249f7  ->0089a05c  mov dword ptr [0x89a05c], edx                    
+score_blk   004249fd  ->00899bd0  mov edx, dword ptr [0x899bd0]                    
+score_blk   00424a05  ->0089a0a8  mov edx, dword ptr [0x89a0a8]                    
+score_blk   00424a0b  ->0089a0b0  mov dword ptr [0x89a0b0], eax                    
+score_blk   00424a10  ->00899b80  mov eax, dword ptr [0x899b80]                    
+score_blk   00424a17  ->0089a0b4  mov eax, dword ptr [0x89a0b4]                    
+score_blk   00424a1c  ->0089a060  mov dword ptr [0x89a060], ecx                    
+score_blk   00424a22  ->00899bc8  mov ecx, dword ptr [0x899bc8]                    
+score_blk   00424a2a  ->00899fb8  mov ecx, dword ptr [0x899fb8]                    
+score_blk   00424a30  ->0089a0a8  mov dword ptr [0x89a0a8], edx                    
+score_blk   00424a36  ->00899bd4  mov edx, dword ptr [0x899bd4]                    
+score_blk   00424a3e  ->0089a190  mov edx, dword ptr [0x89a190]                    
+score_blk   00424a44  ->0089a0b4  mov dword ptr [0x89a0b4], eax                    
+score_blk   00424a49  ->00899ad8  mov eax, dword ptr [0x899ad8]                    
+score_blk   00424a50  ->0089a1e4  mov eax, dword ptr [0x89a1e4]                    
+score_blk   00424a55  ->00899fb8  mov dword ptr [0x899fb8], ecx                    
+score_blk   00424a5b  ->00899cb0  mov ecx, dword ptr [0x899cb0]                    
+score_blk   00424a63  ->0089a194  mov ecx, dword ptr [0x89a194]                    
+score_blk   00424a69  ->0089a190  mov dword ptr [0x89a190], edx                    
+score_blk   00424a6f  ->00899d04  mov edx, dword ptr [0x899d04]                    
+score_blk   00424a77  ->0089a1e8  mov edx, dword ptr [0x89a1e8]                    
+score_blk   00424a7d  ->0089a1e4  mov dword ptr [0x89a1e4], eax                    
+score_blk   00424a82  ->00899cb4  mov eax, dword ptr [0x899cb4]                    
+score_blk   00424a89  ->0089a194  mov dword ptr [0x89a194], ecx                    
+score_blk   00424a8f  ->00899d08  mov ecx, dword ptr [0x899d08]                    
+score_blk   00424a97  ->0089a1e8  mov dword ptr [0x89a1e8], edx                    
+score_blk   00424a9d  ->00899cb8  mov edx, dword ptr [0x899cb8]                    
+score_blk   00424aa3  ->0089a198  mov eax, dword ptr [0x89a198]                    
+score_blk   00424aa8  ->0089a1e0  mov ecx, dword ptr [0x89a1e0]                    
+score_blk   00424ab0  ->0089a1ec  mov edx, dword ptr [0x89a1ec]                    
+score_blk   00424ab6  ->0089a198  mov dword ptr [0x89a198], eax                    
+score_blk   00424abb  ->00899d00  mov eax, dword ptr [0x899d00]                    
+score_blk   00424ac2  ->0089a0f0  mov eax, dword ptr [0x89a0f0]                    
+score_blk   00424ac7  ->0089a1e0  mov dword ptr [0x89a1e0], ecx                    
+score_blk   00424acd  ->00899d0c  mov ecx, dword ptr [0x899d0c]                    
+score_blk   00424ad5  ->0089a2c8  mov ecx, dword ptr [0x89a2c8]                    
+score_blk   00424adb  ->0089a1ec  mov dword ptr [0x89a1ec], edx                    
+score_blk   00424ae1  ->00899c10  mov edx, dword ptr [0x899c10]                    
+score_blk   00424ae9  ->0089a31c  mov edx, dword ptr [0x89a31c]                    
+score_blk   00424aef  ->0089a0f0  mov dword ptr [0x89a0f0], eax                    
+score_blk   00424af4  ->00899de8  mov eax, dword ptr [0x899de8]                    
+score_blk   00424afb  ->0089a2cc  mov eax, dword ptr [0x89a2cc]                    
+score_blk   00424b00  ->0089a2c8  mov dword ptr [0x89a2c8], ecx                    
+score_blk   00424b06  ->00899e3c  mov ecx, dword ptr [0x899e3c]                    
+score_blk   00424b0e  ->0089a320  mov ecx, dword ptr [0x89a320]                    
+score_blk   00424b14  ->0089a31c  mov dword ptr [0x89a31c], edx                    
+score_blk   00424b1a  ->00899dec  mov edx, dword ptr [0x899dec]                    
+score_blk   00424b22  ->0089a2d0  mov edx, dword ptr [0x89a2d0]                    
+score_blk   00424b28  ->0089a2cc  mov dword ptr [0x89a2cc], eax                    
+score_blk   00424b2d  ->00899e40  mov eax, dword ptr [0x899e40]                    
+score_blk   00424b34  ->0089a318  mov eax, dword ptr [0x89a318]                    
+score_blk   00424b39  ->0089a320  mov dword ptr [0x89a320], ecx                    
+score_blk   00424b3f  ->00899df0  mov ecx, dword ptr [0x899df0]                    
+score_blk   00424b47  ->0089a324  mov ecx, dword ptr [0x89a324]                    
+score_blk   00424b4d  ->0089a2d0  mov dword ptr [0x89a2d0], edx                    
+score_blk   00424b53  ->00899e38  mov edx, dword ptr [0x899e38]                    
+score_blk   00424b5b  ->0089a318  mov dword ptr [0x89a318], eax                    
+score_blk   00424b60  ->00899e44  mov eax, dword ptr [0x899e44]                    
+score_blk   00424b67  ->0089a228  mov eax, dword ptr [0x89a228]                    
+score_blk   00424b6c  ->0089a324  mov dword ptr [0x89a324], ecx                    
+score_blk   00424b72  ->00899d48  mov ecx, dword ptr [0x899d48]                    
+score_blk   00424b7a  ->0089a228  mov dword ptr [0x89a228], eax                    
+score_blk   00424c3f  ->008999ac  cmp esi, 0x8999ac                                
+score_blk   00424c54  ->00899698  fild dword ptr [0x899698]                        
+score_blk   00424c6d  ->008997d0  fild dword ptr [0x8997d0]                        
+score_blk   00424c86  ->00899908  fild dword ptr [0x899908]                        
+score_blk   00424cfe  ->008996e8  mov esi, dword ptr [0x8996e8]                    
+score_blk   00424d08  ->008996e8  fild dword ptr [0x8996e8]                        
+score_blk   00424d31  ->00899820  fild dword ptr [0x899820]                        
+score_blk   00424d37  ->00899820  mov edx, dword ptr [0x899820]                    
+score_blk   00424d58  ->00899958  fild dword ptr [0x899958]                        
+score_blk   00424d5e  ->00899958  mov ecx, dword ptr [0x899958]                    
+score_blk   00424e34  ->00899960  mov ecx, dword ptr [0x899960]                    
+score_blk   00424e3a  ->00899828  mov edx, dword ptr [0x899828]                    
+score_blk   00424e40  ->008996f0  mov eax, dword ptr [0x8996f0]                    
+score_blk   00424e59  ->0089995c  mov edx, dword ptr [0x89995c]                    
+score_blk   00424e5f  ->00899824  mov eax, dword ptr [0x899824]                    
+score_blk   00424e64  ->008996ec  mov ecx, dword ptr [0x8996ec]                    
+score_blk   00424e7e  ->00899964  mov eax, dword ptr [0x899964]                    
+score_blk   00424e83  ->0089982c  mov ecx, dword ptr [0x89982c]                    
+score_blk   00424e89  ->008996f4  mov edx, dword ptr [0x8996f4]                    
+score_blk   00424e93  ->008995bc  mov eax, dword ptr [0x8995bc]                    
+score_blk   00425307  ->008995c4  mov esi, 0x8995c4                                
+score_blk   0042577d  ->00899a40  cmp ebx, 0x899a40                                
+score_blk   0042579f  ->00899aa4  cmp esi, 0x899aa4                                
+score_blk   004257bc  ->008995ec  mov esi, 0x8995ec                                
+veh_records 0046730d  ->00881f90  mov ecx, dword ptr [eax + 0x881f90]              
+veh_records 00467317  ->008815a4  mov ecx, dword ptr [eax + 0x8815a4]              
+veh_records 00467371  ->008815d8  mov esi, 0x8815d8                                
+veh_records 0046763b  ->008849e8  cmp esi, 0x8849e8                                
+veh_records 0046b1de  ->008815a0  add eax, 0x8815a0                                
+veh_records 0046b50f  ->008815a0  add ecx, 0x8815a0                                
+veh_records 0046b5fa  ->008815a0  add esi, 0x8815a0                                
+veh_records 0046bab4  ->008815a0  add ecx, 0x8815a0                                
+veh_records 0046bcf6  ->00882094  mov edx, dword ptr [eax + 0x882094]              
+veh_records 0046bcfe  ->00882098  mov edx, dword ptr [eax + 0x882098]              
+veh_records 0046bd07  ->0088209c  mov eax, dword ptr [eax + 0x88209c]              
+veh_records 0046bd36  ->008820a0  mov edx, dword ptr [eax + 0x8820a0]              
+veh_records 0046bd3e  ->008820a4  mov edx, dword ptr [eax + 0x8820a4]              
+veh_records 0046bd47  ->008820a8  mov eax, dword ptr [eax + 0x8820a8]              
+veh_records 0046bd84  ->00881744  mov eax, dword ptr [eax + 0x881744]              
+veh_records 0046bdc1  ->008815a0  add eax, 0x8815a0                                
+veh_records 0046be35  ->0088219c  mov dword ptr [eax + 0x88219c], edx              
+veh_records 0046be3b  ->0088221c  mov dword ptr [eax + 0x88221c], ecx              
+veh_records 0046be86  ->008815c0  mov dword ptr [ecx + 0x8815c0], eax              
+veh_records 0046be90  ->008815d8  mov dword ptr [ecx + 0x8815d8], eax              
+veh_records 0046bea6  ->008815c4  mov dword ptr [ecx + 0x8815c4], eax              
+veh_records 0046beac  ->008815dc  mov dword ptr [ecx + 0x8815dc], edx              
+veh_records 0046bebe  ->008815c8  mov dword ptr [ecx + 0x8815c8], eax              
+veh_records 0046bec8  ->008815e0  mov dword ptr [ecx + 0x8815e0], eax              
+veh_records 0046bede  ->008815cc  mov dword ptr [ecx + 0x8815cc], eax              
+veh_records 0046bee4  ->008815e4  mov dword ptr [ecx + 0x8815e4], edx              
+veh_records 0046bef6  ->008815d0  mov dword ptr [ecx + 0x8815d0], eax              
+veh_records 0046bf00  ->008815e8  mov dword ptr [ecx + 0x8815e8], eax              
+veh_records 0046bf16  ->008815d4  mov dword ptr [ecx + 0x8815d4], eax              
+veh_records 0046bf1c  ->008815ec  mov dword ptr [ecx + 0x8815ec], edx              
+veh_records 0046bf64  ->008815b4  mov edx, dword ptr [eax + 0x8815b4]              
+veh_records 0046bf82  ->00881f50  fld dword ptr [eax + 0x881f50]                   
+veh_records 0046bf8e  ->00881f50  fstp dword ptr [eax + 0x881f50]                  
+veh_records 0046bf97  ->00881f54  fadd dword ptr [eax + 0x881f54]                  
+veh_records 0046bf9d  ->00881f54  fstp dword ptr [eax + 0x881f54]                  
+veh_records 0046bfa6  ->00881f58  fadd dword ptr [eax + 0x881f58]                  
+veh_records 0046bfac  ->00881f58  fstp dword ptr [eax + 0x881f58]                  
+veh_records 0046bfe5  ->008815a0  add esi, 0x8815a0                                
+veh_records 0046c57a  ->008815a0  add eax, 0x8815a0                                
+veh_records 0046c5d8  ->008815a0  add eax, 0x8815a0                                
+veh_records 0046c6e6  ->008820b0  mov eax, dword ptr [eax + 0x8820b0]              
+veh_records 0046c716  ->008820b0  mov edx, dword ptr [eax + 0x8820b0]              
+veh_records 0046c71c  ->008820b0  lea eax, [eax + 0x8820b0]                        
+veh_records 0046c742  ->00882198  mov eax, dword ptr [eax + 0x882198]              
+veh_records 0046c762  ->00882194  mov eax, dword ptr [eax + 0x882194]              
+veh_records 0046c783  ->008815b0  mov eax, dword ptr [eax + 0x8815b0]              
+veh_records 0046c7a7  ->008815b0  mov dword ptr [eax + 0x8815b0], ecx              
+veh_records 0046c7c3  ->008815a4  mov eax, dword ptr [eax + 0x8815a4]              
+veh_records 0046c7fc  ->00881f90  mov eax, dword ptr [edi + 0x881f90]              
+veh_records 0046c811  ->008815b0  mov eax, dword ptr [edi + 0x8815b0]              
+veh_records 0046c857  ->00881f74  lea esi, [edi + 0x881f74]                        
+veh_records 0046c92f  ->00881f78  fmul dword ptr [edi + 0x881f78]                  
+veh_records 0046c93b  ->00881f7c  fmul dword ptr [edi + 0x881f7c]                  
+veh_records 0046c94d  ->00881f7c  fmul dword ptr [edi + 0x881f7c]                  
+veh_records 0046c96f  ->00881f78  fmul dword ptr [edi + 0x881f78]                  
+veh_records 0046ca2f  ->00881f84  fld dword ptr [edi + 0x881f84]                   
+veh_records 0046caf7  ->00881f48  mov edx, dword ptr [edi + 0x881f48]              
+veh_records 0046cb03  ->00881ec8  lea eax, [edx + edi + 0x881ec8]                  
+veh_records 0046cb44  ->008815b4  mov edx, dword ptr [eax + 0x8815b4]              
+veh_records 0046cb52  ->00881f50  lea eax, [eax + 0x881f50]                        
+veh_records 0046cbc6  ->00881f90  mov ecx, dword ptr [eax + 0x881f90]              
+veh_records 0046cbce  ->00881f94  mov eax, dword ptr [eax + 0x881f94]              
+veh_records 0046cbfa  ->00881f90  mov dword ptr [eax + 0x881f90], ecx              
+veh_records 0046cc00  ->00881f94  mov dword ptr [eax + 0x881f94], edx              
+veh_records 0046cc22  ->00881f80  fld dword ptr [eax + 0x881f80]                   
+veh_records 0046d304  ->00881790  mov eax, dword ptr [eax + 0x881790]              
+veh_records 0046d344  ->00881790  mov eax, dword ptr [eax + 0x881790]              
+veh_records 0046d384  ->00881738  mov eax, dword ptr [eax + 0x881738]              
+veh_records 0046d4b2  ->00881f48  mov ecx, dword ptr [eax + 0x881f48]              
+veh_records 0046d4bb  ->00881ec8  lea edx, [ecx + eax + 0x881ec8]                  
+veh_records 0046d4e8  ->00881ec8  lea edi, [eax + 0x881ec8]                        
+veh_records 0046d4f7  ->00881f08  lea edi, [eax + 0x881f08]                        
+veh_records 0046d525  ->00881ec8  lea eax, [esi + 0x881ec8]                        
+veh_records 0046d52e  ->00881f74  lea edi, [esi + 0x881f74]                        
+veh_records 0046d547  ->00881f78  mov edx, dword ptr [esi + 0x881f78]              
+veh_records 0046d553  ->00881f7c  mov ecx, dword ptr [esi + 0x881f7c]              
+veh_records 0046d58e  ->00881f50  fld dword ptr [esi + 0x881f50]                   
+veh_records 0046d59f  ->00881f50  lea ecx, [esi + 0x881f50]                        
+veh_records 0046d5a7  ->00881f54  fld dword ptr [esi + 0x881f54]                   
+veh_records 0046d5ba  ->00881f58  fld dword ptr [esi + 0x881f58]                   
+veh_records 0046d5e2  ->00881f78  fld dword ptr [esi + 0x881f78]                   
+veh_records 0046d5ef  ->00881f74  fld dword ptr [esi + 0x881f74]                   
+veh_records 0046d5fb  ->00881f7c  fld dword ptr [esi + 0x881f7c]                   
+veh_records 0046d676  ->00881f50  mov edx, dword ptr [eax + 0x881f50]              
+veh_records 0046d67e  ->00881f54  mov edx, dword ptr [eax + 0x881f54]              
+veh_records 0046d687  ->00881f58  mov eax, dword ptr [eax + 0x881f58]              
+veh_records 0046d6b6  ->008820ac  mov eax, dword ptr [eax + 0x8820ac]              
+veh_records 0046d6e6  ->00881f84  mov eax, dword ptr [eax + 0x881f84]              
+veh_records 0046d716  ->00881f68  mov edx, dword ptr [eax + 0x881f68]              
+veh_records 0046d71e  ->00881f6c  mov edx, dword ptr [eax + 0x881f6c]              
+veh_records 0046d727  ->00881f70  mov eax, dword ptr [eax + 0x881f70]              
+veh_records 0046d758  ->008816e4  mov dword ptr [eax + 0x8816e4], edx              
+veh_records 0046d761  ->008816e8  mov dword ptr [eax + 0x8816e8], edx              
+veh_records 0046d76a  ->008816ec  mov dword ptr [eax + 0x8816ec], ecx              
+veh_records 0046d794  ->00882194  mov ecx, dword ptr [eax + 0x882194]              
+veh_records 0046d7a2  ->00882198  mov dword ptr [eax + 0x882198], 2                
+veh_records 0046d7cf  ->00882198  mov dword ptr [eax + 0x882198], 1                
+veh_records 0046d7d9  ->00882194  mov dword ptr [eax + 0x882194], ecx              
+veh_records 0046d834  ->00882194  mov edi, dword ptr [eax + 0x882194]              
+veh_records 0046d83a  ->00882194  lea eax, [eax + 0x882194]                        
+veh_records 0046d84e  ->00882194  mov esi, dword ptr [ecx + 0x882194]              
+veh_records 0046d854  ->00882194  lea eax, [ecx + 0x882194]                        
+veh_records 0046da90  ->008815a0  add edi, 0x8815a0                                
+veh_records 0046dbea  ->008815a8  mov eax, dword ptr [eax + 0x8815a8]              
+veh_records 0046dc0e  ->008815a8  mov dword ptr [eax + 0x8815a8], ecx              
+veh_records 0046dc30  ->00881f90  mov eax, dword ptr [eax + 0x881f90]              
+veh_records 0046dd9e  ->008816f4  mov dword ptr [eax + 0x8816f4], ecx              
+veh_records 0046df48  ->008815a4  cmp dword ptr [esi + 0x8815a4], 1                
+veh_records 0046df55  ->00881f48  mov eax, dword ptr [esi + 0x881f48]              
+veh_records 0046df64  ->00881ef8  fld dword ptr [eax + esi + 0x881ef8]             
+veh_records 0046df78  ->00881f50  lea edx, [esi + 0x881f50]                        
+veh_records 0046df82  ->00881efc  fld dword ptr [eax + 0x881efc]                   
+veh_records 0046df92  ->00881f00  fld dword ptr [eax + 0x881f00]                   
+veh_records 0046e0f3  ->008815a4  mov ebx, dword ptr [0x8815a4]                    
+veh_records 0046e0ff  ->008815a8  mov ebp, dword ptr [0x8815a8]                    
+veh_records 0046e111  ->008822a8  mov ecx, dword ptr [0x8822a8]                    
+veh_records 0046e119  ->008822ac  mov esi, dword ptr [0x8822ac]                    
+veh_records 0046e127  ->00882fac  mov ecx, dword ptr [0x882fac]                    
+veh_records 0046e12f  ->00882fb0  mov edx, dword ptr [0x882fb0]                    
+veh_records 0046e13d  ->00883cb0  mov ecx, dword ptr [0x883cb0]                    
+veh_records 0046e145  ->00883cb4  mov ecx, dword ptr [0x883cb4]                    
+veh_records 0046e1ac  ->008822a8  mov ebx, dword ptr [0x8822a8]                    
+veh_records 0046e1bc  ->00882fac  mov esi, dword ptr [0x882fac]                    
+veh_records 0046e1cc  ->00883cb0  mov edx, dword ptr [0x883cb0]                    
+veh_records 0046e23f  ->008815a4  mov ecx, dword ptr [0x8815a4]                    
+veh_records 0046e250  ->008822a8  mov ecx, dword ptr [0x8822a8]                    
+veh_records 0046e25b  ->00882fac  mov ecx, dword ptr [0x882fac]                    
+veh_records 0046e266  ->00883cb0  mov ecx, dword ptr [0x883cb0]                    
+veh_records 004704f8  ->008815a0  add edi, 0x8815a0                                
+veh_records 00470a09  ->008815a0  add esi, 0x8815a0                                
+veh_records 00470b2d  ->008815a4  mov eax, dword ptr [edi + 0x8815a4]              
+veh_records 00470b37  ->008815b0  cmp dword ptr [edi + 0x8815b0], 1                
+veh_records 00470b44  ->00881a44  fld dword ptr [edi + 0x881a44]                   
+veh_records 00470b56  ->00881f48  mov edx, dword ptr [edi + 0x881f48]              
+veh_records 00470b69  ->00881ef8  lea ecx, [edx + edi + 0x881ef8]                  
+veh_records 00470bc5  ->008815a0  lea eax, [edi + 0x8815a0]                        
+veh_records 00470c73  ->008815a4  mov eax, dword ptr [0x8815a4]                    
+veh_records 00470c78  ->008815b4  mov ecx, dword ptr [0x8815b4]                    
+veh_records 00470f6f  ->00881f90  mov esi, 0x881f90                                
+veh_records 004710a1  ->008815b0  mov esi, 0x8815b0                                
+veh_records 00471159  ->00881f48  mov ebx, 0x881f48                                
+veh_records 00471320  ->008815b8  mov esi, 0x8815b8                                
+veh_records 00471765  ->008815a0  cmp ebx, 0x8815a0                                
+veh_records 00471ea2  ->008815a0  cmp edx, 0x8815a0                                
+veh_records 0047d437  ->00881630  fld dword ptr [0x881630]                         
+veh_records 0047d43d  ->0088163c  fsub dword ptr [0x88163c]                        
+veh_records 0047d449  ->00881664  fld dword ptr [0x881664]                         
+veh_records 0047d44f  ->00881634  fsub dword ptr [0x881634]                        
+veh_records 0047d45b  ->00881638  fld dword ptr [0x881638]                         
+veh_records 0047d461  ->00881650  fsub dword ptr [0x881650]                        
+veh_records 0047d495  ->0088163c  fld dword ptr [0x88163c]                         
+veh_records 0047d49d  ->00881630  fsub dword ptr [0x881630]                        
+veh_records 0047d4a9  ->008816d8  fst dword ptr [0x8816d8]                         
+veh_records 0047d4af  ->00881634  fld dword ptr [0x881634]                         
+veh_records 0047d4bb  ->008816dc  fst dword ptr [0x8816dc]                         
+veh_records 0047d4c1  ->00881650  fld dword ptr [0x881650]                         
+veh_records 0047d4c9  ->00881638  fsub dword ptr [0x881638]                        
+veh_records 0047d4d9  ->008816e0  fst dword ptr [0x8816e0]                         
+veh_records 0047d4e1  ->008823dc  fstp dword ptr [0x8823dc]                        
+veh_records 0047d4e9  ->008823e0  fstp dword ptr [0x8823e0]                        
+veh_records 0047d4ef  ->008823e4  fst dword ptr [0x8823e4]                         
+veh_records 0047d4f7  ->008830e0  fstp dword ptr [0x8830e0]                        
+veh_records 0047d4ff  ->008830e4  fstp dword ptr [0x8830e4]                        
+veh_records 0047d505  ->008830e8  fstp dword ptr [0x8830e8]                        
+veh_records 0047d50d  ->00883de4  fstp dword ptr [0x883de4]                        
+veh_records 0047d513  ->00883de8  fstp dword ptr [0x883de8]                        
+veh_records 0047d521  ->00883dec  mov dword ptr [0x883dec], edx                    
+veh_records 0047d735  ->008815a4  mov eax, dword ptr [esi + 0x8815a4]              
+veh_records 0047d74c  ->008815b4  mov eax, dword ptr [esi + 0x8815b4]              
+veh_records 0047d754  ->008815a0  lea ecx, [esi + 0x8815a0]                        
+veh_records 0047e504  ->00881f84  mov ecx, dword ptr [ebp + 0x881f84]              
+veh_records 0047e6a2  ->00881f84  mov eax, dword ptr [ebp + 0x881f84]              
+veh_records 0047eab1  ->008816d8  fld dword ptr [eax + 0x8816d8]                   
+veh_records 0047eac6  ->008816dc  fld dword ptr [eax + 0x8816dc]                   
+veh_records 0047ead6  ->008816e0  fld dword ptr [eax + 0x8816e0]                   
+veh_records 0047ebe2  ->00881f68  mov edi, 0x881f68                                
+veh_records 0047f0a3  ->00885378  cmp edi, 0x885378                                
+veh_records 0047f0d5  ->008816d8  mov ebp, 0x8816d8                                
+veh_records 0047f1bd  ->00884ae8  cmp ebp, 0x884ae8                                
+veh_records 0048073d  ->008815b4  mov eax, dword ptr [ebx + 0x8815b4]              
+veh_records 00480834  ->00881f50  lea ebp, [ebx + 0x881f50]                        
+veh_records 00480872  ->00881f54  fld dword ptr [ebx + 0x881f54]                   
+veh_records 00480882  ->00881f58  fld dword ptr [ebx + 0x881f58]                   
+veh_records 0048091a  ->008816d8  lea eax, [ebx + 0x8816d8]                        
+veh_records 0048099c  ->00881f64  mov dword ptr [ebx + 0x881f64], edi              
+veh_records 004809a2  ->00881f60  mov dword ptr [ebx + 0x881f60], edi              
+veh_records 004809a8  ->00881f5c  mov dword ptr [ebx + 0x881f5c], edi              
+veh_records 004809ae  ->00881f58  mov dword ptr [ebx + 0x881f58], edi              
+veh_records 004809b4  ->00881f54  mov dword ptr [ebx + 0x881f54], edi              
+veh_records 004809ba  ->00881f50  mov dword ptr [ebx + 0x881f50], edi              
+veh_records 004809c0  ->008815b4  mov dword ptr [ebx + 0x8815b4], 1                
+veh_records 004809ca  ->008815b8  mov dword ptr [ebx + 0x8815b8], 0x258            
+veh_records 004809fd  ->008815b4  mov eax, dword ptr [ebp + 0x8815b4]              
+veh_records 00480a79  ->00881f50  fstp dword ptr [ebp + 0x881f50]                  
+veh_records 00480a8f  ->00881f54  fstp dword ptr [ebp + 0x881f54]                  
+veh_records 00480a9f  ->00881f58  fstp dword ptr [ebp + 0x881f58]                  
+veh_records 00480ace  ->008816d8  lea ecx, [ebp + 0x8816d8]                        
+veh_records 00480b4f  ->008815b4  mov dword ptr [ebp + 0x8815b4], 0                
+veh_records 00480b59  ->008815b8  mov dword ptr [ebp + 0x8815b8], 0x258            
+veh_records 00480b8f  ->0088173c  mov ecx, dword ptr [eax + 0x88173c]              
+veh_records 00480bb5  ->00881800  mov ecx, dword ptr [eax + 0x881800]              
+veh_records 00480bc3  ->008818c4  mov ecx, dword ptr [eax + 0x8818c4]              
+veh_records 00480bd1  ->00881988  mov ecx, dword ptr [eax + 0x881988]              
+veh_records 00480c03  ->00881f68  lea eax, [edi + 0x881f68]                        
+veh_records 00480c96  ->00881f74  fld dword ptr [edi + 0x881f74]                   
+veh_records 00480cbb  ->00881f78  fld dword ptr [edi + 0x881f78]                   
+veh_records 00480cd4  ->00881f7c  fld dword ptr [edi + 0x881f7c]                   
+veh_records 00480cf9  ->00881f74  fld dword ptr [edi + 0x881f74]                   
+veh_records 00480d1e  ->00881f78  fld dword ptr [edi + 0x881f78]                   
+veh_records 00480d37  ->00881f7c  fld dword ptr [edi + 0x881f7c]                   
+veh_records 00480ecf  ->00881ec8  add edi, 0x881ec8                                
+veh_records 0048101f  ->00881ec8  add edi, 0x881ec8                                
+veh_records 00481107  ->00881ec8  add edi, 0x881ec8                                
+veh_records 0048122f  ->00881ec8  add edi, 0x881ec8                                
+veh_records 004813a9  ->00881f74  fld dword ptr [edi + 0x881f74]                   
+veh_records 004813cf  ->00881f78  fld dword ptr [edi + 0x881f78]                   
+veh_records 004813df  ->00881f7c  fld dword ptr [edi + 0x881f7c]                   
+veh_records 00481493  ->00881f74  fld dword ptr [edi + 0x881f74]                   
+veh_records 004814bd  ->00881f78  fld dword ptr [edi + 0x881f78]                   
+veh_records 004814cd  ->00881f7c  fld dword ptr [edi + 0x881f7c]                   
+veh_records 004815cd  ->00881f74  fld dword ptr [edi + 0x881f74]                   
+veh_records 004815f3  ->00881f78  fld dword ptr [edi + 0x881f78]                   
+veh_records 00481603  ->00881f7c  fld dword ptr [edi + 0x881f7c]                   
+veh_records 00481691  ->008815ac  cmp dword ptr [edi + 0x8815ac], 0x1770           
+veh_records 004816da  ->00881f68  fld dword ptr [edi + 0x881f68]                   
+veh_records 004816f0  ->00881f6c  fld dword ptr [edi + 0x881f6c]                   
+veh_records 00481700  ->00881f70  fld dword ptr [edi + 0x881f70]                   
+total 763

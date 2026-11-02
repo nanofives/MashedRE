@@ -6,7 +6,7 @@
 // session (see per-function notes). Style/idiom follows RwpSolverLeaves1.cpp (K1).
 //
 // K2 members (rva:size): 004c4600:111 004c51a0:323 004c52f0:378 00546b10:214 00546bf0:93
-// 00546c50:93 00546cb0:93 (00546c50 now in RwpSolverMath2QuatY.cpp, x87). Retires the RwpBuildExterns.cpp RVA thunks for
+// 00546c50:93 00546cb0:93 (00546c50 now in RwpSolverMath2QuatY.cpp, 00546b10/bf0/cb0 in RwpSolverMath2Quat.cpp, x87). Retires the RwpBuildExterns.cpp RVA thunks for
 // FUN_004c52f0/004c51a0/00546b10 (these definitions replace them at link).
 //
 // NO-GUESSING disasm verifications (pool14, 2026-07-16):
@@ -103,10 +103,6 @@ typedef void (__cdecl *RwErrRecordFn)(int*);
 extern "C" float __cdecl FastSqrt(float x);
 #define FUN_004c3b30  FastSqrt
 
-// Forward decls (FUN_00546b10 dispatches to the two siblings below it).
-extern "C" void __cdecl FUN_00546bf0(float *param_1, float *param_2);
-extern "C" void __cdecl FUN_00546c50(float *param_1, float *param_2);
-extern "C" void __cdecl FUN_00546cb0(float *param_1, float *param_2);
 
 // ---------------------------------------------------------------------------
 // 0x004c4600  RwMatrixMultiply(dst, a, b): identity-flag short-circuits (flag word
@@ -330,85 +326,9 @@ static uint * __cdecl FUN_004c52f0_impl(uint *param_1,uint *param_2,int param_3)
   return param_1;
 }
 
-// ---------------------------------------------------------------------------
-// 0x00546b10  Matrix->quaternion (Shoemake): trace branch, else dispatch to the
-//             largest-diagonal sibling (X: 0x546bf0, Y: 0x546c50, Z: 0x546cb0).
-//             Returns 0 on a null arg, else 1.
-// ---------------------------------------------------------------------------
-extern "C" undefined4 __cdecl FUN_00546b10(float *param_1,float *param_2);
-static undefined4 __cdecl FUN_00546b10_impl(float *param_1,float *param_2) {
-  float10 fVar1;
-  void (__cdecl *pcVar2)(float*, float*);
-  float10 fVar3;
-
-  if ((param_1 == (float *)0x0) || (param_2 == (float *)0x0)) {
-    return 0;
-  }
-  // trace stays on the x87 stack UNROUNDED through the FCOM and the +1.0
-  // (0x00546b23..0x00546b46); disasm sum order (m[10] + m[0]) + m[5]. [X87]
-  fVar1 = (float10)param_2[10] + (float10)*param_2 + (float10)param_2[5];
-  if ((float10)DAT_005d757c < fVar1) {
-    fVar3 = (float10)FUN_004c3b30((float)(fVar1 + (float10)_DAT_005cc320));  // 0x00546b49 [X87]
-    param_1[3] = (float)((float10)_DAT_005cc32c * fVar3);
-    fVar3 = (float10)_DAT_005cc32c / fVar3;                                  // [X87]
-    *param_1 = (float)(((float10)param_2[6] - (float10)param_2[9]) * fVar3);
-    param_1[1] = (float)(((float10)param_2[8] - (float10)param_2[2]) * fVar3);
-    param_1[2] = (float)(((float10)param_2[1] - (float10)param_2[4]) * fVar3);
-    return 1;
-  }
-  if (*param_2 <= param_2[5]) {
-    pcVar2 = FUN_00546c50;                            // 0x00546bcd
-    if (param_2[10] < param_2[5]) goto LAB_00546bd9;
-  }
-  else if (param_2[10] < *param_2) {
-    FUN_00546bf0(param_1,param_2);                    // 0x00546baf/0x00546bb5
-    return 1;
-  }
-  pcVar2 = FUN_00546cb0;                              // 0x00546bd4
-LAB_00546bd9:
-  (*pcVar2)(param_1,param_2);
-  return 1;
-}
-
-// ---------------------------------------------------------------------------
-// 0x00546bf0  Matrix->quat, "X is largest" Shoemake branch.
-// ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00546bf0(float *param_1,float *param_2);
-static void __cdecl FUN_00546bf0_impl(float *param_1,float *param_2) {
-  float10 fVar1;
-
-  // arg = m[0] - (m[10] + m[5]) + 1.0, single float32 rounding at the call
-  // (FLD/FADD/FSUBR/FADD/FSTP 0x00546bf5..0x00546c03). [X87]
-  fVar1 = (float10)FUN_004c3b30((float)((float10)*param_2 -
-              ((float10)param_2[10] + (float10)param_2[5]) + (float10)_DAT_005cc320));
-  *param_1 = (float)((float10)_DAT_005cc32c * fVar1);
-  fVar1 = (float10)_DAT_005cc32c / fVar1;                                    // [X87]
-  param_1[3] = (float)(((float10)param_2[6] - (float10)param_2[9]) * fVar1);
-  param_1[1] = (float)(((float10)param_2[4] + (float10)param_2[1]) * fVar1);
-  param_1[2] = (float)(((float10)param_2[8] + (float10)param_2[2]) * fVar1);
-  return;
-}
-
-// 0x00546c50 ("Y is largest") moved to Collision/RwpSolverMath2QuatY.cpp on 2026-10-11 so it
-// can be compiled x87 alone (U-9220). The forward decl above still binds FUN_00546b10's dispatch.
-
-// ---------------------------------------------------------------------------
-// 0x00546cb0  Matrix->quat, "Z is largest" Shoemake branch.
-// ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00546cb0(float *param_1,float *param_2);
-static void __cdecl FUN_00546cb0_impl(float *param_1,float *param_2) {
-  float10 fVar1;
-
-  // arg = m[10] - (m[5] + m[0]) + 1.0 (0x00546cb5..0x00546cc3). [X87]
-  fVar1 = (float10)FUN_004c3b30((float)((float10)param_2[10] -
-              ((float10)param_2[5] + (float10)*param_2) + (float10)_DAT_005cc320));
-  param_1[2] = (float)((float10)_DAT_005cc32c * fVar1);
-  fVar1 = (float10)_DAT_005cc32c / fVar1;                                    // [X87]
-  param_1[3] = (float)(((float10)param_2[1] - (float10)param_2[4]) * fVar1);
-  *param_1 = (float)(((float10)param_2[8] + (float10)param_2[2]) * fVar1);
-  param_1[1] = (float)(((float10)param_2[9] + (float10)param_2[6]) * fVar1);
-  return;
-}
+// 0x00546b10 / 0x00546bf0 / 0x00546cb0 moved to Collision/RwpSolverMath2Quat.cpp on 2026-11-01
+// (D4-WSB-55B080-ULP) and 0x00546c50 to Collision/RwpSolverMath2QuatY.cpp on 2026-10-11 (U-9220):
+// those four Shoemake bodies are compiled x87 (mashedmod/x87_tus.txt) so the thread PC applies.
 
 // --- gta-reversed-style hook registration (inert on the exe via HookSystemNoOp; installs
 //     the inline-JMP under the .asi for the diff-original A/B acceptance) — CLUSTER 2. ---
@@ -439,34 +359,6 @@ extern "C" uint * __cdecl FUN_004c52f0(uint *param_1,uint *param_2,int param_3) 
     return ShadowAB::Run(ab, FUN_004c52f0_impl, param_1, param_2, param_3);
 }
 RH_ScopedInstall(FUN_004c52f0, 0x004c52f0);
-// --- 0x00546b10 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
-// In-process original-vs-port comparison at the real call site; arm with
-// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
-extern "C" undefined4 __cdecl FUN_00546b10(float *param_1,float *param_2) {
-    SHADOW_AB_COUNTER(ab, "FUN_00546b10", 0x00546b10u, ShadowAB::kPhaseRace);
-    return ShadowAB::Run(ab, FUN_00546b10_impl, param_1, param_2);
-}
-RH_ScopedInstall(FUN_00546b10, 0x00546b10);
-// --- 0x00546bf0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
-// In-process original-vs-port comparison at the real call site; arm with
-// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
-// OUTPUT REGION: 0x10 bytes at (param_1) -- supplied by hand via --region;
-// the claim that this span covers every write MUST be backed by the analysis note.
-extern "C" void __cdecl FUN_00546bf0(float *param_1,float *param_2) {
-    SHADOW_AB_COUNTER(ab, "FUN_00546bf0", 0x00546bf0u, ShadowAB::kPhaseRace);
-    ShadowAB::RunRegion(ab, FUN_00546bf0_impl, reinterpret_cast<void*>(param_1), 0x10, param_1, param_2);
-}
-RH_ScopedInstall(FUN_00546bf0, 0x00546bf0);
-// --- 0x00546cb0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
-// In-process original-vs-port comparison at the real call site; arm with
-// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
-// OUTPUT REGION: 0x10 bytes at (param_1) -- supplied by hand via --region;
-// the claim that this span covers every write MUST be backed by the analysis note.
-extern "C" void __cdecl FUN_00546cb0(float *param_1,float *param_2) {
-    SHADOW_AB_COUNTER(ab, "FUN_00546cb0", 0x00546cb0u, ShadowAB::kPhaseRace);
-    ShadowAB::RunRegion(ab, FUN_00546cb0_impl, reinterpret_cast<void*>(param_1), 0x10, param_1, param_2);
-}
-RH_ScopedInstall(FUN_00546cb0, 0x00546cb0);
 
 }  // namespace Collision
 }  // namespace mashed_re
