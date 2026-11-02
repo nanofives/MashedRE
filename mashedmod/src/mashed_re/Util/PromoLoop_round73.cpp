@@ -18,20 +18,8 @@
 
 #include <cstdint>
 
-// 0x0042c1a0
-extern "C" __declspec(dllexport) void __cdecl StateAdvance2to3(void) {
-    if (*reinterpret_cast<std::int32_t*>(0x0067eab0u) == 2)             // CMP [0x67eab0],2 / JNZ
-        *reinterpret_cast<std::int32_t*>(0x0067eab0u) = 3;             // MOV [0x67eab0],3
-}
-RH_ScopedInstall(StateAdvance2to3, 0x0042c1a0);
+// MATCH-S07: the body of 0x0042c1a0 (StateAdvance2to3) moved to Match/MatchS07_0042c1a0.cpp,
+// which compiles the byte-matched source re/match/s07/0042c1a0.c.
 
-// 0x00432290
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Trigger432290(void) {
-    if (*reinterpret_cast<std::int32_t*>(0x0067eab0u) != 0) {           // TEST/JZ
-        std::int32_t v = *reinterpret_cast<std::int32_t*>(0x0067eabcu);
-        if (v == static_cast<std::int32_t>(0xff210000) || v == static_cast<std::int32_t>(0xff220000))
-            return 1;                                                   // MOV EAX,1
-    }
-    return 0;                                                           // XOR EAX,EAX
-}
-RH_ScopedInstall(Trigger432290, 0x00432290);
+// MATCH-S08: the body of 0x00432290 (Trigger432290) moved to Match/MatchS08_00432290.cpp,
+// which compiles the byte-matched source re/match/s08/00432290.c.

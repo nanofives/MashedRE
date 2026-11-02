@@ -87,69 +87,8 @@ static inline std::int32_t CallFun0040e470(int idx) {
 // U-3447 (0x1000 mode meaning), U-3448 (piVar3 stride)
 // ---------------------------------------------------------------------------
 
-// 0x0042ae10
-extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckA() {
-    // Guard: if (mode != 2 AND e7c8 == 0 AND 898ab0 != 0): not ready
-    std::int32_t mode     = *reinterpret_cast<std::int32_t*>(0x0067eab0u);
-    std::int32_t guard2   = *reinterpret_cast<std::int32_t*>(0x0067e7c8u);
-    std::int32_t guard3   = *reinterpret_cast<std::int32_t*>(0x00898ab0u);
-
-    if (mode != 2 && guard2 == 0 && guard3 != 0) {
-        return 0;
-    }
-
-    std::int32_t dispatch = *reinterpret_cast<std::int32_t*>(0x007f1a0cu);
-
-    if (dispatch == 0x1000) {
-        // Path A: stride-0x4c char scan at 0x7f1502
-        // Table A base: pcVar1 - 0x4c0 = 0x7f1042
-        // Table B base: pcVar1         = 0x7f1502
-        const std::int8_t* pcVar1 = reinterpret_cast<const std::int8_t*>(0x007f1502u);
-
-        while (true) {
-            // Loop condition: table A entry is '\0' OR table B entry != '\0'
-            if (*reinterpret_cast<const std::int8_t*>(
-                    reinterpret_cast<std::uintptr_t>(pcVar1) - 0x4c0u) == '\0'
-                || *pcVar1 != '\0') {
-                // Advance by stride 0x4c
-                pcVar1 += 0x4c;
-                if (reinterpret_cast<std::uintptr_t>(pcVar1) > 0x007f1761u) {
-                    return 0;
-                }
-            } else {
-                // Both conditions false: table A non-'\0' AND table B == '\0'
-                return 1;
-            }
-        }
-    } else {
-        // Path B: car-index + FUN_0040e470 check
-        const std::int32_t* piVar3 = reinterpret_cast<const std::int32_t*>(0x007f1a14u);
-        int iVar4 = 0;
-
-        while (true) {
-            // Loop condition: any of four predicates true → keep scanning
-            bool cond = (*piVar3 == -1)
-                     || (CallFun0040e470(iVar4) == 2)  // [UNCERTAIN U-3445]
-                     || (*reinterpret_cast<const std::int8_t*>(
-                             0x007f1042u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) == '\0')
-                     || (*reinterpret_cast<const std::int8_t*>(
-                             0x007f1502u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) != '\0');
-
-            if (!cond) {
-                return 1;
-            }
-
-            // Advance: piVar3 += 4 on int* = +16 bytes [UNCERTAIN U-3448]
-            piVar3 += 4;
-            iVar4 += 1;
-            if (reinterpret_cast<std::uintptr_t>(piVar3) > 0x007f1a53u) {
-                return 0;
-            }
-        }
-    }
-}
-
-RH_ScopedInstall(MenuReadinessCheckA, 0x0042ae10);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S06: the body of 0x0042ae10 (MenuReadinessCheckA) moved to Match/MatchS06_0042ae10.cpp,
+// which compiles the byte-matched source re/match/s06/0042ae10.c.
 
 // ---------------------------------------------------------------------------
 // MenuReadinessCheckB  --  0x0042aeb0
@@ -205,61 +144,8 @@ RH_ScopedInstall(MenuReadinessCheckA, 0x0042ae10);  // re-enabled 2026-05-24 c3-
 // U-3445 (FUN_0040e470 semantics shared with A), U-3446 (+1 byte column rel. A)
 // ---------------------------------------------------------------------------
 
-// 0x0042aeb0
-extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckB() {
-    // Guard: if (mode != 2 AND 898ab0 != 0): not ready  (no e7c8 guard)
-    std::int32_t mode  = *reinterpret_cast<std::int32_t*>(0x0067eab0u);
-    std::int32_t guard = *reinterpret_cast<std::int32_t*>(0x00898ab0u);
-
-    if (mode != 2 && guard != 0) {
-        return 0;
-    }
-
-    std::int32_t dispatch = *reinterpret_cast<std::int32_t*>(0x007f1a0cu);
-
-    if (dispatch == 0x1000) {
-        // Path A: table B+1 base = 0x7f1503; table A+1 base = 0x7f1043
-        const std::int8_t* pcVar1 = reinterpret_cast<const std::int8_t*>(0x007f1503u);
-
-        while (true) {
-            if (*reinterpret_cast<const std::int8_t*>(
-                    reinterpret_cast<std::uintptr_t>(pcVar1) - 0x4c0u) == '\0'
-                || *pcVar1 != '\0') {
-                pcVar1 += 0x4c;
-                if (reinterpret_cast<std::uintptr_t>(pcVar1) > 0x007f1762u) {
-                    return 0;
-                }
-            } else {
-                return 1;
-            }
-        }
-    } else {
-        // Path B: same table base as A but +1 byte column
-        const std::int32_t* piVar3 = reinterpret_cast<const std::int32_t*>(0x007f1a14u);
-        int iVar4 = 0;
-
-        while (true) {
-            bool cond = (*piVar3 == -1)
-                     || (CallFun0040e470(iVar4) == 2)  // [UNCERTAIN U-3445]
-                     || (*reinterpret_cast<const std::int8_t*>(
-                             0x007f1043u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) == '\0')
-                     || (*reinterpret_cast<const std::int8_t*>(
-                             0x007f1503u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) != '\0');
-
-            if (!cond) {
-                return 1;
-            }
-
-            piVar3 += 4;
-            iVar4 += 1;
-            if (reinterpret_cast<std::uintptr_t>(piVar3) > 0x007f1a53u) {
-                return 0;
-            }
-        }
-    }
-}
-
-RH_ScopedInstall(MenuReadinessCheckB, 0x0042aeb0);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S07: the body of 0x0042aeb0 (MenuReadinessCheckB) moved to Match/MatchS07_0042aeb0.cpp,
+// which compiles the byte-matched source re/match/s07/0042aeb0.c.
 
 // ---------------------------------------------------------------------------
 // MenuReadinessCheckC  --  0x0042af50
@@ -316,59 +202,5 @@ RH_ScopedInstall(MenuReadinessCheckB, 0x0042aeb0);  // re-enabled 2026-05-24 c3-
 // U-1616 (int index array at 0x7f1a14 — element count unknown)
 // ---------------------------------------------------------------------------
 
-// 0x0042af50
-extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckC() {
-    // Guard: if (mode != 2 AND e7c8 == 0 AND 898ab0 != 0): not ready
-    std::int32_t mode   = *reinterpret_cast<std::int32_t*>(0x0067eab0u);
-    std::int32_t guard2 = *reinterpret_cast<std::int32_t*>(0x0067e7c8u);
-    std::int32_t guard3 = *reinterpret_cast<std::int32_t*>(0x00898ab0u);
-
-    if (mode != 2 && guard2 == 0 && guard3 != 0) {
-        return 0;
-    }
-
-    std::int32_t dispatch = *reinterpret_cast<std::int32_t*>(0x007f1a0cu);
-
-    if (dispatch == 0x1000) {
-        // Path A: table B-1 base = 0x7f1501; table A-1 base = 0x7f1041
-        const std::int8_t* pcVar1 = reinterpret_cast<const std::int8_t*>(0x007f1501u);
-
-        while (true) {
-            if (*reinterpret_cast<const std::int8_t*>(
-                    reinterpret_cast<std::uintptr_t>(pcVar1) - 0x4c0u) == '\0'
-                || *pcVar1 != '\0') {
-                pcVar1 += 0x4c;
-                if (reinterpret_cast<std::uintptr_t>(pcVar1) > 0x007f1760u) {
-                    return 0;
-                }
-            } else {
-                return 1;
-            }
-        }
-    } else {
-        // Path B: same int* base as A and B; -1 byte column rel. A (col+1/col+0)
-        const std::int32_t* piVar3 = reinterpret_cast<const std::int32_t*>(0x007f1a14u);
-        int iVar4 = 0;
-
-        while (true) {
-            bool cond = (*piVar3 == -1)
-                     || (CallFun0040e470(iVar4) == 2)  // [UNCERTAIN U-1615]
-                     || (*reinterpret_cast<const std::int8_t*>(
-                             0x007f1041u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) == '\0')
-                     || (*reinterpret_cast<const std::int8_t*>(
-                             0x007f1501u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) != '\0');
-
-            if (!cond) {
-                return 1;
-            }
-
-            piVar3 += 4;
-            iVar4 += 1;
-            if (reinterpret_cast<std::uintptr_t>(piVar3) > 0x007f1a53u) {
-                return 0;
-            }
-        }
-    }
-}
-
-RH_ScopedInstall(MenuReadinessCheckC, 0x0042af50);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S07: the body of 0x0042af50 (MenuReadinessCheckC) moved to Match/MatchS07_0042af50.cpp,
+// which compiles the byte-matched source re/match/s07/0042af50.c.

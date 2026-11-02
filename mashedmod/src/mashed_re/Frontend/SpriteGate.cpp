@@ -78,31 +78,8 @@ static constexpr std::uintptr_t kStr_lock  = 0x005cd7b8u;  // "lock"
 static constexpr std::uintptr_t kStr_dot   = 0x005cd7b4u;  // "dot"
 static constexpr std::uintptr_t kStr_check = 0x005cd7acu;  // "check"
 
-// 0x0042ee00
-extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl SpriteSlotGate(int /*slot*/) {
-    __asm {
-        mov  eax, dword ptr [esp+4]
-        test eax, eax
-        jne  L_SG_1
-        mov  dword ptr [esp+4], 05CD7B8h
-        jmp  dword ptr [s_jmp_0040bb50]
-    L_SG_1:
-        cmp  eax, 1
-        jne  L_SG_2
-        mov  dword ptr [esp+4], 05CD7B4h
-        jmp  dword ptr [s_jmp_0040bb50]
-    L_SG_2:
-        cmp  eax, 2
-        jne  L_SG_NONE
-        mov  dword ptr [esp+4], 05CD7ACh
-        jmp  dword ptr [s_jmp_0040bb50]
-    L_SG_NONE:
-        xor  eax, eax
-        ret
-    }
-}
-
-RH_ScopedInstall(SpriteSlotGate, 0x0042ee00);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x0042ee00 (SpriteSlotGate) moved to Match/MatchS07_0042ee00.cpp,
+// which compiles the byte-matched source re/match/s07/0042ee00.c.
 
 // ---------------------------------------------------------------------------
 // HudSlotTypePlayer0  --  0x00430a10
@@ -119,27 +96,8 @@ RH_ScopedInstall(SpriteSlotGate, 0x0042ee00);  // re-enabled 2026-05-24 batch-fr
 // ref: re/analysis/hud_frontend_d4/0x00430a10.md
 // ---------------------------------------------------------------------------
 
-// 0x00430a10
-extern "C" __declspec(dllexport) int __cdecl HudSlotTypePlayer0() {
-    // 0x00430a17: read DAT_0067e9fc; switch on (value - 2)
-    // Default path: the switch is on (mode-2); default falls through returning (mode-2).
-    // Observed: mode 0 → 0xFFFFFFFE (-2) = 0-2; mode default → mode-2.
-    const std::int32_t mode = *reinterpret_cast<const std::int32_t*>(0x0067e9fcu);
-    switch (mode) {
-        case 2:  return 0;   // 0x00430a1f
-        case 3:              // 0x00430a23
-        case 4:              // 0x00430a27
-        case 5:  return 1;   // 0x00430a2b
-        case 6:              // 0x00430a2f
-        case 7:              // 0x00430a2f
-        case 8:              // 0x00430a2f
-        case 9:  return 3;   // 0x00430a2f
-        case 10: return 11;  // 0x00430a33 (0xb)
-        default: return mode - 2;  // 0x00430a36: default — (mode-2) computed by switch dispatch
-    }
-}
-
-RH_ScopedInstall(HudSlotTypePlayer0, 0x00430a10);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x00430a10 (HudSlotTypePlayer0) moved to Match/MatchS07_00430a10.cpp,
+// which compiles the byte-matched source re/match/s07/00430a10.c.
 
 // ---------------------------------------------------------------------------
 // HudSlotTypePlayer1  --  0x00430a60
@@ -154,27 +112,8 @@ RH_ScopedInstall(HudSlotTypePlayer0, 0x00430a10);  // re-enabled 2026-05-24 batc
 // ref: re/analysis/hud_frontend_d4/0x00430a60.md
 // ---------------------------------------------------------------------------
 
-// 0x00430a60
-extern "C" __declspec(dllexport) int __cdecl HudSlotTypePlayer1() {
-    // 0x00430a67: read DAT_0067e9fc; switch on (value - 2)
-    // Default (out-of-range modes): returns (mode-2) per switch dispatch arithmetic.
-    // Observed: mode 0 → 0xFFFFFFFE (-2) = 0-2.
-    const std::int32_t mode = *reinterpret_cast<const std::int32_t*>(0x0067e9fcu);
-    switch (mode) {
-        case 3:              // 0x00430a6e
-        case 4:              // 0x00430a72
-        case 5:  return 2;   // 0x00430a72
-        case 2:  return 0;   // 0x00430a76
-        case 6:  return 0;   // 0x00430a76
-        case 7:  return 0;   // 0x00430a76
-        case 8:  return 0;   // 0x00430a76
-        case 9:  return 0;   // 0x00430a76
-        case 10: return 0;   // 0x00430a76
-        default: return mode - 2;  // 0x00430a79: default — (mode-2)
-    }
-}
-
-RH_ScopedInstall(HudSlotTypePlayer1, 0x00430a60);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x00430a60 (HudSlotTypePlayer1) moved to Match/MatchS07_00430a60.cpp,
+// which compiles the byte-matched source re/match/s07/00430a60.c.
 
 // ---------------------------------------------------------------------------
 // HudSlotTypePlayer2  --  0x00430ab0
@@ -189,24 +128,5 @@ RH_ScopedInstall(HudSlotTypePlayer1, 0x00430a60);  // re-enabled 2026-05-24 batc
 // ref: re/analysis/hud_frontend_d4/0x00430ab0.md
 // ---------------------------------------------------------------------------
 
-// 0x00430ab0
-extern "C" __declspec(dllexport) int __cdecl HudSlotTypePlayer2() {
-    // 0x00430ab7: read DAT_0067e9fc; switch on (value - 2)
-    // Default (out-of-range modes): returns (mode-2) per switch dispatch arithmetic.
-    // Observed: mode 0 → 0xFFFFFFFE (-2) = 0-2.
-    const std::int32_t mode = *reinterpret_cast<const std::int32_t*>(0x0067e9fcu);
-    switch (mode) {
-        case 3:              // 0x00430abe
-        case 4:              // 0x00430ac2
-        case 5:  return 5;   // 0x00430ac2
-        case 2:  return 0;   // 0x00430ac6
-        case 6:  return 0;   // 0x00430ac6
-        case 7:  return 0;   // 0x00430ac6
-        case 8:  return 0;   // 0x00430ac6
-        case 9:  return 0;   // 0x00430ac6
-        case 10: return 0;   // 0x00430ac6
-        default: return mode - 2;  // 0x00430ac9: default — (mode-2)
-    }
-}
-
-RH_ScopedInstall(HudSlotTypePlayer2, 0x00430ab0);  // re-enabled 2026-05-24 batch-frontend
+// MATCH-S07: the body of 0x00430ab0 (HudSlotTypePlayer2) moved to Match/MatchS07_00430ab0.cpp,
+// which compiles the byte-matched source re/match/s07/00430ab0.c.

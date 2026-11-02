@@ -25,8 +25,8 @@ namespace {
 inline std::uint32_t& Flags(float* m) { return *reinterpret_cast<std::uint32_t*>(m + 3); }
 }  // namespace
 
-// 0x004c4680 (thunk_FUN_004c4680): 0x004c4680..0x004c4a41 as disassembled. Each row is scaled by the LUT inverse sqrt
-// 0x004c3b90 of (y*y + x*x) + z*z, NOT 1/sqrt, so the rows are not exactly unit (car 1's up.y reaches 1.00000024 at call 4
+// 0x004c4680 (thunk_FUN_004c4680): 0x004c4680..0x004c4a41 as disassembled. Each row is scaled by the LUT inverse sqrt (FUN_004c3b90,
+// Math::LutInvSqrt) of (y*y + x*x) + z*z, NOT 1/sqrt, so the rows are not exactly unit (car 1's up.y reaches 1.00000024 at call 4
 // in o_w93c, u9765). The pair is selected by the abs dots with the original's comparison order.
 void RwMatrixOrthoNormalizeLut(float* dst, const float* src) {
     const float k0 = 0.0f;                                                     // [0x005d757c]

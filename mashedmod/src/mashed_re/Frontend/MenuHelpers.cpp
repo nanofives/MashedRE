@@ -35,34 +35,8 @@
 //     eax = 0 ; if edx != 0: al = (ecx == 0)  (0x0042ecf9..0x0042ed02).
 // ---------------------------------------------------------------------------
 
-// 0x0042ebe0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendPlayerSlotCheck(int param_1) {
-    std::uint32_t found = 0;                                                       // 0x0042ebe4
-    for (std::uint32_t base = 0x007f0a48u;                                         // 0x0042ebe6
-         static_cast<std::int32_t>(base) < 0x007f0c28;                           // 0x0042ed58 jl
-         base += 0x1e0u) {                                                         // 0x0042ed53
-        std::uintptr_t col;
-        if (param_1 == 10)      col = base - 4u;                                   // 0x0042ebf5
-        else if (param_1 == 11) col = base;                                        // 0x0042ebff
-        else if (param_1 == 12) col = base + 0xcu;                                 // 0x0042ec08
-        else continue;                                                             // 0x0042ec06 -> 0x0042ed53
-        for (std::uint32_t row = 0; row < 10u; ++row) {
-            if (*reinterpret_cast<const std::uint32_t*>(col + row * 0x30u) == 0) {
-                found = 1;                                                         // 0x0042ece8
-                goto tail;
-            }
-        }
-    }
-tail:
-    {
-        const std::uint32_t flag = *reinterpret_cast<const std::uint32_t*>(
-            static_cast<std::uint32_t>(0x007f0a44u + static_cast<std::uint32_t>(param_1) * 0x30u));   // 0x0042ecf3
-        if (flag == 0) return 0u;                                                  // 0x0042ecfe
-        return found == 0 ? 1u : 0u;                                               // 0x0042ed02 sete
-    }
-}
-
-RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);  // re-ported 2026-10-12 reearn/fstate
+// MATCH-S07: the body of 0x0042ebe0 (FrontendPlayerSlotCheck) moved to Match/MatchS07_0042ebe0.cpp,
+// which compiles the byte-matched source re/match/s07/0042ebe0.c.
 
 // ---------------------------------------------------------------------------
 // FrontendCursorUpdate  --  0x0042f7b0
@@ -121,8 +95,17 @@ RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);  // re-ported 2026-10-12 
 // ref: re/analysis/race_hud_capture_20260902.md (Finding 29)
 // ---------------------------------------------------------------------------
 
-// 0x0042f7b0
-extern "C" __declspec(dllexport) void __cdecl FrontendCursorUpdate() {
+// MATCH-S07: the body of 0x0042f7b0 (FrontendCursorUpdate) moved to Match/MatchS07_0042f7b0.cpp,
+// which compiles the byte-matched source re/match/s07/0042f7b0.c.
+
+#ifdef MASHED_STANDALONE
+// Pre-swap Ability Select step, kept ONLY for the default-OFF knob MASHED_ABILITY_CURSOR_MATCHED (MATCH-S07-FU,
+// PREREG verify/matchs07fu_20261101/PREREG_MATCH-S07-FU.md). It is not a port of the original function: it is the
+// text the exe ran before the swap, and it differs from the matched body in one place, the decrement guard (`> 0`
+// here, the original's `!= 0` per re/match/s07/0042f7b0.c, so the original decrements an entry that is already
+// negative and this copy leaves it). exe_main.cpp calls it while the knob is unset and FrontendCursorUpdate (the
+// matched body) when the knob is set. Exe only. Delete it when the flip is decided (a roadmap decision row).
+extern "C" void __cdecl FrontendCursorUpdatePreSwap() {
     if (*reinterpret_cast<std::int32_t*>(0x0067eab0u) != 0) {
         return;
     }
@@ -186,8 +169,7 @@ extern "C" __declspec(dllexport) void __cdecl FrontendCursorUpdate() {
         piVar1 += 0x30 / sizeof(std::int32_t);  // 12 ints
     }
 }
-
-RH_ScopedInstall(FrontendCursorUpdate, 0x0042f7b0);  // re-enabled 2026-05-24 c3-frontend-b
+#endif
 
 // ---------------------------------------------------------------------------
 // LocalPlayerSlotCheck  --  0x00436810
@@ -220,63 +202,5 @@ RH_ScopedInstall(FrontendCursorUpdate, 0x0042f7b0);  // re-enabled 2026-05-24 c3
 
 extern "C" std::uint32_t __cdecl IsMultiplayerMode();
 
-// 0x00436810
-// Return type is `int` (not `bool`) to match the harness comparison: the
-// original returns via SETLE/SETcc which sets only the low byte of EAX,
-// leaving the upper 24 bits undefined.  Returning `int` from C++ generates
-// a XOR-and-set sequence that zeroes the full register, but the harness
-// then compares the full 32-bit return.  We coerce to (int) so both sides
-// produce the same value for the false (==12) path where the original
-// only writes the low byte.
-extern "C" __declspec(dllexport) int __cdecl LocalPlayerSlotCheck(int param_1) {
-    // 0x00436815: guard — slot index 12 always returns false.
-    if (param_1 == 0xc) {
-        return 0;
-    }
-    // 0x00436820: branch on IsMultiplayerMode() return value.
-    if (IsMultiplayerMode() == 0u) {
-        // ─── SP branch ────────────────────────────────────────────────
-        // 0x0043684d: piVar3 = &DAT_007f0a7c (int32*).
-        // 0x0043686c: stride = 0x48 ints (0x120 bytes).
-        // 0x00436870: terminate when piVar3 >= 0x007f0cbc.
-        std::int32_t* piVar3 = reinterpret_cast<std::int32_t*>(0x007f0a7cu);
-        int iVar2 = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar3) < 0x007f0cbcu) {
-            // 6 probes per block at int-offsets [-0xc, 0, +0xc, +0x18, +0x24, +0x30].
-            // [U-3410] meaning of offsets unresolved; reproduced literally.
-            if (piVar3[-0xc] != 0) iVar2++;
-            if (piVar3[0]    != 0) iVar2++;
-            if (piVar3[0xc]  != 0) iVar2++;
-            if (piVar3[0x18] != 0) iVar2++;
-            if (piVar3[0x24] != 0) iVar2++;
-            if (piVar3[0x30] != 0) iVar2++;
-            piVar3 += 0x48;  // stride in ints (= 0x120 bytes)
-        }
-        return param_1 <= iVar2 - 1;
-    }
-
-    // ─── MP branch ────────────────────────────────────────────────────
-    // 0x004368a0: piVar3 = &DAT_007f0a74 (int32*).
-    // 0x004368b9: stride = 0x48 ints.
-    // 0x004368bd: terminate when piVar3 >= 0x007f0cb4.
-    std::int32_t* piVar3 = reinterpret_cast<std::int32_t*>(0x007f0a74u);
-    int iVar2 = 0;
-    while (reinterpret_cast<std::uintptr_t>(piVar3) < 0x007f0cb4u) {
-        // [U-3411] meaning of `== 2` unresolved; reproduced literally.
-        if (piVar3[-0xc] == 2) iVar2++;
-        if (piVar3[0]    == 2) iVar2++;
-        if (piVar3[0xc]  == 2) iVar2++;
-        if (piVar3[0x18] == 2) iVar2++;
-        if (piVar3[0x24] == 2) iVar2++;
-        if (piVar3[0x30] == 2) iVar2++;
-        piVar3 += 0x48;
-    }
-    // 0x004368c2: (&DAT_007f0a44)[param_1 * 0xc] != 0 gate.
-    std::int32_t* slotTypeBase = reinterpret_cast<std::int32_t*>(0x007f0a44u);
-    if (slotTypeBase[param_1 * 0xc] != 0) {
-        return param_1 <= iVar2;
-    }
-    return false;
-}
-
-RH_ScopedInstall(LocalPlayerSlotCheck, 0x00436810);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S08: the body of 0x00436810 (LocalPlayerSlotCheck) moved to Match/MatchS08_00436810.cpp,
+// which compiles the byte-matched source re/match/s08/00436810.c.

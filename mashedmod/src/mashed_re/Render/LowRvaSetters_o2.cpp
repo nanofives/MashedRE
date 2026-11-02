@@ -185,34 +185,8 @@ RH_ScopedInstall(TrackDataSlotSet, 0x004053d0);  // re-enabled 2026-05-24 c3-ren
 // ref: re/analysis/promote_c2_render_lowrva/00423630.md
 // ---------------------------------------------------------------------------
 
-// 0x00423630
-extern "C" __declspec(dllexport) void __cdecl AiDataBufInit(void)
-{
-    // Step 1: clear adjacent dword. [0x00423630 body, first write]
-    *reinterpret_cast<std::uint32_t*>(0x00801a9cu) = 0u;
-
-    // Step 2: fill first AI buffer (DAT_007f1a9c) with 0x2000 dwords of 0xffffffff.
-    // Count 0x2000 and base 0x007f1a9c cited at 0x00423630.
-    std::uint32_t* puVar2 = reinterpret_cast<std::uint32_t*>(0x007f1a9cu);
-    for (int iVar1 = 0x2000; iVar1 != 0; iVar1 += -1) {
-        *puVar2 = 0xffffffffu;
-        puVar2 = puVar2 + 1;
-    }
-
-    // Step 3: fill second AI buffer (DAT_007f9a9c) with 0x2000 dwords of 0xffffffff.
-    // Base 0x007f9a9c cited at 0x00423630.
-    puVar2 = reinterpret_cast<std::uint32_t*>(0x007f9a9cu);
-    for (int iVar1 = 0x2000; iVar1 != 0; iVar1 += -1) {
-        *puVar2 = 0xffffffffu;
-        puVar2 = puVar2 + 1;
-    }
-
-    // Step 4: clear two header/state slots. [0x00423630 body, last writes]
-    *reinterpret_cast<std::uint32_t*>(0x007f1a54u) = 0u;  // DAT_007f1a54
-    *reinterpret_cast<std::uint32_t*>(0x007f1a64u) = 0u;  // DAT_007f1a64
-}
-
-RH_ScopedInstall(AiDataBufInit, 0x00423630);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S05: the body of 0x00423630 (AiDataBufInit) moved to Match/MatchS05_00423630.cpp,
+// which compiles the byte-matched source re/match/s05/00423630.c.
 
 // ---------------------------------------------------------------------------
 // EntryHeaderClear  --  0x00425ab0
@@ -249,23 +223,8 @@ RH_ScopedInstall(AiDataBufInit, 0x00423630);  // re-enabled 2026-05-24 c3-render
 // ref: re/analysis/promote_c2_render_lowrva/00425ab0.md
 // ---------------------------------------------------------------------------
 
-// 0x00425ab0
-extern "C" __declspec(dllexport) void __cdecl EntryHeaderClear(void)
-{
-    // Clears 2 dwords (entry+0x3C and entry+0x40) for 8 entries, stride 0x4c.
-    // Base 0x008992a0, stride 0x4c, count 8 — all cited from 0x00425ab0 body.
-    static const unsigned BASE = 0x008992a0u;
-    static const unsigned STRIDE = 0x4cu;
-    static const int COUNT = 8;
-
-    for (int i = 0; i < COUNT; i++) {
-        unsigned entry_base = BASE + static_cast<unsigned>(i) * STRIDE;
-        *reinterpret_cast<std::uint32_t*>(entry_base)      = 0u;  // entry+0x00 (field +0x3C from struct base)
-        *reinterpret_cast<std::uint32_t*>(entry_base + 4u) = 0u;  // entry+0x04 (field +0x40 from struct base)
-    }
-}
-
-RH_ScopedInstall(EntryHeaderClear, 0x00425ab0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S05: the body of 0x00425ab0 (EntryHeaderClear) moved to Match/MatchS05_00425ab0.cpp,
+// which compiles the byte-matched source re/match/s05/00425ab0.c.
 
 // ---------------------------------------------------------------------------
 // AiPizLoad  --  0x004235b0
@@ -309,38 +268,8 @@ RH_ScopedInstall(EntryHeaderClear, 0x00425ab0);  // re-enabled 2026-05-24 c3-ren
 // ref: re/analysis/promote_c2_render_lowrva/004235b0.md
 // ---------------------------------------------------------------------------
 
-// 0x004235b0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AiPizLoad(void)
-{
-    std::uint32_t uVar3 = 0u;
-
-    // Step 1: build AI path. [0x004235b0]
-    s_FUN_00423480();
-
-    // Step 2: open piz by path. [0x004235b0]
-    s_FUN_00495280("d:\\ToastArt\\Common\\ai.piz");
-
-    // Step 3: open stream handle. [FUN_004cc230(2, 1, &DAT_00644110)]
-    int iVar1 = s_FUN_004cc230(2, 1, reinterpret_cast<void*>(0x00644110u));
-    if (iVar1 != 0) {
-        // Step 4: find chunk with tag 0x13269902. [FUN_004cc5e0]
-        std::uint32_t uStack_8 = 0u;
-        std::uint32_t auStack_4[1] = {0u};
-        int iVar2 = s_FUN_004cc5e0(iVar1, 0x13269902u, &uStack_8, auStack_4);
-        if (iVar2 != 0) {
-            // Step 5: read record data into DAT_007f1a9c buffer. [FUN_004cbd30]
-            s_FUN_004cbd30(iVar1, reinterpret_cast<void*>(0x007f1a9cu), uStack_8);
-            // Step 6: close stream. [FUN_004cc160(iVar1, 0)]
-            s_FUN_004cc160(iVar1, 0);
-            uVar3 = 1u;
-        }
-    }
-
-    // Step 7: close piz. [FUN_004952f0]
-    s_FUN_004952f0();
-
-    return uVar3;
-}
+// MATCH-S05: the body of 0x004235b0 (AiPizLoad) moved to Match/MatchS05_004235b0.cpp,
+// which compiles the byte-matched source re/match/s05/004235b0.c.
 
 // MASS-DISABLED 2026-05-24 needs-canonical-piz-state: RH_ScopedInstall(AiPizLoad, 0x004235b0);
 // Phase A1 audit 2026-05-24: function depends on canonical PIZ-VFS state

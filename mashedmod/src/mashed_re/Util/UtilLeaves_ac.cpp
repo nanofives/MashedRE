@@ -103,12 +103,8 @@
 //   *param_1 = param_2 ; ret     — 10-byte trivial indirect write (cdecl stack args).
 // ---------------------------------------------------------------------------
 
-// 0x004292c0
-extern "C" __declspec(dllexport) void __cdecl UtilWritePtr(std::uint32_t* p, std::uint32_t v) {
-    *p = v;
-}
-
-RH_ScopedInstall(UtilWritePtr, 0x004292c0);
+// MATCH-S06: the body of 0x004292c0 (UtilWritePtr) moved to Match/MatchS06_004292c0.cpp,
+// which compiles the byte-matched source re/match/s06/004292c0.c.
 
 // ---------------------------------------------------------------------------
 // sub_0042aab0  --  0x0042aab0   (void(void) two-constant initializer)
@@ -117,13 +113,8 @@ RH_ScopedInstall(UtilWritePtr, 0x004292c0);
 //   DAT_00898a90 = 0x180 (384) ; DAT_00898ab0 = 0 ; ret    — 20-byte leaf.
 // ---------------------------------------------------------------------------
 
-// 0x0042aab0
-extern "C" __declspec(dllexport) void __cdecl UtilInit898a90() {
-    *reinterpret_cast<std::uint32_t*>(0x00898a90u) = 0x00000180u;   // 384
-    *reinterpret_cast<std::uint32_t*>(0x00898ab0u) = 0u;
-}
-
-RH_ScopedInstall(UtilInit898a90, 0x0042aab0);
+// MATCH-S06: the body of 0x0042aab0 (UtilInit898a90) moved to Match/MatchS06_0042aab0.cpp,
+// which compiles the byte-matched source re/match/s06/0042aab0.c.
 
 // ---------------------------------------------------------------------------
 // FUN_00430b00  --  0x00430b00   (TimeDisplay::SetEntry — 2D-indexed 3-field write)
@@ -136,13 +127,5 @@ RH_ScopedInstall(UtilInit898a90, 0x0042aab0);
 //   47-byte leaf. Buffer base 0x008989e0; 12-byte elements; p1,p2 in {0,1}.
 // ---------------------------------------------------------------------------
 
-// 0x00430b00
-extern "C" __declspec(dllexport) void __cdecl TimeDisplaySetEntry(
-        int param_1, int param_2, std::uint32_t v3, std::uint32_t v4, std::uint32_t v5) {
-    int off = (param_2 + param_1 * 2) * 0xc;
-    *reinterpret_cast<std::uint32_t*>(0x008989e0u + off) = v3;
-    *reinterpret_cast<std::uint32_t*>(0x008989e4u + off) = v4;
-    *reinterpret_cast<std::uint32_t*>(0x008989e8u + off) = v5;
-}
-
-RH_ScopedInstall(TimeDisplaySetEntry, 0x00430b00);
+// MATCH-S07: the body of 0x00430b00 (TimeDisplaySetEntry) moved to Match/MatchS07_00430b00.cpp,
+// which compiles the byte-matched source re/match/s07/00430b00.c.

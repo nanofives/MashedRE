@@ -153,19 +153,20 @@ $exe = Join-Path $Repo 'original\MASHED.exe'
 $wd  = Join-Path $Repo 'original'
 $av = 0; $ok = 0
 for ($i=1; $i -le $Runs; $i++) {
-  $p = Start-Process -FilePath $exe -WorkingDirectory $wd -PassThru
-  $sw = [Diagnostics.Stopwatch]::StartNew()
-  $exited = $p.WaitForExit($Seconds * 1000)      # footgun #2: ALWAYS WaitForExit first
-  $t = [math]::Round($sw.Elapsed.TotalSeconds,2)
-  if ($exited) {
-    $code = $p.ExitCode
-    $tag = if ($code -eq 0xC0000005 -or $code -eq -1073741819) { 'AV 0xC0000005' } else { "exit 0x{0:X8}" -f $code }
+  # D5-SHIM-DINPUT8-SPAWNERS: no dinput8 proxy. dev_asi.py boot Module.loads $Deployed (the subset
+  # just deployed) + InjectHooks before resume, waits, and kills only its own pid.
+  $line = & py.exe -3.12 (Join-Path $Repo 're\frida\dev_asi.py') boot --seconds $Seconds --exe $exe | Select-Object -Last 1
+  if ($line -match '^DIED (\S+) (0x[0-9A-F]{8})') {
+    $t = $Matches[1]; $code = $Matches[2]
+    $tag = if ($code -eq '0xC0000005') { 'AV 0xC0000005' } else { "exit $code" }
     Write-Host ("  run {0}: DIED {1,6}s  {2}" -f $i,$t,$tag) -ForegroundColor Red
     $av++
-  } else {
-    Write-Host ("  run {0}: BOOTS {1,6}s (alive at threshold)" -f $i,$t) -ForegroundColor Green
-    Stop-Process -Id $p.Id -Force              # only ever our own pid
+  } elseif ($line -match '^BOOTS (\S+)') {
+    Write-Host ("  run {0}: BOOTS {1,6}s (alive at threshold)" -f $i,$Matches[1]) -ForegroundColor Green
     $ok++
+  } else {
+    Write-Host ("  run {0}: ERROR {1}" -f $i,$line) -ForegroundColor Red
+    $av++
   }
   Start-Sleep -Seconds 2
 }

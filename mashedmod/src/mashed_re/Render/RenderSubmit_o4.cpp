@@ -173,14 +173,8 @@ RH_ScopedInstall(RwRenderCommandBufferReset, 0x004cd140);  // re-enabled 2026-05
 // ref: re/analysis/promote_c2_video_display/0042b890.md
 // ---------------------------------------------------------------------------
 
-// 0x0042b890
-extern "C" __declspec(dllexport) void __cdecl RenderWidthSet(std::uint16_t param_1)
-{
-    // Write low 16 bits of param_1 to DAT_0067ea54 (render-width copy). [0x0042b890]
-    *reinterpret_cast<std::uint16_t*>(0x0067ea54u) = param_1;
-}
-
-RH_ScopedInstall(RenderWidthSet, 0x0042b890);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S07: the body of 0x0042b890 (RenderWidthSet) moved to Match/MatchS07_0042b890.cpp,
+// which compiles the byte-matched source re/match/s07/0042b890.c.
 
 // ---------------------------------------------------------------------------
 // RenderHeightSet  --  0x0042b8a0
@@ -204,11 +198,5 @@ RH_ScopedInstall(RenderWidthSet, 0x0042b890);  // re-enabled 2026-05-24 c3-rende
 // ref: re/analysis/promote_c2_video_display/0042b8a0.md
 // ---------------------------------------------------------------------------
 
-// 0x0042b8a0
-extern "C" __declspec(dllexport) void __cdecl RenderHeightSet(std::uint16_t param_1)
-{
-    // Write low 16 bits of param_1 to DAT_0067ea56 (render-height copy). [0x0042b8a0]
-    *reinterpret_cast<std::uint16_t*>(0x0067ea56u) = param_1;
-}
-
-RH_ScopedInstall(RenderHeightSet, 0x0042b8a0);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S07: the body of 0x0042b8a0 (RenderHeightSet) moved to Match/MatchS07_0042b8a0.cpp,
+// which compiles the byte-matched source re/match/s07/0042b8a0.c.

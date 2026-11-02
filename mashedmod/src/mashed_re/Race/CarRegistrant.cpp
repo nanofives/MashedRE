@@ -17,6 +17,7 @@
 #include "CarRegistrant.h"
 #include "WorldRegistry.h"
 #include "../Vehicle/VehicleRecordBase.h"
+#include "../Vehicle/RecordBlockState.h"   // [MATCH-PORTSTATE-RECORDS] knob
 
 #include <cstdint>
 #include <cstdlib>
@@ -26,13 +27,19 @@ extern "C" void RG_484cf0();                                                    
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);          // 0x0046c7b0
 extern "C" std::uint32_t __cdecl IsCarSlotActive(int param_1);                         // 0x0040e370
 
-#include "CarRegistrant_naked.inc"
+// MATCH-S05: the body of 0x0041f710 (CR_41f710, was CarRegistrant_naked.inc) moved to Match/MatchS05_0041f710.cpp,
+// which compiles the byte-matched source re/match/s05/0041f710.c. CR_41f710 there takes the record in EAX.
+extern "C" void CR_41f710();
 
 namespace mashed_re {
 namespace Race {
 
 namespace {
-alignas(4) unsigned char s_rec[4][0x2ac];
+alignas(4) unsigned char s_recStore[4][0x2ac];
+// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default OFF): the four records ARE the original's
+// 0x0063d9e0 + v*0x2ac. Only the three fields below are written either way (the exe builds no RW car object).
+unsigned char (*const s_rec)[0x2ac] = Vehicle::PortStateRecords_On()
+    ? reinterpret_cast<unsigned char (*)[0x2ac]>(0x0063d9e0u) : s_recStore;
 constexpr std::uint32_t kRadiusBits = 0x3f088c2du;   // measured, U-9218
 
 void CallRegistrant(unsigned char* rec) {
@@ -42,6 +49,8 @@ void CallRegistrant(unsigned char* rec) {
     }
 }
 }  // namespace
+
+const unsigned char* CarsReg_RecordBase() { return s_rec[0]; }
 
 void CarsReg_FrameTick() {
     for (int v = 0; v < 4; ++v) {

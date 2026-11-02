@@ -46,8 +46,8 @@ sys.path.insert(0, str(ROOT / "re" / "frida"))
 import statenav
 from statenav import Nav, _open_handle, _exit_code
 
-EXE = statenav.EXE
-ORIG = statenav.ORIG
+EXE = statenav.dev_asi.original_exe(statenav.EXE)
+ORIG = EXE.parent
 
 AGENT = r'''
 'use strict';
@@ -362,9 +362,9 @@ def main():
     env = dict(os.environ)
     hk = f"0x{rva:08x}"
     if arm == "off":
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None); env["MASHED_HOOK_ONLY"] = "__none__"
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = "__none__"
     elif arm == "on":
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None); env["MASHED_HOOK_ONLY"] = hk
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = hk
     elif arm == "stock":
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = "__none__"
     else:
@@ -383,9 +383,13 @@ def main():
         print(msg, flush=True); rec["log"].append(msg)
 
     dev = frida.get_local_device()
-    pid = dev.spawn(str(exe), cwd=str(cwd), env=env)
+    # D5-SHIM-DINPUT8-SPAWNERS: off/on load the asi before the first resume (dev_asi:
+    # Module.load + InjectHooks, MASHED_HOOK_ONLY honoured), not through the dinput8 proxy.
+    _p, sess, _asi = statenav.dev_asi.spawn_original(exe, hooks=arm in ("off", "on"), env=env,
+                                                     cwd=cwd, device=dev, resume=False)
+    pid = _p.pid; rec["dev_asi"] = _asi
     rec["pid"] = pid; log(f"  spawned pid={pid} row={row} arm={arm}")
-    sess = dev.attach(pid); hproc = _open_handle(pid)
+    hproc = _open_handle(pid)
     def on_msg(m, d):
         p = m.get("payload") if isinstance(m, dict) else None
         if isinstance(p, dict) and p.get("kind") == "crash":

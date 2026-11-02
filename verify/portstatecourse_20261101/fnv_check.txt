@@ -1,0 +1,5 @@
+file C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe.unpatched recs=bbba0607 ptrs=b1872d64 hook=6064cc66 count=3c1ab248
+H_PSC.log recs OK ptrs OK hook OK count OK sel=005f33f8 name=training
+B_PSC_K0.log recs OK ptrs OK hook OK count OK sel=005f33f8 name=training
+B_PSC_K1.log recs OK ptrs OK hook OK count OK sel=005f33f8 name=training
+B_PSC_K26.log recs OK ptrs OK hook OK count OK sel=005f33f8 name=training

@@ -119,112 +119,15 @@ static inline char PadAt(std::uintptr_t base, std::int32_t pad) {
 // No timer, no screen-type check.
 // ---------------------------------------------------------------------------
 
-// 0x0042b770
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectE() {
-    std::uint32_t edge = 0;  // EBX
+// MATCH-S07: the body of 0x0042b770 (MenuButtonDetectE) moved to Match/MatchS07_0042b770.cpp,
+// which compiles the byte-matched source re/match/s07/0042b770.c.
 
-    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
-        for (int k = 0; k < 7; ++k) {                       // 0x0042b783..0x0042b81f
-            if (PadAt(kActiveBase5, k) != '\0' && PadAt(kProcessedBase5, k) == '\0') edge = 1;
-        }
-        if (*reinterpret_cast<const char*>(kPathARow7Active5) != '\0' &&
-            *reinterpret_cast<const char*>(kPathARow7Processed5) == '\0') {
-            return 1u;                                      // 0x0042b836
-        }
-        return edge;                                        // 0x0042b885
-    }
+// 0x0042b310 MenuButtonDetectC and 0x0042b540 MenuButtonDetectD shared the static helper
+// MenuButtonDetectScreenGate here. MATCH-S07 moved both bodies to Match/MatchS07_0042b310.cpp and
+// Match/MatchS07_0042b540.cpp (byte-matched sources re/match/s07/0042b310.c / 0042b540.c), so the helper went too.
 
-    for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
-        const std::int32_t id = *SlotRec(i);                // 0x0042b846
-        if (id == -1) continue;
-        if (CallSlotState(i) == 2) continue;                // 0x0042b84c
-        if (PadAt(kActiveBase5, id) != '\0' && PadAt(kProcessedBase5, id) == '\0') edge = 1;  // 0x0042b85e / 0x0042b868
-    }
-    return edge;                                            // 0x0042b885
-}
-
-RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);  // re-ported 2026-10-12 (negctl re-earn)
-
-// ---------------------------------------------------------------------------
-// 0x0042b310  MenuButtonDetectC
-// 0x0042b540  MenuButtonDetectD
-// The two bodies are the same instruction stream with three operands changed:
-// held column (0x007f1044 / 0x007f1045), previous-frame column (0x007f1504 /
-// 0x007f1505) and the cleared dword (0x0067f1b8 / 0x0067f1bc). Re-ported from
-// the bytes 2026-10-12 (negctl re-earn). The earlier port had two defects:
-//   1. screen type 0x13 returned 1 only for sub 2; the original returns 1 for
-//      sub 0, 1 and 2 (0x0042b3f9 je / 0x0042b3fe je -> 0x0042b3e7, and
-//      0x0042b400 cmp 2 -> 0x0042b405);
-//   2. both player-slot walks stepped 4 bytes over 8 records instead of
-//      0x10 bytes over 4 records (0x0042b3bf / 0x0042b521 `add esi, 0x10`).
-//
-// Phase 1 (0x0042b310..0x0042b3c9): held = any eligible pad's held byte != 0.
-//   0x1000 path: pads 0..6 OR into EBX, pad 7 jumps straight to phase 2.
-//   Otherwise: slot record i (0..3) is eligible when its id != -1 and
-//   FUN_0040e470(i) != 2; the pad is the id (0x0042b3ad imul 0x4c).
-// Phase 2 (0x0042b3cb..0x0042b40f): not held -> dword = 0 (0x0042b40f), go to
-//   phase 3. Held -> t = *(0x0067ed3c + DAT_0067e9f8*0x40):
-//   t == 0x13: sub = *(0x0067ed40 + DAT_0067e9f8*0x40); sub 0/1/2 -> return 1,
-//              any other sub -> phase 3;
-//   t == 0x1e: return 1;  any other t -> phase 3.
-// Phase 3 (0x0042b419..0x0042b533): return 1 if any eligible pad has
-//   held != 0 && previous == 0, else 0. The slot walk does not stop early.
-// ---------------------------------------------------------------------------
-
-static std::uint32_t MenuButtonDetectScreenGate(std::uintptr_t heldBase, std::uintptr_t prevBase,
-                                                std::uintptr_t clearAddr) {
-    bool held = false;  // EBX
-
-    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
-        for (int k = 0; k < 7; ++k) {                       // 0x0042b324..0x0042b381
-            if (PadAt(heldBase, k) != '\0') held = true;
-        }
-        if (PadAt(heldBase, 7) != '\0') held = true;        // 0x0042b386 jne 0x0042b3cf
-    } else {
-        for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
-            const std::int32_t id = *SlotRec(i);            // 0x0042b398
-            if (id == -1) continue;
-            if (CallSlotState(i) == 2) continue;            // 0x0042b39e
-            if (PadAt(heldBase, id) != '\0') held = true;   // 0x0042b3b0
-        }
-    }
-
-    if (!held) {
-        *reinterpret_cast<std::uint32_t*>(clearAddr) = 0u; // 0x0042b40f
-    } else {
-        const std::uintptr_t off = static_cast<std::uintptr_t>(
-            *reinterpret_cast<const std::int32_t*>(kSlotIndex)) << 6;   // 0x0042b3d4 `shl eax, 6`
-        const std::int32_t t = *reinterpret_cast<const std::int32_t*>(kScreenTypeBase + off);
-        if (t == kScreenId13) {
-            const std::int32_t sub = *reinterpret_cast<const std::int32_t*>(kCursorBase + off);  // 0x0042b3f1
-            if (sub == 0 || sub == 1 || sub == 2) return 1u;            // 0x0042b3f9 / 0x0042b3fe / 0x0042b400
-        } else if (t == kScreenId1e) {
-            return 1u;                                                  // 0x0042b3e2
-        }
-    }
-
-    std::uint32_t edge = 0;  // EBP
-    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
-        for (int k = 0; k < 8; ++k) {                       // 0x0042b429..0x0042b4da
-            if (PadAt(heldBase, k) != '\0' && PadAt(prevBase, k) == '\0') edge = 1;
-        }
-        return edge;
-    }
-    for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
-        const std::int32_t id = *SlotRec(i);                // 0x0042b4f0
-        if (id == -1) continue;
-        if (CallSlotState(i) == 2) continue;                // 0x0042b4f6
-        if (PadAt(heldBase, id) != '\0' && PadAt(prevBase, id) == '\0') edge = 1;  // 0x0042b508 / 0x0042b512
-    }
-    return edge;                                            // 0x0042b52f
-}
-
-// 0x0042b310
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectC() {
-    return MenuButtonDetectScreenGate(kActiveBase0, kProcessedBase0, kNoInputFlag);
-}
-
-RH_ScopedInstall(MenuButtonDetectC, 0x0042b310);  // re-ported 2026-10-12 (negctl re-earn)
+// MATCH-S07: the body of 0x0042b310 (MenuButtonDetectC) moved to Match/MatchS07_0042b310.cpp,
+// which compiles the byte-matched source re/match/s07/0042b310.c.
 
 // ---------------------------------------------------------------------------
 // 0x0042b960  CarSlotInit1P
@@ -248,29 +151,8 @@ static constexpr std::uintptr_t kSlot3       = 0x007f1a34;
 static constexpr std::uintptr_t kSlot4       = 0x007f1a44;
 static constexpr std::uintptr_t kModeSel     = 0x007f1a0c;
 
-// 0x0042b960
-extern "C" __declspec(dllexport) void __cdecl CarSlotInit1P() {
-    std::int32_t idx = 0;                                   // 0x0042b960 `xor ecx, ecx`
-    for (std::uintptr_t prev = kTableB_base; prev < kScanBound; prev += kStride, ++idx) {
-        if (*reinterpret_cast<const char*>(prev - (kTableB_base - kTableA_base)) != '\0' &&
-            *reinterpret_cast<const char*>(prev) == '\0') {
-            break;                                          // 0x0042b97d je 0x0042b98a
-        }
-    }
-
-    *reinterpret_cast<std::int32_t*>(kSlot1)  = idx;        // 0x0042b991
-    *reinterpret_cast<std::uint32_t*>(kSlot2) = 0xffffffffu;// 0x0042b997
-    *reinterpret_cast<std::uint32_t*>(kSlot3) = 0xffffffffu;// 0x0042b99c
-    *reinterpret_cast<std::uint32_t*>(kSlot4) = 0xffffffffu;// 0x0042b9a1
-    *reinterpret_cast<std::int32_t*>(kModeSel) = 1;         // 0x0042b9a6
-
-    CallSlotWrite(0, 1);                                    // 0x0042b9b0
-    CallSlotWrite(1, 0);                                    // 0x0042b9b9
-    CallSlotWrite(2, 0);                                    // 0x0042b9c2
-    CallSlotWrite(3, 0);                                    // 0x0042b9cb
-}
-
-RH_ScopedInstall(CarSlotInit1P, 0x0042b960);  // re-ported 2026-10-12 (negctl re-earn)
+// MATCH-S07: the body of 0x0042b960 (CarSlotInit1P) moved to Match/MatchS07_0042b960.cpp,
+// which compiles the byte-matched source re/match/s07/0042b960.c.
 
 // ---------------------------------------------------------------------------
 // 0x0042b9e0  CarSlotAssign
@@ -300,155 +182,11 @@ static constexpr std::uintptr_t kCarIdTableBase  = 0x007f1a1c; // car-ID table (
 static constexpr std::uintptr_t kCarIdTableBound = 0x7f1a5b;   // assignment loop upper bound
 // kModeSel already defined above (0x007f1a0c)
 
-// 0x0042b9e0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotAssign() {
-    // Step 1: reset all 4 player slots to 0
-    for (int iVar5 = 0; iVar5 < 4; iVar5++) {
-        CallSlotWrite(iVar5, 0);
-    }
+// MATCH-S07: the body of 0x0042b9e0 (CarSlotAssign) moved to Match/MatchS07_0042b9e0.cpp,
+// which compiles the byte-matched source re/match/s07/0042b9e0.c.
 
-    // Step 2: count valid car options
-    std::int32_t iVar5 = 0xc; // starts at 12 (total option fields)
-    const std::int32_t* piVar2 = reinterpret_cast<const std::int32_t*>(kCarOptionBase);
-    do {
-        // Check 6 offsets: [-3], [0], [3], [6], [9], [0xc] in int* units
-        static const int offsets[] = { -3, 0, 3, 6, 9, 0xc };
-        for (int o : offsets) {
-            if (piVar2[o] < 1) iVar5 -= 1;
-        }
-        piVar2 = reinterpret_cast<const std::int32_t*>(
-            reinterpret_cast<std::uintptr_t>(piVar2) + kCarOptionStride * 4);
-    } while (reinterpret_cast<std::uintptr_t>(piVar2) < kCarOptionBound);
-
-    if (iVar5 < 2) return 1; // fewer than 2 valid options -> early OK
-
-    // Step 3: collision detection
-    bool bVar1 = false;
-    const std::int32_t* piVar2b = reinterpret_cast<const std::int32_t*>(kCarChoiceBase);
-    while (reinterpret_cast<std::uintptr_t>(piVar2b) < kCollOuterBound) {
-        const std::int32_t* piVar6 = piVar2b + 3;
-        while (reinterpret_cast<std::uintptr_t>(piVar6) < kCollInnerBound) {
-            if (*piVar2b == *piVar6 && *piVar2b > 0) bVar1 = true;
-            piVar6 += 3;
-        }
-        piVar2b += 3;
-    }
-    if (bVar1) return 0; // collision detected
-
-    // Step 4: clear slot table to 0xffffffff
-    std::uint32_t* puVar3 = reinterpret_cast<std::uint32_t*>(kSlotTableBase);
-    do {
-        *puVar3 = 0xffffffffu;
-        puVar3 = reinterpret_cast<std::uint32_t*>(
-            reinterpret_cast<std::uintptr_t>(puVar3) + 16);
-    } while (reinterpret_cast<std::uintptr_t>(puVar3) < kSlotTableBound);
-
-    // Step 5: assign car IDs to player slots
-    // Outer do-while: advances player-slot pointer piVar2c and player index local_4.
-    // Inner do-while: steps car-ID iVar4 from 1..6 until a match is found.
-    // When iVar4 == 7 or piVar2c exceeds bound: DAT_007f1a0c=2, return 0x1000.
-    std::int32_t local_4 = 0; // player index
-    std::int32_t* piVar2c = reinterpret_cast<std::int32_t*>(kCarIdTableBase);
-    std::int32_t iVar4 = 1; // car ID starts at 1
-    std::int32_t local_8 = 0; // 0=no-match, 1=matched, 2=exhausted
-
-    do {
-        if (local_8 == 2) {
-            *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-            return 0x1000u;
-        }
-        local_8 = 0;
-
-        // Inner scan: find player whose car choice == iVar4
-        const std::int32_t* piVar6 = reinterpret_cast<const std::int32_t*>(kCarChoiceBase);
-        std::int32_t iVar5b = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar6) < kCollInnerBound) {
-            if (*piVar6 == iVar4) {
-                // write slot index and car-ID-1 into current player record
-                *(piVar2c - 2) = iVar5b;  // piVar2c[-2] = choice array index
-                *piVar2c = iVar4 - 1;     // piVar2c[0]  = car-ID-1
-                CallSlotWrite(local_4, 1);
-                local_8 = 1;
-            }
-            piVar6 += 3;
-            iVar5b += 1;
-        }
-
-        iVar4 += 1;
-        if (iVar4 == 7) { local_8 = 2; continue; }
-
-    } while (local_8 == 0);  // continue scanning if no match this round
-
-    // Advance to next player slot (only reached when local_8 == 1 or 2)
-    if (local_8 == 2) {
-        *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-        return 0x1000u;
-    }
-
-    local_4 += 1;
-    piVar2c += 4;
-    if (reinterpret_cast<std::uintptr_t>(piVar2c) > kCarIdTableBound) {
-        *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-        return 0x1000u;
-    }
-
-    // Continue outer assignment loop for remaining players
-    do {
-        if (local_8 == 2) {
-            *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-            return 0x1000u;
-        }
-        local_8 = 0;
-
-        const std::int32_t* piVar6 = reinterpret_cast<const std::int32_t*>(kCarChoiceBase);
-        std::int32_t iVar5b = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar6) < kCollInnerBound) {
-            if (*piVar6 == iVar4) {
-                *(piVar2c - 2) = iVar5b;
-                *piVar2c = iVar4 - 1;
-                CallSlotWrite(local_4, 1);
-                local_8 = 1;
-            }
-            piVar6 += 3;
-            iVar5b += 1;
-        }
-
-        iVar4 += 1;
-        if (iVar4 == 7) { local_8 = 2; continue; }
-
-        if (local_8 != 0) {
-            local_4 += 1;
-            piVar2c += 4;
-            if (reinterpret_cast<std::uintptr_t>(piVar2c) > kCarIdTableBound) {
-                *reinterpret_cast<std::int32_t*>(kModeSel) = 2;
-                return 0x1000u;
-            }
-        }
-    } while (true);
-}
-
-RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);  // re-enabled 2026-05-24 c3-frontend-a
-
-// ---------------------------------------------------------------------------
-// 0x0042b540  MenuButtonDetectD
-// Same instruction stream as 0x0042b310 (see MenuButtonDetectScreenGate) with
-// held 0x007f1045 (0x0042b554), previous 0x007f1505 (0x0042b662) and cleared
-// dword 0x0067f1bc (0x0042b63f). Re-ported 2026-10-12 (negctl re-earn): the
-// earlier port fell through to the edge detect for type 0x13 sub 0/1
-// (0x0042b629 / 0x0042b62e je 0x0042b617 return 1) and walked the slot
-// records at 4-byte stride (0x0042b5ef / 0x0042b751 `add esi, 0x10`).
-// ---------------------------------------------------------------------------
-
-static constexpr std::uintptr_t kActiveBase1    = 0x007f1045; // 0x0042b554
-static constexpr std::uintptr_t kProcessedBase1 = 0x007f1505; // 0x0042b662
-static constexpr std::uintptr_t kNoInputFlag1   = 0x0067f1bc; // 0x0042b63f
-
-// 0x0042b540
-extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectD() {
-    return MenuButtonDetectScreenGate(kActiveBase1, kProcessedBase1, kNoInputFlag1);
-}
-
-RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);  // re-ported 2026-10-12 (negctl re-earn)
+// MATCH-S07: the body of 0x0042b540 (MenuButtonDetectD) moved to Match/MatchS07_0042b540.cpp,
+// which compiles the byte-matched source re/match/s07/0042b540.c.
 
 // ---------------------------------------------------------------------------
 // 0x0042b8b0  ScreenWidthGet
@@ -458,17 +196,8 @@ RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);  // re-ported 2026-10-12 (negct
 // Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8b0.md
 // ---------------------------------------------------------------------------
 
-// Screen dimension globals (uint16_t each)
-static constexpr std::uintptr_t kScreenWidth  = 0x0067ea54; // uint16_t pixel width
-static constexpr std::uintptr_t kScreenHeight = 0x0067ea56; // uint16_t pixel height
-
-// 0x0042b8b0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenWidthGet() {
-    return static_cast<std::uint32_t>(
-        *reinterpret_cast<std::uint16_t*>(kScreenWidth));
-}
-
-RH_ScopedInstall(ScreenWidthGet, 0x0042b8b0);  // re-enabled 2026-05-24 c3-safe
+// MATCH-S07: the body of 0x0042b8b0 (ScreenWidthGet) moved to Match/MatchS07_0042b8b0.cpp,
+// which compiles the byte-matched source re/match/s07/0042b8b0.c.
 
 // ---------------------------------------------------------------------------
 // 0x0042b8c0  ScreenHeightGet
@@ -478,10 +207,5 @@ RH_ScopedInstall(ScreenWidthGet, 0x0042b8b0);  // re-enabled 2026-05-24 c3-safe
 // Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8c0.md
 // ---------------------------------------------------------------------------
 
-// 0x0042b8c0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenHeightGet() {
-    return static_cast<std::uint32_t>(
-        *reinterpret_cast<std::uint16_t*>(kScreenHeight));
-}
-
-RH_ScopedInstall(ScreenHeightGet, 0x0042b8c0);  // re-enabled 2026-05-24 c3-safe
+// MATCH-S07: the body of 0x0042b8c0 (ScreenHeightGet) moved to Match/MatchS07_0042b8c0.cpp,
+// which compiles the byte-matched source re/match/s07/0042b8c0.c.

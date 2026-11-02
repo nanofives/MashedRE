@@ -21,6 +21,8 @@
 import os, sys, time, argparse, subprocess
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 try: import psutil
 except ImportError: psutil = None
 
@@ -3060,6 +3062,40 @@ function vsProbeDrain(){
   return r;
 }
 function vsWatchDrain(){ const r = VS.w; VS.w = []; return r; }
+// --- sub-state-5 second-leg probe (D4-DC-77b0-STATE5-ORIGREAD, 2026-11-01) -------------------------
+// Entry hooks on FUN_0040fc00 (C), FUN_00418860 (S), FUN_004177b0 (B), entry + leave on FUN_00425a40 (A / R, leave
+// logs EAX). Each row: kind, sdframe, tick 0x007f0ff4, return-address RVA, EAX (R rows), then the gate dwords
+// 0x0063ba8c, 0x005f29c0, 0x007f1a50, 0x007f1a54, 0x007f1a70, 0x007f1a74, 0x007f1a78, 0x00801ca0. Every call while
+// 0x0063ba8c == 5 is logged (up to 8000 rows), other sub-states only the first N per (kind, sub-state). All four run at
+// most a few times per frame, so not hot paths. Read-only.
+const ST5 = { armed:false, cap:8, rows:[], n:{}, n5:0, err:null };
+function st5ProbeArm(cap){
+  if (ST5.armed) return 'already armed';
+  try {
+    ST5.cap = cap || 8;
+    const tk = ga(0x007f0ff4), ss = ga(0x0063ba8c);
+    const G = [0x0063ba8c, 0x005f29c0, 0x007f1a50, 0x007f1a54, 0x007f1a70, 0x007f1a74, 0x007f1a78, 0x00801ca0].map(ga);
+    const rva = function(p){ return p.sub(modBase()).add(IMG).toString(16); };
+    const row = function(kind, ra, eax){
+      const s = ss.readU32();
+      if (s === 5) { if (ST5.n5 >= 8000) return; ST5.n5++; }
+      else { const k = kind + s; ST5.n[k] = (ST5.n[k] || 0) + 1; if (ST5.n[k] > ST5.cap) return; }
+      ST5.rows.push([kind, SD.frames, tk.readS32(), ra, eax].concat(G.map(function(g){ return g.readU32().toString(16); })).join(','));
+    };
+    // Object form: a bare-function callback is a Frida probe, whose `this` has no valid returnAddress.
+    const ent = function(kind){ return { onEnter(){ try { row(kind, rva(this.returnAddress), ''); } catch(e){ if (!ST5.err) ST5.err = kind + ' ' + e; } } }; };
+    Interceptor.attach(ga(0x0040fc00), ent('C'));
+    Interceptor.attach(ga(0x00418860), ent('S'));
+    Interceptor.attach(ga(0x004177b0), ent('B'));
+    Interceptor.attach(ga(0x00425a40), {
+      onEnter(){ try { this.ra = rva(this.returnAddress); row('A', this.ra, ''); } catch(e){ if (!ST5.err) ST5.err = 'A ' + e; } },
+      onLeave(r){ try { row('R', this.ra, r.toUInt32().toString(16)); } catch(e){ if (!ST5.err) ST5.err = 'R ' + e; } }
+    });
+    ST5.armed = true;
+    return 'st5-probe armed (0x40fc00 0x418860 0x4177b0 entry, 0x425a40 entry+leave) cap ' + ST5.cap;
+  } catch(e){ return 'ERR ' + e; }
+}
+function st5ProbeDrain(){ const r = ST5.rows; ST5.rows = []; return r; }
 
 // --- phase-3 camera-call probe (D3-SUBSTATE-PH3, U-9203, 2026-10-28) -----------------------------
 // FUN_00446520(cam, force_reset) entry + leave, the first N calls after arming: caller, reset arg, the sub-state and
@@ -4204,6 +4240,9 @@ rpc.exports = {
   vsProbeDrain: function(){ return vsProbeDrain(); },
   vsWatchDrain: function(){ return vsWatchDrain(); },
   vsProbeErr: function(){ return '' + VS.err + ' calls=' + VS.n + ' hits=' + VS.nw; },
+  st5ProbeArm: function(n){ return st5ProbeArm(n); },
+  st5ProbeDrain: function(){ return st5ProbeDrain(); },
+  st5ProbeErr: function(){ return '' + ST5.err + ' n5=' + ST5.n5; },
   ccProbeArm: function(c){ return ccProbeArm(c); },
   ccProbeDrain: function(){ return ccProbeDrain(); },
   ccProbeErr: function(){ return '' + CCP.err; },
@@ -5055,6 +5094,11 @@ def main():
                          "four 0x005f2770 slot cells, 0x00897ffc, 0x0067e9fc, 0x007f0fd0) and hardware write watchpoints on "
                          "0x0063ba8c / 0x00897ffc / 0x005f275c / 0x0067e9fc. Writes <out>.vs.csv and <out>.vsw.csv. Uses all "
                          "four debug registers, so not with --watch-write. Requires --statediff-out.")
+    ap.add_argument("--st5-probe", type=int, default=0,
+                    help="[D4-DC-77b0-STATE5-ORIGREAD] N: entry hooks on FUN_0040fc00 / FUN_00418860 / FUN_004177b0 and "
+                         "entry+leave on FUN_00425a40 with the gate dwords 0x0063ba8c, 0x005f29c0, 0x007f1a50/54/70/74/78, "
+                         "0x00801ca0 and the return-address RVA. Every call in sub-state 5, first N per (fn, sub-state) "
+                         "otherwise. Writes <out>.st5.csv. Requires --statediff-out.")
     ap.add_argument("--p3cam-probe", type=int, default=0,
                     help="[D3-SUBSTATE-PH3, U-9203] N: entry+leave hook on FUN_00446520 (race camera), first N calls: "
                          "caller, reset arg, sub-state/timer globals, cam +0x00..+0x5c in and out, +0x964..+0x9a0 out, entry 0 "
@@ -5163,14 +5207,14 @@ def main():
         env["MASHED_RE_DEV"] = "1"
         env["MASHED_PHYS_C4_SELFTEST"] = "1"
         env.pop("MASHED_HOOK_ONLY", None)
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
     elif args.hooks:
         env["MASHED_RE_DEV"] = "1"
         env["MASHED_HOOK_ONLY"] = args.hooks
         env["MASHED_PHYS_C4_SELFTEST"] = "1"
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
-    else:
-        env["MASHED_RE_NO_AUTO_HOOK"] = "1"     # stock original, no installed hooks
+    # D5-SHIM-DINPUT8-SPAWNERS: MASHED_RE_NO_AUTO_HOOK=1 on every arm, so the dinput8 proxy
+    # never maps the asi. The hooks arm gets it from dev_asi below (Module.load +
+    # InjectHooks before the first resume, which honours MASHED_HOOK_ONLY).
+    env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     if os.environ.get("MASHED_NO_SELFTEST", "").strip() not in ("", "0"):
         # Control run: hooks installed LIVE but the in-process shadow A/B NOT armed. Used to
         # tell "the port crashes" from "the A/B harness crashes" (Lane 3 first run, 2026-09-10).
@@ -5183,12 +5227,17 @@ def main():
         env.pop("MASHED_PHYS_C4_SELFTEST", None)
     _keep_display_awake()
     dev = frida.get_local_device()
-    proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+    sess = None
+    if args.hooks:
+        proc, sess, _asi = dev_asi.spawn_original(EXE, hooks=True, env=env, device=dev)
+        print(f"  [hooks] asi loaded before resume: {_asi.get('path')}")
+    else:
+        proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
     pid = proc.pid
     print(f"=== scenario_launch  pid={pid}  track={args.track} mode={args.mode} cars={args.cars} ===")
     print("  attaching ASAP...")
-    sess = None
     for _ in range(200):
+        if sess is not None: break
         try: sess = dev.attach(pid); break
         except Exception: time.sleep(0.1)
     if sess is None:
@@ -5260,8 +5309,8 @@ def main():
         # 1) wait for the menu (main loop live, phase 1)
         if wait_phase(1, 40, "menu (phase 1)") is None: raise SystemExit
         time.sleep(0.5)
-        # asi:ExportName counters could not resolve at attach time (dinput8 had not
-        # loaded mashed_re_dev.asi yet). The menu being up means it is loaded now.
+        # asi:ExportName counters: the asi is mapped before resume now (dev_asi), so the
+        # first arm already resolves; re-arming at the menu is kept and harmless.
         if "asi:" in _count_csv:
             print("  [counters/asi]", E.rearm_asi())
         # 2) write the selection globals
@@ -5354,6 +5403,8 @@ def main():
                 print("  [statediff]", E.a5_probe_arm("0x008815a0", args.statediff_car, args.a5_probe))
             if args.valsrc_probe:
                 print("  [statediff]", E.vs_probe_arm())
+            if args.st5_probe:
+                print("  [statediff]", E.st5_probe_arm(args.st5_probe))
             if args.snap_probe:
                 _n0, _ns = (int(x) for x in args.snap_probe.split(":"))
                 print("  [statediff]", E.snap_probe_arm(_n0, _ns))
@@ -6115,6 +6166,15 @@ def main():
                             for r in _vw: f.write(r + chr(10))
                         print(f"  [statediff] valsrc-probe {len(_vr)} runs -> {_vf}, {len(_vw)} watch hits -> {_wf} (err {E.vs_probe_err()})")
                     except Exception as _e: print("  [statediff] valsrc drain failed:", _e)
+                if args.st5_probe:
+                    try:
+                        _sr = E.st5_probe_drain()
+                        _sf = outp.with_suffix(outp.suffix + ".st5.csv")
+                        with open(_sf, "w", newline="") as f:
+                            f.write("kind,sdframe,tick,ret,eax,ba8c,s29c0,a50,a54,a70,a74,a78,ca0" + chr(10))
+                            for r in _sr: f.write(r + chr(10))
+                        print(f"  [statediff] st5-probe {len(_sr)} rows -> {_sf} (err {E.st5_probe_err()})")
+                    except Exception as _e: print("  [statediff] st5 drain failed:", _e)
                 if args.snap_probe:
                     try:
                         _n0, _ns = (int(x) for x in args.snap_probe.split(":"))

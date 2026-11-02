@@ -1,0 +1,56 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+ConstantGetter22	0x001300c0	1	yes	yes	_ConstantGetter22 <- _PromptStripResolve <- ?PromptStripAppend@?A0x3d698b0a@1Frontend@mashed_re@@YAXHHH@Z <- ?Nav_Init@Frontend@mashed_re@@YAXXZ <- _WinMain@16
+DefaultParam_SetField00	0x00130c10	1	yes	yes	_DefaultParam_SetField00 <- ?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ <- _WinMain@16
+DefaultParam_SetField04	0x00130bf0	1	yes	yes	_DefaultParam_SetField04 <- ?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ <- _WinMain@16
+DefaultParam_SetField08	0x00130c00	1	yes	yes	_DefaultParam_SetField08 <- ?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ <- _WinMain@16
+FUN_0042f020	0x00130810	0	no	no	
+FrontendModeDispatch	0x00130700	0	no	yes	
+FrontendPageIdDispatch	0x00130df0	0	no	yes	
+FrontendPanelFlagAdvance	0x00130cc0	1	no	yes	_FrontendPageIdDispatch+0x0
+FrontendPlayerSlotCheck	0x00130640	0	no	yes	
+GetDat0067ea64	0x001308d0	9	no	yes	_PlayerBlock2Field00Get+0x0;_PlayerBlock2Field04Get+0xf;_PlayerBlock2Field08Get+0xf;_PlayerBlock2Field50Get+0x0;_PlayerScoreTeamAccBaseB+0xc;_PlayerScoreTeamAccCumB+0xc;_PlayerScoreTeamAccGatedB+0x1b;_PlayerScoreTeamAccGatedC+0x1b
+GetDat0067ecb4	0x001304d0	0	no	yes	
+GetDat0067ecb8	0x001304e0	0	no	yes	
+GetDat0067f17c	0x00130a90	0	no	yes	
+GetFrameCounterPlus73	0x001308c0	0	no	yes	
+GetRaceEndFlag	0x00130a80	0	no	yes	
+GetRaceSubMode	0x001308f0	3	yes	yes	_GetRaceSubMode <- _RaceEndFlagIfEndMode <- _PickupPoolSpawn <- ?InitReal@PickupField@D3d9Render@mashed_re@@QAEXABV?$vector@USpawn@PickupField@D3d9Render@mashed_re@@V?$allocator@USpawn@PickupField@D3d9Render@mashed_re@@@std@@@std@@M@Z <- ?InitPickups@TrackRenderer@D3d9Render@mashed_re@@QAEXXZ <- _WinMain@16
+HudRectEmitter5	0x00130220	0	no	yes	
+HudSlotTypePlayer0	0x00130aa0	0	no	yes	
+HudSlotTypePlayer1	0x00130af0	0	no	yes	
+HudSlotTypePlayer2	0x00130b30	0	no	yes	
+MenuAlphaGet	0x001300d0	0	no	yes	
+MenuButtonDetectA	0x0012f830	0	no	yes	
+MenuButtonDetectB	0x0012f9d0	0	no	yes	
+MenuButtonDetectC	0x0012fb70	0	no	yes	
+MenuButtonDetectD	0x0012fd60	0	no	yes	
+MenuButtonDetectE	0x0012ff50	0	no	yes	
+MenuEntryArrayInit	0x001305d0	2	yes	yes	_MenuEntryArrayInit <- ?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ <- _WinMain@16
+MenuFlagDat007f0f10Get	0x00130cb0	0	no	yes	
+MenuModeSync	0x00130900	0	no	yes	
+MenuReadinessCheckB	0x0012f6e0	0	no	yes	
+MenuReadinessCheckC	0x0012f780	0	no	yes	
+MenuSlotCount	0x00130bb0	0	no	yes	
+MenuStateParamStore	0x00130440	0	no	yes	
+MenuTeamBalance	0x001300f0	2	yes	yes	_MenuTeamBalance <- _WinMain@16
+MenuTeamSelectTick	0x001309b0	1	yes	yes	_MenuTeamSelectTick <- ?RenderFrame@?A0x8b8cd3e4@@YA_NXZ <- _WinMain@16
+Post0042bf30	0x001303b0	0	no	yes	
+RaceEndAltFlagIfEndMode	0x00130a60	0	no	yes	
+RaceEndConstGet	0x001300b0	0	no	yes	
+RaceEndFlagIfEndMode	0x00130a40	1	yes	yes	_RaceEndFlagIfEndMode <- _PickupPoolSpawn <- ?InitReal@PickupField@D3d9Render@mashed_re@@QAEXABV?$vector@USpawn@PickupField@D3d9Render@mashed_re@@V?$allocator@USpawn@PickupField@D3d9Render@mashed_re@@@std@@@std@@M@Z <- ?InitPickups@TrackRenderer@D3d9Render@mashed_re@@QAEXXZ <- _WinMain@16
+RaceInterruptFlagGet	0x001304a0	0	no	yes	
+RaceStateArrayZero	0x001304b0	1	yes	yes	_RaceStateArrayZero <- ?ExecuteFrontendBootChain@?A0x8b8cd3e4@@YAXXZ <- _WinMain@16
+RaceTransitionBufZero	0x00130580	0	no	yes	
+ScreenHeightGet	0x00130070	0	no	yes	
+ScreenWidthGet	0x00130060	0	no	yes	
+SinGlobalProduct431b20	0x00130c20	0	no	yes	
+SinGlobalProduct431b50	0x00130c50	0	no	yes	
+SinGlobalProduct431b60	0x00130c80	0	no	yes	
+SpriteSlotGate	0x001306b0	0	no	yes	
+StatePhaseIsFinal	0x001300a0	0	no	yes	
+StatePhaseIsIdle	0x00130080	0	no	yes	
+StatePhaseIsTwo	0x00130090	0	no	yes	
+StatePhaseSubSet	0x001300e0	0	no	yes	
+TimeDiffDecompose	0x001304f0	0	no	yes	
+TimeDisplaySetEntry	0x00130b70	0	no	yes	
+Vehicle0HandleGet	0x001308e0	0	no	yes	

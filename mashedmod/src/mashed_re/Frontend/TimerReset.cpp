@@ -16,17 +16,8 @@
 #include <cstdint>
 #include <cstring>
 
-// ─── 0x00422b30  TimerArrayClear ──────────────────────────────────────────────
-// DAT_00899e80: start of 312-dword (1248-byte) block zeroed on each call.
-// Loop count 0x138 = 312 confirmed at 0x00422b30 body.
-static constexpr std::uintptr_t kTimerArray = 0x00899e80u;
-
-// 0x00422b30
-extern "C" __declspec(dllexport) void __cdecl TimerArrayClear() {
-    std::memset(reinterpret_cast<void*>(kTimerArray), 0, 312u * sizeof(std::uint32_t));
-}
-
-RH_ScopedInstall(TimerArrayClear, 0x00422b30);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S05: the body of 0x00422b30 (TimerArrayClear) moved to Match/MatchS05_00422b30.cpp,
+// which compiles the byte-matched source re/match/s05/00422b30.c.
 
 
 // MATCH-S02: the body of 0x0040b810 (TimerGlobalsReset) moved to Match/MatchS02_0040b810.cpp,

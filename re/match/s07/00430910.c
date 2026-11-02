@@ -1,0 +1,100 @@
+// FLAGS: /O2 /GS /Ob1
+/* MATCH-S07 0x00430910: 100% by hand (raw 40.0%). Ghidra's 138 B stops before the jump tables; match.py --bytes:
+   whole obj symbol 155 B BYTE-IDENTICAL (dword table at 0x0043099c + byte index table at 0x004309a4, cases
+   3-5 -> 0, 6-9 -> 1). Each zero test is its own if/return (the first return 0 is laid out inline, the others
+   jump to it), and both cases end in their own table read, which the compiler tail-merges. The switch has no
+   default and the function no final return: for DAT_0067e9fc outside 3..9 the original returns eax =
+   DAT_0067e9fc - 3 (the switch's scratch value). Kept as is to match. */
+/* ---- MATCH-S07 preamble (same text in every re/match/s07 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
+typedef struct { int v[12]; } Row00430910;
+MGLOBAL(int, DAT_0067e9fc, 0x0067e9fc);
+MGLOBAL(int, DAT_0067f184, 0x0067f184);
+MGLOBAL(int, DAT_0067f17c, 0x0067f17c);
+MGLOBALA(Row00430910, DAT_007f0a40, 1, 0x007f0a40);
+// MATCH: 0x00430910 FUN_00430910
+int FUN_00430910(void)
+{
+  switch (DAT_0067e9fc) {
+  case 3:
+  case 4:
+  case 5:
+    if (DAT_0067f184 == 0) {
+      return 0;
+    }
+    if (DAT_0067f184 == 3) {
+      return 0;
+    }
+    if (DAT_0067f184 == 4) {
+      return 0;
+    }
+    if (DAT_0067f184 == 6) {
+      return 0;
+    }
+    if (DAT_0067f184 == 7) {
+      return 0;
+    }
+    if (DAT_0067f184 == 8) {
+      return 0;
+    }
+    if (DAT_0067f184 == 9) {
+      return 0;
+    }
+    if (DAT_0067f184 == 10) {
+      return 0;
+    }
+    if (DAT_0067f184 == 11) {
+      return 0;
+    }
+    return DAT_007f0a40[DAT_0067f17c].v[DAT_0067f184];
+  case 6:
+  case 7:
+  case 8:
+  case 9:
+    if (DAT_0067f184 == 0) {
+      return 0;
+    }
+    if (DAT_0067f184 == 1) {
+      return 0;
+    }
+    if (DAT_0067f184 == 2) {
+      return 0;
+    }
+    if (DAT_0067f184 == 5) {
+      return 0;
+    }
+    if (DAT_0067f184 == 6) {
+      return 0;
+    }
+    if (DAT_0067f184 == 7) {
+      return 0;
+    }
+    if (DAT_0067f184 == 4) {
+      return 0;
+    }
+    if (DAT_0067f184 == 11) {
+      return 0;
+    }
+    return DAT_007f0a40[DAT_0067f17c].v[DAT_0067f184];
+  }
+}

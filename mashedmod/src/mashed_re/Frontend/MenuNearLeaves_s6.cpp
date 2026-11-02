@@ -43,14 +43,8 @@
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
 // ---------------------------------------------------------------------------
 
-// 0x00426cb0
-extern "C" __declspec(dllexport) std::uint8_t* __cdecl SlotIndexToPtr(int param_1)
-{
-    // Map slot index to pointer: base 0x00663664, stride 0x4c. [0x00426cb0]
-    return reinterpret_cast<std::uint8_t*>(0x00663664u) + param_1 * 0x4c;
-}
-
-RH_ScopedInstall(SlotIndexToPtr, 0x00426cb0);
+// MATCH-S06: the body of 0x00426cb0 (SlotIndexToPtr) moved to Match/MatchS06_00426cb0.cpp,
+// which compiles the byte-matched source re/match/s06/00426cb0.c.
 
 // ---------------------------------------------------------------------------
 // HandleArrayRelease  --  0x00426d90
@@ -69,26 +63,8 @@ RH_ScopedInstall(SlotIndexToPtr, 0x00426cb0);
 // ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426d90.md
 // ---------------------------------------------------------------------------
 
-// Forward: 0x004e6680  RpClumpRender  (C1 — not yet verified)
-static auto* const s_FUN_004e6680 =
-    reinterpret_cast<void(__cdecl*)(int)>(0x004e6680);
-
-// 0x00426d90  (DEFERRED — callee gate fails; not installed)
-extern "C" __declspec(dllexport) void __cdecl HandleArrayRelease()
-{
-    // Iterate the 4-element int handle array at DAT_00656f48..DAT_00656f54.
-    // Release each non-null handle via FUN_004e6680. [0x00426d90..0x00426d9a]
-    int* piVar1 = reinterpret_cast<int*>(0x00656f48u);
-    do {
-        if (*piVar1 != 0) {
-            s_FUN_004e6680(*piVar1);   // 0x004e6680 — C1; deferred
-        }
-        piVar1 = piVar1 + 1;
-    } while (reinterpret_cast<std::uintptr_t>(piVar1) < 0x00656f58u);
-}
-
-// NOTE: RH_ScopedInstall intentionally omitted — callee 0x004e6680 is C1.
-// Re-enable once 0x004e6680 reaches C2+.
+// MATCH-S06: the body of 0x00426d90 (HandleArrayRelease) moved to Match/MatchS06_00426d90.cpp,
+// which compiles the byte-matched source re/match/s06/00426d90.c.
 
 // ---------------------------------------------------------------------------
 // PathBuilderLoad  --  0x0042a640
@@ -116,54 +92,8 @@ extern "C" __declspec(dllexport) void __cdecl HandleArrayRelease()
 // ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042a640.md
 // ---------------------------------------------------------------------------
 
-// Forward callees:
-// 0x004a2fd0  _strchr  (CRT; C2+)
-static auto* const s_strchr =
-    reinterpret_cast<char*(__cdecl*)(const char*, int)>(0x004a2fd0);
-// 0x0042a530  FUN_0042a530  (C2; piz searcher)
-static auto* const s_FUN_0042a530 =
-    reinterpret_cast<std::int32_t(__cdecl*)(void*, void*)>(0x0042a530);
-// 0x004b3c60  FUN_004b3c60  (C2; stream reader)
-static auto* const s_FUN_004b3c60 =
-    reinterpret_cast<std::uint32_t(__cdecl*)()>(0x004b3c60);
-
-// 0x0042a640  (DEFERRED — no suitable Frida arg_type; not installed)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PathBuilderLoad(char* param_1)
-{
-    // Dispatch table pointer at 0x007d3ff8. [0x0042a640]
-    void** vtable = *reinterpret_cast<void***>(0x007d3ff8u);
-
-    // Step 1: vtable[0xcc/4] copies param_1 into DAT_0067e3a8. [0x0042a640 +0xcc]
-    auto copy_fn = reinterpret_cast<void(__cdecl*)(const char*)>(
-        reinterpret_cast<std::uint8_t*>(vtable)[0xcc / sizeof(void*)]);
-    (void)copy_fn;  // placeholder — indirect call through table offset
-    // Emit the actual vtable-offset call as in the original:
-    reinterpret_cast<void(__cdecl*)(const char*)>(
-        *reinterpret_cast<void**>(
-            reinterpret_cast<std::uint8_t*>(*reinterpret_cast<void**>(0x007d3ff8u)) + 0xcc)
-    )(param_1);
-
-    // Step 2: if no '.' in param_1, append default extension. [0x0042a6xx]
-    if (s_strchr(param_1, 0x2e) == nullptr) {
-        const char* ext = *reinterpret_cast<const char**>(0x005f65b4u);
-        reinterpret_cast<void(__cdecl*)(const char*)>(
-            *reinterpret_cast<void**>(
-                reinterpret_cast<std::uint8_t*>(*reinterpret_cast<void**>(0x007d3ff8u)) + 0xd4)
-        )(ext);
-    }
-
-    // Step 3: load resource from path; return 0 on failure, FUN_004b3c60() on success.
-    if (s_FUN_0042a530(
-            reinterpret_cast<void*>(0x0067dba8u),
-            reinterpret_cast<void*>(0x0067e3a8u)) != 0)
-    {
-        return s_FUN_004b3c60();
-    }
-    return 0u;
-}
-
-// NOTE: RH_ScopedInstall intentionally omitted — no Frida arg_type for char* path.
-// Queue harness-ext work before re-attempting C3 diff for this function.
+// MATCH-S06: the body of 0x0042a640 (PathBuilderLoad) moved to Match/MatchS06_0042a640.cpp,
+// which compiles the byte-matched source re/match/s06/0042a640.c.
 
 // ---------------------------------------------------------------------------
 // ConstantGetter22  --  0x0042b920
@@ -181,14 +111,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl PathBuilderLoad(char* par
 // ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042b920.md
 // ---------------------------------------------------------------------------
 
-// 0x0042b920
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ConstantGetter22()
-{
-    // Returns 0x16 = 22 unconditionally. [0x0042b920]
-    return 0x16u;
-}
-
-RH_ScopedInstall(ConstantGetter22, 0x0042b920);
+// MATCH-S07: the body of 0x0042b920 (ConstantGetter22) moved to Match/MatchS07_0042b920.cpp,
+// which compiles the byte-matched source re/match/s07/0042b920.c.
 
 // ---------------------------------------------------------------------------
 // FUN_0042bde0 (5-call HUD rect emitter via ChromeBaseDraw 0x00472c60) was ported here

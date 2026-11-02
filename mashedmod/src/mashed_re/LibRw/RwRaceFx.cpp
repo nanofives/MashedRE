@@ -1218,10 +1218,10 @@ rw::Texture* PuGlowTexture() {
 void DrawPickupGlow(rw::Camera* cam) {
     Rfx::Emitter* e = static_cast<Rfx::Emitter*>(Gameplay::PickupGlow_Emitter());
     if (!e) return;
-    if (!e->tank.texture) e->tank.texture = PuGlowTexture();   // FUN_004770c0's FUN_004e8090(material, puglow)
+    if (!Rfx::Texture(*e)) Rfx::SetTexture(*e, PuGlowTexture());   // FUN_004770c0's FUN_004e8090(material, puglow)
     rw::SetRenderState(rw::ZWRITEENABLE, 0);
     rw::SetRenderState(rw::ZTESTENABLE, 1);
-    RaceFx_DrawEmitter(&e->tank, cam);
+    RaceFx_DrawEmitter(e, cam);
     rw::SetRenderState(rw::ZWRITEENABLE, 1);
     rw::SetRenderState(rw::ZTESTENABLE, 1);
 }
@@ -1747,6 +1747,32 @@ void RaceFx_ReplayHudRow(int ba8c, float dtb) {
     r.prev = ba8c;
 }
 
+}  // namespace LibRw
+}  // namespace mashed_re
+extern "C" void HudIngameDispatch(void);   // 0x0040dfc0, Match/MatchS02_0040dfc0.cpp
+namespace mashed_re {
+namespace LibRw {
+
+// MATCH-TOPDOWN-T03: the exe binds the matched FUN_0040dfc0's draw callees to this pass
+// (Match/MatchS02_0040dfc0.cpp, MASHED_STANDALONE arm). s_pass is the pass's inputs while the dispatcher runs.
+namespace { const HudInputs* s_pass = nullptr; }
+// FUN_00426ba0 returns DAT_0066d704 (0x00426ba0), the course object; the exe keeps no course object there, and
+// the pass's world_up is the port's stand-in for it (TrackRenderer.cpp RaceFx_SetHud).
+int RaceFx_HudBindWorldUp() { return (s_pass && s_pass->world_up) ? 1 : 0; }
+// FUN_0041c0c0 @ 0x0041c0c0: the 2 records at 0x0063cab8, then +0x16c (the exe's records are g_panel).
+void RaceFx_HudBindPanels() {
+    for (const Panel& P : g_panel)
+        if (P.clump) RenderPanel(P);
+}
+// FUN_0041b630 @ 0x0041b630, drawn before the lights (0x0040e0ee). MASHED_HUD_NONTEAM=0 keeps it off.
+void RaceFx_HudBindNonTeam() {
+    if (RaceFx_HudNonTeamEnabled()) RenderNonTeam();
+}
+// FUN_0041db80 @ 0x0041db80 on the start-light clock DAT_0063d588 (the pass's timer).
+void RaceFx_HudBindLights() {
+    if (s_pass) RenderLights(s_pass->timer);
+}
+
 void RaceFx_RenderHud(int width, int height) {
     if (!RaceFx_HudEnabled()) return;
     HudReplay& r = Rep();
@@ -1759,30 +1785,26 @@ void RaceFx_RenderHud(int width, int height) {
         c.world_up = true;
         in = c;
     }
-    // FUN_0040dfc0 @ 0x0040dfc0's branch (jump tables 0x0040e12c / 0x0040e140 / 0x0040e14c): the
-    // team panels FUN_0041c0c0, the non-team panels FUN_0041b630, or a per-mode HUD.
-    bool panels = false, nonteam = false;
+    // Which panels draw is decided by the matched FUN_0040dfc0 below (MATCH-TOPDOWN-T03). This switch only
+    // gates the non-team records' logic: it is true where FUN_0040dfc0 @ 0x0040dfc0's branch (jump tables
+    // 0x0040e12c / 0x0040e140 / 0x0040e14c) reaches FUN_0041b630.
+    bool nonteam = false;
     switch (in.round_type) {
-    case 2: break;                                   // FUN_0041e850 (not ported)
+    case 2: break;                                   // FUN_0041e850
     case 3: case 4: case 5:
         if (in.mode_fd0 == 4 || in.mode_fd0 == 7 || in.mode_fd0 == 9 || in.mode_fd0 == 5 ||
             in.mode_fd0 == 8 || in.mode_fd0 == 10)
             break;                                   // FUN_0041ded0 / FUN_0041c300 / FUN_0041a3e0
-        panels = in.team_play != 0;                  // default -> caseD_7
-        nonteam = in.team_play == 0;
+        nonteam = in.team_play == 0;                 // default -> caseD_7
         break;
     case 6: case 10:
-        panels = in.team_play != 0 && in.mode_fd0 != 2;
-        nonteam = !panels;
+        nonteam = !(in.team_play != 0 && in.mode_fd0 != 2);
         break;
-    case 0xb: break;                                 // FUN_00403160 (not ported)
+    case 0xb: break;                                 // FUN_00403160
     default:
-        panels = in.team_play != 0;
         nonteam = in.team_play == 0;
         break;
     }
-    // [UNCERTAIN U-9704] the per-mode HUDs above are not ported: nothing is drawn where the
-    // original draws them.
     // [rfx2] the non-team records' logic, ahead of the draw as FUN_004111c0's tick precedes
     // FUN_00492e90: set-up at the round's first HUD frame (race state 1, FUN_0041b4d0 + FUN_0041b510),
     // positions at the state-4 tick (FUN_0041b520; the stand-in countdown has no state 4, so its
@@ -1802,7 +1824,6 @@ void RaceFx_RenderHud(int width, int height) {
     if (!in.world_up || in.state < 5 || in.state > 6) return;
     LoadHud(width, height);
     if (!g_hud_ok) return;
-    const bool lights = in.round_type != 0xb;
     UpdatePanels(in);
     UpdateLights(in);
     // FUN_0040de30: identity frame, view window (0.6, 0.45) (0x3f19999a, 0x3ee66666), rwPARALLEL
@@ -1838,11 +1859,24 @@ void RaceFx_RenderHud(int width, int height) {
     rw::SetRenderState(rw::DESTBLEND, rw::BLENDINVSRCALPHA);
     rw::SetRenderState(rw::ALPHATESTFUNC, rw::ALPHAGREATER);
     rw::SetRenderState(rw::ALPHATESTREF, 0);
-    if (panels)
-        for (const Panel& P : g_panel)                // FUN_0041c0c0: 0x0063cab8, then +0x16c
-            if (P.clump) RenderPanel(P);
-    if (nonteam) RenderNonTeam();                     // FUN_0041b630, before the lights (0x0040e0ee)
-    if (lights) RenderLights(in.timer);
+    // MATCH-TOPDOWN-T03: the matched FUN_0040dfc0 (Match/MatchS02_0040dfc0.cpp) picks the panels. It reads
+    // DAT_0063ba8c and DAT_007f0fd0 itself, and FUN_0042f6a0 / FUN_0042f500 (DAT_0067e9fc / DAT_0067ea64) through
+    // their exe bodies. Its callees bind to this pass (RaceFx_HudBind* below).
+    // MASHED_HUD_REPLAY (diagnostic): the replayed row's four words stand in for the call only, then the exe's
+    // own values go back, so the dispatcher decides from the original's inputs as the port switch did.
+    s_pass = &in;
+    if (r.on) {
+        int* const w[4] = {reinterpret_cast<int*>(0x0063ba8cu), reinterpret_cast<int*>(0x007f0fd0u),
+                           reinterpret_cast<int*>(0x0067e9fcu), reinterpret_cast<int*>(0x0067ea64u)};
+        const int v[4] = {in.state, in.mode_fd0, in.round_type, in.team_play};
+        int sv[4];
+        for (int k = 0; k < 4; ++k) { sv[k] = *w[k]; *w[k] = v[k]; }
+        HudIngameDispatch();
+        for (int k = 0; k < 4; ++k) *w[k] = sv[k];
+    } else {
+        HudIngameDispatch();
+    }
+    s_pass = nullptr;
     rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
     rw::SetRenderState(rw::ZWRITEENABLE, sv_zw);
     rw::SetRenderState(rw::FOGENABLE, sv_fog);
@@ -2297,18 +2331,19 @@ bool RaceFx_EmittersEnabled() {
 // +0xa4 / +0xa8, vertex alpha +0xac (RS 0xc). The colour dword FUN_00537b20 writes is drawn as a D3DCOLOR
 // (R = byte 0, B = byte 2): the pickup type-19 glow, dword 0xffff0000, is blue on the original's capture
 // (re/analysis/PICKUPS_LOOK_PLACEMENT_2026-09-29.md, section 1.1).
-bool RaceFx_DrawEmitter(const void* tank_v, void* rw_camera) {
-    if (!RaceFx_EmittersEnabled() || !tank_v) return false;
-    const Rfx::PTank& tank = *static_cast<const Rfx::PTank*>(tank_v);
+bool RaceFx_DrawEmitter(const void* emitter_v, void* rw_camera) {
+    if (!RaceFx_EmittersEnabled() || !emitter_v) return false;
+    const Rfx::Emitter& em = *static_cast<const Rfx::Emitter*>(emitter_v);
+    const Rfx::PTank& tank = em.tank;
     if (tank.count == 0) return false;
     rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
-    rw::Texture* tex = static_cast<rw::Texture*>(const_cast<void*>(tank.texture));
+    rw::Texture* tex = static_cast<rw::Texture*>(const_cast<void*>(Rfx::Texture(em)));
     if (!cam || !cam->getFrame() || !tex) return false;
     const rw::Matrix* L = cam->getFrame()->getLTM();
     const float r[3] = {-L->right.x, -L->right.y, -L->right.z};   // 0x005381c0..0x005381d0
     const float u[3] = {L->up.x, L->up.y, L->up.z};               // 0x005381d3..0x005381e2
     Rfx::Streams st;
-    if (!Rfx::Instance(tank, r, u, st)) {
+    if (!Rfx::Instance(tank, em.c4_set, r, u, st)) {
         static bool s_logged = false;
         if (!s_logged) {
             s_logged = true;

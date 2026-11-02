@@ -16,29 +16,17 @@
 
 #include <cstdint>
 
-// 0x0042f760  A1 9C F1 67 00 C3  (mov eax,[0x0067f19c]; ret) — channel-B trigger flag
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global67f19cGet(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0067f19cu);  // cited at 0x0042f760
-}
-RH_ScopedInstall(Global67f19cGet, 0x0042f760);
+// MATCH-S07: the body of 0x0042f760 (Global67f19cGet) moved to Match/MatchS07_0042f760.cpp,
+// which compiles the byte-matched source re/match/s07/0042f760.c.
 
-// 0x0042f770  A1 A0 F1 67 00 C3  (mov eax,[0x0067f1a0]; ret) — channel-C trigger-A flag
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global67f1a0Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0067f1a0u);  // cited at 0x0042f770
-}
-RH_ScopedInstall(Global67f1a0Get, 0x0042f770);
+// MATCH-S07: the body of 0x0042f770 (Global67f1a0Get) moved to Match/MatchS07_0042f770.cpp,
+// which compiles the byte-matched source re/match/s07/0042f770.c.
 
-// 0x0042f780  A1 A4 F1 67 00 C3  (mov eax,[0x0067f1a4]; ret) — channel-C trigger-B flag
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global67f1a4Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0067f1a4u);  // cited at 0x0042f780
-}
-RH_ScopedInstall(Global67f1a4Get, 0x0042f780);
+// MATCH-S07: the body of 0x0042f780 (Global67f1a4Get) moved to Match/MatchS07_0042f780.cpp,
+// which compiles the byte-matched source re/match/s07/0042f780.c.
 
-// 0x00426bb0  A1 D8 D6 66 00 C3  (mov eax,[0x0066d6d8]; ret) — path-count int
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global66d6d8Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0066d6d8u);  // cited at 0x00426bb0
-}
-RH_ScopedInstall(Global66d6d8Get, 0x00426bb0);
+// MATCH-S06: the body of 0x00426bb0 (Global66d6d8Get) moved to Match/MatchS06_00426bb0.cpp,
+// which compiles the byte-matched source re/match/s06/00426bb0.c.
 
 // 0x0045bfe0  A1 2C 33 80 00 C3  (mov eax,[0x0080332c]; ret)
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Global80332cGet(void) {

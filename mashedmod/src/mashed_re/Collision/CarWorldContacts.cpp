@@ -6,7 +6,7 @@
 //   re/analysis/WSB2_B3_CONTACT_PORT_MAP.md
 //
 // Functions ported (B2 set per COLLISION_GATE_BRIEF / ratified Option B):
-//   0x0046c5f0  TriangleFaceNormal            (leaf; FUN_004c3b30 only)
+//   TriangleFaceNormal (FUN_0046c5f0): body moved to Match/MatchPilot_0046c5f0.cpp (MATCH-TOPDOWN-T13)
 //   (0x00468b40 ContactHistoryLookup: the one body is Vehicle/VehicleState.cpp, dcleaf 2026-10-22;
 //    Collision::ContactHistoryLookup in ContactSolvers.h forwards to it)
 //   0x0046cc40  WheelTerrainContactClassifier (approaching-contact classify)
@@ -45,28 +45,8 @@ namespace Collision {
 static const float kSentFirstFrame = asF(0xff010101);  // -1.7147562e+38
 static const float kSentPersistent = asF(0xff0000ff);  // -1.7014636e+38
 
-// ---------------------------------------------------------------------------
-// 0x0046c5f0  TriangleFaceNormal
-//   Original: __fastcall, EAX=apex, ESI=out-normal, stack=p1,p2. Unit normal of
-//   the triangle (apex,p1,p2) via cross product; guarded against degeneracy.
-//   Numerator _DAT_005cc320 = 1.0f @0x005cc320. FastSqrt = FUN_004c3b30.
-// ---------------------------------------------------------------------------
-void TriangleFaceNormal(const float* apex, const float* p1, const float* p2, float* outN)
-{
-    float fVar2 = (apex[2] - p1[2]) * (apex[1] - p2[1]) - (apex[1] - p1[1]) * (apex[2] - p2[2]);
-    float fVar3 = (apex[0] - p1[0]) * (apex[2] - p2[2]) - (apex[2] - p1[2]) * (apex[0] - p2[0]);
-    float fVar1 = (apex[1] - p1[1]) * (apex[0] - p2[0]) - (apex[0] - p1[0]) * (apex[1] - p2[1]);
-    float fVar4 = fVar2 * fVar2 + fVar3 * fVar3 + fVar1 * fVar1;
-    if (kZero <= fVar4) {
-        float len = FastSqrt(fVar4);
-        if (len != kZero) {
-            float inv = kOne / len;        // _DAT_005cc320 / len
-            outN[0] = fVar2 * inv;
-            outN[1] = fVar3 * inv;
-            outN[2] = fVar1 * inv;
-        }
-    }
-}
+// TriangleFaceNormal (FUN_0046c5f0): MATCH-TOPDOWN-T13 moved the body to Match/MatchPilot_0046c5f0.cpp,
+// which compiles the byte-matched source re/match/pilot/a5_0046c5f0.c (exe only, x87).
 
 // ---------------------------------------------------------------------------
 // 0x0046cc40  WheelTerrainContactClassifier

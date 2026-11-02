@@ -12,6 +12,8 @@ import ctypes, json, os, sys, time
 from ctypes import wintypes
 from pathlib import Path
 import frida
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi
 try: import psutil
 except ImportError: psutil = None
 
@@ -288,13 +290,16 @@ def main():
     count_exports = []
     if "--count-export" in sys.argv:
         count_exports = sys.argv[sys.argv.index("--count-export")+1].split(",")
-    env=dict(os.environ)
-    if not hooks_on:
-        env["MASHED_RE_NO_AUTO_HOOK"]="1"   # stock; we only drive input
-    else:
-        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
-        print("  [hooks] dev .asi ARMED")
-    dev=frida.get_local_device(); pid=dev.spawn(str(EXE),cwd=str(ORIG),env=env); sess=dev.attach(pid)
+    # D5-SHIM-DINPUT8-SPAWNERS: the asi no longer comes from the dinput8 proxy. dev_asi
+    # spawns suspended with MASHED_RE_NO_AUTO_HOOK=1 (proxy inert) and, for --hooks,
+    # Module.loads the asi and calls InjectHooks before the first resume.
+    dev=frida.get_local_device()
+    exe=dev_asi.original_exe(EXE)
+    _proc, sess, _info = dev_asi.spawn_original(exe, hooks=hooks_on, env=dict(os.environ),
+                                                device=dev, resume=False)
+    pid=_proc.pid
+    if hooks_on:
+        print(f"  [hooks] dev .asi ARMED ({_info.get('path')})")
     hproc=_open_handle(pid)
     sess.on("detached", lambda reason, *a: print(f"  [detached] reason={reason} exit_code=0x{(_exit_code(hproc) or 0):08x}"))
     def _on_msg(m, d):
@@ -346,8 +351,7 @@ def main():
     dev.resume(pid)
     nav=Nav(scr,pid)
     if count_exports:
-        # The .asi is loaded by the dinput8 proxy AFTER resume, so its exports do not exist
-        # at spawn time; retry until the module is present.
+        # The .asi is mapped before resume (dev_asi); keep the retry for the counter arm.
         armed=False
         for _ in range(40):
             time.sleep(0.5)

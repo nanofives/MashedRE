@@ -1,0 +1,14 @@
+[1/14] default-acquire-unchanged PASS 
+[2/14] priority-marker-visible-while-waiting PASS 
+[3/14] order-A-then-T-then-B PASS ['A', 'T', 'B']
+[4/14] marker-cleared-after-acquire PASS 
+[5/14] worker-cannot-retake-ahead-of-train PASS ['W0', 'T', 'W1', 'W2']
+[6/14] stale-markers-expire PASS 
+[7/14] live-holder-age-1801-not-broken PASS TIMEOUT owner=20432
+[8/14] legacy-record-live-pid-week-old-not-broken PASS TIMEOUT
+[9/14] pid-reuse-start-mismatch-is-broken PASS 
+[10/14] solo-drain-waits-on-live-then-breaks-dead PASS still=True out=TOKEN f78171
+[11/14] dead-holder-still-broken PASS 
+[12/14] empty-file-grace-then-broken PASS TIMEOUT
+[13/14] ps-live-holder-age-1801-not-broken PASS TIMEOUT
+[14/14] ps-holder-not-broken-by-python PASS TIMEOUT owner_start=1793576333.4

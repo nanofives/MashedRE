@@ -16,7 +16,7 @@
 //
 // Candidates NOT in this file (already implemented in TimerState.cpp /
 // TimerInit.cpp — drift-fix only via re-classify):
-//   0x00413f90  TimerGetBasePtr       (TimerState.cpp)
+//   0x00413f90  TimerGetBasePtr       (Match/MatchS08FU_00413f90.cpp; was TimerState.cpp)
 //   0x00422120  TimerInitLoop         (TimerInit.cpp)
 //
 // Candidates skipped (refused — see PROMOTION_QUEUE note):
@@ -29,26 +29,8 @@
 
 #include <cstdint>
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0042c2f0  SetDat0067ecb8  void __cdecl(uint32_t param_1)
-//
-// Single-write setter. Writes param_1 to DAT_0067ecb8.
-// 9-byte body. No branches, no callees.
-//
-// Asm (from re/analysis/game_state_d2/0x0042c2f0.md):
-//   8B 44 24 04   MOV EAX, [ESP+0x4]   ; param_1
-//   A3 B8 EC 67 00  MOV [0x0067ecb8], EAX
-//   C3            RET
-//
-// Paired setter for getter FUN_0042c2e0 (0x0042c2e0, already C3 as
-// GetDat0067ecb8). Called from FUN_004929d0 cases 1 and 4 with arg 0
-// after FUN_0042b940 — clears the pending-event flag.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) void __cdecl SetDat0067ecb8(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x0067ecb8) = param_1;
-}
-
-RH_ScopedInstall(SetDat0067ecb8, 0x0042c2f0);  // re-enabled 2026-05-24 batch-util
+// MATCH-S07: the body of 0x0042c2f0 (SetDat0067ecb8) moved to Match/MatchS07_0042c2f0.cpp,
+// which compiles the byte-matched source re/match/s07/0042c2f0.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004098b0  LoadingState1Enter  void __cdecl(void)
@@ -160,26 +142,9 @@ RH_ScopedInstall(LoadingState2Enter, 0x00409900);  // re-enabled 2026-05-24 batc
 //
 // Sole caller: FUN_004111c0 (init).
 // ─────────────────────────────────────────────────────────────────────────────
-typedef std::uint32_t (__cdecl* gate_no_arg_t)();
-typedef void          (__cdecl* action_global_arg_t)(std::uint32_t);
-typedef void          (__cdecl* action_no_arg_t)();
 
-static constexpr std::uintptr_t kFUN_0041ea40_va = 0x0041ea40u;
-static constexpr std::uintptr_t kFUN_0041e920_va = 0x0041e920u;
-static constexpr std::uintptr_t kFUN_00480100_va = 0x00480100u;
-static constexpr std::uint32_t  kDAT_00646e58    = 0x00646e58u;
-
-extern "C" __declspec(dllexport) void __cdecl TimerDispatch10() {
-    const auto gate    = reinterpret_cast<gate_no_arg_t>(kFUN_0041ea40_va);
-    const auto action1 = reinterpret_cast<action_global_arg_t>(kFUN_0041e920_va);
-    const auto action2 = reinterpret_cast<action_no_arg_t>(kFUN_00480100_va);
-    if (gate() != 0u) {
-        action1(kDAT_00646e58);
-        action2();
-    }
-}
-
-RH_ScopedInstall(TimerDispatch10, 0x00426c10);  // re-enabled 2026-05-24 batch-util
+// MATCH-S06: the body of 0x00426c10 (TimerDispatch10) moved to Match/MatchS06_00426c10.cpp,
+// which compiles the byte-matched source re/match/s06/00426c10.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00426c30  TimerDispatch30  void __cdecl(void)
@@ -202,18 +167,9 @@ RH_ScopedInstall(TimerDispatch10, 0x00426c10);  // re-enabled 2026-05-24 batch-u
 //
 // FUN_0041ea30, FUN_0041e910 not yet reversed. Sole caller: FUN_004111c0.
 // ─────────────────────────────────────────────────────────────────────────────
-static constexpr std::uintptr_t kFUN_0041ea30_va = 0x0041ea30u;
-static constexpr std::uintptr_t kFUN_0041e910_va = 0x0041e910u;
 
-extern "C" __declspec(dllexport) void __cdecl TimerDispatch30() {
-    const auto gate   = reinterpret_cast<gate_no_arg_t>(kFUN_0041ea30_va);
-    const auto action = reinterpret_cast<action_global_arg_t>(kFUN_0041e910_va);
-    if (gate() != 0u) {
-        action(kDAT_00646e58);
-    }
-}
-
-RH_ScopedInstall(TimerDispatch30, 0x00426c30);  // re-enabled 2026-05-24 batch-util
+// MATCH-S06: the body of 0x00426c30 (TimerDispatch30) moved to Match/MatchS06_00426c30.cpp,
+// which compiles the byte-matched source re/match/s06/00426c30.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00426c70  TimerDispatch70  void __cdecl(void)
@@ -235,18 +191,9 @@ RH_ScopedInstall(TimerDispatch30, 0x00426c30);  // re-enabled 2026-05-24 batch-u
 //
 // FUN_0041ea50, FUN_0041e930 not yet reversed. Sole caller: FUN_004111c0.
 // ─────────────────────────────────────────────────────────────────────────────
-static constexpr std::uintptr_t kFUN_0041ea50_va = 0x0041ea50u;
-static constexpr std::uintptr_t kFUN_0041e930_va = 0x0041e930u;
 
-extern "C" __declspec(dllexport) void __cdecl TimerDispatch70() {
-    const auto gate   = reinterpret_cast<gate_no_arg_t>(kFUN_0041ea50_va);
-    const auto action = reinterpret_cast<action_global_arg_t>(kFUN_0041e930_va);
-    if (gate() != 0u) {
-        action(kDAT_00646e58);
-    }
-}
-
-RH_ScopedInstall(TimerDispatch70, 0x00426c70);  // re-enabled 2026-05-24 batch-util
+// MATCH-S06: the body of 0x00426c70 (TimerDispatch70) moved to Match/MatchS06_00426c70.cpp,
+// which compiles the byte-matched source re/match/s06/00426c70.c.
 
 // 0x0041cb80  TimerArrayInit46 — REFUSED (not bit-identical reachable).
 //

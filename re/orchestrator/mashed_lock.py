@@ -63,6 +63,38 @@
 #       (start time recorded against PID reuse); --ttl stays the fallback
 #   py -3.12 mashed_lock.py solo-end --token <hex>
 #       session-scoped form (no live PID to bind to, so it expires at --ttl)
+#
+# SOLO OPENS YIELD TO PRIORITY, added 2026-11-01 (HB-MASHEDLOCK-SOLO-PRIORITY). Run 29: the
+# train's pass 20261101_191148 waited from 19:39 while MATCH-TOPDOWN-T01 (19:32) and then
+# HB-ASI-EAX-57C420-gates (19:54, 12 h expiry) opened solo windows back to back. Now:
+#   - a NEW non-priority solo open waits while a live priority marker of another process
+#     exists, while a priority acquirer HOLDS the game lock, and for PRIO_SOLO_LINGER_SEC
+#     after it releases. One file per priority process, <name>_priolinger_<pid>.lock:
+#     held=true from acquire to release (stale only when that PID is dead), then held=false
+#     with a PRIO_SOLO_LINGER_SEC expiry. Without the held state a window opened during the
+#     train's hold and then drained it (concurrency test case 5). The linger covers the
+#     train's next call in the same pass, seconds later. Ordinary game-lock acquires ignore
+#     this file, and the priority markers keep their HB-LOCKPRIO meaning.
+#   - a window ALREADY OPEN is never touched: it stays valid until solo-end or its expiry.
+#   - priority solo opens (the train) do not wait on markers or lingers (they queue on the
+#     solo file itself), and neither does a process admitted by the open window's token.
+#   - default expiry SOLO_TTL_SEC = 1 h for both `run --solo` and `solo-begin` (was 12 h /
+#     4 h). One default gate run (G-CTRL + B) took 10-23 min in the 2026-11-01 train logs.
+#     A longer step passes --ttl explicitly.
+#
+# PASS-WIDE PRIORITY HOLD, added 2026-11-02 (HB-MASHEDLOCK-EARLY-PRIORITY). Every 2026-11-01
+# starvation had one shape: the train merged and built for 4-8 min before its first
+# `run --priority` wrote a marker, and a worker opened a solo window in that gap (EAX 20:49
+# before the 20:57 claim, PATHPROG-REMERGE 21:29 before 21:33). The train now writes the
+# held=true record above for ITS OWN pwsh PID at the start of each pass:
+#   mashed_lock.py prio-hold --owner-pid <pid> --label X [--ttl S]
+#   mashed_lock.py prio-release --owner-pid <pid> [--linger S]
+# Same file and meaning as the per-acquire hold (<name>_priolinger_<pid>.lock): new
+# non-priority solo opens wait, ordinary game-lock acquires do not, an open window is not
+# touched, priority solo opens ignore it. Stale once the owner PID is dead (owner_start
+# guards reuse). prio-release turns it into a PRIO_SOLO_LINGER_SEC linger (a back-to-back
+# pass re-registers within it), --linger 0 removes it; it only touches the record of that
+# owner PID.
 
 import glob
 import json
@@ -73,12 +105,16 @@ import time
 import tempfile
 import uuid
 
-LOCK_DIR = tempfile.gettempdir()
+# MASHED_LOCK_DIR redirects every lock/solo/priority file (HB-MASHEDLOCK-RACE: the
+# concurrency self-test must not touch the live files other sessions hold).
+LOCK_DIR = os.environ.get('MASHED_LOCK_DIR') or tempfile.gettempdir()
 DEFAULT_NAME = 'mashed_machine'
 EMPTY_GRACE_SEC = 10     # an empty/unparsable lock file younger than this is a writer mid-create
 SOLO_ENV = 'MASHED_LOCK_SOLO_TOKEN'
-SOLO_TTL_SEC = 4 * 3600  # default solo window when not bound to a live PID
+SOLO_TTL_SEC = 3600      # default solo window expiry, run --solo and solo-begin (HB-MASHEDLOCK-SOLO-PRIORITY)
+REMOVE_TRIES = 8         # HB-MASHEDLOCK-RACE: Windows sharing violations on remove clear in ms
 PRIO_GRACE_SEC = 300     # a priority marker outlives its requester's wait by this much
+PRIO_SOLO_LINGER_SEC = 120   # new solo opens keep yielding this long after a priority release
 
 
 def _lock_path(name):
@@ -177,6 +213,38 @@ def _read_owner(path):
         return {}
 
 
+def _remove(path, tries=REMOVE_TRIES):
+    """HB-MASHEDLOCK-RACE: remove `path`, tolerating the races between concurrent
+    readers/removers. True when the file is gone (including already gone), False when
+    it is still there after `tries` attempts (Windows PermissionError/WinError 32 while
+    another process has it open, or any other OSError). Never raises OSError."""
+    for i in range(tries):
+        try:
+            os.remove(path)
+            return True
+        except FileNotFoundError:
+            return True
+        except OSError:
+            time.sleep(0.01 * (i + 1))
+    return not os.path.exists(path)
+
+
+def _remove_if_same(path, o):
+    """Remove `path` only if it still holds the record `o` we judged stale, so a lock
+    re-created by another process between our read and our remove is not broken."""
+    if _read_owner(path) != o:
+        return False
+    return _remove(path)
+
+
+def _young(path):
+    """True when `path` was modified within EMPTY_GRACE_SEC (a writer mid-create)."""
+    try:
+        return time.time() - os.path.getmtime(path) <= EMPTY_GRACE_SEC
+    except OSError:
+        return False
+
+
 def _solo_path(name):
     return os.path.join(LOCK_DIR, name + '_solo.lock')
 
@@ -192,11 +260,10 @@ def prio_pending(name=DEFAULT_NAME, ignore_pid=None):
     pat = os.path.join(glob.escape(LOCK_DIR), glob.escape(name) + '_prio_*.lock')
     for path in glob.glob(pat):
         o = _read_owner(path)
+        if not o and _young(path):
+            continue   # marker being written (prio_mark opens with 'w'), not stale
         if (not o) or (not _pid_alive(o.get('pid'))) or (o.get('expires') or 0) < time.time():
-            try:
-                os.remove(path)
-            except OSError:
-                pass
+            _remove_if_same(path, o)
             continue
         if ignore_pid is not None and o.get('pid') == ignore_pid:
             continue
@@ -212,10 +279,79 @@ def prio_mark(name, label, ttl):
 
 
 def prio_clear(name):
+    _remove(_prio_path(name))
+
+
+def _linger_path(name, pid=None):
+    return os.path.join(LOCK_DIR, f"{name}_priolinger_{pid or os.getpid()}.lock")
+
+
+def prio_linger_mark(name, label, secs=None, held=False, pid=None):
+    """HB-MASHEDLOCK-SOLO-PRIORITY: held=True when a priority acquirer takes the game lock
+    (stale only once this PID is dead), held=False when it releases: for `secs` more, new
+    non-priority solo opens keep waiting, so the holder's next call in the same pass is not
+    overtaken by a window. Expiry alone ends the released form (the PID usually exits).
+    `pid` (HB-MASHEDLOCK-EARLY-PRIORITY) writes the record for another live process, the
+    merge train's pwsh, instead of this one. Returns False when the write failed."""
+    secs = (24 * 3600 if held else PRIO_SOLO_LINGER_SEC) if secs is None else secs
+    pid = pid or os.getpid()
     try:
-        os.remove(_prio_path(name))
+        with open(_linger_path(name, pid), 'w', encoding='utf-8') as f:
+            f.write(json.dumps({'pid': pid, 'at': _now_iso(), 'epoch': int(time.time()),
+                                'expires': int(time.time() + secs), 'label': label,
+                                'held': bool(held), 'owner_start': _pid_start(pid),
+                                'host': socket.gethostname()}))
+        return True
     except OSError:
-        pass
+        return False   # best effort: a missing record only reopens the pre-fix gap
+
+
+def prio_hold(name, label, owner_pid, ttl=24 * 3600):
+    """HB-MASHEDLOCK-EARLY-PRIORITY: pass-wide hold for `owner_pid` (the merge train's pwsh),
+    written at the start of a pass, before merge and build. New non-priority solo opens wait
+    until prio_release or the owner's death. Never touches an open window or the game lock."""
+    if not _pid_alive(owner_pid):
+        return False
+    return prio_linger_mark(name, label, secs=ttl, held=True, pid=owner_pid)
+
+
+def prio_release(name, owner_pid, linger=None):
+    """End `owner_pid`'s pass-wide hold: a `linger` s (default PRIO_SOLO_LINGER_SEC) released
+    record, or removal when linger is 0. Only that owner's own record is touched. True when
+    no held record of that owner remains."""
+    path = _linger_path(name, owner_pid)
+    o = _read_owner(path)
+    if not o:
+        return not os.path.exists(path) or _remove(path)
+    if o.get('pid') != owner_pid:
+        return False
+    linger = PRIO_SOLO_LINGER_SEC if linger is None else linger
+    if linger <= 0:
+        return _remove(path)
+    return prio_linger_mark(name, o.get('label') or '', secs=linger, held=False, pid=owner_pid)
+
+
+def prio_lingering(name=DEFAULT_NAME, ignore_pid=None):
+    """Priority holds (held=true, live PID) and unexpired lingers for `name`, as dicts.
+    Expired lingers and holds of a dead PID are removed."""
+    out = []
+    pat = os.path.join(glob.escape(LOCK_DIR), glob.escape(name) + '_priolinger_*.lock')
+    for path in glob.glob(pat):
+        o = _read_owner(path)
+        if not o and _young(path):
+            continue
+        if (not o) or (o.get('expires') or 0) < time.time() or (o.get('held') and _owner_dead(o)):
+            _remove_if_same(path, o)
+            continue
+        if ignore_pid is not None and o.get('pid') == ignore_pid:
+            continue
+        out.append(o)
+    return out
+
+
+def solo_blockers(name=DEFAULT_NAME, ignore_pid=None):
+    """What a NEW non-priority solo open waits on: live priority markers, then lingers."""
+    return prio_pending(name, ignore_pid=ignore_pid) + prio_lingering(name, ignore_pid=ignore_pid)
 
 
 def solo_owner(name=DEFAULT_NAME):
@@ -225,19 +361,29 @@ def solo_owner(name=DEFAULT_NAME):
     if not os.path.exists(path):
         return None
     o = _read_owner(path)
+    if not o:
+        # HB-MASHEDLOCK-RACE: empty/unparsable/unreadable. A writer between its O_EXCL
+        # create and its write looks exactly like this, so it is a busy window, not a
+        # stale one, until EMPTY_GRACE_SEC has passed.
+        if _young(path):
+            return dict(_BUSY_SOLO)
     dead = _owner_dead(o)
     expired = (o.get('expires') or 0) < time.time()
     if not o or dead or expired:
-        try:
-            os.remove(path)
-        except FileNotFoundError:
-            pass
-        return None
+        if _remove_if_same(path, o):
+            return None
+        if not os.path.exists(path):
+            return None
+        return dict(_BUSY_SOLO)   # could not remove (sharing violation): retry, not stale
     return o
 
 
+_BUSY_SOLO = {'token': None, 'label': '(solo window busy or unreadable)', 'at': '?'}
+
+
 def _solo_admits_me(owner):
-    return owner is not None and os.environ.get(SOLO_ENV) == owner.get('token')
+    tok = owner.get('token') if owner else None
+    return bool(tok) and os.environ.get(SOLO_ENV) == tok
 
 
 def solo_begin(label='', name=DEFAULT_NAME, ttl=SOLO_TTL_SEC, pid=None, wait=1800,
@@ -248,13 +394,13 @@ def solo_begin(label='', name=DEFAULT_NAME, ttl=SOLO_TTL_SEC, pid=None, wait=180
     if priority:
         prio_mark(name, label, wait + PRIO_GRACE_SEC + 300)
     try:
-        return _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid)
+        return _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid, priority)
     finally:
         if priority:
             prio_clear(name)
 
 
-def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None):
+def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None, priority=0):
     def log(m):
         if not quiet:
             print(f"[mashed-lock] {m}", flush=True)
@@ -262,7 +408,20 @@ def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None):
     token = uuid.uuid4().hex
     start = time.time()
     noted = False
+    prio_noted = False
     while True:
+        if not priority:
+            # HB-MASHEDLOCK-SOLO-PRIORITY: yield to a pending (or just-released) priority
+            # claim. Only this NEW open waits; a window already open is left alone.
+            blk = solo_blockers(name, ignore_pid=os.getpid())
+            if blk:
+                if not prio_noted:
+                    log(f"WAITING to open solo '{name}' -- priority claim pending "
+                        f"({blk[0].get('label')}) since {blk[0].get('at')}")
+                    prio_noted = True
+                time.sleep(poll)
+                start = time.time()   # bounded by the marker/linger expiry, not by `wait`
+                continue
         try:
             fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
             os.write(fd, json.dumps({
@@ -273,6 +432,11 @@ def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None):
             }).encode('utf-8'))
             os.close(fd)
             break
+        except PermissionError:
+            if time.time() - start > wait:   # Windows delete-pending solo file: transient, retry
+                raise
+            time.sleep(poll)
+            continue
         except FileExistsError:
             o = solo_owner(name)
             if o is None:
@@ -287,12 +451,10 @@ def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None):
     log(f"SOLO OPEN '{name}' ({label}) ttl={ttl}s; draining the current holder")
     gpath = _lock_path(name)
     while os.path.exists(gpath):
-        if _holder_stale(gpath, _read_owner(gpath)):
-            try:
-                os.remove(gpath)
-            except FileNotFoundError:
-                pass
-            break
+        go = _read_owner(gpath)
+        if _holder_stale(gpath, go):
+            if _remove_if_same(gpath, go) or not os.path.exists(gpath):
+                break
         time.sleep(poll)
     log(f"SOLO HELD '{name}'")
     return token
@@ -303,10 +465,7 @@ def solo_end(token, name=DEFAULT_NAME, quiet=False):
     o = _read_owner(path) if os.path.exists(path) else {}
     ok = bool(o) and o.get('token') == token
     if ok:
-        try:
-            os.remove(path)
-        except FileNotFoundError:
-            pass
+        _remove(path)
     if not quiet:
         print(f"[mashed-lock] {'SOLO CLOSED' if ok else 'solo not held by that token:'} "
               f"'{name}'", flush=True)
@@ -334,7 +493,10 @@ class MashedLock:
             return self._acquire()
         prio_mark(self.name, self.label, self.wait + PRIO_GRACE_SEC)
         try:
-            return self._acquire()
+            r = self._acquire()
+            # written before the marker goes, so a new solo open never sees neither
+            prio_linger_mark(self.name, self.label, held=True)
+            return r
         finally:
             prio_clear(self.name)
 
@@ -374,6 +536,13 @@ class MashedLock:
                 self._held = True
                 self._log(f"HELD '{self.name}' pid={os.getpid()} ({self.label})")
                 return self
+            except PermissionError:
+                # Windows: the file is delete-pending (another process is removing it).
+                # Transient, like a held lock: retry (concurrency hammer, 'prio' op).
+                if time.time() - start > self.wait:
+                    raise
+                time.sleep(self.poll)
+                continue
             except FileExistsError:
                 owner = _read_owner(self.path)
                 opid = owner.get('pid')
@@ -381,10 +550,9 @@ class MashedLock:
                 if _holder_stale(self.path, owner):
                     self._log(f"breaking STALE '{self.name}' (pid={opid} alive="
                               f"{_pid_alive(opid)} age={int(age)}s)")
-                    try:
-                        os.remove(self.path)
-                    except FileNotFoundError:
-                        pass
+                    if _remove_if_same(self.path, owner) or not os.path.exists(self.path):
+                        continue
+                    time.sleep(self.poll)   # could not remove right now: retry, do not spin
                     continue
                 if time.time() - start > self.wait:
                     raise TimeoutError(
@@ -400,11 +568,15 @@ class MashedLock:
         if not self._held:
             return
         owner = _read_owner(self.path)
+        for _ in range(REMOVE_TRIES):   # a transient unreadable read must not leak our lock
+            if owner or not os.path.exists(self.path):
+                break
+            time.sleep(0.02)
+            owner = _read_owner(self.path)
         if owner.get('pid') == os.getpid():
-            try:
-                os.remove(self.path)
-            except FileNotFoundError:
-                pass
+            _remove(self.path)
+        if self.priority:
+            prio_linger_mark(self.name, self.label)
         self._held = False
         self._log(f"released '{self.name}' pid={os.getpid()}")
 
@@ -437,6 +609,13 @@ def _cli():
         for pm in prio_pending(name):
             print(f"PRIORITY-PENDING '{name}' pid={pm.get('pid')} label={pm.get('label')} "
                   f"since={pm.get('at')}")
+        for pl in prio_lingering(name):
+            if pl.get('held'):
+                print(f"PRIORITY-HOLD '{name}' pid={pl.get('pid')} label={pl.get('label')} "
+                      f"since={pl.get('at')} (new solo opens wait)")
+            else:
+                print(f"PRIORITY-LINGER '{name}' label={pl.get('label')} new solo opens wait "
+                      f"{int((pl.get('expires') or 0) - time.time())}s more")
         so = solo_owner(name)
         if so:
             left = int((so.get('expires') or 0) - time.time())
@@ -450,14 +629,30 @@ def _cli():
                          owner_pid=int(opt('--owner-pid')) if opt('--owner-pid') else None)
         print(f"TOKEN {tok}")
         return 0
+    if cmd == 'prio-hold':
+        if not opt('--owner-pid'):
+            sys.exit("prio-hold needs --owner-pid <pid>")
+        opid = int(opt('--owner-pid'))
+        ok = prio_hold(name, opt('--label', 'cli'), opid, ttl=int(opt('--ttl', 24 * 3600)))
+        print(f"PRIORITY-HOLD '{name}' owner_pid={opid}" if ok else
+              f"prio-hold FAILED '{name}' owner_pid={opid} (dead PID or unwritable)", flush=True)
+        return 0 if ok else 1
+    if cmd == 'prio-release':
+        if not opt('--owner-pid'):
+            sys.exit("prio-release needs --owner-pid <pid>")
+        opid = int(opt('--owner-pid'))
+        lg = int(opt('--linger')) if opt('--linger') is not None else None
+        ok = prio_release(name, opid, linger=lg)
+        print(f"PRIORITY-RELEASED '{name}' owner_pid={opid}" if ok else
+              f"prio-release FAILED '{name}' owner_pid={opid}", flush=True)
+        return 0 if ok else 1
     if cmd == 'solo-end':
         if not opt('--token'):
             sys.exit("solo-end needs --token <hex>")
         return 0 if solo_end(opt('--token'), name=name) else 1
     if cmd == 'break':
         if os.path.exists(path):
-            os.remove(path)
-            print(f"broke '{name}'")
+            print(f"broke '{name}'" if _remove(path) else f"could not remove '{name}' (in use)")
         else:
             print(f"'{name}' already free")
         return 0
@@ -471,16 +666,18 @@ def _cli():
         prio = 1 if '--priority' in args[:args.index('--')] else 0
         if '--solo' in args[:args.index('--')]:
             tok = solo_begin(label=label, name=name, pid=os.getpid(),
-                             ttl=int(opt('--ttl', 12 * 3600)), wait=wait, priority=prio)
+                             ttl=int(opt('--ttl', SOLO_TTL_SEC)), wait=wait, priority=prio)
             env = dict(os.environ)
             env[SOLO_ENV] = tok
             try:
                 return subprocess.call(sub, env=env)
             finally:
                 solo_end(tok, name=name)
+                if prio:
+                    prio_linger_mark(name, label)
         with MashedLock(label=label, name=name, wait=wait, priority=prio):
             return subprocess.call(sub)
-    sys.exit(f"unknown command '{cmd}' (status|break|run|solo-begin|solo-end)")
+    sys.exit(f"unknown command '{cmd}' (status|break|run|solo-begin|solo-end|prio-hold|prio-release)")
 
 
 if __name__ == '__main__':

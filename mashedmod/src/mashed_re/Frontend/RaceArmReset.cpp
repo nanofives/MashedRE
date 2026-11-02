@@ -58,21 +58,5 @@
 //   U-4255: param_1 type/semantics (stored into 0x0067ecac).
 // ---------------------------------------------------------------------------
 
-// 0x00433240
-extern "C" __declspec(dllexport) void __cdecl RaceArmReset(std::uint32_t param_1) {
-    // one-shot gate at 0x0067eca4 cited at 0x00433240 body.
-    if (*reinterpret_cast<const std::uint32_t*>(0x0067eca4u) != 0u) {
-        return;
-    }
-    *reinterpret_cast<std::uint32_t*>(0x0067eca4u) = 1u;        // 0x00433249
-    *reinterpret_cast<std::uint32_t*>(0x0067ecb0u) = 0x21u;     // 0x00433253
-    reinterpret_cast<void(__cdecl*)()>(0x00402f80u)();          // 0x0043325d
-    reinterpret_cast<void(__cdecl*)()>(0x0042d3a0u)();          // 0x00433262
-    *reinterpret_cast<std::uint32_t*>(0x0067e844u) = 0u;        // 0x0043326b
-    *reinterpret_cast<std::uint32_t*>(0x0067e9f8u) = 0u;        // 0x00433275
-    *reinterpret_cast<std::uint32_t*>(0x0067e914u) = 0u;        // 0x0043327f
-    *reinterpret_cast<std::uint32_t*>(0x0067ecacu) = param_1;   // 0x00433289
-    *reinterpret_cast<std::uint32_t*>(0x0067ea84u) = 1u;        // 0x0043328e
-}
-
-RH_ScopedInstall(RaceArmReset, 0x00433240);
+// MATCH-S08: the body of 0x00433240 (RaceArmReset) moved to Match/MatchS08_00433240.cpp,
+// which compiles the byte-matched source re/match/s08/00433240.c.

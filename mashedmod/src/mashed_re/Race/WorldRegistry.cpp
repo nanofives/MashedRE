@@ -23,6 +23,7 @@
 #include "../Math/RwLutTables.h"
 #include "../Vehicle/VehicleRecordBase.h"   // G-M2b-LIVE trace column
 #include "../Gameplay/PickupTick.h"          // [M3] FUN_00458920 dispatch
+#include "WorldObjectLinks.h"                // Insert484a50 / Zero484c90, one body each (D4-DC-INC-batch3)
 
 #include <float.h>
 #include <algorithm>
@@ -159,7 +160,7 @@ bool FromHex(const std::string& h, std::uint8_t* out, std::size_t n) {
 long Registry_UnportedCallbacks() { return s_cbUnported; }
 
 void Registry_RaceInit() {
-    reinterpret_cast<void_fn>(&RG_484c90)();
+    Zero484c90();                       // FUN_00484c90, Race/WorldObjectLinks.cpp
 }
 
 void Registry_FrameTick() {

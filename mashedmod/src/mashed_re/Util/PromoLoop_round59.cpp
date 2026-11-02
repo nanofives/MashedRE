@@ -23,18 +23,8 @@
 
 #include <cstdint>
 
-// 0x00420da0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TblRetPtrout63e4b8_0(std::uint32_t idx, std::uint32_t* out) {
-    std::uint32_t a = 0x0063e4b8u + idx * 0x24u;                  // LEA idx*9 ; LEA *4 + 0x63e4b8
-    if (out) *out = *reinterpret_cast<std::uint32_t*>(a + 0);     // JZ guard ; MOV [out],[addr+0]
-    return *reinterpret_cast<std::uint32_t*>(a + 8);             // MOV EAX,[addr+8]
-}
-RH_ScopedInstall(TblRetPtrout63e4b8_0, 0x00420da0);
+// MATCH-S05: the body of 0x00420da0 (TblRetPtrout63e4b8_0) moved to Match/MatchS05_00420da0.cpp,
+// which compiles the byte-matched source re/match/s05/00420da0.c.
 
-// 0x00420dc0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TblRetPtrout63e4b8_4(std::uint32_t idx, std::uint32_t* out) {
-    std::uint32_t a = 0x0063e4b8u + idx * 0x24u;
-    if (out) *out = *reinterpret_cast<std::uint32_t*>(a + 4);     // *out = *(addr+4)
-    return *reinterpret_cast<std::uint32_t*>(a + 0xc);          // return *(addr+0xc)
-}
-RH_ScopedInstall(TblRetPtrout63e4b8_4, 0x00420dc0);
+// MATCH-S05: the body of 0x00420dc0 (TblRetPtrout63e4b8_4) moved to Match/MatchS05_00420dc0.cpp,
+// which compiles the byte-matched source re/match/s05/00420dc0.c.

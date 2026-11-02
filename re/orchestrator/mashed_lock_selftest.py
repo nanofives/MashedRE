@@ -151,6 +151,11 @@ plant(holder.pid, 5, owner_start=round(hstart - 1000, 1))   # PID reused by a la
 check('pid-reuse-start-mismatch-is-broken', try_acquire(5) == 'ACQUIRED')
 
 # the solo drain uses the same rule: it waits on a live 1801 s holder, proceeds once it dies
+# HB-MASHEDLOCK-SOLO-PRIORITY: the priority acquirers of cases 2-5 left their 120 s linger, which
+# by design holds new solo opens back. This case is about the drain, so drop the lingers first.
+for _f in os.listdir(FAKE_DIR):
+    if '_priolinger_' in _f:
+        os.remove(os.path.join(FAKE_DIR, _f))
 plant(holder.pid, 1801, owner_start=hstart)
 sb = subprocess.Popen([sys.executable, '-c', PRELUDE +
                        "print('TOKEN', ml.solo_begin(label='st', name=%r, ttl=60, poll=0.2, quiet=True), flush=True)"

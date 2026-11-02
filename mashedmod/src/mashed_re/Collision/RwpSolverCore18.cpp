@@ -77,7 +77,7 @@ typedef long double    float10;      // x87 80-bit ST0 return
 
 // --- extern callees (K1/K2/K3/K5/K16/K17, defined in sibling TUs of same .asi) ----
 extern "C" int     __cdecl FUN_0055c230(int param_1,float *param_2,undefined4 param_3,float *param_4,undefined4 param_5); // 0x0055c230 (K5)
-extern "C" void    __cdecl FUN_0055bd80(int param_1,int param_2,undefined4 param_3,undefined4 param_4); // 0x0055bd80 (K5)
+extern "C" undefined4 __cdecl FUN_0055bd80(int param_1,int param_2,undefined4 param_3,undefined4 param_4); // 0x0055bd80 (K5)
 extern "C" undefined2 __cdecl FUN_0055ae50(int *param_1,int param_2);                              // 0x0055ae50 (K3)
 extern "C" undefined4 __cdecl FUN_0055abb0(undefined4 *param_1,int param_2,undefined4 param_3);    // 0x0055abb0 (K3)
 extern "C" void *  __cdecl FUN_0055c000(int shape,float *mtx,float *dir,void *out);                // 0x0055c000 (K5)

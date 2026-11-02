@@ -1,0 +1,15 @@
+== s06/004282a0
+0x004282a0 _FUN_004282a0: 100.0% (regs 100.0%, ops 100.0%)  26/26 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 122 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004282a0	OK	checked=7	unchecked=2	004282a0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+== s06/004274e0
+0x004274e0 _FUN_004274e0: 100.0% (regs 100.0%, ops 100.0%)  38/38 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 148 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004274e0	OK	checked=12	unchecked=0	004274e0.c	
+== s07/0042e3a0
+0x0042e3a0 _FUN_0042e3a0: 100.0% (regs 100.0%, ops 100.0%)  138/138 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 487 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0042e3a0	OK	checked=17	unchecked=0	0042e3a0.c	
+b3dea86c25847a54e0c09a2d1c143ffeb00e44c070b41689b5b18d85c66b5362 *re/match/s06/004282a0.c
+18b3d516e628145c70307e343d6e94bb975ff8edf7bd65b07d57b9920651394b *re/match/s06/004274e0.c
+25a46fa6ef9c3c3351be7cc9864d6b24cd7d5d550ac8adc19ca593e22c348272 *re/match/s07/0042e3a0.c

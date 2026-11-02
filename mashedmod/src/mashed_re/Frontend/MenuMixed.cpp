@@ -394,43 +394,8 @@ RH_ScopedInstall(MenusBodyA, 0x0042d5a0);  // re-enabled 2026-05-24 c3-frontend-
 // ref: re/analysis/promote_c2_frontend_menus/0x0042d290.md
 // ---------------------------------------------------------------------------
 
-// 0x0042d290
-extern "C" __declspec(dllexport) void __cdecl MenusLapTimeFmt(
-    int param_1, std::uint32_t param_2,
-    char* param_3, char* param_4)
-{
-    // Format-string addresses ARE the strings (.rdata-resident); do NOT
-    // dereference. Confirmed by harness Orig output 2026-05-21 (see
-    // log/diff_menus_lap_time_fmt.csv): DAT_005cd794 → "%d", DAT_005cd798 →
-    // "%s%d", DAT_005cd7a0 → "0". Ghidra's analysis note 0x0042d290.md
-    // claimed "%02d" + a pad value; runtime observable is "%s%d" + pad
-    // string "0" + param_1, taking FOUR variadic args (Ghidra's high-level
-    // call site shows only the fixed-arg prototype and elides the 4th).
-    const char* fmt_ge10 = reinterpret_cast<const char*>(0x005cd794u);
-    const char* fmt_lt10 = reinterpret_cast<const char*>(0x005cd798u);
-    const char* pad_str  = reinterpret_cast<const char*>(0x005cd7a0u);
-
-    // Both branches format the value; the < 10 branch prepends pad_str ("0").
-    if (param_1 < 10) {
-        s_FUN_004a2b60(param_3, fmt_lt10, pad_str, static_cast<std::uint32_t>(param_1));
-    } else {
-        s_FUN_004a2b60(param_3, fmt_ge10, static_cast<std::uint32_t>(param_1));
-    }
-
-    // Read second value from FPU ST0 via FUN_004a2c48.
-    // Caller must have pushed the second time component onto ST0.
-    // (0x0042d290 body: iVar1 = FUN_004a2c48())
-    std::uint32_t iVar1 = s_FUN_004a2c48();
-
-    if (static_cast<int>(iVar1) < 10) {
-        s_FUN_004a2b60(param_4, fmt_lt10, pad_str, iVar1);
-    } else {
-        s_FUN_004a2b60(param_4, fmt_ge10, iVar1);
-    }
-    (void)param_2;  // param_2 unused in body (cited as undefined4 in plate)
-}
-
-RH_ScopedInstall(MenusLapTimeFmt, 0x0042d290);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S07: the body of 0x0042d290 (MenusLapTimeFmt) moved to Match/MatchS07_0042d290.cpp,
+// which compiles the byte-matched source re/match/s07/0042d290.c.
 
 // ---------------------------------------------------------------------------
 // MenusLapTimeCmp  --  0x0042ed70
@@ -678,42 +643,5 @@ RH_ScopedInstall(FrontendC2RoundI, 0x00408a70);  // re-enabled 2026-05-24 c3-fro
 // 0x42480000 = 50.0f IEEE-754 (cited at 0x00422fd0 body).
 static constexpr std::uint32_t k50f_bits = 0x42480000u;
 
-// 0x00422fd0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendRaceResultsDispatch(
-    int param_1)
-{
-    // Bounds check: >= 0x10 → no-op (cited at 0x00422fd0 body).
-    if (param_1 < 0x10) {
-        // Kill car.  (0x00422fd0 body: FUN_0046c5c0(param_1))
-        s_FUN_0046c5c0(param_1);
-
-        // Set status flag to 1.  (0x00422fd0 body: FUN_0046c790(param_1, 1))
-        s_FUN_0046c790(param_1, 1);
-
-        // Set float slot 0 to 50.0f.
-        // (0x00422fd0 body: FUN_004215c0(param_1, 0x42480000, 0))
-        s_FUN_004215c0(param_1, k50f_bits, 0);
-
-        // Set float slot 1 to 50.0f.
-        // (0x00422fd0 body: FUN_004215c0(param_1, 0x42480000, 1))
-        s_FUN_004215c0(param_1, k50f_bits, 1);
-
-        // Set car state to 2.  (0x00422fd0 body: FUN_0045ba00(param_1, 2))
-        s_FUN_0045ba00(param_1, 2);
-
-        // Conditional secondary handler.
-        // (0x00422fd0 body: if (DAT_007f0fd0 != 7))
-        std::uint32_t game_mode = *reinterpret_cast<std::uint32_t*>(kGameModeDat);
-        if (game_mode != 7u) {
-            // (0x00422fd0 body: if (FUN_0040e470(param_1) == 1))
-            if (s_CarSlotStateGet(param_1) == 1u) {
-                // (0x00422fd0 body: thunk_FUN_00419760(param_1, 1))
-                s_thunk_FUN_00419760(param_1, 1);
-            }
-        }
-    }
-
-    return 0u;  // always 0 (cited at 0x00422fd0 body: return 0)
-}
-
-RH_ScopedInstall(FrontendRaceResultsDispatch, 0x00422fd0);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S05: the body of 0x00422fd0 (FrontendRaceResultsDispatch) moved to Match/MatchS05_00422fd0.cpp,
+// which compiles the byte-matched source re/match/s05/00422fd0.c.

@@ -411,6 +411,9 @@ private:
     // See re/analysis/D3_AUDIT_2026-09-14.md section 1.
     void  AiBridgeSnapshot();
     void  AiStepDump();
+    // [D4-DC-77b0-STATE5-LEG2] MASHED_ST5_LEG2 (default OFF): FUN_00425a40's body on a sub-state-5 call
+    // (FUN_0040fc00 0x0040fc6c). verify/d4dc77b0st5leg2_20261101/PREREG_D4-DC-77b0-STATE5-LEG2.md.
+    void  St5Leg2(int units, float dt, float accel, bool exitCall);
     // [U-9186 leg G1] MEASUREMENT ONLY, default-OFF (MASHED_U9186_GATES=<path>).
     // Dumps every input FUN_00442a60 reads so its gate chain can be evaluated
     // offline without porting it. All reads; writes nothing the game uses.

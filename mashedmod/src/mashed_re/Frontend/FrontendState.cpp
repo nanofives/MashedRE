@@ -15,69 +15,11 @@
 #include "../Race/SelectionToGameMode.h"
 #include <cstdint>
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00430b60  MenuSlotCount
-//
-// Ghidra decomp (frontend_c0_promote/0x00430b60.md):
-//   cVar1 = (DAT_007f1a14 != -1)
-//   if (DAT_007f1a24 != -1): cVar1 += 1
-//   if (DAT_007f1a34 != -1): cVar1 += 1
-//   if (DAT_007f1a44 != -1): cVar1 += 1
-//   return cVar1
-//
-// Counts non-(-1) entries among four slot globals spaced 0x10 bytes apart.
-// Return range: 0..4.  Pure read; no side-effects.
-//
-// Global addresses cited at (analysis note):
-//   0x00430b62  DAT_007f1a14  slot 0
-//   0x00430b6c  DAT_007f1a24  slot 1
-//   0x00430b76  DAT_007f1a34  slot 2
-//   0x00430b80  DAT_007f1a44  slot 3
-// Sentinel 0xffffffff (-1) marks absent slot.
-// [UNCERTAIN U-3600] Semantic meaning of these globals not traced.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) char __cdecl MenuSlotCount() {
-    // 0x00430b62
-    char cVar1 = (*reinterpret_cast<const std::int32_t*>(0x007f1a14) != -1) ? 1 : 0;
-    // 0x00430b6c
-    if (*reinterpret_cast<const std::int32_t*>(0x007f1a24) != -1) cVar1 += 1;
-    // 0x00430b76
-    if (*reinterpret_cast<const std::int32_t*>(0x007f1a34) != -1) cVar1 += 1;
-    // 0x00430b80
-    if (*reinterpret_cast<const std::int32_t*>(0x007f1a44) != -1) cVar1 += 1;
-    return cVar1;
-}
-RH_ScopedInstall(MenuSlotCount, 0x00430b60);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S07: the body of 0x00430b60 (MenuSlotCount) moved to Match/MatchS07_00430b60.cpp,
+// which compiles the byte-matched source re/match/s07/00430b60.c.
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0042f6b0  MenuModeSync
-//
-// Ghidra decomp (frontend_c0_promote/0x0042f6b0.md):
-//   switch (DAT_0067f184) {
-//     case 0:   DAT_0067e9fc = 2;  break;
-//     case 1:   DAT_0067e9fc = 3;  break;
-//     case 2:   DAT_0067e9fc = 4;  break;
-//     case 3:   DAT_0067e9fc = 6;  break;
-//     case 5:   DAT_0067e9fc = 5;  break;
-//     case 8:   DAT_0067e9fc = 7;  break;
-//     case 9:   DAT_0067e9fc = 8;  break;
-//     case 10:  DAT_0067e9fc = 9;  break;
-//     case 11:  DAT_0067e9fc = 10; break;
-//     default:  /* no write */     break;
-//   }
-//
-// Switch base at 0x0042f6b8.  Cases 4, 6, 7 absent — default is no-op.
-// [UNCERTAIN U-3595] Exact semantic mapping (menu index → game-mode code) not confirmed.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) void __cdecl MenuModeSync() {
-    // 0x0042f6b8
-    const std::int32_t mode = *reinterpret_cast<const std::int32_t*>(0x0067f184);
-    // dualcopy4 (2026-10-16): the case table is the ONE body Race/SelectionToGameMode.h:SelectionToGameModeBody (it was a second
-    // copy of Race/RaceModes.cpp:SelectionToGameMode, the exe's pure form). -1 = the original's default arm, no write.
-    const int m = mashed_re::Race::RaceModes::SelectionToGameModeBody(mode);
-    if (m >= 0) *reinterpret_cast<std::int32_t*>(0x0067e9fc) = m;
-}
-RH_ScopedInstall(MenuModeSync, 0x0042f6b0);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S07: the body of 0x0042f6b0 (MenuModeSync) moved to Match/MatchS07_0042f6b0.cpp,
+// which compiles the byte-matched source re/match/s07/0042f6b0.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00430910  MenuOptionSlotGet

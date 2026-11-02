@@ -45,7 +45,7 @@ typedef unsigned short ushort;
 
 // --- extern callees (defined in sibling K-cluster TUs of same .asi) ----------
 extern "C" undefined4 __cdecl FUN_0055abb0(undefined4 *param_1,int param_2,undefined4 param_3);       // 0x0055abb0 (K3)
-extern "C" void       __cdecl FUN_0055bd80(int param_1,int param_2,undefined4 param_3,undefined4 param_4); // 0x0055bd80 (K5)
+extern "C" undefined4  __cdecl FUN_0055bd80(int param_1,int param_2,undefined4 param_3,undefined4 param_4); // 0x0055bd80 (K5)
 extern "C" uint       __cdecl FUN_00576640(int *param_1,uint param_2,uint param_3,int param_4,int param_5); // 0x00576640 (K16)
 extern "C" int        __cdecl FUN_00575c60(undefined4 *param_1,uint *param_2,float *param_3,float *param_4,float *param_5,undefined4 param_6); // 0x00575c60 (K18)
 extern "C" int        __cdecl FUN_0056b7a0(undefined4 *param_1,int param_2,uint param_3,int param_4); // 0x0056b7a0 (K18)
