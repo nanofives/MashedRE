@@ -79,9 +79,30 @@ Added arms (`_R4` = `MASHED_ROUND_RULE=4`, `-MASHED_GAME_MODE`, both with the wi
 | **G-ON-R4** | `H_PK46R4W` step / gates / ptrace hashes = `H_DEFR4W`'s, byte for byte (no ref exists for this recipe) |
 | **G-READS-R4** | as G-READS, on every row of both files |
 
+## 3b. Amendment 2 (committed before its arms): the callback replay drives the bump arm
+
+`H_DEFR4W` (knob OFF, rule 4, 14,400 frames) created no witness file either: 0 calls. Live recipes on the current build
+do not reach the bump arm. The M3 replay does: `MASHED_PKCB_REPLAY` runs `PK_458920` on each captured row
+(`Gameplay/PickupTick.cpp:PickupCb_MaybeReplay`), and `synth_unicorn.cb.tsv` holds 60 bump rows of 3,888
+(`verify/d3_mode7_m3_20261010/RESULT_M3.md`, G-M3-REPLAY-SYNTH). Per row it compares pool entry bytes `[4, 0x50)` and the
+call list against the captured output.
+
+Arms (`verify/d4dc_0046d4a0_knob_20261101/run_replay.py`, recipe of `run_m3_replay.ps1` synth set at PC_24, witness on
+in both): `RP_DEF` (knob OFF), `RP_PK46` (knob ON).
+
+| Gate | Prediction |
+|---|---|
+| **G-RP-OFF** (control) | `RP_DEF.replay.txt`: `rows=3888 exact=3888 entry_bad=0 calls_bad=0` |
+| **G-RP-ON** | `RP_PK46.replay.txt` = `RP_DEF.replay.txt` on the `G-M3-REPLAY`, `arms:` and `entry mismatched offsets:` lines |
+| **G-EXEC-RP** | both witness files: 60 rows (one per bump row), the same `idx` sequence |
+| **G-READS-RP** | as G-READS on every row. `one_ret = 0` on any row is a finding (the record array not allocated at replay time; the original never returns 0 for `idx < 0x10`) and is reported, not scored as PASS |
+
+If `RP_PK46` crashes, the RESULT gives the exit code and the witness rows written before it, and no flip is filed.
+
 ## 4. The flip (filed as a decision, not done here)
 
-On G-DEF + G-ON + G-EXEC PASS (or, per amendment 1, G-DEF + G-ON + G-EXEC-R4 + G-ON-R4 PASS): map `"0x0046d4a0"` in `pickups_m3.json` to `PtrCompute881ec8`, drop `PK_46d4a0` from the
+On G-DEF + G-ON + G-EXEC PASS (or, per amendment 1, G-DEF + G-ON + G-EXEC-R4 + G-ON-R4 PASS, or, per amendment 2, G-DEF + G-ON + G-RP-ON +
+G-EXEC-RP + G-READS-RP PASS): map `"0x0046d4a0"` in `pickups_m3.json` to `PtrCompute881ec8`, drop `PK_46d4a0` from the
 spec's `funcs`, regenerate the `.inc`, delete `PK_46d4a0_sel` and the knob, and remove the allowlist key
 `DUP-IN-TARGET:0046d4a0`. Expected default hashes after the flip: unchanged, G-CTRL `8284be46 / ba407a16 / 31fe043e`,
 B `1d5bf4f9` x3. D4-DC-INC-0046d4a0 closes with the flip.
