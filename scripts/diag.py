@@ -14,7 +14,10 @@ Subcommands:
                          re/diag/runs/<tag>_<ts>.log, scan output vs the catalog,
                          print any matched known issue + its fix. Exits with CMD's rc.
   probe-render           spawn mashed_re.exe muted ~12 s; report if D3D9 can create a
-                         device in THIS context (display/lock state)
+                         device in THIS context (display/lock state). Optional
+                         --exe PATH, --cwd DIR (a root holding original/, the log
+                         lands there, MASHED_ROOT=DIR), --secs N. Exit 0 = OK; the
+                         last line is "RENDER: OK|BLOCKED|UNKNOWN - detail".
   scan FILE              scan an existing log file against the signature catalog
   issues                 print the known-issue catalog
 
@@ -224,9 +227,9 @@ def check_verify_scratch(heal):
             f"{len(files)} verify scratch image(s){' restored' if heal else ' restorable'}", heal)
 
 
-def check_render_capability(_heal):
+def check_render_capability(_heal, log=None):
     """Diagnose-only: read the most recent standalone D3D9 result."""
-    log = os.path.join(ROOT, "mashed_re.log")
+    log = log or os.path.join(ROOT, "mashed_re.log")
     if not os.path.exists(log):
         return ("render", "UNKNOWN", "no mashed_re.log yet — run `diag.py probe-render`", False)
     txt = open(log, errors="replace").read()
@@ -353,26 +356,32 @@ def cmd_run(args):
 
 def cmd_probe_render(args):
     """Spawn mashed_re.exe muted briefly; report D3D9 device capability."""
-    exe = os.path.join(ROOT, "mashedmod", "build", "mashed_re.exe")
+    exe = getattr(args, "exe", None) or os.path.join(ROOT, "mashedmod", "build", "mashed_re.exe")
+    cwd = getattr(args, "cwd", None) or ROOT
+    secs = getattr(args, "secs", None) or 12
     if not os.path.exists(exe):
         print("probe-render: build mashed_re.exe first (cmd /c mashedmod\\build.bat)")
         return 2
-    log = os.path.join(ROOT, "mashed_re.log")
+    log = os.path.join(cwd, "mashed_re.log")
     try:
         os.remove(log)
     except OSError:
         pass
     env = dict(os.environ, MASHED_MUTE="1")
-    print("probe-render: spawning mashed_re.exe muted ~12s ...")
+    if getattr(args, "cwd", None):
+        env["MASHED_ROOT"] = cwd   # private root (merge train): the log stays out of the shared tree
+    print(f"probe-render: spawning {exe} muted ~{secs}s in {cwd} ...")
     try:
-        p = subprocess.Popen([exe], cwd=ROOT, env=env)
+        p = subprocess.Popen([exe], cwd=cwd, env=env)
         import time
-        time.sleep(12)
-        p.terminate()
+        time.sleep(secs)
+        if p.poll() is None:
+            p.terminate()   # only the PID this probe spawned
+            p.wait(10)
     except Exception as e:
         print(f"probe-render: spawn failed: {e}")
         return 1
-    name, status, detail, _ = check_render_capability(False)
+    name, status, detail, _ = check_render_capability(False, log)
     print(f"RENDER: {status} — {detail}")
     return 0 if status == "OK" else 1
 
@@ -514,7 +523,8 @@ def main():
     sub.add_parser("heal")
     r = sub.add_parser("run"); r.add_argument("--tag", default="run")
     r.add_argument("cmd", nargs=argparse.REMAINDER)
-    sub.add_parser("probe-render")
+    pr = sub.add_parser("probe-render")
+    pr.add_argument("--exe"); pr.add_argument("--cwd"); pr.add_argument("--secs", type=int)
     sc = sub.add_parser("scan"); sc.add_argument("file")
     sub.add_parser("issues")
     wr = sub.add_parser("wt-remove"); wr.add_argument("path", nargs="?")
