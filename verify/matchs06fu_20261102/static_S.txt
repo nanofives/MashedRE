@@ -1,0 +1,6 @@
+0x004274e0 _FUN_004274e0: 100.0% (regs 100.0%, ops 100.0%)  38/38 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 148 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004274e0	OK	checked=12	unchecked=0	004274e0.c	
+0x004282a0 _FUN_004282a0: 100.0% (regs 100.0%, ops 100.0%)  26/26 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 122 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004282a0	OK	checked=7	unchecked=2	004282a0.c	  unchecked: @__security_check_cookie@4,___security_cookie

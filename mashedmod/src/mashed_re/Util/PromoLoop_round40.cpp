@@ -16,17 +16,15 @@
 
 #include <cstdint>
 
-// 0x0044dfe0  B8 50 00 00 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Ret50(void) { return 0x50u; }  // cited at 0x0044dfe0
-RH_ScopedInstall(Ret50, 0x0044dfe0);
+// MATCH-S08: the body of 0x0044dfe0 (Ret50) moved to Match/MatchS08_0044dfe0.cpp,
+// which compiles the byte-matched source re/match/s08/0044dfe0.c.
 
 // 0x00493b40  B8 03 00 00 00 C3
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Ret3(void) { return 0x3u; }  // cited at 0x00493b40
 RH_ScopedInstall(Ret3, 0x00493b40);
 
-// 0x00443090  B8 F0 7F 89 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Ret897ff0(void) { return 0x00897ff0u; }  // cited at 0x00443090
-RH_ScopedInstall(Ret897ff0, 0x00443090);
+// MATCH-S08: the body of 0x00443090 (Ret897ff0) moved to Match/MatchS08_00443090.cpp,
+// which compiles the byte-matched source re/match/s08/00443090.c.
 
 // 0x004098a0  B8 F0 A5 63 00 C3
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Ret63a5f0(void) { return 0x0063a5f0u; }  // cited at 0x004098a0

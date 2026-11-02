@@ -1,0 +1,4 @@
+[rva-lint] 3 finding(s): CROSS-TARGET=1, DUP-IN-TARGET=2  |  allowlisted=3 NEW=0
+[rva-lint] OK -- no NEW duplicate bodies (3 known, tracked in re\tools\dual_copy_allowlist.txt)
+[asm-lint] OK -- no bare absolute asm operand in 1082 source files
+=== Build OK ===

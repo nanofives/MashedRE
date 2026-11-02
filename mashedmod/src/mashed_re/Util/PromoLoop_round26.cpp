@@ -52,10 +52,5 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ElapsedTimeGet(void) {
 }
 RH_ScopedInstall(ElapsedTimeGet, 0x0040e4a0);
 
-// 0x00443080  AiTargetEnableGet -- A1 FC 7F 89 00 C3 (mov eax,[0x00897ffc]; ret)
-//   must be non-zero to enable AI mode-6 targeting. Caller FUN_004177b0
-//   (ai, C2).
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AiTargetEnableGet(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x00897ffcu);  // cited at 0x00443080
-}
-RH_ScopedInstall(AiTargetEnableGet, 0x00443080);
+// MATCH-S08: the body of 0x00443080 (AiTargetEnableGet) moved to Match/MatchS08_00443080.cpp,
+// which compiles the byte-matched source re/match/s08/00443080.c.

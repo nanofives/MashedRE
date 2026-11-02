@@ -311,77 +311,8 @@ static const float kDispB_HScale  = DispC_F(0x3d088889u);  // 1/30       fmul [0
 static const float kDispB_TextX   = DispC_F(0x439b0000u);  // 311.0      push imm @0x0042fd7a
 static const float kDispB_RowStep = DispC_F(0x41f00000u);  // 30.0       fadd [0x005cc72c] @0x0042fdf2
 
-// 0x0042fb70
-extern "C" __declspec(dllexport) void __cdecl MenuSpriteDispatchB(void)
-{
-    std::uintptr_t desc_table;
-    if (*reinterpret_cast<const std::int32_t*>(kDispB_Mode) != 0) {           // jne @0x0042fb7a
-        desc_table = kDispB_DescOther;
-    } else {
-        if (*reinterpret_cast<const std::int32_t*>(kDispB_Alpha) < 0x60)      // cmp/jl @0x0042fb7c (signed)
-            return;                                                            // no render states
-        desc_table = kDispB_DescMode0;
-    }
-    const std::uint32_t desc = *reinterpret_cast<const std::uint32_t*>(
-        desc_table + (*reinterpret_cast<const std::uint32_t*>(kDispB_Screen) << 6));
-    const int count = s_MenuGroupCount(0, reinterpret_cast<int*>(desc));       // @0x0042fbac (EDX = desc)
-    float y = static_cast<float>(DispC_MenuBaseY(count, 0x1e));                // @0x0042fbb6, fild/fstp @0x0042fbc5
-
-    vtable_render_state(6, 0);                                                 // @0x0042fbd1
-    vtable_render_state(8, 0);                                                 // @0x0042fbdd
-
-    const std::uint32_t a8 = *reinterpret_cast<const std::uint8_t*>(kDispB_Alpha);  // mov cl,[0x67e7ec] @0x0042fbe0
-    // esi = [esp+0x18] @0x0042fbe6, a stack slot nothing in this function writes first. A
-    // track value outside 0..3 on row 0 draws that indeterminate id on the original; the
-    // port draws 0. Rows 1 and 2 never depend on it (row 1 always assigns, row 2 keeps row 1's).
-    int id = 0;
-    for (int i = 0; i < 3; ++i) {                                              // inc/cmp 3 @0x0042fdfb
-        const std::uint32_t scr = *reinterpret_cast<const std::uint32_t*>(kDispB_Screen);
-        const std::uintptr_t sel_table =
-            *reinterpret_cast<const std::int32_t*>(kDispB_Mode) == 0 ? kDispB_SelMode0 : kDispB_SelOther;  // @0x0042fbf3
-        const bool selected = *reinterpret_cast<const std::int32_t*>(sel_table + (scr << 6)) == i;  // @0x0042fc05/0x0042fc15
-        const std::uint32_t color = (a8 << 24) | (selected ? 0u : 0x00ffffffu);   // bytes @0x0042fc1d..0x0042fc38
-
-        const int w0 = static_cast<std::int16_t>(s_ScreenWidthGet());          // @0x0042fc42
-        const float ax = static_cast<float>(static_cast<double>(w0) * kDispB_ArrowXk);
-        const int h0 = static_cast<std::int16_t>(s_ScreenHeightGet());         // @0x0042fc5c
-        const float ay = static_cast<float>(
-            static_cast<double>(h0) * (static_cast<double>(y) - kDispB_YBias) * kDispB_YScale);  // @0x0042fc63..0x0042fc79
-        const int w1 = static_cast<std::int16_t>(s_ScreenWidthGet());          // @0x0042fc82
-        const float cw = static_cast<float>(static_cast<double>(w1) * kDispB_WScale);
-        const int h1 = static_cast<std::int16_t>(s_ScreenHeightGet());         // @0x0042fca8
-        const float dh = static_cast<float>(static_cast<double>(h1) * kDispB_HScale);
-        s_TextSpriteScaled(s_SpriteLookupC(reinterpret_cast<void*>(kDispArrowName)),  // @0x0042fce1/0x0042fcea
-                           ax, ay, cw, dh, color, kDispUv, 0.0f, 0.0f, kDispOne, 0, 0);
-
-        if (i == 0) {                                                          // je @0x0042fcf7
-            const std::int32_t v = *reinterpret_cast<const std::int32_t*>(kDispB_Track);
-            if (v == 0) id = 0xe3; else if (v == 1) id = 0xd2;                 // @0x0042fd40..0x0042fd68
-            else if (v == 2) id = 0xd3; else if (v == 3) id = 0xd4;
-        } else if (i == 1) {
-            id = (*reinterpret_cast<const std::int32_t*>(kDispB_Players) != 0 ? 1 : 0) + 0x59;  // setne/add @0x0042fd31
-        } else {
-            const std::int32_t v = *reinterpret_cast<const std::int32_t*>(kDispB_Music);
-            if (v == 0) id = 0xe0; else if (v == 1) id = 0xe1;                 // @0x0042fd04..0x0042fd20
-            else if (v == 2) id = 0xe2;
-        }
-        s_SpriteDraw(id, kDispB_TextX, y, color, kDispTextSc, 0);              // @0x0042fd80
-
-        const int width = DispC_MeasureTrunc(id);                              // @0x0042fd8b/0x0042fd93
-        const int w3 = static_cast<std::int16_t>(s_ScreenWidthGet());          // @0x0042fd9a
-        const int prod = static_cast<int>(static_cast<std::uint32_t>(w3) *
-                                          static_cast<std::uint32_t>(width + 0x13e));  // @0x0042fda2/0x0042fda8
-        const int rx = prod / 640;                                             // 0x66666667, sar 8 @0x0042fdab..0x0042fdc0
-        s_TextSpriteUVExplicit(s_SpriteLookupC(reinterpret_cast<void*>(kDispArrowName)),  // @0x0042fde0/0x0042fde9
-                               static_cast<float>(rx), ay, cw, dh, color, 1);
-        y = y + kDispB_RowStep;                                                // @0x0042fdee..0x0042fdff
-    }
-
-    vtable_render_state(6, 1);                                                 // @0x0042fe13
-    vtable_render_state(8, 1);                                                 // @0x0042fe1f
-}
-
-RH_ScopedInstall(MenuSpriteDispatchB, 0x0042fb70);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S07: the body of 0x0042fb70 (MenuSpriteDispatchB) moved to Match/MatchS07_0042fb70.cpp,
+// which compiles the byte-matched source re/match/s07/0042fb70.c.
 
 
 // MATCH-S07: the body of 0x0042fe90 (MenuSpriteDispatchC) moved to Match/MatchS07_0042fe90.cpp,
@@ -414,64 +345,8 @@ static constexpr std::uintptr_t kChrA_ScrollCtr     = 0x0067ebc0u; // credits sc
 static constexpr std::uintptr_t kChrA_DeltaTime     = 0x007f1000u; // delta-time (scroll speed)
 static constexpr std::uintptr_t kChrA_AnimFrame     = 0x0067f17cu; // animation frame counter
 
-// 0x0042e3a0
-extern "C" __declspec(dllexport) void __cdecl MenuChromeShellA(void)
-{
-    int screen_idx = *reinterpret_cast<int*>(kChrA_ScreenIdx);
-
-    // Credits-screen check. Disassembly at 0x0042e3a0 (verified in Ghidra slot,
-    // MASHED.exe @0x00400000):
-    //   0042e3a0  MOV EAX,[0x0067e9f8]            ; screen_idx
-    //   0042e3a9  SHL EAX,0x6                     ; screen_idx * 0x40   (NOT 0x10)
-    //   0042e3ac  MOV ECX,[EAX + 0x0067ed38]      ; screen_type = table[screen_idx]
-    //   0042e3b6  CMP ECX,0x5f6980                ; compare to the ADDRESS &DAT_005f6980
-    //   0042e3bd  JNZ ...                          ; (immediate-address compare)
-    // The earlier reimpl used stride 0x10 and *dereferenced* the sentinel
-    // (*(void**)0x005f6980) — two divergences. Both are invisible at the quiescent
-    // main menu (screen_idx==0, non-credits screen → else branch either way), so the
-    // synthetic diff and the standalone's B16 no-op thunk masked them; but they are
-    // real for the credits screen / screen_idx!=0 and affect the .asi too.
-    void* screen_type = *reinterpret_cast<void**>(
-        kChrA_ScreenTable + static_cast<std::uintptr_t>(screen_idx) * 0x40u);
-    void* credits_sentinel = reinterpret_cast<void*>(kChrA_CreditsSent);
-
-    if (screen_type == credits_sentinel) {
-        // Advance scroll counter by delta-time. Cited at body.
-        int delta = *reinterpret_cast<int*>(kChrA_DeltaTime);
-        *reinterpret_cast<int*>(kChrA_ScrollCtr) += delta;
-        int scroll = *reinterpret_cast<int*>(kChrA_ScrollCtr);
-        // Draw credits at scroll offset - 15000. Cited at body.
-        s_CreditsSpriteLine(scroll - 15000);
-    } else {
-        // Reset scroll counter. Cited at body.
-        *reinterpret_cast<int*>(kChrA_ScrollCtr) = 0;
-    }
-
-    // Top amber band: (0,0)–(640,64). Cited at body.
-    // FUN_00472f40(0, 0, 0x44200000, 0x42800000, 0xa0000000)
-    // = TextGradientV0V1Override(0.0f, 0.0f, 640.0f, 64.0f, 0xa0000000)
-    s_TextGradientV0V1(0.0f, 0.0f, 640.0f, 64.0f, 0xa0000000u);
-
-    // Bottom dark band: (0,416)–(640,64). Cited at body.
-    // FUN_004730b0(0, 0x43d00000, 0x44200000, 0x42800000, 0xa0000000)
-    // = TextGradientV2V3Override(0.0f, 416.0f, 640.0f, 64.0f, 0xa0000000)
-    s_TextGradientV2V3(0.0f, 416.0f, 640.0f, 64.0f, 0xa0000000u);
-
-    // Top white divider line: (0, 416.0f, 640.0f, 1.0f, 0xffffffff). Cited at body.
-    s_ChromeBaseDraw(0.0f, 416.0f, 640.0f, 1.0f, 0xffffffffu);
-    // Bottom white divider line: (0, 64.0f, 640.0f, 1.0f, 0xffffffff). Cited at body.
-    s_ChromeBaseDraw(0.0f, 64.0f, 640.0f, 1.0f, 0xffffffffu);
-
-    // Amber tick marks: only drawn when DAT_0067f17c > 9. Cited at body.
-    if (*reinterpret_cast<int*>(kChrA_AnimFrame) > 9) {
-        s_ChromeBaseDraw(0.0f, 64.0f,    640.0f, 3.0f, 0x80f7941du);
-        s_ChromeBaseDraw(0.0f, 65.5f,    640.0f, 3.0f, 0x40f7941du);
-        s_ChromeBaseDraw(0.0f, 413.0f,   640.0f, 3.0f, 0x80f7941du);
-        s_ChromeBaseDraw(0.0f, 410.0f,   640.0f, 3.0f, 0x40f7941du);
-    }
-}
-
-RH_ScopedInstall(MenuChromeShellA, 0x0042e3a0);  // re-enabled 2026-05-24 c3-frontend-a
+// MATCH-S07: the body of 0x0042e3a0 (MenuChromeShellA) moved to Match/MatchS07_0042e3a0.cpp,
+// which compiles the byte-matched source re/match/s07/0042e3a0.c.
 
 
 // ---------------------------------------------------------------------------

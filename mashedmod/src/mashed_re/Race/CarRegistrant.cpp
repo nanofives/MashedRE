@@ -17,6 +17,7 @@
 #include "CarRegistrant.h"
 #include "WorldRegistry.h"
 #include "../Vehicle/VehicleRecordBase.h"
+#include "../Vehicle/RecordBlockState.h"   // [MATCH-PORTSTATE-RECORDS] knob
 
 #include <cstdint>
 #include <cstdlib>
@@ -34,7 +35,11 @@ namespace mashed_re {
 namespace Race {
 
 namespace {
-alignas(4) unsigned char s_rec[4][0x2ac];
+alignas(4) unsigned char s_recStore[4][0x2ac];
+// [MATCH-PORTSTATE-RECORDS, L-78 (c)] MASHED_PORTSTATE_RECORDS (default OFF): the four records ARE the original's
+// 0x0063d9e0 + v*0x2ac. Only the three fields below are written either way (the exe builds no RW car object).
+unsigned char (*const s_rec)[0x2ac] = Vehicle::PortStateRecords_On()
+    ? reinterpret_cast<unsigned char (*)[0x2ac]>(0x0063d9e0u) : s_recStore;
 constexpr std::uint32_t kRadiusBits = 0x3f088c2du;   // measured, U-9218
 
 void CallRegistrant(unsigned char* rec) {
@@ -44,6 +49,8 @@ void CallRegistrant(unsigned char* rec) {
     }
 }
 }  // namespace
+
+const unsigned char* CarsReg_RecordBase() { return s_rec[0]; }
 
 void CarsReg_FrameTick() {
     for (int v = 0; v < 4; ++v) {

@@ -1,0 +1,1 @@
+[portstate-records] frames=13200 samples=52800 base=008815a0 vis0=0063d9e0 dbe0_bad=0 f030_live=52800 f030_bad=26421 d510_bad=29813 d510_bad0=29813 score=0,0,0,0 held=00000000,00000000,00000000,00000000

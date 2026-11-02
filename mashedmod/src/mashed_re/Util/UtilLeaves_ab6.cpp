@@ -50,15 +50,8 @@
 // then zeroes the standalone scalar at 0x0089898c. No params, no callees.
 // ---------------------------------------------------------------------------
 
-// 0x004425d0
-extern "C" __declspec(dllexport) void __cdecl UtilZeroTable8964c0() {
-    for (std::uint32_t a = 0x008964c0u; (std::int32_t)a < 0x00897fc0; a += 0xD8u) {
-        *reinterpret_cast<std::uint32_t*>(a) = 0u;   // mov [eax],0 ; add eax,0xd8 ; cmp/jl
-    }
-    *reinterpret_cast<std::uint32_t*>(0x0089898cu) = 0u;  // mov [0x0089898c],0
-}
-
-RH_ScopedInstall(UtilZeroTable8964c0, 0x004425d0);
+// MATCH-S08: the body of 0x004425d0 (UtilZeroTable8964c0) moved to Match/MatchS08_004425d0.cpp,
+// which compiles the byte-matched source re/match/s08/004425d0.c.
 
 // ---------------------------------------------------------------------------
 // FUN_0045c480  --  0x0045c480   (void(void) scatter zeroer B)

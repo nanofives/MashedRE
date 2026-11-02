@@ -178,6 +178,7 @@
 #include "Frontend/RowMovers.h"             // FrontendModeIndexFor: 0x004309b0 (challenge launch gate)
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
+#include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 #include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default ON, L-27)
@@ -751,7 +752,7 @@ int              g_team_balance = -1;
 int              g_team_assign  = -1;
 extern "C" void          __cdecl MenuTeamSelectTick();  // 0x0042fa00, Frontend/MenuNav.cpp
 extern "C" int           __cdecl MenuTeamBalance();     // 0x0042bb60, Frontend/MenuNav.cpp
-extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Frontend/MenuButtonDetect.cpp
+extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Match/MatchS07_0042b9e0.cpp (matched body; MASHED_CARSLOT_ASSIGN_SLOTSTATE)
 // Ability Select's per-frame input step -- the exact sibling of
 // MenuTeamSelectTick. FUN_0043c000 calls it under the screen-15 panel flag:
 //   0x0043c17d  mov eax, dword ptr [0x67e7d8]
@@ -763,7 +764,11 @@ extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Frontend/
 // sets DAT_0067e7e0 = 1 for 9 / 0x10 (screen 16). Already implemented and C3 as
 // FrontendCursorUpdate; that TU is in BOTH build lists, so the exe calls the
 // established copy and no second install is created (the U-9065 shape).
-extern "C" void          __cdecl FrontendCursorUpdate();  // 0x0042f7b0, Frontend/MenuHelpers.cpp
+extern "C" void          __cdecl FrontendCursorUpdate();  // 0x0042f7b0, Match/MatchS07_0042f7b0.cpp (matched body)
+// MATCH-S07-FU: the exe keeps the pre-swap step (Frontend/MenuHelpers.cpp, decrement guard `> 0`) unless
+// MASHED_ABILITY_CURSOR_MATCHED is set, which calls the matched body (guard `!= 0`, the original's). Default OFF;
+// PREREG verify/matchs07fu_20261101/PREREG_MATCH-S07-FU.md.
+extern "C" void          __cdecl FrontendCursorUpdatePreSwap();
 // [#1/#5] Player Colour Select (screen 4 / page 0x18) LEFT/RIGHT colour cursor —
 // faithful case-0x18 arm of FUN_0043dfd0 (writes 0x0067ea98+p*4, then
 // FUN_00431b80). Frontend/GameModeCarSelect.cpp.
@@ -2117,6 +2122,10 @@ void ModalGo(int step) {
 static void MenuLaunchRace(int launchMode) {
     char piz[160];
     RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
+    // [MATCH-PORTSTATE-GAMEFLOW] knob ON: the mode word is written before the course load, as the original's
+    // frontend does (0x0043dfd0), and the phase word leaves the frontend (0x004929d0 case 1 -> 2).
+    mashed_re::Race::GameModeState_PreLoad(launchMode);
+    mashed_re::Race::GameModeState_SetPhase(2);
     if (g_track.Load(g_device, piz, kLogPath)) {
         mashed_re::Race::RaceConfig cfg;
         cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
@@ -3328,33 +3337,23 @@ static float DeriveMenuMeasureDiv() {
     return hi - lo;                               // FUN_00553cf0: max - min
 }
 
-// The exe's cells for the shared menu-width body (Frontend/MenuMeasure.cpp, D4-DC-82a0).
-// Each callee keeps the original's ABI, so the body is the same instructions in both targets.
-//   Lookup  (cdecl, result in EAX): the message id itself; the text is read by Remap.
-//   Remap   (EAX = id, EBX = 0x400-byte buffer): GetMenuMessage over g_msg_dat, which applies
-//           the FUN_004277a0 control-code remap; an unknown id leaves an empty string.
-//   Measure (cdecl, ST0): FUN_005554d0 (0x005554d0..0x005555aa) over g_font: sum over 16-bit codes
+// The exe's binding for the shared menu-width body (Match/MatchS06_004282a0.cpp, the byte-matched
+// source re/match/s06/004282a0.c since MATCH-S06-FU; Frontend/MenuMeasure.h). Plain cdecl C functions
+// standing in the body's three callee slots, and the addresses of its two globals:
+//   FUN_00427780 slot (MenuBa_ExeLookup): the message id itself; the text is read by the remap slot.
+//   FUN_004277a0 slot (MenuBa_ExeRemap): GetMenuMessage over g_msg_dat, which applies the
+//           control-code remap; an unknown id leaves an empty string.
+//   FUN_005554d0 slot (MenuBa_ExeMeasure) over g_font: sum over 16-bit codes
 //           of (rec+0x00 width + [ctx+0x0c] tracking) for codes with a glyph (ASCII LUT ctx+0x24
 //           below 0x80, ext table ctx+0x12c for code-[ctx+0x124] < [ctx+0x128], no advance
 //           otherwise), times the size argument (0x0055559f). The font argument is unused.
 //   Font cell: a zero dword. Div cell: [0x0067d830] as derived by DeriveMenuMeasureDiv.
-static void __cdecl ExeMenuMeasureText(int id, wchar_t* out) {
-    GetMenuMessage(id, out, 0x200);
+extern "C" short* MenuBa_ExeLookup(int id) {
+    return reinterpret_cast<short*>(static_cast<std::intptr_t>(id));
 }
-extern "C" __declspec(naked) void ExeMenuMeasureLookup() {
-    __asm {
-        mov eax, dword ptr [esp + 4]
-        ret
-    }
-}
-extern "C" __declspec(naked) void ExeMenuMeasureRemap() {
-    __asm {
-        push ebx
-        push eax
-        call ExeMenuMeasureText
-        add  esp, 8
-        ret
-    }
+extern "C" void MenuBa_ExeRemap(short* src, short* dst) {
+    GetMenuMessage(static_cast<int>(reinterpret_cast<std::intptr_t>(src)),
+                   reinterpret_cast<wchar_t*>(dst), 0x200);
 }
 static float __cdecl ExeMenuMeasureGlyphs(const void* /*font*/, const wchar_t* buf, float size) {
     const float trk = g_font.tracking();
@@ -3370,9 +3369,10 @@ static float __cdecl ExeMenuMeasureGlyphs(const void* /*font*/, const wchar_t* b
 }
 static const std::uint32_t s_menuMeasureFont = 0;
 static float s_menuMeasureDiv = 0.f;
-extern "C" void*        g_menuBa_Lookup   = reinterpret_cast<void*>(&ExeMenuMeasureLookup);
-extern "C" void*        g_menuBa_Remap    = reinterpret_cast<void*>(&ExeMenuMeasureRemap);
-extern "C" void*        g_menuBa_Measure  = reinterpret_cast<void*>(&ExeMenuMeasureGlyphs);
+extern "C" float MenuBa_ExeMeasure(int font, short* text, float size) {
+    return ExeMenuMeasureGlyphs(reinterpret_cast<const void*>(static_cast<std::intptr_t>(font)),
+                                reinterpret_cast<const wchar_t*>(text), size);
+}
 extern "C" const void*  g_menuBa_FontCell = &s_menuMeasureFont;
 extern "C" const float* g_menuBa_DivCell  = &s_menuMeasureDiv;
 
@@ -3387,7 +3387,7 @@ float MeasureMenuMessage(int id, float scale) {
     unsigned int cw = 0, t = 0;
     _controlfp_s(&cw, 0, 0);
     _controlfp_s(&t, _PC_24, _MCW_PC);
-    const float r = MenuMenusBA(static_cast<std::uint32_t>(id), scale);
+    const float r = MenuMenusBA(id, scale);
     _controlfp_s(&t, cw & _MCW_PC, _MCW_PC);
     return r;
 }
@@ -6404,7 +6404,12 @@ bool RenderFrame() {
                             std::fclose(lf);
                         }
                     }
-                    FrontendCursorUpdate();
+                    {
+                        static const bool s_abilMatched =
+                            (std::getenv("MASHED_ABILITY_CURSOR_MATCHED") != nullptr);
+                        if (s_abilMatched) FrontendCursorUpdate();        // matched body (MATCH-S07-FU knob)
+                        else               FrontendCursorUpdatePreSwap(); // pre-swap step (default)
+                    }
                 }
                 // consume cols 0 and 1 for every profile the tick could have
                 // read, mirroring the original's post-consume latch. Both
@@ -9739,6 +9744,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                          g_settings.insults_on, g_settings.gamma, g_settings.autosave);
             std::fclose(lf);
         }
+        // [MATCH-PORTSTATE-GAMEFLOW] knob ON: phase 1, the original main-loop init 0x00492770 (0x0049278e), before
+        // the dev-race route below can move it to 2 / 3.
+        mashed_re::Race::GameModeState_SetPhase(1);
         // R4: MASHED_TRACK_VIEW=<1 | track name | piz path> -> fly-through.
         // A bare name (no slash, no .piz) resolves to TRACKS/<name>.piz.
         {
@@ -9756,6 +9764,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     std::snprintf(path, sizeof(path), "%s", tv);
                 }
                 CreateDirectoryA("verify\\r4", nullptr);
+                // [MATCH-PORTSTATE-GAMEFLOW] knob ON, race route (MASHED_ROUND): the game mode word before the course
+                // load (the value the R6 block below writes after it) and phase 2 (0x004929d0 case 1 -> 2).
+                if (mashed_re::Race::GameModeState_On() && GetEnvironmentVariableA("MASHED_ROUND", nullptr, 0) > 0) {
+                    char gm[8] = {};
+                    int g = -1;
+                    if (GetEnvironmentVariableA("MASHED_GAME_MODE", gm, sizeof(gm)) > 0) g = std::atoi(gm);
+                    if (!(g >= 2 && g <= 10)) g = 3;
+                    mashed_re::Race::GameModeState_PreLoad(g);
+                    mashed_re::Race::GameModeState_SetPhase(2);
+                }
                 g_track_view = g_track.Load(g_device, path, kLogPath);
                 // R5: MASHED_CAR=<1 | vehicle piz path> -> spawn the Advantage
                 // car (or the named vehicle's *0.DFF) on the collision ground.
@@ -9798,6 +9816,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                             *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = g;
                         }
                         g_track.StartMatch();
+                        mashed_re::Race::GameModeState_SetPhase(3);   // [MATCH-PORTSTATE-GAMEFLOW] case 2 -> 3
                         // [D3 2026-09-26] place the power-up orbs, as the frontend
                         // race path does (RaceSession.cpp:152). Without it this dev
                         // race had ZERO orbs, measured by the MASHED_PU_STEPDUMP orb

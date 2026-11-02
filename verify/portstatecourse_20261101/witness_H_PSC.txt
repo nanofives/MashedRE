@@ -1,0 +1,1 @@
+[portstate-course] course=30 fnv recs=bbba0607 ptrs=b1872d64 hook=6064cc66 count=3c1ab248 sel=005f33f8 name=training slot14=00451280 slot44=00000000 tab=005f2728 e9fc=0 v=0 ce80=6 ba78=0 rec78=005f2570 rec78d0=30

@@ -78,16 +78,5 @@ RH_ScopedInstall(AiVehicleFieldPtrGet, 0x00408af0);
 //   U-7601: semantic of the stored float (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00442cc0
-extern "C" __declspec(dllexport) float __cdecl AiVehicleFloat4Get(int param_1) {
-    // 4 bound cited at 0x00442cc0 body (signed compare).
-    if (param_1 < 4) {
-        // 0x008989b0 base, stride 4 cited at 0x00442cc0 body.
-        return *reinterpret_cast<const float*>(
-            0x008989b0u + static_cast<std::uint32_t>(param_1) * 4u);
-    }
-    // 0x005d757c (0.0 float) cited at 0x00442cc0 body.
-    return *reinterpret_cast<const float*>(0x005d757cu);
-}
-
-RH_ScopedInstall(AiVehicleFloat4Get, 0x00442cc0);
+// MATCH-S08: the body of 0x00442cc0 (AiVehicleFloat4Get) moved to Match/MatchS08_00442cc0.cpp,
+// which compiles the byte-matched source re/match/s08/00442cc0.c.
