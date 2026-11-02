@@ -145,37 +145,8 @@ static const std::uintptr_t k_00636564 = 0x00636564u; // clump handle (arg to FU
 // ref: re/analysis/game_state_d2/0x004331a0.md
 // ===========================================================================
 
-// 0x004331a0
-extern "C" __declspec(dllexport) void __cdecl RaceFinalizeOnce(std::uint32_t param_1)
-{
-    if (*reinterpret_cast<std::int32_t*>(k_0067eca4) == 0) {
-        *reinterpret_cast<std::int32_t*>(k_0067eca4) = 1;
-        s_F0042d3a0();
-        *reinterpret_cast<std::uint32_t*>(k_0067ebb0) = 0x43520000u;
-        *reinterpret_cast<std::uint32_t*>(k_0067ebb4) = 0x43520000u;
-        *reinterpret_cast<std::uint32_t*>(k_0067ebb8) = 0x43520000u;
-        *reinterpret_cast<std::uint32_t*>(k_0067ebbc) = 0x43520000u;
-        *reinterpret_cast<std::uint32_t*>(k_0067ecac) = param_1;
-        *reinterpret_cast<std::int32_t*>(k_0067ebc8) = 0;
-        *reinterpret_cast<std::int32_t*>(k_0067ec20) = 0;
-        *reinterpret_cast<std::int32_t*>(k_0067ebcc) = 0;
-        *reinterpret_cast<std::int32_t*>(k_0067e844) = 0;
-        *reinterpret_cast<std::int32_t*>(k_0067e9f8) = 0;
-        *reinterpret_cast<std::int32_t*>(k_0067e914) = 0;
-        *reinterpret_cast<std::int32_t*>(k_0067ec24) = 0;
-        *reinterpret_cast<std::int32_t*>(k_0067ea6c) = 0;
-        std::uint32_t* p = reinterpret_cast<std::uint32_t*>(k_0067ebd0);
-        for (int i = 0x14; i != 0; i--) {
-            *p = 0;
-            p++;
-        }
-        *reinterpret_cast<std::int32_t*>(k_0067ea08) = 0;
-        s_F004248b0();
-        s_F00424920();
-    }
-}
-
-RH_ScopedInstall(RaceFinalizeOnce, 0x004331a0);
+// MATCH-S08: the body of 0x004331a0 (RaceFinalizeOnce) moved to Match/MatchS08_004331a0.cpp,
+// which compiles the byte-matched source re/match/s08/004331a0.c.
 
 // ===========================================================================
 // AiLastPlaceFrustration  --  0x00415020

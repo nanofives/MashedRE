@@ -1,0 +1,22 @@
+== s08/004425d0
+0x004425d0 _FUN_004425d0: 80.0% (regs 80.0%, ops 80.0%)  10/8 ins  flags=/O2 /GS /Ob1 tc=ddk
+   ! mov dword ptr [0], 0                         | 
+   ! ret                                          | 
+   bytes: 45 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004425d0	OK	checked=3	unchecked=0	004425d0.c	
+f08b728e7d67a7246667ab5d4a23d6537ebe96a0c5f62f817757804eca2b7227 *re/match/s08/004425d0.c
+== s08/00442cc0
+0x00442cc0 _FUN_00442cc0: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 24 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00442cc0	OK	checked=2	unchecked=0	00442cc0.c	
+da2f5b8b5545863ede618f22a18a53027c9520cf455d280d549655fc8559c8ef *re/match/s08/00442cc0.c
+== s08/00443300
+0x00443300 _FUN_00443300: 100.0% (regs 100.0%, ops 100.0%)  112/112 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 307 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00443300	OK	checked=14	unchecked=0	00443300.c	
+bea47ecaa95ac866c62070493b945395932f6559834f0850fedace89c5971c34 *re/match/s08/00443300.c
+== s08/00448700
+0x00448700 _FUN_00448700: 100.0% (regs 100.0%, ops 100.0%)  13/13 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 43 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00448700	OK	checked=4	unchecked=0	00448700.c	
+aed0397229b267e365e4e8fbc3c68ea996a656508aebfad33f9e4fbaa9031aab *re/match/s08/00448700.c

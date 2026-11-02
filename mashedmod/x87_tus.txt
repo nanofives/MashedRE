@@ -51,6 +51,20 @@ RwpSolverBroadphase3
 RwpSolverCore14
 RwpSolverCore15
 RwpSolverCore17
+# MATCH-S08 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s08/)
+MatchS08_004331a0
+MatchS08_0043c000
+MatchS08_00442420
+MatchS08_00442c80
+MatchS08_00442cc0
+MatchS08_00442ce0
+MatchS08_00442df0
+MatchS08_00443300
+MatchS08_00449880
+MatchS08_0044dff0
+MatchS08_0044e020
+MatchS08_0044e050
+MatchS08_0044e070
 # MATCH-S04 2026-10-31: port bodies compiled from byte-matched game code that uses float (re/match/s04/)
 MatchS04_0041b770
 MatchS04_0041cbc0
@@ -70,12 +84,17 @@ MatchS05_00425b10
 CameraEntries
 # D-11072 P1 (2026-10-09): FUN_00478660/FUN_004783f0 course-block build; x87 double rule; gate = byte compare
 PathNodes
+# MATCH-T01G-FU 2026-11-02: port bodies compiled from byte-matched game code that uses float (re/match/t01g/)
+MatchT01G_004111c0
 # MATCH-S07 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s07/)
 MatchS07_0042aff0
 MatchS07_0042b180
 MatchS07_0042bde0
+MatchS07_0042d290
 MatchS07_0042d300
+MatchS07_0042e3a0
 MatchS07_0042f8d0
+MatchS07_0042fb70
 MatchS07_0042fe90
 MatchS07_00430b30
 MatchS07_00431b20
@@ -120,6 +139,7 @@ MatchS06_00427e00
 MatchS06_00427f00
 MatchS06_00427ff0
 MatchS06_00428140
+MatchS06_004282a0
 MatchS06_00428320
 MatchS06_00428590
 MatchS06_00428610

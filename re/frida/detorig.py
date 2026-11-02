@@ -92,7 +92,8 @@ def run(args):
                "warpAt": args.warp_at, "scen": SCENARIO, "input": INPUT, "ckpts": CKPTS,
                "holdrand": 0x12345678, "witness": [0x00468980, 0x00470670],
                "negctl": int(args.negctl, 16) if args.negctl else 0, "rebase": args.rebase,
-               "loadSleepMs": args.load_sleep_ms}
+               "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
+               "watch": [int(x, 16) for x in args.watch.split(",") if x][:2]}
         meta["cfg"] = cfg
         src = "const DETORIG_CFG = " + json.dumps(cfg) + ";\n" + (HERE / "js" / "detorig.js").read_text(encoding="utf-8")
         state = {"done": False, "err": None}
@@ -108,6 +109,14 @@ def run(args):
                 p["file"] = f.name
                 meta["ckpt"].append(p)
                 print(f"  ckpt {p['k']} dn={p['dn']} phase={p['phase']} clk={p['clk_7f0ff0']} sha={p['sha256'][:12]}", flush=True)
+            elif p["kind"] == "watch":
+                with open(out / "watch.jsonl", "a") as f:
+                    f.write(json.dumps(p) + "\n")
+                meta["watch_hits"] = meta.get("watch_hits", 0) + 1
+            elif p["kind"] == "calllog":
+                (out / "calllog.bin").write_bytes(data or b"")
+                meta["calllog"] = {"count": p["count"], "rec": p["rec"], "file": "calllog.bin"}
+                print(f"  call log {p['count']} calls", flush=True)
             elif p["kind"] == "warp":
                 meta["warp"] = p; print(f"  warp at N={p['n']} pins={p['pins']}", flush=True)
             elif p["kind"] == "race":
@@ -218,6 +227,8 @@ if __name__ == "__main__":
     ap.add_argument("--negctl", default="", help="negative control at the race anchor: 1 = RW RNG word at the cursor +1, else a hex VA bumped by one")
     ap.add_argument("--rebase", action="store_true", help="set T / Q at the race anchor (runs off_e/off_f/neg_b; made worse, see RESULT)")
     ap.add_argument("--load-sleep-ms", type=int, default=50, help="load hold: real ms slept per main-thread clock call until phase 3 (0 = off)")
+    ap.add_argument("--watch", default="", help="comma list (max 2) of hex VAs: hardware write watchpoints from the race anchor on (watch.jsonl)")
+    ap.add_argument("--call-log", action="store_true", help="log every main-thread clock call from the warp to the race anchor (calllog.bin, 64 B per call)")
     ap.add_argument("--qstep", type=int, default=15000, help="QPC counts per main-thread QPC call")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--menu-wait", type=float, default=2.0)

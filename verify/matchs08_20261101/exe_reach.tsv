@@ -1,0 +1,10 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+MenuDimOverlayFadeStep	0x001488f0	0	no	yes	
+LocalPlayerSlotCheck	0x00148a30	0	no	yes	
+MenuSlotFlagSetCurrent	0x00148bf0	0	no	yes	
+RaceFinalizeOnce	0x00148950	0	no	yes	
+UtilZeroTable8964c0	0x00148c20	1	yes	yes	_UtilZeroTable8964c0 <- ?Ai_BridgeLoad@?A0x2ce940ca@D3d9Render@mashed_re@@YA_NHPBD@Z <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+AiVehicleFloat4Get	0x00148c50	1	yes	yes	_AiVehicleFloat4Get <- _TG_414c30 <- ?ModeSeven_MaybeReplay@Ai@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+AiSplineEval_x87	0x00148c70	11	yes	no	_AiSplineEval_x87 <- _AL_443440 <- _AL_414570 <- ?AiLeaf_MaybeReplay@Ai@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+VehicleSeedWritePair	0x00148dd0	1	yes	yes	_VehicleSeedWritePair <- ?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z <- ?RenderFrame@?A0xa099b071@@YA_NXZ <- _WinMain@16
+SlotRecordPositionPtr	0x00148e10	0	no	yes	

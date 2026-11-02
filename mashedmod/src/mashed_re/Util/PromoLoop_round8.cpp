@@ -43,13 +43,8 @@
 // No uncertainties (body fully legible per the note).
 // ---------------------------------------------------------------------------
 
-// 0x004430a0
-extern "C" __declspec(dllexport) void __cdecl Util897fe0Set(std::uint32_t param_1) {
-    // 0x00897fe0 cited at 0x004430a0 body.
-    *reinterpret_cast<std::uint32_t*>(0x00897fe0u) = param_1;
-}
-
-RH_ScopedInstall(Util897fe0Set, 0x004430a0);
+// MATCH-S08: the body of 0x004430a0 (Util897fe0Set) moved to Match/MatchS08_004430a0.cpp,
+// which compiles the byte-matched source re/match/s08/004430a0.c.
 
 // ---------------------------------------------------------------------------
 // Util897fe0Get  --  0x004430b0   (subsystem: util)
@@ -66,13 +61,8 @@ RH_ScopedInstall(Util897fe0Set, 0x004430a0);
 // Caller: FUN_004102f0 (C2). No uncertainties.
 // ---------------------------------------------------------------------------
 
-// 0x004430b0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Util897fe0Get(void) {
-    // 0x00897fe0 cited at 0x004430b0 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x00897fe0u);
-}
-
-RH_ScopedInstall(Util897fe0Get, 0x004430b0);
+// MATCH-S08: the body of 0x004430b0 (Util897fe0Get) moved to Match/MatchS08_004430b0.cpp,
+// which compiles the byte-matched source re/match/s08/004430b0.c.
 
 // ---------------------------------------------------------------------------
 // GhostModeIsActive  --  0x0042f790   (subsystem: util)
