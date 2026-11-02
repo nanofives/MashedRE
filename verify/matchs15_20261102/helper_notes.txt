@@ -1,0 +1,138 @@
+## h1
+0x0048d0f0  80  100.0  100.0  cxx:ok  -  static callee; file holds a stand-in caller (not original code)
+0x0048cf90  337  100.0  100.0  cxx:ok  -  bitmap byte read into a local, b|mask written back; relocheck OK
+0x0048d360  434  90.6  90.6  cxx:ok  b  (t+1)*k CSE'd by ours (original reloads t after size.x store), vel.z order, colour copy schedule
+0x0048d540  434  90.6  90.6  cxx:ok  b  same template as 0x0048d360 (type 10, k 12)
+0x0048d720  434  90.6  90.6  cxx:ok  b  same template as 0x0048d360 (type 8)
+0x0048e180  434  90.6  90.6  cxx:ok  b  same template as 0x0048d360 (type 6, size 0.04, k 10)
+0x0048d140  485  91.6  91.6  cxx:ok  b  (t+1)*7 CSE'd by ours, alpha store one push later
+0x0048d900  505  89.9  89.9  cxx:ok  b  second size component's (t+1)*k hoisted by ours, first pos add operand order
+0x0048db20  505  89.9  89.9  cxx:ok  b  same template as 0x0048d900 (type 15)
+0x0048dd40  505  89.9  89.9  cxx:ok  b  same template as 0x0048d900 (type 16, k 6/9, g 0.0003)
+0x0048df60  505  89.9  89.9  cxx:ok  b  same template as 0x0048d900 (type 1, size 0.05/0.03, k 8/13)
+0x0048d140 holds 0x0048d0f0
+0x0048d360 holds 0x0048d0f0
+0x0048d540 holds 0x0048d0f0
+0x0048d720 holds 0x0048d0f0
+0x0048e180 holds 0x0048d0f0
+0x0048d900 holds 0x0048d0f0
+0x0048db20 holds 0x0048d0f0
+0x0048dd40 holds 0x0048d0f0
+0x0048df60 holds 0x0048d0f0
+## h2
+0x0048f260  24-26  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f680  24-26  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f6b0  24-26  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f6e0  24-26  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f710  24-26  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048ebc0  33  100  100  cxx:ok  -  int divide by record field + clamp
+0x0048f590  235  100  100  cxx:ok  -  record array 10x0x24 at 0x00769f50, for/break
+0x0048f420  364  100  100  cxx:ok  -  record array 40x0x20 at 0x00766a00, FUN_00472650 cdecl float(float,float)
+0x0048e5f0  373  100  100  cxx:ok  -  switch dispatcher; p/j in for header, case order, DAT_007668f4 file-static (C)
+0x0048f290  389  100  100  cxx:ok  -  record array 100x0x24 at 0x00770718, store order f18/r0/r1, f20 before active (unchecked: __ftol, CRT)
+0x0048e820  599  85.5  100  cxx:ok  b  esi/edi swap of i vs hoisted 1.0f only; ops 100%
+0x0048e360  619  84.0  84.0  cxx:ok  b  original reloads size / no CSE of rotv*10 (forceinline find-next reproduces it but rotates the scan loop); pos+vel operand order
+0x0048e360 holds 0x0048d0f0 (static callee, 100%)
+0x0048f260  26  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f680  24  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f6b0  24  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f6e0  24  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048f710  24  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048ebc0  33  100  100  cxx:ok  -  int divide by record field + clamp
+0x0048f740  49  100  100  cxx:ok  -  raw converter; Ghidra size short, whole symbol byte-identical
+0x0048e7b0  100  100  100  cxx:ok  -  raw converter + C++ casts; Ghidra size short, whole symbol byte-identical
+0x0048f590  235  100  100  cxx:ok  -  record array 10x0x24, for/break
+0x0048f420  364  100  100  cxx:ok  -  record array 40x0x20, FUN_00472650 cdecl float(float,float), decl order
+0x0048e5f0  373  100  100  cxx:ok  -  switch dispatcher; p/j in for header, case order, DAT_007668f4 file-static (C)
+0x0048f290  389  100  100  cxx:ok  -  record array 100x0x24, store order (unchecked __ftol is CRT)
+0x0048e820  599  85.5  100  cxx:ok  b  only esi/edi swapped between i and hoisted 1.0f; ops 100%
+0x0048e360  619  84.0  84.0  cxx:ok  b  original reloads size, no CSE of rotv*10 (a forceinline find-next reproduces it but rotates the scan loop)
+0x0048e360 holds 0x0048d0f0
+## h3
+0x0048f8a0  332  100.0  100.0  cxx:ok  -  matched (struct array, Vec3 copies, kill-first branch, 0.006f literal)
+0x0048fef0  35  100.0  100.0  cxx:ok  -  matched (temp pointer dropped)
+0x0048fe70  85  100.0  100.0  cxx:ok  -  matched (local query struct, struct copy of position)
+0x0048ff20  45  100.0  100.0  cxx:ok  -  matched (callback as function pointer, slot struct array)
+0x0048fb10  456  100.0  100.0  cxx:ok  -  matched (struct array, p->follow re-read per use fixes IV bias, frame>11 block order)
+0x0048f9f0  275  100.0  100.0  cxx:ok  -  matched (struct array, field-wise UV copy, colour stores after alpha)
+0x0048f780  287  98.6  98.6  cxx:ok  b  fade fstp scheduled one store late; store-order sweep did not move it
+0x0048ebf0  1010  71.8  92.9  cxx:ok  b  register rotation + first-call block recomputes param_3*0x488 (source form not found)
+## h4
+0x00490020  864  90.9%  97.9%  cxx:ok  b  head eax/ecx colouring swap for player/mode + colour-byte store scheduling; body exact
+0x004904d0  24  100%  100%  cxx:ok  -  byte-identical whole symbol (Ghidra size stops inside the loop; per-ins 55.6%)
+0x00490380  272  100%  100%  cxx:ok  -  byte-identical; .rdata floats as literals, t re-read from the record
+0x00490500  2353  56.0%  61.0%  cxx:ok  b  structure complete (661/661 ins); original keeps 3 outer induction pointers (rec+0x1c/scale/stage) + 8-aligned frame, source gets 2, shifting every offset/register in the 10-record loop
+## h5
+0x00491a70 (missing from re/console/pc_funcs.csv). I scored them with D:/MashedWT/MATCH-S15_data/scratch/h5/m.py, a
+0x004917a0  18  100  100  cxx:ok  -  byte-identical
+0x00490e50  30  100  100  cxx:ok  -  byte-identical (exit callee noreturn)
+0x00491070  69  100  100  cxx:ok  -  whole 78 B symbol byte-identical (Ghidra size stops before loop tail; instr score 70.8)
+0x004919b0  88  100  100  cxx:ok  -  byte-identical
+0x00491a10  88  100  100  cxx:ok  -  byte-identical (sibling of 0x004919b0)
+0x004917c0  155  100  100  cxx:ok  -  byte-identical (int locals for __ftol results)
+0x00491860  155  100  100  cxx:ok  -  byte-identical (sibling of 0x004917c0)
+0x00491900  164  100  100  cxx:ok  -  byte-identical
+0x00491a70  164  100  100  cxx:ok  -  byte-identical (sibling of 0x00491900)
+0x00490e70  215  100  100  cxx:ok  -  byte-identical (zero stores as 0.0f)
+0x00491340  323  98.1  98.1  cxx:ok  b  one fld [edi] scheduled after the counter load (orig before); 10 rewrites + permuter no gain
+0x00491590  491  92.9  97.2  cxx:ok  b  r duplicated with fst instead of fld st(0)+fstp, eax/ecx/edx naming in the -a/a pushes; 2 permuter runs no legal gain
+0x004910c0  620  97.2  97.2  cxx:ok  b  far-plane fstp scheduled after the next push (orig before); needs (float)(far + 0.0) for the fld/fstp copy; permuter no gain
+## h6
+0x004922e0  82  100.0  100.0  cxx:ok  -  0x4c-stride struct array at 0x007f1058 + int table at 0x007f1a14
+0x00491bd0  28  100.0  100.0  cxx:ok  -  whole obj symbol byte-identical (Ghidra size stops inside the loop, per-ins 54.5%)
+0x00492340  47  100.0  100.0  cxx:ok  -  same 0x4c struct
+0x00492290  70  100.0  100.0  cxx:ok  -  FUN_00499690 returns int
+0x00492440  125  100.0  100.0  cxx:ok  -  struct ptr, compound += and re-read fields in the divides
+0x004921d0  156  100.0  100.0  cxx:ok  -  int[6] local (no /GS cookie), arities from one add esp
+0x00491b20  173  93.6  93.6  cxx:ok  b  original reloads param_2 twice and reuses edx for the d[] copies, ours keeps it live
+0x00491e50  173  100.0  100.0  cxx:ok  -  static callee (EAX buf, EDI src), held in re/match/s15/00491f00.c
+0x00492370  198  100.0  100.0  cxx:ok  -  three separate early returns, thunks called by own address
+0x004924f0  414  71.8  74.8  cxx:ok  b  original eliminates i (pointer compares, b/c/d via walking pointer), ours keeps i
+0x00491c00  583  100.0  100.0  cxx:ok  -  file-static DAT_00771724/DAT_00771728, struct-copied locals
+0x00491f00  611  88.3  89.4  cxx:ok  b  x87 operand order on d[0]/d[2], age kept in two regs; DAT_00771724 file-static
+0x00491f00 holds 0x00491e50
+## h7
+0x004929d0  790  100.0  100.0  cxx:ok  -  nested switch on FUN_0042b930, case order 1,2,3,7,5,4,6, int callees, two-call if/else
+0x00492e60  44  100.0  100.0  cxx:ok  -  FUN_004671a0 takes 1 arg, float[2] 0.8f
+0x004926c0  173  100.0  100.0  cxx:ok  -  if/else-if order, FUN_00466b50 takes 1 arg
+0x00493480  178  100.0  100.0  cxx:ok  -  local tick + local accumulator, n*50 subtract, 1/3000 literal
+0x00493390  239  100.0  100.0  cxx:ok  -  unsigned timer, t=call; now=t; t+=acc register split
+0x004927c0  500  100.0  100.0  cxx:ok  -  init local step table, flag r, case order 0,1,3,2, whole symbol byte-identical incl jump table
+0x00492e90  1237  100.0  100.0  cxx:ok  -  real callee arities, case order 1,2,3/7,5/6,4, case 3/7 nonzero-first, tail store order (whole symbol byte-identical)
+## h8
+0x00493540  5  100  100  cxx:ok  -  jmp thunk, return FUN_00495150()
+0x00493550  5  100  100  cxx:ok  -  jmp thunk, void tail call
+0x00493560  5  100  100  cxx:ok  -  jmp thunk, return FUN_004954f0()
+0x00493b40  6  100  100  cxx:ok  -  return 3; no Ghidra size, scored with size 6 override, byte-identical
+0x004938e0  28  80.0  90.0  cxx:ok  b  root-walk loop, eax/ecx swap of loop temporaries
+0x004943d0  30  100  100  cxx:ok  -  scalar deleting dtor as __fastcall(this, edx, flag)
+0x00493600  58  100  100  cxx:ok  -  int return, function decls for callbacks
+0x00493c00  93  100  100  cxx:ok  -  thiscall ctor as __fastcall(this, edx, a, b), base ctor same
+0x004943f0  108  100  100  cxx:ok  -  float param, IBasicAudio-shaped vtable calls, float literals
+0x004942b0  110  100  100  cxx:ok  -  COM vtable structs (event get/free, position put double 0.0)
+0x00493b50  111  100  100  cxx:ok  -  /GS OSVERSIONINFOA, int return of indirect tail call
+0x00493f00  112  100  100  cxx:ok  -  variadic, va_start spelled as &fmt+4, /GS char[1024]
+0x00493ac0  127  100  100  cxx:ok  -  no Ghidra size (size 127 override), byte-identical; early-return GetACP block order
+0x00494320  168  100  100  cxx:ok  -  COM release chain, null-before-Release copies
+0x00493640  172  67.9  67.9  cxx:ok  b  init chain, return-0 block placed first in original, not reproduced
+0x00493710  430  94.2  94.2  cxx:ok  b  boot sequence, deferred arg-pop flush before the 0x200000 call not reproduced
+0x00493900  448  66.9  67.7  cxx:ok  b  strtok loop rotated by our build, original keeps one call site (ebp pointer)
+0x00493fd0  631  80.1  94.4  cxx:ok  b  Im2D quad; short-out/temp slot order and eax/ecx swap for RwGlobals vs colour
+0x00493540  5  100  100  cxx:ok  -  jmp thunk via return FUN_00495150()
+0x00493550  5  100  100  cxx:ok  -  jmp thunk via void tail call
+0x00493560  5  100  100  cxx:ok  -  jmp thunk via return FUN_004954f0()
+0x00493b40  6  100  100  cxx:ok  -  return 3; no Ghidra function, scored with size override, byte-identical
+0x004938e0  28  80.0  90.0  cxx:ok  b  root-walk loop, eax/ecx swap of the loop temporaries
+0x004943d0  30  100  100  cxx:ok  -  scalar deleting dtor as __fastcall(this, edx, flag)
+0x00493600  58  100  100  cxx:ok  -  int return, callbacks as function decls
+0x00493c00  93  100  100  cxx:ok  -  thiscall ctor as __fastcall(this, edx, a, b), base ctor same
+0x004943f0  108  100  100  cxx:ok  -  float param, vtable 0x20/0x1c calls, float literals
+0x004942b0  110  100  100  cxx:ok  -  COM vtable structs, double 0.0 arg
+0x00493b50  111  100  100  cxx:ok  -  /GS OSVERSIONINFOA, int return of indirect call
+0x00493f00  112  100  100  cxx:ok  -  variadic, va_start as &fmt+4, /GS char[1024]
+0x00493ac0  127  100  100  cxx:ok  -  no Ghidra function (size 127 override), byte-identical, early-return block order
+0x00494320  168  100  100  cxx:ok  -  COM release chain, null global before Release
+0x00493640  172  67.9  67.9  cxx:ok  b  init chain, original places the return-0 block first
+0x00493710  430  94.2  94.2  cxx:ok  b  boot sequence, early arg-pop flush before the 0x200000 call not reproduced
+0x00493900  448  66.9  67.7  cxx:ok  b  strtok loop rotated by our build, original keeps one call site
+0x00493fd0  631  80.1  94.4  cxx:ok  b  Im2D quad, short-out/temp slot order and eax/ecx swap
