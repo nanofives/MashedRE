@@ -13,12 +13,8 @@
 
 #include <cstdint>
 
-// 0x00454a30  8B 44 24 04 8D 04 40 8B 04 C5 04 83 68 00 C3
-//   mov eax,[esp+4]; lea eax,[eax+eax*2]; mov eax,[eax*8 + 0x00688304]; ret  (stride 0x18)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table688304Get(std::uint32_t param_1) {
-    return *reinterpret_cast<const std::uint32_t*>(0x00688304u + param_1 * 0x18u);  // cited at 0x00454a30
-}
-RH_ScopedInstall(Table688304Get, 0x00454a30);
+// MATCH-S09: the body of 0x00454a30 (Table688304Get) moved to Match/MatchS09_00454a30.cpp,
+// which compiles the byte-matched source re/match/s09/00454a30.c.
 
 // 0x0045c850  8B 44 24 04 C7 04 85 9C F0 88 00 00 00 00 00 C3
 //   mov eax,[esp+4]; mov dword [eax*4 + 0x0088f09c],0; ret

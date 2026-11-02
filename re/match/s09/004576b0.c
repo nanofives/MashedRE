@@ -42,7 +42,7 @@ undefined4 FUN_004576b0(void)
     iVar1 = iVar1 + 1;
   } while (iVar1 < 2);
   if (iVar1 < 4) {
-    piVar2 = &DAT_0068a254 + iVar1 * 4;
+    piVar2 = (int *)&DAT_0068a254 + iVar1 * 4;
     do {
       if (*piVar2 != 0) {
         return 1;

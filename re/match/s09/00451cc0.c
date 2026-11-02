@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(int, int); /* C++ port: the call passes (obj, 0) */
+#else
 typedef int code();
+#endif
 // MATCH: 0x00451cc0 FUN_00451cc0
 void FUN_00451cc0(int param_1)
 

@@ -1819,19 +1819,8 @@ extern "C" __declspec(dllexport) void __cdecl Fill4899c0(std::uint8_t* p, std::u
 }
 RH_ScopedInstall(Fill4899c0, 0x004899c0);
 
-// ===== round 160 ===== (bounded abs-table state setter)
-// 0x00458f20 — u32 fn(i, arg2): if((int)i<0 || i>=0x19) return 0; rec=0x68b198+i*0x50;
-//   if(arg2==0){ rec[0x20]=3; rec[0x1c]=0; } else if(rec[0x20]==3){ rec[0x20]=1; rec[0x1c]=0; }
-//   else { rec[0x1c]=0; } return 1.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Set458f20(std::uint32_t i, std::uint32_t arg2) {
-    if (static_cast<int>(i) < 0 || i >= 0x19) return 0;
-    std::uint8_t* rec = reinterpret_cast<std::uint8_t*>(0x0068b198 + i * 0x50);
-    if (arg2 == 0) { *reinterpret_cast<std::uint32_t*>(rec + 0x20) = 3; *reinterpret_cast<std::uint32_t*>(rec + 0x1c) = 0; }
-    else if (*reinterpret_cast<std::uint32_t*>(rec + 0x20) == 3) { *reinterpret_cast<std::uint32_t*>(rec + 0x20) = 1; *reinterpret_cast<std::uint32_t*>(rec + 0x1c) = 0; }
-    else { *reinterpret_cast<std::uint32_t*>(rec + 0x1c) = 0; }
-    return 1;
-}
-RH_ScopedInstall(Set458f20, 0x00458f20);
+// MATCH-S09: the body of 0x00458f20 (Set458f20) moved to Match/MatchS09_00458f20.cpp,
+// which compiles the byte-matched source re/match/s09/00458f20.c.
 
 // ===== round 161 ===== (ESI/EDX field-match predicate)
 // 0x0047bc90 — u32 fn(ESI=s, EDX=e): a=s[0x10]; c=e[0x10]; if(a==c || a==e[0x14]){
@@ -2800,31 +2789,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Alloc5ae4c0(voi
 }
 RH_ScopedInstall(Alloc5ae4c0, 0x005ae4c0);
 
-// 0x00458f80  FUN_00458f80 (gameplay, NEAR-LEAF: init loop over a C3 state-setter)
-// void f(int arg1): for i in 0..0x18 call Set458f20(i, arg1) (callee 0x00458f20 is C3; it
-// writes the absolute record table 0x68b198 stride 0x50). Verbatim naked port; the `call
-// rel32` to the callee is reproduced as `mov eax,0x458f20; call eax` (absolute) so the .asi
-// reimpl targets the same original callee address.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init458f80(void)
-{
-    __asm {
-        push esi
-        mov  esi, dword ptr [esp+8]          // arg1
-        xor  edx, edx
-    L_NLI_LOOP:
-        push esi
-        push edx
-        mov  eax, 0458F20h                    // callee 0x00458f20 (absolute)
-        call eax
-        add  esp, 8
-        inc  edx
-        cmp  edx, 0x19
-        jl   L_NLI_LOOP
-        pop  esi
-        ret
-    }
-}
-RH_ScopedInstall(Init458f80, 0x00458f80);
+// MATCH-S09: the body of 0x00458f80 (Init458f80) moved to Match/MatchS09_00458f80.cpp,
+// which compiles the byte-matched source re/match/s09/00458f80.c.
 
 // MATCH-S07: the body of 0x0042c1f0 (Count42c1f0) moved to Match/MatchS07_0042c1f0.cpp,
 // which compiles the byte-matched source re/match/s07/0042c1f0.c.

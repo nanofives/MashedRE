@@ -46,7 +46,8 @@ void FUN_004588c0(int p0);
 void FUN_0045c010(int p0, undefined4 p1);
 int FUN_0045c330(int p0);
 void FUN_00465ca0(int p0, int p1);
-// MATCH: 0x00458570 FUN_00458570
+// HELD: 0x00458570 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 static float FUN_00458570(V3_00458920 *out, int idx, int *rec)
 {
   float len;
@@ -73,6 +74,9 @@ static float FUN_00458570(V3_00458920 *out, int idx, int *rec)
   }
   return len;
 }
+#else
+float FUN_00458570(V3_00458920 *out, int idx, int *rec);
+#endif
 
 // MATCH: 0x00458920 FUN_00458920
 void FUN_00458920(int param_1, int param_2)

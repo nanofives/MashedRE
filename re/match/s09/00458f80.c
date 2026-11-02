@@ -43,7 +43,8 @@ typedef struct Rec_00458f80 {
   V3_00458f80 vel;
 } Rec_00458f80;
 MGLOBALA(Rec_00458f80, DAT_0068b198, 25, 0x0068b198);
-// MATCH: 0x00458f20 FUN_00458f20
+// HELD: 0x00458f20 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 int FUN_00458f20(int i, int on)
 {
   Rec_00458f80 *r;
@@ -60,6 +61,9 @@ int FUN_00458f20(int i, int on)
   r->f1c = 0;
   return 1;
 }
+#else
+int FUN_00458f20(int i, int on);
+#endif
 
 // MATCH: 0x00458f80 FUN_00458f80
 void FUN_00458f80(int on)
