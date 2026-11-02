@@ -1,0 +1,101 @@
+=== run 1 22:14:35
+[1/16] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/16] new-solo-waits-while-priority-pending PASS (marker=True solo_returned=False window_file=False)
+[3/16] ordinary-acquire-ignores-linger PASS (ordinary acquire 0.0 s, solo still waiting=True)
+[4/16] new-solo-not-opened-during-priority-hold PASS (T2_GOT=1793582080.768 T2_DONE=1793582081.781 S_OPEN=1793582084.1)
+[5/16] new-solo-waits-through-linger PASS (S_OPEN - T2_DONE = 2.32 s, linger 3 s)
+[6/16] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/16] solo-open-unblocked-without-claims PASS (0.01 s)
+[8/16] solo-begin-default-ttl-le-1h PASS (ttl=3600s)
+[9/16] run-solo-default-ttl-le-1h PASS (ttl=3600s)
+[10/16] control-no-hold-reproduces-starvation PASS (solo open +0.01 s, gate got +2.55 s, after the window closed)
+PRIORITY-HOLD 'mashed_machine' owner_pid=16816
+PRIORITY-RELEASED 'mashed_machine' owner_pid=16816
+[11/16] pass-hold-keeps-new-solo-out-of-merge-build-and-gate PASS (gate got +1.09 s, solo open +1.42 s, after gate done +1.4 s)
+[12/16] pass-hold-ordinary-acquire-not-blocked PASS (0.0 s)
+[13/16] pass-hold-priority-solo-not-blocked PASS (0.15 s)
+[14/16] pass-hold-leaves-open-window PASS (hold=True window_unchanged=True token_child_got=True solo_end=True)
+[15/16] pass-hold-release-own-only-and-lingers PASS (other release kept mine=True linger_left=119s dead_pid_refused=True)
+PRIORITY-HOLD 'mashed_machine' owner_pid=8376
+[16/16] pass-hold-stale-when-owner-dies PASS (new solo open 0.01 s after the owner exited)
+scenarios: 16/16 PASS
+impl=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-MASHEDLOCK-EARLY-PRIORITY\re\orchestrator\mashed_lock.py
+procs=8 secs=12.0 lockdir=C:\Users\maria\AppData\Local\Temp\mashed_lock_conc_14yyynbf
+acquires=22 solo_windows=8 status_reads=20 timeouts=0 overlaps=0 errors=0 hung_workers=0
+PASS
+=== run 2 22:15:28
+[1/16] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/16] new-solo-waits-while-priority-pending PASS (marker=True solo_returned=False window_file=False)
+[3/16] ordinary-acquire-ignores-linger PASS (ordinary acquire 0.0 s, solo still waiting=True)
+[4/16] new-solo-not-opened-during-priority-hold PASS (T2_GOT=1793582133.138 T2_DONE=1793582134.368 S_OPEN=1793582137.056)
+[5/16] new-solo-waits-through-linger PASS (S_OPEN - T2_DONE = 2.69 s, linger 3 s)
+[6/16] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/16] solo-open-unblocked-without-claims PASS (0.03 s)
+[8/16] solo-begin-default-ttl-le-1h PASS (ttl=3600s)
+[9/16] run-solo-default-ttl-le-1h PASS (ttl=3600s)
+[10/16] control-no-hold-reproduces-starvation PASS (solo open +0.06 s, gate got +2.64 s, after the window closed)
+PRIORITY-HOLD 'mashed_machine' owner_pid=16452
+PRIORITY-RELEASED 'mashed_machine' owner_pid=16452
+[11/16] pass-hold-keeps-new-solo-out-of-merge-build-and-gate PASS (gate got +1.17 s, solo open +1.49 s, after gate done +1.48 s)
+[12/16] pass-hold-ordinary-acquire-not-blocked PASS (0.0 s)
+[13/16] pass-hold-priority-solo-not-blocked PASS (0.15 s)
+[14/16] pass-hold-leaves-open-window PASS (hold=True window_unchanged=True token_child_got=True solo_end=True)
+[15/16] pass-hold-release-own-only-and-lingers PASS (other release kept mine=True linger_left=120s dead_pid_refused=True)
+PRIORITY-HOLD 'mashed_machine' owner_pid=17532
+[16/16] pass-hold-stale-when-owner-dies PASS (new solo open 0.01 s after the owner exited)
+scenarios: 16/16 PASS
+impl=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-MASHEDLOCK-EARLY-PRIORITY\re\orchestrator\mashed_lock.py
+procs=8 secs=12.0 lockdir=C:\Users\maria\AppData\Local\Temp\mashed_lock_conc_5mnk44d3
+acquires=31 solo_windows=9 status_reads=19 timeouts=0 overlaps=0 errors=0 hung_workers=0
+PASS
+=== run 3 22:16:25
+[1/16] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/16] new-solo-waits-while-priority-pending PASS (marker=True solo_returned=False window_file=False)
+[3/16] ordinary-acquire-ignores-linger PASS (ordinary acquire 0.0 s, solo still waiting=True)
+[4/16] new-solo-not-opened-during-priority-hold PASS (T2_GOT=1793582189.475 T2_DONE=1793582190.523 S_OPEN=1793582193.025)
+[5/16] new-solo-waits-through-linger PASS (S_OPEN - T2_DONE = 2.5 s, linger 3 s)
+[6/16] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/16] solo-open-unblocked-without-claims PASS (0.02 s)
+[8/16] solo-begin-default-ttl-le-1h PASS (ttl=3600s)
+[9/16] run-solo-default-ttl-le-1h PASS (ttl=3600s)
+[10/16] control-no-hold-reproduces-starvation PASS (solo open +0.01 s, gate got +2.62 s, after the window closed)
+PRIORITY-HOLD 'mashed_machine' owner_pid=7892
+PRIORITY-RELEASED 'mashed_machine' owner_pid=7892
+[11/16] pass-hold-keeps-new-solo-out-of-merge-build-and-gate PASS (gate got +1.17 s, solo open +1.58 s, after gate done +1.48 s)
+[12/16] pass-hold-ordinary-acquire-not-blocked PASS (0.0 s)
+[13/16] pass-hold-priority-solo-not-blocked PASS (0.17 s)
+[14/16] pass-hold-leaves-open-window PASS (hold=True window_unchanged=True token_child_got=True solo_end=True)
+[15/16] pass-hold-release-own-only-and-lingers PASS (other release kept mine=True linger_left=120s dead_pid_refused=True)
+PRIORITY-HOLD 'mashed_machine' owner_pid=23568
+[16/16] pass-hold-stale-when-owner-dies PASS (new solo open 0.01 s after the owner exited)
+scenarios: 16/16 PASS
+impl=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-MASHEDLOCK-EARLY-PRIORITY\re\orchestrator\mashed_lock.py
+procs=8 secs=12.0 lockdir=C:\Users\maria\AppData\Local\Temp\mashed_lock_conc_u36xiw3y
+acquires=36 solo_windows=15 status_reads=26 timeouts=1 overlaps=0 errors=0 hung_workers=0
+PASS
+=== base impl b52d95787 (scenarios only)
+[1/16] open-window-survives-pending-priority PASS (marker=True window_kept=True token_child_got=True)
+[2/16] new-solo-waits-while-priority-pending PASS (marker=True solo_returned=False window_file=False)
+[3/16] ordinary-acquire-ignores-linger PASS (ordinary acquire 0.0 s, solo still waiting=True)
+[4/16] new-solo-not-opened-during-priority-hold PASS (T2_GOT=1793582273.159 T2_DONE=1793582274.172 S_OPEN=1793582277.012)
+[5/16] new-solo-waits-through-linger PASS (S_OPEN - T2_DONE = 2.84 s, linger 3 s)
+[6/16] priority-solo-ignores-other-marker PASS (marker=True opened=True)
+[7/16] solo-open-unblocked-without-claims PASS (0.02 s)
+[8/16] solo-begin-default-ttl-le-1h PASS (ttl=3600s)
+[9/16] run-solo-default-ttl-le-1h PASS (ttl=3600s)
+[10/16] control-no-hold-reproduces-starvation PASS (solo open +0.02 s, gate got +2.56 s, after the window closed)
+unknown command 'prio-hold' (status|break|run|solo-begin|solo-end)
+unknown command 'prio-release' (status|break|run|solo-begin|solo-end)
+[11/16] pass-hold-keeps-new-solo-out-of-merge-build-and-gate FAIL (gate got +2.62 s, solo open +0.01 s, after gate done +2.93 s)
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-MASHEDLOCK-EARLY-PRIORITY\re\orchestrator\mashed_lock_concurrency_test.py", line 332, in scenarios
+    ml.prio_hold(name, 'hold-12', me)
+    ^^^^^^^^^^^^
+AttributeError: module 'mashed_lock_under_test' has no attribute 'prio_hold'
+[12/16] scenario-aborted FAIL
+[13/16] scenario-aborted FAIL
+[14/16] scenario-aborted FAIL
+[15/16] scenario-aborted FAIL
+[16/16] scenario-aborted FAIL
+scenarios: 10/16 PASS
+FAIL

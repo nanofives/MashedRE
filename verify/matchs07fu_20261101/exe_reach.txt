@@ -1,0 +1,10 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+CarSlotInit1P	0x00166590	0	no	yes	
+CarSlotAssign	0x00166600	1	yes	yes	_CarSlotAssign <- ?RenderFrame@?A0xc2f594ab@@YA_NXZ <- _WinMain@16
+FrontendCursorUpdate	0x00167410	1	yes	yes	_FrontendCursorUpdate <- ?RenderFrame@?A0xc2f594ab@@YA_NXZ <- _WinMain@16
+FrontendCursorUpdatePreSwap	0x0015b740	1	yes	no	_FrontendCursorUpdatePreSwap <- ?RenderFrame@?A0xc2f594ab@@YA_NXZ <- _WinMain@16
+VehicleUnlockFlagGet	0x00167170	0	no	yes	
+CarSelectReset	0x00167b80	0	no	yes	
+MenuChromeShellA	0x00166e10	0	no	yes	
+MenuSpriteDispatchB	0x001675c0	0	no	yes	
+MatchS07_0042b9e0_Call0040e480	0x00166810	2	yes	no	_MatchS07_0042b9e0_Call0040e480 <- _CarSlotAssign <- ?RenderFrame@?A0xc2f594ab@@YA_NXZ <- _WinMain@16
