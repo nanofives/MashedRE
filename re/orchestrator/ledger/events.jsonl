@@ -2120,3 +2120,166 @@
 {"at":"2026-11-02T01:20:45Z","id":"HB-MASHEDLOCK-SOLO-PRIORITY","from":"merge-queued","to":"merged","owner":"cmvyfwqvo0oarn01byjqmv6il","note":"merge train 20261101_220728: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
 {"at":"2026-11-02T01:21:03Z","id":"HB-MASHEDLOCK-EARLY-PRIORITY","from":"review","to":"review","owner":"cmvyjd2e6076mqu1cjt4pa003","note":"TEXT-ONLY ready @ e3f44578e (contains HB-MASHEDLOCK-SOLO-PRIORITY b52d95787)"}
 {"at":"2026-11-02T01:21:21Z","id":"HB-MASHEDLOCK-EARLY-PRIORITY","from":"review","to":"merge-queued","owner":"cmvyjd2e6076mqu1cjt4pa003","note":"orch/HB-MASHEDLOCK-EARLY-PRIORITY"}
+{"at":"2026-11-02T01:28:23Z","id":"MATCH-RC-T03","from":"open","to":"claimed","owner":"cmvykxa0x036xpa1c5zmev5fd","note":""}
+{"at":"2026-11-02T01:28:25Z","id":"MATCH-RC-S06S07","from":"open","to":"claimed","owner":"cmvykxc340373pa1csd9xvcij","note":""}
+{"at":"2026-11-02T01:28:26Z","id":"MATCH-PORTSTATE-COURSE","from":"open","to":"claimed","owner":"cmvykxe730379pa1cuhbxktew","note":""}
+{"at":"2026-11-02T01:30:30Z","id":"MATCH-RC-S06S07","from":"claimed","to":"working","owner":"cmvykxc340373pa1csd9xvcij","note":"starting: locate S06/S07 swaps"}
+{"at":"2026-11-02T01:30:56Z","id":"MATCH-PORTSTATE-COURSE","from":"claimed","to":"working","owner":"cmvykxe730379pa1cuhbxktew","note":"worktree created, surveying U-9783 and T04/T05/T13"}
+{"at":"2026-11-02T01:33:33Z","id":"MATCH-RC-T03","from":"claimed","to":"working","owner":"cmvykxa0x036xpa1c5zmev5fd","note":"C4 re-classify committed"}
+{"at":"2026-11-02T01:33:34Z","id":"MATCH-RC-T03","from":"working","to":"review","owner":"cmvykxa0x036xpa1c5zmev5fd","note":""}
+{"at":"2026-11-02T01:34:16Z","id":"HB-MASHEDLOCK-EARLY-PRIORITY","from":"merge-queued","to":"merged","owner":"cmvyjd2e6076mqu1cjt4pa003","note":"merge train 20261101_222125: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T01:34:34Z","id":"D4-DC-77b0-ST3-PRETICK","from":"working","to":"working","owner":"cmvyioksl037jqu1cajsfjtt2","note":"PREREG 0889efc83, knob afe21a567 built; arms queued on mashed_lock"}
+{"at":"2026-11-02T01:35:41Z","id":"MATCH-RC-S06S07","from":"working","to":"review","owner":"cmvykxc340373pa1csd9xvcij","note":"20 rows: 18 C3->C4 match, 2 C4 gain match route; 173 callerless stay"}
+{"at":"2026-11-02T01:35:47Z","id":"MATCH-TOPDOWN-T10","from":"review","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"sha d5933a53f already in orch/integration via MATCH-TOPDOWN-T05 (run 30 L0)"}
+{"at":"2026-11-02T01:35:49Z","id":"D5-SHIM-STEP3-VERIFYSPAWNERS","from":"review","to":"merge-queued","owner":"cmvye44fs09ntn01b7esuf3w2","note":"orch/D5-SHIM-STEP3-VERIFYSPAWNERS"}
+{"at":"2026-11-02T01:35:50Z","id":"D5-SHIM-STEP3-LAUNCHER","from":"review","to":"merge-queued","owner":"cmvyevetk0h91n01bt62p0654","note":"orch/D5-SHIM-STEP3-LAUNCHER"}
+{"at":"2026-11-02T01:35:52Z","id":"MATCH-S05-RC","from":"review","to":"merge-queued","owner":"cmvy4jx35406jp71h9e49af4t","note":"orch/MATCH-S05-RC"}
+{"at":"2026-11-02T01:35:53Z","id":"PROMOTE-DETORIG-PILOT","from":"review","to":"merge-queued","owner":"cmvy4jzm04099p71hyhpc6fn6","note":"orch/PROMOTE-DETORIG-PILOT"}
+{"at":"2026-11-02T01:35:55Z","id":"MATCH-TOPDOWN-T11","from":"review","to":"merge-queued","owner":"cmvybs2sr07ixq81czifqt0m6","note":"orch/MATCH-TOPDOWN-T11"}
+{"at":"2026-11-02T01:38:07Z","id":"MATCH-RC-T03","from":"review","to":"review","owner":"cmvykxa0x036xpa1c5zmev5fd","note":"TEXT-ONLY ready @ 7da0e996d"}
+{"at":"2026-11-02T01:38:08Z","id":"MATCH-RC-S06S07","from":"review","to":"review","owner":"cmvykxc340373pa1csd9xvcij","note":"TEXT-ONLY ready @ 876e7cd6d"}
+{"at":"2026-11-02T01:39:04Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"open","to":"claimed","owner":"cmvylb32z04w3pa1cijl8kwm7","note":""}
+{"at":"2026-11-02T01:39:06Z","id":"MATCH-S07-FU","from":"open","to":"claimed","owner":"cmvylbebc04wjpa1cxuby8ukh","note":""}
+{"at":"2026-11-02T01:43:33Z","id":"MATCH-S07-FU","from":"claimed","to":"working","owner":"cmvylbebc04wjpa1cxuby8ukh","note":"worktree up; assessing 9 rvas"}
+{"at":"2026-11-02T01:44:15Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"claimed","to":"working","owner":"cmvylb32z04w3pa1cijl8kwm7","note":"worktree ready, pilot merged; next: private root + load-hold arms"}
+{"at":"2026-11-02T01:51:51Z","id":"D4-WSB-55B080-ULP","from":"working","to":"review","owner":"cmvyh5tch0tdzn01bg7bl46jb","note":"GREEN: x87 TU for 0x00546b10/bf0/cb0; S1a CLEAN 24/24 vs SSE2 control DIVERGENT 8/24; gates equal refs pre/post merge"}
+{"at":"2026-11-02T01:53:23Z","id":"D4-WSB-55B080-ULP","from":"review","to":"review","owner":"cmvyh5tch0tdzn01bg7bl46jb","note":"SOURCE -Full ready @ e51b1fc4a"}
+{"at":"2026-11-02T01:54:52Z","id":"D5-SHIM-STEP3-VERIFYSPAWNERS","from":"merge-queued","to":"merged","owner":"cmvye44fs09ntn01b7esuf3w2","note":"merge train 20261101_223631: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T01:54:54Z","id":"D5-SHIM-STEP3-LAUNCHER","from":"merge-queued","to":"merged","owner":"cmvyevetk0h91n01bt62p0654","note":"merge train 20261101_223631: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T01:54:57Z","id":"MATCH-S05-RC","from":"merge-queued","to":"merged","owner":"cmvy4jx35406jp71h9e49af4t","note":"merge train 20261101_223631: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T02:07:07Z","id":"D4-DC-INC-0046d4a0-KNOB","from":"working","to":"decision","owner":"cmvydz1xa0895n01b9yzdb3um","note":"L-82"}
+{"at":"2026-11-02T02:07:16Z","id":"MATCH-RC-T03","from":"review","to":"merge-queued","owner":"cmvykxa0x036xpa1c5zmev5fd","note":"orch/MATCH-RC-T03"}
+{"at":"2026-11-02T02:07:16Z","id":"D4-DC-INC-0046d4a0-KNOB","from":"decision","to":"decision","owner":"cmvydz1xa0895n01b9yzdb3um","note":"L-82 filed; knob+PREREG 910c5e6f2, RESULT db3b9bb6e"}
+{"at":"2026-11-02T02:07:19Z","id":"MATCH-RC-S06S07","from":"review","to":"merge-queued","owner":"cmvykxc340373pa1csd9xvcij","note":"orch/MATCH-RC-S06S07"}
+{"at":"2026-11-02T02:10:06Z","id":"MATCH-PORTSTATE-COURSE","from":"working","to":"review","owner":"cmvykxe730379pa1cuhbxktew","note":"knob MASHED_PORTSTATE_COURSE default OFF; P1-P4 hold; gates unchanged OFF and ON; 0x0041e870 gets a knob-only exe caller; other rows blocked by record block / GameFlow / RW device"}
+{"at":"2026-11-02T02:10:11Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"working","to":"working","owner":"cmvylb32z04w3pa1cijl8kwm7","note":"harness +call-log +watch (695a950ad), scorer rules RING4/ACC60/WINMSG (6d86beeeb): pilot OFF/OFF and ON/ON now normalize 15/15; batch1 (8 load-hold arms) queued on the game lock behind merge train"}
+{"at":"2026-11-02T02:12:51Z","id":"MATCH-PORTSTATE-COURSE","from":"review","to":"review","owner":"cmvykxe730379pa1cuhbxktew","note":"SOURCE -Full ready @ 622335487"}
+{"at":"2026-11-02T02:13:20Z","id":"PROMOTE-DETORIG-PILOT","from":"merge-queued","to":"merged","owner":"cmvy4jzm04099p71hyhpc6fn6","note":"merge train 20261101_225626: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T02:13:23Z","id":"MATCH-TOPDOWN-T11","from":"merge-queued","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"merge train 20261101_225626: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T02:13:29Z","id":"MATCH-PORTSTATE-RECORDS","from":"open","to":"claimed","owner":"cmvymjim3099tpa1c0pjlmbm4","note":""}
+{"at":"2026-11-02T02:15:46Z","id":"MATCH-PORTSTATE-RECORDS","from":"claimed","to":"working","owner":"cmvymjim3099tpa1c0pjlmbm4","note":"worktree from orch/MATCH-PORTSTATE-COURSE; reading COURSE pattern"}
+{"at":"2026-11-02T02:26:55Z","id":"D4-DC-77b0-ST3-PRETICK","from":"working","to":"decision","owner":"cmvyioksl037jqu1cajsfjtt2","note":"L-83"}
+{"at":"2026-11-02T02:26:56Z","id":"D4-DC-77b0-ST3-PRETICK","from":"decision","to":"review","owner":"cmvyioksl037jqu1cajsfjtt2","note":"GREEN: knob ON gives 762+1 case-3 AI ticks, cells (1,2,2,2); gates unchanged unset and set; flip filed as decision"}
+{"at":"2026-11-02T02:27:21Z","id":"D4-DC-77b0-ST3-PRETICK","from":"review","to":"review","owner":"cmvyioksl037jqu1cajsfjtt2","note":"SOURCE -Full ready @ 30ec68b69"}
+{"at":"2026-11-02T02:32:55Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"working","to":"review","owner":"cmvylb32z04w3pa1cijl8kwm7","note":"GREEN TEXT-ONLY @ cf3334dab: load hold pins load at 118 calls (8/8); cause FUN_004b67e0 overlapped-read poll loop calling QPC callback FUN_00429290; 6 pairs NORMALIZED+RACE-STATE 15/15, 0 unexplained; neg_c at equal load RACE-STATE 0/15; OFF/ON residue = FUN_00469aa0 uninitialised stack copy (0x007ec9e4 ring +0x2c). Branch includes orch/PROMOTE-DETORIG-PILOT merge."}
+{"at":"2026-11-02T02:34:08Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"review","to":"review","owner":"cmvylb32z04w3pa1cijl8kwm7","note":"TEXT-ONLY ready @ cf3334dab"}
+{"at":"2026-11-02T02:34:37Z","id":"MATCH-S07-FU","from":"working","to":"review","owner":"cmvylbebc04wjpa1cxuby8ukh","note":"8 swaps + 0x00431b80 in, 0x00430b90 not; 2 default-OFF knobs; gates = refs, knob arms inert; 0x0042e3a0 old C4 body had wrong constant"}
+{"at":"2026-11-02T02:34:42Z","id":"MATCH-S06-FU","from":"open","to":"claimed","owner":"cmvynavoj0crxpa1c83m81jm5","note":""}
+{"at":"2026-11-02T02:35:20Z","id":"MATCH-RC-T03","from":"merge-queued","to":"merged","owner":"cmvykxa0x036xpa1c5zmev5fd","note":"merge train 20261101_231430: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T02:35:22Z","id":"MATCH-RC-S06S07","from":"merge-queued","to":"merged","owner":"cmvykxc340373pa1csd9xvcij","note":"merge train 20261101_231430: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T02:36:17Z","id":"MATCH-PORTSTATE-RECORDS","from":"working","to":"working","owner":"cmvymjim3099tpa1c0pjlmbm4","note":"PREREG 3fab09ccc, knob 282046ead built; gate arms DEF+PSR queued under mashed_lock"}
+{"at":"2026-11-02T02:36:19Z","id":"MATCH-S07-FU","from":"review","to":"review","owner":"cmvylbebc04wjpa1cxuby8ukh","note":"SOURCE -Full ready @ ee4dc9dde"}
+{"at":"2026-11-02T02:37:00Z","id":"MATCH-S06-FU","from":"claimed","to":"working","owner":"cmvynavoj0crxpa1c83m81jm5","note":"worktree created; reading S06 sources"}
+{"at":"2026-11-02T02:37:02Z","id":"D4-DC-INC-PATHPROG-REMERGE","from":"review","to":"merge-queued","owner":"cmvydyysy087nn01b02zrcpde","note":"orch/D4-DC-INC-PATHPROG-REMERGE"}
+{"at":"2026-11-02T02:37:04Z","id":"HB-ASI-EAX-57C420","from":"review","to":"merge-queued","owner":"cmvydz5tu08atn01b47oq03ha","note":"orch/HB-ASI-EAX-57C420"}
+{"at":"2026-11-02T02:37:06Z","id":"D4-WSB-55B080-ULP","from":"review","to":"merge-queued","owner":"cmvyh5tch0tdzn01bg7bl46jb","note":"orch/D4-WSB-55B080-ULP"}
+{"at":"2026-11-02T02:37:08Z","id":"D4-DC-77b0-ST5-HOLD","from":"review","to":"merge-queued","owner":"cmvydyuwp086bn01bt1vj431h","note":"orch/D4-DC-77b0-ST5-HOLD"}
+{"at":"2026-11-02T02:37:10Z","id":"D4-DC-77b0-MATCHEND-SUBSTATE","from":"review","to":"merge-queued","owner":"cmvye0ee508o3n01bhqahezpo","note":"orch/D4-DC-77b0-MATCHEND-SUBSTATE"}
+{"at":"2026-11-02T02:37:12Z","id":"D4-DC-77b0-ST3-PRETICK","from":"review","to":"merge-queued","owner":"cmvyioksl037jqu1cajsfjtt2","note":"orch/D4-DC-77b0-ST3-PRETICK"}
+{"at":"2026-11-02T02:37:14Z","id":"MATCH-TOPDOWN-T01","from":"review","to":"merge-queued","owner":"cmvybs2sr07ixq81czifqt0m6","note":"orch/MATCH-TOPDOWN-T01"}
+{"at":"2026-11-02T02:37:16Z","id":"MATCH-0040E370-NAKED","from":"review","to":"merge-queued","owner":"cmvy4jx35406jp71h9e49af4t","note":"orch/MATCH-0040E370-NAKED"}
+{"at":"2026-11-02T02:37:18Z","id":"MATCH-S08","from":"review","to":"merge-queued","owner":"cmvycr0x700t1n01bwkfutkao","note":"orch/MATCH-S08"}
+{"at":"2026-11-02T02:37:20Z","id":"MATCH-PORTSTATE-COURSE","from":"review","to":"merge-queued","owner":"cmvykxe730379pa1cuhbxktew","note":"orch/MATCH-PORTSTATE-COURSE"}
+{"at":"2026-11-02T02:37:22Z","id":"MATCH-S07-FU","from":"review","to":"merge-queued","owner":"cmvylbebc04wjpa1cxuby8ukh","note":"orch/MATCH-S07-FU"}
+{"at":"2026-11-02T03:00:15Z","id":"MATCH-PORTSTATE-RECORDS","from":"working","to":"review","owner":"cmvymjim3099tpa1c0pjlmbm4","note":"GREEN: knob MASHED_PORTSTATE_RECORDS, gates unchanged OFF/ON (g2), 0x0046dbe0 swap-ready behind a flip"}
+{"at":"2026-11-02T03:01:57Z","id":"MATCH-PORTSTATE-RECORDS","from":"review","to":"review","owner":"cmvymjim3099tpa1c0pjlmbm4","note":"SOURCE -Full ready @ d5a57c978 (stacked on orch/MATCH-PORTSTATE-COURSE @ 622335487, merge COURSE first)"}
+{"at":"2026-11-02T03:02:33Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"open","to":"claimed","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":""}
+{"at":"2026-11-02T03:04:28Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"claimed","to":"working","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":"worktree created, reading RECORDS/COURSE RESULTs"}
+{"at":"2026-11-02T03:18:06Z","id":"D4-DC-INC-PATHPROG-REMERGE","from":"merge-queued","to":"red-merge","owner":"cmvydyysy087nn01b02zrcpde","note":"merge train 20261101_233753: conflict needs a hand merge (frida-sweep recipe): hooks.csv, mashedmod/src/mashed_re/Ai/AiLeafTargets_naked.inc, mashedmod/src/mashed_re/Ai/AiTargetClosest_naked.inc, mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp, mashedmod/src/mashed_re/Race/PathProgDot.cpp, mashedmod/src/mashed_re/Race/PathProgStep_naked.inc, mashedmod/src/mashed_re/Util/PromoLoop_round31.cpp, mashedmod/src/mashed_re/Vehicle/PromoLoop_round2.cpp"}
+{"at":"2026-11-02T03:18:16Z","id":"HB-ASI-EAX-57C420","from":"merge-queued","to":"merged","owner":"cmvydz5tu08atn01b47oq03ha","note":"merge train 20261101_233753: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T03:25:38Z","id":"MATCH-S06-FU","from":"working","to":"review","owner":"cmvynavoj0crxpa1c83m81jm5","note":"GREEN: 0x004282a0 matched body in both targets (C4 candidate, exe-callers=3), 0x004274e0 matched body asi-only behind MASHED_LOC_USA_DAT (default OFF); gates 8284be46/ba407a16/31fe043e B 1d5bf4f9 x3 unchanged"}
+{"at":"2026-11-02T03:28:09Z","id":"MATCH-S06-FU","from":"review","to":"review","owner":"cmvynavoj0crxpa1c83m81jm5","note":"SOURCE -Full ready @ 4bf3919f3"}
+{"at":"2026-11-02T03:28:53Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"working","to":"working","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":"PREREG c255a4063, code b03eb46ac; gate arms g1 queued behind merge-train lock"}
+{"at":"2026-11-02T03:39:31Z","id":"D4-WSB-55B080-ULP","from":"merge-queued","to":"merged","owner":"cmvyh5tch0tdzn01bg7bl46jb","note":"merge train 20261102_001912: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T03:39:34Z","id":"D4-DC-77b0-ST5-HOLD","from":"merge-queued","to":"merged","owner":"cmvydyuwp086bn01bt1vj431h","note":"merge train 20261102_001912: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T03:39:36Z","id":"D4-DC-77b0-MATCHEND-SUBSTATE","from":"merge-queued","to":"merged","owner":"cmvye0ee508o3n01bhqahezpo","note":"merge train 20261102_001912: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T04:00:38Z","id":"D4-DC-77b0-ST3-PRETICK","from":"merge-queued","to":"merged","owner":"cmvyioksl037jqu1cajsfjtt2","note":"merge train 20261102_004044: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T04:00:40Z","id":"MATCH-TOPDOWN-T01","from":"merge-queued","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"merge train 20261102_004044: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T04:00:43Z","id":"MATCH-0040E370-NAKED","from":"merge-queued","to":"merged","owner":"cmvy4jx35406jp71h9e49af4t","note":"merge train 20261102_004044: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T04:01:45Z","id":"MATCH-TOPDOWN-T02","from":"review","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"sha fc0d11920 already in orch/integration via MATCH-TOPDOWN-T01 (merge train 20261102_004044, gates unchanged)"}
+{"at":"2026-11-02T04:01:47Z","id":"MATCH-TOPDOWN-T08","from":"review","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"sha fc0d11920 already in orch/integration via MATCH-TOPDOWN-T01 (merge train 20261102_004044, gates unchanged)"}
+{"at":"2026-11-02T04:01:49Z","id":"MATCH-TOPDOWN-T09","from":"review","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"sha fc0d11920 already in orch/integration via MATCH-TOPDOWN-T01 (merge train 20261102_004044, gates unchanged)"}
+{"at":"2026-11-02T04:01:50Z","id":"MATCH-TOPDOWN-T12","from":"review","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"sha fc0d11920 already in orch/integration via MATCH-TOPDOWN-T01 (merge train 20261102_004044, gates unchanged)"}
+{"at":"2026-11-02T04:01:52Z","id":"MATCH-TOPDOWN-T13","from":"review","to":"merged","owner":"cmvy4jx35406jp71h9e49af4t","note":"sha d2bacf645 already in orch/integration via MATCH-0040E370-NAKED (merge train 20261102_004044, gates unchanged)"}
+{"at":"2026-11-02T04:02:05Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"working","to":"review","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":""}
+{"at":"2026-11-02T04:02:25Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"review","to":"review","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":"SOURCE -Full ready @ 0ff69edec (stacked on RECORDS d5a57c978 on COURSE 622335487; state half only, handoff in RESULT)"}
+{"at":"2026-11-02T04:03:22Z","id":"MATCH-RC-S06S07","from":"merged","to":"decision","owner":"cmvykxc340373pa1csd9xvcij","note":"L-84"}
+{"at":"2026-11-02T04:03:51Z","id":"MATCH-RC-S06S07","from":"decision","to":"merged","owner":"cmvykxc340373pa1csd9xvcij","note":"merge train 20261101_231430: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9 x3 (restored after L-84 was filed against it; the follow-up lives in MATCH-RC-NAVDEV)"}
+{"at":"2026-11-02T04:03:55Z","id":"MATCH-RC-NAVDEV","from":"open","to":"decision","owner":"","note":"L-84 (filed against MATCH-RC-S06S07)"}
+{"at":"2026-11-02T04:09:06Z","id":"MATCH-RC-NAVDEV","from":"decision","to":"open","owner":"","note":"L-84 answered (a), Mariano 2026-11-02: 0x0042a9c0 and 0x0042ad90 STAY C4; a dev-only exe path (Nav_DevGoto) counts as an exe caller under L-68. Text-only: record the answer in their notes, no level change"}
+{"at":"2026-11-02T04:11:47Z","id":"MATCH-RC-T13N","from":"open","to":"claimed","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":""}
+{"at":"2026-11-02T04:11:48Z","id":"MATCH-RC-T01G","from":"open","to":"claimed","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":""}
+{"at":"2026-11-02T04:11:49Z","id":"MATCH-RC-NAVDEV","from":"open","to":"claimed","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":""}
+{"at":"2026-11-02T04:11:50Z","id":"MATCH-T13-SEED","from":"open","to":"claimed","owner":"cmvyqrjzy0q5ppa1crkwomb97","note":""}
+{"at":"2026-11-02T04:11:51Z","id":"MATCH-T01G-FU","from":"open","to":"claimed","owner":"cmvyqrmyu0q67pa1co18q9x3w","note":""}
+{"at":"2026-11-02T04:16:10Z","id":"MATCH-T01G-FU","from":"claimed","to":"working","owner":"cmvyqrmyu0q67pa1co18q9x3w","note":"byte-match 0040fc00 004111c0 0040e590 00416250 (+00409a80)"}
+{"at":"2026-11-02T04:16:11Z","id":"MATCH-T13-SEED","from":"claimed","to":"working","owner":"cmvyqrjzy0q5ppa1crkwomb97","note":"worktree created, reading 0x004173a0 / Rule10Seed"}
+{"at":"2026-11-02T04:16:17Z","id":"MATCH-RC-T13N","from":"claimed","to":"working","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"re-classify text-only"}
+{"at":"2026-11-02T04:16:19Z","id":"MATCH-RC-T01G","from":"claimed","to":"working","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"re-classify text-only"}
+{"at":"2026-11-02T04:16:21Z","id":"MATCH-RC-NAVDEV","from":"claimed","to":"working","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"re-classify text-only"}
+{"at":"2026-11-02T04:20:00Z","id":"MATCH-RC-T13N","from":"working","to":"review","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"TEXT-ONLY ready @ 96ab4b374"}
+{"at":"2026-11-02T04:20:02Z","id":"MATCH-RC-T01G","from":"working","to":"review","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"TEXT-ONLY ready @ 96ab4b374 (combined branch orch/MATCH-RC-T13N)"}
+{"at":"2026-11-02T04:20:04Z","id":"MATCH-RC-NAVDEV","from":"working","to":"review","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"TEXT-ONLY ready @ 96ab4b374 (combined branch orch/MATCH-RC-T13N)"}
+{"at":"2026-11-02T04:22:05Z","id":"MATCH-S09","from":"open","to":"claimed","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":""}
+{"at":"2026-11-02T04:27:06Z","id":"MATCH-S09","from":"claimed","to":"working","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":"static leg start"}
+{"at":"2026-11-02T04:28:57Z","id":"MATCH-S08","from":"merge-queued","to":"red-merge","owner":"cmvycr0x700t1n01bwkfutkao","note":"merge train 20261102_010215: conflict needs a hand merge (frida-sweep recipe): mashedmod/src/mashed_re/Util/UtilMid.cpp"}
+{"at":"2026-11-02T04:29:01Z","id":"MATCH-PORTSTATE-COURSE","from":"merge-queued","to":"red-merge","owner":"cmvykxe730379pa1cuhbxktew","note":"merge train 20261102_010215: conflict needs a hand merge (frida-sweep recipe): verify/savelink_20261023/run_arms.py"}
+{"at":"2026-11-02T04:29:11Z","id":"MATCH-S07-FU","from":"merge-queued","to":"merged","owner":"cmvylbebc04wjpa1cxuby8ukh","note":"merge train 20261102_010215: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T04:30:42Z","id":"MATCH-TOPDOWN-T02","from":"merged","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"merged via head MATCH-TOPDOWN-T01 @ fc0d11920 (run 30 pass 3)"}
+{"at":"2026-11-02T04:30:43Z","id":"MATCH-TOPDOWN-T08","from":"merged","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"merged via head MATCH-TOPDOWN-T01 @ fc0d11920 (run 30 pass 3)"}
+{"at":"2026-11-02T04:30:46Z","id":"MATCH-TOPDOWN-T09","from":"merged","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"merged via head MATCH-TOPDOWN-T01 @ fc0d11920 (run 30 pass 3)"}
+{"at":"2026-11-02T04:30:48Z","id":"MATCH-TOPDOWN-T12","from":"merged","to":"merged","owner":"cmvybs2sr07ixq81czifqt0m6","note":"merged via head MATCH-TOPDOWN-T01 @ fc0d11920 (run 30 pass 3)"}
+{"at":"2026-11-02T04:30:49Z","id":"MATCH-TOPDOWN-T13","from":"merged","to":"merged","owner":"cmvy4jx35406jp71h9e49af4t","note":"merged via head MATCH-0040E370-NAKED @ d2bacf645 (run 30 pass 3)"}
+{"at":"2026-11-02T04:31:10Z","id":"MATCH-S06-FU","from":"review","to":"merge-queued","owner":"cmvynavoj0crxpa1c83m81jm5","note":"orch/MATCH-S06-FU"}
+{"at":"2026-11-02T05:07:17Z","id":"MATCH-T13-SEED","from":"working","to":"review","owner":"cmvyqrjzy0q5ppa1crkwomb97","note":"SOURCE -Full ready @ 8c8373015; DECISION: seed follows FUN_00414060's DAT_0089a360 (championship rule-10 events d=6/4/7, f=0.4/0.6/0.3), neither 0.75 nor 1.0; knob OFF, gates unchanged; recommend porting FUN_00414060/00414120/00417750 before any flip"}
+{"at":"2026-11-02T05:09:33Z","id":"MATCH-T13-SEED","from":"review","to":"review","owner":"cmvyqrjzy0q5ppa1crkwomb97","note":"SOURCE -Full ready @ 8c8373015"}
+{"at":"2026-11-02T05:09:34Z","id":"MATCH-T13-SEED","from":"review","to":"decision","owner":"cmvyqrjzy0q5ppa1crkwomb97","note":"L-85"}
+{"at":"2026-11-02T05:11:06Z","id":"MATCH-S08","from":"red-merge","to":"working","owner":"cmvycr0x700t1n01bwkfutkao","note":"re-merge onto 419a9abe9"}
+{"at":"2026-11-02T05:11:08Z","id":"MATCH-PORTSTATE-COURSE","from":"red-merge","to":"working","owner":"cmvykxe730379pa1cuhbxktew","note":"re-merge onto 419a9abe9"}
+{"at":"2026-11-02T05:11:09Z","id":"MATCH-PORTSTATE-RECORDS","from":"review","to":"working","owner":"cmvymjim3099tpa1c0pjlmbm4","note":"re-merge onto 419a9abe9"}
+{"at":"2026-11-02T05:11:11Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"review","to":"working","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":"re-merge onto 419a9abe9"}
+{"at":"2026-11-02T05:12:17Z","id":"MATCH-T01G-FU","from":"working","to":"review","owner":"cmvyqrmyu0q67pa1co18q9x3w","note":"SOURCE -Full ready @ 89a99ac21; 0x0040fc00+0x004111c0 matched+swapped (exe-callers=0), 0x0040e590 84.6%, 0x00416250 88.9%, 0x00409a80 chain via Ghidra-missed fns; gates unchanged"}
+{"at":"2026-11-02T05:14:13Z","id":"MATCH-S06-FU","from":"merge-queued","to":"merged","owner":"cmvynavoj0crxpa1c83m81jm5","note":"merge train 20261102_013154: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T05:15:53Z","id":"MATCH-RC-FU","from":"open","to":"claimed","owner":"cmvyt1wbf15ubpa1cilt07j6r","note":""}
+{"at":"2026-11-02T05:16:20Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"review","to":"merge-queued","owner":"cmvylb32z04w3pa1cijl8kwm7","note":"orch/PROMOTE-DETORIG-LOADHOLD"}
+{"at":"2026-11-02T05:16:22Z","id":"MATCH-RC-T13N","from":"review","to":"merge-queued","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"orch/MATCH-RC-T13N"}
+{"at":"2026-11-02T05:16:39Z","id":"MATCH-T01G-FU","from":"review","to":"merge-queued","owner":"cmvyqrmyu0q67pa1co18q9x3w","note":"orch/MATCH-T01G-FU"}
+{"at":"2026-11-02T05:17:08Z","id":"MATCH-RC-T13N","from":"merge-queued","to":"merge-queued","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"orch/MATCH-RC-T13N"}
+{"at":"2026-11-02T05:17:11Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"merge-queued","to":"merge-queued","owner":"cmvylb32z04w3pa1cijl8kwm7","note":"orch/PROMOTE-DETORIG-LOADHOLD"}
+{"at":"2026-11-02T05:19:26Z","id":"MATCH-RC-FU","from":"claimed","to":"working","owner":"cmvyt1wbf15ubpa1cilt07j6r","note":"re-classify text-only"}
+{"at":"2026-11-02T05:21:50Z","id":"MATCH-RC-FU","from":"working","to":"review","owner":"cmvyt1wbf15ubpa1cilt07j6r","note":"TEXT-ONLY ready @ 778182a85"}
+{"at":"2026-11-02T05:33:12Z","id":"MATCH-RC-FU","from":"review","to":"merge-queued","owner":"cmvyt1wbf15ubpa1cilt07j6r","note":"orch/MATCH-RC-FU"}
+{"at":"2026-11-02T05:35:59Z","id":"MATCH-RC-T13N","from":"merge-queued","to":"merged","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"merge train 20261102_021726: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T05:36:01Z","id":"PROMOTE-DETORIG-LOADHOLD","from":"merge-queued","to":"merged","owner":"cmvylb32z04w3pa1cijl8kwm7","note":"merge train 20261102_021726: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T06:04:11Z","id":"MATCH-RC-T01G","from":"review","to":"merged","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"merged via head MATCH-RC-T13N @ 96ab4b374 (run 30 pass 5)"}
+{"at":"2026-11-02T06:04:11Z","id":"MATCH-RC-NAVDEV","from":"review","to":"merged","owner":"cmvyqr93j0q4ppa1ck9okejfl","note":"merged via head MATCH-RC-T13N @ 96ab4b374 (run 30 pass 5)"}
+{"at":"2026-11-02T06:05:49Z","id":"MATCH-RC-FU","from":"merge-queued","to":"merged","owner":"cmvyt1wbf15ubpa1cilt07j6r","note":"merge train 20261102_023655: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-02T06:06:38Z","id":"MATCH-T01G-FU","from":"merge-queued","to":"merge-queued","owner":"cmvyqrmyu0q67pa1co18q9x3w","note":"orch/MATCH-T01G-FU"}
+{"at":"2026-11-02T06:54:01Z","id":"MATCH-T01G-FU","from":"merge-queued","to":"merged","owner":"cmvyqrmyu0q67pa1co18q9x3w","note":"merge train 20261102_030710: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T07:28:47Z","id":"MATCH-S09","from":"working","to":"review","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":"SOURCE -Full ready @ 4079c670d: 107/129 matched, 19 swapped (5 exe), 5 C4 candidates, gates unchanged"}
+{"at":"2026-11-02T07:40:01Z","id":"MATCH-S08","from":"working","to":"review","owner":"cmvycr0x700t1n01bwkfutkao","note":"SOURCE -Full ready @ fe620db75 (re-merged onto 419a9abe9; gated 3e48a2d09, gates = refs)"}
+{"at":"2026-11-02T07:40:02Z","id":"MATCH-PORTSTATE-COURSE","from":"working","to":"review","owner":"cmvykxe730379pa1cuhbxktew","note":"SOURCE -Full ready @ 16955581e (re-merged onto 419a9abe9; gated 213952116, gates = refs knob OFF and ON)"}
+{"at":"2026-11-02T07:40:03Z","id":"MATCH-PORTSTATE-RECORDS","from":"working","to":"review","owner":"cmvymjim3099tpa1c0pjlmbm4","note":"SOURCE -Full ready @ d20783166, stacked on COURSE 16955581e (gated 152c18869, gates = refs, knob ON gates.csv 67931834 masked 0)"}
+{"at":"2026-11-02T07:40:04Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"working","to":"review","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":"SOURCE -Full ready @ 72c181374, stacked on RECORDS d20783166 / COURSE 16955581e (gated d86dac98c, gates = refs, knob ON gates.csv 67931834 masked 0)"}
+{"at":"2026-11-02T07:40:58Z","id":"MATCH-S08-FU","from":"open","to":"claimed","owner":"cmvyy8uso1e9jpa1caattir89","note":""}
+{"at":"2026-11-02T07:42:47Z","id":"MATCH-S08-FU","from":"claimed","to":"working","owner":"cmvyy8uso1e9jpa1caattir89","note":"stacked on MATCH-S08 fe620db75"}
+{"at":"2026-11-02T07:44:49Z","id":"D4-DC-INC-SQRT-FOLD","from":"working","to":"review","owner":"cmvyjigk307oaqu1ceiglhqg1","note":""}
+{"at":"2026-11-02T07:44:50Z","id":"D4-DC-INC-SQRT-FOLD","from":"review","to":"decision","owner":"cmvyjigk307oaqu1ceiglhqg1","note":"L-86"}
+{"at":"2026-11-02T07:45:40Z","id":"MATCH-S08","from":"review","to":"merge-queued","owner":"cmvycr0x700t1n01bwkfutkao","note":"orch/MATCH-S08"}
+{"at":"2026-11-02T07:45:42Z","id":"MATCH-S09","from":"review","to":"merge-queued","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":"orch/MATCH-S09"}
+{"at":"2026-11-02T07:45:44Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"review","to":"merge-queued","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":"orch/MATCH-PORTSTATE-GAMEFLOW"}
+{"at":"2026-11-02T09:11:36Z","id":"MATCH-S08-FU","from":"working","to":"review","owner":"cmvyy8uso1e9jpa1caattir89","note":"SOURCE -Full ready @ 258463c03 (stacked on MATCH-S08 fe620db75)"}
+{"at":"2026-11-02T09:11:59Z","id":"MATCH-PAUSE-OVERLAY","from":"open","to":"decision","owner":"","note":"L-87"}
+{"at":"2026-11-02T09:19:10Z","id":"MATCH-S08-FU","from":"review","to":"merge-queued","owner":"cmvyy8uso1e9jpa1caattir89","note":"orch/MATCH-S08-FU"}
+{"at":"2026-11-02T09:30:17Z","id":"MATCH-S08","from":"merge-queued","to":"merged","owner":"cmvycr0x700t1n01bwkfutkao","note":"merge train 20261102_044613: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T10:06:54Z","id":"MATCH-RC-S08","from":"open","to":"claimed","owner":"cmvz3gepr1j31pa1co2wu69vr","note":""}
+{"at":"2026-11-02T10:06:55Z","id":"MATCH-RC-S09","from":"open","to":"claimed","owner":"cmvz3gepr1j31pa1co2wu69vr","note":""}
+{"at":"2026-11-02T10:08:24Z","id":"MATCH-RC-S08","from":"claimed","to":"working","owner":"cmvz3gepr1j31pa1co2wu69vr","note":"RC-S08 + RC-S09 stacked"}
+{"at":"2026-11-02T10:31:59Z","id":"MATCH-S09","from":"merge-queued","to":"red-merge","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":"merge train 20261102_063056: conflict needs a hand merge (frida-sweep recipe): re/console/pc_funcs.csv"}
+{"at":"2026-11-02T10:32:05Z","id":"MATCH-PORTSTATE-GAMEFLOW","from":"merge-queued","to":"merged","owner":"cmvyoancf0f1rpa1cwn0lqjuo","note":"merge train 20261102_063056: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T10:32:37Z","id":"MATCH-RC-S08","from":"working","to":"review","owner":"cmvz3gepr1j31pa1co2wu69vr","note":"TEXT-ONLY ready @ 45e7ab715"}
+{"at":"2026-11-02T10:32:38Z","id":"MATCH-RC-S09","from":"claimed","to":"open","owner":"","note":"waiting for S09 merge (MATCH-S09 stage red-merge at 07:32)"}
+{"at":"2026-11-02T10:32:45Z","id":"MATCH-PORTSTATE-RECORDS","from":"review","to":"decision","owner":"cmvymjim3099tpa1c0pjlmbm4","note":"L-88"}
+{"at":"2026-11-02T10:33:53Z","id":"MATCH-S09","from":"red-merge","to":"working","owner":"cmvyr4pln0s7ppa1cgjk5v3cr","note":"re-merge onto 9d208ac35"}
+{"at":"2026-11-02T11:04:24Z","id":"MATCH-S08-FU","from":"merge-queued","to":"merged","owner":"cmvyy8uso1e9jpa1caattir89","note":"merge train 20261102_073244: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-11-02T11:05:08Z","id":"MATCH-PORTSTATE-COURSE","from":"review","to":"merged","owner":"cmvykxe730379pa1cuhbxktew","note":"merged via head MATCH-PORTSTATE-GAMEFLOW @ 9d208ac35 (run 30 pass 7)"}
