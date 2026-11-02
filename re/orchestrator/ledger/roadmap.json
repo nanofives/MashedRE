@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-11-02T01:03:43Z",
+  "updated": "2026-11-02T01:21:23Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -5134,20 +5134,20 @@
       "id": "MATCH-S08",
       "section": "MATCH",
       "title": "C4 by byte match, slice MATCH-S08: game functions 0x00432260..0x00451680 (128 functions, 0 library rows skipped inside). Select, g2s, match, bounded permute, body swap, build, gates. Needs MATCH-MERGE merged; re-classify C4 also needs MATCH-RUBRIC merged",
-      "stage": "working",
+      "stage": "review",
       "owner": "cmvycr0x700t1n01bwkfutkao",
       "parent": "cmvy4ht053yvdp71hgkb0x8a6",
       "branch": "orch/MATCH-S08",
       "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\MATCH-S08",
-      "evidence": "verify/matchscope_20261031/slices.tsv",
+      "evidence": "verify/matchs08_20261101/RESULT_MATCH-S08.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 4,
       "next": "",
-      "note": "select/g2s/match on slice, T07/T11 RVAs first",
-      "updated": "2026-11-01T21:42:28Z"
+      "note": "SOURCE -Full ready @ 56a88ebf4: 93/128 matched, 29 swapped (9 exe), 4 C4 candidates, gates unchanged",
+      "updated": "2026-11-02T01:20:33Z"
     },
     {
       "id": "MATCH-S09",
@@ -7111,7 +7111,7 @@
       "id": "HB-MASHEDLOCK-SOLO-PRIORITY",
       "section": "HARNESS",
       "title": "mashed_lock.py lets a new solo window open while a merge-train PRIORITY-PENDING claim waits, so the train starves (run 29: pass 20261101_191148 pending from 19:39 while MATCH-TOPDOWN-T01 solo opened 19:32 and HB-ASI-EAX-57C420-gates solo opened 19:54 with a 12 h expiry). Make solo-open refuse (wait) while a priority claim is pending, and cap a solo window's default expiry to something near one gate run. Extend mashed_lock_concurrency_test.py with the case. TEXT-ONLY.",
-      "stage": "review",
+      "stage": "merged",
       "owner": "cmvyfwqvo0oarn01byjqmv6il",
       "parent": "cmvydx9j307tbn01bp02my06s",
       "branch": "orch/HB-MASHEDLOCK-SOLO-PRIORITY",
@@ -7123,8 +7123,9 @@
       "decision": "",
       "wave": 3,
       "next": "",
-      "note": "TEXT-ONLY ready @ b52d95787",
-      "updated": "2026-11-01T23:42:10Z"
+      "note": "merge train 20261101_220728: G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-02T01:20:45Z",
+      "sha": "75165386dabbd5e91c408a3ce4dc594bf5af72e4"
     },
     {
       "id": "PROMOTE-DETORIG-LOADHOLD",
@@ -7149,20 +7150,39 @@
       "id": "HB-MASHEDLOCK-EARLY-PRIORITY",
       "section": "HARNESS",
       "title": "Follow-up to HB-MASHEDLOCK-SOLO-PRIORITY (review @ b52d95787; build on that branch): every starvation on 2026-11-01 had the same shape. The train merges and builds for 4-8 min before it registers PRIORITY-PENDING, and a worker opens a solo window in that gap (EAX 20:49 before the 20:57 claim, PATHPROG-REMERGE 21:29 before the 21:33 claim). Make re/orchestrator/merge_train.ps1 register its mashed_lock priority at the START of each pass (before merge and build), keep it through the gates, and release it on every exit path (GREEN, RED, conflict, nothing queued). Must not break a window another session already holds. Text-only tooling, no game boots. If the .ps1 edit cannot be applied, put the exact diff in the RESULT.",
-      "stage": "working",
+      "stage": "merge-queued",
       "owner": "cmvyjd2e6076mqu1cjt4pa003",
       "parent": "cmvyjc3fn06xwqu1ctjp5m7ch",
       "branch": "orch/HB-MASHEDLOCK-EARLY-PRIORITY",
       "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\HB-MASHEDLOCK-EARLY-PRIORITY",
-      "evidence": "planner note 2026-11-01; HB-MASHEDLOCK-SOLO-PRIORITY b52d95787",
+      "evidence": "verify/harness_20261102/RESULT_HB-MASHEDLOCK-EARLY-PRIORITY.md",
       "deps": [],
       "needs": [],
       "solo": false,
       "decision": "",
       "wave": 3,
       "next": "",
-      "note": "worktree created from b52d95787; editing merge_train.ps1 priority lifetime",
-      "updated": "2026-11-02T00:46:49Z"
+      "note": "TEXT-ONLY ready @ e3f44578e (contains HB-MASHEDLOCK-SOLO-PRIORITY b52d95787)",
+      "updated": "2026-11-02T01:21:21Z"
+    },
+    {
+      "id": "HB-SELFTEST-D2DEFH",
+      "section": "HARNESS",
+      "title": "merge_train.ps1 -SelfTest fails 3 HB-D2RERUN checks identically on base: the test hardcodes D2_DEF_2 while merge_train.json now uses D2_DEFH_* (42 s hold). One-line test fix, text-only (found by HB-MASHEDLOCK-EARLY-PRIORITY, verify/harness_20261102).",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 3,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-02T01:21:23Z"
     }
   ]
 }
