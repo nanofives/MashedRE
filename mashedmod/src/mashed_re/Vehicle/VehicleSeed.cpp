@@ -13,64 +13,9 @@
 // the post-loop writes are the sole producers of those globals.
 // Ref: re/analysis/skeleton_prep_render/00448700.md
 // Binary anchor: MASHED.exe size=2,846,720 sha256=BDCAE093...EFD3C0E
-#include "../Core/HookSystem.h"
-#include "../Race/CameraEntries.h"
-#include <cstdint>
+// The old naked body called 0x004464c0 through s_call_004464c0: the port CameraEntryDispatchAll
+// (Util/CameraEntryDispatch.cpp) in the exe, the raw RVA (installed CameraEntryDispatchAll) in the .asi.
+// The matched source calls it as FUN_004464c0, bound to CameraEntryDispatchAll in the wrapper.
 
-namespace {
-constexpr std::uintptr_t kDispatchArg_897fe0 = 0x00897fe0u;
-constexpr std::uintptr_t kOut1_897ffc        = 0x00897ffcu;
-constexpr std::uintptr_t kOut2_898000        = 0x00898000u;
-
-// 0x004464c0  FUN_004464c0  CameraEntry::DispatchAll.
-// Indirect slot so the CALL below clobbers no register beyond the ABI's scratch set.
-#ifdef MASHED_STANDALONE
-// Exe: the RVA is outside the mapped text, so bind the port (Util/CameraEntryDispatch.cpp, both
-// targets since D-11073 leg 2). The .asi keeps the raw RVA so a live hook there is honoured.
-void* const s_call_004464c0 = reinterpret_cast<void*>(&CameraEntryDispatchAll);
-#else
-void* const s_call_004464c0 = reinterpret_cast<void*>(0x004464c0u);
-#endif
-} // namespace
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00448700  VehicleSeedWritePair
-// ─────────────────────────────────────────────────────────────────────────────
-// BUGFIX 2026-07-27 — HANG (infinite loop). The C form of this loop was
-//     for (int i = 100; i != 0; --i) CallDispatchAll(...);
-// and MSVC allocated `i` to EAX *across the call*, emitting:
-//     asi+0xc5c0  mov eax,0x64          ; i
-//     asi+0xc5c5  push 0x00897fe0
-//     asi+0xc5ca  call <thunk -> 0x004464c0>
-//     asi+0xc5cf  add esp,4
-//     asi+0xc5d2  sub eax,1             ; <-- EAX is the CALLEE'S RETURN VALUE here
-//     asi+0xc5d5  jne  asi+0xc5c5
-// Our port of 0x004464c0 (CameraEntryDispatchAll) is declared `std::uint32_t` and
-// returns the entry count, which is 0 whenever the camera-entry array is empty
-// (0x00898994 == 0 live at race entry). So each iteration reloaded EAX=0, `sub eax,1`
-// gave 0xffffffff, and the loop never terminated — the main thread wedged inside it
-// (IsHungAppWindow=true; 12/12 thread samples in this loop; ESI==0x32 identical across
-// three separate processes). The original is immune because it keeps its counter in
-// ESI (`MOV ESI,0x64` / `DEC ESI`) precisely because EAX does not survive a CALL.
-// Transcribed verbatim so the counter lives in ESI exactly as the original.
-// After `PUSH ESI` the incoming args sit at [ESP+8] / [ESP+0xc], matching the original.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl VehicleSeedWritePair(
-        std::uint32_t /*param_1*/, std::uint32_t /*param_2*/) {
-    __asm {
-        push esi
-        mov  esi, 64h                       // 100 iterations
-    L_VSWP_LOOP:
-        push 0897FE0h                       // kDispatchArg_897fe0
-        call dword ptr [s_call_004464c0]    // routes through any live hook at the RVA
-        add  esp, 4                         // __cdecl: caller cleans
-        dec  esi
-        jne  L_VSWP_LOOP
-        mov  eax, dword ptr [esp+8]         // param_1
-        mov  ecx, dword ptr [esp+0Ch]       // param_2
-        mov  dword ptr ds:[0897FFCh], eax   // kOut1_897ffc
-        mov  dword ptr ds:[0898000h], ecx   // kOut2_898000
-        pop  esi
-        ret
-    }
-}
-RH_ScopedInstall(VehicleSeedWritePair, 0x00448700);
+// MATCH-S08: the body of 0x00448700 (VehicleSeedWritePair) moved to Match/MatchS08_00448700.cpp,
+// which compiles the byte-matched source re/match/s08/00448700.c.

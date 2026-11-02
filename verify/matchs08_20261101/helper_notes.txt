@@ -1,0 +1,158 @@
+## h1
+0x0043d7c0  1791  100(bytes; 99.6% ins)  99.6%  cxx:ok  -  BYTE-IDENTICAL whole symbol (1844 B); only ins diff is add esp/ret past Ghidra size; relocheck OK unchecked=3 (__ftol, PostQuitMessage)
+## h2
+0x00434720  8369  57.1%  70.5%  cxx:ok  b  hand rewrite from disasm, ops 97.1%; residual = frame slot packing (use-count + liveness) and ebx/edi swap for zero vs n, not found in budget
+0x00434720 holds 0x0042f8d0 (100%), 0x00430b30 (100%), 0x0042b8b0 (100%), 0x0042b8c0 (100%)
+## h3
+0x004322c0  244  100.0  100.0  cxx:ok  none  callees 0x0042f6b0/0x00430830/0x00430910 defined earlier in the file give the intra-TU register caching
+0x004322c0 holds 0x0042f6b0 (100%), 0x00430830 (100%), 0x00430910 (61.7%, b: return-0 block placement)
+0x004323c0  136  100.0  100.0  cxx:ok  none  same three same-file leaf callees as 0x004322c0; globals read directly
+0x004323c0 holds 0x0042f6b0 (100%), 0x00430830 (100%), 0x00430910 (61.7%)
+0x004324a0  276  100.0  100.0  cxx:ok  none  hand control-flow rewrite; FUN_00432450 called with 6 cdecl args
+0x00432ad0  92  100.0  100.0  cxx:ok  none  0xff clamp through a local; FUN_0042aae0 cdecl 1 arg
+0x004331a0  152  100.0  100.0  cxx:ok  none  0x0067ebb0..0x0067ec23 is one global struct (float[4] loop, int[20] rep stosd)
+0x004325c0  564  100.0  100.0  cxx:ok  none  rebuilt from listing: x87 speed local, _ftol, switch on type, index loop; static register-arg callee
+0x004325c0 holds 0x0042ac50 (100%, static eax/ecx callee, same body as 0043d2a0.c)
+0x00432800  649  100.0  100.0  cxx:ok  none  MenuLevel array indexed directly, case bodies in layout order 8,0x1c,1,2,3,10,0x12,0x18
+0x004332a0  835  97.3  97.3  cxx:ok  b  block layout: original puts the slot.v = -1 block after the epilogue, ours inline
+0x004332a0 holds 0x0042ac50 (100%, static eax/ecx) and 0x00430760 (100%, same-file leaf so ECX survives the call)
+0x00432b30  1327  74.2  74.2  cxx:ok  b,c  static eax/esi register-arg function with stand-in caller; residual cross-jumping of identical case tails (343 vs 357 ins)
+0x00432b30 holds 0x0042ad10 (100%, static eax/edx + 3 stack) and 0x0042add0 (100%, static ebx/edi)
+## h4
+0x00436810  194  100.0  100.0  cxx:ok  -  12-entry loop over the 0x30-byte records at 0x007f0a40 (compiler unrolls 6x), relocheck OK
+0x004391b0  88  100.0  100.0  cxx:ok  -  EAX arg = static callee, stand-in caller in its own file (real caller 0x00439210), relocheck OK
+0x00433f40  997  99.3  100.0  cxx:ok  b  one add-operand register pair at the first FUN_004282a0 arg (eab4/eadc load order); switch cases kept apart by constant spellings
+0x0043a610  1050  35.1  42.9  cxx:ok  b  structure right (ops 84%), alpha in bl where the original uses a stack byte and ebx constants (regalloc/stack layout)
+0x0043aa30  1187  50.5  58.7  cxx:ok  b  structure right (ops 91%), stack-slot layout/regalloc not found (locals placed by use, not declaration order)
+0x004335f0  2376  64.8  75.3  cxx:ok  b  structure right (ops 92%), stack layout/regalloc and pal[0] forwarding in the id==0 branch; permuter's 71.4% changes behaviour, rejected
+0x00439210  5109  40.5  58.2  cxx:ok  b  structure in place (ops 83%), 60 min cap: stack layout/regalloc/x87 scheduling in the two row loops
+0x004368e0  10415  25.1  25.0  cxx:FAIL  b  raw body plus uchar param and static b8b0/b8c0 only (60 min cap); struct-by-value draws, goto structure, raw arity artefacts owed
+0x0043a610 holds 0x0042f8d0 (100%, relocheck OK)
+0x0043aa30 holds 0x0042f8d0 (100%, relocheck OK)
+0x00439210 holds 0x0042b8b0 0x0042b8c0 0x00430a10 0x00430a60 0x00430ab0 0x004391b0 (all 100%, relocheck OK)
+0x004368e0 holds 0x0042b8b0 0x0042b8c0 (100%, relocheck OK)
+## h5
+0x00441700  83  100.0  100.0  cxx:ok  -  by hand, float[2] view window to FUN_004c1c80
+0x004414b0  581  89.8  89.8  cxx:ok  b  x87 scheduling of the pos*-1 and at/right scale vectors (scalar kept to end in original)
+0x0043d2a0  1303  54.0  64.7  cxx:ok  c  register-arg callee FUN_00432b30 (eax/esi, 1327 B) not in file; loop regalloc follows
+0x0043d2a0 holds 0x0042ac00 (bytes identical past Ghidra size), 0x0042ac50 (100%), 0x0042ad90 (100%)
+0x0043c000  1451  100.0  100.0  cxx:ok  -  by hand, 18 fade pairs; state 0x0067e7d8 else-branch byte store into the state
+0x0043c5b0  3292  40.5  61.1  cxx:ok  b  structure by hand; local slot layout and loop pointer bias differ (60 min cap)
+0x0043c5b0 holds 0x0042aad0 (100%)
+0x0043af10  4061  22.9  29.7  cxx:FAIL  b  raw converter body + compile fixes; Ghidra merged pushes into wrong callees, needs rewrite from the listing
+0x0043dfd0  10938  17.7  46.9  cxx:ok  b  raw body, float globals/prototypes fixed; regalloc across 10.9 KB body, out of budget
+## h6
+0x00441760  117  100.0  100.0  cxx:ok  -  static __inline float-arg wrapper gives the fld/fstp angle copies
+0x004417e0  62  100.0  100.0  cxx:ok  -  vector copied through a local struct then member-wise
+0x00441820  357  100.0  100.0  cxx:ok  -  literal 90/180, member-wise vector copies, float[16] matrix (no /GS cookie)
+0x00441b30  329  86.7  86.7  cxx:ok  b  frame slots of the float locals (f6 in param_2's slot in the original)
+0x00441c80  179  100.0  100.0  cxx:ok  -  first position as scalars, difference as a local struct, literal 0.5f
+0x00442440  391  73.8  68.9  cxx:ok  b  original pushes translate args after the last fadd; 9176 hoists them into the sum (esp offsets shift)
+0x004425d0  36  100.0(bytes)  80.0  cxx:ok  -  byte-identical whole symbol; Ghidra size stops before the trailing store/ret
+0x00442600  349  100.0  100.0  cxx:ok  -  case bodies in original emit order, float== as int compare, whole symbol byte-identical
+0x00441990  407  100.0  100.0  cxx:ok  -  atan angle code as 0x004233e0, horizontal length reuses dz's variable (slot reuse)
+0x004427c0  598  52.7  70.2  cxx:ok  b  min loop unrolled x8 here vs x4 in the original; param/table registers differ
+0x00441d40  1730  69.2  74.2  cxx:ok  b  original keeps the wrapped angle on the x87 stack through the rate formula; step-copy frame slot; permuter's 77.5% changed behaviour (rejected)
+## h7
+0x00442a20  51  100.0  100.0  cxx:ok  -  64-byte struct copy; relocheck OK
+0x00442c80  63  100.0  100.0  cxx:ok  -  relocheck OK
+0x00442ce0  249  100.0  100.0  cxx:ok  -  three separate early-return ifs; relocheck OK
+0x00442df0  7  100.0  100.0  cxx:ok  -  float return; relocheck OK
+0x004430e0  289  100.0  100.0  cxx:ok  -  RwRGBA by value, Im2D vertex struct; relocheck OK (cookie unchecked)
+0x00443210  233  100.0  100.0  cxx:ok  -  float literals not globals; RwRGBA local by value; relocheck OK
+0x00443300  307  100.0  100.0  cxx:ok  -  Catmull-Rom, local index; relocheck OK
+0x00443d10  167  100.0  100.0  cxx:ok  -  float locals for scaled coords; relocheck OK (_ftol unchecked)
+0x00442a60  531  99.4  99.4  cxx:ok  a  one load of the loop counter scheduled after fmul instead of before; memset intrinsic clear
+0x00442e00  627  65.1  65.7  cxx:ok  b  frame 0xc vs 8 (original packs dz/sqrt into param_1's dead slot), x87 spills in the pitch wobble
+0x00443440  2225  58.4  67.5  cxx:ok  b  register (esi/edi/ebx) and stack-slot packing differ; flow/calls line up (ops 94.1%); Ghidra size short of real end 0x00443d0d
+## h8
+0x004464c0  92  100.0  100.0  cxx:ok  -  relocheck OK; record table as int[54], callees cdecl (int *rec, int arg)
+0x00444b60  1163  69.0  69.0  cxx:ok  (b)  all 336 ins in order (ops 98.8%); frame slot order (+2 free slots) and x87 pop of t*t differ
+0x00448220  1248  97.0  97.0  cxx:ok  (b)  real size 1248 (tail jmp 0x00434360); tail block fld/fmul vs arg-push scheduling, statement orders + permuter no change
+0x00445aa0  2579  67.4  71.6  cxx:ok  (b)  out of budget: edi/ebp swap, 'off' kept in dead param_2 slot (ours const-propagates), active-branch block layout
+0x00444ff0  2709  100.0  100.0  cxx:ok  -  relocheck OK; RwRGBA by value, Spline[3] banks, case 0 + separate identical default gives the jump table
+0x00443dc0  3464  57.5  59.0  cxx:ok  (b)  out of budget: frame layout, 4 duplicated y-compares in 2 draws (ours folds them), walk/retry block layout
+0x00446520  7412  94.9  94.9  cxx:ok  (a)  FLAGS /Od (function is unoptimized code); frame matched via name-hash local naming; residual = orig evaluates [p+x] operand before [ebp-x] (fld [p]; fsubr), 9176 never does (likely 9176 vs 9466)
+## h9
+0x00448730  52  100.0  100.0  cxx:ok  -  float += 1.0f literal (0x005cc320 is .rdata 1.0f)
+0x00448770  165  100.0  100.0  cxx:ok  -  int-index loop over arrays, local vec init before global store
+0x00448880  184  100.0  100.0  cxx:ok  -  same shape as 0x00448770, 4 entries
+0x00448cb0  261  100.0  100.0  cxx:ok  -  float globals, literal constants, sin/cos intrinsics
+0x00448dc0  95  100.0  100.0  cxx:ok  -  float + pointer callee results through locals (twin 0x0044cb00: same source, DAT_00896230[4], i<4 -> 100%, scratch/h9/t_0044cb00.c)
+0x00448e20  207  100.0  100.0  cxx:ok  -  4-entry twin of 0x00448cb0, literal constants, sin/cos intrinsics
+0x00448ef0  97  100.0  100.0  cxx:ok  -  callees take one unused pushed int, float literal 0.2f, (sin+1.0)*0.15f
+0x004491e0  205  100.0  100.0  cxx:ok  -  3 local vectors, matrix struct pointer frame+0x10, pointer-walk loop
+0x004492b0  379  100.0  100.0  cxx:ok  -  callee arity: 426060 takes 0 args, 4e4320/4e4350 take (world, cam)
+0x004496a0  111  100.0  100.0  cxx:ok  -  float local vector, direct 2-arg call to 0x00465da0
+0x00449710  108  100.0  100.0  cxx:ok  -  same source as 0x004496a0, constant id 6000
+0x00449880  37  100.0  100.0  cxx:ok  -  float local + 1.0f, int loop -> rep stosd
+0x00449b30  99  100.0  100.0  cxx:ok  -  float pair local (eax/ecx copy), "smoke" literal, tail jmp
+0x00449ba0  5  100.0  100.0  cxx:ok  -  one-statement void wrapper = /O2 tail jmp
+0x00448940  867  100.0  100.0  cxx:ok  -  byte-identical 880 B obj symbol (Ghidra size 13 B short, insn score 97.9%); sphere macro shape + block-scoped emitter vectors
+0x00448730  52  100.0  100.0  cxx:ok  -  float += 1.0f literal (0x005cc320 is .rdata 1.0f)
+0x00448770  165  100.0  100.0  cxx:ok  -  int-index loop over arrays, local vector init before the global store
+0x00448880  184  100.0  100.0  cxx:ok  -  same shape as 0x00448770, 4 entries
+0x00448cb0  261  100.0  100.0  cxx:ok  -  float globals, literal constants, sin/cos intrinsics
+0x00448dc0  95  100.0  100.0  cxx:ok  -  float and pointer callee results through locals (twin 0x0044cb00: same source with DAT_00896230[4], i<4 -> 100% + relocheck OK, scratch/h9/t_0044cb00.c)
+0x00448e20  207  100.0  100.0  cxx:ok  -  4-entry twin of 0x00448cb0, literal constants
+0x00448ef0  97  100.0  100.0  cxx:ok  -  callees take one unused pushed int, 0.2f literal, (sin+1.0)*0.15f
+0x004491e0  205  100.0  100.0  cxx:ok  -  3 local vectors, matrix struct pointer frame+0x10, pointer-walk loop
+0x004492b0  379  100.0  100.0  cxx:ok  -  callee arity: 0x00426060 takes 0 args, 0x004e4320/0x004e4350 take (world, cam)
+0x004496a0  111  100.0  100.0  cxx:ok  -  float local vector, direct 2-arg call to 0x00465da0
+0x00449710  108  100.0  100.0  cxx:ok  -  same source as 0x004496a0, constant id 6000
+0x00449880  37  100.0  100.0  cxx:ok  -  float local + 1.0f, int loop -> rep stosd
+0x00449b30  99  100.0  100.0  cxx:ok  -  float pair local (eax/ecx copy), "smoke" literal, tail jmp
+0x00449ba0  5  100.0  100.0  cxx:ok  -  one-statement void wrapper = /O2 tail jmp (not class c)
+0x00448940  867  100.0  100.0  cxx:ok  -  byte-identical 880 B obj symbol (Ghidra size 13 B short, insn score 97.9%), sphere macro shape + block-scoped emitter vectors
+## h10
+0x0044aaa0  123  100.0  100.0  cxx:ok  -  struct array at 0x00684320 indexed by i
+0x0044ab20  144  100.0  100.0  cxx:ok  -  struct array; handle re-read through e->m_00 picks the element base
+0x0044bbc0  106  100.0  100.0  cxx:ok  -  0x8c-byte local descriptor struct + 12-byte struct copy from LTM+0x30
+0x0044bc30  279  100.0  100.0  cxx:ok  -  .rdata floats are literals 0.99f / 0.001f, not globals
+0x0044bd50  273  89.5  89.5  cxx:ok  b  points-array induction base y vs z and loop store order; inline setters gave fld/fstp
+0x0044be70  289  89.7  89.7  cxx:ok  b  same shape and residual as 0x0044bd50 (points induction base, loop store order)
+0x0044c490  94  95.5  95.5  cxx:ok  b  vector pointer materialization (add eax,0x40) vs folded first load; struct-copy form swaps eax/ecx
+0x0044c4f0  250  98.8  98.8  cxx:ok  a  store [ebx+0x3c] scheduled after the two pushes for FUN_0047cdc0 (pilot residual, no source move found)
+0x0044c5f0  328  100.0  100.0  cxx:ok  -  all .rdata floats as literals, bounce velocity through a local
+0x0044c740  259  100.0  100.0  cxx:ok  -  hi/lo pointer pair, radius sum before distance, .rdata floats as literals
+0x0044c920  121  100.0  100.0  cxx:ok  -  uint param, 0.02f literal, i/j=i+1 pair loop over 3 slots
+0x0044bfa0  934  74.3  74.3  cxx:ok  b  stack layout of the six V3 locals (v placed above at/right); dot-product operand order follows it
+## h11
+0x0044cb00  95  100.0  100.0  cxx:ok  -  float local for the angle arg + FUN_00442410 result in a local (same trick fits twin 0x00448dc0)
+0x0044d5e0  176  100.0  100.0  cxx:ok  -  3-float struct copy of the param + int index loop over an 8 x 6-vertex array at 0x006848dc
+0x0044df80  81  100.0  100.0  cxx:ok  -  int index loop over the 0xf8-byte record array at 0x00890080
+0x0044dff0  43  100.0  100.0  cxx:ok  -  3-float struct copy from record.h->[+4] + 0x40
+0x0044e020  38  100.0  100.0  cxx:ok  -  record struct, float field +0x30 < DAT_005ce2d8
+0x0044e050  17  100.0  100.0  cxx:ok  -  record struct, float return of +0x28
+0x0044e070  39  100.0  100.0  cxx:ok  -  table first: `* (1.0f / 6.0f)` (0x005cc8f4 is an .rdata literal)
+0x0044e0a0  239  98.4  98.4  cxx:ok  b  one fstp-vs-load scheduling swap after the FUN_004b4510 call (literals 0.5f/300.0f, (float)fabs)
+0x0044e190  170  73.2  98.2  cxx:ok  b  static (EBX=rec), register rotation only from handles[i] on; held with its 3 TU siblings + stand-in caller
+0x0044e240  142  100.0  100.0  cxx:ok  -  static (ESI=clump, EDI=b, a on stack), in 0044e190.c
+0x0044e2d0  60  81.0  95.2  cxx:ok  b  static (EAX=array, EBX=rec), one load hoisted into ecx vs eax reused after push, in 0044e190.c
+0x0044e310  54  100.0  100.0  cxx:ok  -  static (EAX=handle, ESI=rec), in 0044e190.c
+0x0044e190 holds 0x0044e240 0x0044e2d0 0x0044e310
+0x0044ecc0  105  100.0  100.0  cxx:ok  -  Fx[3][10] slot array at 0x00895600, two int index loops, matrix local
+0x00451060  38  100.0  100.0  cxx:ok  -  FUN_00467210 takes 1 arg; push 0 is FUN_004c1480's 3rd arg
+0x0044f830  305  100.0  100.0  cxx:ok  -  switch writes the id base into the dead param slot, Fx[3][10] slots, tail jmp to FUN_0044ecc0
+0x00450300  346  100.0  100.0  cxx:ok  -  static (ESI = param) + stand-in caller, chained v.x = v.y = -1.0f, float literals
+0x0044e680  1213  100.0  100.0  cxx:ok  -  local float[8][10] initializer, field locals, table value local, DAT_00894e00[kind][idx], chained identity matrix
+0x00450b10  391  86.6  85.7  cxx:ok  b  uv/x+w/y+h locals + permuter order; x87 store scheduling residual
+0x0044cb00  95  100.0  100.0  cxx:ok  -  float local for the angle arg + FUN_00442410 result in a local (same trick fits twin 0x00448dc0)
+0x0044d5e0  176  100.0  100.0  cxx:ok  -  3-float struct copy of the param + int index loop over 8 x 6-vertex array at 0x006848dc
+0x0044df80  81  100.0  100.0  cxx:ok  -  int index loop over the 0xf8-byte record array
+0x0044dff0  43  100.0  100.0  cxx:ok  -  3-float struct copy from record.h->[+4] + 0x40
+0x0044e020  38  100.0  100.0  cxx:ok  -  record struct, float field compare
+0x0044e050  17  100.0  100.0  cxx:ok  -  record struct, float return
+0x0044e070  39  100.0  100.0  cxx:ok  -  `* (1.0f / 6.0f)`: 0x005cc8f4 is an .rdata literal
+0x0044e0a0  239  98.4  98.4  cxx:ok  b  one fstp-vs-load swap after the FUN_004b4510 call
+0x0044e190  170  73.2  98.2  cxx:ok  b  static EBX=rec, register rotation from handles[i] on
+0x0044e240  142  100.0  100.0  cxx:ok  -  static ESI/EDI + stack arg (in 0044e190.c)
+0x0044e2d0  60  81.0  95.2  cxx:ok  b  static EAX/EBX, one load in ecx vs eax reused after push (in 0044e190.c)
+0x0044e310  54  100.0  100.0  cxx:ok  -  static EAX/ESI (in 0044e190.c)
+0x0044ecc0  105  100.0  100.0  cxx:ok  -  Fx[3][10] slots at 0x00895600, int index loops
+0x0044f830  305  100.0  100.0  cxx:ok  -  switch writes the id base into the dead param slot, tail jmp
+0x00450300  346  100.0  100.0  cxx:ok  -  static ESI=param + stand-in caller, chained v.x = v.y = -1.0f
+0x00450b10  391  86.6  85.7  cxx:ok  b  uv/x+w/y+h locals + permuter order, x87 store scheduling residual
+0x00451060  38  100.0  100.0  cxx:ok  -  FUN_00467210 takes 1 arg
+0x0044e680  1213  100.0  100.0  cxx:ok  -  local float[8][10] init, field locals, DAT_00894e00[kind][idx]
+0x0044e190 holds 0x0044e240 0x0044e2d0 0x0044e310
