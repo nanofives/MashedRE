@@ -6,14 +6,10 @@
 //
 // Functions in this file:
 //   0x0045ba00  RaceResultIndexedStore   — 15B leaf; indexed store to DAT_0068d1f0
-//   0x0046c5c0  VehicleSlotInit          — 47B leaf; slot-init: clear+copy DAT_007f1030
-//   0x0046c790  VehicleSlotFieldSet      — 31B leaf; writes field +0x0c in per-slot struct
 //   0x004307a0  ElapsedVsThresholdCheck  — 116B dispatcher; reads float table + 3 callees
 //
 // Analysis notes:
 //   re/analysis/promote_c1_low_ab1/0x0045ba00.md
-//   re/analysis/promote_c1_low_ab1/0x0046c5c0.md
-//   re/analysis/promote_c1_low_ab1/0x0046c790.md
 //   re/analysis/frontend_c0_promote/0x004307a0.md
 
 #include "../Core/HookSystem.h"
@@ -67,111 +63,10 @@ static auto* const s_LapSecsGetBySlot =
 // MATCH-S10: the body of 0x0045ba00 (RaceResultIndexedStore) moved to Match/MatchS10_0045ba00.cpp,
 // which compiles the byte-matched source re/match/s10/0045ba00.c.
 
-// ---------------------------------------------------------------------------
-// VehicleSlotInit  --  0x0046c5c0
-//
-// Original: FUN_0046c5c0 (47 bytes, 0x0046c5c0..0x0046c5ee)
-// Signature: undefined4 FUN_0046c5c0(uint param_1)
-//   param_1: slot index (0..15 valid; > 15 → return 0)
-// Returns: 1 on success, 0 if out-of-bounds.
-//
-// Body:
-//   if (param_1 > 0xf) return 0;                              [0x0046c5c4]
-//   uVar1 = DAT_007f1030;                                     [0x0046c5cb]
-//   *(byte*)(&DAT_008815a4 + param_1 * 0x341) = 0;            [0x0046c5d3]
-//   *(undefined4*)(&DAT_008820b0 + param_1 * 0xd04) = uVar1;  [0x0046c5df]
-//   return 1;                                                  [0x0046c5ec]
-//
-// Constants (cited from 0x0046c5c0 body):
-//   0x0000000f (15) — upper-bound inclusive for param_1             [0x0046c5c4]
-//   0x007f1030      — global read into uVar1                        [0x0046c5cb]
-//   0x008815a4      — first array base; stride 0x341 (833)          [0x0046c5d3]
-//   0x00000341 (833)— stride for DAT_008815a4                       [0x0046c5d3]
-//   0x008820b0      — second array base; stride 0xd04 (3332)        [0x0046c5df]
-//   0x00000d04 (3332)—stride for DAT_008820b0                       [0x0046c5df]
-//   1               — return value on success                       [0x0046c5ec]
-//   0               — return value on out-of-bounds                 [0x0046c5c4]
-//
-// Uncertainties (non-blocking):
-//   U-2870: DAT_008815a4 struct layout (stride 0x341, 16 slots); field at +0x00 zeroed.
-//   U-2871: DAT_007f1030 identity — value copied to second array.
-//
-// ref: re/analysis/promote_c1_low_ab1/0x0046c5c0.md
-// ---------------------------------------------------------------------------
-
-// 0x0046c5c0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleSlotInit(
-    std::uint32_t param_1)
-{
-    // Bounds check: param_1 > 0xf (15) → return 0. [0x0046c5c4]
-    if (param_1 > 0xfu) {
-        return 0u;
-    }
-
-    // Read global DAT_007f1030. [0x0046c5cb]
-    std::uint32_t uVar1 = *reinterpret_cast<std::uint32_t*>(0x007f1030u);
-
-    // Zero field at DAT_008815a4 + param_1 * 0x341 (first array, field +0x00). [0x0046c5d3]
-    *reinterpret_cast<std::uint8_t*>(0x008815a4u + param_1 * 0x341u) = 0u;
-
-    // Write uVar1 to DAT_008820b0 + param_1 * 0xd04 (second array). [0x0046c5df]
-    *reinterpret_cast<std::uint32_t*>(0x008820b0u + param_1 * 0xd04u) = uVar1;
-
-    return 1u; // success [0x0046c5ec]
-}
-
-RH_ScopedInstall(VehicleSlotInit, 0x0046c5c0);  // re-enabled 2026-05-24 c3-frontend-b
-
-// ---------------------------------------------------------------------------
-// VehicleSlotFieldSet  --  0x0046c790
-//
-// Original: FUN_0046c790 (31 bytes, 0x0046c790..0x0046c7ae)
-// Signature: undefined4 FUN_0046c790(uint param_1, undefined4 param_2)
-//   param_1: slot index (0..15 valid; > 15 → return 0xffffffff)
-//   param_2: value to write
-// Returns: 0xffffffff (-1) on out-of-bounds; 0 on success.
-//
-// Body:
-//   if (param_1 > 0xf) return 0xffffffff;                      [0x0046c794]
-//   *(undefined4*)(&DAT_008815b0 + param_1 * 0x341) = param_2; [0x0046c79e]
-//   return 0;                                                   [0x0046c7ac]
-//
-// Note: DAT_008815b0 = DAT_008815a4 + 0xc (field +0x0c within per-slot struct).
-// Same 0x341 stride as VehicleSlotInit.
-//
-// Constants (cited from 0x0046c790 body):
-//   0x0000000f (15)  — upper-bound inclusive                    [0x0046c794]
-//   0x008815b0       — DAT_008815a4 + 0xc; field +0x0c         [0x0046c79e]
-//   0x00000341 (833) — stride (same as VehicleSlotInit)         [0x0046c79e]
-//   0x00000000       — return on success                        [0x0046c7ac]
-//   0xffffffff (-1)  — return on bounds-failure                 [0x0046c794]
-//
-// Uncertainties (non-blocking):
-//   U-2872: field at +0x0c within 0x341-byte per-slot struct; semantics unknown.
-//
-// Dependency order: VehicleSlotInit (0x0046c5c0) must be GREEN before this is
-// promoted; it is a callee of the caller 0x00422fd0 (FrontendRaceResultsDispatch C3).
-//
-// ref: re/analysis/promote_c1_low_ab1/0x0046c790.md
-// ---------------------------------------------------------------------------
-
-// 0x0046c790
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleSlotFieldSet(
-    std::uint32_t param_1, std::uint32_t param_2)
-{
-    // Bounds check: param_1 > 0xf → return -1. [0x0046c794]
-    if (param_1 > 0xfu) {
-        return 0xffffffffu;
-    }
-
-    // Write param_2 to field +0x0c of per-slot struct at DAT_008815b0. [0x0046c79e]
-    // DAT_008815b0 = DAT_008815a4 + 0xc; stride 0x341 (833 bytes/slot).
-    *reinterpret_cast<std::uint32_t*>(0x008815b0u + param_1 * 0x341u) = param_2;
-
-    return 0u; // success [0x0046c7ac]
-}
-
-RH_ScopedInstall(VehicleSlotFieldSet, 0x0046c790);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-FIX-46C5C0: the bodies of 0x0046c5c0 (VehicleSlotInit) and 0x0046c790 (VehicleSlotFieldSet) moved to
+// Match/MatchS11_0046c5c0.cpp and Match/MatchS11_0046c790.cpp, which compile the byte-matched sources
+// re/match/s11/0046c5c0.c and 0046c790.c. The old bodies here used stride 0x341 where the original uses 0xd04
+// (0x0046c5c0 also stored a BYTE where the original stores a DWORD).
 
 // ---------------------------------------------------------------------------
 // ElapsedVsThresholdCheck  --  0x004307a0
