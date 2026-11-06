@@ -1,0 +1,22 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+VehicleContactHistoryLookup	0x0015c290	2	yes	yes	_VehicleContactHistoryLookup <- ?WheelTerrainContactClassifier@Collision@mashed_re@@YAXPAHPAM@Z <- ?Classify@?A0x7bcce675@Collision@mashed_re@@YAXPBMHABV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@111AAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@@Z <- ?CollWorld_RunReplayIfRequested@Collision@mashed_re@@YAXXZ <- ?VehiclePhysics_SetWorld@Vehicle@mashed_re@@YAXPBMHPBIH1@Z <- ?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z <- ?RenderFrame@?A0x588f7e14@@YA_NXZ <- _WinMain@16
+VehicleEntitySlotRead	0x0015c380	0	no	yes	
+VehicleDestructionStateGetter	0x0015c3b0	0	no	yes	
+VehicleVec3At9C8Get	0x0015c4b0	0	no	yes	
+VehicleDampVec3	0x0015c320	0	no	yes	
+VehicleCarStateSet	0x0015c3d0	0	no	yes	
+VehicleFloatFieldAsInt	0x0015c410	0	no	yes	
+VehicleVelocityWorldGet	0x0015c440	0	no	yes	
+ChromeBaseDraw	0x0015c520	16	yes	yes	_ChromeBaseDraw <- ?RenderFrame@?A0x588f7e14@@YA_NXZ <- _WinMain@16
+TextGradientV0V1Override	0x0015c870	1	no	yes	_FUN_00428d30+0x244
+TextGradientV2V3Override	0x0015ca20	1	no	yes	_FUN_00428d30+0x262
+TextSpriteUVExplicit	0x0015cf60	0	no	yes	
+GradientQuadHorizAlpha	0x0015cbd0	0	no	yes	
+BorderQuadFourAlpha	0x0015cd80	0	no	yes	
+Im2DTriangleDraw	0x0015c6c0	0	no	no	
+DegToRad	0x0015d100	0	no	yes	
+EntityFieldSet	0x0015c500	0	no	yes	
+GetOverlayCamera	0x0015c220	0	no	yes	
+FollowTargetField40_impl	0x0015c230	0	no	yes	
+FollowTargetField10_impl	0x0015c260	0	no	yes	
+UtilTableRead46b4f0	0x0015c2d0	0	no	yes	

@@ -77,33 +77,11 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleSlotGetter(std::ui
 }
 RH_ScopedInstall(VehicleSlotGetter, 0x0046c7b0);  // re-enabled 2026-05-24 c3-vehicle
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046c770  VehicleDestructionStateGetter
-// Ghidra decomp:
-//   if (0xf < param_1) return 0xffffffff;
-//   return (&DAT_008815b0)[param_1 * 0x341];
-// U-3605: full value domain for this field is unconfirmed; 0=alive observed.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleDestructionStateGetter(std::uint32_t vehicleIdx) {
-    if (vehicleIdx > 0xfu) return 0xffffffffu;
-    return reinterpret_cast<const std::uint32_t*>(kVehicleBase_8815b0)[vehicleIdx * kDWordStride];
-}
-RH_ScopedInstall(VehicleDestructionStateGetter, 0x0046c770);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S11: the body of 0x0046c770 (VehicleDestructionStateGetter) moved to Match/MatchS11_0046c770.cpp,
+// which compiles the byte-matched source re/match/s11/0046c770.c.
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046c6d0  VehicleEntitySlotRead
-// Ghidra decomp:
-//   if (0xf < param_1) return 0;
-//   *param_2 = *(undefined4*)(&DAT_008820b0 + param_1 * 0xd04);
-//   return 1;
-// Note: param_1 is signed int; OOB is param_1 > 15 (not unsigned guard).
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleEntitySlotRead(int slotIdx, std::uint32_t* outVal) {
-    if (slotIdx > 0xf) return 0;
-    *outVal = *reinterpret_cast<const std::uint32_t*>(kEntityBase_8820b0 + slotIdx * kByteStride);
-    return 1;
-}
-RH_ScopedInstall(VehicleEntitySlotRead, 0x0046c6d0);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S11: the body of 0x0046c6d0 (VehicleEntitySlotRead) moved to Match/MatchS11_0046c6d0.cpp,
+// which compiles the byte-matched source re/match/s11/0046c6d0.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046dbe0  VehicleRacePositionGet
@@ -122,56 +100,11 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleRacePositionGet(in
 }
 RH_ScopedInstall(VehicleRacePositionGet, 0x0046dbe0);  // re-enabled 2026-05-24 c3-vehicle
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00468b40  VehicleContactHistoryLookup
-// Ghidra decomp:
-//   piVar1 = (int*)(param_2 + 0xbfc);
-//   while (piVar1[0x20]==0 || *(int*)(param_1+0x34) != *piVar1) {
-//     ++iVar2; ++piVar1;
-//     if (0x1f < iVar2) return 0;
-//   }
-//   return 1;
-// param_1 = geometry entry ptr (contact ID at byte offset +0x34)
-// param_2 = vehicle struct ptr
-// Contact table: vehicle+0xBFC, 32 int slots; active flags at +0x80 per slot.
-// Disassembly 0x00468b40..0x00468b74: flag test [eax+0x80] first (0x00468b50, je skips the key
-// compare), then key [edx+0x34] vs [eax] (0x00468b5a..0x00468b5d); ecx counts to 0x20 (0x00468b65).
-// [dcleaf 2026-10-22] The ONE body for 0x00468b40 in both targets. Pointer-relative, so no target thunk.
-// The exe's contact solvers (Collision/CarWorldContacts.cpp) reach it through
-// Collision::ContactHistoryLookup, a forwarder in Collision/ContactSolvers.h; their former private copy
-// was the same loop.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleContactHistoryLookup(int param_1, int param_2) {
-    const int* piVar1 = reinterpret_cast<const int*>(param_2 + 0xBFC);
-    int iVar2 = 0;
-    while (piVar1[0x20] == 0 || *reinterpret_cast<const int*>(param_1 + 0x34) != *piVar1) {
-        ++iVar2;
-        ++piVar1;
-        if (iVar2 > 0x1f) return 0;
-    }
-    return 1;
-}
-RH_ScopedInstall(VehicleContactHistoryLookup, 0x00468b40);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S11: the body of 0x00468b40 (VehicleContactHistoryLookup) moved to Match/MatchS11_00468b40.cpp,
+// which compiles the byte-matched source re/match/s11/00468b40.c.
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046d700  VehicleVec3At9C8Get
-// Ghidra decomp:
-//   if (0xf < param_2) return 0;
-//   param_1[0] = (&DAT_00881f68)[param_2 * 0x341];
-//   param_1[1] = (&DAT_00881f6c)[param_2 * 0x341];
-//   param_1[2] = (&DAT_00881f70)[param_2 * 0x341];
-//   return 1;
-// param_1 = out buffer (3 DWORDs at +0x9C8/+0x9CC/+0x9D0 in per-vehicle block)
-// param_2 = vehicle index 0..15  (U-1748: direction type unconfirmed)
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleVec3At9C8Get(std::uint32_t* outVec, std::uint32_t vehicleIdx) {
-    if (vehicleIdx > 0xfu) return 0;
-    outVec[0] = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f68)[vehicleIdx * kDWordStride];
-    outVec[1] = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f6c)[vehicleIdx * kDWordStride];
-    outVec[2] = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f70)[vehicleIdx * kDWordStride];
-    return 1;
-}
-RH_ScopedInstall(VehicleVec3At9C8Get, 0x0046d700);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S11: the body of 0x0046d700 (VehicleVec3At9C8Get) moved to Match/MatchS11_0046d700.cpp,
+// which compiles the byte-matched source re/match/s11/0046d700.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046cbb0  VehicleCarStateRead

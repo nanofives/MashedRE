@@ -179,6 +179,7 @@
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
+#include "Race/GameModeMachine.h"           // [MATCH-PORTSTATE-GAMEFLOW-FU] 0x004929d0 racing-phase tick (knob)
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 #include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default ON, L-27)
@@ -1186,6 +1187,60 @@ void ShutdownDirectInput() {
     if (g_dinput) { g_dinput->Release(); g_dinput = nullptr; }
 }
 
+// [HB-GATE-FLAKE-GAMEFLOW] Ambient keyboard in a deterministic capture. The keyboard device is
+// DISCL_BACKGROUND|DISCL_NONEXCLUSIVE (InitDirectInput), so it reports keys pressed in ANY window on the
+// machine. The R7 cook (CookCtrlByteAFromKeyboard, DIK 0x1c) and the powerup fire read (DIK_SPACE) read g_keys
+// with no focus or g_det_clock gate. On 2026-11-02 one Enter press at det_frame 5406 ended the G-CTRL arm's
+// round-1 result screen (R7IN test=0) and moved all three G-CTRL hashes
+// (verify/harness_20261102/RESULT_HB-GATE-FLAKE-GAMEFLOW.md).
+//  - Witness (log only, every MASHED_DETERMINISTIC run): a `DET-AMBIENT-KEY` line per frame on which the device
+//    reports a key down, capped at 64 lines. It never changes g_keys.
+//  - MASHED_DET_NO_AMBIENT_KEYS=1 (default OFF): in a MASHED_DETERMINISTIC run, g_keys is zeroed after the device
+//    read, the state a run with nobody at the keyboard reads. In-process injectors (nav demo, cfgedit, drive
+//    hold) write g_keys after PollKeyboard returns, so they are not affected.
+//  - MASHED_DET_TEST_KEY=<dik>@<det_frame>[+<frames>] (test only): reports <dik> down from the device for
+//    <frames> (default 1) frames starting at <det_frame>, before the filter, so a run can reproduce an ambient
+//    press without touching the real keyboard. Decimal or 0x hex.
+static void DetAmbientKeys() {
+    if (!g_det_clock) return;
+    static const bool s_drop = [] { const char* e = std::getenv("MASHED_DET_NO_AMBIENT_KEYS"); return e && e[0] && e[0] != '0'; }();
+    static int s_tk_dik = -1;
+    static unsigned s_tk_at = 0, s_tk_n = 1;
+    static const bool s_tk_parsed = [] {
+        const char* e = std::getenv("MASHED_DET_TEST_KEY");
+        if (!e || !e[0]) return true;
+        char* p = nullptr;
+        const long dik = std::strtol(e, &p, 0);
+        if (!p || *p != '@' || dik < 0 || dik > 255) return true;
+        char* q = nullptr;
+        const unsigned long at = std::strtoul(p + 1, &q, 0);
+        unsigned long n = 1;
+        if (q && *q == '+') n = std::strtoul(q + 1, nullptr, 0);
+        s_tk_dik = static_cast<int>(dik); s_tk_at = static_cast<unsigned>(at); s_tk_n = n ? static_cast<unsigned>(n) : 1u;
+        return true;
+    }();
+    (void)s_tk_parsed;
+    bool test = false;
+    if (s_tk_dik >= 0 && g_det_frame >= s_tk_at && g_det_frame - s_tk_at < s_tk_n) {
+        g_keys[s_tk_dik] = 0x80;
+        test = true;
+    }
+    int first = -1, count = 0;
+    for (int k = 0; k < 256; ++k)
+        if (g_keys[k] & 0x80) { if (first < 0) first = k; ++count; }
+    if (count == 0) return;
+    static int s_lines = 0;
+    if (s_lines < 64) {
+        ++s_lines;
+        if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+            std::fprintf(lf, "DET-AMBIENT-KEY det_frame=%u dik=0x%02x keys_down=%d test=%d %s\n",
+                         static_cast<unsigned>(g_det_frame), first, count, test ? 1 : 0, s_drop ? "dropped" : "LIVE");
+            std::fclose(lf);
+        }
+    }
+    if (s_drop) std::memset(g_keys, 0, sizeof(g_keys));
+}
+
 // B11 — single-shot keyboard poll. Saves prior state, fetches new state.
 // Re-acquires on focus loss (DIERR_INPUTLOST / DIERR_NOTACQUIRED) so the
 // next poll succeeds.
@@ -1199,6 +1254,7 @@ void PollKeyboard() {
     } else if (FAILED(hr)) {
         std::memset(g_keys, 0, sizeof(g_keys));
     }
+    DetAmbientKeys();
 }
 
 // --------------------------------------------------------------------------
@@ -2113,6 +2169,10 @@ void ModalGo(int step) {
     }
 }
 
+// [MATCH-T13-SEED-WRITER] Race/AiDifficultyReset.cpp, MASHED_DIFF360_LIVE (default OFF).
+extern "C" bool __cdecl RaceDiff360Live_Enabled();
+extern "C" void __cdecl RaceDiff360Live_TableInit(const char* site);
+
 // Race launch shared by the two menu launch points (U-9667, 2026-10-12):
 // FUN_0043dfd0 action 0xff260000 on Challenge Select (screens 6/7) for game
 // modes 2..5 (LAB_0043f371, FUN_0043d2a0(0,2) + DAT_0067e914=1), and action
@@ -2133,6 +2193,11 @@ static void MenuLaunchRace(int launchMode) {
         // [brecipe] the launch mode is also the live game mode word DAT_0067e9fc, which the AI host's FUN_0042f6a0
         // then reads (TrackRenderer.cpp aib_round_type). MASHED_MODE_LIVE was deleted by D5-KNOBS-E4-MODE-REG.
         *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = launchMode;
+        // [MATCH-T13-SEED-WRITER] MASHED_DIFF360_LIVE=1: FUN_00413fa0 indexes the difficulty table by FUN_00430790
+        // (= DAT_0067f17c). The exe keeps that row in Nav_ChallengeRow() (U-9667) and never stored it at 0x0067f17c, so
+        // the knob binds it here, next to the game mode word. Default OFF.
+        if (RaceDiff360Live_Enabled())
+            *reinterpret_cast<std::int32_t*>(0x0067f17cu) = mashed_re::Frontend::Nav_ChallengeRow();
         // [#5 2026-09-07] 0x0067ea98 is the port's player-0 COLOUR cursor
         // (moved by CarSelectCycleColour -> FUN_00431b80), NOT the car
         // index — the old comment conflated the two. Drive cfg.cars[0].colour
@@ -9815,6 +9880,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                             if (!(g >= 2 && g <= 10)) g = 3;
                             *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = g;
                         }
+                        // [MATCH-T13-SEED-WRITER] dev inputs for the PREREG arms, MASHED_DIFF360_LIVE=1 only. This route has
+                        // no frontend, so nothing writes DAT_0067f17c or runs FUN_00414120. MASHED_DIFF360_ROW=<0..12> writes
+                        // the row (as scenario_launch.py writes DAT_0067f17c), MASHED_DIFF360_INIT_TABLE=1 runs the table
+                        // init once (as its T13SEED_INIT_DIFF_TABLE=1 calls FUN_00414120 at the menu). Both CONTRIVED.
+                        if (RaceDiff360Live_Enabled()) {
+                            char dr[8] = {};
+                            if (GetEnvironmentVariableA("MASHED_DIFF360_ROW", dr, sizeof(dr)) > 0) {
+                                const int row = std::atoi(dr);
+                                if (row >= 0 && row <= 12) *reinterpret_cast<std::int32_t*>(0x0067f17cu) = row;
+                            }
+                            if (GetEnvironmentVariableA("MASHED_DIFF360_INIT_TABLE", nullptr, 0) > 0)
+                                RaceDiff360Live_TableInit("tableinit_dev");
+                        }
                         g_track.StartMatch();
                         mashed_re::Race::GameModeState_SetPhase(3);   // [MATCH-PORTSTATE-GAMEFLOW] case 2 -> 3
                         // [D3 2026-09-26] place the power-up orbs, as the frontend
@@ -10239,6 +10317,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // default — nothing requests a race yet) this is a no-op, so the menu is
         // unaffected; the wiring is in place for when the frontend launches a race.
         mashed_re::Race::GameFlow_Update(0.016f);
+        // [MATCH-PORTSTATE-GAMEFLOW-FU] MASHED_PORTSTATE_GAMEFLOW_FU (default OFF): the original game-mode machine
+        // 0x004929d0 in phases 3 / 7, else its entry call 0x004927c0 (Race/GameModeMachine.cpp). OFF = no-op.
+        mashed_re::Race::GameModeMachine_Tick();
         if (!RenderFrame()) {
             // Unrecoverable device loss; bail out.
             break;

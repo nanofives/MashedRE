@@ -1864,14 +1864,22 @@ void VehicleStep(int v)
     // Plate: re/analysis/ai_update/0x00418560.md lines 28-34. Reference body with the
     // same shape: Ai/AiController.cpp:177-193 (.asi).
     //
-    // DEVIATION, REGISTERED: FUN_0040e4a0 (ElapsedTimeGet) reads 0x005f29b8, which is
-    // image .data the standalone never loads, so `elapsed` reads 0 here and the
-    // countdown compare is always true while mode 5 holds. That makes the accel hold
-    // permanent for the duration of mode 5 rather than releasing part-way. It does NOT
-    // affect the 0x007f0ff8 zeroing this leg exists for, and mode 5 is transient.
+    // FUN_0040e4a0 is `mov eax,[0x005f29b8]; ret` (0x0040e4a0). The 2026-10-08 note here said the
+    // standalone never writes 0x005f29b8, so `elapsed` read 0. That is stale: the sub-state port writes
+    // it (TrackRenderer.cpp phase 3 / 0x00410371 store of 12000, SubStateHeldCountdown5_C's 0x004103e3
+    // decrement, 0x004104c0 zero at the state-5 exit), so the compare below reads the live countdown.
+    // Listing (MASHED.exe.unpatched): 0x004185b5 add ecx,0x40 / 0x004185b8 imul ecx,ecx,0x64 /
+    // 0x004185bb cmp eax,ecx / 0x004185bd jge 0x00418841 (pop/ret, no write) / 0x004185c3 mov [edi+4],0xff;
+    // cd < 0: 0x004185cb mov edx,0x4a / sub edx,ecx / imul edx,edx,0x64 / 0x004185d7 jge 0x00418841.
     // Default-OFF behind MASHED_MODE5_RESET.
+    // [D4-DC-77b0-ST5-C4ACCEL] MASHED_ST5_LEG2 also takes this branch. On the original every FUN_00418860 tick
+    // while DAT_0063ba8c == 5 (leg 1's 0x0041040e and leg 2's 0x00425a73) returns here without the control
+    // step, so c4 is 0 until 0x005f29b8 drops under the threshold (measured: 0 until GO-5 frames, all three AI
+    // cars, verify/d4dc77b0st5hold_20261101). Without it the exe ran FUN_00416250 on those ticks and wrote
+    // c4 0xff / 0x40 from call 1 (the ST5-HOLD knob arms). PREREG verify/d4dc77b0st5c4accel_20261102.
     {
-        static const bool s_mode5 = (std::getenv("MASHED_MODE5_RESET") != nullptr);
+        static const bool s_mode5 = (std::getenv("MASHED_MODE5_RESET") != nullptr) || [] {
+            const char* e = std::getenv("MASHED_ST5_LEG2"); return e && e[0] && e[0] != '0'; }();
         if (s_mode5) {
             const int subMode = s_host.game_sub_mode();          // FUN_0040e350 @0x0041858e
             if (subMode == 5) {                                  // 0x00418593

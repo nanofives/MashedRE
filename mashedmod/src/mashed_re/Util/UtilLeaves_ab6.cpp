@@ -146,23 +146,8 @@ RH_ScopedInstall(UtilZeroScatter45c480, 0x0045c480);
 // unconfirmed; non-blocking — does not affect offset/bounds correctness.)
 // ---------------------------------------------------------------------------
 
-// 0x0046b4f0
-extern "C" __declspec(dllexport) int __cdecl UtilTableRead46b4f0(
-        std::uint32_t* out, std::uint32_t outerIdx, std::uint32_t innerIdx) {
-    if (outerIdx >= 0x10u) return 0;                    // cmp 0x10 / jae
-    if ((std::int32_t)innerIdx >= 0x12) return 0;       // cmp 0x12 / jl (signed)
-    // row base = 0x008815a0 + outer*0xD04, addressed as a byte pointer.
-    std::uint8_t* row = reinterpret_cast<std::uint8_t*>(0x008815a0u + outerIdx * 0xD04u);
-    // out[0] = *(uint32*)(row + (inner*3 + 0x18)*4)
-    out[0] = *reinterpret_cast<std::uint32_t*>(row + (innerIdx * 3u + 0x18u) * 4u);
-    // &base[inner*3] as a byte pointer for the +0x64/+0x68 reads.
-    std::uint8_t* p = row + (innerIdx * 3u) * 4u;
-    out[1] = *reinterpret_cast<std::uint32_t*>(p + 0x64u);
-    out[2] = *reinterpret_cast<std::uint32_t*>(p + 0x68u);
-    return 1;
-}
-
-RH_ScopedInstall(UtilTableRead46b4f0, 0x0046b4f0);
+// MATCH-S11: the body of 0x0046b4f0 (UtilTableRead46b4f0) moved to Match/MatchS11_0046b4f0.cpp,
+// which compiles the byte-matched source re/match/s11/0046b4f0.c.
 
 // ---------------------------------------------------------------------------
 // FUN_004904d0  --  0x004904d0   (void(void) global-table zeroer C)

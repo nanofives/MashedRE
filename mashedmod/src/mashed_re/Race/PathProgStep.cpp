@@ -163,6 +163,14 @@ extern "C" int __cdecl RangeTableGroupOffset(int slot, int value);              
 extern "C" void __cdecl Dot408590(void);                                        // FUN_00408590, Race/PathProgDot.cpp
 // MATCH-TOPDOWN-T13: FUN_00407cd0 is the byte-matched C body (exe only), not a generated PP_ copy.
 extern "C" int __cdecl PP_407cd0(int v, int start);                             // FUN_00407cd0, Match/MatchS01_00407cd0.cpp
+// MATCH-S06 removed the naked PP_ copies of six leaf callees; pathprog_p2.json maps each call to the byte-matched
+// body (re/match/s06/<rva>.c). Declared here because gen_naked_asm.py emits no prototypes (D4-DC-INC-PATHPROG-REMERGE).
+extern "C" void GlobalDat0066ce58Get();                                         // FUN_00426090, Match/MatchS06_00426090.cpp
+extern "C" void Global66d6d8Get();                                              // FUN_00426bb0, Match/MatchS06_00426bb0.cpp
+extern "C" void SlotIndexToPtr();                                               // FUN_00426cb0, Match/MatchS06_00426cb0.cpp
+extern "C" void VehicleTable4cPtrGet();                                         // FUN_00426cc0, Match/MatchS06_00426cc0.cpp
+extern "C" void GetDat0066d6e4();                                               // FUN_00426cf0, Match/MatchS06_00426cf0.cpp
+extern "C" void FrontendArraySlotGet();                                         // FUN_00426d00, Match/MatchS06_00426d00.cpp
 
 #include "PathProgStep_naked.inc"
 

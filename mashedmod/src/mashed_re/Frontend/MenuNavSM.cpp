@@ -809,8 +809,13 @@ bool Anim_Tick() {
 // FUN_0043d2a0(1,0). Rooting the frontend nav at 0 made "back" reveal the pause
 // menu and ESC quit. The frontend-only standalone must root at the main menu.
 static constexpr int kMainMenuScreen = 1;
+// [MATCH-T13-SEED-WRITER] FUN_0043d2a0 calls FUN_00414120 (0x0043d3d0) when its first argument == 1 (cmp esi,1 at
+// 0x0043d3cb, reached for every direction), then FUN_00422b30 / FUN_0040b810 and DAT_0067ea70 = 1 (0x0043d3d5..0x0043d3df,
+// not part of this step). MASHED_DIFF360_LIVE=1 only (Race/AiDifficultyReset.cpp).
+extern "C" void __cdecl RaceDiff360Live_TableInit(const char* site);
 
 void Nav_Init() {
+    RaceDiff360Live_TableInit("tableinit_navinit");   // roots at screen 1 (see kMainMenuScreen)
     g_nav_depth = 0;
     std::memset(g_stack, 0, sizeof(g_stack));
     NavSlot& s = g_stack[0];
@@ -837,6 +842,7 @@ void Nav_Init() {
 
 // FUN_0043d2a0(screen_id, dir).  0x0043d2a0
 void Nav(int screen_id, int dir) {
+    if (screen_id == kMainMenuScreen) RaceDiff360Live_TableInit("tableinit_nav1");   // 0x0043d3cb / 0x0043d3d0
     if (dir == kNavPush) {
         if (g_nav_depth + 1 >= kMaxNavDepth) return; // stack full guard
         // Save the current cursor for restore on pop.

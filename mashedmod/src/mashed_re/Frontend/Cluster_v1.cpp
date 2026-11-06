@@ -42,15 +42,8 @@
 // Constant read at 0x00474e62: _DAT_005cd7a8 = 0x3C8EFA35 = PI/180.
 static constexpr std::uintptr_t kDegToRadConstAddr = 0x005cd7a8;
 
-// 0x00474e60
-extern "C" __declspec(dllexport) float __cdecl DegToRad(float param_1) {
-    // Read PI/180 directly from the game's data address so the constant is
-    // identical to what the original x87 FMULS instruction reads.
-    const float kPiOver180 = *reinterpret_cast<const float*>(kDegToRadConstAddr);
-    return param_1 * kPiOver180;
-}
-
-RH_ScopedInstall(DegToRad, 0x00474e60);
+// MATCH-S11: the body of 0x00474e60 (DegToRad) moved to Match/MatchS11_00474e60.cpp,
+// which compiles the byte-matched source re/match/s11/00474e60.c.
 
 // ---------------------------------------------------------------------------
 // FUN_00556cd0 (getter) and FUN_00556cc0 (setter) of DAT_00912a20 were ported here first as

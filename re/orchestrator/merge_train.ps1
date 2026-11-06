@@ -7,6 +7,8 @@
   full gate set (solo) when a branch touches Vehicle/ Ai/ Collision/, and fast-forwards
   orch/integration only on GREEN. A RED batch is re-merged one branch at a time to find
   the culprit, which is bounced to stage red-merge. Never pushes, never deploys.
+  A pass on a machine that cannot present (display asleep / locked, D3D9 hr=0x8876086A) gives verdict INFRA instead:
+  nothing bounced, rows stay queued (HB-TRAIN-INFRA-PRECHECK, see Get-ArmInfra / Run-Gates).
 
   Config: re/orchestrator/merge_train.json. Ledger: roadmap.ps1 (live dir log/orch).
 
@@ -181,23 +183,74 @@ function Run-Arms([string]$wt, [string[]]$arms, [string]$out, [switch]$Solo) {
   & py.exe -3.12 $LOCKPY @lockArgs -- py.exe -3.12 $runner @arms 2>&1 | ForEach-Object { Add-Content -LiteralPath $LOG -Value $_ }
   return $LASTEXITCODE
 }
+# HB-TRAIN-INFRA-PRECHECK: a run on a machine that cannot present (display asleep, screen locked) is not a finding.
+# Every exe boot then fails CreateDevice with D3DERR hr=0x8876086A (diag.py D3D9-NOTAVAIL, same regex) and every gate
+# hash comes out MISSING; run 31 pass 2 (20261102_091940) bounced MATCH-S08FU-NOTES that way as "default gates
+# changed". Such a pass gives verdict INFRA: no bounce, no one-at-a-time re-merge, every unmerged row stays queued.
+# INFRA needs evidence of the fault (the D3D9 signature in an arm log, a BLOCKED render probe, or no arm log at all);
+# all-MISSING arms whose logs carry no signature get a render probe, and only a BLOCKED probe makes them INFRA, so a
+# merged exe that dies at boot on a live display is still bounced instead of holding the queue forever.
+$INFRA_RX = 'CreateDevice\(.*hr=0x8876086[AC]'
+# InitD3D9 walks several CreateDevice attempts and logs each one (exe_main.cpp:3189-3203), so a failed attempt can
+# be followed by a working one: the signature counts only in a log with no "CreateDevice(...) -> OK" line.
+$DEVICE_OK_RX = 'CreateDevice\(.*\) -> OK '
+# Callers consult this only for a gate that did not match its reference.
+# '' = no infra fault; 'ALL-MISSING' = every hash MISSING, arm logs present, no signature (the caller probes);
+# anything else = the INFRA reason.
+function Get-ArmInfra([string]$out, [string[]]$arms, [string[]]$hashes) {
+  $sig = @($arms | Where-Object { $lg = Join-Path $out "$_.log"; (Test-Path -LiteralPath $lg) -and (Select-String -LiteralPath $lg -Pattern $INFRA_RX -Quiet) -and -not (Select-String -LiteralPath $lg -Pattern $DEVICE_OK_RX -Quiet) })
+  if ($sig.Count) { return "D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in $($sig -join ', ')" }
+  if ($hashes.Count -and @($hashes | Where-Object { $_ -ne 'MISSING' }).Count -eq 0) {
+    if (-not @($arms | Where-Object { Test-Path -LiteralPath (Join-Path $out "$_.log") }).Count) { return 'all gate hashes MISSING and no arm wrote a log (the runner or the lock never ran the exe)' }
+    return 'ALL-MISSING'
+  }
+  return ''
+}
+# diag.py probe-render on the merged exe in the private root, under the machine lock. status OK | BLOCKED | UNKNOWN |
+# UNAVAILABLE (no RENDER line: an older diag.py without --exe/--cwd, or the probe itself failed).
+function Test-RenderProbe([string]$wt) {
+  $diagPy = Join-Path $wt 'scripts\diag.py'; $exe = Join-Path $wt 'mashedmod\build\mashed_re.exe'
+  $o = @(& py.exe -3.12 $LOCKPY run --priority --label "merge-train-probe:$TS" --wait 7200 -- py.exe -3.12 $diagPy probe-render --exe $exe --cwd $CFG.root 2>&1 | ForEach-Object { "$_" })
+  Add-Content -LiteralPath (Join-Path $DATA 'probe_render.txt') -Value $o
+  $line = @($o | Where-Object { $_ -match '^RENDER: ' } | Select-Object -Last 1)
+  if ($line.Count -and $line[0] -match '^RENDER: (\w+)') { return @{ status = $Matches[1]; text = $line[0] } }
+  return @{ status = 'UNAVAILABLE'; text = "probe-render gave no RENDER line: $(($o | Select-Object -Last 1))" }
+}
 function Gate-Default([string]$wt) {
   $out = Join-Path $DATA 'arms'
   $g = $CFG.gctrl; $b = $CFG.b
-  $res = @{ ok = $true; text = '' }
-  $tries = 0
+  $res = @{ ok = $true; text = ''; infra = $false; why = '' }
+  $tries = 0; $gArms = @(); $inf = ''
   do {
     $arm = if ($tries -eq 0) { $g.arm } else { "$($g.arm)-$($tries + 1)" }
+    $gArms += $arm
     Run-Arms $wt @($arm) $out | Out-Null
     $h = @($g.files | ForEach-Object { Sha8 (Join-Path $out ($_ -replace "^$([regex]::Escape($g.arm))", $arm)) })
     $gok = (($h -join '/') -eq ($g.ref -join '/'))
     $tries++
+    $inf = if ($gok) { '' } else { Get-ArmInfra $out @($arm) $h }
+    if ($inf -and $inf -ne 'ALL-MISSING') { break }   # a dead display: no G-CTRL rerun, no B arms
   } while (-not $gok -and $tries -le [int]$g.retries)   # a G-CTRL run can drop one frame's rows: rerun first
+  if ($inf -and $inf -ne 'ALL-MISSING') {
+    $res.ok = $false; $res.infra = $true; $res.why = $inf
+    $res.text = "G-CTRL $($h -join '/')  B not run (INFRA: $inf)"
+    return $res
+  }
   Run-Arms $wt $b.arms $out | Out-Null
   $hb = @($b.arms | ForEach-Object { Sha8 (Join-Path $out "$_.step.csv") })
   $bok = (($hb -join '/') -eq ($b.ref -join '/'))
   $res.ok = $gok -and $bok
   $res.text = "G-CTRL $($h -join '/')$(if($gok){''}else{' (ref ' + ($g.ref -join '/') + ')'})  B $($hb -join '/')$(if($bok){''}else{' (ref ' + ($b.ref -join '/') + ')'})"
+  if (-not $res.ok) {
+    $inf = Get-ArmInfra $out ($gArms + $b.arms) ($h + $hb)
+    if ($inf -eq 'ALL-MISSING') {
+      $pr = Test-RenderProbe $wt
+      Say "  all gate hashes MISSING, render probe: $($pr.text)"
+      if ($pr.status -eq 'BLOCKED') { $inf = "all gate hashes MISSING and the render probe is BLOCKED ($($pr.text))" }
+      else { $res.text += " (all MISSING, render probe $($pr.status): a boot failure of the merged exe, not a display fault)"; $inf = '' }
+    }
+    if ($inf) { $res.infra = $true; $res.why = $inf; $res.text += " (INFRA: $inf)" }
+  }
   return $res
 }
 function Get-ShortD2Arms([string]$out, [string[]]$arms, [int]$min) {
@@ -238,6 +291,10 @@ function Gate-Full([string]$wt) {
   $d = & py.exe -3.12 (Join-Path $wt $f.d2_score) port @logs 2>&1
   $d | Set-Content (Join-Path $DATA 'score_d2.txt')
   $nd = @($d | Where-Object { $_ -match 'drvmed=\S+ in' -and $_ -notmatch 'OUT|=NA' }).Count
+  if ($nd -ne 3 -or $short.Count) {   # HB-TRAIN-INFRA-PRECHECK: the display went to sleep after the default gates
+    $d2inf = Get-ArmInfra $out $f.d2_arms @()
+    if ($d2inf) { return @{ ok = $false; infra = $true; why = $d2inf; text = (($notes + "D2 $nd/3 (INFRA: $d2inf)") -join '; ') } }
+  }
   if ($nd -ne 3 -or $short.Count) { $ok = $false }; $notes += "D2 $nd/3$(if($short.Count){" ($($short.Count) arm(s) still under $($f.d2_min_lines) lines after $maxRe rerun(s))"})"
   # 13 tracks: table identical to the reference
   Ensure-Root $CFG.root13
@@ -255,9 +312,54 @@ function Gate-Full([string]$wt) {
   if (-not ($same -and $ig)) { $ok = $false }; $notes += "13 tracks $(if($same){'identical'}else{'DIFFER'}) gates $(if($ig){'PASS'}else{'FAIL'})"
   return @{ ok = $ok; text = ($notes -join '; ') }
 }
+# Gates on a built tree. HB-TRAIN-INFRA-PRECHECK: a render precheck first; BLOCKED = INFRA before any arm runs.
+# UNKNOWN / UNAVAILABLE go on to the arms (Gate-Default classifies their result), only BLOCKED is display evidence.
+function Run-Gates([string]$wt, $r, [bool]$needFull) {
+  Ensure-Root $CFG.root
+  $pr = Test-RenderProbe $wt
+  Say "  render precheck: $($pr.text)"
+  if ($pr.status -eq 'BLOCKED') { $r.ok = $false; $r.infra = $true; $r.gates = 'not run: render precheck BLOCKED'; $r.why = "INFRA: render precheck $($pr.text)"; return $r }
+  $gd = Gate-Default $wt
+  $r.gates = $gd.text; Say "  gates: $($gd.text)"
+  if ($gd.infra) { $r.ok = $false; $r.infra = $true; $r.why = "INFRA: $($gd.why)"; return $r }
+  if (-not $gd.ok) { $r.ok = $false; $r.why = "default gates changed"; return $r }
+  if ($needFull) {
+    $gf = Gate-Full $wt
+    $r.gates += "; $($gf.text)"; Say "  full set: $($gf.text)"
+    if ($gf.infra) { $r.ok = $false; $r.infra = $true; $r.why = "INFRA: $($gf.why)"; return $r }
+    if (-not $gf.ok) { $r.ok = $false; $r.why = "full gate set"; return $r }
+  }
+  return $r
+}
+# Step-2 outcome of a batch. On RED re-merges one branch at a time (first GREEN lands this run). HB-TRAIN-INFRA-PRECHECK:
+# an INFRA result bounces nothing and stops the pass, so every row not merged stays queued for the next pass.
+# Returns a hashtable (never dot-sourced): res, merged, bounced, infra (reason or '').
+function Resolve-Batch($items, $first) {
+  $o = @{ res = $first; merged = @(); bounced = @(); infra = '' }
+  if ($first.ok) { $o.merged = @($items); return $o }
+  Remove-Temp $first.wt
+  $o.res = $null
+  if ($first.infra) { $o.infra = $first.why; return $o }
+  if ($items.Count -eq 1) { $o.bounced = @(@{ it = $items[0]; why = $first.why; gates = $first.gates }); return $o }
+  Say "batch RED ($($first.why)); re-merging one at a time"
+  foreach ($it in $items) {
+    $one = Try-Batch @($it)
+    if ($one.ok -and -not $o.res) { $o.res = $one; $o.merged = @($it); continue }   # first GREEN one lands this run
+    Remove-Temp $one.wt
+    if ($one.infra) { $o.infra = $one.why; Say "  $($it.id): $($one.why); stopping, the rows not merged stay queued"; break }
+    if (-not $one.ok) { $o.bounced += @{ it = $it; why = $one.why; gates = $one.gates } }
+  }
+  return $o
+}
+function Tracker-Lint([string]$wt, [string]$baseRef) {
+  $tlog = Join-Path $DATA 'tracker_lint.txt'
+  $o = & py.exe -3.12 (Join-Path $HERE 'tracker_lint.py') --repo $wt --base $baseRef 2>&1; $rc = $LASTEXITCODE
+  $o | Set-Content $tlog
+  return @{ ok = ($rc -eq 0); rc = $rc; last = (($o | Select-Object -Last 1) -as [string]); log = $tlog; out = @($o) }
+}
 function Try-Batch($items) {
   $wt = New-Temp $base
-  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null }
+  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false }
   try {
     foreach ($it in $items) {
       $m = Merge-One $wt $it
@@ -283,6 +385,12 @@ function Try-Batch($items) {
       if ($arc -ne 0) { $r.ok = $false; $r.why = "archive_lint: $(($al | Select-Object -Last 1)) ($alog)"; return $r }
       Say "  archive lint OK: $(($al | Select-Object -Last 1))"
     } else { Say "  WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree" }
+    # HB-TRAIN-HOOKSCSV-TEXTONLY: hooks.csv is text-only (nothing in the build or the gate scorers reads it), so a
+    # re-classify row skips build + gates. The tracker lint (the train's own copy, next to this script) runs on every
+    # batch instead and fails on a malformed hooks.csv / UNCERTAINTIES.md row the base does not already have.
+    $tl = Tracker-Lint $wt $base
+    if (-not $tl.ok) { $r.ok = $false; $r.why = "tracker_lint: $($tl.last) ($($tl.log))"; return $r }
+    Say "  tracker lint OK: $($tl.last)"
     if ($textOnly) { $r.gates = 'not run: text-only change (no build input touched)'; return $r }
     # build both targets, never deploy
     $blog = Join-Path $DATA 'build.log'
@@ -297,16 +405,7 @@ function Try-Batch($items) {
     $lint | Set-Content (Join-Path $DATA 'lint.txt')
     if ($lrc -ne 0) { $r.ok = $false; $r.why = "lint_rva_bodies: $(($lint | Select-Object -Last 1))"; return $r }
     Say "  lint OK: $(($lint | Select-Object -Last 1))"
-    Ensure-Root $CFG.root
-    $gd = Gate-Default $wt
-    $r.gates = $gd.text; Say "  gates: $($gd.text)"
-    if (-not $gd.ok) { $r.ok = $false; $r.why = "default gates changed"; return $r }
-    if ($needFull) {
-      $gf = Gate-Full $wt
-      $r.gates += "; $($gf.text)"; Say "  full set: $($gf.text)"
-      if (-not $gf.ok) { $r.ok = $false; $r.why = "full gate set"; return $r }
-    }
-    return $r
+    return (Run-Gates $wt $r $needFull)
   } finally {
     $r.sha = (Git -C $wt rev-parse HEAD) | Select-Object -First 1
   }
@@ -445,26 +544,183 @@ if ($SelfTest) {
     $env:MASHED_LOCK_DIR = $oldLd
   }
 
-  # --- HB-D2RERUN: fake arm runner, D2_DEF_2 comes back short (1485 lines) on the first run
+  # --- HB-TRAIN-HOOKSCSV-TEXTONLY: a hooks.csv-only re-classify batch is text-only, and the tracker lint still
+  # bounces a malformed row. Runs the real Try-Batch on the fake repo (no archive_lint.py there, so no build is reached
+  # on a text-only batch). The base carries one 9-column row, like the 4 pre-existing NCOL rows of the live hooks.csv.
+  function Put([string]$rel, [string]$text) { [IO.File]::WriteAllBytes((Join-Path $fake $rel), [Text.Encoding]::UTF8.GetBytes($text)) }
+  $hdr = "rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes,exe_file`n# RVA: comment row,,,,,,,`n"
+  $hbase = $hdr + "00401000,FunA,boot,C3,impl,a.cpp,,,n,a.cpp`n00401010,FunB,boot,C2,mapped,,,,n,`n00401020,FunC,boot,C4,verified,c.cpp,,,short row`n"
+  $ubase = "# U`n| U-0001 | semantic | x | y | z | n/a | nothing |`n| U-0002 | semantic | x | y | z | n/a | nothing |`n"
+  Put 'hooks.csv' $hbase; Put 'UNCERTAINTIES.md' $ubase
+  Git -C $fake add hooks.csv UNCERTAINTIES.md | Out-Null; Git -C $fake commit -q -m 'trackers base' | Out-Null
+  $cases = [ordered]@{
+    'rc-ok'     = @{ h = ($hbase -replace '00401000,FunA,boot,C3', '00401000,FunA,boot,C4'); u = $ubase; log = $true; want = $true }
+    'bad-ncol'  = @{ h = ($hbase + "00401030,FunD,boot,C2,mapped,,,,n,,extra`n"); u = $ubase; want = $false; key = 'NCOL rva=00401030' }
+    'bad-conf'  = @{ h = ($hbase -replace '00401010,FunB,boot,C2', '00401010,FunB,boot,C5'); u = $ubase; want = $false; key = 'CONF rva=00401010' }
+    'bad-dup'   = @{ h = ($hbase + "00401010,FunB2,boot,C2,mapped,,,,n,`n"); u = $ubase; want = $false; key = 'DUP rva=00401010' }
+    'bad-quote' = @{ h = ($hbase + "00401040,FunE,boot,C2,mapped,,,,`"open quote,`n"); u = $ubase; want = $false; key = 'PARSE' }
+    'bad-udup'  = @{ h = $hbase; u = ($ubase + "| U-0002 | semantic | dup | y | z | n/a | nothing |`n"); want = $false; key = 'UDUP U-0002' }
+  }
+  foreach ($k in $cases.Keys) {
+    $c = $cases[$k]
+    Git -C $fake checkout -q -b "step-$k" integration | Out-Null
+    Put 'hooks.csv' $c.h; Put 'UNCERTAINTIES.md' $c.u
+    if ($c.log) { Put 're\analysis\CHANGELOG.md' "# log`nbase`nentry a`nentry b`nre-classify $k`n" }
+    Git -C $fake commit -q -am "step $k" | Out-Null
+    Git -C $fake checkout -q integration | Out-Null
+  }
+  $base = (Git -C $fake rev-parse integration) | Select-Object -First 1
+  foreach ($k in $cases.Keys) {
+    $c = $cases[$k]
+    $res = Try-Batch @(@{ id = "T-$k"; branch = "step-$k" })
+    $tlo = if (Test-Path (Join-Path $DATA 'tracker_lint.txt')) { Get-Content (Join-Path $DATA 'tracker_lint.txt') -Raw } else { '' }
+    if ($c.want) {
+      Check ($res.ok -and $res.gates -match '^not run: text-only' -and $tlo -match 'pre-existing=1 NEW=0') "tracker: $k (hooks.csv + CHANGELOG only) is text-only, no build, lint OK with the base's 9-column row pre-existing (ok=$($res.ok) gates='$($res.gates)')"
+    } else {
+      Check ((-not $res.ok) -and $res.why -match '^tracker_lint: ' -and $tlo -match [regex]::Escape("NEW $($c.key)")) "tracker: $k bounced by the tracker lint with NEW $($c.key) (why='$($res.why)')"
+    }
+    Remove-Temp $res.wt
+  }
+  $oldGlobs = @('*.md', '*.txt', 'verify/*', 're/analysis/*')
+  Check ((-not (Like-Any 'hooks.csv' $oldGlobs)) -and (Like-Any 'hooks.csv' $CFG.text_only_globs)) 'control: hooks.csv was not text-only under the old globs, is under merge_train.json'
+  $src = @('mashedmod/src/mashed_re/Ai/AiStandalone.cpp', 'mashedmod/build.bat', 're/tools/dual_copy_allowlist.txt.bak', 'scripts/lint_rva_bodies.py', 're/match/s01.c', 're/orchestrator/tracker_lint.py', 're/frida/hooks_registry.py', 're/tools/hooks.csv')
+  $leak = @($src | Where-Object { Like-Any $_ $CFG.text_only_globs })
+  Check ($leak.Count -eq 0) "control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: $($leak -join ','))"
+
+  # --- HB-D2RERUN: fake arm runner, the second d2_arms arm comes back short (1485 lines) on the first run
+  # The arm names come from merge_train.json (D2_DEF_n until run 23, D2_DEFH_n since); the second arm is the short one.
   $f = $CFG.full; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
+  $script:d2Short = $f.d2_arms[1]; $d2First = $f.d2_arms[0]
   $script:runs = @{}
   function Run-Arms([string]$wt, [string[]]$arms, [string]$out, [switch]$Solo) {
     foreach ($a in $arms) {
       $script:runs[$a] = 1 + [int]$script:runs[$a]
-      $lines = switch ($script:Scenario) { 'short-once' { if ($a -eq 'D2_DEF_2' -and $script:runs[$a] -eq 1) { 1485 } else { 1700 } } 'short-always' { if ($a -eq 'D2_DEF_2') { 1485 } else { 1700 } } default { 1700 } }
+      $lines = switch ($script:Scenario) { 'short-once' { if ($a -eq $script:d2Short -and $script:runs[$a] -eq 1) { 1485 } else { 1700 } } 'short-always' { if ($a -eq $script:d2Short) { 1485 } else { 1700 } } default { 1700 } }
       Write-Lf (Join-Path $out "$a.motion_diag.log") @(1..$lines | ForEach-Object { "row $_" })
     }
     return 0
   }
   $script:Scenario = 'short-once'
   $r = Run-D2Arms 'unused' $f $out
-  Check ($r.short.Count -eq 0 -and $script:runs['D2_DEF_2'] -eq 2 -and $script:runs['D2_DEF_1'] -eq 1) "short-once: D2_DEF_2 rerun once (2 runs), others not rerun, 0 arms short"
+  Check ($r.short.Count -eq 0 -and $script:runs[$script:d2Short] -eq 2 -and $script:runs[$d2First] -eq 1) "short-once: $($script:d2Short) rerun once (2 runs), others not rerun, 0 arms short"
   $script:runs = @{}; $script:Scenario = 'short-always'
   $r = Run-D2Arms 'unused' $f $out
-  Check ($r.short.Count -eq 1 -and $script:runs['D2_DEF_2'] -eq (1 + $r.maxRe)) "short-always: reruns bounded at $($r.maxRe), arm still reported short (runs=$($script:runs['D2_DEF_2']))"
+  Check ($r.short.Count -eq 1 -and $script:runs[$script:d2Short] -eq (1 + $r.maxRe)) "short-always: reruns bounded at $($r.maxRe), arm still reported short (runs=$($script:runs[$script:d2Short]))"
   $script:runs = @{}; $script:Scenario = 'ok'
   $r = Run-D2Arms 'unused' $f $out
-  Check ($r.short.Count -eq 0 -and $script:runs['D2_DEF_2'] -eq 1) 'full-length logs: no rerun'
+  Check ($r.short.Count -eq 0 -and $script:runs[$script:d2Short] -eq 1) 'full-length logs: no rerun'
+
+  # --- HB-TRAIN-INFRA-PRECHECK: INFRA path (no bounce, rows stay queued) vs the normal path, all offline:
+  # fake arm runner, fake render probe, fake Try-Batch. Never boots the exe. merge_train.json is never written:
+  # the refs below live only in an in-memory copy of $CFG, and its SHA-256 is checked before and after.
+  $cfgPath = Join-Path $HERE 'merge_train.json'; $cfgSha0 = (Get-FileHash -Algorithm SHA256 $cfgPath).Hash
+  $CFG = $CFG | ConvertTo-Json -Depth 20 | ConvertFrom-Json
+  $sleepLine = 'InitD3D9: CreateDevice(HAL,depthA,vsimm) -> fail hr=0x8876086A'
+  $okLine = 'InitD3D9: CreateDevice(HAL,depthA,vsimm) -> OK hr=0x00000000 OK'
+  # unit: Get-ArmInfra
+  $ia = Join-Path $DATA 'infra_unit'; New-Item -ItemType Directory -Force -Path $ia | Out-Null
+  Write-Lf (Join-Path $ia 'U1.log') @('boot', $sleepLine)
+  Write-Lf (Join-Path $ia 'U2.log') @('boot', 'InitD3D9: CreateDevice(HAL,depthB,vsdef) -> fail hr=0x8876086C')
+  Write-Lf (Join-Path $ia 'U3.log') @('boot', $okLine)
+  Write-Lf (Join-Path $ia 'U5.log') @('boot', $sleepLine, 'InitD3D9: CreateDevice(REF,depthA,vsimm) -> OK hr=0x00000000 OK')
+  Check ((Get-ArmInfra $ia @('U1') @('MISSING')) -match '^D3D9-NOTAVAIL .* in U1$') 'unit: arm log with CreateDevice hr=0x8876086A and no device = INFRA reason'
+  Check ((Get-ArmInfra $ia @('U3', 'U2') @('1234abcd', 'MISSING')) -match 'in U2$') 'unit: hr=0x8876086C in one of two arm logs = INFRA, names that arm'
+  Check ((Get-ArmInfra $ia @('U5') @('MISSING')) -eq 'ALL-MISSING') 'unit: 0x8876086A followed by a working CreateDevice is not the signature (falls to ALL-MISSING)'
+  Check ((Get-ArmInfra $ia @('U3') @('MISSING', 'MISSING')) -eq 'ALL-MISSING') 'unit: all MISSING, log present, no signature = ALL-MISSING (caller probes)'
+  Check ((Get-ArmInfra $ia @('U4') @('MISSING', 'MISSING')) -match 'no arm wrote a log') 'unit: all MISSING and no arm log = INFRA (runner never ran the exe)'
+  Check ((Get-ArmInfra $ia @('U3') @('MISSING', '1234abcd')) -eq '') 'unit: one hash present, clean log = not INFRA'
+  Check ((Get-ArmInfra $ia @('U3') @()) -eq '') 'unit: D2 form (no hashes), clean log = not INFRA'
+
+  # Run-Gates end to end: render precheck -> Gate-Default -> verdict routing
+  $g = $CFG.gctrl; $bA = $CFG.b
+  $refDir = Join-Path $DATA 'infra_ref'; New-Item -ItemType Directory -Force -Path $refDir | Out-Null
+  $gRef = @($g.files | ForEach-Object { $p = Join-Path $refDir $_; Write-Lf $p @("fake $_"); Sha8 $p })
+  $bRef = @($bA.arms | ForEach-Object { $p = Join-Path $refDir "$_.step.csv"; Write-Lf $p @("fake B step"); Sha8 $p })
+  $CFG.gctrl.ref = $gRef; $CFG.b.ref = $bRef
+  function Ensure-Root([string]$root) { }
+  function Test-RenderProbe([string]$wt) {
+    $s = if ($script:ProbeSeq.Count) { $script:ProbeSeq[0] } else { 'OK' }
+    if ($script:ProbeSeq.Count) { $script:ProbeSeq = @($script:ProbeSeq | Select-Object -Skip 1) }
+    $script:probes++
+    return @{ status = $s; text = "RENDER: $s - fake probe" }
+  }
+  function Run-Arms([string]$wt, [string[]]$arms, [string]$out, [switch]$Solo) {
+    New-Item -ItemType Directory -Force -Path $out | Out-Null
+    foreach ($a in $arms) {
+      $script:runs[$a] = 1 + [int]$script:runs[$a]
+      $base = $a -replace '-\d+$', ''
+      $sc = $script:Scenario
+      $logLines = switch ($sc) { 'asleep' { @('boot', $script:sleepLine) } 'fallback-red' { @('boot', $script:sleepLine, $script:okLine) } 'nolog' { $null } default { @('boot', $script:okLine) } }
+      if ($logLines) { Write-Lf (Join-Path $out "$a.log") $logLines }
+      if ($sc -in 'asleep', 'nolog', 'missing') { continue }
+      if ($base -eq $script:gArm) { foreach ($fn in $script:gFiles) { Write-Lf (Join-Path $out ($fn -replace "^$([regex]::Escape($script:gArm))", $a)) @("fake $fn") } }
+      else { Write-Lf (Join-Path $out "$a.step.csv") @($(if (($sc -in @('b-red', 'fallback-red')) -and ($a -eq 'B_DEF_K1')) { 'B changed' } else { 'fake B step' })) }
+    }
+    return 0
+  }
+  $script:sleepLine = $sleepLine; $script:okLine = $okLine; $script:gArm = $g.arm; $script:gFiles = @($g.files)
+  function Gates-Case([string]$scenario, [string[]]$probeSeq) {
+    Remove-Item -LiteralPath (Join-Path $DATA 'arms') -Recurse -Force -ErrorAction SilentlyContinue
+    $script:Scenario = $scenario; $script:ProbeSeq = @($probeSeq); $script:probes = 0; $script:runs = @{}
+    $rr = @{ ok = $true; wt = 'fake'; why = ''; gates = 'not run'; sha = ''; bad = $null; infra = $false }
+    return (Run-Gates 'fake-wt' $rr $false)
+  }
+  $c = Gates-Case 'green' @('BLOCKED')
+  Check (-not $c.ok -and $c.infra -and $c.why -match '^INFRA: render precheck RENDER: BLOCKED' -and $script:runs.Count -eq 0) "INFRA path: precheck BLOCKED = INFRA before any arm (arms run $($script:runs.Count), why '$($c.why)')"
+  $c = Gates-Case 'green' @('OK')
+  Check ($c.ok -and -not $c.infra -and $c.gates -notmatch 'ref|INFRA' -and $script:probes -eq 1) "normal path: precheck OK, refs match = GREEN, one probe, no rerun (gates '$($c.gates)')"
+  $c = Gates-Case 'b-red' @('OK')
+  Check (-not $c.ok -and -not $c.infra -and $c.why -eq 'default gates changed' -and $c.gates -match 'B \S+ \(ref ' -and $script:probes -eq 1) "normal path: a changed B hash is still RED 'default gates changed' (gates '$($c.gates)')"
+  $c = Gates-Case 'asleep' @('OK')
+  Check (-not $c.ok -and $c.infra -and $c.why -match '^INFRA: D3D9-NOTAVAIL' -and $script:runs[$g.arm] -eq 1 -and -not $script:runs.ContainsKey('B_DEF_K0') -and $c.gates -match 'MISSING') "INFRA path: 0x8876086A arm (display slept after the precheck) = INFRA, no G-CTRL rerun, B not run (runs $(($script:runs.Keys | Sort-Object) -join ','))"
+  $c = Gates-Case 'asleep' @('UNKNOWN')
+  Check (-not $c.ok -and $c.infra -and $c.why -match 'D3D9-NOTAVAIL') 'INFRA path: precheck UNKNOWN goes on to the arms, the 0x8876086A arm makes it INFRA'
+  $c = Gates-Case 'nolog' @('OK')
+  Check (-not $c.ok -and $c.infra -and $c.why -match 'no arm wrote a log') "INFRA path: arms that wrote nothing = INFRA (why '$($c.why)')"
+  $c = Gates-Case 'missing' @('OK', 'BLOCKED')
+  Check (-not $c.ok -and $c.infra -and $c.why -match 'MISSING and the render probe is BLOCKED' -and $script:probes -eq 2) "INFRA path: all-MISSING with clean logs, post-arm probe BLOCKED = INFRA (probes $($script:probes))"
+  $c = Gates-Case 'missing' @('OK', 'OK')
+  Check (-not $c.ok -and -not $c.infra -and $c.why -eq 'default gates changed' -and $c.gates -match 'boot failure of the merged exe') "normal path: all-MISSING with a live display stays RED (a broken exe is bounced, not held) (gates '$($c.gates)')"
+  $c = Gates-Case 'fallback-red' @('OK')
+  Check (-not $c.ok -and -not $c.infra -and $c.why -eq 'default gates changed') 'normal path: a 0x8876086A attempt followed by a working device is not INFRA, the changed hash stays RED'
+
+  # Resolve-Batch: bounce / queue decisions with a fake Try-Batch (no merge, no build)
+  function Remove-Temp([string]$p) { $script:removed++ }
+  function Try-Batch($items) {
+    $k = ($items | ForEach-Object { $_.id }) -join '+'
+    $script:tbCalls += $k
+    return $script:TB[$k]
+  }
+  function TB([string]$kind) {
+    switch ($kind) {
+      'green' { @{ ok = $true; wt = 'fake'; why = ''; gates = 'G-CTRL ok'; infra = $false } }
+      'red' { @{ ok = $false; wt = 'fake'; why = 'default gates changed'; gates = 'G-CTRL x (ref y)'; infra = $false } }
+      'infra' { @{ ok = $false; wt = 'fake'; why = 'INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF'; gates = 'G-CTRL MISSING/MISSING/MISSING  B not run'; infra = $true } }
+    }
+  }
+  $iA = @{ id = 'T-A'; branch = 'orch/T-A' }; $iB = @{ id = 'T-B'; branch = 'orch/T-B' }; $iC = @{ id = 'T-C'; branch = 'orch/T-C' }
+  function Batch-Case([object[]]$items, [hashtable]$tb) {
+    $script:TB = $tb; $script:tbCalls = @(); $script:removed = 0
+    $first = Try-Batch $items
+    return (Resolve-Batch $items $first)
+  }
+  $o = Batch-Case @($iA) @{ 'T-A' = (TB 'infra') }
+  Check ($o.infra -and $o.bounced.Count -eq 0 -and $o.merged.Count -eq 0 -and $null -eq $o.res) "INFRA path: single row INFRA = 0 bounced, 0 merged, row left queued ($($o.infra))"
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'infra') }
+  Check ($o.infra -and $o.bounced.Count -eq 0 -and $script:tbCalls.Count -eq 1) "INFRA path: 3-row batch INFRA = 0 bounced, no one-at-a-time re-merge (Try-Batch calls $($script:tbCalls.Count))"
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'red'); 'T-B' = (TB 'infra'); 'T-C' = (TB 'green') }
+  Check ($o.infra -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-A' -and $o.merged.Count -eq 0 -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-B') "INFRA path: INFRA mid one-at-a-time stops there; the RED before it bounces, the row after it is not tried (calls $($script:tbCalls -join ','))"
+  $o = Batch-Case @($iA) @{ 'T-A' = (TB 'red') }
+  Check (-not $o.infra -and $o.bounced.Count -eq 1 -and $o.bounced[0].why -eq 'default gates changed') 'normal path: single row RED = bounced (unchanged)'
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'green'); 'T-B' = (TB 'red'); 'T-C' = (TB 'green') }
+  Check (-not $o.infra -and $o.merged.Count -eq 1 -and $o.merged[0].id -eq 'T-A' -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-B' -and $null -ne $o.res -and $script:removed -eq 3) "normal path: batch RED -> one at a time: first GREEN lands, RED bounced, second GREEN stays queued (temps removed $($script:removed))"
+  $o = Batch-Case @($iA, $iB) @{ 'T-A+T-B' = (TB 'green') }
+  Check (-not $o.infra -and $o.merged.Count -eq 2 -and $o.bounced.Count -eq 0 -and $script:tbCalls.Count -eq 1) 'normal path: batch GREEN = both merged (unchanged)'
+
+  # AST: the run body routes through Resolve-Batch, bounces only $bounced, and verdict INFRA wins
+  $tb = $top[0].Body.Extent.Text
+  Check (($tb -match '\$rb = Resolve-Batch \$batch \$res') -and ($tb -match '\$bounced = @\(\$rb\.bounced\)') -and ($tb -match "foreach \(\`$b in \`$bounced\) \{\s*Ledger set \`$b\.it\.id red-merge") -and ($tb -match "\`$verdict = if \(\`$infra\) \{ 'INFRA' \}")) 'AST: run body = Try-Batch -> Resolve-Batch, red-merge only for $bounced, verdict INFRA when $infra'
+  Check ((Get-FileHash -Algorithm SHA256 $cfgPath).Hash -eq $cfgSha0) "merge_train.json unchanged by the selftest (sha256 $($cfgSha0.Substring(0,12)))"
 
   Say "SELFTEST done: $fails failure(s)"
   Write-Output "SELFTEST $(if ($fails) { 'FAIL' } else { 'PASS' }) ($fails failure(s)) log $LOG"
@@ -496,29 +752,17 @@ if ($Plan) { exit 0 }
 try {
 Enter-PassPriority
 $res = Try-Batch $batch
-$merged = @(); $bounced = @()
-if ($res.ok) { $merged = $batch }
-else {
-  Remove-Temp $res.wt
-  if ($batch.Count -eq 1) { $bounced = @(@{ it = $batch[0]; why = $res.why; gates = $res.gates }) ; $res = $null }
-  else {
-    Say "batch RED ($($res.why)); re-merging one at a time"
-    $res = $null
-    foreach ($it in $batch) {
-      $one = Try-Batch @($it)
-      if ($one.ok -and -not $res) { $res = $one; $merged = @($it); continue }   # first GREEN one lands this run
-      if (-not $one.ok) { $bounced += @{ it = $it; why = $one.why; gates = $one.gates } }
-      Remove-Temp $one.wt
-    }
-  }
-}
+$infraGates = $res.gates
+$rb = Resolve-Batch $batch $res
+$res = $rb.res; $merged = @($rb.merged); $bounced = @($rb.bounced); $infra = $rb.infra
+if ($infra) { Say "INFRA: $infra; nothing bounced for it, every row not merged stays queued" }
 foreach ($b in $bounced) {
   Ledger set $b.it.id red-merge "merge train $TS`: $($b.why)"
   Ledger dequeue $b.it.id
 }
 
 # ---- 3. fast-forward orch/integration on GREEN --------------------------------------
-$verdict = if ($bounced.Count -or -not $merged.Count) { 'RED' } else { 'GREEN' }
+$verdict = if ($infra) { 'INFRA' } elseif ($bounced.Count -or -not $merged.Count) { 'RED' } else { 'GREEN' }
 $tip = (Git rev-parse $INT) | Select-Object -First 1
 if ($merged.Count) {
   $wt = $res.wt
@@ -559,9 +803,9 @@ $report = @(
   "verdict: $verdict",
   "branch: $INT @ $final",
   "evidence: $LOG",
-  "gates: $(if ($res) { $res.gates } else { ($bounced | ForEach-Object { $_.gates }) -join ' | ' })",
+  "gates: $(if ($res) { $res.gates } elseif ($infra -and -not $bounced.Count) { "not scored: $infraGates" } else { ($bounced | ForEach-Object { $_.gates }) -join ' | ' })",
   "decision: none",
-  "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $($_.why)" }) -join '; ')]"
+  "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $($_.why)" }) -join '; ')]$(if ($infra) { " infra [$infra; rows not merged stay queued, re-run the train on a live display]" })"
 )
 $report | Set-Content (Join-Path $DATA 'REPORT.txt') -Encoding utf8
 $report | Write-Output
