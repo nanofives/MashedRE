@@ -1,0 +1,117 @@
+0x004c0740	M	-	-
+0x004c07b0	M	-	-
+0x004c0830	M	-	-
+0x004c0ad0	M	-	-
+0x004c0b10	M	Render/RwAtomicDirtyFlag.cpp[A]:('int __cdecl', 24)	Render/RwAtomicDirtyFlag.cpp:[('RwAtomicDirtyFlagGet', 30)]
+0x004c0b70	M	-	-
+0x004c0c20	M	-	-
+0x004c0e50	M	Util/PromoLoop_sessionB.cpp[A]:('DllHeadInsert4c0e50', 3205)	Util/PromoLoop_sessionB.cpp:[('DllHeadInsert4c0e50', 3221)]
+0x004c0ed0	M	-	-
+0x004c0ef0	M	-	-
+0x004c0f00	M	-	-
+0x004c1300	M	-	-
+0x004c1340	M	-	-
+0x004c13e0	M	-	-
+0x004c1480	M	-	-
+0x004c1520	M	-	-
+0x004c1680	M	-	-
+0x004c1740	M	-	-
+0x004c1800	M	-	-
+0x004c1840	M	-	-
+0x004c18c0	M	-	-
+0x004c19f0	M	Boot/FrameDispatch.cpp[EA]:('RwVtableSlot07Call', 54)	Boot/FrameDispatch.cpp:[('RwVtableSlot07Call', 61)]
+0x004c1a00	M	Frontend/IntroSplash.cpp[A]:('', 180)	Frontend/IntroSplash.cpp:[('IntroSplashVtableSlot6', 189)]
+0x004c1a10	M	-	-
+0x004c1a40	M	-	-
+0x004c1a70	M	Render/CameraProjCoeffs.cpp[EA]:('void __cdecl', 25)	Render/CameraProjCoeffs.cpp:[('CameraRecomputeProjCoeffs', 77)]
+0x004c1b10	M	-	-
+0x004c1b40	M	-	-
+0x004c1bb0	M	Frontend/IntroSplash.cpp[A]:('', 211)	Frontend/IntroSplash.cpp:[('IntroSplashRenderState', 225)]
+0x004c1be0	M	Frontend/IntroSplash.cpp[A]:('OrigRenderTargetHelper', 62)	-
+0x004c1c10	M	-	-
+0x004c1c80	M	HUD/ViewportDimsSet_ag.cpp[A]:('ViewportDimsSet', 19)	HUD/ViewportDimsSet_ag.cpp:[('ViewportDimsSet', 33)]
+0x004c1cf0	M	-	-
+0x004c1f80	M	-	-
+0x004c2620	M	-	-
+0x004c2a30	M	-	-
+0x004c2c90	M	Render/PromoLoop_round250.cpp[A]:('DriverSystemDispatch', 74)	Render/PromoLoop_round250.cpp:[('DriverSystemDispatch', 130)]
+0x004c2d70	M	Render/RwPluginHelpers_o3.cpp[A]:('RwPluginRegistryFrozen', 55)	Render/RwPluginHelpers_o3.cpp:[('RwPluginRegistryFrozen', 60)]
+0x004c2d80	M	-	-
+0x004c2d90	M	Render/PromoLoop_round249.cpp[A]:('RwEngineRegisterPlugin', 83)	Render/PromoLoop_round249.cpp:[('RwEngineRegisterPlugin', 94)]
+0x004c2dc0	M	-	-
+0x004c2de0	M	Render/RwPluginHelpers_q1.cpp[A]:('RwEngineGetNumSubSystems', 66)	Render/RwPluginHelpers_q1.cpp:[('RwEngineGetNumSubSystems', 76)]
+0x004c2e10	M	Render/RwPluginHelpers_q1.cpp[A]:('RwEngineGetSubSystemInfo', 103)	Render/RwPluginHelpers_q1.cpp:[('RwEngineGetSubSystemInfo', 121)]
+0x004c2e40	M	Render/RwPluginHelpers_q1.cpp[A]:('RwEngineGetCurrentSubSystem', 147)	Render/RwPluginHelpers_q1.cpp:[('RwEngineGetCurrentSubSystem', 164)]
+0x004c2e70	M	Render/RwPluginHelpers_o3.cpp[A]:('RwEngineSetSubSystem', 84)	Render/RwPluginHelpers_o3.cpp:[('RwEngineSetSubSystem', 92)]
+0x004c2ea0	M	Render/RwPluginHelpers_q1.cpp[A]:('RwEngineGetNumVideoModes', 192)	Render/RwPluginHelpers_q1.cpp:[('RwEngineGetNumVideoModes', 209)]
+0x004c2ed0	M	Render/RwPluginHelpers_o3.cpp[A]:('RwEngineGetModeInfo', 151)	Render/RwPluginHelpers_o3.cpp:[('RwEngineGetModeInfo', 169)]
+0x004c2f00	M	Boot/VideoConfig.cpp[EA]:('RwEngineGetCurrentMode', 113)	Boot/VideoConfig.cpp:[('RwEngineGetCurrentMode', 130)]
+0x004c2f30	M	Render/RwPluginHelpers_o3.cpp[A]:('RwEngineSetVideoMode', 116)	Render/RwPluginHelpers_o3.cpp:[('RwEngineSetVideoMode', 124)]
+0x004c2f60	M	-	-
+0x004c2fb0	M	-	-
+0x004c3040	M	-	-
+0x004c3270	M	-	-
+0x004c32b0	M	-	-
+0x004c35f0	M	-	-
+0x004c3730	M	Math/RwV3dTransform.cpp[EA]:('', 22)	Math/RwV3dTransform.cpp:[('RwV3dTransformPoint', 34)]
+0x004c3880	M	Math/RwV3dTransform.cpp[EA]:('', 38)	Math/RwV3dTransform.cpp:[('RwV3dTransformVector', 50)]
+0x004c3910	M	Render/Vec3NormalizeScale.cpp[EA]:('float __cdecl', 25)	Render/Vec3NormalizeScale.cpp:[('Vec3NormalizeScale', 80)]
+0x004c39b0	M	Math/RwV3dNormalize.cpp[EA]:('', 119)	Math/RwV3dNormalize.cpp:[('RwV3dNormalize', 142)]
+0x004c3ac0	M	-	Math/Vec3.cpp:[('Vec3Magnitude', 77)]
+0x004c3b30	M	Math/RwLutTables.cpp[EA]:('LutSqrt', 54)	Math/RwSqrt.cpp:[('FastSqrt', 158)]
+0x004c3b90	M	-	Math/RwSqrt.cpp:[('FastInvSqrt', 110)]
+0x004c3bf0	.	Math/RwV2d.cpp[EA]:('', 49)	Math/RwV2d.cpp:[('Vec2Length', 73)]
+0x004c3c60	.	Math/RwV2d.cpp[EA]:('', 79)	Math/RwV2d.cpp:[('Vec2Normalize', 130)]
+0x004c3d60	M	-	-
+0x004c3d90	M	-	-
+0x004c3dc0	M	-	-
+0x004c3df0	M	Math/RwV3dTransformPoints.cpp[EA]:('', 43)	Math/RwV3dTransformPoints.cpp:[('RwV3dTransformPoints', 56)]
+0x004c40b0	.	-	-
+0x004c4270	.	Math/MatrixOrthoResidual.cpp[EA]:('', 54)	Math/MatrixOrthoResidual.cpp:[('MatrixOrthoResidual4c4270', 104)]
+0x004c42d0	.	Math/MatrixOrthoResidual.cpp[EA]:('', 121)	Math/MatrixOrthoResidual.cpp:[('MatrixNormResidual4c42d0', 193)]
+0x004c4360	.	Math/MatrixOrthoResidual.cpp[EA]:('', 234)	Math/MatrixOrthoResidual.cpp:[('MatrixIdentityResidual4c4360', 300)]
+0x004c4430	.	-	-
+0x004c4470	.	-	-
+0x004c4530	.	-	-
+0x004c45f0	M	Util/PromoLoop_sessionB.cpp[A]:('And4c45f0', 767)	Util/PromoLoop_sessionB.cpp:[('And4c45f0', 770)]
+0x004c4600	.	Collision/RwpSolverMath2.cpp[EA]:('FUN_004c4600', 338)	Collision/RwpSolverMath2.cpp:[('FUN_004c4600', 342)]
+0x004c4670	.	-	-
+0x004c4680	M	Math/RwMatrixOrthoNormalize.cpp[E]:('RwMatrixOrthoNormalizeLut', 31)	-
+0x004c4a50	.	Math/RwMatrixRotateInner.cpp[EA]:('', 81)	Math/RwMatrixRotateInner.cpp:[('RwMatrixRotateInner', 233)]
+0x004c4d20	.	Math/RwMatrixRotate.cpp[EA]:('', 75)	Math/RwMatrixRotate.cpp:[('RwMatrixRotate', 147)]
+0x004c4dc0	.	Render/RwMatrixInvert.cpp[EA]:('void __cdecl', 201)	Render/RwMatrixInvert.cpp:[('RwMatrixInvertEntry', 300)]
+0x004c4eb0	.	Render/RwMatrixInvert.cpp[EA]:('void __cdecl', 29)	Render/RwMatrixInvert.cpp:[('RwMatrixInvert', 169)]
+0x004c5010	.	Math/RwMatrixScale.cpp[EA]:('', 49)	Math/RwMatrixScale.cpp:[('RwMatrixScale', 95)]
+0x004c51a0	M	Collision/RwpSolverMath2.cpp[EA]:('FUN_004c51a0', 349)	Collision/RwpSolverMath2.cpp:[('FUN_004c51a0', 353)]
+0x004c52f0	M	Collision/RwpSolverMath2.cpp[EA]:('FUN_004c52f0', 357)	Collision/RwpSolverMath2.cpp:[('FUN_004c52f0', 361)]
+0x004c5470	M	-	-
+0x004c5680	M	-	-
+0x004c5770	M	-	-
+0x004c5800	M	Render/TextureLoaderCluster.cpp[A]:('std::uint32_t __cdecl', 63)	Render/TextureLoaderCluster.cpp:[('RwTexDictionarySetCurrent', 73)]
+0x004c5820	M	Render/TextureLoaderCluster.cpp[A]:('std::uint32_t __cdecl', 92)	Render/TextureLoaderCluster.cpp:[('RwTexDictionaryGetCurrent', 101)]
+0x004c5830	M	Util/PromoLoop_sessionB.cpp[A]:('Set4c5830', 569)	Util/PromoLoop_sessionB.cpp:[('Set4c5830', 575)]
+0x004c5850	M	Util/PromoLoop_sessionB.cpp[A]:('Get4c5850', 550)	Util/PromoLoop_sessionB.cpp:[('Get4c5850', 555)]
+0x004c5860	M	-	-
+0x004c5890	M	Render/TextureLoader_q6.cpp[A]:('std::uint32_t* __cdecl', 64)	Render/TextureLoader_q6.cpp:[('RwTexDictionaryCreate', 123)]
+0x004c5930	M	-	-
+0x004c59c0	M	-	-
+0x004c5ae0	M	Render/TextureLoaderCluster.cpp[A]:('std::uint32_t* __cdecl', 222)	Render/TextureLoaderCluster.cpp:[('RwTextureSetName', 252)]
+0x004c5b50	M	Render/TextureLoaderCluster.cpp[A]:('std::uint32_t* __cdecl', 282)	Render/TextureLoaderCluster.cpp:[('RwTextureSetMaskName', 312)]
+0x004c5bc0	M	Util/PromoLoop_sessionB.cpp[A]:('Insert4c5bc0', 1372)	Util/PromoLoop_sessionB.cpp:[('Insert4c5bc0', 1385)]
+0x004c5c00	M	Util/PromoLoop_sessionB.cpp[A]:('Search4c5c00', 2334)	Util/PromoLoop_sessionB.cpp:[('Search4c5c00', 2401)]
+0x004c5c80	M	Util/PromoLoop_sessionB.cpp[A]:('Set4c5c80', 579)	Util/PromoLoop_sessionB.cpp:[('Set4c5c80', 585)]
+0x004c5ca0	M	Util/PromoLoop_sessionB.cpp[A]:('Get4c5ca0', 558)	Util/PromoLoop_sessionB.cpp:[('Get4c5ca0', 563)]
+0x004c5cb0	M	-	-
+0x004c5dd0	M	-	-
+0x004c6140	M	-	-
+0x004c6580	M	-	-
+0x004c6750	.	-	-
+0x004c6ba0	M	-	-
+0x004c75c0	M	Util/PromoLoop_sessionB.cpp[A]:('Get4c75c0', 982)	Util/PromoLoop_sessionB.cpp:[('Get4c75c0', 988)]
+0x004c75e0	M	Frontend/SplashGameMode_t5.cpp[A]:('ViewportOriginGetter', 168)	Frontend/SplashGameMode_t5.cpp:[('ViewportOriginGetter', 177)]
+0x004c7600	M	-	Render/RasterDeviceWrappers.cpp:[('RasterUnlock_Entry', 219)]
+0x004c7620	M	-	-
+0x004c76c0	M	-	-
+0x004c76f0	M	-	Render/RasterDeviceWrappers.cpp:[('RasterCanLock_Entry', 385)]
+0x004c7730	M	-	-
+0x004c7760	M	-	-

@@ -1,0 +1,4 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+_RwVtableSlot07Call	0x00161a50	11	no	yes	_ViewportInit+0x52;_FUN_00428a30+0x74;_FUN_00428a30+0x17e;_TitleBuildInfoRender+0x116;_FUN_00428d30+0x4bc;_FUN_00429e10+0x74;_FUN_00429e10+0x17e;_FUN_00429e10+0x1e8
+_RwV3dTransformPoints	0x00161a90	0	no	yes	
+_RwEngineGetCurrentMode	0x00161a60	0	no	yes	

@@ -151,32 +151,10 @@ static constexpr int            kInputBackOffset = 0x4C0;            // back-off
 
 static constexpr std::uintptr_t kVtableSlot6Offset = 0x18u;   // 6 × 4 = 24 = 0x18
 
-// 2026-07-28 — transcribed verbatim. Sweep A flagged this RVA as an ECX Class-A defect; that
-// verdict is a FALSE POSITIVE. The original tail-JMPs, so ECX on return is whatever the
-// vtable callee leaves — identical either way. Measuring the emitted body settled it:
-// MSVC compiled `return fn();` as a tail jump too, so the callee still inherits the frame and
-// still sees param_1 at [ESP+4]:
-//     00011dd0  mov eax,dword ptr [esp+4]
-//     00011dd4  mov eax,dword ptr [eax+0x18]
-//     00011dd7  jmp eax
-// A REAL discrepancy survives that, though: the original enters the callee with EAX = param_1
-// (it jumps through memory and never overwrites EAX), while ours enters with EAX = the
-// function pointer. Any callee that reads EAX sees a different value.
-// [UNCERTAIN U-9027] vtable slot 6 targets are not enumerable statically (Ghidra: "Could not
-// recover jumptable at 0x004c1a08"), so whether a target reads EAX is unproven. Transcribed
-// verbatim regardless — 3 instructions, and exactness costs nothing here.
-//
-// 0x004c1a00
-extern "C" __declspec(dllexport) __declspec(naked)
-int __cdecl IntroSplashVtableSlot6(int /*param_1*/) {
-    __asm {
-        mov eax, dword ptr [esp + 4]        // 0x004c1a00
-        mov dword ptr [esp + 4], eax        // 0x004c1a04  (no-op rewrite, kept verbatim)
-        jmp dword ptr [eax + 0x18]          // 0x004c1a08  tail-jmp: callee inherits the frame
-    }
-}
-
-RH_ScopedInstall(IntroSplashVtableSlot6, 0x004c1a00);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S19: the body of 0x004c1a00 (IntroSplashVtableSlot6) moved to Match/MatchS19_004c1a00.cpp,
+// which compiles the byte-matched source re/match/s19/004c1a00.c.
+// Declaration only (C linkage; the wrapper defines it as RwCamera *(RwCamera *)): the in-TU caller below.
+extern "C" int __cdecl IntroSplashVtableSlot6(int param_1);
 
 
 // ─── 0x004c1bb0  IntroSplashRenderState ──────────────────────────────────────
@@ -197,22 +175,10 @@ RH_ScopedInstall(IntroSplashVtableSlot6, 0x004c1a00);  // re-enabled 2026-05-24 
 
 static constexpr std::uintptr_t kRwDriverVtable_9c = 0x9cu;   // slot 39 × 4 = 0x9c
 
-// 0x004c1bb0
-extern "C" __declspec(dllexport)
-std::uint32_t __cdecl IntroSplashRenderState(std::uint32_t param_1,
-                                              void*         param_2,
-                                              std::uint32_t param_3) {
-    const std::uintptr_t driver_vtable_root =
-        *reinterpret_cast<const std::uintptr_t*>(kRwDriver_007d3ff8);
-    using VFn = int (__cdecl*)(std::uint32_t, void*, std::uint32_t);
-    const VFn fn = *reinterpret_cast<VFn*>(driver_vtable_root + kRwDriverVtable_9c);
-    const int iVar1 = fn(param_1, param_2, param_3);
-    // -(uint)(iVar1 != 0) & param_1
-    const std::uint32_t mask = static_cast<std::uint32_t>(-static_cast<int>(iVar1 != 0));
-    return mask & param_1;
-}
-
-RH_ScopedInstall(IntroSplashRenderState, 0x004c1bb0);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S19: the body of 0x004c1bb0 (IntroSplashRenderState) moved to Match/MatchS19_004c1bb0.cpp,
+// which compiles the byte-matched source re/match/s19/004c1bb0.c.
+// Declaration only (C linkage; the wrapper defines it as unsigned int (unsigned int, int, int)): the in-TU caller below.
+extern "C" std::uint32_t __cdecl IntroSplashRenderState(std::uint32_t param_1, void* param_2, std::uint32_t param_3);
 
 
 // ─── 0x00492d20  IntroSplashFrameTickShim ────────────────────────────────────

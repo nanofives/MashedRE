@@ -79,16 +79,5 @@ typedef int(__cdecl* RwPluginRegistryAddPlugin_t)(std::uint32_t /*registry*/,
                                                   std::uint32_t /*cb2*/,
                                                   std::uint32_t /*cb3*/);
 
-// 0x004c2d90
-extern "C" __declspec(dllexport) int __cdecl RwEngineRegisterPlugin(
-    std::uint32_t size, std::uint32_t id, std::uint32_t initCB, std::uint32_t termCB)
-{
-    const RwPluginRegistryAddPlugin_t addPlugin =
-        reinterpret_cast<RwPluginRegistryAddPlugin_t>(0x004d7de0u);
-
-    // FUN_004d7de0(&DAT_00617fe0, param_1, param_2, param_3, param_4, 0)
-    // [0x004c2d9c .. 0x004c2dab]; EAX falls through to our return. [0x004c2db3]
-    return addPlugin(0x00617fe0u, size, id, initCB, termCB, 0u);
-}
-
-RH_ScopedInstall(RwEngineRegisterPlugin, 0x004c2d90);
+// MATCH-S19: the body of 0x004c2d90 (RwEngineRegisterPlugin) moved to Match/MatchS19_004c2d90.cpp,
+// which compiles the byte-matched source re/match/s19/004c2d90.c.

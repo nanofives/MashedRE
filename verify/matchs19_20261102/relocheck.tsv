@@ -1,0 +1,119 @@
+0x004c0740	OK	checked=1	unchecked=0	004c0740.c	
+0x004c07b0	OK	checked=13	unchecked=0	004c07b0.c	
+0x004c0830	OK	checked=7	unchecked=0	004c0830.c	
+0x004c0ad0	OK	checked=0	unchecked=0	004c0ad0.c	
+0x004c0b10	OK	checked=0	unchecked=0	004c0b10.c	
+0x004c0b70	OK	checked=2	unchecked=0	004c0b70.c	
+0x004c0ad0	OK	checked=0	unchecked=0	004c0c20.c	
+0x004c0c20	OK	checked=9	unchecked=0	004c0c20.c	
+0x004c0e50	OK	checked=4	unchecked=0	004c0e50.c	
+0x004c0ed0	OK	checked=1	unchecked=0	004c0ed0.c	
+0x004c0ef0	OK	checked=0	unchecked=0	004c0ef0.c	
+0x004c0ad0	OK	checked=0	unchecked=0	004c0f00.c	
+0x004c0f00	OK	checked=6	unchecked=0	004c0f00.c	
+0x004c1300	OK	checked=0	unchecked=0	004c1300.c	
+0x004c1340	OK	checked=5	unchecked=0	004c1340.c	
+0x004c13e0	OK	checked=5	unchecked=0	004c13e0.c	
+0x004c1480	OK	checked=5	unchecked=0	004c1480.c	
+0x004c1520	OK	checked=5	unchecked=0	004c1520.c	
+0x004c1680	OK	checked=5	unchecked=0	004c1680.c	
+0x004c1740	OK	checked=0	unchecked=0	004c1740.c	
+0x004c1800	OK	checked=0	unchecked=0	004c1800.c	
+0x004c1840	OK	checked=0	unchecked=0	004c1840.c	
+0x004c18c0	OK	checked=0	unchecked=0	004c18c0.c	
+0x004c19f0	OK	checked=0	unchecked=0	004c19f0.c	
+0x004c1a00	OK	checked=0	unchecked=0	004c1a00.c	
+0x004c1a10	OK	checked=1	unchecked=0	004c1a10.c	
+0x004c1a40	OK	checked=2	unchecked=0	004c1a40.c	
+0x004c1a70	OK	checked=1	unchecked=4	004c1a70.c	  unchecked: __DAT_005cc320,__DAT_005cc32c,__DAT_005cd03c
+0x004c1b10	OK	checked=2	unchecked=0	004c1b10.c	
+0x004c1b40	OK	checked=0	unchecked=0	004c1b40.c	
+0x004c1bb0	OK	checked=1	unchecked=0	004c1bb0.c	
+0x004c1be0	OK	checked=1	unchecked=0	004c1be0.c	
+0x004c1c10	OK	checked=5	unchecked=0	004c1c10.c	
+0x004c1c80	OK	checked=3	unchecked=0	004c1c80.c	
+0x004c1cf0	OK	checked=5	unchecked=0	004c1cf0.c	
+0x004c1f80	BAD	checked=4	unchecked=1	004c1f80.c	+0x3e8 _FUN_004c3b90: ours 0x004c3b90 vs orig 0xd9295bb2; +0x4f3 _FUN_004c3b90: ours 0x004c3b90 vs orig 0xd8846c50; +0x62e _FUN_004c3b90: ours 0x004c3b90 vs orig 0x472525b2; +0x73d _FUN_004c3b90: ours 0x004c3b90 vs orig 0xd8704b15  unchecked: __ftol
+0x004c2620	BAD	checked=5	unchecked=3	004c2620.c	+0x6f __DAT_005cc320: ours 0x005cc320 vs orig 0xe1d8005c; +0xa0 __DAT_005cc320: ours 0x005cc320 vs orig 0x1c244cd8; +0x122 _FUN_004c3d90: ours 0x004c3d90 vs orig 0xde6c2007; +0x2e7 _FUN_004c3b90: ours 0x004c3b90 vs orig 0xda0e07d7; +0x3f6 _FUN_004c3b90: ours 0x004c3b90 vs orig 0x7492b2dc  unchecked: __ftol
+0x004c2a30	BAD	checked=1	unchecked=4	004c2a30.c	+0x128 _FUN_004c4530: ours 0x004c4530 vs orig 0x41257c7c  unchecked: __DAT_005cc32c,__DAT_005cd50c
+0x004c2c90	OK	checked=4	unchecked=0	004c2c90.c	
+0x004c2d70	OK	checked=1	unchecked=0	004c2d70.c	
+0x004c2d80	OK	checked=0	unchecked=0	004c2d80.c	
+0x004c2d90	OK	checked=2	unchecked=0	004c2d90.c	
+0x004c2dc0	OK	checked=2	unchecked=0	004c2dc0.c	
+0x004c2de0	OK	checked=2	unchecked=0	004c2de0.c	
+0x004c2e10	OK	checked=2	unchecked=0	004c2e10.c	
+0x004c2e40	OK	checked=2	unchecked=0	004c2e40.c	
+0x004c2e70	OK	checked=2	unchecked=0	004c2e70.c	
+0x004c2ea0	OK	checked=2	unchecked=0	004c2ea0.c	
+0x004c2ed0	OK	checked=2	unchecked=0	004c2ed0.c	
+0x004c2f00	OK	checked=2	unchecked=0	004c2f00.c	
+0x004c2f30	OK	checked=2	unchecked=0	004c2f30.c	
+0x004c2f60	BAD	checked=7	unchecked=0	004c2f60.c	+0x3 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x6a56007d; +0x14 _FUN_004c2c90: ours 0x004c2c90 vs orig 0x8c4c2f75
+0x004c2fb0	BAD	checked=10	unchecked=0	004c2fb0.c	+0x3 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x6a56007d; +0x14 _FUN_004c2c90: ours 0x004c2c90 vs orig 0x844c2fc4; +0x54 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x7d3ff80d; +0x76 _FUN_004c2c90: ours 0x004c2c90 vs orig 0x00489612
+0x004c3040	OK	checked=9	unchecked=0	004c3040.c	
+0x004c3270	OK	checked=4	unchecked=0	004c3270.c	
+0x004c32b0	BAD	checked=78	unchecked=0	004c32b0.c	+0x21 _FUN_004cca80: ours 0x004cca80 vs orig 0xe405c700; +0x27 _FUN_004ccba0: ours 0x004ccba0 vs orig 0x4c35d000; +0x2d __DAT_007d3fe0: ours 0x007d3fe0 vs orig 0x05c716eb; +0x33 __DAT_007d3fe4: ours 0x007d3fe4 vs orig 0xca80007d; +0x3e _FUN_004c35b0: ours 0x004c35b0 vs orig 0x4ccba000; +0x44 _FUN_004c35d0: ours 0x004c35d0 vs orig 0x94e6e801; +0x49 __DAT_007d3fe0: ours 0x007d3fe0 vs orig 0x3ff8a100; +0x4f __DAT_007d3fe4: ours 0x007d3fe4 vs orig 0x2c244c8b; +0x5f _FUN_004cc7e0: ours 0x004cc7e0 vs orig 0x8b4cb052; +0x64 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x00000124; +0x77 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x840ff685; +0x8a _FUN_004d8570: ours 0x004d8570 vs orig 0x0510b72e; +0x9c _FUN_004cce20: ours 0x004cce20 vs orig 0x1042b940; +0xac _FUN_004d7c60: ours 0x004d7c60 vs orig 0x684c80e4; +0xbf _FUN_004d8470: ours 0x004d8470 vs orig 0x4a6be800; +0xc7 _FUN_004d8430: ours 0x004d8430 vs orig 0x4c3e2068; +0xd8 _DAT_00617fe0: ours 0x00617fe0 vs orig 0x617fe068; +0xdd _FUN_004d7de0: ours 0x004d7de0 vs orig 0x4d352c1c; +0xe6 _FUN_004c3e20: ours 0x004c3e20 vs orig 0x4d904068; +0xee _FUN_004c3e90: ours 0x004c3e90 vs orig 0x0d68004d; +0xfe _DAT_00617fe0: ours 0x00617fe0 vs orig 0x014a2de8; +0x103 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x8b94f83a; +0x10d _FUN_004d9040: ours 0x004d9040 vs orig 0x7068004c; +0x114 _FUN_004d9030: ours 0x004d9030 vs orig 0x00040268; +0x124 _DAT_00617fe0: ours 0x00617fe0 vs orig 0x68006a00; +0x129 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x684c7fe5; +0x134 _FUN_004c4430: ours 0x004c4430 vs orig 0x046a0000; +0x13c _FUN_004c4470: ours 0x004c4470 vs orig 0x24448900; +0x14c _DAT_00617fe0: ours 0x00617fe0 vs orig 0xbca06800; +0x153 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x004c380b; +0x15c _FUN_004c0830: ours 0x004c0830 vs orig 0x44890061; +0x164 _FUN_004c07b0: ours 0x004c07b0 vs orig 0x83000149; +0x174 _DAT_00617fe0: ours 0x00617fe0 vs orig 0x19806800; +0x179 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x04519c2d; +0x185 _FUN_004cbd00: ours 0x004cbd00 vs orig 0x49a5e800; +0x18c _FUN_004cbca0: ours 0x004cbca0 vs orig 0xdb606800; +0x19c _DAT_00617fe0: ours 0x00617fe0 vs orig 0x00022068; +0x1a1 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x61cc14bd; +0x1ac _FUN_004c1940: ours 0x004c1940 vs orig 0x6a000149; +0x1bb _FUN_004c1980: ours 0x004c1980 vs orig 0x00040768; +0x1c8 _DAT_00617fe0: ours 0x00617fe0 vs orig 0xe85c2444; +0x1cd _FUN_004d7de0: ours 0x004d7de0 vs orig 0x834c35ca; +0x1d8 _FUN_004cdb60: ours 0x004cdb60 vs orig 0x5e006800; +0x1e0 _FUN_004cd900: ours 0x004cd900 vs orig 0x68004c5f; +0x1f3 _DAT_00617fe0: ours 0x00617fe0 vs orig 0x68006a00; +0x1f8 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x684c8231; +0x204 _FUN_004c78a0: ours 0x004c78a0 vs orig 0x68606a00; +0x20b _FUN_004c78e0: ours 0x004c78e0 vs orig 0x24448900; +0x21b _DAT_00617fe0: ours 0x00617fe0 vs orig 0x8fa06800; +0x220 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x045e9cd4; +0x22b _FUN_004c5e00: ours 0x004c5e00 vs orig 0x44890061; +0x233 _FUN_004c5f60: ours 0x004c5f60 vs orig 0x83000148; +0x243 _DAT_00617fe0: ours 0x00617fe0 vs orig 0x8b342454; +0x24c _FUN_004d7de0: ours 0x004d7de0 vs orig 0x3070798b; +0x257 _FUN_004d8550: ours 0x004d8550 vs orig 0x24548bf2; +0x25f _FUN_004d8530: ours 0x004d8530 vs orig 0x0b18244c; +0x26f _DAT_00617fe0: ours 0x00617fe0 vs orig 0x244c8bf1; +0x274 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x00b72533; +0x280 _FUN_004d9000: ours 0x004d9000 vs orig 0xd85068f1; +0x287 _FUN_004d8fa0: ours 0x004d8fa0 vs orig 0x040a68f3; +0x297 _DAT_00617fe0: ours 0x00617fe0 vs orig 0x4893e8f7; +0x29c _FUN_004d7de0: ours 0x004d7de0 vs orig 0x684c9f50; +0x2a8 _FUN_004d8560: ours 0x004d8560 vs orig 0x04579d5c; +0x2b2 _FUN_004cd810: ours 0x004cd810 vs orig 0x8b00617f; +0x2b8 _FUN_004cd850: ours 0x004cd850 vs orig 0x00014874; +0x2cc _DAT_00617fe0: ours 0x00617fe0 vs orig 0xe8000147; +0x2d1 _FUN_004d7de0: ours 0x004d7de0 vs orig 0xe84c361e; +0x2dc _FUN_004d8b70: ours 0x004d8b70 vs orig 0xc318c483; +0x2e4 _FUN_004d8a80: ours 0x004d8a80 vs orig 0x85f08b00; +0x2f4 _DAT_00617fe0: ours 0x00617fe0 vs orig 0x00000124; +0x2f9 _FUN_004d7de0: ours 0x004d7de0 vs orig 0x834c35ad; +0x34e _thunk_FUN_004cfa00: orig 0x7d8c2e0f is not a jmp thunk to 0x004cfa00; +0x358 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x0a448900; +0x36b _FUN_004d7ca0: ours 0x004d7ca0 vs orig 0x7d8c2e2c; +0x370 _FUN_004ccf20: ours 0x004ccf20 vs orig 0x40484baf; +0x375 _FUN_0045b350: ours 0x0045b350 vs orig 0x0a90bf29
+0x004c35f0	OK	checked=12	unchecked=0	004c35f0.c	
+0x004c3730	OK	checked=0	unchecked=0	004c3730.c	
+0x004c3880	OK	checked=0	unchecked=0	004c3880.c	
+0x004c3910	BAD	checked=2	unchecked=0	004c3910.c	+0x30 _DAT_007d3ffc: ours 0x007d3ffc vs orig 0x007d3ff8; +0x36 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x007d3ffc
+0x004c39b0	BAD	checked=5	unchecked=0	004c39b0.c	+0xc _DAT_007d3ffc: ours 0x007d3ffc vs orig 0x358b5600; +0x18 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x0840d900
+0x004c3ac0	OK	checked=2	unchecked=0	004c3ac0.c	
+0x004c3b30	OK	checked=2	unchecked=0	004c3b30.c	
+0x004c3b90	OK	checked=2	unchecked=0	004c3b90.c	
+0x004c3bf0	OK	checked=2	unchecked=0	004c3bf0.c	
+0x004c3c60	OK	checked=5	unchecked=0	004c3c60.c	
+0x004c3d60	OK	checked=2	unchecked=0	004c3d60.c	
+0x004c3d90	OK	checked=2	unchecked=0	004c3d90.c	
+0x004c3dc0	OK	checked=2	unchecked=0	004c3dc0.c	
+0x004c3df0	OK	checked=2	unchecked=0	004c3df0.c	
+0x004c40b0	OK	checked=3	unchecked=0	004c40b0.c	
+0x004c4270	OK	checked=0	unchecked=0	004c4270.c	
+0x004c42d0	OK	checked=3	unchecked=0	004c42d0.c	
+0x004c4360	OK	checked=3	unchecked=0	004c4360.c	
+0x004c4430	OK	checked=7	unchecked=0	004c4430.c	
+0x004c4470	OK	checked=16	unchecked=0	004c4470.c	
+0x004c4530	OK	checked=5	unchecked=0	004c4530.c	
+0x004c45f0	OK	checked=0	unchecked=0	004c45f0.c	
+0x004c4600	OK	checked=2	unchecked=0	004c4600.c	
+0x004c4670	OK	checked=1	unchecked=0	004c4670.c	
+0x004c4680	BAD	checked=12	unchecked=1	004c4680.c	+0x7e _FUN_004c3b90: ours 0x004c3b90 vs orig 0x2469204e; +0xca _FUN_004c3b90: ours 0x004c3b90 vs orig 0x00408936; +0x116 _FUN_004c3b90: ours 0x004c3b90 vs orig 0x24912199; +0x141 _DAT_005d757c: ours 0x005d757c vs orig 0x25e0df00; +0x156 _DAT_005d757c: ours 0x005d757c vs orig 0xdf005d75; +0x176 _DAT_005d757c: ours 0x005d757c vs orig 0xd9000000; +0x1ab _DAT_005d757c: ours 0x005d757c vs orig 0xd9e0d934; +0x1e2 _DAT_005d757c: ours 0x005d757c vs orig 0xd9382444; +0x215 _DAT_005d757c: ours 0x005d757c vs orig 0xd9e0d902; +0x2bb _FUN_004c3b90: ours 0x004c3b90 vs orig 0xc22b1617; +0x338 _FUN_004c3b90: ours 0x004c3b90 vs orig 0x0f250a95; +0x3cd const __real@4f800000: ours 0000804f vs orig@0x81909090 3c6f75747369646520696d6167653e  unchecked: __ftol
+0x004c4a50	BAD	checked=13	unchecked=0	004c4a50.c	+0x38 const __real@3f800000: ours 0000803f vs orig@0xd8dd2c24 3c6f75747369646520696d6167653e; +0x45 const __real@3f800000: ours 0000803f vs orig@0x24245cd9 3c6f75747369646520696d6167653e; +0x52 const __real@3f800000: ours 0000803f vs orig@0x8cd82c24 3c6f75747369646520696d6167653e; +0xd5 const __real@3f800000: ours 0000803f vs orig@0x2444c700 3c6f75747369646520696d6167653e; +0x106 const __real@3f800000: ours 0000803f vs orig@0x2005d9d8 3c6f75747369646520696d6167653e; +0x136 const __real@3f800000: ours 0000803f vs orig@0x2005d954 3c6f75747369646520696d6167653e
+0x004c4d20	BAD	checked=4	unchecked=0	004c4d20.c	+0x7f const __real@3f800000: ours 0000803f vs orig@0x2dd8ffd9 3c6f75747369646520696d6167653e; +0x89 _FUN_004c4a50: ours 0x004c4a50 vs orig 0xe8a29fd1
+0x004c4dc0	OK	checked=3	unchecked=0	004c4dc0.c	
+0x004c4eb0	BAD	checked=3	unchecked=0	004c4eb0.c	+0x55 const __real@3f800000: ours 0000803f vs orig@0xd8dd0824 3c6f75747369646520696d6167653e; +0x5f const __real@00000000: ours 00000000 vs orig@0x0474d285 3c6f75747369646520696d6167653e; +0x6e const __real@3f800000: ours 0000803f vs orig@0x0448d8c1 3c6f75747369646520696d6167653e
+0x004c5010	OK	checked=3	unchecked=0	004c5010.c	
+0x004c51a0	BAD	checked=4	unchecked=5	004c51a0.c	+0xac _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x04962a64; +0xb6 _FUN_004d8480: ours 0x004d8480 vs orig 0xd90e3063; +0xbb _uRam0000000c: ours 0x0000000c vs orig 0x3458d934; +0xc9 _uRam0000000c: ours 0x0000000c vs orig 0xc1de0449  unchecked: __ftol,_s_Invalid_combination_type_0061811c
+0x004c52f0	BAD	checked=6	unchecked=1	004c52f0.c	+0x37 _DAT_007d4028: ours 0x007d4028 vs orig 0x448d1c24; +0x3d _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x314de850; +0x91 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x5ba9b1e4; +0x9b _FUN_004d8480: ours 0x004d8480 vs orig 0x11057803; +0xad _DAT_007d4028: ours 0x007d4028 vs orig 0x8b182474; +0xb3 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x00000010  unchecked: _s_Invalid_combination_type_0061811c
+0x004c5470	BAD	checked=11	unchecked=1	004c5470.c	+0x18 __DAT_005cc320: ours 0x005cc320 vs orig 0x06d90000; +0x3f _FUN_004c3ac0: ours 0x004c3ac0 vs orig 0x472564d7; +0x4d _DAT_005d757c: ours 0x005d757c vs orig 0xd8ffffe6; +0x77 __DAT_005cc320: ours 0x005cc320 vs orig 0x44d919d9; +0xbe __DAT_005cc98c: ours 0x005cc98c vs orig 0x5d757c1d; +0xcd __DAT_005cc328: ours 0x005cc328 vs orig 0x0000013f; +0x105 _DAT_005d757c: ours 0x005d757c vs orig 0x245cd9e0; +0x11f _DAT_005d757c: ours 0x005d757c vs orig 0x24448960; +0x13a _FUN_004c5680: ours 0x004c5680 vs orig 0x5d263687; +0x143 __DAT_005cc320: ours 0x005cc320 vs orig 0x5cd9e0d9; +0x158 _FUN_004c4eb0: ours 0x004c4eb0 vs orig 0x504cb28f  unchecked: _fpatan
+0x004c5680	BAD	checked=4	unchecked=0	004c5680.c	+0x23 __DAT_005cc320: ours 0x005cc320 vs orig 0xd806d958; +0x51 __DAT_005cc320: ours 0x005cc320 vs orig 0x00004100; +0x75 __DAT_005cc320: ours 0x005cc320 vs orig 0x245cd904; +0xb7 _FUN_004c3b90: ours 0x004c3b90 vs orig 0xde5c7b87
+0x004c5770	OK	checked=2	unchecked=0	004c5770.c	
+0x004c5800	OK	checked=2	unchecked=0	004c5800.c	
+0x004c5820	OK	checked=2	unchecked=0	004c5820.c	
+0x004c5830	OK	checked=2	unchecked=0	004c5830.c	
+0x004c5850	OK	checked=2	unchecked=0	004c5850.c	
+0x004c5860	OK	checked=1	unchecked=0	004c5860.c	
+0x004c5890	OK	checked=12	unchecked=0	004c5890.c	
+0x004c5930	BAD	checked=7	unchecked=0	004c5930.c	+0x49 _DAT_00618150: ours 0x00618150 vs orig 0xe8006181; +0x4e _FUN_004d8060: ours 0x004d8060 vs orig 0x8b4c5aa8; +0x65 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x8b007d3f; +0x6b _DAT_007d4054: ours 0x007d4054 vs orig 0x8b007d40
+0x004c59c0	OK	checked=0	unchecked=0	004c59c0.c	
+0x004c5ae0	OK	checked=4	unchecked=0	004c5ae0.c	
+0x004c5b50	OK	checked=4	unchecked=0	004c5b50.c	
+0x004c5bc0	OK	checked=0	unchecked=0	004c5bc0.c	
+0x004c5c00	OK	checked=0	unchecked=0	004c5c00.c	
+0x004c5c80	OK	checked=2	unchecked=0	004c5c80.c	
+0x004c5ca0	OK	checked=2	unchecked=0	004c5ca0.c	
+0x004c5cb0	BAD	checked=11	unchecked=0	004c5cb0.c	+0x2d _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x18247c8b; +0x32 _DAT_007d4054: ours 0x007d4054 vs orig 0x7d3ff815; +0x59 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x016f3ff5; +0x67 _FUN_004d8480: ours 0x004d8480 vs orig 0x0173c203; +0x77 _s__null__00618178: ours 0x00618178 vs orig 0x61817868; +0x7f _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x016f1a1b; +0x8d _FUN_004d8480: ours 0x004d8480 vs orig 0x01739c29; +0x9e _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x7d3ff80d; +0xa4 _DAT_007d4054: ours 0x007d4054 vs orig 0x7d405415
+0x004c5dd0	OK	checked=2	unchecked=0	004c5dd0.c	
+0x004c6140	OK	checked=3	unchecked=0	004c6140.c	
+0x004c6580	BAD	checked=8	unchecked=3	004c6580.c	+0xea _FUN_004daa40: ours 0x004daa40 vs orig 0x5c0c99cb; +0x116 _FUN_004d9050: ours 0x004d9050 vs orig 0x24d8f27e; +0x144 _FUN_004d9530: ours 0x004d9530 vs orig 0x24d8f1c8; +0x17b _FUN_004cdca0: ours 0x004cdca0 vs orig 0xef34b84f; +0x18e _FUN_004cdd60: ours 0x004cdd60 vs orig 0xc4cf6712; +0x1a7 _FUN_004da4f0: ours 0x004da4f0 vs orig 0x3070ebb6; +0x1c8 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x1110e8a7; +0x1e1 _FUN_004daaf0: ours 0x004daaf0 vs orig 0xb4d7bdba  unchecked: @__security_check_cookie@4,___security_cookie,__chkstk
+0x004c6750	BAD	checked=46	unchecked=1	004c6750.c	+0x2f _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x3ff8158b; +0x66 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x18814fde; +0x74 _FUN_004d8480: ours 0x004d8480 vs orig 0x1d035019; +0x85 _FUN_004ce6c0: ours 0x004ce6c0 vs orig 0x7f32502f; +0x92 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x3ff8a150; +0xc6 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x3ff8158b; +0xdc _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x3ff8a100; +0x10e _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x17d95086; +0x11c _FUN_004d8480: ours 0x004d8480 vs orig 0x1c5b50c2; +0x12d _FUN_004ce6c0: ours 0x004ce6c0 vs orig 0x7e8a50d7; +0x13a _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x3ff80d8b; +0x15b _FUN_004ce970: ours 0x004ce970 vs orig 0x810c50ff; +0x1a8 _FUN_004d5340: ours 0x004d5340 vs orig 0xea8f5152; +0x1b5 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x7442515f; +0x1c3 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x1724512f; +0x1d1 _FUN_004d8480: ours 0x004d8480 vs orig 0x1ba65176; +0x217 _FUN_004cdca0: ours 0x004cdca0 vs orig 0xf6d1762f; +0x226 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x5eac29ad; +0x23c _FUN_004cdd60: ours 0x004cdd60 vs orig 0x1cc22a15; +0x249 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x834c6a10; +0x24f _FUN_004cdd00: ours 0x004cdd00 vs orig 0x5eac29d6; +0x266 _FUN_004cecb0: ours 0x004cecb0 vs orig 0x8b4c6a2d; +0x26c _FUN_004cdd00: ours 0x004cdd00 vs orig 0x004cb000; +0x284 _FUN_004cdca0: ours 0x004cdca0 vs orig 0xedd1769c; +0x293 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x5eac2a1a; +0x2a9 _FUN_004cdd60: ours 0x004cdd60 vs orig 0x1cc22a82; +0x2b6 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x834c6a7c; +0x2bc _FUN_004cdd00: ours 0x004cdd00 vs orig 0x5eac2a43; +0x2d3 _FUN_004dabd0: ours 0x004dabd0 vs orig 0x834c6a99; +0x2d9 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x8b5165b0; +0x2f2 _FUN_004daa40: ours 0x004daa40 vs orig 0xc0d16f0a; +0x310 _FUN_004d9050: ours 0x004d9050 vs orig 0x06708ee8; +0x327 _FUN_004d9530: ours 0x004d9530 vs orig 0x45d772d0; +0x335 _FUN_004cdca0: ours 0x004cdca0 vs orig 0x2510ee61; +0x348 _FUN_004cdd60: ours 0x004cdd60 vs orig 0x43d776ef; +0x364 _FUN_004da4f0: ours 0x004da4f0 vs orig 0x11058333; +0x37b _FUN_004cdd00: ours 0x004cdd00 vs orig 0x06848f63; +0x39e _FUN_004daa40: ours 0x004daa40 vs orig 0xc0d16fb6; +0x3bc _FUN_004d9050: ours 0x004d9050 vs orig 0x06708fa4; +0x3d6 _FUN_004d9530: ours 0x004d9530 vs orig 0x55d77377; +0x3e4 _FUN_004cdca0: ours 0x004cdca0 vs orig 0x2510ef10; +0x3f3 _FUN_004cdd60: ours 0x004cdd60 vs orig 0x53d77792; +0x40f _FUN_004da4f0: ours 0x004da4f0 vs orig 0x010583de; +0x426 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x06849006; +0x435 _FUN_004daaf0: ours 0x004daaf0 vs orig 0xc6d7904d  unchecked: __chkstk
+0x004c6ba0	BAD	checked=60	unchecked=2	004c6ba0.c	+0xd _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x01682484; +0x40 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0xbe0f3e72; +0x76 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x851284de; +0x80 _FUN_004d8480: ours 0x004d8480 vs orig 0x807118af; +0x9f _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x8d000001; +0xb6 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x0000f491; +0xec _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x44d994b4; +0xf6 _FUN_004d8480: ours 0x004d8480 vs orig 0xc4cf6c9b; +0xfe _DAT_007d4054: ours 0x007d4054 vs orig 0x00000177; +0x104 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x007d4054; +0x180 _FUN_004c6750: ours 0x004c6750 vs orig 0x3870e9ad; +0x1aa _FUN_004c77c0: ours 0x004c77c0 vs orig 0xf0d76d4e; +0x1b9 _FUN_004cdd00: ours 0x004cdd00 vs orig 0xc4cf6d5d; +0x1db _FUN_004d5310: ours 0x004d5310 vs orig 0xe8a2c48e; +0x1e9 _FUN_004c76f0: ours 0x004c76f0 vs orig 0xe8a26d8d; +0x202 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x0001998e; +0x21c _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x51000001; +0x252 _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0xbe5b6df6; +0x25c _FUN_004d8480: ours 0x004d8480 vs orig 0x004d6d68; +0x273 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x44894424; +0x289 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0xc6ed8500; +0x2bf _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x014cab73; +0x2c9 _FUN_004d8480: ours 0x004d8480 vs orig 0x004d6df2; +0x2d1 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x68000000; +0x2d7 _DAT_007d4054: ours 0x007d4054 vs orig 0x68550000; +0x300 _FUN_004c7860: ours 0x004c7860 vs orig 0x004c701b; +0x327 _FUN_004c7600: ours 0x004c7600 vs orig 0xc4d03fca; +0x355 _FUN_004c6750: ours 0x004c6750 vs orig 0x0534a31d; +0x389 _FUN_004cefd0: ours 0x004cefd0 vs orig 0x3908b3b6; +0x3a7 _FUN_004cdd00: ours 0x004cdd00 vs orig 0x40f4d9bf; +0x3b6 _FUN_004c7650: ours 0x004c7650 vs orig 0x02d093de; +0x3fb _FUN_004c6580: ours 0x004c6580 vs orig 0xf62c57f1; +0x405 _FUN_004cefd0: ours 0x004cefd0 vs orig 0x5061342c; +0x41f _FUN_004c7860: ours 0x004c7860 vs orig 0x004cefd0; +0x431 _FUN_004d5310: ours 0x004d5310 vs orig 0xff7f7ff9; +0x442 _FUN_004c7600: ours 0x004c7600 vs orig 0x004c7860; +0x44f _FUN_004cdd00: ours 0x004cdd00 vs orig 0x569ea8af; +0x46f _FUN_004cdd00: ours 0x004cdd00 vs orig 0x8b4c707f; +0x482 _FUN_004cefd0: ours 0x004cefd0 vs orig 0xfb87804a; +0x489 _FUN_004d5310: ours 0x004d5310 vs orig 0x51852c79; +0x496 _FUN_004c7650: ours 0x004c7650 vs orig 0xeec96b75; +0x49c _FUN_004cdd00: ours 0x004cdd00 vs orig 0x004c7650; +0x4aa _FUN_004cdd00: ours 0x004cdd00 vs orig 0x0052d912; +0x4b2 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x00007f7a; +0x4b8 _DAT_007d4054: ours 0x007d4054 vs orig 0x00e2b3e8; +0x4e6 _DAT_00618138: ours 0x00618138 vs orig 0xa104c483; +0x504 _FUN_004d8000: ours 0x004d8000 vs orig 0xc4d06933; +0x510 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x005047c7; +0x520 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x0447c700; +0x54c _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0xc4cf716d; +0x556 _FUN_004d8480: ours 0x004d8480 vs orig 0x004d418c; +0x56a _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0xbb20f883; +0x575 _DAT_007d3e6c: ours 0x007d3e6c vs orig 0x511f4ebe; +0x582 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x245c8980; +0x587 _DAT_007d3e6c: ours 0x007d3e6c vs orig 0x010ec4e8; +0x59c _DAT_007d3e8b: ours 0x007d3e8b vs orig 0x2f47c618; +0x5a6 _DAT_007d3e6c: ours 0x007d3e6c vs orig 0x4974206a; +0x5b6 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0xf80d8b00; +0x5dd _FUN_004d7ff0: ours 0x004d7ff0 vs orig 0x5cd5f181; +0x5ea _FUN_004d8480: ours 0x004d8480 vs orig 0x44d9a1b2  unchecked: @__security_check_cookie@4,___security_cookie
+0x004c75c0	OK	checked=2	unchecked=0	004c75c0.c	
+0x004c75e0	OK	checked=0	unchecked=0	004c75e0.c	
+0x004c7600	OK	checked=1	unchecked=0	004c7600.c	
+0x004c7620	OK	checked=1	unchecked=0	004c7620.c	
+0x004c76c0	OK	checked=1	unchecked=0	004c76c0.c	
+0x004c76f0	OK	checked=1	unchecked=0	004c76f0.c	
+0x004c7730	OK	checked=2	unchecked=0	004c7730.c	
+0x004c7760	OK	checked=1	unchecked=0	004c7760.c	

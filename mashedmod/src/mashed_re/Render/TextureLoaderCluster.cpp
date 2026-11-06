@@ -59,18 +59,8 @@
 static constexpr std::uintptr_t kRwGlobalsPtr  = 0x007d3ff8u;  // texture plugin slot offset
 static constexpr std::uintptr_t kRwInstancePtr = 0x007d4054u;  // global RW instance base ptr
 
-// 0x004c5800
-extern "C" __declspec(dllexport) std::uint32_t __cdecl
-RwTexDictionarySetCurrent(std::uint32_t param_1)
-{
-    // cited 0x004c5805: write param_1 to slot +0x1c
-    std::uint32_t rw_slot  = *reinterpret_cast<std::uint32_t*>(kRwGlobalsPtr);
-    std::uint32_t rw_base  = *reinterpret_cast<std::uint32_t*>(kRwInstancePtr);
-    *reinterpret_cast<std::uint32_t*>(rw_base + 0x1cu + rw_slot) = param_1;
-    return 1u;  // cited 0x004c5815
-}
-
-RH_ScopedInstall(RwTexDictionarySetCurrent, 0x004c5800);  // re-enabled 2026-05-24 phase-a2-strict GREEN int_scalar (always returns 1)
+// MATCH-S19: the body of 0x004c5800 (std::uint32_t __cdecl) moved to Match/MatchS19_004c5800.cpp,
+// which compiles the byte-matched source re/match/s19/004c5800.c.
 
 // ---------------------------------------------------------------------------
 // 0x004c5820  FUN_004c5820  RwTexDictionaryGetCurrent   (15 bytes)
@@ -88,17 +78,8 @@ RH_ScopedInstall(RwTexDictionarySetCurrent, 0x004c5800);  // re-enabled 2026-05-
 // Symmetric getter for the slot written by RwTexDictionarySetCurrent.
 // ---------------------------------------------------------------------------
 
-// 0x004c5820
-extern "C" __declspec(dllexport) std::uint32_t __cdecl
-RwTexDictionaryGetCurrent()
-{
-    // cited 0x004c5822: read slot +0x1c
-    std::uint32_t rw_slot = *reinterpret_cast<std::uint32_t*>(kRwGlobalsPtr);
-    std::uint32_t rw_base = *reinterpret_cast<std::uint32_t*>(kRwInstancePtr);
-    return *reinterpret_cast<std::uint32_t*>(rw_base + 0x1cu + rw_slot);
-}
-
-RH_ScopedInstall(RwTexDictionaryGetCurrent, 0x004c5820);  // re-enabled 2026-05-24 phase-a2-strict GREEN getter
+// MATCH-S19: the body of 0x004c5820 (std::uint32_t __cdecl) moved to Match/MatchS19_004c5820.cpp,
+// which compiles the byte-matched source re/match/s19/004c5820.c.
 
 // ---------------------------------------------------------------------------
 // 0x004c5a00  FUN_004c5a00  RwTextureCreate   (89 bytes)
@@ -218,38 +199,9 @@ static RwErrReportFn_t   const s_FUN_004d7ff0 =
 static RwErrDispatchFn_t const s_FUN_004d8480 =
     reinterpret_cast<RwErrDispatchFn_t>(0x004d8480u);
 
-// 0x004c5ae0
-extern "C" __declspec(dllexport) std::uint32_t* __cdecl
-RwTextureSetName(std::uint32_t* param_1, const char* param_2)
-{
-    std::uint32_t rw_base = *reinterpret_cast<std::uint32_t*>(kRwGlobalsPtr);
+// MATCH-S19: the body of 0x004c5ae0 (std::uint32_t* __cdecl) moved to Match/MatchS19_004c5ae0.cpp,
+// which compiles the byte-matched source re/match/s19/004c5ae0.c.
 
-    // strncpy(tex+0x10, name, 0x20) via vtable+0xd0, cited 0x004c5ae8
-    StrncpyFn_t strncpy_fn = *reinterpret_cast<StrncpyFn_t*>(rw_base + 0xd0u);
-    strncpy_fn(reinterpret_cast<std::uint8_t*>(param_1) + 0x10u, param_2, 0x20u);
-
-    // strlen(name) via vtable+0xf4, cited 0x004c5af6
-    StrlenFn_t strlen_fn = *reinterpret_cast<StrlenFn_t*>(rw_base + 0xf4u);
-    std::uint32_t uVar1 = strlen_fn(param_2);
-
-    if (uVar1 > 0x1fu) {
-        // Overflow path: error code 0x8000001e, cited 0x004c5aff
-        struct { std::uint32_t a; std::uint32_t b; } stk;
-        stk.a = 1u;
-        stk.b = s_FUN_004d7ff0(0x8000001eu, param_2, 0x20u, 0x1fu,
-                                static_cast<std::int32_t>(
-                                    *reinterpret_cast<const std::int8_t*>(param_2 + 0x1fu)));
-        s_FUN_004d8480(&stk);
-        // Force null-terminator at tex+0x2f, cited 0x004c5b3c
-        *reinterpret_cast<std::uint8_t*>(
-            reinterpret_cast<std::uintptr_t>(param_1) + 0x2fu) = 0u;
-    }
-
-    return param_1;  // cited 0x004c5b40
-}
-
-// Re-enabled area-render r6 2026-09-01 (DEMOTED-row re-promotion; path1 struct_str_set GREEN).
-RH_ScopedInstall(RwTextureSetName, 0x004c5ae0);
 
 // ---------------------------------------------------------------------------
 // 0x004c5b50  FUN_004c5b50  RwTextureSetMaskName   (109 bytes)
@@ -278,35 +230,6 @@ RH_ScopedInstall(RwTextureSetName, 0x004c5ae0);
 // tex->mask is char[32] at tex+0x30..+0x4f.
 // ---------------------------------------------------------------------------
 
-// 0x004c5b50
-extern "C" __declspec(dllexport) std::uint32_t* __cdecl
-RwTextureSetMaskName(std::uint32_t* param_1, const char* param_2)
-{
-    std::uint32_t rw_base = *reinterpret_cast<std::uint32_t*>(kRwGlobalsPtr);
+// MATCH-S19: the body of 0x004c5b50 (std::uint32_t* __cdecl) moved to Match/MatchS19_004c5b50.cpp,
+// which compiles the byte-matched source re/match/s19/004c5b50.c.
 
-    // strncpy(tex+0x30, maskName, 0x20) via vtable+0xd0, cited 0x004c5b58
-    StrncpyFn_t strncpy_fn = *reinterpret_cast<StrncpyFn_t*>(rw_base + 0xd0u);
-    strncpy_fn(reinterpret_cast<std::uint8_t*>(param_1) + 0x30u, param_2, 0x20u);
-
-    // strlen(maskName) via vtable+0xf4, cited 0x004c5b66
-    StrlenFn_t strlen_fn = *reinterpret_cast<StrlenFn_t*>(rw_base + 0xf4u);
-    std::uint32_t uVar1 = strlen_fn(param_2);
-
-    if (uVar1 > 0x1fu) {
-        // Overflow path: error code 0x8000001e, cited 0x004c5b6f
-        struct { std::uint32_t a; std::uint32_t b; } stk;
-        stk.a = 1u;
-        stk.b = s_FUN_004d7ff0(0x8000001eu, param_2, 0x20u, 0x1fu,
-                                static_cast<std::int32_t>(
-                                    *reinterpret_cast<const std::int8_t*>(param_2 + 0x1fu)));
-        s_FUN_004d8480(&stk);
-        // Force null-terminator at tex+0x4f, cited 0x004c5bac
-        *reinterpret_cast<std::uint8_t*>(
-            reinterpret_cast<std::uintptr_t>(param_1) + 0x4fu) = 0u;
-    }
-
-    return param_1;  // cited 0x004c5bb0
-}
-
-// Re-enabled area-render r6 2026-09-01 (DEMOTED-row re-promotion; path1 struct_str_set GREEN).
-RH_ScopedInstall(RwTextureSetMaskName, 0x004c5b50);
