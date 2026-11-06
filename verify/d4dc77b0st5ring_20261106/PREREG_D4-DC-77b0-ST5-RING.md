@@ -38,3 +38,13 @@ New run_arms stack: `ST5L2NRA` = ST5L2 + `MASHED_NO_RING_AUDIO_PASS=1`.
 
 GREEN = G0, R-CD, R-OFF, W-C4 and W-GO hold. R-EQ is a consistency witness: if it fails while R-CD holds, report the
 difference, it does not by itself make the step red.
+
+## Amendment 1 (2026-11-06, after the first arm set, before its re-run)
+
+First arm set (exe 0cde9a6d): G0 held, R-OFF held (B_ST5L2NRA_K0 dda413d7), R-CD failed: knob-ON logs read
+`draws_before=312 ... cd=4,2,1,4`, i.e. the ring open's 310 discards plus 2 pass draws. The per-car gate
+`IsCarSlotActive(v)` reads the exe's slot table, 1,0,0,0 at state-2 entry (`Ai_SetCarSlotState` at race load; cars 1..3
+are set to 2 only in the AI tick), where the original's B captures read 1,2,2,2 (scenario_launch.py FUN_0040e480 pokes),
+so the pass drew for car 0 only. Change: the gate is the exe's car set, `v < 1 + ai_cars_.size()` (DEVIATION comment
+at `RingAudioPassDraws`). Predictions unchanged, with R-CD read as `draws_before=318` (310 + 8) on the K0 arms and
+`cd=3,3,3,3`. Every arm of the first set is re-run on the new exe; the first set is kept as evidence of the failure.
