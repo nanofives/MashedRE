@@ -71,7 +71,7 @@ static inline const std::uint32_t* RwSqrtLutRoot(std::uint32_t delta) {
                                       : RwLutGuard::SqrtRoot();
 }
 
-extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
+static float FastInvSqrtTwoForm(float x) {
     std::uint32_t bits;
     static_assert(sizeof(bits) == sizeof(x), "float must be 32-bit");
     std::memcpy(&bits, &x, sizeof(bits));
@@ -98,6 +98,15 @@ extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
     return result;
 }
 
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] hook of 0x004c3b90, default ON since 2026-11-02 (L-86 (a), Math/RwLutTables.h): the one body,
+// Math::LutInvSqrt. MASHED_NO_SQRT_FOLD=1: the form above (live table in the .asi, 1/std::sqrt in the exe).
+extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
+    if (!mashed_re::Math::SqrtFoldOn()) return FastInvSqrtTwoForm(x);
+    const float r = mashed_re::Math::LutInvSqrt(x);
+    if (mashed_re::Math::SqrtFoldLogOn()) mashed_re::Math::SqrtFoldNote(1, r, FastInvSqrtTwoForm(x));
+    return r;
+}
+
 RH_ScopedInstall(FastInvSqrt, 0x004c3b90);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
 
 // Mashed RE - Fast sqrt (single float) primitive.
@@ -109,7 +118,7 @@ RH_ScopedInstall(FastInvSqrt, 0x004c3b90);  // re-enabled 2026-05-24 (pre-regres
 // function takes the squared value as a parameter (caller does the
 // sum-of-squares); FastSqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]) would behave
 // identically to Vec3Magnitude(v).
-extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
+static float FastSqrtTwoForm(float x) {
     std::uint32_t bits;
     static_assert(sizeof(bits) == sizeof(x), "float must be 32-bit");
     std::memcpy(&bits, &x, sizeof(bits));
@@ -134,6 +143,16 @@ extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
     float result;
     std::memcpy(&result, &result_bits, sizeof(result));
     return result;
+}
+
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] hook of 0x004c3b30, default ON since 2026-11-02 (L-86 (a)): Math::LutSqrt, as
+// FastInvSqrt above.
+// MASHED_NO_SQRT_FOLD=1: the form above (std::sqrt in the exe).
+extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
+    if (!mashed_re::Math::SqrtFoldOn()) return FastSqrtTwoForm(x);
+    const float r = mashed_re::Math::LutSqrt(x);
+    if (mashed_re::Math::SqrtFoldLogOn()) mashed_re::Math::SqrtFoldNote(0, r, FastSqrtTwoForm(x));
+    return r;
 }
 
 RH_ScopedInstall(FastSqrt, 0x004c3b30);  // re-enabled 2026-05-24 (pre-regression C4 leaf)

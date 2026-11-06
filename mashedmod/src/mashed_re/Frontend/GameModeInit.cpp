@@ -20,10 +20,8 @@
 static constexpr std::uintptr_t kEntityBase_8815a8 = 0x008815a8u;
 static constexpr std::uint32_t  kEntityDWordStride  = 0x341u; // = 0xD04 / 4
 
-extern "C" __declspec(dllexport) void __cdecl EntityFieldSet(int param_1, std::uint32_t param_2) {
-    reinterpret_cast<std::uint32_t*>(kEntityBase_8815a8)[param_1 * kEntityDWordStride] = param_2;
-}
-RH_ScopedInstall(EntityFieldSet, 0x0046dc00);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S11: the body of 0x0046dc00 (EntityFieldSet) moved to Match/MatchS11_0046dc00.cpp,
+// which compiles the byte-matched source re/match/s11/0046dc00.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00492340  CarSlotInit

@@ -27,9 +27,5 @@
 // MATCH-S07: the body of 0x0042f7a0 (GhostFlagReset) moved to Match/MatchS07_0042f7a0.cpp,
 // which compiles the byte-matched source re/match/s07/0042f7a0.c.
 
-// 0x00452160  A1 AC 4D 68 00 83 C0 30 C3  (mov eax,[0x00684dac]; add eax,0x30; ret)
-//   Returns the powerup-target pointer field: *(0x00684dac) + 0x30.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PowerupTargetPtrGet(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x00684dacu) + 0x30u;  // cited at 0x00452160
-}
-RH_ScopedInstall(PowerupTargetPtrGet, 0x00452160);
+// MATCH-S09: the body of 0x00452160 (PowerupTargetPtrGet) moved to Match/MatchS09_00452160.cpp,
+// which compiles the byte-matched source re/match/s09/00452160.c.

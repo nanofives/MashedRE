@@ -44,11 +44,10 @@ extern "C" std::uint32_t __cdecl AspectRatioGlobalGet(void);   // 0x00493fc0
 // MATCH-S16: the body of 0x00494a80 (OrigVideoLoad) moved to Match/MatchS16_00494a80.cpp,
 // which compiles the byte-matched source re/match/s16/00494a80.c.
 
-// 0x004671a0  FUN_004671a0 — vehicle-0 getter: (int) -> uint32
-static uint32 OrigVehicle0Get(int param) {
-    typedef uint32 (__cdecl* Fn)(int);
-    return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x004671a0u))(param);
-}
+// MATCH-S11: FUN_004671a0 (called here through its original address as OrigVehicle0Get) now has a port body,
+// Match/MatchS11_004671a0.cpp (BackBuffRasterOpen, the hooks.csv name), which compiles the byte-matched source
+// re/match/s11/004671a0.c; its callees 0x0042b930 / 0x0042f510 are called through their original addresses there.
+extern "C" uint32 __cdecl BackBuffRasterOpen(int param);
 
 // 0x00494480  FUN_00494480 — input/button check: (int) -> int
 static int OrigInputCheck(int param) {

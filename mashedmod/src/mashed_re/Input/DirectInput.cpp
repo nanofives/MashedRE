@@ -111,18 +111,8 @@ static constexpr std::size_t    kJoypadSlotStride = 0x448;
 // Boot/RwEngineInit.cpp. CreateDInputObjectBool, a forwarder to it that installed a second
 // hook on the same RVA, was removed 2026-10-16 (dupinstall).
 
-// ---------------------------------------------------------------------------
-// 0x0045b350  RwInitNullStub — void(void)
-// ---------------------------------------------------------------------------
-// 1-byte bare RET (0xC3). Single instruction: RET. No prologue, no operands.
-// 33 callers across the binary (verified function_callers in ma1-ghidra-s3
-// session). Functions as a null/placeholder callback in RW init paths.
-//
-extern "C" __declspec(dllexport) void __cdecl RwInitNullStub() {
-    // Intentionally empty — mirror of the 0xC3 RET in the original.
-}
-
-RH_ScopedInstall(RwInitNullStub, 0x0045b350);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S09: the body of 0x0045b350 (RwInitNullStub) moved to Match/MatchS09_0045b350.cpp,
+// which compiles the byte-matched source re/match/s09/0045b350.c.
 
 // ---------------------------------------------------------------------------
 // 0x004b6480  BitArrayClear — void(byte* buf, uint count_bits)

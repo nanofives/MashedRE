@@ -27,13 +27,5 @@ extern "C" __declspec(dllexport) void __cdecl Set771968_1(void) {
 }
 RH_ScopedInstall(Set771968_1, 0x00493590);
 
-// 0x0045a0f0  8B 44 24 04 85 C0 7C 0F 83 F8 04 7D 0A 6B C0 58 8B 80 00 BA 68 00 C3 83 C8 FF C3
-//   mov eax,[esp+4]; test eax,eax; jl ret-1; cmp eax,4; jge ret-1;
-//   imul eax,eax,0x58; mov eax,[eax+0x0068ba00]; ret;  (ret-1:) or eax,-1; ret
-//   Signed bounds [0,3] vehicle-powerup-state field getter; -1 out of range.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehPwrState68ba00Get(std::uint32_t param_1) {
-    if (static_cast<std::int32_t>(param_1) < 0) return 0xFFFFFFFFu;       // cited at 0x0045a0f0 (test/jl)
-    if (param_1 >= 4u) return 0xFFFFFFFFu;                                // cited at 0x0045a0fa (cmp 4/jge)
-    return *reinterpret_cast<const std::uint32_t*>(0x0068ba00u + param_1 * 0x58u);  // cited at 0x0045a103
-}
-RH_ScopedInstall(VehPwrState68ba00Get, 0x0045a0f0);
+// MATCH-S09: the body of 0x0045a0f0 (VehPwrState68ba00Get) moved to Match/MatchS09_0045a0f0.cpp,
+// which compiles the byte-matched source re/match/s09/0045a0f0.c.

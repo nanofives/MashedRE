@@ -18,29 +18,8 @@
 
 #include <cstdint>
 
-// ---------------------------------------------------------------------------
-// SlotActiveThunk  --  0x00496900   (subsystem: vehicle)
-//
-// Original: thunk_FUN_00497450 (5 bytes, 0x00496900..0x00496904)
-// Bytes: E9 4B 0B 00 00   (jmp rel32 -> 0x00496905 + 0xB4B = 0x00497450)
-// Signature: forwards int player_idx to FUN_00497450 (slot-active predicate).
-//
-// FUN_00497450 (input C2): returns 0 for idx > 3, else the slot-active byte at
-// (&DAT_007e96fc)[idx*0x80] != 0 (live race state). The reimpl call-throughs
-// to the original-image predicate (a call vs the thunk's jmp is observationally
-// identical for the return value).
-//
-// Constants (cited from thunk body at 0x00496900):
-//   0x00497450 — jump target (rel32 0xB4B)
-//
-// Caller: FUN_00432080 (vehicle, C3). Callee: FUN_00497450 (input, C2).
-//
-// Uncertainties (non-blocking):
-//   U-1509: meaning of the slot-active value (data-semantic, in the callee).
-// ---------------------------------------------------------------------------
-
-// MATCH-S16: the body of 0x00496900 (SlotActiveThunk) moved to Match/MatchS16_00496900.cpp,
-// which compiles the byte-matched source re/match/s16/00496900.c.
+// MATCH-PORTSTATE-GAMEFLOW-FU: the body of 0x00496900 (SlotActiveThunk) moved to Match/MatchGFFU_00497450.cpp,
+// next to the body of its jump target 0x00497450.
 
 // ---------------------------------------------------------------------------
 // InteractionCooldownSet  --  0x00415860   (subsystem: ai)
