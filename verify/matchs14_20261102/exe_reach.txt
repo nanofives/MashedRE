@@ -1,0 +1,7 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+_Zero484c90	0x0017c4e0	1	yes	yes	_Zero484c90 <- ?Registry_RaceInit@Race@mashed_re@@YAXXZ <- ?Ai_BridgeLoad@?A0x721e019c@D3d9Render@mashed_re@@YA_NHPBD@Z <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+_WorldObjectsBaseGet	0x0017c4c0	1	yes	yes	_WorldObjectsBaseGet <- _TG_414c30 <- ?ModeSeven_MaybeReplay@Ai@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+_RG_484cf0	0x0017c580	3	yes	no	_RG_484cf0 <- ?Registry_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+_RG_485070	0x0017c650	2	yes	no	_RG_485070 <- ?Registry_MaybeReplay@Race@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+_SmplFzxStateBlockGetLogged	0x0017c6a0	0	no	yes	
+_SmplFzxStateBlockGetLoggedBody	0x0017c6c0	0	no	yes	
