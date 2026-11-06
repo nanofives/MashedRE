@@ -46,6 +46,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-06  0x00451690  WarzonePontoonAnimLoopCb  C1->C4  route match (c4=match), exe-callers=1 (RtAnim loop callback registered in InitFrom ... WinMain); ran on Warzone WL_DEF (state 2->5 x2); gates = refs; evidence: verify/matchs09fu_20261102/RESULT_MATCH-S09-FU.md
+2026-11-06  0x00451ce0  FUN_00451ce0  C2->C4  route match (c4=match), exe-callers=5 (StateMachine ... WinMain); ran on Warzone W_DEF/WL_DEF (state 0 Sample every tick); gates = refs; evidence: verify/matchs09fu_20261102/RESULT_MATCH-S09-FU.md
+2026-11-06  0x00458920  FUN_00458920  C2->C4  route match (c4=match), exe-callers=1 (Pickups_Callback ... WinMain); ran in G-CTRL H_PKT (2 PK rows); gates = refs; evidence: verify/matchs09fu_20261102/RESULT_MATCH-S09-FU.md
 2026-11-02  D-11075  DEFERRED  rewritten, stays Active  launcher retired by L-79 A (D5-SHIM-STEP3-LAUNCHER); row no longer implies a live launcher
 2026-11-02  S-3714  STUBS  Active->struck  native port, no call_original (0x00546bf0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
 2026-11-02  S-3715  STUBS  Active->struck  native port, no call_original (0x00546c50 RwpSolverMath2QuatY.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
