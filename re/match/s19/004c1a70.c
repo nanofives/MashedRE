@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c1a70 (h2): 88.4%, regs 88.4%. Hand: switch(projection) with case 2 + default gives the original sub ecx,2/je; near plane loaded then divided. Permuter (129 compiles) no gain. Residual (b): device zBufferNear/Far copied with fld/fstp in the original, mov int pair here; tried local copies, +0.0f, typed forms. */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c1a70 (h2 hand form, h6): 90.7%, regs 90.7%, cxx ok. switch(projection) with case 2 + default gives the original sub ecx,2/je; /G5 (h6) took it from 88.4 to 90.7. Residual (b): the original copies device zBufferNear/zBufferFar (RwGlobals+0x18/+0x1c) to the stack with fld/fstp, ours with mov pairs. Tried: (float)(double) casts, double locals, a 2-float struct local (copy and per-field), /Op, permuter 128 compiles. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

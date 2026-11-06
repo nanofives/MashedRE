@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c3040 (h2): 91.2%, regs 91.2%. Hand: RwGlobals as a 0x4b-dword struct, struct copy gives rep movsd; pointer swapped to the static copy before the copy. Residual (b): add eax,0x10 / mov ecx,0x4b / pop edi each one slot off; copy-first order 79.4%, permuter 92 compiles no gain. */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c3040 (h2 hand form, h6): 97.1%, regs 97.1%, cxx ok. RwGlobals as a 0x4b-dword struct, struct copy gives rep movsd. /G5 (h6) took it from 91.2 to 97.1. Residual (b): add eax,0x10 for the first arg is scheduled one push 0 earlier in the original. Tried: &g->w[4], char* +0x10, int-typed global, explicit (void*)0 args, permuter 112 compiles. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

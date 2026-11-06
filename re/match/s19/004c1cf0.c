@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c1cf0 (h2): 94.1%, regs 94.1%. Hand: typed fn pointer through RwGlobals+0x11c. Residual (a): push esi scheduled before the mov edx load in the original; permuter 66 compiles no gain. */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c1cf0 (h2 hand form, h6 flags): 100.0%, regs 100.0%, relocheck OK, cxx ok. Typed fn pointer through RwGlobals+0x11c. The 94.1% residual (push esi before the mov edx load) was the flag set: /G5 fixes it with the source unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

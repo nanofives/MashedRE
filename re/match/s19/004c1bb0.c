@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c1bb0 (h2): 87.5%, regs 87.5%. Hand: fn pointer local from RwGlobals+0x9c. Residual (a): original loads [eax+0x9c] after push esi; tried typed RwGlobals struct, inline call, ternary (all 62.5%). */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c1bb0 (h2 hand form, h6 flags): 100.0%, regs 100.0%, relocheck OK, cxx ok. Fn pointer local from RwGlobals+0x9c. The 87.5% residual (load of +0x9c after push esi) was the flag set: /G5 fixes it with the source unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

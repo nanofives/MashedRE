@@ -1,6 +1,5 @@
 // FLAGS: /O2 /GS /Ob1 /G5
-/* MATCH-S19 0x004c76f0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs19_20261102/results.tsv. */
+/* MATCH-S19 0x004c76f0 (h6): 100.0%, regs 100.0%, relocheck OK, cxx ok. RwRasterGetNumLevels shape: typed RwRaster, cFormat & 0x80 gives test al,al; js, the RwGlobals+0xb8 slot read into a function-pointer local first (gives mov eax,[eax+0xb8]; call eax; the direct call through the slot was 50.0), the parameter slot is the out value (h4's 0x004c76c0 form). Raw g2s was 45.0. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,20 +22,33 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef int code();
+typedef struct RwRaster {
+  struct RwRaster *parent;
+  unsigned char *cpPixels;
+  unsigned char *palette;
+  int width;
+  int height;
+  int depth;
+  int stride;
+  short nOffsetX;
+  short nOffsetY;
+  unsigned char cType;
+  unsigned char cFlags;
+  unsigned char privateFlags;
+  unsigned char cFormat;
+} RwRaster;
+typedef int (*fp3)(void *, void *, int);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x004c76f0 FUN_004c76f0
-int FUN_004c76f0(int param_1)
-
+int FUN_004c76f0(RwRaster *raster)
 {
-  int iVar1;
-  
-  if (-1 < *(char *)(param_1 + 0x23)) {
+  fp3 fn;
+  if (!(raster->cFormat & 0x80)) {
     return 1;
   }
-  iVar1 = (**(code **)(DAT_007d3ff8 + 0xb8))(&param_1,param_1,0);
-  if (iVar1 != 0) {
-    return param_1;
+  fn = *(fp3 *)(DAT_007d3ff8 + 0xb8);
+  if (fn(&raster, raster, 0)) {
+    return (int)raster;
   }
   return -1;
 }

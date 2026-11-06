@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c2c90 (h2): 93.2%, regs 93.2%. Hand: device fpSystem call, switch 0xd..0x12 (jump table matches), shared error tail. Residual (b): two arg loads before sub esp, the *out=1 store, and the error-code store/lea pair scheduled differently; permuter 97 compiles no gain. */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c2c90 (h2 hand form, h6 flags): 100.0%, regs 100.0%, relocheck OK, cxx ok. Device fpSystem call, switch 0xd..0x12 (jump table), shared error tail. The 93.2% residual (arg loads / error-tail stores scheduling) was the flag set: /G5 fixes it with the source unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

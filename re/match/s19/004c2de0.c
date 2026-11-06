@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c2de0 (h2): 92.9%, regs 92.9%. Hand. Residual (b): lea eax,[esp+4] (address of the out local) is scheduled before the second push 0 in the original, after it here; tried int/array/int* forms and casts. */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c2de0 (h2 hand form, h6 flags): 100.0%, regs 100.0%, relocheck OK, cxx ok. The 92.9% residual (lea of the out local before the second push 0) was the flag set: /G5 fixes it with the source unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

@@ -1,6 +1,5 @@
 // FLAGS: /O2 /GS /Ob1 /G5
-/* MATCH-S19 0x004c5cb0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs19_20261102/results.tsv. */
+/* MATCH-S19 0x004c5cb0 (h6): 89.4%, regs 90.6%. RwTextureRead shape: find slot (texture globals +0x18) with refCount++ early return, read slot (+0x14), RWERROR local struct with an if/else on maskName (the ternary was 63.5), RwTexDictionaryAddTexture inlined via the link macros. Residual (b): the original pushes edi in the prologue (before the find call), 9176 shrink-wraps it past the early return (same class as 0x004c5930). Tried: single-exit if/else-if form (35.6), function-scope RwError, assign-in-condition, double currentTexDict read, flags (game 81.2, /G6 81.2, /Oy- 73.3), permuter 99 compiles. cxx ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,57 +22,54 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef int code();
+typedef struct RwLLLink { struct RwLLLink *next, *prev; } RwLLLink;
+typedef struct { RwLLLink link; } RwLinkList;
+typedef struct { unsigned char type, subType, flags, privateFlags; void *parent; } RwObject;
+typedef struct { RwObject object; RwLinkList texturesInDict; RwLLLink lInInstance; } RwTexDictionary;
+typedef struct RwTexture { void *raster; RwTexDictionary *dict; RwLLLink lInDictionary; char name[32]; char mask[32]; unsigned int filterAddressing; int refCount; } RwTexture;
+typedef RwTexture *(*RwTextureFindFn)(const char *);
+typedef RwTexture *(*RwTextureReadFn)(const char *, const char *);
+typedef struct { RwLinkList texDictList; void *texFreeList; void *texDictFreeList; RwTexDictionary *currentTexDict; RwTextureReadFn readFunc; RwTextureFindFn findFunc; } TG;
+#define TGL(v) (((TG *)(((unsigned char *)DAT_007d3ff8) + DAT_007d4054))->v)
+#define rwLinkListAddLLLink(list, linkvar) { (linkvar)->next = (list)->link.next; (linkvar)->prev = &(list)->link; ((list)->link.next)->prev = (linkvar); (list)->link.next = (linkvar); }
+#define rwLinkListRemoveLLLink(linkvar) { ((linkvar)->prev)->next = (linkvar)->next; ((linkvar)->next)->prev = (linkvar)->prev; }
+typedef struct { int pluginID; int errorCode; } RwError;
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_007d4054, 0x007d4054);
-extern char s_(null)_00618178[];
-undefined4 FUN_004d7ff0(undefined4 p0);
-undefined4 * FUN_004d8480(undefined4 * p0);
-MGLOBAL(int, s__null__00618178, 0x00618178);
+MGLOBALA(char, s__null__00618178, 7, 0x00618178);
+int FUN_004d7ff0(int code, ...);
+RwError *FUN_004d8480(RwError *p0);
 // MATCH: 0x004c5cb0 FUN_004c5cb0
-int FUN_004c5cb0(undefined4 param_1,int param_2)
-
+RwTexture *FUN_004c5cb0(const char *name, const char *maskName)
 {
-  undefined4 *puVar1;
-  int iVar2;
-  undefined4 uVar3;
-  int iVar4;
-  int *piVar5;
-  undefined4 uStack_8;
-  undefined4 uStack_4;
-  
-  iVar4 = (**(code **)(DAT_007d3ff8 + DAT_007d4054 + 0x18))(param_1);
-  if (iVar4 != 0) {
-    *(int *)(iVar4 + 0x54) = *(int *)(iVar4 + 0x54) + 1;
-    return iVar4;
+  RwTexture *texture;
+  RwTexDictionary *dict;
+
+  texture = TGL(findFunc)(name);
+  if (texture) {
+    texture->refCount++;
+    return texture;
   }
-  iVar4 = (**(code **)(DAT_007d3ff8 + DAT_007d4054 + 0x14))(param_1,param_2);
-  if (iVar4 == 0) {
-    uStack_8 = 1;
-    if (param_2 != 0) {
-      uStack_4 = FUN_004d7ff0(0x16,param_1,param_2);
-      FUN_004d8480(&uStack_8);
-      return 0;
+  texture = TGL(readFunc)(name, maskName);
+  if (!texture) {
+    RwError err;
+    err.pluginID = 1;
+    if (maskName) {
+      err.errorCode = FUN_004d7ff0(0x16, name, maskName);
+      FUN_004d8480(&err);
+    } else {
+      err.errorCode = FUN_004d7ff0(0x16, name, s__null__00618178);
+      FUN_004d8480(&err);
     }
-    uStack_4 = FUN_004d7ff0(0x16,param_1,s__null__00618178);
-    FUN_004d8480(&uStack_8);
     return 0;
   }
-  iVar2 = *(int *)(DAT_007d3ff8 + DAT_007d4054 + 0x10);
-  if (iVar2 != 0) {
-    if (*(int *)(iVar4 + 4) != 0) {
-      **(undefined4 **)(iVar4 + 0xc) = *(undefined4 *)(iVar4 + 8);
-      *(undefined4 *)(*(int *)(iVar4 + 8) + 4) = *(undefined4 *)(iVar4 + 0xc);
+  dict = TGL(currentTexDict);
+  if (dict) {
+    if (texture->dict) {
+      rwLinkListRemoveLLLink(&texture->lInDictionary);
     }
-    *(int *)(iVar4 + 4) = iVar2;
-    uVar3 = *(undefined4 *)(iVar2 + 8);
-    piVar5 = (int *)(iVar2 + 8);
-    puVar1 = (undefined4 *)(iVar4 + 8);
-    *(int **)(iVar4 + 0xc) = piVar5;
-    *puVar1 = uVar3;
-    *(undefined4 **)(*piVar5 + 4) = puVar1;
-    *piVar5 = (int)puVar1;
+    texture->dict = dict;
+    rwLinkListAddLLLink(&dict->texturesInDict, &texture->lInDictionary);
   }
-  return iVar4;
+  return texture;
 }

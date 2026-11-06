@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c1be0 (h2): 93.3%, regs 93.3%. Hand. Residual (a): load of raster (+0x60) scheduled after the two arg pushes in the original; typed struct, permuter 62 compiles no gain. */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c1be0 (h2 hand form, h6 flags): 100.0%, regs 100.0%, relocheck OK, cxx ok. The 93.3% residual (raster +0x60 load after the arg pushes) was the flag set: /G5 fixes it with the source unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

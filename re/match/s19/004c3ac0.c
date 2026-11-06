@@ -1,6 +1,7 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c3ac0 (h3): best 75.0% (regs 86.1%, ops 91.7%). RwV3dLength: dot then RW table sqrt (RwGlobals+DAT_007d3ffc table) through a
-   RwSplitBits union (volatile int members). Residual: x87 pop placement around `test eax,eax` and the scheduling
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c3ac0 (h3, h5): 100% (regs 100%) with /G5 added (h5, 2026-11-06: the RW core is a Pentium /G5 build;
+   source unchanged from h3). h3 under plain /O2 /GS /Ob1: 75.0% (regs 86.1%, ops 91.7%). RwV3dLength: dot then RW table sqrt (RwGlobals+DAT_007d3ffc table) through a
+   RwSplitBits union (volatile int members). Residual under plain flags (gone with /G5): x87 pop placement around `test eax,eax` and the scheduling
    of the two RwGlobals loads against the `+= 0x800` (eax/ecx/edx rotate). Tried idx/tab/inline-expression forms,
    split add, permuter (109). Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

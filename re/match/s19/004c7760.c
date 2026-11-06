@@ -1,6 +1,5 @@
 // FLAGS: /O2 /GS /Ob1 /G5
-/* MATCH-S19 0x004c7760: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs19_20261102/results.tsv. */
+/* MATCH-S19 0x004c7760 (h6): 100.0%, regs 100.0%, relocheck OK, cxx ok. RwRasterSubRaster shape: typed RwRaster/RwRect, cFlags & 0x80 test gives test al,al; jns (the raw char < 0 gave jge, 97.2%), typed fn pointer RwGlobals+0x78 */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,25 +22,36 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef int code();
+typedef struct RwRaster {
+  struct RwRaster *parent;
+  unsigned char *cpPixels;
+  unsigned char *palette;
+  int width;
+  int height;
+  int depth;
+  int stride;
+  short nOffsetX;
+  short nOffsetY;
+  unsigned char cType;
+  unsigned char cFlags;
+  unsigned char privateFlags;
+  unsigned char cFormat;
+} RwRaster;
+typedef struct RwRect { int x; int y; int w; int h; } RwRect;
+typedef int (*RwStdFunc)(void *, void *, int);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x004c7760 FUN_004c7760
-undefined4 * FUN_004c7760(undefined4 *param_1,undefined4 *param_2,short *param_3)
-
+RwRaster *FUN_004c7760(RwRaster *raster, RwRaster *parent, RwRect *rect)
 {
-  int iVar1;
-  
-  if (*(char *)((int)param_1 + 0x21) < '\0') {
-    param_1[3] = *(undefined4 *)(param_3 + 4);
-    param_1[4] = *(undefined4 *)(param_3 + 6);
-    *(short *)(param_1 + 7) = *(short *)(param_2 + 7) + *param_3;
-    *(short *)((int)param_1 + 0x1e) = *(short *)((int)param_2 + 0x1e) + param_3[2];
-    iVar1 = (**(code **)(DAT_007d3ff8 + 0x78))(param_1,param_2,0);
-    if (iVar1 != 0) {
-      *param_1 = *param_2;
-      return param_1;
+  if (raster->cFlags & 0x80) {
+    raster->width = rect->w;
+    raster->height = rect->h;
+    raster->nOffsetX = (short)(parent->nOffsetX + rect->x);
+    raster->nOffsetY = (short)(parent->nOffsetY + rect->y);
+    if ((*(RwStdFunc *)(DAT_007d3ff8 + 0x78))(raster, parent, 0)) {
+      raster->parent = parent->parent;
+      return raster;
     }
   }
-  return (undefined4 *)0x0;
+  return 0;
 }

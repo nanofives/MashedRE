@@ -3,7 +3,7 @@
    inlined (same text as in 0x004c0c20), then link as first child, parent pointer, root taken from the parent into a
    local and pushed down through FUN_004c0ad0. The file holds 0x004c0ad0 as a static callee. FLAGS add /G5 (game
    flags: 57.5% raw). Residual: the same sibling-search loop base register as 0x004c0c20 (`[eax+0x9c]` vs
-   `[edx+0x9c]`). Tried: for/while forms, a static __inline remove helper (not inlined under /Ob1: 26%). Class (b). */
+   `[edx+0x9c]`). Tried: for/while forms, a static __inline remove helper (not inlined under /Ob1: 26%). h6 resume: do-while, for(;;)-break, temp-next, RW while(cur->next!=child), __inline unlink/find-prev helpers, flags /G6 /Op /Ox /Oy-, permuter again (0c20 157, 0f00 174 compiles): none moves it. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

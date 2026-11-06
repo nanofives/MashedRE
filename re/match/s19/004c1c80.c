@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c1c80 (h2): 86.4%, regs 86.4%. Hand: V2d struct copy, 1.0f in a local. Residual (a): original schedules the x load and fld 1.0 after push esi; tried separate stores, Ghidra order. */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c1c80 (h2 hand form, h6 flags): 100.0%, regs 100.0%, relocheck OK (DAT_005cc320 renamed from _DAT_ so relocheck resolves it), cxx ok. V2d struct copy, 1.0f in a local. The 86.4% residual (x load and fld 1.0 after push esi) was the flag set: /G5 fixes it with the source unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -22,16 +22,16 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-MGLOBAL(float, _DAT_005cc320, 0x005cc320);
+MGLOBAL(float, DAT_005cc320, 0x005cc320);
 int FUN_004c0e50(int p0);
 typedef struct { float x; float y; } RwV2d_t;
 // MATCH: 0x004c1c80 FUN_004c1c80
 int FUN_004c1c80(int param_1, RwV2d_t *param_2)
 {
-  float one = _DAT_005cc320;
+  float one = DAT_005cc320;
   *(RwV2d_t *)(param_1 + 0x68) = *param_2;
   *(float *)(param_1 + 0x70) = one / *(float *)(param_1 + 0x68);
-  *(float *)(param_1 + 0x74) = _DAT_005cc320 / *(float *)(param_1 + 0x6c);
+  *(float *)(param_1 + 0x74) = DAT_005cc320 / *(float *)(param_1 + 0x6c);
   if (*(int *)(param_1 + 4) != 0) {
     FUN_004c0e50(*(int *)(param_1 + 4));
   }

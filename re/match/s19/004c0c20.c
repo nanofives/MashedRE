@@ -6,7 +6,7 @@
    FLAGS add /G5 (game flags: 44.7% raw).
    Residual: in the sibling search loop the original loads `next` through the copied register (`mov ecx,eax;
    mov eax,[ecx+0x9c]`), ours through the old one (`[eax+0x9c]`). Tried for/while/assign-in-condition forms and the
-   permuter (157 compiles, no gain). Class (b). */
+   permuter (157 compiles, no gain). h6 resume: do-while, for(;;)-break, temp-next, RW while(cur->next!=child), __inline unlink/find-prev helpers, flags /G6 /Op /Ox /Oy-, permuter again (0c20 157, 0f00 174 compiles): none moves it. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

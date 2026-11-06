@@ -1,5 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c2f00 (h2): 94.7%, regs 94.7%. Same form and residual as 0x004c2e40 (lea scheduling, b). */
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c2f00 (h2 hand form, h6 flags): 100.0%, regs 100.0%, relocheck OK, cxx ok. Success branch first, result local. The 94.7% residual (lea of the out local one push early) was the flag set: /G5 fixes it with the source unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

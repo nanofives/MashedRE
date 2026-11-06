@@ -1,6 +1,5 @@
 // FLAGS: /O2 /GS /Ob1 /G5
-/* MATCH-S19 0x004c6140: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs19_20261102/results.tsv. */
+/* MATCH-S19 0x004c6140 (h6): 100.0%, regs 100.0%, relocheck OK, cxx ok. Mip-level texture name suffix: char[3] 'm' + hex digit from the 0x005d8b68 digit string (level 1..15, else 0) + NUL, appended with the RwGlobals+0xd4 string-cat slot to the name and, when non-empty, the mask name. Ghidra's __thiscall/__fastcall prototype was wrong: plain cdecl (char *, char *, unsigned char). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,34 +22,24 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char undefined1;
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef unsigned char byte;
-typedef int code();
-#define CONCAT11(a,b) ((ushort)(((uint)(uchar)(a)<<8)|(uchar)(b)))
-#define CONCAT12(a,b) ((uint)(((uint)(uchar)(a)<<16)|(ushort)(b)))
+typedef char *(*RwStrcatFn)(char *, const char *);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
+MGLOBALA(char, s_0123456789abcdef_005d8b68, 17, 0x005d8b68);
 // MATCH: 0x004c6140 FUN_004c6140
-undefined4 __thiscall __fastcall FUN_004c6140(undefined4 param_1,undefined4 param_2,char *param_3,byte param_4)
-
+int FUN_004c6140(char *name, char *maskName, unsigned char mipLevel)
 {
-  char cVar1;
-  undefined1 local_4 [3];
-  undefined1 uStack_1;
-  
-  if ((param_4 == 0) || (0xf < param_4)) {
-    cVar1 = '\0';
+  char suffix[3];
+  suffix[0] = 'm';
+  if (mipLevel > 0 && mipLevel < 16) {
+    suffix[1] = s_0123456789abcdef_005d8b68[mipLevel];
+  } else {
+    suffix[1] = 0;
   }
-  else {
-    cVar1 = "0123456789abcdef"[param_4];
-  }
-  uStack_1 = (undefined1)((uint)param_1 >> 0x18);
-  local_4 = (undefined1  [3])CONCAT12(0,CONCAT11(cVar1,0x6d));
-  if (cVar1 != '\0') {
-    (**(code **)(DAT_007d3ff8 + 0xd4))(param_2,local_4);
-    if ((param_3 != (char *)0x0) && (*param_3 != '\0')) {
-      (**(code **)(DAT_007d3ff8 + 0xd4))(param_3,local_4);
+  suffix[2] = 0;
+  if (suffix[1]) {
+    (*(RwStrcatFn *)(DAT_007d3ff8 + 0xd4))(name, suffix);
+    if (maskName && *maskName) {
+      (*(RwStrcatFn *)(DAT_007d3ff8 + 0xd4))(maskName, suffix);
     }
   }
   return 1;

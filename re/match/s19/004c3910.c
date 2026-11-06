@@ -1,5 +1,9 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-S19 0x004c3910 (h3): best 83.0% (regs 87.2%, ops 95.7%). V3d normalize via RW's table inverse sqrt (RwSplitBits union with
+// FLAGS: /O2 /GS /Ob1 /G5
+/* MATCH-S19 0x004c3910 (h3, h5): 91.5% (regs 91.5%, ops 100%) with /G5 added (h5, 2026-11-06: RW core is a /G5 build;
+   source unchanged from h3). With /G5 the pops, register swap and x-store order all match; the only residual is the
+   x87 operand order of the y and z scales (original `fld in->y; fmul r`, ours `fld r; fmul in->y`), same as
+   0x004c3c60. h5 tried both operand orders, no `r` local, the volatile-table form, permuter 138: no move.
+   h3 under plain /O2 /GS /Ob1: best 83.0% (regs 87.2%, ops 95.7%). V3d normalize via RW's table inverse sqrt (RwSplitBits union with
    volatile int members gives the store/reload of the int view; table pointer at RwGlobals+DAT_007d3ffc+4, index
    value held in its own variable then += the exponent term). Dot written z*z + (x*x + y*y) for the y,x,z load order.
    RwGlobals order here is DAT_007d3ffc + DAT_007d3ff8 + 4 (the brief's order gives relocheck BAD in this function).
