@@ -1,0 +1,130 @@
+[mtrain 11:04:41] SELFTEST fake repo C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441
+[mtrain 11:04:42]   union-resolved: re/analysis/CHANGELOG.md
+[mtrain 11:04:42]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 11:04:42]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 11:04:42]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 11:04:42]   SELFTEST contrast: Set-Content writes 2 CR byte(s) for 2 lines on this host
+[mtrain 11:04:42] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-3d09 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-3d09: removed
+[mtrain 11:04:43] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261102_110441/.worktrees/step-clean rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\step-clean: removed
+[mtrain 11:04:43]   cleanup step-clean: worktree and branch removed
+[mtrain 11:04:43] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261102_110441/.worktrees/step-dirty rc=1 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\step-dirty: refused (likely dirty): fatal: 'C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\step-dirty' contains modified 
+[mtrain 11:04:43]   cleanup step-dirty: worktree removal refused (C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261102_110441/.worktrees/step-dirty), worktree and branch kept
+[mtrain 11:04:43]   cleanup step-ahead: git branch --delete refused, branch kept: error: the branch 'step-ahead' is not fully merged
+[mtrain 11:04:43]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 11:04:43]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 11:04:43]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 11:04:43] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-b053
+[mtrain 11:04:44] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-b053 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-b053: removed
+[mtrain 11:04:44]   SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+[mtrain 11:04:44] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-861f
+[mtrain 11:04:44] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-861f rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-861f: removed
+[mtrain 11:04:44]   SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+[mtrain 11:04:44] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-1aa7 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-1aa7: removed
+[mtrain 11:04:44]   SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+[mtrain 11:04:45] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-5094 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-5094: removed
+[mtrain 11:04:45] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-956b
+[mtrain 11:04:45] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-956b rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-956b: removed
+[mtrain 11:04:45]   SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+[mtrain 11:04:45]   cleanup step-out: worktree C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261102_110441-outside-wt is not under .worktrees\, worktree and branch kept
+[mtrain 11:04:45]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 11:04:46] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441-outside-wt rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441-outside-wt: removed
+[mtrain 11:04:46]   SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+[mtrain 11:04:46]   SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+[mtrain 11:04:46]   SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+[mtrain 11:04:46]   SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+[mtrain 11:04:46]   SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+[mtrain 11:04:46]   SELFTEST PASS: AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=True inner=1)
+[mtrain 11:04:46] priority: PRIORITY-HOLD 'mashed_machine' owner_pid=18144 rc=0
+[mtrain 11:04:46] priority: PRIORITY-RELEASED 'mashed_machine' owner_pid=18144 rc=0
+[mtrain 11:04:46]   SELFTEST PASS: priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=False)
+[mtrain 11:04:46] priority: PRIORITY-HOLD 'mashed_machine' owner_pid=18144 rc=0
+[mtrain 11:04:47]   SELFTEST PASS: priority hold: status shows PRIORITY-HOLD pid=18144
+[mtrain 11:04:50]   SELFTEST PASS: priority hold: a new non-priority solo open waits while held (blocked=True), an ordinary acquire does not (ok=True), the solo opens after release (opened=True)
+[mtrain 11:04:52]   merged T-rc-ok (step-rc-ok)
+[mtrain 11:04:52]   changed 2 file(s); text-only=True full-set=False
+[mtrain 11:04:52]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:04:52]   tracker lint OK: [tracker-lint] OK -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=0 (base b30782dbcc55dbaf4be72de0a90c1b8b6c7c1aa1)
+[mtrain 11:04:52]   SELFTEST PASS: tracker: rc-ok (hooks.csv + CHANGELOG only) is text-only, no build, lint OK with the base's 9-column row pre-existing (ok=True gates='not run: text-only change (no build input touched)')
+[mtrain 11:04:53] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-2644 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-2644: removed
+[mtrain 11:04:53]   merged T-bad-ncol (step-bad-ncol)
+[mtrain 11:04:53]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:04:53]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:04:53]   SELFTEST PASS: tracker: bad-ncol bounced by the tracker lint with NEW NCOL rva=00401030 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base b30782dbcc55dbaf4be72de0a90c1b8b6c7c1aa1) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_110441\tracker_lint.txt)')
+[mtrain 11:04:54] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-b633 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-b633: removed
+[mtrain 11:04:54]   merged T-bad-conf (step-bad-conf)
+[mtrain 11:04:54]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:04:54]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:04:55]   SELFTEST PASS: tracker: bad-conf bounced by the tracker lint with NEW CONF rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base b30782dbcc55dbaf4be72de0a90c1b8b6c7c1aa1) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_110441\tracker_lint.txt)')
+[mtrain 11:04:55] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-0b0b rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-0b0b: removed
+[mtrain 11:04:55]   merged T-bad-dup (step-bad-dup)
+[mtrain 11:04:55]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:04:55]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:04:55]   SELFTEST PASS: tracker: bad-dup bounced by the tracker lint with NEW DUP rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base b30782dbcc55dbaf4be72de0a90c1b8b6c7c1aa1) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_110441\tracker_lint.txt)')
+[mtrain 11:04:56] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-1a5c rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-1a5c: removed
+[mtrain 11:04:56]   merged T-bad-quote (step-bad-quote)
+[mtrain 11:04:56]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:04:56]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:04:56]   SELFTEST PASS: tracker: bad-quote bounced by the tracker lint with NEW PARSE (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 0 rows, UNCERTAINTIES.md 2 ids, pre-existing=0 NEW=1 (base b30782dbcc55dbaf4be72de0a90c1b8b6c7c1aa1) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_110441\tracker_lint.txt)')
+[mtrain 11:04:57] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-f095 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-f095: removed
+[mtrain 11:04:57]   merged T-bad-udup (step-bad-udup)
+[mtrain 11:04:57]   changed 1 file(s); text-only=True full-set=False
+[mtrain 11:04:57]   WARN archive lint SKIPPED: no scripts/lan_release/archive_lint.py in this tree
+[mtrain 11:04:58]   SELFTEST PASS: tracker: bad-udup bounced by the tracker lint with NEW UDUP U-0002 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base b30782dbcc55dbaf4be72de0a90c1b8b6c7c1aa1) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_110441\tracker_lint.txt)')
+[mtrain 11:04:58] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-10c4 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_110441\.worktrees\mtrain-20261102_110441-10c4: removed
+[mtrain 11:04:58]   SELFTEST PASS: control: hooks.csv was not text-only under the old globs, is under merge_train.json
+[mtrain 11:04:58]   SELFTEST PASS: control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: )
+[mtrain 11:04:59]   D2 rerun: D2_DEFH_2 motion_diag under 1600 lines, rerun 1/2
+[mtrain 11:04:59]   SELFTEST PASS: short-once: D2_DEFH_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 11:04:59]   D2 rerun: D2_DEFH_2 motion_diag under 1600 lines, rerun 1/2
+[mtrain 11:04:59]   D2 rerun: D2_DEFH_2 motion_diag under 1600 lines, rerun 2/2
+[mtrain 11:05:00]   D2 short after 2 rerun(s): D2_DEFH_2
+[mtrain 11:05:00]   SELFTEST PASS: short-always: reruns bounded at 2, arm still reported short (runs=3)
+[mtrain 11:05:00]   SELFTEST PASS: full-length logs: no rerun
+[mtrain 11:05:00]   SELFTEST PASS: unit: arm log with CreateDevice hr=0x8876086A and no device = INFRA reason
+[mtrain 11:05:00]   SELFTEST PASS: unit: hr=0x8876086C in one of two arm logs = INFRA, names that arm
+[mtrain 11:05:00]   SELFTEST PASS: unit: 0x8876086A followed by a working CreateDevice is not the signature (falls to ALL-MISSING)
+[mtrain 11:05:00]   SELFTEST PASS: unit: all MISSING, log present, no signature = ALL-MISSING (caller probes)
+[mtrain 11:05:00]   SELFTEST PASS: unit: all MISSING and no arm log = INFRA (runner never ran the exe)
+[mtrain 11:05:00]   SELFTEST PASS: unit: one hash present, clean log = not INFRA
+[mtrain 11:05:00]   SELFTEST PASS: unit: D2 form (no hashes), clean log = not INFRA
+[mtrain 11:05:01]   render precheck: RENDER: BLOCKED - fake probe
+[mtrain 11:05:01]   SELFTEST PASS: INFRA path: precheck BLOCKED = INFRA before any arm (arms run 0, why 'INFRA: render precheck RENDER: BLOCKED - fake probe')
+[mtrain 11:05:01]   render precheck: RENDER: OK - fake probe
+[mtrain 11:05:01]   gates: G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/5d43806c/5d43806c
+[mtrain 11:05:01]   SELFTEST PASS: normal path: precheck OK, refs match = GREEN, one probe, no rerun (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/5d43806c/5d43806c')
+[mtrain 11:05:01]   render precheck: RENDER: OK - fake probe
+[mtrain 11:05:01]   gates: G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)
+[mtrain 11:05:01]   SELFTEST PASS: normal path: a changed B hash is still RED 'default gates changed' (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)')
+[mtrain 11:05:01]   render precheck: RENDER: OK - fake probe
+[mtrain 11:05:01]   gates: G-CTRL MISSING/MISSING/MISSING  B not run (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+[mtrain 11:05:01]   SELFTEST PASS: INFRA path: 0x8876086A arm (display slept after the precheck) = INFRA, no G-CTRL rerun, B not run (runs H_DEF)
+[mtrain 11:05:01]   render precheck: RENDER: UNKNOWN - fake probe
+[mtrain 11:05:01]   gates: G-CTRL MISSING/MISSING/MISSING  B not run (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+[mtrain 11:05:01]   SELFTEST PASS: INFRA path: precheck UNKNOWN goes on to the arms, the 0x8876086A arm makes it INFRA
+[mtrain 11:05:01]   render precheck: RENDER: OK - fake probe
+[mtrain 11:05:01]   gates: G-CTRL MISSING/MISSING/MISSING  B not run (INFRA: all gate hashes MISSING and no arm wrote a log (the runner or the lock never ran the exe))
+[mtrain 11:05:01]   SELFTEST PASS: INFRA path: arms that wrote nothing = INFRA (why 'INFRA: all gate hashes MISSING and no arm wrote a log (the runner or the lock never ran the exe)')
+[mtrain 11:05:01]   render precheck: RENDER: OK - fake probe
+[mtrain 11:05:01]   all gate hashes MISSING, render probe: RENDER: BLOCKED - fake probe
+[mtrain 11:05:01]   gates: G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (INFRA: all gate hashes MISSING and the render probe is BLOCKED (RENDER: BLOCKED - fake probe))
+[mtrain 11:05:01]   SELFTEST PASS: INFRA path: all-MISSING with clean logs, post-arm probe BLOCKED = INFRA (probes 2)
+[mtrain 11:05:01]   render precheck: RENDER: OK - fake probe
+[mtrain 11:05:01]   all gate hashes MISSING, render probe: RENDER: OK - fake probe
+[mtrain 11:05:01]   gates: G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (all MISSING, render probe OK: a boot failure of the merged exe, not a display fault)
+[mtrain 11:05:01]   SELFTEST PASS: normal path: all-MISSING with a live display stays RED (a broken exe is bounced, not held) (gates 'G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (all MISSING, render probe OK: a boot failure of the merged exe, not a display fault)')
+[mtrain 11:05:01]   render precheck: RENDER: OK - fake probe
+[mtrain 11:05:02]   gates: G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)
+[mtrain 11:05:02]   SELFTEST PASS: normal path: a 0x8876086A attempt followed by a working device is not INFRA, the changed hash stays RED
+[mtrain 11:05:02]   SELFTEST PASS: INFRA path: single row INFRA = 0 bounced, 0 merged, row left queued (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+[mtrain 11:05:02]   SELFTEST PASS: INFRA path: 3-row batch INFRA = 0 bounced, no one-at-a-time re-merge (Try-Batch calls 1)
+[mtrain 11:05:02] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:05:02]   T-B: INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF; stopping, the rows not merged stay queued
+[mtrain 11:05:02]   SELFTEST PASS: INFRA path: INFRA mid one-at-a-time stops there; the RED before it bounces, the row after it is not tried (calls T-A+T-B+T-C,T-A,T-B)
+[mtrain 11:05:02]   SELFTEST PASS: normal path: single row RED = bounced (unchanged)
+[mtrain 11:05:02] batch RED (default gates changed); re-merging one at a time
+[mtrain 11:05:02]   SELFTEST PASS: normal path: batch RED -> one at a time: first GREEN lands, RED bounced, second GREEN stays queued (temps removed 3)
+[mtrain 11:05:02]   SELFTEST PASS: normal path: batch GREEN = both merged (unchanged)
+[mtrain 11:05:02]   SELFTEST PASS: AST: run body = Try-Batch -> Resolve-Batch, red-merge only for $bounced, verdict INFRA when $infra
+[mtrain 11:05:02]   SELFTEST PASS: merge_train.json unchanged by the selftest (sha256 30E470FB2F98)
+[mtrain 11:05:02] SELFTEST done: 0 failure(s)
+SELFTEST PASS (0 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_110441\merge_train.log

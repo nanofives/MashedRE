@@ -1,0 +1,35 @@
+[mtrain 10:45:58] SELFTEST fake repo C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_104557
+[mtrain 10:46:00]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 10:46:00]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 10:46:00]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 10:46:00]   SELFTEST contrast: Set-Content writes 2 CR byte(s) for 2 lines on this host
+[mtrain 10:46:04]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 10:46:04]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 10:46:04]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 10:46:05]   SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+[mtrain 10:46:05]   SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+[mtrain 10:46:06]   SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+[mtrain 10:46:07]   SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+[mtrain 10:46:08]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 10:46:09]   SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+[mtrain 10:46:09]   SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+[mtrain 10:46:09]   SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+[mtrain 10:46:09]   SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+[mtrain 10:46:09]   SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+[mtrain 10:46:09]   SELFTEST PASS: AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=True inner=1)
+[mtrain 10:46:12]   SELFTEST PASS: priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=False)
+[mtrain 10:46:13]   SELFTEST PASS: priority hold: status shows PRIORITY-HOLD pid=22776
+[mtrain 10:46:20]   SELFTEST PASS: priority hold: a new non-priority solo open waits while held (blocked=True), an ordinary acquire does not (ok=True), the solo opens after release (opened=True)
+[mtrain 10:46:24]   SELFTEST PASS: tracker: rc-ok (hooks.csv + CHANGELOG only) is text-only, no build, lint OK with the base's 9-column row pre-existing (ok=True gates='not run: text-only change (no build input touched)')
+[mtrain 10:46:26]   SELFTEST PASS: tracker: bad-ncol bounced by the tracker lint with NEW NCOL rva=00401030 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 7cd8be45119c2b1e21965d78a5ec571008246b08) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_104557\tracker_lint.txt)')
+[mtrain 10:46:27]   SELFTEST PASS: tracker: bad-conf bounced by the tracker lint with NEW CONF rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 7cd8be45119c2b1e21965d78a5ec571008246b08) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_104557\tracker_lint.txt)')
+[mtrain 10:46:28]   SELFTEST PASS: tracker: bad-dup bounced by the tracker lint with NEW DUP rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 7cd8be45119c2b1e21965d78a5ec571008246b08) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_104557\tracker_lint.txt)')
+[mtrain 10:46:29]   SELFTEST PASS: tracker: bad-quote bounced by the tracker lint with NEW PARSE (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 0 rows, UNCERTAINTIES.md 2 ids, pre-existing=0 NEW=1 (base 7cd8be45119c2b1e21965d78a5ec571008246b08) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_104557\tracker_lint.txt)')
+[mtrain 10:46:30]   SELFTEST PASS: tracker: bad-udup bounced by the tracker lint with NEW UDUP U-0002 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 7cd8be45119c2b1e21965d78a5ec571008246b08) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_104557\tracker_lint.txt)')
+[mtrain 10:46:31]   SELFTEST PASS: control: hooks.csv was not text-only under the old globs, is under merge_train.json
+[mtrain 10:46:31]   SELFTEST PASS: control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: )
+[mtrain 10:46:31]   SELFTEST PASS: short-once: D2_DEFH_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 10:46:32]   SELFTEST PASS: short-always: reruns bounded at 2, arm still reported short (runs=3)
+[mtrain 10:46:32]   SELFTEST PASS: full-length logs: no rerun
+[mtrain 10:46:32] SELFTEST done: 0 failure(s)
+SELFTEST PASS (0 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_104557\merge_train.log
