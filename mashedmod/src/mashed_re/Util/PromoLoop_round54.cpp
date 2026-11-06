@@ -37,24 +37,11 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Table68ba04Get(std::int32
 }
 RH_ScopedInstall(Table68ba04Get, 0x0045a0d0);
 
-// Per-vehicle table getter: out[0..n-1] = *(u32*)(base + idx*0xd04 + j*4); idx>=0x10 -> return 0.
-template <std::uint32_t Base, int N>
-static inline std::uint32_t VehTblGet(std::uint32_t* out, std::uint32_t idx) {
-    if (idx > 0xfu) return 0;                                  // CMP 0x10 / JC ; XOR EAX,EAX
-    std::uint32_t b = idx * 0xd04u;                            // IMUL 0xd04
-    for (int j = 0; j < N; ++j)
-        out[j] = *reinterpret_cast<std::uint32_t*>(Base + b + j * 4u);
-    return 1;                                                  // MOV EAX,1
-}
+// MATCH-S11: the body of 0x0046d660 (VehTbl881f50Get3) moved to Match/MatchS11_0046d660.cpp,
+// which compiles the byte-matched source re/match/s11/0046d660.c.
 
-// 0x0046d660
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehTbl881f50Get3(std::uint32_t* out, std::uint32_t idx) { return VehTblGet<0x00881f50u, 3>(out, idx); }
-RH_ScopedInstall(VehTbl881f50Get3, 0x0046d660);
+// MATCH-S11: the body of 0x0046d6a0 (VehTbl8820acGet1) moved to Match/MatchS11_0046d6a0.cpp,
+// which compiles the byte-matched source re/match/s11/0046d6a0.c.
 
-// 0x0046d6a0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehTbl8820acGet1(std::uint32_t* out, std::uint32_t idx) { return VehTblGet<0x008820acu, 1>(out, idx); }
-RH_ScopedInstall(VehTbl8820acGet1, 0x0046d6a0);
-
-// 0x0046d6d0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehTbl881f84Get1(std::uint32_t* out, std::uint32_t idx) { return VehTblGet<0x00881f84u, 1>(out, idx); }
-RH_ScopedInstall(VehTbl881f84Get1, 0x0046d6d0);
+// MATCH-S11: the body of 0x0046d6d0 (VehTbl881f84Get1) moved to Match/MatchS11_0046d6d0.cpp,
+// which compiles the byte-matched source re/match/s11/0046d6d0.c.

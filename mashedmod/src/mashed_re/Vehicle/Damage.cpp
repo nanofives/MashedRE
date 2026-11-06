@@ -244,47 +244,5 @@ extern "C" __declspec(dllexport) void __cdecl VehicleEliminationSlotInit(int par
 // MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(VehicleEliminationSlotInit, 0x00419760);
 
 
-// ============================================================================
-// 0x00467300  VehicleCollisionWinTrigger
-//
-// Original 73 bytes. void(int param_1) where param_1 = vehicle index.
-//
-// Body (Ghidra decomp, cited at 0x00467300..0x00467349):
-//   if ((&DAT_00881F90)[param_1 * 0x341] != 0) return;   // CPU vehicle guard
-//   if ((&DAT_008815A4)[param_1 * 0x341] == 0) return;   // no active contact
-//   for (i = 0; i < 4; i++) FUN_00413c70(i, 3, 0);
-//   DAT_007f0fd4 = param_1;
-//   DAT_007f0fdc = 6000;
-//
-// All cited at the canonical_analysis (vehicle_dynamics/00467300.md).
-// Callee FUN_00413c70 is C2 mapped.
-// U-2632 catalogued (effect-code-3 semantic unknown — non-blocking, raw arg).
-// ============================================================================
-
-// Per-vehicle stride for state arrays at DAT_00881F90 / DAT_008815A4 (cited
-// across vehicle_dynamics plates).
-static constexpr std::uint32_t kVehicleDWordStride = 0x341u;
-
-// 0x00467300
-extern "C" __declspec(dllexport) void __cdecl VehicleCollisionWinTrigger(int param_1)
-{
-    // Cited at 0x00467300 body entry: player guard.
-    if (reinterpret_cast<const std::uint32_t*>(kDAT_00881F90)[param_1 * kVehicleDWordStride] != 0u) {
-        return;
-    }
-    // Cited at body: active-contact guard.
-    if (reinterpret_cast<const std::uint32_t*>(kDAT_008815A4)[param_1 * kVehicleDWordStride] == 0u) {
-        return;
-    }
-
-    // Cited at body: 4-channel effect trigger; arg pattern (i, 3, 0).
-    for (int i = 0; i < 4; ++i) {
-        g_FUN_00413c70(i, 3, 0);
-    }
-
-    // Cited at body: write winning vehicle index + countdown timer.
-    *reinterpret_cast<std::uint32_t*>(kDAT_007f0fd4) = static_cast<std::uint32_t>(param_1);
-    *reinterpret_cast<std::uint32_t*>(kDAT_007f0fdc) = 6000u;
-}
-
-RH_ScopedInstall(VehicleCollisionWinTrigger, 0x00467300);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S11: the body of 0x00467300 (VehicleCollisionWinTrigger) moved to Match/MatchS11_00467300.cpp,
+// which compiles the byte-matched source re/match/s11/00467300.c.

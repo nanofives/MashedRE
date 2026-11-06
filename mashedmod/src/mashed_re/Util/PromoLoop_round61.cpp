@@ -32,14 +32,5 @@ extern "C" __declspec(dllexport) float __cdecl FloatIdx639de0(void) {
 }
 RH_ScopedInstall(FloatIdx639de0, 0x004077e0);
 
-// 0x0046d4d0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VecCopy881ec8(std::uint32_t idx, const std::uint32_t* in) {
-    if (idx > 0xfu) return 0;                                           // CMP 0x10 / JC ; XOR EAX,EAX
-    std::uint32_t b = idx * 0xd04u;                                    // IMUL 0xd04
-    std::uint32_t* r1 = reinterpret_cast<std::uint32_t*>(0x00881ec8u + b);
-    std::uint32_t* r2 = reinterpret_cast<std::uint32_t*>(0x00881f08u + b);
-    for (int j = 0; j < 16; ++j) r1[j] = in[j];                        // REP MOVSD #1
-    for (int j = 0; j < 16; ++j) r2[j] = in[j];                        // REP MOVSD #2
-    return 1;                                                          // MOV EAX,1
-}
-RH_ScopedInstall(VecCopy881ec8, 0x0046d4d0);
+// MATCH-S11: the body of 0x0046d4d0 (VecCopy881ec8) moved to Match/MatchS11_0046d4d0.cpp,
+// which compiles the byte-matched source re/match/s11/0046d4d0.c.

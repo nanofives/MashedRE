@@ -1,0 +1,66 @@
+MATCH-S11 swap helper w2 report (2026-11-02). Worktree C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S11.
+All 14 SWAPPED wrappers + the 9 edited old TUs pass wrapcheck.bat. match.py --bytes = BYTE-IDENTICAL and relocheck OK re-run on every .c after the edits.
+
+SOURCE EDIT (6 .c files: 00472c60 00472f40 004730b0 00473540 004736c0 00472dc0): every `x / 640.0f` / `x / 480.0f` in code became
+`x * (1.0f / 640.0f)` / `x * (1.0f / 480.0f)`, with a one-comment note above the // MATCH: line. Why: 9176 emits `fmul [0x5cd5a8]` / `fmul [0x5cc560]`
+(float 1/640 = 0x3acccccd, 1/480 = 0x3b088889) for the divide, but VS2022 /fp:precise keeps a real `divss 640.0`, which rounds differently from the
+old port bodies (they multiply by the float at 0x005cd5a8 / 0x005cc560, which exe_main.cpp:9658-9659 sets to those same bits). After the edit:
+DDK bytes still identical, relocheck OK, and the VS2022 wrapper (00472c60 checked with dumpbin) emits `mulss [__real@3acccccd]` / `[__real@3b088889]`
+in the old body's order. Revert the 6 edits if the lead does not want them; without them those 6 are NOT-SAFE (divide vs multiply).
+
+x87 note: all old float bodies were SSE (none of these TUs is in x87_tus.txt). An SSE wrapper reproduces them exactly. Listing a wrapper in x87_tus
+changes the two-op scale chains (W*x*c) vs the old SSE body; single-op ones (00473870 adds, 00474e60) are unaffected.
+
+0x00472c60  SWAPPED  symbol=ChromeBaseDraw  targets=both  install=1  x87=yes
+ removed=Frontend/DrawQuadPrimitives.cpp:142-165  binds=FUN_0042b8b0=MatchS11_00472c60_Call0042b8b0, FUN_0042b8c0=MatchS11_00472c60_Call0042b8c0 (raw-address forwarders, as the old body called them)
+ note=exe callers: exe_main.cpp:4191,4192,4193,4194; re/match/s06/00428d30.c:130,132,137,141,145,149,154,161 (Match/MatchS06_00428d30.cpp) and re/match/s06/00429e10.c:178,180,184,186 (Match/MatchS06_00429e10.cpp); exe_main.cpp:9667 thunks 0x00472c60 to it (address taken). Rect/RwRGBA by value = same cdecl stack as (4 floats, uint32). Getter return read as short (movsx) vs old uint16 (movzx): same for values < 0x8000. Divide->multiply edit above.
+0x00472f40  SWAPPED  symbol=TextGradientV0V1Override  targets=both  install=1  x87=yes
+ removed=Frontend/DrawQuadPrimitives.cpp:177-203  binds=FUN_0042b8b0/FUN_0042b8c0 -> MatchS11_00472f40_Call0042b8b0/_Call0042b8c0 (raw)
+ note=exe callers: re/match/s06/00428d30.c:120 (MatchS06_00428d30.cpp); exe_main.cpp:9665 thunk (address taken). Divide->multiply edit.
+0x004730b0  SWAPPED  symbol=TextGradientV2V3Override  targets=both  install=1  x87=yes
+ removed=Frontend/DrawQuadPrimitives.cpp:215-240  binds=FUN_0042b8b0/FUN_0042b8c0 -> MatchS11_004730b0_Call0042b8b0/_Call0042b8c0 (raw)
+ note=exe callers: re/match/s06/00428d30.c:124 (MatchS06_00428d30.cpp); exe_main.cpp:9666 thunk (address taken). Divide->multiply edit.
+0x00473870  SWAPPED  symbol=TextSpriteUVExplicit  targets=both  install=1  x87=yes
+ removed=Frontend/DrawQuadPrimitives.cpp:257-303  binds=none (no callees)
+ note=exe callers: none. Same stores (xy, fixed 0/1 uv, z/rhw, swapped colour), same state calls (9 = filter?2:1). Only float op is p+s adds.
+0x00473540  SWAPPED  symbol=GradientQuadHorizAlpha  targets=both  install=1  x87=yes
+ removed=Frontend/MenuLeaves_af1.cpp:127-160  binds=FUN_0042b8b0/FUN_0042b8c0 -> MatchS11_00473540_Call0042b8b0/_Call0042b8c0 (raw)
+ note=exe callers: none. x*W vs old W*x is commutative (exact). Divide->multiply edit.
+0x004736c0  SWAPPED  symbol=BorderQuadFourAlpha  targets=both  install=1  x87=yes
+ removed=Frontend/MenuLeaves_af1.cpp:180-210  binds=FUN_0042b8b0/FUN_0042b8c0 -> MatchS11_004736c0_Call0042b8b0/_Call0042b8c0 (raw)
+ note=exe callers: none. match.py scored view 97.4% is Ghidra's short size; --bytes 424 B byte-identical, as the .c notes. Divide->multiply edit. MenuLeaves_af1.cpp now holds only helpers/comments.
+0x00472dc0  SWAPPED  symbol=Im2DTriangleDraw  targets=both  install=0  x87=yes
+ removed=Frontend/BucketMixed_t3.cpp:180-229  binds=FUN_0042b8b0/FUN_0042b8c0 -> MatchS11_00472dc0_Call0042b8b0/_Call0042b8c0 (raw)
+ note=exe callers: none. Old install was commented out (STAGED note kept in the old TU). Divide->multiply edit.
+0x00474e60  SWAPPED  symbol=DegToRad  targets=both  install=1  x87=yes
+ removed=Frontend/Cluster_v1.cpp:45-53  binds=none
+ note=exe callers: none. Old body read the float at 0x005cd7a8 at run time; the matched literal 0.017453292f is that value (0x3c8efa35, relocheck OK). In the exe the old read depended on that address being mapped; no exe caller reaches it.
+0x0046dc00  SWAPPED  symbol=EntityFieldSet  targets=both  install=1  x87=no
+ removed=Frontend/GameModeInit.cpp:23-26  binds=none
+ note=exe callers: none. Same store (dword at 0x008815a8 + i*0xd04). kEntityBase_8815a8/kEntityDWordStride left unused in the old TU.
+0x004671a0  SWAPPED  symbol=BackBuffRasterOpen (hooks.csv name)  targets=asi  install=0  x87=no
+ removed=Frontend/IntroSplash.cpp:50-54 (static OrigVehicle0Get, a raw call-through to 0x004671a0, not a real body)  binds=FUN_0042b930/FUN_0042f510 -> MatchS11_004671a0_Call0042b930/_Call0042f510 (raw, the calls the original body makes)
+ note=asi only (IntroSplash.cpp is asi-only). The one caller, IntroSplash.cpp:344 in HardwareShowIntroVideo, now calls BackBuffRasterOpen(0); HardwareShowIntroVideo itself is not installed (MASS-DISABLED). This is the RVA's first port body: MatchS06_00428590/00428a30/00428bf0/00428d30/00429e10 still bind FUN_004671a0 to raw forwarders ("no port body") and could rebind. Exe callers: none.
+0x0046c5c0  NOT-SAFE  symbol=VehicleSlotInit  targets=both  install=1  x87=no
+ removed=none  binds=-
+ note=old body (Frontend/SmallLeaves_n2.cpp:111) writes a BYTE 0 at 0x008815a4 + i*0x341 (byte stride 0x341). The matched source (= the original) writes a DWORD 0 at 0x008815a4 + i*0xd04. The 0x008820b0 + i*0xd04 store of DAT_007f1030 is the same. The old port is wrong for every i (1 byte vs 4, and 0x341 vs 0xd04 for i>0), so swapping changes what the port writes. Exe callers: none.
+0x0046c790  NOT-SAFE  symbol=VehicleSlotFieldSet  targets=both  install=1  x87=no
+ removed=none  binds=-
+ note=old body (Frontend/SmallLeaves_n2.cpp:167) writes the dword at 0x008815b0 + i*0x341 (byte stride). The matched source (= the original) writes 0x008815b0 + i*0xd04. Same for i=0, different for i>0. Exe callers: none.
+0x0046c700  SWAPPED  symbol=EntityScoreFieldAdd  targets=asi  install=1  x87=no
+ removed=Frontend/SplashGameMode_t5.cpp:141-154  binds=none
+ note=asi only (SplashGameMode_t5.cpp is asi-only). Same signed bound and the same += at 0x008820b0 + i*0xd04. Race/ScoringHooks.cpp:84 calls the raw 0x0046c700 (reaches it through the install). Exe callers: none.
+0x004671d0  SWAPPED  symbol=FollowTargetField40_impl  targets=both  install=0  x87=no
+ removed=Camera/FollowTargetFieldPtr.cpp:16-57 by hand (shared helper FollowTargetField + FollowTargetField40_impl)  binds=FUN_0042b930/FUN_0042f510 -> MatchS11_004671d0_Call0042b930/_Call0042f510 (raw, as the old helper called them)
+ note=S02 ReleaseResourcePair pattern: the exported FollowTargetField40 (ShadowAB::Run entry, MASHED_SHADOW_AB, unchanged when unarmed) and RH_ScopedInstall(FollowTargetField40, 0x004671d0) stay in the old TU as a thin caller of the matched _impl. The RVA was taken out of the shadow comment so it is not a second body. If the lead counts the kept ShadowAB entry as a knob, call this NOT-SAFE instead. Exe callers: none.
+0x00467210  SWAPPED  symbol=FollowTargetField10_impl  targets=both  install=0  x87=no
+ removed=Camera/FollowTargetFieldPtr.cpp:67-73 by hand (header, forward decl, FollowTargetField10_impl. Entry + install at 74-81 kept as the thin caller)  binds=FUN_0042b930/FUN_0042f510 -> MatchS11_00467210_Call0042b930/_Call0042f510 (raw)
+ note=same ShadowAB thin-caller pattern as 0x004671d0. exe callers of FollowTargetField10 (-> _impl): re/match/t01g/004111c0.c:166,167 (Match/MatchT01G_004111c0.cpp, #define FUN_00467210 FollowTargetField10); also Match/MatchS06_004270f0.cpp binds it (asi).
+0x004671c0  SWAPPED  symbol=GetOverlayCamera  targets=both  install=1  x87=no
+ removed=Render/BatchAB_s1.cpp:76-83  binds=none
+ note=exe callers: none. Same read of 0x006905b4.
+
+New wrappers (the lead adds them to the rsp files): mashedmod/src/mashed_re/Match/MatchS11_{00472c60,00472f40,004730b0,00473870,00473540,004736c0,00472dc0,00474e60,0046dc00,004671c0,004671d0,00467210}.cpp -> exe+asi; MatchS11_{004671a0,0046c700}.cpp -> asi only.
+x87 list candidates: MatchS11_00472c60 00472f40 004730b0 00473870 00473540 004736c0 00472dc0 00474e60 (see the x87 note: SSE matches the old bodies exactly).
+dual_copy_allowlist.txt: no entry for any of these 16 RVAs, so nothing goes stale.
+Line numbers in "removed" are the ORIGINAL file's lines.
