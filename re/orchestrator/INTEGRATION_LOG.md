@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-06 18:02 HB-TRAIN-WTADD-RETRY (orch/HB-TRAIN-WTADD-RETRY): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261106_173431
 - 2026-11-06 16:32 FINAL-TEXT-SALVAGE (orch/FINAL-TEXT-SALVAGE): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261106_163142
 - 2026-11-06 16:30 MATCH-PORTSTATE-RECORDS (orch/MATCH-PORTSTATE-RECORDS): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_160105
 - 2026-11-06 15:35 MATCH-COMBINED-S12-S14-S16 (orch/MATCH-COMBINED-S12-S14-S16): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_150601
