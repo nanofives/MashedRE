@@ -1,5 +1,7 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-02 10:14 RC-D11075-LAUNCHER (orch/RC-D11075-LAUNCHER), RC-STUBS-3714-3716 (orch/RC-STUBS-3714-3716): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261102_101134
+- 2026-11-02 09:17 MATCH-RC-S08 (orch/MATCH-RC-S08): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261102_085559
 - 2026-11-02 08:04 MATCH-S08-FU (orch/MATCH-S08-FU): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261102_073244
 - 2026-11-02 07:32 MATCH-PORTSTATE-GAMEFLOW (orch/MATCH-PORTSTATE-GAMEFLOW): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261102_063056
 - 2026-11-02 06:30 MATCH-S08 (orch/MATCH-S08): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261102_044613
