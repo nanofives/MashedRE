@@ -1,0 +1,15 @@
+arm i1
+  training 884: orig CamManHot pos=(2.000,0.625,-26.125) yaw=4.398  stand yaw=4.972  d_yaw=+0.574  d_pos=0.0000  tri 177/177
+  training 884: orig CamManHot pos=(2.000,0.625,-26.125) yaw=4.398  stand yaw=4.972  d_yaw=+0.574  d_pos=0.0000  tri 177/177
+  training 884: orig draws 2, stand draws 3
+  training 924: orig CamManHot pos=(2.000,0.625,-26.125) yaw=4.398  stand yaw=6.552  d_yaw=+2.155  d_pos=0.0000  tri 177/177
+  training 924: orig CamManHot pos=(2.000,0.625,-26.125) yaw=4.398  stand yaw=6.552  d_yaw=+2.155  d_pos=0.0000  tri 177/177
+  training 924: orig draws 2, stand draws 3
+  training 959: orig CamManHot pos=(2.000,0.625,-26.125) yaw=4.398  stand yaw=9.143  d_yaw=+4.746  d_pos=0.0000  tri 177/177
+  training 959: orig CamManHot pos=(2.000,0.625,-26.125) yaw=4.398  stand yaw=9.143  d_yaw=+4.746  d_pos=0.0000  tri 177/177
+  training 959: orig draws 2, stand draws 3
+  arctic 1051: orig CamManCold pos=(-27.513,1.004,43.407) yaw=-177.085  stand yaw=-177.047  d_yaw=+0.038  d_pos=0.0000  tri 177/177
+  arctic 1051: orig CamManCold pos=(-27.513,1.004,43.407) yaw=-177.085  stand yaw=-177.047  d_yaw=+0.038  d_pos=0.0000  tri 177/177
+  arctic 1051: orig draws 2, stand draws 5
+  arctic 1091: orig draws 0, stand draws 5
+  arctic 1126: orig draws 0, stand draws 5

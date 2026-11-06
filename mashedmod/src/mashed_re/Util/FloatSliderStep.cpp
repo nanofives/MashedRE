@@ -23,55 +23,5 @@
 // __cdecl single int arg: caller cleans -> plain RET.
 #include "../Core/HookSystem.h"
 
-// 0x0045db50
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl
-FloatSliderStep(int /*dir*/)
-{
-    __asm {
-        mov    eax, dword ptr [esp + 4]            // dir
-        cmp    eax, 3
-        ja     L_clamp_high                         // dir > 3: re-clamp only
-        // --- embedded jump table (0x0045dbcc) replaced by an equivalent branch ladder ---
-        cmp    eax, 0
-        je     L_case0
-        cmp    eax, 1
-        je     L_case1
-        cmp    eax, 2
-        je     L_case2
-        // eax == 3
-        fld    dword ptr ds:[0x0068fc8c]
-        fsub   dword ptr ds:[0x005cd0ec]            // -= step2
-        jmp    L_store
-    L_case0:
-        fld    dword ptr ds:[0x0068fc8c]
-        fsub   dword ptr ds:[0x005cc9c0]            // -= step1
-        jmp    L_store
-    L_case1:
-        fld    dword ptr ds:[0x0068fc8c]
-        fadd   dword ptr ds:[0x005cc9c0]            // += step1
-    L_store:
-        fstp   dword ptr ds:[0x0068fc8c]
-    L_clamp_high:
-        fld    dword ptr ds:[0x0068fc8c]
-        fcomp  dword ptr ds:[0x005cc320]            // vs 1.0f
-        fnstsw ax
-        test   ah, 0x41
-        jne    L_clamp_low
-        mov    dword ptr ds:[0x0068fc8c], 0x3f800000 // clamp to 1.0
-        ret
-    L_case2:
-        jmp    L_zero_store                          // table[2] -> the zero-store at 0x45dbbf
-    L_clamp_low:
-        fld    dword ptr ds:[0x0068fc8c]
-        fcomp  dword ptr ds:[0x005d757c]            // vs 0.0f
-        fnstsw ax
-        test   ah, 5
-        jp     L_ret
-    L_zero_store:
-        mov    dword ptr ds:[0x0068fc8c], 0          // clamp to 0.0
-    L_ret:
-        ret
-    }
-}
-
-RH_ScopedInstall(FloatSliderStep, 0x0045db50);
+// MATCH-S10: the body of 0x0045db50 (FloatSliderStep) moved to Match/MatchS10_0045db50.cpp,
+// which compiles the byte-matched source re/match/s10/0045db50.c.

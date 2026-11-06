@@ -1,5 +1,14 @@
 """Wave 3 mass canonical observation — verify ~41 newly-authored C3 candidates."""
 from __future__ import annotations
+# RETIRED 2026-11-02 (D5-SHIM-STEP3-FRIDA5). This harness received mashed_re_dev.asi only
+# through the dinput8 proxy autoload, which D5 shim removal takes out, and nothing live calls it.
+# It refuses to run. Supported paths: re/frida/run_diff_parallel.py <hook> (diff-original path1),
+# re/frida/run_verify_hook.py <hook> (path2), re/frida/scenario_launch.py --hooks (booted game).
+# A new spawner loads the asi with re/frida/dev_asi.py. Source kept for reference only.
+import sys as _retired_sys
+_retired_sys.exit("RETIRED 2026-11-02 (D5-SHIM-STEP3-FRIDA5): use re/frida/run_diff_parallel.py / "
+                  "run_verify_hook.py / scenario_launch.py --hooks; see "
+                  "verify/d5frida5_20261102/RESULT_D5-SHIM-STEP3-FRIDA5.md")
 import sys, time
 from pathlib import Path
 

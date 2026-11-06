@@ -28,8 +28,5 @@
 // MATCH-S06: the body of 0x00426bb0 (Global66d6d8Get) moved to Match/MatchS06_00426bb0.cpp,
 // which compiles the byte-matched source re/match/s06/00426bb0.c.
 
-// 0x0045bfe0  A1 2C 33 80 00 C3  (mov eax,[0x0080332c]; ret)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global80332cGet(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x0080332cu);  // cited at 0x0045bfe0
-}
-RH_ScopedInstall(Global80332cGet, 0x0045bfe0);
+// MATCH-S10: the body of 0x0045bfe0 (Global80332cGet) moved to Match/MatchS10_0045bfe0.cpp,
+// which compiles the byte-matched source re/match/s10/0045bfe0.c.
