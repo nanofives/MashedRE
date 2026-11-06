@@ -58,12 +58,30 @@ function Sha8([string]$p) { if (Test-Path $p) { (Get-FileHash -Algorithm SHA256 
 function Like-Any([string]$f, $globs) { foreach ($g in $globs) { if ($f -like $g) { return $true } } return $false }
 
 # ---- helpers -------------------------------------------------------------------------
+# HB-TRAIN-WTADD-RETRY: one `git worktree add`; the selftest swaps this for a fake that fails N times.
+function Invoke-WtAdd([string]$p, [string]$at) { return (Git -C $MAIN worktree add --detach $p $at) }
+$script:WtAddTries = 3; $script:WtAddWaitSec = 5
+# HB-TRAIN-WTADD-RETRY: train 20261106_122811 lost a GREEN row to one failed add (stderr went to Out-Null, a manual
+# add a minute later worked). git's output now goes to the train log, the add is retried (fresh path, prune between
+# tries), and only the last failure throws, with git's message.
 function New-Temp([string]$at) {
-  $p = Join-Path $MAIN ".worktrees\mtrain-$TS-$([guid]::NewGuid().ToString('N').Substring(0,4))"
-  Git -C $MAIN worktree add --detach $p $at | Out-Null
-  if ($script:GITRC -ne 0) { throw "worktree add failed: $p" }
-  $script:Temps += $p   # HB-TRAINCLEAN: every temp worktree stays registered until Remove-Temp has removed it
-  return $p
+  $msg = ''
+  for ($i = 1; $i -le $script:WtAddTries; $i++) {
+    $p = Join-Path $MAIN ".worktrees\mtrain-$TS-$([guid]::NewGuid().ToString('N').Substring(0,4))"
+    $o = @(Invoke-WtAdd $p $at)
+    if ($script:GITRC -eq 0) {
+      if ($i -gt 1) { Say "worktree add OK on attempt $i/$($script:WtAddTries): $p" }
+      $script:Temps += $p   # HB-TRAINCLEAN: every temp worktree stays registered until Remove-Temp has removed it
+      return $p
+    }
+    $msg = (@($o | ForEach-Object { "$_".Trim() } | Where-Object { $_ }) -join ' | ')
+    Say "worktree add attempt $i/$($script:WtAddTries) failed rc=$($script:GITRC) at $at -> $p`: $msg"
+    if ($i -lt $script:WtAddTries) {
+      if ($script:WtAddWaitSec -gt 0) { Start-Sleep -Seconds $script:WtAddWaitSec }
+      $null = Git -C $MAIN worktree prune
+    }
+  }
+  throw "worktree add failed after $($script:WtAddTries) attempts at $at`: $msg"
 }
 function Remove-Wt([string]$p) {
   # SAFE removal only (never `git worktree remove --force`; WORKTREE-SYMLINK-WIPE). Returns the diag.py exit code.
@@ -335,7 +353,7 @@ function Run-Gates([string]$wt, $r, [bool]$needFull) {
 # an INFRA result bounces nothing and stops the pass, so every row not merged stays queued for the next pass.
 # Returns a hashtable (never dot-sourced): res, merged, bounced, infra (reason or '').
 function Resolve-Batch($items, $first) {
-  $o = @{ res = $first; merged = @(); bounced = @(); infra = '' }
+  $o = @{ res = $first; merged = @(); bounced = @(); infra = ''; error = '' }
   if ($first.ok) { $o.merged = @($items); return $o }
   Remove-Temp $first.wt
   $o.res = $null
@@ -343,7 +361,15 @@ function Resolve-Batch($items, $first) {
   if ($items.Count -eq 1) { $o.bounced = @(@{ it = $items[0]; why = $first.why; gates = $first.gates }); return $o }
   Say "batch RED ($($first.why)); re-merging one at a time"
   foreach ($it in $items) {
-    $one = Try-Batch @($it)
+    # HB-TRAIN-WTADD-RETRY: a throw while trying a row (worktree add, git, build setup) stops the one-at-a-time pass
+    # but never loses what it already proved: the GREEN row and the bounces so far are returned and landed by the
+    # caller; the throwing row and the rows after it stay queued. Train 20261106_122811 lost MATCH-S09-FU that way.
+    try { $one = Try-Batch @($it) }
+    catch {
+      $o.error = "$($it.id): $($_.Exception.Message)"
+      Say "  $($it.id): threw ($($_.Exception.Message)); stopping one-at-a-time$(if ($o.res) { ", landing GREEN $($o.merged[0].id)" }), rows not merged stay queued"
+      break
+    }
     if ($one.ok -and -not $o.res) { $o.res = $one; $o.merged = @($it); continue }   # first GREEN one lands this run
     Remove-Temp $one.wt
     if ($one.infra) { $o.infra = $one.why; Say "  $($it.id): $($one.why); stopping, the rows not merged stay queued"; break }
@@ -717,6 +743,44 @@ if ($SelfTest) {
   $o = Batch-Case @($iA, $iB) @{ 'T-A+T-B' = (TB 'green') }
   Check (-not $o.infra -and $o.merged.Count -eq 2 -and $o.bounced.Count -eq 0 -and $script:tbCalls.Count -eq 1) 'normal path: batch GREEN = both merged (unchanged)'
 
+  # --- HB-TRAIN-WTADD-RETRY (a): New-Temp retries a failing `git worktree add` and logs git's message
+  $realAdd = ${function:Invoke-WtAdd}
+  $script:WtAddWaitSec = 0
+  function Invoke-WtAdd([string]$p, [string]$at) {
+    $script:addCalls++
+    if ($script:addCalls -le $script:addFails) { $script:GITRC = 128; return @("fatal: fake add failure $($script:addCalls) for $at") }
+    return (& $realAdd $p $at)
+  }
+  $script:addCalls = 0; $script:addFails = 2; $script:Temps = @()
+  $tp = $null; $terr = ''
+  try { $tp = New-Temp 'integration' } catch { $terr = $_.Exception.Message }
+  $logTxt = Get-Content -LiteralPath $LOG -Raw
+  Check ($tp -and (Test-Path -LiteralPath (Join-Path $tp '.git')) -and $script:addCalls -eq 3 -and $script:Temps.Count -eq 1 -and $script:Temps[0] -eq $tp -and $logTxt -match 'attempt 1/3 failed rc=128 .*fatal: fake add failure 1' -and $logTxt -match 'attempt 2/3 failed rc=128 .*fatal: fake add failure 2' -and $logTxt -match 'worktree add OK on attempt 3/3') "wtadd: add fails twice then succeeds = temp created on attempt 3, registered once, both git messages in the train log (calls $($script:addCalls), err '$terr')"
+  if ($tp) { Remove-Wt $tp | Out-Null }; $script:Temps = @()
+  $script:addCalls = 0; $script:addFails = 3; $terr = ''; $tp = $null
+  try { $tp = New-Temp 'integration' } catch { $terr = $_.Exception.Message }
+  Check (-not $tp -and $script:addCalls -eq 3 -and $terr -match '^worktree add failed after 3 attempts at integration: fatal: fake add failure 3' -and $script:Temps.Count -eq 0) "wtadd: three failures = throw after the last try with git's message ('$terr')"
+  ${function:Invoke-WtAdd} = $realAdd; $script:WtAddWaitSec = 5
+
+  # --- HB-TRAIN-WTADD-RETRY (b): a throw after a GREEN row in one-at-a-time mode still lands the GREEN row
+  function Try-Batch($items) {
+    $k = ($items | ForEach-Object { $_.id }) -join '+'
+    $script:tbCalls += $k
+    if ($script:TB[$k] -eq 'throw') { throw "worktree add failed after 3 attempts at abc123: fatal: fake for $k" }
+    return $script:TB[$k]
+  }
+  $o = $null; $esc = ''
+  try { $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'green'); 'T-B' = 'throw'; 'T-C' = (TB 'green') } } catch { $esc = $_.Exception.Message }
+  Check (-not $esc -and $o.merged.Count -eq 1 -and $o.merged[0].id -eq 'T-A' -and $null -ne $o.res -and $o.res.ok -and $o.bounced.Count -eq 0 -and $o.error -match '^T-B: worktree add failed' -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-B') "one-at-a-time: GREEN T-A then T-B throws = no exception escapes, T-A returned for landing, T-B/T-C stay queued (calls $($script:tbCalls -join ','), escaped '$esc', error '$($o.error)')"
+  $o = $null; $esc = ''
+  try { $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'red'); 'T-B' = 'throw'; 'T-C' = (TB 'green') } } catch { $esc = $_.Exception.Message }
+  Check (-not $esc -and $o.merged.Count -eq 0 -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-A' -and $o.error -match '^T-B: ') "one-at-a-time: RED T-A then T-B throws = T-A still bounced, nothing merged, error reported (escaped '$esc')"
+  # the run body lands whatever Resolve-Batch returns: $merged comes from $rb.merged, the error only reaches the report
+  $tb = $top[0].Body.Extent.Text
+  $rbFn = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Resolve-Batch' }, $true))
+  $rbTry = $rbFn.Count -eq 1 -and @($rbFn[0].Body.FindAll({ param($n) $n -is [System.Management.Automation.Language.TryStatementAst] -and $n.Body.Extent.Text -match 'Try-Batch @\(\$it\)' -and $n.CatchClauses.Count -eq 1 }, $true)).Count -eq 1
+  Check ($rbTry -and ($tb -match '\$trainErr = \$rb\.error') -and ($tb -notmatch 'throw \$trainErr')) "AST: Resolve-Batch catches the one-at-a-time Try-Batch, the run body carries the error to the report without rethrowing before landing (try/catch=$rbTry)"
+
   # AST: the run body routes through Resolve-Batch, bounces only $bounced, and verdict INFRA wins
   $tb = $top[0].Body.Extent.Text
   Check (($tb -match '\$rb = Resolve-Batch \$batch \$res') -and ($tb -match '\$bounced = @\(\$rb\.bounced\)') -and ($tb -match "foreach \(\`$b in \`$bounced\) \{\s*Ledger set \`$b\.it\.id red-merge") -and ($tb -match "\`$verdict = if \(\`$infra\) \{ 'INFRA' \}")) 'AST: run body = Try-Batch -> Resolve-Batch, red-merge only for $bounced, verdict INFRA when $infra'
@@ -754,7 +818,8 @@ Enter-PassPriority
 $res = Try-Batch $batch
 $infraGates = $res.gates
 $rb = Resolve-Batch $batch $res
-$res = $rb.res; $merged = @($rb.merged); $bounced = @($rb.bounced); $infra = $rb.infra
+$res = $rb.res; $merged = @($rb.merged); $bounced = @($rb.bounced); $infra = $rb.infra; $trainErr = $rb.error
+if ($trainErr) { Say "ERROR mid one-at-a-time: $trainErr; landing what already went GREEN, the rest stays queued" }
 if ($infra) { Say "INFRA: $infra; nothing bounced for it, every row not merged stays queued" }
 foreach ($b in $bounced) {
   Ledger set $b.it.id red-merge "merge train $TS`: $($b.why)"
@@ -805,7 +870,7 @@ $report = @(
   "evidence: $LOG",
   "gates: $(if ($res) { $res.gates } elseif ($infra -and -not $bounced.Count) { "not scored: $infraGates" } else { ($bounced | ForEach-Object { $_.gates }) -join ' | ' })",
   "decision: none",
-  "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $($_.why)" }) -join '; ')]$(if ($infra) { " infra [$infra; rows not merged stay queued, re-run the train on a live display]" })"
+  "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $($_.why)" }) -join '; ')]$(if ($infra) { " infra [$infra; rows not merged stay queued, re-run the train on a live display]" })$(if ($trainErr) { " error [$trainErr; rows not merged stay queued, re-run the train]" })"
 )
 $report | Set-Content (Join-Path $DATA 'REPORT.txt') -Encoding utf8
 $report | Write-Output

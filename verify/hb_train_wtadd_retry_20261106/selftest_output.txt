@@ -1,0 +1,64 @@
+[mtrain 17:22:28]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 17:22:28]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 17:22:28]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 17:22:30]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 17:22:30]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 17:22:30]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 17:22:32]   SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+[mtrain 17:22:34]   SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+[mtrain 17:22:35]   SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+[mtrain 17:22:40]   SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+[mtrain 17:22:42]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 17:22:44]   SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+[mtrain 17:22:44]   SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+[mtrain 17:22:44]   SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+[mtrain 17:22:45]   SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+[mtrain 17:22:45]   SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+[mtrain 17:22:45]   SELFTEST PASS: AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=True inner=1)
+[mtrain 17:22:47]   SELFTEST PASS: priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=False)
+[mtrain 17:22:48]   SELFTEST PASS: priority hold: status shows PRIORITY-HOLD pid=2344
+[mtrain 17:22:55]   SELFTEST PASS: priority hold: a new non-priority solo open waits while held (blocked=True), an ordinary acquire does not (ok=True), the solo opens after release (opened=True)
+[mtrain 17:23:03]   SELFTEST PASS: tracker: rc-ok (hooks.csv + CHANGELOG only) is text-only, no build, lint OK with the base's 9-column row pre-existing (ok=True gates='not run: text-only change (no build input touched)')
+[mtrain 17:23:07]   SELFTEST PASS: tracker: bad-ncol bounced by the tracker lint with NEW NCOL rva=00401030 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 0b741f8782ee1f0d2391400752f3c5ac0a8f1405) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261106_172223\tracker_lint.txt)')
+[mtrain 17:23:11]   SELFTEST PASS: tracker: bad-conf bounced by the tracker lint with NEW CONF rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 0b741f8782ee1f0d2391400752f3c5ac0a8f1405) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261106_172223\tracker_lint.txt)')
+[mtrain 17:23:13]   SELFTEST PASS: tracker: bad-dup bounced by the tracker lint with NEW DUP rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 0b741f8782ee1f0d2391400752f3c5ac0a8f1405) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261106_172223\tracker_lint.txt)')
+[mtrain 17:23:17]   SELFTEST PASS: tracker: bad-quote bounced by the tracker lint with NEW PARSE (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 0 rows, UNCERTAINTIES.md 2 ids, pre-existing=0 NEW=1 (base 0b741f8782ee1f0d2391400752f3c5ac0a8f1405) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261106_172223\tracker_lint.txt)')
+[mtrain 17:23:25]   SELFTEST PASS: tracker: bad-udup bounced by the tracker lint with NEW UDUP U-0002 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 0b741f8782ee1f0d2391400752f3c5ac0a8f1405) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261106_172223\tracker_lint.txt)')
+[mtrain 17:23:26]   SELFTEST PASS: control: hooks.csv was not text-only under the old globs, is under merge_train.json
+[mtrain 17:23:26]   SELFTEST PASS: control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: )
+[mtrain 17:23:27]   SELFTEST PASS: short-once: D2_DEFH_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 17:23:27]   SELFTEST PASS: short-always: reruns bounded at 2, arm still reported short (runs=3)
+[mtrain 17:23:28]   SELFTEST PASS: full-length logs: no rerun
+[mtrain 17:23:28]   SELFTEST PASS: unit: arm log with CreateDevice hr=0x8876086A and no device = INFRA reason
+[mtrain 17:23:28]   SELFTEST PASS: unit: hr=0x8876086C in one of two arm logs = INFRA, names that arm
+[mtrain 17:23:28]   SELFTEST PASS: unit: 0x8876086A followed by a working CreateDevice is not the signature (falls to ALL-MISSING)
+[mtrain 17:23:28]   SELFTEST PASS: unit: all MISSING, log present, no signature = ALL-MISSING (caller probes)
+[mtrain 17:23:29]   SELFTEST PASS: unit: all MISSING and no arm log = INFRA (runner never ran the exe)
+[mtrain 17:23:29]   SELFTEST PASS: unit: one hash present, clean log = not INFRA
+[mtrain 17:23:29]   SELFTEST PASS: unit: D2 form (no hashes), clean log = not INFRA
+[mtrain 17:23:29]   SELFTEST PASS: INFRA path: precheck BLOCKED = INFRA before any arm (arms run 0, why 'INFRA: render precheck RENDER: BLOCKED - fake probe')
+[mtrain 17:23:29]   SELFTEST PASS: normal path: precheck OK, refs match = GREEN, one probe, no rerun (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/5d43806c/5d43806c')
+[mtrain 17:23:30]   SELFTEST PASS: normal path: a changed B hash is still RED 'default gates changed' (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)')
+[mtrain 17:23:30]   SELFTEST PASS: INFRA path: 0x8876086A arm (display slept after the precheck) = INFRA, no G-CTRL rerun, B not run (runs H_DEF)
+[mtrain 17:23:30]   SELFTEST PASS: INFRA path: precheck UNKNOWN goes on to the arms, the 0x8876086A arm makes it INFRA
+[mtrain 17:23:31]   SELFTEST PASS: INFRA path: arms that wrote nothing = INFRA (why 'INFRA: all gate hashes MISSING and no arm wrote a log (the runner or the lock never ran the exe)')
+[mtrain 17:23:32]   SELFTEST PASS: INFRA path: all-MISSING with clean logs, post-arm probe BLOCKED = INFRA (probes 2)
+[mtrain 17:23:32]   SELFTEST PASS: normal path: all-MISSING with a live display stays RED (a broken exe is bounced, not held) (gates 'G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (all MISSING, render probe OK: a boot failure of the merged exe, not a display fault)')
+[mtrain 17:23:32]   SELFTEST PASS: normal path: a 0x8876086A attempt followed by a working device is not INFRA, the changed hash stays RED
+[mtrain 17:23:33]   SELFTEST PASS: INFRA path: single row INFRA = 0 bounced, 0 merged, row left queued (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+[mtrain 17:23:33]   SELFTEST PASS: INFRA path: 3-row batch INFRA = 0 bounced, no one-at-a-time re-merge (Try-Batch calls 1)
+[mtrain 17:23:33]   SELFTEST PASS: INFRA path: INFRA mid one-at-a-time stops there; the RED before it bounces, the row after it is not tried (calls T-A+T-B+T-C,T-A,T-B)
+[mtrain 17:23:33]   SELFTEST PASS: normal path: single row RED = bounced (unchanged)
+[mtrain 17:23:33]   SELFTEST PASS: normal path: batch RED -> one at a time: first GREEN lands, RED bounced, second GREEN stays queued (temps removed 3)
+[mtrain 17:23:33]   SELFTEST PASS: normal path: batch GREEN = both merged (unchanged)
+[mtrain 17:23:34]   SELFTEST PASS: wtadd: add fails twice then succeeds = temp created on attempt 3, registered once, both git messages in the train log (calls 3, err '')
+[mtrain 17:23:37]   SELFTEST PASS: wtadd: three failures = throw after the last try with git's message ('worktree add failed after 3 attempts at integration: fatal: fake add failure 3 for integration')
+[mtrain 17:23:38]   T-B: threw (worktree add failed after 3 attempts at abc123: fatal: fake for T-B); stopping one-at-a-time, landing GREEN T-A, rows not merged stay queued
+[mtrain 17:23:38]   SELFTEST PASS: one-at-a-time: GREEN T-A then T-B throws = no exception escapes, T-A returned for landing, T-B/T-C stay queued (calls T-A+T-B+T-C,T-A,T-B, escaped '', error 'T-B: worktree add failed after 3 attempts at abc123: fatal: fake for T-B')
+[mtrain 17:23:38]   T-B: threw (worktree add failed after 3 attempts at abc123: fatal: fake for T-B); stopping one-at-a-time, rows not merged stay queued
+[mtrain 17:23:38]   SELFTEST PASS: one-at-a-time: RED T-A then T-B throws = T-A still bounced, nothing merged, error reported (escaped '')
+[mtrain 17:23:38]   SELFTEST PASS: AST: Resolve-Batch catches the one-at-a-time Try-Batch, the run body carries the error to the report without rethrowing before landing (try/catch=True)
+[mtrain 17:23:39]   SELFTEST PASS: AST: run body = Try-Batch -> Resolve-Batch, red-merge only for $bounced, verdict INFRA when $infra
+[mtrain 17:23:39]   SELFTEST PASS: merge_train.json unchanged by the selftest (sha256 06DDBBFFDF7F)
+[mtrain 17:23:39] SELFTEST done: 0 failure(s)
+SELFTEST PASS (0 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261106_172223\merge_train.log
