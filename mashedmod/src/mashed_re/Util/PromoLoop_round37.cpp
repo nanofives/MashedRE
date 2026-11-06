@@ -16,11 +16,8 @@
 
 #include <cstdint>
 
-// 0x00452ea0  8B 44 24 04 8B 04 85 50 FF 88 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table88ff50Get(std::uint32_t param_1) {
-    return reinterpret_cast<const std::uint32_t*>(0x0088ff50u)[param_1];  // cited at 0x00452ea0
-}
-RH_ScopedInstall(Table88ff50Get, 0x00452ea0);
+// MATCH-S09: the body of 0x00452ea0 (Table88ff50Get) moved to Match/MatchS09_00452ea0.cpp,
+// which compiles the byte-matched source re/match/s09/00452ea0.c.
 
 // 0x0045dd50  8B 44 24 04 8B 04 85 00 A3 8A 00 C3
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Table8aa300Get(std::uint32_t param_1) {

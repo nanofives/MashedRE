@@ -248,6 +248,10 @@ def base_env(frames):
     e.update(MASHED_MUTE='1', MASHED_TRACK_VIEW='Training', MASHED_CAR='1', MASHED_ROUND='1',
              MASHED_ROUND_RULE='0', MASHED_GAME_MODE='10', MASHED_WIN_POS='primary-bl', MASHED_DETERMINISTIC='1',
              MASHED_DET_FRAMES=str(frames))
+    # HB-GATE-FLAKE-GAMEFLOW (2026-11-02): the exe's keyboard is DISCL_BACKGROUND, so a key pressed in any window
+    # reaches a deterministic arm (one Enter moved all three G-CTRL hashes). Exes from before the knob ignore it.
+    # An arm drops it with '-MASHED_DET_NO_AMBIENT_KEYS'. verify/harness_20261102/RESULT_HB-GATE-FLAKE-GAMEFLOW.md
+    e['MASHED_DET_NO_AMBIENT_KEYS'] = '1'
     return e
 
 
@@ -311,6 +315,15 @@ for _s in (2, 3): STACK['TLG%dF' % _s] = STACK['TLG%d' % _s] + STACK['FL']
 STACK['FLD'] = STACK['FL'] + ['MASHED_A5_DRAFT_LUT=1']   # + u9771's float/LUT drafting test
 STACK['FULLGOFD'] = STACK['FULLGO'] + STACK['FLD']
 for _s in (2, 3): STACK['TLG%dFD' % _s] = STACK['TLG%d' % _s] + STACK['FLD']
+# D4-DC-INC-0046d4a0-KNOB PREREG (verify/d4dc_0046d4a0_knob_20261101/): the bump arm's record-pointer call through the one
+# shared body; PK46W / DEFW add the per-call witness of both forms (MASHED_PK_ONEBODY_46D4A0_WIT)
+STACK['PK46'] = ['MASHED_PK_ONEBODY_46D4A0']
+STACK['PK46W'] = STACK['PK46'] + ['MASHED_PK_ONEBODY_46D4A0_WIT=@OUT@\\@NAME@.pk46.tsv']
+STACK['DEFW'] = ['MASHED_PK_ONEBODY_46D4A0_WIT=@OUT@\\@NAME@.pk46.tsv']
+# PREREG amendment 1: the M3B_ON recipe (round rule 4, no game mode 10; verify/d3_mode7_m3_20261010 had 12 live bumps)
+_R4 = ['MASHED_ROUND_RULE=4', '-MASHED_GAME_MODE']
+STACK['PK46R4W'] = STACK['PK46W'] + _R4
+STACK['DEFR4W'] = STACK['DEFW'] + _R4
 
 
 STACK['ORAND'] = ['MASHED_OWN_RAND_564310=1', 'MASHED_OWN_RAND_LOG=@OUT@/@NAME@.rand.txt']   # D4-WSB-RAND-D11064 PREREG P2
@@ -458,6 +471,12 @@ STACK['PUD'] = ['MASHED_PU_STEPDUMP=@OUT@/@NAME@.pustep.csv']   # D5-FLIP-RFLAME
 STACK['S7FU'] = ['MASHED_CARSLOT_ASSIGN_SLOTSTATE=1', 'MASHED_ABILITY_CURSOR_MATCHED=1']   # MATCH-S07-FU: both default-OFF swap knobs on
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
+# D4-DC-INC-SQRT-FOLD (verify/d4dc_sqrtfold_20261101): FastSqrt / FastInvSqrt / Vec3Magnitude as the LUT helpers + the
+# fold's call / differ log. SQFH = the same under the D2 42 s hold
+STACK['SQF'] = ['MASHED_SQRT_FOLD=1', 'MASHED_SQRT_FOLD_LOG=@OUT@/@NAME@.sqf.txt']
+STACK['SQFH'] = STACK['SQF'] + STACK['DEFH']
+# since the L-86 (a) flip (2026-11-02) the fold is the default: NSQF opts out, SQF only adds the log
+STACK['NSQF'] = ['MASHED_NO_SQRT_FOLD=1']
 # D4-DC-77b0-STATE5-LEG2 (verify/d4dc77b0st5leg2_20261101): FUN_00425a40's body on the sub-state-5 calls (default OFF)
 STACK['ST5L2'] = ['MASHED_ST5_LEG2=1']
 # D4-DC-77b0-ST5-HOLD: the same plus the leg-2 ctrl-byte log (MASHED_ST5_HOLD_DIAG, log only)
@@ -466,6 +485,12 @@ STACK['ST5L2D'] = STACK['ST5L2'] + ['MASHED_ST5_HOLD_DIAG=1']
 for _c in (1, 2, 3):
     STACK[f'RD{_c}'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
     STACK[f'ST5L2RD{_c}'] = STACK['ST5L2'] + STACK[f'RD{_c}']
+# D4-DC-77b0-ST5-C4ACCEL amendment 1: ring phase 8 (MASHED_RING_SKIP, diagnostic) puts FUN_00414180's draw at the
+# original's cd = 3,3,3,3 (peek 0x0089a4f8 + v*0x74, verify/d4dc77b0st5c4accel_20261102)
+STACK['ST5L2RS8D'] = STACK['ST5L2D'] + ['MASHED_RING_SKIP=8']
+for _c in (1, 3):
+    STACK[f'ST5L2RS8RD{_c}'] = STACK[f'ST5L2RD{_c}'] + ['MASHED_RING_SKIP=8']
+    STACK[f'RS8RD{_c}'] = STACK[f'RD{_c}'] + ['MASHED_RING_SKIP=8']
 STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
 STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
 # MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)); PSG = all three port-state knobs (the selector
@@ -473,6 +498,13 @@ STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car reco
 _PSG = ['MASHED_PORTSTATE_COURSE', 'MASHED_PORTSTATE_RECORDS', 'MASHED_PORTSTATE_GAMEFLOW']
 STACK['PSG'] = _PSG; STACK['PSGO'] = ['MASHED_PORTSTATE_GAMEFLOW']
 STACK['DEFA'] = ['MASHED_TRACK_VIEW=Arctic']; STACK['PSGA'] = _PSG + ['MASHED_TRACK_VIEW=Arctic']
+# HB-GATE-FLAKE-GAMEFLOW: reproduce the g1 H_PSGO outlier. R7P = the R7 test press at r7frame 4308 (the frame the
+# g1 Enter landed on); TK = an ambient Enter (DIK 0x1c) reported by the device for det_frames 5406..5415, as g1's log
+# shows, with the drop knob removed; TKD = the same press with the drop knob (base_env) kept; NAKOFF = no drop knob.
+STACK['R7P'] = ['MASHED_R7_INPUT_PRESS=4308']; STACK['PSGOR7P'] = STACK['PSGO'] + STACK['R7P']
+STACK['TK'] = ['-MASHED_DET_NO_AMBIENT_KEYS', 'MASHED_DET_TEST_KEY=0x1c@5406+10']
+STACK['TKD'] = ['MASHED_DET_TEST_KEY=0x1c@5406+10']; STACK['NAKOFF'] = ['-MASHED_DET_NO_AMBIENT_KEYS']
+STACK['PSGOTK'] = STACK['PSGO'] + STACK['TK']
 # MATCH-PORTSTATE-GAMEFLOW-FU: PSGF = PSG + the 0x004929d0 racing-phase tick (MASHED_PORTSTATE_GAMEFLOW_FU)
 STACK['PSGF'] = _PSG + ['MASHED_PORTSTATE_GAMEFLOW_FU']
 for name in sys.argv[1:]:

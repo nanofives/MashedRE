@@ -128,6 +128,8 @@ std::uint32_t __cdecl TG_Fwd(std::uint32_t* out, std::uint32_t idx) {         //
 // D4-DC-INC-ai (2026-11-01): the TG_40e470 copy is gone, target_p3.json maps the call to the one body.
 extern "C" std::uint32_t __cdecl CarSlotStateGet(int slot);                     // FUN_0040e470, Ai/CarSlotState.cpp
 
+extern "C" void Global66d6d8Get();                                              // FUN_00426bb0, Match/MatchS06_00426bb0.cpp (MATCH-S06; target_p3.json maps the call)
+
 #include "AiTargetClosest_naked.inc"
 
 // ---- mode 7 leg M4: FUN_00414c30 + FUN_00414490 (PREREG verify/d3_mode7_m4_20261010/PREREG_M4.md) ----

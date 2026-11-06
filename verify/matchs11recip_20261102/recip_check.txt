@@ -1,0 +1,119 @@
+(float)(1.0/640) = 0.0015625000232830644 bits 3acccccd
+(float)(1.0/480) = 0.0020833334419876337 bits 3b088889
+
+== 00472c60 ==
+00472c63  call 0x42b8b0
+00472c73  fmul dword ptr [esp + 0x10]
+00472c77  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00472c81  call 0x42b8c0
+00472c91  fmul dword ptr [esp + 0x14]
+00472c95  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+00472c9f  call 0x42b8b0
+00472caf  fmul dword ptr [esp + 0x18]
+00472cb3  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00472cbd  call 0x42b8c0
+00472ced  fmul dword ptr [esp + 0x1c]
+00472cfe  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+00472d79  call dword ptr [edx + 0x20]
+00472d86  call dword ptr [ecx + 0x20]
+00472d93  call dword ptr [edx + 0x20]
+00472d9f  call dword ptr [eax + 0x20]
+00472db1  call dword ptr [ecx + 0x30]
+
+== 00472dc0 ==
+00472dc3  call 0x42b8b0
+00472dd3  fmul dword ptr [esp + 0x10]
+00472dd7  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00472de1  call 0x42b8c0
+00472df1  fmul dword ptr [esp + 0x14]
+00472df5  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+00472dff  call 0x42b8b0
+00472e0f  fmul dword ptr [esp + 0x18]
+00472e13  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00472e1d  call 0x42b8c0
+00472e2d  fmul dword ptr [esp + 0x1c]
+00472e31  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+00472e3b  call 0x42b8b0
+00472e4b  fmul dword ptr [esp + 0x20]
+00472e4f  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00472e59  call 0x42b8c0
+00472ea2  fmul dword ptr [esp + 0x24]
+00472ea9  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+00472ef9  call dword ptr [edx + 0x20]
+00472f06  call dword ptr [ecx + 0x20]
+00472f13  call dword ptr [edx + 0x20]
+00472f1f  call dword ptr [eax + 0x20]
+00472f31  call dword ptr [ecx + 0x30]
+
+== 00472f40 ==
+00472f43  call 0x42b8b0
+00472f53  fmul dword ptr [esp + 0x10]
+00472f57  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00472f61  call 0x42b8c0
+00472f71  fmul dword ptr [esp + 0x14]
+00472f75  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+00472f7f  call 0x42b8b0
+00472f8f  fmul dword ptr [esp + 0x18]
+00472f93  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00472f9d  call 0x42b8c0
+00472fcd  fmul dword ptr [esp + 0x1c]
+00472fde  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+00473068  call dword ptr [edx + 0x20]
+00473075  call dword ptr [ecx + 0x20]
+00473082  call dword ptr [edx + 0x20]
+0047308e  call dword ptr [eax + 0x20]
+004730a0  call dword ptr [ecx + 0x30]
+
+== 004730b0 ==
+004730b3  call 0x42b8b0
+004730c3  fmul dword ptr [esp + 0x10]
+004730c7  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+004730d1  call 0x42b8c0
+004730e1  fmul dword ptr [esp + 0x14]
+004730e5  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+004730ef  call 0x42b8b0
+004730ff  fmul dword ptr [esp + 0x18]
+00473103  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+0047310d  call 0x42b8c0
+0047313d  fmul dword ptr [esp + 0x1c]
+0047314e  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+004731d8  call dword ptr [edx + 0x20]
+004731e5  call dword ptr [ecx + 0x20]
+004731f2  call dword ptr [edx + 0x20]
+004731fe  call dword ptr [eax + 0x20]
+00473210  call dword ptr [ecx + 0x30]
+
+== 00473540 ==
+00473543  call 0x42b8b0
+00473553  fmul dword ptr [esp + 0x10]
+00473557  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+00473561  call 0x42b8c0
+00473571  fmul dword ptr [esp + 0x14]
+00473575  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+0047357f  call 0x42b8b0
+0047358f  fmul dword ptr [esp + 0x18]
+00473593  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+0047359d  call 0x42b8c0
+004735c6  fmul dword ptr [esp + 0x1c]
+004735d3  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+0047367a  call dword ptr [ecx + 0x20]
+00473686  call dword ptr [eax + 0x20]
+00473693  call dword ptr [ecx + 0x20]
+004736a0  call dword ptr [edx + 0x20]
+004736b1  call dword ptr [eax + 0x30]
+
+== 004736c0 ==
+004736c2  call 0x42b8b0
+004736d2  fmul dword ptr [esp + 0xc]
+004736d6  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+004736e0  call 0x42b8c0
+004736f0  fmul dword ptr [esp + 0x10]
+004736f4  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+004736fe  call 0x42b8b0
+0047370e  fmul dword ptr [esp + 0x14]
+00473712  fmul dword ptr [0x5cd5a8]  ; [005cd5a8]=3acccccd 0.0015625000232830644
+0047371c  call 0x42b8c0
+0047375a  fmul dword ptr [esp + 0x18]
+00473760  fmul dword ptr [0x5cc560]  ; [005cc560]=3b088889 0.0020833334419876337
+0047382a  call dword ptr [ecx + 0x20]
+00473836  call dword ptr [eax + 0x20]
