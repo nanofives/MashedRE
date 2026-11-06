@@ -46,6 +46,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-06  00420d00  PanelSortInit  C2->C3  path1 GREEN 5/5 + path2 PASS 2/2, U-3226 resolved (4 x 0x24 array) evidence: verify/d4-wip-panelsort_20261106/RESULT_D4-WIP-PANELSORT.md
+2026-11-06  U-3226  UNCERTAINTIES  Active->struck  the block at 0x0063e4b8 is 4 elements of 0x24 bytes: readers index it as [(i*9)*4 + 0x0063e4b8] (0x004215d0, 0x004215ee, 0x00420d84) and loop it with stride 0x24 to 0x0063e548 (0x004215a1..0x004215b4, 0x00420d42..0x00420d72); 0x00420d00 writes element i dword +0x18 = i. Field meanings beyond that not claimed (evidence: verify/d4-wip-panelsort_20261106/RESULT_D4-WIP-PANELSORT.md)
 2026-11-02  D-11075  DEFERRED  rewritten, stays Active  launcher retired by L-79 A (D5-SHIM-STEP3-LAUNCHER); row no longer implies a live launcher
 2026-11-02  S-3714  STUBS  Active->struck  native port, no call_original (0x00546bf0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
 2026-11-02  S-3715  STUBS  Active->struck  native port, no call_original (0x00546c50 RwpSolverMath2QuatY.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md

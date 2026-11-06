@@ -1,0 +1,14 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=16636 (MATCH-T13-SEED-WRITER); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=22572 (D4-WIP-PANELSORT)
+hook: panel_sort_init  rva=0x00420d00  export=PanelSortInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 15216
+  [agent] LUT ready  base=0x142a088  offset=0x134  root=0xd6b0048  delta=0  attempts=1
+  [agent] .asi loaded  base=0x5d100000  PanelSortInit@0x5d121730
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\wip-panelsort\log\diff_panel_sort_init.csv
+  total cases: 5
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+[mashed-lock] released 'mashed_machine' pid=22572
