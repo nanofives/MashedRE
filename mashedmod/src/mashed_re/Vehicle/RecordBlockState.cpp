@@ -36,7 +36,9 @@ Counts s_c;
 }  // namespace
 
 bool PortStateRecords_On() {
-    static const bool s_on = (std::getenv("MASHED_PORTSTATE_RECORDS") != nullptr);
+    // L-88 = a (2026-11-02): decided flip, default ON. MASHED_NO_PORTSTATE_RECORDS=1 reproduces the old default
+    // (exe-own static stores, G-CTRL gates.csv ba407a16). MASHED_PORTSTATE_RECORDS is still accepted (no-op).
+    static const bool s_on = (std::getenv("MASHED_NO_PORTSTATE_RECORDS") == nullptr);
     return s_on;
 }
 
