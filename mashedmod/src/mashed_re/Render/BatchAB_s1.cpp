@@ -73,14 +73,8 @@ RH_ScopedInstall(GetPipelinePtr, 0x004d40c0);
 // ref: re/analysis/render_c1_to_c2_s3/FUN_004671c0.md
 // ---------------------------------------------------------------------------
 
-// 0x004671c0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetOverlayCamera(void)
-{
-    // Load overlay/minimap RwCamera* global [0x004671c0: MOV EAX, [0x006905b4]]
-    return *reinterpret_cast<const std::uint32_t*>(0x006905b4u);
-}
-
-RH_ScopedInstall(GetOverlayCamera, 0x004671c0);
+// MATCH-S11: the body of 0x004671c0 (GetOverlayCamera) moved to Match/MatchS11_004671c0.cpp,
+// which compiles the byte-matched source re/match/s11/004671c0.c.
 
 // ---------------------------------------------------------------------------
 // GetRenderStateBlockPtr — 0x004cbb60

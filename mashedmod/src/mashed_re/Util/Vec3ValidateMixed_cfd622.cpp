@@ -46,27 +46,5 @@
 #include <cstdint>
 #include <cstring>
 
-// Inline reimpl of FUN_004a3907 (_finite check for double).
-// Original asm: mov ax,[esp+0xa]; and ax,0x7ff0; cmp ax,0x7ff0; setne cl; mov eax,ecx
-// [esp+0xa] = high 2 bytes (index 3 as uint16) of the 8-byte double pushed by caller.
-// IEEE 754 double: byte 6-7 = sign(1) | exp(11) | mantissa_high(4).
-// 0x7ff0 = 0111_1111_1111_0000 = exponent all-1s mask -> infinity or NaN.
-// Returns 1 if finite, 0 if infinity or NaN.
-static int IsFiniteDouble(double d) {
-    uint16_t w;
-    std::memcpy(&w, reinterpret_cast<const char*>(&d) + 6, sizeof(w)); // high 2 bytes
-    return (w & 0x7ff0u) != 0x7ff0u ? 1 : 0;
-}
-
-// 0x00472820
-extern "C" __declspec(dllexport) int __cdecl Vec3IsValidNonTiny(float* vec) {
-    if (!IsFiniteDouble(static_cast<double>(vec[0]))) return 0;
-    if (!IsFiniteDouble(static_cast<double>(vec[1]))) return 0;
-    if (!IsFiniteDouble(static_cast<double>(vec[2]))) return 0;
-    float x = vec[0], y = vec[1], z = vec[2];
-    float mag_sq = x * x + y * y + z * z;
-    float threshold = *reinterpret_cast<const float*>(0x005ce54cu); // 1.0e-6f
-    // x87 FCOMP: returns 1 when mag_sq > threshold (C0=0, C3=0 -> jnp not taken)
-    return (mag_sq > threshold) ? 1 : 0;
-}
-RH_ScopedInstall(Vec3IsValidNonTiny, 0x00472820);
+// MATCH-S11: the body of 0x00472820 (Vec3IsValidNonTiny) moved to Match/MatchS11_00472820.cpp,
+// which compiles the byte-matched source re/match/s11/00472820.c.

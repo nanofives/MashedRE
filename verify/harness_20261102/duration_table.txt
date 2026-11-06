@@ -1,0 +1,2 @@
+H Training 14400-frame arms since 10-30: 178 | step=8284be46: 164 secs min/med/max 121 480 805
+other step hashes: 14 [('346d3c84', 2), ('937d89d8', 1), ('4689b9ef', 1), ('2eb711b3', 1), ('c2093a9b', 1), ('2c035230', 1), ('3cc38c6b', 1), ('92e24964', 1)]

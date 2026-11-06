@@ -21,33 +21,14 @@
 
 #include <cstdint>
 
-// 0x0046bd20 — vec3 getter (out, idx)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehTbl8820a0Get3(std::uint32_t* out, std::uint32_t idx) {
-    if (idx > 0xfu) return 0;                                   // CMP 0x10 / JC ; XOR EAX,EAX
-    std::uint32_t b = idx * 0xd04u;                             // IMUL 0xd04
-    out[0] = *reinterpret_cast<std::uint32_t*>(0x008820a0u + b);
-    out[1] = *reinterpret_cast<std::uint32_t*>(0x008820a4u + b);
-    out[2] = *reinterpret_cast<std::uint32_t*>(0x008820a8u + b);
-    return 1;                                                   // MOV EAX,1
-}
-RH_ScopedInstall(VehTbl8820a0Get3, 0x0046bd20);
+// MATCH-S11: the body of 0x0046bd20 (VehTbl8820a0Get3) moved to Match/MatchS11_0046bd20.cpp,
+// which compiles the byte-matched source re/match/s11/0046bd20.c.
 
-// 2-index wheel getter: *out = *(u32*)(Base + (i1*0x11 + i2)*0xc4); i1>=0x10 || i2>=4 -> return 0.
-template <std::uint32_t Base>
-static inline std::uint32_t Idx2WheelGet(std::uint32_t* out, std::uint32_t i1, std::uint32_t i2) {
-    if (i1 >= 0x10u || i2 >= 4u) return 0;                      // CMP 0x10/JNC ; CMP 4/JC
-    *out = *reinterpret_cast<std::uint32_t*>(Base + (i1 * 0x11u + i2) * 0xc4u);  // IMUL 0x11 ; ADD ; IMUL 0xc4
-    return 1;
-}
+// MATCH-S11: the body of 0x0046d320 (Idx2Wheel881790Get) moved to Match/MatchS11_0046d320.cpp,
+// which compiles the byte-matched source re/match/s11/0046d320.c.
 
-// 0x0046d320
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Idx2Wheel881790Get(std::uint32_t* out, std::uint32_t i1, std::uint32_t i2) { return Idx2WheelGet<0x00881790u>(out, i1, i2); }
-RH_ScopedInstall(Idx2Wheel881790Get, 0x0046d320);
+// MATCH-S11: the body of 0x0046d360 (Idx2Wheel881738Get) moved to Match/MatchS11_0046d360.cpp,
+// which compiles the byte-matched source re/match/s11/0046d360.c.
 
-// 0x0046d360
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Idx2Wheel881738Get(std::uint32_t* out, std::uint32_t i1, std::uint32_t i2) { return Idx2WheelGet<0x00881738u>(out, i1, i2); }
-RH_ScopedInstall(Idx2Wheel881738Get, 0x0046d360);
-
-// 0x0046bd60
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Idx2Wheel881744Get(std::uint32_t* out, std::uint32_t i1, std::uint32_t i2) { return Idx2WheelGet<0x00881744u>(out, i1, i2); }
-RH_ScopedInstall(Idx2Wheel881744Get, 0x0046bd60);
+// MATCH-S11: the body of 0x0046bd60 (Idx2Wheel881744Get) moved to Match/MatchS11_0046bd60.cpp,
+// which compiles the byte-matched source re/match/s11/0046bd60.c.

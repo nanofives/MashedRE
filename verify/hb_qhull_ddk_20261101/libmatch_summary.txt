@@ -1,0 +1,2 @@
+qhull DDK /O2 /G5 /Ob2 /GF /Zl (port lib, worktree) rows 313 identical 122 (ambiguous 0) differs 152 not-compared 39 obj-functions 589 unused 315 identical-at-unlisted 0
+proposed bat run (scratch) rows 313 identical 122 (ambiguous 0) differs 152 not-compared 39 obj-functions 589 unused 315 identical-at-unlisted 0

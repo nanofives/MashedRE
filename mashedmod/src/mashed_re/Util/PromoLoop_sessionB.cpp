@@ -92,13 +92,8 @@ RH_ScopedInstall(AudioClear5be930, 0x005be930);
 
 
 
-// 0x0046dd90  gameplay — byte-verified: 8B 44 24 04 8B 4C 24 08 69 C0 04 0D 00 00 89 88 F4 16 88 00 C3
-//   MOV EAX,[ESP+4]=i ; MOV ECX,[ESP+8]=v ; IMUL EAX,EAX,0xd04 ; MOV [EAX+0x8816f4],ECX ; RET
-//   -> *(u32*)(0x008816f4 + i*0xd04) = v   (per-vehicle 0xd04-stride field setter; caller 004177b0 C2)
-extern "C" __declspec(dllexport) void __cdecl VehField8816f4Set(std::uint32_t i, std::uint32_t v) {
-    *reinterpret_cast<std::uint32_t*>(0x008816f4u + i * 0xd04u) = v;
-}
-RH_ScopedInstall(VehField8816f4Set, 0x0046dd90);
+// MATCH-S11: the body of 0x0046dd90 (VehField8816f4Set) moved to Match/MatchS11_0046dd90.cpp,
+// which compiles the byte-matched source re/match/s11/0046dd90.c.
 
 // 0x005bf7d0  audio — byte-verified: 8B 44 24 04 8B 4C 24 08 8B 54 24 0C 89 88 44 01 00 00 89 90 48 01 00 00 C3
 //   fn(p,a,b): *(p+0x144)=a ; *(p+0x148)=b ; RET   (audio object 2-callback setter; caller 005be260 C2)
@@ -409,15 +404,8 @@ RH_ScopedInstall(Init5b0c70, 0x005b0c70);
 // MATCH-S04: the body of 0x0041ee50 (Flag41ee50) moved to Match/MatchS04_0041ee50.cpp,
 // which compiles the byte-matched source re/match/s04/0041ee50.c.
 
-// 0x00471530  particle — byte-verified: strided clear [0x690ab0,0x691500) step 0x84 (byte@-0x80 + dword@0) + [0x691484]=0
-extern "C" __declspec(dllexport) void __cdecl ClearTable471530(void) {
-    for (std::uint32_t p = 0x00690ab0u; p < 0x00691500u; p += 0x84u) {
-        *reinterpret_cast<std::uint8_t*>(p - 0x80) = 0;
-        *reinterpret_cast<std::uint32_t*>(p) = 0;
-    }
-    *reinterpret_cast<std::uint32_t*>(0x00691484u) = 0;
-}
-RH_ScopedInstall(ClearTable471530, 0x00471530);
+// MATCH-S11: the body of 0x00471530 (ClearTable471530) moved to Match/MatchS11_00471530.cpp,
+// which compiles the byte-matched source re/match/s11/00471530.c.
 
 // 0x0046d2e0  vehicle — byte-verified: u32 fn(i,wheel,out): if(i<0x10 && wheel<4){ *out=*(u32*)(0x881790+(i*0x11+wheel)*0xc4); return 1 } return 0
 extern "C" __declspec(dllexport) std::uint32_t __cdecl WheelGet46d2e0(std::uint32_t i, std::uint32_t wheel, std::uint32_t* out) {
@@ -433,14 +421,8 @@ RH_ScopedInstall(WheelGet46d2e0, 0x0046d2e0);
 
 // D4-DC-RFX-CORE: the Copy476a80 body moved to Render/RfxEmitter.cpp (one body for both targets).
 
-// 0x00474d80  render — byte-verified: void fn(p,set): if(p){ b=*(u8*)(p+2); set?b|=4:b&=~4; *(u8*)(p+2)=b; }
-extern "C" __declspec(dllexport) void __cdecl ByteFlag474d80(char* p, std::uint32_t set) {
-    if (p) {
-        if (set) *reinterpret_cast<std::uint8_t*>(p+2) |= 4u;
-        else     *reinterpret_cast<std::uint8_t*>(p+2) &= 0xfbu;
-    }
-}
-RH_ScopedInstall(ByteFlag474d80, 0x00474d80);
+// MATCH-S11: the body of 0x00474d80 (ByteFlag474d80) moved to Match/MatchS11_00474d80.cpp,
+// which compiles the byte-matched source re/match/s11/00474d80.c.
 
 // MATCH-S04: the body of 0x0041f0d0 (MaskGet41f0d0) moved to Match/MatchS04_0041f0d0.cpp,
 // which compiles the byte-matched source re/match/s04/0041f0d0.c.
@@ -1225,37 +1207,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Lerp4b4650(void)
 RH_ScopedInstall(Lerp4b4650, 0x004b4650);
 
 // ===== round 131 ===== (dot-product + cosine-clamp twins — verbatim x87 naked ports)
-// 0x004726b0 — float fn(a*, b*): d = a.y*b.y + a.x*b.x (2D dot); clamp d to [-1.0, 1.0]
-//   (consts 0x5cc320=1.0, 0x5cc33c=-1.0); return ST0. Verbatim x87 transcription.
-extern "C" __declspec(dllexport) __declspec(naked) float __cdecl Dot4726b0(void) {
-    __asm {
-        mov  eax, [esp+4]
-        fld  dword ptr [eax+4]
-        mov  ecx, [esp+8]
-        fmul dword ptr [ecx+4]
-        fld  dword ptr [eax]
-        fmul dword ptr [ecx]
-        faddp st(1), st(0)
-        fcom dword ptr ds:[05CC33Ch]
-        fnstsw ax
-        test ah, 5
-        jp   L1
-        fstp st(0)
-        fld  dword ptr ds:[05CC33Ch]
-        ret
-    L1:
-        fcom dword ptr ds:[05CC320h]
-        fnstsw ax
-        test ah, 41h
-        jne  L2
-        fstp st(0)
-        fld  dword ptr ds:[05CC320h]
-        ret
-    L2:
-        ret
-    }
-}
-RH_ScopedInstall(Dot4726b0, 0x004726b0);
+// MATCH-S11: the body of 0x004726b0 (Dot4726b0) moved to Match/MatchS11_004726b0.cpp,
+// which compiles the byte-matched source re/match/s11/004726b0.c.
 
 // 0x004726f0 — float fn(a*, b*): d = a.y*b.y + a.x*b.x + a.z*b.z (3D dot); clamp to
 //   [-1.0, 1.0]; return ST0. Verbatim x87 transcription (twin of 0x4726b0).
@@ -2970,98 +2923,11 @@ RH_ScopedInstall(Calc412130, 0x00412130);
 // MATCH-S06: the body of 0x00429b70 (Init429b70) moved to Match/MatchS06_00429b70.cpp,
 // which compiles the byte-matched source re/match/s06/00429b70.c.
 
-// 0x00472560  FUN_00472560 (gameplay, NEAR-LEAF: record + table builder via C3 setter)
-// void f(_, arg2, _, arg4): rec=arg2*0x10+0x691500; flag=(arg4==0)?1:0; for esi=0..3:
-//   FUN_0046be10(rec, esi, arg2, flag); FUN_0046be10(rec+4, esi, arg2+0xa, arg4); rec[8]=arg4.
-// Callee 0x46be10 C3 writes *(0x88219c + (idx*0x341+base)*4) = *p1. Verbatim naked port; the
-// two `call rel32` -> `mov eax,0x46be10; call eax`.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Build472560(void)
-{
-    __asm {
-        push ebx
-        mov  ebx, dword ptr [esp+8]          // arg2
-        push ebp
-        mov  ebp, dword ptr [esp+0x10]       // arg4
-        push esi
-        push edi
-        mov  edi, ebx
-        shl  edi, 4
-        xor  eax, eax
-        xor  esi, esi
-        add  edi, 0x691500
-        test ebp, ebp
-        sete al
-        mov  dword ptr [esp+0x14], eax
-    L_BLD_LOOP:
-        mov  ecx, dword ptr [esp+0x14]
-        push ecx
-        push ebx
-        push esi
-        push edi
-        mov  eax, 046BE10h
-        call eax
-        push ebp
-        lea  eax, [ebx+0x0a]
-        push eax
-        lea  eax, [edi+4]
-        push esi
-        push eax
-        mov  eax, 046BE10h
-        call eax
-        add  esp, 0x20
-        inc  esi
-        cmp  esi, 4
-        jl   L_BLD_LOOP
-        mov  dword ptr [edi+8], ebp
-        pop  edi
-        pop  esi
-        pop  ebp
-        pop  ebx
-        ret
-    }
-}
-RH_ScopedInstall(Build472560, 0x00472560);
+// MATCH-S11: the body of 0x00472560 (Build472560) moved to Match/MatchS11_00472560.cpp,
+// which compiles the byte-matched source re/match/s11/00472560.c.
 
-// 0x004725f0  FUN_004725f0 (gameplay, NEAR-LEAF: no-arg record-range initializer)
-// void f(void): for edi=0..9 (esi=0x69150c; esi+=0x10): FUN_0046be10(esi-0xc, edi, edi, 0);
-//   FUN_0046be10(esi-8, edi, edi+0xa, 0); [esi-4]=0; [esi]=0. Callee 0x46be10 C3 table setter
-//   (writes *(0x88219c+(idx*0x341+base)*4)=*p1). Verbatim naked port; calls -> mov eax,abs;call eax.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl InitRange4725f0(void)
-{
-    __asm {
-        push esi
-        push edi
-        xor  edi, edi
-        mov  esi, 069150Ch
-    L_IRG_LOOP:
-        push 0
-        push edi
-        lea  eax, [esi-0x0c]
-        push edi
-        push eax
-        mov  dword ptr [esi-4], 0
-        mov  dword ptr [esi], 0
-        mov  eax, 046BE10h
-        call eax
-        push 0
-        lea  ecx, [edi+0x0a]
-        push ecx
-        lea  edx, [esi-8]
-        push edi
-        push edx
-        mov  eax, 046BE10h
-        call eax
-        add  esp, 0x20
-        add  esi, 0x10
-        inc  edi
-        cmp  esi, 06915ACh
-        jl   L_IRG_LOOP
-        pop  edi
-        pop  esi
-        ret
-    }
-}
-RH_ScopedInstall(InitRange4725f0, 0x004725f0);
+// MATCH-S11: the body of 0x004725f0 (InitRange4725f0) moved to Match/MatchS11_004725f0.cpp,
+// which compiles the byte-matched source re/match/s11/004725f0.c.
 
 // MATCH-S05: the body of 0x004215c0 (Accum4215c0) moved to Match/MatchS05_00420de0.cpp,
 // which compiles the byte-matched source re/match/s05/00420de0.c.
@@ -3235,41 +3101,8 @@ extern "C" __declspec(dllexport) int __cdecl StructTagEquals4cb740(const void* a
 }
 RH_ScopedInstall(StructTagEquals4cb740, 0x004cb740);
 
-// 0x0046bda0  FUN_0046bda0 (gameplay, IndexedFloatAccum16) — PURE LEAF (no calls)
-// int f(float* out, uint i, uint j): bounds-checked 2D-indexed 16-float sum.
-//   if (i>=0x10 || j>=4) return 0;
-//   base = 0x8815a0 + i*0xd04 + j*0xc4 + 0x1b0;
-//   acc = *(float*)0x5d757c (=0.0); then 16 sequential fadds at base-4 .. base+0x38;
-//   acc *= *(float*)0x5cd058 (=0.0625); *out = acc; return 1;
-// capstone-verified. 16 explicit in-order adds preserve x87 add order (bit-identity).
-extern "C" __declspec(dllexport) int __cdecl IndexedFloatAccum16_46bda0(float* out, unsigned i, unsigned j)
-{
-    if (i >= 0x10u) return 0;
-    if (j >= 4u) return 0;
-    const char* base = reinterpret_cast<const char*>(
-        0x008815a0u + i * 0xd04u + j * 0xc4u + 0x1b0u);
-    float acc = *reinterpret_cast<const float*>(0x005d757cu);
-    acc += *reinterpret_cast<const float*>(base - 4);
-    acc += *reinterpret_cast<const float*>(base + 0x00);
-    acc += *reinterpret_cast<const float*>(base + 0x04);
-    acc += *reinterpret_cast<const float*>(base + 0x08);
-    acc += *reinterpret_cast<const float*>(base + 0x0c);
-    acc += *reinterpret_cast<const float*>(base + 0x10);
-    acc += *reinterpret_cast<const float*>(base + 0x14);
-    acc += *reinterpret_cast<const float*>(base + 0x18);
-    acc += *reinterpret_cast<const float*>(base + 0x1c);
-    acc += *reinterpret_cast<const float*>(base + 0x20);
-    acc += *reinterpret_cast<const float*>(base + 0x24);
-    acc += *reinterpret_cast<const float*>(base + 0x28);
-    acc += *reinterpret_cast<const float*>(base + 0x2c);
-    acc += *reinterpret_cast<const float*>(base + 0x30);
-    acc += *reinterpret_cast<const float*>(base + 0x34);
-    acc += *reinterpret_cast<const float*>(base + 0x38);
-    acc *= *reinterpret_cast<const float*>(0x005cd058u);
-    *out = acc;
-    return 1;
-}
-RH_ScopedInstall(IndexedFloatAccum16_46bda0, 0x0046bda0);
+// MATCH-S11: the body of 0x0046bda0 (IndexedFloatAccum16_46bda0) moved to Match/MatchS11_0046bda0.cpp,
+// which compiles the byte-matched source re/match/s11/0046bda0.c.
 
 // 0x0046d7f0  FUN_0046d7f0 (ai, BoundedTableSignClamp) — MOVED 2026-10-01.
 // The body now lives in Vehicle\LaunchRevCharge.cpp, which is in BOTH

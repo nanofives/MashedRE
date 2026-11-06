@@ -39,7 +39,7 @@ static inline const std::uint32_t* Vec3LutRoot() {
     return RwLutGuard::SqrtRoot();
 }
 
-extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {
+static float Vec3MagnitudeTwoForm(const float* v) {
     const float sq = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 
     std::uint32_t sq_bits;
@@ -63,6 +63,15 @@ extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {
     float result;
     std::memcpy(&result, &result_bits, sizeof(result));
     return result;
+}
+
+// [D4-DC-INC-SQRT-FOLD 2026-11-01] hook of 0x004c3ac0, default ON since 2026-11-02 (L-86 (a), Math/RwLutTables.h): the one body,
+// Math::LutLength ((x*x + y*y) + z*z, SSE2 as above, then the LUT sqrt). MASHED_NO_SQRT_FOLD=1: the form above.
+extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {
+    if (!mashed_re::Math::SqrtFoldOn()) return Vec3MagnitudeTwoForm(v);
+    const float r = mashed_re::Math::LutLength(v);
+    if (mashed_re::Math::SqrtFoldLogOn()) mashed_re::Math::SqrtFoldNote(2, r, Vec3MagnitudeTwoForm(v));
+    return r;
 }
 
 RH_ScopedInstall(Vec3Magnitude, 0x004c3ac0);  // re-enabled 2026-05-24 — pre-regression C4, sanity-check the workflow
