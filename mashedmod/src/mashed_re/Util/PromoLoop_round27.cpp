@@ -22,11 +22,8 @@
 // MATCH-S07: the body of 0x00430820 (Global67ed6cGet) moved to Match/MatchS07_00430820.cpp,
 // which compiles the byte-matched source re/match/s07/00430820.c.
 
-// 0x00492d10  A1 68 19 77 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global771968Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x00771968u);  // cited at 0x00492d10
-}
-RH_ScopedInstall(Global771968Get, 0x00492d10);
+// MATCH-S15: the body of 0x00492d10 (Global771968Get) moved to Match/MatchS15_00492d10.cpp,
+// which compiles the byte-matched source re/match/s15/00492d10.c.
 
 // MATCH-S07: the body of 0x00431b30 (Float67eaa8Get) moved to Match/MatchS07_00431b30.cpp,
 // which compiles the byte-matched source re/match/s07/00431b30.c.

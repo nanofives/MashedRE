@@ -1,0 +1,128 @@
+0x0045b9d0	M	-	-
+0x0045ba00	M	Match/MatchS10_0045ba00.cpp[EA]:('FUN_0045ba00', 11)	Match/MatchS10_0045ba00.cpp:[('RaceResultIndexedStore', 13)]
+0x0045ba10	.	-	-
+0x0045baa0	.	Powerup/PowerupTypeSearch.cpp[EA]:('PowerupTypeSearch', 26)	Util/PromoLoop_sessionB.cpp:[('Search45baa0_RegAbi', 1062)]
+0x0045bac0	.	Powerup/PowerupSystem.cpp[E]:('PowerupSystem::Deactivate', 126)	-
+0x0045bae0	M	-	-
+0x0045bba0	.	-	-
+0x0045be90	M	-	-
+0x0045bed0	M	-	-
+0x0045bf30	.	-	-
+0x0045bfa0	M	-	-
+0x0045bfd0	M	-	-
+0x0045bfe0	M	Match/MatchS10_0045bfe0.cpp[A]:('FUN_0045bfe0', 11)	Match/MatchS10_0045bfe0.cpp:[('Global80332cGet', 13)]
+0x0045bff0	M	Match/MatchS10_0045bff0.cpp[A]:('FUN_0045bff0', 11)	Match/MatchS10_0045bff0.cpp:[('Pred45bff0', 13)]
+0x0045c010	M	-	-
+0x0045c030	M	-	-
+0x0045c110	M	Powerup/PowerupContact.cpp[E]:('SurfaceGate', 232)	-
+0x0045c330	M	Match/MatchS10_0045c330.cpp[EA]:('FUN_0045c330', 22)	Match/MatchS10_0045c330.cpp:[('PredNot45c330', 24)]
+0x0045c350	M	Powerup/PowerupContact.cpp[E]:('SweepConfirm', 271)	-
+0x0045c480	M	Util/UtilLeaves_ab6.cpp[EA]:('UtilZeroScatter45c480', 86)	Util/UtilLeaves_ab6.cpp:[('UtilZeroScatter45c480', 104)]
+0x0045c4e0	M	Match/MatchS10_0045c4e0.cpp[A]:('FUN_0045c4e0', 11)	Match/MatchS10_0045c4e0.cpp:[('ArgSearch45c4e0', 13)]
+0x0045c510	M	Match/MatchS10_0045c510.cpp[A]:('FUN_0045c510', 11)	Match/MatchS10_0045c510.cpp:[('Match45c510', 13)]
+0x0045c550	M	-	-
+0x0045c640	M	Match/MatchS10_0045c640.cpp[A]:('FUN_0045c640', 16)	Match/MatchS10_0045c640.cpp:[('Sel88fbc4', 18)]
+0x0045c6b0	M	-	-
+0x0045c720	M	-	-
+0x0045c7f0	M	Match/MatchS10_0045c7f0.cpp[A]:('FUN_0045c7f0', 13)	Match/MatchS10_0045c7f0.cpp:[('Sub45c7f0', 15)]
+0x0045c810	M	Match/MatchS10_0045c810.cpp[A]:('FUN_0045c810', 11)	Match/MatchS10_0045c810.cpp:[('Inc45c810', 13)]
+0x0045c820	M	-	-
+0x0045c850	M	Match/MatchS10_0045c850.cpp[A]:('FUN_0045c850', 11)	Match/MatchS10_0045c850.cpp:[('Table88f09cClear', 13)]
+0x0045c860	M	Match/MatchS10_0045c860.cpp[A]:('FUN_0045c860', 11)	Match/MatchS10_0045c860.cpp:[('Clear88f0a0x4', 13)]
+0x0045c880	M	-	-
+0x0045ca30	M	Util/PromoLoop_sessionB.cpp[A]:('FloatClamp3Level45ca30', 3349)	Util/PromoLoop_sessionB.cpp:[('FloatClamp3Level45ca30', 3361)]
+0x0045cab0	M	Match/MatchS10_0045cab0.cpp[A]:('FUN_0045cab0', 13)	Match/MatchS10_0045cab0.cpp:[('SlotAliveState45cab0', 15)]
+0x0045caf0	M	Match/MatchS10_0045caf0.cpp[A]:('FUN_0045caf0', 11)	Match/MatchS10_0045caf0.cpp:[('EqPredicate7f1a18', 13)]
+0x0045cb20	M	-	-
+0x0045cbe0	M	-	-
+0x0045cc50	M	-	-
+0x0045cc80	M	-	-
+0x0045cd30	M	-	-
+0x0045cfe0	M	-	-
+0x0045d080	M	-	-
+0x0045d0e0	M	-	-
+0x0045d1e0	M	-	-
+0x0045d250	M	-	-
+0x0045d330	M	-	-
+0x0045d3a0	M	-	-
+0x0045d3f0	M	Match/MatchS10_0045d3f0.cpp[A]:('FUN_0045d3f0', 13)	Match/MatchS10_0045d3f0.cpp:[('L2_FUN_0045d3f0', 15)]
+0x0045d430	M	-	-
+0x0045d460	M	-	-
+0x0045d7a0	M	-	-
+0x0045da60	M	-	-
+0x0045da90	M	-	-
+0x0045daf0	M	-	-
+0x0045db50	M	Match/MatchS10_0045db50.cpp[EA]:('FUN_0045db50', 11)	Match/MatchS10_0045db50.cpp:[('FloatSliderStep', 13)]
+0x0045dbe0	M	-	Util/FloatSlider2SelfTest.cpp:[('Slider2_Entry', 228)]
+0x0045dc80	M	-	-
+0x0045dce0	M	-	-
+0x0045dd50	M	Match/MatchS10_0045dd50.cpp[A]:('FUN_0045dd50', 11)	Match/MatchS10_0045dd50.cpp:[('Table8aa300Get', 13)]
+0x0045dd60	M	-	-
+0x0045de80	M	-	-
+0x0045df70	M	Match/MatchS10_0045df70.cpp[A]:('FUN_0045df70', 11)	Match/MatchS10_0045df70.cpp:[('FloatStep45df70', 13)]
+0x0045dfc0	M	Match/MatchS10_0045dfc0.cpp[A]:('FUN_0045dfc0', 12)	Match/MatchS10_0045dfc0.cpp:[('L2_FUN_0045dfc0', 14)]
+0x0045dff0	M	-	-
+0x0045e040	M	-	-
+0x0045e0f0	M	-	-
+0x0045e160	M	-	-
+0x0045e2a0	M	-	-
+0x0045e460	M	-	-
+0x0045e990	M	-	-
+0x0045efe0	M	-	-
+0x0045f5f0	M	-	-
+0x0045faa0	M	-	-
+0x0045ff50	M	-	-
+0x00460270	M	-	-
+0x00460350	M	-	-
+0x00460df0	M	-	-
+0x00461650	M	-	-
+0x00461e90	M	Gameplay/GameplayLeaves_ad3.cpp[A]:('std::uint32_t __cdecl', 80)	Gameplay/GameplayLeaves_ad3.cpp:[('SurfaceCodeClassify', 175)]
+0x004623e0	M	-	-
+0x004624c0	M	-	-
+0x00462500	M	Match/MatchS10_00462500.cpp[A]:('FUN_00462500', 11)	Match/MatchS10_00462500.cpp:[('Set603868_1', 13)]
+0x00462510	M	Match/MatchS10_00462510.cpp[A]:('FUN_00462510', 11)	Match/MatchS10_00462510.cpp:[('Set603868_0', 13)]
+0x00462520	M	-	-
+0x004625b0	M	Audio/AudioCharacterBankPaths.cpp[EA]:('AudioCharacterBankPathsBuild', 88)	Audio/AudioCharacterBankPaths.cpp:[('AudioCharacterBankPathsBuild', 94)]
+0x00462760	M	Match/MatchS10_00462760.cpp[A]:('FUN_00462760', 13)	Match/MatchS10_00462760.cpp:[('Pred462760', 15)]
+0x004627b0	M	Match/MatchS10_004627b0.cpp[A]:('FUN_004627b0', 11)	Match/MatchS10_004627b0.cpp:[('AudioStateActive', 13)]
+0x004627f0	M	-	-
+0x00462950	M	-	-
+0x00462dd0	M	-	-
+0x00462ec0	M	-	-
+0x00462f50	M	-	-
+0x00463150	M	-	-
+0x004631f0	M	-	-
+0x004633d0	M	-	-
+0x00463590	M	-	-
+0x00463640	M	-	-
+0x00463c80	M	-	-
+0x00463f40	M	-	-
+0x004642f0	M	-	-
+0x004644a0	M	-	-
+0x004645c0	M	-	-
+0x00464670	M	-	-
+0x004647f0	M	-	-
+0x004648b0	M	-	-
+0x00464a50	M	-	-
+0x00464ca0	M	-	-
+0x00464e10	M	-	-
+0x004652b0	M	-	-
+0x004656e0	M	-	-
+0x004657b0	M	-	-
+0x00465940	M	-	-
+0x00465a30	M	-	-
+0x00465b20	M	-	-
+0x00465c10	M	-	-
+0x00465ca0	M	-	-
+0x00465e80	M	-	-
+0x00465f40	M	-	-
+0x00466000	M	-	-
+0x00466100	M	-	-
+0x004661a0	M	-	-
+0x004661f0	M	-	-
+0x004669b0	M	-	-
+0x00466a50	M	-	-
+0x00466b50	M	-	-
+0x00467010	M	-	-
+0x00467020	M	-	-
+0x00467070	M	-	-

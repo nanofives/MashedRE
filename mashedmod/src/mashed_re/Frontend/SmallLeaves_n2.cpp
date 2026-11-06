@@ -64,16 +64,8 @@ static auto* const s_LapSecsGetBySlot =
 // ref: re/analysis/promote_c1_low_ab1/0x0045ba00.md
 // ---------------------------------------------------------------------------
 
-// 0x0045ba00
-extern "C" __declspec(dllexport) void __cdecl RaceResultIndexedStore(
-    int param_1, std::uint32_t param_2)
-{
-    // Write param_2 to (&DAT_0068d1f0)[param_1].
-    // Base 0x0068d1f0 cited at 0x0045ba03; stride 4 bytes.
-    *reinterpret_cast<std::uint32_t*>(0x0068d1f0u + static_cast<unsigned>(param_1) * 4u) = param_2;
-}
-
-RH_ScopedInstall(RaceResultIndexedStore, 0x0045ba00);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S10: the body of 0x0045ba00 (RaceResultIndexedStore) moved to Match/MatchS10_0045ba00.cpp,
+// which compiles the byte-matched source re/match/s10/0045ba00.c.
 
 // ---------------------------------------------------------------------------
 // VehicleSlotInit  --  0x0046c5c0

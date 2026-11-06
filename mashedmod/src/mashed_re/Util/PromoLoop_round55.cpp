@@ -27,32 +27,14 @@
 
 #include <cstdint>
 
-// 0x0047ce00
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table6c9438Get(std::int32_t i) {
-    if (i >= 0 && i < 0xc8) return *reinterpret_cast<std::uint32_t*>(0x006c9438u + i * 4u);  // MOV [EAX*4+0x6c9438]
-    return 0;                                                                                 // XOR EAX,EAX
-}
-RH_ScopedInstall(Table6c9438Get, 0x0047ce00);
+// MATCH-S13: the body of 0x0047ce00 (Table6c9438Get) moved to Match/MatchS13_0047ce00.cpp,
+// which compiles the byte-matched source re/match/s13/0047ce00.c.
 
-// 0x0047ce80
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table6c9758Get(std::int32_t i) {
-    if (i >= 0 && i < 0xc8) return *reinterpret_cast<std::uint32_t*>(0x006c9758u + i * 4u);
-    return 0xffffffffu;                                                                       // OR EAX,-1
-}
-RH_ScopedInstall(Table6c9758Get, 0x0047ce80);
+// MATCH-S13: the body of 0x0047ce80 (Table6c9758Get) moved to Match/MatchS13_0047ce80.cpp,
+// which compiles the byte-matched source re/match/s13/0047ce80.c.
 
-// 0x0047d130
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table6c71d8Get(std::int32_t i) {
-    if (i >= 0 && i < 0xc8) return *reinterpret_cast<std::uint32_t*>(0x006c71d8u + i * 4u);
-    return 0;
-}
-RH_ScopedInstall(Table6c71d8Get, 0x0047d130);
+// MATCH-S13: the body of 0x0047d130 (Table6c71d8Get) moved to Match/MatchS13_0047d130.cpp,
+// which compiles the byte-matched source re/match/s13/0047d130.c.
 
-// 0x0045c860
-extern "C" __declspec(dllexport) void __cdecl Clear88f0a0x4(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0088f0a0u) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0088f0a4u) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0088f0a8u) = 0;
-    *reinterpret_cast<std::uint32_t*>(0x0088f0acu) = 0;
-}
-RH_ScopedInstall(Clear88f0a0x4, 0x0045c860);
+// MATCH-S10: the body of 0x0045c860 (Clear88f0a0x4) moved to Match/MatchS10_0045c860.cpp,
+// which compiles the byte-matched source re/match/s10/0045c860.c.

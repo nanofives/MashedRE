@@ -19,8 +19,9 @@
 //
 // Callers (C2): FUN_00446520 (util), FUN_00448700 (vehicle).
 // [D-11073 leg 2, 2026-10-09] Now in BOTH targets. Exe arm: type 0 -> CamEntryType0Step445aa0
-// (Race/CameraEntries.cpp); types 1/2 (FUN_00441d40 / FUN_00442440) are NOT called in the exe:
-// visual only, neither writes the camera struct (BRIEF_D11073 §1), and neither has an exe body.
+// (Race/CameraEntries.cpp); types 1/2 (FUN_00441d40 / FUN_00442440) are NOT called in the exe by default:
+// visual only, neither writes the camera struct (BRIEF_D11073 §1). Type 1 has an exe body since
+// D4-WIP-CAMMANYAW (CamEntryType1Step441d40), called only under MASHED_CAMMANYAW=1; type 2 has none.
 // The type field is RE-READ before each test, as the bytes do ([ESI+4] at 0x004464d7, 0x004464e8,
 // 0x004464f8); the earlier copy cached it.
 // Callees (C2, original): FUN_00445aa0/FUN_00441d40/FUN_00442440.
@@ -114,7 +115,11 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CameraEntryDispatchAll(st
         // 0x004464d7..0x004464e5  type 0 -> CALL 0x00445aa0
         if (*reinterpret_cast<std::uint32_t*>(esi + 0x4u) == 0u)
             CamEntryType0Step445aa0(esi, reinterpret_cast<std::int32_t*>(param_1));
-        // 0x004464e8 / 0x004464f8: types 1 (0x00441d40) and 2 (0x00442440) have no exe body; see header.
+        // 0x004464e8..0x004464f5  type 1 -> CALL 0x00441d40, only under MASHED_CAMMANYAW=1 (default OFF, U-9699,
+        // D4-WIP-CAMMANYAW): knob OFF keeps the default's entry state, which other lanes measure.
+        if (mashed_re::CamEntry::CamManYawOn() && *reinterpret_cast<std::uint32_t*>(esi + 0x4u) == 1u)
+            CamEntryType1Step441d40(esi, reinterpret_cast<std::int32_t*>(param_1));
+        // 0x004464f8: type 2 (0x00442440) has no exe body; see header.
         count = *reinterpret_cast<std::int32_t*>(0x00898994u);           // 0x00446508
         ebx++;                                                         // 0x0044650d
         esi += 0xd8u;                                                  // 0x0044650e

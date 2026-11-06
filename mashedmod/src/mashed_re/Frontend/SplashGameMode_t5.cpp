@@ -36,6 +36,9 @@
 
 #include <cstdint>
 
+// Port body: Match/MatchS15_00493fc0.cpp (MATCH-S15). Called by AspectRatioSnapshot below.
+extern "C" std::uint32_t __cdecl AspectRatioGlobalGet(void);
+
 // ===========================================================================
 // VideoStateFlagGet  --  0x00493f70
 //
@@ -56,13 +59,8 @@
 // ref: re/analysis/skeleton_prep_boot_winmain_a/00493f70.md
 // ===========================================================================
 
-// 0x00493f70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VideoStateFlagGet(void) {
-    // Read DAT_00771a04 (cited at 0x00493f70 body).
-    return *reinterpret_cast<volatile std::uint32_t*>(0x00771a04u);
-}
-
-RH_ScopedInstall(VideoStateFlagGet, 0x00493f70);
+// MATCH-S15: the body of 0x00493f70 (VideoStateFlagGet) moved to Match/MatchS15_00493f70.cpp,
+// which compiles the byte-matched source re/match/s15/00493f70.c.
 
 // ===========================================================================
 // AspectRatioGlobalGet  --  0x00493fc0
@@ -87,13 +85,8 @@ RH_ScopedInstall(VideoStateFlagGet, 0x00493f70);
 // ref: re/analysis/intro_splash/0x00493fc0.md
 // ===========================================================================
 
-// 0x00493fc0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AspectRatioGlobalGet(void) {
-    // Read DAT_00771a18 (cited at 0x00493fc0 body).
-    return *reinterpret_cast<volatile std::uint32_t*>(0x00771a18u);
-}
-
-RH_ScopedInstall(AspectRatioGlobalGet, 0x00493fc0);
+// MATCH-S15: the body of 0x00493fc0 (AspectRatioGlobalGet) moved to Match/MatchS15_00493fc0.cpp,
+// which compiles the byte-matched source re/match/s15/00493fc0.c.
 
 // ===========================================================================
 // TiebreakFlagGet  --  0x00431d80
@@ -198,17 +191,13 @@ RH_ScopedInstall(ViewportOriginGetter, 0x004c75e0);
 // 0x00771a18/0x00771a50/0x00771a54 trio (snapshot for delta/interp).
 //
 // Callee FUN_00493fc0 is C2 (also being promoted in this batch via
-// AspectRatioGlobalGet above). At runtime we forward through the original
-// RVA so the reimpl matches the original's call sequence bit-for-bit.
+// AspectRatioGlobalGet above). Called through the port symbol AspectRatioGlobalGet (MATCH-S15).
 //
 // ref: re/analysis/game_mode_cont2/0x00494f30.md
 // ===========================================================================
 
-// 0x00493fc0  AspectRatioGlobalGet — forwarder to original.
-static std::uint32_t OrigAspectRatioGlobalGet(void) {
-    typedef std::uint32_t (__cdecl* Fn)(void);
-    return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00493fc0u))();
-}
+// MATCH-S15: a raw-address forwarder to the original getter stood here (a second copy of that RVA).
+// The call now goes to its only port body, AspectRatioGlobalGet (declared at the top of this file).
 
 // MATCH-S16: the body of 0x00494f30 (AspectRatioSnapshot) moved to Match/MatchS16_00494f30.cpp,
 // which compiles the byte-matched source re/match/s16/00494f30.c.

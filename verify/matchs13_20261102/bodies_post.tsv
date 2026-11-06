@@ -1,0 +1,128 @@
+0x0047aad0	M	-	-
+0x0047ab30	M	-	-
+0x0047abd0	M	-	-
+0x0047ac80	M	-	-
+0x0047acd0	M	-	-
+0x0047ad00	M	-	-
+0x0047ad30	M	-	-
+0x0047ad40	M	-	-
+0x0047ade0	M	-	-
+0x0047ae80	M	-	-
+0x0047aef0	M	-	-
+0x0047af50	M	-	-
+0x0047afa0	M	-	-
+0x0047b000	M	-	-
+0x0047b0a0	M	-	-
+0x0047b110	M	-	-
+0x0047b160	M	-	-
+0x0047b1b0	M	-	-
+0x0047b200	M	-	-
+0x0047b230	M	-	-
+0x0047b250	M	-	-
+0x0047b280	M	-	-
+0x0047b350	M	-	-
+0x0047b3c0	M	-	-
+0x0047b420	M	-	-
+0x0047b480	M	-	-
+0x0047b500	M	-	-
+0x0047b5b0	M	-	-
+0x0047b630	M	-	-
+0x0047b6b0	M	-	-
+0x0047b720	M	-	-
+0x0047b7d0	M	-	-
+0x0047b860	M	-	-
+0x0047b880	M	-	-
+0x0047b8a0	M	-	-
+0x0047b8d0	M	-	-
+0x0047b980	M	-	-
+0x0047b9b0	M	-	-
+0x0047b9e0	M	Match/MatchS13_0047b9e0.cpp[A]:('FUN_0047b9e0', 21)	Track/CourseLoadDispatch.cpp:[('Track_RenderQuadThunk_47b9e0', 60)]
+0x0047ba00	M	-	-
+0x0047ba10	M	-	-
+0x0047ba20	M	-	-
+0x0047bb10	M	-	-
+0x0047bc90	.	Match/MatchS13_0047bf70.cpp[A]:('Match47bc90_RegAbi', 64)	Match/MatchS13_0047bf70.cpp:[('Match47bc90_RegAbi', 76)]
+0x0047bcc0	.	Match/MatchS13_0047bf70.cpp[A]:('TriEdgePairsBuild', 79)	Match/MatchS13_0047bf70.cpp:[('TriEdgePairsBuild', 90)]
+0x0047be80	.	-	-
+0x0047bf70	M	Match/MatchS13_0047bf70.cpp[A]:('FUN_0047bf70', 58)	-
+0x0047c0b0	M	Match/MatchS13_0047c0b0.cpp[A]:('FUN_0047c0b0', 11)	Match/MatchS13_0047c0b0.cpp:[('ClearColl47c0b0', 13)]
+0x0047c0f0	M	-	-
+0x0047c160	M	Match/MatchS13_0047c160.cpp[EA]:('FUN_0047c160', 14)	-
+0x0047c1f0	.	Match/MatchS13_0047c2d0.cpp[EA]:('FUN_0047c1f0', 12)	-
+0x0047c230	.	Match/MatchS13_0047c270.cpp[EA]:('FUN_0047c230', 12)	-
+0x0047c270	M	Match/MatchS13_0047c270.cpp[EA]:('FUN_0047c270', 12)	Match/MatchS13_0047c270.cpp:[('CameraPathAllNodesEq2', 20)]
+0x0047c2d0	M	Match/MatchS13_0047c2d0.cpp[EA]:('FUN_0047c2d0', 12)	Match/MatchS13_0047c2d0.cpp:[('CameraPathAnyNodeNonzero', 20)]
+0x0047ccb0	M	-	-
+0x0047cd50	M	-	-
+0x0047cdc0	M	Match/MatchS13_0047cdc0.cpp[A]:('FUN_0047cdc0', 11)	Match/MatchS13_0047cdc0.cpp:[('StoreDistSq47cdc0', 13)]
+0x0047cde0	M	-	-
+0x0047ce00	M	Match/MatchS13_0047ce00.cpp[A]:('FUN_0047ce00', 11)	Match/MatchS13_0047ce00.cpp:[('Table6c9438Get', 13)]
+0x0047ce20	M	-	-
+0x0047ce40	M	Match/MatchS13_0047ce40.cpp[A]:('FUN_0047ce40', 11)	Match/MatchS13_0047ce40.cpp:[('Search47ce40', 13)]
+0x0047ce70	M	Match/MatchS13_0047ce70.cpp[A]:('FUN_0047ce70', 11)	Match/MatchS13_0047ce70.cpp:[('Global6c6eb0Get', 13)]
+0x0047ce80	M	Match/MatchS13_0047ce80.cpp[A]:('FUN_0047ce80', 11)	Match/MatchS13_0047ce80.cpp:[('Table6c9758Get', 13)]
+0x0047cea0	M	-	-
+0x0047cf20	M	-	-
+0x0047d080	M	-	-
+0x0047d100	M	Util/PromoLoop_sessionB.cpp[A]:('BoundedThunk47d100', 3796)	Util/PromoLoop_sessionB.cpp:[('BoundedThunk47d100', 3814)]
+0x0047d130	M	Match/MatchS13_0047d130.cpp[A]:('FUN_0047d130', 11)	Match/MatchS13_0047d130.cpp:[('Table6c71d8Get', 13)]
+0x0047d150	M	Match/MatchS13_0047d150.cpp[EA]:('FUN_0047d150', 12)	Match/MatchS13_0047d150.cpp:[('SlotObjectField8', 19)]
+0x0047d180	M	-	-
+0x0047d240	M	-	-
+0x0047d330	M	-	-
+0x0047d3c0	M	Collision/PhysicsWorldBuild.cpp[EA]:('VehiclePhysicsWorldCreate', 35)	-
+0x0047d640	M	Collision/RwpSolverCore23.cpp[EA]:('FUN_0047d640', 144)	-
+0x0047def0	M	-	-
+0x0047e9c0	M	Collision/RwpSolverCore23.cpp[EA]:('FUN_0047e9c0', 892)	Collision/RwpSolverCore23.cpp:[('FUN_0047e9c0', 896)]
+0x0047ea40	M	Match/MatchS13_0047ea40.cpp[EA]:('FUN_0047ea40', 11)	Match/MatchS13_0047ea40.cpp:[('RwpSceneStepWrapper', 13)]
+0x0047ea60	M	-	-
+0x0047eb30	M	Vehicle/VehicleCouplingBridge.cpp[EA]:('VehicleCouplingBridge_impl', 106)	Vehicle/VehicleCouplingBridge.cpp:[('VehicleCouplingBridge', 409)]
+0x0047f1e0	M	-	-
+0x0047f230	M	-	-
+0x0047f290	M	-	-
+0x0047f380	M	-	-
+0x0047f450	M	-	-
+0x0047f480	M	-	-
+0x0047f4c0	M	-	-
+0x0047f6d0	M	-	-
+0x0047f840	M	-	-
+0x0047f940	M	-	-
+0x0047fad0	M	-	-
+0x0047fc40	M	-	-
+0x0047fe00	M	-	-
+0x0047ff70	M	-	-
+0x00480100	M	-	-
+0x00480340	M	-	-
+0x00480720	M	-	-
+0x004809e0	M	-	-
+0x00480b70	M	-	-
+0x00480d60	M	-	-
+0x00481750	M	-	-
+0x00481780	M	-	-
+0x00481810	M	-	-
+0x004818d0	M	-	-
+0x00481a30	M	-	-
+0x00481d90	M	-	-
+0x00481e00	M	Collision/CollisionBodyCreate.cpp[EA]:('ConeCastHullBuild', 51)	-
+0x00482030	M	Match/MatchS13_00482030.cpp[EA]:('FUN_00482030', 11)	Match/MatchS13_00482030.cpp:[('SubStripQuadUV', 13)]
+0x004820e0	M	-	-
+0x00482140	M	-	-
+0x004826d0	M	Match/MatchS13_004826d0.cpp[EA]:('FUN_004826d0', 21)	-
+0x00482730	M	Match/MatchS13_00482730.cpp[A]:('FUN_00482730', 11)	Match/MatchS13_00482730.cpp:[('Init482730', 13)]
+0x00482820	M	-	-
+0x00482860	M	Match/MatchS13_00482860.cpp[A]:('FUN_00482860', 11)	Match/MatchS13_00482860.cpp:[('Pool482860', 13)]
+0x00482900	M	Save/ReplayGetSize.cpp[A]:('int __cdecl', 62)	Save/ReplayGetSize.cpp:[('ReplayGetSize', 84)]
+0x00482930	M	-	-
+0x004829d0	M	-	-
+0x00482ae0	M	Vehicle/SplineCubicBlend.cpp[EA]:('SplineCubicBlend3', 56)	Vehicle/SplineCubicBlend.cpp:[('SplineCubicBlend3', 165)]
+0x00482c10	M	-	-
+0x00483a30	M	Match/MatchS13_00483a30.cpp[A]:('FUN_00483a30', 11)	Match/MatchS13_00483a30.cpp:[('ReplayRewind', 13)]
+0x00483a40	M	-	-
+0x00483a70	M	-	-
+0x00483ca0	M	Match/MatchS13_00483ca0.cpp[A]:('FUN_00483ca0', 11)	Match/MatchS13_00483ca0.cpp:[('FindNodeStructCopy483ca0', 13)]
+0x00483d10	M	-	-
+0x00483ed0	M	-	-
+0x00483fa0	M	-	-
+0x00484000	M	-	-
+0x00484060	M	-	-
+0x004840b0	M	Vehicle/ShapeOwnerHandlePool.cpp[EA]:('ShapeOwnerHandleGet', 29)	Vehicle/ShapeOwnerHandlePool.cpp:[('ShapeOwnerHandleGet', 33)]

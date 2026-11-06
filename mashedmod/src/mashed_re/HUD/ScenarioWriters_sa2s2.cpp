@@ -240,27 +240,8 @@ RH_ScopedInstall(AiLastPlaceFrustration, 0x00415020);
 // ref: re/analysis/bucket_vehicle_004922e0_0057c500/0x004922e0.md
 // ===========================================================================
 
-// 0x004922e0
-extern "C" __declspec(dllexport) void __cdecl CarEventTrigger(int param_1,
-                                                              std::uint32_t param_2,
-                                                              std::uint32_t param_3,
-                                                              std::uint32_t param_4)
-{
-    if (s_F0040e470(param_1) == 1) {
-        if (s_F0040e350() == 6) {
-            int slot = *reinterpret_cast<int*>(k_007f1a14 + param_1 * 0x10);   // 0x00492300
-            int iVar1 = slot * 0x4c;                                              // 0x00492306
-            if (*reinterpret_cast<std::uint32_t*>(k_007f105c + iVar1) != 0) {     // 0x0049230e
-                *reinterpret_cast<std::uint32_t*>(k_007f1068 + iVar1) = param_2;
-                *reinterpret_cast<std::uint32_t*>(k_007f1058 + iVar1) = 1;
-                *reinterpret_cast<std::uint32_t*>(k_007f1064 + iVar1) = param_3;
-                *reinterpret_cast<std::uint32_t*>(k_007f106c + iVar1) = param_4;
-            }
-        }
-    }
-}
-
-RH_ScopedInstall(CarEventTrigger, 0x004922e0);
+// MATCH-S15: the body of 0x004922e0 (CarEventTrigger) moved to Match/MatchS15_004922e0.cpp,
+// which compiles the byte-matched source re/match/s15/004922e0.c.
 
 // ===========================================================================
 // VehicleDamageAccum  --  0x00422b50

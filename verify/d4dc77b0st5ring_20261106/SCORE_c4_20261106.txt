@@ -1,0 +1,6 @@
+calls=112 (exit call 112 excluded)
+car 1: cd=3 T=6700 c29b8 first=11950 last-nonexit=6450 ff_calls=5 bf4_at_exit_call=1300
+car 2: cd=3 T=6700 c29b8 first=11950 last-nonexit=6450 ff_calls=5 bf4_at_exit_call=1300
+car 3: cd=3 T=6700 c29b8 first=11950 last-nonexit=6450 ff_calls=5 bf4_at_exit_call=1300
+W-C4 mismatches=0 []
+W-HOLD mismatches=0 []

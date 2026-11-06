@@ -1,0 +1,120 @@
+## h1
+0x0047b720  167  100.0  100.0  cxx:ok  -  strcpy intrinsic + up-counting loop
+0x0047ab30  150  100.0  100.0  cxx:ok  -  DAT_006bf1cc file-static
+0x0047abd0  172  100.0  100.0  cxx:ok  -  DAT_006bf1cc file-static
+0x0047ac80  66  100.0  100.0  cxx:ok  -  float locals, file-static global
+0x0047ad40  150  100.0  100.0  cxx:ok  -  entry struct, file-static global
+0x0047ade0  145  100.0  100.0  cxx:ok  -  entry struct + RwGlobals slot +0xcc
+0x0047ae80  104  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047aef0  88  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047af50  72  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047afa0  88  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047b000  145  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047b0a0  98  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047b110  71  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047b160  66  100.0  100.0  cxx:ok  -  entry struct pointer into 0x0086cac0
+0x0047b1b0  67  100.0  100.0  cxx:ok  -  float-typed globals
+0x0047b200  35  100.0  100.0  cxx:ok  -  int-typed global, single expression
+## h2
+0x0047b280  197  100.0  100.0  cxx:ok  -  Lua fn, tonumber as double cast to int
+0x0047b350  99  100.0  100.0  cxx:ok  -  Lua fn, strcpy intrinsic, gettop before global load
+0x0047b3c0  91  100.0  100.0  cxx:ok  -  Lua fn, for loop over args
+0x0047b420  93  100.0  100.0  cxx:ok  -  Lua fn, KtcRec struct (0x2510 B) at 0x0086ece0
+0x0047b480  128  100.0  100.0  cxx:ok  -  Lua fn, KtcRec.ent[] append, stores f04 before f10 in source
+0x0047b500  171  100.0  100.0  cxx:ok  -  Lua fn, KtcRec.sub[] append
+0x0047b5b0  120  100.0  100.0  cxx:ok  -  Lua fn, KtcSub.ids[] append via rec[a/8].sub[a&7]
+0x0047b630  125  100.0  100.0  cxx:ok  -  Lua fn, /GS buf[128] + strcpy intrinsic
+0x0047b6b0  112  100.0  100.0  cxx:ok  -  Lua fn, KtcSub f08/f00 set
+0x0047b7d0  136  100.0  100.0  cxx:ok  -  Lua fn, vec3 local by pointer to FUN_00405730
+0x0047b8a0  47  100.0  100.0  cxx:ok  -  int return (not bool)
+0x0047b980  44  100.0  100.0  cxx:ok  -  lua_register shape, 2-arg tail call
+0x0047b9e0  19  100.0  100.0  cxx:ok  b  plain forward tail-jmps; address-taken varargs param form blocks it (real form unknown)
+0x0047ba00  14  0.0  0.0  cxx:ok  b  every 4-byte-arg forward form compiles to a tail jmp; original pushes+calls
+0x0047ba10  5  100.0  100.0  cxx:ok  -  thunk jmp to 0x00496970
+0x0047ba20  230  60.8  71.6  cxx:ok  b  dot-product term order (z first vs y,x,z) and pt/p load order not found
+0x0047bb10  370  79.8  87.4  cxx:ok  b  pb address form + pa/ib register swap, sum add operand order
+## h3
+0x0047bc90  36   100.0  100.0  cxx:ok  -  static callee (ESI/EDX edges), held in 0047bf70.c
+0x0047be80  235  86.4   88.9   cxx:ok  b  shrink-wrapped prologue (count test before pushes) + one fsub slot; indices via __inline helper into ushort[3]
+0x0047bf70  309  100.0  100.0  cxx:ok  -  sector+4 read first, tris before verts; edge bytes via uchar* at &e->v1 and &rec->edge[0].idx
+0x0047c0b0  63   100.0  100.0  cxx:ok  -  memset intrinsics, count store first in source (sunk)
+0x0047c0f0  111  97.3   97.3   cxx:ok  b  DAT_006c2fe8 store lands after rep movsd; fec/fe8 file-static; relocheck BAD only from that shifted store
+0x0047c160  133  100.0  100.0  cxx:ok  -  Ghidra size short of epilogue; --bytes 141 B BYTE-IDENTICAL (insn 86.3)
+0x0047c1f0  53   100.0  100.0  cxx:ok  -  static callee (EAX items, EBX count, stack query), held in 0047c2d0.c
+0x0047c230  54   100.0  100.0  cxx:ok  -  static callee (EAX items, EBX count, stack query), held in 0047c270.c
+0x0047c270  85   100.0  100.0  cxx:ok  -  Ghidra size short of 2nd return; --bytes 91 B BYTE-IDENTICAL (insn 92.1)
+0x0047c2d0  85   100.0  100.0  cxx:ok  -  Ghidra size short of 2nd return; --bytes 91 B BYTE-IDENTICAL (insn 92.1)
+0x0047bcc0  431  100.0  100.0  cxx:ok  -  static callee (EAX ntri), tris indexed [i*4+k]; Ghidra size 3 B short, --bytes 434 B BYTE-IDENTICAL (insn 98.7)
+0x0047bf70 holds 0x0047bc90
+0x0047bf70 holds 0x0047bcc0
+0x0047bf70 holds 0x0047be80
+0x0047c2d0 holds 0x0047c1f0
+0x0047c270 holds 0x0047c230
+## h4
+0x0047cde0  27  100.0  100.0  cxx:ok  -  array global + i>=0
+0x0047ce00  26  100.0  100.0  cxx:ok  -  array global + i>=0
+0x0047ce20  27  100.0  100.0  cxx:ok  -  array global + i>0 && i<=200
+0x0047ce80  27  100.0  100.0  cxx:ok  -  array global + i>=0
+0x0047cea0  127  94.0  100.0  cxx:ok  b  last-call arg chain loads in swapped regs (edx/ecx) and lea operand order; struct shape of chain not found
+0x0047cf20  176  56.5  58.0  cxx:ok  b  original repeats the bitset test (no CSE); every spelling tried gets CSE'd
+0x0047d080  105  100.0  100.0  cxx:ok  -  if/else order swapped vs Ghidra
+0x0047d100  36  100.0  100.0  cxx:ok  -  callee takes 1 arg (tail jmp)
+0x0047d130  26  100.0  100.0  cxx:ok  -  two separate early-return ifs
+0x0047d150  41  100.0  100.0  cxx:ok  -  two separate early-return ifs
+0x0047d180  177  100.0  100.0  cxx:ok  -  float[8] local (char[] adds /GS cookie)
+0x0047d240  236  100.0  100.0  cxx:ok  -  axis float[3], float[8] scratch, float params
+0x0047d3c0  638  91.9  91.9  cxx:ok  b  x87 scale by 0x005cc9dc keeps k in a register vs fmul mem; e0 stack temp
+## h5
+0x0047ea60  204  100.0  100.0  cxx:ok  -  matched (struct copy, -1.0f literal, callee arities)
+0x0047d640  2181  45.7  69.3  cxx:ok  b  structure right (event ring struct, emission macro, dispatch order, unrolled scan); per-node loop register allocation differs (const 1 in esi, track spilled), stack slot order
+## h6
+0x0047def0 (2738 B, HUD event emitter): hand-written from the decomp. Event ring 0x007e9de0 must be one struct
+0x0047def0  2738  85.3%  85.3%  cxx:ok  b  row-copy loop induction pointer base (+0x10 vs +0x14) shifts loop padding and later jump targets; one store scheduled one slot early in the c==2 path
+## h7
+0x0047f450  47  100.0  100.0  cxx:ok  -  callback arg as function pointer
+0x0047f840  254  100.0  100.0  cxx:ok  -  nested calls with correct arities, memset intrinsic
+0x0047f290  233  100.0  100.0  cxx:ok  -  range check spelled >= 0 && <= 200
+0x0047f6d0  251  97.9  97.9  cxx:ok  b  temp spilled to arg5 home slot, original uses arg3's
+0x0047f940  386  100.0  100.0  cxx:ok  -  slot index as byte offset, 0.1f literal, nested 559c40(55dec0(..))
+0x0047eb30  1705  92.8  93.0  cxx:ok  b  acos clamp '> 1' test threaded away by this compiler (spelled 1.0f < dot, +4 B shifts targets/padding); small x87 scheduling diffs
+0x0047f4c0  523  100.0  100.0  cxx:ok  -  bit-set macro with unsigned row width, nested 55af40(55dec0(w), m)
+## h8
+0x0047fad0  356  100.0%  100.0%  cxx:ok  -  0x004e4380 takes 2 args (FUN_00426060() first), 0.1f literal, struct copies
+0x0047fe00  368  100.0%  100.0%  cxx:ok  -  0x110-byte table struct, do-while, store via DAT_006c6870[old count]
+0x0047ff70  386  100.0%  100.0%  cxx:ok  -  sibling of 0x0047fe00, struct based at 0x0086cb98, 0x00562fd0(h, float, float)
+0x0047fc40  435  100.0%  100.0%  cxx:ok  -  sibling of 0x0047fe00, struct based at 0x0086cb84, scaled RwV3d local by address
+0x00480100  562  100.0%  100.0%  cxx:ok  -  200-iter for over parallel arrays, identity RwMatrix local, 0x20-byte bbox local, int[8] scratch
+0x00480340  983  97.4%  97.4%  cxx:ok  -  byte-identical whole symbol (992 B); Ghidra size stops before the epilogue; PObj table indexed by i, memset 0xff
+## h9
+0x004809e0  398  98.4%  98.4%  cxx:ok  a  one fld (v.y*300) scheduled before the FUN_0046d4a0 arg push in the original; survives permuter, literal/global, operand order, inline helper
+0x00482930  156  100.0%  100.0%  cxx:ok  -  60.0/2.0 as literals; FUN_00482900(float,int)
+0x004829d0  267  100.0%  100.0%  cxx:ok  -  replay frame struct, struct-assignment copies
+0x00482ae0  301  99.0%  99.0%  cxx:ok  a  p0 load scheduled one slot after the first fld t; survives permuter and 6 rewrites
+0x00480b70  493  93.1%  93.1%  cxx:ok  b  wheel count needs a 4-iteration loop (unrolled); residual x87 scheduling of vel*20 against the int copy of m->pos in both blocks
+0x00480720  703  100.0%  100.0%  cxx:ok  -  vertex record {V3 p; pad; V3 n; pad}; chained zeroing of car+0x99c/+0x9a8
+## h10
+0x00481750  40  100.0  100.0  cxx:ok  -  tail call passes value to 1-arg FUN_0055b650
+0x00481780  142  100.0  100.0  cxx:ok  -  0x005cf230 = literal 1/360; dest address expr written twice
+0x00481810  180  100.0  100.0  cxx:ok  -  callee arities, float[4] buffer (no GS cookie), struct copies
+0x004818d0  339  98.9  98.9  cxx:n/a  b  one v.z copy store scheduled after the first fld; literals 1e-5f/0.005f, FUN_0047d100 called with 2 args
+0x00480d60  2494  72.8  66.8  cxx:n/a  b  two inline copies of the shared case tail (cases 6/7) vs one after-switch tail; register choice in cases 1/2
+## h11
+0x00481d90  109  100.0  100.0  cxx:ok  -  guard early returns, FUN_0055b650 1 arg
+0x00482030  159  100.0  100.0  cxx:ok  -  unsigned params, double temp, param slot reuse
+0x004820e0  91  100.0  100.0  cxx:ok  -  local 3-float struct, s=h*2 then K/s
+0x004826d0  83  100.0  100.0  cxx:ok  -  if/else calls cross-jumped
+0x00482730  107  100.0  100.0  cxx:ok  -  byte-identical whole symbol (Ghidra size short by add esp/ret), struct copy
+0x00482820  56  100.0  100.0  cxx:ok  -  callbacks as functions
+0x00482860  147  100.0  100.0  cxx:ok  -  ring struct, memset intrinsic
+0x00482900  48  85.7  85.7  cxx:-  b  fld param/fmul global operand order (compiler always loads the global first); permuter no gain
+0x00481e00  550  86.5  96.5  cxx:ok  b  count cached in ecx not edx, param_2*=K operand order, loop-2 esi/inc scheduling; DAT_006ce818 file-static
+0x00481a30  855  63.3  65.4  cxx:-  b  register allocation (obj/atom in ebp/ebx), local slot order, query struct size unknown
+0x00482140  1405  76.8  77.4  cxx:-  b  normal-sum loop unrolled x8 (original x4), j/tl slot swap; strip loop otherwise exact
+## h12
+0x00483ca0  102  100.0  100.0  cxx:ok  -  chunk search + struct copy + memcpy intrinsic
+0x00484000  91  100.0  100.0  cxx:ok  -  one early-return if per test
+0x00484060  75  100.0  100.0  cxx:ok  -  separate early-return ifs (|| gave 78.6%)
+0x004840b0  20  100.0  100.0  cxx:ok  -  >= 4 bound
+0x00483d10  445  100.0  100.0  cxx:ok  -  replay chunk load, structs for header + RwMemory stream
+0x00483a70  546  100.0  100.0  cxx:ok  -  5 RwMatrix blocks struct, RwRGBA locals, struct-copied vectors
+0x00482c10  3616  83.3  80.0  cxx:ok  b  hand-written (raw did not compile): RW quat/matrix macros, loop+branch order fixed; residual x87/push scheduling in inlined quat->matrix blocks; relocheck BAD only from offset misalignment (not 100%); uint->float uses compiler 2^32 const vs DAT_005cc94c

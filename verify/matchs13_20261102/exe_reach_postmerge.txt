@@ -1,0 +1,11 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+CameraPathNodeContainTest	0x000a5320	0	no	no	
+CameraPathAllNodesEq2	0x000a53c0	0	no	yes	
+FUN_0047c230	NOT-IN-MAP	-	-	-	-
+CameraPathAnyNodeNonzero	0x000a5450	0	no	yes	
+FUN_0047c1f0	NOT-IN-MAP	-	-	-	-
+SlotObjectField8	0x000a54e0	0	no	yes	
+RwpSceneStepWrapper	0x000a5510	0	no	yes	
+SubStripQuadUV	0x000a5530	0	no	yes	
+PhysicsCollisionBodyCreate	0x000a55f0	0	no	no	
+VehiclePhysicsWorldCreate	NOT-IN-MAP	-	-	-	-

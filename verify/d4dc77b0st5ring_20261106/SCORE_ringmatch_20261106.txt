@@ -1,0 +1,15 @@
+== r2
+arm   ba8c=0 ret=-        p= 3 q= 0 -> k=0
+E     ba8c=2 ret=41025e   p=11 q= 8 -> k=8
+L     ba8c=2 ret=41025e   p=15 q=12 -> k=12
+cd draws from E row: [3, 3, 3, 3]
+== r1
+arm   ba8c=0 ret=-        p= 3 q= 0 -> k=0
+E     ba8c=2 ret=41025e   p=11 q= 8 -> k=8
+L     ba8c=2 ret=41025e   p=15 q=12 -> k=12
+cd draws from E row: [3, 3, 3, 3]
+== r3
+arm   ba8c=0 ret=-        p= 3 q= 0 -> k=0
+E     ba8c=2 ret=41025e   p=11 q= 8 -> k=8
+L     ba8c=2 ret=41025e   p=15 q=12 -> k=12
+cd draws from E row: [3, 3, 3, 3]
