@@ -1,4 +1,10 @@
-# RESULT MATCH-S16, 2026-11-02
+# RESULT MATCH-S16, 2026-11-02 (merge, gates and re-classify 2026-11-06)
+
+**Verdict 2026-11-06: GREEN.** After merging orch/integration (adf5ff69b): 41 swapped rows, 41/41 byte-identical and
+relocheck OK, exe reach unchanged (0 exe callers, 0 C4 candidates), gates equal the merge_train refs (G-CTRL
+8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3), 41 rows re-classified tracker-only. Section "2026-11-06" at the end. The
+2026-11-02 text below is the static and port leg as first written; two of its 43 swaps (0x00496900, 0x00497450) are
+dropped in favour of the GFFU bodies already on integration.
 
 **Verdict: BLOCKED. Built on this branch. Gates not run because the display is unavailable (D3DERR_NOTAVAILABLE on
 LIVING-PC); the lead's task was static work only.** The slice is 0x004944b0..0x0049b300: 128 game functions, no
@@ -197,3 +203,81 @@ the original image calls the installed bodies, which happens in the .asi, not th
 | bodies_post.tsv (post-swap body scan) | 51b513d7ebd47aab7fe25d411e081fb92ad3e25fdefdffea29ee9d610a0390c6 |
 | rc.tsv (= committed relocheck.tsv) | 24e79b759485fe69d389182d59f2bc4116637e95ee921378786f8d49845e51b6 |
 | g2s/, notes/h1..h6.md, scratch/, swap_w1..w4.txt | raw converter output, helper notes and reports, scratch |
+
+## 2026-11-06: merge, re-check, gates, re-classify
+
+**Merge.** Worktree re-created from `orch/MATCH-S16` @ b3cfd98cd, then
+`git -c merge.autoStash=false merge orch/integration` (adf5ff69b, which carries MATCH-S09, S11, T13-SEED-WRITER and
+PORTSTATE-GAMEFLOW-FU). Three conflicts, resolved by hand:
+- `Frontend/IntroSplash.cpp`: kept the S16 move of 0x00495350 to `MatchS16_00495350.cpp`. Integration's side (S11)
+  had only renamed the `OrigVehicle0Get(0)` call inside the old body to `BackBuffRasterOpen(0)`. The S16 wrapper
+  still reaches 0x004671a0 through its original address (asi only), which runs S11's installed body there.
+- `Util/PromoLoop_round24.cpp` and `Util/PromoLoop_sessionB.cpp`: took integration's side. MATCH-PORTSTATE-GAMEFLOW-FU
+  already moved 0x00496900 SlotActiveThunk and 0x00497450 Pred497450 into `Match/MatchGFFU_00497450.cpp`, built into
+  exe and asi. S16's `MatchS16_00496900.cpp` and `MatchS16_00497450.cpp` (asi only) would have been second bodies, so
+  both were deleted and taken out of `asi_sources.rsp`. `re/match/s16/00496900.c` (100%, relocheck OK) is the
+  byte-matched form of GFFU's hand forwarder. The two rows' hooks.csv cells still name the PromoLoop files: ledger row
+  MATCH-GFFU-TRACKER-497450.
+- rsp files, `x87_tus.txt` and `re/console/pc_funcs.csv` merged with no conflict and no duplicate lines.
+
+S16 swaps after the merge: **41** (5 exe+asi, 36 asi only).
+
+**Build.** `set MASHED_NO_DEPLOY=1&& mashedmoduild.bat`: Build OK, .asi not deployed.
+
+| artifact | sha256 |
+|---|---|
+| exe | `4fc371522b755f7f9f6f349a7cf1532f285f4388fe4c97f8fa0f73eda34a7d5b` |
+| asi | `8ffcb98f9061aa0cf80abfe982a744b95ecf046f593a776c667ee18cb4df3695` |
+
+- `py -3.12 scripts/lint_rva_bodies.py`: `1 finding(s): CROSS-TARGET=1 | allowlisted=1 NEW=0`.
+- `py -3.12 scripts/lint_inline_asm_abs.py`: OK (1253 files).
+
+**Re-check of the 41 swapped rows** (`recheck_postmerge.tsv`): `match.py <src> --bytes` reports BYTE-IDENTICAL
+(relocations masked) for 41/41, and `relocheck.py <src>` reports OK for 41/41. 0x00494f40 is 85% by Ghidra's
+instruction span and byte-identical over the 133 B whole symbol, as on 2026-11-02.
+
+**Exe reach** (`exe_reach_postmerge.txt`, same command as above on the post-merge exe): the five exe+asi symbols still
+have 0 direct exe sites and no WinMain reach (address taken by the install table only). The 36 asi-only rows are not
+in the exe. **C4 candidates: 0.**
+
+**Gates** (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, exe 4fc37152, private root
+`D:/MashedWT/MATCH-S16_root`, test slot outside, `mashed_lock.py run --label MATCH-S16` inside). Refs read from
+`re/orchestrator/merge_train.json` on orch/integration adf5ff69b at gate time.
+
+| gate | this exe | ref | |
+|---|---|---|---|
+| G-CTRL H_DEF step / gates / ptrace | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e | equal |
+| B_DEF_K0 / K1 / K26 step | 1d5bf4f9 / 1d5bf4f9 / 1d5bf4f9 | 1d5bf4f9 x3 | equal |
+
+All four arms exited 0 and self-exited (H_DEF 133 s). `full_set_paths` (Vehicle/, Ai/, Collision/) are not touched by
+this branch.
+
+**Tracker transaction (re-classify, applied by `tools/reclass.py`).** 41 hooks.csv rows: `file` =
+`mashedmod/src/mashed_re/Match/<wrapper>` (the in-file bodies 0x00494f40 / 0x00494fd0 name `MatchS16_00495080.cpp`,
+0x00497190 names `MatchS16_004971b0.cpp`), `exe_file` = the same for the 5 exe+asi rows and unchanged for the 36
+asi-only rows, `notes` += `MATCH-S16 2026-11-06: match evidence: identical, swapped, exe-callers=0; C4 when a caller
+lands (L-68 ruling); match.py <src> 100% ...; relocheck OK ...; src sha256 ...; port body ... (only body); <this
+RESULT>`. Confidence and status cells unchanged (32 C3, 5 C2, 4 C4). The four rows already C4 by an earlier route
+(0x00494f30, 0x00498bc0, 0x00498bd0, 0x00498bf0) keep it, with the note that the match route adds no level. 0x00495080
+and 0x00494a80 carry the owed items below in their notes. 41 CHANGELOG lines (`Cn=Cn notes/file only`) below
+`<!-- ENTRIES -->`. `py -3.12 re/orchestrator/tracker_lint.py --repo . --base orch/integration`: OK, NEW=0.
+No UNCERTAINTIES or STUBS rows were created or closed.
+
+**Follow-up ledger rows filed:**
+- MATCH-S16-FU-L2-494A80: `Lane2/L2_00494a80.cpp` keeps an active install of 0x00494a80 next to the matched
+  `MatchS16_00494a80.cpp` (install=0) in the .asi.
+- MATCH-S16-FU-GAMMA: a diff-original run for 0x00495080, whose gamma-ramp math now runs as VS2022 x87 port code.
+- MATCH-GFFU-TRACKER-497450: hooks.csv cells for 0x00496900 / 0x00497450 (see Merge).
+- MATCH-FIX-4950B0 (filed 2026-11-02) stands.
+
+### Raw files 2026-11-06 (not committed; `D:/MashedWT/MATCH-S16_data`)
+
+| file | sha256 |
+|---|---|
+| arms/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms/B_DEF_K0.step.csv, B_DEF_K1.step.csv, B_DEF_K26.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 (all three) |
+| gates_run.log | 5d10f30ed00bda48ea1e46709ddd6e0a2afc810179a2cdd02c9651f2a7e5ddac |
+| build2.log (Build OK) | 6e7c32c1d2b9ed4f6e8a08034c47a7b12ea64aeb6e774603c28710d9a2d688e8 |
+| postmerge_recheck.tsv (full match.py lines) | 0348d5c2da8a95708f65e1f1cb8d279fe5468085d50cce24e1a9c59767a4f809 |
