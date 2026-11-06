@@ -51,13 +51,8 @@ static FUN_004c2c90_t const s_FUN_004c2c90 =
 // verified against a non-trivial sentinel domain satisfies C2→C3.
 // ---------------------------------------------------------------------------
 
-// 0x004c2d70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwPluginRegistryFrozen() {
-    // 0x004c2d70: MOV EAX, [DAT_007d3ff4] — RW plugin-registry frozen gate
-    return *reinterpret_cast<const std::uint32_t*>(0x007d3ff4u);
-}
-
-RH_ScopedInstall(RwPluginRegistryFrozen, 0x004c2d70);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2d70 (RwPluginRegistryFrozen) moved to Match/MatchS19_004c2d70.cpp,
+// which compiles the byte-matched source re/match/s19/004c2d70.c.
 
 // ---------------------------------------------------------------------------
 // RwEngineSetSubSystem  --  0x004c2e70
@@ -80,16 +75,8 @@ RH_ScopedInstall(RwPluginRegistryFrozen, 0x004c2d70);  // re-enabled 2026-05-24 
 // RW 3.x analog: RwEngineSetSubSystem(RwInt32 idx) → RwBool.
 // ---------------------------------------------------------------------------
 
-// 0x004c2e70
-extern "C" __declspec(dllexport) std::int32_t __cdecl RwEngineSetSubSystem(std::int32_t param_1) {
-    // 0x004c2e70: load DAT_007d3ff8, add 0x10, cmd=0x10, out=0, in1=0, in2=param_1
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    const std::int32_t iVar1 = s_FUN_004c2c90(ctx + 0x10, 0x10, 0, 0, param_1);
-    return iVar1 != 0;  // bool cast: non-zero → 1, zero → 0
-}
-
-RH_ScopedInstall(RwEngineSetSubSystem, 0x004c2e70);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2e70 (RwEngineSetSubSystem) moved to Match/MatchS19_004c2e70.cpp,
+// which compiles the byte-matched source re/match/s19/004c2e70.c.
 
 // ---------------------------------------------------------------------------
 // RwEngineSetVideoMode  --  0x004c2f30
@@ -112,16 +99,8 @@ RH_ScopedInstall(RwEngineSetSubSystem, 0x004c2e70);  // re-enabled 2026-05-24 c3
 // RW 3.x analog: RwEngineSetVideoMode(RwInt32 modeIndex) → RwBool.
 // ---------------------------------------------------------------------------
 
-// 0x004c2f30
-extern "C" __declspec(dllexport) std::int32_t __cdecl RwEngineSetVideoMode(std::int32_t param_1) {
-    // 0x004c2f30: load DAT_007d3ff8, add 0x10, cmd=0x07, out=0, in1=0, in2=param_1
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    const std::int32_t iVar1 = s_FUN_004c2c90(ctx + 0x10, 7, 0, 0, param_1);
-    return iVar1 != 0;  // bool cast
-}
-
-RH_ScopedInstall(RwEngineSetVideoMode, 0x004c2f30);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2f30 (RwEngineSetVideoMode) moved to Match/MatchS19_004c2f30.cpp,
+// which compiles the byte-matched source re/match/s19/004c2f30.c.
 
 // ---------------------------------------------------------------------------
 // RwEngineGetModeInfo  --  0x004c2ed0
@@ -147,23 +126,5 @@ RH_ScopedInstall(RwEngineSetVideoMode, 0x004c2f30);  // re-enabled 2026-05-24 c3
 //          FUN_00498c00 (subsystem enum), FUN_00499400 (mode probe).
 // ---------------------------------------------------------------------------
 
-// 0x004c2ed0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetModeInfo(
-    std::uint32_t param_1, std::int32_t param_2)
-{
-    // 0x004c2ed0: load DAT_007d3ff8, add 0x10, cmd=0x6, out=param_1, in1=0, in2=param_2
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    const std::int32_t iVar1 = s_FUN_004c2c90(
-        ctx + 0x10,
-        6,
-        static_cast<std::int32_t>(param_1),
-        0,
-        param_2);
-    if (iVar1 == 0) {
-        return 0u;
-    }
-    return param_1;
-}
-
-RH_ScopedInstall(RwEngineGetModeInfo, 0x004c2ed0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2ed0 (RwEngineGetModeInfo) moved to Match/MatchS19_004c2ed0.cpp,
+// which compiles the byte-matched source re/match/s19/004c2ed0.c.

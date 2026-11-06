@@ -248,6 +248,8 @@
 "Boot\BootLowRvaCluster.cpp"
 "Boot\Window.cpp"
 "Boot\VideoConfig.cpp"
+"Match\MatchS19_004c19f0.cpp"
+"Match\MatchS19_004c3df0.cpp"
 "Boot\VideoCfgFirstRun.cpp"
 "Boot\Teardown.cpp"
 "Boot\LaunchHandshake.cpp"

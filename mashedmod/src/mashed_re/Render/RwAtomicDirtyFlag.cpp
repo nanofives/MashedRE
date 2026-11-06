@@ -20,11 +20,5 @@
 //   0x004c0b20  C3                  ret
 #include "../Core/HookSystem.h"
 
-// 0x004c0b10
-extern "C" __declspec(dllexport) int __cdecl
-RwAtomicDirtyFlagGet(int param_1)
-{
-    return *(const unsigned char*)(*(const int*)(param_1 + 0xa0) + 3) & 3;
-}
-
-RH_ScopedInstall(RwAtomicDirtyFlagGet, 0x004c0b10);
+// MATCH-S19: the body of 0x004c0b10 (int __cdecl) moved to Match/MatchS19_004c0b10.cpp,
+// which compiles the byte-matched source re/match/s19/004c0b10.c.

@@ -1,4 +1,5 @@
 // FLAGS: /O2 /GS /Ob1 /G5
+// MATCH-S19 swap leg: return type byte -> int. DDK bytes unchanged (match.py 100%, relocheck OK); the VS2022 port then returns the full EAX the original does.
 /* MATCH-S19 0x004c0b10 (h1): 100% (regs 100%), byte-identical, relocheck OK. Raw converter body unchanged; FLAGS add /G5 (game flags give 83.3%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -24,7 +25,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned char byte;
 // MATCH: 0x004c0b10 FUN_004c0b10
-byte FUN_004c0b10(int param_1)
+int FUN_004c0b10(int param_1)
 
 {
   return *(byte *)(*(int *)(param_1 + 0xa0) + 3) & 3;

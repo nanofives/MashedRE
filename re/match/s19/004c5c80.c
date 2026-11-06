@@ -1,4 +1,5 @@
 // FLAGS: /O2 /GS /Ob1 /G5
+// MATCH-S19 swap leg: return type void -> undefined4 returning param_1 (the original leaves param_1 in EAX). DDK bytes unchanged (match.py 100%, relocheck OK); the VS2022 port then returns the full EAX the original does.
 /* MATCH-S19 0x004c5c80 (h4): 100% (regs 100%), relocheck OK. Raw converter body, RwGlobals pointer first. FLAGS add /G5: this RW-core code matches only with /G5 (also /G3,/G4); under the game flags /O2 /GS /Ob1 alone it is 80.0% (same param-load schedule as 0x004c5800). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -26,9 +27,9 @@ typedef unsigned int undefined4;
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_007d4054, 0x007d4054);
 // MATCH: 0x004c5c80 FUN_004c5c80
-void FUN_004c5c80(undefined4 param_1)
+undefined4 FUN_004c5c80(undefined4 param_1)
 
 {
   *(undefined4 *)(DAT_007d3ff8 + DAT_007d4054 + 0x10) = param_1;
-  return;
+  return param_1;
 }

@@ -1,4 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
+// MATCH-S19 swap leg: return type bool -> int. DDK bytes unchanged (match.py 100%, relocheck OK); the VS2022 port then returns the full EAX the original does.
 /* MATCH-S19 0x004c2f30: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchs19_20261102/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -28,7 +29,7 @@ typedef unsigned int uint;
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 uint FUN_004c2c90(int p0, undefined4 p1, undefined4 * p2, undefined4 p3, int p4);
 // MATCH: 0x004c2f30 FUN_004c2f30
-bool FUN_004c2f30(undefined4 param_1)
+int FUN_004c2f30(undefined4 param_1)
 
 {
   int iVar1;

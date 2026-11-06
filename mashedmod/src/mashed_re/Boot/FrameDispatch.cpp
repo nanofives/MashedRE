@@ -50,15 +50,8 @@ RH_ScopedInstall(DisplayActiveFlagGet, 0x00498bf0);  // re-enabled 2026-05-24 c3
 // vtable slot 7 (offset 0x1c from object base).
 static constexpr std::uintptr_t kVtableSlot7Offset = 0x1cu;
 
-// 0x004c19f0
-extern "C" __declspec(dllexport) void __cdecl RwVtableSlot07Call(int param_1) {
-    using VFn = void (*)();
-    const VFn fn = *reinterpret_cast<VFn*>(
-        static_cast<std::uintptr_t>(static_cast<std::uint32_t>(param_1)) + kVtableSlot7Offset);
-    fn();
-}
-
-RH_ScopedInstall(RwVtableSlot07Call, 0x004c19f0);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S19: the body of 0x004c19f0 (RwVtableSlot07Call) moved to Match/MatchS19_004c19f0.cpp,
+// which compiles the byte-matched source re/match/s19/004c19f0.c.
 
 
 // =============================================================================

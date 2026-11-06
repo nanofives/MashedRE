@@ -39,18 +39,5 @@ static constexpr std::uint32_t  kTransformMethod = 0x14u;        // device vtabl
 
 typedef void (__cdecl *RwDeviceTransformFn)(void*, void*, void*, void*);
 
-// 0x004c3df0
-extern "C" __declspec(dllexport)
-void* __cdecl RwV3dTransformPoints(void* p1, void* p2, void* p3, void* p4)
-{
-    const std::uint32_t globals = *reinterpret_cast<const std::uint32_t*>(kRwGlobalsBase);
-    const std::uint32_t offset  = *reinterpret_cast<const std::uint32_t*>(kRwDeviceTblSlot);
-
-    RwDeviceTransformFn method =
-        *reinterpret_cast<RwDeviceTransformFn*>(offset + globals + kTransformMethod);
-    method(p1, p2, p3, p4);
-
-    return p1;  // pass-through of the first (destination) argument
-}
-
-RH_ScopedInstall(RwV3dTransformPoints, 0x004c3df0);
+// MATCH-S19: the body of 0x004c3df0 () moved to Match/MatchS19_004c3df0.cpp,
+// which compiles the byte-matched source re/match/s19/004c3df0.c.

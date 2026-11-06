@@ -99,26 +99,8 @@ RH_ScopedInstall(RwEngineGetNumSubSystems, 0x004c2de0);  // re-enabled 2026-05-2
 // RW 3.x analog: RwEngineGetSubSystemInfo(RwSubSystemInfo *info, RwInt32 idx).
 // ---------------------------------------------------------------------------
 
-// 0x004c2e10
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetSubSystemInfo(
-    std::uint32_t param_1, std::int32_t param_2)
-{
-    // 0x004c2e10: load DAT_007d3ff8, add 0x10, cmd=0x0e, out=param_1, in1=0, in2=param_2
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    const std::int32_t iVar1 = s_FUN_004c2c90(
-        ctx + 0x10,
-        0xe,
-        static_cast<std::int32_t>(param_1),
-        0,
-        param_2);
-    if (iVar1 == 0) {
-        return 0u;
-    }
-    return param_1;
-}
-
-RH_ScopedInstall(RwEngineGetSubSystemInfo, 0x004c2e10);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2e10 (RwEngineGetSubSystemInfo) moved to Match/MatchS19_004c2e10.cpp,
+// which compiles the byte-matched source re/match/s19/004c2e10.c.
 
 // ---------------------------------------------------------------------------
 // RwEngineGetCurrentSubSystem  --  0x004c2e40

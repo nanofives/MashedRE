@@ -1,4 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
+// MATCH-S19 swap leg: return type void -> int (returns the FUN_004d7de0 result the original leaves in EAX). DDK bytes unchanged (match.py 100%, relocheck OK); the VS2022 port then returns the full EAX the original does.
 /* MATCH-S19 0x004c2d90: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchs19_20261102/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -26,11 +27,10 @@ typedef unsigned char bool;
 typedef unsigned char undefined;
 typedef unsigned int undefined4;
 MGLOBAL(undefined4, DAT_00617fe0, 0x00617fe0);
-int FUN_004d7de0(int * p0, int p1, int p2, undefined * p3, undefined * p4, undefined * p5);
+int FUN_004d7de0(undefined4 * p0, undefined4 p1, undefined4 p2, undefined4 p3, undefined4 p4, int p5);
 // MATCH: 0x004c2d90 FUN_004c2d90
-void FUN_004c2d90(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+int FUN_004c2d90(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  FUN_004d7de0(&DAT_00617fe0,param_1,param_2,param_3,param_4,0);
-  return;
+  return FUN_004d7de0(&DAT_00617fe0,param_1,param_2,param_3,param_4,0);
 }

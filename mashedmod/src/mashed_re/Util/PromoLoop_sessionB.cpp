@@ -546,43 +546,19 @@ RH_ScopedInstall(Inc45c810, 0x0045c810);
 // ===== round 102 =====
 // indexed_global_field_read family: return *(*(base_glob) + *(idx_glob) + off)
 
-// 0x004c5850  render — byte-verified: EAX=*[0x7d3ff8]; ECX=*[0x7d4054]; return *(ECX+EAX+0x20)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Get4c5850(void) {
-    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
-    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
-    return *reinterpret_cast<std::uint32_t*>(base + idx + 0x20u);
-}
-RH_ScopedInstall(Get4c5850, 0x004c5850);
+// MATCH-S19: the body of 0x004c5850 (Get4c5850) moved to Match/MatchS19_004c5850.cpp,
+// which compiles the byte-matched source re/match/s19/004c5850.c.
 
-// 0x004c5ca0  render — byte-verified: EAX=*[0x7d3ff8]; ECX=*[0x7d4054]; return *(ECX+EAX+0x10)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Get4c5ca0(void) {
-    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
-    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
-    return *reinterpret_cast<std::uint32_t*>(base + idx + 0x10u);
-}
-RH_ScopedInstall(Get4c5ca0, 0x004c5ca0);
+// MATCH-S19: the body of 0x004c5ca0 (Get4c5ca0) moved to Match/MatchS19_004c5ca0.cpp,
+// which compiles the byte-matched source re/match/s19/004c5ca0.c.
 
 // indexed_global_field_write family: *(*(base_glob)+*(idx_glob)+off)=v
 
-// 0x004c5830  render — byte-verified: ECX=*[0x7d3ff8]; EDX=*[0x7d4054]; EAX=[ESP+4];
-//   *(EDX+ECX+0x20)=EAX; return 1
-extern "C" __declspec(dllexport) int __cdecl Set4c5830(std::uint32_t v) {
-    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
-    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
-    *reinterpret_cast<std::uint32_t*>(base + idx + 0x20u) = v;
-    return 1;
-}
-RH_ScopedInstall(Set4c5830, 0x004c5830);
+// MATCH-S19: the body of 0x004c5830 (Set4c5830) moved to Match/MatchS19_004c5830.cpp,
+// which compiles the byte-matched source re/match/s19/004c5830.c.
 
-// 0x004c5c80  render — byte-verified: ECX=*[0x7d3ff8]; EDX=*[0x7d4054]; EAX=[ESP+4];
-//   *(EDX+ECX+0x10)=EAX; RET  (EAX left = v)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Set4c5c80(std::uint32_t v) {
-    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
-    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
-    *reinterpret_cast<std::uint32_t*>(base + idx + 0x10u) = v;
-    return v;
-}
-RH_ScopedInstall(Set4c5c80, 0x004c5c80);
+// MATCH-S19: the body of 0x004c5c80 (Set4c5c80) moved to Match/MatchS19_004c5c80.cpp,
+// which compiles the byte-matched source re/match/s19/004c5c80.c.
 
 // ===== round 103 =====
 // thiscall_struct_from_table family: __thiscall(this) reads global table indexed by
@@ -763,11 +739,8 @@ RH_ScopedInstall(Time41e150, 0x0041e150);
 // ===== round 115 =====
 // cdecl(ptr,...) struct-field RMW (pure arg-deref; deref_struct_set verified).
 
-// 0x004c45f0 — void fn(p): *(u32*)(p+0xc) &= 0xfffdfffc
-extern "C" __declspec(dllexport) void __cdecl And4c45f0(std::uint8_t* p) {
-    *reinterpret_cast<std::uint32_t*>(p + 0xc) &= 0xfffdfffcu;
-}
-RH_ScopedInstall(And4c45f0, 0x004c45f0);
+// MATCH-S19: the body of 0x004c45f0 (And4c45f0) moved to Match/MatchS19_004c45f0.cpp,
+// which compiles the byte-matched source re/match/s19/004c45f0.c.
 
 // 0x004b52c0 — void fn(p,val,flag): e=*(u32*)(p+8); if(flag) e|=val; *(u32*)(p+8)=e
 extern "C" __declspec(dllexport) void __cdecl Or4b52c0(std::uint8_t* p, std::uint32_t val, std::uint32_t flag) {
@@ -972,20 +945,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init4773f0(void)
 }
 RH_ScopedInstall(Init4773f0, 0x004773f0);
 
-// ===== round 125 =====
-// 0x004c75c0 — byte-verified two-level indexed global read (RW texture-catalog region):
-//   mov eax,[0x7d40a8]      ; base = *(u32*)0x7d40a8
-//   mov ecx,[0x7d3ff8]      ; idx  = *(u32*)0x7d3ff8
-//   mov edx,[eax+ecx+0x28]  ; edx  = *(u32*)(base+idx+0x28)
-//   lea eax,[eax+edx*4]     ; eax  = base + edx*4
-//   mov eax,[eax+ecx]       ; return *(u32*)(base+edx*4+idx)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Get4c75c0(void) {
-    std::uint8_t* base = *reinterpret_cast<std::uint8_t**>(0x007d40a8);
-    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8);
-    std::uint32_t edx  = *reinterpret_cast<std::uint32_t*>(base + idx + 0x28);
-    return *reinterpret_cast<std::uint32_t*>(base + edx * 4 + idx);
-}
-RH_ScopedInstall(Get4c75c0, 0x004c75c0);
+// MATCH-S19: the body of 0x004c75c0 (Get4c75c0) moved to Match/MatchS19_004c75c0.cpp,
+// which compiles the byte-matched source re/match/s19/004c75c0.c.
 
 // ===== round 126 =====
 // 0x00485340 — byte-verified bounded indexed-array getter:
@@ -1365,24 +1326,8 @@ extern "C" __declspec(dllexport) void __cdecl Remove5b35e0(std::uint8_t* list, s
 }
 RH_ScopedInstall(Remove5b35e0, 0x005b35e0);
 
-// ===== round 137 ===== (doubly-linked-list insert-at-head)
-// 0x004c5bc0 — void fn(list, node): if(node[4]) { *(node[0xc])=node[8]; *(node[8]+4)=node[0xc]; }
-//   node[4]=list; head=list+8; old=*head; node[0xc]=head; node[8]=old; *(old+4)=&node[8];
-//   *head=&node[8].  (intrusive list; links reference the &node[8] next-field address.)
-extern "C" __declspec(dllexport) void __cdecl Insert4c5bc0(std::uint8_t* list, std::uint8_t* node) {
-    if (*reinterpret_cast<std::uint32_t*>(node + 4) != 0) {
-        *reinterpret_cast<std::uint8_t**>(*reinterpret_cast<std::uint8_t**>(node + 0xc)) = *reinterpret_cast<std::uint8_t**>(node + 8);
-        *reinterpret_cast<std::uint8_t**>(*reinterpret_cast<std::uint8_t**>(node + 8) + 4) = *reinterpret_cast<std::uint8_t**>(node + 0xc);
-    }
-    *reinterpret_cast<std::uint8_t**>(node + 4) = list;
-    std::uint8_t* head = list + 8;
-    std::uint8_t* old = *reinterpret_cast<std::uint8_t**>(head);
-    *reinterpret_cast<std::uint8_t**>(node + 0xc) = head;
-    *reinterpret_cast<std::uint8_t**>(node + 8) = old;
-    *reinterpret_cast<std::uint8_t**>(old + 4) = node + 8;
-    *reinterpret_cast<std::uint8_t**>(head) = node + 8;
-}
-RH_ScopedInstall(Insert4c5bc0, 0x004c5bc0);
+// MATCH-S19: the body of 0x004c5bc0 (Insert4c5bc0) moved to Match/MatchS19_004c5bc0.cpp,
+// which compiles the byte-matched source re/match/s19/004c5bc0.c.
 
 // ===== round 138 ===== (4-entry global ptr-table match predicate)
 // 0x0045c510 — u32 fn(arg1, arg2): for idx in 0..3: e=*(int**)(0x88f680 + idx*4);
@@ -2325,80 +2270,8 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Aabb48a630(void)
 }
 RH_ScopedInstall(Aabb48a630, 0x0048a630);
 
-// 0x004c5c00  FUN_004c5c00 (frontend, circular-list case-insensitive string search)
-// void* f(list* arg1, char* query): walk the circular list at arg1[8] (sentinel = &arg1[8]);
-// each list node has next at node[0] and a key string at node+8 (object = node-8). Compare
-// the key vs query case-insensitively (only 'a'-'z' folded via +0xe0 == -0x20 mod 256, both
-// sides). Return the object (node-8) on a full match, else 0. Pure pointer/byte walk (no
-// globals, no float) -> VERBATIM naked port.
-extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Search4c5c00(void)
-{
-    __asm {
-        mov  eax, dword ptr [esp+4]         // arg1
-        push ebx
-        add  eax, 8                          // sentinel = &arg1[8]
-        push ebp
-        push esi
-        push edi
-        mov  ebx, dword ptr [eax]            // head = arg1[8]
-        mov  dword ptr [esp+0x14], eax       // save sentinel (clobbers own arg1 slot)
-        cmp  ebx, eax
-        je   L_SR_NF
-        mov  ebp, dword ptr [esp+0x18]       // query (arg2)
-    L_SR_LOOP:
-        lea  eax, [ebx-8]                     // object = node-8
-        lea  ecx, [eax+0x10]                  // key string = object+0x10 = node+8
-        test ecx, ecx
-        je   L_SR_NEXT
-        mov  esi, ecx
-        mov  edi, ebp
-        mov  cl, byte ptr [esi]
-        test cl, cl
-        je   L_SR_END
-    L_SR_INNER:
-        mov  dl, byte ptr [edi]
-        test dl, dl
-        je   L_SR_END
-        cmp  cl, 0x61
-        jl   L_SR_DL
-        cmp  cl, 0x7a
-        jg   L_SR_DL
-        add  cl, 0xe0
-    L_SR_DL:
-        cmp  dl, 0x61
-        jl   L_SR_CMP
-        cmp  dl, 0x7a
-        jg   L_SR_CMP
-        add  dl, 0xe0
-    L_SR_CMP:
-        cmp  cl, dl
-        jne  L_SR_NEXT
-        mov  cl, byte ptr [esi+1]
-        inc  esi
-        inc  edi
-        test cl, cl
-        jne  L_SR_INNER
-    L_SR_END:
-        mov  cl, byte ptr [esi]
-        mov  dl, byte ptr [edi]
-        cmp  cl, dl
-        je   L_SR_RET
-    L_SR_NEXT:
-        mov  ebx, dword ptr [ebx]
-        mov  eax, dword ptr [esp+0x14]
-        cmp  ebx, eax
-        jne  L_SR_LOOP
-    L_SR_NF:
-        xor  eax, eax
-    L_SR_RET:
-        pop  edi
-        pop  esi
-        pop  ebp
-        pop  ebx
-        ret
-    }
-}
-RH_ScopedInstall(Search4c5c00, 0x004c5c00);
+// MATCH-S19: the body of 0x004c5c00 (Search4c5c00) moved to Match/MatchS19_004c5c00.cpp,
+// which compiles the byte-matched source re/match/s19/004c5c00.c.
 
 // [REVERTED 2026-06-15] round 179 FUN_005172f0 (0x005172f0) is in the statically-linked
 // libpng/zlib band (0x516000-0x529fff) -> library-skip per user ruling; demoted C3->C2.
@@ -3197,28 +3070,8 @@ RH_ScopedInstall(FloatClamp3Level45ca30, 0x0045ca30);
 
 // D4-DC-RFX-CORE: the MultiArrayScatter476d00 body moved to Render/RfxEmitter.cpp (one body for both targets).
 
-// 0x004c0e50  FUN_004c0e50 (render, DllHeadInsert) — PURE LEAF (no calls)
-// void f(struct* p): intrusive doubly-linked-list head-insert. node = p[0xa0];
-// if ((node[3] & 3) == 0) insert node at head of list g=*0x7d3ff8 (sentinel @g+0xbc;
-// links: node+8=next, node+0xc=prev; prev points at the &next of the predecessor).
-// Always: node[3] |= 3; p[3] |= 0xc. capstone-verified.
-extern "C" __declspec(dllexport) void __cdecl DllHeadInsert4c0e50(unsigned char* p)
-{
-    unsigned char* node = *reinterpret_cast<unsigned char**>(p + 0xa0);
-    const unsigned char cl = node[3];
-    if ((cl & 3) == 0) {
-        unsigned char* g = *reinterpret_cast<unsigned char**>(0x007d3ff8u);
-        unsigned char* head = *reinterpret_cast<unsigned char**>(g + 0xbc);  // old first
-        *reinterpret_cast<void**>(node + 8)   = head;          // node->next = head
-        *reinterpret_cast<void**>(node + 0xc) = g + 0xbc;      // node->prev = &g->head
-        *reinterpret_cast<void**>(head + 4)   = node + 8;      // head->prev = &node->next
-        *reinterpret_cast<void**>(g + 0xbc)   = node + 8;      // g->head = &node->next
-    }
-    node = *reinterpret_cast<unsigned char**>(p + 0xa0);       // original reloads
-    node[3] = static_cast<unsigned char>(node[3] | 3);
-    p[3] = static_cast<unsigned char>(p[3] | 0xc);
-}
-RH_ScopedInstall(DllHeadInsert4c0e50, 0x004c0e50);
+// MATCH-S19: the body of 0x004c0e50 (DllHeadInsert4c0e50) moved to Match/MatchS19_004c0e50.cpp,
+// which compiles the byte-matched source re/match/s19/004c0e50.c.
 
 // 0x00413c70 FUN_00413c70 (vehicle, Idx2RecordCondSet) — PURE LEAF (no calls)
 // void f(int i, int j, int v): off = (j + 5*i)*12; *(int*)(0x63bc68+off) = v;

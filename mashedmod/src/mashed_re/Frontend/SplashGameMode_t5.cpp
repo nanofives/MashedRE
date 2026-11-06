@@ -164,17 +164,8 @@ RH_ScopedInstall(AspectRatioGlobalGet, 0x00493fc0);
 // ref: re/analysis/intro_splash_d2/0x004c75e0.md
 // ===========================================================================
 
-// 0x004c75e0
-extern "C" __declspec(dllexport) void __cdecl ViewportOriginGetter(int param_1,
-                                                                   std::uint16_t* param_2,
-                                                                   std::uint16_t* param_3) {
-    // Read u16 at param_1+0x1c into *param_2 (cited at 0x004c75e0 body).
-    *param_2 = *reinterpret_cast<const std::uint16_t*>(param_1 + 0x1c);
-    // Read u16 at param_1+0x1e into *param_3 (cited at 0x004c75e0 body).
-    *param_3 = *reinterpret_cast<const std::uint16_t*>(param_1 + 0x1e);
-}
-
-RH_ScopedInstall(ViewportOriginGetter, 0x004c75e0);
+// MATCH-S19: the body of 0x004c75e0 (ViewportOriginGetter) moved to Match/MatchS19_004c75e0.cpp,
+// which compiles the byte-matched source re/match/s19/004c75e0.c.
 
 // ===========================================================================
 // AspectRatioSnapshot  --  0x00494f30
