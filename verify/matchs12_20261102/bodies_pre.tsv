@@ -1,0 +1,129 @@
+0x00474e70	M	-	-
+0x00474f30	M	-	-
+0x00474fb0	M	-	-
+0x00474fd0	M	-	-
+0x00475010	M	-	-
+0x00475180	M	-	-
+0x00475210	M	-	-
+0x004752d0	M	-	-
+0x004752f0	.	-	-
+0x004756e0	M	D3d9Render/TrackRenderer.cpp[E]:('TrackRenderer::ClumpAnimTick', 4895)	-
+0x00475770	.	-	-
+0x00475830	M	-	-
+0x004758d0	M	-	-
+0x004759b0	M	Render/PromoLoop_standins_r1.cpp[A]:('Arrays691600Alloc', 39)	Render/PromoLoop_standins_r1.cpp:[('Arrays691600Alloc', 48)]
+0x00475a00	M	-	-
+0x00475a60	M	Util/UtilMid.cpp[A]:('PendingOpQueueFlush', 456)	Util/UtilMid.cpp:[('PendingOpQueueFlush', 471)]
+0x00475ab0	.	-	-
+0x00475c10	M	-	-
+0x00475d30	M	-	-
+0x00475d90	M	-	-
+0x00475e50	M	-	-
+0x00475ea0	M	-	-
+0x00475ef0	M	-	Lane2/L2_00475ef0.cpp:[('L2_FUN_00475ef0', 54)]
+0x00475f30	M	Util/PromoLoop_sessionB.cpp[A]:('ScaledMulAdd475f30', 3277)	Util/PromoLoop_sessionB.cpp:[('ScaledMulAdd475f30', 3290)]
+0x00475f50	M	-	-
+0x00475f90	.	-	-
+0x004762c0	M	-	-
+0x00476320	M	-	-
+0x00476390	M	-	-
+0x00476430	M	-	-
+0x00476440	M	-	-
+0x004764e0	M	-	-
+0x004764f0	M	-	-
+0x00476650	M	-	-
+0x00476710	M	-	-
+0x004767c0	M	-	-
+0x00476860	M	-	-
+0x00476880	M	-	-
+0x004768a0	M	-	-
+0x004768c0	M	-	-
+0x004769a0	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetPosition', 108)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetPosition', 116)]
+0x004769d0	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetVelocity', 119)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetVelocity', 125)]
+0x004769f0	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetColour', 128)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetColour', 132)]
+0x00476a10	M	Render/RfxEmitter.cpp[EA]:('Copy476a10', 135)	Render/RfxEmitter.cpp:[('Copy476a10', 142)]
+0x00476a30	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetScalar', 145)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetScalar', 149)]
+0x00476a40	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetRGBA', 152)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetRGBA', 160)]
+0x00476a80	M	Render/RfxEmitter.cpp[EA]:('Copy476a80', 163)	Render/RfxEmitter.cpp:[('Copy476a80', 169)]
+0x00476ae0	M	Render/RfxEmitter.cpp[EA]:('Batch476ae0', 176)	Render/RfxEmitter.cpp:[('Batch476ae0', 184)]
+0x00476b30	M	Render/RfxEmitter.cpp[EA]:('Set476b30', 189)	Render/RfxEmitter.cpp:[('Set476b30', 206)]
+0x00476b90	M	Render/RfxEmitter.cpp[EA]:('Batch476b90', 209)	Render/RfxEmitter.cpp:[('Batch476b90', 217)]
+0x00476be0	M	Render/RfxEmitter.cpp[EA]:('Batch476be0', 220)	Render/RfxEmitter.cpp:[('Batch476be0', 226)]
+0x00476c10	M	Render/RfxEmitter.cpp[EA]:('Batch476c10', 229)	Render/RfxEmitter.cpp:[('Batch476c10', 239)]
+0x00476c60	M	Render/RfxEmitter.cpp[EA]:('Batch476c60', 242)	Render/RfxEmitter.cpp:[('Batch476c60', 250)]
+0x00476cb0	M	Render/RfxEmitter.cpp[EA]:('Batch476cb0', 253)	Render/RfxEmitter.cpp:[('Batch476cb0', 260)]
+0x00476d00	M	Render/RfxEmitter.cpp[EA]:('MultiArrayScatter476d00', 268)	Render/RfxEmitter.cpp:[('MultiArrayScatter476d00', 319)]
+0x00476df0	M	Render/RfxEmitter.cpp[EA]:('Flush', 477)	-
+0x004770a0	M	-	-
+0x004770c0	M	Render/RfxEmitter.cpp[EA]:('Create', 379)	-
+0x004773f0	M	Util/PromoLoop_sessionB.cpp[A]:('Init4773f0', 941)	Util/PromoLoop_sessionB.cpp:[('Init4773f0', 973)]
+0x00477450	M	Util/PromoLoop_sessionB.cpp[A]:('Init477450', 1583)	Util/PromoLoop_sessionB.cpp:[('Init477450_RegAbi', 1622)]
+0x00477490	M	-	-
+0x00477500	M	-	-
+0x00477580	M	-	-
+0x004775b0	M	-	-
+0x00477730	M	-	-
+0x00477760	M	-	-
+0x004777d0	M	-	-
+0x00477810	M	-	-
+0x00477870	M	-	-
+0x004778e0	M	-	-
+0x00477920	M	-	-
+0x00477a10	.	-	-
+0x00477b40	M	Util/PromoLoop_sessionB.cpp[A]:('ZeroTwoRegions477b40', 3626)	Util/PromoLoop_sessionB.cpp:[('ZeroTwoRegions477b40', 3641)]
+0x00477b60	M	Util/PromoLoop_sessionB.cpp[A]:('Alloc477b60', 1908)	Util/PromoLoop_sessionB.cpp:[('Alloc477b60', 1926)]
+0x00477be0	.	-	-
+0x00477e00	M	Util/PromoLoop_sessionB.cpp[A]:('Table69318cSet', 149)	Util/PromoLoop_sessionB.cpp:[('Table69318cSet', 152)]
+0x00477e40	M	-	-
+0x00477e60	.	-	-
+0x00477f00	M	-	-
+0x00477f50	.	-	-
+0x00478030	M	-	-
+0x004780c0	M	-	-
+0x00478110	M	-	-
+0x004781b0	M	-	-
+0x00478200	M	-	-
+0x00478220	M	-	-
+0x004783f0	M	-	-
+0x004785e0	M	-	-
+0x00478660	M	-	-
+0x00478cb0	M	Util/PromoLoop_sessionB.cpp[A]:('Memset478cb0', 722)	Util/PromoLoop_sessionB.cpp:[('Memset478cb0', 725)]
+0x00478cc0	M	Render/RenderLeaves_ae2.cpp[EA]:('', 89)	Render/RenderLeaves_ae2.cpp:[('RenderWorldStateZeroFill', 100)]
+0x00478cd0	M	-	-
+0x00478cf0	M	-	-
+0x00479030	M	-	-
+0x004790e0	M	-	-
+0x00479100	M	-	-
+0x00479330	M	-	-
+0x00479fb0	M	-	-
+0x0047a020	M	-	-
+0x0047a0f0	M	-	-
+0x0047a130	M	-	-
+0x0047a180	M	-	-
+0x0047a1b0	M	-	-
+0x0047a1e0	M	-	-
+0x0047a280	M	-	-
+0x0047a320	M	-	-
+0x0047a3a0	M	-	-
+0x0047a440	M	-	-
+0x0047a4a0	M	-	-
+0x0047a540	M	-	-
+0x0047a580	M	-	-
+0x0047a5b0	M	-	-
+0x0047a5e0	M	-	-
+0x0047a610	M	-	-
+0x0047a6b0	M	-	-
+0x0047a6f0	M	-	-
+0x0047a720	M	-	-
+0x0047a750	M	-	-
+0x0047a790	M	-	-
+0x0047a7d0	M	-	-
+0x0047a7f0	M	-	-
+0x0047a810	M	-	-
+0x0047a880	M	-	-
+0x0047a8b0	M	-	-
+0x0047a950	M	-	-
+0x0047a9b0	M	-	-
+0x0047aa20	M	-	-
+0x0047aa50	M	-	-
+0x0047aaa0	M	-	-
