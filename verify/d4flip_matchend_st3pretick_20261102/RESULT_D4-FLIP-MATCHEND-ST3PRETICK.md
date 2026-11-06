@@ -1,7 +1,7 @@
 # RESULT D4-FLIP-MATCHEND-ST3PRETICK (GREEN)
 
 Verdict: **GREEN** (2026-11-06). The flip is committed (ec8c2c340) and all four default-gate arms on the flipped exe,
-rebuilt on top of `orch/integration` @ 7bfd51a2e (merge 6a788de6b), reproduce the current refs in
+rebuilt on top of `orch/integration` @ d351e7dcb (merge 6a788de6b), reproduce the current refs in
 `re/orchestrator/merge_train.json` (G-CTRL 8284be46 / ba407a16 / 31fe043e, B 1d5bf4f9 x3). No `merge_train.json` change.
 SOURCE change (two knob defaults in `TrackRenderer.cpp`), default gate hashes unchanged.
 
@@ -30,7 +30,7 @@ ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  H_DEF.gates.cs
 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  B_DEF_K26.step.csv
 ```
 
-All spawned PIDs (804, 6852, 15764, 17100) self-exited. The merge train should run this row alone in its own `-Full`
+All spawned PIDs (804, 6852, 15764, 17100) self-exited. `orch/integration` has since moved to f565f1946 (MATCH-T13-SEED, D4-DC-INC-0046d4a0-REPLAYORDER, mashedmod changes), so the combined tree is not gated here. The merge train should run this row alone in its own `-Full`
 flip pass, as decided.
 
 ## History: the 2026-11-02 HANDOFF
