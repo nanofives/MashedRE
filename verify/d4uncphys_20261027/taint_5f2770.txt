@@ -1,0 +1,2 @@
+sites 40
+0x40e488 0x40e48e L1 mov dword ptr [edx + ecx*4 + 0x34], eax
