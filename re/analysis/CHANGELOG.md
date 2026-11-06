@@ -84,6 +84,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-06  0x00492d30  GameTickStateMachine7  C2->C2  no change (L-68): match evidence: identical, swapped, exe-callers=0; port body fix (switch paths of cases 2-7 and default; FUN_004111c0/FUN_00498860 prototype arity); evidence: verify/matchfix492d30_20261106/RESULT_MATCH-FIX-492D30.md
 2026-11-06  0x004c2ed0  RwEngineGetModeInfo  C3=C3  notes/file only: match identical, swapped to Match/MatchS19_004c2ed0.cpp (asi), exe-callers=0, no level from the match route (L-68 ruling); evidence: verify/matchs19_20261102/RESULT_MATCH-S19.md
 2026-11-06  0x004c2f00  RwEngineGetCurrentMode  C4=C4  notes/file only: match identical, swapped to Match/MatchS19_004c2f00.cpp (exe+asi), exe-callers=0, no level from the match route (L-68 ruling), C4 stays on its earlier route; evidence: verify/matchs19_20261102/RESULT_MATCH-S19.md
 2026-11-06  0x004c5c80  FUN_004c5c80  C3=C3  notes/file only: match identical, swapped to Match/MatchS19_004c5c80.cpp (asi), exe-callers=0, no level from the match route (L-68 ruling); evidence: verify/matchs19_20261102/RESULT_MATCH-S19.md
