@@ -185,22 +185,10 @@ extern "C" int __cdecl IntroSplashVtableSlot6(int param_1);
 
 static constexpr std::uintptr_t kRwDriverVtable_9c = 0x9cu;   // slot 39 × 4 = 0x9c
 
-// 0x004c1bb0
-extern "C" __declspec(dllexport)
-std::uint32_t __cdecl IntroSplashRenderState(std::uint32_t param_1,
-                                              void*         param_2,
-                                              std::uint32_t param_3) {
-    const std::uintptr_t driver_vtable_root =
-        *reinterpret_cast<const std::uintptr_t*>(kRwDriver_007d3ff8);
-    using VFn = int (__cdecl*)(std::uint32_t, void*, std::uint32_t);
-    const VFn fn = *reinterpret_cast<VFn*>(driver_vtable_root + kRwDriverVtable_9c);
-    const int iVar1 = fn(param_1, param_2, param_3);
-    // -(uint)(iVar1 != 0) & param_1
-    const std::uint32_t mask = static_cast<std::uint32_t>(-static_cast<int>(iVar1 != 0));
-    return mask & param_1;
-}
-
-RH_ScopedInstall(IntroSplashRenderState, 0x004c1bb0);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S19: the body of 0x004c1bb0 (IntroSplashRenderState) moved to Match/MatchS19_004c1bb0.cpp,
+// which compiles the byte-matched source re/match/s19/004c1bb0.c.
+// Declaration only (C linkage; the wrapper defines it as unsigned int (unsigned int, int, int)): the in-TU caller below.
+extern "C" std::uint32_t __cdecl IntroSplashRenderState(std::uint32_t param_1, void* param_2, std::uint32_t param_3);
 
 
 // ─── 0x00492d20  IntroSplashFrameTickShim ────────────────────────────────────

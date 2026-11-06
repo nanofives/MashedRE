@@ -249,6 +249,7 @@
 "Boot\Window.cpp"
 "Boot\VideoConfig.cpp"
 "Match\MatchS19_004c19f0.cpp"
+"Match\MatchS19_004c2f00.cpp"
 "Match\MatchS19_004c3df0.cpp"
 "Boot\VideoCfgFirstRun.cpp"
 "Boot\Teardown.cpp"

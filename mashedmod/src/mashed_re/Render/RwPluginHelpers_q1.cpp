@@ -62,18 +62,8 @@ static FUN_004c2c90_t const s_FUN_004c2c90 =
 // RW 3.x analog: RwEngineGetNumSubSystems() -> RwInt32.
 // ---------------------------------------------------------------------------
 
-// 0x004c2de0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetNumSubSystems() {
-    // 0x004c2de0: local_4 pre-init = 1 (dispatcher fallback for cmd 0xd)
-    std::int32_t local_4 = 1;
-    // 0x004c2de0: load DAT_007d3ff8, add 0x10, cmd=0x0d, out=&local_4, in1=0, in2=0
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    s_FUN_004c2c90(ctx + 0x10, 0xd, reinterpret_cast<std::int32_t>(&local_4), 0, 0);
-    return static_cast<std::uint32_t>(local_4);
-}
-
-RH_ScopedInstall(RwEngineGetNumSubSystems, 0x004c2de0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2de0 (RwEngineGetNumSubSystems) moved to Match/MatchS19_004c2de0.cpp,
+// which compiles the byte-matched source re/match/s19/004c2de0.c.
 
 // ---------------------------------------------------------------------------
 // RwEngineGetSubSystemInfo  --  0x004c2e10
@@ -125,25 +115,8 @@ RH_ScopedInstall(RwEngineGetNumSubSystems, 0x004c2de0);  // re-enabled 2026-05-2
 // RW 3.x analog: RwEngineGetCurrentSubSystem() -> RwInt32.
 // ---------------------------------------------------------------------------
 
-// 0x004c2e40
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetCurrentSubSystem() {
-    // 0x004c2e40: load DAT_007d3ff8, add 0x10, cmd=0x0f, out=&local_4, in1=0, in2=0
-    std::int32_t local_4;  // no pre-init, matches original
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    const std::int32_t iVar1 = s_FUN_004c2c90(
-        ctx + 0x10,
-        0xf,
-        reinterpret_cast<std::int32_t>(&local_4),
-        0,
-        0);
-    if (iVar1 != 0) {
-        return static_cast<std::uint32_t>(local_4);
-    }
-    return 0xffffffffu;  // -1 sentinel: dispatcher refused / driver not available
-}
-
-RH_ScopedInstall(RwEngineGetCurrentSubSystem, 0x004c2e40);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2e40 (RwEngineGetCurrentSubSystem) moved to Match/MatchS19_004c2e40.cpp,
+// which compiles the byte-matched source re/match/s19/004c2e40.c.
 
 // ---------------------------------------------------------------------------
 // RwEngineGetNumVideoModes  --  0x004c2ea0
@@ -170,22 +143,5 @@ RH_ScopedInstall(RwEngineGetCurrentSubSystem, 0x004c2e40);  // re-enabled 2026-0
 // RW 3.x analog: RwEngineGetNumVideoModes() -> RwInt32.
 // ---------------------------------------------------------------------------
 
-// 0x004c2ea0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetNumVideoModes() {
-    // 0x004c2ea0: load DAT_007d3ff8, add 0x10, cmd=0x05, out=&local_4, in1=0, in2=0
-    std::int32_t local_4;  // no pre-init, matches original
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    const std::int32_t iVar1 = s_FUN_004c2c90(
-        ctx + 0x10,
-        5,
-        reinterpret_cast<std::int32_t>(&local_4),
-        0,
-        0);
-    if (iVar1 != 0) {
-        return static_cast<std::uint32_t>(local_4);
-    }
-    return 0xffffffffu;  // -1 sentinel: driver refused
-}
-
-RH_ScopedInstall(RwEngineGetNumVideoModes, 0x004c2ea0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2ea0 (RwEngineGetNumVideoModes) moved to Match/MatchS19_004c2ea0.cpp,
+// which compiles the byte-matched source re/match/s19/004c2ea0.c.

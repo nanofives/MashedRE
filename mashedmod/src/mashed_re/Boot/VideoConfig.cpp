@@ -109,24 +109,7 @@ RH_ScopedInstall(VideoGetRenderHeight, 0x00498bd0);  // re-enabled 2026-05-24 c3
 // Returns current video-mode index, or 0xffffffff on failure.
 // ---------------------------------------------------------------------------
 
-// 0x004c2f00
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetCurrentMode() {
-    // 0x004c2f00 body: load DAT_007d3ff8, add 0x10, pass cmd=10 with &local_4 out.
-    std::uint32_t local_4 = 0;
-    const std::int32_t ctx =
-        *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-    const std::int32_t result = s_FUN_004c2c90(
-        ctx + 0x10,
-        10,
-        reinterpret_cast<std::int32_t>(&local_4),
-        0,
-        0);
-    if (result != 0) {
-        return local_4;
-    }
-    return 0xffffffffu;
-}
-
-RH_ScopedInstall(RwEngineGetCurrentMode, 0x004c2f00);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S19: the body of 0x004c2f00 (RwEngineGetCurrentMode) moved to Match/MatchS19_004c2f00.cpp,
+// which compiles the byte-matched source re/match/s19/004c2f00.c.
 
 // 0x004c2ed0 RwEngineGetModeInfo — implemented in Render/RwPluginHelpers_o3.cpp (c3-batch-o-s3).
