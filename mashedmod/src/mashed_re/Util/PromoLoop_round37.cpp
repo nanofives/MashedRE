@@ -19,11 +19,8 @@
 // MATCH-S09: the body of 0x00452ea0 (Table88ff50Get) moved to Match/MatchS09_00452ea0.cpp,
 // which compiles the byte-matched source re/match/s09/00452ea0.c.
 
-// 0x0045dd50  8B 44 24 04 8B 04 85 00 A3 8A 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table8aa300Get(std::uint32_t param_1) {
-    return reinterpret_cast<const std::uint32_t*>(0x008aa300u)[param_1];  // cited at 0x0045dd50
-}
-RH_ScopedInstall(Table8aa300Get, 0x0045dd50);
+// MATCH-S10: the body of 0x0045dd50 (Table8aa300Get) moved to Match/MatchS10_0045dd50.cpp,
+// which compiles the byte-matched source re/match/s10/0045dd50.c.
 
 // MATCH-S04: the body of 0x0041f320 (Table63d830Get) moved to Match/MatchS04_0041f320.cpp,
 // which compiles the byte-matched source re/match/s04/0041f320.c.

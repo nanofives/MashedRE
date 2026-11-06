@@ -1,0 +1,21 @@
+MATCH-S10 swap helper w1 report (2026-11-02)
+
+0x0045ba00  SWAPPED  symbol=RaceResultIndexedStore  targets=both  install=1  x87=no
+ removed=Frontend/SmallLeaves_n2.cpp:67-76  binds=none  note=old body = same indexed u32 store to 0x0068d1f0+i*4, no callees, no knob; exe callers: none. Wrapper Match/MatchS10_0045ba00.cpp (needs adding to both rsp).
+0x0045bac0  NOT-SAFE  symbol=PowerupSystem::Deactivate  targets=exe  install=0  x87=no
+ removed=none  binds=none  note=old body is a C++ member on port-owned state (slots_[s], cur_, s_table lookup, Lookup(activeCode)), has an armed early-out and resets 7 port-only slot fields; the matched source calls (slot+0xa8)->destroy through the original slot array at 0x0088fbe0. File 0045bae0.c NOT included: 0x0045ba10/0x0045bae0/0x0045bf30/0x0045bba0 stay unswapped (no HELD conversion done) because the file drags in callees with NO port body: 0x004b6520, 0x00459290, 0x004587a0, 0x0047b9b0, 0x00440bc0, 0x00411f30, 0x004039c0, 0x0041f060, 0x00476880, 0x0045c010, 0x0045a190, 0x00453f60; 0x0045bba0 also duplicates the port's PowerupSystem::Tick dispatcher (port-owned state, MASHED_PU_FORCE knob).
+0x0045c110  NOT-SAFE  symbol=SurfaceGate  targets=exe  install=0  x87=no
+ removed=none  binds=none  note=old body takes a port WorldHit* (matKey field) not the RpMaterial colour, has an injector branch (s_gInject) and a CSV log, and reproduces only the two literal refusals: the 20 FUN_00472550 scripted-gate arms are a stand-in returning 0.
+0x0045c350  NOT-SAFE  symbol=SweepConfirm  targets=exe  install=0  x87=no
+ removed=none  binds=none  note=old body is a stand-in: signature (slot, WorldHit*, retAddr), returns 1 or the s_sInject injector result, logs; never walks the hit's material table, never calls FUN_0045c110/FUN_00426c00/FUN_0044d5e0/FUN_004c51a0/FUN_00452140.
+0x0045c330  SWAPPED  symbol=PredNot45c330  targets=both  install=1  x87=no
+ removed=Gameplay/PickupPredicates.cpp:40-58 (+ the now-dead s_fn_45bff0 / PK_SlotEmpty decl block, old lines 20-25)  binds=FUN_0045bff0=PK_SlotEmpty (exe, #ifdef MASHED_STANDALONE) / MatchS10_0045c330_Call0045bff0 raw 0x0045bff0 forwarder (asi)  note=same callee per target as the old naked body's s_fn_45bff0 pointer; result ==0 identical (NEG/SBB/INC); exe callers: Gameplay/PickupCollect_naked.inc:53 (`call PredNot45c330`, included at Gameplay/PickupTick.cpp:196, exe-only TU, unguarded). Asi port body of 0x0045bff0 exists (Util/PromoLoop_sessionB.cpp Pred45bff0, installed) but the old asi body called the raw address, so the forwarder keeps that (installed JMP reaches Pred45bff0). Asi variant compiled without MASHED_STANDALONE: OK.
+0x0045db50  SWAPPED  symbol=FloatSliderStep  targets=both  install=1  x87=yes
+ removed=Util/FloatSliderStep.cpp:26-77 (TU now holds only the header comment + include)  binds=none  note=steps 0.2f/0.005f match the original .rdata the old body read (0x005cc9c0=cdcc4c3e, 0x005cd0ec=0ad7a33b), clamp 1.0/0.0 same; NaN kept unclamped in both, -0.0 kept in both, dir>3 and negative dir re-clamp only in both; single f32 add/sub so SSE vs x87 PC_24/PC_53 give the same f32; build.bat has no /fp flag (precise). exe callers: none. Compiled /arch:IA32 too: OK.
+0x004625b0  NOT-SAFE  symbol=AudioCharacterBankPathsBuild  targets=both  install=0  x87=no
+ removed=none  binds=none  note=old body reads names from a port const table kBankName (not DAT_006041f0 at 0x006041f0), formats via snprintf with a 0x80 cap (truncates; matched strcat does not), and never calls FUN_004a2b60 (no port body of 0x004a2b60 exists either). Shared CharacterBankPathCore is also the exe's Audio::CharacterBankPath core.
+
+match.py re-run (no .c edits): 0045ba00 100% 4/4, 0045c330 100% 8/8, 0045db50 100% 27/27.
+wrapcheck OK: MatchS10_0045ba00, MatchS10_0045c330, MatchS10_0045db50, SmallLeaves_n2, PickupPredicates, FloatSliderStep.
+dual_copy_allowlist.txt: no entry made stale (none of the swapped RVAs had bodies in two TUs).
+Lead to do: add Match/MatchS10_0045ba00.cpp, MatchS10_0045c330.cpp, MatchS10_0045db50.cpp to both rsp files; MatchS10_0045db50.cpp to x87_tus.txt.

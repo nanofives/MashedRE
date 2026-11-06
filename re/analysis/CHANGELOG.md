@@ -48,6 +48,28 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 <!-- ENTRIES -->
 2026-11-06  00420d00  PanelSortInit  C2->C3  path1 GREEN 5/5 + path2 PASS 2/2, U-3226 resolved (4 x 0x24 array) evidence: verify/d4-wip-panelsort_20261106/RESULT_D4-WIP-PANELSORT.md
 2026-11-06  U-3226  UNCERTAINTIES  Active->struck  the block at 0x0063e4b8 is 4 elements of 0x24 bytes: readers index it as [(i*9)*4 + 0x0063e4b8] (0x004215d0, 0x004215ee, 0x00420d84) and loop it with stride 0x24 to 0x0063e548 (0x004215a1..0x004215b4, 0x00420d42..0x00420d72); 0x00420d00 writes element i dword +0x18 = i. Field meanings beyond that not claimed (evidence: verify/d4-wip-panelsort_20261106/RESULT_D4-WIP-PANELSORT.md)
+2026-11-06  0x0045d3f0  FUN_0045d3f0  C2->C2  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045ba00  RaceResultIndexedStore  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045bfe0  Bezier::GetLocate  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c810  FUN_0045c810  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045db50  FloatSliderStep  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x004627b0  AudioStateActive  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x00462510  Set603868_0  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x00462500  Set603868_1  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045df70  FloatStep45df70  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045dfc0  FUN_0045dfc0  C2->C2  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c7f0  FUN_0045c7f0  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045bff0  Pred45bff0  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c330  PredNot45c330  C3->C4  route match (c4=match), exe-callers=1 (PK_458920 <- Pickups_Callback <- RG_CbDispatch <- Registry_FrameTick <- UpdateCar <- RenderFrame <- WinMain); evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c4e0  ArgSearch45c4e0  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c510  FUN_0045c510  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c640  Sel88fbc4  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c850  Table88f09cClear  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045c860  Clear88f0a0x4  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045cab0  SlotAliveState45cab0  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045caf0  EqPredicate7f1a18  C4->C4  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x0045dd50  Table8aa300Get  C4->C4  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
+2026-11-06  0x00462760  FUN_00462760  C3->C3  match identical, swapped, exe-callers=0 (L-68 ruling), level kept; evidence: verify/matchs10_20261102/RESULT_MATCH-S10.md
 2026-11-02  D-11075  DEFERRED  rewritten, stays Active  launcher retired by L-79 A (D5-SHIM-STEP3-LAUNCHER); row no longer implies a live launcher
 2026-11-02  S-3714  STUBS  Active->struck  native port, no call_original (0x00546bf0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
 2026-11-02  S-3715  STUBS  Active->struck  native port, no call_original (0x00546c50 RwpSolverMath2QuatY.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md

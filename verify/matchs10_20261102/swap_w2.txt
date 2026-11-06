@@ -1,0 +1,23 @@
+MATCH-S10 swap helper w2 report (2026-11-02)
+0x0045baa0  NOT-SAFE  symbol=PowerupTypeSearch (+asi Search45baa0/Search45baa0_RegAbi)  targets=both  install=1(asi RegAbi shim)  x87=no
+ removed=none  binds=none  note=the exe caller Powerup/PowerupSystem.cpp:98 (PowerupSystem::Lookup) passes the port-owned C++ table s_table, s_count=9, stride sizeof(TypeEntry); the matched FUN_0045baa0 (static in 0045bfa0.c) hard-codes 0x005f9998/[0x005f9bd8]/0x40, so it cannot serve that caller unchanged. asi caller Search45baa0 (sessionB:~1042) passes the original table and would fit. Not swapped, 0045bfa0.c untouched.
+0x0045bff0  SWAPPED  symbol=Pred45bff0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:216-221  binds=none  note=old read 0x0088fc88+i*0xb4 = matched 0x0088fbe0[i]+0xa8. exe callers: none (exe PredNot45c330 calls PK_SlotEmpty via s_fn_45bff0, Gameplay/PickupTick.cpp:138, a separate port-state function the scanner does not count as a body).
+0x0045c4e0  SWAPPED  symbol=ArgSearch45c4e0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:338-345  binds=none  note=same 0x28 stride, key at +0. exe callers: none.
+0x0045c510  SWAPPED  symbol=Match45c510  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:1441-1455 (round-138 header line re-added by hand)  binds=none  note=same +0xc==1, +0x28==id, arg+4==i order. exe callers: none.
+0x0045c7f0  SWAPPED  symbol=Sub45c7f0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:2926-2943  binds=FUN_0040e350=GetRenderSubMode,FUN_0040e450=Flag63b908Get  note=old naked int, matched void: both original callers (0x0045d356, 0x0045d38c) do pop esi / jmp 0x0045c6b0, which overwrites EAX (0x0045c6d1) before reading it, so the return is dead. No port callers. Flag63b908Get lives in asi-only Util/PromoLoop_round26.cpp: this wrapper cannot link into the exe as is. exe callers: none.
+0x0045c810  SWAPPED  symbol=Inc45c810  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:565-569  binds=none  note=exe callers: none.
+0x0045ca30  NOT-SAFE  symbol=FloatClamp3Level45ca30  targets=asi  install=1  x87=yes
+ removed=none  binds=none  note=old body walks 6 floats (0x0088f5e0..+0x18). Original and matched walk 36 (inner dec edx from 6, outer cmp ecx,0x0088f670 at 0x0045ca9d). NaN also differs: old writes -2.0, original/matched leave it unchanged (jp at 0x0045ca69/0x0045ca8f). Swapping would change what the asi computes (toward the original): lead decision.
+0x0045cab0  SWAPPED  symbol=SlotAliveState45cab0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:4213-4251  binds=FUN_0046cbb0=VehicleCarStateRead,FUN_0046c7b0=VehicleSlotGetter  note=old naked body called raw 0x0046cbb0/0x0046c7b0 (both installed in the asi from Vehicle/VehicleState.cpp, which has the same idx>=0x10 guards as the original). Tests the 2nd arg out, as old did. exe callers: none.
+0x0045df70  SWAPPED  symbol=FloatStep45df70  targets=asi  install=1  x87=yes
+ removed=Util/PromoLoop_sessionB.cpp:347-355  binds=none  note=old read the step from 0x005cc9a4 at runtime. Matched uses literal 0.025f: 0x005cc9a4 is in .rdata (0x005cc000, read-only) and holds 0.025f. Callers: Lane2/L2_0045dfc0.cpp:41,44 (asi-only TU). exe callers: none.
+0x00462760  SWAPPED  symbol=Pred462760  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:3087-3132  binds=FUN_005a89a0=VoiceFieldD6cGet,FUN_005a89b0=VoiceFieldD70Get  note=old called raw 0x005a89b0/0x005a89a0. Port bodies in Audio/AudioFieldGetters.cpp (both targets, installed). Same test order. exe callers: none.
+Checks: wrapcheck OK on all 8 MatchS10_<va8>.cpp and on the edited PromoLoop_sessionB.cpp. No .c edits, so match.py results are unchanged. dual_copy_allowlist: no entries for these RVAs, none made stale.
+Wrappers need adding to asi_sources.rsp. x87_tus: MatchS10_0045df70.cpp.

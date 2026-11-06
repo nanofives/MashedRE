@@ -1,0 +1,128 @@
+0x0045b9d0	M	-	-
+0x0045ba00	M	Frontend/SmallLeaves_n2.cpp[EA]:('RaceResultIndexedStore', 68)	Frontend/SmallLeaves_n2.cpp:[('RaceResultIndexedStore', 76)]
+0x0045ba10	.	-	-
+0x0045baa0	.	Powerup/PowerupTypeSearch.cpp[EA]:('PowerupTypeSearch', 26)	Util/PromoLoop_sessionB.cpp:[('Search45baa0_RegAbi', 1082)]
+0x0045bac0	.	Powerup/PowerupSystem.cpp[E]:('PowerupSystem::Deactivate', 126)	-
+0x0045bae0	.	-	-
+0x0045bba0	.	-	-
+0x0045be90	M	-	-
+0x0045bed0	M	-	-
+0x0045bf30	.	-	-
+0x0045bfa0	.	-	-
+0x0045bfd0	.	-	-
+0x0045bfe0	M	Util/PromoLoop_round31.cpp[A]:('Global80332cGet', 32)	Util/PromoLoop_round31.cpp:[('Global80332cGet', 35)]
+0x0045bff0	.	Util/PromoLoop_sessionB.cpp[A]:('Pred45bff0', 218)	Util/PromoLoop_sessionB.cpp:[('Pred45bff0', 221)]
+0x0045c010	.	-	-
+0x0045c030	.	-	-
+0x0045c110	.	Powerup/PowerupContact.cpp[E]:('SurfaceGate', 232)	-
+0x0045c330	.	Gameplay/PickupPredicates.cpp[EA]:('PredNot45c330', 45)	Gameplay/PickupPredicates.cpp:[('PredNot45c330', 58)]
+0x0045c350	.	Powerup/PowerupContact.cpp[E]:('SweepConfirm', 271)	-
+0x0045c480	.	Util/UtilLeaves_ab6.cpp[EA]:('UtilZeroScatter45c480', 86)	Util/UtilLeaves_ab6.cpp:[('UtilZeroScatter45c480', 104)]
+0x0045c4e0	.	Util/PromoLoop_sessionB.cpp[A]:('ArgSearch45c4e0', 340)	Util/PromoLoop_sessionB.cpp:[('ArgSearch45c4e0', 345)]
+0x0045c510	.	Util/PromoLoop_sessionB.cpp[A]:('Match45c510', 1445)	Util/PromoLoop_sessionB.cpp:[('Match45c510', 1455)]
+0x0045c550	.	-	-
+0x0045c640	.	-	Util/PromoLoop_round60.cpp:[('Sel88fbc4', 62)]
+0x0045c6b0	.	-	-
+0x0045c720	M	-	-
+0x0045c7f0	M	Util/PromoLoop_sessionB.cpp[A]:('Sub45c7f0', 2930)	Util/PromoLoop_sessionB.cpp:[('Sub45c7f0', 2943)]
+0x0045c810	M	Util/PromoLoop_sessionB.cpp[A]:('Inc45c810', 566)	Util/PromoLoop_sessionB.cpp:[('Inc45c810', 569)]
+0x0045c820	M	-	-
+0x0045c850	M	Util/PromoLoop_round47.cpp[A]:('Table88f09cClear', 25)	Util/PromoLoop_round47.cpp:[('Table88f09cClear', 28)]
+0x0045c860	M	Util/PromoLoop_round55.cpp[A]:('Clear88f0a0x4', 52)	Util/PromoLoop_round55.cpp:[('Clear88f0a0x4', 58)]
+0x0045c880	.	-	-
+0x0045ca30	.	Util/PromoLoop_sessionB.cpp[A]:('FloatClamp3Level45ca30', 3441)	Util/PromoLoop_sessionB.cpp:[('FloatClamp3Level45ca30', 3453)]
+0x0045cab0	.	Util/PromoLoop_sessionB.cpp[A]:('SlotAliveState45cab0', 4216)	Util/PromoLoop_sessionB.cpp:[('SlotAliveState45cab0', 4251)]
+0x0045caf0	.	Util/PromoLoop_round58.cpp[A]:('EqPredicate7f1a18', 55)	Util/PromoLoop_round58.cpp:[('EqPredicate7f1a18', 61)]
+0x0045cb20	.	-	-
+0x0045cbe0	.	-	-
+0x0045cc50	M	-	-
+0x0045cc80	.	-	-
+0x0045cd30	.	-	-
+0x0045cfe0	.	-	-
+0x0045d080	.	-	-
+0x0045d0e0	.	-	-
+0x0045d1e0	.	-	-
+0x0045d250	.	-	-
+0x0045d330	.	-	-
+0x0045d3a0	M	-	-
+0x0045d3f0	M	-	Lane2/L2_0045d3f0.cpp:[('L2_FUN_0045d3f0', 55)]
+0x0045d430	M	-	-
+0x0045d460	.	-	-
+0x0045d7a0	.	-	-
+0x0045da60	M	-	-
+0x0045da90	.	-	-
+0x0045daf0	.	-	-
+0x0045db50	.	Util/FloatSliderStep.cpp[EA]:('void __cdecl', 27)	Util/FloatSliderStep.cpp:[('FloatSliderStep', 77)]
+0x0045dbe0	.	-	Util/FloatSlider2SelfTest.cpp:[('Slider2_Entry', 228)]
+0x0045dc80	M	-	-
+0x0045dce0	.	-	-
+0x0045dd50	M	Util/PromoLoop_round37.cpp[A]:('Table8aa300Get', 26)	Util/PromoLoop_round37.cpp:[('Table8aa300Get', 29)]
+0x0045dd60	.	-	-
+0x0045de80	.	-	-
+0x0045df70	.	Util/PromoLoop_sessionB.cpp[A]:('FloatStep45df70', 349)	Util/PromoLoop_sessionB.cpp:[('FloatStep45df70', 355)]
+0x0045dfc0	.	-	Lane2/L2_0045dfc0.cpp:[('L2_FUN_0045dfc0', 51)]
+0x0045dff0	.	-	-
+0x0045e040	.	-	-
+0x0045e0f0	.	-	-
+0x0045e160	.	-	-
+0x0045e2a0	.	-	-
+0x0045e460	.	-	-
+0x0045e990	.	-	-
+0x0045efe0	.	-	-
+0x0045f5f0	.	-	-
+0x0045faa0	.	-	-
+0x0045ff50	.	-	-
+0x00460270	M	-	-
+0x00460350	.	-	-
+0x00460df0	.	-	-
+0x00461650	.	-	-
+0x00461e90	.	Gameplay/GameplayLeaves_ad3.cpp[A]:('std::uint32_t __cdecl', 80)	Gameplay/GameplayLeaves_ad3.cpp:[('SurfaceCodeClassify', 175)]
+0x004623e0	M	-	-
+0x004624c0	M	-	-
+0x00462500	M	Util/PromoLoop_round29.cpp[A]:('Set603868_1', 39)	Util/PromoLoop_round29.cpp:[('Set603868_1', 42)]
+0x00462510	M	Util/PromoLoop_round29.cpp[A]:('Set603868_0', 32)	Util/PromoLoop_round29.cpp:[('Set603868_0', 35)]
+0x00462520	.	-	-
+0x004625b0	.	Audio/AudioCharacterBankPaths.cpp[EA]:('AudioCharacterBankPathsBuild', 88)	Audio/AudioCharacterBankPaths.cpp:[('AudioCharacterBankPathsBuild', 94)]
+0x00462760	.	Util/PromoLoop_sessionB.cpp[A]:('Pred462760', 3107)	Util/PromoLoop_sessionB.cpp:[('Pred462760', 3148)]
+0x004627b0	.	Util/PromoLoop_round72.cpp[A]:('AudioStateActive', 25)	Util/PromoLoop_round72.cpp:[('AudioStateActive', 32)]
+0x004627f0	.	-	-
+0x00462950	.	-	-
+0x00462dd0	M	-	-
+0x00462ec0	M	-	-
+0x00462f50	.	-	-
+0x00463150	.	-	-
+0x004631f0	.	-	-
+0x004633d0	.	-	-
+0x00463590	M	-	-
+0x00463640	.	-	-
+0x00463c80	.	-	-
+0x00463f40	.	-	-
+0x004642f0	.	-	-
+0x004644a0	.	-	-
+0x004645c0	.	-	-
+0x00464670	.	-	-
+0x004647f0	.	-	-
+0x004648b0	.	-	-
+0x00464a50	.	-	-
+0x00464ca0	.	-	-
+0x00464e10	.	-	-
+0x004652b0	.	-	-
+0x004656e0	.	-	-
+0x004657b0	.	-	-
+0x00465940	.	-	-
+0x00465a30	.	-	-
+0x00465b20	.	-	-
+0x00465c10	.	-	-
+0x00465ca0	.	-	-
+0x00465e80	.	-	-
+0x00465f40	.	-	-
+0x00466000	.	-	-
+0x00466100	.	-	-
+0x004661a0	.	-	-
+0x004661f0	.	-	-
+0x004669b0	.	-	-
+0x00466a50	.	-	-
+0x00466b50	.	-	-
+0x00467010	M	-	-
+0x00467020	M	-	-
+0x00467070	M	-	-

@@ -21,15 +21,8 @@
 
 #include <cstdint>
 
-// 0x004627b0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioStateActive(void) {
-    switch (*reinterpret_cast<std::int32_t*>(0x00773920u)) {
-    case 2: case 3: case 4: case 7:
-        return 1;
-    }
-    return 0;
-}
-RH_ScopedInstall(AudioStateActive, 0x004627b0);
+// MATCH-S10: the body of 0x004627b0 (AudioStateActive) moved to Match/MatchS10_004627b0.cpp,
+// which compiles the byte-matched source re/match/s10/004627b0.c.
 
 // MATCH-S07: the body of 0x0042bf30 (Post0042bf30) moved to Match/MatchS07_0042bf30.cpp,
 // which compiles the byte-matched source re/match/s07/0042bf30.c.

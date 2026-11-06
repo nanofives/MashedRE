@@ -17,32 +17,8 @@
 
 #include <cstdint>
 
-#ifdef MASHED_STANDALONE
-extern "C" int __cdecl PK_SlotEmpty(int v);                      // Gameplay/PickupTick.cpp (exe-only TU)
-extern "C" { void* s_fn_45bff0 = reinterpret_cast<void*>(&PK_SlotEmpty); }
-#else
-extern "C" { void* s_fn_45bff0 = reinterpret_cast<void*>(0x0045bff0u); }   // the original inside MASHED.exe
-#endif
-
 // MATCH-S09: the body of 0x004576b0 (AnyActive4576b0) moved to Match/MatchS09_004576b0.cpp,
 // which compiles the byte-matched source re/match/s09/004576b0.c.
 
-// 0x0045c330 FUN_0045c330 (gameplay) — PredNot45c330.
-//   bool f(int idx): return Pred45bff0(idx)==0;  (NEG/SBB/INC = "x==0 ? 1 : 0")
-//   Disasm (0x0045c330..0x0045c342) verbatim. The callee FUN_0045bff0 is taken per target through s_fn_45bff0:
-//   the original in the .asi (was `mov eax, 045BFF0h / call eax`), PK_SlotEmpty in the exe (was PK_45c330's
-//   `call PK_SlotEmpty`). EAX is the callee's return either way, so the dropped `mov eax, imm` changes no live value.
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl PredNot45c330(int /*idx*/)
-{
-    __asm {
-        mov   eax, dword ptr [esp+4]
-        push  eax
-        call  dword ptr [s_fn_45bff0]       ; Pred45bff0
-        add   esp, 4
-        neg   eax
-        sbb   eax, eax
-        inc   eax
-        ret
-    }
-}
-RH_ScopedInstall(PredNot45c330, 0x0045c330);
+// MATCH-S10: the body of 0x0045c330 (PredNot45c330) moved to Match/MatchS10_0045c330.cpp,
+// which compiles the byte-matched source re/match/s10/0045c330.c.
