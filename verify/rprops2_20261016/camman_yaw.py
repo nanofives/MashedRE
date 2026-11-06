@@ -21,6 +21,8 @@ FRAMES = {"training": (884, 924, 959), "arctic": (1051, 1091, 1126), "city": (76
 
 
 def draws(path, tex):
+    if not Path(path).exists():          # [D4-WIP-CAMMANYAW] arm without this track (run13 --tracks 3,13)
+        return []
     d = json.loads(Path(path).read_text())
     out = []
     for e in d["events"]:
