@@ -131,20 +131,8 @@ extern "C" std::uint32_t __cdecl AspectRatioGlobalGet(void);
 // ref: re/analysis/race_results/0046c700.md
 // ===========================================================================
 
-// 0x0046c700
-extern "C" __declspec(dllexport) std::uint32_t __cdecl EntityScoreFieldAdd(int param_1, int param_2) {
-    // Guard at 0x0046c704: param_1 > 15 -> return 0.
-    if (param_1 > 0xf) {
-        return 0u;
-    }
-    // Add param_2 to int at 0x008820b0 + param_1 * 0xd04 (cited at 0x0046c717).
-    int* slot = reinterpret_cast<int*>(0x008820b0u + static_cast<std::uint32_t>(param_1) * 0xd04u);
-    *slot += param_2;
-    // Return 1 at 0x0046c726.
-    return 1u;
-}
-
-RH_ScopedInstall(EntityScoreFieldAdd, 0x0046c700);
+// MATCH-S11: the body of 0x0046c700 (EntityScoreFieldAdd) moved to Match/MatchS11_0046c700.cpp,
+// which compiles the byte-matched source re/match/s11/0046c700.c.
 
 // ===========================================================================
 // ViewportOriginGetter  --  0x004c75e0

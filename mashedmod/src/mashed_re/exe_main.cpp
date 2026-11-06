@@ -1186,6 +1186,60 @@ void ShutdownDirectInput() {
     if (g_dinput) { g_dinput->Release(); g_dinput = nullptr; }
 }
 
+// [HB-GATE-FLAKE-GAMEFLOW] Ambient keyboard in a deterministic capture. The keyboard device is
+// DISCL_BACKGROUND|DISCL_NONEXCLUSIVE (InitDirectInput), so it reports keys pressed in ANY window on the
+// machine. The R7 cook (CookCtrlByteAFromKeyboard, DIK 0x1c) and the powerup fire read (DIK_SPACE) read g_keys
+// with no focus or g_det_clock gate. On 2026-11-02 one Enter press at det_frame 5406 ended the G-CTRL arm's
+// round-1 result screen (R7IN test=0) and moved all three G-CTRL hashes
+// (verify/harness_20261102/RESULT_HB-GATE-FLAKE-GAMEFLOW.md).
+//  - Witness (log only, every MASHED_DETERMINISTIC run): a `DET-AMBIENT-KEY` line per frame on which the device
+//    reports a key down, capped at 64 lines. It never changes g_keys.
+//  - MASHED_DET_NO_AMBIENT_KEYS=1 (default OFF): in a MASHED_DETERMINISTIC run, g_keys is zeroed after the device
+//    read, the state a run with nobody at the keyboard reads. In-process injectors (nav demo, cfgedit, drive
+//    hold) write g_keys after PollKeyboard returns, so they are not affected.
+//  - MASHED_DET_TEST_KEY=<dik>@<det_frame>[+<frames>] (test only): reports <dik> down from the device for
+//    <frames> (default 1) frames starting at <det_frame>, before the filter, so a run can reproduce an ambient
+//    press without touching the real keyboard. Decimal or 0x hex.
+static void DetAmbientKeys() {
+    if (!g_det_clock) return;
+    static const bool s_drop = [] { const char* e = std::getenv("MASHED_DET_NO_AMBIENT_KEYS"); return e && e[0] && e[0] != '0'; }();
+    static int s_tk_dik = -1;
+    static unsigned s_tk_at = 0, s_tk_n = 1;
+    static const bool s_tk_parsed = [] {
+        const char* e = std::getenv("MASHED_DET_TEST_KEY");
+        if (!e || !e[0]) return true;
+        char* p = nullptr;
+        const long dik = std::strtol(e, &p, 0);
+        if (!p || *p != '@' || dik < 0 || dik > 255) return true;
+        char* q = nullptr;
+        const unsigned long at = std::strtoul(p + 1, &q, 0);
+        unsigned long n = 1;
+        if (q && *q == '+') n = std::strtoul(q + 1, nullptr, 0);
+        s_tk_dik = static_cast<int>(dik); s_tk_at = static_cast<unsigned>(at); s_tk_n = n ? static_cast<unsigned>(n) : 1u;
+        return true;
+    }();
+    (void)s_tk_parsed;
+    bool test = false;
+    if (s_tk_dik >= 0 && g_det_frame >= s_tk_at && g_det_frame - s_tk_at < s_tk_n) {
+        g_keys[s_tk_dik] = 0x80;
+        test = true;
+    }
+    int first = -1, count = 0;
+    for (int k = 0; k < 256; ++k)
+        if (g_keys[k] & 0x80) { if (first < 0) first = k; ++count; }
+    if (count == 0) return;
+    static int s_lines = 0;
+    if (s_lines < 64) {
+        ++s_lines;
+        if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+            std::fprintf(lf, "DET-AMBIENT-KEY det_frame=%u dik=0x%02x keys_down=%d test=%d %s\n",
+                         static_cast<unsigned>(g_det_frame), first, count, test ? 1 : 0, s_drop ? "dropped" : "LIVE");
+            std::fclose(lf);
+        }
+    }
+    if (s_drop) std::memset(g_keys, 0, sizeof(g_keys));
+}
+
 // B11 — single-shot keyboard poll. Saves prior state, fetches new state.
 // Re-acquires on focus loss (DIERR_INPUTLOST / DIERR_NOTACQUIRED) so the
 // next poll succeeds.
@@ -1199,6 +1253,7 @@ void PollKeyboard() {
     } else if (FAILED(hr)) {
         std::memset(g_keys, 0, sizeof(g_keys));
     }
+    DetAmbientKeys();
 }
 
 // --------------------------------------------------------------------------

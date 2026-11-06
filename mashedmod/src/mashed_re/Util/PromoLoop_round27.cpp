@@ -28,8 +28,5 @@
 // MATCH-S07: the body of 0x00431b30 (Float67eaa8Get) moved to Match/MatchS07_00431b30.cpp,
 // which compiles the byte-matched source re/match/s07/00431b30.c.
 
-// 0x00452eb0  D9 05 E0 4D 68 00 C3  (FLD m32; powerup pursuit range)
-extern "C" __declspec(dllexport) float __cdecl PowerupRangeGet(void) {
-    return *reinterpret_cast<const float*>(0x00684de0u);  // cited at 0x00452eb0
-}
-RH_ScopedInstall(PowerupRangeGet, 0x00452eb0);
+// MATCH-S09: the body of 0x00452eb0 (PowerupRangeGet) moved to Match/MatchS09_00452eb0.cpp,
+// which compiles the byte-matched source re/match/s09/00452eb0.c.

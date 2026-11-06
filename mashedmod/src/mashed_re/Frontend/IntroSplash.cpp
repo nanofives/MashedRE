@@ -55,11 +55,10 @@ static void OrigVideoLoad(int a, int index, int b) {
     reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00494a80u))(a, index, b);
 }
 
-// 0x004671a0  FUN_004671a0 — vehicle-0 getter: (int) -> uint32
-static uint32 OrigVehicle0Get(int param) {
-    typedef uint32 (__cdecl* Fn)(int);
-    return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x004671a0u))(param);
-}
+// MATCH-S11: FUN_004671a0 (called here through its original address as OrigVehicle0Get) now has a port body,
+// Match/MatchS11_004671a0.cpp (BackBuffRasterOpen, the hooks.csv name), which compiles the byte-matched source
+// re/match/s11/004671a0.c; its callees 0x0042b930 / 0x0042f510 are called through their original addresses there.
+extern "C" uint32 __cdecl BackBuffRasterOpen(int param);
 
 // MATCH-S15: the body of 0x00494480 (OrigInputCheck, a raw-address call into the original; now IntroInputCheck) moved to Match/MatchS15_00494480.cpp,
 // which compiles the byte-matched source re/match/s15/00494480.c.
@@ -326,7 +325,7 @@ void __cdecl HardwareShowIntroVideo() {
         // crash stayed the IDENTICAL 0x25ff5dec, proving uVar2 was always correct and
         // the render-target object's +0x18 method slot is genuinely unbound at intro
         // time in the hooked run (see the registration-site note below).
-        const uint32 uVar2 = OrigVehicle0Get(0);
+        const uint32 uVar2 = BackBuffRasterOpen(0);
 
         // c. Per-frame input tick (return discarded).
         IntroSplashFrameTickShim();
