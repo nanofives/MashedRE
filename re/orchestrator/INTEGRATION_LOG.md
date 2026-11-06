@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-06 09:55 MATCH-T13-SEED-WRITER (orch/MATCH-T13-SEED-WRITER), MATCH-PORTSTATE-GAMEFLOW-FU (orch/MATCH-PORTSTATE-GAMEFLOW-FU): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_093106
 - 2026-11-06 09:04 D4-DC-77b0-ST5-C4ACCEL (orch/D4-DC-77b0-ST5-C4ACCEL): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_084359
 - 2026-11-06 07:55 SALVAGE-SUPERSEDED (orch/SALVAGE-SUPERSEDED): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261106_075347
 - 2026-11-06 07:52 HB-QHULL-DDK (orch/HB-QHULL-DDK), D4-DC-77b0-MATCHEND-SUBSTATE (orch/D4-DC-77b0-MATCHEND-SUBSTATE), D4-SAVE-B (orch/D4-SAVE-B), D4-WSB-D11064-CLOSE (orch/D4-WSB-D11064-CLOSE): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261106_075059
