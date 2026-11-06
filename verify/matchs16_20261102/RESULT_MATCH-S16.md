@@ -281,3 +281,28 @@ No UNCERTAINTIES or STUBS rows were created or closed.
 | gates_run.log | 5d10f30ed00bda48ea1e46709ddd6e0a2afc810179a2cdd02c9651f2a7e5ddac |
 | build2.log (Build OK) | 6e7c32c1d2b9ed4f6e8a08034c47a7b12ea64aeb6e774603c28710d9a2d688e8 |
 | postmerge_recheck.tsv (full match.py lines) | 0348d5c2da8a95708f65e1f1cb8d279fe5468085d50cce24e1a9c59767a4f809 |
+
+## 2026-11-06 rework: re-merge after MATCH-S15 (train dequeue)
+
+The train dequeued `orch/MATCH-S16` @ 3ed4f29f7: it conflicted with MATCH-S15 after S15 merged. Merged
+`orch/integration` b1dd84b7c (S09-FU, S15, S13, ST5-RING) with `git -c merge.autoStash=false merge`. Merge commit
+20243583c.
+
+- `Frontend/IntroSplash.cpp`, `Frontend/SplashGameMode_t5.cpp`: integration's side of each hunk was the old body of an
+  S16 RVA (0x00495350, 0x00494f30). Kept the S16 move. S15's own swaps in those TUs (0x00492d20, 0x00493f70, and the
+  rest) were outside the hunks and are untouched; their `MatchS15_*.cpp` wrappers build.
+- `hooks.csv`: three hunks of adjacent rows. Resolved per row: the S16 side for the 41 S16 rows, integration's side
+  for every other row (S11 / S15 cells kept). `re/analysis/CHANGELOG.md`: both 2026-11-06 blocks kept.
+- `py -3.12 re/orchestrator/tracker_lint.py --repo . --base orch/integration`: OK, NEW=0.
+- `py -3.12 scripts/lint_rva_bodies.py`: `1 finding(s): CROSS-TARGET=1 | allowlisted=1 NEW=0` (one body per RVA).
+- `py -3.12 scripts/lint_inline_asm_abs.py`: OK (1337 files).
+- PRIORITY-HOLD checked before the build (`mashed_lock.py status`: no hold). `MASHED_NO_DEPLOY=1` build OK:
+  exe `de3552225e272a64b6bd48e3f130e7f94bd0004ba4adafb0f485660a030118db`,
+  asi `95070ef86c075f6d715e72ae77c624924dc97edbc0c3e0304ec236bc6756a9ba`.
+- `match.py --bytes` + `relocheck.py` on the 41 swaps (`recheck_postmerge2.tsv`): 41/41 BYTE-IDENTICAL, 41/41 OK.
+- Exe reach (`exe_reach_postmerge2.txt`): the five exe+asi symbols have 0 direct exe sites and no WinMain reach.
+  C4 candidates: 0. Tracker cells unchanged from the 2026-11-06 transaction.
+- **Gates: not run on this exe, by the lead's scope change.** The conductor gates the combined branch
+  (integration + S12 + S14 + S16) in the train.
+
+Raw (`D:/MashedWT/MATCH-S16_data`): build3.log `1fc53407258ef2a387310853bb29396fa1be902c73bb7b079c27179bccb3223c`.
