@@ -1,7 +1,32 @@
-# RESULT MATCH-S13, 2026-11-02
+# RESULT MATCH-S13, 2026-11-02 (resumed 2026-11-06)
 
-**Verdict: BLOCKED. Built on this branch, gates not run: display D3DERR_NOTAVAILABLE.** The static and port legs are
-done. Per the lead's brief, no boot, gate or probe was attempted on LIVING-PC (display off). Slice 0x0047aad0..0x004840b0
+**Verdict (2026-11-06): GREEN. Merged with orch/integration 497edfdb8, rebuilt, default gates equal the refs
+(G-CTRL 8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3) on exe `cfde69a6`. C4 candidates still 0, so the 24 swapped rows
+got the callerless match note through re-classify, no level moved.** Detail: "Resume 2026-11-06" below. The rest of this
+file is the 2026-11-02 static and port record, unchanged except where the resume section corrects it.
+
+## Resume 2026-11-06
+
+- Worktree re-added on `orch/MATCH-S13` fc4f6e0cb. `git -c merge.autoStash=false merge orch/integration` (497edfdb8,
+  MATCH-S09 and later merged) gave merge commit fac98ab9d with no conflicts. The rsp and `x87_tus.txt` anchors held.
+- Rebuild `set MASHED_NO_DEPLOY=1&& mashedmod\build.bat`: Build OK, .asi not deployed. exe sha256
+  `cfde69a6909f2e60d21f126f392413ab7c36024185ecc94be63877276ed56b78`, asi
+  `c446e77f8116440def18d90d383450e953f1d814c8573dd37820a221ba6b0552`.
+- `lint_rva_bodies.py`: `1 finding(s): CROSS-TARGET=1 | allowlisted=1 NEW=0`. `lint_inline_asm_abs.py`: OK (1223 files).
+  `tracker_lint.py --base orch/integration` after the re-classify: OK, NEW=0.
+- Byte match re-confirmed on the merged tree for all 24 swapped rows (`postmerge_match.txt`): `match.py <src> --bytes`
+  gives `BYTE-IDENTICAL (relocations masked)` on all 24 whole symbols, and `relocheck.py` OK on all 24, unchecked=0
+  everywhere. The 5 swapped rows below 100% by instruction count (0x0047bcc0, 0x0047c160, 0x0047c270, 0x0047c2d0,
+  0x00482730) are the whole-symbol-rule rows from the table above. `re/match/s13` and `re/tools/match` are unchanged by
+  the merge.
+- Exe-caller reach re-run on the merged exe map (`exe_reach_postmerge.txt`): same as before. 0 direct sites and no
+  WinMain chain for every exe swap, `VehiclePhysicsWorldCreate` (the source caller of 0x004826d0) still not in the
+  exe map. **C4 candidates: 0.**
+- Correction: the wrappers are **20** TUs `Match/MatchS13_<va8>.cpp`, not 19 (`ls mashedmod/src/mashed_re/Match`).
+- Gates: see "Gates" below. Re-classify: see "C4 re-classify text" below (applied).
+- After the gate run orch/integration moved to adf5ff69b (MATCH-T13-SEED-WRITER, MATCH-PORTSTATE-GAMEFLOW-FU). The refs in
+  `merge_train.json` did not move (no FLIP landed), and `git merge-tree` of HEAD with adf5ff69b is clean, so the branch
+  was not re-merged. The merge train re-gates it at merge time.
 (128 game functions, 0 library rows inside). **106/128** sources are byte-identical under `re/tools/match/match.py`
 (XP DDK cl 13.00.9176 / c2 13.00.9178, `/O2 /GS /Ob1`, C, x87). Every one of the 106 has `relocheck.py` OK in its best
 source file (`relocheck.tsv`). All 16 BAD lines there belong to functions below 100%, where the instruction streams do
@@ -145,9 +170,24 @@ mashedmod/build/mashed_re.map <symbols>` walks the direct `call`/`jmp rel32` gra
 
 ## Gates
 
-**Not run: display unavailable.** The lead's brief records that LIVING-PC's display is off (`CreateDevice` fails with
-D3DERR_NOTAVAILABLE, as MATCH-S10/S11 measured), and it forbids gates, D2 arms and probes in this step, so no boot
-was attempted.
+**2026-11-06: GREEN, equal to the refs.** `verify/matchs13_20261102/gates.sh g1` inside
+`proyectos_test_slot` (outside) and `mashed_lock.py run --label MATCH-S13` (inside), exe copied out to
+`D:/MashedWT/MATCH-S13_data/exe_g1` (sha8 cfde69a6), private root `D:/MashedWT/MATCH-S13_root`. Refs read at gate time
+from `re/orchestrator/merge_train.json`: `gctrl.ref` 8284be46/ba407a16/31fe043e, `b.ref` 1d5bf4f9 x3.
+
+| arm | file | sha8 | ref | exit |
+|---|---|---|---|---|
+| H_DEF | H_DEF.step.csv | 8284be46 | 8284be46 | 0, self-exited, 134 s |
+| H_DEF | H_DEF.gates.csv | ba407a16 | ba407a16 | |
+| H_DEF | H_DEF.ptrace.log | 31fe043e | 31fe043e | |
+| B_DEF_K0 | B_DEF_K0.step.csv | 1d5bf4f9 | 1d5bf4f9 | 0, self-exited |
+| B_DEF_K1 | B_DEF_K1.step.csv | 1d5bf4f9 | 1d5bf4f9 | 0, self-exited |
+| B_DEF_K26 | B_DEF_K26.step.csv | 1d5bf4f9 | 1d5bf4f9 | 0, self-exited |
+
+The merge train's `-Full` pass is still owed at merge time (`mashedmod/src` is in `full_set_paths`).
+
+2026-11-02 (superseded): not run, display unavailable (`CreateDevice` D3DERR_NOTAVAILABLE). The note that follows was
+written then.
 
 Owed before review: `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on this exe, compared with
 `re/orchestrator/merge_train.json` (`gctrl.ref` / `b.ref`), plus the merge train's `-Full` pass (`mashedmod/src` is in
@@ -155,7 +195,12 @@ Owed before review: `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K
 (`SubStripQuadUV`) have no direct exe caller on this map. 0x004826d0 has a caller only through a function the exe does
 not link. A gate move from this branch would therefore point at an indirect (address-taken) path.
 
-## C4 re-classify text (apply after the merge, through re-classify; not applied here)
+## C4 re-classify text (APPLIED 2026-11-06 through re-classify, after the merge and the GREEN gates)
+
+Applied: 24 hooks.csv rows, confidence and status unchanged, `file` -> the wrapper, `notes` += ` | 2026-11-06 MATCH-S13:
+match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling); match.py <src> ...; relocheck
+OK ...; src sha256 ...; port body ...; gates unchanged (...cfde69a6...)`. 24 CHANGELOG lines `Cn->Cn` below
+`<!-- ENTRIES -->`. Per-row data (wrapper, targets, source, sha256, relocheck, old row): `reclass_rows.tsv`.
 
 No row qualifies for C4 (no exe caller). All 24 swapped rows stay at their level, and `notes` += `match evidence:
 identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)`. Evidence for each: `match.py
@@ -172,6 +217,15 @@ dated 2026-10-24). exe sha256 `943c804125a1c2f11004df8126b95b71686a64e899e3b0454
 
 | file | sha256 |
 |---|---|
+| build2.log (post-merge build, Build OK) | 2a3717391a6e0393a500543d461fa083fbdd3ea5dd615473a2387243b9368afb |
+| postmerge_match.log (match.py --bytes + relocheck, 20 sources / 24 rows) | 906fb89b7d957a763038fc195ddeb78b9f4aa0ff5e39b431287dd9eb5a9e0bdd |
+| gates_g1.log (slot + lock + run_arms output) | d61f1cb154a5354e00faf0339009ad1759d44fbcd7caa45ca757288dd4d4bb1e |
+| arms_g1/RUNLOG.txt | 273c4f222ea18615c94221568be676b349214eba2e539f1613abfa1d26f97e86 |
+| arms_g1/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms_g1/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms_g1/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms_g1/B_DEF_K{0,1,26}.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 (all three) |
+| exe_g1/mashed_re.exe | cfde69a6909f2e60d21f126f392413ab7c36024185ecc94be63877276ed56b78 |
 | decomp.json (decomp_pc.py --port --callees, 128 entries, slot Mashed_pool10; 0x0047ad30 entry from decomp_ad30.json) | 9802cb94b49c1057e0fff4c3a4f0cec3fb97c4b1856f76f92e596c53ae108eb8 |
 | decomp_ad30.json (decomp_pc.py --create, slot Mashed_pool0) | 4b76a5fb00fc7db5e843fa5b6a04a78acfd31b8a3618bbc29cf4da22943c881c |
 | g2s/results.tsv (raw converter scores) | 7c9ab801d6d57f66d84f3d3570df68a4a40382461fcb6c292f9ba7ad647431a2 |

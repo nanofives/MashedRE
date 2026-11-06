@@ -46,6 +46,30 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-06  0x0047b9e0  FUN_0047b9e0  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047b9e0.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047bc90  FUN_0047bc90  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047bf70.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047bcc0  TriEdgePairsBuild  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047bf70.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047bf70  FUN_0047bf70  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047bf70.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047c0b0  ClearColl47c0b0  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047c0b0.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047c160  sub_0047c160  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047c160.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047c230  FUN_0047c230  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047c270.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047c270  FUN_0047c270  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047c270.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047c1f0  FUN_0047c1f0  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047c2d0.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047c2d0  FUN_0047c2d0  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047c2d0.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047cdc0  StoreDistSq47cdc0  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047cdc0.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047ce00  Table6c9438Get  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047ce00.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047ce40  Search47ce40  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047ce40.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047ce70  Global6c6eb0Get  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047ce70.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047ce80  Table6c9758Get  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047ce80.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047d130  Table6c71d8Get  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047d130.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047d150  SlotObjectField8  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047d150.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x0047ea40  PhysicsSceneStepWrapper  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_0047ea40.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x00482030  SubStripQuadUV  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_00482030.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x004826d0  PhysicsCollisionBodyCreate  C2->C2  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_004826d0.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x00482730  PhysicsBodySetMaterialColor  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_00482730.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x00482860  FUN_00482860  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_00482860.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x00483a30  FUN_00483a30  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_00483a30.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
+2026-11-06  0x00483ca0  FUN_00483ca0  C3->C3  match evidence: identical, swapped, exe-callers=0 (L-68, not C4); file -> mashedmod/src/mashed_re/Match/MatchS13_00483ca0.cpp; evidence: verify/matchs13_20261102/RESULT_MATCH-S13.md
 2026-11-02  D-11075  DEFERRED  rewritten, stays Active  launcher retired by L-79 A (D5-SHIM-STEP3-LAUNCHER); row no longer implies a live launcher
 2026-11-02  S-3714  STUBS  Active->struck  native port, no call_original (0x00546bf0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
 2026-11-02  S-3715  STUBS  Active->struck  native port, no call_original (0x00546c50 RwpSolverMath2QuatY.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md

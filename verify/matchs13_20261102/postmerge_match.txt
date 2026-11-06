@@ -1,0 +1,72 @@
+0x0047b9e0 _FUN_0047b9e0: 100.0% (regs 100.0%, ops 100.0%)  7/7 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 19 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047b9e0	OK	checked=1	unchecked=0	0047b9e0.c	
+0x0047bc90 _FUN_0047bc90: 100.0% (regs 100.0%, ops 100.0%)  15/15 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 36 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047bcc0 _FUN_0047bcc0: 98.7% (regs 98.7%, ops 98.7%)  155/153 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 434 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047bf70 _FUN_0047bf70: 100.0% (regs 100.0%, ops 100.0%)  102/102 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 309 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047bc90	OK	checked=0	unchecked=0	0047bf70.c	
+0x0047bcc0	OK	checked=4	unchecked=0	0047bf70.c	
+0x0047bf70	OK	checked=8	unchecked=0	0047bf70.c	
+0x0047c0b0 _FUN_0047c0b0: 100.0% (regs 100.0%, ops 100.0%)  17/17 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 63 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047c0b0	OK	checked=5	unchecked=0	0047c0b0.c	
+0x0047c160 _FUN_0047c160: 86.3% (regs 86.3%, ops 86.3%)  51/44 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 141 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047c160	OK	checked=8	unchecked=0	0047c160.c	
+0x0047c230 _FUN_0047c230: 100.0% (regs 100.0%, ops 100.0%)  29/29 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 54 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047c270 _FUN_0047c270: 92.1% (regs 92.1%, ops 92.1%)  38/35 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 91 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047c230	OK	checked=1	unchecked=0	0047c270.c	
+0x0047c270	OK	checked=5	unchecked=0	0047c270.c	
+0x0047c1f0 _FUN_0047c1f0: 100.0% (regs 100.0%, ops 100.0%)  29/29 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 53 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047c2d0 _FUN_0047c2d0: 92.1% (regs 92.1%, ops 92.1%)  38/35 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 91 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047c1f0	OK	checked=1	unchecked=0	0047c2d0.c	
+0x0047c2d0	OK	checked=5	unchecked=0	0047c2d0.c	
+0x0047cdc0 _FUN_0047cdc0: 100.0% (regs 100.0%, ops 100.0%)  5/5 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 20 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047cdc0	OK	checked=1	unchecked=0	0047cdc0.c	
+0x0047ce00 _FUN_0047ce00: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 26 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047ce00	OK	checked=1	unchecked=0	0047ce00.c	
+0x0047ce40 _FUN_0047ce40: 100.0% (regs 100.0%, ops 100.0%)  12/12 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 37 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047ce40	OK	checked=1	unchecked=0	0047ce40.c	
+0x0047ce70 _FUN_0047ce70: 100.0% (regs 100.0%, ops 100.0%)  2/2 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 6 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047ce70	OK	checked=1	unchecked=0	0047ce70.c	
+0x0047ce80 _FUN_0047ce80: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 27 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047ce80	OK	checked=1	unchecked=0	0047ce80.c	
+0x0047d130 _FUN_0047d130: 100.0% (regs 100.0%, ops 100.0%)  9/9 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 26 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047d130	OK	checked=1	unchecked=0	0047d130.c	
+0x0047d150 _FUN_0047d150: 100.0% (regs 100.0%, ops 100.0%)  14/14 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 41 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047d150	OK	checked=2	unchecked=0	0047d150.c	
+0x0047ea40 _FUN_0047ea40: 100.0% (regs 100.0%, ops 100.0%)  10/10 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 23 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x0047ea40	OK	checked=1	unchecked=0	0047ea40.c	
+0x00482030 _FUN_00482030: 100.0% (regs 100.0%, ops 100.0%)  46/46 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 176 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00482030	OK	checked=6	unchecked=0	00482030.c	
+0x004826d0 _FUN_004826d0: 100.0% (regs 100.0%, ops 100.0%)  33/33 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 83 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x004826d0	OK	checked=4	unchecked=0	004826d0.c	
+0x00482730 _FUN_00482730: 94.9% (regs 94.9%, ops 94.9%)  39/37 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 110 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00482730	OK	checked=0	unchecked=0	00482730.c	
+0x00482860 _FUN_00482860: 100.0% (regs 100.0%, ops 100.0%)  48/48 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 147 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00482860	OK	checked=0	unchecked=0	00482860.c	
+0x00483a30 _FUN_00483a30: 100.0% (regs 100.0%, ops 100.0%)  4/4 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 11 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00483a30	OK	checked=0	unchecked=0	00483a30.c	
+0x00483ca0 _FUN_00483ca0: 100.0% (regs 100.0%, ops 100.0%)  39/39 ins  flags=/O2 /GS /Ob1 tc=ddk
+   bytes: 102 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+0x00483ca0	OK	checked=0	unchecked=0	00483ca0.c	
