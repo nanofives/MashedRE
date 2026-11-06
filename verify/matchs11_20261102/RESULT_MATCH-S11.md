@@ -1,6 +1,95 @@
-# RESULT MATCH-S11, 2026-11-02
+# RESULT MATCH-S11, 2026-11-02 (resumed 2026-11-06)
 
-**Verdict: BLOCKED. Built @ this branch, gates not run: display D3DERR_NOTAVAILABLE** (static and port legs done). Slice 0x004670a0..0x00474e60
+**Verdict (2026-11-06): GREEN.** Gates unchanged on exe `ad6b610e` (G-CTRL 8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3),
+both C4 candidates execute in the gate scenario, **2 rows C3 -> C4** by the match route (0x00468b40, 0x00472c60).
+See "Resume 2026-11-06" below. The 2026-11-02 text that follows is kept as written (its BLOCKED verdict is superseded).
+
+## Resume 2026-11-06
+
+**The branch is already inside orch/integration.** `orch/MATCH-S11-RECIP-REVIEW` was cut from this branch's tip
+`b514b8ce7`, so its merge into orch/integration (`77acbb108`, 2026-11-05 23:56) carried all four S11 commits and the 50
+swaps with it. The merge train gated that merge with the full set: `INTEGRATION_LOG.md` 2026-11-06 01:26, G-CTRL
+8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3, (b) 3/3, (e) 3/3, D2 3/3, 13 tracks identical, PASS (run data
+`D:\MashedWT\mtrain_data\20261105_235043`). Every later train merge (S09, T13-SEED, ST3PRETICK, ST5-C4ACCEL, last
+2026-11-06 09:04) passed the same refs. So `git -c merge.autoStash=false merge orch/integration` here was a
+fast-forward to `497edfdb8` with no conflicts, and this branch's build input is now orch/integration's.
+
+| step | result |
+|---|---|
+| merge orch/integration | fast-forward b514b8ce7 -> 497edfdb8, no conflicts |
+| build (`MASHED_NO_DEPLOY=1`) | Build OK, .asi not deployed. exe `ad6b610edd6f4b75e0de49753b6c0e01e79221419d33c5aa62690ff188e63f3f`, asi `2e45360b01f808111bdaed3aee4b8bcdfd77f8764c586cd9eecdd719100be071` |
+| `lint_rva_bodies.py` | `1 finding(s): CROSS-TARGET=1 | allowlisted=1 NEW=0` (the S11 run had 2 allowlisted, one was cleared on integration since) |
+| `lint_inline_asm_abs.py` | OK (1203 files) |
+| byte match, 50 swapped rows | `match.py <src> --flags "/O2 /GS /Ob1" --toolchain ddk --bytes --only <rva>`: **50/50 BYTE-IDENTICAL** (relocations masked). 48 at 100% by instruction; 0x00471530 (81.8%) and 0x004736c0 (97.4%) are two of the 10 whole-symbol rows (Ghidra size short of the real end), as on 2026-11-02 |
+| relocheck, 50 swapped rows | **50/50 OK**. 49 with unchecked=0; 0x0046cc10 lists `unchecked: __ftol` (a CRT import, by name; the 2026-11-02 text said unchecked=0 on all 100, this one row is the exception). 0x0046cc10 has no exe caller, so it is not a C4 row |
+| exe callers on the gated exe | `exe_reach.py` on `ad6b610e`'s map: `_VehicleContactHistoryLookup` reaches WinMain via VehicleTerrainContactSolver <- VehicleContactHistoryUpdate <- StepSubstep <- VehiclePhysics_StepCarsOuter <- TrackRenderer::UpdateCar <- RenderFrame <- WinMain (2 direct sites). `_ChromeBaseDraw`: RenderFrame <- WinMain (16 direct sites) |
+
+### Gates (exe ad6b610e)
+
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, `A4_EXE` = a copy of this build at
+`D:/MashedWT/MATCH-S11_data/exe_gate/`, private root `D:/MashedWT/MATCH-S11_root` (refreshed from `original\` by
+robocopy first), test slot outside, `mashed_lock.py run --label MATCH-S11` inside (queued 10 min for memory, then
+behind MATCH-S09-FU-exec). Every arm exit 0, self-exited. Refs read from `re/orchestrator/merge_train.json` at gate time
+(no FLIP had landed: orch/integration still at 497edfdb8).
+
+| arm | file | sha8 | ref |
+|---|---|---|---|
+| H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0, K1, K26 | step.csv | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
+
+The `-Full` pass (D2 x3, 13 tracks) was not re-run here: the merge train ran it on the merge that brought these swaps in
+(01:26 line above) and on every build-input merge since, all identical.
+
+### Witness: the two C4 bodies execute in the gate scenario
+
+A scratch build (`witness.diff`, not committed: each of the two wrappers renames the matched body to `<sym>_wbody` and
+exports a counting thunk with the old name that logs the call count at every power of two to
+`D:/MashedWT/MATCH-S11_data/witness/<rva>_<pid>.txt`) ran H_DEF and B_DEF_K0 through the same runner, root and lock
+(`--label MATCH-S11-witness`). The counts are lower bounds (last power of two logged).
+
+| arm (pid) | 0x00468b40 calls | 0x00472c60 calls | gate hashes on the witness exe `6ddd9c1d` |
+|---|---|---|---|
+| H_DEF (22220) | >= 262144 | >= 32768 | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0 (7712) | >= 8192 | >= 256 | 1d5bf4f9 |
+
+### C4 applied (re-classify, 2026-11-06)
+
+`hooks.csv` 0x00468b40 and 0x00472c60: confidence C3 -> C4, `file` and `exe_file` -> `Match/MatchS11_<va8>.cpp`,
+`notes` prefixed with `2026-11-06 C3->C4 route match (c4=match)` plus the match.py command, relocheck line, source
+sha256 (`00468b40.c` f8f41549b1298bb4af87e4310e95df3a3b1e98c2e17f0f930e751438cc2e9904, `00472c60.c`
+ddbcab72d9d46f5e5a1e64e3b3d8d785ed4dbdc1952a0d30462cffcddcd83643), exe chain, gate hashes and witness counts. Two
+CHANGELOG lines. No stubs in either body, no `[UNCERTAIN]` markers, no new U-/S- rows.
+
+**Not applied here (owed, tracker-only):** the 48 other swapped rows keep their old `file` cell (the pre-swap TU) and
+have no `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)` note yet. The step
+brief limited this re-classify to the C4 rows. A follow-up re-classify (no build input) should move those 48 file
+cells to the wrappers and add the note. The two follow-ups below (0x0046c5c0 / 0x0046c790 stride defect, the
+`g_vehicleArrayBase` rebinds) are still unfiled.
+
+### Raw files of the resume (`D:/MashedWT/MATCH-S11_data`)
+
+| file | sha256 |
+|---|---|
+| exe_gate/mashed_re.exe (gated build) | ad6b610edd6f4b75e0de49753b6c0e01e79221419d33c5aa62690ff188e63f3f |
+| arms_gate/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms_gate/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms_gate/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms_gate/B_DEF_K0 / K1 / K26 .step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 (all three) |
+| gates_run.txt | 868023160127cb4342bce9712d3584426c6088ec7c70c697e0cb2594375afb1e |
+| recheck_postmerge.txt (match.py + relocheck, 50 rows) | c76ddbdc6a67adc6a8100073cd7b0ef7e321a49218987bb8aeb628138993ea58 |
+| build2.log | 342aab131b61782057af73cf4f28ab378f7ad837d84c9bbd54d1c889c21f6780 |
+| witness.diff (scratch patch) | 588b8ea07010ee87a65f539ad8879ee6011303a0bf3a2f4d9c6e0e41692e3099 |
+| exe_w/mashed_re.exe (witness build) | 6ddd9c1da968f1a7ccfa79cc7ffd43339f3d17c2fee536934ab31d4aab19643f |
+| build_witness.log | 476411a8e32912ad36b7b0b398d63d934dc57d27ef9ee63fccef2fceef8fc391 |
+| witness_run.txt | 1a7d78b47ced718652d8a7bb00c743280488e488ec9ff480547dae521b7e7ccd |
+| witness/0x00468b40_22220.txt | a72e760cbf4c6df43f414e3abdf59c9e64bb050155845b366121caabd1307add |
+| witness/0x00468b40_7712.txt | 51d29926dde229e11b039d1cd26a21ca7c342b8e1ab38a165f4d55505a5813d1 |
+| witness/0x00472c60_22220.txt | 4b016f975f6dd95e6a588a8bb4cb7faa7d03543d60aeed442315b0b31bda8a30 |
+| witness/0x00472c60_7712.txt | ff00f9d5db0e44f32b1dd02ca3a2a898c20d1f3be0dd5be09912ac47ca0340ae |
+
+## Original run, 2026-11-02
+
+**Verdict then: BLOCKED. Built @ this branch, gates not run: display D3DERR_NOTAVAILABLE** (static and port legs done). Slice 0x004670a0..0x00474e60
 (128 game functions, 0 library rows inside). **100/128** sources are byte-identical under `re/tools/match/match.py`
 (XP DDK cl 13.00.9176 / c2 13.00.9178, `/O2 /GS /Ob1`, C, x87), and every one of the 100 has `relocheck.py` OK with
 `unchecked=0` in its best source file (`relocheck.tsv`; its BAD lines all belong to functions below 100%, where the
