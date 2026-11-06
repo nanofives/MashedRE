@@ -466,6 +466,12 @@ STACK['ST5L2D'] = STACK['ST5L2'] + ['MASHED_ST5_HOLD_DIAG=1']
 for _c in (1, 2, 3):
     STACK[f'RD{_c}'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
     STACK[f'ST5L2RD{_c}'] = STACK['ST5L2'] + STACK[f'RD{_c}']
+# D4-DC-77b0-ST5-C4ACCEL amendment 1: ring phase 8 (MASHED_RING_SKIP, diagnostic) puts FUN_00414180's draw at the
+# original's cd = 3,3,3,3 (peek 0x0089a4f8 + v*0x74, verify/d4dc77b0st5c4accel_20261102)
+STACK['ST5L2RS8D'] = STACK['ST5L2D'] + ['MASHED_RING_SKIP=8']
+for _c in (1, 3):
+    STACK[f'ST5L2RS8RD{_c}'] = STACK[f'ST5L2RD{_c}'] + ['MASHED_RING_SKIP=8']
+    STACK[f'RS8RD{_c}'] = STACK[f'RD{_c}'] + ['MASHED_RING_SKIP=8']
 STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
 STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
 # MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)); PSG = all three port-state knobs (the selector
