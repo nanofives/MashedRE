@@ -1,6 +1,11 @@
-# RESULT MATCH-S10, 2026-11-02
+# RESULT MATCH-S10, 2026-11-02 (resumed 2026-11-06)
 
-**Verdict: BLOCKED** (static and port legs done and built; gates not run: the display returned
+**Verdict (2026-11-06): GREEN.** The branch merged orch/integration twice (5c0711a7d at 45821300e, with S09 now in
+integration, then fdac96da0 at 497edfdb8). It was rebuilt at fdac96da0, exe `aa9f4e47`. Gates match the refs:
+G-CTRL 8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3. **1 C4** (0x0045c330, match route). The other 21 swaps keep their
+level under L-68. See "Resume 2026-11-06" at the end. The 2026-11-02 text below is kept as written.
+
+**Verdict (2026-11-02): BLOCKED** (static and port legs done and built; gates not run: the display returned
 D3DERR_NOTAVAILABLE for the whole 60 min poll window). Slice 0x0045b9d0..0x00467070 (128 game functions, 0 library rows inside). **110/128** sources are
 byte-identical under `re/tools/match/match.py` (XP DDK cl 13.00.9176 / c2 13.00.9178, `/O2 /GS /Ob1`, C, x87), and
 every one of the 110 has `relocheck.py` OK in its best source file (`relocheck.tsv`; the 14 BAD lines there all belong
@@ -172,3 +177,73 @@ caller lands (L-68 ruling)`: 0x0045ba00, 0x0045db50 (both targets, no exe caller
 | poll.log (= committed display_poll.txt) | ccc996bafaacdd8227b6ba1f4199a23e80ace0ae453d9fead79edd2f6e0c3cfc |
 | probe/B_DEF_K0.log (last probe, CreateDevice fails) | 5b9a6e8bac9faf78f7df22d7debbf353694792697a1dd95c08615774ab02ffc5 |
 | g2s/, notes/h1..h9.md, scratch/, bodies.tsv | raw converter output, helper reports |
+
+## Resume 2026-11-06
+
+**Merge.** The worktree had been removed by a cleanup. The branch was intact at 116654248 and was re-added at
+`.worktrees/MATCH-S10`. `git -c merge.autoStash=false merge orch/integration` (45821300e, with MATCH-S09 merged)
+gave the one expected conflict, `Gameplay/PickupPredicates.cpp`, and it was resolved as planned above. S09's
+`// MATCH-S09:` note pair and S10's `// MATCH-S10:` note are both kept. The old AnyActive4576b0 body and the
+`s_fn_45bff0` / `PK_SlotEmpty` block are dropped. No other file in the tree uses `s_fn_45bff0` (only a comment in
+`Match/MatchS10_0045c330.cpp`). The rsp files and `x87_tus.txt` merged without conflict and hold no duplicate
+lines. The commit is 5c0711a7d. Integration then moved to 497edfdb8 (D4-DC-77b0-ST5-C4ACCEL), so it was merged again
+(fdac96da0, clean). The only `mashedmod/` change in that merge is `Ai/AiStandalone.cpp`.
+
+**Build.** `MASHED_NO_DEPLOY=1 mashedmod\build.bat` at fdac96da0: Build OK, .asi not deployed. exe sha256
+`aa9f4e47d97d152b12bdf2186b8b3fd1548d7c8b8848ab2c44bccf9dae2df6a6`, asi
+`1253170427cde63bd6f8099e9af7a401a6d2499def3f78c642f2891874f7bf86`. `lint_rva_bodies.py`: `1 finding(s):
+CROSS-TARGET=1 | allowlisted=1 NEW=0`. `lint_inline_asm_abs.py`: OK (1225 files). A build at 5c0711a7d (exe c3950cf2)
+also gave Build OK and NEW=0.
+
+**Post-merge static re-check (22 swapped rows).** `match.py` and `relocheck.py` were re-run on each of the 22
+`re/match/s10/<va8>.c` sources the wrappers include. All 22 score 100.0% (regs 100, ops 100) under
+`flags=/O2 /GS /Ob1 tc=ddk`, and relocheck is OK with `unchecked=0` on all 22. `exe_reach.py` on the merged exe gives
+the same answer as before: PredNot45c330 has 1 direct site (PK_458920) and reaches WinMain through
+`TrackRenderer::UpdateCar` <- RenderFrame. RaceResultIndexedStore and FloatSliderStep have 0 direct sites. The exe
+still binds `FUN_0045bff0` to `PK_SlotEmpty`, and the build links.
+
+**Gates.** `run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` ran from this worktree with private root
+`D:/MashedWT/MATCH-S10_root` (`MASHED_ROOT`, `A4_ROOT`) and output in `D:/MashedWT/MATCH-S10_data/arms`. Lock order:
+test slot outside (slot 2/4, after the 600 s memory wait), `mashed_lock.py run --label MATCH-S10` inside (it queued
+behind D4-WIP-CAMMANYAW). Every arm exited 0 and self-exited. H_DEF took 140 s, each B arm 12-13 s.
+
+| arm | file | sha8 | ref (merge_train.json at gate time) |
+|---|---|---|---|
+| H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0, K1, K26 | step.csv | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
+
+The MATCH-PORTSTATE-RECORDS flip had not merged when the gates ran. The `-Full` pass (D2 x3, 13 tracks) was not run
+here: `mashedmod/src` is in `full_set_paths`, so the merge train runs it on enqueue.
+
+**Re-classify (applied, re-classify skill).** In `hooks.csv` (22 rows) and `re/analysis/CHANGELOG.md` (22 lines under
+`<!-- ENTRIES -->`):
+- 0x0045c330 PredNot45c330 **C3 -> C4**, route match (`c4=match`). Evidence:
+  - source `re/match/s10/0045c330.c`, sha256 `ef1476bdeaad8756b466a720b6a1098362a65b1fa3c987d3673b6278b6749f7a`
+  - match.py 100% (8/8 ins), relocheck OK `checked=1 unchecked=0`
+  - one body, `Match/MatchS10_0045c330.cpp`, in both targets (`file` = `exe_file`)
+  - exe-callers=1 through the per-frame Registry_FrameTick path
+  - gates unchanged on exe aa9f4e47
+
+  Not covered by this row: the exe callee `FUN_0045bff0` -> `PK_SlotEmpty` keeps its own level, and the gate run was
+  not traced for this body.
+- The other 21 swapped rows keep their level, and their `file` cell moves to the wrapper. `exe_file` moves too for
+  0x0045ba00 and 0x0045db50, which are in both targets. Their `notes` get `match evidence: identical, swapped,
+  exe-callers=0; C4 when a caller lands (L-68 ruling)`. Two of them, 0x0045caf0 and 0x0045dd50, were already C4 on the
+  frida route. That evidence covered the removed body, and notes now say the swapped-in body is byte-identical to the
+  original. They stay C4: L-68's demotion clause applies to `match` C4s, and neither row is one.
+- No STUBS or UNCERTAINTIES rows: the body has no stub, and 0x0045c330's own note has no unfiled `[UNCERTAIN]`.
+
+### Raw files (not committed, `D:/MashedWT/MATCH-S10_data`)
+
+| file | sha256 |
+|---|---|
+| gates_run.log | edf4d2150b597ca66d0a72f6877877060f9cf4b84bbd5cb4595a38753c48cd65 |
+| arms/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms/B_DEF_K0.step.csv (= K1 = K26) | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 |
+| build2.log (5c0711a7d) | a1bd2b45fc23e93471efd80f03ff33456b931bcce59464f0ca92d53845b667a9 |
+| build3.log (fdac96da0, gated build) | 69d21a56ef8649e335cdad94d40037c2eca60fa847e3d02cbcfdb6677b6d7818 |
+| postmerge_match.txt (22 x match.py + relocheck) | 36606da13920cb11367a7cbb6193e3f24911a40d730ff16c5c61e914daa03ec3 |
+| exe_reach_postmerge.txt | f3959f3b5bfc88af632a2afb1a16f1859451f01523df87d8662877bc1daf0f22 |
+| reclass_s10.py (the tracker transaction) | a7d416419e3649afe1f347ac9bfa0e4bfabab64a41dc8880d9d2c5a459627bad |
