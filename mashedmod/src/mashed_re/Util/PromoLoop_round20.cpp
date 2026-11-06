@@ -40,12 +40,6 @@
 // Caller: FUN_00493710 RW_INIT_FN (render, C2). Callee: FUN_00499710 (C2).
 // ---------------------------------------------------------------------------
 
-// 0x00495270
-extern "C" __declspec(dllexport) void __cdecl HWNDGet(std::uint32_t* param_1) {
-    // call 0x00499710 cited at 0x00495270 body (E8 rel32 -> 0x00499710).
-    using HwndFn = std::uint32_t(__cdecl*)();
-    *param_1 = reinterpret_cast<HwndFn>(0x00499710u)();
-}
-
-RH_ScopedInstall(HWNDGet, 0x00495270);
+// MATCH-S16: the body of 0x00495270 (HWNDGet) moved to Match/MatchS16_00495270.cpp,
+// which compiles the byte-matched source re/match/s16/00495270.c.
 

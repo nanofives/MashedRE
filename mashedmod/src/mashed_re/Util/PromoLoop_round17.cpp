@@ -45,14 +45,8 @@
 //   U-1143: table element count / type (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00496920
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TimerTable772ffcGet(int param_1) {
-    // 0x00772ffc base + *4 scaled index cited at 0x00496920 body.
-    return *reinterpret_cast<const std::uint32_t*>(
-        0x00772ffcu + static_cast<std::uint32_t>(param_1) * 4u);
-}
-
-RH_ScopedInstall(TimerTable772ffcGet, 0x00496920);
+// MATCH-S16: the body of 0x00496920 (TimerTable772ffcGet) moved to Match/MatchS16_00496920.cpp,
+// which compiles the byte-matched source re/match/s16/00496920.c.
 
 // ---------------------------------------------------------------------------
 // FUN_00496930 (indexed dword table at 0x00773030, U-1144) lives in

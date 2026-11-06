@@ -14,11 +14,8 @@
 
 #include <cstdint>
 
-// 0x00495790  A1 AC 2F 77 00 C3  (mov eax,[0x00772fac]; ret)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global772facGet(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x00772facu);  // cited at 0x00495790
-}
-RH_ScopedInstall(Global772facGet, 0x00495790);
+// MATCH-S16: the body of 0x00495790 (Global772facGet) moved to Match/MatchS16_00495790.cpp,
+// which compiles the byte-matched source re/match/s16/00495790.c.
 
 // MATCH-S08: the body of 0x0044d6e0 (Set684b34) moved to Match/MatchS08_0044d6e0.cpp,
 // which compiles the byte-matched source re/match/s08/0044d6e0.c.

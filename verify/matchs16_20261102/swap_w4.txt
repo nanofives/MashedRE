@@ -1,0 +1,57 @@
+MATCH-S16 swap helper w4 report (2026-11-02)
+
+0x00494a80  SWAPPED  symbol=FUN_00494a80  targets=asi  install=0  x87=no
+ removed=Frontend/IntroSplash.cpp:44-48 (static OrigVideoLoad, a raw call-through to 0x00494a80, the only "body" the scanner saw)  binds=FUN_004c77c0=MatchS16_00494a80_Call004c77c0(raw) FUN_004944c0=MatchS16_00494a80_Call004944c0(raw)
+ note=new real body (the port had only a raw call-through). Callers: MatchS16_00495350 (HardwareShowIntroVideo), asi only; exe callers none. Lane2/L2_00494a80.cpp still has an ACTIVE RH_ScopedInstall(L2_FUN_00494a80, 0x00494a80) (ShadowAB wrapper, asi-only) that the scanner does not count as a body: lead decide whether it stays.
+0x00495350  SWAPPED  symbol=HardwareShowIntroVideo  targets=asi  install=0  x87=yes
+ removed=Frontend/IntroSplash.cpp:294-431  binds=FUN_00492d20=IntroSplashFrameTickShim FUN_00493f70=VideoStateFlagGet FUN_00493f80=IntroVideoDimGetter FUN_00493fc0=AspectRatioGlobalGet FUN_004c19f0=RwVtableSlot07Call FUN_004c1a00=IntroSplashVtableSlot6 FUN_004c1bb0=IntroSplashRenderState FUN_00494a80=FUN_00494a80(new S16 body); raw forwarders MatchS16_00495350_Call{004671a0,00493fd0,00494460,00494480,00499710,004c1be0}
+ note=install stays MASS-DISABLED (old comment kept). Old body called 0x004c19f0 by raw address, now binds the port body RwVtableSlot07Call (installed in the asi, so the raw call already landed there). Old body called AspectRatioGlobalGet() with no args, matched pushes sx/sy (callee ignores stack args, cdecl). The static Orig* call-throughs left in IntroSplash.cpp (004671a0/00494480/004c1be0/00499710/00494460/00493fd0/004c19f0) are now unused, untouched (other RVAs). Exe callers: none.
+0x00494ef0  NOT-SAFE  symbol=ThunkVideoStateGet  targets=both  install=1  x87=no
+ removed=none  binds=-
+ note=matched is `jmp 0x00493f70`; the only port body of 0x00493f70 (VideoStateFlagGet, Frontend/SplashGameMode_t5.cpp) is asi-only, and in the exe 0x00493f70 is zero-filled arena (no B16 thunk). Old body read 0x00771a04 inline, so the exe has no implementation of the callee. Swap becomes SAFE once VideoStateFlagGet links into the exe.
+0x00494f30  SWAPPED  symbol=AspectRatioSnapshot  targets=asi  install=1  x87=no
+ removed=Frontend/SplashGameMode_t5.cpp:225-235  binds=FUN_00493fc0=AspectRatioGlobalGet
+ note=old called 0x00493fc0 by raw address (installed -> AspectRatioGlobalGet); static OrigAspectRatioGlobalGet left unused. Exe callers: none.
+0x004950b0  NOT-SAFE  symbol=QpcTimeScaledTo3Mhz  targets=asi  install=0  x87=no
+ removed=none  binds=-
+ note=old body returns 0 when freq (0x00771e70) == 0 (matched divides, faults like the original) and does unsigned 64-bit multiply/divide (matched: signed __int64 __allmul/__alldiv; differs once QPC*3000000 passes 2^63). MatchS06_00428a30 binds FUN_004950b0 to it.
+0x00495530  SWAPPED  symbol=CreateDInputObject  targets=asi  install=1  x87=no
+ removed=Input/DirectInput.cpp:119-152  binds=FUN_0049b300=MatchS16_00495530_Call0049b300(raw, stdcall) FUN_004987b0=MatchS16_00495530_Call004987b0(raw)
+ note=old called the same two VAs through naked push/ret thunks (game_dinput8_create, game_printf_dbg, now unused, left). Log strings: old passed the original's 0x005cfeb4/0x005cfeac, matched passes its own literals with the same text. C++ edit: Win32 typedef/import block under #ifndef MATCH_PORT (windows.h via HookSystem.h); match 100%, relocheck OK. If h6 swaps 0x0049b300 / h5 0x004987b0, rebind. Exe callers: none.
+0x00495830  SWAPPED  symbol=JoypadStrcpy  targets=asi  install=1  x87=no
+ removed=Input/DirectInput.cpp:206-254  binds=-
+ note=same globals 0x00772fac / 0x00771eb4 stride 0x448. C4996 strcpy warning only. Exe callers: none.
+0x00499720  SWAPPED  symbol=GetInputHinst  targets=asi  install=1  x87=no
+ removed=Input/DirectInput.cpp:104-117  binds=-
+ note=reads 0x007e9580. Exe callers: none.
+0x004955b0  SWAPPED  symbol=DInputInitPredicate  targets=asi  install=1  x87=no
+ removed=Boot/RwEngineInit.cpp:45-55  binds=FUN_00495530=CreateDInputObject
+ note=C++ edit in 004955b0.c: return type MATCH_RET_004955b0 = unsigned int under __cplusplus (bool under C), so VS2022 emits the original's neg/sbb/neg full-width 0/1 (verified in the obj); match 100%, relocheck OK. Old called raw 0x00495530 (installed -> CreateDInputObject). Exe callers: none.
+0x004971b0  SWAPPED  symbol=ControllerConfigLoad_j5 (naked EAX->stack bridge, exported+installed) / core ControllerConfigLoad_j5_Core = FUN_004971b0  targets=asi  install=1  x87=no
+ removed=Input/DInput.cpp:95-170 by hand (excise left the `extern "C" __declspec(dllexport) __declspec(naked)` line dangling and the static ControllerConfigLoad_Body core; both removed)  binds=FUN_00496400=ConfigLogDebug FUN_004a2b60=MatchS16_004971b0_Call004a2b60(raw, naked jmp, variadic) FUN_004a4541/FUN_004a49cf/FUN_004a4368=raw forwarders
+ note=FUN_004a4541 deliberately raw, NOT FsopenSafe: the old body called 0x004a4541 by address so the fix_fopen cave runs on the patched reference and the FILE* stays the game CRT's (FsopenSafe has no garbage-FILE* guard). C++ edits in 004971b0.c: MATCH_STATIC on FUN_004971b0, stand-in caller under #ifndef __cplusplus; match 100% (both lines), relocheck OK. Log strings now the original's 0x005d0064/0x005d0044/0x005d001c (old: own literals, same text). Exe callers: none.
+0x00497190  (held in 004971b0.c, kept as MATCH body)  targets=asi  install=0  x87=no
+ note=no port body anywhere (old called the original by raw address), 100%, so 004971b0.c is its only body (static, inlined into the core in the obj). Do NOT also swap re/match/s16/00497190.c (would be a second body).
+0x00498bc0  SWAPPED  symbol=VideoGetRenderWidth  targets=both  install=1  x87=no
+ removed=Boot/VideoConfig.cpp:51-57  binds=-
+ note=strict check: old = plain read of 0x00616028, no knob/override/policy. Exe callers: none (Boot/SubsystemInit.cpp uses the raw address, not a caller).
+0x00498bd0  SWAPPED  symbol=VideoGetRenderHeight  targets=both  install=1  x87=no
+ removed=Boot/VideoConfig.cpp:62-68  binds=-
+ note=strict check: old = plain read of 0x0061602c, no knob. Exe callers: none (SubsystemInit raw address only).
+0x00498bf0  SWAPPED  symbol=DisplayActiveFlagGet  targets=both  install=1  x87=no
+ removed=Boot/FrameDispatch.cpp:34-39  binds=-
+ note=reads 0x00773204. Exe callers: none.
+0x00499690  SWAPPED  symbol=WindowMsgPump  targets=both  install=1  x87=no
+ removed=Boot/Window.cpp:102-139  binds=-
+ note=same MSG buffer 0x007e95a0, flags 0x0077391c/0x00773918, same WaitMessage gate. C++ edit: Win32 block under #ifndef MATCH_PORT; match 100%, relocheck OK. Exe callers: none (exe_main.cpp:1029 has its own pump, comment only).
+0x004996f0  SWAPPED  symbol=WindowShow  targets=both  install=1  x87=no
+ removed=Boot/Window.cpp:76-100  binds=-
+ note=HWND 0x007e9584. C++ edit: Win32 block under #ifndef MATCH_PORT; match 100%, relocheck OK. Exe callers: none.
+0x004997b0  SWAPPED  symbol=Win32ResourceLoader  targets=asi  install=1  x87=no
+ removed=Render/D3D9Helpers_q5.cpp:153-184  binds=FUN_00499720=GetInputHinst
+ note=old called raw 0x00499720 (installed -> GetInputHinst). C++ edit: Win32 block under #ifndef MATCH_PORT; match 100%, relocheck OK. Exe callers: none.
+
+Wrappers written (lead adds to rsp): Match/MatchS16_{00494a80,00495350,00494f30,00495530,00495830,00499720,004955b0,004971b0,004997b0}.cpp -> asi only; Match/MatchS16_{00498bc0,00498bd0,00498bf0,00499690,004996f0}.cpp -> exe+asi.
+x87 list: MatchS16_00495350.cpp.
+wrapcheck: all 14 wrappers and all 9 edited old TUs OK.
+dual_copy_allowlist.txt: no entry for any of these RVAs, nothing made stale.

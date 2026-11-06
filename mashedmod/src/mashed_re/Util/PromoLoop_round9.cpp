@@ -39,13 +39,8 @@
 // Caller: FUN_004921d0 DisplayInit (C4).
 // ---------------------------------------------------------------------------
 
-// 0x00498be0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RenderBitDepthGet(void) {
-    // 0x00773414 cited at 0x00498be0 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x00773414u);
-}
-
-RH_ScopedInstall(RenderBitDepthGet, 0x00498be0);
+// MATCH-S16: the body of 0x00498be0 (RenderBitDepthGet) moved to Match/MatchS16_00498be0.cpp,
+// which compiles the byte-matched source re/match/s16/00498be0.c.
 
 // ---------------------------------------------------------------------------
 // UtilFloat63b910Get  --  0x0040dc80   (subsystem: util)

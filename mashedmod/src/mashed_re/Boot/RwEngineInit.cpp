@@ -42,14 +42,5 @@
 typedef int (__cdecl *DInputCreateWrapperFn)(void);
 static constexpr std::uintptr_t kDInputCreateWrapperRva = 0x00495530u;
 
-// 0x004955b0
-// Re-ported from the bytes 2026-10-12 (negctl re-earn, bootio): `call 0x00495530` (0x004955b0),
-// then neg eax / sbb eax,eax / neg eax (0x004955b5..0x004955b9) = full-width EAX 0 or 1. The old
-// port returned `unsigned char`, so EAX bits 8..31 leaked from the callee's return.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl DInputInitPredicate() {
-    auto fn = reinterpret_cast<DInputCreateWrapperFn>(kDInputCreateWrapperRva);
-    const int result = fn();                        // 0x004955b0 call 0x00495530
-    return (result != 0) ? 1u : 0u;                 // 0x004955b5..0x004955b9
-}
-
-RH_ScopedInstall(DInputInitPredicate, 0x004955b0);  // re-enabled 2026-05-24 c3-input
+// MATCH-S16: the body of 0x004955b0 (DInputInitPredicate) moved to Match/MatchS16_004955b0.cpp,
+// which compiles the byte-matched source re/match/s16/004955b0.c.

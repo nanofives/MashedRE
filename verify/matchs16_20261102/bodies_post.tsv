@@ -1,0 +1,128 @@
+0x004944b0	M	Match/MatchS16_004944b0.cpp[A]:('FUN_004944b0', 12)	Match/MatchS16_004944b0.cpp:[('Zero4944b0', 14)]
+0x004944c0	M	-	-
+0x00494820	M	-	-
+0x00494a80	M	Match/MatchS16_00494a80.cpp[A]:('FUN_00494a80', 13)	Lane2/L2_00494a80.cpp:[('L2_FUN_00494a80', 52)]
+0x00494ac0	M	-	-
+0x00494b20	M	-	-
+0x00494b65	M	-	-
+0x00494bc0	M	-	-
+0x00494c60	M	-	-
+0x00494c80	M	-	-
+0x00494ee0	M	-	-
+0x00494ef0	M	Boot/Teardown.cpp[EA]:('ThunkVideoStateGet', 45)	Boot/Teardown.cpp:[('ThunkVideoStateGet', 49)]
+0x00494f00	M	-	-
+0x00494f10	M	-	-
+0x00494f20	M	-	-
+0x00494f30	M	Match/MatchS16_00494f30.cpp[A]:('FUN_00494f30', 12)	Match/MatchS16_00494f30.cpp:[('AspectRatioSnapshot', 14)]
+0x00494f40	.	Match/MatchS16_00495080.cpp[A]:('FUN_00494f40', 19)	-
+0x00494fd0	.	Match/MatchS16_00495080.cpp[A]:('FUN_00494fd0', 19)	-
+0x00495080	M	Match/MatchS16_00495080.cpp[A]:('FUN_00495080', 19)	Match/MatchS16_00495080.cpp:[('Fwd494fd0_DoublePlusHalf', 21)]
+0x004950b0	M	Util/UtilMid.cpp[A]:('QpcTimeScaledTo3Mhz', 83)	-
+0x00495110	M	-	-
+0x00495120	M	Match/MatchS16_00495120.cpp[A]:('FUN_00495120', 11)	Match/MatchS16_00495120.cpp:[('TimerQpfStore', 13)]
+0x00495150	M	-	-
+0x004951e0	M	-	-
+0x004951f0	M	-	-
+0x00495270	M	Match/MatchS16_00495270.cpp[A]:('FUN_00495270', 12)	Match/MatchS16_00495270.cpp:[('HWNDGet', 14)]
+0x00495280	M	-	-
+0x004952f0	M	-	-
+0x00495350	M	Match/MatchS16_00495350.cpp[A]:('FUN_00495350', 24)	-
+0x004954f0	M	-	-
+0x00495520	M	Match/MatchS16_00495520.cpp[A]:('FUN_00495520', 11)	Match/MatchS16_00495520.cpp:[('Get771e78', 13)]
+0x00495530	M	Match/MatchS16_00495530.cpp[A]:('FUN_00495530', 13)	Match/MatchS16_00495530.cpp:[('CreateDInputObject', 25)]
+0x00495580	M	-	-
+0x004955b0	M	Match/MatchS16_004955b0.cpp[A]:('FUN_004955b0', 12)	Match/MatchS16_004955b0.cpp:[('DInputInitPredicate', 14)]
+0x004955c0	M	-	-
+0x004955d0	M	-	-
+0x00495780	M	-	-
+0x00495790	M	Match/MatchS16_00495790.cpp[A]:('FUN_00495790', 11)	Match/MatchS16_00495790.cpp:[('Global772facGet', 13)]
+0x004957a0	M	Match/MatchS16_004957a0.cpp[A]:('FUN_004957a0', 11)	Match/MatchS16_004957a0.cpp:[('Grid4957a0', 13)]
+0x00495830	M	Match/MatchS16_00495830.cpp[A]:('FUN_00495830', 11)	Match/MatchS16_00495830.cpp:[('JoypadStrcpy', 13)]
+0x00495870	.	-	-
+0x00495e80	M	-	-
+0x00495fe0	M	-	-
+0x00496010	M	-	-
+0x00496040	M	-	-
+0x004960e0	M	-	-
+0x00496100	M	-	-
+0x00496320	M	-	-
+0x00496370	M	-	-
+0x004963d0	M	-	-
+0x004963e0	M	Save/SettingsConfig.cpp[EA]:('ConfigLogErrorCore', 96)	Save/SettingsConfig.cpp:[('ConfigLogError', 342)]
+0x00496400	M	Save/SettingsConfig.cpp[EA]:('ConfigLogDebugCoreV', 104)	Save/SettingsConfig.cpp:[('ConfigLogDebug', 347)]
+0x00496470	M	-	-
+0x00496490	M	-	-
+0x00496530	.	-	-
+0x004967e0	M	Frontend/IntroSplash.cpp[A]:('OrigInputPipeline', 95)	-
+0x00496900	M	Match/MatchS16_00496900.cpp[A]:('FUN_00496900', 12)	Match/MatchS16_00496900.cpp:[('SlotActiveThunk', 14)]
+0x00496910	M	Match/MatchS16_00496910.cpp[A]:('FUN_00496910', 11)	Match/MatchS16_00496910.cpp:[('Global772ffcGet', 13)]
+0x00496920	M	Match/MatchS16_00496920.cpp[A]:('FUN_00496920', 11)	Match/MatchS16_00496920.cpp:[('TimerTable772ffcGet', 13)]
+0x00496930	M	Match/MatchS16_00496930.cpp[A]:('FUN_00496930', 11)	Match/MatchS16_00496930.cpp:[('Table773030Get', 13)]
+0x00496940	M	-	-
+0x00496970	M	-	-
+0x004969a0	.	-	-
+0x00496c10	M	-	-
+0x00496ce0	M	-	-
+0x00496d00	M	-	-
+0x00496d20	M	-	-
+0x00496d60	M	Match/MatchS16_00496d60.cpp[A]:('FUN_00496d60', 27)	Match/MatchS16_00496d60.cpp:[('PipelineFragment4eb3c0Create', 29)]
+0x00496db0	M	Match/MatchS16_00496db0.cpp[A]:('FUN_00496db0', 27)	Match/MatchS16_00496db0.cpp:[('PipelineFragment4eb9d0Create', 29)]
+0x00496e40	M	-	-
+0x00496ec0	M	-	-
+0x00497000	M	Match/MatchS16_00497000.cpp[A]:('FUN_00497000', 11)	Match/MatchS16_00497000.cpp:[('Proj497000', 13)]
+0x00497060	M	-	-
+0x00497190	M	Match/MatchS16_004971b0.cpp[A]:('FUN_00497190', 22)	-
+0x004971b0	M	Match/MatchS16_004971b0.cpp[A]:('FUN_004971b0', 22)	Match/MatchS16_004971b0.cpp:[('ControllerConfigLoad_j5', 55)]
+0x00497230	M	-	-
+0x004972b0	M	-	-
+0x00497310	M	-	-
+0x00497450	M	Match/MatchS16_00497450.cpp[A]:('FUN_00497450', 11)	Match/MatchS16_00497450.cpp:[('Pred497450', 13)]
+0x00497470	M	-	-
+0x004974b0	M	-	-
+0x00497b10	M	-	-
+0x00497b60	M	-	-
+0x004982a0	M	-	-
+0x00498510	M	-	-
+0x004987b0	M	-	-
+0x00498810	M	-	-
+0x00498860	M	-	-
+0x00498910	M	Save/SettingsConfig.cpp[EA]:('ConfigFilenameGetCore', 120)	Save/SettingsConfig.cpp:[('ConfigFilenameGet', 351)]
+0x00498950	M	Save/SettingsConfig.cpp[EA]:('ConfigLoadCore', 131)	Save/SettingsConfig.cpp:[('ConfigLoad', 353)]
+0x004989b0	M	Save/SettingsConfig.cpp[EA]:('ConfigSaveCore', 146)	Save/SettingsConfig.cpp:[('ConfigSave', 355)]
+0x00498a00	M	Boot/VideoCfgFirstRun.cpp[E]:('ModeLabel', 123)	-
+0x00498b60	M	-	-
+0x00498bc0	M	Match/MatchS16_00498bc0.cpp[EA]:('FUN_00498bc0', 11)	Match/MatchS16_00498bc0.cpp:[('VideoGetRenderWidth', 13)]
+0x00498bd0	M	Match/MatchS16_00498bd0.cpp[EA]:('FUN_00498bd0', 11)	Match/MatchS16_00498bd0.cpp:[('VideoGetRenderHeight', 13)]
+0x00498be0	M	Match/MatchS16_00498be0.cpp[A]:('FUN_00498be0', 11)	Match/MatchS16_00498be0.cpp:[('RenderBitDepthGet', 13)]
+0x00498bf0	M	Match/MatchS16_00498bf0.cpp[EA]:('FUN_00498bf0', 11)	Match/MatchS16_00498bf0.cpp:[('DisplayActiveFlagGet', 13)]
+0x00498c00	M	-	-
+0x00498d20	M	Match/MatchS16_00498d20.cpp[A]:('FUN_00498d20', 26)	Match/MatchS16_00498d20.cpp:[('ReadModeFromCombo_j5', 42)]
+0x00498d60	M	Match/MatchS16_00498d60.cpp[A]:('FUN_00498d60', 30)	Match/MatchS16_00498d60.cpp:[('PopulateModeCombo_s2', 46)]
+0x00498e40	M	Boot/VideoCfgFirstRun.cpp[E]:('DefaultModeFind', 110)	-
+0x00498ea0	M	-	-
+0x00498f60	M	Match/MatchS16_00498f60.cpp[A]:('FUN_00498f60', 30)	Match/MatchS16_00498f60.cpp:[('VideoDialogInit_i3', 47)]
+0x00499170	M	Match/MatchS16_00499170.cpp[A]:('FUN_00499170', 31)	Match/MatchS16_00499170.cpp:[('SubsystemSelectionChanged_i3', 44)]
+0x004991f0	M	Match/MatchS16_004991f0.cpp[A]:('FUN_004991f0', 31)	Match/MatchS16_004991f0.cpp:[('VideoSettingsDlgProc_s2', 33)]
+0x00499400	M	Boot/VideoCfgFirstRun.cpp[E]:('VideoCfgFirstRunWrite', 139)	-
+0x00499690	M	Match/MatchS16_00499690.cpp[EA]:('FUN_00499690', 11)	Match/MatchS16_00499690.cpp:[('WindowMsgPump', 13)]
+0x004996f0	M	Match/MatchS16_004996f0.cpp[EA]:('FUN_004996f0', 11)	Match/MatchS16_004996f0.cpp:[('WindowShow', 13)]
+0x00499710	M	Match/MatchS16_00499710.cpp[A]:('FUN_00499710', 11)	Match/MatchS16_00499710.cpp:[('Global7e9584Get', 13)]
+0x00499720	M	Match/MatchS16_00499720.cpp[A]:('FUN_00499720', 11)	Match/MatchS16_00499720.cpp:[('GetInputHinst', 13)]
+0x00499730	M	Match/MatchS16_00499730.cpp[A]:('FUN_00499730', 11)	Match/MatchS16_00499730.cpp:[('BootPtr773818Get', 13)]
+0x00499740	M	Match/MatchS16_00499740.cpp[A]:('FUN_00499740', 25)	Match/MatchS16_00499740.cpp:[('SetControlTextFromResource_i3', 27)]
+0x004997b0	M	Match/MatchS16_004997b0.cpp[A]:('FUN_004997b0', 12)	Match/MatchS16_004997b0.cpp:[('Win32ResourceLoader', 14)]
+0x00499820	M	-	-
+0x00499890	M	-	-
+0x00499ba0	M	-	-
+0x00499cc0	M	-	-
+0x00499ce0	M	-	-
+0x00499d90	M	-	-
+0x0049a0a0	M	-	-
+0x0049a0e0	M	-	-
+0x0049a150	M	-	-
+0x0049a2e0	M	Match/MatchS16_0049a2e0.cpp[A]:('FUN_0049a2e0', 11)	Match/MatchS16_0049a2e0.cpp:[('Set77396c', 13)]
+0x0049a730	M	-	-
+0x0049a740	M	Match/MatchS16_0049a740.cpp[A]:('FUN_0049a740', 11)	Match/MatchS16_0049a740.cpp:[('Set773978', 13)]
+0x0049aae0	M	-	-
+0x0049ab10	M	-	-
+0x0049b300	.	Input/DirectInput.cpp[A]:('game_dinput8_create', 63)	-

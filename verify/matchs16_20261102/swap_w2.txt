@@ -1,0 +1,14 @@
+MATCH-S16 swap helper w2 report (2026-11-02)
+0x00495120  SWAPPED  symbol=TimerQpfStore  targets=asi  install=1  x87=no  removed=Boot/PromoLoop_round7.cpp:84-98  binds=none  note=C++ fix in 00495120.c: under __cplusplus the LargeInt* dllimport decl is replaced by a macro forwarding to windows.h QueryPerformanceFrequency((LARGE_INTEGER*)p) (C path unchanged); match.py 100% (11/11), relocheck OK, wrapcheck OK. exe callers: none
+0x00499730  SWAPPED  symbol=BootPtr773818Get  targets=asi  install=1  x87=no  removed=Boot/PromoLoop_round7.cpp:50-56  binds=none  note=same constant 0x00773818 (returns &DAT_00773818, pointer type vs old uint32). exe callers: none
+0x00495270  SWAPPED  symbol=HWNDGet  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round20.cpp:43-50  binds=FUN_00499710=Global7e9584Get  note=old body called raw 0x00499710; bound to the port body Global7e9584Get (also swapped here, MatchS16_00499710, same read of 0x007e9584). exe callers: none
+0x00495790  SWAPPED  symbol=Global772facGet  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round34.cpp:17-21  binds=none  note=exe callers: none
+0x00496900  SWAPPED  symbol=SlotActiveThunk  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round24.cpp:42-49  binds=FUN_00497450=Pred497450  note=old body called raw 0x00497450; bound to port Pred497450 (extern "C", uint32(uint32); matched decl int(int), same ABI). Other declaration: Match/MatchS07_0042c220.cpp:13 extern "C" unsigned int SlotActiveThunk(int) (C linkage, compatible; asi-only). exe callers: none
+0x00496910  SWAPPED  symbol=Global772ffcGet  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round33.cpp:33-37  binds=none  note=exe callers: none
+0x00496920  SWAPPED  symbol=TimerTable772ffcGet  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round17.cpp:48-55  binds=none  note=exe callers: none
+0x00496930  SWAPPED  symbol=Table773030Get  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round30.cpp:30-35  binds=none  note=exe callers: none
+0x00498be0  SWAPPED  symbol=RenderBitDepthGet  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round9.cpp:42-48  binds=none  note=exe callers: none
+0x00499710  SWAPPED  symbol=Global7e9584Get  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round32.cpp:21-25  binds=none  note=exe callers: none (asi caller: MatchS16_00495270 via bind)
+0x0049a2e0  SWAPPED  symbol=Set77396c  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round28.cpp:21-25  binds=none  note=exe callers: none
+0x0049a740  SWAPPED  symbol=Set773978  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round28.cpp:24-28 (post first excise)  binds=none  note=exe callers: none
+All 12 wrappers (Match/MatchS16_<va8>.cpp) and all 10 edited old TUs pass wrapcheck. Each RVA had exactly one old body (no dual-copy); no dual_copy_allowlist entries go stale. Lead must add the 12 MatchS16 wrappers to asi_sources.rsp (old TUs are asi-only; none in exe_sources.rsp).

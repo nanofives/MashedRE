@@ -49,11 +49,8 @@ extern "C" std::uint32_t __cdecl IntroInputCheck(void);                         
 // need to know about them. All calls within HardwareShowIntroVideo that go to
 // C1/C2 functions are forwarded through these.
 
-// 0x00494a80  FUN_00494a80 — indexed video loader: (int, int index, int) -> void
-static void OrigVideoLoad(int a, int index, int b) {
-    typedef void (__cdecl* Fn)(int, int, int);
-    reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00494a80u))(a, index, b);
-}
+// MATCH-S16: the body of 0x00494a80 (OrigVideoLoad) moved to Match/MatchS16_00494a80.cpp,
+// which compiles the byte-matched source re/match/s16/00494a80.c.
 
 // MATCH-S11: FUN_004671a0 (called here through its original address as OrigVehicle0Get) now has a port body,
 // Match/MatchS11_004671a0.cpp (BackBuffRasterOpen, the hooks.csv name), which compiles the byte-matched source
@@ -243,144 +240,8 @@ extern "C" std::uint32_t __cdecl IntroSplashRenderState(std::uint32_t param_1, v
 //   stride 0x4C in input scan; back-offset 0x4C0; base DAT_007f1502; bound 0x7f1632
 //   Sleep arg = 5 ms
 
-// 0x00495350
-extern "C" __declspec(dllexport)
-void __cdecl HardwareShowIntroVideo() {
-    // Stack locals matching decompilation layout.
-    // local_44 block: 4-byte RGBA colour {0x00, 0x80, 0x80, 0xFF} as LE uint32.
-    // Bytes: local_44=0x00, local_43=0x80, local_42=0x80, local_41=0xFF.
-    // Stored as uint32 so &rgba_block is the address passed to IntroSplashRenderState.
-    std::uint32_t rgba_block = 0xFF808000u;  // LE: bytes[0]=0x00, [1]=0x80, [2]=0x80, [3]=0xFF
-
-    // Video index sequence: indices 1,2,3,4.
-    int local_18[5];
-    local_18[0] = 1;
-    local_18[1] = 2;
-    local_18[2] = 3;
-    local_18[3] = 4;
-
-    // Dimension outputs from IntroVideoDimGetter.
-    // The function writes param_1[0] and param_1[1], so each "dim" is a
-    // 2-element array of uint32. Ghidra names them local_30/fStack_2c and
-    // local_38/fStack_34 (adjacent pairs on the original stack frame).
-    std::uint32_t dim_a[2] = {0u, 0u};  // [0]=DAT_007719ec  [1]=DAT_007719f0
-    std::uint32_t dim_b[2] = {0u, 0u};  // [0]=DAT_007719f4  [1]=DAT_007719f8
-
-    // Render quad vertices (passed to FUN_00493fd0 as two 8-byte arrays).
-    // uStack_28/uStack_24 = IEEE 754 1.0f (initialised inside the gate block).
-    // uStack_20/uStack_1c = 0 (initialised inside the gate block).
-    std::uint32_t vert_scale[2] = {0x3f800000u, 0x3f800000u};  // [0]=uStack_28 [1]=uStack_24
-    std::uint32_t vert_pos[2]   = {0u, 0u};                    // [0]=uStack_20 [1]=uStack_1c
-
-    int  iVar6 = 0;   // video sequence counter
-
-    // 1. Start first video.
-    OrigVideoLoad(0, local_18[0], 0);
-
-    // 2. Get initial dimensions.
-    IntroVideoDimGetter(dim_a, dim_b);
-
-    // Main loop (do...while true).
-    for (;;) {
-        bool bVar1 = false;
-
-        // b. Get render-target handle.
-        // NB (2026-07-24): an EDI-register-clobber hypothesis was tested here with a
-        // `volatile` uVar2 (forcing a stack reload for the VtableSlot6 dispatch) and
-        // REFUTED — the codegen changed to `mov eax,[esp];mov eax,[eax+0x18]` yet the
-        // crash stayed the IDENTICAL 0x25ff5dec, proving uVar2 was always correct and
-        // the render-target object's +0x18 method slot is genuinely unbound at intro
-        // time in the hooked run (see the registration-site note below).
-        const uint32 uVar2 = BackBuffRasterOpen(0);
-
-        // c. Per-frame input tick (return discarded).
-        IntroSplashFrameTickShim();
-
-        // d. Button/input check.
-        const int iVar3_btn = static_cast<int>(IntroInputCheck());
-        if (iVar3_btn != 0) {
-            // Scan input-state byte array at DAT_007f1502 in 0x4C strides.
-            // Condition: pcVar4[-0x4C0] != 0 AND *pcVar4 == 0 → skip.
-            const std::uint8_t* pcVar4 =
-                reinterpret_cast<const std::uint8_t*>(kInputBase_007f1502);
-            const std::uint8_t* bound =
-                reinterpret_cast<const std::uint8_t*>(kInputBound_007f1632);
-            while (pcVar4 < bound) {
-                if (*(pcVar4 - kInputBackOffset) != 0 && *pcVar4 == 0) {
-                    bVar1 = true;
-                    break;
-                }
-                pcVar4 += kInputStride;
-            }
-            // 2026-07-23 account3 FIDELITY fix: the render-state + vtable-slot-6 +
-            // quad-render calls below are gated on OrigInputCheck(0) != 0 in the
-            // ORIGINAL (FUN_00494480 result wraps FUN_004c1bb0 / FUN_004c1a00 / inner
-            // block). The prior port closed this `if` after the input-scan loop, so
-            // those calls ran outside the gate — a real structural divergence from
-            // 0x00495350, now corrected. NOTE: this is behaviorally a no-op at runtime
-            // because FUN_00494480 unconditionally returns 1 (the gate is always
-            // taken), so it does NOT fix the intro-boot crash — see the crash note at
-            // the registration site below (garbage render-target +0x18, root cause
-            // still open).
-
-            // e. Render-state setter.
-            IntroSplashRenderState(uVar2, &rgba_block, 1u);
-
-            // f. Vtable slot 6 gate.
-            const int iVar3_gate = IntroSplashVtableSlot6(static_cast<int>(uVar2));
-            if (iVar3_gate != 0) {
-                // Reset vertex fields per decompilation (re-initialised each iteration).
-                vert_pos[0]   = 0u;           // uStack_20
-                vert_pos[1]   = 0u;           // uStack_1c
-                vert_scale[0] = 0x3f800000u;  // uStack_28 = 1.0f
-                vert_scale[1] = 0x3f800000u;  // uStack_24 = 1.0f
-
-                // Compute aspect ratios from dimension globals (interpreted as floats).
-                // dim_a[0] = DAT_007719ec = local_30;  dim_a[1] = DAT_007719f0 = fStack_2c
-                // dim_b[0] = DAT_007719f4 = local_38;  dim_b[1] = DAT_007719f8 = fStack_34
-                // fStack_3c = local_30 / local_38 = dim_a[0] / dim_b[0]
-                // fStack_40 = fStack_2c / fStack_34 = dim_a[1] / dim_b[1]
-                const float fStack_3c = *reinterpret_cast<const float*>(&dim_a[0])
-                                      / *reinterpret_cast<const float*>(&dim_b[0]);
-                const float fStack_40 = *reinterpret_cast<const float*>(&dim_a[1])
-                                      / *reinterpret_cast<const float*>(&dim_b[1]);
-
-                // 0x00493fc0 body ignores its two float args (U-0814); the ported
-                // AspectRatioGlobalGet() reads DAT_00771a18 directly. Keep the ratio
-                // computations above for decomp fidelity but mark them unconsumed.
-                (void)fStack_3c;
-                (void)fStack_40;
-                const uint32 uVar5 = AspectRatioGlobalGet();   // ported 0x00493fc0 (was OrigAspectHelper)
-                // FUN_00493fd0(uVar2, &uStack_20, &uStack_28, 0, uVar5)
-                OrigQuadRender(uVar2, vert_pos, vert_scale, 0, uVar5);
-                OrigRwSlot07(static_cast<int>(uVar2));  // FUN_004c19f0
-            }
-        }
-
-        // g. HWND getter.
-        const uint32 uVar5_hwnd = OrigHwndGet();
-
-        // h. Render target + HWND present call.
-        OrigRenderTargetHelper(uVar2, uVar5_hwnd);
-
-        // i. Frame sleep.
-        Sleep(5);
-
-        // j. Check if current video is done or skip triggered.
-        const std::uint32_t iVar3_done = VideoStateFlagGet();   // ported 0x00493f70 (was OrigVideoDone)
-        if (iVar3_done == 0 || bVar1) {
-            IntroVideoClose();
-            ++iVar6;
-            if (iVar6 > 3) {
-                return;  // all 4 videos played
-            }
-            // Start next video (indices 2, 3, 4 from local_18).
-            OrigVideoLoad(0, local_18[iVar6], 0);
-            // Refresh dimensions for new video.
-            IntroVideoDimGetter(dim_a, dim_b);
-        }
-    }
-}
+// MATCH-S16: the body of 0x00495350 () moved to Match/MatchS16_00495350.cpp,
+// which compiles the byte-matched source re/match/s16/00495350.c.
 
 // MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(HardwareShowIntroVideo, 0x00495350);
 // 2026-07-23 account3 canonical-verify: subset-install (MASHED_HOOK_ONLY=0x00495350) CRASHES at boot —
