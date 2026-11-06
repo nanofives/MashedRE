@@ -19,9 +19,8 @@
 // MATCH-S08: the body of 0x0044dfe0 (Ret50) moved to Match/MatchS08_0044dfe0.cpp,
 // which compiles the byte-matched source re/match/s08/0044dfe0.c.
 
-// 0x00493b40  B8 03 00 00 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Ret3(void) { return 0x3u; }  // cited at 0x00493b40
-RH_ScopedInstall(Ret3, 0x00493b40);
+// MATCH-S15: the body of 0x00493b40 (Ret3) moved to Match/MatchS15_00493b40.cpp,
+// which compiles the byte-matched source re/match/s15/00493b40.c.
 
 // MATCH-S08: the body of 0x00443090 (Ret897ff0) moved to Match/MatchS08_00443090.cpp,
 // which compiles the byte-matched source re/match/s08/00443090.c.
@@ -30,6 +29,5 @@ RH_ScopedInstall(Ret3, 0x00493b40);
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Ret63a5f0(void) { return 0x0063a5f0u; }  // cited at 0x004098a0
 RH_ScopedInstall(Ret63a5f0, 0x004098a0);
 
-// 0x004924e0  B8 B4 47 61 00 C3
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Ret6147b4(void) { return 0x006147b4u; }  // cited at 0x004924e0
-RH_ScopedInstall(Ret6147b4, 0x004924e0);
+// MATCH-S15: the body of 0x004924e0 (Ret6147b4) moved to Match/MatchS15_004924e0.cpp,
+// which compiles the byte-matched source re/match/s15/004924e0.c.

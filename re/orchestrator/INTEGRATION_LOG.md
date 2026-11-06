@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-06 13:47 MATCH-S09-FU (orch/MATCH-S09-FU), MATCH-S15 (orch/MATCH-S15), MATCH-S13 (orch/MATCH-S13), D4-DC-77b0-ST5-RING (orch/D4-DC-77b0-ST5-RING): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_131748
 - 2026-11-06 12:14 D4-WIP-CAMMANYAW (orch/D4-WIP-CAMMANYAW), MATCH-S10 (orch/MATCH-S10), MATCH-S11 (orch/MATCH-S11), D5-SHIM-STEP3-FRIDA5 (orch/D5-SHIM-STEP3-FRIDA5): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_114355
 - 2026-11-06 11:32 D4-WIP-PANELSORT (orch/D4-WIP-PANELSORT): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_100655
 - 2026-11-06 09:55 MATCH-T13-SEED-WRITER (orch/MATCH-T13-SEED-WRITER), MATCH-PORTSTATE-GAMEFLOW-FU (orch/MATCH-PORTSTATE-GAMEFLOW-FU): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_093106

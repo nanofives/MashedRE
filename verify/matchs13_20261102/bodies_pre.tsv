@@ -1,0 +1,128 @@
+0x0047aad0	M	-	-
+0x0047ab30	.	-	-
+0x0047abd0	.	-	-
+0x0047ac80	.	-	-
+0x0047acd0	M	-	-
+0x0047ad00	M	-	-
+0x0047ad30	M	-	-
+0x0047ad40	.	-	-
+0x0047ade0	.	-	-
+0x0047ae80	.	-	-
+0x0047aef0	.	-	-
+0x0047af50	.	-	-
+0x0047afa0	.	-	-
+0x0047b000	.	-	-
+0x0047b0a0	.	-	-
+0x0047b110	.	-	-
+0x0047b160	.	-	-
+0x0047b1b0	.	-	-
+0x0047b200	.	-	-
+0x0047b230	M	-	-
+0x0047b250	M	-	-
+0x0047b280	M	-	-
+0x0047b350	M	-	-
+0x0047b3c0	M	-	-
+0x0047b420	M	-	-
+0x0047b480	M	-	-
+0x0047b500	M	-	-
+0x0047b5b0	M	-	-
+0x0047b630	M	-	-
+0x0047b6b0	M	-	-
+0x0047b720	M	-	-
+0x0047b7d0	M	-	-
+0x0047b860	M	-	-
+0x0047b880	M	-	-
+0x0047b8a0	M	-	-
+0x0047b8d0	M	-	-
+0x0047b980	M	-	-
+0x0047b9b0	M	-	-
+0x0047b9e0	.	Track/CourseLoadDispatch.cpp[A]:('Track_RenderQuadThunk_47b9e0', 61)	Track/CourseLoadDispatch.cpp:[('Track_RenderQuadThunk_47b9e0', 65)]
+0x0047ba00	.	-	-
+0x0047ba10	.	-	-
+0x0047ba20	M	-	-
+0x0047bb10	M	-	-
+0x0047bc90	M	Util/PromoLoop_sessionB.cpp[A]:('Match47bc90', 1831)	Util/PromoLoop_sessionB.cpp:[('Match47bc90_RegAbi', 1869)]
+0x0047bcc0	.	Track/PromoLoop_standins_r2.cpp[A]:('TriEdgePairsBuild', 110)	Track/PromoLoop_standins_r2.cpp:[('TriEdgePairsBuild', 120)]
+0x0047be80	.	-	-
+0x0047bf70	.	-	-
+0x0047c0b0	.	Util/PromoLoop_sessionB.cpp[A]:('ClearColl47c0b0', 451)	Util/PromoLoop_sessionB.cpp:[('ClearColl47c0b0', 458)]
+0x0047c0f0	.	-	-
+0x0047c160	.	HUD/ScenarioLeaves_sa2.cpp[EA]:('CameraPathNodeContainTest', 291)	-
+0x0047c1f0	.	-	-
+0x0047c230	.	-	-
+0x0047c270	.	Camera/CameraPathPredicates.cpp[EA]:('CameraPathAllNodesEq2', 73)	Camera/CameraPathPredicates.cpp:[('CameraPathAllNodesEq2', 76)]
+0x0047c2d0	.	Camera/CameraPathPredicates.cpp[EA]:('CameraPathAnyNodeNonzero', 81)	Camera/CameraPathPredicates.cpp:[('CameraPathAnyNodeNonzero', 84)]
+0x0047ccb0	M	-	-
+0x0047cd50	M	-	-
+0x0047cdc0	M	Util/PromoLoop_sessionB.cpp[A]:('StoreDistSq47cdc0', 265)	Util/PromoLoop_sessionB.cpp:[('StoreDistSq47cdc0', 268)]
+0x0047cde0	M	-	-
+0x0047ce00	M	Util/PromoLoop_round55.cpp[A]:('Table6c9438Get', 31)	Util/PromoLoop_round55.cpp:[('Table6c9438Get', 35)]
+0x0047ce20	M	-	-
+0x0047ce40	M	Util/PromoLoop_sessionB.cpp[A]:('Search47ce40', 469)	Util/PromoLoop_sessionB.cpp:[('Search47ce40', 475)]
+0x0047ce70	M	Util/PromoLoop_round33.cpp[A]:('Global6c6eb0Get', 28)	Util/PromoLoop_round33.cpp:[('Global6c6eb0Get', 31)]
+0x0047ce80	M	Util/PromoLoop_round55.cpp[A]:('Table6c9758Get', 38)	Util/PromoLoop_round55.cpp:[('Table6c9758Get', 42)]
+0x0047cea0	.	-	-
+0x0047cf20	.	-	-
+0x0047d080	.	-	-
+0x0047d100	.	Util/PromoLoop_sessionB.cpp[A]:('BoundedThunk47d100', 3991)	Util/PromoLoop_sessionB.cpp:[('BoundedThunk47d100', 4009)]
+0x0047d130	.	Util/PromoLoop_round55.cpp[A]:('Table6c71d8Get', 45)	Util/PromoLoop_round55.cpp:[('Table6c71d8Get', 49)]
+0x0047d150	.	Render/SlotObjectAccessors.cpp[EA]:('SlotObjectField8', 87)	Render/SlotObjectAccessors.cpp:[('SlotObjectField8', 98)]
+0x0047d180	.	-	-
+0x0047d240	.	-	-
+0x0047d330	M	-	-
+0x0047d3c0	.	Collision/PhysicsWorldBuild.cpp[EA]:('VehiclePhysicsWorldCreate', 35)	-
+0x0047d640	.	Collision/RwpSolverCore23.cpp[EA]:('FUN_0047d640', 144)	-
+0x0047def0	.	-	-
+0x0047e9c0	M	Collision/RwpSolverCore23.cpp[EA]:('FUN_0047e9c0', 892)	Collision/RwpSolverCore23.cpp:[('FUN_0047e9c0', 896)]
+0x0047ea40	M	Collision/RwpIntegrator.cpp[EA]:('RwpSceneStepWrapper', 470)	Collision/RwpIntegrator.cpp:[('RwpSceneStepWrapper', 488)]
+0x0047ea60	M	-	-
+0x0047eb30	.	Vehicle/VehicleCouplingBridge.cpp[EA]:('VehicleCouplingBridge_impl', 106)	Vehicle/VehicleCouplingBridge.cpp:[('VehicleCouplingBridge', 409)]
+0x0047f1e0	M	-	-
+0x0047f230	M	-	-
+0x0047f290	.	-	-
+0x0047f380	M	-	-
+0x0047f450	.	-	-
+0x0047f480	M	-	-
+0x0047f4c0	.	-	-
+0x0047f6d0	.	-	-
+0x0047f840	.	-	-
+0x0047f940	.	-	-
+0x0047fad0	.	-	-
+0x0047fc40	.	-	-
+0x0047fe00	.	-	-
+0x0047ff70	.	-	-
+0x00480100	.	-	-
+0x00480340	.	-	-
+0x00480720	.	-	-
+0x004809e0	.	-	-
+0x00480b70	.	-	-
+0x00480d60	.	-	-
+0x00481750	M	-	-
+0x00481780	M	-	-
+0x00481810	M	-	-
+0x004818d0	M	-	-
+0x00481a30	.	-	-
+0x00481d90	.	-	-
+0x00481e00	.	Collision/CollisionBodyCreate.cpp[EA]:('ConeCastHullBuild', 54)	-
+0x00482030	.	Vehicle/SubStripUV.cpp[EA]:('SubStripQuadUV', 52)	Vehicle/SubStripUV.cpp:[('SubStripQuadUV', 117)]
+0x004820e0	.	-	-
+0x00482140	.	-	-
+0x004826d0	.	Collision/CollisionBodyCreate.cpp[EA]:('PhysicsCollisionBodyCreate', 40)	-
+0x00482730	.	Util/PromoLoop_sessionB.cpp[A]:('Init482730', 2024)	Util/PromoLoop_sessionB.cpp:[('Init482730', 2038)]
+0x00482820	.	-	-
+0x00482860	.	Util/PromoLoop_sessionB.cpp[A]:('Pool482860', 2478)	Util/PromoLoop_sessionB.cpp:[('Pool482860', 2533)]
+0x00482900	.	Save/ReplayGetSize.cpp[A]:('int __cdecl', 62)	Save/ReplayGetSize.cpp:[('ReplayGetSize', 84)]
+0x00482930	M	-	-
+0x004829d0	.	-	-
+0x00482ae0	.	Vehicle/SplineCubicBlend.cpp[EA]:('SplineCubicBlend3', 56)	Vehicle/SplineCubicBlend.cpp:[('SplineCubicBlend3', 165)]
+0x00482c10	.	-	-
+0x00483a30	M	Vehicle/ReplayRewind_ag.cpp[A]:('ReplayRewind', 11)	Vehicle/ReplayRewind_ag.cpp:[('ReplayRewind', 16)]
+0x00483a40	M	-	-
+0x00483a70	.	-	-
+0x00483ca0	.	Util/PromoLoop_sessionB.cpp[A]:('FindNodeStructCopy483ca0', 3604)	Util/PromoLoop_sessionB.cpp:[('FindNodeStructCopy483ca0', 3652)]
+0x00483d10	.	-	-
+0x00483ed0	M	-	-
+0x00483fa0	M	-	-
+0x00484000	.	-	-
+0x00484060	.	-	-
+0x004840b0	.	Vehicle/ShapeOwnerHandlePool.cpp[EA]:('ShapeOwnerHandleGet', 29)	Vehicle/ShapeOwnerHandlePool.cpp:[('ShapeOwnerHandleGet', 33)]

@@ -21,7 +21,8 @@
 // [0x007f100c] (the timer step) reads g_pk_dt = (float)DAT_007f1008 * _DAT_005cc948 (0x0040fc57).
 //
 // Mode 7 leg M3 (PREREG verify/d3_mode7_m3_20261010/PREREG_M3.md): the registry's pickup callback.
-// Verbatim naked (spec re/tools/naked_specs/pickups_m3.json -> PickupCollect_naked.inc): FUN_00458920,
+// FUN_00458920 = Match/MatchS09_00458920.cpp (byte-matched source, MATCH-S09-FU; was a verbatim naked copy).
+// Verbatim naked (spec re/tools/naked_specs/pickups_m3.json -> PickupCollect_naked.inc):
 // FUN_00458570 (EAX = car, ESI = out; its ST0 is discarded at 0x004589e2 and its out buffer is a dead
 // local), FUN_0045c330; FUN_004c3ac0 / FUN_004c39b0 are the PK_ bodies above. FUN_00405890,
 // FUN_00407580 and FUN_0046d4a0 are the one shared bodies (declared above the #include). C bindings, cdecl:
@@ -201,6 +202,10 @@ std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);  
 //   FUN_00407580: PK_407580 deleted by D4-DC-INC-ai (2026-11-01); Gameplay/SubsystemARecordKey.cpp, both targets.
 extern "C" unsigned int Pred405890(void);                                       // Race/CollectDone.cpp
 extern "C" int __cdecl SubsystemARecordKey(int index);                          // Gameplay/SubsystemARecordKey.cpp
+// MATCH-S09-FU: FUN_00458920's body is the byte-matched source re/match/s09/00458920.c, compiled by
+// Match/MatchS09_00458920.cpp under this name (the naked PK_458920 left pickups_m3.json and the .inc). It keeps the
+// same callees (Pred405890, SubsystemARecordKey, PK_SubMode, PredNot45c330, PK_458570_w, PK_Burst, PK_Grant, PK_Sfx).
+extern "C" void PK_458920();
 
 #include "PickupTick_naked.inc"
 #include "PickupCollect_naked.inc"

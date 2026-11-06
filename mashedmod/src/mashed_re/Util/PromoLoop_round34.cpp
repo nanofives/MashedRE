@@ -23,12 +23,8 @@ RH_ScopedInstall(Global772facGet, 0x00495790);
 // MATCH-S08: the body of 0x0044d6e0 (Set684b34) moved to Match/MatchS08_0044d6e0.cpp,
 // which compiles the byte-matched source re/match/s08/0044d6e0.c.
 
-// 0x00493590  C7 05 68 19 77 00 01 00 00 00 C3  (mov dword [0x00771968],1; ret)
-//   Base of the 3-word flag cluster at 0x00771968 (siblings +4/+8 set in round 29).
-extern "C" __declspec(dllexport) void __cdecl Set771968_1(void) {
-    *reinterpret_cast<std::uint32_t*>(0x00771968u) = 1u;  // cited at 0x00493590
-}
-RH_ScopedInstall(Set771968_1, 0x00493590);
+// MATCH-S15: the body of 0x00493590 (Set771968_1) moved to Match/MatchS15_00493590.cpp,
+// which compiles the byte-matched source re/match/s15/00493590.c.
 
 // MATCH-S09: the body of 0x0045a0f0 (VehPwrState68ba00Get) moved to Match/MatchS09_0045a0f0.cpp,
 // which compiles the byte-matched source re/match/s09/0045a0f0.c.

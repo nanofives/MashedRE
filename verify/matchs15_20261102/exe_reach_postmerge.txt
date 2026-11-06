@@ -1,0 +1,17 @@
+symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
+UtilZeroTable86a4a0	0x00162650	0	no	yes	
+ByteQuadSet50	0x001649b0	0	no	yes	
+ByteQuadSet80	0x00164a10	0	no	yes	
+ByteQuadSet50Body	NOT-IN-MAP	-	-	-	-
+ByteQuadSet80Body	NOT-IN-MAP	-	-	-	-
+RenderStatsAccumulate	0x00164be0	0	no	yes	
+CarEventTrigger	0x00164b50	0	no	yes	
+CarSlotInit	0x00164bb0	0	no	yes	
+DisplayInit	0x00164a40	0	no	yes	
+SubsystemInit	0x00164b20	0	no	yes	
+MainLoopInit	0x00164c60	1	yes	yes	_MainLoopInit <- ?ExecuteFrontendBootChain@?A0xb9da56f1@@YAXXZ <- _WinMain@16
+FpsDiscretise	0x00164cd0	0	no	yes	
+thunk_LaunchLangGate	0x00164d90	0	no	yes	
+thunk_EngineStopDispatch	0x00164da0	0	no	yes	
+thunk_HwExitDispatch	0x00164db0	0	no	yes	
+SoftwareTidyUpBeforeExiting	0x00164dc0	0	no	yes	

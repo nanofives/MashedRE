@@ -24,11 +24,8 @@ RH_ScopedInstall(Global63a5d0Get, 0x004075a0);
 // MATCH-S04: the body of 0x0041e140 (Global63d7e0Get) moved to Match/MatchS04_0041e140.cpp,
 // which compiles the byte-matched source re/match/s04/0041e140.c.
 
-// 0x0047ce70  A1 B0 6E 6C 00 C3  (mov eax,[0x006c6eb0]; ret)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Global6c6eb0Get(void) {
-    return *reinterpret_cast<const std::uint32_t*>(0x006c6eb0u);  // cited at 0x0047ce70
-}
-RH_ScopedInstall(Global6c6eb0Get, 0x0047ce70);
+// MATCH-S13: the body of 0x0047ce70 (Global6c6eb0Get) moved to Match/MatchS13_0047ce70.cpp,
+// which compiles the byte-matched source re/match/s13/0047ce70.c.
 
 // 0x00496910  A1 FC 2F 77 00 C3  (mov eax,[0x00772ffc]; ret) — timer-table base dword
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Global772ffcGet(void) {

@@ -36,6 +36,14 @@ typedef std::uint8_t   uint8;
 extern "C" std::uint32_t __cdecl VideoStateFlagGet(void);      // 0x00493f70
 extern "C" std::uint32_t __cdecl AspectRatioGlobalGet(void);   // 0x00493fc0
 
+// MATCH-S15: these four now have their only body in Match/MatchS15_<va8>.cpp (byte-matched sources
+// re/match/s15/<va8>.c). FUN_00494480 and FUN_00494460 were raw-address calls into the original here;
+// neither body reads a stack arg, so the 0 the caller pushed is dropped.
+extern "C" int  __cdecl IntroSplashFrameTickShim(void);                                      // MatchS15_00492d20.cpp
+extern "C" void __cdecl IntroVideoDimGetter(std::uint32_t* param_1, std::uint32_t* param_2); // MatchS15_00493f80.cpp
+extern "C" void __cdecl IntroVideoClose(void);                                               // MatchS15_00494460.cpp
+extern "C" std::uint32_t __cdecl IntroInputCheck(void);                                      // MatchS15_00494480.cpp
+
 // Callee stubs — forward to original RVAs (boot-time trampolines via function pointer).
 // Declared as function pointers to the original addresses so the linker doesn't
 // need to know about them. All calls within HardwareShowIntroVideo that go to
@@ -52,11 +60,8 @@ static void OrigVideoLoad(int a, int index, int b) {
 // re/match/s11/004671a0.c; its callees 0x0042b930 / 0x0042f510 are called through their original addresses there.
 extern "C" uint32 __cdecl BackBuffRasterOpen(int param);
 
-// 0x00494480  FUN_00494480 — input/button check: (int) -> int
-static int OrigInputCheck(int param) {
-    typedef int (__cdecl* Fn)(int);
-    return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00494480u))(param);
-}
+// MATCH-S15: the body of 0x00494480 (OrigInputCheck, a raw-address call into the original; now IntroInputCheck) moved to Match/MatchS15_00494480.cpp,
+// which compiles the byte-matched source re/match/s15/00494480.c.
 
 // 0x004c1be0  FUN_004c1be0 — render target helper: (uint32, uint32) -> uint32
 static uint32 OrigRenderTargetHelper(uint32 a, uint32 b) {
@@ -72,11 +77,8 @@ static uint32 OrigHwndGet() {
 
 // 0x00493f70 — now called directly via ported VideoStateFlagGet (see fwd decl above).
 
-// 0x00494460  FUN_00494460 — close video: (int) -> void
-static void OrigVideoClose(int param) {
-    typedef void (__cdecl* Fn)(int);
-    reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00494460u))(param);
-}
+// MATCH-S15: the body of 0x00494460 (OrigVideoClose, a raw-address call into the original; now IntroVideoClose) moved to Match/MatchS15_00494460.cpp,
+// which compiles the byte-matched source re/match/s15/00494460.c.
 
 // 0x00493fc0 — now called directly via ported AspectRatioGlobalGet (see fwd decl above).
 
@@ -132,20 +134,8 @@ static constexpr int            kInputBackOffset = 0x4C0;            // back-off
 // U-0813: type of globals (float vs int) — caller treats them as floats post-divide.
 // Leaf-exemption applies (C2->C3): zero static callees.
 
-// 0x00493f80
-extern "C" __declspec(dllexport)
-void __cdecl IntroVideoDimGetter(std::uint32_t* param_1, std::uint32_t* param_2) {
-    if (param_1 != nullptr) {
-        param_1[0] = *reinterpret_cast<const std::uint32_t*>(kIntroDim_007719ec);
-        param_1[1] = *reinterpret_cast<const std::uint32_t*>(kIntroDim_007719f0);
-    }
-    if (param_2 != nullptr) {
-        param_2[0] = *reinterpret_cast<const std::uint32_t*>(kIntroDim_007719f4);
-        param_2[1] = *reinterpret_cast<const std::uint32_t*>(kIntroDim_007719f8);
-    }
-}
-
-RH_ScopedInstall(IntroVideoDimGetter, 0x00493f80);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S15: the body of 0x00493f80 (IntroVideoDimGetter) moved to Match/MatchS15_00493f80.cpp,
+// which compiles the byte-matched source re/match/s15/00493f80.c.
 
 
 // ─── 0x004c1a00  IntroSplashVtableSlot6 ──────────────────────────────────────
@@ -234,14 +224,8 @@ RH_ScopedInstall(IntroSplashRenderState, 0x004c1bb0);  // re-enabled 2026-05-24 
 // ref: re/analysis/intro_splash/0x00492d20.md
 // U-0811: FUN_004967e0 callee semantics — open (does not affect mechanical correctness).
 
-// 0x00492d20
-extern "C" __declspec(dllexport)
-int __cdecl IntroSplashFrameTickShim() {
-    OrigInputPipeline();   // FUN_004967e0() — per-frame input pipeline
-    return 1;
-}
-
-RH_ScopedInstall(IntroSplashFrameTickShim, 0x00492d20);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S15: the body of 0x00492d20 (IntroSplashFrameTickShim) moved to Match/MatchS15_00492d20.cpp,
+// which compiles the byte-matched source re/match/s15/00492d20.c.
 
 
 // ─── 0x00495350  HardwareShowIntroVideo ─────────────────────────────────────
@@ -347,7 +331,7 @@ void __cdecl HardwareShowIntroVideo() {
         IntroSplashFrameTickShim();
 
         // d. Button/input check.
-        const int iVar3_btn = OrigInputCheck(0);
+        const int iVar3_btn = static_cast<int>(IntroInputCheck());
         if (iVar3_btn != 0) {
             // Scan input-state byte array at DAT_007f1502 in 0x4C strides.
             // Condition: pcVar4[-0x4C0] != 0 AND *pcVar4 == 0 → skip.
@@ -419,7 +403,7 @@ void __cdecl HardwareShowIntroVideo() {
         // j. Check if current video is done or skip triggered.
         const std::uint32_t iVar3_done = VideoStateFlagGet();   // ported 0x00493f70 (was OrigVideoDone)
         if (iVar3_done == 0 || bVar1) {
-            OrigVideoClose(0);
+            IntroVideoClose();
             ++iVar6;
             if (iVar6 > 3) {
                 return;  // all 4 videos played
