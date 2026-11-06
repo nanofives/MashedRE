@@ -1,13 +1,16 @@
 # RESULT MATCH-S19, 2026-11-06
 
-**Verdict: GATES_PENDING.** Slice 0x004c0740..0x004c7760 (117 game functions, 28 library rows inside skipped).
+**Verdict: GREEN.** Gates on the merged build equal the merge_train refs (G-CTRL 8284be46/ba407a16/31fe043e, B 1d5bf4f9 x3). Slice 0x004c0740..0x004c7760 (117 game functions, 28 library rows inside skipped).
 **84/117** sources are byte-identical under `re/tools/match/match.py` (XP DDK cl 13.00.9176 / c2 13.00.9178), and
 every one of the 84 has `relocheck.py` OK with `unchecked=0` (`relocheck.tsv`). **32** of them are now the port's only
 body (32 wrapper TUs `Match/MatchS19_<va8>.cpp`): 3 in `mashed_re.exe` and the .asi, 29 in the .asi only.
-**C4 candidates: 0.** None of the 3 exe-side swaps has a direct exe chain from `WinMain` (L-68, L-89, table below).
+**C4 candidates: 0.** None of the 3 exe-side swaps has a direct exe chain from `WinMain` (L-68, L-89, table below); same on the merged build.
 
-Branch: `orch/MATCH-S19`, cut from orch/integration 3c6510ee6 (run 5), orch/integration adf5ff69b merged before the
-swap leg (run 6). Exe `a992ab0d` (sha256 a992ab0dce5fc116...), asi `04b906c6`, both built with `MASHED_NO_DEPLOY=1`.
+Branch: `orch/MATCH-S19`, cut from orch/integration 3c6510ee6 (run 5). orch/integration adf5ff69b merged before the
+swap leg, then 0f5899d1c (MATCH-S10, MATCH-S11 and others) merged after the first gate run. Gated builds, both with
+`MASHED_NO_DEPLOY=1`: pre-merge exe `a992ab0d`, merged exe `b1e4cc92` (sha256
+b1e4cc92d8a35a25f8dbd9dea70ffcfb054894ee729ffaf28508a12e64c74a54), asi `2636b31d`. A trial merge with the newer
+orch/integration b1dd84b7c (MATCH-S13, S15, S09-FU) is conflict-free (`git merge-tree`); it is left to the train.
 Insertion anchor: the S19 rsp block sits after `"Boot\VideoConfig.cpp"` (exe and asi).
 
 ## Finding that changes how to match this range: the RW core is a Pentium build
@@ -163,7 +166,26 @@ The 29 asi-only swaps have no exe body. **0 C4 candidates**, so no counter build
 
 ## Gates
 
-GATES_TABLE
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, private root `D:/MashedWT/MATCH-S19_root`
+(`MASHED_ROOT`, robocopy of `original\`), test slot outside and `mashed_lock.py run --solo --label MATCH-S19` inside
+(opened after the merge train's priority windows cleared). Refs read from `re/orchestrator/merge_train.json` at gate
+time (no FLIP had landed: gctrl `8284be46/ba407a16/31fe043e`, b `1d5bf4f9` x3).
+
+| run | exe | arm | file | sha8 | ref |
+|---|---|---|---|---|---|
+| 1 (pre-merge, 12:28) | a992ab0d | H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| 1 | a992ab0d | B_DEF_K0, K1, K26 | step.csv | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
+| 2 (merged, 14:03) | b1e4cc92 | H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| 2 | b1e4cc92 | B_DEF_K1, K26 | step.csv | 1d5bf4f9 x2 | 1d5bf4f9 |
+| 2, re-run 14:22 | b1e4cc92 | B_DEF_K0 | step.csv | 1d5bf4f9 | 1d5bf4f9 |
+
+Run 2's first B_DEF_K0 exited 3 after 34 s with no step.csv: its log shows `InitD3D9: CreateDevice(HAL/HW,...) -> HUNG
+hr=0x80004005` and the REF retry HUNG too, so the arm never reached the race. That is the display device, not the
+port; the arm alone was re-run under the same locks and matched the ref. Every other arm exit 0, self-exited.
+
+The merge train's `-Full` pass (D2 x3, 13 tracks) was not run here (`mashedmod/src` is in `full_set_paths`, so the
+train runs it on enqueue). With 0 exe callers for the 3 exe-side swaps, no gate scenario executes a swapped body in
+the exe; the gates show the swap leaves the default exe behaviour unchanged.
 
 ## Re-classify
 
@@ -197,5 +219,12 @@ not swapped (9 NOT-SAFE, 1 SKIP, 42 with no port body) are not touched in hooks.
 | flagsweep.txt | 3bc0fbb0bb3b34312b9fdea3f789b2629d9261aa601b365eb86d5e14d3fd0029 |
 | exe_reach.txt | a8a350a79a780f46547ee219b330b6449f1d8eed17b8e1d3c843c2d7ac063841 |
 | build1.log | 99df875e9acb2aa9c7aae2eed714afbb2d705a6691bef6204e92877c2dce80c7 |
-ARMS_SHA
+| exe_reach2.txt (merged build) | 671bd54d5641e1868324f6dc300a2d0806a7a4f036a9fe3227150afec8e9d0aa |
+| build2.log (merged build) | aad2fc62b111d2d8182b1e548bdcc169458257a3d0a3407a0315df86e4e21d54 |
+| arms2/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms2/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms2/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms2/B_DEF_K1.step.csv, arms2/B_DEF_K26.step.csv, arms2k0/B_DEF_K0.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 (each) |
+| arms2/B_DEF_K0.log (the HUNG CreateDevice run) | 739ae20a1900e7447919596faadf5f8cc2b315929c195d8ebf3eb52856e7cb6f |
+| arms/ (run 1, pre-merge exe) | same six hashes as run 2 (gates.log) |
 | notes/h1..h6.md, scratch/, g2s/ | helper reports, scratch, raw converter output |
