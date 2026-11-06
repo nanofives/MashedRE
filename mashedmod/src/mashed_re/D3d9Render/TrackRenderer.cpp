@@ -5217,6 +5217,38 @@ static bool St5Leg2Enabled() {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_ST5_LEG2"); return e && e[0] && e[0] != '0'; }();
     return s_on;
 }
+// [D4-DC-77b0-ST5-RING] The FUN_00534870 ring draws of the original's audio pass that runs before the state-2 roll.
+// Measured (verify/d4dc77b0st5ring_20261106, --ring-probe): the original ring is at draw k = 0 at the menu, k = 8 at
+// FUN_00414180 entry (called from 0x0041025e, sub-state 2) and k = 12 at its leave. The 8 draws are all FUN_00472650
+// calls returning to 0x004636f9 (lo 0, hi 250) and 0x0046386e (lo 0, hi 100), alternating, 4 pairs, sub-state 2.
+// Main loop 0x004922a0: 0x004922b3 call 0x00492d30 (game tick, FUN_00414180's chain) then 0x004922bd call 0x004926c0,
+// whose 0x0049270c call 0x00466b50 runs the race case: per car v = 0..3 (0x00466cf4..0x00466d3d), if FUN_0040e370(v)
+// (0x00466cf7), FUN_00463640(v) (0x00466d04). So the 8 draws come from the audio pass of the iteration before the
+// state-2 game tick. FUN_00463640: no exit before 0x004636f4 `call 0x00472650` (push 0x437a0000, push 0 at
+// 0x004636ed/0x004636f2); the rpm state switch at 0x004637c7 (`jmp [eax*4 + 0x463c64]`, eax = [0x0069054c + v*4])
+// sends state 0 to 0x004637ce, whose every path reaches 0x00463869 `call 0x00472650` (push 0x42c80000, push 0 at
+// 0x00463862/0x00463867); states 1..4 (0x0046389d, 0x004638f9, 0x00463943, 0x0046399d) and > 4 (0x004639d5) do not
+// draw. The pass measured here drew twice per car, so every car was in rpm state 0.
+// The exe's engine voice (Audio/AudioWire.cpp) keeps its private RNG, and the rpm state machine is not ported, so
+// only this first pass is reproduced: values discarded, run once at the exe's state-2 entry before
+// SubStateRollCountdown414180. The original's later audio passes (4 to 8 draws per frame in sub-state 3) are not.
+// On with MASHED_ST5_LEG2 (the knob whose mode-5 branch reads the rolled cd); MASHED_NO_RING_AUDIO_PASS=1 opts out
+// (A/B), MASHED_RING_AUDIO_PASS=1 turns it on without MASHED_ST5_LEG2.
+static bool RingAudioPassEnabled() {
+    static const bool s_on = [] {
+        auto on = [](const char* n) { const char* e = std::getenv(n); return e && e[0] && e[0] != '0'; };
+        if (on("MASHED_NO_RING_AUDIO_PASS")) return false;
+        return on("MASHED_RING_AUDIO_PASS") || St5Leg2Enabled();
+    }();
+    return s_on;
+}
+static void RingAudioPassDraws() {
+    for (int v = 0; v < 4; ++v) {                                  // 0x00466cf4..0x00466d3d
+        if (!IsCarSlotActive(v)) continue;                         // FUN_0040e370 @0x00466cf7
+        (void)::Ai::Ai_RandRange(0.0f, 250.0f);                    // FUN_00472650 @0x004636f4
+        (void)::Ai::Ai_RandRange(0.0f, 100.0f);                    // FUN_00472650 @0x00463869 (rpm state 0)
+    }
+}
 // [D4-DC-77b0-ST5-HOLD] MASHED_ST5_HOLD_DIAG (default OFF, log only): per leg-2 call, each AI car's ctrl bytes and position.
 static bool St5HoldDiag() {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_ST5_HOLD_DIAG"); return e && e[0] && e[0] != '0'; }();
@@ -5553,6 +5585,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         int& ba8c = *reinterpret_cast<int*>(0x0063ba8cu);
         int& s29b8 = *reinterpret_cast<int*>(0x005f29b8u);
         if (ba8c == 0) {                                   // FUN_004111c0 state-2 tail
+            if (RingAudioPassEnabled()) RingAudioPassDraws();   // [D4-DC-77b0-ST5-RING] the audio pass before it
             SubStateRollCountdown414180();                 // 0x00410259 FUN_00414180 (cd roll)
             SubState_SeedCd();                             // MASHED_SUBSTATE_CD override (measurement, unset by default)
             // [D-11073 leg 2] 0x0041026d: phase 3 only while the state-1 seed 100000 is intact

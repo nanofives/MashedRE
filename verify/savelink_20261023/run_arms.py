@@ -491,6 +491,8 @@ STACK['ST5L2RS8D'] = STACK['ST5L2D'] + ['MASHED_RING_SKIP=8']
 for _c in (1, 3):
     STACK[f'ST5L2RS8RD{_c}'] = STACK[f'ST5L2RD{_c}'] + ['MASHED_RING_SKIP=8']
     STACK[f'RS8RD{_c}'] = STACK[f'RD{_c}'] + ['MASHED_RING_SKIP=8']
+# D4-DC-77b0-ST5-RING: MASHED_ST5_LEG2 now also runs the audio-pass ring draws before the state-2 roll; NRA opts out
+STACK['ST5L2NRA'] = STACK['ST5L2'] + ['MASHED_NO_RING_AUDIO_PASS=1']
 STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
 STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
 # MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)); PSG = all three port-state knobs (the selector
