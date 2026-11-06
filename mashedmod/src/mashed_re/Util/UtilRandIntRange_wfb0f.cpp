@@ -61,21 +61,5 @@
 //     stale. Non-blocking: the no-arg call matches the disassembly.
 // ---------------------------------------------------------------------------
 
-// Raw PRNG at 0x00534870 (STUB S-1424). Takes no arguments; reads global state.
-static auto* const s_FUN_00534870 =
-    reinterpret_cast<std::uint32_t(__cdecl*)()>(0x00534870u);
-
-// 0x00472690
-extern "C" __declspec(dllexport) int __cdecl RandIntInRange(int param_1, int param_2) {
-    // 0x00534870: call PRNG with no args (STUB S-1424).
-    std::uint32_t uVar1 = s_FUN_00534870();
-    // 0x7fffffff at AND instruction (0x00472699): strip sign bit.
-    uVar1 &= 0x7fffffffu;
-    // SUB+INC at 0x0047269f..0x004726a0: inclusive range = hi - lo + 1.
-    std::uint32_t range = static_cast<std::uint32_t>(param_2 - param_1) + 1u;
-    // DIV at 0x004726a4: unsigned divide; EDX = remainder, EAX = quotient (discarded).
-    // ADD at 0x004726a8: remainder + lo = result in [lo, hi].
-    return static_cast<int>(uVar1 % range) + param_1;
-}
-
-RH_ScopedInstall(RandIntInRange, 0x00472690);
+// MATCH-S11: the body of 0x00472690 (RandIntInRange) moved to Match/MatchS11_00472690.cpp,
+// which compiles the byte-matched source re/match/s11/00472690.c.

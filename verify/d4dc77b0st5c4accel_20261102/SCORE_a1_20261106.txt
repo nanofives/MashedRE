@@ -1,0 +1,46 @@
+B_ST5L2RS8D_K0: [substate] FUN_00414180 draws_before=0 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_ST5L2RS8RD1_K0: [substate] FUN_00414180 draws_before=0 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_ST5L2RS8RD3_K0: [substate] FUN_00414180 draws_before=0 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_RS8RD1_K0: [substate] FUN_00414180 draws_before=0 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+=== B_ST5L2RS8D_K0 pid=5396 exe=34530fab
+    B_ST5L2RS8D_K0.step.csv lines=964 sha8=ebc6afd1
+=== B_ST5L2RS8RD1_K0 pid=13024 exe=34530fab
+    B_ST5L2RS8RD1_K0.step.csv lines=964 sha8=ebc6afd1
+=== B_ST5L2RS8RD3_K0 pid=24808 exe=34530fab
+    B_ST5L2RS8RD3_K0.step.csv lines=964 sha8=ebc6afd1
+=== B_RS8RD1_K0 pid=19648 exe=34530fab
+    B_RS8RD1_K0.step.csv lines=762 sha8=1d5bf4f9
+calls=112 (exit call 112 excluded)
+car 1: cd=3 T=6700 c29b8 first=11950 last-nonexit=6450 ff_calls=5 bf4_at_exit_call=1300
+car 2: cd=3 T=6700 c29b8 first=11950 last-nonexit=6450 ff_calls=5 bf4_at_exit_call=1300
+car 3: cd=3 T=6700 c29b8 first=11950 last-nonexit=6450 ff_calls=5 bf4_at_exit_call=1300
+W-C4 mismatches=0 []
+W-HOLD mismatches=0 []
+== B_ST5L2RS8RD1_K0
+frame,+bf4,+bf8
+0,900,1
+1,700,1
+2,500,1
+3,300,1
+4,100,1
+5,0,0
+12,0,0
+== B_ST5L2RS8RD3_K0
+frame,+bf4,+bf8
+0,900,1
+1,700,1
+2,500,1
+3,300,1
+4,100,1
+5,0,0
+12,0,0
+== B_RS8RD1_K0
+frame,+bf4,+bf8
+0,1100,1
+1,900,1
+2,700,1
+3,500,1
+4,300,1
+5,100,1
+6,0,0
+12,0,0

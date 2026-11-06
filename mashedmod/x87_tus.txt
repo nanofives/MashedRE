@@ -124,6 +124,11 @@ ViewportScaledRectDraw
 # pontoon (2026-10-16): the Warzone track object 0x00684d18 (RtAnim/RpHAnim/RW matrix leaves transcribed from the
 # listings, run at PC_24 by Pontoon_Tick). verify/pontoon_20261016/PREREG_pontoon.md.
 WarzonePontoon
+# MATCH-S09 2026-11-02: port bodies compiled from byte-matched game code that uses float (re/match/s09/)
+MatchS09_00451990
+MatchS09_00451a50
+MatchS09_00452eb0
+MatchS09_00458fa0
 # MATCH-S06 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s06/)
 MatchS06_004264d0
 MatchS06_00426d20

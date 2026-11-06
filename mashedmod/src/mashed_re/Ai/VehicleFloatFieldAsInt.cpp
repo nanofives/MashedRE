@@ -43,31 +43,5 @@ __declspec(naked) int __cdecl FtolFrom(const float* /*src*/) {
 
 } // namespace
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046cc10  VehicleFloatFieldAsInt(int* out, unsigned idx) -> 1 ok / 0 range
-//
-// Verbatim 0x0046cc10..0x0046cc38:
-//   0046cc10 mov eax,[esp+8]              ; idx  (SECOND argument)
-//   0046cc14 cmp eax,0x10
-//   0046cc17 jb  0x46cc1c                 ; UNSIGNED compare
-//   0046cc19 xor eax,eax / ret            ; out of range -> 0, *out UNTOUCHED
-//   0046cc1c imul eax,eax,0xd04
-//   0046cc22 fld dword ptr [eax+0x881f80]
-//   0046cc28 call 0x4a2c48                ; __ftol -> EAX
-//   0046cc2d mov ecx,[esp+4]              ; out
-//   0046cc31 mov [ecx],eax
-//   0046cc33 mov eax,1 / ret
-//
-// Note the out-of-range path leaves *out ALONE — it does not zero it. The diff
-// poisons the out slot to 0xCCCCCCCC before each call, so that "no write" is
-// observable rather than silently matching a stale value.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleFloatFieldAsInt(int* out,
-                                                                    unsigned int idx) {
-    if (idx >= kMaxIndex) return 0;
-    const float* src = reinterpret_cast<const float*>(
-        kFieldBase_881f80 + static_cast<std::uintptr_t>(idx) * kVehicleStride);
-    *out = FtolFrom(src);
-    return 1;
-}
-RH_ScopedInstall(VehicleFloatFieldAsInt, 0x0046cc10);
+// MATCH-S11: the body of 0x0046cc10 (VehicleFloatFieldAsInt) moved to Match/MatchS11_0046cc10.cpp,
+// which compiles the byte-matched source re/match/s11/0046cc10.c.

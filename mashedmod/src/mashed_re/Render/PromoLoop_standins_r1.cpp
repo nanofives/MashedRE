@@ -22,25 +22,9 @@ inline RwMallocFn RwMallocSlot() {
 }
 }  // namespace
 
-// ===========================================================================
-// 0x00474db0  RwMallocArrayZeroFill  (FUN_00474db0, 42 B, cdecl(count, stride) -> block)
-//   0x00474db0  mov eax, [0x007d3ff8]
-//   0x00474db6  mov esi, [esp+8]             count
-//   0x00474dba  imul esi, [esp+0xc]          n = count * stride (low 32 bits)
-//   0x00474dc0  push 0 / push esi
-//   0x00474dc3  call [eax+0x108]             p = rwmalloc(n, 0)
-//   0x00474dcb  push esi / push edi
-//   0x00474dcd  call 0x004b6520              ZeroFillWrapper(p, n), also when p is NULL
-//   0x00474dd5  mov eax, edi                 return p
-// ===========================================================================
-// 0x00474db0
-extern "C" __declspec(dllexport) void* __cdecl RwMallocArrayZeroFill(std::uint32_t count, std::uint32_t stride) {
-    const std::uint32_t n = count * stride;                       // 0x00474dba
-    void* p = RwMallocSlot()(n, 0);                               // 0x00474dc3
-    reinterpret_cast<ZeroFillFn>(0x004b6520u)(p, n);              // 0x00474dcd
-    return p;                                                     // 0x00474dd5
-}
-RH_ScopedInstall(RwMallocArrayZeroFill, 0x00474db0);
+// MATCH-S11: the body of 0x00474db0 (RwMallocArrayZeroFill) moved to Match/MatchS11_00474db0.cpp,
+// which compiles the byte-matched source re/match/s11/00474db0.c.
+extern "C" void* __cdecl RwMallocArrayZeroFill(std::uint32_t count, std::uint32_t stride);   // 0x00474db0 (Match/MatchS11_00474db0.cpp)
 
 // ===========================================================================
 // 0x004759b0  Arrays691600Alloc  (FUN_004759b0, 68 B, cdecl(n) -> last block; caller 0x0040bbb0)
