@@ -1,9 +1,42 @@
-# RESULT D4-FLIP-MATCHEND-ST3PRETICK (HANDOFF: gate arms pending display)
+# RESULT D4-FLIP-MATCHEND-ST3PRETICK (GREEN)
 
-Verdict: **HANDOFF**. The flip is committed and the exe builds. The four default-gate arms did not run to a
-hash: every boot of `mashed_re.exe` on this machine since about 09:18 (2026-11-02) fails D3D9 CreateDevice
-with `hr=0x8876086A` (D3DERR_NOTAVAILABLE, D3D9-NOTAVAIL), because the display is asleep. That is the cause of
-the missing hashes. It is not a finding and not a gate change.
+Verdict: **GREEN** (2026-11-06). The flip is committed (ec8c2c340) and all four default-gate arms on the flipped exe,
+rebuilt on top of `orch/integration` @ 7bfd51a2e (merge 6a788de6b), reproduce the current refs in
+`re/orchestrator/merge_train.json` (G-CTRL 8284be46 / ba407a16 / 31fe043e, B 1d5bf4f9 x3). No `merge_train.json` change.
+SOURCE change (two knob defaults in `TrackRenderer.cpp`), default gate hashes unchanged.
+
+## Gate arms, 2026-11-06 (resume after the 2026-11-02 HANDOFF)
+
+Exe: `mashedmod/build/mashed_re.exe` built from the worktree with `MASHED_NO_DEPLOY=1` after merging `orch/integration`,
+SHA-256 `f47b16de1e7bd3fded4cb40a3e91bcd0beec990ade601106dcda5d8c50395bda`. Render probe first
+(`scripts/diag.py probe-render` against the private root): `RENDER: OK, last CreateDevice hr=0x00000000`.
+Run: test slot outside, `mashed_lock.py run --label D4-FLIP-MATCHEND-ST3PRETICK` inside, `bash verify/d4flip_matchend_st3pretick_20261102/run_all.sh`.
+
+| Arm | Expected (merge_train.json refs) | Got | exit / secs |
+|---|---|---|---|
+| H_DEF step / gates / ptrace | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e | 0 / 245 |
+| B_DEF_K0 | 1d5bf4f9 | 1d5bf4f9 | 0 / 24 |
+| B_DEF_K1 | 1d5bf4f9 | 1d5bf4f9 | 0 / 22 |
+| B_DEF_K26 | 1d5bf4f9 | 1d5bf4f9 | 0 / 22 |
+
+Raw files (not committed), `D:/MashedWT/D4-FLIP-MATCHEND-ST3PRETICK_data/arms/`, SHA-256:
+
+```
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198  H_DEF.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  H_DEF.gates.csv
+31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3  H_DEF.ptrace.log
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  B_DEF_K0.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  B_DEF_K1.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  B_DEF_K26.step.csv
+```
+
+All spawned PIDs (804, 6852, 15764, 17100) self-exited. The merge train should run this row alone in its own `-Full`
+flip pass, as decided.
+
+## History: the 2026-11-02 HANDOFF
+
+The first attempt (below) built the flip but could not boot: every `mashed_re.exe` boot on the machine failed D3D9
+CreateDevice with `hr=0x8876086A` (D3DERR_NOTAVAILABLE, D3D9-NOTAVAIL) because the display was asleep. Not a finding.
 
 ## What changed (commit ec8c2c340 on orch/D4-FLIP-MATCHEND-ST3PRETICK)
 
@@ -28,7 +61,7 @@ Build: `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"` from the worktree
 not deployed. `mashedmod/build/mashed_re.exe` SHA-256
 `45cece5350283d442d3528525b1acd1cd2d0f366979a74c1dad84384f4c3ce45`.
 
-## What remains: the four default-gate arms
+## 2026-11-02 state: the four default-gate arms (since run, see the table above)
 
 | Arm | Expected (merge_train.json refs) | Got |
 |---|---|---|
