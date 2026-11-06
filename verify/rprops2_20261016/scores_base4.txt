@@ -1,0 +1,15 @@
+arm base4
+frame          orig match orig tri match tri   tri%  rows red  verdict
+training 884    242   198    18128     17207  94.9%    77   0  CITED
+training 924    257   195    18358     17171  93.5%    76   0  CITED
+training 959    233   195    18079     17171  95.0%    76   0  CITED
+arctic 1051     180   145    35412     32956  93.1%    78   0  CITED
+arctic 1091     177   144    35197     32719  93.0%    77   0  CITED
+arctic 1126     131   105    29307     27011  92.2%    77   0  CITED
+city 761        512   474    42182     38408  91.1%   126   0  CITED
+city 801        496   462    41692     37948  91.0%   124   0  CITED
+city 836        444   415    34493     30977  89.8%   122   0  CITED
+rows by citation id (summed per track):
+  training C01=63 C01b=3 C02=9 C03=3 C04=1 C05=9 C06=6 C07=9 C08=18 C10=3 C11=6 C14=3 C17=6 C18=3 C19=78 C20=3 C21=6
+  arctic   C01=30 C02=9 C03=3 C04=6 C05=6 C06=6 C08=18 C09=7 C15=6 C16=3 C17=4 C18=3 C19=86 C20=6 C21=39
+  city     C01=72 C02=9 C03=3 C04=3 C05=8 C06=6 C07=1 C08=21 C09=7 C12=6 C14=6 C17=4 C18=3 C19=206 C21=17
