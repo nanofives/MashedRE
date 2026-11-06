@@ -23,12 +23,8 @@
 
 #include <cstdint>
 
-// 0x00453f30
-extern "C" __declspec(dllexport) void __cdecl Fill6870b4(void) {
-    for (std::uint32_t p = 0x006870b4u; static_cast<std::int32_t>(p) < 0x00687ec4; p += 0x24u)
-        *reinterpret_cast<std::uint32_t*>(p) = 0xffffffffu;
-}
-RH_ScopedInstall(Fill6870b4, 0x00453f30);
+// MATCH-S09: the body of 0x00453f30 (Fill6870b4) moved to Match/MatchS09_00453f30.cpp,
+// which compiles the byte-matched source re/match/s09/00453f30.c.
 
 // [rtex 2026-10-16] IdxPtr404e00 (FUN_00404e00) and IdxPtr404e20 (FUN_00404e20) moved,
 // unchanged for the .asi, to Vehicle/CarMaterialTables.cpp, which both targets compile: the

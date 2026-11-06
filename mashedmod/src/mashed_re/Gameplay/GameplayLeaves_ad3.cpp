@@ -23,49 +23,11 @@ static constexpr std::uintptr_t kVehicleBase_8816e4 = 0x008816e4u;  // vec3 (+0x
 static constexpr std::uint32_t  kDWordStride        = 0x341u;
 static constexpr std::uint32_t  kByteStride         = 0xD04u;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046bce0  VehicleVec3At94Get
-// Ghidra decomp (FUN_0046bce0):
-//   if (0xf < param_2) return 0;
-//   *param_1     = (&DAT_00882094)[param_2 * 0x341];
-//   param_1[1]   = (&DAT_00882098)[param_2 * 0x341];
-//   param_1[2]   = (&DAT_0088209c)[param_2 * 0x341];
-//   return 1;
-// Pure getter of the per-vehicle vec3 at record +0x94 (contiguous dwords at
-// 0x00882094/98/9c, dword stride 0x341). U-8408: vec3 semantic unconfirmed —
-// does not affect offset/bounds correctness.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleVec3At94Get(std::uint32_t* outVec, std::uint32_t vehicleIdx) {
-    if (vehicleIdx > 0xfu) return 0;
-    const std::uint32_t* base = reinterpret_cast<const std::uint32_t*>(kVehicleBase_882094);
-    outVec[0] = base[vehicleIdx * kDWordStride];
-    outVec[1] = base[vehicleIdx * kDWordStride + 1];
-    outVec[2] = base[vehicleIdx * kDWordStride + 2];
-    return 1;
-}
-RH_ScopedInstall(VehicleVec3At94Get, 0x0046bce0);
+// MATCH-S11: the body of 0x0046bce0 (VehicleVec3At94Get) moved to Match/MatchS11_0046bce0.cpp,
+// which compiles the byte-matched source re/match/s11/0046bce0.c.
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046d740  VehicleVec3At6E4Set
-// Ghidra decomp (FUN_0046d740):
-//   if (0xf < param_2) return 0;
-//   iVar1 = param_2 * 0xd04;
-//   *(undefined4*)(&DAT_008816e4 + iVar1) = *param_1;
-//   *(undefined4*)(&DAT_008816e8 + iVar1) = param_1[1];
-//   *(undefined4*)(&DAT_008816ec + iVar1) = param_1[2];
-//   return 1;
-// Setter for the per-vehicle vec3 at record +0x6e4 (byte stride 0xd04).
-// param_1 = input vec3 (3 dwords). U-8421: vec3 semantic unconfirmed.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleVec3At6E4Set(const std::uint32_t* inVec, std::uint32_t vehicleIdx) {
-    if (vehicleIdx > 0xfu) return 0;
-    std::uintptr_t rec = kVehicleBase_8816e4 + vehicleIdx * kByteStride;
-    *reinterpret_cast<std::uint32_t*>(rec)     = inVec[0];
-    *reinterpret_cast<std::uint32_t*>(rec + 4) = inVec[1];
-    *reinterpret_cast<std::uint32_t*>(rec + 8) = inVec[2];
-    return 1;
-}
-RH_ScopedInstall(VehicleVec3At6E4Set, 0x0046d740);
+// MATCH-S11: the body of 0x0046d740 (VehicleVec3At6E4Set) moved to Match/MatchS11_0046d740.cpp,
+// which compiles the byte-matched source re/match/s11/0046d740.c.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00461e90  SurfaceCodeClassify

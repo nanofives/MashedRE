@@ -46,6 +46,15 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-02  D-11075  DEFERRED  rewritten, stays Active  launcher retired by L-79 A (D5-SHIM-STEP3-LAUNCHER); row no longer implies a live launcher
+2026-11-02  S-3714  STUBS  Active->struck  native port, no call_original (0x00546bf0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
+2026-11-02  S-3715  STUBS  Active->struck  native port, no call_original (0x00546c50 RwpSolverMath2QuatY.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
+2026-11-02  S-3716  STUBS  Active->struck  native port, no call_original (0x00546cb0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
+2026-11-02  0x00442c80  ModeGatedPlayerCheck  C4=C4  notes/file only: match evidence added (identical, literal-constant form, swapped, exe-callers via A5 <- WinMain), C4 stays on the frida route; evidence: verify/matchs08fu_notes_20261102/RESULT_MATCH-S08FU-NOTES.md
+2026-11-02  0x00442ce0  VehicleRubberBandSpeedModifier  C4=C4  notes/file only: match evidence added (identical, literal-constant form, swapped, exe-callers via A5 <- WinMain), C4 stays on the frida route; evidence: verify/matchs08fu_notes_20261102/RESULT_MATCH-S08FU-NOTES.md
+2026-11-02  0x00413f90  TimerGetBasePtr  C4=C4  notes/file only: match evidence added (identical, swapped, exe-callers=0, no level from the match route per L-68), C4 stays on the frida route; evidence: verify/matchs08fu_notes_20261102/RESULT_MATCH-S08FU-NOTES.md
+2026-11-02  0x00442cc0  AiVehicleFloat4Get  C3=C3  no change (L-89): a call made only by an env-gated replay harness is not an exe caller under L-68, so the row stays C3; evidence: verify/matchs08fu_notes_20261102/RESULT_MATCH-S08FU-NOTES.md
+2026-11-02  0x00443300  FUN_00443300  C3=C3  no change (L-89): a call made only by an env-gated replay harness is not an exe caller under L-68, so the row stays C3; evidence: verify/matchs08fu_notes_20261102/RESULT_MATCH-S08FU-NOTES.md
 2026-11-02  0x00443300  FUN_00443300  C3->C3  match identical, swapped, exe-callers=0 under default (callers only under env MASHED_AILEAF_REPLAY); C4 when a caller lands (L-68 ruling); evidence: verify/rcs08_20261102/RESULT_MATCH-RC-S08.md
 2026-11-02  0x00442cc0  AiVehicleFloat4Get  C3->C3  match identical, swapped, exe-callers=0 under default (caller only under env MASHED_C30_REPLAY); C4 when a caller lands (L-68 ruling); evidence: verify/rcs08_20261102/RESULT_MATCH-RC-S08.md
 2026-11-02  0x00448700  VehicleSeedWritePair  C2->C4  route match (c4=match), exe-callers=3 (UpdateCar <- RenderFrame <- WinMain, MatchEndConclude); evidence: verify/rcs08_20261102/RESULT_MATCH-RC-S08.md

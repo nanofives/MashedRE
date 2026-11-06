@@ -59,6 +59,9 @@ extern "C" float __cdecl RaceScoreFloatGetBySlot(int param_1);                 /
 extern "C" void __cdecl SplineCubicBlend3(float t, float* out, float* p0, float* p1, float* p2,
                                           float* p3);                           // 0x00482ae0
 #include "../Vehicle/VehicleRecordBase.h"
+// [MATCH-T13-SEED] 0x004173a0, the matched body (Match/MatchS03_004173a0.cpp).
+extern "C" float Float89a360Get(void);
+
 namespace mashed_re { namespace Frontend {   // [u9779] FUN_0040d590's one body (Frontend/MenuLeaves_af4.cpp)
 struct Rank3Callees { float (*pct)(int); void (*kill)(std::uint32_t); void (*add)(std::uint32_t, int); };
 void RaceRankThree(std::uint32_t, std::uint32_t, std::uint32_t, int, const Rank3Callees&);
@@ -241,13 +244,14 @@ int aib_track_index()      { return g_aib.course; }
 // 6259/6259). This returned 1, which (a) skipped FUN_00416250's sub-state-6 block, the
 // one that calls the fire decision, (b) stepped the PLAYER through the AI tick
 // (FUN_00418860's `|| FUN_00443080() == 1`) and (c) forced DAT_0089a368 = 2 every frame.
-// [D4-DC-77b0-MATCHEND-SUBSTATE] MASHED_MATCHEND_SUBSTATE (default OFF): FUN_00410510's match-end stores (0xb at
+// [D4-DC-77b0-MATCHEND-SUBSTATE] MASHED_MATCHEND_SUBSTATE (default ON since D4-FLIP-MATCHEND-ST3PRETICK 2026-11-02,
+// L-80 (a); MASHED_NO_MATCHEND_SUBSTATE=1 opts out, MASHED_MATCHEND_SUBSTATE=1 is still accepted, a no-op): FUN_00410510's match-end stores (0xb at
 // 0x00410645, FUN_00448700(1, w) at 0x0041067e / 0x00410811), FUN_004111c0 case 0xb (0x00410ab0..0x00410b25, 9 at
 // 0x00410b02) and, here, FUN_00443080 read live. The original measured 0 here on every racing frame and 1 at every
 // FUN_004177b0 entry in 0xb (verify/d4dc77b0runtime_20261101, leg 3). The cell's only exe writer is VehicleSeedWritePair.
 // verify/d4dc77b0matchend_20261101/PREREG_D4-DC-77b0-MATCHEND-SUBSTATE.md. Knob OFF: 0, as before.
 bool MatchEndSubstateEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_MATCHEND_SUBSTATE"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_MATCHEND_SUBSTATE"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 int aib_ai_target_enable() {
@@ -3329,7 +3333,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Race::RoundGrid_MaybeReplay();    // [round grid Stage A] G-RG-SNAP (env-gated)
                     Race::Registry_MaybeReplay();     // [mode 7 M1] G-M1-REG / G-M1-PASS (env-gated)
                     Gameplay::Pickups_MaybeReplay();  // [mode 7 M2a] G-M2a-REPLAY (env-gated)
-                    Gameplay::PickupCb_MaybeReplay(); // [mode 7 M3] G-M3-REPLAY (env-gated)
+                    // Gameplay::PickupCb_MaybeReplay() [mode 7 M3] moved to UpdateCar, after VehiclePhysics_Init
+                    // (D4-DC-INC-0046d4a0-REPLAYORDER, L-82 (a)).
                 }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
@@ -5454,6 +5459,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             s_pinit_pre = true;
         }
     }
+    // [D4-DC-INC-0046d4a0-REPLAYORDER, L-82 (a)] G-M3-REPLAY (MASHED_PKCB_REPLAY, env-gated, no-op unset) runs once here,
+    // after VehiclePhysics_Init has set g_vehicleArrayBase. At track load it ran before the record array existed, so the
+    // one-body 0x0046d4a0 (PtrCompute881ec8) returned 0 there and FUN_00458570 then read [0 + 0x30] (0x00458586..0x0045858d).
+    // The original's FUN_0046d4a0 never returns 0 for idx < 0x10 (0x0046d4a4..0x0046d4c8).
+    {
+        static bool s_pkcbReplayed = false;
+        if (!s_pkcbReplayed) { s_pkcbReplayed = true; Gameplay::PickupCb_MaybeReplay(); }
+    }
 
     // [D-11073 leg 1b step 2] MASHED_L1B_INPUTS (default OFF): measurement-only per-frame
     // dump of the sub-state handlers' inputs. Writes nothing the game reads.
@@ -5573,15 +5586,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     std::fclose(lf);
                 }
             }
-            // [D4-DC-77b0-ST3-PRETICK] MASHED_ST3_PRETICK (default OFF). FUN_004111c0 case 3 is FUN_004102f0() then
+            // [D4-DC-77b0-ST3-PRETICK] MASHED_ST3_PRETICK (default ON since D4-FLIP-MATCHEND-ST3PRETICK 2026-11-02,
+            // L-83 (a); MASHED_NO_ST3_PRETICK=1 opts out, MASHED_ST3_PRETICK=1 is still accepted, a no-op). FUN_004111c0 case 3 is FUN_004102f0() then
             // FUN_0040fc00(), which stores DAT_007f1008 / _DAT_007f100c (0x0040fc63 / 0x0040fc57) and calls FUN_00425a40
             // (0x0040fc6c) while DAT_005f29c0 != 0. FUN_00425a40 calls FUN_00418860 first (0x00425a73). Measured on the
             // original (verify/d4dc77b0runtime_20261101): FUN_004177b0 entered from 0x00418905 once per case-3 tick, reading
             // 3, and once reading 4 on the release tick (0x00410367 above). The exe made no AI tick before state 5.
             // Only FUN_00418860 here: the rest of FUN_00425a40 on case-3 ticks is not run.
             // verify/d4dc77b0st3pretick_20261101/PREREG_D4-DC-77b0-ST3-PRETICK.md.
-            static const bool s_st3Pretick = [] { const char* e = std::getenv("MASHED_ST3_PRETICK");
-                                                  return e && e[0] && e[0] != '0'; }();
+            static const bool s_st3Pretick = [] { const char* e = std::getenv("MASHED_NO_ST3_PRETICK");
+                                                  return !(e && e[0] && e[0] != '0'); }();
             if (s_st3Pretick && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) {
                 static int s_st3Calls[2] = {0, 0};
                 Ai::Ai_AdvanceClock(units);                // 0x0040fc57 / 0x0040fc63 (written again below, same values)
@@ -7625,6 +7639,38 @@ void TrackRenderer::UpdatePowerups(float dt) {
     }
 }
 
+namespace {
+// [MATCH-T13-SEED] FUN_004046a0 (0x004046a0) reads its difficulty through FUN_004173a0 (= DAT_0089a360, the exe
+// holds 2.5f after the AI race reset). The port fed a literal 0.f, so f = 1.0 on courses 0xb / 0x1a / 0x27
+// where the original's f = 1.0 - DAT_0089a360 * 0.1. MASHED_RULE10_SEED_DIFF=1 passes the matched body
+// (Match/MatchS03_004173a0.cpp) instead. Default OFF: verify/t13seed_20261102/PREREG_MATCH-T13-SEED.md.
+// MASHED_RULE10_SEED_LOG=1 (or the knob) writes one [rule10-seed] line per seed call to mashed_re.log.
+bool Rule10SeedDiffEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RULE10_SEED_DIFF"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+bool Rule10SeedLogEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RULE10_SEED_LOG"); return (e && e[0] && e[0] != '0') || Rule10SeedDiffEnabled(); }();
+    return s;
+}
+std::uint32_t F32Bits(float v) { std::uint32_t u; std::memcpy(&u, &v, 4); return u; }
+float Rule10SeedCall(const char* site, int courseId, float* bonus) {
+    const float diff = Rule10SeedDiffEnabled() ? Float89a360Get() : 0.f;   // 0x004046a0: fVar7 = FUN_004173a0()
+    const float t = Race::RuleEngine::Rule10Seed(courseId, diff, bonus);
+    if (Rule10SeedLogEnabled()) {
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            const float b = bonus ? *bonus : 0.f;
+            std::fprintf(lf, "[rule10-seed] site=%s course=%d knob=%d diff=%.9g diff_raw=%08x live360_raw=%08x "
+                             "timer=%.9g timer_raw=%08x bonus=%.9g bonus_raw=%08x\n",
+                         site, courseId, Rule10SeedDiffEnabled() ? 1 : 0, diff, F32Bits(diff),
+                         *reinterpret_cast<const std::uint32_t*>(0x0089a360u), t, F32Bits(t), b, F32Bits(b));
+            std::fclose(lf);
+        }
+    }
+    return t;
+}
+}  // namespace
+
 void TrackRenderer::StartRound() {
     if (gates_.size() < 4 || !car_ready_) return;
     // [pontoon 2026-10-16] FUN_004111c0's race / round reset runs the course's slots 7 (0x0040fefe) and 6 (0x00410195):
@@ -7663,7 +7709,7 @@ void TrackRenderer::StartRound() {
     // timer unconditionally (30.0 default branch) and rebuilds the 6-entry
     // checkpoint table with every hit flag (0x00636b90 + i*0x14) = 0, so the
     // hit mask and lap latch clear with it.
-    rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
+    rulep_.timer = Rule10SeedCall("round", course_id_, &rule10_bonus_);
     rule10_hit_mask_ = 0;
     rule10_lap_seen_ = -1;
     // [D-11056] re-arm the rule-5 collectible feed each round (collectTotal
@@ -7958,7 +8004,7 @@ void TrackRenderer::SetRaceRule(int rule) {
     *reinterpret_cast<int*>(0x007f0fd0u) = rule;   // [brecipe] one source for DAT_007f0fd0
     rule_engine_on_ = RuleEngineEnabled();
     rulep_ = Race::RuleEngine::Persist{};             // FUN_00414060: slots=-1.0
-    rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
+    rulep_.timer = Rule10SeedCall("setrule", course_id_, &rule10_bonus_);
     rule10_hit_mask_ = 0;
     rule10_lap_seen_ = -1;
     match_draw_ = false;

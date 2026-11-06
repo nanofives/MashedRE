@@ -269,6 +269,8 @@ extern "C" std::uint32_t __cdecl AiVehicleFieldPtrGet(int v);                   
 extern "C" float __cdecl HeadingAtan2ToGameAngle(float p1, float p2, float dummy); // FUN_004233e0, Ai/HeadingAtan2.cpp
 extern "C" void __cdecl AiSplineEval_x87(int base, int seg, float t, float* out); // FUN_00443300, Ai/AiSplineEval.cpp
 
+extern "C" void Global66d6d8Get();                                              // FUN_00426bb0, Match/MatchS06_00426bb0.cpp (MATCH-S06; aileaf_g1.json maps the call)
+
 #include "AiLeafTargets_naked.inc"
 
 namespace Ai {

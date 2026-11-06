@@ -30,14 +30,8 @@
 
 #include <cstdint>
 
-// 0x00472500
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CondGet691500(std::int32_t i) {
-    std::uint32_t b = static_cast<std::uint32_t>(i) * 0x10u;                    // SHL EAX,4
-    if (*reinterpret_cast<std::uint32_t*>(0x00691508u + b) != 0)                // flag @ +8
-        return *reinterpret_cast<std::uint32_t*>(0x00691504u + b);              // slot @ +4
-    return *reinterpret_cast<std::uint32_t*>(0x00691500u + b);                  // slot @ +0
-}
-RH_ScopedInstall(CondGet691500, 0x00472500);
+// MATCH-S11: the body of 0x00472500 (CondGet691500) moved to Match/MatchS11_00472500.cpp,
+// which compiles the byte-matched source re/match/s11/00472500.c.
 
 // 0x0046d4a0 — MOVED 2026-10-08 (U-9186 leg H1b) to Vehicle/VehicleRecordPtr.cpp,
 // a TU shared by both targets, so the standalone gets a body at this RVA without
