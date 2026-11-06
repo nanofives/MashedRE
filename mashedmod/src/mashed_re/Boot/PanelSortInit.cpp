@@ -17,7 +17,9 @@
 //
 // DEV-HOOK TU only (asi_sources.rsp); NOT the greenfield exe (absolute MASHED VAs).
 // Callee FUN_004b6520 ZeroFillWrapper C3.
-// listing: 0x00420d00..0x00420d3a
+// listing: 0x00420d00..0x00420d3a (re/tools/disasm_va.py 0x420d00 0x3b, byte-identical order above).
+// Verification: re/frida/hooks_registry.py 'panel_sort_init' (cache_setter_observe, all 36 dwords of
+// the block seeded and observed). D4-WIP-PANELSORT, verify/d4-wip-panelsort_20261106/.
 // ---------------------------------------------------------------------------
 
 #include "../Core/HookSystem.h"

@@ -9433,6 +9433,36 @@ HOOKS = {
         ],
     },
 
+    # 0x00420d00  PanelSortInit — void(void). FUN_004b6520(&DAT_0063e4b8, 0x90) zero-fills the 0x90-byte
+    # block 0x0063e4b8..0x0063e547 (0x00420d00..0x00420d0f), then four dword stores at stride 0x24:
+    # [0x0063e4d0]=0 (0x00420d12), [0x0063e4f4]=1 (0x00420d1c), [0x0063e518]=2 (0x00420d26),
+    # [0x0063e53c]=3 (0x00420d30). arg_type='cache_setter_observe' (zero-arg precedent: menu_entry_array_init).
+    # OBSERVABLE = all 36 dwords of the block, each SEEDED per test with a test-specific non-zero pattern
+    # (never 0..3), so the observe witnesses the zero-fill on every dword and the four stores; the harness
+    # snapshots and restores every seeded/observed global (the block is the live table at 0x0063e4b8 +
+    # v*0x24, Vehicle/VehiclePhysicsRun.cpp:899). NON-DEGENERATE: the seeds differ per test; the outputs
+    # are constant by construction (no inputs), so the seeds are what a skipped fill or a wrong store
+    # offset would leak. D4-WIP-PANELSORT, verify/d4-wip-panelsort_20261106/.
+    'panel_sort_init': {
+        'rva':            0x00420d00,
+        'export':         'PanelSortInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'obs_globals':    ['0x%08x' % (0x0063e4b8 + 4 * k) for k in range(36)],
+        'path1_tests': [
+            {'seed': [{'addr': '0x%08x' % (0x0063e4b8 + 4 * k), 'val': (pat + k * 0x01010101) & 0xffffffff}
+                      for k in range(36)],
+             'args': []}
+            for pat in (0xDEADBEEF, 0x11111111, 0x80000000, 0x7F7F7F7F, 0xC0DEC0DE)
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x%08x' % (0x0063e4b8 + 4 * k), 'val': (pat + k * 0x01010101) & 0xffffffff}
+                      for k in range(36)],
+             'args': []}
+            for pat in (0xDEADBEEF, 0x5A5A5A5A)
+        ],
+    },
     # 0x004224d0  MenuSlotInit — void(int slot, u32* src4, u32 p3). Zero-fills a 0xf40 slot
     # at &DAT_006403e8 + slot*0xf40 (callee FUN_004b6520 ZeroFillWrapper C3) then writes ~15
     # fields. arg_type='cache_setter_observe' (EXISTING; now in both templates as of the
