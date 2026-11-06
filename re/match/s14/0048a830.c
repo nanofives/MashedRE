@@ -34,6 +34,6 @@ void FUN_0048a830(void)
 
 {
   DAT_0071fa34 = 0;
-  FUN_004b6480(&DAT_007151f0,0x200);
+  FUN_004b6480((byte *)&DAT_007151f0,0x200);
   return;
 }

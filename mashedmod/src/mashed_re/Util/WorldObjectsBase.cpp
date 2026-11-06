@@ -38,11 +38,5 @@
 // Caller: FUN_00414c30 (ai obstacle-avoidance, C2). Leaf.
 // ---------------------------------------------------------------------------
 
-// 0x00484c70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl WorldObjectsBaseGet(std::uint32_t* param_1) {
-    // 0x006e70d8 count + 0x006dccb8 base cited at 0x00484c70 body.
-    *param_1 = *reinterpret_cast<const std::uint32_t*>(0x006e70d8u);
-    return 0x006dccb8u;
-}
-
-RH_ScopedInstall(WorldObjectsBaseGet, 0x00484c70);
+// MATCH-S14: the body of 0x00484c70 (WorldObjectsBaseGet) moved to Match/MatchS14_00484c70.cpp,
+// which compiles the byte-matched source re/match/s14/00484c70.c.

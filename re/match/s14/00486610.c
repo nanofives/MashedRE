@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+void FUN_004864f0(undefined4 p0, undefined4 p1, int p2); /* port: C++ will not convert the dword arg to a pointer; same stack bytes */
+#else
 void FUN_004864f0(undefined4 * p0, undefined4 p1, int p2);
+#endif
 // MATCH: 0x00486610 FUN_00486610
 void FUN_00486610(undefined4 param_1,undefined4 param_2)
 

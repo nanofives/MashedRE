@@ -25,7 +25,11 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned char undefined1;
 MGLOBAL(undefined1, DAT_00703068, 0x00703068);
+#ifdef __cplusplus
+void FUN_004768c0(void *p0); /* port: C++ will not convert &DAT_00703068 to int; same stack bytes */
+#else
 void FUN_004768c0(int p0);
+#endif
 // MATCH: 0x00487140 FUN_00487140
 void FUN_00487140(void)
 

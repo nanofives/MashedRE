@@ -160,7 +160,7 @@ bool FromHex(const std::string& h, std::uint8_t* out, std::size_t n) {
 long Registry_UnportedCallbacks() { return s_cbUnported; }
 
 void Registry_RaceInit() {
-    Zero484c90();                       // FUN_00484c90, Race/WorldObjectLinks.cpp
+    Zero484c90();                       // FUN_00484c90, Match/MatchS14_00484c90.cpp
 }
 
 void Registry_FrameTick() {

@@ -27,7 +27,11 @@ typedef unsigned int undefined4;
 typedef unsigned int uint;
 MGLOBAL(int, DAT_006e71cc, 0x006e71cc);
 undefined4 FUN_00485340(uint p0);
+#ifdef __cplusplus
+void FUN_004987b0(const char *p0, ...); /* port: variadic debug printf (C++ needs the real arity) */
+#else
 void FUN_004987b0(undefined4 p0);
+#endif
 // MATCH: 0x004853b0 FUN_004853b0
 undefined4 FUN_004853b0(int param_1)
 

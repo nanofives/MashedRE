@@ -13,27 +13,8 @@
 
 #include <cstdint>
 
-// 0x00485bd0  top=*p-1; *p=top; if(top<0){*p=0;return 0;} return *(p[2]+top*4)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl StackPop485bd0(void* stk) {
-    std::uint8_t* m = reinterpret_cast<std::uint8_t*>(stk);
-    std::int32_t top = *reinterpret_cast<std::int32_t*>(m + 0) - 1;
-    *reinterpret_cast<std::int32_t*>(m + 0) = top;
-    if (top < 0) { *reinterpret_cast<std::int32_t*>(m + 0) = 0; return 0; }
-    const std::uint32_t buf = *reinterpret_cast<std::uint32_t*>(m + 8);
-    return reinterpret_cast<const std::uint32_t*>(static_cast<std::uintptr_t>(buf))[top];  // cited at 0x00485bd0
-}
-RH_ScopedInstall(StackPop485bd0, 0x00485bd0);
+// MATCH-S14: the body of 0x00485bd0 (StackPop485bd0) moved to Match/MatchS14_00485bd0.cpp,
+// which compiles the byte-matched source re/match/s14/00485bd0.c.
 
-// 0x00485bf0  top=*p; if(p[1]<=top)return 0; if(top<0) FUN_004a332b(-42); *(p[2]+top*4)=val; (*p)++; return 1
-extern "C" __declspec(dllexport) std::uint32_t __cdecl StackPush485bf0(void* stk, std::uint32_t val) {
-    std::uint8_t* m = reinterpret_cast<std::uint8_t*>(stk);
-    const std::int32_t top = *reinterpret_cast<std::int32_t*>(m + 0);
-    if (*reinterpret_cast<std::int32_t*>(m + 4) <= top) return 0;
-    if (top < 0)
-        reinterpret_cast<void(__cdecl*)(std::uint32_t)>(static_cast<std::uintptr_t>(0x004a332bu))(0xffffffd6u);  // range-check trap (untested path)
-    const std::uint32_t buf = *reinterpret_cast<std::uint32_t*>(m + 8);
-    reinterpret_cast<std::uint32_t*>(static_cast<std::uintptr_t>(buf))[top] = val;  // cited at 0x00485bf0
-    *reinterpret_cast<std::int32_t*>(m + 0) = top + 1;
-    return 1;
-}
-RH_ScopedInstall(StackPush485bf0, 0x00485bf0);
+// MATCH-S14: the body of 0x00485bf0 (StackPush485bf0) moved to Match/MatchS14_00485bf0.cpp,
+// which compiles the byte-matched source re/match/s14/00485bf0.c.

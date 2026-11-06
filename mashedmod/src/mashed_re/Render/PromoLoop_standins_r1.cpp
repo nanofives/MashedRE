@@ -47,28 +47,5 @@ extern "C" __declspec(dllexport) void* __cdecl Arrays691600Alloc(std::uint32_t n
 }
 RH_ScopedInstall(Arrays691600Alloc, 0x004759b0);
 
-// ===========================================================================
-// 0x00484170  Rec18Create  (FUN_00484170, 82 B, cdecl(a1, a2, a3) -> 0x18-byte block or NULL; caller 0x00402750)
-//   0x00484175  push 0 / push 0x18 / call [eax+0x108]    r = rwmalloc(0x18, 0)
-//   0x00484182  test eax, eax / je 0x004841bf             NULL -> return 0 (0x004841bf xor eax, eax)
-//   0x00484186  ecx = a3 (esp+0xc): r[0] = a3[0] (0x0048418c), r[1] = a3[1] (0x00484195)
-//   0x00484191  edx = a2 (esp+8):   r[2] = a2[0]          (0x0048419e)
-//   0x0048419a  edx = a1 (esp+4):   fld [a1+0x80] / fdivr [0x005cc320] (= 1.0f, 0x3f800000)
-//   0x004841ad  r[4] = 0, 0x004841b4 r[5] = 0, 0x004841bb fstp dword [r+0xc]   r[3] = 1.0f / a1.f[0x80]
-// A single x87 division rounded once to float equals the SSE single division (64-bit intermediate >= 2*24+2).
-// ===========================================================================
-// 0x00484170
-extern "C" __declspec(dllexport) void* __cdecl Rec18Create(const std::uint8_t* a1, const std::uint32_t* a2,
-                                                           const std::uint32_t* a3) {
-    std::uint32_t* r = static_cast<std::uint32_t*>(RwMallocSlot()(0x18u, 0));   // 0x00484179
-    if (!r) return nullptr;                                                     // 0x00484184
-    r[0] = a3[0];                                                               // 0x0048418c
-    r[1] = a3[1];                                                               // 0x00484195
-    r[2] = a2[0];                                                               // 0x0048419e
-    const float x = *reinterpret_cast<const float*>(a1 + 0x80);                 // 0x004841a1
-    r[4] = 0;                                                                   // 0x004841ad
-    r[5] = 0;                                                                   // 0x004841b4
-    *reinterpret_cast<float*>(&r[3]) = 1.0f / x;                                // 0x004841a7 / 0x004841bb
-    return r;
-}
-RH_ScopedInstall(Rec18Create, 0x00484170);
+// MATCH-S14: the body of 0x00484170 (Rec18Create) moved to Match/MatchS14_00484170.cpp,
+// which compiles the byte-matched source re/match/s14/00484170.c.

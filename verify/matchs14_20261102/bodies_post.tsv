@@ -1,0 +1,128 @@
+0x004840d0	M	Match/MatchS14_004840d0.cpp[A]:('FUN_004840d0', 11)	Match/MatchS14_004840d0.cpp:[('JointPtr6ce81cGet', 13)]
+0x004840f0	.	Util/PromoLoop_sessionB.cpp[A]:('Count4840f0', 681)	Util/PromoLoop_sessionB.cpp:[('Count4840f0', 708)]
+0x00484130	M	-	-
+0x00484170	M	Match/MatchS14_00484170.cpp[A]:('FUN_00484170', 11)	Match/MatchS14_00484170.cpp:[('Rec18Create', 13)]
+0x004841d0	M	-	-
+0x00484280	M	-	-
+0x004842b0	M	Match/MatchS14_004842b0.cpp[A]:('FUN_004842b0', 11)	Match/MatchS14_004842b0.cpp:[('Clear4842b0', 13)]
+0x00484310	.	-	-
+0x004844a0	.	-	-
+0x00484580	.	-	-
+0x004847d0	M	Race/WorldRegistry.cpp[E]:('RG_4847d0', 116)	-
+0x00484a50	.	Race/WorldObjectLinks.cpp[EA]:('Insert484a50', 27)	Race/WorldObjectLinks.cpp:[('Insert484a50', 64)]
+0x00484ac0	M	Race/WorldRegistry.cpp[E]:('RG_484ac0', 116)	-
+0x00484c70	M	Match/MatchS14_00484c70.cpp[EA]:('FUN_00484c70', 11)	Match/MatchS14_00484c70.cpp:[('WorldObjectsBaseGet', 13)]
+0x00484c90	M	Match/MatchS14_00484c90.cpp[EA]:('FUN_00484c90', 11)	Match/MatchS14_00484c90.cpp:[('Zero484c90', 13)]
+0x00484cf0	M	Match/MatchS14_00484cf0.cpp[E]:('FUN_00484cf0', 14)	-
+0x00484de0	M	Race/WorldRegistry.cpp[E]:('RG_484de0', 116)	-
+0x00484f70	M	Race/WorldRegistry.cpp[E]:('RG_484f70', 116)	-
+0x00485070	M	Match/MatchS14_00485070.cpp[E]:('FUN_00485070', 14)	Lane2/L2_00485070.cpp:[('L2_FUN_00485070', 58)]
+0x004850b0	M	Match/MatchS14_004850b0.cpp[A]:('FUN_004850b0', 11)	Match/MatchS14_004850b0.cpp:[('Search4850b0', 13)]
+0x004850e0	M	-	-
+0x004852e0	.	-	-
+0x00485340	M	Match/MatchS14_00485340.cpp[A]:('FUN_00485340', 11)	Match/MatchS14_00485340.cpp:[('Get485340', 13)]
+0x00485360	M	Match/MatchS14_00485360.cpp[A]:('FUN_00485360', 11)	Match/MatchS14_00485360.cpp:[('DynObjListGetCount', 13)]
+0x00485370	M	Match/MatchS14_00485370.cpp[A]:('FUN_00485370', 11)	Match/MatchS14_00485370.cpp:[('DynamicObjectListGetBase', 13)]
+0x00485380	.	-	-
+0x004853b0	M	Match/MatchS14_004853b0.cpp[EA]:('SmplFzxStateBlockGetLogged', 35)	Match/MatchS14_004853b0.cpp:[('SmplFzxStateBlockGetLogged', 39)]
+0x004853f0	M	-	-
+0x00485420	M	-	-
+0x00485460	M	-	-
+0x004854e0	.	-	-
+0x004858c0	M	-	-
+0x00485a00	M	Match/MatchS14_00485a00.cpp[A]:('FUN_00485a00', 11)	Match/MatchS14_00485a00.cpp:[('Init485a00', 13)]
+0x00485a70	M	Match/MatchS14_00485a70.cpp[A]:('FUN_00485a70', 11)	Match/MatchS14_00485a70.cpp:[('PoolInsert485a70', 13)]
+0x00485b30	M	Util/PromoLoop_round46.cpp[A]:('PoolRemove485b30', 19)	Util/PromoLoop_round46.cpp:[('PoolRemove485b30', 69)]
+0x00485bd0	M	Match/MatchS14_00485bd0.cpp[A]:('FUN_00485bd0', 11)	Match/MatchS14_00485bd0.cpp:[('StackPop485bd0', 13)]
+0x00485bf0	M	Match/MatchS14_00485bf0.cpp[A]:('FUN_00485bf0', 18)	Match/MatchS14_00485bf0.cpp:[('StackPush485bf0', 20)]
+0x00485c20	M	-	-
+0x00485d90	M	-	-
+0x00485e10	M	-	-
+0x00485e50	M	-	-
+0x00485ef0	M	-	-
+0x00486220	M	-	-
+0x00486270	M	-	-
+0x004862d0	M	-	-
+0x00486350	M	-	-
+0x00486370	M	-	-
+0x00486460	M	-	-
+0x004864f0	M	-	-
+0x00486610	M	Match/MatchS14_00486610.cpp[A]:('FUN_00486610', 17)	Match/MatchS14_00486610.cpp:[('ParticleBurst4', 19)]
+0x00486830	.	-	-
+0x00486f50	M	-	Lane2/L2_00486f50.cpp:[('L2_FUN_00486f50', 52)]
+0x00486f90	M	Match/MatchS14_00486f90.cpp[A]:('FUN_00486f90', 11)	Match/MatchS14_00486f90.cpp:[('PoolArrayReset486f90', 13)]
+0x00487020	M	-	-
+0x00487140	M	Match/MatchS14_00487140.cpp[A]:('FUN_00487140', 21)	Match/MatchS14_00487140.cpp:[('Fwd4768c0_703068', 23)]
+0x00487150	M	-	-
+0x00487280	.	-	-
+0x00487d00	M	-	HUD/ScenarioWriters_sa2s1.cpp:[('Particle3rdEmitterSubmit', 77)]
+0x00487d60	M	-	-
+0x00487d70	M	-	-
+0x00487de0	M	-	-
+0x00487df0	M	Match/MatchS14_00487df0.cpp[A]:('FUN_00487df0', 11)	Match/MatchS14_00487df0.cpp:[('Set703058_0', 13)]
+0x00487e00	.	-	-
+0x00487e20	M	-	-
+0x00487e30	M	-	-
+0x00487e40	M	Match/MatchS14_00487e40.cpp[A]:('FUN_00487e40', 11)	Match/MatchS14_00487e40.cpp:[('SkyElementRemove', 13)]
+0x00487e70	M	-	-
+0x004880a0	M	Match/MatchS14_004880a0.cpp[A]:('FUN_004880a0', 33)	Match/MatchS14_004880a0.cpp:[('Obj7030acCreate', 35)]
+0x004881d0	M	Match/MatchS14_004881d0.cpp[A]:('FUN_004881d0', 35)	Match/MatchS14_004881d0.cpp:[('Obj7030a8Create', 37)]
+0x00488320	.	-	-
+0x00488390	M	Match/MatchS14_00488390.cpp[A]:('FUN_00488390', 11)	Match/MatchS14_00488390.cpp:[('Table86ae38Set', 13)]
+0x004883b0	.	-	-
+0x00488e70	.	-	-
+0x004891f0	M	-	-
+0x00489240	M	-	-
+0x00489250	M	-	-
+0x00489290	M	Match/MatchS14_00489290.cpp[A]:('FUN_00489290', 11)	Match/MatchS14_00489290.cpp:[('Reset489290', 13)]
+0x004892c0	M	-	-
+0x004893a0	M	Match/MatchS14_004893a0.cpp[A]:('FUN_004893a0', 14)	Match/MatchS14_004893a0.cpp:[('AdjThunk4893a0', 16)]
+0x004893b0	M	Match/MatchS14_004893b0.cpp[A]:('FUN_004893b0', 11)	Match/MatchS14_004893b0.cpp:[('Inc4893b0', 13)]
+0x004893d0	M	Match/MatchS14_004893d0.cpp[A]:('FUN_004893d0', 11)	Match/MatchS14_004893d0.cpp:[('Push4893d0', 13)]
+0x00489450	M	Match/MatchS14_00489450.cpp[A]:('FUN_00489450', 11)	Match/MatchS14_00489450.cpp:[('ContRecSet450', 13)]
+0x00489480	M	Match/MatchS14_00489480.cpp[A]:('FUN_00489480', 11)	Match/MatchS14_00489480.cpp:[('ContRecSet480', 13)]
+0x004894a0	M	Match/MatchS14_004894a0.cpp[A]:('FUN_004894a0', 11)	Match/MatchS14_004894a0.cpp:[('ContRecSet4a0', 13)]
+0x004894f0	M	Match/MatchS14_004894f0.cpp[A]:('FUN_004894f0', 11)	Match/MatchS14_004894f0.cpp:[('Clear894f0', 13)]
+0x00489500	.	-	-
+0x00489890	M	-	Lane2/L2_00489890.cpp:[('L2_FUN_00489890', 53)]
+0x004898d0	M	-	-
+0x00489910	M	-	-
+0x00489940	M	-	-
+0x004899c0	M	Match/MatchS14_004899c0.cpp[A]:('FUN_004899c0', 11)	Match/MatchS14_004899c0.cpp:[('Fill4899c0', 13)]
+0x00489a40	M	-	-
+0x00489c30	M	-	-
+0x00489c60	M	-	-
+0x00489ce0	M	-	-
+0x00489da0	M	Match/MatchS14_00489da0.cpp[A]:('FUN_00489da0', 11)	Match/MatchS14_00489da0.cpp:[('Zero489da0', 13)]
+0x00489dc0	M	-	-
+0x0048a060	.	-	-
+0x0048a130	M	-	-
+0x0048a3c0	M	-	-
+0x0048a430	M	-	-
+0x0048a460	M	Match/MatchS14_0048a460.cpp[A]:('FUN_0048a460', 11)	Match/MatchS14_0048a460.cpp:[('StridedClear2_709238', 13)]
+0x0048a490	M	-	-
+0x0048a4e0	M	-	-
+0x0048a5d0	M	-	-
+0x0048a630	M	Match/MatchS14_0048a630.cpp[A]:('FUN_0048a630', 11)	Match/MatchS14_0048a630.cpp:[('Aabb48a630', 13)]
+0x0048a6f0	M	-	-
+0x0048a780	M	-	-
+0x0048a830	M	Match/MatchS14_0048a830.cpp[A]:('FUN_0048a830', 14)	Match/MatchS14_0048a830.cpp:[('ZeroFill48a830', 16)]
+0x0048a850	M	-	-
+0x0048aa20	M	-	-
+0x0048aa50	M	-	-
+0x0048ab70	.	-	-
+0x0048ad50	M	-	-
+0x0048ade0	M	Match/MatchS14_0048ade0.cpp[A]:('FUN_0048ade0', 14)	Match/MatchS14_0048ade0.cpp:[('ZeroFill48ade0', 16)]
+0x0048ae00	M	-	-
+0x0048af70	M	-	-
+0x0048aff0	.	-	-
+0x0048b230	.	-	-
+0x0048b440	.	-	-
+0x0048b650	M	-	-
+0x0048b7c0	M	-	-
+0x0048b960	M	-	-
+0x0048baf0	M	-	-
+0x0048bb70	M	-	-
+0x0048bbe0	M	-	-
+0x0048bc10	M	-	-
+0x0048cee0	M	-	-

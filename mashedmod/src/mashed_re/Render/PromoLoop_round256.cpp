@@ -43,13 +43,8 @@
 
 typedef int(__cdecl* PoolReset_t)(std::uint32_t);
 
-// 0x00487140
-extern "C" __declspec(dllexport) int __cdecl Fwd4768c0_703068()
-{
-    return reinterpret_cast<PoolReset_t>(0x004768c0u)(0x00703068u);
-}
-
-RH_ScopedInstall(Fwd4768c0_703068, 0x00487140);
+// MATCH-S14: the body of 0x00487140 (Fwd4768c0_703068) moved to Match/MatchS14_00487140.cpp,
+// which compiles the byte-matched source re/match/s14/00487140.c.
 
 // 0x00413bb0
 extern "C" __declspec(dllexport) int __cdecl Fwd4768c0_63bd50()

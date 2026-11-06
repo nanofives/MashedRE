@@ -1,0 +1,128 @@
+0x004840d0	M	Util/PromoLoop_round30.cpp[A]:('JointPtr6ce81cGet', 39)	Util/PromoLoop_round30.cpp:[('JointPtr6ce81cGet', 44)]
+0x004840f0	.	Util/PromoLoop_sessionB.cpp[A]:('Count4840f0', 689)	Util/PromoLoop_sessionB.cpp:[('Count4840f0', 716)]
+0x00484130	M	-	-
+0x00484170	M	Render/PromoLoop_standins_r1.cpp[A]:('Rec18Create', 61)	Render/PromoLoop_standins_r1.cpp:[('Rec18Create', 74)]
+0x004841d0	M	-	-
+0x00484280	M	-	-
+0x004842b0	M	Util/PromoLoop_sessionB.cpp[A]:('Clear4842b0', 42)	Util/PromoLoop_sessionB.cpp:[('Clear4842b0', 48)]
+0x00484310	.	-	-
+0x004844a0	.	-	-
+0x00484580	.	-	-
+0x004847d0	M	Race/WorldRegistry.cpp[E]:('RG_4847d0', 116)	-
+0x00484a50	.	Race/WorldObjectLinks.cpp[EA]:('Insert484a50', 27)	Race/WorldObjectLinks.cpp:[('Insert484a50', 64)]
+0x00484ac0	M	Race/WorldRegistry.cpp[E]:('RG_484ac0', 116)	-
+0x00484c70	M	Util/WorldObjectsBase.cpp[EA]:('WorldObjectsBaseGet', 42)	Util/WorldObjectsBase.cpp:[('WorldObjectsBaseGet', 48)]
+0x00484c90	M	Race/WorldObjectLinks.cpp[EA]:('Zero484c90', 69)	Race/WorldObjectLinks.cpp:[('Zero484c90', 87)]
+0x00484cf0	M	Race/WorldRegistry.cpp[E]:('RG_484cf0', 116)	-
+0x00484de0	M	Race/WorldRegistry.cpp[E]:('RG_484de0', 116)	-
+0x00484f70	M	Race/WorldRegistry.cpp[E]:('RG_484f70', 116)	-
+0x00485070	M	Race/WorldRegistry.cpp[E]:('RG_485070', 116)	Lane2/L2_00485070.cpp:[('L2_FUN_00485070', 58)]
+0x004850b0	M	Util/PromoLoop_sessionB.cpp[A]:('Search4850b0', 1424)	Util/PromoLoop_sessionB.cpp:[('Search4850b0', 1435)]
+0x004850e0	M	-	-
+0x004852e0	.	-	-
+0x00485340	M	Util/PromoLoop_sessionB.cpp[A]:('Get485340', 1000)	Util/PromoLoop_sessionB.cpp:[('Get485340', 1006)]
+0x00485360	M	Util/PromoLoop_round17.cpp[A]:('DynObjListGetCount', 83)	Util/PromoLoop_round17.cpp:[('DynObjListGetCount', 88)]
+0x00485370	M	Render/PromoLoop_round11.cpp[A]:('DynamicObjectListGetBase', 91)	Render/PromoLoop_round11.cpp:[('DynamicObjectListGetBase', 96)]
+0x00485380	.	-	-
+0x004853b0	M	Physics/SmplFzxStateBlock.cpp[EA]:('SmplFzxStateBlockGetLogged', 59)	Physics/SmplFzxStateBlock.cpp:[('SmplFzxStateBlockGetLogged', 63)]
+0x004853f0	M	-	-
+0x00485420	M	-	-
+0x00485460	M	-	-
+0x004854e0	.	-	-
+0x004858c0	M	-	-
+0x00485a00	M	Util/PromoLoop_sessionB.cpp[A]:('Init485a00', 1685)	Util/PromoLoop_sessionB.cpp:[('Init485a00', 1706)]
+0x00485a70	M	Util/PromoLoop_round45.cpp[A]:('PoolInsert485a70', 19)	Util/PromoLoop_round45.cpp:[('PoolInsert485a70', 65)]
+0x00485b30	M	Util/PromoLoop_round46.cpp[A]:('PoolRemove485b30', 19)	Util/PromoLoop_round46.cpp:[('PoolRemove485b30', 69)]
+0x00485bd0	M	Util/PromoLoop_round48.cpp[A]:('StackPop485bd0', 17)	Util/PromoLoop_round48.cpp:[('StackPop485bd0', 25)]
+0x00485bf0	M	Util/PromoLoop_round48.cpp[A]:('StackPush485bf0', 28)	Util/PromoLoop_round48.cpp:[('StackPush485bf0', 39)]
+0x00485c20	M	-	-
+0x00485d90	M	-	-
+0x00485e10	M	-	-
+0x00485e50	M	-	-
+0x00485ef0	M	-	-
+0x00486220	M	-	-
+0x00486270	M	-	-
+0x004862d0	M	-	-
+0x00486350	M	-	-
+0x00486370	M	-	-
+0x00486460	M	-	-
+0x004864f0	M	-	-
+0x00486610	M	Particle/ParticleBurst_ac1.cpp[A]:('', 40)	Particle/ParticleBurst_ac1.cpp:[('ParticleBurst4', 49)]
+0x00486830	.	-	-
+0x00486f50	M	-	Lane2/L2_00486f50.cpp:[('L2_FUN_00486f50', 52)]
+0x00486f90	M	Util/PromoLoop_sessionB.cpp[A]:('PoolArrayReset486f90', 3574)	Util/PromoLoop_sessionB.cpp:[('PoolArrayReset486f90', 3619)]
+0x00487020	M	-	-
+0x00487140	M	Render/PromoLoop_round256.cpp[A]:('Fwd4768c0_703068', 47)	Render/PromoLoop_round256.cpp:[('Fwd4768c0_703068', 52)]
+0x00487150	M	-	-
+0x00487280	.	-	-
+0x00487d00	M	-	HUD/ScenarioWriters_sa2s1.cpp:[('Particle3rdEmitterSubmit', 77)]
+0x00487d60	M	-	-
+0x00487d70	M	-	-
+0x00487de0	M	-	-
+0x00487df0	M	Util/PromoLoop_round29.cpp[A]:('Set703058_0', 45)	Util/PromoLoop_round29.cpp:[('Set703058_0', 48)]
+0x00487e00	.	-	-
+0x00487e20	M	-	-
+0x00487e30	M	-	-
+0x00487e40	M	Sky/SkyElementRemove.cpp[A]:('SkyElementRemove', 28)	Sky/SkyElementRemove.cpp:[('SkyElementRemove', 43)]
+0x00487e70	M	-	-
+0x004880a0	M	Sky/PromoLoop_standins_r6.cpp[A]:('Obj7030acCreate', 60)	Sky/PromoLoop_standins_r6.cpp:[('Obj7030acCreate', 65)]
+0x004881d0	M	Sky/PromoLoop_standins_r6.cpp[A]:('Obj7030a8Create', 74)	Sky/PromoLoop_standins_r6.cpp:[('Obj7030a8Create', 82)]
+0x00488320	.	-	-
+0x00488390	M	Util/PromoLoop_round50.cpp[A]:('Table86ae38Set', 25)	Util/PromoLoop_round50.cpp:[('Table86ae38Set', 28)]
+0x004883b0	.	-	-
+0x00488e70	.	-	-
+0x004891f0	M	-	-
+0x00489240	M	-	-
+0x00489250	M	-	-
+0x00489290	M	Util/PromoLoop_sessionB.cpp[A]:('Reset489290', 795)	Util/PromoLoop_sessionB.cpp:[('Reset489290', 803)]
+0x004892c0	M	-	-
+0x004893a0	M	Util/PromoLoop_sessionB.cpp[A]:('AdjThunk4893a0', 3648)	Util/PromoLoop_sessionB.cpp:[('AdjThunk4893a0', 3658)]
+0x004893b0	M	Util/PromoLoop_sessionB.cpp[A]:('Inc4893b0', 845)	Util/PromoLoop_sessionB.cpp:[('Inc4893b0', 851)]
+0x004893d0	M	Util/PromoLoop_sessionB.cpp[A]:('Push4893d0', 1979)	Util/PromoLoop_sessionB.cpp:[('Push4893d0', 1997)]
+0x00489450	M	Util/PromoLoop_round63.cpp[A]:('ContRecSet450', 21)	Util/PromoLoop_round63.cpp:[('ContRecSet450', 26)]
+0x00489480	M	Util/PromoLoop_round63.cpp[A]:('ContRecSet480', 29)	Util/PromoLoop_round63.cpp:[('ContRecSet480', 33)]
+0x004894a0	M	Util/PromoLoop_round63.cpp[A]:('ContRecSet4a0', 36)	Util/PromoLoop_round63.cpp:[('ContRecSet4a0', 43)]
+0x004894f0	M	Util/PromoLoop_round47.cpp[A]:('Clear894f0', 28)	Util/PromoLoop_round47.cpp:[('Clear894f0', 34)]
+0x00489500	.	-	-
+0x00489890	M	-	Lane2/L2_00489890.cpp:[('L2_FUN_00489890', 53)]
+0x004898d0	M	-	-
+0x00489910	M	-	-
+0x00489940	M	-	-
+0x004899c0	M	Util/PromoLoop_sessionB.cpp[A]:('Fill4899c0', 1735)	Util/PromoLoop_sessionB.cpp:[('Fill4899c0', 1749)]
+0x00489a40	M	-	-
+0x00489c30	M	-	-
+0x00489c60	M	-	-
+0x00489ce0	M	-	-
+0x00489da0	M	Util/PromoLoop_sessionB.cpp[A]:('Zero489da0', 825)	Util/PromoLoop_sessionB.cpp:[('Zero489da0', 833)]
+0x00489dc0	M	-	-
+0x0048a060	.	-	-
+0x0048a130	M	-	-
+0x0048a3c0	M	-	-
+0x0048a430	M	-	-
+0x0048a460	M	Util/PromoLoop_round64.cpp[A]:('StridedClear2_709238', 22)	Util/PromoLoop_round64.cpp:[('StridedClear2_709238', 28)]
+0x0048a490	M	-	-
+0x0048a4e0	M	-	-
+0x0048a5d0	M	-	-
+0x0048a630	M	Util/PromoLoop_sessionB.cpp[A]:('Aabb48a630', 2246)	Util/PromoLoop_sessionB.cpp:[('Aabb48a630', 2326)]
+0x0048a6f0	M	-	-
+0x0048a780	M	-	-
+0x0048a830	M	Util/PromoLoop_sessionB.cpp[A]:('ZeroFill48a830', 2973)	Util/PromoLoop_sessionB.cpp:[('ZeroFill48a830', 2985)]
+0x0048a850	M	-	-
+0x0048aa20	M	-	-
+0x0048aa50	M	-	-
+0x0048ab70	.	-	-
+0x0048ad50	M	-	-
+0x0048ade0	M	Util/PromoLoop_sessionB.cpp[A]:('ZeroFill48ade0', 2958)	Util/PromoLoop_sessionB.cpp:[('ZeroFill48ade0', 2969)]
+0x0048ae00	M	-	-
+0x0048af70	M	-	-
+0x0048aff0	.	-	-
+0x0048b230	.	-	-
+0x0048b440	.	-	-
+0x0048b650	M	-	-
+0x0048b7c0	M	-	-
+0x0048b960	M	-	-
+0x0048baf0	M	-	-
+0x0048bb70	M	-	-
+0x0048bbe0	M	-	-
+0x0048bc10	M	-	-
+0x0048cee0	M	-	-

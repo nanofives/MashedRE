@@ -87,13 +87,8 @@ RH_ScopedInstall(RwCapsBlockPtrGet, 0x004cae90);
 //   U-7556: entry struct layout (data-semantic; prior U-3575).
 // ---------------------------------------------------------------------------
 
-// 0x00485370
-extern "C" __declspec(dllexport) std::uint32_t __cdecl DynamicObjectListGetBase(void) {
-    // 0x006e87b8 cited at 0x00485370 body.
-    return 0x006e87b8u;
-}
-
-RH_ScopedInstall(DynamicObjectListGetBase, 0x00485370);
+// MATCH-S14: the body of 0x00485370 (DynamicObjectListGetBase) moved to Match/MatchS14_00485370.cpp,
+// which compiles the byte-matched source re/match/s14/00485370.c.
 
 // ---------------------------------------------------------------------------
 // ReplayCursorReset  --  0x00405420   (subsystem: util)

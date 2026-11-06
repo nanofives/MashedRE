@@ -41,8 +41,5 @@ extern "C" __declspec(dllexport) void __cdecl Set603868_1(void) {
 }
 RH_ScopedInstall(Set603868_1, 0x00462500);
 
-// 0x00487df0  C7 05 58 30 70 00 00 00 00 00 C3  (mov dword [0x00703058],0; ret)
-extern "C" __declspec(dllexport) void __cdecl Set703058_0(void) {
-    *reinterpret_cast<std::uint32_t*>(0x00703058u) = 0u;  // cited at 0x00487df0
-}
-RH_ScopedInstall(Set703058_0, 0x00487df0);
+// MATCH-S14: the body of 0x00487df0 (Set703058_0) moved to Match/MatchS14_00487df0.cpp,
+// which compiles the byte-matched source re/match/s14/00487df0.c.

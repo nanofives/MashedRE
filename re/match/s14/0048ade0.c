@@ -32,6 +32,6 @@ void FUN_004b6480(byte * p0, uint p1);
 void FUN_0048ade0(void)
 
 {
-  FUN_004b6480(&DAT_007151f0,0x200);
+  FUN_004b6480((byte *)&DAT_007151f0,0x200);
   return;
 }
