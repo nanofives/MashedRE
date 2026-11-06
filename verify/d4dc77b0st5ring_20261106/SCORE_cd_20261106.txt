@@ -1,0 +1,10 @@
+B_ST5L2D_K0: [substate] FUN_00414180 draws_before=318 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_ST5L2RD1_K0: [substate] FUN_00414180 draws_before=318 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_ST5L2RD3_K0: [substate] FUN_00414180 draws_before=318 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_ST5L2_K0: [substate] FUN_00414180 draws_before=318 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_ST5L2_K1: [substate] FUN_00414180 draws_before=319 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,2 rec0=2 fd0=0
+B_ST5L2_K26: [substate] FUN_00414180 draws_before=344 pre368=0 pre370=0x00000000 idx=2 cd=4,3,1,4 rec0=2 fd0=0
+H_ST5L2: [substate] FUN_00414180 draws_before=318 pre368=0 pre370=0x00000000 idx=2 cd=3,3,3,3 rec0=2 fd0=0
+B_ST5L2NRA_K0: [substate] FUN_00414180 draws_before=0 pre368=0 pre370=0x00000000 idx=2 cd=3,1,4,2 rec0=2 fd0=0
+B_DEF_K0: [substate] FUN_00414180 draws_before=0 pre368=0 pre370=0x00000000 idx=2 cd=3,1,4,2 rec0=2 fd0=0
+H_DEF: [substate] FUN_00414180 draws_before=0 pre368=0 pre370=0x00000000 idx=2 cd=3,1,4,2 rec0=2 fd0=0

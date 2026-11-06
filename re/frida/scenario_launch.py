@@ -3102,6 +3102,55 @@ function st5ProbeArm(cap){
 }
 function st5ProbeDrain(){ const r = ST5.rows; ST5.rows = []; return r; }
 
+// --- FUN_00534870 ring-state probe (D4-DC-77b0-ST5-RING, 2026-11-06) -------------------------------------------
+// Reads the FUN_00534870 state block S = [0x007dc578] + [0x007d3ff8] (0x00534870.. reads both): S+0 ring base,
+// S+4 cursor p, S+8 cursor q, S+0xc ring end, and the 31 ring dwords [base, end). One row at arm time, one at every
+// FUN_00414180 entry and leave (first N calls), and one per --peek tick via ringProbeSnap. Row: tag, sdframe, sub-state
+// 0x0063ba8c, return-address RVA, base, p index, q index, end index, ring[0..30] hex. FUN_00414180 runs once per race
+// start (state-2 caller), not a hot path. Read-only.
+const RNG = { armed:false, cap:4, n:0, rows:[], err:null };
+function ringRow(tag, ra){
+  const S = ptr((ga(0x007dc578).readU32() + ga(0x007d3ff8).readU32()) >>> 0);
+  const b = S.readU32(), pp = S.add(4).readU32(), q = S.add(8).readU32(), e = S.add(12).readU32();
+  const r = [tag, SD.frames, ga(0x0063ba8c).readS32(), ra, b.toString(16), (pp - b) / 4, (q - b) / 4, (e - b) / 4];
+  if (b) { const B = ptr(b); for (let i = 0; i < 31; ++i) r.push(B.add(i * 4).readU32().toString(16)); }
+  return r.join(',');
+}
+function ringProbeArm(cap){
+  if (RNG.armed) return 'already armed';
+  try {
+    RNG.cap = cap || 4;
+    const rva = function(p){ return p.sub(modBase()).add(IMG).toString(16); };
+    try { RNG.rows.push(ringRow('arm', '')); } catch(e){ RNG.err = 'arm ' + e; }
+    Interceptor.attach(ga(0x00414180), {
+      onEnter(){ try { this.on = RNG.n < RNG.cap; if (!this.on) return; RNG.n++; this.ra = rva(this.returnAddress); RNG.rows.push(ringRow('E', this.ra)); } catch(e){ if (!RNG.err) RNG.err = 'E ' + e; } },
+      onLeave(){ try { if (this.on) RNG.rows.push(ringRow('L', this.ra)); } catch(e){ if (!RNG.err) RNG.err = 'L ' + e; } }
+    });
+    // Callers: FUN_00534870 entry, first RNG.ccap calls after arm (sub-state, backtrace RVAs), then detached. The
+    // cap bounds the hot-path exposure (a few ms even at a per-wheel draw rate).
+    RNG.ccap = parseInt(RNG.ccapEnv || '64', 10); RNG.cn = 0;
+    const L = Interceptor.attach(ga(0x00534870), { onEnter(){ try {
+      if (RNG.cn >= RNG.ccap) return; RNG.cn++;
+      // FUN_00472650 = push ecx / call 0x00534870 (0x00472650..0x00472651): [esp+8] = its caller, [esp+0xc]/[esp+0x10] = lo/hi.
+      // sk = image-code dwords on the next 0x100 stack bytes (raw scan, a reading aid, not a call chain).
+      const sp = this.context.esp, mb = modBase();
+      let bt = '';
+      if (this.returnAddress.sub(mb).add(IMG).toUInt32() === 0x00472656) {
+        bt = 'c=' + rva(sp.add(8).readPointer()) + ' lo=' + sp.add(12).readFloat() + ' hi=' + sp.add(16).readFloat() + ' sk=';
+        const sk = [];
+        for (let o = 0x14; o < 0x114 && sk.length < 6; o += 4) { const v = sp.add(o).readU32() - mb.toUInt32() + IMG; if (v >= 0x00401000 && v < 0x005cc000) sk.push(v.toString(16)); }
+        bt += sk.join(' ');
+      }
+      RNG.rows.push(['C' + (RNG.cn - 1), SD.frames, ga(0x0063ba8c).readS32(), rva(this.returnAddress), bt].join(','));
+      if (RNG.cn >= RNG.ccap) setTimeout(function(){ try { L.detach(); } catch(e){} }, 0);
+    } catch(e){ if (!RNG.err) RNG.err = 'C ' + e; } } });
+    RNG.armed = true;
+    return 'ring-probe armed (0x414180 entry+leave, first ' + RNG.cap + ' calls)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function ringProbeSnap(){ try { RNG.rows.push(ringRow('peek', '')); return 'ok'; } catch(e){ return 'ERR ' + e; } }
+function ringProbeDrain(){ const r = RNG.rows; RNG.rows = []; return r; }
+
 // --- phase-3 camera-call probe (D3-SUBSTATE-PH3, U-9203, 2026-10-28) -----------------------------
 // FUN_00446520(cam, force_reset) entry + leave, the first N calls after arming: caller, reset arg, the sub-state and
 // timer globals, cam dwords +0x00..+0x5c at entry and leave, the spring block +0x964..+0x9a0 at leave, entry 0's
@@ -4248,6 +4297,10 @@ rpc.exports = {
   st5ProbeArm: function(n){ return st5ProbeArm(n); },
   st5ProbeDrain: function(){ return st5ProbeDrain(); },
   st5ProbeErr: function(){ return '' + ST5.err + ' n5=' + ST5.n5; },
+  ringProbeArm: function(n){ return ringProbeArm(n); },
+  ringProbeSnap: function(){ return ringProbeSnap(); },
+  ringProbeDrain: function(){ return ringProbeDrain(); },
+  ringProbeErr: function(){ return '' + RNG.err + ' n=' + RNG.n; },
   ccProbeArm: function(c){ return ccProbeArm(c); },
   ccProbeDrain: function(){ return ccProbeDrain(); },
   ccProbeErr: function(){ return '' + CCP.err; },
@@ -5104,6 +5157,10 @@ def main():
                          "entry+leave on FUN_00425a40 with the gate dwords 0x0063ba8c, 0x005f29c0, 0x007f1a50/54/70/74/78, "
                          "0x00801ca0 and the return-address RVA. Every call in sub-state 5, first N per (fn, sub-state) "
                          "otherwise. Writes <out>.st5.csv. Requires --statediff-out.")
+    ap.add_argument("--ring-probe", type=int, default=0,
+                    help="[D4-DC-77b0-ST5-RING] N: FUN_00534870 ring state block ([0x007dc578]+[0x007d3ff8]: base, p, q, end, "
+                         "31 ring dwords) at arm time, at FUN_00414180 entry+leave (first N calls) and on every --peek tick. "
+                         "Writes <out>.ring.csv. Requires --statediff-out.")
     ap.add_argument("--p3cam-probe", type=int, default=0,
                     help="[D3-SUBSTATE-PH3, U-9203] N: entry+leave hook on FUN_00446520 (race camera), first N calls: "
                          "caller, reset arg, sub-state/timer globals, cam +0x00..+0x5c in and out, +0x964..+0x9a0 out, entry 0 "
@@ -5424,6 +5481,8 @@ def main():
                 print("  [statediff]", E.vs_probe_arm())
             if args.st5_probe:
                 print("  [statediff]", E.st5_probe_arm(args.st5_probe))
+            if args.ring_probe:
+                print("  [statediff]", E.ring_probe_arm(args.ring_probe))
             if args.snap_probe:
                 _n0, _ns = (int(x) for x in args.snap_probe.split(":"))
                 print("  [statediff]", E.snap_probe_arm(_n0, _ns))
@@ -5515,6 +5574,7 @@ def main():
                 if args.peek and n % 6 == 0:
                     try:
                         print(f"\n  [peek] +{time.time()-t0nw:.1f}s", E.peek(args.peek))
+                        if args.ring_probe: E.ring_probe_snap()
                     except Exception as ex:
                         print(f"\n  [peek] failed: {ex}")
                 time.sleep(0.6)
@@ -6194,6 +6254,15 @@ def main():
                             for r in _sr: f.write(r + chr(10))
                         print(f"  [statediff] st5-probe {len(_sr)} rows -> {_sf} (err {E.st5_probe_err()})")
                     except Exception as _e: print("  [statediff] st5 drain failed:", _e)
+                if args.ring_probe:
+                    try:
+                        _rr = E.ring_probe_drain()
+                        _rf = outp.with_suffix(outp.suffix + ".ring.csv")
+                        with open(_rf, "w", newline="") as f:
+                            f.write("tag,sdframe,ba8c,ret,base,p,q,end," + ",".join("r%d" % i for i in range(31)) + chr(10))
+                            for r in _rr: f.write(r + chr(10))
+                        print(f"  [statediff] ring-probe {len(_rr)} rows -> {_rf} (err {E.ring_probe_err()})")
+                    except Exception as _e: print("  [statediff] ring drain failed:", _e)
                 if args.snap_probe:
                     try:
                         _n0, _ns = (int(x) for x in args.snap_probe.split(":"))
