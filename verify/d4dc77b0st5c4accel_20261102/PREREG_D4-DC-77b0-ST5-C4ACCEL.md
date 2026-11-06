@@ -67,3 +67,29 @@ B_ST5L2D_K0, then B_RD1_K0 B_ST5L2RD1_K0 B_RD3_K0 B_ST5L2RD3_K0.
 
 W-C4 + W-HOLD + G0 green and W-GO green: file the flip as an L-n decision with the knob-ON hashes as expected refs.
 W-GO red: no flip filed, RESULT names the remaining difference (cd draw or s29b8 start) with numbers.
+
+## Amendment 1 (2026-11-06, after the main arms, before any amendment arm)
+
+Main arms (exe 34530fab): G0 equal, W-C4 0 mismatches, W-HOLD 0 mismatches, W-GO red (knob ON frame 0: car 1
+700 / 1, car 3 800 / 1). The diag gives cd = 1, 4, 2 (cars 1..3) and charges at release 100 / 400 / 200.
+
+New original evidence (two boots, `scenario_launch.py --track 0 --mode 10 --cars 4 --rule 0 --poke-ctrl-slots --hold 30
+--statediff-car 1|3 --statediff-aictrl --peek 0089a4f8:i,0089a56c:i,0089a5e0:i,0089a654:i,0089a360:f,005f29b8:i,0063ba8c:i`):
+cd = 3 for v = 0..3 on every peek of both boots, DAT_0089a360 = 2.5 (row 2 of 0x005f2d80 = 1..5). So the exe's
+3,1,4,2 is a ring phase difference: FUN_00414180 is the exe's first FUN_00534870 consumer (`draws_before=0`), and an
+offline copy of the port ring (FUN_00534990 seed, 310 discards) gives 3,1,4,2 at skip 0 and 3,3,3,3 first at skip 8.
+
+Diagnostic arms (not a fix, `MASHED_RING_SKIP` shifts every later ring consumer): B_ST5L2RS8D_K0, B_ST5L2RS8RD1_K0,
+B_ST5L2RS8RD3_K0, B_RS8RD1_K0 (stacks = the existing ones + `MASHED_RING_SKIP=8`).
+
+Predictions, stated now:
+- A1-CD: the `[substate] FUN_00414180` line reads cd=3,3,3,3 in all four arms.
+- A1-C4: score_c4.py on B_ST5L2RS8D_K0 exits 0, each AI car with 5 non-exit 0xff calls and bf4 = 1300 on the exit line
+  (charge 300 = 5 held reads + the exit-call read, release +1000 at 0x0046d7c7).
+- A1-GO: knob ON frame 0 = 900 / 1 on cars 1 and 3 (1300, less one 200 step on the exit call's leg 2 and one on race
+  frame 0). That is the original's value one frame after its release frame (876 = 1100, 877 = 900, p_c1). The default
+  with skip 8 stays 1100 / 1 at frame 0 (RD frame 0 is the first race frame, and the default runs no physics on the
+  exit call).
+- Reading: if A1-GO holds, the knob-ON exe and the original agree frame for frame once cd matches, and W-GO's 1100 / 1
+  bar (taken from the default) was one frame off for a knob that adds the exit call's physics. W-GO itself stays red as
+  preregistered. No flip is filed from this step either way: the cd draw needs a ring-phase decision first.
