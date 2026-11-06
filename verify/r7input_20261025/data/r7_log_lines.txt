@@ -1,0 +1,82 @@
+## B_DEF_K0.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
+RULE-EVAL rule=0 round=2 participants=4 r=0 timer=30.00 scores=3,7,8,6
+R6 ROUND END winner=car1 scores=[3,7,8,6]
+## B_DEF_K1.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,7,8,5
+R6 ROUND END winner=car2 scores=[4,7,8,5]
+RULE-EVAL rule=0 round=2 participants=4 r=0 timer=30.00 scores=2,9,7,6
+R6 ROUND END winner=car1 scores=[2,9,7,6]
+## B_DEF_K26.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,7,5,8
+R6 ROUND END winner=car3 scores=[4,7,5,8]
+RULE-EVAL rule=0 round=2 participants=4 r=0 timer=30.00 scores=2,9,6,7
+R6 ROUND END winner=car1 scores=[2,9,6,7]
+## B_I_K0.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
+RULE-EVAL rule=0 round=2 participants=4 r=0 timer=30.00 scores=3,7,8,6
+R6 ROUND END winner=car1 scores=[3,7,8,6]
+## B_XIP150_K0.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
+R7IN byte0xa slot=1 val=0xff r7frame=150 test=1 det_frame=551
+R7X EXIT det_frame=551 round 1 -> 2 match_winner=-1
+RULE-EVAL rule=0 round=2 participants=4 r=0 timer=30.00 scores=2,7,8,7
+R6 ROUND END winner=car1 scores=[2,7,8,7]
+R7IN byte0xa slot=1 val=0xff r7frame=150 test=1 det_frame=1058
+R7X EXIT det_frame=1058 round 2 -> 3 match_winner=-1
+## B_XIP50_K0.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
+R7IN byte0xa slot=1 val=0xff r7frame=50 test=1 det_frame=451
+## B_XI_K0.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
+## B_XI_K1.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,7,8,5
+R6 ROUND END winner=car2 scores=[4,7,8,5]
+## B_XI_K26.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,7,5,8
+R6 ROUND END winner=car3 scores=[4,7,5,8]
+## B_X_K0.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
+## D2_XI_1.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+R7IN byte0xa slot=1 val=0xff r7frame=0 test=0 det_frame=18
+## D2_XI_2.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+R7IN byte0xa slot=1 val=0xff r7frame=0 test=0 det_frame=12
+## D2_XI_3.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+R7IN byte0xa slot=1 val=0xff r7frame=0 test=0 det_frame=19
+## H_DEF.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
+RULE-EVAL rule=0 round=2 participants=4 r=0 timer=30.00 scores=3,7,8,6
+R6 ROUND END winner=car1 scores=[3,7,8,6]
+RULE-EVAL rule=0 round=3 participants=4 r=0 timer=30.00 scores=1,6,9,8
+R6 ROUND END winner=car3 scores=[1,6,9,8]
+RULE-EVAL rule=0 round=4 participants=4 r=0 timer=30.00 scores=0,7,8,10
+R6 ROUND END winner=car3 scores=[0,7,8,10]
+RULE-EVAL rule=0 round=5 participants=4 r=0 timer=30.00 scores=0,6,10,11
+R6 ROUND END winner=car2 scores=[0,6,10,11]
+RULE-EVAL rule=0 round=6 participants=4 r=4 timer=30.00 scores=0,5,11,13
+R6 MATCH OVER t=55.0s winner=car3 (score>11 rule, 0x00410510)
+## H_XI.log
+input slots: game controllers 1, types 1 2 0 0, active 2
+RULE-EVAL rule=0 round=1 participants=4 r=0 timer=30.00 scores=4,5,7,8
+R6 ROUND END winner=car3 scores=[4,5,7,8]
