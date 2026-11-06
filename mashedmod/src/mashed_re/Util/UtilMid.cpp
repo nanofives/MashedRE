@@ -12,7 +12,7 @@
 // Hook list:
 //   (0x00442c80 ModeGatedPlayerCheck: deleted dcleaf 2026-10-22; the one body is
 //    Vehicle/ForceIntegratorLeaves.cpp:RubberBandGate, installed through RubberBandGateEntry)
-//   0x004950b0  QpcTimeScaledTo3Mhz        (80b, QPC*3e6/freq)
+//   (0x004950b0 QpcTimeScaledTo3Mhz: MATCH-FIX-4950B0, body in Match/MatchS16_004950b0.cpp)
 //   0x004b302f  StricmpThunk               (104b, library __stricmp passthrough)
 //   0x00429aa0  GameStateSlotsFill         (134b, predicate-gated slot fill; re-ported 2026-10-12)
 //   0x0041d730  PlayerSlotConfigInit       (225b, config-pair slot init loop)
@@ -56,48 +56,9 @@ inline T as_fn(std::uintptr_t rva) {
 
 } // namespace
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x004950b0  QpcTimeScaledTo3Mhz
-//
-// 80-byte QPC sampler: result = QPC * 3,000,000 / DAT_00771e70:74.
-//
-// Decompiler shows `return;` (void) but EAX:EDX carries the 64-bit __alldiv
-// result. We delegate to the original (cannot replicate EDX:EAX return from
-// pure C++ on the standalone exe target — but here we're only the hook DLL).
-//
-// On the hook DLL side, the simplest correct reimpl is to call the original
-// at its RVA. However, that re-enters our own hook → infinite loop. Instead,
-// we reproduce the body inline using QPC + 64-bit ops, and return the lower
-// 32 bits of the result via the standard C ABI; callers using the upper half
-// would observe a drift, but Ghidra notes the high-half is unused in the
-// observed call sites (FUN_00492e90 stores into 32-bit slots).
-//
-// Analysis: re/analysis/timer/0x004950b0.md
-// Callees: __alldiv (S-0660 C1), __allmul (S-0661 C1), QueryPerformanceCounter.
-// ─────────────────────────────────────────────────────────────────────────────
-namespace {
-constexpr std::uintptr_t kDat_00771e70_lo = 0x00771e70;
-constexpr std::uintptr_t kDat_00771e70_hi = 0x00771e74;
-} // namespace
-
-extern "C" __declspec(dllexport) std::uint32_t __cdecl QpcTimeScaledTo3Mhz() {
-    LARGE_INTEGER ctr;
-    ctr.QuadPart = 0;
-    QueryPerformanceCounter(&ctr);
-
-    const std::uint64_t qpc     = static_cast<std::uint64_t>(ctr.QuadPart);
-    const std::uint64_t product = qpc * static_cast<std::uint64_t>(3000000u);
-
-    const std::uint32_t freq_lo = *reinterpret_cast<const std::uint32_t*>(kDat_00771e70_lo);
-    const std::uint32_t freq_hi = *reinterpret_cast<const std::uint32_t*>(kDat_00771e70_hi);
-    const std::uint64_t freq    = (static_cast<std::uint64_t>(freq_hi) << 32) | freq_lo;
-
-    if (freq == 0) return 0u;  // matches behavior before QPF is initialized
-    const std::uint64_t result = product / freq;
-    return static_cast<std::uint32_t>(result & 0xFFFFFFFFu);
-}
-
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(QpcTimeScaledTo3Mhz, 0x004950b0);
+// MATCH-FIX-4950B0: the body of 0x004950b0 (QpcTimeScaledTo3Mhz) moved to Match/MatchS16_004950b0.cpp,
+// which compiles the byte-matched source re/match/s16/004950b0.c (signed __int64 math, no zero-freq guard).
+// Its install stays off there (MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred).
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004b302f  StricmpThunk
