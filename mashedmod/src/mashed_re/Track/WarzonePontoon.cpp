@@ -35,6 +35,10 @@
 
 extern "C" void __cdecl RwMatrixInvertEntry(void* out, void* in);                        // Render/RwMatrixInvert.cpp
 extern "C" unsigned int* __cdecl FUN_004c52f0(unsigned int* dst, unsigned int* src, int op);   // Collision/RwpSolverMath2.cpp
+// MATCH-S09 bodies (Match/MatchS09_<va8>.cpp, the byte-matched re/match/s09 sources); obj = &O() (0x00684d18).
+extern "C" unsigned int __cdecl WarzonePontoonBoxCarry(int obj, void* in, void* out);   // Match/MatchS09_00451990.cpp
+extern "C" void __cdecl WarzonePontoonDeactivate(int obj);                              // Match/MatchS09_00451cc0.cpp
+extern "C" void __cdecl WarzonePontoonTrackBody(int obj, void* in, void* out);          // Match/MatchS09_00451a50.cpp
 namespace mashed_re { namespace Math {
 void* RwMatrixMultiplyCPUDispatch(void* out, const void* A, const void* B);   // 0x004c4600 (Math/RwMatrixMultiplyCpu.cpp)
 } }
@@ -337,18 +341,10 @@ void Marker(int v, int on) {
     }
 }
 
-// 0x00451990 FUN_00451990(obj, in, out): in * inv(+0x54); inside the box -> out = that * [+0x94], 1; else out = in, 0.
+// MATCH-S09: the body of 0x00451990 (BoxCarry) moved to Match/MatchS09_00451990.cpp,
+// which compiles the byte-matched source re/match/s09/00451990.c.
 int BoxCarry(Obj& o, const float* in, float* out) {
-    alignas(16) float local[16], inv[16];
-    std::memcpy(local, in, 64);
-    MatInvert(inv, o.m54);                                                  // 0x004519aa FUN_004c4dc0(local_40, obj+0x54)
-    CombinePost(local, inv);                                                // 0x004519b8 FUN_004c52f0(local_80, local_40, 2)
-    const float x = local[12], z = local[14];
-    int r;
-    if ((o.box[0] <= x) || (x <= o.box[3]) || (o.box[2] <= z) || (z <= o.box[5])) r = 0;   // 0x004519c0..0x00451a0d
-    else { CombinePost(local, o.m94); r = 1; }                              // 0x00451a14 FUN_004c52f0(local_80, [+0x94], 2)
-    std::memmove(out, r ? local : in, 64);                                  // 0x00451a27 rep movsd
-    return r;
+    return static_cast<int>(WarzonePontoonBoxCarry(reinterpret_cast<int>(&o), const_cast<float*>(in), out));
 }
 
 // 0x00451820 FUN_00451820: the 0 -> 1 trigger.
@@ -423,11 +419,9 @@ void ResetCb(Obj*, int) {
     // FUN_0047d180(Tower / Deck, rest): RWP body matrices, none in the exe.
 }
 
-// 0x00451cc0 FUN_00451cc0.
-void Deactivate(Obj& o) {
-    o.state = 0;
-    if (o.cb) o.cb(&o, 0);
-}
+// MATCH-S09: the body of 0x00451cc0 (Deactivate) moved to Match/MatchS09_00451cc0.cpp,
+// which compiles the byte-matched source re/match/s09/00451cc0.c.
+void Deactivate(Obj& o) { WarzonePontoonDeactivate(reinterpret_cast<int>(&o)); }
 
 // 0x00451690: the anim loop callback (SubAnimTime by +0x44, update, state 5).
 int LoopCb(Interp* ip, Obj* o) {
@@ -527,16 +521,9 @@ void StateMachine(Obj& o, int units) {
     *reinterpret_cast<float*>(0x007f0fb4u) = o.c8;                          // write-only in the original
 }
 
-// 0x00451a50 FUN_00451a50(obj, in, out): out = ortho(in * inv(+0x54) * [+0x94]).
-void TrackBody(Obj& o, float* m) {
-    alignas(16) float t[16], inv[16];
-    std::memcpy(t, m, 64);
-    MatInvert(inv, o.m54);
-    CombinePost(t, inv);
-    CombinePost(t, o.m94);
-    OrthoNormalize(t, t);
-    std::memcpy(m, t, 64);
-}
+// MATCH-S09: the body of 0x00451a50 (TrackBody) moved to Match/MatchS09_00451a50.cpp,
+// which compiles the byte-matched source re/match/s09/00451a50.c.
+void TrackBody(Obj& o, float* m) { WarzonePontoonTrackBody(reinterpret_cast<int>(&o), m, m); }
 
 // ---- parsing ---------------------------------------------------------------------------------------------------
 

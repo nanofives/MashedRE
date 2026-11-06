@@ -1,0 +1,27 @@
+[mtrain 10:45:02] SELFTEST fake repo C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261102_104502
+[mtrain 10:45:03]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 10:45:03]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 10:45:03]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 10:45:03]   SELFTEST contrast: Set-Content writes 2 CR byte(s) for 2 lines on this host
+[mtrain 10:45:06]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 10:45:06]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 10:45:06]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 10:45:06]   SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+[mtrain 10:45:07]   SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+[mtrain 10:45:08]   SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+[mtrain 10:45:11]   SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+[mtrain 10:45:12]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 10:45:13]   SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+[mtrain 10:45:13]   SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+[mtrain 10:45:13]   SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+[mtrain 10:45:13]   SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+[mtrain 10:45:13]   SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+[mtrain 10:45:13]   SELFTEST PASS: AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=True inner=1)
+[mtrain 10:45:14]   SELFTEST PASS: priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=False)
+[mtrain 10:45:14]   SELFTEST PASS: priority hold: status shows PRIORITY-HOLD pid=26612
+[mtrain 10:45:21]   SELFTEST PASS: priority hold: a new non-priority solo open waits while held (blocked=True), an ordinary acquire does not (ok=True), the solo opens after release (opened=True)
+[mtrain 10:45:21]   SELFTEST FAIL: short-once: D2_DEF_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 10:45:21]   SELFTEST FAIL: short-always: reruns bounded at 2, arm still reported short (runs=)
+[mtrain 10:45:21]   SELFTEST FAIL: full-length logs: no rerun
+[mtrain 10:45:21] SELFTEST done: 3 failure(s)
+SELFTEST FAIL (3 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261102_104502\merge_train.log

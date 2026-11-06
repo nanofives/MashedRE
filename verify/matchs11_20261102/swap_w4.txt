@@ -1,0 +1,25 @@
+MATCH-S11 swap helper w4 report (2026-11-02)
+
+0x0046d660  SWAPPED  symbol=VehTbl881f50Get3  targets=asi  install=1  x87=no(float copy only, see X)  removed=Util/PromoLoop_round54.cpp:50-52 (+unused VehTblGet template)  binds=none  note=old dword copy of 0x00881f50+i*0xd04 (=0x008815a0+0x9b0) x3, same bound; exe callers: none
+0x0046d6a0  SWAPPED  symbol=VehTbl8820acGet1  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round54.cpp:53-55  binds=none  note=0x008820ac = 0x008815a0+0xb0c; exe callers: none
+0x0046d6d0  SWAPPED  symbol=VehTbl881f84Get1  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round54.cpp:56-58  binds=none  note=0x00881f84 = 0x008815a0+0x9e4; exe callers: none
+0x00472520  SWAPPED  symbol=Table69150cSet  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round50.cpp:24-28  binds=none  note=same store 0x0069150c+i*0x10; exe callers: none
+0x00472550  SWAPPED  symbol=Table691508Get  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round50.cpp:18-22  binds=none  note=same load 0x00691508+i*0x10; exe callers: none
+0x00472640  SWAPPED  symbol=Set86ecc8  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round32.cpp:33-37  binds=none  note=same store 0x0086ecc8; exe callers: none
+0x0046dd80  SWAPPED  symbol=Float61313cGet  targets=asi  install=1  x87=yes(float return, fld only; identical either way)  removed=Util/PromoLoop_round35.cpp:31-35  binds=none  note=matched returns float10 (long double = double in MSVC) vs old float, both in ST0 from fld dword [0x0061313c]; no port C++ declarations; exe callers: none
+0x004723d0  SWAPPED  symbol=Init691500  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round51.cpp:17-27  binds=none  note=old loop writes the same 40 dwords (0xffNNffff/0xffNN3cff/0/0, NN=1..10) at 0x00691500..0x0069159f, store order differs only; exe callers: none
+0x00472500  SWAPPED  symbol=CondGet691500  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round58.cpp:33-40  binds=none  note=same flag +8 / slot +4 / slot +0 reads at 0x00691500+i*0x10; exe callers: none
+0x0046d4d0  SWAPPED  symbol=VecCopy881ec8  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round61.cpp:35-45  binds=none  note=two 64-byte copies to 0x008815a0+0x928 / +0x968 (=0x00881ec8/0x00881f08), struct copy; exe callers: none
+0x0046b4f0  SWAPPED  symbol=UtilTableRead46b4f0  targets=both  install=1  x87=no(float copy only, see X)  removed=Util/UtilLeaves_ab6.cpp:149-165  binds=none  note=old dword reads at 0x008815a0+i*0xd04+0x60+j*12 (+0/+4/+8), same unsigned i>=0x10 and signed j>=0x12 bounds; no #ifndef MASHED_STANDALONE guard; exe callers: none
+0x00472690  SWAPPED  symbol=RandIntInRange  targets=asi  install=1  x87=no  removed=Util/UtilRandIntRange_wfb0f.cpp:68-81 (+unused s_FUN_00534870)  binds=FUN_00534870=MatchS11_00472690_Call00534870 (raw-address forwarder to 0x00534870, as the old body; no port body of 0x00534870 exists)  note=exe callers: none; TU now holds no code (lead may drop it from asi_sources.rsp)
+0x00472820  SWAPPED  symbol=Vec3IsValidNonTiny  targets=asi  install=1  x87=yes  removed=Util/Vec3ValidateMixed_cfd622.cpp:61-72 (+unused IsFiniteDouble)  binds=FUN_004a3907=MatchS11_00472820_Call004a3907 (raw-address forwarder to original 0x004a3907, cdecl double)  note=old body inlined the _finite check instead of calling 0x004a3907 (same computation per its header disasm); no port body of 0x004a3907 exists, so the forwarder calls the original image (asi-only, OK). Old summed x*x+y*y+z*z in SSE float; matched is the original order z*z+(x*x+y*y) on x87 = same result at the .asi's PC_24 (only exponent-range differences, which cannot change the >1e-6 verdict for finite inputs). exe callers: none; TU now holds no code (lead may drop it from asi_sources.rsp)
+
+X (float-copy getters 0x0046d660, 0x0046b4f0): with /arch:IA32 VS2022 compiles the float field copies as fld/fstp
+  (checked: scratch/w4/MatchS11_0046d660.asm, MatchS11_0046b4f0.asm), which quiets a signaling-NaN bit pattern; the old
+  bodies and the original copy dwords. Under the default /arch:SSE2 the copy is bit-exact. Recommend NOT listing these
+  two wrappers in x87_tus.txt.
+
+All 13 wrappers + all 10 edited old TUs: wrapcheck OK. No .c edits (match unchanged). Each wrapper scans as exactly one
+body + one install of its RVA; the edited old TUs no longer carry any of these RVAs.
+dual_copy_allowlist.txt: no entry for any of these 13 RVAs (none stale).
+Wrappers to add to rsp: 0x0046b4f0 both; the other 12 asi only.

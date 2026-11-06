@@ -94,7 +94,18 @@
 // its two names onto the same addresses as before.
 #define MATCH_PORT 1
 #define DAT_0089a378 (*reinterpret_cast<G0089a378*>(0x0089a378u))
+#ifdef MASHED_STANDALONE
+// [MATCH-T13-SEED-WRITER 2026-11-02] The exe's image pad is zero-filled over the original's .data, so a copy from
+// 0x005f2a70 read 39 zeros. The exe binds the source to the image's own 156 bytes (MASHED.exe.unpatched, .data
+// 0x005f2a70..0x005f2b0b, 13 rows x 3 ints, read 2026-11-02). The asi keeps the live address.
+static const int s_tbl_005f2a70[13][3] = {
+    {1, 1, 3}, {1, 2, 5}, {3, 4, 3}, {3, 3, 5}, {2, 3, 5}, {3, 4, 6}, {3, 4, 6},
+    {4, 9, 7}, {4, 5, 7}, {4, 8, 8}, {4, 8, 9}, {5, 7, 10}, {5, 7, 10},
+};
+#define DAT_005f2a70 s_tbl_005f2a70
+#else
 #define DAT_005f2a70 (reinterpret_cast<const int(*)[3]>(0x005f2a70u))
+#endif
 #define FUN_00414120 CopyTable005f2a70To0089a384
 extern "C" __declspec(dllexport) void __cdecl CopyTable005f2a70To0089a384(void);
 extern "C" {

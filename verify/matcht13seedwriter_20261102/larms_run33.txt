@@ -1,0 +1,33 @@
+=== L_SANDS pid=17652 exe=21dfac34
+    exit=0 secs=24
+    [diff360] tableinit_dev mode=5 row=5 idx=17 a384=6 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40200000 a364=-1
+    [diff360] raceinit mode=5 row=5 idx=17 a384=6 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40c00000 a364=-1
+    [rule10-seed] site=round course=11 knob=1 diff=6 diff_raw=40c00000 live360_raw=40c00000 timer=15.6999998 timer_raw=417b3333 bonus=4.3499999 bonus_raw=408b3333
+    [rule10-seed] site=setrule course=11 knob=1 diff=6 diff_raw=40c00000 live360_raw=40c00000 timer=15.6999998 timer_raw=417b3333 bonus=4.3499999 bonus_raw=408b3333
+    [diff360] tableinit_navinit mode=5 row=5 idx=17 a384=6 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40c00000 a364=-1
+=== L_NEU pid=23952 exe=21dfac34
+    exit=0 secs=23
+    [diff360] tableinit_dev mode=4 row=2 idx=7 a384=4 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40200000 a364=-1
+    [diff360] raceinit mode=4 row=2 idx=7 a384=4 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40800000 a364=-1
+    [rule10-seed] site=round course=39 knob=1 diff=4 diff_raw=40800000 live360_raw=40800000 timer=17.7999992 timer_raw=418e6666 bonus=3.89999986 bonus_raw=40799999
+    [rule10-seed] site=setrule course=39 knob=1 diff=4 diff_raw=40800000 live360_raw=40800000 timer=17.7999992 timer_raw=418e6666 bonus=3.89999986 bonus_raw=40799999
+    [diff360] tableinit_navinit mode=4 row=2 idx=7 a384=4 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40800000 a364=-1
+=== L_CITY pid=11068 exe=21dfac34
+    exit=0 secs=25
+    [diff360] tableinit_dev mode=4 row=12 idx=37 a384=7 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40200000 a364=-1
+    [diff360] raceinit mode=4 row=12 idx=37 a384=7 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40e00000 a364=-1
+    [rule10-seed] site=round course=26 knob=1 diff=7 diff_raw=40e00000 live360_raw=40e00000 timer=17.8999996 timer_raw=418f3333 bonus=5.95000029 bonus_raw=40be6667
+    [rule10-seed] site=setrule course=26 knob=1 diff=7 diff_raw=40e00000 live360_raw=40e00000 timer=17.8999996 timer_raw=418f3333 bonus=5.95000029 bonus_raw=40be6667
+    [diff360] tableinit_navinit mode=4 row=12 idx=37 a384=7 a37c_raw=00000000 a380_raw=00000000 a378=0 n4c0=0 ea7c=0 ea90=0 a360_raw=40e00000 a364=-1
+=== C_SANDS pid=21604 exe=21dfac34
+    exit=0 secs=25
+    [rule10-seed] site=round course=11 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=16.75 timer_raw=41860000 bonus=4.5250001 bonus_raw=4090cccd
+    [rule10-seed] site=setrule course=11 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=16.75 timer_raw=41860000 bonus=4.5250001 bonus_raw=4090cccd
+=== C_NEU pid=9860 exe=21dfac34
+    exit=0 secs=25
+    [rule10-seed] site=round course=39 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=18.25 timer_raw=41920000 bonus=3.9749999 bonus_raw=407e6666
+    [rule10-seed] site=setrule course=39 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=18.25 timer_raw=41920000 bonus=3.9749999 bonus_raw=407e6666
+=== C_CITY pid=20316 exe=21dfac34
+    exit=0 secs=47
+    [rule10-seed] site=round course=26 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=19.25 timer_raw=419a0000 bonus=6.17500019 bonus_raw=40c5999a
+    [rule10-seed] site=setrule course=26 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=19.25 timer_raw=419a0000 bonus=6.17500019 bonus_raw=40c5999a
