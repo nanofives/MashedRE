@@ -14,14 +14,5 @@
 
 #include <cstdint>
 
-// 0x004723d0
-extern "C" __declspec(dllexport) void __cdecl Init691500(void) {
-    for (std::uint32_t i = 0; i < 10u; ++i) {
-        std::uint8_t* e = reinterpret_cast<std::uint8_t*>(0x00691500u + i * 0x10u);
-        *reinterpret_cast<std::uint32_t*>(e + 0x0) = 0xff00ffffu | ((i + 1u) << 16);  // cited at 0x004723d0
-        *reinterpret_cast<std::uint32_t*>(e + 0x4) = 0xff003cffu | ((i + 1u) << 16);
-        *reinterpret_cast<std::uint32_t*>(e + 0x8) = 0u;
-        *reinterpret_cast<std::uint32_t*>(e + 0xc) = 0u;
-    }
-}
-RH_ScopedInstall(Init691500, 0x004723d0);
+// MATCH-S11: the body of 0x004723d0 (Init691500) moved to Match/MatchS11_004723d0.cpp,
+// which compiles the byte-matched source re/match/s11/004723d0.c.

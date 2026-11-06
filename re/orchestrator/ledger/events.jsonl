@@ -2392,3 +2392,25 @@
 {"at":"2026-11-02T15:20:36Z","id":"MATCH-S10","from":"working","to":"blocked","owner":"cmvz9p9651ykrpa1c5dus55p1","note":"built @ cf19b66b2, gates not run: display D3DERR_NOTAVAILABLE (110/128 matched, 22 swapped, C4 candidate 0x0045c330 after gates; RESULT verify/matchs10_20261102/RESULT_MATCH-S10.md @ 116654248)"}
 {"at":"2026-11-02T16:21:53Z","id":"MATCH-S11","from":"working","to":"blocked","owner":"cmvzdiru92h8mpa1cagt3tkc4","note":"built @ 64be93909, gates not run: display D3DERR_NOTAVAILABLE"}
 {"at":"2026-11-02T16:22:03Z","id":"MATCH-S11","from":"blocked","to":"blocked","owner":"cmvzdiru92h8mpa1cagt3tkc4","note":"built @ b514b8ce7, gates not run: display D3DERR_NOTAVAILABLE"}
+{"at":"2026-11-02T16:27:16Z","id":"MATCH-S11-RECIP-REVIEW","from":"open","to":"claimed","owner":"cmvzh1o902vsapa1ccdwtxv8b","note":""}
+{"at":"2026-11-02T16:27:17Z","id":"MATCH-S15","from":"open","to":"claimed","owner":"cmvzh1p372vsopa1cythinr01","note":""}
+{"at":"2026-11-02T16:27:18Z","id":"MATCH-S13","from":"open","to":"claimed","owner":"cmvzh1px82vswpa1cx48fpw8x","note":""}
+{"at":"2026-11-02T16:28:35Z","id":"MATCH-S11-RECIP-REVIEW","from":"claimed","to":"working","owner":"cmvzh1o902vsapa1ccdwtxv8b","note":"static recip review"}
+{"at":"2026-11-02T16:29:17Z","id":"MATCH-S11-RECIP-REVIEW","from":"working","to":"review","owner":"cmvzh1o902vsapa1ccdwtxv8b","note":"TEXT-ONLY ready @ 169c8a178"}
+{"at":"2026-11-02T16:29:19Z","id":"MATCH-S15","from":"claimed","to":"working","owner":"cmvzh1p372vsopa1cythinr01","note":"select/g2s/match started"}
+{"at":"2026-11-02T16:29:38Z","id":"MATCH-S16","from":"open","to":"claimed","owner":"cmvzh565f2w8opa1cmowdwlyg","note":""}
+{"at":"2026-11-02T16:29:42Z","id":"MATCH-S13","from":"claimed","to":"working","owner":"cmvzh1px82vswpa1cx48fpw8x","note":"static leg: select/g2s/match"}
+{"at":"2026-11-02T16:32:27Z","id":"MATCH-S16","from":"claimed","to":"working","owner":"cmvzh565f2w8opa1cmowdwlyg","note":"static legs: select/g2s/match"}
+{"at":"2026-11-02T17:42:25Z","id":"MATCH-S16","from":"working","to":"blocked","owner":"cmvzh565f2w8opa1cmowdwlyg","note":"built @ b3cfd98cd, gates owed: display D3DERR_NOTAVAILABLE (115/128 matched, 43 swapped, 0 C4 candidates (exe-callers=0); RESULT verify/matchs16_20261102/RESULT_MATCH-S16.md @ b3cfd98cd)"}
+{"at":"2026-11-02T17:45:32Z","id":"MATCH-S12","from":"open","to":"claimed","owner":"cmvzjutlr3tukpa1ckvuwkq74","note":""}
+{"at":"2026-11-02T17:46:34Z","id":"MATCH-S15","from":"working","to":"blocked","owner":"cmvzh1p372vsopa1cythinr01","note":"built @ 3a8eea733, gates owed: display D3DERR_NOTAVAILABLE (103/129 matched, 38 swapped; RESULT verify/matchs15_20261102/RESULT_MATCH-S15.md @ 3a8eea733); 1 C4 candidate 0x00492770; port bugs filed MATCH-FIX-492E60/4926C0/492D30"}
+{"at":"2026-11-02T17:47:57Z","id":"MATCH-S12","from":"claimed","to":"working","owner":"cmvzjutlr3tukpa1ckvuwkq74","note":"worktree up; select+g2s next"}
+{"at":"2026-11-02T17:48:47Z","id":"MATCH-S13","from":"working","to":"blocked","owner":"cmvzh1px82vswpa1cx48fpw8x","note":"built @ fc4f6e0cb, gates owed: display D3DERR_NOTAVAILABLE (106/128 matched, 24 swapped; RESULT verify/matchs13_20261102/RESULT_MATCH-S13.md @ fc4f6e0cb)"}
+{"at":"2026-11-02T17:49:31Z","id":"MATCH-S14","from":"open","to":"claimed","owner":"cmvzjzvr93uqupa1c6ptcbw0v","note":""}
+{"at":"2026-11-02T17:49:33Z","id":"MATCH-S19","from":"open","to":"claimed","owner":"cmvzjzwkm3ur4pa1ckmgkocf5","note":""}
+{"at":"2026-11-02T17:52:57Z","id":"MATCH-S14","from":"claimed","to":"working","owner":"cmvzjzvr93uqupa1c6ptcbw0v","note":"static match leg started (claude3)"}
+{"at":"2026-11-02T17:53:00Z","id":"MATCH-S19","from":"claimed","to":"working","owner":"cmvzjzwkm3ur4pa1ckmgkocf5","note":"static leg: worktree + slice"}
+{"at":"2026-11-02T18:14:51Z","id":"MATCH-S12","from":"working","to":"working","owner":"cmvzjutlr3tukpa1ckvuwkq74","note":"match leg: 83/129 at 100% so far; helpers relaunched after PFB move"}
+{"at":"2026-11-02T18:29:17Z","id":"MATCH-S12","from":"working","to":"open","owner":"","note":"stopped run 5: WIP @ b2f318ff7 on orch/MATCH-S12, reached match leg (85/129 at 100% by match.py; relocheck on hand files, swap, build owed; raw data D:/MashedWT/MATCH-S12_data)"}
+{"at":"2026-11-02T18:32:35Z","id":"MATCH-S19","from":"working","to":"open","owner":"","note":"stopped run 5: WIP @ 7cf45c0fe on orch/MATCH-S19, reached static leg (hand-matching interrupted, 59/117 byte-identical + relocheck OK, no swaps, no build; resume notes verify/matchs19_20261102/WIP_MATCH-S19.md)"}
+{"at":"2026-11-02T18:33:17Z","id":"MATCH-S14","from":"working","to":"open","owner":"","note":"stopped run 5: WIP @ 592010ee3 on orch/MATCH-S14, reached hand-match leg (35 raw + 62 helper-reported 100% = 97/128 claimed, not lead-verified; no swap/build). Resume notes: verify/matchs14_20261102/WIP_STATUS.md"}

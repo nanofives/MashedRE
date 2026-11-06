@@ -20,29 +20,5 @@ static constexpr std::uintptr_t kVehicleBase_881f58 = 0x00881f58u;
 static constexpr std::uintptr_t kDampingScalar_5ce264 = 0x005ce264u;
 static constexpr std::uint32_t  kDWordStride         = 0x341u;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046c570  VehicleDampVec3
-// Ghidra decomp (74 bytes):
-//   *(float *)(&DAT_00881f50 + idx * 0x341 * 4) =
-//       *(float *)(&DAT_00881f50 + idx * 0x341 * 4) * _DAT_005ce264;
-//   *(float *)(&DAT_00881f54 + idx * 0x341 * 4) =
-//       *(float *)(&DAT_00881f54 + idx * 0x341 * 4) * _DAT_005ce264;
-//   *(float *)(&DAT_00881f58 + idx * 0x341 * 4) =
-//       *(float *)(&DAT_00881f58 + idx * 0x341 * 4) * _DAT_005ce264;
-//   return 1;
-// Pure leaf; constant-1 return.  Caller 0x00424eb0 (game-mode cleanup loop).
-// [UNCERTAIN] whether the 3-float field is a velocity, force, or angular
-// momentum vector — meaning-only; mechanical reimpl is exact.
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleDampVec3(int vehicleIdx) {
-    const auto step  = static_cast<std::uintptr_t>(vehicleIdx) * kDWordStride;
-    float* const fx = reinterpret_cast<float*>(kVehicleBase_881f50 + step * 4u);
-    float* const fy = reinterpret_cast<float*>(kVehicleBase_881f54 + step * 4u);
-    float* const fz = reinterpret_cast<float*>(kVehicleBase_881f58 + step * 4u);
-    const float k    = *reinterpret_cast<const float*>(kDampingScalar_5ce264);
-    *fx = *fx * k;
-    *fy = *fy * k;
-    *fz = *fz * k;
-    return 1;
-}
-RH_ScopedInstall(VehicleDampVec3, 0x0046c570);  // re-enabled 2026-05-24 c3-vehicle
+// MATCH-S11: the body of 0x0046c570 (VehicleDampVec3) moved to Match/MatchS11_0046c570.cpp,
+// which compiles the byte-matched source re/match/s11/0046c570.c.

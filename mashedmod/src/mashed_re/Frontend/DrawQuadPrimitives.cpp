@@ -139,30 +139,8 @@ static inline void fill_xy_quad(float x, float y, float w, float h) {
 // Render states 1=0 (no texture), 12=1, 10=5, 11=6.
 // ---------------------------------------------------------------------------
 
-// 0x00472c60
-extern "C" __declspec(dllexport) void __cdecl ChromeBaseDraw(
-    float x, float y, float w, float h, std::uint32_t argb)
-{
-    // Coordinate scaling — cited at 0x00472c60 body.
-    const float scale_x = *reinterpret_cast<float*>(kScaleX);
-    const float scale_y = *reinterpret_cast<float*>(kScaleY);
-    const float sx = static_cast<float>(s_ScreenWidthGet())  * x * scale_x;
-    const float sy = static_cast<float>(s_ScreenHeightGet()) * y * scale_y;
-    const float sw = static_cast<float>(s_ScreenWidthGet())  * w * scale_x;
-    const float sh = static_cast<float>(s_ScreenHeightGet()) * h * scale_y;
-
-    fill_xy_quad(sx, sy, sw, sh);
-    fill_zwc_all(rw_z_field(), color_swap_argb_to_abgr(argb));
-
-    // Render states cited at body exit.
-    rw_set_state(1, 0);   // disable texture
-    rw_set_state(12, 1);  // alpha blend enable
-    rw_set_state(10, 5);  // src blend factor
-    rw_set_state(11, 6);  // dst blend factor
-    rw_draw_4verts();
-}
-
-RH_ScopedInstall(ChromeBaseDraw, 0x00472c60);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S11: the body of 0x00472c60 (ChromeBaseDraw) moved to Match/MatchS11_00472c60.cpp,
+// which compiles the byte-matched source re/match/s11/00472c60.c.
 
 
 // ---------------------------------------------------------------------------
@@ -174,33 +152,8 @@ RH_ScopedInstall(ChromeBaseDraw, 0x00472c60);  // re-enabled 2026-05-24 c3-front
 // DAT_00898a30 (V0 color = kV0+0x10) and DAT_00898a4c (V1 color = kV1+0x10).
 // ---------------------------------------------------------------------------
 
-// 0x00472f40
-extern "C" __declspec(dllexport) void __cdecl TextGradientV0V1Override(
-    float x, float y, float w, float h, std::uint32_t argb)
-{
-    // Same scaling block as ChromeBaseDraw — cited at 0x00472f40 body.
-    const float scale_x = *reinterpret_cast<float*>(kScaleX);
-    const float scale_y = *reinterpret_cast<float*>(kScaleY);
-    const float sx = static_cast<float>(s_ScreenWidthGet())  * x * scale_x;
-    const float sy = static_cast<float>(s_ScreenHeightGet()) * y * scale_y;
-    const float sw = static_cast<float>(s_ScreenWidthGet())  * w * scale_x;
-    const float sh = static_cast<float>(s_ScreenHeightGet()) * h * scale_y;
-
-    fill_xy_quad(sx, sy, sw, sh);
-    fill_zwc_all(rw_z_field(), color_swap_argb_to_abgr(argb));
-
-    // Top-edge opaque-black override — DAT_00898a30 (V0) + DAT_00898a4c (V1).
-    *reinterpret_cast<std::uint32_t*>(kV0 + 0x10) = 0xff000000u;
-    *reinterpret_cast<std::uint32_t*>(kV1 + 0x10) = 0xff000000u;
-
-    rw_set_state(1, 0);
-    rw_set_state(12, 1);
-    rw_set_state(10, 5);
-    rw_set_state(11, 6);
-    rw_draw_4verts();
-}
-
-RH_ScopedInstall(TextGradientV0V1Override, 0x00472f40);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S11: the body of 0x00472f40 (TextGradientV0V1Override) moved to Match/MatchS11_00472f40.cpp,
+// which compiles the byte-matched source re/match/s11/00472f40.c.
 
 
 // ---------------------------------------------------------------------------
@@ -212,32 +165,8 @@ RH_ScopedInstall(TextGradientV0V1Override, 0x00472f40);  // re-enabled 2026-05-2
 // _DAT_00898a84 (V3 color = kV3+0x10).
 // ---------------------------------------------------------------------------
 
-// 0x004730b0
-extern "C" __declspec(dllexport) void __cdecl TextGradientV2V3Override(
-    float x, float y, float w, float h, std::uint32_t argb)
-{
-    const float scale_x = *reinterpret_cast<float*>(kScaleX);
-    const float scale_y = *reinterpret_cast<float*>(kScaleY);
-    const float sx = static_cast<float>(s_ScreenWidthGet())  * x * scale_x;
-    const float sy = static_cast<float>(s_ScreenHeightGet()) * y * scale_y;
-    const float sw = static_cast<float>(s_ScreenWidthGet())  * w * scale_x;
-    const float sh = static_cast<float>(s_ScreenHeightGet()) * h * scale_y;
-
-    fill_xy_quad(sx, sy, sw, sh);
-    fill_zwc_all(rw_z_field(), color_swap_argb_to_abgr(argb));
-
-    // Bottom-edge opaque-black override.
-    *reinterpret_cast<std::uint32_t*>(kV2 + 0x10) = 0xff000000u;
-    *reinterpret_cast<std::uint32_t*>(kV3 + 0x10) = 0xff000000u;
-
-    rw_set_state(1, 0);
-    rw_set_state(12, 1);
-    rw_set_state(10, 5);
-    rw_set_state(11, 6);
-    rw_draw_4verts();
-}
-
-RH_ScopedInstall(TextGradientV2V3Override, 0x004730b0);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S11: the body of 0x004730b0 (TextGradientV2V3Override) moved to Match/MatchS11_004730b0.cpp,
+// which compiles the byte-matched source re/match/s11/004730b0.c.
 
 
 // ---------------------------------------------------------------------------
@@ -254,53 +183,8 @@ RH_ScopedInstall(TextGradientV2V3Override, 0x004730b0);  // re-enabled 2026-05-2
 // carried — neither marked [Blocks C3]; runtime evidence resolves the swap.
 // ---------------------------------------------------------------------------
 
-// 0x00473870
-extern "C" __declspec(dllexport) void __cdecl TextSpriteUVExplicit(
-    int* tex_ptr, float x, float y, float w, float h,
-    std::uint32_t argb, int blend_flag)
-{
-    // No scaling — params used directly.
-    fill_xy_quad(x, y, w, h);
-
-    // UV mapping: hardcoded full-texture quad (CORRECTION 2026-05-21).
-    // C1 analysis note in re/analysis/hud_frontend_d5/0x00473870.md claimed
-    // "UV fields not set in this function" — runtime decomp via Ghidra MCP
-    // 2026-05-21 confirmed the function does write a fixed [0..1]×[0..1] UV
-    // quad (cited at decomp lines: _DAT_00898a34=0, _DAT_00898a38=0,
-    // _DAT_00898a50=0x3f800000, _DAT_00898a54=0, _DAT_00898a6c=0,
-    // _DAT_00898a70=0x3f800000, _DAT_00898a88=0x3f800000,
-    // _DAT_00898a8c=0x3f800000). Note addendum filed.
-    //   V0 (TL): U=0.0, V=0.0
-    //   V1 (TR): U=1.0, V=0.0
-    //   V2 (BL): U=0.0, V=1.0
-    //   V3 (BR): U=1.0, V=1.0
-    *reinterpret_cast<std::uint32_t*>(kV0 + 0x14) = 0x00000000u;  // V0 U=0
-    *reinterpret_cast<std::uint32_t*>(kV0 + 0x18) = 0x00000000u;  // V0 V=0
-    *reinterpret_cast<std::uint32_t*>(kV1 + 0x14) = 0x3f800000u;  // V1 U=1
-    *reinterpret_cast<std::uint32_t*>(kV1 + 0x18) = 0x00000000u;  // V1 V=0
-    *reinterpret_cast<std::uint32_t*>(kV2 + 0x14) = 0x00000000u;  // V2 U=0
-    *reinterpret_cast<std::uint32_t*>(kV2 + 0x18) = 0x3f800000u;  // V2 V=1
-    *reinterpret_cast<std::uint32_t*>(kV3 + 0x14) = 0x3f800000u;  // V3 U=1
-    *reinterpret_cast<std::uint32_t*>(kV3 + 0x18) = 0x3f800000u;  // V3 V=1
-
-    fill_zwc_all(rw_z_field(), color_swap_argb_to_abgr(argb));
-
-    // Texture dispatch — cited at 0x004738d8 / 0x004738e3 / 0x004738f2.
-    if (tex_ptr == nullptr) {
-        rw_set_state(1, 0);
-    } else {
-        int tex_handle = *tex_ptr;
-        rw_set_state(1, tex_handle);
-        rw_set_state(9, blend_flag == 0 ? 1 : 2);
-    }
-
-    rw_set_state(12, 1);
-    rw_set_state(10, 5);
-    rw_set_state(11, 6);
-    rw_draw_4verts();
-}
-
-RH_ScopedInstall(TextSpriteUVExplicit, 0x00473870);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S11: the body of 0x00473870 (TextSpriteUVExplicit) moved to Match/MatchS11_00473870.cpp,
+// which compiles the byte-matched source re/match/s11/00473870.c.
 
 
 // ---------------------------------------------------------------------------

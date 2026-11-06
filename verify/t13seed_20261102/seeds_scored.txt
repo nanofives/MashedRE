@@ -1,0 +1,63 @@
+# MATCH-T13-SEED seed calls, original FUN_004046a0 records (oracle json) and port [rule10-seed] lines
+# O_SANDS.oracle.json run {'track': 5, 'mode': 3, 'cars': 4, 'rule': 10, 'hold': 40, 'pid': 3232, 'hooks': None, 'ts': '2026-11-02 01:26:23'} err None
+call atSeg segRet1 state rule course d360_raw d360 timer timer_raw tbl_floats(nonzero)
+0 0 0 1 10 0xb 00000000 0 17.5 418c0000 +08=4.65(4094cccd)
+1 0 0 2 10 0xb 00000000 0 17.5 418c0000 +08=4.65(4094cccd)
+2 641 1 2 10 0xb 00000000 0 17.5 418c0000 +08=4.65(4094cccd)
+# O_CITY.oracle.json run {'track': 12, 'mode': 3, 'cars': 4, 'rule': 10, 'hold': 40, 'pid': 22420, 'hooks': None, 'ts': '2026-11-02 01:27:26'} err None
+call atSeg segRet1 state rule course d360_raw d360 timer timer_raw tbl_floats(nonzero)
+0 0 0 1 10 0x1a 00000000 0 20 41a00000 +08=6.3(40c9999a)
+1 0 0 2 10 0x1a 00000000 0 20 41a00000 +08=6.3(40c9999a)
+2 601 1 2 10 0x1a 00000000 0 20 41a00000 +08=6.3(40c9999a)
+3 1217 2 2 10 0x1a 00000000 0 20 41a00000 +08=6.3(40c9999a)
+# O_NEU.oracle.json run {'track': 2, 'mode': 3, 'cars': 4, 'rule': 10, 'hold': 40, 'pid': 17944, 'hooks': None, 'ts': '2026-11-02 01:28:23'} err None
+call atSeg segRet1 state rule course d360_raw d360 timer timer_raw tbl_floats(nonzero)
+0 0 0 1 10 0x27 00000000 0 19 41980000 +08=4.1(40833333)
+1 0 0 2 10 0x27 00000000 0 19 41980000 +08=4.1(40833333)
+# O_TRAIN.oracle.json run {'track': 0, 'mode': 3, 'cars': 4, 'rule': 10, 'hold': 40, 'pid': 9284, 'hooks': None, 'ts': '2026-11-02 01:29:21'} err None
+call atSeg segRet1 state rule course d360_raw d360 timer timer_raw tbl_floats(nonzero)
+0 0 0 1 10 0x1e 00000000 0 30 41f00000 
+1 0 0 2 10 0x1e 00000000 0 30 41f00000 
+2 822 1 2 10 0x1e 00000000 0 30 41f00000 
+# OEV_SANDS.oracle.json run {'track': 5, 'mode': 5, 'cars': 4, 'rule': 10, 'hold': 40, 'pid': 5092, 'hooks': None, 'ts': '2026-11-02 01:41:30'} err None
+call atSeg segRet1 state rule course d360_raw d360 timer timer_raw tbl_floats(nonzero)
+0 0 0 1 10 0xb 40c00000 6 15.7 417b3333 +08=4.35(408b3333)
+1 0 0 2 10 0xb 40c00000 6 15.7 417b3333 +08=4.35(408b3333)
+# OEV_NEU.oracle.json run {'track': 2, 'mode': 4, 'cars': 4, 'rule': 10, 'hold': 40, 'pid': 25168, 'hooks': None, 'ts': '2026-11-02 01:42:23'} err None
+call atSeg segRet1 state rule course d360_raw d360 timer timer_raw tbl_floats(nonzero)
+0 0 0 1 10 0x27 40800000 4 17.8 418e6666 +08=3.9(40799999)
+1 0 0 2 10 0x27 40800000 4 17.8 418e6666 +08=3.9(40799999)
+# OEV_CITY.oracle.json run {'track': 12, 'mode': 4, 'cars': 4, 'rule': 10, 'hold': 40, 'pid': 21104, 'hooks': None, 'ts': '2026-11-02 01:43:16'} err None
+call atSeg segRet1 state rule course d360_raw d360 timer timer_raw tbl_floats(nonzero)
+0 0 0 1 10 0x1a 40e00000 7 17.9 418f3333 +08=5.95(40be6667)
+1 0 0 2 10 0x1a 40e00000 7 17.9 418f3333 +08=5.95(40be6667)
+2 455 1 2 10 0x1a 40e00000 7 17.9 418f3333 +08=5.95(40be6667)
+3 920 2 2 10 0x1a 40e00000 7 17.9 418f3333 +08=5.95(40be6667)
+# O10_SANDS.oracle.json: 0 FUN_004046a0 calls
+# O10_CITY.oracle.json: 0 FUN_004046a0 calls
+# O10_NEU.oracle.json: 0 FUN_004046a0 calls
+# port
+ [rule10-seed] site=round course=26 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=20 timer_raw=41a00000 bonus=6.30000019 bonus_raw=40c9999a
+ [rule10-seed] site=setrule course=26 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=20 timer_raw=41a00000 bonus=6.30000019 bonus_raw=40c9999a
+ [rule10-seed] site=round course=39 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=19 timer_raw=41980000 bonus=4.0999999 bonus_raw=40833333
+ [rule10-seed] site=setrule course=39 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=19 timer_raw=41980000 bonus=4.0999999 bonus_raw=40833333
+ [rule10-seed] site=round course=11 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=17.5 timer_raw=418c0000 bonus=4.6500001 bonus_raw=4094cccd
+ [rule10-seed] site=setrule course=11 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=17.5 timer_raw=418c0000 bonus=4.6500001 bonus_raw=4094cccd
+ [rule10-seed] site=round course=30 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=30 timer_raw=41f00000 bonus=0 bonus_raw=00000000
+ [rule10-seed] site=setrule course=30 knob=0 diff=0 diff_raw=00000000 live360_raw=40200000 timer=30 timer_raw=41f00000 bonus=0 bonus_raw=00000000
+ [rule10-seed] site=round course=26 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=19.25 timer_raw=419a0000 bonus=6.17500019 bonus_raw=40c5999a
+ [rule10-seed] site=setrule course=26 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=19.25 timer_raw=419a0000 bonus=6.17500019 bonus_raw=40c5999a
+ [rule10-seed] site=round course=39 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=18.25 timer_raw=41920000 bonus=3.9749999 bonus_raw=407e6666
+ [rule10-seed] site=setrule course=39 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=18.25 timer_raw=41920000 bonus=3.9749999 bonus_raw=407e6666
+ [rule10-seed] site=round course=11 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=16.75 timer_raw=41860000 bonus=4.5250001 bonus_raw=4090cccd
+ [rule10-seed] site=setrule course=11 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=16.75 timer_raw=41860000 bonus=4.5250001 bonus_raw=4090cccd
+ [rule10-seed] site=round course=30 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=30 timer_raw=41f00000 bonus=0 bonus_raw=00000000
+ [rule10-seed] site=setrule course=30 knob=1 diff=2.5 diff_raw=40200000 live360_raw=40200000 timer=30 timer_raw=41f00000 bonus=0 bonus_raw=00000000
+parms/P_OFF_CITY.log 2
+parms/P_OFF_NEU.log 2
+parms/P_OFF_SANDS.log 2
+parms/P_OFF_TRAIN.log 2
+parms/P_ON_CITY.log 2
+parms/P_ON_NEU.log 2
+parms/P_ON_SANDS.log 2
+parms/P_ON_TRAIN.log 2

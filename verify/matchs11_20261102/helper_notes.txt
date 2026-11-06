@@ -1,0 +1,148 @@
+## h1
+0x004670a0  112  100.0  100.0  cxx:ok  -  static callee (EDI/ESI args), held in 00467110.c
+0x00467110  133  100.0  100.0  cxx:ok  -  with static callee 0x004670a0 defined first
+0x004671d0  54  100.0  100.0  cxx:ok  -  nested if, three returns
+0x00467210  54  100.0  100.0  cxx:ok  -  nested if, three returns
+0x004672d0  45  100.0  100.0  cxx:ok  -  nested if, three returns
+0x00468b40  53  100.0  100.0  cxx:ok  -  for-loop advancing i and pointer together
+0x00468980  437  90.1  90.1  cxx:ok  b  ECX/ESI static callee + stand-in caller; two 3-term dot orders canonicalised by cl (12 ins)
+0x00467350  767  97.5  97.5  cxx:ok  b  3-term dot order canonicalised by cl (6 ins); event queue as one struct
+0x004694e0  1465  46.5  53.2  cxx:ok  b  frame layout + contact/world pointer registers; -10/100000 products forwarded; ops 90%
+0x00468d80  1871  82.1  84.9  cxx:ok  b  contact pointer +0x20 in EDI vs +0x18 in EBP; dot order; ops 96.5%
+0x00467650  4908  56.1  56.3  cxx:ok  b  ESI static callee + stand-in; frame layout, keep-and-pop x87 adds, dot order; budget
+0x00467110 holds 0x004670a0
+## h2
+0x0046b4f0  72  100.0  100.0  cxx:ok  -  two early returns + typed 0xd04 record array
+0x0046bce0  54  100.0  100.0  cxx:ok  -  early return + typed 0xd04 record (vec3 at +0xaf4)
+0x0046bd20  54  100.0  100.0  cxx:ok  -  early return + typed 0xd04 record (vec3 at +0xb00)
+0x0046bd60  50  100.0  100.0  cxx:ok  -  two early returns + wheel[4] (0xc4) at +0x1a4
+0x0046bda0  104  100.0  100.0  cxx:ok  -  record ptr statement + 16-sum loop + /16.0f
+0x0046baa0  569  100.0(bytes)  100.0  cxx:ok  -  whole symbol byte-identical (Ghidra size 3 B short); per-wheel pointer stops store hoisting
+0x0046b1c0  810  97.7  97.7  cxx:n/a  b  x87 scheduling of the first midpoint (fadd one store early, fstp/fxch/fmul 20 stores late); Vec3 temp + literal consts
+0x00469aa0  841  60.0  70.7  cxx:n/a  b  ESI-passed car (static + stand-in); compiler picks EDI and a 0x5c frame, registers rotate from there
+0x0046b540  1368  59.2  64.4  cxx:n/a  b  store block constant registers (eax/edx vs ecx), loop induction bases and x87 operand order
+0x00469df0  5060  30.1  33.3  cxx:n/a  b  first structural pass; EAX/ECX-passed cars land in EDI/ESI, x87 scheduling, budget
+## h3
+0x0046be10  55  100.0  100.0  cxx:ok  -  struct-array car record (+0xbfc/+0xc7c arrays), early return
+0x0046bf50  104  100.0  100.0  cxx:ok  -  struct-array car record, cdecl callee 0x00481780
+0x0046c570  75  100.0  100.0  cxx:ok  -  struct-array car record, 0.85f literal
+0x0046c5c0  48  100.0  100.0  cxx:ok  -  struct-array car record, bounds check first
+0x0046c5f0  210  100.0  100.0  cxx:ok  -  pilot body; static + stand-in caller (EAX/ECX/EDX in, ESI out)
+0x0046c6d0  36  100.0  100.0  cxx:ok  -  struct-array car record getter, signed index
+0x0046c700  44  100.0  100.0  cxx:ok  -  struct-array car record +=, signed index
+0x0046c730  25  100.0  100.0  cxx:ok  -  struct-array car record getter
+0x0046c750  25  100.0  100.0  cxx:ok  -  struct-array car record getter
+0x0046c770  26  100.0  100.0  cxx:ok  -  struct-array car record getter, -1 on bad index
+0x0046c790  32  100.0  100.0  cxx:ok  -  struct-array car record setter, -1 on bad index
+0x0046c7b0  26  100.0  100.0  cxx:ok  -  struct-array car record getter, -1 on bad index
+0x0046cb30  126  100.0  100.0  cxx:ok  -  struct-array car record, V3 struct copy, cdecl callee 0x0047f1e0
+0x0046cbb0  48  100.0  100.0  cxx:ok  -  struct-array car record getters
+0x0046cbe0  44  100.0  100.0  cxx:ok  -  struct-array car record setters
+0x0046cc10  41  100.0  100.0  cxx:ok  -  struct-array car record, (int) float cast = CRT _ftol
+0x0046c7d0  852  100.0  100.0  cxx:ok  -  direct car-record fields, shared float slot, float exprs split against cl reassociation
+0x0046bfc0  1446  60.9  61.2  cxx:ok  b  structure/ops 98%, frame slot layout (0xb4 vs 0xb8, pos/la/counter sharing) + w kept on x87 to epilogue
+0x0046cc40  1687  73.1  76.1  cxx:ok  b  debug ring as one struct; residual frame slots, prologue push order, ev hoist, loop-tail block layout
+## h4
+0x0046d2e0  50  100  100  cxx:ok  -  two separate early returns
+0x0046d320  50  100  100  cxx:ok  -  unsigned args, separate early returns
+0x0046d360  50  100  100  cxx:ok  -  unsigned args, separate early returns
+0x0046d400  153  100  100  cxx:ok  -  .rdata _DAT_ floats are literals 3.0f/6.0f; permuter store order
+0x0046d4a0  46  100  100  cxx:ok  -  0xd04 record, matrix pair + index
+0x0046d4d0  62  100  100  cxx:ok  -  0xd04 record, two 64-byte struct copies
+0x0046d510  84  100  100  cxx:ok  -  per-field copy of rec+0xac after V3 transform
+0x0046d570  228  100  100  cxx:ok  -  (double) on record operand + z,x,y dot order; literals; CRT acos
+0x0046d660  54  100  100  cxx:ok  -  V3 getter, vehicle record +0x9b0
+0x0046d6a0  36  100  100  cxx:ok  -  dword getter, vehicle record +0xb0c
+0x0046d6d0  36  100  100  cxx:ok  -  dword getter, vehicle record +0x9e4
+0x0046d700  54  100  100  cxx:ok  -  V3 getter, vehicle record +0x9c8
+0x0046d740  54  100  100  cxx:ok  -  V3 setter, vehicle record +0x144
+0x0046d780  109  100  100  cxx:ok  -  vehicle record +0xbf4/+0xbf8, cdecl callee
+0x0046d7f0  144  100  100  cxx:ok  -  literal 160.0f, slot table via 0x007f1a14
+0x0046da80  339  61.2  68.2  cxx:ok  (b)  i kept in EBP by our build (original reloads from stack); loop zero stores via EDX. 0x0046da80 holds 0x0046c5f0
+0x0046dc20  351  100  100  cxx:ok  -  event ring struct, per-field 8-dword row from uninitialized b[16]
+0x0046d880  508  100  100  cxx:ok  -  whole symbol byte-identical (--bytes, 511 B); scored 98.7% = epilogue past Ghidra size
+0x0046ddb0  3102  81.7  83.4  cxx:ok  (b)  EDI car via static fn + stand-in caller; residue in x87 scheduling. 0x0046ddb0 holds 0x0046c5f0
+0x0046d2e0  50  100  100  cxx:ok  -  two separate early returns (a combined && test put return 0 last)
+0x0046d320  50  100  100  cxx:ok  -  unsigned args, separate early returns
+0x0046d360  50  100  100  cxx:ok  -  unsigned args, separate early returns
+0x0046d400  153  100  100  cxx:ok  -  .rdata _DAT_ floats are literals 3.0f/6.0f; RW line intersection struct; permuter store order
+0x0046d4a0  46  100  100  cxx:ok  -  vehicle record DAT_008815a0: matrix pair +0x928, index +0x9a8
+0x0046d4d0  62  100  100  cxx:ok  -  vehicle record, two 64-byte struct copies
+0x0046d510  84  100  100  cxx:ok  -  per-field copy of +0x9d4 after the V3 transform
+0x0046d570  228  100  100  cxx:ok  -  (double) on the record operand + z,x,y dot order; literals; CRT acos
+0x0046d660  54  100  100  cxx:ok  -  V3 getter +0x9b0
+0x0046d6a0  36  100  100  cxx:ok  -  dword getter +0xb0c
+0x0046d6d0  36  100  100  cxx:ok  -  dword getter +0x9e4
+0x0046d700  54  100  100  cxx:ok  -  V3 getter +0x9c8
+0x0046d740  54  100  100  cxx:ok  -  V3 setter +0x144
+0x0046d780  109  100  100  cxx:ok  -  +0xbf4/+0xbf8, cdecl callee
+0x0046d7f0  144  100  100  cxx:ok  -  literal 160.0f, slot table via 0x007f1a14
+0x0046da80  339  61.2  68.2  cxx:ok  (b)  our build keeps i in EBP (the original reloads it from the stack); the loop zero stores go through EDX
+0x0046dc20  351  100  100  cxx:ok  -  event ring as one struct; 8-dword row written per field from an uninitialized b[16]
+0x0046d880  508  100  100  cxx:ok  -  whole symbol byte-identical (--bytes, 511 B); the scored 98.7% is only the epilogue past Ghidra's size
+0x0046ddb0  3102  81.7  83.4  cxx:ok  (b)  EDI car via static fn + stand-in caller; steer dot evaluated z-first (x87-resident delta), addressing/scheduling residue
+0x0046da80 holds 0x0046c5f0
+0x0046ddb0 holds 0x0046c5f0
+## h5
+0x004704c0  420  91.0  91.8  cxx:ok  (b)  x87: pos.y-h held in ST0 across the inits in the original, ours stores at once; 0x0046f6c0 via static stand-in (EAX/EDI)
+0x004709a0  705  55.7  62.9  cxx:ok  (b)  reg alloc: original keeps do-loop count n in EBP, flag/surf/i in memory; ours gives EBP to the flag; 5 register-arg callees via static stand-ins
+0x00470670  802  98.0  98.0  cxx:ok  (b)  (float)pad[n]*car[0x190]: original fild then fmul [mem], ours fimul / fld first (2x2 ins); .rdata floats as literals
+0x0046e9e0  1419  81.7  81.9  cxx:ok  (b)  x87: ours reassociates the thrust products and keeps acc zeros on the FPU stack; original multiplies left to right, acc in memory
+0x0046ef70  1872  43.9  45.2  cxx:ok  (b)  ops 97.3%: original keeps &contacts[0] in its own stack slot (frame 0x80 vs 0x7c), shifting every stack offset
+0x0046f6c0  3581  44.3  53.4  cxx:ok  (b)  ops 90%, 885/893 ins; stack-slot/register assignment and a shared k*12 induction differ; ran out of budget
+0x0046f6c0 holds 0x0046c5f0 (100%, copy of pilot a5)
+0x00470670 holds stand-ins for 0x0046ddb0, 0x00467650 and h1's 0x00468980 body (no MATCH lines)
+0x004709a0 holds stand-ins for 0x0046e9e0, 0x0046f6c0, 0x00469aa0, 0x0046ef70, 0x00469df0 (no MATCH lines)
+0x004704c0 holds a stand-in for 0x0046f6c0 (no MATCH line)
+## h6
+0x00471780 / 0x00471ec0 are compiler literals (__real@); `x / 16.0f` emits the fmul by 0.0625.
+0x00471450  49   100.0  100.0  cxx:ok    -    counter + records are one struct at 0x006905c8
+0x00471490  85   100.0  100.0  cxx:ok    -    same RecTable struct
+0x004714f0  60   100.0  100.0  cxx:ok    -    inlined strcpy into the 20 x 0x84 name table
+0x00471530  33   100.0  100.0  cxx:ok    -    whole symbol byte-identical (40 B), Ghidra size stops before the tail
+0x00471560  62   100.0  100.0  cxx:ok    -    strstr loop over the name table (CRT strstr unchecked)
+0x00471cf0  245  100.0  100.0  cxx:ok    -    whole symbol byte-identical (256 B), 0x2510 entry struct
+0x00471df0  190  100.0  100.0  cxx:ok    -    static callee 0x00471530 (edx live across the call), index loops, memset intrinsic
+0x00471eb0  5    100.0  100.0  cxx:ok    -    tail-jump wrapper to 0x00471df0
+0x004715a0  456  100.0  100.0  cxx:ok    -    whole symbol byte-identical (477 B), pilot a3 body on the shared struct
+0x00471ac0  541  100.0  100.0  cxx:ok    -    whole symbol byte-identical (547 B), if/else store, local entry pointer, re-read search bound
+0x00471ec0  634  44.4   57.2   cxx:ok    (b)  structure matches, register allocation not reproduced (x in ebp, record in ebx, sub base +0x458)
+0x00471780  831  73.3   79.8   cxx:ok    (b)  structure/x87 match, ebp/stack-slot allocation and fsubr operand order not reproduced
+0x00470c70  1950 69.8   73.7   cxx:ok    (c)  register-arg static callees 0x00470670 (eax) / 0x0046f6c0 (eax, edi) not in file, plus frame/regalloc (b)
+0x00471df0 holds 0x00471530
+## h7
+0x004721b0  43  100.0  100.0  cxx:ok  -  callback arg declared as function
+0x004722e0  37  100.0  100.0  cxx:ok  -  set-callback with NULL fallback
+0x00472380  74  100.0  100.0  cxx:ok  -  RW plugin registration, int return
+0x00472560  81  100.0  100.0  cxx:ok  -  row pointer + do-while order
+0x004725f0  76  100.0  100.0  cxx:ok  -  for loop over 10-record table
+0x00472650  51  100.0  100.0  cxx:ok  -  cdecl not thiscall, regrouped float expr
+0x004726b0  64  100.0  100.0  cxx:ok  -  2D dot clamped
+0x004726f0  72  95.8  95.8  cxx:ok  a  3D dot clamped, first fld scheduled after mov ecx; ~20 forms + permuter no gain
+0x00472740  210  100.0  100.0  cxx:ok  -  (out,a,b,t) byte lerp, Ghidra arity wrong
+0x00472820  121  100.0  100.0  cxx:ok  -  _finite x3 + <= squared-length test
+0x004728a0  74  100.0  100.0  cxx:ok  -  else-if chain with ?1:0 sets block order
+0x004728f0  178  100.0  100.0  cxx:ok  -  bytes-identical whole symbol (Ghidra size short); float literal step
+0x004729b0  286  100.0  100.0  cxx:ok  -  Im3D curve line draw, vertex struct, literal step
+0x00472ad0  63  100.0  100.0  cxx:ok  -  two RGBA quads on stack
+0x00472b10  331  100.0  100.0  cxx:ok  -  Im2D textured quad, rect struct by value
+0x00472c60  347  100.0  100.0  cxx:ok  -  Im2D quad, rect struct by value, /640 /480 division
+0x00472dc0  379  100.0  100.0  cxx:ok  -  Im2D triangle, /640 /480 division
+0x00472f40  362  100.0  100.0  cxx:ok  -  0x00472c60 quad + black v0/v1
+0x004730b0  362  100.0  100.0  cxx:ok  -  0x00472c60 quad + black v2/v3
+## h8
+0x00473220  391  100%  100%  cxx:ok  -  byte-identical whole symbol (scored 97.3%: Ghidra size stops before the epilogue)
+0x004733b0  391  100%  100%  cxx:ok  -  byte-identical whole symbol (scored 97.3%: Ghidra size stops before the epilogue)
+0x00473540  376  100%  100%  cxx:ok  -  RwV2d pos/size by value, per-vertex statement order
+0x00473870  379  100%  100%  cxx:ok  -  RwV2d pos/size by value; v0 uv before z/rhw
+0x004736c0  417  100%  100%  cxx:ok  -  byte-identical whole symbol (scored 97.4%: Ghidra size stops before the epilogue); uchar alpha params
+0x004739f0  557  100%  100%  cxx:ok  -  if/else raster set (a ?: folds), uv rect + scale mode
+0x00473c20  697  99.0%  99.0%  cxx:ok  b  y2 spill slot: [esp+8] (a.x) vs original [esp+0x14] (b.y); 2 bytes
+## h9
+0x00474d60  28  100.0  100.0  cxx:ok  -  by hand; RpClumpForAllAtomics(clump, cb 0x00474d30, &arg2); relocheck OK
+0x00474d80  34  100.0  100.0  cxx:ok  -  by hand; uint temp + one store after if/else
+0x00474de0  119  94.7  94.7  cxx:ok  a/b  RwV3d sub/scale/add macro form; 2 push/add-esp scheduling slots survive every rewrite + permuter
+0x00474e60  11  100.0  100.0  cxx:ok  -  literal 0.017453292f (extern global loads first)
+0x004744a0  998  99.6  99.6  cxx:ok  b  RwV2d corner/origin locals, RwGlobals dOpenDevice; 1 fstp scheduled past test eax
+0x00474890  1159  45.2  50.8  cxx:ok  b  two half quads; original keeps 6 float slots (inlined-helper shape) not found; permuter 55.1% rejected (changes semantics)
+0x00473ee0  1449  66.3  71.5  cxx:ok  b  FUN_004744a0 body inlined in the original: written out in place (plain __inline not inlined); frame 0x44 vs 0x3c, row-loop regalloc differs

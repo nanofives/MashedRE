@@ -24,18 +24,8 @@ extern "C" { void* s_fn_45bff0 = reinterpret_cast<void*>(&PK_SlotEmpty); }
 extern "C" { void* s_fn_45bff0 = reinterpret_cast<void*>(0x0045bff0u); }   // the original inside MASHED.exe
 #endif
 
-// 0x004576b0  particle — byte-verified: 33 C0 8B 0C 85 00 A3 68 00 85 C9 75 25 40 83 F8 02 7C EF 83 F8 04 7D 17 C1 E0 04 05 54 A2 68 00 83 38 00 75 0D 83 C0 10 3D 94 A2 68 00 7C F1 33 C0 C3 B8 01 00 00 00 C3
-//   "any active?" over 4 slots (0x68a300,0x68a304 then 0x68a274,0x68a284) -> return 1 if any nonzero
-//   Moved unchanged from Util/PromoLoop_sessionB.cpp. The exe copy PK_4576b0 read the same absolute addresses
-//   (the exe maps 0x00500000..0x009fffff), so both targets read what each one's naked copy read.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl AnyActive4576b0(void) {
-    for (std::uint32_t i = 0; i < 2; i++)
-        if (*reinterpret_cast<std::int32_t*>(0x0068a300u + i * 4u)) return 1u;
-    for (std::uint32_t p = 0x0068a274u; p < 0x0068a294u; p += 0x10u)
-        if (*reinterpret_cast<std::int32_t*>(p)) return 1u;
-    return 0u;
-}
-RH_ScopedInstall(AnyActive4576b0, 0x004576b0);
+// MATCH-S09: the body of 0x004576b0 (AnyActive4576b0) moved to Match/MatchS09_004576b0.cpp,
+// which compiles the byte-matched source re/match/s09/004576b0.c.
 
 // 0x0045c330 FUN_0045c330 (gameplay) — PredNot45c330.
 //   bool f(int idx): return Pred45bff0(idx)==0;  (NEG/SBB/INC = "x==0 ? 1 : 0")
