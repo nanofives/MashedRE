@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-06 03:33 HB-GATE-FLAKE-GAMEFLOW (orch/HB-GATE-FLAKE-GAMEFLOW): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_031230
 - 2026-11-06 03:01 MATCH-T13-SEED (orch/MATCH-T13-SEED), D4-DC-INC-0046d4a0-REPLAYORDER (orch/D4-DC-INC-0046d4a0-REPLAYORDER): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_023810
 - 2026-11-06 02:27 HB-TRAIN-STACK3 (orch/HB-TRAIN-STACK3), D4-DC-INC-PATHPROG-REMERGE (orch/D4-DC-INC-PATHPROG-REMERGE), MATCH-S09 (orch/MATCH-S09): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_015649
 - 2026-11-06 01:26 D4-DC-77b0-RUNTIME-PARKED (orch/D4-DC-77b0-RUNTIME-PARKED), MATCH-S08FU-NOTES (orch/MATCH-S08FU-NOTES2), MATCH-S11-RECIP-REVIEW (orch/MATCH-S11-RECIP-REVIEW): G-CTRL 8284be46/ba407a16/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261105_235043
