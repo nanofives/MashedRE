@@ -131,6 +131,10 @@ MatchS09_00451990
 MatchS09_00451a50
 MatchS09_00452eb0
 MatchS09_00458fa0
+# MATCH-S09-FU 2026-11-02 (same rule): the pontoon Sample / loop callback and the pickup callback 0x00458920
+MatchS09_00451690
+MatchS09_00451ce0
+MatchS09_00458920
 # MATCH-S06 2026-11-01: port bodies compiled from byte-matched game code that uses float (re/match/s06/)
 MatchS06_004264d0
 MatchS06_00426d20
