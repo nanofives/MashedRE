@@ -19,12 +19,5 @@
 // MATCH-S10: the body of 0x0045c850 (Table88f09cClear) moved to Match/MatchS10_0045c850.cpp,
 // which compiles the byte-matched source re/match/s10/0045c850.c.
 
-// 0x004894f0  8B 44 24 04 33 C9 89 48 54 89 48 08 89 48 0C C3
-//   mov eax,[esp+4]; xor ecx,ecx; mov [eax+0x54],ecx; mov [eax+8],ecx; mov [eax+0xc],ecx; ret
-extern "C" __declspec(dllexport) void __cdecl Clear894f0(void* param_1) {
-    std::uint8_t* p = reinterpret_cast<std::uint8_t*>(param_1);
-    *reinterpret_cast<std::uint32_t*>(p + 0x54) = 0;  // cited at 0x004894f0
-    *reinterpret_cast<std::uint32_t*>(p + 0x08) = 0;
-    *reinterpret_cast<std::uint32_t*>(p + 0x0c) = 0;
-}
-RH_ScopedInstall(Clear894f0, 0x004894f0);
+// MATCH-S14: the body of 0x004894f0 (Clear894f0) moved to Match/MatchS14_004894f0.cpp,
+// which compiles the byte-matched source re/match/s14/004894f0.c.

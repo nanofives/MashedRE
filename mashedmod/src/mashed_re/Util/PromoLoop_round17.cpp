@@ -79,13 +79,8 @@ RH_ScopedInstall(TimerTable772ffcGet, 0x00496920);
 //   U-3575 (prior): list entry struct (data-semantic).
 // ---------------------------------------------------------------------------
 
-// 0x00485360
-extern "C" __declspec(dllexport) std::uint32_t __cdecl DynObjListGetCount(void) {
-    // 0x006fa0f8 cited at 0x00485360 body.
-    return *reinterpret_cast<const std::uint32_t*>(0x006fa0f8u);
-}
-
-RH_ScopedInstall(DynObjListGetCount, 0x00485360);
+// MATCH-S14: the body of 0x00485360 (DynObjListGetCount) moved to Match/MatchS14_00485360.cpp,
+// which compiles the byte-matched source re/match/s14/00485360.c.
 
 // ---------------------------------------------------------------------------
 // FsManager7dc76cSet  --  0x00550790   (subsystem: util)

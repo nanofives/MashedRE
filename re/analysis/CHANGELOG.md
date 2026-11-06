@@ -11,6 +11,44 @@ per-lane docs plus `git log` cover the other half.
 
 **Ordering: NEWEST FIRST.** One entry per line, starting `YYYY-MM-DD`. New entries are
 **prepended immediately below the `<!-- ENTRIES -->` marker**, never appended to the end.
+2026-11-06  0x00484c70  WorldObjectsBaseGet  C3->C4  route match: identical + relocheck OK, only port body, exe body runs in default arms, gates unchanged; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x0048a630  FUN_0048a630  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485070  FUN_00485070  C2->C2  no change: matched + swapped in exe, .asi hooks the RVA with a different body (Lane2/L2_00485070.cpp); evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004881d0  Obj7030a8Create  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00484170  Rec18Create  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485360  DynObjListGetCount  C4->C4  notes/file only: match evidence added (identical, swapped, exe-callers=0), C4 stays on the frida route; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485370  DynamicObjectListGetBase  C4->C4  notes/file only: match evidence added (identical, swapped, exe-callers=0), C4 stays on the frida route; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485340  FUN_00485340  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00484c90  FUN_00484c90  C3->C4  route match: identical + relocheck OK, only port body, exe body runs in default arms, gates unchanged; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004840d0  JointPtr6ce81cGet  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004842b0  Clear4842b0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00484cf0  FUN_00484cf0  C2->C4  route match: identical + relocheck OK, only port body, exe body runs in default arms, gates unchanged; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004850b0  FUN_004850b0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004853b0  FUN_004853b0  C2->C2  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485a00  FUN_00485a00  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485a70  PoolInsert485a70  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485bd0  StackPop485bd0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00485bf0  StackPush485bf0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00486610  FUN_00486610  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00486f90  FUN_00486f90  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00487140  Fwd4768c0_703068  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00487df0  Set703058_0  C4->C4  notes/file only: match evidence added (identical, swapped, exe-callers=0), C4 stays on the frida route; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00487e40  FUN_00487e40  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004880a0  Obj7030acCreate  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00488390  Table86ae38Set  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00489290  FUN_00489290  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x0048ade0  FUN_0048ade0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004899c0  FUN_004899c0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00489da0  FUN_00489da0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x0048a460  StridedClear2_709238  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x0048a830  FUN_0048a830  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004893a0  FUN_004893a0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004893b0  FUN_004893b0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004893d0  FUN_004893d0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00489450  ContRecSet450  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x00489480  ContRecSet480  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004894a0  ContRecSet4a0  C3->C3  no change (L-68): match evidence: identical, swapped, exe-callers=0; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
+2026-11-06  0x004894f0  Clear894f0  C4->C4  notes/file only: match evidence added (identical, swapped, exe-callers=0), C4 stays on the frida route; evidence: verify/matchs14_20261102/RESULT_MATCH-S14.md
 2026-11-01  0x00426090  GlobalDat0066ce58Get  C3->C4  route match (c4=match), exe-callers=8 (RangeTableMemberTest ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
 2026-11-01  0x00426bb0  CameraPath::GetCount  C3->C4  route match (c4=match), exe-callers=5 (TG_414a70 ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
 2026-11-01  0x00426bc0  GetDat0066d6e0  C3->C4  route match (c4=match), exe-callers=1 (SnapNodeToSafeStartLines ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md

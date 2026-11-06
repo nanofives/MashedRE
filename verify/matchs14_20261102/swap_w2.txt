@@ -1,0 +1,50 @@
+MATCH-S14 body-swap helper w2 (2026-11-06). Branch orch/MATCH-S14 (orch/integration merged, 0d0f06c3e).
+All 24 RVAs SWAPPED. Every old body was asi-only (old TUs are in asi_sources.rsp only, none in x87_tus.txt,
+so all old TUs compiled in the default SSE codegen). Each RVA had exactly one body (rva_body_scan) and one active
+install, both in the old TU; no Lane2/L2_* install; no Match/ body from S01..S11. No port caller of any of the 24
+symbols exists anywhere in mashedmod/src (only the definitions and RH_ScopedInstall; Obj7030a8Create's call of
+Obj7030acCreate now goes through the bind), so exe callers = none for every RVA.
+New wrappers (all asi-only, install=1): mashedmod/src/mashed_re/Match/MatchS14_<va8>.cpp for the 24 va8 below.
+match.py 100% on all 24 (00486f90 / 00489290 / 0048a460 are 95.1% / 70% / 70% instruction-level because Ghidra's
+size stops before the loop tail; `match.py --bytes` = whole symbol BYTE-IDENTICAL for all three, as each file's
+header records). relocheck OK on all 24.
+C++-compat edits (DDK bytes unchanged, match.py 100% + relocheck OK re-run after the edit):
+  re/match/s14/0048a830.c, re/match/s14/0048ade0.c: `FUN_004b6480(&DAT_007151f0,0x200)` ->
+  `FUN_004b6480((byte *)&DAT_007151f0,0x200)` (undefined4* -> byte* needs the cast in C++).
+Old-TU cleanups beyond excise: Sky/PromoLoop_standins_r6.cpp lost its anonymous-namespace helpers (Fn0/Fn2/Fn3u,
+PlugOff, At, BuildInto), used only by the two removed bodies. Sky/SkyElementRemove.cpp lost its 4 unused
+static constexpr address constants. Excise also removed the "===== round N =====" header lines of sessionB rounds
+117/119/126/141/156/159/169 (each headed only the removed function).
+dual_copy_allowlist.txt: no entry made stale (no RVA had bodies in two TUs; none of the 24 is listed).
+
+0x004842b0  SWAPPED  symbol=Clear4842b0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:39-48  binds=-  note=4 absolute stores, same addresses; exe callers none
+0x004850b0  SWAPPED  symbol=Search4850b0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:1412-1427  binds=-  note=same list walk; old returned int -1, matched undefined4 0xffffffff (same bits); exe callers none
+0x00485340  SWAPPED  symbol=Get485340  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:982-998  binds=-  note=same unsigned bound; exe callers none
+0x00485a00  SWAPPED  symbol=Init485a00  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:1644-1669  binds=-  note=same stores (floats stored as int bit patterns); matched also returns param_3 (old void); exe callers none
+0x00486f90  SWAPPED  symbol=PoolArrayReset486f90  targets=asi  install=1  x87=yes  removed=Util/PromoLoop_sessionB.cpp:3507-3558  binds=-  note=old naked asm; field offsets/counts checked equal (150x0x7c @0x006fe790, 100x0x90 @0x006fa5d0, 50.0f at +0x2c, 0x00703038/0x0070303c); exe callers none
+0x00489290  SWAPPED  symbol=Reset489290  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:785-795  binds=-  note=same 100x0x68 records from 0x00703118, +0x54=0/+0x58=1; exe callers none
+0x004893a0  SWAPPED  symbol=AdjThunk4893a0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:3523-3538  binds=FUN_00476cb0=Batch476cb0  note=old naked tail-jmp to raw 0x00476cb0, which the .asi redirects to Batch476cb0 (Render/RfxEmitter.cpp, in asi rsp); exe callers none
+0x004893b0  SWAPPED  symbol=Inc4893b0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:825-834  binds=-  note=same; exe callers none
+0x004893d0  SWAPPED  symbol=Push4893d0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:1897-1919  binds=-  note=same stores (matched re-reads *param_1 per store as the original); exe callers none
+0x004899c0  SWAPPED  symbol=Fill4899c0  targets=asi  install=1  x87=yes  removed=Util/PromoLoop_sessionB.cpp:1654-1671  binds=-  note=old looped i=0..count-1 with an explicit count==0 return; matched (= original) loops i=count-1..0; same stores unless src aliases the arrays; exe callers none
+0x00489da0  SWAPPED  symbol=Zero489da0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:805-816  binds=-  note=same; exe callers none
+0x0048a630  SWAPPED  symbol=Aabb48a630  targets=asi  install=1  x87=yes  removed=Util/PromoLoop_sessionB.cpp:2115-2201  binds=-  note=old naked x87 asm read box [esp+4], sphere [esp+8] (its comment's EDX/ECX was wrong); comparisons checked equal to the matched source; old returned int, matched undefined4; exe callers none
+0x0048a830  SWAPPED  symbol=ZeroFill48a830  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:2761-2775  binds=FUN_004b6480=BitArrayClear  note=old naked called raw 0x004b6480, redirected in the .asi to BitArrayClear (Input/DirectInput.cpp, asi rsp only); .c C++ cast fix; exe callers none
+0x0048ade0  SWAPPED  symbol=ZeroFill48ade0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_sessionB.cpp:2743-2759  binds=FUN_004b6480=BitArrayClear  note=as 0x0048a830; .c C++ cast fix; exe callers none
+0x00487df0  SWAPPED  symbol=Set703058_0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round29.cpp:44-48  binds=-  note=same; exe callers none
+0x00487e40  SWAPPED  symbol=SkyElementRemove  targets=asi  install=1  x87=no  removed=Sky/SkyElementRemove.cpp:27-43 (+ unused constants 17-25)  binds=-  note=same stores (0x0086ae34+i*0x38, +0x18, 0x007030b4); exe callers none
+0x004880a0  SWAPPED  symbol=Obj7030acCreate  targets=asi  install=1  x87=yes  removed=Sky/PromoLoop_standins_r6.cpp:59-65 (+ helpers 24-57)  binds=FUN_004c0b30/FUN_00534b60/FUN_004e7e30/FUN_004e8090=MatchS14_004880a0_Call<va8> raw forwarders  note=old called all four by raw address, none has a callable port body (scanner hit for 0x00534b60 = RfxEmitter.cpp PTankNormaliseFlags, a 1-arg C++ flag helper, not the function); old returned *(0x007dc57c), matched void: only caller 0x004881d0 passes it on to 0x00402918, which does not read EAX; exe callers none
+0x004881d0  SWAPPED  symbol=Obj7030a8Create  targets=asi  install=1  x87=yes  removed=Sky/PromoLoop_standins_r6.cpp:62-77  binds=FUN_004880a0=Obj7030acCreate (MatchS14_004880a0), 4 raw forwarders MatchS14_004881d0_Call<va8>  note=same as 0x004880a0; old returned the guard / callee EAX, matched void; only caller 0x00402918 does not read EAX; exe callers none
+0x00488390  SWAPPED  symbol=Table86ae38Set  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round50.cpp:24-28  binds=-  note=same; exe callers none
+0x00489450  SWAPPED  symbol=ContRecSet450  targets=asi  install=1  x87=yes  removed=Util/PromoLoop_round63.cpp:20-26  binds=-  note=old copied 2 dwords, matched copies a 2-float struct (same addresses base+count*0x30-0x20); exe callers none
+0x00489480  SWAPPED  symbol=ContRecSet480  targets=asi  install=1  x87=yes  removed=Util/PromoLoop_round63.cpp:23-28  binds=-  note=same float store at -0x18; exe callers none
+0x004894a0  SWAPPED  symbol=ContRecSet4a0  targets=asi  install=1  x87=yes  removed=Util/PromoLoop_round63.cpp:26-34  binds=-  note=old dword copies, matched 2-float struct copies, same addresses; exe callers none
+0x004894f0  SWAPPED  symbol=Clear894f0  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round47.cpp:26-34  binds=-  note=same; exe callers none
+0x0048a460  SWAPPED  symbol=StridedClear2_709238  targets=asi  install=1  x87=no  removed=Util/PromoLoop_round64.cpp:21-28  binds=-  note=same; exe callers none
+
+Compile checks (run 2026-11-06 11:37, after the merge-train PRIORITY-HOLD cleared; one at a time): wrapcheck.bat
+OK on all 24 MatchS14_<va8>.cpp wrappers and on the 8 edited old TUs (Util/PromoLoop_sessionB.cpp,
+Util/PromoLoop_round29.cpp, Sky/SkyElementRemove.cpp, Sky/PromoLoop_standins_r6.cpp, Util/PromoLoop_round50.cpp,
+Util/PromoLoop_round63.cpp, Util/PromoLoop_round47.cpp, Util/PromoLoop_round64.cpp), no errors or warnings.
+Lead to do: add the 24 wrappers to asi_sources.rsp only (all old bodies were asi-only; 0x0048a830/0x0048ade0 bind
+BitArrayClear in Input/DirectInput.cpp, which only the .asi compiles), and x87_tus.txt entries for the x87=yes rows.
