@@ -25,11 +25,16 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 MGLOBAL(float, DAT_00613278, 0x00613278);
 MGLOBAL(float, DAT_00613258, 0x00613258);
 MGLOBAL(float, DAT_00613274, 0x00613274);
 // MATCH: 0x00475f30 FUN_00475f30
-static void FUN_00475f30(float *out, float param_1, float param_2)
+MATCH_STATIC void FUN_00475f30(float *out, float param_1, float param_2)
 {
   float f;
   f = DAT_00613258 * DAT_00613278 * param_1 * param_2 + DAT_00613274;
@@ -37,8 +42,10 @@ static void FUN_00475f30(float *out, float param_1, float param_2)
   out[0] = f;
 }
 /* stand-in caller (not the real TU): makes the compiler pass `out` in EAX */
+#ifndef __cplusplus
 void FUN_00475f30_standin(float *o, float a, float b)
 {
   FUN_00475f30(o, a, b);
   FUN_00475f30(o + 2, b, a);
 }
+#endif

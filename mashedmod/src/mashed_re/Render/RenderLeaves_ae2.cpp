@@ -70,31 +70,9 @@ int __cdecl RenderElemArrayCopy(int param_1, int param_2) {
     return count;  // EAX at 0x004b40e7
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00478cc0  FUN_00478cc0  RenderWorldStateZeroFill
-// 1-arg __cdecl. Zero-fills exactly 0x418f (16783) dwords (67132 bytes) starting
-// at param_1 — an inline REP STOSD, equivalent to memset(param_1, 0, 0x418f*4).
-// Called once from FUN_00479330 (the render world-state initializer).
-//
-// ASM (0x00478cc0..0x00478ccf):
-//   PUSH EDI
-//   MOV  EDI,[ESP+8]        ; param_1  (post-push: orig ESP+4)
-//   MOV  ECX,0x418f         ; dword count
-//   XOR  EAX,EAX            ; fill value 0
-//   REP STOSD               ; [EDI..] = 0 x 0x418f dwords
-//   POP  EDI
-//   RET                     ; no immediate -> __cdecl
-// ref: re/analysis/render_2_c1_to_c2_s2/FUN_00478cc0.md  (U-4528)
-// ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport)
-void __cdecl RenderWorldStateZeroFill(uint32_t* param_1) {
-    for (int n = 0x418f; n != 0; --n) {
-        *param_1 = 0u;
-        ++param_1;
-    }
-}
+// MATCH-S12: the body of 0x00478cc0 (RenderWorldStateZeroFill) moved to Match/MatchS12_00478cc0.cpp,
+// which compiles the byte-matched source re/match/s12/00478cc0.c.
 
 // ─── Hook registration ───────────────────────────────────────────────────────
-// Both bit-identity verified leaves (run_diff_warm.py, c3-batch-ae-s2).
+// Bit-identity verified leaf (run_diff_warm.py, c3-batch-ae-s2); 0x00478cc0's install moved with its body.
 RH_ScopedInstall(RenderElemArrayCopy,      0x004b40c0);
-RH_ScopedInstall(RenderWorldStateZeroFill, 0x00478cc0);

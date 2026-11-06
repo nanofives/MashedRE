@@ -32,7 +32,7 @@ void FUN_004b6520(undefined4 p0, undefined4 p1);
 void FUN_00477b40(void)
 
 {
-  FUN_004b6520(&DAT_00693198,0x2c000);
-  FUN_004b6520(&DAT_006bf198,0x20);
+  FUN_004b6520((undefined4)&DAT_00693198,0x2c000);
+  FUN_004b6520((undefined4)&DAT_006bf198,0x20);
   return;
 }

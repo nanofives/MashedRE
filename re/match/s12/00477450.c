@@ -24,6 +24,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 
 void *memcpy(void *, const void *, unsigned int);
 #pragma intrinsic(memcpy)
@@ -45,7 +50,7 @@ MGLOBALA(Decal, DAT_00692bb8, 16, 0x00692bb8);
 MGLOBALA(unsigned char, DAT_006132cc, 4, 0x006132cc);
 
 // MATCH: 0x00477450 FUN_00477450
-static void FUN_00477450(Decal *d, float *mat, unsigned char *col, float tmax, float rate)
+MATCH_STATIC void FUN_00477450(Decal *d, float *mat, unsigned char *col, float tmax, float rate)
 {
     d->age = 0.0f;
     d->t = 0.0f;
@@ -56,7 +61,8 @@ static void FUN_00477450(Decal *d, float *mat, unsigned char *col, float tmax, f
     *(int *)d->col = *(int *)col;
 }
 
-// MATCH: 0x00477760 FUN_00477760
+// HELD: 0x00477760 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 void FUN_00477760(int which, float *mat, unsigned char *col, float tmax, float rate)
 {
     Decal *d;
@@ -75,3 +81,6 @@ void FUN_00477760(int which, float *mat, unsigned char *col, float tmax, float r
 found:
     FUN_00477450(d, mat, col, tmax, rate);
 }
+#else
+void FUN_00477760(int which, float *mat, unsigned char *col, float tmax, float rate);
+#endif

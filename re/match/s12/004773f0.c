@@ -25,6 +25,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+#ifdef __cplusplus
+#define MATCH_STATIC
+#else
+#define MATCH_STATIC static
+#endif
 
 typedef struct Decal {
     float m[16];
@@ -41,7 +46,7 @@ MGLOBALA(Decal, DAT_006925b8, 16, 0x006925b8);
 MGLOBALA(Decal, DAT_00692bb8, 16, 0x00692bb8);
 
 // MATCH: 0x004773f0 FUN_004773f0
-static void FUN_004773f0(Decal *d)
+MATCH_STATIC void FUN_004773f0(Decal *d)
 {
     d->t = 0.0f;
     d->tmax = 0.0f;
@@ -59,7 +64,8 @@ static void FUN_004773f0(Decal *d)
     *(unsigned int *)&d->m[3] = *(unsigned int *)&d->m[3] | 0x20003;
 }
 
-// MATCH: 0x00477730 FUN_00477730
+// HELD: 0x00477730 (body elsewhere; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+#ifndef MATCH_PORT
 void FUN_00477730(void)
 {
     Decal *d;
@@ -68,3 +74,6 @@ void FUN_00477730(void)
     for (d = DAT_006925b8; (int)d < (int)(DAT_006925b8 + 16); d++)
         FUN_004773f0(d);
 }
+#else
+void FUN_00477730(void);
+#endif
