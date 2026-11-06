@@ -60,11 +60,22 @@ sha256 (`00468b40.c` f8f41549b1298bb4af87e4310e95df3a3b1e98c2e17f0f930e751438cc2
 ddbcab72d9d46f5e5a1e64e3b3d8d785ed4dbdc1952a0d30462cffcddcd83643), exe chain, gate hashes and witness counts. Two
 CHANGELOG lines. No stubs in either body, no `[UNCERTAIN]` markers, no new U-/S- rows.
 
-**Not applied here (owed, tracker-only):** the 48 other swapped rows keep their old `file` cell (the pre-swap TU) and
-have no `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)` note yet. The step
-brief limited this re-classify to the C4 rows. A follow-up re-classify (no build input) should move those 48 file
-cells to the wrappers and add the note. The two follow-ups below (0x0046c5c0 / 0x0046c790 stride defect, the
-`g_vehicleArrayBase` rebinds) are still unfiled.
+**The other 48 swapped rows (re-classify, tracker only, no level change):** `file` -> `Match/MatchS11_<va8>.cpp` for all
+48, `exe_file` -> the wrapper for the 19 exe+asi rows (the 29 asi-only rows keep an empty `exe_file`). `notes` prefixed
+`2026-11-06 MATCH-S11: match evidence: identical, swapped, exe-callers=<n>; C4 when a caller lands (L-68 ruling)` with
+the source path + sha256 and the wrapper. Exe callers counted on `ad6b610e`'s map with `exe_reach.py`: 0 direct sites for
+17 of the 19 exe+asi rows. 0x00472f40 and 0x004730b0 each have 1 site (`FUN_00428d30+0x244` / `+0x262`) and no direct
+chain from WinMain, and their notes say so. The 5 rows already at C4 (0x0046bce0, 0x0046bd20, 0x0046bda0, 0x0046d700,
+0x0046dd80) hold C4 by an earlier route, not `c4=match`, so their level stays and their notes say that. 48 CHANGELOG lines
+(`Cn->Cn`). `tracker_lint.py --repo . --base orch/integration`: OK, NEW=0. `lint_rva_bodies.py`: NEW=0.
+
+**Follow-ups filed as ledger rows (section MATCH, stage open):** `MATCH-S11-FU-STRIDE` (0x0046c5c0 / 0x0046c790,
+0x341 vs 0xd04 stride defect in `Frontend/SmallLeaves_n2.cpp`, matched sources exist and pass relocheck) and
+`MATCH-S11-FU-VEHBASE` (the `g_vehicleArrayBase` / VehRecord rebinds that keep 9 vehicle-record leaves NOT-SAFE). Both
+point at the NOT-SAFE table below.
+
+**Next:** enqueue. The commits after the gated build touch only trackers and text (no `mashedmod/` change), so the
+gates above still hold for this branch.
 
 ### Raw files of the resume (`D:/MashedWT/MATCH-S11_data`)
 
