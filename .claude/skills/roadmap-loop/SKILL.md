@@ -93,8 +93,11 @@ Final message: one REPORT block, <step-id> = <section>, next: = one line per ste
 You are the merge train, run <N>. Read <ORCH>\re\orchestrator\WORKER_RULES.md. Run, with the sandbox disabled,
 run_in_background and a 7200000 ms timeout (a -Full pass runs past 30 min, and a foreground or default background
 timeout kills it): pwsh -NoProfile -File <ORCH>\re\orchestrator\merge_train.ps1 [-Full]
-Repeat until it prints "branch: (nothing queued)" or a RED. Do not fix anything. Final message: the last REPORT block it printed.
+Repeat until it prints "branch: (nothing queued)", a RED, or an INFRA (display asleep or locked, D3D9 hr=0x8876086A:
+nothing bounced, the rows stay queued, not a finding). Do not fix anything. Final message: the last REPORT block it printed.
 ```
+On an INFRA report (HB-TRAIN-INFRA-PRECHECK), re-run the train once the display is awake. Do not re-run it in a loop.
+
 When to pass `-Full` (run 20): a queue that touches `mashedmod/src` or another build input, and every decided
 flip, runs WITH `-Full` (a default can live outside `full_set_paths`). A text-only queue (trackers, docs, `verify/`
 evidence, `re/` tools that no build reads) runs WITHOUT it. `-Full` on a text-only row runs D2 x3 and the 13 tracks

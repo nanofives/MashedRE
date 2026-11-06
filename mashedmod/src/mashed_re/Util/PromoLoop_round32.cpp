@@ -30,11 +30,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Global7dcabcGet(void) {
 }
 RH_ScopedInstall(Global7dcabcGet, 0x005a7b50);
 
-// 0x00472640  8B 44 24 04 A3 C8 EC 86 00 C3  (mov eax,[esp+4]; mov [0x0086ecc8],eax; ret)
-extern "C" __declspec(dllexport) void __cdecl Set86ecc8(std::uint32_t param_1) {
-    *reinterpret_cast<std::uint32_t*>(0x0086ecc8u) = param_1;  // cited at 0x00472640
-}
-RH_ScopedInstall(Set86ecc8, 0x00472640);
+// MATCH-S11: the body of 0x00472640 (Set86ecc8) moved to Match/MatchS11_00472640.cpp,
+// which compiles the byte-matched source re/match/s11/00472640.c.
 
 // 0x0040e170  8B 44 24 04 A3 7C BA 63 00 C3  (mov eax,[esp+4]; mov [0x0063ba7c],eax; ret)
 extern "C" __declspec(dllexport) void __cdecl Set63ba7c(std::uint32_t param_1) {

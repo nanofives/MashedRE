@@ -43,9 +43,5 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl JointPtr6ce81cGet(std::ui
 }
 RH_ScopedInstall(JointPtr6ce81cGet, 0x004840d0);
 
-// 0x00455b40  8B 44 24 04 6B C0 2C 8B 80 E0 85 68 00 C3
-//   mov eax,[esp+4]; imul eax,eax,0x2c; mov eax,[eax + 0x006885e0]; ret  (0x2c-byte stride)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PowerupTable6885e0Get(std::uint32_t param_1) {
-    return *reinterpret_cast<const std::uint32_t*>(0x006885e0u + param_1 * 0x2cu);  // cited at 0x00455b40
-}
-RH_ScopedInstall(PowerupTable6885e0Get, 0x00455b40);
+// MATCH-S09: the body of 0x00455b40 (PowerupTable6885e0Get) moved to Match/MatchS09_00455b40.cpp,
+// which compiles the byte-matched source re/match/s09/00455b40.c.

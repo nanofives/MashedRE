@@ -43,10 +43,12 @@ static uint32_t Orig_StreamRead(int stream, void* buf, uint32_t size) {
     return reinterpret_cast<Fn>(static_cast<uintptr_t>(0x004cbd30u))(stream, buf, size);
 }
 
-// 0x004522d0  FUN_004522d0 — heap free (vtable dealloc wrapper)
+// MATCH-S09: the body of FUN_004522d0 (heap free through RwGlobals +0x10c) is
+// Match/MatchS09_004522d0.cpp (RwGlobalsFree4522d0, byte-matched source re/match/s09/004522d0.c).
+// Orig_Free forwards to it (not a body).
+extern "C" void __cdecl RwGlobalsFree4522d0(int param_1);
 static void Orig_Free(void* ptr) {
-    typedef void (__cdecl *Fn)(void*);
-    reinterpret_cast<Fn>(static_cast<uintptr_t>(0x004522d0u))(ptr);
+    RwGlobalsFree4522d0(static_cast<int>(reinterpret_cast<uintptr_t>(ptr)));
 }
 
 // 0x005ac210  FUN_005ac210 — wave_node factory [DEFERRED — see file header]

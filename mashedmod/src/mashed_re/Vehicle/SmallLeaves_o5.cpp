@@ -29,32 +29,8 @@ static constexpr std::uintptr_t kCarStateBase       = 0x00881f90u;  // 0x0046cbf
 static constexpr std::uintptr_t kCarStateBase2      = 0x00881f94u;  // 0x0046cc00
 static constexpr std::uint32_t  kByteStride         = 0xD04u;       // 0x0046cbf0
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046cbe0  VehicleCarStateSet
-// Setter companion to FUN_0046cbb0 (VehicleCarStateRead, C2).
-//
-// Disasm 0x0046cbe0..0x0046cc0b (cdecl, 3 stack args, 43 bytes):
-//   0x0046cbe0  mov eax,[esp+4]           ; idx
-//   0x0046cbe4  cmp eax,0x10 ; jb         ; UNSIGNED: idx >= 0x10 -> 0x0046cbe9 xor eax,eax ; ret
-//   0x0046cbec  mov ecx,[esp+8]           ; a
-//   0x0046cbf0  imul eax,eax,0xd04
-//   0x0046cbf6  mov edx,[esp+0xc]         ; b
-//   0x0046cbfa  mov [eax+0x881f90],ecx    ; DWORD store
-//   0x0046cc00  mov [eax+0x881f94],edx    ; DWORD store
-//   0x0046cc06  mov eax,1 ; ret
-// Caller: FUN_00424eb0.  Pure leaf (no calls).
-// This is the single implementation: the duplicate in Vehicle/Physics.cpp
-// (VehicleSpinoutStateSet, which registered first and so was the copy actually
-// installed in the .asi) was removed 2026-10-12 (reearn/fstate).
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x0046cbe0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleCarStateSet(std::uint32_t vehicleIdx, std::uint32_t a, std::uint32_t b) {
-    if (vehicleIdx >= 0x10u) return 0;                                                  // 0x0046cbe4 cmp/jb (unsigned)
-    *reinterpret_cast<std::uint32_t*>(kCarStateBase  + vehicleIdx * kByteStride) = a;   // 0x0046cbfa
-    *reinterpret_cast<std::uint32_t*>(kCarStateBase2 + vehicleIdx * kByteStride) = b;   // 0x0046cc00
-    return 1;                                                                           // 0x0046cc06
-}
-RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);  // re-ported 2026-10-12 reearn/fstate (dword store, unsigned guard)
+// MATCH-S11: the body of 0x0046cbe0 (VehicleCarStateSet) moved to Match/MatchS11_0046cbe0.cpp,
+// which compiles the byte-matched source re/match/s11/0046cbe0.c.
 
 // MATCH-S07: the body of 0x0042d3a0 (RaceTransitionBufZero) moved to Match/MatchS07_0042d3a0.cpp,
 // which compiles the byte-matched source re/match/s07/0042d3a0.c.

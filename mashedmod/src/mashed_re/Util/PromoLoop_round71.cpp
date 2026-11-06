@@ -19,9 +19,5 @@
 
 // (moved) TtlSet68b1b0 / FUN_00458fa0 now lives in Gameplay/PickupPoolSpawn.cpp (shared exe + asi TU), mode 7 M3b 2026-10-10.
 
-// 0x00459540
-extern "C" __declspec(dllexport) void __cdecl PoolJReset68ba00(std::uint32_t idx) {
-    *reinterpret_cast<std::uint32_t*>(0x0068ba08u + idx * 0x58u) = 0;                   // [EAX+0x68ba08],0
-    *reinterpret_cast<std::uint32_t*>(0x0068ba00u + idx * 0x58u) = 0xffffffffu;         // [EAX+0x68ba00],0xffffffff
-}
-RH_ScopedInstall(PoolJReset68ba00, 0x00459540);
+// MATCH-S09: the body of 0x00459540 (PoolJReset68ba00) moved to Match/MatchS09_00459540.cpp,
+// which compiles the byte-matched source re/match/s09/00459540.c.
