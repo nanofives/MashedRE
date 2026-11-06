@@ -45,14 +45,5 @@
 // Callers treat FUN_00490ff0 as void and ignore eax, so the extra return is inert.
 // ---------------------------------------------------------------------------
 
-// 0x00490ff0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RainSetCameraScale(
-    std::uint32_t param_1, std::uint32_t param_2)
-{
-    // Store order mirrors the original (param_2 first, then param_1). [0x00490ff8/0x00490ffd]
-    *reinterpret_cast<std::uint32_t*>(0x006146b4u) = param_2;  // _DAT_006146b4 = param_2
-    *reinterpret_cast<std::uint32_t*>(0x006146b0u) = param_1;  // _DAT_006146b0 = param_1
-    return param_2;  // eax = param_2 at RET (0x00490ff0 MOV EAX,[ESP+0x8])
-}
-
-RH_ScopedInstall(RainSetCameraScale, 0x00490ff0);
+// MATCH-S15: the body of 0x00490ff0 (RainSetCameraScale) moved to Match/MatchS15_00490ff0.cpp,
+// which compiles the byte-matched source re/match/s15/00490ff0.c.

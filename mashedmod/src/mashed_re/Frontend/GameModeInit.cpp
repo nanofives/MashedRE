@@ -51,15 +51,5 @@ static constexpr std::uintptr_t kPlayerGuard_7f105c = 0x007f105cu; // guard fiel
 static constexpr std::uint32_t  kPlayerByteStride   = 0x4cu;       // 76 bytes/element
 static constexpr std::uint32_t  kPlayerDWordStride   = 0x13u;      // 19 DWORDs = 76 bytes
 
-extern "C" __declspec(dllexport) void __cdecl CarSlotInit(int param_1) {
-    const int iVar1 = param_1 * static_cast<int>(kPlayerByteStride);
-
-    // Guard: element[param_1][+4] must be non-zero.
-    if (reinterpret_cast<const std::uint32_t*>(kPlayerGuard_7f105c)[param_1 * kPlayerDWordStride] != 0u) {
-        *reinterpret_cast<std::uint32_t*>(kPlayerBase_7f1058 + iVar1)        = 1u;
-        *reinterpret_cast<std::uint32_t*>(kPlayerBase_7f1058 + iVar1 + 0x10) = 3u;
-        *reinterpret_cast<std::uint32_t*>(kPlayerBase_7f1058 + iVar1 + 0x0c) = 10u;
-        *reinterpret_cast<std::uint32_t*>(kPlayerBase_7f1058 + iVar1 + 0x14) = 0xffu;
-    }
-}
-RH_ScopedInstall(CarSlotInit, 0x00492340);  // re-enabled 2026-05-24 c3-frontend-b
+// MATCH-S15: the body of 0x00492340 (CarSlotInit) moved to Match/MatchS15_00492340.cpp,
+// which compiles the byte-matched source re/match/s15/00492340.c.

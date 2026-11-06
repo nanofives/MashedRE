@@ -37,12 +37,5 @@
 // Uncertainties (non-blocking, data-semantic): the two globals' rain meaning.
 // ---------------------------------------------------------------------------
 
-// 0x00491010
-extern "C" __declspec(dllexport) void __cdecl RainLineWidthRangeSet(std::uint32_t param_1,
-                                                                    std::uint32_t param_2) {
-    // 0x006146b8 / 0x006146bc cited at 0x00491010 body.
-    *reinterpret_cast<std::uint32_t*>(0x006146b8u) = param_1;
-    *reinterpret_cast<std::uint32_t*>(0x006146bcu) = param_2;
-}
-
-RH_ScopedInstall(RainLineWidthRangeSet, 0x00491010);
+// MATCH-S15: the body of 0x00491010 (RainLineWidthRangeSet) moved to Match/MatchS15_00491010.cpp,
+// which compiles the byte-matched source re/match/s15/00491010.c.

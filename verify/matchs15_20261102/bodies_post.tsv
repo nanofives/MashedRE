@@ -1,0 +1,129 @@
+0x0048cf70	M	-	-
+0x0048cf90	M	-	-
+0x0048d0f0	M	-	-
+0x0048d140	M	-	-
+0x0048d360	M	-	-
+0x0048d540	M	-	-
+0x0048d720	M	-	-
+0x0048d900	M	-	-
+0x0048db20	M	-	-
+0x0048dd40	M	-	-
+0x0048df60	M	-	-
+0x0048e180	M	-	-
+0x0048e360	M	-	-
+0x0048e5f0	M	-	-
+0x0048e7b0	M	-	-
+0x0048e820	M	-	-
+0x0048eac0	M	-	-
+0x0048ebc0	M	Match/MatchS15_0048ebc0.cpp[A]:('FUN_0048ebc0', 11)	Match/MatchS15_0048ebc0.cpp:[('Div48ebc0', 13)]
+0x0048ebf0	M	-	-
+0x0048f260	M	Match/MatchS15_0048f260.cpp[A]:('FUN_0048f260', 11)	Match/MatchS15_0048f260.cpp:[('Clear48f260', 13)]
+0x0048f290	M	-	-
+0x0048f420	M	-	-
+0x0048f590	M	Match/MatchS15_0048f590.cpp[A]:('FUN_0048f590', 11)	Match/MatchS15_0048f590.cpp:[('ParticlePoolAlloc48f590', 13)]
+0x0048f680	M	Match/MatchS15_0048f680.cpp[A]:('FUN_0048f680', 11)	Match/MatchS15_0048f680.cpp:[('StridedClear76a100', 13)]
+0x0048f6b0	M	Match/MatchS15_0048f6b0.cpp[A]:('FUN_0048f6b0', 11)	Match/MatchS15_0048f6b0.cpp:[('StridedClear766a00', 13)]
+0x0048f6e0	M	Match/MatchS15_0048f6e0.cpp[A]:('FUN_0048f6e0', 11)	Match/MatchS15_0048f6e0.cpp:[('StridedClear770718', 13)]
+0x0048f710	M	Match/MatchS15_0048f710.cpp[A]:('FUN_0048f710', 11)	Match/MatchS15_0048f710.cpp:[('StridedClear769f50', 13)]
+0x0048f740	M	-	Lane2/L2_0048f740.cpp:[('L2_FUN_0048f740', 57)]
+0x0048f780	M	-	-
+0x0048f8a0	M	-	-
+0x0048f9f0	M	-	-
+0x0048fb10	M	-	-
+0x0048fce0	M	-	Lane2/L2_0048fce0.cpp:[('L2_FUN_0048fce0', 50)]
+0x0048fd10	M	-	Lane2/L2_0048fd10.cpp:[('L2_FUN_0048fd10', 50)]
+0x0048fd40	M	-	Lane2/L2_0048fd40.cpp:[('L2_FUN_0048fd40', 50)]
+0x0048fd70	M	-	-
+0x0048fdd0	M	-	-
+0x0048fe70	M	-	-
+0x0048fef0	M	-	-
+0x0048ff20	M	-	-
+0x0048ffd0	M	-	-
+0x00490000	M	-	-
+0x00490020	M	-	-
+0x00490380	M	-	-
+0x00490490	M	-	Lane2/L2_00490490.cpp:[('L2_FUN_00490490', 57)]
+0x004904d0	M	Match/MatchS15_004904d0.cpp[EA]:('FUN_004904d0', 11)	Match/MatchS15_004904d0.cpp:[('UtilZeroTable86a4a0', 13)]
+0x00490500	M	-	-
+0x00490e50	M	-	-
+0x00490e70	M	-	-
+0x00490f50	M	Match/MatchS15_00490f50.cpp[EA]:('FUN_00490f50', 16)	Match/MatchS15_00490f50.cpp:[('ByteQuadSet50', 31)]
+0x00490f80	M	Match/MatchS15_00490f80.cpp[EA]:('FUN_00490f80', 16)	Match/MatchS15_00490f80.cpp:[('ByteQuadSet80', 31)]
+0x00490fb0	M	-	-
+0x00490ff0	M	Match/MatchS15_00490ff0.cpp[A]:('FUN_00490ff0', 11)	Match/MatchS15_00490ff0.cpp:[('RainSetCameraScale', 13)]
+0x00491010	M	Match/MatchS15_00491010.cpp[A]:('FUN_00491010', 11)	Match/MatchS15_00491010.cpp:[('RainLineWidthRangeSet', 13)]
+0x00491030	M	-	-
+0x00491070	M	Match/MatchS15_00491070.cpp[A]:('FUN_00491070', 11)	Match/MatchS15_00491070.cpp:[('Rain491070', 13)]
+0x004910c0	M	-	-
+0x00491340	M	-	-
+0x00491490	M	-	-
+0x004914b0	M	-	-
+0x00491530	M	-	-
+0x00491590	M	-	-
+0x00491780	M	-	-
+0x004917a0	M	-	-
+0x004917c0	M	-	-
+0x00491860	M	-	-
+0x00491900	M	-	-
+0x004919b0	M	-	-
+0x00491a10	M	-	-
+0x00491a70	M	-	-
+0x00491b20	M	-	-
+0x00491bd0	M	Match/MatchS15_00491bd0.cpp[A]:('FUN_00491bd0', 11)	Match/MatchS15_00491bd0.cpp:[('ClearVB491bd0', 13)]
+0x00491c00	M	-	-
+0x00491e50	.	-	-
+0x00491f00	M	-	-
+0x00492170	M	-	-
+0x004921b0	M	-	-
+0x004921d0	M	Match/MatchS15_004921d0.cpp[EA]:('FUN_004921d0', 61)	Match/MatchS15_004921d0.cpp:[('DisplayInit', 63)]
+0x00492270	M	Match/MatchS15_00492270.cpp[EA]:('FUN_00492270', 25)	Match/MatchS15_00492270.cpp:[('SubsystemInit', 27)]
+0x00492290	M	-	-
+0x004922e0	M	Match/MatchS15_004922e0.cpp[EA]:('FUN_004922e0', 13)	Match/MatchS15_004922e0.cpp:[('CarEventTrigger', 15)]
+0x00492340	M	Match/MatchS15_00492340.cpp[EA]:('FUN_00492340', 11)	Match/MatchS15_00492340.cpp:[('CarSlotInit', 13)]
+0x00492370	M	-	-
+0x00492440	M	Match/MatchS15_00492440.cpp[EA]:('FUN_00492440', 11)	Match/MatchS15_00492440.cpp:[('RenderStatsAccumulate', 13)]
+0x004924c0	M	Match/MatchS15_004924c0.cpp[A]:('FUN_004924c0', 11)	Match/MatchS15_004924c0.cpp:[('Set6147b4Triple', 13)]
+0x004924e0	M	Match/MatchS15_004924e0.cpp[A]:('FUN_004924e0', 11)	Match/MatchS15_004924e0.cpp:[('Ret6147b4', 13)]
+0x004924f0	M	Boot/SubsystemInit.cpp[EA]:('DataZeroFill', 277)	-
+0x004926c0	M	Boot/FrameDispatch.cpp[EA]:('AudioTickAndAvg', 249)	-
+0x00492770	M	Match/MatchS15_00492770.cpp[EA]:('FUN_00492770', 33)	Match/MatchS15_00492770.cpp:[('MainLoopInit', 35)]
+0x004927c0	M	-	-
+0x004929d0	M	-	-
+0x00492d10	M	Match/MatchS15_00492d10.cpp[A]:('FUN_00492d10', 11)	Match/MatchS15_00492d10.cpp:[('Global771968Get', 13)]
+0x00492d20	M	Match/MatchS15_00492d20.cpp[A]:('FUN_00492d20', 18)	Match/MatchS15_00492d20.cpp:[('IntroSplashFrameTickShim', 20)]
+0x00492d30	M	Util/UtilMid.cpp[A]:('GameTickStateMachine7', 180)	-
+0x00492e60	M	Boot/SubsystemInit.cpp[EA]:('SetDefaultViewWindow', 229)	-
+0x00492e90	M	-	-
+0x00493390	M	-	-
+0x00493480	M	Match/MatchS15_00493480.cpp[EA]:('FUN_00493480', 17)	Match/MatchS15_00493480.cpp:[('FpsDiscretise', 19)]
+0x00493540	M	Match/MatchS15_00493540.cpp[EA]:('thunk_FUN_00495150', 17)	Match/MatchS15_00493540.cpp:[('thunk_LaunchLangGate', 19)]
+0x00493550	M	Match/MatchS15_00493550.cpp[EA]:('thunk_FUN_004938c0', 17)	Match/MatchS15_00493550.cpp:[('thunk_EngineStopDispatch', 19)]
+0x00493560	M	Match/MatchS15_00493560.cpp[EA]:('thunk_FUN_004954f0', 17)	Match/MatchS15_00493560.cpp:[('thunk_HwExitDispatch', 19)]
+0x00493570	M	Match/MatchS15_00493570.cpp[A]:('FUN_00493570', 11)	Match/MatchS15_00493570.cpp:[('Set77196c_1', 13)]
+0x00493580	M	Match/MatchS15_00493580.cpp[A]:('FUN_00493580', 11)	Match/MatchS15_00493580.cpp:[('Set771970_1', 13)]
+0x00493590	M	Match/MatchS15_00493590.cpp[A]:('FUN_00493590', 11)	Match/MatchS15_00493590.cpp:[('Set771968_1', 13)]
+0x004935a0	M	-	-
+0x004935d0	M	-	-
+0x00493600	M	-	-
+0x00493640	M	-	-
+0x00493710	M	-	-
+0x004938c0	M	Match/MatchS15_004938c0.cpp[EA]:('FUN_004938c0', 33)	Match/MatchS15_004938c0.cpp:[('SoftwareTidyUpBeforeExiting', 35)]
+0x004938e0	M	Util/PromoLoop_sessionB.cpp[A]:('Walk4938e0', 2185)	Util/PromoLoop_sessionB.cpp:[('Walk4938e0', 2201)]
+0x00493900	M	-	-
+0x00493ac0	M	-	-
+0x00493b40	M	Match/MatchS15_00493b40.cpp[A]:('FUN_00493b40', 11)	Match/MatchS15_00493b40.cpp:[('Ret3', 13)]
+0x00493b50	M	-	-
+0x00493bc0	M	-	-
+0x00493c00	M	-	-
+0x00493c60	M	-	-
+0x00493f00	M	-	-
+0x00493f70	M	Match/MatchS15_00493f70.cpp[A]:('FUN_00493f70', 11)	Match/MatchS15_00493f70.cpp:[('VideoStateFlagGet', 13)]
+0x00493f80	M	Match/MatchS15_00493f80.cpp[A]:('FUN_00493f80', 11)	Match/MatchS15_00493f80.cpp:[('IntroVideoDimGetter', 13)]
+0x00493fc0	M	Match/MatchS15_00493fc0.cpp[A]:('FUN_00493fc0', 11)	Match/MatchS15_00493fc0.cpp:[('AspectRatioGlobalGet', 13)]
+0x00493fd0	M	Frontend/IntroSplash.cpp[A]:('OrigQuadRender', 87)	-
+0x004942b0	M	-	-
+0x00494320	M	-	-
+0x004943d0	M	Render/Vtbl5cf9e8ScalarDeletingDtor.cpp[A]:('Vtbl5cf9e8ScalarDeletingDtor', 56)	Render/Vtbl5cf9e8ScalarDeletingDtor.cpp:[('Vtbl5cf9e8ScalarDeletingDtor', 74)]
+0x004943f0	M	-	-
+0x00494460	M	Match/MatchS15_00494460.cpp[A]:('FUN_00494460', 24)	-
+0x00494480	M	Match/MatchS15_00494480.cpp[A]:('FUN_00494480', 21)	-

@@ -74,12 +74,8 @@ static VoidFn_t const s_FUN_004c3270 = reinterpret_cast<VoidFn_t>(0x004c3270);
 // Anti-island: callee FUN_00495150 at C2; callers via WinMain chain.
 // ref: re/analysis/promote_c2_launch_handshake/00493540.md
 
-// 0x00493540
-extern "C" __declspec(dllexport) std::uint32_t __cdecl thunk_LaunchLangGate() {
-    return s_FUN_00495150();
-}
-
-RH_ScopedInstall(thunk_LaunchLangGate, 0x00493540);  // re-enabled 2026-05-24 c3-boot-a
+// MATCH-S15: the body of 0x00493540 (thunk_LaunchLangGate) moved to Match/MatchS15_00493540.cpp,
+// which compiles the byte-matched source re/match/s15/00493540.c.
 
 
 // ─── 0x00493550  thunk_FUN_004938c0 ────────────────────────────────────────
@@ -95,12 +91,8 @@ RH_ScopedInstall(thunk_LaunchLangGate, 0x00493540);  // re-enabled 2026-05-24 c3
 // Anti-island: callee FUN_004938c0 at C2; callers via WinMain chain.
 // ref: re/analysis/promote_c2_launch_handshake/00493550.md
 
-// 0x00493550
-extern "C" __declspec(dllexport) void __cdecl thunk_EngineStopDispatch() {
-    s_FUN_004938c0();
-}
-
-RH_ScopedInstall(thunk_EngineStopDispatch, 0x00493550);  // re-enabled 2026-05-25 a4-thunk-passthrough (C3 evidence: log/diff_engine_stop_dispatch.csv GREEN 10/10)
+// MATCH-S15: the body of 0x00493550 (thunk_EngineStopDispatch) moved to Match/MatchS15_00493550.cpp,
+// which compiles the byte-matched source re/match/s15/00493550.c.
 
 
 // ─── 0x00493560  thunk_FUN_004954f0 ────────────────────────────────────────
@@ -120,12 +112,8 @@ RH_ScopedInstall(thunk_EngineStopDispatch, 0x00493550);  // re-enabled 2026-05-2
 // Anti-island: callee FUN_004954f0 at C2; callers via WinMain chain.
 // ref: re/analysis/promote_c2_launch_handshake/00493560.md
 
-// 0x00493560
-extern "C" __declspec(dllexport) std::uint32_t __cdecl thunk_HwExitDispatch() {
-    return s_FUN_004954f0();
-}
-
-RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);  // re-enabled 2026-05-25 a4-thunk-passthrough (C3 evidence: implicit-survival sweep 2026-05-23; 1:1 proxy to s_FUN_004954f0)
+// MATCH-S15: the body of 0x00493560 (thunk_HwExitDispatch) moved to Match/MatchS15_00493560.cpp,
+// which compiles the byte-matched source re/match/s15/00493560.c.
 
 
 // ─── 0x004938c0  sub_004938c0  (SoftwareTidyUpBeforeExiting) ──────────────────────────
@@ -148,13 +136,5 @@ RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);  // re-enabled 2026-05-25 a4
 //   callers: FUN_00492370 and thunk_FUN_004938c0 (0x00493550, also this cluster).
 // ref: re/analysis/promote_c2_launch_handshake/004938c0.md
 
-// 0x004938c0
-extern "C" __declspec(dllexport) void __cdecl SoftwareTidyUpBeforeExiting() {
-    s_FUN_00558470();
-    s_FUN_00550390();
-    s_FUN_004c2f60();
-    s_FUN_004c3040();
-    s_FUN_004c3270();
-}
-
-RH_ScopedInstall(SoftwareTidyUpBeforeExiting, 0x004938c0);  // re-enabled 2026-05-24 batch-mixed
+// MATCH-S15: the body of 0x004938c0 (SoftwareTidyUpBeforeExiting) moved to Match/MatchS15_004938c0.cpp,
+// which compiles the byte-matched source re/match/s15/004938c0.c.

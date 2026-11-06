@@ -234,14 +234,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioCtxSwap5a7b40(std::u
 }
 RH_ScopedInstall(AudioCtxSwap5a7b40, 0x005a7b40);
 
-// 0x004924c0  boot — byte-verified: 8A 44 24 04 8A 4C 24 08 8A 54 24 0C A2 B4 47 61 00 88 0D B5 47 61 00 88 15 B6 47 61 00 C3
-//   fn(a,b,c): *(u8*)0x006147b4=a ; *(u8*)0x006147b5=b ; *(u8*)0x006147b6=c   (callers 00426810/00426e10 C2)
-extern "C" __declspec(dllexport) void __cdecl Set6147b4Triple(unsigned char a, unsigned char b, unsigned char c) {
-    *reinterpret_cast<unsigned char*>(0x006147b4u) = a;
-    *reinterpret_cast<unsigned char*>(0x006147b5u) = b;
-    *reinterpret_cast<unsigned char*>(0x006147b6u) = c;
-}
-RH_ScopedInstall(Set6147b4Triple, 0x004924c0);
+// MATCH-S15: the body of 0x004924c0 (Set6147b4Triple) moved to Match/MatchS15_004924c0.cpp,
+// which compiles the byte-matched source re/match/s15/004924c0.c.
 
 // 0x0047cdc0  render — byte-verified: D9 44 24 08 8B 44 24 04 D8 4C 24 08 D9 1C 85 70 68 6C 00 C3
 //   fn(i,f): FLD [esp+8]=f ; FMUL [esp+8]=f ; FSTP [eax*4+0x6c6870] -> *(float*)(0x006c6870 + i*4) = f*f
@@ -432,20 +426,11 @@ extern "C" __declspec(dllexport) int __cdecl Search47ce40(int key) {
 }
 RH_ScopedInstall(Search47ce40, 0x0047ce40);
 
-// 0x0048f260  particle — strided clear: for p in [0x76d980,0x7706d0) step 0x488: *(u32*)p=0  (one dword/record)
-extern "C" __declspec(dllexport) void __cdecl Clear48f260(void) {
-    for (std::uint32_t p = 0x0076d980u; p < 0x007706d0u; p += 0x488u)
-        *reinterpret_cast<std::uint32_t*>(p) = 0;
-}
-RH_ScopedInstall(Clear48f260, 0x0048f260);
+// MATCH-S15: the body of 0x0048f260 (Clear48f260) moved to Match/MatchS15_0048f260.cpp,
+// which compiles the byte-matched source re/match/s15/0048f260.c.
 
-// 0x00491bd0  particle — zero vertex buffer *(0x869ca0): for i in [0,0x4000) step 0x20: *(u32*)(*(0x869ca0)+i)=0
-extern "C" __declspec(dllexport) void __cdecl ClearVB491bd0(void) {
-    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x00869ca0u);
-    for (std::uint32_t i = 0; i < 0x4000u; i += 0x20u)
-        *reinterpret_cast<std::uint32_t*>(base + i) = 0;
-}
-RH_ScopedInstall(ClearVB491bd0, 0x00491bd0);
+// MATCH-S15: the body of 0x00491bd0 (ClearVB491bd0) moved to Match/MatchS15_00491bd0.cpp,
+// which compiles the byte-matched source re/match/s15/00491bd0.c.
 
 // ===== round 98 =====
 
@@ -1078,15 +1063,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Search41f330_Reg
 }
 RH_ScopedInstall(Search41f330_RegAbi, 0x0041f330);  // ABI fixed 2026-07-27 (was __cdecl -> ~71 s AV)
 
-// 0x0048ebc0 — byte-verified indexed-global signed division with high clamp:
-//   ecx=[esp+4]*0x488; eax=8; cdq; idiv [ecx+0x76d994]; if(eax>=8) eax=8; return eax.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Div48ebc0(std::uint32_t arg) {
-    int d = *reinterpret_cast<int*>(0x0076d994 + arg * 0x488);
-    int q = 8 / d;
-    if (q >= 8) q = 8;
-    return static_cast<std::uint32_t>(q);
-}
-RH_ScopedInstall(Div48ebc0, 0x0048ebc0);
+// MATCH-S15: the body of 0x0048ebc0 (Div48ebc0) moved to Match/MatchS15_0048ebc0.cpp,
+// which compiles the byte-matched source re/match/s15/0048ebc0.c.
 
 // ===== round 129 ===== (deferred-renderstate setters, same subsystem as r127)
 // 0x004d6c40 — byte-verified: if(arg==*0x7d6bf0) return 1; *0x7d5890=tbl_0x5d8c64[arg];
@@ -1852,22 +1830,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Find42add0_RegAb
 }
 RH_ScopedInstall(Find42add0_RegAbi, 0x0042add0);  // ABI fixed 2026-07-26 (was __cdecl)
 
-// ===== round 164 ===== (RainColorInit: strided BGRA-swizzle buffer fill)
-// 0x00491070 — void fn(): p = *0x771530 + 0x1d; for(o=0;o<4;o++) for(i=0;i<0xe0;i++){
-//   p[-1]=*0x616030; p[0]=*0x616032; p[1]=*0x616031; p[2]=*0x616033; p+=0x20; }
-extern "C" __declspec(dllexport) void __cdecl Rain491070(void) {
-    std::uint8_t* p = *reinterpret_cast<std::uint8_t**>(0x00771530) + 0x1d;
-    for (int o = 0; o < 4; o++) {
-        for (int i = 0; i < 0xe0; i++) {
-            p[-1] = *reinterpret_cast<std::uint8_t*>(0x00616030);
-            p[0]  = *reinterpret_cast<std::uint8_t*>(0x00616032);
-            p[1]  = *reinterpret_cast<std::uint8_t*>(0x00616031);
-            p[2]  = *reinterpret_cast<std::uint8_t*>(0x00616033);
-            p += 0x20;
-        }
-    }
-}
-RH_ScopedInstall(Rain491070, 0x00491070);
+// MATCH-S15: the body of 0x00491070 (Rain491070) moved to Match/MatchS15_00491070.cpp,
+// which compiles the byte-matched source re/match/s15/00491070.c.
 
 // ===== round 165 ===== (bitmap first-free-slot allocator)
 // 0x00477b60 — u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if none return 0;
@@ -3439,39 +3403,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl StructPropagate4
 }
 RH_ScopedInstall(StructPropagate41e4b0, 0x0041e4b0);
 
-// 0x0048f590 FUN_0048f590 (particle, ParticlePoolAlloc) — PURE LEAF (no calls)
-// void f(int* a1, int a2): scan 10 slots (stride 0x24) at pool 0x769f50 for a free
-// one (slot[+0]==0); if none free, evict the max-priority slot (max of slot[+0x1c]).
-// Write the particle into the chosen slot: +4..+0xc = a1[0..2]; +0x10/+0x14 = a2;
-// +0x18 = 0x437f0000(255.0f); +0x1c = 0; +0x20 = 0; +0 = 1. capstone-verified.
-static void Slot48f590(unsigned char* pool, int idx, const int* a1, int a2)
-{
-    unsigned char* sp = pool + idx * 0x24;
-    *reinterpret_cast<int*>(sp + 0x04) = a1[0];
-    *reinterpret_cast<int*>(sp + 0x08) = a1[1];
-    *reinterpret_cast<int*>(sp + 0x0c) = a1[2];
-    *reinterpret_cast<int*>(sp + 0x10) = a2;
-    *reinterpret_cast<int*>(sp + 0x14) = a2;
-    *reinterpret_cast<int*>(sp + 0x1c) = 0;
-    *reinterpret_cast<int*>(sp + 0x18) = 0x437f0000;
-    *reinterpret_cast<int*>(sp + 0x20) = 0;
-    *reinterpret_cast<int*>(sp + 0x00) = 1;
-}
-extern "C" __declspec(dllexport) void __cdecl ParticlePoolAlloc48f590(int* a1, int a2)
-{
-    unsigned char* const pool = reinterpret_cast<unsigned char*>(0x00769f50u);
-    int count = 0, maxIdx = 0, maxVal = 0, slot = -1;
-    for (int i = 0; i < 10; i++) {
-        unsigned char* sp = pool + i * 0x24;
-        if (*reinterpret_cast<int*>(sp + 0) == 0) { slot = i; break; }
-        count++;
-        int pri = *reinterpret_cast<int*>(sp + 0x1c);
-        if (pri > maxVal) { maxIdx = i; maxVal = pri; }
-    }
-    if (slot >= 0) Slot48f590(pool, slot, a1, a2);
-    if (count == 10) Slot48f590(pool, maxIdx, a1, a2);
-}
-RH_ScopedInstall(ParticlePoolAlloc48f590, 0x0048f590);
+// MATCH-S15: the body of 0x0048f590 (ParticlePoolAlloc48f590) moved to Match/MatchS15_0048f590.cpp,
+// which compiles the byte-matched source re/match/s15/0048f590.c.
 
 // 0x00486f90 FUN_00486f90 (particle, PoolArrayReset) — PURE LEAF (no calls)
 // void f(void): clears two global pool arrays. Loop1: eax 0x70302c down to 0x6fe800

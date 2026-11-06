@@ -135,33 +135,8 @@ static constexpr std::uintptr_t kUnkGlobal_007f1020         = 0x007f1020u;
 static constexpr std::uintptr_t kGameStateMachine_00771968  = 0x00771968u;
 static constexpr std::uintptr_t kRwValueStore_007e9dc0      = 0x007e9dc0u;
 
-// 0x00492770
-extern "C" __declspec(dllexport) int __cdecl MainLoopInit() {
-    // DAT_00828300 = 0 at 0x00492772
-    *reinterpret_cast<std::uint32_t*>(kGameLoopExitFlag_00828300) = 0u;
-    // FUN_00495110() at 0x00492774 — [UNCERTAIN U-3930]
-    s_FUN_00495110();
-    // DAT_007f1000 = 0 at 0x0049277a
-    *reinterpret_cast<std::uint32_t*>(kFrameTickCounter_007f1000) = 0u;
-    // DAT_007f101c = 0 at 0x00492781
-    *reinterpret_cast<std::uint32_t*>(kUnkGlobal_007f101c) = 0u;
-    // DAT_007f1020 = 0 at 0x00492787
-    *reinterpret_cast<std::uint32_t*>(kUnkGlobal_007f1020) = 0u;
-    // DAT_00771968 = 1 at 0x0049278e
-    *reinterpret_cast<std::uint32_t*>(kGameStateMachine_00771968) = 1u;
-    // uVar1 = FUN_0042b920() at 0x00492790 — [UNCERTAIN U-3928]
-    const int uVar1 = s_FUN_0042b920();
-    // FUN_00433240(uVar1) at 0x00492797 — [UNCERTAIN U-3929]
-    s_FUN_00433240(uVar1);
-    // FUN_0042b950() at 0x0049279c — [UNCERTAIN U-3930]
-    s_FUN_0042b950();
-    // DAT_007e9dc0 = FUN_004c57a0() at 0x004927a5 — [UNCERTAIN U-3931]
-    *reinterpret_cast<std::uint32_t*>(kRwValueStore_007e9dc0) =
-        static_cast<std::uint32_t>(s_FUN_004c57a0());
-    return 1;
-}
-
-RH_ScopedInstall(MainLoopInit, 0x00492770);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe
+// MATCH-S15: the body of 0x00492770 (MainLoopInit) moved to Match/MatchS15_00492770.cpp,
+// which compiles the byte-matched source re/match/s15/00492770.c.
 
 
 // ---------------------------------------------------------------------------
@@ -203,62 +178,9 @@ static constexpr std::uintptr_t kSubFrameAccum_007719d4 = 0x007719d4u;
 // kFrameTickCounter_007f1000 shared with MainLoopInit (0x007f1000) above.
 static constexpr std::uintptr_t kFloatTickOutput_007f1004 = 0x007f1004u;
 
-// 0x00493480
-// Re-ported from the bytes 2026-10-12 (negctl re-earn, cluster bootio). The old body ran the
-// remainder round-up / zero-snap only inside an unsigned `accum > 49` and compared unsigned;
-// the original (disasm 0x00493480..0x00493531) compares SIGNED throughout and runs both
-// remainder tests on every call, and its 200 band starts at 0xc5 (0x004934c1), not 0xc4.
-extern "C" __declspec(dllexport) int __cdecl FpsDiscretise() {
-    s_FUN_00493390();                                                   // 0x00493480
+// MATCH-S15: the body of 0x00493480 (FpsDiscretise) moved to Match/MatchS15_00493480.cpp,
+// which compiles the byte-matched source re/match/s15/00493480.c.
 
-    // 0x00493485 mov eax,[0x7f1000]; the snapped value lives in EAX only (the global is
-    // overwritten at 0x00493514), signed jl/jg compares.
-    std::int32_t ms = *reinterpret_cast<const std::int32_t*>(kFrameTickCounter_007f1000);
-    if      (ms >= 0x2f && ms <= 0x35) ms = 0x32;                       // 0x0049348a..0x00493494
-    else if (ms >= 0x61 && ms <= 0x67) ms = 0x64;                       // 0x0049349b..0x004934a5
-    else if (ms >= 0x93 && ms <= 0x99) ms = 0x96;                       // 0x004934ac..0x004934ba
-    else if (ms >= 0xc5 && ms <= 0xcb) ms = 0xc8;                       // 0x004934c1..0x004934cf
-
-    std::int32_t& accum = *reinterpret_cast<std::int32_t*>(kSubFrameAccum_007719d4);
-    // 0x004934d4..0x004934da add ecx,eax (wraps; computed unsigned to keep it defined)
-    std::uint32_t acc = static_cast<std::uint32_t>(accum) + static_cast<std::uint32_t>(ms);
-    std::uint32_t ticks = 0u;                                           // 0x004934dc xor edx,edx
-    if (static_cast<std::int32_t>(acc) >= 0x32) {                       // 0x004934de cmp ecx,0x32; jl
-        ticks = acc / 50u;                                              // 0x004934e3..0x004934ea mul 0x51eb851f; shr edx,4
-        acc  -= ticks * 50u;                                            // 0x004934ef..0x004934f2 imul -0x32; add
-    }
-    accum = static_cast<std::int32_t>(acc);                             // 0x004934f7
-    if (static_cast<std::int32_t>(acc) > 0x2f) {                        // 0x004934f4 cmp ecx,0x2f; jle
-        ++ticks;                                                        // 0x004934ff
-        accum = 0;                                                      // 0x00493507
-    } else if (static_cast<std::int32_t>(acc) < 3) {                    // 0x00493502 cmp ecx,3; jge
-        accum = 0;                                                      // 0x00493507
-    }
-
-    std::int32_t& tick_ms = *reinterpret_cast<std::int32_t*>(kFrameTickCounter_007f1000);
-    tick_ms = static_cast<std::int32_t>(ticks * 50u);                   // 0x00493511..0x00493514
-
-    // 0x0049351f fild dword [0x7f1000]; fmul dword [0x5cc948]; fstp dword [0x7f1004]: the
-    // product is formed in ST at the live control word and rounded once at the fstp. The
-    // constant is read from a local copy of its bits (0x39aec33e), not from the .rdata VA.
-    static const std::uint32_t kTickToSecondsBits = 0x39aec33eu;        // 0x005cc948
-    std::int32_t* const tick_p = &tick_ms;
-    float* const dt_out = reinterpret_cast<float*>(kFloatTickOutput_007f1004);
-    __asm {
-        mov  eax, tick_p
-        fild dword ptr [eax]
-        fmul dword ptr [kTickToSecondsBits]
-        mov  eax, dt_out
-        fstp dword ptr [eax]
-    }
-    return 1;                                                           // 0x0049351a
-}
-
-// Re-enabled r211 2026-06-15 (was MASS-DISABLED 2026-05-24 phase-a2): reimpl is
-// byte-faithful (callee FUN_00493390 C2 sets DAT_007f1000=0x32 deterministically;
-// float const 1/3000.0f == orig DAT_005cc948 0x39aec33e). Promoted C2->C3 via
-// early_window near_leaf_seed_multi_obs (seed accum 0x7719d4, observe 0x7f1000/0x7719d4/0x7f1004).
-RH_ScopedInstall(FpsDiscretise, 0x00493480);
 
 
 // ---------------------------------------------------------------------------

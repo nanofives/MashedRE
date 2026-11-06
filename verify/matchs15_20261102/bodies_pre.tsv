@@ -1,0 +1,129 @@
+0x0048cf70	M	-	-
+0x0048cf90	M	-	-
+0x0048d0f0	M	-	-
+0x0048d140	M	-	-
+0x0048d360	M	-	-
+0x0048d540	M	-	-
+0x0048d720	M	-	-
+0x0048d900	M	-	-
+0x0048db20	M	-	-
+0x0048dd40	M	-	-
+0x0048df60	M	-	-
+0x0048e180	M	-	-
+0x0048e360	M	-	-
+0x0048e5f0	M	-	-
+0x0048e7b0	M	-	-
+0x0048e820	M	-	-
+0x0048eac0	M	-	-
+0x0048ebc0	M	Util/PromoLoop_sessionB.cpp[A]:('Div48ebc0', 1128)	Util/PromoLoop_sessionB.cpp:[('Div48ebc0', 1134)]
+0x0048ebf0	M	-	-
+0x0048f260	M	Util/PromoLoop_sessionB.cpp[A]:('Clear48f260', 478)	Util/PromoLoop_sessionB.cpp:[('Clear48f260', 482)]
+0x0048f290	M	-	-
+0x0048f420	M	-	-
+0x0048f590	M	Util/PromoLoop_sessionB.cpp[A]:('Slot48f590', 3796)	Util/PromoLoop_sessionB.cpp:[('ParticlePoolAlloc48f590', 3823)]
+0x0048f680	M	Util/PromoLoop_round53.cpp[A]:('StridedClear76a100', 50)	Util/PromoLoop_round53.cpp:[('StridedClear76a100', 51)]
+0x0048f6b0	M	Util/PromoLoop_round53.cpp[A]:('StridedClear766a00', 54)	Util/PromoLoop_round53.cpp:[('StridedClear766a00', 55)]
+0x0048f6e0	M	Util/PromoLoop_round53.cpp[A]:('StridedClear770718', 58)	Util/PromoLoop_round53.cpp:[('StridedClear770718', 59)]
+0x0048f710	M	Util/PromoLoop_round53.cpp[A]:('StridedClear769f50', 62)	Util/PromoLoop_round53.cpp:[('StridedClear769f50', 63)]
+0x0048f740	M	-	Lane2/L2_0048f740.cpp:[('L2_FUN_0048f740', 57)]
+0x0048f780	M	-	-
+0x0048f8a0	M	-	-
+0x0048f9f0	M	-	-
+0x0048fb10	M	-	-
+0x0048fce0	M	-	Lane2/L2_0048fce0.cpp:[('L2_FUN_0048fce0', 50)]
+0x0048fd10	M	-	Lane2/L2_0048fd10.cpp:[('L2_FUN_0048fd10', 50)]
+0x0048fd40	M	-	Lane2/L2_0048fd40.cpp:[('L2_FUN_0048fd40', 50)]
+0x0048fd70	M	-	-
+0x0048fdd0	M	-	-
+0x0048fe70	M	-	-
+0x0048fef0	M	-	-
+0x0048ff20	M	-	-
+0x0048ffd0	M	-	-
+0x00490000	M	-	-
+0x00490020	M	-	-
+0x00490380	M	-	-
+0x00490490	M	-	Lane2/L2_00490490.cpp:[('L2_FUN_00490490', 57)]
+0x004904d0	M	Util/UtilLeaves_ab6.cpp[EA]:('UtilZeroTable86a4a0', 185)	Util/UtilLeaves_ab6.cpp:[('UtilZeroTable86a4a0', 191)]
+0x00490500	M	-	-
+0x00490e50	M	-	-
+0x00490e70	M	-	-
+0x00490f50	M	Render/GlobalByteQuad.cpp[EA]:('ByteQuadSet50', 60)	Render/GlobalByteQuad.cpp:[('ByteQuadSet50', 64)]
+0x00490f80	M	Render/GlobalByteQuad.cpp[EA]:('ByteQuadSet80', 77)	Render/GlobalByteQuad.cpp:[('ByteQuadSet80', 81)]
+0x00490fb0	M	-	-
+0x00490ff0	M	Render/RainCameraScale.cpp[A]:('RainSetCameraScale', 49)	Render/RainCameraScale.cpp:[('RainSetCameraScale', 58)]
+0x00491010	M	Render/RainLineWidthRange.cpp[A]:('RainLineWidthRangeSet', 41)	Render/RainLineWidthRange.cpp:[('RainLineWidthRangeSet', 48)]
+0x00491030	M	-	-
+0x00491070	M	Util/PromoLoop_sessionB.cpp[A]:('Rain491070', 1955)	Util/PromoLoop_sessionB.cpp:[('Rain491070', 1967)]
+0x004910c0	M	-	-
+0x00491340	M	-	-
+0x00491490	M	-	-
+0x004914b0	M	-	-
+0x00491530	M	-	-
+0x00491590	M	-	-
+0x00491780	M	-	-
+0x004917a0	M	-	-
+0x004917c0	M	-	-
+0x00491860	M	-	-
+0x00491900	M	-	-
+0x004919b0	M	-	-
+0x00491a10	M	-	-
+0x00491a70	M	-	-
+0x00491b20	M	-	-
+0x00491bd0	M	Util/PromoLoop_sessionB.cpp[A]:('ClearVB491bd0', 485)	Util/PromoLoop_sessionB.cpp:[('ClearVB491bd0', 490)]
+0x00491c00	M	-	-
+0x00491e50	.	-	-
+0x00491f00	M	-	-
+0x00492170	M	-	-
+0x004921b0	M	-	-
+0x004921d0	M	Boot/SubsystemInit.cpp[EA]:('DisplayInit', 220)	Boot/SubsystemInit.cpp:[('DisplayInit', 269)]
+0x00492270	M	Boot/SubsystemInit.cpp[EA]:('SubsystemInit', 167)	Boot/SubsystemInit.cpp:[('SubsystemInit', 182)]
+0x00492290	M	-	-
+0x004922e0	M	HUD/ScenarioWriters_sa2s2.cpp[EA]:('CarEventTrigger', 244)	HUD/ScenarioWriters_sa2s2.cpp:[('CarEventTrigger', 263)]
+0x00492340	M	Frontend/GameModeInit.cpp[EA]:('CarSlotInit', 56)	Frontend/GameModeInit.cpp:[('CarSlotInit', 67)]
+0x00492370	M	-	-
+0x00492440	M	Render/RenderLeaves_ae1.cpp[EA]:('RenderStatsAccumulate', 68)	Render/RenderLeaves_ae1.cpp:[('RenderStatsAccumulate', 99)]
+0x004924c0	M	Util/PromoLoop_sessionB.cpp[A]:('Set6147b4Triple', 255)	Util/PromoLoop_sessionB.cpp:[('Set6147b4Triple', 260)]
+0x004924e0	M	Util/PromoLoop_round40.cpp[A]:('Ret6147b4', 34)	Util/PromoLoop_round40.cpp:[('Ret6147b4', 35)]
+0x004924f0	M	Boot/SubsystemInit.cpp[EA]:('DataZeroFill', 347)	-
+0x004926c0	M	Boot/FrameDispatch.cpp[EA]:('AudioTickAndAvg', 327)	-
+0x00492770	M	Boot/FrameDispatch.cpp[EA]:('MainLoopInit', 139)	Boot/FrameDispatch.cpp:[('MainLoopInit', 164)]
+0x004927c0	M	-	-
+0x004929d0	M	-	-
+0x00492d10	M	Util/PromoLoop_round27.cpp[A]:('Global771968Get', 26)	Util/PromoLoop_round27.cpp:[('Global771968Get', 29)]
+0x00492d20	M	Frontend/IntroSplash.cpp[A]:('', 239)	Frontend/IntroSplash.cpp:[('IntroSplashFrameTickShim', 245)]
+0x00492d30	M	Util/UtilMid.cpp[A]:('GameTickStateMachine7', 180)	-
+0x00492e60	M	Boot/SubsystemInit.cpp[EA]:('SetDefaultViewWindow', 299)	-
+0x00492e90	M	-	-
+0x00493390	M	-	-
+0x00493480	M	Boot/FrameDispatch.cpp[EA]:('FpsDiscretise', 211)	Boot/FrameDispatch.cpp:[('FpsDiscretise', 261)]
+0x00493540	M	Boot/LaunchHandshake.cpp[EA]:('thunk_LaunchLangGate', 78)	Boot/LaunchHandshake.cpp:[('thunk_LaunchLangGate', 82)]
+0x00493550	M	Boot/LaunchHandshake.cpp[EA]:('thunk_EngineStopDispatch', 99)	Boot/LaunchHandshake.cpp:[('thunk_EngineStopDispatch', 103)]
+0x00493560	M	Boot/LaunchHandshake.cpp[EA]:('thunk_HwExitDispatch', 124)	Boot/LaunchHandshake.cpp:[('thunk_HwExitDispatch', 128)]
+0x00493570	M	Util/PromoLoop_round29.cpp[A]:('Set77196c_1', 20)	Util/PromoLoop_round29.cpp:[('Set77196c_1', 23)]
+0x00493580	M	Util/PromoLoop_round29.cpp[A]:('Set771970_1', 26)	Util/PromoLoop_round29.cpp:[('Set771970_1', 29)]
+0x00493590	M	Util/PromoLoop_round34.cpp[A]:('Set771968_1', 28)	Util/PromoLoop_round34.cpp:[('Set771968_1', 31)]
+0x004935a0	M	-	-
+0x004935d0	M	-	-
+0x00493600	M	-	-
+0x00493640	M	-	-
+0x00493710	M	-	-
+0x004938c0	M	Boot/LaunchHandshake.cpp[EA]:('SoftwareTidyUpBeforeExiting', 152)	Boot/LaunchHandshake.cpp:[('SoftwareTidyUpBeforeExiting', 160)]
+0x004938e0	M	Util/PromoLoop_sessionB.cpp[A]:('Walk4938e0', 2221)	Util/PromoLoop_sessionB.cpp:[('Walk4938e0', 2237)]
+0x00493900	M	-	-
+0x00493ac0	M	-	-
+0x00493b40	M	Util/PromoLoop_round40.cpp[A]:('Ret3', 23)	Util/PromoLoop_round40.cpp:[('Ret3', 24)]
+0x00493b50	M	-	-
+0x00493bc0	M	-	-
+0x00493c00	M	-	-
+0x00493c60	M	-	-
+0x00493f00	M	-	-
+0x00493f70	M	Frontend/SplashGameMode_t5.cpp[A]:('VideoStateFlagGet', 60)	Frontend/SplashGameMode_t5.cpp:[('VideoStateFlagGet', 65)]
+0x00493f80	M	Frontend/IntroSplash.cpp[A]:('', 137)	Frontend/IntroSplash.cpp:[('IntroVideoDimGetter', 149)]
+0x00493fc0	M	Frontend/SplashGameMode_t5.cpp[A]:('AspectRatioGlobalGet', 91)	Frontend/SplashGameMode_t5.cpp:[('AspectRatioGlobalGet', 96)]
+0x00493fd0	M	Frontend/IntroSplash.cpp[A]:('OrigQuadRender', 85)	-
+0x004942b0	M	-	-
+0x00494320	M	-	-
+0x004943d0	M	Render/Vtbl5cf9e8ScalarDeletingDtor.cpp[A]:('Vtbl5cf9e8ScalarDeletingDtor', 56)	Render/Vtbl5cf9e8ScalarDeletingDtor.cpp:[('Vtbl5cf9e8ScalarDeletingDtor', 74)]
+0x004943f0	M	-	-
+0x00494460	M	Frontend/IntroSplash.cpp[A]:('OrigVideoClose', 77)	-
+0x00494480	M	Frontend/IntroSplash.cpp[A]:('OrigInputCheck', 57)	-

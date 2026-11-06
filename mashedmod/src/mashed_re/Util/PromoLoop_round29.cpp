@@ -16,17 +16,11 @@
 
 #include <cstdint>
 
-// 0x00493570  C7 05 6C 19 77 00 01 00 00 00 C3  (mov dword [0x0077196c],1; ret)
-extern "C" __declspec(dllexport) void __cdecl Set77196c_1(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0077196cu) = 1u;  // cited at 0x00493570
-}
-RH_ScopedInstall(Set77196c_1, 0x00493570);
+// MATCH-S15: the body of 0x00493570 (Set77196c_1) moved to Match/MatchS15_00493570.cpp,
+// which compiles the byte-matched source re/match/s15/00493570.c.
 
-// 0x00493580  C7 05 70 19 77 00 01 00 00 00 C3  (mov dword [0x00771970],1; ret)
-extern "C" __declspec(dllexport) void __cdecl Set771970_1(void) {
-    *reinterpret_cast<std::uint32_t*>(0x00771970u) = 1u;  // cited at 0x00493580
-}
-RH_ScopedInstall(Set771970_1, 0x00493580);
+// MATCH-S15: the body of 0x00493580 (Set771970_1) moved to Match/MatchS15_00493580.cpp,
+// which compiles the byte-matched source re/match/s15/00493580.c.
 
 // MATCH-S10: the body of 0x00462510 (Set603868_0) moved to Match/MatchS10_00462510.cpp,
 // which compiles the byte-matched source re/match/s10/00462510.c.
