@@ -1,0 +1,163 @@
+## h1
+0x00451690  49  100.0  100.0  cxx:ok  -  float local copy gives fld/fstp
+0x004516d0  87  100.0  100.0  cxx:ok  -  switch with shared (*p)++ after it
+0x00451760  191  100.0  100.0  cxx:ok  -  struct-typed object, struct copies, real callee arity
+0x00451820  201  100.0  100.0  cxx:ok  -  for loop, matrix struct copy from out-pointer
+0x00451990  191  100.0  100.0  cxx:ok  -  range test sets a flag, separate if(flag) picks the copy source
+0x00451a50  128  100.0  100.0  cxx:ok  -  matrix struct copies, thunk callee 0x004c4670 by name
+0x00451ce0  151  100.0  100.0  cxx:ok  -  typed structs, scale is literal 360.0f not the global
+0x00451d80  944  100.0  100.0  cxx:ok  -  whole symbol byte-identical (pc_funcs size 61 stops at the jump table; match.py line shows 7.6%); struct, unsigned dt, literal floats, field-order fixes
+0x00452130  15  100.0  100.0  cxx:ok  -  tail call FUN_004e6680(*p) (Ghidra had inlined the callee)
+0x00452170  104  100.0  100.0  cxx:ok  -  global matrix struct copies, MGLOBALA strings
+0x004522d0  12  100.0  100.0  cxx:ok  -  tail jump via RwGlobals+0x10c, 1 forwarded arg picks ecx
+0x00451ad0  494  100.0  100.0  cxx:ok  -  typed struct, callee arities from pushes, four test blocks written out
+0x004527f0  730  100.0  100.0  cxx:ok  -  struct-typed level object, temporaries for nested calls, three file-static globals
+## h2
+0x00452ad0  18  100.0  100.0  cxx:ok  -  tail call to 0x00452620 (Ghidra size 89 ran past the jmp)
+0x00452af0  45  100.0  100.0  cxx:ok  -  tail call to 0x00452620, FUN_0047d100 has 2 args
+0x00452eb0  7  100.0  100.0  cxx:ok  -  float getter
+0x00452ec0  51  100.0  100.0  cxx:ok  -  static ESI-arg callee, held in 00452f30.c
+0x00452f00  46  100.0  100.0  cxx:ok  -  static ESI-arg callee, held in 00452f30.c
+0x00452f30  53  100.0  100.0  cxx:ok  -  whole symbol byte-identical (Ghidra size 50 cuts the tail)
+0x00453eb0  118  100.0  100.0  cxx:ok  -  ring-buffer record add
+0x00452b20  494  100.0  100.0  cxx:ok  -  natural form
+0x00453100  258  100.0  100.0  cxx:ok  -  static ESI-arg callee, held in 004538b0.c
+0x00453210  120  100.0  100.0  cxx:ok  -  static EDI-arg callee, held in 004538b0.c
+0x004532f0  82  100.0  100.0  cxx:ok  -  static EAX-arg callee, held in 004538b0.c (int pad avoids /GS cookie)
+0x00453730  377  95.3  95.3  cxx:ok  b  static EAX-arg, held in 004538b0.c; &hit push and one out.x fstp scheduled one slot off
+0x004538b0  717  87.4  87.4  cxx:ok  b  static EAX-arg (stand-in caller for 0x00453b80); x87 keeps off+tgt sums live (fsubr st(2)), store interleave
+0x00452f30 holds 0x00452ec0, 0x00452f00
+0x004538b0 holds 0x00453100, 0x00453210, 0x004532f0, 0x00453730
+## h3
+0x00453f30  24  100  100  cxx:ok  -  whole symbol byte-identical (Ghidra size stops at the loop label), raw body
+0x00454130  58  100  100  cxx:ok  -  table 0x00688240 as struct array, int index loop (biased IV)
+0x00454170  97  100  100  cxx:ok  -  record in ESI: file-static callee before the real caller FUN_00454790
+0x004541e0  307  100  100  cxx:ok  -  entry in ESI (static callee, stand-in caller shaped like 0x00454740), literals 3.5f/40.0f, per-branch calls
+0x00454790  37  100  100  cxx:ok  -  pointer loop with int-cast bound, >=2 && <=5
+0x004547c0  84  100  100  cxx:ok  -  entry in EDI: static callee before the real caller FUN_004548a0, FUN_004b6520 takes (ptr, n)
+0x00454820  118  100  100  cxx:ok  -  int index loop, static EDI/ESI callees in the file
+0x004548a0  51  100  100  cxx:ok  -  pointer loops with int-cast bounds over two tables
+0x004548e0  311  100  100  cxx:ok  -  whole symbol byte-identical (Ghidra size stops before the epilogue), switch on k, int index loop
+0x00454bd0  44  100  100  cxx:ok  -  entry in ESI: static callee, stand-in caller shaped like 0x00454e40
+0x00454c00  12  100  100  cxx:ok  -  entry in EAX: static callee, stand-in caller shaped like 0x00454e40
+0x00454c10  68  100  100  cxx:ok  -  one arg in EDX (not fastcall): static callee, stand-in caller shaped like 0x00454db0
+0x00454c60  109  100  100  cxx:ok  -  entry in EAX, if/else-if state chain, static ESI callee
+0x00454350  994  98.2  98.2  cxx:ok  b  two x87 scheduling spots (fstp before an arg push, fld before a V3 store), permuter 415 compiles no gain
+0x00454170 holds 0x00454790
+0x00454790 holds 0x00454170
+0x004547c0 holds 0x00454170 0x004548a0
+0x004548a0 holds 0x00454170 0x004547c0
+0x00454820 holds 0x00454170 0x004547c0
+0x00454bd0 holds 0x00454c00
+0x00454c00 holds 0x00454bd0
+0x00454c60 holds 0x00454bd0
+0x00454350 holds 0x00454170
+## h4
+0x00454cd0  222  100.0  100.0  cxx:ok  -  ESI-passed record as static callee + stand-in caller (0x00454e00 loop), float literals
+0x00454fa0  75  100.0  100.0  cxx:ok  -  ESI-passed record, held as static callee in 00455030.c
+0x00454ff0  64  100.0  100.0  cxx:ok  -  ESI-passed record, held as static callee in 00455030.c
+0x00455030  48  100.0  100.0  cxx:ok  -  two pointer walks, a before b, signed end compare
+0x00455100  79  100.0  100.0  cxx:ok  -  struct record, frame read first, float literals
+0x00455060  157  100.0  100.0  cxx:ok  -  fields via DAT_006885d0[i], return &DAT_006885d0[i]
+0x00455610  211  90.1  90.1  cxx:ok  b  ESI-passed (stand-in caller); x87 keeps +0x30 live through the velocity products (fld m; fmul st1), ours consumes it
+0x00455910  131  100.0  100.0  cxx:ok  -  EAX-passed record, held in 00455030.c with its static callee 0x00454ff0 + stand-in caller
+0x004556f0  541  98.8  100.0  cxx:ok  b  ESI-passed (stand-in caller); Ghidra size 98 B is short (real 541 B); one multiply operand order (vx) left
+0x00455b50  229  100.0  100.0  cxx:ok  -  EAX-passed record (stand-in caller), call written twice so each branch pushes its constant
+0x00455fe0  82  100.0  100.0  cxx:ok  -  ESI-passed record; stand-in copy of the 0x00456c70 loop (real caller matched raw)
+0x00456040  247  100.0  100.0  cxx:ok  -  callee arity (0x0045bfd0 no args, 0x004e4450 two), struct array
+0x00456140  123  100.0  100.0  cxx:ok  -  float scale param, colour local in dead param slot, float-returning callee
+0x00456760  279  100.0  100.0  cxx:ok  -  pilot body; case order 0,1,2,6,4,5,3 fixes the pilot's swapped +0x24/+0x3c stores (relocheck)
+0x00455150  521  99.4  99.4  cxx:ok  a  one fstp scheduled one push earlier than the original (permuter + 9 rewrites, no move)
+0x00454cd0  222  100.0  100.0  cxx:ok  -  ESI-passed record, static callee + stand-in caller, float literals
+0x00454fa0  75  100.0  100.0  cxx:ok  -  ESI-passed, held as static in 00455030.c
+0x00454ff0  64  100.0  100.0  cxx:ok  -  ESI-passed, held as static in 00455030.c (2 callers: 0x00455030, 0x00455910)
+0x00455610  211  90.1  90.1  cxx:ok  b  ESI-passed (stand-in); x87 keeps +0x30 live through the velocity products, ours consumes it
+0x004556f0  541  98.8  100.0  cxx:ok  b  ESI-passed (stand-in); Ghidra size 98 B short, scored at real 541 B; vx multiply operand order
+0x00455910  131  100.0  100.0  cxx:ok  -  EAX-passed, held in 00455030.c with static 0x00454ff0 + stand-in caller
+0x00455b50  229  100.0  100.0  cxx:ok  -  EAX-passed (stand-in), final call written twice (cross-jumped pushes)
+0x00455fe0  82  100.0  100.0  cxx:ok  -  ESI-passed, stand-in copy of the 0x00456c70 loop
+0x00456040  247  100.0  100.0  cxx:ok  -  callee arity (0x0045bfd0 no args, 0x004e4450 two)
+0x00456140  123  100.0  100.0  cxx:ok  -  float scale param, colour local in dead param slot
+0x00456760  279  100.0  100.0  cxx:ok  -  pilot body, case order 0,1,2,6,4,5,3 (pilot's +0x24/+0x3c stores were swapped, relocheck BAD)
+0x00455150  521  99.4  99.4  cxx:ok  a  one fstp scheduled one push early
+0x00455030 holds 0x00454fa0, 0x00454ff0, 0x00455910
+## h5
+0x00456c30  55  100.0  100.0  cxx:ok  -  by hand, pointer from next global + field-address end test
+0x00456c90  5  100.0  100.0  cxx:ok  -  tail-call jmp to FUN_00456c70 (Ghidra name thunk_FUN_00456c70)
+0x00456ce0  21  100.0  100.0  cxx:ok  -  static EAX-arg callee + stand-in caller (real caller 0x00456d20)
+0x00456d00  28  100.0  100.0  cxx:ok  -  static EAX-arg callee + stand-in caller (real callers 0x00456d20, call at 0x0045777a)
+0x00456eb0  181  100.0  100.0  cxx:ok  -  static EAX-arg callee + stand-in caller (real caller 0x004577f0)
+0x00456f70  149  100.0  100.0  cxx:ok  -  static ESI-arg callee + stand-in caller (real caller 0x00457010); len *= k per branch
+0x004570a0  81  100.0  100.0  cxx:ok  -  static EAX-arg callee + stand-in caller (real call at 0x00457495)
+0x004568d0  856  76.1  76.9  cxx:ok  b  induction-pointer bias +0x24 vs +0x2c (all displacements off by 8); rest matches, call tail-merge found
+0x00457100  1285  97.7  97.7  cxx:ok  a/b  atS block operand order vs push interleave (pilot residual); 2 swapped global pairs fixed via relocheck
+0x00457100 holds 0x004570a0
+0x004570a0  81  100.0  100.0  cxx:ok  -  static EAX-arg callee + stand-in caller; real caller 0x00457100 (its file holds it too)
+0x004568d0  856  76.1  76.9  cxx:ok  b  induction-pointer bias +0x24 vs +0x2c (all displacements off by 8); rest matches
+0x00457100  1285  97.7  97.7  cxx:ok  a/b  atS block operand order vs push interleave (pilot residual)
+## h6
+0x00457650  88  100  100  cxx:ok  -  byte-identical whole symbol (91 B, Ghidra size short of epilogue), counted for over 64x0x68 array
+0x004577f0  9  100  100  cxx:ok  -  EAX-passed arg to static callee 0x00456eb0 (callee also 100%, byte-identical)
+0x00457ba0  110  100  100  cxx:ok  -  ESI-passed entry; held as static in 00458360.c (byte-identical)
+0x00458020  90  100  100  cxx:ok  -  EDI-passed header; held as static in 00458360.c (byte-identical)
+0x00458360  51  100  100  cxx:ok  -  two counted loops over the 4 x 0x18 and 32 x 0x6c arrays calling the two statics
+0x004584e0  138  87.8  87.8  cxx:ok  b  EAX/ESI static + stand-in caller; frame-pos copy scheduling and x87 pop order (fstp st(2)/st(1)) differ
+0x00458570  185  90.0  90.0  cxx:ok  b  stack rec + EAX idx + ESI out static with stand-in caller; dy spill to param slot in squared length differs
+0x00458630  274  100  100  cxx:ok  -  byte-identical (360 B with jump table); case order from table + explicit return-0 cases give the flat table
+0x00457c10  512  73.4  92.8  cxx:ok  b  EAX static + stand-in caller; structure/ops right, register rotation from the t load on through the argument setup
+0x00458080  615  100  100  cxx:ok  -  EAX static state machine, held in 00458360.c with its real caller 0x004582f0 (unsized, byte-identical 104 B); byte-identical 615 B
+0x004577f0 holds 0x00456eb0 (h5's address; 100%, byte-identical 181 B, static EAX callee)
+0x00458360 holds 0x00457ba0, 0x00458020, 0x00458080 (all 100%, byte-identical) and the unsized real caller 0x004582f0 (no MATCH line, 104 B byte-identical)
+## h7
+0x004587a0  214  100.0  100.0  cxx:ok  -  count-down index loop (for i = 25; i-- != 0) over 25 x 0x50 records
+0x00458880  55  100.0  100.0  cxx:ok  -  index loop (raw pointer loop changed the compare)
+0x004588c0  82  100.0  100.0  cxx:ok  -  callee arity fix (458630 1 arg, 490020 7 args), RGBA byte stores
+0x00458920  276  100.0  100.0  cxx:ok  -  static callee 0x00458570 (ESI out, EAX idx, rec on stack); param order (out, idx, rec) puts idx in ESI
+0x00458a40  207  87.8  87.8  cxx:ok  b  record in EDI via static + stand-in caller; x87 scheduling (compare reload order, push 1 vs fadd, last fmul)
+0x00458b10  219  69.1  92.6  cxx:ok  b  count/frame in EBX/EDI swapped vs original; dot product loads the frame field first in the original
+0x00458bf0  128  100.0  100.0  cxx:ok  -  count-down while loop, struct copies
+0x00458c70  136  100.0  100.0  cxx:ok  -  record pointer, home/pos/vel copy order
+0x00458e00  274  99.0  99.0  cxx:ok  b  one fld scheduled after dec esi in the slot-distance loop
+0x00458f20  81  100.0  100.0  cxx:ok  -  compiler-duplicated return tail
+0x00458f80  25  100.0  100.0  cxx:ok  -  needs 0x00458f20's body earlier in the TU (EDX kept live across the call)
+0x00458fa0  38  100.0  100.0  cxx:ok  -  range-checked float store
+0x00458fd0  33  100.0  100.0  cxx:ok  -  458e00 takes 2 args, third push is 458fa0's arg
+0x00459000  655  92.7  92.7  cxx:ok  b  clamp compares (constant loaded vs memory operand) + fsub/add ebx interleave in state 1
+0x00458920 holds 0x00458570 (static, 90.0%, regs 90.0%, b: original spills y into the dead arg slot)
+0x00458a40 holds 0x004584e0 (static, 87.8%, regs 87.8%, b: x87 load scheduling / pops)
+0x00458f80 holds 0x00458f20 (non-static, 100%; second definition of FUN_00458f20 next to 00458f20.c, include one in the port)
+0x00459000 holds 0x00458a40 (static, 87.8%) and 0x004584e0 (static, 87.8%)
+## h8
+0x00459290  277  100.0  100.0  cxx:ok  -  byte-identical whole symbol (Ghidra size stops before epilogue), struct array at 0x0068b9f8 + do/while
+0x00459400  128  100.0  100.0  cxx:ok  -  file-static DAT_0068bb5c (hoists cos), .rdata floats are literals 0.01f/1.0f/2.0f
+0x00459480  179  100.0  100.0  cxx:ok  -  static callee, slot ptr in EDI (stand-in caller for FUN_0045a190), literals 4.0f/0.003f/3.0f/0.5f
+0x00459560  81  100.0  100.0  cxx:ok  -  slot array at 0x0068b9f8 indexed in a for loop
+0x00459620  2727  63.7  72.8  cxx:ok  b  structure+frame 0x110 matched (union at 0x70, reused V3/V4 buffers, literals); register allocation of loops 1-2 (param_2 in EDI, n in memory) and scalar slot packing not reproduced, out of budget
+0x00459480 holds 0x00459480 (static, EDI arg) plus stand-in caller caller_0045a190 (not matched)
+## h9
+0x0045a0d0  27  100.0  100.0  cxx:ok  -  matched (param_1 >= 0 form)
+0x0045a0f0  27  100.0  100.0  cxx:ok  -  matched (param_1 >= 0 form)
+0x0045a110  25  100.0  100.0  cxx:ok  -  matched (param_1 >= 0 form)
+0x0045a130  81  100.0  100.0  cxx:ok  -  matched (descending pointer do/while over 4 records)
+0x0045a3a0  115  81.0  90.5  cxx:ok  b  loop body exact (do/while down-counters, 4x5x5 array); original keeps param_1 in EBP from entry, ours loads it after the loop
+0x0045a530  86  100.0  100.0  cxx:ok  -  matched (static callee, vec3 in EAX, stand-in caller for 0x0045ae80)
+0x0045a590  278  100.0  100.0  cxx:ok  -  matched (static callee, object in EAX, stand-in caller for 0x0045ae80; float literals not .rdata globals)
+0x0045a190  515  93.0  93.0  cxx:ok  b  loop walker copy gives add edi,-0x58 not sub; x87/push scheduling in 3 spots (d.y/d.z fsub, 0.3f size scale); holds static 0x00459480 (EDI arg)
+0x0045a190 holds 0x00459480
+0x0045a950  594  92.3  92.9  cxx:ok  b  memset zeroing uses xor ecx + reg stores (original: immediates, plain zero stores get DSE'd); last-block push/x87 scheduling
+0x0045a3a0  115  81.0  90.5  cxx:ok  b  loop body exact; original keeps param_1 in EBP from entry, ours loads it after the loop
+0x0045a530  86  100.0  100.0  cxx:ok  -  matched (static, vec3 in EAX, stand-in caller for 0x0045ae80)
+0x0045a590  278  100.0  100.0  cxx:ok  -  matched (static, object in EAX, stand-in caller for 0x0045ae80; float literals)
+0x0045a190  515  93.0  93.0  cxx:ok  b  add edi,-0x58 vs sub edi,0x58 from the loop-walker copy; x87/push scheduling in 3 spots
+0x0045a950  594  92.3  92.9  cxx:ok  b  memset zeroing via xor ecx (original immediates); last-block push/x87 scheduling
+## h10
+0x0045b360  46  100.0  100.0  cxx:ok  -  ESI-passed slot pointer as static callee + stand-in caller (0x0045b810 loop)
+0x0045b930  83  100.0  100.0  cxx:ok  -  byte-identical 86 B symbol (Ghidra size stops before epilogue; instruction score 90.0%)
+0x0045ac40  295  61.5  66.1  cxx:ok  (b)  EAX/ECX static callee + stand-in caller; inner start pointer not strength-reduced as own induction, x87 product order
+0x0045b390  839  96.9  96.9  cxx:ok  (b)  x87/push scheduling in the v block and dir2.y load (0x0045bfe0 is 0-arg, start/end Line struct)
+0x0045ae80  886  80.7  80.7  cxx:ok  (b)  record loops become down-counters with EBX biased +0x10 (original: unbiased EBX + spilled copy, pointer tests); holds 0x0045a530/0x0045a590 (h9 bodies) and 0x0045ac40
+0x0045b360  46  100.0  100.0  cxx:ok  -  ESI-passed slot pointer as static callee + stand-in caller (0x0045b810 loop); relocheck OK
+0x0045b930  83  100.0  100.0  cxx:ok  -  byte-identical 86 B symbol (Ghidra size stops before the epilogue, instruction score 90.0%); relocheck OK
+0x0045ac40  295  61.5  66.1  cxx:ok  (b)  EAX/ECX static callee; inner-loop start not strength-reduced as its own induction, j not in EBP, x87 product order
+0x0045ae80  886  80.7  80.7  cxx:ok  (b)  record loops become down-counters with EBX biased +0x10 (original: unbiased EBX + spilled copy, pointer tests)
+0x0045ae80 holds 0x0045a530, 0x0045a590, 0x0045ac40

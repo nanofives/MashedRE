@@ -18,9 +18,5 @@
 
 #include <cstdint>
 
-// 0x0045a110
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PtrGet68ba1c(std::int32_t i) {
-    if (i >= 0 && i < 4) return 0x0068ba1cu + i * 0x58u;   // IMUL 0x58 ; ADD 0x68ba1c
-    return 0;                                              // XOR EAX,EAX
-}
-RH_ScopedInstall(PtrGet68ba1c, 0x0045a110);
+// MATCH-S09: the body of 0x0045a110 (PtrGet68ba1c) moved to Match/MatchS09_0045a110.cpp,
+// which compiles the byte-matched source re/match/s09/0045a110.c.

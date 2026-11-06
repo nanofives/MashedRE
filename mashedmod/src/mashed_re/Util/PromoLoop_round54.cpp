@@ -30,12 +30,8 @@
 
 #include <cstdint>
 
-// 0x0045a0d0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table68ba04Get(std::int32_t i) {
-    if (i >= 0 && i < 4) return *reinterpret_cast<std::uint32_t*>(0x0068ba04u + i * 0x58u);  // IMUL 0x58 ; MOV [EAX+0x68ba04]
-    return 0xffffffffu;                                                                       // OR EAX,-1
-}
-RH_ScopedInstall(Table68ba04Get, 0x0045a0d0);
+// MATCH-S09: the body of 0x0045a0d0 (Table68ba04Get) moved to Match/MatchS09_0045a0d0.cpp,
+// which compiles the byte-matched source re/match/s09/0045a0d0.c.
 
 // MATCH-S11: the body of 0x0046d660 (VehTbl881f50Get3) moved to Match/MatchS11_0046d660.cpp,
 // which compiles the byte-matched source re/match/s11/0046d660.c.
