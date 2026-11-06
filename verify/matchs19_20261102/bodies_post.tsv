@@ -1,0 +1,117 @@
+0x004c0740	M	-	-
+0x004c07b0	M	-	-
+0x004c0830	M	-	-
+0x004c0ad0	M	-	-
+0x004c0b10	M	Match/MatchS19_004c0b10.cpp[A]:('FUN_004c0b10', 11)	Match/MatchS19_004c0b10.cpp:[('RwAtomicDirtyFlagGet', 13)]
+0x004c0b70	M	-	-
+0x004c0c20	M	-	-
+0x004c0e50	M	Match/MatchS19_004c0e50.cpp[A]:('FUN_004c0e50', 11)	Match/MatchS19_004c0e50.cpp:[('DllHeadInsert4c0e50', 13)]
+0x004c0ed0	M	-	-
+0x004c0ef0	M	-	-
+0x004c0f00	M	-	-
+0x004c1300	M	-	-
+0x004c1340	M	-	-
+0x004c13e0	M	-	-
+0x004c1480	M	-	-
+0x004c1520	M	-	-
+0x004c1680	M	-	-
+0x004c1740	M	-	-
+0x004c1800	M	-	-
+0x004c1840	M	-	-
+0x004c18c0	M	-	-
+0x004c19f0	M	Match/MatchS19_004c19f0.cpp[EA]:('FUN_004c19f0', 11)	Match/MatchS19_004c19f0.cpp:[('RwVtableSlot07Call', 13)]
+0x004c1a00	M	Match/MatchS19_004c1a00.cpp[A]:('FUN_004c1a00', 11)	Match/MatchS19_004c1a00.cpp:[('IntroSplashVtableSlot6', 13)]
+0x004c1a10	M	-	-
+0x004c1a40	M	-	-
+0x004c1a70	M	Render/CameraProjCoeffs.cpp[EA]:('void __cdecl', 25)	Render/CameraProjCoeffs.cpp:[('CameraRecomputeProjCoeffs', 77)]
+0x004c1b10	M	-	-
+0x004c1b40	M	-	-
+0x004c1bb0	M	Match/MatchS19_004c1bb0.cpp[A]:('FUN_004c1bb0', 11)	Match/MatchS19_004c1bb0.cpp:[('IntroSplashRenderState', 13)]
+0x004c1be0	M	Frontend/IntroSplash.cpp[A]:('OrigRenderTargetHelper', 62)	-
+0x004c1c10	M	-	-
+0x004c1c80	M	Match/MatchS19_004c1c80.cpp[A]:('FUN_004c1c80', 12)	Match/MatchS19_004c1c80.cpp:[('ViewportDimsSet', 18)]
+0x004c1cf0	M	-	-
+0x004c1f80	M	-	-
+0x004c2620	M	-	-
+0x004c2a30	M	-	-
+0x004c2c90	M	Match/MatchS19_004c2c90.cpp[A]:('FUN_004c2c90', 15)	Match/MatchS19_004c2c90.cpp:[('DriverSystemDispatch', 30)]
+0x004c2d70	M	Match/MatchS19_004c2d70.cpp[A]:('FUN_004c2d70', 11)	Match/MatchS19_004c2d70.cpp:[('RwPluginRegistryFrozen', 13)]
+0x004c2d80	M	-	-
+0x004c2d90	M	Match/MatchS19_004c2d90.cpp[A]:('FUN_004c2d90', 12)	Match/MatchS19_004c2d90.cpp:[('RwEngineRegisterPlugin', 18)]
+0x004c2dc0	M	-	-
+0x004c2de0	M	Match/MatchS19_004c2de0.cpp[A]:('FUN_004c2de0', 12)	Match/MatchS19_004c2de0.cpp:[('RwEngineGetNumSubSystems', 18)]
+0x004c2e10	M	Match/MatchS19_004c2e10.cpp[A]:('FUN_004c2e10', 12)	Match/MatchS19_004c2e10.cpp:[('RwEngineGetSubSystemInfo', 18)]
+0x004c2e40	M	Match/MatchS19_004c2e40.cpp[A]:('FUN_004c2e40', 12)	Match/MatchS19_004c2e40.cpp:[('RwEngineGetCurrentSubSystem', 18)]
+0x004c2e70	M	Match/MatchS19_004c2e70.cpp[A]:('FUN_004c2e70', 12)	Match/MatchS19_004c2e70.cpp:[('RwEngineSetSubSystem', 18)]
+0x004c2ea0	M	Match/MatchS19_004c2ea0.cpp[A]:('FUN_004c2ea0', 12)	Match/MatchS19_004c2ea0.cpp:[('RwEngineGetNumVideoModes', 18)]
+0x004c2ed0	M	Match/MatchS19_004c2ed0.cpp[A]:('FUN_004c2ed0', 12)	Match/MatchS19_004c2ed0.cpp:[('RwEngineGetModeInfo', 18)]
+0x004c2f00	M	Match/MatchS19_004c2f00.cpp[EA]:('FUN_004c2f00', 12)	Match/MatchS19_004c2f00.cpp:[('RwEngineGetCurrentMode', 18)]
+0x004c2f30	M	Match/MatchS19_004c2f30.cpp[A]:('FUN_004c2f30', 12)	Match/MatchS19_004c2f30.cpp:[('RwEngineSetVideoMode', 18)]
+0x004c2f60	M	-	-
+0x004c2fb0	M	-	-
+0x004c3040	M	-	-
+0x004c3270	M	-	-
+0x004c32b0	M	-	-
+0x004c35f0	M	-	-
+0x004c3730	M	Math/RwV3dTransform.cpp[EA]:('', 22)	Math/RwV3dTransform.cpp:[('RwV3dTransformPoint', 34)]
+0x004c3880	M	Math/RwV3dTransform.cpp[EA]:('', 38)	Math/RwV3dTransform.cpp:[('RwV3dTransformVector', 50)]
+0x004c3910	M	Render/Vec3NormalizeScale.cpp[EA]:('float __cdecl', 25)	Render/Vec3NormalizeScale.cpp:[('Vec3NormalizeScale', 80)]
+0x004c39b0	M	Math/RwV3dNormalize.cpp[EA]:('', 119)	Math/RwV3dNormalize.cpp:[('RwV3dNormalize', 142)]
+0x004c3ac0	M	-	Math/Vec3.cpp:[('Vec3Magnitude', 77)]
+0x004c3b30	M	Math/RwLutTables.cpp[EA]:('LutSqrt', 54)	Math/RwSqrt.cpp:[('FastSqrt', 158)]
+0x004c3b90	M	-	Math/RwSqrt.cpp:[('FastInvSqrt', 110)]
+0x004c3bf0	M	Math/RwV2d.cpp[EA]:('', 49)	Math/RwV2d.cpp:[('Vec2Length', 73)]
+0x004c3c60	M	Math/RwV2d.cpp[EA]:('', 79)	Math/RwV2d.cpp:[('Vec2Normalize', 130)]
+0x004c3d60	M	-	-
+0x004c3d90	M	-	-
+0x004c3dc0	M	-	-
+0x004c3df0	M	Match/MatchS19_004c3df0.cpp[EA]:('FUN_004c3df0', 11)	Match/MatchS19_004c3df0.cpp:[('RwV3dTransformPoints', 13)]
+0x004c40b0	M	-	-
+0x004c4270	M	Math/MatrixOrthoResidual.cpp[EA]:('', 54)	Math/MatrixOrthoResidual.cpp:[('MatrixOrthoResidual4c4270', 104)]
+0x004c42d0	M	Math/MatrixOrthoResidual.cpp[EA]:('', 121)	Math/MatrixOrthoResidual.cpp:[('MatrixNormResidual4c42d0', 193)]
+0x004c4360	M	Math/MatrixOrthoResidual.cpp[EA]:('', 234)	Math/MatrixOrthoResidual.cpp:[('MatrixIdentityResidual4c4360', 300)]
+0x004c4430	M	-	-
+0x004c4470	M	-	-
+0x004c4530	M	-	-
+0x004c45f0	M	Match/MatchS19_004c45f0.cpp[A]:('FUN_004c45f0', 11)	Match/MatchS19_004c45f0.cpp:[('And4c45f0', 13)]
+0x004c4600	M	Collision/RwpSolverMath2.cpp[EA]:('FUN_004c4600', 338)	Collision/RwpSolverMath2.cpp:[('FUN_004c4600', 342)]
+0x004c4670	M	-	-
+0x004c4680	M	Math/RwMatrixOrthoNormalize.cpp[E]:('RwMatrixOrthoNormalizeLut', 31)	-
+0x004c4a50	M	Math/RwMatrixRotateInner.cpp[EA]:('', 81)	Math/RwMatrixRotateInner.cpp:[('RwMatrixRotateInner', 233)]
+0x004c4d20	M	Math/RwMatrixRotate.cpp[EA]:('', 75)	Math/RwMatrixRotate.cpp:[('RwMatrixRotate', 147)]
+0x004c4dc0	M	Render/RwMatrixInvert.cpp[EA]:('void __cdecl', 201)	Render/RwMatrixInvert.cpp:[('RwMatrixInvertEntry', 300)]
+0x004c4eb0	M	Render/RwMatrixInvert.cpp[EA]:('void __cdecl', 29)	Render/RwMatrixInvert.cpp:[('RwMatrixInvert', 169)]
+0x004c5010	M	Math/RwMatrixScale.cpp[EA]:('', 49)	Math/RwMatrixScale.cpp:[('RwMatrixScale', 95)]
+0x004c51a0	M	Collision/RwpSolverMath2.cpp[EA]:('FUN_004c51a0', 349)	Collision/RwpSolverMath2.cpp:[('FUN_004c51a0', 353)]
+0x004c52f0	M	Collision/RwpSolverMath2.cpp[EA]:('FUN_004c52f0', 357)	Collision/RwpSolverMath2.cpp:[('FUN_004c52f0', 361)]
+0x004c5470	M	-	-
+0x004c5680	M	-	-
+0x004c5770	M	-	-
+0x004c5800	M	Match/MatchS19_004c5800.cpp[A]:('FUN_004c5800', 11)	Match/MatchS19_004c5800.cpp:[('RwTexDictionarySetCurrent', 13)]
+0x004c5820	M	Match/MatchS19_004c5820.cpp[A]:('FUN_004c5820', 11)	Match/MatchS19_004c5820.cpp:[('RwTexDictionaryGetCurrent', 13)]
+0x004c5830	M	Match/MatchS19_004c5830.cpp[A]:('FUN_004c5830', 11)	Match/MatchS19_004c5830.cpp:[('Set4c5830', 13)]
+0x004c5850	M	Match/MatchS19_004c5850.cpp[A]:('FUN_004c5850', 11)	Match/MatchS19_004c5850.cpp:[('Get4c5850', 13)]
+0x004c5860	M	-	-
+0x004c5890	M	Match/MatchS19_004c5890.cpp[A]:('FUN_004c5890', 12)	Match/MatchS19_004c5890.cpp:[('RwTexDictionaryCreate', 18)]
+0x004c5930	M	-	-
+0x004c59c0	M	-	-
+0x004c5ae0	M	Match/MatchS19_004c5ae0.cpp[A]:('FUN_004c5ae0', 15)	Match/MatchS19_004c5ae0.cpp:[('RwTextureSetName', 30)]
+0x004c5b50	M	Match/MatchS19_004c5b50.cpp[A]:('FUN_004c5b50', 15)	Match/MatchS19_004c5b50.cpp:[('RwTextureSetMaskName', 30)]
+0x004c5bc0	M	Match/MatchS19_004c5bc0.cpp[A]:('FUN_004c5bc0', 11)	Match/MatchS19_004c5bc0.cpp:[('Insert4c5bc0', 13)]
+0x004c5c00	M	Match/MatchS19_004c5c00.cpp[A]:('FUN_004c5c00', 11)	Match/MatchS19_004c5c00.cpp:[('Search4c5c00', 13)]
+0x004c5c80	M	Match/MatchS19_004c5c80.cpp[A]:('FUN_004c5c80', 11)	Match/MatchS19_004c5c80.cpp:[('Set4c5c80', 13)]
+0x004c5ca0	M	Match/MatchS19_004c5ca0.cpp[A]:('FUN_004c5ca0', 11)	Match/MatchS19_004c5ca0.cpp:[('Get4c5ca0', 13)]
+0x004c5cb0	M	-	-
+0x004c5dd0	M	-	-
+0x004c6140	M	-	-
+0x004c6580	M	-	-
+0x004c6750	M	-	-
+0x004c6ba0	M	-	-
+0x004c75c0	M	Match/MatchS19_004c75c0.cpp[A]:('FUN_004c75c0', 11)	Match/MatchS19_004c75c0.cpp:[('Get4c75c0', 13)]
+0x004c75e0	M	Match/MatchS19_004c75e0.cpp[A]:('FUN_004c75e0', 11)	Match/MatchS19_004c75e0.cpp:[('ViewportOriginGetter', 13)]
+0x004c7600	M	-	Render/RasterDeviceWrappers.cpp:[('RasterUnlock_Entry', 219)]
+0x004c7620	M	-	-
+0x004c76c0	M	-	-
+0x004c76f0	M	-	Render/RasterDeviceWrappers.cpp:[('RasterCanLock_Entry', 385)]
+0x004c7730	M	-	-
+0x004c7760	M	-	-
