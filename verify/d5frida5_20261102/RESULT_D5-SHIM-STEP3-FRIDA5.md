@@ -5,7 +5,7 @@ Task: the five live `re/frida` spawners that D5-SHIM-STEP3-VERIFYSPAWNERS allowl
 `NEEDS-DEV-ASI` (they got `mashed_re_dev.asi` only from the dinput8 proxy autoload). Migrate two to
 `re/frida/dev_asi.spawn_original`, retire three, drop all five from the allowlist.
 
-**Verdict: static leg GREEN, boots PENDING (display asleep, D3D9-NOTAVAIL since about 09:20; see section 3)**
+**Verdict: GREEN. Static leg GREEN. Boots GREEN in run 6 (2026-11-06, 3 of 3 pass, see section 3)**
 
 ## 1. Changes
 
@@ -74,7 +74,37 @@ between (`diag_boot2.log`: shared original 20.04 s, private root 25.86 s), as di
 catch_crash pair. [UNCERTAIN] whether the display was awake during run 3 itself: no probe-render was
 taken next to it, so run 3 does not count as the evidence boot.
 
-__BOOTS_FINAL__
+Runs 4 and 5 (2026-11-06 00:xx) never booted. They ran under an outer `mashed_lock.py run` that
+held `mashed_machine` while each step waited for a test slot, and that deadlocked the merge train
+(conductor killed them at 00:41). `edecab963` fixed `boots.sh`: each step takes the test slot outside
+and `mashed_lock` inside, and the script is run directly.
+
+**Run 6 (evidence run, 2026-11-06 09:07 to 09:55, `boots.sh` at `edecab963`, `RUN=run6`).** Driver
+`D:/MashedWT/D5-SHIM-STEP3-FRIDA5_data/run6_driver.sh`. Each step held `mashed_machine` alone
+(label `D5-SHIM-STEP3-FRIDA5`), so one game ran at a time. Every step started under the 8 GB cap
+after the 10 min memory wait (about 21 GB committed of a 24 GB budget, SimGolf running too).
+
+| step | tool | result |
+|---|---|---|
+| 1 | `auto_count_at_menu --seconds 12` (hooks ON) | **PASS**. pid 22872, `dev asi loaded at 0x5f610000 installed=True`, idled the full 12 s at the menu with no "process gone" line, exit 0. All four counters read 0 (GetEventFlag `0x0041f1c0`, GetPlayerStateBits, CarSlotInit `0x00492340`, EntityFieldSet). The idle-menu counter files in `log/` (`auto_count_at_menu_main_menu_idle_10s.txt`) read 0 as well, so zero counts at an idle menu are not a regression |
+| 2 | `catch_crash_eip --seconds 15` (hooks ON) | **PASS**. pid 15868, `dev asi loaded at 0x5fa10000 installed=True`, handler armed before resume, `still running at 15s, no crash`, 18 type-`system` first-chance events at `0x7642bae4` ignored. Exit 1 = the tool's "NO CRASH CAPTURED" path (`catch_crash_eip.py:151-152`), the same as run 3 |
+| 3 | `catch_crash_eip --seconds 15 --no-hooks` (control) | **PASS**. pid 24828, no asi, `still running at 15s, no crash`, 18 type-`system` events at `0x7642bae4` ignored, exit 1 (no crash) |
+
+No crash at all, so the U-9677 piz-collision signatures (`+0x1509b4`, `+0xe66db`) did not come up and
+no re-run was needed. Each tool killed only its own pid, and no MASHED.exe or mashed_re.exe from
+this lane was left running. The 18 `system` events per boot (3 in runs 2 and 3, 18 in run 1) show up
+with hooks ON and OFF alike, so the asi does not cause them. The count changes between runs, and
+this lane does not look into why.
+
+The probe-render steps either side of the boots (`run6_probe_pre.log`) printed `RENDER: UNKNOWN`
+(no `mashed_re.log` where `diag.py` reads it). That is a tooling gap, not a display verdict. All three boots stayed
+alive for the whole window (12 s and 15 s). The D3D9-NOTAVAIL boots in runs 2 and 3 died at 2.3 to
+5 s. [UNCERTAIN] whether the display was awake, since there is no CreateDevice line for run 6. The
+survival over the full window is the evidence.
+The post-boot probe was stopped while it queued, because it would have produced the same UNKNOWN.
+
+Tally: run 6 = 3 pass / 0 fail. Across all runs with the display awake, hooks-ON catch_crash_eip
+= 2 of 2 pass (runs 3 and 6).
 
 ## 4. Gates
 
@@ -87,4 +117,16 @@ Not run: no `mashedmod/` file changed (Python harness, allowlist and `verify/` o
 
 Hashes in `D:/MashedWT/D5-SHIM-STEP3-FRIDA5_data/SHA256SUMS.txt`. Files: `run1*.log`, `run1_crash_eip.txt`
 (the 18 `system` events), `run2*.log`, `run3*.log`, `diag_boot.log`, `diag_boot2.log`, `diag3_*.log`,
-`bisect_interceptor.log`, `session_patterns.log`, `exitcode.log`.
+`bisect_interceptor.log`, `session_patterns.log`, `exitcode.log`, `run4*`/`run5*` (deadlocked, no boot),
+`run6_driver.sh`, `run6_driver.log`, `run6_auto_count_at_menu.log`, `run6_catch_crash_eip.log`,
+`run6_catch_crash_eip_nohooks.log`, `run6_probe_pre.log`.
+
+## 6. Expected gate effect on merge
+
+- Static: on `HEAD` and on `git merge-tree --write-tree HEAD orch/integration` (tree `958f6d10e`,
+  merges clean), `spawner_audit.py` exits **0**: `142 spawners, 124 covered, 18 allowlisted, 0 FLAGGED`.
+  `orch/integration` alone today: exit **1**, `144 / 121 / 21 / 2 FLAGGED` (the two `not-an-exe-spawn`
+  false positives this branch allowlists). Merging turns the spawner guard from RED to GREEN.
+- G-CTRL / B hashes: unchanged. No `mashedmod/` file differs from `orch/integration`
+  (`git diff orch/integration...HEAD -- mashedmod` is empty), so `mashed_re.exe` and the asi are
+  byte-identical.
