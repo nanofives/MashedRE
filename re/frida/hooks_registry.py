@@ -374,17 +374,32 @@ HOOKS = {
         'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
 
     # 0x0045ca30 FloatClamp3Level45ca30 (gameplay) - PURE LEAF void f(void): 3-level
-    # quantize of 6-float array @0x88f5e0. x>-2->0.0; x>-4->-1.0; else -2.0. Fixed
-    # constant outputs. Reuses near_leaf_seed_multi_obs: seed 6 floats, observe them.
+    # quantize of the 6x6 float block @0x88f5e0..0x88f670 (36 floats; MATCH-S10 byte-matched body).
+    # x>-2 (0x5cc34c) -> 0.0; else x>-4 (0x5cca00) -> -1.0; else x<=-4 -> -2.0; NaN fails all three
+    # tests and is left as it is. MATCH-FIX-45CA30: observe and seed all 36 (the old vector saw only
+    # the first 6, which is why a 6-float body passed). Every set seeds all 36: the quantize is not
+    # idempotent (-1.0 -> 0.0), so an unseeded tail would read the other side's output.
     'float_clamp3_45ca30': {'rva': 0x0045ca30, 'export': 'FloatClamp3Level45ca30', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
-        'observe_addrs': [0x0088f5e0, 0x0088f5e4, 0x0088f5e8, 0x0088f5ec, 0x0088f5f0, 0x0088f5f4],
+        'observe_addrs': [0x0088f5e0 + 4 * k for k in range(36)],
         'seed_sets': [
-            # 5.0,-3.0,-10.0,0.0,-2.5,-5.0 -> 0,-1,-2,0,-1,-2
-            {'globals': [[0x88f5e0,0x40a00000],[0x88f5e4,0xc0400000],[0x88f5e8,0xc1200000],[0x88f5ec,0x00000000],[0x88f5f0,0xc0200000],[0x88f5f4,0xc0a00000]]},
-            # -1.0,-3.5,-100.0,10.0,-8.0,-2.1 -> 0,-1,-2,0,-2,-1
-            {'globals': [[0x88f5e0,0xbf800000],[0x88f5e4,0xc0600000],[0x88f5e8,0xc2c80000],[0x88f5ec,0x41200000],[0x88f5f0,0xc1000000],[0x88f5f4,0xc0066666]]},
+            # pool: 5,-3,-10,0,-2.5,-5,-1,-3.5,-100,10,-8,-2.1, boundaries -2,-4, ulp neighbours, -0, +-inf
+            {'globals': [[0x88f5e0 + 4 * k, v] for k, v in enumerate(
+                [0x40a00000,0xc0400000,0xc1200000,0x00000000,0xc0200000,0xc0a00000,0xbf800000,0xc0600000,0xc2c80000,
+                 0x41200000,0xc1000000,0xc0066666,0xc0000000,0xc0800000,0xbfffffff,0xc0000001,0xc07fffff,0xc0800001,
+                 0x80000000,0x7f800000,0xff800000,0x40a00000,0xc0400000,0xc1200000,0xbf800000,0xc0600000,0xc2c80000,
+                 0xc0000000,0xc0800000,0x41200000,0xc1000000,0xc0066666,0xc0200000,0xc0a00000,0x00000000,0xc0400000])]},
+            # a second ordering of the pool, so every value lands in another row and column
+            {'globals': [[0x88f5e0 + 4 * k, v] for k, v in enumerate(
+                [0xc0400000,0x00000000,0xc0a00000,0xc0200000,0xc0066666,0xc1000000,0x41200000,0xc0800000,0xc0000000,
+                 0xc2c80000,0xc0600000,0xbf800000,0xc1200000,0xc0400000,0x40a00000,0xff800000,0x7f800000,0x80000000,
+                 0xc0800001,0xc07fffff,0xc0000001,0xbfffffff,0xc0800000,0xc0000000,0xc0066666,0xc1000000,0x41200000,
+                 0xc2c80000,0xc0600000,0xbf800000,0xc0a00000,0xc0200000,0x00000000,0xc1200000,0xc0400000,0x40a00000])]},
+            # NaN (0x7fc00000, 0xffc00000) in every row, mixed with in-band values
+            {'globals': [[0x88f5e0 + 4 * k, v] for k, v in enumerate(
+                [0x7fc00000,0xc0400000,0xffc00000,0xc1200000,0xbf800000,0xc0000000] * 5 +
+                [0xc0800000,0x7fc00000,0x40a00000,0xffc00000,0xc0600000,0xc0800001])]},
         ],
-        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
 
     # 0x0040dcb0 TimerStateMachine40dcb0 (gameplay) - PURE LEAF void f(void): multi-phase
     # countdown SM on globals 0x63b90c(state)/910(t1)/918(t2), rate 700.0, dt 0x7f100c.
