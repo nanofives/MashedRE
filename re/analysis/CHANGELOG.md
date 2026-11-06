@@ -46,6 +46,24 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-06  0x004759b0  Arrays691600Alloc  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00475a60  PendingOpQueueFlush  C4=C4  notes/file only: match evidence added (identical, swapped, no level from the match route per L-68), C4 stays on its earlier route; match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00475ef0  FUN_00475ef0  C2->C2  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00475f30  FUN_00475f30  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x004769a0  ParticleEmitter_SetPosition  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00476a10  FUN_00476a10  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00476a30  ParticleEmitter_SetScalar  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00476b90  Batch476b90  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00476be0  Batch476be0  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00476cb0  Batch476cb0  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00476d00  FUN_00476d00  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x004773f0  FUN_004773f0  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00477450  FUN_00477450  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00477b40  FUN_00477b40  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00477b60  FUN_00477b60  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00477e00  Table69318cSet  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00478cb0  FUN_00478cb0  C3->C3  match identical, swapped (asi only), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
+2026-11-06  0x00478cc0  FUN_00478cc0  C3->C3  match identical, swapped (exe+asi), exe-callers=0 in the default build; C4 when a caller lands (L-68 ruling); evidence: verify/matchs12_20261102/RESULT_MATCH-S12.md
 2026-11-02  D-11075  DEFERRED  rewritten, stays Active  launcher retired by L-79 A (D5-SHIM-STEP3-LAUNCHER); row no longer implies a live launcher
 2026-11-02  S-3714  STUBS  Active->struck  native port, no call_original (0x00546bf0 RwpSolverMath2Quat.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
 2026-11-02  S-3715  STUBS  Active->struck  native port, no call_original (0x00546c50 RwpSolverMath2QuatY.cpp); evidence: verify/harness_20261102/RESULT_RC-STUBS-3714-3716.md
