@@ -1,9 +1,14 @@
 # RESULT D4-DC-INC-0046d4a0-REPLAYORDER
 
-**Verdict: HANDOFF.** The static and build work is done and committed: the order fix, the PREREG (committed alone), the
-flip, the runner and the scorer. No arm has run yet. Every `scripts/diag.py probe-render` returned BLOCKED, D3DERR
-`0x8876086A` (display asleep): at 09:4x, 09:51, 09:56 and 10:01 local, 2026-11-02. That is not a finding. The arms
-below are the only remaining work.
+**Verdict: GREEN (2026-11-06).** Every PREREG gate passes. The replay after `VehiclePhysics_Init` gives
+`rows=3888 exact=3888 entry_bad=0 calls_bad=0` on all four arms, as predicted. G-READS-ON has 60 rows with one base. The
+flipped exe keeps the default gates on the refs: G-CTRL `8284be46/ba407a16/31fe043e`, B `1d5bf4f9` x3. Section 4 has
+the scored table and the raw-file hashes. This closes D4-DC-INC-0046d4a0 and D4-DC-INC-0046d4a0-KNOB. The allowlist key
+`DUP-IN-TARGET:0046d4a0` is gone (`lint_rva_bodies.py` on the tip: `1 finding(s): CROSS-TARGET=1 allowlisted=1 NEW=0`).
+
+History: on 2026-11-02 every `scripts/diag.py probe-render` returned BLOCKED, D3DERR `0x8876086A` (display asleep), so
+the first pass ended as HANDOFF with no arm run. On 2026-11-06 the branch was merged with `orch/integration`
+(`9a991247c`, text only, no `mashedmod/` change), rebuilt, `probe-render` gave `RENDER: OK`, and the arms ran.
 
 Branch `orch/D4-DC-INC-0046d4a0-REPLAYORDER`, worktree `.worktrees/D4-DC-INC-0046d4a0-REPLAYORDER`. It is based on
 `orch/integration` `bf8abf3d0` and carries `orch/D4-DC-INC-0046d4a0-KNOB` `db3b9bb6e` (merge `8e88ae071`), so the merge
@@ -60,3 +65,40 @@ From the worktree, once `py -3.12 scripts/diag.py probe-render` (run from the ma
 
 Predictions (PREREG): the replay arms give `rows=3888 exact=3888 entry_bad=0 calls_bad=0`, arms
 `bump=60 collect=60 no-op=3522 vanish=246`. G-READS-ON gives 60 rows, all `one_ret=1` with one base. G-DEF matches the refs.
+
+## 4. Arms and score (2026-11-06)
+
+The section 3 steps were run as written. Exe for the `FLIP` arms and the default gates: the rebuild of `9a991247c`
+(`MASHED_NO_DEPLOY=1`, log `D:/MashedWT/D4-DC-INC-0046d4a0-REPLAYORDER_data/build3.log`), staged as `exe_flip/`.
+`mashed_re.exe` `6bed629e4f157d7578977d9dac83a091f7faee65be2a14120e098699f9428de4`, `.asi`
+`2a9d278395d555f73fe25e3b208a9abb1c4afc10aee59f279375f6131efb9045`. The `cd148e9ec` build moved to `exe_flip_cd148e9ec/`.
+The `FIX` arms used `exe_fix/` from section 2 (`724c00f6`). Runs were wrapped in the test slot (outside) and
+`mashed_lock.py run` (inside). Replay arms ran 01:54 local, default gates 01:54 to 02:32 local.
+
+`py -3.12 verify/d4dc_0046d4a0_replayorder_20261102/score.py` (also in `SCORE.md`):
+
+| Gate | Arm | Result | Detail |
+|---|---|---|---|
+| G-RP-OFF | `RP_FIX_OFF` | PASS | G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0, arms bump=60 collect=60 no-op=3522 vanish=246, MISMATCH lines 0 |
+| G-RP-ON | `RP_FIX_ON` | PASS | same |
+| G-RP-FLIP | `RP_FLIP` | PASS | same |
+| G-RP-FLIP53 (diag) | `RP_FLIP53` | PASS | same, pc=53 |
+| G-READS-ON (OFF arm) | `RP_FIX_OFF` | PASS | rows=60 one_ret!=1_or_ptr0=0 distinct(one_ptr-idx*0xd04)=1 00d26940 |
+| G-READS-ON (ON arm) | `RP_FIX_ON` | PASS | rows=60 one_ret!=1_or_ptr0=0 distinct(one_ptr-idx*0xd04)=1 00d26940 |
+| G-DEF | `H_DEF + B_DEF_K0/K1/K26` | PASS | G-CTRL 8284be46/ba407a16/31fe043e (ref same), B 1d5bf4f9 x3 (ref same) |
+
+Committed extracts: `extracts/` (`*.replay.txt`, `*.pk46.tsv`, `RUNLOG_replay.txt`, `RUNLOG.txt`, 32 KB).
+
+Raw files (not committed), `D:/MashedWT/D4-DC-INC-0046d4a0-REPLAYORDER_data/arms/`:
+
+| file | sha256 |
+|---|---|
+| `H_DEF.step.csv` | `8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198` |
+| `H_DEF.gates.csv` | `ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb` |
+| `H_DEF.ptrace.log` | `31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3` |
+| `B_DEF_K0.step.csv` | `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457` |
+| `B_DEF_K1.step.csv` | `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457` |
+| `B_DEF_K26.step.csv` | `1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457` |
+
+Trackers: no confidence change (`0x0046d4a0` stays C3). The optional re-classify note from section 3 step 5 is left to
+the lead.
