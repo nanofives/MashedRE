@@ -35,18 +35,15 @@ extern "C" float _DAT_005cd2c0;      // 0x005cd2c0 2*pi     (0x40c90fdb) longitu
 extern "C" float DAT_005d757c;       // 0x005d757c 0.0      latitude start / mesh threshold
 extern "C" float _DAT_005cd0ec;      // 0x005cd0ec 0.005    (0x3ba3d70a) type-4 radius floor
 
-// 0x004826d0  RwpConvexHull.c — create one collision body: cone-cast hull + mesh, activate.
-//   int FUN_004826d0(int param_1 /*scene*/, int param_2 /*linkFlag*/)
-int PhysicsCollisionBodyCreate(int scene, int linkFlag)
-{
-    int iVar3 = (linkFlag == 0) ? 0 : scene;                    // 0x004826d0
-    void* hull = ConeCastHullBuild(scene, 1.0f, (void*)iVar3);  // FUN_00481e00(scene,1.0f,iVar3)
-    // mesh flag: DAT_005d757c(0.0) < *(float*)(scene+0x4c)
-    int meshFlag = (DAT_005d757c < *(float*)(scene + 0x4c)) ? 1 : 0;
-    void* mesh = FUN_00482140(hull, meshFlag);                  // FUN_00482140 (RpAtomic collision mesh)
-    FUN_00563810(hull);                                         // FUN_00563810 activate body
-    return (int)mesh;                                           // stored into DAT_006c9a78[i]
-}
+// MATCH-S13: the body of 0x004826d0 (PhysicsCollisionBodyCreate) moved to Match/MatchS13_004826d0.cpp,
+// which compiles the byte-matched source re/match/s13/004826d0.c. The C++ entry below only forwards to it
+// (PhysicsWorldBuild.cpp calls it through CollisionBuildDeps.h).
+}  // namespace Collision
+}  // namespace mashed_re
+extern "C" int __cdecl PhysicsCollisionBodyCreate(int scene, int linkFlag);
+namespace mashed_re {
+namespace Collision {
+int PhysicsCollisionBodyCreate(int scene, int linkFlag) { return ::PhysicsCollisionBodyCreate(scene, linkFlag); }
 
 // 0x00481e00  RwpConvexHull.c — build a convex hull by cone-sampling the shape's
 // GJK support map in ~120 directions, then handing the point cloud to qhull.

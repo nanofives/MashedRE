@@ -1,0 +1,26 @@
+MATCH-S13 swap helper w1 report (2026-11-02)
+0x0047bc90  SWAPPED  symbol=Match47bc90 (installed entry Match47bc90_RegAbi, ESI/EDX adapter kept in wrapper, preserves EDX)  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:1801-1851 (Match47bc90 + Match47bc90_RegAbi + install, by hand)  binds=none  note=same predicate on +0x10/+0x14; FUN_0047bc90 -> MATCH_STATIC in 0047bf70.c; exe callers: none; wrapper Match/MatchS13_0047bf70.cpp (one wrapper for the whole file)
+0x0047bcc0  SWAPPED  symbol=TriEdgePairsBuildBody (installed entry TriEdgePairsBuild, EAX adapter kept in wrapper)  targets=asi  install=1  x87=no
+ removed=Track/PromoLoop_standins_r2.cpp:30-120 (body + naked entry + install; TU now header comment only)  binds=FUN_0047bc90=Match47bc90 (same TU)  note=same 72n temp, record fill, pair loop, count, copy, free via *(0x007d3ff8)+0x108/+0x10c; MATCH_STATIC; match.py 98.7% insn only from Ghidra size, --bytes 434 B BYTE-IDENTICAL; exe callers: none
+0x0047be80  HELD  symbol=-  targets=-  install=0  x87=yes(held copy only, not compiled)
+ removed=-  binds=FUN_0047be80=MatchS13_0047bf70_Call0047be80 (naked raw forwarder: ECX=out EDX=tris EBX=verts, stack count, saves EBX)  note=no port body anywhere; // HELD line + #ifndef MATCH_PORT around TriIdx and the body, prototype under #else
+0x0047bf70  SWAPPED(new body)  symbol=FUN_0047bf70  targets=asi  install=0  x87=no
+ removed=- (no old body)  binds=FUN_0047bcc0=TriEdgePairsBuildBody FUN_0047be80/004c0ed0/004c3d90/004b53b0=MatchS13_0047bf70_Call<va8> raw-address forwarders (no port bodies)  note=no port callers, not installed; match.py 100% BYTE-IDENTICAL, relocheck OK after MATCH_STATIC/HELD edits
+0x0047c0b0  SWAPPED  symbol=ClearColl47c0b0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:450-458  binds=none  note=same 4 regions + 0x006c2fec; exe callers: none (Match/MatchS06_00426e10.cpp binds FUN_0047c0b0 to it, asi-only)
+0x0047cdc0  SWAPPED  symbol=StoreDistSq47cdc0  targets=asi  install=1  x87=yes
+ removed=Util/PromoLoop_sessionB.cpp:262-268  binds=none  note=f*f to 0x006c6870+i*4; exe callers: none
+0x0047ce40  SWAPPED  symbol=Search47ce40  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:468-475  binds=none  note=same 200-entry search of 0x006c6b90; exe callers: none
+0x0047d100  NOT-SAFE  symbol=BoundedThunk47d100  targets=asi  install=1  x87=no
+ removed=-  binds=-  note=matched source declares FUN_004b5240(int) with ONE arg and relies on the DDK tail jmp reusing the caller's frame to pass the caller's 2nd arg (flag) through; 0x004b5240 (port body Or4b5240) takes (p, flag). A VS2022 C++ compile is not guaranteed to emit that tail jmp, so the callee's flag would be stack garbage. Old naked body left in place.
+0x00482730  SWAPPED  symbol=Init482730  targets=asi  install=1  x87=yes
+ removed=Util/PromoLoop_sessionB.cpp:2021-2038  binds=none  note=same stores (+4 color, +0xc/+0x10 1.0f, +0x14 0.5f); matched returns param_1 in EAX like the original (old body was void); exe callers: none
+0x00482860  SWAPPED  symbol=Pool482860  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:2472-2533 (naked)  binds=none  note=same zero-fill (N+2)*0x24 + ring build + 0x168/0x170/0x194=0, 0x198=1; exe callers: none
+0x00483ca0  SWAPPED  symbol=FindNodeStructCopy483ca0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_sessionB.cpp:3599-3652 (naked)  binds=none  note=same chunk walk (id/0x10b or 0/0), 0x67-dword copy, p1[0x5b]*0x24 bytes to +0x19c, return 1; exe callers: none
+New TUs (asi rsp): Match/MatchS13_0047bf70.cpp 0047c0b0 0047cdc0 0047ce40 00482730 00482860 00483ca0 (all wrapcheck OK; old TUs wrapcheck OK). x87 TUs: MatchS13_0047cdc0.cpp, MatchS13_00482730.cpp.
+Stale dual_copy_allowlist entries: none (no entry for these RVAs). Track/PromoLoop_standins_r2.cpp now holds no code (lead may drop it from asi_sources.rsp).
+Line numbers for sessionB removals are as excise reported them (sequential removals, bottom-up).
