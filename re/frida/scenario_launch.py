@@ -520,10 +520,15 @@ function armOracle(){
         OR.lastOrder = exOrder;
       } catch(e){ OR.err = 'ord.leave '+e; } }
     });
+    // MATCH-T13-SEED (read-only): entry course id DAT_00644158 (FUN_00426c00) and DAT_0089a360 (FUN_004173a0,
+    // raw u32); exit raw timer bits, DAT_005ea0ac and the 0x90 bytes at 0x00636b80 (checkpoint table).
     Interceptor.attach(ga(0x004046a0), {
+      onEnter(){ try { this.course = ga(0x00644158).readS32(); this.d360 = ga(0x0089a360).readU32(); } catch(e){ OR.err = 'seed10.enter '+e; } },
       onLeave(){ try { if (OR.seed10.length < 40) OR.seed10.push({atSeg: OR.seg.calls,
         segRet1: OR.seg.ret1, rule: ga(0x007f0fd0).readS32(), timer: ga(0x007f0fe4).readFloat(),
-        state: ga(0x0063ba8c).readS32()}); } catch(e){ OR.err = 'seed10 '+e; } }
+        state: ga(0x0063ba8c).readS32(), course: this.course, d360raw: this.d360,
+        timerRaw: ga(0x007f0fe4).readU32(), ea0acRaw: ga(0x005ea0ac).readU32(),
+        tbl: Array.from(new Uint8Array(ga(0x00636b80).readByteArray(0x90))).map(function(b){ return ('0' + b.toString(16)).slice(-2); }).join('')}); } catch(e){ OR.err = 'seed10 '+e; } }
     });
     OR.armed = true;
     return 'oracle armed (0x00410d10 + 0x00410510 + 0x004177b0 + seed 0x004046a0)';
@@ -5332,6 +5337,20 @@ def main():
             } };""")
             pl.on("message", lambda m, d: None); pl.load()
             print("  [preload]", pl.exports_sync.run()); pl.unload()
+        if os.environ.get("T13SEED_INIT_DIFF_TABLE"):
+            # MATCH-T13-SEED (CONTRIVED, PREREG amendment 1): the warp skips the championship launch FUN_0043dfd0,
+            # which calls FUN_00414120 at 0x0043fead (DAT_0089a384[0..38] = 0x005f2a70[], DAT_0089a37c = 0). Run it once
+            # here so FUN_00414060's default branch (0x00414066) reads the table it reads in a championship.
+            it = sess.create_script("""
+            const D = (Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0]).base.toUInt32() - 0x00400000;
+            rpc.exports = { run: function () {
+              new NativeFunction(ptr(0x00414120 + D), 'void', [], 'mscdecl')();
+              const t = []; for (let i = 0; i < 39; i++) t.push(ptr(0x0089a384 + D + i * 4).readS32());
+              return { tbl: t.join(','), a37c: ptr(0x0089a37c + D).readFloat(), f17c: ptr(0x0067f17c + D).readS32(),
+                       mode: ptr(0x0067e9fc + D).readS32() };
+            } };""")
+            it.on("message", lambda m, d: None); it.load()
+            print("  [init-diff-table]", it.exports_sync.run()); it.unload()
         if args.statediff_out:
             # Arm BEFORE the phase poke so frame 0 = the very first phase-3 tick.
             print("  [statediff]", E.sd_arm(args.statediff_car, args.statediff_aictrl))

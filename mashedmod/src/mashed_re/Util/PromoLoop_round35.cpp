@@ -22,11 +22,8 @@ extern "C" __declspec(dllexport) float __cdecl Float5ea0a8Get(void) {
 }
 RH_ScopedInstall(Float5ea0a8Get, 0x004039e0);
 
-// 0x004173a0  D9 05 60 A3 89 00 C3  (fld dword [0x0089a360]; ret)
-extern "C" __declspec(dllexport) float __cdecl Float89a360Get(void) {
-    return *reinterpret_cast<const float*>(0x0089a360u);  // cited at 0x004173a0
-}
-RH_ScopedInstall(Float89a360Get, 0x004173a0);
+// 0x004173a0 Float89a360Get moved to Match/MatchS03_004173a0.cpp (MATCH-T13-SEED: the byte-matched source is
+// its one body in both targets, with this file's install).
 
 // MATCH-S11: the body of 0x0046dd80 (Float61313cGet) moved to Match/MatchS11_0046dd80.cpp,
 // which compiles the byte-matched source re/match/s11/0046dd80.c.
