@@ -2783,40 +2783,8 @@ RH_ScopedInstall(Ghost41a9b0, 0x0041a9b0);
 
 // FUN_00408590 Dot408590: MOVED 2026-11-01 (D4-DC-INC-ai) to Race/PathProgDot.cpp, one body for both targets.
 
-// 0x00413fa0  FUN_00413fa0 (hud, NEAR-LEAF: combine two pure global getters)
-// int f(void): a=FUN_00430790()(=*0x67f17c); s=a*3; b=FUN_0042f6a0()(=*0x67e9fc);
-//   return s + (b==4 ? 1 : b==5 ? 2 : 0). Both callees C3 pure global getters. Verbatim
-//   naked port; `call rel32`->`mov eax,abs;call eax`.
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Calc413fa0(void)
-{
-    __asm {
-        push esi
-        mov  eax, 0430790h
-        call eax
-        lea  esi, [eax+eax*2]
-        mov  eax, 042F6A0h
-        call eax
-        xor  ecx, ecx
-        cmp  eax, 4
-        jne  L_C4_1
-        mov  eax, 1
-        add  eax, esi
-        pop  esi
-        ret
-    L_C4_1:
-        cmp  eax, 5
-        jne  L_C4_2
-        mov  eax, 2
-        add  eax, esi
-        pop  esi
-        ret
-    L_C4_2:
-        lea  eax, [ecx+esi]
-        pop  esi
-        ret
-    }
-}
-RH_ScopedInstall(Calc413fa0, 0x00413fa0);
+// FUN_00413fa0 Calc413fa0: MOVED 2026-11-02 (MATCH-T13-SEED-WRITER) to Match/MatchS03_00413fa0.cpp, the
+// byte-matched re/match/s03/h2_00413fa0.c, one body for both targets.
 
 // [SKIPPED 2026-06-15] FUN_0049a730 (0x0049a730) is a clean near-leaf (!FUN_00426c00()) but
 // has NO static caller (no direct call, no address-as-data ref) -> cannot satisfy the
