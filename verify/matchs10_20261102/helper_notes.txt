@@ -1,0 +1,126 @@
+0x0045ba10  140  100.0  100.0  cxx:ok  -  slot record in ESI: static callee held in 0045bae0.c, identity-matrix stores written in the original's store order
+0x0045baa0  32  100.0  100.0  cxx:pending  -  type id in ESI: static callee held in 0045bfa0.c, guarded do-while pointer walk
+0x0045bac0  28  100.0  100.0  cxx:ok  -  slot record in ESI: static callee held in 0045bae0.c
+0x0045bae0  175  96.1  96.1  cxx:ok  -  whole obj symbol byte-identical (181 B; Ghidra size stops before add esp,4 + tail jmp)
+0x0045bf30  95  90.3  90.3  cxx:ok  -  whole obj symbol byte-identical (98 B; Ghidra size stops before pop/pop/ret), (int) pointer compare for jl
+0x0045bfa0  35  100.0  100.0  cxx:pending  -  holds static 0x0045baa0
+0x0045bfd0  5  100.0  100.0  cxx:pending  -  tail call to 0x00426060
+0x0045bff0  26  100.0  100.0  cxx:pending  -  slot array index, ==0
+0x0045c010  25  100.0  100.0  cxx:pending  -  tail call 0x0045bfa0 with &slot[i]
+0x0045c030  211  98.6  98.6  cxx:pending  a  one discarded-x87-result fstp st(0) scheduled before the next lea in the original; permuter 185 variants + 4 manual (return type, arg order, locals order, cast) no move
+0x0045c330  19  100.0  100.0  cxx:pending  -  call 0x0045bff0, ==0
+0x0045c350  303  100.0  100.0  cxx:pending  -  switch on 0x00426c00 (case 2 / 0x21), RGBA packed compare, identity matrix ones first
+0x0045c480  83  55.0  70.0  cxx:pending  b  original zeroes 4 globals (0x0088f0a0..ac) from a second zero register (ecx) and keeps all scalar stores before the rep stosd; ours sinks them after it. Tried int/float/ptr/uint/double/volatile/static type splits, memset vs loop, permuter 224 variants
+0x0045c4e0  36  100.0  100.0  cxx:pending  -  for-loop search over 0x28-byte records
+0x0045c510  54  100.0  100.0  cxx:pending  -  for-loop over 4 slot pointers, && chain
+0x0045c110  537  100.0  100.0  cxx:pending  -  if (two colours) return 1, then switch on the packed RGBA word; tail calls to 0x00472550
+0x0045c550  232  37.3  74.7  cxx:pending  b  chain loop: original reloads table[id].next at loop top and tests a second load at the bottom (edi), ours carries the bottom load into the next iteration (one fewer load, registers shift); tried do/while/for/inline-helper/cast forms, permuter 269 variants (its best 53.3% reorders ids[n]=id, wrong semantics, rejected)
+0x0045bba0  738  100.0  100.0  cxx:pending  -  in 0045bae0.c (needs static 0x0045bac0): state==0 branch first, if(mode==0){b4 edge}else f08(s,mode), mode=0 first in the loop body; Ghidra size 856 runs into the tail-called 0x00453f60, real body 738 B byte-identical
+0x0045ba10  140  100.0  100.0  cxx:ok  -  slot in ESI, static callee in 0045bae0.c, identity stores in original order
+0x0045baa0  32  100.0  100.0  cxx:ok  -  type id in ESI, static callee in 0045bfa0.c, guarded do-while pointer walk
+0x0045bac0  28  100.0  100.0  cxx:ok  -  slot in ESI, static callee in 0045bae0.c
+0x0045bae0  175  96.1  96.1  cxx:ok  -  whole symbol byte-identical (181 B), Ghidra size stops before add esp + tail jmp
+0x0045bf30  95  90.3  90.3  cxx:ok  -  whole symbol byte-identical (98 B), Ghidra size stops before pop/pop/ret, held in 0045bae0.c
+0x0045bfa0  35  100.0  100.0  cxx:ok  -  calls static 0x0045baa0
+0x0045bfd0  5  100.0  100.0  cxx:ok  -  tail jump to 0x00426060
+0x0045bff0  26  100.0  100.0  cxx:ok  -  slot[i].type == 0
+0x0045c010  25  100.0  100.0  cxx:ok  -  tail call 0x0045bfa0(&slot[i], type)
+0x0045c030  211  98.6  98.6  cxx:ok  a  one discarded x87 result popped before the next lea in the original, after it in ours; permuter 185 + 4 manual forms
+0x0045c330  19  100.0  100.0  cxx:ok  -  0x0045bff0(slot) == 0
+0x0045c350  303  100.0  100.0  cxx:ok  -  switch on 0x00426c00, packed RGBA compare, local identity matrix ones first
+0x0045c480  83  55.0  70.0  cxx:ok  b  original uses a second zero register for 0x0088f0a0..ac and keeps the stores before rep stosd, ours sinks them; type splits, static, memset/loop, permuter 224
+0x0045c4e0  36  100.0  100.0  cxx:ok  -  for-loop search, 0x28-byte records
+0x0045c510  54  100.0  100.0  cxx:ok  -  for-loop over 4 slot pointers, && chain
+0x0045c550  232  37.3  74.7  cxx:ok  b  chain loop: original reloads table[id].next at the top and tests a separate load at the bottom, ours carries one load, registers shift; 7 loop forms, permuter 269
+0x0045c110  537  100.0  100.0  cxx:ok  -  two-colour early return, then switch on packed RGBA with tail calls to 0x00472550
+0x0045bba0  738  100.0  100.0  cxx:ok  -  held in 0045bae0.c (uses static 0x0045bac0); state==0 branch first, if(mode==0) else f08, mode=0 first; Ghidra size 856 runs into tail-called 0x00453f60
+0x0045bae0 holds 0x0045ba10 0x0045bac0 0x0045bf30 0x0045bba0
+0x0045bfa0 holds 0x0045baa0
+0x0045c640  97  100.0  100.0  cxx:ok  -  switch(param_1) with cases 1,2,3,default
+0x0045c6b0  108  100.0  100.0  cxx:ok  -  callee 0x0045c640 non-static in the same TU keeps EDX live
+0x0045c6b0 holds 0x0045c640
+0x0045ca30  109  100.0  100.0  cxx:ok  -  byte-identical whole symbol (Ghidra size ends before outer loop tail)
+0x0045c880  372  100.0  100.0  cxx:ok  -  per-case assigns in a,b,d,c order; d-term duplicated in both arms of param_3 != -1
+0x0045cab0  62  100.0  100.0  cxx:ok  -  int return instead of bool, real callee arity
+0x0045caf0  48  100.0  100.0  cxx:ok  -  two separate early returns
+0x0045cb20  191  100.0  100.0  cxx:ok  -  callee bodies 0x0045c4e0/0x0045c510/0x0045c550 in the TU let DAT_0088fbc8 be CSE'd across the calls
+0x0045cb20 holds 0x0045c4e0, 0x0045c510 (and a semantic 0x0045c550 body, no MATCH line)
+0x0045cbe0  102  100.0  100.0  cxx:ok  -  byte-identical whole symbol, callee 0x0045c4e0 in the TU, guard + do-while
+0x0045cbe0 holds 0x0045c4e0
+0x0045cc80  169  100.0  100.0  cxx:ok  -  switch with two identical case bodies (sub/dec chain)
+0x0045cfe0  147  100.0  100.0  cxx:ok  -  float literal 0.0166f for the 0x005ce650 increment, 3-arg call to 0x0045cbe0
+0x0045d080  85  100.0  100.0  cxx:ok  -  typed record list, i <= count loop, 3-arg call
+0x0045d1e0  106  100.0  100.0  cxx:ok  -  natural && chain, typed record pointer array
+0x0045d0e0  247  100.0  100.0  cxx:ok  -  plain counter ++ (address CSE in EDI), if/else with the long arm first, byte-flag arm falls to shared return 0
+0x0045d250  220  100.0  100.0  cxx:ok  -  a != -1 arm first, three independent fbc0 != mode tests
+0x0045cd30  563  62.8  78.1  cxx:ok  b  p=&DAT_0088f680[i] not kept in EDX through the slot loop, loop IV set/frame size differ (permuter 512 compiles)
+0x0045cd30 holds 0x0045c820
+0x0045d330  60  100  100  cxx:ok  -  whole obj byte-identical; per-insn 89.7% is Ghidra size stopping before duplicated tail
+0x0045da90  94  100  100  cxx:ok  -  four locals are one 16-byte struct passed by address
+0x0045daf0  95  100  100  cxx:ok  -  12-byte vector copy is one struct assignment
+0x0045db50  122  100  100  cxx:ok  -  natural switch, case 2 store+return tail-merged; float literals
+0x0045dbe0  146  100  100  cxx:ok  -  3-case switch + clamp; compiler threads case 2 past the clamp
+0x0045dce0  101  100  100  cxx:ok  -  vector copy from param_2 is one struct assignment
+0x0045dd60  272  78.7  78.7  cxx:ok  b  one x87 operand order (gain loaded first, fmulp); shift moves later jump targets
+0x0045de80  236  52.9  69.0  cxx:ok  b  memset fill = address of "" 0x005cc4de (9176 folds it to mov cl,imm8); shared zero in ebp / spill register allocation
+0x0045df70  71  100  100  cxx:ok  -  two compares with 0.025f step
+0x0045dfc0  46  100  100  cxx:ok  -  float callee arg 1.0f, not int 0x3f800000
+0x0045dff0  68  100  100  cxx:ok  -  not thiscall; FUN_00408ad0 is 1-arg cdecl returning float
+0x0045e040  176  100  100  cxx:ok  -  release loop: signed first-entry test, inner != test, tail-merged calls
+0x0045e0f0  112  100  100  cxx:ok  -  clamp on the float param (<0 first), float callee arg
+0x0045d7a0  702  52.6  68.4  cxx:ok  b  flags updates are memory RMW per helper in the original (9176 carries them), cross-product addressing, DAT_0068f620 reg reuse
+0x0045d460  822  94.2  97.7  cxx:ok  b  only the voice-count sum loop differs (accumulator edx stored as the initial 0, register assignment)
+0x0045e160  308  100.0  100.0  cxx:ok  -  local float[11][3] stored element by element; relocheck OK unchecked=0
+0x0045e2a0  440  100.0  100.0  cxx:ok  -  local float[15][3] stored element by element; relocheck OK unchecked=0
+0x0045f5f0  1185  100.0  100.0  cxx:ok  -  pilot 0x0045e990 shape (slot/sound-record structs, macros); step/limit/22050 as literal floats fix fld/fadd operand order; relocheck OK unchecked=0
+0x0045faa0  1193  100.0  100.0  cxx:ok  -  same Obj/slot/record macros as 0x0045f5f0; local V3 from FUN_004417e0, V3* from FUN_0044b000, two channel loops; relocheck OK unchecked=0
+0x0045e460  1313  100.0  100.0  cxx:ok  -  same Obj/slot/record macros; local float clamp, FUN_00472650 random freq; relocheck OK unchecked=0
+0x0045efe0  1540  89.8  98.3  cxx:ok  a  x87 CSE of 22050-sin*500 kept in st(0) in the original, spilled (or reloaded) by 9176; one spot cascades regs/offsets
+0x0045e990  1610  99.5  99.5  cxx:ok  a  pilot body in S10 form, literals fixed 1 of 2 pilot spots; left: 2 integer ops scheduled into the fsub->fstp window
+0x00460270  220  100.0  100.0  cxx:ok  -  vec3 local [1], float literals for .rdata consts
+0x0045ff50  786  100.0  100.0  cxx:ok  -  channel struct + Vec3 struct copy, float literals
+0x00461e90  1250  95.8  95.8  cxx:ok  b  nested switch; 0x24 needs a hidden default-equal case; 0x21/0x1a 968080 tail-merge target differs
+0x00461650  2095  100(bytes)  98.8  cxx:ok  -  byte-identical whole symbol (Ghidra size short); DAT_0068f4c4 file-static
+0x00460df0  2135  100.0  100.0  cxx:ok  -  channel struct + Vec3 struct copy, float literals
+0x00460350  2716  100.0  100.0  cxx:ok  -  channel struct + Vec3 struct copy; fade factors as .rdata globals, 0.2 factor literal
+0x004623e0  213  100.0  100.0  cxx:ok  -  read table entry at every use, tail as one clamp if/else-if (call tail-duplicated), fmul operand order fixed for relocheck
+0x00462520  92  100.0  100.0  cxx:ok  -  case 0 written as its own first case returning the default value keeps the 13-entry table
+0x004625b0  386  100.0  100.0  cxx:ok  -  whole symbol byte-identical (420 B, Ghidra size short); strcat intrinsics on [6][0x80] tables, case order 0,1,4,2,3
+0x00462760  79  100.0  100.0  cxx:ok  -  int[4] table with int index (pointer loop gave jb)
+0x004627b0  34  100.0  100.0  cxx:ok  -  whole symbol byte-identical; cases 1,5,6 as own return-0 group + separate default keeps the 2-target byte table
+0x004627f0  351  96.8  96.8  cxx:ok  b  first two |= on +0x70 fold into one or 0x50 (bitfields/volatile/inline setters/permuter tried); arities 5aa060=3, 5a9e40=(h,&caps)
+0x00463150  147  100.0  100.0  cxx:ok  -  472650 = cdecl float(float,float), typed globals, table read at every use
+0x004633d0  442  100.0  100.0  cxx:ok  -  .rdata floats are literals, 4a2c48=__ftol (unchecked=1), pitch from (1-p) before t=1-p
+0x004631f0  476  100.0  100.0  cxx:ok  -  float-returning callees, table read at every use, float literal stores
+0x00462f50  482  100.0  100.0  cxx:ok  -  whole symbol byte-identical; switch sets two flags + state, play blocks after it (compiler threads the jumps)
+0x00462950  1122  88.8  94.7  cxx:ok  b  eax/ecx flip around DAT_0088e670 (count-down sum loop setup); static fc80/fc84, int-cast 5a6dc0 sites, volatile bank float
+0x00463590  161  100.0  100.0  cxx:ok  -  file-static DAT_006904e0 lets the flag load pass the counter store; <=1 for cmp 1/jg
+0x004644a0  278  100.0  100.0  cxx:ok  -  last test reads DAT_006036d4[p] directly (no jump threading); >=2 / <=0 compare forms
+0x004645c0  171  100.0  100.0  cxx:ok  -  natural rewrite with record-array struct
+0x00464670  369  100.0  100.0  cxx:ok  -  int param_2 (slot reused for a float), hoisted record base, literal float constants, if/else scale stores
+0x004642f0  422  100.0  100.0  cxx:ok  -  out-arg locals in an inner block so the spilled result reuses their slot; 0/1/2 switch; literal floats
+0x00463c80  695  100.0  100.0  cxx:ok  -  sin() in both branches (tail-merged), 1.57f*(v*c) to stop constant folding; literal floats
+0x00463f40  938  100.0  100.0  cxx:ok  -  byte-identical whole symbol (--bytes; Ghidra size 932 stops before the epilogue, scored 98.4%); signed colour switch, if/else calls instead of ternary arg
+0x00463640  1521  94.3  94.9  cxx:ok  b  case-6 block kept apart from 2/8/9 only by swapping its two stores (every same-order form merges); state/gear register choice at 0x00463a1f
+0x004647f0  186  83.3  83.3  cxx:ok  b  channel loop: original loads the record field before the global and leaves the loop unaligned, ours the reverse
+0x004648b0  346  100.0  100.0  cxx:ok  -  float 4th arg / float table value keeps case bodies apart; relocheck OK (unchecked __ftol)
+0x00464ca0  357  92.7  92.7  cxx:ok  b  sin expression CSE kept on x87 stack across the handle test in the original, recomputed in ours
+0x004656e0  206  100.0  100.0  cxx:ok  -  two separate early return-0 statements; local {ptr,count,entry} descriptor; relocheck OK
+0x004657b0  374  100.0  100.0  cxx:ok  -  record char read before state test; final volume store as if/else; relocheck OK
+0x00465940  221  100.0  100.0  cxx:ok  -  whole symbol byte-identical (Ghidra size stops before loop jg/epilogue, insn score 92.9%); cdecl 1 arg, not thiscall; relocheck OK
+0x00465a30  221  100.0  100.0  cxx:ok  -  whole symbol byte-identical (Ghidra size short, insn score 92.9%); twin of 0x00465940; relocheck OK
+0x00465b20  233  100.0  100.0  cxx:ok  -  cdecl (V3 *pos, int k), twin of 0x00465940; relocheck OK
+0x00464a50  584  98.3  98.3  cxx:ok  b  fstp of the length result scheduled before the deferred arg pop in the original
+0x004652b0  742  100.0  100.0  cxx:ok  -  literal additive constants, global product constants (cl swaps one product), nested-if branch layout; relocheck OK
+0x00464e10  1183  100.0  100.0  cxx:ok  -  literal additive constants, float random callee + __ftol, store order of the zero init; relocheck OK (unchecked __ftol)
+0x00465c10  133  100.0  100.0  cxx:ok  -  raw 97.4: float callee arg written 1.0f; relocheck OK
+0x00465ca0  252  100.0  100.0  cxx:ok  -  12-byte struct copy for the vec3 stores, early-return guard, float args; relocheck OK
+0x00465e80  189  100.0  100.0  cxx:ok  -  vec3 struct copy, float args, slot index in a fresh local; relocheck OK
+0x00465f40  191  100.0  100.0  cxx:ok  -  vec3 struct copy, fresh index local, float clamp if/else-if then one call; relocheck OK
+0x00466000  250  100.0  100.0  cxx:ok  -  early returns, index stored back into param_1, vec3 struct copy, float clamp, param_5 float; relocheck OK
+0x00466100  149  100.0  100.0  cxx:ok  -  early returns, fresh index local, float clamp then one call; relocheck OK
+0x004661a0  74  100.0  100.0  cxx:ok  -  fresh index local, float 0.0f arg; relocheck OK
+0x004669b0  160  84.4  90.6  cxx:ok  b  zero stores are inlined memsets; residual: one shared zero register and eax=1 for DAT_006904e8 not reproduced (permuter order)
+0x00466a50  242  100.0  100.0  cxx:ok  -  byte-identical whole symbol (tail jmp past Ghidra size, 98.7% by count); unsigned for loops; relocheck OK
+0x00466b50  1077  100.0  100.0  cxx:ok  -  byte-identical; case order 0,1,2,3/7,5,4,6, inlined memset for 0x006904a4[4], nested switches, folded empty callee 0x0045b350 called via two declarations; relocheck OK
+0x004661f0  1977  100.0  100.0  cxx:ok  -  byte-identical; cdecl callees (not fastcall), vec3 structs, 22050 bits as int, (in.y + 1.0f) literal, file-static DAT_0069058c; relocheck OK

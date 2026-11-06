@@ -274,6 +274,18 @@ private:
     std::vector<int> texanim_models_;
     int   texanim_mult_ = 1;
 
+    // [D4-WIP-CAMMANYAW U-9699] The camera-men are entries 1..N of the camera-entry array DAT_008964c0
+    // (stride 0xd8). FUN_004464c0 steps the type-1 entries (CALL 0x00441d40 at 0x004464f0) on the frames
+    // FUN_00446520 runs (0x004468f9, the sub-state frames, SubStateCameraChain here), and the track's
+    // per-frame helper (0x00448dc0 and 11 more) re-poses each CamMan frame from FUN_00442420(i) (entry
+    // +0xb0, yaw) and FUN_00442410(i) (entry +0x3c, position). MASHED_CAMMANYAW=1 (default OFF) makes the
+    // exe's CameraEntryDispatchAll call the type-1 step and UpdateCamMen re-pose the instances from the
+    // array each Render. Knob OFF: the camera-men keep the rprops table pose.
+    std::size_t camman_prop_ = 0;                 // index into props_
+    int         camman_n_ = 0;                    // entries 1..N
+    bool        camman_on_ = false;
+    void UpdateCamMen();
+
     // ---- F2 .ANM animated copters (COURSE.LUA General_Anim_Filename + SetCopter;
     // KTCSCRIPT.LUA KTC_NewCopter). The flight paths are the track's .ANM
     // (Track::HAnim, rwID_HANIMANIMATION); the models are COPTER/JETRANGER/

@@ -5,15 +5,22 @@
 # Requires:
 #   - All 5 disk patches applied (so MASHED boots to main menu without dialogs).
 #   - original/videocfg.bin pinned to a windowed mode.
-#   - pycaw + comtypes (per-app mute via Windows Core Audio API).
+#   - optional: pycaw + comtypes (per-app mute via Windows Core Audio API). Without them the
+#     run goes on unmuted (D5-SHIM-STEP3-FRIDA5: pycaw is not installed under py -3.12 here).
 #
 # Optional CLI args:
 #   --hooks=name1,name2,...   Comma-separated registry key names from hooks_registry.py
 #                             (snake_case). Overrides the hardcoded HOOKS dict above.
 #   --scenario=tag            Arbitrary tag appended to output filename for this run.
+#   --no-hooks                Stock game: mashed_re_dev.asi is never mapped.
+#
+# Spawn path (D5-SHIM-STEP3-FRIDA5, 2026-11-02): re/frida/dev_asi.spawn_original. The counts
+# used to run on a game that got mashed_re_dev.asi from the dinput8 proxy autoload; now the
+# asi is Module.load'ed and InjectHooks'ed before the first resume (MASHED_HOOK_ONLY / _SKIP
+# still honoured), and the counter agent reuses that Frida session. MASHED_ROOT selects a
+# private game root. The pid this script spawns is the only one it kills.
 import argparse
 import os
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -21,7 +28,11 @@ from pathlib import Path
 import frida
 import psutil
 
-from pycaw.pycaw import AudioUtilities
+try:
+    from pycaw.pycaw import AudioUtilities
+    HAS_PYCAW = True
+except ImportError:
+    HAS_PYCAW = False
 
 ROOT       = Path(__file__).resolve().parent.parent.parent
 
@@ -37,10 +48,11 @@ def _find_original(script_root: Path) -> Path:
     return candidate
 
 
-MASHED_EXE = _find_original(ROOT)
-OUT_FILE   = ROOT / 'log' / 'observe_cold_boot_to_menu_c4-batch-a-s14.txt'
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dev_asi  # noqa: E402
 
-sys.path.insert(0, str(ROOT / 're' / 'frida'))
+MASHED_EXE = dev_asi.original_exe(_find_original(ROOT))
+OUT_FILE   = ROOT / 'log' / 'observe_cold_boot_to_menu_c4-batch-a-s14.txt'
 
 HOOKS = {
     'GetEventFlag':        '0x0041f1c0',
@@ -89,6 +101,8 @@ def main():
                         help='Comma-separated registry key names (snake_case) from hooks_registry.py')
     parser.add_argument('--scenario', type=str, default=None,
                         help='Scenario tag appended to output file name')
+    parser.add_argument('--no-hooks', action='store_true',
+                        help='stock game: mashed_re_dev.asi is never mapped')
     args = parser.parse_args()
 
     # Resolve --hooks if provided
@@ -111,7 +125,7 @@ def main():
     if not MASHED_EXE.exists():
         sys.exit(f"missing {MASHED_EXE}")
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    log = ROOT / 'original' / 'mashed.log'
+    log = MASHED_EXE.parent / 'mashed.log'
     if log.exists():
         try: log.unlink()
         except PermissionError: pass  # locked by a previous MASHED instance; harmless
@@ -128,16 +142,23 @@ def main():
         print(f"       the windowed-mode shim — it would go fullscreen.")
         sys.exit(2)
 
-    print(f"spawning {MASHED_EXE}")
-    proc = subprocess.Popen(
-        [str(MASHED_EXE)], cwd=str(MASHED_EXE.parent),
-        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        creationflags=0x00000200 | 0x00000008)
+    print(f"spawning {MASHED_EXE} (hooks {'OFF' if args.no_hooks else 'ON'})")
+    device = frida.get_local_device()
+    try:
+        proc, session, info = dev_asi.spawn_original(
+            MASHED_EXE, hooks=not args.no_hooks, device=device)
+    except Exception as e:
+        print(f"spawn failed: {e}")
+        return 4
     pid = proc.pid
     print(f"  pid = {pid}")
+    if info:
+        print(f"  dev asi loaded at {info.get('base')} installed={info.get('installed')}")
 
     # Mute as soon as the audio session shows up (DirectSound init takes ~1s).
-    if not args.no_mute:
+    if not args.no_mute and not HAS_PYCAW:
+        print("  pycaw not installed: audio not muted")
+    if not args.no_mute and HAS_PYCAW:
         muted = False
         deadline = time.time() + 8
         while time.time() < deadline:
@@ -149,17 +170,13 @@ def main():
         if not muted:
             print("  could not find audio session within 8s — game may still produce sound")
 
-    # Attach Frida and count.
-    time.sleep(0.2)
-    device = frida.get_local_device()
-    try:
-        session = device.attach(pid)
-    except Exception as e:
-        print(f"attach failed: {e}")
-        try: proc.kill()
-        except Exception: pass
-        return 4
-
+    # Count on the session spawn_original kept open.
+    detach = {}
+    def on_detached(reason, crash):
+        detach['reason'] = reason
+        if crash is not None:
+            detach['crash'] = getattr(crash, 'summary', None) or str(crash)[:400]
+    session.on('detached', on_detached)
     import json
     js = AGENT_JS.replace('$HOOKS$', json.dumps(HOOKS))
     script = session.create_script(js)
@@ -189,7 +206,10 @@ def main():
     start = time.time()
     while time.time() - start < args.seconds:
         if not psutil.pid_exists(pid):
-            print("  process gone before idle complete"); break
+            rc = proc.poll()
+            rc_s = 'unknown' if rc is None else f'0x{rc & 0xFFFFFFFF:08X}'
+            print(f"  process gone before idle complete (pid {pid}, exit {rc_s}, "
+                  f"frida detach {detach.get('reason')}, crash {detach.get('crash')})"); break
         try:
             snap = script.exports_sync.snapshot()
             elapsed = int(time.time() - start)

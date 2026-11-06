@@ -29,10 +29,9 @@ re/frida/run_diff_parallel.py             # not-an-exe-spawn: Popen of run_diff.
 re/tools/orig_rampwatch.py                # not-an-exe-spawn: Popen of scenario_launch.py, which is covered
 scripts/diag.py                           # not-an-exe-spawn: spawns mashed_re.exe (standalone), no asi
 re/frida/catch_standalone_phys_crash.py   # not-an-exe-spawn: spawns mashed_re.exe (standalone), no asi
+re/orchestrator/merge_train.ps1           # not-an-exe-spawn: Start-Process py.exe mashed_lock.py solo-begin (self-test, line 434); MASHED.exe only in a Test-Path
+re/orchestrator/mashed_lock_concurrency_test.py  # not-an-exe-spawn: Popen of sys.executable lock children, "no MASHED.exe" (line 3)
 
-# NEEDS-DEV-ASI (decision: migrate or retire)
-re/frida/auto_count_at_menu.py            # NEEDS-DEV-ASI: Popen MASHED.exe then Interceptor counts of registry hooks
-re/frida/catch_crash_eip.py               # NEEDS-DEV-ASI: crash EIP catcher on a game that relied on autoload
-re/frida/canon_observe_refused.py         # NEEDS-DEV-ASI: observes hooks installed by autoload
-re/frida/probe_005ab100.py                # NEEDS-DEV-ASI: verifies the hook at 0x005ab100 is installed
-re/frida/mass_canonical_observe_wave3.py  # NEEDS-DEV-ASI: wave 3 hook observation, no asi load in file
+# NEEDS-DEV-ASI: none left. D5-SHIM-STEP3-FRIDA5 (2026-11-02) migrated auto_count_at_menu.py and
+# catch_crash_eip.py to dev_asi.spawn_original and retired canon_observe_refused.py,
+# probe_005ab100.py and mass_canonical_observe_wave3.py (refuse to run). Their lines are gone.
