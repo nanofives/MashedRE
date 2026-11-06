@@ -1,6 +1,14 @@
-# RESULT MATCH-S15, 2026-11-02
+# RESULT MATCH-S15, 2026-11-02 (gates and re-classify 2026-11-06)
 
-**Verdict: BLOCKED. Built on this branch, gates not run: display D3DERR_NOTAVAILABLE** (L1 instruction: static work only,
+**Verdict 2026-11-06: GREEN.** After merging orch/integration (adds S09, S11, S11-RECIP-REVIEW), the build is clean,
+38/38 swapped rows still match and relocheck OK, and the default gates equal `merge_train.json` on exe `7fc2b62a`
+(G-CTRL `8284be46/ba407a16/31fe043e`, B `1d5bf4f9` x3). **No C-level moves.** All 38 swapped rows are re-classified
+tracker-only (file/exe_file to the wrapper, match note). 0x00492770 MainLoopInit does **not** get the match route:
+the exe calls it at boot but it faults before returning (section "2026-11-06" below). It stays C4 on its frida route.
+Follow-up ledger row MATCH-S15-FU-MAINLOOP. The 2026-11-02 text below is kept as written (its BLOCKED verdict is
+superseded).
+
+**Verdict 2026-11-02: BLOCKED. Built on this branch, gates not run: display D3DERR_NOTAVAILABLE** (L1 instruction: static work only,
 DISPLAY IS OFF on LIVING-PC, no gate, no game run). Slice 0x0048cf70..0x00494480 (129 game functions, 0 library rows
 inside). **103/129** sources are byte-identical under `re/tools/match/match.py` (XP DDK cl 13.00.9176 / c2 13.00.9178,
 `/O2 /GS /Ob1`, C, x87), and every one of the 103 has `relocheck.py` OK in its source file (`relocheck.tsv`). 89 have
@@ -193,3 +201,78 @@ lands (L-68 ruling)`.
 | bodies.tsv (pre-swap body scan; committed copy bodies_pre.tsv) | d5cb6605ac39ec517804c20b36005a1b617ffba75e0fec8eb66b314b1549e592 |
 | build1.log (Build OK) | 5e77d1d3b1380f6eacbd80cf2b4691d82d724157e904fcf754aa623e234f31a3 |
 | g2s/, notes/h1..h8.md, scratch/, swap_cands.txt | raw converter output, helper notes, scratch |
+
+## 2026-11-06: merge, re-check, gates, re-classify
+
+**Merge.** Worktree re-added at `.worktrees/MATCH-S15` on `orch/MATCH-S15` @ 3a8eea733, then
+`git -c merge.autoStash=false merge orch/integration` (497edfdb8): no conflicts, merge commit fbc5259d8.
+`set MASHED_NO_DEPLOY=1&& mashedmod\build.bat`: Build OK, .asi not deployed. exe sha256
+`7fc2b62add410685292030be61c7673312145ce8cb176d7e33beee0003d95595`, asi
+`1c3b247c5c1eceac745f847dc58763b3dfb30380616cd87b391630846c81b8d6`. `lint_rva_bodies.py`: `allowlisted=1 NEW=0`.
+`lint_inline_asm_abs.py`: OK (1241 files).
+
+**Re-check of the 38 swapped rows** (`tools/recheck.sh`, output `recheck_postmerge.txt`): every source blob equals
+the `swaps.tsv` sha, `match.py --flags "/O2 /GS /Ob1" --toolchain ddk` gives 100% on the 30 instruction-scored rows
+and `0 differing` bytes on the 8 whole-symbol rows (`--bytes`), and `relocheck.py` is OK on all 38.
+**Exe reach** on the new map (`exe_reach_postmerge.txt`, same symbol set as `exe_reach.txt`): identical to the
+2026-11-02 table. MainLoopInit has 1 direct caller (`ExecuteFrontendBootChain` <- `_WinMain@16`), the other 37 have 0.
+
+**Gates** (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, `A4_ROOT=D:/MashedWT/MATCH-S15_root`,
+`A4_OUT=D:/MashedWT/MATCH-S15_data/arms`, inside `proyectos_test_slot.py` then `mashed_lock.py run --label MATCH-S15`;
+`merge_train.json` re-read on orch/integration adf5ff69b after the run, refs unchanged):
+
+| arm | file | sha8 | ref |
+|---|---|---|---|
+| H_DEF | step.csv | 8284be46 | 8284be46 |
+| H_DEF | gates.csv | ba407a16 | ba407a16 |
+| H_DEF | ptrace.log | 31fe043e | 31fe043e |
+| B_DEF_K0 | step.csv | 1d5bf4f9 | 1d5bf4f9 |
+| B_DEF_K1 | step.csv | 1d5bf4f9 | 1d5bf4f9 |
+| B_DEF_K26 | step.csv | 1d5bf4f9 | 1d5bf4f9 |
+
+All four arms `exit=0 self_exited=True`. The merge train's `-Full` pass (D2 x3, 13 tracks) was not run here.
+
+**MainLoopInit in the exe.** The private root's `mashed_re.log` (last arm's boot) prints, at step 7 of
+`ExecuteFrontendBootChain` (exe_main.cpp:9349-9360):
+
+```
+Milestone B10: frontend boot chain start
+  ...
+  [6] TimerSlotClear OK; readback 0x0063d558=0x00000000 (expect 0)
+  [7] MainLoopInit AV'd (expected: tunnels into MASHED code section via FUN_00495110 etc.)
+Milestone B10: frontend boot chain complete
+```
+
+So the exe enters the swapped body every boot (no counter build was needed: this log line is the witness), and an
+exception raised inside it is caught by the SEH there, so `return 1` is never reached. Its five callees
+(0x00495110 C2, 0x0042b920 C4, 0x0042b950 C3, 0x00433240 C3, 0x004c57a0 C2) have no exe body (`exe_file` empty in
+hooks.csv), and the wrapper calls them through raw-address forwarders, as the old Boot/FrameDispatch.cpp body did.
+Which instruction faults is [UNCERTAIN]: the log line does not say, and no counter build was run. The old body's log
+line was the same "expected" text, so the gates cannot see a difference in the part that does not run.
+
+**Re-classify decision (worker, conservative):** MATCH C4 condition L-68 is "the exe actually calls the swapped-in
+body". It does, but the body faults before it returns, so the unchanged gates cover only its first store. The match
+route is **not claimed** for 0x00492770: no `c4=match` token, and the row stays C4 on its frida route, so its level
+does not move either way. Follow-up ledger row **MATCH-S15-FU-MAINLOOP**: give the five callees exe bodies (or bind
+the forwarders to port bodies), show `[7] MainLoopInit returned 1` with the gates unchanged, then claim c4=match.
+
+**Tracker transaction (re-classify, applied):** 38 hooks.csv rows: `file` = `mashedmod/src/mashed_re/Match/MatchS15_<va8>.cpp`,
+`exe_file` = the same for the 14 exe+asi rows and empty for the 24 asi-only rows, `notes` +=
+`MATCH-S15 2026-11-06: match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling); match.py
+<src> 100% ...; relocheck OK ...; src sha256 ...; port body ... (only body); <this RESULT>` (MainLoopInit gets the
+exe-callers=1 / faults-before-return text above instead). Confidence and status cells unchanged. 38 CHANGELOG lines
+(`Cn=Cn notes/file only`). `tracker_lint.py --repo . --base orch/integration`: OK, NEW=0.
+
+### Raw files 2026-11-06 (not committed; `D:/MashedWT/MATCH-S15_data`)
+
+| file | sha256 |
+|---|---|
+| arms/H_DEF.step.csv | 8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198 |
+| arms/H_DEF.gates.csv | ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb |
+| arms/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
+| arms/B_DEF_K0.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 |
+| arms/B_DEF_K1.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 |
+| arms/B_DEF_K26.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 |
+| gates_run.log | 05f979d013dcb57d97cd9b90cda128b2ae4cc7cf2fa129f069debd0710efa1ac |
+| build2.log (Build OK) | 8113f23c048000acf151821f81f988953897a9f3cee9ffebbb8f9070b2bb8ef4 |
+| ../MATCH-S15_root/mashed_re.log (boot chain witness) | ab0cd27f03881e54203bd5bce6bb8ac4cc49eea0e70dd4835021aeba1a843e6a |
