@@ -5242,9 +5242,14 @@ static bool RingAudioPassEnabled() {
     }();
     return s_on;
 }
-static void RingAudioPassDraws() {
+// Per-car gate. The original's is FUN_0040e370(v) (slot table *(0x005f2770) + 0x34 + 4v = 0x005f275c..0x005f2768),
+// 1,2,2,2 in the B captures (scenario_launch.py FUN_0040e480 pokes), so all four cars draw. The exe's table is 1,0,0,0 at
+// this point (Ai_SetCarSlotState at race load above; cars 1..3 become 2 only in the AI tick, AiController.cpp 0x00418860),
+// so the gate here is the exe's car set, v < 1 + ai_cars_.size(). DEVIATION: equal to FUN_0040e370 on every car the race
+// spawned; measured first try with IsCarSlotActive drew for car 0 only (draws_before 312 = 310 + 2, arms 2026-11-06).
+static void RingAudioPassDraws(int cars) {
     for (int v = 0; v < 4; ++v) {                                  // 0x00466cf4..0x00466d3d
-        if (!IsCarSlotActive(v)) continue;                         // FUN_0040e370 @0x00466cf7
+        if (v >= cars) continue;                                   // FUN_0040e370 @0x00466cf7 (see DEVIATION)
         (void)::Ai::Ai_RandRange(0.0f, 250.0f);                    // FUN_00472650 @0x004636f4
         (void)::Ai::Ai_RandRange(0.0f, 100.0f);                    // FUN_00472650 @0x00463869 (rpm state 0)
     }
@@ -5585,7 +5590,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         int& ba8c = *reinterpret_cast<int*>(0x0063ba8cu);
         int& s29b8 = *reinterpret_cast<int*>(0x005f29b8u);
         if (ba8c == 0) {                                   // FUN_004111c0 state-2 tail
-            if (RingAudioPassEnabled()) RingAudioPassDraws();   // [D4-DC-77b0-ST5-RING] the audio pass before it
+            if (RingAudioPassEnabled()) RingAudioPassDraws(1 + static_cast<int>(ai_cars_.size()));   // [D4-DC-77b0-ST5-RING] the audio pass before it
             SubStateRollCountdown414180();                 // 0x00410259 FUN_00414180 (cd roll)
             SubState_SeedCd();                             // MASHED_SUBSTATE_CD override (measurement, unset by default)
             // [D-11073 leg 2] 0x0041026d: phase 3 only while the state-1 seed 100000 is intact

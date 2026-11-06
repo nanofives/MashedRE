@@ -26,7 +26,7 @@ def cd(u):
     f = np.float32
     return int(f(4.0) * f(u & 0x7fffffff) * f(4.656612873e-10) + f(1.0))
 def main():
-    rows = list(csv.DictReader(open(sys.argv[1])))
+    rows = [r for r in csv.DictReader(open(sys.argv[1])) if r['tag'] in ('arm', 'E', 'L', 'peek')]   # C rows = callers
     maxk = int(sys.argv[2]) if len(sys.argv) > 2 else 2000000
     want = {}
     for i, row in enumerate(rows):
