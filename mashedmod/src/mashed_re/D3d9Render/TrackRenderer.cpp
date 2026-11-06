@@ -5307,9 +5307,15 @@ void TrackRenderer::St5Leg2(int units, float dt, float accel, bool exitCall) {
                 for (int k = 0; k < 8; ++k) aio.input[k] = blk[k];
                 if (St5HoldDiag())   // [D4-DC-77b0-ST5-HOLD] log only: the ctrl bytes leg 2 hands this car
                     if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                        std::fprintf(lf, "[st5hold] call=%d car=%d slot=%d blk=%02x%02x%02x%02x%02x%02x%02x%02x pos=(%.9g,%.9g,%.9g)\n",
+                        // [D4-DC-77b0-ST5-C4ACCEL] + the FUN_00418560 mode-5 compare inputs (cd 0x0089a4f8 + v*0x74 at 0x004185ab,
+                        // FUN_0040e4a0's 0x005f29b8) and the leg-1 charge +0xbf4 (FUN_0046d7f0) as leg 2 sees them.
+                        const unsigned char* rr = Vehicle::VehiclePhysics_RecordPtr(v);
+                        std::fprintf(lf, "[st5hold] call=%d car=%d slot=%d blk=%02x%02x%02x%02x%02x%02x%02x%02x pos=(%.9g,%.9g,%.9g)"
+                                         " cd=%d c29b8=%d bf4=%d\n",
                                      s_calls, v, Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride),
-                                     blk[0], blk[1], blk[2], blk[3], blk[4], blk[5], blk[6], blk[7], a.pos[0], a.pos[1], a.pos[2]);
+                                     blk[0], blk[1], blk[2], blk[3], blk[4], blk[5], blk[6], blk[7], a.pos[0], a.pos[1], a.pos[2],
+                                     Ai::I32(0x0089a4f8u + static_cast<std::uintptr_t>(v) * 0x74u), Ai::I32(0x005f29b8u),
+                                     rr ? *reinterpret_cast<const int*>(rr + 0xbf4) : -999);
                         std::fclose(lf);
                     }
                 aio.steer = 0.f;
