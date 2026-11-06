@@ -175,7 +175,43 @@ Follow-up rows filed: `MATCH-S12-FU-RFXDEF` (map `DAT_00613288/90/94/a4` onto Rf
 under `MASHED_STANDALONE`, so the 8 null-default NOT-SAFE rows can swap). Not filed, recorded here: `TrackRenderer::ClumpAnimTick`
 (0x004756e0) is a C++ re-port on port state, a swap needs FUN_00426700 / FUN_004752f0 / FUN_004b47e0 ported first.
 
-## Build
+## Remerge (run 6, after the lead's GO)
+
+The first gate pass (above, exe b2ec5d9f) was on the branch merged with orch/integration 9a0f7def5. `git merge-tree`
+against 0f5899d1c conflicted in `hooks.csv` and `re/analysis/CHANGELOG.md`, so the branch merged orch/integration twice
+more: 0f5899d1c (merge e526ccf65; the two trackers resolved as integration's file plus this slice's 18-row re-classify
+transaction re-applied, `D:/MashedWT/MATCH-S12_data/reclass2.py`, idempotent) and b1dd84b7c (MATCH-S09-FU, S13, S15,
+D4-DC-77b0-ST5-RING; merge 1e0b14534, no conflict). On the merged tree: `tracker_lint.py --base orch/integration` OK
+NEW=0 (diff vs integration = the 18 rows + 18 CHANGELOG lines), rva-lint NEW=0, asm-lint OK (1317 files), each of the
+18 RVAs still has one body (its wrapper). S13 now makes raw-address calls into two S12-matched RVAs that have no port body
+(`MatchS13_0047c2d0_Call00478030`, `MatchS13_0047c270_Call004780c0`): no second body, and a raw-address call is not a
+caller of a port body.
+
+`match.py` + `relocheck.py` re-run on the 18 swapped sources after the merge: identical to before (17 at 100% by
+instruction, 0x00475ef0 by the whole-symbol rule: 57 B symbol, 0 bad bytes, Ghidra size 49; relocheck OK, unchecked=0
+on all 18).
+
+Build (`MASHED_NO_DEPLOY=1`): Build OK, rva-lint NEW=0, asm-lint OK, .asi not deployed. exe sha256
+`6b196a1b2303949f66999ca4dfe21605be88ad07b6415d59f2ea2c87a930734a`, asi
+`77728530a7630e7262b089e79e0f0c93e72d06bf3a59a42aa2ec44a79704165b`. exe_reach unchanged (same three env-gated chains,
+`exe_reach.txt` is from this build).
+
+Gates on the merged exe: same command and root, test slot outside, `mashed_lock.py run --solo --label MATCH-S12-gates2`
+inside, 14:22 to 14:36, refs re-read from orch/integration's `merge_train.json` at gate time (unchanged). Every arm
+exit 0 and self-exited, one run each.
+
+| arm | file | sha8 | ref |
+|---|---|---|---|
+| H_DEF | step.csv / gates.csv / ptrace.log | 8284be46 / ba407a16 / 31fe043e | 8284be46 / ba407a16 / 31fe043e |
+| B_DEF_K0, K1, K26 | step.csv | 1d5bf4f9 x3 | 1d5bf4f9 x3 |
+
+Raw (`D:/MashedWT/MATCH-S12_data`): `arms2/` files carry the same sha256 as the `arms/` rows below (byte-identical
+outputs); `build2.log` ce960e90e18b01c855047e7fcf8f3fae92dbcb4cbdccb8568760570034152ab0; `gates2.log`
+e52b33f83e884b755a816ca11ec5443cf2d503d5f3147072e882a0e550f95f6a.
+
+Per the conductor (via the lead): not enqueued; the conductor gates a combined branch (integration + S12 + S14 + S16).
+
+## Build (first pass)
 
 `set MASHED_NO_DEPLOY=1&& mashedmod\build.bat`, Build OK, rva-lint NEW=0, asm-lint OK, .asi not deployed
 (`original\mashed_re_dev.asi` still dated 2026-10-24). exe sha256

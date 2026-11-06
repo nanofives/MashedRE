@@ -1,9 +1,9 @@
 symbol	addr	direct_sites	reach_WinMain	addr_taken	chain_or_callers
-ParticleEmitter_SetPosition	0x0013d7b0	0	no	yes	
-Copy476a10	0x0013d7e0	0	no	yes	
-ParticleEmitter_SetScalar	0x0013d820	0	no	yes	
-Batch476b90	0x0013d830	1	yes	yes	_Batch476b90 <- ?Create@Rfx@mashed_re@@YAXAAUEmitter@12@IHPBX@Z <- ?PickupGlow_DbgPost@Gameplay@mashed_re@@YAXXZ <- ?Pickups_FrameTick@Gameplay@mashed_re@@YAXXZ <- ?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z <- ?RenderFrame@?A0x8b1462ef@@YA_NXZ <- _WinMain@16
-Batch476be0	0x0013d890	1	yes	yes	_Batch476be0 <- ?Create@Rfx@mashed_re@@YAXAAUEmitter@12@IHPBX@Z <- ?PickupGlow_DbgPost@Gameplay@mashed_re@@YAXXZ <- ?Pickups_FrameTick@Gameplay@mashed_re@@YAXXZ <- ?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z <- ?RenderFrame@?A0x8b1462ef@@YA_NXZ <- _WinMain@16
-Batch476cb0	0x0013d8c0	0	no	yes	
-MultiArrayScatter476d00	0x0013d900	1	yes	yes	_MultiArrayScatter476d00 <- _PK_GlowSubmit <- _PK_459000 <- ?Pickups_MaybeReplay@Gameplay@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
-RenderWorldStateZeroFill	0x0013d9f0	0	no	yes	
+ParticleEmitter_SetPosition	0x0013e020	0	no	yes	
+Copy476a10	0x0013e050	0	no	yes	
+ParticleEmitter_SetScalar	0x0013e090	0	no	yes	
+Batch476b90	0x0013e0a0	1	yes	yes	_Batch476b90 <- ?Create@Rfx@mashed_re@@YAXAAUEmitter@12@IHPBX@Z <- ?PickupGlow_DbgPost@Gameplay@mashed_re@@YAXXZ <- ?Pickups_FrameTick@Gameplay@mashed_re@@YAXXZ <- ?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z <- ?RenderFrame@?A0x8b1462ef@@YA_NXZ <- _WinMain@16
+Batch476be0	0x0013e100	1	yes	yes	_Batch476be0 <- ?Create@Rfx@mashed_re@@YAXAAUEmitter@12@IHPBX@Z <- ?PickupGlow_DbgPost@Gameplay@mashed_re@@YAXXZ <- ?Pickups_FrameTick@Gameplay@mashed_re@@YAXXZ <- ?UpdateCar@TrackRenderer@D3d9Render@mashed_re@@QAEXABUDriveInput@123@@Z <- ?RenderFrame@?A0x8b1462ef@@YA_NXZ <- _WinMain@16
+Batch476cb0	0x0013e130	0	no	yes	
+MultiArrayScatter476d00	0x0013e170	1	yes	yes	_MultiArrayScatter476d00 <- _PK_GlowSubmit <- _PK_459000 <- ?Pickups_MaybeReplay@Gameplay@mashed_re@@YAXXZ <- ?Load@TrackRenderer@D3d9Render@mashed_re@@QAE_NPAUIDirect3DDevice9@@PBD1@Z <- _WinMain@16
+RenderWorldStateZeroFill	0x0013e260	0	no	yes	
