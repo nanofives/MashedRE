@@ -1,8 +1,10 @@
 # RESULT HB-GATE-FLAKE-GAMEFLOW (2026-11-02)
 
-Verdict: **cause found from existing logs. The fix is built but NOT verified on the exe**, because the display was asleep
-from about 09:20 and every boot returned D3D9 `0x8876086A`. Arm status is in "Arms" below and the next steps are
-in "Handoff".
+Verdict: **GREEN (arms run 2026-11-06).** The cause is confirmed on the exe and the harness knob removes it. Q6 (strong
+form) and Q7 both hold: an injected Enter at det_frame 5406..5415 reproduces g1's outlier hashes 3cc38c6b / 75d81021 /
+8c8ba1f1 byte for byte, and the same press with `MASHED_DET_NO_AMBIENT_KEYS=1` gives the refs. Default gates on the
+merged exe `ea3de8a2` are unchanged: G-CTRL 8284be46 / ba407a16 / 31fe043e, B 1d5bf4f9 x3. Scored table in
+"Arms (2026-11-06)" below. The 2026-11-02 attempts (display asleep) are kept as history.
 
 **Cause: a real keyboard Enter pressed somewhere on the machine reaches a deterministic G-CTRL arm.** The exe's
 keyboard is opened `DISCL_BACKGROUND | DISCL_NONEXCLUSIVE` (`exe_main.cpp` InitDirectInput), so it reports keys
@@ -77,9 +79,40 @@ a sleeping display, so a person at the keyboard around 00:45 fits the evidence. 
 - Build: `MASHED_NO_DEPLOY=1`, `=== Build OK ===`, `[rva-lint] ... allowlisted=2 NEW=0`, `[asm-lint] OK`. Exe
   `88356f08`.
 
-## Arms
+## Arms (2026-11-06)
 
-Prediction ids are the PREREG's Q1..Q7. **No arm in this step has reached the simulation.**
+Branch merged with `orch/integration` (`09e51bbca`) and rebuilt: `MASHED_NO_DEPLOY=1`, `=== Build OK ===`,
+`[rva-lint] ... allowlisted=2 NEW=0`, `[asm-lint] OK`. Exe `m` = `ea3de8a2` (this branch after the merge). Exe `fd02` =
+`fd0211e9` (the MATCH-PORTSTATE-GAMEFLOW exe). `diag.py probe-render` returned `RENDER: OK` before the run. Every set ran
+under `test-slot` (outside) and `mashed_lock run` (inside), root `D:/MashedWT/HB-GATE-FLAKE-GAMEFLOW_root`. All 12 arms
+exited 0 and self-exited. No reruns.
+
+| id | exe | arm | secs | step / gates / ptrace sha8 | log | verdict |
+|---|---|---|---|---|---|---|
+| Q6 | m | H_TK (test Enter 0x1c @5406+10, drop knob OFF) | 487 | **3cc38c6b / 75d81021 / 8c8ba1f1** | 10 `DET-AMBIENT-KEY ... LIVE`, `R7IN ... test=0 det_frame=5406`, `R7X EXIT det_frame=5406 round 1 -> 2` | **PASS, strong form** (g1's hashes exactly; step file byte-equal to g1 `H_PSGO.step.csv`, full sha256 `3cc38c6b0e0c...`) |
+| Q7 | m | H_TKD (same press, drop knob ON) | 480 | 8284be46 / ba407a16 / 31fe043e | 10 `DET-AMBIENT-KEY ... dropped`, 0 `R7IN` | **PASS** |
+| Q4 | m | H_DEF | 472 | 8284be46 / ba407a16 / 31fe043e | 0 `DET-AMBIENT-KEY`, 0 `R7IN` | **PASS** |
+| Q4 | m | B_DEF_K0 / K1 / K26 | 41 / 41 / 40 | 1d5bf4f9 x3 | 0 `DET-AMBIENT-KEY` | **PASS** |
+| Q5 | m | H_NAKOFF (drop knob OFF, no key) | 244 | 8284be46 / ba407a16 / 31fe043e | 0 `DET-AMBIENT-KEY` | **PASS** |
+| (extra) | m | H_PSGOTK (GAMEFLOW knob ON + test Enter) | 253 | 3cc38c6b / 75d81021 / 8c8ba1f1 | as H_TK | same as H_TK: the GAMEFLOW knob plays no part on Training |
+| Q1 | fd02 | H_PSGOR7P (`MASHED_R7_INPUT_PRESS=4308`) | 243 | 44b58377 / 019e0262 / 8f5e6136 | `R7IN ... test=1 det_frame=5406`, `R7X EXIT det_frame=5406 round 1 -> 2`, then `R7IN ... det_frame=10070`, `R7X EXIT det_frame=10070 round 2 -> 3` | **PASS** (prediction: round change at 5406 and step file equal to g1 for 4,969 lines. Observed: equal to g1 for 10,003 lines) |
+| Q2 | fd02 | H_R7P | 250 | 44b58377 / 019e0262 / 8f5e6136 | as H_PSGOR7P | **PASS** (byte-equal to H_PSGOR7P) |
+| Q3 | fd02 | H_PSGO-r1, H_DEF-r1 | 245 / 242 | 8284be46 / ba407a16 / 31fe043e | 0 `R7IN` | **PASS**. H_PSGO-r2 was not run (the run script never listed it). Two of the three Q3 arms ran |
+
+Reading:
+- Q1/Q2 hashes are not g1's, which the PREREG did not predict either way. The cause: `MASHED_R7_INPUT_PRESS=4308` fires at
+  r7frame 4308 of **each** round, so it presses again at det_frame 10070 and starts round 3. The step file matches g1
+  through line 10,003 and splits at line 10,004, inside that second press's window. The one-shot `MASHED_DET_TEST_KEY`
+  (Q6) has no second press and matches g1 in full.
+- Q6 ran on a different exe from g1 (`ea3de8a2` against `fd0211e9`) and still matched byte for byte. One Enter held 10
+  frames at det_frame 5406 is enough to produce the whole outlier. Nothing else (wall clock, lock, file race) is needed.
+- No arm in this run logged an ambient key: every `DET-AMBIENT-KEY` line comes from the test knob (`test=1`).
+
+Gate hashes on `ea3de8a2`: G-CTRL 8284be46 / ba407a16 / 31fe043e, B 1d5bf4f9 x3. Equal to `merge_train.json` refs.
+
+## Arms (2026-11-02 history: display asleep)
+
+Prediction ids are the PREREG's Q1..Q7. **No arm on 2026-11-02 reached the simulation.**
 
 | attempt | time | arms | outcome |
 |---|---|---|---|
@@ -89,7 +122,9 @@ Prediction ids are the PREREG's Q1..Q7. **No arm in this step has reached the si
 
 Rerun count: 0 completed arms, 14 failed boots (INFRA) plus 4 BLOCKED probes. Hashes: none.
 
-## Handoff
+## Handoff (2026-11-02, closed 2026-11-06)
+
+Done: every arm below ran on 2026-11-06 (table above), except H_PSGO-r2. The text that follows is the 2026-11-02 state.
 
 - Branch `orch/HB-GATE-FLAKE-GAMEFLOW`, worktree `.worktrees/HB-GATE-FLAKE-GAMEFLOW`.
 - The exes are already built and copied out: `exe_new` = `88356f08` (this branch), `exe_fd02` = `fd0211e9`.
@@ -137,3 +172,34 @@ fd0211e93b286efb3b3a034d2d21eeaf06b69fde3c77d469c9e4421b42b68789  HB-GATE-FLAKE-
 ```
 
 Committed extract: `duration_table.txt` (the 178-row summary of evidence item 5).
+
+### Raw data, 2026-11-06 arms (`D:/MashedWT/HB-GATE-FLAKE-GAMEFLOW_data/`, not committed)
+
+ptrace and per-arm `.log` hashes are in `run_resume.log`. Committed extract: `hashes_20261106.txt` (this list).
+
+```
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  arms_fd02/H_DEF-r1.gates.csv
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198  arms_fd02/H_DEF-r1.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  arms_fd02/H_PSGO-r1.gates.csv
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198  arms_fd02/H_PSGO-r1.step.csv
+019e026263294856df36242706954372a4e1d9ed6b407311140637f315a95957  arms_fd02/H_PSGOR7P.gates.csv
+44b583773d55aabfdb800baf5bce253d8d4fc9e241c732c00d0648919511e46f  arms_fd02/H_PSGOR7P.step.csv
+019e026263294856df36242706954372a4e1d9ed6b407311140637f315a95957  arms_fd02/H_R7P.gates.csv
+44b583773d55aabfdb800baf5bce253d8d4fc9e241c732c00d0648919511e46f  arms_fd02/H_R7P.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  arms_m/B_DEF_K0.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  arms_m/B_DEF_K1.step.csv
+1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457  arms_m/B_DEF_K26.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  arms_m/H_DEF.gates.csv
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198  arms_m/H_DEF.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  arms_m/H_NAKOFF.gates.csv
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198  arms_m/H_NAKOFF.step.csv
+75d810216f6a7a3285823e1ce2fc1e70c86fb902d9e703c73d8c7f1bea899567  arms_m/H_PSGOTK.gates.csv
+3cc38c6b0e0c0df627f336e55bcb45d997fca623c64c97329485b8feaa2a1b69  arms_m/H_PSGOTK.step.csv
+75d810216f6a7a3285823e1ce2fc1e70c86fb902d9e703c73d8c7f1bea899567  arms_m/H_TK.gates.csv
+3cc38c6b0e0c0df627f336e55bcb45d997fca623c64c97329485b8feaa2a1b69  arms_m/H_TK.step.csv
+ba407a169a8ec433f486492814e7e450e32c6c48be5f1a0e38e9c53074db1ceb  arms_m/H_TKD.gates.csv
+8284be46b3c692f3ba129f252367b5f5097eef9e39bc49a1be6514e4d33b6198  arms_m/H_TKD.step.csv
+9ffbaaea911771c2eccd5cfa598d857f06149804a6925eb89fed7aec9462490a  build2.log
+ea3de8a2bdfe45ffc0a8cfb335aff226c8e344526ee61dfe029f7852df80a363  exe_m/mashed_re.exe
+1f9dbdd36d188944bcd8250074758abe3679c13916a4a1ca011f8b68cec7ec94  run_resume.log
+```
