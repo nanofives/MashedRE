@@ -1,6 +1,53 @@
-# RESULT MATCH-PORTSTATE-GAMEFLOW-FU (2026-11-02)
+# RESULT MATCH-PORTSTATE-GAMEFLOW-FU (2026-11-02, gates 2026-11-06)
 
-Verdict: **BLOCKED. Built @ `e86684a29`, gates not run: display D3DERR_NOTAVAILABLE.** The static leg is done. 11 of
+Verdict: **GREEN (2026-11-06). P1, P2 and P3 hold, and P4 measured `phase 3 -> 7`.** Default gates are unchanged:
+G-CTRL 8284be46 / ba407a16 / 31fe043e, B 1d5bf4f9 x3. The knob stays default OFF. See "Gates (run 33, 2026-11-06)"
+below. The 2026-11-02 text that follows is kept as written.
+
+## Gates (run 33, 2026-11-06)
+
+Branch merged with `orch/integration` at `6f383c743`. The merge brought ledger files only (`re/orchestrator/DECISIONS.md`,
+`ledger/events.jsonl`, `ledger/roadmap.json`), with no source change. Rebuilt with `MASHED_NO_DEPLOY=1`: `=== Build OK ===`,
+`[rva-lint] ... allowlisted=2 NEW=0`, `[asm-lint] OK`. Exe SHA-256 `701bd75d...` (the 11-02 build was `bda9abcb...`;
+the source is the same, so the hashes differ by build only). Runner `verify/matchgameflowfu_20261102/gates2.sh`
+(gates1.sh with the new exe) under `proyectos_test_slot.py` (outside) and `mashed_lock.py run` (inside), private root
+`D:/MashedWT/MATCH-PORTSTATE-GAMEFLOW-FU_root`. All 8 arms exited 0 by themselves (H 131 s / 134 s, B 13-19 s).
+The first queued attempt (2026-11-05 23:55) never got a slot before the session stopped. It ran no arm
+(`gates2_queued_dead.log`).
+
+| arm | step.csv | gates.csv | ptrace.log |
+|---|---|---|---|
+| H_DEF | 8284be46 | ba407a16 | 31fe043e |
+| H_PSGF | 8284be46 | 67931834 | 31fe043e |
+| B_DEF_K0 / K1 / K26 | 1d5bf4f9 x3 | | |
+| B_PSGF_K0 / K1 / K26 | 1d5bf4f9 x3 | | |
+
+Full hashes: `gates2_hashes.txt`. Witness extract: `gates2_witness.txt`.
+
+- **P1 GREEN.** The knob is OFF, and every DEF arm equals the `merge_train.json` refs. No DEF log has a
+  `[portstate-gameflow-fu]` line.
+- **P2 GREEN.** H_PSGF step 8284be46 and ptrace 31fe043e match the refs. Its gates.csv is 67931834, the H_PSG value of
+  MATCH-PORTSTATE-GAMEFLOW (COURSE's abs columns), as predicted. B_PSGF = 1d5bf4f9 x3.
+- **P3 GREEN.** All 4 PSGF logs print `knob ON`, and `machine` equals `ticks` (H_PSGF through 13800). The logs have no
+  `0x0040d440 reached` line, no `step 0x00771980` line, and show `e450=0`, `c080=0`, `step=0`.
+- **P4 measured.** `0x0042c220 returned 1 (first), 0x0067eab0=0`, then `phase 3 -> 7 (tick 1)`. After that, `phase=7`
+  and `eab0=1` hold for the rest of each PSGF arm (`c220=1`). The gates do not move, which matches the PREREG's static
+  read: no race-path exe reader consumes `0x0067ea10` / `0x0067eab0` / `0x00771968`.
+
+Raw data (D:/MashedWT/MATCH-PORTSTATE-GAMEFLOW-FU_data, not committed):
+
+```
+701bd75d85bfc196fc082cd11ed2e3a8d583bdb2313521354df530457e018f16  mashed_re_6f383c743.exe
+dce21091043cdd1a6fe18748228ed01959277378d58d2b0931d4094f64025ab8  build2.log
+888274b9a6ba7f23fd56266739d92b6ea91a753c9756c7ec5b6e0f35457a5d82  gates2.log
+```
+Arm outputs: `arms_g2/` (step / gates / ptrace hashes in `gates2_hashes.txt`).
+
+The handoff list below is unchanged. The flip needs an original-side run off Training, and no decision is filed.
+
+## 2026-11-02 text
+
+Verdict (2026-11-02): **BLOCKED. Built @ `e86684a29`, gates not run: display D3DERR_NOTAVAILABLE.** The static leg is done. 11 of
 the 14 callees of the game-mode machine 0x004929d0 that had no exe body now have one (12 of 14 counting 0x0040e350,
 which `orch/integration` already had). The machine itself has a matched source (95.7%) and runs in the exe behind
 `MASHED_PORTSTATE_GAMEFLOW_FU` (default OFF), phases 3 and 7 only. The two left are 0x0040d440 and its callee

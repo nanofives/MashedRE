@@ -1,0 +1,12 @@
+B_PSGF_K0.log:[portstate-gameflow-fu] knob ON
+B_PSGF_K0.log:[portstate-gameflow-fu] 0x0042c220 returned 1 (first), 0x0067eab0=0
+B_PSGF_K0.log:[portstate-gameflow-fu] phase 3 -> 7 (tick 1)
+B_PSGF_K1.log:[portstate-gameflow-fu] knob ON
+B_PSGF_K1.log:[portstate-gameflow-fu] 0x0042c220 returned 1 (first), 0x0067eab0=0
+B_PSGF_K1.log:[portstate-gameflow-fu] phase 3 -> 7 (tick 1)
+B_PSGF_K26.log:[portstate-gameflow-fu] knob ON
+B_PSGF_K26.log:[portstate-gameflow-fu] 0x0042c220 returned 1 (first), 0x0067eab0=0
+B_PSGF_K26.log:[portstate-gameflow-fu] phase 3 -> 7 (tick 1)
+H_PSGF.log:[portstate-gameflow-fu] knob ON
+H_PSGF.log:[portstate-gameflow-fu] 0x0042c220 returned 1 (first), 0x0067eab0=0
+H_PSGF.log:[portstate-gameflow-fu] phase 3 -> 7 (tick 1)
