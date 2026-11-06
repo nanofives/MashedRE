@@ -10,7 +10,7 @@ cut from orch/integration `ac2e9ed63`. Ledger row: `working`.
 - The exe has no body and no caller of 0x0045ca30 (the caller is FUN_0045d250, which the port does not have).
   `exe_sources.rsp` is unchanged. A dependency scan of the `/sourceDependencies` json shows 0 of 630 exe objects
   depend on any changed file, and the asi scan catches exactly the 2 expected TUs. Script:
-  `%LOCALAPPDATA%\Temp\claude\...\scratchpad\exedeps.py` (copy it into this folder if it is still wanted).
+  `py -3.12 verify/matchfix45ca30_20261106/exedeps.py <wt> ac2e9ed63`.
 - `re/frida/hooks_registry.py` `float_clamp3_45ca30`: seeds and observes all 36 floats (3 sets, with the -2 and -4
   boundaries, ulp neighbours, +-0, +-inf, NaN). The old vector observed 6, which is why the 6-float body passed.
 - Build OK (`MASHED_NO_DEPLOY=1`). exe sha256 `5d41fe7d...`, asi `c5a3735b...`. Build log
