@@ -1,11 +1,6 @@
 {
   "funcs": [
     {
-      "name": "RG_484cf0",
-      "start": "0x00484cf0",
-      "size": 237
-    },
-    {
       "name": "RG_4847d0",
       "start": "0x004847d0",
       "size": 628
@@ -14,11 +9,6 @@
       "name": "RG_484ac0",
       "start": "0x00484ac0",
       "size": 427
-    },
-    {
-      "name": "RG_485070",
-      "start": "0x00485070",
-      "size": 52
     },
     {
       "name": "RG_484de0",

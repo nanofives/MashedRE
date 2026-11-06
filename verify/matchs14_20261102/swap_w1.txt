@@ -1,0 +1,55 @@
+MATCH-S14 swap helper w1 report (2026-11-06)
+Compile checks: wrapcheck OK on all 14 wrappers and all 12 edited old TUs (one batch after the PRIORITY-HOLD cleared at 11:37; WorldRegistry.cpp shows only its existing C4996 getenv/fopen/sscanf warnings).
+C++-compat .c edits (004853b0, 00486610, 00487140): match.py 100% and relocheck OK after the edit (4853b0 checked=4, 486610 checked=1, 487140 checked=2).
+
+0x00484a50  NOT-SAFE  symbol=Insert484a50  targets=both  install=1(old, stays)  x87=no
+ removed=none  binds=-  note=there is no re/match/s14/00484a50.c. The matched form is the static register-arg callee inside re/match/s14/00484ac0.c, whose own MATCH line 0x00484ac0 is 70.3% (relocheck BAD) and has an exe port body RG_484ac0. Swapping needs (a) 0x00484ac0's MATCH line turned HELD/#ifndef MATCH_PORT in a file that is not this RVA's file, and (b) a naked EAX/ECX -> stack adapter, because port callers (RG_484ac0 naked calls at WorldRegistry_naked.inc 00484b8d / 00484c44, and the original's callers in the .asi) pass EAX=cell, ECX=object, while a C++ compile of the matched function takes stack args. The callers reload ECX after each call, so clobbering ECX/EDX is harmless. Lead decision. Old body left as is.
+
+0x00484c90  SWAPPED  symbol=Zero484c90  targets=both  install=1  x87=no
+ removed=Race/WorldObjectLinks.cpp:66-87  binds=none  note=same 300 records (stride 0x8c from 0x006dccb8), the same 7 dwords +0,+4,+8,+0xc,+0x10,+0x14,+0x1c, u16 idx at +0x20, 9 dwords at +0x68, then 0x006e70d8=0 and 0x006e70cc=0. Exe callers: Race/WorldRegistry.cpp:163 (Registry_RaceInit). Comment updates: WorldRegistry.cpp:163, WorldObjectLinks.h:5.
+
+0x00484c70  SWAPPED  symbol=WorldObjectsBaseGet  targets=both  install=1  x87=no
+ removed=Util/WorldObjectsBase.cpp:41-48  binds=none  note=*p = [0x006e70d8], returns 0x006dccb8, same in both. Exe callers: Ai/AiModeSeven_naked.inc:29 `call WorldObjectsBaseGet` (included by Ai/AiTargetClosest.cpp:248). AiTargetClosest.cpp:245 declares it as uint32_t(uint32_t*) with C linkage, so it links against the matched undefined4*(undefined4*). WorldObjectsBase.cpp now holds only comments and includes.
+
+0x00484cf0  SWAPPED  symbol=RG_484cf0  targets=exe  install=0  x87=no (12-byte float struct copy only, no arithmetic)
+ removed=Race/WorldRegistry_naked.inc:9-93 (included by Race/WorldRegistry.cpp:116, removed by hand: excise.py anchors on the #include line)  binds=FUN_004847d0=RG_4847d0 FUN_00484ac0=RG_484ac0  note=the old verbatim naked body reads/writes only absolute addresses (0x006e70d4/c8/cc, records at 0x006dccb8) and calls the same two callees, so it matches. The wrapper binds to naked bodies in the exe-only WorldRegistry.cpp, so it must stay exe-only (do not add it to asi_sources.rsp). re/tools/naked_specs/registry_m1.json still lists RG_484cf0: a regenerated .inc would restore the body, so drop it from the spec (I did not touch it). The forward declaration `extern "C" void RG_484cf0();` stays at .inc:2. Exe callers: Race/WorldRegistry.cpp:205 (Registry_Register), :265 (Registry_MaybeReplay, MASHED_REGISTRY_REPLAY harness), Gameplay/PickupTick_naked.inc:196 (via PickupTick.cpp:205), Match/MatchS05_0041f710.cpp:12 (FUN_00484cf0 bind; call at re/match/s05/0041f710.c:57).
+
+0x00485070  SWAPPED  symbol=RG_485070  targets=exe  install=0  x87=no
+ removed=Race/WorldRegistry_naked.inc:435-452 (by hand, same reason)  binds=FUN_00484de0=RG_484de0 FUN_00484f70=RG_484f70  note=same branch and same 3 stores. The wrapper is exe-only, as for 484cf0. registry_m1.json still lists RG_485070. Lane2/L2_00485070.cpp (asi-only) holds an active install RH_ScopedInstall(L2_FUN_00485070, 0x00485070) and is itself an asi body: a generated decomp transcription, raw-address callees, ShadowAB::RunTracked. The scanner only lists its install. Not touched: lead decides. Exe callers: Race/WorldRegistry.cpp:199 (end of the pair pass), :290 (Registry_MaybeReplay harness).
+
+0x004853b0  SWAPPED  symbol=SmplFzxStateBlockGetLogged (matched fn named SmplFzxStateBlockGetLoggedBody)  targets=both  install=1  x87=no
+ removed=Physics/SmplFzxStateBlock.cpp:18-63 (excise 56-63 + by hand: the _impl, the two naked call-throughs, the namespace)  binds=FUN_00485340=MatchS14_004853b0_Call00485340 (raw-address forwarder) FUN_004987b0=MatchS14_004853b0_Call004987b0 (naked tail-jump, variadic)  note=the old body called both callees through their raw addresses. The exported entry SmplFzxStateBlockGetLogged = ShadowAB::Run(SmplFzxStateBlockGetLoggedBody) moved into the wrapper unchanged (S06 pattern) with its RH_ScopedInstall. One difference: the format string is now the port's own literal, not .rdata 0x005cf310 (same text). C++ fix in the .c: under __cplusplus FUN_004987b0 is declared (const char*, ...); the C side is unchanged. 0x00485340's old .asi body Get485340 in PromoLoop_sessionB.cpp is gone from this branch (another helper's swap, Match/MatchS14_00485340.cpp exists). This binding stays raw-address as the old body was, which also keeps the exe link free of an asi-only symbol. Exe callers: none. Old TU not in x87_tus.
+
+0x004840d0  SWAPPED  symbol=JointPtr6ce81cGet  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_round30.cpp:37-44  binds=none  note=same bound test (<4) and table 0x006ce81c. Exe callers: none (asi-only).
+
+0x00484170  SWAPPED  symbol=Rec18Create  targets=asi  install=1  x87=yes (old TU Render/PromoLoop_standins_r1.cpp not in x87_tus, SSE2)
+ removed=Render/PromoLoop_standins_r1.cpp:50-74  binds=none  note=same allocator slot [[0x007d3ff8]+0x108](0x18,0), same stores. The old body divided by the literal 1.0f, the matched source by [0x005cc320], which holds 1.0f in the original image. RwMallocSlot() in that TU is now unused (inline, no warning). Exe callers: none.
+
+0x00485360  SWAPPED  symbol=DynObjListGetCount  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_round17.cpp:82-88  binds=none  note=returns [0x006fa0f8]. Exe callers: none.
+
+0x00485370  SWAPPED  symbol=DynamicObjectListGetBase  targets=asi  install=1  x87=no
+ removed=Render/PromoLoop_round11.cpp:90-96  binds=none  note=returns 0x006e87b8. Exe callers: none.
+
+0x00485a70  SWAPPED  symbol=PoolInsert485a70  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_round45.cpp:18-65  binds=none  note=same free-slot scan (0xffff when none is free), same store order and the same head/tail cases. Exe callers: none.
+
+0x00485bd0  SWAPPED  symbol=StackPop485bd0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_round48.cpp:16-25  binds=none  note=same. Exe callers: none.
+
+0x00485bf0  SWAPPED  symbol=StackPush485bf0  targets=asi  install=1  x87=no
+ removed=Util/PromoLoop_round48.cpp:19-31 (after the 485bd0 cut)  binds=FUN_004a332b=MatchS14_00485bf0_Call004a332b (raw-address forwarder, __declspec(noreturn) + __assume(0))  note=the old body called 0x004a332b raw and kept going if it returned. The matched source declares it noreturn (the original's CRT exit). The port body Boot/Boot.cpp CrtExitNoReturn_j5 is in neither rsp, so the raw forwarder is the right binding. Exe callers: none.
+
+0x00486610  SWAPPED  symbol=ParticleBurst4  targets=asi  install=1  x87=no
+ removed=Particle/ParticleBurst_ac1.cpp:39-49  binds=FUN_004864f0=MatchS14_00486610_Call004864f0 (raw-address forwarder)  note=same call (param_1, param_2, 4). C++ fix in the .c: under __cplusplus the callee takes (undefined4, undefined4, int), with the same stack bytes. Exe callers: none.
+
+0x00487140  SWAPPED  symbol=Fwd4768c0_703068  targets=asi  install=1  x87=no
+ removed=Render/PromoLoop_round256.cpp:46-52  binds=FUN_004768c0=MatchS14_00487140_Call004768c0 (naked tail-jump to 0x004768c0)  note=the old body returned the callee's int. The matched source is void. VS2022 output checked (/FAs): `push [ref 0x00703068]; call forwarder; pop ecx; ret`, so EAX passes through unchanged as in the original. C++ fix in the .c: under __cplusplus the callee takes void*. Exe callers: none.
+
+0x00486f50  SKIP  note=no old body outside Lane2. Lane2/L2_00486f50.cpp (asi-only) holds L2_FUN_00486f50, installed. It is a generated verbatim decomp transcription and is a body, although the scanner lists only its install. It calls RW slot [[0x007d3ff8]+0x20](8,0), then raw 0x004770a0 with 0x006fe740 and with 0x006fe700, then the slot again with (8,1), all under ShadowAB::RunTracked. Port callers: none (reached only through the install, from the original's callers). The .c is 100% / relocheck OK but CXXFAIL.
+0x00489890  SKIP  note=Lane2/L2_00489890.cpp (asi-only), L2_FUN_00489890(param_1), installed, a generated transcription under ShadowAB::RunTracked: if [p+0x54]!=0, it calls raw 0x00489500(p) and 0x00476df0(p+0x10), stores [p+8] to 0x00703110, then sets [p+8]=0 and [p+0xc]=1. Port callers: none. The .c is 100% / relocheck OK / CXXOK.
+0x00487d00  SKIP  note=HUD/ScenarioWriters_sa2s1.cpp (in BOTH rsps) holds Particle3rdEmitterSubmit(param_1, byte param_2), installed. It is a real body; its RVA comment `// Particle3rdEmitterSubmit  --  0x00487d00` is not in the scanner's format, so the scanner lists only the install. If [0x00703058] < [0x00703070] it calls raw 0x00476a10(param_1), 0x004769f0(&(param_2<<24)) and 0x00476d00(0x00703068), then increments [0x00703058]. Port callers: none, exe included. The .c is 100% / relocheck OK / CXXOK.
+
+dual_copy_allowlist.txt: no entry names any of these RVAs, so nothing is made stale.
+Wrapper TUs to add (lead): exe+asi: MatchS14_00484c90, MatchS14_00484c70, MatchS14_004853b0. exe only: MatchS14_00484cf0, MatchS14_00485070. asi only: MatchS14_004840d0, 00484170, 00485360, 00485370, 00485a70, 00485bd0, 00485bf0, 00486610, 00487140. x87_tus: MatchS14_00484170 (float division).

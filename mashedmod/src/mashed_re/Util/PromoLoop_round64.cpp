@@ -18,11 +18,5 @@
 
 #include <cstdint>
 
-// 0x0048a460
-extern "C" __declspec(dllexport) void __cdecl StridedClear2_709238(void) {
-    for (std::uint32_t p = 0x00709238u; static_cast<std::int32_t>(p) < 0x00713198; p += 0x330u) {
-        *reinterpret_cast<std::uint32_t*>(p) = 0;
-        *reinterpret_cast<std::uint32_t*>(p + 4) = 0;
-    }
-}
-RH_ScopedInstall(StridedClear2_709238, 0x0048a460);
+// MATCH-S14: the body of 0x0048a460 (StridedClear2_709238) moved to Match/MatchS14_0048a460.cpp,
+// which compiles the byte-matched source re/match/s14/0048a460.c.

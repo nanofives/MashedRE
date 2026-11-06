@@ -190,14 +190,5 @@ extern "C" std::uint32_t __cdecl AspectRatioGlobalGet(void);
 // MATCH-S15: a raw-address forwarder to the original getter stood here (a second copy of that RVA).
 // The call now goes to its only port body, AspectRatioGlobalGet (declared at the top of this file).
 
-// 0x00494f30
-extern "C" __declspec(dllexport) void __cdecl AspectRatioSnapshot(void) {
-    // Call FUN_00493fc0 (returns DAT_00771a18) -- cited at 0x00494f30 body.
-    std::uint32_t v = AspectRatioGlobalGet();
-    // DAT_00771a50 = v -- cited at 0x00494f30 body.
-    *reinterpret_cast<volatile std::uint32_t*>(0x00771a50u) = v;
-    // DAT_00771a54 = v -- cited at 0x00494f30 body.
-    *reinterpret_cast<volatile std::uint32_t*>(0x00771a54u) = v;
-}
-
-RH_ScopedInstall(AspectRatioSnapshot, 0x00494f30);
+// MATCH-S16: the body of 0x00494f30 (AspectRatioSnapshot) moved to Match/MatchS16_00494f30.cpp,
+// which compiles the byte-matched source re/match/s16/00494f30.c.

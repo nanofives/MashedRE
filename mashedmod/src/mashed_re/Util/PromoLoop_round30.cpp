@@ -27,21 +27,11 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Global7d3e4cGetThunk(void
 }
 RH_ScopedInstall(Global7d3e4cGetThunk, 0x004b65a0);
 
-// 0x00496930  8B 44 24 04 8B 04 85 30 30 77 00 C3
-//   mov eax,[esp+4]; mov eax,[eax*4 + 0x00773030]; ret  (dword table, index*4)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Table773030Get(std::uint32_t param_1) {
-    return reinterpret_cast<const std::uint32_t*>(0x00773030u)[param_1];  // cited at 0x00496930
-}
-RH_ScopedInstall(Table773030Get, 0x00496930);
+// MATCH-S16: the body of 0x00496930 (Table773030Get) moved to Match/MatchS16_00496930.cpp,
+// which compiles the byte-matched source re/match/s16/00496930.c.
 
-// 0x004840d0  8B 44 24 04 83 F8 04 72 03 33 C0 C3 8B 04 85 1C E8 6C 00 C3
-//   mov eax,[esp+4]; cmp eax,4; jb hit; xor eax,eax; ret; hit: mov eax,[eax*4+0x006ce81c]; ret
-extern "C" __declspec(dllexport) std::uint32_t __cdecl JointPtr6ce81cGet(std::uint32_t param_1) {
-    if (param_1 < 4u)
-        return reinterpret_cast<const std::uint32_t*>(0x006ce81cu)[param_1];  // cited at 0x004840d0
-    return 0u;  // cmp/jb out-of-bounds -> xor eax,eax at 0x004840d9
-}
-RH_ScopedInstall(JointPtr6ce81cGet, 0x004840d0);
+// MATCH-S14: the body of 0x004840d0 (JointPtr6ce81cGet) moved to Match/MatchS14_004840d0.cpp,
+// which compiles the byte-matched source re/match/s14/004840d0.c.
 
 // MATCH-S09: the body of 0x00455b40 (PowerupTable6885e0Get) moved to Match/MatchS09_00455b40.cpp,
 // which compiles the byte-matched source re/match/s09/00455b40.c.

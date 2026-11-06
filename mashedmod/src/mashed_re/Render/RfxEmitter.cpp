@@ -104,16 +104,8 @@ void SinCos24(float a, float* s, float* c) {
 // Staging setters (FUN_00476d00 copies the globals they fill)
 // ===========================================================================
 
-// 0x004769a0
-extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetPosition(float* param_1)
-{
-    if (param_1 == nullptr) param_1 = reinterpret_cast<float*>(0x006925a8u);   // DAT_006925a8 (BSS, no writer)
-    const std::uint32_t* s = reinterpret_cast<const std::uint32_t*>(param_1);
-    G(0x00692528u) = s[0];
-    G(0x0069252cu) = s[1];
-    G(0x00692530u) = s[2];
-}
-RH_ScopedInstall(ParticleEmitter_SetPosition, 0x004769a0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S12: the body of 0x004769a0 (ParticleEmitter_SetPosition) moved to Match/MatchS12_004769a0.cpp,
+// which compiles the byte-matched source re/match/s12/004769a0.c.
 
 // 0x004769d0
 extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetVelocity(float* param_1)
@@ -131,22 +123,11 @@ extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetColour(std::uin
 }
 RH_ScopedInstall(ParticleEmitter_SetColour, 0x004769f0);  // re-enabled 2026-05-24 c3-render-b
 
-// 0x00476a10 (default: the template, 0x00476a1a)
-extern "C" __declspec(dllexport) void __cdecl Copy476a10(std::uint8_t* src)
-{
-    if (src == nullptr) src = reinterpret_cast<std::uint8_t*>(kTemplate);
-    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(0x006924e8u);
-    const std::uint32_t* s = reinterpret_cast<const std::uint32_t*>(src);
-    for (int i = 0; i < 16; i++) d[i] = s[i];
-}
-RH_ScopedInstall(Copy476a10, 0x00476a10);
+// MATCH-S12: the body of 0x00476a10 (Copy476a10) moved to Match/MatchS12_00476a10.cpp,
+// which compiles the byte-matched source re/match/s12/00476a10.c.
 
-// 0x00476a30 (no null guard: the value itself)
-extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetScalar(std::uint32_t param_1)
-{
-    G(0x006924d8u) = param_1;
-}
-RH_ScopedInstall(ParticleEmitter_SetScalar, 0x00476a30);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S12: the body of 0x00476a30 (ParticleEmitter_SetScalar) moved to Match/MatchS12_00476a30.cpp,
+// which compiles the byte-matched source re/match/s12/00476a30.c.
 
 // 0x00476a40
 extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetRGBA(std::uint32_t* param_1)
@@ -205,25 +186,11 @@ extern "C" __declspec(dllexport) void __cdecl Set476b30(std::uint8_t* p1, std::u
 }
 RH_ScopedInstall(Set476b30, 0x00476b30);
 
-// 0x00476b90 (default: the template, 0x00476b9a)
-extern "C" __declspec(dllexport) void __cdecl Batch476b90(std::uint32_t* p1, std::uint32_t* p2)
-{
-    if (!p2) p2 = reinterpret_cast<std::uint32_t*>(kTemplate);
-    std::uint8_t* b = Plugin(p1);
-    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(b + 0xf8);
-    for (int k = 0; k < 16; k++) d[k] = p2[k];
-    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x8000u;
-}
-RH_ScopedInstall(Batch476b90, 0x00476b90);
+// MATCH-S12: the body of 0x00476b90 (Batch476b90) moved to Match/MatchS12_00476b90.cpp,
+// which compiles the byte-matched source re/match/s12/00476b90.c.
 
-// 0x00476be0
-extern "C" __declspec(dllexport) void __cdecl Batch476be0(std::uint32_t* p1, std::uint32_t v)
-{
-    std::uint8_t* b = Plugin(p1);
-    *reinterpret_cast<std::uint32_t*>(b + 0xc0) = v;
-    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x20000u;
-}
-RH_ScopedInstall(Batch476be0, 0x00476be0);
+// MATCH-S12: the body of 0x00476be0 (Batch476be0) moved to Match/MatchS12_00476be0.cpp,
+// which compiles the byte-matched source re/match/s12/00476be0.c.
 
 // 0x00476c10
 extern "C" __declspec(dllexport) void __cdecl Batch476c10(std::uint32_t* p1, std::uint32_t* p2)
@@ -249,74 +216,16 @@ extern "C" __declspec(dllexport) void __cdecl Batch476c60(std::uint32_t* p1, std
 }
 RH_ScopedInstall(Batch476c60, 0x00476c60);
 
-// 0x00476cb0
-extern "C" __declspec(dllexport) void __cdecl Batch476cb0(std::uint32_t* p1, std::uint32_t p2, std::uint32_t p3)
-{
-    std::uint8_t* b = Plugin(p1);
-    *reinterpret_cast<std::uint32_t*>(b + 0xa4) = p2;
-    *reinterpret_cast<std::uint32_t*>(b + 0xa8) = p3;
-    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x10000000u;
-}
-RH_ScopedInstall(Batch476cb0, 0x00476cb0);
+// MATCH-S12: the body of 0x00476cb0 (Batch476cb0) moved to Match/MatchS12_00476cb0.cpp,
+// which compiles the byte-matched source re/match/s12/00476cb0.c.
 
 // ===========================================================================
 // Submit: if (count < capacity) copy the staging globals into each present batch array at [count], ++count.
 // A pure leaf. The copies are dword MOVs / REP MOVSD in the original, so bit copies here.
 // ===========================================================================
 
-// 0x00476d00
-extern "C" __declspec(dllexport) void __cdecl MultiArrayScatter476d00(unsigned char* p)
-{
-    const int counter = *reinterpret_cast<int*>(p + 0xc);
-    if (counter >= *reinterpret_cast<int*>(p + 8)) return;
-    unsigned char* a0 = *reinterpret_cast<unsigned char**>(p + 0x10);
-    if (a0) {
-        int* d = reinterpret_cast<int*>(a0 + counter * 12);
-        d[0] = *reinterpret_cast<int*>(0x00692528u);
-        d[1] = *reinterpret_cast<int*>(0x0069252cu);
-        d[2] = *reinterpret_cast<int*>(0x00692530u);
-    }
-    unsigned char* a1 = *reinterpret_cast<unsigned char**>(p + 0x14);
-    if (a1) {
-        int* d = reinterpret_cast<int*>(a1 + counter * 8);
-        d[0] = *reinterpret_cast<int*>(0x006924dcu);
-        d[1] = *reinterpret_cast<int*>(0x006924e0u);
-    }
-    unsigned char* a2 = *reinterpret_cast<unsigned char**>(p + 0x18);
-    if (a2) *reinterpret_cast<int*>(a2 + counter * 4) = *reinterpret_cast<int*>(0x00692554u);
-    unsigned char* a3 = *reinterpret_cast<unsigned char**>(p + 0x1c);
-    if (a3) {  // rep movsd 0x10 dwords from 0x6924e8
-        int* d = reinterpret_cast<int*>(a3 + counter * 64);
-        const int* s = reinterpret_cast<const int*>(0x006924e8u);
-        for (int k = 0; k < 0x10; k++) d[k] = s[k];
-    }
-    unsigned char* a4 = *reinterpret_cast<unsigned char**>(p + 0x20);
-    if (a4) {  // fld dword [0x006924d8] / fstp dword [ecx + edx*4] (0x00476d8e / 0x00476d94): an x87 round
-               // trip, exact for every float but a signalling NaN, which it quiets; a plain copy would not
-        float* d = reinterpret_cast<float*>(a4 + counter * 4);
-        __asm {
-            mov  ecx, d
-            fld  dword ptr ds:[0x006924d8]
-            fstp dword ptr [ecx]
-        }
-    }
-    unsigned char* a5 = *reinterpret_cast<unsigned char**>(p + 0x24);
-    if (a5) {
-        int* d = reinterpret_cast<int*>(a5 + counter * 16);
-        d[0] = *reinterpret_cast<int*>(0x00692598u);
-        d[1] = *reinterpret_cast<int*>(0x0069259cu);
-        d[2] = *reinterpret_cast<int*>(0x006925a0u);
-        d[3] = *reinterpret_cast<int*>(0x006925a4u);
-    }
-    unsigned char* a6 = *reinterpret_cast<unsigned char**>(p + 0x28);
-    if (a6) {  // rep movsd 8 dwords from 0x692534
-        int* d = reinterpret_cast<int*>(a6 + counter * 32);
-        const int* s = reinterpret_cast<const int*>(0x00692534u);
-        for (int k = 0; k < 8; k++) d[k] = s[k];
-    }
-    *reinterpret_cast<int*>(p + 0xc) = counter + 1;
-}
-RH_ScopedInstall(MultiArrayScatter476d00, 0x00476d00);
+// MATCH-S12: the body of 0x00476d00 (MultiArrayScatter476d00) moved to Match/MatchS12_00476d00.cpp,
+// which compiles the byte-matched source re/match/s12/00476d00.c.
 
 // ===========================================================================
 // The exe's side: create, flush, the instance callbacks (no .asi install)

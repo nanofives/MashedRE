@@ -123,10 +123,16 @@ MatchS13_00482030
 ProgressBarSetA
 # drawstream (2026-10-12): 0x00427ad0 rect chain (fmul xs; fmul viewport; fstp), same measurement.
 MenuMenusBB
+# MATCH-S12 2026-11-06: port bodies from byte-matched game code whose old bodies did x87 float work (naked asm, or 0x00476d00 fld/fstp copy) (re/match/s12/)
+MatchS12_00475f30
+MatchS12_00476d00
+MatchS12_004773f0
 # bnormalise (2026-10-12): 0x00428610 re-ported from the listing; the coordMode-2 chain keeps fVar4*p2 in ST
 # (0x004286ad..0x004286c1). Measured by run_diff at the harness CW and at 0x007f; see
 # re/analysis/negctl/session_20261012b/bnormalise_RESULT.md.
 ViewportScaledRectDraw
+# MATCH-S16 2026-11-02: port bodies compiled from byte-matched game code that uses float (re/match/s16/)
+MatchS16_00495080
 # pontoon (2026-10-16): the Warzone track object 0x00684d18 (RtAnim/RpHAnim/RW matrix leaves transcribed from the
 # listings, run at PC_24 by Pontoon_Tick). verify/pontoon_20261016/PREREG_pontoon.md.
 WarzonePontoon

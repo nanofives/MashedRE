@@ -21,34 +21,8 @@
 
 #include <cstdint>
 
-namespace {
-using Fn0 = void*(__cdecl*)();
-using Fn1 = void*(__cdecl*)(void*);
-using Fn4 = void*(__cdecl*)(void*, void*, void*, void*);
+// MATCH-S16: the body of 0x00496d60 (PipelineFragment4eb3c0Create) moved to Match/MatchS16_00496d60.cpp,
+// which compiles the byte-matched source re/match/s16/00496d60.c.
 
-void* PipelineWithFragment(std::uintptr_t nodeGetter) {
-    void* pipe = reinterpret_cast<Fn0>(0x004d4170u)();
-    if (!pipe) return nullptr;
-    void* locked = reinterpret_cast<Fn1>(0x004d4dd0u)(pipe);
-    if (locked) {
-        void* node = reinterpret_cast<Fn0>(nodeGetter)();
-        void* r = reinterpret_cast<Fn4>(0x004d4f90u)(locked, nullptr, node, nullptr);
-        if (reinterpret_cast<Fn1>(0x004d4380u)(r)) return pipe;
-    }
-    reinterpret_cast<Fn1>(0x004d41e0u)(pipe);
-    return nullptr;
-}
-}  // namespace
-
-// 0x00496d60  PipelineFragment4eb3c0Create (FUN_00496d60, 76 B)
-// 0x00496d62 0x004d4170 / 0x00496d6b je 0x00496da7 / 0x00496d6e 0x004d4dd0 / 0x00496d7a je 0x00496d9e /
-// 0x00496d7c 0x004eb3c0 / 0x00496d87 0x004d4f90 / 0x00496d8d 0x004d4380 / 0x00496d97 je 0x00496d9e / 0x00496d99 ret pipe /
-// 0x00496d9f 0x004d41e0 / 0x00496da8 xor eax, eax
-// 0x00496d60
-extern "C" __declspec(dllexport) void* __cdecl PipelineFragment4eb3c0Create() { return PipelineWithFragment(0x004eb3c0u); }
-RH_ScopedInstall(PipelineFragment4eb3c0Create, 0x00496d60);
-
-// 0x00496db0  PipelineFragment4eb9d0Create (FUN_00496db0, 76 B): as 0x00496d60 with node getter 0x004eb9d0 (0x00496dcc).
-// 0x00496db0
-extern "C" __declspec(dllexport) void* __cdecl PipelineFragment4eb9d0Create() { return PipelineWithFragment(0x004eb9d0u); }
-RH_ScopedInstall(PipelineFragment4eb9d0Create, 0x00496db0);
+// MATCH-S16: the body of 0x00496db0 (PipelineFragment4eb9d0Create) moved to Match/MatchS16_00496db0.cpp,
+// which compiles the byte-matched source re/match/s16/00496db0.c.

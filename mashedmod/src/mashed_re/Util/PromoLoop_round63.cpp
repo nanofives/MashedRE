@@ -17,27 +17,11 @@
 
 #include <cstdint>
 
-// 0x00489450
-extern "C" __declspec(dllexport) void __cdecl ContRecSet450(int* cont, const std::uint32_t* in2) {
-    std::uint32_t addr = static_cast<std::uint32_t>(cont[0]) + static_cast<std::uint32_t>(cont[2]) * 0x30u;
-    *reinterpret_cast<std::uint32_t*>(addr - 0x20) = in2[0];   // MOV [addr-0x20],ESI
-    *reinterpret_cast<std::uint32_t*>(addr - 0x1c) = in2[1];   // MOV [addr-0x1c],EAX
-}
-RH_ScopedInstall(ContRecSet450, 0x00489450);
+// MATCH-S14: the body of 0x00489450 (ContRecSet450) moved to Match/MatchS14_00489450.cpp,
+// which compiles the byte-matched source re/match/s14/00489450.c.
 
-// 0x00489480
-extern "C" __declspec(dllexport) void __cdecl ContRecSet480(int* cont, float val) {
-    std::uint32_t addr = static_cast<std::uint32_t>(cont[0]) + static_cast<std::uint32_t>(cont[2]) * 0x30u;
-    *reinterpret_cast<float*>(addr - 0x18) = val;             // FSTP [addr-0x18]
-}
-RH_ScopedInstall(ContRecSet480, 0x00489480);
+// MATCH-S14: the body of 0x00489480 (ContRecSet480) moved to Match/MatchS14_00489480.cpp,
+// which compiles the byte-matched source re/match/s14/00489480.c.
 
-// 0x004894a0
-extern "C" __declspec(dllexport) void __cdecl ContRecSet4a0(int* cont, const std::uint32_t* in2a, const std::uint32_t* in2b) {
-    std::uint32_t addr = static_cast<std::uint32_t>(cont[0]) + static_cast<std::uint32_t>(cont[2]) * 0x30u;
-    *reinterpret_cast<std::uint32_t*>(addr - 0x10) = in2a[0];
-    *reinterpret_cast<std::uint32_t*>(addr - 0xc) = in2a[1];
-    *reinterpret_cast<std::uint32_t*>(addr - 0x8) = in2b[0];
-    *reinterpret_cast<std::uint32_t*>(addr - 0x4) = in2b[1];
-}
-RH_ScopedInstall(ContRecSet4a0, 0x004894a0);
+// MATCH-S14: the body of 0x004894a0 (ContRecSet4a0) moved to Match/MatchS14_004894a0.cpp,
+// which compiles the byte-matched source re/match/s14/004894a0.c.

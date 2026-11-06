@@ -29,23 +29,11 @@
 
 
 
-// 0x00495520  input — byte-verified: A1 78 1E 77 00 C3
-//   MOV EAX,[0x00771e78] ; RET   (read_global u32; direct caller FUN_00496040 C2)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Get771e78(void) {
-    return *reinterpret_cast<std::uint32_t*>(0x00771e78u);
-}
-RH_ScopedInstall(Get771e78, 0x00495520);
+// MATCH-S16: the body of 0x00495520 (Get771e78) moved to Match/MatchS16_00495520.cpp,
+// which compiles the byte-matched source re/match/s16/00495520.c.
 
-// 0x004842b0  debug-overlay — byte-verified: 33 C0 / A3.. x4 / C3
-//   XOR EAX,EAX ; MOV [0x6cfc88],EAX ; MOV [0x6cf068],EAX ; MOV [0x6cf06c],EAX ;
-//   MOV [0x6cfc8c],EAX ; RET   (4-global zero-clear; direct caller FUN_00484580 C2)
-extern "C" __declspec(dllexport) void __cdecl Clear4842b0(void) {
-    *reinterpret_cast<std::uint32_t*>(0x006cfc88u) = 0;   // MOV [0x6cfc88],EAX
-    *reinterpret_cast<std::uint32_t*>(0x006cf068u) = 0;   // MOV [0x6cf068],EAX
-    *reinterpret_cast<std::uint32_t*>(0x006cf06cu) = 0;   // MOV [0x6cf06c],EAX
-    *reinterpret_cast<std::uint32_t*>(0x006cfc8cu) = 0;   // MOV [0x6cfc8c],EAX
-}
-RH_ScopedInstall(Clear4842b0, 0x004842b0);
+// MATCH-S14: the body of 0x004842b0 (Clear4842b0) moved to Match/MatchS14_004842b0.cpp,
+// which compiles the byte-matched source re/match/s14/004842b0.c.
 
 // NOTE: 0x005c9d00 (XOR EAX,EAX; RET = GetRaceEndTrigger) was surfaced by the
 // classifier as const_return 0 and diffs GREEN bit-identically — but it is DELIBERATELY
@@ -144,12 +132,8 @@ extern "C" __declspec(dllexport) void* __cdecl ClearDesc5bde50(void* p) {
 }
 RH_ScopedInstall(ClearDesc5bde50, 0x005bde50);
 
-// 0x00477e00  render — byte-verified: 8B 44 24 04 8B 4C 24 08 69 C0 C0 02 00 00 89 88 8C 31 69 00 C3
-//   fn(i,v): IMUL EAX,EAX,0x2c0 ; *(u32*)(0x0069318c + i*0x2c0) = v ; RET   (caller 0040d8f0 C2)
-extern "C" __declspec(dllexport) void __cdecl Table69318cSet(std::uint32_t i, std::uint32_t v) {
-    *reinterpret_cast<std::uint32_t*>(0x0069318cu + i * 0x2c0u) = v;
-}
-RH_ScopedInstall(Table69318cSet, 0x00477e00);
+// MATCH-S12: the body of 0x00477e00 (Table69318cSet) moved to Match/MatchS12_00477e00.cpp,
+// which compiles the byte-matched source re/match/s12/00477e00.c.
 
 // ===== round 83 =====
 // Mashed RE — promote-round round 83 (3-field struct setters + byte-OR RMW; deref_struct_set).
@@ -416,22 +400,8 @@ RH_ScopedInstall(WheelGet46d2e0, 0x0046d2e0);
 
 // ===== round 98 =====
 
-// 0x00497000  render — byte-verified: build 16-dword projection matrix at out from camera struct p2
-//   out[0]=p2[0x70]; out[5]=p2[0x74]; out[10]=fv=p2[0x84]/(p2[0x84]-p2[0x80]); out[0xb]=-(fv*p2[0x80]);
-//   out[0xe]=1.0f; rest 0
-extern "C" __declspec(dllexport) void __cdecl Proj497000(std::uint32_t* out, char* p2) {
-    out[0]=*reinterpret_cast<std::uint32_t*>(p2+0x70);
-    out[1]=0; out[2]=0; out[3]=0; out[4]=0;
-    out[5]=*reinterpret_cast<std::uint32_t*>(p2+0x74);
-    out[6]=0; out[7]=0; out[8]=0; out[9]=0;
-    float fv = *reinterpret_cast<float*>(p2+0x84) / (*reinterpret_cast<float*>(p2+0x84) - *reinterpret_cast<float*>(p2+0x80));
-    *reinterpret_cast<float*>(out+10) = fv;
-    float f1 = *reinterpret_cast<float*>(p2+0x80);
-    out[0xc]=0; out[0xd]=0;
-    *reinterpret_cast<std::uint32_t*>(out+0xe)=0x3f800000u; out[0xf]=0;
-    *reinterpret_cast<float*>(out+0xb) = -(fv*f1);
-}
-RH_ScopedInstall(Proj497000, 0x00497000);
+// MATCH-S16: the body of 0x00497000 (Proj497000) moved to Match/MatchS16_00497000.cpp,
+// which compiles the byte-matched source re/match/s16/00497000.c.
 
 // ===== round 99 =====
 
@@ -552,15 +522,8 @@ RH_ScopedInstall(Reset413fe0, 0x00413fe0);
 // ===== round 107 =====
 // ECX-input (thiscall) const-field setters — verbatim naked-asm ports.
 
-// 0x004944b0  util — byte-verified: mov eax,ecx; mov dword[eax],0; ret  (*this = 0; return this)
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Zero4944b0(void) {
-    __asm {
-        mov eax, ecx
-        mov dword ptr [eax], 0
-        ret
-    }
-}
-RH_ScopedInstall(Zero4944b0, 0x004944b0);
+// MATCH-S16: the body of 0x004944b0 (Zero4944b0) moved to Match/MatchS16_004944b0.cpp,
+// which compiles the byte-matched source re/match/s16/004944b0.c.
 
 // 0x0049c800  particle — byte-verified: mov dword[ecx+0x68],0; ret  (this->field68 = 0)
 extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Zero49c800(void) {
@@ -641,11 +604,8 @@ RH_ScopedInstall(Count4840f0, 0x004840f0);
 // ===== round 111 =====
 // cdecl buffer ops (state-independent: memset / memcpy from abs static data).
 
-// 0x00478cb0  render — byte-verified: void fn(p): rep stosd 0xab8 dwords of 0 at p
-extern "C" __declspec(dllexport) void __cdecl Memset478cb0(std::uint32_t* p) {
-    for (unsigned i = 0; i < 0xab8u; i++) p[i] = 0;
-}
-RH_ScopedInstall(Memset478cb0, 0x00478cb0);
+// MATCH-S12: the body of 0x00478cb0 (Memset478cb0) moved to Match/MatchS12_00478cb0.cpp,
+// which compiles the byte-matched source re/match/s12/00478cb0.c.
 
 // 0x004b65c0  render — byte-verified: void fn(dst): if(dst) rep movsd 0x82b dwords
 //   from 0x8ab7e0 to dst
@@ -710,17 +670,8 @@ RH_ScopedInstall(Or4b5240, 0x004b5240);
 
 // ===== round 116 =====
 
-// 0x00489290 — byte-verified: void fn(): for(eax=0x705a10;;){ eax-=0x68;
-//   *(u32*)(eax-4)=0; *(u32*)eax=1; if(eax==0x703170) break; }  (100-record reset)
-extern "C" __declspec(dllexport) void __cdecl Reset489290(void) {
-    std::uint32_t eax = 0x705a10u;
-    do {
-        eax -= 0x68u;
-        *reinterpret_cast<std::uint32_t*>(eax - 4) = 0;
-        *reinterpret_cast<std::uint32_t*>(eax) = 1;
-    } while (eax != 0x703170u);
-}
-RH_ScopedInstall(Reset489290, 0x00489290);
+// MATCH-S14: the body of 0x00489290 (Reset489290) moved to Match/MatchS14_00489290.cpp,
+// which compiles the byte-matched source re/match/s14/00489290.c.
 
 // 0x004b7020 — byte-verified: uint fn(a, idx): if(idx==-1) return 0x6172f8;
 //   else return *(u32*)(0x5d8818 + idx*4)
@@ -739,18 +690,8 @@ extern "C" __declspec(dllexport) int __cdecl Tbl4b9540(std::uint32_t a, std::uin
 }
 RH_ScopedInstall(Tbl4b9540, 0x004b9540);
 
-// ===== round 117 =====
-// 0x00489da0 — byte-verified: void fn(idx): ptr=*(u32*)(0x7067fc + idx*4);
-//   for(0x200 recs of 0x20B at ptr){ *(u32*)ptr=0; *(u32*)(ptr+4)=0; ptr+=0x20; }
-extern "C" __declspec(dllexport) void __cdecl Zero489da0(std::uint32_t idx) {
-    std::uint8_t* p = *reinterpret_cast<std::uint8_t**>(0x007067fcu + idx * 4u);
-    for (unsigned i = 0; i < 0x200u; i++) {
-        *reinterpret_cast<std::uint32_t*>(p) = 0;
-        *reinterpret_cast<std::uint32_t*>(p + 4) = 0;
-        p += 0x20u;
-    }
-}
-RH_ScopedInstall(Zero489da0, 0x00489da0);
+// MATCH-S14: the body of 0x00489da0 (Zero489da0) moved to Match/MatchS14_00489da0.cpp,
+// which compiles the byte-matched source re/match/s14/00489da0.c.
 
 // ===== round 118 =====
 // 0x004d54d0 — byte-verified: void fn(idx, out): *out = *(u32*)(0x7d57f8 + idx*8)
@@ -759,16 +700,8 @@ extern "C" __declspec(dllexport) void __cdecl Get4d54d0(std::uint32_t idx, std::
 }
 RH_ScopedInstall(Get4d54d0, 0x004d54d0);
 
-// ===== round 119 =====
-// 0x004893b0 — byte-verified: void fn(p): p[0xc]++; base=p[0]; idx=p[8];
-//   *(u32*)(base + idx*0x30 - 0x14) = 1   (nested: p[0] is a base ptr)
-extern "C" __declspec(dllexport) void __cdecl Inc4893b0(std::uint8_t* p) {
-    *reinterpret_cast<std::uint32_t*>(p + 0xc) += 1;
-    std::uint8_t* base = *reinterpret_cast<std::uint8_t**>(p);
-    std::uint32_t idx = *reinterpret_cast<std::uint32_t*>(p + 8);
-    *reinterpret_cast<std::uint32_t*>(base + idx * 0x30u - 0x14u) = 1;
-}
-RH_ScopedInstall(Inc4893b0, 0x004893b0);
+// MATCH-S14: the body of 0x004893b0 (Inc4893b0) moved to Match/MatchS14_004893b0.cpp,
+// which compiles the byte-matched source re/match/s14/004893b0.c.
 
 // ===== round 120 =====
 // 0x0046be10 — byte-verified: uint fn(arg0,a1,a2,a3):
@@ -855,63 +788,14 @@ RH_ScopedInstall(Get5af700, 0x005af700);
 
 // ===== round 105 =====
 
-// 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
-//   Verbatim asm port (bit-identical by construction). Zeroes 14 dwords, sets bytes
-//   [0x40..0x43]=0xff, [0x28]/[0x14]/[0]=1.0f, [0xc]=([0xc]|0x20003).
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init4773f0(void) {
-    __asm {
-        xor ecx, ecx
-        mov dl, 0xff
-        mov dword ptr [eax + 0x48], ecx
-        mov dword ptr [eax + 0x4c], ecx
-        mov dword ptr [eax + 0x50], ecx
-        mov dword ptr [eax + 0x54], ecx
-        mov dword ptr [eax + 0x58], ecx
-        mov dword ptr [eax + 0x10], ecx
-        mov dword ptr [eax + 8], ecx
-        mov dword ptr [eax + 4], ecx
-        mov dword ptr [eax + 0x24], ecx
-        mov dword ptr [eax + 0x20], ecx
-        mov dword ptr [eax + 0x18], ecx
-        mov dword ptr [eax + 0x38], ecx
-        mov dword ptr [eax + 0x34], ecx
-        mov dword ptr [eax + 0x30], ecx
-        mov ecx, dword ptr [eax + 0xc]
-        mov byte ptr [eax + 0x40], dl
-        mov byte ptr [eax + 0x41], dl
-        mov byte ptr [eax + 0x42], dl
-        mov byte ptr [eax + 0x43], dl
-        mov edx, 0x3f800000
-        or ecx, 0x20003
-        mov dword ptr [eax + 0x28], edx
-        mov dword ptr [eax + 0x14], edx
-        mov dword ptr [eax], edx
-        mov dword ptr [eax + 0xc], ecx
-        ret
-    }
-}
-RH_ScopedInstall(Init4773f0, 0x004773f0);
+// MATCH-S12: the body of 0x004773f0 (Init4773f0) moved to Match/MatchS12_004773f0.cpp,
+// which compiles the byte-matched source re/match/s12/004773f0.c.
 
 // MATCH-S19: the body of 0x004c75c0 (Get4c75c0) moved to Match/MatchS19_004c75c0.cpp,
 // which compiles the byte-matched source re/match/s19/004c75c0.c.
 
-// ===== round 126 =====
-// 0x00485340 — byte-verified bounded indexed-array getter:
-//   mov eax,[esp+4]          ; i
-//   cmp eax,[0x6e71c4]       ; bound
-//   ja  fail                 ; unsigned: i > bound -> return 0
-//   mov ecx,[0x6e71cc]       ; container ptr
-//   mov edx,[ecx+0x10]       ; arr = container[0x10]
-//   mov eax,[edx+eax*4]      ; return arr[i]
-//   ret
-// fail: xor eax,eax; ret
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Get485340(std::uint32_t i) {
-    if (i > *reinterpret_cast<std::uint32_t*>(0x006e71c4)) return 0;
-    std::uint8_t* cont = *reinterpret_cast<std::uint8_t**>(0x006e71cc);
-    std::uint8_t* arr  = *reinterpret_cast<std::uint8_t**>(cont + 0x10);
-    return *reinterpret_cast<std::uint32_t*>(arr + i * 4);
-}
-RH_ScopedInstall(Get485340, 0x00485340);
+// MATCH-S14: the body of 0x00485340 (Get485340) moved to Match/MatchS14_00485340.cpp,
+// which compiles the byte-matched source re/match/s14/00485340.c.
 
 // ===== round 127 =====
 // 0x004d5480 — byte-verified mark-dirty setter (absolute tables):
@@ -1214,31 +1098,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Split41e170_RegA
 }
 RH_ScopedInstall(Split41e170_RegAbi, 0x0041e170);  // ABI fixed 2026-07-27 (was __cdecl)
 
-// ===== round 134 ===== (bounded 2D-grid multi-out getter)
-// 0x004957a0 — u32 fn(i, j, out1, out2, out3): if(i>=*0x772fac || j>=*0x771e80) return 0;
-//   idx=i*0x89+j; if(out1){out1[0]=tbl150[idx*8]; out1[1]=tbl154[idx*8];}
-//   if(out2){out2[0]=tbl1d0[idx*8]; out2[1]=tbl1d4[idx*8];} idx3=i*0x112+j;
-//   if(out3) out3[0]=tbl290[idx3*4]; return 1.
-//   NB: original reads out2/out3 via post-`push esi/edi` [esp+0x18]/[esp+0x1c] which map
-//   to pre-push +0x10/+0x14 -> they are args 4 and 5, not 6 and 7.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Grid4957a0(
-        std::uint32_t i, std::uint32_t j, int* out1, int* out2, int* out3) {
-    if (static_cast<int>(i) >= *reinterpret_cast<int*>(0x00772fac)) return 0;
-    if (static_cast<int>(j) >= *reinterpret_cast<int*>(0x00771e80)) return 0;
-    int idx = static_cast<int>(i) * 0x89 + static_cast<int>(j);
-    if (out1) {
-        out1[0] = *reinterpret_cast<int*>(0x00772150 + idx * 8);
-        out1[1] = *reinterpret_cast<int*>(0x00772154 + idx * 8);
-    }
-    if (out2) {
-        out2[0] = *reinterpret_cast<int*>(0x007721d0 + idx * 8);
-        out2[1] = *reinterpret_cast<int*>(0x007721d4 + idx * 8);
-    }
-    int idx3 = static_cast<int>(i) * 0x112 + static_cast<int>(j);
-    if (out3) out3[0] = *reinterpret_cast<int*>(0x00772290 + idx3 * 4);
-    return 1;
-}
-RH_ScopedInstall(Grid4957a0, 0x004957a0);
+// MATCH-S16: the body of 0x004957a0 (Grid4957a0) moved to Match/MatchS16_004957a0.cpp,
+// which compiles the byte-matched source re/match/s16/004957a0.c.
 
 // [REVERTED 2026-06-15] round 135 FUN_00528e30 (0x00528e30) is in the statically-linked
 // libpng/zlib band (0x516000-0x529fff, right after zcalloc/zcfree) -> library-skip per user
@@ -1290,22 +1151,8 @@ RH_ScopedInstall(Clear4e4350, 0x004e4350);
 // MATCH-S07: the body of 0x0042c150 (Scan42c150) moved to Match/MatchS07_0042c150.cpp,
 // which compiles the byte-matched source re/match/s07/0042c150.c.
 
-// ===== round 141 ===== (global 2-level list search)
-// 0x004850b0 — int fn(key): g=*(u8**)0x6e71cc; node=*(u8**)(g+4); if(node==0) return -1;
-//   loop: e=*(u8**)node; if(e && e[8]==key) return e[0xc]; node=*(u8**)(node+8); if(node) loop;
-//   return -1.
-extern "C" __declspec(dllexport) int __cdecl Search4850b0(std::uint32_t key) {
-    std::uint8_t* g = *reinterpret_cast<std::uint8_t**>(0x006e71cc);
-    std::uint8_t* node = *reinterpret_cast<std::uint8_t**>(g + 4);
-    while (node) {
-        std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(node);
-        if (e && *reinterpret_cast<std::uint32_t*>(e + 8) == key)
-            return *reinterpret_cast<int*>(e + 0xc);
-        node = *reinterpret_cast<std::uint8_t**>(node + 8);
-    }
-    return -1;
-}
-RH_ScopedInstall(Search4850b0, 0x004850b0);
+// MATCH-S14: the body of 0x004850b0 (Search4850b0) moved to Match/MatchS14_004850b0.cpp,
+// which compiles the byte-matched source re/match/s14/004850b0.c.
 
 // ===== round 142 ===== (4-branch pure pointer getter)
 // 0x005aa9c0 — u32 fn(arg): c=arg[0x20]; if(c){ p=arg[0]; f=p[0x40]&0xfffffff;
@@ -1449,50 +1296,9 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Set558100(std::uint8_t* a
 }
 RH_ScopedInstall(Set558100, 0x00558100);
 
-// ===== round 152 ===== (EAX-dest struct init: 16-dword copy + field sets)
-// 0x00477450 — void fn(EAX=dest, [esp+4]=src, [esp+8]=arg2, [esp+0xc]=arg3, [esp+0x10]=arg4):
-//   dest[0x54]=0; dest[0x48]=0; dest[0x4c]=arg3; dest[0x58]=1; dest[0x50]=arg4;
-//   memcpy(dest, src, 16 dwords); dest[0x40]=*arg2.  (dest in EAX; reimpl takes it as arg0.)
-extern "C" __declspec(dllexport) void __cdecl Init477450(
-        std::uint8_t* dest, std::uint8_t* src, std::uint32_t* arg2, std::uint32_t arg3, std::uint32_t arg4) {
-    *reinterpret_cast<std::uint32_t*>(dest + 0x54) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x48) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x4c) = arg3;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x58) = 1;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x50) = arg4;
-    for (int i = 0; i < 16; i++) reinterpret_cast<std::uint32_t*>(dest)[i] = reinterpret_cast<std::uint32_t*>(src)[i];
-    *reinterpret_cast<std::uint32_t*>(dest + 0x40) = *arg2;
-}
-// Register-ABI shim — this, NOT Init477450, is installed at 0x00477450.
-// ABI FIX 2026-07-27 — MIXED convention, unlike the other shims in this file. The original
-// takes its destination in EAX (0x00477456 `MOV [EAX+0x54],ECX`, 0x00477478 `MOV EDI,EAX`)
-// and FOUR arguments on the stack (0x00477450 `MOV EDX,[ESP+0x10]`, 0x0047745c
-// `MOV ECX,[ESP+0xc]`, 0x00477461 `MOV ESI,[ESP+0x8]` after one PUSH = entry [ESP+4],
-// 0x0047747c `MOV ECX,[ESP+0x10]` after two PUSHes = entry [ESP+8]).
-// Installed as plain __cdecl, the C body took `dest` from [esp+4] — i.e. the original's FIRST
-// stack arg (src) — and then memcpy'd 0x40 bytes through it and wrote fields up to +0x58.
-// So the four real stack args must be forwarded UNCHANGED and EAX supplied as param 0.
-//
-// EAX is also PRESERVED by the original — it is never written across the body, so callers may
-// rely on the implicit EAX==dest return. Our C body returns void, so EAX is restored from the
-// pushed copy after the call.
-// Frame: at entry [ESP+4]=src, [ESP+8]=arg2, [ESP+0xc]=arg3, [ESP+0x10]=arg4. Each PUSH shifts
-// those by 4, which is why the same literal [ESP+0x10] walks src..arg4 in reverse.
-// The original ends in a plain RET (caller cleans its 4 args), so this shim does too.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init477450_RegAbi(void) {
-    __asm {
-        push dword ptr [esp+0x10]   // arg4
-        push dword ptr [esp+0x10]   // arg3
-        push dword ptr [esp+0x10]   // arg2
-        push dword ptr [esp+0x10]   // src
-        push eax                    // dest (register arg in the original)
-        call Init477450
-        mov  eax, dword ptr [esp]   // restore EAX==dest (the original preserves it)
-        add  esp, 20
-        ret
-    }
-}
-RH_ScopedInstall(Init477450_RegAbi, 0x00477450);  // ABI fixed 2026-07-27 (was __cdecl)
+// MATCH-S12: the body of 0x00477450 (Init477450) moved to Match/MatchS12_00477450.cpp,
+// which compiles the byte-matched source re/match/s12/00477450.c.
+// Its register-ABI entry Init477450_RegAbi (the installed hook) moved there too.
 
 // ===== round 153 ===== (struct-table div/mod compute + out-param)
 // 0x005b2fd0 — u32 fn(arg1, arg2, arg3, arg4, arg5):
@@ -1551,32 +1357,8 @@ extern "C" __declspec(dllexport) int __cdecl Sqrt49da90(std::uint32_t narg) {
 }
 RH_ScopedInstall(Sqrt49da90, 0x0049da90);
 
-// ===== round 156 ===== (3-arg struct init with nested sub-object)
-// 0x00485a00 — void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; dest[8/0x10/0x18/0x1c/0x20/0x24/
-//   0x28]=0; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]=0; sub[0x40]=0;
-//   sub[0x44]=0; sub[0x38]=1; sub[0x48]=0; sub[0x50]=1.
-extern "C" __declspec(dllexport) void __cdecl Init485a00(std::uint8_t* a, std::uint32_t b, std::uint8_t* dest) {
-    std::uint32_t a4 = *reinterpret_cast<std::uint32_t*>(a + 4);
-    *reinterpret_cast<std::uint32_t*>(dest) = b;
-    *reinterpret_cast<std::uint32_t*>(dest + 4) = a4;
-    *reinterpret_cast<std::uint32_t*>(dest + 8) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x10) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x18) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x1c) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x20) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x24) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x28) = 0;
-    *reinterpret_cast<std::uint32_t*>(dest + 0xc) = 0x3f800000;
-    *reinterpret_cast<std::uint32_t*>(dest + 0x14) = 0x3c23d70a;
-    std::uint8_t* sub = *reinterpret_cast<std::uint8_t**>(dest + 0x60);
-    *reinterpret_cast<std::uint32_t*>(sub + 0x3c) = 0;
-    *reinterpret_cast<std::uint32_t*>(sub + 0x40) = 0;
-    *reinterpret_cast<std::uint32_t*>(sub + 0x44) = 0;
-    *reinterpret_cast<std::uint32_t*>(sub + 0x38) = 1;
-    *reinterpret_cast<std::uint32_t*>(sub + 0x48) = 0;
-    *reinterpret_cast<std::uint32_t*>(sub + 0x50) = 1;
-}
-RH_ScopedInstall(Init485a00, 0x00485a00);
+// MATCH-S14: the body of 0x00485a00 (Init485a00) moved to Match/MatchS14_00485a00.cpp,
+// which compiles the byte-matched source re/match/s14/00485a00.c.
 
 // ===== round 157 ===== (2-way flag-branch struct compute)
 // 0x005b93a0 — void fn(p, arg2): if(p[0x94][0x50] & 8){ sub=p[0x11c]; sub[0x88]=0;
@@ -1602,24 +1384,8 @@ RH_ScopedInstall(Calc5b93a0, 0x005b93a0);
 // ===== round 158 ===== (strided record-array zeroer + record-index field)
 // [moved] 0x00484c90 Zero484c90 moved to Race/WorldObjectLinks.cpp (D4-DC-INC-batch3, 2026-11-01): one body, both targets.
 
-// ===== round 159 ===== (paired vec3 array fill: copy src into arr1, zero arr2)
-// 0x004899c0 — void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4];
-//   for i in [0,count): *(vec3*)(arr1+i*12) = *(vec3*)src; *(vec3*)(arr2+i*12) = {0,0,0}.
-extern "C" __declspec(dllexport) void __cdecl Fill4899c0(std::uint8_t* p, std::uint8_t* src) {
-    int count = *reinterpret_cast<int*>(p + 0xc);
-    if (count == 0) return;
-    std::uint8_t* arr1 = *reinterpret_cast<std::uint8_t**>(p);
-    std::uint8_t* arr2 = *reinterpret_cast<std::uint8_t**>(p + 4);
-    for (int i = 0; i < count; i++) {
-        std::uint32_t* d1 = reinterpret_cast<std::uint32_t*>(arr1 + i * 12);
-        d1[0] = *reinterpret_cast<std::uint32_t*>(src);
-        d1[1] = *reinterpret_cast<std::uint32_t*>(src + 4);
-        d1[2] = *reinterpret_cast<std::uint32_t*>(src + 8);
-        std::uint32_t* d2 = reinterpret_cast<std::uint32_t*>(arr2 + i * 12);
-        d2[0] = 0; d2[1] = 0; d2[2] = 0;
-    }
-}
-RH_ScopedInstall(Fill4899c0, 0x004899c0);
+// MATCH-S14: the body of 0x004899c0 (Fill4899c0) moved to Match/MatchS14_004899c0.cpp,
+// which compiles the byte-matched source re/match/s14/004899c0.c.
 
 // MATCH-S09: the body of 0x00458f20 (Set458f20) moved to Match/MatchS09_00458f20.cpp,
 // which compiles the byte-matched source re/match/s09/00458f20.c.
@@ -1711,29 +1477,8 @@ RH_ScopedInstall(Find42add0_RegAbi, 0x0042add0);  // ABI fixed 2026-07-26 (was _
 // MATCH-S15: the body of 0x00491070 (Rain491070) moved to Match/MatchS15_00491070.cpp,
 // which compiles the byte-matched source re/match/s15/00491070.c.
 
-// ===== round 165 ===== (bitmap first-free-slot allocator)
-// 0x00477b60 — u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if none return 0;
-//   rec=0x693198+idx*0x2c0; rec[0x2b0]=0; rec[0x2b8]=0; rec[0x2b4]=1; rec[0x2bc]=30.0f
-//   (0x41f00000); set bit idx in the bitmap; return idx+1.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Alloc477b60(void) {
-    int idx = 0;
-    while (idx < 0x100) {
-        std::uint8_t bit = static_cast<std::uint8_t>(1 << (idx & 7));
-        std::uint8_t b = *reinterpret_cast<std::uint8_t*>(0x006bf198 + (idx >> 3));
-        if (!(b & bit)) {
-            std::uint8_t* rec = reinterpret_cast<std::uint8_t*>(0x00693198 + idx * 0x2c0);
-            *reinterpret_cast<std::uint32_t*>(rec + 0x2b0) = 0;
-            *reinterpret_cast<std::uint32_t*>(rec + 0x2b8) = 0;
-            *reinterpret_cast<std::uint32_t*>(rec + 0x2b4) = 1;
-            *reinterpret_cast<std::uint32_t*>(rec + 0x2bc) = 0x41f00000;
-            *reinterpret_cast<std::uint8_t*>(0x006bf198 + (idx >> 3)) |= bit;
-            return idx + 1;
-        }
-        idx++;
-    }
-    return 0;
-}
-RH_ScopedInstall(Alloc477b60, 0x00477b60);
+// MATCH-S12: the body of 0x00477b60 (Alloc477b60) moved to Match/MatchS12_00477b60.cpp,
+// which compiles the byte-matched source re/match/s12/00477b60.c.
 
 // ===== round 166 ===== (state dispatch + intrusive-list insert)
 // 0x005b0f90 — void fn(p, _, state_src): state=*state_src; sub=p[0x20];
@@ -1766,29 +1511,8 @@ RH_ScopedInstall(StateInsert5b0f90, 0x005b0f90);
 // MATCH-S13: the body of 0x00482730 (Init482730) moved to Match/MatchS13_00482730.cpp,
 // which compiles the byte-matched source re/match/s13/00482730.c.
 
-// ===== round 169 ===== (bounded struct-of-arrays push)
-// 0x004893d0 — void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){ p[8]=cap; return; }
-//   buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]=0;
-//   buf[off+0..3]=arg3[0..3]; p[8]=top+1; p[0x54]=1.
-extern "C" __declspec(dllexport) void __cdecl Push4893d0(std::uint8_t* p, std::uint8_t* arg2, std::uint8_t* arg3) {
-    int top = *reinterpret_cast<int*>(p + 8);
-    int cap = *reinterpret_cast<int*>(p + 4);
-    if (top >= cap) { *reinterpret_cast<int*>(p + 8) = cap; return; }
-    std::uint8_t* buf = *reinterpret_cast<std::uint8_t**>(p);
-    int off = top * 0x30;
-    std::uint8_t* rec = buf + off + 4;
-    *reinterpret_cast<std::uint32_t*>(rec) = *reinterpret_cast<std::uint32_t*>(arg2);
-    *reinterpret_cast<std::uint32_t*>(rec + 4) = *reinterpret_cast<std::uint32_t*>(arg2 + 4);
-    *reinterpret_cast<std::uint32_t*>(rec + 8) = *reinterpret_cast<std::uint32_t*>(arg2 + 8);
-    *reinterpret_cast<std::uint32_t*>(buf + off + 0x1c) = 0;
-    buf[off + 0] = arg3[0];
-    buf[off + 1] = arg3[1];
-    buf[off + 2] = arg3[2];
-    buf[off + 3] = arg3[3];
-    *reinterpret_cast<int*>(p + 8) = top + 1;
-    *reinterpret_cast<int*>(p + 0x54) = 1;
-}
-RH_ScopedInstall(Push4893d0, 0x004893d0);
+// MATCH-S14: the body of 0x004893d0 (Push4893d0) moved to Match/MatchS14_004893d0.cpp,
+// which compiles the byte-matched source re/match/s14/004893d0.c.
 
 // ===== round 170 ===== (trie walk; tail-recursion reimplemented as a loop)
 // 0x004daa00 — u32 fn(node, key, depth): while(depth!=0){ depth--; idx=key&0xf; key>>=4;
@@ -2031,93 +1755,8 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Cmp5ae170(void)
 }
 RH_ScopedInstall(Cmp5ae170, 0x005ae170);
 
-// 0x0048a630  FUN_0048a630 (ai, sphere-vs-AABB overlap predicate)
-// int f(box* arg1=EDX, sphere* arg2=ECX):  box = {min.xyz @ 0,4,8; max.xyz @ 0xc,0x10,0x14}
-//   sphere = {center.xyz @ 0,4,8; radius @ 0xc}. Block 1: if center strictly inside the
-//   box on all 3 axes -> return 1. Else block 2: test the box expanded by radius; return 1
-//   if center within, else 0. All straight-line fld/fcomp (NO fld st(N) juggling, no globals)
-//   -> VERBATIM naked port is bit-identical.
-extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Aabb48a630(void)
-{
-    __asm {
-        mov  ecx, dword ptr [esp+8]         // arg2 sphere
-        mov  edx, dword ptr [esp+4]         // arg1 box
-        fld   dword ptr [ecx]
-        fcomp dword ptr [edx+0x0c]
-        fnstsw ax
-        test ah, 1
-        jne  L_AB_B2
-        fld   dword ptr [ecx]
-        fcomp dword ptr [edx]
-        fnstsw ax
-        test ah, 0x41
-        jp   L_AB_B2
-        fld   dword ptr [ecx+4]
-        fcomp dword ptr [edx+0x10]
-        fnstsw ax
-        test ah, 1
-        jne  L_AB_B2
-        fld   dword ptr [ecx+4]
-        fcomp dword ptr [edx+4]
-        fnstsw ax
-        test ah, 0x41
-        jp   L_AB_B2
-        fld   dword ptr [ecx+8]
-        fcomp dword ptr [edx+0x14]
-        fnstsw ax
-        test ah, 1
-        jne  L_AB_B2
-        fld   dword ptr [ecx+8]
-        fcomp dword ptr [edx+8]
-        fnstsw ax
-        test ah, 0x41
-        jnp  L_AB_TRUE
-    L_AB_B2:
-        fld   dword ptr [ecx+0x0c]
-        fadd  dword ptr [ecx]
-        fcomp dword ptr [edx+0x0c]
-        fnstsw ax
-        test ah, 1
-        jne  L_AB_FALSE
-        fld   dword ptr [ecx]
-        fsub  dword ptr [ecx+0x0c]
-        fcomp dword ptr [edx]
-        fnstsw ax
-        test ah, 0x41
-        jp   L_AB_FALSE
-        fld   dword ptr [ecx+0x0c]
-        fadd  dword ptr [ecx+4]
-        fcomp dword ptr [edx+0x10]
-        fnstsw ax
-        test ah, 1
-        jne  L_AB_FALSE
-        fld   dword ptr [ecx+4]
-        fsub  dword ptr [ecx+0x0c]
-        fcomp dword ptr [edx+4]
-        fnstsw ax
-        test ah, 0x41
-        jp   L_AB_FALSE
-        fld   dword ptr [ecx+0x0c]
-        fadd  dword ptr [ecx+8]
-        fcomp dword ptr [edx+0x14]
-        fnstsw ax
-        test ah, 1
-        jne  L_AB_FALSE
-        fld   dword ptr [ecx+8]
-        fsub  dword ptr [ecx+0x0c]
-        fcomp dword ptr [edx+8]
-        fnstsw ax
-        test ah, 0x41
-        jp   L_AB_FALSE
-    L_AB_TRUE:
-        mov  eax, 1
-        ret
-    L_AB_FALSE:
-        xor  eax, eax
-        ret
-    }
-}
-RH_ScopedInstall(Aabb48a630, 0x0048a630);
+// MATCH-S14: the body of 0x0048a630 (Aabb48a630) moved to Match/MatchS14_0048a630.cpp,
+// which compiles the byte-matched source re/match/s14/0048a630.c.
 
 // MATCH-S19: the body of 0x004c5c00 (Search4c5c00) moved to Match/MatchS19_004c5c00.cpp,
 // which compiles the byte-matched source re/match/s19/004c5c00.c.
@@ -2552,39 +2191,11 @@ RH_ScopedInstall(Search40bb30, 0x0040bb30);
 // MATCH-S07: the body of 0x0042c280 (Init42c280) moved to Match/MatchS07_0042c280.cpp,
 // which compiles the byte-matched source re/match/s07/0042c280.c.
 
-// 0x0048ade0  FUN_0048ade0 (particle, NEAR-LEAF: zero-fill wrapper)
-// void f(void): FUN_004b6480(0x7151f0, 0x200) -> clears a 0x200-bit (0x40-byte) array at
-// 0x7151f0 (rep stosd/stosb zero; size&7==0 so no partial mask). Callee 0x4b6480 C3.
-// Verbatim naked port; call -> mov eax,abs;call eax. (Verified via boundary-echo: filled
-// region -> 0, the byte at +0x40 stays = the seed.)
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroFill48ade0(void)
-{
-    __asm {
-        push 0x200
-        push 07151F0h
-        mov  eax, 04B6480h
-        call eax
-        add  esp, 8
-        ret
-    }
-}
-RH_ScopedInstall(ZeroFill48ade0, 0x0048ade0);
+// MATCH-S14: the body of 0x0048ade0 (ZeroFill48ade0) moved to Match/MatchS14_0048ade0.cpp,
+// which compiles the byte-matched source re/match/s14/0048ade0.c.
 
-// 0x0048a830  FUN_0048a830 (particle, NEAR-LEAF: zero a global + zero-fill, sibling of 0x48ade0)
-// void f(void): *0x71fa34 = 0; FUN_004b6480(0x7151f0, 0x200). Callee 0x4b6480 C3. Verbatim naked port.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroFill48a830(void)
-{
-    __asm {
-        push 0x200
-        push 07151F0h
-        mov  dword ptr ds:[071FA34h], 0
-        mov  eax, 04B6480h
-        call eax
-        add  esp, 8
-        ret
-    }
-}
-RH_ScopedInstall(ZeroFill48a830, 0x0048a830);
+// MATCH-S14: the body of 0x0048a830 (ZeroFill48a830) moved to Match/MatchS14_0048a830.cpp,
+// which compiles the byte-matched source re/match/s14/0048a830.c.
 
 // [REVERTED r209 2026-06-15] FUN_004c2dc0 reimpl drafted + GREEN, but its subsystem tag is
 // third-party-library[lua-5.0] -> Lua library-skip (NOT first-party). Left C2. Lesson: the
@@ -2851,25 +2462,8 @@ extern "C" __declspec(dllexport) int __cdecl QuadBufferBuild5b0bb0(unsigned char
 }
 RH_ScopedInstall(QuadBufferBuild5b0bb0, 0x005b0bb0);
 
-// 0x00475f30 FUN_00475f30 (render, ScaledMulAdd) — PURE LEAF, EAX-implicit out ptr.
-// void f(EAX=out, float a1@[esp+4], float a2@[esp+8]):
-//   r = *0x613278(0.5) * *0x613258(2.0) * a1 * a2 + *0x613274(0.1); out[1]=r; out[0]=r.
-// VERBATIM naked copy of the original instructions -> byte-identical. Verified via the
-// eax_out_2float trampoline (mov eax,outbuf; jmp target).
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ScaledMulAdd475f30(void)
-{
-    __asm {
-        fld   dword ptr ds:[0613278h]
-        fmul  dword ptr ds:[0613258h]
-        fmul  dword ptr [esp+4]
-        fmul  dword ptr [esp+8]
-        fadd  dword ptr ds:[0613274h]
-        fst   dword ptr [eax+4]
-        fstp  dword ptr [eax]
-        ret
-    }
-}
-RH_ScopedInstall(ScaledMulAdd475f30, 0x00475f30);
+// MATCH-S12: the body of 0x00475f30 (ScaledMulAdd475f30) moved to Match/MatchS12_00475f30.cpp,
+// which compiles the byte-matched source re/match/s12/00475f30.c.
 
 // 0x004d8c40 FUN_004d8c40 (frontend, DllMergeSwap) — PURE LEAF (no calls)
 // void f(void): on table entry base = *0x911ad8 + *0x7d3ff8, splice circular list B
@@ -3064,97 +2658,14 @@ RH_ScopedInstall(StructPropagate41e4b0, 0x0041e4b0);
 // MATCH-S15: the body of 0x0048f590 (ParticlePoolAlloc48f590) moved to Match/MatchS15_0048f590.cpp,
 // which compiles the byte-matched source re/match/s15/0048f590.c.
 
-// 0x00486f90 FUN_00486f90 (particle, PoolArrayReset) — PURE LEAF (no calls)
-// void f(void): clears two global pool arrays. Loop1: eax 0x70302c down to 0x6fe800
-// (stride 0x7c) zeroing 11 fields + [eax-0x44]=50.0f. Loop2: eax 0x6fa654 up to
-// <0x6fde94 (stride 0x90) zeroing 12 fields + [eax-0x44]=50.0f. Also [0x703038]=0,
-// [0x70303c]=0. VERBATIM naked copy (byte-identical; the original's lea esp,[esp] nop
-// and jmp-to-fallthrough are control-flow-equivalent, omitted).
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl PoolArrayReset486f90(void)
-{
-    __asm {
-        mov   eax, 07030A8h
-        xor   ecx, ecx
-        mov   edx, 042480000h
-    L1:
-        sub   eax, 7Ch
-        cmp   eax, 06FE800h
-        mov   dword ptr [eax+8], ecx
-        mov   dword ptr [eax], ecx
-        mov   dword ptr [eax-50h], ecx
-        mov   dword ptr [eax-68h], ecx
-        mov   dword ptr [eax-6Ch], ecx
-        mov   dword ptr [eax-70h], ecx
-        mov   dword ptr [eax-5Ch], ecx
-        mov   dword ptr [eax-64h], ecx
-        mov   dword ptr [eax-58h], ecx
-        mov   dword ptr [eax-54h], ecx
-        mov   dword ptr [eax+4], ecx
-        mov   dword ptr [eax-44h], edx
-        jne   L1
-        mov   dword ptr ds:[0703038h], ecx
-        mov   eax, 06FA654h
-    L2:
-        mov   dword ptr [eax-84h], ecx
-        mov   dword ptr [eax+8], ecx
-        mov   dword ptr [eax], ecx
-        mov   dword ptr [eax-50h], ecx
-        mov   dword ptr [eax-68h], ecx
-        mov   dword ptr [eax-6Ch], ecx
-        mov   dword ptr [eax-70h], ecx
-        mov   dword ptr [eax-5Ch], ecx
-        mov   dword ptr [eax-64h], ecx
-        mov   dword ptr [eax-58h], ecx
-        mov   dword ptr [eax-54h], ecx
-        mov   dword ptr [eax+4], ecx
-        mov   dword ptr [eax-44h], edx
-        add   eax, 90h
-        cmp   eax, 06FDE94h
-        jl    L2
-        mov   dword ptr ds:[070303Ch], ecx
-        ret
-    }
-}
-RH_ScopedInstall(PoolArrayReset486f90, 0x00486f90);
+// MATCH-S14: the body of 0x00486f90 (PoolArrayReset486f90) moved to Match/MatchS14_00486f90.cpp,
+// which compiles the byte-matched source re/match/s14/00486f90.c.
 
-// 0x00477b40 FUN_00477b40 (util, ZeroTwoRegions) — NEAR-LEAF (calls C3 0x4b6520).
-// void f(void): ZeroFillWrapper(0x693198, 0x2c000); ZeroFillWrapper(0x6bf198, 0x20).
-// (0x4b6520 = ZeroFillWrapper = memset(dest,0,count), C3 r210.) VERBATIM naked
-// (rel32 call -> mov eax,abs; call eax; behaviorally identical; both sides call the
-// same real C3 callee at suspended-spawn).
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroTwoRegions477b40(void)
-{
-    __asm {
-        push  02C000h
-        push  0693198h
-        mov   eax, 04B6520h
-        call  eax
-        push  020h
-        push  06BF198h
-        mov   eax, 04B6520h
-        call  eax
-        add   esp, 010h
-        ret
-    }
-}
-RH_ScopedInstall(ZeroTwoRegions477b40, 0x00477b40);
+// MATCH-S12: the body of 0x00477b40 (ZeroTwoRegions477b40) moved to Match/MatchS12_00477b40.cpp,
+// which compiles the byte-matched source re/match/s12/00477b40.c.
 
-// 0x004893a0 FUN_004893a0 (gameplay, AdjThunk) — NEAR-LEAF adjustor thunk (calls C3 0x476cb0).
-// void f(p, a2, a3): p += 0x10; tail-call 0x476cb0(p, a2, a3). 0x476cb0 (Batch476cb0, C3):
-// node = (*0x7dc57c)[p[4]]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000.
-// So overall: node=(*0x7dc57c)[*(p+0x14)]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000.
-// VERBATIM naked (rel32 jmp -> mov eax,abs; jmp eax; both sides tail-call the same real C3).
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl AdjThunk4893a0(void)
-{
-    __asm {
-        mov   edx, dword ptr [esp+4]
-        add   edx, 010h
-        mov   dword ptr [esp+4], edx
-        mov   eax, 0476CB0h
-        jmp   eax
-    }
-}
-RH_ScopedInstall(AdjThunk4893a0, 0x004893a0);
+// MATCH-S14: the body of 0x004893a0 (AdjThunk4893a0) moved to Match/MatchS14_004893a0.cpp,
+// which compiles the byte-matched source re/match/s14/004893a0.c.
 
 // [SKIPPED r239 2026-06-15] 0x004b6550 is a pure tail-jmp thunk (jmp 0x4b6700); its
 // first byte is 0xE9, which the early_window NO_AUTO_HOOK safety check reads as an

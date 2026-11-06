@@ -1,0 +1,129 @@
+0x00474e70	M	-	-
+0x00474f30	M	-	-
+0x00474fb0	M	-	-
+0x00474fd0	M	-	-
+0x00475010	M	-	-
+0x00475180	M	-	-
+0x00475210	M	-	-
+0x004752d0	M	-	-
+0x004752f0	M	-	-
+0x004756e0	M	D3d9Render/TrackRenderer.cpp[E]:('TrackRenderer::ClumpAnimTick', 4895)	-
+0x00475770	M	-	-
+0x00475830	M	-	-
+0x004758d0	M	-	-
+0x004759b0	M	Match/MatchS12_004759b0.cpp[A]:('FUN_004759b0', 12)	Match/MatchS12_004759b0.cpp:[('Arrays691600Alloc', 14)]
+0x00475a00	M	-	-
+0x00475a60	M	Match/MatchS12_00475a60.cpp[A]:('FUN_00475a60', 12)	Match/MatchS12_00475a60.cpp:[('PendingOpQueueFlush', 14)]
+0x00475ab0	M	-	-
+0x00475c10	M	-	-
+0x00475d30	M	-	-
+0x00475d90	M	-	-
+0x00475e50	M	-	-
+0x00475ea0	M	-	-
+0x00475ef0	M	Match/MatchS12_00475ef0.cpp[A]:('FUN_00475ef0', 12)	Match/MatchS12_00475ef0.cpp:[('L2_FUN_00475ef0', 14)]
+0x00475f30	M	Match/MatchS12_00475f30.cpp[A]:('FUN_00475f30', 14)	Match/MatchS12_00475f30.cpp:[('ScaledMulAdd475f30', 30)]
+0x00475f50	M	-	-
+0x00475f90	M	-	-
+0x004762c0	M	-	-
+0x00476320	M	-	-
+0x00476390	M	-	-
+0x00476430	M	-	-
+0x00476440	M	-	-
+0x004764e0	M	-	-
+0x004764f0	M	-	-
+0x00476650	M	-	-
+0x00476710	M	-	-
+0x004767c0	M	-	-
+0x00476860	M	-	-
+0x00476880	M	-	-
+0x004768a0	M	-	-
+0x004768c0	M	-	-
+0x004769a0	M	Match/MatchS12_004769a0.cpp[EA]:('FUN_004769a0', 11)	Match/MatchS12_004769a0.cpp:[('ParticleEmitter_SetPosition', 13)]
+0x004769d0	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetVelocity', 111)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetVelocity', 117)]
+0x004769f0	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetColour', 120)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetColour', 124)]
+0x00476a10	M	Match/MatchS12_00476a10.cpp[EA]:('FUN_00476a10', 11)	Match/MatchS12_00476a10.cpp:[('Copy476a10', 13)]
+0x00476a30	M	Match/MatchS12_00476a30.cpp[EA]:('FUN_00476a30', 11)	Match/MatchS12_00476a30.cpp:[('ParticleEmitter_SetScalar', 13)]
+0x00476a40	M	Render/RfxEmitter.cpp[EA]:('ParticleEmitter_SetRGBA', 133)	Render/RfxEmitter.cpp:[('ParticleEmitter_SetRGBA', 141)]
+0x00476a80	M	Render/RfxEmitter.cpp[EA]:('Copy476a80', 144)	Render/RfxEmitter.cpp:[('Copy476a80', 150)]
+0x00476ae0	M	Render/RfxEmitter.cpp[EA]:('Batch476ae0', 157)	Render/RfxEmitter.cpp:[('Batch476ae0', 165)]
+0x00476b30	M	Render/RfxEmitter.cpp[EA]:('Set476b30', 170)	Render/RfxEmitter.cpp:[('Set476b30', 187)]
+0x00476b90	M	Match/MatchS12_00476b90.cpp[EA]:('FUN_00476b90', 11)	Match/MatchS12_00476b90.cpp:[('Batch476b90', 13)]
+0x00476be0	M	Match/MatchS12_00476be0.cpp[EA]:('FUN_00476be0', 11)	Match/MatchS12_00476be0.cpp:[('Batch476be0', 13)]
+0x00476c10	M	Render/RfxEmitter.cpp[EA]:('Batch476c10', 196)	Render/RfxEmitter.cpp:[('Batch476c10', 206)]
+0x00476c60	M	Render/RfxEmitter.cpp[EA]:('Batch476c60', 209)	Render/RfxEmitter.cpp:[('Batch476c60', 217)]
+0x00476cb0	M	Match/MatchS12_00476cb0.cpp[EA]:('FUN_00476cb0', 11)	Match/MatchS12_00476cb0.cpp:[('Batch476cb0', 13)]
+0x00476d00	M	Match/MatchS12_00476d00.cpp[EA]:('FUN_00476d00', 11)	Match/MatchS12_00476d00.cpp:[('MultiArrayScatter476d00', 13)]
+0x00476df0	M	Render/RfxEmitter.cpp[EA]:('Flush', 386)	-
+0x004770a0	M	-	-
+0x004770c0	M	Render/RfxEmitter.cpp[EA]:('Create', 288)	-
+0x004773f0	M	Match/MatchS12_004773f0.cpp[A]:('FUN_004773f0', 15)	Match/MatchS12_004773f0.cpp:[('Init4773f0', 28)]
+0x00477450	M	Match/MatchS12_00477450.cpp[A]:('FUN_00477450', 17)	Match/MatchS12_00477450.cpp:[('Init477450_RegAbi', 37)]
+0x00477490	M	-	-
+0x00477500	M	-	-
+0x00477580	M	-	-
+0x004775b0	M	-	-
+0x00477730	M	-	-
+0x00477760	M	-	-
+0x004777d0	M	-	-
+0x00477810	M	-	-
+0x00477870	M	-	-
+0x004778e0	M	-	-
+0x00477920	M	-	-
+0x00477a10	M	-	-
+0x00477b40	M	Match/MatchS12_00477b40.cpp[A]:('FUN_00477b40', 12)	Match/MatchS12_00477b40.cpp:[('ZeroTwoRegions477b40', 14)]
+0x00477b60	M	Match/MatchS12_00477b60.cpp[A]:('FUN_00477b60', 11)	Match/MatchS12_00477b60.cpp:[('Alloc477b60', 13)]
+0x00477be0	M	-	-
+0x00477e00	M	Match/MatchS12_00477e00.cpp[A]:('FUN_00477e00', 11)	Match/MatchS12_00477e00.cpp:[('Table69318cSet', 13)]
+0x00477e40	M	-	-
+0x00477e60	M	-	-
+0x00477f00	M	-	-
+0x00477f50	M	-	-
+0x00478030	M	-	-
+0x004780c0	M	-	-
+0x00478110	M	-	-
+0x004781b0	M	-	-
+0x00478200	M	-	-
+0x00478220	M	-	-
+0x004783f0	M	-	-
+0x004785e0	M	-	-
+0x00478660	M	-	-
+0x00478cb0	M	Match/MatchS12_00478cb0.cpp[A]:('FUN_00478cb0', 11)	Match/MatchS12_00478cb0.cpp:[('Memset478cb0', 13)]
+0x00478cc0	M	Match/MatchS12_00478cc0.cpp[EA]:('FUN_00478cc0', 11)	Match/MatchS12_00478cc0.cpp:[('RenderWorldStateZeroFill', 13)]
+0x00478cd0	M	-	-
+0x00478cf0	M	-	-
+0x00479030	M	-	-
+0x004790e0	M	-	-
+0x00479100	M	-	-
+0x00479330	M	-	-
+0x00479fb0	M	-	-
+0x0047a020	M	-	-
+0x0047a0f0	M	-	-
+0x0047a130	M	-	-
+0x0047a180	M	-	-
+0x0047a1b0	M	-	-
+0x0047a1e0	M	-	-
+0x0047a280	M	-	-
+0x0047a320	M	-	-
+0x0047a3a0	M	-	-
+0x0047a440	M	-	-
+0x0047a4a0	M	-	-
+0x0047a540	M	-	-
+0x0047a580	M	-	-
+0x0047a5b0	M	-	-
+0x0047a5e0	M	-	-
+0x0047a610	M	-	-
+0x0047a6b0	M	-	-
+0x0047a6f0	M	-	-
+0x0047a720	M	-	-
+0x0047a750	M	-	-
+0x0047a790	M	-	-
+0x0047a7d0	M	-	-
+0x0047a7f0	M	-	-
+0x0047a810	M	-	-
+0x0047a880	M	-	-
+0x0047a8b0	M	-	-
+0x0047a950	M	-	-
+0x0047a9b0	M	-	-
+0x0047aa20	M	-	-
+0x0047aa50	M	-	-
+0x0047aaa0	M	-	-

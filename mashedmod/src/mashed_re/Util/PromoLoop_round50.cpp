@@ -21,11 +21,8 @@
 // MATCH-S11: the body of 0x00472520 (Table69150cSet) moved to Match/MatchS11_00472520.cpp,
 // which compiles the byte-matched source re/match/s11/00472520.c.
 
-// 0x00488390  (&DAT_0086ae38)[i*0xe] = val  (stride 0x38)
-extern "C" __declspec(dllexport) void __cdecl Table86ae38Set(std::uint32_t param_1, std::uint32_t param_2) {
-    *reinterpret_cast<std::uint32_t*>(0x0086ae38u + param_1 * 0x38u) = param_2;  // cited at 0x00488390
-}
-RH_ScopedInstall(Table86ae38Set, 0x00488390);
+// MATCH-S14: the body of 0x00488390 (Table86ae38Set) moved to Match/MatchS14_00488390.cpp,
+// which compiles the byte-matched source re/match/s14/00488390.c.
 
 // 0x00416230  *(0x0089a500 + i*0x74) = val
 extern "C" __declspec(dllexport) void __cdecl Table89a500Set(std::uint32_t param_1, std::uint32_t param_2) {

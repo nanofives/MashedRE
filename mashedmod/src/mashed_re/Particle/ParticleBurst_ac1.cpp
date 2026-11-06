@@ -36,14 +36,5 @@
 // ref: re/analysis/particle_promote_ac1/0x00486610.md
 // ─────────────────────────────────────────────────────────────────────────────
 
-// 0x00486610
-extern "C" __declspec(dllexport)
-void __cdecl ParticleBurst4(std::uint32_t param_1, std::uint32_t param_2)
-{
-    // FUN_004864f0(param_1, param_2, 4)   // 0x00486617
-    typedef void (__cdecl *FN)(std::uint32_t*, std::uint32_t, int);
-    const auto fn = reinterpret_cast<FN>(0x004864f0u);
-    fn(reinterpret_cast<std::uint32_t*>(param_1), param_2, 4);
-}
-
-RH_ScopedInstall(ParticleBurst4, 0x00486610);
+// MATCH-S14: the body of 0x00486610 (ParticleBurst4) moved to Match/MatchS14_00486610.cpp,
+// which compiles the byte-matched source re/match/s14/00486610.c.
