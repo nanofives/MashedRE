@@ -1,0 +1,6 @@
+0x004ec839	cur=/O2 /Ob1 /G5	38.7:/O2 /GS /Ob1	27.4:/O2 /Ob1 /G5	82.3:/O1	72.6:/O1 /G5	82.3:/O1 /Oy-	8.8:/Os /Oy-	82.3:/O1 /GS	39.1:/O2 /Oy-	82.3:/O1 /Ob1	82.3:/Ox /Os /Oy-	BEST 82.3 /Ox /Os /Oy-
+0x004ec915	cur=/O2 /Ob1 /G5	40.7:/O2 /GS /Ob1	39.0:/O2 /Ob1 /G5	50.8:/O1	49.2:/O1 /G5	50.8:/O1 /Oy-	31.2:/Os /Oy-	50.8:/O1 /GS	45.8:/O2 /Oy-	50.8:/O1 /Ob1	50.8:/Ox /Os /Oy-	BEST 50.8 /Ox /Os /Oy-
+0x004ec9cd	cur=/O2 /Ob1 /G5	33.3:/O2 /GS /Ob1	33.3:/O2 /Ob1 /G5	59.4:/O1	59.4:/O1 /G5	59.4:/O1 /Oy-	28.6:/Os /Oy-	59.4:/O1 /GS	55.1:/O2 /Oy-	59.4:/O1 /Ob1	59.4:/Ox /Os /Oy-	BEST 59.4 /Ox /Os /Oy-
+0x004ecaab	cur=/O2 /Ob1 /G5	17.9:/O2 /GS /Ob1	17.9:/O2 /Ob1 /G5	39.3:/O1	39.3:/O1 /G5	39.3:/O1 /Oy-	35.3:/Os /Oy-	39.3:/O1 /GS	39.3:/O2 /Oy-	39.3:/O1 /Ob1	39.3:/Ox /Os /Oy-	BEST 39.3 /Ox /Os /Oy-
+0x004ecb97	cur=/O2 /Ob1 /G5	38.0:/O2 /GS /Ob1	36.6:/O2 /Ob1 /G5	46.6:/O1	45.2:/O1 /G5	46.6:/O1 /Oy-	18.3:/Os /Oy-	46.6:/O1 /GS	43.1:/O2 /Oy-	46.6:/O1 /Ob1	46.6:/Ox /Os /Oy-	BEST 46.6 /Ox /Os /Oy-
+0x004ecc6f	cur=/O2 /Ob1 /G5	36.6:/O2 /GS /Ob1	36.6:/O2 /Ob1 /G5	45.2:/O1	45.2:/O1 /G5	45.2:/O1 /Oy-	19.1:/Os /Oy-	45.2:/O1 /GS	43.4:/O2 /Oy-	45.2:/O1 /Ob1	45.2:/Ox /Os /Oy-	BEST 45.2 /Ox /Os /Oy-
