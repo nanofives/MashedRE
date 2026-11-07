@@ -1,6 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S24 0x00555280: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs24_20261107/results.tsv. */
+   unchanged except casts, a C++ `code(...)` typedef or callee prototypes for the VS2022 C++ check (DDK bytes identical, relocheck OK); globals moved to MGLOBAL. Score: see verify/matchs24_20261107/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 MGLOBAL(undefined4 *, DAT_00912a18, 0x00912a18);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(undefined4, DAT_00912a14, 0x00912a14);
