@@ -1,0 +1,9 @@
+table	rva	ghidra_size	acc%	regs%	bytes_n	bytes_bad	collect_by	collect_best%
+base	0x004c07b0	None	-	-	-	-	refused	- (no Ghidra size for 0x004c07b0; refusing to guess the original's length)
+base	0x004c0830	None	-	-	-	-	refused	- (no Ghidra size for 0x004c0830; refusing to guess the original's length)
+base	0x004c4430	None	-	-	-	-	refused	- (no Ghidra size for 0x004c4430; refusing to guess the original's length)
+base	0x004c4470	None	-	-	-	-	refused	- (no Ghidra size for 0x004c4470; refusing to guess the original's length)
+new	0x004c07b0	124	100.0	100.0	124	0	insn	100.0
+new	0x004c0830	61	100.0	100.0	61	0	insn	100.0
+new	0x004c4430	61	100.0	100.0	61	0	insn	100.0
+new	0x004c4470	191	100.0	100.0	191	0	insn	100.0
