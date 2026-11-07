@@ -1,0 +1,25 @@
+[1/15] 0x004260e0 match PASS byte-identical 525 B, relocheck OK (25/0)
+[2/15] 0x004262f0 match PASS byte-identical 73 B, relocheck OK (9/0)
+[3/15] 0x00426340 match PASS byte-identical 280 B, relocheck OK (18/2)
+[4/15] 0x00426070 match PASS byte-identical 6 B, relocheck OK (1/0)
+[5/15] 0x00426080 match PASS byte-identical 6 B, relocheck OK (1/0)
+[6/15] 0x00426090 match SKIP already C4 (no write)
+[7/15] 0x00426700 match PASS byte-identical 125 B, relocheck OK (3/0)
+[8/15] 0x00426810 match REFUSED not byte-identical: 29 differing unmasked bytes of 672 (insn 97.9%)
+[9/15] 0x00426c10 match SKIP already C4 (no write)
+[10/15] 0x004264d0 match REFUSED naked function (__declspec(naked)): an inline-asm transcription matches by construction
+[11/15] 0x00426640 match REFUSED body is 2 inline __asm block(s) in a C frame with no other C statement (SimGolf G26 rule: not match evidence)
+[12/15] 0x004b6fc0 libid PASS identical _lua_gettop
+[13/15] 0x0057e750 libid PASS identical _qh_checkflipped_all
+[14/15] 0x004a3090 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[15/15] 0x004b6fd0 libid REFUSED libmatch status differs (needs identical, one candidate)
+batch: 8 pass, 5 refused, 2 skipped (already C4), 15 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-07  0x004260e0  FUN_004260e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004260e0.c; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md
+  2026-11-07  0x004262f0  FUN_004262f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004262f0.c; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md
+  2026-11-07  0x00426340  FUN_00426340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426340.c; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md
+  2026-11-07  0x00426070  TrackPhysWorld2Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426070.c; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md
+  2026-11-07  0x00426080  GlobalDat00656ed8Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426080.c; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md
+  2026-11-07  0x00426700  FUN_00426700  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426700.c; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md
+  2026-11-07  0x004b6fc0  lua_gettop  C2->C4  route libid (L-93): library identity, verify/libidentity_20261030/libidentity_functions.tsv; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md
+  2026-11-07  0x0057e750  FUN_0057e750  C2->C4  route libid (L-93): library identity, verify/libidentity_20261030/libidentity_functions.tsv; evidence: verify/matchs06_20261101/RESULT_MATCH-S06.md

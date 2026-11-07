@@ -82,7 +82,7 @@ Every row in `hooks.csv` carries a confidence label `C0..C4`. Promotion is one-w
 - A reimplementation has been written in `mashedmod/src/mashed_re/`.
 - Build is clean.
 - The function is hooked through `RH_ScopedInstall` and runtime-toggleable.
-- **Promotion to C4 requires:** the `diff-original` skill has produced a clean Frida CSV diff between original and modded behavior on at least one canonical scenario. No stubs in the implementation.
+- **Promotion to C4 by the frida route requires:** the `diff-original` skill has produced a clean Frida CSV diff between original and modded behavior on at least one canonical scenario, with the hook installed. No stubs in the implementation. (The two static routes, `match` and `libid`, are in "C4 routes" below. They do not need C3 first.)
 
 - **Write-set leg for C4 (user decisions L-38, L-40, L-54, 2026-10-27..29):** a function that stores outside its
   own frame needs, next to the clean race diff, a write-set compare against the original that actually compared
@@ -96,82 +96,118 @@ Every row in `hooks.csv` carries a confidence label `C0..C4`. Promotion is one-w
     statically, e.g. the SCOPE store list) can reach C4 on a clean race diff alone, because there is nothing to
     compare (L-54). Its callee's level does not cap it. Precedent: `0x0056bb30` (2026-10-29, wraps `0x0056ba30`).
 
-### C4 — Verified
-- All F-DoD criteria satisfied (see `ROADMAP.md`).
+### C4 — Verified (the reverse engineering is certified)
+- C4 certifies the **reverse engineering** of the function: our reconstruction is shown equal to the original, either
+  in behaviour (frida route) or as compiled source (`match`, `libid`). Since L-93 (2026-11-07) C4 makes **no claim
+  about the port**: whether `mashed_re.exe` compiles that reconstruction, and whether the game calls it, is the port
+  axis (section "Port axis" below).
 - The function is canonical reference material; lower-confidence callers can lean on it.
+- `ROADMAP.md` (v4) defines the function Definition of Done on both axes. C4 is the RE-axis one.
 
-### C4 routes by byte match (user decision, Mariano 2026-10-31)
+**What C4 meant before 2026-11-07 (history).** From the first rubric to L-93, C4 certified the port as well: the frida
+route needed the hook live in the canonical scenario, and the byte-match routes (2026-10-31) needed the matched source
+to be the exe's only body (old match rule 2), the merge-train gates unchanged after the swap (old rule 3), an exe caller
+of the swapped body (L-68, refined by L-84 and L-89), and for `libid` the port compiling the vendored source (which kept
+qhull waiting on L-73). L-93 (Mariano, 2026-11-07, option B, `log/orch/DECISIONS.md`) separated the two questions, the
+way SimGolf does (`SimGolf/re/CONFIDENCE.md`; SimGolf also asks for a C3 hook, Mashed does not). The port rules were not
+dropped: they moved, unchanged, to the port axis. Rows promoted before L-93 keep their C4.
 
-A C4 row is reached by **one** of three routes. The frida route is everything above (clean `diff-original` plus the
-Write-set leg). The two routes below are static: they certify that the port *is* the original's source, so a runtime
-diff is not the evidence. Both are recorded in `hooks.csv` `notes` and in the `re-classify` evidence fields (`match`,
-`libid`). Tools: `re/tools/match/`. Measurements: `verify/matchpilot_20261030/RESULT_MATCH-PILOT.md`,
+### C4 routes (L-93, Mariano 2026-11-07; static routes first written 2026-10-31)
+
+A row is C4 by **any one** of three routes. Each route is recorded in `hooks.csv` `notes` (`c4=match`, `c4=libid`, or
+the frida CSV) and in the `re-classify` evidence fields. Tools: `re/tools/match/`, batch gate `re/tools/c4_reclass.py`.
+Measurements behind the static routes: `verify/matchpilot_20261030/RESULT_MATCH-PILOT.md`,
 `verify/libidentity_20261030/RESULT_LIB-IDENTITY.md`.
 
-- **`match` (game code).** C4 only when all three hold:
-  1. The reconstructed source is **byte-identical** under `re/tools/match/match.py` (relocated operands masked) with
-     the XP DDK compiler, `cl` 13.00.9176 / `c2` 13.00.9178 (`tools/vc7ddk`), and the recorded flags (game code
-     `/O2 /GS /Ob1`, as C, x87; `/G5` breaks game code), **and** `re/tools/match/relocheck.py` reports OK for that
-     function. `match.py` masks every relocation, so 100% alone does not show that each global, callee or constant
-     is the right one: MATCH-S02 found two sources at 100% that stored to swapped arrays (0x0040b250, 0x0040b810;
-     `verify/matchs02_20261031/RESULT_MATCH-S02.md`). relocheck resolves each relocation (`MGLOBAL` names, `FUN_<rva>`
-     callees, own constants and strings) against the original's operand and lists the rest (imports, CRT helpers,
-     file-static data) as unchecked by name. Those unchecked names go in the evidence.
-  2. `mashed_re.exe` uses **that source as the function's body**: one body per RVA (the `lint_rva_bodies.py` rule),
-     both targets where the RVA is hooked, and physics TUs listed in `mashedmod/x87_tus.txt`. A matched source that
-     the exe does not compile is not C4.
-  3. The merge-train gates are **unchanged** after the body is swapped in (`gctrl.ref` / `b.ref` in
-     `re/orchestrator/merge_train.json`). A body swap that moves a gate hash is a real port divergence, not a failure
-     of the rule: file it as an L-n decision.
+- **frida (unchanged).** A clean `diff-original` run on a canonical scenario with the hook installed, plus the
+  Write-set leg (both above, under C3).
+- **`match` (game code).** C4 when **all** of these hold, and nothing else is asked:
+  1. The reconstructed source is **byte-identical** under `re/tools/match/match.py` (relocated operands masked; the
+     whole-symbol `--bytes` compare reports no differing byte, and the instruction compare is 100% or the original's
+     Ghidra body is shorter than the symbol) with the recorded compiler, XP DDK `cl` 13.00.9176 / `c2` 13.00.9178
+     (`tools/vc7ddk`, `// TOOLCHAIN ddk`, the default), and the flags recorded in the source (`// FLAGS:`; game code
+     `/O2 /GS /Ob1`, as C, x87; `/G5` breaks game code).
+  2. `re/tools/match/relocheck.py` reports **OK** for that function. `match.py` masks every relocation, so 100% alone
+     does not show that each global, callee or constant is the right one: MATCH-S02 found two sources at 100% that
+     stored to swapped arrays (0x0040b250, 0x0040b810; `verify/matchs02_20261031/RESULT_MATCH-S02.md`). relocheck
+     resolves each relocation (`MGLOBAL` names, `FUN_<rva>` callees, own constants and strings) against the original's
+     operand and lists the rest (imports, CRT helpers, file-static data) as unchecked by name. Those names go in the
+     evidence.
+  3. The source is **not a naked inline-asm transcription** (`__declspec(naked)`), and its body is **not only inline
+     `__asm`** inside a compiled C frame (SimGolf G26 rule, 2026-11-02: one `__asm` block plus declarations and a
+     `return` is a transcription too). Both match by construction. Inline `__asm` inside a body that does real C work is
+     fine.
+  4. No `STUB` marker in the function body.
 
-  A matched source alone is not C4. A naked inline-asm transcription is not match evidence (it matches by
-  construction); an inline `__asm` block inside a compiled C body is.
+  Removed from this gate by L-93: the exe uses the source as its body, the exe calls it, the gates are unchanged after
+  a swap. Those are port-axis facts now.
+- **`libid` (vendored or linked library code: Lua 4.0, qhull 2002.1, the DDK CRT, libpng 1.0.12, zlib 1.1.3).** C4
+  when the function is **identical** to one function of the library object, or of the library source compiled with its
+  recorded flags (`re/tools/match/libmatch.py`: every byte equal except relocation sites, relocations into the same
+  function checked). The libmatch status must be `identical` (or `identical-unlisted`, the same identity at an address
+  that had no row yet) with **one** candidate: an `identical-ambiguous` row (the same bytes as several library
+  functions) does not name the function and is not C4. Recorded builds: Lua `/O2 /Ob1 /G5`, qhull `/O2 /G5`, libpng
+  and zlib `/O2 /G5`, CRT = the DDK `libcmt.lib` member (`@comp.id` in the evidence). The old clause "and the port
+  gets the function from that same vendored source" is removed by L-93 (port axis).
 
-  **Callerless bodies (L-68 ruling, Mariano 2026-10-31).** A `match` row is C4 **only when `mashed_re.exe` actually
-  calls the swapped-in body.** A swap with **no caller in the exe** (`exe-callers=0`) keeps the swap and its match
-  evidence but stays **below C4** (at its current level): it is matched and swapped, pending a caller. Gate (3) cannot
-  help here, because with no caller the unchanged gates show only that the swap changed nothing the default build
-  runs. `notes` gets `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)`. When
-  a caller lands, re-count the exe callers and re-classify to C4 with the gates unchanged. A merged `match` C4 whose
-  body has `exe-callers=0` is demoted to its previous level with the same note.
-- **`libid` (vendored library code: Lua 4.0, qhull 2002.1).** C4 when the library object's function is **identical**
-  to the image (`re/tools/match/libmatch.py`: every byte equal except relocation sites, relocations into the same
-  function checked, ambiguous names excluded) **and** the port gets the function from that same vendored library
-  source, built with the recorded flags (Lua `/O2 /Ob1 /G5`, qhull `/O2 /G5`). Identity without the port using the
-  source is not C4.
-- **CRT rows: waived at library level (L-67, Mariano 2026-10-31).** The port links the platform CRT by design, so
-  `libid`'s "same vendored source" condition is false for every CRT function, even when the DDK `libcmt.lib` member
-  is byte-identical to the original. CRT rows are therefore **not C4** and come **out of the P-DoD count**. The exe
-  link is unchanged. They keep their confidence level (C2 today), and through `re-classify`:
-  - the `status` cell becomes `waived-platform-crt` (one token, as the column holds);
-  - `notes` starts `identified, waived: platform CRT (L-67)` for a row whose function is byte-identical to a DDK
-    `libcmt.lib` member, followed by the libid evidence as provenance (libmatch command, member, `@comp.id`), and
-    `waived: platform CRT (L-67)` for the others. An `ambiguous` identity (the same bytes as several members) records
-    all the candidate names;
-  - a CRT function filed under another subsystem (MATCH-LIB's 197 rows tagged boot, d3dx9-shader-compiler, render,
-    util, save, audio, frontend; `verify/libidentity_20261030/RESULT_LIB-IDENTITY.md` finding 2) is refiled to the
-    CRT subsystem (`third-party-library[msvc-crt-main]`, `-tail` or `[msvc-crt]`, the bucket its address range
-    already uses) with the same status and notes.
-  Lua and qhull are vendored and use `libid` as above. The CRT waiver (L-67) covers the CRT only.
-- **libpng 1.0.12 and zlib 1.1.3: waived at library level (L-70, Mariano 2026-10-31).** The 42 libpng and 14 zlib
-  functions whose bytes are identical to the DDK build (`verify/matchlib_20261031/pngzlib/`, `/O2 /G5`) are refiled to
-  `third-party-library[libpng-1.0.12]` / `third-party-library[zlib-1.1.3]`, status `waived-library`, and come out of the
-  P-DoD count like the CRT rows. The port links no libpng / zlib built from that source, so they are not `libid` C4.
-  They keep their level, `notes` starts `identified, waived: vendored library <lib> (L-70)` and carries the libid
-  identity as provenance; an identical address with no row gets a C1 row. Helper: `libid_reclass.py waive-lib`.
-  The 4 older `third-party-library[libpng]` rows are not identical and are not touched.
+**What `match` and `libid` evidence covers.** The Write-set leg is a **frida-route leg** only: it exists because a
+clean race diff cannot show stores that land outside the sampled memory. Byte identity covers the function's **own**
+instructions: identical bytes perform identical stores for identical inputs, and relocheck checks the address behind
+each named global, callee and constant. It does **not** cover: (a) callees, which keep their own level (relocheck proves
+the call goes to the right RVA, not what is there); (b) relocations relocheck lists as unchecked (imports, CRT helpers,
+file-static data), named in `notes`; (c) anything about the port (its body, its globals, its callers), which is the
+port axis.
 
-**How the Write-set leg relates.** The Write-set leg is a **frida-route leg** only: it exists because a clean race diff
-cannot show stores that land outside the sampled memory. It is not an extra requirement of `match` or `libid`. Byte
-identity discharges it for the function's **own** stores: identical bytes (same instructions, same operands up to
-relocation) compiled into the exe as the body perform identical stores for identical inputs, so there is nothing left
-to compare in the body. relocheck then checks the address behind each named global, callee and constant. What
-identity plus relocheck does **not** cover, and what gate (3) therefore carries: (a) callees, which keep their own
-level (relocheck proves the call goes to the right RVA, not what the port's body there does); (b) relocations relocheck
-lists as unchecked (imports, CRT helpers, file-static data), and the layout and contents of the port's globals and heap
-behind a correct address; (c) inputs from state the port computes differently. Where a matched row has callees or
-globals that no gate exercises, say so in `notes`: the row is still C4 by this route (it has an exe caller), but it
-is not evidence for those callees or globals. A callerless body is not C4 at all (L-68).
+**Batch promotion.** `py -3.12 re/tools/c4_reclass.py batch --tsv <rva,route,evidence> [--apply --result <RESULT>]`
+recompiles every `match` source and re-runs relocheck at promotion time, checks the `libid` TSV status, refuses each row
+that fails a criterion above (by name) and writes the rest in one transaction, one CHANGELOG line per row. Usage:
+`re-classify` skill, "Batch C4 (L-93)".
+
+## Port axis (`hooks.csv` `port` column; L-93, 2026-11-07)
+
+The port axis records what `mashed_re.exe` does with an RVA. It is measured separately from C0..C4 and is what the
+project Definition of Done (P-DoD) counts (`ROADMAP.md` v4).
+
+- **`port` column** (derived, built by `scripts/backfill_port.py`, step C4R-PORTCOL; regenerate it, do not hand-edit):
+  - `none`: `mashed_re.exe` compiles no body for the RVA.
+  - `body`: the exe compiles a body for the RVA, and no game path in the exe calls it.
+  - `called`: the exe compiles a body for the RVA and a game path in the exe calls it.
+- **Rulings that now decide the port column, not C4** (text unchanged, scope moved by L-93):
+  - **Old match rule 2:** a matched source swapped in is the RVA's only body (the `lint_rva_bodies.py` rule), in both
+    targets where the RVA is hooked, physics TUs listed in `mashedmod/x87_tus.txt`.
+  - **Old match rule 3:** after any body swap the merge-train gates are unchanged (`gctrl.ref` / `b.ref` in
+    `re/orchestrator/merge_train.json`). A swap that moves a gate hash is a real port divergence: file it as an L-n
+    decision. This still binds every merge; it no longer binds C4.
+  - **L-68 (callerless bodies, 2026-10-31):** a body with no exe caller (`exe-callers=0`) is `body`, not `called`.
+    Older notes reading `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)` are
+    history: those rows take `match` C4 under L-93 when the route holds (C4R-MATCHBATCH), and the old demotion of a
+    callerless `match` C4 no longer applies.
+  - **L-84 (2026-11-02):** a dev-only path compiled into the shipping exe (`Nav_DevGoto`) counts as an exe caller:
+    `called` (precedent 0x0042a9c0, 0x0042ad90).
+  - **L-89 (2026-11-02):** a call made only by an env-gated test or replay harness is not a game path: `body`
+    (precedent 0x00442cc0, 0x00443300).
+  - **L-73 (qhull, 2026-11-01):** the `build_qhull.bat` DDK diff waits for a ported caller of 0x0047d3c0. That is a
+    port decision. qhull rows take `libid` C4 now without it.
+  - **libid port clause:** whether the port links the vendored library source is a port fact.
+- **Library rows out of the P-DoD port count (kept):**
+  - **CRT rows (L-67, Mariano 2026-10-31).** The port links the platform CRT by design, so CRT rows are waived at
+    library level and come **out of the P-DoD count**. The exe link is unchanged. Through `re-classify`:
+    - the `status` cell becomes `waived-platform-crt` (one token, as the column holds);
+    - `notes` starts `identified, waived: platform CRT (L-67)` for a row whose function is byte-identical to a DDK
+      `libcmt.lib` member, followed by the libid evidence as provenance (libmatch command, member, `@comp.id`), and
+      `waived: platform CRT (L-67)` for the others. An `ambiguous` identity records all the candidate names;
+    - a CRT function filed under another subsystem (MATCH-LIB's 197 rows tagged boot, d3dx9-shader-compiler, render,
+      util, save, audio, frontend; `verify/libidentity_20261030/RESULT_LIB-IDENTITY.md` finding 2) is refiled to the
+      CRT subsystem (`third-party-library[msvc-crt-main]`, `-tail` or `[msvc-crt]`, the bucket its address range
+      already uses) with the same status and notes.
+  - **libpng 1.0.12 and zlib 1.1.3 (L-70, Mariano 2026-10-31).** The 42 libpng and 14 zlib functions whose bytes are
+    identical to the DDK build (`verify/matchlib_20261031/pngzlib/`, `/O2 /G5`) are refiled to
+    `third-party-library[libpng-1.0.12]` / `third-party-library[zlib-1.1.3]`, status `waived-library`, and come out of
+    the P-DoD count like the CRT rows. `notes` starts `identified, waived: vendored library <lib> (L-70)` and carries
+    the libid identity as provenance; an identical address with no row gets a C1 row. Helper:
+    `libid_reclass.py waive-lib`. The 4 older `third-party-library[libpng]` rows are not identical and are not touched.
+  - Under L-93 these waived rows **may still carry C4 by `libid`** (the RE axis): the waiver takes them out of the
+    port count, it does not say anything about the identity. The `status` cell keeps the waiver token.
 
 ## Which copy the evidence covers (clause added 2026-09-29)
 
@@ -209,10 +245,17 @@ pairs appearing; `re/tools/dual_copy_allowlist.txt` is the shrinking list of kno
 Precedent and the full finding: `re/analysis/DUAL_COPY_AUDIT_2026-09-29.md`,
 `re/analysis/DUAL_COPY_FIX_2026-09-29.md`.
 
+**Scope (L-93):** this clause is about the frida route, whose evidence is measured on a copy. A `match` or `libid`
+C4 certifies the reconstruction, not a copy in either target, so it is neither a claim about `mashed_re.exe` nor
+weakened by a second body. Which bodies the exe has is the port axis.
+
 ## Demotion rules
 
 A function is **demoted** automatically when:
 - A diff regression is observed (C4 → C3 until re-verified).
+- A `match` or `libid` C4 whose cited evidence no longer passes the route (the source was edited and no longer
+  recompiles byte-identical, relocheck turns BAD, the identity turns out ambiguous) drops to the level it had before.
+  `c4_reclass.py batch` on the cited source shows it.
 - A struct it depends on changes shape (any function touching that field at C3 → C2).
 - An `[UNCERTAIN]` it depends on is upgraded with new contradicting evidence.
 - Its **shipping-exe copy is shown to differ in behaviour** from the copy the evidence measured
@@ -226,4 +269,4 @@ Demotions are loud — emit a row in `re/analysis/CHANGELOG.md` so we don't lose
 - Promoting on "this is probably what it does." Ban.
 - Skipping levels (C0 → C3). Ban — every level's evidence must be on file.
 - Promoting an island. If callees are C0 and the function reads an unknown global, it cannot be C3.
-- Promoting because the build compiles. C3 requires reasoning about behavior; C4 requires Frida diff. Compile-passing alone gets you nothing.
+- Promoting because the build compiles. C3 requires reasoning about behavior; C4 requires a frida diff with the hook live, a byte match (match.py + relocheck OK) or a library identity. Compile-passing alone gets you nothing.

@@ -34,8 +34,8 @@ For each promotion request, the skill **must** check the corresponding gate from
 | C1 | function has name/strings/xrefs evidence; subsystem assigned |
 | C2 | decomp read end-to-end; `re/analysis/<sub>/<func>.md` exists with shape (args/return/reads/writes), every const/offset cited; NO-GUESSING |
 | C3 | semantics stated; reimplementation lives at `mashedmod/src/mashed_re/...`; build is clean; hooked via `RH_ScopedInstall`; runtime-toggleable; at least one caller AND one callee at C2+ |
-| C4 | `diff-original` CSV produced; clean diff vs original; no stubs in this function's body |
-| C4 (static) | `match` or `libid` evidence, see "Evidence types `match` and `libid`" below; no stubs in the body |
+| C4 (frida) | `diff-original` CSV produced on a canonical scenario with the hook installed; clean diff vs original; no stubs in this function's body |
+| C4 (static, L-93) | `match` (byte-identical + relocheck OK, not naked / asm-only) or `libid` (identical, one candidate) evidence, see "Evidence types `match` and `libid`" below; no exe body, caller or gate check; batch via `c4_reclass.py` |
 
 For each refusal, the skill states **exactly which gate criterion failed** and what evidence would unblock it.
 
@@ -116,40 +116,71 @@ py -3.12 re\tools\uncertainty_resolve.py resolve --reason "<why>" --evidence "<r
 - Only `## Active uncertainties` is touched. Line endings are preserved per line (the file mixes LF and CRLF).
 - Self-test: `py -3.12 -m pytest re/tools/tests/test_uncertainty_resolve.py` (fake repo root, real trackers untouched).
 
-## Evidence types `match` and `libid` (C4 by byte match, 2026-10-31)
+## Evidence types `match` and `libid` (C4 by L-93, 2026-11-07)
 
 A C4 request may carry evidence type `match` or `libid` instead of a `diff-original` CSV. Gate text: `re/CONFIDENCE.md`,
-"C4 routes by byte match". Required fields; refuse and name the missing one if any is absent:
+"C4 routes". Since L-93 (Mariano, 2026-11-07) C4 certifies the reverse engineering only: these routes need **no** exe
+body, **no** exe caller and **no** gate run, and they do not need C3 first. Required fields; refuse and name the missing
+one if any is absent:
 
 | field | `match` | `libid` |
 |---|---|---|
-| tool command | the exact `match.py` command line | the exact `libmatch.py` command line |
+| tool command | the exact `match.py --bytes` command line | the exact `libmatch.py` command line (or its TSV) |
 | relocheck result | `re/tools/match/relocheck.py <src>` line for the RVA: `OK`, plus the names it lists as unchecked | n/a |
-| compiler build | `cl` 13.00.9176 / `c2` 13.00.9178 (XP DDK) | same, or the DDK `libcmt.lib` member's `@comp.id` |
-| flags | recorded flags (game code `/O2 /GS /Ob1`, C) | recorded flags (Lua `/O2 /Ob1 /G5`, qhull `/O2 /G5`) |
-| matched source path + sha | reconstructed source file + sha256 | vendored library source file + sha256 |
-| port body file | the TU in `mashed_re.exe` (and the `.asi` TU where hooked) that compiles that same source | the TU that compiles that vendored source |
+| compiler build | `cl` 13.00.9176 / `c2` 13.00.9178 (XP DDK, `// TOOLCHAIN ddk`) | same, or the DDK `libcmt.lib` member's `@comp.id` |
+| flags | the source's `// FLAGS:` (game code `/O2 /GS /Ob1`, C) | recorded flags (Lua `/O2 /Ob1 /G5`, qhull / libpng / zlib `/O2 /G5`) |
+| matched source path + sha | reconstructed source file + sha256 | library object + function name from the TSV |
 
-Checks before stamping C4:
-- `match`: the tool reports 100% (byte-identical after relocation masking) for that RVA **and** relocheck reports OK
-  (a 100% source with relocheck BAD is refused: it can store to the wrong global); the port body file is the
-  matched source or includes it (`exe_file == file`, lint clean, physics TU in `x87_tus.txt`); the merge-train gates
-  are unchanged after the swap (cite the gate hashes). A matched source the port does not compile, or a naked
-  inline-asm transcription, is refused.
-- `match`, callerless body (no exe caller, `exe-callers=0`): **NOT C4** (L-68, Mariano 2026-10-31). Count the exe
-  callers of the swapped-in body yourself. With 0, keep the swap and the match evidence, leave the level where it is,
-  and write `match evidence: identical, swapped, exe-callers=0; C4 when a caller lands (L-68 ruling)` in `notes`. No
-  `c4=match` token. A merged `match` C4 found with `exe-callers=0` is demoted to its previous level with that note.
-  Rubric, "Callerless bodies".
-- `libid`: status `identical` and not `ambiguous` in the libmatch TSV; the port body file compiles that vendored
-  source. CRT rows never take `libid` C4: see "CRT rows (L-67)" below.
+Checks before stamping C4 (the batch tool below runs exactly these):
+- `match`: the source recompiles **byte-identical** for that RVA under the DDK with its recorded flags (`--bytes`: no
+  differing unmasked byte; instruction compare 100%, or the original's Ghidra body is shorter than the symbol)
+  **and** relocheck reports OK (a 100% source with relocheck BAD is refused: it can store to the wrong global).
+  Refused: a `vc19` toolchain, a `__declspec(naked)` source, a body that is only inline `__asm` in a C frame
+  (SimGolf G26: `__asm` blocks plus declarations and a bare `return`), a `STUB` marker in the body.
+- `libid`: status `identical` or `identical-unlisted` in the libmatch TSV with one candidate function. Refused:
+  `identical-ambiguous`, `differs`, `not-compared`, or several identical candidates at the address.
+- **Not checked any more (L-93):** the port body file, `exe_file == file`, lint, `x87_tus.txt`, exe callers (L-68,
+  L-84, L-89), unchanged gates, and for `libid` whether the port compiles the vendored source. Those are the port
+  axis (`hooks.csv` `port` column, `scripts/backfill_port.py`). CRT, libpng and zlib rows keep their `waived-*` status
+  (out of the P-DoD port count, L-67 / L-70) and may take `libid` C4.
 - The Write-set leg is not asked for on these routes.
-- `hooks.csv` `notes` gets `c4=match` or `c4=libid` plus the source sha; the CHANGELOG evidence column cites the RESULT.
+- `hooks.csv` `notes` gets `c4=match` or `c4=libid` plus the evidence (command, compiler, flags, relocheck counts and
+  unchecked names, source sha256, RESULT); the CHANGELOG evidence column cites the RESULT. `file`, `exe_file` and
+  `status` are not touched.
 
-### CRT rows (L-67, Mariano 2026-10-31): waive, never promote
+### Batch C4 (L-93): many rows, one transaction
+
+Use this for every `match` / `libid` promotion, one row or two thousand. Never write a per-slice reclass script.
+
+```
+py -3.12 re\tools\c4_reclass.py make-tsv --results verify\matchsNN_<date>\results.tsv [...] --out <batch.tsv>
+py -3.12 re\tools\c4_reclass.py batch --tsv <batch.tsv> [--report <verdicts.tsv>]                 # dry run
+py -3.12 re\tools\c4_reclass.py batch --tsv <batch.tsv> --apply --result <RESULT.md> [--strict]   # write
+```
+
+- **Batch TSV**: header `rva  route  evidence`. `route` is `match` (evidence = the matched `.c`, repo-relative) or
+  `libid` (evidence = the libmatch TSV). `make-tsv` builds the `match` rows from MATCH slice `results.tsv` files (every
+  row recorded at 100%; the layouts of S01, S03 and S02+ are all read).
+- **Gate per row**: the tool recompiles each `match` source now (`match.compare --bytes`, then `relocheck.check`), so
+  the evidence is the source as it is in the tree, not a score from an older run. Each row prints
+  `[N/M] 0x<rva> <route> PASS|REFUSED|SKIP <detail>`, and a refusal names the failing criterion. A row with no
+  `hooks.csv` row is refused (add the row first, e.g. `libid_reclass.py add-rows`). A row already C4 is skipped.
+- **Dry run by default**: nothing is written; it prints the CHANGELOG lines `--apply` would add.
+- **`--apply`** (needs `--result`): every PASS row gets confidence `C4` and a notes fragment
+  `<date> C4 by route <route> (L-93): c4=<route>; <evidence>; <RESULT>`. Only those `hooks.csv` lines are rewritten (the
+  rest of the file is left byte for byte), then one CHANGELOG line per row
+  (`date  0x<rva>  name  Cn->C4  route <route> (L-93): ...; evidence: <RESULT>`) goes below `<!-- ENTRIES -->`.
+  Refused rows are reported and left alone. `--strict` writes nothing when any row is refused.
+- Idempotent: a second `--apply` skips every row it promoted.
+- `--jobs N` (default 4) compiles sources in parallel.
+- Self-test: `py -3.12 -m pytest re/tools/tests/test_c4_reclass.py` (fake repo root, no compiler, real trackers
+  untouched).
+
+### CRT rows (L-67, Mariano 2026-10-31): waive (out of the P-DoD port count)
 
 The port links the platform CRT by design, so CRT rows are waived at library level and come out of the P-DoD count.
-They are **not C4** and keep their confidence level. Exe link unchanged. For each CRT row (MATCH-LIB runs this
+The waiver keeps their confidence level and exe link. Since L-93 a waived row identical to a DDK `libcmt.lib`
+member may still take `libid` C4 through the batch tool (the waiver is a port fact, the identity is an RE fact). For each CRT row (MATCH-LIB runs this
 over the CRT rows and the 197 CRT functions filed under other subsystems):
 
 1. `status` = `waived-platform-crt`. The confidence cell is not changed.
@@ -162,7 +193,7 @@ over the CRT rows and the 197 CRT functions filed under other subsystems):
    no evidence, and the row stays where it is.
 4. Changelog line per row: `date  RVA  name  Cn->Cn  waived-platform-crt (L-67) evidence: <RESULT>`.
 
-Lua and qhull rows are not waived: they take `libid` C4 when the port compiles the vendored source.
+Lua and qhull rows are not waived: they take `libid` C4 by identity alone (L-93).
 
 Run it with the helper, never by hand (added MATCH-LIB 2026-10-31):
 
@@ -188,13 +219,13 @@ py -3.12 re\tools\libid_reclass.py refile-lib --tsv <tsv> --library lua-4.0|qhul
 
 - **add-rows** appends a **C1** row per address (C1 gate: the identity names the function, the library fixes the
   subsystem). Lua / qhull: status `mapped`, notes `C1 by libid: identical <obj> <fn> (<flags>, <compiler>; <tsv>)`
-  plus the mandatory `not C4: <why>`. CRT: status `waived-platform-crt` with the L-67 notes. A name the bytes do not
+  plus the mandatory `not C4: <why>` (before L-93 the reason was the port; since L-93 an identical row is promoted
+  afterwards with `c4_reclass.py batch`, so `not C4: pending c4_reclass batch` is enough). CRT: status `waived-platform-crt` with the L-67 notes. A name the bytes do not
   determine (several functions identical there, MASM local labels, C++ mangled names) becomes `FUN_<rva>` with every
   candidate in notes. CHANGELOG `(none)->C1`.
 - **refile-lib** moves a Lua / qhull row filed under a game subsystem to the library subsystem when its address is
   identical to exactly one library function. Confidence, status and file are kept; notes get the identity first.
-- Neither operation promotes. A libid C4 still needs the gate above (the port compiles that vendored source with the
-  recorded flags).
+- Neither operation promotes. A libid C4 goes through `c4_reclass.py batch` (identity alone, L-93).
 ### libpng / zlib identical rows (L-70)
 
 ```
@@ -203,7 +234,8 @@ py -3.12 re/tools/libid_reclass.py waive-lib --library libpng-1.0.12|zlib-1.1.3 
 
 Refiles the row at every `identical-unlisted` address to `third-party-library[libpng-1.0.12]` / `[zlib-1.1.3]`, status
 `waived-library`, confidence kept, notes `identified, waived: vendored library <lib> (L-70)` plus the libid identity. An
-address with no row gets a C1 row. Never C4 (the port links no libpng / zlib from that source). Idempotent.
+address with no row gets a C1 row. The waiver never promotes. Since L-93 the identical rows may take `libid` C4
+through `c4_reclass.py batch` (the status keeps `waived-library`). Idempotent.
 
 - Self-test: `py -3.12 -m pytest re/tools/tests/test_libid_reclass.py` (fake repo root, real trackers untouched).
 
