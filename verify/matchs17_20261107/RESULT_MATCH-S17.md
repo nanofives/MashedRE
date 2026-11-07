@@ -12,7 +12,7 @@ Branch `orch/MATCH-S17`, cut from orch/integration e498cb11a.
 
 Every one of the 54 rows is a libcmt function that hooks.csv files under boot (44), util (7) or render (3).
 `libid_slice.tsv` (`re/tools/match/libmatch.py` against the DDK `tools/vc7ddk/lib/wxp/i386/libcmt.lib`, restricted to
-the slice by `tools/libmatch_slice.py`) names the CRT function for 47 of them: 12 identical to the DDK library plus 2 identical-ambiguous
+the slice by `tools/libmatch_slice.py`) names the CRT function for 47 of them: 12 identical to the DDK library plus 2 identical-ambiguous,
 33 differ, 7 not compared. Examples: 0x004a2bb8 report_failure, 0x004a31f3 `_cinit`, 0x004a3258
 `doexit`, 0x004a4bb7 `WinMainCRTStartup`, 0x004a504f `_output`, 0x004aaff0 `memcpy`.
 The Rich header of MASHED.exe lists comp.id 28/9178 (C, 8 objects) and 29/9178 (C++, 49), the same compiler as the
