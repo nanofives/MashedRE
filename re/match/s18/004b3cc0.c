@@ -26,10 +26,10 @@ typedef unsigned char bool;
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-bool FUN_004cc160(undefined4 * p0, undefined4 * p1);
-undefined4 * FUN_004cc230(undefined4 p0, int p1, undefined4 * p2);
-undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 * p2, uint * p3);
-undefined1 * FUN_00545260(undefined4 p0);
+bool FUN_004cc160(undefined4 p0, undefined4 p1);
+undefined4 FUN_004cc230(undefined4 p0, int p1, undefined4 p2);
+undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 p2, undefined4 p3);
+undefined4 FUN_00545260(undefined4 p0);
 // MATCH: 0x004b3cc0 FUN_004b3cc0
 undefined4 FUN_004b3cc0(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 

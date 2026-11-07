@@ -30,8 +30,8 @@ int FUN_004c0b30(void);
 undefined4 FUN_004c0c20(int p0);
 void FUN_004c15c0(int p0);
 int FUN_004c1c10(int p0, int p1);
-undefined1 * FUN_004c1d30(void);
-undefined4 * FUN_004c5a00(undefined4 p0);
+int FUN_004c1d30(void);
+int FUN_004c5a00(undefined4 p0);
 undefined4 FUN_004c7650(undefined4 p0);
 int FUN_004c77c0(undefined4 p0, undefined4 p1, undefined4 p2, undefined4 p3);
 // MATCH: 0x004b48e0 FUN_004b48e0

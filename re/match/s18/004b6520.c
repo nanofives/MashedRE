@@ -26,7 +26,7 @@ typedef unsigned char bool;
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-undefined4 * FUN_004b64e0(undefined4 * p0, undefined1 p1, uint p2);
+undefined4 * FUN_004b64e0(undefined4 p0, undefined1 p1, uint p2);
 // MATCH: 0x004b6520 FUN_004b6520
 void FUN_004b6520(undefined4 param_1,undefined4 param_2)
 

@@ -24,7 +24,7 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
-void FUN_004b4130(void);
+int FUN_004b4130(int p0, undefined4 * p1);
 // MATCH: 0x004b4140 FUN_004b4140
 void FUN_004b4140(undefined4 param_1)
 
