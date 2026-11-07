@@ -26,7 +26,7 @@ typedef unsigned char bool;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 typedef unsigned short ushort;
-typedef int code();
+typedef int code(int, int, undefined4);
 #ifndef __cplusplus
 #define true 1
 #endif

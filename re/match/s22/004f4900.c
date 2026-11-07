@@ -25,7 +25,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
-typedef int code();
+typedef int code(int);
 MGLOBAL(int, DAT_007d7384, 0x007d7384);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_007d7388, 0x007d7388);
