@@ -25,7 +25,7 @@ score the same as before (`score_diff_stale14_final.tsv`: 0 changes). Decision f
 have master get functions defined at these 14 entries and re-dump (the proper fix, master write via ghidra-sweep).
 
 ## Before/after collect score (tools/score_all.py, collect.py rule: insn acc, or bytes when no bad bytes and bytes_n >= size)
-- `score_diff_all.tsv`: every `re/match/**/*.c` on orch/integration (2056 files), old table vs plain dump: 2399 scored
+- `score_diff_all.tsv`: every `re/match/**/*.c` on orch/integration (2056 files), old table vs plain dump: 2385 scored
   rows unchanged except the 14 above. With the 14 retained: **no row changes score or verdict.**
 - `score_diff_m2extra.tsv`: sources that exist only on `orch/C4R-BATCH-M2` (s17, s18, s20-s24, extracted to scratch):
   631 unchanged, 8 bytes unchanged, **23 rows go refused -> scored** because they get a size:
