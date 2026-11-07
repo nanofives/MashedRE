@@ -1,9 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00520ef0: libpng 1.0.12 pngwtran.c png_do_write_swap_alpha, official body without the
    PNG_USELESS_TESTS NULL check.
-   96.9% (regs 96.9, ops 100). Residual: the 16-bit branches spill save[1] to the arg slot of row_info (+0xd)
-   where the original uses the arg slot of row (+0x11). Tried: save at function scope, two scalars, sp/dp split,
-   shared function-scope locals, permuter 182 variants, 5 flag sets. Class (b) stack-slot assignment. */
+   100% (h7 round 2; was 96.9, save[1] in the row_info arg slot): row copied from row_arg (`png_bytep row =
+   row_arg;`), which frees the row slot for the original's save[1] spill. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -33,8 +32,9 @@ typedef uchar png_byte;
 typedef uchar *png_bytep;
 typedef uint png_uint_32;
 // MATCH: 0x00520ef0 FUN_00520ef0
-void FUN_00520ef0(png_row_infop row_info, png_bytep row)
+void FUN_00520ef0(png_row_infop row_info, png_bytep row_arg)
 {
+   png_bytep row = row_arg;
    {
       if (row_info->color_type == 6)
       {

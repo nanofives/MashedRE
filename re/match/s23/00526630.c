@@ -1,10 +1,11 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S23 0x00526630 (h4): libpng 1.0.12 pngrutil.c png_handle_pHYs. Best 91.9% (regs 91.9%).
+/* MATCH-S23 0x00526630 (h4): libpng 1.0.12 pngrutil.c png_handle_pHYs. Best 93.5% (regs 93.5%, h6 round 2, was 91.9).
    Written from the official source with the original's inlining mirrored by hand: png_crc_read, png_crc_finish,
    png_crc_error, png_get_uint_32/16 (and png_check_chunk_name where present) are inline in the original, per call
    site either fully inline or calling png_crc_error 0x005232c0 / png_get_uint_32 0x00523110 / png_crc_finish
    0x00523170; each copy follows the original's form. png_chunk_error = 0x005172b0, png_chunk_warning = 0x00517380.
-   Residual class (b): Four inlined png_crc_finish copies written per original copy (IDAT copy inlines png_crc_error with png_get_uint_32 called; the others call 0x005232c0). Remaining: (1) the original hoists `mov eax,[esi+0x6c]` above the chunk_name&0x20 branch in the IDAT copy (tried flags local, ternary, else-if); (2) dead param slot chosen for istop/crc_bytes (length vs png_ptr). Permuter no gain. */
+   Residual class (b): Four inlined png_crc_finish copies written per original copy (IDAT copy inlines png_crc_error with png_get_uint_32 called; the others call 0x005232c0). Remaining: (1) the original hoists `mov eax,[esi+0x6c]` above the chunk_name&0x20 branch in the IDAT copy (tried flags local, ternary, else-if); (2) dead param slot chosen for istop/crc_bytes (length vs png_ptr). Permuter no gain.
+   Round 2 (h6): length arg copy (`uint length = length_arg;`) fixes the param-slot packing; only the class (a) flags-load hoist in the inlined png_crc_error copies is left. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -44,8 +45,9 @@ int FUN_005232c0(int png_ptr);
 void FUN_00516370(int png_ptr, int info_ptr, uint res_x, uint res_y, int unit_type);
 
 // MATCH: 0x00526630 FUN_00526630
-void FUN_00526630(int png_ptr, int info_ptr, uint length)
+void FUN_00526630(int png_ptr, int info_ptr, uint length_arg)
 {
+   uint length = length_arg;
    uchar buf[9];
    uint res_x, res_y;
    int unit_type;

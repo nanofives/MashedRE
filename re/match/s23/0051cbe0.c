@@ -2,9 +2,13 @@
 /* MATCH-S23 0x0051cbe0: libpng 1.0.12 pngwutil.c png_write_IHDR (no PNG_MNG_FEATURES in this function's filter
    check, PNG_WRITE_INTERLACING_SUPPORTED), png_save_uint_32 and png_write_chunk with its start / data / end written
    inline, deflateInit2 = deflateInit2_(..., "1.1.3", 0x38).
-   95.6% (regs 96.4, ops 98.8). Residual: zlib_strategy. The original keeps 0 in ebx (xor ebx,ebx, shared by the zero
-   length bytes, the do_filter test and the Z_DEFAULT_STRATEGY store) and branches; 9176 uses xor bl,bl and a setne
-   store. Tried L/unsigned/int-cast spellings of the strategy if, png_ptr/width copies, permuter 240 s. Class (b).
+   98.8% (h7 round 2; was 95.6). What moved it: the strategy if/else written as `zlib_strategy = 1; if (do_filter
+   == 8) zlib_strategy = 0;` (same final state). The official if/else always became xor bl,bl + setne in 9176
+   (tried ==/!= order, constant left, ternary, switch, goto arms, a pointer temp, int/char/unsigned spellings); the
+   store-then-test form stops the setne, so 0 is a dword constant again (xor ebx,ebx as in the original). Residual:
+   ours loads do_filter into dl before the store of 1 and tests with jne, the original does cmp byte [esi+0x125],cl;
+   je over the store (if/else layout). Class (a): if-conversion to setne that no semantically equal if/else
+   spelling avoids. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -179,10 +183,7 @@ void FUN_0051cbe0(int png_ptr, unsigned int width, unsigned int height,
    }
    if (!(*(unsigned int *)(png_ptr + 0x6c) & 1))
    {
-      if (*(unsigned char *)(png_ptr + 0x125) != 0x08)
-         *(int *)(png_ptr + 0xc4) = 1;
-      else
-         *(int *)(png_ptr + 0xc4) = 0;
+      *(int *)(png_ptr + 0xc4) = 1; if (*(unsigned char *)(png_ptr + 0x125) == 0x08) *(int *)(png_ptr + 0xc4) = 0;
    }
    if (!(*(unsigned int *)(png_ptr + 0x6c) & 2))
       *(int *)(png_ptr + 0xb4) = -1;

@@ -3,10 +3,11 @@
    png_crc_finish unevenly: IDAT path fully inline, Duplicate path with png_get_uint_32 called (0x00523110),
    length and main paths with png_crc_error called (0x005232c0). Written as static __forceinline variants
    png_crc_finish / _i / _e (pngcrc3 block).
-   87.9% (regs 87.9, ops 99.4). Residual: (1) stack slot: the original reuses the dead length arg slot
+   89.2% (regs 89.2, h6 round 2, was 87.9; residual (1) fixed by the length arg copy). Residual: (1) stack slot: the original reuses the dead length arg slot
    ([esp+0x28]) for istop / crc_bytes, ours the png_ptr slot ([esp+0x20]); (2) the IDAT path's inlined
    png_crc_error: the original hoists the identical 'mov eax,[esi+0x6c]' out of both arms, ours keeps it in each
-   arm (same as 0x005232c0). Class (b) stack packing + (a) post-allocation hoist. */
+   arm (same as 0x005232c0). Class (b) stack packing + (a) post-allocation hoist.
+   Round 2 (h6): length arg copy fixes the param-slot packing; only the class (a) flags-load hoist is left. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -218,8 +219,9 @@ void FUN_00517270(png_structp png_ptr, const char *message); /* png_warning */
 void FUN_00516430(png_structp png_ptr, png_infop info_ptr, void *sig_bit); /* png_set_sBIT */
 
 // MATCH: 0x005241f0 FUN_005241f0
-void FUN_005241f0(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
+void FUN_005241f0(png_structp png_ptr, png_infop info_ptr, png_uint_32 length_arg)
 {
+   png_uint_32 length = length_arg;
    png_size_t truelen;
    png_byte buf[4];
 

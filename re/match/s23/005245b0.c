@@ -2,12 +2,14 @@
 /* MATCH-S23 0x005245b0: libpng 1.0.12 pngrutil.c png_handle_cHRM (floating + fixed point, sRGB check, no
    console io). png_crc_finish per call site as the original's compiler did: inlined with png_crc_error called
    (png_crc_finish_e) for the IDAT / Duplicate / length / white / red / green paths, called (0x00523170) for the
-   blue / sRGB / final paths; png_crc_read and png_get_uint_32 inlined everywhere. white_x is computed after red_y (permuter; pure
-   float arithmetic, same values).
-   85.5% (regs 86.0, ops 99.4) (80.6% with the official order). Residual: frame 0x28 vs 0x20. The original
-   keeps two of the eight png_fixed_point values in the dead png_ptr / length arg slots, ours gives them frame
-   slots, so most [esp+N] operands differ by 8. Same stack-packing family as 0x00523360 / 0x00523e40. Tried:
-   permuter 234 variants. Class (b). */
+   blue / sRGB / final paths; png_crc_read and png_get_uint_32 inlined everywhere.
+   91.2% (regs 92.8, ops 99.6) (h6 round 2, was 85.5). What moved it: info_ptr + length arg copies
+   (`x = x_arg;`) give the original's 0x20 frame (y_red / green_y in the dead png_ptr / length slots, istop in
+   the info_ptr slot), and with them the official float order (white_x first) is best again (round 1 had moved
+   white_x after red_y to compensate the frame). Residual class (b): (1) three abs() operands (int_x_white,
+   int_x_red, int_y_red) are reloaded `mov edx,[m]; lea eax,[edx-K]` in the original, ours `mov eax,[m];
+   add eax,-K`; (2) argument load order / registers for the png_set_cHRM_fixed pushes. Permuter 167 compiles,
+   no gain. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -242,8 +244,10 @@ static __forceinline png_uint_32 png_get_uint_32(png_bytep buf)
 }
 
 // MATCH: 0x005245b0 FUN_005245b0
-void FUN_005245b0(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
+void FUN_005245b0(png_structp png_ptr, png_infop info_ptr_arg, png_uint_32 length_arg)
 {
+   png_infop info_ptr = info_ptr_arg;
+   png_uint_32 length = length_arg;
    png_byte buf[4];
    float white_x, white_y, red_x, red_y, green_x, green_y, blue_x, blue_y;
    png_fixed_point int_x_white, int_y_white, int_x_red, int_y_red, int_x_green,
@@ -333,10 +337,10 @@ void FUN_005245b0(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
       FUN_00523170(png_ptr, 0);
       return;
    }
+   white_x = (float)int_x_white / (float)100000.0;
    white_y = (float)int_y_white / (float)100000.0;
    red_x   = (float)int_x_red   / (float)100000.0;
    red_y   = (float)int_y_red   / (float)100000.0;
-   white_x = (float)int_x_white / (float)100000.0;
    green_x = (float)int_x_green / (float)100000.0;
    green_y = (float)int_y_green / (float)100000.0;
    blue_x  = (float)int_x_blue  / (float)100000.0;

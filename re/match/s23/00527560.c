@@ -1,10 +1,11 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S23 0x00527560 (h4): libpng 1.0.12 pngrutil.c png_handle_tIME. Best 88.3% (regs 88.3%).
+/* MATCH-S23 0x00527560 (h4): libpng 1.0.12 pngrutil.c png_handle_tIME. Best 90.5% (regs 90.5%, h6 round 2, was 88.3).
    Written from the official source with the original's inlining mirrored by hand: png_crc_read, png_crc_finish,
    png_crc_error, png_get_uint_32/16 (and png_check_chunk_name where present) are inline in the original, per call
    site either fully inline or calling png_crc_error 0x005232c0 / png_get_uint_32 0x00523110 / png_crc_finish
    0x00523170; each copy follows the original's form. png_chunk_error = 0x005172b0, png_chunk_warning = 0x00517380.
-   Residual class (b): Copies: dup copy inlines get_uint_32 (ERRINL), length copy and good path call 0x00523110. Residual: param-slot choice for istop/crc_bytes (original length slot, ours png_ptr slot; tried function-level vs block-level istop/crc_bytes) + hoist. */
+   Residual class (b): Copies: dup copy inlines get_uint_32 (ERRINL), length copy and good path call 0x00523110. Residual: param-slot choice for istop/crc_bytes (original length slot, ours png_ptr slot; tried function-level vs block-level istop/crc_bytes) + hoist.
+   Round 2 (h6): length arg copy fixes the param-slot packing; only the class (a) flags-load hoist is left. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -43,8 +44,9 @@ uint FUN_00523110(uchar *buf);
 void FUN_00516830(int png_ptr, int info_ptr, png_time *mod_time);
 
 // MATCH: 0x00527560 FUN_00527560
-void FUN_00527560(int png_ptr, int info_ptr, uint length)
+void FUN_00527560(int png_ptr, int info_ptr, uint length_arg)
 {
+   uint length = length_arg;
    uchar buf[7];
    png_time mod_time;
    int crc_err;

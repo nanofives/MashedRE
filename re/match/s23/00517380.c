@@ -34,7 +34,7 @@ void FUN_00517380(int param_1,undefined4 param_2)
   int iVar1;
   char local_54 [84];
   
-  FUN_005172f0(param_1,local_54,param_2);
+  FUN_005172f0(param_1,(int)local_54,(undefined4 *)param_2);
   iVar1 = 0;
   if (local_54[0] == '#') {
     iVar1 = 1;
@@ -44,7 +44,7 @@ void FUN_00517380(int param_1,undefined4 param_2)
     } while (iVar1 < 0xf);
   }
   if (*(code **)(param_1 + 0x44) != (code *)0x0) {
-    (**(code **)(param_1 + 0x44))(param_1,local_54 + iVar1);
+    ((void (*)(int,char *))(*(code **)(param_1 + 0x44)))(param_1,local_54 + iVar1);
   }
   return;
 }

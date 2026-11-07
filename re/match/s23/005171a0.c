@@ -34,9 +34,9 @@ void FUN_005171a0(int param_1,undefined4 *param_2)
 {
   int iVar1;
   
-  FUN_00516de0(param_1,param_2,0x7fff,0xffffffff);
+  FUN_00516de0(param_1,(int)param_2,0x7fff,0xffffffff);
   if (*(int *)(param_1 + 0x1d0) != 0) {
-    FUN_00520930(param_1,*(undefined4 *)(param_1 + 0x1d4));
+    FUN_00520930(param_1,(void *)*(undefined4 *)(param_1 + 0x1d4));
     *(undefined4 *)(param_1 + 0x1d4) = 0;
     *(undefined4 *)(param_1 + 0x1d0) = 0;
   }

@@ -54,18 +54,18 @@ void FUN_00518080(int *param_1,int *param_2,int *param_3)
   }
   uVar1 = *(undefined4 *)(iVar3 + 0x1f0);
   uVar2 = *(undefined4 *)(iVar3 + 0x1e8);
-  FUN_00518140(iVar3,iVar4,local_4);
+  FUN_00518140((undefined4 *)iVar3,iVar4,local_4);
   if (iVar4 != 0) {
     FUN_00516de0(iVar3,iVar4,0x4000,0xffffffff);
-    FUN_00520870(iVar4,uVar1,uVar2);
+    FUN_00520870((void *)iVar4,(undefined *)uVar1,uVar2);
     *param_2 = 0;
   }
   if (local_4 != 0) {
     FUN_00516de0(iVar3,local_4,0x4000,0xffffffff);
-    FUN_00520870(local_4,uVar1,uVar2);
+    FUN_00520870((void *)local_4,(undefined *)uVar1,uVar2);
     *param_3 = 0;
   }
-  FUN_00520870(iVar3,uVar1,uVar2);
+  FUN_00520870((void *)iVar3,(undefined *)uVar1,uVar2);
   *param_1 = 0;
   return;
 }

@@ -120,3 +120,26 @@ pass over every function first beats a deep dive into one.
 Write `D:/MashedWT/MATCH-S23_data/notes/<your helper id>.md`, appending one line per function **as you finish it**:
 `0x<va>  size  best%  regs%  cxx:ok|FAIL  class  one-line reason`, plus any static callee a file holds
 (`0x<file va> holds 0x<callee va>`). End with the same compact list as your final message. Nothing else.
+
+## Round 2 additions (helpers h6, h7)
+Round 1 gave 54/118. Read the GENERAL lines at the top of `D:/MashedWT/MATCH-S23_data/notes/h1.md`..`h5.md` first.
+What moved functions to 100% in round 1:
+- **Arg copies** (h2, h5, h1): the original keeps spilled locals in dead argument slots. Rename a parameter `x_arg`
+  and start the body with `T x = x_arg;`; that frees its slot. Try all subsets of the parameters the body reads late:
+  `D:/MashedWT/MATCH-S23_data/scratch/h2/argcopy.py` sweeps the subsets (it uses a `/*PREAMBLE*/` placeholder form;
+  copy it to your scratch dir and adapt it rather than editing h2's). 0x00528630 went 72.4 -> 100 only with all 4 copied.
+- **Inlined helpers written by hand**: png_crc_read / png_crc_finish / png_crc_error / png_get_uint_32 / chunk writers
+  / zlib reset functions are inline in the original; write each copy as its own block (or a `static __forceinline`
+  helper above the function) and keep its int result where the original keeps it (setne + test).
+- Known class (a) residuals, do not spend budget on them: `repne scasb` strlen, inline `fnstcw/fldcw/fistp`
+  float-to-int (9176 calls `__ftol`), `xor r16 / mov r8` zero extension instead of `movzx`.
+- Open families worth one fresh attempt: the **flags-load hoist** in inlined png_crc_error copies (h3, h4: the
+  original loads `png_ptr->flags` before the `chunk_name[0] & 0x20` branch; try computing the mask into a local first,
+  `int need = ...flags & ...;`, or the 1.0.12 macro text exactly, or the condition order swapped) and the **partial
+  shrink-wrap** of callee-saved pushes (h1, h5: original pushes a register in the prologue that ours pushes later;
+  try an early read of an arg into a local used on all paths, or moving an early-return test).
+- **The permuter can change behaviour** (h1 rejected a 92.8 variant that moved a store above the computation it
+  uses). Before keeping any permuter output, check it does the same thing as the official source.
+Same rules, same notes format, notes file `D:/MashedWT/MATCH-S23_data/notes/<id>.md`. Each function already has a file
+in `re/match/s23/` from round 1: work on it in place, keep it only if the score goes up, and update its header
+comment (best %, what moved it). Budget: 15 min per function, 25 min above 800 B.

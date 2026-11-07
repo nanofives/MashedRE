@@ -3,9 +3,9 @@
    features, png_pass_dsp_mask at 0x005e3350 and png_pass_mask at 0x005e3334 as globals, png_IDAT at
    0x005e3224; png_memcmp(chunk_name, png_IDAT, 4) is the inlined dword compare). png_ptr copied from
    png_ptr_arg so chunk_length can sit in the arg slot.
-   Best 99.4% (regs 100%, ops 100%). Residual (a): in cases 2 and 4 the original emits `and ecx, 7` / `and edx, 3`
-   (32-bit and) before `cmp cl, 4`, ours `and cl, 7`. Tried int / unsigned / byte / short reads, casts on the
-   masked value, xor form: none moves it without breaking the rest. */
+   100% (h7 round 2; was 99.4). What moved it: cases 2 and 4 written with the constant on the left,
+   `if (4 != (row_number & 0x07))` / `if (2 != (row_number & 3))`: the original's 32-bit `and ecx, 7` before
+   `cmp cl, 4` comes from that operand order (the official `(x & 7) != 4` gives `and cl, 7`). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -90,7 +90,7 @@ void FUN_00517940(void *png_ptr_arg, unsigned char *row, unsigned char *dsp_row)
             }
             break;
          case 2:
-            if ((PP(unsigned int, 0xe4) & 0x07) != 4)
+            if (4 != (PP(unsigned int, 0xe4) & 0x07))
             {
                if (dsp_row != 0 && (PP(unsigned int, 0xe4) & 4))
                   FUN_00527ee0(png_ptr, dsp_row,
@@ -110,7 +110,7 @@ void FUN_00517940(void *png_ptr_arg, unsigned char *row, unsigned char *dsp_row)
             }
             break;
          case 4:
-            if ((PP(unsigned int, 0xe4) & 3) != 2)
+            if (2 != (PP(unsigned int, 0xe4) & 3))
             {
                if (dsp_row != 0 && (PP(unsigned int, 0xe4) & 2))
                   FUN_00527ee0(png_ptr, dsp_row,

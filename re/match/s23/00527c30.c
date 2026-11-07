@@ -1,10 +1,10 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S23 0x00527c30 (h4): libpng 1.0.12 pngrutil.c png_handle_unknown. Best 99.2% (regs 99.2%).
+/* MATCH-S23 0x00527c30 (h4): libpng 1.0.12 pngrutil.c png_handle_unknown. 100.0% (regs 100.0%) after the round-2 info_ptr arg copy (h6; was 99.2).
    Written from the official source with the original's inlining mirrored by hand: png_crc_read, png_crc_finish,
    png_crc_error, png_get_uint_32/16 (and png_check_chunk_name where present) are inline in the original, per call
    site either fully inline or calling png_crc_error 0x005232c0 / png_get_uint_32 0x00523110 / png_crc_finish
    0x00523170; each copy follows the original's form. png_chunk_error = 0x005172b0, png_chunk_warning = 0x00517380.
-   Residual class (b): png_check_chunk_name and png_crc_finish(skip) inlined by hand; png_unknown_chunk needs its trailing `location` byte (frame 0x1c). Remaining: istop spill goes to png_ptr's dead slot in ours, info_ptr's in the original (2 ins). Permuter no gain. */
+   Residual class (b): png_check_chunk_name and png_crc_finish(skip) inlined by hand; png_unknown_chunk needs its trailing `location` byte (frame 0x1c). Round 1 residual (istop spill in png_ptr's dead slot vs info_ptr's) fixed by `int info_ptr = info_ptr_arg;` (h6 round 2), which frees info_ptr's slot. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -52,8 +52,9 @@ void FUN_00516d50(int png_ptr, void *buf, uint length);
 void FUN_00516a70(int png_ptr, int info_ptr, png_unknown_chunk *unknowns, int num);
 
 // MATCH: 0x00527c30 FUN_00527c30
-void FUN_00527c30(int png_ptr, int info_ptr, uint length)
+void FUN_00527c30(int png_ptr, int info_ptr_arg, uint length)
 {
+   int info_ptr = info_ptr_arg;
    uint skip = 0;
    uint i, istop;
    uchar crc_bytes[4];

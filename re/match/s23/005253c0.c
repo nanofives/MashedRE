@@ -1,10 +1,11 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S23 0x005253c0 (h4): libpng 1.0.12 pngrutil.c png_handle_iCCP. Best 88.6% (regs 88.8%).
+/* MATCH-S23 0x005253c0 (h4): libpng 1.0.12 pngrutil.c png_handle_iCCP. Best 90.7% (regs 90.7%, h6 round 2, was 88.6).
    Written from the official source with the original's inlining mirrored by hand: png_crc_read, png_crc_finish,
    png_crc_error, png_get_uint_32/16 (and png_check_chunk_name where present) are inline in the original, per call
    site either fully inline or calling png_crc_error 0x005232c0 / png_get_uint_32 0x00523110 / png_crc_finish
    0x00523170; each copy follows the original's form. png_chunk_error = 0x005172b0, png_chunk_warning = 0x00517380.
-   Residual class (b): Raw converter failed; written from libpng source. profile_size in the nested shl-8 form. data_length in an inner block. Residual: hoist + istop/data_length slots (original info_ptr/length slots, ours png_ptr slot). */
+   Residual class (b): Raw converter failed; written from libpng source. profile_size in the nested shl-8 form. data_length in an inner block. Residual: hoist + istop/data_length slots (original info_ptr/length slots, ours png_ptr slot).
+   Round 2 (h6): info_ptr + length arg copies fix the istop/data_length slots, and the official <<24 profile_size form through a block-local p = chunkdata+prefix_length gives the original's lea/movsx order; only the class (a) flags-load hoist is left. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -49,8 +50,10 @@ char *FUN_00523360(int png_ptr, int comp_type, char *chunkdata, uint chunklength
 void FUN_00516570(int png_ptr, int info_ptr, char *name, int compression_type, char *profile, uint proflen);
 
 // MATCH: 0x005253c0 FUN_005253c0
-void FUN_005253c0(int png_ptr, int info_ptr, uint length)
+void FUN_005253c0(int png_ptr, int info_ptr_arg, uint length_arg)
 {
+   int info_ptr = info_ptr_arg;
+   uint length = length_arg;
    char *chunkdata;
    uchar compression_type;
    char *profile;
@@ -266,10 +269,11 @@ void FUN_005253c0(int png_ptr, int info_ptr, uint length)
       return;
    }
 
-   profile_size = ((((((*(chunkdata+prefix_length))<<8) |
-                  (*(chunkdata+prefix_length+1)))<<8) |
-                  (*(chunkdata+prefix_length+2)))<< 8) |
-                  ((*(chunkdata+prefix_length+3))    );
+
+   {
+   char *p = chunkdata+prefix_length;
+   profile_size = ((*p)<<24) | ((*(p+1))<<16) | ((*(p+2))<< 8) | ((*(p+3)));
+   }
 
    if(profile_size < profile_length)
       profile_length = profile_size;

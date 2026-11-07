@@ -1,11 +1,15 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S23 0x0052aa40: 82.1% (regs 83.3%). zlib 1.1.3 infblock.c inflate_blocks_new with inflate_blocks_reset
-   (c = Z_NULL) written inline; the reset's mode tests fold away after s->mode = TYPE. Residual: the original
-   pushes ebx in the prologue and gives each early return its own epilogue; ours shrink-wraps ebx (push after
-   the first two returns) and shares the return-0 exit. Tried: separate assignment/test form, reset as a
-   static __forceinline function (same 82.1), a static non-inline reset with /O2 /G5 (not inlined, 64.3), flags
-   /O2 /GS /Ob1 72.6, /Ox, /Ob0, /Ob2, /G3-/G6, /Oy- (no better), permuter 147 compiles no improvement.
-   Class (b). */
+/* MATCH-S23 0x0052aa40: 89.3% (regs 89.3%; h7 round 2, was 82.1). zlib 1.1.3 infblock.c inflate_blocks_new with
+   inflate_blocks_reset (c = Z_NULL) written inline; the reset's mode tests fold away after s->mode = TYPE.
+   What moved it: the first test written `if ((s = ZALLOC(...)) != 0) {} else return s;` (same semantics). With
+   the official `== 0) return s;` our c2 lays the return out at the fallthrough and shrink-wraps ebx below the
+   first two returns; with the else-return form it pushes ebx in the prologue as the original does.
+   Residual: our c2 then moves that return to the shared return-0 tail (constant s == 0, je to the epilogue),
+   the original keeps it inline at the fallthrough with its own pop/ret; the second return's xor eax,eax is
+   scheduled after the pops. In this c2 inline exit <=> shrink-wrapped and moved exit <=> no shrink-wrap, the
+   original has inline exits without the shrink-wrap. Tried (unsigned)s < 1 (inline again, 85.7), goto,
+   braces, flags (round 1: /O2 /GS /Ob1 72.6, /Ox, /Ob0, /Ob2, /G3-/G6, /Oy-), permuter 147 compiles.
+   Class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -66,8 +70,7 @@ inflate_blocks_state *FUN_0052aa40(z_stream *z, check_func c, unsigned w)
 {
   inflate_blocks_state *s;
 
-  if ((s = (inflate_blocks_state *)(*(z->zalloc))(z->opaque, 1, 0x40)) == 0)
-    return s;
+  if ((s = (inflate_blocks_state *)(*(z->zalloc))(z->opaque, 1, 0x40)) != 0) {} else return s;
   if ((s->hufts = (*(z->zalloc))(z->opaque, 8, 0x5a0)) == 0)
   {
     (*(z->zfree))(z->opaque, s);

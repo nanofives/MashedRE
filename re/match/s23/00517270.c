@@ -40,7 +40,7 @@ void FUN_00517270(int param_1,char *param_2)
     } while (iVar1 < 0xf);
   }
   if (*(code **)(param_1 + 0x44) != (code *)0x0) {
-    (**(code **)(param_1 + 0x44))(param_1,param_2 + iVar1);
+    ((void (*)(int,char *))(*(code **)(param_1 + 0x44)))(param_1,param_2 + iVar1);
   }
   return;
 }

@@ -4,10 +4,11 @@
    main path call png_crc_error (0x005232c0), the IDAT and Duplicate paths inline png_crc_error but call
    png_get_uint_32 (0x00523110). Written as static __forceinline variants png_crc_finish_e / _i
    (pngcrc2 block).
-   87.5% (regs 87.5, ops 99.4). Residual: (1) stack slot: the original reuses the dead length arg slot
+   90.0% (regs 90.0, h6 round 2, was 87.5; the length-slot residual fixed by the length arg copy). Residual: (1) stack slot: the original reuses the dead length arg slot
    ([esp+0x24]) for istop / crc_bytes / igamma, ours the png_ptr slot ([esp+0x1c]); (2) the IDAT path's inlined
    png_crc_error hoists the flags load (as 0x005232c0), the Duplicate path does not, in both builds.
-   Tried: prior prototype, K&R definition, permuter 106 variants. Class (b) stack packing. */
+   Tried: prior prototype, K&R definition, permuter 106 variants. Class (b) stack packing.
+   Round 2 (h6): length arg copy fixes the param-slot packing; only the class (a) flags-load hoist is left. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -159,8 +160,9 @@ void FUN_00515e50(png_structp png_ptr, png_infop info_ptr, double file_gamma); /
 void FUN_00515ee0(png_structp png_ptr, png_infop info_ptr, png_fixed_point int_gamma); /* png_set_gAMA_fixed */
 
 // MATCH: 0x00523e40 FUN_00523e40
-void FUN_00523e40(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
+void FUN_00523e40(png_structp png_ptr, png_infop info_ptr, png_uint_32 length_arg)
 {
+   png_uint_32 length = length_arg;
    png_fixed_point igamma;
    float file_gamma;
    png_byte buf[4];
