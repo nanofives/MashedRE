@@ -1,10 +1,13 @@
-// FLAGS: /O2 /Ob1 /G5
-/* MATCH-S20 0x004cb4c0 (h2): 83.7% (regs 83.7%). Raw 59.2%. D3D SetTransform(0x100) world-matrix cache: Mat16
-   struct globals (copy = rep movsd struct assignment), int compare loop against the cached matrix, int return hr >=
-   0. Tried: count-down loop with two pointers (81.5%), float matrix type, permuter (swapped comparands, +1.1).
-   Residual (a)/(b): the original has a push ebp / mov ebp,esp frame with no locals and no and esp (an aligned-frame
-   request the 9176 build never makes for this body), and keeps a 16-step down-counter in edx where ours compares
-   the pointer against 0x40. relocheck not run (below 100%). */
+// FLAGS: /O2 /Ob1 /G5 /Oy-
+/* MATCH-S20 0x004cb4c0 (h2, h5): 90.2% (regs 90.2%) with FLAGS /O2 /Ob1 /G5 /Oy- (83.7% without /Oy-). Raw 59.2%.
+   D3D SetTransform(0x100) world-matrix cache: Mat16 struct globals (copy = rep movsd struct assignment), int compare
+   loop against the cached matrix, int return hr >= 0.
+   Round 2 (h5): the original has a push ebp / mov ebp, esp frame with no locals: /Oy- (frame pointer kept)
+   reproduces it exactly (83.7 -> 90.2), so this function's object was built without frame-pointer omission.
+   Residual (b): the original keeps a 16-step down-counter in edx and compares cache[i] (loaded) against the
+   new matrix in memory; ours compares the pointer against end. Tried with /Oy-: both compare orders (89.1),
+   pointer do-while / while(n--) / byte-offset forms (77.6-83.5), 16 - i index (88.0). Earlier (h2): float matrix
+   type, permuter. relocheck not run (below 100%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

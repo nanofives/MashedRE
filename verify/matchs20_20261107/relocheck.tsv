@@ -15,6 +15,7 @@
 0x004cb0b0	OK	checked=4	unchecked=0	004cb0b0.c	
 0x004cb0f0	OK	checked=4	unchecked=0	004cb0f0.c	
 0x004cb130	OK	checked=7	unchecked=0	004cb130.c	
+0x004cb190	OK	checked=8	unchecked=0	004cb190.c	
 0x004cb2c0	OK	checked=3	unchecked=0	004cb2c0.c	
 0x004cb2f0	OK	checked=2	unchecked=0	004cb2f0.c	
 0x004cb740	OK	checked=0	unchecked=0	004cb740.c	
@@ -37,6 +38,7 @@
 0x004cc790	OK	checked=3	unchecked=0	004cc790.c	
 0x004cc7e0	OK	checked=1	unchecked=0	004cc7e0.c	
 0x004ccce0	OK	checked=2	unchecked=0	004ccce0.c	
+0x004ccf20	OK	checked=17	unchecked=0	004ccf20.c	
 0x004cd060	OK	checked=1	unchecked=0	004cd060.c	
 0x004cd070	OK	checked=15	unchecked=0	004cd070.c	
 0x004cd140	OK	checked=2	unchecked=0	004cd140.c	

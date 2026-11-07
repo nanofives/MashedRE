@@ -10,7 +10,7 @@ rva	size	subsystem	conf	exe_body	raw_g2s%	best%	regs%	by	source	source_sha256_16
 0x004c8c70	472	render	C2	-	83.0	66.2	89.7	insn	re/match/s20/004c8c70.c	a0ede516820a9d2d
 0x004c8e50	579	render	C2	-	24.6	100.0	100.0	insn	re/match/s20/004c8e50.c	0cec2816b4deabc9
 0x004c9ad0	499	render	C2	-	compile	100.0	100.0	insn	re/match/s20/004c9ad0.c	83cf17b2e5e55c47
-0x004c9cd0	443	render	C2	-	compile	90.2	90.2	insn	re/match/s20/004c9cd0.c	6b7223ad067940b9
+0x004c9cd0	443	render	C2	-	compile	96.5	96.5	insn	re/match/s20/004c9cd0.c	a239356941e1b0b8
 0x004c9eb0	147	render	C3	-	37.7	94.8	94.8	insn	re/match/s20/004c9eb0.c	3f1e480a600deeff
 0x004c9f50	10	render	C3	-	100.0	100.0	100.0	insn	re/match/s20/004c9f50.c	707d73203511f681
 0x004c9f60	67	render	C2	-	85.7	100.0	100.0	insn	re/match/s20/004c9f60.c	ad641abac40c51cd
@@ -22,11 +22,11 @@ rva	size	subsystem	conf	exe_body	raw_g2s%	best%	regs%	by	source	source_sha256_16
 0x004cb0b0	51	render	C2	-	76.5	100.0	100.0	insn	re/match/s20/004cb0b0.c	5d2d3c765886310f
 0x004cb0f0	51	render	C2	-	76.5	100.0	100.0	insn	re/match/s20/004cb0f0.c	5902cdcc661f4e28
 0x004cb130	90	render	C2	-	93.8	100.0	100.0	insn	re/match/s20/004cb130.c	cd39bb516e6cb389
-0x004cb190	298	render	C2	-	21.1	98.3	98.3	insn	re/match/s20/004cb190.c	ed3ab46f684fbe89
+0x004cb190	298	render	C2	-	21.1	100.0	100.0	insn	re/match/s20/004cb190.c	30929e665ae30e17
 0x004cb2c0	36	render	C2	-	83.3	100.0	100.0	insn	re/match/s20/004cb2c0.c	5b58ae859f4970a8
 0x004cb2f0	50	render	C2	-	94.7	100.0	100.0	insn	re/match/s20/004cb2f0.c	34bd2cd20e681a01
 0x004cb490	42	render	C2	-	16.7	83.3	88.9	insn	re/match/s20/004cb490.c	7ea7a6253f703f1e
-0x004cb4c0	320	render	C2	-	59.2	83.7	83.7	insn	re/match/s20/004cb4c0.c	20bb78cbfe353cca
+0x004cb4c0	320	render	C2	-	59.2	90.2	90.2	insn	re/match/s20/004cb4c0.c	0619fd85a090ee3f
 0x004cb740	244	render	C3	-	31.7	100.0	100.0	insn	re/match/s20/004cb740.c	b10cefabfdd3f168
 0x004cb840	41	render	C2	-	78.9	100.0	100.0	insn	re/match/s20/004cb840.c	e3fdfffd3e451f32
 0x004cba80	76	render	C2	-	47.1	90.3	90.3	insn	re/match/s20/004cba80.c	5358c9ecdc87915d
@@ -55,7 +55,7 @@ rva	size	subsystem	conf	exe_body	raw_g2s%	best%	regs%	by	source	source_sha256_16
 0x004cc790	80	render	C2	RwWorldStream.cpp	71.4	100.0	100.0	insn	re/match/s20/004cc790.c	446b9264519e6125
 0x004cc7e0	10	render	C3	-	100.0	100.0	100.0	insn	re/match/s20/004cc7e0.c	a325a1cc917f1564
 0x004ccce0	254	render	C2	-	33.6	100.0	100.0	insn	re/match/s20/004ccce0.c	7dfd806b5012fc69
-0x004ccf20	312	render	C2	-	59.6	87.7	88.7	insn	re/match/s20/004ccf20.c	de79cbf4c2ee7605
+0x004ccf20	312	render	C2	-	59.6	100.0	100.0	insn	re/match/s20/004ccf20.c	48508ceee04c3ae0
 0x004cd060	11	render	C4	-	100.0	100.0	100.0	insn	re/match/s20/004cd060.c	bf0c2f3e14fe63c1
 0x004cd070	196	render	C2	-	60.8	100.0	100.0	insn	re/match/s20/004cd070.c	30177ef577f51837
 0x004cd140	47	render	C3	-	33.3	100.0	100.0	insn	re/match/s20/004cd140.c	92a3115de0254dd4
@@ -98,7 +98,7 @@ rva	size	subsystem	conf	exe_body	raw_g2s%	best%	regs%	by	source	source_sha256_16
 0x004d1640	1735	render	C2	-	36.9	92.4	92.4	insn	re/match/s20/004d1640.c	357a2feb115cae39
 0x004d1d20	67	render	C2	-	69.6	100.0	100.0	insn	re/match/s20/004d1d20.c	6f5252dfa10ad7ae
 0x004d1d70	162	render	C2	-	32.8	72.1	98.4	insn	re/match/s20/004d1d70.c	24247df070df55be
-0x004d1e30	1270	render	C2	-	compile	87.5	87.5	insn	re/match/s20/004d1e30.c	3ae8d62feca41403
+0x004d1e30	1270	render	C2	-	compile	99.1	98.6	insn	re/match/s20/004d1e30.c	25e15dd729c61da7
 0x004d2340	1548	render	C2	-	compile	37.3	43.5	insn	re/match/s20/004d2340.c	b13f1fce8a3a778c
 0x004d2c80	426	render	C2	-	compile	100.0	100.0	insn	re/match/s20/004d2c80.c	812dfa97cf606a9a
 0x004d2e30	608	render	C2	-	compile	100.0	100.0	insn	re/match/s20/004d2e30.c	e3d13e72760e6ff3

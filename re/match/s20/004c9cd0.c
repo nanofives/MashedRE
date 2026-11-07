@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S20 0x004c9cd0 (h4): 90.2% (regs 90.2%), 143/143 instructions (raw converter did not compile: C2050).
+/* MATCH-S20 0x004c9cd0 (h4, h5): 96.5% (regs 96.5%), 143/143 instructions (raw converter did not compile: C2050).
    D3D9 lost-device restore: TestCooperativeLevel (+0xc); on D3DERR_DEVICENOTRESET (0x88760869) FUN_004c9ad0, Reset
    (+0x40) with the present parameters at 0x009120e0; on D3DERR_INVALIDCALL-style 0x8876086c and Windowed it reads
    the adapter display mode (IDirect3D9 +0x20) into 0x00911f90 / BackBufferFormat, sets 0x00911f94 to 32/16/0 by
@@ -7,11 +7,12 @@
    once), FUN_004d1e30 && FUN_004dc970 -> FUN_004d6200, SetLight/LightEnable (+0xcc/+0xd4) for each 0x6c-byte
    light slot, FUN_004db3e0 -> FUN_004e0920; then the hook at 0x007d459c. Failure stores 0 in 0x007d4140; else
    BeginScene (+0xa4) once when 0x007d4140 is 0.
-   What moved it: `return DAT_007d4140 = x` returns, a depth local for the switch, hr2 initialised to 0 (67.6 ->
-   90.2). Residual: push esi is scheduled after the two checks instead of at the top of the restore block, and the
-   return-0 block layout (ours `mov [g], 0; xor eax, eax` before the success path, original `xor eax, eax;
-   mov [g], eax` after it). Tried: single `return DAT` exit (76.4), i declared at three scopes, Ghidra's goto loop
-   form, permuter 117 compiles. Class (b). */
+   What moved it: a depth local for the switch, hr2 initialised to 0 (67.6 -> 90.2, h4). Round 2 (h5): the
+   InsideScene-style tail `if (hr >= 0) { if (!g) { if (BeginScene >= 0) g = 1; } } else g = 0; return g;`
+   together with `hr == 0x8876086c && Windowed` as one condition (no early return) gives the original's shared
+   `mov [g], eax` epilogues (90.2 -> 96.5). Residual: push esi is scheduled after the two checks instead of at the
+   top of the restore block (ours shrink-wraps esi into the light-loop block). Tried: i / hr2 at function scope,
+   nested ifs for the two checks. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -76,12 +77,9 @@ int FUN_004c9cd0(void)
   if (hr == (long)0x88760869) {
     FUN_004c9ad0();
     hr = VCALL(Fn2, DAT_007d4110, 16)(DAT_007d4110, &DAT_009120e0);
-    if (hr == (long)0x8876086c) {
+    if (hr == (long)0x8876086c && DAT_009120e0.Windowed) {
       D3DDISPLAYMODE mode;
       int depth;
-      if (!DAT_009120e0.Windowed) {
-        return DAT_007d4140 = 0;
-      }
       VCALL(Fn3, DAT_007d4108, 8)(DAT_007d4108, DAT_007d410c, &mode);
       DAT_00911f90 = mode.Format;
       DAT_009120e0.BackBufferFormat = mode.Format;
@@ -127,13 +125,14 @@ int FUN_004c9cd0(void)
       }
     }
   }
-  if (hr < 0) {
-    return DAT_007d4140 = 0;
-  }
-  if (!DAT_007d4140) {
-    if (VCALL(Fn1, DAT_007d4110, 41)(DAT_007d4110) >= 0) {
-      return DAT_007d4140 = 1;
+  if (hr >= 0) {
+    if (!DAT_007d4140) {
+      if (VCALL(Fn1, DAT_007d4110, 41)(DAT_007d4110) >= 0) {
+        DAT_007d4140 = 1;
+      }
     }
+  } else {
+    DAT_007d4140 = 0;
   }
   return DAT_007d4140;
 }

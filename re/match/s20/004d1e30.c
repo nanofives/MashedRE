@@ -1,11 +1,16 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S20 0x004d1e30 (h1): 87.5% (regs 87.5%). Raw converter did not compile. Moved by: case
-   order 0/4, 5, 1, 2 as laid out in the binary and the 0x004d2e30 depth probe as a __forceinline helper (48.8% ->
-   84.9%), permuter (next-pointer and swapChain-clear placement, 87.5%). Residual: the original keeps
-   `(cFormat << 8) & mask` as `xor; mov ah/dh, [raster+0x23]` (no byte narrowing) in cases 0/4 and 5, ours tests the
-   byte (`test byte [esi+0x23], 0x60`, `shr 7; not`); plus scheduling in the swap-chain block. Tried: enum,
-   int, unsigned and RW's masked GetFormat macro forms (no change). Class (b). Walks the video-memory raster list at
-   DAT_007d46e0 ({raster, next}) and re-creates D3D resources for top-level rasters (parent == self), by raster type
+/* MATCH-S20 0x004d1e30 (h1, h6): 99.1% (regs 98.6%, ops 99.1%, 423/423 ins). Raw converter did not compile. Moved
+   by: case order 0/4, 5, 1, 2 as laid out in the binary and the 0x004d2e30 depth probe as a __forceinline helper
+   (48.8% -> 84.9%), permuter (next-pointer and swapChain-clear placement, 87.5%); h6: RwRasterGetFormat as
+   `(unsigned int)(cFormat << 8)` and levels = `(~format >> 15) & 1` (case 5 emits the original's `xor edx, edx;
+   mov dh, [esi+0x23]; not; shr 0xf; and 1`, 87.9%), then case 0/4 reads the format into a block local and tests
+   `!(format & 0x4000) && !(format & 0x2000)` in that order (the original's `xor eax, eax; mov ah, [esi+0x23];
+   test ah, 0x60`, 99.1%; the 0x2000-first order or a single `& 0x6000` test folds to `test byte [esi+0x23], 0x60`).
+   Residual: case 5 schedule only. The original copies the format to edi (`mov edi, edx`) between the argument
+   pushes and runs `not / shr 0xf / and 1` on edi after them; ours runs them on edx before `push ebp`, then copies.
+   Tried: levels as one expression, as a copy then in-place ops, a loop-scope format variable shared with case
+   0/4, `!(f & 0x8000)` / `?:` / xor forms (88.4%), permuter 331 compiles. Class (b).
+   Walks the video-memory raster list at DAT_007d46e0 ({raster, next}) and re-creates D3D resources for top-level rasters (parent == self), by raster type
    (+0x20): 0/4 palettised (format bits 0x6000) -> SetPaletteEntries (+0x11c) when ext+4 is set, else depth formats
    0x46..0x50 -> CreateTexture (+0x5c, levels 1, usage 2); 1 -> without ext+0 the depth-format probe of 0x004d2e30
    and CreateDepthStencilSurface (+0x74, sizes clamped to >= 1), with ext+0 GetClientRect(DAT_007d4104) sizes,
@@ -47,7 +52,7 @@ typedef int (__stdcall *SetPalFn)(IUnk *self, unsigned int index, void *entries)
 typedef int (__stdcall *CreateChainFn)(IUnk *self, void *pp, IUnk **out);
 typedef int (__stdcall *GetBackBufFn)(IUnk *self, unsigned int a, int b, IUnk **out);
 typedef enum RwRasterFormat { rwRASTERFORMATDEFAULT = 0, rwRASTERFORMATMIPMAP = 0x8000 } RwRasterFormat;
-#define RwRasterGetFormat(r) ((RwRasterFormat)(((r)->cFormat) << 8))
+#define RwRasterGetFormat(r) ((unsigned int)(((r)->cFormat) << 8))
 typedef struct Rect4 { int left; int top; int right; int bottom; } Rect4;
 typedef struct Present14 { unsigned int width; unsigned int height; int format; unsigned int v3[4]; void *window; unsigned int v8; unsigned int autoDepth; unsigned int v10[4]; } Present14;
 typedef struct FmtInfo { unsigned char a; unsigned char depth; unsigned char b; unsigned char c; } FmtInfo;
@@ -106,17 +111,20 @@ int FUN_004d1e30(void)
       switch (raster->cType) {
       case 0:
       case 4:
-        if (!(RwRasterGetFormat(raster) & 0x6000)) {
+        {
+        unsigned int format = RwRasterGetFormat(raster);
+        if (!(format & 0x4000) && !(format & 0x2000)) {
           if (rasExt->d3dFormat >= 0x46 && rasExt->d3dFormat <= 0x50) {
             hr = ((CreateTexFn)DAT_007d4110->v[0x5c / 4])(DAT_007d4110, raster->width, raster->height, 1, 2, rasExt->d3dFormat, 0, &rasExt->texture, 0);
           }
         } else if (rasExt->palette != 0) {
           hr = ((SetPalFn)DAT_007d4110->v[0x11c / 4])(DAT_007d4110, rasExt->palette->globalindex, rasExt->palette->entries);
         }
+        }
         break;
       case 5:
         if (rasExt->texture == 0) {
-          unsigned int levels = (RwRasterGetFormat(raster) & 0x8000) ? 0 : 1;
+          unsigned int levels = (~RwRasterGetFormat(raster) >> 15) & 1;
           if (rasExt->cube & 0xf) {
             hr = ((CreateCubeFn)DAT_007d4110->v[0x64 / 4])(DAT_007d4110, raster->width, levels, ((rasExt->automipmapgen & 0xf) ? 0x400 : 0) | 1, rasExt->d3dFormat, 0, &rasExt->texture, 0);
           } else {
