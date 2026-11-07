@@ -1,6 +1,9 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004dfab0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004dfab0 (h1, by hand): best 36.4% exact, regs 60.6% (raw 28.1%). Luminance (r*30+g*59+b*11)/100
+   (signed divide), times alpha, unsigned /255. Residual: multiply-by-constant decomposition. The original builds
+   g*59 as 7g -> 29g -> 59g and uses imul for r*30; 9178 emits 3g -> 15g -> 60g-g and a lea chain for r*30.
+   Tried: term order (r,g,b / g,b,r), a lum temporary, int/uint/ushort casts on the bytes, alpha first, permuter
+   (86 compiles, no gain). Class (a). C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,12 +26,12 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int uint;
-typedef unsigned char byte;
 // MATCH: 0x004dfab0 FUN_004dfab0
-uint FUN_004dfab0(byte *param_1)
+uint FUN_004dfab0(uchar *param_1)
 
 {
-  return ((((uint)param_1[1] * 0x3b + (uint)param_1[2] * 0xb + (uint)*param_1 * 0x1e) / 100) *
-         (uint)param_1[3]) / 0xff;
+  int lum;
+
+  lum = (param_1[0] * 30 + param_1[1] * 59 + param_1[2] * 11) / 100;
+  return (uint)(lum * param_1[3]) / 255;
 }

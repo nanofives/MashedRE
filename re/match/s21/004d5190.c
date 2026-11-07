@@ -1,6 +1,12 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d5190: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d5190 (h1, by hand): best 79.0% exact, regs 79.0% (raw 24.8%). Allocates a slot record out of a
+   pool: clears the 10-dword output, RWERROR 0x29 / 0x28 when the counts at +0x2c / +0x20 exceed 32, RWERROR 0x2a and
+   return 0 when +0x2c >= the plugin limit (RwGlobals + DAT_00911ae0 + 0x38), else fills n slots with -1, zeroes a
+   12-byte triple and bumps pool->count. Moves: varargs _rwerror + RwError struct, real out/pool structs, ok=1 before
+   the clear loop, ok=0 placements found by the permuter (only the semantics-preserving ones kept; 54.3 -> 79.0).
+   Residual: `ok` is spilled to a stack slot in ours, kept in ebp in the original (with ebp reused as the constant 1
+   for the first pluginID). Tried: register on ok, ok init positions (4), memset intrinsic vs loop, pointer vs
+   index fill, permuter (1036 compiles). Class (b). C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,76 +29,72 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-#ifndef __cplusplus
-#define false 0
-#endif
-MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
+typedef struct { int pluginID; int errorCode; } FUN_004d5190_err;
+typedef struct { int pad; int count; char *mem; } FUN_004d5190_pool;
+typedef struct {
+  int src;
+  uint n;
+  int *slots;
+  int pad0c[4];
+  int *trip;
+  int a;
+  int b;
+} FUN_004d5190_out;
+MGLOBAL(char *, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_00911ae0, 0x00911ae0);
-undefined4 FUN_004d7ff0(undefined4 p0);
-undefined4 * FUN_004d8480(undefined4 * p0);
+int FUN_004d7ff0(int code, ...);
+FUN_004d5190_err *FUN_004d8480(FUN_004d5190_err *err);
 // MATCH: 0x004d5190 FUN_004d5190
-bool FUN_004d5190(int param_1,int *param_2,int param_3)
+int FUN_004d5190(FUN_004d5190_pool *param_1,FUN_004d5190_out *param_2,int param_3)
 
 {
-  uint uVar1;
-  undefined4 *puVar2;
-  int iVar3;
-  uint uVar4;
-  bool bVar5;
-  int *piVar6;
-  undefined4 local_8;
-  undefined4 local_4;
-  
-  uVar1 = *(uint *)(param_3 + 0x2c);
-  piVar6 = param_2;
-  for (iVar3 = 10; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *piVar6 = 0;
-    piVar6 = piVar6 + 1;
+  FUN_004d5190_err err;
+  uint n;
+  uint i;
+  int ok;
+  int *p;
+
+  n = *(uint *)(param_3 + 0x2c);
+  ok = 1;
+  for (i = 0; i < 10; i++) {
+    ((int *)param_2)[i] = 0;
   }
-  if (uVar1 >= 0x21) {
-    local_8 = 1;
-    local_4 = FUN_004d7ff0(0x29);
-    FUN_004d8480(&local_8);
+  if (n > 0x20) {
+    err.pluginID = 1;
+    err.errorCode = FUN_004d7ff0(0x29);
+    ok = 0;
+    FUN_004d8480(&err);
   }
-  bVar5 = 0x20 < *(uint *)(param_3 + 0x20);
-  if (bVar5) {
-    local_8 = 1;
-    local_4 = FUN_004d7ff0(0x28);
-    FUN_004d8480(&local_8);
+  if (*(uint *)(param_3 + 0x20) > 0x20) {
+    ok = 0;
+    err.pluginID = 1;
+    err.errorCode = FUN_004d7ff0(0x28);
+    FUN_004d8480(&err);
   }
-  bVar5 = !bVar5 && uVar1 < 0x21;
-  uVar4 = *(uint *)(DAT_00911ae0 + 0x38 + DAT_007d3ff8);
-  if (uVar4 <= uVar1) {
-    local_8 = 1;
-    local_4 = FUN_004d7ff0(0x2a);
-    FUN_004d8480(&local_8);
-    return false;
+  if (n >= *(uint *)(DAT_007d3ff8 + DAT_00911ae0 + 0x38)) {
+    err.errorCode = FUN_004d7ff0(0x2a);
+    FUN_004d8480(&err);
+    err.pluginID = 1;
+    return 0;
   }
-  if (bVar5) {
-    puVar2 = (undefined4 *)(*(int *)(param_1 + 4) * 0x80 + uVar4 * 0x28 + *(int *)(param_1 + 8));
-    uVar4 = 0;
-    param_2[2] = (int)puVar2;
-    param_2[1] = uVar1;
-    if (uVar1 != 0) {
-      do {
-        *puVar2 = 0xffffffff;
-        puVar2 = puVar2 + 1;
-        uVar4 = uVar4 + 1;
-      } while (uVar4 < (uint)param_2[1]);
+  if (ok) {
+    p = (int *)(param_1->mem + param_1->count * 0x80 +
+                *(uint *)(DAT_007d3ff8 + DAT_00911ae0 + 0x38) * 0x28);
+    param_2->slots = p;
+    param_2->n = n;
+    for (i = 0; i < param_2->n; i++) {
+      *p++ = -1;
     }
-    puVar2 = (undefined4 *)
-             (*(int *)(param_1 + 8) +
-             (*(int *)(param_1 + 4) + *(int *)(DAT_00911ae0 + 0x38 + DAT_007d3ff8) * 0xe) * 0xc);
-    *puVar2 = 0;
-    puVar2[1] = 0;
-    puVar2[2] = 0;
-    param_2[7] = (int)puVar2;
-    param_2[8] = 0;
-    param_2[9] = 0;
-    *param_2 = param_3;
-    *(int *)(param_1 + 4) = *(int *)(param_1 + 4) + 1;
+    p = (int *)(param_1->mem +
+                (param_1->count + *(uint *)(DAT_007d3ff8 + DAT_00911ae0 + 0x38) * 14) * 12);
+    p[0] = 0;
+    p[1] = 0;
+    p[2] = 0;
+    param_2->trip = p;
+    param_2->a = 0;
+    param_2->b = 0;
+    param_2->src = param_3;
+    param_1->count++;
   }
-  return bVar5;
+  return ok;
 }

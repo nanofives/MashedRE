@@ -1,6 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d84e0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d84e0 (h1, by hand): 100.0% exact, regs 100.0%. Plugin-global block at DAT_007d3ff8 + DAT_007d6c5c
+   copied out as one 8-byte struct, then reset to {0, 0x80000000}. Moves: struct copy (62.5 -> 80.0), and the function
+   returns its argument (eax stays live, which picks the store registers; 80.0 -> 100). relocheck OK, C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,19 +24,15 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
+typedef struct { int a; int b; } S84;
 MGLOBAL(int, DAT_007d6c5c, 0x007d6c5c);
-MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
+MGLOBAL(char *, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x004d84e0 FUN_004d84e0
-void FUN_004d84e0(undefined4 *param_1)
+S84 *FUN_004d84e0(S84 *param_1)
 
 {
-  int iVar1;
-  
-  iVar1 = DAT_007d6c5c;
-  *param_1 = *(undefined4 *)(DAT_007d6c5c + DAT_007d3ff8);
-  param_1[1] = *(undefined4 *)(iVar1 + 4 + DAT_007d3ff8);
-  *(undefined4 *)(DAT_007d6c5c + DAT_007d3ff8) = 0;
-  *(undefined4 *)(DAT_007d6c5c + 4 + DAT_007d3ff8) = 0x80000000;
-  return;
+  *param_1 = *(S84 *)(DAT_007d3ff8 + DAT_007d6c5c);
+  ((S84 *)(DAT_007d3ff8 + DAT_007d6c5c))->a = 0;
+  ((S84 *)(DAT_007d3ff8 + DAT_007d6c5c))->b = 0x80000000;
+  return param_1;
 }

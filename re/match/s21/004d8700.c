@@ -1,9 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d8700 (h2): 89.5% (regs 89.5%), no Ghidra size: scored with nosize.py (sym_len 42, ends at
-   0x004d872a, 90 padding to 0x004d8730). strlwr shape: returns s, lowercases 'A'..'Z' (+0x20) in place.
-   Residual: the pre-loop test is `cmp byte ptr [eax],0` in ours, `mov cl,[eax]; test cl,cl` in the original
-   (8 bytes). Tried 9 forms (while/for/do, index, char temp before the loop, `c=*p` rotated, `s && *s`, -'A'+'a')
-   and the permuter (88 compiles, no gain). Class (b): source shape of the first-character test not found. */
+/* MATCH-S21 0x004d8700 (h2): 100% (regs 100%), no Ghidra size: scored with nosize.py, acc 100, bytes_bad=[],
+   symbol ends at 0x004d872a, 90 padding to 0x004d8730. strlwr shape: returns s, lowercases 'A'..'Z' (+0x20)
+   in place. The raw form (void, Ghidra's double load) scored 0%; natural while loop with a char temp is exact
+   under /G5 (without /G5 the pre-loop test becomes `cmp byte ptr [eax],0`, 89.5%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

@@ -1,6 +1,10 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004e1df0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004e1df0 (h1, by hand): best 80.9% exact, regs 80.9% (raw 52.1%). Extension-chunk skip: find chunk 3
+   (0x004cc5e0), then per sub-chunk read header (0x004cc400) and skip its length (0x004cc050), size -= 12 + len.
+   Moves: `register` stream copy, which puts the stream in esi and the size in the dead argument slot (52.1 -> 80.9).
+   Residual: block layout only. The original places the shared `xor eax,eax; ret` right after the first call (jne
+   over it); 9178 puts it at the end. Tried: early returns, nested if, for(;;)+break (raw shape), goto fail, ||
+   merge, `while (size)`, four spellings of the size update, permuter (89 compiles, no gain). Class (a). C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,33 +27,28 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-#ifndef __cplusplus
-#define true 1
-#endif
-undefined4 * FUN_004cc050(undefined4 * p0, int p1);
-undefined4 FUN_004cc400(undefined4 p0, undefined4 * p1, undefined4 * p2, uint * p3, uint * p4);
-undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 * p2, uint * p3);
+int FUN_004cc050(int stream, uint size);
+int FUN_004cc400(int stream, uint *type, uint *length, uint *version, uint *build);
+int FUN_004cc5e0(int stream, uint type, uint *length, uint *version);
 // MATCH: 0x004e1df0 FUN_004e1df0
-undefined4 FUN_004e1df0(undefined4 param_1,int param_2)
+int FUN_004e1df0(int param_1,int param_2)
 
 {
-  int iVar1;
-  int iVar2;
-  int local_4;
-  
-  iVar1 = param_2;
-  iVar2 = FUN_004cc5e0(param_2,3,&param_2,0);
-  if (iVar2 != 0) {
-    while( true ) {
-      if (param_2 == 0) {
-        return param_1;
-      }
-      iVar2 = FUN_004cc400(iVar1,0,&local_4,0,0);
-      if ((iVar2 == 0) || (iVar2 = FUN_004cc050(iVar1,local_4), iVar2 == 0)) break;
-      param_2 = param_2 + (-0xc - local_4);
-    }
+  uint size;
+  uint len;
+  register int stream = param_2;
+
+  if (!FUN_004cc5e0(stream,3,&size,0)) {
+    return 0;
   }
-  return 0;
+  while (size > 0) {
+    if (!FUN_004cc400(stream,0,&len,0,0)) {
+      return 0;
+    }
+    if (!FUN_004cc050(stream,len)) {
+      return 0;
+    }
+    size -= 12 + len;
+  }
+  return param_1;
 }

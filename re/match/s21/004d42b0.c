@@ -1,6 +1,11 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d42b0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d42b0 (h1, by hand): best 77.8% exact, regs 88.9% (raw 55.6%). Bump allocator: size rounded to 4,
+   DAT_007d4718 += size, over DAT_007d4714 -> undo + RWERROR(0x80000013, size) via _rwerror 0x004d7ff0 (varargs) and
+   RwErrorSet 0x004d8480. Moves: varargs _rwerror + RwError local struct (55.6 -> 77.8). Residual: scheduling only. The
+   original hoists the DAT_007d4714 load and `sub esp,8` above `lea ecx,[eax+3]` and takes &err in ecx before
+   storing the _rwerror result. Tried: int/uint on param/size/globals (8 combos), file-static globals (3), a size
+   temporary, compare spelled both ways, compound assign in the if, early-return form, permuter (92 compiles, no
+   gain). Class (a). C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,28 +28,25 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
+typedef struct { int pluginID; int errorCode; } RwError_;
 MGLOBAL(uint, DAT_007d4714, 0x007d4714);
 MGLOBAL(uint, DAT_007d4718, 0x007d4718);
-undefined4 FUN_004d7ff0(undefined4 p0);
-undefined4 * FUN_004d8480(undefined4 * p0);
+int FUN_004d7ff0(int code, ...);
+RwError_ *FUN_004d8480(RwError_ *err);
 // MATCH: 0x004d42b0 FUN_004d42b0
-int FUN_004d42b0(int param_1)
+uint FUN_004d42b0(uint param_1)
 
 {
-  uint uVar1;
-  undefined4 local_8;
-  undefined4 local_4;
-  
-  uVar1 = param_1 + 3U & 0xfffffffc;
-  DAT_007d4718 = DAT_007d4718 + uVar1;
-  if (DAT_007d4714 < DAT_007d4718) {
-    DAT_007d4718 = DAT_007d4718 - uVar1;
-    local_8 = 1;
-    local_4 = FUN_004d7ff0(0x80000013,uVar1);
-    FUN_004d8480(&local_8);
+  RwError_ err;
+
+  param_1 = (param_1 + 3) & ~3u;
+  DAT_007d4718 += param_1;
+  if (DAT_007d4718 > DAT_007d4714) {
+    DAT_007d4718 -= param_1;
+    err.pluginID = 1;
+    err.errorCode = FUN_004d7ff0(0x80000013, param_1);
+    FUN_004d8480(&err);
     return 0;
   }
-  return DAT_007d4718 - uVar1;
+  return DAT_007d4718 - param_1;
 }

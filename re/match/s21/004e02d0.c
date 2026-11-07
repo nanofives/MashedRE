@@ -1,6 +1,14 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004e02d0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004e02d0 (h1, by hand): best 67.8% exact, regs 74.9% (raw 44.0%). Image -> 32-bit raster pixel
+   conversion. Depth 4/8: build a 256-entry palette (888: 0xff000000|rgb, 8888: argb, else the per-format converter
+   picked by the switch on the native format at raster + DAT_00911ae4 + 0x18, alpha byte from 0x00911b00[format])
+   and map the indices; depth 32: convert pixels directly. Native-ext +8 = alpha flag, also set on the parent when
+   it differs. Converter switch is a local macro (#undef after); structure, switch tables, loop shapes and frame
+   (0x410) match. Residual: register allocation in the pixel loops. The original evicts param_2 (image) from ebx
+   to its stack home inside the loops and keeps y in ebp; 9178 keeps the image in ebx and spills y, which costs
+   one extra temp in every packing expression. Tried: sequenced c = (c<<8)|x packing, the 0xffffff00 spelling,
+   loop-var order, src/dst statement order, separate dst++. Permuter (895 compiles) reached 71.2% only by moving
+   the pixel store after src += 4, which changes the bytes read, so it is not kept. Class (b). C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,303 +31,156 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char undefined1;
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef unsigned char byte;
-typedef int code();
-#define CONCAT11(a,b) ((ushort)(((uint)(uchar)(a)<<8)|(uchar)(b)))
-#define CONCAT21(a,b) ((uint)(((uint)(ushort)(a)<<8)|(uchar)(b)))
-#define CONCAT31(a,b) ((uint)(((uint)(a)<<8)|(uchar)(b)))
+typedef struct FUN_004e02d0_raster FUN_004e02d0_raster;
+struct FUN_004e02d0_raster {
+  FUN_004e02d0_raster *parent;
+  uchar *cpPixels;
+  uchar *palette;
+  int width;
+  int height;
+  int depth;
+  int stride;
+  short nOffsetX;
+  short nOffsetY;
+  uchar cType;
+  uchar cFlags;
+  uchar privateFlags;
+  uchar cFormat;
+};
+typedef struct { int flags; int width; int height; int depth; int stride; uchar *cpPixels; uchar *palette; } FUN_004e02d0_image;
+typedef struct { int pad00[2]; uchar alpha; uchar pad09[3]; int pad0c[3]; int format; } FUN_004e02d0_ext;
+typedef uint (*FUN_004e02d0_conv)(uchar *rgba);
 MGLOBAL(int, DAT_00911ae4, 0x00911ae4);
-MGLOBAL(undefined4, DAT_00911b00, 0x00911b00);
-MGLOBAL(undefined1, FUN_004dfb60, 0x004dfb60);
-MGLOBAL(undefined1, FUN_004df870, 0x004df870);
-MGLOBAL(undefined1, FUN_004df8a0, 0x004df8a0);
-MGLOBAL(undefined1, FUN_004df8d0, 0x004df8d0);
-MGLOBAL(undefined1, FUN_004df910, 0x004df910);
-MGLOBAL(undefined1, FUN_004df950, 0x004df950);
-MGLOBAL(undefined1, FUN_004df980, 0x004df980);
-MGLOBAL(undefined1, FUN_004df9b0, 0x004df9b0);
-MGLOBAL(undefined1, FUN_004df9e0, 0x004df9e0);
-MGLOBAL(undefined1, FUN_004dfa10, 0x004dfa10);
-MGLOBAL(undefined1, FUN_004dfa40, 0x004dfa40);
-MGLOBAL(undefined1, FUN_004dfa70, 0x004dfa70);
-MGLOBAL(undefined1, FUN_004dfaa0, 0x004dfaa0);
-MGLOBAL(undefined1, FUN_004dfab0, 0x004dfab0);
-MGLOBAL(undefined1, FUN_004dfb10, 0x004dfb10);
+MGLOBALA(uint, DAT_00911b00, 128, 0x00911b00);
+uint FUN_004df870(uchar *rgba);
+uint FUN_004df8a0(uchar *rgba);
+uint FUN_004df8d0(uchar *rgba);
+uint FUN_004df910(uchar *rgba);
+uint FUN_004df950(uchar *rgba);
+uint FUN_004df980(uchar *rgba);
+uint FUN_004df9b0(uchar *rgba);
+uint FUN_004df9e0(uchar *rgba);
+uint FUN_004dfa10(uchar *rgba);
+uint FUN_004dfa40(uchar *rgba);
+uint FUN_004dfa70(uchar *rgba);
+uint FUN_004dfaa0(uchar *rgba);
+uint FUN_004dfab0(uchar *rgba);
+uint FUN_004dfb10(uchar *rgba);
+uint FUN_004dfb60(uchar *rgba);
+#define FUN_004e02d0_FIND(fn, format)            \
+  fn = 0;                                        \
+  switch (format) {                              \
+  case 0x15: fn = FUN_004dfa40; break;           \
+  case 0x16: fn = FUN_004df9e0; break;           \
+  case 0x17: fn = FUN_004df8a0; break;           \
+  case 0x18: fn = FUN_004df870; break;           \
+  case 0x19: fn = FUN_004df8d0; break;           \
+  case 0x1a: fn = FUN_004df910; break;           \
+  case 0x1d: fn = FUN_004df950; break;           \
+  case 0x1e: fn = FUN_004df980; break;           \
+  case 0x20: case 0x3f: fn = FUN_004dfa70; break;\
+  case 0x21: case 0x3e: fn = FUN_004dfa10; break;\
+  case 0x32: fn = FUN_004dfab0; break;           \
+  case 0x33: fn = FUN_004dfb10; break;           \
+  case 0x3c: case 0x75: fn = FUN_004dfaa0; break;\
+  case 0x3d: fn = FUN_004df9b0; break;           \
+  case 0x51: fn = FUN_004dfb60; break;           \
+  }
 // MATCH: 0x004e02d0 FUN_004e02d0
-void FUN_004e02d0(int *param_1,int param_2)
+void FUN_004e02d0(FUN_004e02d0_raster *param_1,FUN_004e02d0_image *param_2)
 
 {
-  int iVar1;
-  undefined1 *puVar2;
-  undefined4 uVar3;
-  uint uVar4;
-  byte *pbVar5;
-  byte bVar6;
-  uint *puVar7;
-  byte bVar8;
-  int iVar9;
-  int iVar10;
-  undefined4 *puVar11;
-  code *pcVar12;
-  int iVar13;
-  char local_40d;
-  code *local_40c;
-  int local_408;
-  uint local_400 [256];
-  
-  iVar1 = DAT_00911ae4;
-  iVar10 = *(int *)(param_2 + 0xc);
-  if ((iVar10 == 4) || (iVar10 == 8)) {
-    bVar8 = *(byte *)((int)param_1 + 0x23) & 0xf;
-    bVar6 = (byte)iVar10;
-    if (bVar8 == 6) {
-      iVar10 = 0;
-      iVar9 = 1 << (bVar6 & 0x1f);
-      local_40d = -1;
-      if (0 < iVar9) {
-        iVar13 = *(int *)(param_2 + 0x18);
-        pbVar5 = (byte *)(iVar13 + 2);
-        do {
-          local_400[iVar10] =
-               ((*(byte *)(iVar13 + iVar10 * 4) | 0xffffff00) << 8 | (uint)pbVar5[-1]) << 8 |
-               (uint)*pbVar5;
-          iVar10 = iVar10 + 1;
-          pbVar5 = pbVar5 + 4;
-        } while (iVar10 < iVar9);
+  FUN_004e02d0_ext *ext;
+  FUN_004e02d0_conv fn;
+  uchar alpha;
+  uint pal[256];
+  int x, y, i, n;
+  uchar *src;
+  uint *dst;
+
+  ext = (FUN_004e02d0_ext *)((char *)param_1 + DAT_00911ae4);
+  switch (param_2->depth) {
+  case 4:
+  case 8:
+    if ((param_1->cFormat & 0xf) << 8 == 0x600) {
+      n = 1 << param_2->depth;
+      alpha = 0xff;
+      for (i = 0; i < n; i++) {
+        src = param_2->palette + i * 4;
+        pal[i] = 0xff000000 | (src[0] << 16) | (src[1] << 8) | src[2];
       }
     }
-    else if (bVar8 == 5) {
-      iVar10 = 0;
-      iVar9 = 1 << (bVar6 & 0x1f);
-      local_40d = '\0';
-      if (0 < iVar9) {
-        iVar13 = *(int *)(param_2 + 0x18);
-        puVar2 = (undefined1 *)(iVar13 + 1);
-        do {
-          local_400[iVar10] =
-               CONCAT31(CONCAT21(CONCAT11(puVar2[2],*(undefined1 *)(iVar13 + iVar10 * 4)),*puVar2),
-                        puVar2[1]);
-          iVar10 = iVar10 + 1;
-          puVar2 = puVar2 + 4;
-        } while (iVar10 < iVar9);
+    else if ((param_1->cFormat & 0xf) << 8 == 0x500) {
+      n = 1 << param_2->depth;
+      alpha = 0;
+      for (i = 0; i < n; i++) {
+        src = param_2->palette + i * 4;
+        pal[i] = (src[3] << 24) | (src[0] << 16) | (src[1] << 8) | src[2];
       }
     }
     else {
-      iVar10 = *(int *)((int)param_1 + DAT_00911ae4 + 0x18);
-      pcVar12 = (code *)0x0;
-      switch(iVar10) {
-      case 0x15:
-        pcVar12 = FUN_004dfa40;
-        break;
-      case 0x16:
-        pcVar12 = FUN_004df9e0;
-        break;
-      case 0x17:
-        pcVar12 = FUN_004df8a0;
-        break;
-      case 0x18:
-        pcVar12 = FUN_004df870;
-        break;
-      case 0x19:
-        pcVar12 = FUN_004df8d0;
-        break;
-      case 0x1a:
-        pcVar12 = FUN_004df910;
-        break;
-      case 0x1d:
-        pcVar12 = FUN_004df950;
-        break;
-      case 0x1e:
-        pcVar12 = FUN_004df980;
-        break;
-      case 0x20:
-      case 0x3f:
-        pcVar12 = FUN_004dfa70;
-        break;
-      case 0x21:
-      case 0x3e:
-        pcVar12 = FUN_004dfa10;
-        break;
-      case 0x32:
-        pcVar12 = FUN_004dfab0;
-        break;
-      case 0x33:
-        pcVar12 = FUN_004dfb10;
-        break;
-      case 0x3c:
-      case 0x75:
-        pcVar12 = FUN_004dfaa0;
-        break;
-      case 0x3d:
-        pcVar12 = FUN_004df9b0;
-        break;
-      case 0x51:
-        pcVar12 = FUN_004dfb60;
-      }
-      local_40d = *(char *)(&DAT_00911b00 + iVar10);
-      iVar10 = 0;
-      if (0 < 1 << (bVar6 & 0x1f)) {
-        do {
-          uVar4 = (*pcVar12)(*(int *)(param_2 + 0x18) + iVar10 * 4);
-          local_400[iVar10] = uVar4;
-          iVar10 = iVar10 + 1;
-        } while (iVar10 < 1 << ((byte)*(undefined4 *)(param_2 + 0xc) & 0x1f));
+      FUN_004e02d0_FIND(fn, ext->format);
+      alpha = (uchar)DAT_00911b00[ext->format];
+      for (i = 0; i < 1 << param_2->depth; i++) {
+        pal[i] = fn(param_2->palette + i * 4);
       }
     }
-    iVar10 = 0;
-    if (0 < param_1[4]) {
-      iVar9 = param_1[3];
-      do {
-        pbVar5 = (byte *)(*(int *)(param_2 + 0x10) * iVar10 + *(int *)(param_2 + 0x14));
-        iVar13 = 0;
-        puVar7 = (uint *)(param_1[6] * iVar10 + param_1[1]);
-        if (0 < iVar9) {
-          do {
-            bVar6 = *pbVar5;
-            pbVar5 = pbVar5 + 1;
-            iVar13 = iVar13 + 1;
-            *puVar7 = local_400[bVar6];
-            iVar9 = param_1[3];
-            puVar7 = puVar7 + 1;
-          } while (iVar13 < iVar9);
+    for (y = 0; y < param_1->height; y++) {
+      dst = (uint *)(param_1->cpPixels + param_1->stride * y);
+      src = param_2->cpPixels + param_2->stride * y;
+      for (x = 0; x < param_1->width; x++) {
+        *dst++ = pal[*src++];
+      }
+    }
+    break;
+  case 32:
+    if ((param_1->cFormat & 0xf) << 8 == 0x600) {
+      for (y = 0; y < param_1->height; y++) {
+        src = param_2->cpPixels + param_2->stride * y;
+        dst = (uint *)(param_1->cpPixels + param_1->stride * y);
+        for (x = 0; x < param_1->width; x++) {
+          *dst = 0xff000000 | (src[0] << 16) | (src[1] << 8) | src[2];
+          src += 4;
+          dst++;
         }
-        iVar10 = iVar10 + 1;
-      } while (iVar10 < param_1[4]);
-    }
-  }
-  else {
-    if (iVar10 != 0x20) goto LAB_004e0737;
-    bVar6 = *(byte *)((int)param_1 + 0x23) & 0xf;
-    if (bVar6 == 6) {
-      iVar10 = 0;
-      if (0 < param_1[4]) {
-        iVar9 = param_1[3];
-        do {
-          iVar13 = 0;
-          pbVar5 = (byte *)(*(int *)(param_2 + 0x10) * iVar10 + *(int *)(param_2 + 0x14));
-          puVar7 = (uint *)(param_1[6] * iVar10 + param_1[1]);
-          if (0 < iVar9) {
-            do {
-              iVar13 = iVar13 + 1;
-              *puVar7 = ((*pbVar5 | 0xffffff00) << 8 | (uint)pbVar5[1]) << 8 | (uint)pbVar5[2];
-              iVar9 = param_1[3];
-              pbVar5 = pbVar5 + 4;
-              puVar7 = puVar7 + 1;
-            } while (iVar13 < iVar9);
-          }
-          iVar10 = iVar10 + 1;
-        } while (iVar10 < param_1[4]);
       }
-      goto LAB_004e0388;
+      ext->alpha = 0;
+      return;
     }
-    if (bVar6 == 5) {
-      iVar10 = 0;
-      if (0 < param_1[4]) {
-        iVar9 = param_1[3];
-        do {
-          iVar13 = 0;
-          puVar2 = (undefined1 *)(*(int *)(param_2 + 0x10) * iVar10 + *(int *)(param_2 + 0x14));
-          puVar11 = (undefined4 *)(param_1[6] * iVar10 + param_1[1]);
-          if (0 < iVar9) {
-            do {
-              iVar13 = iVar13 + 1;
-              *puVar11 = CONCAT31(CONCAT21(CONCAT11(puVar2[3],*puVar2),puVar2[1]),puVar2[2]);
-              iVar9 = param_1[3];
-              puVar2 = puVar2 + 4;
-              puVar11 = puVar11 + 1;
-            } while (iVar13 < iVar9);
-          }
-          iVar10 = iVar10 + 1;
-        } while (iVar10 < param_1[4]);
-      }
-      goto LAB_004e0737;
-    }
-    iVar10 = *(int *)((int)param_1 + DAT_00911ae4 + 0x18);
-    local_40c = (code *)0x0;
-    switch(iVar10) {
-    case 0x15:
-      local_40c = FUN_004dfa40;
-      break;
-    case 0x16:
-      local_40c = FUN_004df9e0;
-      break;
-    case 0x17:
-      local_40c = FUN_004df8a0;
-      break;
-    case 0x18:
-      local_40c = FUN_004df870;
-      break;
-    case 0x19:
-      local_40c = FUN_004df8d0;
-      break;
-    case 0x1a:
-      local_40c = FUN_004df910;
-      break;
-    case 0x1d:
-      local_40c = FUN_004df950;
-      break;
-    case 0x1e:
-      local_40c = FUN_004df980;
-      break;
-    case 0x20:
-    case 0x3f:
-      local_40c = FUN_004dfa70;
-      break;
-    case 0x21:
-    case 0x3e:
-      local_40c = FUN_004dfa10;
-      break;
-    case 0x32:
-      local_40c = FUN_004dfab0;
-      break;
-    case 0x33:
-      local_40c = FUN_004dfb10;
-      break;
-    case 0x3c:
-    case 0x75:
-      local_40c = FUN_004dfaa0;
-      break;
-    case 0x3d:
-      local_40c = FUN_004df9b0;
-      break;
-    case 0x51:
-      local_40c = FUN_004dfb60;
-    }
-    local_40d = *(char *)(&DAT_00911b00 + iVar10);
-    local_408 = 0;
-    if (0 < param_1[4]) {
-      iVar10 = param_1[3];
-      do {
-        iVar13 = *(int *)(param_2 + 0x10) * local_408 + *(int *)(param_2 + 0x14);
-        puVar11 = (undefined4 *)(param_1[6] * local_408 + param_1[1]);
-        iVar9 = 0;
-        if (0 < iVar10) {
-          do {
-            uVar3 = (*local_40c)(iVar13);
-            *puVar11 = uVar3;
-            iVar10 = param_1[3];
-            iVar13 = iVar13 + 4;
-            puVar11 = puVar11 + 1;
-            iVar9 = iVar9 + 1;
-          } while (iVar9 < iVar10);
+    if ((param_1->cFormat & 0xf) << 8 == 0x500) {
+      for (y = 0; y < param_1->height; y++) {
+        src = param_2->cpPixels + param_2->stride * y;
+        dst = (uint *)(param_1->cpPixels + param_1->stride * y);
+        for (x = 0; x < param_1->width; x++) {
+          *dst = (src[3] << 24) | (src[0] << 16) | (src[1] << 8) | src[2];
+          src += 4;
+          dst++;
         }
-        local_408 = local_408 + 1;
-      } while (local_408 < param_1[4]);
+      }
+      goto has_alpha;
     }
+    FUN_004e02d0_FIND(fn, ext->format);
+    alpha = (uchar)DAT_00911b00[ext->format];
+    for (y = 0; y < param_1->height; y++) {
+      src = param_2->cpPixels + param_2->stride * y;
+      dst = (uint *)(param_1->cpPixels + param_1->stride * y);
+      for (x = 0; x < param_1->width; x++) {
+        *dst++ = fn(src);
+        src += 4;
+      }
+    }
+    break;
+  default:
+    goto has_alpha;
   }
-  if (local_40d == -1) {
-LAB_004e0388:
-    *(undefined1 *)((int)param_1 + iVar1 + 8) = 0;
+  if (alpha == 0xff) {
+    ext->alpha = 0;
     return;
   }
-LAB_004e0737:
-  *(undefined1 *)((int)param_1 + iVar1 + 8) = 1;
-  if (param_1 == (int *)*param_1) {
-    return;
+has_alpha:
+  ext->alpha = 1;
+  if (param_1 != param_1->parent) {
+    ((FUN_004e02d0_ext *)((char *)param_1->parent + DAT_00911ae4))->alpha = 1;
   }
-  *(undefined1 *)(*param_1 + DAT_00911ae4 + 8) = 1;
-  return;
 }
+#undef FUN_004e02d0_FIND

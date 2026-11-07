@@ -1,6 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d8350: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d8350 (h1, by hand): 100.0% exact, regs 100.0% (raw 40.4%). Frame LTM update over the children:
+   RwFrame layout (privateFlags +3, parent +4, modelling +0x10, ltm +0x50, child +0x98, next +0x9c) with a 64-byte
+   matrix struct copy (rep movsd), RwMatrixMultiply 0x004c4600 and the recursive child walk 0x004d83d0. Moves: real
+   struct types and a uint flags (zero-extended, kept in the dead argument slot). relocheck OK, C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,39 +25,43 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef unsigned char byte;
-undefined4 * FUN_004c4600(undefined4 * p0, undefined4 * p1, undefined4 * p2);
-void FUN_004d83d0(int p0, uint p1);
+typedef struct { float m[16]; } RwMatrix_;
+typedef struct RwFrame_ RwFrame_;
+struct RwFrame_ {
+  uchar type;
+  uchar subType;
+  uchar flags;
+  uchar privateFlags;
+  RwFrame_ *parent;
+  int pad08[2];
+  RwMatrix_ modelling;
+  RwMatrix_ ltm;
+  int pad90[2];
+  RwFrame_ *child;
+  RwFrame_ *next;
+};
+RwMatrix_ *FUN_004c4600(RwMatrix_ *dst, RwMatrix_ *a, RwMatrix_ *b);
+void FUN_004d83d0(RwFrame_ *frame, uint flags);
 // MATCH: 0x004d8350 FUN_004d8350
-void FUN_004d8350(int param_1)
+void FUN_004d8350(RwFrame_ *param_1)
 
 {
-  byte bVar1;
-  byte bVar2;
-  int iVar3;
-  undefined4 *puVar4;
-  undefined4 *puVar5;
-  
-  bVar1 = *(byte *)(param_1 + 3);
-  if ((bVar1 & 4) != 0) {
-    puVar4 = (undefined4 *)(param_1 + 0x10);
-    puVar5 = (undefined4 *)(param_1 + 0x50);
-    for (iVar3 = 0x10; iVar3 != 0; iVar3 = iVar3 + -1) {
-      *puVar5 = *puVar4;
-      puVar4 = puVar4 + 1;
-      puVar5 = puVar5 + 1;
-    }
+  uint flags;
+  uint childFlags;
+  RwFrame_ *child;
+
+  flags = param_1->privateFlags;
+  if (flags & 4) {
+    param_1->ltm = param_1->modelling;
   }
-  for (iVar3 = *(int *)(param_1 + 0x98); iVar3 != 0; iVar3 = *(int *)(iVar3 + 0x9c)) {
-    bVar2 = *(byte *)(iVar3 + 3) | bVar1;
-    if ((bVar2 & 4) != 0) {
-      FUN_004c4600(iVar3 + 0x50,iVar3 + 0x10,*(int *)(iVar3 + 4) + 0x50);
-      *(byte *)(iVar3 + 3) = *(byte *)(iVar3 + 3) & 0xfb;
+  for (child = param_1->child; child != 0; child = child->next) {
+    childFlags = child->privateFlags | flags;
+    if (childFlags & 4) {
+      FUN_004c4600(&child->ltm, &child->modelling, &child->parent->ltm);
+      child->privateFlags &= ~4;
     }
-    FUN_004d83d0(*(undefined4 *)(iVar3 + 0x98),bVar2);
+    FUN_004d83d0(child->child, childFlags);
   }
-  *(byte *)(param_1 + 3) = bVar1 & 0xfa;
+  param_1->privateFlags = (uchar)(flags & 0xfa);
   return;
 }

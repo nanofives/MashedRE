@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d8680: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d8680 (h4): 100% (regs 100%). Raw form with the range tests spelled >= 'A' && <= 'Z' (the raw '@' < c && c < '[' gave jle/jge). Residual: none. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -34,10 +33,10 @@ int FUN_004d8680(char *param_1,char *param_2)
     do {
       cVar1 = *param_1;
       cVar2 = *param_2;
-      if (('@' < cVar1) && (cVar1 < '[')) {
+      if ((cVar1 >= 'A') && (cVar1 <= 'Z')) {
         cVar1 = cVar1 + ' ';
       }
-      if (('@' < cVar2) && (cVar2 < '[')) {
+      if ((cVar2 >= 'A') && (cVar2 <= 'Z')) {
         cVar2 = cVar2 + ' ';
       }
       if (cVar1 != cVar2) {

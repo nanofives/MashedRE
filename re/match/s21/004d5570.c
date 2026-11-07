@@ -1,6 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d5570: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d5570 (h1, by hand): 100.0% exact, regs 100.0%. Raw form called the device method through a cdecl
+   `code` pointer (extra add esp); a __stdcall vtable slot type (+0x114) fixes it. DAT_007d4f60 as an int array
+   (14 per first index; the array bound 0x70 is a declaration choice, not read from the binary). relocheck OK, C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

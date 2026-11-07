@@ -1,6 +1,9 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d53b0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d53b0 (h1, by hand): 100.0% exact, regs 100.0% (raw 50.8%). D3D state-cache flush: pending render
+   states (list 0x007d5168, {value,changed} 0x007d57f8, cache 0x007d54b0) through device slot +0xe4, then pending
+   texture-stage states (pairs 0x007d62a8, [8][33] {value,changed} 0x007d4720, [8][33] cache 0x007d5e88) through
+   +0x10c. Moves: __stdcall vtable slot types, the {value,changed} struct, and real [stage][33] 2D arrays (the flat
+   stage*33+type index was 93.4%). Array bounds come from the gaps between the globals. relocheck OK, C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,64 +26,58 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef int code();
+typedef struct { int value; int changed; } FUN_004d53b0_cache;
+typedef struct { int stage; int type; } FUN_004d53b0_tss;
+typedef int (__stdcall *FUN_004d53b0_setrs)(int *self, int state, int value);
+typedef int (__stdcall *FUN_004d53b0_settss)(int *self, int stage, int type, int value);
 MGLOBAL(uint, DAT_007d6c14, 0x007d6c14);
-MGLOBAL(int *, DAT_007d4110, 0x007d4110);
 MGLOBAL(uint, DAT_007d6c18, 0x007d6c18);
-MGLOBAL(undefined4, DAT_007d4720, 0x007d4720);
-MGLOBAL(undefined4, DAT_007d4724, 0x007d4724);
-MGLOBAL(undefined4, DAT_007d5168, 0x007d5168);
-MGLOBAL(undefined4, DAT_007d54b0, 0x007d54b0);
-MGLOBAL(undefined4, DAT_007d57f8, 0x007d57f8);
-MGLOBAL(undefined4, DAT_007d57fc, 0x007d57fc);
-MGLOBAL(undefined4, DAT_007d5e88, 0x007d5e88);
-MGLOBAL(undefined4, DAT_007d62a8, 0x007d62a8);
-MGLOBAL(undefined4, DAT_007d62ac, 0x007d62ac);
+MGLOBAL(int *, DAT_007d4110, 0x007d4110);
+MGLOBALA(int, DAT_007d5168, 210, 0x007d5168);
+MGLOBALA(int, DAT_007d54b0, 210, 0x007d54b0);
+MGLOBALA(FUN_004d53b0_cache, DAT_007d57f8, 210, 0x007d57f8);
+MGLOBALA(FUN_004d53b0_tss, DAT_007d62a8, 264, 0x007d62a8);
+typedef FUN_004d53b0_cache FUN_004d53b0_row[33];
+MGLOBALA(FUN_004d53b0_row, DAT_007d4720, 8, 0x007d4720);
+typedef int FUN_004d53b0_irow[33];
+MGLOBALA(FUN_004d53b0_irow, DAT_007d5e88, 8, 0x007d5e88);
 // MATCH: 0x004d53b0 FUN_004d53b0
 void FUN_004d53b0(void)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  int iVar5;
-  int *piVar6;
-  uint uVar7;
-  
+  uint i;
+  int state;
+  int value;
+  int stage;
+  int type;
+
   if (DAT_007d6c14 != 0) {
-    uVar7 = 0;
+    i = 0;
     do {
-      iVar1 = (&DAT_007d5168)[uVar7];
-      iVar2 = (&DAT_007d57f8)[iVar1 * 2];
-      iVar3 = (&DAT_007d54b0)[iVar1];
-      (&DAT_007d57fc)[iVar1 * 2] = 0;
-      piVar6 = DAT_007d4110;
-      if (iVar3 != iVar2) {
-        (&DAT_007d54b0)[iVar1] = iVar2;
-        (**(code **)(*piVar6 + 0xe4))(piVar6,iVar1,iVar2);
+      state = DAT_007d5168[i];
+      value = DAT_007d57f8[state].value;
+      DAT_007d57f8[state].changed = 0;
+      if (DAT_007d54b0[state] != value) {
+        DAT_007d54b0[state] = value;
+        (*(FUN_004d53b0_setrs *)(*DAT_007d4110 + 0xe4))(DAT_007d4110,state,value);
       }
-      uVar7 = uVar7 + 1;
-    } while (uVar7 < DAT_007d6c14);
+      i++;
+    } while (i < DAT_007d6c14);
     DAT_007d6c14 = 0;
   }
   if (DAT_007d6c18 != 0) {
-    uVar7 = 0;
+    i = 0;
     do {
-      iVar2 = (&DAT_007d62a8)[uVar7 * 2];
-      iVar3 = (&DAT_007d62ac)[uVar7 * 2];
-      iVar1 = iVar2 + iVar3 + iVar2 * 0x20;
-      iVar4 = (&DAT_007d4720)[iVar1 * 2];
-      iVar5 = (&DAT_007d5e88)[iVar1];
-      (&DAT_007d4724)[iVar1 * 2] = 0;
-      if (iVar5 != iVar4) {
-        (&DAT_007d5e88)[iVar1] = iVar4;
-        (**(code **)(*DAT_007d4110 + 0x10c))(DAT_007d4110,iVar2,iVar3,iVar4);
+      stage = DAT_007d62a8[i].stage;
+      type = DAT_007d62a8[i].type;
+      value = DAT_007d4720[stage][type].value;
+      DAT_007d4720[stage][type].changed = 0;
+      if (DAT_007d5e88[stage][type] != value) {
+        DAT_007d5e88[stage][type] = value;
+        (*(FUN_004d53b0_settss *)(*DAT_007d4110 + 0x10c))(DAT_007d4110,stage,type,value);
       }
-      uVar7 = uVar7 + 1;
-    } while (uVar7 < DAT_007d6c18);
+      i++;
+    } while (i < DAT_007d6c18);
     DAT_007d6c18 = 0;
   }
   return;

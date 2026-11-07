@@ -1,6 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d87a0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs21_20261107/results.tsv. */
+/* MATCH-S21 0x004d87a0 (h1, by hand): 100.0% exact, regs 100.0%. String stream write: NULL -> "" (0x005d8d70), size =
+   (strlen via RwGlobals+0xf4 + 4) & ~3, chunk header (type 2, 0x37002, 10) via 0x004cc580, body via 0x004cbe80.
+   The duplicated NULL test is in the original (kept as a second variable). Raw form was 95.6% on the
+   `-(r != 0) & p` return; two early `return 0` give the single neg/sbb/and. relocheck OK, C++ ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,36 +25,31 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char undefined;
-typedef unsigned char undefined1;
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef int code();
-MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
-MGLOBAL(undefined1, DAT_005d8d70, 0x005d8d70);
-undefined4 * FUN_004cbe80(undefined4 * p0, undefined4 * p1, uint p2);
-undefined4 FUN_004cc580(undefined4 p0, undefined4 p1, undefined4 p2, uint p3, uint p4);
+typedef int (*FUN_004d87a0_strlen)(const char *s);
+MGLOBAL(char *, DAT_007d3ff8, 0x007d3ff8);
+MGLOBALA(char, DAT_005d8d70, 1, 0x005d8d70);
+int FUN_004cbe80(int stream, const char *buf, uint size);
+int FUN_004cc580(int stream, int type, uint size, uint version, uint build);
 // MATCH: 0x004d87a0 FUN_004d87a0
-uint FUN_004d87a0(undefined *param_1,undefined4 param_2)
+const char *FUN_004d87a0(const char *param_1,int param_2)
 
 {
-  undefined *puVar1;
-  int iVar2;
-  uint uVar3;
-  
-  if (param_1 == (undefined *)0x0) {
-    param_1 = &DAT_005d8d70;
+  const char *s;
+  uint size;
+
+  if (param_1 == 0) {
+    param_1 = DAT_005d8d70;
   }
-  puVar1 = param_1;
-  if (param_1 == (undefined *)0x0) {
-    puVar1 = &DAT_005d8d70;
+  s = param_1;
+  if (param_1 == 0) {
+    s = DAT_005d8d70;
   }
-  iVar2 = (**(code **)(DAT_007d3ff8 + 0xf4))(puVar1);
-  uVar3 = iVar2 + 4U & 0xfffffffc;
-  iVar2 = FUN_004cc580(param_2,2,uVar3,0x37002,10);
-  if (iVar2 == 0) {
+  size = ((*(FUN_004d87a0_strlen *)(DAT_007d3ff8 + 0xf4))(s) + 4) & ~3u;
+  if (FUN_004cc580(param_2,2,size,0x37002,10) == 0) {
     return 0;
   }
-  iVar2 = FUN_004cbe80(param_2,param_1,uVar3);
-  return -(uint)(iVar2 != 0) & (uint)param_1;
+  if (FUN_004cbe80(param_2,param_1,size) == 0) {
+    return 0;
+  }
+  return param_1;
 }
