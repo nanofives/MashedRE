@@ -1,6 +1,7 @@
 // FLAGS: /O1
-/* MATCH-S17 0x004a5f07: raw g2s.py output under the CRT flags /O1 (flagsweep_raw.txt: 67-75% under /O2 /GS /Ob1); callees renamed FUN_<va8> (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs17_20261107/results.tsv. */
+/* MATCH-S17 0x004a5f07: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees) under the CRT
+   flags /O1 (67-75% under the game flags /O2 /GS /Ob1, verify/matchs17_20261107/flagsweep_raw.txt). Body unchanged except
+   callee names -> FUN_<va8> (tools/funrename.py); globals moved to MGLOBAL. 100%, relocheck OK. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
