@@ -1,0 +1,137 @@
+rva	sub	conf	exe_file
+0x005b1160	audio	C3	mashedmod/src/mashed_re/Audio/RingHeaderInit.cpp
+0x005b1180	audio	C3	
+0x005b11d0	audio	C3	
+0x005b11f0	audio	C2	
+0x005b1260	audio	C2	
+0x005b1500	audio	C2	
+0x005b15d0	audio	C2	
+0x005b2080	audio	C2	
+0x005b2190	audio	C2	
+0x005b2220	audio	C2	
+0x005b2820	audio	C2	
+0x005b29e0	audio	C2	
+0x005b2b00	audio	C2	
+0x005b2de0	audio	C2	
+0x005b2fd0	audio	C3	
+0x005b3020	audio	C2	
+0x005b30e0	audio	C2	
+0x005b3300	audio	C2	
+0x005b34f0	audio	C2	
+0x005b3540	audio	C2	
+0x005b3550	audio	C2	
+0x005b3580	audio	C3	mashedmod/src/mashed_re/Audio/AudioList_ag.cpp
+0x005b35a0	audio	C3	mashedmod/src/mashed_re/Audio/AudioList_ag.cpp
+0x005b35e0	audio	C3	
+0x005b3620	audio	C2	
+0x005b3670	audio	C3	mashedmod/src/mashed_re/Audio/AudioList_ag.cpp
+0x005b36b0	audio	C3	mashedmod/src/mashed_re/Audio/AudioList_ag.cpp
+0x005b36f0	audio	C2	
+0x005b3760	audio	C2	
+0x005b3a00	audio	C2	
+0x005b3b30	audio	C2	
+0x005b3b60	audio	C2	
+0x005b3b80	audio	C2	
+0x005b3e60	audio	C2	
+0x005b4060	audio	C3	mashedmod/src/mashed_re/Audio/AudioLeaves_ab2.cpp
+0x005b4150	audio	C2	
+0x005b41f0	audio	C2	
+0x005b4850	audio	C2	
+0x005b51d0	audio	C2	
+0x005b53b0	audio	C2	
+0x005b5860	audio	C2	
+0x005b5e00	audio	C2	
+0x005b5f70	audio	C2	
+0x005b6260	audio	C2	
+0x005b66c0	audio	C2	
+0x005b6710	audio	C2	
+0x005b6760	audio	C2	
+0x005b6820	audio	C2	
+0x005b6910	audio	C2	
+0x005b6a40	audio	C3	
+0x005b6b00	audio	C3	
+0x005b6be0	audio	C2	
+0x005b7010	audio	C2	
+0x005b70e0	audio	C2	
+0x005b7110	audio	C2	
+0x005b73b0	audio	C3	mashedmod/src/mashed_re/Audio/AudioLeaves_ab3.cpp
+0x005b73e0	audio	C2	
+0x005b7430	audio	C2	
+0x005b74c0	audio	C2	
+0x005b7880	audio	C2	
+0x005b7980	audio	C2	
+0x005b7b30	audio	C2	
+0x005b7e20	audio	C2	
+0x005b8040	audio	C2	
+0x005b8080	audio	C2	
+0x005b8090	audio	C2	
+0x005b8130	audio	C2	
+0x005b81d0	audio	C2	
+0x005b8570	audio	C2	
+0x005b8be0	audio	C2	
+0x005b8c40	audio	C2	
+0x005b92e0	audio	C2	
+0x005b9320	audio	C2	
+0x005b93a0	audio	C3	
+0x005b9410	audio	C3	mashedmod/src/mashed_re/Audio/AudioLeaves_ab3.cpp
+0x005b9460	audio	C2	
+0x005b9e30	audio	C2	
+0x005b9f30	audio	C2	
+0x005ba1d0	audio	C2	
+0x005ba720	audio	C2	
+0x005ba760	audio	C2	
+0x005ba780	audio	C2	
+0x005ba7f0	audio	C2	
+0x005baa60	audio	C2	
+0x005bac00	audio	C2	
+0x005bad30	audio	C2	
+0x005baf00	audio	C3	mashedmod/src/mashed_re/Audio/AudioMusic.cpp
+0x005baf40	audio	C3	mashedmod/src/mashed_re/Audio/AudioLeaves_ab3.cpp
+0x005baf60	audio	C3	mashedmod/src/mashed_re/Audio/AudioDSound.cpp
+0x005baf90	audio	C3	mashedmod/src/mashed_re/Audio/AudioDSound.cpp
+0x005bb000	audio	C2	
+0x005bb5b0	audio	C3	mashedmod/src/mashed_re/Audio/AudioLeaves_ab3.cpp
+0x005bb820	audio	C2	
+0x005bba60	audio	C2	
+0x005bbac0	audio	C2	
+0x005bbb20	audio	C2	
+0x005bbb70	audio	C2	
+0x005bbbb0	audio	C2	
+0x005bbc00	audio	C2	
+0x005bbc10	audio	C2	
+0x005bbd50	audio	C2	
+0x005bbdb0	audio	C2	
+0x005bbed0	audio	C2	
+0x005bbf30	audio	C2	
+0x005bbf60	audio	C2	
+0x005bbfc0	audio	C3	mashedmod/src/mashed_re/Audio/AudioDSound.cpp
+0x005bc020	audio	C2	
+0x005bc050	audio	C2	
+0x005bc0f0	audio	C2	
+0x005bc190	audio	C2	
+0x005bc400	audio	C3	mashedmod/src/mashed_re/Audio/AudioDSound.cpp
+0x005bc450	audio	C3	mashedmod/src/mashed_re/Audio/AudioLeaves_ab3.cpp
+0x005bc470	audio	C2	
+0x005bc640	audio	C2	
+0x005bc690	audio	C2	
+0x005bc750	audio	C2	
+0x005bc800	audio	C2	
+0x005bc850	audio	C2	
+0x005bc860	audio	C2	
+0x005bc880	audio	C2	
+0x005bc890	audio	C2	
+0x005bc900	audio	C2	
+0x005bc920	audio	C2	
+0x005bcab0	audio	C2	
+0x005bcb80	audio	C3	mashedmod/src/mashed_re/Audio/AudioLeaves_ab3.cpp
+0x005bcbb0	audio	C2	
+0x005bcbe0	audio	C2	
+0x005bcc70	audio	C2	
+0x005bcca0	audio	C2	
+0x005bcd10	audio	C2	
+0x005bcd80	audio	C2	
+0x005bcda0	audio	C2	
+0x005bce80	audio	C2	
+0x005bd500	audio	C2	
+0x005bd610	audio	C2	
+0x005bd6f0	audio	C2	
