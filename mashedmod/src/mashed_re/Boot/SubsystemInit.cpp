@@ -6,7 +6,7 @@
 //   0x00492270  SubsystemInit          — 3-callee gate: RW_INIT_FN(0) + DisplayInit + ViewportInit
 //   0x004921d0  DisplayInit            — display init: RW video-mode + LoadIcon TXD
 //   0x00428590  ViewportInit           — MOVED to Match/MatchS06_00428590.cpp (MATCH-S06)
-//   0x00492e60  SetDefaultViewWindow   — RwCameraSetViewWindow(0.8, 0.8)
+//   0x00492e60  SetDefaultViewWindow   — MOVED to Match/MatchS15_00492e60.cpp (MATCH-FIX-492E60)
 //
 // Deferred:
 //   0x004924f0  DataZeroFill           — DEFERRED (see note at bottom of file)
@@ -110,22 +110,6 @@ using FUN_004c5c00_t = void* (__cdecl*)(void*, const char*);
 static FUN_004c5c00_t const s_FUN_004c5c00 =
     reinterpret_cast<FUN_004c5c00_t>(0x004c5c00u);
 
-// FUN_004671a0 — RW camera/op dispatcher (C2): multi-arg, returns handle.
-// Observed calls:
-//   FUN_004671a0(0, &local_4, 3)   — (slot=0, color-ptr, op=3)
-//   FUN_004671a0(0)                — (slot=0) — returns handle
-//   FUN_004671a0(0, 0, 1)          — (slot=0, 0, op=1)
-//   FUN_004671a0(0xffffffff, ptr)  — (sentinel, RwV2d-ptr) in SetDefaultViewWindow
-// Using variadic-style: cdecl with maximal arg shape; callers only consume what they pass.
-using FUN_004671a0_2arg_t = std::uint32_t (__cdecl*)(std::uint32_t, void*);
-static FUN_004671a0_2arg_t const s_FUN_004671a0_2 =
-    reinterpret_cast<FUN_004671a0_2arg_t>(0x004671a0u);
-
-// FUN_004c1c80 — RwCameraSetViewWindow candidate (C2): void(uint32 handle).
-using FUN_004c1c80_t = void (__cdecl*)(std::uint32_t);
-static FUN_004c1c80_t const s_FUN_004c1c80 =
-    reinterpret_cast<FUN_004c1c80_t>(0x004c1c80u);
-
 // ---------------------------------------------------------------------------
 // Globals written by DisplayInit — from analysis note 0x004921d0.md.
 // ---------------------------------------------------------------------------
@@ -201,48 +185,8 @@ static void** const g_DAT_00771960 =
 // MATCH-S06: the body of 0x00428590 (ViewportInit) moved to Match/MatchS06_00428590.cpp,
 // which compiles the byte-matched source re/match/s06/00428590.c.
 
-// ---------------------------------------------------------------------------
-// SetDefaultViewWindow  --  0x00492e60
-//
-// Original: FUN_00492e60 (43 bytes, ~0x00492e60–0x00492e8a).
-// Decompiled body (verbatim from analysis note 00492e60.md):
-//   local_8 = 0x3f4ccccd   (IEEE 754 single: 0.8f)
-//   local_4 = 0x3f4ccccd   (IEEE 754 single: 0.8f)
-//   uVar1 = FUN_004671a0(0xffffffff, &local_8)
-//   FUN_004c1c80(uVar1)
-//   return void
-//
-// The two stack floats form an RwV2d-shaped struct {width=0.8f, height=0.8f}.
-// FUN_004c1c80 is the RwCameraSetViewWindow candidate (C2).
-//
-// Constants cited (from analysis table):
-//   body (~0x00492e65)  0x3f4ccccd  — IEEE 754 = 0.8f (view-window width)
-//   body (~0x00492e6a)  0x3f4ccccd  — IEEE 754 = 0.8f (view-window height)
-//   body (~0x00492e6f)  0xffffffff  — first arg to FUN_004671a0 (camera handle sentinel)
-//                                     [UNCERTAIN U-3922]: Blocks=none; not derivable from decomp.
-//
-// Callers: 0x00492e90 (FrameDispatch, C2); 0x004924f0 (DataZeroFill, C2).
-// Callees: FUN_004671a0 C2, FUN_004c1c80 C2.
-// ---------------------------------------------------------------------------
-
-// 0x00492e60
-extern "C" __declspec(dllexport) void __cdecl SetDefaultViewWindow() {
-    // body (~0x00492e65): local_8 = 0x3f4ccccd (IEEE 754 = 0.8f).
-    std::uint32_t local_8 = 0x3f4ccccdu;
-    // body (~0x00492e6a): local_4 = 0x3f4ccccd (IEEE 754 = 0.8f).
-    std::uint32_t local_4 = 0x3f4ccccdu;
-
-    // body (~0x00492e6f): uVar1 = FUN_004671a0(0xffffffff, &local_8)
-    // First arg is 0xffffffff [UNCERTAIN U-3922]; second is pointer to the 2-float pair.
-    const std::uint32_t uVar1 = s_FUN_004671a0_2(
-        0xffffffffu,
-        reinterpret_cast<void*>(&local_8));
-
-    // FUN_004c1c80(uVar1) — RwCameraSetViewWindow candidate (C2).
-    s_FUN_004c1c80(uVar1);
-}
-
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(SetDefaultViewWindow, 0x00492e60);
+// MATCH-FIX-492E60: the body of 0x00492e60 (SetDefaultViewWindow) moved to Match/MatchS15_00492e60.cpp,
+// which compiles the byte-matched source re/match/s15/00492e60.c (install still mass-disabled there).
 
 
 // ---------------------------------------------------------------------------
