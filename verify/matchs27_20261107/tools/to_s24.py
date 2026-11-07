@@ -1,11 +1,11 @@
-"""Convert a raw g2s output (D:/MashedWT/MATCH-S27_data/g2s/<va8>.c) into the re/match/s24 form:
+"""Convert a raw g2s output (D:/MashedWT/MATCH-S27_data/g2s/<va8>.c) into the re/match/s27 form:
 FLAGS line /O2 /GS /Ob1, the shared preamble, globals through MGLOBAL (address from decomp.json), body untouched.
-    py -3.12 to_s24.py <va8> [<va8> ...]      (run from the MATCH-S24 worktree)"""
+    py -3.12 to_s27.py <va8> [<va8> ...]      (run from the MATCH-S27 worktree)"""
 import ast, json, pathlib, re, sys
 
 D = pathlib.Path("D:/MashedWT/MATCH-S27_data")
 PRE = (D / "tools" / "preamble.h").read_text()
-OUT = pathlib.Path("re/match/s24")
+OUT = pathlib.Path("re/match/s27")
 dec = {f["entry"]: f for f in json.load(open(D / "decomp.json"))["functions"]}
 
 
@@ -45,6 +45,9 @@ def convert(va8):
             if a:
                 out.append(f"MGLOBAL({t}{(' ' + star) if star else ''}, {name}, 0x{a.group(1)});")
                 continue
+            if name in ("LPLONG",) or name.startswith("param_") or name.startswith("in_") or name.startswith("unaff_"):
+                out.append(f"/* converter noise: extern {t} {name}; dropped (no address) */")
+                continue
             raise SystemExit(f"{va8}: global {name} has no address")
         if ln.startswith("// MATCH:"):
             body_started = True
@@ -57,8 +60,8 @@ def convert(va8):
             keep += [x for x in (pre, ln, post) if x]
     fl = re.match(r"// FLAGS: (.*)", src).group(1).strip()
     hdr = [f"// FLAGS: {fl}",
-           f"/* MATCH-S24 0x{va8}: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body",
-           f"   unchanged; globals moved to MGLOBAL. Score: see verify/matchs24_20261107/results.tsv. */"]
+           f"/* MATCH-S27 0x{va8}: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body",
+           f"   unchanged; globals moved to MGLOBAL. Score: see verify/matchs27_20261107/results.tsv. */"]
     (OUT / f"{va8}.c").write_bytes(("\n".join(hdr) + "\n" + PRE + "\n".join(keep) + ("\n" if keep else "") + text.strip() + "\n").encode("latin-1"))
 
 
