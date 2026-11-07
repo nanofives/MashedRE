@@ -28,9 +28,18 @@
 // The course index k is the row of the original's course table whose record's dword 0 is the loaded COURSE.LUA
 // Course_Id (0x0040d250 returns exactly that dword for row DAT_0063ba7c). In the original's mode 10 the course
 // loaded is row DAT_0067f17c (0x0043dfd0 case 10 -> FUN_0040e170(DAT_0067f17c)) and the handling row is
-// DAT_0067ea94 (0x0046b573). The exe races the track it loaded, so the only original state in which both agree
-// with it is DAT_0067f17c = DAT_0067ea94 = k; that is what is published. On the original's own Quick Battle both
-// are 0 (0x00431d00 writes DAT_0067ea94 = 0), row 0 = Training (Course_Id 30), the gate scenario.
+// DAT_0067ea94 (0x0046b573). DAT_0067f17c / DAT_0063ba7c / DAT_0063ba78 = k is what is published.
+//
+// [D4-UNC-PHYS-2 2026-11-07, U-9783] DAT_0067ea94 is NOT published from the course any more. The original never
+// writes it at course load: its writers are 0x00431d00 (= 0) and the setup-screen option of 0x0043dfd0 (screen 0x12
+// row 4, 0x0044024d..0x00440268 / 0x0044079d..0x004407b8; screen 0x18 row 3), stepped by the left / right
+// controls and filtered by the mode-10 availability words 0x007f0a44 + i*0x30 (FUN_00430830, 0x00430852). Measured
+// on the original (verify/d4uncphys_20261107/RESULT_D4-UNC-PHYS.md): on the harness route (tracks 0/3/10/11) and on
+// the menu Quick Battle route DAT_0067ea94 stays 0 on every course and A3 runs type 6 (_DAT_00613108 = 105.0); only
+// a pick of the setup option moves it (row 3 picked on a Training race: type 18, 100.0 / 42000.0, with
+// DAT_0063ba7c = DAT_0063ba78 = 0). So the handling row and the course row are separate selections, and the
+// previous `DAT_0067ea94 = k` gave non-Training courses a handling row the original does not run there. The word
+// keeps whatever the exe's frontend wrote (Frontend/GameModeCarSelect.cpp, the 0x00431d00 port, writes 0).
 #include "GameModeState.h"
 #include "../Track/CourseTableState.h"
 
@@ -98,8 +107,8 @@ void GameModeState_OnCourseLoad(int course_id) {
     const int k = Track::CourseTableState_IndexOf(course_id);
     if (k >= 0) {
         I32(kRow) = k;                               // the launch's source (0x0043dfd0 -> FUN_0040e170(DAT_0067f17c))
-        if (I32(kMode) == 10) I32(kQbRow) = k;       // the mode-10 handling row (0x0046b573)
-        I32(kSelCrs) = k;                            // FUN_0040e170 (0x0040e170)
+        // DAT_0067ea94 (kQbRow, the mode-10 handling row read at 0x0046b573) is left alone: see the U-9783 note above.
+        I32(kSelCrs) = k;                          // FUN_0040e170 (0x0040e170)
         I32(kLdCrs)  = I32(kSelCrs);                 // 0x0040d45b: DAT_0063ba78 = DAT_0063ba7c
     }
     // Witness: the row the original's 0x0046b540 selector would read now, and its handling key (+4, 0x0040ce80).

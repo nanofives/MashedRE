@@ -19,8 +19,8 @@ void GameModeState_PreLoad(int gameMode);
 
 // At the exe's course load (after CourseTableState_OnCourseLoad): the course index k of course_id in the original's
 // course table (0x005f2728 row whose record dword 0 = course_id), published where the original keeps it:
-// 0x0067f17c (the launch's source for 0x0040e170, 0x0043dfd0), 0x0067ea94 when DAT_0067e9fc == 10 (0x0046b573),
-// 0x0063ba7c (0x0040e170) and 0x0063ba78 (0x0040d45b, case 2 of 0x004929d0).
+// 0x0067f17c (the launch's source for 0x0040e170, 0x0043dfd0), 0x0063ba7c (0x0040e170) and 0x0063ba78 (0x0040d45b,
+// case 2 of 0x004929d0). Not 0x0067ea94: the original keeps it as a setup-screen option (U-9783, D4-UNC-PHYS-2).
 void GameModeState_OnCourseLoad(int course_id);
 
 // 0x0046b540's selector input, the original's form (0x0046b56c..0x0046b585): 0x0040ce80(DAT_0067e9fc == 10 ?
