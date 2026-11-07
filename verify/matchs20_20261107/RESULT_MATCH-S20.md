@@ -14,15 +14,15 @@ the 79 identical rows. Gates: not run (match-only, the merge train runs them).
 
 Every file is `// FLAGS: /O2 /Ob1 /G5` (one, 0x004cb4c0, adds `/Oy-`). The raw converter ran twice, with the game
 flags `/O2 /GS /Ob1` and with `/O2 /Ob1 /G5` (the MATCH-S19 RW-core finding): /G5 scored higher on 58 functions,
-equal on 43, lower on 16, and raw 100% went 17 -> 21 under /G5. No hand-matched function ended on the game flags.
+equal on 43, lower on 16, and raw 100% went 16 -> 20 under /G5. No hand-matched function ended on the game flags.
 
 ## Static leg
 
 | | count |
 |---|---|
 | slice functions | 117 |
-| raw converter (g2s, best of both flag sets) at 100% | 21 (20 relocheck OK as converted, 0x004d3d50 after writing RwGlobals first) |
-| hand-matched to 100%, round 1 (helpers h1-h4) | 56 |
+| raw converter (g2s, best of both flag sets) at 100% | 20 (19 relocheck OK as converted, 0x004d3d50 after writing RwGlobals first) |
+| hand-matched to 100%, round 1 (helpers h1-h4) | 57 |
 | hand-matched to 100%, round 2 (h5, h6 on 20 near-misses) | 2 (0x004cb190, 0x004ccf20) |
 | **identical** | **79** |
 | below 100% | 38 (table below; budget spent) |
