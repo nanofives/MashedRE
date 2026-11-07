@@ -3514,7 +3514,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // 0x005f2570 / 0x005f2728 / 0x005f33f8 / 0x005f37a0 seeded and 0x0063d7e4 selected by the matched 0x0041e870.
     mashed_re::Track::CourseTableState_OnCourseLoad(course_id_);
     // [MATCH-PORTSTATE-GAMEFLOW, L-78 (c)] MASHED_PORTSTATE_GAMEFLOW (default OFF): the course index words
-    // 0x0067f17c / 0x0067ea94 / 0x0063ba7c / 0x0063ba78 hold the loaded course's row (Race/GameModeState.cpp).
+    // 0x0067f17c / 0x0063ba7c / 0x0063ba78 hold the loaded course's row (Race/GameModeState.cpp; 0x0067ea94 is not
+    // the course row, U-9783).
     mashed_re::Race::GameModeState_OnCourseLoad(course_id_);
 
     // render-world soup for spawn validation (visible-surface heights)

@@ -312,6 +312,28 @@ def main():
             print("  [SEM] " + json.dumps(p, sort_keys=True), flush=True)
     scr=sess.create_script(AGENT); scr.on("message", _on_msg); scr.load()
     scr.exports_sync.init()
+    # [D4-UNC-PHYS-2] MASHED_NAV_PEEK='rva:t,...' (t = i/u/f, hex image rvas): plain reads printed at each nav
+    # milestone and every 10 s in the round. No Interceptor, no write. A second script in the same session.
+    peek_spec = os.environ.get("MASHED_NAV_PEEK", "").strip()
+    PK = None
+    if peek_spec:
+        _pk = sess.create_script("""
+        rpc.exports = { peek: function (spec) {
+          const M = Process.findModuleByName('MASHED.exe'); const o = {};
+          for (const part of spec.split(',')) { if (!part) continue; const b = part.split(':');
+            const a = M.base.add(parseInt(b[0], 16) - 0x400000); const t = b[1] || 'i';
+            o[b[0]] = t === 'f' ? a.readFloat() : (t === 'u' ? a.readU32() : a.readS32()); }
+          return JSON.stringify(o); },
+          poke: function (spec) {
+            const M = Process.findModuleByName('MASHED.exe'); let n = 0;
+            for (const part of spec.split(',')) { if (!part) continue; const kv = part.split('=');
+              M.base.add(parseInt(kv[0], 16) - 0x400000).writeU32(parseInt(kv[1], 16) >>> 0); n++; }
+            return n; } };""")
+        _pk.load(); PK = _pk.exports_sync
+    def peek(tag):
+        if PK is None: return
+        try: print(f"  [peek {tag}] {PK.peek(peek_spec)}", flush=True)
+        except Exception as e: print(f"  [peek {tag}] err {e}", flush=True)
     # representative gameplay/results-gated HOLD hooks (non-hot: init/event/results, not per-frame)
     # RESULTS/round-end subset (the 12 that were 0 in Time Trial) + a few in-race positives.
     # These fire on round END in the competitive arena (Quick Battle), which ends on
@@ -393,10 +415,27 @@ def main():
     nav.confirm_to_depth(5, tries=4)   # colour -> track select
     print(f"  track-select: depth={nav.depth()} sel={scr.exports_sync.sel()}")
     shoot(pid, ROOT/shotdir/"sn_track.png")
+    peek("track-select")
+    # [D4-UNC-PHYS-2] MASHED_NAV_POKE='rva=val,...' (hex): CONTRIVED state written once here (track-select screen),
+    # e.g. a 0x007f0a44 + i*0x30 availability word so the mode-10 0x0067ea94 option can leave row 0 on a stock save.
+    if PK is not None and os.environ.get("MASHED_NAV_POKE", "").strip():
+        print(f"  [poke CONTRIVED] {os.environ['MASHED_NAV_POKE']} -> {PK.poke(os.environ['MASHED_NAV_POKE'])}", flush=True)
+        peek("after-poke")
+    # [D4-UNC-PHYS-2] MASHED_NAV_TRACK_SEQ='c,c,..': control codes pressed in order on the track-select screen before
+    # its confirm (4=confirm, 11=up, 12=down; others probed), with a peek after each. MASHED_NAV_GM_SEQ is the same on
+    # the next screen (the Game Mode setup screen), before the start attempts.
+    def press_seq(env, tag):
+        seq = [int(x) for x in os.environ.get(env, "").split(",") if x.strip()]
+        for _k, _c in enumerate(seq):
+            nav.press(_c); time.sleep(0.6)
+            peek(f"{tag}{_k + 1}(code {_c}) depth={nav.depth()}")
+    press_seq("MASHED_NAV_TRACK_SEQ", "track-seq")
     # DESCEND toward the race: confirm, wait for depth-increase OR phase-change (race leaves the
     # frontend), screenshot+log each new state. Stop when stuck or phase leaves 3 (in race).
     nav.press(4); time.sleep(1.5)   # confirm track -> Quick Battle "Game Mode" setup screen
     print(f"  after track confirm: depth={nav.depth()} phase={nav.phase()}")
+    peek("track-confirm")
+    press_seq("MASHED_NAV_GM_SEQ", "gm-seq")
     dump_counts("track-confirm")
     shoot(pid, ROOT/shotdir/"sn_gamemode.png")
     # On the Game Mode screen "Play Game" is the top option; confirm to START the arena round.
@@ -405,6 +444,7 @@ def main():
         if nav.phase()!=3: break
         nav.press(4); time.sleep(1.5)
         print(f"  start-attempt {k}: depth={nav.depth()} phase={nav.phase()}")
+        peek(f"start-attempt{k}")
         dump_counts(f"start-attempt{k}")
         if nav.phase()==0: break
     shoot(pid, ROOT/shotdir/"sn_race_enter.png")
@@ -471,6 +511,7 @@ def main():
             res_hit=[r for r in RESULTS_SUBSET if isinstance(cc.get(r),int) and cc[r]>0]
             tnow=int(round_secs-(end-time.time()))
             print(f"   round t+{tnow}s phase={nav.phase()} exercised={len(nz)} results_hit={len(res_hit)}")
+            peek(f"round+{tnow}")
             shoot(pid, ROOT/shotdir/f"sn_round_{tnow}.png")
             if res_hit and first_results is None:
                 first_results=tnow; print(f"   >>> RESULTS hooks firing at t+{tnow}s: {res_hit}")

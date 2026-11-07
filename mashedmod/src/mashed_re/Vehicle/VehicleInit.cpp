@@ -103,9 +103,11 @@ static_assert(sizeof(HandlingOverride) == 0x14, "the walk below steps 5 ints, as
 // -0.04249 (port, tag 0) vs -0.04462 (original) = 0.9523.
 //
 // `MASHED_HANDLING_TYPE=0` reverts to the pre-fix selector for A/B (ROADMAP v3: a flag
-// may only turn the ported behaviour OFF). [UNCERTAIN U-9783] FUN_0040ce80 itself is ported, but the
-// object array *(int**)0x005f2770 it indexes has no producer in the standalone, so the type cannot yet
-// vary per car or per track there; the .asi reads the live chain (A3HandlingType below).
+// may only turn the ported behaviour OFF). [U-9783 RESOLVED 2026-11-07, verify/d4uncphys_20261107] *(int**)0x005f2770
+// is the image's static table (0x005f2728, no runtime writer), and in mode 10 its index is 0x0067ea94, a setup-screen
+// option kept apart from the course row. It is 0 on every harness and menu race on a save with only row 0 available,
+// so the original runs type 6 on every course and this constant is that value. A non-zero row needs the exe frontend
+// to carry the option. MASHED_PORTSTATE_GAMEFLOW runs the original's chain; the .asi reads it live (A3HandlingType).
 static int HandlingTypeIndex() {
     static const int s_t = [] {
         const char* e = std::getenv("MASHED_HANDLING_TYPE");
