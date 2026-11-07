@@ -1,6 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S24 0x00551290: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs24_20261107/results.tsv. */
+/* MATCH-S24 0x00551290 (h2): 100% (regs 100%), byte-identical (nosize.py: no Ghidra size; the symbol is 23 B
+   and ends at 0x005512a7, then 90 padding to the next entry 0x005512b0). Tail call through RwGlobals
+   (DAT_007d3ff8) slot +0x10c with *(param_1+0x58) as the one stack argument. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,14 +24,10 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef int code();
+typedef void (*fn10c_t)(int);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x00551290 FUN_00551290
-void FUN_00551290(void)
-
+void FUN_00551290(int param_1)
 {
-                    /* WARNING: Could not recover jumptable at 0x005512a1. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(DAT_007d3ff8 + 0x10c))();
-  return;
+  (*(fn10c_t *)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x58));
 }

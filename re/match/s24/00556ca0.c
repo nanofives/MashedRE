@@ -1,6 +1,9 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S24 0x00556ca0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs24_20261107/results.tsv. */
+/* MATCH-S24 0x00556ca0 (h4): 60.0% (regs 60.0%). Tail call through (param_1 + 0x138) with the caller's 3 args.
+   The original re-stores arg 3 ([esp+0xc] via edx) though it is unchanged; 9176 elides it. Tried: int, float, char,
+   short, void pointer, struct, __int64 arg types, type-pun casts, local copy, varargs callee, 4 args, void return, struct
+   member fn pointer, flags /O2 /GS /Ob1, /O1, /O1 /Oy-, /Ox. None re-stores arg 3. Residual (b): source form of
+   the third argument not found. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,13 +26,9 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef int code();
+typedef int (*fn_00556ca0)(int, int, int);
 // MATCH: 0x00556ca0 FUN_00556ca0
-void FUN_00556ca0(int param_1)
-
+int FUN_00556ca0(int param_1, int param_2, int param_3)
 {
-                    /* WARNING: Could not recover jumptable at 0x00556cb0. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(param_1 + 0x138))();
-  return;
+  return (*(fn_00556ca0 *)(param_1 + 0x138))(param_1, param_2, param_3);
 }

@@ -1,6 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S24 h3 0x00551180 (no Ghidra size; RtFSHandler method stored at handler+0x40 by 0x00551190).
-   Best: see nosize.py. Return value of the assignment reproduces `mov eax,1; mov [ecx+0x20],eax`. */
+   Best: 100% acc, 100% regs, bytes_bad=[], 13 B, ends 0x0055118d (nop pad to 0x00551190). relocheck OK, cxx ok.
+   Return value of the assignment reproduces `mov eax,1; mov [ecx+0x20],eax`. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
