@@ -51,8 +51,11 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   `re/orchestrator/merge_train.json` (since the D3-CF-U9779 flip, 2026-10-25: G-CTRL
   `ef5f2e10/57f7ff83/b4f4b55a`, B `c37d4c0c/0a8f9806/7013671d`; read the file, it wins over this line)
   (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`).
-- Trackers only through `re-classify`. No C4 without a canonical-scenario run with the hook
-  installed. Master Ghidra only through ghidra-sweep.
+- Trackers only through `re-classify`. C4 has three routes (L-93, 2026-11-07, `re/CONFIDENCE.md`): a
+  canonical-scenario run with the hook installed (frida), a byte match (`match.py` byte-identical with the recorded
+  DDK compiler and flags, `relocheck.py` OK, not naked or asm-only), or a library identity (`libid`). The static
+  routes certify the RE only, need no exe body, caller or gate, and are applied with `re/tools/c4_reclass.py batch`.
+  Master Ghidra only through ghidra-sweep.
 - Tracker edits go through the re-classify skill. A script is allowed only when it is the skill's
   own documented operation (e.g. re/tools/deferred_close.py). Ad-hoc scripts are not.
 - Do not edit `ROADMAP.md` or `re/NEXT_SESSION.md` unless the step's deliverable is that text

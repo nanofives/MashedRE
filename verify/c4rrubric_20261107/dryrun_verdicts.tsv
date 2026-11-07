@@ -1,0 +1,16 @@
+rva	route	evidence	verdict	detail
+0x004260e0	match	re/match/s06/004260e0.c	PASS	byte-identical 525 B, relocheck OK (25/0)
+0x004262f0	match	re/match/s06/004262f0.c	PASS	byte-identical 73 B, relocheck OK (9/0)
+0x00426340	match	re/match/s06/00426340.c	PASS	byte-identical 280 B, relocheck OK (18/2)
+0x00426070	match	re/match/s06/00426070.c	PASS	byte-identical 6 B, relocheck OK (1/0)
+0x00426080	match	re/match/s06/00426080.c	PASS	byte-identical 6 B, relocheck OK (1/0)
+0x00426090	match	re/match/s06/00426090.c	SKIP	already C4 (no write)
+0x00426700	match	re/match/s06/00426700.c	PASS	byte-identical 125 B, relocheck OK (3/0)
+0x00426810	match	re/match/s06/00426810.c	REFUSED	not byte-identical: 29 differing unmasked bytes of 672 (insn 97.9%)
+0x00426c10	match	re/match/s06/00426c10.c	SKIP	already C4 (no write)
+0x004264d0	match	verify/c4rrubric_20261107/synthetic_asm_naked.c	REFUSED	naked function (__declspec(naked)): an inline-asm transcription matches by construction
+0x00426640	match	verify/c4rrubric_20261107/synthetic_asm_g26.c	REFUSED	body is 2 inline __asm block(s) in a C frame with no other C statement (SimGolf G26 rule: not match evidence)
+0x004b6fc0	libid	verify/libidentity_20261030/libidentity_functions.tsv	PASS	identical _lua_gettop
+0x0057e750	libid	verify/libidentity_20261030/libidentity_functions.tsv	PASS	identical _qh_checkflipped_all
+0x004a3090	libid	verify/libidentity_20261030/libidentity_functions.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004b6fd0	libid	verify/libidentity_20261030/libidentity_functions.tsv	REFUSED	libmatch status differs (needs identical, one candidate)

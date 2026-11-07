@@ -252,7 +252,13 @@ Rules (mandatory — a violation killed another session's TTD race capture mid-r
 
 ### Confidence promotion (NO overclaiming)
 
-Synthetic Frida A/B with the hook bypassed (env-var disabled) is **C3** evidence at best — it proves the implementation is bit-identical, not that the patcher works. **C4 demands a canonical-scenario run with the hook actually installed.** This rule has been violated before; refuse C4 promotions that lack canonical-scenario evidence with the inline-JMP live.
+C4 certifies the **reverse engineering**, not the port (decision L-93, Mariano 2026-11-07; `re/CONFIDENCE.md` "C4 routes"). It has three routes, and each is enough on its own:
+
+- **frida:** a canonical-scenario run with the hook actually installed. Synthetic Frida A/B with the hook bypassed (env-var disabled) is **C3** evidence at best — it proves the implementation is bit-identical, not that the patcher works. This rule has been violated before; refuse frida-route C4 promotions that lack canonical-scenario evidence with the inline-JMP live.
+- **match:** the reconstructed source is byte-identical under `re/tools/match/match.py` with the recorded compiler (XP DDK `cl` 13.00.9176 / `c2` 13.00.9178, `tools/vc7ddk`) and flags, `re/tools/match/relocheck.py` reports OK, and it is not a naked inline-asm transcription nor a body that is only inline `__asm` inside a C frame (SimGolf G26). A 100% score without relocheck OK is refused.
+- **libid:** the function is identical to one function of the vendored library object or the library source built with its recorded flags (libmatch, one candidate; ambiguous identities are refused).
+
+Whether `mashed_re.exe` compiles that body, whether the game calls it (L-68, L-84, L-89) and whether the gates stay unchanged are **port-axis** facts (`hooks.csv` `port` column), not C4. CRT / libpng / zlib rows stay out of the P-DoD port count (L-67 / L-70) and may still carry C4 by libid. Before 2026-11-07 C4 also certified the port. Batch promotion: `re/tools/c4_reclass.py` (re-classify skill, "Batch C4").
 
 ## Operating principles
 
