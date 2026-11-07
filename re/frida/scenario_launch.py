@@ -1108,6 +1108,63 @@ function watchWriteArm(recBaseHex, car, offsCsv){
   } catch(e){ return 'ERR ' + e; }
 }
 function watchWriteDrain(){ const r = WW.rows; WW.rows = []; return r; }
+// --- GLOBAL WATCH (D4-UNC-PHYS-2 2026-11-07) ---------------------------------
+// --watch-global <rva>[,<rva>..] (max 4): hardware WRITE watchpoints (debug registers 0..3, 4 bytes) on image
+// globals, armed on every thread right after attach and re-armed at the menu and before the launch poke (threads
+// created after an arm are covered only from the next arm). Each hit logs [hit#, pc rva (the instruction AFTER the
+// store), u32 after the write for every watched address, 0x0063ba8c, accurate backtrace rvas]. Read-only: no
+// Interceptor, no code patch. Frida's own (cloaked) threads are not enumerated, so the harness's own writes do not trap.
+// Shares Process.setExceptionHandler with --watch-write / --valsrc-probe: do not combine them.
+const GW = { addrs:[], rvas:[], rows:[], n:0, err:null, handler:false };
+function globalWatchArm(csv){
+  try {
+    if (!GW.addrs.length) {
+      GW.rvas = csv.split(',').filter(x => x).map(x => parseInt(x, 16)).slice(0, 4);
+      GW.addrs = GW.rvas.map(r => ga(r));
+    }
+    if (!GW.handler) {
+      const ss = ga(0x0063ba8c);
+      Process.setExceptionHandler(function(d){
+        if (d.type !== 'single-step' && d.type !== 'breakpoint') return false;
+        try {
+          const c = d.context;
+          let acc = '';
+          try { acc = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 10).map(p => wwRva(p.sub(modBase()).add(IMG).toUInt32())).join('|'); }
+          catch(e){ acc = 'bt-err'; }
+          // pc as an image rva, or module!offset when the store is outside MASHED.exe; plus a stack scan of the
+          // first 4 dwords in [esp, esp+0x100) that fall in the image .text (candidate returns, stale ones possible).
+          let pcs = wwRva(c.pc.sub(modBase()).add(IMG).toUInt32());
+          const pm = Process.findModuleByAddress(c.pc);
+          if (pm && pm.name !== 'MASHED.exe') pcs = pm.name + '!' + wwRva(c.pc.sub(pm.base).toUInt32());
+          const sc = [];
+          for (let k = 0; k < 64 && sc.length < 4; k++) {
+            const x = c.esp.add(k * 4).readPointer();
+            const xr = x.sub(modBase()).add(IMG).toUInt32() >>> 0;
+            if (xr >= 0x401000 && xr < 0x5c0000) sc.push(wwRva(xr));
+          }
+          acc = acc + ' scan ' + sc.join('|');
+          GW.n++;
+          if (GW.rows.length < 20000)
+            GW.rows.push([GW.n, pcs]
+                         .concat(GW.addrs.map(a => wwRva(a.readU32())))
+                         .concat([ss.readS32(), 'tick=' + ga(0x007f0ff4).readS32(),
+                                  'cnt=' + Object.keys(CNT).map(k => k + ':' + CNT[k]).join('|'), acc]).join(','));
+        } catch(e){ if (!GW.err) GW.err = 'hit ' + e; }
+        return true;
+      });
+      GW.handler = true;
+    }
+    let n = 0;
+    Process.enumerateThreads().forEach(function(t){
+      for (let k = 0; k < GW.addrs.length; k++) {
+        try { t.setHardwareWatchpoint(k, GW.addrs[k], 4, 'w'); if (k === 0) n++; }
+        catch(e){ if (!GW.err) GW.err = 'arm tid ' + t.id + ' ' + e.message; }
+      }
+    });
+    return 'global watch armed on ' + n + ' threads: ' + GW.rvas.map(wwRva).join(',');
+  } catch(e){ return 'ERR ' + e; }
+}
+function globalWatchDrain(){ const r = GW.rows; GW.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- AXIS probe (U-9175, D2 attempt 16) ------------------------------------
@@ -4181,6 +4238,9 @@ rpc.exports = {
   latBracketDrain: function(){ return latBracketDrain(); },
   watchWriteArm: function(recBaseHex, car, offs){ return watchWriteArm(recBaseHex, car, offs); },
   watchWriteDrain: function(){ return watchWriteDrain(); },
+  globalWatchArm: function(csv){ return globalWatchArm(csv); },
+  globalWatchDrain: function(){ return globalWatchDrain(); },
+  globalWatchStats: function(){ return JSON.stringify({n:GW.n, pending:GW.rows.length, err:GW.err}); },
   watchWriteStats: function(){ return JSON.stringify({armed:WW.armed, n:WW.n, pending:WW.rows.length, err:WW.err}); },
   latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
                                                       sub:LB.nSub, sol:(LB.nSol || 0), pending:LB.rows.length,
@@ -4481,9 +4541,15 @@ rpc.exports = {
       // is recomputed by the spawn loop, so we do NOT preset it.
       const e480 = new NativeFunction(ga(ACTIVATE), 'void', ['int','int'], 'mscdecl');
       for (let s = 0; s < 4; s++) e480(s, s === 0 ? 1 : (s < cfg.cars ? 2 : 0));
+      // [D4-UNC-PHYS-2] --pre-u32: CONTRIVED selection globals written here, before the launch poke.
+      let pre = '';
+      if (cfg.pre) for (const part of cfg.pre.split(',')) {
+        if (!part) continue; const kv = part.split('=');
+        ga(parseInt(kv[0], 16)).writeU32(parseInt(kv[1], 16) >>> 0); pre += ' pre ' + kv[0] + '=' + kv[1];
+      }
       armSpawn();
       armInput();
-      return 'set track='+cfg.track+' mode='+cfg.mode+' cars='+cfg.cars+' car='+cfg.car
+      return pre + ' set track='+cfg.track+' mode='+cfg.mode+' cars='+cfg.cars+' car='+cfg.car
              +' rule='+cfg.rule+' team='+cfg.team
              +(cfg.difficulty>=0?' diff='+cfg.difficulty:'')+(cfg.powerups>=0?' powerups='+cfg.powerups:'');
     } catch(e){ return 'ERR '+e; }
@@ -5238,6 +5304,16 @@ def main():
     ap.add_argument("--audio-probe", default="",
                     help="[D4-WSJ-REF] path prefix: log every audio voice start/stop and its gameplay caller "
                          "(AUDIO_AGENT) to <prefix>.audio.csv + <prefix>.audiosnap.json")
+    ap.add_argument("--pre-u32", default="",
+                    help="[D4-UNC-PHYS-2] CONTRIVED selection state: 'rva=val[,...]' (hex) u32 writes done in setup, "
+                         "after the track/mode writes and BEFORE the launch poke (unlike --poke-u32, which writes "
+                         "inside the hold). Added for U-9783: 0067ea94 (the mode-10 handling index A3 reads at "
+                         "0x0046b57d) has no harness writer.")
+    ap.add_argument("--watch-global", default="",
+                    help="[D4-UNC-PHYS-2] comma list (max 4) of hex image RVAs; hardware WRITE watchpoints armed "
+                         "after attach, at the menu and before launch. Hits are printed at the end as [gwatch] rows "
+                         "(hit#, pc rva after the store, u32 values, 0x0063ba8c, tick 0x007f0ff4, MASHED_COUNT_RVAS counters, backtrace). Do not combine with "
+                         "--watch-write / --valsrc-probe (one exception handler).")
     ap.add_argument("--peek", default="",
                     help="[U-9147] comma-separated image globals to READ periodically, "
                          "'rva:type' with type f/d/i/u (default f). No Interceptor, no "
@@ -5323,6 +5399,8 @@ def main():
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
     E = scr.exports_sync
     AU = None
+    if args.watch_global:
+        print("  [gwatch]", E.global_watch_arm(args.watch_global))
     if args.audio_probe:
         _ascr = sess.create_script(AUDIO_AGENT); _ascr.on("message", on_msg); _ascr.load()
         AU = _ascr.exports_sync
@@ -5376,9 +5454,15 @@ def main():
         if "asi:" in _count_csv:
             print("  [counters/asi]", E.rearm_asi())
         # 2) write the selection globals
+        if args.watch_global:
+            print("  [gwatch] menu re-arm:", E.global_watch_arm(args.watch_global))
+        if args.peek:
+            try: print("  [peek] menu (before setup)", E.peek(args.peek))
+            except Exception as ex: print(f"  [peek] menu failed: {ex}")
         cfg = {"track": args.track, "mode": args.mode, "cars": args.cars, "car": args.car,
                "rule": args.rule, "team": args.team,
-               "difficulty": args.difficulty, "powerups": args.powerups}
+               "difficulty": args.difficulty, "powerups": args.powerups,
+               "pre": args.pre_u32}
         print("  [setup]", E.setup(cfg))
         if os.environ.get("SAVELINK_PRELOAD"):
             # savelink G4: the warp skips the frontend step that restores the save, so run the game's own pair in
@@ -5582,6 +5666,8 @@ def main():
             print("  [no-warp] hold elapsed; detaching")
             raise SystemExit(0)
         # 3) poke the state machine into load+spawn
+        if args.watch_global:
+            print("  [gwatch] launch re-arm:", E.global_watch_arm(args.watch_global))
         print("  [launch] poke DAT_00771968 = 2 ->", E.launch())
         if args.oracle:
             print("  [oracle]", E.arm_oracle())
@@ -5829,6 +5915,12 @@ def main():
     except SystemExit:
         pass
     finally:
+        if args.watch_global:
+            try:
+                print("  [gwatch] stats", E.global_watch_stats())
+                for _r in E.global_watch_drain(): print("  [gwatch]", _r)
+            except Exception as ex:
+                print(f"  [gwatch] drain failed: {ex}")
         if AU is not None:
             # [D4-WSJ-REF] in finally so an early game exit still yields the rows captured so far.
             try:

@@ -1,0 +1,41 @@
+# U-9785 / U-9786 original-side scan: scenario_launch.py --track N --cars 4 --rule 0 --mode 10 --hold 20, no hooks.
+# MASHED_COUNT_RVAS: 0x0046e78c = A5 random-surface branch entry (first insn after jne 0x0046e7d5 at 0x0046e78a; FUN_00472650 calls at 0x0046e7ac / 0x0046e7c3), 0x00468980 = A6b entry, 0x00468abb = A6b motion-state != 0 leg
+[audio-ok-endpoints t0] 4
+[t0]   *** RACE RUNNING (phase 3) ***
+[t0]   [counters] {"0x0046e78c":0,"0x00468980":4848,"0x00468abb":0}
+[audio-ok-endpoints t1] 4
+[t1]   *** RACE RUNNING (phase 3) ***
+[t1]   [counters] {"0x0046e78c":0,"0x00468980":4619,"0x00468abb":0}
+[audio-ok-endpoints t2] 4
+[t2]   *** RACE RUNNING (phase 3) ***
+[t2]   [counters] {"0x0046e78c":0,"0x00468980":3544,"0x00468abb":0}
+[audio-ok-endpoints t3] 4
+[t3]   *** RACE RUNNING (phase 3) ***
+[t3]   [counters] {"0x0046e78c":0,"0x00468980":4424,"0x00468abb":0}
+[audio-ok-endpoints t4] 4
+[t4]   *** RACE RUNNING (phase 3) ***
+[t4]   [counters] {"0x0046e78c":0,"0x00468980":4974,"0x00468abb":0}
+[audio-ok-endpoints t5] 4
+[t5]   *** RACE RUNNING (phase 3) ***
+[t5]   [counters] {"0x0046e78c":0,"0x00468980":4653,"0x00468abb":0}
+[audio-ok-endpoints t6] 4
+[t6]   *** RACE RUNNING (phase 3) ***
+[t6]   [counters] {"0x0046e78c":0,"0x00468980":3893,"0x00468abb":0}
+[audio-ok-endpoints t7] 4
+[t7]   *** RACE RUNNING (phase 3) ***
+[t7]   [counters] {"0x0046e78c":454,"0x00468980":3989,"0x00468abb":0}
+[audio-ok-endpoints t8] 4
+[t8]   *** RACE RUNNING (phase 3) ***
+[t8]   [counters] {"0x0046e78c":0,"0x00468980":4879,"0x00468abb":0}
+[audio-ok-endpoints t9] 4
+[t9]   *** RACE RUNNING (phase 3) ***
+[t9]   [counters] {"0x0046e78c":0,"0x00468980":4850,"0x00468abb":0}
+[audio-ok-endpoints t10] 4
+[t10]   *** RACE RUNNING (phase 3) ***
+[t10]   [counters] {"0x0046e78c":0,"0x00468980":4964,"0x00468abb":0}
+[audio-ok-endpoints t11] 4
+[t11]   *** RACE RUNNING (phase 3) ***
+[t11]   [counters] {"0x0046e78c":0,"0x00468980":4530,"0x00468abb":0}
+[audio-ok-endpoints t12] 4
+[t12]   *** RACE RUNNING (phase 3) ***
+[t12]   [counters] {"0x0046e78c":0,"0x00468980":4306,"0x00468abb":0}
