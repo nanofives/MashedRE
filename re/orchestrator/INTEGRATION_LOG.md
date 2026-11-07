@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-06 23:59 MATCH-S19-FU-PCFUNCS (orch/MATCH-S19-FU-PCFUNCS-M): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261106_234533
 - 2026-11-06 23:39 MATCH-FIX-45CA30 (orch/MATCH-FIX-45CA30-M): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_231944
 - 2026-11-06 23:19 MATCH-RC-S09 (orch/MATCH-RC-S09-M): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261106_231610
 - 2026-11-06 23:15 MATCH-FIX-492D30 (orch/MATCH-FIX-492D30-492E60): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261106_224137
