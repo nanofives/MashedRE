@@ -1,0 +1,15 @@
+library	rva	hooks_name	subsystem	confidence	status	library_object	lib_function	lib_size	first_diff	category	note
+zlib-1.1.3	0x004d1000	zcalloc	third-party-library[zlib-1.1.3]	C1	identical	zutil.obj	_zcalloc	19			masked 4 B
+zlib-1.1.3	0x004f1f90	FUN_004f1f90	third-party-library[zlib-1.1.3]	C2	identical	gzio.obj	_gztell	18			masked 4 B; 1 intra-obj reloc implied addr differs
+zlib-1.1.3	0x004fa6f0	zcalloc	third-party-library[zlib-1.1.3]	C1	identical	zutil.obj	_zcalloc	19			masked 4 B; 1 ext ref(s) disagree with majority map
+zlib-1.1.3	0x00521990	FUN_00521990	third-party-library[zlib-1.1.3]	C2	identical	deflate.obj	_deflateEnd	170			masked 0 B
+zlib-1.1.3	0x00522ab0	FUN_00522ab0	third-party-library[zlib-1.1.3]	C2	identical	inflate.obj	_inflateReset	66			masked 4 B
+zlib-1.1.3	0x00522b00	FUN_00522b00	third-party-library[zlib-1.1.3]	C2	identical	inflate.obj	_inflateEnd	72			masked 4 B
+zlib-1.1.3	0x00522cc0	FUN_00522cc0	third-party-library[zlib-1.1.3]	C2	identical	inflate.obj	_inflateInit_	26			masked 4 B; 1 intra-obj reloc implied addr differs
+zlib-1.1.3	0x00528e00	zcalloc	third-party-library[zlib-1.1.3]	C2	identical	zutil.obj	_zcalloc	19			masked 4 B; 1 ext ref(s) disagree with majority map
+zlib-1.1.3	0x0052a890	FUN_0052a890	third-party-library[zlib-1.1.3]	C2	identical	adler32.obj	_adler32	302			masked 0 B
+zlib-1.1.3	0x0052a9c0	FUN_0052a9c0	third-party-library[zlib-1.1.3]	C2	identical	infblock.obj	_inflate_blocks_reset	123			masked 4 B
+zlib-1.1.3	0x0052b7e0	FUN_0052b7e0	third-party-library[zlib-1.1.3]	C2	identical	infcodes.obj	_inflate_codes_new	57			masked 0 B
+zlib-1.1.3	0x0052bf20	FUN_0052bf20	third-party-library[zlib-1.1.3]	C2	identical	infcodes.obj	_inflate_codes_free	20			masked 0 B
+zlib-1.1.3	0x0052c630	FUN_0052c630	third-party-library[zlib-1.1.3]	C2	identical	inftrees.obj	_inflate_trees_fixed	46			masked 16 B
+zlib-1.1.3	0x0052c660	FUN_0052c660	third-party-library[zlib-1.1.3]	C2	identical	infutil.obj	_inflate_flush	306			masked 0 B

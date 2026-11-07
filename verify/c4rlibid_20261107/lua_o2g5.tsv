@@ -1,0 +1,303 @@
+library	rva	hooks_name	subsystem	confidence	status	library_object	lib_function	lib_size	first_diff	category	note
+lua-4.0	0x004b6fc0	lua_gettop	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_gettop	15			masked 0 B
+lua-4.0	0x004b6fd0	FUN_004b6fd0	third-party-library[lua-4.0]	C2	differs	liolib.obj	_io_readfrom	20	0x3	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.60; +0x3 lib[mov eax, dword ptr [esp + 4]] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004b6ff0	FUN_004b6ff0	third-party-library[lua-4.0]	C2	differs	lapi.obj	_luaA_indexAcceptable	31	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.78; +0x0 lib[test eax, eax] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004b7020	FUN_004b7020	third-party-library[lua-4.0]	C3	identical	lapi.obj	_lua_typename	23			masked 8 B
+lua-4.0	0x004b7040	FUN_004b7040	third-party-library[lua-4.0]	C2	differs	lapi.obj	_lua_isnumber	89	0x8	prologue / stack-frame or argument-load order	mnemonic similarity 0.65; +0x8 lib[test eax, eax] orig[push eax] (same-insn-start)
+lua-4.0	0x004b7090	lua_tonumber	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b70d0	FUN_004b70d0	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_newtag	41	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.70; +0x0 lib[push ecx] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004b7110	FUN_004b7110	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_pushnil	40			masked 4 B
+lua-4.0	0x004b7140	FUN_004b7140	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_pushnumber	56			masked 4 B
+lua-4.0	0x004b7180	FUN_004b7180	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_pushlstring	64			masked 8 B
+lua-4.0	0x004b7200	thunk_FUN_004b7fd0	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_pushcclosure	5			masked 4 B
+lua-4.0	0x004b7210	FUN_004b7210	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_newtable	56			masked 8 B
+lua-4.0	0x004b7250	FUN_004b7250	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_setglobal	37			masked 8 B
+lua-4.0	0x004b7280	FUN_004b7280	third-party-library[lua-4.0]	C2	identical	lapi.obj	_lua_ref	173			masked 8 B
+lua-4.0	0x004b7330	FUN_004b7330	third-party-library[lua-4.0]	C2	differs	lstate.obj	_lua_open	156	0x14	instruction selection or scheduling	mnemonic similarity 0.90; +0x14 lib[je 0x8a] orig[jne 0x1b] (same-insn-start)
+lua-4.0	0x004b7450	errormessage	third-party-library[lua-4.0]	C1	identical	lstate.obj	_errormessage	46			masked 20 B
+lua-4.0	0x004b7480	FUN_004b7480	third-party-library[lua-4.0]	C2	differs	lstate.obj	_lua_close	171	0x1c	branch displacement (earlier size difference)	mnemonic similarity 0.86; +0x1c lib[je 0x37] orig[je 0x33] (same-insn-start)
+lua-4.0	0x004b7530	FUN_004b7530	third-party-library[lua-4.0]	C2	identical	ldo.obj	_luaD_init	62			masked 4 B
+lua-4.0	0x004b7570	FUN_004b7570	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b75d0	FUN_004b75d0	third-party-library[lua-4.0]	C2	identical	ldo.obj	_luaD_adjusttop	70			masked 4 B
+lua-4.0	0x004b7620	FUN_004b7620	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b7660	FUN_004b7660	third-party-library[lua-4.0]	C2	differs	ldo.obj	_dohook	53	0x1	prologue / stack-frame or argument-load order	mnemonic similarity 0.79; +0x1 lib[mov ebx, dword ptr [esi + 0x10]] orig[push esi] (same-insn-start)
+lua-4.0	0x004b76a0	FUN_004b76a0	third-party-library[lua-4.0]	C2	differs	ldo.obj	_luaD_callTM	55	0x5	prologue / stack-frame or argument-load order	mnemonic similarity 0.76; +0x5 lib[mov esi, dword ptr [esp + 8]] orig[push edi] (same-insn-start)
+lua-4.0	0x004b76e0	FUN_004b76e0	third-party-library[lua-4.0]	C2	differs	ldo.obj	_luaD_openstack	77	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.89; +0x1 lib[mov ecx, dword ptr [esi]] orig[mov edx, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004b7740	FUN_004b7740	third-party-library[lua-4.0]	C2	differs	ldo.obj	_luaD_call	410	0x9	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.87; +0x9 lib[mov esi, dword ptr [esp + 0x24]] orig[mov esi, dword ptr [esp + 0x28]] (same-insn-start)
+lua-4.0	0x004b78a0	FUN_004b78a0	third-party-library[lua-4.0]	C2	differs	ldo.obj	_luaD_callHook	88	0x1	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.67; +0x1 lib[mov ecx, dword ptr [esi + 0x6c]] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004b78e0	FUN_004b78e0	third-party-library[lua-4.0]	C2	differs	ldo.obj	_callCclosure	102	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.90; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004b7960	FUN_004b7960	third-party-library[lua-4.0]	C2	identical	ldo.obj	_lua_call	64			masked 8 B
+lua-4.0	0x004b79a0	f_call	third-party-library[lua-4.0]	C1	identical	ldo.obj	_f_call	25			masked 4 B
+lua-4.0	0x004b79c0	FUN_004b79c0	third-party-library[lua-4.0]	C2	differs	ldo.obj	_protectedparser	77	0x3	prologue / stack-frame or argument-load order	mnemonic similarity 0.88; +0x3 lib[push edi] orig[mov eax, dword ptr [esp + 0x10]] (same-insn-start)
+lua-4.0	0x004b7a20	f_parser	third-party-library[lua-4.0]	C1	identical	ldo.obj	_f_parser	68			masked 16 B
+lua-4.0	0x004b7a70	FUN_004b7a70	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_error	31	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.74; +0x0 lib[push esi] orig[mov eax, dword ptr [esp + 0x10]] (same-insn-start)
+lua-4.0	0x004b7aa0	FUN_004b7aa0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b7b00	FUN_004b7b00	third-party-library[lua-4.0]	C2	identical	ldo.obj	_lua_error	36			masked 8 B
+lua-4.0	0x004b7b30	FUN_004b7b30	third-party-library[lua-4.0]	C2	identical	ldo.obj	_message	105			masked 20 B
+lua-4.0	0x004b7ba0	FUN_004b7ba0	third-party-library[lua-4.0]	C2	identical	ldo.obj	_luaD_breakrun	57			masked 16 B
+lua-4.0	0x004b7be0	FUN_004b7be0	third-party-library[lua-4.0]	C2	differs	ldo.obj	_luaD_runprotected	172	0xa	register allocation (same instruction, different registers)	mnemonic similarity 0.70; +0xa lib[push edi] orig[push 0] (same-insn-start)
+lua-4.0	0x004b7c70	FUN_004b7c70	third-party-library[lua-4.0]	C2	differs	ldo.obj	_restore_stack_limit	35	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.70; +0x1 lib[mov edx, dword ptr [ecx + 4]] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004b7ca0	FUN_004b7ca0	third-party-library[lua-4.0]	C2	identical	lobject.obj	_luaO_power2	20			masked 0 B
+lua-4.0	0x004b7cc0	FUN_004b7cc0	third-party-library[lua-4.0]	C2	identical	lobject.obj	_luaO_equalObj	96			masked 28 B
+lua-4.0	0x004b7d20	FUN_004b7d20	third-party-library[lua-4.0]	C2	identical	lobject.obj	_luaO_openspace	58			masked 4 B
+lua-4.0	0x004b7d60	FUN_004b7d60	third-party-library[lua-4.0]	C2	differs	lobject.obj	_luaO_str2d	124	0x20	instruction selection or scheduling	mnemonic similarity 0.90; +0x20 lib[je 0x64] orig[jne 0x29] (same-insn-start)
+lua-4.0	0x004b7df0	FUN_004b7df0	third-party-library[lua-4.0]	C2	identical	lobject.obj	_luaO_verror	54			masked 8 B
+lua-4.0	0x004b7e30	FUN_004b7e30	third-party-library[lua-4.0]	C2	differs	lobject.obj	_luaO_chunkid	257	0x1	prologue / stack-frame or argument-load order	mnemonic similarity 0.79; +0x1 lib[mov ebx, dword ptr [esp + 0xc]] orig[push esi] (same-insn-start)
+lua-4.0	0x004b7f30	FUN_004b7f30	third-party-library[lua-4.0]	C2	identical	lvm.obj	_luaV_tonumber	56			masked 4 B
+lua-4.0	0x004b7f70	FUN_004b7f70	third-party-library[lua-4.0]	C2	differs	lvm.obj	_luaV_tostring	80	0x17	x87 sequence (fld/fstp vs integer move, or FPU op order)	mnemonic similarity 0.76; +0x17 lib[mov eax, dword ptr [esi + 0xc]] orig[fld qword ptr [esi + 8]] (same-insn-start)
+lua-4.0	0x004b7ff0	FUN_004b7ff0	third-party-library[lua-4.0]	C2	differs	lvm.obj	_luaV_closure	127	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.90; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004b80a0	FUN_004b80a0	third-party-library[lua-4.0]	C2	identical	lvm.obj	_luaV_gettable	236			masked 24 B
+lua-4.0	0x004b8190	FUN_004b8190	third-party-library[lua-4.0]	C2	identical	lvm.obj	_luaV_settable	268			masked 24 B
+lua-4.0	0x004b82a0	FUN_004b82a0	third-party-library[lua-4.0]	C2	identical	lvm.obj	_luaV_getglobal	148			masked 16 B
+lua-4.0	0x004b8340	FUN_004b8340	third-party-library[lua-4.0]	C2	identical	lvm.obj	_luaV_setglobal	282			masked 24 B
+lua-4.0	0x004b8460	FUN_004b8460	third-party-library[lua-4.0]	C2	differs	lvm.obj	_luaV_lessthan	214	0x4	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.90; +0x4 lib[mov ebx, dword ptr [esp + 0x10]] orig[mov ebx, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004b8540	FUN_004b8540	third-party-library[lua-4.0]	C2	differs	lvm.obj	_call_binTM	115	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.90; +0x0 lib[push ebp] orig[push ebx] (same-insn-start)
+lua-4.0	0x004b85d0	FUN_004b85d0	third-party-library[lua-4.0]	C2	differs	lvm.obj	_luaV_strcomp	101	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.76; +0x0 lib[push ebx] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004b8650	FUN_004b8650	third-party-library[lua-4.0]	C2	differs	lvm.obj	_luaV_strconc	526	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.64; +0x2 lib[sub esp, 0x6c] orig[sub esp, 0xc] (same-insn-start)
+lua-4.0	0x004b87e0	FUN_004b87e0	third-party-library[lua-4.0]	C2	differs	lvm.obj	_luaV_execute	3032	0xf	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.90; +0xf lib[mov ebx, dword ptr [ebp + 0x10]] orig[mov ebx, dword ptr [ebp + 8]] (same-insn-start)
+lua-4.0	0x004b9380	FUN_004b9380	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b9400	FUN_004b9400	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_lua_baselibopen	50	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.70; +0x0 lib[push edi] orig[mov eax, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004b9440	FUN_004b9440	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_getn	55	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.60; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004b9480	FUN_004b9480	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b9540	FUN_004b9540	third-party-library[lua-4.0]	C3	identical	ltm.obj	_luaT_validevent	34			masked 4 B
+lua-4.0	0x004b9570	FUN_004b9570	third-party-library[lua-4.0]	C2	differs	ltm.obj	_luaT_init	111	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.71; +0x0 lib[push ebp] orig[push esi] (same-insn-start)
+lua-4.0	0x004b95c0	FUN_004b95c0	third-party-library[lua-4.0]	C2	differs	ltm.obj	_init_entry	43	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.63; +0x0 lib[shl eax, 6] orig[mov edx, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004b9600	FUN_004b9600	third-party-library[lua-4.0]	C2	differs	ltm.obj	_checktag	25	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.71; +0x0 lib[test eax, eax] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004b9630	FUN_004b9630	third-party-library[lua-4.0]	C2	identical	ltm.obj	_luaT_tag	28			masked 0 B
+lua-4.0	0x004b9650	FUN_004b9650	third-party-library[lua-4.0]	C2	differs	ltm.obj	_luaI_checkevent	85	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.89; +0x0 lib[push esi] orig[push ebx] (same-insn-start)
+lua-4.0	0x004b96c0	FUN_004b96c0	third-party-library[lua-4.0]	C2	differs	ltm.obj	_findevent	98	0x8	prologue / stack-frame or argument-load order	mnemonic similarity 0.90; +0x8 lib[mov ebp, dword ptr [esp + 0xc]] orig[push esi] (same-insn-start)
+lua-4.0	0x004b9730	FUN_004b9730	third-party-library[lua-4.0]	C2	differs	ltm.obj	_lua_settagmethod	212	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.77; +0x0 lib[push ebx] orig[mov eax, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004b97f0	FUN_004b97f0	third-party-library[lua-4.0]	C2	identical	lstring.obj	_luaS_init	85			masked 8 B
+lua-4.0	0x004b9850	FUN_004b9850	third-party-library[lua-4.0]	C2	identical	lstring.obj	_luaS_freeall	55			masked 8 B
+lua-4.0	0x004b9890	FUN_004b9890	third-party-library[lua-4.0]	C2	identical	lstring.obj	_luaS_resize	177			masked 8 B
+lua-4.0	0x004b9950	FUN_004b9950	third-party-library[lua-4.0]	C2	differs	lstring.obj	_luaS_newlstr	238	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.64; +0x0 lib[sub esp, 8] orig[push ecx] (same-insn-start)
+lua-4.0	0x004b9a10	FUN_004b9a10	third-party-library[lua-4.0]	C2	differs	lstring.obj	_hash_s	50	0x1	prologue / stack-frame or argument-load order	mnemonic similarity 0.84; +0x1 lib[push edi] orig[mov esi, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004b9a50	FUN_004b9a50	third-party-library[lua-4.0]	C2	differs	lstring.obj	_newentry	58	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.86; +0x0 lib[push esi] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004b9aa0	FUN_004b9aa0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b9ad0	FUN_004b9ad0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b9b00	FUN_004b9b00	third-party-library[lua-4.0]	C2	identical	ltable.obj	_luaH_mainposition	88			masked 32 B
+lua-4.0	0x004b9b60	FUN_004b9b60	third-party-library[lua-4.0]	C2	identical	ltable.obj	_luaH_getnum	67			masked 8 B
+lua-4.0	0x004b9bb0	FUN_004b9bb0	third-party-library[lua-4.0]	C2	identical	ltable.obj	_luaH_getstr	53			masked 4 B
+lua-4.0	0x004b9bf0	FUN_004b9bf0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b9c90	FUN_004b9c90	third-party-library[lua-4.0]	C2	identical	ltable.obj	_luaH_next	112			masked 16 B
+lua-4.0	0x004b9d00	FUN_004b9d00	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004b9dc0	FUN_004b9dc0	third-party-library[lua-4.0]	C2	differs	ltable.obj	_luaH_new	87	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.74; +0x0 lib[push ebx] orig[push esi] (same-insn-start)
+lua-4.0	0x004b9e20	FUN_004b9e20	third-party-library[lua-4.0]	C2	differs	ltable.obj	_setnodevector	128	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.88; +0x0 lib[push ebp] orig[push ebx] (same-insn-start)
+lua-4.0	0x004b9eb0	FUN_004b9eb0	third-party-library[lua-4.0]	C2	identical	ltable.obj	_luaH_free	60			masked 8 B
+lua-4.0	0x004b9ef0	FUN_004b9ef0	third-party-library[lua-4.0]	C2	differs	ltable.obj	_luaH_set	229	0x3e	branch displacement (earlier size difference)	mnemonic similarity 0.95; +0x3e lib[jne 0xd5] orig[jne 0xd7] (same-insn-start)
+lua-4.0	0x004b9fe0	FUN_004b9fe0	third-party-library[lua-4.0]	C2	differs	ltable.obj	_rehash	180	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.77; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004ba090	FUN_004ba090	third-party-library[lua-4.0]	C2	differs	ltable.obj	_numuse	27	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.93; +0x1 lib[mov edx, dword ptr [eax]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004ba0b0	FUN_004ba0b0	third-party-library[lua-4.0]	C2	identical	ltable.obj	_luaH_setint	43			masked 4 B
+lua-4.0	0x004ba0e0	FUN_004ba0e0	third-party-library[lua-4.0]	C2	identical	ltable.obj	_luaH_setstrnum	63			masked 4 B
+lua-4.0	0x004ba120	FUN_004ba120	third-party-library[lua-4.0]	C2	differs	liolib.obj	_setfilebyname	26	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.88; +0x1 lib[mov ecx, dword ptr [eax + 8]] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004ba140	FUN_004ba140	third-party-library[lua-4.0]	C2	identical	lmem.obj	_luaM_growaux	97			masked 12 B
+lua-4.0	0x004ba1b0	FUN_004ba1b0	third-party-library[lua-4.0]	C2	differs	lmem.obj	_luaM_realloc	95	0x7	prologue / stack-frame or argument-load order	mnemonic similarity 0.86; +0x7 lib[jne 0x1a] orig[push edi] (same-insn-start)
+lua-4.0	0x004ba210	FUN_004ba210	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_setglobal	37	0x5	register allocation (same instruction, different registers)	mnemonic similarity 0.75; +0x5 lib[push 2] orig[push edi] (same-insn-start)
+lua-4.0	0x004ba250	FUN_004ba250	third-party-library[lua-4.0]	C2	differs	lgc.obj	_collectproto	52	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.80; +0x0 lib[mov eax, dword ptr [edi + 0x20]] orig[push esi] (same-insn-start)
+lua-4.0	0x004ba290	FUN_004ba290	third-party-library[lua-4.0]	C2	differs	lgc.obj	_collectclosure	47	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.80; +0x0 lib[mov eax, dword ptr [edi + 0x24]] orig[push esi] (same-insn-start)
+lua-4.0	0x004ba2d0	FUN_004ba2d0	third-party-library[lua-4.0]	C2	differs	lgc.obj	_collecttable	47	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.80; +0x0 lib[mov eax, dword ptr [edi + 0x28]] orig[push esi] (same-insn-start)
+lua-4.0	0x004ba310	FUN_004ba310	third-party-library[lua-4.0]	C2	differs	lgc.obj	_collectstrings	159	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.74; +0x0 lib[mov eax, dword ptr [esi + 0x2c]] orig[push ebx] (same-insn-start)
+lua-4.0	0x004ba3a0	FUN_004ba3a0	third-party-library[lua-4.0]	C2	differs	lgc.obj	_checktab	48	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.85; +0x0 lib[mov ecx, dword ptr [esi]] orig[push esi] (same-insn-start)
+lua-4.0	0x004ba3e0	FUN_004ba3e0	third-party-library[lua-4.0]	C2	differs	lgc.obj	_collectudata	168	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.74; +0x1 lib[mov eax, dword ptr [ecx + 0x38]] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004ba470	FUN_004ba470	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004ba4f0	FUN_004ba4f0	third-party-library[lua-4.0]	C2	differs	lgc.obj	_callgcTM	113	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.91; +0x1 lib[push edi] orig[push esi] (same-insn-start)
+lua-4.0	0x004ba570	FUN_004ba570	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004ba5d0	FUN_004ba5d0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004ba6c0	FUN_004ba6c0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004ba6f0	FUN_004ba6f0	third-party-library[lua-4.0]	C2	differs	lgc.obj	_marklock	47	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.81; +0x0 lib[push ebp] orig[push ebx] (same-insn-start)
+lua-4.0	0x004ba730	FUN_004ba730	third-party-library[lua-4.0]	C2	differs	lgc.obj	_marktagmethods	97	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.71; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004ba780	FUN_004ba780	third-party-library[lua-4.0]	C2	differs	lgc.obj	_markclosure	33	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.75; +0x0 lib[cmp dword ptr [esi + 8], esi] orig[push esi] (same-insn-start)
+lua-4.0	0x004ba7b0	FUN_004ba7b0	third-party-library[lua-4.0]	C2	differs	lgc.obj	_protomark	147	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.96; +0x0 lib[push esi] orig[push ebx] (same-insn-start)
+lua-4.0	0x004ba840	FUN_004ba840	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004ba8c0	FUN_004ba8c0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004ba900	FUN_004ba900	third-party-library[lua-4.0]	C2	differs	lgc.obj	_hasmark	80	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.65; +0x1 lib[mov ecx, dword ptr [eax]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004ba960	FUN_004ba960	third-party-library[lua-4.0]	C2	differs	lgc.obj	_checkMbuffer	48	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.83; +0x0 lib[mov ecx, dword ptr [esi + 0x1c]] orig[push esi] (same-insn-start)
+lua-4.0	0x004ba9a0	FUN_004ba9a0	third-party-library[lua-4.0]	C2	differs	llex.obj	_luaX_init	56	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.78; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004ba9e0	FUN_004ba9e0	third-party-library[lua-4.0]	C2	identical	llex.obj	_luaX_checklimit	62			masked 12 B
+lua-4.0	0x004baa20	FUN_004baa20	third-party-library[lua-4.0]	C2	identical	llex.obj	_luaX_syntaxerror	68			masked 12 B
+lua-4.0	0x004baa70	FUN_004baa70	third-party-library[lua-4.0]	C2	differs	liolib.obj	_read_number	65	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.70; +0x0 lib[sub esp, 8] orig[mov ecx, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004baad0	FUN_004baad0	third-party-library[lua-4.0]	C2	identical	llex.obj	_luaX_token2str	44			masked 4 B
+lua-4.0	0x004bab00	FUN_004bab00	third-party-library[lua-4.0]	C2	identical	llex.obj	_luaX_setinput	149			masked 0 B
+lua-4.0	0x004baba0	FUN_004baba0	third-party-library[lua-4.0]	C2	differs	llex.obj	_luaX_lex	1408	0xd	branch displacement (earlier size difference)	mnemonic similarity 0.96; +0xd lib[ja 0xd9] orig[ja 0xe0] (same-insn-start)
+lua-4.0	0x004bb130	FUN_004bb130	third-party-library[lua-4.0]	C2	differs	lparser.obj	_exp1	33	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.90; +0x0 lib[sub esp, 0xc] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bb160	FUN_004bb160	third-party-library[lua-4.0]	C2	differs	llex.obj	_inclinenumber	108	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.69; +0x0 lib[mov eax, dword ptr [esi + 0x30]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bb1b0	FUN_004bb1b0	third-party-library[lua-4.0]	C2	differs	llex.obj	_readname	168	0x1	prologue / stack-frame or argument-load order	mnemonic similarity 0.96; +0x1 lib[mov ebp, dword ptr [esi + 0x2c]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bb260	FUN_004bb260	third-party-library[lua-4.0]	C2	differs	llex.obj	_read_number	699	0x1	prologue / stack-frame or argument-load order	mnemonic similarity 0.98; +0x1 lib[mov ebx, dword ptr [esi + 0x2c]] orig[push ebp] (same-insn-start)
+lua-4.0	0x004bb520	FUN_004bb520	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bb7a0	FUN_004bb7a0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bbb00	FUN_004bbb00	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bbb30	FUN_004bbb30	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_aux_stackedfunction	52	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.93; +0x0 lib[push esi] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bbb70	FUN_004bbb70	third-party-library[lua-4.0]	C2	identical	ldebug.obj	_luaG_getline	137			masked 0 B
+lua-4.0	0x004bbc00	FUN_004bbc00	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_currentpc	28	0x1	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.96; +0x1 lib[mov eax, dword ptr [eax + 8]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bbc20	FUN_004bbc20	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_isLmark	30	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.75; +0x0 lib[test eax, eax] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bbc50	FUN_004bbc50	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_lua_getinfo	379	0x9	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.66; +0x9 lib[mov ebx, dword ptr [esp + 0xc]] orig[mov ebx, dword ptr [esp + 0x14]] (same-insn-start)
+lua-4.0	0x004bbd90	FUN_004bbd90	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_setnormalized	43	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.80; +0x0 lib[cmp dword ptr [eax], 6] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bbdd0	FUN_004bbdd0	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_nups	31	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.78; +0x1 lib[mov eax, dword ptr [ecx]] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bbe00	FUN_004bbe00	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bbe40	FUN_004bbe40	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_funcinfo	131	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.81; +0x1 lib[mov eax, dword ptr [ecx]] orig[mov ecx, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004bbed0	FUN_004bbed0	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_infoLproto	23	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.82; +0x1 lib[mov edx, dword ptr [ecx + 0x40]] orig[mov ecx, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bbef0	FUN_004bbef0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bbf60	FUN_004bbf60	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_travtagmethods	68	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.89; +0x0 lib[push ebp] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bbfb0	FUN_004bbfb0	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_travglobals	85	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.89; +0x0 lib[push ebx] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bc010	FUN_004bc010	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bc080	FUN_004bc080	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bc160	FUN_004bc160	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_luaG_symbexec	476	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.73; +0x0 lib[sub esp, 0x3ec] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bc330	FUN_004bc330	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bc360	FUN_004bc360	third-party-library[lua-4.0]	C2	differs	ldebug.obj	_luaG_typeerror	90	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.80; +0x0 lib[push ebx] orig[push esi] (same-insn-start)
+lua-4.0	0x004bc3c0	FUN_004bc3c0	third-party-library[lua-4.0]	C2	identical	ldebug.obj	_luaG_binerror	37			masked 4 B
+lua-4.0	0x004bc3f0	FUN_004bc3f0	third-party-library[lua-4.0]	C2	identical	ldebug.obj	_luaG_ordererror	77			masked 24 B
+lua-4.0	0x004bc440	FUN_004bc440	third-party-library[lua-4.0]	C2	identical	lzio.obj	_luaZ_mopen	46			masked 4 B
+lua-4.0	0x004bc480	FUN_004bc480	third-party-library[lua-4.0]	C2	identical	lzio.obj	_luaZ_read	118			masked 0 B
+lua-4.0	0x004bc500	FUN_004bc500	third-party-library[lua-4.0]	C2	differs	liolib.obj	_io_debug	151	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.64; +0x2 lib[sub esp, 0xfc] orig[sub esp, 0x50c] (same-insn-start)
+lua-4.0	0x004bc590	FUN_004bc590	third-party-library[lua-4.0]	C2	differs	lparser.obj	_next	76	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.97; +0x2 lib[mov esi, eax] orig[mov esi, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bc5e0	FUN_004bc5e0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_check_condition	19	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.70; +0x0 lib[test eax, eax] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bc600	FUN_004bc600	third-party-library[lua-4.0]	C2	differs	lparser.obj	_open_func	87	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.84; +0x0 lib[mov eax, dword ptr [edi + 0x2c]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bc670	FUN_004bc670	third-party-library[lua-4.0]	C2	differs	lparser.obj	_close_func	262	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.81; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bc750	FUN_004bc750	third-party-library[lua-4.0]	C2	differs	lparser.obj	_removelocalvars	45	0x1	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.82; +0x1 lib[mov eax, dword ptr [eax + 0x28]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bc790	FUN_004bc790	third-party-library[lua-4.0]	C2	differs	lstrlib.obj	_start_capture	71	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.69; +0x0 lib[push ebp] orig[push esi] (same-insn-start)
+lua-4.0	0x004bc7c0	FUN_004bc7c0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bc7f0	FUN_004bc7f0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_block_follow	69	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.77; +0x0 lib[add eax, 0xfffffefc] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bc840	FUN_004bc840	third-party-library[lua-4.0]	C2	differs	lparser.obj	_stat	511	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.78; +0x0 lib[push ebx] orig[push esi] (same-insn-start)
+lua-4.0	0x004bca50	FUN_004bca50	third-party-library[lua-4.0]	C2	differs	liolib.obj	_io_date	132	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.62; +0x0 lib[sub esp, 0x104] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bcaf0	FUN_004bcaf0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_error_expected	59	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.95; +0x0 lib[sub esp, 0x74] orig[mov ecx, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bcb30	FUN_004bcb30	third-party-library[lua-4.0]	C2	differs	lgc.obj	_luaC_collect	54	0x1	prologue / stack-frame or argument-load order	mnemonic similarity 0.62; +0x1 lib[mov ebx, dword ptr [esp + 0xc]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bcb70	FUN_004bcb70	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_sort_comp	105	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.60; +0x0 lib[push ebx] orig[sub esp, 0x18] (same-insn-start)
+lua-4.0	0x004bcc10	FUN_004bcc10	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB__ALERT	34	0x3	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.62; +0x3 lib[mov eax, dword ptr [esp + 4]] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bcc40	FUN_004bcc40	third-party-library[lua-4.0]	C2	differs	lparser.obj	_enterbreak	23	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.82; +0x0 lib[movsx edx, word ptr [ecx + 0x1c]] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bcc60	FUN_004bcc60	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_set2	26	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.73; +0x0 lib[push eax] orig[push esi] (same-insn-start)
+lua-4.0	0x004bcc90	FUN_004bcc90	third-party-library[lua-4.0]	C2	differs	lparser.obj	_cond	25	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.73; +0x0 lib[push -1] orig[push esi] (same-insn-start)
+lua-4.0	0x004bccc0	FUN_004bccc0	third-party-library[lua-4.0]	C2	differs	ldblib.obj	_lua_dblibopen	21	0x3	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.64; +0x3 lib[mov eax, dword ptr [esp + 4]] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bcce0	FUN_004bcce0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bcda0	FUN_004bcda0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_simpleexp	623	0x3	register allocation (same instruction, different registers)	mnemonic similarity 0.83; +0x3 lib[push ebx] orig[push esi] (same-insn-start)
+lua-4.0	0x004bcfc0	FUN_004bcfc0	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_deprecated_func	32	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.81; +0x0 lib[push esi] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bcfe0	FUN_004bcfe0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_string_constant	80	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.89; +0x1 lib[mov eax, dword ptr [edi + 4]] orig[mov edx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bd040	FUN_004bd040	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_sort	80	0x1	prologue / stack-frame or argument-load order	mnemonic similarity 0.71; +0x1 lib[mov esi, dword ptr [esp + 8]] orig[push edi] (same-insn-start)
+lua-4.0	0x004bd0b0	FUN_004bd0b0	third-party-library[lua-4.0]	C2	differs	ldblib.obj	_setcallhook	37	0x5	prologue / stack-frame or argument-load order	mnemonic similarity 0.75; +0x5 lib[push edi] orig[xor eax, eax] (same-insn-start)
+lua-4.0	0x004bd0f0	FUN_004bd0f0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_singlevar	58	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.79; +0x0 lib[push edi] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bd140	FUN_004bd140	third-party-library[lua-4.0]	C2	differs	lparser.obj	_search_local	98	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.89; +0x0 lib[push ebx] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bd1b0	FUN_004bd1b0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_pushupvalue	121	0x3	prologue / stack-frame or argument-load order	mnemonic similarity 0.88; +0x3 lib[mov ecx, esi] orig[lea eax, [esp]] (same-insn-start)
+lua-4.0	0x004bd240	FUN_004bd240	third-party-library[lua-4.0]	C2	differs	lparser.obj	_indexupvalue	118	0xc	prologue / stack-frame or argument-load order	mnemonic similarity 0.86; +0xc lib[movsx edx, word ptr [esi + 0x20]] orig[push edi] (same-insn-start)
+lua-4.0	0x004bd2c0	FUN_004bd2c0	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bd4b0	FUN_004bd4b0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_code_string	19	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.64; +0x0 lib[mov edx, dword ptr [esi + 0x28]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bd4d0	FUN_004bd4d0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_funcargs	166	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.76; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bd570	FUN_004bd570	third-party-library[lua-4.0]	C2	differs	lparser.obj	_explist1	170	0x7	register allocation (same instruction, different registers)	mnemonic similarity 0.67; +0x7 lib[push ebp] orig[push esi] (same-insn-start)
+lua-4.0	0x004bd5e0	FUN_004bd5e0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_constructor	186	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.67; +0x2 lib[sub esp, 0x14] orig[sub esp, 0x10] (same-insn-start)
+lua-4.0	0x004bd6a0	FUN_004bd6a0	third-party-library[lua-4.0]	C2	differs	lparser.obj	_constructor_part	333	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.90; +0x2 lib[mov esi, eax] orig[mov esi, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bd800	FUN_004bd800	third-party-library[lua-4.0]	C2	differs	lparser.obj	_lookahead	17	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.64; +0x0 lib[lea eax, [esi + 0x20]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bd820	FUN_004bd820	third-party-library[lua-4.0]	C2	differs	lparser.obj	_recfields	191	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.71; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bd8a0	FUN_004bd8a0	third-party-library[lua-4.0]	C2	differs	liolib.obj	_io_rename	115	0x5	prologue / stack-frame or argument-load order	mnemonic similarity 0.68; +0x5 lib[push 0] orig[mov eax, dword ptr [esi + 8]] (same-insn-start)
+lua-4.0	0x004bd930	FUN_004bd930	third-party-library[lua-4.0]	C2	differs	lparser.obj	_listfields	275	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.64; +0x0 lib[sub esp, 0x10] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bd9e0	FUN_004bd9e0	third-party-library[lua-4.0]	C2	differs	ldblib.obj	_settabss	30	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.62; +0x0 lib[push eax] orig[sub esp, 0xc] (same-insn-start)
+lua-4.0	0x004bda10	FUN_004bda10	third-party-library[lua-4.0]	C2	differs	lparser.obj	_getunopr	22	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.74; +0x0 lib[cmp eax, 0x2d] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bda30	FUN_004bda30	third-party-library[lua-4.0]	C2	differs	lparser.obj	_getbinopr	412	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.91; +0x0 lib[add eax, -0x2a] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bdbd0	FUN_004bdbd0	third-party-library[lua-4.0]	C2	differs	lauxlib.obj	_luaL_check_lstr	122	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.70; +0x2 lib[sub esp, 0x34] orig[sub esp, 0x18] (same-insn-start)
+lua-4.0	0x004bdc40	FUN_004bdc40	third-party-library[lua-4.0]	C2	differs	lauxlib.obj	_luaL_checktype	98	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.73; +0x2 lib[sub esp, 0x34] orig[sub esp, 0xc] (same-insn-start)
+lua-4.0	0x004bdcc0	lparser_fornum	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_foreach	130	0x5	register allocation (same instruction, different registers)	mnemonic similarity 0.71; +0x5 lib[push 4] orig[push edi] (same-insn-start)
+lua-4.0	0x004bdd50	lparser_new_localvar	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_deprecated_funcs	53	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.67; +0x0 lib[push esi] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bdda0	lparser_registerlocalvar	third-party-library[lua-4.0]	C2	differs	lparser.obj	_luaI_registerlocalvar	67	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.86; +0x1 lib[mov ecx, dword ptr [eax + 0x28]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bddf0	lparser_new_localvarliteral	third-party-library[lua-4.0]	C2	differs	lparser.obj	_new_localvarstr	28	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.76; +0x0 lib[push edi] orig[mov eax, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004bde20	lparser_forbody	third-party-library[lua-4.0]	C2	differs	ldblib.obj	_setlocal	112	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.67; +0x0 lib[sub esp, 0x60] orig[mov eax, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004bdea0	lparser_adjustlocalvars	third-party-library[lua-4.0]	C2	differs	lparser.obj	_adjustlocalvars	45	0x1	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.82; +0x1 lib[mov eax, dword ptr [eax + 0x28]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bdee0	lparser_forlist	third-party-library[lua-4.0]	C2	differs	lstate.obj	_f_luaopen	106	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.65; +0x0 lib[mov eax, dword ptr [esp + 8]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bdf80	lparser_funcargs_or_methodcall	third-party-library[lua-4.0]	C2	differs	lparser.obj	_ifstat	226	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.79; +0x2 lib[sub esp, 0x10] orig[sub esp, 0xc] (same-insn-start)
+lua-4.0	0x004be070	lparser_test_then_block	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_rawget	41	0x5	register allocation (same instruction, different registers)	mnemonic similarity 0.78; +0x5 lib[push 4] orig[push esi] (same-insn-start)
+lua-4.0	0x004be0a0	lparser_localstat	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_next	61	0x5	register allocation (same instruction, different registers)	mnemonic similarity 0.64; +0x5 lib[push 4] orig[push edi] (same-insn-start)
+lua-4.0	0x004be110	lparser_adjust_assign	third-party-library[lua-4.0]	C2	differs	lparser.obj	_adjust_mult_assign	82	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.89; +0x0 lib[push esi] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004be170	lparser_funcname_or_callstat	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_type	45	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.73; +0x0 lib[push esi] orig[sub esp, 0xc] (same-insn-start)
+lua-4.0	0x004be1b0	lparser_funcname_dotcolon	third-party-library[lua-4.0]	C2	differs	lparser.obj	_funcname	143	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.62; +0x0 lib[push ebp] orig[push ebx] (same-insn-start)
+lua-4.0	0x004be220	lparser_exprstat	third-party-library[lua-4.0]	C2	differs	lparser.obj	_namestat	99	0x3	prologue / stack-frame or argument-load order	mnemonic similarity 0.79; +0x3 lib[mov eax, esi] orig[lea eax, [esp]] (same-insn-start)
+lua-4.0	0x004be290	lparser_assignment	third-party-library[lua-4.0]	C2	differs	lparser.obj	_assignment	194	0x3	register allocation (same instruction, different registers)	mnemonic similarity 0.81; +0x3 lib[push ebp] orig[push ebx] (same-insn-start)
+lua-4.0	0x004be360	lparser_retstat	third-party-library[lua-4.0]	C2	differs	lvm.obj	_call_arith	42	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.83; +0x2 lib[mov esi, eax] orig[mov esi, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004be3b0	lparser_breakstat	third-party-library[lua-4.0]	C2	differs	lparser.obj	_breakstat	156	0x2	prologue / stack-frame or argument-load order	mnemonic similarity 0.74; +0x2 lib[push esi] orig[mov ebp, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004be410	lparser_body	third-party-library[lua-4.0]	C2	differs	liolib.obj	_setloc	103	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.61; +0x0 lib[push esi] orig[sub esp, 0x4cc] (same-insn-start)
+lua-4.0	0x004be4b0	lparser_pushclosure	third-party-library[lua-4.0]	C2	differs	lparser.obj	_pushclosure	138	0x6	prologue / stack-frame or argument-load order	mnemonic similarity 0.94; +0x6 lib[xor ebx, ebx] orig[push ebp] (same-insn-start)
+lua-4.0	0x004be540	lparser_parlist	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_dofile	109	0x7	prologue / stack-frame or argument-load order	mnemonic similarity 0.62; +0x7 lib[push esi] orig[xor edi, edi] (same-insn-start)
+lua-4.0	0x004be5d0	lparser_parlist_end	third-party-library[lua-4.0]	C2	differs	lparser.obj	_code_params	165	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.64; +0x0 lib[push esi] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004be640	lundump_LoadFunction	third-party-library[lua-4.0]	C2	differs	lundump.obj	_luaU_undump	135	0x6	prologue / stack-frame or argument-load order	mnemonic similarity 0.86; +0x6 lib[xor ebx, ebx] orig[push edi] (same-insn-start)
+lua-4.0	0x004be6c0	lundump_getsource	third-party-library[lua-4.0]	C2	differs	lundump.obj	_ZNAME	10	0x1	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.77; +0x1 lib[mov eax, dword ptr [eax + 0x10]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004be6d0	lundump_LoadChunk	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_getglobal	32	0x4	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.83; +0x4 lib[mov esi, dword ptr [esp + 8]] orig[mov esi, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004be6f0	lundump_LoadFunction_body	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_settagmethod	160	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.63; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004be780	lundump_LoadByte	third-party-library[lua-4.0]	C2	differs	lundump.obj	_ezgetc	77	0x2	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.77; +0x2 lib[mov esi, eax] orig[mov esi, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004be7d0	lundump_error_eof	third-party-library[lua-4.0]	C2	differs	lparser.obj	_leavebreak	26	0x1	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.87; +0x1 lib[mov eax, dword ptr [edi]] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004be7f0	lundump_LoadInt	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004be820	lundump_LoadVar	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004be880	lundump_LoadBlock	third-party-library[lua-4.0]	C2	differs	liolib.obj	_lua_iolibopen	28	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.71; +0x0 lib[push esi] orig[mov eax, dword ptr [esp + 0x10]] (same-insn-start)
+lua-4.0	0x004be8b0	lundump_LoadString	third-party-library[lua-4.0]	C2	differs	lundump.obj	_LoadChunk	23	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.69; +0x0 lib[push edi] orig[mov eax, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004be8d4	lundump_LoadString_tail	third-party-library[lua-4.0]	C2	differs	lbaselib.obj	_luaB_collectgarbage	36	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.68; +0x0 lib[push esi] orig[push ebx] (same-insn-start)
+lua-4.0	0x004be900	lundump_LoadCode	third-party-library[lua-4.0]	C2	differs	lundump.obj	_LoadCode	130	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.78; +0x0 lib[push ecx] orig[mov eax, dword ptr [esp + 0x10]] (same-insn-start)
+lua-4.0	0x004be980	lundump_LoadVector	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bea00	lundump_LoadLines	third-party-library[lua-4.0]	C2	differs	lundump.obj	_LoadLocals	279	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.61; +0x1 lib[mov edx, dword ptr [esp + 8]] orig[mov eax, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004beaa0	lundump_LoadLocals	third-party-library[lua-4.0]	C2	differs	lundump.obj	_LoadLines	81	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.74; +0x0 lib[push ecx] orig[push ebx] (same-insn-start)
+lua-4.0	0x004beaf0	lundump_LoadConstants	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bebe0	lundump_LoadHeader	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bed50	lundump_LoadDouble	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bed80	lundump_LoadSignature	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bede0	lundump_TESTSIZE	third-party-library[lua-4.0]	C2	differs	liolib.obj	_getnonullfile	80	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.75; +0x0 lib[push ebx] orig[push esi] (same-insn-start)
+lua-4.0	0x004bee20	lfunc_newupval	third-party-library[lua-4.0]	C2	identical	lfunc.obj	_luaF_newclosure	57			masked 4 B
+lua-4.0	0x004bee60	lfunc_newproto	third-party-library[lua-4.0]	C2	identical	lfunc.obj	_luaF_newproto	89			masked 4 B
+lua-4.0	0x004beec0	lfunc_setcodesize	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004beef0	lfunc_sizeproto	third-party-library[lua-4.0]	C2	differs	lfunc.obj	_protosize	40	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.85; +0x1 lib[mov ecx, dword ptr [eax + 0x34]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bef20	lfunc_freeproto	third-party-library[lua-4.0]	C2	differs	lfunc.obj	_luaF_freeproto	162	0x10	branch displacement (earlier size difference)	mnemonic similarity 0.81; +0x10 lib[jle 0x49] orig[jle 0x22] (same-insn-start)
+lua-4.0	0x004befa0	lfunc_freeclosure	third-party-library[lua-4.0]	C2	differs	lfunc.obj	_luaF_freeclosure	46	0x9	prologue / stack-frame or argument-load order	mnemonic similarity 0.62; +0x9 lib[mov esi, 0xffffffe0] orig[push 0] (same-insn-start)
+lua-4.0	0x004befd0	lfunc_getlocalname	third-party-library[lua-4.0]	C2	identical	lfunc.obj	_luaF_getlocalname	69			masked 0 B
+lua-4.0	0x004bf020	lcode_syntaxerror_curtoken	third-party-library[lua-4.0]	C2	identical	lcode.obj	_luaK_error	23			masked 4 B
+lua-4.0	0x004bf040	lcode_jump	third-party-library[lua-4.0]	C2	differs	liolib.obj	_io_getenv	38	0x6	register allocation (same instruction, different registers)	mnemonic similarity 0.74; +0x6 lib[push 0] orig[push -1] (same-insn-start)
+lua-4.0	0x004bf080	lcode_getlabel	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_getlabel	51	0x9	register allocation (same instruction, different registers)	mnemonic similarity 0.76; +0x9 lib[mov edx, dword ptr [esi + 0x14]] orig[mov ecx, dword ptr [esi + 0x14]] (same-insn-start)
+lua-4.0	0x004bf0b0	lcode_checkstack	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_deltastack	65	0x19	branch displacement (earlier size difference)	mnemonic similarity 0.89; +0x19 lib[jle 0x3f] orig[jle 0x3b] (same-insn-start)
+lua-4.0	0x004bf0f0	lcode_storestring_or_storek	third-party-library[lua-4.0]	C2	differs	lstrlib.obj	_lua_strlibopen	21	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.64; +0x1 lib[mov eax, dword ptr [esp + 4]] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bf110	lcode_storeNumber	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bf180	lcode_numberK	third-party-library[lua-4.0]	C2	identical	lcode.obj	_number_constant	121			masked 8 B
+lua-4.0	0x004bf200	lcode_setreg_or_loadnil	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bf230	lcode_hasjumps	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_lastisopen	58	0x4	prologue / stack-frame or argument-load order	mnemonic similarity 0.60; +0x4 lib[mov ecx, dword ptr [eax + 0x10]] orig[push eax] (same-insn-start)
+lua-4.0	0x004bf260	lcode_getprevinstr	third-party-library[lua-4.0]	C2	differs	lcode.obj	_previous_instruction	23	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.77; +0x1 lib[mov ecx, dword ptr [eax + 0x10]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bf280	lcode_setreturns	third-party-library[lua-4.0]	C2	differs	lundump.obj	_ezread	44	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.64; +0x0 lib[push eax] orig[push esi] (same-insn-start)
+lua-4.0	0x004bf2d0	lcode_storevar	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_infix	70	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.70; +0x1 lib[mov ecx, dword ptr [esp + 4]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bf320	lcode_patchlist	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_patchlist	56	0x2e	register allocation (same instruction, different registers)	mnemonic similarity 0.82; +0x2e lib[push eax] orig[push ecx] (same-insn-start)
+lua-4.0	0x004bf360	lcode_patchlistaux	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bf3f0	lcode_patchtarget	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_fixjump	88	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.83; +0x0 lib[mov edx, dword ptr [ebx]] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bf460	lcode_getjump	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_getjump	29	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.73; +0x1 lib[mov edx, dword ptr [eax]] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bf490	lcode_patchtohere	third-party-library[lua-4.0]	C2	differs	liolib.obj	_gethandle	68	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.64; +0x0 lib[push ebx] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bf4e0	lcode_goiftrue	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_goiftrue	37	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.61; +0x0 lib[push esi] orig[mov edx, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004bf510	lcode_codecond	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_testgo	254	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.63; +0x0 lib[push ecx] orig[mov eax, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004bf5c0	lcode_dischargevars_short	third-party-library[lua-4.0]	C2	differs	lcode.obj	_discharge1	38	0x2	register allocation (same instruction, different registers)	mnemonic similarity 0.79; +0x2 lib[mov eax, edi] orig[mov esi, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004bf600	lcode_dischargevars	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bf670	lcode_invertcond	third-party-library[lua-4.0]	C2	differs	lcode.obj	_invertjump	108	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.63; +0x0 lib[add eax, -0x20] orig[mov eax, dword ptr [esp + 4]] (same-insn-start)
+lua-4.0	0x004bf6e0	lcode_codearith	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bf820	lcode_need_value	third-party-library[lua-4.0]	C2	differs	lcode.obj	_need_value	56	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.67; +0x0 lib[cmp ecx, -1] orig[mov eax, dword ptr [esp + 8]] (same-insn-start)
+lua-4.0	0x004bf870	lcode_codeABx_label	third-party-library[lua-4.0]	C2	differs	ldblib.obj	_callf	33	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.88; +0x0 lib[mov eax, dword ptr [esp + 8]] orig[push esi] (same-insn-start)
+lua-4.0	0x004bf890	lcode_prefix	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bf920	lcode_infix	third-party-library[lua-4.0]	C2	not-compared						no library function paired
+lua-4.0	0x004bf970	lcode_goiffalse	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_goiffalse	35	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.61; +0x0 lib[push esi] orig[mov edx, dword ptr [esp + 0xc]] (same-insn-start)
+lua-4.0	0x004bf9a0	lcode_posfix	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_posfix	208	0x13	branch displacement (earlier size difference)	mnemonic similarity 0.76; +0x13 lib[je 0x89] orig[je 0x69] (same-insn-start)
+lua-4.0	0x004bfa40	lcode_codeABC_nil	third-party-library[lua-4.0]	C2	identical	lcode.obj	_luaK_code0	23			masked 4 B
+lua-4.0	0x004bfa60	lcode_codeABx	third-party-library[lua-4.0]	C2	identical	lcode.obj	_luaK_code1	26			masked 4 B
+lua-4.0	0x004bfa80	lcode_codeABC_core	third-party-library[lua-4.0]	C2	differs	lcode.obj	_luaK_code2	1000	0x7	prologue / stack-frame or argument-load order	mnemonic similarity 0.79; +0x7 lib[mov edx, dword ptr [eax + 0x10]] orig[push edi] (same-insn-start)
+lua-4.0	0x004bfe30	FUN_004bfe30	third-party-library[lua-4.0]	C2	differs	lcode.obj	_codelineinfo	113	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.88; +0x0 lib[mov ecx, dword ptr [edi + 0x24]] orig[push ebx] (same-insn-start)
+lua-4.0	0x004bfeb0	FUN_004bfeb0	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_abs	34			masked 8 B
+lua-4.0	0x004bfee0	FUN_004bfee0	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_sin	40			masked 12 B
+lua-4.0	0x004bff10	FUN_004bff10	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_cos	40			masked 12 B
+lua-4.0	0x004bff40	FUN_004bff40	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_tan	42			masked 12 B
+lua-4.0	0x004bff70	FUN_004bff70	third-party-library[lua-4.0]	C2	identical-ambiguous	lmathlib.obj	_math_asin	43			masked 16 B; same bytes as _math_acos
+lua-4.0	0x004bffa0	FUN_004bffa0	third-party-library[lua-4.0]	C2	identical-ambiguous	lmathlib.obj	_math_asin	43			masked 16 B; same bytes as _math_acos
+lua-4.0	0x004bffd0	FUN_004bffd0	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_atan	42			masked 12 B
+lua-4.0	0x004c0000	math_atan2	third-party-library[lua-4.0]	C1	identical	lmathlib.obj	_math_atan2	67			masked 16 B
+lua-4.0	0x004c0050	FUN_004c0050	third-party-library[lua-4.0]	C2	identical-ambiguous	lmathlib.obj	_math_ceil	40			masked 12 B; same bytes as _math_floor
+lua-4.0	0x004c0080	FUN_004c0080	third-party-library[lua-4.0]	C2	identical-ambiguous	lmathlib.obj	_math_ceil	40			masked 12 B; same bytes as _math_floor
+lua-4.0	0x004c00b0	FUN_004c00b0	third-party-library[lua-4.0]	C1	identical-ambiguous	lmathlib.obj	_math_mod	65			masked 16 B; same bytes as _math_pow
+lua-4.0	0x004c0100	FUN_004c0100	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_sqrt	34			masked 8 B
+lua-4.0	0x004c0130	FUN_004c0130	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_log	38			masked 8 B
+lua-4.0	0x004c0160	FUN_004c0160	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_log10	38			masked 8 B
+lua-4.0	0x004c0190	FUN_004c0190	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_exp	54			masked 8 B
+lua-4.0	0x004c01d0	FUN_004c01d0	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_deg	38			masked 12 B
+lua-4.0	0x004c0200	FUN_004c0200	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_rad	38			masked 12 B
+lua-4.0	0x004c0280	FUN_004c0280	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_ldexp	61			masked 20 B
+lua-4.0	0x004c02c0	FUN_004c02c0	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_min	112			masked 16 B
+lua-4.0	0x004c0330	FUN_004c0330	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_math_max	114			masked 16 B
+lua-4.0	0x004c04f0	math_randomseed	third-party-library[lua-4.0]	C1	identical	lmathlib.obj	_math_randomseed	29			masked 12 B
+lua-4.0	0x004c0510	FUN_004c0510	third-party-library[lua-4.0]	C2	identical	lmathlib.obj	_lua_mathlibopen	76			masked 36 B
+lua-4.0	0x004c0560	FUN_004c0560	third-party-library[lua-4.0]	C1	identical-ambiguous	lmathlib.obj	_math_mod	65			masked 16 B; same bytes as _math_pow
+lua-4.0	0x004c05b0	FUN_004c05b0	third-party-library[lua-4.0]	C2	identical	lauxlib.obj	_luaL_argerror	87			masked 24 B
+lua-4.0	0x004c0610	FUN_004c0610	third-party-library[lua-4.0]	C2	differs	lauxlib.obj	_type_error	67	0x3	register allocation (same instruction, different registers)	mnemonic similarity 0.87; +0x3 lib[push edi] orig[push esi] (same-insn-start)
+lua-4.0	0x004c0670	FUN_004c0670	third-party-library[lua-4.0]	C2	differs	lauxlib.obj	_luaL_check_number	76	0x7	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.94; +0x7 lib[mov esi, dword ptr [esp + 0x10]] orig[mov esi, dword ptr [esp + 0x14]] (same-insn-start)
+lua-4.0	0x004c06c0	FUN_004c06c0	third-party-library[lua-4.0]	C2	identical	lauxlib.obj	_luaL_openlib	58			masked 8 B
+lua-4.0	0x004c0700	FUN_004c0700	third-party-library[lua-4.0]	C2	identical	lauxlib.obj	_luaL_verror	54			masked 8 B
