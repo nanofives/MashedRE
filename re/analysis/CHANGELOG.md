@@ -84,6 +84,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-07  U-9783  UNCERTAINTIES  Active->struck  the mode-10 handling row 0x0067ea94 is a setup-screen option (FUN_0043dfd0 screen 0x12 row 4 / 0x18 row 3), separate from the course row 0x0063ba7c; live table 0x005f2770 -> 0x005f2728 static with 0 writes; 0 on every harness and menu race here (only row 0 available in 0x007f0a44+i*0x30), so A3 runs type 6 (105.0) on every course and the standalone default constant 6 is the original value; harness 13-track refs were taken at type 6; GAMEFLOW knob no longer writes 0x0067ea94 = k (gates unchanged, B_PSGA_K0 = B_DEFA_K0 b030be28) (evidence: verify/d4uncphys_20261107/RESULT_D4-UNC-PHYS.md)
 2026-11-06  0x004576b0  AnyActive4576b0  C3->C4  route match (c4=match): 100% 20/20 insn, relocheck OK, only body Match/MatchS09_004576b0.cpp, exe-callers=1 via Pickups_MaybeReplay; evidence: verify/matchrcs09_20261106/RESULT_MATCH-RC-S09.md
 2026-11-06  0x00458fa0  TtlSet68b1b0  C3->C4  route match (c4=match): 100% 38 B, relocheck OK, only body Match/MatchS09_00458fa0.cpp, exe-callers=1 via PickupField::InitReal; evidence: verify/matchrcs09_20261106/RESULT_MATCH-RC-S09.md
 2026-11-06  0x00451990  FUN_00451990  C2->C4  route match (c4=match): 100% 191 B, relocheck OK, only body Match/MatchS09_00451990.cpp, exe-callers=1 via Pontoon Coupling; evidence: verify/matchrcs09_20261106/RESULT_MATCH-RC-S09.md

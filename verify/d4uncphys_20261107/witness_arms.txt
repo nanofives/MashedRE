@@ -1,0 +1,9 @@
+== H_PSG
+[portstate-gameflow] course=30 k=0 mode=10 row=0 qbrow=0 sel=0 ld=0 v_rec_id=30 v_key=6
+[portstate-gameflow] a3 mode=10 v=0 type=6
+== B_PSG_K0
+[portstate-gameflow] course=30 k=0 mode=10 row=0 qbrow=0 sel=0 ld=0 v_rec_id=30 v_key=6
+[portstate-gameflow] a3 mode=10 v=0 type=6
+== B_PSGA_K0
+[portstate-gameflow] course=0 k=3 mode=10 row=3 qbrow=0 sel=3 ld=3 v_rec_id=30 v_key=6
+[portstate-gameflow] a3 mode=10 v=0 type=6
