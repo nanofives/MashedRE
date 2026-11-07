@@ -1,0 +1,46 @@
+rva	status	checked	unchecked	file	detail
+0x004a2bb8	OK	checked=2	unchecked=2	004a2bb8.c	  unchecked: __SEH_prolog,__imp__ExitProcess@4
+0x004a2be9	BAD	checked=2	unchecked=0	004a2be9.c	+0x9 _FUN_004a2bb8: ours 0x004a2bb8 vs orig 0x0049eddf
+0x004a2bf7	OK	checked=11	unchecked=0	004a2bf7.c	
+0x004a2c2f	OK	checked=4	unchecked=0	004a2c2f.c	
+0x004a31e1	OK	checked=1	unchecked=0	004a31e1.c	
+0x004a31ea	OK	checked=1	unchecked=0	004a31ea.c	
+0x004a31f3	OK	checked=7	unchecked=0	004a31f3.c	
+0x004a3258	OK	checked=16	unchecked=2	004a3258.c	  unchecked: __imp__GetCurrentProcess@0,__imp__TerminateProcess@8
+0x004a334d	OK	checked=1	unchecked=0	004a334d.c	
+0x004a3ac9	OK	checked=1	unchecked=2	004a3ac9.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x004a43d2	OK	checked=10	unchecked=8	004a43d2.c	  unchecked: @__security_check_cookie@4,___security_cookie,__aulldiv,__aullrem,__imp__GetSystemTimeAsFileTime@4,__imp__GetTimeZoneInformation@4
+0x004a45c6	OK	checked=1	unchecked=0	004a45c6.c	
+0x004a4660	OK	checked=1	unchecked=0	004a4660.c	
+0x004a467e	OK	checked=10	unchecked=3	004a467e.c	  unchecked: __SEH_epilog,__SEH_prolog,__imp__HeapAlloc@12
+0x004a4728	OK	checked=1	unchecked=0	004a4728.c	
+0x004a4bb7	OK	checked=30	unchecked=7	004a4bb7.c	  unchecked: __SEH_epilog,__SEH_prolog,__alloca_probe,__imp__GetCommandLineA@0,__imp__GetModuleHandleA@4,__imp__GetStartupInfoA@4,__imp__GetVersionExA@4
+0x004a4fc1	OK	checked=1	unchecked=0	004a504f.c	
+0x004a4ff4	OK	checked=1	unchecked=0	004a504f.c	
+0x004a5018	OK	checked=1	unchecked=0	004a504f.c	
+0x004a504f	OK	checked=22	unchecked=3	004a504f.c	  unchecked: @__security_check_cookie@4,___security_cookie,__aulldvrm
+0x004a57e4	BAD	checked=2	unchecked=5	004a57e4.c	+0x4c _DAT_00616038: ours 0x00616038 vs orig 0x4e006160  unchecked: __imp__GetCurrentProcessId@0,__imp__GetCurrentThreadId@0,__imp__GetSystemTimeAsFileTime@4,__imp__GetTickCount@0,__imp__QueryPerformanceCounter@4
+0x004a583a	OK	checked=24	unchecked=4	004a583a.c	  unchecked: __SEH_prolog,___security_cookie,__alloca_probe,__imp__GetModuleFileNameA@12
+0x004a5df5	BAD	checked=3	unchecked=0	004a5df5.c	+0x28 const __real@3ff0000000000000: ours 000000000000f03f vs orig@0x1ddce845 3c6f75747369646520696d6167653e
+0x004a5e35	OK	checked=3	unchecked=2	004a5e35.c	  unchecked: __imp__GetModuleHandleA@4,__imp__GetProcAddress@8
+0x004a5f07	OK	checked=3	unchecked=0	004a5f07.c	
+0x004a7796	BAD	checked=5	unchecked=1	004a7796.c	+0x33 _DAT_00616408: ours 0x0061640c vs orig 0x00616408; +0x4c _DAT_00616408: ours 0x0061652c vs orig 0x00616528  unchecked: __imp__DeleteCriticalSection@4
+0x004a77eb	OK	checked=1	unchecked=1	004a77eb.c	  unchecked: __imp__LeaveCriticalSection@4
+0x004a7800	OK	checked=9	unchecked=0	004a7800.c	
+0x004a787f	OK	checked=3	unchecked=1	004a787f.c	  unchecked: __imp__EnterCriticalSection@4
+0x004a78b0	OK	checked=3	unchecked=2	004a78b0.c	  unchecked: __SEH_epilog,__SEH_prolog
+0x004a9744	OK	checked=1	unchecked=0	004a9744.c	
+0x004aa23d	OK	checked=1	unchecked=0	004aa23d.c	
+0x004ab8d6	OK	checked=24	unchecked=6	004ab8d6.c	  unchecked: @__security_check_cookie@4,___security_cookie,__alloca_probe,__imp__GetModuleFileNameA@12,__imp__GetStdHandle@4,__imp__WriteFile@20
+0x004abc53	OK	checked=17	unchecked=0	004abc53.c	
+0x004abf28	OK	checked=8	unchecked=6	004abf28.c	  unchecked: __imp__FreeEnvironmentStringsA@4,__imp__FreeEnvironmentStringsW@4,__imp__GetEnvironmentStrings@0,__imp__GetEnvironmentStringsW@0,__imp__GetLastError@0,__imp__WideCharToMultiByte@32
+0x004ad1e0	OK	checked=1	unchecked=0	004ad1e0.c	
+0x004ad3e3	OK	checked=1	unchecked=0	004ad3e3.c	
+0x004ae635	BAD	checked=21	unchecked=0	004ae635.c	+0x4c _DAT_00616d20: ours 0x00616d2c vs orig 0x14c48300; +0x51 const ??_C@_01ICJEACDI@?$DL?$AA@: ours 3b00 vs orig@0x752468de 3c6f75747369646520696d6167653e; +0x57 _DAT_00616d20: ours 0x00616d24 vs orig 0x6d2435ff; +0x5f _FUN_004ac570: ours 0x004ac570 vs orig 0x844ae676; +0x81 _DAT_00616d20: ours 0x00616d24 vs orig 0x6d2435ff; +0x86 _FUN_004ae4b6: ours 0x004ae4b6 vs orig 0xfe40cebf; +0x8f _DAT_00616d20: ours 0x00616d5c vs orig 0x6d60fe81
+0x004aedcf	OK	checked=18	unchecked=3	004aedcf.c	  unchecked: @__security_check_cookie@4,___security_cookie,__imp__GetCPInfo@8
+0x004aed77	OK	checked=0	unchecked=0	004aefd0.c	
+0x004aefd0	OK	checked=24	unchecked=3	004aefd0.c	  unchecked: @__security_check_cookie@4,___security_cookie,__imp__GetCPInfo@8
+0x004af2ad	OK	checked=1	unchecked=0	004af2ad.c	
+0x004af2d4	OK	checked=4	unchecked=0	004af2d4.c	
+0x004af31a	OK	checked=2	unchecked=1	004af31a.c	  unchecked: __imp__SetUnhandledExceptionFilter@4
+0x004af32d	OK	checked=1	unchecked=1	004af32d.c	  unchecked: __imp__SetUnhandledExceptionFilter@4
