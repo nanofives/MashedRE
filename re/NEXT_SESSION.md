@@ -1,5 +1,22 @@
 # Next session kickoff
 
+> ## START HERE 2026-11-07: ROADMAP v4 (L-93). Read `ROADMAP.md` first, then this file's blocks below as history.
+>
+> - **Two axes.** RE axis: C0..C4 per `re/CONFIDENCE.md`, C4 = reverse engineering certified (100% byte match with
+>   relocheck OK, or library identity, on its own). Port axis: the derived `hooks.csv` `port` column (none / body /
+>   called) plus the playthrough and default-build gates. The project DoD (P-DoD) is the port axis.
+> - **RE axis next:** M1 C4R-RUBRIC + C4R-PORTCOL (run 35), then M2 C4R-MATCHBATCH (about 1,875 C4 expected), M3 match-only
+>   slices S17, S18, S20..S28 (no swap, no build, no gates), M4 C4R-LIBID, M5 residue (MATCH-S14-FU, MATCH-RWCORE-G5,
+>   d3dx9 / DirectShow, the Frida route, MATCH-9466), final sweep C4R-MATCHBATCH-2 (about 3,350 C4 expected).
+> - **Port axis next:** D4 open rows (D4-DC-77b0, D4-DC-INC-*, D4-UNC-PHYS-3, D4-ST5LEG2-MODE7, D3-CF-*), the matched-body
+>   swap rows (MATCH-S09-FU2, -S11-FU-VEHBASE, -S12-FU-RFXDEF, -S15-FU-MAINLOOP, -S16-FU-GAMMA, -S16-FU-L2-494A80,
+>   -S19-FU-MATHSAFE, -S19-FU-RASTER-SELFTEST, -RECORDS-SWAP-46DBE0, -PAUSE-OVERLAY), then D5 (D5-SHIM, D5-DEPS, D5-KNOBS).
+>   A swap moves the `port` value, not the C-level.
+> - **Old citations.** `ROADMAP.md §Dn` and `ROADMAP.md:<line>` in the blocks below (all dated before 2026-11-07) point at
+>   v3, archived verbatim at `re/analysis/archive/ROADMAP_v3_2026-08-15.md`. The blocks below still describe the C4 rule
+>   before L-93 (C4 tied to the exe port); read `re/CONFIDENCE.md` for the current rule.
+> - Gate refs: `re/orchestrator/merge_train.json`. Ledger: `re/orchestrator/roadmap.ps1 status`.
+
 > ## START HERE 2026-10-24 audiolink slices 1-7 + AudioRws 1 (MERGED into `race/first-frame-parity`, Mariano's call): **17 Audio TUs newly in both targets (59 functions), plus the two precedent files now address-free in the exe (3 functions: 0x005b0f40, 0x005ad2e0, 0x005aed20); 3 latent defects + 1 fault-order gap fixed; the audio pool constructor chain found.** Next = AudioRws pool / list family (private zero storage = the pre-open state), or the job-twin decisions.
 >
 > - Slice 7: AudioQueuePop calls a port of 0x005ad2e0 (AudioQueueConsume, path1 10/10, new handler queue_node_consume); AudioVecLength's exe arm reads private copies of 0x005d757c / 0x00633b48 (equal to the runtime bytes). `RESULT_slice7.md`.
