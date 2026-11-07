@@ -20,3 +20,9 @@ re/analysis/CHANGELOG.md text eol=lf
 re/orchestrator/ledger/** text eol=lf
 re/orchestrator/DECISIONS.md text eol=lf
 re/orchestrator/INTEGRATION_LOG.md text eol=lf
+
+# hooks.csv: the derived `port` column (L-93, scripts/backfill_port.py) sits on every row, so a branch
+# that predates it would conflict on every row it touched. The driver strips `port`, merges the rest
+# with git merge-file, and carries `port` back by RVA. Undefined driver = git's normal text merge.
+# Register once per clone: git config merge.hooksport.driver "py -3.12 scripts/backfill_port.py --merge-driver %O %A %B"
+/hooks.csv merge=hooksport
