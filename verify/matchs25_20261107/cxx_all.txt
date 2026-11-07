@@ -1,0 +1,177 @@
+CXXOK 005a5910
+CXXOK 005a5b30
+CXXOK 005a5d60
+CXXOK 005a5d90
+CXXOK 005a5f00
+CXXOK 005a5f60
+CXXOK 005a6030
+CXXOK 005a6070
+CXXOK 005a60b0
+CXXOK 005a60e0
+CXXOK 005a6110
+CXXOK 005a6150
+CXXOK 005a6190
+CXXOK 005a61b0
+CXXOK 005a6280
+CXXOK 005a62b0
+CXXOK 005a6340
+CXXOK 005a65a0
+CXXOK 005a65d0
+CXXOK 005a6670
+CXXOK 005a66d0
+CXXOK 005a6710
+CXXOK 005a6b70
+CXXOK 005a6c60
+CXXOK 005a6c90
+CXXOK 005a6cb0
+CXXOK 005a6d60
+CXXOK 005a6d90
+CXXOK 005a6dc0
+CXXOK 005a6df0
+CXXOK 005a6e10
+CXXOK 005a6ea0
+CXXFAIL 005a6f30 
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(77): error C2440: '=': no se puede realizar la conversión de 'undefined4' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(78): error C2446: !=': no hay conversión de 'undefined4 *' en 'undefined4 **'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(84): error C2664: 'void FUN_005a7460(int *)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(93): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(94): error C2660: 'FUN_005a6df0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(102): error C3861: 'ROUND': no se encontró el identificador
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(114): error C2664: 'void FUN_005a7460(int *)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(124): error C2660: 'FUN_005a6df0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(125): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(126): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(127): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(129): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(131): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(132): error C2664: 'uint FUN_005a6d60(undefined4 *,int,undefined4,undefined4)': el argumento 1 no puede convertirse de 'int' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(133): error C2664: 'uint FUN_005a6d60(undefined4 *,int,undefined4,undefined4)': el argumento 1 no puede convertirse de 'int' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(134): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(135): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(136): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(137): error C2660: 'FUN_005a6dc0': la función no acepta 4 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005a6f30.c(143): error C2446: !=': no hay conversión de 'undefined4 *' en 'undefined4 **'
+CXXOK 005a71f0
+CXXOK 005a73b0
+CXXOK 005a7420
+CXXOK 005a7460
+CXXOK 005a7520
+CXXOK 005a7560
+CXXOK 005a75b0
+CXXOK 005a7920
+CXXOK 005a79a0
+CXXOK 005a7a40
+CXXOK 005a7a60
+CXXOK 005a7aa0
+CXXOK 005a7af0
+CXXOK 005a7b00
+CXXOK 005a7b50
+CXXOK 005a7b60
+CXXOK 005a7e70
+CXXOK 005a7ea0
+CXXOK 005a7ee0
+CXXOK 005a7f70
+CXXOK 005a8060
+CXXOK 005a8390
+CXXOK 005a8560
+CXXOK 005a86a0
+CXXOK 005a8750
+CXXOK 005a8890
+CXXOK 005a8960
+CXXOK 005a89a0
+CXXOK 005a89b0
+CXXOK 005a89c0
+CXXOK 005a89d0
+CXXOK 005a8e70
+CXXOK 005a8f30
+CXXOK 005a9280
+CXXOK 005a9ab0
+CXXOK 005a9be0
+CXXOK 005a9c50
+CXXOK 005a9d00
+CXXOK 005a9de0
+CXXOK 005a9e10
+CXXOK 005a9e40
+CXXOK 005a9e60
+CXXOK 005a9f10
+CXXOK 005a9f60
+CXXOK 005a9ff0
+CXXOK 005aa030
+CXXOK 005aa060
+CXXOK 005aa0c0
+CXXOK 005aa1e0
+CXXOK 005aa200
+CXXOK 005aa330
+CXXOK 005aa3d0
+CXXOK 005aa560
+CXXOK 005aa7a0
+CXXOK 005aa7e0
+CXXOK 005aa8a0
+CXXOK 005aa900
+CXXOK 005aa9c0
+CXXOK 005aaa00
+CXXOK 005aaac0
+CXXOK 005aab00
+CXXOK 005aab70
+CXXOK 005aabe0
+CXXOK 005aac20
+CXXOK 005aacf0
+CXXOK 005aad40
+CXXOK 005aadc0
+CXXOK 005aaff0
+CXXOK 005ab010
+CXXOK 005ab040
+CXXOK 005ab070
+CXXOK 005ab090
+CXXOK 005ab150
+CXXOK 005ab180
+CXXOK 005ab190
+CXXOK 005ab1c0
+CXXOK 005ab2f0
+CXXOK 005ab340
+CXXOK 005ab370
+CXXOK 005ab380
+CXXOK 005ab410
+CXXOK 005ab560
+CXXOK 005ab620
+CXXOK 005ab710
+CXXOK 005ab980
+CXXOK 005aba20
+CXXOK 005abcb0
+CXXOK 005abcf0
+CXXOK 005abd30
+CXXOK 005abe30
+CXXOK 005abf80
+CXXOK 005abfa0
+CXXFAIL 005ac210 
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(87): error C2664: 'void FUN_005aec00(int,uint)': el argumento 1 no puede convertirse de 'uint **' a 'int'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(89): error C2664: 'undefined4 *FUN_005acaa0(undefined4 *,undefined4 *,int,int)': el argumento 1 no puede convertirse de 'undefined1 [28]' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(90): error C2664: 'int FUN_005aca80(int)': el argumento 1 no puede convertirse de 'undefined1 [28]' a 'int'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(92): error C2664: 'undefined4 *FUN_005acaa0(undefined4 *,undefined4 *,int,int)': el argumento 1 no puede convertirse de 'int [7]' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(93): error C2664: 'int FUN_005aca80(int)': el argumento 1 no puede convertirse de 'int [7]' a 'int'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(100): error C2664: 'void FUN_005aec00(int,uint)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(106): error C2664: 'undefined4 *FUN_005ae0c0(undefined4 *,undefined4 *,undefined4 *)': el argumento 3 no puede convertirse de 'uint' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(115): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(125): error C2664: 'undefined4 *FUN_005aa0c0(undefined4 *,int *,undefined *,undefined4,int)': el argumento 3 no puede convertirse de 'undefined1' a 'undefined *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(131): error C2664: 'undefined4 *FUN_005ae0c0(undefined4 *,undefined4 *,undefined4 *)': el argumento 3 no puede convertirse de 'uint' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(132): error C2664: 'undefined4 FUN_005ac900(undefined4)': el argumento 1 no puede convertirse de 'uint *' a 'undefined4'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(136): error C2664: 'int FUN_005adf30(byte *,byte *)': el argumento 1 no puede convertirse de 'undefined4' a 'byte *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(138): error C2664: 'undefined4 FUN_005ac900(undefined4)': el argumento 1 no puede convertirse de 'undefined1 *' a 'undefined4'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(139): error C2664: 'undefined4 FUN_005acd10(int,undefined4)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(147): error C2664: 'void FUN_005ac980(undefined4 *,undefined4 *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(163): error C2664: 'undefined4 *FUN_005ae0c0(undefined4 *,undefined4 *,undefined4 *)': el argumento 3 no puede convertirse de 'uint' a 'undefined4 *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(178): error C2664: 'void FUN_005aaac0(undefined *,undefined4)': el argumento 1 no puede convertirse de 'undefined1' a 'undefined *'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(187): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(191): error C2660: 'FUN_005aea00': la función no acepta 2 argumentos
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(203): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(206): error C2664: 'int FUN_005aba20(int,undefined4,undefined4 *,undefined4 *,uint,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-S25\re\match\s25\005ac210.c(209): error C2664: 'uint FUN_005ac7b0(uint,undefined4,undefined4)': el argumento 2 no puede convertirse de 'uint *' a 'undefined4'
+CXXOK 005ac540
+CXXOK 005ac5f0
+CXXOK 005ac650
+CXXOK 005ac740
+CXXOK 005ac7b0
+CXXOK 005ac7e0
+CXXOK 005ac880
+CXXOK 005ac900
+CXXOK 005ac980

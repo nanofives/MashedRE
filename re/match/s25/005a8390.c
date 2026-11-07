@@ -1,0 +1,66 @@
+// FLAGS: /O2 /Ob1 /G5
+/* best 98.5% (regs 98.5%, ops 100.0%) via match_permute (store of &DAT_007dcad8 moved before the iVar3 load). Residual: one scratch
+   register in the list-link sequence (original: mov eax,[DAT]; ... mov ecx,[DAT]; ours swaps the load position). Class (b). */
+/* MATCH-S25 0x005a8390: hand-matched (h1). */
+/* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
+
+MGLOBAL(int, DAT_007dcb68, 0x007dcb68);
+MGLOBAL(void *, DAT_007dcae0, 0x007dcae0);
+MGLOBAL(int *, DAT_007dcad8, 0x007dcad8);
+__declspec(dllimport) unsigned long __stdcall WaitForSingleObject(void *hHandle, unsigned long dwMilliseconds);
+__declspec(dllimport) int __stdcall ReleaseSemaphore(void *hSemaphore, long lReleaseCount, long *lpPreviousCount);
+int FUN_005aefc0(int p0, int p1, undefined4 p2, undefined4 p3, undefined4 p4, undefined4 p5);
+// MATCH: 0x005a8390 FUN_005a8390
+int FUN_005a8390(int param_1,int param_2,undefined4 *param_3)
+{
+  int *piVar1;
+  undefined4 uVar2;
+  int iVar3;
+  piVar1 = (int *)(param_1 + 0x14);
+  if (*(int *)(param_1 + 0x14) != 0) {
+    **(int **)(param_1 + 0x18) = *(int *)(param_1 + 0x14);
+    *(undefined4 *)(*piVar1 + 4) = *(undefined4 *)(param_1 + 0x18);
+    *(undefined4 *)(param_1 + 0x18) = 0;
+    *piVar1 = 0;
+  }
+  uVar2 = *(undefined4 *)(param_2 + 0x2c);
+  *(undefined4 *)(param_1 + 0xd9c) = 0;
+  iVar3 = FUN_005aefc0(param_1 + 0xec,param_2,uVar2,*param_3,param_3[1],param_3[2]);
+  if (iVar3 == 0) {
+    return 0;
+  }
+  if (DAT_007dcb68 != 0) {
+    WaitForSingleObject(DAT_007dcae0,0xffffffff);
+  }
+  *(int **)(param_1 + 0x18) = (int *)&DAT_007dcad8;
+  iVar3 = (int)DAT_007dcad8;
+  *piVar1 = iVar3;
+  *(int **)((int)DAT_007dcad8 + 4) = piVar1;
+  DAT_007dcad8 = piVar1;
+  if (DAT_007dcb68 != 0) {
+    ReleaseSemaphore(DAT_007dcae0,1,(long *)0x0);
+  }
+  DAT_007dcb68 = DAT_007dcb68 + 1;
+  return param_1;
+}
