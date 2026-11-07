@@ -110,7 +110,7 @@ int FUN_00402750(void)
   FUN_004963e0("Calling HardwareShowIntroVideo\n");
   FUN_00495350();
   FUN_00494c80(0);
-  FUN_00495280("d:\toastart\common\font36.piz");
+  FUN_00495280("d:\\toastart\\common\\font36.piz");
   FUN_004283a0();
   FUN_00427ca0();
   FUN_004275d0(FUN_004671a0(0));
@@ -137,11 +137,11 @@ int FUN_00402750(void)
   FUN_00403640(FUN_004671a0(0));
   FUN_0047ba00(FUN_004671a0(0), 0);
   if (FUN_00499ce0() == 0) return 0;
-  FUN_00495280("d:\toastart\common\powerups\powerups.piz");
+  FUN_00495280("d:\\toastart\\common\\powerups\\powerups.piz");
   FUN_0045bae0();
   FUN_00418980();
   FUN_004952f0();
-  FUN_00495280("d:\toastart\common\Panel\Panel.piz");
+  FUN_00495280("d:\\toastart\\common\\Panel\\Panel.piz");
   FUN_0041b450();
   FUN_0041bec0();
   FUN_0041cb10();
@@ -157,11 +157,11 @@ int FUN_00402750(void)
   FUN_00412890();
   FUN_00471eb0();
   FUN_00404830();
-  FUN_00495280("d:\ToastArt\common\perm.piz");
+  FUN_00495280("d:\\ToastArt\\common\\perm.piz");
   FUN_00425bc0();
   FUN_004025f0();
   FUN_004952f0();
-  DAT_00636ac8 = FUN_004b3d80("toastart\pc\pc.txd", 0, 0);
+  DAT_00636ac8 = FUN_004b3d80("toastart\\pc\\pc.txd", 0, 0);
   FUN_00431b40(0.3f);
   FUN_00402f50();
   FUN_00428390(3);

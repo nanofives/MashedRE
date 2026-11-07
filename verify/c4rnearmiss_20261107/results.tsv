@@ -1,0 +1,112 @@
+rva	source	before_pct	before_bytes_bad	after_pct	after_bytes_bad	verdict	how	sha256	flags
+0x00402750	re/match/s01/00402750.c	100.0	0	100.0	0	IDENTICAL	string literal backslashes escaped; relocheck BAD -> OK	d6a980e83640f96b687619a7eee85e79be68e277394e8172ee6f1bda3ed7be9c	/O2 /GS /Ob1
+0x0040ac80	re/match/s02/0040ac80.c	54.5	0	100.0	0	IDENTICAL	no source change; scored at body_end size 0x36 (pc_funcs body_size 228 folds 4 tail-jumped handlers); hidden_check.py	5ce78a1f70605b1dfe14040912412cb7852d6bb71159d704127c691c13e2dd04	/O2 /GS /Ob1
+0x004c0ad0	re/match/s19/004c0ad0.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	65ece3facdfa1e4f73934013ec46e3554109fa4533312ab87a2b5a98ad2f00d4	/O2 /GS /Ob1 /G5
+0x004d4bf0	re/match/s21/004d4bf0.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	d8c2ed0773237607846f3bb098ba860192e7c098f41e8d8a4b8e798e7f510d56	/O2 /Ob1 /G5
+0x004d8280	re/match/s21/004d8280.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	e8a3617b0ec12e7d99880cc359d342eaff19b86c479e46b0b867771137df0384	/O2 /Ob1 /G5
+0x004d83d0	re/match/s21/004d83d0.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	00bb4743bdb3e7e954dd3a786acfc1107df19275b6b87f35ef5d04b55abba520	/O2 /Ob1 /G5
+0x004da430	re/match/s21/004da430.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	81fa20d0d53851e204e33dd8727c587c8c42bb17841879c6723d9af21175fbc4	/O2 /Ob1 /G5
+0x004da480	re/match/s21/004da480.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	864b4035c60e6e4dd59100b1cd59e0d63c2888d2cd81d47ccb8fa5fcd8277054	/O2 /Ob1 /G5
+0x004dab70	re/match/s21/004dab70.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	3afcf418b22c513a9f86559fdc754a72bc6daf905b274c4c339b9c817f8a1785	/O2 /Ob1 /G5
+0x00553e80	re/match/s24/00554200.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	a14100732019be3aff47ff5403e3899aa297df628bf419e68576ef79c4486723	/O2 /Ob1 /G5
+0x00554010	re/match/s24/00554010.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	61af929dc284f72dc9686f3ffa56c0a3c12f3746ace3ac7a5b9a45b8930b0f49	/O2 /Ob1 /G5
+0x00554150	re/match/s24/00554150.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	89a437f87a16cf47d330dcd95c72d8d5c9aef1bdf46a06a542a5725382d5e57e	/O2 /Ob1 /G5
+0x0055c4f0	re/match/s24/0055c4f0.c	100.0	1	100.0	0	IDENTICAL	no source change; the 1 bad byte is a self-recursive REL32 call that match.py byte_compare reads as DIR32; selfcall_bytecheck.py typed_bad=0	a79b5dd8bb3ae458ef19465ab9ef448650948a893b15821fd0657dda4e7eb3cd	/O2 /Ob1 /G5
+0x004046a0	re/match/s01/004046a0.c	96.8	6	96.8	6	UNCHANGED	permute: no gain	a5de8bdbec427b154fdaa302c6d7925368eb2d11c136e636c29e883d4cd753d8	/O2 /GS /Ob1
+0x004039f0	re/match/s01/004039f0.c	97.1	39	97.1	39	UNCHANGED	permute: no gain	e1a41cbd946f5777a3b01fb49e9bea69ba7504da053f68a5464bc4a5b76e4936	/O2 /GS /Ob1
+0x00402b70	re/match/s01/00402b70.c	99.4	6	99.4	6	UNCHANGED	permute: no gain	88e73e77ebd192b24124ba9c6ad29840847d8f643c16053cebb86c6c72ec2c38	/O2 /GS /Ob1
+0x00405730	re/match/s01/00405730.c	96.2	5	96.2	5	UNCHANGED	permute: no gain	b764c8090e3295cb8d955108a7c1cac2c7de1c2147a7c31038cdd3205392f3db	/O2 /GS /Ob1
+0x00405920	re/match/s01/00405920.c	99.2	7	99.2	7	UNCHANGED	permute: no gain	1b18f386ba039b3e68eb52c60870416693210f8a7b751ae4138759079d42df77	/O2 /GS /Ob1
+0x00407800	re/match/s01/00407800.c	99.3	8	99.3	8	UNCHANGED	permute: no gain	917f552cbc7bbb64df10a3f2796af17ee0c60cc377fd40f7d92d6ff934e43b18	/O2 /GS /Ob1
+0x004064c0	re/match/s01/004064c0.c	99.4	19	99.4	19	UNCHANGED	permute: no gain	c30d1f1aa5e2c4d24db6af32b8b029592f516e37ddb43deef956fe97d5cabf0f	/O2 /GS /Ob1
+0x00405ab0	re/match/s01/00405920.c	96.9	42	96.9	42	UNCHANGED	permute: no gain	1b18f386ba039b3e68eb52c60870416693210f8a7b751ae4138759079d42df77	/O2 /GS /Ob1
+0x00412cf0	re/match/s03/h2_00412cf0.c	99.0	7	99.0	7	UNCHANGED	permute: no gain	d3bf73c5ee10bd64c2b8b93255f5be012e09a890f9b95aeab1865ddec6b5c280	/O2 /GS /Ob1
+0x0040ad90	re/match/s02/0040ad90.c	97.9	3	97.9	3	UNCHANGED	permute: no gain	423afffb4b916a869943a4e287c7b5c41ae118a9d050a3241e9368e81588c081	/O2 /GS /Ob1
+0x00414f00	re/match/pilot/a1_00414f00.c	95.8	18	95.8	18	UNCHANGED	permute: no gain	5e55091528133dc883ce35e1e3f497df1848c2c087a26264750802f994d7124a	/O2 /GS /Ob1
+0x00408610	re/match/s01/00408610.c	95.8	32	95.8	32	UNCHANGED	permute: no gain	172fa482e134739024e2de9f311cdf61ff6b1ecfc585dd421bd314c4f0a4d366	/O2 /GS /Ob1
+0x0041af50	re/match/s03/h3_0041af50.c	96.3	163	96.3	163	UNCHANGED	permute: no gain	0db59e30daff39844ebd6d85de14d196000c898df8f87b0069d21964ae3baa79	/O2 /GS /Ob1
+0x00414300	re/match/s03/h4_00414300.c	97.8	4	97.8	4	UNCHANGED	permute: no gain	cf28a8033b8cc9dadc860da6e00b791abd4f95e966ceacbebaf55b6421d914d4	/O2 /GS /Ob1
+0x0041c180	re/match/s04/0041c180.c	96.7	8	96.7	8	UNCHANGED	permute: no gain	ce246052e2884702906b5b771ab73d91700df08d61e78aea6589ee872e1c4e77	/O2 /GS /Ob1
+0x0041ce00	re/match/s04/0041ce00.c	98.7	8	98.7	8	UNCHANGED	permute: no gain	8875919f02f81bb9f33cab8e7a8d66dad2deba3640e3184ffe77dc0442426e68	/O2 /GS /Ob1
+0x0041d930	re/match/s04/0041d930.c	97.0	8	97.0	8	UNCHANGED	permute: no gain	c42718bc685a28de5e9a2d30f34be0b143f12258645325a1da0bfd2669016961	/O2 /GS /Ob1
+0x0041c410	re/match/s04/0041c410.c	99.4	8	99.4	8	UNCHANGED	permute: no gain	e2ae019e662349121fd96d4b8494c5b6b673f16f6ce9b0a504e3ebf32b32ee59	/O2 /GS /Ob1
+0x0041e6c0	re/match/s04/0041e6c0.c	98.8	15	98.8	15	UNCHANGED	permute: no gain	f09c41f97013a2bc72a34856b0e753082e73a343ed99567eeee9994503999e63	/O2 /GS /Ob1
+0x00420050	re/match/s05/00420050.c	99.3	9	99.3	9	UNCHANGED	permute: no gain	aa99ef76ed6bb9fd2a67fc6b25451b4f6c7f9d9ddb0e4369e8c4af5b5ad8052e	/O2 /GS /Ob1
+0x0041fcc0	re/match/s05/0041fcc0.c	98.9	7	98.9	7	UNCHANGED	permute: no gain	100e242d986805190e359f51bde876d391dafdc054cf453e15277038a444c0e1	/O2 /GS /Ob1
+0x00422570	re/match/s05/00422570.c	98.5	16	98.5	16	UNCHANGED	permute: no gain	bad3d397ffb654c04ef7e66caf36c51afb7b32ed9604da07ed582b1de162dae5	/O2 /GS /Ob1
+0x00426810	re/match/s06/00426810.c	97.9	29	97.9	29	UNCHANGED	permute: no gain	dcc7274523adcc4efe948792f524dec8eb031310b26221feedf0eb625e129ed9	/O2 /GS /Ob1
+0x00429310	re/match/s06/00429310.c	98.3	16	98.3	16	UNCHANGED	permute: no gain	3087c3908ab6f97facc7837a6368e55d640e7ac27c4ad118420a40d6a164a3a8	/O2 /GS /Ob1
+0x00429bd0	re/match/s06/00429bd0.c	99.4	4	99.4	4	UNCHANGED	permute: no gain	008d8e294a17e79c2f8d53ba7665865014c32eac932d68832a725c9229430ce9	/O2 /GS /Ob1
+0x00424eb0	re/match/s05/00424eb0.c	98.6	5	98.6	5	UNCHANGED	permute: no gain	a85e27f0a48355535aa7ee7be34ef84f8844635930be21889f08f44774e9f5c5	/O2 /GS /Ob1
+0x004307a0	re/match/s07/004307a0.c	97.1	5	97.1	5	UNCHANGED	permute: no gain	5499a9abae6617c02b02169d0fa771e7897273004833d91f8a154b361129364d	/O2 /GS /Ob1
+0x0042f530	re/match/s07/0042f530.c	96.9	6	96.9	6	UNCHANGED	permute: no gain	392b17e272948dbfa81b29dff9566231631bfb0231df514bda8b74e3ce0b5020	/O2 /GS /Ob1
+0x0042d5a0	re/match/s07/0042d5a0.c	98.1	8	98.1	8	UNCHANGED	permute: no gain	f2b222ccfd75ed856f10c2be91a2840b7ba72c673708bd860b2085869c18b4c2	/O2 /GS /Ob1
+0x00431240	re/match/s07/00431240.c	98.9	15	98.9	15	UNCHANGED	permute: no gain	9a32f2b498dc98998df9fc1beac1dc5efa0aa58ea093ee7de60d572c02b68262	/O2 /GS /Ob1
+0x004332a0	re/match/s08/004332a0.c	97.3	60	97.3	60	UNCHANGED	permute: no gain	5595ebff31c7b25aeefe6e26871773df0aa89f2e8595bf5bca446e12c0fe59fe	/O2 /GS /Ob1
+0x00442a60	re/match/s08/00442a60.c	99.4	6	99.4	6	UNCHANGED	permute: no gain	73789a0063d5636f31f2086ebf28ac12c06ffd528aac45ce0ce5c2df28deb8e2	/O2 /GS /Ob1
+0x00433f40	re/match/s08/00433f40.c	99.3	2	99.3	2	UNCHANGED	permute: no gain	f8479757d23a51d16105907c07ff737daf508c01570c09c2c5e66b5573f9d73e	/O2 /GS /Ob1
+0x0044c490	re/match/s08/0044c490.c	95.5	62	95.5	62	UNCHANGED	permute: no gain	c24369d3235a5f9e910c7c7dd009e430a9baad8c0a9d6b9bb0fe551ad74a230b	/O2 /GS /Ob1
+0x0044c4f0	re/match/pilot/a2_0044c4f0.c	98.8	9	98.8	9	UNCHANGED	permute: no gain	ca7979ac6da67a3c84bd5a9d744968d0ad338d8559d938a31c94b5dee3e1bc61	/O2 /GS /Ob1
+0x0044e0a0	re/match/s08/0044e0a0.c	98.4	7	98.4	7	UNCHANGED	permute: no gain	a24fa8f585375a83ebf2c0216ee5365cdad13c809eedd919a5397e7291d4091c	/O2 /GS /Ob1
+0x00453730	re/match/s09/004538b0.c	95.3	24	95.3	24	UNCHANGED	permute: no gain	c365c3b51ba918ce56a581231850d72b87892f884f71e3ab00e4e82f9fec0d89	/O2 /GS /Ob1
+0x00448220	re/match/s08/00448220.c	97.0	81	97.0	81	UNCHANGED	permute: no gain	a747b919ae3947ad7a97760e38cc07a273aa1ab0f956b82a6e4ba738099f7991	/O2 /GS /Ob1
+0x00455150	re/match/s09/00455150.c	99.4	5	99.4	5	UNCHANGED	permute: no gain	cc6fd4b9df4f3d8034357365a054a4981638793d19b2df35d1a120cf52ab762d	/O2 /GS /Ob1
+0x00454350	re/match/s09/00454350.c	98.2	37	98.2	37	UNCHANGED	permute: no gain	486ad3df312ea02de82f8348f879e1878033d7ac525c07c014ba249eb2441e58	/O2 /GS /Ob1
+0x00458e00	re/match/s09/00458e00.c	99.0	3	99.0	3	UNCHANGED	permute: no gain	876ea9c4500e8fab26c74719f6d72e91ade207db6ad190c61816403409f718d8	/O2 /GS /Ob1
+0x00457100	re/match/pilot/a2_00457100.c	97.7	100	97.7	100	UNCHANGED	permute: no gain	d708ffcc1a240780de35eb3f759376aefac39793acae13e8d0fb5ccd483aec4c	/O2 /GS /Ob1
+0x0045c030	re/match/s10/0045c030.c	98.6	6	98.6	6	UNCHANGED	permute: no gain	735abe80c517eaa778bfc0473b65b2911b4af5c98260db1b1982513e74a6eb6f	/O2 /GS /Ob1
+0x0045b390	re/match/s09/0045b390.c	96.9	45	96.9	45	UNCHANGED	permute: no gain	8124b47a86e8a4625b90cde63da0b293ef3426872685677a73ecb85c50a4e7c2	/O2 /GS /Ob1
+0x00461e90	re/match/s10/00461e90.c	95.8	209	95.8	209	UNCHANGED	permute: no gain	22327c950ebda608638bd5ee59a11228d352b956f7559dca4a0982683f731d68	/O2 /GS /Ob1
+0x004627f0	re/match/s10/004627f0.c	96.8	61	96.8	61	UNCHANGED	permute: no gain	974100713af45f7aa470fdb5ee2c2d03edcc2d992aeefc96ab6c3506362d2b40	/O2 /GS /Ob1
+0x0045e990	re/match/s10/0045e990.c	99.5	18	99.5	18	UNCHANGED	permute: no gain	a390cfddb8341bc64a9203282958a9fb32f41c5eb8361c176d0932d4f2222f9f	/O2 /GS /Ob1
+0x00467350	re/match/s11/00467350.c	97.5	30	97.5	30	UNCHANGED	permute: no gain	792d0e1f52091e89566c327b210d1c5890532077216100f23de14c66f352aefd	/O2 /GS /Ob1
+0x00464a50	re/match/s10/00464a50.c	98.3	7	98.3	7	UNCHANGED	permute: no gain	78ecbe016dcc9aa2f77ef0179018309d4c37164bf99007e3e7bfa089059fdfbf	/O2 /GS /Ob1
+0x004726f0	re/match/s11/004726f0.c	95.8	7	95.8	7	UNCHANGED	permute: no gain	3f43bd3f4de4c9bd0bc9d4c88f2687ec71c7b869af67dcc8791c0a64e09208d1	/O2 /GS /Ob1
+0x00470670	re/match/s11/00470670.c	98.0	35	98.0	35	UNCHANGED	permute: no gain	ba5accbaf9265d78370bcb9655b81e5bad83df30dac65d64f3bd4cf787df9f0e	/O2 /GS /Ob1
+0x0046b1c0	re/match/s11/0046b1c0.c	97.7	137	97.7	137	UNCHANGED	permute: no gain	c1965ef3a678b05b87c8a41b35b5c7a59171005aeff869822697f2f8dd5328d7	/O2 /GS /Ob1
+0x00473c20	re/match/s11/00473c20.c	99.0	2	99.0	2	UNCHANGED	permute: no gain	4e8e5c718c20e5630e07c63325d2b4448c61a4781f96a5674cf908ab3572a2ac	/O2 /GS /Ob1
+0x004744a0	re/match/s11/004744a0.c	99.6	6	99.6	6	UNCHANGED	permute: no gain	e8fa5fc797ff86d3d3ce70d3454fac90096a64de03365cf1877063b7075eb361	/O2 /GS /Ob1
+0x004752f0	re/match/s12/004752f0.c	95.0	236	95.0	236	UNCHANGED	permute: no gain	a8650c4fb6a6f2bc707d9b8b4d3ef408b3c9e35dae7e7fd6ecd9195b0b3f2fbc	/O2 /GS /Ob1
+0x00475f90	re/match/s12/00475f90.c	96.4	6	96.4	6	UNCHANGED	permute: no gain	cd9a5ccfca4ba0627fd938b5e5e7a0ba89bde39c10642f1cf0928cbcf6e12133	/O2 /GS /Ob1
+0x00477e60	re/match/s12/00477e60.c	98.3	3	98.3	3	UNCHANGED	permute: no gain	08d8298ff37adc41bb6e9aa952778fbbad6c647f26edf8eb8a277171ece93717	/O2 /GS /Ob1
+0x00477f00	re/match/s12/00477f00.c	96.4	7	96.4	7	UNCHANGED	permute: no gain	0a37cb088d6b8a96a84b17a43ac28f32b107261da9d1d9df7dfd88e579668d76	/O2 /GS /Ob1
+0x004785e0	re/match/s12/004785e0.c	97.8	7	97.8	7	UNCHANGED	permute: no gain	43f7dfe1d3e78d5d0b6cc297f1f1c125c32d3b1abbe40e2c2d0873b417ccb77c	/O2 /GS /Ob1
+0x0047c0f0	re/match/s13/0047c0f0.c	97.3	4	97.3	4	UNCHANGED	permute: no gain	30b969cf2105b193220300d26622141df672e50f6e92a1505059f6b5902f93e7	/O2 /GS /Ob1
+0x0047a320	re/match/s12/0047a320.c	95.2	44	95.2	44	UNCHANGED	permute: no gain	96707f420011a25e93ce55611635558add93b34ffd7981be2345dc2b2c8f9120	/O2 /GS /Ob1
+0x0047f6d0	re/match/s13/0047f6d0.c	97.9	2	97.9	2	UNCHANGED	permute: no gain	31a8bb1fe5fae7dbaedab7512f7541f6adecb64397112daa588b0292a95a702b	/O2 /GS /Ob1
+0x004818d0	re/match/s13/004818d0.c	98.9	6	98.9	6	UNCHANGED	permute: no gain	5f9491c30818893f9dc37c0c00b7559b81b25230c1103939ea3231b372f1ad96	/O2 /GS /Ob1
+0x00482ae0	re/match/s13/00482ae0.c	99.0	4	99.0	4	UNCHANGED	permute: no gain	96a1134d3b6f7ecfe208b76c9489a8e97da22d4b6b41ad402e3cbf9bdb2c74f8	/O2 /GS /Ob1
+0x004809e0	re/match/s13/004809e0.c	98.4	9	98.4	9	UNCHANGED	permute: no gain	77d4f645c1e63db23c29d1afabe718c588b3615ffabe760cbf90bd0e1a104918	/O2 /GS /Ob1
+0x00487020	re/match/s14/00487020.c	96.3	7	96.3	7	UNCHANGED	permute: no gain	44a55c34c1ed42ffa1f79f2fb758c7c3eb0a2885f1a5bc135a8092067f9fd365	/O2 /GS /Ob1
+0x0048a4e0	re/match/s14/0048a4e0.c	98.8	2	98.8	2	UNCHANGED	permute: no gain	82f116d2500536a75d606d5c8f4b26d1e7f33bb2fcd2796398364f61d0142b42	/O2 /GS /Ob1
+0x00484de0	re/match/s14/00484de0.c	99.2	14	99.2	14	UNCHANGED	permute: no gain	88fb1271d1269d26aa34094eb647b17027dc3a3656d2e0e8781fa5ccd34caf72	/O2 /GS /Ob1
+0x0048f780	re/match/s15/0048f780.c	98.6	7	98.6	7	UNCHANGED	permute: no gain	0df10a5780c9cc648e73ecfc77b2a335e25046925e08d749ea9eb5de84ab7a49	/O2 /GS /Ob1
+0x00491340	re/match/s15/00491340.c	98.1	10	98.1	10	UNCHANGED	permute: no gain	062dca015b2273d9481309c4dc6eaec0536b6409edc737db2cc9dab7c1ac4975	/O2 /GS /Ob1
+0x004910c0	re/match/s15/004910c0.c	97.2	5	97.2	5	UNCHANGED	permute: no gain	c4ad72bf5350e3e26cb5b8189fe453545c66d1080b144f8119bf93a4b73f2b8b	/O2 /GS /Ob1
+0x004967e0	re/match/s16/004967e0.c	98.8	26	98.8	26	UNCHANGED	permute: no gain	5bb6d80987fbe2ff2cb0ef11108167b5ed5f2e0b1e9431f7bc84725bf48f9c3d	/O2 /GS /Ob1
+0x00498510	re/match/s16/00498510.c	95.3	11	95.3	11	UNCHANGED	permute: no gain	7decafad05cc62605acfa5b7607a4d25652071474d987dc021d6c3d52c8753c2	/O2 /GS /Ob1
+0x004b61c0	re/match/s18/004b61c0.c	95.9	398	95.9	398	UNCHANGED	permute: no gain	283dbbe71ae04b8988bec68154194afe8cf45d5033d486532bf9cfad3997f270	/O2 /GS /Ob1
+0x004c0c20	re/match/s19/004c0c20.c	98.9	1	98.9	1	UNCHANGED	permute: no gain	0ddc1dc08ff6f3c1eb6741757556277565eae00b475d214d2a76116406f6dab9	/O2 /GS /Ob1 /G5
+0x00495870	re/match/s16/00495fe0.c	98.4	401	98.9	70	NEAR	permute: one statement swap (d->stick[0].y = y after V2LenSq) applied; residual x87 store order (fst/fxch vs fld st(1)/fstp)	eff30939819df957f976b0839538e03f32f1a24e5fd79414fd7bfb9a3966918f	/O2 /GS /Ob1
+0x004c0f00	re/match/s19/004c0f00.c	98.8	1	98.8	1	UNCHANGED	permute: no gain	d5aaf5865de8bf56a370cec6e7bb0d836f9b32b2fa5ca5181bfa129a906bf85b	/O2 /GS /Ob1 /G5
+0x004c3040	re/match/s19/004c3040.c	97.1	5	97.1	5	UNCHANGED	permute: no gain	6ba6710a697c0873bf284794e8dcbf03801a4e09464ddc142983b9d64dd36a32	/O2 /GS /Ob1 /G5
+0x004c3c60	re/match/s19/004c3c60.c	97.3	6	97.3	6	UNCHANGED	permute: no gain	d86589577cc767bf27750e42a5f0136249c55019e3958a0d698f9829737bc001	/O2 /GS /Ob1 /G5
+0x004c9cd0	re/match/s20/004c9cd0.c	96.5	44	96.5	44	UNCHANGED	permute: no gain	985d07278ea2deb1b8a802f5ea89b7c4d7b923aabaac644cc12a83b9333abc22	/O2 /Ob1 /G5
+0x004d4310	re/match/s21/004d4310.c	95.7	9	95.7	9	UNCHANGED	permute: no gain	de274b924f48322e283360f95162288cd3b41aedf5adb1955b32b34d8776a303	/O2 /Ob1 /G5
+0x004d4a20	re/match/s21/004d4a20.c	99.4	4	99.4	4	UNCHANGED	permute: no gain	2f2b0784f3c8f72a1ec4bfd1d549f0d8a09e5fdd2fe8f11252f4bab0a72d236a	/O2 /Ob1 /G5
+0x004d4f00	re/match/s21/004d4f00.c	98.5	11	98.5	11	UNCHANGED	permute: no gain	3e758531bd4b4267237c8ed8f83499f165f74189e08a82c01e139321fdd0d44d	/O2 /Ob1 /G5
+0x004f8730	re/match/s22/004f8730.c	96.7	4	96.7	4	UNCHANGED	permute: no gain	7ca2f2f06f103f6adafe71625151cbf411ebe3b205203f30b8bfcde8292d5692	/O2 /Ob1 /G5
+0x004d1e30	re/match/s20/004d1e30.c	99.1	19	99.1	19	UNCHANGED	permute: no gain	560e48a2aa17290ca69aad04ef36867e19a4ee35dc19b463d47076215078fe41	/O2 /Ob1 /G5
+0x00517da0	re/match/s23/00517da0.c	97.1	5	97.1	5	UNCHANGED	permute: no gain	512c339f32164a9c0fbb5d5e39c5361003b6bf30d5e51cab5cf2fb99a2735c78	/O2 /Ob1 /G5
+0x00516de0	re/match/s23/00516de0.c	98.4	23	98.4	23	UNCHANGED	permute: no gain	2db24b35daea7733f2ef43aedbd3d468a388ce09f5999478af297128a8675c86	/O2 /Ob1 /G5
+0x00519820	re/match/s23/00519820.c	96.3	33	96.3	33	UNCHANGED	permute: no gain	31ac736aaf54128b51916be8a152de44f24a70482d8d055a048f3e06f6c9ff7c	/O2 /Ob1 /G5
+0x004d7480	re/match/s21/004d7480.c	96.2	82	96.2	82	UNCHANGED	permute: no gain	7d8b19f513281aee0b02f43756bae58deb16d3d6520284c6858ded294d1e9e60	/O2 /Ob1 /G5
+0x0051bb40	re/match/s23/0051bb40.c	98.1	19	98.1	19	UNCHANGED	permute: no gain	1805a6d3911c8b270e92b571a8f6cb2b3cdf8417ac4fb25791b62a5eb4765b94	/O2 /Ob1 /G5
+0x0051cbe0	re/match/s23/0051cbe0.c	98.8	12	98.8	12	UNCHANGED	permute: no gain	e9761547dd0a3e7202da508143fce41fb9a9d03e7004669d8d7de5ec0eb81396	/O2 /Ob1 /G5
+0x0051f4f0	re/match/s23/0051f4f0.c	97.6	45	97.6	45	UNCHANGED	permute: no gain	5a6ea348894ada2c1519fca45c55fac79c50e4c1b86927d174e2df67258a2860	/O2 /Ob1 /G5
+0x00527a40	re/match/s23/00527a40.c	97.8	19	97.8	19	UNCHANGED	permute: no gain	6997469f733fd9c7f3c0d24cae2002793b19805377895f47128cdca5a14a6b94	/O2 /Ob1 /G5
+0x00528810	re/match/s23/00528810.c	97.8	46	97.8	46	UNCHANGED	permute: no gain	2e37f5720ce0190e1b6681655bc3a83aae22bdd22f3dc879822f6994d31f23ec	/O2 /Ob1 /G5
+0x00555f20	re/match/s24/00555f20.c	96.1	12	96.1	12	UNCHANGED	permute: no gain	f972646f9073bd788456ddcff7e8ea3342b5cb54ffab4eb0f98eebe387fa9b69	/O2 /Ob1 /G5
+0x00557110	re/match/s24/00557110.c	96.5	12	96.5	12	UNCHANGED	permute: no gain	9694b45d75d888bae998651bdcd29379e840b4e82e4818330839e05d55ddd50d	/O2 /Ob1 /G5
+0x00555af0	re/match/s24/00555af0.c	99.3	2	99.3	2	UNCHANGED	permute: no gain	cb3e72060d6daf4a587180d8abb986be7f277f5f8a45534e3dab801b83a3b4bb	/O2 /Ob1 /G5
+0x00556e90	re/match/s24/00556e90.c	97.5	35	97.5	35	UNCHANGED	permute: no gain	d2330f1b3512957baf62e2515658acee6ebbd2e0b8a42a6c89f35688be5756d2	/O2 /Ob1 /G5
