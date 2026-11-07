@@ -1,0 +1,81 @@
+0x005bd9e0	OK	checked=2	unchecked=0	005bd9e0.c	
+0x005bdc70	OK	checked=6	unchecked=0	005bdc70.c	
+0x005bde50	OK	checked=0	unchecked=0	005bde50.c	
+0x005bdef0	OK	checked=0	unchecked=0	005bdef0.c	
+0x005be080	OK	checked=1	unchecked=0	005be080.c	
+0x005be0f0	OK	checked=2	unchecked=0	005be0f0.c	
+0x005be140	OK	checked=0	unchecked=0	005be140.c	
+0x005be160	OK	checked=3	unchecked=0	005be160.c	
+0x005be190	OK	checked=0	unchecked=0	005be190.c	
+0x005be1b0	OK	checked=4	unchecked=0	005be1b0.c	
+0x005be450	OK	checked=3	unchecked=3	005be450.c	  unchecked: __imp__CloseHandle@4,__imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005be5f0	OK	checked=1	unchecked=1	005be5f0.c	  unchecked: __imp__ReleaseSemaphore@12
+0x005be630	OK	checked=0	unchecked=0	005be630.c	
+0x005be720	OK	checked=1	unchecked=0	005be720.c	
+0x005be8c0	OK	checked=5	unchecked=0	005be8c0.c	
+0x005be930	OK	checked=0	unchecked=0	005be930.c	
+0x005be940	OK	checked=3	unchecked=0	005be940.c	
+0x005beaa0	OK	checked=1	unchecked=0	005beaa0.c	
+0x005beb50	OK	checked=1	unchecked=0	005beb50.c	
+0x005beba0	OK	checked=7	unchecked=0	005beba0.c	
+0x005bec10	OK	checked=6	unchecked=1	005bec10.c	  unchecked: __imp__DeleteCriticalSection@4
+0x005bedc0	OK	checked=0	unchecked=2	005bedc0.c	  unchecked: __imp__EnterCriticalSection@4,__imp__LeaveCriticalSection@4
+0x005bef20	OK	checked=1	unchecked=0	005bef20.c	
+0x005bf000	OK	checked=2	unchecked=1	005bf000.c	  unchecked: __imp__CoTaskMemAlloc@4
+0x005bf230	OK	checked=12	unchecked=0	005bf230.c	
+0x005bf370	OK	checked=3	unchecked=0	005bf370.c	
+0x005bf470	OK	checked=1	unchecked=0	005bf470.c	
+0x005bf610	OK	checked=4	unchecked=0	005bf610.c	
+0x005bf660	OK	checked=0	unchecked=0	005bf660.c	
+0x005bf690	OK	checked=2	unchecked=1	005bf690.c	  unchecked: __imp__InterlockedDecrement@4
+0x005bf6d0	OK	checked=2	unchecked=0	005bf6d0.c	
+0x005bf7d0	OK	checked=0	unchecked=0	005bf7d0.c	
+0x005bfa20	OK	checked=0	unchecked=0	005bfa20.c	
+0x005bfb20	OK	checked=0	unchecked=2	005bfb20.c	  unchecked: __alldiv
+0x005bfb90	OK	checked=0	unchecked=1	005bfb90.c	  unchecked: __imp__ReleaseSemaphore@12
+0x005bfcc0	OK	checked=0	unchecked=0	005bfcc0.c	
+0x005bfe60	OK	checked=2	unchecked=2	005bfe60.c	  unchecked: __imp__EnterCriticalSection@4,__imp__LeaveCriticalSection@4
+0x005bfed0	OK	checked=0	unchecked=2	005bfed0.c	  unchecked: __imp__EnterCriticalSection@4,__imp__LeaveCriticalSection@4
+0x005c2025	OK	checked=7	unchecked=0	005c2025.c	
+0x005c21ba	OK	checked=1	unchecked=0	005c21ba.c	
+0x005c228e	OK	checked=1	unchecked=0	005c228e.c	
+0x005c22bd	OK	checked=2	unchecked=0	005c22bd.c	
+0x005c27e6	OK	checked=3	unchecked=0	005c27e6.c	
+0x005c2a0e	OK	checked=2	unchecked=2	005c2a0e.c	  unchecked: __allmul,__imp__GetSystemTimeAsFileTime@4
+0x005c31d0	OK	checked=2	unchecked=2	005c31d0.c	  unchecked: @__security_check_cookie@4,___security_cookie
+0x005c4640	OK	checked=2	unchecked=0	005c4640.c	
+0x005c4780	OK	checked=2	unchecked=0	005c4780.c	
+0x005c47b0	OK	checked=1	unchecked=0	005c47b0.c	
+0x005c4ab0	OK	checked=1	unchecked=0	005c4ab0.c	
+0x005c4ba0	OK	checked=0	unchecked=0	005c4ba0.c	
+0x005c4bb0	OK	checked=3	unchecked=0	005c4bb0.c	
+0x005c4d20	OK	checked=0	unchecked=0	005c4d20.c	
+0x005c4d30	OK	checked=0	unchecked=0	005c4d30.c	
+0x005c4d50	OK	checked=2	unchecked=0	005c4d50.c	
+0x005c4da0	OK	checked=2	unchecked=0	005c4da0.c	
+0x005c4df0	OK	checked=0	unchecked=0	005c4df0.c	
+0x005c4e10	OK	checked=0	unchecked=0	005c4e10.c	
+0x005c6b40	OK	checked=0	unchecked=0	005c6b40.c	
+0x005c6bb0	OK	checked=2	unchecked=0	005c6bb0.c	
+0x005c7070	OK	checked=1	unchecked=2	005c7070.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005c7570	OK	checked=1	unchecked=0	005c7570.c	
+0x005c75b0	OK	checked=0	unchecked=0	005c75b0.c	
+0x005c75c0	OK	checked=0	unchecked=2	005c75c0.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005c7990	OK	checked=2	unchecked=0	005c7990.c	
+0x005c7ee0	OK	checked=4	unchecked=2	005c7ee0.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005c7f80	OK	checked=1	unchecked=0	005c7f80.c	
+0x005c7fb0	OK	checked=3	unchecked=1	005c7fb0.c	  unchecked: __imp__CloseHandle@4
+0x005c7fe0	OK	checked=1	unchecked=2	005c7fe0.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005c8980	OK	checked=1	unchecked=0	005c8980.c	
+0x005c8eb0	OK	checked=2	unchecked=0	005c8eb0.c	
+0x005c90a0	OK	checked=3	unchecked=0	005c90a0.c	
+0x005c9120	OK	checked=0	unchecked=0	005c9120.c	
+0x005c91f0	OK	checked=2	unchecked=0	005c91f0.c	
+0x005c9220	OK	checked=1	unchecked=0	005c9220.c	
+0x005c9380	OK	checked=0	unchecked=0	005c9380.c	
+0x005c9490	OK	checked=3	unchecked=0	005c9490.c	
+0x005c9680	OK	checked=10	unchecked=0	005c9680.c	
+0x005c96d0	OK	checked=2	unchecked=0	005c96d0.c	
+0x005c96e0	OK	checked=10	unchecked=0	005c96e0.c	
+0x005c9740	OK	checked=2	unchecked=0	005c9740.c	
+0x005c9d00	OK	checked=0	unchecked=0	005c9d00.c	
