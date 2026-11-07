@@ -16,7 +16,7 @@
 //   0x004b302f  StricmpThunk               (104b, library __stricmp passthrough)
 //   0x00429aa0  GameStateSlotsFill         (134b, predicate-gated slot fill; re-ported 2026-10-12)
 //   0x0041d730  PlayerSlotConfigInit       (225b, config-pair slot init loop)
-//   0x00492d30  GameTickStateMachine7      (265b, 7-case state-machine dispatch)
+//   (0x00492d30 GameTickStateMachine7: MATCH-FIX-492D30, body in Match/MatchS15_00492d30.cpp)
 //   0x004295a0  HudDualLabelRender         (125b, two HUD label calls; re-ported 2026-10-12)
 //   0x00442440  TransformMatrixUpdate      (~390b, 4x4 matrix copy + accumulate)
 //   (0x0043c000 TimerSlotTickDispatcher: MATCH-S08, body in Match/MatchS08_0043c000.cpp)
@@ -130,147 +130,9 @@ extern "C" __declspec(dllexport) int __cdecl StricmpThunk(const char* s1, const 
 // MATCH-S04: the body of 0x0041d730 (PlayerSlotConfigInit) moved to Match/MatchS04_0041cdb0.cpp,
 // which compiles the byte-matched source re/match/s04/0041cdb0.c (it also holds 0x0041cdb0).
 // Its install stays off there (MASS-DISABLED 2026-05-24 needs-canonical-slot-state).
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00492d30  GameTickStateMachine7
-//
-// 265-byte 7-case state machine on DAT_00771968. Entry samples QPC via
-// FUN_004950b0, calls FUN_0045b350 + FUN_005c9d00 unconditionally, then
-// switches on the state. Always returns 1.
-//
-// Cases:
-//   1: FUN_0042b930() == 0x21 → FUN_004030d0()
-//   2: fall-through
-//   3: if DAT_007f1000 > 0: batch FUN_004111c0(0x32) in chunks of 50 → fall-through
-//   4: FUN_0043dfd0(); FUN_0042b930() == 0x20 → FUN_0045b350(); goto case-7
-//   5: break
-//   6: batch FUN_004111c0(0x32) in chunks of 50; break
-//   7: shared tail
-//
-// After switch (cases 1, 3, 4-default): FUN_0043dfd0(); FUN_0043d7c0().
-// Shared tail: if FUN_00496920(5) AND DAT_007719cc==0:
-//   FUN_00498860(FUN_004671a0(0)); DAT_007719cc=1
-// Compute elapsed = FUN_004950b0() - entry_qpc; store at DAT_007719a8;
-// return 1.
-//
-// Analysis: re/analysis/util_c0_promote/0x00492d30.md
-// ─────────────────────────────────────────────────────────────────────────────
-namespace {
-constexpr std::uintptr_t kFn_004950b0_RVA  = 0x004950b0;
-constexpr std::uintptr_t kFn_0045b350_RVA  = 0x0045b350;
-constexpr std::uintptr_t kFn_005c9d00_RVA  = 0x005c9d00;
-constexpr std::uintptr_t kFn_0042b930_RVA  = 0x0042b930;
-constexpr std::uintptr_t kFn_004030d0_RVA  = 0x004030d0;
-constexpr std::uintptr_t kFn_004111c0_RVA  = 0x004111c0;
-constexpr std::uintptr_t kFn_0043dfd0_RVA  = 0x0043dfd0;
-constexpr std::uintptr_t kFn_0043d7c0_RVA  = 0x0043d7c0;
-constexpr std::uintptr_t kFn_00496920_RVA  = 0x00496920;
-constexpr std::uintptr_t kFn_004671a0_RVA  = 0x004671a0;
-constexpr std::uintptr_t kFn_00498860_RVA  = 0x00498860;
 
-constexpr std::uintptr_t kDat_00771968_RVA = 0x00771968;  // state var
-constexpr std::uintptr_t kDat_007f1000_RVA = 0x007f1000;  // resource count
-constexpr std::uintptr_t kDat_007719cc_RVA = 0x007719cc;  // debounce flag
-constexpr std::uintptr_t kDat_007719a8_RVA = 0x007719a8;  // elapsed accumulator
-} // namespace
-
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GameTickStateMachine7() {
-    auto fn_qpc          = as_fn<Fn_i_v_t>(kFn_004950b0_RVA);
-    auto fn_0045b350     = as_fn<Fn_void_void_t>(kFn_0045b350_RVA);
-    auto fn_005c9d00     = as_fn<Fn_void_void_t>(kFn_005c9d00_RVA);
-    auto fn_0042b930     = as_fn<Fn_i_v_t>(kFn_0042b930_RVA);
-    auto fn_004030d0     = as_fn<Fn_void_void_t>(kFn_004030d0_RVA);
-    auto fn_004111c0     = as_fn<Fn_void_i_t>(kFn_004111c0_RVA);
-    auto fn_0043dfd0     = as_fn<Fn_void_void_t>(kFn_0043dfd0_RVA);
-    auto fn_0043d7c0     = as_fn<Fn_void_void_t>(kFn_0043d7c0_RVA);
-    auto fn_00496920     = as_fn<Fn_i_i_t>(kFn_00496920_RVA);
-    auto fn_004671a0     = as_fn<Fn_i_i_t>(kFn_004671a0_RVA);
-    auto fn_00498860     = as_fn<Fn_void_i_t>(kFn_00498860_RVA);
-
-    const int entry_qpc = fn_qpc();
-    fn_0045b350();
-    fn_005c9d00();
-
-    const std::uint32_t state = *reinterpret_cast<const std::uint32_t*>(kDat_00771968_RVA);
-
-    bool goto_tail   = false;
-    bool break_after = false;
-
-    switch (state) {
-        case 1: {
-            if (fn_0042b930() == 0x21) {
-                fn_004030d0();
-            }
-            break;  // continue to post-switch fall-through actions
-        }
-        case 2: {
-            // Decomp: falls to default path (post-switch)
-            break;
-        }
-        case 3: {
-            const std::int32_t n = *reinterpret_cast<const std::int32_t*>(kDat_007f1000_RVA);
-            if (n > 0) {
-                const std::int32_t chunks = ((n - 1) / 50) + 1;
-                for (std::int32_t c = 0; c < chunks; ++c) {
-                    fn_004111c0(0x32);
-                }
-            }
-            break;  // fall-through to post-switch
-        }
-        case 4: {
-            fn_0043dfd0();
-            if (fn_0042b930() == 0x20) {
-                fn_0045b350();
-            }
-            goto_tail = true;  // goto case-7 tail
-            break;
-        }
-        case 5: {
-            break_after = true;  // explicit break, skip post-switch
-            break;
-        }
-        case 6: {
-            const std::int32_t n = *reinterpret_cast<const std::int32_t*>(kDat_007f1000_RVA);
-            if (n > 0) {
-                const std::int32_t chunks = ((n - 1) / 50) + 1;
-                for (std::int32_t c = 0; c < chunks; ++c) {
-                    fn_004111c0(0x32);
-                }
-            }
-            break_after = true;  // case 6 breaks
-            break;
-        }
-        case 7: {
-            goto_tail = true;
-            break;
-        }
-        default: {
-            break;  // fall-through to post-switch
-        }
-    }
-
-    // Post-switch: cases 1, 2, 3, default → fn_0043dfd0(); fn_0043d7c0()
-    if (!break_after && !goto_tail) {
-        fn_0043dfd0();
-        fn_0043d7c0();
-    }
-
-    // Shared tail (all paths converge here, including break_after)
-    const int gate = fn_00496920(5);
-    if (gate != 0 && *reinterpret_cast<const std::uint32_t*>(kDat_007719cc_RVA) == 0u) {
-        const int v = fn_004671a0(0);
-        fn_00498860(v);
-        *reinterpret_cast<std::uint32_t*>(kDat_007719cc_RVA) = 1u;
-    } else {
-        *reinterpret_cast<std::uint32_t*>(kDat_007719cc_RVA) = 0u;
-    }
-
-    const int exit_qpc = fn_qpc();
-    *reinterpret_cast<std::int32_t*>(kDat_007719a8_RVA) = exit_qpc - entry_qpc;
-
-    return 1u;
-}
-
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(GameTickStateMachine7, 0x00492d30);
+// MATCH-FIX-492D30: the body of 0x00492d30 (GameTickStateMachine7) moved to Match/MatchS15_00492d30.cpp,
+// which compiles the byte-matched source re/match/s15/00492d30.c (install still mass-disabled there).
 
 // MATCH-S06: the body of 0x004295a0 (HudDualLabelRender) moved to Match/MatchS06_004295a0.cpp,
 // which compiles the byte-matched source re/match/s06/004295a0.c.

@@ -1,6 +1,8 @@
 // FLAGS: /O2 /GS /Ob1
 /* MATCH-S15 0x00492d30: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs15_20261102/results.tsv. */
+   unchanged; globals moved to MGLOBAL. Score: see verify/matchs15_20261102/results.tsv.
+   MATCH-FIX-492D30: prototypes of FUN_004111c0 (uint) and FUN_00498860 (undefined4) take the one argument every
+   call passes (g2s had (void), which C++ rejects); match.py re-run = 100% (verify/matchfix492d30_20261106). */
 /* ---- MATCH-S15 preamble (same text in every re/match/s15 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -30,7 +32,7 @@ MGLOBAL(int, DAT_007719cc, 0x007719cc);
 MGLOBAL(undefined1, DAT_007719a8, 0x007719a8);
 MGLOBAL(int, DAT_007f1000, 0x007f1000);
 void FUN_004030d0(void);
-void FUN_004111c0(void);
+void FUN_004111c0(uint p0);
 undefined4 FUN_0042b930(void);
 void FUN_0043d7c0(void);
 void FUN_0043dfd0(void);
@@ -38,7 +40,7 @@ void FUN_0045b350(void);
 undefined4 FUN_004671a0(int p0);
 undefined4 FUN_004950b0(void);
 undefined4 FUN_00496920(int p0);
-void FUN_00498860(void);
+void FUN_00498860(undefined4 p0);
 undefined4 FUN_005c9d00(void);
 MGLOBAL(int, _DAT_007719a8, 0x007719a8);
 // MATCH: 0x00492d30 FUN_00492d30
