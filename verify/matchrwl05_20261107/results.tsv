@@ -1,0 +1,127 @@
+rva	size	best%	regs%	flags	by	sha256	class	reason	cxx
+0x00554390	1110	33.5	45.8	/O2 /Ob1 /G5	insn	4f99f16f6df1f240	b	raw converter body, not worked	CXXOK
+0x005551d0	162	84.8	93.5	/O2 /Ob1 /G5	insn	a215b65bb4f9df13	b	original zeroes +0x14..+0x20 through a second xor edx,edx	CXXOK
+0x00556d20	73	100.0	100.0	/O2 /Ob1 /G5	insn	5bf2dc4f1d88081a	-	identical	CXXOK
+0x00556d70	195	100.0	100.0	/O2 /Ob1 /G5	insn	e16c306d5ddd4dc4	-	identical	CXXOK
+0x005578a0	121	100.0	100.0	/O2 /Ob1 /G5	insn	6377c56f9fb2d357	-	identical	CXXOK
+0x00557ec0	226	64.9	75.3	/O2 /Ob1 /G5	insn	5939920c2560faed	b	same lazy-init block residue as 0x00558030	CXXOK
+0x00557fb0	87	100.0	100.0	/O2 /Ob1 /G5	insn	61d5729bfd0334e8	-	identical	CXXOK
+0x00558030	204	75.0	76.5	/O2 /Ob1 /G5	insn	cabdf1652ba628b3	b	return-0 block placement	CXXOK
+0x00558180	101	100.0	100.0	/O2 /Ob1 /G5	insn	10961a3de78aed45	-	identical	CXXOK
+0x00558240	433	52.8	68.1	/O2 /Ob1 /G5	insn	c467449f1740069e	b	not worked, raw form	CXXFAIL
+0x00558400	110	100.0	100.0	/O2 /Ob1 /G5	insn	a8e676daa253c6a6	-	identical	CXXOK
+0x005584c0	133	90.0	90.0	/O2 /Ob1 /G5	insn	14c41cc084365f8a	b	first return-0 block layout	CXXOK
+0x00558550	407	100.0	100.0	/O2 /Ob1 /G5	insn	9a49f4442f0a8360	-	identical	CXXOK
+0x005586f0	362	62.3	68.5	/O2 /Ob1 /G5	insn	1994eac44de05287	b	permuter-improved raw form	CXXFAIL
+0x00558860	729	24.8	47.7	/O2 /Ob1 /G5	insn	56db171a3852a5d0	b	raw form with a placeholder for an unresolved -NAN operand, not worked	CXXFAIL
+0x00558c50	44	100.0	100.0	/O2 /Ob1 /G5	insn	726e7117599f8e48	-	identical	CXXOK
+0x00558c80	22	100.0	100.0	/O2 /Ob1 /G5	insn	d249387e85f69377	-	identical	CXXOK
+0x00558ca0	12	100.0	100.0	/O2 /Ob1 /G5	insn	19874deb3a943343	-	identical	CXXOK
+0x00558cb0	114	78.4	82.4	/O2 /Ob1 /G5	insn	191277c47a5427be	b	orig has an 8-byte local frame not reproduced	CXXOK
+0x00558d30	182	100.0	100.0	/O2 /Ob1 /G5	insn	54afda89917bf305	-	identical	CXXOK
+0x00558df0	579	39.7	73.1	/O2 /Ob1 /G5	insn	11a3d7adbae0540d	b	not worked, raw form	CXXFAIL
+0x00559040	675	11.4	26.9	/O2 /Ob1 /G5	insn	041f1eb837bf3659	a	x87 scheduling differs throughout	CXXOK
+0x005592f0	610	29.9	29.9	/O2 /Ob1 /G5	insn	dce54f663bae25fe	b	raw converter body, not worked (167 vs 129 instructions)	CXXOK
+0x00559560	107	68.3	68.3	/O2 /Ob1 /G5	insn	0b61f339d10ab762	a	(x+0x1f)>>5<<5 folds to and ~0x1f for every spelling	CXXOK
+0x005595d0	1396	57.5	76.8	/O2 /Ob1 /G5	insn	42e2f037ccb63249	b	untouched raw form	CXXFAIL
+0x00559b50	73	100.0	100.0	/O2 /Ob1 /G5	insn	71812cbaeeacf54f	-	identical	CXXOK
+0x00559ba0	19	100.0	100.0	/O2 /Ob1 /G5	insn	30b55da99cc42f82	-	identical	CXXOK
+0x00559bc0	23	100.0	100.0	/O2 /Ob1 /G5	insn	d24db8588c1a78ba	-	identical	CXXOK
+0x00559be0	27	100.0	100.0	/O2 /Ob1 /G5	insn	5995fdadcc921745	-	identical	CXXOK
+0x00559c00	31	83.3	83.3	/O2 /Ob1 /G5	insn	cb18360438056962	a	original has an inline ret after jne, ours shares the final ret	CXXOK
+0x00559c20	27	100.0	100.0	/O2 /Ob1 /G5	insn	0f83bea63abfc66a	-	identical	CXXOK
+0x00559c40	660	42.4	59.5	/O2 /Ob1 /G5	insn	fd8e63fedc780503	b	untouched raw form	CXXFAIL
+0x00559ee0	263	43.9	65.3	/O2 /Ob1 /G5	insn	ef1210bcab3993fc	b	original keeps the 1<<n mask in ebp and rebuilds it, ours spills it	CXXOK
+0x0055a140	172	12.3	95.4	/O2 /Ob1 /G5	insn	fe0a32960f145095	b	same instruction stream, registers differ only (param_1 eax, param_2 esi)	CXXOK
+0x0055a9a0	397	14.7	35.0	/O2 /Ob1 /G5	insn	a797e8e02e08b321	b	raw form did not compile; return type fixed only, not worked	CXXOK
+0x0055ac50	197	88.3	90.9	/O2 /Ob1 /G5	insn	bfccc525b6407960	b	xor ecx zero-extend hoisted above the test in the original	CXXOK
+0x0055ad20	12	100.0	100.0	/O2 /Ob1 /G5	insn	f31112b64708d3e7	-	identical	CXXOK
+0x0055ad30	161	87.7	87.7	/O2 /Ob1 /G5	insn	a59e62e8df8079cc	b	ebx used as the zero constant for the DAT stores	CXXOK
+0x0055ade0	102	90.2	90.2	/O2 /Ob1 /G5	insn	cd6ad21dfebe1e6d	a	push edi hoisted to prologue in the original (shrink-wrap)	CXXOK
+0x0055ae50	27	71.4	71.4	/O2 /Ob1 /G5	insn	fe1a8e986a84ec65	b	tail call into 0x00565550, load order of the two loads	CXXOK
+0x0055ae70	199	100.0	100.0	/O2 /Ob1 /G5	insn	77414379046298b3	-	identical	CXXOK
+0x0055af40	25	100.0	100.0	/O2 /Ob1 /G5	insn	e048a92e8d0ea082	-	identical	CXXOK
+0x0055af60	8	100.0	100.0	/O2 /Ob1 /G5	insn	b8dbe6f4b837b56d	-	identical	CXXOK
+0x0055af70	8	100.0	100.0	/O2 /Ob1 /G5	insn	fe9aa469ddba5c12	-	identical	CXXOK
+0x0055af80	59	100.0	100.0	/O2 /Ob1 /G5	insn	1447fc27b77bf5a3	-	identical	CXXOK
+0x0055afc0	98	100.0	100.0	/O2 /Ob1 /G5	insn	e71807edced8a288	-	identical	CXXOK
+0x0055b030	46	100.0	100.0	/O2 /Ob1 /G5	insn	629b9d3683780541	-	identical	CXXOK
+0x0055b060	22	100.0	100.0	/O2 /Ob1 /G5	insn	6b257ed0fc02daba	-	identical	CXXOK
+0x0055b080	1047	14.5	19.7	/O2 /GS /Ob1	insn	8a7155bf954f5cf5	b	not worked, raw form	CXXFAIL
+0x0055b4a0	425	50.8	56.1	/O2 /Ob1 /G5	insn	a666958e2d654ba0	b	sqrt intrinsic form, residue not worked	CXXFAIL
+0x0055b650	251	31.6	51.6	/O2 /Ob1 /G5	insn	55246f9cdf49c156	b	not worked, raw form	CXXOK
+0x0055b750	173	42.4	42.4	/O1 /Ob1 /G5	insn	58cf758a53aaea6b	b	flags /O1 /Ob1 /G5; orig frameless with st(n) reuse, ours builds an ebp frame	CXXOK
+0x0055b860	203	100.0	100.0	/O2 /Ob1 /G5	insn	26a33431b806ac8c	-	identical	CXXOK
+0x0055b930	15	100.0	100.0	/O2 /Ob1 /G5	insn	1d46dc4d4a7931df	-	identical	CXXOK
+0x0055b940	329	23.4	25.2	/O2 /Ob1 /G5	insn	f6b36f1934eb3a2e	b	nosize row, not worked	CXXOK
+0x0055ba90	28	100.0	100.0	/O2 /Ob1 /G5	insn	bef7064959051b71	-	identical	CXXOK
+0x0055bab0	12	100.0	100.0	/O2 /Ob1 /G5	insn	17a763c53073e275	-	identical	CXXOK
+0x0055bac0	14	100.0	100.0	/O2 /Ob1 /G5	insn	e034b81fa580ff4c	-	identical	CXXOK
+0x0055bad0	14	100.0	100.0	/O2 /Ob1 /G5	insn	b08933f338256718	-	identical	CXXOK
+0x0055bae0	133	39.2	39.2	/O2 /Ob1 /G5	insn	f4c8ab29ad2edb50	a	point transform: original spills one sum to [esp+8] and pops two dead st(0)	CXXOK
+0x0055bbf0	379	15.9	25.8	/O2 /Ob1 /G5	insn	d4384e4253d596d3	a	x87 class as 0x0055bae0, raw body	CXXOK
+0x0055bd70	14	100.0	100.0	/O2 /Ob1 /G5	insn	b23a800dc098844a	-	identical	CXXOK
+0x0055bd80	85	100.0	100.0	/O2 /Ob1 /G5	insn	3ee6e9060fdd6b3c	-	identical	CXXOK
+0x0055bde0	534	25.4	26.9	/O1	insn	2192e56b924c2b37	b	untouched raw form (/O1)	CXXFAIL
+0x0055c000	230	43.8	43.8	/O2 /Ob1 /G5	insn	639f7c465d4ca52c	a	x87 class as 0x0055bae0	CXXOK
+0x0055c230	154	93.4	93.4	/O2 /Ob1 /G5	insn	1b89d08ae5325907	a	first dot product scheduling (fld before mov eax)	CXXOK
+0x0055c2d0	175	89.2	89.2	/O2 /Ob1 /G5	insn	b6ca28f955fcde07	a	x87 operand order in rows 0,2,3	CXXOK
+0x0055c380	88	85.2	96.3	/O2 /Ob1 /G5	insn	a20b62a29d530845	b	0x3e4ccccd constant register vs the [+0xc] RMW	CXXOK
+0x0055c3e0	169	65.1	66.7	/O2 /Ob1 /G5	insn	145a2c2a8855614e	c	orig uses the C++ bool conversion neg/sbb/neg then je, no C spelling gives it	CXXOK
+0x0055c490	12	100.0	100.0	/O2 /Ob1 /G5	insn	70d65990a58366b5	-	identical	CXXOK
+0x0055c4a0	76	100.0	100.0	/O2 /Ob1 /G5	insn	894b83b5ee08f626	-	identical	CXXOK
+0x0055c540	30	100.0	100.0	/O2 /Ob1 /G5	insn	243f56420af63d8f	-	identical	CXXOK
+0x0055cd40	130	100.0	100.0	/O2 /Ob1 /G5	insn	4d65f26776f520a7	-	identical	CXXOK
+0x0055dc70	43	100.0	100.0	/O2 /Ob1 /G5	insn	d40b0b69aaf55e36	-	identical	CXXOK
+0x0055dca0	184	80.6	80.6	/O2 /Ob1 /G5	insn	6d25c553826cd643	b	ebp used as a shared zero constant	CXXOK
+0x0055dd60	99	100.0	100.0	/O2 /Ob1 /G5	insn	4fb2e0c0ee0db288	-	identical	CXXOK
+0x0055ddd0	69	100.0	100.0	/O2 /Ob1 /G5	insn	d6d7a6eb96711a94	-	identical	CXXOK
+0x0055de20	61	100.0	100.0	/O2 /Ob1 /G5	insn	1b8d6fb223e8ef97	-	identical	CXXOK
+0x0055de60	71	100.0	100.0	/O2 /Ob1 /G5	insn	29e7a7dfa4ef4c13	-	identical	CXXOK
+0x0055ded0	183	70.3	95.3	/O2 /Ob1 /G5	insn	577a01cc86bff2bf	b	ebx<->edi swap and one store operand order remain	CXXOK
+0x0055df90	81	100.0	100.0	/O2 /Ob1 /G5	insn	55b43fb1c491a420	-	identical	CXXOK
+0x0055e190	32	100.0	100.0	/O2 /Ob1 /G5	insn	1cc3bcc4e2dba918	-	identical	CXXOK
+0x0055e2d0	44	100.0	100.0	/O2 /Ob1 /G5	insn	817d005cbc4ec51a	-	identical	CXXOK
+0x0055e300	33	100.0	100.0	/O2 /Ob1 /G5	insn	4a036a0466ee14dd	-	identical	CXXOK
+0x0055e330	159	100.0	100.0	/O2 /Ob1 /G5	insn	91fef0ed81cb7fc6	-	identical	CXXOK
+0x0055e440	37	100.0	100.0	/O2 /Ob1 /G5	insn	cdaa1fe500452b29	-	identical	CXXOK
+0x0055f450	46	100.0	100.0	/O2 /Ob1 /G5	insn	0587e4f7853784a0	-	identical	CXXOK
+0x0055f480	147	100.0	100.0	/O2 /Ob1 /G5	insn	31344330df615345	-	identical	CXXOK
+0x0055f520	324	44.7	58.3	/O2 /Ob1 /G5	insn	26b40016da0b708b	b	raw converter body, not worked	CXXFAIL
+0x0055f670	400	56.0	73.0	/O2 /Ob1 /G5	insn	e6c1c9c93689e947	b	not worked, raw form	CXXFAIL
+0x0055f800	1486	65.3	79.6	/O2 /Ob1 /G5	insn	7113a0c56d2abd9f	b	not worked, raw form (permuter timed out)	CXXFAIL
+0x0055fdd0	52	100.0	100.0	/O2 /Ob1 /G5	insn	b3f6711f0dcae301	-	identical	CXXOK
+0x0055fe10	31	100.0	100.0	/O2 /Ob1 /G5	insn	4941ef85bc61f82b	-	identical	CXXOK
+0x0055fe30	12	100.0	100.0	/O2 /Ob1 /G5	insn	cc77d23bcc7f4dd3	-	identical	CXXOK
+0x0055fe40	12	25.0	100.0	/O2 /Ob1 /G5	insn	79a63f380767209d	a	original loads ptr arg into eax before the value arg; every spelling tried	CXXOK
+0x00561280	265	65.1	70.6	/O2 /Ob1 /G5	insn	5d3dd026c40c6369	b	orig has a 0xc local frame spilling the third dot product	CXXOK
+0x00561ea0	21	100.0	100.0	/O2 /Ob1 /G5	insn	cd6c6a580351389a	-	identical	CXXOK
+0x00561ec0	21	100.0	100.0	/O2 /Ob1 /G5	insn	0a7e5e013e4da425	-	identical	CXXOK
+0x00561ee0	87	100.0	100.0	/O2 /Ob1 /G5	insn	94f38403d9300e22	-	identical	CXXOK
+0x00562010	169	32.3	35.5	/O2 /GS /Ob1	insn	0b8dbe099f4651aa	b	raw converter body (game flags won the raw run), not worked	CXXFAIL
+0x00562380	214	74.0	90.9	/O2 /Ob1 /G5	insn	3a874011bcd5c8ef	b	cross-product term order, fld DAT vs fld x order	CXXOK
+0x00562460	38	100.0	100.0	/O2 /Ob1 /G5	insn	e173c9ca6d0ea21c	-	identical	CXXOK
+0x00562500	18	100.0	100.0	/O2 /Ob1 /G5	insn	09dcbed8e46360cf	-	identical	CXXOK
+0x00562520	60	100.0	100.0	/O2 /Ob1 /G5	insn	190ab5cd5c52e6da	-	identical	CXXOK
+0x00562560	26	100.0	100.0	/O2 /Ob1 /G5	insn	e226cc8bbac65bc6	-	identical	CXXOK
+0x00562580	85	100.0	100.0	/O2 /Ob1 /G5	insn	22b7742ea091f77a	-	identical	CXXOK
+0x005625e0	30	100.0	100.0	/O2 /Ob1 /G5	insn	a45236d48f550a9e	-	identical	CXXOK
+0x00562600	56	100.0	100.0	/O2 /Ob1 /G5	insn	108db3816c20cab4	-	identical	CXXOK
+0x00562660	270	38.2	45.1	/O2 /Ob1 /G5	insn	6d3ed8dda361854c	b	different branch layout, sub esp 0x20 at entry	CXXOK
+0x00562ed0	209	28.7	77.0	/O2 /Ob1 /G5	insn	90ca499212213503	b	register allocation ebx/ebp/edi with per-field copies through scratch regs	CXXOK
+0x00562fd0	45	100.0	100.0	/O2 /Ob1 /G5	insn	f5d335b25cf2043d	-	identical	CXXOK
+0x00563810	45	100.0	100.0	/O2 /Ob1 /G5	insn	82103363d9a37579	-	identical	CXXOK
+0x00563840	246	75.8	86.4	/O2 /Ob1 /G5	insn	e0c7c16beb38b841	b	and/lea chain scheduling	CXXOK
+0x00563940	445	56.4	65.4	/O2 /Ob1 /G5	insn	25a9d49d1601a9f9	b	ushort edge-index loads and frame layout differ	CXXOK
+0x00563b00	373	33.3	40.2	/O2 /Ob1 /G5	insn	27fa179c8afd04e8	b	nosize row, not worked	CXXOK
+0x00563c80	345	34.1	46.3	/O2 /Ob1 /G5	insn	102ca793800018e3	b	raw converter body, only flags tried	CXXOK
+0x00563de0	16	100.0	100.0	/O2 /Ob1 /G5	insn	3432ab45ca7d08e4	-	identical	CXXOK
+0x00563df0	114	66.7	75.6	/O2 /Ob1 /G5	insn	703c94d0c8343033	a	lea [p2+p3*2+2]; shl 3 folded to *8+0x10	CXXOK
+0x00564040	187	19.4	59.7	/O2 /Ob1 /G5	insn	944b94d7da195d3b	b	original reloads the ushort param with and 0xffff, count in a stack slot	CXXOK
+0x00564100	47	81.0	85.7	/O2 /Ob1 /G5	insn	e792aa451b276bd0	b	memset intrinsic, movsx vs mov al for the byte arg	CXXOK
+0x00564130	81	48.5	48.5	/O2 /Ob1 /G5	insn	7bd023043aa52c03	b	orig keeps the byte in the param_3 stack slot, uVar1 in esi across the div	CXXOK
+0x00564190	27	100.0	100.0	/O2 /Ob1 /G5	insn	ce4c7d0ca24ac616	-	identical	CXXOK
+0x00564310	663	15.4	22.0	/O2 /Ob1 /G5	insn	f6ce84364792e8f5	b	not worked, raw form	CXXOK
+0x005645b0	267	27.5	45.1	/O2 /GS /Ob1	insn	800f3646ff300189	b	not worked, raw form	CXXOK
+0x00565160	67	100.0	100.0	/O2 /Ob1 /G5	insn	e64d3de6b3cfaaf6	-	identical	CXXOK
+0x00565570	28	16.7	100.0	/O2 /Ob1 /G5	insn	abcc19bea4a552c4	a	arg-load register assignment eax/ecx/dx vs edx/eax/cx	CXXOK
