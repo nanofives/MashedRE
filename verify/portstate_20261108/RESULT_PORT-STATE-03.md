@@ -4,10 +4,16 @@ Branch `orch/PORT-STATE-03` off `orch/PORT-STATE-01` @ `9c653e93b` (PORT-STATE-0
 `orch/integration` @ `cc56a0a68`, so the brief's `merge orch/integration` step has not run yet: see "Hand-in").
 PREREG `b4373fe39` (committed alone with the `run_nav.py --data` option, before any arm).
 
-**Verdict: GREEN.** Under `MASHED_PORTSTATE_FRONTEND` (default OFF, exe only) the frontend menu records now live at
+**Verdict: DECISION** (round 2, L-100 (a), section 4). **0x004325c0** is now the byte-matched source as the one
+body in both targets, and `MASHED_NO_ANIM_TRUNC` is deleted. Gates and the frontend state log are unchanged on the
+committed build. One part of the brief is reverted: the `x87_tus.txt` entry for the wrapper. The bisect shows the
+/arch:IA32 compile alone moves the state log (1 of 185 and 10 of 619 `rec=` lines). The SSE2 compile reproduces the
+pre-swap logs exactly. Keeping it is the decision (section 4c).
+
+Round 1 (GREEN): under `MASHED_PORTSTATE_FRONTEND` (default OFF, exe only), the frontend menu records now live at
 DAT_00898ac0. Three matched bodies run on that state with the knob ON: **0x0042d3e0** MenuEntryArrayInit,
 **0x00497450** Pred497450 and **0x0042ad10** (a lane B-frontier row the move unblocked, port `none` -> `body`).
-Each keeps today's hand path with the knob OFF. **0x004325c0 is not swapped**: it needs a decision (section 4).
+Each keeps today's hand path with the knob OFF.
 Default gates are unchanged: G-CTRL `8284be46/67931834/31fe043e`, B `1d5bf4f9` x3. The knob-ON arms give the same
 hashes. The frontend per-frame state log, which now carries a record-table hash, is byte-identical OFF vs ON on
 three scripts.
@@ -46,7 +52,8 @@ the float path, which reads +0x08 and writes +0x04 / +0x08 only, so the poison i
 | 0x0042d3e0 | MenuEntryArrayInit | re/match/s07/0042d3e0.c | C4 by match (hooks.csv) | (C4 row) | MatchS07_0042d3e0.cpp / same | called -> called |
 | 0x00497450 | Pred497450 | re/match/gffu/00497450.c | C4 by match (hooks.csv) | (C4 row) | MatchGFFU_00497450.cpp / same | called -> called |
 | 0x0042ad10 | FUN_0042ad10 | re/match/s06/0042ad10.c | **100.0%, 32/32 ins, 118 B BYTE-IDENTICAL** (re-run on this branch) | **OK checked=9 unchecked=0** | MatchS06_0042ad10.cpp / none | **none -> body** |
-| 0x004325c0 | FUN_004325c0 | re/match/s08/004325c0.c | (not touched) | | MenuAnimTickTwin.cpp / same | called -> called |
+| 0x004325c0 | FUN_004325c0 | re/match/s08/004325c0.c | round 2: 100.0%, 152/152 ins, 564 B BYTE-IDENTICAL | OK checked=24, unchecked __ftol | MatchS08_004325c0.cpp / same | called -> called |
+| 0x0042ac50 | FUN_0042ac50 (Calc42ac50) | re/match/s06/0042ac50.c | (unchanged) | | MatchS06_0042ac50.cpp / same | body -> **called** (round 2) |
 
 0x0042ad10 is `body`, not `called`, in `backfill_port.py`. That is the honest value here. `FUN_0042ad10` is
 `static` in the matched source, so MSVC inlines it into the forwarder `PromptRowInit0042ad10` and the map has no
@@ -76,35 +83,60 @@ multi-screen attempt (P3 row).
 Committed extracts (one copy each, since the runs are identical): `PS03_navkeys_keyscript.txt` (P3a),
 `PS03_navkeys_walk.txt` (P3b), `PS03_navdemo.txt` (P4).
 
-## 4. 0x004325c0: not swapped, a decision for the lead to file
+## 4. 0x004325c0: swapped by L-100 (a) (round 2)
 
-The records move removes 0x004325c0's state blocker: the matched `re/match/s08/004325c0.c` walks `DAT_00898ac0[30]`,
-which is now the frontend's records with the knob ON. Two things are still in the way, and neither is mine to settle:
+Round 1 left 0x004325c0 alone. It had two blockers: the L-32 rounding opt-out knob in its hand body, and the dual
+copy that a knob-ON-only swap would create. Filed as **L-100**. Mariano's answer: "(a) delete MASHED_NO_ANIM_TRUNC,
+matched body is the only body, lands only with G-CTRL/B and the frontend state log unchanged".
 
-1. **`MASHED_NO_ANIM_TRUNC`** (the L-32 opt-out) lives in the RVA's one body, `MenuAnimTickBody`
-   (`Frontend/MenuAnimTickTwin.cpp`, both targets). The matched body truncates through `_ftol` (0x004a2c48), with no
-   opt-out. So the exe cannot run only the matched body without deleting that knob. L-13 / L-14 are the precedent
-   for deleting a knob as a decision.
-2. A knob-ON-only swap would compile two bodies of 0x004325c0 into the exe: the matched one (knob ON) and
-   `MenuAnimTickBody` (knob OFF, and ON with NO_ANIM_TRUNC). That is a new `DUP-IN-TARGET` allowlist line, and the
-   allowlist header says "ADDING A LINE IS A DECISION". The allowlist has 1 live line today.
+### 4a. What landed (`1496ead86`, x87 part reverted in `20142cd32`)
 
-Further facts for whoever implements it. The matched body also reads DAT_007f1004 (dt), DAT_0067eca4 (phase),
-DAT_0067e914 (gate) and DAT_0067ece0 (item count). The exe frontend holds these in `g_frame_dt`, `g_anim_phase`
-(constant 2), `g_anim_gate` (constant 1) and the nav slot's `item_count`. Its only callee, FUN_0042ac50, is static
-in the same source and reads no global, so STATE-01's one-call bridge (`ModeWordScope` shape) is valid for them.
-The body compares record +0x30 to 0x005f7370 / 0x005f72a0, the screen-24 / screen-18 table addresses, and never
-dereferences them. The exe writes 0 at +0x30, so the knob-ON populate would have to store those two addresses for
-screens 24 / 18. Options for the decision row:
+| step | change |
+|---|---|
+| 1 knob | `Frontend/MenuAnimTickTwin.cpp` (hand `MenuAnimTickBody` + the knob) and `Frontend/MenuAnimTick.h` deleted, both targets. No live code or tool names the knob any more (`grep` over `mashedmod/`, `scripts/`, `re/frida/`, `re/tools/`, `.claude/`). The remaining mentions are history and are not edited: dated `verify/` RESULTs and PREREGs, `re/analysis/CHANGELOG.md`, `hooks.csv` notes, the L-32 / L-100 rows in the ledger-owned `DECISIONS.md`, and the generated `scripts/ghidra/call_targets.json` (its `file` field still names the deleted TU) |
+| 2 swap | `Match/MatchS08_004325c0.cpp` in both rsp lists: `re/match/s08/004325c0.c`, export kept as `MenuAnimTickTwin` (`re/frida/menu_anim_diff.py` finds it by that name), `RH_ScopedInstall(MenuAnimTickTwin, 0x004325c0)`. The source's static callee 0x0042ac50 sits in `#ifndef MATCH_PORT`. The port branch calls it by name (`#define FUN_0042ac50 Calc42ac50`, the one body in `Match/MatchS06_0042ac50.cpp`), so 0x0042ac50 keeps one body per target. DDK text unchanged: match.py `--bytes` **BYTE-IDENTICAL 564 B, 152/152 ins**, relocheck **OK checked=24, unchecked __ftol** (the same result as the unmodified source). src sha256 `5c4b5ab1d8e19e54` (was `95490871ca55ac22`) |
+| 3 bridge | `Anim_Tick` (`MenuNavSM.cpp`) calls `MenuAnimTickTwin()` in both knob states. For the one call it puts `g_frame_dt`, `g_anim_phase`, `g_anim_gate` and the slot's `item_count` at DAT_007f1004 / DAT_0067eca4 / DAT_0067e914 / DAT_0067ece0 and restores the previous values after. With the knob OFF it also copies records 0..29 of the store to DAT_00898ac0, copies them back after the call, and restores what DAT_00898ac0 held. The body's one callee reads no global. Main thread only |
+| 4 +0x30 | `BuildRecords` stores `0x005f7370` (screen 24) / `0x005f72a0` (screen 18) at item record +0x30, as 0x0043d2a0 stores the screen's table pointer (`re/match/s08/0043d2a0.c:302`). Other screens keep 0: the port has no original address for their tables (the original holds `PTR_DAT_005f7638[screen]`), and 0x004325c0 only compares with those two values |
+| x87 | **reverted.** `MatchS08_004325c0` is not in `x87_tus.txt` (4c) |
 
-- (a) Delete `MASHED_NO_ANIM_TRUNC`, swap both targets to the matched source, give the exe's knob-OFF path a copy
-  bridge (records to DAT_00898ac0 for the call), and write +0x30 for screens 18 / 24. One body. **Recommended**: it
-  ends with one body and no knob-gated row.
-- (b) Allowlist a knob-gated exe dual copy until the `MASHED_PORTSTATE_FRONTEND` flip, then delete the hand body.
-- (c) Leave 0x004325c0 as is until the frontend flip decision.
+`rva_body_scan.py`: 0x004325c0 has one body per target, `Match/MatchS08_004325c0.cpp` (exe and asi), and 0x0042ac50
+one each in `Match/MatchS06_0042ac50.cpp`. rva-lint `CROSS-TARGET=1 allowlisted=1 NEW=0`, no allowlist line added.
+Backfills: 0x004325c0 `exe_file` -> MenuNavSM.cpp | MatchS08_004325c0.cpp, port `called` -> `called`.
+**0x0042ac50 port `body` -> `called`** (the matched tick calls it by name). Totals none=5310 body=587 called=254.
+Re-classify `file` leg for 0x004325c0 -> `Match/MatchS08_004325c0.cpp` (C4 -> C4, CHANGELOG line with the new src sha).
 
-Evidence: this file, `Frontend/MenuAnimTickTwin.cpp`, `re/match/s08/004325c0.c`, `re/tools/dual_copy_allowlist.txt`.
-I did not file it with `roadmap.ps1 decision PORT-STATE-03`, because that moves this step's own row to `decision`.
+### 4b. Checks (frozen builds, private root, `test-slot` outside, `mashed_lock` inside, every run self-exit 0)
+
+| build | G-CTRL default / knob ON | B default / knob ON | NAV_KEYS key script (185 lines) OFF / ON | NAV_KEYS multi-screen walk (619 lines) OFF / ON | NAV_DEMO OFF / ON |
+|---|---|---|---|---|---|
+| reference (round 1, `590d9969`) | 8284be46/67931834/31fe043e both | 1d5bf4f9 x3 both | `4e5e35a2` / `4e5e35a2` | `efc763d4` / `efc763d4` | `376a1765` / `376a1765` |
+| L-100 with x87 entry (`0a1ab369`, `1496ead86`) | 8284be46/67931834/31fe043e both | 1d5bf4f9 x3 both | **`2e8cc64f` / `2e8cc64f`** | **`dc862c7e` / `dc862c7e`** | `376a1765` / `376a1765` |
+| **L-100 SSE2, committed (`44b3da06`, `20142cd32`)** | 8284be46/67931834/31fe043e both | 1d5bf4f9 x3 both | `4e5e35a2` / `4e5e35a2` | `efc763d4` / `efc763d4` | `376a1765` / `376a1765` |
+
+In the x87 build only `rec=` moves (FNV of records 0..29), on 1 frame of the key script (f=3, the first animating
+frame) and 10 frames of the walk. Every other field is equal, and `rec=` converges again on the following frames. The
+bisect is one variable: same commit, x87 entry removed, everything else in place. It reproduces the references
+exactly, so steps 1-4 are neutral on the state log and the /arch:IA32 compile alone moves it.
+
+### 4c. Decision for the lead: the wrapper's float model
+
+The matched 0x004325c0 has two float paths (`re/match/s08/004325c0.c`). Its slide counters are
+`(int)(dt * speed * K)`, and its default path is `f8 = dt * 300.0f + f8`, clamped at 180.0f. Under /arch:IA32 the exe
+holds the intermediate at x87 precision and rounds once. Under SSE2 each float operation rounds to 32 bits, as the hand
+body did. The original runs that code on x87. Whether its precision control is 24-bit at the menu was not
+measured in this step (open: the original's FPU control word during the frontend tick; a D3D9 device created
+without `D3DCREATE_FPU_PRESERVE` sets 24-bit, not checked here). The memory note "asm bit-identity in the .asi is not
+the standalone's" records PC_24 for MASHED.exe in the race.
+
+- (a) **Keep SSE2 (committed).** The state log and gates are unchanged. The `x87_tus.txt` policy line for matched
+  float code ("MATCH-S08 2026-11-01: port bodies compiled from byte-matched game code that uses float") is not applied
+  to this one TU. **Recommended**: it is the value set the brief allows to land, and it equals 32-bit-per-op rounding,
+  which a PC_24 original also produces.
+- (b) Add it to `x87_tus.txt`, accept the moved `rec=` hashes (`2e8cc64f` / `dc862c7e`) as the new frontend
+  reference, and measure the original's control word first.
+
+Evidence: this section; raw logs listed below. Hash sets: reference / SSE2 `4e5e35a2`, `efc763d4`, `376a1765`; x87
+`2e8cc64f`, `dc862c7e`, `376a1765`.
 
 ## 5. Re-classify leg (from PORT-STATE-01)
 
@@ -159,4 +191,15 @@ only `orch/integration`'s commits after `cc56a0a68`. This branch touches `MenuNa
 | nav/walk_on/mashed_re.log | 8845eaaca38a39f455f770f10094db692485a9849ed2873b1dc925cba44ccfb2 |
 | nav/demo_off/mashed_re.log | 0b6c7bad4edda1d633cc023edb52f1ef78b8e5c701339bf53d6782d88c086a41 |
 | nav/demo_on/mashed_re.log | c3c67c2b06a586f9db433e16867206689b3a08e681a3584cc42294c1698a2b4a |
+| exe_l100/mashed_re.exe (x87 build, not kept) | 0a1ab3692fc746ac41d7924af47df61261052b9cf580f1e3e3059f0e213df391 |
+| exe_l100_sse/mashed_re.exe (committed build) | 44b3da068a8dc3f80370c27da58033556015f5a89a48aa07001b2f268875ec1f |
+| exe_l100_sse/mashed_re_dev.asi | b1fb259cd26d745089da7979aab5a227b61d38b9254662e92b4a072a9fe218e7 |
+| l100/nav/keys_off.navkeys.txt (= keys_on, x87) | 2e8cc64f6e0fb7e6e96c0d28ebd68e0ccbf56f5500beb9d110ecc7c6876c1bb4 |
+| l100/nav/walk_off.navkeys.txt (= walk_on, x87) | dc862c7ed98ef02782b4ce069173265946799f3a15ee8f9918893106408f4035 |
+| l100sse/nav/keys_{off,on}.navkeys.txt | 4e5e35a2f1b2e96e986d678804c959b9b8683ef8499a7d7f0b1c68c3ba007d94 |
+| l100sse/nav/walk_{off,on}.navkeys.txt | efc763d4e47cac7cdf755fc145b996f6892906b4ca5730eebcd127c7c5994f4b |
+| l100/run.log (x87 gates + logs) | e7f2c64212fa8771d2d579d7f65b9da659ea2ca813c5076b19f3c3ed622868a1 |
+| l100sse/run.log (SSE2 gates + knob-ON logs) | 39086197fc02bc1c07d287834b4f0ca943f1ed60136f9dc6b5788f43ebfe6d76 |
+| l100/arms, l100sse/arms | same sha256 per file as the round-1 arms above |
+| build_l100.log / build_l100_sse.log | 14991b779063b42e / 94210e53b703f8f8 |
 | hooks_before.csv | hooks.csv at `9c653e93b` (for the port before/after) |
