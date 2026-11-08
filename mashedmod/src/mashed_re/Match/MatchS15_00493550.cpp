@@ -6,12 +6,18 @@
 
 #define MATCH_PORT 1
 #define thunk_FUN_004938c0 thunk_EngineStopDispatch
+// [PORT-TOP-03] exe: 0x004938c0 binds by name to its matched exe body (Match/MatchS15_004938c0.cpp), whose RW calls bind
+// to librw (LibRw/RwApiBind.cpp). The .asi keeps the raw-address call.
+#ifdef MASHED_STANDALONE
+#define FUN_004938c0 SoftwareTidyUpBeforeExiting
+#else
 #define FUN_004938c0 MatchS15_00493550_Call004938c0
 // Callees of the matched source: the old Boot/LaunchHandshake.cpp body called each one through its original address, so these
 // forwarders make that same raw-address call (in the .asi an installed callee hook is reached through its JMP).
 extern "C" void MatchS15_00493550_Call004938c0(void) {
     reinterpret_cast<void (__cdecl*)()>(0x004938c0u)();
 }
+#endif
 #pragma comment(linker, "/EXPORT:thunk_EngineStopDispatch=_thunk_EngineStopDispatch")
 extern "C" {
 #include "../../../../re/match/s15/00493550.c"

@@ -10358,16 +10358,23 @@ static void HandTop_DeviceShutdown() {
 // PORT-TOP-02 stand-in exports for the knob TU. extern "C" so the matched C bodies bind them by name.
 extern "C" {
 void PortTop_HandPrelude() { HandTop_Prelude(); }
-int  PortTop_HandInitDevice(HINSTANCE h) {
-    PlaceDevWindow(g_hwnd);   // dev harness window placement (the hand path does it right after CreateWindow)
-    int rc = 0; return HandTop_InitDevice(h, &rc) ? 1 : 0;
-}
+// dev harness window placement (the hand path does it right after CreateWindow). [PORT-TOP-03] the knob path's
+// device init is now the matched SubsystemInit 0x00492270 with RW on librw (PortTop_HandCreateDevice below).
+void PortTop_HandPlaceWindow() { PlaceDevWindow(g_hwnd); }
 int  PortTop_HandInitRest(HINSTANCE h) { int rc = 0; return HandTop_InitRest(h, &rc) ? 1 : 0; }
 void PortTop_HandPollKeyboard() { PollKeyboard(); }
 void PortTop_HandFrameUpdate() { if (HandTop_FrameDetTick()) HandTop_FrameUpdate(); }
 int  PortTop_HandRenderFrame() { if (!RenderFrame()) { PostQuitMessage(0); return 0; } return 1; }
 void PortTop_HandAppDestroy() { HandTop_AppDestroy(); }
 void PortTop_HandDeviceShutdown() { HandTop_DeviceShutdown(); }
+// [PORT-TOP-03] the device half of HandTop_InitDevice for the RW API binding layer's RwEngineStart
+// (LibRw/RwApiBind.cpp): the exe creates its D3D9 device, librw adopts it. Returns the device, or null.
+void* PortTop_HandCreateDevice() {
+    DumpRegionMap("pre-initd3d9");
+    if (!InitD3D9()) return nullptr;
+    DumpRegionMap("post-initd3d9");
+    return g_device;
+}
 void PortTop_SetHwnd(HWND h) { g_hwnd = h; }
 void PortTop_HandGameModeMachine() { mashed_re::Race::GameModeMachine_Tick(); }
 void PortTop_HandSetOutputActive(int active) { mashed_re::Audio::SetOutputActive(active != 0); }

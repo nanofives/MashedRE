@@ -12,7 +12,7 @@ import time
 
 W = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 EXE = os.path.join(W, 'mashedmod', 'build', 'mashed_re.exe')
-OUT = 'D:/MashedWT/PORT-TOP-02_data'
+OUT = os.environ.get('PORTTOP_OUT', 'D:/MashedWT/PORT-TOP-02_data')   # PORT-TOP-03: PORTTOP_OUT overrides
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
         shutil.copyfile(log, dst)
     print('%s: %s rc=%d (0x%08X) after %.1f s, log -> %s' % (label, how, rc, rc & 0xffffffff, dt, dst))
     if os.path.exists(dst):
-        keep = ('[ORIG_TOP]', 'NAV_KEYS', 'NAV_DEMO', 'B17-SUMMARY', 'FATAL', '[7] MainLoopInit', 'Milestone B10')
+        keep = ('[ORIG_TOP]', '[RW_BIND]', 'NAV_KEYS', 'NAV_DEMO', 'B17-SUMMARY', 'FATAL', '[7] MainLoopInit', 'Milestone B10')
         lines = [ln.rstrip() for ln in open(dst, encoding='latin-1') if any(k in ln for k in keep)]
         for ln in lines[:60]:
             print('  ' + ln)

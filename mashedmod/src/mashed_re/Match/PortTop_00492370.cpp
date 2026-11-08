@@ -30,13 +30,14 @@ extern "C" {
 
 // ---- exe-side targets (exe_main.cpp PORT-TOP-02 export block and existing exe bodies) ----
 void PortTop_HandPrelude(void);
-int  PortTop_HandInitDevice(void* hInstance);
+void PortTop_HandPlaceWindow(void);
 int  PortTop_HandInitRest(void* hInstance);
 void PortTop_HandPollKeyboard(void);
 void PortTop_HandFrameUpdate(void);
 int  PortTop_HandRenderFrame(void);
 void PortTop_HandAppDestroy(void);
-void PortTop_HandDeviceShutdown(void);
+int  SubsystemInit(void);                      // Match/MatchS15_00492270.cpp
+void thunk_EngineStopDispatch(void);           // Match/MatchS15_00493550.cpp
 void PortTop_HandGameModeMachine(void);
 void PortTop_SetHwnd(void* hwnd);
 int  MainLoopInit(void);                       // Match/MatchS15_00492770.cpp
@@ -112,12 +113,17 @@ int PortTop_StandIn_004924f0(void) {
     PortTop_Log("0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)");
     return 1;
 }
-// stand-in for 0x00492270 SubsystemInit (RW engine init/open/start 0x00493710, DisplayInit 0x004921d0, ViewportInit
-// rva 0x00428590): the hand device init (InitD3D9 + librw RaceSubmit_Init). The window is 0x00499ba0's (DAT_007e9584).
-int PortTop_StandIn_00492270(void) {
+// rva 0x00492270 SubsystemInit: the matched exe body (Match/MatchS15_00492270.cpp) since PORT-TOP-03. Under
+// MASHED_STANDALONE it calls the matched RW engine bring-up 0x00493710 (Match/PortTop_00493710.cpp) with its RW core
+// calls on librw (LibRw/RwApiBind.cpp: RwEngineInit/Open/Start; RwEngineStart creates the exe device and librw adopts
+// it), and the missing stubs for DisplayInit 0x004921d0 / ViewportInit 0x00428590. Before the call: the exe's window
+// global is 0x00499ba0's window (DAT_007e9584) and the dev-harness window placement the hand path does after
+// CreateWindow.
+int PortTop_Bound_00492270(void) {
     PortTop_SetHwnd(*reinterpret_cast<void* volatile*>(0x007e9584u));
-    const int r = PortTop_HandInitDevice(*reinterpret_cast<void* volatile*>(0x007e9580u));
-    PortTop_Log("0x00492270 subsystem init: stand-in HandTop_InitDevice returned %d", r);
+    PortTop_HandPlaceWindow();
+    const int r = SubsystemInit();
+    PortTop_Log("0x00492270 SubsystemInit (matched) returned %d", r);
     return r;
 }
 // stand-in for 0x00402750 AppInitialiseOnBootup: the rest of the hand init (wedge, boot chain, input, dsound guard,
@@ -134,16 +140,14 @@ void PortTop_StandIn_00402a40(void) {
     PortTop_Log("0x00402a40 AppDestroy: stand-in HandTop_AppDestroy");
     PortTop_HandAppDestroy();
 }
-// rva 0x004c5930 is the RenderWare texture-dictionary destroy (its source walks RwTexDictionary). WinMain calls it only
-// when DAT_0077195c != 0, which 0x004921d0 sets; the exe never runs 0x004921d0, so this is not reached. PORT-TOP-03.
-int PortTop_Rw_004c5930(int dict) {
-    PortTop_Log("0x004c5930 RW texdict destroy: missing (PORT-TOP-03), dict=0x%08X not destroyed", dict);
-    return 1;
-}
-// stand-in for 0x00493550 -> 0x004938c0 (RW engine stop/close/term + file system close): the hand device shutdown.
-void PortTop_StandIn_00493550(void) {
-    PortTop_Log("0x00493550 engine stop: stand-in HandTop_DeviceShutdown");
-    PortTop_HandDeviceShutdown();
+// rva 0x004c5930 RwTexDictionaryDestroy: bound to librw (LibRw/RwApiBind.cpp, rw::TexDictionary::destroy) since
+// PORT-TOP-03. WinMain calls it only when DAT_0077195c != 0, which 0x004921d0 sets; 0x004921d0 is not run in the exe
+// yet, so it stays unreached.
+// rva 0x00493550 -> 0x004938c0: the matched exe bodies (Match/MatchS15_00493550.cpp -> MatchS15_004938c0.cpp) since
+// PORT-TOP-03, RW calls on librw (RwEngineStop also releases the exe device, the counterpart of RwEngineStart).
+void PortTop_Bound_00493550(void) {
+    PortTop_Log("0x00493550 -> 0x004938c0 SoftwareTidyUpBeforeExiting (matched, RW calls on librw)");
+    thunk_EngineStopDispatch();
 }
 // rva 0x00493560 -> 0x004954f0 HardwareExitApplication: no exe body for it or its 5 callees; the hand top level has none.
 int PortTop_Missing_00493560(void) {
@@ -211,14 +215,14 @@ int PortTop_Missing_00493480(void) { return 0; }
 #define FUN_00493900 Orig_00493900                  // matched (66.9% source), PortTop_00493900.cpp
 #define FUN_00493540 PortTop_Missing_00493540
 #define FUN_004924f0 PortTop_StandIn_004924f0
-#define FUN_00492270 PortTop_StandIn_00492270
+#define FUN_00492270 PortTop_Bound_00492270       // matched, Match/MatchS15_00492270.cpp (PORT-TOP-03)
 #define FUN_005c9d00 GetRaceEndTrigger              // port, Util/GameStateGetters.cpp
 #define FUN_004996f0 WindowShow                     // matched, Match/MatchS16_004996f0.cpp
 #define FUN_004963e0 PortTop_CfgLogError           // stand-in (exe body not exe-visible, see above)
 #define FUN_00402750 PortTop_StandIn_00402750
 #define FUN_00402a40 PortTop_StandIn_00402a40
-#define FUN_004c5930 PortTop_Rw_004c5930
-#define FUN_00493550 PortTop_StandIn_00493550
+#define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930  // RW: RwTexDictionaryDestroy -> librw (PORT-TOP-03)
+#define FUN_00493550 PortTop_Bound_00493550       // matched, Match/MatchS15_00493550.cpp (PORT-TOP-03)
 #define FUN_00493560 PortTop_Missing_00493560
 // run function 0x00492290
 #define FUN_00492770 PortTop_MainLoopInitGuarded

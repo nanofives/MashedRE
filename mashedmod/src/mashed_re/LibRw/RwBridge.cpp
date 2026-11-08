@@ -319,14 +319,19 @@ int RunSmoke(HWND hwnd, int width, int height, int frames) {
 //
 // No Charset::open() here: that is the smoke's debug-text facility, and this path
 // draws no librw 2D. Im2D (I6) stays with the D3D9 bridge for now.
-bool EngineStartAdopted(HWND hwnd, void* dev, int width, int height) {
-    if (!dev) { LogLine("adopt: FAIL -- null device"); return false; }
-    LogLine("librw engine start (E2'b step 3, ADOPTED device %p) %dx%d",
-            dev, width, height);
-
+// PORT-TOP-03: the same bring-up split into the RW 3.x phases RwEngineInit / (plugin attach) / RwEngineOpen /
+// RwEngineStart, so the RW API binding layer (LibRw/RwApiBind.cpp) can run each phase at the call site of that RW
+// call in the matched engine bring-up. EngineStartAdopted below runs the four in its old order, same log lines.
+bool EnginePhaseInit() {
     if (!rw::Engine::init())  { LogLine("adopt: FAIL Engine::init");  return false; }
-    RegisterPlugins();
+    return true;
+}
 
+void EnginePhasePlugins() {
+    RegisterPlugins();
+}
+
+bool EnginePhaseOpen(HWND hwnd) {
     rw::EngineOpenParams params;
     std::memset(&params, 0, sizeof(params));
     params.window = hwnd;
@@ -334,7 +339,11 @@ bool EngineStartAdopted(HWND hwnd, void* dev, int width, int height) {
 
     const rw::int32 numSub = rw::Engine::getNumSubSystems();
     if (numSub > 0) rw::Engine::setSubSystem(numSub - 1);
+    return true;
+}
 
+bool EnginePhaseStartAdopted(void* dev) {
+    if (!dev) { LogLine("adopt: FAIL -- null device"); return false; }
     rw::d3d::setAdoptedDevice(static_cast<IDirect3DDevice9*>(dev));
 
     if (!rw::Engine::start()) { LogLine("adopt: FAIL Engine::start"); return false; }
@@ -350,6 +359,17 @@ bool EngineStartAdopted(HWND hwnd, void* dev, int width, int height) {
     }
     LogLine("ok: engine started on adopted device (d3ddevice=%p)", dev);
     return true;
+}
+
+bool EngineStartAdopted(HWND hwnd, void* dev, int width, int height) {
+    if (!dev) { LogLine("adopt: FAIL -- null device"); return false; }
+    LogLine("librw engine start (E2'b step 3, ADOPTED device %p) %dx%d",
+            dev, width, height);
+
+    if (!EnginePhaseInit()) return false;
+    EnginePhasePlugins();
+    if (!EnginePhaseOpen(hwnd)) return false;
+    return EnginePhaseStartAdopted(dev);
 }
 
 void EngineStop() {

@@ -53,5 +53,12 @@ bool EngineStartAdopted(HWND hwnd, void* dev, int width, int height);
 // Matching teardown. Does NOT release the adopted device.
 void EngineStop();
 
+// PORT-TOP-03: EngineStartAdopted in its RW 3.x phases (RwEngineInit, plugin attach, RwEngineOpen, RwEngineStart),
+// for the RW API binding layer LibRw/RwApiBind.cpp. Same order, same calls, same log lines as EngineStartAdopted.
+bool EnginePhaseInit();
+void EnginePhasePlugins();
+bool EnginePhaseOpen(HWND hwnd);
+bool EnginePhaseStartAdopted(void* dev);
+
 }  // namespace LibRw
 }  // namespace mashed_re
