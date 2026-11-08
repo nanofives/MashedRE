@@ -5,7 +5,7 @@
 Branch `orch/C4R-MATCHBATCH-2` from `orch/integration` (25fad7e91).
 
 ## Commands
-1. SIZEFIX: appended 5 hooks.csv rows (line-based, CRLF kept): `00550c30 00550d80 00551050 00551290 005512d0`, name `FUN_<rva>`, subsystem `hud` (the S24 neighbours), C2, status `new`, port `none`.
+1. SIZEFIX: appended 5 hooks.csv rows (line-based, CRLF kept): `00550c30 00550d80 00551050 00551290 005512d0`, name `FUN_<rva>`, subsystem `util` (RtFS file handlers, as S24 results.tsv column 3 records them; first filed as `hud`, corrected after the conductor's review), C2, status `new`, port `none`.
 2. `py -3.12 verify/c4rmatchbatch3_20261107/build_ledger.py --jobs 8` -> `re/analysis/match_ledger.tsv` (3,313 RVAs, 2,548 pass), `batch.tsv` 2,549 rows. `00499740.c` (g2s_raw) still reports "compile failed (ddk)", as in the previous batch.
 3. `c4_reclass.py batch --tsv batch.tsv --report verdicts.tsv --jobs 8` (dry run, `dryrun.log`).
 4. `c4_reclass.py batch ... --apply --result <this file> --jobs 8 --date 2026-11-07` (`apply.log`): 342 pass, 1 refused, 2,206 skipped.
@@ -43,3 +43,5 @@ S28 is 79 here against 81 expected, and the 2 "other" rows are one S17 and one S
 (game C2 -243 includes the 5 new rows entering at C2 and leaving as C4: the net comes from 342 promoted minus the 1 library row.)
 
 Files: `verify/c4rmatchbatch3_20261107/` (build_ledger.py, ladder_counts.py, batch.tsv, verdicts.tsv, dryrun.log, apply.log, build_ledger.log, backfill_port.log, lint_before/after.txt, ladder_before/after.json). Also edited: hooks.csv (line-based), re/analysis/CHANGELOG.md (+342), re/analysis/match_ledger.tsv.
+
+SIZEFIX subsystem correction: the 5 rows are `util`, not `hud`. Game/library ladder unchanged (both are game rows); only the per-subsystem split in ladder_after.json moved. tracker_lint NEW 0 re-run.
