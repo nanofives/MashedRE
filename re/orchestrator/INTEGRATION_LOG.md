@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-07 21:18 C4R-RUBRIC (orch/C4R-RUBRIC), C4R-PORTCOL-LINT (orch/C4R-PORTCOL-LINT), MATCH-S17 (orch/MATCH-S17): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261107_211031
 - 2026-11-07 13:35 C4R-ROADMAP (orch/C4R-ROADMAP): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261107_133139
 - 2026-11-07 01:31 D4-UNC-PHYS (orch/D4-UNC-PHYS-2-M): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261107_011209
 - 2026-11-07 00:20 MATCH-FIX-4950B0 (orch/MATCH-FIX-4950B0-M): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261107_000010
