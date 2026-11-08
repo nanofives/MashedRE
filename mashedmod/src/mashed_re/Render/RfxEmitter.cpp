@@ -143,16 +143,8 @@ RH_ScopedInstall(Copy476a80, 0x00476a80);
 // Batch setters: p1 = the batch, plugin = *(*(p1 + 4) + [0x007dc57c]); each ORs one dirty bit at +0x40
 // ===========================================================================
 
-// 0x00476ae0
-extern "C" __declspec(dllexport) void __cdecl Batch476ae0(std::uint32_t* p1, std::uint32_t* p2)
-{
-    if (!p2) p2 = k00613288;
-    std::uint8_t* b = Plugin(p1);
-    *reinterpret_cast<std::uint32_t*>(b + 0xb8) = p2[0];
-    *reinterpret_cast<std::uint32_t*>(b + 0xbc) = p2[1];
-    *reinterpret_cast<std::uint32_t*>(b + 0x40) |= 0x4000u;
-}
-RH_ScopedInstall(Batch476ae0, 0x00476ae0);
+// MATCH-S12: the body of Batch476ae0 moved to Match/MatchS12_00476ae0.cpp (PORT-STATE-02),
+// which compiles the byte-matched source re/match/s12/00476ae0.c.
 
 // 0x00476b30: val = *(p2 ? p2 : 0x00613290); plugin +0xc4 = val; material 0 (atomic +0x18 -> +0x20 -> [0])
 // +4 = plugin +0xc4 when the material exists (0x00476b74); plugin +0x40 |= 0x2000. Every plugin access
