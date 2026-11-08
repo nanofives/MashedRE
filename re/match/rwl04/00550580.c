@@ -74,9 +74,10 @@ int FUN_00550580(int param_1,int param_2,unsigned int param_3,int param_4,int pa
     if (iVar2 != 1) {
       *(int *)(iVar3 + 0x20) = 1;
       iVar3 = 0;
-      return iVar3;
     }
-    *(int *)(iVar3 + 0x1c) = 2;
+    else {
+      *(int *)(iVar3 + 0x1c) = 2;
+    }
     return iVar3;
   }
   else {

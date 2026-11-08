@@ -1,1 +1,6 @@
-rva	pct	relocheck
+0x0053e730	OK	checked=1	unchecked=0	0053e730.c	
+0x0053e760	OK	checked=1	unchecked=0	0053e760.c	
+0x00550580	OK	checked=5	unchecked=2	00550580.c	  unchecked: __imp__EnterCriticalSection@4,__imp__LeaveCriticalSection@4
+0x0054b630	OK	checked=2	unchecked=0	0054b630.c	
+0x0054d4d0	OK	checked=48	unchecked=0	0054d4d0.c	
+0x0054dbd0	OK	checked=64	unchecked=0	0054dbd0.c	

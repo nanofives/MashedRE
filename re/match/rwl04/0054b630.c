@@ -42,12 +42,13 @@ int FUN_0054b630(int param_1,int param_2,undefined2 param_3)
   short *nw;
   if (b->n == cap) {
     old = b->data;
-    nw = (short *)(**(PFN_alloc *)(DAT_007d3ff8 + 0x108))((cap + 8) * 2,0x30123);
+    param_2 = cap + 8;
+    nw = (short *)(**(PFN_alloc *)(DAT_007d3ff8 + 0x108))(param_2 * 2,0x30123);
     if (old != 0) {
       memcpy(nw,old,b->n * 2);
       (**(PFN_free *)(DAT_007d3ff8 + 0x10c))(old);
     }
-    b->cap = cap + 8;
+    b->cap = param_2;
     b->data = nw;
   }
   b->data[b->n] = param_3;

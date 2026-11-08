@@ -51,7 +51,7 @@ void FUN_00540340(int param_1,int param_2,byte param_3,int param_4)
     FUN_004d6e70(param_4,0);
     piVar1 = *(int **)(DAT_007dc5dc + *(int *)(param_2 + 8));
     if ((((piVar1 != (int *)0x0) && (piVar1[0xc] == 5)) &&
-        (puVar2 = (float *)*piVar1, piVar3 = piVar1, puVar2 != (float *)0x0)) &&
+        (piVar3 = piVar1, puVar2 = (float *)*piVar3, puVar2 != (float *)0x0)) &&
        ((((int *)puVar2)[3] & 0x20000) == 0)) {
       FUN_004d54f0(0,0x18,2);
       DAT_00623d38 = puVar2[0];
@@ -78,22 +78,22 @@ void FUN_00540340(int param_1,int param_2,byte param_3,int param_4)
   }
   if (DAT_006181d4 != 0) {
     DAT_006181d4 = 0;
-    (*(int (**)(int **, int))((char *)*DAT_007d4110 + 0x1ac))(DAT_007d4110,0);
+    (*(int (__stdcall **)(int **, int))((char *)*DAT_007d4110 + 0x1ac))(DAT_007d4110,0);
   }
   if (DAT_006181d0 != *(int *)(param_2 + 0x10)) {
     DAT_006181d0 = *(int *)(param_2 + 0x10);
-    (*(int (**)(int **, int))((char *)*DAT_007d4110 + 0x170))(DAT_007d4110,*(int *)(param_2 + 0x10));
+    (*(int (__stdcall **)(int **, int))((char *)*DAT_007d4110 + 0x170))(DAT_007d4110,*(int *)(param_2 + 0x10));
   }
   if (*(int *)(param_1 + 8) != 0) {
     FUN_004d53b0();
-    (*(int (**)(int **, int, int, int, int, int, int))((char *)*DAT_007d4110 + 0x148))
+    (*(int (__stdcall **)(int **, int, int, int, int, int, int))((char *)*DAT_007d4110 + 0x148))
               (DAT_007d4110,*(int *)(param_1 + 0xc),*(int *)(param_2 + 0x14),0,
                *(int *)(param_2 + 0x18),*(int *)(param_2 + 0x1c),
                *(int *)(param_2 + 0x20));
   }
   else {
     FUN_004d53b0();
-    (*(int (**)(int **, int, int, int))((char *)*DAT_007d4110 + 0x144))
+    (*(int (__stdcall **)(int **, int, int, int))((char *)*DAT_007d4110 + 0x144))
               (DAT_007d4110,*(int *)(param_1 + 0xc),*(int *)(param_2 + 0x14),
                *(int *)(param_2 + 0x20));
   }
