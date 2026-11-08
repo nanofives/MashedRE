@@ -1,0 +1,6 @@
+D:/MashedWT/PORT-STATE-02_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1919.6200 in n=('380', '647', '1429') H1 398/400 median 1333.9
+D:/MashedWT/PORT-STATE-02_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1920.2500 in n=('379', '647', '1428') H1 398/400 median 1333.9
+D:/MashedWT/PORT-STATE-02_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1919.6200 in n=('380', '647', '1429') H1 398/400 median 1333.9
+D:/MashedWT/PORT-STATE-02_data/arms/D2_DEFHPSS_1.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1919.6200 in n=('380', '647', '1429') H1 398/400 median 1333.9
+D:/MashedWT/PORT-STATE-02_data/arms/D2_DEFHPSS_2.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1920.2500 in n=('379', '647', '1428') H1 398/400 median 1333.9
+D:/MashedWT/PORT-STATE-02_data/arms/D2_DEFHPSS_3.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1920.2500 in n=('378', '647', '1427') H1 398/400 median 1333.9
