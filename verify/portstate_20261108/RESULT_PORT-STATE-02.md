@@ -102,3 +102,77 @@ Folder `D:/MashedWT/PORT-STATE-02_data/`:
 | build3.log | 4f39fe8934c9e2a5b84426e4eeec523ce322ed99dbe593c2415c7abecb0ba1fc |
 
 Folders `t13_off/`, `t13_on/` (13-track captures), `runs/` (P6-P8 per-run logs), `arms/` (full arm set).
+
+## 6. After L-101 (Mariano: "(a) flip default ON now, opt-out MASHED_NO_PORTSTATE_SEED=1, first consumer the 0x00498950 / 0x004989b0 swap")
+
+**Verdict: GREEN.** Flip, swaps and merge leave the default gates where they were at every gated step.
+
+### 6a. Commits and gates
+
+Every gate set is `H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` through `test-slot` + `mashed_lock.py run --label PORT-STATE-02`
+on a frozen copy of that commit's `MASHED_NO_DEPLOY=1` build (`D:/MashedWT/PORT-STATE-02_data/exe_<tag>/`). Every
+build: rva-lint `NEW=0`, asm-lint OK, seed `--check` OK.
+
+| commit(s) | content | exe sha8 | G-CTRL | B |
+|---|---|---|---|---|
+| `257efb22a` | flip: `PortStateSeed_On()` = `MASHED_NO_PORTSTATE_SEED` unset. `MASHED_PORTSTATE_SEED` removed from code, header, generator doc and `run_arms.py` (stacks PSS / DEFHPSS retired, `NOPSS` = the opt-out). The verify drivers that ran the pre-flip arms (`run_p6p8.sh`, `run_p8b.sh`, `run_gates.sh`) and the PREREG keep the old spelling as the record of what ran | `3b3147b4` | `8284be46/67931834/31fe043e` | `1d5bf4f9` x3 |
+| `a773cd75e` | 0x00498910 / 0x00498950 / 0x004989b0 to `re/match/s16/00498950.c` (later superseded by the merge, see 6b) | `64bb082a` | same | same |
+| `92434b6a8`, `98f329780`, `6fa18d03c`, `23478abb4` | 0x004769d0, 0x004769f0, 0x00476ae0, 0x00476b30 out of `Render/RfxEmitter.cpp` into `Match/MatchS12_<rva>.cpp` (both targets) | `3eacdf8d` | same | same |
+| `d6ca6ca5a`, `e0611e60a`, `78ef52ad9`, `c09d495da`, `c0806962b` | 0x0040e470, 0x0040e480 out of `Ai/CarSlotState.cpp` (the setter's standalone null guard goes: the seed makes `0x005f2770` non-null from boot), 0x0040ce80 out of `Util/PromoLoop_round49.cpp`, 0x0046dd80: the exe compiles `Match/MatchS11_0046dd80.cpp` and `GearConstGet` calls it; tracker backfill | `d5e59f26` | same | same |
+| `dcf79ae80` | merge `orch/integration` @ `eee426759` (PORT-STATE-01 landed) | (built OK, gated with the next row) | | |
+| `dbedbfcbe` | the seed consumer, see 6b | `70fa0d9e` | `8284be46/67931834/31fe043e` | `1d5bf4f9` x3 |
+
+On `70fa0d9e` also: boot-to-menu NAV `5eb64a8c` and Quick Battle NAV `3998f57a` (both = the pre-flip traces), the
+seed line `entries=100/100 ... mem=dd093ea5` with no env, videocfg present `present, no write`, absent
+`first-run write ret=1`, file `7f130171` (= the hand body's). `MASHED_NO_PORTSTATE_SEED=1` alone: exit `0xC0000409`
+at the first-run load (empty fopen mode). With `MASHED_VIDEOCFG_WRITE=0` as well: menu reached, exit 0. `NOPSS` in
+`run_arms.py` carries both.
+
+### 6b. Merge with integration and the consumer
+
+`orch/integration` already held three of these swaps, done while the seed did not exist: PORT-SAVE-01 (`6136322d7`)
+moved the whole config cluster (0x004963e0 / 0x00496400 / 0x00498910 / 0x00498950 / 0x004989b0) to its matched
+sources (`Match/PortSave01_Config.cpp` + `Save/SettingsConfig.cpp`), PORT-FE-01 moved 0x0040e470, PORT-RENDER-01 moved
+0x004769f0. The merge keeps integration's form for those three: my `Match/MatchS16_00498950.cpp` is deleted. Both
+`MatchS02_0040e470.cpp` and `MatchS12_004769f0.cpp` take integration's text, and the duplicate rsp lines are dropped.
+In the exe, integration bound the seeded values to private copies (`SettingsCfgGlobal` returned private strings for
+0x005d013c / 0x005d0158 / 0x005cfe70 / 0x005cf010 / 0x005d00d8, and `g_rfxDefault00613290` for 0x00613290).
+`dbedbfcbe` removes those: the matched bodies read the original addresses and the seed fills them. That makes the
+config cluster and 0x004769f0 the seed's consumers in the default build. `RfxEmitter.cpp`'s copies for 0x00613294 /
+0x006132a4 stay, because those addresses are not in the inventory.
+
+### 6c. Port column, before (`304ac130b`) and after (`dbedbfcbe`)
+
+| rva | name | port before | port after | exe body after |
+|---|---|---|---|---|
+| 0x00498910 | ConfigFilenameGet | called | called | `Match/PortSave01_Config.cpp` (integration), seeded strings |
+| 0x00498950 | ConfigLoad | called | called | same |
+| 0x004989b0 | ConfigSave | called | called | same |
+| 0x0040e470 | CarSlotStateGet | called | called | `Match/MatchS02_0040e470.cpp` (integration) |
+| 0x0040e480 | CarSlotStateSet | called | called | `Match/MatchS02_0040e480.cpp` |
+| 0x0040ce80 | PtrTable5f2770Get | called | called | `Match/MatchS02_0040ce80.cpp` |
+| 0x004769d0 | ParticleEmitter_SetVelocity | body | body | `Match/MatchS12_004769d0.cpp` |
+| 0x004769f0 | ParticleEmitter_SetColour | called | called | `Match/MatchS12_004769f0.cpp` (integration), seeded 0x00613290 |
+| 0x00476ae0 | Batch476ae0 | body | **called** | `Match/MatchS12_00476ae0.cpp` |
+| 0x00476b30 | FUN_00476b30 | body | **called** | `Match/MatchS12_00476b30.cpp` |
+| 0x0046dd80 | Float61313cGet | none | **called** | `Match/MatchS11_0046dd80.cpp` (new in the exe) |
+
+`backfill_exe_file.py` and `backfill_port.py` on the final build: "rows whose old value changed: 0" and "rows
+changed: 0" (the earlier changes are in `c0806962b` and the merge commit). The merge commit also takes the
+backfill's port values for integration's own PORT-TOP rows (0x00495110 / 0x004950b0 / 0x00495120 / 0x0042b950 /
+0x00433240 none -> called, 0x00402f80 body -> called), whose `hooks.csv` was older than its map.
+
+### 6d. Dropped (not seed-only)
+
+- **0x004325c0** (MenuAnimTickBody). The exe body runs on the port's `g_records` store and passed-in phase / gate
+  values. The matched body reads 0x00898ac0, 0x0067eca4 and 0x0067e914 directly. That is the PORT-STATE-03 slice 2
+  (`g_records` -> 0x00898ac0), not a data seed. It was not swapped and no hash was measured for it.
+
+No row moved a hash. All game launches of this step ran under `mashed_lock.py run --label PORT-STATE-02` (inside
+`test-slot`). Builds before the lead's 2026-11-08 lock rule did not check for a merge-train PRIORITY-HOLD / SOLO.
+The experiment-E build and two rebuilds ran around 15:00-15:20 while the train held a SOLO window.
+
+Tracker leg for the lead: the `hooks.csv` `file` column for 0x0040e480 / 0x0040ce80 / 0x004769d0 / 0x00476ae0 /
+0x00476b30 / 0x0046dd80 still names the old TUs (re-classify, C4 unchanged).
+
+Raw: `D:/MashedWT/PORT-STATE-02_data/arms_{flip,swap,rfx,slot,final}/` (`run.log` + arm files), `exe_{flip,swap,rfx,slot,final}/`.
