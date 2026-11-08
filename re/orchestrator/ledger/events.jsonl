@@ -2860,3 +2860,148 @@
 {"at":"2026-11-08T02:01:09Z","id":"C4R-DXLIB","from":"claimed","to":"review","owner":"cmw76fvvm2cbdp41ju9oogcz3","note":"d3dx9 9.0b Summer 2003 chosen (219 vs 31 unique); 234 rows C4 by libid (psgp 144, shader 69, backext 6, render 1, dshow 14); 323 refused; lint NEW 0"}
 {"at":"2026-11-08T02:01:32Z","id":"C4R-DXLIB","from":"review","to":"merge-queued","owner":"cmw76fvvm2cbdp41ju9oogcz3","note":"orch/C4R-DXLIB"}
 {"at":"2026-11-08T02:16:01Z","id":"C4R-DXLIB","from":"merge-queued","to":"merged","owner":"cmw76fvvm2cbdp41ju9oogcz3","note":"merge train 20261107_230139: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T02:18:21Z","id":"C4R-DXLIB-NEWROWS","from":"open","to":"claimed","owner":"cmw77cxmw2darp41jgizg1buy","note":""}
+{"at":"2026-11-08T02:18:22Z","id":"C4R-DXLIB-REFILE","from":"open","to":"claimed","owner":"cmw77cxmw2darp41jgizg1buy","note":""}
+{"at":"2026-11-08T02:18:23Z","id":"C4R-INITTIME","from":"open","to":"claimed","owner":"cmw77cxmw2darp41jgizg1buy","note":""}
+{"at":"2026-11-08T02:19:35Z","id":"C4R-DXLIB-NEWROWS","from":"claimed","to":"working","owner":"cmw77cxmw2darp41jgizg1buy","note":"worktree up"}
+{"at":"2026-11-08T02:19:37Z","id":"C4R-AC80-EXTENT","from":"open","to":"claimed","owner":"worker-c4rac80extent","note":""}
+{"at":"2026-11-08T02:19:47Z","id":"C4R-DXLIB-REFILE","from":"claimed","to":"working","owner":"cmw77cxmw2darp41jgizg1buy","note":"worktree up"}
+{"at":"2026-11-08T02:19:48Z","id":"C4R-INITTIME","from":"claimed","to":"working","owner":"cmw77cxmw2darp41jgizg1buy","note":"worktree up"}
+{"at":"2026-11-08T02:21:06Z","id":"C4R-CL9466","from":"open","to":"decision","owner":"","note":"L-95"}
+{"at":"2026-11-08T02:21:36Z","id":"C4R-C2-FLAGSWEEP","from":"open","to":"claimed","owner":"c4r-c2-probes-worker","note":""}
+{"at":"2026-11-08T02:21:36Z","id":"C4R-DSHOW-BASECLASSES","from":"open","to":"claimed","owner":"c4r-c2-probes-worker","note":""}
+{"at":"2026-11-08T02:21:43Z","id":"MATCH-RWLIB","from":"open","to":"claimed","owner":"cmw77gj9s2dofp41jnjiwpagw","note":""}
+{"at":"2026-11-08T02:22:35Z","id":"C4R-C2-FLAGSWEEP","from":"claimed","to":"working","owner":"c4r-c2-probes-worker","note":"probing"}
+{"at":"2026-11-08T02:22:36Z","id":"C4R-DSHOW-BASECLASSES","from":"claimed","to":"working","owner":"c4r-c2-probes-worker","note":"probing"}
+{"at":"2026-11-08T02:22:37Z","id":"C4R-CL9466","from":"decision","to":"open","owner":"","note":"L-95 answered (a) 2026-11-07: fetch dotnet-1.0-SDK and check for cl/c2 13.00.9466 + libcmt.lib."}
+{"at":"2026-11-08T02:23:14Z","id":"MATCH-RWLIB","from":"claimed","to":"working","owner":"cmw77gj9s2dofp41jnjiwpagw","note":"lead cmw77gj9; 768 rows cut into MATCH-RWL01..06"}
+{"at":"2026-11-08T02:24:32Z","id":"MATCH-RWL01","from":"open","to":"claimed","owner":"cmw77l5hx2ellp41jdnuer6eo","note":""}
+{"at":"2026-11-08T02:24:35Z","id":"MATCH-RWL02","from":"open","to":"claimed","owner":"cmw77l8ol2elxp41jh66nzy0l","note":""}
+{"at":"2026-11-08T02:24:38Z","id":"MATCH-RWL05","from":"open","to":"claimed","owner":"cmw77lazg2em3p41jbba7t2ch","note":""}
+{"at":"2026-11-08T02:29:19Z","id":"MATCH-RWL01","from":"claimed","to":"working","owner":"cmw77l5hx2ellp41jdnuer6eo","note":"worker started"}
+{"at":"2026-11-08T02:29:44Z","id":"C4R-CL9466","from":"open","to":"blocked","owner":"","note":"L-95 checked 2026-11-07: .NET Framework SDK 1.0 (archive.org dotnet-1.0-SDK setup.exe sha1 303facab, Microsoft signature valid) ships no C++ compiler or CRT libs (7,751 cab entries: only .NET libs mscoree/corguids/format/PinvokeLib/rpcrt4ext/mscorsn). No free clean source of cl 13.00.9466 known; VS .NET 2002 retail (commercial) is the only one. Download deleted. Blocked until a licensed copy is available."}
+{"at":"2026-11-08T02:31:15Z","id":"MATCH-RWL05","from":"claimed","to":"working","owner":"cmw77lazg2em3p41jbba7t2ch","note":"started"}
+{"at":"2026-11-08T02:31:23Z","id":"C4R-DXLIB-NEWROWS","from":"working","to":"review","owner":"cmw77cxmw2darp41jgizg1buy","note":"GREEN @ b586927ee, RESULT ready"}
+{"at":"2026-11-08T02:31:25Z","id":"C4R-DXLIB-REFILE","from":"working","to":"review","owner":"cmw77cxmw2darp41jgizg1buy","note":"GREEN @ b586927ee, RESULT ready"}
+{"at":"2026-11-08T02:31:27Z","id":"C4R-INITTIME","from":"working","to":"review","owner":"cmw77cxmw2darp41jgizg1buy","note":"GREEN @ b586927ee, RESULT ready"}
+{"at":"2026-11-08T02:31:32Z","id":"C4R-AC80-EXTENT","from":"claimed","to":"review","owner":"worker-c4rac80extent","note":"extent proven (228 B = 80 B MATCH + 4 HIDDEN statics + pad, 0 diff bytes); c4_reclass extent override; regression 1/3589 changed; 0x0040ac80 C2->C4; lint NEW 0"}
+{"at":"2026-11-08T02:32:06Z","id":"C4R-DXLIB-NEWROWS","from":"review","to":"merge-queued","owner":"cmw77cxmw2darp41jgizg1buy","note":"orch/C4R-DXLIB-FU"}
+{"at":"2026-11-08T02:39:53Z","id":"C4R-DXLIB-NEWROWS","from":"merge-queued","to":"merged","owner":"cmw77cxmw2darp41jgizg1buy","note":"merge train 20261107_233234: not run: text-only change (no build input touched)"}
+{"at":"2026-11-08T02:51:28Z","id":"C4R-AC80-EXTENT","from":"review","to":"merge-queued","owner":"worker-c4rac80extent","note":"orch/C4R-AC80-EXTENT"}
+{"at":"2026-11-08T02:51:30Z","id":"C4R-DXLIB-REFILE","from":"review","to":"merged","owner":"cmw77cxmw2darp41jgizg1buy","note":"Merged 2026-11-07 inside C4R-DXLIB-NEWROWS (orch/C4R-DXLIB-FU @ b586927ee), train GREEN text-only, orch/integration 27015d6d8."}
+{"at":"2026-11-08T02:51:31Z","id":"C4R-INITTIME","from":"review","to":"merged","owner":"cmw77cxmw2darp41jgizg1buy","note":"Merged 2026-11-07 inside C4R-DXLIB-NEWROWS (orch/C4R-DXLIB-FU @ b586927ee), train GREEN text-only, orch/integration 27015d6d8."}
+{"at":"2026-11-08T02:53:16Z","id":"C4R-C2-FLAGSWEEP","from":"working","to":"review","owner":"c4r-c2-probes-worker","note":"0 of 746 C2/C3 match rows reach the gate under 74 flag sets (54,084 compiles); recorded FLAGS already per-range best; no FLAGS change"}
+{"at":"2026-11-08T02:53:17Z","id":"C4R-DSHOW-BASECLASSES","from":"working","to":"review","owner":"c4r-c2-probes-worker","note":"126 rows to C4 by libid vs DX 9.0b BaseClasses source /Gz /MT /GX /O2 /Ob1 (159/159 identical, 19 ambiguous refused); C4 3437->3563, lint NEW 0"}
+{"at":"2026-11-08T03:08:59Z","id":"C4R-AC80-EXTENT","from":"merge-queued","to":"merged","owner":"worker-c4rac80extent","note":"merge train 20261107_235251: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T03:13:54Z","id":"C4R-DSHOW-BASECLASSES","from":"review","to":"merge-queued","owner":"c4r-c2-probes-worker","note":"orch/C4R-C2-PROBES"}
+{"at":"2026-11-08T03:15:32Z","id":"C4R-DSHOW-NEWROWS","from":"open","to":"claimed","owner":"dshow-newrows-worker","note":""}
+{"at":"2026-11-08T03:16:40Z","id":"C4R-DSHOW-NEWROWS","from":"claimed","to":"review","owner":"dshow-newrows-worker","note":"0 rows added: all 96 BaseClasses unlisted addresses lack a pc_funcs boundary (83 single-candidate), need pc_funcs regen first"}
+{"at":"2026-11-08T03:17:02Z","id":"C4R-DSHOW-NEWROWS","from":"review","to":"blocked","owner":"dshow-newrows-worker","note":"No-op by rule: the 83 single-candidate + 11 ambiguous BaseClasses addresses have no function in re/console/pc_funcs.csv (gaps between entries, e.g. 0x0049c790). Branch orch/C4R-DSHOW-NEWROWS @ 2c95a5508 keeps verify/c4rdshownewrows_20261108/newrows.py (idempotent): re-run --apply + libid batch after C4R-DXLIB-GHIDRAFN creates the functions and regenerates pc_funcs."}
+{"at":"2026-11-08T03:20:05Z","id":"MATCH-RWL05","from":"working","to":"review","owner":"cmw77lazg2em3p41jbba7t2ch","note":"68/126 identical"}
+{"at":"2026-11-08T03:22:05Z","id":"C4R-DSHOW-BASECLASSES","from":"merge-queued","to":"merged","owner":"c4r-c2-probes-worker","note":"merge train 20261108_001355: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T03:22:42Z","id":"C4R-C2-FLAGSWEEP","from":"review","to":"merged","owner":"c4r-c2-probes-worker","note":"Merged 2026-11-08 with C4R-DSHOW-BASECLASSES (orch/C4R-C2-PROBES). Result: 0 of 746 rows reach 100% under 74 flag sets; recorded flags are already per-range best; no FLAGS edits."}
+{"at":"2026-11-08T03:26:37Z","id":"MATCH-RWL01","from":"working","to":"review","owner":"cmw77l5hx2ellp41jdnuer6eo","note":""}
+{"at":"2026-11-08T03:28:01Z","id":"MATCH-RWL05","from":"review","to":"merge-queued","owner":"cmw77lazg2em3p41jbba7t2ch","note":"orch/MATCH-RWL05"}
+{"at":"2026-11-08T03:28:14Z","id":"MATCH-RWL03","from":"open","to":"claimed","owner":"cmw79vbnq2t3jp41j8xr45pc8","note":""}
+{"at":"2026-11-08T03:30:06Z","id":"MATCH-RWL03","from":"claimed","to":"working","owner":"cmw79vbnq2t3jp41j8xr45pc8","note":"L2 worker started"}
+{"at":"2026-11-08T03:35:25Z","id":"MATCH-RWL01","from":"review","to":"merge-queued","owner":"cmw77l5hx2ellp41jdnuer6eo","note":"orch/MATCH-RWL01"}
+{"at":"2026-11-08T03:36:07Z","id":"MATCH-RWL04","from":"open","to":"claimed","owner":"cmw7a4vk52uc7p41jinmxvkyc","note":""}
+{"at":"2026-11-08T03:42:56Z","id":"MATCH-RWL05","from":"merge-queued","to":"merged","owner":"cmw77lazg2em3p41jbba7t2ch","note":"merge train 20261108_002824: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T03:51:19Z","id":"MATCH-RWL02","from":"claimed","to":"merge-queued","owner":"cmw77l8ol2elxp41jh66nzy0l","note":"orch/MATCH-RWL02"}
+{"at":"2026-11-08T03:51:41Z","id":"MATCH-RWL06","from":"open","to":"claimed","owner":"cmw7apafb2xtjp41j2mmy6825","note":""}
+{"at":"2026-11-08T03:52:56Z","id":"MATCH-RWL01","from":"merge-queued","to":"merged","owner":"cmw77l5hx2ellp41jdnuer6eo","note":"merge train 20261108_004356: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T03:56:32Z","id":"MATCH-RWL06","from":"claimed","to":"working","owner":"cmw7apafb2xtjp41j2mmy6825","note":"setup done, raw g2s 13/126 at 100"}
+{"at":"2026-11-08T04:08:18Z","id":"MATCH-RWL03","from":"working","to":"review","owner":"cmw79vbnq2t3jp41j8xr45pc8","note":""}
+{"at":"2026-11-08T04:14:26Z","id":"MATCH-RWL02","from":"merge-queued","to":"merged","owner":"cmw77l8ol2elxp41jh66nzy0l","note":"merge train 20261108_010409: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T04:34:43Z","id":"MATCH-RWL04","from":"claimed","to":"review","owner":"cmw7a4vk52uc7p41jinmxvkyc","note":"60/126 identical, relocheck OK"}
+{"at":"2026-11-08T04:38:18Z","id":"MATCH-RWL03","from":"review","to":"merge-queued","owner":"cmw79vbnq2t3jp41j8xr45pc8","note":"orch/MATCH-RWL03"}
+{"at":"2026-11-08T04:51:49Z","id":"MATCH-RWL04","from":"review","to":"merge-queued","owner":"cmw7a4vk52uc7p41jinmxvkyc","note":"orch/MATCH-RWL04"}
+{"at":"2026-11-08T04:52:23Z","id":"MATCH-RWL03","from":"merge-queued","to":"review","owner":"cmw79vbnq2t3jp41j8xr45pc8","note":"Held by conductor: relocheck.py RE_G change needs a full re/match regression before merge (requested from the MATCH-RWLIB lead)."}
+{"at":"2026-11-08T05:09:40Z","id":"MATCH-RWL06","from":"working","to":"review","owner":"cmw7apafb2xtjp41j2mmy6825","note":"38/126 identical, relocheck OK"}
+{"at":"2026-11-08T05:17:43Z","id":"MATCH-RWL06","from":"review","to":"merge-queued","owner":"cmw7apafb2xtjp41j2mmy6825","note":"orch/MATCH-RWL06"}
+{"at":"2026-11-08T05:19:26Z","id":"MATCH-RWL03","from":"review","to":"merge-queued","owner":"cmw79vbnq2t3jp41j8xr45pc8","note":"orch/MATCH-RWL03"}
+{"at":"2026-11-08T05:19:47Z","id":"MATCH-RWLIB","from":"working","to":"done","owner":"cmw77gj9s2dofp41jnjiwpagw","note":"6 slices RWL01..06, 365/768 identical + relocheck OK; RWL01/02/05 merged, RWL03/04/06 queued; regex regression D:/MashedWT/MATCH-RWLIB_data/regex_regression.md"}
+{"at":"2026-11-08T05:19:53Z","id":"MATCH-RWL04","from":"merge-queued","to":"merge-queued","owner":"cmw7a4vk52uc7p41jinmxvkyc","note":"orch/MATCH-RWL04"}
+{"at":"2026-11-08T05:20:35Z","id":"MATCH-RWLIB","from":"done","to":"review","owner":"cmw77gj9s2dofp41jnjiwpagw","note":"regex_regression note committed for the train"}
+{"at":"2026-11-08T05:20:36Z","id":"MATCH-RWLIB","from":"review","to":"merge-queued","owner":"cmw77gj9s2dofp41jnjiwpagw","note":"orch/MATCH-RWLIB"}
+{"at":"2026-11-08T05:27:53Z","id":"MATCH-RWL06","from":"merge-queued","to":"merged","owner":"cmw7apafb2xtjp41j2mmy6825","note":"merge train 20261108_021955: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T05:27:54Z","id":"MATCH-RWL03","from":"merge-queued","to":"merged","owner":"cmw79vbnq2t3jp41j8xr45pc8","note":"merge train 20261108_021955: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T05:27:56Z","id":"MATCH-RWL04","from":"merge-queued","to":"merged","owner":"cmw7a4vk52uc7p41jinmxvkyc","note":"merge train 20261108_021955: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T05:31:19Z","id":"MATCH-RWLIB","from":"merge-queued","to":"merged","owner":"cmw77gj9s2dofp41jnjiwpagw","note":"merge train 20261108_022935: not run: text-only change (no build input touched)"}
+{"at":"2026-11-08T05:32:11Z","id":"C4R-MATCHBATCH-3","from":"open","to":"claimed","owner":"c4rmb3-worker","note":""}
+{"at":"2026-11-08T05:41:05Z","id":"C4R-MATCHBATCH-3","from":"claimed","to":"review","owner":"c4rmb3-worker","note":"365 RW library rows to C4 by match, 0 refused, lint NEW 0"}
+{"at":"2026-11-08T05:41:18Z","id":"C4R-MATCHBATCH-3","from":"review","to":"merge-queued","owner":"c4rmb3-worker","note":"orch/C4R-MATCHBATCH-3"}
+{"at":"2026-11-08T05:48:15Z","id":"C4R-MATCHBATCH-3","from":"merge-queued","to":"merged","owner":"c4rmb3-worker","note":"merge train 20261108_024120: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T05:49:12Z","id":"C4R-MATCHBATCH-3","from":"merged","to":"merged","owner":"c4rmb3-worker","note":"Merged 2026-11-08: 365 RenderWare library rows C4 by match, C4 3605 -> 3970, train GREEN hashes unchanged, integration 9d1034b27."}
+{"at":"2026-11-08T05:50:16Z","id":"C4R-DXLIB-GHIDRAFN","from":"open","to":"claimed","owner":"cmw7ex63i3g3hp41jeydemv8p","note":""}
+{"at":"2026-11-08T05:50:26Z","id":"C4R-DSHOW-NEWROWS","from":"blocked","to":"claimed","owner":"cmw7ex63i3g3hp41jeydemv8p","note":""}
+{"at":"2026-11-08T05:50:32Z","id":"MATCH-RWLIB-2","from":"open","to":"claimed","owner":"cmw7exffc3g49p41jujhi6qsh","note":""}
+{"at":"2026-11-08T05:51:52Z","id":"MATCH-RWLIB-2","from":"claimed","to":"working","owner":"cmw7exffc3g49p41jujhi6qsh","note":"lead: 5 slices MATCH-RWR01..05 (79 rows each, 395 total)"}
+{"at":"2026-11-08T05:52:28Z","id":"MATCH-RWR01","from":"open","to":"claimed","owner":"cmw7f0now3gg5p41js26avsr9","note":""}
+{"at":"2026-11-08T05:52:29Z","id":"MATCH-RWR02","from":"open","to":"claimed","owner":"cmw7f0p3m3ggxp41jerxa3q58","note":""}
+{"at":"2026-11-08T05:52:30Z","id":"MATCH-RWR03","from":"open","to":"claimed","owner":"cmw7f0qao3gh7p41jfws9sd4t","note":""}
+{"at":"2026-11-08T05:54:40Z","id":"MATCH-RWR02","from":"claimed","to":"working","owner":"cmw7f0p3m3ggxp41jerxa3q58","note":"L2 worker started"}
+{"at":"2026-11-08T05:54:40Z","id":"MATCH-RWR03","from":"claimed","to":"working","owner":"cmw7f0qao3gh7p41jfws9sd4t","note":"static match work on R03.tsv"}
+{"at":"2026-11-08T05:54:40Z","id":"MATCH-RWR01","from":"claimed","to":"working","owner":"cmw7f0now3gg5p41js26avsr9","note":"RW core R01 near misses first"}
+{"at":"2026-11-08T05:55:04Z","id":"MATCH-RWR03","from":"working","to":"review","owner":"cmw7f0qao3gh7p41jfws9sd4t","note":""}
+{"at":"2026-11-08T05:55:50Z","id":"MATCH-RWR03","from":"review","to":"working","owner":"cmw7f0qao3gh7p41jfws9sd4t","note":"continuing R03"}
+{"at":"2026-11-08T05:57:26Z","id":"MATCH-RWR03","from":"working","to":"review","owner":"cmw7f0qao3gh7p41jfws9sd4t","note":""}
+{"at":"2026-11-08T05:58:07Z","id":"MATCH-RWR02","from":"working","to":"review","owner":"cmw7f0p3m3ggxp41jerxa3q58","note":""}
+{"at":"2026-11-08T05:58:34Z","id":"MATCH-RWR03","from":"review","to":"claimed","owner":"cmw7f8e1u3hr9p41jsncf6rc2","note":"reassigned: first worker stopped after 4 rows"}
+{"at":"2026-11-08T05:59:01Z","id":"MATCH-RWR03","from":"claimed","to":"working","owner":"cmw7f8e1u3hr9p41jsncf6rc2","note":"round 2: rewriting 80-93% and converter-form rows"}
+{"at":"2026-11-08T06:00:01Z","id":"MATCH-RWR03","from":"working","to":"review","owner":"cmw7f8e1u3hr9p41jsncf6rc2","note":""}
+{"at":"2026-11-08T06:00:54Z","id":"MATCH-RWR03","from":"review","to":"handoff","owner":"cmw7f8e1u3hr9p41jsncf6rc2","note":"two sonnet workers: 0/79, ~13 rows tried, no movement; held pending R01 yield"}
+{"at":"2026-11-08T06:00:55Z","id":"MATCH-RWR02","from":"review","to":"handoff","owner":"cmw7f0p3m3ggxp41jerxa3q58","note":"sonnet: 0/79, permuter on 17 rows >=87% no 100%; 3 unverified permuter gains; held pending R01 yield"}
+{"at":"2026-11-08T06:05:39Z","id":"C4R-DXLIB-GHIDRAFN","from":"claimed","to":"review","owner":"cmw7ex63i3g3hp41jeydemv8p","note":"GREEN: 129 fns created in master (47 d3dx9 / 82 BaseClasses), pc_funcs +129, 129 rows added + C4 libid, 9 refused, 0 splits, 23 sub-tag rows held for decision; pool not synced"}
+{"at":"2026-11-08T06:05:40Z","id":"C4R-DSHOW-NEWROWS","from":"claimed","to":"review","owner":"cmw7ex63i3g3hp41jeydemv8p","note":"GREEN: 129 fns created in master (47 d3dx9 / 82 BaseClasses), pc_funcs +129, 129 rows added + C4 libid, 9 refused, 0 splits, 23 sub-tag rows held for decision; pool not synced"}
+{"at":"2026-11-08T06:06:10Z","id":"C4R-DXLIB-GHIDRAFN","from":"review","to":"merge-queued","owner":"cmw7ex63i3g3hp41jeydemv8p","note":"orch/C4R-DXLIB-GHIDRAFN"}
+{"at":"2026-11-08T06:21:03Z","id":"MATCH-RWR01","from":"working","to":"review","owner":"cmw7f0now3gg5p41js26avsr9","note":""}
+{"at":"2026-11-08T06:24:13Z","id":"C4R-DXLIB-GHIDRAFN","from":"merge-queued","to":"merged","owner":"cmw7ex63i3g3hp41jeydemv8p","note":"merge train 20261108_031613: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T06:31:27Z","id":"MATCH-RWR01","from":"review","to":"merge-queued","owner":"cmw7f0now3gg5p41js26avsr9","note":"orch/MATCH-RWR01"}
+{"at":"2026-11-08T06:31:59Z","id":"MATCH-RWR02","from":"handoff","to":"claimed","owner":"cmw7gfhtq3krrp41j638fgp1j","note":"reassigned to opus worker"}
+{"at":"2026-11-08T06:31:59Z","id":"MATCH-RWR03","from":"handoff","to":"claimed","owner":"cmw7gfis53ks3p41j8zto599o","note":"reassigned to opus worker"}
+{"at":"2026-11-08T06:32:00Z","id":"MATCH-RWR04","from":"open","to":"claimed","owner":"cmw7gfk4g3ksfp41jkaolt9fb","note":""}
+{"at":"2026-11-08T06:32:36Z","id":"MATCH-RWR02","from":"claimed","to":"working","owner":"cmw7gfhtq3krrp41j638fgp1j","note":"opus takeover of R02 (79 rows), shape-first on near misses"}
+{"at":"2026-11-08T06:32:46Z","id":"MATCH-RWR03","from":"claimed","to":"working","owner":"cmw7gfis53ks3p41j8zto599o","note":"opus takeover: C-shape rework of near misses (R01 method)"}
+{"at":"2026-11-08T06:33:38Z","id":"MATCH-RWR04","from":"claimed","to":"working","owner":"cmw7gfk4g3ksfp41jkaolt9fb","note":"R04 rows 0x00550670..0x005655a0, near misses first"}
+{"at":"2026-11-08T06:41:34Z","id":"MATCH-RWR03","from":"working","to":"handoff","owner":"cmw7gfis53ks3p41j8zto599o","note":""}
+{"at":"2026-11-08T06:41:39Z","id":"MATCH-RWR02","from":"working","to":"handoff","owner":"cmw7gfhtq3krrp41j638fgp1j","note":"2/79 at 100% (004e67b0, 004e8940); stopped for reboot; resume per RESULT Next"}
+{"at":"2026-11-08T06:42:00Z","id":"MATCH-RWR04","from":"working","to":"handoff","owner":"cmw7gfk4g3ksfp41jkaolt9fb","note":"6/79 at 100%, stopped for reboot; resume plan in RESULT"}
+{"at":"2026-11-08T06:42:55Z","id":"MATCH-RWLIB-2","from":"working","to":"handoff","owner":"cmw7exffc3g49p41jujhi6qsh","note":"LIVING-PC reboot: R01 queued 11/79; R02 2, R03 6, R04 6 at handoff (workers kept for resume); R05 not started. D:/MashedWT/MATCH-RWLIB-2_data/LEAD_HANDOFF.md"}
+{"at":"2026-11-08T12:57:21Z","id":"C4R-DSHOW-NEWROWS","from":"review","to":"merged","owner":"cmw7ex63i3g3hp41jeydemv8p","note":"Merged 2026-11-08 inside C4R-DXLIB-GHIDRAFN (orch/C4R-DXLIB-GHIDRAFN @ 86b908c14): 82 BaseClasses functions created in master Ghidra, rows added + C4 by libid."}
+{"at":"2026-11-08T12:58:28Z","id":"MATCH-RWR02","from":"handoff","to":"claimed","owner":"cmw7u8jup00urp415j9hfo9pc","note":"post-reboot opus worker"}
+{"at":"2026-11-08T12:58:30Z","id":"MATCH-RWR03","from":"handoff","to":"claimed","owner":"cmw7u8kox00v5p415f4yd6xp7","note":"post-reboot opus worker"}
+{"at":"2026-11-08T12:58:31Z","id":"MATCH-RWR04","from":"handoff","to":"claimed","owner":"cmw7u8ll100vjp415bgi1zw10","note":"post-reboot opus worker"}
+{"at":"2026-11-08T12:58:32Z","id":"MATCH-RWLIB-2","from":"handoff","to":"working","owner":"cmw7exffc3g49p41jujhi6qsh","note":"post-reboot: R02-R04 resumed by fresh opus workers; R05 next"}
+{"at":"2026-11-08T12:59:09Z","id":"MATCH-RWR02","from":"claimed","to":"working","owner":"cmw7u8jup00urp415j9hfo9pc","note":"resume after reboot: regen results.tsv, continue from 0x00538310"}
+{"at":"2026-11-08T12:59:18Z","id":"MATCH-RWR03","from":"claimed","to":"working","owner":"cmw7u8kox00v5p415f4yd6xp7","note":"opus resume after reboot: regen results, small rows, 87.5..79.2"}
+{"at":"2026-11-08T12:59:20Z","id":"MATCH-RWR04","from":"claimed","to":"working","owner":"cmw7u8ll100vjp415bgi1zw10","note":"resumed after reboot: 6/79 at 100%, continuing near misses"}
+{"at":"2026-11-08T13:04:41Z","id":"MATCH-RWR04","from":"working","to":"working","owner":"cmw7u8ll100vjp415bgi1zw10","note":"resumed after reboot"}
+{"at":"2026-11-08T13:06:10Z","id":"MATCH-RWR03","from":"working","to":"working","owner":"cmw7u8kox00v5p415f4yd6xp7","note":"resumed after reboot"}
+{"at":"2026-11-08T13:06:15Z","id":"MATCH-RWR02","from":"working","to":"working","owner":"cmw7u8jup00urp415j9hfo9pc","note":"resumed after reboot; continuing R02 from 0x00538310"}
+{"at":"2026-11-08T13:11:25Z","id":"MATCH-RWR01","from":"merge-queued","to":"merged","owner":"cmw7f0now3gg5p41js26avsr9","note":"merge train 20261108_095749: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T13:21:49Z","id":"MATCH-RWR03","from":"working","to":"review","owner":"cmw7u8kox00v5p415f4yd6xp7","note":""}
+{"at":"2026-11-08T13:22:32Z","id":"MATCH-RWR03","from":"review","to":"merge-queued","owner":"cmw7u8kox00v5p415f4yd6xp7","note":"orch/MATCH-RWR03"}
+{"at":"2026-11-08T13:22:43Z","id":"MATCH-RWR05","from":"open","to":"claimed","owner":"cmw7v3tka05g5p415wtlmtgz2","note":""}
+{"at":"2026-11-08T13:24:31Z","id":"MATCH-RWR05","from":"claimed","to":"working","owner":"cmw7v3tka05g5p415wtlmtgz2","note":"R05 RW-Physics rows: near misses first"}
+{"at":"2026-11-08T13:24:49Z","id":"MATCH-RWR02","from":"working","to":"review","owner":"cmw7u8jup00urp415j9hfo9pc","note":""}
+{"at":"2026-11-08T13:25:25Z","id":"MATCH-RWR02","from":"review","to":"merge-queued","owner":"cmw7u8jup00urp415j9hfo9pc","note":"orch/MATCH-RWR02"}
+{"at":"2026-11-08T13:26:07Z","id":"MATCH-RWR06","from":"open","to":"claimed","owner":"cmw7v85q805xjp4154r8cv1x6","note":""}
+{"at":"2026-11-08T13:28:10Z","id":"MATCH-RWR06","from":"claimed","to":"working","owner":"cmw7v85q805xjp4154r8cv1x6","note":"R06 51 RW rows to 100% match"}
+{"at":"2026-11-08T13:33:16Z","id":"MATCH-RWR04","from":"working","to":"review","owner":"cmw7u8ll100vjp415bgi1zw10","note":""}
+{"at":"2026-11-08T13:33:50Z","id":"MATCH-RWR04","from":"review","to":"merge-queued","owner":"cmw7u8ll100vjp415bgi1zw10","note":"orch/MATCH-RWR04"}
+{"at":"2026-11-08T13:50:37Z","id":"MATCH-RWR05","from":"working","to":"review","owner":"cmw7v3tka05g5p415wtlmtgz2","note":""}
+{"at":"2026-11-08T13:51:26Z","id":"MATCH-RWR05","from":"review","to":"merge-queued","owner":"cmw7v3tka05g5p415wtlmtgz2","note":"orch/MATCH-RWR05"}
+{"at":"2026-11-08T13:54:10Z","id":"MATCH-RWR06","from":"working","to":"review","owner":"cmw7v85q805xjp4154r8cv1x6","note":""}
+{"at":"2026-11-08T13:54:50Z","id":"MATCH-RWR06","from":"review","to":"merge-queued","owner":"cmw7v85q805xjp4154r8cv1x6","note":"orch/MATCH-RWR06"}
+{"at":"2026-11-08T13:54:51Z","id":"MATCH-RWLIB-2","from":"working","to":"review","owner":"cmw7exffc3g49p41jujhi6qsh","note":"6 slices done: 60 rows at 100% (R01 11 merged, R02 11, R03 13, R04 18, R05 5, R06 7 queued); 5 of R06's are Ghidra-missed rows that need a pc_funcs.csv entry first"}
+{"at":"2026-11-08T14:05:04Z","id":"MATCH-RWR03","from":"merge-queued","to":"merged","owner":"cmw7u8kox00v5p415f4yd6xp7","note":"merge train 20261108_105530: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T14:05:05Z","id":"MATCH-RWR02","from":"merge-queued","to":"merged","owner":"cmw7u8jup00urp415j9hfo9pc","note":"merge train 20261108_105530: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T14:05:06Z","id":"MATCH-RWR04","from":"merge-queued","to":"merged","owner":"cmw7u8ll100vjp415bgi1zw10","note":"merge train 20261108_105530: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T14:14:52Z","id":"MATCH-RWR05","from":"merge-queued","to":"merged","owner":"cmw7v3tka05g5p415wtlmtgz2","note":"merge train 20261108_110545: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T14:14:54Z","id":"MATCH-RWR06","from":"merge-queued","to":"merged","owner":"cmw7v85q805xjp4154r8cv1x6","note":"merge train 20261108_110545: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
+{"at":"2026-11-08T14:15:45Z","id":"MATCH-RWLIB-2","from":"review","to":"merged","owner":"cmw7exffc3g49p41jujhi6qsh","note":"Merged 2026-11-08: RWR01-06, 60 of 395 RW rows now 100% + relocheck OK (opus high, source-shape fixes; sonnet 0/79). Follow-ups in the lead REPORT: 9176 ret-merging, bit-test folding, ~300 raw rows. Promotion: C4R-MATCHBATCH-4."}
+{"at":"2026-11-08T14:16:16Z","id":"C4R-MATCHBATCH-4","from":"open","to":"claimed","owner":"cmw7x0ftw0aihp415klso0cov","note":""}
+{"at":"2026-11-08T14:26:45Z","id":"C4R-MATCHBATCH-4","from":"claimed","to":"review","owner":"cmw7x0ftw0aihp415klso0cov","note":"5 RWR06 fns created in master (pc_funcs +5), 65 RW rows C4 by match, 0 refused, C4 4099->4164, lint NEW 0"}
+{"at":"2026-11-08T14:27:07Z","id":"C4R-MATCHBATCH-4","from":"review","to":"merge-queued","owner":"cmw7x0ftw0aihp415klso0cov","note":"orch/C4R-MATCHBATCH-4"}
+{"at":"2026-11-08T14:36:52Z","id":"C4R-MATCHBATCH-4","from":"merge-queued","to":"merged","owner":"cmw7x0ftw0aihp415klso0cov","note":"merge train 20261108_112708: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9"}
