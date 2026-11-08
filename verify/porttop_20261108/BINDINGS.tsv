@@ -5,14 +5,14 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00493900	sub_00493900	matched	Orig_00493900	re/match/s15/00493900.c, best 66.9% (hooks C2), the only source. Match/PortTop_00493900.cpp. Parses -vs/-cs/-l switches	1	0x00492370
 0x00493540	thunk_LaunchLangGate	missing	PortTop_Missing_00493540	exe body thunk_LaunchLangGate (MatchS15_00493540.cpp) forwards to raw 0x00495150, which faults in the exe. 0x00495150 and its 6 callees have no exe body, no hand equivalent. Stub returns DAT_007719e4 == 0, as 0x00495150 does	1	0x00492370
 0x004924f0	sub_004924f0	stand-in	PortTop_StandIn_004924f0	job done by the hand boot chain steps 1-3 (ExecuteFrontendBootChain) inside the 0x00402750 stand-in. exe body Boot/SubsystemInit.cpp is a tunnel to the original address	1	0x00492370
-0x00492270	SubsystemInit	stand-in	PortTop_StandIn_00492270 -> HandTop_InitDevice	InitD3D9 + librw RaceSubmit_Init on the window 0x00499ba0 made. exe body SubsystemInit (MatchS15_00492270.cpp) forwards to raw 0x00493710 / 0x004921d0 / 0x00428590	1	0x00492370
-0x005c9d00	GetRaceEndTrigger	port	GetRaceEndTrigger	mashedmod/src/mashed_re/Util/GameStateGetters.cpp	1	0x00492370
+0x00492270	SubsystemInit	matched	SubsystemInit (via PortTop_Bound_00492270)	Match/MatchS15_00492270.cpp; its MASHED_STANDALONE branch binds 0x00493710 to the matched bring-up (RW on librw) and 0x004921d0 / 0x00428590 to missing stubs. PORT-TOP-03	1	0x00492370
+0x005c9d00	GetRaceEndTrigger	port	GetRaceEndTrigger	Util/GameStateGetters.cpp (xor eax,eax; ret). Also a WinMain callee	1	0x00492370
 0x004996f0	WindowShow	matched	WindowShow	mashedmod/src/mashed_re/Match/MatchS16_004996f0.cpp	1	0x00492370
 0x004963e0	ConfigLogError	stand-in	PortTop_CfgLogError	exe body ConfigLogErrorCore is file-internal (Save/SettingsConfig.cpp, PORT-SAVE-01). Reference is a no-op under disable_log. Stub mirrors the text into mashed_re.log	1	0x00492370
 0x00402750	AppInitialiseOnBootup	stand-in	PortTop_StandIn_00402750 -> HandTop_InitRest	data wedge, boot chain B7/B10, DirectInput, dsound guard, boot movies, audio, frontend assets. PORT-TOP-04 replaces it	1	0x00492370
 0x00402a40	AppDestroy	stand-in	PortTop_StandIn_00402a40 -> HandTop_AppDestroy	Audio::Shutdown, ShutdownDirectInput, small.mpg close. PORT-TOP-04 replaces it	1	0x00492370
-0x004c5930	sub_004c5930	rw	PortTop_Rw_004c5930	RW texture-dictionary destroy (its source walks RwTexDictionary). Logged stub. Not reached: DAT_0077195c stays 0 because 0x004921d0 never runs in the exe. PORT-TOP-03	1	0x00492370
-0x00493550	thunk_EngineStopDispatch	stand-in	PortTop_StandIn_00493550 -> HandTop_DeviceShutdown	ShutdownD3D9 for 0x004938c0 (RW engine stop/close/term). exe body thunk_EngineStopDispatch forwards to raw 0x004938c0	1	0x00492370
+0x004c5930	sub_004c5930	bound	MashedRw_TexDictionaryDestroy_004c5930	LibRw/RwApiBind.cpp: RwTexDictionaryDestroy -> rw::TexDictionary::destroy. Not reached: DAT_0077195c stays 0 (0x004921d0 not run). PORT-TOP-03	1	0x00492370
+0x00493550	thunk_EngineStopDispatch	matched	thunk_EngineStopDispatch (via PortTop_Bound_00493550)	Match/MatchS15_00493550.cpp; MASHED_STANDALONE binds 0x004938c0 by name to SoftwareTidyUpBeforeExiting. PORT-TOP-03	1	0x00492370
 0x00493560	thunk_FUN_004954f0	missing	PortTop_Missing_00493560	0x004954f0 HardwareExitApplication and its 5 callees have no exe body. exe body thunk_HwExitDispatch forwards raw. Stub returns 0 like 0x004954f0	1	0x00492370
 0x00499cc0	sub_00499cc0	matched	Orig_00499cc0	re/match/s16/00499cc0.c, Match/PortTop_Leaves.cpp. DestroyWindow + returns the pump MSG wParam	1	0x00492370
 0x00492770	MainLoopInit	matched	PortTop_MainLoopInitGuarded -> MainLoopInit	mashedmod/src/mashed_re/Match/MatchS15_00492770.cpp, SEH-guarded: its 5 callees forward raw and fault (PORT-TOP-01). The hand boot chain also calls it once (step 7)	1	0x00492290
@@ -40,17 +40,17 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0042b920	ConstantGetter22	missing	MatchS15_00492770_Call0042b920 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b920.cpp	2	0x00492770
 0x0042b950	Set7f1a0c_1000	missing	MatchS15_00492770_Call0042b950 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none 	2	0x00492770
 0x00433240	FUN_00433240	missing	MatchS15_00492770_Call00433240 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none 	2	0x00492770
-0x004c57a0	FontCtxMatrix_AllocInit	rw	MatchS15_00492770_Call004c57a0 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none 	2	0x00492770
+0x004c57a0	FontCtxMatrix_AllocInit	rw	MatchS15_00492770_Call004c57a0 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none | PORT-TOP-03: bound by PORT-TOP-01 (orch/PORT-TOP-01: MashedRw_MatrixCreate_004c57a0 in LibRw/RwBridge.cpp, rw::Matrix::create); on this branch still the raw forwarder until that branch merges	2	0x00492770
 0x00495150	FUN_00495150	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00493540
 0x00431ae0	FUN_00431ae0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431ae0.cpp; hooks C4	2	0x004924f0
 0x00431af0	FUN_00431af0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431af0.cpp; hooks C4	2	0x004924f0
 0x00431b00	FUN_00431b00	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431b00.cpp; hooks C4	2	0x004924f0
 0x00431b10	BootParamSet2	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004924f0
 0x00431d00	FUN_00431d00	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS07_00431d00.cpp; hooks C4	2	0x004924f0
-0x0045b350	RwInitNullStub	rw		RW core called by 0x004924f0. exe port=none ; hooks C4	2	0x004924f0
-0x00428590	ViewportInit	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS06_00428590.cpp; hooks C4	2	0x00492270
-0x004921d0	DisplayInit	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_004921d0.cpp; hooks C4	2	0x00492270
-0x00493710	FUN_00493710	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492270
+0x0045b350	RwInitNullStub	matched	RwInitNullStub	Match/MatchS09_0045b350.cpp, now also in the exe list (bare RET). Called twice by 0x00493710 and by 0x004924f0	2	0x004924f0
+0x00428590	ViewportInit	missing	PortTop_Missing_00428590	Match/PortTop_00493710.cpp: not run, returns 1. exe body ViewportInit (MatchS06_00428590.cpp) forwards 5 of 6 callees to raw addresses. PORT-TOP-04	2	0x00492270
+0x004921d0	DisplayInit	missing	PortTop_Missing_004921d0	Match/PortTop_00493710.cpp: not run. exe body DisplayInit (MatchS15_004921d0.cpp) forwards its 12 callees to raw addresses. PORT-TOP-04	2	0x00492270
+0x00493710	FUN_00493710	matched	Orig_00493710 (via PortTop_Bound_00493710)	Match/PortTop_00493710.cpp compiles re/match/s15/00493710.c (h8 best 94.2%, the only source). RW engine bring-up. PORT-TOP-03	2	0x00492270
 0x004a4254	FUN_004a4254	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x004963e0
 0x004025f0	FUN_004025f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
 0x004026d0	FUN_004026d0	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS01.cpp; hooks C4	2	0x00402750
@@ -100,11 +100,11 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004b3d80	FUN_004b3d80	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
 0x004b6540	thunk_FUN_004b6640	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
 0x004b6560	BootGlobalPairSetThunk	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
-0x004c2ed0	RwEngineGetModeInfo	rw		RW core called by 0x00402750. exe port=none ; hooks C4	2	0x00402750
-0x004c2f00	RwEngineGetCurrentMode	rw		RW core called by 0x00402750. exe port=body mashedmod/src/mashed_re/Match/MatchS19_004c2f00.cpp; hooks C4	2	0x00402750
+0x004c2ed0	RwEngineGetModeInfo	bound	MashedRw_EngineGetModeInfo_004c2ed0	LibRw/RwApiBind.cpp: RwEngineGetModeInfo -> rw::Engine::getVideoModeInfo (refRate / format written 0). Called by 0x00493710 (knob path) and 0x00402750 (stand-in)	2	0x00402750
+0x004c2f00	RwEngineGetCurrentMode	bound	MashedRw_EngineGetCurrentMode_004c2f00	LibRw/RwApiBind.cpp: RwEngineGetCurrentMode -> rw::Engine::getCurrentVideoMode. Called by 0x00493710 (knob path) and 0x00402750 (stand-in). The exe body RwEngineGetCurrentMode (MatchS19_004c2f00.cpp) forwards raw to 0x004c2c90 and is not used	2	0x00402750
 0x004caea0	FUN_004caea0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x00402750
 0x004d8560	FUN_004d8560	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Util/UtilLeaves_ab6.cpp; hooks C4	2	0x00402750
-0x00558240	FUN_00558240	rw		RW core called by 0x00402750. exe port=none ; hooks C2	2	0x00402750
+0x00558240	FUN_00558240	rw		RW core called by 0x00402750. exe port=none ; hooks C2 | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	2	0x00402750
 0x004014b0	FUN_004014b0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
 0x004015a0	FUN_004015a0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
 0x00403660	FUN_00403660	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
@@ -144,9 +144,9 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004b4880	FUN_004b4880	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
 0x004b6550	thunk_FUN_004b6700	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
 0x005581f0	FUN_005581f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
-0x004c5a60	FUN_004c5a60	rw		RW core called by 0x004c5930. exe port=none ; hooks C4	2	0x004c5930
-0x004d8060	RwPluginListDestructDispatch	rw		RW core called by 0x004c5930. exe port=none ; hooks C4	2	0x004c5930
-0x004938c0	SoftwareTidyUpBeforeExiting	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_004938c0.cpp; hooks C4	2	0x00493550
+0x004c5a60	FUN_004c5a60	bound	(inside MashedRw_TexDictionaryDestroy_004c5930)	LibRw/RwApiBind.cpp: per-texture destroy of RwTexDictionaryDestroy; librw TexDictionary::destroy destroys each texture	2	0x004c5930
+0x004d8060	RwPluginListDestructDispatch	bound	(inside MashedRw_TexDictionaryDestroy_004c5930)	LibRw/RwApiBind.cpp: plugin destructor dispatch; librw runs its plugin destructors inside destroy	2	0x004c5930
+0x004938c0	SoftwareTidyUpBeforeExiting	matched	SoftwareTidyUpBeforeExiting	Match/MatchS15_004938c0.cpp; MASHED_STANDALONE binds its 5 RW calls to LibRw/RwApiBind.cpp. PORT-TOP-03	2	0x00493550
 0x004954f0	HardwareExitApplication	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00493560
 0x0040b430	FUN_0040b430	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b430.cpp; hooks C4	2	0x004929d0
 0x0040b540	PlayerScoreRankOrder	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b540.cpp|mashedmod/src/mashed_re/exe_main.cpp; hooks C4	2	0x004929d0
@@ -205,7 +205,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00492440	sub_00492440	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_00492440.cpp; hooks C4	2	0x00492e90
 0x00492e60	sub_00492e60	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_00492e60.cpp; hooks C4	2	0x00492e90
 0x00498bf0	DisplayActiveFlagGet	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Boot/FrameDispatch.cpp|mashedmod/src/mashed_re/Match/MatchS16_00498bf0.cpp; hooks C4	2	0x00492e90
-0x004c19f0	RwVtableSlot07Call	rw		RW core called by 0x00492e90. exe port=body mashedmod/src/mashed_re/Boot/FrameDispatch.cpp|mashedmod/src/mashed_re/Match/MatchS19_004c19f0.cpp; hooks C4	2	0x00492e90
+0x004c19f0	RwVtableSlot07Call	rw		RW core called by 0x00492e90. exe port=body mashedmod/src/mashed_re/Boot/FrameDispatch.cpp|mashedmod/src/mashed_re/Match/MatchS19_004c19f0.cpp; hooks C4 | PORT-TOP-03: not on the knob path (caller 0x00492e90 is a stand-in). exe port body Boot/FrameDispatch.cpp + MatchS19_004c19f0.cpp (camera vtable slot +0x1c call)	2	0x00492e90
 0x004c1a00	IntroSplashVtableSlot6	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
 0x004c1bb0	IntroSplashRenderState	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
 0x004c1be0	sub_004c1be0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
@@ -215,47 +215,64 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00466b50	FUN_00466b50	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
 0x00496930	Table773030Get	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
 0x00493390	FUN_00493390	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00493480
-0x004c2fb0	RwEngineStart	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004c30b0	RwEngineOpen	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004c32b0	RwEngineInit	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004c9f50	RwGlobal7d4134Set	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004cbc60	RwGlobal7d4598Set	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004cbc70	RwGlobal7d4598Get	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004cbc80	RwGlobal7d459cSet	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004cbc90	RwGlobal7d459cGet	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x00550350	RtFSManagerOpen	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x005584c0	FUN_005584c0	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
-0x004e6ab0	FUN_004e6ab0	rw		RW core called by level-2 node 0x0041cb10. exe port=none 	3	0x0041cb10
-0x004c0b30	FUN_004c0b30	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
-0x004c1040	FUN_004c1040	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
-0x004e69a0	FUN_004e69a0	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
-0x004e7e30	FUN_004e7e30	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
-0x004cbd30	RwStreamRead	rw		RW core called by level-2 node 0x004274e0. exe port=body mashedmod/src/mashed_re/D3d9Render/RwWorldStream.cpp|mashedmod/src/mashed_re/Render/RwStreamCore.cpp	3	0x004274e0
-0x00552920	FUN_00552920	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
-0x00553cf0	FUN_00553cf0	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
-0x00553e80	FUN_00553e80	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
-0x00553ef0	FUN_00553ef0	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
-0x00556d70	FUN_00556d70	rw		RW core called by level-2 node 0x00427ca0. exe port=none 	3	0x00427ca0
-0x004e8090	FUN_004e8090	rw		RW core called by level-2 node 0x004881d0. exe port=none 	3	0x004881d0
-0x00534b60	FUN_00534b60	rw		RW core called by level-2 node 0x004881d0. exe port=called mashedmod/src/mashed_re/Render/RfxEmitter.cpp	3	0x004881d0
-0x004eb3c0	FUN_004eb3c0	rw		RW core called by level-2 node 0x00496e40. exe port=none 	3	0x00496e40
-0x004eb9d0	FUN_004eb9d0	rw		RW core called by level-2 node 0x00496e40. exe port=none 	3	0x00496e40
-0x0054f8d0	FUN_0054f8d0	rw		RW core called by level-2 node 0x004b3d80. exe port=none 	3	0x004b3d80
-0x004cc7f0	FUN_004cc7f0	rw		RW core called by level-2 node 0x004caea0. exe port=none 	3	0x004caea0
-0x004ccc50	FUN_004ccc50	rw		RW core called by level-2 node 0x004caea0. exe port=none 	3	0x004caea0
-0x004c7650	FUN_004c7650	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x004c77c0	FUN_004c77c0	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x004cdca0	FUN_004cdca0	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x004cdd00	FUN_004cdd00	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x004cdd60	FUN_004cdd60	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x004d7ff0	RwIdentityPassthrough	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x004d8480	RwErrSlotWrite	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x00558180	FUN_00558180	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x00558400	FUN_00558400	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
-0x004e45b0	RwFrameRemoveChild	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
-0x004e4860	RpWorldRemoveLight	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
-0x004e4d90	FUN_004e4d90	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
-0x004e5700	RpWorldDestroy	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
-0x004e6e00	RpClumpDestroy	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
-0x004e6920	FUN_004e6920	rw		RW core called by level-2 node 0x0041e0d0. exe port=none 	3	0x0041e0d0
-0x004e4320	RwPluginLinkSet	rw		RW core called by level-2 node 0x00426670. exe port=none 	3	0x00426670
+0x004c2fb0	RwEngineStart	bound	MashedRw_EngineStart_004c2fb0	LibRw/RwApiBind.cpp: RwEngineStart -> exe InitD3D9 device, adopted, rw::Engine::start, librw race renderer camera / state block	3	0x00493710
+0x004c30b0	RwEngineOpen	bound	MashedRw_EngineOpen_004c30b0	LibRw/RwApiBind.cpp: RwEngineOpen(params.displayID = hwnd) -> rw::Engine::open + last subsystem	3	0x00493710
+0x004c32b0	RwEngineInit	bound	MashedRw_EngineInit_004c32b0	LibRw/RwApiBind.cpp: RwEngineInit -> rw::Engine::init	3	0x00493710
+0x004c9f50	RwGlobal7d4134Set	shim	MashedRw_D3D9Set7d4134_004c9f50	LibRw/RwApiBind.cpp: keeps the value; RW D3D9-driver setting with no librw equivalent	3	0x00493710
+0x004cbc60	RwGlobal7d4598Set	shim	MashedRw_Set7d4598_004cbc60	LibRw/RwApiBind.cpp: keeps the pointer (0x00493700, no exe body), librw not told	3	0x00493710
+0x004cbc70	RwGlobal7d4598Get	shim	MashedRw_Get7d4598_004cbc70	LibRw/RwApiBind.cpp: returns the kept value	3	0x00493710
+0x004cbc80	RwGlobal7d459cSet	shim	MashedRw_Set7d459c_004cbc80	LibRw/RwApiBind.cpp: keeps the pointer (0x004936f0, no exe body), librw not told	3	0x00493710
+0x004cbc90	RwGlobal7d459cGet	shim	MashedRw_Get7d459c_004cbc90	LibRw/RwApiBind.cpp: returns the kept value	3	0x00493710
+0x00550350	RtFSManagerOpen	shim	MashedRw_RtFSManagerOpen_00550350	LibRw/RwApiBind.cpp: RtFSManagerOpen, no RtFSManager in librw; returns 1	3	0x00493710
+0x005584c0	FUN_005584c0	shim	MashedRw_Alloc7dc8b8_005584c0	LibRw/RwApiBind.cpp: returns 1, no allocation (two RW-heap buffers, no exe reader)	3	0x00493710
+0x004e6ab0	FUN_004e6ab0	rw		RW core called by level-2 node 0x0041cb10. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041cb10
+0x004c0b30	FUN_004c0b30	rw		RW core called by level-2 node 0x0041def0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041def0
+0x004c1040	FUN_004c1040	rw		RW core called by level-2 node 0x0041def0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041def0
+0x004e69a0	FUN_004e69a0	rw		RW core called by level-2 node 0x0041def0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041def0
+0x004e7e30	FUN_004e7e30	rw		RW core called by level-2 node 0x0041def0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041def0
+0x004cbd30	RwStreamRead	rw		RW core called by level-2 node 0x004274e0. exe port=body mashedmod/src/mashed_re/D3d9Render/RwWorldStream.cpp|mashedmod/src/mashed_re/Render/RwStreamCore.cpp | PORT-TOP-03: not on the knob path (caller 0x004274e0 under a stand-in). exe port bodies D3d9Render/RwWorldStream.cpp, Render/RwStreamCore.cpp	3	0x004274e0
+0x00552920	FUN_00552920	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
+0x00553cf0	FUN_00553cf0	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
+0x00553e80	FUN_00553e80	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
+0x00553ef0	FUN_00553ef0	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
+0x00556d70	FUN_00556d70	rw		RW core called by level-2 node 0x00427ca0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00427ca0
+0x004e8090	FUN_004e8090	rw		RW core called by level-2 node 0x004881d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004881d0
+0x00534b60	FUN_00534b60	rw		RW core called by level-2 node 0x004881d0. exe port=called mashedmod/src/mashed_re/Render/RfxEmitter.cpp | PORT-TOP-03: not on the knob path (caller 0x004881d0 under a stand-in). exe port=called Render/RfxEmitter.cpp	3	0x004881d0
+0x004eb3c0	FUN_004eb3c0	rw		RW core called by level-2 node 0x00496e40. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00496e40
+0x004eb9d0	FUN_004eb9d0	rw		RW core called by level-2 node 0x00496e40. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00496e40
+0x0054f8d0	FUN_0054f8d0	rw		RW core called by level-2 node 0x004b3d80. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004b3d80
+0x004cc7f0	FUN_004cc7f0	rw		RW core called by level-2 node 0x004caea0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004caea0
+0x004ccc50	FUN_004ccc50	rw		RW core called by level-2 node 0x004caea0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004caea0
+0x004c7650	FUN_004c7650	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x004c77c0	FUN_004c77c0	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x004cdca0	FUN_004cdca0	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x004cdd00	FUN_004cdd00	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x004cdd60	FUN_004cdd60	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x004d7ff0	RwIdentityPassthrough	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x004d8480	RwErrSlotWrite	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x00558180	FUN_00558180	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x00558400	FUN_00558400	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
+0x004e45b0	RwFrameRemoveChild	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
+0x004e4860	RpWorldRemoveLight	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
+0x004e4d90	FUN_004e4d90	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
+0x004e5700	RpWorldDestroy	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
+0x004e6e00	RpClumpDestroy	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
+0x004e6920	FUN_004e6920	rw		RW core called by level-2 node 0x0041e0d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041e0d0
+0x004e4320	RwPluginLinkSet	rw		RW core called by level-2 node 0x00426670. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00426670
+0x004c3040	FUN_004c3040	bound	MashedRw_EngineClose_004c3040	LibRw/RwApiBind.cpp: RwEngineClose -> rw::Engine::close	3	0x00493710
+0x004c3270	FUN_004c3270	bound	MashedRw_EngineTerm_004c3270	LibRw/RwApiBind.cpp: RwEngineTerm -> rw::Engine::term	3	0x00493710
+0x004c5c80	FUN_004c5c80	bound	MashedRw_TexDictionarySetCurrent_004c5c80	LibRw/RwApiBind.cpp: RwTexDictionarySetCurrent -> rw::TexDictionary::setCurrent (0x00493710 passes 0)	3	0x00493710
+0x00550390	RtFSManagerClose	shim	MashedRw_RtFSManagerClose_00550390	LibRw/RwApiBind.cpp: no-op (no RtFSManager in librw). Also called by 0x004938c0	3	0x00493710
+0x004c9eb0	DeviceModeBestBelowSet	shim	MashedRw_D3D9SetRefreshRate_004c9eb0	LibRw/RwApiBind.cpp: keeps the value (0x3c); the exe device is windowed	3	0x00493710
+0x004c9f60	FUN_004c9f60	shim	MashedRw_D3D9Set7d413c_004c9f60	LibRw/RwApiBind.cpp: keeps the value; RW D3D9-driver setting with no librw equivalent	3	0x00493710
+0x00495780	HardwareInstallFileSystem	missing	PortTop_Missing_00495780	Match/PortTop_00493710.cpp: no-op (0x004955d0 unported; no RtFSManager in librw)	3	0x00493710
+0x00495270	HWNDGet	matched	HWNDGet	Match/MatchS16_00495270.cpp, now also in the exe list	3	0x00493710
+0x00499710	Global7e9584Get	matched	Global7e9584Get	Match/MatchS16_00499710.cpp, now also in the exe list	4	0x00495270
+0x00493640	RenderwareAttachPlugins	stand-in	MashedRw_AttachPlugins_00493640	LibRw/RwApiBind.cpp: librw plugin registration (RwBridge.cpp RegisterPlugins), between Engine::init and open as RW 3.x requires	3	0x00493710
+0x004951f0	HardwareSetVideoMode	stand-in	PortTop_StandIn_004951f0	Match/PortTop_00493710.cpp: returns 1; the exe InitD3D9 picks the windowed mode inside the RwEngineStart binding	3	0x00493710
+0x00493600	FUN_00493600	missing	PortTop_Missing_00493600	Match/PortTop_00493710.cpp: returns 1 (0x004ce790 and its 4 function arguments unported)	3	0x00493710
+0x004a2cbd	printf	crt	PortTop_Crt_004a2cbd	Match/PortTop_00493710.cpp: CRT printf; the formatted line goes to mashed_re.log	3	0x00493710
+0x004936f0	FUN_004936f0	missing	PortTop_Missing_004936f0	Match/PortTop_00493710.cpp: pointer argument only (not in hooks.csv); the RW shims never call it	3	0x00493710
+0x00493700	FUN_00493700	missing	PortTop_Missing_00493700	Match/PortTop_00493710.cpp: pointer argument only (not in hooks.csv); the RW shims never call it	3	0x00493710
+0x004c2f60	RwEngineStop	bound	MashedRw_EngineStop_004c2f60	LibRw/RwApiBind.cpp: RwEngineStop -> librw race-renderer scene teardown, rw::Engine::stop, then the exe releases its device (ShutdownD3D9)	3	0x004938c0
+0x00558470	sub_00558470	shim	MashedRw_Free7dc8b8_00558470	LibRw/RwApiBind.cpp: no-op (counterpart of the 0x005584c0 shim)	3	0x004938c0
