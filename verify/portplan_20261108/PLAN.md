@@ -120,13 +120,69 @@ batches one at a time, then lane B by subsystem. At most 3 workers live.
 hand port and the original. That is a parity fix in principle, but it is still a flip and goes to Mariano with the
 bisected swap and both hash sets.
 
-## 6. Decisions needed (not blocking the first batches)
+## 6. Decisions (Mariano, 2026-11-08, log/orch/DECISIONS.md L-96..L-98)
 
-- **Q1** (architecture): the 1,352 rows under no exe-called root and most of the 727 below the C2 dispatchers can
-  only become `called` if the exe's hand-written top level (frame loop, frontend state machine, renderer front)
-  is replaced by the matched originals, top down (MATCH-S15-FU-MAINLOOP is the entry). Options: (a) keep the
-  current top level and port only the frontier (about 360 rows), (b) plan a top-down swap starting at the main
-  loop. Recommendation: (a) now, revisit (b) after lane B closes.
-- **Q2**: Lua 4.0 (94) and qhull (122) are library code the exe has no body for. In scope for the port count or not?
-- **Q3**: RenderWare core (320) is replaced by librw and RW-Physics (172) by hand ports. Record both as decisions
-  (out of the port count, like CRT) or not?
+- **L-96 (Q1): start top-down now**, in parallel with lanes A/B. Replace the exe's hand-written top level with the
+  original's, top down, one swap per commit (section 7). Hash flips are expected and follow the gate rule: a batch
+  that moves G-CTRL or B is not fast-forwarded, it is bisected to the swap and brought to Mariano with the evidence.
+  The exe stays bootable and playable at every merge. The hand top level stays behind a knob until the original's
+  path passes the gates.
+- **L-97 (Q2):** Lua 4.0 (94) and qhull 2002.1 (122) are out of the P-DoD port count, like CRT / libpng / zlib.
+- **L-98 (Q3):** RenderWare core (320) is out of the port count (librw replaces it by design). RW-Physics 3.7 (172)
+  stays in and is swapped like game code (section 8).
+
+## 7. Top-down lane (L-96)
+
+The original top level, from the CRT `entry` `0x004a4bb7`: WinMain `0x00492370` -> AppInitialiseOnBootup
+`0x00402750` (57 callees), the run function `0x00492290` (8 callees: MainLoopInit `0x00492770`,
+GameTickStateMachine7 `0x00492d30`, `0x004929d0` ...), AppDestroy `0x00402a40` (43), the message pump
+`0x00499690` (holds the focus gate `0x004996d3`). Direct calls only, game rows only, WinMain reaches **2,155**
+functions: C4 1,746 (matched source 1,656), C3 61, C2 341. Depth: 15 at level 1, 118 at 2, 258 at 3, 422 at 4,
+then 412 / 373 / 296 / 166 / 70 / 24.
+
+Facts that shape the lane:
+- The exe already follows part of it: its WinMain -> ExecuteFrontendBootChain calls the matched MainLoopInit
+  (`Match/MatchS15_00492770.cpp`), which faults because 5 callees have no exe body (MATCH-S15-FU-MAINLOOP).
+- `0x004111c0` (race frame, 11-state dispatcher on `DAT_0063ba8c`) is byte-identical as a whole symbol
+  (`verify/matcht01gfu_20261102`, match.py reads its jump table at `0x00411324` as code and prints 84.7%, so the
+  tracker still says C2) and is already compiled in the exe (`Match/MatchT01G_004111c0.cpp`), port `body`. So is
+  Race::Tick `0x0040fc00`. The exe's race frame is hand-written and calls neither.
+- Course::Finish `0x0040d270` has no matched source (C2). It needs a MATCH row before it can be swapped.
+- The top level calls RenderWare core directly (RwEngineInit `0x004c32b0`, RwEngineStart `0x004c2fb0`,
+  RpClumpForAllAtomics `0x004e66d0`, RwStream*, RwMatrix*, camera, raster). Under L-98 those stay librw, so the
+  matched game bodies need every RW core call bound to a librw-backed function of the same signature. That layer
+  is the main enabling work of the lane.
+
+Shape. A knob `MASHED_ORIG_TOP` selects the original's top level; the hand top level is the default until the
+original's path passes the gates, then the default flips (a decided flip, Mariano) and the hand path stays behind an
+opt-out knob until it is retired. Each original body that the knob path runs binds its callees in this order: a
+matched exe body, else an existing port body by name, else an explicit **stand-in** (the hand top level's function
+that does that job), listed in `verify/porttop_*/BINDINGS.tsv` (rva, binding kind matched / port / stand-in, exe
+symbol). A stand-in is debt: each later row replaces stand-ins with matched bodies, deepest-first under the node it
+works on. No absolute-address callee, ever (6 thunks).
+
+| row | content | gate | hash risk |
+|---|---|---|---|
+| PORT-TOP-01 | MATCH-S15-FU-MAINLOOP: exe bodies for `0x00495110 0x0042b920 0x0042b950 0x00433240 0x004c57a0`, boot log `[7] MainLoopInit returned 1`. Default path | gates | low-medium |
+| PORT-TOP-02 | knob scaffold: `MASHED_ORIG_TOP=1` runs matched WinMain `0x00492370` + run function `0x00492290`, levels 1-2 bound (BINDINGS.tsv), boots to the main menu. Default unchanged | gates (default) + knob boot-to-menu | none on default |
+| PORT-TOP-03 | RW API binding layer: inventory the RW core entry points the knob path's matched bodies call, bind each to librw | build, knob boot, drawlist on the menu | none on default |
+| PORT-TOP-04 | AppInitialiseOnBootup `0x00402750` / AppDestroy `0x00402a40` under the knob, stand-ins out | knob boot + clean exit | none on default |
+| PORT-TOP-05 | message pump `0x00499690` and the frame `0x00492290` subtree: `0x00492d30`, `0x004929d0` -> `0x0040d440` | knob: menu -> Quick Battle -> race start | none on default |
+| PORT-TOP-06 | race frame `0x004111c0` + Race::Tick `0x0040fc00` wired from `0x00492d30` under the knob | knob G-CTRL / B (expect a diff, record it) | flip when it becomes default |
+| PORT-TOP-07 | Course::Finish `0x0040d270`: MATCH row first (RE axis), then swap | match.py + relocheck, then knob gates | flip when default |
+| PORT-TOP-08 | frontend state machine `0x0042c960` (the other caller of `0x004111c0`) and the menu top | knob nav_coverage + drawlist | none on default |
+| PORT-TOP-09.. | descend level by level (3: 258, 4: 422 ...), replacing stand-ins; C2/C3 nodes on the way get MATCH rows | per row | per row |
+| PORT-TOP-FLIP | knob path passes G-CTRL / B (or Mariano accepts its hashes): flip the default | -Full train, decided flip | flip |
+
+While every knob row keeps the default unchanged, the default gates must not move. That keeps the lane mergeable
+in parallel with lanes A/B. The non-TRAINING tracks can still move on code layout alone
+(memory sim-trajectory-is-code-layout-sensitive), so read a 13-track change against a same-base no-op control.
+
+## 8. RW-Physics lane (L-98)
+
+RW-Physics 3.7 C4 rows: 172 = body 73 (16 with a matched source, 57 C4 by another route), none 99 (98 with a
+matched source), called 0. The hand bodies live in `Collision/RwpSolver*.cpp` and `Collision/RwpIntegrator.cpp`.
+`called 0` for a solver the race runs every frame means the exe reaches its physics through names the port column
+does not bind to these RVAs (or through its own solver). Row **PORT-RWP-01** settles that first (which exe
+functions the race actually executes for each RWP RVA), then swaps the 16 matched-source body rows one per commit.
+**PORT-RWP-02** ports the 98 none rows the exe path needs. Both are race-sim: high hash risk, bisect per swap.
