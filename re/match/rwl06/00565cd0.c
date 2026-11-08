@@ -1,4 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: 100% regs 100%, relocheck OK (was 68.3). Literal 0.5f for DAT_005cc32c, the two endpoints as pointer locals a = param_2, b = param_2 + 4 (fixes the fld/fadd operand order of the x and z sums), radius (float)sqrt(...) * 0.5f. Supersedes the header below. */
+/* MATCH-RWR05 2026-11-08: float DAT_ constants written as float literals (values read from the unpatched exe; relocheck compares __real@ constants by value). The compiler orders x87 operands differently for a literal than for a global. Score in results.tsv. */
 /* MATCH-RWL06 h1 0x00565cd0: 68.3% (regs 63.4%), class a. x87 add/mul operand order canonicalised by compiler. Tried: operand flips, permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -28,13 +30,14 @@ MGLOBAL(float, DAT_005cc32c, 0x005cc32c);
 // MATCH: 0x00565cd0 FUN_00565cd0
 void FUN_00565cd0(float *param_1,float *param_2)
 {
-  *param_1 = param_2[0] + param_2[4];
-  param_1[1] = param_2[5] + param_2[1];
-  param_1[2] = param_2[2] + param_2[6];
-  param_1[0] = DAT_005cc32c * param_1[0];
-  param_1[1] = DAT_005cc32c * param_1[1];
-  param_1[2] = DAT_005cc32c * param_1[2];
-  param_1[3] = (float)(sqrt((param_2[6] - param_2[2]) * (param_2[6] - param_2[2]) +
-                    (param_2[5] - param_2[1]) * (param_2[5] - param_2[1]) +
-                    (param_2[4] - param_2[0]) * (param_2[4] - param_2[0])) * DAT_005cc32c);
+  float *a = param_2;
+  float *b = param_2 + 4;
+
+  param_1[0] = a[0] + b[0];
+  param_1[1] = a[1] + b[1];
+  param_1[2] = a[2] + b[2];
+  param_1[0] = 0.5f * param_1[0];
+  param_1[1] = 0.5f * param_1[1];
+  param_1[2] = 0.5f * param_1[2];
+  param_1[3] = (float)sqrt((b[2] - a[2]) * (b[2] - a[2]) + (b[1] - a[1]) * (b[1] - a[1]) + (b[0] - a[0]) * (b[0] - a[0])) * 0.5f;
 }

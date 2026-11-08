@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: float DAT_ constants written as float literals (values read from the unpatched exe; relocheck compares __real@ constants by value). The compiler orders x87 operands differently for a literal than for a global. Score in results.tsv. */
 /* MATCH-RWL06 0x00566200: hand-matched (h2). 39.7% regs 39.7% ops 89.0% under /O2 /Ob1 /G5 (raw /O1 file 14.5%). float, (float)fabs, 0x005cc32c as float. Box vectors e[3], s[3] as float arrays (x87 values spilled between steps, as in the original); s scaled in place. Residual: original evaluates the three e/s pairs interleaved with loads (e kept on the x87 stack) and a different frame (0x24 vs 0x20); source-order changes tried only partly. Class b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -46,12 +47,12 @@ void FUN_00566200(float *param_1,float *param_2,float *param_3)
   s[0] = param_2[4] + *param_2;
   s[1] = param_2[5] + param_2[1];
   s[2] = param_2[6] + param_2[2];
-  fVar1 = e[0] * DAT_005cc32c;
-  fVar2 = e[1] * DAT_005cc32c;
-  fVar3 = e[2] * DAT_005cc32c;
-  s[0] = s[0] * DAT_005cc32c;
-  s[1] = s[1] * DAT_005cc32c;
-  s[2] = s[2] * DAT_005cc32c;
+  fVar1 = e[0] * 0.5f;
+  fVar2 = e[1] * 0.5f;
+  fVar3 = e[2] * 0.5f;
+  s[0] = s[0] * 0.5f;
+  s[1] = s[1] * 0.5f;
+  s[2] = s[2] * 0.5f;
   fVar8 = (float)fabs(*param_3) * fVar1 + (float)fabs(param_3[2]) * fVar3 + (float)fabs(param_3[1]) * fVar2;
   fVar7 = (float)fabs(param_3[4]) * fVar1 + (float)fabs(param_3[6]) * fVar3 + (float)fabs(param_3[5]) * fVar2;
   fVar1 = (float)fabs(param_3[8]) * fVar1 + (float)fabs(param_3[10]) * fVar3 + (float)fabs(param_3[9]) * fVar2;

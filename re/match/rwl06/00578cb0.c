@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: float DAT_ constants written as float literals (values read from the unpatched exe; relocheck compares __real@ constants by value). The compiler orders x87 operands differently for a literal than for a global. Score in results.tsv. */
 /* MATCH-RWL06 h3 0x00578cb0: best 70.3% (regs 77.0%, ops 93.2%), class (a). float local_8[2] array, compare form; x87 operand order of the dot product differs (6 permutations tried). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -54,9 +55,9 @@ float FUN_00578cb0(int *param_1,float *param_2,float *param_3,float *param_4)
     param_3[2] = param_2[2];
     return fVar4;
   }
-  *param_3 = *param_2 * _DAT_005cc33c;
-  param_3[1] = param_2[1] * _DAT_005cc33c;
-  param_3[2] = param_2[2] * _DAT_005cc33c;
+  *param_3 = *param_2 * (-1.0f);
+  param_3[1] = param_2[1] * (-1.0f);
+  param_3[2] = param_2[2] * (-1.0f);
   *param_4 = -fVar3;
   return local_8[1];
 }

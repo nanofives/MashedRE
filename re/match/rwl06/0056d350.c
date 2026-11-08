@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: 100% regs 100%, relocheck OK. Re-derived with a typed 32-byte element table (E **tab, i = c + (b + a*4)*2, (*tab)[i].v[k]); the Ghidra int-offset form gave eax/ecx swapped (55.9%). Supersedes the header below. */
 /* MATCH-RWL06 0x0056d350: hand-matched (h2). 55.9% regs 94.9% ops 94.9% under FLAGS /O2 /Ob1 /G5 (raw file was /O1 at 77.0% with a frame-pointer prologue that the original lacks). Instruction stream identical; only the eax/ecx assignment differs (orig: iVar1 in ecx, param_3 loaded into eax after it; ours the reverse). Dot terms written in original x87 order (+0x18,+0x14,+0x10). Tried operand swaps, shift spellings, unsigned, permuter 166 compiles. Class b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -23,22 +24,16 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x0056d350 FUN_0056d350
-void FUN_0056d350(int *param_1,float *param_2,float *param_3,int param_4,int param_5,int param_6)
+typedef struct { float v[8]; } E;
+void FUN_0056d350(E **tab,float *out,float *m,int a,int b,int c)
 {
-  int iVar1;
-  int iVar2;
+  int i;
 
-  iVar1 = (param_6 + (param_5 + param_4 * 4) * 2) * 0x20;
-  *param_2 = *(float *)(*param_1 + iVar1) * param_3[3];
-  param_2[1] = *(float *)(*param_1 + 4 + iVar1) * param_3[3];
-  param_2[2] = *(float *)(*param_1 + 8 + iVar1) * param_3[3];
-  iVar2 = *param_1 + iVar1;
-  param_2[4] = *(float *)(iVar2 + 0x18) * param_3[2] +
-               *(float *)(iVar2 + 0x14) * param_3[1] + *(float *)(iVar2 + 0x10) * *param_3;
-  iVar2 = *param_1 + iVar1;
-  param_2[5] = *(float *)(iVar2 + 0x18) * param_3[6] +
-               *(float *)(iVar2 + 0x14) * param_3[5] + *(float *)(iVar2 + 0x10) * param_3[4];
-  iVar1 = iVar1 + *param_1;
-  param_2[6] = *(float *)(iVar1 + 0x18) * param_3[10] +
-               *(float *)(iVar1 + 0x14) * param_3[9] + *(float *)(iVar1 + 0x10) * param_3[8];
+  i = c + (b + a * 4) * 2;
+  out[0] = (*tab)[i].v[0] * m[3];
+  out[1] = (*tab)[i].v[1] * m[3];
+  out[2] = (*tab)[i].v[2] * m[3];
+  out[4] = (*tab)[i].v[6] * m[2] + (*tab)[i].v[5] * m[1] + (*tab)[i].v[4] * m[0];
+  out[5] = (*tab)[i].v[6] * m[6] + (*tab)[i].v[5] * m[5] + (*tab)[i].v[4] * m[4];
+  out[6] = (*tab)[i].v[6] * m[10] + (*tab)[i].v[5] * m[9] + (*tab)[i].v[4] * m[8];
 }

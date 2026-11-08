@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: float DAT_ constants written as float literals (values read from the unpatched exe; relocheck compares __real@ constants by value). The compiler orders x87 operands differently for a literal than for a global. Score in results.tsv. */
 /* MATCH-RWL06 0x0057a9a0: hand pass (h2), body kept in raw form. 34.1% regs 39.8% ops 67.8% under /O2 /Ob1 /G5. Compiles after: prototypes of 0x0055c000 (int,int,float*,float*) and 0x0057a250 (int*,float*,float,float*,float*,float*,float*,float), byte[432] scratch as float[108]. Control flow (do/while of 4, goto labels) kept from the decomp; not iterated further (budget). Class b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -91,7 +92,7 @@ FUN_0057a9a0(undefined4 param_1,int *param_2,float param_3,float *param_4,float 
     if (**(short **)(iVar1 + 0x5c) != 1) {
       fVar5 = FUN_0057a660(param_2,&local_1d4);
       local_1f8 = (float)fVar5;
-      local_1fc = param_7 * DAT_005cc328;
+      local_1fc = param_7 * 0.01f;
       if (local_1fc < local_1f8) {
         local_1fc = local_1fc + local_1f8;
       }
@@ -107,7 +108,7 @@ FUN_0057a9a0(undefined4 param_1,int *param_2,float param_3,float *param_4,float 
         local_1d8 = local_1cc * local_200;
         iVar4 = FUN_0057a250(param_2,&local_1e0,local_1c0 + local_200,local_1b0,&local_1bc,
                              &local_1f8,&local_1f4,param_7);
-        if ((iVar4 == 0) || (local_1f4 <= DAT_005d757c)) {
+        if ((iVar4 == 0) || (local_1f4 <= 0.0f)) {
           local_1ec = local_200;
           if (local_1e4 == 0) {
             if (local_200 == local_1fc) {
@@ -116,13 +117,13 @@ FUN_0057a9a0(undefined4 param_1,int *param_2,float param_3,float *param_4,float 
             local_200 = local_1fc;
           }
           else {
-            local_200 = (local_200 + local_1fc) * DAT_005cc32c;
+            local_200 = (local_200 + local_1fc) * 0.5f;
           }
         }
         else {
           local_1fc = local_200;
           local_1e4 = 1;
-          bVar2 = local_200 == DAT_005d757c;
+          bVar2 = local_200 == 0.0f;
           *param_4 = local_1bc;
           param_4[1] = local_1b8;
           param_4[2] = local_1b4;
@@ -132,10 +133,10 @@ FUN_0057a9a0(undefined4 param_1,int *param_2,float param_3,float *param_4,float 
           if (local_1f4 < param_3) goto LAB_0057ad3c;
           local_1f8 = param_4[2] * local_1cc + local_1d4 * *param_4 + param_4[1] * local_1d0;
           if (local_200 <= local_1f4 / local_1f8) {
-            local_200 = local_1ec * DAT_005cc9dc + local_200 * DAT_005cc9a0;
+            local_200 = local_1ec * 0.95f + local_200 * 0.05f;
           }
           else {
-            local_200 = local_200 - (local_1f4 / local_1f8) * DAT_005cc9dc;
+            local_200 = local_200 - (local_1f4 / local_1f8) * 0.95f;
           }
           if (local_200 < local_1ec) {
             local_1ec = local_200;
@@ -147,14 +148,14 @@ FUN_0057a9a0(undefined4 param_1,int *param_2,float param_3,float *param_4,float 
         return 0;
       }
 LAB_0057ad3c:
-      if (local_1fc != DAT_005d757c) {
+      if (local_1fc != 0.0f) {
         local_1fc = (param_4[2] * local_1cc + local_1d4 * *param_4 + param_4[1] * local_1d0) *
                     local_1fc;
-        *param_5 = *param_5 - DAT_005cc32c * local_1fc;
+        *param_5 = *param_5 - 0.5f * local_1fc;
         *param_6 = *param_6 - local_1fc;
       }
 LAB_0057ad7f:
-      *param_5 = *param_5 - (local_1f0 - local_1e8) * DAT_005cc32c;
+      *param_5 = *param_5 - (local_1f0 - local_1e8) * 0.5f;
       *param_6 = *param_6 - local_1c4;
       return 1;
     }
@@ -169,7 +170,7 @@ LAB_0057ad7f:
                 *(float *)(iVar4 + 0x30) * *param_4 + *(float *)(iVar4 + 0x34) * param_4[1]) -
                 local_1e8;
   }
-  *param_5 = (local_1e8 + fVar3) * DAT_005cc32c;
+  *param_5 = (local_1e8 + fVar3) * 0.5f;
   *param_6 = local_1e8 - fVar3;
   return 1;
 }
