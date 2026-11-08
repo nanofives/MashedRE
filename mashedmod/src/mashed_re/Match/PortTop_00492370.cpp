@@ -1,0 +1,250 @@
+// PORT-TOP-02 (L-96, top-down lane): the MASHED_ORIG_TOP knob path. EXE ONLY (exe_sources.rsp, not asi_sources.rsp).
+//
+// With MASHED_ORIG_TOP=1 (default OFF, read once at WinMain entry in exe_main.cpp) the exe's WinMain hands control to
+// the byte-matched original WinMain 0x00492370 (re/match/s15/00492370.c, match.py 100%) and its run function
+// rva 0x00492290 (re/match/s15/00492290.c, 100%), compiled verbatim here as C++ with MATCH_PORT. Three more matched
+// sources the two bodies call: 0x00499cc0 (s16) compiles in PortTop_Leaves.cpp, 0x00492d20 and 0x00499730 in their existing wrappers.
+// Window create 0x00499ba0, its window procedure 0x00499820, the OS-version logger 0x00499890 and the command-line
+// parser 0x00493900 have their own TUs (their Win32 typedefs cannot share one TU).
+//
+// Every callee binds by name, in this order (verify/porttop_20261108/PLAN 7): a matched exe body, else an existing
+// port body, else a stand-in = the hand top level's piece doing that job (exe_main.cpp HandTop_*), else a logged
+// "missing" stub that returns what the reference returns. No absolute-address call anywhere (6 RVA thunks only).
+// The full table, with the RenderWare entry points for PORT-TOP-03, is verify/porttop_20261108/BINDINGS.tsv.
+//
+// The exe maps the original data range zero-filled, so the original strings these bodies read are zero there. Under
+// the knob only, PortTop_SeedRdata writes their original bytes back (PortTop_RdataSeed.inc, generated from the
+// anchored binary by verify/porttop_20261108/gen_rdata_seed.py).
+
+#ifdef MASHED_STANDALONE
+
+#include <cstdarg>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#define MATCH_PORT 1
+
+extern "C" {
+
+// ---- exe-side targets (exe_main.cpp PORT-TOP-02 export block and existing exe bodies) ----
+void PortTop_HandPrelude(void);
+int  PortTop_HandInitDevice(void* hInstance);
+int  PortTop_HandInitRest(void* hInstance);
+void PortTop_HandPollKeyboard(void);
+void PortTop_HandFrameUpdate(void);
+int  PortTop_HandRenderFrame(void);
+void PortTop_HandAppDestroy(void);
+void PortTop_HandDeviceShutdown(void);
+void PortTop_HandGameModeMachine(void);
+void PortTop_SetHwnd(void* hwnd);
+int  MainLoopInit(void);                       // Match/MatchS15_00492770.cpp
+__declspec(dllimport) void __stdcall PostQuitMessage(int nExitCode);
+
+// ---- logging: one line per knob-path step into mashed_re.log (the hand prelude truncated it) ----
+static void PortTop_Log(const char* fmt, ...) {
+    if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+        va_list ap;
+        va_start(ap, fmt);
+        std::fputs("[ORIG_TOP] ", f);
+        std::vfprintf(f, fmt, ap);
+        std::fputc('\n', f);
+        va_end(ap);
+        std::fclose(f);
+    }
+}
+
+// ---- .rdata seed (knob only) ----
+struct PortTopSeed { unsigned va; unsigned n; const char* bytes; };
+static const PortTopSeed kPortTopSeed[] = {
+#include "PortTop_RdataSeed.inc"
+};
+static void PortTop_SeedRdata(void) {
+    unsigned done = 0;
+    for (const PortTopSeed& s : kPortTopSeed) {
+        __try {
+            std::memcpy(reinterpret_cast<void*>(static_cast<std::uintptr_t>(s.va)), s.bytes, s.n);
+            ++done;
+        } __except (1) {
+            PortTop_Log("seed 0x%08X (%u bytes) faulted", s.va, s.n);
+        }
+    }
+    PortTop_Log("rdata seed: %u/%u strings written", done, static_cast<unsigned>(sizeof(kPortTopSeed) / sizeof(kPortTopSeed[0])));
+}
+
+// The reference MASHED.exe runs with the no_focus_pause patch (0x004996d3 JNZ->JMP: the pump never calls WaitMessage),
+// and the hand path bypasses the same gate (PumpOnce). Equivalent here: keep the pump's focus flag DAT_0077391c set.
+// MASHED_ORIG_TOP_FOCUSPAUSE=1 keeps the unpatched behaviour (WaitMessage while unfocused).
+static int s_focusPause = 0;
+static void PortTop_NoFocusPause(void) {
+    if (!s_focusPause) *reinterpret_cast<volatile int*>(0x0077391cu) = 1;
+}
+
+// Config log 0x004963e0 / 0x00496400: the exe's bodies (ConfigLogErrorCore / ConfigLogDebugCore) sit in an anonymous
+// namespace in Save/SettingsConfig.cpp (a PORT-SAVE-01 file), so they cannot be bound by name yet. In the reference both
+// are no-ops (the disable_log patch: 0x004963e7 JMP, 0x00496400 RET). The stand-ins write nothing the game reads; they
+// mirror the text into mashed_re.log so the boot steps the matched WinMain logs are visible.
+void PortTop_CfgLogError(const char* msg) {
+    if (msg) PortTop_Log("cfglog: %.*s", static_cast<int>(std::strcspn(msg, "\n")), msg);
+}
+void PortTop_CfgLogDebug(const char* fmt, ...) {
+    char buf[0x200];
+    va_list ap;
+    va_start(ap, fmt);
+    std::vsnprintf(buf, sizeof(buf), fmt ? fmt : "", ap);
+    va_end(ap);
+    PortTop_Log("cfglog: %.*s", static_cast<int>(std::strcspn(buf, "\n")), buf);
+}
+
+// ---- WinMain 0x00492370 callees ----
+// stand-in for the gate 0x00493540 -> 0x00495150: none of 0x00495150's 6 callees has an exe body and the hand top
+// level has no such step. Returns what 0x00495150 returns, DAT_007719e4 == 0 (0x007719e4 is the "-cs1" switch that
+// rva 0x00493900 sets).
+int PortTop_Missing_00493540(int, int) {
+    const int r = *reinterpret_cast<volatile int*>(0x007719e4u) == 0;
+    PortTop_Log("0x00493540 gate: missing (0x00495150 unported), returns %d", r);
+    return r;
+}
+// stand-in for 0x004924f0 (zero-fill 0x007f0f60 + boot params): the hand boot chain (exe_main ExecuteFrontendBootChain
+// steps 1-3) does this job inside the 0x00402750 stand-in. The range is zero at this point (zero-initialised pad).
+int PortTop_StandIn_004924f0(void) {
+    PortTop_Log("0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)");
+    return 1;
+}
+// stand-in for 0x00492270 SubsystemInit (RW engine init/open/start 0x00493710, DisplayInit 0x004921d0, ViewportInit
+// rva 0x00428590): the hand device init (InitD3D9 + librw RaceSubmit_Init). The window is 0x00499ba0's (DAT_007e9584).
+int PortTop_StandIn_00492270(void) {
+    PortTop_SetHwnd(*reinterpret_cast<void* volatile*>(0x007e9584u));
+    const int r = PortTop_HandInitDevice(*reinterpret_cast<void* volatile*>(0x007e9580u));
+    PortTop_Log("0x00492270 subsystem init: stand-in HandTop_InitDevice returned %d", r);
+    return r;
+}
+// stand-in for 0x00402750 AppInitialiseOnBootup: the rest of the hand init (wedge, boot chain, input, dsound guard,
+// boot movies, audio, frontend assets). Returns nonzero on success like 0x00402750.
+int PortTop_StandIn_00402750(void) {
+    void* hinst = *reinterpret_cast<void* volatile*>(0x007e9580u);
+    const int r = PortTop_HandInitRest(hinst);
+    PortTop_NoFocusPause();
+    PortTop_Log("0x00402750 AppInitialiseOnBootup: stand-in HandTop_InitRest returned %d", r);
+    return r;
+}
+// stand-in for 0x00402a40 AppDestroy.
+void PortTop_StandIn_00402a40(void) {
+    PortTop_Log("0x00402a40 AppDestroy: stand-in HandTop_AppDestroy");
+    PortTop_HandAppDestroy();
+}
+// rva 0x004c5930 is the RenderWare texture-dictionary destroy (its source walks RwTexDictionary). WinMain calls it only
+// when DAT_0077195c != 0, which 0x004921d0 sets; the exe never runs 0x004921d0, so this is not reached. PORT-TOP-03.
+int PortTop_Rw_004c5930(int dict) {
+    PortTop_Log("0x004c5930 RW texdict destroy: missing (PORT-TOP-03), dict=0x%08X not destroyed", dict);
+    return 1;
+}
+// stand-in for 0x00493550 -> 0x004938c0 (RW engine stop/close/term + file system close): the hand device shutdown.
+void PortTop_StandIn_00493550(void) {
+    PortTop_Log("0x00493550 engine stop: stand-in HandTop_DeviceShutdown");
+    PortTop_HandDeviceShutdown();
+}
+// rva 0x00493560 -> 0x004954f0 HardwareExitApplication: no exe body for it or its 5 callees; the hand top level has none.
+int PortTop_Missing_00493560(void) {
+    PortTop_Log("0x00493560 hardware exit: missing (0x004954f0 unported), returns 0");
+    return 0;
+}
+
+// ---- run function 0x00492290 callees ----
+// rva 0x00492770 MainLoopInit: the matched exe body (Match/MatchS15_00492770.cpp). Its 5 callees still forward to raw
+// original addresses (PORT-TOP-01 closes them), so the call is SEH-guarded here exactly as the hand boot chain step 7
+// guards it. Remove the guard when PORT-TOP-01 lands.
+int PortTop_MainLoopInitGuarded(void) {
+    int r = 0;
+    __try {
+        r = MainLoopInit();
+        PortTop_Log("0x00492770 MainLoopInit returned %d", r);
+    } __except (1) {
+        PortTop_Log("0x00492770 MainLoopInit faulted (PORT-TOP-01: callees 0x00495110 0x0042b920 0x0042b950 0x00433240 0x004c57a0)");
+    }
+    return r;
+}
+// rva 0x004929d0 game-mode machine: the port wrapper GameModeMachine_Tick (Race/GameModeMachine.cpp), the hand loop's
+// call for this job (default it is a no-op; MASHED_PORTSTATE_GAMEFLOW_FU=1 runs the matched 0x004929d0).
+static unsigned s_frame = 0;
+int PortTop_Port_004929d0(void) {
+    if (s_frame == 0) PortTop_Log("first frame: run function 0x00492290 loop entered");
+    PortTop_HandGameModeMachine();
+    return 1;
+}
+// rva 0x004967e0 (input poll, C2, no exe body) under the matched 0x00492d20: the hand keyboard poll.
+void PortTop_StandIn_004967e0(void) {
+    PortTop_HandPollKeyboard();
+}
+// stand-in for 0x00492d30 GameTickStateMachine7 (7-case machine on DAT_00771968, unported tree): the hand frame update
+// (deterministic frame cap, harness steps, menu navigation, input globals, GameFlow_Update).
+int PortTop_StandIn_00492d30(void) {
+    PortTop_HandFrameUpdate();
+    return 1;
+}
+// stand-in for 0x00492e90 (frame render, 26 callees): the hand RenderFrame. A device loss posts WM_QUIT, which the
+// matched pump 0x00499690 turns into the loop exit (the hand loop breaks on it).
+int PortTop_StandIn_00492e90(void) {
+    const int r = PortTop_HandRenderFrame();
+    if (s_frame == 0 || (s_frame < 600 && (s_frame % 120) == 0))
+        PortTop_Log("frame %u rendered (%d)", s_frame, r);
+    ++s_frame;
+    return r;
+}
+// rva 0x004926c0 AudioTickAndAvg: the exe body exists (Match/MatchS15_004926c0.cpp) but its 5 callees have none and its
+// forwarders call raw original addresses, which fault in the exe. Not called; the hand audio runs on its own thread.
+void PortTop_Missing_004926c0(void) {}
+// rva 0x00493480 FpsDiscretise: the exe body exists but forwards to raw 0x00493390 (no exe body). Not called; the hand
+// frame pacing is the device present + limiter inside RenderFrame.
+int PortTop_Missing_00493480(void) { return 0; }
+
+} // extern "C"
+
+// ---- the matched bodies ----
+#define FUN_00492370 Orig_00492370
+#define FUN_00492290 Orig_00492290
+#define FUN_00492d20 IntroSplashFrameTickShim      // matched, Match/MatchS15_00492d20.cpp (shared with the asi)
+#define FUN_00499cc0 Orig_00499cc0                  // matched, PortTop_Leaves.cpp
+// WinMain 0x00492370
+#define FUN_00499ba0 Orig_00499ba0                  // matched, PortTop_00499ba0.cpp
+#define FUN_00493900 Orig_00493900                  // matched (66.9% source), PortTop_00493900.cpp
+#define FUN_00493540 PortTop_Missing_00493540
+#define FUN_004924f0 PortTop_StandIn_004924f0
+#define FUN_00492270 PortTop_StandIn_00492270
+#define FUN_005c9d00 GetRaceEndTrigger              // port, Util/GameStateGetters.cpp
+#define FUN_004996f0 WindowShow                     // matched, Match/MatchS16_004996f0.cpp
+#define FUN_004963e0 PortTop_CfgLogError           // stand-in (exe body not exe-visible, see above)
+#define FUN_00402750 PortTop_StandIn_00402750
+#define FUN_00402a40 PortTop_StandIn_00402a40
+#define FUN_004c5930 PortTop_Rw_004c5930
+#define FUN_00493550 PortTop_StandIn_00493550
+#define FUN_00493560 PortTop_Missing_00493560
+// run function 0x00492290
+#define FUN_00492770 PortTop_MainLoopInitGuarded
+#define FUN_00499690 WindowMsgPump                  // matched, Match/MatchS16_00499690.cpp
+#define FUN_004929d0 PortTop_Port_004929d0
+#define FUN_00492d30 PortTop_StandIn_00492d30
+#define FUN_00492e90 PortTop_StandIn_00492e90
+#define FUN_004926c0 PortTop_Missing_004926c0
+#define FUN_00493480 PortTop_Missing_00493480
+
+extern "C" {
+#include "../../../../re/match/s15/00492370.c"
+#include "../../../../re/match/s15/00492290.c"
+
+int PortTop_WinMain(void* hInstance, void* hPrevInstance, char* lpCmdLine, int nCmdShow) {
+    PortTop_HandPrelude();
+    s_focusPause = (std::getenv("MASHED_ORIG_TOP_FOCUSPAUSE") != nullptr);
+    PortTop_Log("MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over");
+    PortTop_SeedRdata();
+    PortTop_NoFocusPause();
+    const int r = Orig_00492370(static_cast<int>(reinterpret_cast<std::uintptr_t>(hInstance)),
+                                static_cast<int>(reinterpret_cast<std::uintptr_t>(hPrevInstance)),
+                                static_cast<int>(reinterpret_cast<std::uintptr_t>(lpCmdLine)), nCmdShow);
+    PortTop_Log("WinMain 0x00492370 returned %d after %u frames", r, s_frame);
+    return r;
+}
+} // extern "C"
+
+#endif // MASHED_STANDALONE
