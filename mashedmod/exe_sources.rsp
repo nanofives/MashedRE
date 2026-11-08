@@ -37,6 +37,7 @@
 "Vehicle\RecordBlockState.cpp"
 "Race\GameModeState.cpp"
 "Util\PromoLoop_round49.cpp"
+"Match\MatchS02_0040ce80.cpp"
 "Vehicle\D2SinkProbe.cpp"
 "Vehicle\LaunchRevCharge.cpp"
 "Vehicle\VehicleCouplingBridge.cpp"

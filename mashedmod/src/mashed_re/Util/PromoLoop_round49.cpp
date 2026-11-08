@@ -13,10 +13,5 @@
 
 #include <cstdint>
 
-// 0x0040ce80
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PtrTable5f2770Get(std::uint32_t param_1) {
-    const std::uint32_t table = *reinterpret_cast<const std::uint32_t*>(0x005f2770u);
-    const std::uint32_t entry = reinterpret_cast<const std::uint32_t*>(static_cast<std::uintptr_t>(table))[param_1];
-    return *reinterpret_cast<const std::uint32_t*>(static_cast<std::uintptr_t>(entry) + 4u);  // cited at 0x0040ce80
-}
-RH_ScopedInstall(PtrTable5f2770Get, 0x0040ce80);
+// MATCH-S02: the body of PtrTable5f2770Get moved to Match/MatchS02_0040ce80.cpp (PORT-STATE-02),
+// which compiles the byte-matched source re/match/s02/0040ce80.c.
