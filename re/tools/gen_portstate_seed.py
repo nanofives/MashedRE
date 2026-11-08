@@ -193,6 +193,11 @@ def sha256(path):
     return hashlib.sha256(open(path, 'rb').read()).hexdigest().upper()
 
 
+def sha256_text(path):
+    """SHA-256 of a text file with CRLF folded to LF, so the checkout's line endings do not change it."""
+    return hashlib.sha256(open(path, 'rb').read().replace(b'\r\n', b'\n')).hexdigest().upper()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true')
@@ -209,7 +214,7 @@ def main():
         print('%s ERROR: no inventory at %s' % (tag, a.inventory))
         return 1
     inv = read_inventory(a.inventory)
-    inv_sha = sha256(a.inventory)
+    inv_sha = sha256_text(a.inventory)
     binp = a.unpatched or find_unpatched()
 
     if a.check:
