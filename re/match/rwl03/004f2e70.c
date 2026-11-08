@@ -37,6 +37,7 @@ MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 undefined4 FUN_004cc7f0(undefined4 p0, undefined4 p1, undefined4 p2, undefined4 p3);
 int FUN_004f2f90(int p0, int p1, short p2, short p3, uint p4, int p5);
 // MATCH: 0x004f2e70 FUN_004f2e70
+typedef struct T2e70 { short v[3]; short pad[7]; } T2e70;
 int FUN_004f2e70(uint param_1,undefined4 *param_2,int param_3,short *param_4)
 
 {
@@ -44,35 +45,24 @@ int FUN_004f2e70(uint param_1,undefined4 *param_2,int param_3,short *param_4)
   undefined4 uVar2;
   int iVar3;
   short *puVar4;
+  T2e70 *tri = (T2e70 *)param_4;
   uint uVar5;
 
   iVar1 = (int *)(**(codeptr *)(DAT_007d3ff8 + 0x108))(param_1 * 4,0x30502);
   uVar2 = FUN_004cc7f0(0x24,param_1,4,0x30502);
   *param_2 = uVar2;
   uVar2 = FUN_004cc7f0(0x10,(param_1 >> 1) + 1,4,0x30502);
-  uVar5 = 0;
   param_2[1] = uVar2;
-  if (param_1 > 0) {
-    puVar4 = param_4 + 2;
-    do {
-      iVar3 = (**(codeptr *)(DAT_007d3ff8 + 0x118))(*param_2,0x30502);
-      iVar1[uVar5] = iVar3;
-      *(undefined1 *)(iVar3 + 0x20) = 0;
+  for (uVar5 = 0; uVar5 < param_1; uVar5++) {
+      iVar1[uVar5] = (**(codeptr *)(DAT_007d3ff8 + 0x118))(*param_2,0x30502);
+      *(undefined1 *)(iVar1[uVar5] + 0x20) = 0;
       *(uint *)iVar1[uVar5] = uVar5;
       *(undefined4 *)(iVar1[uVar5] + 0x14) = 0;
-      iVar3 = iVar1[uVar5];
-      *(undefined4 *)(iVar3 + 0x10) = 0;
+      *(undefined4 *)(iVar1[uVar5] + 0x10) = 0;
       *(undefined4 *)(iVar1[uVar5] + 0x18) = 0;
-      uVar2 = FUN_004f2f90(param_2[1],param_3,puVar4[-2],puVar4[-1],uVar5,(int)iVar1);
-      *(undefined4 *)(iVar1[uVar5] + 4) = uVar2;
-      uVar2 = FUN_004f2f90(param_2[1],param_3,puVar4[-1],*puVar4,uVar5,(int)iVar1);
-      *(undefined4 *)(iVar1[uVar5] + 8) = uVar2;
-      uVar2 = FUN_004f2f90(param_2[1],param_3,*puVar4,puVar4[-2],uVar5,(int)iVar1);
-      iVar3 = iVar1[uVar5];
-      uVar5 = uVar5 + 1;
-      puVar4 = puVar4 + 10;
-      *(undefined4 *)(iVar3 + 0xc) = uVar2;
-    } while (uVar5 < param_1);
+      *(undefined4 *)(iVar1[uVar5] + 4) = FUN_004f2f90(param_2[1],param_3,tri[uVar5].v[0],tri[uVar5].v[1],uVar5,(int)iVar1);
+      *(undefined4 *)(iVar1[uVar5] + 8) = FUN_004f2f90(param_2[1],param_3,tri[uVar5].v[1],tri[uVar5].v[2],uVar5,(int)iVar1);
+      *(undefined4 *)(iVar1[uVar5] + 0xc) = FUN_004f2f90(param_2[1],param_3,tri[uVar5].v[2],tri[uVar5].v[0],uVar5,(int)iVar1);
   }
   return (int)iVar1;
 }
