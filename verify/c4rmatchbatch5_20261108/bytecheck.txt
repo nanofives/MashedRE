@@ -1,0 +1,15 @@
+== 0x0052df20 19
+0x0052df20 _FUN_0052df20: 100.0% (regs 100.0%, ops 100.0%)  6/6 ins  flags=/O2 /Ob1 /G5 tc=ddk
+bytes_n 19 orig 19 bytes_bad []
+== 0x00537b20 84
+0x00537b20 _FUN_00537b20: 100.0% (regs 100.0%, ops 100.0%)  40/40 ins  flags=/O2 /Ob1 /G5 tc=ddk
+bytes_n 84 orig 84 bytes_bad []
+== 0x00537d20 71
+0x00537d20 _FUN_00537d20: 100.0% (regs 100.0%, ops 100.0%)  31/31 ins  flags=/O2 /Ob1 /G5 tc=ddk
+bytes_n 71 orig 71 bytes_bad []
+== 0x00537d70 106
+0x00537d70 _FUN_00537d70: 100.0% (regs 100.0%, ops 100.0%)  46/46 ins  flags=/O2 /Ob1 /G5 tc=ddk
+bytes_n 106 orig 106 bytes_bad []
+== 0x00537e60 105
+0x00537e60 _FUN_00537e60: 100.0% (regs 100.0%, ops 100.0%)  34/34 ins  flags=/O2 /Ob1 /G5 tc=ddk
+bytes_n 105 orig 105 bytes_bad []
