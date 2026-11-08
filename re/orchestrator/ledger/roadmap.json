@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-11-08T01:05:28Z",
+  "updated": "2026-11-08T02:16:01Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -8584,12 +8584,12 @@
       "id": "C4R-DXLIB",
       "section": "C4R",
       "title": "L-93 M5: library identity for the statically linked d3dx9 (third-party-library[d3dx9-psgp], [d3dx9-shader-compiler]) and DirectShow baseclasses rows (556 rows, never compared). Use what C4R-LIBID finds on disk (2004 DirectX 9.0c SDK static d3dx9.lib, the SDK's strmbase sources); if nothing is on disk, file a decision row for Mariano on fetching the SDK instead of downloading. Promote identical rows through the re-classify batch mode.",
-      "stage": "decision",
-      "owner": "",
-      "parent": "",
-      "branch": "",
+      "stage": "merged",
+      "owner": "cmw76fvvm2cbdp41ju9oogcz3",
+      "parent": "cmw4cxp880bsdo21cyoqk2t6z",
+      "branch": "orch/C4R-DXLIB",
       "worktree": "",
-      "evidence": "",
+      "evidence": "verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md",
       "deps": [
         "C4R-LIBID"
       ],
@@ -8598,8 +8598,9 @@
       "decision": "L-94",
       "wave": 3,
       "next": "",
-      "note": "From C4R-LIBID: no static d3dx9 library on this machine. DirectShow strmbase.lib (XP DDK SP1 and RTM) and the BaseClasses source (SimGolf tools/dxsdk8, DX 8.0 SDK) are present; strmbase.lib already matches 14 of the 159 DirectShow rows uniquely (10 ambiguous). d3dx9 part waits on decision L-94.",
-      "updated": "2026-11-07T17:46:32Z"
+      "note": "merge train 20261107_230139: G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9",
+      "updated": "2026-11-08T02:16:01Z",
+      "sha": "1661a03bdd522f6c940fe56db6098997460c8ef2"
     },
     {
       "id": "C4R-PORTCOL-LINT",
@@ -8736,6 +8737,44 @@
       "next": "",
       "note": "",
       "updated": "2026-11-08T01:02:21Z"
+    },
+    {
+      "id": "C4R-DXLIB-REFILE",
+      "section": "C4R",
+      "title": "From C4R-DXLIB: 0x004fb5a0 (render, byte-identical to d3dx9 c_D3DXPSGPUpdateSkinnedMesh, libid C4) and 8 render rows already C4 by match whose bytes equal d3dx9 functions: refile subsystem render -> third-party-library[d3dx9-psgp] through re-classify (game C4 count drops by 9, library rises by 9), and add a correction note on U-9135 (it called 0x004fb5a0 a D3DX caller; it is D3DX itself). Evidence verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md. Text-only.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 2,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-08T02:01:33Z"
+    },
+    {
+      "id": "C4R-DXLIB-NEWROWS",
+      "section": "C4R",
+      "title": "From C4R-DXLIB: 159 addresses in MASHED.exe are identical to d3dx9 9.0b (Summer 2003) functions but have no hooks.csv row. Add rows (subsystem third-party-library[d3dx9-*] per the matched object, name from the library symbol, C2 baseline) through re-classify, check each against re/console/pc_funcs.csv for a function boundary, then libid-promote the unique ones with c4_reclass. Evidence verify/c4rdxlib_20261107/. Text-only.",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 2,
+      "next": "",
+      "note": "",
+      "updated": "2026-11-08T02:01:33Z"
     }
   ]
 }
