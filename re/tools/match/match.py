@@ -290,10 +290,17 @@ def byte_compare(addr: int, secs, syms, sym: str):
     bad = [i for i in range(len(mine)) if i not in masked and mine[i] != orig[i]]
     # relocations to labels in this same section (jump tables, internal jumps): the original's absolute target
     # must sit at the same offset from the function start as ours (stored addend added)
+    # REL32 sites (a self-recursive `call`) hold a displacement in the original, not an address
+    s = [x for x in syms if x["sec"] > 0 and x["type"] == 0x20 and x["name"] == full][0]
+    rel32 = {off - s["value"] for off, _, rtype in secs[s["sec"] - 1]["relocs"] if rtype == 0x14}
     for site, tgt in local.items():
         if site + 4 <= len(mine):
-            ours = tgt + int.from_bytes(mine[site:site + 4], "little")
-            theirs = int.from_bytes(orig[site:site + 4], "little") - addr
+            if site in rel32:
+                ours = tgt + int.from_bytes(mine[site:site + 4], "little", signed=True)
+                theirs = site + 4 + int.from_bytes(orig[site:site + 4], "little", signed=True)
+            else:
+                ours = tgt + int.from_bytes(mine[site:site + 4], "little")
+                theirs = int.from_bytes(orig[site:site + 4], "little") - addr
             if ours != theirs:
                 bad.append(site)
     return len(mine), sorted(bad)
