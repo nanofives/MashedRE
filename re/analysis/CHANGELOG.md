@@ -85,6 +85,7 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
 2026-11-08  0x004769f0  ParticleEmitter_SetColour  C4->C4  file column -> Match/MatchS12_004769f0.cpp (matched re/match/s12/004769f0.c is the body in both targets, port called, gates unchanged); evidence: verify/portrender_20261108/RESULT_PORT-RENDER-01.md
+2026-11-08  0x0040d270  Course::Finish  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/top07/0040d270.c; evidence: verify/porttop07_20261108/RESULT_PORT-TOP-07.md
 2026-11-08  0x004fc6f5  x86_D3DXVec2Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
 2026-11-08  0x004fc75e  x86_D3DXVec2TransformNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
 2026-11-08  0x004fc793  x86_D3DXVec3Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
