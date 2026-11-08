@@ -84,6 +84,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-07  0x0040ac80  FUN_0040ac80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ac80.c; evidence: verify/c4rac80extent_20261107/RESULT_C4R-AC80-EXTENT.md
 2026-11-07  0x004ec760  FUN_004ec760  C2->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md
 2026-11-07  0x004ec79d  FUN_004ec79d  C2->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md
 2026-11-07  0x004ec8eb  FUN_004ec8eb  C2->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md

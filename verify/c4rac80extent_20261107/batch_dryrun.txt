@@ -1,0 +1,4 @@
+[1/1] 0x0040ac80 match PASS extent override: 5 members = 228 B, each byte-identical, relocheck OK (22/0)
+batch: 1 pass, 0 refused, 0 skipped (already C4), 1 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-07  0x0040ac80  FUN_0040ac80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ac80.c; evidence: <RESULT>

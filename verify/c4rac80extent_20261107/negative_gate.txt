@@ -1,0 +1,6 @@
+[control] PASS (as expected): extent override: 5 members = 228 B, each byte-identical, relocheck OK (22/0)
+[sum-mismatch] REFUSED (as expected): extent override: member sizes sum 227 B != pc_funcs body_size 228
+[hidden-member-byte] REFUSED (as expected): extent member 0x0040abc0: not byte-identical, 1 differing unmasked bytes of 31
+[hidden-marker-missing] REFUSED (as expected): extent member 0x0040abe0: no `// HIDDEN: 0x0040abe0 _FUN_0040abe0 31` in verify/c4rac80extent_20261107/_neg_0040ac80.c
+[wrong-source] REFUSED (as expected): extent override names source re/match/s02/0040ab40.c, batch gives re/match/s02/0040ac80.c
+5/5 as expected
