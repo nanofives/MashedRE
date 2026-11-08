@@ -12,6 +12,7 @@
 "Track\KfInterpolate.cpp"
 "D3d9Render\TrackRenderer.cpp"
 "Ai\AiStandalone.cpp"
+"Match\MatchS11_0046dd80.cpp"
 "Ai\CarSlotState.cpp"
 "Match\MatchS02_0040e480.cpp"
 "Match\MatchS02_0040e470.cpp"
