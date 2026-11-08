@@ -1,80 +1,80 @@
-rva	size	best_pct	before_pct	class	reason
-00549900	112	94.9	94.9	a	fisub dword vs fild qword;fsubp
-00540340	454	93.7	93.7	a	454  93.7  93.7  cxx:ok  a  esp cleanup merging
-00550580	237	93.5	93.5	a	xor esi,esi; mov eax,esi on fail return (file created by hand)
-0054b630	150	93.0	93.0	b	memcpy intrinsic + struct VB; spill slot numbering differs
-0054d4d0	1785	90.5	90.5	a	/O1 wins; orig reloads stores from memory
-0054c400	230	87.5	87.5	b	inner count hoisting
-0053e760	44	86.7	86.7	a/b	20 86.7 86.7 cxx:? a/b early-ret layout (je->shared ret vs original jn
-00544d20	154	86.7	86.7	a	orig keeps separate xor eax,eax/ret exits, ours merges
-0053e730	48	85.7	85.7	a	-  85.7  85.7  cxx:ok  a  original emits jne+ret (no fallthrough early
-00538600	161	84.8	84.8	a	161  84.8  84.8  cxx:ok  a  original does not tail-merge the 'xor eax,
-00540160	97	83.8	83.8	b	97  83.8  86.5  cxx:ok  b  byte idx via &idx idiom; null-ptr store tai
-00541b50	490	83.6	83.6	a	shrink-wrapped push ebx shifts frame
-0053eaa0	266	79.2	79.2	a	-  79.2  79.2  cxx:ok  a  same non-merged early returns as 00538600
-0054dbd0	2379	78.9	78.9	b	raw
-0053fd30	355	77.2	77.2	b	355  77.2  78.0  cxx:ok  b  found/null block layout loops 2-3
-00543e50	619	75.9	75.9	a	14 unmerged xor/ret exits
-0054f410	1216	75.8	75.8	a	fld/fstp lane copies vs integer mov; globals float
-0053d5a0	231	75.3	75.3	b	-  75.3  84.7  cxx:ok  b  struct copy (rep movsd), 2-arg 004d7ff0, loc
-00544bf0	291	74.3	74.3	b	f5c copy via FPU, frame order
-00540100	95	73.0	73.0	b	95 73.0 75.7 b param-slot byte loop ok; load order [global]+[param] an
-00543bb0	392	72.3	72.3	a	dec chain switch, unmerged epilogues
-0054b6d0	100	70.3	70.3	b	same 37 ins, reg choice esi vs ecx
-0054b8c0	344	69.4	69.4	a	orig keeps 6 unmerged failure epilogues
-0053fbb0	356	68.5	68.5	b	356  68.5  75.8  cxx:ok  b  idx-in-param-slot idiom, switch jump table
-0053d0b0	269	67.1	67.1	a/b	269 67.1 67.1 a/b original materializes each >=0 test (xor;test;setge;
-0053d820	244	66.7	66.7	b	244 66.7 81.7 b structs A(9 dw)/B(6 dw) give frame; esi push shrink-wr
-0053dba0	679	66.2	66.2	b	679  66.2  76.0  cxx:ok  b  not worked beyond cxx fixes
-0054b740	376	66.1	66.1	b	orig duplicates 6-pop epilogue per early return
-0054cfa0	225	65.8	65.8	b	structure only (permuter)
-0053fa20	80	65.6	65.6	b	80  65.6  65.6  cxx:ok  b  /O1 /G5; edi load order not moved
-0053fb00	80	65.6	65.6	a/b	80 65.6 65.6 a/b edi-saved param + shrink-wrapped push esi order, /O1 
-005493e0	410	64.2	64.2	b	raw
-00545260	214	61.6	61.6	a	separate exit epilogues + reg alloc
-00543b90	21	60.0	60.0	a	add operand order only (add ecx,eax vs add eax,ecx)
-00543da0	21	60.0	60.0	b	add operand order (ecx,eax vs eax,ecx) after fixing callee arity
-0053e5d0	182	59.4	59.4	b	182  59.4  67.2  cxx:ok  b  unsigned fidiv fold not reproduced
-00544a70	96	58.1	58.1	b	base idx*0x14 folding differs
-0054c870	1590	56.6	56.6	b	structure only
-0053d6c0	342	56.3	56.3	a/b	~380 56.3 73.2 a/b original duplicates the pop/pop/pop/pop/add esp/ret
-0054f8d0	1154	54.9	54.9	b	raw
-0053ccc0	189	54.1	54.1	b	189  54.1  63.5  cxx:ok  b  locals typed (float v[4], m[12]); original
-0054c4f0	888	54.1	54.1	b	structure only
-00549970	127	53.6	53.6	b	zero kept in esi vs xor eax + imm store
-00543b30	94	52.9	52.9	b	orig holds ebx=0 as shared return, tail-duplicated F(*p2)
-0053fec0	438	50.9	50.9	b	438  50.9  63.5  cxx:ok  b  fixed compile (byte store into local_28[0]
-00544ad0	281	46.0	46.0	b	dirty-flag blocks, ebx=3 hoisted
-0053e430	391	44.2	44.2	b	391  44.2  53.3  cxx:ok  b  loop form, switch layout
-005412d0	2161	44.2	44.2	b	compile errors fixed
-0053d460	318	41.5	41.5	b	318  41.5  62.7  cxx:ok  b  memcpy intrinsic (rep movsd), loc[3], flag
-0053d040	18	40.0	40.0	a	18  40.0  100.0  cxx:ok  a  operand regs eax/ecx swapped for the two s
-005459c0	880	37.0	37.0	b	structure only; ROUND() stub is a raw-converter artifact (needs real r
-0054d090	150	36.8	36.8	b	structure only (permuter)
-0054fd60	967	36.5	36.5	b	structure only
-00549b20	1203	32.5	32.5	b	structure only (protos fixed so it compiles)
-00541d40	1398	30.7	30.7	b	compile error fixed
-005402d0	100	28.6	28.6	b	100  28.6  62.9  cxx:ok  b  2-arg fn, idx idiom; original reloads para
-00547230	529	28.4	28.4	b	structure only
-0053e830	614	25.8	25.8	b	614  25.8  60.3  cxx:FAIL  b  not worked (raw), cxx proto types
-0054ceb0	230	25.6	25.6	b	ops 91%; precomputed deltas found, frame/spill layout differs
-00546890	633	24.6	24.6	b	structure only (memset intrinsic); regs/frame differ
-00545d30	1506	24.3	24.3	b	structure only; ROUND() artifact; compiles after proto fixes
-005405c0	3340	23.8	23.8	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
-00546d10	346	22.1	22.1	b	x87 stack residency / term order
-0053d920	639	21.0	21.0	b	639  21.0  29.5  cxx:ok  b  raw (/O1) kept, not enough budget
-0054b340	739	20.8	20.8	b	raw
-0054ba20	896	19.0	19.0	b	raw
-00550130	533	18.3	18.3	b	raw
-0053bdf0	2013	16.2	16.2	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
-0053c6e0	1490	13.6	13.6	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
-00539900	1469	12.4	12.4	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
-00539ec0	2033	12.4	12.4	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
-0054a120	2315	12.1	12.1	b	structure only (C++ fixes only)
-0054bda0	1621	10.2	10.2	b	raw
-0053b7b0	1590	10.0	10.0	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
-0053cd80	694	8.9	8.9	b	see notes
-00538d60	2961	-1	-1	b	no compiling source: raw converter output fails under the DDK and the 
-0053a7a0	4108	-1	-1	b	no compiling source: raw converter output fails under the DDK and the 
-0053dea0	1416	-1	-1	b	no compiling source: raw converter output fails under the DDK and the 
-005422c0	4666	-1	-1	c	raw converter failed (NAN operand with no address), no source
+rva	size	best%	regs%	flags	by	sha256	class	reason	before%
+0x00549900	112	94.9	94.9	/O2 /Ob1 /G5	insn	86be2c220466630f	a	fisub dword vs fild qword;fsubp	94.9
+0x00540340	454	99.4	99.4	/O2 /Ob1 /G5	insn	9ed1efd78803a593	b	D3D9 vtable calls __stdcall; one mov esi,[ebx] vs [eax] residue	93.7
+0x00550580	237	100.0	100.0	/O2 /Ob1 /G5	insn	d28d9223c21c51b8	identical	one result variable in the tail if/else	93.5
+0x0054b630	150	100.0	100.0	/O2 /Ob1 /G5	insn	31a454127cff28eb	identical	new capacity kept in dead param_2 (spill slots)	93.0
+0x0054d4d0	1785	100.0	100.0	/O2 /Ob1 /G5	insn	8103a7e67167d7ee	identical	volatile float read alias of param_1 (flagged)	90.5
+0x0054c400	230	100.0	100.0	/O2 /Ob1 /G5	insn	3539ce9565fb4ac8	identical	inner loop counts j up to n-i, weight (float)(n-i-j)	87.5
+0x0053e760	44	100.0	100.0	/O2 /Ob1 /G5	insn	873e856f7dad3778	identical	returns the allocated pointer (Ghidra void)	86.7
+0x00544d20	154	86.7	86.7	/O2 /Ob1 /G5	insn	ef653b5e9ae98d35	b	plugin attach: same cross-jump residue as 0x00538600	86.7
+0x0053e730	48	100.0	100.0	/O2 /Ob1 /G5	insn	0840788ac69e0236	identical	returns the allocated pointer (Ghidra void)	85.7
+0x00538600	161	84.8	84.8	/O2 /Ob1 /G5	insn	9dff4ecd216cabfc	b	plugin attach: original keeps one xor/ret per failure, ours cross-jumps	84.8
+0x00540160	97	100.0	100.0	/O2 /Ob1 /G5	insn	34d63fe439eb800b	identical	same lookup; the +8 field and the value are float	83.8
+0x00541b50	490	83.6	85.0	/O2 /Ob1 /G5	insn	8e8ee2f696ea607a	b	ebx push sunk into the second path (shrink-wrap); 7 shapes, no move	83.6
+0x0053eaa0	266	79.2	79.2	/O2 /Ob1 /G5	insn	31d864d114a14df6	b	plugin attach: same cross-jump residue as 0x00538600	79.2
+0x0054dbd0	2379	100.0	100.0	/O2 /Ob1 /G5	insn	4b63724784fb95c1	identical	volatile float read alias + DAT_005cc31c typed float (flagged)	78.9
+0x0053fd30	355	89.0	89.0	/O2 /Ob1 /G5	insn	68e3b4111fe4d224	b	lookup blocks as goto/float; found-block layout of lookups 2-3 differs	77.2
+0x00543e50	619	75.9	75.9	/O2 /Ob1 /G5	insn	8b37aa47063d0203	a	14 unmerged xor/ret exits	75.9
+0x0054f410	1216	75.8	75.8	/O2 /Ob1 /G5	insn	b3419e9a7f8adf0b	a	fld/fstp lane copies vs integer mov; globals float	75.8
+0x0053d5a0	231	75.3	84.7	/O2 /Ob1 /G5	insn	a7f96cc04b7a92ab	b	-  75.3  84.7  cxx:ok  b  struct copy (rep movsd), 2-arg 004d7ff0, loc	75.3
+0x00544bf0	291	74.3	77.1	/O2 /Ob1 /G5	insn	620f56fda4415b9f	b	f5c copy via FPU, frame order	74.3
+0x00540100	95	100.0	100.0	/O2 /Ob1 /G5	insn	e8f9cd4c70fe1abd	identical	entry-table lookup: goto found / e = 0 / e->val = v; return param_1	73.0
+0x00543bb0	392	72.3	72.3	/O2 /Ob1 /G5	insn	c2cd482edb6624b6	a	dec chain switch, unmerged epilogues	72.3
+0x0054b6d0	100	70.3	100.0	/O2 /Ob1 /G5	insn	cae07eae43b0ebe4	b	same 37 ins, reg choice esi vs ecx	70.3
+0x0054b8c0	344	69.4	69.4	/O2 /Ob1 /G5	insn	5c35ed61d24dc0ff	a	orig keeps 6 unmerged failure epilogues	69.4
+0x0053fbb0	356	68.5	75.8	/O2 /Ob1 /G5	insn	b6c9c15f9dd08b9c	b	356  68.5  75.8  cxx:ok  b  idx-in-param-slot idiom, switch jump table	68.5
+0x0053d0b0	269	67.1	67.1	/O2 /Ob1 /G5	insn	9f43506aeb5443ac	a/b	269 67.1 67.1 a/b original materializes each >=0 test (xor;test;setge;	67.1
+0x0053d820	244	66.7	81.7	/O2 /Ob1 /G5	insn	804d00876037df18	b	244 66.7 81.7 b structs A(9 dw)/B(6 dw) give frame; esi push shrink-wr	66.7
+0x0053dba0	679	66.2	76.0	/O2 /Ob1 /G5	insn	1775b9562259404b	b	679  66.2  76.0  cxx:ok  b  not worked beyond cxx fixes	66.2
+0x0054b740	376	66.1	67.2	/O2 /Ob1 /G5	insn	d891990a98cb49d1	b	orig duplicates 6-pop epilogue per early return	66.1
+0x0054cfa0	225	65.8	64.6	/O2 /Ob1 /G5	insn	3bbdd96bc49cb7f8	b	structure only (permuter)	65.8
+0x0053fa20	80	93.8	93.8	/O2 /Ob1 /G5	insn	67560026ff1e862b	b	O2 flags + flag read into dead param_2 slot; original uses the param_1 slot	65.6
+0x0053fb00	80	93.8	93.8	/O2 /Ob1 /G5	insn	192989a6c55f84c5	b	same as 0x0053fa20	65.6
+0x005493e0	410	64.2	70.3	/O2 /GS /Ob1	insn	c130439b8c88ff2e	b	raw	64.2
+0x00545260	214	61.6	54.7	/O2 /Ob1 /G5	insn	f12aeff31128afce	a	separate exit epilogues + reg alloc	61.6
+0x00543b90	21	100.0	100.0	/O2 /Ob1 /G5	insn	67c1b5bf534c6d5d	identical	param += global; return the tail call (int)	60.0
+0x00543da0	21	100.0	100.0	/O2 /Ob1 /G5	insn	20afd74802c78d3e	identical	param += global; 4-arg int tail call like 0x00543b90	60.0
+0x0053e5d0	182	59.4	67.2	/O2 /Ob1 /G5	insn	de20917a2d03d071	b	182  59.4  67.2  cxx:ok  b  unsigned fidiv fold not reproduced	59.4
+0x00544a70	96	58.1	61.3	/O2 /Ob1 /G5	insn	e3cd4d7a24caa3fa	b	base idx*0x14 folding differs	58.1
+0x0054c870	1590	56.6	58.3	/O2 /Ob1 /G5	insn	b2b2e43a85c763a1	b	structure only	56.6
+0x0053d6c0	342	56.3	73.2	/O2 /Ob1 /G5	insn	4743dfec5cc74d99	a/b	~380 56.3 73.2 a/b original duplicates the pop/pop/pop/pop/add esp/ret	56.3
+0x0054f8d0	1154	54.9	68.6	/O2 /Ob1 /G5	insn	924a9e634fd1b873	b	raw	54.9
+0x0053ccc0	189	54.1	63.5	/O2 /Ob1 /G5	insn	6e92c9ef08bc7462	b	189  54.1  63.5  cxx:ok  b  locals typed (float v[4], m[12]); original	54.1
+0x0054c4f0	888	54.1	55.1	/O2 /Ob1 /G5	insn	292c2fd9b04524d4	b	structure only	54.1
+0x00549970	127	53.6	78.6	/O2 /Ob1 /G5	insn	941f61bb80bebe5b	b	zero kept in esi vs xor eax + imm store	53.6
+0x00543b30	94	52.9	72.5	/O2 /Ob1 /G5	insn	c83959a171878358	b	orig holds ebx=0 as shared return, tail-duplicated F(*p2)	52.9
+0x0053fec0	438	50.9	63.5	/O2 /Ob1 /G5	insn	2a6ee0796a35e5d5	b	438  50.9  63.5  cxx:ok  b  fixed compile (byte store into local_28[0]	50.9
+0x00544ad0	281	46.0	68.0	/O2 /Ob1 /G5	insn	8cf5f0b2c9b22d2b	b	dirty-flag blocks, ebx=3 hoisted	46.0
+0x0053e430	391	44.2	53.3	/O2 /Ob1 /G5	insn	1a049db1e8c897a8	b	391  44.2  53.3  cxx:ok  b  loop form, switch layout	44.2
+0x005412d0	2161	44.2	53.9	/O2 /Ob1 /G5	insn	5d6ba8826d690205	b	compile errors fixed	44.2
+0x0053d460	318	41.5	62.7	/O2 /Ob1 /G5	insn	089d6465109e5030	b	318  41.5  62.7  cxx:ok  b  memcpy intrinsic (rep movsd), loc[3], flag	41.5
+0x0053d040	18	100.0	100.0	/O2 /Ob1 /G5	insn	58636e70dbd86346	identical	returns param_1 (Ghidra void)	40.0
+0x005459c0	880	37.0	45.7	/O2 /Ob1 /G5	insn	1daeecead20fee1e	b	structure only; ROUND() stub is a raw-converter artifact (needs real r	37.0
+0x0054d090	150	36.8	50.9	/O2 /Ob1 /G5	insn	6d6f4ed7d6db2411	b	structure only (permuter)	36.8
+0x0054fd60	967	36.5	68.3	/O2 /Ob1 /G5	insn	6322ec576bfdcd3a	b	structure only	36.5
+0x00549b20	1203	32.5	63.4	/O2 /Ob1 /G5	insn	3cfb63ef55e62287	b	structure only (protos fixed so it compiles)	32.5
+0x00541d40	1398	30.7	36.9	/O2 /Ob1 /G5	insn	9188d8d42ea56ce0	b	compile error fixed	30.7
+0x005402d0	100	100.0	100.0	/O2 /Ob1 /G5	insn	2a73fb3083a9c58c	identical	same lookup; two float params (param_3 dropped by Ghidra), returns param_1	28.6
+0x00547230	529	28.4	30.9	/O2 /Ob1 /G5	insn	0048d8223b307d4e	b	structure only	28.4
+0x0053e830	614	25.8	60.3	/O2 /Ob1 /G5	insn	45dfb25e32b9e6cd	b	614  25.8  60.3  cxx:FAIL  b  not worked (raw), cxx proto types	25.8
+0x0054ceb0	230	25.6	57.7	/O2 /Ob1 /G5	insn	ce9537cd6feb1a0f	b	ops 91%; precomputed deltas found, frame/spill layout differs	25.6
+0x00546890	633	24.6	49.1	/O2 /Ob1 /G5	insn	90fd5622fb49dee4	b	structure only (memset intrinsic); regs/frame differ	24.6
+0x00545d30	1506	24.3	32.9	/O2 /Ob1 /G5	insn	f8f7cd62cb7f4a42	b	structure only; ROUND() artifact; compiles after proto fixes	24.3
+0x005405c0	3340	23.8	25.4	/O2 /Ob1 /G5	insn	88dacdd17d66e9a4	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	23.8
+0x00546d10	346	22.1	38.5	/O2 /Ob1 /G5	insn	afc0606c953ac670	b	x87 stack residency / term order	22.1
+0x0053d920	639	21.0	29.5	/O1	insn	e68ae10ee8d10c56	b	639  21.0  29.5  cxx:ok  b  raw (/O1) kept, not enough budget	21.0
+0x0054b340	739	20.8	37.8	/O2 /Ob1 /G5	insn	258b9c42b7ff9368	b	raw	20.8
+0x0054ba20	896	19.0	20.0	/O2 /Ob1 /G5	insn	5bf55345bcb14f1c	b	raw	19.0
+0x00550130	533	18.3	21.7	/O2 /Ob1 /G5	insn	f08b19405eee2599	b	raw	18.3
+0x0053bdf0	2013	16.2	27.7	/O2 /Ob1 /G5	insn	2d6a63e87029d999	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	16.2
+0x0053c6e0	1490	13.6	25.4	/O2 /Ob1 /G5	insn	512ae4736e166adc	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	13.6
+0x00539900	1469	12.4	33.8	/O2 /Ob1 /G5	insn	fed99b33510457c7	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	12.4
+0x00539ec0	2033	12.4	24.5	/O2 /GS /Ob1	insn	6f45b8527ffadde7	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	12.4
+0x0054a120	2315	12.1	29.3	/O2 /GS /Ob1	insn	e253c0242de69f46	b	structure only (C++ fixes only)	12.1
+0x0054bda0	1621	10.2	9.6	/O2 /Ob1 /G5	insn	f902967e49176260	b	raw	10.2
+0x0053b7b0	1590	10.0	12.5	/O2 /Ob1 /G5	insn	2b95d1b42a2cfa6b	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	10.0
+0x0053cd80	694	8.9	30.2	/O2 /Ob1 /G5	insn	986c40d3ae5076d7	b	see notes	8.9
+0x00538d60	2961	-1	-1				compile fail		-1
+0x0053a7a0	4108	-1	-1				compile fail		-1
+0x0053dea0	1416	-1	-1				compile fail		-1
+0x005422c0	4666	-1	-1				no source		-1
