@@ -1,0 +1,64 @@
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 h3 0x00574230: best 100.0% (regs 100.0%, ops 100.0%), class (-). float (not float10) temps, "fVar7 > DAT" operand form, (uint)x > 0 for jbe; byte-identical. */
+/* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
+typedef unsigned int uint;
+typedef long double float10;
+typedef int code();
+MGLOBAL(float, DAT_005d757c, 0x005d757c);
+// MATCH: 0x00574230 FUN_00574230
+float FUN_00574230(int param_1)
+
+{
+  int iVar1;
+  int *piVar2;
+  int *piVar3;
+  int iVar4;
+  uint uVar5;
+  int iVar6;
+  float fVar7;
+  float fVar8;
+  float local_4;
+  
+  uVar5 = 0;
+  local_4 = 1e+10;
+  piVar3 = *(int **)(param_1 + 0x40);
+  if ((uint)piVar3[1] > 0) {
+    iVar4 = *piVar3;
+    iVar6 = 0;
+    do {
+      piVar2 = (int *)(iVar6 + 0x5c + iVar4);
+      iVar1 = iVar6 + iVar4;
+      iVar4 = *piVar3;
+      fVar7 = (**(float (**)(int))(*piVar2 + 0x24))(iVar1);
+      fVar8 = *(float *)(iVar6 + 0x4c + iVar4);
+      fVar7 = fVar8 + fVar8 + fVar7;
+      if ((fVar7 > DAT_005d757c) && (fVar7 < local_4)) {
+        local_4 = fVar7;
+      }
+      uVar5 = uVar5 + 1;
+      iVar6 = iVar6 + 0x60;
+    } while (uVar5 < (uint)piVar3[1]);
+  }
+  return (float10)local_4;
+}

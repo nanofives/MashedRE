@@ -1,0 +1,140 @@
+CXXOK 00565590
+CXXOK 005655a0
+CXXOK 00565780
+CXXOK 005659f0
+CXXOK 00565ab0
+CXXOK 00565bc0
+CXXOK 00565c20
+CXXOK 00565cd0
+CXXOK 00565d50
+CXXOK 00565ef0
+CXXOK 00565fa0
+CXXOK 00566050
+CXXOK 00566200
+CXXOK 005663a0
+CXXOK 00566420
+CXXOK 005665a0
+CXXOK 005667c0
+CXXOK 00566830
+CXXOK 005668e0
+CXXOK 00566aa0
+CXXOK 00566b40
+CXXOK 00566c10
+CXXOK 00566ca0
+CXXOK 00566d50
+CXXOK 00566ea0
+CXXOK 005670a0
+CXXOK 005672c0
+CXXOK 00567350
+CXXOK 00567630
+CXXOK 005676f0
+CXXOK 00567c40
+CXXOK 005685f0
+CXXOK 005687a0
+CXXOK 005687d0
+CXXOK 00568860
+CXXOK 00568990
+CXXOK 00568c40
+CXXOK 00568c80
+CXXOK 00568cf0
+CXXOK 00568d20
+CXXOK 00569690
+CXXOK 00569e90
+CXXOK 0056a250
+CXXOK 0056a450
+CXXOK 0056a7a0
+CXXOK 0056aae0
+CXXOK 0056ac40
+CXXOK 0056adb0
+CXXOK 0056b9d0
+CXXOK 0056ba30
+CXXOK 0056bb80
+CXXOK 0056be80
+CXXOK 0056c8e0
+CXXOK 0056cf90
+CXXOK 0056d350
+CXXOK 0056d3f0
+CXXFAIL 0056dd40 
+re\match\rwl06\0056dd40.c(350): error C2228: el operando izquierdo de '._4_4_' debe tener class/struct/union
+re\match\rwl06\0056dd40.c(618): error C3861: 'movmskps': no se encontró el identificador
+re\match\rwl06\0056dd40.c(638): error C3861: 'rsqrtps': no se encontró el identificador
+re\match\rwl06\0056dd40.c(890): error C3863: el tipo de matriz 'undefined1 [16]' no es asignable
+CXXOK 0056f0a0
+CXXOK 0056f350
+CXXOK 0056fad0
+CXXOK 0056fb90
+CXXOK 0056fea0
+CXXOK 00570090
+CXXOK 005729a0
+CXXOK 005735f0
+CXXOK 00573670
+CXXOK 00573890
+CXXOK 005739d0
+CXXOK 00574230
+CXXOK 005742c0
+CXXOK 005748a0
+CXXOK 00574920
+CXXOK 005749b0
+CXXOK 00574a20
+CXXOK 00574ac0
+CXXOK 00574ad0
+CXXOK 00575120
+CXXOK 005751f0
+CXXOK 005752b0
+CXXOK 00575560
+CXXOK 005757d0
+CXXOK 00575880
+CXXOK 00575b60
+CXXOK 00575c60
+CXXOK 00575fe0
+CXXOK 00576880
+CXXOK 00577be0
+CXXOK 00577cb0
+CXXOK 00577ec0
+CXXOK 005784a0
+CXXOK 00578610
+CXXOK 00578b20
+CXXOK 00578bd0
+CXXOK 00578cb0
+CXXOK 00578d90
+CXXOK 00578e50
+CXXOK 00578ec0
+CXXOK 00578f20
+CXXOK 00578ff0
+CXXOK 00579c00
+CXXOK 00579d50
+CXXOK 00579e50
+CXXOK 00579ee0
+CXXOK 0057a250
+CXXOK 0057a660
+CXXOK 0057a9a0
+CXXOK 0057adb0
+CXXOK 0057ae20
+CXXOK 0057ae30
+CXXOK 0057bf30
+CXXOK 0057c0d0
+CXXOK 0057c1b0
+re\match\rwl06\0057c1b0.c(34): error C2664: 'void FUN_0055c380(undefined4 *,undefined4)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+CXXOK 0057c220
+re\match\rwl06\0057c220.c(45): error C2660: 'FUN_0055dff0': la función no acepta 2 argumentos
+CXXOK 0057c270
+CXXOK 0057c2b0
+CXXOK 0057c300
+re\match\rwl06\0057c300.c(42): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl06\0057c300.c(43): error C2440: '=': no se puede realizar la conversión de 'undefined1 *' a 'undefined4'
+re\match\rwl06\0057c300.c(44): error C2664: 'int FUN_0055ded0(int,ushort,ushort)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+CXXOK 0057c370
+re\match\rwl06\0057c370.c(37): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 0057c420
+CXXOK 0057c440
+CXXOK 0057c500
+re\match\rwl06\0057c500.c(41): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl06\0057c500.c(46): error C2664: 'void FUN_0055b860(undefined4 *,undefined4)': el argumento 1 no puede convertirse de 'int' a 'undefined4 *'
+CXXOK 0057c550
+re\match\rwl06\0057c550.c(40): error C2660: 'FUN_0055b930': la función no acepta 1 argumentos
+re\match\rwl06\0057c550.c(41): error C2660: 'FUN_00564190': la función no acepta 1 argumentos
+re\match\rwl06\0057c550.c(44): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 005cb000
+CXXOK 005cb07f
+CXXOK 005cb0ef
+CXXOK 005cb42b
