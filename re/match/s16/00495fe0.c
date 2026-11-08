@@ -133,8 +133,8 @@ static void FUN_00495870(JoyDev *d)
   x = (float)fabs(d->stick[0].x) < dz ? 0.0f : d->stick[0].x;
   d->stick[0].x = x;
   y = (float)fabs(d->stick[0].y) < dz ? 0.0f : d->stick[0].y;
-  d->stick[0].y = y;
   mag = V2LenSq(d->stick[0]);
+  d->stick[0].y = y;
   if (mag > 1.0f) {
     mag = 1.0f / (float)sqrt(mag);
     d->stick[0].x = x * mag;
