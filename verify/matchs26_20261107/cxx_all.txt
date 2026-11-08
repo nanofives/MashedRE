@@ -1,0 +1,197 @@
+
+CXXOK 005ac9e0
+CXXOK 005aca40
+CXXOK 005aca80
+CXXOK 005acaa0
+CXXOK 005acd10
+CXXOK 005acd60
+CXXOK 005acda0
+CXXOK 005ace70
+CXXOK 005ad080
+CXXOK 005ad0b0
+CXXOK 005ad2e0
+CXXOK 005ad320
+CXXOK 005ad420
+CXXOK 005ad540
+CXXOK 005ad570
+CXXOK 005ad5f0
+CXXOK 005ad6a0
+CXXOK 005ad6f0
+CXXOK 005ad730
+CXXOK 005ad770
+CXXFAIL 005ad8b0 
+re\match\s26\005ad8b0.c(36): error C2664: 'void FUN_005ae920(uint *,uint)': el argumento 1 no puede convertirse de 'undefined1 *' a 'uint *'
+CXXOK 005ad8d0
+CXXOK 005ad910
+CXXOK 005ad980
+CXXOK 005ad9d0
+CXXOK 005ada40
+CXXOK 005adbe0
+CXXOK 005adc10
+CXXOK 005add60
+CXXOK 005addd0
+CXXOK 005ade10
+CXXOK 005ade60
+CXXOK 005ade90
+CXXOK 005aded0
+CXXOK 005adef0
+CXXOK 005adf30
+CXXOK 005adf60
+CXXOK 005adfe0
+CXXOK 005ae010
+CXXOK 005ae030
+CXXOK 005ae050
+CXXOK 005ae080
+CXXOK 005ae0b0
+CXXOK 005ae0c0
+CXXOK 005ae170
+CXXOK 005ae250
+CXXOK 005ae300
+CXXOK 005ae330
+CXXOK 005ae380
+CXXOK 005ae3a0
+CXXOK 005ae400
+CXXOK 005ae470
+CXXOK 005ae4b0
+CXXOK 005ae4c0
+CXXOK 005ae550
+CXXOK 005ae590
+CXXOK 005ae650
+CXXOK 005ae780
+CXXOK 005ae7e0
+CXXOK 005ae800
+CXXOK 005ae920
+CXXOK 005aea00
+CXXOK 005aea10
+CXXOK 005aea40
+CXXOK 005aea50
+CXXOK 005aea60
+CXXOK 005aeaf0
+CXXOK 005aeb30
+CXXOK 005aeb80
+CXXOK 005aeb90
+CXXOK 005aec00
+CXXOK 005aec30
+CXXOK 005aeca0
+CXXOK 005aed20
+CXXOK 005aeda0
+CXXOK 005aee20
+CXXOK 005aeea0
+CXXOK 005aeed0
+CXXOK 005aef00
+CXXOK 005aef30
+CXXOK 005aefa0
+CXXOK 005aefc0
+CXXOK 005af010
+CXXOK 005af040
+CXXOK 005af070
+CXXOK 005af170
+CXXOK 005af180
+CXXOK 005af200
+CXXOK 005af230
+CXXOK 005af260
+CXXOK 005af2d0
+CXXOK 005af300
+CXXOK 005af430
+CXXOK 005af470
+CXXOK 005af510
+CXXOK 005af600
+CXXOK 005af690
+CXXOK 005af700
+CXXOK 005af740
+CXXOK 005af7a0
+CXXOK 005af7d0
+CXXOK 005af860
+CXXOK 005af8f0
+CXXOK 005afa00
+CXXFAIL 005afcf0 
+re\match\s26\005afcf0.c(133): error C2664: 'undefined4 *FUN_005ad6a0(int)': el argumento 1 no puede convertirse de 'undefined1 *' a 'int'
+re\match\s26\005afcf0.c(133): error C2440: '=': no se puede realizar la conversión de '_T' a 'undefined4'
+re\match\s26\005afcf0.c(160): error C2660: 'FUN_005ad6a0': la función no acepta 5 argumentos
+re\match\s26\005afcf0.c(160): error C2440: '=': no se puede realizar la conversión de '_T' a 'undefined4'
+re\match\s26\005afcf0.c(161): error C2660: 'FUN_005aa060': la función no acepta 4 argumentos
+re\match\s26\005afcf0.c(162): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 **'
+re\match\s26\005afcf0.c(163): error C2446: ==': no hay conversión de 'int **' en 'undefined4 **'
+re\match\s26\005afcf0.c(167): error C2664: 'undefined4 *FUN_005ad6a0(int)': el argumento 1 no puede convertirse de 'undefined1 *' a 'int'
+re\match\s26\005afcf0.c(169): error C2664: 'undefined4 *FUN_005ad6a0(int)': el argumento 1 no puede convertirse de 'undefined1 *' a 'int'
+re\match\s26\005afcf0.c(169): error C2440: '=': no se puede realizar la conversión de '_T' a 'int'
+re\match\s26\005afcf0.c(170): error C2440: '=': no se puede realizar la conversión de 'undefined4 *****' a 'undefined4 ****'
+re\match\s26\005afcf0.c(171): error C2440: '=': no se puede realizar la conversión de 'undefined4 *****' a 'undefined4 ****'
+re\match\s26\005afcf0.c(174): error C2664: 'bool FUN_005a9ff0(undefined4,undefined4,int)': el argumento 2 no puede convertirse de 'int ****' a 'undefined4'
+re\match\s26\005afcf0.c(178): error C2664: 'undefined4 FUN_005b0360(int,undefined4,undefined4,undefined4,undefined4)': el argumento 2 no puede convertirse de 'int ****' a 'undefined4'
+re\match\s26\005afcf0.c(180): error C2664: 'void FUN_005ade90(int *)': el argumento 1 no puede convertirse de 'undefined4 *****' a 'int *'
+re\match\s26\005afcf0.c(183): error C2664: 'undefined4 FUN_005b04b0(int,undefined4,int,int ******,int ******,undefined4)': el argumento 2 no puede convertirse de 'int ****' a 'undefined4'
+re\match\s26\005afcf0.c(185): error C2664: 'void FUN_005b0b40(undefined4 *)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(186): error C2664: 'void FUN_005ade90(int *)': el argumento 1 no puede convertirse de 'undefined4 *****' a 'int *'
+re\match\s26\005afcf0.c(189): error C2664: 'void FUN_005ade90(int *)': el argumento 1 no puede convertirse de 'undefined4 *****' a 'int *'
+re\match\s26\005afcf0.c(194): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 **'
+re\match\s26\005afcf0.c(207): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(208): error C2446: <': no hay conversión de 'undefined4 **' en 'int **'
+re\match\s26\005afcf0.c(210): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 **'
+re\match\s26\005afcf0.c(229): error C2660: 'FUN_005aea00': la función no acepta 2 argumentos
+re\match\s26\005afcf0.c(230): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(233): error C2664: 'void FUN_005b0b40(undefined4 *)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(236): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(238): error C2664: 'int FUN_005a9e40(int,undefined4)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+re\match\s26\005afcf0.c(240): error C2660: 'FUN_004522d0': la función no acepta 1 argumentos
+re\match\s26\005afcf0.c(241): error C2664: 'void FUN_005b0b40(undefined4 *)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(248): error C2664: 'int *FUN_005aa560(int,undefined4 *,uint,undefined1 *,undefined *,undefined4)': el argumento 1 no puede convertirse de 'int *' a 'int'
+re\match\s26\005afcf0.c(252): error C2660: 'FUN_004522d0': la función no acepta 1 argumentos
+re\match\s26\005afcf0.c(253): error C2664: 'void FUN_005b0b40(undefined4 *)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(261): error C2664: 'void FUN_005b1030(int,undefined4,int,undefined4)': el argumento 3 no puede convertirse de 'int *' a 'int'
+re\match\s26\005afcf0.c(262): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(265): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 **'
+re\match\s26\005afcf0.c(266): error C2664: 'undefined4 *FUN_005b0b60(undefined4 *,int)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(267): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(268): error C2446: ==': no hay conversión de 'int **' en 'undefined4 **'
+re\match\s26\005afcf0.c(273): error C2660: 'FUN_004522d0': la función no acepta 1 argumentos
+re\match\s26\005afcf0.c(274): error C2664: 'void FUN_005b0b40(undefined4 *)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(280): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(284): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 **'
+re\match\s26\005afcf0.c(287): error C2664: 'int FUN_005a9e40(int,undefined4)': el argumento 1 no puede convertirse de 'int *' a 'int'
+re\match\s26\005afcf0.c(290): error C2660: 'FUN_004522d0': la función no acepta 1 argumentos
+re\match\s26\005afcf0.c(291): error C2664: 'void FUN_005b0b40(undefined4 *)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(303): error C2664: 'uint FUN_005ace70(undefined4 *)': el argumento 1 no puede convertirse de 'int **' a 'undefined4 *'
+re\match\s26\005afcf0.c(305): error C2664: 'uint FUN_005ac650(uint *)': el argumento 1 no puede convertirse de 'undefined4' a 'uint *'
+re\match\s26\005afcf0.c(316): error C2660: 'FUN_004522d0': la función no acepta 1 argumentos
+re\match\s26\005afcf0.c(317): error C2664: 'void FUN_005b0b40(undefined4 *)': el argumento 1 no puede convertirse de 'int *****' a 'undefined4 *'
+re\match\s26\005afcf0.c(323): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(348): error C2664: 'int *FUN_005af860(int *,int **,int **,int,int)': el argumento 4 no puede convertirse de 'int *' a 'int'
+re\match\s26\005afcf0.c(365): error C2664: 'void FUN_005b1030(int,undefined4,int,undefined4)': el argumento 1 no puede convertirse de 'int *' a 'int'
+re\match\s26\005afcf0.c(366): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(367): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+re\match\s26\005afcf0.c(368): error C2446: !=': no hay conversión de 'undefined4 **' en 'int **'
+re\match\s26\005afcf0.c(369): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 **'
+re\match\s26\005afcf0.c(369): error C2446: !=': no hay conversión de 'int **' en 'undefined4 **'
+re\match\s26\005afcf0.c(371): error C2664: 'void FUN_005b0b10(int)': el argumento 1 no puede convertirse de 'undefined4 **' a 'int'
+re\match\s26\005afcf0.c(372): error C2440: '=': no se puede realizar la conversión de 'undefined4 **' a 'int **'
+CXXOK 005b0360
+CXXOK 005b03e0
+CXXOK 005b04b0
+CXXOK 005b0700
+CXXOK 005b0740
+CXXOK 005b0970
+CXXOK 005b09c0
+CXXOK 005b0a90
+CXXOK 005b0b10
+CXXOK 005b0b40
+CXXOK 005b0b60
+CXXOK 005b0b90
+CXXOK 005b0bb0
+CXXOK 005b0c70
+CXXOK 005b0ca0
+CXXOK 005b0cf0
+CXXOK 005b0dc0
+CXXOK 005b0df0
+CXXOK 005b0e70
+CXXOK 005b0ec0
+CXXOK 005b0f10
+CXXOK 005b0f40
+CXXOK 005b0f90
+CXXOK 005b1030
+CXXOK 005b1080
+CXXOK 005b10a0
+CXXOK 005b10d0
+CXXOK 005b10e0
+CXXOK 005b1110
+CXXOK 005b1140
