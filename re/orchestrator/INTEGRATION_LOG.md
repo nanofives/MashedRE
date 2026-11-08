@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-08 02:48 C4R-MATCHBATCH-3 (orch/C4R-MATCHBATCH-3): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261108_024120
 - 2026-11-08 02:31 MATCH-RWLIB (orch/MATCH-RWLIB): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261108_022935
 - 2026-11-08 02:27 MATCH-RWL06 (orch/MATCH-RWL06), MATCH-RWL03 (orch/MATCH-RWL03), MATCH-RWL04 (orch/MATCH-RWL04): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261108_021955
 - 2026-11-08 01:14 MATCH-RWL02 (orch/MATCH-RWL02): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261108_010409
