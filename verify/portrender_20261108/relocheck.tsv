@@ -1,0 +1,2 @@
+rva	source	relocheck	checked	unchecked	match_bytes
+0x004769f0	re/match/s12/004769f0.c	OK	3	0	BYTE-IDENTICAL 30 B, 10/10 ins 100.0%
