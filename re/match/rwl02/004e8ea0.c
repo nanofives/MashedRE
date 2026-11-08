@@ -42,8 +42,9 @@ undefined4 FUN_004e8ea0(Obj *o)
     if (o->p58 != 0) {
       FUN_004d8bd0(o->p58);
     }
+    o->rc++;
+    o->rc--;
     o->flags = o->flags | 0xfff;
-    o->rc = o->rc;
     if (o->p54 != 0) {
       FUN_004f0c10(o->p54);
       o->p54 = 0;

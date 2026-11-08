@@ -42,6 +42,7 @@ N538310 * FUN_00538310(N538310 *param_1,int *param_2)
   ty = param_1->type;
   if (ty < 0) {
     p = (char *)param_1 + DAT_00912488;
+    { float *a = (float *)(p + 0x1c);
     *(int *)(p + 0x28) = param_2[3];
     *(int *)(p + 0x2c) = param_2[4];
     *(int *)(p + 0x30) = param_2[5];
@@ -54,10 +55,12 @@ N538310 * FUN_00538310(N538310 *param_1,int *param_2)
     *(int *)(p + 0x34) = n[0x12];
     *(int *)(p + 0x38) = n[0x13];
     *(int *)(p + 0x3c) = n[0x14];
-    d[0] = *(float *)(p + 0x1c) - *(float *)(p + 0x28);
-    d[1] = *(float *)(p + 0x20) - *(float *)(p + 0x2c);
-    d[2] = *(float *)(p + 0x24) - *(float *)(p + 0x30);
-    *(float *)(p + 0x4c) = (float)FUN_004c3ac0(d);
+    d[0] = a[0] - a[3];
+    d[1] = a[1] - a[4];
+    d[2] = a[2] - a[5];
+    }
+    { float len = (float)FUN_004c3ac0(d);
+    *(float *)(p + 0x4c) = len; }
     return param_1;
   }
   sp = param_1->split;

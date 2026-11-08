@@ -1,0 +1,80 @@
+rva	size	best%	regs%	flags	by	sha256	class	reason	before%
+0x004e67b0	201	100.0	100.0	/O2 /Ob1 /G5	insn	ba8f83d95bc965b2	identical	+0x64 list head init after the +0x6c store	97.1
+0x0052fdb0	213	96.2	96.2	/O2 /Ob1 /G5	insn	dd2653eb736d94fb	a	213  96.2  96.2  cxx:ok  a  esi push order at entry	96.2
+0x004f3be0	193	95.6	95.6	/O2 /Ob1 /G5	insn	10129303195c0161	a	193  95.6  95.6  cxx:ok  a  lea edi schedule	95.6
+0x00538310	329	100.0	100.0	/O2 /Ob1 /G5	insn	0553af2735ff55c4	identical	box pointer for the extent, length in a local before the store	95.5
+0x004e8940	82	100.0	100.0	/O2 /Ob1 /G5	insn	f2eefa66758c38da	identical	one return param_1 at the end with if/else stores	92.3
+0x004e8750	443	100.0	100.0	/O2 /Ob1 /G5	insn	fe0f09268b92f652	identical	count += n then reload; entry +0x14/+0x18 stores fixed	91.1
+0x004e6920	127	90.9	90.9	/O2 /Ob1 /G5	insn	bee1c71f61ce680b	a	shrink-wrap: edi push sinks into the if region; return-in-if lever does not apply (no early return)	90.9
+0x004e7cc0	124	90.9	90.9	/O2 /Ob1 /G5	insn	ad176ff00d15ba6d	a	shrink-wrap, same body as 004e6920	90.9
+0x004e6470	122	90.7	90.7	/O2 /Ob1 /G5	insn	3f099bbff254330c	a	shrink-wrap, same body as 004e6920	90.7
+0x004ebc30	196	100.0	100.0	/O2 /Ob1 /G5	insn	f3ba73503466e285	identical	two call arms; __stdcall vtable slot +8	89.3
+0x004f2e70	273	91.0	98.0	/O2 /Ob1 /G5	insn	3f0d132dd3790cbd	b	for-loop + typed triangle array; residue: eax/ecx/edx choice at the alloc call	89.0
+0x004e7e50	60	88.0	88.0	/O2 /Ob1 /G5	insn	cf1fb4cf55950d2b			88.0
+0x004e98d0	60	88.0	88.0	/O2 /Ob1 /G5	insn	d1029ed85f5101be			88.0
+0x004e9910	60	88.0	88.0	/O2 /Ob1 /G5	insn	a5228dfad5e569c5			88.0
+0x0052fe90	98	87.8	87.8	/O2 /Ob1 /G5	insn	d5b9ec893e8bc9ca	b	early fail returns keep own epilogue without xor eax in the original; 12 shapes tried	87.8
+0x004f2f90	151	100.0	100.0	/O2 /Ob1 /G5	insn	27efd11269eb90c4	identical	for-loop list walk; arr[index] operand order fixed	87.3
+0x005327d0	212	100.0	100.0	/O2 /Ob1 /G5	insn	d55939325236d433	identical	condition tests the stored global	87.3
+0x004ebb00	296	98.1	99.1	/O2 /Ob1 /G5	insn	9cdcbc8ea4a130fd	b	plain for-loops, one return; residue: param_3 loaded into eax before lea	83.3
+0x004f0ae0	234	81.8	100.0	/O2 /Ob1 /G5	insn	bf479d9cfd9f0d11	a	esi/edi swap only; decl order, sz placement, permuter (516 compiles) no change	81.8
+0x00534b60	402	81.6	86.0	/O2 /Ob1 /G5	insn	95e7b6f71bae5b94	a/b	402 81.6 86.0 a/b int flag vars (f==1 tests) found; remaining: origina	81.6
+0x004e8640	269	77.9	77.9	/O2 /Ob1 /G5	insn	a05160ed04dba916			77.9
+0x004e5fc0	318	77.3	77.3	/O2 /Ob1 /G5	insn	7337985435ab9390	b	x87 stack allocation of the scaled temps; source has a broken flag-clear expression	77.3
+0x004e89a0	62	100.0	100.0	/O2 /Ob1 /G5	insn	125146bd3432de35	identical	count local, return inside the loop	76.7
+0x004e8ea0	165	100.0	100.0	/O2 /Ob1 /G5	insn	96cfd57e53cd79dc	identical	refcount +1/-1 before the lock-all flags	76.5
+0x0052eb40	269	76.5	79.4	/O2 /Ob1 /G5	insn	9b7ce2f6580f5213	b	269  76.5  79.4  cxx:ok  b  sz4 hoist, matrix loop	76.5
+0x0052ea70	205	71.8	84.5	/O2 /Ob1 /G5	insn	6093b959e5ee8740	b	205 71.8 84.5 b param slots reused as loop vars (uint shift, <0 compar	71.8
+0x004e8440	242	70.8	70.8	/O2 /Ob1 /G5	insn	e51fd8ae97fe5275			70.8
+0x004e6650	43	70.0	75.0	/O2 /Ob1 /G5	insn	8b5ff4acdbe03413	b	list terminator address CSE (same class as 004e6710)	70.0
+0x004e6e00	377	67.9	77.6	/O2 /Ob1 /G5	insn	8c9febd77c4da396			67.9
+0x004f3440	627	67.1	72.1	/O2 /Ob1 /G5	insn	ce9eadbad4494e03	b	~560 67.1 ~71 b goto-laden merge-sort-like list merge; 0<(uint) tests 	67.1
+0x005333a0	116	64.9	70.2	/O2 /Ob1 /G5	insn	c3e9d06d31dac0ac	b	116 64.9 70.2 b address-taken param_2 gets spilled copy local + s[1] C	64.9
+0x00532a60	281	64.8	64.8	/O2 /Ob1 /G5	insn	b935c60f93e11ed5	b	281  64.8  64.8  cxx:ok  b  FPU spill pattern of quat temps	64.8
+0x004eb9e0	85	64.7	82.4	/O2 /Ob1 /G5	insn	31ca2f579587f756			64.7
+0x005300d0	137	58.9	69.9	/O2 /Ob1 /G5	insn	85031a822cc943ad	b	137  58.9  69.9  cxx:ok  b  entry pushes/param reload differ	58.9
+0x004e8a10	595	58.6	66.7	/O2 /Ob1 /G5	insn	956586e9a1737203			58.6
+0x004e9080	687	56.9	72.7	/O2 /Ob1 /G5	insn	987c54e4010a0070			56.9
+0x004e6710	67	87.1	87.1	/O2 /Ob1 /G5	insn	d318aefbdb7b13ce	b	RW while/early-return form; residue: list terminator address CSE (lea vs add)	54.8
+0x004e6760	67	87.1	87.1	/O2 /Ob1 /G5	insn	62f15ae4b4c8358c	b	RW while/early-return form; residue: list terminator address CSE (lea vs add)	54.8
+0x004e62f0	372	53.4	75.9	/O2 /Ob1 /G5	insn	43134679f44277c2			53.4
+0x00535700	248	51.7	94.3	/O2 /Ob1 /G5	insn	8885dfcaa68d6600	a	248  51.7  94.3  cxx:ok  a  ecx/edx swap + 0x40000000 test form	51.7
+0x004e9330	1303	51.5	56.2	/O2 /Ob1 /G5	insn	d5be453f8d52c528			51.5
+0x004e8120	724	50.2	43.4	/O2 /Ob1 /G5	insn	194ea72a68d6e543			50.2
+0x00533d00	247	48.2	84.7	/O2 /Ob1 /G5	insn	302ad7694e6cf6fb	b	-  48.2  84.7  cxx:ok  b  raw form kept; permuter variants changed sem	48.2
+0x004ea220	663	46.5	55.3	/O2 /Ob1 /G5	insn	4653469eeb21c837			46.5
+0x0052df70	356	46.4	52.9	/O2 /Ob1 /G5	insn	3eb67cfec2230374	b	356 46.4 52.9 b x87 float flags: struct Ev typed (t, limit floats, cb,	46.4
+0x004e6ab0	592	46.1	67.5	/O2 /Ob1 /G5	insn	419b95ba0a59b5dd			46.1
+0x004e99b0	1156	45.5	50.4	/O2 /Ob1 /G5	insn	99b72269e9107cc4			45.5
+0x0052daf0	492	42.5	34.0	/O2 /Ob1 /G5	insn	5bb1e0bbb9abfa96	b	492  42.5  34.0  cxx:ok  b  callee-saved pushes, locals count	42.5
+0x004e7060	952	39.5	53.9	/O2 /Ob1 /G5	insn	18ed31b0011bd8f0			39.5
+0x004e7420	2207	37.9	29.2	/O2 /Ob1 /G5	insn	df6d4e276d6b240b			37.9
+0x004e6f80	37	100.0	100.0	/O2 /Ob1 /G5	insn	325a92c5cd103a9e	identical	returns the owner (Ghidra void); RW link-insert order	37.5
+0x0052e0e0	471	36.6	48.0	/O2 /Ob1 /G5	insn	976b75a8d16c4936	b	471  36.6  48.0  cxx:ok  b  retyped struct with float fields (was int 	36.6
+0x004e9e40	980	34.4	58.1	/O2 /Ob1 /G5	insn	092637b9f30fa107			34.4
+0x00530160	349	32.6	48.6	/O2 /Ob1 /G5	insn	f87df56baa31db04	a	349  32.6  48.6  cxx:ok  a  raw form; original does not tail-merge ear	32.6
+0x004f36c0	497	32.0	66.3	/O2 /Ob1 /G5	insn	0e8c1016d15d59a2	b	~650 32.0 66.3 b raw did not compile (callee protos/fn-addr decls fixe	32.0
+0x004e6100	327	31.7	60.3	/O2 /Ob1 /G5	insn	67a59b2290c8a8c2			31.7
+0x004ea9a0	2430	30.1	44.3	/O2 /Ob1 /G5	insn	52148cd138ba93dd			30.1
+0x00535330	859	30.1	52.0	/O2 /Ob1 /G5	insn	82b6562e08816705	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	30.1
+0x004e8c70	543	28.9	54.4	/O2 /Ob1 /G5	insn	57e5f5b32b5a8848			28.9
+0x00532b80	1043	27.5	28.4	/O2 /GS /Ob1	insn	b31ec732d736fa40	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	27.5
+0x00535910	34	100.0	100.0	/O2 /Ob1 /G5	insn	bf432f8aff106bdd	identical	returns param_1 (Ghidra void)	27.3
+0x004f3e90	870	26.5	43.8	/O2 /Ob1 /G5	insn	e85b8a7465a46f1e	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	26.5
+0x00530c00	1810	23.7	33.7	/O2 /GS /Ob1	insn	984c24a2af7e20ec	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	23.7
+0x00534d00	1569	23.4	51.4	/O2 /Ob1 /G5	insn	82f631044559d45e	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	23.4
+0x00530650	1453	17.7	34.6	/O2 /Ob1 /G5	insn	ac80fc3971635bf7	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	17.7
+0x004f2570	2302	15.6	21.8	/O2 /Ob1 /G5	insn	2e1852e809fb2969	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	15.6
+0x005320b0	220	9.9	12.4	/O1	insn	ac142b084e34e136	c	220 9.9 12.4 c SSE packed (shufps/mulps/movaps/movhlps) matrix-transfo	9.9
+0x004f0f10	462	9.3	58.7	/O2 /Ob1 /G5	insn	4abc5b78f1ca712b	b/c	~460 9.3 58.7 b/c 0x400-byte frame with structs; original pushes ebx/e	9.3
+0x00533ec0	2467	8.6	29.5	/O2 /Ob1 /G5	insn	889853afb51d663c	b	not hand-matched: over the 700 B helper cap or budget (raw converter f	8.6
+0x00532000	171	7.7	9.2	/O1	insn	ee20940dcbdaaca2	c	171  7.7  9.2  cxx:ok  c  hand-written SSE (movaps/mulps/shufps); no S	7.7
+0x004f1fb0	1134	-1	-1				compile fail		-1
+0x0052df20	?	-1	-1				no source		-1
+0x00536780	?	-1	-1				no source		-1
+0x00536e90	?	-1	-1				no source		-1
+0x00536fe0	?	-1	-1				no source		-1
+0x00537b20	?	-1	-1				no source		-1
+0x00537d20	?	-1	-1				no source		-1
+0x00537d70	?	-1	-1				no source		-1
+0x00537e60	?	-1	-1				no source		-1

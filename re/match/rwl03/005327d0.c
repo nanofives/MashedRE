@@ -47,12 +47,10 @@ int FUN_005327d0(void)
   int iVar1;
   int iVar2;
   int uVar3;
-  uint uVar4;
 
   iVar1 = FUN_004cbb60();
-  uVar4 = *(byte *)(iVar1 + 0x1e) & 1;
-  DAT_007dc540 = uVar4;
-  if (((uVar4 == 0) || ((*(uint *)(iVar1 + 0xc4) & 0xffff) < 0x101)) ||
+  DAT_007dc540 = *(byte *)(iVar1 + 0x1e) & 1;
+  if ((!DAT_007dc540 || ((*(uint *)(iVar1 + 0xc4) & 0xffff) < 0x101)) ||
      ((*(uint *)(iVar1 + 0xcc) & 0xffff) < 0x101)) {
     DAT_007dc544 = 0;
     DAT_007dc548 = 0;

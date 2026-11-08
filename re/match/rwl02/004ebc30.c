@@ -43,13 +43,12 @@ void FUN_004ebc30(int param_1)
     pcVar4 = (char *)(param_1 + 0x36);
     do {
       if (*pcVar4 == '\0') {
-        if (cVar1 != 8) {
-          if (cVar1 != 1) {
-            break;
-          }
-          pcVar7 = *(char **)(pcVar7 + 0x18);
+        if (cVar1 == 8) {
+          FUN_004f4270(pcVar7);
         }
-        FUN_004f4270(pcVar7);
+        else if (cVar1 == 1) {
+          FUN_004f4270(*(char **)(pcVar7 + 0x18));
+        }
         break;
       }
       uVar3 = uVar3 + 1;
@@ -58,7 +57,7 @@ void FUN_004ebc30(int param_1)
   }
   piVar6 = *(int **)(param_1 + 0x20);
   if (piVar6 != (int *)0) {
-    (**(void (**)(int *))(*piVar6 + 8))(piVar6);
+    (**(void (__stdcall **)(int *))(*piVar6 + 8))(piVar6);
     *(int *)(param_1 + 0x20) = 0;
   }
   if (*(int *)(param_1 + 0x4c) != 0) {

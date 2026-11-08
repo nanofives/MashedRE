@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR02 2026-11-08: 100% (relocheck OK). The +0x64 list head init (next then prev, both = head) moved after the +0x6c store; supersedes the header below. */
 /* MATCH-RWL02 h1 0x004e67b0: best 97.1% (regs 97.1%), residual class b. permuter swapped two independent stores (+0x68 and *puVar1). The callback at +0x48 is stored, tested against zero and stored again as in the original (`if (FUN_004e5f90 == 0)` dummy test reproduces the duplicate store); remaining: push order of arg setup. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -61,9 +62,7 @@ undefined1 * FUN_004e67b0(void)
   if (FUN_004e5f90 == 0) { *(void (**)(void))(puVar2 + 0x48) = FUN_004e5f90; }
   *(undefined4 *)(puVar2 + 0x54) = 0x3f800000;
   *(undefined4 *)(puVar2 + 0x58) = 0x3f800000;
-  puVar1 = puVar2 + 100;
   *(undefined2 *)(puVar2 + 0x50) = 0;
-  *(undefined1 **)(puVar2 + 0x68) = puVar1;
   *(undefined2 *)(puVar2 + 0x52) = 0;
   *(undefined4 *)(puVar2 + 0x5c) = 0;
   *(undefined4 *)(puVar2 + 0x4c) = 3;
@@ -71,7 +70,8 @@ undefined1 * FUN_004e67b0(void)
   *(undefined4 *)(puVar2 + 0x40) = 0;
   *(undefined4 *)(puVar2 + 0x3c) = 0;
   *(undefined4 *)(puVar2 + 0x6c) = 0;
-  *(undefined1 **)puVar1 = puVar1;
+  *(undefined1 **)(puVar2 + 100) = puVar2 + 100;
+  *(undefined1 **)(puVar2 + 0x68) = puVar2 + 100;
   FUN_004d8000(&DAT_00618664,puVar2);
   return puVar2;
 }
