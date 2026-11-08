@@ -1,0 +1,80 @@
+rva	size	best_pct	before_pct	class	reason
+00549900	112	94.9	94.9	a	fisub dword vs fild qword;fsubp
+00540340	454	93.7	93.7	a	454  93.7  93.7  cxx:ok  a  esp cleanup merging
+00550580	237	93.5	93.5	a	xor esi,esi; mov eax,esi on fail return (file created by hand)
+0054b630	150	93.0	93.0	b	memcpy intrinsic + struct VB; spill slot numbering differs
+0054d4d0	1785	90.5	90.5	a	/O1 wins; orig reloads stores from memory
+0054c400	230	87.5	87.5	b	inner count hoisting
+0053e760	44	86.7	86.7	a/b	20 86.7 86.7 cxx:? a/b early-ret layout (je->shared ret vs original jn
+00544d20	154	86.7	86.7	a	orig keeps separate xor eax,eax/ret exits, ours merges
+0053e730	48	85.7	85.7	a	-  85.7  85.7  cxx:ok  a  original emits jne+ret (no fallthrough early
+00538600	161	84.8	84.8	a	161  84.8  84.8  cxx:ok  a  original does not tail-merge the 'xor eax,
+00540160	97	83.8	83.8	b	97  83.8  86.5  cxx:ok  b  byte idx via &idx idiom; null-ptr store tai
+00541b50	490	83.6	83.6	a	shrink-wrapped push ebx shifts frame
+0053eaa0	266	79.2	79.2	a	-  79.2  79.2  cxx:ok  a  same non-merged early returns as 00538600
+0054dbd0	2379	78.9	78.9	b	raw
+0053fd30	355	77.2	77.2	b	355  77.2  78.0  cxx:ok  b  found/null block layout loops 2-3
+00543e50	619	75.9	75.9	a	14 unmerged xor/ret exits
+0054f410	1216	75.8	75.8	a	fld/fstp lane copies vs integer mov; globals float
+0053d5a0	231	75.3	75.3	b	-  75.3  84.7  cxx:ok  b  struct copy (rep movsd), 2-arg 004d7ff0, loc
+00544bf0	291	74.3	74.3	b	f5c copy via FPU, frame order
+00540100	95	73.0	73.0	b	95 73.0 75.7 b param-slot byte loop ok; load order [global]+[param] an
+00543bb0	392	72.3	72.3	a	dec chain switch, unmerged epilogues
+0054b6d0	100	70.3	70.3	b	same 37 ins, reg choice esi vs ecx
+0054b8c0	344	69.4	69.4	a	orig keeps 6 unmerged failure epilogues
+0053fbb0	356	68.5	68.5	b	356  68.5  75.8  cxx:ok  b  idx-in-param-slot idiom, switch jump table
+0053d0b0	269	67.1	67.1	a/b	269 67.1 67.1 a/b original materializes each >=0 test (xor;test;setge;
+0053d820	244	66.7	66.7	b	244 66.7 81.7 b structs A(9 dw)/B(6 dw) give frame; esi push shrink-wr
+0053dba0	679	66.2	66.2	b	679  66.2  76.0  cxx:ok  b  not worked beyond cxx fixes
+0054b740	376	66.1	66.1	b	orig duplicates 6-pop epilogue per early return
+0054cfa0	225	65.8	65.8	b	structure only (permuter)
+0053fa20	80	65.6	65.6	b	80  65.6  65.6  cxx:ok  b  /O1 /G5; edi load order not moved
+0053fb00	80	65.6	65.6	a/b	80 65.6 65.6 a/b edi-saved param + shrink-wrapped push esi order, /O1 
+005493e0	410	64.2	64.2	b	raw
+00545260	214	61.6	61.6	a	separate exit epilogues + reg alloc
+00543b90	21	60.0	60.0	a	add operand order only (add ecx,eax vs add eax,ecx)
+00543da0	21	60.0	60.0	b	add operand order (ecx,eax vs eax,ecx) after fixing callee arity
+0053e5d0	182	59.4	59.4	b	182  59.4  67.2  cxx:ok  b  unsigned fidiv fold not reproduced
+00544a70	96	58.1	58.1	b	base idx*0x14 folding differs
+0054c870	1590	56.6	56.6	b	structure only
+0053d6c0	342	56.3	56.3	a/b	~380 56.3 73.2 a/b original duplicates the pop/pop/pop/pop/add esp/ret
+0054f8d0	1154	54.9	54.9	b	raw
+0053ccc0	189	54.1	54.1	b	189  54.1  63.5  cxx:ok  b  locals typed (float v[4], m[12]); original
+0054c4f0	888	54.1	54.1	b	structure only
+00549970	127	53.6	53.6	b	zero kept in esi vs xor eax + imm store
+00543b30	94	52.9	52.9	b	orig holds ebx=0 as shared return, tail-duplicated F(*p2)
+0053fec0	438	50.9	50.9	b	438  50.9  63.5  cxx:ok  b  fixed compile (byte store into local_28[0]
+00544ad0	281	46.0	46.0	b	dirty-flag blocks, ebx=3 hoisted
+0053e430	391	44.2	44.2	b	391  44.2  53.3  cxx:ok  b  loop form, switch layout
+005412d0	2161	44.2	44.2	b	compile errors fixed
+0053d460	318	41.5	41.5	b	318  41.5  62.7  cxx:ok  b  memcpy intrinsic (rep movsd), loc[3], flag
+0053d040	18	40.0	40.0	a	18  40.0  100.0  cxx:ok  a  operand regs eax/ecx swapped for the two s
+005459c0	880	37.0	37.0	b	structure only; ROUND() stub is a raw-converter artifact (needs real r
+0054d090	150	36.8	36.8	b	structure only (permuter)
+0054fd60	967	36.5	36.5	b	structure only
+00549b20	1203	32.5	32.5	b	structure only (protos fixed so it compiles)
+00541d40	1398	30.7	30.7	b	compile error fixed
+005402d0	100	28.6	28.6	b	100  28.6  62.9  cxx:ok  b  2-arg fn, idx idiom; original reloads para
+00547230	529	28.4	28.4	b	structure only
+0053e830	614	25.8	25.8	b	614  25.8  60.3  cxx:FAIL  b  not worked (raw), cxx proto types
+0054ceb0	230	25.6	25.6	b	ops 91%; precomputed deltas found, frame/spill layout differs
+00546890	633	24.6	24.6	b	structure only (memset intrinsic); regs/frame differ
+00545d30	1506	24.3	24.3	b	structure only; ROUND() artifact; compiles after proto fixes
+005405c0	3340	23.8	23.8	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
+00546d10	346	22.1	22.1	b	x87 stack residency / term order
+0053d920	639	21.0	21.0	b	639  21.0  29.5  cxx:ok  b  raw (/O1) kept, not enough budget
+0054b340	739	20.8	20.8	b	raw
+0054ba20	896	19.0	19.0	b	raw
+00550130	533	18.3	18.3	b	raw
+0053bdf0	2013	16.2	16.2	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
+0053c6e0	1490	13.6	13.6	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
+00539900	1469	12.4	12.4	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
+00539ec0	2033	12.4	12.4	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
+0054a120	2315	12.1	12.1	b	structure only (C++ fixes only)
+0054bda0	1621	10.2	10.2	b	raw
+0053b7b0	1590	10.0	10.0	b	not hand-matched: over the 700 B helper cap or budget (raw converter f
+0053cd80	694	8.9	8.9	b	see notes
+00538d60	2961	-1	-1	b	no compiling source: raw converter output fails under the DDK and the 
+0053a7a0	4108	-1	-1	b	no compiling source: raw converter output fails under the DDK and the 
+0053dea0	1416	-1	-1	b	no compiling source: raw converter output fails under the DDK and the 
+005422c0	4666	-1	-1	c	raw converter failed (NAN operand with no address), no source
