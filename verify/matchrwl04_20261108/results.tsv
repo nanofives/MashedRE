@@ -1,0 +1,127 @@
+rva	size	best%	regs%	flags	by	sha256	class	reason	helper	cxx
+0x005412d0	2161	44.2	53.9	/O2 /Ob1 /G5	insn	996a71d0711a38e9	b	compile errors fixed	h2	CXXFAIL
+0x00541b50	490	83.6	85.0	/O2 /Ob1 /G5	insn	c2b1dbc4fe5bb512	a	shrink-wrapped push ebx shifts frame	h3	CXXOK
+0x00541d40	1398	30.7	36.9	/O2 /Ob1 /G5	insn	04b2d91f8a862427	b	compile error fixed	h2	CXXFAIL
+0x005422c0	4666	-	-	-	-	-	c	raw converter failed (NAN operand with no address), no source	-	-
+0x00543710	566	100.0	100.0	/O2 /Ob1 /G5	insn	e55f3c1a44ffde1c	-	identical	h3	CXXOK
+0x00543950	116	100.0	100.0	/O2 /Ob1 /G5	insn	bd1f29ceaa0a8263	-	identical	h3	CXXOK
+0x005439d0	101	100.0	100.0	/O2 /Ob1 /G5	insn	10ad57cd085d9595	-	identical	h2	CXXOK
+0x00543a40	202	100.0	100.0	/O2 /Ob1 /G5	insn	ac97f625b3ec248a	-	identical	raw	CXXOK
+0x00543b10	14	100.0	100.0	/O2 /Ob1 /G5	insn	f5011f8715389cd4	-	identical	raw	CXXOK
+0x00543b20	14	100.0	100.0	/O2 /Ob1 /G5	insn	a6ae81163cff5d25	-	identical	raw	CXXOK
+0x00543b30	94	52.9	72.5	/O2 /Ob1 /G5	insn	5948e0268a3adc63	b	orig holds ebx=0 as shared return, tail-duplicated F(*p2)	h3	CXXOK
+0x00543b90	21	60.0	100.0	/O2 /Ob1 /G5	insn	37a0e15b2a808c68	a	add operand order only (add ecx,eax vs add eax,ecx)	h1	CXXOK
+0x00543bb0	392	72.3	72.3	/O2 /Ob1 /G5	insn	4bdaf4f915b783a2	a	dec chain switch, unmerged epilogues	h1	CXXOK
+0x00543d40	41	100.0	100.0	/O2 /Ob1 /G5	insn	7aa5b5d32ec5685b	-	identical	raw	CXXOK
+0x00543d70	35	100.0	100.0	/O2 /Ob1 /G5	insn	54b73d9d960c69ed	-	identical	raw	CXXOK
+0x00543da0	21	60.0	100.0	/O2 /Ob1 /G5	insn	252914f5c9c3f77c	b	add operand order (ecx,eax vs eax,ecx) after fixing callee arity	h2	CXXOK
+0x00543dc0	35	100.0	100.0	/O2 /Ob1 /G5	insn	edeeb99cc5ee4d92	-	identical	raw	CXXOK
+0x00543df0	15	100.0	100.0	/O2 /Ob1 /G5	insn	e95d8240a8618b69	-	identical	raw	CXXOK
+0x00543e00	15	100.0	100.0	/O2 /Ob1 /G5	insn	af62839ae1ecd272	-	identical	raw	CXXOK
+0x00543e10	19	100.0	100.0	/O2 /Ob1 /G5	insn	d2dd1240d0ed8c14	-	identical	raw	CXXOK
+0x00543e30	19	100.0	100.0	/O2 /Ob1 /G5	insn	797539067b950164	-	identical	h3	CXXOK
+0x00543e50	619	75.9	75.9	/O2 /Ob1 /G5	insn	2501bca1ea621ef5	a	14 unmerged xor/ret exits	h1	CXXOK
+0x005449f0	121	100.0	100.0	/O2 /Ob1 /G5	insn	8c5bf0cc20e918ff	-	identical	h1	CXXOK
+0x00544a70	96	58.1	61.3	/O2 /Ob1 /G5	insn	e3cd4d7a24caa3fa	b	base idx*0x14 folding differs	h3	CXXOK
+0x00544ad0	281	46.0	68.0	/O2 /Ob1 /G5	insn	8cf5f0b2c9b22d2b	b	dirty-flag blocks, ebx=3 hoisted	h2	CXXOK
+0x00544bf0	291	74.3	77.1	/O2 /Ob1 /G5	insn	8ad97f7def36847e	b	f5c copy via FPU, frame order	h1	CXXOK
+0x00544d20	154	86.7	86.7	/O2 /Ob1 /G5	insn	ef653b5e9ae98d35	a	orig keeps separate xor eax,eax/ret exits, ours merges	h2	CXXOK
+0x00545260	214	61.6	54.7	/O2 /Ob1 /G5	insn	f12aeff31128afce	a	separate exit epilogues + reg alloc	h2	CXXOK
+0x005459c0	880	37.0	45.7	/O2 /Ob1 /G5	insn	691278c362d27d7e	b	structure only; ROUND() stub is a raw-converter artifact (needs real round idiom)	h3	CXXOK
+0x00545d30	1506	24.3	32.9	/O2 /Ob1 /G5	insn	f8f7cd62cb7f4a42	b	structure only; ROUND() artifact; compiles after proto fixes	h3	CXXOK
+0x00546320	87	100.0	100.0	/O2 /Ob1 /G5	insn	70f2c57442fb827a	-	identical	raw	CXXOK
+0x00546380	427	100.0	100.0	/O2 /Ob1 /G5	insn	9f020547f814e005	-	identical	h3	CXXOK
+0x00546530	35	100.0	100.0	/O2 /Ob1 /G5	insn	120b2d5d6d146583	-	identical	h1	CXXOK
+0x00546890	633	24.6	49.1	/O2 /Ob1 /G5	insn	90fd5622fb49dee4	b	structure only (memset intrinsic); regs/frame differ	h3	CXXOK
+0x00546bf0	93	100.0	100.0	/O2 /Ob1 /G5	insn	d14c8df952a58907	-	identical	h3	CXXOK
+0x00546c50	93	100.0	100.0	/O2 /Ob1 /G5	insn	851ae014a66a6cf1	-	identical	h1	CXXOK
+0x00546cb0	93	100.0	100.0	/O2 /Ob1 /G5	insn	3347fdddecc33ef9	-	identical	h2	CXXOK
+0x00546d10	346	22.1	38.5	/O2 /Ob1 /G5	insn	72b8a70c3a9e04f9	b	x87 stack residency / term order	h2	CXXOK
+0x00547230	529	28.4	30.9	/O2 /Ob1 /G5	insn	ef958b4e1bb9106e	b	structure only	h1	CXXOK
+0x005492a0	15	100.0	100.0	/O2 /Ob1 /G5	insn	29a3b6cd9e15eaa8	-	identical	raw	CXXOK
+0x005493d0	15	100.0	100.0	/O2 /Ob1 /G5	insn	154dfae698724fa0	-	identical	raw	CXXOK
+0x005493e0	410	64.2	70.3	/O2 /GS /Ob1	insn	c7a3585363fc35a1	b	raw	h2	CXXFAIL
+0x00549580	29	100.0	100.0	/O2 /Ob1 /G5	insn	d2c2f62a8df7f79a	-	identical	raw	CXXOK
+0x005495a0	8	100.0	100.0	/O2 /Ob1 /G5	insn	f6a4c752560acd5f	-	identical	raw	CXXOK
+0x005495b0	83	100.0	100.0	/O2 /Ob1 /G5	insn	9c0cae707fea15f4	-	identical	h2	CXXOK
+0x00549610	12	100.0	100.0	/O2 /Ob1 /G5	insn	60b0aa6b3fd4e1e4	-	identical	raw	CXXOK
+0x00549620	30	100.0	100.0	/O2 /Ob1 /G5	insn	a6e74759d869dfa2	-	identical	raw	CXXOK
+0x00549640	198	100.0	100.0	/O2 /Ob1 /G5	insn	d6e3da4c82fda6b0	-	identical	h2	CXXOK
+0x00549900	112	94.9	94.9	/O2 /Ob1 /G5	insn	89d590357d2a6a5a	a	fisub dword vs fild qword;fsubp	h1	CXXOK
+0x00549970	127	53.6	78.6	/O2 /Ob1 /G5	insn	fb2053a768ba8966	b	zero kept in esi vs xor eax + imm store	h1	CXXOK
+0x005499f0	45	100.0	100.0	/O2 /Ob1 /G5	insn	0cc5ef727ce1be6f	-	identical	raw	CXXOK
+0x00549a50	56	100.0	100.0	/O2 /Ob1 /G5	insn	4147e488f5fff5c7	-	identical	h2	CXXOK
+0x00549a90	14	100.0	100.0	/O2 /Ob1 /G5	insn	b6dbc7e20a58b91c	-	identical	raw	CXXOK
+0x00549aa0	126	100.0	100.0	/O2 /Ob1 /G5	insn	1ffe90be518b67dd	-	identical	h3	CXXOK
+0x00549b20	1203	32.5	63.4	/O2 /Ob1 /G5	insn	3cfb63ef55e62287	b	structure only (protos fixed so it compiles)	h3	CXXOK
+0x0054a120	2315	12.1	29.3	/O2 /GS /Ob1	insn	e253c0242de69f46	b	structure only (C++ fixes only)	h1	CXXOK
+0x0054b340	739	20.8	37.8	/O2 /Ob1 /G5	insn	3bcd82f7ceccbf8e	b	raw	h2	CXXFAIL
+0x0054b630	150	93.0	96.5	/O2 /Ob1 /G5	insn	b23b9a507f852108	b	memcpy intrinsic + struct VB; spill slot numbering differs	h3	CXXOK
+0x0054b6d0	100	70.3	100.0	/O2 /Ob1 /G5	insn	e9a84c0fda45b281	b	same 37 ins, reg choice esi vs ecx	h1	CXXOK
+0x0054b740	376	66.1	67.2	/O2 /Ob1 /G5	insn	f7ea912c1171ab6c	b	orig duplicates 6-pop epilogue per early return	h3	CXXOK
+0x0054b8c0	344	69.4	69.4	/O2 /Ob1 /G5	insn	f35018741d0c556b	a	orig keeps 6 unmerged failure epilogues	h1	CXXOK
+0x0054ba20	896	19.0	20.0	/O2 /Ob1 /G5	insn	d5f098a5b7703371	b	raw	h2	CXXFAIL
+0x0054bda0	1621	10.2	9.6	/O2 /Ob1 /G5	insn	f5dca6ec8c30c4f3	b	raw	h2	CXXFAIL
+0x0054c400	230	87.5	88.8	/O2 /Ob1 /G5	insn	a74d2d077d3d85c2	b	inner count hoisting	h2	CXXOK
+0x0054c4f0	888	54.1	55.1	/O2 /Ob1 /G5	insn	a350dfdd5b7f1633	b	structure only	h1	CXXOK
+0x0054c870	1590	56.6	58.3	/O2 /Ob1 /G5	insn	6e72a8fc546a2f00	b	structure only	h1	CXXOK
+0x0054ceb0	230	25.6	57.7	/O2 /Ob1 /G5	insn	ce9537cd6feb1a0f	b	ops 91%; precomputed deltas found, frame/spill layout differs	h3	CXXOK
+0x0054cfa0	225	65.8	64.6	/O2 /Ob1 /G5	insn	4df1657ebc8b99b9	b	structure only (permuter)	h1	CXXOK
+0x0054d090	150	36.8	50.9	/O2 /Ob1 /G5	insn	890bb7e4facfe9db	b	structure only (permuter)	h1	CXXOK
+0x0054d4d0	1785	90.5	90.5	/O1	insn	0ea1892d135b0985	a	/O1 wins; orig reloads stores from memory	h1	CXXOK
+0x0054dbd0	2379	78.9	78.9	/O1	insn	cf163d558e1ff8a8	b	raw	h2	CXXOK
+0x0054e520	1646	88.4	88.4	/O2 /Ob1 /G5	insn	32d9d7bd4a8b4e99	b	ops 95.7; 6.0f literal for 0x005cd0a0 (+10 pts); volatile tried, worse; spill/fst forms remain	h3	CXXOK
+0x0054eb90	2161	82.6	82.6	/O2 /Ob1 /G5	insn	a008eb240d8bf739	b	same 6.0f literal; not further worked	h3	CXXOK
+0x0054f410	1216	75.8	75.8	/O2 /Ob1 /G5	insn	b3419e9a7f8adf0b	a	fld/fstp lane copies vs integer mov; globals float	h1	CXXOK
+0x0054f8d0	1154	54.9	68.6	/O2 /Ob1 /G5	insn	0eeb6ccaa0fc28ec	b	raw	h2	CXXFAIL
+0x0054fd60	967	36.5	68.3	/O2 /Ob1 /G5	insn	6322ec576bfdcd3a	b	structure only	h1	CXXOK
+0x00550130	533	18.3	21.7	/O2 /Ob1 /G5	insn	92345a816c4f5989	b	raw	h2	CXXFAIL
+0x00550350	54	100.0	100.0	/O2 /Ob1 /G5	insn	9261a0af32504882	-	identical	h3	CXXOK
+0x00550400	45	100.0	100.0	/O2 /Ob1 /G5	insn	52cef2147e07da67	-	identical	h3	CXXOK
+0x00550520	95	100.0	100.0	/O2 /Ob1 /G5	insn	0dd050e499063bc0	-	identical	h2	CXXOK
+0x00550580	237	93.5	93.5	/O2 /Ob1 /G5	insn	dbc5f07ad5cacd8a	a	xor esi,esi; mov eax,esi on fail return (file created by hand)	h1	CXXOK
+0x00550670	200	70.9	70.9	/O2 /Ob1 /G5	insn	03c67e0cdca29093	b	orig keeps redundant ptr==0 test and lays err block first	h3	CXXOK
+0x00550740	6	100.0	100.0	/O2 /Ob1 /G5	insn	60174afe8def8d06	-	identical	raw	CXXOK
+0x00550750	56	100.0	100.0	/O2 /Ob1 /G5	insn	40a1cbe42eb26f51	-	identical	raw	CXXOK
+0x005507a0	6	100.0	100.0	/O2 /Ob1 /G5	insn	147b10c714633ad7	-	identical	raw	CXXOK
+0x005507b0	341	82.0	82.0	/O2 /Ob1 /G5	insn	f70e1a950e0dab64	b	same err/ret-0 layout as 0x00550670	h3	CXXOK
+0x00550a20	193	82.4	82.4	/O2 /Ob1 /G5	insn	b2bca26097352c21	a	shrink-wrap edi	h1	CXXOK
+0x00550bd0	14	100.0	100.0	/O2 /Ob1 /G5	insn	fff87507a607e22e	-	identical	h2	CXXOK
+0x00551190	251	90.7	90.7	/O2 /Ob1 /G5	insn	5a0bcca8b1cb9a8b	a	shrink-wrapped push esi	h3	CXXOK
+0x00551330	216	100.0	100.0	/O2 /Ob1 /G5	insn	8deb9a92d8b6b7ff	-	identical	h3	CXXOK
+0x00551410	66	100.0	100.0	/O2 /Ob1 /G5	insn	b286ae43311c5c11	-	identical	raw	CXXOK
+0x00551460	127	37.9	43.1	/O2 /Os /Ob1 /G5	insn	2e019eacd9c7c039	a	strlen repne scasb not emitted by 9176 (flags /O2 /Os)	h2	CXXOK
+0x00551510	50	100.0	100.0	/O2 /Ob1 /G5	insn	41b4486e37556c09	-	identical	h1	CXXOK
+0x00551550	77	89.2	89.2	/O2 /Ob1 /G5	insn	645b581427e26ffe	a	orig no shrink-wrap (push esi/edi at entry)	h1	CXXOK
+0x005515a0	111	100.0	100.0	/O2 /Ob1 /G5	insn	9b4eccd6d07c1f0a	-	identical	h3	CXXOK
+0x00551840	167	46.5	81.7	/O2 /Ob1 /G5	insn	b354e7cfb4912f15	a	known-zero eax reuse on fail exits	h1	CXXOK
+0x00551a50	121	96.4	98.2	/O2 /Ob1 /G5	insn	f11de54b98e469c0	b	eax reload + lea edx,[eax+8] vs mov edx; add edx,8	h2	CXXOK
+0x00551ad0	285	59.3	65.4	/O2 /Ob1 /G5	insn	ecada1d7a138f83a	b	ops 89%; 0x40 local matrix init ordering	h3	CXXOK
+0x00551c40	94	80.5	80.5	/O2 /Ob1 /G5	insn	9919cd662fa214cc	a	no shrink-wrap, 3 duplicated epilogues	h1	CXXOK
+0x00551ca0	53	100.0	100.0	/O2 /Ob1 /G5	insn	c4b30c4dbaa935ed	-	identical	h2	CXXOK
+0x00551ce0	6	100.0	100.0	/O2 /Ob1 /G5	insn	89187257a793f91e	-	identical	raw	CXXOK
+0x00551cf0	56	100.0	100.0	/O2 /Ob1 /G5	insn	7a280161f7a5e77e	-	identical	h3	CXXOK
+0x00551d40	649	41.5	54.6	/O2 /Ob1 /G5	insn	e50c6cbd3aff0ef6	b	structure only (permuter form)	h1	CXXOK
+0x00551fd0	8	100.0	100.0	/O2 /Ob1 /G5	insn	d04a6c38ad02d4a0	-	identical	raw	CXXOK
+0x00551fe0	55	100.0	100.0	/O2 /Ob1 /G5	insn	b445d55e9315cfab	-	identical	h1	CXXOK
+0x00552020	39	100.0	100.0	/O2 /Ob1 /G5	insn	e9eb08fa2625c02a	-	identical	raw	CXXOK
+0x00552230	174	100.0	100.0	/O2 /Ob1 /G5	insn	e1423e0bd9d4f87e	-	identical	h2	CXXOK
+0x005522e0	92	100.0	100.0	/O2 /Ob1 /G5	insn	121efe1b2370c571	-	identical	raw	CXXOK
+0x005524a0	32	100.0	100.0	/O2 /Ob1 /G5	insn	490e26485fcd70b6	-	identical	h3	CXXOK
+0x00552720	43	6.7	100.0	/O2 /Ob1 /G5	insn	49961048197f0b48	a	ops identical, two ptr params swap registers	h2	CXXOK
+0x00552890	142	82.4	82.4	/O2 /Ob1 /G5	insn	685dba9b713ed050	a	x87 sum schedule	h2	CXXOK
+0x00552920	316	78.0	78.0	/O2 /Ob1 /G5	insn	a2a9689b385eb8a4	b	slot order of s/f1/f2, CSE of f*s	h2	CXXOK
+0x00552fa0	129	100.0	100.0	/O2 /Ob1 /G5	insn	13d7c2d9d4e500c1	-	identical	h3	CXXOK
+0x00553030	192	100.0	100.0	/O2 /Ob1 /G5	insn	d2150afabbbf89a4	-	identical	h3	CXXOK
+0x005530f0	244	67.8	67.8	/O2 /Ob1 /G5	insn	ae22cbaae631b1d1	b	x87 spill slots	h2	CXXOK
+0x005531f0	469	20.7	25.3	/O2 /Ob1 /G5	insn	c9113b165efa6d49	b	raw	h2	CXXFAIL
+0x005533d0	441	55.0	61.1	/O2 /Ob1 /G5	insn	d14c380478f83d0f	b	structure only	h1	CXXOK
+0x00553590	134	100.0	100.0	/O2 /Ob1 /G5	insn	0aab3b3981a0a8d1	-	identical	h1	CXXOK
+0x00553620	626	18.7	32.2	/O2 /GS /Ob1	insn	348e7f39ab9ad665	b	raw	h2	CXXFAIL
+0x005538a0	936	19.7	29.8	/O2 /Ob1 /G5	insn	c84f1726c79b0a26	b	structure only	h3	CXXOK
+0x00553c50	157	100.0	100.0	/O2 /Ob1 /G5	insn	f5958f0f82c2d6c4	-	identical	h3	CXXOK
+0x00553cf0	262	40.9	72.0	/O2 /Ob1 /G5	insn	de40d57d9b9f1c45	b	structure only	h1	CXXOK
+0x00553e00	115	100.0	100.0	/O2 /Ob1 /G5	insn	77f228310fc0478f	-	identical	h2	CXXOK
+0x00553ef0	72	100.0	100.0	/O2 /Ob1 /G5	insn	97f00c2a9699e80b	-	identical	raw	CXXOK
+0x00553f40	205	100.0	100.0	/O2 /Ob1 /G5	insn	f63baaef9dc395e7	-	identical	h1	CXXOK
+0x005540d0	122	100.0	100.0	/O2 /Ob1 /G5	insn	52df3c9f3fa8f1f9	-	identical	raw	CXXOK
