@@ -1,0 +1,6 @@
+0x004963e0	OK	checked=1	unchecked=1	004963e0.c	  unchecked: _fputs
+0x00496400	OK	checked=3	unchecked=3	00496400.c	  unchecked: @__security_check_cookie@4,___security_cookie,_fputs
+0x00498910	OK	checked=9	unchecked=0	00498910.c	
+0x00498950	OK	checked=10	unchecked=0	00498910.c	
+0x004989b0	OK	checked=8	unchecked=0	00498910.c	
+0x00550bc0	OK	checked=0	unchecked=0	00550bc0.c	
