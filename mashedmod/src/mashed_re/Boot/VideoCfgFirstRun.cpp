@@ -10,7 +10,7 @@
 //
 // The original writes the file before its device exists (FUN_004951f0 -> FUN_00499400), so this runs from InitD3D9
 // between Direct3DCreate9 and CreateDevice, on the standalone's own IDirect3D9. The bytes depend on the adapter.
-// The write goes through ConfigLoadCore / ConfigSaveCore (Save/SettingsConfig.cpp): "videocfg.bin" in the exe's cwd.
+// The write goes through ConfigLoad / ConfigSave (Match/PortSave01_Config.cpp, re/match/s16): "videocfg.bin" in the exe's cwd.
 //
 // Departure: the original copies the adapter name into a 0x50-byte table entry per subsystem (0x00498c00), so a name of
 // 80 or more characters runs into the next entry. The name is read straight from the adapter here.
@@ -25,8 +25,8 @@
 #include <cstring>
 #include <vector>
 
-int   ConfigLoadCore();      // Save/SettingsConfig.cpp, 0x00498950
-int   ConfigSaveCore();      // Save/SettingsConfig.cpp, 0x004989b0
+extern "C" int __cdecl ConfigLoad(void);   // Match/PortSave01_Config.cpp, 0x00498950 (re/match/s16)
+extern "C" int __cdecl ConfigSave(void);   // Match/PortSave01_Config.cpp, 0x004989b0 (re/match/s16)
 void* ConfigSettingsBuf();   // Save/SettingsConfig.cpp, the 0x00773208 buffer
 
 namespace {
@@ -151,7 +151,7 @@ int VideoCfgFirstRunWrite(IDirect3D9* d3d) {
     std::vector<VideoMode> modes;
     for (const Entry& x : BuildModeList(d3d, 0)) modes.push_back(ModeInfo(x));
 
-    if (ConfigLoadCore()) {                                            // 0x00499555..0x0049955c
+    if (ConfigLoad()) {                                            // 0x00499555..0x0049955c
         Log("videocfg.bin present, no write");
         return 0;
     }
@@ -186,7 +186,7 @@ int VideoCfgFirstRunWrite(IDirect3D9* d3d) {
     Put32(buf, 0x194, m.depth);                                        // 0x00498f3b -> 0x0077339c
     Put32(buf, 0x198, m.flags & 1);                                    // 0x00498f4b..0x00498f4f -> 0x007733a0
 
-    const int ok = ConfigSaveCore();                                   // 0x0049958b
+    const int ok = ConfigSave();                                   // 0x0049958b
     char line[256];
     std::snprintf(line, sizeof line, "first-run write ret=%d modes=%d pick=%d '%s' '%s'", ok,
                   static_cast<int>(modes.size()), mode, id.Description, label);
