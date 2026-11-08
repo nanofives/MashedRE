@@ -24,7 +24,7 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
-typedef int code();
+typedef int code1(int);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x004e1780 FUN_004e1780
 void FUN_004e1780(int param_1)
@@ -35,16 +35,16 @@ void FUN_004e1780(int param_1)
   
   if (param_1 != 0) {
     if (*(int *)(param_1 + 0xc) != 0) {
-      (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0xc));
+      (**(code1 **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0xc));
       *(undefined4 *)(param_1 + 0xc) = 0;
     }
     iVar2 = *(int *)(param_1 + 4);
     while (iVar2 != 0) {
       iVar1 = *(int *)(iVar2 + 8);
-      (**(code **)(DAT_007d3ff8 + 0x10c))(iVar2);
+      (**(code1 **)(DAT_007d3ff8 + 0x10c))(iVar2);
       iVar2 = iVar1;
     }
-    (**(code **)(DAT_007d3ff8 + 0x10c))(param_1);
+    (**(code1 **)(DAT_007d3ff8 + 0x10c))(param_1);
   }
   return;
 }

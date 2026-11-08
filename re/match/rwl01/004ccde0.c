@@ -24,7 +24,7 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
-MGLOBAL(undefined4, DAT_007d45cc, 0x007d45cc);
+MGLOBAL(undefined4 *, DAT_007d45cc, 0x007d45cc);
 int FUN_004ccc50(int * p0);
 // MATCH: 0x004ccde0 FUN_004ccde0
 int FUN_004ccde0(void)
@@ -35,9 +35,9 @@ int FUN_004ccde0(void)
   int iVar3;
   
   iVar3 = 0;
-  for (puVar1 = DAT_007d45cc; (undefined4 **)puVar1 != &DAT_007d45cc; puVar1 = (undefined4 *)*puVar1
+  for (puVar1 = DAT_007d45cc; puVar1 != (undefined4 *)&DAT_007d45cc; puVar1 = (undefined4 *)*puVar1
       ) {
-    iVar2 = FUN_004ccc50(puVar1 + -7);
+    iVar2 = FUN_004ccc50((int *)(puVar1 + -7));
     if (0 < iVar2) {
       iVar3 = iVar3 + iVar2;
     }

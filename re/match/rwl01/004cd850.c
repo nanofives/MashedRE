@@ -33,7 +33,7 @@ undefined4 FUN_004e18f0(int * p0);
 void FUN_004e1960(int * p0);
 void FUN_004e1990(int * p0);
 undefined4 FUN_004e19f0(int * p0);
-MGLOBAL(int, _DAT_007d4600, 0x007d4600);
+MGLOBAL(undefined4 *, _DAT_007d4600, 0x007d4600);
 // MATCH: 0x004cd850 FUN_004cd850
 undefined4 FUN_004cd850(undefined4 param_1,int param_2)
 
@@ -49,15 +49,15 @@ undefined4 FUN_004cd850(undefined4 param_1,int param_2)
     *puVar2 = 0;
     puVar2 = puVar2 + 1;
   }
-  iVar1 = FUN_004e18f0(DAT_007d3ff8 + 0x1c + DAT_00911d00);
+  iVar1 = FUN_004e18f0((int *)(DAT_007d3ff8 + 0x1c + DAT_00911d00));
   if (iVar1 != 0) {
-    iVar1 = FUN_004e19f0(DAT_007d3ff8 + 0x20 + DAT_00911d00);
+    iVar1 = FUN_004e19f0((int *)(DAT_007d3ff8 + 0x20 + DAT_00911d00));
     if (iVar1 != 0) {
       return param_1;
     }
   }
-  FUN_004e1990(DAT_007d3ff8 + 0x20 + DAT_00911d00);
-  FUN_004e1960(DAT_007d3ff8 + 0x1c + DAT_00911d00);
+  FUN_004e1990((int *)(DAT_007d3ff8 + 0x20 + DAT_00911d00));
+  FUN_004e1960((int *)(DAT_007d3ff8 + 0x1c + DAT_00911d00));
   DAT_00911d04 = DAT_00911d04 + -1;
   return 0;
 }

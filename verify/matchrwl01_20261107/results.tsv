@@ -1,0 +1,133 @@
+rva	size	best%	regs%	flags	by	sha256	class	reason
+0x004c0790	29	100.0	100.0	/O2 /Ob1 /G5	insn	a5c3dfc605072113	identical	raw converter / hand
+0x004c0870	153	100.0	100.0	/O2 /Ob1 /G5	insn	ea1db5cbf0c26cfe	identical	byte flag local widened to uint (gives xor ecx,ecx; mov cl) then narrowed on store
+0x004c0910	334	82.0	82.0	/O2 /Ob1 /G5	insn	dec31e0e887024d0	b	64-byte struct copy done; prologue/param register scheduling
+0x004c0a60	98	100.0	100.0	/O2 /Ob1 /G5	insn	19dedcde7d4cfb9f	identical	parent!=0 branch first, do-while+return
+0x004c0b30	51	100.0	100.0	/O2 /Ob1 /G5	insn	f15f03d0b79abcbf	identical	raw converter / hand
+0x004c0d70	107	100.0	100.0	/O2 /Ob1 /G5	insn	25a192e8d315dd22	identical	raw converter / hand
+0x004c0de0	112	100.0	100.0	/O2 /Ob1 /G5	insn	8b18a22d83a6af34	identical	raw converter / hand
+0x004c1040	461	99.2	100.0	/O2 /Ob1 /G5	insn	574d9fc73d4da6b8	a	holds 0x004c0ad0 (static callee); one [+0x9c] load base register
+0x004c1210	232	98.4	100.0	/O2 /Ob1 /G5	insn	8a427973c6329187	a	holds 0x004c0ad0 (static callee, 100%); one [+0x9c] load base register
+0x004c15c0	180	100.0	100.0	/O2 /Ob1 /G5	insn	7f30b040417fb63c	identical	byte flag local widened to uint then narrowed on store (same as 0x004c0870)
+0x004c1710	39	100.0	100.0	/O2 /Ob1 /G5	insn	ba866319d5d1cb5c	identical	raw converter / hand
+0x004c1940	61	100.0	100.0	/O2 /Ob1 /G5	insn	a6455c1070010088	identical	raw converter / hand
+0x004c1980	100	100.0	100.0	/O2 /Ob1 /G5	insn	f0a6d1d69f131eec	identical	raw converter / hand
+0x004c1cc0	39	100.0	100.0	/O2 /Ob1 /G5	insn	531f77b5a445396a	identical	raw converter / hand
+0x004c1d30	171	100.0	100.0	/O2 /Ob1 /G5	insn	21e96eb2e8d684bb	identical	FLAGS was /O1, now /O2 /Ob1 /G5. Callee 0x004c1a70 needs a same-TU definition so the compiler knows it keeps EDX (zero reg) and takes a stack arg: file holds a NON-real stand-in body for 0x004c1a70 under #ifndef __cplusplus (its real body is not in this file; it clobbers eax/ecx only). Function-pointer stores use real prototypes.
+0x004c2bf0	157	100.0	100.0	/O2 /Ob1 /G5	insn	db7d274de2e6a913	identical	raw converter / hand
+0x004c30b0	447	61.7	79.2	/O2 /Ob1 /G5	insn	63b5031f3f3dd44d	b	state bool in esi / constant 1 in edi swapped
+0x004c3e20	110	85.2	100.0	/O2 /Ob1 /G5	insn	b2e153b24750b7eb	(a)	address base/index operand order [ecx+eax] vs [eax+ecx] only
+0x004c3e90	543	44.3	45.0	/O2 /Ob1 /G5	insn	78d7cc404035696d	b	Fast-sqrt LUT builder: float bits via union, sqrt intrinsic (fsqrt), fdivr of the double at 0x005cd0c8, real function-pointer stores, 2-dword record array. 13.2 -> 44.3. Residual: original loops are not optimised (value kept in [esp] and param_2's stack slot [esp+0x10] reused as the result temp, plain inc/cmp loop), ours strength-reduces and unrolls; tried param_2 as the temp, no change.
+0x004c4220	69	40.7	40.7	/O2 /Ob1 /G5	insn	7a06116da9441b20	(b)	triple product, x87 stack schedule (three cofactors kept on stack) not reached
+0x004c57a0	83	100.0	100.0	/O2 /Ob1 /G5	insn	5dde01fd7ad5d8c2	identical	raw converter / hand
+0x004c5a00	90	89.7	89.7	/O2 /Ob1 /G5	insn	650bb6dd2a946811	b	ops 100%, only store order of [+0x50]/[+0x51]/[+0x30] (permuter)
+0x004c5a60	121	83.7	88.4	/O2 /Ob1 /G5	insn	6b60bbeec07bc84b	(b)	refcount decrement: original keeps edx store + eax copy for test
+0x004c5da0	39	100.0	100.0	/O2 /Ob1 /G5	insn	04cf78efe020eb21	identical	raw converter / hand
+0x004c5e00	340	77.7	84.5	/O2 /Ob1 /G5	insn	57086f0e4c33cfc1	(b)	do-while over list node, DAT_007d4080 load after first branch
+0x004c5f60	471	95.6	96.5	/O2 /Ob1 /G5	insn	85400d63db56db2b	a	Function-pointer stores as immediates via real prototypes (FUN_004c6140, LAB_004c61b0/7200/7490 declared as void fn) took it from 90.4 to 95.6. Residual: original keeps three separate return-0 epilogues (xor eax,eax; pop esi; ret), ours cross-jumps them into one at the end, plus one lea operand order; no statement order moved it, permuter no gain.
+0x004c7650	62	100.0	100.0	/O2 /Ob1 /G5	insn	5700668f6f489a10	identical	raw converter / hand
+0x004c7690	39	100.0	100.0	/O2 /Ob1 /G5	insn	7be0495e27c9c934	identical	raw converter / hand
+0x004c77c0	154	100.0	100.0	/O2 /Ob1 /G5	insn	d013899358e0ffa4	identical	free call has 2 args, failure branch first
+0x004c78a0	63	100.0	100.0	/O2 /Ob1 /G5	insn	d88ea76ca667c5dd	identical	raw converter / hand
+0x004c78e0	272	100.0	100.0	/O2 /Ob1 /G5	insn	62c128c38a09a024	identical	memset intrinsic (rep stosd)
+0x004c8690	169	100.0	100.0	/O2 /Ob1 /G5	insn	824364bbaf1030e6	identical	non-NULL branch first, 64-byte struct copy
+0x004c90a0	459	68.5	74.1	/O2 /Ob1 /G5	insn	a14a86823ed4e0d9	b	Fixed realloc arity (3 args, flags hoisted) and COM calls to __stdcall: 64.6 -> 68.5. Residual: switch 0x15..0x23 compiles as a compare chain, original is byte index table + 2-entry jump table (tried explicit case labels 0x1a..0x22 into default, no change); malloc/realloc arm layout and the post-loop realloc tail also differ.
+0x004cb330	344	18.6	47.5	/O2 /Ob1 /G5	insn	7577988e04873287	b	Not worked beyond raw output (budget spent on higher-yield rows). Two source copies are visible in the original (param_2 given vs default palette 0x005d8b90, different register allocation, flag 0x007d4154 = 0 vs 1 only when index 0x100): needs a hand rewrite as two specialised bodies; compare loop keeps its counter in [ebp-4] in the first copy.
+0x004cb600	236	78.6	81.0	/O2 /Ob1 /G5	insn	0771d2aa41460099	b	Struct form right (Rec6c 0x6c array, Blk68 copy gives rep movsd, realloc/malloc arms, COM call 0xcc __stdcall, setge result). Residual: original lays out grow code, then the FUN_004cb740 check block, then the shared copy tail with the early 'return 1' epilogue shared at the very end; ours emits the check block and its own epilogue after the tail. Tried: if/else flip, malloc/realloc arm order, permuter (84.5% variant makes the counter unsigned which changes behaviour: rejected).
+0x004cb8a0	480	43.3	50.0	/O2 /Ob1 /G5	insn	4f6e00209787c55e	b	param_1 in ebp and count reloaded in ebx in the original
+0x004cbca0	96	100.0	100.0	/O2 /Ob1 /G5	insn	553f466a986afcf4	identical	raw converter / hand
+0x004cbd00	43	100.0	100.0	/O2 /Ob1 /G5	insn	6e67b1310a8dd4b7	identical	raw converter / hand
+0x004cc7f0	33	100.0	100.0	/O2 /Ob1 /G5	insn	ad054b98e5230bfe	identical	raw converter / hand
+0x004cc820	433	74.5	78.4	/O2 /Ob1 /G5	insn	d64af8fb4b8aface	b	Zeroing loops (rep stosd + rep stosb) are memset(p+2,0,n) with #pragma intrinsic(memset) (55.6 -> 74.5); alloc/realloc arms flipped (realloc arm inline); param_4 as uint with >0 test (jbe). Residual: original saves ebx/ebp/esi/edi at entry (ours pushes esi/ebp later) and a different copy of the a few scheduling choices.
+0x004cc9e0	5	100.0	100.0	/O2 /Ob1 /G5	insn	f82a7fb1f28f9074	identical	jmp thunk, same-arity forwarding call is tail-called
+0x004cc9f0	136	100.0	100.0	/O2 /Ob1 /G5	insn	50b8be12eedf027e	identical	raw converter / hand
+0x004ccba0	169	95.9	100.0	/O2 /Ob1 /G5	insn	3c5b8e1eb45380ca	(a/b)	only 3 byte-access address operand orders differ
+0x004ccc50	138	98.2	100.0	/O2 /Ob1 /G5	insn	58015e641264dfdd	a	for-loops; only base/index order of [ecx+eax+8]
+0x004ccde0	51	100.0	100.0	/O2 /Ob1 /G5	insn	3e66e559cef5aa73	identical	raw converter / hand
+0x004cce20	199	100.0	100.0	/O2 /Ob1 /G5	insn	c80117293ef2b307	identical	16-byte struct copy and int stores over RwGlobals, handlers as functions
+0x004cd810	61	100.0	100.0	/O2 /Ob1 /G5	insn	e8fa96ca30b633a9	identical	raw converter / hand
+0x004cd850	166	100.0	100.0	/O2 /Ob1 /G5	insn	29073f46dba19fd7	identical	raw converter / hand
+0x004cd900	608	97.2	97.2	/O2 /Ob1 /G5	insn	fbb686a8d2b89db1	(a/b)	float arg fix; first failure return not tail-merged in original
+0x004cdb60	313	100.0	100.0	/O2 /Ob1 /G5	insn	70d29b56ccd884f9	identical	global sum operand order flipped
+0x004cdca0	87	100.0	100.0	/O2 /Ob1 /G5	insn	ca6176b2f8a604c0	identical	raw converter / hand
+0x004cdd00	86	100.0	100.0	/O2 /Ob1 /G5	insn	888f9a14c44953f1	identical	raw converter / hand
+0x004cdd60	188	79.2	87.0	/O2 /Ob1 /G5	insn	765bdf6221592f4b	b	shift block placement and edx/ebp/edi assignment
+0x004cdf20	936	28.3	65.8	/O2 /Ob1 /G5	insn	64d56445d562ebfb	b	Raw converter output with prototype/cast fixes for the C++ check only (ops 83% = same instruction multiset, order/register assignment differs). Above the 45 min cap before any rewrite was started; list-walk and COM-less alloc paths need structural work.
+0x004ce5d0	179	63.0	71.7	/O2 /Ob1 /G5	insn	689c28468d712773	(b)	globals/capacity loaded before sub esp,8, frame layout of error struct
+0x004cee90	320	66.7	84.6	/O2 /Ob1 /G5	insn	c55aa77f2fa3e3b1	b	header words held in callee-saved regs across the pool alloc (inlined alloc)
+0x004cf2b0	378	47.8	56.5	/O2 /Ob1 /G5	insn	880dfe18a4e187f8	b	Prototype fixes only (FUN_004c57a0 returns a pointer, thunk args cast): file now compiles (no score before). The original copies a 13-dword stack record into the raster field by field with 0x10-stride lea bases and a single and-3 temp; needs the record as a struct and member-wise copy, not done.
+0x004cf5a0	545	59.4	70.1	/O2 /Ob1 /G5	insn	0cf0d8ff788b8284	b	original branches on byte [esp+0x12] loaded into ebx before the calls
+0x004d2980	758	53.3	55.7	/O2 /Ob1 /G5	insn	e451f2bd820597cb	b	hoisted (flags&0xf00), out-of-line cube branch, call cleanup per slot
+0x004d3090	922	32.8	35.1	/O2 /Ob1 /G5	insn	1bf6da821b734776	(b)	raw form only, out of budget
+0x004d3db0	210	100.0	100.0	/O2 /Ob1 /G5	insn	a9ddc9470fca0454	identical	failure block first, globals written ff8+k+other
+0x004d4170	102	100.0	100.0	/O2 /Ob1 /G5	insn	f3bcb0a2d53ee516	identical	stack pair as an array keeps the second store
+0x004d4380	1412	17.2	28.5	/O2 /Ob1 /G5	insn	a3f5dd97d612595f	(b)	raw form only, out of budget
+0x004d4910	271	55.4	85.1	/O2 /Ob1 /G5	insn	d331c34a8c6029aa	b	original needs only ebx/esi/edi, ours takes ebp for the count
+0x004d4dd0	291	63.2	67.5	/O2 /Ob1 /G5	insn	298eedf332192587	b	Control flow now follows the original (resize arm first, malloc arm second, for(uVar4<count) loop). Residual is register/frame allocation: original saves ebp at entry (counter) and ebx only in the loop, uses edi=iVar1+4 strength-reduced base, and has no shared return-0 epilogues. Tried arm order, loop forms.
+0x004d4f90	508	28.3	49.5	/O2 /Ob1 /G5	insn	22a6615319547206	b	vararg walker, register allocation of object/cursor
+0x004d7de0	515	61.5	69.2	/O2 /Ob1 /G5	insn	900e267d1bde9a9a	(b)	fixed to compile; error path inline early return layout
+0x004d8810	609	50.7	57.5	/O2 /Ob1 /G5	insn	0e9cec89b410957d	b	Raw converter output with prototype/cast fixes for the C++ check only. Frame 0x98 vs original 0x9c: the error record (local_98/local_94) overlaps local_90[] in Ghidra's layout and needs a proper struct/array to keep both stores; not rewritten.
+0x004d8a80	240	100.0	100.0	/O2 /Ob1 /G5	insn	aaa3a1d9d60495c3	identical	callee arity 2, two stack arrays, unsigned size 0 < n
+0x004d8bd0	106	100.0	100.0	/O2 /Ob1 /G5	insn	6c29ea825e2d07df	identical	raw converter / hand
+0x004d9000	43	100.0	100.0	/O2 /Ob1 /G5	insn	6c7772dd880e087d	identical	raw converter / hand
+0x004d9030	16	100.0	100.0	/O2 /Ob1 /G5	insn	606cd943be170f18	identical	raw converter / hand
+0x004d9040	16	100.0	100.0	/O2 /Ob1 /G5	insn	6f75d29dcc4c7901	identical	raw converter / hand
+0x004db2e0	252	100.0	100.0	/O2 /Ob1 /G5	insn	13d497aefd993456	identical	else-if inverted, failure before success
+0x004db3e0	368	95.2	99.0	/O2 /Ob1 /G5	insn	f5c74719ac596e37	a	Release calls load vtable into edx/ecx in opposite order, return esi vs xor
+0x004dc300	112	8.5	9.9	/O1	insn	748f65a5aca90660	c	Original is hand-written SSE (movups/movaps alignment branch, shufps, mulps, addps, movhlps, movlps) with push ebp frame. cl 13.00.9176 has no __m128/_mm_*ps (tested: C2061) and __asm is banned; the C is only the scalar semantics (x87 build, no SSE).
+0x004dc370	154	2.0	2.0	/O2 /Ob1 /G5	insn	fbb4a1f969cd7759	(c)	hand-written SSE loop (4x3), needs asm (placeholder body)
+0x004dc410	139	2.2	2.2	/O2 /Ob1 /G5	insn	e6b23a1ba378cd3b	(c)	hand-written SSE loop (3x3), needs asm (placeholder body)
+0x004dc4a0	137	8.8	10.3	/O1	insn	41fb94367f350eec	c	Same hand-written SSE family (4-row movups/movaps load, shufps/mulps/addps); DDK has no SSE intrinsics, __asm banned. File holds scalar semantics only.
+0x004dc530	122	10.0	10.0	/O1	insn	123fca281881580b	c	Same hand-written SSE vec3 transform as 0x004dc300 (stores via movss/shufps 0xe5); DDK has no SSE intrinsics, __asm banned. File holds scalar semantics only.
+0x004dc5b0	404	80.7	93.6	/O2 /Ob1 /G5	insn	39425b4c3779bfae	(b)	third alloc block scheduling, unsigned ja tail test
+0x004dc750	329	25.6	63.6	/O2 /Ob1 /G5	insn	290c7845bbf842b0	(b)	free-list coalesce, head spilled to stack slot, 5 callee-saved regs
+0x004dc8a0	49	58.3	58.3	/O2 /Ob1 /G5	insn	0162ab794f922c5f	b	compiler loads/increments the ring counter before the four stores, original after (volatile stores kept)
+0x004dc8e0	141	100.0	100.0	/O2 /Ob1 /G5	insn	da75511d707c46ab	identical	arrays DAT_007d70cc/dc/ec[4] with unsigned i<4 (gives ecx+const loop), COM Release __stdcall, head pointer reloaded after hit
+0x004dc970	103	100.0	100.0	/O2 /Ob1 /G5	insn	df93f9be78434ac6	identical	stdcall vtable call, list head loaded inside if
+0x004dc9e0	188	100.0	100.0	/O2 /Ob1 /G5	insn	d641d29f292e8c74	identical	3 arrays of 4 dwords, tail zeroing for-loop unrolled by compiler
+0x004dcaa0	220	100.0	100.0	/O2 /Ob1 /G5	insn	3193f023d6804cb7	identical	next ptr loaded at loop top (puVar1=p[4]; p=puVar1), 6th COM arg is param_2 (Ghidra had param_1 twice), COM calls __stdcall, flag computed into a local before the call
+0x004dcb80	35	100.0	100.0	/O2 /Ob1 /G5	insn	9fcb05d5450065ca	identical	do-while over list with hoisted param, early return on match
+0x004dcbb0	369	77.5	84.2	/O2 /Ob1 /G5	insn	3d850ed1960629d7	(b)	real proto cdecl 5 args; param_1/uVar5/uVar6 register assignment
+0x004dcd30	20	100.0	100.0	/O2 /Ob1 /G5	insn	47bbe4d176d16337	identical	vtable+0x30 call, >=0, cdecl wrapper
+0x004dcd50	103	100.0	100.0	/O2 /Ob1 /G5	insn	c432d4599a561be0	identical	raw converter / hand
+0x004dcdc0	456	35.7	81.1	/O2 /Ob1 /G5	insn	518214974edfc9f3	(b)	list head in ecx vs eax swap, layout shift (ops 97.2%)
+0x004dd0b0	130	1.7	3.4	/O2 /Ob1 /G5	insn	5e0d5426b9dc54e6	(c)	pushf/popf + cpuid, needs inline asm (placeholder body)
+0x004dd140	6	100.0	100.0	/O2 /Ob1 /G5	insn	d26a22cdc8123fea	identical	import thunk via dllimport void tail call
+0x004dd150	386	100.0	100.0	/O2 /Ob1 /G5	insn	483c10ee81360d62	identical	D3D COM slot prototypes, flag byte as byte<<8, cube branch first
+0x004ddcb0	176	46.2	67.9	/O2 /Ob1 /G5	insn	775cd7b43ac684ad	b	duplicated pow2 bodies: shared counter tail-merges, separate counters take edi
+0x004ddd60	587	38.8	22.9	/O2 /Ob1 /G5	insn	beb15c98157a477b	b	switch tree/case order match; per-case shift distribution differs
+0x004ddfb0	501	23.6	34.4	/O2 /Ob1 /G5	insn	9af8bf40c227ee0d	b	Not worked beyond the raw converter output (budget went to higher-yield rows); flags changed from /GS to /O2 /Ob1 /G5 (same class of score); frame is 4 bytes short as in the other rows with a dead 2-dword error record, needs the array form.
+0x004de1b0	468	56.8	58.6	/O2 /Ob1 /G5	insn	0f3c3411dcb0657a	(b)	memcpy intrinsic + arity fix; frame/locals layout
+0x004de390	1087	45.0	53.1	/O2 /Ob1 /G5	insn	8f931fb4801e6ae4	b	per-format loop shapes/registers not matched (budget)
+0x004de800	564	52.5	71.3	/O2 /Ob1 /G5	insn	c5eeb230f5cc16c6	(b)	switch selecting callbacks; function addresses declared as functions (+4%)
+0x004dee20	24	100.0	100.0	/O2 /Ob1 /G5	insn	a59ac015b8390e16	identical	raw converter / hand
+0x004dee40	491	22.5	51.0	/O2 /Ob1 /G5	insn	c9db88c1a7eae68c	(b)	raw Ghidra form, loop/register structure differs
+0x004df120	1420	46.3	56.6	/O2 /Ob1 /G5	insn	a83786bf9cee3ab3	b	Raw converter output with prototype/cast fixes for the C++ check only. Frame 0x21c vs 0x220 (4-byte error-record store eliminated, same fix as 0x004e14a0: 2-dword record as an array); not rewritten, above budget.
+0x004df750	119	100.0	100.0	/O2 /Ob1 /G5	insn	6ac92b2e59a0dd4c	identical	switch case blocks in original order, handlers declared as functions, /G5
+0x004df870	39	100.0	100.0	/O2 /Ob1 /G5	insn	3cd1bf3352f62fff	identical	raw converter / hand
+0x004df8a0	39	100.0	100.0	/O2 /Ob1 /G5	insn	4a0a7bd501b53764	identical	raw converter / hand
+0x004e08b0	98	100.0	100.0	/O2 /Ob1 /G5	insn	ce3922006fccf0f7	identical	COM Release call is __stdcall (callee pops), not cdecl code*
+0x004e0920	578	20.8	37.6	/O2 /Ob1 /G5	insn	aa57e62e5f950072	b	Raw Ghidra output for the vertex-element table part is wrong (the uStack_ block is really a call's 7 stack args plus 8-byte {WORD,WORD,BYTE x4} element arrays built with byte/word stores); fixed the first IDirect3D call (7 args, __stdcall) and the COM Release, file now compiles. The element tables (0x14..0x3b off esp, 4 variants) were not rewritten: out of budget.
+0x004e1290	6	100.0	100.0	/O2 /Ob1 /G5	insn	93a30563c9322969	identical	address-of global returned as int*
+0x004e12a0	6	100.0	100.0	/O2 /Ob1 /G5	insn	fd8e02b110c12dfd	identical	returns address of 0x006185b8 (int *)
+0x004e12b0	319	67.7	84.3	/O2 /Ob1 /G5	insn	a8526f02ab1ee906	b	Freelist-block coalesce (header at param_2-0x20: +0 prev, +4 next, +8 size, +0xc link). Written with everything relative to piVar1, int-valued flags (mov r,1 / xor r,r like the original). Residual: original loads the param before the pushes into eax and keeps iVar2 in eax, we keep it in ecx / use ebx+ebp; flags in the file were /GS before, now plain G5 (no change in score class). Permuter 74% variant corrupts an address expression (*(int*)4): rejected.
+0x004e13f0	167	50.0	75.0	/O2 /Ob1 /G5	insn	16d8b539a1e51418	b	Structure right (single exit returning iVar2, nested realloc fail path with 8-byte local, goto done); register assignment differs (ours param=edi/iVar2=esi, original param=esi/iVar2=edi/uVar3=ebx) and frame lacks sub esp 8/ebx. Tried: return iVar2 vs 0, single-exit goto, pointer param, decl order, permuter (62.5% variant reorders side effects: rejected).
+0x004e14a0	331	38.9	59.3	/O2 /Ob1 /G5	insn	d67e923ee948083c	b	Heap-grow (size round 0x1f&~0x1f, scan 8-byte entries backwards, alloc 0x8b extra, link block, sprintf of resize, FUN_004e1670). String global as MGLOBALA, 2-dword stack record as an array so both stores survive, tail 'esi=*p+0x20; if(esi)' instead of Ghidra's 0xffffffe0 test. Residual: block layout (original puts the post-link tail after the fail epilogues via jmp, loads param_2 into eax before the pushes, and-with-edx not byte and). Permuter variants swap stores past calls: rejected.
+0x004e15f0	128	96.2	100.0	/O2 /Ob1 /G5	insn	91598fdd2abc2848	a	32-byte struct copy; commutative base/index order of [ecx+eax-0x1c]
+0x004e1670	146	52.8	84.9	/O2 /Ob1 /G5	insn	96feb580ab4e5952	b	param_3 in edi vs esi and remainder register assignment differ (permuter variants were wrong)
+0x004e1710	104	100.0	100.0	/O2 /Ob1 /G5	insn	b0694b46b7b139c2	identical	permuter swap of the init order
+0x004e1780	90	100.0	100.0	/O2 /Ob1 /G5	insn	96dbd279a609a50d	identical	raw converter / hand
+0x004e17e0	270	100.0	100.0	/O2 /Ob1 /G5	insn	2bb69c3b0be807e9	identical	puVar2=0 assigned before the puVar3[5]=0 store so the zero register is not shared with the immediate store
+0x004e18f0	103	100.0	100.0	/O2 /Ob1 /G5	insn	e9bb5f726891cb1e	identical	reused iVar1 for the 0x004d4380 result (Ghidra added iVar1=0), real prototypes
+0x004e1960	38	100.0	100.0	/O2 /Ob1 /G5	insn	0707491dfcd4e10f	identical	raw converter / hand
+0x004e1990	88	100.0	100.0	/O2 /Ob1 /G5	insn	0bf0cf87d60a259d	identical	raw converter / hand
+0x004e19f0	152	100.0	100.0	/O2 /Ob1 /G5	insn	2b952419c763af00	identical	single local reused for second object
+0x004e1a90	41	100.0	100.0	/O2 /Ob1 /G5	insn	950524197467d8f3	identical	raw converter / hand
+0x004e1ac0	55	100.0	100.0	/O2 /Ob1 /G5	insn	593d59b237790ca1	identical	raw converter / hand
+0x004e1b00	41	100.0	100.0	/O2 /Ob1 /G5	insn	167e1a982ed58b45	identical	raw converter / hand
+0x004e1b30	41	100.0	100.0	/O2 /Ob1 /G5	insn	6c37d14d22e87241	identical	raw converter / hand
+0x004e1b60	299	86.5	90.1	/O2 /Ob1 /G5	insn	d5ff93880bddef3e	b	first call's arg registers (permuter, valid variant)
+0x004e1c90	69	100.0	100.0	/O2 /Ob1 /G5	insn	75093f38277e346d	identical	ternary return (x!=0?p:0) gives neg/sbb/and, not -(uint)(x!=0)
+0x004e1ce0	61	100.0	100.0	/O2 /Ob1 /G5	insn	506bd2c2f51505ce	identical	raw converter / hand
+0x004e1d20	195	84.8	84.8	/O2 /Ob1 /G5	insn	05c7650b102d5112	b	Only the placement of the return-0 epilogue differs: original emits it right after the first 0x004cc580 test (later fails jump back to it), ours puts it at the end. Tried: early return 0, original wrapper form, for-loop with return 0 inside, permuter (no gain).
+0x004e1e70	234	56.5	56.5	/O2 /Ob1 /G5	insn	3ce8c8efc7eb1366	(b)	structure right; esi zero kept across function, err-struct store order

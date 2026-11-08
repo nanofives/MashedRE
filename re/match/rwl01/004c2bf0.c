@@ -37,7 +37,7 @@ int FUN_004c2bf0(int param_1)
 {
   int iVar1;
   
-  iVar1 = FUN_004c1d30();
+  iVar1 = (int)FUN_004c1d30();
   if (iVar1 == 0) {
     return 0;
   }
@@ -57,6 +57,6 @@ int FUN_004c2bf0(int param_1)
   *(undefined4 *)(iVar1 + 100) = *(undefined4 *)(param_1 + 100);
   *(undefined4 *)(iVar1 + 0x14) = *(undefined4 *)(param_1 + 0x14);
   FUN_004c1a70(iVar1);
-  FUN_004d8090(&DAT_00617f98,iVar1,param_1);
+  FUN_004d8090((int)&DAT_00617f98,iVar1,param_1);
   return iVar1;
 }

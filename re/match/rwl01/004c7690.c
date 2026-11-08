@@ -26,12 +26,12 @@ typedef unsigned char bool;
 typedef unsigned char undefined;
 typedef unsigned int undefined4;
 MGLOBAL(undefined4, DAT_00618180, 0x00618180);
-int FUN_004d7de0(int * p0, int p1, int p2, undefined * p3, undefined * p4, undefined * p5);
+int FUN_004d7de0(int * p0, int p1, int p2, undefined4 p3, undefined4 p4, undefined4 p5);
 // MATCH: 0x004c7690 FUN_004c7690
 void FUN_004c7690(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
                  undefined4 param_5)
 
 {
-  FUN_004d7de0(&DAT_00618180,param_1,param_2,param_3,param_4,param_5);
+  FUN_004d7de0((int *)&DAT_00618180,param_1,param_2,param_3,param_4,param_5);
   return;
 }

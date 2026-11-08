@@ -34,8 +34,8 @@ void FUN_004e1990(int * p0);
 undefined4 FUN_004cd810(undefined4 param_1)
 
 {
-  FUN_004e1990(DAT_007d3ff8 + DAT_00911d00 + 0x20);
-  FUN_004e1960(DAT_007d3ff8 + DAT_00911d00 + 0x1c);
+  FUN_004e1990((int *)(DAT_007d3ff8 + DAT_00911d00 + 0x20));
+  FUN_004e1960((int *)(DAT_007d3ff8 + DAT_00911d00 + 0x1c));
   DAT_00911d04 = DAT_00911d04 + -1;
   return param_1;
 }
