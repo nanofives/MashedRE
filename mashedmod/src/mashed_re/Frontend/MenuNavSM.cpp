@@ -374,7 +374,13 @@ constexpr std::uint32_t kTermVal = 0xff070000u; // -0xf90000 (terminator)
 // --------------------------------------------------------------------------
 int        g_nav_depth = 0;                 // DAT_0067e9f8
 NavSlot    g_stack[kMaxNavDepth] = {};
-MenuRecord g_records[kMaxRecords] = {};     // 0x00898ac0 analogue
+MenuRecord g_records_store[kMaxRecords] = {};   // 0x00898ac0 analogue: the records with MASHED_PORTSTATE_FRONTEND OFF
+// PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the records are DAT_00898ac0 itself (PortStateFrontend.h), so a matched
+// frontend body that names DAT_00898ac0 reads and writes the records this state machine draws. Read once, like the vehicle
+// records' MASHED_PORTSTATE_RECORDS (Vehicle/VehiclePhysicsRun.cpp g_records).
+MenuRecord* const g_records = PortStateFrontend_On() ? reinterpret_cast<MenuRecord*>(kMenuRecords) : g_records_store;
+// Record capacity: 30 at DAT_00898ac0 (the original array; 0x008990d8.. are other globals), 31 in the port store as before.
+inline int RecordCapacity() { return PortStateFrontend_On() ? kOrigMenuRecords : kMaxRecords; }
 int        g_record_count = 0;
 int        g_last_dir = 0;                  // DAT_0067e844
 
@@ -405,7 +411,8 @@ static_assert(offsetof(MenuRecord, pad20) == 0x20 && offsetof(MenuRecord, pad30)
 void RecordsZero() {
     MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(g_records), 30);
     for (int i = 0; i < 30; ++i) { g_records[i].pad20 = 0; g_records[i].pad30 = 0; }
-    std::memset(&g_records[30], 0, sizeof(MenuRecord));
+    // Entry 30 exists only in the port store. At DAT_00898ac0 (knob ON) it would be 0x008990d8.., other original globals.
+    if (!PortStateFrontend_On()) std::memset(&g_records[30], 0, sizeof(MenuRecord));
     g_record_count = 0;
 }
 
@@ -638,7 +645,7 @@ void BuildRecords(const NavSlot& slot) {
     // list is centered on virtual-Y 0xf0 (240) exactly as the original lays it out.
     constexpr int kSpacing = 0x1e;      // 30, the per-row Y step (local_c += 0x1e)
     const int base_y = Q_ListBaseY(slot.item_count, kSpacing);
-    for (int row = 0; row < slot.item_count && rec < kMaxRecords; ++row) {
+    for (int row = 0; row < slot.item_count && rec < RecordCapacity(); ++row) {
         const int prim = KvLookup(slot.desc_table, kTagItem, row);
         g_records[rec].tag       = static_cast<std::int32_t>(kTagItem);
         g_records[rec].row_index = row;
@@ -710,7 +717,7 @@ inline int PromptRelNormalize(int rel) { return (rel == -1) ? 0 : rel; }
 void PromptStripAppend(int key, int cmp, int rel) {
     const std::uint32_t tag = PromptStripTag(key);  // keys outside 1..10, 3/7/9: no row
     if (tag == 0) return;
-    if (g_record_count >= kMaxRecords) return;     // standalone bounds guard
+    if (g_record_count >= RecordCapacity()) return;  // standalone bounds guard
     MenuRecord& r = g_records[g_record_count];
     PromptRowInit(r, tag);
     PromptStripRow row;

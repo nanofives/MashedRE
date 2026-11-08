@@ -1686,14 +1686,21 @@ bool RunNavKeysStep() {
     } else {
         return true;                     // script done, last gap elapsed
     }
+    // rec= (PORT-STATE-03): FNV-1a 32 over menu records 0..29 (30 x 0x34 bytes, wherever MASHED_PORTSTATE_FRONTEND puts them).
+    std::uint32_t recHash = 0x811c9dc5u;
+    {
+        const unsigned char* rb = reinterpret_cast<const unsigned char*>(Nav_Records());
+        for (int i = 0; i < 30 * 0x34; ++i) { recHash ^= rb[i]; recHash *= 0x01000193u; }
+    }
     std::FILE* lf = std::fopen(kLogPath, "a");
     if (lf) {
-        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d opp=%d,%d,%d\n",
+        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d opp=%d,%d,%d rec=%08x n=%d\n",
                      frame, tap, Nav_Depth(), Nav_ScreenId(), Nav_Cursor(),
                      Nav_ChallengeRow(), Nav_GameModeWord(),
                      Nav_GameState().sel_f184, Nav_GameState().ea68, Nav_NavFlagF1a4(),
                      static_cast<int>(mashed_re::Race::GameFlow_Mode()),
-                     g_frontend_phase, Nav_GameState().ea98, Nav_GameState().ea9c, Nav_GameState().eaa0);
+                     g_frontend_phase, Nav_GameState().ea98, Nav_GameState().ea9c, Nav_GameState().eaa0,
+                     static_cast<unsigned>(recHash), Nav_RecordCount());
         std::fclose(lf);
     }
     ++frame;
