@@ -1,0 +1,12 @@
+rva	lib_function	library_object	lib_size	pc_body_size	tail_fill	pc_name	subsystem	verdict	why
+0x004fc6f5	?x86_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	105	105		FUN_004fc6f5	third-party-library[d3dx9-psgp]	add	
+0x004fc75e	?x86_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	53	53		FUN_004fc75e	third-party-library[d3dx9-psgp]	add	
+0x004fc793	?x86_D3DXVec3Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR3@@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	139	139		FUN_004fc793	third-party-library[d3dx9-psgp]	add	
+0x004fc81e	?x86_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	95	95		FUN_004fc81e	third-party-library[d3dx9-psgp]	add	
+0x004fc87d	?x86_D3DXVec4Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	153	153		FUN_004fc87d	third-party-library[d3dx9-psgp]	add	
+0x0050fc7c	_x3d_D3DXVec4Transform@12	d3dx9.lib:obj\i386\x3d_vec4.obj	130	130		FUN_0050fc7c	third-party-library[d3dx9-psgp]	add	
+0x0050fcfe	?x3d_D3DXVec4Normalize@@YGPAUD3DXVECTOR4@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	95	95		FUN_0050fcfe	third-party-library[d3dx9-psgp]	add	
+0x0050fd5d	?x3d_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	306	306		FUN_0050fd5d	third-party-library[d3dx9-psgp]	add	
+0x0050fe8f	?x3d_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	113	113		FUN_0050fe8f	third-party-library[d3dx9-psgp]	add	
+0x0050ff00	?x3d_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	200	200		FUN_0050ff00	third-party-library[d3dx9-psgp]	add	
+0x0050ffc8	?x3d_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	222	222		FUN_0050ffc8	third-party-library[d3dx9-psgp]	add	
