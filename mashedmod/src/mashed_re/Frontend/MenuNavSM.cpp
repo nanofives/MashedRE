@@ -21,7 +21,6 @@
 // existing TextRenderer/MashedFont path instead.
 
 #include "MenuNavSM.h"
-#include "MenuAnimTick.h"
 #include "MenuNav.h"            // MenuEntryWalk: the shared 0x0042ac90 body
 #include "../Race/RaceModes.h"  // SelectionToGameMode: the host-side name of 0x0042f6b0's table (SelectionToGameMode.h)
 #include "RowMovers.h"          // challenge-row movers 0x004322c0 / 0x004323c0
@@ -40,6 +39,8 @@ extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key
 extern "C" void __cdecl MenuEntryArrayInit(void);      // 0x0042d3e0, Match/MatchS07_0042d3e0.cpp (zeroes DAT_00898ac0)
 extern "C" int  __cdecl Pred497450(int param_1);        // 0x00497450, Match/MatchGFFU_00497450.cpp (reads DAT_007e96fc)
 extern "C" void __cdecl PromptRowInit0042ad10(int* idx, int a, int x, int y, int e);   // 0x0042ad10, Match/MatchS06_0042ad10.cpp
+// Both knob states: the menu slide-animation tick (L-100 (a)), reads DAT_00898ac0 and four input words, see Anim_Tick.
+extern "C" int  __cdecl MenuAnimTickTwin(void);         // 0x004325c0, Match/MatchS08_004325c0.cpp
 
 namespace mashed_re {
 namespace Frontend {
@@ -672,6 +673,12 @@ void BuildRecords(const NavSlot& slot) {
         // counter; pool0 decomp 2026-06-09) — the anim tick's type-0 settle
         // recomputes Y from this field (FUN_004325c0 @0x004326b8).
         g_records[rec].pad20     = row;
+        // +0x30: the original stores the screen's table pointer here (0x0043d2a0, re/match/s08/0043d2a0.c:302,
+        // it->def = DAT_0067ed78[lv].def). The anim tick 0x004325c0 compares it with 0x005f7370 (screen 24) and
+        // 0x005f72a0 (screen 18) only (L-100 (a)). The port's other screen tables have no original address here,
+        // so they keep 0, which equals neither (the original holds PTR_DAT_005f7638[screen]).
+        g_records[rec].pad30     = (slot.screen_id == 24) ? static_cast<std::int32_t>(kScreen24Table)
+                                 : (slot.screen_id == 18) ? static_cast<std::int32_t>(kScreen18Table) : 0;
         // Anim init (FUN_0043d2a0): slide counter +0x10 = 0x1ff (item slides in),
         // type +0x04 = 0 (not frozen). The anim tick (FUN_004325c0) drives slide
         // -> 0 then settles (type=1). Root screen items start settled (type=1,
@@ -801,25 +808,40 @@ void FrameClockUpdate(int raw_ms) {
     g_frame_dt = static_cast<float>(g_tick_ms) * 3.3333333e-4f; // 0x0049351f
 }
 
-// FUN_004325c0 (0x004325c0): ONE body for both targets since D4-FU-MENUSPEED (2026-10-27, decision L-35 = 3),
-// MenuAnimTickBody in Frontend/MenuAnimTickTwin.cpp (citations there). This host only supplies the inputs: the
-// FUN_00493480 port's dt, g_anim_phase / g_anim_gate, the nav slot's item count for DAT_0067ece0, the
-// FUN_0042ac50 port, and the slot's screen id for the original's record +0x30 pointer match (24 = 0x005f7370,
-// 18 = 0x005f72a0). Speed is the original's rate (the MASHED_MENU_ANIM_SPEED switch was
-// removed in D5-MENUANIMSPEED once MASHED_MENU_CLOCK_FAITHFUL became default).
+// FUN_004325c0 (0x004325c0): the byte-matched body is the ONE body in both targets (PORT-STATE-03, decision L-100 (a),
+// Match/MatchS08_004325c0.cpp, export MenuAnimTickTwin). It reads its inputs at the original addresses, so this host
+// is a one-call bridge: it puts the FUN_00493480 port's dt (DAT_007f1004), g_anim_phase (DAT_0067eca4), g_anim_gate
+// (DAT_0067e914) and the nav slot's item count (DAT_0067ece0) there, calls the body, and restores the four previous
+// values. With MASHED_PORTSTATE_FRONTEND ON the records already are DAT_00898ac0. With it OFF the bridge also copies
+// records 0..29 of the port store there for the call and back after, and restores what DAT_00898ac0 held. The body's
+// one callee, 0x0042ac50 (Calc42ac50), reads no global, so nothing else observes the bridged values. Main thread only.
+// The screen match on record +0x30 (0x004326e4 / 0x0043271f) reads the table address BuildRecords stores there
+// (screens 24 / 18). Speed is the original's rate (the MASHED_MENU_ANIM_SPEED switch was removed in D5-MENUANIMSPEED
+// once MASHED_MENU_CLOCK_FAITHFUL became default).
 bool Anim_Tick() {
     const NavSlot& slot = g_stack[g_nav_depth];
-    MenuAnimTickIn in;
-    in.dt                = g_frame_dt;
-    in.phase             = g_anim_phase;
-    in.gate              = g_anim_gate;
-    in.item_total        = slot.item_count;
-    in.list_base_y       = &Q_ListBaseY;
-    in.screen_per_record = false;
-    in.screen            = slot.screen_id;
-    in.screen_24         = 24;
-    in.screen_18         = 18;
-    return MenuAnimTickBody(g_records, in) != 0;
+    float&        dtW    = *reinterpret_cast<float*>(kAnimDtWord);
+    std::int32_t& phaseW = *reinterpret_cast<std::int32_t*>(kAnimPhaseWord);
+    std::int32_t& gateW  = *reinterpret_cast<std::int32_t*>(kAnimGateWord);
+    std::int32_t& itemsW = *reinterpret_cast<std::int32_t*>(kAnimItemTotalWord);
+    const float        dt0 = dtW;
+    const std::int32_t phase0 = phaseW, gate0 = gateW, items0 = itemsW;
+    dtW = g_frame_dt; phaseW = g_anim_phase; gateW = g_anim_gate; itemsW = slot.item_count;
+    int ret;
+    if (PortStateFrontend_On()) {
+        ret = MenuAnimTickTwin();                                     // g_records == DAT_00898ac0
+    } else {
+        constexpr std::size_t kBytes = static_cast<std::size_t>(kOrigMenuRecords) * sizeof(MenuRecord);
+        unsigned char* const orig = reinterpret_cast<unsigned char*>(kMenuRecords);
+        unsigned char saved[kBytes];
+        std::memcpy(saved, orig, kBytes);
+        std::memcpy(orig, g_records_store, kBytes);
+        ret = MenuAnimTickTwin();
+        std::memcpy(g_records_store, orig, kBytes);
+        std::memcpy(orig, saved, kBytes);
+    }
+    dtW = dt0; phaseW = phase0; gateW = gate0; itemsW = items0;
+    return ret != 0;
 }
 
 } // namespace

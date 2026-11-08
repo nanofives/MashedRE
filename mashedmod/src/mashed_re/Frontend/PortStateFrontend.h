@@ -32,6 +32,16 @@ constexpr int            kOrigMenuRecords = 30;
 // ON: the screen-0x1c player-active test reads DAT_007e96fc[i*0x80] (stride 0x200) through the matched 0x00497450.
 constexpr std::uintptr_t kPlayerActiveWord = 0x007e96fcu;
 
+// The matched 0x004325c0 (L-100 (a), both knob states) reads these input words; MenuNavSM.cpp Anim_Tick bridges them for one call.
+constexpr std::uintptr_t kAnimDtWord        = 0x007f1004u;   // DAT_007f1004 frame dt (FUN_00493480)
+constexpr std::uintptr_t kAnimPhaseWord     = 0x0067eca4u;   // DAT_0067eca4 (>= 4 picks 2.0f, 0x004325c8)
+constexpr std::uintptr_t kAnimGateWord      = 0x0067e914u;   // DAT_0067e914 (0x00432603)
+constexpr std::uintptr_t kAnimItemTotalWord = 0x0067ece0u;   // DAT_0067ece0 item count (read into EBP, 0x004325dd)
+// Record +0x30 holds the screen's table pointer (0x0043d2a0: it->def = DAT_0067ed78[lv].def, re/match/s08/0043d2a0.c:302).
+// 0x004325c0 compares it with these two (0x004326e4 / 0x0043271f) and never dereferences it.
+constexpr std::uint32_t kScreen24Table = 0x005f7370u;        // &DAT_005f7370, screen 24
+constexpr std::uint32_t kScreen18Table = 0x005f72a0u;        // &DAT_005f72a0, screen 18
+
 bool PortStateFrontend_On();
 
 enum ModeWordSite : int { kSite00430830RowAvail = 0, kSite00430830Arrows = 1, kSite004309b0Gate = 2, kSiteCount = 3 };
