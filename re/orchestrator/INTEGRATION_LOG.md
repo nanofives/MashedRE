@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-08 14:22 PORT-FE-01 (orch/PORT-FE-01): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261108_124527
 - 2026-11-08 12:07 PORT-PLAN-2 (orch/PORT-PLAN-2): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261108_120202
 - 2026-11-08 11:53 PORT-PLAN-20261108 (orch/PORT-PLAN-20261108): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261108_115212
 - 2026-11-08 11:43 C4R-DXLIB-TAG11 (orch/C4R-DXLIB-TAG11): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261108_114228
