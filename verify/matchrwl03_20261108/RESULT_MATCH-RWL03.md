@@ -59,3 +59,6 @@ decomp_raw.json, g2s_g5 / g2s_game / g2s_o1 results. decomp_pc.py ran from the m
 
 ## Reproduce
 `py -3.12 verify/matchrwl03_20261108/tools/collect.py`; `relocheck.py re/match/rwl03/<va8>.c` per identical row.
+
+## Merge note
+After merging orch/integration (which carried MATCH-RWL01's `(?:[^,;]+,\s*)?`), the relocheck.py conflict was resolved to the stricter `(?:[^,;\n]+,\s*)?` line (a superset of the RWL01 fix); re-running relocheck.py on every row of the RWL01 (70), RWL02 (74), RWL05 (68) and RWL03 (55) relocheck.tsv files printed OK for all, unchanged.
