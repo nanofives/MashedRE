@@ -123,3 +123,24 @@ Committed: this file, `gen_top04a_tus.py`, `gen_dinput_seed.py`, `update_binding
 | navdemo_*/walk_02_mainmenu.bmp (all four) | 24249b644e3e8057271f3f1c252514c7820abec3f3da15d316f39dbf156a9066 |
 | arms/H_DEF.step.csv / .gates.csv / .ptrace.log | 8284be46... / 67931834... / 31fe043e... |
 | arms/B_DEF_K0/K1/K26.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 |
+
+## Merge with orch/integration eee426759 (PORT-STATE-01), so TOP-02 + TOP-03 + 04A land together
+
+`git -c merge.autoStash=false merge orch/integration` at `7d9cf4654`: no conflicts. `hooks.csv` keeps the 11-column
+shape; `backfill_exe_file.py` (0 rows changed) then `backfill_port.py` ("hooks.csv already current"). Merged build
+`df8a5008` (`build2.log`), both targets OK, rva-lint "no NEW duplicate bodies", asm-lint OK.
+
+One locked run (`run_all2.log`, test-slot + `mashed_lock.py --label PORT-TOP-04A`):
+
+| check | result |
+|---|---|
+| knob-ON boot `knob_on_2` (3000 frames) | exit 0; boot gate returned 1, MainLoopInit returned 1, HardwareExitApplication released DirectInput and the keyboard, `WinMain 0x00492370 returned 0 after 3000 frames` |
+| G-CTRL | `8284be46/67931834/31fe043e` (ref) |
+| B | `1d5bf4f9` x3 (ref) |
+| nav-demo captures, knob ON / OFF / OFF / ON with the settings reset | 12 / 12 identical, `walk_02_mainmenu.bmp` `24249b64...` |
+
+| raw file (D:/MashedWT/PORT-TOP-04A_data) | sha256 |
+|---|---|
+| build2.log | 7a47ae7fbcaac73b827318e3915d7b460804d8496decabb4dffa845037cea039 |
+| run_all2.log | f9639c0349b927123627e8bf88afcec5ca2b4a899dd11bfcc6ffdec840b9064a |
+| knob_on_2.log | e3170820c37976b8b73a0db63abee624c425dc38c646a59c0f6d6f41c547d847 |
