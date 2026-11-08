@@ -36,6 +36,8 @@
 // Declaration of the kv-stream search (original FUN_0042ad90): the ONE body is Frontend/KvFind.cpp (both targets).
 // KvLookup below is its host-side name.
 extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n);
+// PORT-STATE-03, MASHED_PORTSTATE_FRONTEND ON only: the matched bodies that run on the frontend state at its original addresses.
+extern "C" void __cdecl MenuEntryArrayInit(void);      // 0x0042d3e0, Match/MatchS07_0042d3e0.cpp (zeroes DAT_00898ac0)
 
 namespace mashed_re {
 namespace Frontend {
@@ -407,9 +409,13 @@ int KvLookup(const std::uint32_t* table, std::uint32_t tag_key, int occurrence) 
 // and which this state machine both writes, line "g_records[rec].pad20 = row", and reads as row20), pad30 (+0x30) and the whole of entry 30.
 // So the net effect is still the old memset; the difference from the original is now explicit instead of hidden in a memset. Making the
 // reset faithful (leave pad20 stale) would change which rows the draw loop sees, which only a frontend parity capture can judge: open.
+// PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the records are DAT_00898ac0, so the 14 stores x 30 entries are the matched
+// 0x0042d3e0 itself (Match/MatchS07_0042d3e0.cpp, the export the boot's milestone B7 already calls). With the knob OFF the helper
+// MenuEntryZeroBody does the same stores on the port store. The wider clear below runs in both states.
 static_assert(offsetof(MenuRecord, pad20) == 0x20 && offsetof(MenuRecord, pad30) == 0x30 && sizeof(MenuRecord) == 0x34, "MenuRecord layout");
 void RecordsZero() {
-    MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(g_records), 30);
+    if (PortStateFrontend_On()) MenuEntryArrayInit();   // 0x0042d3e0 on DAT_00898ac0 == g_records
+    else                        MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(g_records), 30);
     for (int i = 0; i < 30; ++i) { g_records[i].pad20 = 0; g_records[i].pad30 = 0; }
     // Entry 30 exists only in the port store. At DAT_00898ac0 (knob ON) it would be 0x008990d8.., other original globals.
     if (!PortStateFrontend_On()) std::memset(&g_records[30], 0, sizeof(MenuRecord));
