@@ -1,0 +1,665 @@
+lane	rva	name	glob	addr	size	section	init	exe	writes	blocker	exe_files
+A-dual	0x004298c0	Clear67d99c_x4	DAT_0067d99c	0x0067d99c	4	.data	bss	cmt	1	STATE	Frontend/MenuLeaves_af5.cpp;Frontend/MenuNavSM.cpp;Frontend/MenuScoreGetters.cpp;Frontend/SmallLeaves_n2.cpp
+A-dual	0x004298c0	Clear67d99c_x4	DAT_0067d994	0x0067d994	4	.data	bss	cmt	1	STATE	Frontend/MenuLeaves_af5.cpp;Frontend/MenuNavSM.cpp;Frontend/MenuScoreGetters.cpp;Frontend/SmallLeaves_n2.cpp
+A-dual	0x004298c0	Clear67d99c_x4	DAT_0067d98c	0x0067d98c	4	.data	bss	cmt	1	STATE	Frontend/MenuLeaves_af5.cpp;Frontend/MenuNavSM.cpp;Frontend/MenuScoreGetters.cpp;Frontend/SmallLeaves_n2.cpp
+A-dual	0x004298c0	Clear67d99c_x4	DAT_008991bc	0x008991bc	4	.data	bss	cmt	1	STATE	Frontend/MenuLeaves_af5.cpp
+A-dual	0x00429a70	LapFracGetBySlot	DAT_0067d99c	0x0067d99c	1	.data	bss	cmt	0	STATE	Frontend/MenuLeaves_af5.cpp;Frontend/MenuNavSM.cpp;Frontend/MenuScoreGetters.cpp;Frontend/SmallLeaves_n2.cpp
+A-dual	0x00429a80	LapLapsGetBySlot	DAT_0067d98c	0x0067d98c	4	.data	bss	cmt	0	STATE	Frontend/MenuLeaves_af5.cpp;Frontend/MenuNavSM.cpp;Frontend/MenuScoreGetters.cpp;Frontend/SmallLeaves_n2.cpp
+A-dual	0x00429a90	LapSecsGetBySlot	DAT_0067d994	0x0067d994	4	.data	bss	cmt	0	STATE	Frontend/MenuLeaves_af5.cpp;Frontend/MenuNavSM.cpp;Frontend/MenuScoreGetters.cpp;Frontend/SmallLeaves_n2.cpp
+A-dual	0x0042af50	MenuReadinessCheckC	DAT_0067eab0	0x0067eab0	4	.data	bss	lit	0		Frontend/MenuHelpers.cpp;Race/GameModeMachine.cpp;exe_main.cpp
+A-dual	0x0042af50	MenuReadinessCheckC	DAT_0067e7c8	0x0067e7c8	4	.data	bss	cmt	0	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp;Frontend/MenuStateMachine.cpp
+A-dual	0x0042af50	MenuReadinessCheckC	DAT_00898ab0	0x00898ab0	4	.data	bss	cmt	0	STATE	Frontend/MenuNavSM.cpp;Frontend/MenuStateMachine.cpp;Util/UtilLeaves_ac.cpp
+A-dual	0x0042af50	MenuReadinessCheckC	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+A-dual	0x0042af50	MenuReadinessCheckC	DAT_007f1041	0x007f1041	1216	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp
+A-dual	0x0042af50	MenuReadinessCheckC	DAT_007f1501	0x007f1501	1216	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp
+A-dual	0x0042af50	MenuReadinessCheckC	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+A-dual	0x00431b70	MenuFlagDat007f0f10Get	DAT_007f0f10	0x007f0f10	4	.data	bss	name	0	STATE	Match/MatchS07_00431b70.cpp
+A-swap-called	0x0040e350	GetRenderSubMode	DAT_0063ba8c	0x0063ba8c	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Race/SpectatorDistances.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;exe_main.cpp
+A-swap-called	0x0046c730	Table882198Get	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046c750	Table882194Get	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046d4a0	PtrCompute881ec8	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046d570	FUN_0046d570	DAT_005d757c	0x005d757c	4	.rdata	zero	lit	0		Audio/AudioVecLength.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS03_00414060.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Render/PaletteQu
+A-swap-called	0x0046d570	FUN_0046d570	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046d780	LaunchRevRelease	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046d7f0	LaunchRevChargeTick	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046d7f0	LaunchRevChargeTick	DAT_007f1a14	0x007f1a14	64	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+A-swap-called	0x0046d7f0	LaunchRevChargeTick	DAT_007f1038	0x007f1038	32	.data	bss	lit	0		Ai/AiState.h
+A-swap-called	0x0040e470	CarSlotStateGet	PTR_PTR_005f2770	0x005f2770	4	.data	nonzero	lit	0	IDATA	Ai/AiLeaderTimer.cpp;Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;Ai/AiTargetClosest.cpp;Ai/CarSlotState.cpp;D3d9Render/TrackRenderer.cpp;Race/GameModeState.cpp;Race/SubStateCallees.cpp;Race/SubStateMachi
+A-swap-called	0x0040e480	CarSlotStateSet	PTR_PTR_005f2770	0x005f2770	4	.data	nonzero	lit	0	IDATA	Ai/AiLeaderTimer.cpp;Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;Ai/AiTargetClosest.cpp;Ai/CarSlotState.cpp;D3d9Render/TrackRenderer.cpp;Race/GameModeState.cpp;Race/SubStateCallees.cpp;Race/SubStateMachi
+A-swap-called	0x00426cb0	FUN_00426cb0	DAT_00663664	0x00663664	1	.data	bss	cmt	0	STATE	Frontend/FrontendLeaves_ad2.cpp;Frontend/MenuNearLeaves_s6.cpp;Race/RoundGrid.h
+A-swap-called	0x0042d3e0	MenuEntryArrayInit	DAT_00898ac0	0x00898ac0	120	.data	bss	lit	0		Frontend/MenuAnimTickTwin.cpp;exe_main.cpp
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_0067e9fc	0x0067e9fc	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendMode.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuScoreGetters.cpp;Frontend/MenuScoreSort.cpp;Race/A
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_007f0a44	0x007f0a44	4	.data	bss	lit	0		Frontend/MenuScoreSort.cpp
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_007f0a48	0x007f0a48	4	.data	bss	lit	0		Frontend/MenuScoreSort.cpp
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_007f0a4c	0x007f0a4c	4	.data	bss	lit	0		Frontend/MenuScoreSort.cpp
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_007f0a54	0x007f0a54	4	.data	bss	lit	0		Frontend/MenuScoreSort.cpp
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_007f0a60	0x007f0a60	1	.data	bss	lit	0		Frontend/MenuScoreSort.cpp
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_007f0a64	0x007f0a64	1	.data	bss	lit	0		Frontend/MenuScoreSort.cpp
+A-swap-called	0x00430830	SplitScreenTrackAssignment	DAT_007f0a68	0x007f0a68	4	.data	bss	lit	0		Frontend/MenuScoreSort.cpp
+A-swap-called	0x004309b0	FrontendModeIndex	DAT_0067e9fc	0x0067e9fc	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendMode.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuScoreGetters.cpp;Frontend/MenuScoreSort.cpp;Race/A
+A-swap-called	0x004325c0	FUN_004325c0	DAT_0067eca4	0x0067eca4	4	.data	bss	lit	0		Frontend/MenuAnimTickTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+A-swap-called	0x004325c0	FUN_004325c0	DAT_0067e914	0x0067e914	4	.data	bss	lit	0		Frontend/MenuAnimTickTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+A-swap-called	0x004325c0	FUN_004325c0	DAT_0067ece0	0x0067ece0	4	.data	bss	lit	0		Frontend/MenuAnimTickTwin.cpp
+A-swap-called	0x004325c0	FUN_004325c0	DAT_007f1004	0x007f1004	4	.data	bss	lit	0		Boot/FrameDispatch.cpp;Frontend/MenuAnimTickTwin.cpp;Frontend/MenuNav.cpp
+A-swap-called	0x004325c0	FUN_004325c0	DAT_00898ac0	0x00898ac0	120	.data	bss	lit	0		Frontend/MenuAnimTickTwin.cpp;exe_main.cpp
+A-swap-called	0x004325c0	FUN_004325c0	DAT_005f72a0	0x005f72a0	208	.data	nonzero	lit	0	IDATA	Frontend/MenuAnimTickTwin.cpp
+A-swap-called	0x004325c0	FUN_004325c0	DAT_005f7370	0x005f7370	208	.data	nonzero	lit	0	IDATA	Frontend/MenuAnimTickTwin.cpp
+A-swap-called	0x00432b30	MenuPromptStrip	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	1		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+A-swap-called	0x00432b30	MenuPromptStrip	DAT_00898ac0	0x00898ac0	128	.data	bss	lit	0		Frontend/MenuAnimTickTwin.cpp;exe_main.cpp
+A-swap-called	0x0040b540	PlayerScoreRankOrder	DAT_007f0fcc	0x007f0fcc	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp
+A-swap-called	0x0040b540	PlayerScoreRankOrder	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+A-swap-called	0x0040b540	PlayerScoreRankOrder	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+A-swap-called	0x0040b540	PlayerScoreRankOrder	DAT_008a94e0	0x008a94e0	16	.data	bss	cmt	0	STATE	D3d9Render/TrackRenderer.cpp;LibRw/RwRaceFx.h;Race/RaceSceneState.h;Race/RuleEngine.h;Util/UtilLeaves_ac.cpp;exe_main.cpp
+A-swap-called	0x0040b890	FUN_0040b890	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+A-swap-called	0x0040b8e0	FUN_0040b8e0	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+A-swap-called	0x0040ce80	PtrTable5f2770Get	PTR_PTR_005f2770	0x005f2770	4	.data	nonzero	lit	0	IDATA	Ai/AiLeaderTimer.cpp;Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;Ai/AiTargetClosest.cpp;Ai/CarSlotState.cpp;D3d9Render/TrackRenderer.cpp;Race/GameModeState.cpp;Race/SubStateCallees.cpp;Race/SubStateMachi
+A-swap-called	0x00451820	FUN_00451820	DAT_005f9788	0x005f9788	1	.data	nonzero	cmt	0	IDATA	Track/WarzonePontoon.cpp
+A-swap-called	0x00451ad0	FUN_00451ad0	DAT_005f9788	0x005f9788	1	.data	nonzero	cmt	0	IDATA	Track/WarzonePontoon.cpp
+A-swap-called	0x00451ad0	FUN_00451ad0	DAT_0088ff50	0x0088ff50	16	.data	bss	lit	1		Ai/AiPostStepBrake.cpp;Ai/AiTrackObjSeek.cpp;Track/WarzonePontoon.cpp
+A-swap-called	0x00451ad0	FUN_00451ad0	s_movement_is___f___f___f__005ce368	0x005ce368	26	.rdata	nonzero	-	0	RDATA	
+A-swap-called	0x00451d80	WarzonePontoonTick	DAT_007f0fb4	0x007f0fb4	4	.data	bss	lit	1		Track/WarzonePontoon.cpp
+A-swap-called	0x00451d80	WarzonePontoonTick	DAT_0088ff50	0x0088ff50	4	.data	bss	lit	0		Ai/AiPostStepBrake.cpp;Ai/AiTrackObjSeek.cpp;Track/WarzonePontoon.cpp
+A-swap-called	0x00451d80	WarzonePontoonTick	DAT_0088ff54	0x0088ff54	4	.data	bss	-	0	NOWRITE	
+A-swap-called	0x00451d80	WarzonePontoonTick	DAT_0088ff58	0x0088ff58	4	.data	bss	-	0	NOWRITE	
+A-swap-called	0x00451d80	WarzonePontoonTick	DAT_0088ff5c	0x0088ff5c	4	.data	bss	-	0	NOWRITE	
+A-swap-called	0x00452170	WarzonePontoonResetBodies	DAT_005f978c	0x005f978c	4	.data	nonzero	-	0	IDATA	
+A-swap-called	0x00452170	WarzonePontoonResetBodies	DAT_005f9790	0x005f9790	4	.data	nonzero	-	0	IDATA	
+A-swap-called	0x00452170	WarzonePontoonResetBodies	DAT_00684c58	0x00684c58	4	.data	bss	lit	0		Track/WarzonePontoon.cpp
+A-swap-called	0x00452170	WarzonePontoonResetBodies	DAT_00684c98	0x00684c98	4	.data	bss	lit	1		Track/WarzonePontoon.cpp
+A-swap-called	0x00452170	WarzonePontoonResetBodies	DAT_00684cd8	0x00684cd8	4	.data	bss	lit	1		Track/WarzonePontoon.cpp
+A-swap-called	0x00452170	WarzonePontoonResetBodies	DAT_00684de8	0x00684de8	4	.data	bss	lit	0		Track/WarzonePontoon.cpp
+A-swap-called	0x00452170	WarzonePontoonResetBodies	s_we_have_reset_the_pontoon_005ce3a0	0x005ce3a0	27	.rdata	nonzero	-	0	RDATA	
+A-swap-called	0x00452170	WarzonePontoonResetBodies	s_Reset_with_matrix_005ce38c	0x005ce38c	18	.rdata	nonzero	-	0	RDATA	
+A-swap-called	0x00497450	Pred497450	DAT_007e96fc	0x007e96fc	2048	.data	bss	cmt	0	STATE	Frontend/MenuNavSM.cpp;Frontend/MenuNavSM.h;Race/GameFlow.cpp;Race/RaceSession.h;exe_main.cpp
+A-swap-called	0x00448940	ArcticTrackNodeSlot0	DAT_008962c0	0x008962c0	4	.data	bss	lit	0		Render/ArcticTrackNodeSlot0.cpp
+A-swap-called	0x00448940	ArcticTrackNodeSlot0	DAT_0068324c	0x0068324c	4	.data	bss	lit	1		Render/ArcticTrackNodeSlot0.cpp
+A-swap-called	0x00448940	ArcticTrackNodeSlot0	DAT_00683248	0x00683248	4	.data	bss	lit	1		Render/ArcticTrackNodeSlot0.cpp
+A-swap-called	0x00448940	ArcticTrackNodeSlot0	DAT_008963e0	0x008963e0	100	.data	bss	lit	1		Render/ArcticTrackNodeSlot0.cpp
+A-swap-called	0x00448940	ArcticTrackNodeSlot0	DAT_008962e0	0x008962e0	256	.data	bss	lit	1		Render/ArcticTrackNodeSlot0.cpp
+A-swap-called	0x00448dc0	FUN_00448dc0	DAT_006146fc	0x006146fc	4	.data	zero	lit	0		Race/CameraEntries.cpp;Vehicle/VehicleCouplingBridge.cpp
+A-swap-called	0x00448dc0	FUN_00448dc0	DAT_00896460	0x00896460	20	.data	bss	cmt	0	STATE	D3d9Render/TrackRenderer.cpp
+A-swap-called	0x004769f0	ParticleEmitter_SetColour	DAT_00692554	0x00692554	4	.data	bss	lit	1		Render/RfxEmitter.cpp
+A-swap-called	0x004769f0	ParticleEmitter_SetColour	DAT_00613290	0x00613290	4	.data	nonzero	lit	0	IDATA	Render/RfxEmitter.cpp
+A-swap-called	0x00476df0	FUN_00476df0	DAT_007dc57c	0x007dc57c	4	.data	bss	lit	0		Render/RfxEmitter.cpp
+A-swap-called	0x00498a00	FUN_00498a00	s_fmt_005d0170	0x005d0170	16	.rdata	nonzero	cmt	0	RDATA	Boot/VideoCfgFirstRun.cpp
+A-swap-called	0x00498e40	FUN_00498e40	DAT_007731f8	0x007731f8	4	.data	bss	cmt	0	STATE	Boot/VideoConfig.cpp
+A-swap-called	0x00498e40	FUN_00498e40	DAT_00773408	0x00773408	4	.data	bss	cmt	0	STATE	Boot/VideoConfig.cpp
+A-swap-called	0x00498e40	FUN_00498e40	DAT_0077340c	0x0077340c	4	.data	bss	-	0	NOWRITE	
+A-swap-called	0x004c3bf0	Vec2Length	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+A-swap-called	0x004c3bf0	Vec2Length	DAT_007d3ffc	0x007d3ffc	4	.data	bss	lit	0		Math/RwLutGuard.h;Math/RwSqrt.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Math/RwV3dTransformPoints.cpp;Math/Vec3.cpp;Render/Vec3NormalizeScale.cpp
+A-swap-called	0x004c3c60	Vec2Normalize	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+A-swap-called	0x004c3c60	Vec2Normalize	DAT_007d3ffc	0x007d3ffc	4	.data	bss	lit	0		Math/RwLutGuard.h;Math/RwSqrt.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Math/RwV3dTransformPoints.cpp;Math/Vec3.cpp;Render/Vec3NormalizeScale.cpp
+A-swap-called	0x004c3c60	Vec2Normalize	DAT_005d757c	0x005d757c	4	.rdata	zero	lit	0		Audio/AudioVecLength.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS03_00414060.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Render/PaletteQu
+A-swap-called	0x004963e0	ConfigLogError	DAT_00772fbc	0x00772fbc	4	.data	bss	lit	0		Save/SettingsConfig.cpp
+A-swap-called	0x00496400	ConfigLogDebug	DAT_00772fbc	0x00772fbc	4	.data	bss	lit	0		Save/SettingsConfig.cpp
+A-swap-called	0x00498910	ConfigFilenameGet	DAT_007731e8	0x007731e8	16	.data	bss	lit	0		Save/SettingsConfig.cpp
+A-swap-called	0x00498950	ConfigLoad	DAT_00773208	0x00773208	512	.data	bss	lit	0		Save/SettingsConfig.cpp
+A-swap-called	0x00498950	ConfigLoad	s_Loading_005d013c	0x005d013c	27	.rdata	nonzero	lit	0	RDATA	Save/SettingsConfig.cpp
+A-swap-called	0x00498950	ConfigLoad	DAT_005cf010	0x005cf010	3	.rdata	nonzero	lit	0	RDATA	Save/SettingsConfig.cpp
+A-swap-called	0x00498950	ConfigLoad	s_FAILED_005cfe70	0x005cfe70	9	.rdata	nonzero	lit	0	RDATA	Save/SettingsConfig.cpp
+A-swap-called	0x004989b0	ConfigSave	DAT_00773208	0x00773208	512	.data	bss	lit	0		Save/SettingsConfig.cpp
+A-swap-called	0x004989b0	ConfigSave	s_Saving_005d0158	0x005d0158	24	.rdata	nonzero	lit	0	RDATA	Save/SettingsConfig.cpp
+A-swap-called	0x004989b0	ConfigSave	DAT_005d00d8	0x005d00d8	3	.rdata	nonzero	lit	0	RDATA	Save/SettingsConfig.cpp
+A-swap-called	0x0040b180	FUN_0040b180	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+A-swap-called	0x0040b180	FUN_0040b180	DAT_008a94e0	0x008a94e0	16	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp;LibRw/RwRaceFx.h;Race/RaceSceneState.h;Race/RuleEngine.h;Util/UtilLeaves_ac.cpp;exe_main.cpp
+A-swap-called	0x0040b180	FUN_0040b180	DAT_008a9500	0x008a9500	16	.data	bss	cmt	1	STATE	LibRw/RwRaceFx.h;Util/UtilLeaves_ac.cpp
+A-swap-called	0x0040b180	FUN_0040b180	DAT_008a9510	0x008a9510	16	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp;Race/RaceSceneState.h
+A-swap-called	0x0040b180	FUN_0040b180	DAT_008a9520	0x008a9520	16	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp;Race/RaceSceneState.h;Race/RoundGrid.h;exe_main.cpp
+A-swap-called	0x0040b180	FUN_0040b180	DAT_008a9570	0x008a9570	16	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp;Race/RaceSceneState.h
+A-swap-called	0x0040dbd0	SubStateEnter4	DAT_0063ba8c	0x0063ba8c	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Race/SpectatorDistances.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;exe_main.cpp
+A-swap-called	0x0040dbd0	SubStateEnter4	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+A-swap-called	0x00441820	CameraPath::SamplePoint	DAT_006146f0	0x006146f0	12	.data	nonzero	cmt	0	IDATA	D3d9Render/TrackRenderer.cpp;Race/HeadingAssist.cpp;Race/RaceCamera.cpp;Vehicle/AeroStabilize.cpp
+A-swap-called	0x00441820	CameraPath::SamplePoint	DAT_006146fc	0x006146fc	12	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Vehicle/VehicleCouplingBridge.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_0089898c	0x0089898c	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Race/CameraEntries.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_008964a0	0x008964a0	4	.data	bss	lit	1		Race/CameraEntries.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_0089899c	0x0089899c	4	.data	bss	lit	1		Race/CameraEntries.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_00898998	0x00898998	4	.data	bss	lit	1		Race/CameraEntries.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_00898994	0x00898994	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Race/CameraEntries.cpp;Util/CameraEntryDispatch.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_0089649c	0x0089649c	4	.data	bss	lit	1		Race/CameraEntries.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_008964a4	0x008964a4	4	.data	bss	lit	1		Race/CameraEntries.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_00897fc0	0x00897fc0	4	.data	bss	lit	1		Race/CameraEntries.cpp
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f7a48	0x005f7a48	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f7bd0	0x005f7bd0	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f7e48	0x005f7e48	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f8030	0x005f8030	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f82a8	0x005f82a8	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f8490	0x005f8490	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f8798	0x005f8798	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f8980	0x005f8980	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f8b68	0x005f8b68	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f8d50	0x005f8d50	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f8ea8	0x005f8ea8	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f91e0	0x005f91e0	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_005f9368	0x005f9368	4	.data	nonzero	lit	0	IDATA	Race/CameraEntries.cpp;Race/CameraEntryTables.h
+A-swap-called	0x00442600	CamEntriesInit442600	DAT_008964c0	0x008964c0	128	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Race/CameraEntries.cpp;Util/CameraEntryDispatch.cpp
+A-swap-called	0x0046baa0	FUN_0046baa0	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x004c3b30	FastSqrt	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+A-swap-called	0x004c3b30	FastSqrt	DAT_007d3ffc	0x007d3ffc	4	.data	bss	lit	0		Math/RwLutGuard.h;Math/RwSqrt.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Math/RwV3dTransformPoints.cpp;Math/Vec3.cpp;Render/Vec3NormalizeScale.cpp
+A-swap-called	0x00405890	Pred405890	DAT_0063a5d0	0x0063a5d0	4	.data	bss	lit	0		Gameplay/PickupTick.cpp;Match/MatchS01.cpp
+A-swap-called	0x00405890	Pred405890	DAT_0063a5d4	0x0063a5d4	4	.data	bss	lit	0		Gameplay/PickupTick.cpp;Match/MatchS01.cpp
+A-swap-called	0x0040e180	MostSeparatedPair	PTR_PTR_005f2770	0x005f2770	4	.data	nonzero	lit	0	IDATA	Ai/AiLeaderTimer.cpp;Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;Ai/AiTargetClosest.cpp;Ai/CarSlotState.cpp;D3d9Render/TrackRenderer.cpp;Race/GameModeState.cpp;Race/SubStateCallees.cpp;Race/SubStateMachi
+A-swap-called	0x00467650	VehicleWheelDrivetrainUpdate	DAT_0088e5f0	0x0088e5f0	4	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp
+A-swap-called	0x00467650	VehicleWheelDrivetrainUpdate	DAT_0088e668	0x0088e668	4	.data	bss	lit	0		Vehicle/Integrate2.cpp
+A-swap-called	0x00467650	VehicleWheelDrivetrainUpdate	DAT_0088e66c	0x0088e66c	4	.data	bss	lit	0		Vehicle/Integrate2.cpp
+A-swap-called	0x00468980	VehicleAeroStabilizer	DAT_006146f0	0x006146f0	4	.data	nonzero	cmt	0	IDATA	D3d9Render/TrackRenderer.cpp;Race/HeadingAssist.cpp;Race/RaceCamera.cpp;Vehicle/AeroStabilize.cpp
+A-swap-called	0x00468980	VehicleAeroStabilizer	DAT_006146fc	0x006146fc	4	.data	zero	lit	0		Race/CameraEntries.cpp;Vehicle/VehicleCouplingBridge.cpp
+A-swap-called	0x00468980	VehicleAeroStabilizer	DAT_00614708	0x00614708	4	.data	zero	lit	0		Ai/VehicleVelocityWorldGet.cpp;Vehicle/VehicleCouplingBridge.cpp
+A-swap-called	0x0046b1c0	VehicleSlotAabbExpand	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_00613108	0x00613108	4	.data	nonzero	lit	1	IDATA	Vehicle/VehicleInit.cpp
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_00613110	0x00613110	4	.data	nonzero	cmt	0	IDATA	Vehicle/VehicleInit.cpp
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_00613114	0x00613114	4	.data	nonzero	lit	1	IDATA	Vehicle/VehicleInit.cpp
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_00613118	0x00613118	4	.data	nonzero	cmt	0	IDATA	Vehicle/VehicleInit.cpp
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_00613130	0x00613130	4	.data	nonzero	lit	1	IDATA	Vehicle/VehicleInit.cpp
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_0061313c	0x0061313c	4	.data	nonzero	lit	1	IDATA	Ai/AiStandalone.cpp;Vehicle/VehicleInit.cpp
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_005cc558	0x005cc558	4	.rdata	nonzero	name	0	RDATA	Collision/RwpSolverCore17.cpp
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_005d757c	0x005d757c	4	.rdata	zero	lit	0		Audio/AudioVecLength.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS03_00414060.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Render/PaletteQu
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_005cc320	0x005cc320	4	.rdata	nonzero	lit	0	RDATA	Collision/RwpSolverLeaves1.cpp;Collision/RwpSolverLeaves1X87.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;Collision/RwpSolverMath2QuatY.cpp;Collision/RwpVtableKV1.cpp;HUD/Scenario
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046b540	VehicleSpawnInit	DAT_00613140	0x00613140	4	.data	zero	lit	0		Vehicle/VehicleInit.cpp
+A-swap-called	0x0046c7b0	VehicleSlotGetter	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046cbb0	VehicleCarStateRead	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_005d757c	0x005d757c	4	.rdata	zero	lit	0		Audio/AudioVecLength.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS03_00414060.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Render/PaletteQu
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_00614708	0x00614708	4	.data	zero	lit	0		Ai/VehicleVelocityWorldGet.cpp;Vehicle/VehicleCouplingBridge.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_006146fc	0x006146fc	4	.data	zero	lit	0		Race/CameraEntries.cpp;Vehicle/VehicleCouplingBridge.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_007f0ff8	0x007f0ff8	4	.data	bss	lit	0		Ai/AiBankSwitch.cpp;Ai/AiStandalone.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/VehiclePhysicsRun.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_00803334	0x00803334	4	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_00803338	0x00803338	4	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_0080333c	0x0080333c	4	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_00803340	0x00803340	4	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_0088e610	0x0088e610	4	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_0088e5f0	0x0088e5f0	4	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_00613138	0x00613138	4	.data	nonzero	cmt	0	IDATA	Vehicle/ForceIntegrator.h
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_008815a0	0x008815a0	16	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+A-swap-called	0x0046ddb0	VehicleWheelForceIntegrator	DAT_00881560	0x00881560	16	.data	bss	lit	0		Vehicle/ForceIntegrator.cpp
+A-swap-called	0x00470670	VehicleControlUpdate	DAT_007f101c	0x007f101c	4	.data	bss	lit	0		Boot/FrameDispatch.cpp;Race/CameraEntries.cpp;Vehicle/VehicleControl.cpp
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692564	0x00692564	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692580	0x00692580	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_0069256c	0x0069256c	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692558	0x00692558	4	.data	bss	lit	1		Render/RfxEmitter.cpp
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692568	0x00692568	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692560	0x00692560	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_0069255c	0x0069255c	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_0069257c	0x0069257c	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692578	0x00692578	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692570	0x00692570	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692590	0x00692590	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_0069258c	0x0069258c	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_00692588	0x00692588	4	.data	bss	-	1		
+A-swap-called	0x004770c0	FUN_004770c0	DAT_007dc57c	0x007dc57c	4	.data	bss	lit	0		Render/RfxEmitter.cpp
+A-swap-called	0x004770c0	FUN_004770c0	DAT_006132c4	0x006132c4	4	.data	nonzero	name	0	IDATA	Render/RfxEmitter.cpp
+A-swap-called	0x004770c0	FUN_004770c0	DAT_006132c8	0x006132c8	4	.data	nonzero	name	0	IDATA	Render/RfxEmitter.cpp
+B-frontier	0x0041f030	TriggerStructRead	DAT_0063d9e0	0x0063d9e0	16	.data	bss	lit	0		Race/CarRegistrant.cpp
+B-frontier	0x00426c00	FUN_00426c00	DAT_00644158	0x00644158	4	.data	bss	cmt	0	STATE	Ai/AiPostStepBrake.cpp;Boot/GameStateCluster.cpp;D3d9Render/TrackRenderer.cpp;HUD/ScenarioLeaves_sa2.cpp;LibRw/RwCarFx.cpp;LibRw/RwCarFx.h;Race/CameraEntries.cpp;Race/RuleEngine.cpp;Race/RuleEngine.h
+B-frontier	0x00443080	AiTargetEnableGet	DAT_00897ffc	0x00897ffc	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp
+B-frontier	0x00452160	PowerupTargetPtrGet	DAT_00684dac	0x00684dac	4	.data	bss	lit	0		Ai/AiTrackObjSeek.cpp
+B-frontier	0x00452ea0	Table88ff50Get	DAT_0088ff50	0x0088ff50	4	.data	bss	lit	0		Ai/AiPostStepBrake.cpp;Ai/AiTrackObjSeek.cpp;Track/WarzonePontoon.cpp
+B-frontier	0x00452eb0	PowerupRangeGet	DAT_00684de0	0x00684de0	4	.data	bss	lit	0		Ai/AiPostStepBrake.cpp;Ai/AiTrackObjSeek.cpp
+B-frontier	0x0046cc10	VehicleFloatFieldAsInt	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+B-frontier	0x0046d6d0	VehTbl881f84Get1	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+B-frontier	0x00465ca0	FUN_00465ca0	DAT_0068f4c8	0x0068f4c8	4	.data	bss	name	0	STATE	Audio/AudioWire.cpp
+B-frontier	0x00465ca0	FUN_00465ca0	DAT_008aa254	0x008aa254	4	.data	bss	cmt	0	STATE	Audio/AudioWire.cpp
+B-frontier	0x00465ca0	FUN_00465ca0	DAT_008aa2d0	0x008aa2d0	4	.data	bss	cmt	1	STATE	Audio/AudioWire.cpp;Gameplay/PickupTick.cpp
+B-frontier	0x00465ca0	FUN_00465ca0	DAT_00604570	0x00604570	4	.data	zero	cmt	0	STATE	Audio/EngineClassTable.h
+B-frontier	0x00465ca0	FUN_00465ca0	DAT_00604574	0x00604574	4	.data	nonzero	-	0	IDATA	
+B-frontier	0x00465ca0	FUN_00465ca0	DAT_0068f640	0x0068f640	4	.data	bss	cmt	0	STATE	Audio/AudioWire.cpp
+B-frontier	0x0040bb30	FUN_0040bb30	DAT_0063b8f8	0x0063b8f8	4	.data	bss	cmt	0	STATE	exe_main.cpp
+B-frontier	0x00442410	CameraSlotFieldPtrGet	DAT_008964fc	0x008964fc	1	.data	bss	cmt	0	STATE	D3d9Render/TrackRenderer.cpp
+B-frontier	0x00442420	CameraSlotFloatGet	DAT_00896570	0x00896570	1	.data	bss	cmt	0	STATE	D3d9Render/TrackRenderer.cpp
+B-frontier	0x0040acd0	FUN_0040acd0	DAT_008a9584	0x008a9584	4	.data	bss	lit	0		Save/GameSaveVFS.cpp
+B-frontier	0x0040ad20	FrontendGlobalGet	DAT_008a95ac	0x008a95ac	4	.data	bss	lit	0		Save/GameSaveBuffer.cpp;Save/GameSaveVFS.cpp
+B-frontier	0x0040b810	TimerGlobalsReset	DAT_0063b8ec	0x0063b8ec	4	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp;Frontend/TimerReset.cpp
+B-frontier	0x0040b810	TimerGlobalsReset	DAT_008a94f0	0x008a94f0	16	.data	bss	cmt	1	STATE	Frontend/FrontendAccessors.cpp;Frontend/TimerReset.cpp;Util/UtilLeaves_ac.cpp
+B-frontier	0x0040b810	TimerGlobalsReset	DAT_008a9530	0x008a9530	16	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp;Frontend/TimerReset.cpp
+B-frontier	0x0040b810	TimerGlobalsReset	DAT_008a9540	0x008a9540	16	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp;Frontend/TimerReset.cpp
+B-frontier	0x0040b810	TimerGlobalsReset	DAT_008a9550	0x008a9550	16	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp
+B-frontier	0x0040b810	TimerGlobalsReset	DAT_008a9560	0x008a9560	16	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp
+B-frontier	0x0041e080	ScoreboardStateZeroInit	DAT_0063d798	0x0063d798	1	.data	bss	cmt	0	STATE	Frontend/SmallLeaves_t1.cpp
+B-frontier	0x0041e080	ScoreboardStateZeroInit	DAT_0063d7d8	0x0063d7d8	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d798	0x0063d798	4	.data	bss	cmt	1	STATE	Frontend/SmallLeaves_t1.cpp
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d79c	0x0063d79c	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7a0	0x0063d7a0	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7c4	0x0063d7c4	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7d0	0x0063d7d0	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7d4	0x0063d7d4	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7dc	0x0063d7dc	4	.data	bss	cmt	1	STATE	Frontend/SmallLeaves_t1.cpp
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7b0	0x0063d7b0	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7b4	0x0063d7b4	4	.data	bss	-	1		
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7cc	0x0063d7cc	4	.data	bss	cmt	1	STATE	Frontend/SmallLeaves_t1.cpp
+B-frontier	0x0041e080	ScoreboardStateZeroInit	_DAT_0063d7b8	0x0063d7b8	4	.data	bss	-	1		
+B-frontier	0x00422b30	TimerArrayClear	DAT_00899e80	0x00899e80	4	.data	bss	cmt	0	STATE	Frontend/TimerReset.cpp
+B-frontier	0x00422fd0	FrontendRaceResultsDispatch	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+B-frontier	0x004277a0	TextCtrlCodeRemap	DAT_0067d838	0x0067d838	4	.data	bss	lit	0		Match/MatchS06_004282a0.cpp
+B-frontier	0x004277a0	TextCtrlCodeRemap	DAT_0067d83c	0x0067d83c	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x004277a0	TextCtrlCodeRemap	DAT_008991c0	0x008991c0	4	.data	bss	cmt	0	STATE	Frontend/FrontendLeaves_ad2.cpp
+B-frontier	0x0042ac90	FUN_0042ac90	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x0042ac90	FUN_0042ac90	DAT_0067ed38	0x0067ed38	4	.data	bss	lit	0		Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0042ac90	FUN_0042ac90	DAT_0067ed40	0x0067ed40	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0042ad10	FUN_0042ad10	DAT_00898ac0	0x00898ac0	4	.data	bss	lit	0		Frontend/MenuAnimTickTwin.cpp;exe_main.cpp
+B-frontier	0x0042add0	FUN_0042add0	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x0042add0	FUN_0042add0	DAT_0067ed38	0x0067ed38	4	.data	bss	lit	0		Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0042ae10	MenuReadinessCheckA	DAT_0067eab0	0x0067eab0	4	.data	bss	lit	0		Frontend/MenuHelpers.cpp;Race/GameModeMachine.cpp;exe_main.cpp
+B-frontier	0x0042ae10	MenuReadinessCheckA	DAT_0067e7c8	0x0067e7c8	4	.data	bss	cmt	0	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp;Frontend/MenuStateMachine.cpp
+B-frontier	0x0042ae10	MenuReadinessCheckA	DAT_00898ab0	0x00898ab0	4	.data	bss	cmt	0	STATE	Frontend/MenuNavSM.cpp;Frontend/MenuStateMachine.cpp;Util/UtilLeaves_ac.cpp
+B-frontier	0x0042ae10	MenuReadinessCheckA	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x0042ae10	MenuReadinessCheckA	DAT_007f1042	0x007f1042	8	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/SlotZeroers_s1.cpp;Race/CameraEntries.cpp;exe_main.cpp
+B-frontier	0x0042ae10	MenuReadinessCheckA	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x0042aeb0	MenuReadinessCheckB	DAT_0067eab0	0x0067eab0	4	.data	bss	lit	0		Frontend/MenuHelpers.cpp;Race/GameModeMachine.cpp;exe_main.cpp
+B-frontier	0x0042aeb0	MenuReadinessCheckB	DAT_00898ab0	0x00898ab0	4	.data	bss	cmt	0	STATE	Frontend/MenuNavSM.cpp;Frontend/MenuStateMachine.cpp;Util/UtilLeaves_ac.cpp
+B-frontier	0x0042aeb0	MenuReadinessCheckB	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x0042aeb0	MenuReadinessCheckB	DAT_007f1043	0x007f1043	1216	.data	bss	cmt	0	STATE	Frontend/MenuStateMachine.cpp
+B-frontier	0x0042aeb0	MenuReadinessCheckB	DAT_007f1503	0x007f1503	1216	.data	bss	cmt	0	STATE	Frontend/MenuStateMachine.cpp
+B-frontier	0x0042aeb0	MenuReadinessCheckB	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_007f1004	0x007f1004	4	.data	bss	lit	0		Boot/FrameDispatch.cpp;Frontend/MenuAnimTickTwin.cpp;Frontend/MenuNav.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_0067f1b0	0x0067f1b0	4	.data	bss	lit	1		Frontend/MenuNav.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_005ccac0	0x005ccac0	4	.rdata	nonzero	lit	0	RDATA	Frontend/MenuNav.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_007f1046	0x007f1046	1216	.data	bss	lit	0		Frontend/MenuNav.cpp;Frontend/SlotZeroers_s1.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_007f1506	0x007f1506	1216	.data	bss	lit	0		Frontend/MenuNav.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_0067ed3c	0x0067ed3c	1024	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp
+B-frontier	0x0042aff0	MenuButtonDetectA	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_007f1004	0x007f1004	4	.data	bss	lit	0		Boot/FrameDispatch.cpp;Frontend/MenuAnimTickTwin.cpp;Frontend/MenuNav.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_0067f1b4	0x0067f1b4	4	.data	bss	lit	1		Frontend/MenuNav.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_005ccac0	0x005ccac0	4	.rdata	nonzero	lit	0	RDATA	Frontend/MenuNav.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_007f1047	0x007f1047	1216	.data	bss	lit	0		Frontend/MenuNav.cpp;Frontend/SlotZeroers_s1.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_007f1507	0x007f1507	1216	.data	bss	lit	0		Frontend/MenuNav.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_0067ed3c	0x0067ed3c	1024	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp
+B-frontier	0x0042b180	MenuButtonDetectB	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x0042b540	MenuButtonDetectD	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x0042b540	MenuButtonDetectD	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x0042b540	MenuButtonDetectD	DAT_0067f1bc	0x0067f1bc	4	.data	bss	-	1		
+B-frontier	0x0042b540	MenuButtonDetectD	DAT_007f1045	0x007f1045	1216	.data	bss	lit	0		Frontend/SlotZeroers_s1.cpp
+B-frontier	0x0042b540	MenuButtonDetectD	DAT_007f1505	0x007f1505	1216	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b540	MenuButtonDetectD	DAT_0067ed3c	0x0067ed3c	64	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp
+B-frontier	0x0042b540	MenuButtonDetectD	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1049	0x007f1049	1	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1509	0x007f1509	1	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1095	0x007f1095	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1555	0x007f1555	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f10e1	0x007f10e1	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f15a1	0x007f15a1	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f112d	0x007f112d	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f15ed	0x007f15ed	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1179	0x007f1179	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1639	0x007f1639	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f11c5	0x007f11c5	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1685	0x007f1685	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1211	0x007f1211	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f16d1	0x007f16d1	1	.data	bss	-	0	NOWRITE	
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f125d	0x007f125d	1	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f171d	0x007f171d	1	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp
+B-frontier	0x0042b770	MenuButtonDetectE	DAT_007f1a14	0x007f1a14	4	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x0042b960	CarSlotInit1P	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	1		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x0042b960	CarSlotInit1P	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x0042b960	CarSlotInit1P	DAT_007f1042	0x007f1042	1216	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/SlotZeroers_s1.cpp;Race/CameraEntries.cpp;exe_main.cpp
+B-frontier	0x0042f020	FUN_0042f020	DAT_007f0e50	0x007f0e50	156	.data	bss	cmt	1	STATE	Frontend/MenuNavSM.h;Frontend/VehicleMeta.cpp;Save/GameSaveFormat.h
+B-frontier	0x0042f400	FUN_0042f400	DAT_005cd794	0x005cd794	3	.rdata	nonzero	-	0	RDATA	
+B-frontier	0x0042f6b0	MenuModeSync	DAT_0067f184	0x0067f184	4	.data	bss	lit	0		Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp
+B-frontier	0x0042f6b0	MenuModeSync	DAT_0067e9fc	0x0067e9fc	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendMode.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuScoreGetters.cpp;Frontend/MenuScoreSort.cpp;Race/A
+B-frontier	0x00430760	IsMultiplayerMode	DAT_0067e9fc	0x0067e9fc	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendMode.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuScoreGetters.cpp;Frontend/MenuScoreSort.cpp;Race/A
+B-frontier	0x00430910	MenuOptionSlotGet	DAT_0067e9fc	0x0067e9fc	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendMode.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuScoreGetters.cpp;Frontend/MenuScoreSort.cpp;Race/A
+B-frontier	0x00430910	MenuOptionSlotGet	DAT_0067f184	0x0067f184	4	.data	bss	lit	0		Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp
+B-frontier	0x00430910	MenuOptionSlotGet	DAT_0067f17c	0x0067f17c	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuLeaves_af4.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/SmallLeaves_n2.cpp;R
+B-frontier	0x00430910	MenuOptionSlotGet	DAT_007f0a40	0x007f0a40	4	.data	bss	lit	0		Frontend/FrontendState.cpp;Frontend/MenuLeaves_af4.cpp;Frontend/MenuNavSM.cpp;Race/GameFlow.cpp;Save/GameSaveBuffer.cpp;exe_main.cpp
+B-frontier	0x00430b60	MenuSlotCount	DAT_007f1a14	0x007f1a14	4	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x00430b60	MenuSlotCount	DAT_007f1a24	0x007f1a24	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp
+B-frontier	0x00430b60	MenuSlotCount	DAT_007f1a34	0x007f1a34	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp
+B-frontier	0x00430b60	MenuSlotCount	DAT_007f1a44	0x007f1a44	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp
+B-frontier	0x00431b80	FUN_00431b80	DAT_007f1a1c	0x007f1a1c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;exe_main.cpp
+B-frontier	0x00431b80	FUN_00431b80	DAT_0067ea98	0x0067ea98	12	.data	bss	lit	1		Frontend/GameModeCarSelect.cpp;exe_main.cpp
+B-frontier	0x00431d00	FUN_00431d00	DAT_0067ea74	0x0067ea74	4	.data	bss	lit	1		Frontend/GameModeCarSelect.cpp
+B-frontier	0x00431d00	FUN_00431d00	DAT_0067ea90	0x0067ea90	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Frontend/GameModeCarSelect.cpp;Race/AiDifficultyReset.cpp
+B-frontier	0x00431d00	FUN_00431d00	DAT_0067ea94	0x0067ea94	4	.data	bss	lit	1		Frontend/GameModeCarSelect.cpp;Race/GameModeState.cpp;Track/CourseTableState.cpp
+B-frontier	0x00431d00	FUN_00431d00	DAT_0067eaac	0x0067eaac	4	.data	bss	lit	1		Frontend/GameModeCarSelect.cpp
+B-frontier	0x00431d00	FUN_00431d00	DAT_0067ea98	0x0067ea98	12	.data	bss	lit	1		Frontend/GameModeCarSelect.cpp;exe_main.cpp
+B-frontier	0x004322c0	FUN_004322c0	DAT_0067e9fc	0x0067e9fc	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendMode.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuScoreGetters.cpp;Frontend/MenuScoreSort.cpp;Race/A
+B-frontier	0x004322c0	FUN_004322c0	DAT_0067f184	0x0067f184	4	.data	bss	lit	1		Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp
+B-frontier	0x004322c0	FUN_004322c0	DAT_0067f17c	0x0067f17c	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuLeaves_af4.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/SmallLeaves_n2.cpp;R
+B-frontier	0x004322c0	FUN_004322c0	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x004322c0	FUN_004322c0	DAT_0067f1a4	0x0067f1a4	4	.data	bss	lit	1		Frontend/FrontendNav.cpp
+B-frontier	0x004322c0	FUN_004322c0	DAT_0067ea68	0x0067ea68	4	.data	bss	lit	0		Frontend/FrontendNav.cpp
+B-frontier	0x004322c0	FUN_004322c0	DAT_0067ed3c	0x0067ed3c	256	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp
+B-frontier	0x004323c0	MenuCursorBack	DAT_0067f184	0x0067f184	4	.data	bss	lit	1		Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp
+B-frontier	0x004323c0	MenuCursorBack	DAT_0067f17c	0x0067f17c	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuLeaves_af4.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/SmallLeaves_n2.cpp;R
+B-frontier	0x004323c0	MenuCursorBack	DAT_0067f1a4	0x0067f1a4	4	.data	bss	lit	1		Frontend/FrontendNav.cpp
+B-frontier	0x004323c0	MenuCursorBack	DAT_0067ea68	0x0067ea68	4	.data	bss	lit	0		Frontend/FrontendNav.cpp
+B-frontier	0x004324a0	FUN_004324a0	DAT_0067eab0	0x0067eab0	4	.data	bss	lit	0		Frontend/MenuHelpers.cpp;Race/GameModeMachine.cpp;exe_main.cpp
+B-frontier	0x004324a0	FUN_004324a0	DAT_0067eabc	0x0067eabc	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x004324a0	FUN_004324a0	DAT_0067eab4	0x0067eab4	4	.data	bss	cmt	0	STATE	Match/MatchS07_0042bf30.cpp;exe_main.cpp
+B-frontier	0x004324a0	FUN_004324a0	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	0		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_0067ea88	0x0067ea88	4	.data	bss	cmt	1	STATE	Frontend/MenuNavSM.h;Race/RaceModes.cpp;Race/RaceModes.h;exe_main.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_0067ea7c	0x0067ea7c	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Race/AiDifficultyReset.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_0067ea78	0x0067ea78	4	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_0067f17c	0x0067f17c	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Frontend/FrontendDispatch.cpp;Frontend/FrontendNav.cpp;Frontend/FrontendState.cpp;Frontend/MenuLeaves_af4.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/SmallLeaves_n2.cpp;R
+B-frontier	0x00432800	FUN_00432800	DAT_0067ea74	0x0067ea74	4	.data	bss	lit	1		Frontend/GameModeCarSelect.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+B-frontier	0x00432800	FUN_00432800	DAT_0067ea64	0x0067ea64	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;exe_main.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_0067ea8c	0x0067ea8c	4	.data	bss	lit	0		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_007f0ad4	0x007f0ad4	4	.data	bss	cmt	0	STATE	Frontend/MenuNavSM.cpp;Frontend/MenuNavSM.h;Race/GameFlow.cpp;Save/GameSaveFormat.h;exe_main.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_007f0f2c	0x007f0f2c	4	.data	bss	cmt	0	STATE	Frontend/MenuNavSM.cpp;Frontend/MenuNavSM.h;Race/GameFlow.cpp;Save/GameSaveFormat.h;exe_main.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_007f0fe8	0x007f0fe8	4	.data	bss	-	1		
+B-frontier	0x00432800	FUN_00432800	DAT_0067ed78	0x0067ed78	64	.data	bss	lit	0		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_007f0a40	0x007f0a40	624	.data	bss	lit	0		Frontend/FrontendState.cpp;Frontend/MenuLeaves_af4.cpp;Frontend/MenuNavSM.cpp;Race/GameFlow.cpp;Save/GameSaveBuffer.cpp;exe_main.cpp
+B-frontier	0x00432800	FUN_00432800	DAT_00898aa0	0x00898aa0	320	.data	bss	-	1		
+B-frontier	0x00433240	FUN_00433240	DAT_0067eca4	0x0067eca4	4	.data	bss	lit	1		Frontend/MenuAnimTickTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x00433240	FUN_00433240	DAT_0067ecb0	0x0067ecb0	4	.data	bss	cmt	1	STATE	Boot/GameStateCluster.cpp;Frontend/MenuGetters.cpp;exe_main.cpp
+B-frontier	0x00433240	FUN_00433240	DAT_0067e844	0x0067e844	4	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x00433240	FUN_00433240	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	1		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x00433240	FUN_00433240	DAT_0067e914	0x0067e914	4	.data	bss	lit	1		Frontend/MenuAnimTickTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x00433240	FUN_00433240	DAT_0067ecac	0x0067ecac	4	.data	bss	lit	1		HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x00433240	FUN_00433240	DAT_0067ea84	0x0067ea84	4	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0046c700	EntityScoreFieldAdd	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+B-frontier	0x0046dc00	EntityFieldSet	DAT_008815a8	0x008815a8	4	.data	bss	lit	0		Frontend/GameModeInit.cpp;Vehicle/ForceIntegratorLeaves.cpp;Vehicle/RecordBlockState.cpp;Vehicle/VehicleState.cpp
+B-frontier	0x00492340	CarSlotInit	DAT_007f1058	0x007f1058	4	.data	bss	lit	0		Frontend/GameModeInit.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x00494f30	AspectRatioSnapshot	DAT_00771a50	0x00771a50	4	.data	bss	-	1		
+B-frontier	0x00494f30	AspectRatioSnapshot	DAT_00771a54	0x00771a54	4	.data	bss	-	1		
+B-frontier	0x00495080	Fwd494fd0_DoublePlusHalf	DAT_005cc32c	0x005cc32c	4	.rdata	nonzero	lit	0	RDATA	Ai/AiTrackObjSeek.cpp;Collision/RwpSolverIntegrate6.cpp;Collision/RwpSolverLeaves1.cpp;Collision/RwpSolverLeaves1X87.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;Collision/RwpSolv
+B-frontier	0x00495080	Fwd494fd0_DoublePlusHalf	DAT_00771a0c	0x00771a0c	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x00452140	FUN_00452140	DAT_00684d18	0x00684d18	1	.data	bss	lit	0		Track/WarzonePontoon.cpp
+B-frontier	0x00454a30	Table688304Get	DAT_00688304	0x00688304	4	.data	bss	lit	0		Ai/AiStandalone.cpp
+B-frontier	0x0045bff0	Pred45bff0	DAT_0088fbe0	0x0088fbe0	16	.data	bss	lit	0		Powerup/PowerupContact.cpp
+B-frontier	0x0046be10	Write46be10	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+B-frontier	0x0046bf50	FUN_0046bf50	DAT_008815a0	0x008815a0	64	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/SubStateCallees.cpp;Vehicle/ForceIntegrator.cpp;Vehicle/Integrate2.cpp;Vehicle/LaunchRevCharge.cpp;Vehicle/VehicleContactHull
+B-frontier	0x0046dd80	Float61313cGet	DAT_0061313c	0x0061313c	4	.data	nonzero	lit	0	IDATA	Ai/AiStandalone.cpp;Vehicle/VehicleInit.cpp
+B-frontier	0x0046dd90	VehField8816f4Set	DAT_008816f4	0x008816f4	1	.data	bss	cmt	0	STATE	Ai/AiStandalone.cpp
+B-frontier	0x00472550	Table691508Get	DAT_00691508	0x00691508	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x0041b630	HudSlotLoopB630	DAT_0063c8d0	0x0063c8d0	16	.data	bss	lit	0		HUD/HudDispatch.cpp;Race/SubStateCallees.cpp;Render/ParticleEmitterCtors.cpp
+B-frontier	0x0041db80	Sub0041db80_HudThresholdDispatch	DAT_0063d55c	0x0063d55c	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x0041e850	sub_0041e850	DAT_0063d610	0x0063d610	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x00426ba0	HudDrawEnabled	DAT_0066d704	0x0066d704	4	.data	bss	cmt	0	STATE	LibRw/RwRaceFx.h;Match/MatchS02_0040dfc0.cpp
+B-frontier	0x00427780	FontText_StringTableLookup	DAT_0066d828	0x0066d828	1	.data	bss	cmt	0	STATE	D3d9Render/MenuStringTable.h;exe_main.cpp
+B-frontier	0x0042b8b0	ScreenWidthGet	DAT_0067ea54	0x0067ea54	2	.data	bss	cmt	0	STATE	Frontend/MenuButtonDetect.cpp;exe_main.cpp
+B-frontier	0x0042b8c0	ScreenHeightGet	DAT_0067ea56	0x0067ea56	2	.data	bss	cmt	0	STATE	Frontend/MenuButtonDetect.cpp;exe_main.cpp
+B-frontier	0x0044d5e0	DepthChargePathSafetyCheck	DAT_00684b34	0x00684b34	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x0044d5e0	DepthChargePathSafetyCheck	DAT_005cc9c0	0x005cc9c0	4	.rdata	nonzero	cmt	0	RDATA	D3d9Render/TrackRenderer.cpp;Powerup/PowerupAim.cpp;Race/CameraEntries.cpp;Util/FloatSliderStep.cpp;exe_main.cpp
+B-frontier	0x0044d5e0	DepthChargePathSafetyCheck	DAT_00684b1c	0x00684b1c	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x0044d5e0	DepthChargePathSafetyCheck	DAT_00684670	0x00684670	32	.data	bss	-	0	NOWRITE	
+B-frontier	0x0044d5e0	DepthChargePathSafetyCheck	DAT_006848dc	0x006848dc	32	.data	bss	-	0	NOWRITE	
+B-frontier	0x0045bed0	PowerupRoundCleanup	DAT_005f9bd8	0x005f9bd8	4	.data	nonzero	cmt	0	IDATA	Powerup/PowerupSystem.cpp;Powerup/PowerupSystem.h;Powerup/PowerupTypeSearch.cpp
+B-frontier	0x0045bed0	PowerupRoundCleanup	PTR_FUN_005f99c4	0x005f99c4	4	.data	nonzero	-	0	IDATA	
+B-frontier	0x0045bed0	PowerupRoundCleanup	DAT_0088fbe0	0x0088fbe0	1	.data	bss	lit	0		Powerup/PowerupContact.cpp
+B-frontier	0x0045c010	PowerupPickupWrapper	DAT_0088fbe0	0x0088fbe0	16	.data	bss	lit	0		Powerup/PowerupContact.cpp
+B-frontier	0x00448770	FUN_00448770	DAT_00896490	0x00896490	8	.data	bss	-	1		
+B-frontier	0x00448770	FUN_00448770	DAT_005f95d0	0x005f95d0	8	.data	nonzero	cmt	0	IDATA	D3d9Render/TrackRenderer.cpp
+B-frontier	0x00448770	FUN_00448770	DAT_005f95e8	0x005f95e8	8	.data	nonzero	cmt	0	IDATA	D3d9Render/TrackRenderer.cpp
+B-frontier	0x00448820	FUN_00448820	DAT_00896460	0x00896460	4	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp
+B-frontier	0x00448820	FUN_00448820	DAT_00896464	0x00896464	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x00448880	FUN_00448880	DAT_00896480	0x00896480	16	.data	bss	-	1		
+B-frontier	0x00448880	FUN_00448880	DAT_005f95f0	0x005f95f0	16	.data	nonzero	cmt	0	IDATA	D3d9Render/TrackRenderer.cpp
+B-frontier	0x00448880	FUN_00448880	DAT_005f9620	0x005f9620	16	.data	nonzero	cmt	0	IDATA	D3d9Render/TrackRenderer.cpp
+B-frontier	0x0044df80	FUN_0044df80	DAT_00684b7c	0x00684b7c	4	.data	bss	-	1		
+B-frontier	0x0044df80	FUN_0044df80	DAT_00890080	0x00890080	320	.data	bss	-	0	NOWRITE	
+B-frontier	0x004671a0	BackBuffRasterOpen	DAT_006905b0	0x006905b0	4	.data	bss	cmt	0	STATE	D3d9Render/TrackRenderer.cpp;Powerup/PowerupSystem.h
+B-frontier	0x00467210	sub_00467210	DAT_006905b0	0x006905b0	4	.data	bss	cmt	0	STATE	D3d9Render/TrackRenderer.cpp;Powerup/PowerupSystem.h
+B-frontier	0x0046d400	FUN_0046d400	DAT_005d757c	0x005d757c	4	.rdata	zero	lit	0		Audio/AudioVecLength.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS03_00414060.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Render/PaletteQu
+B-frontier	0x00474db0	RwMallocArrayZeroFill	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004769a0	ParticleEmitter_SetPosition	DAT_00692528	0x00692528	4	.data	bss	-	1		
+B-frontier	0x004769a0	ParticleEmitter_SetPosition	DAT_0069252c	0x0069252c	4	.data	bss	-	1		
+B-frontier	0x004769a0	ParticleEmitter_SetPosition	DAT_00692530	0x00692530	4	.data	bss	-	1		
+B-frontier	0x004769a0	ParticleEmitter_SetPosition	DAT_006925a8	0x006925a8	12	.data	bss	cmt	0	STATE	Render/RfxEmitter.cpp;Render/RfxEmitter.h
+B-frontier	0x004769d0	ParticleEmitter_SetVelocity	DAT_006924dc	0x006924dc	4	.data	bss	lit	1		Render/RfxEmitter.cpp
+B-frontier	0x004769d0	ParticleEmitter_SetVelocity	DAT_006924e0	0x006924e0	4	.data	bss	lit	1		Render/RfxEmitter.cpp
+B-frontier	0x004769d0	ParticleEmitter_SetVelocity	DAT_00613288	0x00613288	8	.data	nonzero	lit	0	IDATA	Render/RfxEmitter.cpp
+B-frontier	0x00476a30	ParticleEmitter_SetScalar	DAT_006924d8	0x006924d8	1	.data	bss	cmt	0	STATE	Render/RfxEmitter.cpp;Render/RfxEmitter.h
+B-frontier	0x00476a30	ParticleEmitter_SetScalar	_DAT_006924d8	0x006924d8	4	.data	bss	cmt	1	STATE	Render/RfxEmitter.cpp;Render/RfxEmitter.h
+B-frontier	0x00476ae0	Batch476ae0	DAT_007dc57c	0x007dc57c	4	.data	bss	lit	0		Render/RfxEmitter.cpp
+B-frontier	0x00476ae0	Batch476ae0	DAT_00613288	0x00613288	4	.data	nonzero	lit	0	IDATA	Render/RfxEmitter.cpp
+B-frontier	0x00476b30	FUN_00476b30	DAT_007dc57c	0x007dc57c	4	.data	bss	lit	0		Render/RfxEmitter.cpp
+B-frontier	0x00476b30	FUN_00476b30	DAT_00613290	0x00613290	4	.data	nonzero	lit	0	IDATA	Render/RfxEmitter.cpp
+B-frontier	0x00476c60	Batch476c60	DAT_007dc57c	0x007dc57c	4	.data	bss	lit	0		Render/RfxEmitter.cpp
+B-frontier	0x00476c60	Batch476c60	DAT_006132a4	0x006132a4	4	.data	zero	lit	0		Render/RfxEmitter.cpp
+B-frontier	0x00491c00	FUN_00491c00	DAT_00869ca0	0x00869ca0	4	.data	bss	-	1		
+B-frontier	0x00491c00	FUN_00491c00	DAT_00771718	0x00771718	4	.data	bss	-	1		
+B-frontier	0x00491c00	FUN_00491c00	DAT_00771724	0x00771724	4	.data	bss	-	1		
+B-frontier	0x00491c00	FUN_00491c00	DAT_00771728	0x00771728	4	.data	bss	-	1		
+B-frontier	0x00491c00	FUN_00491c00	DAT_007dc57c	0x007dc57c	4	.data	bss	lit	0		Render/RfxEmitter.cpp
+B-frontier	0x00491c00	FUN_00491c00	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004924c0	Set6147b4Triple	DAT_006147b4	0x006147b4	1	.data	zero	-	1		
+B-frontier	0x004924c0	Set6147b4Triple	DAT_006147b5	0x006147b5	1	.data	zero	-	1		
+B-frontier	0x004924c0	Set6147b4Triple	DAT_006147b6	0x006147b6	1	.data	zero	-	1		
+B-frontier	0x00496d20	FUN_00496d20	DAT_00773088	0x00773088	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x00498c00	VideoModeTableInit	DAT_007731f8	0x007731f8	4	.data	bss	cmt	1	STATE	Boot/VideoConfig.cpp
+B-frontier	0x00498c00	VideoModeTableInit	DAT_007731fc	0x007731fc	4	.data	bss	cmt	1	STATE	Boot/VideoConfig.cpp
+B-frontier	0x00498c00	VideoModeTableInit	DAT_00773200	0x00773200	4	.data	bss	-	1		
+B-frontier	0x00498c00	VideoModeTableInit	DAT_00773408	0x00773408	4	.data	bss	cmt	1	STATE	Boot/VideoConfig.cpp
+B-frontier	0x00498c00	VideoModeTableInit	DAT_0077340c	0x0077340c	4	.data	bss	-	1		
+B-frontier	0x00498c00	VideoModeTableInit	DAT_00773410	0x00773410	4	.data	bss	-	1		
+B-frontier	0x0049a0a0	FUN_0049a0a0	DAT_00773968	0x00773968	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x0049a0e0	FUN_0049a0e0	DAT_00636ad4	0x00636ad4	4	.data	zero	-	0	NOWRITE	
+B-frontier	0x0049a0e0	FUN_0049a0e0	DAT_00773968	0x00773968	4	.data	bss	-	1		
+B-frontier	0x0049a0e0	FUN_0049a0e0	DAT_00771e58	0x00771e58	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x004b47e0	FUN_004b47e0	DAT_005d757c	0x005d757c	4	.rdata	zero	lit	0		Audio/AudioVecLength.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS03_00414060.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Render/PaletteQu
+B-frontier	0x004c0e50	FUN_004c0e50	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c1340	FUN_004c1340	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c1480	FUN_004c1480	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c1520	FUN_004c1520	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c2e70	RwEngineSetSubSystem	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c2ed0	RwEngineGetModeInfo	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c2f30	RwEngineSetVideoMode	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c3d90	FUN_004c3d90	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c3d90	FUN_004c3d90	DAT_007d3ffc	0x007d3ffc	4	.data	bss	lit	0		Math/RwLutGuard.h;Math/RwSqrt.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Math/RwV3dTransformPoints.cpp;Math/Vec3.cpp;Render/Vec3NormalizeScale.cpp
+B-frontier	0x004c3df0	RwV3dTransformPoints	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c3df0	RwV3dTransformPoints	DAT_007d3ffc	0x007d3ffc	4	.data	bss	lit	0		Math/RwLutGuard.h;Math/RwSqrt.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Math/RwV3dTransformPoints.cpp;Math/Vec3.cpp;Render/Vec3NormalizeScale.cpp
+B-frontier	0x004c4600	RwMatrixMultiply	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c4600	RwMatrixMultiply	DAT_007d4028	0x007d4028	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Math/RwMatrixRotateInner.cpp;Render/RwMatrixInvert.cpp
+B-frontier	0x004099e0	SaveStatusClear	DAT_008a95a0	0x008a95a0	4	.data	bss	lit	1		Save/GameSave.cpp
+B-frontier	0x00550b00	VfsFileExists	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x00550b00	VfsFileExists	DAT_007dc754	0x007dc754	4	.data	bss	lit	0		Save/GameSaveVFS.cpp
+B-frontier	0x00550b00	VfsFileExists	DAT_007dc75c	0x007dc75c	4	.data	bss	lit	0		Save/GameSaveVFS.cpp
+B-frontier	0x00550b00	VfsFileExists	DAT_007dc768	0x007dc768	4	.data	bss	lit	0		Save/GameSaveVFS.cpp
+B-frontier	0x00550b00	VfsFileExists	DAT_007dc76c	0x007dc76c	4	.data	bss	lit	0		Save/GameSaveVFS.cpp
+B-frontier	0x00487e70	FUN_00487e70	DAT_007030b4	0x007030b4	4	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp;LibRw/RwRaceFx.h
+B-frontier	0x00487e70	FUN_00487e70	DAT_0086ae20	0x0086ae20	512	.data	bss	cmt	0	STATE	LibRw/RwRaceFx.h
+B-frontier	0x00487e70	FUN_00487e70	DAT_006142a0	0x006142a0	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006142b0	0x006142b0	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006142c0	0x006142c0	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006142e4	0x006142e4	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_00614304	0x00614304	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_00614314	0x00614314	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_00614324	0x00614324	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_00614348	0x00614348	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_00614368	0x00614368	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_00614378	0x00614378	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_00614388	0x00614388	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006143a8	0x006143a8	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006143c8	0x006143c8	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006143d8	0x006143d8	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006143e8	0x006143e8	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_0061440c	0x0061440c	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_0061442c	0x0061442c	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_0061443c	0x0061443c	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_0061444c	0x0061444c	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_0061446c	0x0061446c	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_0061447c	0x0061447c	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_0061448c	0x0061448c	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_006144b0	0x006144b0	16	.data	nonzero	-	0	IDATA	
+B-frontier	0x00487e70	FUN_00487e70	DAT_007030b8	0x007030b8	16	.data	bss	-	0	NOWRITE	
+B-frontier	0x00487e70	FUN_00487e70	DAT_007030dc	0x007030dc	16	.data	bss	-	0	NOWRITE	
+B-frontier	0x0040d440	FUN_0040d440	DAT_0063ba7c	0x0063ba7c	4	.data	bss	lit	0		Race/GameModeState.cpp
+B-frontier	0x0040d440	FUN_0040d440	PTR_PTR_005f2770	0x005f2770	4	.data	nonzero	lit	0	IDATA	Ai/AiLeaderTimer.cpp;Ai/AiLeafTargets.cpp;Ai/AiStandalone.cpp;Ai/AiTargetClosest.cpp;Ai/CarSlotState.cpp;D3d9Render/TrackRenderer.cpp;Race/GameModeState.cpp;Race/SubStateCallees.cpp;Race/SubStateMachi
+B-frontier	0x0040d440	FUN_0040d440	DAT_0063ba78	0x0063ba78	4	.data	bss	lit	1		Race/GameModeState.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Track/CourseTableState.cpp
+B-frontier	0x0040ad30	FUN_0040ad30	DAT_008a95ac	0x008a95ac	4	.data	bss	lit	1		Save/GameSaveBuffer.cpp;Save/GameSaveVFS.cpp
+B-frontier	0x0040e170	Set63ba7c	DAT_0063ba7c	0x0063ba7c	4	.data	bss	lit	1		Race/GameModeState.cpp
+B-frontier	0x0040e360	RaceMode::Set	DAT_0063ba8c	0x0063ba8c	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Race/SpectatorDistances.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;exe_main.cpp
+B-frontier	0x0041eda0	TimerBitFieldSet	DAT_0063d9e0	0x0063d9e0	16	.data	bss	lit	0		Race/CarRegistrant.cpp
+B-frontier	0x0041f1e0	FUN_0041f1e0	DAT_0063d9e0	0x0063d9e0	2736	.data	bss	lit	0		Race/CarRegistrant.cpp
+B-frontier	0x00429aa0	GameStateSlotsFill	DAT_0067d990	0x0067d990	4	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp
+B-frontier	0x00429aa0	GameStateSlotsFill	DAT_0067d998	0x0067d998	4	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp
+B-frontier	0x00429aa0	GameStateSlotsFill	DAT_0067d9a0	0x0067d9a0	4	.data	bss	cmt	1	STATE	Frontend/MenuScoreGetters.cpp
+B-frontier	0x00429aa0	GameStateSlotsFill	DAT_00614718	0x00614718	52	.data	nonzero	lit	0	IDATA	Frontend/SmallLeaves_n2.cpp
+B-frontier	0x00429aa0	GameStateSlotsFill	DAT_007f0db4	0x007f0db4	52	.data	bss	cmt	0	STATE	Save/GameSaveFormat.h
+B-frontier	0x00429aa0	GameStateSlotsFill	DAT_007f0de8	0x007f0de8	52	.data	bss	cmt	0	STATE	Save/GameSaveFormat.h
+B-frontier	0x00429aa0	GameStateSlotsFill	DAT_007f0e1c	0x007f0e1c	52	.data	bss	cmt	0	STATE	Save/GameSaveFormat.h
+B-frontier	0x0042b950	Set7f1a0c_1000	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	1		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+B-frontier	0x00431b30	Float67eaa8Get	DAT_0067eaa8	0x0067eaa8	4	.data	bss	-	0	NOWRITE	
+B-frontier	0x00431d70	Course::GetLeaderIndex	DAT_0067ea94	0x0067ea94	4	.data	bss	lit	0		Frontend/GameModeCarSelect.cpp;Race/GameModeState.cpp;Track/CourseTableState.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e840	0x0067e840	4	.data	bss	cmt	0	STATE	exe_main.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_005d757c	0x005d757c	4	.rdata	zero	lit	0		Audio/AudioVecLength.cpp;Collision/RwpSolverMath2.cpp;Collision/RwpSolverMath2Quat.cpp;HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS03_00414060.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Render/PaletteQu
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7d8	0x0067e7d8	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuHelpers.cpp;Frontend/MenuLeaves_af6.cpp;exe_main.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7b0	0x0067e7b0	4	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7f0	0x0067e7f0	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp;exe_main.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7d0	0x0067e7d0	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7a8	0x0067e7a8	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7c0	0x0067e7c0	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7c8	0x0067e7c8	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp;Frontend/MenuStateMachine.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7f8	0x0067e7f8	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp;exe_main.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e838	0x0067e838	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp;exe_main.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e828	0x0067e828	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e830	0x0067e830	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e820	0x0067e820	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7e0	0x0067e7e0	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuHelpers.cpp;Frontend/MenuLeaves_af6.cpp;exe_main.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7e8	0x0067e7e8	4	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e808	0x0067e808	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e810	0x0067e810	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e818	0x0067e818	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7b8	0x0067e7b8	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e800	0x0067e800	4	.data	bss	cmt	1	STATE	Frontend/BucketMixed_t3.cpp;Frontend/MenuLeaves_af6.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7ac	0x0067e7ac	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7dc	0x0067e7dc	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7b4	0x0067e7b4	1	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7f4	0x0067e7f4	1	.data	bss	cmt	1	STATE	exe_main.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7d4	0x0067e7d4	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7c4	0x0067e7c4	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7cc	0x0067e7cc	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7fc	0x0067e7fc	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e83c	0x0067e83c	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e82c	0x0067e82c	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e834	0x0067e834	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e824	0x0067e824	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7e4	0x0067e7e4	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7ec	0x0067e7ec	1	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e80c	0x0067e80c	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e814	0x0067e814	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e81c	0x0067e81c	1	.data	bss	-	1		
+B-frontier	0x0043c000	TimerSlotTickDispatcher	DAT_0067e7bc	0x0067e7bc	1	.data	bss	-	1		
+B-frontier	0x00442c80	ModeGatedPlayerCheck	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+B-frontier	0x00442c80	ModeGatedPlayerCheck	DAT_008989b0	0x008989b0	16	.data	bss	lit	0		Ai/AiLeaderTimer.cpp;Ai/AiStandalone.cpp;Ai/AiTargetClosest.cpp;D3d9Render/TrackRenderer.cpp;Race/SpectatorDistances.cpp;Vehicle/ForceIntegratorLeaves.cpp
+B-frontier	0x004430a0	Util897fe0Set	DAT_00897fe0	0x00897fe0	4	.data	bss	lit	1		D3d9Render/TrackRenderer.cpp;Race/CameraApply.cpp;Race/CameraEntries.cpp
+B-frontier	0x004464c0	CameraEntry::DispatchAll	DAT_00898994	0x00898994	4	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Race/CameraEntries.cpp;Util/CameraEntryDispatch.cpp
+B-frontier	0x004464c0	CameraEntry::DispatchAll	DAT_008964c0	0x008964c0	216	.data	bss	lit	0		D3d9Render/TrackRenderer.cpp;Race/CameraEntries.cpp;Util/CameraEntryDispatch.cpp
+B-frontier	0x00472640	Set86ecc8	DAT_0086ecc8	0x0086ecc8	4	.data	bss	cmt	1	STATE	Frontend/DrawQuadPrimitives.cpp;Frontend/MenuNavSM.cpp
+B-frontier	0x00472650	FUN_00472650	DAT_005cd314	0x005cd314	4	.rdata	nonzero	cmt	0	RDATA	Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Vehicle/ForceIntegrator.h
+B-frontier	0x00495110	FUN_00495110	DAT_007f1030	0x007f1030	4	.data	bss	cmt	1	STATE	Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/RaceCamera.h;Race/RaceSceneState.h;Vehicle/VehiclePhysicsRun.cpp;Vehicle/VehicleStruct.h
+B-frontier	0x00496d00	FUN_00496d00	DAT_00773090	0x00773090	4	.data	bss	-	1		
+B-frontier	0x004c3ac0	Vec3Magnitude	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c3ac0	Vec3Magnitude	DAT_007d3ffc	0x007d3ffc	4	.data	bss	lit	0		Math/RwLutGuard.h;Math/RwSqrt.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Math/RwV3dTransformPoints.cpp;Math/Vec3.cpp;Render/Vec3NormalizeScale.cpp
+B-frontier	0x004c3b90	FastInvSqrt	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+B-frontier	0x004c3b90	FastInvSqrt	DAT_007d3ffc	0x007d3ffc	4	.data	bss	lit	0		Math/RwLutGuard.h;Math/RwSqrt.cpp;Math/RwV2d.cpp;Math/RwV3dNormalize.cpp;Math/RwV3dTransformPoints.cpp;Math/Vec3.cpp;Render/Vec3NormalizeScale.cpp
+B-frontier	0x00423b20	CarSnapshotDwordGet	DAT_008995ec	0x008995ec	4	.data	bss	cmt	0	STATE	Race/RuleEngine.h
+B-frontier	0x00442df0	RaceFloat898980Get	DAT_00898980	0x00898980	4	.data	bss	cmt	0	STATE	D3d9Render/TrackRenderer.cpp;Race/RaceCamera.cpp
+B-frontier	0x00476c10	Batch476c10	DAT_007dc57c	0x007dc57c	4	.data	bss	lit	0		Render/RfxEmitter.cpp
+B-frontier	0x00476c10	Batch476c10	DAT_00613294	0x00613294	4	.data	zero	lit	0		Render/RfxEmitter.cpp
+B-frontier	0x0047ea60	FUN_0047ea60	DAT_008816d8	0x008816d8	4	.data	bss	lit	0		Vehicle/VehicleCouplingBridge.cpp
+B-frontier	0x0047ea60	FUN_0047ea60	DAT_008816dc	0x008816dc	4	.data	bss	name	0	STATE	Collision/PhysicsWorldBuild.cpp;Collision/RwpBuildExterns.cpp
+B-frontier	0x0047ea60	FUN_0047ea60	DAT_008816e0	0x008816e0	4	.data	bss	name	0	STATE	Collision/PhysicsWorldBuild.cpp;Collision/RwpBuildExterns.cpp
+B-frontier	0x0047ea60	FUN_0047ea60	DAT_006c9a78	0x006c9a78	32	.data	bss	lit	0		Vehicle/VehicleCouplingBridge.cpp
+B-frontier	0x00480720	VehicleRespawnPlace	DAT_008815b4	0x008815b4	64	.data	bss	lit	0		Race/SubStateCallees.cpp
+B-frontier	0x00480720	VehicleRespawnPlace	DAT_006c9a78	0x006c9a78	64	.data	bss	lit	0		Vehicle/VehicleCouplingBridge.cpp
+B-frontier	0x00481750	FUN_00481750	DAT_006c9a78	0x006c9a78	16	.data	bss	lit	0		Vehicle/VehicleCouplingBridge.cpp
+B-frontier	0x00484000	FUN_00484000	DAT_006ce81c	0x006ce81c	16	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp;Vehicle/ShapeOwnerHandlePool.cpp
+B-frontier	0x00484000	FUN_00484000	DAT_006ce82c	0x006ce82c	16	.data	bss	lit	0		Vehicle/ShapeOwnerHandlePool.cpp
+B-frontier	0x004840b0	FUN_004840b0	DAT_006ce82c	0x006ce82c	16	.data	bss	lit	0		Vehicle/ShapeOwnerHandlePool.cpp
+B-frontier	0x00485360	DynObjListGetCount	DAT_006fa0f8	0x006fa0f8	4	.data	bss	cmt	0	STATE	Collision/ContactDeps.h;Collision/ContactStubs.cpp
+B-frontier	0x00485370	DynamicObjectListGetBase	DAT_006e87b8	0x006e87b8	1	.data	bss	cmt	0	STATE	Collision/ContactDeps.h;Collision/ContactStubs.cpp
+B-frontier	0x004922e0	CarEventTrigger	DAT_007f1058	0x007f1058	4	.data	bss	lit	0		Frontend/GameModeInit.cpp;HUD/ScenarioWriters_sa2s2.cpp
+B-frontier	0x004922e0	CarEventTrigger	DAT_007f1a14	0x007f1a14	16	.data	bss	lit	0		Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Frontend/MenuNavSM.cpp;HUD/ScenarioWriters_sa2s2.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehi
+B-frontier	0x00443090	Ret897ff0	DAT_00897ff0	0x00897ff0	1	.data	bss	lit	0		Race/WorldRegistry.cpp
+TOP	0x00492370	sub_00492370	DAT_0077195c	0x0077195c	4	.data	bss	lit	1		Boot/SubsystemInit.cpp
+TOP	0x00492370	sub_00492370	s_Calling_AppInitialiseOnBootup_005cf714	0x005cf714	32	.rdata	nonzero	-	0	RDATA	
+TOP	0x00492370	sub_00492370	s_Calling_AppDestroy_005cf700	0x005cf700	20	.rdata	nonzero	-	0	RDATA	
+TOP	0x00492370	sub_00492370	s_Calling_SoftwareTidyUpBeforeExiting_005cf6d8	0x005cf6d8	37	.rdata	nonzero	-	0	RDATA	
+TOP	0x00492370	sub_00492370	s_Calling_HardwareExitApplication_005cf6b4	0x005cf6b4	33	.rdata	nonzero	-	0	RDATA	
+TOP	0x00492290	sub_00492290	DAT_00828300	0x00828300	4	.data	bss	lit	0		Boot/FrameDispatch.cpp
+TOP	0x00492770	MainLoopInit	DAT_00828300	0x00828300	4	.data	bss	lit	1		Boot/FrameDispatch.cpp
+TOP	0x00492770	MainLoopInit	DAT_007f1000	0x007f1000	4	.data	bss	lit	1		Boot/FrameDispatch.cpp;Frontend/MenuSpriteDispatch.cpp
+TOP	0x00492770	MainLoopInit	DAT_007f101c	0x007f101c	4	.data	bss	lit	1		Boot/FrameDispatch.cpp;Race/CameraEntries.cpp;Vehicle/VehicleControl.cpp
+TOP	0x00492770	MainLoopInit	DAT_00771968	0x00771968	4	.data	bss	lit	1		Boot/FrameDispatch.cpp;Collision/RwpIntegrator.cpp;Core/ShadowAB.h;Race/GameModeMachine.cpp;Race/GameModeState.cpp
+TOP	0x00492770	MainLoopInit	_DAT_007f1020	0x007f1020	4	.data	bss	lit	1		Boot/FrameDispatch.cpp
+TOP	0x00492770	MainLoopInit	_DAT_007e9dc0	0x007e9dc0	4	.data	bss	lit	1		Boot/FrameDispatch.cpp
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0f2c	0x007f0f2c	4	.data	bss	cmt	1	STATE	Frontend/MenuNavSM.cpp;Frontend/MenuNavSM.h;Race/GameFlow.cpp;Save/GameSaveFormat.h;exe_main.cpp
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0f30	0x007f0f30	4	.data	bss	-	1		
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0f34	0x007f0f34	4	.data	bss	-	1		
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0f38	0x007f0f38	4	.data	bss	cmt	1	STATE	D3d9Render/TrackRenderer.cpp;Race/RaceCamera.cpp
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0f3c	0x007f0f3c	4	.data	bss	cmt	1	STATE	Save/GameSaveFormat.h
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0fec	0x007f0fec	4	.data	bss	cmt	1	STATE	Save/GameSaveFormat.h
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	1		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0ff0	0x007f0ff0	4	.data	bss	lit	1		HUD/ScenarioWriters_sa2s2.cpp;Match/MatchS01.cpp
+TOP-L1	0x004924f0	sub_004924f0	DAT_00803344	0x00803344	4	.data	bss	cmt	1	STATE	Save/GameSaveFormat.h
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0a40	0x007f0a40	4	.data	bss	lit	0		Frontend/FrontendState.cpp;Frontend/MenuLeaves_af4.cpp;Frontend/MenuNavSM.cpp;Race/GameFlow.cpp;Save/GameSaveBuffer.cpp;exe_main.cpp
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f0f60	0x007f0f60	226212	.data	bss	lit	0		exe_main.cpp
+TOP-L1	0x004924f0	sub_004924f0	DAT_007f1058	0x007f1058	32	.data	bss	lit	0		Frontend/GameModeInit.cpp;HUD/ScenarioWriters_sa2s2.cpp
+TOP-L1	0x00493900	sub_00493900	DAT_006147bc	0x006147bc	4	.data	nonzero	-	1	IDATA	
+TOP-L1	0x00493900	sub_00493900	DAT_007719e0	0x007719e0	4	.data	bss	-	1		
+TOP-L1	0x00493900	sub_00493900	DAT_006147c0	0x006147c0	4	.data	nonzero	cmt	1	IDATA	Boot/LaunchHandshake.cpp
+TOP-L1	0x00493900	sub_00493900	DAT_007719e4	0x007719e4	4	.data	bss	cmt	1	STATE	Boot/LaunchHandshake.cpp
+TOP-L1	0x00493900	sub_00493900	DAT_007719e8	0x007719e8	4	.data	bss	cmt	1	STATE	Boot/LaunchHandshake.cpp
+TOP-L1	0x00493900	sub_00493900	s__vs0_005cf8cc	0x005cf8cc	5	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__vs1_005cf8c4	0x005cf8c4	5	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__cs0_005cf8bc	0x005cf8bc	5	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__cs1_005cf8b4	0x005cf8b4	5	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__l0_005cf8b0	0x005cf8b0	4	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__l1_005cf8ac	0x005cf8ac	4	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__l2_005cf8a8	0x005cf8a8	4	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__l3_005cf8a4	0x005cf8a4	4	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__l4_005cf8a0	0x005cf8a0	4	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00493900	sub_00493900	s__l5_005cf89c	0x005cf89c	4	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x004963e0	ConfigLogError	DAT_00772fbc	0x00772fbc	4	.data	bss	lit	0		Save/SettingsConfig.cpp
+TOP-L1	0x004996f0	WindowShow	DAT_007e9584	0x007e9584	4	.data	bss	lit	0		Boot/Window.cpp
+TOP-L1	0x00499ba0	sub_00499ba0	DAT_007e9584	0x007e9584	4	.data	bss	lit	1		Boot/Window.cpp
+TOP-L1	0x00499ba0	sub_00499ba0	DAT_007e9580	0x007e9580	4	.data	bss	-	1		
+TOP-L1	0x00499ba0	sub_00499ba0	DAT_00773818	0x00773818	256	.data	bss	-	0	NOWRITE	
+TOP-L1	0x00499ba0	sub_00499ba0	s_MASHED_005cfabc	0x005cfabc	7	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00499ba0	sub_00499ba0	s_MASHED__D3D9___Release__005d041c	0x005d041c	24	.rdata	nonzero	-	0	RDATA	
+TOP-L1	0x00499cc0	sub_00499cc0	DAT_007e9584	0x007e9584	4	.data	bss	lit	0		Boot/Window.cpp
+TOP-L1	0x00499cc0	sub_00499cc0	DAT_007e95a8	0x007e95a8	4	.data	bss	-	0	NOWRITE	
+TOP-L1	0x004c5930	sub_004c5930	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+TOP-L1	0x004c5930	sub_004c5930	DAT_00618150	0x00618150	4	.data	nonzero	-	0	IDATA	
+TOP-L1	0x004926c0	AudioTickAndAvg	DAT_006147b8	0x006147b8	4	.data	nonzero	-	1	IDATA	
+TOP-L1	0x004926c0	AudioTickAndAvg	DAT_00771994	0x00771994	4	.data	bss	-	1		
+TOP-L1	0x004926c0	AudioTickAndAvg	DAT_00771978	0x00771978	4	.data	bss	-	1		
+TOP-L1	0x004926c0	AudioTickAndAvg	DAT_0077197c	0x0077197c	4	.data	bss	-	1		
+TOP-L1	0x004929d0	FUN_004929d0	DAT_00771968	0x00771968	4	.data	bss	lit	1		Boot/FrameDispatch.cpp;Collision/RwpIntegrator.cpp;Core/ShadowAB.h;Race/GameModeMachine.cpp;Race/GameModeState.cpp
+TOP-L1	0x004929d0	FUN_004929d0	DAT_0077196c	0x0077196c	4	.data	bss	-	1		
+TOP-L1	0x004929d0	FUN_004929d0	DAT_00771970	0x00771970	4	.data	bss	-	1		
+TOP-L1	0x004929d0	FUN_004929d0	DAT_00771974	0x00771974	4	.data	bss	-	1		
+TOP-L1	0x004929d0	FUN_004929d0	DAT_007f0fd0	0x007f0fd0	4	.data	bss	lit	0		Ai/AiLeafTargets.cpp;Ai/AiState.h;D3d9Render/TrackRenderer.cpp;Gameplay/PickupTick.cpp;Gameplay/Thresholds_ah4.cpp;Race/SubStateCallees.cpp;Race/SubStateMachine.cpp;Vehicle/ForceIntegrator.cpp;Vehicle
+TOP-L1	0x004929d0	FUN_004929d0	DAT_007f1a18	0x007f1a18	64	.data	bss	lit	0		Frontend/MenuNav.cpp;exe_main.cpp
+TOP-L1	0x00492d30	GameTickStateMachine7	DAT_00771968	0x00771968	4	.data	bss	lit	0		Boot/FrameDispatch.cpp;Collision/RwpIntegrator.cpp;Core/ShadowAB.h;Race/GameModeMachine.cpp;Race/GameModeState.cpp
+TOP-L1	0x00492d30	GameTickStateMachine7	DAT_007719cc	0x007719cc	4	.data	bss	-	1		
+TOP-L1	0x00492d30	GameTickStateMachine7	DAT_007f1000	0x007f1000	4	.data	bss	lit	0		Boot/FrameDispatch.cpp;Frontend/MenuSpriteDispatch.cpp
+TOP-L1	0x00492d30	GameTickStateMachine7	_DAT_007719a8	0x007719a8	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_0077198c	0x0077198c	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_007719a0	0x007719a0	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_00771998	0x00771998	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_0077199c	0x0077199c	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_00771988	0x00771988	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_007719a4	0x007719a4	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_00771990	0x00771990	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_00771968	0x00771968	4	.data	bss	lit	0		Boot/FrameDispatch.cpp;Collision/RwpIntegrator.cpp;Core/ShadowAB.h;Race/GameModeMachine.cpp;Race/GameModeState.cpp
+TOP-L1	0x00492e90	FUN_00492e90	DAT_007719c8	0x007719c8	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_007719ac	0x007719ac	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_007719b0	0x007719b0	4	.data	bss	-	1		
+TOP-L1	0x00492e90	FUN_00492e90	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+TOP-L1	0x00492e90	FUN_00492e90	DAT_006147b4	0x006147b4	4	.data	nonzero	-	0	IDATA	
+TOP-L1	0x00492e90	FUN_00492e90	DAT_00868320	0x00868320	384	.data	bss	-	0	NOWRITE	
+TOP-L1	0x00493480	FpsDiscretise	DAT_007f1000	0x007f1000	4	.data	bss	lit	1		Boot/FrameDispatch.cpp;Frontend/MenuSpriteDispatch.cpp
+TOP-L1	0x00493480	FpsDiscretise	DAT_007719d4	0x007719d4	4	.data	bss	lit	1		Boot/FrameDispatch.cpp
+TOP-L1	0x00493480	FpsDiscretise	DAT_007f1004	0x007f1004	4	.data	bss	lit	1		Boot/FrameDispatch.cpp;Frontend/MenuAnimTickTwin.cpp;Frontend/MenuNav.cpp
+TOP-L1	0x00499690	WindowMsgPump	DAT_007e95a0	0x007e95a0	4	.data	bss	lit	0		Boot/Window.cpp
+TOP-L1	0x00499690	WindowMsgPump	DAT_0077391c	0x0077391c	4	.data	bss	lit	0		Boot/Window.cpp
+TOP-L1	0x00499690	WindowMsgPump	DAT_00773918	0x00773918	4	.data	bss	lit	0		Boot/Window.cpp
+TOP-L1	0x0042b950	Set7f1a0c_1000	DAT_007f1a0c	0x007f1a0c	4	.data	bss	lit	1		Frontend/MenuButtonDetect.cpp;Frontend/MenuNav.cpp;Race/GameModeMachine.cpp
+TOP-L1	0x00433240	FUN_00433240	DAT_0067eca4	0x0067eca4	4	.data	bss	lit	1		Frontend/MenuAnimTickTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+TOP-L1	0x00433240	FUN_00433240	DAT_0067ecb0	0x0067ecb0	4	.data	bss	cmt	1	STATE	Boot/GameStateCluster.cpp;Frontend/MenuGetters.cpp;exe_main.cpp
+TOP-L1	0x00433240	FUN_00433240	DAT_0067e844	0x0067e844	4	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp;HUD/ScenarioWriters_sa2s2.cpp
+TOP-L1	0x00433240	FUN_00433240	DAT_0067e9f8	0x0067e9f8	4	.data	bss	lit	1		Frontend/MenuButtonDetect.cpp;Frontend/MenuGetters.cpp;Frontend/MenuNav.cpp;Frontend/MenuSpriteDispatch.cpp;Frontend/PromptStripTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+TOP-L1	0x00433240	FUN_00433240	DAT_0067e914	0x0067e914	4	.data	bss	lit	1		Frontend/MenuAnimTickTwin.cpp;HUD/ScenarioWriters_sa2s2.cpp
+TOP-L1	0x00433240	FUN_00433240	DAT_0067ecac	0x0067ecac	4	.data	bss	lit	1		HUD/ScenarioWriters_sa2s2.cpp
+TOP-L1	0x00433240	FUN_00433240	DAT_0067ea84	0x0067ea84	4	.data	bss	lit	1		Frontend/MenuSpriteDispatch.cpp
+TOP-L1	0x00495110	FUN_00495110	DAT_007f1030	0x007f1030	4	.data	bss	cmt	1	STATE	Ai/AiStandalone.cpp;D3d9Render/TrackRenderer.cpp;Race/RaceCamera.h;Race/RaceSceneState.h;Vehicle/VehiclePhysicsRun.cpp;Vehicle/VehicleStruct.h
+TOP-L1	0x004c57a0	FontCtxMatrix_AllocInit	DAT_007d3ff8	0x007d3ff8	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Core/ShadowTrack.h;D3d9Render/RwIm2DBridge.cpp;Frontend/BucketMixed_t3.cpp;Frontend/DrawQuadPrimitives.cpp;Frontend/MenuLeaves_af1.cpp;Frontend/MenuSpriteDispatch.cpp;Matc
+TOP-L1	0x004c57a0	FontCtxMatrix_AllocInit	DAT_007d4028	0x007d4028	4	.data	bss	lit	0		Collision/RwpSolverMath2.cpp;Math/RwMatrixRotateInner.cpp;Render/RwMatrixInvert.cpp
