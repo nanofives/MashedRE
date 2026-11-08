@@ -1,0 +1,223 @@
+CXXOK 00554390
+CXXOK 005551d0
+CXXOK 00556d20
+CXXOK 00556d70
+CXXOK 005578a0
+CXXOK 00557ec0
+CXXOK 00557fb0
+CXXOK 00558030
+CXXOK 00558180
+CXXFAIL 00558240 
+re\match\rwl05\00558240.c(64): error C2664: 'undefined4 *FUN_004d8480(undefined4 *)': el argumento 1 no puede convertirse de 'int *' a 'undefined4 *'
+re\match\rwl05\00558240.c(77): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'int'
+re\match\rwl05\00558240.c(79): error C2664: 'uint *FUN_004cdd60(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl05\00558240.c(79): error C2440: '=': no se puede realizar la conversión de '_T' a 'int'
+re\match\rwl05\00558240.c(87): error C2664: 'undefined *FUN_00558180(undefined4 *,int *)': el argumento 1 no puede convertirse de 'undefined1 [8]' a 'undefined4 *'
+re\match\rwl05\00558240.c(87): error C2440: '=': no se puede realizar la conversión de '_T' a 'undefined4'
+re\match\rwl05\00558240.c(94): error C2664: 'byte *FUN_00558400(byte *,int,byte *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'byte *'
+re\match\rwl05\00558240.c(94): error C2440: '=': no se puede realizar la conversión de '_T' a 'undefined4'
+re\match\rwl05\00558240.c(104): error C2664: 'int FUN_004d5310(int,byte *)': el argumento 2 no puede convertirse de 'int' a 'byte *'
+re\match\rwl05\00558240.c(107): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+CXXOK 00558400
+CXXOK 005584c0
+CXXOK 00558550
+CXXFAIL 005586f0 
+re\match\rwl05\005586f0.c(54): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\005586f0.c(58): error C2664: 'undefined *FUN_00558180(undefined4 *,int *)': el argumento 1 no puede convertirse de 'int [7]' a 'undefined4 *'
+re\match\rwl05\005586f0.c(84): error C2664: 'int FUN_00558860(int,uint,int,int,int,int,int,short,int)': el argumento 1 no puede convertirse de 'char *' a 'int'
+re\match\rwl05\005586f0.c(89): error C2664: 'int FUN_00558860(int,uint,int,int,int,int,int,short,int)': el argumento 1 no puede convertirse de 'char *' a 'int'
+CXXFAIL 00558860 
+re\match\rwl05\00558860.c(81): error C2664: 'undefined *FUN_00558180(undefined4 *,int *)': el argumento 1 no puede convertirse de 'int *' a 'undefined4 *'
+CXXOK 00558c50
+CXXOK 00558c80
+CXXOK 00558ca0
+CXXOK 00558cb0
+CXXOK 00558d30
+CXXFAIL 00558df0 
+re\match\rwl05\00558df0.c(67): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00558df0.c(70): error C2664: 'uint FUN_004cbd30(undefined4 *,undefined4 *,uint)': el argumento 1 no puede convertirse de 'int' a 'undefined4 *'
+re\match\rwl05\00558df0.c(74): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00558df0.c(77): error C2660: 'FUN_004d7ff0': la función no acepta 2 argumentos
+re\match\rwl05\00558df0.c(81): error C2440: '=': no se puede realizar la conversión de 'int *' a 'int'
+re\match\rwl05\00558df0.c(86): error C2664: 'int FUN_005c4bb0(int *,undefined4)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl05\00558df0.c(88): error C2440: '=': no se puede realizar la conversión de 'int *' a 'undefined4'
+re\match\rwl05\00558df0.c(95): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00558df0.c(96): error C2664: 'int FUN_005c4bb0(int *,undefined4)': el argumento 1 no puede convertirse de 'int' a 'int *'
+re\match\rwl05\00558df0.c(98): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00558df0.c(99): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00558df0.c(108): error C2664: 'undefined4 FUN_0055dec0(undefined4 *)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\00558df0.c(109): error C2664: 'int FUN_005c4e10(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl05\00558df0.c(113): error C2664: 'int FUN_005c4e10(int *)': el argumento 1 no puede convertirse de 'int' a 'int *'
+re\match\rwl05\00558df0.c(114): error C2664: 'undefined4 FUN_0055dec0(undefined4 *)': el argumento 1 no puede convertirse de 'int' a 'undefined4 *'
+re\match\rwl05\00558df0.c(116): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00558df0.c(118): error C2664: 'undefined4 FUN_005c4d50(int *)': el argumento 1 no puede convertirse de 'int' a 'int *'
+re\match\rwl05\00558df0.c(119): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00558df0.c(124): error C2664: 'int FUN_005c4df0(int *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl05\00558df0.c(132): error C2664: 'undefined4 FUN_005c4d50(int *)': el argumento 1 no puede convertirse de 'int' a 'int *'
+re\match\rwl05\00558df0.c(134): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 00559040
+CXXOK 005592f0
+CXXOK 00559560
+CXXFAIL 005595d0 
+re\match\rwl05\005595d0.c(115): error C2440: '=': no se puede realizar la conversión de 'uint *' a 'undefined4'
+re\match\rwl05\005595d0.c(119): error C2664: 'int FUN_005645b0(int,undefined4,uint,undefined4 *,undefined4)': el argumento 4 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(122): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(126): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(130): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(134): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(138): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(161): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(195): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(224): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(239): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\005595d0.c(246): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+CXXOK 00559b50
+CXXOK 00559ba0
+CXXOK 00559bc0
+CXXOK 00559be0
+CXXOK 00559c00
+CXXOK 00559c20
+CXXFAIL 00559c40 
+re\match\rwl05\00559c40.c(86): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00559c40.c(92): error C2664: 'int FUN_00564c80(int,uint,float *)': el argumento 3 no puede convertirse de 'int' a 'float *'
+re\match\rwl05\00559c40.c(114): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl05\00559c40.c(133): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 00559ee0
+CXXOK 0055a140
+CXXOK 0055a9a0
+CXXOK 0055ac50
+CXXOK 0055ad20
+CXXOK 0055ad30
+CXXOK 0055ade0
+CXXOK 0055ae50
+CXXOK 0055ae70
+CXXOK 0055af40
+CXXOK 0055af60
+CXXOK 0055af70
+CXXOK 0055af80
+CXXOK 0055afc0
+CXXOK 0055b030
+CXXOK 0055b060
+CXXFAIL 0055b080 
+re\match\rwl05\0055b080.c(57): error C3861: 'SQRT': no se encontró el identificador
+re\match\rwl05\0055b080.c(78): error C3861: 'SQRT': no se encontró el identificador
+re\match\rwl05\0055b080.c(83): error C3861: 'SQRT': no se encontró el identificador
+re\match\rwl05\0055b080.c(86): error C2664: 'int *FUN_0055b4a0(int *,float *)': el argumento 2 no puede convertirse de 'int' a 'float *'
+re\match\rwl05\0055b080.c(126): error C2664: 'undefined4 FUN_00546b10(float *,float *)': el argumento 1 no puede convertirse de 'int' a 'float *'
+re\match\rwl05\0055b080.c(129): error C2664: 'void FUN_004c51a0(float *,float *,int)': el argumento 1 no puede convertirse de 'int' a 'float *'
+CXXFAIL 0055b4a0 
+re\match\rwl05\0055b4a0.c(76): error C2664: 'void FUN_005655a0(float *,float *)': el argumento 1 no puede convertirse de 'undefined4 *' a 'float *'
+re\match\rwl05\0055b4a0.c(77): error C2664: 'void FUN_005655a0(float *,float *)': el argumento 1 no puede convertirse de 'undefined4 *' a 'float *'
+CXXOK 0055b650
+CXXOK 0055b750
+CXXOK 0055b860
+CXXOK 0055b930
+CXXOK 0055b940
+CXXOK 0055ba90
+CXXOK 0055bab0
+CXXOK 0055bac0
+CXXOK 0055bad0
+CXXOK 0055bae0
+CXXOK 0055bbf0
+CXXOK 0055bd70
+CXXOK 0055bd80
+CXXFAIL 0055bde0 
+re\match\rwl05\0055bde0.c(58): error C2664: 'undefined4 *FUN_004c4600(undefined4 *,undefined4 *,undefined4 *)': el argumento 1 no puede convertirse de 'undefined1 [64]' a 'undefined4 *'
+re\match\rwl05\0055bde0.c(76): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 0055c000
+CXXOK 0055c230
+CXXOK 0055c2d0
+CXXOK 0055c380
+CXXOK 0055c3e0
+CXXOK 0055c490
+CXXOK 0055c4a0
+CXXOK 0055c540
+CXXOK 0055cd40
+CXXOK 0055dc70
+CXXOK 0055dca0
+CXXOK 0055dd60
+CXXOK 0055ddd0
+CXXOK 0055de20
+CXXOK 0055de60
+CXXOK 0055ded0
+CXXOK 0055df90
+CXXOK 0055e190
+CXXOK 0055e2d0
+CXXOK 0055e300
+CXXOK 0055e330
+CXXOK 0055e440
+CXXOK 0055f450
+CXXOK 0055f480
+CXXFAIL 0055f520 
+re\match\rwl05\0055f520.c(45): error C2664: 'int FUN_00568c40(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f520.c(51): error C2664: 'int FUN_005687d0(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f520.c(53): error C2664: 'int FUN_005687a0(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f520.c(87): error C2664: 'int FUN_00567630(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f520.c(89): error C2664: 'uint FUN_005672c0(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+CXXFAIL 0055f670 
+re\match\rwl05\0055f670.c(51): error C2664: 'int FUN_005687a0(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f670.c(71): error C2664: 'int FUN_005687d0(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f670.c(87): error C2664: 'int FUN_00568c40(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f670.c(92): error C2664: 'int FUN_00567630(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\0055f670.c(94): error C2664: 'uint FUN_005672c0(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+CXXFAIL 0055f800 
+re\match\rwl05\0055f800.c(104): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(111): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(118): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(122): error C2664: 'uint *FUN_00568d20(int,uint)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+re\match\rwl05\0055f800.c(122): error C2440: '=': no se puede realizar la conversión de '_T' a 'undefined4'
+re\match\rwl05\0055f800.c(129): error C2664: 'void FUN_00568860(int,uint *,undefined4,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+re\match\rwl05\0055f800.c(153): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(157): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(161): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(169): error C2664: 'void FUN_0055f480(int,int,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+re\match\rwl05\0055f800.c(175): error C2664: 'void FUN_00568c80(int,uint *,int,int,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+re\match\rwl05\0055f800.c(179): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(191): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(198): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(207): error C2664: 'void FUN_005676f0(int,int *,int *,uint *,int,int,int,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+re\match\rwl05\0055f800.c(209): error C2664: 'void FUN_00567350(uint,int *,uint *,uint *,int,int,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'uint'
+re\match\rwl05\0055f800.c(218): error C2664: 'void FUN_00564100(undefined4 *,undefined1,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl05\0055f800.c(234): error C2440: '=': no se puede realizar la conversión de 'undefined1' a 'code (__cdecl *)'
+re\match\rwl05\0055f800.c(236): error C2440: '=': no se puede realizar la conversión de 'undefined1' a 'code (__cdecl *)'
+re\match\rwl05\0055f800.c(237): error C2440: '=': no se puede realizar la conversión de 'undefined1' a 'code (__cdecl *)'
+re\match\rwl05\0055f800.c(240): error C2440: '=': no se puede realizar la conversión de 'undefined1' a 'code (__cdecl *)'
+re\match\rwl05\0055f800.c(241): error C2440: '=': no se puede realizar la conversión de 'undefined1' a 'code (__cdecl *)'
+CXXOK 0055fdd0
+CXXOK 0055fe10
+CXXOK 0055fe30
+CXXOK 0055fe40
+CXXOK 00561280
+CXXOK 00561ea0
+CXXOK 00561ec0
+CXXOK 00561ee0
+CXXFAIL 00562010 
+re\match\rwl05\00562010.c(53): error C2664: 'undefined4 FUN_004e55d0(int *)': el argumento 1 no puede convertirse de 'int' a 'int *'
+re\match\rwl05\00562010.c(64): error C2664: 'void FUN_00562380(int,int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl05\00562010.c(65): error C2664: 'undefined4 FUN_00538c80(undefined4,undefined4 *,undefined4,undefined4)': el argumento 2 no puede convertirse de 'undefined1 [28]' a 'undefined4 *'
+CXXOK 00562380
+CXXOK 00562460
+CXXOK 00562500
+CXXOK 00562520
+CXXOK 00562560
+CXXOK 00562580
+CXXOK 005625e0
+CXXOK 00562600
+CXXOK 00562660
+CXXOK 00562ed0
+CXXOK 00562fd0
+CXXOK 00563810
+CXXOK 00563840
+CXXOK 00563940
+CXXOK 00563b00
+CXXOK 00563c80
+CXXOK 00563de0
+CXXOK 00563df0
+CXXOK 00564040
+CXXOK 00564100
+CXXOK 00564130
+CXXOK 00564190
+CXXOK 00564310
+CXXOK 005645b0
+CXXOK 00565160
+CXXOK 00565570
