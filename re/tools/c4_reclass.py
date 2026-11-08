@@ -42,6 +42,9 @@ LIB_FLAGS = {   # recorded build of each vendored library (libid_reclass.py LIBS
     "libpng-1.0.12": "libpng 1.0.12 /O2 /G5",
     "zlib-1.1.3": "zlib 1.1.3 /O2 /G5",
     "msvc-crt": "DDK libcmt.lib member",
+    "d3dx9-sum2003": "DirectX 9.0b SDK Summer 2003 d3dx9.lib member",
+    "d3dx9-sum2004": "DirectX 9.0c SDK Summer 2004 d3dx9.lib member",
+    "directshow-baseclasses-ddk": "XP DDK SP1 strmbase.lib member",
 }
 LIBID_OK = {"identical", "identical-unlisted"}
 
@@ -270,7 +273,7 @@ def gate_libid(rva, tsv_rel, cache):
     key = next((k for k in LIB_FLAGS if lib.startswith(k)), None)
     flags = LIB_FLAGS.get(key, f"library {lib or '?'}")
     note = (f"libmatch {tsv_rel}: {r['status']} {r.get('library_object', '')} {r.get('lib_function', '')} "
-            f"({r.get('lib_size', '?')} B; {flags}; {COMPILER})")
+            f"({r.get('lib_size', '?')} B; {flags}" + ("" if flags.startswith("DirectX") else f"; {COMPILER}") + ")")
     return True, f"{r['status']} {r.get('lib_function', '')}", note
 
 

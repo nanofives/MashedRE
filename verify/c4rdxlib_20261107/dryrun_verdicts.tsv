@@ -1,0 +1,558 @@
+rva	route	evidence	verdict	detail
+0x004ec760	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?WithinEpsilon@@YGHMM@Z
+0x004ec79d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXFloat32To16Array@@YGPAUD3DXFLOAT16@@PAU1@PBMI@Z
+0x004ec8eb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+0x004ec9a3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+0x004eca7c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec2BaryCentric@@YGPAUD3DXVECTOR2@@PAU1@PBU1@11MM@Z
+0x004ecaee	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z
+0x004ecafb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXVec2Transform@12
+0x004ecb12	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec2TransformCoord@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x004ecb1f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXVec2TransformCoord@12
+0x004ecb36	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x004ecb43	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXVec2TransformNormal@12
+0x004ecb5a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+0x004ecc45	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z
+0x004ecd40	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z
+0x004ecd6f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z
+0x004ece64	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR3@@IPBUD3DXMATRIX@@I@Z
+0x004ecf1c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x004ecf29	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXVec3TransformCoord@12
+0x004ecf2f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x004ecf40	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXVec3TransformCoordArray@24
+0x004ecf46	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x004ecf53	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXVec3TransformNormal@12
+0x004ecfbf	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3TransformNormalArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x004ed04e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+0x004ed1c6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+0x004ed297	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+0x004ed2c1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+0x004ed3b4	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z
+0x004ed3e3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z
+0x004ed506	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXVec4TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x004ed6ad	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+0x004ed6ba	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXMatrixMultiply@12
+0x004ed8f6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@@Z
+0x004ed903	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXMatrixTranspose@8
+0x004ed976	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+0x004ed983	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXMatrixMultiplyTranspose@12
+0x004edbbf	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixInverse@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z
+0x004edbcc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXMatrixInverse@12
+0x004edf71	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixScaling@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+0x004edffb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixTranslation@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+0x004ee085	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixRotationX@@YGPAUD3DXMATRIX@@PAU1@M@Z
+0x004ee0a1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXMatrixRotationX@@YGPAUD3DXMATRIX@@PAU1@M@Z
+0x004ee11b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixRotationY@@YGPAUD3DXMATRIX@@PAU1@M@Z
+0x004ee137	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXMatrixRotationY@@YGPAUD3DXMATRIX@@PAU1@M@Z
+0x004ee1b2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixRotationZ@@YGPAUD3DXMATRIX@@PAU1@M@Z
+0x004ee1ce	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXMatrixRotationZ@@YGPAUD3DXMATRIX@@PAU1@M@Z
+0x004ee24a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z
+0x004ee26a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z
+0x004ee36c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixRotationQuaternion@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXQUATERNION@@@Z
+0x004ee379	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXMatrixRotationQuaternion@8
+0x004ee461	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+0x004ee48f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixTransformation@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z
+0x004ee4a0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXMatrixAffineTransformation@@YGPAUD3DXMATRIX@@PAU1@MPBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1@Z
+0x004ee4c7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXMatrixAffineTransformation@@YGPAUD3DXMATRIX@@PAU1@MPBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1@Z
+0x004ee74a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z
+0x004ee76a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z
+0x004ee7c6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z
+0x004ee7f4	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXQuaternionRotationYawPitchRoll@16
+0x004ee8d3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z
+0x004ee8e0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXQuaternionMultiply@12
+0x004ee989	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+0x004ee996	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXQuaternionInverse@8
+0x004eea4d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+0x004eea5a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXQuaternionLn@8
+0x004eeadb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionExp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+0x004eeae8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXQuaternionExp@8
+0x004eeb86	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z
+0x004eebaa	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXQuaternionSlerp@16
+0x004eec93	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z
+0x004eecbd	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z
+0x004eed14	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z
+0x004eed54	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNION@@PAU1@PBU1@11MM@Z
+0x004eeddc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z
+0x004eede9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _D3DXPlaneNormalize@8
+0x004ef0df	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXPlaneTransformArray@@YGPAUD3DXPLANE@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x004ef1af	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?init_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z
+0x004ef25b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z
+0x004ef2c6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z
+0x004ef349	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec2TransformCoord@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x004ef3c6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x004ef45e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x004ef49a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x004ef4ee	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+0x004ef58b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x004ef647	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x004ef726	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+0x004ef8b3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec3ProjectArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33I@Z
+0x004efab3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXVec3Unproject@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+0x004efc59	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004efe8a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004eff40	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?c_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+0x004eff79	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fb9aa	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?CalculateEdgeControlPoint@@YGXPAUD3DXVECTOR3@@00M0@Z
+0x004fbd78	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?GetD3DRegValue@@YGHKPADPAXK@Z
+0x004fbdd5	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?IsIntelSSEProcessor@@YGKXZ
+0x004fbe0f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fbe1b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004fbe7a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fbf76	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fc015	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fc0b1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fc21f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fc383	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?get_feature_flags@@YGIXZ
+0x004fc467	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fc916	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x86_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+0x004fc9e0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x86_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+0x004fcac3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x86_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+0x004fcb51	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x86_D3DXInitFastTable@@YGXPAUD3DXFASTTABLE@@@Z
+0x004fcb96	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fcbe6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CPPConditional@D3DXShader@@QAE@HH@Z
+0x004fcc00	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004fcc34	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CPPInclude@D3DXShader@@QAE@XZ
+0x004fcc67	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CPPInclude@D3DXShader@@QAE@XZ
+0x004fccd8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fce7f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?InitializeFromMemory@CPPInclude@D3DXShader@@QAEJPBXIPAVCAlloc@D3DXCore@@PAVCTErrors@2@@Z
+0x004fceb8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004fceec	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fcf91	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd031	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd075	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd09a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd0d3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004fd405	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd4b1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd4da	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd6a2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004fd778	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd7d0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd843	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd8a5	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fd8f5	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fda12	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fdda7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fddbc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fde39	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fdeaa	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Escape@CPreProcessor@D3DXShader@@IAEIPBDIPAD@Z
+0x004fdf0f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fdf42	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fe1b0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fe21e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fe298	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fe2fe	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004fe9cf	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004febf6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ff041	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?d3dxtok_parse@D3DXShader@@YGHXZ
+0x004ff554	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ff5b6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ff8b9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ff913	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CLockVolume@D3DXTex@@QAE@XZ
+0x004ff919	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ff936	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ff958	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CTErrors@D3DXShader@@QAE@XZ
+0x004ff978	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CTErrors@D3DXShader@@QAE@XZ
+0x004ff9a7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Push@CTErrors@D3DXShader@@IAEJIPAI@Z
+0x004ffae8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?PreformattedError@CTErrors@D3DXShader@@QAEJPBD@Z
+0x004ffb3e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?GetErrorBuffer@CTErrors@D3DXShader@@QAEJPAPAUID3DXBuffer@@@Z
+0x004ffba7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004ffbab	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CTokenize@D3DXShader@@QAE@XZ
+0x004ffbc5	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Initialize@CTokenize@D3DXShader@@QAEJPBXIPBDIPAVCAlloc@D3DXCore@@PAVCTErrors@2@@Z
+0x004ffc2d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?SkipToEOL@CTokenize@D3DXShader@@QAEHXZ
+0x004ffc86	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ffe02	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004ffe81	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexOperator@CTokenize@D3DXShader@@IAEIPBDPAD@Z
+0x004fff8d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexFloatSuffix@CTokenize@D3DXShader@@IAEIPBDPAUD3DXTOKEN@2@@Z
+0x004fffd3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexIntegerSuffix@CTokenize@D3DXShader@@IAEIPBDPAUD3DXTOKEN@2@@Z
+0x0050005a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?SetWarningSpecifier@CTErrors@D3DXShader@@QAEJII@Z
+0x005000c2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Error@CTErrors@D3DXShader@@QAAJPAUD3DXTOKEN@2@IPBDZZ
+0x0050018b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Warning@CTErrors@D3DXShader@@QAAJPAUD3DXTOKEN@2@IPBDZZ
+0x005002ec	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?SyntaxError@CTErrors@D3DXShader@@QAEJIPAUD3DXTOKEN@2@@Z
+0x0050042f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0050055f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexHex@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+0x00500604	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexOctal@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+0x00500680	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexDecimal@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+0x00500721	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005008b7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexVersion@CTokenize@D3DXShader@@IAEIPBDPAK@Z
+0x005009ba	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?LexChar@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+0x005009f9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00500adc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00500c48	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?GetUsageAndIndex@D3DXShader@@YGJPBDPAE1@Z
+0x00500ee3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?RegisterHash@D3DXShader@@YGIPBD@Z
+0x00500f1f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?GetElement@CFragmentRegisterAllocator@D3DXShader@@QAEPAVCRegisterEntryNode@2@PBD@Z
+0x00500f51	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?GetElements@CFragmentRegisterAllocator@D3DXShader@@QAEXPAPAVCRegisterEntryNode@2@@Z
+0x00500f76	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CAssembler@D3DXShader@@QAE@XZ
+0x00500f92	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Error@CAssembler@D3DXShader@@IAAXPBDZZ
+0x00501050	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?ValidationError@CAssembler@D3DXShader@@KGJPBDIKI0PAX@Z
+0x005010bc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?NonNull@CAssembler@D3DXShader@@IAEPAVCNode@2@PAV32@@Z
+0x005010f1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?DecodeOpcode@CAssembler@D3DXShader@@IAEHPAUD3DXTOKEN@2@@Z
+0x00501a85	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?DecodeMask@CAssembler@D3DXShader@@IAEKPAUD3DXTOKEN@2@@Z
+0x00501b38	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?DecodeSwizzle@CAssembler@D3DXShader@@IAEKPAUD3DXTOKEN@2@@Z
+0x00501bf2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Validate@CAssembler@D3DXShader@@IAEJPAUD3DXTOKEN@2@@Z
+0x00501c42	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Assure@CAssembler@D3DXShader@@IAEJI@Z
+0x00501cc0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Emit@CAssembler@D3DXShader@@IAEJK@Z
+0x00501ce4	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0050250a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0050272a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00502a2b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CFragmentRegisterAllocator@D3DXShader@@QAE@XZ
+0x00502a48	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?GetShaderCode@CAssembler@D3DXShader@@IAEJPAPAUID3DXBuffer@@@Z
+0x00502a9f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?AddElement@CFragmentRegisterAllocator@D3DXShader@@QAEJPBDII@Z
+0x00502b34	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00502b60	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00502b7b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00502dc2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Token@CAssembler@D3DXShader@@IAEHXZ
+0x00502e9e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0050339f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CRegisterEntryNode@D3DXShader@@QAE@XZ
+0x005033ba	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005033f4	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00503a3a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?d3dxasm_parse@D3DXShader@@YGHXZ
+0x00504008	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00504479	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CBuffer@D3DXCore@@UAE@XZ
+0x0050450d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00504554	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CBuffer@D3DXCore@@QAE@XZ
+0x0050456c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Create@CBuffer@D3DXCore@@SGJKPAPAV12@@Z
+0x005045ca	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z
+0x00504643	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXQuaternionNormalize@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+0x005046dd	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0050475b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0050481d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00504947	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0KMATRIX@@QAE@ABUD3DXMATRIX@@@Z
+0x00504ac1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00504cc7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00504e55	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x00504fbb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x005050cb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00505309	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005054d9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0050570a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00505c62	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?SSEFloat16Conversion8@@YGXXZ
+0x00505d8c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXFloat16To32Array@@YGPAMPAMPBUD3DXFLOAT16@@I@Z
+0x00505f2c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0050612c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00506428	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x005064e8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec4Normalize@@YGPAUD3DXVECTOR4@@PAU1@PBU1@@Z
+0x00506582	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z
+0x00506634	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+0x005066b9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+0x0050675e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z
+0x00506811	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+0x005068ab	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+0x00506a29	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_D3DXPlaneIntersectLine@@YGPAUD3DXVECTOR3@@PAU1@PBUD3DXPLANE@@PBU1@2@Z
+0x00506ad7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00506bd7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00506ce3	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00506db8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00506ea8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0050706f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00507275	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00507403	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse2_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x00507569	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse2_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+0x00507679	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005078b7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00507a87	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00507cb8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?SSEFloat16Conversion8@@YGXXZ
+0x00507da9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse2_D3DXFloat16To32Array@@YGPAMPAMPBUD3DXFLOAT16@@I@Z
+0x00507e7b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00507f3b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00508046	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00508146	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00508252	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00508326	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00508429	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0050853e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00508772	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00508939	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x005089fb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00508b40	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ProcPrologue
+0x00508c00	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ProcPrologue
+0x00509340	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ProcPrologue
+0x00509a72	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXQuaternionToAxisAngle@@YGXPBUD3DXQUATERNION@@PAUD3DXVECTOR3@@PAM@Z
+0x00509fac	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z
+0x0050a018	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z
+0x0050a14f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNION@@PAU1@PBU1@11MM@Z
+0x0050a1dc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z
+0x0050a2d2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+0x0050a41e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z
+0x0050b53f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixIdentity@@YGPAUD3DXMATRIX@@PAU1@@Z
+0x0050b6ff	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixTransformation@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z
+0x0050c897	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+0x0050cf70	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z
+0x0050d089	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixTransformation_K7@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z
+0x0050e1dd	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixInverse_K7@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z
+0x0050e8b7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixInverse_inline@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z
+0x0050ec78	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _x3d_D3DXVec3TransformNormal@12
+0x0050ecdf	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+0x0050ef6d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXVec3TransformCoord_inline@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+0x0050eff8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXMatrixMultiply_inline@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+0x0050f1bf	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _x3d_D3DXVec3TransformCoord@12
+0x0050f1c4	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+0x0050f34c	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXVec3Unproject@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+0x0050f572	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0050f700	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ProcPrologue
+0x0050f9bb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _x3d_D3DXVec2Transform@12
+0x0050fa10	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _x3d_D3DXVec2TransformNormal@12
+0x0050fa49	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _x3d_D3DXVec2TransformCoord@12
+0x0051028b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?x3d_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z
+0x0051036d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0051037a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CResource@D3DXCore@@QAE@XZ
+0x00510388	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CFile@D3DXCore@@QAE@XZ
+0x0051039a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Open@CFile@D3DXCore@@QAEJPBXH@Z
+0x005104bb	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Close@CFile@D3DXCore@@QAEJXZ
+0x005104fc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CFile@D3DXCore@@QAE@XZ
+0x00510507	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CNode@D3DXShader@@QAE@W4_D3DXNODE_TYPE@1@@Z
+0x00510521	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0051054e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?IsEqual@CNode@D3DXShader@@UAEHPAV12@@Z
+0x00510583	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005105a2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005105b6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Append@CNode@D3DXShader@@SGPAV12@PAV12@0@Z
+0x005105dd	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CNodeList@D3DXShader@@QAE@XZ
+0x005105f8	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CNodeList@D3DXShader@@QAE@PAVCNode@1@0PBD@Z
+0x0051061f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?IsEqual@CNodeList@D3DXShader@@UAEHPAVCNode@2@@Z
+0x00510677	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005106f9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?TokenEqual@D3DXShader@@YGHPBUD3DXTOKEN@1@0@Z
+0x005107c7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005107df	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0051085a	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0051085b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00510886	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005108c2	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0051094d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00510986	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00510b70	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00510ba9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00510be1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00510c27	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00510c62	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?IsEqual@CNodeValue@D3DXShader@@UAEHPAVCNode@2@@Z
+0x00510d43	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00510d65	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00510d87	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00510da9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00510dc5	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00510de1	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??0CCommentBlock@D3DXShader@@QAE@K@Z
+0x00510df9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ??1CCommentBlock@D3DXShader@@QAE@XZ
+0x00510e2f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?Add@CCommentBlock@D3DXShader@@QAEJPBXIKPAK@Z
+0x00510f66	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?SizeInDwords@CCommentBlock@D3DXShader@@QAEIXZ
+0x00510f72	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?WriteComment@CCommentBlock@D3DXShader@@QAEJPAKI@Z
+0x0051105d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511112	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0051120b	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005112c9	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005115aa	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005115e6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511636	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0051167d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511741	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511774	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005117ba	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511841	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0051185d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x00511879	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005118cd	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511918	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0051196e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x005119dc	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511a4e	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511ad7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511b85	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511c4d	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511e02	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00511f0f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00512024	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00512352	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0051251f	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00512cbe	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse_SinCos4@@YGXQBMQAM1@Z
+0x00512ea7	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical ?sse2_SinCos4@@YGXQBMQAM1@Z
+0x005130c0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _a_atan2
+0x005131c0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _a_acos
+0x005137a0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _a_sincos
+0x005138a0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical _a_sin
+0x00513c58	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00513cb6	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00513f90	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00514330	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00514780	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00514920	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00514bd0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00514d00	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00514e60	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00514ec0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x005151c0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00515260	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00515370	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00515770	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x005159d0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00515ae0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00515e50	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00515f30	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00515fd0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x005161d0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x005163a0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00516460	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00516570	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00516650	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00516830	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x00516870	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00516920	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x00516a70	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x005b8200	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x005b8680	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004fb5a0	libid	verify/c4rdxlib_20261107/d3dx_sum2003.tsv	PASS	identical-unlisted ?c_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z
+0x0049c5d0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049c620	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049c690	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049c6a0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ??1CCritSec@@QAE@XZ
+0x0049c6b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ??0CAutoLock@@QAE@PAVCCritSec@@@Z
+0x0049c6d0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049c6e0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049c750	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?EndFlush@CBaseRenderer@@UAEJXZ
+0x0049c770	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?Inactive@CBaseRenderer@@UAEJXZ
+0x0049c800	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049c810	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049c840	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049c900	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049c930	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049c990	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ca00	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ca60	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049cb00	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049cb20	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049cbd0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049cc40	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?SetRepaintStatus@CBaseRenderer@@QAEXH@Z
+0x0049cc80	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ccd0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049cd70	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ce10	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ceb0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?BreakConnect@CRendererInputPin@@UAEJXZ
+0x0049cf00	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049cfb0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049d080	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049d0a0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049d1d0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049d200	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049d240	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049d270	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049d920	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049d960	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049d9a0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049da20	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049da90	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049db00	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049dcb0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049dd60	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049de60	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049de70	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049de80	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049de90	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049df70	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049e140	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049e190	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049e4b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049e580	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049e5c0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049e600	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049e640	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049e6c0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049ea70	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?ResetEndOfStream@CBaseRenderer@@UAEJXZ
+0x0049eab0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ead0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049ebc0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ??1CBaseVideoRenderer@@UAE@XZ
+0x0049ebf0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ec10	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ec80	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049eca0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ecc0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049eeb0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049ef10	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ef60	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f030	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f090	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049f0a0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049f180	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f1b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f1e0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f210	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ??1CEnumMediaTypes@@UAE@XZ
+0x0049f2b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f2e0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f300	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049f420	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f4d0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f5b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049f690	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049f830	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049f950	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049fa40	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049fac0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049fc80	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049fcc0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049fe10	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049ff30	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x0049ff60	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x0049ffe0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a01b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a0220	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a02d0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a0380	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a0550	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a0570	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a0680	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a06c0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a0ab0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a0c10	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a0d10	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a0e90	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a0ef0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a0fe0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a1000	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1030	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?LoadOLEAut32@@YGPAUHINSTANCE__@@XZ
+0x004a1050	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1080	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a10b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1100	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1160	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1180	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ??1CAMEvent@@QAE@XZ
+0x004a1190	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a11c0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a1200	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a1240	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a1260	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1570	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1780	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a1790	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a17a0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a17c0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a1a60	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a1ac0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a1dc0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a21a0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2250	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a2310	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?ResetMediaTime@CRendererPosPassThru@@QAEJXZ
+0x004a2340	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a23e0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a2440	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a2460	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a2500	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2530	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a25f0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2620	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2680	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a26b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a26e0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a26f0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2710	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a2730	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2770	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2790	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a27b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a27f0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2860	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a28b0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2920	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2940	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status not-compared (needs identical, one candidate)
+0x004a2980	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2a30	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2aa0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2ae0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ??1CMediaType@@QAE@XZ
+0x004a2af0	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2b00	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status differs (needs identical, one candidate)
+0x004a2b30	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	PASS	identical ?DeleteMediaType@@YGXPAU_AMMediaType@@@Z
+0x004a2b50	libid	verify/c4rdxlib_20261107/dshow_strmbase.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)

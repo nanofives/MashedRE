@@ -1,0 +1,559 @@
+[1/557] 0x004ec760 libid PASS identical ?WithinEpsilon@@YGHMM@Z
+[2/557] 0x004ec79d libid PASS identical ?c_D3DXFloat32To16Array@@YGPAUD3DXFLOAT16@@PAU1@PBMI@Z
+[3/557] 0x004ec8eb libid PASS identical ?init_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+[4/557] 0x004ec9a3 libid PASS identical ?init_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+[5/557] 0x004eca7c libid PASS identical ?init_D3DXVec2BaryCentric@@YGPAUD3DXVECTOR2@@PAU1@PBU1@11MM@Z
+[6/557] 0x004ecaee libid PASS identical ?init_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z
+[7/557] 0x004ecafb libid PASS identical _D3DXVec2Transform@12
+[8/557] 0x004ecb12 libid PASS identical ?init_D3DXVec2TransformCoord@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[9/557] 0x004ecb1f libid PASS identical _D3DXVec2TransformCoord@12
+[10/557] 0x004ecb36 libid PASS identical ?init_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[11/557] 0x004ecb43 libid PASS identical _D3DXVec2TransformNormal@12
+[12/557] 0x004ecb5a libid PASS identical ?init_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+[13/557] 0x004ecc45 libid PASS identical ?init_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z
+[14/557] 0x004ecd40 libid PASS identical ?init_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z
+[15/557] 0x004ecd6f libid PASS identical ?c_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z
+[16/557] 0x004ece64 libid PASS identical ?init_D3DXVec3TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR3@@IPBUD3DXMATRIX@@I@Z
+[17/557] 0x004ecf1c libid PASS identical ?init_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[18/557] 0x004ecf29 libid PASS identical _D3DXVec3TransformCoord@12
+[19/557] 0x004ecf2f libid PASS identical ?init_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[20/557] 0x004ecf40 libid PASS identical _D3DXVec3TransformCoordArray@24
+[21/557] 0x004ecf46 libid PASS identical ?init_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[22/557] 0x004ecf53 libid PASS identical _D3DXVec3TransformNormal@12
+[23/557] 0x004ecfbf libid PASS identical ?init_D3DXVec3TransformNormalArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[24/557] 0x004ed04e libid PASS identical ?init_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+[25/557] 0x004ed1c6 libid PASS identical ?c_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+[26/557] 0x004ed297 libid PASS identical ?init_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+[27/557] 0x004ed2c1 libid PASS identical ?c_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+[28/557] 0x004ed3b4 libid PASS identical ?init_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z
+[29/557] 0x004ed3e3 libid PASS identical ?c_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z
+[30/557] 0x004ed506 libid PASS identical ?init_D3DXVec4TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[31/557] 0x004ed6ad libid PASS identical ?init_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+[32/557] 0x004ed6ba libid PASS identical _D3DXMatrixMultiply@12
+[33/557] 0x004ed8f6 libid PASS identical ?init_D3DXMatrixTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@@Z
+[34/557] 0x004ed903 libid PASS identical _D3DXMatrixTranspose@8
+[35/557] 0x004ed976 libid PASS identical ?init_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+[36/557] 0x004ed983 libid PASS identical _D3DXMatrixMultiplyTranspose@12
+[37/557] 0x004edbbf libid PASS identical ?init_D3DXMatrixInverse@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z
+[38/557] 0x004edbcc libid PASS identical _D3DXMatrixInverse@12
+[39/557] 0x004edf71 libid PASS identical ?init_D3DXMatrixScaling@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+[40/557] 0x004edffb libid PASS identical ?init_D3DXMatrixTranslation@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+[41/557] 0x004ee085 libid PASS identical ?init_D3DXMatrixRotationX@@YGPAUD3DXMATRIX@@PAU1@M@Z
+[42/557] 0x004ee0a1 libid PASS identical ?c_D3DXMatrixRotationX@@YGPAUD3DXMATRIX@@PAU1@M@Z
+[43/557] 0x004ee11b libid PASS identical ?init_D3DXMatrixRotationY@@YGPAUD3DXMATRIX@@PAU1@M@Z
+[44/557] 0x004ee137 libid PASS identical ?c_D3DXMatrixRotationY@@YGPAUD3DXMATRIX@@PAU1@M@Z
+[45/557] 0x004ee1b2 libid PASS identical ?init_D3DXMatrixRotationZ@@YGPAUD3DXMATRIX@@PAU1@M@Z
+[46/557] 0x004ee1ce libid PASS identical ?c_D3DXMatrixRotationZ@@YGPAUD3DXMATRIX@@PAU1@M@Z
+[47/557] 0x004ee24a libid PASS identical ?init_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z
+[48/557] 0x004ee26a libid PASS identical ?c_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z
+[49/557] 0x004ee36c libid PASS identical ?init_D3DXMatrixRotationQuaternion@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXQUATERNION@@@Z
+[50/557] 0x004ee379 libid PASS identical _D3DXMatrixRotationQuaternion@8
+[51/557] 0x004ee461 libid PASS identical ?init_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+[52/557] 0x004ee48f libid PASS identical ?init_D3DXMatrixTransformation@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z
+[53/557] 0x004ee4a0 libid PASS identical ?init_D3DXMatrixAffineTransformation@@YGPAUD3DXMATRIX@@PAU1@MPBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1@Z
+[54/557] 0x004ee4c7 libid PASS identical ?c_D3DXMatrixAffineTransformation@@YGPAUD3DXMATRIX@@PAU1@MPBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1@Z
+[55/557] 0x004ee74a libid PASS identical ?init_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z
+[56/557] 0x004ee76a libid PASS identical ?c_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z
+[57/557] 0x004ee7c6 libid PASS identical ?init_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z
+[58/557] 0x004ee7f4 libid PASS identical _D3DXQuaternionRotationYawPitchRoll@16
+[59/557] 0x004ee8d3 libid PASS identical ?init_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z
+[60/557] 0x004ee8e0 libid PASS identical _D3DXQuaternionMultiply@12
+[61/557] 0x004ee989 libid PASS identical ?init_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[62/557] 0x004ee996 libid PASS identical _D3DXQuaternionInverse@8
+[63/557] 0x004eea4d libid PASS identical ?init_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[64/557] 0x004eea5a libid PASS identical _D3DXQuaternionLn@8
+[65/557] 0x004eeadb libid PASS identical ?init_D3DXQuaternionExp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[66/557] 0x004eeae8 libid PASS identical _D3DXQuaternionExp@8
+[67/557] 0x004eeb86 libid PASS identical ?init_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z
+[68/557] 0x004eebaa libid PASS identical _D3DXQuaternionSlerp@16
+[69/557] 0x004eec93 libid PASS identical ?init_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z
+[70/557] 0x004eecbd libid PASS identical ?c_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z
+[71/557] 0x004eed14 libid PASS identical ?init_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z
+[72/557] 0x004eed54 libid PASS identical ?c_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNION@@PAU1@PBU1@11MM@Z
+[73/557] 0x004eeddc libid PASS identical ?init_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z
+[74/557] 0x004eede9 libid PASS identical _D3DXPlaneNormalize@8
+[75/557] 0x004ef0df libid PASS identical ?init_D3DXPlaneTransformArray@@YGPAUD3DXPLANE@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[76/557] 0x004ef1af libid PASS identical ?init_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z
+[77/557] 0x004ef25b libid PASS identical ?c_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z
+[78/557] 0x004ef2c6 libid PASS identical ?c_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z
+[79/557] 0x004ef349 libid PASS identical ?c_D3DXVec2TransformCoord@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[80/557] 0x004ef3c6 libid PASS identical ?c_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[81/557] 0x004ef45e libid PASS identical ?c_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[82/557] 0x004ef49a libid PASS identical ?c_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[83/557] 0x004ef4ee libid PASS identical ?c_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+[84/557] 0x004ef58b libid PASS identical ?c_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[85/557] 0x004ef647 libid PASS identical ?c_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[86/557] 0x004ef726 libid PASS identical ?c_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+[87/557] 0x004ef8b3 libid PASS identical ?c_D3DXVec3ProjectArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33I@Z
+[88/557] 0x004efab3 libid PASS identical ?c_D3DXVec3Unproject@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+[89/557] 0x004efc59 libid REFUSED libmatch status differs (needs identical, one candidate)
+[90/557] 0x004efe8a libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[91/557] 0x004eff40 libid PASS identical ?c_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+[92/557] 0x004eff79 libid REFUSED libmatch status differs (needs identical, one candidate)
+[93/557] 0x004fb9aa libid PASS identical ?CalculateEdgeControlPoint@@YGXPAUD3DXVECTOR3@@00M0@Z
+[94/557] 0x004fbd78 libid PASS identical ?GetD3DRegValue@@YGHKPADPAXK@Z
+[95/557] 0x004fbdd5 libid PASS identical ?IsIntelSSEProcessor@@YGKXZ
+[96/557] 0x004fbe0f libid REFUSED libmatch status differs (needs identical, one candidate)
+[97/557] 0x004fbe1b libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[98/557] 0x004fbe7a libid REFUSED libmatch status differs (needs identical, one candidate)
+[99/557] 0x004fbf76 libid REFUSED libmatch status differs (needs identical, one candidate)
+[100/557] 0x004fc015 libid REFUSED libmatch status differs (needs identical, one candidate)
+[101/557] 0x004fc0b1 libid REFUSED libmatch status differs (needs identical, one candidate)
+[102/557] 0x004fc21f libid REFUSED libmatch status differs (needs identical, one candidate)
+[103/557] 0x004fc383 libid PASS identical ?get_feature_flags@@YGIXZ
+[104/557] 0x004fc467 libid REFUSED libmatch status differs (needs identical, one candidate)
+[105/557] 0x004fc916 libid PASS identical ?x86_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+[106/557] 0x004fc9e0 libid PASS identical ?x86_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+[107/557] 0x004fcac3 libid PASS identical ?x86_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+[108/557] 0x004fcb51 libid PASS identical ?x86_D3DXInitFastTable@@YGXPAUD3DXFASTTABLE@@@Z
+[109/557] 0x004fcb96 libid REFUSED libmatch status differs (needs identical, one candidate)
+[110/557] 0x004fcbe6 libid PASS identical ??0CPPConditional@D3DXShader@@QAE@HH@Z
+[111/557] 0x004fcc00 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[112/557] 0x004fcc34 libid PASS identical ??0CPPInclude@D3DXShader@@QAE@XZ
+[113/557] 0x004fcc67 libid PASS identical ??1CPPInclude@D3DXShader@@QAE@XZ
+[114/557] 0x004fccd8 libid REFUSED libmatch status differs (needs identical, one candidate)
+[115/557] 0x004fce7f libid PASS identical ?InitializeFromMemory@CPPInclude@D3DXShader@@QAEJPBXIPAVCAlloc@D3DXCore@@PAVCTErrors@2@@Z
+[116/557] 0x004fceb8 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[117/557] 0x004fceec libid REFUSED libmatch status differs (needs identical, one candidate)
+[118/557] 0x004fcf91 libid REFUSED libmatch status differs (needs identical, one candidate)
+[119/557] 0x004fd031 libid REFUSED libmatch status differs (needs identical, one candidate)
+[120/557] 0x004fd075 libid REFUSED libmatch status differs (needs identical, one candidate)
+[121/557] 0x004fd09a libid REFUSED libmatch status differs (needs identical, one candidate)
+[122/557] 0x004fd0d3 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[123/557] 0x004fd405 libid REFUSED libmatch status differs (needs identical, one candidate)
+[124/557] 0x004fd4b1 libid REFUSED libmatch status differs (needs identical, one candidate)
+[125/557] 0x004fd4da libid REFUSED libmatch status differs (needs identical, one candidate)
+[126/557] 0x004fd6a2 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[127/557] 0x004fd778 libid REFUSED libmatch status differs (needs identical, one candidate)
+[128/557] 0x004fd7d0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[129/557] 0x004fd843 libid REFUSED libmatch status differs (needs identical, one candidate)
+[130/557] 0x004fd8a5 libid REFUSED libmatch status differs (needs identical, one candidate)
+[131/557] 0x004fd8f5 libid REFUSED libmatch status differs (needs identical, one candidate)
+[132/557] 0x004fda12 libid REFUSED libmatch status differs (needs identical, one candidate)
+[133/557] 0x004fdda7 libid REFUSED libmatch status differs (needs identical, one candidate)
+[134/557] 0x004fddbc libid REFUSED libmatch status differs (needs identical, one candidate)
+[135/557] 0x004fde39 libid REFUSED libmatch status differs (needs identical, one candidate)
+[136/557] 0x004fdeaa libid PASS identical ?Escape@CPreProcessor@D3DXShader@@IAEIPBDIPAD@Z
+[137/557] 0x004fdf0f libid REFUSED libmatch status differs (needs identical, one candidate)
+[138/557] 0x004fdf42 libid REFUSED libmatch status differs (needs identical, one candidate)
+[139/557] 0x004fe1b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[140/557] 0x004fe21e libid REFUSED libmatch status differs (needs identical, one candidate)
+[141/557] 0x004fe298 libid REFUSED libmatch status differs (needs identical, one candidate)
+[142/557] 0x004fe2fe libid REFUSED libmatch status differs (needs identical, one candidate)
+[143/557] 0x004fe9cf libid REFUSED libmatch status differs (needs identical, one candidate)
+[144/557] 0x004febf6 libid REFUSED libmatch status differs (needs identical, one candidate)
+[145/557] 0x004ff041 libid PASS identical ?d3dxtok_parse@D3DXShader@@YGHXZ
+[146/557] 0x004ff554 libid REFUSED libmatch status differs (needs identical, one candidate)
+[147/557] 0x004ff5b6 libid REFUSED libmatch status differs (needs identical, one candidate)
+[148/557] 0x004ff8b9 libid REFUSED libmatch status differs (needs identical, one candidate)
+[149/557] 0x004ff913 libid PASS identical ??0CLockVolume@D3DXTex@@QAE@XZ
+[150/557] 0x004ff919 libid REFUSED libmatch status differs (needs identical, one candidate)
+[151/557] 0x004ff936 libid REFUSED libmatch status differs (needs identical, one candidate)
+[152/557] 0x004ff958 libid PASS identical ??0CTErrors@D3DXShader@@QAE@XZ
+[153/557] 0x004ff978 libid PASS identical ??1CTErrors@D3DXShader@@QAE@XZ
+[154/557] 0x004ff9a7 libid PASS identical ?Push@CTErrors@D3DXShader@@IAEJIPAI@Z
+[155/557] 0x004ffae8 libid PASS identical ?PreformattedError@CTErrors@D3DXShader@@QAEJPBD@Z
+[156/557] 0x004ffb3e libid PASS identical ?GetErrorBuffer@CTErrors@D3DXShader@@QAEJPAPAUID3DXBuffer@@@Z
+[157/557] 0x004ffba7 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[158/557] 0x004ffbab libid PASS identical ??0CTokenize@D3DXShader@@QAE@XZ
+[159/557] 0x004ffbc5 libid PASS identical ?Initialize@CTokenize@D3DXShader@@QAEJPBXIPBDIPAVCAlloc@D3DXCore@@PAVCTErrors@2@@Z
+[160/557] 0x004ffc2d libid PASS identical ?SkipToEOL@CTokenize@D3DXShader@@QAEHXZ
+[161/557] 0x004ffc86 libid REFUSED libmatch status differs (needs identical, one candidate)
+[162/557] 0x004ffe02 libid REFUSED libmatch status differs (needs identical, one candidate)
+[163/557] 0x004ffe81 libid PASS identical ?LexOperator@CTokenize@D3DXShader@@IAEIPBDPAD@Z
+[164/557] 0x004fff8d libid PASS identical ?LexFloatSuffix@CTokenize@D3DXShader@@IAEIPBDPAUD3DXTOKEN@2@@Z
+[165/557] 0x004fffd3 libid PASS identical ?LexIntegerSuffix@CTokenize@D3DXShader@@IAEIPBDPAUD3DXTOKEN@2@@Z
+[166/557] 0x0050005a libid PASS identical ?SetWarningSpecifier@CTErrors@D3DXShader@@QAEJII@Z
+[167/557] 0x005000c2 libid PASS identical ?Error@CTErrors@D3DXShader@@QAAJPAUD3DXTOKEN@2@IPBDZZ
+[168/557] 0x0050018b libid PASS identical ?Warning@CTErrors@D3DXShader@@QAAJPAUD3DXTOKEN@2@IPBDZZ
+[169/557] 0x005002ec libid PASS identical ?SyntaxError@CTErrors@D3DXShader@@QAEJIPAUD3DXTOKEN@2@@Z
+[170/557] 0x0050042f libid REFUSED libmatch status differs (needs identical, one candidate)
+[171/557] 0x0050055f libid PASS identical ?LexHex@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+[172/557] 0x00500604 libid PASS identical ?LexOctal@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+[173/557] 0x00500680 libid PASS identical ?LexDecimal@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+[174/557] 0x00500721 libid REFUSED libmatch status differs (needs identical, one candidate)
+[175/557] 0x005008b7 libid PASS identical ?LexVersion@CTokenize@D3DXShader@@IAEIPBDPAK@Z
+[176/557] 0x005009ba libid PASS identical ?LexChar@CTokenize@D3DXShader@@IAEIPBDPAI@Z
+[177/557] 0x005009f9 libid REFUSED libmatch status differs (needs identical, one candidate)
+[178/557] 0x00500adc libid REFUSED libmatch status differs (needs identical, one candidate)
+[179/557] 0x00500c48 libid PASS identical ?GetUsageAndIndex@D3DXShader@@YGJPBDPAE1@Z
+[180/557] 0x00500ee3 libid PASS identical ?RegisterHash@D3DXShader@@YGIPBD@Z
+[181/557] 0x00500f1f libid PASS identical ?GetElement@CFragmentRegisterAllocator@D3DXShader@@QAEPAVCRegisterEntryNode@2@PBD@Z
+[182/557] 0x00500f51 libid PASS identical ?GetElements@CFragmentRegisterAllocator@D3DXShader@@QAEXPAPAVCRegisterEntryNode@2@@Z
+[183/557] 0x00500f76 libid PASS identical ??0CAssembler@D3DXShader@@QAE@XZ
+[184/557] 0x00500f92 libid PASS identical ?Error@CAssembler@D3DXShader@@IAAXPBDZZ
+[185/557] 0x00501050 libid PASS identical ?ValidationError@CAssembler@D3DXShader@@KGJPBDIKI0PAX@Z
+[186/557] 0x005010bc libid PASS identical ?NonNull@CAssembler@D3DXShader@@IAEPAVCNode@2@PAV32@@Z
+[187/557] 0x005010f1 libid PASS identical ?DecodeOpcode@CAssembler@D3DXShader@@IAEHPAUD3DXTOKEN@2@@Z
+[188/557] 0x00501a85 libid PASS identical ?DecodeMask@CAssembler@D3DXShader@@IAEKPAUD3DXTOKEN@2@@Z
+[189/557] 0x00501b38 libid PASS identical ?DecodeSwizzle@CAssembler@D3DXShader@@IAEKPAUD3DXTOKEN@2@@Z
+[190/557] 0x00501bf2 libid PASS identical ?Validate@CAssembler@D3DXShader@@IAEJPAUD3DXTOKEN@2@@Z
+[191/557] 0x00501c42 libid PASS identical ?Assure@CAssembler@D3DXShader@@IAEJI@Z
+[192/557] 0x00501cc0 libid PASS identical ?Emit@CAssembler@D3DXShader@@IAEJK@Z
+[193/557] 0x00501ce4 libid REFUSED libmatch status differs (needs identical, one candidate)
+[194/557] 0x0050250a libid REFUSED libmatch status differs (needs identical, one candidate)
+[195/557] 0x0050272a libid REFUSED libmatch status differs (needs identical, one candidate)
+[196/557] 0x00502a2b libid PASS identical ??1CFragmentRegisterAllocator@D3DXShader@@QAE@XZ
+[197/557] 0x00502a48 libid PASS identical ?GetShaderCode@CAssembler@D3DXShader@@IAEJPAPAUID3DXBuffer@@@Z
+[198/557] 0x00502a9f libid PASS identical ?AddElement@CFragmentRegisterAllocator@D3DXShader@@QAEJPBDII@Z
+[199/557] 0x00502b34 libid REFUSED libmatch status differs (needs identical, one candidate)
+[200/557] 0x00502b60 libid REFUSED libmatch status differs (needs identical, one candidate)
+[201/557] 0x00502b7b libid REFUSED libmatch status differs (needs identical, one candidate)
+[202/557] 0x00502dc2 libid PASS identical ?Token@CAssembler@D3DXShader@@IAEHXZ
+[203/557] 0x00502e9e libid REFUSED libmatch status differs (needs identical, one candidate)
+[204/557] 0x0050339f libid PASS identical ??1CRegisterEntryNode@D3DXShader@@QAE@XZ
+[205/557] 0x005033ba libid REFUSED libmatch status differs (needs identical, one candidate)
+[206/557] 0x005033f4 libid REFUSED libmatch status differs (needs identical, one candidate)
+[207/557] 0x00503a3a libid PASS identical ?d3dxasm_parse@D3DXShader@@YGHXZ
+[208/557] 0x00504008 libid REFUSED libmatch status differs (needs identical, one candidate)
+[209/557] 0x00504479 libid PASS identical ??1CBuffer@D3DXCore@@UAE@XZ
+[210/557] 0x0050450d libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[211/557] 0x00504554 libid PASS identical ??0CBuffer@D3DXCore@@QAE@XZ
+[212/557] 0x0050456c libid PASS identical ?Create@CBuffer@D3DXCore@@SGJKPAPAV12@@Z
+[213/557] 0x005045ca libid PASS identical ?sse_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z
+[214/557] 0x00504643 libid PASS identical ?sse_D3DXQuaternionNormalize@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[215/557] 0x005046dd libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[216/557] 0x0050475b libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[217/557] 0x0050481d libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[218/557] 0x00504947 libid PASS identical ??0KMATRIX@@QAE@ABUD3DXMATRIX@@@Z
+[219/557] 0x00504ac1 libid REFUSED libmatch status differs (needs identical, one candidate)
+[220/557] 0x00504cc7 libid REFUSED libmatch status differs (needs identical, one candidate)
+[221/557] 0x00504e55 libid PASS identical ?sse_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[222/557] 0x00504fbb libid PASS identical ?sse_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[223/557] 0x005050cb libid REFUSED libmatch status differs (needs identical, one candidate)
+[224/557] 0x00505309 libid REFUSED libmatch status differs (needs identical, one candidate)
+[225/557] 0x005054d9 libid REFUSED libmatch status differs (needs identical, one candidate)
+[226/557] 0x0050570a libid REFUSED libmatch status differs (needs identical, one candidate)
+[227/557] 0x00505c62 libid PASS identical ?SSEFloat16Conversion8@@YGXXZ
+[228/557] 0x00505d8c libid PASS identical ?sse_D3DXFloat16To32Array@@YGPAMPAMPBUD3DXFLOAT16@@I@Z
+[229/557] 0x00505f2c libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[230/557] 0x0050612c libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[231/557] 0x00506428 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[232/557] 0x005064e8 libid PASS identical ?sse_D3DXVec4Normalize@@YGPAUD3DXVECTOR4@@PAU1@PBU1@@Z
+[233/557] 0x00506582 libid PASS identical ?sse_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z
+[234/557] 0x00506634 libid PASS identical ?sse_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+[235/557] 0x005066b9 libid PASS identical ?sse_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+[236/557] 0x0050675e libid PASS identical ?sse_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z
+[237/557] 0x00506811 libid PASS identical ?sse_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z
+[238/557] 0x005068ab libid PASS identical ?sse_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z
+[239/557] 0x00506a29 libid PASS identical ?sse_D3DXPlaneIntersectLine@@YGPAUD3DXVECTOR3@@PAU1@PBUD3DXPLANE@@PBU1@2@Z
+[240/557] 0x00506ad7 libid REFUSED libmatch status differs (needs identical, one candidate)
+[241/557] 0x00506bd7 libid REFUSED libmatch status differs (needs identical, one candidate)
+[242/557] 0x00506ce3 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[243/557] 0x00506db8 libid REFUSED libmatch status differs (needs identical, one candidate)
+[244/557] 0x00506ea8 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[245/557] 0x0050706f libid REFUSED libmatch status differs (needs identical, one candidate)
+[246/557] 0x00507275 libid REFUSED libmatch status differs (needs identical, one candidate)
+[247/557] 0x00507403 libid PASS identical ?sse2_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[248/557] 0x00507569 libid PASS identical ?sse2_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[249/557] 0x00507679 libid REFUSED libmatch status differs (needs identical, one candidate)
+[250/557] 0x005078b7 libid REFUSED libmatch status differs (needs identical, one candidate)
+[251/557] 0x00507a87 libid REFUSED libmatch status differs (needs identical, one candidate)
+[252/557] 0x00507cb8 libid PASS identical ?SSEFloat16Conversion8@@YGXXZ
+[253/557] 0x00507da9 libid PASS identical ?sse2_D3DXFloat16To32Array@@YGPAMPAMPBUD3DXFLOAT16@@I@Z
+[254/557] 0x00507e7b libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[255/557] 0x00507f3b libid REFUSED libmatch status differs (needs identical, one candidate)
+[256/557] 0x00508046 libid REFUSED libmatch status differs (needs identical, one candidate)
+[257/557] 0x00508146 libid REFUSED libmatch status differs (needs identical, one candidate)
+[258/557] 0x00508252 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[259/557] 0x00508326 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[260/557] 0x00508429 libid REFUSED libmatch status differs (needs identical, one candidate)
+[261/557] 0x0050853e libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[262/557] 0x00508772 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[263/557] 0x00508939 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[264/557] 0x005089fb libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[265/557] 0x00508b40 libid PASS identical ProcPrologue
+[266/557] 0x00508c00 libid PASS identical ProcPrologue
+[267/557] 0x00509340 libid PASS identical ProcPrologue
+[268/557] 0x00509a72 libid PASS identical ?x3d_D3DXQuaternionToAxisAngle@@YGXPBUD3DXQUATERNION@@PAUD3DXVECTOR3@@PAM@Z
+[269/557] 0x00509fac libid PASS identical ?x3d_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z
+[270/557] 0x0050a018 libid PASS identical ?x3d_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z
+[271/557] 0x0050a14f libid PASS identical ?x3d_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNION@@PAU1@PBU1@11MM@Z
+[272/557] 0x0050a1dc libid PASS identical ?x3d_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z
+[273/557] 0x0050a2d2 libid PASS identical ?x3d_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[274/557] 0x0050a41e libid PASS identical ?x3d_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z
+[275/557] 0x0050b53f libid PASS identical ?x3d_D3DXMatrixIdentity@@YGPAUD3DXMATRIX@@PAU1@@Z
+[276/557] 0x0050b6ff libid PASS identical ?x3d_D3DXMatrixTransformation@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z
+[277/557] 0x0050c897 libid PASS identical ?x3d_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+[278/557] 0x0050cf70 libid PASS identical ?x3d_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z
+[279/557] 0x0050d089 libid PASS identical ?x3d_D3DXMatrixTransformation_K7@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z
+[280/557] 0x0050e1dd libid PASS identical ?x3d_D3DXMatrixInverse_K7@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z
+[281/557] 0x0050e8b7 libid PASS identical ?x3d_D3DXMatrixInverse_inline@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z
+[282/557] 0x0050ec78 libid PASS identical _x3d_D3DXVec3TransformNormal@12
+[283/557] 0x0050ecdf libid PASS identical ?x3d_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z
+[284/557] 0x0050ef6d libid PASS identical ?x3d_D3DXVec3TransformCoord_inline@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[285/557] 0x0050eff8 libid PASS identical ?x3d_D3DXMatrixMultiply_inline@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+[286/557] 0x0050f1bf libid PASS identical _x3d_D3DXVec3TransformCoord@12
+[287/557] 0x0050f1c4 libid PASS identical ?x3d_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+[288/557] 0x0050f34c libid PASS identical ?x3d_D3DXVec3Unproject@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z
+[289/557] 0x0050f572 libid REFUSED libmatch status differs (needs identical, one candidate)
+[290/557] 0x0050f700 libid PASS identical ProcPrologue
+[291/557] 0x0050f9bb libid PASS identical _x3d_D3DXVec2Transform@12
+[292/557] 0x0050fa10 libid PASS identical _x3d_D3DXVec2TransformNormal@12
+[293/557] 0x0050fa49 libid PASS identical _x3d_D3DXVec2TransformCoord@12
+[294/557] 0x0051028b libid PASS identical ?x3d_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z
+[295/557] 0x0051036d libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[296/557] 0x0051037a libid PASS identical ??1CResource@D3DXCore@@QAE@XZ
+[297/557] 0x00510388 libid PASS identical ??0CFile@D3DXCore@@QAE@XZ
+[298/557] 0x0051039a libid PASS identical ?Open@CFile@D3DXCore@@QAEJPBXH@Z
+[299/557] 0x005104bb libid PASS identical ?Close@CFile@D3DXCore@@QAEJXZ
+[300/557] 0x005104fc libid PASS identical ??1CFile@D3DXCore@@QAE@XZ
+[301/557] 0x00510507 libid PASS identical ??0CNode@D3DXShader@@QAE@W4_D3DXNODE_TYPE@1@@Z
+[302/557] 0x00510521 libid REFUSED libmatch status differs (needs identical, one candidate)
+[303/557] 0x0051054e libid PASS identical ?IsEqual@CNode@D3DXShader@@UAEHPAV12@@Z
+[304/557] 0x00510583 libid REFUSED libmatch status differs (needs identical, one candidate)
+[305/557] 0x005105a2 libid REFUSED libmatch status differs (needs identical, one candidate)
+[306/557] 0x005105b6 libid PASS identical ?Append@CNode@D3DXShader@@SGPAV12@PAV12@0@Z
+[307/557] 0x005105dd libid PASS identical ??0CNodeList@D3DXShader@@QAE@XZ
+[308/557] 0x005105f8 libid PASS identical ??0CNodeList@D3DXShader@@QAE@PAVCNode@1@0PBD@Z
+[309/557] 0x0051061f libid PASS identical ?IsEqual@CNodeList@D3DXShader@@UAEHPAVCNode@2@@Z
+[310/557] 0x00510677 libid REFUSED libmatch status differs (needs identical, one candidate)
+[311/557] 0x005106f9 libid PASS identical ?TokenEqual@D3DXShader@@YGHPBUD3DXTOKEN@1@0@Z
+[312/557] 0x005107c7 libid REFUSED libmatch status differs (needs identical, one candidate)
+[313/557] 0x005107df libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[314/557] 0x0051085a libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[315/557] 0x0051085b libid REFUSED libmatch status differs (needs identical, one candidate)
+[316/557] 0x00510886 libid REFUSED libmatch status differs (needs identical, one candidate)
+[317/557] 0x005108c2 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[318/557] 0x0051094d libid REFUSED libmatch status differs (needs identical, one candidate)
+[319/557] 0x00510986 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[320/557] 0x00510b70 libid REFUSED libmatch status differs (needs identical, one candidate)
+[321/557] 0x00510ba9 libid REFUSED libmatch status differs (needs identical, one candidate)
+[322/557] 0x00510be1 libid REFUSED libmatch status differs (needs identical, one candidate)
+[323/557] 0x00510c27 libid REFUSED libmatch status differs (needs identical, one candidate)
+[324/557] 0x00510c62 libid PASS identical ?IsEqual@CNodeValue@D3DXShader@@UAEHPAVCNode@2@@Z
+[325/557] 0x00510d43 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[326/557] 0x00510d65 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[327/557] 0x00510d87 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[328/557] 0x00510da9 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[329/557] 0x00510dc5 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[330/557] 0x00510de1 libid PASS identical ??0CCommentBlock@D3DXShader@@QAE@K@Z
+[331/557] 0x00510df9 libid PASS identical ??1CCommentBlock@D3DXShader@@QAE@XZ
+[332/557] 0x00510e2f libid PASS identical ?Add@CCommentBlock@D3DXShader@@QAEJPBXIKPAK@Z
+[333/557] 0x00510f66 libid PASS identical ?SizeInDwords@CCommentBlock@D3DXShader@@QAEIXZ
+[334/557] 0x00510f72 libid PASS identical ?WriteComment@CCommentBlock@D3DXShader@@QAEJPAKI@Z
+[335/557] 0x0051105d libid REFUSED libmatch status differs (needs identical, one candidate)
+[336/557] 0x00511112 libid REFUSED libmatch status differs (needs identical, one candidate)
+[337/557] 0x0051120b libid REFUSED libmatch status differs (needs identical, one candidate)
+[338/557] 0x005112c9 libid REFUSED libmatch status differs (needs identical, one candidate)
+[339/557] 0x005115aa libid REFUSED libmatch status differs (needs identical, one candidate)
+[340/557] 0x005115e6 libid REFUSED libmatch status differs (needs identical, one candidate)
+[341/557] 0x00511636 libid REFUSED libmatch status differs (needs identical, one candidate)
+[342/557] 0x0051167d libid REFUSED libmatch status differs (needs identical, one candidate)
+[343/557] 0x00511741 libid REFUSED libmatch status differs (needs identical, one candidate)
+[344/557] 0x00511774 libid REFUSED libmatch status differs (needs identical, one candidate)
+[345/557] 0x005117ba libid REFUSED libmatch status differs (needs identical, one candidate)
+[346/557] 0x00511841 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[347/557] 0x0051185d libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[348/557] 0x00511879 libid REFUSED libmatch status differs (needs identical, one candidate)
+[349/557] 0x005118cd libid REFUSED libmatch status differs (needs identical, one candidate)
+[350/557] 0x00511918 libid REFUSED libmatch status differs (needs identical, one candidate)
+[351/557] 0x0051196e libid REFUSED libmatch status differs (needs identical, one candidate)
+[352/557] 0x005119dc libid REFUSED libmatch status differs (needs identical, one candidate)
+[353/557] 0x00511a4e libid REFUSED libmatch status differs (needs identical, one candidate)
+[354/557] 0x00511ad7 libid REFUSED libmatch status differs (needs identical, one candidate)
+[355/557] 0x00511b85 libid REFUSED libmatch status differs (needs identical, one candidate)
+[356/557] 0x00511c4d libid REFUSED libmatch status differs (needs identical, one candidate)
+[357/557] 0x00511e02 libid REFUSED libmatch status differs (needs identical, one candidate)
+[358/557] 0x00511f0f libid REFUSED libmatch status differs (needs identical, one candidate)
+[359/557] 0x00512024 libid REFUSED libmatch status differs (needs identical, one candidate)
+[360/557] 0x00512352 libid REFUSED libmatch status differs (needs identical, one candidate)
+[361/557] 0x0051251f libid REFUSED libmatch status differs (needs identical, one candidate)
+[362/557] 0x00512cbe libid PASS identical ?sse_SinCos4@@YGXQBMQAM1@Z
+[363/557] 0x00512ea7 libid PASS identical ?sse2_SinCos4@@YGXQBMQAM1@Z
+[364/557] 0x005130c0 libid PASS identical _a_atan2
+[365/557] 0x005131c0 libid PASS identical _a_acos
+[366/557] 0x005137a0 libid PASS identical _a_sincos
+[367/557] 0x005138a0 libid PASS identical _a_sin
+[368/557] 0x00513c58 libid REFUSED libmatch status differs (needs identical, one candidate)
+[369/557] 0x00513cb6 libid REFUSED libmatch status differs (needs identical, one candidate)
+[370/557] 0x00513f90 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[371/557] 0x00514330 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[372/557] 0x00514780 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[373/557] 0x00514920 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[374/557] 0x00514bd0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[375/557] 0x00514d00 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[376/557] 0x00514e60 libid REFUSED libmatch status differs (needs identical, one candidate)
+[377/557] 0x00514ec0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[378/557] 0x005151c0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[379/557] 0x00515260 libid REFUSED libmatch status differs (needs identical, one candidate)
+[380/557] 0x00515370 libid REFUSED libmatch status differs (needs identical, one candidate)
+[381/557] 0x00515770 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[382/557] 0x005159d0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[383/557] 0x00515ae0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[384/557] 0x00515e50 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[385/557] 0x00515f30 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[386/557] 0x00515fd0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[387/557] 0x005161d0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[388/557] 0x005163a0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[389/557] 0x00516460 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[390/557] 0x00516570 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[391/557] 0x00516650 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[392/557] 0x00516830 libid REFUSED libmatch status differs (needs identical, one candidate)
+[393/557] 0x00516870 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[394/557] 0x00516920 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[395/557] 0x00516a70 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[396/557] 0x005b8200 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[397/557] 0x005b8680 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[398/557] 0x004fb5a0 libid PASS identical-unlisted ?c_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z
+[399/557] 0x0049c5d0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[400/557] 0x0049c620 libid REFUSED libmatch status differs (needs identical, one candidate)
+[401/557] 0x0049c690 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[402/557] 0x0049c6a0 libid PASS identical ??1CCritSec@@QAE@XZ
+[403/557] 0x0049c6b0 libid PASS identical ??0CAutoLock@@QAE@PAVCCritSec@@@Z
+[404/557] 0x0049c6d0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[405/557] 0x0049c6e0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[406/557] 0x0049c750 libid PASS identical ?EndFlush@CBaseRenderer@@UAEJXZ
+[407/557] 0x0049c770 libid PASS identical ?Inactive@CBaseRenderer@@UAEJXZ
+[408/557] 0x0049c800 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[409/557] 0x0049c810 libid REFUSED libmatch status differs (needs identical, one candidate)
+[410/557] 0x0049c840 libid REFUSED libmatch status differs (needs identical, one candidate)
+[411/557] 0x0049c900 libid REFUSED libmatch status differs (needs identical, one candidate)
+[412/557] 0x0049c930 libid REFUSED libmatch status differs (needs identical, one candidate)
+[413/557] 0x0049c990 libid REFUSED libmatch status differs (needs identical, one candidate)
+[414/557] 0x0049ca00 libid REFUSED libmatch status differs (needs identical, one candidate)
+[415/557] 0x0049ca60 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[416/557] 0x0049cb00 libid REFUSED libmatch status differs (needs identical, one candidate)
+[417/557] 0x0049cb20 libid REFUSED libmatch status differs (needs identical, one candidate)
+[418/557] 0x0049cbd0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[419/557] 0x0049cc40 libid PASS identical ?SetRepaintStatus@CBaseRenderer@@QAEXH@Z
+[420/557] 0x0049cc80 libid REFUSED libmatch status differs (needs identical, one candidate)
+[421/557] 0x0049ccd0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[422/557] 0x0049cd70 libid REFUSED libmatch status differs (needs identical, one candidate)
+[423/557] 0x0049ce10 libid REFUSED libmatch status differs (needs identical, one candidate)
+[424/557] 0x0049ceb0 libid PASS identical ?BreakConnect@CRendererInputPin@@UAEJXZ
+[425/557] 0x0049cf00 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[426/557] 0x0049cfb0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[427/557] 0x0049d080 libid REFUSED libmatch status differs (needs identical, one candidate)
+[428/557] 0x0049d0a0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[429/557] 0x0049d1d0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[430/557] 0x0049d200 libid REFUSED libmatch status differs (needs identical, one candidate)
+[431/557] 0x0049d240 libid REFUSED libmatch status differs (needs identical, one candidate)
+[432/557] 0x0049d270 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[433/557] 0x0049d920 libid REFUSED libmatch status differs (needs identical, one candidate)
+[434/557] 0x0049d960 libid REFUSED libmatch status differs (needs identical, one candidate)
+[435/557] 0x0049d9a0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[436/557] 0x0049da20 libid REFUSED libmatch status differs (needs identical, one candidate)
+[437/557] 0x0049da90 libid REFUSED libmatch status differs (needs identical, one candidate)
+[438/557] 0x0049db00 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[439/557] 0x0049dcb0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[440/557] 0x0049dd60 libid REFUSED libmatch status differs (needs identical, one candidate)
+[441/557] 0x0049de60 libid REFUSED libmatch status differs (needs identical, one candidate)
+[442/557] 0x0049de70 libid REFUSED libmatch status differs (needs identical, one candidate)
+[443/557] 0x0049de80 libid REFUSED libmatch status differs (needs identical, one candidate)
+[444/557] 0x0049de90 libid REFUSED libmatch status differs (needs identical, one candidate)
+[445/557] 0x0049df70 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[446/557] 0x0049e140 libid REFUSED libmatch status differs (needs identical, one candidate)
+[447/557] 0x0049e190 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[448/557] 0x0049e4b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[449/557] 0x0049e580 libid REFUSED libmatch status differs (needs identical, one candidate)
+[450/557] 0x0049e5c0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[451/557] 0x0049e600 libid REFUSED libmatch status differs (needs identical, one candidate)
+[452/557] 0x0049e640 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[453/557] 0x0049e6c0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[454/557] 0x0049ea70 libid PASS identical ?ResetEndOfStream@CBaseRenderer@@UAEJXZ
+[455/557] 0x0049eab0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[456/557] 0x0049ead0 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[457/557] 0x0049ebc0 libid PASS identical ??1CBaseVideoRenderer@@UAE@XZ
+[458/557] 0x0049ebf0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[459/557] 0x0049ec10 libid REFUSED libmatch status differs (needs identical, one candidate)
+[460/557] 0x0049ec80 libid REFUSED libmatch status differs (needs identical, one candidate)
+[461/557] 0x0049eca0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[462/557] 0x0049ecc0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[463/557] 0x0049eeb0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[464/557] 0x0049ef10 libid REFUSED libmatch status differs (needs identical, one candidate)
+[465/557] 0x0049ef60 libid REFUSED libmatch status differs (needs identical, one candidate)
+[466/557] 0x0049f030 libid REFUSED libmatch status differs (needs identical, one candidate)
+[467/557] 0x0049f090 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[468/557] 0x0049f0a0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[469/557] 0x0049f180 libid REFUSED libmatch status differs (needs identical, one candidate)
+[470/557] 0x0049f1b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[471/557] 0x0049f1e0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[472/557] 0x0049f210 libid PASS identical ??1CEnumMediaTypes@@UAE@XZ
+[473/557] 0x0049f2b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[474/557] 0x0049f2e0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[475/557] 0x0049f300 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[476/557] 0x0049f420 libid REFUSED libmatch status differs (needs identical, one candidate)
+[477/557] 0x0049f4d0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[478/557] 0x0049f5b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[479/557] 0x0049f690 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[480/557] 0x0049f830 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[481/557] 0x0049f950 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[482/557] 0x0049fa40 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[483/557] 0x0049fac0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[484/557] 0x0049fc80 libid REFUSED libmatch status differs (needs identical, one candidate)
+[485/557] 0x0049fcc0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[486/557] 0x0049fe10 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[487/557] 0x0049ff30 libid REFUSED libmatch status differs (needs identical, one candidate)
+[488/557] 0x0049ff60 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[489/557] 0x0049ffe0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[490/557] 0x004a01b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[491/557] 0x004a0220 libid REFUSED libmatch status differs (needs identical, one candidate)
+[492/557] 0x004a02d0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[493/557] 0x004a0380 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[494/557] 0x004a0550 libid REFUSED libmatch status differs (needs identical, one candidate)
+[495/557] 0x004a0570 libid REFUSED libmatch status differs (needs identical, one candidate)
+[496/557] 0x004a0680 libid REFUSED libmatch status differs (needs identical, one candidate)
+[497/557] 0x004a06c0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[498/557] 0x004a0ab0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[499/557] 0x004a0c10 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[500/557] 0x004a0d10 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[501/557] 0x004a0e90 libid REFUSED libmatch status differs (needs identical, one candidate)
+[502/557] 0x004a0ef0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[503/557] 0x004a0fe0 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[504/557] 0x004a1000 libid REFUSED libmatch status differs (needs identical, one candidate)
+[505/557] 0x004a1030 libid PASS identical ?LoadOLEAut32@@YGPAUHINSTANCE__@@XZ
+[506/557] 0x004a1050 libid REFUSED libmatch status differs (needs identical, one candidate)
+[507/557] 0x004a1080 libid REFUSED libmatch status differs (needs identical, one candidate)
+[508/557] 0x004a10b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[509/557] 0x004a1100 libid REFUSED libmatch status differs (needs identical, one candidate)
+[510/557] 0x004a1160 libid REFUSED libmatch status differs (needs identical, one candidate)
+[511/557] 0x004a1180 libid PASS identical ??1CAMEvent@@QAE@XZ
+[512/557] 0x004a1190 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[513/557] 0x004a11c0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[514/557] 0x004a1200 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[515/557] 0x004a1240 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[516/557] 0x004a1260 libid REFUSED libmatch status differs (needs identical, one candidate)
+[517/557] 0x004a1570 libid REFUSED libmatch status differs (needs identical, one candidate)
+[518/557] 0x004a1780 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[519/557] 0x004a1790 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[520/557] 0x004a17a0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[521/557] 0x004a17c0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[522/557] 0x004a1a60 libid REFUSED libmatch status differs (needs identical, one candidate)
+[523/557] 0x004a1ac0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[524/557] 0x004a1dc0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[525/557] 0x004a21a0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[526/557] 0x004a2250 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[527/557] 0x004a2310 libid PASS identical ?ResetMediaTime@CRendererPosPassThru@@QAEJXZ
+[528/557] 0x004a2340 libid REFUSED libmatch status differs (needs identical, one candidate)
+[529/557] 0x004a23e0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[530/557] 0x004a2440 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[531/557] 0x004a2460 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[532/557] 0x004a2500 libid REFUSED libmatch status differs (needs identical, one candidate)
+[533/557] 0x004a2530 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[534/557] 0x004a25f0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[535/557] 0x004a2620 libid REFUSED libmatch status differs (needs identical, one candidate)
+[536/557] 0x004a2680 libid REFUSED libmatch status differs (needs identical, one candidate)
+[537/557] 0x004a26b0 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[538/557] 0x004a26e0 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[539/557] 0x004a26f0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[540/557] 0x004a2710 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+[541/557] 0x004a2730 libid REFUSED libmatch status differs (needs identical, one candidate)
+[542/557] 0x004a2770 libid REFUSED libmatch status differs (needs identical, one candidate)
+[543/557] 0x004a2790 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[544/557] 0x004a27b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[545/557] 0x004a27f0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[546/557] 0x004a2860 libid REFUSED libmatch status differs (needs identical, one candidate)
+[547/557] 0x004a28b0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[548/557] 0x004a2920 libid REFUSED libmatch status differs (needs identical, one candidate)
+[549/557] 0x004a2940 libid REFUSED libmatch status not-compared (needs identical, one candidate)
+[550/557] 0x004a2980 libid REFUSED libmatch status differs (needs identical, one candidate)
+[551/557] 0x004a2a30 libid REFUSED libmatch status differs (needs identical, one candidate)
+[552/557] 0x004a2aa0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[553/557] 0x004a2ae0 libid PASS identical ??1CMediaType@@QAE@XZ
+[554/557] 0x004a2af0 libid REFUSED libmatch status differs (needs identical, one candidate)
+[555/557] 0x004a2b00 libid REFUSED libmatch status differs (needs identical, one candidate)
+[556/557] 0x004a2b30 libid PASS identical ?DeleteMediaType@@YGXPAU_AMMediaType@@@Z
+[557/557] 0x004a2b50 libid REFUSED libmatch status identical-ambiguous (needs identical, one candidate)
+batch: 234 pass, 323 refused, 0 skipped (already C4), 557 rows
+wrote hooks.csv (234 rows -> C4) and 234 CHANGELOG lines
