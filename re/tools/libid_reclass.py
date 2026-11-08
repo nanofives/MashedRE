@@ -28,7 +28,8 @@ waive-lib  (L-70, Mariano 2026-10-31) Every `identical-unlisted` address of the 
            that address is refiled to `third-party-library[libpng-1.0.12]` / `[zlib-1.1.3]`, status `waived-library`
            (confidence kept), notes start `identified, waived: vendored library (L-70)` with the libid identity as
            provenance. An address with no row gets a C1 row, same waiver. Like the CRT waiver, the rows leave the P-DoD
-           count and never take libid C4 (the port links no libpng / zlib built from that source).
+           count. This operation never promotes; since L-93 (2026-11-07) an identical row may take libid C4 through
+           re/tools/c4_reclass.py batch (the waiver is a port fact, the identity an RE fact).
 
 Every operation prepends one CHANGELOG line per row below <!-- ENTRIES -->. Refuses: a missing evidence file, a
 hooks.csv that does not round-trip through the csv module byte for byte, a CRT refile whose identity is not

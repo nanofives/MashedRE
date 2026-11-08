@@ -32,22 +32,29 @@ Rules every child reads: `$ORCH\re\orchestrator\WORKER_RULES.md`. Decisions: `lo
 - A `solo` row starts only when no other worker is live. Tell its lead so.
 - Exactly one merge train child at a time.
 
-## MATCH section: C4 by byte match (Mariano 2026-10-31)
+## MATCH section: C4 by byte match (Mariano 2026-10-31; C4 meaning changed by L-93, 2026-11-07)
 - Its own cap on top of the caps above: one MATCH lead, **+3 live / +8 workers per run**. MATCH workers do not count
   against the 6 / 12. Static legs (select, g2s, match, permute) take no game lock and no test slot, but each holds one
   Ghidra pool slot and runs compiles. Port-swap legs build and go through the train like any source row.
 - Compiler: XP DDK cl 13.00.9176 / c2 13.00.9178 in `tools/vc7ddk` (gitignored). Game code flags `/O2 /GS /Ob1`, as
   C, x87 (`/G5` breaks game code). Lua 4.0 `/O2 /Ob1 /G5`, qhull 2002.1 `/O2 /G5`. Tools in `re/tools/match/`.
-- **C4 by match certifies the port.** A row is C4 only when (a) its reconstructed source is byte-identical under
-  `re/tools/match/match.py` with that compiler and the recorded flags, AND (b) `mashed_re.exe` uses that source as
-  the function's body (one body per RVA, the existing lint; both targets where the RVA is hooked; physics TUs go in
-  `x87_tus.txt`), AND (c) the merge-train gates are unchanged. A matched source alone is not C4. A naked inline-asm
-  transcription is not match evidence; an inline `__asm` block inside a compiled C body is. Library identity (`libid`)
-  is C4 when identical AND the port gets the function from that same vendored library source.
+- **C4 by match certifies the reverse engineering, not the port (L-93, Mariano 2026-11-07).** A row is C4 by
+  `match` when its reconstructed source is byte-identical under `re/tools/match/match.py` with that compiler and the
+  recorded flags, AND `relocheck.py` reports OK, AND it is not a naked inline-asm transcription nor a body that is only
+  inline `__asm` inside a C frame (SimGolf G26). Nothing else: no exe body, no exe caller (L-68 / L-84 / L-89), no gate
+  run. Library identity (`libid`) is C4 when the function is identical to one library function (libmatch, one
+  candidate). Before L-93 both routes also required the port to use the source and the gates to stay unchanged (see
+  `re/CONFIDENCE.md`, "What C4 meant before 2026-11-07").
+- Promotion goes through `py -3.12 re/tools/c4_reclass.py batch` (dry run, then `--apply --result <RESULT>`): it
+  recompiles each source, re-runs relocheck and writes all passing rows in one transaction. No per-slice reclass
+  scripts.
 - Game-code slices (`MATCH-Snn`) are contiguous RVA ranges of about 100-150 functions: MSVC lays functions out per
   object file and Ghidra's register-passed args come from earlier static callees in the same file. One slice per
-  worker: select, g2s, match, bounded permute, swap the matched bodies in, build, gates, re-classify C4.
-- A body swap that moves a gate hash is a real port divergence: file it as an L-n decision, not a failure.
+  worker: select, g2s, match, bounded permute, relocheck, re-classify C4 with the batch tool. A match-only slice needs
+  no build and no gates.
+- Swapping a matched body into `mashed_re.exe` is **port-axis** work (the `hooks.csv` `port` column, none / body /
+  called, `scripts/backfill_port.py`): it builds, runs the gates and goes through the train like any source row. A body
+  swap that moves a gate hash is a real port divergence: file it as an L-n decision, not a failure.
 
 ## Spawning (decisions 1 and 2): always the auto-permission pattern
 1. `spawn_child` with `account`, `model`, `effort` and the holding prompt
