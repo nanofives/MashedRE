@@ -1,0 +1,8 @@
+0x00492770	OK	checked=11	unchecked=0	00492770.c	
+0x0042b920	OK	checked=0	unchecked=0	0042b920.c	
+0x0042b950	OK	checked=1	unchecked=0	0042b950.c	
+0x00433240	OK	checked=10	unchecked=0	00433240.c	
+0x00495110	OK	checked=2	unchecked=0	00495110.c	
+0x004950b0	OK	checked=2	unchecked=3	004950b0.c	  unchecked: __alldiv,__allmul,__imp__QueryPerformanceCounter@4
+0x00495120	OK	checked=2	unchecked=1	00495120.c	  unchecked: __imp__QueryPerformanceFrequency@4
+0x004c57a0	OK	checked=2	unchecked=0	004c57a0.c	

@@ -28,6 +28,7 @@
 #include <rw.h>
 
 #include <cstdarg>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -361,3 +362,16 @@ void EngineStop() {
 
 }  // namespace LibRw
 }  // namespace mashed_re
+
+// PORT-TOP-01 (L-98: RW core stays librw): exe binding of 0x004c57a0 for MainLoopInit 0x00492770
+// (Match/MatchS15_00492770.cpp). The matched body (re/match/rwl01/004c57a0.c) allocates a matrix through the RW
+// globals at 0x007d3ff8 (freelist call at +0x118, hint 0x3000d) and writes identity with flags 0x20003. The exe maps
+// the original data range zero-filled, so that body would read a NULL RwGlobals and fault. librw's Matrix::create is
+// the same operation on librw's engine (started in RaceSubmit_Init before ExecuteFrontendBootChain): a 64-byte
+// RwMatrix, identity, flags TYPEORTHONORMAL (3) | IDENTITY (0x20000) = 0x20003. MainLoopInit stores the pointer at
+// 0x007e9dc0 (no exe reader). Returns 0 when librw has no engine (the matched body's NULL branch).
+extern "C" unsigned int __cdecl MashedRw_MatrixCreate_004c57a0(void) {
+    if (rw::engine == nullptr) return 0u;
+    rw::Matrix* const m = rw::Matrix::create();
+    return static_cast<unsigned int>(reinterpret_cast<std::uintptr_t>(m));
+}
