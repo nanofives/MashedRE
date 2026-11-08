@@ -25,6 +25,7 @@
 #include "MenuNav.h"            // MenuEntryWalk: the shared 0x0042ac90 body
 #include "../Race/RaceModes.h"  // SelectionToGameMode: the host-side name of 0x0042f6b0's table (SelectionToGameMode.h)
 #include "RowMovers.h"          // challenge-row movers 0x004322c0 / 0x004323c0
+#include "PortStateFrontend.h"  // MASHED_PORTSTATE_FRONTEND: the game-mode word at DAT_0067e9fc (PORT-STATE-01)
 #include "MenuEntryZero.h"      // MenuEntryZeroBody: the one body of 0x0042d3e0
 #include "PromptStrip.h"        // PromptStripTag / PromptStripResolve: the one body of 0x00432b30
 
@@ -152,7 +153,7 @@ enum : int {
 // Fresh-main-menu defaults (image-padded zeroes; player slots -1).
 const MenuGameState kFreshState = {
     { -1, -1, -1, -1 },  // team_slot[]
-    0,                   // game_mode
+    0,                   // game_mode_off
     0,                   // flag_ea64
     0,                   // flag_ecdc
     0,                   // flag_ed6c
@@ -195,7 +196,7 @@ int g_cup_continue_variant = 1;  // FUN_004307a0 stand-in (1 = single 0x135;
 // (cmp/je chain 0x00430765..0x0043077c -> mov eax,1 at 0x00430781; else xor eax,eax at 0x0043077e).
 // Verbatim; the compare order does not matter for the result.
 static bool Q_ModeIsCupFlow() {
-    const int m = g_game_state.game_mode;
+    const int m = Nav_GameModeWord();
     return m == 2 || m == 10 || m == 3 || m == 4 || m == 5;
 }
 
@@ -994,15 +995,20 @@ static void CursorStep(NavSlot& s, int delta) {
 // fills that address from the save (Nav_GameStateLoadSave mirrors the span),
 // so they see exactly the table the original restored from the same save.
 static int __cdecl RowAvail(int row) {                       // FUN_00430830
-    return static_cast<int>(SplitScreenTrackAssignmentFor(g_game_state.game_mode, row));
+    // PORT-STATE-01: the matched 0x00430830 (Match/MatchS07_00430830.cpp) reads DAT_0067e9fc; the bridge puts the
+    // frontend's word there for the call (a no-op with MASHED_PORTSTATE_FRONTEND ON, where the word is DAT_0067e9fc).
+    const ModeWordScope bridge(kSite00430830RowAvail, Nav_GameModeWord());
+    const int ret = static_cast<int>(SplitScreenTrackAssignment(row));
+    bridge.Result(ret);
+    return ret;
 }
 static int __cdecl RowOptValid() {                           // FUN_00430910
-    return MenuOptionSlotGetFor(g_game_state.game_mode, g_game_state.sel_f184,
+    return MenuOptionSlotGetFor(Nav_GameModeWord(), g_game_state.sel_f184,
                                 g_challenge_row);
 }
 static void __cdecl RowModeSync() {                          // FUN_0042f6b0
     const int m = mashed_re::Race::RaceModes::SelectionToGameMode(g_game_state.sel_f184);
-    if (m >= 0) g_game_state.game_mode = m;   // sel 4/6/7/>11: the original writes nothing
+    if (m >= 0) Nav_GameModeWord() = m;   // sel 4/6/7/>11: the original writes nothing
 }
 
 // DAT_0067f1a4 analogue. Set to 1 by both arms before the mover (harvest
@@ -1015,7 +1021,7 @@ static RowMoverIo StandaloneRowIo() {
     RowMoverIo io;
     io.row      = &g_challenge_row;
     io.sel      = &g_game_state.sel_f184;
-    io.mode     = &g_game_state.game_mode;
+    io.mode     = &Nav_GameModeWord();
     io.flag     = &g_nav_flag_f1a4;
     io.ea68     = &g_game_state.ea68;
     io.avail    = &RowAvail;
@@ -1084,11 +1090,11 @@ void ApplyActionGameMode(std::uint32_t action) {
         default: break;
     }
     switch (action) {
-        case 0xff3d0000u: g_game_state.game_mode = 3;  g_game_state.flag_ea64 = 0; break;
-        case 0xff4d0000u: g_game_state.game_mode = 10; g_game_state.flag_ea64 = 1; break;
-        case 0xff400000u: g_game_state.game_mode = 2;  g_game_state.flag_ea64 = 0; break;
-        case 0xff2c0000u: g_game_state.game_mode = 6;  g_game_state.flag_ea64 = 0; break;
-        case 0xff2e0000u: g_game_state.game_mode = 6;  g_game_state.flag_ea64 = 1; break;
+        case 0xff3d0000u: Nav_GameModeWord() = 3;  g_game_state.flag_ea64 = 0; break;
+        case 0xff4d0000u: Nav_GameModeWord() = 10; g_game_state.flag_ea64 = 1; break;
+        case 0xff400000u: Nav_GameModeWord() = 2;  g_game_state.flag_ea64 = 0; break;
+        case 0xff2c0000u: Nav_GameModeWord() = 6;  g_game_state.flag_ea64 = 0; break;
+        case 0xff2e0000u: Nav_GameModeWord() = 6;  g_game_state.flag_ea64 = 1; break;
         default: break;
     }
     // DAT_0067f184, the selection index those modes come from (the movers walk
@@ -1151,7 +1157,7 @@ bool Nav_ContinueCupBegin() {
     MenuGameState& gs = g_game_state;
     // L292-297: game_mode (DAT_0067e9fc) 6 or 2 gates the ea6c toggle; only
     // ea6c==4 falls through to the advance block. Any other ea6c -> no action.
-    if (gs.game_mode == 6 || gs.game_mode == 2) {
+    if (Nav_GameModeWord() == 6 || Nav_GameModeWord() == 2) {
         if (gs.ea6c == 1) { gs.ea6c = 2; return false; } // L293-295: toggle, no nav
         if (gs.ea6c != 4) return false;                  // else: no advance
         // ea6c == 4 -> L296 goto LAB_0043e736 (advance)
@@ -1165,7 +1171,7 @@ bool Nav_ContinueCupBegin() {
             // L303 DAT_0067f1a8 = 0 (presentation flag; no standalone consumer).
             gs.ea6c = 5;                                 // L308
             Nav(7, kNavPush);                            // L304 FUN_0043d2a0(7,0)
-            if (gs.flag_ed6c == 2) gs.game_mode = 3;     // L305-306 (never here; verbatim)
+            if (gs.flag_ed6c == 2) Nav_GameModeWord() = 3;     // L305-306 (never here; verbatim)
             return true;                                 // advanced
         }
         // L310-321: ed6c != 0 -> variant-gated confirmation modal.
@@ -1202,7 +1208,7 @@ int Nav_TakePendingCupModal() {
 void Nav_ContinueCupConfirm() {
     // FUN_0043dfd0 modal-confirm site (Fable confirm note): FUN_0043d2a0(7,0);
     // if (DAT_0067ed6c == 2) DAT_0067e9fc = 3 (two-choice -> SM state 3).
-    if (g_game_state.flag_ed6c == 2) g_game_state.game_mode = 3;
+    if (g_game_state.flag_ed6c == 2) Nav_GameModeWord() = 3;
     Nav(7, kNavPush);
 }
 
@@ -1408,7 +1414,7 @@ int NavTest_ActionToScreen(std::uint32_t a, int kind) { return ActionToScreen(a,
 // it to the live game-state, then returns the resulting game_mode.
 int NavTest_ApplyActionGameMode(std::uint32_t a) {
     ApplyActionGameMode(a);
-    return g_game_state.game_mode;
+    return Nav_GameModeWord();
 }
 int NavTest_KvLookup(const std::uint32_t* t, std::uint32_t tag, int n) { return KvLookup(t, tag, n); }
 // Vertical-grow fraction for the menu-entry animation (0 = collapsed to a
@@ -1450,6 +1456,9 @@ bool              Nav_ItemEnabled(int row_index) {
 }
 
 MenuGameState&    Nav_GameState()    { return g_game_state; }
+int&              Nav_GameModeWord() {
+    return PortStateFrontend_On() ? *reinterpret_cast<int*>(kGameModeWord) : g_game_state.game_mode_off;
+}
 void              Nav_GameStateReset() { g_game_state = kFreshState; }
 
 // Scoped port of FUN_00404e80 (0x00404e80) step 1 — see header. The span
