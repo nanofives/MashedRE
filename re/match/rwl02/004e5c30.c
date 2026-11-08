@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 76.7%. Count hoisted into a local (n = world->n, spilled to the param slot) and the atomics array pointer loaded inside the loop. Supersedes the header below. */
 // h2: 76.7% (regs 83.3%, ops 96.7%). Loop bound re-read from the struct each pass (cached-count forms 53.3%). Residual: original caches the count in the dead param_1 stack slot and keeps it spilled while cb/data live in ebp/ebx. Sibling of 0x004e89a0. Class (b).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -33,8 +34,11 @@ typedef struct { char pad[0x10]; int *atomics; int n; } W;
 W *RpWorldForAllAtomics(W *world, code *cb, void *data)
 {
   int i;
-  for (i = 0; i < world->n; i++) {
-    if ((*cb)(world->atomics[i], data) == 0) {
+  int n = world->n;
+  void **a;
+  for (i = 0; i < n; i++) {
+    a = (void **)world->atomics;
+    if (!(*cb)(a[i], data)) {
       break;
     }
   }

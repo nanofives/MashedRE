@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 98.2%. The bitmap sum reads through a byte pointer m = (byte *)(piVar4 + 2) set before the loop (m[uVar5]); that gives the [ecx+eax+8] index/base order. Supersedes the header below. */
 /* MATCH-RWL01 0x004ccc50: best 98.2% (regs 100%, ops 100%), class (a). Rewritten as for-loops (list unlink, byte-sum loop, relink); only the base/index order of [ecx+eax+8] differs (9 index spellings, permuter 284 compiles). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -51,9 +52,9 @@ int FUN_004ccc50(int *param_1)
     *(int *)(*piVar4 + 4) = piVar4[1];
     piVar3 = (int *)*piVar4;
     iVar6 = 0;
-    for (uVar5 = 0; uVar5 < uVar2; uVar5++) {
-      iVar6 = iVar6 + (uint)*(byte *)(uVar5 + 8 + (int)piVar4);
-    }
+    { byte *m = (byte *)(piVar4 + 2); for (uVar5 = 0; uVar5 < uVar2; uVar5++) {
+      iVar6 = iVar6 + m[uVar5];
+    } }
     if (iVar6 == 0) {
       (**(code **)(DAT_007d3ff8 + 0x10c))(piVar4);
       local_4 = local_4 + 1;

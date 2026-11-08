@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 94.1% (regs 94.1%), was 91.2%. Nested if chain returning r; remaining: the original keeps one ret per failing call where ours jumps to a shared ret (12 return shapes tried, incl. && chains and separate result variables). Class (b). */
 // h2 hand-matched. 91.2% (regs 91.2%, ops 89.7%). Residual: original lays out each failure return inline (xor eax,eax / ret after the jcc, the second one reusing eax==0), ours cross-jumps them into one shared tail. Tried return-value-as-variable, compound if, /Ox /Gy /Ob2 /G6 /Oi-. Class (a). Callbacks passed as function pointers (void FUN_xxx(void)).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -60,12 +61,11 @@ int FUN_004e5d30(void)
     return 0;
   }
   r = FUN_004e3470();
-  if (r == 0) {
-    return r;
+  if (r != 0) {
+    r = FUN_004e65c0();
+    if (r != 0) {
+      r = FUN_004f42d0() != 0;
+    }
   }
-  r = FUN_004e65c0();
-  if (r == 0) {
-    return r;
-  }
-  return FUN_004f42d0() != 0;
+  return r;
 }

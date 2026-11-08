@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 78.6% (regs 78.6%), was 70.6%. head then cur, compare head != cur, early return param_1 inside the loop; remaining: the original loads param_1 into eax before the pushes and uses lea for head (ours keeps it in edi). Class (b). */
 /* MATCH-RWL02 h3 0x004e5bf0: hand-written. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -25,12 +26,14 @@ typedef unsigned char bool;
 // MATCH: 0x004e5bf0 FUN_004e5bf0
 int FUN_004e5bf0(int param_1, int (*param_2)(int, int), int param_3)
 {
-  int *head = (int *)(param_1 + 0x2c);
-  int *cur = *(int **)(param_1 + 0x2c);
+  int *head;
+  int *cur;
   int *next;
+  head = (int *)(param_1 + 0x2c);
+  cur = *(int **)(param_1 + 0x2c);
   while (head != cur) {
     next = (int *)*cur;
-    if (param_2((int)(cur - 8), param_3) == 0) break;
+    if (param_2((int)(cur - 8), param_3) == 0) return param_1;
     cur = next;
   }
   return param_1;

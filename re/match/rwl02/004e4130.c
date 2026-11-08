@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 67.6%. match_permute.py swap: cur = nx moves before the free callback (o is already computed, same semantics). Supersedes the header below. */
 // h2 hand-matched. 67.6% (regs 83.8%, ops 91.9%). RW link-list removal of two links per node. Residual: original keeps cur in esi, loads prev/next/o before the first store and reloads next from esi; ours reloads differently and has an extra mov. Tried 5 orderings of the removal statements. Class (b).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -45,8 +46,8 @@ C *FUN_004e4130(C *clump)
     o->b.next->prev = o->b.prev;
     o->a.prev->next = o->a.next;
     o->a.next->prev = o->a.prev;
-    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7164 + 4 + DAT_007d3ff8), o);
     cur = nx;
+    (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7164 + 4 + DAT_007d3ff8), o);
   }
   return clump;
 }

@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 88.2%. Stack walk: pop is cur = stack[sp--]; push keeps the old node (piVar4 = cur; cur = cur[2]; stack[++sp] = piVar4[3]). Global order DAT_007d3ff8 + DAT_007d71cc + 4 (the other spelling scores 100% but relocheck BAD, globals swapped). Supersedes the header below. */
 /* MATCH-RWL02 h1 0x004e55d0: best 88.2% (regs 94.1%), residual class b. orig flag test is byte [p+3]&1 with range check first and unsigned compares (jb/jae); remaining: tree walk register choice (orig reuses cursor eax and edx copy); permuter flat at 88.2. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -34,7 +35,7 @@ undefined4 FUN_004e55d0(int *param_1)
   int *piVar4;
   int iVar5;
   int aiStack_100 [64];
-  puVar1 = (undefined4 *)(DAT_007d71cc + 4 + DAT_007d3ff8);
+  puVar1 = (undefined4 *)(DAT_007d3ff8 + DAT_007d71cc + 4);
   puVar2 = (undefined4 *)*puVar1;
   while (puVar2 != puVar1) {
     piVar3 = (int *)puVar2[-2];
@@ -49,15 +50,13 @@ undefined4 FUN_004e55d0(int *param_1)
       do {
         if (*piVar3 < 0) {
           if (param_1 == piVar3) return puVar2[-2];
-          piVar4 = (int *)aiStack_100[iVar5];
-          iVar5 = iVar5 + -1;
+          piVar3 = (int *)aiStack_100[iVar5--];
         }
         else {
-          piVar4 = (int *)piVar3[2];
-          iVar5 = iVar5 + 1;
-          aiStack_100[iVar5] = piVar3[3];
+          piVar4 = piVar3;
+          piVar3 = (int *)piVar3[2];
+          aiStack_100[++iVar5] = piVar4[3];
         }
-        piVar3 = piVar4;
       } while (iVar5 >= 0);
     }
     puVar2 = (undefined4 *)*puVar2;

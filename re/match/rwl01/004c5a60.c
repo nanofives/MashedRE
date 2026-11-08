@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 83.7%. Refcount written as param_1[0x15]--; if (param_1[0x15] <= 0) { param_1[0x15]++; ... } (the edx copy before the test). Supersedes the header below. */
 /* MATCH-RWL01 0x004c5a60: 83.7% regs 88.4%. Refcount-- with test of a copy: original keeps edx=count-1 stored and eax copy for test and +1; ours uses one register. Tried <=0, ++ form, copy variable, permuter (no gain). class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -40,11 +41,9 @@ undefined4 FUN_004c5a60(int *param_1)
   int iVar1;
   int iVar2;
   
-  iVar1 = param_1[0x15] + -1;
-  param_1[0x15] = iVar1;
-  if (iVar1 <= 0) {
-    iVar1 = iVar1 + 1;
-    param_1[0x15] = iVar1;
+  param_1[0x15]--;
+  if (param_1[0x15] <= 0) {
+    param_1[0x15]++;
     FUN_004d8060((int)&DAT_00618138,(undefined4)param_1);
     if (param_1[1] != 0) {
       *(int *)param_1[3] = param_1[2];

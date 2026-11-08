@@ -1,0 +1,80 @@
+rva	size	best%	regs%	flags	by	sha256	class	reason	before%
+0x004c1040	461	99.2	100.0	/O2 /Ob1 /G5	insn	574d9fc73d4da6b8	a	holds 0x004c0ad0 (static callee); one [+0x9c] load base register	99.2
+0x004c1210	232	98.4	100.0	/O2 /Ob1 /G5	insn	8a427973c6329187	a	holds 0x004c0ad0 (static callee, 100%); one [+0x9c] load base register	98.4
+0x004ccc50	138	100.0	100.0	/O2 /Ob1 /G5	insn	e06c33e45de158dd	identical	byte pointer to the bitmap set before the loop (index/base order)	98.2
+0x004e4450	143	98.1	98.1	/O2 /Ob1 /G5	insn	a3aac68d7be79737			98.1
+0x004cd900	608	97.2	97.2	/O2 /Ob1 /G5	insn	bb49ae2840c6439a	(a/b)	float arg fix; first failure return not tail-merged in original	97.2
+0x004e15f0	128	100.0	100.0	/O2 /Ob1 /G5	insn	7480675aaec5c5e2	identical	tail block through the typed end pointer (base/index order)	96.2
+0x004ccba0	169	100.0	100.0	/O2 /Ob1 /G5	insn	e3a4b8e148bf43cb	identical	one bitmap byte pointer + fresh for-loop index	95.9
+0x004c5f60	471	95.6	96.5	/O2 /Ob1 /G5	insn	7dca86ecd3799823	a	Function-pointer stores as immediates via real prototypes (FUN_004c614	95.6
+0x004db3e0	368	95.2	99.0	/O2 /Ob1 /G5	insn	f5c74719ac596e37	a	Release calls load vtable into edx/ecx in opposite order, return esi v	95.2
+0x004e2470	132	93.6	95.7	/O2 /Ob1 /G5	insn	bf4a9159a19eeeb4			93.6
+0x004e5d30	237	94.1	94.1	/O2 /Ob1 /G5	insn	dbba06beb8a89bce	b	nested if chain; original keeps one ret per failing call	91.2
+0x004e51e0	156	90.7	92.6	/O2 /Ob1 /G5	insn	f05b0a771c4add37			90.7
+0x004e5700	288	100.0	100.0	/O2 /Ob1 /G5	insn	93e1be4dfd67a133	identical	same stack walk as 004e55d0; flag test before the +0x1c load	89.8
+0x004c5a00	90	89.7	89.7	/O2 /Ob1 /G5	insn	cda30aef109fd2e4	b	ops 100%, only store order of [+0x50]/[+0x51]/[+0x30] (permuter)	89.7
+0x004e55d0	129	100.0	100.0	/O2 /Ob1 /G5	insn	8460d40696494414	identical	stack pop cur = stack[sp--], push via saved node; ff8 + 71cc global order	88.2
+0x004e5ef0	60	88.0	88.0	/O2 /Ob1 /G5	insn	9113afb593ade87b			88.0
+0x004e1b60	299	86.5	90.1	/O2 /Ob1 /G5	insn	7c27f76430f4abbb	b	first call's arg registers (permuter, valid variant)	86.5
+0x004c3e20	110	92.6	100.0	/O2 /Ob1 /G5	insn	6fa9d7fb9b7ed66b	(a)/(b)	loads fixed via typed char* base; two stores after the call keep [eax+edx]	85.2
+0x004e1d20	195	84.8	84.8	/O2 /Ob1 /G5	insn	4ebc521124836a49	b	Only the placement of the return-0 epilogue differs: original emits it	84.8
+0x004c5a60	121	100.0	100.0	/O2 /Ob1 /G5	insn	4116927182f55fe4	identical	refcount-- then test, ++ on the free path	83.7
+0x004c0910	334	82.0	82.0	/O2 /Ob1 /G5	insn	209545d26325624d	b	64-byte struct copy done; prologue/param register scheduling	82.0
+0x004e4f70	165	100.0	100.0	/O2 /Ob1 /G5	insn	0d2ec89096945e94	identical	double recursion, second call tail-looped by the compiler	81.8
+0x004dc5b0	404	80.7	93.6	/O2 /Ob1 /G5	insn	78a8bd4add543f40	(b)	third alloc block scheduling, unsigned ja tail test	80.7
+0x004cdd60	188	79.2	87.0	/O2 /Ob1 /G5	insn	6824d2852354d83b	b	shift block placement and edx/ebp/edi assignment	79.2
+0x004cb600	236	78.6	81.0	/O2 /Ob1 /G5	insn	225183bcff436ca3	b	Struct form right (Rec6c 0x6c array, Blk68 copy gives rep movsd, reall	78.6
+0x004c5e00	340	77.7	84.5	/O2 /Ob1 /G5	insn	6c47a59462c982b0	(b)	do-while over list node, DAT_007d4080 load after first branch	77.7
+0x004dcbb0	369	77.5	84.2	/O2 /Ob1 /G5	insn	253ba94b2fe2ba84	(b)	real proto cdecl 5 args; param_1/uVar5/uVar6 register assignment	77.5
+0x004e5c30	62	100.0	100.0	/O2 /Ob1 /G5	insn	85fe5f4454d45632	identical	count hoisted to a local, array pointer reloaded per iteration	76.7
+0x004cc820	433	74.5	78.4	/O2 /Ob1 /G5	insn	6d24f9a29acfef21	b	Zeroing loops (rep stosd + rep stosb) are memset(p+2,0,n) with #pragma	74.5
+0x004e4380	38	100.0	100.0	/O2 /Ob1 /G5	insn	8567dae61fa1a3f7	identical	returns param_1 (Ghidra void)	72.2
+0x004e4c30	338	71.3	88.9	/O2 /Ob1 /G5	insn	cbbe07a72c403cf0			71.3
+0x004e5bf0	57	78.6	78.6	/O2 /Ob1 /G5	insn	7a452b4526c9e56c	b	head first, head != cur, early return; param_1 load scheduling	70.6
+0x004e5020	364	70.5	73.5	/O2 /Ob1 /G5	insn	79644c4911950387			70.5
+0x004c90a0	459	68.5	74.1	/O2 /Ob1 /G5	insn	0f67a19c40688049	b	Fixed realloc arity (3 args, flags hoisted) and COM calls to __stdcall	68.5
+0x004e12b0	319	67.7	84.3	/O2 /Ob1 /G5	insn	257b8c4e74062b06	b	Freelist-block coalesce (header at param_2-0x20: +0 prev, +4 next, +8 	67.7
+0x004e4130	89	100.0	100.0	/O2 /Ob1 /G5	insn	8266b24b3f784575	identical	permuter swap: cur = nx before the free callback	67.6
+0x004cee90	320	66.7	84.6	/O2 /Ob1 /G5	insn	c47c73d654aa9079	b	header words held in callee-saved regs across the pool alloc (inlined 	66.7
+0x004d4dd0	291	63.2	67.5	/O2 /Ob1 /G5	insn	0a07b46a8a16ac8b	b	Control flow now follows the original (resize arm first, malloc arm se	63.2
+0x004ce5d0	179	63.0	71.7	/O2 /Ob1 /G5	insn	aa06ac104edf5f4a	(b)	globals/capacity loaded before sub esp,8, frame layout of error struct	63.0
+0x004c30b0	447	61.7	79.2	/O2 /Ob1 /G5	insn	63b5031f3f3dd44d	b	state bool in esi / constant 1 in edi swapped	61.7
+0x004d7de0	515	61.5	69.2	/O2 /Ob1 /G5	insn	a4b97897ca770166	(b)	fixed to compile; error path inline early return layout	61.5
+0x004cf5a0	545	59.4	70.1	/O2 /Ob1 /G5	insn	0cf0d8ff788b8284	b	original branches on byte [esp+0x12] loaded into ebx before the calls	59.4
+0x004dc8a0	49	58.3	58.3	/O2 /Ob1 /G5	insn	c11f075339e68247	b	compiler loads/increments the ring counter before the four stores, ori	58.3
+0x004e5850	923	57.4	72.5	/O2 /Ob1 /G5	insn	51b9b85eca38ab70			57.4
+0x004e5820	21	100.0	100.0	/O2 /Ob1 /G5	insn	45bc59a0a81037b2	identical	returns p; /O2 /Ob1 /G5 like the slice	57.1
+0x004de1b0	468	56.8	58.6	/O2 /Ob1 /G5	insn	93c418e92794673a	(b)	memcpy intrinsic + arity fix; frame/locals layout	56.8
+0x004e1e70	234	56.5	56.5	/O2 /Ob1 /G5	insn	4e7e732e0c0f32ce	(b)	structure right; esi zero kept across function, err-struct store order	56.5
+0x004d4910	271	55.4	85.1	/O2 /Ob1 /G5	insn	4c00377f5b8e7538	b	original needs only ebx/esi/edi, ours takes ebp for the count	55.4
+0x004d2980	758	53.3	55.7	/O2 /Ob1 /G5	insn	5e02844e3c4ab1f8	b	hoisted (flags&0xf00), out-of-line cube branch, call cleanup per slot	53.3
+0x004e1670	146	52.8	84.9	/O2 /Ob1 /G5	insn	11e91bc3634f027b	b	param_3 in edi vs esi and remainder register assignment differ (permut	52.8
+0x004de800	564	52.5	71.3	/O2 /Ob1 /G5	insn	94b5dae9e377ed2e	(b)	switch selecting callbacks; function addresses declared as functions (	52.5
+0x004d8810	609	50.7	57.5	/O2 /Ob1 /G5	insn	a1de9fdd868770f9	b	Raw converter output with prototype/cast fixes for the C++ check only.	50.7
+0x004e13f0	167	50.0	75.0	/O2 /Ob1 /G5	insn	245e64ee2093119e	b	Structure right (single exit returning iVar2, nested realloc fail path	50.0
+0x004cf2b0	378	47.8	56.5	/O2 /Ob1 /G5	insn	b59d832503d2fd3d	b	Prototype fixes only (FUN_004c57a0 returns a pointer, thunk args cast)	47.8
+0x004df120	1420	46.3	56.6	/O2 /Ob1 /G5	insn	d3af638fcd236c93	b	Raw converter output with prototype/cast fixes for the C++ check only.	46.3
+0x004ddcb0	176	46.2	67.9	/O2 /Ob1 /G5	insn	1b1eeb9d5282ac70	b	duplicated pow2 bodies: shared counter tail-merges, separate counters 	46.2
+0x004de390	1087	45.0	53.1	/O2 /Ob1 /G5	insn	8f931fb4801e6ae4	b	per-format loop shapes/registers not matched (budget)	45.0
+0x004c3e90	543	44.3	45.0	/O2 /Ob1 /G5	insn	0db657bb8ef80068	b	Fast-sqrt LUT builder: float bits via union, sqrt intrinsic (fsqrt), f	44.3
+0x004cb8a0	480	43.3	50.0	/O2 /Ob1 /G5	insn	4f6e00209787c55e	b	param_1 in ebp and count reloaded in ebx in the original	43.3
+0x004c4220	69	40.7	40.7	/O2 /Ob1 /G5	insn	5fceaec92d23c8f4	(b)	triple product, x87 stack schedule (three cofactors kept on stack) not	40.7
+0x004e14a0	331	38.9	59.3	/O2 /Ob1 /G5	insn	a07660c56879a5e4	b	Heap-grow (size round 0x1f&~0x1f, scan 8-byte entries backwards, alloc	38.9
+0x004ddd60	587	38.8	22.9	/O2 /Ob1 /G5	insn	beb15c98157a477b	b	switch tree/case order match; per-case shift distribution differs	38.8
+0x004e2bf0	884	38.2	68.1	/O2 /Ob1 /G5	insn	87320682f28c9a7d			38.2
+0x004dcdc0	456	35.7	81.1	/O2 /Ob1 /G5	insn	36ea763fb7b266d1	(b)	list head in ecx vs eax swap, layout shift (ops 97.2%)	35.7
+0x004e2930	560	34.3	53.9	/O2 /Ob1 /G5	insn	26c0874d8f20cecf			34.3
+0x004d3090	922	32.8	35.1	/O2 /Ob1 /G5	insn	a878cfa341715d5a	(b)	raw form only, out of budget	32.8
+0x004e2090	899	29.7	48.3	/O2 /Ob1 /G5	insn	d160dc9f7ff76373			29.7
+0x004cdf20	936	28.3	65.8	/O2 /Ob1 /G5	insn	2e5bce65ac65abb7	b	Raw converter output with prototype/cast fixes for the C++ check only 	28.3
+0x004d4f90	508	28.3	49.5	/O2 /Ob1 /G5	insn	22a6615319547206	b	vararg walker, register allocation of object/cursor	28.3
+0x004e5300	710	27.9	49.6	/O2 /Ob1 /G5	insn	0fc85cc4e9a793f1			27.9
+0x004dc750	329	25.6	63.6	/O2 /Ob1 /G5	insn	7bfc921ca763b8fb	(b)	free-list coalesce, head spilled to stack slot, 5 callee-saved regs	25.6
+0x004e2650	730	23.8	26.2	/O2 /GS /Ob1	insn	1471e72e93e0df2d			23.8
+0x004ddfb0	501	23.6	34.4	/O2 /Ob1 /G5	insn	73659aebac29c346	b	Not worked beyond the raw converter output (budget went to higher-yiel	23.6
+0x004dee40	491	22.5	51.0	/O2 /Ob1 /G5	insn	211ac49b244d80c0	(b)	raw Ghidra form, loop/register structure differs	22.5
+0x004e2530	273	22.5	58.6	/O2 /Ob1 /G5	insn	e24a375a791a65bf			22.5
+0x004e0920	578	20.8	37.6	/O2 /Ob1 /G5	insn	d3f0457dfbba7adc	b	Raw Ghidra output for the vertex-element table part is wrong (the uSta	20.8
+0x004cb330	344	18.6	47.5	/O2 /Ob1 /G5	insn	3f1f23957fbecbe3	b	Not worked beyond raw output (budget spent on higher-yield rows). Two 	18.6
+0x004d4380	1412	17.2	28.5	/O2 /Ob1 /G5	insn	1307667ea9e50956	(b)	raw form only, out of budget	17.2
+0x004e3160	598	9.9	50.7	/O2 /Ob1 /G5	insn	a90dc16c5723ea9c			9.9

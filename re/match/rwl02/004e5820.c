@@ -1,4 +1,5 @@
-// FLAGS: /O1 /Ob1 /G5
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 57.1% under /O1. Under the slice flags /O2 /Ob1 /G5: if (cb == 0) cb = FUN_004e5190; p->cb = cb; return p; (the function returns p). Supersedes the header below. */
 // h2: best 57.1% (regs 57.1) under /O1 /Ob1 /G5 (the /O2 forms are 10%). Residual: original loads cb into ecx and p into eax before the test and has one tail; ours keeps eax/ecx swapped or duplicates the store. Tried ternary, struct arg, local temp, if/else. Class (b). Store-then-fixup form kept.
 // h2 hand-matched.
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -28,7 +29,9 @@ typedef int code();
 void FUN_004e5190(void);
 typedef struct { char pad[0x68]; code *cb; } S;
 // MATCH: 0x004e5820 FUN_004e5820
-void FUN_004e5820(S *p, code *cb)
+S *FUN_004e5820(S *p, code *cb)
 {
-  p->cb = cb; if (cb == 0) { p->cb = (code *)FUN_004e5190; }
+  if (cb == 0) { cb = (code *)FUN_004e5190; }
+  p->cb = cb;
+  return p;
 }

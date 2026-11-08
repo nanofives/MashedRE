@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 95.9%. One byte pointer pm = (unsigned char *)(puVar1 + 2) for both bitmap accesses, and a fresh loop index ui in a for loop for the sum; together they give both address operand orders. Supersedes the header below. */
 /* MATCH-RWL01 0x004ccba0: 95.9% regs 100%.  class (a/b) Only 3 byte-access address operand orders differ ([edx+esi+8] vs [esi+edx+8], [esi+eax+8] vs [eax+esi+8]). Tried index/base source orders, array index, int casts. Shift is 0x80>>(n-8*(n>>3)) without the 0x1f mask.. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -41,6 +42,8 @@ uint * FUN_004ccba0(uint *param_1,uint param_2)
   uint uVar3;
   int iVar4;
   uint uVar5;
+  unsigned char *pm;
+  uint ui;
 
   puVar1 = (uint *)param_1[4];
   uVar2 = param_1[2];
@@ -54,18 +57,16 @@ uint * FUN_004ccba0(uint *param_1,uint param_2)
   }
   uVar3 = (param_2 - uVar3) / *param_1;
   uVar5 = uVar3 >> 3;
-  ((unsigned char *)puVar1)[uVar5 + 8] &= ~(0x80 >> (uVar3 - (uVar5 << 3)));
+  pm = (unsigned char *)(puVar1 + 2);
+  pm[uVar5] &= ~(0x80 >> (uVar3 - (uVar5 << 3)));
+
   if ((param_1[6] & 2) != 0) {
     iVar4 = 0;
-    uVar3 = 0;
-    if (0 < uVar2) {
-      do {
-        iVar4 = iVar4 + *(unsigned char *)(uVar3 + 8 + (int)puVar1);
-        uVar3 = uVar3 + 1;
-      } while (uVar3 < uVar2);
-      if (iVar4 != 0) {
-        return param_1;
-      }
+    for (ui = 0; ui < uVar2; ui++) {
+      iVar4 = iVar4 + pm[ui];
+    }
+    if (iVar4 != 0) {
+      return param_1;
     }
     *(uint *)puVar1[1] = *puVar1;
     *(uint *)(*puVar1 + 4) = puVar1[1];
