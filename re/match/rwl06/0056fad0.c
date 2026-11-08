@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: float DAT_ constants written as float literals (values read from the unpatched exe; relocheck compares __real@ constants by value). The compiler orders x87 operands differently for a literal than for a global. Score in results.tsv. */
 /* MATCH-RWL06 h3 0x0056fad0: best 76.5% (regs 76.5%, ops 98.5%), class (a). V3 struct copy found; the fmul/fld operand order of every product is canonicalised by the compiler (source flips change nothing); permuter no gain. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -42,9 +43,9 @@ void FUN_0056fad0(float *param_1,float *param_2,float *param_3,float *param_4,in
     param_1[6] = param_2[1] * *param_3 - param_3[1] * *param_2;
   }
   if (param_6 != 0) {
-    param_1[8] = *param_2 * _DAT_005cc33c;
-    param_1[9] = param_2[1] * _DAT_005cc33c;
-    param_1[10] = param_2[2] * _DAT_005cc33c;
+    param_1[8] = *param_2 * (-1.0f);
+    param_1[9] = param_2[1] * (-1.0f);
+    param_1[10] = param_2[2] * (-1.0f);
     param_1[0xc] = param_2[1] * param_4[2] - param_4[1] * param_2[2];
     param_1[0xd] = param_2[2] * *param_4 - param_4[2] * *param_2;
     param_1[0xe] = param_4[1] * *param_2 - param_2[1] * *param_4;

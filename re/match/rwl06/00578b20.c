@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: 90.6% regs 90.6% (was 81.2). The global DAT_005cc33c (-1.0f) written as the literal -1.0f: the compiler then loads the vector element first (fld [esi]; fmul [const]) as the original does; with the global it loads the constant first. Residual: the param_1 copy (ours mov eax,[esp+0xc] before push esi then mov edi,eax; original mov edi,[esp+0x14] after push edi). Real locals (minA..maxB) get ops 100% but a 0xc frame (69.8%); 60 declaration orders did not give the 8-byte frame. Class b. Supersedes the header below. */
 /* MATCH-RWL06 h1 0x00578b20: 81.2% (regs 81.2%), class b. edi/eax load order for param_1 copy. Tried: out vars alias param slots, local_8 reuse, d>t compare, permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -43,9 +44,9 @@ float10 FUN_00578b20(int *param_1,float *param_2,float *param_3)
     *param_3 = *(float *)&param_1;
     return d;
   }
-  *pfVar2 = DAT_005cc33c * *pfVar2;
-  pfVar2[1] = DAT_005cc33c * pfVar2[1];
-  pfVar2[2] = DAT_005cc33c * pfVar2[2];
+  *pfVar2 = *pfVar2 * -1.0f;
+  pfVar2[1] = pfVar2[1] * -1.0f;
+  pfVar2[2] = pfVar2[2] * -1.0f;
   *param_3 = -*(float *)&param_2;
   return local_8;
 }

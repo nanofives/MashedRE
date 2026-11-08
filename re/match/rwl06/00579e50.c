@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: 83.3% regs 83.3% (was 60.4). Re-derived as struct S {float p[4][6]; float m[4][4]; ... maskA@0x1a4, n@0x1a8, maskB@0x1ac} with a for loop over bit/i and row pointers a, b: register assignment now matches. Residual: the original's strength-reduced row pointer sits at p[i][1] (lea edx,[eax+4]) and emits the dot as z,x,y; 48 term/operand orders in three spellings (array, R struct, explicit a pointer) all compile to one order, x,y,z-anchored at p[i][2]. Class b. Supersedes the header below. */
 /* MATCH-RWL06 h1 0x00579e50: 60.4% (regs 87.5%), class b. callee-saved reg assignment ebx/edi swapped. Tried: >=1 compare, term orders (all 12), permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -23,36 +24,20 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x00579e50 FUN_00579e50
-void FUN_00579e50(int param_1)
+typedef struct { float p[4][6]; float m[4][4]; char pad[0x1a4 - 0xa0]; uint maskA; int n; uint maskB; } S;
+void FUN_00579e50(S *s)
 {
-  float *pfVar1;
-  int iVar2;
-  uint uVar3;
-  float *pfVar4;
-  uint uVar5;
-  int iVar6;
-  int iVar7;
+  int i;
+  int bit;
+  float *a;
+  float *b;
 
-  uVar5 = 1;
-  uVar3 = *(uint *)(param_1 + 0x1a4) | *(uint *)(param_1 + 0x1ac);
-  iVar6 = 0;
-  if ((int)uVar3 >= 1) {
-    iVar7 = 0x18;
-    pfVar4 = (float *)(param_1 + 8);
-    do {
-      if ((uVar5 & uVar3) != 0) {
-        iVar2 = *(int *)(param_1 + 0x1a8);
-        pfVar1 = (float *)(param_1 + iVar2 * 0x18);
-        *(float *)(param_1 + (iVar2 + iVar7) * 4) =
-             pfVar4[-2] * *pfVar1 + pfVar4[-1] * *(float *)(param_1 + 4 + iVar2 * 0x18) + pfVar1[2] * *pfVar4;
-        *(undefined4 *)(param_1 + (iVar6 + 0x18 + *(int *)(param_1 + 0x1a8) * 4) * 4) =
-             *(undefined4 *)(param_1 + (iVar7 + *(int *)(param_1 + 0x1a8)) * 4);
-      }
-      uVar5 = uVar5 * 2;
-      uVar3 = *(uint *)(param_1 + 0x1a4) | *(uint *)(param_1 + 0x1ac);
-      iVar6 = iVar6 + 1;
-      iVar7 = iVar7 + 4;
-      pfVar4 = pfVar4 + 6;
-    } while ((int)uVar5 <= (int)uVar3);
+  for (i = 0, bit = 1; bit <= (int)(s->maskA | s->maskB); bit <<= 1, i++) {
+    if (bit & (s->maskA | s->maskB)) {
+      a = s->p[i];
+      b = s->p[s->n];
+      s->m[i][s->n] = a[0] * b[0] + a[1] * b[1] + b[2] * a[2];
+      s->m[s->n][i] = s->m[i][s->n];
+    }
   }
 }

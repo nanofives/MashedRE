@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: float DAT_ constants written as float literals (values read from the unpatched exe; relocheck compares __real@ constants by value). The compiler orders x87 operands differently for a literal than for a global. Score in results.tsv. */
 /* MATCH-RWL06 h3 0x00566420: best 31.1% (regs 34.1%, ops 72.6%), class (b). rewritten with proper float *poly / *dpoly parameters; the original keeps x in the FPU across the loop, double locals tried and are worse. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -44,8 +45,8 @@ void FUN_00566420(float param_1,float param_2,float param_3,float param_4,int pa
   int iter;
 
   iter = 0x17;
-  x = (param_1 + param_2) * _DAT_005cc32c;
-  if ((param_1 <= param_2) && (param_3 * param_4 < DAT_005d757c)) {
+  x = (param_1 + param_2) * 0.5f;
+  if ((param_1 <= param_2) && (param_3 * param_4 < 0.0f)) {
     while (1) {
       f = param_6[param_5];
       i = param_5;
@@ -53,10 +54,10 @@ void FUN_00566420(float param_1,float param_2,float param_3,float param_4,int pa
         i = i - 1;
         f = f * x + param_6[i];
       }
-      if (DAT_005d757c <= param_3 * f) {
+      if (0.0f <= param_3 * f) {
         param_1 = x;
         param_3 = f;
-        if (DAT_005d757c <= param_4 * f) {
+        if (0.0f <= param_4 * f) {
           break;
         }
       }
@@ -70,14 +71,14 @@ void FUN_00566420(float param_1,float param_2,float param_3,float param_4,int pa
         i = i - 1;
         df = df * x + param_7[i];
       }
-      if ((DAT_005d757c < (x - param_1) * df - f == DAT_005d757c < df) &&
-          (DAT_005d757c < (param_2 - x) * df + f == DAT_005d757c < df)) {
+      if ((0.0f < (x - param_1) * df - f == 0.0f < df) &&
+          (0.0f < (param_2 - x) * df + f == 0.0f < df)) {
         nx = x - f / df;
       }
       else {
-        nx = (param_1 + param_2) * _DAT_005cc32c;
+        nx = (param_1 + param_2) * 0.5f;
       }
-      if ((nx - x) * (nx - x) < nx * nx * _DAT_005e5470) {
+      if ((nx - x) * (nx - x) < nx * nx * 1.44e-14f) {
         return;
       }
       iter = iter - 1;

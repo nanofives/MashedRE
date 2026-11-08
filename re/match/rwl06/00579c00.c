@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: float DAT_ constants written as float literals (values read from the unpatched exe; relocheck compares __real@ constants by value). The compiler orders x87 operands differently for a literal than for a global. Score in results.tsv. */
 /* MATCH-RWL06 h1 0x00579c00: 72.2% (regs 72.2%), class b. x87 min/max keep in st0, reg alloc, loop counter memory. Tried: for-form, final compare flip, permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -37,7 +38,7 @@ undefined4 FUN_00579c00(float *param_1,uint param_2,int param_3,float *param_4)
   int local_8;
   float local_4;
 
-  fVar2 = DAT_005d757c;
+  fVar2 = 0.0f;
   uVar5 = 1;
   local_c = 0.0f;
   local_4 = -1.0f;
@@ -77,14 +78,14 @@ undefined4 FUN_00579c00(float *param_1,uint param_2,int param_3,float *param_4)
       local_8 = local_8 + 1;
       pfVar4 = pfVar4 + 6;
     } while ((int)uVar5 <= (int)param_2);
-    if (local_c != DAT_005d757c) {
-      local_c = DAT_005cc320 / local_c;
+    if (local_c != 0.0f) {
+      local_c = 1.0f / local_c;
       *param_1 = local_c * *param_1;
       param_1[1] = param_1[1] * local_c;
       param_1[2] = param_1[2] * local_c;
     }
   }
-  if (fVar2 > local_4 * DAT_005cea1c) {
+  if (fVar2 > local_4 * (-1e-05f)) {
     return 1;
   }
   return 0;
