@@ -1,0 +1,64 @@
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL02 h3 0x004e45b0: hand-written. */
+/* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
+MGLOBAL(int, DAT_007d7174, 0x007d7174);
+int FUN_004d7ff0(int p0);
+void FUN_004d8480(int * p0);
+int FUN_004e4650(int p0, int p1);
+int FUN_004e46f0(int p0, int p1);
+int FUN_004e4780(int p0, int p1);
+void FUN_004e6710(int p0, int (*p1)(int, int), int p2);
+void FUN_004e66d0(int p0, int (*p1)(int, int), int p2);
+void FUN_004e6760(int p0, int (*p1)(int, int), int p2);
+// MATCH: 0x004e45b0 FUN_004e45b0
+int FUN_004e45b0(int param_1, int param_2)
+{
+  int *piVar1;
+  int *piVar2;
+  int iVar3;
+  int local[2];
+
+  piVar2 = (int *)(DAT_007d7174 + param_2);
+  iVar3 = *(int *)(DAT_007d7174 + param_2);
+  if (iVar3 != 0) {
+    *(int *)(iVar3 + 0x24) = *(int *)(iVar3 + 0x24) + -1;
+    iVar3 = *piVar2;
+    piVar1 = (int *)(param_2 + 0x20);
+    if (piVar1 == *(int **)(iVar3 + 0x28)) {
+      *(int *)(iVar3 + 0x28) = *piVar1;
+    }
+    **(int **)(param_2 + 0x24) = *piVar1;
+    *(int *)(*piVar1 + 4) = *(int *)(param_2 + 0x24);
+    FUN_004e66d0(param_2, FUN_004e4650, param_1);
+    FUN_004e6760(param_2, FUN_004e46f0, param_1);
+    FUN_004e6710(param_2, FUN_004e4780, param_1);
+    *piVar2 = 0;
+    return param_1;
+  }
+  local[0] = 2;
+  local[1] = FUN_004d7ff0(4);
+  FUN_004d8480(local);
+  return 0;
+}
+
