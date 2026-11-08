@@ -67,8 +67,7 @@ frame render `0x00492e90`) or under them, and for most of them the RW 3.x identi
 source (example: `0x004e45b0`, tracked as RwFrameRemoveChild, takes two arguments and indexes a plugin offset at
 `0x007d7174`). Each row's note in BINDINGS.tsv says so. Exceptions with exe bodies: `0x004c19f0` (FrameDispatch.cpp),
 `0x004cbd30` (RwWorldStream.cpp / RwStreamCore.cpp), `0x00534b60` (RfxEmitter.cpp, called). `0x004c57a0` is bound by
-PORT-TOP-01 (`MashedRw_MatrixCreate_004c57a0`, `rw::Matrix::create`) on `orch/PORT-TOP-01`; on this branch it is still
-the raw forwarder inside the guarded MainLoopInit until that branch merges.
+PORT-TOP-01 (`MashedRw_MatrixCreate_004c57a0`, `rw::Matrix::create`), merged in at `02beb17e9` (kind `bound` now).
 
 ## What the knob path runs now
 
@@ -149,12 +148,35 @@ No tracker leg (no C-level moves).
 
 ## Merge state
 
-`orch/PORT-TOP-01` and `orch/PORT-TOP-02` were both in the merge train and not on `orch/integration` when this branch
-was cut and when it was handed in, so the `merge orch/integration` step was not possible yet. Expected conflicts when
-TOP-01 lands: none in code expected (TOP-01 appends to the end of `RwBridge.cpp` and adds an include; this branch edits
-the middle), and `BINDINGS.tsv`, which TOP-01 creates as its own 9-line file at the same path (add/add against TOP-02's
-260 rows, before this branch). Resolution: keep this branch's table and set `0x004c57a0` to kind `bound`, symbol
-`MashedRw_MatrixCreate_004c57a0`.
+Handed in at `4fa32db71` on top of `orch/PORT-TOP-02`. After acceptance, `orch/integration` (`34456c1d3`, with
+PORT-TOP-01) was merged in with `git -c merge.autoStash=false merge orch/integration`: merge commit `02beb17e9`.
+Conflicts and resolution:
+- `mashedmod/exe_sources.rsp`, `mashedmod/x87_tus.txt`: both sides appended list entries; kept both.
+- `verify/porttop_20261108/BINDINGS.tsv` (add/add: TOP-01 wrote its own 8-row table with other columns): kept this
+  branch's table and folded TOP-01's rows in (`0x004c57a0` -> kind `bound`, `MashedRw_MatrixCreate_004c57a0`,
+  rw::Matrix::create in `LibRw/RwBridge.cpp`; `0x00495110`, `0x0042b920`, `0x0042b950`, `0x00433240` matched;
+  `0x004950b0` stand-in). TOP-01's table is kept verbatim as `BINDINGS_TOP01.tsv`.
+- `RwBridge.cpp`: auto-merged (TOP-01 appends at the end, this branch edits the middle).
+
+Merged build `c372a04f` (`build3.log`), both targets OK, rva-lint "no NEW duplicate bodies", asm-lint OK.
+
+| gate (merged build) | result | ref |
+|---|---|---|
+| G-CTRL | `8284be46/67931834/31fe043e` | same |
+| B | `1d5bf4f9/1d5bf4f9/1d5bf4f9` | same |
+
+All four arms exit 0, self-exited. Knob-ON boot on the merged build (`knob_on_merge`, 3000 frames): exit 0, and
+`0x00492770 MainLoopInit returned 1`: with TOP-01's callee bindings the SEH guard no longer catches a fault. The guard
+itself stays until PORT-TOP-04 removes it. PORT-TOP-02 is not on `orch/integration` yet; a second merge follows when it
+lands.
+
+| raw file (D:/MashedWT/PORT-TOP-03_data) | sha256 |
+|---|---|
+| mashed_re_merge.exe | c372a04f72871e4feb899e092ca062dcf65a501a13d6a16ef2d62b130a8931ce |
+| build3.log | b39d9effac5230bd277c4dc0f87639e02b8e9ce78ee105efc778a784abbfd4dc |
+| gates_merge.log | 6f6dbc809c59ced84849ee696f3d888a1b7b207ac431513706c992b4fb14c320 |
+| knob_on_merge.log | a9df109c49c67ca336eb3375fcca7d5a2d90bdb57adb66ca433b43fe7949aae2 |
+| arms_merge/* | same hashes as the gate table above |
 
 ## Next stand-ins, in order
 
