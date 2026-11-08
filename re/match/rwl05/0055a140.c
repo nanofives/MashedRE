@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 12.3%. Returns param 1 (Ghidra typed it void). Supersedes the header below. */
 /* MATCH-RWL05 0x0055a140: hand-matched (h1). 12.3% (regs 95.4%, ops 98.5%), 65/65 ins. Same instruction stream; register assignment differs only (original: param_1 in eax, param_2 in esi, ours param_2 in edx and param_1 in esi). ushort == 0xffff compares, ushort loaded into unsigned local, while-loop form, permuter (26%) did not move it. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */

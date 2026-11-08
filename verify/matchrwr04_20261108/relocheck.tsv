@@ -1,6 +1,18 @@
+0x0055ade0	OK	checked=0	unchecked=0	0055ade0.c	
+0x00551550	OK	checked=0	unchecked=0	00551550.c	
+0x0055ac50	OK	checked=0	unchecked=0	0055ac50.c	
+0x0055ad30	OK	checked=3	unchecked=0	0055ad30.c	
+0x0055c380	OK	checked=0	unchecked=0	0055c380.c	
+0x005551d0	OK	checked=4	unchecked=0	005551d0.c	
+0x00559c00	OK	checked=0	unchecked=0	00559c00.c	
+0x005507b0	OK	checked=12	unchecked=6	005507b0.c	  unchecked: __strncpy,__strstr
+0x00564100	OK	checked=0	unchecked=0	00564100.c	
+0x0055dca0	OK	checked=5	unchecked=0	0055dca0.c	
+0x00558030	OK	checked=9	unchecked=0	00558030.c	
+0x00550670	OK	checked=7	unchecked=1	00550670.c	  unchecked: __strncpy
+0x00557ec0	OK	checked=10	unchecked=0	00557ec0.c	
+0x00564130	OK	checked=1	unchecked=0	00564130.c	
 0x0055fe40	OK	checked=0	unchecked=0	0055fe40.c	
 0x00565570	OK	checked=0	unchecked=0	00565570.c	
 0x0055a140	OK	checked=0	unchecked=0	0055a140.c	
 0x00552720	OK	checked=0	unchecked=0	00552720.c	
-0x0055ade0	OK	checked=0	unchecked=0	0055ade0.c	
-0x00551550	OK	checked=0	unchecked=0	00551550.c	

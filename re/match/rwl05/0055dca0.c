@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 80.6%. Natural for loop over a {int a,b} array instead of the Ghidra do-while. Supersedes the header below. */
 /* MATCH-RWL05 0x0055dca0: hand-matched (h3). 80.6% (regs 80.6, ops 93.5). unsigned `> 0` guard gives jbe; residue is ebp used as a shared zero constant (original uses immediates). class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */

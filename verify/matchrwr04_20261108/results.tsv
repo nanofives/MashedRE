@@ -1,0 +1,80 @@
+rva	size	best%	regs%	flags	by	sha256	class	reason	before%
+0x00551a50	121	96.4	98.2	/O2 /Ob1 /G5	insn	70add752ab9e8e81	b	eax reload + lea edx,[eax+8] vs mov edx; add edx,8	96.4
+0x0055c230	154	93.4	93.4	/O2 /Ob1 /G5	insn	1b89d08ae5325907	a	first dot product scheduling (fld before mov eax)	93.4
+0x00551190	251	90.7	90.7	/O2 /Ob1 /G5	insn	938117d27857d6d2	a	shrink-wrapped push esi	90.7
+0x0055ade0	102	100.0	100.0	/O2 /Ob1 /G5	insn	6f2ba33d3d75b162	identical	return param_2 duplicated inside the if block (no shrink-wrap)	90.2
+0x005584c0	133	90.0	90.0	/O2 /Ob1 /G5	insn	14c41cc084365f8a	a	two return-0 paths: original keeps an inline ret with eax reuse, ours tail-merges to xor	90.0
+0x00551550	77	100.0	100.0	/O2 /Ob1 /G5	insn	9f10426e7eb842bf	identical	returns int: callback result on that path, param_1 at the end	89.2
+0x0055c2d0	175	89.2	89.2	/O2 /Ob1 /G5	insn	b6ca28f955fcde07	a	x87 operand order in rows 0,2,3	89.2
+0x0055ac50	197	100.0	100.0	/O2 /Ob1 /G5	insn	964c43b255095a68	identical	index/bit expressions inline in the test (no uVar3/iVar2 temps)	88.3
+0x0055ad30	161	100.0	100.0	/O2 /Ob1 /G5	insn	201ab201788cf29f	identical	ret = param_2 assigned before the bit set	87.7
+0x0055c380	88	100.0	100.0	/O2 /Ob1 /G5	insn	da2b12328abe0a80	identical	permuter store order (independent field stores)	85.2
+0x005551d0	162	100.0	100.0	/O2 /Ob1 /G5	insn	c942637fa6a3f231	identical	4-iteration zeroing for loop (own zero register)	84.8
+0x00559c00	31	100.0	100.0	/O2 /Ob1 /G5	insn	26364ce2f1762fa4	identical	returns piVar1 (Ghidra typed void); return 0 reuses eax	83.3
+0x00550a20	193	87.1	87.1	/O2 /Ob1 /G5	insn	13837328e7eaec57	a	ops/off hoisted (87.1); edi shrink-wrap remains	82.4
+0x00552890	142	91.2	91.2	/O2 /Ob1 /G5	insn	ed90ca6d224941c0	b	permuter v.y store move (91.2); zero-store and dot-product schedule remain	82.4
+0x005507b0	341	100.0	100.0	/O2 /Ob1 /G5	insn	a8da975042acb3f4	identical	same error-block shape as 0x00550670	82.0
+0x00564100	47	100.0	100.0	/O2 /Ob1 /G5	insn	ae07590abfcab5fc	identical	fill value typed int	81.0
+0x0055dca0	184	100.0	100.0	/O2 /Ob1 /G5	insn	26ad81832d57106c	identical	natural for loop over a {int a,b} array	80.6
+0x00551c40	94	80.5	80.5	/O2 /Ob1 /G5	insn	3cf26f25f4948393	a	same return-0 tail-merge class as 0x005584c0, plus edi shrink-wrap	80.5
+0x00558cb0	114	78.4	82.4	/O2 /Ob1 /G5	insn	191277c47a5427be	b	orig has an 8-byte local frame not reproduced	78.4
+0x00552920	316	79.8	79.8	/O2 /Ob1 /G5	insn	b8121de4cf83dfac	b	duplicated products (79.8); x87 temp slots remain	78.0
+0x00563840	246	70.3	87.5	/O2 /Ob1 /G5	insn	97d6835b83a8d2cc	b	source used puVar3 before the alloc (fixed, semantics now right); scheduling remains	75.8
+0x00558030	204	100.0	100.0	/O2 /Ob1 /G5	insn	c27009ef2975424c	identical	offset var first, else-return, zeroing for loop (not memset)	75.0
+0x00562380	214	74.0	90.9	/O2 /Ob1 /G5	insn	3a874011bcd5c8ef	b	cross-product term order, fld DAT vs fld x order	74.0
+0x0055ae50	27	71.4	71.4	/O2 /Ob1 /G5	insn	fe1a8e986a84ec65	b	tail call into 0x00565550, load order of the two loads	71.4
+0x00550670	200	100.0	100.0	/O2 /Ob1 /G5	insn	798069a15cdb1490	identical	error block inline in the then-branch, NULL test at the found label	70.9
+0x0055ded0	183	98.4	100.0	/O2 /Ob1 /G5	insn	1d21b2a8ee27b8c8	b	separate loop counter fixed regs; [eax+edx] vs [edx+eax] on one store remains	70.3
+0x00559560	107	68.3	68.3	/O2 /Ob1 /G5	insn	0b61f339d10ab762	a	(x+0x1f)>>5<<5 folds to and ~0x1f for every spelling	68.3
+0x005530f0	244	67.8	67.8	/O2 /Ob1 /G5	insn	ae22cbaae631b1d1	b	x87 spill slots	67.8
+0x00563df0	114	66.7	75.6	/O2 /Ob1 /G5	insn	703c94d0c8343033	a	lea [p2+p3*2+2]; shl 3 folded to *8+0x10	66.7
+0x0055f800	1486	65.3	79.6	/O2 /Ob1 /G5	insn	52890de602b3a9b1	b	not worked, raw form (permuter timed out)	65.3
+0x0055c3e0	169	65.1	66.7	/O2 /Ob1 /G5	insn	145a2c2a8855614e	c	orig uses the C++ bool conversion neg/sbb/neg then je, no C spelling g	65.1
+0x00561280	265	65.1	70.6	/O2 /Ob1 /G5	insn	5d3dd026c40c6369	b	orig has a 0xc local frame spilling the third dot product	65.1
+0x00557ec0	226	100.0	100.0	/O2 /Ob1 /G5	insn	80d5f3abc4cd77b8	identical	same three fixes as 0x00558030	64.9
+0x005586f0	362	62.3	68.5	/O2 /Ob1 /G5	insn	1994eac44de05287	b	permuter-improved raw form	62.3
+0x00551ad0	285	59.3	65.4	/O2 /Ob1 /G5	insn	e384bad0e2802ad4	b	ops 89%; 0x40 local matrix init ordering	59.3
+0x005595d0	1396	57.5	76.8	/O2 /Ob1 /G5	insn	42e2f037ccb63249	b	untouched raw form	57.5
+0x00563940	445	56.4	65.4	/O2 /Ob1 /G5	insn	1439144f5d47b4f1	b	ushort edge-index loads and frame layout differ	56.4
+0x0055f670	400	56.0	73.0	/O2 /Ob1 /G5	insn	529b0b6e8400862b	b	not worked, raw form	56.0
+0x005533d0	441	55.0	61.1	/O2 /Ob1 /G5	insn	6009f16bd5820521	b	structure only	55.0
+0x00558240	433	52.8	68.1	/O2 /Ob1 /G5	insn	acef7db67b9ef6e4	b	not worked, raw form	52.8
+0x0055b4a0	425	50.8	56.1	/O2 /Ob1 /G5	insn	a666958e2d654ba0	b	sqrt intrinsic form, residue not worked	50.8
+0x00564130	81	100.0	100.0	/O2 /Ob1 /G5	insn	656e353b3809b6a1	identical	aligned alloc returning p + pad; pad byte held in param_3 slot	48.5
+0x00551840	167	46.5	81.7	/O2 /Ob1 /G5	insn	6f21a7a92cd80fcc	a	same return-0 tail-merge class as 0x005584c0	46.5
+0x0055f520	324	44.7	58.3	/O2 /Ob1 /G5	insn	477f080a04bdedf5	b	raw converter body, not worked	44.7
+0x00559ee0	263	43.9	65.3	/O2 /Ob1 /G5	insn	ef1210bcab3993fc	b	original keeps the 1<<n mask in ebp and rebuilds it, ours spills it	43.9
+0x0055c000	230	43.8	43.8	/O2 /Ob1 /G5	insn	639f7c465d4ca52c	a	x87 class as 0x0055bae0	43.8
+0x00559c40	660	42.4	59.5	/O2 /Ob1 /G5	insn	fd8e63fedc780503	b	untouched raw form	42.4
+0x0055b750	173	42.4	42.4	/O1 /Ob1 /G5	insn	58cf758a53aaea6b	b	flags /O1 /Ob1 /G5; orig frameless with st(n) reuse, ours builds an eb	42.4
+0x00551d40	649	41.5	54.6	/O2 /Ob1 /G5	insn	d325bec4115efa8d	b	structure only (permuter form)	41.5
+0x00553cf0	262	40.9	72.0	/O2 /Ob1 /G5	insn	ad61d91fa0701e14	b	structure only	40.9
+0x00558df0	579	39.7	73.1	/O2 /Ob1 /G5	insn	dfa08c11a2d94d9b	b	not worked, raw form	39.7
+0x0055bae0	133	39.2	39.2	/O2 /Ob1 /G5	insn	f4c8ab29ad2edb50	a	point transform: original spills one sum to [esp+8] and pops two dead 	39.2
+0x00562660	270	38.2	45.1	/O2 /Ob1 /G5	insn	6d3ed8dda361854c	b	different branch layout, sub esp 0x20 at entry	38.2
+0x00551460	127	37.9	43.1	/O2 /Os /Ob1 /G5	insn	863750247e133564	a	strlen repne scasb not emitted by 9176 (flags /O2 /Os)	37.9
+0x00563c80	345	34.1	46.3	/O2 /Ob1 /G5	insn	102ca793800018e3	b	raw converter body, only flags tried	34.1
+0x00554390	1110	33.5	45.8	/O2 /Ob1 /G5	insn	a1e6e4a3b348d56f	b	raw converter body, not worked	33.5
+0x00563b00	373	33.3	40.2	/O2 /Ob1 /G5	insn	d21cad49909d5449	b	nosize row, not worked	33.3
+0x00562010	169	32.3	35.5	/O2 /GS /Ob1	insn	15e3d649e9ffd37a	b	raw converter body (game flags won the raw run), not worked	32.3
+0x0055b650	251	31.6	51.6	/O2 /Ob1 /G5	insn	bf75505aed5c71e4	b	not worked, raw form	31.6
+0x005592f0	610	29.9	29.9	/O2 /Ob1 /G5	insn	dce54f663bae25fe	b	raw converter body, not worked (167 vs 129 instructions)	29.9
+0x00562ed0	209	28.7	77.0	/O2 /Ob1 /G5	insn	90ca499212213503	b	register allocation ebx/ebp/edi with per-field copies through scratch 	28.7
+0x005645b0	267	27.5	45.1	/O2 /GS /Ob1	insn	af6b02ed9eea36e4	b	not worked, raw form	27.5
+0x0055bde0	534	25.4	26.9	/O1	insn	2192e56b924c2b37	b	untouched raw form (/O1)	25.4
+0x0055fe40	12	100.0	100.0	/O2 /Ob1 /G5	insn	ab44686b6f8ef36a	identical	returns param 1 (Ghidra typed void)	25.0
+0x00558860	729	24.8	47.7	/O2 /Ob1 /G5	insn	2e76eed6c4fd835a	b	raw form with a placeholder for an unresolved -NAN operand, not worked	24.8
+0x0055b940	329	23.4	25.2	/O2 /Ob1 /G5	insn	96ace2d29f0ee838	b	nosize row, not worked	23.4
+0x005531f0	469	20.7	25.3	/O2 /Ob1 /G5	insn	a61d333b148d4b64	b	raw	20.7
+0x005538a0	936	19.7	29.8	/O2 /Ob1 /G5	insn	e656684ee51ae642	b	structure only	19.7
+0x00564040	187	19.4	59.7	/O2 /Ob1 /G5	insn	944b94d7da195d3b	b	original reloads the ushort param with and 0xffff, count in a stack sl	19.4
+0x00553620	626	18.7	32.2	/O2 /GS /Ob1	insn	a58743af4e6bcc89	b	raw	18.7
+0x00565570	28	100.0	100.0	/O2 /Ob1 /G5	insn	e9fdf91735402398	identical	returns param 1 (Ghidra typed void)	16.7
+0x0055bbf0	379	15.9	25.8	/O2 /Ob1 /G5	insn	d4384e4253d596d3	a	x87 class as 0x0055bae0, raw body	15.9
+0x00564310	663	15.4	22.0	/O2 /Ob1 /G5	insn	f3a4b4208bc674b6	b	not worked, raw form	15.4
+0x005655a0	468	14.8	14.8	/O2 /Ob1 /G5	insn	214cc5b80ac0d080	b	quaternion-to-matrix: original stores every product in its own 4-byte 	14.8
+0x0055a9a0	397	14.7	35.0	/O2 /Ob1 /G5	insn	a797e8e02e08b321	b	raw form did not compile; return type fixed only, not worked	14.7
+0x0055b080	1047	14.5	19.7	/O2 /GS /Ob1	insn	acc6d2322e70e951	b	not worked, raw form	14.5
+0x0055a140	172	100.0	100.0	/O2 /Ob1 /G5	insn	c921c697db2b4e97	identical	returns param 1 (Ghidra typed void)	12.3
+0x00559040	675	11.4	26.9	/O2 /Ob1 /G5	insn	041f1eb837bf3659	a	x87 scheduling differs throughout	11.4
+0x00552720	43	100.0	100.0	/O2 /Ob1 /G5	insn	ae292be1e006f67c	identical	returns param 1 (Ghidra typed void)	6.7

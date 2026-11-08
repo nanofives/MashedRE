@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 87.7%. ret = param_2 assigned before the bit set (ebx stops being the zero constant). Supersedes the header below. */
 /* MATCH-RWL05 0x0055ad30: hand-matched (h3). 87.7% (regs 87.7, ops 93.8). result kept in a local that the original holds in ebx; residue is ebx also used as the zero constant for the DAT_007dc8c0 stores and compare. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */

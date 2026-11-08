@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 75.0%. Offset variable read first, if/else return shape, zeroing for loop instead of memset. Supersedes the header below. */
 /* MATCH-RWL05 0x00558030: hand-matched (h3). 75.0% (regs 76.5, ops 85.3). memset intrinsic for the 10-dword clear, function-pointer null test (`mov ecx,0x557b70; test ecx,ecx`) kept; permuter swapped the DAT_00913274 load order. Residue: placement of the `return 0` block and table-offset register. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -40,28 +41,30 @@ int FUN_00558030(int param_1, float param_2)
   float fVar2;
   int *piVar3;
 
-  piVar3 = *(int **)(param_1 + DAT_00913274);
   iVar1 = DAT_00913274;
+  piVar3 = *(int **)(param_1 + iVar1);
   if (piVar3 == (int *)0) {
     piVar3 = (int *)(*(Alloc *)(DAT_007d3ff8 + 0x118))(DAT_0091327c, 0x30112);
     if (piVar3 != (int *)0) {
+      int i;
       piVar3[3] = -0x40800000;
       piVar3[4] = -0x40800000;
       *piVar3 = 0;
       piVar3[1] = 0;
       piVar3[2] = (int)FUN_00557a60;
       piVar3[5] = -1;
-      memset(piVar3 + 6, 0, 40);
+      for (i = 0; i < 10; i++) piVar3[6 + i] = 0;
     }
     *(int **)(param_1 + iVar1) = piVar3;
-    if (piVar3 == (int *)0) {
+    if (piVar3 != (int *)0) {
+      iVar1 = *(int *)(param_1 + 0x18);
+      if (iVar1 != 0) {
+        FUN_004e8e90(iVar1);
+      }
+      piVar3[6] = iVar1;
+    } else {
       return 0;
     }
-    iVar1 = *(int *)(param_1 + 0x18);
-    if (iVar1 != 0) {
-      FUN_004e8e90(iVar1);
-    }
-    piVar3[6] = iVar1;
   }
   fVar2 = DAT_005cc55c / param_2;
   piVar3[3] = *(int *)&param_2;

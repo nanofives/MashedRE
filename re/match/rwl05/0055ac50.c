@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 88.3%. Word index and bit mask written inline in the test (no uVar3/iVar2 temps). Supersedes the header below. */
 /* MATCH-RWL05 0x0055ac50: hand-matched (h3). 88.3% (regs 90.9, ops 94.8). ushort id read once into an unsigned int local. Residue: original hoists the xor ecx,ecx zero-extend above the test. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */

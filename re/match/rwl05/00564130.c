@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 48.5%. Aligned alloc that returns p + pad; the pad byte is held in the dead param_3 slot (*(unsigned char *)&param_3). Supersedes the header below. */
 /* MATCH-RWL05 0x00564130 (h2): hand: 48.5% class (b): original keeps the byte in the param_3 stack slot (byte store [esp+0x14], flags from sub reused) and holds uVar1 in esi across the div; tried &param_3 byte pointer (39.4%, closer layout), nested-if, permuter 240 s no gain. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */

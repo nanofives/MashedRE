@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 90.2%. return param_2 duplicated inside the if block, so the shared epilogue pushes edi at entry. Supersedes the header below. */
 /* MATCH-RWL05 0x0055ade0 (h2): hand, 90.2%, class (a): residue is push edi hoisted to the prologue in the original (shrink-wrap), flags /GS /O1 /G6 worse, permuter 150 s no gain. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */

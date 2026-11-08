@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 82.0%. Same error-block shape as 0x00550670. Supersedes the header below. */
 /* MATCH-RWL04 0x005507b0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl04_20261107/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

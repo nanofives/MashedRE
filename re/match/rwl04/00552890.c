@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 91.2%, was 82.4%. match_permute.py moved the v.y store after v.x. Remaining: y/z zero-store order and the dot-product load schedule (48 order/spelling combinations tried). Class (b). */
 /* MATCH-RWL04 0x00552890 (h2): 82.4% (regs 82.4, ops 94.1). Float globals, 12-byte local vector (y,z zeroed first), float sum. Residue: x87 sum schedule (original loads v1, add esp, v0, v2 interleaved; ours batches); all 6 term orders give identical bytes. class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -40,9 +41,9 @@ float10 FUN_00552890(void)
   struct V {float x,y,z;} v;
   if (DAT_00912bec == 0) {
     FUN_00552e40();
-    v.y = 0.0f;
     v.z = 0.0f;
     v.x = (DAT_00912b08 / DAT_00912b10) * DAT_00912be4 * DAT_00912be0;
+    v.y = 0.0f;
     FUN_004c3dc0((float*)&v,(float*)&v,&DAT_00912b58);
     DAT_00912bec = 1;
     DAT_00912be8 = v.x * v.x + v.y * v.y + v.z * v.z;

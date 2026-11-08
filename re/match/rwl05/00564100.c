@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 81.0%. Fill value typed int. Supersedes the header below. */
 /* MATCH-RWL05 0x00564100: hand-matched (h3). 81.0% (regs 85.7). memset intrinsic (rep stosd/stosb) with `char` arg and `> 0` guard; residue is movsx vs mov al for the byte arg and register shuffle around edx/ebx. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */

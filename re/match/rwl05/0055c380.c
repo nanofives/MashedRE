@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 85.2%. match_permute.py store order: independent field stores reordered (0x3e4ccccd stores first). Supersedes the header below. */
 /* MATCH-RWL05 0x0055c380: hand-matched (h3). 85.2% (regs 96.3, ops 100). permuter swapped the [0xc]/[0x15] stores; residue is the allocation of the 0x3e4ccccd constant vs the [+0xc] read-modify-write. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -31,6 +32,7 @@ void FUN_0055c380(undefined4 *param_1,undefined4 param_2)
   param_1[0x13] = 0;
   *(undefined2 *)((int)param_1 + 0x5a) = 0;
   *(undefined2 *)(param_1 + 0x16) = 0;
+  param_1[0x15] = 0x3e4ccccd;
   param_1[4] = 0;
   param_1[2] = 0;
   param_1[1] = 0;
@@ -38,13 +40,12 @@ void FUN_0055c380(undefined4 *param_1,undefined4 param_2)
   param_1[8] = 0;
   param_1[6] = 0;
   param_1[0xe] = 0;
-  param_1[0xd] = 0;
-  param_1[0x15] = 0x3e4ccccd;
-  param_1[0xc] = 0;
   param_1[0x14] = 0x3e4ccccd;
-  param_1[3] = param_1[3] | 0x20003;
-  param_1[0x17] = param_2;
+  param_1[0xd] = 0;
   param_1[10] = 0x3f800000;
+  param_1[0xc] = 0;
+  param_1[3] = 0x20003 | param_1[3];
+  param_1[0x17] = param_2;
   param_1[5] = 0x3f800000;
   *param_1 = 0x3f800000;
   return;
