@@ -41,6 +41,12 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   the lock: `py -3.12 <orch-wt>\re\orchestrator\mashed_lock.py run --label <step> -- <cmd>`
   (`run --solo` for a wall-clock-bound step such as D2 arms; the window expires after 1 h unless you
   pass `--ttl <s>`, and a new solo open waits while the merge train has a priority claim). Kill only PIDs you spawned.
+- **Every** launch of `MASHED.exe` or `mashed_re.exe` goes through `mashed_lock.py run`, not only gate
+  arms: ad-hoc boots, knob-ON boots, nav-demo captures, state-log runs. With the test slot, test-slot
+  OUTSIDE and mashed_lock INSIDE. And no `build.bat` while `mashed_lock.py status` shows a merge-train
+  PRIORITY-HOLD or SOLO: do read/edit work and wait. Reason: on 2026-11-08 two full-set passes bounced on
+  D2 line count alone under load from concurrent game runs and builds (PORT-SAVE-01 at 13:10, the
+  HB-TRAIN-STACK / PORT-TOP-04A / PORT-STATE-03 batch at 18:29), about an hour of gates each.
 - In PowerShell call `py.exe`, not `py` (a `~/bin/py` sh shim hangs pwsh).
 - Piz-collision crashes (`MASHED.exe+0x1509b4`, `+0xe66db`, U-9677) are re-runs, not findings.
 
