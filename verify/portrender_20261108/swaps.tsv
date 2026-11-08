@@ -1,0 +1,2 @@
+rva	name	source	wrapper	replaced_body	port_before	port_after	verdict
+0x004769f0	ParticleEmitter_SetColour	re/match/s12/004769f0.c	mashedmod/src/mashed_re/Match/MatchS12_004769f0.cpp	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	called	called	SWAPPED

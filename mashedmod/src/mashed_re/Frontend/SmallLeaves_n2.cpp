@@ -20,23 +20,30 @@
 // Forward declarations for callees (0x004307a0 only; others are leaves)
 // ---------------------------------------------------------------------------
 
-// 0x00429a70  LapFracGetBySlot  — C3 (MenuScoreGetters.cpp)
-// float __cdecl LapFracGetBySlot(uint32_t param_1)
-// Returns (float)DAT_0067d99c[param_1].
+// Callees of 0x004307a0, all three byte-matched leaves (C4 by match; one body each in
+// Match/MatchS06_00429a70.cpp, Match/MatchS06_00429a80.cpp, Match/MatchS06_00429a90.cpp):
+//   LapFracGetBySlot (orig. 0x00429a70)  returns (float)DAT_0067d99c[param_1]
+//   LapLapsGetBySlot (orig. 0x00429a80)  returns DAT_0067d98c[param_1]
+//   LapSecsGetBySlot (orig. 0x00429a90)  returns DAT_0067d994[param_1]
+// PORT-FE-01 (2026-11-08): the exe binds them BY NAME to those matched exports. It used to call the
+// original addresses, which the standalone does not map (only the six RVA thunks of exe_main.cpp exist),
+// so any exe call of ElapsedVsThresholdCheck faulted. The .asi keeps the original-address calls (the
+// installed hooks redirect them there), so its diff behaviour is unchanged.
+#ifdef MASHED_STANDALONE
+extern "C" float __cdecl LapFracGetBySlot(int param_1);
+extern "C" std::uint32_t __cdecl LapLapsGetBySlot(int param_1);
+extern "C" std::uint32_t __cdecl LapSecsGetBySlot(int param_1);
+static auto* const s_LapFracGetBySlot = &LapFracGetBySlot;
+static auto* const s_LapLapsGetBySlot = &LapLapsGetBySlot;
+static auto* const s_LapSecsGetBySlot = &LapSecsGetBySlot;
+#else
 static auto* const s_LapFracGetBySlot =
     reinterpret_cast<float(__cdecl*)(int)>(0x00429a70);
-
-// 0x00429a80  LapLapsGetBySlot  — C3 (MenuScoreGetters.cpp)
-// uint32_t __cdecl LapLapsGetBySlot(uint32_t param_1)
-// Returns DAT_0067d98c[param_1].
 static auto* const s_LapLapsGetBySlot =
     reinterpret_cast<std::int32_t(__cdecl*)(int)>(0x00429a80);
-
-// 0x00429a90  LapSecsGetBySlot  — C3 (MenuScoreGetters.cpp)
-// uint32_t __cdecl LapSecsGetBySlot(int param_1)
-// Returns DAT_0067d994[param_1].
 static auto* const s_LapSecsGetBySlot =
     reinterpret_cast<std::int32_t(__cdecl*)(int)>(0x00429a90);
+#endif
 
 // ---------------------------------------------------------------------------
 // RaceResultIndexedStore  --  0x0045ba00
