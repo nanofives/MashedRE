@@ -1,0 +1,213 @@
+CXXFAIL 005412d0 
+re\match\rwl04\005412d0.c(92): error C2664: 'void FUN_00540340(int,int,byte,undefined4)': el argumento 4 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl04\005412d0.c(110): error C2664: 'undefined4 FUN_004d6e70(undefined4 *,int)': el argumento 1 no puede convertirse de 'int *' a 'undefined4 *'
+re\match\rwl04\005412d0.c(114): error C2664: 'void FUN_004d3b00(undefined4 *)': el argumento 1 no puede convertirse de 'int' a 'undefined4 *'
+re\match\rwl04\005412d0.c(205): error C2664: 'undefined4 FUN_00541b50(int,int,int)': el argumento 1 no puede convertirse de 'int *' a 'int'
+re\match\rwl04\005412d0.c(226): error C2664: 'undefined4 FUN_00541b50(int,int,int)': el argumento 1 no puede convertirse de 'int *' a 'int'
+re\match\rwl04\005412d0.c(283): error C2664: 'undefined4 FUN_00541b50(int,int,int)': el argumento 1 no puede convertirse de 'int *' a 'int'
+re\match\rwl04\005412d0.c(309): error C2664: 'void FUN_004d54d0(int,undefined4 *)': el argumento 2 no puede convertirse de 'int **' a 'undefined4 *'
+re\match\rwl04\005412d0.c(310): error C2664: 'void FUN_004d54d0(int,undefined4 *)': el argumento 2 no puede convertirse de 'int **' a 'undefined4 *'
+re\match\rwl04\005412d0.c(314): error C2664: 'void FUN_004d54d0(int,undefined4 *)': el argumento 2 no puede convertirse de 'int *' a 'undefined4 *'
+CXXOK 00541b50
+CXXFAIL 00541d40 
+re\match\rwl04\00541d40.c(93): error C2660: 'FUN_00540340': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(103): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 *'
+re\match\rwl04\00541d40.c(105): error C2660: 'FUN_004dcbb0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(112): error C2660: 'FUN_005422c0': la función no acepta 1 argumentos
+re\match\rwl04\00541d40.c(113): error C2664: 'bool FUN_004dcd30(int *)': el argumento 1 no puede convertirse de 'int' a 'int *'
+re\match\rwl04\00541d40.c(114): error C2660: 'FUN_004d6e70': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(124): error C2660: 'FUN_004cb130': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(135): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl04\00541d40.c(136): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(137): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(138): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(139): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(140): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(176): error C2660: 'FUN_004d5480': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(179): error C2664: 'void FUN_004d54d0(int,undefined4 *)': el argumento 2 no puede convertirse de 'int **' a 'undefined4 *'
+re\match\rwl04\00541d40.c(180): error C2660: 'FUN_004d5480': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(181): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(194): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(195): error C2660: 'FUN_004d5480': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(196): error C2660: 'FUN_004d7100': la función no acepta 1 argumentos
+re\match\rwl04\00541d40.c(205): error C2660: 'FUN_004d6e70': la función no acepta 1 argumentos
+re\match\rwl04\00541d40.c(206): error C2664: 'void FUN_004d54d0(int,undefined4 *)': el argumento 2 no puede convertirse de 'int *' a 'undefined4 *'
+re\match\rwl04\00541d40.c(207): error C2664: 'void FUN_004d54d0(int,undefined4 *)': el argumento 2 no puede convertirse de 'int *' a 'undefined4 *'
+re\match\rwl04\00541d40.c(208): error C2660: 'FUN_004d5480': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(209): error C2660: 'FUN_004d5480': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(237): error C3861: 'ROUND': no se encontró el identificador
+re\match\rwl04\00541d40.c(245): error C2660: 'FUN_00541b50': la función no acepta 1 argumentos
+re\match\rwl04\00541d40.c(275): error C2660: 'FUN_004d6e70': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(276): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(277): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl04\00541d40.c(279): error C2660: 'FUN_004d5480': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(280): error C2660: 'FUN_004d5480': la función no acepta 2 argumentos
+re\match\rwl04\00541d40.c(281): error C2660: 'FUN_004d6e70': la función no acepta 2 argumentos
+CXXOK 00543710
+CXXOK 00543950
+CXXOK 005439d0
+CXXOK 00543a40
+CXXOK 00543b10
+CXXOK 00543b20
+CXXOK 00543b30
+CXXOK 00543b90
+CXXOK 00543bb0
+CXXOK 00543d40
+CXXOK 00543d70
+CXXOK 00543da0
+CXXOK 00543dc0
+CXXOK 00543df0
+CXXOK 00543e00
+CXXOK 00543e10
+CXXOK 00543e30
+CXXOK 00543e50
+CXXOK 005449f0
+CXXOK 00544a70
+CXXOK 00544ad0
+CXXOK 00544bf0
+CXXOK 00544d20
+CXXOK 00545260
+CXXOK 005459c0
+CXXOK 00545d30
+CXXOK 00546320
+CXXOK 00546380
+CXXOK 00546530
+CXXOK 00546890
+CXXOK 00546bf0
+CXXOK 00546c50
+CXXOK 00546cb0
+CXXOK 00546d10
+CXXOK 00547230
+CXXOK 005492a0
+CXXOK 005493d0
+CXXFAIL 005493e0 
+re\match\rwl04\005493e0.c(58): error C2660: 'FUN_004d7ff0': la función no acepta 2 argumentos
+re\match\rwl04\005493e0.c(72): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+re\match\rwl04\005493e0.c(74): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+re\match\rwl04\005493e0.c(77): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+re\match\rwl04\005493e0.c(81): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+re\match\rwl04\005493e0.c(85): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+re\match\rwl04\005493e0.c(92): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+re\match\rwl04\005493e0.c(107): error C2660: 'FUN_004d7ff0': la función no acepta 2 argumentos
+CXXOK 00549580
+CXXOK 005495a0
+CXXOK 005495b0
+CXXOK 00549610
+CXXOK 00549620
+CXXOK 00549640
+CXXOK 00549900
+CXXOK 00549970
+CXXOK 005499f0
+CXXOK 00549a50
+CXXOK 00549a90
+CXXOK 00549aa0
+CXXOK 00549b20
+CXXOK 0054a120
+CXXFAIL 0054b340 
+re\match\rwl04\0054b340.c(82): error C2440: '=': no se puede realizar la conversión de 'float *' a 'undefined4 *'
+re\match\rwl04\0054b340.c(107): error C2664: 'int FUN_0054b630(int,int,undefined2)': el argumento 1 no puede convertirse de 'float *' a 'int'
+CXXOK 0054b630
+CXXOK 0054b6d0
+CXXOK 0054b740
+CXXOK 0054b8c0
+CXXFAIL 0054ba20 
+re\match\rwl04\0054ba20.c(105): error C2664: 'void FUN_0054f410(float *,float *)': el argumento 1 no puede convertirse de 'undefined1 [256]' a 'float *'
+re\match\rwl04\0054ba20.c(106): error C2664: 'void FUN_0054d4d0(float *,float *)': el argumento 1 no puede convertirse de 'undefined1 [256]' a 'float *'
+re\match\rwl04\0054ba20.c(107): error C2664: 'void FUN_0054e520(float *,float *,float,float)': el argumento 2 no puede convertirse de 'undefined1 [256]' a 'float *'
+CXXFAIL 0054bda0 
+re\match\rwl04\0054bda0.c(128): error C2664: 'void FUN_0054f410(float *,float *)': el argumento 1 no puede convertirse de 'undefined1 [256]' a 'float *'
+re\match\rwl04\0054bda0.c(129): error C2664: 'void FUN_0054dbd0(float *,float *)': el argumento 1 no puede convertirse de 'undefined1 [256]' a 'float *'
+re\match\rwl04\0054bda0.c(130): error C2664: 'void FUN_0054eb90(float *,float *,float,float)': el argumento 2 no puede convertirse de 'undefined1 [256]' a 'float *'
+re\match\rwl04\0054bda0.c(150): error C3861: 'ROUND': no se encontró el identificador
+re\match\rwl04\0054bda0.c(152): error C3861: 'ROUND': no se encontró el identificador
+re\match\rwl04\0054bda0.c(154): error C3861: 'ROUND': no se encontró el identificador
+re\match\rwl04\0054bda0.c(157): error C3861: 'ROUND': no se encontró el identificador
+CXXOK 0054c400
+CXXOK 0054c4f0
+CXXOK 0054c870
+CXXOK 0054ceb0
+CXXOK 0054cfa0
+CXXOK 0054d090
+CXXOK 0054d4d0
+CXXOK 0054dbd0
+CXXOK 0054e520
+CXXOK 0054eb90
+CXXOK 0054f410
+CXXFAIL 0054f8d0 
+re\match\rwl04\0054f8d0.c(91): error C2664: 'uint FUN_004cbd30(undefined4 *,undefined4 *,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl04\0054f8d0.c(95): error C2440: '=': no se puede realizar la conversión de 'undefined1 *' a 'int'
+re\match\rwl04\0054f8d0.c(103): error C2664: 'undefined4 FUN_0054fd60(int,undefined4 *)': el argumento 2 no puede convertirse de 'int *' a 'undefined4 *'
+re\match\rwl04\0054f8d0.c(116): error C2664: 'uint FUN_004cbd30(undefined4 *,undefined4 *,uint)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl04\0054f8d0.c(121): error C2660: 'FUN_004d7ff0': la función no acepta 2 argumentos
+re\match\rwl04\0054f8d0.c(155): error C2664: 'undefined4 FUN_004d5340(undefined4,undefined4,undefined4 *,undefined4 *,undefined4 *,uint *)': el argumento 5 no puede convertirse de 'int *' a 'undefined4 *'
+re\match\rwl04\0054f8d0.c(161): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl04\0054f8d0.c(186): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl04\0054f8d0.c(208): error C2664: 'int FUN_004d5310(int,byte *)': el argumento 2 no puede convertirse de 'int' a 'byte *'
+re\match\rwl04\0054f8d0.c(210): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl04\0054f8d0.c(219): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl04\0054f8d0.c(225): error C2664: 'undefined4 *FUN_004c5860(undefined4 *,int)': el argumento 1 no puede convertirse de 'int' a 'undefined4 *'
+re\match\rwl04\0054f8d0.c(226): error C2664: 'int FUN_004e1b60(int,int,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+CXXOK 0054fd60
+CXXFAIL 00550130 
+re\match\rwl04\00550130.c(58): error C2660: 'FUN_004cc5e0': la función no acepta 2 argumentos
+re\match\rwl04\00550130.c(65): error C2660: 'FUN_004cbd30': la función no acepta 1 argumentos
+re\match\rwl04\00550130.c(71): error C2440: '=': no se puede realizar la conversión de 'undefined1 *' a 'int'
+re\match\rwl04\00550130.c(77): error C2440: '=': no se puede realizar la conversión de 'undefined1 *' a 'int'
+re\match\rwl04\00550130.c(79): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'int'
+re\match\rwl04\00550130.c(91): error C2660: 'FUN_004c5800': la función no acepta 1 argumentos
+re\match\rwl04\00550130.c(92): error C2660: 'FUN_004c5830': la función no acepta 1 argumentos
+CXXOK 00550350
+CXXOK 00550400
+CXXOK 00550520
+CXXOK 00550580
+CXXOK 00550670
+CXXOK 00550740
+CXXOK 00550750
+CXXOK 005507a0
+CXXOK 005507b0
+CXXOK 00550a20
+CXXOK 00550bd0
+CXXOK 00551190
+CXXOK 00551330
+CXXOK 00551410
+CXXOK 00551460
+CXXOK 00551510
+CXXOK 00551550
+CXXOK 005515a0
+CXXOK 00551840
+CXXOK 00551a50
+CXXOK 00551ad0
+CXXOK 00551c40
+CXXOK 00551ca0
+CXXOK 00551ce0
+CXXOK 00551cf0
+CXXOK 00551d40
+CXXOK 00551fd0
+CXXOK 00551fe0
+CXXOK 00552020
+CXXOK 00552230
+CXXOK 005522e0
+CXXOK 005524a0
+CXXOK 00552720
+CXXOK 00552890
+CXXOK 00552920
+CXXOK 00552fa0
+CXXOK 00553030
+CXXOK 005530f0
+CXXFAIL 005531f0 
+re\match\rwl04\005531f0.c(54): error C2664: 'int FUN_005c4c60(int *,int,undefined4)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+CXXOK 005533d0
+CXXOK 00553590
+CXXFAIL 00553620 
+re\match\rwl04\00553620.c(78): error C2664: 'undefined4 FUN_005c4d30(undefined4 *)': el argumento 1 no puede convertirse de 'undefined4' a 'undefined4 *'
+re\match\rwl04\00553620.c(103): error C2664: 'void FUN_005538a0(undefined4 *,float *,int)': el argumento 2 no puede convertirse de 'int *' a 'float *'
+re\match\rwl04\00553620.c(113): error C2664: 'int FUN_005c4bb0(int *,undefined4)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl04\00553620.c(138): error C2664: 'int FUN_005c4bb0(int *,undefined4)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl04\00553620.c(157): error C2664: 'int FUN_005533d0(int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+CXXOK 005538a0
+CXXOK 00553c50
+CXXOK 00553cf0
+CXXOK 00553e00
+CXXOK 00553ef0
+CXXOK 00553f40
+CXXOK 005540d0
