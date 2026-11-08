@@ -6,12 +6,20 @@
 
 #define MATCH_PORT 1
 #define FUN_00495530 CreateDInputObject
+// [PORT-TOP-04A] exe: DirectInput8Create (the 0x0049b300 import thunk) and the debug printf 0x004987b0 bind by name
+// (Match/PortTop_InputPort.cpp, Match/PortTop_004987b0.cpp). The .asi keeps the raw-address calls.
+#ifdef MASHED_STANDALONE
+#define FUN_0049b300 PortTop_DirectInput8Create_0049b300
+#define FUN_004987b0 DbgPrintf_004987b0
+#else
 #define FUN_0049b300 MatchS16_00495530_Call0049b300
 #define FUN_004987b0 MatchS16_00495530_Call004987b0
+#endif
 #pragma comment(linker, "/EXPORT:CreateDInputObject=_CreateDInputObject")
 extern "C" {
 #include "../../../../re/match/s16/00495530.c"
 }
+#ifndef MASHED_STANDALONE
 // Callees with no C-callable port body: raw-address forwarders, the same calls the old Input/DirectInput.cpp body
 // made (its naked push/ret thunks game_dinput8_create -> 0x0049b300 and game_printf_dbg -> 0x004987b0).
 extern "C" {
@@ -22,4 +30,5 @@ void MatchS16_00495530_Call004987b0(char *p0) {
     reinterpret_cast<void (__cdecl*)(char *)>(0x004987b0u)(p0);
 }
 }
+#endif
 RH_ScopedInstall(CreateDInputObject, 0x00495530);

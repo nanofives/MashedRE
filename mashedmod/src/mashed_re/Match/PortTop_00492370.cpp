@@ -38,6 +38,9 @@ int  PortTop_HandRenderFrame(void);
 void PortTop_HandAppDestroy(void);
 int  SubsystemInit(void);                      // Match/MatchS15_00492270.cpp
 void thunk_EngineStopDispatch(void);           // Match/MatchS15_00493550.cpp
+bool thunk_LaunchLangGate(void);               // Match/MatchS15_00493540.cpp
+unsigned int thunk_HwExitDispatch(void);       // Match/MatchS15_00493560.cpp
+void PortTop_SeedDInput(void);                 // Match/PortTop_InputPort.cpp
 void PortTop_HandGameModeMachine(void);
 void PortTop_SetHwnd(void* hwnd);
 int  MainLoopInit(void);                       // Match/MatchS15_00492770.cpp
@@ -99,12 +102,19 @@ void PortTop_CfgLogDebug(const char* fmt, ...) {
 }
 
 // ---- WinMain 0x00492370 callees ----
-// stand-in for the gate 0x00493540 -> 0x00495150: none of 0x00495150's 6 callees has an exe body and the hand top
-// level has no such step. Returns what 0x00495150 returns, DAT_007719e4 == 0 (0x007719e4 is the "-cs1" switch that
-// rva 0x00493900 sets).
-int PortTop_Missing_00493540(int, int) {
-    const int r = *reinterpret_cast<volatile int*>(0x007719e4u) == 0;
-    PortTop_Log("0x00493540 gate: missing (0x00495150 unported), returns %d", r);
+// rva 0x00493540 -> 0x00495150: the matched exe bodies since PORT-TOP-04A (Match/MatchS15_00493540.cpp ->
+// Match/PortTop_00495150.cpp: QPF store 0x00495120, DirectInput object 0x004955b0, joypads 0x004960a0, keyboard
+// 0x004963b0, controller defaults 0x00498510 (missing)). The thunk is compiled as bool (AL only), so the value is
+// widened here before the matched WinMain reads it as int. WinMain passes two arguments the thunk does not read.
+int PortTop_Bound_00493540(int, int) {
+    PortTop_SeedDInput();
+    const int r = thunk_LaunchLangGate() ? 1 : 0;
+    const unsigned qlo = *reinterpret_cast<volatile unsigned*>(0x00771e70u);
+    PortTop_Log("0x00493540 -> 0x00495150 boot gate (matched) returned %d; QPF at 0x00771e70 = %u; DirectInput "
+                "0x00771e78 = %s, keyboard 0x00772fb8 = %s, joypads 0x00772fac = %d", r, qlo,
+                *reinterpret_cast<void* volatile*>(0x00771e78u) ? "created" : "NULL",
+                *reinterpret_cast<void* volatile*>(0x00772fb8u) ? "created" : "NULL",
+                *reinterpret_cast<volatile int*>(0x00772facu));
     return r;
 }
 // stand-in for 0x004924f0 (zero-fill 0x007f0f60 + boot params): the hand boot chain (exe_main ExecuteFrontendBootChain
@@ -149,24 +159,23 @@ void PortTop_Bound_00493550(void) {
     PortTop_Log("0x00493550 -> 0x004938c0 SoftwareTidyUpBeforeExiting (matched, RW calls on librw)");
     thunk_EngineStopDispatch();
 }
-// rva 0x00493560 -> 0x004954f0 HardwareExitApplication: no exe body for it or its 5 callees; the hand top level has none.
-int PortTop_Missing_00493560(void) {
-    PortTop_Log("0x00493560 hardware exit: missing (0x004954f0 unported), returns 0");
-    return 0;
+// rva 0x00493560 -> 0x004954f0 HardwareExitApplication: the matched exe bodies since PORT-TOP-04A
+// (Match/MatchS15_00493560.cpp -> Match/PortTop_004954f0.cpp: keyboard, joypad and DirectInput release).
+int PortTop_Bound_00493560(void) {
+    const unsigned r = thunk_HwExitDispatch();
+    PortTop_Log("0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned %u; DirectInput 0x00771e78 = %s, "
+                "keyboard 0x00772fb8 = %s", r, *reinterpret_cast<void* volatile*>(0x00771e78u) ? "LEFT" : "released",
+                *reinterpret_cast<void* volatile*>(0x00772fb8u) ? "LEFT" : "released");
+    return static_cast<int>(r);
 }
 
 // ---- run function 0x00492290 callees ----
-// rva 0x00492770 MainLoopInit: the matched exe body (Match/MatchS15_00492770.cpp). Its 5 callees still forward to raw
-// original addresses (PORT-TOP-01 closes them), so the call is SEH-guarded here exactly as the hand boot chain step 7
-// guards it. Remove the guard when PORT-TOP-01 lands.
-int PortTop_MainLoopInitGuarded(void) {
-    int r = 0;
-    __try {
-        r = MainLoopInit();
-        PortTop_Log("0x00492770 MainLoopInit returned %d", r);
-    } __except (1) {
-        PortTop_Log("0x00492770 MainLoopInit faulted (PORT-TOP-01: callees 0x00495110 0x0042b920 0x0042b950 0x00433240 0x004c57a0)");
-    }
+// rva 0x00492770 MainLoopInit: the matched exe body (Match/MatchS15_00492770.cpp), its 5 callees bound by name since
+// PORT-TOP-01. Called directly since PORT-TOP-04A (the SEH guard is gone). 0x00495110's QPF divisor is the one the
+// boot gate 0x00495120 stored, as in the original order.
+int PortTop_MainLoopInit(void) {
+    const int r = MainLoopInit();
+    PortTop_Log("0x00492770 MainLoopInit returned %d", r);
     return r;
 }
 // rva 0x004929d0 game-mode machine: the port wrapper GameModeMachine_Tick (Race/GameModeMachine.cpp), the hand loop's
@@ -213,7 +222,7 @@ int PortTop_Missing_00493480(void) { return 0; }
 // WinMain 0x00492370
 #define FUN_00499ba0 Orig_00499ba0                  // matched, PortTop_00499ba0.cpp
 #define FUN_00493900 Orig_00493900                  // matched (66.9% source), PortTop_00493900.cpp
-#define FUN_00493540 PortTop_Missing_00493540
+#define FUN_00493540 PortTop_Bound_00493540       // matched, Match/MatchS15_00493540.cpp (PORT-TOP-04A)
 #define FUN_004924f0 PortTop_StandIn_004924f0
 #define FUN_00492270 PortTop_Bound_00492270       // matched, Match/MatchS15_00492270.cpp (PORT-TOP-03)
 #define FUN_005c9d00 GetRaceEndTrigger              // port, Util/GameStateGetters.cpp
@@ -223,9 +232,9 @@ int PortTop_Missing_00493480(void) { return 0; }
 #define FUN_00402a40 PortTop_StandIn_00402a40
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930  // RW: RwTexDictionaryDestroy -> librw (PORT-TOP-03)
 #define FUN_00493550 PortTop_Bound_00493550       // matched, Match/MatchS15_00493550.cpp (PORT-TOP-03)
-#define FUN_00493560 PortTop_Missing_00493560
+#define FUN_00493560 PortTop_Bound_00493560       // matched, Match/MatchS15_00493560.cpp (PORT-TOP-04A)
 // run function 0x00492290
-#define FUN_00492770 PortTop_MainLoopInitGuarded
+#define FUN_00492770 PortTop_MainLoopInit
 #define FUN_00499690 WindowMsgPump                  // matched, Match/MatchS16_00499690.cpp
 #define FUN_004929d0 PortTop_Port_004929d0
 #define FUN_00492d30 PortTop_StandIn_00492d30
