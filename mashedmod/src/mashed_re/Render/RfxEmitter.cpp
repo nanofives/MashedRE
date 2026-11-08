@@ -146,27 +146,8 @@ RH_ScopedInstall(Copy476a80, 0x00476a80);
 // MATCH-S12: the body of Batch476ae0 moved to Match/MatchS12_00476ae0.cpp (PORT-STATE-02),
 // which compiles the byte-matched source re/match/s12/00476ae0.c.
 
-// 0x00476b30: val = *(p2 ? p2 : 0x00613290); plugin +0xc4 = val; material 0 (atomic +0x18 -> +0x20 -> [0])
-// +4 = plugin +0xc4 when the material exists (0x00476b74); plugin +0x40 |= 0x2000. Every plugin access
-// re-reads the atomic and [0x007dc57c], as the original does.
-extern "C" __declspec(dllexport) void __cdecl Set476b30(std::uint8_t* p1, std::uint8_t* p2)
-{
-    std::uint32_t val = *reinterpret_cast<std::uint32_t*>(p2 ? p2 : reinterpret_cast<std::uint8_t*>(k00613290));
-    std::uint32_t g = G(kPlugOff);
-    std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(p1 + 4);
-    std::uint8_t* obj = *reinterpret_cast<std::uint8_t**>(e + g);
-    *reinterpret_cast<std::uint32_t*>(obj + 0xc4) = val;
-    std::uint8_t* x = *reinterpret_cast<std::uint8_t**>(e + 0x18);
-    std::uint8_t* y = *reinterpret_cast<std::uint8_t**>(x + 0x20);
-    std::uint8_t* n = *reinterpret_cast<std::uint8_t**>(y);
-    if (n != nullptr) {
-        std::uint8_t* obj2 = *reinterpret_cast<std::uint8_t**>(e + G(kPlugOff));
-        *reinterpret_cast<std::uint32_t*>(n + 4) = *reinterpret_cast<std::uint32_t*>(obj2 + 0xc4);
-    }
-    std::uint8_t* obj3 = *reinterpret_cast<std::uint8_t**>(e + G(kPlugOff));
-    *reinterpret_cast<std::uint32_t*>(obj3 + 0x40) |= 0x2000u;
-}
-RH_ScopedInstall(Set476b30, 0x00476b30);
+// MATCH-S12: the body of Set476b30 moved to Match/MatchS12_00476b30.cpp (PORT-STATE-02),
+// which compiles the byte-matched source re/match/s12/00476b30.c.
 
 // MATCH-S12: the body of 0x00476b90 (Batch476b90) moved to Match/MatchS12_00476b90.cpp,
 // which compiles the byte-matched source re/match/s12/00476b90.c.
