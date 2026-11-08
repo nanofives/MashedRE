@@ -77,11 +77,5 @@ static inline std::uint32_t* SlotStateAddr(int param_1) {
         reinterpret_cast<std::uintptr_t>(base) + static_cast<unsigned>(param_1) * 4u + 0x34u);
 }
 
-// 0x0040e470
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotStateGet(int param_1) {
-    // Return value at PTR_PTR_005f2770[param_1 * 4 + 0x34].
-    // 0x005f2770 base cited at 0x0040e470 body; 0x34 offset cited at 0x0040e470 body.
-    return *SlotStateAddr(param_1);
-}
-
-RH_ScopedInstall(CarSlotStateGet, 0x0040e470);  // re-enabled 2026-05-24 c3-render-a
+// MATCH-S02: the body of CarSlotStateGet moved to Match/MatchS02_0040e470.cpp (PORT-STATE-02),
+// which compiles the byte-matched source re/match/s02/0040e470.c.
