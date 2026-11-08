@@ -70,17 +70,13 @@ int PortTop_Crt_004a2cbd(char* fmt, ...) {
     return n;
 }
 
-// ---- SubsystemInit 0x00492270's other two callees (bound from Match/MatchS15_00492270.cpp) ----
-// rva 0x004921d0 DisplayInit: exe body exists, its 10 callees forward to raw addresses (0x00467110 0x0042b890 0x0042b8a0
-// rva 0x0042d560 0x0042f660 0x004997b0 0x004b3eb0 0x00498bc0 0x00498bd0 + RW 0x004c5c00 / 0x004c2ed0 / 0x004c2f00).
-// Not run: DAT_0077195c stays 0, so WinMain's RwTexDictionaryDestroy 0x004c5930 stays unreached. PORT-TOP-04.
-void PortTop_Missing_004921d0(void) {
-    PortTop93_Log("0x004921d0 DisplayInit: not run (exe body's callees forward to raw addresses; PORT-TOP-04)");
-}
-// rva 0x00428590 ViewportInit: exe body exists, 5 of its 6 callees forward to raw addresses. Not run. Returns 1.
-unsigned int PortTop_Missing_00428590(void) {
-    PortTop93_Log("0x00428590 ViewportInit: not run (exe body's callees forward to raw addresses; PORT-TOP-04)");
-    return 1;
+// ---- ViewportInit 0x00428590's loading-disc draw (bound from Match/MatchS06_00428590.cpp, PORT-TOP-04B) ----
+// rva 0x00428450: sin of DAT_0067d974, a white quad of the LoadIcon texture (*DAT_00771960) through 0x00450b10, then
+// DAT_0067d974 += 0.1 (re/match/s06/00428450.c, best 84.6%). Its only port body is the .asi-only naked-asm HudSpinCoinAnim
+// (HUD/TextCluster.cpp, raw-address calls), and an exe copy of the 84.6% source would be a second body of this RVA (rva-lint
+// CROSS-TARGET). Missing: nothing is drawn, DAT_0067d974 keeps the 1.5707964 ViewportInit stored.
+void PortTop_Missing_00428450(int x, int y) {
+    PortTop93_Log("0x00428450 loading-disc draw (%d, %d): missing body, not drawn", x, y);
 }
 
 // The RW API binding layer (LibRw/RwApiBind.cpp) symbols are declared by the matched source itself, through the

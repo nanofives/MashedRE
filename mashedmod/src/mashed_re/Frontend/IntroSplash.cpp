@@ -60,7 +60,7 @@ extern "C" uint32 __cdecl BackBuffRasterOpen(int param);
 // MATCH-S15: the body of 0x00494480 (OrigInputCheck, a raw-address call into the original; now IntroInputCheck) moved to Match/MatchS15_00494480.cpp,
 // which compiles the byte-matched source re/match/s15/00494480.c.
 
-// 0x004c1be0  FUN_004c1be0 — render target helper: (uint32, uint32) -> uint32
+// Call-through to the ORIGINAL FUN_004c1be0 — render target helper: (uint32, uint32) -> uint32 (not a body)
 static uint32 OrigRenderTargetHelper(uint32 a, uint32 b) {
     typedef uint32 (__cdecl* Fn)(uint32, uint32);
     return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x004c1be0u))(a, b);

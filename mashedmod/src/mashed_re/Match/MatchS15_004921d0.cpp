@@ -6,6 +6,23 @@
 
 #define MATCH_PORT 1
 #define FUN_004921d0 DisplayInit
+// [PORT-TOP-04B] exe: the callees bind by name (MASHED_ORIG_TOP path, SubsystemInit 0x00492270). RW core calls bind to
+// LibRw/RwApiBind.cpp; rva 0x00498bc0 / 0x00498bd0 bind to the exe resolution (PortTop_Width / PortTop_Height, as in
+// PortTop_00499ba0.cpp: VideoGetRenderWidth reads DAT_00616028, zero in the exe). The .asi keeps the raw-address calls.
+#ifdef MASHED_STANDALONE
+#define FUN_004c2f00 MashedRw_EngineGetCurrentMode_004c2f00          // RW: RwEngineGetCurrentMode (TOP-03)
+#define FUN_004c2ed0 MashedRw_EngineGetModeInfo_004c2ed0             // RW: RwEngineGetModeInfo (TOP-03)
+#define FUN_00498bc0 PortTop_Width                                   // stand-in: exe render width
+#define FUN_00498bd0 PortTop_Height                                  // stand-in: exe render height
+#define FUN_00467110 Orig_00467110                                   // matched, Match/PortTop_00467110.cpp
+#define FUN_0042b890 RenderWidthSet                                  // matched, Match/MatchS07_0042b890.cpp
+#define FUN_0042b8a0 RenderHeightSet                                 // matched, Match/MatchS07_0042b8a0.cpp
+#define FUN_0042d560 Orig_0042d560                                   // matched, Match/PortTop_0042d560.cpp
+#define FUN_0042f660 DefaultViewportCameraInit                       // matched, Match/PortTop_0042f660.cpp
+#define FUN_004997b0 Win32ResourceLoader                             // matched, Match/MatchS16_004997b0.cpp
+#define FUN_004b3eb0 PortTop_Port_004b3eb0                           // port (decomp, no matched source), LibRw/RwApiBind.cpp
+#define FUN_004c5c00 MashedRw_TexDictionaryFindNamedTexture_004c5c00 // RW: RwTexDictionaryFindNamedTexture (TOP-03)
+#else
 #define FUN_004c2f00 MatchS15_004921d0_Call004c2f00
 #define FUN_004c2ed0 MatchS15_004921d0_Call004c2ed0
 #define FUN_00498bc0 MatchS15_004921d0_Call00498bc0
@@ -56,6 +73,7 @@ extern "C" int MatchS15_004921d0_Call004b3eb0(int p0, int p1, int p2, int p3) {
 extern "C" int MatchS15_004921d0_Call004c5c00(int p0, const char* p1) {
     return reinterpret_cast<int (__cdecl*)(int p0, const char* p1)>(0x004c5c00u)(p0, p1);
 }
+#endif
 #pragma comment(linker, "/EXPORT:DisplayInit=_DisplayInit")
 extern "C" {
 #include "../../../../re/match/s15/004921d0.c"
