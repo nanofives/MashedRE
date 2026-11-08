@@ -1,0 +1,257 @@
+lane	rva	sub	port	kind	tu_dir	exe_file	match	flag	name	prior
+A-dual	0x004298c0	frontend	body	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuLeaves_af5.cpp|mashedmod/src/mashed_re/Match/MatchS06_004298c0.cpp	re/match/s06/004298c0.c		Clear67d99c_x4	NOTSWAPPED:matchs08fu_20261102
+A-dual	0x00429a70	frontend	body	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp|mashedmod/src/mashed_re/Frontend/SmallLeaves_n2.cpp|mashedmod/src/mashed_re/Match/MatchS06_00429a70.cpp	re/match/s06/00429a70.c		LapFracGetBySlot	
+A-dual	0x00429a80	frontend	body	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp|mashedmod/src/mashed_re/Frontend/SmallLeaves_n2.cpp|mashedmod/src/mashed_re/Match/MatchS06_00429a80.cpp	re/match/s06/00429a80.c		LapLapsGetBySlot	
+A-dual	0x00429a90	frontend	body	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp|mashedmod/src/mashed_re/Frontend/SmallLeaves_n2.cpp|mashedmod/src/mashed_re/Match/MatchS06_00429a90.cpp	re/match/s06/00429a90.c		LapSecsGetBySlot	
+A-dual	0x0042af50	frontend	body	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuStateMachine.cpp|mashedmod/src/mashed_re/Frontend/TimerReset.cpp|mashedmod/src/mashed_re/Match/MatchS07_0042af50.cpp	re/match/s07/0042af50.c		MenuReadinessCheckC	NOTSWAPPED:matchs08fu_20261102
+A-dual	0x0042bde0	frontend	body	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/BatchAA_s1.cpp|mashedmod/src/mashed_re/Frontend/MenuNearLeaves_s6.cpp|mashedmod/src/mashed_re/Match/MatchS07_0042bde0.cpp	re/match/s07/0042bde0.c		HudRectEmitter5	
+A-dual	0x00431b70	frontend	body	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/BucketMixed_t3.cpp|mashedmod/src/mashed_re/Frontend/MenuLeaves_af5.cpp|mashedmod/src/mashed_re/Match/MatchS07_00431b70.cpp	re/match/s07/00431b70.c		MenuFlagDat007f0f10Get	
+A-swap-called	0x00408af0	ai	called	handport	Ai	mashedmod/src/mashed_re/Ai/AiVehicleFieldGetters.cpp	re/match/s01/raw/00408af0.c		AiVehicleFieldPtrGet	
+A-swap-called	0x0040e350	ai	called	dual	Match+Vehicle	mashedmod/src/mashed_re/Match/MatchS02_0040e350.cpp|mashedmod/src/mashed_re/Vehicle/ForceIntegratorStubs.cpp	re/match/s02/0040e350.c		GetRenderSubMode	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x00414490	ai	called	handport	Ai	mashedmod/src/mashed_re/Ai/AiTargetClosest.cpp	re/match/s03/h2_00414490.c		FUN_00414490	
+A-swap-called	0x00417cf0	ai	called	handport	Ai	mashedmod/src/mashed_re/Ai/AiStandalone.cpp	re/match/s03/h2_00417cf0.c		FUN_00417cf0	NOTSWAPPED:matchs03_20261031
+A-swap-called	0x00418860	ai	called	handport	Ai	mashedmod/src/mashed_re/Ai/AiStandalone.cpp	re/match/s03/h3_00418860.c		FUN_00418860	NOTSWAPPED:matchs03_20261031
+A-swap-called	0x004233e0	ai	called	handport	Ai	mashedmod/src/mashed_re/Ai/HeadingAtan2.cpp	re/match/s05/004233e0.c		HeadingAtan2ToGameAngle	
+A-swap-called	0x0046c730	ai	called	handport	Race	mashedmod/src/mashed_re/Race/SubStateCallees.cpp	re/match/s11/0046c730.c		Table882198Get	
+A-swap-called	0x0046c750	ai	called	handport	Race	mashedmod/src/mashed_re/Race/SubStateCallees.cpp	re/match/s11/0046c750.c		Table882194Get	
+A-swap-called	0x0046d4a0	ai	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/VehicleRecordPtr.cpp	re/match/s11/0046d4a0.c		PtrCompute881ec8	NOTSWAPPED:matchs09fu_20261102
+A-swap-called	0x0046d570	ai	called	handport	Ai	mashedmod/src/mashed_re/Ai/AiLeafTargets.cpp	re/match/s11/0046d570.c		FUN_0046d570	
+A-swap-called	0x0046d780	ai	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/LaunchRevCharge.cpp	re/match/s11/0046d780.c		LaunchRevRelease	
+A-swap-called	0x0046d7f0	ai	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/LaunchRevCharge.cpp	re/match/s11/0046d7f0.c		LaunchRevChargeTick	
+A-swap-called	0x00408a50	frontend	called	handport	Match	mashedmod/src/mashed_re/Match/MatchS01.cpp	re/match/s01/raw/00408a50.c		FUN_00408a50	
+A-swap-called	0x00408ad0	frontend	called	handport	Match	mashedmod/src/mashed_re/Match/MatchS01.cpp	re/match/s01/raw/00408ad0.c		RaceScoreFloatGetBySlot	
+A-swap-called	0x0040e470	frontend	called	handport	Ai+Frontend	mashedmod/src/mashed_re/Ai/CarSlotState.cpp|mashedmod/src/mashed_re/Frontend/MenuStateMachine.cpp	re/match/s02/0040e470.c		CarSlotStateGet	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x0040e480	frontend	called	handport	Ai	mashedmod/src/mashed_re/Ai/AiStandalone.cpp|mashedmod/src/mashed_re/Ai/CarSlotState.cpp	re/match/s02/0040e480.c		CarSlotStateSet	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x00426cb0	frontend	called	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/FrontendLeaves_ad2.cpp|mashedmod/src/mashed_re/Frontend/MenuNearLeaves_s6.cpp|mashedmod/src/mashed_re/Match/MatchS06_00426cb0.cpp	re/match/s06/00426cb0.c		FUN_00426cb0	
+A-swap-called	0x0042d3e0	frontend	called	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuInit.cpp|mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp|mashedmod/src/mashed_re/Match/MatchS07_0042d3e0.cpp	re/match/s07/0042d3e0.c		MenuEntryArrayInit	
+A-swap-called	0x00430830	frontend	called	handport	Frontend	mashedmod/src/mashed_re/Frontend/MenuScoreSort.cpp	re/match/s07/00430830.c		SplitScreenTrackAssignment	
+A-swap-called	0x004309b0	frontend	called	handport	Frontend	mashedmod/src/mashed_re/Frontend/FrontendMode.cpp	re/match/s07/004309b0.c		FrontendModeIndex	
+A-swap-called	0x004325c0	frontend	called	handport	Frontend	mashedmod/src/mashed_re/Frontend/MenuAnimTickTwin.cpp|mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp	re/match/s08/004325c0.c		FUN_004325c0	
+A-swap-called	0x00432b30	frontend	called	handport	Frontend	mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp|mashedmod/src/mashed_re/Frontend/PromptStripTwin.cpp	re/match/s08/00432b30.c		MenuPromptStrip	NOTSWAPPED:matchs08fu_20261102
+A-swap-called	0x00407580	gameplay	called	handport	Gameplay	mashedmod/src/mashed_re/Gameplay/SubsystemARecordKey.cpp	re/match/s01/raw/00407580.c		SubsystemARecordKey	
+A-swap-called	0x00407b00	gameplay	called	handport	Gameplay	mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp	re/match/s01/00407b00.c		FUN_00407b00	
+A-swap-called	0x00407b70	gameplay	called	handport	Gameplay	mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp	re/match/s01/00407b70.c		FUN_00407b70	
+A-swap-called	0x00407d70	gameplay	called	handport	Gameplay	mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp	re/match/s01/00407d70.c		RangeTableCountGroup	
+A-swap-called	0x00407db0	gameplay	called	handport	Gameplay	mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp	re/match/s01/00407db0.c		RangeTableGroupOffset	
+A-swap-called	0x0040b540	gameplay	called	dual	Match+exe_main.cpp	mashedmod/src/mashed_re/Match/MatchS02_0040b540.cpp|mashedmod/src/mashed_re/exe_main.cpp	re/match/s02/0040b540.c		PlayerScoreRankOrder	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x0040b890	gameplay	called	handport	Gameplay+exe_main.cpp	mashedmod/src/mashed_re/Gameplay/Thresholds_ah4.cpp|mashedmod/src/mashed_re/exe_main.cpp	re/match/s02/0040b890.c		FUN_0040b890	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x0040b8e0	gameplay	called	handport	Gameplay+exe_main.cpp	mashedmod/src/mashed_re/Gameplay/Thresholds_ah4.cpp|mashedmod/src/mashed_re/exe_main.cpp	re/match/s02/0040b8e0.c		FUN_0040b8e0	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x0040ce80	gameplay	called	handport	Util	mashedmod/src/mashed_re/Util/PromoLoop_round49.cpp	re/match/s02/0040ce80.c		PtrTable5f2770Get	NOTSWAPPED:match_topdown_20261101
+A-swap-called	0x00451820	gameplay	called	handport	Track	mashedmod/src/mashed_re/Track/WarzonePontoon.cpp	re/match/s09/00451820.c		FUN_00451820	NOTSWAPPED:matchs09fu_20261102
+A-swap-called	0x00451ad0	gameplay	called	handport	Track	mashedmod/src/mashed_re/Track/WarzonePontoon.cpp	re/match/s09/00451ad0.c		FUN_00451ad0	NOTSWAPPED:matchs09fu_20261102
+A-swap-called	0x00451d80	gameplay	called	handport	Track	mashedmod/src/mashed_re/Track/WarzonePontoon.cpp	re/match/s09/00451d80.c		WarzonePontoonTick	NOTSWAPPED:matchs09fu_20261102
+A-swap-called	0x00452170	gameplay	called	handport	Track	mashedmod/src/mashed_re/Track/WarzonePontoon.cpp	re/match/s09/00452170.c		WarzonePontoonResetBodies	NOTSWAPPED:matchs09fu_20261102
+A-swap-called	0x0045c110	gameplay	called	handport	Powerup	mashedmod/src/mashed_re/Powerup/PowerupContact.cpp	re/match/s10/0045c110.c		FUN_0045c110	
+A-swap-called	0x00497450	input	called	dual	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp|mashedmod/src/mashed_re/Match/MatchGFFU_00497450.cpp	re/match/gffu/00497450.c;re/match/s16/00497450.c		Pred497450	
+A-swap-called	0x00448940	render	called	handport	Render	mashedmod/src/mashed_re/Render/ArcticTrackNodeSlot0.cpp	re/match/s08/00448940.c		ArcticTrackNodeSlot0	
+A-swap-called	0x00448dc0	render	called	handport	D3d9Render	mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp	re/match/s08/00448dc0.c		FUN_00448dc0	
+A-swap-called	0x004756e0	render	called	handport	D3d9Render	mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp	re/match/s12/004756e0.c		FUN_004756e0	
+A-swap-called	0x004769f0	render	called	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/004769f0.c		ParticleEmitter_SetColour	
+A-swap-called	0x00476df0	render	called	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/00476df0.c		FUN_00476df0	
+A-swap-called	0x00498a00	render	called	handport	Boot	mashedmod/src/mashed_re/Boot/VideoCfgFirstRun.cpp	re/match/s16/00498a00.c		FUN_00498a00	
+A-swap-called	0x00498e40	render	called	handport	Boot	mashedmod/src/mashed_re/Boot/VideoCfgFirstRun.cpp	re/match/s16/00498e40.c		FUN_00498e40	
+A-swap-called	0x004b4b60	render	called	handport	Powerup	mashedmod/src/mashed_re/Powerup/PowerupContact.cpp	re/match/s18/004b4b60.c		FUN_004b4b60	
+A-swap-called	0x004c3bf0	render	called	handport	Math	mashedmod/src/mashed_re/Math/RwV2d.cpp	re/match/s19/004c3bf0.c		Vec2Length	
+A-swap-called	0x004c3c60	render	called	handport	Math	mashedmod/src/mashed_re/Math/RwV2d.cpp	re/match/s19/004c3c60.c		Vec2Normalize	
+A-swap-called	0x00404f50	save	called	handport	Save	mashedmod/src/mashed_re/Save/GameSave.cpp	re/match/s01/raw/00404f50.c		SaveWrite	
+A-swap-called	0x00404f80	save	called	handport	Save	mashedmod/src/mashed_re/Save/GameSave.cpp	re/match/s01/raw/00404f80.c		SaveFileExists	
+A-swap-called	0x00410510	save	called	handport	Race	mashedmod/src/mashed_re/Race/EvalResultCore.cpp|mashedmod/src/mashed_re/Race/RuleEngine.cpp	re/match/pilot/a5_00410510.c;re/match/s02/00410510.c		Race::EvaluateResult	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x004963e0	save	called	handport	Save	mashedmod/src/mashed_re/Save/SettingsConfig.cpp	re/match/s16/004963e0.c		ConfigLogError	
+A-swap-called	0x00496400	save	called	handport	Save	mashedmod/src/mashed_re/Save/SettingsConfig.cpp	re/match/s16/00496400.c		ConfigLogDebug	
+A-swap-called	0x00498910	save	called	handport	Save	mashedmod/src/mashed_re/Save/SettingsConfig.cpp	re/match/s16/00498910.c		ConfigFilenameGet	
+A-swap-called	0x00498950	save	called	handport	Save	mashedmod/src/mashed_re/Save/SettingsConfig.cpp	re/match/s16/00498950.c		ConfigLoad	
+A-swap-called	0x004989b0	save	called	handport	Save	mashedmod/src/mashed_re/Save/SettingsConfig.cpp	re/match/s16/004989b0.c		ConfigSave	
+A-swap-called	0x00550bc0	save	called	handport	Save	mashedmod/src/mashed_re/Save/VfsStream.cpp	re/match/s24/00550bc0.c		VfsStreamGetType	
+A-swap-called	0x0040b180	util	called	handport	D3d9Render	mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp	re/match/s02/0040b180.c		FUN_0040b180	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x0040dbd0	util	called	handport	Race	mashedmod/src/mashed_re/Race/SubStateMachine.cpp	re/match/s02/0040dbd0.c		SubStateEnter4	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x00441820	util	called	handport	Race	mashedmod/src/mashed_re/Race/RaceCamera.cpp	re/match/s08/00441820.c		CameraPath::SamplePoint	
+A-swap-called	0x00441c80	util	called	handport	Race	mashedmod/src/mashed_re/Race/CameraEntries.cpp	re/match/s08/00441c80.c		CamCarMidpoint441c80	
+A-swap-called	0x00442600	util	called	handport	Race	mashedmod/src/mashed_re/Race/CameraEntries.cpp	re/match/s08/00442600.c		CamEntriesInit442600	
+A-swap-called	0x0045c350	util	called	handport	Powerup	mashedmod/src/mashed_re/Powerup/PowerupContact.cpp	re/match/s10/0045c350.c		Bezier::Interpolate	
+A-swap-called	0x0046baa0	util	called	handport	Race	mashedmod/src/mashed_re/Race/SubStateCallees.cpp	re/match/s11/0046baa0.c		FUN_0046baa0	
+A-swap-called	0x004c3b30	util	called	handport	Math	mashedmod/src/mashed_re/Math/RwLutTables.cpp	re/match/s19/004c3b30.c		FastSqrt	
+A-swap-called	0x004d8560	util	called	handport	Util	mashedmod/src/mashed_re/Util/UtilLeaves_ab6.cpp	re/match/s21/004d8560.c		FUN_004d8560	
+A-swap-called	0x0052de60	util	called	handport	Track	mashedmod/src/mashed_re/Track/WarzonePontoon.cpp	re/match/s23/0052de60.c		FUN_0052de60	
+A-swap-called	0x005c9d00	util	called	handport	Util	mashedmod/src/mashed_re/Util/GameStateGetters.cpp	re/match/gffu/005c9d00.c;re/match/s28/005c9d00.c		GetRaceEndTrigger	
+A-swap-called	0x00404e20	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/CarMaterialTables.cpp	re/match/s01/raw/00404e20.c		IdxPtr404e20	
+A-swap-called	0x00405890	vehicle	called	dual	Match+Race	mashedmod/src/mashed_re/Match/MatchS01.cpp|mashedmod/src/mashed_re/Race/RuleEngine.cpp	re/match/s01/00405890.c		Pred405890	
+A-swap-called	0x0040e180	vehicle	called	handport	Race	mashedmod/src/mashed_re/Race/MostSepPair.cpp|mashedmod/src/mashed_re/Race/RaceCamera.cpp	re/match/s02/0040e180.c		MostSeparatedPair	NOTSWAPPED:matchs02_20261031
+A-swap-called	0x00467650	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/Integrate2.cpp	re/match/s11/00467650.c		VehicleWheelDrivetrainUpdate	
+A-swap-called	0x00468980	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/AeroStabilize.cpp	re/match/s11/00468980.c		VehicleAeroStabilizer	
+A-swap-called	0x00468b40	vehicle	called	dual	Collision+Match	mashedmod/src/mashed_re/Collision/CarWorldContacts.cpp|mashedmod/src/mashed_re/Match/MatchS11_00468b40.cpp	re/match/s11/00468b40.c		VehicleContactHistoryLookup	
+A-swap-called	0x0046b1c0	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/VehicleContactHull.cpp	re/match/s11/0046b1c0.c		VehicleSlotAabbExpand	
+A-swap-called	0x0046b540	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/VehicleInit.cpp	re/match/s11/0046b540.c		VehicleSpawnInit	
+A-swap-called	0x0046c7b0	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/VehicleState.cpp	re/match/s11/0046c7b0.c		VehicleSlotGetter	
+A-swap-called	0x0046cbb0	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/VehicleState.cpp	re/match/s11/0046cbb0.c		VehicleCarStateRead	
+A-swap-called	0x0046dbe0	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/ForceIntegrator.cpp|mashedmod/src/mashed_re/Vehicle/VehicleState.cpp	re/match/pilot/f_0046dbe0.c;re/match/s11/0046dbe0.c		VehicleRacePositionGet	
+A-swap-called	0x0046ddb0	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/ForceIntegrator.cpp	re/match/s11/0046ddb0.c		VehicleWheelForceIntegrator	
+A-swap-called	0x00470670	vehicle	called	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/VehicleControl.cpp	re/match/s11/00470670.c		VehicleControlUpdate	
+A-swap-called	0x004770c0	vehicle	called	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/004770c0.c		FUN_004770c0	
+B-frontier	0x00414030	ai	none	nobody	(new)		re/match/s03/raw_00414030.c		AiSplineBankTimerReset	
+B-frontier	0x0041f030	ai	none	nobody	(new)		re/match/s04/0041f030.c		TriggerStructRead	
+B-frontier	0x00422b50	ai	body	handport	HUD	mashedmod/src/mashed_re/HUD/ScenarioWriters_sa2s2.cpp	re/match/pilot/a5_00422b50.c;re/match/s05/00422b50.c		VehicleDamageAccum	
+B-frontier	0x00426c00	ai	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_00426c00.cpp	re/match/s06/00426c00.c		FUN_00426c00	NOTSWAPPED:match_topdown_20261101
+B-frontier	0x00443080	ai	body	handport	D3d9Render	mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp	re/match/s08/00443080.c		AiTargetEnableGet	
+B-frontier	0x00452160	ai	none	nobody	(new)		re/match/s09/00452160.c		PowerupTargetPtrGet	
+B-frontier	0x00452ea0	ai	none	nobody	(new)		re/match/s09/00452ea0.c		Table88ff50Get	
+B-frontier	0x00452eb0	ai	none	nobody	(new)		re/match/s09/00452eb0.c		PowerupRangeGet	
+B-frontier	0x0046cc10	ai	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS11_0046cc10.cpp	re/match/s11/0046cc10.c		VehicleFloatFieldAsInt	
+B-frontier	0x0046d510	ai	body	matched	Ai+Match	mashedmod/src/mashed_re/Ai/VehicleVelocityWorldGet.cpp|mashedmod/src/mashed_re/Match/MatchS11_0046d510.cpp	re/match/pilot/a2_0046d510.c;re/match/s11/0046d510.c		VehicleVelocityWorldGet	
+B-frontier	0x0046d6d0	ai	none	nobody	(new)		re/match/s11/0046d6d0.c		VehTbl881f84Get1	
+B-frontier	0x0048a630	ai	none	nobody	(new)		re/match/s14/0048a630.c		FUN_0048a630	
+B-frontier	0x00465ca0	audio	none	nobody	(new)		re/match/s10/00465ca0.c		FUN_00465ca0	
+B-frontier	0x0040bb30	boot	none	nobody	(new)		re/match/s02/0040bb30.c		FUN_0040bb30	
+B-frontier	0x00494ef0	boot	body	handport	Boot	mashedmod/src/mashed_re/Boot/Teardown.cpp	re/match/s16/00494ef0.c		ThunkVideoStateGet	
+B-frontier	0x00494f20	boot	none	nobody	(new)		re/match/s16/00494f20.c		thunk_FUN_00494460	
+B-frontier	0x00442410	camera	none	nobody	(new)		re/match/s08/00442410.c		CameraSlotFieldPtrGet	
+B-frontier	0x00442420	camera	none	nobody	(new)		re/match/s08/00442420.c		CameraSlotFloatGet	
+B-frontier	0x00408a70	frontend	body	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/ForceIntegratorStubs.cpp	re/match/s01/00408a70.c		FrontendC2RoundI	
+B-frontier	0x0040acd0	frontend	none	nobody	(new)		re/match/s02/0040acd0.c		FUN_0040acd0	
+B-frontier	0x0040ad20	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS02_0040ad20.cpp	re/match/s02/0040ad20.c		FrontendGlobalGet	
+B-frontier	0x0040b810	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS02_0040b810.cpp	re/match/s02/0040b810.c		TimerGlobalsReset	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x0040d590	frontend	body	handport	Frontend	mashedmod/src/mashed_re/Frontend/MenuLeaves_af4.cpp	re/match/s02/0040d590.c		FUN_0040d590	NOTSWAPPED:matchs02_20261031
+B-frontier	0x0041e080	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS04_0041e080.cpp	re/match/s04/0041e080.c		ScoreboardStateZeroInit	
+B-frontier	0x00422b30	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS05_00422b30.cpp	re/match/s05/00422b30.c		TimerArrayClear	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x00422fd0	frontend	none	nobody	(new)		re/match/s05/00422fd0.c		FrontendRaceResultsDispatch	
+B-frontier	0x004277a0	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_004277a0.cpp	re/match/s06/004277a0.c		TextCtrlCodeRemap	
+B-frontier	0x0042ac50	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_0042ac50.cpp	re/match/s06/0042ac50.c		FUN_0042ac50	
+B-frontier	0x0042ac90	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_0042ac90.cpp	re/match/s06/0042ac90.c		FUN_0042ac90	NOTSWAPPED:matchs06_20261101
+B-frontier	0x0042ad10	frontend	none	nobody	(new)		re/match/s06/0042ad10.c		FUN_0042ad10	
+B-frontier	0x0042add0	frontend	none	nobody	(new)		re/match/s06/0042add0.c		FUN_0042add0	
+B-frontier	0x0042ae10	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_0042ae10.cpp	re/match/s06/0042ae10.c		MenuReadinessCheckA	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x0042aeb0	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042aeb0.cpp	re/match/s07/0042aeb0.c		MenuReadinessCheckB	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x0042aff0	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042aff0.cpp	re/match/s07/0042aff0.c		MenuButtonDetectA	
+B-frontier	0x0042b180	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042b180.cpp	re/match/s07/0042b180.c		MenuButtonDetectB	
+B-frontier	0x0042b310	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042b310.cpp	re/match/pilot/a7_0042b310.c;re/match/s07/0042b310.c		MenuButtonDetectC	
+B-frontier	0x0042b540	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042b540.cpp	re/match/s07/0042b540.c		MenuButtonDetectD	
+B-frontier	0x0042b770	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042b770.cpp	re/match/s07/0042b770.c		MenuButtonDetectE	
+B-frontier	0x0042b960	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042b960.cpp	re/match/s07/0042b960.c		CarSlotInit1P	
+B-frontier	0x0042f020	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042f020.cpp	re/match/s07/0042f020.c		FUN_0042f020	
+B-frontier	0x0042f400	frontend	none	nobody	(new)		re/match/s07/0042f400.c		FUN_0042f400	
+B-frontier	0x0042f6b0	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_0042f6b0.cpp	re/match/s07/0042f6b0.c		MenuModeSync	
+B-frontier	0x00430760	frontend	body	handport	Frontend	mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp	re/match/s07/00430760.c		IsMultiplayerMode	
+B-frontier	0x00430910	frontend	body	handport	Frontend	mashedmod/src/mashed_re/Frontend/FrontendState.cpp	re/match/s07/00430910.c		MenuOptionSlotGet	
+B-frontier	0x00430b60	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_00430b60.cpp	re/match/s07/00430b60.c		MenuSlotCount	
+B-frontier	0x00431b80	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS07_00431d00.cpp	re/match/s07/00431b80.c		FUN_00431b80	
+B-frontier	0x00431d00	frontend	body	handport	Match	mashedmod/src/mashed_re/Match/MatchS07_00431d00.cpp	re/match/s07/00431d00.c		FUN_00431d00	
+B-frontier	0x004322c0	frontend	none	nobody	(new)		re/match/s08/004322c0.c		FUN_004322c0	
+B-frontier	0x004323c0	frontend	body	handport	Frontend	mashedmod/src/mashed_re/Frontend/FrontendNav.cpp	re/match/s08/004323c0.c		MenuCursorBack	
+B-frontier	0x004324a0	frontend	none	nobody	(new)		re/match/s08/004324a0.c		FUN_004324a0	
+B-frontier	0x00432800	frontend	none	nobody	(new)		re/match/s08/00432800.c		FUN_00432800	
+B-frontier	0x00433240	frontend	none	nobody	(new)		re/match/s08/00433240.c		FUN_00433240	
+B-frontier	0x0046c700	frontend	none	nobody	(new)		re/match/s11/0046c700.c		EntityScoreFieldAdd	
+B-frontier	0x0046dc00	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS11_0046dc00.cpp	re/match/s11/0046dc00.c		EntityFieldSet	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x00492340	frontend	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS15_00492340.cpp	re/match/s15/00492340.c		CarSlotInit	
+B-frontier	0x00494f30	frontend	none	nobody	(new)		re/match/s16/00494f30.c		AspectRatioSnapshot	
+B-frontier	0x00495080	frontend	none	nobody	(new)		re/match/s16/00495080.c		Fwd494fd0_DoublePlusHalf	
+B-frontier	0x00409790	gameplay	none	nobody	(new)		re/match/s01/00409790.c		FUN_00409790	
+B-frontier	0x004098a0	gameplay	body	handport	Gameplay	mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp	re/match/s01/raw/004098a0.c		Ret63a5f0	
+B-frontier	0x004173a0	gameplay	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS03_004173a0.cpp	re/match/s03/h1_004173a0.c		Float89a360Get	
+B-frontier	0x00452140	gameplay	none	nobody	(new)		re/match/s09/00452140.c		FUN_00452140	
+B-frontier	0x00454a30	gameplay	none	nobody	(new)		re/match/s09/00454a30.c		Table688304Get	
+B-frontier	0x004588c0	gameplay	none	nobody	(new)		re/match/s09/004588c0.c		FUN_004588c0	
+B-frontier	0x00458d00	gameplay	none	nobody	(new)		re/match/s09/00458d00.c		FUN_00458d00	
+B-frontier	0x00458dd0	gameplay	none	nobody	(new)		re/match/s09/00458dd0.c		FUN_00458dd0	
+B-frontier	0x00458f80	gameplay	none	nobody	(new)		re/match/s09/00458f80.c		FUN_00458f80	
+B-frontier	0x0045bff0	gameplay	none	nobody	(new)		re/match/s10/0045bff0.c		Pred45bff0	
+B-frontier	0x0046be10	gameplay	none	nobody	(new)		re/match/s11/0046be10.c		Write46be10	NOTSWAPPED:matchs09fu_20261102
+B-frontier	0x0046bf50	gameplay	none	nobody	(new)		re/match/s11/0046bf50.c		FUN_0046bf50	NOTSWAPPED:matchs09fu_20261102
+B-frontier	0x0046dd80	gameplay	none	nobody	(new)		re/match/s11/0046dd80.c		Float61313cGet	
+B-frontier	0x0046dd90	gameplay	none	nobody	(new)		re/match/s11/0046dd90.c		VehField8816f4Set	
+B-frontier	0x00472550	gameplay	none	nobody	(new)		re/match/s11/00472550.c		Table691508Get	
+B-frontier	0x00403160	hud	none	nobody	(new)		re/match/s01/00403160.c		Sub00403160_SubMode0BViewport	
+B-frontier	0x0041b630	hud	body	handport	HUD	mashedmod/src/mashed_re/HUD/HudDispatch.cpp	re/match/s04/0041b630.c		HudSlotLoopB630	NOTSWAPPED:matchs04_20261031
+B-frontier	0x0041db80	hud	none	nobody	(new)		re/match/s04/0041db80.c		Sub0041db80_HudThresholdDispatch	
+B-frontier	0x0041e850	hud	none	nobody	(new)		re/match/s04/0041e850.c		sub_0041e850	
+B-frontier	0x00426ba0	hud	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_00426ba0.cpp	re/match/s06/00426ba0.c		HudDrawEnabled	
+B-frontier	0x00427780	hud	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_00427780.cpp	re/match/s06/00427780.c		FontText_StringTableLookup	
+B-frontier	0x0042b8b0	hud	body	matched	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp|mashedmod/src/mashed_re/Match/MatchS07_0042b8b0.cpp	re/match/s07/0042b8b0.c		ScreenWidthGet	
+B-frontier	0x0042b8c0	hud	body	matched	Frontend+Match	mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp|mashedmod/src/mashed_re/Match/MatchS07_0042b8c0.cpp	re/match/s07/0042b8c0.c		ScreenHeightGet	
+B-frontier	0x005554d0	hud	none	nobody	(new)		re/match/s24/005554d0.c		FUN_005554d0	NOTSWAPPED:matchs06fu_20261102
+B-frontier	0x0044d5e0	powerups	none	nobody	(new)		re/match/s08/0044d5e0.c		DepthChargePathSafetyCheck	
+B-frontier	0x0045bed0	powerups	none	nobody	(new)		re/match/s10/0045bed0.c		PowerupRoundCleanup	
+B-frontier	0x0045c010	powerups	none	nobody	(new)		re/match/s10/0045c010.c		PowerupPickupWrapper	
+B-frontier	0x00448770	render	none	nobody	(new)		re/match/s08/00448770.c		FUN_00448770	
+B-frontier	0x00448820	render	none	nobody	(new)		re/match/s08/00448820.c		FUN_00448820	
+B-frontier	0x00448880	render	none	nobody	(new)		re/match/s08/00448880.c		FUN_00448880	
+B-frontier	0x0044df80	render	none	nobody	(new)		re/match/s08/0044df80.c		FUN_0044df80	
+B-frontier	0x0045b350	render	none	nobody	(new)		re/match/s09/0045b350.c		RwInitNullStub	
+B-frontier	0x004671a0	render	none	nobody	(new)		re/match/s11/004671a0.c		BackBuffRasterOpen	
+B-frontier	0x00467210	render	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS11_00467210.cpp	re/match/s11/00467210.c		sub_00467210	
+B-frontier	0x0046d400	render	none	nobody	(new)		re/match/s11/0046d400.c		FUN_0046d400	
+B-frontier	0x00474db0	render	none	nobody	(new)		re/match/s11/00474db0.c		RwMallocArrayZeroFill	
+B-frontier	0x004769a0	render	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS12_004769a0.cpp	re/match/s12/004769a0.c		ParticleEmitter_SetPosition	
+B-frontier	0x004769d0	render	body	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/004769d0.c		ParticleEmitter_SetVelocity	
+B-frontier	0x00476a30	render	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS12_00476a30.cpp	re/match/s12/00476a30.c		ParticleEmitter_SetScalar	
+B-frontier	0x00476ae0	render	body	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/00476ae0.c		Batch476ae0	
+B-frontier	0x00476b30	render	body	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/00476b30.c		FUN_00476b30	
+B-frontier	0x00476c60	render	body	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/00476c60.c		Batch476c60	
+B-frontier	0x00491c00	render	none	nobody	(new)		re/match/s15/00491c00.c		FUN_00491c00	
+B-frontier	0x004924c0	render	none	nobody	(new)		re/match/s15/004924c0.c		Set6147b4Triple	
+B-frontier	0x00496d20	render	none	nobody	(new)		re/match/s16/00496d20.c		FUN_00496d20	
+B-frontier	0x00498c00	render	none	nobody	(new)		re/match/s16/00498c00.c		VideoModeTableInit	
+B-frontier	0x0049a0a0	render	none	nobody	(new)		re/match/s16/0049a0a0.c		FUN_0049a0a0	
+B-frontier	0x0049a0e0	render	none	nobody	(new)		re/match/s16/0049a0e0.c		FUN_0049a0e0	
+B-frontier	0x004b47e0	render	none	nobody	(new)		re/match/s18/004b47e0.c		FUN_004b47e0	
+B-frontier	0x004b4a80	render	none	nobody	(new)		re/match/s18/004b4a80.c		FUN_004b4a80	
+B-frontier	0x004c0b10	render	none	nobody	(new)		re/match/s19/004c0b10.c		FUN_004c0b10	
+B-frontier	0x004c0e50	render	none	nobody	(new)		re/match/s19/004c0e50.c		FUN_004c0e50	
+B-frontier	0x004c0ed0	render	none	nobody	(new)		re/match/s19/004c0ed0.c		FUN_004c0ed0	
+B-frontier	0x004c1340	render	none	nobody	(new)		re/match/s19/004c1340.c		FUN_004c1340	
+B-frontier	0x004c1480	render	none	nobody	(new)		re/match/s19/004c1480.c		FUN_004c1480	
+B-frontier	0x004c1520	render	none	nobody	(new)		re/match/s19/004c1520.c		FUN_004c1520	
+B-frontier	0x004c1b10	render	none	nobody	(new)		re/match/s19/004c1b10.c		FUN_004c1b10	
+B-frontier	0x004c2e70	render	none	nobody	(new)		re/match/s19/004c2e70.c		RwEngineSetSubSystem	
+B-frontier	0x004c2ed0	render	none	nobody	(new)		re/match/s19/004c2ed0.c		RwEngineGetModeInfo	
+B-frontier	0x004c2f30	render	none	nobody	(new)		re/match/s19/004c2f30.c		RwEngineSetVideoMode	
+B-frontier	0x004c3d90	render	none	nobody	(new)		re/match/s19/004c3d90.c		FUN_004c3d90	
+B-frontier	0x004c3df0	render	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS19_004c3df0.cpp	re/match/s19/004c3df0.c		RwV3dTransformPoints	
+B-frontier	0x004c4600	render	body	handport	Collision	mashedmod/src/mashed_re/Collision/RwpSolverMath2.cpp	re/match/s19/004c4600.c		RwMatrixMultiply	
+B-frontier	0x004d7ff0	render	none	nobody	(new)		re/match/s21/004d7ff0.c		RwIdentityPassthrough	
+B-frontier	0x004099e0	save	body	handport	Save	mashedmod/src/mashed_re/Save/GameSave.cpp	re/match/s02/004099e0.c		SaveStatusClear	NOTSWAPPED:matchs02_20261031
+B-frontier	0x004b3b70	save	body	handport	Save	mashedmod/src/mashed_re/Save/FileWrappers.cpp	re/match/s18/004b3b70.c		FileReadWrapper_i3	
+B-frontier	0x004b3bb0	save	body	handport	Save	mashedmod/src/mashed_re/Save/FileWrappers.cpp	re/match/s18/004b3bb0.c		FileWriteWrapper_i3	
+B-frontier	0x00550b00	save	body	handport	Save	mashedmod/src/mashed_re/Save/GameSaveVFS.cpp	re/match/s24/00550b00.c		VfsFileExists	
+B-frontier	0x00487e70	sky	none	nobody	(new)		re/match/s14/00487e70.c		FUN_00487e70	
+B-frontier	0x0040d440	track	none	nobody	(new)		re/match/s02/0040d440.c		FUN_0040d440	NOTSWAPPED:match_topdown_20261101
+B-frontier	0x00402f40	util	body	handport	Frontend	mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp	re/match/s01/raw/00402f40.c		Util636ad8Get	
+B-frontier	0x004098b0	util	none	nobody	(new)		re/match/s01/raw/004098b0.c		LoadingState1Enter	
+B-frontier	0x00409900	util	none	nobody	(new)		re/match/s01/raw/00409900.c		LoadingState2Enter	NOTSWAPPED:match_topdown_20261101
+B-frontier	0x00409930	util	none	nobody	(new)		re/match/s01/raw/00409930.c		LoadingState3Enter	NOTSWAPPED:match_topdown_20261101
+B-frontier	0x0040ad30	util	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS02_0040ad30.cpp	re/match/s02/0040ad30.c		FUN_0040ad30	
+B-frontier	0x0040e170	util	none	nobody	(new)		re/match/s02/0040e170.c		Set63ba7c	
+B-frontier	0x0040e360	util	none	nobody	(new)		re/match/s02/0040e360.c		RaceMode::Set	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x00413f90	util	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS08FU_00413f90.cpp	re/match/s03/raw_00413f90.c;re/match/s08fu/00413f90.c		TimerGetBasePtr	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x0041eda0	util	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS04_0041eda0.cpp	re/match/s04/0041eda0.c		TimerBitFieldSet	
+B-frontier	0x0041f1e0	util	none	nobody	(new)		re/match/s04/0041f1e0.c		FUN_0041f1e0	
+B-frontier	0x00429aa0	util	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS06_00429aa0.cpp	re/match/s06/00429aa0.c		GameStateSlotsFill	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x0042b950	util	none	nobody	(new)		re/match/s07/0042b950.c		Set7f1a0c_1000	NOTSWAPPED:matchs08fu_20261102
+B-frontier	0x00431b30	util	none	nobody	(new)		re/match/s07/00431b30.c		Float67eaa8Get	
+B-frontier	0x00431d70	util	none	nobody	(new)		re/match/s07/00431d70.c		Course::GetLeaderIndex	
+B-frontier	0x0043c000	util	none	nobody	(new)		re/match/s08/0043c000.c		TimerSlotTickDispatcher	
+B-frontier	0x00442c80	util	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS08_00442c80.cpp	re/match/s08/00442c80.c		ModeGatedPlayerCheck	
+B-frontier	0x004430a0	util	none	nobody	(new)		re/match/s08/004430a0.c		Util897fe0Set	
+B-frontier	0x004464c0	util	none	nobody	(new)		re/match/s08/004464c0.c		CameraEntry::DispatchAll	
+B-frontier	0x00472640	util	none	nobody	(new)		re/match/s11/00472640.c		Set86ecc8	
+B-frontier	0x00472650	util	none	nobody	(new)		re/match/s11/00472650.c		FUN_00472650	
+B-frontier	0x00494f00	util	none	nobody	(new)		re/match/s16/00494f00.c		thunk_FUN_00494a80	
+B-frontier	0x00494f10	util	none	nobody	(new)		re/match/s16/00494f10.c		thunk_FUN_00494480	
+B-frontier	0x00495110	util	none	nobody	(new)		re/match/s16/00495110.c		FUN_00495110	
+B-frontier	0x00496d00	util	none	nobody	(new)		re/match/s16/00496d00.c		FUN_00496d00	
+B-frontier	0x004b6520	util	none	nobody	(new)		re/match/s18/004b6520.c		ZeroFillWrapper	
+B-frontier	0x004c3ac0	util	none	nobody	(new)		re/match/s19/004c3ac0.c		Vec3Magnitude	NOTSWAPPED:matchs02_20261031
+B-frontier	0x004c3b90	util	none	nobody	(new)		re/match/s19/004c3b90.c		FastInvSqrt	
+B-frontier	0x00423b20	vehicle	none	nobody	(new)		re/match/s05/00423b20.c		CarSnapshotDwordGet	
+B-frontier	0x00442df0	vehicle	none	nobody	(new)		re/match/s08/00442df0.c		RaceFloat898980Get	
+B-frontier	0x00476c10	vehicle	body	handport	Render	mashedmod/src/mashed_re/Render/RfxEmitter.cpp	re/match/s12/00476c10.c		Batch476c10	
+B-frontier	0x0047ea60	vehicle	none	nobody	(new)		re/match/s13/0047ea60.c		FUN_0047ea60	
+B-frontier	0x00480720	vehicle	none	nobody	(new)		re/match/s13/00480720.c		VehicleRespawnPlace	NOTSWAPPED:matchs09fu_20261102
+B-frontier	0x00481750	vehicle	none	nobody	(new)		re/match/s13/00481750.c		FUN_00481750	
+B-frontier	0x00484000	vehicle	none	nobody	(new)		re/match/s13/00484000.c		FUN_00484000	
+B-frontier	0x004840b0	vehicle	body	handport	Vehicle	mashedmod/src/mashed_re/Vehicle/ShapeOwnerHandlePool.cpp	re/match/s13/004840b0.c		FUN_004840b0	
+B-frontier	0x00485360	vehicle	none	nobody	(new)		re/match/s14/00485360.c		DynObjListGetCount	
+B-frontier	0x00485370	vehicle	none	nobody	(new)		re/match/s14/00485370.c		DynamicObjectListGetBase	
+B-frontier	0x00485420	vehicle	none	nobody	(new)		re/match/s14/00485420.c		FUN_00485420	
+B-frontier	0x004922e0	vehicle	body	matched	Match	mashedmod/src/mashed_re/Match/MatchS15_004922e0.cpp	re/match/s15/004922e0.c		CarEventTrigger	
+B-frontier	0x00496900	vehicle	none	nobody	(new)		re/match/s16/00496900.c		SlotActiveThunk	
+B-frontier	0x00443090	world-objects	none	nobody	(new)		re/match/s08/00443090.c		Ret897ff0	

@@ -59,29 +59,8 @@ RH_ScopedInstall(CarSlotStateSet, 0x0040e480);
 // ---------------------------------------------------------------------------
 // CarSlotStateGet  --  FUN_0040e470  (15 bytes, 0x0040e470..0x0040e47e)
 //
-// Signature: undefined4 FUN_0040e470(int param_1)
-//   param_1: car slot index (0-3)
-// Returns *(PTR_PTR_005f2770 + param_1*4 + 0x34). No branches, no side-effects.
-//
-// Uncertainties:
-//   U-1300: value semantics (what value 2 means) — does not affect reimpl.
-//
+// PORT-FE-01 (2026-11-08): the body moved to Match/MatchS02_0040e470.cpp, which compiles the byte-matched source
+// re/match/s02/0040e470.c (MATCH-S02, C4 by byte match). Same read of [0x005f2770] + param_1*4 + 0x34, no guard,
+// same export name and install, so every by-name caller is unchanged.
 // ref: re/analysis/race_results/0040e470.md
 // ---------------------------------------------------------------------------
-
-static inline std::uint32_t* SlotStateAddr(int param_1) {
-    // 0x005f2770: base pointer-to-pointer (cited at 0x0040e470 body)
-    std::uint32_t* base = *reinterpret_cast<std::uint32_t**>(0x005f2770u);
-    // 0x34 = 52: fixed offset after param_1*4 stride (cited at 0x0040e470 body)
-    return reinterpret_cast<std::uint32_t*>(
-        reinterpret_cast<std::uintptr_t>(base) + static_cast<unsigned>(param_1) * 4u + 0x34u);
-}
-
-// 0x0040e470
-extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotStateGet(int param_1) {
-    // Return value at PTR_PTR_005f2770[param_1 * 4 + 0x34].
-    // 0x005f2770 base cited at 0x0040e470 body; 0x34 offset cited at 0x0040e470 body.
-    return *SlotStateAddr(param_1);
-}
-
-RH_ScopedInstall(CarSlotStateGet, 0x0040e470);  // re-enabled 2026-05-24 c3-render-a

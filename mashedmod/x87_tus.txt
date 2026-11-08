@@ -196,3 +196,5 @@ MatchPilot_0046c5f0
 # MATCH-T13-SEED-WRITER 2026-11-02: byte-matched x87 body of 0x00414060 (re/match/s03/h3_00414060.c)
 MatchS03_00414060
 PortSave01_Config
+# PORT-FE-01 2026-11-08: byte-matched body of 0x0040e470 (re/match/s02/0040e470.c), moved out of Ai/CarSlotState.cpp
+MatchS02_0040e470
