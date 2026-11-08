@@ -27,6 +27,8 @@ MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 int FUN_00554940(void);
 typedef unsigned int * (__cdecl *fnalloc)(int, int);
 int FUN_005c4ad0(int p0, unsigned int p1);
+void *memset(void *, int, unsigned int);
+#pragma intrinsic(memset)
 // MATCH: 0x005551d0 FUN_005551d0
 unsigned int * FUN_005551d0(void)
 {
@@ -43,10 +45,7 @@ unsigned int * FUN_005551d0(void)
   puVar1[2] = 0;
   puVar1[3] = 0;
   puVar1[4] = 0;
-  puVar1[5] = 0;
-  puVar1[6] = 0;
-  puVar1[7] = 0;
-  puVar1[8] = 0;
+  memset(puVar1 + 5, 0, 16);
   puVar1[0x4a] = 0;
   puVar1[0x4c] = 0;
   puVar1[0x49] = 0;

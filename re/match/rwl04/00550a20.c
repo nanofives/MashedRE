@@ -46,12 +46,13 @@ char * FUN_00550a20(char *param_1,int param_2,int param_3)
       if (param_1[iVar4] == '\n') {
         iVar4 = iVar4 + 1;
         param_1[iVar4] = 0;
+        iVar4 = iVar4 - iVar1;
+        ops = (Ops *)(*(int *)(param_3 + 0x38) + 0x28);
         if (*(int *)(param_3 + 0x18) != 0) {
           *(int *)(param_3 + 0x28) = 4;
           *(int *)(param_3 + 0x20) = 3;
         }
-        ops = (Ops *)(*(int *)(param_3 + 0x38) + 0x28);
-        ops->sk(param_3,iVar4 - iVar1,2);
+        ops->sk(param_3,iVar4,2);
         return param_1;
       }
       if (((param_1[iVar4] == '\r') && (iVar4 < param_2)) &&

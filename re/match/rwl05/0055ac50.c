@@ -27,8 +27,8 @@ typedef void (*VCall)(int *);
 int FUN_0055ac50(int param_1, int *param_2, int param_3)
 {
   unsigned int *puVar1;
-  unsigned int uVar3;
-  int iVar2;
+
+
   unsigned int id;
 
   if (param_3 != 0) {
@@ -38,10 +38,8 @@ int FUN_0055ac50(int param_1, int *param_2, int param_3)
     return param_1;
   }
   id = *(unsigned short *)(param_2 + 8);
-  uVar3 = 1 << (id & 0x1f);
-  iVar2 = (id >> 5) * 4;
-  if (((*(unsigned int *)(iVar2 + *(int *)(param_1 + 0x60)) & uVar3) != 0) && (param_2[9] != 0) &&
-      ((*(unsigned int *)(iVar2 + *(int *)(param_2[9] + 0x60)) & uVar3) != 0)) {
+  if (((((unsigned int *)*(int *)(param_1 + 0x60))[id >> 5] & (1 << (id & 0x1f))) != 0) && (param_2[9] != 0) &&
+      ((((unsigned int *)*(int *)(param_2[9] + 0x60))[id >> 5] & (1 << (id & 0x1f))) != 0)) {
     (*(VCall *)(*param_2 + 0x14))(param_2);
     id = *(unsigned short *)(param_2 + 8);
     puVar1 = (unsigned int *)(*(int *)(param_1 + 0x60) + (id >> 5) * 4);

@@ -23,18 +23,18 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x00559c00 FUN_00559c00
-void FUN_00559c00(int *param_1)
+int *FUN_00559c00(int *param_1)
 {
   int *piVar1;
   int n = param_1[0xf];
 
   if (n == 0) {
-    return;
+    return 0;
   }
   n--;
   param_1[0xf] = n;
   piVar1 = *(int **)(param_1[0xe] + n * 4);
   *piVar1 = (int)param_1;
   *(unsigned short *)(piVar1 + 1) = 0xffff;
-  return;
+  return piVar1;
 }

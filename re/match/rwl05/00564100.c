@@ -25,7 +25,7 @@ typedef unsigned char bool;
 #pragma intrinsic(memset)
 void *memset(void *, int, unsigned int);
 // MATCH: 0x00564100 FUN_00564100
-void FUN_00564100(void *param_1, char param_2, unsigned int param_3)
+void FUN_00564100(void *param_1, int param_2, unsigned int param_3)
 {
   if (param_3 > 0) {
     memset(param_1, param_2, param_3);

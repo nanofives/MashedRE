@@ -60,9 +60,6 @@ undefined4 FUN_00550670(char *param_1,undefined4 param_2,undefined4 param_3,unde
           for (puVar4 = DAT_007dc754; puVar4 != (undefined4 *)0x0; puVar4 = (undefined4 *)*puVar4) {
             iVar2 = (**(PFN_cmp *)(DAT_007d3ff8 + 0xf0))(cStack_64,puVar4[3]);
             if (iVar2 == 0) {
-              if (puVar4 == (undefined4 *)0x0) {
-                return 0;
-              }
               goto LAB_00550711;
             }
           }
@@ -71,11 +68,18 @@ undefined4 FUN_00550670(char *param_1,undefined4 param_2,undefined4 param_3,unde
       } while (uVar5 < uVar1);
     }
     puVar4 = DAT_007dc76c;
-    if (DAT_007dc76c != (undefined4 *)0x0) {
-LAB_00550711:
-      uVar3 = FUN_00550580(puVar4,param_1,param_2,param_3,param_4);
-      return uVar3;
+    if (DAT_007dc76c == (undefined4 *)0x0) {
+      if (DAT_007dc768 != 0) {
+        (*DAT_007dc768)(6);
+      }
+      return 0;
     }
+LAB_00550711:
+    if (puVar4 == (undefined4 *)0x0) {
+      return 0;
+    }
+    uVar3 = FUN_00550580(puVar4,param_1,param_2,param_3,param_4);
+    return uVar3;
   }
   if (DAT_007dc768 != 0) {
     (*DAT_007dc768)(6);

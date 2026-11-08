@@ -24,20 +24,18 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x00564130 FUN_00564130
-void FUN_00564130(int param_1,unsigned int param_2,unsigned int param_3)
+unsigned char *FUN_00564130(int param_1,unsigned int param_2,unsigned int param_3)
 {
-  unsigned int uVar1;
-  unsigned char bVar2;
+  unsigned char *p;
 
-  uVar1 = (**(unsigned int (**)(int,unsigned int))(DAT_007d3ff8 + 0x108))(param_1 + param_2,param_3);
-  if (uVar1 == 0) {
-    return;
+  p = (unsigned char *)(**(unsigned int (**)(int,unsigned int))(DAT_007d3ff8 + 0x108))(param_1 + param_2,param_3);
+  if (p == 0) {
+    return 0;
   }
-  bVar2 = (unsigned char)param_2 - (unsigned char)(uVar1 % param_2);
-  param_3 = (unsigned int)bVar2;
-  if (bVar2 == 0) {
-    param_3 = param_2 & 0xff;
-    bVar2 = (unsigned char)param_2;
+  *(unsigned char *)&param_3 = (unsigned char)(param_2 - ((unsigned int)p % param_2));
+  if (*(unsigned char *)&param_3 == 0) {
+    *(unsigned char *)&param_3 = (unsigned char)param_2;
   }
-  *(unsigned char *)(param_3 + uVar1 + -1) = bVar2;
+  p[*(unsigned char *)&param_3 - 1] = *(unsigned char *)&param_3;
+  return p + *(unsigned char *)&param_3;
 }

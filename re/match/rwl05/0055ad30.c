@@ -39,11 +39,11 @@ int *FUN_0055ad30(int param_1, int *param_2)
   if (*(unsigned int *)(param_1 + 0x4c) < *(unsigned int *)(param_1 + 0x48)) {
     iVar2 = (*(VCall *)(*param_2 + 0x10))(param_2);
     if (iVar2 != 0) {
+      ret = param_2;
       puVar1 = (unsigned int *)(*(int *)(param_1 + 0x60) + (unsigned int)(*(unsigned short *)(param_2 + 8) >> 5) * 4);
       *puVar1 = *puVar1 | (1 << (*(unsigned short *)(param_2 + 8) & 0x1f));
       DAT_007dc8c0 = 0;
       *(int *)(param_1 + 0x4c) = *(int *)(param_1 + 0x4c) + 1;
-      ret = param_2;
     } else if (DAT_007dc8c0 == 0) {
       DAT_007dc8c0 = 1;
     }

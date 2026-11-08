@@ -42,14 +42,15 @@ int FUN_0055ded0(int param_1,unsigned short param_2,unsigned short param_3)
   *(unsigned short *)(param_1 + 0xc) = 0;
   *(int *)(param_1 + 0x1c) = 0;
   if (0 < param_2) {
+    unsigned int k = n;
     off = 0;
     do {
       off += 0xc;
-      n--;
+      k--;
       *(int *)(*(int *)(param_1 + 0x10) + off - 8) = 0;
       *(int *)(*(int *)(param_1 + 0x10) + off - 4) = 0;
       *(int *)(off + *(int *)(param_1 + 0x10) - 0xc) = 0;
-    } while (n != 0);
+    } while (k != 0);
   }
   *(unsigned short *)(param_1 + 0x14) = 0;
   *(unsigned short *)(param_1 + 0x16) = param_3;
