@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 80.6%. Natural for loop over a {int a,b} array instead of the Ghidra do-while. Supersedes the header below. */
 /* MATCH-RWL05 0x0055dca0: hand-matched (h3). 80.6% (regs 80.6, ops 93.5). unsigned `> 0` guard gives jbe; residue is ebp used as a shared zero constant (original uses immediates). class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -27,6 +28,7 @@ typedef int (*Alloc3)(int, int, int);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 int FUN_00559b50(int p0, int p1, int p2, int p3);
 int FUN_0055f450(int *p0, int p1, int p2);
+struct P2 { int a, b; };
 // MATCH: 0x0055dca0 FUN_0055dca0
 int *FUN_0055dca0(int *param_1, int param_2, int param_3, int param_4)
 {
@@ -49,13 +51,9 @@ int *FUN_0055dca0(int *param_1, int param_2, int param_3, int param_4)
   param_1[6] = *(int *)(param_2 + 4);
   uVar2 = (*(Alloc3 *)(DAT_007d3ff8 + 0x114))(*(int *)(param_2 + 4), 8, 0x30900);
   param_1[7] = uVar2;
-  uVar3 = 0;
-  if (*(unsigned int *)(param_2 + 4) > 0) {
-    do {
-      uVar3 = uVar3 + 1;
-      *(int *)(param_1[7] + -8 + uVar3 * 8) = 0;
-      *(int *)(param_1[7] + -4 + uVar3 * 8) = 0;
-    } while (uVar3 < *(unsigned int *)(param_2 + 4));
+  for (uVar3 = 0; uVar3 < *(unsigned int *)(param_2 + 4); uVar3++) {
+    ((struct P2 *)param_1[7])[uVar3].a = 0;
+    ((struct P2 *)param_1[7])[uVar3].b = 0;
   }
   return param_1;
 }

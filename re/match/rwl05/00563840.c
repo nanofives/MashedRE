@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 70.3%, was 75.8% on a source that wrote puVar3[1] before puVar3 was assigned (uninitialised pointer). The store now follows the alloc, so the semantics are right and the score dropped. Remaining: param reload / lea scheduling. Class (b). */
 /* MATCH-RWL05 0x00563840 (h2): hand, 75.8%, class (b): scheduling of the and/lea chain, permuter 240 s. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -40,9 +41,9 @@ void FUN_00563840(int param_1,int param_2,int param_3)
   uVar4 = uVar7 + 1 + param_3 * 0xc & 0xfffe;
   uVar5 = uVar4 + 5 + param_3 * 2 & 0xfffc;
   uVar1 = uVar5 + 1 + param_2 * 0xc & 0xfffe;
-  puVar3[1] = (unsigned int)(puVar3 + 0x23);
   uVar2 = uVar1 + param_2 * 2 & 0xffff;
   puVar3 = (*(AL *)(DAT_007d3ff8 + 0x108))(uVar2,0x30900);
+  puVar3[1] = (unsigned int)(puVar3 + 0x23);
   *puVar3 = uVar2;
   puVar3[2] = (uVar6 & 0xffff) + (unsigned int)puVar3;
   puVar3[3] = (uVar7 & 0xffff) + (unsigned int)puVar3;

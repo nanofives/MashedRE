@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 64.9%. Same three fixes as 0x00558030. Supersedes the header below. */
 /* MATCH-RWL05 0x00557ec0: hand-matched (h3). 64.9% (regs 75.3, ops 87.0). same lazy-init block as 0x00558030, same residue. The permuter variant that swapped piVar2[1]= with the +0x48 store was rejected (changes semantics). class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -41,27 +42,29 @@ int FUN_00557ec0(int param_1, int param_2, int param_3)
   int *piVar2;
 
   iVar1 = DAT_00913274;
-  piVar2 = *(int **)(param_1 + DAT_00913274);
+  piVar2 = *(int **)(param_1 + iVar1);
   if (piVar2 == (int *)0) {
     piVar2 = (int *)(*(Alloc *)(DAT_007d3ff8 + 0x118))(DAT_0091327c, 0x30112);
     if (piVar2 != (int *)0) {
+      int i;
       piVar2[3] = -0x40800000;
       piVar2[4] = -0x40800000;
       *piVar2 = 0;
       piVar2[1] = 0;
       piVar2[2] = (int)FUN_00557a60;
       piVar2[5] = -1;
-      memset(piVar2 + 6, 0, 40);
+      for (i = 0; i < 10; i++) piVar2[6 + i] = 0;
     }
     *(int **)(param_1 + iVar1) = piVar2;
-    if (piVar2 == (int *)0) {
+    if (piVar2 != (int *)0) {
+      iVar1 = *(int *)(param_1 + 0x18);
+      if (iVar1 != 0) {
+        FUN_004e8e90(iVar1);
+      }
+      piVar2[6] = iVar1;
+    } else {
       return 0;
     }
-    iVar1 = *(int *)(param_1 + 0x18);
-    if (iVar1 != 0) {
-      FUN_004e8e90(iVar1);
-    }
-    piVar2[6] = iVar1;
   }
   if (param_3 != 0) {
     FUN_004e8e90(param_3);

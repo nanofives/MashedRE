@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 98.4% (regs 100%), was 70.3%. Separate loop counter k fixes the ebx/edi swap. Remaining: one store keeps [edx+eax-0xc] where the original has [eax+edx-0xc] (8 spellings, pointer temp, permuter 711 compiles). Class (b). */
 /* MATCH-RWL05 0x0055ded0 (h2): hand, 70.3%, class (b): only the register swap ebx<->edi (original ebx=count, edi=zero) and one store operand order remain; permuter 200 s no gain. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -42,14 +43,15 @@ int FUN_0055ded0(int param_1,unsigned short param_2,unsigned short param_3)
   *(unsigned short *)(param_1 + 0xc) = 0;
   *(int *)(param_1 + 0x1c) = 0;
   if (0 < param_2) {
+    unsigned int k = n;
     off = 0;
     do {
       off += 0xc;
-      n--;
+      k--;
       *(int *)(*(int *)(param_1 + 0x10) + off - 8) = 0;
       *(int *)(*(int *)(param_1 + 0x10) + off - 4) = 0;
       *(int *)(off + *(int *)(param_1 + 0x10) - 0xc) = 0;
-    } while (n != 0);
+    } while (k != 0);
   }
   *(unsigned short *)(param_1 + 0x14) = 0;
   *(unsigned short *)(param_1 + 0x16) = param_3;

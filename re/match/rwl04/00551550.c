@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 89.2%. Returns int: the callback result on that path, param_1 at the end. Supersedes the header below. */
 /* MATCH-RWL04 h1 */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -24,7 +25,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef int (*code)(int,int,int,int,int);
 // MATCH: 0x00551550 FUN_00551550
-void FUN_00551550(int param_1)
+int FUN_00551550(int param_1)
 {
   int iVar1;
   int uVar2;
@@ -38,11 +39,11 @@ void FUN_00551550(int param_1)
         uVar2 = *(int *)(param_1 + 0x2c);
       }
       *(int *)(param_1 + 0x28) = 1;
-      (*(code *)(param_1 + 0x30))
+      return (*(code *)(param_1 + 0x30))
                 (param_1,uVar2,*(int *)(param_1 + 0x20),iVar1,*(int *)(param_1 + 0x34)
                 );
-      return;
     }
     *(int *)(param_1 + 0x28) = 1;
   }
+  return param_1;
 }

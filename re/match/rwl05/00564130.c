@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 48.5%. Aligned alloc that returns p + pad; the pad byte is held in the dead param_3 slot (*(unsigned char *)&param_3). Supersedes the header below. */
 /* MATCH-RWL05 0x00564130 (h2): hand: 48.5% class (b): original keeps the byte in the param_3 stack slot (byte store [esp+0x14], flags from sub reused) and holds uVar1 in esi across the div; tried &param_3 byte pointer (39.4%, closer layout), nested-if, permuter 240 s no gain. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -24,20 +25,18 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x00564130 FUN_00564130
-void FUN_00564130(int param_1,unsigned int param_2,unsigned int param_3)
+unsigned char *FUN_00564130(int param_1,unsigned int param_2,unsigned int param_3)
 {
-  unsigned int uVar1;
-  unsigned char bVar2;
+  unsigned char *p;
 
-  uVar1 = (**(unsigned int (**)(int,unsigned int))(DAT_007d3ff8 + 0x108))(param_1 + param_2,param_3);
-  if (uVar1 == 0) {
-    return;
+  p = (unsigned char *)(**(unsigned int (**)(int,unsigned int))(DAT_007d3ff8 + 0x108))(param_1 + param_2,param_3);
+  if (p == 0) {
+    return 0;
   }
-  bVar2 = (unsigned char)param_2 - (unsigned char)(uVar1 % param_2);
-  param_3 = (unsigned int)bVar2;
-  if (bVar2 == 0) {
-    param_3 = param_2 & 0xff;
-    bVar2 = (unsigned char)param_2;
+  *(unsigned char *)&param_3 = (unsigned char)(param_2 - ((unsigned int)p % param_2));
+  if (*(unsigned char *)&param_3 == 0) {
+    *(unsigned char *)&param_3 = (unsigned char)param_2;
   }
-  *(unsigned char *)(param_3 + uVar1 + -1) = bVar2;
+  p[*(unsigned char *)&param_3 - 1] = *(unsigned char *)&param_3;
+  return p + *(unsigned char *)&param_3;
 }

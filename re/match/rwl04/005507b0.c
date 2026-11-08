@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 82.0%. Same error-block shape as 0x00550670. Supersedes the header below. */
 /* MATCH-RWL04 0x005507b0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl04_20261107/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -99,9 +100,6 @@ undefined4 FUN_005507b0(char *param_1,char *param_2)
           for (puVar7 = DAT_007dc754; puVar7 != (undefined4 *)0x0; puVar7 = (undefined4 *)*puVar7) {
             iVar3 = (**(PFN_cmp *)(DAT_007d3ff8 + 0xf0))(cStack_64,puVar7[3]);
             if (iVar3 == 0) {
-              if (puVar7 == (undefined4 *)0x0) {
-                return 0;
-              }
               goto LAB_005508ee;
             }
           }
@@ -110,11 +108,18 @@ undefined4 FUN_005507b0(char *param_1,char *param_2)
       } while (uVar8 < (uint)param_2);
     }
     puVar7 = DAT_007dc76c;
-    if (DAT_007dc76c != (undefined4 *)0x0) {
-LAB_005508ee:
-      uVar4 = FUN_00550580(puVar7,param_1,uVar6,0,0);
-      return uVar4;
+    if (DAT_007dc76c == (undefined4 *)0x0) {
+      if (DAT_007dc768 != 0) {
+        (*DAT_007dc768)(6);
+      }
+      return 0;
     }
+LAB_005508ee:
+    if (puVar7 == (undefined4 *)0x0) {
+      return 0;
+    }
+    uVar4 = FUN_00550580(puVar7,param_1,uVar6,0,0);
+    return uVar4;
   }
   if (DAT_007dc768 != 0) {
     (*DAT_007dc768)(6);

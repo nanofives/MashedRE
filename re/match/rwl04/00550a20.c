@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 87.1%, was 82.4%. ops pointer and i - n hoisted before the flag test. Remaining: the original pushes edi at entry, ours shrink-wraps it past the first return (nest, while/for, return shapes tried). Class (a). */
 /* MATCH-RWL04 0x00550a20 h1: best 82.4% (regs 82.4%, ops 94.1%). Residue: edi pushed at entry in orig (no shrink-wrap), ops (vt+0x28) computed before the x18 test in orig. memcpy intrinsic = rep movsd/movsb. Class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -46,12 +47,13 @@ char * FUN_00550a20(char *param_1,int param_2,int param_3)
       if (param_1[iVar4] == '\n') {
         iVar4 = iVar4 + 1;
         param_1[iVar4] = 0;
+        iVar4 = iVar4 - iVar1;
+        ops = (Ops *)(*(int *)(param_3 + 0x38) + 0x28);
         if (*(int *)(param_3 + 0x18) != 0) {
           *(int *)(param_3 + 0x28) = 4;
           *(int *)(param_3 + 0x20) = 3;
         }
-        ops = (Ops *)(*(int *)(param_3 + 0x38) + 0x28);
-        ops->sk(param_3,iVar4 - iVar1,2);
+        ops->sk(param_3,iVar4,2);
         return param_1;
       }
       if (((param_1[iVar4] == '\r') && (iVar4 < param_2)) &&

@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 88.3%. Word index and bit mask written inline in the test (no uVar3/iVar2 temps). Supersedes the header below. */
 /* MATCH-RWL05 0x0055ac50: hand-matched (h3). 88.3% (regs 90.9, ops 94.8). ushort id read once into an unsigned int local. Residue: original hoists the xor ecx,ecx zero-extend above the test. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -27,8 +28,8 @@ typedef void (*VCall)(int *);
 int FUN_0055ac50(int param_1, int *param_2, int param_3)
 {
   unsigned int *puVar1;
-  unsigned int uVar3;
-  int iVar2;
+
+
   unsigned int id;
 
   if (param_3 != 0) {
@@ -38,10 +39,8 @@ int FUN_0055ac50(int param_1, int *param_2, int param_3)
     return param_1;
   }
   id = *(unsigned short *)(param_2 + 8);
-  uVar3 = 1 << (id & 0x1f);
-  iVar2 = (id >> 5) * 4;
-  if (((*(unsigned int *)(iVar2 + *(int *)(param_1 + 0x60)) & uVar3) != 0) && (param_2[9] != 0) &&
-      ((*(unsigned int *)(iVar2 + *(int *)(param_2[9] + 0x60)) & uVar3) != 0)) {
+  if (((((unsigned int *)*(int *)(param_1 + 0x60))[id >> 5] & (1 << (id & 0x1f))) != 0) && (param_2[9] != 0) &&
+      ((((unsigned int *)*(int *)(param_2[9] + 0x60))[id >> 5] & (1 << (id & 0x1f))) != 0)) {
     (*(VCall *)(*param_2 + 0x14))(param_2);
     id = *(unsigned short *)(param_2 + 8);
     puVar1 = (unsigned int *)(*(int *)(param_1 + 0x60) + (id >> 5) * 4);

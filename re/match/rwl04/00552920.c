@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 79.8%, was 78.0%. Products written out (no in[3] = in[0] copies). Remaining: the original keeps w*s and h*s as stack temps (h*s reuses the scale slot). Class (b). */
 /* MATCH-RWL04 0x00552920 (h2): 78.0% (regs 78.0, ops 90.2). Typed: in[12]/out[12] float arrays for the two 4x3 vertex blocks, scale in a 2-float array sa[2] (forces the original frame 0x70 with s at +0), global reads moved after the if. Residue: stack slot order of s/fVar1/fVar2 and CSE of fVar*s (orig computes once and spills, ours re-multiplies). class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -43,6 +44,7 @@ int FUN_00552920(int param_1)
   float sa[2];
   float fVar1;
   float fVar2;
+  float x, y;
   float in[12];
   float out[12];
 
@@ -55,18 +57,20 @@ int FUN_00552920(int param_1)
   fVar1 = DAT_00912b08;
   fVar2 = DAT_00912b0c;
   FUN_00552e40();
-  in[0] = fVar1 * sa[0] * DAT_005cd50c;
+  fVar1 = fVar1 * sa[0];
+  fVar2 = fVar2 * sa[0];
+  in[0] = fVar1 * DAT_005cd50c;
+  in[1] = fVar2 * DAT_005cd50c;
   in[2] = 0;
+  in[3] = fVar1 * DAT_005cd50c;
+  in[4] = fVar2 * DAT_005cc32c;
   in[5] = 0;
+  in[6] = fVar1 * DAT_005cc32c;
+  in[7] = fVar2 * DAT_005cc32c;
   in[8] = 0;
+  in[9] = fVar1 * DAT_005cc32c;
+  in[10] = fVar2 * DAT_005cd50c;
   in[11] = 0;
-  in[3] = in[0];
-  in[1] = fVar2 * sa[0] * DAT_005cd50c;
-  in[4] = fVar2 * sa[0] * DAT_005cc32c;
-  in[6] = fVar1 * sa[0] * DAT_005cc32c;
-  in[7] = in[4];
-  in[9] = in[6];
-  in[10] = in[1];
   FUN_004c3d90(out,in,4,&DAT_00912b58);
   FUN_00552fa0(param_1);
   FUN_00553030(param_1,out[0],out[1]);

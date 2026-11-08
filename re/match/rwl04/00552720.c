@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 6.7%. Returns param 1 (Ghidra typed it void). Supersedes the header below. */
 /* h2 note: 6.7% (regs 100, ops 100). All 15 ops identical; only the two pointer params swap registers (orig dst=eax src=ecx, ours reverse); param order, locals, struct view and temps tried. class (a). */
 /* MATCH-RWL04 0x00552720: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl04_20261107/results.tsv. */
@@ -26,8 +27,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 // MATCH: 0x00552720 FUN_00552720
-void FUN_00552720(undefined4 *param_1,undefined4 *param_2)
-
+undefined4 * FUN_00552720(undefined4 *param_1,undefined4 *param_2)
 {
   *param_1 = *param_2;
   param_1[1] = param_2[1];
@@ -35,5 +35,5 @@ void FUN_00552720(undefined4 *param_1,undefined4 *param_2)
   param_1[3] = param_2[5];
   param_1[4] = param_2[0xc];
   param_1[5] = param_2[0xd];
-  return;
+  return param_1;
 }

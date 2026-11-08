@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 83.3%. Returns piVar1 (Ghidra typed it void); the return 0 reuses eax. Supersedes the header below. */
 /* MATCH-RWL05 0x00559c00: hand-matched (h3). 83.3%. early-return form; the original lays out `jne L; ret; L:` with the ret inline, ours shares the final ret. Tried if/else, != 0, returns, permuter. class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -23,18 +24,18 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x00559c00 FUN_00559c00
-void FUN_00559c00(int *param_1)
+int *FUN_00559c00(int *param_1)
 {
   int *piVar1;
   int n = param_1[0xf];
 
   if (n == 0) {
-    return;
+    return 0;
   }
   n--;
   param_1[0xf] = n;
   piVar1 = *(int **)(param_1[0xe] + n * 4);
   *piVar1 = (int)param_1;
   *(unsigned short *)(piVar1 + 1) = 0xffff;
-  return;
+  return piVar1;
 }

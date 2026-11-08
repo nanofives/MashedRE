@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 25.0%. Returns param 1 (Ghidra typed it void). Supersedes the header below. */
 /* MATCH-RWL05 0x0055fe40 (h2): hand, 25% class (a): original loads the pointer arg into eax before the value arg; the compiler loads the value first for every spelling tried (int/struct/void ptr, volatile/temps, /G6 /G7 /O1 /GS). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -23,7 +24,8 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x0055fe40 FUN_0055fe40
-void FUN_0055fe40(int *p,int v)
+int * FUN_0055fe40(int *p,int v)
 {
   p[1] = v;
+  return p;
 }

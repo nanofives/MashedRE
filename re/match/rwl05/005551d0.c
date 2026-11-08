@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR04 2026-11-08: 100% (regs 100%), relocheck OK, C++ check OK, was 84.8%. 4-iteration zeroing for loop (unrolled with its own zero register). Supersedes the header below. */
 /* MATCH-RWL05 0x005551d0: hand-matched (h1). 84.8% (regs 93.5%, ops 93.5%), 45/46 ins. Original zeroes dwords +0x14..+0x20 through a second xor edx,edx (separate zero value) while +8..+0x10 and +0x124.. use edi; tried float/pointer/short typed zero stores, same result. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -43,10 +44,9 @@ unsigned int * FUN_005551d0(void)
   puVar1[2] = 0;
   puVar1[3] = 0;
   puVar1[4] = 0;
-  puVar1[5] = 0;
-  puVar1[6] = 0;
-  puVar1[7] = 0;
-  puVar1[8] = 0;
+  for (iVar3 = 0; iVar3 < 4; iVar3++) {
+    puVar1[5 + iVar3] = 0;
+  }
   puVar1[0x4a] = 0;
   puVar1[0x4c] = 0;
   puVar1[0x49] = 0;
