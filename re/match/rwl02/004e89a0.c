@@ -33,9 +33,11 @@ typedef struct { char pad[0x20]; int *atomics; int n; } W;
 W *FUN_004e89a0(W *world, code *cb, void *data)
 {
   int i;
-  for (i = 0; i < world->n; i++) {
-    if ((*cb)(world->atomics[i], data) == 0) {
-      break;
+  int n = world->n;
+  for (i = 0; i < n; i++) {
+    void *a = world->atomics[i];
+    if (!(*cb)(a, data)) {
+      return world;
     }
   }
   return world;
