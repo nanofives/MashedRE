@@ -81,7 +81,7 @@ struct MenuGameState {
     int  flag_ea64;         // DAT_0067ea64 (FUN_0042f500 return)
     int  flag_ecdc;         // DAT_0067ecdc
     int  flag_ed6c;         // DAT_0067ed6c
-    int  player_active[4];  // DAT_007e96fc[i*0x80] (0 = inactive)
+    int  player_active_off[4];  // DAT_007e96fc[i*0x80] (0 = inactive); MASHED_PORTSTATE_FRONTEND OFF only (ON: Q_PlayerActive reads DAT_007e96fc)
 
     // grey-out (FUN_00432800) state. Fresh-menu defaults below.
     int  has_savedata;      // DAT_007f0f2c (screen 1 item 3 enable; 0 = none)

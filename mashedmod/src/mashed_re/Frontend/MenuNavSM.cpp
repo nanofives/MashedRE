@@ -38,6 +38,7 @@
 extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n);
 // PORT-STATE-03, MASHED_PORTSTATE_FRONTEND ON only: the matched bodies that run on the frontend state at its original addresses.
 extern "C" void __cdecl MenuEntryArrayInit(void);      // 0x0042d3e0, Match/MatchS07_0042d3e0.cpp (zeroes DAT_00898ac0)
+extern "C" int  __cdecl Pred497450(int param_1);        // 0x00497450, Match/MatchGFFU_00497450.cpp (reads DAT_007e96fc)
 
 namespace mashed_re {
 namespace Frontend {
@@ -159,7 +160,7 @@ const MenuGameState kFreshState = {
     0,                   // flag_ea64
     0,                   // flag_ecdc
     0,                   // flag_ed6c
-    { 0, 0, 0, 0 },      // player_active[]
+    { 0, 0, 0, 0 },      // player_active_off[]
     0,                   // has_savedata (DAT_007f0f2c)
     2,                   // has_profiles (DAT_007f0ad4) - LIVE-PROBED 2026-06-12:
                          // the original holds 2 at the menu with an all-zero
@@ -480,9 +481,14 @@ int Q_ListBaseY(int item_count, int spacing) {
 
 // FUN_00497450 (0x00497450) - player-active predicate. param<4 && DAT_007e96fc[
 // param*0x80] != 0. Fresh menu: all inactive. Used by the screen-0x1c grey-out.
+// PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the test is the matched 0x00497450 itself (Match/MatchGFFU_00497450.cpp,
+// [0x007e96fc + i*0x200]). The port's extra `player < 0` guard is not on that path: the one caller is the screen-0x1c loop
+// below, i in 0..3. Nothing in the exe writes DAT_007e96fc (exe_main.cpp keeps the slot types in g_input_slot_type) nor
+// player_active_off, so both paths return 0 on every call today.
 bool Q_PlayerActive(int player) {
+    if (PortStateFrontend_On()) return Pred497450(player) != 0;
     if (player < 0 || player >= 4) return false;
-    return g_game_state.player_active[player] != 0;
+    return g_game_state.player_active_off[player] != 0;
 }
 
 // FUN_00430b60 (0x00430b60) - count of active team slots (DAT_007f1a14/24/34/44
