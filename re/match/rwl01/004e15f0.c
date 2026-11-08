@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 96.2%. The tail block now goes through the typed `end` pointer like the first block (end = *param_2 + param_2[1] - 0x20; end->f4 = blk; blk->f0 = end), which gives the [ecx+eax] base/index order. Supersedes the header below. */
 /* MATCH-RWL01 0x004e15f0: best 96.2% (regs 100%, ops 100%), class (a)/(b). 32-byte struct copy (rep movsd) via a B32 struct type; only the base/index register order of [ecx+eax-0x1c] and the lea differs (commutative add operand order, 9 spellings tried, permuter 386 compiles). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -32,8 +33,6 @@ undefined4 FUN_004e15f0(undefined4 *param_1,int *param_2,undefined4 param_3)
   B32 *blk;
   B32 *end;
   B32 *mid;
-  int iVar4;
-  int iVar6;
   piVar5 = (int *)FUN_004e13f0((int)param_3);
   if (piVar5 != (int *)0x0) {
     blk = (B32 *)*param_1;
@@ -53,10 +52,9 @@ undefined4 FUN_004e15f0(undefined4 *param_1,int *param_2,undefined4 param_3)
     piVar5[1] = (int)mid;
     *piVar5 = mid->f8;
     if (param_2 != (int *)0x0) {
-      iVar6 = param_2[1];
-      iVar4 = *param_2;
-      *(int *)(iVar6 + -0x1c + iVar4) = (int)blk;
-      *(int *)blk = iVar6 + -0x20 + iVar4;
+      end = (B32 *)(*param_2 + param_2[1] - 0x20);
+      end->f4 = (int)blk;
+      blk->f0 = (int)end;
     }
     return 1;
   }

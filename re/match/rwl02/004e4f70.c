@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 81.8%. Source is a double recursion (if (*p != -1) { if (p[2]) F(p[2]); if (p[3]) F(p[3]); return; }); the compiler turns the second call into the loop Ghidra showed. Supersedes the header below. */
 /* MATCH-RWL02 h1 0x004e4f70: best 81.8% (regs 81.8%), residual class b. orig lays out the -1 (leaf) branch out of line and falls into the sibling loop from cmp -1; ours puts the leaf case inline; tried loop forms and permuter, 81.8. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -38,14 +39,14 @@ void FUN_004e4f70(int *param_1)
   int iVar3;
   iVar3 = *param_1;
   if (iVar3 == -2) return;
-  while (iVar3 != -1) {
+  if (iVar3 != -1) {
     if (param_1[2] != 0) {
       FUN_004e4f70((int *)param_1[2]);
     }
-    param_1 = (int *)param_1[3];
-    if (param_1 == (int *)0) return;
-    iVar3 = *param_1;
-    if (iVar3 == -2) return;
+    if (param_1[3] != 0) {
+      FUN_004e4f70((int *)param_1[3]);
+    }
+    return;
   }
   if (param_1[0xd] != 0) {
     FUN_004d8bd0(param_1[0xd]);

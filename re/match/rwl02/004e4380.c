@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR01 2026-11-08: 100% (regs 100%), relocheck OK, was 72.2%. The function returns param_1 (eax holds it at the ret); Ghidra typed it void, which made the compiler duplicate the tail. Supersedes the header below. */
 /* MATCH-RWL02 h1 0x004e4380: best 72.2% (regs 72.2%), residual class b. compiler tail-duplicates store+pop+ret into the skip path (orig joins and reloads param_1); tried 4 spellings and permuter, flat at 72.2. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -26,7 +27,7 @@ typedef unsigned char bool;
 MGLOBAL(int, DAT_007d7170, 0x007d7170);
 void FUN_004c0e50(int p0);
 // MATCH: 0x004e4380 FUN_004e4380
-void FUN_004e4380(undefined4 param_1,int param_2)
+undefined4 FUN_004e4380(undefined4 param_1,int param_2)
 {
   undefined4 *puVar1;
   puVar1 = (undefined4 *)(DAT_007d7170 + param_2);
@@ -34,4 +35,5 @@ void FUN_004e4380(undefined4 param_1,int param_2)
     FUN_004c0e50(*(int *)(param_2 + 4));
   }
   *puVar1 = param_1;
+  return param_1;
 }
