@@ -84,6 +84,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-08  0x00430830  SplitScreenTrackAssignment  C4->C4  file column only: Frontend/MenuScoreSort.cpp -> Match/MatchS07_00430830.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
+2026-11-08  0x004309b0  FrontendModeIndex  C4->C4  file column only: Frontend/FrontendMode.cpp (deleted) -> Match/MatchS07_004309b0.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
 2026-11-08  0x004fc6f5  x86_D3DXVec2Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
 2026-11-08  0x004fc75e  x86_D3DXVec2TransformNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
 2026-11-08  0x004fc793  x86_D3DXVec3Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
