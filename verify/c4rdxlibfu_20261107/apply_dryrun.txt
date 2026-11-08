@@ -1,0 +1,54 @@
+refile 004fb5a0 FUN_004fb5a0 C4 -> third-party-library[d3dx9-psgp] (?c_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z)
+refile 004ec839 FUN_004ec839 C4 -> third-party-library[d3dx9-psgp] (?c_D3DXFloat16To32Array@@YGPAMPAMPBUD3DXFLOAT16@@I@Z)
+refile 004ec915 FUN_004ec915 C4 -> third-party-library[d3dx9-psgp] (?c_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z)
+refile 004ec9cd FUN_004ec9cd C4 -> third-party-library[d3dx9-psgp] (?c_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z)
+refile 004ecaab FUN_004ecaab C4 -> third-party-library[d3dx9-psgp] (?c_D3DXVec2BaryCentric@@YGPAUD3DXVECTOR2@@PAU1@PBU1@11MM@Z)
+refile 004ecb97 FUN_004ecb97 C4 -> third-party-library[d3dx9-psgp] (?c_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z)
+refile 004ecc6f FUN_004ecc6f C4 -> third-party-library[d3dx9-psgp] (?c_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z)
+refile 004f022d FUN_004f022d C4 -> third-party-library[d3dx9-psgp] (?c_D3DXMatrixShadow@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR4@@PBUD3DXPLANE@@@Z)
+refile 004f0307 FUN_004f0307 C4 -> third-party-library[d3dx9-psgp] (?c_D3DXMatrixReflect@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXPLANE@@@Z)
+inittime 005c2a0e boot -> third-party-library[msvc-crt-tail], waived-platform-crt, C4 kept
+add 004ecdd9 c_D3DXVec3Transform third-party-library[d3dx9-psgp]
+add 0050245e D3DXShader::compare third-party-library[d3dx9-shader-compiler]
+add 00505e60 sse_D3DXVec2Transform third-party-library[d3dx9-psgp]
+add 00505ef5 sse_D3DXVec2TransformNormal third-party-library[d3dx9-psgp]
+add 00506931 sse_D3DXVec3BaryCentric third-party-library[d3dx9-psgp]
+add 0050698e sse_D3DXVec4BaryCentric third-party-library[d3dx9-psgp]
+add 005069d7 sse_D3DXVec2BaryCentric third-party-library[d3dx9-psgp]
+add 0050997c x3d_D3DXQuaternionMultiply third-party-library[d3dx9-psgp]
+add 00509a15 x3d_D3DXQuaternionNormalize third-party-library[d3dx9-psgp]
+add 00509ab6 x3d_D3DXQuaternionRotationMatrix third-party-library[d3dx9-psgp]
+add 00509cd2 x3d_D3DXQuaternionRotationMatrix_K7 third-party-library[d3dx9-psgp]
+add 00509ee7 x3d_D3DXQuaternionRotationYawPitchRoll third-party-library[d3dx9-psgp]
+add 0050a26e x3d_D3DXQuaternionInverse third-party-library[d3dx9-psgp]
+add 0050a379 x3d_D3DXQuaternionExp third-party-library[d3dx9-psgp]
+add 0050ae57 x3d_D3DXMatrixMultiply third-party-library[d3dx9-psgp]
+add 0050b089 x3d_D3DXMatrixfDeterminant third-party-library[d3dx9-psgp]
+add 0050b158 x3d_D3DXMatrixTranslation third-party-library[d3dx9-psgp]
+add 0050b1a8 x3d_D3DXMatrixShadow third-party-library[d3dx9-psgp]
+add 0050b293 x3d_D3DXMatrixReflect third-party-library[d3dx9-psgp]
+add 0050b36f x3d_D3DXMatrixRotationX third-party-library[d3dx9-psgp]
+add 0050b3d2 x3d_D3DXMatrixRotationY third-party-library[d3dx9-psgp]
+add 0050b430 x3d_D3DXMatrixRotationZ third-party-library[d3dx9-psgp]
+add 0050b489 x3d_D3DXMatrixScaling third-party-library[d3dx9-psgp]
+add 0050b4d0 x3d_D3DXMatrixTranspose third-party-library[d3dx9-psgp]
+add 0050b578 x3d_D3DXMatrixRotationQuaternion third-party-library[d3dx9-psgp]
+add 0050b64a x3d_D3DXMatrixRotationQuaternion_K7 third-party-library[d3dx9-psgp]
+add 0050ca3c x3d_D3DXMatrixAffineTransformation third-party-library[d3dx9-psgp]
+add 0050e4bf x3d_D3DXMatrixMultiplyTranspose third-party-library[d3dx9-psgp]
+add 0050ebeb x3d_D3DXMatrixInverse third-party-library[d3dx9-psgp]
+add 0050ec07 x3d_D3DXVec3Transform third-party-library[d3dx9-psgp]
+add 0050ed3e x3d_D3DXVec3BaryCentric third-party-library[d3dx9-psgp]
+add 0050edaf x3d_D3DXVec3Hermite third-party-library[d3dx9-psgp]
+add 0050ee83 x3d_D3DXVec3CatmullRom third-party-library[d3dx9-psgp]
+add 0050faad x3d_D3DXVec2Hermite third-party-library[d3dx9-psgp]
+add 0050fb45 x3d_D3DXVec2BaryCentric third-party-library[d3dx9-psgp]
+add 0050fb8e x3d_D3DXVec2Normalize third-party-library[d3dx9-psgp]
+add 0050fbd1 x3d_D3DXVec2CatmullRom third-party-library[d3dx9-psgp]
+add 005100a6 x3d_D3DXPlaneFromPointNormal third-party-library[d3dx9-psgp]
+add 005100e9 x3d_D3DXPlaneFromPoints third-party-library[d3dx9-psgp]
+add 005101cd x3d_D3DXPlaneIntersectLine third-party-library[d3dx9-psgp]
+add 005102ef x3d_D3DXPlaneTransform third-party-library[d3dx9-psgp]
+U-9135 correction note added
+refiled 9, inittime 1, added 41, CHANGELOG lines 52
+dry run: nothing written

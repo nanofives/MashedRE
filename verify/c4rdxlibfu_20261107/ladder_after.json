@@ -1,0 +1,195 @@
+{
+ "game": {
+  "C2": 719,
+  "C3": 103,
+  "C4": 2546,
+  "other": 32
+ },
+ "library": {
+  "C1": 10,
+  "C2": 1587,
+  "C3": 118,
+  "C4": 932
+ },
+ "overall": {
+  "C1": 10,
+  "C2": 2306,
+  "C3": 221,
+  "C4": 3478,
+  "other": 32
+ },
+ "rows": 6047,
+ "subsystem": {
+  "(empty)": {
+   "other": 32
+  },
+  "ai": {
+   "C2": 18,
+   "C3": 4,
+   "C4": 55
+  },
+  "audio": {
+   "C2": 182,
+   "C3": 36,
+   "C4": 366
+  },
+  "boot": {
+   "C2": 40,
+   "C3": 2,
+   "C4": 150
+  },
+  "camera": {
+   "C2": 2,
+   "C3": 1,
+   "C4": 11
+  },
+  "debug-overlay": {
+   "C2": 3,
+   "C4": 2
+  },
+  "frontend": {
+   "C2": 23,
+   "C3": 12,
+   "C4": 230
+  },
+  "gameplay": {
+   "C2": 63,
+   "C3": 5,
+   "C4": 308
+  },
+  "hud": {
+   "C2": 19,
+   "C3": 6,
+   "C4": 82
+  },
+  "input": {
+   "C2": 4,
+   "C4": 27
+  },
+  "particle": {
+   "C2": 26,
+   "C4": 76
+  },
+  "physics": {
+   "C2": 1,
+   "C4": 11
+  },
+  "powerups": {
+   "C4": 10
+  },
+  "render": {
+   "C2": 175,
+   "C3": 26,
+   "C4": 692
+  },
+  "save": {
+   "C2": 1,
+   "C4": 30
+  },
+  "sky": {
+   "C2": 2,
+   "C4": 5
+  },
+  "smplfzx": {
+   "C2": 1,
+   "C3": 1,
+   "C4": 12
+  },
+  "third-party-library[RenderWare-Physics-3.7]": {
+   "C2": 123,
+   "C3": 107,
+   "C4": 58
+  },
+  "third-party-library[d3dx9-backward-extension]": {
+   "C2": 51,
+   "C4": 6
+  },
+  "third-party-library[d3dx9-fx]": {
+   "C2": 2
+  },
+  "third-party-library[d3dx9-psgp]": {
+   "C2": 45,
+   "C4": 193
+  },
+  "third-party-library[d3dx9-shader-compiler]": {
+   "C2": 80,
+   "C4": 70
+  },
+  "third-party-library[directshow-baseclasses]": {
+   "C2": 138,
+   "C3": 7,
+   "C4": 14
+  },
+  "third-party-library[libpng-1.0.12]": {
+   "C3": 1,
+   "C4": 41
+  },
+  "third-party-library[libpng]": {
+   "C2": 4
+  },
+  "third-party-library[lua-4.0]": {
+   "C1": 1,
+   "C2": 207,
+   "C4": 94
+  },
+  "third-party-library[msvc-crt-main]": {
+   "C1": 1,
+   "C2": 121,
+   "C4": 270
+  },
+  "third-party-library[msvc-crt-tail]": {
+   "C2": 37,
+   "C4": 45
+  },
+  "third-party-library[msvc-crt]": {
+   "C2": 9,
+   "C3": 1,
+   "C4": 1
+  },
+  "third-party-library[msvc-seh-funclets]": {
+   "C2": 43
+  },
+  "third-party-library[qhull-2002.1-continuation]": {
+   "C2": 44,
+   "C4": 36
+  },
+  "third-party-library[qhull-2002.1]": {
+   "C2": 147,
+   "C4": 86
+  },
+  "third-party-library[renderware]": {
+   "C1": 8,
+   "C2": 536,
+   "C3": 2,
+   "C4": 4
+  },
+  "third-party-library[zlib-1.1.3]": {
+   "C4": 14
+  },
+  "track": {
+   "C2": 11,
+   "C4": 52
+  },
+  "unknown": {
+   "C2": 2,
+   "C4": 9
+  },
+  "util": {
+   "C2": 114,
+   "C3": 5,
+   "C4": 293
+  },
+  "vehicle": {
+   "C2": 28,
+   "C3": 5,
+   "C4": 119
+  },
+  "video": {
+   "C4": 3
+  },
+  "world-objects": {
+   "C2": 4,
+   "C4": 3
+  }
+ }
+}

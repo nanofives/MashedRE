@@ -22,6 +22,12 @@ batch     Reads a TSV with columns `rva`, `route`, `evidence` (header required; 
           it would write. --apply writes hooks.csv (confidence C4, notes appended with `c4=match` / `c4=libid` and
           the evidence) and prepends one CHANGELOG line per promoted row below <!-- ENTRIES -->, all in one write per
           file. --apply needs --result (the RESULT the CHANGELOG cites). --strict writes nothing if any row is refused.
+          Extent override (C4R-AC80-EXTENT): a route-match row listed in re/tools/match/extent_overrides.tsv is a
+          Ghidra body made of several compiled symbols (a dispatcher plus statics it tail-jumps to). It is scored as
+          the concatenation of the listed members: the member sizes must sum to pc_funcs body_size, the first member
+          is the row's `// MATCH:` symbol, the others `// HIDDEN:` functions of the same source, and every member must
+          be insn 100% at its size, whole-symbol BYTE-IDENTICAL and relocheck OK. Rows not in that table take the
+          default path unchanged.
 make-tsv  Turns MATCH slice results.tsv files into a batch TSV: every row whose recorded score is 100 becomes
           `rva  match  <source>`. The batch gate still recompiles each one.
 
@@ -34,6 +40,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 HOOKS = ROOT / "hooks.csv"
 CHANGELOG = ROOT / "re" / "analysis" / "CHANGELOG.md"
 MATCHDIR = pathlib.Path(__file__).resolve().parent / "match"
+EXTENTS = MATCHDIR / "extent_overrides.tsv"
 MARKER = "<!-- ENTRIES -->"
 COMPILER = "XP DDK cl 13.00.9176 / c2 13.00.9178"
 LIB_FLAGS = {   # recorded build of each vendored library (libid_reclass.py LIBS / PNGZLIB, RESULT_LIB-IDENTITY)
@@ -136,9 +143,9 @@ def brace_block(t, i):
     return len(t)
 
 
-def function_text(text, rva):
-    """(header, body) of the definition that follows `// MATCH: 0x<rva>`; None when there is no such annotation."""
-    m = re.search(r"//\s*MATCH:\s*(?:MASHED\.exe\s+)?0x0*" + rva.lstrip("0") + r"\b[^\n]*\n", text, re.I)
+def function_text(text, rva, tag="MATCH"):
+    """(header, body) of the definition that follows `// <tag>: 0x<rva>`; None when there is no such annotation."""
+    m = re.search(r"//\s*" + tag + r":\s*(?:MASHED\.exe\s+)?0x0*" + rva.lstrip("0") + r"\b[^\n]*\n", text, re.I)
     if not m:
         return None
     rest = text[m.end():]
@@ -180,6 +187,48 @@ def asm_verdict(header, body):
     return None
 
 
+# ---------------------------------------------------------------- extent overrides (C4R-AC80-EXTENT)
+def load_extents():
+    """{rva8: {"source", "members": [(rva8, sym, size), ...], "evidence"}} from extent_overrides.tsv ('#' = comment)."""
+    if not EXTENTS.is_file():
+        return {}
+    lines = [l for l in read_raw(EXTENTS).splitlines() if l.strip() and not l.lstrip().startswith("#")]
+    out = {}
+    for r in csv.DictReader(io.StringIO("\n".join(lines)), delimiter="\t"):
+        mem = []
+        for m in r["members"].split(","):
+            sym, rest = m.strip().split("@")
+            mr, size = rest.split(":")
+            mem.append((norm_rva(mr), sym, int(size)))
+        out[norm_rva(r["rva"])] = {"source": r["source"].strip().replace("\\", "/"), "members": mem,
+                                   "evidence": r["evidence"].strip()}
+    return out
+
+
+def eval_extent(match, relocheck, p, text, ext):
+    """Per-member score at the override size, whole-symbol byte compare and relocheck, on one fresh compile."""
+    fl = match.file_flags(text) or match.DEFAULT_FLAGS
+    secs, syms = match.coff(match.compile_obj(p, fl, match.file_lang(text), match.file_toolchain(text)))
+    res = []
+    for mrva, sym, size in ext["members"]:
+        a = int(mrva, 16)
+        acc, _, _, x, y, _, _ = match.score_function(a, secs, syms, sym, size)
+        n, bad = match.byte_compare(a, secs, syms, sym)
+        res.append({"rva": mrva, "sym": sym, "size": size, "acc": acc, "n_mine": len(x), "n_orig": len(y),
+                    "bytes_n": n, "bytes_bad": len(bad)})
+    # relocheck reads the functions to check from match.parse_annotations: hand it exactly the members
+    orig_pa = match.parse_annotations
+    match.parse_annotations = lambda t: [(int(m, 16), s) for m, s, _ in ext["members"]]
+    try:
+        rc = {f"{r[0]:08x}": r for r in relocheck.check(p)}
+    finally:
+        match.parse_annotations = orig_pa
+    for d in res:
+        r = rc.get(d["rva"])
+        d["reloc"] = ("NOSYM", [], [], 0) if not r or r[1] == "NOSYM" else (r[1], list(r[2]), sorted(set(r[3])), r[4])
+    return res
+
+
 # ---------------------------------------------------------------- compiler evaluation (one process per source)
 def eval_source(src_abs):
     """Recompile one source: {addr_hex8: {...}} from match.compare (bytes mode) and relocheck.check."""
@@ -187,6 +236,11 @@ def eval_source(src_abs):
     import match, relocheck  # noqa: E402
     p = pathlib.Path(src_abs)
     text = p.read_text()
+    try:
+        rel = p.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        rel = None
+    exts = {r: e for r, e in load_extents().items() if e["source"] == rel}
     out = {"_toolchain": match.file_toolchain(text), "_flags": match.file_flags(text) or match.DEFAULT_FLAGS,
            "_lang": match.file_lang(text)}
     try:
@@ -200,6 +254,8 @@ def eval_source(src_abs):
                 d["reloc"] = ("NOSYM", [], [], 0)
             else:
                 d["reloc"] = (r[1], list(r[2]), sorted(set(r[3])), r[4])
+        for rva, e in exts.items():
+            out.setdefault(rva, {})["extent"] = eval_extent(match, relocheck, p, text, e)
     except BaseException as e:  # match.py / relocheck exit via SystemExit on a compile error
         out["_error"] = str(e).splitlines()[0][:160] if str(e) else type(e).__name__
     return out
@@ -232,6 +288,9 @@ def gate_match(rva, src, ev):
         return False, f"match/relocheck failed: {ev['_error']}", None
     if ev.get("_toolchain") != "ddk":
         return False, f"toolchain {ev.get('_toolchain')} is not the recorded compiler (ddk = {COMPILER})", None
+    ext = load_extents().get(rva)
+    if ext is not None:
+        return gate_extent(rva, src, ev, ext, path, text)
     r = ev.get(rva)
     if not r or "acc" not in r:
         return False, f"match.py produced no result for 0x{rva} (symbol not in the obj)", None
@@ -253,6 +312,63 @@ def gate_match(rva, src, ev):
             f"{ev.get('_lang', 'c')}); relocheck OK checked={n} unchecked={len(unch)}"
             + (f" [{','.join(unch)}]" if unch else "") + f"; src sha256 {sha}")
     return True, f"byte-identical {r['bytes_n']} B, relocheck OK ({n}/{len(unch)})", note
+
+
+def gate_extent(rva, src, ev, ext, path, text):
+    """Route match for a row in extent_overrides.tsv: every member must pass on its own, and the members must make
+    up the whole pc_funcs body_size."""
+    sys.path.insert(0, str(MATCHDIR))
+    import match  # noqa: E402
+    tsv = EXTENTS.relative_to(ROOT).as_posix()
+    if ext["source"] != src:
+        return False, f"extent override names source {ext['source']}, batch gives {src}", None
+    mem = ext["members"]
+    if mem[0][0] != rva:
+        return False, f"extent override: first member 0x{mem[0][0]} is not the row 0x{rva}", None
+    body = match.function_table().get(int(rva, 16))
+    total = sum(m[2] for m in mem)
+    if body is None or total != body:
+        return False, f"extent override: member sizes sum {total} B != pc_funcs body_size {body}", None
+    for k, (mrva, sym, size) in enumerate(mem):
+        if k:
+            hm = re.search(r"//\s*HIDDEN:\s*0x0*" + mrva.lstrip("0") + r"\s+(\S+)\s+(\d+)", text, re.I)
+            if not hm or hm.group(1) != sym or int(hm.group(2)) != size:
+                return False, f"extent member 0x{mrva}: no `// HIDDEN: 0x{mrva} {sym} {size}` in {src}", None
+        ft = function_text(text, mrva, "MATCH" if k == 0 else "HIDDEN")
+        if ft is None:
+            return False, f"extent member 0x{mrva}: no definition after its marker in {src}", None
+        bad = asm_verdict(*ft)
+        if bad:
+            return False, f"extent member 0x{mrva}: {bad}", None
+        if "STUB" in ft[1]:
+            return False, f"extent member 0x{mrva}: STUB marker in the function body", None
+    res = (ev.get(rva) or {}).get("extent")
+    if not res or len(res) != len(mem):
+        return False, "extent override: no per-member evaluation for this source", None
+    parts, nrel, unch_all = [], 0, []
+    for d in res:
+        if d["bytes_bad"]:
+            return False, (f"extent member 0x{d['rva']}: not byte-identical, {d['bytes_bad']} differing unmasked "
+                           f"bytes of {d['bytes_n']}"), None
+        if d["acc"] != 1:
+            return False, (f"extent member 0x{d['rva']}: insn {100 * d['acc']:.1f}% at {d['size']} B "
+                           f"({d['n_mine']}/{d['n_orig']})"), None
+        st, rbad, unch, n = d["reloc"]
+        if st != "OK":
+            return False, (f"extent member 0x{d['rva']}: relocheck {st}"
+                           + (f": {'; '.join(rbad)[:200]}" if rbad else "")), None
+        nrel += n
+        unch_all += unch
+        parts.append(f"0x{d['rva']} {d['size']}/{d['bytes_n']} B")
+    sha = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+    r = ev.get(rva, {})
+    note = (f"match.py {src} --bytes, extent override {tsv} ({len(mem)} members = pc_funcs body {body} B: "
+            f"{', '.join(parts)} [ghidra/obj B]; each BYTE-IDENTICAL, insn 100.0%) ({COMPILER}, "
+            f"{r.get('flags', ev.get('_flags'))}, {ev.get('_lang', 'c')}); relocheck OK checked={nrel} "
+            f"unchecked={len(unch_all)}" + (f" [{','.join(unch_all)}]" if unch_all else "")
+            + f"; extent proof {ext['evidence']}; src sha256 {sha}")
+    return True, (f"extent override: {len(mem)} members = {body} B, each byte-identical, relocheck OK "
+                  f"({nrel}/{len(unch_all)})"), note
 
 
 def gate_libid(rva, tsv_rel, cache):

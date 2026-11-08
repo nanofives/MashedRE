@@ -210,6 +210,100 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-07  0x004a2aa0  FUN_004a2aa0  C2->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: verify/c4rdshowbase_20261107/RESULT_C4R-DSHOW-BASECLASSES.md
 2026-11-07  0x004a2af0  FUN_004a2af0  C2->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: verify/c4rdshowbase_20261107/RESULT_C4R-DSHOW-BASECLASSES.md
 2026-11-07  0x004a2b00  FUN_004a2b00  C2->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: verify/c4rdshowbase_20261107/RESULT_C4R-DSHOW-BASECLASSES.md
+2026-11-07  0x0040ac80  FUN_0040ac80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ac80.c; evidence: verify/c4rac80extent_20261107/RESULT_C4R-AC80-EXTENT.md
+2026-11-07  0x004ecdd9  c_D3DXVec3Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050245e  D3DXShader::compare  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x00505e60  sse_D3DXVec2Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x00505ef5  sse_D3DXVec2TransformNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x00506931  sse_D3DXVec3BaryCentric  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050698e  sse_D3DXVec4BaryCentric  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x005069d7  sse_D3DXVec2BaryCentric  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050997c  x3d_D3DXQuaternionMultiply  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x00509a15  x3d_D3DXQuaternionNormalize  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x00509ab6  x3d_D3DXQuaternionRotationMatrix  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x00509cd2  x3d_D3DXQuaternionRotationMatrix_K7  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x00509ee7  x3d_D3DXQuaternionRotationYawPitchRoll  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050a26e  x3d_D3DXQuaternionInverse  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050a379  x3d_D3DXQuaternionExp  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050ae57  x3d_D3DXMatrixMultiply  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b089  x3d_D3DXMatrixfDeterminant  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b158  x3d_D3DXMatrixTranslation  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b1a8  x3d_D3DXMatrixShadow  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b293  x3d_D3DXMatrixReflect  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b36f  x3d_D3DXMatrixRotationX  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b3d2  x3d_D3DXMatrixRotationY  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b430  x3d_D3DXMatrixRotationZ  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b489  x3d_D3DXMatrixScaling  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b4d0  x3d_D3DXMatrixTranspose  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b578  x3d_D3DXMatrixRotationQuaternion  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050b64a  x3d_D3DXMatrixRotationQuaternion_K7  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050ca3c  x3d_D3DXMatrixAffineTransformation  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050e4bf  x3d_D3DXMatrixMultiplyTranspose  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050ebeb  x3d_D3DXMatrixInverse  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050ec07  x3d_D3DXVec3Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050ed3e  x3d_D3DXVec3BaryCentric  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050edaf  x3d_D3DXVec3Hermite  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050ee83  x3d_D3DXVec3CatmullRom  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050faad  x3d_D3DXVec2Hermite  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050fb45  x3d_D3DXVec2BaryCentric  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050fb8e  x3d_D3DXVec2Normalize  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x0050fbd1  x3d_D3DXVec2CatmullRom  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x005100a6  x3d_D3DXPlaneFromPointNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x005100e9  x3d_D3DXPlaneFromPoints  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x005101cd  x3d_D3DXPlaneIntersectLine  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0x005102ef  x3d_D3DXPlaneTransform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  U-9135  correction: 0x004fb5a0 is d3dx9 c_D3DXPSGPUpdateSkinnedMesh itself, not a D3DX client; 9 render rows refiled to third-party-library[d3dx9-psgp] evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004fb5a0  FUN_004fb5a0  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXPSGPUpdateSkinnedMesh, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004ec839  FUN_004ec839  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXFloat16To32Array, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004ec915  FUN_004ec915  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXVec2Hermite, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004ec9cd  FUN_004ec9cd  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXVec2CatmullRom, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004ecaab  FUN_004ecaab  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXVec2BaryCentric, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004ecb97  FUN_004ecb97  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXVec3Hermite, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004ecc6f  FUN_004ecc6f  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXVec3CatmullRom, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004f022d  FUN_004f022d  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXMatrixShadow, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004f0307  FUN_004f0307  C4->C4  refiled render->third-party-library[d3dx9-psgp] by libid (c_D3DXMatrixReflect, d3dx9 9.0b Summer 2003) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  005c2a0e  ___inittime  C4->C4  waived-platform-crt (L-67), refiled boot->third-party-library[msvc-crt-tail] evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  004ecdd9  c_D3DXVec3Transform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050245e  D3DXShader::compare  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-shader-compiler]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  00505e60  sse_D3DXVec2Transform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  00505ef5  sse_D3DXVec2TransformNormal  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  00506931  sse_D3DXVec3BaryCentric  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050698e  sse_D3DXVec4BaryCentric  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  005069d7  sse_D3DXVec2BaryCentric  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050997c  x3d_D3DXQuaternionMultiply  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  00509a15  x3d_D3DXQuaternionNormalize  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  00509ab6  x3d_D3DXQuaternionRotationMatrix  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  00509cd2  x3d_D3DXQuaternionRotationMatrix_K7  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  00509ee7  x3d_D3DXQuaternionRotationYawPitchRoll  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050a26e  x3d_D3DXQuaternionInverse  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050a379  x3d_D3DXQuaternionExp  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050ae57  x3d_D3DXMatrixMultiply  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b089  x3d_D3DXMatrixfDeterminant  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b158  x3d_D3DXMatrixTranslation  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b1a8  x3d_D3DXMatrixShadow  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b293  x3d_D3DXMatrixReflect  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b36f  x3d_D3DXMatrixRotationX  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b3d2  x3d_D3DXMatrixRotationY  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b430  x3d_D3DXMatrixRotationZ  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b489  x3d_D3DXMatrixScaling  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b4d0  x3d_D3DXMatrixTranspose  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b578  x3d_D3DXMatrixRotationQuaternion  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050b64a  x3d_D3DXMatrixRotationQuaternion_K7  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050ca3c  x3d_D3DXMatrixAffineTransformation  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050e4bf  x3d_D3DXMatrixMultiplyTranspose  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050ebeb  x3d_D3DXMatrixInverse  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050ec07  x3d_D3DXVec3Transform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050ed3e  x3d_D3DXVec3BaryCentric  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050edaf  x3d_D3DXVec3Hermite  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050ee83  x3d_D3DXVec3CatmullRom  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050faad  x3d_D3DXVec2Hermite  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050fb45  x3d_D3DXVec2BaryCentric  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050fb8e  x3d_D3DXVec2Normalize  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  0050fbd1  x3d_D3DXVec2CatmullRom  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  005100a6  x3d_D3DXPlaneFromPointNormal  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  005100e9  x3d_D3DXPlaneFromPoints  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  005101cd  x3d_D3DXPlaneIntersectLine  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
+2026-11-07  005102ef  x3d_D3DXPlaneTransform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
 2026-11-07  0x004ec760  FUN_004ec760  C2->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md
 2026-11-07  0x004ec79d  FUN_004ec79d  C2->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md
 2026-11-07  0x004ec8eb  FUN_004ec8eb  C2->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlib_20261107/RESULT_C4R-DXLIB.md

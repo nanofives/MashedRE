@@ -1,0 +1,51 @@
+source re/match/s02/0040ac80.c flags /O2 /GS /Ob1 toolchain ddk
+original C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe.unpatched
+member _FUN_0040abc0 sec 3 +0x0 @0x0040abc0: obj symbol 32 B -> 0x0040abc0..0x0040abdf (trailing pad 1 B), relocs 2, differing bytes 0
+    obj  a10000000083f8067c1483f8087e0583f80b750ac7050000000000000000c390
+    orig a188958a0083f8067c1483f8087e0583f80b750ac70584958a0000000000c390
+    reloc 0x0040abc1 DIR32 -> _DAT_008a9588 (MGLOBAL) ours 0x008a9588 orig 0x008a9588 OK
+    reloc 0x0040abd6 DIR32 -> _DAT_008a9584 (MGLOBAL) ours 0x008a9584 orig 0x008a9584 OK
+member _FUN_0040abe0 sec 5 +0x0 @0x0040abe0: obj symbol 32 B -> 0x0040abe0..0x0040abff (trailing pad 1 B), relocs 3, differing bytes 0
+    obj  a10000000083f8067c1483f80a7f0fe800000000c7050000000000000000c390
+    orig a194958a0083f8067c1483f80a7f0fe8ac150200c70584958a0000000000c390
+    reloc 0x0040abe1 DIR32 -> _DAT_008a9594 (MGLOBAL) ours 0x008a9594 orig 0x008a9594 OK
+    reloc 0x0040abf0 REL32 -> _FUN_0042c1a0 (FUN_ name) ours 0x0042c1a0 orig 0x0042c1a0 OK
+    reloc 0x0040abf6 DIR32 -> _DAT_008a9584 (MGLOBAL) ours 0x008a9584 orig 0x008a9584 OK
+member _FUN_0040ac00 sec 7 +0x0 @0x0040ac00: obj symbol 64 B -> 0x0040ac00..0x0040ac3f (trailing pad 2 B), relocs 5, differing bytes 0
+    obj  a10000000083f8097c1583f80a7e1083f80c750bc7050000000000000000c3c7050000000000000000c7050000000008000000c705000000000b000000c39090
+    orig a190958a0083f8097c1583f80a7e1083f80c750bc7058c958a0000000000c3c70584958a0000000000c70598958a0008000000c70590958a000b000000c39090
+    reloc 0x0040ac01 DIR32 -> _DAT_008a9590 (MGLOBAL) ours 0x008a9590 orig 0x008a9590 OK
+    reloc 0x0040ac16 DIR32 -> _DAT_008a958c (MGLOBAL) ours 0x008a958c orig 0x008a958c OK
+    reloc 0x0040ac21 DIR32 -> _DAT_008a9584 (MGLOBAL) ours 0x008a9584 orig 0x008a9584 OK
+    reloc 0x0040ac2b DIR32 -> _DAT_008a9598 (MGLOBAL) ours 0x008a9598 orig 0x008a9598 OK
+    reloc 0x0040ac35 DIR32 -> _DAT_008a9590 (MGLOBAL) ours 0x008a9590 orig 0x008a9590 OK
+member _FUN_0040ac40 sec 9 +0x0 @0x0040ac40: obj symbol 64 B -> 0x0040ac40..0x0040ac7f (trailing pad 14 B), relocs 5, differing bytes 0
+    obj  833d0000000007c7050000000000000000c70500000000060000007414c7050000000008000000c705000000000b000000c39090909090909090909090909090
+    orig 833d8c958a0007c70584958a0000000000c7058c958a00060000007414c70598958a0008000000c70590958a000b000000c39090909090909090909090909090
+    reloc 0x0040ac42 DIR32 -> _DAT_008a958c (MGLOBAL) ours 0x008a958c orig 0x008a958c OK
+    reloc 0x0040ac49 DIR32 -> _DAT_008a9584 (MGLOBAL) ours 0x008a9584 orig 0x008a9584 OK
+    reloc 0x0040ac53 DIR32 -> _DAT_008a958c (MGLOBAL) ours 0x008a958c orig 0x008a958c OK
+    reloc 0x0040ac5f DIR32 -> _DAT_008a9598 (MGLOBAL) ours 0x008a9598 orig 0x008a9598 OK
+    reloc 0x0040ac69 DIR32 -> _DAT_008a9590 (MGLOBAL) ours 0x008a9590 orig 0x008a9590 OK
+member _FUN_0040ac80 sec 11 +0x0 @0x0040ac80: obj symbol 80 B -> 0x0040ac80..0x0040accf (trailing pad 0 B), relocs 14, differing bytes 0
+    obj  a1000000004883f805772aff248500000000e900000000e900000000e900000000e900000000e800000000c7050000000000000000c38bff000000000000000000000000000000000000000000000000
+    orig a184958a004883f805772aff2485b8ac4000e9a9ffffffe964ffffffe93fffffffe91affffffe8f5140200c70584958a0000000000c38bffa1ac400092ac400097ac40009cac4000b5ac4000a6ac4000
+    reloc 0x0040ac81 DIR32 -> _DAT_008a9584 (MGLOBAL) ours 0x008a9584 orig 0x008a9584 OK
+    reloc 0x0040ac8e DIR32 -> $L604 (same-section label) ours 0x0040acb8 orig 0x0040acb8 OK
+    reloc 0x0040ac93 REL32 -> _FUN_0040ac40 (FUN_ name) ours 0x0040ac40 orig 0x0040ac40 OK
+    reloc 0x0040ac98 REL32 -> _FUN_0040ac00 (FUN_ name) ours 0x0040ac00 orig 0x0040ac00 OK
+    reloc 0x0040ac9d REL32 -> _FUN_0040abe0 (FUN_ name) ours 0x0040abe0 orig 0x0040abe0 OK
+    reloc 0x0040aca2 REL32 -> _FUN_0040abc0 (FUN_ name) ours 0x0040abc0 orig 0x0040abc0 OK
+    reloc 0x0040aca7 REL32 -> _FUN_0042c1a0 (FUN_ name) ours 0x0042c1a0 orig 0x0042c1a0 OK
+    reloc 0x0040acad DIR32 -> _DAT_008a9584 (MGLOBAL) ours 0x008a9584 orig 0x008a9584 OK
+    reloc 0x0040acb8 DIR32 -> $L582 (same-section label) ours 0x0040aca1 orig 0x0040aca1 OK
+    reloc 0x0040acbc DIR32 -> $L579 (same-section label) ours 0x0040ac92 orig 0x0040ac92 OK
+    reloc 0x0040acc0 DIR32 -> $L580 (same-section label) ours 0x0040ac97 orig 0x0040ac97 OK
+    reloc 0x0040acc4 DIR32 -> $L581 (same-section label) ours 0x0040ac9c orig 0x0040ac9c OK
+    reloc 0x0040acc8 DIR32 -> $L576 (same-section label) ours 0x0040acb5 orig 0x0040acb5 OK
+    reloc 0x0040accc DIR32 -> $L583 (same-section label) ours 0x0040aca6 orig 0x0040aca6 OK
+ghidra body: 228 B in 5 ranges: 0x0040abc0..0x0040abde (31), 0x0040abe0..0x0040abfe (31), 0x0040ac00..0x0040ac3d (62), 0x0040ac40..0x0040ac71 (50), 0x0040ac80..0x0040acb5 (54)
+ghidra body bytes outside every member symbol: 0
+window 0x0040abc0..0x0040accf = 272 B = members 272 B + gaps 0 B
+member bytes outside the ghidra body: 44 (0x0040abdf..0x0040accf)
+VERDICT PROVEN: differing bytes 0, body bytes uncovered 0, non-pad gaps 0

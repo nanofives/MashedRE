@@ -1,0 +1,9 @@
+# Per-RVA extent overrides for the C4 match gate (re/tools/c4_reclass.py, C4R-AC80-EXTENT 2026-11-07).
+# A row here makes the gate score a function whose Ghidra body (re/console/pc_funcs.csv body_size) is several
+# compiled symbols as the concatenation of those members. members = comma-separated `<sym>@<rva8>:<size>`; size is
+# the Ghidra body range the member covers (score_function size). The first member is the row's own `// MATCH:`
+# symbol; every other member is a `// HIDDEN: 0x<rva> <sym> <size>` function of the same source. The gate refuses
+# unless the sizes sum to pc_funcs body_size, every member is insn 100% at its size, whole-symbol BYTE-IDENTICAL and
+# relocheck OK. evidence = the RESULT that proved the extent from the binary (Ghidra body ranges + bytes).
+rva	source	members	evidence
+0040ac80	re/match/s02/0040ac80.c	FUN_0040ac80@0040ac80:54,_FUN_0040abc0@0040abc0:31,_FUN_0040abe0@0040abe0:31,_FUN_0040ac00@0040ac00:62,_FUN_0040ac40@0040ac40:50	verify/c4rac80extent_20261107/RESULT_C4R-AC80-EXTENT.md
