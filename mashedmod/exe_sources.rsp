@@ -95,6 +95,7 @@
 "D3d9Render\RwWorldStream.cpp"
 "Render\RwStreamCore.cpp"
 "Render\RfxEmitter.cpp"
+"Match\MatchS12_004769d0.cpp"
 "Match\MatchS12_004769a0.cpp"
 "Match\MatchS12_00476a10.cpp"
 "Match\MatchS12_00476a30.cpp"
