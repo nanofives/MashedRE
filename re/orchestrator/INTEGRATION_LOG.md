@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-08 00:22 C4R-DSHOW-BASECLASSES (orch/C4R-C2-PROBES): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261108_001355
 - 2026-11-08 00:08 C4R-AC80-EXTENT (orch/C4R-AC80-EXTENT): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261107_235251
 - 2026-11-07 23:39 C4R-DXLIB-NEWROWS (orch/C4R-DXLIB-FU): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261107_233234
 - 2026-11-07 23:15 C4R-DXLIB (orch/C4R-DXLIB): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261107_230139
