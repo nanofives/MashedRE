@@ -1,0 +1,558 @@
+rva	subsystem	release	symbol	verdict	c4_reclass
+0x004ec760	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?WithinEpsilon@@YGHMM@Z	identical	PASS
+0x004ec79d	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXFloat32To16Array@@YGPAUD3DXFLOAT16@@PAU1@PBMI@Z	identical	PASS
+0x004ec8eb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z	identical	PASS
+0x004ec9a3	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z	identical	PASS
+0x004eca7c	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec2BaryCentric@@YGPAUD3DXVECTOR2@@PAU1@PBU1@11MM@Z	identical	PASS
+0x004ecaee	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ecafb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXVec2Transform@12	identical	PASS
+0x004ecb12	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec2TransformCoord@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ecb1f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXVec2TransformCoord@12	identical	PASS
+0x004ecb36	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ecb43	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXVec2TransformNormal@12	identical	PASS
+0x004ecb5a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z	identical	PASS
+0x004ecc45	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z	identical	PASS
+0x004ecd40	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z	identical	PASS
+0x004ecd6f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z	identical	PASS
+0x004ece64	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR3@@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ecf1c	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ecf29	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXVec3TransformCoord@12	identical	PASS
+0x004ecf2f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ecf40	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXVec3TransformCoordArray@24	identical	PASS
+0x004ecf46	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ecf53	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXVec3TransformNormal@12	identical	PASS
+0x004ecfbf	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3TransformNormalArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ed04e	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z	identical	PASS
+0x004ed1c6	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	identical	PASS
+0x004ed297	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	identical	PASS
+0x004ed2c1	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	identical	PASS
+0x004ed3b4	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z	identical	PASS
+0x004ed3e3	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z	identical	PASS
+0x004ed506	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXVec4TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ed6ad	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	identical	PASS
+0x004ed6ba	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXMatrixMultiply@12	identical	PASS
+0x004ed8f6	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@@Z	identical	PASS
+0x004ed903	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXMatrixTranspose@8	identical	PASS
+0x004ed976	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	identical	PASS
+0x004ed983	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXMatrixMultiplyTranspose@12	identical	PASS
+0x004edbbf	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixInverse@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z	identical	PASS
+0x004edbcc	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXMatrixInverse@12	identical	PASS
+0x004edf71	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixScaling@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	identical	PASS
+0x004edffb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixTranslation@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	identical	PASS
+0x004ee085	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixRotationX@@YGPAUD3DXMATRIX@@PAU1@M@Z	identical	PASS
+0x004ee0a1	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXMatrixRotationX@@YGPAUD3DXMATRIX@@PAU1@M@Z	identical	PASS
+0x004ee11b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixRotationY@@YGPAUD3DXMATRIX@@PAU1@M@Z	identical	PASS
+0x004ee137	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXMatrixRotationY@@YGPAUD3DXMATRIX@@PAU1@M@Z	identical	PASS
+0x004ee1b2	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixRotationZ@@YGPAUD3DXMATRIX@@PAU1@M@Z	identical	PASS
+0x004ee1ce	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXMatrixRotationZ@@YGPAUD3DXMATRIX@@PAU1@M@Z	identical	PASS
+0x004ee24a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z	identical	PASS
+0x004ee26a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z	identical	PASS
+0x004ee36c	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixRotationQuaternion@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXQUATERNION@@@Z	identical	PASS
+0x004ee379	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXMatrixRotationQuaternion@8	identical	PASS
+0x004ee461	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	identical	PASS
+0x004ee48f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixTransformation@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z	identical	PASS
+0x004ee4a0	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXMatrixAffineTransformation@@YGPAUD3DXMATRIX@@PAU1@MPBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1@Z	identical	PASS
+0x004ee4c7	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXMatrixAffineTransformation@@YGPAUD3DXMATRIX@@PAU1@MPBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1@Z	identical	PASS
+0x004ee74a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z	identical	PASS
+0x004ee76a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z	identical	PASS
+0x004ee7c6	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z	identical	PASS
+0x004ee7f4	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXQuaternionRotationYawPitchRoll@16	identical	PASS
+0x004ee8d3	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z	identical	PASS
+0x004ee8e0	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXQuaternionMultiply@12	identical	PASS
+0x004ee989	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	identical	PASS
+0x004ee996	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXQuaternionInverse@8	identical	PASS
+0x004eea4d	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	identical	PASS
+0x004eea5a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXQuaternionLn@8	identical	PASS
+0x004eeadb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionExp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	identical	PASS
+0x004eeae8	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXQuaternionExp@8	identical	PASS
+0x004eeb86	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z	identical	PASS
+0x004eebaa	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXQuaternionSlerp@16	identical	PASS
+0x004eec93	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z	identical	PASS
+0x004eecbd	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z	identical	PASS
+0x004eed14	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z	identical	PASS
+0x004eed54	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNION@@PAU1@PBU1@11MM@Z	identical	PASS
+0x004eeddc	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z	identical	PASS
+0x004eede9	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXPlaneNormalize@8	identical	PASS
+0x004ef0df	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXPlaneTransformArray@@YGPAUD3DXPLANE@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ef1af	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?init_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z	identical	PASS
+0x004ef25b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ef2c6	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ef349	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec2TransformCoord@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ef3c6	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ef45e	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ef49a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ef4ee	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z	identical	PASS
+0x004ef58b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x004ef647	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x004ef726	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z	identical	PASS
+0x004ef8b3	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3ProjectArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33I@Z	identical	PASS
+0x004efab3	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3Unproject@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z	identical	PASS
+0x004efc59	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXVec3UnprojectArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33I@Z	differ	REFUSED
+0x004efe8a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXQuaternionNormalize@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z,?c_D3DXVec4Normalize@@YGPAUD3DXVECTOR4@@PAU1@PBU1@@Z	ambiguous	REFUSED
+0x004eff40	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	identical	PASS
+0x004eff79	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?c_D3DXMatrixTransformation@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z	differ	REFUSED
+0x004fb9aa	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?CalculateEdgeControlPoint@@YGXPAUD3DXVECTOR3@@00M0@Z	identical	PASS
+0x004fbd78	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?GetD3DRegValue@@YGHKPADPAXK@Z	identical	PASS
+0x004fbdd5	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?IsIntelSSEProcessor@@YGKXZ	identical	PASS
+0x004fbe0f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?Process@Transform3DVertex1@D3DXCore@@QAEXPAULINE_VERTEX@2@PBUTransformedVertexData@2@K@Z	differ	REFUSED
+0x004fbe1b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x004fbe7a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXCpuOptimizations@4	differ	REFUSED
+0x004fbf76	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXGatherFragmentsFromFileA@24	differ	REFUSED
+0x004fc015	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_D3DXGetTargetDescByName@12	differ	REFUSED
+0x004fc0b1	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXInitFastTable@@YAXPAUD3DXFASTTABLE@@@Z	differ	REFUSED
+0x004fc21f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXInitFastTable@@YAXPAUD3DXFASTTABLE@@@Z	differ	REFUSED
+0x004fc383	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?get_feature_flags@@YGIXZ	identical	PASS
+0x004fc467	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXInitFastTable@@YAXPAUD3DXFASTTABLE@@@Z	differ	REFUSED
+0x004fc916	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x86_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z	identical	PASS
+0x004fc9e0	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x86_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	identical	PASS
+0x004fcac3	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x86_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	identical	PASS
+0x004fcb51	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?x86_D3DXInitFastTable@@YGXPAUD3DXFASTTABLE@@@Z	identical	PASS
+0x004fcb96	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1D3DXFONT_PHRASE@D3DXCore@@QAE@XZ	differ	REFUSED
+0x004fcbe6	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CPPConditional@D3DXShader@@QAE@HH@Z	identical	PASS
+0x004fcc00	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CPPConditional@D3DXShader@@QAE@XZ,??1CPPDefine@D3DXShader@@QAE@XZ	ambiguous	REFUSED
+0x004fcc34	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CPPInclude@D3DXShader@@QAE@XZ	identical	PASS
+0x004fcc67	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CPPInclude@D3DXShader@@QAE@XZ	identical	PASS
+0x004fccd8	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?InitializeFromFile@CPPInclude@D3DXShader@@QAEJPBXHPAVCAlloc@D3DXCore@@PAVCTErrors@2@PAUID3DXInclude@@W4_D3DXINCLUDE_TYPE@@0@Z	differ	REFUSED
+0x004fce7f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?InitializeFromMemory@CPPInclude@D3DXShader@@QAEJPBXIPAVCAlloc@D3DXCore@@PAVCTErrors@2@@Z	identical	PASS
+0x004fceb8	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1SHitNode@@QAE@XZ,??1CPPBlock@D3DXShader@@QAE@XZ	ambiguous	REFUSED
+0x004fceec	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CPreProcessor@D3DXShader@@QAE@XZ	differ	REFUSED
+0x004fcf91	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CPreProcessor@D3DXShader@@QAE@XZ	differ	REFUSED
+0x004fd031	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Begin@CPreProcessor@D3DXShader@@QAEJK@Z	differ	REFUSED
+0x004fd075	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetFileLine@CPreProcessor@D3DXShader@@QAEJPAPBDPAI@Z	differ	REFUSED
+0x004fd09a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetBufferPointer@CPreProcessor@D3DXShader@@QAEJPAPBDPAI@Z	differ	REFUSED
+0x004fd0d3	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x004fd405	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Error@CPreProcessor@D3DXShader@@IAAXPBDZZ	differ	REFUSED
+0x004fd4b1	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoLine@CPreProcessor@D3DXShader@@IAEJIPBD@Z	differ	REFUSED
+0x004fd4da	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoInclude@CPreProcessor@D3DXShader@@IAEJXZ	differ	REFUSED
+0x004fd6a2	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x004fd778	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoIf@CPreProcessor@D3DXShader@@IAEJH@Z	differ	REFUSED
+0x004fd7d0	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoElif@CPreProcessor@D3DXShader@@IAEJH@Z	differ	REFUSED
+0x004fd843	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoElse@CPreProcessor@D3DXShader@@IAEJXZ	differ	REFUSED
+0x004fd8a5	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoEndif@CPreProcessor@D3DXShader@@IAEJXZ	differ	REFUSED
+0x004fd8f5	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoPragmaPackMatrix@CPreProcessor@D3DXShader@@IAEJXZ	differ	REFUSED
+0x004fda12	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoPragmaWarning@CPreProcessor@D3DXShader@@IAEJXZ	differ	REFUSED
+0x004fdda7	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	_d3dx_gzeof@4	differ	REFUSED
+0x004fddbc	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?AddDefine@CPreProcessor@D3DXShader@@IAEJPAVCPPDefine@2@@Z	differ	REFUSED
+0x004fde39	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?FindDefine@CPreProcessor@D3DXShader@@IAEHPBDPAPAVCNode@2@1@Z	differ	REFUSED
+0x004fdeaa	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Escape@CPreProcessor@D3DXShader@@IAEIPBDIPAD@Z	identical	PASS
+0x004fdf0f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?NonNull@CPreProcessor@D3DXShader@@IAEPAVCNode@2@PAV32@@Z	differ	REFUSED
+0x004fdf42	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoDefine@CPreProcessor@D3DXShader@@IAEJPBDH@Z	differ	REFUSED
+0x004fe1b0	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoUndef@CPreProcessor@D3DXShader@@IAEJPBD@Z	differ	REFUSED
+0x004fe21e	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DoPragma@CPreProcessor@D3DXShader@@IAEJXZ	differ	REFUSED
+0x004fe298	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?UintDefine@CPreProcessor@D3DXShader@@IAEIPBD@Z	differ	REFUSED
+0x004fe2fe	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?CallDefine@CPreProcessor@D3DXShader@@IAEHPAUD3DXTOKEN@2@PAVCNode@2@1@Z	differ	REFUSED
+0x004fe9cf	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?InitializeDefines@CPreProcessor@D3DXShader@@IAEJPBU_D3DXMACRO@@@Z	differ	REFUSED
+0x004febf6	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Production@CPreProcessor@D3DXShader@@IAEXII@Z	differ	REFUSED
+0x004ff041	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?d3dxtok_parse@D3DXShader@@YGHXZ	identical	PASS
+0x004ff554	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?InitializeFromMemory@CPreProcessor@D3DXShader@@QAEJPBXIPBU_D3DXMACRO@@PAUID3DXInclude@@@Z	differ	REFUSED
+0x004ff5b6	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetToken@CPreProcessor@D3DXShader@@QAEJPAUD3DXTOKEN@2@@Z	differ	REFUSED
+0x004ff8b9	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Init@CRenderToSurface@D3DXCore@@QAEJPAUIDirect3DDevice9@@IIW4_D3DFORMAT@@H1@Z	differ	REFUSED
+0x004ff913	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CLockVolume@D3DXTex@@QAE@XZ	identical	PASS
+0x004ff919	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?FreeCombinePool@D3DX@@YGXPAUMEM_POOL@1@@Z	differ	REFUSED
+0x004ff936	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?init_destination@D3DXTex@@YGXPAUjpeg_compress_struct@D3DX@@@Z	differ	REFUSED
+0x004ff958	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CTErrors@D3DXShader@@QAE@XZ	identical	PASS
+0x004ff978	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CTErrors@D3DXShader@@QAE@XZ	identical	PASS
+0x004ff9a7	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Push@CTErrors@D3DXShader@@IAEJIPAI@Z	identical	PASS
+0x004ffae8	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?PreformattedError@CTErrors@D3DXShader@@QAEJPBD@Z	identical	PASS
+0x004ffb3e	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetErrorBuffer@CTErrors@D3DXShader@@QAEJPAPAUID3DXBuffer@@@Z	identical	PASS
+0x004ffba7	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetNumArguments@CBaseProgram@D3DXShader@@QAEIXZ,?CInstructions@CInstructionInfo@D3DXShader@@QAEIXZ,?GetErrorCount@CTErrors@D3DXShader@@QAEIXZ,?Init@myHamerslyPoints@D3DXSHSim@@QAEJXZ	ambiguous	REFUSED
+0x004ffbab	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CTokenize@D3DXShader@@QAE@XZ	identical	PASS
+0x004ffbc5	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Initialize@CTokenize@D3DXShader@@QAEJPBXIPBDIPAVCAlloc@D3DXCore@@PAVCTErrors@2@@Z	identical	PASS
+0x004ffc2d	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?SkipToEOL@CTokenize@D3DXShader@@QAEHXZ	identical	PASS
+0x004ffc86	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexFloat@CTokenize@D3DXShader@@IAEIPBDPAN@Z	differ	REFUSED
+0x004ffe02	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexIdentifier@CTokenize@D3DXShader@@IAEIPBDPAPBD@Z	differ	REFUSED
+0x004ffe81	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexOperator@CTokenize@D3DXShader@@IAEIPBDPAD@Z	identical	PASS
+0x004fff8d	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexFloatSuffix@CTokenize@D3DXShader@@IAEIPBDPAUD3DXTOKEN@2@@Z	identical	PASS
+0x004fffd3	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexIntegerSuffix@CTokenize@D3DXShader@@IAEIPBDPAUD3DXTOKEN@2@@Z	identical	PASS
+0x0050005a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?SetWarningSpecifier@CTErrors@D3DXShader@@QAEJII@Z	identical	PASS
+0x005000c2	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Error@CTErrors@D3DXShader@@QAAJPAUD3DXTOKEN@2@IPBDZZ	identical	PASS
+0x0050018b	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Warning@CTErrors@D3DXShader@@QAAJPAUD3DXTOKEN@2@IPBDZZ	identical	PASS
+0x005002ec	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?SyntaxError@CTErrors@D3DXShader@@QAEJIPAUD3DXTOKEN@2@@Z	identical	PASS
+0x0050042f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?SkipWhitespace@CTokenize@D3DXShader@@QAEHXZ	differ	REFUSED
+0x0050055f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexHex@CTokenize@D3DXShader@@IAEIPBDPAI@Z	identical	PASS
+0x00500604	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexOctal@CTokenize@D3DXShader@@IAEIPBDPAI@Z	identical	PASS
+0x00500680	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexDecimal@CTokenize@D3DXShader@@IAEIPBDPAI@Z	identical	PASS
+0x00500721	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexStringChar@CTokenize@D3DXShader@@IAEIPBDPAI@Z	differ	REFUSED
+0x005008b7	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexVersion@CTokenize@D3DXShader@@IAEIPBDPAK@Z	identical	PASS
+0x005009ba	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexChar@CTokenize@D3DXShader@@IAEIPBDPAI@Z	identical	PASS
+0x005009f9	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?LexString@CTokenize@D3DXShader@@IAEIPBDPAPBD@Z	differ	REFUSED
+0x00500adc	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetToken@CTokenize@D3DXShader@@QAEJKPAUD3DXTOKEN@2@@Z	differ	REFUSED
+0x00500c48	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetUsageAndIndex@D3DXShader@@YGJPBDPAE1@Z	identical	PASS
+0x00500ee3	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?RegisterHash@D3DXShader@@YGIPBD@Z	identical	PASS
+0x00500f1f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetElement@CFragmentRegisterAllocator@D3DXShader@@QAEPAVCRegisterEntryNode@2@PBD@Z	identical	PASS
+0x00500f51	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetElements@CFragmentRegisterAllocator@D3DXShader@@QAEXPAPAVCRegisterEntryNode@2@@Z	identical	PASS
+0x00500f76	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CAssembler@D3DXShader@@QAE@XZ	identical	PASS
+0x00500f92	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Error@CAssembler@D3DXShader@@IAAXPBDZZ	identical	PASS
+0x00501050	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?ValidationError@CAssembler@D3DXShader@@KGJPBDIKI0PAX@Z	identical	PASS
+0x005010bc	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?NonNull@CAssembler@D3DXShader@@IAEPAVCNode@2@PAV32@@Z	identical	PASS
+0x005010f1	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DecodeOpcode@CAssembler@D3DXShader@@IAEHPAUD3DXTOKEN@2@@Z	identical	PASS
+0x00501a85	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DecodeMask@CAssembler@D3DXShader@@IAEKPAUD3DXTOKEN@2@@Z	identical	PASS
+0x00501b38	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DecodeSwizzle@CAssembler@D3DXShader@@IAEKPAUD3DXTOKEN@2@@Z	identical	PASS
+0x00501bf2	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Validate@CAssembler@D3DXShader@@IAEJPAUD3DXTOKEN@2@@Z	identical	PASS
+0x00501c42	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Assure@CAssembler@D3DXShader@@IAEJI@Z	identical	PASS
+0x00501cc0	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Emit@CAssembler@D3DXShader@@IAEJK@Z	identical	PASS
+0x00501ce4	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?EmitInstruction@CAssembler@D3DXShader@@IAEJPAVCNode@2@@Z	differ	REFUSED
+0x0050250a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?EmitFragmentInfo@CAssembler@D3DXShader@@IAEJXZ	differ	REFUSED
+0x0050272a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?EmitDebugInfo@CAssembler@D3DXShader@@IAEJXZ	differ	REFUSED
+0x00502a2b	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CFragmentRegisterAllocator@D3DXShader@@QAE@XZ	identical	PASS
+0x00502a48	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetShaderCode@CAssembler@D3DXShader@@IAEJPAPAUID3DXBuffer@@@Z	identical	PASS
+0x00502a9f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?AddElement@CFragmentRegisterAllocator@D3DXShader@@QAEJPBDII@Z	identical	PASS
+0x00502b34	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CFragmentInfo@D3DXShader@@QAE@H@Z	differ	REFUSED
+0x00502b60	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CFragmentInfo@D3DXShader@@QAE@XZ	differ	REFUSED
+0x00502b7b	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetRegisterInfo@CFragmentInfo@D3DXShader@@QAEJPAVCTErrors@2@PAVCFragmentConstants@2@PAUD3DXTOKEN@2@PBDPAVCNode@2@PAK55@Z	differ	REFUSED
+0x00502dc2	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Token@CAssembler@D3DXShader@@IAEHXZ	identical	PASS
+0x00502e9e	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?DecodeRegister@CAssembler@D3DXShader@@IAEPAVCNode@2@PAUD3DXTOKEN@2@PAV32@@Z	differ	REFUSED
+0x0050339f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CRegisterEntryNode@D3DXShader@@QAE@XZ	identical	PASS
+0x005033ba	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1SAnimSetList@@QAE@XZ	differ	REFUSED
+0x005033f4	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Production@CAssembler@D3DXShader@@IAEXII@Z	differ	REFUSED
+0x00503a3a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?d3dxasm_parse@D3DXShader@@YGHXZ	identical	PASS
+0x00504008	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Assemble@CAssembler@D3DXShader@@QAEJPAVCPreProcessor@2@KPAVCFragmentConstants@2@PAPAUID3DXBuffer@@@Z	differ	REFUSED
+0x00504479	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CBuffer@D3DXCore@@UAE@XZ	identical	PASS
+0x0050450d	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?QueryInterface@CBuffer@D3DXCore@@UAGJABU_GUID@@PAPAX@Z,?QueryInterface@?$GXSimplifyMesh@G$00$0PPPP@@@UAGJABU_GUID@@PAPAX@Z,?QueryInterface@?$GXSimplifyMesh@I$0A@$0?0@@UAGJABU_GUID@@PAPAX@Z,?QueryInterface@CD3DXSkinInfo@@UAGJABU_GUID@@PAPAX@Z,?QueryInterface@CRenderToEnvMap@D3DXCore@@UAGJABU_GUID@@PAPAX@Z,?QueryInterface@CRenderToSurface@D3DXCore@@UAGJABU_GUID@@PAPAX@Z	ambiguous	REFUSED
+0x00504554	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CBuffer@D3DXCore@@QAE@XZ	identical	PASS
+0x0050456c	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Create@CBuffer@D3DXCore@@SGJKPAPAV12@@Z	identical	PASS
+0x005045ca	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z	identical	PASS
+0x00504643	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXQuaternionNormalize@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	identical	PASS
+0x005046dd	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z,?sse2_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	ambiguous	REFUSED
+0x0050475b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z,?sse2_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z	ambiguous	REFUSED
+0x0050481d	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXQuaternionRotationMatrix@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z,?sse2_D3DXQuaternionRotationMatrix@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z	ambiguous	REFUSED
+0x00504947	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	??0KMATRIX@@QAE@ABUD3DXMATRIX@@@Z	identical	PASS
+0x00504ac1	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR3@@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x00504cc7	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x00504e55	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x00504fbb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x005050cb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec4TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x00505309	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3TransformNormalArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x005054d9	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x0050570a	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z	differ	REFUSED
+0x00505c62	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?SSEFloat16Conversion8@@YGXXZ	identical	PASS
+0x00505d8c	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXFloat16To32Array@@YGPAMPAMPBUD3DXFLOAT16@@I@Z	identical	PASS
+0x00505f2c	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec4Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU1@PBUD3DXMATRIX@@@Z,?sse2_D3DXVec4Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	ambiguous	REFUSED
+0x0050612c	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00506428	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z,?sse2_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z	ambiguous	REFUSED
+0x005064e8	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec4Normalize@@YGPAUD3DXVECTOR4@@PAU1@PBU1@@Z	identical	PASS
+0x00506582	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z	identical	PASS
+0x00506634	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z	identical	PASS
+0x005066b9	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	identical	PASS
+0x0050675e	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z	identical	PASS
+0x00506811	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	identical	PASS
+0x005068ab	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z	identical	PASS
+0x00506a29	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXPlaneIntersectLine@@YGPAUD3DXVECTOR3@@PAU1@PBUD3DXPLANE@@PBU1@2@Z	identical	PASS
+0x00506ad7	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXPlaneFromPoints@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@11@Z	differ	REFUSED
+0x00506bd7	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXMatrixReflect@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXPLANE@@@Z	differ	REFUSED
+0x00506ce3	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z,?sse2_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	ambiguous	REFUSED
+0x00506db8	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec2Normalize@@YGPAUD3DXVECTOR2@@PAU1@PBU1@@Z	differ	REFUSED
+0x00506ea8	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x0050706f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec3TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR3@@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x00507275	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x00507403	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x00507569	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec2TransformNormalArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	identical	PASS
+0x00507679	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec4TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x005078b7	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec3TransformNormalArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x00507a87	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec3TransformCoordArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	differ	REFUSED
+0x00507cb8	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?SSEFloat16Conversion8@@YGXXZ	identical	PASS
+0x00507da9	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXFloat16To32Array@@YGPAMPAMPBUD3DXFLOAT16@@I@Z	identical	PASS
+0x00507e7b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z,?sse2_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z	ambiguous	REFUSED
+0x00507f3b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z	differ	REFUSED
+0x00508046	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXPlaneFromPoints@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@11@Z	differ	REFUSED
+0x00508146	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXMatrixReflect@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXPLANE@@@Z	differ	REFUSED
+0x00508252	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR3@@PBUD3DXMATRIX@@@Z,?sse2_D3DXVec3Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR3@@PBUD3DXMATRIX@@@Z	ambiguous	REFUSED
+0x00508326	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z,?sse2_D3DXVec3TransformCoord@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	ambiguous	REFUSED
+0x00508429	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse2_D3DXVec2Normalize@@YGPAUD3DXVECTOR2@@PAU1@PBU1@@Z	differ	REFUSED
+0x0050853e	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00508772	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00508939	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z,?sse2_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z	ambiguous	REFUSED
+0x005089fb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?sse_D3DXQuaternionRotationMatrix@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z,?sse2_D3DXQuaternionRotationMatrix@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z	ambiguous	REFUSED
+0x00508b40	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	ProcPrologue	identical	PASS
+0x00508c00	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	ProcPrologue	identical	PASS
+0x00509340	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	ProcPrologue	identical	PASS
+0x00509a72	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXQuaternionToAxisAngle@@YGXPBUD3DXQUATERNION@@PAUD3DXVECTOR3@@PAM@Z	identical	PASS
+0x00509fac	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXQuaternionRotationAxis@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXVECTOR3@@M@Z	identical	PASS
+0x0050a018	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z	identical	PASS
+0x0050a14f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNION@@PAU1@PBU1@11MM@Z	identical	PASS
+0x0050a1dc	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXQuaternionSquad@@YGPAUD3DXQUATERNION@@PAU1@PBU1@111M@Z	identical	PASS
+0x0050a2d2	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	identical	PASS
+0x0050a41e	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z	identical	PASS
+0x0050b53f	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixIdentity@@YGPAUD3DXMATRIX@@PAU1@@Z	identical	PASS
+0x0050b6ff	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixTransformation@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z	identical	PASS
+0x0050c897	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixRotationYawPitchRoll@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	identical	PASS
+0x0050cf70	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixRotationAxis@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@M@Z	identical	PASS
+0x0050d089	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixTransformation_K7@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1121@Z	identical	PASS
+0x0050e1dd	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixInverse_K7@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z	identical	PASS
+0x0050e8b7	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixInverse_inline@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z	identical	PASS
+0x0050ec78	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_x3d_D3DXVec3TransformNormal@12	identical	PASS
+0x0050ecdf	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXVec3Normalize@@YGPAUD3DXVECTOR3@@PAU1@PBU1@@Z	identical	PASS
+0x0050ef6d	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXVec3TransformCoord_inline@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	identical	PASS
+0x0050eff8	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXMatrixMultiply_inline@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	identical	PASS
+0x0050f1bf	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_x3d_D3DXVec3TransformCoord@12	identical	PASS
+0x0050f1c4	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXVec3Project@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z	identical	PASS
+0x0050f34c	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXVec3Unproject@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z	identical	PASS
+0x0050f572	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXVec3Unproject_K7@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBU_D3DVIEWPORT9@@PBUD3DXMATRIX@@33@Z	differ	REFUSED
+0x0050f700	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	ProcPrologue	identical	PASS
+0x0050f9bb	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_x3d_D3DXVec2Transform@12	identical	PASS
+0x0050fa10	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_x3d_D3DXVec2TransformNormal@12	identical	PASS
+0x0050fa49	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	_x3d_D3DXVec2TransformCoord@12	identical	PASS
+0x0051028b	third-party-library[d3dx9-psgp]	DX9.0b-sum2003 d3dx9.lib	?x3d_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z	identical	PASS
+0x0051036d	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CResource@D3DXCore@@QAE@XZ,??0TF_Row@D3DXTex@@QAE@XZ	ambiguous	REFUSED
+0x0051037a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CResource@D3DXCore@@QAE@XZ	identical	PASS
+0x00510388	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CFile@D3DXCore@@QAE@XZ	identical	PASS
+0x0051039a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Open@CFile@D3DXCore@@QAEJPBXH@Z	identical	PASS
+0x005104bb	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Close@CFile@D3DXCore@@QAEJXZ	identical	PASS
+0x005104fc	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CFile@D3DXCore@@QAE@XZ	identical	PASS
+0x00510507	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNode@D3DXShader@@QAE@W4_D3DXNODE_TYPE@1@@Z	identical	PASS
+0x00510521	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CHandle@Compiler@D3DXEffects@@QAE@XZ	differ	REFUSED
+0x0051054e	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?IsEqual@CNode@D3DXShader@@UAEHPAV12@@Z	identical	PASS
+0x00510583	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?IsEqual@CNode@D3DXShader@@SGHPAV12@0@Z	differ	REFUSED
+0x005105a2	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Copy@CNode@D3DXShader@@SGPAV12@PAV12@@Z	differ	REFUSED
+0x005105b6	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Append@CNode@D3DXShader@@SGPAV12@PAV12@0@Z	identical	PASS
+0x005105dd	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNodeList@D3DXShader@@QAE@XZ	identical	PASS
+0x005105f8	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNodeList@D3DXShader@@QAE@PAVCNode@1@0PBD@Z	identical	PASS
+0x0051061f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?IsEqual@CNodeList@D3DXShader@@UAEHPAVCNode@2@@Z	identical	PASS
+0x00510677	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Copy@CNodeList@D3DXShader@@UAEPAV12@XZ	differ	REFUSED
+0x005106f9	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?TokenEqual@D3DXShader@@YGHPBUD3DXTOKEN@1@0@Z	identical	PASS
+0x005107c7	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CPMSharedData@@QAE@XZ	differ	REFUSED
+0x005107df	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x0051085a	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CQuadric@@QAE@XZ,??1CArgument@D3DXShader@@QAE@XZ,??1CInstruction@D3DXShader@@QAE@XZ,??1CParse@D3DXShader@@QAE@XZ,??1CPool@D3DXShader@@QAE@XZ,??1CTokenize@D3DXShader@@QAE@XZ,??1SArgument@D3DXEffects@@QAE@XZ,?Print@CNode@D3DXShader@@UAEXXZ,?Print@CNodeArray@D3DXShader@@UAEXXZ,?Print@CNodeAsmInstruction@D3DXShader@@UAEXXZ,?Print@CNodeAsmRegister@D3DXShader@@UAEXXZ,?Print@CNodeBuffer@D3DXShader@@UAEXXZ,?Print@CNodeDecl@D3DXShader@@UAEXXZ,?Print@CNodeExpression@D3DXShader@@UAEXXZ,?Print@CNodeFunction@D3DXShader@@UAEXXZ,?Print@CNodeList@D3DXShader@@UAEXXZ,?Print@CNodeProgram@D3DXShader@@UAEXXZ,?Print@CNodeRegister@D3DXShader@@UAEXXZ,?Print@CNodeScope@D3DXShader@@UAEXXZ,?Print@CNodeState@D3DXShader@@UAEXXZ,?Print@CNodeStatement@D3DXShader@@UAEXXZ,?Print@CNodeToken@D3DXShader@@UAEXXZ,?Print@CNodeTree@D3DXShader@@UAEXXZ,?Print@CNodeType@D3DXShader@@UAEXXZ,?Print@CNodeUsage@D3DXShader@@UAEXXZ,?Print@CNodeValue@D3DXShader@@UAEXXZ,?Print@CNodeVariable@D3DXShader@@UAEXXZ,?QuantizeColorKey@CCodecYUV@D3DXTex@@MAEXXZ,?d3dx_png_read_warning_fn@D3DXTex@@YAXPAUpng_struct_def@D3DX@@PBD@Z,?d3dx_png_write_warning_fn@D3DXTex@@YAXPAUpng_struct_def@D3DX@@PBD@Z,?extr_glEnd@D3DX@@YGXXZ,?flush_png_data@D3DXTex@@YAXPAUpng_struct_def@D3DX@@@Z,?noEnd@D3DX@@YGXXZ,_tr_static_init@0	ambiguous	REFUSED
+0x0051085b	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CRenderToSurface@D3DXCore@@QAE@XZ	differ	REFUSED
+0x00510886	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNodeScope@D3DXShader@@QAE@W4_D3DXSCOPE_TYPE@1@PBDPAVCNode@1@PAVCNodeTree@1@PAV01@@Z	differ	REFUSED
+0x005108c2	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CVSProgram@D3DXShader@@UAE@XZ,??1CFXLProgram@D3DXShader@@UAE@XZ,??1CPSProgram@D3DXShader@@UAE@XZ	ambiguous	REFUSED
+0x0051094d	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNodeFunction@D3DXShader@@QAE@XZ	differ	REFUSED
+0x00510986	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00510b70	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNodeValue@D3DXShader@@QAE@XZ	differ	REFUSED
+0x00510ba9	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNodeValue@D3DXShader@@QAE@W4_D3DXVALUE_TYPE@1@IPBUD3DXTOKEN@1@@Z	differ	REFUSED
+0x00510be1	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CNodeValue@D3DXShader@@QAE@W4_D3DXVALUE_TYPE@1@PAVCNode@1@PBUD3DXTOKEN@1@@Z	differ	REFUSED
+0x00510c27	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1SAssignment@D3DXEffects@@QAE@XZ	differ	REFUSED
+0x00510c62	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?IsEqual@CNodeValue@D3DXShader@@UAEHPAVCNode@2@@Z	identical	PASS
+0x00510d43	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??_GCVSProgram@D3DXShader@@UAEPAXI@Z,??_GCFXLProgram@D3DXShader@@UAEPAXI@Z,??_GCPSProgram@D3DXShader@@UAEPAXI@Z	ambiguous	REFUSED
+0x00510d65	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??_GCVSProgram@D3DXShader@@UAEPAXI@Z,??_GCFXLProgram@D3DXShader@@UAEPAXI@Z,??_GCPSProgram@D3DXShader@@UAEPAXI@Z	ambiguous	REFUSED
+0x00510d87	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??_GCVSProgram@D3DXShader@@UAEPAXI@Z,??_GCFXLProgram@D3DXShader@@UAEPAXI@Z,??_GCPSProgram@D3DXShader@@UAEPAXI@Z	ambiguous	REFUSED
+0x00510da9	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??_GCBufferA16@D3DXCore@@UAEPAXI@Z,??_G?$GXPriorityQueue@USCMergeCandidate@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_G?$myHashTable@VmyEdge@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_GCAnimationController@D3DXAnimation@@QAEPAXI@Z,??_GCAssignment@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCAssignmentInfo@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCBaseProgram@D3DXShader@@UAEPAXI@Z,??_GCBuffer@D3DXCore@@UAEPAXI@Z,??_GCCodec@D3DXTex@@UAEPAXI@Z,??_GCCodecDXT@D3DXTex@@UAEPAXI@Z,??_GCCodecYUV@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2B10G10R10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2R10G10B10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2W10V10U10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A32B32G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4L4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_CxV8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_D16_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D32F_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_A16L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_R16G16B16@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT1@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT2@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT3@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT4@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT5@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G8R8_G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_L6V5U5@D3DXTex@@UAEPAXI@Z,??_GCCodec_L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q16W16V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q8W8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_R5G6B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8_B8G8@D3DXTex@@UAEPAXI@Z,??_GCCodec_UYVY@D3DXTex@@UAEPAXI@Z,??_GCCodec_V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_X4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8L8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_YUY2@D3DXTex@@UAEPAXI@Z,??_GCCompressedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCConstantTable@D3DXShader@@QAEPAXI@Z,??_GCD3DXSetCall@D3DXEffects@@QAEPAXI@Z,??_GCD3DXSkinInfo@@QAEPAXI@Z,??_GCD3DXTexSampler@@QAEPAXI@Z,??_GCD3DXVariable@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShare@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShareList@D3DXEffects@@QAEPAXI@Z,??_GCData@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffect@D3DXEffects@@QAEPAXI@Z,??_GCEffectCompiler@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffectPool@D3DXEffects@@QAEPAXI@Z,??_GCFaceContext@D3DX@@QAEPAXI@Z,??_GCFont@D3DXCore@@QAEPAXI@Z,??_GCFragment@D3DXShader@@QAEPAXI@Z,??_GCFragmentInfo@D3DXShader@@QAEPAXI@Z,??_GCFragmentLinker@D3DXShader@@QAEPAXI@Z,??_GCFunction@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCHandle@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCImage@D3DXTex@@QAEPAXI@Z,??_GCKeyframedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCLine@D3DXCore@@QAEPAXI@Z,??_GCMatrixStack@D3DXMath@@QAEPAXI@Z,??_GCPPBlock@D3DXShader@@QAEPAXI@Z,??_GCPPConditional@D3DXShader@@QAEPAXI@Z,??_GCPPDefine@D3DXShader@@QAEPAXI@Z,??_GCPPInclude@D3DXShader@@QAEPAXI@Z,??_GCPPPragmaDef@D3DXShader@@QAEPAXI@Z,??_GCPSLegacyProgram@D3DXShader@@UAEPAXI@Z,??_GCPass@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCPool@D3DXShader@@QAEPAXI@Z,??_GCProgram@D3DXShader@@UAEPAXI@Z,??_GCRegisterEntryNode@D3DXShader@@QAEPAXI@Z,??_GCRenderToEnvMap@D3DXCore@@QAEPAXI@Z,??_GCRenderToSurface@D3DXCore@@QAEPAXI@Z,??_GCShaderProgram@D3DXShader@@UAEPAXI@Z,??_GCSprite@D3DXCore@@QAEPAXI@Z,??_GCStateBlock@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCStringBuffer@D3DXCore@@UAEPAXI@Z,??_GCTechnique@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCVariable@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCachedTriIntersectManager@D3DXSHSim@@UAEPAXI@Z,??_GD3DXFONT_PHRASE@D3DXCore@@QAEPAXI@Z,??_GSAnimSetList@@QAEPAXI@Z,??_GSAnimationList@@QAEPAXI@Z,??_GSBranchState@D3DXShader@@QAEPAXI@Z,??_GSDefaultList@@QAEPAXI@Z,??_GSHandle@D3DXEffects@@QAEPAXI@Z,??_GSHitNode@@QAEPAXI@Z,??_GSStringList@@QAEPAXI@Z,??_GTwoLevelVoxGrid@D3DXSHSim@@UAEPAXI@Z	ambiguous	REFUSED
+0x00510dc5	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??_GCBufferA16@D3DXCore@@UAEPAXI@Z,??_G?$GXPriorityQueue@USCMergeCandidate@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_G?$myHashTable@VmyEdge@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_GCAnimationController@D3DXAnimation@@QAEPAXI@Z,??_GCAssignment@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCAssignmentInfo@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCBaseProgram@D3DXShader@@UAEPAXI@Z,??_GCBuffer@D3DXCore@@UAEPAXI@Z,??_GCCodec@D3DXTex@@UAEPAXI@Z,??_GCCodecDXT@D3DXTex@@UAEPAXI@Z,??_GCCodecYUV@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2B10G10R10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2R10G10B10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2W10V10U10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A32B32G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4L4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_CxV8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_D16_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D32F_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_A16L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_R16G16B16@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT1@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT2@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT3@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT4@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT5@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G8R8_G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_L6V5U5@D3DXTex@@UAEPAXI@Z,??_GCCodec_L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q16W16V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q8W8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_R5G6B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8_B8G8@D3DXTex@@UAEPAXI@Z,??_GCCodec_UYVY@D3DXTex@@UAEPAXI@Z,??_GCCodec_V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_X4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8L8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_YUY2@D3DXTex@@UAEPAXI@Z,??_GCCompressedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCConstantTable@D3DXShader@@QAEPAXI@Z,??_GCD3DXSetCall@D3DXEffects@@QAEPAXI@Z,??_GCD3DXSkinInfo@@QAEPAXI@Z,??_GCD3DXTexSampler@@QAEPAXI@Z,??_GCD3DXVariable@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShare@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShareList@D3DXEffects@@QAEPAXI@Z,??_GCData@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffect@D3DXEffects@@QAEPAXI@Z,??_GCEffectCompiler@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffectPool@D3DXEffects@@QAEPAXI@Z,??_GCFaceContext@D3DX@@QAEPAXI@Z,??_GCFont@D3DXCore@@QAEPAXI@Z,??_GCFragment@D3DXShader@@QAEPAXI@Z,??_GCFragmentInfo@D3DXShader@@QAEPAXI@Z,??_GCFragmentLinker@D3DXShader@@QAEPAXI@Z,??_GCFunction@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCHandle@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCImage@D3DXTex@@QAEPAXI@Z,??_GCKeyframedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCLine@D3DXCore@@QAEPAXI@Z,??_GCMatrixStack@D3DXMath@@QAEPAXI@Z,??_GCPPBlock@D3DXShader@@QAEPAXI@Z,??_GCPPConditional@D3DXShader@@QAEPAXI@Z,??_GCPPDefine@D3DXShader@@QAEPAXI@Z,??_GCPPInclude@D3DXShader@@QAEPAXI@Z,??_GCPPPragmaDef@D3DXShader@@QAEPAXI@Z,??_GCPSLegacyProgram@D3DXShader@@UAEPAXI@Z,??_GCPass@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCPool@D3DXShader@@QAEPAXI@Z,??_GCProgram@D3DXShader@@UAEPAXI@Z,??_GCRegisterEntryNode@D3DXShader@@QAEPAXI@Z,??_GCRenderToEnvMap@D3DXCore@@QAEPAXI@Z,??_GCRenderToSurface@D3DXCore@@QAEPAXI@Z,??_GCShaderProgram@D3DXShader@@UAEPAXI@Z,??_GCSprite@D3DXCore@@QAEPAXI@Z,??_GCStateBlock@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCStringBuffer@D3DXCore@@UAEPAXI@Z,??_GCTechnique@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCVariable@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCachedTriIntersectManager@D3DXSHSim@@UAEPAXI@Z,??_GD3DXFONT_PHRASE@D3DXCore@@QAEPAXI@Z,??_GSAnimSetList@@QAEPAXI@Z,??_GSAnimationList@@QAEPAXI@Z,??_GSBranchState@D3DXShader@@QAEPAXI@Z,??_GSDefaultList@@QAEPAXI@Z,??_GSHandle@D3DXEffects@@QAEPAXI@Z,??_GSHitNode@@QAEPAXI@Z,??_GSStringList@@QAEPAXI@Z,??_GTwoLevelVoxGrid@D3DXSHSim@@UAEPAXI@Z	ambiguous	REFUSED
+0x00510de1	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??0CCommentBlock@D3DXShader@@QAE@K@Z	identical	PASS
+0x00510df9	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	??1CCommentBlock@D3DXShader@@QAE@XZ	identical	PASS
+0x00510e2f	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?Add@CCommentBlock@D3DXShader@@QAEJPBXIKPAK@Z	identical	PASS
+0x00510f66	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?SizeInDwords@CCommentBlock@D3DXShader@@QAEIXZ	identical	PASS
+0x00510f72	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?WriteComment@CCommentBlock@D3DXShader@@QAEJPAKI@Z	identical	PASS
+0x0051105d	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?CalcNumRegisters@D3DXShader@@YGJPAVCNode@1@PAI1@Z	differ	REFUSED
+0x00511112	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?GetConstantSize@CFragmentConstants@D3DXShader@@QAEJPAUD3DXTOKEN@2@PBDPAI@Z	differ	REFUSED
+0x0051120b	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?EmitDefaultValue@D3DXShader@@YGJPAVCCommentBlock@1@IIPAVCNode@1@PAK@Z	differ	REFUSED
+0x005112c9	third-party-library[d3dx9-shader-compiler]	DX9.0b-sum2003 d3dx9.lib	?AddRegister@CFragmentConstants@D3DXShader@@QAEJPAVCCommentBlock@2@PAU_D3DXSHADER_CONSTANTINFO@@PBDIK@Z	differ	REFUSED
+0x005115aa	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	??0CNodeAsmInstruction@D3DXShader@@QAE@XZ	differ	REFUSED
+0x005115e6	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	??0CNodeAsmInstruction@D3DXShader@@QAE@PBUD3DXTOKEN@1@KKK@Z	differ	REFUSED
+0x00511636	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	??1CLoggableDevice@D3DXEffects@@QAE@XZ	differ	REFUSED
+0x0051167d	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?Copy@CNodeAsmInstruction@D3DXShader@@UAEPAV12@XZ	differ	REFUSED
+0x00511741	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	??0CNodeAsmRegister@D3DXShader@@QAE@XZ	differ	REFUSED
+0x00511774	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	??0CNodeAsmRegister@D3DXShader@@QAE@KKKHPAVCNode@1@@Z	differ	REFUSED
+0x005117ba	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?Copy@CNodeAsmRegister@D3DXShader@@UAEPAV12@XZ	differ	REFUSED
+0x00511841	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	??_GCBufferA16@D3DXCore@@UAEPAXI@Z,??_G?$GXPriorityQueue@USCMergeCandidate@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_G?$myHashTable@VmyEdge@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_GCAnimationController@D3DXAnimation@@QAEPAXI@Z,??_GCAssignment@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCAssignmentInfo@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCBaseProgram@D3DXShader@@UAEPAXI@Z,??_GCBuffer@D3DXCore@@UAEPAXI@Z,??_GCCodec@D3DXTex@@UAEPAXI@Z,??_GCCodecDXT@D3DXTex@@UAEPAXI@Z,??_GCCodecYUV@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2B10G10R10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2R10G10B10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2W10V10U10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A32B32G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4L4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_CxV8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_D16_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D32F_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_A16L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_R16G16B16@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT1@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT2@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT3@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT4@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT5@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G8R8_G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_L6V5U5@D3DXTex@@UAEPAXI@Z,??_GCCodec_L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q16W16V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q8W8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_R5G6B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8_B8G8@D3DXTex@@UAEPAXI@Z,??_GCCodec_UYVY@D3DXTex@@UAEPAXI@Z,??_GCCodec_V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_X4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8L8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_YUY2@D3DXTex@@UAEPAXI@Z,??_GCCompressedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCConstantTable@D3DXShader@@QAEPAXI@Z,??_GCD3DXSetCall@D3DXEffects@@QAEPAXI@Z,??_GCD3DXSkinInfo@@QAEPAXI@Z,??_GCD3DXTexSampler@@QAEPAXI@Z,??_GCD3DXVariable@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShare@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShareList@D3DXEffects@@QAEPAXI@Z,??_GCData@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffect@D3DXEffects@@QAEPAXI@Z,??_GCEffectCompiler@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffectPool@D3DXEffects@@QAEPAXI@Z,??_GCFaceContext@D3DX@@QAEPAXI@Z,??_GCFont@D3DXCore@@QAEPAXI@Z,??_GCFragment@D3DXShader@@QAEPAXI@Z,??_GCFragmentInfo@D3DXShader@@QAEPAXI@Z,??_GCFragmentLinker@D3DXShader@@QAEPAXI@Z,??_GCFunction@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCHandle@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCImage@D3DXTex@@QAEPAXI@Z,??_GCKeyframedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCLine@D3DXCore@@QAEPAXI@Z,??_GCMatrixStack@D3DXMath@@QAEPAXI@Z,??_GCPPBlock@D3DXShader@@QAEPAXI@Z,??_GCPPConditional@D3DXShader@@QAEPAXI@Z,??_GCPPDefine@D3DXShader@@QAEPAXI@Z,??_GCPPInclude@D3DXShader@@QAEPAXI@Z,??_GCPPPragmaDef@D3DXShader@@QAEPAXI@Z,??_GCPSLegacyProgram@D3DXShader@@UAEPAXI@Z,??_GCPass@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCPool@D3DXShader@@QAEPAXI@Z,??_GCProgram@D3DXShader@@UAEPAXI@Z,??_GCRegisterEntryNode@D3DXShader@@QAEPAXI@Z,??_GCRenderToEnvMap@D3DXCore@@QAEPAXI@Z,??_GCRenderToSurface@D3DXCore@@QAEPAXI@Z,??_GCShaderProgram@D3DXShader@@UAEPAXI@Z,??_GCSprite@D3DXCore@@QAEPAXI@Z,??_GCStateBlock@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCStringBuffer@D3DXCore@@UAEPAXI@Z,??_GCTechnique@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCVariable@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCachedTriIntersectManager@D3DXSHSim@@UAEPAXI@Z,??_GD3DXFONT_PHRASE@D3DXCore@@QAEPAXI@Z,??_GSAnimSetList@@QAEPAXI@Z,??_GSAnimationList@@QAEPAXI@Z,??_GSBranchState@D3DXShader@@QAEPAXI@Z,??_GSDefaultList@@QAEPAXI@Z,??_GSHandle@D3DXEffects@@QAEPAXI@Z,??_GSHitNode@@QAEPAXI@Z,??_GSStringList@@QAEPAXI@Z,??_GTwoLevelVoxGrid@D3DXSHSim@@UAEPAXI@Z	ambiguous	REFUSED
+0x0051185d	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	??_GCBufferA16@D3DXCore@@UAEPAXI@Z,??_G?$GXPriorityQueue@USCMergeCandidate@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_G?$myHashTable@VmyEdge@D3DXSHSim@@@D3DXSHSim@@QAEPAXI@Z,??_GCAnimationController@D3DXAnimation@@QAEPAXI@Z,??_GCAssignment@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCAssignmentInfo@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCBaseProgram@D3DXShader@@UAEPAXI@Z,??_GCBuffer@D3DXCore@@UAEPAXI@Z,??_GCCodec@D3DXTex@@UAEPAXI@Z,??_GCCodecDXT@D3DXTex@@UAEPAXI@Z,??_GCCodecYUV@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_A16B16G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2B10G10R10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2R10G10B10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A2W10V10U10@D3DXTex@@UAEPAXI@Z,??_GCCodec_A32B32G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4L4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_A8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_CxV8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_D16_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D32F_LOCKABLE@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_A16L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_D3DX_R16G16B16@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT1@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT2@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT3@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT4@D3DXTex@@UAEPAXI@Z,??_GCCodec_DXT5@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16@D3DXTex@@UAEPAXI@Z,??_GCCodec_G16R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G32R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_G8R8_G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_L16@D3DXTex@@UAEPAXI@Z,??_GCCodec_L6V5U5@D3DXTex@@UAEPAXI@Z,??_GCCodec_L8@D3DXTex@@UAEPAXI@Z,??_GCCodec_P8@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q16W16V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_Q8W8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R16F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R32F@D3DXTex@@UAEPAXI@Z,??_GCCodec_R3G3B2@D3DXTex@@UAEPAXI@Z,??_GCCodec_R5G6B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_R8G8_B8G8@D3DXTex@@UAEPAXI@Z,??_GCCodec_UYVY@D3DXTex@@UAEPAXI@Z,??_GCCodec_V16U16@D3DXTex@@UAEPAXI@Z,??_GCCodec_V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X1R5G5B5@D3DXTex@@UAEPAXI@Z,??_GCCodec_X4R4G4B4@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8B8G8R8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8L8V8U8@D3DXTex@@UAEPAXI@Z,??_GCCodec_X8R8G8B8@D3DXTex@@UAEPAXI@Z,??_GCCodec_YUY2@D3DXTex@@UAEPAXI@Z,??_GCCompressedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCConstantTable@D3DXShader@@QAEPAXI@Z,??_GCD3DXSetCall@D3DXEffects@@QAEPAXI@Z,??_GCD3DXSkinInfo@@QAEPAXI@Z,??_GCD3DXTexSampler@@QAEPAXI@Z,??_GCD3DXVariable@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShare@D3DXEffects@@QAEPAXI@Z,??_GCD3DXVariableShareList@D3DXEffects@@QAEPAXI@Z,??_GCData@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffect@D3DXEffects@@QAEPAXI@Z,??_GCEffectCompiler@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCEffectPool@D3DXEffects@@QAEPAXI@Z,??_GCFaceContext@D3DX@@QAEPAXI@Z,??_GCFont@D3DXCore@@QAEPAXI@Z,??_GCFragment@D3DXShader@@QAEPAXI@Z,??_GCFragmentInfo@D3DXShader@@QAEPAXI@Z,??_GCFragmentLinker@D3DXShader@@QAEPAXI@Z,??_GCFunction@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCHandle@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCImage@D3DXTex@@QAEPAXI@Z,??_GCKeyframedAnimationSet@D3DXAnimation@@QAEPAXI@Z,??_GCLine@D3DXCore@@QAEPAXI@Z,??_GCMatrixStack@D3DXMath@@QAEPAXI@Z,??_GCPPBlock@D3DXShader@@QAEPAXI@Z,??_GCPPConditional@D3DXShader@@QAEPAXI@Z,??_GCPPDefine@D3DXShader@@QAEPAXI@Z,??_GCPPInclude@D3DXShader@@QAEPAXI@Z,??_GCPPPragmaDef@D3DXShader@@QAEPAXI@Z,??_GCPSLegacyProgram@D3DXShader@@UAEPAXI@Z,??_GCPass@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCPool@D3DXShader@@QAEPAXI@Z,??_GCProgram@D3DXShader@@UAEPAXI@Z,??_GCRegisterEntryNode@D3DXShader@@QAEPAXI@Z,??_GCRenderToEnvMap@D3DXCore@@QAEPAXI@Z,??_GCRenderToSurface@D3DXCore@@QAEPAXI@Z,??_GCShaderProgram@D3DXShader@@UAEPAXI@Z,??_GCSprite@D3DXCore@@QAEPAXI@Z,??_GCStateBlock@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCStringBuffer@D3DXCore@@UAEPAXI@Z,??_GCTechnique@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCVariable@Compiler@D3DXEffects@@QAEPAXI@Z,??_GCachedTriIntersectManager@D3DXSHSim@@UAEPAXI@Z,??_GD3DXFONT_PHRASE@D3DXCore@@QAEPAXI@Z,??_GSAnimSetList@@QAEPAXI@Z,??_GSAnimationList@@QAEPAXI@Z,??_GSBranchState@D3DXShader@@QAEPAXI@Z,??_GSDefaultList@@QAEPAXI@Z,??_GSHandle@D3DXEffects@@QAEPAXI@Z,??_GSHitNode@@QAEPAXI@Z,??_GSStringList@@QAEPAXI@Z,??_GTwoLevelVoxGrid@D3DXSHSim@@UAEPAXI@Z	ambiguous	REFUSED
+0x00511879	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?Error@CParse@D3DXShader@@IAAXPAUD3DXTOKEN@2@IPBDZZ	differ	REFUSED
+0x005118cd	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?Warning@CParse@D3DXShader@@IAAXPAUD3DXTOKEN@2@IPBDZZ	differ	REFUSED
+0x00511918	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?FatalError@CParse@D3DXShader@@IAAXPAUD3DXTOKEN@2@IPBDZZ	differ	REFUSED
+0x0051196e	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?IsConst@CParse@D3DXShader@@IAEHPAVCNode@2@@Z	differ	REFUSED
+0x005119dc	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?IsNumeric@CParse@D3DXShader@@IAEHPAVCNode@2@@Z	differ	REFUSED
+0x00511a4e	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?TypeSize@CParse@D3DXShader@@IAEIPAVCNode@2@@Z	differ	REFUSED
+0x00511ad7	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?IsTypeEqual@CParse@D3DXShader@@IAEHPAVCNode@2@0@Z	differ	REFUSED
+0x00511b85	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?GetSubType@CParse@D3DXShader@@IAEJPAVCNode@2@IPAVCNodeType@2@@Z	differ	REFUSED
+0x00511c4d	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?GetComponentType@CParse@D3DXShader@@IAEJPAVCNode@2@0PAW4_D3DXCOMPONENT_TYPE@2@@Z	differ	REFUSED
+0x00511e02	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?ScoreFunctionDecl@CParse@D3DXShader@@IAEIPAVCNodeFunction@2@PAVCNode@2@1K@Z	differ	REFUSED
+0x00511f0f	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?ScoreCast@CParse@D3DXShader@@IAEIPAVCNode@2@0@Z	differ	REFUSED
+0x00512024	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?IsSupportedCast@CParse@D3DXShader@@IAEHPAVCNode@2@0H@Z	differ	REFUSED
+0x00512352	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?ScoreFunctionCall@CParse@D3DXShader@@IAEIPAVCNodeFunction@2@PAVCNode@2@1K@Z	differ	REFUSED
+0x0051251f	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?FindDecl@CParse@D3DXShader@@IAEJW4_D3DXDECL_TYPE@2@PAUD3DXTOKEN@2@PAVCNode@2@2PAVCNodeScope@2@KPAPAV52@4@Z	differ	REFUSED
+0x00512cbe	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?sse_SinCos4@@YGXQBMQAM1@Z	identical	PASS
+0x00512ea7	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?sse2_SinCos4@@YGXQBMQAM1@Z	identical	PASS
+0x005130c0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	_a_atan2	identical	PASS
+0x005131c0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	_a_acos	identical	PASS
+0x005137a0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	_a_sincos	identical	PASS
+0x005138a0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	_a_sin	identical	PASS
+0x00513c58	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?TypeSize@D3DXShader@@YGIPAVCNode@1@@Z	differ	REFUSED
+0x00513cb6	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?EmitTypeInfo@D3DXShader@@YGJPAVCCommentBlock@1@PAVCNode@1@IKPAK@Z	differ	REFUSED
+0x00513f90	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00514330	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00514780	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00514920	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00514bd0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00514d00	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00514e60	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?png_write_image@D3DX@@YGXPAUpng_struct_def@1@PAPAE@Z	differ	REFUSED
+0x00514ec0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x005151c0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?read_backing_store@D3DX@@YGXPAUjpeg_common_struct@1@PAUbacking_store_struct@1@PAXJJ@Z	differ	REFUSED
+0x00515260	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?png_write_destroy@D3DX@@YGXPAUpng_struct_def@1@@Z	differ	REFUSED
+0x00515370	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?png_set_filter_heuristics@D3DX@@YGXPAUpng_struct_def@1@HHPAN1@Z	differ	REFUSED
+0x00515770	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x005159d0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	?png_do_bgr@D3DX@@YGXPAUpng_row_info_struct@1@PAE@Z	differ	REFUSED
+0x00515ae0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00515e50	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00515f30	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00515fd0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x005161d0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x005163a0	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00516460	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00516570	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00516650	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00516830	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib	_D3DXFrameAppendChild@8	differ	REFUSED
+0x00516870	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00516920	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x00516a70	third-party-library[d3dx9-backward-extension]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x005b8200	third-party-library[d3dx9-fx]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x005b8680	third-party-library[d3dx9-fx]	DX9.0b-sum2003 d3dx9.lib		nopair	REFUSED
+0x004fb5a0	render	DX9.0b-sum2003 d3dx9.lib	?c_D3DXPSGPUpdateSkinnedMesh@@YGXPBUD3DXMATRIX@@0PAE1KKPAPAE2KKPAMH@Z	identical	PASS
+0x0049c5d0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?QueryInterface@CClassFactory@@UAGJABU_GUID@@PAPAX@Z	differ	REFUSED
+0x0049c620	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?WaitForReceiveToComplete@CBaseRenderer@@QAEXXZ	differ	REFUSED
+0x0049c690	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Name@CBasePin@@QAEPAGXZ,?GetRealState@CBaseRenderer@@QAE?AW4_FilterState@@XZ,?GetWindowHeight@CBaseWindow@@QAEJXZ	ambiguous	REFUSED
+0x0049c6a0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CCritSec@@QAE@XZ	identical	PASS
+0x0049c6b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CAutoLock@@QAE@PAVCCritSec@@@Z	identical	PASS
+0x0049c6d0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049c6e0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?FindPin@CBaseRenderer@@UAGJPBGPAPAUIPin@@@Z	differ	REFUSED
+0x0049c750	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?EndFlush@CBaseRenderer@@UAEJXZ	identical	PASS
+0x0049c770	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Inactive@CBaseRenderer@@UAEJXZ	identical	PASS
+0x0049c800	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049c810	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?CancelNotification@CBaseRenderer@@UAEJXZ	differ	REFUSED
+0x0049c840	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?ScheduleSample@CBaseRenderer@@UAEHPAUIMediaSample@@@Z	differ	REFUSED
+0x0049c900	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?GetPinCount@CSource@@UAEHXZ	differ	REFUSED
+0x0049c930	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Disconnect@CBasePin@@UAGJXZ	differ	REFUSED
+0x0049c990	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?SetSyncSource@CBaseStreamControl@@QAEXPAUIReferenceClock@@@Z	differ	REFUSED
+0x0049ca00	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CTransformFilter@@QAE@PAGPAUIUnknown@@ABU_GUID@@@Z	differ	REFUSED
+0x0049ca60	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049cb00	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CLoadDirectDraw@@QAE@XZ	differ	REFUSED
+0x0049cb20	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?StartStreaming@CBaseRenderer@@UAEJXZ	differ	REFUSED
+0x0049cbd0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Run@CCmdQueue@@UAEJ_J@Z	differ	REFUSED
+0x0049cc40	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?SetRepaintStatus@CBaseRenderer@@QAEXH@Z	identical	PASS
+0x0049cc80	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CRendererInputPin@@QAE@PAVCBaseRenderer@@PAJPBG@Z	differ	REFUSED
+0x0049ccd0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?EndOfStream@CRendererInputPin@@UAGJXZ	differ	REFUSED
+0x0049cd70	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?BeginFlush@CRendererInputPin@@UAGJXZ	differ	REFUSED
+0x0049ce10	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?EndFlush@CRendererInputPin@@UAGJXZ	differ	REFUSED
+0x0049ceb0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?BreakConnect@CRendererInputPin@@UAEJXZ	identical	PASS
+0x0049cf00	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049cfb0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?ResetStreamingTimes@CBaseVideoRenderer@@UAEJXZ	differ	REFUSED
+0x0049d080	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?OnStopStreaming@CBaseVideoRenderer@@UAEJXZ	differ	REFUSED
+0x0049d0a0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049d1d0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049d200	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?StartStreaming@CVideoTransformFilter@@MAEJXZ	differ	REFUSED
+0x0049d240	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?GetSurfaceDesc@CAggDrawSurface@@UAGJPAU_DDSURFACEDESC@@@Z	differ	REFUSED
+0x0049d270	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049d920	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?SetSink@CBasePin@@UAGJPAUIQualityControl@@@Z	differ	REFUSED
+0x0049d960	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?get_FramesDroppedInRenderer@CBaseVideoRenderer@@UAGJPAH@Z	differ	REFUSED
+0x0049d9a0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?get_AvgFrameRate@CBaseVideoRenderer@@UAGJPAH@Z	differ	REFUSED
+0x0049da20	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?get_AvgSyncOffset@CBaseVideoRenderer@@UAGJPAH@Z	differ	REFUSED
+0x0049da90	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?isqrt@@YGHH@Z	differ	REFUSED
+0x0049db00	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049dcb0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049dd60	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CBaseRenderer@@QAE@ABU_GUID@@PAGPAUIUnknown@@PAJ@Z	differ	REFUSED
+0x0049de60	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?PreparePerformanceData@CBaseVideoRenderer@@QAEXHH@Z	differ	REFUSED
+0x0049de70	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CVideoTransformFilter@@UAE@XZ	differ	REFUSED
+0x0049de80	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?SetConfigInfo@CDynamicOutputPin@@QAEXPAUIGraphConfig@@PAX@Z	differ	REFUSED
+0x0049de90	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CBaseRenderer@@UAE@XZ	differ	REFUSED
+0x0049df70	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049e140	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?GetState@CBaseRenderer@@UAGJKPAW4_FilterState@@@Z	differ	REFUSED
+0x0049e190	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049e4b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?GetPin@CBaseRenderer@@UAEPAVCBasePin@@H@Z	differ	REFUSED
+0x0049e580	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?EndOfStream@CBaseRenderer@@UAEJXZ	differ	REFUSED
+0x0049e5c0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?BeginFlush@CBaseRenderer@@UAEJXZ	differ	REFUSED
+0x0049e600	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?CompleteConnect@CBaseRenderer@@UAEJPAUIPin@@@Z	differ	REFUSED
+0x0049e640	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049e6c0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049ea70	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?ResetEndOfStream@CBaseRenderer@@UAEJXZ	identical	PASS
+0x0049eab0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??_GCEnumPins@@UAEPAXI@Z	differ	REFUSED
+0x0049ead0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	_GetSubtypeName@4,??1?$CGenericList@UIMediaSample@@@@QAE@XZ,??1?$CGenericList@VCBasePin@@@@QAE@XZ,??1?$CGenericList@VCDeferredCommand@@@@QAE@XZ,??1?$CGenericList@VCMsg@@@@QAE@XZ,??1CBaseOutputPin@@UAE@XZ,??1CDisp@@QAE@XZ,??1CTransformInputPin@@UAE@XZ,?Active@CPullPin@@QAEJXZ,?AddBefore@?$CGenericList@VCDeferredCommand@@@@QAEPAU__POSITION@@PAU2@PAVCDeferredCommand@@@Z,?AddTail@?$CGenericList@UIMediaSample@@@@QAEPAU__POSITION@@PAUIMediaSample@@@Z,?AddTail@?$CGenericList@VCBasePin@@@@QAEHPAV1@@Z,?AddTail@?$CGenericList@VCBasePin@@@@QAEPAU__POSITION@@PAVCBasePin@@@Z,?AddTail@?$CGenericList@VCDeferredCommand@@@@QAEPAU__POSITION@@PAVCDeferredCommand@@@Z,?CheckRequest@CSourceStream@@IAEHPAW4Command@1@@Z,?Find@?$CGenericList@VCBasePin@@@@QBEPAU__POSITION@@PAVCBasePin@@@Z,?Get@?$CGenericList@VCDeferredCommand@@@@QBEPAVCDeferredCommand@@PAU__POSITION@@@Z,?GetNext@?$CGenericList@VCDeferredCommand@@@@QBEPAVCDeferredCommand@@AAPAU__POSITION@@@Z,?GetNext@?$CGenericList@VCMsg@@@@QBEPAVCMsg@@AAPAU__POSITION@@@Z,?GetRequest@CSourceStream@@IAE?AW4Command@1@XZ,?InitAllocator@CBaseOutputPin@@UAEJPAPAUIMemAllocator@@@Z,?Remove@?$CGenericList@VCDeferredCommand@@@@QAEPAVCDeferredCommand@@PAU__POSITION@@@Z,?RemoveHead@?$CGenericList@UIMediaSample@@@@QAEPAUIMediaSample@@XZ,?RemoveHead@?$CGenericList@VCMsg@@@@QAEPAVCMsg@@XZ,?Set@CMediaType@@QAEJABV1@@Z	ambiguous	REFUSED
+0x0049ebc0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CBaseVideoRenderer@@UAE@XZ	identical	PASS
+0x0049ebf0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??_GCEnumMediaTypes@@UAEPAXI@Z	differ	REFUSED
+0x0049ec10	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CBaseVideoRenderer@@QAE@ABU_GUID@@PAGPAUIUnknown@@PAJ@Z	differ	REFUSED
+0x0049ec80	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??_GCMediaSample@@UAEPAXI@Z	differ	REFUSED
+0x0049eca0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	_CreateMemoryAllocator@4	differ	REFUSED
+0x0049ecc0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049eeb0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049ef10	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?QueryFilterInfo@CBaseFilter@@UAGJPAU_FilterInfo@@@Z	differ	REFUSED
+0x0049ef60	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?JoinFilterGraph@CBaseFilter@@UAGJPAUIFilterGraph@@PBG@Z	differ	REFUSED
+0x0049f030	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?DynamicReconnect@CDynamicOutputPin@@QAEJPBVCMediaType@@@Z	differ	REFUSED
+0x0049f090	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	_GetSubtypeName@4,??1?$CGenericList@UIMediaSample@@@@QAE@XZ,??1?$CGenericList@VCBasePin@@@@QAE@XZ,??1?$CGenericList@VCDeferredCommand@@@@QAE@XZ,??1?$CGenericList@VCMsg@@@@QAE@XZ,??1CBaseOutputPin@@UAE@XZ,??1CDisp@@QAE@XZ,??1CTransformInputPin@@UAE@XZ,?Active@CPullPin@@QAEJXZ,?AddBefore@?$CGenericList@VCDeferredCommand@@@@QAEPAU__POSITION@@PAU2@PAVCDeferredCommand@@@Z,?AddTail@?$CGenericList@UIMediaSample@@@@QAEPAU__POSITION@@PAUIMediaSample@@@Z,?AddTail@?$CGenericList@VCBasePin@@@@QAEHPAV1@@Z,?AddTail@?$CGenericList@VCBasePin@@@@QAEPAU__POSITION@@PAVCBasePin@@@Z,?AddTail@?$CGenericList@VCDeferredCommand@@@@QAEPAU__POSITION@@PAVCDeferredCommand@@@Z,?CheckRequest@CSourceStream@@IAEHPAW4Command@1@@Z,?Find@?$CGenericList@VCBasePin@@@@QBEPAU__POSITION@@PAVCBasePin@@@Z,?Get@?$CGenericList@VCDeferredCommand@@@@QBEPAVCDeferredCommand@@PAU__POSITION@@@Z,?GetNext@?$CGenericList@VCDeferredCommand@@@@QBEPAVCDeferredCommand@@AAPAU__POSITION@@@Z,?GetNext@?$CGenericList@VCMsg@@@@QBEPAVCMsg@@AAPAU__POSITION@@@Z,?GetRequest@CSourceStream@@IAE?AW4Command@1@XZ,?InitAllocator@CBaseOutputPin@@UAEJPAPAUIMemAllocator@@@Z,?Remove@?$CGenericList@VCDeferredCommand@@@@QAEPAVCDeferredCommand@@PAU__POSITION@@@Z,?RemoveHead@?$CGenericList@UIMediaSample@@@@QAEPAUIMediaSample@@XZ,?RemoveHead@?$CGenericList@VCMsg@@@@QAEPAVCMsg@@XZ,?Set@CMediaType@@QAEJABV1@@Z	ambiguous	REFUSED
+0x0049f0a0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049f180	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Release@CEnumPins@@UAGKXZ	differ	REFUSED
+0x0049f1b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Reset@CEnumPins@@UAGJXZ	differ	REFUSED
+0x0049f1e0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Refresh@CEnumPins@@AAGJXZ	differ	REFUSED
+0x0049f210	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CEnumMediaTypes@@UAE@XZ	identical	PASS
+0x0049f2b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Release@CEnumMediaTypes@@UAGKXZ	differ	REFUSED
+0x0049f2e0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Reset@CEnumMediaTypes@@UAGJXZ	differ	REFUSED
+0x0049f300	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049f420	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?AttemptConnection@CBasePin@@IAEJPAUIPin@@PBVCMediaType@@@Z	differ	REFUSED
+0x0049f4d0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?TryMediaTypes@CBasePin@@IAEJPAUIPin@@PBVCMediaType@@PAUIEnumMediaTypes@@@Z	differ	REFUSED
+0x0049f5b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?AgreeMediaType@CBasePin@@IAEJPAUIPin@@PBVCMediaType@@@Z	differ	REFUSED
+0x0049f690	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049f830	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049f950	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049fa40	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?CompleteConnect@CBasePin@@UAEJPAUIPin@@@Z,?BreakConnect@CTransformFilter@@UAEJW4_PinDirection@@@Z,?EndOfStream@CBasePin@@UAGJXZ,?ReadFromStream@CPersistStream@@UAEJPAUIStream@@@Z,?SetMediaType@CBaseRenderer@@UAEJPBVCMediaType@@@Z,?WriteToStream@CPersistStream@@UAEJPAUIStream@@@Z	ambiguous	REFUSED
+0x0049fac0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049fc80	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?BreakConnect@CBaseInputPin@@UAEJXZ	differ	REFUSED
+0x0049fcc0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Receive@CBaseInputPin@@UAGJPAUIMediaSample@@@Z	differ	REFUSED
+0x0049fe10	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049ff30	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?BeginFlush@CBaseInputPin@@UAGJXZ	differ	REFUSED
+0x0049ff60	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x0049ffe0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a01b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CBasePropertyPage@@QAE@PADPAUIUnknown@@HH@Z	differ	REFUSED
+0x004a0220	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Stop@CBaseFilter@@UAGJXZ	differ	REFUSED
+0x004a02d0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a0380	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a0550	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??_GCRenderedInputPin@@UAEPAXI@Z	differ	REFUSED
+0x004a0570	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Next@CEnumPins@@UAGJKPAPAUIPin@@PAK@Z	differ	REFUSED
+0x004a0680	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Skip@CEnumPins@@UAGJK@Z	differ	REFUSED
+0x004a06c0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a0ab0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a0c10	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a0d10	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a0e90	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CTransformInputPin@@QAE@PAGPAVCTransformFilter@@PAJPBG@Z	differ	REFUSED
+0x004a0ef0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CBaseControlWindow@@QAE@PAVCBaseFilter@@PAVCCritSec@@PAGPAUIUnknown@@PAJ@Z	differ	REFUSED
+0x004a0fe0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CBaseObject@@QAE@PBG@Z,??0CBaseObject@@QAE@PBD@Z	ambiguous	REFUSED
+0x004a1000	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CBaseObject@@QAE@XZ	differ	REFUSED
+0x004a1030	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?LoadOLEAut32@@YGPAUHINSTANCE__@@XZ	identical	PASS
+0x004a1050	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	_GetInterface@8	differ	REFUSED
+0x004a1080	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CUnknown@@QAE@PAGPAUIUnknown@@PAJ@Z	differ	REFUSED
+0x004a10b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?NonDelegatingQueryInterface@CUnknown@@UAGJABU_GUID@@PAPAX@Z	differ	REFUSED
+0x004a1100	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Delete@CAMSchedule@@AAEXPAVCAdvisePacket@1@@Z	differ	REFUSED
+0x004a1160	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CRefTime@@QAE@J@Z	differ	REFUSED
+0x004a1180	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CAMEvent@@QAE@XZ	identical	PASS
+0x004a1190	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a11c0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a1200	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a1240	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a1260	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?llMulDiv@@YG_J_J000@Z	differ	REFUSED
+0x004a1570	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?WaitDispatchingMessages@@YGKPAXKPAUHWND__@@I0@Z	differ	REFUSED
+0x004a1780	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?lstrcpyWInternal@@YGPAGPAGPBG@Z,?lstrcmpWInternal@@YGHPBG0@Z,?lstrcmpiWInternal@@YGHPBG0@Z,?lstrcpynWInternal@@YGPAGPAGPBGH@Z,?lstrlenWInternal@@YGHPBG@Z	ambiguous	REFUSED
+0x004a1790	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CBaseDispatch@@QAE@XZ,??1?$QzCComPtr@UIPinConnection@@@@QAE@XZ	ambiguous	REFUSED
+0x004a17a0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?GetTypeInfoCount@CBaseDispatch@@QAGJPAI@Z	differ	REFUSED
+0x004a17c0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a1a60	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?GetPeer@CPosPassThru@@AAEJPAPAUIMediaPosition@@@Z	differ	REFUSED
+0x004a1ac0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a1dc0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a21a0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?RegisterMediaTime@CRendererPosPassThru@@QAEJPAUIMediaSample@@@Z	differ	REFUSED
+0x004a2250	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a2310	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?ResetMediaTime@CRendererPosPassThru@@QAEJXZ	identical	PASS
+0x004a2340	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?EOS@CRendererPosPassThru@@QAEJXZ	differ	REFUSED
+0x004a23e0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a2440	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a2460	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a2500	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CTransInPlaceFilter@@QAE@PAGPAUIUnknown@@ABU_GUID@@PAJ_N@Z	differ	REFUSED
+0x004a2530	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a25f0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??_GCPosPassThru@@UAEPAXI@Z	differ	REFUSED
+0x004a2620	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CRendererPosPassThru@@QAE@PBGPAUIUnknown@@PAJPAUIPin@@@Z	differ	REFUSED
+0x004a2680	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??_GCRendererPosPassThru@@UAEPAXI@Z	differ	REFUSED
+0x004a26b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a26e0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??BCAMEvent@@QBEPAXXZ,??B?$QzCComPtr@UIPinConnection@@@@QAEPAUIPinConnection@@XZ,??C?$QzCComPtr@UIPinConnection@@@@QAEPAUIPinConnection@@XZ,?GetHeadPosition@?$CGenericList@VCDeferredCommand@@@@QBEPAU__POSITION@@XZ,?GetHeadPosition@?$CGenericList@VCMsg@@@@QBEPAU__POSITION@@XZ,?GetHeadPositionI@CBaseList@@QBEPAU__POSITION@@XZ,?Prev@CNode@CBaseList@@QBEPAV12@XZ	ambiguous	REFUSED
+0x004a26f0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CNodeCache@CBaseList@@QAE@XZ	differ	REFUSED
+0x004a2710	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CBaseList@@QAE@PAG@Z,??0CBaseList@@QAE@PAD@Z	ambiguous	REFUSED
+0x004a2730	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??_GCSeekingPassThru@@UAEPAXI@Z	differ	REFUSED
+0x004a2770	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CRefTime@@QAE@_J@Z	differ	REFUSED
+0x004a2790	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a27b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?FindI@CBaseList@@IBEPAU__POSITION@@PAX@Z	differ	REFUSED
+0x004a27f0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?AddTailI@CBaseList@@IAEPAU__POSITION@@PAX@Z	differ	REFUSED
+0x004a2860	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?AddTail@CBaseList@@QAEHPAV1@@Z	differ	REFUSED
+0x004a28b0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CPosPassThru@@QAE@PBGPAUIUnknown@@PAJPAUIPin@@@Z	differ	REFUSED
+0x004a2920	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CMediaType@@QAE@XZ	differ	REFUSED
+0x004a2940	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib		nopair	REFUSED
+0x004a2980	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?MatchesPartial@CMediaType@@QBEHPBV1@@Z	differ	REFUSED
+0x004a2a30	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?CopyMediaType@@YGJPAU_AMMediaType@@PBU1@@Z	differ	REFUSED
+0x004a2aa0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CTransformOutputPin@@UAE@XZ	differ	REFUSED
+0x004a2ae0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??1CMediaType@@QAE@XZ	identical	PASS
+0x004a2af0	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	??0CCritSec@@QAE@XZ	differ	REFUSED
+0x004a2b00	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?Set@CMediaType@@QAEJABU_AMMediaType@@@Z	differ	REFUSED
+0x004a2b30	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	?DeleteMediaType@@YGXPAU_AMMediaType@@@Z	identical	PASS
+0x004a2b50	third-party-library[directshow-baseclasses]	XPDDK-SP1 strmbase.lib	_GetSubtypeName@4,??1?$CGenericList@UIMediaSample@@@@QAE@XZ,??1?$CGenericList@VCBasePin@@@@QAE@XZ,??1?$CGenericList@VCDeferredCommand@@@@QAE@XZ,??1?$CGenericList@VCMsg@@@@QAE@XZ,??1CBaseOutputPin@@UAE@XZ,??1CDisp@@QAE@XZ,??1CTransformInputPin@@UAE@XZ,?Active@CPullPin@@QAEJXZ,?AddBefore@?$CGenericList@VCDeferredCommand@@@@QAEPAU__POSITION@@PAU2@PAVCDeferredCommand@@@Z,?AddTail@?$CGenericList@UIMediaSample@@@@QAEPAU__POSITION@@PAUIMediaSample@@@Z,?AddTail@?$CGenericList@VCBasePin@@@@QAEHPAV1@@Z,?AddTail@?$CGenericList@VCBasePin@@@@QAEPAU__POSITION@@PAVCBasePin@@@Z,?AddTail@?$CGenericList@VCDeferredCommand@@@@QAEPAU__POSITION@@PAVCDeferredCommand@@@Z,?CheckRequest@CSourceStream@@IAEHPAW4Command@1@@Z,?Find@?$CGenericList@VCBasePin@@@@QBEPAU__POSITION@@PAVCBasePin@@@Z,?Get@?$CGenericList@VCDeferredCommand@@@@QBEPAVCDeferredCommand@@PAU__POSITION@@@Z,?GetNext@?$CGenericList@VCDeferredCommand@@@@QBEPAVCDeferredCommand@@AAPAU__POSITION@@@Z,?GetNext@?$CGenericList@VCMsg@@@@QBEPAVCMsg@@AAPAU__POSITION@@@Z,?GetRequest@CSourceStream@@IAE?AW4Command@1@XZ,?InitAllocator@CBaseOutputPin@@UAEJPAPAUIMemAllocator@@@Z,?Remove@?$CGenericList@VCDeferredCommand@@@@QAEPAVCDeferredCommand@@PAU__POSITION@@@Z,?RemoveHead@?$CGenericList@UIMediaSample@@@@QAEPAUIMediaSample@@XZ,?RemoveHead@?$CGenericList@VCMsg@@@@QAEPAVCMsg@@XZ,?Set@CMediaType@@QAEJABV1@@Z	ambiguous	REFUSED

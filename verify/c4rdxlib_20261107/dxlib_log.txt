@@ -1,0 +1,3 @@
+[d3dx_sum2003] d3dx9-sum2003 C:\Users\maria\Desktop\Proyectos\Mashed\tools\dxsdk9\sum2003\Lib\d3dx9.lib objs 228 rows 397 identical 245 (ambiguous 26) differs 121 not-compared 31 obj-fns 6025 identical-elsewhere 1209
+[d3dx_sum2004] d3dx9-sum2004 C:\Users\maria\Desktop\Proyectos\Mashed\tools\dxsdk9\sum2004\Lib\d3dx9.lib objs 253 rows 397 identical 54 (ambiguous 23) differs 300 not-compared 43 obj-fns 7776 identical-elsewhere 143
+[dshow_strmbase] directshow-baseclasses-ddk C:\Users\maria\Desktop\Proyectos\Mashed\tools\vc7ddk\lib\wxp\i386\strmbase.lib objs 33 rows 159 identical 24 (ambiguous 10) differs 90 not-compared 45 obj-fns 1590 identical-elsewhere 161
