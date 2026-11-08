@@ -52,6 +52,9 @@ seed = [l for l in log if l.startswith('[portstate-seed]')]
 summ = [l for l in log if 'B17-SUMMARY' in l]
 nav = [l for l in log if l.startswith('NAV_KEYS')]
 navh = hashlib.sha256('\n'.join(nav).encode()).hexdigest()[:8]
+body = [l for l in log if not l.startswith('[portstate-seed]')]
+logh = hashlib.sha256('\n'.join(body).encode()).hexdigest()[:8]
+print(f'[{name}] log lines={len(body)} sha8(no seed line)={logh}', flush=True)
 cf = root / 'videocfg.bin'
 cfh = hashlib.sha256(cf.read_bytes()).hexdigest()[:8] if cf.exists() else 'absent'
 if cf.exists():
