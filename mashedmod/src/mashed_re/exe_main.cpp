@@ -177,6 +177,7 @@
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 #include "Frontend/RowMovers.h"             // FrontendModeIndex / SplitScreenTrackAssignment: matched 0x004309b0 / 0x00430830
 #include "Frontend/PortStateFrontend.h"     // MASHED_PORTSTATE_FRONTEND + the DAT_0067e9fc bridge (PORT-STATE-01)
+#include "Compat/PortStateSeed.h"           // MASHED_PORTSTATE_SEED: original file-backed bytes into the pad (PORT-STATE-02, L-99 a)
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
@@ -9413,6 +9414,9 @@ namespace mashed_re { namespace Race { void GameFlow_BootSpan(unsigned char span
 namespace mashed_re { namespace Frontend { void Nav_GameStateSeedSpan(const unsigned char* span); } }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
+    // PORT-STATE-02 (L-99 a): MASHED_PORTSTATE_SEED (default OFF) copies the generated table of the original's
+    // file-backed .rdata/.data values into the B17 pad before any game code runs. OFF = no write, no log.
+    mashed_re::Compat::PortStateSeed_Apply();
     ApplyResolutionEnv();   // MASHED_HIRES=1 -> 1280x960 (else 640x480); before window+device
     // Self-locating asset root. Every data path in this exe (and the log) is
     // relative to the REPO ROOT ("original/TOASTART/..."), so a launch whose
@@ -9458,6 +9462,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         std::FILE* clr = std::fopen(kLogPath, "w");
         if (clr) std::fclose(clr);
     }
+    mashed_re::Compat::PortStateSeed_Log(kLogPath);   // ON only (PORT-STATE-02)
 
     // Scripted nav-demo verification harness (in-process input only). Enabled
     // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.

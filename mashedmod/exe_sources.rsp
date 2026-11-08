@@ -157,6 +157,7 @@
 "D3d9Render\MashedFont.cpp"
 "D3d9Render\MenuStringTable.cpp"
 "Compat\StandaloneRvaThunks.cpp"
+"Compat\PortStateSeed.cpp"
 "Stubs\HookSystemNoOp.cpp"
 "Frontend\MenuInit.cpp"
 "Frontend\MenuButtonDetect.cpp"
