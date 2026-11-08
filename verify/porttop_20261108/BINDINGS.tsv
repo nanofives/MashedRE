@@ -1,0 +1,261 @@
+rva	name	kind	exe_symbol	note	level	caller
+0x00492370	sub_00492370	matched	Orig_00492370	re/match/s15/00492370.c (100%), Match/PortTop_00492370.cpp. Entered from the exe WinMain when MASHED_ORIG_TOP=1	0	
+0x00492290	sub_00492290	matched	Orig_00492290	re/match/s15/00492290.c (100%), Match/PortTop_00492370.cpp	0	0x00492370
+0x00499ba0	sub_00499ba0	matched	Orig_00499ba0	re/match/s16/00499ba0.c (h6), Match/PortTop_00499ba0.cpp. Creates the window (class MASHED, WndProc 0x00499820)	1	0x00492370
+0x00493900	sub_00493900	matched	Orig_00493900	re/match/s15/00493900.c, best 66.9% (hooks C2), the only source. Match/PortTop_00493900.cpp. Parses -vs/-cs/-l switches	1	0x00492370
+0x00493540	thunk_LaunchLangGate	missing	PortTop_Missing_00493540	exe body thunk_LaunchLangGate (MatchS15_00493540.cpp) forwards to raw 0x00495150, which faults in the exe. 0x00495150 and its 6 callees have no exe body, no hand equivalent. Stub returns DAT_007719e4 == 0, as 0x00495150 does	1	0x00492370
+0x004924f0	sub_004924f0	stand-in	PortTop_StandIn_004924f0	job done by the hand boot chain steps 1-3 (ExecuteFrontendBootChain) inside the 0x00402750 stand-in. exe body Boot/SubsystemInit.cpp is a tunnel to the original address	1	0x00492370
+0x00492270	SubsystemInit	stand-in	PortTop_StandIn_00492270 -> HandTop_InitDevice	InitD3D9 + librw RaceSubmit_Init on the window 0x00499ba0 made. exe body SubsystemInit (MatchS15_00492270.cpp) forwards to raw 0x00493710 / 0x004921d0 / 0x00428590	1	0x00492370
+0x005c9d00	GetRaceEndTrigger	port	GetRaceEndTrigger	mashedmod/src/mashed_re/Util/GameStateGetters.cpp	1	0x00492370
+0x004996f0	WindowShow	matched	WindowShow	mashedmod/src/mashed_re/Match/MatchS16_004996f0.cpp	1	0x00492370
+0x004963e0	ConfigLogError	stand-in	PortTop_CfgLogError	exe body ConfigLogErrorCore is file-internal (Save/SettingsConfig.cpp, PORT-SAVE-01). Reference is a no-op under disable_log. Stub mirrors the text into mashed_re.log	1	0x00492370
+0x00402750	AppInitialiseOnBootup	stand-in	PortTop_StandIn_00402750 -> HandTop_InitRest	data wedge, boot chain B7/B10, DirectInput, dsound guard, boot movies, audio, frontend assets. PORT-TOP-04 replaces it	1	0x00492370
+0x00402a40	AppDestroy	stand-in	PortTop_StandIn_00402a40 -> HandTop_AppDestroy	Audio::Shutdown, ShutdownDirectInput, small.mpg close. PORT-TOP-04 replaces it	1	0x00492370
+0x004c5930	sub_004c5930	rw	PortTop_Rw_004c5930	RW texture-dictionary destroy (its source walks RwTexDictionary). Logged stub. Not reached: DAT_0077195c stays 0 because 0x004921d0 never runs in the exe. PORT-TOP-03	1	0x00492370
+0x00493550	thunk_EngineStopDispatch	stand-in	PortTop_StandIn_00493550 -> HandTop_DeviceShutdown	ShutdownD3D9 for 0x004938c0 (RW engine stop/close/term). exe body thunk_EngineStopDispatch forwards to raw 0x004938c0	1	0x00492370
+0x00493560	thunk_FUN_004954f0	missing	PortTop_Missing_00493560	0x004954f0 HardwareExitApplication and its 5 callees have no exe body. exe body thunk_HwExitDispatch forwards raw. Stub returns 0 like 0x004954f0	1	0x00492370
+0x00499cc0	sub_00499cc0	matched	Orig_00499cc0	re/match/s16/00499cc0.c, Match/PortTop_Leaves.cpp. DestroyWindow + returns the pump MSG wParam	1	0x00492370
+0x00492770	MainLoopInit	matched	PortTop_MainLoopInitGuarded -> MainLoopInit	mashedmod/src/mashed_re/Match/MatchS15_00492770.cpp, SEH-guarded: its 5 callees forward raw and fault (PORT-TOP-01). The hand boot chain also calls it once (step 7)	1	0x00492290
+0x00499690	WindowMsgPump	matched	WindowMsgPump	mashedmod/src/mashed_re/Match/MatchS16_00499690.cpp. Focus gate kept open (DAT_0077391c=1) as the reference no_focus_pause patch does; MASHED_ORIG_TOP_FOCUSPAUSE=1 keeps WaitMessage	1	0x00492290
+0x004929d0	FUN_004929d0	port	PortTop_Port_004929d0 -> GameModeMachine_Tick	mashedmod/src/mashed_re/Race/GameModeMachine.cpp wrapper the hand loop calls (no-op unless MASHED_PORTSTATE_GAMEFLOW_FU=1, which runs the matched 0x004929d0)	1	0x00492290
+0x00492d20	IntroSplashFrameTickShim	matched	IntroSplashFrameTickShim	mashedmod/src/mashed_re/Match/MatchS15_00492d20.cpp, now also in the exe list (its 0x004967e0 forwarder binds the stand-in in the exe)	1	0x00492290
+0x00492d30	GameTickStateMachine7	stand-in	PortTop_StandIn_00492d30 -> HandTop_FrameDetTick + HandTop_FrameUpdate	hand frame update (det frame cap, harness steps, menu nav, input globals, GameFlow_Update). 0x00492d30 dispatches on DAT_00771968, unported tree. PORT-TOP-05	1	0x00492290
+0x00492e90	FUN_00492e90	stand-in	PortTop_StandIn_00492e90 -> RenderFrame	hand RenderFrame; device loss posts WM_QUIT. PORT-TOP-05	1	0x00492290
+0x004926c0	AudioTickAndAvg	missing	PortTop_Missing_004926c0	exe body AudioTickAndAvg (MatchS15_004926c0.cpp) forwards its 5 callees raw (none has an exe body). No-op	1	0x00492290
+0x00493480	FpsDiscretise	missing	PortTop_Missing_00493480	exe body FpsDiscretise forwards raw to 0x00493390 (no exe body). No-op; hand pacing is the present/limiter in RenderFrame	1	0x00492290
+0x00499820	sub_00499820	matched	Orig_00499820	re/match/s16/00499820.c (h6), Match/PortTop_00499820.cpp. Window procedure of the knob window	2	0x00499ba0
+0x00498bc0	VideoGetRenderWidth	stand-in	PortTop_Width	exe resolution kWidth. exe body VideoGetRenderWidth reads DAT_00616028 = 0 in the exe; the reference returns 640 by fix_camera_res	2	0x00499ba0
+0x00498bd0	VideoGetRenderHeight	stand-in	PortTop_Height	exe resolution kHeight (see 0x00498bc0)	2	0x00499ba0
+0x00499890	FUN_00499890	matched	Orig_00499890	re/match/s16/00499890.c (h6), Match/PortTop_00499890.cpp. OS-version log	2	0x00499ba0
+0x00499730	BootPtr773818Get	matched	BootPtr773818Get	mashedmod/src/mashed_re/Match/MatchS16_00499730.cpp, now also in the exe list	2	0x00493900
+0x004a3ac9	FUN_004a3ac9	port	strtok	CRT (library row, out of the P-DoD port count)	2	0x00493900
+0x004b302f	__stricmp	port	_stricmp	CRT (library row)	2	0x00493900
+0x004a2be9	__security_check_cookie	port	__security_check_cookie	CRT /GS, emitted by the compiler	2	0x00493900
+0x004967e0	FUN_004967e0	stand-in	PortTop_StandIn_004967e0 -> PollKeyboard	hand DirectInput keyboard poll. 0x004967e0 is C2, no exe body	2	0x00492d20
+0x00496490	sub_00496490	missing	PortTop_Missing_00496490	log open on WM_CREATE: returns 0, the reference value under disable_log	3	0x00499820
+0x00496470	sub_00496470	missing	PortTop_Missing_00496470	log close on WM_DESTROY: no-op (handle NULL under disable_log)	3	0x00499820
+0x004960e0	sub_004960e0	stand-in	PortTop_StandIn_004960e0 -> Audio::SetOutputActive	the hand WndProc job on WM_ACTIVATE	3	0x00499820
+0x00496400	ConfigLogDebug	stand-in	PortTop_CfgLogDebug	exe body ConfigLogDebugCore is file-internal; reference RET under disable_log. Mirrors into mashed_re.log	3	0x00499890
+0x00495110	FUN_00495110	missing	MatchS15_00492770_Call00495110 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none 	2	0x00492770
+0x0042b920	ConstantGetter22	missing	MatchS15_00492770_Call0042b920 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b920.cpp	2	0x00492770
+0x0042b950	Set7f1a0c_1000	missing	MatchS15_00492770_Call0042b950 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none 	2	0x00492770
+0x00433240	FUN_00433240	missing	MatchS15_00492770_Call00433240 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none 	2	0x00492770
+0x004c57a0	FontCtxMatrix_AllocInit	rw	MatchS15_00492770_Call004c57a0 (raw forwarder)	MainLoopInit callee, forwards to the raw address and faults in the exe; PORT-TOP-01. exe port=none 	2	0x00492770
+0x00495150	FUN_00495150	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00493540
+0x00431ae0	FUN_00431ae0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431ae0.cpp; hooks C4	2	0x004924f0
+0x00431af0	FUN_00431af0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431af0.cpp; hooks C4	2	0x004924f0
+0x00431b00	FUN_00431b00	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431b00.cpp; hooks C4	2	0x004924f0
+0x00431b10	BootParamSet2	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004924f0
+0x00431d00	FUN_00431d00	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS07_00431d00.cpp; hooks C4	2	0x004924f0
+0x0045b350	RwInitNullStub	rw		RW core called by 0x004924f0. exe port=none ; hooks C4	2	0x004924f0
+0x00428590	ViewportInit	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS06_00428590.cpp; hooks C4	2	0x00492270
+0x004921d0	DisplayInit	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_004921d0.cpp; hooks C4	2	0x00492270
+0x00493710	FUN_00493710	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492270
+0x004a4254	FUN_004a4254	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x004963e0
+0x004025f0	FUN_004025f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004026d0	FUN_004026d0	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS01.cpp; hooks C4	2	0x00402750
+0x00402f50	FUN_00402f50	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS01.cpp; hooks C4	2	0x00402750
+0x00403640	FUN_00403640	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00404830	FUN_00404830	under-stand-in		parent bound to a stand-in, not reached. exe port= MASHED_STANDALONE only; not hooked  Vehicle/CarMaterialTables_dirt.inc; hooks C4	2	0x00402750
+0x0040bb30	FUN_0040bb30	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0040bb50	FUN_0040bb50	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/exe_main.cpp; hooks C4	2	0x00402750
+0x0040bbb0	FUN_0040bbb0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004113b0	FUN_004113b0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00412890	FUN_00412890	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00418980	thunk_FUN_0041a060	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041a1e0	FUN_0041a1e0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041b450	FUN_0041b450	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041bec0	FUN_0041bec0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041c100	FUN_0041c100	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041cb10	FUN_0041cb10	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS04_0041c320.cpp; hooks C4	2	0x00402750
+0x0041d6e0	FUN_0041d6e0	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS04_0041cd20.cpp; hooks C4	2	0x00402750
+0x0041d8b0	FUN_0041d8b0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041db90	FUN_0041db90	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041def0	FUN_0041def0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0041eaa0	FUN_0041eaa0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00420d00	PanelSortInit	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00425bc0	FUN_00425bc0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004274d0	LangIndexSeedFromCli	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004274e0	FUN_004274e0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004275d0	FUN_004275d0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00427ca0	FontText_HudInit	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS06_00427ca0.cpp; hooks C4	2	0x00402750
+0x00428390	FrontendStateSet	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004283a0	FUN_004283a0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00431b40	Set67eaa8	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0045bae0	FUN_0045bae0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004669b0	FUN_004669b0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x00402750
+0x004671a0	BackBuffRasterOpen	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00471eb0	thunk_FUN_00471df0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004723d0	Init691500	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x0047ba00	FUN_0047ba00	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x00402750
+0x00484170	Rec18Create	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004841d0	FUN_004841d0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x00402750
+0x004881d0	Obj7030a8Create	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00494c80	FUN_00494c80	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00495280	FUN_00495280	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004952f0	FUN_004952f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00495350	HardwareShowIntroVideo	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00496e40	PCVS_Init	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x00499ce0	FUN_00499ce0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004b3d80	FUN_004b3d80	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004b6540	thunk_FUN_004b6640	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004b6560	BootGlobalPairSetThunk	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402750
+0x004c2ed0	RwEngineGetModeInfo	rw		RW core called by 0x00402750. exe port=none ; hooks C4	2	0x00402750
+0x004c2f00	RwEngineGetCurrentMode	rw		RW core called by 0x00402750. exe port=body mashedmod/src/mashed_re/Match/MatchS19_004c2f00.cpp; hooks C4	2	0x00402750
+0x004caea0	FUN_004caea0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x00402750
+0x004d8560	FUN_004d8560	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Util/UtilLeaves_ab6.cpp; hooks C4	2	0x00402750
+0x00558240	FUN_00558240	rw		RW core called by 0x00402750. exe port=none ; hooks C2	2	0x00402750
+0x004014b0	FUN_004014b0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x004015a0	FUN_004015a0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00403660	FUN_00403660	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0040bd00	FUN_0040bd00	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0040cf80	FUN_0040cf80	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0040cfd0	FUN_0040cfd0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x004114c0	FUN_004114c0	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS02_004114c0.cpp; hooks C4	2	0x00402a40
+0x004189e0	thunk_FUN_004196f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041a3d0	FUN_0041a3d0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041b660	FUN_0041b660	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041c0e0	FUN_0041c0e0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041c2c0	FUN_0041c2c0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041ccf0	FUN_0041ccf0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041d890	FUN_0041d890	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041da80	FUN_0041da80	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041de70	FUN_0041de70	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041e0d0	FUN_0041e0d0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0041ffb0	FUN_0041ffb0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00421590	thunk_FUN_004210f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00425ed0	FUN_00425ed0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00426ba0	HudDrawEnabled	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS06_00426ba0.cpp; hooks C4	2	0x00402a40
+0x00426c00	FUN_00426c00	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS06_00426c00.cpp; hooks C4	2	0x00402a40
+0x00427620	FontText_HudShutdown	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00428400	FUN_00428400	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0042c2a0	FUN_0042c2a0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0045b930	FUN_0045b930	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00467010	FUN_00467010	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00467020	FUN_00467020	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00467070	FUN_00467070	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x0047ba10	thunk_FUN_00496970	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00484130	FUN_00484130	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00489250	FUN_00489250	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00494bc0	FUN_00494bc0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00494ef0	ThunkVideoStateGet	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Boot/Teardown.cpp; hooks C4	2	0x00402a40
+0x00494f20	thunk_FUN_00494460	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x00496ce0	FUN_00496ce0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x004b4880	FUN_004b4880	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x004b6550	thunk_FUN_004b6700	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x005581f0	FUN_005581f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00402a40
+0x004c5a60	FUN_004c5a60	rw		RW core called by 0x004c5930. exe port=none ; hooks C4	2	0x004c5930
+0x004d8060	RwPluginListDestructDispatch	rw		RW core called by 0x004c5930. exe port=none ; hooks C4	2	0x004c5930
+0x004938c0	SoftwareTidyUpBeforeExiting	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_004938c0.cpp; hooks C4	2	0x00493550
+0x004954f0	HardwareExitApplication	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00493560
+0x0040b430	FUN_0040b430	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b430.cpp; hooks C4	2	0x004929d0
+0x0040b540	PlayerScoreRankOrder	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b540.cpp|mashedmod/src/mashed_re/exe_main.cpp; hooks C4	2	0x004929d0
+0x0040b6d0	FUN_0040b6d0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b6d0.cpp; hooks C4	2	0x004929d0
+0x0040b6e0	FUN_0040b6e0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b6e0.cpp; hooks C4	2	0x004929d0
+0x0040b700	FUN_0040b700	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b700.cpp; hooks C4	2	0x004929d0
+0x0040d440	FUN_0040d440	missing		parent runs on the knob path, callee has no exe body. exe port=none ; hooks C4	2	0x004929d0
+0x0040e340	GetLiveCarCount	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040e340.cpp; hooks C4	2	0x004929d0
+0x0040e350	GetRenderSubMode	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040e350.cpp|mashedmod/src/mashed_re/Vehicle/ForceIntegratorStubs.cpp; hooks C4	2	0x004929d0
+0x0040e450	Flag63b908Get	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040e450.cpp; hooks C4	2	0x004929d0
+0x0040e460	Flag63b908Set	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040e460.cpp; hooks C4	2	0x004929d0
+0x0042b8d0	StatePhaseIsIdle	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b8d0.cpp; hooks C4	2	0x004929d0
+0x0042b8e0	FUN_0042b8e0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b8e0.cpp; hooks C4	2	0x004929d0
+0x0042b8f0	StatePhaseIsFinal	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b8f0.cpp; hooks C4	2	0x004929d0
+0x0042b910	FUN_0042b910	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b910.cpp; hooks C4	2	0x004929d0
+0x0042b930	MenuAlphaGet	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b930.cpp; hooks C4	2	0x004929d0
+0x0042b940	FUN_0042b940	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042b940.cpp; hooks C4	2	0x004929d0
+0x0042c1c0	FUN_0042c1c0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042c1c0.cpp; hooks C4	2	0x004929d0
+0x0042c1d0	FUN_0042c1d0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042c1d0.cpp; hooks C4	2	0x004929d0
+0x0042c220	FUN_0042c220	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042c220.cpp; hooks C4	2	0x004929d0
+0x0042c280	FUN_0042c280	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042c280.cpp; hooks C4	2	0x004929d0
+0x0042c2d0	GetDat0067ecb4	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042c2d0.cpp; hooks C4	2	0x004929d0
+0x0042c2e0	GetDat0067ecb8	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042c2e0.cpp; hooks C4	2	0x004929d0
+0x0042c2f0	SetDat0067ecb8	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042c2f0.cpp; hooks C4	2	0x004929d0
+0x0042f500	GetDat0067ea64	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042f500.cpp; hooks C4	2	0x004929d0
+0x0042f6a0	GetRaceSubMode	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_0042f6a0.cpp; hooks C4	2	0x004929d0
+0x00432080	RaceEndCheckFinish	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00432080.cpp; hooks C4	2	0x004929d0
+0x004331a0	RaceFinalizeOnce	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS08_004331a0.cpp; hooks C4	2	0x004929d0
+0x00448700	VehicleSeedWritePair	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS08_00448700.cpp; hooks C4	2	0x004929d0
+0x004927c0	FUN_004927c0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchGFFU_004927c0.cpp; hooks C4	2	0x004929d0
+0x004030d0	FUN_004030d0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
+0x004111c0	FUN_004111c0	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchT01G_004111c0.cpp; hooks C2	2	0x00492d30
+0x0043d7c0	FUN_0043d7c0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
+0x0043dfd0	FUN_0043dfd0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Race/RaceModes.cpp; hooks C2	2	0x00492d30
+0x004950b0	QpcTimeScaledTo3Mhz	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
+0x00496920	TimerTable772ffcGet	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
+0x00498860	FUN_00498860	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
+0x00403050	FUN_00403050	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x00404320	PerModeRenderMachine	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0040de30	sub_0040de30	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0040df20	sub_0040df20	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0040df60	ConditionalRenderSubPass	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0040dfc0	HudIngameDispatch	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040dfc0.cpp; hooks C4	2	0x00492e90
+0x00410b30	sub_00410b30	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x00426030	FUN_00426030	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x00426670	WorldRenderDispatch_Begin	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x004266b0	WorldRenderDispatch_End	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0042a9f0	GetFadeAlpha	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0042d390	GetRaceStateField	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0042f510	Vehicle0HandleGet	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS07_0042f510.cpp; hooks C4	2	0x00492e90
+0x0042f530	sub_0042f530	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x00492e90
+0x00430b90	FUN_00430b90	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x00433f40	MenuModalRender	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C3	2	0x00492e90
+0x0043c5b0	MenuDrawLoop	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x004671c0	GetOverlayCamera	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS11_004671c0.cpp; hooks C4	2	0x00492e90
+0x00492440	sub_00492440	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_00492440.cpp; hooks C4	2	0x00492e90
+0x00492e60	sub_00492e60	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS15_00492e60.cpp; hooks C4	2	0x00492e90
+0x00498bf0	DisplayActiveFlagGet	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Boot/FrameDispatch.cpp|mashedmod/src/mashed_re/Match/MatchS16_00498bf0.cpp; hooks C4	2	0x00492e90
+0x004c19f0	RwVtableSlot07Call	rw		RW core called by 0x00492e90. exe port=body mashedmod/src/mashed_re/Boot/FrameDispatch.cpp|mashedmod/src/mashed_re/Match/MatchS19_004c19f0.cpp; hooks C4	2	0x00492e90
+0x004c1a00	IntroSplashVtableSlot6	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x004c1bb0	IntroSplashRenderState	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x004c1be0	sub_004c1be0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x004c1c80	FUN_004c1c80	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
+0x0045d3f0	FUN_0045d3f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
+0x0045d430	FUN_0045d430	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
+0x00466b50	FUN_00466b50	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
+0x00496930	Table773030Get	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
+0x00493390	FUN_00493390	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00493480
+0x004c2fb0	RwEngineStart	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004c30b0	RwEngineOpen	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004c32b0	RwEngineInit	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004c9f50	RwGlobal7d4134Set	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004cbc60	RwGlobal7d4598Set	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004cbc70	RwGlobal7d4598Get	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004cbc80	RwGlobal7d459cSet	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004cbc90	RwGlobal7d459cGet	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x00550350	RtFSManagerOpen	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x005584c0	FUN_005584c0	rw		RW core called by level-2 node 0x00493710. exe port=none 	3	0x00493710
+0x004e6ab0	FUN_004e6ab0	rw		RW core called by level-2 node 0x0041cb10. exe port=none 	3	0x0041cb10
+0x004c0b30	FUN_004c0b30	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
+0x004c1040	FUN_004c1040	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
+0x004e69a0	FUN_004e69a0	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
+0x004e7e30	FUN_004e7e30	rw		RW core called by level-2 node 0x0041def0. exe port=none 	3	0x0041def0
+0x004cbd30	RwStreamRead	rw		RW core called by level-2 node 0x004274e0. exe port=body mashedmod/src/mashed_re/D3d9Render/RwWorldStream.cpp|mashedmod/src/mashed_re/Render/RwStreamCore.cpp	3	0x004274e0
+0x00552920	FUN_00552920	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
+0x00553cf0	FUN_00553cf0	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
+0x00553e80	FUN_00553e80	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
+0x00553ef0	FUN_00553ef0	rw		RW core called by level-2 node 0x004275d0. exe port=none 	3	0x004275d0
+0x00556d70	FUN_00556d70	rw		RW core called by level-2 node 0x00427ca0. exe port=none 	3	0x00427ca0
+0x004e8090	FUN_004e8090	rw		RW core called by level-2 node 0x004881d0. exe port=none 	3	0x004881d0
+0x00534b60	FUN_00534b60	rw		RW core called by level-2 node 0x004881d0. exe port=called mashedmod/src/mashed_re/Render/RfxEmitter.cpp	3	0x004881d0
+0x004eb3c0	FUN_004eb3c0	rw		RW core called by level-2 node 0x00496e40. exe port=none 	3	0x00496e40
+0x004eb9d0	FUN_004eb9d0	rw		RW core called by level-2 node 0x00496e40. exe port=none 	3	0x00496e40
+0x0054f8d0	FUN_0054f8d0	rw		RW core called by level-2 node 0x004b3d80. exe port=none 	3	0x004b3d80
+0x004cc7f0	FUN_004cc7f0	rw		RW core called by level-2 node 0x004caea0. exe port=none 	3	0x004caea0
+0x004ccc50	FUN_004ccc50	rw		RW core called by level-2 node 0x004caea0. exe port=none 	3	0x004caea0
+0x004c7650	FUN_004c7650	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x004c77c0	FUN_004c77c0	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x004cdca0	FUN_004cdca0	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x004cdd00	FUN_004cdd00	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x004cdd60	FUN_004cdd60	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x004d7ff0	RwIdentityPassthrough	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x004d8480	RwErrSlotWrite	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x00558180	FUN_00558180	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x00558400	FUN_00558400	rw		RW core called by level-2 node 0x00558240. exe port=none 	3	0x00558240
+0x004e45b0	RwFrameRemoveChild	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
+0x004e4860	RpWorldRemoveLight	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
+0x004e4d90	FUN_004e4d90	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
+0x004e5700	RpWorldDestroy	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
+0x004e6e00	RpClumpDestroy	rw		RW core called by level-2 node 0x004014b0. exe port=none 	3	0x004014b0
+0x004e6920	FUN_004e6920	rw		RW core called by level-2 node 0x0041e0d0. exe port=none 	3	0x0041e0d0
+0x004e4320	RwPluginLinkSet	rw		RW core called by level-2 node 0x00426670. exe port=none 	3	0x00426670
