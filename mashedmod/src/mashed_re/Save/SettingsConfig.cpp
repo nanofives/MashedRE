@@ -3,9 +3,10 @@
 //
 //   0x004963e0  ConfigLogError     void(const char*)      fputs to the log handle 0x00772fbc
 //   0x00496400  ConfigLogDebug     void(const char*, ...) vsprintf into 0x200 bytes, fputs to the log handle
-//   0x00498910  ConfigFilenameGet  char*()                "videocfg.bin" (0x005d012c) copied to 0x007731e8
-//   0x00498950  ConfigLoad         int()                  fopen "rb", fread 0x200 into 0x00773208
-//   0x004989b0  ConfigSave         int()                  fopen "wb", fwrite 0x200 from 0x00773208
+//   and the host thunks of the three matched videocfg functions (since PORT-STATE-02 their body is
+//   re/match/s16/00498950.c through Match/MatchS16_00498950.cpp, which also exports and installs them):
+//   filename get (copies "videocfg.bin" to 0x007731e8), load (fopen "rb", fread 0x200 into 0x00773208),
+//   save (fopen "wb", fwrite 0x200 from 0x00773208).
 //
 // Read from the disassembly of original/MASHED.exe.unpatched (re/tools/disasm_fn.py 004963e0 0049646f / 00498910
 // 004989fd). Two departures of the previous copies are corrected: ConfigLoad called FUN_004a4541 with a third argument
@@ -45,17 +46,9 @@ namespace {
 
 #ifdef MASHED_STANDALONE
 void*         s_logHandle = nullptr;
-char          s_filenameBuf[16];
-unsigned char s_settings[0x200];
 void**        LogHandle()   { return &s_logHandle; }
-char*         FilenameBuf() { return s_filenameBuf; }
-void*         SettingsBuf() { return s_settings; }
-const char*   kFilename   = "videocfg.bin";                 // 0x005d012c
-const char*   kFmtLoading = "Loading video cfg from %s\n";   // 0x005d013c
-const char*   kFmtSaving  = "Saving video cfg to %s\n";      // 0x005d0158
-const char*   kFailed     = "\tFAILED\n";                    // 0x005cfe70
-const char*   kModeRead   = "rb";                            // 0x005cf010
-const char*   kModeWrite  = "wb";                            // 0x005d00d8
+char*         FilenameBuf() { return reinterpret_cast<char*>(0x007731e8u); }   // the matched body's buffers (PORT-STATE-02)
+void*         SettingsBuf() { return reinterpret_cast<void*>(0x00773208u); }
 int      HostFputs(const char* s, void* f)                     { return std::fputs(s, static_cast<std::FILE*>(f)); }
 int      HostVsprintf(char* b, const char* f, va_list a)       { return std::vsprintf(b, f, a); }
 void*    HostFopen(const char* p, const char* m)               { return _fsopen(p, m, _SH_DENYNO); }
@@ -116,46 +109,31 @@ void ConfigLogDebugCore(const char* fmt, ...)
     va_end(ap);
 }
 
-// 0x00498910
-char* ConfigFilenameGetCore()
-{
-    char* dst = FilenameBuf();
-    std::memcpy(dst + 0, kFilename + 0, 4);                       // 0x00498910 / 0x00498921
-    std::memcpy(dst + 4, kFilename + 4, 4);                       // 0x00498915 / 0x00498930
-    std::memcpy(dst + 8, kFilename + 8, 4);                       // 0x0049891b / 0x00498936
-    dst[12] = kFilename[12];                                      // 0x00498926 / 0x0049892b
-    return dst;                                                   // 0x0049893c
+// The videocfg filename / load / save functions: their only body is the byte-matched re/match/s16/00498950.c (MATCH-S16, 100%),
+// compiled in both targets by Match/MatchS16_00498950.cpp (PORT-STATE-02, L-101). Its callees bind to the per-target
+// hosts above: FUN_004a4541 / 49cf / 4b22 / 4368 = HostFopen / Fread / Fwrite / Fclose, FUN_004963e0 / 00496400 = the
+// log cores. Its .rdata reads (0x005cf010 "rb", 0x005d00d8 "wb", 0x005d013c, 0x005d0158, 0x005cfe70) are the original's
+// own bytes in the .asi and the port-state seed's in the exe (Compat/PortStateSeed.cpp, default ON). With
+// MASHED_NO_PORTSTATE_SEED=1 the exe reads an empty fopen mode and the UCRT ends the process (0xC0000409), so that
+// opt-out needs MASHED_VIDEOCFG_WRITE=0 as well.
+struct FILE_;
+extern "C" char* __cdecl ConfigFilenameGet(void);   // Match/MatchS16_00498950.cpp
+extern "C" int   __cdecl ConfigLoad(void);
+extern "C" int   __cdecl ConfigSave(void);
+extern "C" void MatchVcfgLogError(const char* fmt, ...) { ConfigLogErrorCore(fmt); }
+extern "C" void MatchVcfgLogDebug(const char* fmt, ...) {
+    va_list ap; va_start(ap, fmt); ConfigLogDebugCoreV(fmt, ap); va_end(ap);
 }
-
-// 0x00498950
-int ConfigLoadCore()
-{
-    char* name = ConfigFilenameGetCore();                         // 0x00498951
-    ConfigLogDebugCore(kFmtLoading, name);                        // 0x00498958..0x0049895e
-    void* f = HostFopen(name, kModeRead);                         // 0x00498963..0x00498969 FUN_004a4541
-    if (f == nullptr) {                                           // 0x00498973..0x00498975
-        ConfigLogErrorCore(kFailed);                              // 0x00498999..0x0049899e
-        return 0;
-    }
-    HostFread(SettingsBuf(), 1, 0x200, f);                        // 0x00498977..0x00498984 FUN_004a49cf
-    HostFclose(f);                                                // 0x00498989..0x0049898a FUN_004a4368
-    return 1;
-}
-
-// 0x004989b0
-int ConfigSaveCore()
-{
-    char* name = ConfigFilenameGetCore();                         // 0x004989b1
-    ConfigLogDebugCore(kFmtSaving, name);                         // 0x004989b8..0x004989be
-    void* f = HostFopen(name, kModeWrite);                        // 0x004989c3..0x004989c9 FUN_004a4541
-    if (f == nullptr) return 0;                                   // 0x004989d3..0x004989d5, 0x004989f9 (no log)
-    HostFwrite(SettingsBuf(), 1, 0x200, f);                       // 0x004989d7..0x004989e4 FUN_004a4b22
-    HostFclose(f);                                                // 0x004989e9..0x004989ea
-    return 1;
-}
+extern "C" FILE_* MatchVcfgFopen(const char* n, const char* m) { return static_cast<FILE_*>(HostFopen(n, m)); }
+extern "C" unsigned MatchVcfgFread(void* b, unsigned s, unsigned n, FILE_* f) { return HostFread(b, s, n, f); }
+extern "C" unsigned MatchVcfgFwrite(const void* b, unsigned s, unsigned n, FILE_* f) { return HostFwrite(b, s, n, f); }
+extern "C" int MatchVcfgFclose(FILE_* f) { return HostFclose(f); }
+char* ConfigFilenameGetCore() { return ConfigFilenameGet(); }
+int   ConfigLoadCore()        { return ConfigLoad(); }
+int   ConfigSaveCore()        { return ConfigSave(); }
 
 #ifdef MASHED_STANDALONE
-// The exe's private 0x200-byte buffer (0x00773208 in the original), filled by Boot/VideoCfgFirstRun.cpp's port of
+// The 0x200-byte buffer at 0x00773208 (the matched body's), filled by Boot/VideoCfgFirstRun.cpp's port of
 // FUN_00498ea0 before ConfigSaveCore (MASHED_VIDEOCFG_WRITE, default ON, =0 opts out).
 void* ConfigSettingsBuf() { return SettingsBuf(); }
 #endif
@@ -345,12 +323,7 @@ extern "C" __declspec(dllexport) void __cdecl ConfigLogDebug(const char* fmt, ..
     va_list ap; va_start(ap, fmt); ConfigLogDebugCoreV(fmt, ap); va_end(ap);
 }
 RH_ScopedInstall(ConfigLogDebug, 0x00496400);
-extern "C" __declspec(dllexport) char* __cdecl ConfigFilenameGet() {
-    InterlockedIncrement(&g_live[2]); return ConfigFilenameGetCore();
-}
-RH_ScopedInstall(ConfigFilenameGet, 0x00498910);
-extern "C" __declspec(dllexport) int __cdecl ConfigLoad() { InterlockedIncrement(&g_live[3]); return ConfigLoadCore(); }
-RH_ScopedInstall(ConfigLoad, 0x00498950);
-extern "C" __declspec(dllexport) int __cdecl ConfigSave() { InterlockedIncrement(&g_live[4]); return ConfigSaveCore(); }
-RH_ScopedInstall(ConfigSave, 0x004989b0);
+// The three videocfg filename / load / save entries are exported and installed by
+// Match/MatchS16_00498950.cpp since PORT-STATE-02: the matched body is their only body. Their live counters
+// (g_live[2..4]) are no longer incremented.
 #endif

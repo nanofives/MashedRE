@@ -238,6 +238,7 @@
 "Save\VfsStream.cpp"
 "Save\FsOpen.cpp"
 "Save\SettingsConfig.cpp"
+"Match\MatchS16_00498950.cpp"
 "Save\FileWrappers.cpp"
 "Save\SettingsAndIO.cpp"
 "Save\SettingsDialog.cpp"
