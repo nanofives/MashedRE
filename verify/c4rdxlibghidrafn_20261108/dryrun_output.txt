@@ -1,0 +1,260 @@
+[1/129] 0x004ece75 libid PASS identical-unlisted ?c_D3DXVec3TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR3@@IPBUD3DXMATRIX@@I@Z
+[2/129] 0x004ecf59 libid PASS identical-unlisted ?c_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[3/129] 0x004ecfd0 libid PASS identical-unlisted ?c_D3DXVec3TransformNormalArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[4/129] 0x004ed09f libid PASS identical-unlisted ?c_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z
+[5/129] 0x004ed467 libid PASS identical-unlisted ?c_D3DXVec4Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[6/129] 0x004ed517 libid PASS identical-unlisted ?c_D3DXVec4TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[7/129] 0x004ed5e3 libid PASS identical-unlisted ?c_D3DXMatrixDeterminant@@YGMPBUD3DXMATRIX@@@Z
+[8/129] 0x004ed6c0 libid PASS identical-unlisted ?c_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+[9/129] 0x004ed909 libid PASS identical-unlisted ?c_D3DXMatrixTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@@Z
+[10/129] 0x004ed989 libid PASS identical-unlisted ?c_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z
+[11/129] 0x004edbd2 libid PASS identical-unlisted ?c_D3DXMatrixInverse@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z
+[12/129] 0x004edf9f libid PASS identical-unlisted ?c_D3DXMatrixScaling@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+[13/129] 0x004ee029 libid PASS identical-unlisted ?c_D3DXMatrixTranslation@@YGPAUD3DXMATRIX@@PAU1@MMM@Z
+[14/129] 0x004ee37f libid PASS identical-unlisted ?c_D3DXMatrixRotationQuaternion@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXQUATERNION@@@Z
+[15/129] 0x004ee5d4 libid PASS identical-unlisted ?c_D3DXQuaternionToAxisAngle@@YGXPBUD3DXQUATERNION@@PAUD3DXVECTOR3@@PAM@Z
+[16/129] 0x004ee616 libid PASS identical-unlisted ?c_D3DXQuaternionRotationMatrix@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z
+[17/129] 0x004ee7fa libid PASS identical-unlisted ?c_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z
+[18/129] 0x004ee8e6 libid PASS identical-unlisted ?c_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z
+[19/129] 0x004ee99c libid PASS identical-unlisted ?c_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[20/129] 0x004eea60 libid PASS identical-unlisted ?c_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[21/129] 0x004eeaee libid PASS identical-unlisted ?c_D3DXQuaternionExp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z
+[22/129] 0x004eebb0 libid PASS identical-unlisted ?c_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z
+[23/129] 0x004eedef libid PASS identical-unlisted ?c_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z
+[24/129] 0x004eee9d libid PASS identical-unlisted ?c_D3DXPlaneIntersectLine@@YGPAUD3DXVECTOR3@@PAU1@PBUD3DXPLANE@@PBU1@2@Z
+[25/129] 0x004eef4c libid PASS identical-unlisted ?c_D3DXPlaneFromPointNormal@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@1@Z
+[26/129] 0x004eef91 libid PASS identical-unlisted ?c_D3DXPlaneFromPoints@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@11@Z
+[27/129] 0x004ef040 libid PASS identical-unlisted ?c_D3DXPlaneTransform@@YGPAUD3DXPLANE@@PAU1@PBU1@PBUD3DXMATRIX@@@Z
+[28/129] 0x004ef0f0 libid PASS identical-unlisted ?c_D3DXPlaneTransformArray@@YGPAUD3DXPLANE@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z
+[29/129] 0x004ef1d1 libid PASS identical-unlisted ?c_D3DXVec2Normalize@@YGPAUD3DXVECTOR2@@PAU1@PBU1@@Z
+[30/129] 0x004f03c6 libid PASS identical-unlisted ?c_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z
+[31/129] 0x004fba47 libid PASS identical-unlisted ?c_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@@PAUD3DXVECTOR2@@KPAM222K@Z
+[32/129] 0x00504489 libid PASS identical-unlisted ?Init@CBuffer@D3DXCore@@UAEJK@Z
+[33/129] 0x005044bd libid PASS identical-unlisted ?Release@CBuffer@D3DXCore@@UAGKXZ
+[34/129] 0x00510809 libid PASS identical-unlisted ?IsEqual@CNodeToken@D3DXShader@@UAEHPAVCNode@2@@Z
+[35/129] 0x005108cd libid PASS identical-unlisted ?IsEqual@CNodeType@D3DXShader@@UAEHPAVCNode@2@@Z
+[36/129] 0x00513000 libid PASS identical-unlisted _a_atan
+[37/129] 0x005132c0 libid PASS identical-unlisted _a_asin
+[38/129] 0x005133c0 libid PASS identical-unlisted _a_log
+[39/129] 0x005134c0 libid PASS identical-unlisted _a_log10
+[40/129] 0x005134e0 libid PASS identical-unlisted _a_exp
+[41/129] 0x005135c0 libid PASS identical-unlisted _a_sqrt
+[42/129] 0x005135e0 libid PASS identical-unlisted _a_fabs
+[43/129] 0x00513600 libid PASS identical-unlisted _a_ceil
+[44/129] 0x00513640 libid PASS identical-unlisted _a_floor
+[45/129] 0x00513680 libid PASS identical-unlisted _a_frexp
+[46/129] 0x00513720 libid PASS identical-unlisted _a_modf
+[47/129] 0x00513ac0 libid PASS identical-unlisted _a_pow
+[48/129] 0x0049c790 libid PASS identical-unlisted ?GetSampleTimes@CBaseRenderer@@UAEJPAUIMediaSample@@PA_J1@Z
+[49/129] 0x0049c8c0 libid PASS identical-unlisted ?Render@CBaseRenderer@@UAEJPAUIMediaSample@@@Z
+[50/129] 0x0049ced0 libid PASS identical-unlisted ?CompleteConnect@CRendererInputPin@@UAEJPAUIPin@@@Z
+[51/129] 0x0049cf80 libid PASS identical-unlisted ?SetMediaType@CRendererInputPin@@UAEJPBVCMediaType@@@Z
+[52/129] 0x0049d0c0 libid PASS identical-unlisted ?RecordFrameLateness@CBaseVideoRenderer@@UAEXHH@Z
+[53/129] 0x0049d2d0 libid PASS identical-unlisted ?SetSink@CBaseVideoRenderer@@UAGJPAUIQualityControl@@@Z
+[54/129] 0x0049d2e0 libid PASS identical-unlisted ?Notify@CBaseVideoRenderer@@UAGJPAUIBaseFilter@@UtagQuality@@@Z
+[55/129] 0x0049d320 libid PASS identical-unlisted ?SendQuality@CBaseVideoRenderer@@UAEJ_J0@Z
+[56/129] 0x0049d490 libid PASS identical-unlisted ?ShouldDrawSampleNow@CBaseVideoRenderer@@UAEJPAUIMediaSample@@PA_J1@Z
+[57/129] 0x0049d8f0 libid PASS identical-unlisted ?ScheduleSample@CBaseVideoRenderer@@UAEHPAUIMediaSample@@@Z
+[58/129] 0x0049dbc0 libid PASS identical-unlisted ?get_DevSyncOffset@CBaseVideoRenderer@@UAGJPAH@Z
+[59/129] 0x0049dbf0 libid PASS identical-unlisted ?get_Jitter@CBaseVideoRenderer@@UAGJPAH@Z
+[60/129] 0x0049dc20 libid PASS identical-unlisted ?NonDelegatingQueryInterface@CBaseVideoRenderer@@UAGJABU_GUID@@PAPAX@Z
+[61/129] 0x0049e0a0 libid PASS identical-unlisted ?SourceThreadCanWait@CBaseRenderer@@UAEJH@Z
+[62/129] 0x0049e0d0 libid PASS identical-unlisted ?WaitForRenderTime@CBaseRenderer@@UAEJXZ
+[63/129] 0x0049e1f0 libid PASS identical-unlisted ?Stop@CBaseRenderer@@UAGJXZ
+[64/129] 0x0049e2c0 libid PASS identical-unlisted ?Pause@CBaseRenderer@@UAGJXZ
+[65/129] 0x0049e3b0 libid PASS identical-unlisted ?Run@CBaseRenderer@@UAGJ_J@Z
+[66/129] 0x0049e850 libid PASS identical-unlisted ?Receive@CBaseRenderer@@UAEJPAUIMediaSample@@@Z
+[67/129] 0x0049e9d0 libid PASS identical-unlisted ?SendEndOfStream@CBaseRenderer@@UAEJXZ
+[68/129] 0x0049eae0 libid PASS identical-unlisted ?Receive@CRendererInputPin@@UAGJPAUIMediaSample@@@Z
+[69/129] 0x0049ed70 libid PASS identical-unlisted ?GetClassID@CBaseFilter@@UAGJPAU_GUID@@@Z
+[70/129] 0x0049edb0 libid PASS identical-unlisted ?SetSyncSource@CBaseFilter@@UAGJPAUIReferenceClock@@@Z
+[71/129] 0x0049ee20 libid PASS identical-unlisted ?GetSyncSource@CBaseFilter@@UAGJPAPAUIReferenceClock@@@Z
+[72/129] 0x0049eed0 libid PASS identical-unlisted ?StreamTime@CBaseFilter@@UAEJAAVCRefTime@@@Z
+[73/129] 0x0049f160 libid PASS identical-unlisted ?AddRef@CEnumPins@@UAGKXZ
+[74/129] 0x0049f290 libid PASS identical-unlisted ?AddRef@CEnumMediaTypes@@UAGKXZ
+[75/129] 0x0049f360 libid PASS identical-unlisted ?NonDelegatingQueryInterface@CBasePin@@UAGJABU_GUID@@PAPAX@Z
+[76/129] 0x0049f3e0 libid PASS identical-unlisted ?NonDelegatingAddRef@CBasePin@@UAGKXZ
+[77/129] 0x0049f400 libid PASS identical-unlisted ?NonDelegatingRelease@CBasePin@@UAGKXZ
+[78/129] 0x0049f6b0 libid PASS identical-unlisted ?CheckConnect@CBasePin@@UAEJPAUIPin@@@Z
+[79/129] 0x0049f6e0 libid PASS identical-unlisted ?ReceiveConnection@CBasePin@@UAGJPAUIPin@@PBU_AMMediaType@@@Z
+[80/129] 0x0049f870 libid PASS identical-unlisted ?ConnectedTo@CBasePin@@UAGJPAPAUIPin@@@Z
+[81/129] 0x0049f8a0 libid PASS identical-unlisted ?ConnectionMediaType@CBasePin@@UAGJPAU_AMMediaType@@@Z
+[82/129] 0x0049f9c0 libid PASS identical-unlisted ?QueryDirection@CBasePin@@UAGJPAW4_PinDirection@@@Z
+[83/129] 0x0049f9e0 libid PASS identical-unlisted ?QueryAccept@CBasePin@@UAGJPBU_AMMediaType@@@Z
+[84/129] 0x0049fa50 libid PASS identical-unlisted ?SetSink@CBasePin@@UAGJPAUIQualityControl@@@Z
+[85/129] 0x0049fa80 libid PASS identical-unlisted ?NewSegment@CBasePin@@UAGJ_J0N@Z
+[86/129] 0x0049fb20 libid PASS identical-unlisted ?NonDelegatingQueryInterface@CBaseInputPin@@UAGJABU_GUID@@PAPAX@Z
+[87/129] 0x0049fb70 libid PASS identical-unlisted ?GetAllocator@CBaseInputPin@@UAGJPAPAUIMemAllocator@@@Z
+[88/129] 0x0049fc00 libid PASS identical-unlisted ?NotifyAllocator@CBaseInputPin@@UAGJPAUIMemAllocator@@H@Z
+[89/129] 0x0049fe70 libid PASS identical-unlisted ?ReceiveCanBlock@CBaseInputPin@@UAGJXZ
+[90/129] 0x0049ff90 libid PASS identical-unlisted ?Notify@CBaseInputPin@@UAGJPAUIBaseFilter@@UtagQuality@@@Z
+[91/129] 0x0049ffb0 libid PASS identical-unlisted ?CheckStreaming@CBaseInputPin@@UAEJXZ
+[92/129] 0x004a0460 libid PASS identical-unlisted ?Register@CBaseFilter@@UAGJXZ
+[93/129] 0x004a04d0 libid PASS identical-unlisted ?Unregister@CBaseFilter@@UAGJXZ
+[94/129] 0x004a06e0 libid PASS identical-unlisted ?Next@CEnumMediaTypes@@UAGJKPAPAU_AMMediaType@@PAK@Z
+[95/129] 0x004a0850 libid PASS identical-unlisted ?Skip@CEnumMediaTypes@@UAGJK@Z
+[96/129] 0x004a0910 libid PASS identical-unlisted ?Connect@CBasePin@@UAGJPAUIPin@@PBU_AMMediaType@@@Z
+[97/129] 0x004a0a20 libid PASS identical-unlisted ?Disconnect@CBasePin@@UAGJXZ
+[98/129] 0x004a0b70 libid PASS identical-unlisted ?Clone@CEnumPins@@UAGJPAPAUIEnumPins@@@Z
+[99/129] 0x004a0c70 libid PASS identical-unlisted ?Clone@CEnumMediaTypes@@UAGJPAPAUIEnumMediaTypes@@@Z
+[100/129] 0x004a0e00 libid PASS identical-unlisted ?EnumMediaTypes@CBasePin@@UAGJPAPAUIEnumMediaTypes@@@Z
+[101/129] 0x004a0f50 libid PASS identical-unlisted ?EnumPins@CBaseFilter@@UAGJPAPAUIEnumPins@@@Z
+[102/129] 0x004a1120 libid PASS identical-unlisted ?NonDelegatingRelease@CUnknown@@UAGKXZ
+[103/129] 0x004a18a0 libid PASS identical-unlisted ?GetIDsOfNames@CBaseDispatch@@QAGJABU_GUID@@PAPAGIKPAJ@Z
+[104/129] 0x004a1b20 libid PASS identical-unlisted ?GetCapabilities@CPosPassThru@@UAGJPAK@Z
+[105/129] 0x004a1b60 libid PASS identical-unlisted ?CheckCapabilities@CPosPassThru@@UAGJPAK@Z
+[106/129] 0x004a1ba0 libid PASS identical-unlisted ?IsFormatSupported@CPosPassThru@@UAGJPBU_GUID@@@Z
+[107/129] 0x004a1be0 libid PASS identical-unlisted ?QueryPreferredFormat@CPosPassThru@@UAGJPAU_GUID@@@Z
+[108/129] 0x004a1c20 libid PASS identical-unlisted ?SetTimeFormat@CPosPassThru@@UAGJPBU_GUID@@@Z
+[109/129] 0x004a1c60 libid PASS identical-unlisted ?GetTimeFormatA@CPosPassThru@@UAGJPAU_GUID@@@Z
+[110/129] 0x004a1ca0 libid PASS identical-unlisted ?IsUsingTimeFormat@CPosPassThru@@UAGJPBU_GUID@@@Z
+[111/129] 0x004a1ce0 libid PASS identical-unlisted ?ConvertTimeFormat@CPosPassThru@@UAGJPA_JPBU_GUID@@_J1@Z
+[112/129] 0x004a1d30 libid PASS identical-unlisted ?SetPositions@CPosPassThru@@UAGJPA_JK0K@Z
+[113/129] 0x004a1d80 libid PASS identical-unlisted ?GetPositions@CPosPassThru@@UAGJPA_J0@Z
+[114/129] 0x004a1df0 libid PASS identical-unlisted ?GetAvailable@CPosPassThru@@UAGJPA_J0@Z
+[115/129] 0x004a1e30 libid PASS identical-unlisted ?GetRate@CPosPassThru@@UAGJPAN@Z
+[116/129] 0x004a1e70 libid PASS identical-unlisted ?SetRate@CPosPassThru@@UAGJN@Z
+[117/129] 0x004a1ec0 libid PASS identical-unlisted ?get_Duration@CPosPassThru@@UAGJPAN@Z
+[118/129] 0x004a1f00 libid PASS identical-unlisted ?get_CurrentPosition@CPosPassThru@@UAGJPAN@Z
+[119/129] 0x004a1f40 libid PASS identical-unlisted ?put_CurrentPosition@CPosPassThru@@UAGJN@Z
+[120/129] 0x004a1f80 libid PASS identical-unlisted ?get_StopTime@CPosPassThru@@UAGJPAN@Z
+[121/129] 0x004a1fc0 libid PASS identical-unlisted ?put_StopTime@CPosPassThru@@UAGJN@Z
+[122/129] 0x004a2000 libid PASS identical-unlisted ?get_PrerollTime@CPosPassThru@@UAGJPAN@Z
+[123/129] 0x004a2040 libid PASS identical-unlisted ?put_PrerollTime@CPosPassThru@@UAGJN@Z
+[124/129] 0x004a2080 libid PASS identical-unlisted ?get_Rate@CPosPassThru@@UAGJPAN@Z
+[125/129] 0x004a20c0 libid PASS identical-unlisted ?put_Rate@CPosPassThru@@UAGJN@Z
+[126/129] 0x004a2120 libid PASS identical-unlisted ?CanSeekForward@CPosPassThru@@UAGJPAJ@Z
+[127/129] 0x004a2160 libid PASS identical-unlisted ?CanSeekBackward@CPosPassThru@@UAGJPAJ@Z
+[128/129] 0x004a2590 libid PASS identical-unlisted ?AddRef@CPosPassThru@@UAGKXZ
+[129/129] 0x004a25a0 libid PASS identical-unlisted ?Release@CPosPassThru@@UAGKXZ
+batch: 129 pass, 0 refused, 0 skipped (already C4), 129 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-08  0x004ece75  c_D3DXVec3TransformArray  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ecf59  c_D3DXVec3TransformNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ecfd0  c_D3DXVec3TransformNormalArray  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ed09f  c_D3DXVec4Cross  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ed467  c_D3DXVec4Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ed517  c_D3DXVec4TransformArray  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ed5e3  c_D3DXMatrixDeterminant  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ed6c0  c_D3DXMatrixMultiply  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ed909  c_D3DXMatrixTranspose  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ed989  c_D3DXMatrixMultiplyTranspose  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004edbd2  c_D3DXMatrixInverse  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004edf9f  c_D3DXMatrixScaling  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ee029  c_D3DXMatrixTranslation  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ee37f  c_D3DXMatrixRotationQuaternion  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ee5d4  c_D3DXQuaternionToAxisAngle  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ee616  c_D3DXQuaternionRotationMatrix  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ee7fa  c_D3DXQuaternionRotationYawPitchRoll  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ee8e6  c_D3DXQuaternionMultiply  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ee99c  c_D3DXQuaternionInverse  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004eea60  c_D3DXQuaternionLn  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004eeaee  c_D3DXQuaternionExp  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004eebb0  c_D3DXQuaternionSlerp  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004eedef  c_D3DXPlaneNormalize  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004eee9d  c_D3DXPlaneIntersectLine  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004eef4c  c_D3DXPlaneFromPointNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004eef91  c_D3DXPlaneFromPoints  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ef040  c_D3DXPlaneTransform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ef0f0  c_D3DXPlaneTransformArray  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004ef1d1  c_D3DXVec2Normalize  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004f03c6  c_D3DXQuaternionSquadSetup  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x004fba47  c_D3DXPSGPTessellateNPatch  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00504489  D3DXCore::CBuffer::Init  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005044bd  D3DXCore::CBuffer::Release  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00510809  D3DXShader::CNodeToken::IsEqual  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005108cd  D3DXShader::CNodeType::IsEqual  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00513000  a_atan  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005132c0  a_asin  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005133c0  a_log  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005134c0  a_log10  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005134e0  a_exp  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005135c0  a_sqrt  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x005135e0  a_fabs  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00513600  a_ceil  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00513640  a_floor  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00513680  a_frexp  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00513720  a_modf  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x00513ac0  a_pow  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: <RESULT>
+  2026-11-08  0x0049c790  CBaseRenderer::GetSampleTimes  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049c8c0  CBaseRenderer::Render  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049ced0  CRendererInputPin::CompleteConnect  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049cf80  CRendererInputPin::SetMediaType  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049d0c0  CBaseVideoRenderer::RecordFrameLateness  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049d2d0  CBaseVideoRenderer::SetSink  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049d2e0  CBaseVideoRenderer::Notify  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049d320  CBaseVideoRenderer::SendQuality  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049d490  CBaseVideoRenderer::ShouldDrawSampleNow  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049d8f0  CBaseVideoRenderer::ScheduleSample  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049dbc0  CBaseVideoRenderer::get_DevSyncOffset  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049dbf0  CBaseVideoRenderer::get_Jitter  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049dc20  CBaseVideoRenderer::NonDelegatingQueryInterface  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049e0a0  CBaseRenderer::SourceThreadCanWait  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049e0d0  CBaseRenderer::WaitForRenderTime  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049e1f0  CBaseRenderer::Stop  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049e2c0  CBaseRenderer::Pause  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049e3b0  CBaseRenderer::Run  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049e850  CBaseRenderer::Receive  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049e9d0  CBaseRenderer::SendEndOfStream  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049eae0  CRendererInputPin::Receive  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049ed70  CBaseFilter::GetClassID  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049edb0  CBaseFilter::SetSyncSource  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049ee20  CBaseFilter::GetSyncSource  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049eed0  CBaseFilter::StreamTime  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f160  CEnumPins::AddRef  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f290  CEnumMediaTypes::AddRef  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f360  CBasePin::NonDelegatingQueryInterface  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f3e0  CBasePin::NonDelegatingAddRef  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f400  CBasePin::NonDelegatingRelease  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f6b0  CBasePin::CheckConnect  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f6e0  CBasePin::ReceiveConnection  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f870  CBasePin::ConnectedTo  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f8a0  CBasePin::ConnectionMediaType  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f9c0  CBasePin::QueryDirection  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049f9e0  CBasePin::QueryAccept  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049fa50  CBasePin::SetSink  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049fa80  CBasePin::NewSegment  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049fb20  CBaseInputPin::NonDelegatingQueryInterface  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049fb70  CBaseInputPin::GetAllocator  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049fc00  CBaseInputPin::NotifyAllocator  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049fe70  CBaseInputPin::ReceiveCanBlock  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049ff90  CBaseInputPin::Notify  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x0049ffb0  CBaseInputPin::CheckStreaming  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0460  CBaseFilter::Register  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a04d0  CBaseFilter::Unregister  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a06e0  CEnumMediaTypes::Next  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0850  CEnumMediaTypes::Skip  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0910  CBasePin::Connect  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0a20  CBasePin::Disconnect  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0b70  CEnumPins::Clone  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0c70  CEnumMediaTypes::Clone  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0e00  CBasePin::EnumMediaTypes  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a0f50  CBaseFilter::EnumPins  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1120  CUnknown::NonDelegatingRelease  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a18a0  CBaseDispatch::GetIDsOfNames  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1b20  CPosPassThru::GetCapabilities  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1b60  CPosPassThru::CheckCapabilities  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1ba0  CPosPassThru::IsFormatSupported  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1be0  CPosPassThru::QueryPreferredFormat  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1c20  CPosPassThru::SetTimeFormat  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1c60  CPosPassThru::GetTimeFormatA  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1ca0  CPosPassThru::IsUsingTimeFormat  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1ce0  CPosPassThru::ConvertTimeFormat  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1d30  CPosPassThru::SetPositions  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1d80  CPosPassThru::GetPositions  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1df0  CPosPassThru::GetAvailable  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1e30  CPosPassThru::GetRate  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1e70  CPosPassThru::SetRate  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1ec0  CPosPassThru::get_Duration  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1f00  CPosPassThru::get_CurrentPosition  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1f40  CPosPassThru::put_CurrentPosition  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1f80  CPosPassThru::get_StopTime  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a1fc0  CPosPassThru::put_StopTime  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a2000  CPosPassThru::get_PrerollTime  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a2040  CPosPassThru::put_PrerollTime  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a2080  CPosPassThru::get_Rate  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a20c0  CPosPassThru::put_Rate  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a2120  CPosPassThru::CanSeekForward  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a2160  CPosPassThru::CanSeekBackward  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a2590  CPosPassThru::AddRef  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>
+  2026-11-08  0x004a25a0  CPosPassThru::Release  C1->C4  route libid (L-93): library identity, verify/c4rdshowbase_20261107/rel_ob1.tsv; evidence: <RESULT>

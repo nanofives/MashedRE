@@ -1,0 +1,97 @@
+rva	lib_function	library_object	lib_size	pc_body_size	verdict	why
+0x004943d0	??_G?$CGenericList@UIMediaSample@@@@QAEPAXI@Z|??_GCAMSchedule@@UAEPAXI@Z|??_GCBaseReferenceClock@@MAEPAXI@Z	amfilter.obj|ctlutil.obj|dllentry.obj|outputq.obj|pullpin.obj|refclock.obj|renbase.obj|schedule.obj|source.obj|sysclock.obj|transfrm.obj|transip.obj|vtrans.obj|winutil.obj	30	30	skip	hooks.csv row present; ambiguous: 23 library functions
+0x00494c60	??_G?$CGenericList@UIMediaSample@@@@QAEPAXI@Z|??_GCAMSchedule@@UAEPAXI@Z|??_GCBaseReferenceClock@@MAEPAXI@Z	amfilter.obj|ctlutil.obj|dllentry.obj|outputq.obj|pullpin.obj|refclock.obj|renbase.obj|schedule.obj|source.obj|sysclock.obj|transfrm.obj|transip.obj|vtrans.obj|winutil.obj	30	30	skip	hooks.csv row present; ambiguous: 23 library functions
+0x0049c790	?GetSampleTimes@CBaseRenderer@@UAEJPAUIMediaSample@@PA_J1@Z	renbase.obj	92		skip	no pc_funcs boundary at rva
+0x0049c8c0	?Render@CBaseRenderer@@UAEJPAUIMediaSample@@@Z	renbase.obj	63		skip	no pc_funcs boundary at rva
+0x0049ced0	?CompleteConnect@CRendererInputPin@@UAEJPAUIPin@@@Z	renbase.obj	40		skip	no pc_funcs boundary at rva
+0x0049cf80	?SetMediaType@CRendererInputPin@@UAEJPBVCMediaType@@@Z	renbase.obj	38		skip	no pc_funcs boundary at rva
+0x0049d0c0	?RecordFrameLateness@CBaseVideoRenderer@@UAEXHH@Z	renbase.obj	268		skip	no pc_funcs boundary at rva
+0x0049d2d0	?SetSink@CBaseVideoRenderer@@UAGJPAUIQualityControl@@@Z	renbase.obj	16		skip	no pc_funcs boundary at rva
+0x0049d2e0	?Notify@CBaseVideoRenderer@@UAGJPAUIBaseFilter@@UtagQuality@@@Z	renbase.obj	58		skip	no pc_funcs boundary at rva
+0x0049d320	?SendQuality@CBaseVideoRenderer@@UAEJ_J0@Z	renbase.obj	359		skip	no pc_funcs boundary at rva
+0x0049d490	?ShouldDrawSampleNow@CBaseVideoRenderer@@UAEJPAUIMediaSample@@PA_J1@Z	renbase.obj	1105		skip	no pc_funcs boundary at rva
+0x0049d8f0	?ScheduleSample@CBaseVideoRenderer@@UAEHPAUIMediaSample@@@Z	renbase.obj	38		skip	no pc_funcs boundary at rva
+0x0049dbc0	?get_DevSyncOffset@CBaseVideoRenderer@@UAGJPAH@Z	renbase.obj	44		skip	no pc_funcs boundary at rva
+0x0049dbf0	?get_Jitter@CBaseVideoRenderer@@UAGJPAH@Z	renbase.obj	46		skip	no pc_funcs boundary at rva
+0x0049dc20	?NonDelegatingQueryInterface@CBaseVideoRenderer@@UAGJABU_GUID@@PAPAX@Z	renbase.obj	129		skip	no pc_funcs boundary at rva
+0x0049e0a0	?SourceThreadCanWait@CBaseRenderer@@UAEJH@Z	renbase.obj	37		skip	no pc_funcs boundary at rva
+0x0049e0d0	?WaitForRenderTime@CBaseRenderer@@UAEJXZ	renbase.obj	99		skip	no pc_funcs boundary at rva
+0x0049e1f0	?Stop@CBaseRenderer@@UAGJXZ	renbase.obj	199		skip	no pc_funcs boundary at rva
+0x0049e2c0	?Pause@CBaseRenderer@@UAGJXZ	renbase.obj	228		skip	no pc_funcs boundary at rva
+0x0049e3b0	?Run@CBaseRenderer@@UAGJ_J@Z	renbase.obj	246		skip	no pc_funcs boundary at rva
+0x0049e850	?Receive@CBaseRenderer@@UAEJPAUIMediaSample@@@Z	renbase.obj	363		skip	no pc_funcs boundary at rva
+0x0049e9d0	?SendEndOfStream@CBaseRenderer@@UAEJXZ	renbase.obj	154		skip	no pc_funcs boundary at rva
+0x0049eae0	?Receive@CRendererInputPin@@UAGJPAUIMediaSample@@@Z	renbase.obj	213		skip	no pc_funcs boundary at rva
+0x0049ed70	?GetClassID@CBaseFilter@@UAGJPAU_GUID@@@Z	amfilter.obj	50		skip	no pc_funcs boundary at rva
+0x0049edb0	?SetSyncSource@CBaseFilter@@UAGJPAUIReferenceClock@@@Z	amfilter.obj	109		skip	no pc_funcs boundary at rva
+0x0049ee20	?GetSyncSource@CBaseFilter@@UAGJPAPAUIReferenceClock@@@Z	amfilter.obj	130		skip	no pc_funcs boundary at rva
+0x0049eed0	?StreamTime@CBaseFilter@@UAEJAAVCRefTime@@@Z	amfilter.obj	62		skip	no pc_funcs boundary at rva
+0x0049f100	?QueryInterface@CEnumMediaTypes@@UAGJABU_GUID@@PAPAX@Z|?QueryInterface@CEnumPins@@UAGJABU_GUID@@PAPAX@Z	amfilter.obj	89		skip	ambiguous: 2 library functions; no pc_funcs boundary at rva
+0x0049f160	?AddRef@CEnumPins@@UAGKXZ	amfilter.obj	17		skip	no pc_funcs boundary at rva
+0x0049f230	?QueryInterface@CEnumMediaTypes@@UAGJABU_GUID@@PAPAX@Z|?QueryInterface@CEnumPins@@UAGJABU_GUID@@PAPAX@Z	amfilter.obj	89		skip	ambiguous: 2 library functions; no pc_funcs boundary at rva
+0x0049f290	?AddRef@CEnumMediaTypes@@UAGKXZ	amfilter.obj	17		skip	no pc_funcs boundary at rva
+0x0049f360	?NonDelegatingQueryInterface@CBasePin@@UAGJABU_GUID@@PAPAX@Z	amfilter.obj	125		skip	no pc_funcs boundary at rva
+0x0049f3e0	?NonDelegatingAddRef@CBasePin@@UAGKXZ	amfilter.obj	20		skip	no pc_funcs boundary at rva
+0x0049f400	?NonDelegatingRelease@CBasePin@@UAGKXZ	amfilter.obj	20		skip	no pc_funcs boundary at rva
+0x0049f6b0	?CheckConnect@CBasePin@@UAEJPAUIPin@@@Z	amfilter.obj	42		skip	no pc_funcs boundary at rva
+0x0049f6e0	?ReceiveConnection@CBasePin@@UAGJPAUIPin@@PBU_AMMediaType@@@Z	amfilter.obj	333		skip	no pc_funcs boundary at rva
+0x0049f870	?ConnectedTo@CBasePin@@UAGJPAPAUIPin@@@Z	amfilter.obj	48		skip	no pc_funcs boundary at rva
+0x0049f8a0	?ConnectionMediaType@CBasePin@@UAGJPAU_AMMediaType@@@Z	amfilter.obj	168		skip	no pc_funcs boundary at rva
+0x0049f9c0	?QueryDirection@CBasePin@@UAGJPAW4_PinDirection@@@Z	amfilter.obj	30		skip	no pc_funcs boundary at rva
+0x0049f9e0	?QueryAccept@CBasePin@@UAGJPBU_AMMediaType@@@Z	amfilter.obj	42		skip	no pc_funcs boundary at rva
+0x0049fa50	?SetSink@CBasePin@@UAGJPAUIQualityControl@@@Z	amfilter.obj	37		skip	no pc_funcs boundary at rva
+0x0049fa80	?NewSegment@CBasePin@@UAGJ_J0N@Z	amfilter.obj	60		skip	no pc_funcs boundary at rva
+0x0049fb20	?NonDelegatingQueryInterface@CBaseInputPin@@UAGJABU_GUID@@PAPAX@Z	amfilter.obj	78		skip	no pc_funcs boundary at rva
+0x0049fb70	?GetAllocator@CBaseInputPin@@UAGJPAPAUIMemAllocator@@@Z	amfilter.obj	142		skip	no pc_funcs boundary at rva
+0x0049fc00	?NotifyAllocator@CBaseInputPin@@UAGJPAUIMemAllocator@@H@Z	amfilter.obj	125		skip	no pc_funcs boundary at rva
+0x0049fe70	?ReceiveCanBlock@CBaseInputPin@@UAGJXZ	amfilter.obj	182		skip	no pc_funcs boundary at rva
+0x0049ff90	?Notify@CBaseInputPin@@UAGJPAUIBaseFilter@@UtagQuality@@@Z	amfilter.obj	20		skip	no pc_funcs boundary at rva
+0x0049ffb0	?CheckStreaming@CBaseInputPin@@UAEJXZ	amfilter.obj	45		skip	no pc_funcs boundary at rva
+0x004a0460	?Register@CBaseFilter@@UAGJXZ	amfilter.obj	107		skip	no pc_funcs boundary at rva
+0x004a04d0	?Unregister@CBaseFilter@@UAGJXZ	amfilter.obj	125		skip	no pc_funcs boundary at rva
+0x004a06e0	?Next@CEnumMediaTypes@@UAGJKPAPAU_AMMediaType@@PAK@Z	amfilter.obj	355		skip	no pc_funcs boundary at rva
+0x004a0850	?Skip@CEnumMediaTypes@@UAGJK@Z	amfilter.obj	184		skip	no pc_funcs boundary at rva
+0x004a0910	?Connect@CBasePin@@UAGJPAUIPin@@PBU_AMMediaType@@@Z	amfilter.obj	258		skip	no pc_funcs boundary at rva
+0x004a0a20	?Disconnect@CBasePin@@UAGJXZ	amfilter.obj	129		skip	no pc_funcs boundary at rva
+0x004a0b70	?Clone@CEnumPins@@UAGJPAPAUIEnumPins@@@Z	amfilter.obj	156		skip	no pc_funcs boundary at rva
+0x004a0c70	?Clone@CEnumMediaTypes@@UAGJPAPAUIEnumMediaTypes@@@Z	amfilter.obj	156		skip	no pc_funcs boundary at rva
+0x004a0e00	?EnumMediaTypes@CBasePin@@UAGJPAPAUIEnumMediaTypes@@@Z	amfilter.obj	136		skip	no pc_funcs boundary at rva
+0x004a0f50	?EnumPins@CBaseFilter@@UAGJPAPAUIEnumPins@@@Z	amfilter.obj	136		skip	no pc_funcs boundary at rva
+0x004a1120	?NonDelegatingRelease@CUnknown@@UAGKXZ	combase.obj	60		skip	no pc_funcs boundary at rva
+0x004a18a0	?GetIDsOfNames@CBaseDispatch@@QAGJABU_GUID@@PAPAGIKPAJ@Z	ctlutil.obj	73		skip	no pc_funcs boundary at rva
+0x004a18f0	?NonDelegatingQueryInterface@CAggDirectDraw@@UAGJABU_GUID@@PAPAX@Z|?NonDelegatingQueryInterface@CAggDrawSurface@@UAGJABU_GUID@@PAPAX@Z|?NonDelegatingQueryInterface@CBasePropertyPage@@UAGJABU_GUID@@PAPAX@Z	cprop.obj|ctlutil.obj|videoctl.obj	56		skip	ambiguous: 7 library functions; no pc_funcs boundary at rva
+0x004a1930	?GetTypeInfoCount@CBaseBasicVideo@@UAGJPAI@Z|?GetTypeInfoCount@CBaseVideoWindow@@UAGJPAI@Z|?GetTypeInfoCount@CBasicAudio@@UAGJPAI@Z	ctlutil.obj	16		skip	ambiguous: 6 library functions; no pc_funcs boundary at rva
+0x004a1940	?GetTypeInfo@CBaseBasicVideo@@UAGJIKPAPAUITypeInfo@@@Z|?GetTypeInfo@CBaseVideoWindow@@UAGJIKPAPAUITypeInfo@@@Z|?GetTypeInfo@CBasicAudio@@UAGJIKPAPAUITypeInfo@@@Z	ctlutil.obj	36		skip	ambiguous: 6 library functions; no pc_funcs boundary at rva
+0x004a1970	?GetIDsOfNames@CBaseBasicVideo@@UAGJABU_GUID@@PAPAGIKPAJ@Z|?GetIDsOfNames@CBaseVideoWindow@@UAGJABU_GUID@@PAPAGIKPAJ@Z|?GetIDsOfNames@CBasicAudio@@UAGJABU_GUID@@PAPAGIKPAJ@Z	ctlutil.obj	24		skip	ambiguous: 6 library functions; no pc_funcs boundary at rva
+0x004a1978	?GetTypeInfoCount@CBaseBasicVideo@@UAGJPAI@Z|?GetTypeInfoCount@CBaseVideoWindow@@UAGJPAI@Z|?GetTypeInfoCount@CBasicAudio@@UAGJPAI@Z	ctlutil.obj	16		skip	ambiguous: 6 library functions; no pc_funcs boundary at rva
+0x004a1990	?Invoke@CBaseBasicVideo@@UAGJJABU_GUID@@KGPAUtagDISPPARAMS@@PAUtagVARIANT@@PAUtagEXCEPINFO@@PAI@Z|?Invoke@CBaseVideoWindow@@UAGJJABU_GUID@@KGPAUtagDISPPARAMS@@PAUtagVARIANT@@PAUtagEXCEPINFO@@PAI@Z|?Invoke@CBasicAudio@@UAGJJABU_GUID@@KGPAUtagDISPPARAMS@@PAUtagVARIANT@@PAUtagEXCEPINFO@@PAI@Z	ctlutil.obj	118		skip	ambiguous: 6 library functions; no pc_funcs boundary at rva
+0x004a1a10	?NonDelegatingQueryInterface@CPosPassThru@@UAGJABU_GUID@@PAPAX@Z	ctlutil.obj	80		skip	no pc_funcs boundary at rva
+0x004a1b20	?GetCapabilities@CPosPassThru@@UAGJPAK@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1b60	?CheckCapabilities@CPosPassThru@@UAGJPAK@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1ba0	?IsFormatSupported@CPosPassThru@@UAGJPBU_GUID@@@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1be0	?QueryPreferredFormat@CPosPassThru@@UAGJPAU_GUID@@@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1c20	?SetTimeFormat@CPosPassThru@@UAGJPBU_GUID@@@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1c60	?GetTimeFormatA@CPosPassThru@@UAGJPAU_GUID@@@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1ca0	?IsUsingTimeFormat@CPosPassThru@@UAGJPBU_GUID@@@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1ce0	?ConvertTimeFormat@CPosPassThru@@UAGJPA_JPBU_GUID@@_J1@Z	ctlutil.obj	70		skip	no pc_funcs boundary at rva
+0x004a1d30	?SetPositions@CPosPassThru@@UAGJPA_JK0K@Z	ctlutil.obj	65		skip	no pc_funcs boundary at rva
+0x004a1d80	?GetPositions@CPosPassThru@@UAGJPA_J0@Z	ctlutil.obj	55		skip	no pc_funcs boundary at rva
+0x004a1df0	?GetAvailable@CPosPassThru@@UAGJPA_J0@Z	ctlutil.obj	55		skip	no pc_funcs boundary at rva
+0x004a1e30	?GetRate@CPosPassThru@@UAGJPAN@Z	ctlutil.obj	50		skip	no pc_funcs boundary at rva
+0x004a1e70	?SetRate@CPosPassThru@@UAGJN@Z	ctlutil.obj	80		skip	no pc_funcs boundary at rva
+0x004a1ec0	?get_Duration@CPosPassThru@@UAGJPAN@Z	ctlutil.obj	53		skip	no pc_funcs boundary at rva
+0x004a1f00	?get_CurrentPosition@CPosPassThru@@UAGJPAN@Z	ctlutil.obj	53		skip	no pc_funcs boundary at rva
+0x004a1f40	?put_CurrentPosition@CPosPassThru@@UAGJN@Z	ctlutil.obj	58		skip	no pc_funcs boundary at rva
+0x004a1f80	?get_StopTime@CPosPassThru@@UAGJPAN@Z	ctlutil.obj	53		skip	no pc_funcs boundary at rva
+0x004a1fc0	?put_StopTime@CPosPassThru@@UAGJN@Z	ctlutil.obj	58		skip	no pc_funcs boundary at rva
+0x004a2000	?get_PrerollTime@CPosPassThru@@UAGJPAN@Z	ctlutil.obj	53		skip	no pc_funcs boundary at rva
+0x004a2040	?put_PrerollTime@CPosPassThru@@UAGJN@Z	ctlutil.obj	58		skip	no pc_funcs boundary at rva
+0x004a2080	?get_Rate@CPosPassThru@@UAGJPAN@Z	ctlutil.obj	53		skip	no pc_funcs boundary at rva
+0x004a20c0	?put_Rate@CPosPassThru@@UAGJN@Z	ctlutil.obj	83		skip	no pc_funcs boundary at rva
+0x004a2120	?CanSeekForward@CPosPassThru@@UAGJPAJ@Z	ctlutil.obj	53		skip	no pc_funcs boundary at rva
+0x004a2160	?CanSeekBackward@CPosPassThru@@UAGJPAJ@Z	ctlutil.obj	53		skip	no pc_funcs boundary at rva
+0x004a24a0	?GetDuration@CPosPassThru@@UAGJPA_J@Z|?GetPreroll@CPosPassThru@@UAGJPA_J@Z|?GetStopPosition@CPosPassThru@@UAGJPA_J@Z	ctlutil.obj	22		skip	ambiguous: 3 library functions; no pc_funcs boundary at rva
+0x004a24c0	?GetDuration@CPosPassThru@@UAGJPA_J@Z|?GetPreroll@CPosPassThru@@UAGJPA_J@Z|?GetStopPosition@CPosPassThru@@UAGJPA_J@Z	ctlutil.obj	22		skip	ambiguous: 3 library functions; no pc_funcs boundary at rva
+0x004a24e0	?GetDuration@CPosPassThru@@UAGJPA_J@Z|?GetPreroll@CPosPassThru@@UAGJPA_J@Z|?GetStopPosition@CPosPassThru@@UAGJPA_J@Z	ctlutil.obj	22		skip	ambiguous: 3 library functions; no pc_funcs boundary at rva
+0x004a2590	?AddRef@CPosPassThru@@UAGKXZ	ctlutil.obj	16		skip	no pc_funcs boundary at rva
+0x004a25a0	?Release@CPosPassThru@@UAGKXZ	ctlutil.obj	16		skip	no pc_funcs boundary at rva

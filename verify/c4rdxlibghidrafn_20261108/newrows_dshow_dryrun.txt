@@ -1,0 +1,16 @@
+addresses 96 Counter({'add': 82, 'skip': 14})
+  skip 0x004943d0 ??_G?$CGenericList@UIMediaSample@@@@QAEPAXI@Z|??_G | hooks.csv row present; ambiguous: 23 library functions
+  skip 0x00494c60 ??_G?$CGenericList@UIMediaSample@@@@QAEPAXI@Z|??_G | hooks.csv row present; ambiguous: 23 library functions
+  skip 0x0049f100 ?QueryInterface@CEnumMediaTypes@@UAGJABU_GUID@@PAP | ambiguous: 2 library functions; no pc_funcs boundary at rva
+  skip 0x0049f230 ?QueryInterface@CEnumMediaTypes@@UAGJABU_GUID@@PAP | ambiguous: 2 library functions; no pc_funcs boundary at rva
+  skip 0x004a18f0 ?NonDelegatingQueryInterface@CAggDirectDraw@@UAGJA | ambiguous: 7 library functions; no pc_funcs boundary at rva
+  skip 0x004a1930 ?GetTypeInfoCount@CBaseBasicVideo@@UAGJPAI@Z|?GetT | ambiguous: 6 library functions; no pc_funcs boundary at rva
+  skip 0x004a1940 ?GetTypeInfo@CBaseBasicVideo@@UAGJIKPAPAUITypeInfo | ambiguous: 6 library functions; no pc_funcs boundary at rva
+  skip 0x004a1970 ?GetIDsOfNames@CBaseBasicVideo@@UAGJABU_GUID@@PAPA | ambiguous: 6 library functions; no pc_funcs boundary at rva
+  skip 0x004a1978 ?GetTypeInfoCount@CBaseBasicVideo@@UAGJPAI@Z|?GetT | ambiguous: 6 library functions; no pc_funcs boundary at rva
+  skip 0x004a1990 ?Invoke@CBaseBasicVideo@@UAGJJABU_GUID@@KGPAUtagDI | ambiguous: 6 library functions; no pc_funcs boundary at rva
+  skip 0x004a1a10 ?NonDelegatingQueryInterface@CPosPassThru@@UAGJABU | no pc_funcs boundary at rva
+  skip 0x004a24a0 ?GetDuration@CPosPassThru@@UAGJPA_J@Z|?GetPreroll@ | ambiguous: 3 library functions; no pc_funcs boundary at rva
+  skip 0x004a24c0 ?GetDuration@CPosPassThru@@UAGJPA_J@Z|?GetPreroll@ | ambiguous: 3 library functions; no pc_funcs boundary at rva
+  skip 0x004a24e0 ?GetDuration@CPosPassThru@@UAGJPA_J@Z|?GetPreroll@ | ambiguous: 3 library functions; no pc_funcs boundary at rva
+dry run
