@@ -84,6 +84,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-08  0x004325c0  FUN_004325c0  C4->C4  file column only: Frontend/MenuAnimTickTwin.cpp (deleted) -> Match/MatchS08_004325c0.cpp (L-100 (a): matched source is the one body in both targets). re/match/s08/004325c0.c gained a MATCH_PORT guard around its static callee 0x0042ac50 (DDK text unchanged): match.py --bytes BYTE-IDENTICAL 564 B, 152/152 ins, relocheck OK checked=24 (unchecked __ftol, as before); src sha256 now 5c4b5ab1d8e19e54 (was 95490871ca55ac22); evidence: verify/portstate_20261108/RESULT_PORT-STATE-03.md
 2026-11-08  0x00430830  SplitScreenTrackAssignment  C4->C4  file column only: Frontend/MenuScoreSort.cpp -> Match/MatchS07_00430830.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
 2026-11-08  0x004309b0  FrontendModeIndex  C4->C4  file column only: Frontend/FrontendMode.cpp (deleted) -> Match/MatchS07_004309b0.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
 2026-11-08  0x004fc6f5  x86_D3DXVec2Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
