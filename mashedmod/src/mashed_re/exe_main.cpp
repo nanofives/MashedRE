@@ -175,7 +175,8 @@
 #include "LibRw/RwRaceSubmit.h"             // E2'b step 3: in-loop submit (the shipping race renderer)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
-#include "Frontend/RowMovers.h"             // FrontendModeIndexFor: 0x004309b0 (challenge launch gate)
+#include "Frontend/RowMovers.h"             // FrontendModeIndex / SplitScreenTrackAssignment: matched 0x004309b0 / 0x00430830
+#include "Frontend/PortStateFrontend.h"     // MASHED_PORTSTATE_FRONTEND + the DAT_0067e9fc bridge (PORT-STATE-01)
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
@@ -1689,7 +1690,7 @@ bool RunNavKeysStep() {
     if (lf) {
         std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d opp=%d,%d,%d\n",
                      frame, tap, Nav_Depth(), Nav_ScreenId(), Nav_Cursor(),
-                     Nav_ChallengeRow(), Nav_GameState().game_mode,
+                     Nav_ChallengeRow(), Nav_GameModeWord(),
                      Nav_GameState().sel_f184, Nav_GameState().ea68, Nav_NavFlagF1a4(),
                      static_cast<int>(mashed_re::Race::GameFlow_Mode()),
                      g_frontend_phase, Nav_GameState().ea98, Nav_GameState().ea9c, Nav_GameState().eaa0);
@@ -2179,6 +2180,26 @@ extern "C" void __cdecl RaceDiff360Live_TableInit(const char* site);
 // 0xff420000 on screens 18/24 (harvest L954-1035, the same reload + e914=1).
 // Was inline in the screen-6/7 confirm; moved out unchanged so screens 18/24
 // reach it too. Track = Campaign_SelectedTrack(), set by the caller.
+// PORT-STATE-01: the two exe call sites of the byte-matched 0x00430830 / 0x004309b0 outside MenuNavSM.cpp. Both
+// bodies read DAT_0067e9fc; the bridge (Frontend/PortStateFrontend.h) puts the caller's value there for the call.
+// s24 row 3 draws its arrows only when FUN_00430830(1) != 0 (0x0043b186..0x0043b199, 0x0043b35f..0x0043b388).
+static bool SplitScreenArrowsLocked() {
+    using namespace mashed_re::Frontend;
+    const ModeWordScope bridge(kSite00430830Arrows, Nav_GameModeWord());
+    const int ret = static_cast<int>(SplitScreenTrackAssignment(1));
+    bridge.Result(ret);
+    return ret == 0;
+}
+// The challenge launch gate's column, FUN_004309b0 on launchMode (the game mode with the standalone's 0 -> 3 default,
+// or MASHED_GAME_MODE), as the hand core was called before.
+static int FrontendModeIndexGate(int launchMode) {
+    using namespace mashed_re::Frontend;
+    const ModeWordScope bridge(kSite004309b0Gate, launchMode);
+    const int ret = FrontendModeIndex();
+    bridge.Result(ret);
+    return ret;
+}
+
 static void MenuLaunchRace(int launchMode) {
     char piz[160];
     RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
@@ -2346,7 +2367,7 @@ bool UpdateMenuSelection() {
                 // (GameFlow_RequestResults), so a mid-race Esc (gm==InRace)
                 // still exits straight to the menu — no push on aborts.
                 // Launch mode is read from the session config (survives into
-                // Results; Nav_GameState().game_mode can be mutated by the
+                // Results; Nav_GameModeWord() can be mutated by the
                 // continue-cup confirm itself). MASHED_CUP_STANDINGS=0 reverts.
                 static const bool s_cupstandings = [] {
                     const char* e = std::getenv("MASHED_CUP_STANDINGS");
@@ -2493,7 +2514,7 @@ bool UpdateMenuSelection() {
         }();
         const int tsid = Nav_ScreenId();
         if (s_tiers && (tsid == 6 || tsid == 7)) {
-            int& gm = mashed_re::Frontend::Nav_GameState().game_mode;
+            int& gm = mashed_re::Frontend::Nav_GameModeWord();
             const int cur_gm = (gm == 0) ? 3 : gm;   // unset -> mode 3 (this
                                                      // screen's launch default)
             if (cur_gm >= 3 && cur_gm <= 5) {
@@ -2579,7 +2600,7 @@ bool UpdateMenuSelection() {
             // verification (each real mode launches with its own rule below).
             // (Resolved BEFORE the track load so the tier launch gate below
             // can refuse without switching the loaded world.)
-            int launchMode = mashed_re::Frontend::Nav_GameState().game_mode;
+            int launchMode = mashed_re::Frontend::Nav_GameModeWord();
             if (launchMode == 0) launchMode = 3;
             bool modeForced = false;           // dev override bypasses the gate
             char gm[8] = {};
@@ -2618,8 +2639,7 @@ bool UpdateMenuSelection() {
             if (!trackOverride && !modeForced &&
                 Nav_SelectAction() == 0xff260000u) {
                 const int gateRow = Nav_ChallengeRow();                    // DAT_0067f17c
-                const int gateCol = mashed_re::Frontend::FrontendModeIndexFor(
-                    launchMode);                                           // FUN_004309b0
+                const int gateCol = FrontendModeIndexGate(launchMode);     // FUN_004309b0
                 const std::int32_t* const tbl =
                     reinterpret_cast<const std::int32_t*>(0x007f0a40);
                 if (tbl[gateCol + gateRow * 0xc] == 0) {
@@ -2647,7 +2667,7 @@ bool UpdateMenuSelection() {
             // DAT_0067e914=1, the launch. The modal itself is not ported: a zero
             // count refuses the launch silently. The per-slot AI assignment in
             // that arm is not ported either; MenuLaunchRace builds its own config.
-            int launchMode = Nav_GameState().game_mode;
+            int launchMode = Nav_GameModeWord();
             if (launchMode == 0) launchMode = 3;
             const MenuGameState& gs = Nav_GameState();
             const int opponents = (gs.ea98 != 0) + (gs.ea9c != 0) + (gs.eaa0 != 0);
@@ -7525,7 +7545,7 @@ bool RenderFrame() {
                 // 0x0043b35f..0x0043b388); s18 has no such test.
                 const bool arrows = g_menu_arrow_ready &&
                     !(sp && r == 3 &&
-                      mashed_re::Frontend::SplitScreenTrackAssignmentFor(gs.game_mode, 1) == 0);
+                      SplitScreenArrowsLocked());
                 const float ay = (kScrH * (cy - 6.0f)) * bitsF(0x3b088889u);
                 // Right arrow: FUN_004739f0("Arrow", A, ay, aw, ah, colour,
                 // mirrored u) at 0x0043b3d5 (s18) / 0x0043b1f8 (s24).

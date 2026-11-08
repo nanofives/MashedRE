@@ -76,7 +76,8 @@ enum NavDir : int { kNavPush = 0, kNavPop = 1, kNavReload = 2 };
 // loads a save or enters a mode can drive faithful deeper routing.
 struct MenuGameState {
     int  team_slot[4];      // DAT_007f1a14 / 24 / 34 / 44 (active player team; -1 = empty)
-    int  game_mode;         // DAT_0067e9fc (0 = none at fresh menu)
+    int  game_mode_off;     // DAT_0067e9fc (0 = none at fresh menu). Store used only with MASHED_PORTSTATE_FRONTEND
+                            //   OFF: read and write the word through Nav_GameModeWord() (PortStateFrontend.h)
     int  flag_ea64;         // DAT_0067ea64 (FUN_0042f500 return)
     int  flag_ecdc;         // DAT_0067ecdc
     int  flag_ed6c;         // DAT_0067ed6c
@@ -132,6 +133,8 @@ struct MenuGameState {
 
 // Access / reset the standalone game state (defaults = fresh main menu).
 MenuGameState& Nav_GameState();
+// The frontend's game-mode word: DAT_0067e9fc itself with MASHED_PORTSTATE_FRONTEND ON, else game_mode_off.
+int&           Nav_GameModeWord();
 void           Nav_GameStateReset();
 
 // Save-driven game state — scoped port of Save::DeserializeFromBuffer

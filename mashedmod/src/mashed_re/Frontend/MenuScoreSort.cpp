@@ -14,59 +14,9 @@
 
 #include <cstdint>
 
-// ---------------------------------------------------------------------------
-// SplitScreenTrackAssignment  --  0x00430830
-//
-// Original: FUN_00430830 (179 bytes, 0x00430830..0x004308e3)
-// Signature: undefined4 FUN_00430830(int param_1)
-//   param_1: slot index
-// Pure leaf; no callees.
-//
-// Switch on DAT_0067e9fc (game mode) — same global as GetRaceSubMode.
-// 0x00430835 add eax,-2 ; 0x00430838 cmp eax,8 ; ja 0x004308e1 (UNSIGNED):
-// modes outside 2..10 return 0 (0x004308e1 xor eax,eax). Jump table 0x004308e4.
-// EVERY case computes p*0x30 (lea r,[eax+eax*2] ; shl r,4) and loads one dword:
-//   mode 2  : [p*0x30 + 0x7f0a44]   0x00430848..0x00430852
-//   mode 3  : [p*0x30 + 0x7f0a44]   0x00430859..0x00430863
-//   mode 4  : [p*0x30 + 0x7f0a48]   0x0043086a..0x00430874
-//   mode 5  : [p*0x30 + 0x7f0a54]   0x0043087b..0x00430885
-//   mode 6  : [p*0x30 + 0x7f0a4c]   0x0043088c..0x00430896
-//   mode 7  : [p*0x30 + 0x7f0a60]   0x0043089d..0x004308a7
-//   mode 8  : [p*0x30 + 0x7f0a64]   0x004308ae..0x004308b8
-//   mode 9  : [p*0x30 + 0x7f0a68]   0x004308bf..0x004308c9
-//   mode 10 : [p*0x30 + 0x7f0a44]   0x004308d0..0x004308da
-// Re-ported 2026-10-12 (reearn/fstate): the previous port used stride 0xc for
-// every mode except 7/8, so any p != 0 read the wrong dword.
-// ---------------------------------------------------------------------------
-
-// 0x00430830 — the body, with the mode global as a parameter (RowMovers.h) so
-// the standalone's challenge-row movers run the same code on their own mode.
-std::uint32_t mashed_re::Frontend::SplitScreenTrackAssignmentFor(std::int32_t mode_s, int param_1) {
-    const std::uint32_t mode = static_cast<std::uint32_t>(mode_s);
-    std::uintptr_t col;
-    switch (mode) {
-    case 2:  col = 0x007f0a44u; break;   // 0x00430852
-    case 3:  col = 0x007f0a44u; break;   // 0x00430863
-    case 4:  col = 0x007f0a48u; break;   // 0x00430874
-    case 5:  col = 0x007f0a54u; break;   // 0x00430885
-    case 6:  col = 0x007f0a4cu; break;   // 0x00430896
-    case 7:  col = 0x007f0a60u; break;   // 0x004308a7
-    case 8:  col = 0x007f0a64u; break;   // 0x004308b8
-    case 9:  col = 0x007f0a68u; break;   // 0x004308c9
-    case 10: col = 0x007f0a44u; break;   // 0x004308da
-    default: return 0u;                  // 0x004308e1
-    }
-    const std::uint32_t off = static_cast<std::uint32_t>(param_1) * 0x30u;   // lea+shl 4, mod 2^32
-    return *reinterpret_cast<const std::uint32_t*>(static_cast<std::uint32_t>(col + off));
-}
-
-// 0x00430830 — hook binding: the image's mode global DAT_0067e9fc.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl SplitScreenTrackAssignment(int param_1) {
-    return mashed_re::Frontend::SplitScreenTrackAssignmentFor(
-        *reinterpret_cast<const std::int32_t*>(0x0067e9fcu), param_1);
-}
-
-RH_ScopedInstall(SplitScreenTrackAssignment, 0x00430830);  // re-ported 2026-10-12 reearn/fstate (stride 0x30 for every mode)
+// SplitScreenTrackAssignment (FUN_00430830): the byte-matched source re/match/s07/00430830.c is its one body,
+// Match/MatchS07_00430830.cpp (PORT-STATE-01, 2026-11-08). The hand port that stood here took the mode word as a
+// parameter. The exe callers now pass it through the DAT_0067e9fc bridge (Frontend/PortStateFrontend.h).
 
 // ---------------------------------------------------------------------------
 // PlayerColorTableGet  --  0x0040e3a0

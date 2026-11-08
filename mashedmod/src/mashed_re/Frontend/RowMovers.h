@@ -11,21 +11,23 @@
 #pragma once
 #include <cstdint>
 
+// 0x00430830 (FUN_00430830, SplitScreenTrackAssignment): one dword of the 0x007f0a40 table, row `p` (stride 0x30),
+// column chosen by DAT_0067e9fc. Modes outside 2..10 return 0. The one body is the byte-matched source
+// re/match/s07/00430830.c (Match/MatchS07_00430830.cpp, PORT-STATE-01). It reads DAT_0067e9fc: exe callers go through
+// the ModeWordScope bridge (Frontend/PortStateFrontend.h).
+extern "C" std::uint32_t __cdecl SplitScreenTrackAssignment(int param_1);
+// 0x004309b0 (FUN_004309b0, FrontendModeIndex): DAT_0067e9fc -> table column. The one body is the byte-matched source
+// re/match/s07/004309b0.c (Match/MatchS07_004309b0.cpp, PORT-STATE-01).
+extern "C" int __cdecl FrontendModeIndex();
+
 namespace mashed_re {
 namespace Frontend {
 
-// 0x00430830 (FUN_00430830, SplitScreenTrackAssignment): one dword of the
-// 0x007f0a40 table, row `p` (stride 0x30), column chosen by `mode`
-// (DAT_0067e9fc). Modes outside 2..10 return 0. Body: MenuScoreSort.cpp.
-std::uint32_t SplitScreenTrackAssignmentFor(std::int32_t mode, int p);
 
 // 0x00430910 (FUN_00430910, MenuOptionSlotGet): `mode` = DAT_0067e9fc,
 // `sel` = DAT_0067f184, `row` = DAT_0067f17c. Body: FrontendState.cpp.
 int MenuOptionSlotGetFor(std::int32_t mode, std::int32_t sel, std::int32_t row);
 
-// 0x004309b0 (FUN_004309b0, FrontendModeIndex): game mode -> table column.
-// Body: FrontendMode.cpp.
-int FrontendModeIndexFor(std::int32_t mode);
 
 // State and callees the two row movers touch. The pointers name the four
 // globals by their original addresses; the callees are FUN_00430830,
