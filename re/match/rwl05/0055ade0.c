@@ -35,6 +35,7 @@ int * FUN_0055ade0(int param_1,int *param_2)
     puVar1 = (unsigned int *)(*(int *)(param_1 + 0x60) + ((unsigned int)*(unsigned short *)(param_2 + 8) >> 5) * 4);
     *puVar1 = *puVar1 & ~(1 << ((unsigned int)*(unsigned short *)(param_2 + 8) & 0x1f));
     *(int *)(param_1 + 0x4c) = *(int *)(param_1 + 0x4c) + -1;
+    return param_2;
   }
   return param_2;
 }

@@ -23,7 +23,8 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x0055fe40 FUN_0055fe40
-void FUN_0055fe40(int *p,int v)
+int * FUN_0055fe40(int *p,int v)
 {
   p[1] = v;
+  return p;
 }

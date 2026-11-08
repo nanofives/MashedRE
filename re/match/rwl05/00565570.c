@@ -23,7 +23,8 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x00565570 FUN_00565570
-void FUN_00565570(int param_1,unsigned int param_2,unsigned short param_3)
+int FUN_00565570(int param_1,unsigned int param_2,unsigned short param_3)
 {
   *(unsigned short *)(param_1 + 0xb810 + (param_2 & 0xffff) * 2) = param_3;
+  return param_1;
 }

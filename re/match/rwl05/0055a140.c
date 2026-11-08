@@ -23,7 +23,7 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x0055a140 FUN_0055a140
-void FUN_0055a140(int param_1,int param_2)
+int FUN_0055a140(int param_1,int param_2)
 {
   int *piVar1;
   unsigned int *puVar2;
@@ -61,4 +61,5 @@ void FUN_0055a140(int param_1,int param_2)
   puVar2 = (unsigned int *)(*(int *)(param_1 + 0x6c) + (u >> 5) * 4);
   *puVar2 = *puVar2 & ~(1 << (u & 0x1f));
   *(unsigned short *)(param_2 + 4) = 0xffff;
+  return param_1;
 }

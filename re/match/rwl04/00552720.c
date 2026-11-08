@@ -26,8 +26,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 // MATCH: 0x00552720 FUN_00552720
-void FUN_00552720(undefined4 *param_1,undefined4 *param_2)
-
+undefined4 * FUN_00552720(undefined4 *param_1,undefined4 *param_2)
 {
   *param_1 = *param_2;
   param_1[1] = param_2[1];
@@ -35,5 +34,5 @@ void FUN_00552720(undefined4 *param_1,undefined4 *param_2)
   param_1[3] = param_2[5];
   param_1[4] = param_2[0xc];
   param_1[5] = param_2[0xd];
-  return;
+  return param_1;
 }

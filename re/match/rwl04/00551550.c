@@ -24,7 +24,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef int (*code)(int,int,int,int,int);
 // MATCH: 0x00551550 FUN_00551550
-void FUN_00551550(int param_1)
+int FUN_00551550(int param_1)
 {
   int iVar1;
   int uVar2;
@@ -38,11 +38,11 @@ void FUN_00551550(int param_1)
         uVar2 = *(int *)(param_1 + 0x2c);
       }
       *(int *)(param_1 + 0x28) = 1;
-      (*(code *)(param_1 + 0x30))
+      return (*(code *)(param_1 + 0x30))
                 (param_1,uVar2,*(int *)(param_1 + 0x20),iVar1,*(int *)(param_1 + 0x34)
                 );
-      return;
     }
     *(int *)(param_1 + 0x28) = 1;
   }
+  return param_1;
 }
