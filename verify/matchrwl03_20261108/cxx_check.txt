@@ -1,0 +1,385 @@
+
+CXXOK 004f0910
+CXXOK 004f0970
+CXXOK 004f0ae0
+CXXOK 004f0bd0
+CXXOK 004f0c10
+CXXOK 004f0c50
+CXXOK 004f0f10
+CXXFAIL 004f1fb0 
+re\match\rwl03\004f1fb0.c(72): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(84): error C2664: 'void FUN_005c24e0(undefined1 *,uint,uint,undefined *)': el argumento 1 no puede convertirse de 'int *' a 'undefined1 *'
+re\match\rwl03\004f1fb0.c(100): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(101): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(129): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(146): error C2664: 'undefined4 FUN_004f2570(int,uint,int *,int)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int'
+re\match\rwl03\004f1fb0.c(147): error C2664: 'undefined4 FUN_004f3440(int *,int)': el argumento 1 no puede convertirse de 'int **' a 'int *'
+re\match\rwl03\004f1fb0.c(151): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(171): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(173): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(178): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(196): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'void' a 'undefined4 *'
+re\match\rwl03\004f1fb0.c(209): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+re\match\rwl03\004f1fb0.c(227): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(234): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(235): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f1fb0.c(236): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXFAIL 004f2570 
+re\match\rwl03\004f2570.c(87): error C2664: 'int FUN_004f2e70(uint,undefined4 *,undefined4,int)': el argumento 3 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl03\004f2570.c(104): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(109): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(111): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(115): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(119): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(121): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(122): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(124): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(128): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(136): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(143): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(380): error C2664: 'void FUN_004f3030(int *,int,int)': el argumento 2 no puede convertirse de 'int **' a 'int'
+re\match\rwl03\004f2570.c(381): error C2664: 'int FUN_004f3150(int *,short *,undefined4,undefined4,int)': el argumento 2 no puede convertirse de 'int' a 'short *'
+re\match\rwl03\004f2570.c(415): error C2664: 'int FUN_004f3150(int *,short *,undefined4,undefined4,int)': el argumento 2 no puede convertirse de 'int' a 'short *'
+re\match\rwl03\004f2570.c(427): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(436): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(462): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(468): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(491): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(497): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f2570.c(498): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'undefined4'
+CXXOK 004f2e70
+CXXOK 004f2f90
+CXXOK 004f3440
+CXXOK 004f36c0
+CXXOK 004f3b00
+CXXOK 004f3b60
+CXXOK 004f3be0
+CXXFAIL 004f3e90 
+re\match\rwl03\004f3e90.c(52): error C2664: 'undefined4 FUN_004cc5e0(undefined4,int,undefined4 *,uint *)': el argumento 3 no puede convertirse de 'undefined1 [4]' a 'undefined4 *'
+re\match\rwl03\004f3e90.c(62): error C2664: 'undefined4 FUN_004cc790(undefined4,undefined4,undefined4)': el argumento 2 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl03\004f3e90.c(76): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(86): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(93): error C2664: 'undefined4 FUN_004e8030(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl03\004f3e90.c(104): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(111): error C2664: 'undefined4 FUN_004e8030(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl03\004f3e90.c(118): error C2440: '=': no se puede realizar la conversión de 'int *' a 'int'
+re\match\rwl03\004f3e90.c(120): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(127): error C2664: 'undefined4 FUN_004e8030(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl03\004f3e90.c(132): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(145): error C2664: 'undefined4 FUN_004e8030(int *)': el argumento 1 no puede convertirse de 'int' a 'int *'
+re\match\rwl03\004f3e90.c(149): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(152): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(158): error C2664: 'undefined4 FUN_004e8030(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl03\004f3e90.c(164): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(168): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\004f3e90.c(175): error C2660: 'FUN_004d7ff0': la función no acepta 2 argumentos
+re\match\rwl03\004f3e90.c(182): error C2664: 'undefined4 FUN_004e8030(int *)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl03\004f3e90.c(187): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 004f4200
+CXXOK 004f4340
+CXXOK 004f43f0
+CXXOK 004f46a0
+CXXOK 0052d8e0
+CXXOK 0052daf0
+CXXOK 0052ddf0
+CXXOK 0052df70
+CXXOK 0052e0e0
+CXXOK 0052e2c0
+CXXOK 0052e310
+CXXOK 0052e650
+CXXOK 0052ea70
+CXXOK 0052eb40
+CXXOK 0052eeb0
+CXXOK 0052fd60
+CXXOK 0052fdb0
+CXXOK 0052fe90
+CXXOK 0052ff00
+CXXOK 0052ffd0
+CXXOK 00530000
+CXXOK 00530010
+CXXOK 00530050
+CXXOK 00530090
+CXXOK 005300d0
+CXXOK 00530160
+CXXOK 005302c0
+CXXFAIL 00530650 
+re\match\rwl03\00530650.c(80): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00530650.c(104): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00530650.c(107): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00530650.c(121): error C2664: 'undefined4 FUN_004f57e0(int,float *,float *,int,int)': el argumento 2 no puede convertirse de 'uint' a 'float *'
+re\match\rwl03\00530650.c(147): error C2664: 'undefined4 FUN_004f5030(int,float *,float *,int,int)': el argumento 2 no puede convertirse de 'uint' a 'float *'
+re\match\rwl03\00530650.c(214): error C2664: 'undefined4 FUN_004f7850(int,ushort *,byte *,int,int,int)': el argumento 2 no puede convertirse de 'uint' a 'ushort *'
+re\match\rwl03\00530650.c(225): error C2664: 'undefined4 FUN_004f57e0(int,float *,float *,int,int)': el argumento 2 no puede convertirse de 'uint' a 'float *'
+re\match\rwl03\00530650.c(235): error C2660: 'FUN_004f79f0': la función no acepta 6 argumentos
+re\match\rwl03\00530650.c(250): error C2664: 'undefined4 FUN_004f71f0(int,float *,float *,int,int)': el argumento 2 no puede convertirse de 'uint' a 'float *'
+re\match\rwl03\00530650.c(270): error C2664: 'bool FUN_004f77f0(undefined4 *,int,int,int)': el argumento 1 no puede convertirse de 'uint' a 'undefined4 *'
+re\match\rwl03\00530650.c(283): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXFAIL 00530c00 
+re\match\rwl03\00530c00.c(74): error C2440: '=': no se puede realizar la conversión de 'undefined *' a 'int'
+re\match\rwl03\00530c00.c(107): error C2660: 'FUN_00530010': la función no acepta 2 argumentos
+re\match\rwl03\00530c00.c(392): error C2664: 'undefined4 FUN_004dc5b0(uint,uint,int *,int *)': el argumento 3 no puede convertirse de 'int' a 'int *'
+re\match\rwl03\00530c00.c(410): error C2664: 'undefined4 FUN_004dcaa0(uint *,uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+CXXOK 00532000
+CXXOK 005320b0
+CXXOK 005327d0
+CXXOK 00532a60
+CXXFAIL 00532b80 
+re\match\rwl03\00532b80.c(119): error C3861: 'ABS': no se encontró el identificador
+CXXOK 005333a0
+CXXOK 005336d0
+CXXOK 00533d00
+CXXFAIL 00533ec0 
+re\match\rwl03\00533ec0.c(165): error C2664: 'undefined4 *FUN_004c4600(undefined4 *,undefined4 *,undefined4 *)': el argumento 3 no puede convertirse de 'int' a 'undefined4 *'
+re\match\rwl03\00533ec0.c(189): error C2446: ==': no hay conversión de 'int' en 'code (__cdecl *)'
+re\match\rwl03\00533ec0.c(219): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00533ec0.c(221): error C2664: 'undefined4 *FUN_004c4600(undefined4 *,undefined4 *,undefined4 *)': el argumento 2 no puede convertirse de 'float [5]' a 'undefined4 *'
+re\match\rwl03\00533ec0.c(359): error C2664: 'undefined4 *FUN_004c4600(undefined4 *,undefined4 *,undefined4 *)': el argumento 3 no puede convertirse de 'int' a 'undefined4 *'
+re\match\rwl03\00533ec0.c(383): error C2446: ==': no hay conversión de 'int' en 'code (__cdecl *)'
+re\match\rwl03\00533ec0.c(413): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00533ec0.c(415): error C2664: 'undefined4 *FUN_004c4600(undefined4 *,undefined4 *,undefined4 *)': el argumento 2 no puede convertirse de 'float [5]' a 'undefined4 *'
+re\match\rwl03\00533ec0.c(444): error C2664: 'undefined4 *FUN_004c4600(undefined4 *,undefined4 *,undefined4 *)': el argumento 1 no puede convertirse de 'uint' a 'undefined4 *'
+CXXOK 00534870
+CXXOK 00534a80
+CXXOK 00534b60
+CXXFAIL 00534d00 
+re\match\rwl03\00534d00.c(63): error C2440: '=': no se puede realizar la conversión de 'undefined1 *' a 'int'
+re\match\rwl03\00534d00.c(66): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00534d00.c(69): error C2440: '=': no se puede realizar la conversión de 'undefined1' a 'code (__cdecl *)'
+re\match\rwl03\00534d00.c(145): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00534d00.c(205): error C2660: 'FUN_00535330': la función no acepta 3 argumentos
+re\match\rwl03\00534d00.c(210): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00534d00.c(215): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00534d00.c(217): error C2664: 'int *FUN_004e8090(int *,int)': el argumento 1 no puede convertirse de 'undefined4' a 'int *'
+re\match\rwl03\00534d00.c(249): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00534d00.c(250): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\00534d00.c(251): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXFAIL 00535330 
+re\match\rwl03\00535330.c(109): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 005356f0
+CXXOK 00535700
+CXXOK 00535910
+CXXOK 00538310
+CXXOK 00538600
+CXXOK 00538a80
+CXXOK 00538b70
+CXXOK 00538ba0
+CXXOK 00538bd0
+CXXOK 00538c80
+CXXFAIL 00538d60 
+re\match\rwl03\00538d60.c(303): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\00538d60.c(304): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\00538d60.c(316): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\00538d60.c(338): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\00538d60.c(343): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\00538d60.c(413): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXFAIL 00539900 
+re\match\rwl03\00539900.c(254): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXFAIL 00539ec0 
+re\match\rwl03\00539ec0.c(328): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 0053a6c0
+CXXFAIL 0053a7a0 
+re\match\rwl03\0053a7a0.c(177): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\0053a7a0.c(368): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\0053a7a0.c(369): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\0053a7a0.c(381): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\0053a7a0.c(403): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\0053a7a0.c(408): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'undefined1 *' a 'float'
+re\match\rwl03\0053a7a0.c(474): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXFAIL 0053b7b0 
+re\match\rwl03\0053b7b0.c(130): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\0053b7b0.c(270): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXFAIL 0053bdf0 
+re\match\rwl03\0053bdf0.c(133): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\0053bdf0.c(328): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 0053c5d0
+CXXFAIL 0053c6e0 
+re\match\rwl03\0053c6e0.c(189): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+CXXOK 0053ccc0
+CXXOK 0053cd80
+CXXOK 0053d040
+CXXOK 0053d060
+CXXOK 0053d090
+CXXOK 0053d0b0
+CXXOK 0053d200
+CXXOK 0053d400
+CXXOK 0053d460
+CXXOK 0053d5a0
+CXXOK 0053d690
+CXXOK 0053d6c0
+CXXOK 0053d820
+CXXOK 0053d920
+CXXOK 0053dba0
+CXXOK 0053de50
+CXXFAIL 0053dea0 
+re\match\rwl03\0053dea0.c(101): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\0053dea0.c(176): error C2664: 'void FUN_005c24e0(undefined1 *,uint,uint,undefined *)': el argumento 1 no puede convertirse de 'uint' a 'undefined1 *'
+re\match\rwl03\0053dea0.c(194): error C2664: 'void FUN_005c24e0(undefined1 *,uint,uint,undefined *)': el argumento 1 no puede convertirse de 'uint' a 'undefined1 *'
+re\match\rwl03\0053dea0.c(207): error C3861: 'ROUND': no se encontró el identificador
+re\match\rwl03\0053dea0.c(226): error C2664: 'void FUN_0053e430(float,float,float,int *)': el argumento 1 no puede convertirse de 'uint *' a 'float'
+re\match\rwl03\0053dea0.c(228): error C2664: 'float10 FUN_0053e5d0(int,uint *,int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl03\0053dea0.c(246): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'void' a 'undefined4 *'
+re\match\rwl03\0053dea0.c(273): error C2664: 'void FUN_0053e430(float,float,float,int *)': el argumento 1 no puede convertirse de 'uint *' a 'float'
+re\match\rwl03\0053dea0.c(274): error C2664: 'void FUN_0053e6f0(int)': el argumento 1 no puede convertirse de 'uint *' a 'int'
+re\match\rwl03\0053dea0.c(277): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'void' a 'undefined4 *'
+re\match\rwl03\0053dea0.c(288): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'int'
+re\match\rwl03\0053dea0.c(291): error C2197: 'code (__cdecl *)': hay demasiados argumentos para la llamada
+re\match\rwl03\0053dea0.c(304): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'int'
+re\match\rwl03\0053dea0.c(307): error C2664: 'void FUN_0053de50(int *)': el argumento 1 no puede convertirse de 'undefined4 *' a 'int *'
+re\match\rwl03\0053dea0.c(315): error C2440: 'conversión de tipo': no se puede realizar la conversión de 'void' a 'undefined4 *'
+re\match\rwl03\0053dea0.c(320): error C2664: 'undefined4 *FUN_004d8480(undefined4 *)': el argumento 1 no puede convertirse de 'float *' a 'undefined4 *'
+CXXOK 0053e430
+CXXOK 0053e5d0
+CXXOK 0053e690
+CXXOK 0053e6f0
+CXXOK 0053e730
+CXXOK 0053e760
+CXXOK 0053e790
+CXXOK 0053e7f0
+CXXFAIL 0053e830 
+re\match\rwl03\0053e830.c(76): error C2664: 'undefined4 *FUN_004cdca0(undefined4,undefined4,undefined4)': el argumento 2 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl03\0053e830.c(76): error C2440: '=': no se puede realizar la conversión de '_T' a 'uint'
+re\match\rwl03\0053e830.c(78): error C2664: 'uint *FUN_004cdd60(uint *)': el argumento 1 no puede convertirse de 'uint' a 'uint *'
+re\match\rwl03\0053e830.c(79): error C2664: 'uint *FUN_004d52d0(uint *,int)': el argumento 1 no puede convertirse de 'uint' a 'uint *'
+re\match\rwl03\0053e830.c(83): error C2664: 'undefined4 *FUN_004cdca0(undefined4,undefined4,undefined4)': el argumento 2 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl03\0053e830.c(83): error C2440: '=': no se puede realizar la conversión de '_T' a 'int'
+re\match\rwl03\0053e830.c(84): error C2664: 'uint *FUN_004cdd60(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl03\0053e830.c(106): error C2664: 'undefined4 *FUN_004cdca0(undefined4,undefined4,undefined4)': el argumento 2 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl03\0053e830.c(106): error C2440: '=': no se puede realizar la conversión de '_T' a 'int'
+re\match\rwl03\0053e830.c(107): error C2664: 'uint *FUN_004cdd60(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl03\0053e830.c(108): error C2664: 'uint *FUN_004d52d0(uint *,int)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl03\0053e830.c(111): error C2664: 'undefined4 *FUN_004cdca0(undefined4,undefined4,undefined4)': el argumento 2 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl03\0053e830.c(111): error C2440: '=': no se puede realizar la conversión de '_T' a 'uint'
+re\match\rwl03\0053e830.c(112): error C2664: 'uint *FUN_004cdd60(uint *)': el argumento 1 no puede convertirse de 'uint' a 'uint *'
+re\match\rwl03\0053e830.c(114): error C2664: 'uint *FUN_004dabd0(uint *,uint *)': el argumento 1 no puede convertirse de 'uint' a 'uint *'
+re\match\rwl03\0053e830.c(115): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'uint' a 'uint *'
+re\match\rwl03\0053e830.c(118): error C2664: 'uint *FUN_004cdf20(uint *,int)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl03\0053e830.c(119): error C2664: 'undefined4 FUN_004d5340(undefined4,undefined4,undefined4 *,undefined4 *,undefined4 *,uint *)': el argumento 3 no puede convertirse de 'int *' a 'undefined4 *'
+re\match\rwl03\0053e830.c(129): error C2664: 'int FUN_004c77c0(undefined4,undefined4,undefined4,undefined4)': el argumento 3 no puede convertirse de 'int *' a 'undefined4'
+re\match\rwl03\0053e830.c(130): error C2664: 'int FUN_004d5310(int,byte *)': el argumento 2 no puede convertirse de 'int' a 'byte *'
+re\match\rwl03\0053e830.c(131): error C2440: '=': no se puede realizar la conversión de 'undefined4 *' a 'int'
+re\match\rwl03\0053e830.c(145): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'int' a 'uint *'
+re\match\rwl03\0053e830.c(146): error C2664: 'undefined4 FUN_004cdd00(uint *)': el argumento 1 no puede convertirse de 'uint' a 'uint *'
+re\match\rwl03\0053e830.c(181): error C2664: 'int FUN_004c5ae0(int,int)': el argumento 2 no puede convertirse de 'char *' a 'int'
+CXXOK 0053eaa0
+CXXOK 0053eca0
+CXXOK 0053f150
+CXXOK 0053fa20
+CXXOK 0053fb00
+CXXOK 0053fb70
+CXXOK 0053fba0
+CXXOK 0053fbb0
+CXXOK 0053fd30
+CXXOK 0053fea0
+CXXOK 0053fec0
+CXXOK 00540080
+CXXOK 00540100
+CXXOK 00540160
+CXXOK 005401d0
+CXXOK 00540260
+CXXOK 005402d0
+CXXOK 00540340
+CXXOK 00540510
+CXXFAIL 005405c0 
+re\match\rwl03\005405c0.c(119): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(121): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(122): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(123): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(128): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(130): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(131): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(132): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(133): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(136): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(142): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(149): error C2664: 'bool FUN_004cb330(int,int *)': el argumento 2 no puede convertirse de 'undefined1 *' a 'int *'
+re\match\rwl03\005405c0.c(164): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(166): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(167): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(168): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(169): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(172): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(182): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(183): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(184): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(185): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(186): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(187): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(190): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(191): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(192): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(193): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(194): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(195): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(198): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(199): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(201): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(207): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(208): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(210): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(211): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(212): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(220): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(226): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(233): error C2664: 'bool FUN_004cb330(int,int *)': el argumento 2 no puede convertirse de 'undefined1 *' a 'int *'
+re\match\rwl03\005405c0.c(242): error C2660: 'FUN_004d6e70': la función no acepta 2 argumentos
+re\match\rwl03\005405c0.c(243): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(244): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(245): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(246): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(249): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(250): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(251): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(252): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(253): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(254): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(258): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(260): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(268): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(269): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(270): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(271): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(272): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(275): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(276): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(277): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(278): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(279): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(280): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(283): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(284): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(286): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(287): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(288): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(299): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(301): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(302): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(308): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(309): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(310): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(314): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(315): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(316): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(317): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(318): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(319): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(322): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(323): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(325): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(326): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(327): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(328): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(333): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(335): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(346): error C2440: '=': no se puede realizar la conversión de 'int **' a 'undefined4 *'
+re\match\rwl03\005405c0.c(354): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(355): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(356): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(357): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(358): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(361): error C2660: 'FUN_004d54f0': la función no acepta 1 argumentos
+re\match\rwl03\005405c0.c(362): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(364): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(365): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(366): error C2660: 'FUN_004d54f0': la función no acepta 3 argumentos
+re\match\rwl03\005405c0.c(366): fatal error C1003: el recuento de errores supera 100; se detiene la compilación
+

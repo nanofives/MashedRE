@@ -19,7 +19,7 @@ import pathlib, re, struct, sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import match
 
-RE_G = re.compile(r"MGLOBALA?\(\s*[^,]+?,\s*(\w+)\s*,\s*(?:[^,]+,\s*)?(0x[0-9a-fA-F]+)\s*\)")
+RE_G = re.compile(r"MGLOBALA?\(\s*[^,]+?,\s*(\w+)\s*,\s*(?:[^,;\n]+,\s*)?(0x[0-9a-fA-F]+)\s*\)")
 REL_DIR32, REL_REL32 = 0x06, 0x14
 
 
