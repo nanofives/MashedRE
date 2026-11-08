@@ -1,0 +1,78 @@
+rva	sub	conf	exe_file
+0x00545340	track	C2	
+0x00546b10	vehicle	C3	mashedmod/src/mashed_re/Collision/RwpSolverMath2Quat.cpp
+0x00546e70	vehicle	C2	
+0x00547450	track	C2	mashedmod/src/mashed_re/Collision/CollisionWorld.cpp
+0x00547bf0	track	C2	
+0x00550390	render	C2	
+0x00550430	util	C2	
+0x005504d0	util	C2	
+0x00550790	util	C3	
+0x00550910	save	C2	
+0x00550950	audio	C3	
+0x00550980	save	C3	mashedmod/src/mashed_re/Save/VfsStream.cpp
+0x005509b0	audio	C2	
+0x00550af0	audio	C2	
+0x00550b00	save	C4	
+0x00550bc0	save	C4	mashedmod/src/mashed_re/Save/VfsStream.cpp
+0x00550be0	util	C2	
+0x00550c30	util	C2	
+0x00550c50	util	C2	
+0x00550d80	util	C2	
+0x00550da0	util	C2	
+0x00550f20	util	C2	
+0x00551050	util	C2	
+0x00551090	util	C2	
+0x00551180	util	C2	
+0x00551190	util	C2	
+0x00551290	util	C2	
+0x005512b0	util	C2	
+0x005512d0	util	C2	
+0x005514e0	util	C2	
+0x00552750	hud	C3	
+0x00552840	hud	C3	mashedmod/src/mashed_re/Frontend/BatchAA_s1.cpp
+0x00552a60	hud	C3	
+0x00552b60	hud	C2	
+0x00552b90	hud	C2	
+0x00552c10	hud	C3	
+0x00552d10	hud	C3	
+0x00552d70	render	C3	
+0x00552da0	hud	C3	
+0x00552df0	hud	C4	
+0x00552e40	hud	C2	
+0x00554010	hud	C2	
+0x00554050	hud	C2	
+0x00554150	hud	C2	
+0x00554200	hud	C2	
+0x00554940	hud	C2	
+0x00555280	hud	C2	
+0x00555360	hud	C2	
+0x005554d0	hud	C2	
+0x005555b0	render	C2	
+0x00555830	hud	C2	
+0x00555910	hud	C2	
+0x00555af0	hud	C2	
+0x00555f20	hud	C2	
+0x00555ff0	hud	C2	
+0x00556780	hud	C2	
+0x00556ca0	hud	C2	
+0x00556cc0	hud	C3	mashedmod/src/mashed_re/Frontend/BatchAA_s3.cpp
+0x00556cd0	hud	C3	mashedmod/src/mashed_re/Frontend/BatchAA_s6.cpp
+0x00556ce0	hud	C2	
+0x00556e40	hud	C2	
+0x00556e90	render	C2	
+0x00557110	hud	C3	
+0x005571c0	hud	C2	
+0x005571e0	hud	C2	
+0x00557220	hud	C2	
+0x00557250	hud	C2	
+0x005572b0	hud	C2	
+0x005572c0	hud	C2	
+0x00558100	gameplay	C3	
+0x00558140	gameplay	C3	
+0x005581f0	boot	C2	
+0x00558470	render	C2	
+0x00558b40	gameplay	C2	
+0x0055c4f0	vehicle	C3	
+0x0055c810	vehicle	C3	
+0x0055dec0	util	C3	mashedmod/src/mashed_re/Util/UtilLeaves_ab6.cpp

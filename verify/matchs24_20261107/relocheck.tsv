@@ -1,0 +1,56 @@
+0x00550390	OK	checked=8	unchecked=1	00550390.c	  unchecked: __imp__DeleteCriticalSection@4
+0x00550430	OK	checked=11	unchecked=0	00550430.c	
+0x005504d0	OK	checked=3	unchecked=0	005504d0.c	
+0x00550790	OK	checked=1	unchecked=0	00550790.c	
+0x00550910	OK	checked=2	unchecked=2	00550910.c	  unchecked: __imp__EnterCriticalSection@4,__imp__LeaveCriticalSection@4
+0x00550950	OK	checked=0	unchecked=0	00550950.c	
+0x00550980	OK	checked=0	unchecked=0	00550980.c	
+0x005509b0	OK	checked=0	unchecked=0	005509b0.c	
+0x00550af0	OK	checked=0	unchecked=0	00550af0.c	
+0x00550b00	OK	checked=6	unchecked=1	00550b00.c	  unchecked: __strncpy
+0x00550bc0	OK	checked=0	unchecked=0	00550bc0.c	
+0x00550be0	OK	checked=1	unchecked=0	00550be0.c	
+0x00550c30	OK	checked=0	unchecked=0	00550c30.c	
+0x00550d80	OK	checked=0	unchecked=1	00550d80.c	  unchecked: __imp__CloseHandle@4
+0x00551050	OK	checked=0	unchecked=1	00551050.c	  unchecked: __imp__SetFilePointer@16
+0x00551090	OK	checked=7	unchecked=2	00551090.c	  unchecked: __imp__GetLastError@0,__imp__GetOverlappedResult@16
+0x00551180	OK	checked=0	unchecked=0	00551180.c	
+0x00551290	OK	checked=1	unchecked=0	00551290.c	
+0x005512b0	OK	checked=1	unchecked=0	005512b0.c	
+0x005512d0	OK	checked=2	unchecked=1	005512d0.c	  unchecked: __imp__GetFileAttributesA@4
+0x005514e0	OK	checked=0	unchecked=0	005514e0.c	
+0x00552750	OK	checked=28	unchecked=0	00552750.c	
+0x00552840	OK	checked=5	unchecked=0	00552840.c	
+0x00552a60	OK	checked=23	unchecked=0	00552a60.c	
+0x00552b60	OK	checked=8	unchecked=0	00552b60.c	
+0x00552b90	OK	checked=14	unchecked=0	00552b90.c	
+0x00552c10	OK	checked=32	unchecked=0	00552c10.c	
+0x00552d10	OK	checked=9	unchecked=0	00552d10.c	
+0x00552d70	OK	checked=4	unchecked=0	00552d70.c	
+0x00552da0	OK	checked=5	unchecked=0	00552da0.c	
+0x00552df0	OK	checked=5	unchecked=0	00552df0.c	
+0x00552e40	OK	checked=24	unchecked=0	00552e40.c	
+0x00554010	OK	checked=2	unchecked=0	00554010.c	
+0x00554050	OK	checked=9	unchecked=0	00554050.c	
+0x00554150	OK	checked=7	unchecked=0	00554150.c	
+0x00555280	OK	checked=23	unchecked=0	00555280.c	
+0x005554d0	OK	checked=1	unchecked=0	005554d0.c	
+0x005555b0	OK	checked=4	unchecked=0	005555b0.c	
+0x00555830	OK	checked=7	unchecked=0	00555830.c	
+0x00555910	OK	checked=23	unchecked=0	00555910.c	
+0x00556cc0	OK	checked=1	unchecked=0	00556cc0.c	
+0x00556cd0	OK	checked=1	unchecked=0	00556cd0.c	
+0x00556ce0	OK	checked=6	unchecked=0	00556ce0.c	
+0x00556e40	OK	checked=3	unchecked=0	00556e40.c	
+0x005571c0	OK	checked=3	unchecked=0	005571c0.c	
+0x005571e0	OK	checked=5	unchecked=0	005571e0.c	
+0x00557220	OK	checked=6	unchecked=0	00557220.c	
+0x00557250	OK	checked=10	unchecked=0	00557250.c	
+0x005572b0	OK	checked=1	unchecked=0	005572b0.c	
+0x00558100	OK	checked=4	unchecked=0	00558100.c	
+0x00558140	OK	checked=1	unchecked=0	00558140.c	
+0x005581f0	OK	checked=3	unchecked=0	005581f0.c	
+0x00558470	OK	checked=7	unchecked=0	00558470.c	
+0x0055c4f0	OK	checked=0	unchecked=0	0055c4f0.c	
+0x0055c810	OK	checked=2	unchecked=0	0055c810.c	
+0x0055dec0	OK	checked=0	unchecked=0	0055dec0.c	

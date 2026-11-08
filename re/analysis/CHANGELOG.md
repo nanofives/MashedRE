@@ -84,6 +84,2613 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-07  0x004a2bb8  report_failure  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a2bb8.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a2bf7  FUN_004a2bf7  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a2bf7.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a31e1  FUN_004a31e1  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a31e1.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a31ea  FUN_004a31ea  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a31ea.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a31f3  CrtPreInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a31f3.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a3258  CrtExitCore  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a3258.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a334d  CrtExitNormal_j5  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a334d.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a3ac9  FUN_004a3ac9  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a3ac9.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a43d2  FUN_004a43d2  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a43d2.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a45c6  FUN_004a45c6  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a45c6.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a4660  FUN_004a4660  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a4660.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a467e  _calloc  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a467e.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a4728  FUN_004a4728  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a4728.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a4bb7  entry  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a4bb7.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a504f  FUN_004a504f  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a504f.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a583a  FUN_004a583a  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a583a.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a5e35  __ms_p5_mp_test_fdiv  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a5e35.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a5f07  ___endstdio  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a5f07.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a77eb  FUN_004a77eb  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a77eb.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a7800  FUN_004a7800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a7800.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a787f  __lock  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a787f.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a78b0  CrtPreInitLoop  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a78b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004a9744  __flushall  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004a9744.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004aa23d  FUN_004aa23d  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004aa23d.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ab8d6  FUN_004ab8d6  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004ab8d6.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004abc53  __setenvp  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004abc53.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004abf28  ___crtGetEnvironmentStringsA  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004abf28.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ad1e0  FUN_004ad1e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004ad1e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ad3e3  FUN_004ad3e3  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004ad3e3.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004aedcf  FUN_004aedcf  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004aedcf.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004aefd0  FUN_004aefd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004aefd0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004af2ad  FUN_004af2ad  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004af2ad.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004af2d4  FUN_004af2d4  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004af2d4.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004af32d  FUN_004af32d  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s17/004af32d.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3bb0  FileWriteWrapper_i3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3bb0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3bf0  FUN_004b3bf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3bf0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3c60  FUN_004b3c60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3c60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3cc0  FUN_004b3cc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3cc0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3d20  FUN_004b3d20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3d20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3d80  FUN_004b3d80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3d80.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3de0  FUN_004b3de0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3de0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b3e40  FUN_004b3e40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b3e40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4000  Fwd4b3fc0_Arg2Zero  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4000.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4010  FUN_004b4010  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4010.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4050  FUN_004b4050  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4050.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4080  FUN_004b4080  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4080.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b40c0  FUN_004b40c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b40c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b40f0  FUN_004b40f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b40f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4120  FUN_004b4120  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4120.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4130  FUN_004b4130  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4130.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4140  FUN_004b4140  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4140.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4150  FUN_004b4150  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4150.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b41b0  FUN_004b41b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b41b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b41f0  FUN_004b41f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b41f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4230  FUN_004b4230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4230.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4270  FUN_004b4270  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4270.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4280  FUN_004b4280  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4280.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b44f0  FUN_004b44f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b44f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4510  FUN_004b4510  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4510.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4650  FUN_004b4650  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4650.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b46b0  FUN_004b46b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b46b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b47c0  FUN_004b47c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b47c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b47e0  FUN_004b47e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b47e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4880  FUN_004b4880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4880.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b48e0  FUN_004b48e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b48e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4a80  FUN_004b4a80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4a80.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4ad0  FUN_004b4ad0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4ad0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4b20  FUN_004b4b20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4b20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4b60  FUN_004b4b60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4b60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4c80  FUN_004b4c80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4c80.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4cd0  Bezier::QueryWrapper  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4cd0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4d10  FUN_004b4d10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4d10.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4e20  FUN_004b4e20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4e20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b4e70  FUN_004b4e70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b4e70.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5030  FUN_004b5030  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5030.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5190  FUN_004b5190  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5190.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b51d0  FUN_004b51d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b51d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5240  FUN_004b5240  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5240.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5260  FUN_004b5260  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5260.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b52c0  FUN_004b52c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b52c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b52f0  FUN_004b52f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b52f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5320  FUN_004b5320  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5320.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5350  thunk_FUN_00550b00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5350.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5360  thunk_FUN_005507b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5360.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5370  thunk_FUN_00550910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5370.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5380  thunk_FUN_00550950  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5380.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5390  thunk_FUN_005509b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5390.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b53a0  thunk_FUN_00550bc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b53a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b5580  ClumpForAllAtomics_Cb4b5560  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b5580.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b59c0  FUN_004b59c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b59c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b60c0  FUN_004b60c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b60c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6480  BitArrayClear  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6480.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b64e0  FUN_004b64e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b64e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6520  ZeroFillWrapper  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6520.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6540  thunk_FUN_004b6640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6540.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6550  thunk_FUN_004b6700  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6550.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6560  BootGlobalPairSetThunk  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6560.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6570  FUN_004b6570  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6570.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6590  thunk_FUN_004b67a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6590.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b65a0  Global7d3e4cGetThunk  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b65a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b65b0  thunk_FUN_004b68f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b65b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b65c0  FUN_004b65c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b65c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b65e0  FUN_004b65e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b65e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6610  BootGlobalPairSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6610.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6700  FUN_004b6700  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6700.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6710  FUN_004b6710  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6710.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6770  FUN_004b6770  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6770.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b67a0  FUN_004b67a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b67a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b67e0  FUN_004b67e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b67e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b68e0  Global7d3e4cGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b68e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b68f0  FUN_004b68f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b68f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6940  FUN_004b6940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6940.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6b00  StoreEaxAtEcx  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6b00.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b6b90  FUN_004b6b90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b6b90.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b7fd0  FUN_004b7fd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b7fd0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004b8080  FUN_004b8080  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b8080.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c7860  RasterMipLock  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c7860.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c79f0  FUN_004c79f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c79f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c7a20  FUN_004c7a20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c7a20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c7a60  thunk_FUN_004cfa00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c7a60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c8650  rwD3D9RenderStateCacheInvalidate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c8650.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c8740  FUN_004c8740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c8740.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c8800  FUN_004c8800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c8800.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c8e50  FUN_004c8e50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c8e50.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c9ad0  FUN_004c9ad0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c9ad0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c9f50  RwGlobal7d4134Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c9f50.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004c9f60  FUN_004c9f60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c9f60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cae90  RwCapsBlockPtrGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cae90.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cafd0  FUN_004cafd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cafd0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb070  FUN_004cb070  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb070.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb0b0  FUN_004cb0b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb0b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb0f0  FUN_004cb0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb0f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb130  FUN_004cb130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb130.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb190  FUN_004cb190  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb190.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb2c0  FUN_004cb2c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb2c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb2f0  FUN_004cb2f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb2f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb740  FUN_004cb740  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb740.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cb840  FUN_004cb840  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb840.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbad0  FUN_004cbad0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbad0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbb00  FUN_004cbb00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbb00.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbb20  FUN_004cbb20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbb20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbb50  RwComReleaseThunk  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbb50.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbb60  GetRenderStateBlockPtr  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbb60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbc60  RwGlobal7d4598Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbc60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbc70  RwGlobal7d4598Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbc70.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbc80  RwGlobal7d459cSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbc80.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbc90  RwGlobal7d459cGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbc90.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cbd30  RwStreamRead  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbd30.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cc160  FUN_004cc160  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cc160.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cc400  FUN_004cc400  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cc400.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cc4f0  FUN_004cc4f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cc4f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cc580  FUN_004cc580  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cc580.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cc790  FUN_004cc790  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cc790.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cc7e0  RwGlobal6182b0Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cc7e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ccce0  FUN_004ccce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ccce0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ccf20  FUN_004ccf20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ccf20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cd070  RwRenderPrimitiveSubmit  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cd070.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cd140  RwRenderCommandBufferReset  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cd140.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cd170  FUN_004cd170  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cd170.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cd2d0  RwRenderIndexedSubmit  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cd2d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cd430  FUN_004cd430  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cd430.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cde20  FUN_004cde20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cde20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cde50  FUN_004cde50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cde50.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ce2d0  FUN_004ce2d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ce2d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ce390  FUN_004ce390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ce390.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ce690  FUN_004ce690  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ce690.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ce6c0  FUN_004ce6c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ce6c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ce790  FUN_004ce790  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ce790.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ce8e0  FUN_004ce8e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ce8e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ceaf0  FUN_004ceaf0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ceaf0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ceba0  FUN_004ceba0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004ceba0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cefd0  FUN_004cefd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cefd0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cf430  FUN_004cf430  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cf430.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cf460  FUN_004cf460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cf460.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cf9e0  FUN_004cf9e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cf9e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cfa00  FUN_004cfa00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cfa00.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cfe20  FUN_004cfe20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cfe20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cfe40  FUN_004cfe40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cfe40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cfee0  RasterPluginByteGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cfee0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004cff00  FUN_004cff00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cff00.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d1d20  FUN_004d1d20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d1d20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d2c80  rwD3D8CameraTextureRasterCreate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d2c80.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d2e30  rwD3D8ZBufferRasterCreate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d2e30.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d38b0  rwD3D8CheckTextureFormat  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d38b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d38f0  rwD3D8CreateTextureWithFormat  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d38f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d3950  rwD3D8CreateMipmapTexture  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d3950.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d39b0  rwD3D8CreateCubeTexture  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d39b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d3a10  rwD3D8CheckAutoMipMap  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d3a10.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d3a60  rwD3D8CheckAutoMipMapAlpha  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d3a60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d3ab0  rwD3D8CheckAutoMipMapCube  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d3ab0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d3d50  rwD3D8RasterClose  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d3d50.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d40c0  GetPipelinePtr  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d40c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d41e0  FUN_004d41e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d41e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d52d0  FUN_004d52d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d52d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d5310  RasterImageCopy  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d5310.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d5340  RasterLockRead  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d5340.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d53b0  D3d9State_Flush  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d53b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d5480  FUN_004d5480  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d5480.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d54d0  FUN_004d54d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d54d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d54f0  FUN_004d54f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d54f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d5550  FUN_004d5550  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d5550.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d5570  D3d9State_SetSampler  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d5570.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d55b0  FUN_004d55b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d55b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d6b90  D3d9State_SetStage0Filter  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d6b90.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d6c40  FUN_004d6c40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d6c40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d6c90  FUN_004d6c90  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d6c90.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d6ce0  FUN_004d6ce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d6ce0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d6e60  TexStageCacheGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d6e60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d6e70  FUN_004d6e70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d6e70.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d71f0  FUN_004d71f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d71f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7200  FUN_004d7200  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7200.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7250  FUN_004d7250  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7250.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d72a0  FUN_004d72a0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d72a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d72f0  FUN_004d72f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d72f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7340  FUN_004d7340  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7340.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7390  FUN_004d7390  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7390.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d73e0  FUN_004d73e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d73e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7430  FUN_004d7430  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7430.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7ac0  D3d9State_FogBlendToggle  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7ac0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7bc0  FUN_004d7bc0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7bc0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7c10  FUN_004d7c10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7c10.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7c60  FUN_004d7c60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7c60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7ca0  FUN_004d7ca0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7ca0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7db0  RwPluginExtensionSlotGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7db0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d7ff0  RwIdentityPassthrough  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7ff0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8000  FUN_004d8000  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8000.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8060  RwPluginListDestructDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8060.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8090  RwPluginListCopyDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8090.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8350  FUN_004d8350  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8350.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d84e0  RwErrorGet  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d84e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8560  FUN_004d8560  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8560.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8570  RwEngineRegisterStringFunctions  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8570.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8680  RwStricmp  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8680.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8770  RwStringGetSizeAligned  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8770.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d87a0  RwStringStreamWrite  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d87a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d8eb0  RwResourcesDrainArena  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8eb0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004d9050  FUN_004d9050  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d9050.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004daa40  FUN_004daa40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004daa40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004daaf0  FUN_004daaf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004daaf0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004db550  FUN_004db550  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004db550.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004db770  FUN_004db770  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004db770.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004df8d0  PixEncode1555  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004df8d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004df910  PixEncode4444  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004df910.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004df950  PixEncodeA8R3G3B2  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004df950.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004df980  PixEncodeX4R4G4B4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004df980.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004df9b0  FUN_004df9b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004df9b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004df9e0  PixEncodeX8R8G8B8  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004df9e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004dfa10  FUN_004dfa10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004dfa10.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004dfa40  FUN_004dfa40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004dfa40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004dfa70  FUN_004dfa70  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004dfa70.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004dfaa0  FUN_004dfaa0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004dfaa0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004e4320  RwPluginLinkSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004e4320.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004e4350  FUN_004e4350  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004e4350.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004e6680  RpClumpRender  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004e6680.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec130  FUN_004ec130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec130.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec720  Store_Deref14_Off00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec720.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec730  FUN_004ec730  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec730.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec740  Store_Deref14_Off0c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec740.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec750  FUN_004ec750  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec750.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec839  FUN_004ec839  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec839.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec915  FUN_004ec915  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec915.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ec9cd  FUN_004ec9cd  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ec9cd.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ecaab  FUN_004ecaab  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ecaab.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ecb67  thunk_FUN_004ecb5a  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ecb67.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ecb97  FUN_004ecb97  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ecb97.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004ecc6f  FUN_004ecc6f  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004ecc6f.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f022d  FUN_004f022d  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f022d.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f0307  FUN_004f0307  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f0307.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f07a0  FUN_004f07a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f07a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f07d0  FUN_004f07d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f07d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f0800  FUN_004f0800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f0800.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f0810  FUN_004f0810  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f0810.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f0900  FUN_004f0900  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f0900.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f0940  FUN_004f0940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f0940.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f0d80  CountedStride0cForAll  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f0d80.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f1130  FUN_004f1130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f1130.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f1800  FUN_004f1800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f1800.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f1f00  FUN_004f1f00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f1f00.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f3030  FUN_004f3030  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f3030.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f3bc0  FUN_004f3bc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f3bc0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f3bd0  IndexedDwordFetch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f3bd0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f3cb0  PtrArrayFindLastIndex  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f3cb0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f3ce0  FUN_004f3ce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f3ce0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f42d0  FUN_004f42d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f42d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f43b0  FUN_004f43b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f43b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f4470  FUN_004f4470  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f4470.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f4510  FUN_004f4510  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f4510.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f4900  FUN_004f4900  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f4900.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f5020  FUN_004f5020  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f5020.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f77f0  FUN_004f77f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f77f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f7dc0  FUN_004f7dc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f7dc0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f81b0  FUN_004f81b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f81b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f8400  FUN_004f8400  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f8400.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f8490  FUN_004f8490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f8490.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f8640  FUN_004f8640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f8640.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f8660  PluginDataDwordA  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f8660.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f8670  FUN_004f8670  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f8670.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004f8690  PluginDataDwordB  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004f8690.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004fb050  FUN_004fb050  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004fb050.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004fb0e0  FUN_004fb0e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004fb0e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x004fb4d0  FUN_004fb4d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s22/004fb4d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00516bf0  png_set_write_fn  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00516bf0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00516d20  thunk_png_free  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00516d20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00516da0  png_create_info_struct  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00516da0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005171a0  FUN_005171a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/005171a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00517200  FUN_00517200  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00517200.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00517250  FUN_00517250  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00517250.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00517270  FUN_00517270  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00517270.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005172b0  FUN_005172b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/005172b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005172f0  FUN_005172f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/005172f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00517380  FUN_00517380  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00517380.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00517940  FUN_00517940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00517940.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00518080  FUN_00518080  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00518080.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00518140  FUN_00518140  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00518140.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00518570  Rmw518570  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00518570.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00518580  FUN_00518580  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00518580.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00518590  FUN_00518590  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00518590.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00519270  png_do_read_transformations  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00519270.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005196f0  FUN_005196f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/005196f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005199f0  FUN_005199f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/005199f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00519bc0  FUN_00519bc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00519bc0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00519f70  FUN_00519f70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00519f70.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051bd70  FUN_0051bd70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051bd70.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051ca10  FUN_0051ca10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051ca10.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051ca90  FUN_0051ca90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051ca90.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051d0f0  FUN_0051d0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051d0f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051d1b0  FUN_0051d1b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051d1b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051d340  FUN_0051d340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051d340.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051d400  FUN_0051d400  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051d400.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051d560  FUN_0051d560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051d560.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051d800  FUN_0051d800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051d800.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051d900  FUN_0051d900  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051d900.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051db30  FUN_0051db30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051db30.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051e230  png_write_tRNS  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051e230.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051e4a0  FUN_0051e4a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051e4a0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051e6f0  png_write_hIST  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051e6f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051ed60  FUN_0051ed60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051ed60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051f240  FUN_0051f240  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051f240.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0051f810  FUN_0051f810  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0051f810.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00520640  FUN_00520640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00520640.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005209d0  Set5209d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/005209d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00520ef0  FUN_00520ef0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00520ef0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00522970  FUN_00522970  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00522970.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00523640  FUN_00523640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00523640.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00527c30  FUN_00527c30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00527c30.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00528630  FUN_00528630  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00528630.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00528e20  zcfree  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00528e20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00528e30  FUN_00528e30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00528e30.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00528ef0  FUN_00528ef0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00528ef0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00529050  FUN_00529050  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00529050.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0052b750  FUN_0052b750  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0052b750.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0052bf40  FUN_0052bf40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0052bf40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0052d7e0  FUN_0052d7e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0052d7e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0052d980  FUN_0052d980  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0052d980.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0052da20  FUN_0052da20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0052da20.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0052ddc0  FUN_0052ddc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0052ddc0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0052de60  FUN_0052de60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/0052de60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00534920  FUN_00534920  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00534920.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550390  sub_00550390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550390.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550430  FUN_00550430  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550430.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005504d0  FUN_005504d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005504d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550790  FsManager7dc76cSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550790.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550910  FUN_00550910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550910.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550950  RwsStreamRead  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550950.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550980  VfsStreamRead  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550980.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005509b0  FUN_005509b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005509b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550af0  FUN_00550af0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550af0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00550be0  FUN_00550be0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550be0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00551090  FUN_00551090  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00551090.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005512b0  FUN_005512b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005512b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552750  FontCtx_ResetTransform  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552750.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552840  FontCtx_SetRotation  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552840.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552a60  FontSys_SetActiveCamera  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552a60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552b60  FontSys_InitSeq  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552b60.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552b90  FontSys_Shutdown  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552b90.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552c10  FontSys_InitRenderState  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552c10.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552d10  FontMatrix_Push  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552d10.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552d70  ViewportStackPop  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552d70.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552da0  FontCtx_SetScale  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552da0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00552e40  FontCtx_FlushMatrix  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00552e40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00554050  FontCanvas_Shutdown  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00554050.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00555280  FontSys_ShutdownContextPool  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00555280.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005554d0  FUN_005554d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005554d0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005555b0  FUN_005555b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005555b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00555830  FUN_00555830  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00555830.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00556cc0  SetDat00912a20  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00556cc0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00556cd0  GetDat00912a20  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00556cd0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00556ce0  FontSys_ShutdownBuffers  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00556ce0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00556e40  FUN_00556e40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00556e40.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005571c0  FontSys_ShutdownFontPool  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005571c0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005571e0  FontSys_InitFontPool  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005571e0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00557220  FontSys_ShutdownDataPools  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00557220.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00557250  FontSys_InitDataPools  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00557250.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005572b0  thunk_FUN_005572c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005572b0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00558100  FUN_00558100  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00558100.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00558140  FUN_00558140  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00558140.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x005581f0  FUN_005581f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/005581f0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00558470  sub_00558470  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00558470.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0055c810  PhysicsBodySetLinearVelocity  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/0055c810.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x0055dec0  FUN_0055dec0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/0055dec0.c; evidence: verify/c4rmatchbatch2_20261107/RESULT_C4R-MATCHBATCH-2.md
+2026-11-07  0x00401000  FUN_00401000  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00401000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004011f0  FUN_004011f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004011f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00401340  CupSpinSpeedAndColor  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00401340.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004013f0  FUN_004013f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004013f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004014b0  FUN_004014b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/004014b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00401570  EntryTableScanByKey  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00401570.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004015a0  FUN_004015a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004015a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00401630  FUN_00401630  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00401630.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00401ee0  EntityTableSelectUpdate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00401570.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00401f10  FUN_00401f10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00401f10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00402240  ClumpGeom401fe0Create  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00402240.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00402590  ClumpGeom4022a0Create  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00402590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004025f0  FUN_004025f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00401690.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00402a40  AppDestroy  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00402a40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00402f40  Util636ad8Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00402f40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00402f80  CupFloatInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00402f50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00402fb0  FUN_00402fb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00402fb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403050  FUN_00403050  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403050.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004030d0  FUN_004030d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004030d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403250  FUN_00403250  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403250.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004034a0  FUN_004034a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004034a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403640  FUN_00403640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00403640.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403660  FUN_00403660  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403660.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403910  FUN_00403910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004036a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004039c0  FUN_004039c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/004039c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004039e0  Float5ea0a8Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/004039e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403c60  FUN_00403c60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403c60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403d30  Render_00403d30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403d30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403db0  FUN_00403db0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403db0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403ed0  Render_00403ed0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403ed0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00403fa0  FUN_00403fa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00403fa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004041c0  FUN_004041c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004041c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00404650  FUN_00404650  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00404650.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00404820  FUN_00404820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00404820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00404830  FUN_00404830  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00404830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004053d0  TrackDataSlotSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004053d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00405400  Clear639d70x3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004053d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00405420  ReplayCursorReset  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004053d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00405460  FUN_00405460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00405460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00405780  FUN_00405780  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00405780.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004058b0  FloatSub4058b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/004058b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004058c0  FUN_004058c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004058c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004058e0  FUN_004058e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/004058e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00405f60  FUN_00405f60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00405920.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00406070  FUN_00406070  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00405920.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00406130  FUN_00406130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00406130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00406370  Clear10x3_63a494  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00406370.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00406410  FUN_00406410  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00405920.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00406950  FUN_00406950  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00406950.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004072e0  FUN_004072e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004072e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004073b0  FUN_004073b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004073b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004074a0  FUN_004074a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004074a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407550  SubsystemARecordFind  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00407550.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407580  SubsystemARecordKey  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00407580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004075b0  ItemPosRet4075b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004075b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407600  Player::GetPositionPtr  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00407600.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407620  Deref407620  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00407620.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407640  CopterFind639dc4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00407640.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004077e0  FloatIdx639de0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004077e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407a00  ReadAiCheckpointField  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00407a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407b00  FUN_00407b00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00407b00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407b70  FUN_00407b70  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00407b70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00407d70  RangeTableCountGroup  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00407d70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00408a50  FUN_00408a50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00407a60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00408a70  FrontendC2RoundI  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00408a70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00408ad0  RaceScoreFloatGetBySlot  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00407a60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00408af0  AiVehicleFieldPtrGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00408af0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409300  FUN_00409300  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00409300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409330  FUN_00409330  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00409330.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004093b0  FUN_004093b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004093b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004095a0  FUN_004095a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/004095a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409680  LedArrayInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00409680.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004096a0  FUN_004096a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/004096a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409710  FUN_00409710  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00409710.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409790  FUN_00409790  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00409790.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004098d0  FUN_004098d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/004098d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409950  FUN_00409950  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00409950.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409970  FUN_00409970  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/raw/00409970.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00409a80  FUN_00409a80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00409a80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ab40  FUN_0040ab40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ab40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040acd0  FUN_0040acd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040acd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ad20  FrontendGlobalGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ad20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ad30  FUN_0040ad30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ad30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ad40  FUN_0040ad40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ad40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ae30  FUN_0040ae30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ae30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b090  sub_0040b090  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b090.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b180  FUN_0040b180  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b180.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b250  FUN_0040b250  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b250.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b410  RaceScoreTimerGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b410.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b430  FUN_0040b430  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b430.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b460  MenuMenusBD  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b540  PlayerScoreRankOrder  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b620  SlotSortByModeScore  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b620.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b6b0  ModeScoreGetBySlot  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b6b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b6e0  FUN_0040b6e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b6e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b700  FUN_0040b700  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b700.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b7a0  HotkeyStringBaseGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b7a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b7b0  PlayerHotkeyTableGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b7b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b810  TimerGlobalsReset  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b810.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b890  FUN_0040b890  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b890.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b8e0  FUN_0040b8e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b8e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b930  PlayerScoreThresholdMask  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b930.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b970  Bool0Out8a94e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b970.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040b9a0  MaxScoreFlags40b9a0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040b9a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ba00  BoolMinOut8a94e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ba00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ba60  Active4Slots40ba60  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ba60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040baa0  FUN_0040baa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040baa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040bae0  FUN_0040bae0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040bae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040bb30  FUN_0040bb30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040bb30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040bb50  FUN_0040bb50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040bb50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040bbb0  FUN_0040bbb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040bbb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040bd00  FUN_0040bd00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040bd00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040bd80  FUN_0040bd80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040bd80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040bde0  FUN_0040bde0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040bde0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040c5b0  FUN_0040c5b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040c5b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040cd90  thunk_FUN_00425ef0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040cd90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040cda0  FUN_0040cda0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040cda0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ce00  FUN_0040ce00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ce00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ce80  PtrTable5f2770Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ce80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040cf40  FUN_0040cf40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040cf40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040cf80  FUN_0040cf80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040cf80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040cfd0  FUN_0040cfd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040cfd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040d020  FUN_0040d020  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040d020.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040d040  Course::ValidateCarsFinished  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040d040.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040d250  DoubleDerefIndexedGetter  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040d250.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040d430  FUN_0040d430  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040d430.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040d470  FUN_0040d470  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040d470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040d590  FUN_0040d590  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040d590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040da50  FUN_0040da50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040da50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040dba0  FUN_0040dba0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040dba0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040dbd0  SubStateEnter4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040dbd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040dc80  UtilFloat63b910Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040dc80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040dcb0  FUN_0040dcb0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040dcb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040ddb0  FUN_0040ddb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ddb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040de10  FUN_0040de10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040de10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040de30  sub_0040de30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040de30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040df20  sub_0040df20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040df20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040df60  ConditionalRenderSubPass  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040df60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e170  Set63ba7c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e360  RaceMode::Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e3a0  PlayerColorTableGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e3a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e450  Flag63b908Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e450.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e460  Flag63b908Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e470  CarSlotStateGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e480  CarSlotStateSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e4a0  ElapsedTimeGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e4b0  Race::GetSoleFinishedPlayer  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e4b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e500  FUN_0040e500  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e500.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040e560  FUN_0040e560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040e560.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0040fc00  Race::Tick  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/t01g/004111c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004102f0  FUN_004102f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/004102f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004103a0  SubStateHeldCountdown5  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/004103a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00410510  Race::EvaluateResult  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a5_00410510.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00410b30  sub_00410b30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00410b30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411170  TimeTrialRecordPlayback  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411350  Replay::TimeFormat  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411350.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004113b0  FUN_004113b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/004113b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004114c0  FUN_004114c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/004114c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004114e0  ReplayCleanup  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/004114e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411530  Replay::GetTimeAtIdx  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411580  ReplayGetBestTime  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004115c0  ReplayGetCurrentTime  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/004115c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411600  ReplayRecordFrame  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411600.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411750  ReplayStartLap  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411750.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004117b0  ReplaySave  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/004117b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411ce0  Ghost::SetupRender  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411ce0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411d60  ReplayCheckTimer  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411d60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00411f30  FUN_00411f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00411f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00412010  FUN_00412010  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00412010.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00412050  FUN_00412050  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00412050.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00412100  FUN_00412100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/00412100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00412130  FUN_00412130  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00412130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00412880  thunk_FUN_00412190  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00412880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00412890  FUN_00412890  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00412890.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413a00  FUN_00413a00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00413a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413a40  FUN_00413a40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/perm_00413a40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413b80  FUN_00413b80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00413b80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413bb0  Fwd4768c0_63bd50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00413bb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413bc0  HudUvRect413bc0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00413bc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413c70  FUN_00413c70  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00413c70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413f20  ZeroFill60_63bc60  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00413f20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413f50  FUN_00413f50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00413f50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413fa0  FUN_00413fa0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00413fa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00413fe0  FUN_00413fe0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00413fe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00414030  AiSplineBankTimerReset  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h4_00417180.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00414060  FUN_00414060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h3_00414060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00414120  CopyTable005f2a70To0089a384  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00414120.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00414180  SubStateRollCountdown414180  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00414180.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00414220  FUN_00414220  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00414220.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00414490  FUN_00414490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00414490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004148b0  FUN_004148b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h4_004148b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00414a70  FUN_00414a70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h4_00414300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00415020  AiLastPlaceFrustration  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00415020.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004150e0  FUN_004150e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_004150e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00415190  AiLeaderProgressRangeGate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00415190.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00415200  AiVehicle0ZeroProgressGuard  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00415200.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00415860  InteractionCooldownSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00415860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00415d00  FUN_00415d00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00415d00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004161e0  AiSplineTargetInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h3_004161e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00416230  Table89a500Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00416230.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00417370  FUN_00417370  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/m_00417370.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004173a0  Float89a360Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_004173a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004173b0  FUN_004173b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/m_00417370.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004173e0  FUN_004173e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_004173e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00417530  FUN_00417530  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00417530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00417740  FUN_00417740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00417740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00417750  FUN_00417750  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h3_00417750.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00417cf0  FUN_00417cf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00417cf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418860  FUN_00418860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h3_00418860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418980  thunk_FUN_0041a060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418980.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418990  thunk_FUN_004194f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418990.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004189a0  FUN_004189a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_004189a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004189c0  FUN_004189c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_004189c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004189e0  thunk_FUN_004196f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_004189e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004189f0  thunk_FUN_00419760  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_004189f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418a00  FUN_00418a00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418a30  FUN_00418a30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418a70  FUN_00418a70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h3_00418a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418db0  FUN_00418db0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00418db0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418de0  FUN_00418de0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418e30  FUN_00418e30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418e50  Fill64_63c508  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00418e50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418e70  FUN_00418e70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418e70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418f30  FUN_00418f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00418f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00418f40  FUN_00418f40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00418f40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00419090  FUN_00419090  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a6_00419090.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004190f0  ClearEax4190f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00419480  FUN_00419480  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004194f0  FUN_004194f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004196f0  FUN_004196f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/m_004196f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00419760  FUN_00419760  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00419fd0  FUN_00419fd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_00419fd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00419ff0  FUN_00419ff0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00419ff0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a060  FUN_0041a060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a180  FUN_0041a180  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_00418a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a1e0  FUN_0041a1e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a1e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a3d0  FUN_0041a3d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_0041a3d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a3e0  HudDispatchMode10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a1e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a4a0  FUN_0041a4a0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a500  GhostVec3Set63c6d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a550  GhostVec4Set63c6b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a5b0  GhostSlotSet63c6ec  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_0041a5b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a5d0  FUN_0041a5d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h3_0041a5d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a840  FUN_0041a840  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a8b0  GhostSlotSet63c6f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_0041a8b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a8d0  FUN_0041a8d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a960  FUN_0041a960  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_0041a960.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a980  FUN_0041a980  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_0041a980.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041a9b0  FUN_0041a9b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_0041a9b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ad00  FUN_0041ad00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041a4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ad60  ParticleEmitterCtorA  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041adb0  FUN_0041adb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ae60  FUN_0041ae60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041af00  FUN_0041af00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b340  FUN_0041b340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b440  EmitterDtorClumpAt5c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b450  FUN_0041b450  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b4d0  FUN_0041b4d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b510  HudCounterReset  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/raw_0041b510.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b540  FUN_0041b540  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b630  HudSlotLoopB630  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b660  FUN_0041b660  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h1_grp_0041ad60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b690  FUN_0041b690  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b690.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b720  FUN_0041b720  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b720.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b770  FUN_0041b770  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b770.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041b7a0  FUN_0041b7a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b7a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041bc50  FUN_0041bc50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041bc50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041beb0  EmitterDtorClumpAt15c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041beb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041bec0  FUN_0041bec0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b690.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041bf20  FUN_0041bf20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b720.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c010  HudConstTableInitAndSweep  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041b770.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c090  FUN_0041c090  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c090.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c0c0  HudDispatchSlot2  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041bc50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c0e0  FUN_0041c0e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041beb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c100  FUN_0041c100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c2c0  FUN_0041c2c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c2c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c300  HudDispatchMode5  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c2d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c320  ParticleEmitterCtorC  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c380  FUN_0041c380  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a7_0041c380.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041c9a0  FUN_0041c9a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c9a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041cb00  EmitterDtorClumpAt100  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041cb00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041cb10  FUN_0041cb10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041cb80  sub_0041cb80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c380.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041cbc0  FloatTableInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041cbc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041cc50  HudSlotUpdateCc50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c410.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ccc0  HudSlotLoopCcc0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041c9a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ccf0  FUN_0041ccf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041cb00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041cd20  ParticleEmitterCtorD  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041cd20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041cdb0  FUN_0041cdb0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041cdb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d410  FUN_0041d410  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041d410.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d6d0  FUN_0041d6d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041d6d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d6e0  FUN_0041d6e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041cd20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d730  sub_0041d730  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041cdb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d830  FUN_0041d830  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041d830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d870  sub_0041d870  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041d410.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d890  FUN_0041d890  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041d6d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041d8b0  FUN_0041d8b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041d8b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041da80  FUN_0041da80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041da80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041db90  FUN_0041db90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041db90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041dc30  FUN_0041dc30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041dca0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041de70  FUN_0041de70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041de70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041def0  FUN_0041def0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041def0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e080  ScoreboardStateZeroInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e0d0  FUN_0041e0d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e0d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e130  TimerStateSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e140  Global63d7e0Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e140.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e150  FUN_0041e150  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e6c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e170  FUN_0041e170  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e6c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e1c0  FUN_0041e1c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e6c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e1e0  FUN_0041e1e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e6c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e4b0  FUN_0041e4b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e6c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e630  FUN_0041e630  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e850.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e850  sub_0041e850  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e850.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e870  TrackNodeRecordScan  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e870.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e8b0  TrackNodeDispatch14  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e8b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e8c0  TrackNodeDispatch18  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e8c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e8d0  FUN_0041e8d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e8d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e8e0  FUN_0041e8e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e8e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e8f0  TrackNodeDispatch24  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e8f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e900  FUN_0041e900  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e900.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e910  FUN_0041e910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e910.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e920  FUN_0041e920  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e920.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e930  FUN_0041e930  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e930.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e940  FUN_0041e940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e950  FUN_0041e950  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e950.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e960  FUN_0041e960  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e960.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e970  TrackNodeDispatch44  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e970.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e980  TrackNodeRecordFind  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e980.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e9b0  TrackNodeFieldCmp10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e9b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e9d0  TrackNodeFnPtrGet14  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e9d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041e9e0  TrackNodeFnPtrGet18  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041e9e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea10  GlobalField63d7e4_24  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea20  GlobalField63d7e4_28  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea30  GlobalField63d7e4_2c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea40  GlobalField63d7e4_30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea50  GlobalField63d7e4_34  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea60  GlobalField63d7e4_38  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea80  GlobalField63d7e4_40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ea90  TrackNodeFnPtrGet44  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ea90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041eaa0  FUN_0041eaa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041eaa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ebb0  FUN_0041ebb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ebb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ec00  FUN_0041ec00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ec00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ecc0  FUN_0041ecc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ecc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041eda0  TimerBitFieldSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041eda0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ede0  Flag0041ede0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ede0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ee50  Flag41ee50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ee50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041eeb0  Flag0041eeb0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041eeb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ef60  Player::WriteFieldZero  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ef60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ef80  FlagToggle63dc74  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041ef80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041efc0  Car::GetLapProgress  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041efc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f000  TimerSlotDataCopy  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f030  TriggerStructRead  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f060  FUN_0041f060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f090  GetPlayerStateBits  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f090.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f0d0  MaskGet41f0d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f0d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f100  FloatTable63dc64Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f1c0  GetEventFlag  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f1c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f1e0  FUN_0041f1e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f1e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f220  FUN_0041f220  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f220.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f260  WorldMatrixCopy  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f260.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f290  FUN_0041f290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f2c0  FUN_0041f2c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f2c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f300  Table63dc6cGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f320  Car::GetState  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f330  FUN_0041f330  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f330.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f360  GatedSwitch636ad0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f3d0  FUN_0041f3d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f3d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f4f0  FUN_0041f4f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f4f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f880  FUN_0041f880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/0041f880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041f8f0  FUN_0041f8f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/0041f8f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041fe10  FUN_0041fe10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/0041fe10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0041ffb0  FUN_0041ffb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/0041ffb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00420230  FUN_00420230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420230.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00420340  FUN_00420340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420340.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00420d00  PanelSortInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420d00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00420d40  TimerStructArrayClear  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420d40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00420d80  FUN_00420d80  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420d80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00420de0  FUN_00420de0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420de0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00420e00  FUN_00420e00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420e00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421060  FUN_00421060  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421080  Fill63e5a4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004210b0  FUN_004210b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004210b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004210f0  FUN_004210f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004210f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421100  FUN_00421100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421160  FUN_00421160  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421560  FUN_00421560  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421560.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421590  thunk_FUN_004210f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004215a0  FUN_004215a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420e00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004215c0  FUN_004215c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420de0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004215e0  FUN_004215e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00420de0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421630  FUN_00421630  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421630.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421690  FUN_00421690  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004216b0  FUN_004216b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004216b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421720  FUN_00421720  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004216b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421750  FUN_00421750  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421750.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421800  FUN_00421800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421750.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004218b0  PhysBodyCreateAttach  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004218b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004218d0  PhysWorldBodyBuild  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004218b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421930  FUN_00421930  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421930.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421960  FUN_00421960  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421d20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421980  FUN_00421980  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004219f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004219a0  FUN_004219a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004219f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004219c0  FUN_004219c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004216b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004219f0  FUN_004219f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004219f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421a90  FUN_00421a90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004220d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421ba0  FUN_00421ba0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004220d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421c10  FUN_00421c10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421c10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421c50  FUN_00421c50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422120.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00421c80  FUN_00421c80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00421c80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004220d0  FUN_004220d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004220d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422120  TimerInitLoop  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422120.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422140  FUN_00422140  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422140.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422160  FUN_00422160  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004222d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422290  FUN_00422290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004222d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004222c0  TimerInitThunk  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004222c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004222d0  FUN_004222d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004222d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004223b0  FUN_004223b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004223b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004223f0  FUN_004223f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422440  FUN_00422440  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422440.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422470  FUN_00422470  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/m_00422470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004224d0  MenuSlotInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004224d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422a80  SlotBlockZero  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422a80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422aa0  SlotFieldSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422aa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422ac0  FUN_00422ac0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422ac0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422af0  SlotWordSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422af0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422b10  TimerArrayZero  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422b10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422b30  TimerArrayClear  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422b30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422b50  VehicleDamageAccum  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a5_00422b50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00422fd0  FrontendRaceResultsDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422fd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423040  FrontendDirInput  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a6_00423040.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423270  TabCycler  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423320  CursorMover  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004233e0  HeadingAtan2ToGameAngle  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004233e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423480  AiFilenameBuild  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423540  FUN_00423540  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004235b0  FUN_004235b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004235b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423630  AiDataBufInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423630.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423670  FUN_00423670  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423670.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423b00  FUN_00423b00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423b00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423b20  CarSnapshotDwordGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423b20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423b40  PlayerScoreAccA  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423b40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423b60  PlayerScoreAccB  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423b60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423b80  PlayerScoreAccC  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423b80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423ba0  PlayerScoreAccD  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423ba0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423bc0  PlayerScoreTeamAccC  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423bc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00423c40  PlayerScoreTeamAccBase  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00423c40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004241b0  GetDat008994c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004241b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00424270  FUN_00424270  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00424270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004248b0  PerCarSnapshotInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/004248b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00424920  EndOfRoundAccumulator  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00424920.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425a40  FUN_00425a40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425a40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425ab0  EntryHeaderClear  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425ab0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425b10  PlayerSlotZero  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425b10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425b70  SlotFieldSetter  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425b70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425b90  FUN_00425b90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425b90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425bc0  FUN_00425bc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425bc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425bf0  FUN_00425bf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425bf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425c00  FUN_00425c00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425c00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425d50  FUN_00425d50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425d50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425e40  FUN_00425e40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425e40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425ea0  FUN_00425ea0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425ea0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425ed0  FUN_00425ed0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425ed0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425ee0  SlotWordPtrGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425ee0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425ef0  ActiveSlotCount  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425ef0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00425fa0  FUN_00425fa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00425fa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426020  GlobalDat00646e58Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00426020.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426030  FUN_00426030  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00426030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426060  TrackPhysWorld1Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00426060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426070  TrackPhysWorld2Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426070.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426080  GlobalDat00656ed8Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004260a0  GetDat00657438  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004260a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004260b0  GetDat0065743c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004260b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004260c0  TrackPhysWorld3Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004260c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004260e0  FUN_004260e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a7_004260e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004262f0  FUN_004262f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004262f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426340  FUN_00426340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426340.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426460  FUN_00426460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004264d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004264d0  FUN_004264d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004264d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426630  PitchParamSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426630.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426640  FUN_00426640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426640.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426670  WorldRenderDispatch_Begin  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426670.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004266b0  WorldRenderDispatch_End  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004266b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004266f0  PitchParam2Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004266f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426700  FUN_00426700  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426700.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426780  FUN_00426780  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426780.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426ab0  sub_00426ab0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426ab0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426b40  FUN_00426b40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426b40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426ba0  HudDrawEnabled  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426ba0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426c00  FUN_00426c00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426c00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426c50  FUN_00426c50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426c50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426c90  FUN_00426c90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426c90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426cd0  TrackSlotArrayReset  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426cd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426d20  FUN_00426d20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426d20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426d90  FUN_00426d90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426d90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426dc0  FrontendRaycastForward  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426dc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426de0  FUN_00426de0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426de0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426df0  FUN_00426df0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/f_small_a.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426e00  TrackLoaderFloatGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426e00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00426e10  FUN_00426e10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00426e10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004270f0  CourseRenderFrame  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004270f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004274d0  LangIndexSeedFromCli  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004274d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004274e0  FUN_004274e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004274e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427580  FUN_00427580  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004275d0  FUN_004275d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004275d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427620  FontText_HudShutdown  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427620.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427680  FontText_ComputeScreenXY  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427680.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004277a0  TextCtrlCodeRemap  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004277a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427840  FontText_UTF16WidenCopy  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427840.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427880  FUN_00427880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004278d0  FUN_004278d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004278d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427990  FUN_00427990  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427990.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427ad0  MenuMenusBB  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427ad0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427be0  FUN_00427be0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427be0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427c90  GetDat0067d84c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427c90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427ca0  FontText_HudInit  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427ca0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427e00  FUN_00427e00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427e00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427f00  FUN_00427f00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427f00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00427ff0  FontText_DrawTextRotated  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00427ff0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428140  FUN_00428140  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428140.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428320  FUN_00428320  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428390  FrontendStateSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428390.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004283a0  FUN_004283a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004283a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428400  FUN_00428400  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428400.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428590  ViewportInit  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428610  ViewportScaledRectDraw  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428610.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428760  ViewportScaledRectDraw_Arg7Zero  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004288a0  FUN_004288a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004288a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428a30  FUN_00428a30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428bf0  FUN_00428bf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428bf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00428d30  FUN_00428d30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00428d30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429240  FUN_00429240  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429290  FUN_00429290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004292c0  sub_004292c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004292c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004292d0  sub_004292d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004292d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429300  HudOverlayFloatGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429620  FUN_00429620  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429620.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429660  FUN_00429660  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429660.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429820  Clear8991b0Pair  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429840  RaceStateLatchSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429840.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429860  RaceStateFlagGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429870  LapTimeALessThanB  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429870.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004298c0  Clear67d99c_x4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004298c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004298e0  TimeDisplay::InitForLap  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004298e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004299d0  TimeRecord::WriteTrackBest  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/004299d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429a30  MenuMenusBE  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429a70  LapFracGetBySlot  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429a70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429a80  LapLapsGetBySlot  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429a80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429a90  LapSecsGetBySlot  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429a90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429aa0  GameStateSlotsFill  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429aa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429b30  FUN_00429b30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429b30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429b70  FUN_00429b70  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429b70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00429e10  FUN_00429e10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/00429e10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a470  FUN_0042a470  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a530  FUN_0042a530  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a5d0  FUN_0042a5d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a5d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a640  FUN_0042a640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a640.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a6b0  FUN_0042a6b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a6b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a740  FUN_0042a740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a7f0  FUN_0042a7f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a7f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a860  FUN_0042a860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a8d0  FUN_0042a8d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a8d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a940  MenuTableSearch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a980  MenuTableSearchAlt  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a980.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042a9f0  GetFadeAlpha  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042a9f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042aab0  sub_0042aab0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042aab0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042ac00  MenuGroupCount  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042ac00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042ac50  FUN_0042ac50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042ac50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042ac90  FUN_0042ac90  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042ac90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042ad10  FUN_0042ad10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042ad10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042add0  FUN_0042add0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s06/0042add0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042aeb0  MenuReadinessCheckB  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042aeb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042af50  MenuReadinessCheckC  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042af50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b540  MenuButtonDetectD  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b890  RenderWidthSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b890.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b8a0  RenderHeightSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b8a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b8b0  ScreenWidthGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b8b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b8e0  FUN_0042b8e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b8e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b8f0  StatePhaseIsFinal  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b8f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b910  FUN_0042b910  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b910.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b940  FUN_0042b940  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b950  Set7f1a0c_1000  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b950.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b960  CarSlotInit1P  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b960.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042b9e0  FUN_0042b9e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042b9e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042bde0  HudRectEmitter5  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042bde0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042bf30  MenuModalPost  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042bf30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042bfb0  MenuStateParamStore  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042bfb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c010  FUN_0042c010  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c010.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c090  FUN_0042c090  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c090.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c150  FUN_0042c150  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c150.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c1a0  StateAdvance2to3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c1a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c1c0  FUN_0042c1c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c1c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c1f0  FUN_0042c1f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c1f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c220  FUN_0042c220  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c220.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c280  FUN_0042c280  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c280.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c2a0  FUN_0042c2a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c2a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c2d0  GetDat0067ecb4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c2d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c2e0  GetDat0067ecb8  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c2e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c300  FUN_0042c300  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c3c0  FUN_0042c3c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c3c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c7c0  FUN_0042c7c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c7c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042c960  CameraTransitionStateMachine  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042c960.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042d290  MenusLapTimeFmt  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042d290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042d300  TimeDiffDecompose  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042d300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042d390  GetRaceStateField  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042d390.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042d3a0  RaceTransitionBufZero  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042d3a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042d420  FUN_0042d420  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042d420.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042d4a0  FUN_0042d4a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042d4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042d560  FUN_0042d560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042d560.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042e3a0  MenuChromeShellA  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042e3a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042ee00  SpriteSlotGate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042ee00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042ee40  FrontendModeDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042ee40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042ef40  VehicleUnlockFlagGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042ef40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f020  FUN_0042f020  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f020.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f0b0  GetFrameCounterPlus73  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f0b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f400  FUN_0042f400  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f400.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f500  GetDat0067ea64  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f500.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f510  Vehicle0HandleGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f510.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f520  ViewportBlockPtrGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f520.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f660  DefaultViewportCameraInit  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f660.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f6b0  MenuModeSync  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f6b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f760  Global67f19cGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f770  Global67f1a0Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f770.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f780  Global67f1a4Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f780.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f790  GhostMode::IsActive  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f790.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f7a0  GhostMode::Clear  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f7a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042f7b0  FrontendCursorUpdate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042f7b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042fab0  SpriteSlotDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042fab0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042fb70  MenuSpriteDispatchB  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042fb70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042fe80  GetRaceEndFlag  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042fe80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0042fe90  MenuSpriteDispatchC  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/0042fe90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430120  FUN_00430120  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430120.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430760  IsMultiplayerMode  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430790  GetDat0067f17c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430790.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430820  Global67ed6cGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430830  SplitScreenTrackAssignment  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430910  MenuOptionSlotGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430910.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004309b0  FrontendModeIndex  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/004309b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430a60  HudSlotTypePlayer1  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430a60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430ab0  HudSlotTypePlayer2  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430ab0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430b00  TimeDisplay::SetEntry  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430b00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430b30  FUN_00430b30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430b30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430b60  MenuSlotCount  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430b60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00430b90  FUN_00430b90  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00430b90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b10  BootParamSet2  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b20  SinGlobalProduct431b20  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/f_small_a.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b30  Float67eaa8Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b40  Set67eaa8  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b50  SinGlobalProduct431b50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b60  SinGlobalProduct431b60  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b70  MenuFlagDat007f0f10Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431b80  FUN_00431b80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431d00  FUN_00431d00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431b80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431d70  Course::GetLeaderIndex  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431d70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431d80  TiebreakFlagGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431d80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431d90  FrontendPanelFlagAdvance  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431d90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00431f30  FrontendPageIdDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00431f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00432080  RaceEndCheckFinish  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a1_00432080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00432230  RecEq231  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s07/00432230.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00432260  RecEq232  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00432260.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00432290  Trigger432290  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00432290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004322c0  FUN_004322c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004322c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004323c0  MenuCursorBack  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004323c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00432450  FUN_00432450  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00432450.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004324a0  FUN_004324a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004324a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004325c0  FUN_004325c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004325c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00432800  FUN_00432800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00432800.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00432ad0  MenuDimOverlayFadeStep  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00432ad0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004331a0  RaceFinalizeOnce  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004331a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00433240  FUN_00433240  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00433240.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00436810  LocalPlayerSlotCheck  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00436810.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004391b0  FUN_004391b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004391b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0043aee0  MenuSlotFlagSetCurrent  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0043aee0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0043bf30  FUN_0043bf30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0043bf30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0043d7c0  FUN_0043d7c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0043d7c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0043df00  FUN_0043df00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0043df00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00441490  FUN_00441490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00441490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00441700  Camera::SetupFOV  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00441700.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00441760  Camera::Apply  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00441760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004417e0  FUN_004417e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004417e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00441820  CameraPath::SamplePoint  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00441820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00441990  FUN_00441990  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00441990.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00441c80  CamCarMidpoint441c80  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00441c80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00442410  CameraSlotFieldPtrGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00442410.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00442420  CameraSlotFloatGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00442420.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00442600  CamEntriesInit442600  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00442600.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00442a20  Camera::InitWithMatrix  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00442a20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00442cc0  AiVehicleFloat4Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00442cc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00442df0  RaceFloat898980Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00442df0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00443080  AiTargetEnableGet  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00443080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00443090  Ret897ff0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00443090.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004430a0  Util897fe0Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004430a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004430b0  Util897fe0Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004430b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004430c0  FUN_004430c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004430c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004430e0  FUN_004430e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004430e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00443210  FUN_00443210  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00443210.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00443300  FUN_00443300  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00443300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00443d10  FUN_00443d10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00443d10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00444ff0  FUN_00444ff0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00444ff0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448730  FUN_00448730  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448770  FUN_00448770  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448770.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448820  FUN_00448820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448880  FUN_00448880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448940  ArcticTrackNodeSlot0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448cb0  FUN_00448cb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448cb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448dc0  FUN_00448dc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448dc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448e20  FUN_00448e20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448e20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00448ef0  FUN_00448ef0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00448ef0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004491e0  SkyDomeUpdatePos  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004491e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004492b0  SkyDomeRender  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004492b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004495d0  GlobalFieldGet896278  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004495d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004496a0  EgyptPushColumn1  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/004496a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00449710  EgyptPushColumn2  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00449710.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00449880  FUN_00449880  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00449880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00449b30  FUN_00449b30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00449b30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00449ba0  thunk_FUN_00449b30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00449ba0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00449bb0  FUN_00449bb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00449bb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044aaa0  FUN_0044aaa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044aaa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044ab20  FUN_0044ab20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044ab20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044b000  FUN_0044b000  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044b000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044bbc0  FUN_0044bbc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044bbc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044bc30  FUN_0044bc30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044bc30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044c370  GlobalFieldGet896000  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044c370.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044c5f0  FUN_0044c5f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044c5f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044c740  FUN_0044c740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044c740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044c8b0  FUN_0044c8b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044c8b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044c920  FUN_0044c920  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044c920.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044ca40  RoundaboutStartCrane  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044ca40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044caa0  FUN_0044caa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044caa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044cb00  FUN_0044cb00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044cb00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044d5e0  DepthChargePathSafetyCheck  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044d5e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044d6e0  Set684b34  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044d6e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044df80  FUN_0044df80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044df80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044dfe0  Ret50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044dfe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044dff0  ItemWorldPos44dff0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044dff0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044e020  FloatLt44e020  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e020.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044e050  FloatTable8900a8Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e050.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044e070  FUN_0044e070  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e070.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044e240  FUN_0044e240  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e190.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044e310  FUN_0044e310  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e190.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044e680  FUN_0044e680  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e680.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044ecc0  FUN_0044ecc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044ecc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0044f830  FUN_0044f830  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044f830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00450300  FUN_00450300  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00450300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00451060  FUN_00451060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00451060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00451680  WarzonePontoonSetResetCb  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00451680.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004516d0  FUN_004516d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004516d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00451730  FUN_00451730  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00451730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00451760  WarzonePontoonInit  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00451760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00451820  FUN_00451820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00451820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00451ad0  FUN_00451ad0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00451ad0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00451d80  WarzonePontoonTick  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00451d80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452130  WarzonePontoonDraw  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452140  FUN_00452140  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452140.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452160  PowerupTargetPtrGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452160.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452170  WarzonePontoonResetBodies  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004522d0  FUN_004522d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004522d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004523f0  FUN_004523f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004523f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004527f0  WarzoneSlot0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004527f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452ad0  WarzoneSlot7  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452ad0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452af0  WarzoneSlot6  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452af0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452b20  WarzoneSlot1  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452b20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452ea0  Table88ff50Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452ea0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452eb0  PowerupRangeGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452eb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452ec0  FUN_00452ec0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452f00  FUN_00452f00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00452f30  FUN_00452f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00452f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00453100  FUN_00453100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004538b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00453210  FUN_00453210  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004538b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004532f0  FUN_004532f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004538b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00453eb0  FUN_00453eb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00453eb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00453f30  Fill6870b4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00453f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004540c0  DepthChargePerFrameTeardown  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004540c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454130  FUN_00454130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454170  FUN_00454170  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004541e0  FUN_004541e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004541e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454790  FUN_00454790  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004547c0  FUN_004547c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004547c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454820  FUN_00454820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004548a0  FUN_004548a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004547c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004548e0  FUN_004548e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004548e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454a20  thunk_FUN_004548a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454a20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454bd0  FUN_00454bd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454bd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454c00  FUN_00454c00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454bd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454c10  FUN_00454c10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454c10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454c60  FUN_00454c60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454c60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454cd0  FUN_00454cd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454cd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454f80  FUN_00454f80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00454f80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454fa0  FUN_00454fa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00454ff0  FUN_00454ff0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00455030  FUN_00455030  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00455060  FUN_00455060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00455100  FUN_00455100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00455910  FUN_00455910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00455b40  PowerupTable6885e0Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455b40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00455b50  FUN_00455b50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455b50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00455fe0  FUN_00455fe0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00455fe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456040  FUN_00456040  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456040.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456140  FUN_00456140  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456140.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456760  FUN_00456760  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004568a0  FUN_004568a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004568a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456c30  FUN_00456c30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456c30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456c70  FUN_00456c70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456c70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456c90  thunk_FUN_00456c70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456c90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456ce0  FUN_00456ce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456ce0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456d00  FUN_00456d00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456d00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456eb0  FUN_00456eb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456eb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00456f70  FUN_00456f70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00456f70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004570a0  FUN_004570a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004570a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00457610  FUN_00457610  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00457610.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00457650  FUN_00457650  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00457650.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004577f0  FUN_004577f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004577f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00457ba0  FUN_00457ba0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458020  FUN_00458020  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458080  FUN_00458080  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458360  FUN_00458360  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458630  FUN_00458630  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458630.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004587a0  FUN_004587a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004587a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458880  FUN_00458880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004588c0  FUN_004588c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004588c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458bf0  FUN_00458bf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458bf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458c70  FUN_00458c70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458c70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458d00  FUN_00458d00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458d00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458dd0  FUN_00458dd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458dd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458f20  FUN_00458f20  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458f20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458f80  FUN_00458f80  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458f80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00458fd0  FUN_00458fd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458fd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00459290  FUN_00459290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00459290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004593b0  FUN_004593b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004593b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00459400  FUN_00459400  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a7_00459400.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00459480  FUN_00459480  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00459480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00459540  PoolJReset68ba00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00459540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00459560  FUN_00459560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00459560.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004595c0  FUN_004595c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/004595c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045a0d0  Table68ba04Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a0d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045a0f0  VehPwrState68ba00Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a0f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045a110  PtrGet68ba1c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a110.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045a130  FUN_0045a130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045a530  FUN_0045a530  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045a590  FUN_0045a590  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045a590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045b350  RwInitNullStub  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045b350.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045b360  FUN_0045b360  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045b360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045b930  FUN_0045b930  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045b930.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045b990  FUN_0045b990  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/0045b990.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045b9d0  FUN_0045b9d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045b9d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045ba00  RaceResultIndexedStore  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045ba00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045ba10  FUN_0045ba10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045baa0  PowerupTypeLookup  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bfa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bac0  PowerupSlotDeactivate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bae0  FUN_0045bae0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bba0  FUN_0045bba0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045be90  FUN_0045be90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045be90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bed0  PowerupRoundCleanup  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bed0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bf30  PowerupTeardownAll  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bfa0  PowerupSlotActivate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bfa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bfd0  thunk_FUN_00426060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bfd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bfe0  Bezier::GetLocate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bfe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045bff0  Pred45bff0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045bff0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c010  PowerupPickupWrapper  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c010.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c110  FUN_0045c110  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c110.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c350  Bezier::Interpolate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c350.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c4e0  ArgSearch45c4e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c4e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c510  FUN_0045c510  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c510.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c640  Sel88fbc4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c640.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c6b0  FUN_0045c6b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c6b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c720  FUN_0045c720  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c720.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c7f0  FUN_0045c7f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c7f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c810  FUN_0045c810  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c810.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c820  FUN_0045c820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c850  Table88f09cClear  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c850.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c860  Clear88f0a0x4  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045c880  FUN_0045c880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045c880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045ca30  FUN_0045ca30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045ca30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045cab0  SlotAliveState45cab0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045cab0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045cb20  FUN_0045cb20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045cb20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045cbe0  FUN_0045cbe0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045cbe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045cc50  FUN_0045cc50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045cc50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045cc80  FUN_0045cc80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045cc80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045cfe0  FUN_0045cfe0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045cfe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d080  FUN_0045d080  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045d080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d0e0  FUN_0045d0e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045d0e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d1e0  FUN_0045d1e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045d1e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d250  FUN_0045d250  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a4_0045d250.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d330  FUN_0045d330  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045d330.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d3a0  FUN_0045d3a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045d3a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d3f0  FUN_0045d3f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045d3f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045d430  FUN_0045d430  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045d430.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045da60  FUN_0045da60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045da60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045da90  FUN_0045da90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045da90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045daf0  FUN_0045daf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045daf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045db50  FloatSliderStep  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045db50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045dbe0  FloatSlider2Adjust  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045dbe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045dc80  FUN_0045dc80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045dc80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045dce0  FUN_0045dce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045dce0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045df70  FloatStep45df70  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045df70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045dfc0  FUN_0045dfc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045dfc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045dff0  FUN_0045dff0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045dff0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045e040  FUN_0045e040  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045e040.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045e0f0  FUN_0045e0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045e0f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045e160  FUN_0045e160  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045e160.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045e2a0  FUN_0045e2a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045e2a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045e460  FUN_0045e460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045e460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045f5f0  FUN_0045f5f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045f5f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045faa0  FUN_0045faa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045faa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0045ff50  FUN_0045ff50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/0045ff50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00460270  FUN_00460270  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00460270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00460350  FUN_00460350  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00460350.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00460df0  FUN_00460df0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00460df0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00461650  FUN_00461650  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00461650.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004623e0  FUN_004623e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004623e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004624c0  FUN_004624c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004624c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00462500  Set603868_1  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00462500.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00462510  Set603868_0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00462510.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00462520  FUN_00462520  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00462520.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004625b0  AudioCharacterBankPathsBuild  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004625b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00462760  FUN_00462760  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00462760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004627b0  AudioStateActive  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004627b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00462dd0  FUN_00462dd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00462dd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00462ec0  FUN_00462ec0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00462ec0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00462f50  FUN_00462f50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00462f50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00463150  FUN_00463150  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00463150.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004631f0  FUN_004631f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004631f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004633d0  FUN_004633d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004633d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00463590  FUN_00463590  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00463590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00463c80  FUN_00463c80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00463c80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00463f40  FUN_00463f40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00463f40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004642f0  FUN_004642f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004642f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004644a0  FUN_004644a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004644a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004645c0  FUN_004645c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a1_004645c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00464670  FUN_00464670  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00464670.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004648b0  FUN_004648b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004648b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00464e10  FUN_00464e10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00464e10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004652b0  FUN_004652b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004652b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004656e0  FUN_004656e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004656e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004657b0  FUN_004657b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004657b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00465940  FUN_00465940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00465940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00465a30  FUN_00465a30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00465a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00465b20  FUN_00465b20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00465b20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00465c10  FUN_00465c10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00465c10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00465ca0  FUN_00465ca0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00465ca0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00465e80  FUN_00465e80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00465e80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00465f40  FUN_00465f40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00465f40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00466000  FUN_00466000  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00466000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00466100  FUN_00466100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00466100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004661a0  FUN_004661a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004661a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004661f0  FUN_004661f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/004661f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00466a50  FUN_00466a50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00466a50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00466b50  FUN_00466b50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00466b50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00467010  FUN_00467010  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00467010.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00467020  FUN_00467020  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00467020.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00467070  FUN_00467070  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00467070.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004670a0  FUN_004670a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00467110.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00467110  FUN_00467110  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00467110.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004671a0  BackBuffRasterOpen  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004671a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004671c0  GetOverlayCamera  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004671c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004671d0  FUN_004671d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004671d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00467210  sub_00467210  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00467210.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004672d0  FUN_004672d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004672d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00467300  VehicleCollisionWinTrigger  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00467300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046b4f0  FUN_0046b4f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046b4f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046baa0  FUN_0046baa0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046baa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046bd60  Idx2Wheel881744Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046bd60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046be10  Write46be10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046be10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046be50  FUN_0046be50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046be50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046bf50  FUN_0046bf50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046bf50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c570  VehicleDampVec3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c570.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c5c0  VehicleSlotInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c5c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c6d0  VehicleEntitySlotRead  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c6d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c700  EntityScoreFieldAdd  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c700.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c730  Table882198Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c750  Table882194Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c750.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c770  VehicleDestructionStateGetter  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c770.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c790  VehicleSlotFieldSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c790.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046c7d0  FUN_0046c7d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046c7d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046cb30  Player::GetOffset3D  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046cb30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046cbe0  VehicleCarStateSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/f_small_a.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046cc10  VehicleFloatFieldAsInt  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046cc10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d2e0  WheelGet46d2e0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d2e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d320  Idx2Wheel881790Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d360  Idx2Wheel881738Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d360.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d400  FUN_0046d400  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d400.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d4a0  PtrCompute881ec8  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d4d0  VehiclePhysicsMatrixSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d4d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d510  VehicleVelocityWorldGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a2_0046d510.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d570  FUN_0046d570  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d570.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d660  VehTbl881f50Get3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d660.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d6a0  VehTbl8820acGet1  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d6a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d6d0  VehTbl881f84Get1  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d6d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d740  VehicleVec3At6E4Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d780  LaunchRevRelease  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d780.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d7f0  LaunchRevChargeTick  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d7f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046d880  FUN_0046d880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046d880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046dc00  EntityFieldSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046dc00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046dc20  VehicleOOBDebugDraw  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046dc20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0046dd90  VehField8816f4Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/0046dd90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471430  FUN_00471430  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471430.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471450  FUN_00471450  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471450.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471490  FUN_00471490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004714f0  RegisterTrackEventCallback  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004714f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471530  ClearTable471530  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471560  FUN_00471560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471560.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004715a0  FUN_004715a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a3_004715a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471ac0  FUN_00471ac0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471ac0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471cf0  FUN_00471cf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471cf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471df0  FUN_00471df0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471df0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00471eb0  thunk_FUN_00471df0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00471eb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004721b0  FUN_004721b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004721b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004722e0  FUN_004722e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004722e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472380  FUN_00472380  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472380.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004723d0  Init691500  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004723d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472500  CondGet691500  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472500.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472520  Table69150cSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472520.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472550  Table691508Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472550.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472560  FUN_00472560  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472560.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004725c0  FUN_004725c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004725c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004725f0  FUN_004725f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004725f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472640  Set86ecc8  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472640.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472650  FUN_00472650  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472650.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472690  FUN_00472690  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472690.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004726b0  FUN_004726b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004726b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472740  FUN_00472740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472820  FUN_00472820  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004728a0  FUN_004728a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004728a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004728f0  FUN_004728f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004728f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004729b0  FUN_004729b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004729b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472ad0  FUN_00472ad0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472ad0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472b10  FUN_00472b10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472b10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472dc0  FUN_00472dc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472dc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00472f40  TextGradientV0V1Override  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00472f40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004730b0  TextGradientV2V3Override  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004730b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00473220  FUN_00473220  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00473220.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004733b0  FUN_004733b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004733b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00473540  GradientQuadHorizAlpha  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00473540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004736c0  BorderQuadFourAlpha  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004736c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00473870  TextSpriteUVExplicit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00473870.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004739f0  TextSpriteScaled  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004739f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00474d60  FUN_00474d60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00474d60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00474d80  ByteFlag474d80  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00474d80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00474db0  RwMallocArrayZeroFill  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00474db0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00474e60  DegToRad  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/00474e60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00474f30  FUN_00474f30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00474f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00474fb0  FUN_00474fb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00474fb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00474fd0  FUN_00474fd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00474fd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475010  FUN_00475010  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475010.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475180  FUN_00475180  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475180.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004752d0  FUN_004752d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004752d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004756e0  FUN_004756e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004756e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475830  FUN_00475830  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004758d0  FUN_004758d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004758d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004759b0  Arrays691600Alloc  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004759b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475c10  FUN_00475c10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475c10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475d30  FUN_00475d30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475d30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475d90  FUN_00475d90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475d90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475e50  FUN_00475e50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475e50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475ea0  FUN_00475ea0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475ea0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475ef0  FUN_00475ef0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a1_00475ef0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475f30  FUN_00475f30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00475f50  FUN_00475f50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475f50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004762c0  FUN_004762c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004762c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476390  FUN_00476390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476390.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476430  thunk_FUN_00475ef0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476430.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476440  FUN_00476440  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476440.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004764e0  FUN_004764e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004764e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004764f0  FUN_004764f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004764f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476650  FUN_00476650  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476650.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476710  FUN_00476710  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476710.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004767c0  FUN_004767c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004767c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476860  FUN_00476860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476880  FUN_00476880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004768a0  FUN_004768a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004768a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004768c0  FUN_004768c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004768c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004769a0  ParticleEmitter_SetPosition  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004769a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004769d0  ParticleEmitter_SetVelocity  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004769d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004769f0  ParticleEmitter_SetColour  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004769f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476a10  FUN_00476a10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476a10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476a30  ParticleEmitter_SetScalar  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476a40  ParticleEmitter_SetRGBA  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476a40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476a80  Copy476a80  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476a80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476ae0  Batch476ae0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476ae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476b30  FUN_00476b30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476b30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476b90  Batch476b90  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476b90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476be0  Batch476be0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476be0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476c10  Batch476c10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476c10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476c60  Batch476c60  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476c60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476cb0  Batch476cb0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476cb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476d00  FUN_00476d00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476d00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00476df0  FUN_00476df0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476df0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004770c0  FUN_004770c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004770c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004773f0  FUN_004773f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004773f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477450  FUN_00477450  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477450.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477490  FUN_00477490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477500  FUN_00477500  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477500.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477580  FUN_00477580  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004775b0  FUN_004775b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004775b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477730  FUN_00477730  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477760  FUN_00477760  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004777d0  FUN_004777d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477810  FUN_00477810  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477500.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477870  FUN_00477870  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004778e0  FUN_004778e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004778e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477a10  FUN_00477a10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477a10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477b40  FUN_00477b40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477b40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477b60  FUN_00477b60  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477b60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477e00  Table69318cSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477e00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00477e40  FUN_00477e40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477e40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478030  FUN_00478030  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00478030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004780c0  FUN_004780c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004780c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478110  FUN_00478110  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00478110.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004781b0  FUN_004781b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004781b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478200  FUN_00478200  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00478200.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478220  FUN_00478220  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00478220.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478cb0  FUN_00478cb0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00478cb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478cc0  FUN_00478cc0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00478cc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478cd0  FUN_00478cd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00478cd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00478cf0  CourseAssetDestroy  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a4_00478cf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00479030  FUN_00479030  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00479030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004790e0  FUN_004790e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/004790e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00479fb0  FUN_00479fb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00479fb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a0f0  FUN_0047a0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a0f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a130  FUN_0047a130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a180  Course_Id  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a180.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a1b0  Occluder_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a1b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a1e0  SkyFilename_Handler  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a1e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a280  Mts_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a280.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a3a0  Clump_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a3a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a440  UVA_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a440.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a4a0  Spline_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a4a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a540  AI_Bsp_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a580  AI_Data_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a5b0  World_Bsp_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a5b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a5e0  Hoppy_Bsp_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a5e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a610  Object_Bsp_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a610.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a6b0  Collision_Bsp_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a6b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a6f0  Texture_Dictionary_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a6f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a720  Lap_Variations  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a720.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a750  Split_Sector  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a750.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a790  Lap_Line  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a790.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a7d0  Lap_Line_End  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a7d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a7f0  Lap_Line_Change  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a7f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a810  Safe_Start_Lines  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a810.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a880  Camera_Anim_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a8b0  General_Anim_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a8b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a950  Clump_Mts_Pair  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a950.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047a9b0  Physics_Object  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047a9b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047aa20  Clump_Exclude_From_World  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047aa20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047aa50  Powerup_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047aa50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047aaa0  Lights_Filename  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/0047aaa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047aad0  Ambient_RGB  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047aad0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ab30  SetupFog_Handler  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ab30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047abd0  ModifyFog_Handler  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047abd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ac80  Vehicle_Shininess_Range  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ac80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047acd0  Shine_Scale  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047acd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ad00  Shadow_Scale  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ad00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ad30  Vehicle_Body_Dirt_Texture  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ad30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ad40  SetClumpAnim  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ad40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ade0  RWP_Object  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ade0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ae80  RWP_Object_Box  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ae80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047aef0  RWP_Object_Cylinder  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047aef0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047af50  RWP_Object_Sphere  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047af50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047afa0  RWP_Object_Capsule  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047afa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b000  RWP_Object_Properties  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b0a0  RWP_Object_CentreOfMassOffset  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b0a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b110  RWP_Object_BaseLabel  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b110.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b160  RWP_Object_ShatterVel  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b160.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b1b0  Set_Current_Position  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b1b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b200  Set_Current_Type  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b200.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b230  Set_Current_Respawn_Time  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b230.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b250  Place_Powerup  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b250.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b280  Set_Track_Powerups  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b280.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b350  Physics_Scenario_Create  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b350.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b3c0  Physics_Scenario_Set_Sequence  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b3c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b420  Physics_Scenario_Add_Objects  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b420.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b480  Physics_Scenario_Add_Animated_Object  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b500  Physics_Scenario_Create_Trigger  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b500.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b5b0  Physics_Scenario_Trigger_Add_Objects  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b5b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b630  Physics_Scenario_Get_Function  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b630.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b6b0  Physics_Scenario_Trigger_Set_AI_Poly  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b6b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b720  KTC_NewCopter  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b720.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b7d0  KTC_AddPickUp  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b7d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b860  FUN_0047b860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b880  FUN_0047b880  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b880.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b8a0  FUN_0047b8a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b8a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b8d0  FUN_0047b8d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b8d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b980  RegisterScriptCommand  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b980.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b9b0  FUN_0047b9b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b9b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047b9e0  FUN_0047b9e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047b9e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ba10  thunk_FUN_00496970  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ba10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047bc90  FUN_0047bc90  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047bf70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047bcc0  TriEdgePairsBuild  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047bf70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047bf70  FUN_0047bf70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047bf70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047c0b0  ClearColl47c0b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c0b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047c160  sub_0047c160  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c160.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047c1f0  FUN_0047c1f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c2d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047c230  FUN_0047c230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047c270  FUN_0047c270  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047c2d0  FUN_0047c2d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c2d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ccb0  FUN_0047ccb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ccb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047cd50  FUN_0047cd50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047cd50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047cdc0  StoreDistSq47cdc0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047cdc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047cde0  FUN_0047cde0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047cde0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ce00  Table6c9438Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ce00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ce20  FUN_0047ce20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ce20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ce40  Search47ce40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ce40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ce70  Global6c6eb0Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ce70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ce80  Table6c9758Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ce80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047d080  FUN_0047d080  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047d080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047d100  FUN_0047d100  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047d100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047d130  Table6c71d8Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047d130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047d150  SlotObjectField8  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047d150.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047d180  FUN_0047d180  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047d180.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047d240  VehiclePhysicsBodyPlace  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047d240.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047d330  FUN_0047d330  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047d330.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047e9c0  PhysicsSceneInitSequence  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047e9c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ea40  PhysicsSceneStepWrapper  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ea40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ea60  FUN_0047ea60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ea60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f1e0  FUN_0047f1e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f1e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f230  FUN_0047f230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f230.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f290  FUN_0047f290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f380  FUN_0047f380  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f380.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f450  FUN_0047f450  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f450.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f480  FUN_0047f480  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f4c0  FUN_0047f4c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a5_0047f4c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f840  FUN_0047f840  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f840.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047f940  FUN_0047f940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047f940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047fad0  FUN_0047fad0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047fad0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047fc40  FUN_0047fc40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047fc40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047fe00  FUN_0047fe00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047fe00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0047ff70  FUN_0047ff70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047ff70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00480100  FUN_00480100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00480100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00480340  FUN_00480340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00480340.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00480720  VehicleRespawnPlace  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00480720.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00481750  FUN_00481750  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00481750.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00481780  FUN_00481780  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00481780.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00481810  FUN_00481810  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00481810.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00481d90  FUN_00481d90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00481d90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00482030  SubStripQuadUV  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00482030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004820e0  FUN_004820e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/004820e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004826d0  PhysicsCollisionBodyCreate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/004826d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00482730  PhysicsBodySetMaterialColor  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00482730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00482820  FUN_00482820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a2_00482820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00482860  FUN_00482860  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00482860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00482930  Replay::New  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00482930.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004829d0  Replay::WriteFrame  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/004829d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00483a30  FUN_00483a30  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00483a30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00483a40  FUN_00483a40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00483a40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00483a70  FUN_00483a70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00483a70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00483ca0  FUN_00483ca0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a4_00483ca0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00483d10  Replay::Load  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00483d10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00483ed0  FUN_00483ed0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00483ed0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00483fa0  FUN_00483fa0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00483fa0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00484000  FUN_00484000  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00484000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00484060  FUN_00484060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/00484060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004840b0  FUN_004840b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/004840b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004840d0  JointPtr6ce81cGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004840d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00484130  FUN_00484130  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00484130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00484170  Rec18Create  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00484170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00484280  FUN_00484280  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00484280.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004842b0  Clear4842b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004842b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00484a50  FUN_00484a50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00484ac0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485070  FUN_00485070  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485070.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004850b0  FUN_004850b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004850b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004850e0  FUN_004850e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004850e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004852e0  FUN_004852e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004853f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485340  FUN_00485340  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485340.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485380  FUN_00485380  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485420.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004853b0  FUN_004853b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004853b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004853f0  FUN_004853f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004853f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485420  FUN_00485420  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485420.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485460  FUN_00485460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004858c0  FUN_004858c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004858c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485a00  FUN_00485a00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485a70  PoolInsert485a70  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485a70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485bd0  StackPop485bd0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485bd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485bf0  StackPush485bf0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485bf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485c20  FUN_00485c20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485c20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485d90  FUN_00485d90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485d90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485e10  FUN_00485e10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485e10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00485e50  FUN_00485e50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00485c20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486220  FUN_00486220  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486220.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486270  FUN_00486270  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004862d0  FUN_004862d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004862d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486350  FUN_00486350  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486350.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486370  FUN_00486370  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486370.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486460  FUN_00486460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486610  FUN_00486610  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486610.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486f50  FUN_00486f50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486f50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00486f90  FUN_00486f90  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00486f90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487140  Fwd4768c0_703068  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487140.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487150  FUN_00487150  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487150.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487d60  FUN_00487d60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487d60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487d70  FUN_00487d70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487d70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487de0  FUN_00487de0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487de0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487e00  FUN_00487e00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487150.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487e20  thunk_FUN_00535700  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487e20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487e30  thunk_FUN_00535910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487e30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487e40  FUN_00487e40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487e40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00487e70  FUN_00487e70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00487e70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004880a0  Obj7030acCreate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004880a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004881d0  Obj7030a8Create  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004881d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00488390  Table86ae38Set  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00488390.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004891f0  FUN_004891f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004891f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489240  SkySecondaryDispatch  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489240.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489250  FUN_00489250  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489250.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489290  FUN_00489290  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004892c0  FUN_004892c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004892c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004893a0  FUN_004893a0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004893a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004893b0  FUN_004893b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004893b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004893d0  FUN_004893d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004893d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489450  ContRecSet450  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489450.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489480  ContRecSet480  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004894a0  ContRecSet4a0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004894a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489890  FUN_00489890  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489890.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004898d0  FUN_004898d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004898d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489910  FUN_00489910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489910.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489940  FUN_00489940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004899c0  FUN_004899c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/004899c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489c30  FUN_00489c30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489c30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489c60  FUN_00489c60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489c60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489ce0  FUN_00489ce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489ce0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00489da0  FUN_00489da0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/00489da0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a060  FUN_0048a060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a130.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a3c0  FUN_0048a3c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a3c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a430  FUN_0048a430  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a430.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a460  StridedClear2_709238  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a490  FUN_0048a490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a5d0  FUN_0048a5d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a630  FUN_0048a630  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a630.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a6f0  FUN_0048a6f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a6f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a830  FUN_0048a830  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048a850  FUN_0048a850  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048a850.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048aa20  FUN_0048aa20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048aa20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048ad50  FUN_0048ad50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048ad50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048ade0  FUN_0048ade0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048ade0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048ae00  FUN_0048ae00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048ae00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048af70  FUN_0048af70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048af70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048b650  FUN_0048b650  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048b650.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048b960  FUN_0048b960  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048b960.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048baf0  FUN_0048baf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048baf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048bb70  FUN_0048bb70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048bb70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048bbe0  FUN_0048bbe0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048bbe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048bc10  FUN_0048bc10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048bc10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048cee0  FUN_0048cee0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14/0048cee0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048cf70  FUN_0048cf70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048cf70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048cf90  FUN_0048cf90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048cf90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048d0f0  FUN_0048d0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048d0f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048e5f0  FUN_0048e5f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048e5f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048e7b0  FUN_0048e7b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048e7b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048eac0  FUN_0048eac0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048eac0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048ebc0  FUN_0048ebc0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048ebc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f260  Clear48f260  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f260.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f290  FUN_0048f290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f420  FUN_0048f420  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f420.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f590  FUN_0048f590  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f680  StridedClear76a100  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f680.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f6b0  StridedClear766a00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f6b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f6e0  StridedClear770718  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f6e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f710  StridedClear769f50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f710.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f740  FUN_0048f740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f8a0  FUN_0048f8a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f8a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048f9f0  FUN_0048f9f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f9f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fb10  FUN_0048fb10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fb10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fce0  FUN_0048fce0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fce0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fd10  FUN_0048fd10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fd10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fd40  FUN_0048fd40  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fd40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fd70  FUN_0048fd70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fd70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fdd0  FUN_0048fdd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fdd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fe70  FUN_0048fe70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fe70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048fef0  FUN_0048fef0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fef0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048ff20  FUN_0048ff20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048ff20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0048ffd0  FUN_0048ffd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048ffd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490000  FUN_00490000  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490380  FUN_00490380  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490380.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490490  FUN_00490490  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004904d0  FUN_004904d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004904d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490e50  FUN_00490e50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490e50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490e70  FUN_00490e70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490e70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490f50  FUN_00490f50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490f50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490f80  FUN_00490f80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490f80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490fb0  FUN_00490fb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490fb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00490ff0  FUN_00490ff0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00490ff0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491010  FUN_00491010  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491010.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491030  FUN_00491030  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491030.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491070  RainColorInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491070.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491490  FUN_00491490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004914b0  RainRender  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004914b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491530  FUN_00491530  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491780  FUN_00491780  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491780.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004917a0  RainEnable  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004917a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004917c0  RainSetHeadColour  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004917c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491860  RainSetTailColour  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491900  RainSetPosition  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491900.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004919b0  RainSetScale  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004919b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491a10  RainSetCameraScale  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491a10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491a70  RainSetDirection  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491a70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491bd0  ClearVB491bd0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491bd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491c00  FUN_00491c00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491c00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00491e50  FUN_00491e50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00491f00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492170  FUN_00492170  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004921b0  FUN_004921b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004921b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004921d0  DisplayInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004921d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492290  sub_00492290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492290.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004922e0  CarEventTrigger  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004922e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492340  CarSlotInit  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492340.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492370  sub_00492370  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492370.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492440  sub_00492440  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492440.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004924c0  Set6147b4Triple  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004924c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004924e0  FogColorGetter  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004924e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004926c0  AudioTickAndAvg  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004926c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004927c0  FUN_004927c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004927c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004929d0  FUN_004929d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004929d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492d10  Global771968Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492d10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492d20  IntroSplashFrameTickShim  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492d20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492d30  GameTickStateMachine7  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492d30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492e60  sub_00492e60  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492e60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00492e90  FUN_00492e90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00492e90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493390  FUN_00493390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493390.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493480  FpsDiscretise  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493540  thunk_LaunchLangGate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493540.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493550  thunk_EngineStopDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493550.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493560  thunk_FUN_004954f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493560.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493570  Set77196c_1  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493570.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493580  Set771970_1  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493590  Set771968_1  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493590.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004935a0  FUN_004935a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004935a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004935d0  FUN_004935d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004935d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493600  FUN_00493600  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493600.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493710  FUN_00493710  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a2_00493710.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493ac0  LAB_00493ac0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493ac0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493b40  Ret3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493b40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493b50  FUN_00493b50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493b50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493bc0  FUN_00493bc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493bc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493c00  FUN_00493c00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493c00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493c60  FUN_00493c60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493c60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00493f00  FUN_00493f00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00493f00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004942b0  FUN_004942b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004942b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494320  FUN_00494320  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00494320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004943d0  Vtbl5cf9e8ScalarDeletingDtor  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004943d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004943f0  FUN_004943f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/004943f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494460  sub_00494460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00494460.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494480  FUN_00494480  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/00494480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004944b0  FUN_004944b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004944b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494a80  sub_00494a80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494a80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494ac0  FUN_00494ac0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494ac0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494b20  FUN_00494b20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494b20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494bc0  FUN_00494bc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494bc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494c60  FUN_00494c60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494c60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494c80  FUN_00494c80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494c80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494ee0  thunk_FUN_004d8560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494ee0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494f00  thunk_FUN_00494a80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494f00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494f10  thunk_FUN_00494480  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494f10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494f20  thunk_FUN_00494460  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00494f20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494f40  FUN_00494f40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00494fd0  FUN_00494fd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495080  Fwd494fd0_DoublePlusHalf  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495080.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004950b0  QpcTimeScaledTo3Mhz  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004950b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495110  FUN_00495110  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495110.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495120  TimerQpfStore  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495120.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495150  FUN_00495150  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495150.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004951e0  thunk_FUN_00495780  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004951e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004951f0  HardwareSetVideoMode  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004951f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495270  HWNDGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495280  FUN_00495280  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495280.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004952f0  FUN_004952f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004952f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495350  HardwareShowIntroVideo  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495350.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004954f0  HardwareExitApplication  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004954f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495520  Get771e78  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495520.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495530  CreateDInputObject  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495580  FUN_00495580  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495580.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004955b0  DInputInitPredicate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004955b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004955c0  thunk_FUN_00495580  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004955c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004955d0  FUN_004955d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004955d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495780  HardwareInstallFileSystem  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495780.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495790  Global772facGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495790.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004957a0  FUN_004957a0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004957a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495830  JoypadStrcpy  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495e80  FUN_00495e80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495e80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00495fe0  FUN_00495fe0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00495fe0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496010  FUN_00496010  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496010.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496040  FUN_00496040  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496040.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004960e0  sub_004960e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004960e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496100  FUN_00496100  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496100.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496320  FUN_00496320  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496320.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496370  FUN_00496370  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496370.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004963d0  thunk_FUN_00496370  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004963d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496470  sub_00496470  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496490  sub_00496490  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496490.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496530  FUN_00496530  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004967e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496910  Global772ffcGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496910.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496920  TimerTable772ffcGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496920.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496930  Table773030Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496930.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496940  FUN_00496940  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496940.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496970  FUN_00496970  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496970.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496c10  FUN_00496c10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496c10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496ce0  FUN_00496ce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496ce0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496d00  FUN_00496d00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496d00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496d20  FUN_00496d20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496d20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496d60  PipelineFragment4eb3c0Create  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496d60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496db0  PipelineFragment4eb9d0Create  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496db0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496e40  PCVS_Init  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496e40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00496ec0  FUN_00496ec0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00496ec0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497000  Proj497000  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497000.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497060  FUN_00497060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497060.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497190  FUN_00497190  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497190.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004971b0  ControllerConfigLoad_j5  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004971b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497230  FUN_00497230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497230.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004972b0  FUN_004972b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004972b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497310  FUN_00497310  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497310.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497450  Pred497450  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497450.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497470  FUN_00497470  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004974b0  FUN_004974b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004974b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00497b10  FUN_00497b10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00497b10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004982a0  FUN_004982a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004982a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004987b0  FUN_004987b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004987b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498860  FUN_00498860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498810.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498a00  FUN_00498a00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498b60  FUN_00498b60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498b60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498be0  RenderBitDepthGet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498be0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498c00  VideoModeTableInit  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498d20  ReadModeFromCombo_j5  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a2_00498d20.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498d60  PopulateModeCombo  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a6_00498d60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498e40  FUN_00498e40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00498f60  VideoDialogInit_i3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499170  SubsystemSelectionChanged_i3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a5_00499170.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004991f0  VideoSettingsDlgProc  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00498a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499690  WindowMsgPump  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499690.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004996f0  WindowShow  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004996f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499710  Global7e9584Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499710.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499720  GetInputHinst  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499720.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499730  BootPtr773818Get  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499740  SetControlTextFromResource_i3  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a6_00499740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004997b0  FUN_004997b0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/004997b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499820  sub_00499820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499820.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499890  FUN_00499890  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499890.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499ba0  sub_00499ba0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499ba0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499cc0  sub_00499cc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499cc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x00499ce0  FUN_00499ce0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/00499ce0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049a0a0  FUN_0049a0a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049a0a0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049a0e0  FUN_0049a0e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049a0e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049a150  FUN_0049a150  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049a150.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049a2e0  Set77396c  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049a2e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049a730  FUN_0049a730  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049a730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049a740  Set773978  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049a740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049aae0  FUN_0049aae0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049aae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x0049ab10  FUN_0049ab10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s16/0049ab10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c0740  FUN_004c0740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c0740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c07b0  rwID_FRAMEMODULE_ctor  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c07b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c0830  rwID_FRAMEMODULE_dtor  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c0830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c0b10  FUN_004c0b10  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c0b10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c0b70  FUN_004c0b70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c0b70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c0e50  FUN_004c0e50  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c0e50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c0ed0  FUN_004c0ed0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c0ed0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c0ef0  FUN_004c0ef0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c0ef0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1300  FUN_004c1300  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1300.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1340  FUN_004c1340  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1340.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c13e0  FUN_004c13e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c13e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1480  FUN_004c1480  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1480.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1520  FUN_004c1520  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1520.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1680  FUN_004c1680  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1680.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1740  FUN_004c1740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1740.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1800  FUN_004c1800  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1800.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1840  FUN_004c1840  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1840.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c19f0  RwVtableSlot07Call  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c19f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1a00  IntroSplashVtableSlot6  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1a00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1a10  FUN_004c1a10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1a10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1a40  FUN_004c1a40  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1a40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1b10  FUN_004c1b10  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1b10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1bb0  IntroSplashRenderState  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1bb0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1be0  sub_004c1be0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1be0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1c10  Camera::SetProjection  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1c10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1c80  FUN_004c1c80  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1c80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c1cf0  FUN_004c1cf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c1cf0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2c90  DriverSystemDispatch  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2c90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2d80  FUN_004c2d80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2d80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2d90  RwEngineRegisterPlugin  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2d90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2dc0  FUN_004c2dc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2dc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2de0  RwEngineGetNumSubSystems  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2de0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2e10  RwEngineGetSubSystemInfo  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2e10.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2e40  RwEngineGetCurrentSubSystem  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2e40.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2e70  RwEngineSetSubSystem  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2e70.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2ea0  RwEngineGetNumVideoModes  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2ea0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2ed0  RwEngineGetModeInfo  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2ed0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c2f30  RwEngineSetVideoMode  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2f30.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c3270  sub_004c3270  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c3270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c35f0  FUN_004c35f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c35f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c3d60  FUN_004c3d60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c3d60.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c3d90  FUN_004c3d90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c3d90.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c3dc0  FUN_004c3dc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c3dc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c3df0  RwV3dTransformPoints  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c3df0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c40b0  FUN_004c40b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c40b0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c4270  MatrixOrthoResidual4c4270  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c4270.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c42d0  MatrixNormResidual4c42d0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c42d0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c4430  rwID_MATRIXMODULE_dtor  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c4430.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c4470  rwID_MATRIXMODULE_ctor  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c4470.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c4530  FUN_004c4530  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c4530.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c45f0  FUN_004c45f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c45f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c4600  RwMatrixMultiply  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c4600.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c4670  thunk_FUN_004c4680  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c4670.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5770  FUN_004c5770  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5770.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5800  FUN_004c5800  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5800.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5830  FUN_004c5830  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5830.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5850  FUN_004c5850  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5850.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5860  FUN_004c5860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5860.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5890  RwTexDictionaryCreate  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5890.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c59c0  FUN_004c59c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c59c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5ae0  RwTextureSetName  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5ae0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5b50  RwTextureSetMaskName  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5b50.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5bc0  FUN_004c5bc0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5bc0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5c00  FUN_004c5c00  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5c00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5c80  FUN_004c5c80  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5c80.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5ca0  FUN_004c5ca0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5ca0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c5dd0  FUN_004c5dd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c5dd0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c6140  FUN_004c6140  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c6140.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c75c0  FUN_004c75c0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c75c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c75e0  ViewportOriginGetter  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c75e0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c7600  RasterUnlock  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c7600.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c7620  FUN_004c7620  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c7620.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c76c0  FUN_004c76c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c76c0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c76f0  RasterCanLock  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c76f0.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c7730  FUN_004c7730  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c7730.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004c7760  FUN_004c7760  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c7760.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x005c9d00  GetRaceEndTrigger  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/gffu/005c9d00.c; evidence: verify/c4rmatchbatch_20261107/RESULT_C4R-MATCHBATCH.md
+2026-11-07  0x004b6fc0  lua_gettop  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7020  FUN_004b7020  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7110  FUN_004b7110  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7140  FUN_004b7140  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7180  FUN_004b7180  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7200  thunk_FUN_004b7fd0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7210  FUN_004b7210  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7250  FUN_004b7250  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7280  FUN_004b7280  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7450  errormessage  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7530  FUN_004b7530  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b75d0  FUN_004b75d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7960  FUN_004b7960  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b79a0  f_call  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7a20  f_parser  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7b00  FUN_004b7b00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7b30  FUN_004b7b30  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7ba0  FUN_004b7ba0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7ca0  FUN_004b7ca0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7cc0  FUN_004b7cc0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7d20  FUN_004b7d20  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7df0  FUN_004b7df0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b7f30  FUN_004b7f30  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b80a0  FUN_004b80a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b8190  FUN_004b8190  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b82a0  FUN_004b82a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b8340  FUN_004b8340  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9540  FUN_004b9540  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9630  FUN_004b9630  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b97f0  FUN_004b97f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9850  FUN_004b9850  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9890  FUN_004b9890  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9ad0  FUN_004b9ad0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9b00  FUN_004b9b00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9b60  FUN_004b9b60  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9bb0  FUN_004b9bb0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9c90  FUN_004b9c90  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9d00  FUN_004b9d00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b9eb0  FUN_004b9eb0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ba0b0  FUN_004ba0b0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ba0e0  FUN_004ba0e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ba120  FUN_004ba120  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ba140  FUN_004ba140  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ba9e0  FUN_004ba9e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004baa20  FUN_004baa20  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004baa70  FUN_004baa70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004baad0  FUN_004baad0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bab00  FUN_004bab00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bbb70  FUN_004bbb70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bc3c0  FUN_004bc3c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bc3f0  FUN_004bc3f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bc440  FUN_004bc440  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bc480  FUN_004bc480  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bccc0  FUN_004bccc0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bee20  lfunc_newupval  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bee60  lfunc_newproto  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004befd0  lfunc_getlocalname  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf020  lcode_syntaxerror_curtoken  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf040  lcode_jump  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf080  lcode_getlabel  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf0b0  lcode_checkstack  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf0f0  lcode_storestring_or_storek  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf110  lcode_storeNumber  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf180  lcode_numberK  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf200  lcode_setreg_or_loadnil  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf280  lcode_setreturns  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bf2d0  lcode_storevar  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bfa40  lcode_codeABC_nil  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bfa60  lcode_codeABx  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bfeb0  FUN_004bfeb0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bfee0  FUN_004bfee0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bff10  FUN_004bff10  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bff40  FUN_004bff40  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bff70  FUN_004bff70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bffa0  FUN_004bffa0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004bffd0  FUN_004bffd0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0000  math_atan2  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0050  FUN_004c0050  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0080  FUN_004c0080  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c00b0  FUN_004c00b0  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0100  FUN_004c0100  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0130  FUN_004c0130  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0160  FUN_004c0160  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0190  FUN_004c0190  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c01d0  FUN_004c01d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0200  FUN_004c0200  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0280  FUN_004c0280  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c02c0  FUN_004c02c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0330  FUN_004c0330  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c04f0  math_randomseed  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0510  FUN_004c0510  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c05b0  FUN_004c05b0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c06c0  FUN_004c06c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004c0700  FUN_004c0700  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/lua.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0057e750  FUN_0057e750  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0057ec70  FUN_0057ec70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0057ed80  FUN_0057ed80  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0057f030  FUN_0057f030  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0057f080  FUN_0057f080  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0057f200  FUN_0057f200  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0057f940  FUN_0057f940  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00580090  FUN_00580090  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00580ac0  FUN_00580ac0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00580ea0  FUN_00580ea0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00580fc0  FUN_00580fc0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00581120  FUN_00581120  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00581170  FUN_00581170  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005815f0  FUN_005815f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005817f0  FUN_005817f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00581930  FUN_00581930  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582220  FUN_00582220  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582680  FUN_00582680  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005827f0  FUN_005827f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582ac0  FUN_00582ac0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582ce0  FUN_00582ce0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582d40  FUN_00582d40  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582e10  FUN_00582e10  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582e70  FUN_00582e70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582ed0  FUN_00582ed0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00582f00  FUN_00582f00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005830a0  FUN_005830a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00583330  FUN_00583330  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00584070  FUN_00584070  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00584430  FUN_00584430  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00585360  qh_comparevisit  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00585d20  qh_compareangle  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00585d50  qh_comparemerge  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00586340  FUN_00586340  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00586b90  FUN_00586b90  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00586d90  FUN_00586d90  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00586e80  FUN_00586e80  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00587ad0  FUN_00587ad0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00587d30  FUN_00587d30  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005888f0  FUN_005888f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00588e70  FUN_00588e70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00589500  FUN_00589500  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00589650  FUN_00589650  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00589890  FUN_00589890  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00589dc0  FUN_00589dc0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058d6d0  FUN_0058d6d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058edf0  FUN_0058edf0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058ee20  FUN_0058ee20  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058f140  FUN_0058f140  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058f360  FUN_0058f360  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058f3f0  FUN_0058f3f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058f8e0  FUN_0058f8e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058fa50  FUN_0058fa50  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0058fae0  FUN_0058fae0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005905d0  FUN_005905d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00590900  FUN_00590900  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00591020  FUN_00591020  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005913c0  FUN_005913c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00591c80  FUN_00591c80  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00592690  FUN_00592690  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005930b0  FUN_005930b0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005930e0  FUN_005930e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005934d0  FUN_005934d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00593730  FUN_00593730  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005938a0  FUN_005938a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00593990  FUN_00593990  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00593de0  FUN_00593de0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00594080  FUN_00594080  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00594660  FUN_00594660  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005946a0  FUN_005946a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00594720  FUN_00594720  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00594c70  FUN_00594c70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00594cd0  FUN_00594cd0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00594d70  FUN_00594d70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00595950  FUN_00595950  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005964e0  FUN_005964e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00597210  FUN_00597210  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00597330  FUN_00597330  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00597650  FUN_00597650  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00598070  FUN_00598070  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005981c0  FUN_005981c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005984d0  FUN_005984d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00598980  FUN_00598980  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00598ea0  FUN_00598ea0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00599290  FUN_00599290  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005994a0  FUN_005994a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00599760  FUN_00599760  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00599bf0  FUN_00599bf0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00599f60  FUN_00599f60  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059a3a0  FUN_0059a3a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059a720  FUN_0059a720  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059ad80  FUN_0059ad80  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059b360  FUN_0059b360  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059b3e0  FUN_0059b3e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059b460  FUN_0059b460  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059b9a0  FUN_0059b9a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059bab0  FUN_0059bab0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059bc20  FUN_0059bc20  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059bd30  FUN_0059bd30  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059c7f0  FUN_0059c7f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059cb00  FUN_0059cb00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059cbc0  FUN_0059cbc0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059cde0  FUN_0059cde0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059ce60  FUN_0059ce60  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059dd50  qh_compare_facetvisit  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059df50  FUN_0059df50  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059e1e0  FUN_0059e1e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059e500  FUN_0059e500  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0059e720  qh_compare_facetmerge  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a1720  qh_printincidences  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a1aa0  qh_printfacet  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a1c80  FUN_005a1c80  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a2070  FUN_005a2070  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a2500  qh_printfacet2math  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a2670  FUN_005a2670  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a2870  FUN_005a2870  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a2b60  FUN_005a2b60  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a3ea0  qh_printhelp_singularity  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a4e00  qh_eachvoronoi_all  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a4ed0  qh_printvertex  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a56e0  FUN_005a56e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005a5790  qh_printvridge  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/qhull.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a2b60  sprintf  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a2c48  FUN_004a2c48  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a2cbd  printf  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a2d30  FUN_004a2d30  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a2d70  FUN_004a2d70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a2fc0  FUN_004a2fc0  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3090  FUN_004a3090  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a30d0  _floor_pentium4  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a31b1  CrtExitProcess_j5  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a332b  CrtExitNoReturn_j5  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a333c  __exit  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3370  FUN_004a3370  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3440  CrtStackProbe  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a38e6  FUN_004a38e6  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3907  FUN_004a3907  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a391c  FUN_004a391c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a39c0  FUN_004a39c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3b84  FUN_004a3b84  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3bda  FUN_004a3bda  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3bdf  FUN_004a3bdf  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3c1c  FUN_004a3c1c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3c2a  FUN_004a3c2a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3c61  FUN_004a3c61  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3cb3  FUN_004a3cb3  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3ce9  FUN_004a3ce9  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3d0d  FUN_004a3d0d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3d7e  FUN_004a3d7e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3e20  FUN_004a3e20  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3e8d  FUN_004a3e8d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3ede  FUN_004a3ede  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3f90  FUN_004a3f90  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3fb0  _unwind_handler  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a3fd2  FUN_004a3fd2  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a403a  FUN_004a403a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a405d  FUN_004a405d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4066  FUN_004a4066  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a407e  __onexit_lk  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a40fe  ___onexitinit  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4126  __onexit  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a415e  _atexit  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4170  __alldiv  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4220  __allmul  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a42c5  FUN_004a42c5  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a431c  FUN_004a431c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4368  FUN_004a4368  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4554  __heap_alloc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a45cf  __nh_malloc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a45fb  _malloc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a460d  _free  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4b6e  __amsg_exit  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4b93  CrtFastErrorExit  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4da0  __aulldvrm  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4e40  FUN_004a4e40  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4ea8  FUN_004a4ea8  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4fc1  write_char  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a4ff4  write_multi_char  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5018  write_string  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a59bf  CrtSehEpilog  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a59d0  FUN_004a59d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5a0c  _cropzeros  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5a57  _positive  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5a71  FUN_004a5a71  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5aaf  FUN_004a5aaf  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5acc  FUN_004a5acc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5bee  FUN_004a5bee  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5d92  FUN_004a5d92  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5de3  FUN_004a5de3  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5e5e  __initstdio  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5f1b  FUN_004a5f1b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5f4a  FUN_004a5f4a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5f6d  FUN_004a5f6d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5f9c  FUN_004a5f9c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a5fbf  FUN_004a5fbf  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a6047  FUN_004a6047  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a6071  FUN_004a6071  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a6100  FUN_004a6100  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a6e60  FUN_004a6e60  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a6ec7  FUN_004a6ec7  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a6f53  FUN_004a6f53  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7030  FUN_004a7030  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7047  FUN_004a7047  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7090  FUN_004a7090  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a70a5  FUN_004a70a5  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a70bc  FUN_004a70bc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a70d5  FUN_004a70d5  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7118  FUN_004a7118  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a712e  FUN_004a712e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a713b  FUN_004a713b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7165  _check_overflow_exit  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7179  FUN_004a7179  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a721c  FUN_004a721c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7286  FUN_004a7286  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a767c  _floor_default  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a774d  __mtinitlocks  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7940  FUN_004a7940  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7c2c  FUN_004a7c2c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7e12  FUN_004a7e12  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7e3c  FUN_004a7e3c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7e51  FUN_004a7e51  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7eac  FUN_004a7eac  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a7f66  FUN_004a7f66  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a820b  FUN_004a820b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a842d  FUN_004a842d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8455  FUN_004a8455  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8482  FUN_004a8482  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8520  FUN_004a8520  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8573  FUN_004a8573  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a875f  FUN_004a875f  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a876c  FUN_004a876c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a877a  FUN_004a877a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a879e  FUN_004a879e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a87f7  FUN_004a87f7  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8815  FUN_004a8815  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8828  FUN_004a8828  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8899  FUN_004a8899  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8a04  FUN_004a8a04  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8ac2  FUN_004a8ac2  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8ae0  FUN_004a8ae0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8bae  FUN_004a8bae  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8bf3  FUN_004a8bf3  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a8c10  FUN_004a8c10  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a92de  FUN_004a92de  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a9313  FUN_004a9313  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a9340  FUN_004a9340  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a938c  FUN_004a938c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a949b  FUN_004a949b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a951e  FUN_004a951e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a95b9  FUN_004a95b9  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a95e4  FUN_004a95e4  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a9641  FUN_004a9641  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a966f  FUN_004a966f  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a973b  FUN_004a973b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a974d  FUN_004a974d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a9858  FUN_004a9858  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a9cc9  FUN_004a9cc9  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004a9e81  FUN_004a9e81  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa00c  FUN_004aa00c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa03a  FUN_004aa03a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa060  FUN_004aa060  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa0d5  FUN_004aa0d5  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa246  FUN_004aa246  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa24f  FUN_004aa24f  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa2c2  FUN_004aa2c2  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa3db  FUN_004aa3db  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa3e4  ___heap_select  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa3fe  __heap_init  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa44f  ___sbh_heap_init  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa497  ___sbh_find_block  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa4c2  ___sbh_free_block  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa7da  ___sbh_alloc_new_region  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa891  ___sbh_alloc_new_group  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aa997  FUN_004aa997  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aac76  ___sbh_alloc_block  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aaf72  __callnewh  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ab32d  FUN_004ab32d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ab40e  FUN_004ab40e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ab5db  FUN_004ab5db  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aba4d  __FF_MSGBANNER  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aba86  FUN_004aba86  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004abbea  FUN_004abbea  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004abd1a  FUN_004abd1a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004abe86  FUN_004abe86  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac04a  FUN_004ac04a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac248  FUN_004ac248  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac2bc  FUN_004ac2bc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac367  FUN_004ac367  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac3ab  FUN_004ac3ab  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac3d5  FUN_004ac3d5  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac435  FUN_004ac435  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac45c  ___crtMessageBoxA  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac660  _except_handler3  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac71d  FUN_004ac71d  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac738  FUN_004ac738  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac777  FUN_004ac777  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac7b1  FUN_004ac7b1  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac7f0  FUN_004ac7f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac82a  FUN_004ac82a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac869  FUN_004ac869  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac931  FUN_004ac931  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac953  FUN_004ac953  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac985  FUN_004ac985  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ac9d2  FUN_004ac9d2  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aca44  FUN_004aca44  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aca5f  FUN_004aca5f  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aca78  FUN_004aca78  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004acaf3  FUN_004acaf3  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad0b4  FUN_004ad0b4  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad1e9  FUN_004ad1e9  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad27b  FUN_004ad27b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad309  FUN_004ad309  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad33b  __controlfp  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad351  __fcloseall  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad3f0  fdiv_main_routine  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad507  _adj_fdiv_r  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad9a6  _fdivp_sti_st  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad9b9  _fdivrp_sti_st  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ad9cc  _adj_fdiv_m32  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ada18  _adj_fdiv_m64  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ada64  _adj_fdiv_m16i  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ada98  _adj_fdiv_m32i  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adacc  _adj_fdivr_m32  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adb18  _adj_fdivr_m64  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adb64  _adj_fdivr_m16i  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adb98  _adj_fdivr_m32i  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adbcc  _safe_fdiv  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adbe1  _safe_fdivr  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adbf6  FUN_004adbf6  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004addfc  FUN_004addfc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004adeae  _fprem1_common  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ae0b4  _adj_fprem1  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ae279  FUN_004ae279  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ae28f  ___crtInitCritSecNoSpinCount@8  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ae29f  ___crtInitCritSecAndSpinCount  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ae32a  FUN_004ae32a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ae3f4  FUN_004ae3f4  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004ae5fa  FUN_004ae5fa  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aed77  FUN_004aed77  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aeda6  setSBCS  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aef61  FUN_004aef61  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af166  __setmbcp  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af2b6  ___initmbctable  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af400  FUN_004af400  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af418  FUN_004af418  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af430  FUN_004af430  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af4ac  FUN_004af4ac  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af52b  FUN_004af52b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af56c  FUN_004af56c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af5df  FUN_004af5df  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af601  FUN_004af601  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af74e  FUN_004af74e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004af80a  FUN_004af80a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004afa30  FUN_004afa30  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004afbf0  FUN_004afbf0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004aff2c  FUN_004aff2c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004affaf  FUN_004affaf  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004affe0  FUN_004affe0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004afff1  FUN_004afff1  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b0068  FUN_004b0068  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b044b  FUN_004b044b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b046c  FUN_004b046c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b04ca  FUN_004b04ca  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b04f8  FUN_004b04f8  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b0cd7  FUN_004b0cd7  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b0d05  FUN_004b0d05  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b0e7e  FUN_004b0e7e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b11e5  FUN_004b11e5  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1375  __init_time  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b13d4  FUN_004b13d4  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1433  FUN_004b1433  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1600  FUN_004b1600  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b16d9  FUN_004b16d9  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1b26  FUN_004b1b26  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1b86  FUN_004b1b86  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1c1c  FUN_004b1c1c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1c3a  FUN_004b1c3a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b1d52  FUN_004b1d52  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b2700  FUN_004b2700  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b274e  FUN_004b274e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b2b0c  FUN_004b2b0c  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b302f  __stricmp  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b3098  FUN_004b3098  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b3117  FUN_004b3117  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b3155  FUN_004b3155  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b317f  FUN_004b317f  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b3525  FUN_004b3525  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b3572  FUN_004b3572  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b3788  FUN_004b3788  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b37ea  FUN_004b37ea  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b391a  FUN_004b391a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004b3aec  FUN_004b3aec  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1a40  FUN_005c1a40  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1cb7  FUN_005c1cb7  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1cd4  FUN_005c1cd4  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1d63  _fseek  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1dac  __ftol  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1dd3  FID_conflict:_fwprintf  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1e31  FID_conflict:_ungetc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1ea0  _longjmp  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c1f1c  __setjmp3  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2090  FUN_005c2090  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c20d0  _ceil_pentium4  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c21e2  _frexp  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c229b  _rand  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2435  FID_conflict:__time32  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2470  shortsort  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c24e0  FUN_005c24e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2770  FUN_005c2770  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c278f  FUN_005c278f  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c281e  FUN_005c281e  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c28e7  FUN_005c28e7  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2940  exp  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c297c  _CIexp  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c29cb  _clock  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2a45  _localtime  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2bc5  strtoxl  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2d9b  FUN_005c2d9b  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2dd9  FUN_005c2dd9  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2e79  __beginthread  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2f0a  FUN_005c2f0a  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2f26  _wcscmp  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2f58  FUN_005c2f58  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c302a  __ftell_lk  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c318c  __rt_probe_read4@4  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c326b  FID_conflict:__floor_default  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c3340  __cintrindisp2  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c337e  __cintrindisp1  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c33bb  __ctrandisp2  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c3551  __ctrandisp1  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c3584  __fload  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c35c0  __inc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c4080  FUN_005c4080  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c4180  FUN_005c4180  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c4440  _gmtime  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c4547  ___mbtowc_mt  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005ca2d0  __aullshr  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005c2a0e  ___inittime  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/crt_libcmt.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004d1000  zcalloc  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004f1f90  FUN_004f1f90  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x004fa6f0  zcalloc  C1->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00521990  FUN_00521990  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00522ab0  FUN_00522ab0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00522b00  FUN_00522b00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00522cc0  FUN_00522cc0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00528e00  zcalloc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0052a890  FUN_0052a890  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0052a9c0  FUN_0052a9c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0052b7e0  FUN_0052b7e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0052bf20  FUN_0052bf20  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0052c630  FUN_0052c630  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0052c660  FUN_0052c660  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/zlib.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005150e0  FUN_005150e0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00515660  FUN_00515660  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00515680  FUN_00515680  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005156b0  FUN_005156b0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00515710  FUN_00515710  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00515740  FUN_00515740  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005157c0  FUN_005157c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00515aa0  FUN_00515aa0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00515d50  FUN_00515d50  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00515ee0  FUN_00515ee0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005161a0  FUN_005161a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00516320  FUN_00516320  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00516370  FUN_00516370  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00516430  FUN_00516430  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00516bb0  png_write_data  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00516bd0  png_flush_data  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00516cc0  png_zalloc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00516d30  png_reset_crc  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005173d0  Set5173d0  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005175d0  FUN_005175d0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00517e00  FUN_00517e00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005183a0  FUN_005183a0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005183c0  FUN_005183c0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005184b0  FUN_005184b0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x005184f0  FUN_005184f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00519af0  FUN_00519af0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00519e30  FUN_00519e30  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0051c100  FUN_0051c100  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0051c9f0  FUN_0051c9f0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0051ca60  StoreBE51ca60  C3->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0051cb70  FUN_0051cb70  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x0051f350  FUN_0051f350  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00520850  png_destroy_struct  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00520960  FUN_00520960  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00520990  FUN_00520990  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00520a00  FUN_00520a00  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00520b60  FUN_00520b60  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00521000  FUN_00521000  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00523140  png_crc_read  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00528200  FUN_00528200  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
+2026-11-07  0x00528ba0  FUN_00528ba0  C2->C4  route libid (L-93): library identity, verify/c4rlibid_20261107/libpng.tsv; evidence: verify/c4rlibid_20261107/RESULT_C4R-LIBID.md
 2026-11-07  U-9783  UNCERTAINTIES  Active->struck  the mode-10 handling row 0x0067ea94 is a setup-screen option (FUN_0043dfd0 screen 0x12 row 4 / 0x18 row 3), separate from the course row 0x0063ba7c; live table 0x005f2770 -> 0x005f2728 static with 0 writes; 0 on every harness and menu race here (only row 0 available in 0x007f0a44+i*0x30), so A3 runs type 6 (105.0) on every course and the standalone default constant 6 is the original value; harness 13-track refs were taken at type 6; GAMEFLOW knob no longer writes 0x0067ea94 = k (gates unchanged, B_PSGA_K0 = B_DEFA_K0 b030be28) (evidence: verify/d4uncphys_20261107/RESULT_D4-UNC-PHYS.md)
 2026-11-06  0x004576b0  AnyActive4576b0  C3->C4  route match (c4=match): 100% 20/20 insn, relocheck OK, only body Match/MatchS09_004576b0.cpp, exe-callers=1 via Pickups_MaybeReplay; evidence: verify/matchrcs09_20261106/RESULT_MATCH-RC-S09.md
 2026-11-06  0x00458fa0  TtlSet68b1b0  C3->C4  route match (c4=match): 100% 38 B, relocheck OK, only body Match/MatchS09_00458fa0.cpp, exe-callers=1 via PickupField::InitReal; evidence: verify/matchrcs09_20261106/RESULT_MATCH-RC-S09.md

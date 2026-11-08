@@ -120,7 +120,13 @@ def main(argv) -> int:
         if i == 0 or not raw.strip() or raw.startswith("#") or (row and row[0].startswith("#")):
             out_lines.append(raw)
             continue
-        if len(row) != len(cols):
+        # Since the `port` column (C4R-PORTCOL, 2026-11-07) a 10-column row with an unquoted comma
+        # in notes reaches the 11-column width by accident (0041f360). Its shifted exe_file cell holds
+        # notes text, not a mashedmod/ path, and its port cell is not a port value: treat it as malformed.
+        shifted = len(row) == len(cols) and (
+            any(t and not t.startswith("mashedmod/") for t in row[xi].split("|"))
+            or ("port" in cols and row[cols.index("port")] not in ("", "none", "body", "called")))
+        if len(row) != len(cols) or shifted:
             # a data row whose notes hold an unquoted comma: its columns are shifted, so exe_file cannot be
             # located. Keep it byte for byte and say so; it is a tracker defect, not this script's to rewrite.
             malformed.append((i + 1, row[0] if row else "", len(row)))

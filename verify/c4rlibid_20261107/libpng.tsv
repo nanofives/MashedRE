@@ -1,0 +1,47 @@
+library	rva	hooks_name	subsystem	confidence	status	library_object	lib_function	lib_size	first_diff	category	note
+libpng-1.0.12	0x005150e0	FUN_005150e0	third-party-library[libpng-1.0.12]	C2	identical	pngwrite.obj	_png_write_flush	211			masked 24 B
+libpng-1.0.12	0x00515660	FUN_00515660	third-party-library[libpng-1.0.12]	C2	identical	pngtrans.obj	_png_set_packing	30			masked 0 B
+libpng-1.0.12	0x00515680	FUN_00515680	third-party-library[libpng-1.0.12]	C2	identical	pngtrans.obj	_png_set_interlace_handling	35			masked 0 B
+libpng-1.0.12	0x005156b0	FUN_005156b0	third-party-library[libpng-1.0.12]	C2	identical	pngtrans.obj	_png_set_filler	88			masked 0 B
+libpng-1.0.12	0x00515710	FUN_00515710	third-party-library[libpng-1.0.12]	C2	identical	pngtrans.obj	_png_do_invert	40			masked 0 B
+libpng-1.0.12	0x00515740	FUN_00515740	third-party-library[libpng-1.0.12]	C2	identical	pngtrans.obj	_png_do_swap	47			masked 0 B
+libpng-1.0.12	0x005157c0	FUN_005157c0	third-party-library[libpng-1.0.12]	C2	identical	pngtrans.obj	_png_do_strip_filler	518			masked 0 B
+libpng-1.0.12	0x00515aa0	FUN_00515aa0	third-party-library[libpng-1.0.12]	C2	identical	pngset.obj	_png_set_bKGD	53			masked 0 B
+libpng-1.0.12	0x00515d50	FUN_00515d50	third-party-library[libpng-1.0.12]	C2	identical	pngset.obj	_png_set_cHRM_fixed	242			masked 32 B
+libpng-1.0.12	0x00515ee0	FUN_00515ee0	third-party-library[libpng-1.0.12]	C2	identical	pngset.obj	_png_set_gAMA_fixed	69			masked 12 B
+libpng-1.0.12	0x005161a0	FUN_005161a0	third-party-library[libpng-1.0.12]	C2	identical	pngset.obj	_png_set_oFFs	47			masked 0 B
+libpng-1.0.12	0x00516320	FUN_00516320	third-party-library[libpng-1.0.12]	C2	identical	pngset.obj	_png_set_sCAL	76			masked 0 B
+libpng-1.0.12	0x00516370	FUN_00516370	third-party-library[libpng-1.0.12]	C2	identical	pngset.obj	_png_set_pHYs	47			masked 0 B
+libpng-1.0.12	0x00516430	FUN_00516430	third-party-library[libpng-1.0.12]	C2	identical	pngset.obj	_png_set_sBIT	45			masked 0 B
+libpng-1.0.12	0x00516bb0	png_write_data	third-party-library[libpng-1.0.12]	C2	identical	pngwio.obj	_png_write_data	32			masked 8 B
+libpng-1.0.12	0x00516bd0	png_flush_data	third-party-library[libpng-1.0.12]	C2	identical	pngwio.obj	_png_flush	21			masked 0 B
+libpng-1.0.12	0x00516cc0	png_zalloc	third-party-library[libpng-1.0.12]	C2	identical	png.obj	_png_zalloc	96			masked 4 B
+libpng-1.0.12	0x00516d30	png_reset_crc	third-party-library[libpng-1.0.12]	C2	identical	png.obj	_png_reset_crc	25			masked 4 B
+libpng-1.0.12	0x005173d0	Set5173d0	third-party-library[libpng-1.0.12]	C3	identical	pngerror.obj	_png_set_error_fn	26			masked 0 B
+libpng-1.0.12	0x005175d0	FUN_005175d0	third-party-library[libpng-1.0.12]	C2	identical	pngread.obj	_png_read_info	878			masked 248 B
+libpng-1.0.12	0x00517e00	FUN_00517e00	third-party-library[libpng-1.0.12]	C2	identical	pngread.obj	_png_read_end	632			masked 216 B
+libpng-1.0.12	0x005183a0	FUN_005183a0	third-party-library[libpng-1.0.12]	C2	identical	pngget.obj	_png_get_valid	29			masked 0 B
+libpng-1.0.12	0x005183c0	FUN_005183c0	third-party-library[libpng-1.0.12]	C2	identical	pngget.obj	_png_get_IHDR	229			masked 8 B
+libpng-1.0.12	0x005184b0	FUN_005184b0	third-party-library[libpng-1.0.12]	C2	identical	pngget.obj	_png_get_PLTE	56			masked 0 B
+libpng-1.0.12	0x005184f0	FUN_005184f0	third-party-library[libpng-1.0.12]	C2	identical	pngget.obj	_png_get_tRNS	116			masked 0 B
+libpng-1.0.12	0x00519af0	FUN_00519af0	third-party-library[libpng-1.0.12]	C2	identical	pngrtran.obj	_png_do_read_invert_alpha	196			masked 0 B
+libpng-1.0.12	0x00519e30	FUN_00519e30	third-party-library[libpng-1.0.12]	C2	identical	pngrtran.obj	_png_do_gray_to_rgb	319			masked 0 B
+libpng-1.0.12	0x0051c100	FUN_0051c100	third-party-library[libpng-1.0.12]	C2	identical	pngrtran.obj	_png_do_dither	274			masked 0 B
+libpng-1.0.12	0x0051c9f0	FUN_0051c9f0	third-party-library[libpng-1.0.12]	C2	identical	pngrio.obj	_png_read_data	32			masked 8 B
+libpng-1.0.12	0x0051ca60	StoreBE51ca60	third-party-library[libpng-1.0.12]	C3	identical	pngwutil.obj	_png_save_uint_32	35			masked 0 B
+libpng-1.0.12	0x0051cb70	FUN_0051cb70	third-party-library[libpng-1.0.12]	C2	identical	pngwutil.obj	_png_write_sig	102			masked 4 B
+libpng-1.0.12	0x0051f350	FUN_0051f350	third-party-library[libpng-1.0.12]	C2	identical	pngwutil.obj	_png_write_start_row	402			masked 40 B
+libpng-1.0.12	0x005207c0	png_create_struct_2	third-party-library[libpng]	C2	not-compared						no library function paired
+libpng-1.0.12	0x00520850	png_destroy_struct	third-party-library[libpng-1.0.12]	C2	identical	pngmem.obj	_png_destroy_struct	18			masked 4 B
+libpng-1.0.12	0x00520870	FUN_00520870	third-party-library[libpng]	C2	not-compared						no library function paired
+libpng-1.0.12	0x005208c0	FUN_005208c0	third-party-library[libpng]	C2	differs	pngmem.obj	_png_malloc	56	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.76; +0x0 lib[push edi] orig[push esi] (same-insn-start)
+libpng-1.0.12	0x00520930	png_free	third-party-library[libpng]	C2	differs	pngmem.obj	_png_free	24	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.71; +0x1 lib[mov eax, dword ptr [esp + 4]] orig[mov ecx, dword ptr [esp + 4]] (same-insn-start)
+libpng-1.0.12	0x00520960	FUN_00520960	third-party-library[libpng-1.0.12]	C2	identical	pngmem.obj	_png_memcpy_check	35			masked 0 B
+libpng-1.0.12	0x00520990	FUN_00520990	third-party-library[libpng-1.0.12]	C2	identical	pngmem.obj	_png_memset_check	49			masked 0 B
+libpng-1.0.12	0x00520a00	FUN_00520a00	third-party-library[libpng-1.0.12]	C2	identical	pngwtran.obj	_png_do_write_transformations	343			masked 36 B
+libpng-1.0.12	0x00520b60	FUN_00520b60	third-party-library[libpng-1.0.12]	C2	identical	pngwtran.obj	_png_do_pack	272			masked 0 B
+libpng-1.0.12	0x00521000	FUN_00521000	third-party-library[libpng-1.0.12]	C2	identical	pngwtran.obj	_png_do_write_invert_alpha	263			masked 0 B
+libpng-1.0.12	0x00523110	LoadBE523110	third-party-library[libpng-1.0.12]	C3	identical-ambiguous	pngrutil.obj	_png_get_uint_32	39			masked 0 B; same bytes as _png_get_int_32
+libpng-1.0.12	0x00523140	png_crc_read	third-party-library[libpng-1.0.12]	C2	identical	pngrutil.obj	_png_crc_read	38			masked 8 B
+libpng-1.0.12	0x00528200	FUN_00528200	third-party-library[libpng-1.0.12]	C2	identical	pngrutil.obj	_png_do_read_interlace	1063			masked 4 B
+libpng-1.0.12	0x00528ba0	FUN_00528ba0	third-party-library[libpng-1.0.12]	C2	identical	pngrutil.obj	_png_read_start_row	606			masked 32 B

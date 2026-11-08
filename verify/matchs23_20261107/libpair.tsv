@@ -1,0 +1,119 @@
+rva	hooks_name	lib_object	lib_function	lib_size	status	note
+0x00516bf0		pngpread.obj	_png_set_progressive_read_fn	54	differs	
+0x00516c40		png.obj	_png_sig_cmp	124	differs	
+0x00516d20		png.obj	_png_zfree	5	identical	
+0x00516d50		png.obj	_png_calculate_crc	72	differs	
+0x00516da0		png.obj	_png_create_info_struct	43	differs	
+0x00516de0		png.obj	_png_free_data	946	differs	
+0x005171a0		png.obj	_png_info_destroy	85	differs	
+0x00517200		png.obj	_png_handle_as_unknown	77	differs	
+0x00517250		pngerror.obj	_png_error	53	differs	
+0x00517270					not-compared	
+0x005172b0		pngerror.obj	_png_chunk_error	73	differs	
+0x005172f0		pngerror.obj	_png_format_buffer	139	differs	
+0x00517380					not-compared	
+0x005173f0		pngread.obj	_png_create_read_struct	564	differs	
+0x00517940		pngread.obj	_png_read_row	1112	differs	
+0x00517da0		pngread.obj	_png_read_image	83	differs	
+0x00518080		pngread.obj	_png_destroy_read_struct	151	differs	
+0x00518140		pngread.obj	_png_read_destroy	600	differs	
+0x00518570		pngrtran.obj	_png_set_strip_16	14	identical	
+0x00518580		pngrtran.obj	_png_set_expand	14	identical-ambiguous	
+0x00518590		pngrtran.obj	_png_set_gray_to_rgb	14	identical	
+0x005185a0		pngrtran.obj	_png_init_read_transformations	2552	differs	
+0x00519270		pngrtran.obj	_png_do_read_transformations	1099	differs	
+0x005196f0		pngrtran.obj	_png_do_unpack	298	differs	
+0x00519820		pngrtran.obj	_png_do_unshift	455	differs	
+0x005199f0		pngrtran.obj	_png_do_read_swap_alpha	248	differs	
+0x00519bc0		pngrtran.obj	_png_do_read_filler	618	differs	
+0x00519f70		pngrtran.obj	_png_do_rgb_to_gray	1858	differs	
+0x0051a6c0		pngrtran.obj	_png_do_background	4228	differs	
+0x0051b750		pngrtran.obj	_png_do_gamma	1004	differs	
+0x0051bb40		pngrtran.obj	_png_do_expand_palette	558	differs	
+0x0051bd70		pngrtran.obj	_png_do_expand	916	differs	
+0x0051c220		pngrtran.obj	_png_build_gamma_table	1638	differs	
+0x0051ca10		pngrio.obj	_png_set_read_fn	83	differs	
+0x0051ca90		pngwutil.obj	_png_write_chunk_start	88	differs	
+0x0051cb40		pngwutil.obj	_png_write_chunk_data	46	differs	
+0x0051cbe0		pngwutil.obj	_png_write_IHDR	932	differs	
+0x0051cfc0		pngwutil.obj	_png_write_PLTE	242	differs	
+0x0051d0f0		pngwutil.obj	_png_write_gAMA	151	differs	
+0x0051d1b0		pngwutil.obj	_png_write_chunk	114	differs	
+0x0051d240					not-compared	
+0x0051d340		pngwutil.obj	_png_write_sRGB	128	differs	
+0x0051d400		pngwutil.obj	_png_write_iCCP	227	differs	
+0x0051d560		pngwutil.obj	_png_text_compress	670	differs	
+0x0051d800		pngwutil.obj	_png_write_compressed_data_out	238	differs	
+0x0051d900		pngwutil.obj	_png_write_sPLT	479	differs	
+0x0051db30		pngwutil.obj	_png_write_sBIT	186	differs	
+0x0051dca0					not-compared	
+0x0051e230					not-compared	
+0x0051e4a0					not-compared	
+0x0051e6f0		pngwutil.obj	_png_write_hIST	182	differs	
+0x0051e7f0		pngwutil.obj	_png_check_keyword	425	differs	
+0x0051e990		pngwutil.obj	_png_write_tEXt	180	differs	
+0x0051ead0					not-compared	
+0x0051ed60		pngwutil.obj	_png_write_oFFs	204	differs	
+0x0051ee70		pngwutil.obj	_png_write_pCAL	617	differs	
+0x0051f0e0					not-compared	
+0x0051f240		pngwutil.obj	_png_write_pHYs	204	differs	
+0x0051f4f0		pngwutil.obj	_png_write_finish_row	476	differs	
+0x0051f810		pngwutil.obj	_png_do_write_interlace	579	differs	
+0x0051fa50		pngwutil.obj	_png_write_find_filter	3023	differs	
+0x00520640					not-compared	
+0x005209d0					not-compared	
+0x00520c70		pngwtran.obj	_png_do_shift	673	differs	
+0x00520ef0		pngwtran.obj	_png_do_write_swap_alpha	257	differs	
+0x00521110					not-compared	
+0x00521410					not-compared	
+0x00521520		deflate.obj	_deflate	636	differs	
+0x00522970					not-compared	
+0x00522b50		inflate.obj	_inflateInit2_	251	differs	
+0x00522ce0		inflate.obj	_inflate	1064	differs	
+0x00523170		pngrutil.obj	_png_crc_finish	192	differs	
+0x005232c0		pngrutil.obj	_png_crc_error	150	differs	
+0x00523360		pngrutil.obj	_png_decompress_chunk	823	differs	
+0x00523640					not-compared	
+0x005238c0					not-compared	
+0x00523cd0					not-compared	
+0x00523e40					not-compared	
+0x005241f0					not-compared	
+0x005245b0					not-compared	
+0x00524f70					not-compared	
+0x005253c0					not-compared	
+0x00525870					not-compared	
+0x00525bd0					not-compared	
+0x00525fb0					not-compared	
+0x00526310					not-compared	
+0x00526630					not-compared	
+0x00526910					not-compared	
+0x00526bf0					not-compared	
+0x005270e0					not-compared	
+0x00527560					not-compared	
+0x005278a0					not-compared	
+0x00527a40					not-compared	
+0x00527c30					not-compared	
+0x00527ee0		pngrutil.obj	_png_combine_row	783	differs	
+0x00528630		pngrutil.obj	_png_read_filter_row	488	differs	
+0x00528810		pngrutil.obj	_png_read_finish_row	733	differs	
+0x00528e20		zutil.obj	_zcfree	12	identical	
+0x00528e30		trees.obj	__tr_init	100	differs	
+0x00528ef0					not-compared	
+0x00529050					not-compared	
+0x0052aa40		infblock.obj	_inflate_blocks_new	155	differs	
+0x0052ab00		infblock.obj	_inflate_blocks	2916	differs	
+0x0052b750					not-compared	
+0x0052b820		infcodes.obj	_inflate_codes	1840	differs	
+0x0052bf40		inftrees.obj	_inflate_trees_bits	163	differs	
+0x0052bff0		inftrees.obj	_huft_build	1227	differs	
+0x0052c4a0		inftrees.obj	_inflate_trees_dynamic	387	differs	
+0x0052c7a0		inffast.obj	_inflate_fast	878	differs	
+0x0052cb00					not-compared	
+0x0052d170					not-compared	
+0x0052d7e0					not-compared	
+0x0052d980					not-compared	
+0x0052da20					not-compared	
+0x0052ddc0					not-compared	
+0x0052de60					not-compared	
+0x0052df40		infblock.obj	_inflate_set_dictionary	49	differs	
+0x00534920						
