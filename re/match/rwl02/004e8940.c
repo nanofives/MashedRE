@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR02 2026-11-08: 100% (relocheck OK). One return at the end (if/else stores), the compiler duplicates the tail as the original does. */
 /* MATCH-RWL02 h3 0x004e8940: hand-written. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -38,9 +39,10 @@ int FUN_004e8940(int param_1, int param_2, int param_3)
       }
     }
     *(short *)(param_2 + 6) = (short)iVar1;
-    return param_1;
   }
-  *(unsigned short *)(param_2 + 6) = 0xffff;
+  else {
+    *(unsigned short *)(param_2 + 6) = 0xffff;
+  }
   return param_1;
 }
 
