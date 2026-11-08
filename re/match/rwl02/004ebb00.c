@@ -27,36 +27,31 @@ typedef unsigned char bool;
 int FUN_004ebb00(short *param_1, short *param_2, int param_3, int param_4)
 {
   uint cnt = param_3 - 2;
-  uint i = 0;
+  uint i;
   int out = 0;
 
   if (param_4 != 0) {
-    if (param_3 != 2) {
-      do {
-        short a = *param_2;
-        if (a != param_2[1] && a != param_2[2] && param_2[1] != param_2[2]) {
-          short o = (short)param_4;
-          if ((i & 1) != 0) {
-            param_1[2] = a - o;
-            param_1[1] = param_2[1] - o;
-            param_1[0] = param_2[2] - o;
-          } else {
-            param_1[0] = a - o;
-            param_1[1] = param_2[1] - o;
-            param_1[2] = param_2[2] - o;
-          }
-          param_1 += 3;
-          out += 3;
+    for (i = 0; i < cnt; i++) {
+      short a = *param_2;
+      if (a != param_2[1] && a != param_2[2] && param_2[1] != param_2[2]) {
+        short o = (short)param_4;
+        if ((i & 1) != 0) {
+          param_1[2] = a - o;
+          param_1[1] = param_2[1] - o;
+          param_1[0] = param_2[2] - o;
+        } else {
+          param_1[0] = a - o;
+          param_1[1] = param_2[1] - o;
+          param_1[2] = param_2[2] - o;
         }
-        param_2++;
-        i++;
-      } while (i < cnt);
-      return out;
+        param_1 += 3;
+        out += 3;
+      }
+      param_2++;
     }
-    return out;
   }
-  if (param_3 != 2) {
-    do {
+  else {
+    for (i = 0; i < cnt; i++) {
       short a = *param_2;
       if (a != param_2[1] && a != param_2[2] && param_2[1] != param_2[2]) {
         if ((i & 1) != 0) {
@@ -72,9 +67,7 @@ int FUN_004ebb00(short *param_1, short *param_2, int param_3, int param_4)
         out += 3;
       }
       param_2++;
-      i++;
-    } while (i < cnt);
-    return out;
+    }
   }
   return out;
 }
