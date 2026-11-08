@@ -12,7 +12,7 @@ struct PortStateSeedEntry {
 namespace mashed_re {
 namespace Compat {
 
-// Reads MASHED_PORTSTATE_SEED once. Default OFF: does nothing at all (no write, no log).
+// Default ON since L-101; MASHED_NO_PORTSTATE_SEED=1 (read once) opts out: no write, no log.
 bool PortStateSeed_On();
 
 // WinMain entry, before any game code: copies the generated table (Compat/PortStateSeed.inc) into the pad at

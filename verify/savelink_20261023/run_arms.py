@@ -496,8 +496,7 @@ STACK['ST5L2NRA'] = STACK['ST5L2'] + ['MASHED_NO_RING_AUDIO_PASS=1']
 STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
 STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
 STACK['PSF'] = ['MASHED_PORTSTATE_FRONTEND']  # PORT-STATE-01: frontend game-mode word at DAT_0067e9fc
-STACK['PSS'] = ['MASHED_PORTSTATE_SEED']      # PORT-STATE-02: the L-99 (a) seed table into the pad
-STACK['DEFHPSS'] = STACK['DEFH'] + STACK['PSS']   # PORT-STATE-02: D2 under the 42 s hold with the seed ON
+STACK['NOPSS'] = ['MASHED_NO_PORTSTATE_SEED']   # PORT-STATE-02 after the L-101 flip: the seed's opt-out (= the pre-flip default)
 STACK['NPSR'] = ['MASHED_NO_PORTSTATE_RECORDS=1']  # L-88 flip opt-out: the pre-flip default (gates.csv ba407a16)
 # MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)); PSG = all three port-state knobs (the selector
 # 0x0040ce80 needs the seeded course table), PSGO = the GAMEFLOW knob alone; the *A stacks race Arctic (Course_Id 0, row 3)
