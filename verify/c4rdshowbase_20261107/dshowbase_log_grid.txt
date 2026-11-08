@@ -1,0 +1,7 @@
+[rel_uni] /Gz /MT /GX /O2 -D NDEBUG WIN32 _LIB _WIN32_DCOM WINVER=0x400 UNICODE _UNICODE: objs 29 rows 159 identical 131 (ambiguous 26) differs 19 not-compared 9 obj-fns 1592 identical-elsewhere 144
+[rel_o1] /Gz /MT /GX /O1 -D NDEBUG WIN32 _MBCS _LIB _WIN32_DCOM WINVER=0x400: objs 29 rows 159 identical 24 (ambiguous 7) differs 97 not-compared 38 obj-fns 1569 identical-elsewhere 169
+[rel_ob1] /Gz /MT /GX /O2 /Ob1 -D NDEBUG WIN32 _MBCS _LIB _WIN32_DCOM WINVER=0x400: objs 29 rows 159 identical 159 (ambiguous 19) differs 0 not-compared 0 obj-fns 1569 identical-elsewhere 179
+[rel_g5] /Gz /MT /GX /O2 /G5 -D NDEBUG WIN32 _MBCS _LIB _WIN32_DCOM WINVER=0x400: objs 29 rows 159 identical 68 (ambiguous 20) differs 73 not-compared 18 obj-fns 1569 identical-elsewhere 65
+[rel_g6] /Gz /MT /GX /O2 /G6 -D NDEBUG WIN32 _MBCS _LIB _WIN32_DCOM WINVER=0x400: objs 29 rows 159 identical 141 (ambiguous 21) differs 14 not-compared 4 obj-fns 1569 identical-elsewhere 144
+[rel_uni_ob1] /Gz /MT /GX /O2 /Ob1 -D NDEBUG WIN32 _LIB _WIN32_DCOM WINVER=0x400 UNICODE _UNICODE: objs 29 rows 159 identical 149 (ambiguous 25) differs 5 not-compared 5 obj-fns 1592 identical-elsewhere 179
+[rel_nogz] /MT /GX /O2 -D NDEBUG WIN32 _MBCS _LIB _WIN32_DCOM WINVER=0x400: objs 29 rows 159 identical 138 (ambiguous 21) differs 15 not-compared 6 obj-fns 1569 identical-elsewhere 143
