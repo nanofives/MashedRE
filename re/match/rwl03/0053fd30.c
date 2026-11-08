@@ -24,11 +24,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef struct { int a, b, c, d, e, f; } S53fd30;
+typedef struct { int a, b; float c; int d, e, f; } S53fd30;
 MGLOBAL(S53fd30 *, DAT_007dc5dc, 0x007dc5dc);
 void FUN_004c5a60(int p0);
 // MATCH: 0x0053fd30 FUN_0053fd30
-int FUN_0053fd30(int param_1,int param_2,int param_3,int param_4,int param_5)
+int FUN_0053fd30(int param_1,int param_2,int param_3,int param_4,float param_5)
 {
   S53fd30 *pS;
   byte i;
@@ -76,10 +76,12 @@ found3:
   pS = *(S53fd30 **)((char *)DAT_007dc5dc + param_1);
   for (j = 0; j < 2; j++) {
     if (pS[j].f == 2) {
-      pS[j].c = param_5;
-      return param_1;
+      e = &pS[j];
+      goto found4;
     }
   }
-  ((S53fd30 *)0)->c = param_5;
+  e = 0;
+found4:
+  e->c = param_5;
   return param_1;
 }
