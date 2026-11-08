@@ -410,6 +410,7 @@
 "Math\MatrixOrthoResidual.cpp"
 "Render\TrackLoaderMicros_p3.cpp"
 "Render\RfxEmitter.cpp"
+"Match\MatchS12_004769f0.cpp"
 "Match\MatchS12_004769d0.cpp"
 "Match\MatchS12_004759b0.cpp"
 "Match\MatchS12_00475a60.cpp"

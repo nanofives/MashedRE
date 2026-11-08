@@ -110,12 +110,8 @@ void SinCos24(float a, float* s, float* c) {
 // MATCH-S12: the body of ParticleEmitter_SetVelocity moved to Match/MatchS12_004769d0.cpp (PORT-STATE-02),
 // which compiles the byte-matched source re/match/s12/004769d0.c.
 
-// 0x004769f0
-extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetColour(std::uint32_t* param_1)
-{
-    G(0x00692554u) = param_1 ? param_1[0] : *k00613290;
-}
-RH_ScopedInstall(ParticleEmitter_SetColour, 0x004769f0);  // re-enabled 2026-05-24 c3-render-b
+// MATCH-S12: the body of ParticleEmitter_SetColour moved to Match/MatchS12_004769f0.cpp (PORT-STATE-02),
+// which compiles the byte-matched source re/match/s12/004769f0.c.
 
 // MATCH-S12: the body of 0x00476a10 (Copy476a10) moved to Match/MatchS12_00476a10.cpp,
 // which compiles the byte-matched source re/match/s12/00476a10.c.
