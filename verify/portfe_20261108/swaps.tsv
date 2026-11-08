@@ -1,0 +1,2 @@
+rva	port_symbol	targets	c4_route	best%	by	relocheck	reloc_checked	reloc_unchecked	source	source_blob	wrapper	wrapper_blob	old_tu
+0x0040e470	CarSlotStateGet	both	match	100.0	bytes	OK	1	0	re/match/s02/0040e470.c	5362b96d8b7eefdb9c4d7cf799fcc720ea6c87b5	mashedmod/src/mashed_re/Match/MatchS02_0040e470.cpp	5fbf900eeaf6cc2d59215cf1645254292aa8403b	Ai/CarSlotState.cpp
