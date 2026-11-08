@@ -1,0 +1,6 @@
+# MATCH-RWR06 identical rows without a Ghidra function: va size (re/match/rwl03 extent)
+0x0052df20 19
+0x00537b20 84
+0x00537d20 71
+0x00537d70 106
+0x00537e60 105
