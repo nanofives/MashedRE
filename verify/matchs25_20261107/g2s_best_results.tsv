@@ -1,0 +1,136 @@
+rva	stage	acc	regs	ops	n_mine	n_orig	note	run
+0x005a5910	ok	100.0	100.0	100.0	21	21		g2s_g5
+0x005a5b30	ok	95.7	95.7	95.7	46	46		g2s_g5
+0x005a5d60	ok	100.0	100.0	100.0	15	15		g2s_g5
+0x005a5d90	ok	92.1	92.1	96.8	63	62		g2s_g5
+0x005a5f00	ok	70.8	70.8	83.3	24	22		g2s_game
+0x005a5f60	ok	90.7	90.7	90.7	54	54		g2s_g5
+0x005a6030	ok	87.5	87.5	93.8	16	15		g2s_game
+0x005a6070	ok	56.0	64.0	72.0	23	25		g2s_o1
+0x005a60b0	ok	100.0	100.0	100.0	8	8		g2s_g5
+0x005a60e0	ok	100.0	100.0	100.0	10	10		g2s_g5
+0x005a6110	ok	100.0	100.0	100.0	21	21		g2s_g5
+0x005a6150	ok	100.0	100.0	100.0	21	21		g2s_g5
+0x005a6190	ok	100.0	100.0	100.0	8	8		g2s_g5
+0x005a61b0	ok	38.9	38.9	47.2	36	35		g2s_g5
+0x005a6280	ok	100.0	100.0	100.0	14	14		g2s_g5
+0x005a62b0	ok	77.6	77.6	79.6	41	49		g2s_g5
+0x005a6340	ok	28.8	32.4	38.8	109	170		g2s_g5
+0x005a65a0	ok	66.7	66.7	75.0	11	12		g2s_g5
+0x005a65d0	ok	25.6	46.2	87.2	37	39		g2s_g5
+0x005a6670	ok	58.1	67.7	87.1	28	31		g2s_g5
+0x005a66d0	ok	78.9	78.9	78.9	15	19		g2s_g5
+0x005a6710	ok	100.0	100.0	100.0	32	32		g2s_g5
+0x005a6b70	compile						C2069 cast of 'void' term to non-'void'	g2s_g5
+0x005a6c60	ok	100.0	100.0	100.0	12	12		g2s_g5
+0x005a6c90	ok	100.0	100.0	100.0	8	8		g2s_g5
+0x005a6cb0	ok	62.5	66.7	79.2	66	72		g2s_g5
+0x005a6d60	ok	50.0	72.7	77.3	22	22		g2s_g5
+0x005a6d90	ok	57.1	81.0	81.0	21	20		g2s_game
+0x005a6dc0	ok	57.1	64.3	71.4	12	14		g2s_g5
+0x005a6df0	ok	50.0	50.0	50.0	5	6		g2s_g5
+0x005a6e10	ok	100.0	100.0	100.0	19	19		g2s_g5
+0x005a6ea0	ok	25.0	41.7	63.9	28	36		g2s_g5
+0x005a6f30	ok	62.4	71.3	81.0	230	237		g2s_g5
+0x005a71f0	compile						C2120 'void' illegal with all types	g2s_g5
+0x005a73b0	ok	100.0	100.0	100.0	34	34		g2s_g5
+0x005a7420	ok	33.3	66.7	93.3	15	15		g2s_g5
+0x005a7460	compile						C2109 subscript requires array or pointer type	g2s_g5
+0x005a7520	ok	45.8	45.8	37.5	24	24		g2s_g5
+0x005a7560	ok	100.0	100.0	100.0	23	23		g2s_g5
+0x005a75b0	compile						C2440 'type cast' : cannot convert from 'int *' to 'float'	g2s_g5
+0x005a7920	ok	80.0	82.9	88.6	35	35		g2s_g5
+0x005a79a0	ok	100.0	100.0	100.0	57	57		g2s_g5
+0x005a7a40	ok	62.5	75.0	75.0	16	14		g2s_g5
+0x005a7a60	ok	100.0	100.0	100.0	23	23		g2s_g5
+0x005a7aa0	ok	100.0	100.0	100.0	35	35		g2s_g5
+0x005a7af0	ok	25.0	25.0	25.0	1	4		g2s_g5
+0x005a7b00	ok	92.6	92.6	92.6	27	25		g2s_g5
+0x005a7b50	ok	100.0	100.0	100.0	2	2		g2s_g5
+0x005a7b60	ok	39.1	53.5	77.1	243	271		g2s_g5
+0x005a7e70	ok	100.0	100.0	100.0	17	17		g2s_g5
+0x005a7ea0	ok	100.0	100.0	100.0	21	21		g2s_g5
+0x005a7ee0	ok	93.2	93.2	95.5	44	44		g2s_g5
+0x005a7f70	ok	100.0	100.0	100.0	14	14		g2s_g5
+0x005a8060	ok	37.6	41.9	50.5	151	210		g2s_g5
+0x005a8390	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005a8560	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005a86a0	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005a8750	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005a8890	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005a8960	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005a89a0	ok	100.0	100.0	100.0	3	3		g2s_g5
+0x005a89b0	ok	100.0	100.0	100.0	3	3		g2s_g5
+0x005a89c0	ok	100.0	100.0	100.0	3	3		g2s_g5
+0x005a89d0	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005a8e70	ok	100.0	100.0	100.0	12	12		g2s_g5
+0x005a8f30	ok	29.2	32.7	39.3	101	168		g2s_g5
+0x005a9280	compile						C2440 'type cast' : cannot convert from 'int *' to 'float'	g2s_g5
+0x005a9ab0	ok	67.0	74.1	90.2	107	112		g2s_g5
+0x005a9be0	ok	100.0	100.0	100.0	35	35		g2s_g5
+0x005a9c50	ok	93.3	93.3	95.0	59	60		g2s_g5
+0x005a9d00	ok	75.9	75.9	91.6	83	83		g2s_g5
+0x005a9de0	ok	100.0	100.0	100.0	20	20		g2s_g5
+0x005a9e10	ok	100.0	100.0	100.0	14	14		g2s_g5
+0x005a9e40	ok	100.0	100.0	100.0	16	16		g2s_g5
+0x005a9e60	ok	55.4	63.1	72.3	61	65		g2s_g5
+0x005a9f10	ok	52.4	52.4	61.9	15	21		g2s_g5
+0x005a9f60	ok	35.8	44.8	80.6	67	64		g2s_g5
+0x005a9ff0	ok	47.4	47.4	84.2	18	19		g2s_g5
+0x005aa030	ok	63.2	63.2	73.7	19	18		g2s_g5
+0x005aa060	ok	29.6	29.6	66.7	23	27		g2s_g5
+0x005aa0c0	ok	26.2	77.5	92.5	80	80		g2s_g5
+0x005aa1e0	score						no Ghidra size for 0x005aa1e0; refusing to guess the original's length	g2s_g5
+0x005aa200	ok	45.7	65.5	78.4	116	108		g2s_g5
+0x005aa330	ok	50.9	92.5	92.5	53	53		g2s_g5
+0x005aa3d0	ok	64.4	69.5	74.6	59	57		g2s_g5
+0x005aa560	compile						C2069 cast of 'void' term to non-'void'	g2s_g5
+0x005aa7a0	ok	57.1	75.0	78.6	25	28		g2s_g5
+0x005aa7e0	ok	83.3	86.7	91.7	60	60		g2s_g5
+0x005aa8a0	ok	27.3	27.3	72.7	11	11		g2s_g5
+0x005aa900	ok	92.5	92.5	92.5	67	67		g2s_g5
+0x005aa9c0	ok	63.6	63.6	72.7	22	22		g2s_g5
+0x005aaa00	ok	100.0	100.0	100.0	65	65		g2s_g5
+0x005aaac0	ok	77.3	81.8	86.4	22	22		g2s_g5
+0x005aab00	ok	64.4	77.8	91.1	42	45		g2s_g5
+0x005aab70	ok	64.4	77.8	91.1	42	45		g2s_g5
+0x005aabe0	ok	75.0	75.0	87.5	8	7		g2s_game
+0x005aac20	ok	60.0	82.7	86.7	75	74		g2s_g5
+0x005aacf0	ok	78.1	81.2	90.6	32	32		g2s_g5
+0x005aad40	ok	100.0	100.0	100.0	2	2		g2s_g5
+0x005aadc0	ok	34.4	62.5	65.6	32	28		g2s_g5
+0x005aaff0	ok	100.0	100.0	100.0	4	4		g2s_g5
+0x005ab010	ok	16.7	38.9	44.4	9	18		g2s_g5
+0x005ab040	compile						C2143 syntax error : missing ')' before '*'	g2s_g5
+0x005ab070	ok	50.0	66.7	83.3	6	6		g2s_g5
+0x005ab090	ok	59.5	64.9	75.7	37	35		g2s_game
+0x005ab150	ok	78.6	78.6	85.7	12	14		g2s_g5
+0x005ab180	compile						C2143 syntax error : missing ')' before 'constant'	g2s_g5
+0x005ab190	ok	70.0	70.0	70.0	7	10		g2s_g5
+0x005ab1c0	ok	88.9	88.9	88.9	17	18		g2s_g5
+0x005ab2f0	ok	40.9	59.1	50.0	22	21		g2s_game
+0x005ab340	ok	58.8	70.6	76.5	17	15		g2s_g5
+0x005ab370	ok	100.0	100.0	100.0	3	3		g2s_g5
+0x005ab380	ok	34.6	57.7	75.0	50	52		g2s_g5
+0x005ab410	ok	39.0	45.8	71.2	59	54		g2s_g5
+0x005ab560	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005ab620	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005ab710	compile						C2146 syntax error : missing ')' before identifier 'p2'	g2s_g5
+0x005ab980	ok	21.1	44.7	47.4	38	32		g2s_o1
+0x005aba20	compile						C2069 cast of 'void' term to non-'void'	g2s_g5
+0x005abcb0	ok	52.4	52.4	71.4	20	21		g2s_g5
+0x005abcf0	ok	100.0	100.0	100.0	24	24		g2s_g5
+0x005abd30	ok	43.1	60.6	78.9	104	109		g2s_g5
+0x005abe30	ok	20.0	28.1	50.4	106	135		g2s_o1
+0x005abf80	ok	71.4	71.4	71.4	7	7		g2s_g5
+0x005abfa0	ok	48.8	67.3	92.9	204	211		g2s_g5
+0x005ac210	ok	41.3	56.3	77.8	287	293		g2s_g5
+0x005ac540	ok	50.0	83.3	83.3	5	6		g2s_g5
+0x005ac5f0	ok	74.4	79.5	94.9	37	39		g2s_g5
+0x005ac650	ok	91.3	93.5	95.7	92	91		g2s_g5
+0x005ac740	ok	100.0	100.0	100.0	17	17		g2s_g5
+0x005ac7b0	ok	91.3	91.3	91.3	23	21		g2s_g5
+0x005ac7e0	ok	98.2	98.2	98.2	55	55		g2s_g5
+0x005ac880	ok	100.0	100.0	100.0	48	48		g2s_g5
+0x005ac900	ok	42.9	42.9	78.6	14	14		g2s_g5
+0x005ac980	ok	100.0	100.0	100.0	37	37		g2s_g5
