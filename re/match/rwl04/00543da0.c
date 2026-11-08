@@ -23,10 +23,10 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 MGLOBAL(int, DAT_007dc63c, 0x007dc63c);
-void FUN_00543bb0(int a);
+int FUN_00543bb0(int a, int b, int c, int d);
 // MATCH: 0x00543da0 FUN_00543da0
-void FUN_00543da0(int param_1)
+int FUN_00543da0(int param_1, int b, int c, int d)
 {
-  int a = DAT_007dc63c;
-  FUN_00543bb0(param_1 + a);
+  param_1 += DAT_007dc63c;
+  return FUN_00543bb0(param_1, b, c, d);
 }

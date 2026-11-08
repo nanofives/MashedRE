@@ -31,15 +31,16 @@ typedef int code();
 #endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x0053e760 FUN_0053e760
-void FUN_0053e760(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 *FUN_0053e760(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 {
   undefined4 *puVar1;
 
   puVar1 = (undefined4 *)(**(code **)(DAT_007d3ff8 + 0x108))(0x14,0);
-  if (puVar1 != (undefined4 *)0x0) {
-    *puVar1 = param_1;
-    puVar1[3] = param_2;
-    puVar1[4] = param_3;
-    return;
+  if (puVar1 == (undefined4 *)0x0) {
+    return 0;
   }
+  *puVar1 = param_1;
+  puVar1[3] = param_2;
+  puVar1[4] = param_3;
+  return puVar1;
 }

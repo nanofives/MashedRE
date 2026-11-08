@@ -1,4 +1,4 @@
-// FLAGS: /O1 /G5
+// FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL03 0x0053fb00: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -28,24 +28,21 @@ MGLOBAL(int, DAT_007dc5f0, 0x007dc5f0);
 undefined4 FUN_004cc790(undefined4 p0, undefined4 p1, undefined4 p2);
 undefined4 FUN_00543b20(int p0);
 // MATCH: 0x0053fb00 FUN_0053fb00
-int FUN_0053fb00(int param_1,undefined4 param_2,int param_3)
-
+int FUN_0053fb00(int param_1,int param_2,int param_3)
 {
-  undefined4 *puVar1;
+  int *puVar1;
   int iVar2;
-  int iVar3;
-  
+
   iVar2 = param_1;
-  iVar3 = FUN_004cc790(param_1,(undefined4)&param_1,4);
-  if (iVar3 == 0) {
+  if (FUN_004cc790(iVar2,(undefined4)&param_2,4) == 0) {
     return 0;
   }
-  if (param_1 != 0) {
-    puVar1 = (undefined4 *)(DAT_007dc5f0 + param_3);
+  if (param_2 != 0) {
+    puVar1 = (int *)(DAT_007dc5f0 + param_3);
     if (*(int *)(DAT_007dc5f0 + param_3) == 0) {
-      iVar3 = FUN_00543b20(param_3);
-      if (iVar3 != 0) {
+      if (FUN_00543b20(param_3) != 0) {
         *puVar1 = 1;
+        return iVar2;
       }
     }
   }

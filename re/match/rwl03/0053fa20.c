@@ -1,4 +1,4 @@
-// FLAGS: /O1 /G5
+// FLAGS: /O2 /Ob1 /G5
 // h3: 65.6% regs 65.6% (flags /O1 /G5 won). Residue class (b): original loads edi first then lea; prologue/schedule of the arg reload not moved by 4 source forms and the permuter.
 /* MATCH-RWL03 0x0053fa20: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
@@ -34,14 +34,15 @@ int FUN_0053fa20(int param_1,int param_2,int param_3)
   int iVar2;
 
   iVar2 = param_1;
-  if (FUN_004cc790(param_1, &param_1, 4) == 0) {
+  if (FUN_004cc790(iVar2, &param_2, 4) == 0) {
     return 0;
   }
-  if (param_1 != 0) {
+  if (param_2 != 0) {
     puVar1 = (int *)(DAT_007dc5ec + param_3);
     if (*(int *)(DAT_007dc5ec + param_3) == 0) {
       if (FUN_00543b10(param_3) != 0) {
         *puVar1 = 1;
+        return iVar2;
       }
     }
   }

@@ -30,31 +30,23 @@ typedef unsigned char byte;
 MGLOBAL(int, DAT_007dc5dc, 0x007dc5dc);
 MGLOBAL(undefined1, DAT_00000008, 0x00000008);
 MGLOBAL(int, _DAT_00000008, 0x00000008);
+typedef struct { int a, b; float val; int c, d, type; } E;
 // MATCH: 0x00540160 FUN_00540160
 /* [C1 2026-05-20] Two-arg function (uint slot_id, undefined4 value). Returns slot_id unchanged. */
 
-int FUN_00540160(uint param_1,undefined4 param_2)
+int FUN_00540160(uint param_1,float param_2)
 
 {
-  int iVar1;
-  int iVar2;
-  byte bVar3;
-  uint idx;
-  int *pn;
 
-  iVar2 = param_1;
-  iVar1 = *(int *)(DAT_007dc5dc + param_1);
-  bVar3 = 0;
-  *(byte *)&idx = bVar3;
-  do {
-    if (*(int *)(iVar1 + 0x14 + (idx & 0xff) * 0x18) == 2) {
-      *(undefined4 *)(iVar1 + (idx & 0xff) * 0x18 + 8) = param_2;
-      return iVar2;
-    }
-    bVar3 = bVar3 + 1;
-    *(byte *)&idx = bVar3;
-  } while (bVar3 < 2);
-  pn = 0;
-  pn[2] = param_2;
-  return iVar2;
+
+  E *tab = *(E **)(DAT_007dc5dc + param_1);
+  E *e;
+  byte i;
+  for (i = 0; i < 2; i++) {
+    if (tab[i].type == 2) { e = &tab[i]; goto found; }
+  }
+  e = 0;
+found:
+  e->val = param_2;
+  return param_1;
 }

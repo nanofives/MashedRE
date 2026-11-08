@@ -41,29 +41,16 @@ float * FUN_0054c400(float *param_1,int param_2,float *param_3,int param_4)
   fVar4 = param_3[3];
   fVar5 = param_3[4];
   fVar6 = param_3[5];
-  i = 0;
   pfVar12 = param_1;
-  iVar14 = param_4;
-  if (param_4 >= 0) {
-    do {
-      iVar11 = i;
+  for (i = 0; i <= param_4; i++) {
       fVar7 = (float)i * fVar8;
-      if (iVar14 >= 0) {
-        iVar13 = iVar14 + 1;
-        j = iVar14;
-        do {
-          fVar10 = (float)j * fVar8;
+      for (j = 0; j <= param_4 - i; j++) {
+          fVar10 = (float)(param_4 - i - j) * fVar8;
           fVar9 = DAT_005cc320 - (fVar7 + fVar10);
           *pfVar12 = fVar10 * fVar1 + fVar5 * fVar9 + fVar7 * fVar3;
           pfVar12[1] = fVar10 * fVar2 + fVar9 * fVar6 + fVar7 * fVar4;
           pfVar12 = (float *)((int)pfVar12 + param_2);
-          j = j + -1;
-          iVar13 = iVar13 + -1;
-        } while (iVar13 != 0);
       }
-      i = iVar11 + 1;
-      iVar14 = iVar14 + -1;
-    } while (i <= param_4);
   }
   return param_1;
 }

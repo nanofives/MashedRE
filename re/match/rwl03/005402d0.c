@@ -29,27 +29,18 @@ typedef unsigned int uint;
 typedef unsigned char byte;
 MGLOBAL(int, DAT_007dc5dc, 0x007dc5dc);
 // MATCH: 0x005402d0 FUN_005402d0
-void FUN_005402d0(uint param_1,undefined4 param_2)
-
+typedef struct { float a, b; int c, d, e2; int type; } E5;
+uint FUN_005402d0(uint param_1,float param_2,float param_3)
 {
-  int iVar1;
-  undefined4 *puVar2;
-  byte bVar3;
-
-  bVar3 = 0;
-  iVar1 = *(int *)(DAT_007dc5dc + param_1);
-  *(byte *)&param_1 = bVar3;
-  do {
-    if (*(int *)(iVar1 + 0x14 + (param_1 & 0xff) * 0x18) == 5) {
-      puVar2 = (undefined4 *)(iVar1 + (param_1 & 0xff) * 0x18);
-      goto LAB_x;
-    }
-    bVar3 = bVar3 + 1;
-    *(byte *)&param_1 = bVar3;
-  } while (bVar3 < 2);
-  puVar2 = (undefined4 *)0x0;
-LAB_x:
-  *puVar2 = param_2;
-  puVar2[1] = param_2;
-  return;
+  E5 *tab = *(E5 **)(DAT_007dc5dc + param_1);
+  E5 *e;
+  byte i;
+  for (i = 0; i < 2; i++) {
+    if (tab[i].type == 5) { e = &tab[i]; goto found; }
+  }
+  e = 0;
+found:
+  e->a = param_2;
+  e->b = param_3;
+  return param_1;
 }
