@@ -75,8 +75,8 @@ int FUN_004e8f50(int p0, int p1, Fn p2, Fn p3, Fn p4);
 int FUN_004e8f80(int p0, Fn p1, Fn p2, Fn p3);
 int FUN_004f0910(int p0, int p1, Fn p2, Fn p3, Fn p4);
 int FUN_004f0940(int p0, Fn p1, Fn p2, Fn p3);
-int RpAtomicRegisterPlugin(int p0, int p1, Fn p2, Fn p3, Fn p4);
-int RpClumpRegisterPlugin(int p0, int p1, Fn p2, Fn p3, Fn p4);
+int FUN_004e7d40(int p0, int p1, Fn p2, Fn p3, Fn p4);
+int FUN_004e7d70(int p0, int p1, Fn p2, Fn p3, Fn p4);
 int FUN_004d8560(void);
 // MATCH: 0x004e3470 FUN_004e3470
 int FUN_004e3470(void)
@@ -85,9 +85,9 @@ int FUN_004e3470(void)
   r = FUN_004c2d90(0xc, 0x509, FUN_004e36a0, FUN_004e3790);
   DAT_007d716c = FUN_004c1cc0(0x1c, 0x509, FUN_004e3800, FUN_004e3b80, FUN_004e3b30);
   r |= DAT_007d716c;
-  DAT_007d7170 = RpAtomicRegisterPlugin(8, 0x509, FUN_004e3bd0, FUN_004e3dc0, FUN_004d7ff0);
+  DAT_007d7170 = FUN_004e7d40(8, 0x509, FUN_004e3bd0, FUN_004e3dc0, FUN_004d7ff0);
   r |= DAT_007d7170;
-  DAT_007d7174 = RpClumpRegisterPlugin(8, 0x509, FUN_004e3e40, FUN_004d7ff0, FUN_004e3e70);
+  DAT_007d7174 = FUN_004e7d70(8, 0x509, FUN_004e3e40, FUN_004d7ff0, FUN_004e3e70);
   r |= DAT_007d7174;
   DAT_007d7178 = FUN_004e4bd0(8, 0x509, FUN_004e3ea0, FUN_004e4130, FUN_004e40d0);
   r |= DAT_007d7178;
@@ -99,7 +99,7 @@ int FUN_004e3470(void)
   r |= FUN_004f0910(0, 0x510, 0, 0, 0);
   r |= FUN_004e8f80(0x510, FUN_004e4220, FUN_004e4200, FUN_004e4240);
   r |= FUN_004f0940(0x510, FUN_004e4270, FUN_004e4250, FUN_004e4290);
-  r |= RpAtomicRegisterPlugin(0, 0x1f, 0, 0, 0);
+  r |= FUN_004e7d40(0, 0x1f, 0, 0, 0);
   r |= FUN_004e7da0(0x1f, FUN_004e5ef0, FUN_004e5f30, FUN_004e5f70);
   r |= FUN_004e5cd0(0, 0x1f, 0, 0, 0);
   r |= FUN_004e5d00(0x1f, FUN_004e98d0, FUN_004e5f30, FUN_004e5f70);
