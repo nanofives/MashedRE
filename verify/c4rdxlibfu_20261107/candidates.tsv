@@ -1,0 +1,160 @@
+rva	lib_function	library_object	lib_size	pc_body_size	pc_name	subsystem	verdict	why
+0x004ecb01	?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@@PAUD3DXVECTOR2@@KPAM222K@Z|?init_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z|?init_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	17			third-party-library[d3dx9-psgp]	skip	ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+0x004ecb25	?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@@PAUD3DXVECTOR2@@KPAM222K@Z|?init_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z|?init_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	17			third-party-library[d3dx9-psgp]	skip	ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+0x004ecb49	?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@@PAUD3DXVECTOR2@@KPAM222K@Z|?init_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z|?init_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	17			third-party-library[d3dx9-psgp]	skip	ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+0x004ecb6d	?init_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z|?init_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\d3dxmath.obj	42			third-party-library[d3dx9-psgp]	skip	ambiguous: 2 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+0x004ecdd9	?c_D3DXVec3Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR3@@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	139	139	FUN_004ecdd9	third-party-library[d3dx9-psgp]	add	
+0x004ece75	?c_D3DXVec3TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR3@@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	167			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ecf59	?c_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	102			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ecfd0	?c_D3DXVec3TransformNormalArray@@YGPAUD3DXVECTOR3@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	126			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed05f	?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@@PAUD3DXVECTOR2@@KPAM222K@Z|?init_D3DXVec2TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBUD3DXVECTOR2@@IPBUD3DXMATRIX@@I@Z|?init_D3DXVec2TransformCoordArray@@YGPAUD3DXVECTOR2@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	17			third-party-library[d3dx9-psgp]	skip	ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed09f	?c_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z	d3dx9.lib:obj\i386\d3dxmath.obj	240			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed19c	?init_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z|?init_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\d3dxmath.obj	42			third-party-library[d3dx9-psgp]	skip	ambiguous: 2 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed467	?c_D3DXVec4Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	159			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed517	?c_D3DXVec4TransformArray@@YGPAUD3DXVECTOR4@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	191			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed5e3	?c_D3DXMatrixDeterminant@@YGMPBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	202			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed6c0	?c_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	d3dx9.lib:obj\i386\d3dxmath.obj	566			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed909	?c_D3DXMatrixTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	109			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ed989	?c_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	d3dx9.lib:obj\i386\d3dxmath.obj	566			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004edbd2	?c_D3DXMatrixInverse@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	927			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004edf9f	?c_D3DXMatrixScaling@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	d3dx9.lib:obj\i386\d3dxmath.obj	92			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ee029	?c_D3DXMatrixTranslation@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	d3dx9.lib:obj\i386\d3dxmath.obj	92			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ee37f	?c_D3DXMatrixRotationQuaternion@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXQUATERNION@@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	226			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ee5d4	?c_D3DXQuaternionToAxisAngle@@YGXPBUD3DXQUATERNION@@PAUD3DXVECTOR3@@PAM@Z	d3dx9.lib:obj\i386\d3dxmath.obj	53			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ee616	?c_D3DXQuaternionRotationMatrix@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	308			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ee7fa	?c_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z	d3dx9.lib:obj\i386\d3dxmath.obj	217			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ee8e6	?c_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z	d3dx9.lib:obj\i386\d3dxmath.obj	150			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ee99c	?c_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	177			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eea60	?c_D3DXQuaternionLn@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	123			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eeaee	?c_D3DXQuaternionExp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	152			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eebb0	?c_D3DXQuaternionSlerp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1M@Z	d3dx9.lib:obj\i386\d3dxmath.obj	227			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eed25	?init_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNION@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\d3dxmath.obj	47			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eedef	?c_D3DXPlaneNormalize@@YGPAUD3DXPLANE@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	161			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eee9d	?c_D3DXPlaneIntersectLine@@YGPAUD3DXVECTOR3@@PAU1@PBUD3DXPLANE@@PBU1@2@Z	d3dx9.lib:obj\i386\d3dxmath.obj	162			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eef4c	?c_D3DXPlaneFromPointNormal@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@1@Z	d3dx9.lib:obj\i386\d3dxmath.obj	56			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004eef91	?c_D3DXPlaneFromPoints@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@11@Z	d3dx9.lib:obj\i386\d3dxmath.obj	162			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ef040	?c_D3DXPlaneTransform@@YGPAUD3DXPLANE@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	159			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ef0f0	?c_D3DXPlaneTransformArray@@YGPAUD3DXPLANE@@PAU1@IPBU1@IPBUD3DXMATRIX@@I@Z	d3dx9.lib:obj\i386\d3dxmath.obj	191			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004ef1d1	?c_D3DXVec2Normalize@@YGPAUD3DXVECTOR2@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\d3dxmath.obj	138			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004f03c6	?c_D3DXQuaternionSquadSetup@@YGXPAUD3DXQUATERNION@@00PBU1@111@Z	d3dx9.lib:obj\i386\d3dxmath.obj	986			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004fba47	?c_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@@PAUD3DXVECTOR2@@KPAM222K@Z	d3dx9.lib:obj\i386\psgpmesh.obj	817			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x004fc6f5	?x86_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	105	105	FUN_004fc6f5		skip	sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+0x004fc75e	?x86_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	53	53	FUN_004fc75e		skip	sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+0x004fc793	?x86_D3DXVec3Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR3@@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	139	139	FUN_004fc793		skip	sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+0x004fc81e	?x86_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	95	95	FUN_004fc81e		skip	sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+0x004fc87d	?x86_D3DXVec4Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathx86.obj	153	153	FUN_004fc87d		skip	sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+0x0050245e	?compare@D3DXShader@@YAHPBX0@Z	d3dx9.lib:obj\i386\cassembler.obj	172	172	FUN_0050245e	third-party-library[d3dx9-shader-compiler]	add	
+0x00504489	?Init@CBuffer@D3DXCore@@UAEJK@Z	d3dx9.lib:obj\i386\cbuffer.obj	39			third-party-library[d3dx9-shader-compiler]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005044bd	?Release@CBuffer@D3DXCore@@UAGKXZ	d3dx9.lib:obj\i386\cbuffer.obj	32			third-party-library[d3dx9-shader-compiler]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00505e60	?sse_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBUD3DXVECTOR2@@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathsse.obj	62	62	FUN_00505e60	third-party-library[d3dx9-psgp]	add	
+0x00505ef5	?sse_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PAU1@PBU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\d3dxmathsse.obj	55	55	FUN_00505ef5	third-party-library[d3dx9-psgp]	add	
+0x00505ff8	?sse2_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z|?sse_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	d3dx9.lib:obj\i386\d3dxmathsse.obj|d3dx9.lib:obj\i386\d3dxmathsse2.obj	308	308	FUN_00505ff8		skip	ambiguous: 2 library functions; 2 objects
+0x00506931	?sse_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\d3dxmathsse.obj	93	93	FUN_00506931	third-party-library[d3dx9-psgp]	add	
+0x0050698e	?sse_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\d3dxmathsse.obj	73	73	FUN_0050698e	third-party-library[d3dx9-psgp]	add	
+0x005069d7	?sse_D3DXVec2BaryCentric@@YGPAUD3DXVECTOR2@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\d3dxmathsse.obj	82	82	FUN_005069d7	third-party-library[d3dx9-psgp]	add	
+0x00508b7a	TransformLoop	d3dx9.lib:obj\i386\d3dxplane.obj|d3dx9.lib:obj\i386\d3dxvec4.obj	70				skip	2 objects; no pc_funcs entry at rva (inside 0x00508b40 FUN_00508b40)
+0x00508bc0	ProcEpilog	d3dx9.lib:obj\i386\d3dxplane.obj|d3dx9.lib:obj\i386\d3dxvec4.obj	21				skip	2 objects; no pc_funcs entry at rva (inside 0x00508b40 FUN_00508b40)
+0x00508c3a	TransformLoop	d3dx9.lib:obj\i386\d3dxplane.obj|d3dx9.lib:obj\i386\d3dxvec4.obj	70				skip	2 objects; no pc_funcs entry at rva (inside 0x00508c00 FUN_00508c00)
+0x00508c80	ProcEpilog	d3dx9.lib:obj\i386\d3dxplane.obj|d3dx9.lib:obj\i386\d3dxvec4.obj	21				skip	2 objects; no pc_funcs entry at rva (inside 0x00508c00 FUN_00508c00)
+0x00508cc0	ProcPrologue	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	64	607	FUN_00508cc0		skip	2 objects; size: pc_funcs body 607 B > symbol 64 B (identity covers only the first 64 B)
+0x00508d00	ScalarLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	57				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0)
+0x00508d39	SIMDMatrix	d3dx9.lib:obj\i386\d3dxvec2.obj	196				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0)
+0x00508dfd	TransformLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	212				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0)
+0x00508ed1	PostTransformLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	40				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0)
+0x00508ef9	ProcEpilog	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	38				skip	2 objects; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0)
+0x00508f20	ProcPrologue	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	64	581	FUN_00508f20		skip	2 objects; size: pc_funcs body 581 B > symbol 64 B (identity covers only the first 64 B)
+0x00508f60	ScalarLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	57				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20)
+0x00508f99	SIMDMatrix	d3dx9.lib:obj\i386\d3dxvec2.obj	196				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20)
+0x0050905d	TransformLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	186				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20)
+0x00509117	PostTransformLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	40				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20)
+0x0050913f	ProcEpilog	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	65				skip	2 objects; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20)
+0x00509180	ProcPrologue	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	64	438	FUN_00509180		skip	2 objects; size: pc_funcs body 438 B > symbol 64 B (identity covers only the first 64 B)
+0x005091c0	ScalarLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	57				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180)
+0x005091f9	SIMDMatrix	d3dx9.lib:obj\i386\d3dxvec2.obj	128				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180)
+0x00509279	TransformLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	111				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180)
+0x005092e8	PostTransformLoop	d3dx9.lib:obj\i386\d3dxvec2.obj	40				skip	no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180)
+0x00509310	ProcEpilog	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	38				skip	2 objects; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180)
+0x0050937a	TransformLoop	d3dx9.lib:obj\i386\d3dxvec3.obj	58			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x00509340 FUN_00509340)
+0x005093b4	ProcEpilog	d3dx9.lib:obj\i386\d3dxplane.obj|d3dx9.lib:obj\i386\d3dxvec3.obj|d3dx9.lib:obj\i386\d3dxvec4.obj	44				skip	3 objects; no pc_funcs entry at rva (inside 0x00509340 FUN_00509340)
+0x005093e0	ProcPrologue	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	64	797	FUN_005093e0		skip	2 objects; size: pc_funcs body 797 B > symbol 64 B (identity covers only the first 64 B)
+0x00509420	ScalarLoop	d3dx9.lib:obj\i386\d3dxvec3.obj	57			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0)
+0x00509459	SIMDMatrix	d3dx9.lib:obj\i386\d3dxvec3.obj	264			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0)
+0x00509561	TransformLoop	d3dx9.lib:obj\i386\d3dxvec3.obj	334			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0)
+0x005096af	PostTransformLoop	d3dx9.lib:obj\i386\d3dxvec3.obj	40			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0)
+0x005096d7	ProcEpilog	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	41				skip	2 objects; no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0)
+0x00509700	ProcPrologue	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	64	636	FUN_00509700		skip	2 objects; size: pc_funcs body 636 B > symbol 64 B (identity covers only the first 64 B)
+0x00509740	ScalarLoop	d3dx9.lib:obj\i386\d3dxvec3.obj	57			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x00509700 FUN_00509700)
+0x00509779	SIMDMatrix	d3dx9.lib:obj\i386\d3dxvec3.obj	196			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x00509700 FUN_00509700)
+0x0050983d	TransformLoop	d3dx9.lib:obj\i386\d3dxvec3.obj	241			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x00509700 FUN_00509700)
+0x0050992e	PostTransformLoop	d3dx9.lib:obj\i386\d3dxvec3.obj	40			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x00509700 FUN_00509700)
+0x00509956	ProcEpilog	d3dx9.lib:obj\i386\d3dxvec2.obj|d3dx9.lib:obj\i386\d3dxvec3.obj	38				skip	2 objects; no pc_funcs entry at rva (inside 0x00509700 FUN_00509700)
+0x0050997c	?x3d_D3DXQuaternionMultiply@@YGPAUD3DXQUATERNION@@PAU1@PBU1@1@Z	d3dx9.lib:obj\i386\x3d_quat.obj	153	153	FUN_0050997c	third-party-library[d3dx9-psgp]	add	
+0x00509a15	?x3d_D3DXQuaternionNormalize@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\x3d_quat.obj	93	93	FUN_00509a15	third-party-library[d3dx9-psgp]	add	
+0x00509ab6	?x3d_D3DXQuaternionRotationMatrix@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\x3d_quat.obj	540	540	FUN_00509ab6	third-party-library[d3dx9-psgp]	add	
+0x00509cd2	?x3d_D3DXQuaternionRotationMatrix_K7@@YGPAUD3DXQUATERNION@@PAU1@PBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\x3d_quat.obj	533	533	FUN_00509cd2	third-party-library[d3dx9-psgp]	add	
+0x00509ee7	?x3d_D3DXQuaternionRotationYawPitchRoll@@YGPAUD3DXQUATERNION@@PAU1@MMM@Z	d3dx9.lib:obj\i386\x3d_quat.obj	197	197	FUN_00509ee7	third-party-library[d3dx9-psgp]	add	
+0x0050a26e	?x3d_D3DXQuaternionInverse@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\x3d_quat.obj	100	100	FUN_0050a26e	third-party-library[d3dx9-psgp]	add	
+0x0050a379	?x3d_D3DXQuaternionExp@@YGPAUD3DXQUATERNION@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\x3d_quat.obj	165	165	FUN_0050a379	third-party-library[d3dx9-psgp]	add	
+0x0050ae57	?x3d_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	d3dx9.lib:obj\i386\x3d_matx.obj	562	562	FUN_0050ae57	third-party-library[d3dx9-psgp]	add	
+0x0050b089	?x3d_D3DXMatrixfDeterminant@@YGMPBUD3DXMATRIX@@@Z	d3dx9.lib:obj\i386\x3d_matx.obj	207	207	FUN_0050b089	third-party-library[d3dx9-psgp]	add	
+0x0050b158	?x3d_D3DXMatrixTranslation@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	d3dx9.lib:obj\i386\x3d_matx.obj	80	80	FUN_0050b158	third-party-library[d3dx9-psgp]	add	
+0x0050b1a8	?x3d_D3DXMatrixShadow@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXVECTOR4@@PBUD3DXPLANE@@@Z	d3dx9.lib:obj\i386\x3d_matx.obj	235	235	FUN_0050b1a8	third-party-library[d3dx9-psgp]	add	
+0x0050b293	?x3d_D3DXMatrixReflect@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXPLANE@@@Z	d3dx9.lib:obj\i386\x3d_matx.obj	220	220	FUN_0050b293	third-party-library[d3dx9-psgp]	add	
+0x0050b36f	?x3d_D3DXMatrixRotationX@@YGPAUD3DXMATRIX@@PAU1@M@Z	d3dx9.lib:obj\i386\x3d_matx.obj	99	99	FUN_0050b36f	third-party-library[d3dx9-psgp]	add	
+0x0050b3d2	?x3d_D3DXMatrixRotationY@@YGPAUD3DXMATRIX@@PAU1@M@Z	d3dx9.lib:obj\i386\x3d_matx.obj	94	94	FUN_0050b3d2	third-party-library[d3dx9-psgp]	add	
+0x0050b430	?x3d_D3DXMatrixRotationZ@@YGPAUD3DXMATRIX@@PAU1@M@Z	d3dx9.lib:obj\i386\x3d_matx.obj	89	89	FUN_0050b430	third-party-library[d3dx9-psgp]	add	
+0x0050b489	?x3d_D3DXMatrixScaling@@YGPAUD3DXMATRIX@@PAU1@MMM@Z	d3dx9.lib:obj\i386\x3d_matx.obj	71	71	FUN_0050b489	third-party-library[d3dx9-psgp]	add	
+0x0050b4d0	?x3d_D3DXMatrixTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\x3d_matx.obj	111	111	FUN_0050b4d0	third-party-library[d3dx9-psgp]	add	
+0x0050b578	?x3d_D3DXMatrixRotationQuaternion@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXQUATERNION@@@Z	d3dx9.lib:obj\i386\x3d_matx.obj	210	210	FUN_0050b578	third-party-library[d3dx9-psgp]	add	
+0x0050b64a	?x3d_D3DXMatrixRotationQuaternion_K7@@YGPAUD3DXMATRIX@@PAU1@PBUD3DXQUATERNION@@@Z	d3dx9.lib:obj\i386\x3d_matx.obj	181	181	FUN_0050b64a	third-party-library[d3dx9-psgp]	add	
+0x0050ca3c	?x3d_D3DXMatrixAffineTransformation@@YGPAUD3DXMATRIX@@PAU1@MPBUD3DXVECTOR3@@PBUD3DXQUATERNION@@1@Z	d3dx9.lib:obj\i386\x3d_matx.obj	1332	1332	FUN_0050ca3c	third-party-library[d3dx9-psgp]	add	
+0x0050e4bf	?x3d_D3DXMatrixMultiplyTranspose@@YGPAUD3DXMATRIX@@PAU1@PBU1@1@Z	d3dx9.lib:obj\i386\x3d_matx.obj	1016	1016	FUN_0050e4bf	third-party-library[d3dx9-psgp]	add	
+0x0050ebeb	?x3d_D3DXMatrixInverse@@YGPAUD3DXMATRIX@@PAU1@PAMPBU1@@Z	d3dx9.lib:obj\i386\x3d_matx.obj	28	28	FUN_0050ebeb	third-party-library[d3dx9-psgp]	add	
+0x0050ec07	_x3d_D3DXVec3Transform@12	d3dx9.lib:obj\i386\x3d_vec3.obj	113	113	FUN_0050ec07	third-party-library[d3dx9-psgp]	add	
+0x0050ed3e	?x3d_D3DXVec3BaryCentric@@YGPAUD3DXVECTOR3@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\x3d_vec3.obj	113	113	FUN_0050ed3e	third-party-library[d3dx9-psgp]	add	
+0x0050edaf	?x3d_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec3.obj	212	212	FUN_0050edaf	third-party-library[d3dx9-psgp]	add	
+0x0050ee83	?x3d_D3DXVec3CatmullRom@@YGPAUD3DXVECTOR3@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec3.obj	234	234	FUN_0050ee83	third-party-library[d3dx9-psgp]	add	
+0x0050f73f	Float16Algo	d3dx9.lib:obj\i386\d3dxfloat16.obj	179			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x0050f700 FUN_0050f700)
+0x0050f7f2	PostFloat16Algo	d3dx9.lib:obj\i386\d3dxfloat16.obj	32			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x0050f700 FUN_0050f700)
+0x0050f812	ProcEpilog	d3dx9.lib:obj\i386\d3dxfloat16.obj	45			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x0050f700 FUN_0050f700)
+0x0050f840	ProcPrologue	d3dx9.lib:obj\i386\d3dxfloat16.obj	67	379	FUN_0050f840	third-party-library[d3dx9-psgp]	skip	size: pc_funcs body 379 B > symbol 67 B (identity covers only the first 67 B)
+0x0050f883	Float32Algo	d3dx9.lib:obj\i386\d3dxfloat16.obj	255			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x0050f840 FUN_0050f840)
+0x0050f982	PostFloat32Algo	d3dx9.lib:obj\i386\d3dxfloat16.obj	32			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x0050f840 FUN_0050f840)
+0x0050f9a2	ProcEpilog	d3dx9.lib:obj\i386\d3dxfloat16.obj	25			third-party-library[d3dx9-psgp]	skip	no pc_funcs entry at rva (inside 0x0050f840 FUN_0050f840)
+0x0050faad	?x3d_D3DXVec2Hermite@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec2.obj	152	152	FUN_0050faad	third-party-library[d3dx9-psgp]	add	
+0x0050fb45	?x3d_D3DXVec2BaryCentric@@YGPAUD3DXVECTOR2@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\x3d_vec2.obj	73	73	FUN_0050fb45	third-party-library[d3dx9-psgp]	add	
+0x0050fb8e	?x3d_D3DXVec2Normalize@@YGPAUD3DXVECTOR2@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\x3d_vec2.obj	67	67	FUN_0050fb8e	third-party-library[d3dx9-psgp]	add	
+0x0050fbd1	?x3d_D3DXVec2CatmullRom@@YGPAUD3DXVECTOR2@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec2.obj	171	171	FUN_0050fbd1	third-party-library[d3dx9-psgp]	add	
+0x0050fc7c	_x3d_D3DXVec4Transform@12	d3dx9.lib:obj\i386\x3d_vec4.obj	130	130	FUN_0050fc7c		skip	no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+0x0050fcfe	?x3d_D3DXVec4Normalize@@YGPAUD3DXVECTOR4@@PAU1@PBU1@@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	95	95	FUN_0050fcfe		skip	no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+0x0050fd5d	?x3d_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	306	306	FUN_0050fd5d		skip	no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+0x0050fe8f	?x3d_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11MM@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	113	113	FUN_0050fe8f		skip	no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+0x0050ff00	?x3d_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	200	200	FUN_0050ff00		skip	no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+0x0050ffc8	?x3d_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PBU1@111M@Z	d3dx9.lib:obj\i386\x3d_vec4.obj	222	222	FUN_0050ffc8		skip	no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+0x005100a6	?x3d_D3DXPlaneFromPointNormal@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@1@Z	d3dx9.lib:obj\i386\x3d_plane.obj	67	67	FUN_005100a6	third-party-library[d3dx9-psgp]	add	
+0x005100e9	?x3d_D3DXPlaneFromPoints@@YGPAUD3DXPLANE@@PAU1@PBUD3DXVECTOR3@@11@Z	d3dx9.lib:obj\i386\x3d_plane.obj	228	228	FUN_005100e9	third-party-library[d3dx9-psgp]	add	
+0x005101cd	?x3d_D3DXPlaneIntersectLine@@YGPAUD3DXVECTOR3@@PAU1@PBUD3DXPLANE@@PBU1@2@Z	d3dx9.lib:obj\i386\x3d_plane.obj	190	190	FUN_005101cd	third-party-library[d3dx9-psgp]	add	
+0x005102ef	_x3d_D3DXPlaneTransform@12	d3dx9.lib:obj\i386\x3d_plane.obj	126	126	FUN_005102ef	third-party-library[d3dx9-psgp]	add	
+0x00510809	?IsEqual@CNodeToken@D3DXShader@@UAEHPAVCNode@2@@Z	d3dx9.lib:obj\i386\cnode.obj	34			third-party-library[d3dx9-shader-compiler]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005108cd	?IsEqual@CNodeType@D3DXShader@@UAEHPAVCNode@2@@Z	d3dx9.lib:obj\i386\cnode.obj	64			third-party-library[d3dx9-shader-compiler]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513000	_a_atan	d3dx9.lib:obj\i386\amdmath.obj	191			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005132c0	_a_asin	d3dx9.lib:obj\i386\amdmath.obj	256			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005133c0	_a_log	d3dx9.lib:obj\i386\amdmath.obj	256			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005134c0	_a_log10	d3dx9.lib:obj\i386\amdmath.obj	31			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005134e0	_a_exp	d3dx9.lib:obj\i386\amdmath.obj	224			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005135c0	_a_sqrt	d3dx9.lib:obj\i386\amdmath.obj	31			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005135e0	_a_fabs	d3dx9.lib:obj\i386\amdmath.obj	32			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513600	_a_ceil	d3dx9.lib:obj\i386\amdmath.obj	64			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513640	_a_floor	d3dx9.lib:obj\i386\amdmath.obj	64			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513680	_a_frexp	d3dx9.lib:obj\i386\amdmath.obj	64			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x005136c0	_a_ldexp	d3dx9.lib:obj\i386\amdmath.obj	64			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513700	exception	d3dx9.lib:obj\i386\amdmath.obj	28			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513720	_a_modf	d3dx9.lib:obj\i386\amdmath.obj	32			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513740	_a_fmod	d3dx9.lib:obj\i386\amdmath.obj	64			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513780	exception	d3dx9.lib:obj\i386\amdmath.obj	32			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513820	x5	d3dx9.lib:obj\i386\amdmath.obj	116			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (inside 0x005137a0 FUN_005137a0)
+0x00513920	x5	d3dx9.lib:obj\i386\amdmath.obj	116			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (inside 0x005138a0 FUN_005138a0)
+0x005139a0	_a_tan	d3dx9.lib:obj\i386\amdmath.obj	128			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513a20	x5	d3dx9.lib:obj\i386\amdmath.obj	116			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513a9a	ending	d3dx9.lib:obj\i386\amdmath.obj	37			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)
+0x00513ac0	_a_pow	d3dx9.lib:obj\i386\amdmath.obj	408			third-party-library[d3dx9-backward-extension]	skip	no pc_funcs entry at rva (in no pc_funcs body)

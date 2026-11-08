@@ -1,0 +1,9 @@
+graph: 26867 map symbols, 52763 edges (60333 from relocations), 13324 symbols reachable from WinMain, 24 harness barriers reached
+exe bodies: 915 RVAs, 831 resolved to a map symbol
+port: none=5171  body=587  called=253   (body with no map symbol: 58)
+rows changed: 0   short rows given the column: 0   rows of another width left untouched: 4
+WARN: record 185 (rva 00404830) has 13 fields, header has 11; left untouched
+WARN: record 1206 (rva 004464c0) has 9 fields, header has 11; left untouched
+WARN: record 3127 (rva 0041f360) has 11 fields, header has 11; left untouched
+WARN: record 3137 (rva 00420870) has 12 fields, header has 11; left untouched
+hooks.csv already current
