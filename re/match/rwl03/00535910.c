@@ -28,7 +28,7 @@ typedef unsigned int uint;
 MGLOBAL(int, DAT_007dc57c, 0x007dc57c);
 // MATCH: 0x00535910 FUN_00535910
 
-void FUN_00535910(int param_1)
+int FUN_00535910(int param_1)
 
 {
   int iVar1;
@@ -38,5 +38,5 @@ void FUN_00535910(int param_1)
   uVar2 = *(uint *)(iVar1 + 0x3c);
   *(undefined4 *)(iVar1 + 0x3c) = 0;
   *(uint *)(iVar1 + 0x40) = *(uint *)(iVar1 + 0x40) | uVar2;
-  return;
+  return param_1;
 }
