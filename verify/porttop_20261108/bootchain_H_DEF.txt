@@ -1,0 +1,10 @@
+Milestone B10: frontend boot chain start
+  [1] DataZeroFill (page-granular): zeroed 226212, skipped 0 bytes
+  [2-pre] 0x00630000 state=0x00001000 protect=0x00000004
+  [2] BootDefaultParamsInit OK
+  [3] DefaultParam_SetField00/04/08 OK; readback 0x007f0f00=0x3F333333 04=0x3F333333 08=0x3F333333 (expect 0x3f333333)
+  [4] RaceStateArrayZero OK; readback 0x0067ea10=0x00000000 0x0067ea14=0x00000000 (expect 0)
+  [5] MenuEntryArrayInit OK; readback 0x00898ac0=0x00000000 (expect 0)
+  [6] TimerSlotClear OK; readback 0x0063d558=0x00000000 (expect 0)
+  [7] MainLoopInit returned 1
+Milestone B10: frontend boot chain complete

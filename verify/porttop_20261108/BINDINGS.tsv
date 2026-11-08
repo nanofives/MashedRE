@@ -1,0 +1,9 @@
+caller	rva	binding	exe_symbol	asi_symbol	why
+0x00492770	0x00495110	matched	Store7f1030_Qpc3Mhz	Store7f1030_Qpc3Mhz	re/match/s16/00495110.c, new wrapper Match/MatchS16_00495110.cpp
+0x00492770	0x0042b920	matched	ConstantGetter22	ConstantGetter22	re/match/s07/0042b920.c, exe body since MATCH-S07
+0x00492770	0x00433240	matched	RaceArmReset	RaceArmReset	re/match/s08/00433240.c
+0x00433240	0x00402f80	matched	CupFloatInit	CupFloatInit	re/match/s01 (MatchS01.cpp), already bound by name
+0x00433240	0x0042d3a0	matched	RaceTransitionBufZero	RaceTransitionBufZero	re/match/s07/0042d3a0.c, already bound by name
+0x00492770	0x0042b950	matched	Set7f1a0c_1000	Set7f1a0c_1000	re/match/s07/0042b950.c
+0x00492770	0x004c57a0	port (librw, L-98)	MashedRw_MatrixCreate_004c57a0 (LibRw/RwBridge.cpp -> rw::Matrix::create)	raw 0x004c57a0	matched body reads RwGlobals at 0x007d3ff8 (+0x118 freelist alloc, hint 0x3000d); the exe maps that zero-filled, so it would fault. librw Matrix::create = same 64-byte matrix, identity, flags 0x20003. Stored at 0x007e9dc0, no exe reader
+0x00495110	0x004950b0	stand-in	MatchS16_00495110_Call004950b0 (TimerQpfStore once while 0x00771e70/74 == 0, then QpcTimeScaledTo3Mhz)	QpcTimeScaledTo3Mhz	matched 0x004950b0 divides by the QPF value at 0x00771e70 with no zero guard; the original stores it at 0x00495120 from 0x00493540 before 0x00492770, the exe runs neither (0x00493540 port=body), so it is 0 (#DE). Debt: retire when the exe runs the original boot order (PORT-TOP-02/04)

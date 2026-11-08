@@ -1,0 +1,17 @@
+rva	matched_src	relocheck	hand_body_tu	reached_by_WinMain	shadow_ab	getenv_in_body	asm_in_body	swapped	reason
+0057c440	re/match/rwl06/0057c440.c	OK	RwpVtableKV2.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0055bd70	re/match/rwl05/0055bd70.c	OK	RwpSolverBroadphase3.cpp	no	no	no	yes	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0055bd80	re/match/rwl05/0055bd80.c	OK	RwpSolverGlue5.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+00565160	re/match/rwl05/00565160.c	OK	RwpSolverLeaves1.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+00565fa0	re/match/rwl06/00565fa0.c	OK	RwpSolverLeaves1.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0056b9d0	re/match/rwl06/0056b9d0.c	OK	RwpSolverCore22.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0056ba30	re/match/rwl06/0056ba30.c	OK	RwpSolverCore21.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0056cf90	re/match/rwl06/0056cf90.c	OK	RwpSolverCore7.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0056d350	re/match/rwl06/0056d350.c	OK	RwpSolverCore8.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0056f0a0	re/match/rwl06/0056f0a0.c	OK	RwpSolverCore9.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0056fea0	re/match/rwl06/0056fea0.c	OK	RwpSolverCore10.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+005751f0	re/match/rwl06/005751f0.c	OK	RwpSolverCore16.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+005757d0	re/match/rwl06/005757d0.c	OK	RwpSolverCore18.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+00578e50	re/match/rwl06/00578e50.c	OK	RwpSolverCore19.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0057adb0	re/match/rwl06/0057adb0.c	OK	RwpSolverCore19.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes
+0057ae20	re/match/rwl06/0057ae20.c	OK	RwpSolverCore16.cpp	no	yes	no	no	no	NOT-REACHED: no WinMain path (REACH.tsv); brief swaps only rows the default path executes

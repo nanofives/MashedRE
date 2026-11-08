@@ -1,32 +1,45 @@
-// Mashed RE — Save/SettingsConfig.cpp: the video-config cluster, one body of each function in BOTH rsp files
-// (lane savelink2, 2026-10-23). Save/SettingsCfg.cpp (ConfigSave) is folded in and removed.
+// Mashed RE — Save/SettingsConfig.cpp: the video-config cluster (lane savelink2, 2026-10-23; matched bodies PORT-SAVE-01,
+// 2026-11-08). Save/SettingsCfg.cpp (ConfigSave) is folded in and removed.
 //
 //   0x004963e0  ConfigLogError     void(const char*)      fputs to the log handle 0x00772fbc
 //   0x00496400  ConfigLogDebug     void(const char*, ...) vsprintf into 0x200 bytes, fputs to the log handle
-//   and the host thunks of the three matched videocfg functions (since PORT-STATE-02 their body is
-//   re/match/s16/00498950.c through Match/MatchS16_00498950.cpp, which also exports and installs them):
-//   filename get (copies "videocfg.bin" to 0x007731e8), load (fopen "rb", fread 0x200 into 0x00773208),
-//   save (fopen "wb", fwrite 0x200 from 0x00773208).
+//   0x00498910  ConfigFilenameGet  char*()                "videocfg.bin" (0x005d012c) copied to 0x007731e8
+//   0x00498950  ConfigLoad         int()                  fopen "rb", fread 0x200 into 0x00773208
+//   0x004989b0  ConfigSave         int()                  fopen "wb", fwrite 0x200 from 0x00773208
+//
+// PORT-SAVE-01 (2026-11-08): the five bodies are the byte-matched sources in re/match/s16/ (MATCH-S16, XP DDK cl
+// 13.00.9176 / c2 13.00.9178, /O2 /GS /Ob1, match.py 100%, relocheck OK), compiled unchanged in both targets:
+//   0x004963e0 re/match/s16/004963e0.c   here, at the end of this TU
+//   0x00496400 re/match/s16/00496400.c   Match/PortSave01_Config.cpp
+//   0x00498910 / 0x00498950 / 0x004989b0 re/match/s16/00498910.c (the same three functions as 00498950.c and
+//                                        004989b0.c), Match/PortSave01_Config.cpp
+// 004963e0.c defines FUN_004963e0(char*) while 00498910.c declares it (const char*, ...), as the original's separate C
+// TUs did, so the two cannot share one C++ TU. The call is cdecl with one pointer argument either way.
+// This TU supplies what the matched sources bind to, per target:
+//   * callees (fputs and the CRT entries 0x004a42c5 / 0x004a4541 / 0x004a49cf / 0x004a4b22 / 0x004a4368) -> the
+//     extern "C" SettingsCfg* functions below, which call the same Host* functions the replaced bodies called;
+//   * globals (MGLOBAL / MGLOBALA in the matched preamble) -> SettingsCfgGlobal(address): the original address in the
+//     .asi, and in the exe the same private storage and string copies the replaced bodies used (the exe's mapping of
+//     the original .rdata is zero-filled, so the strings at 0x005d013c / 0x005cf010 / ... are empty there).
+// The file name is the matched body's own literal "videocfg.bin", the name the replaced body used in both targets.
 //
 // Read from the disassembly of original/MASHED.exe.unpatched (re/tools/disasm_fn.py 004963e0 0049646f / 00498910
-// 004989fd). Two departures of the previous copies are corrected: ConfigLoad called FUN_004a4541 with a third argument
-// (_SH_DENYNO) it never pushes (FUN_004a4541 is fopen(path, mode): push 0x40, call _fsopen 0x004a44e5, 0x004a4541..
-// 0x004a4553), and ConfigLogDebug re-reads the log handle after formatting (0x0049643c). Neither changed a result.
+// 004989fd). FUN_004a4541 is fopen(path, mode): push 0x40, call _fsopen 0x004a44e5, 0x004a4541..0x004a4553.
 //
 // The bodies follow the UNPATCHED binary. The boot patch disable_log makes 0x00496400 a RET, 0x004963e7 a JMP and the
 // log opener 0x00496490 return 0 (re/analysis/BOOT_PATCHES.md), so in the patched reference the handle stays NULL and
 // the installed hooks return early exactly as the patched bytes do. Installing them does override the two patched
-// sites; with the opener patched that is unobservable (recorded in RESULT_settingsconfig.md).
+// sites. With the opener patched that is unobservable (recorded in RESULT_settingsconfig.md).
 //
-// Per-target host thunks (#ifdef MASHED_STANDALONE):
-//   exe: the exe's own CRT; the log handle, the filename copy and the 0x200-byte settings buffer are private. The exe
+// Per-target host functions (#ifdef MASHED_STANDALONE):
+//   exe: the exe's own CRT. The log handle, the filename copy and the 0x200-byte settings buffer are private. The exe
 //        never reads videocfg.bin (its window is fixed, exe_main.cpp). ConfigLoad / ConfigSave run only under
 //        MASHED_VIDEOCFG_WRITE (default ON since L-29 (a), =0 opts out): Boot/VideoCfgFirstRun.cpp, the first-run default write.
 //   asi: the game's CRT (cross-CRT FILE* is not shareable) through push/ret thunks, the original strings and globals.
 //
 // OPTIMIZER NOTE (kept from the previous copies): MSVC /O2 + LTCG replaced every typed call of the game's fputs by
-// address with its own CRT symbol, so the file is compiled with optimization off and the game CRT is reached through
-// naked push/ret thunks.
+// address with its own CRT symbol, so the host functions and the sweep are compiled with optimization off and the game
+// CRT is reached through naked push/ret thunks. The matched body at the end is compiled with optimization on.
 //
 // Anchor: MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E (on .unpatched)
 #pragma optimize("", off)
@@ -46,9 +59,16 @@ namespace {
 
 #ifdef MASHED_STANDALONE
 void*         s_logHandle = nullptr;
+char          s_filenameBuf[16];
+unsigned char s_settings[0x200];
 void**        LogHandle()   { return &s_logHandle; }
-char*         FilenameBuf() { return reinterpret_cast<char*>(0x007731e8u); }   // the matched body's buffers (PORT-STATE-02)
-void*         SettingsBuf() { return reinterpret_cast<void*>(0x00773208u); }
+char*         FilenameBuf() { return s_filenameBuf; }
+void*         SettingsBuf() { return s_settings; }
+const char*   kFmtLoading = "Loading video cfg from %s\n";   // 0x005d013c
+const char*   kFmtSaving  = "Saving video cfg to %s\n";      // 0x005d0158
+const char*   kFailed     = "\tFAILED\n";                    // 0x005cfe70
+const char*   kModeRead   = "rb";                            // 0x005cf010
+const char*   kModeWrite  = "wb";                            // 0x005d00d8
 int      HostFputs(const char* s, void* f)                     { return std::fputs(s, static_cast<std::FILE*>(f)); }
 int      HostVsprintf(char* b, const char* f, va_list a)       { return std::vsprintf(b, f, a); }
 void*    HostFopen(const char* p, const char* m)               { return _fsopen(p, m, _SH_DENYNO); }
@@ -63,7 +83,6 @@ int      HostFclose(void* f)                                   { return std::fcl
 void**        LogHandle()   { return reinterpret_cast<void**>(0x00772fbcu); }
 char*         FilenameBuf() { return reinterpret_cast<char*>(0x007731e8u); }
 void*         SettingsBuf() { return reinterpret_cast<void*>(0x00773208u); }
-const char* const kFilename   = reinterpret_cast<const char*>(0x005d012cu);
 const char* const kFmtLoading = reinterpret_cast<const char*>(0x005d013cu);
 const char* const kFmtSaving  = reinterpret_cast<const char*>(0x005d0158u);
 const char* const kFailed     = reinterpret_cast<const char*>(0x005cfe70u);
@@ -85,56 +104,50 @@ __declspec(naked) int __cdecl HostFclose(void*)                          { __asm
 
 } // namespace
 
-// 0x004963e0
-void ConfigLogErrorCore(const char* msg)
-{
-    void* h = *LogHandle();                                       // 0x004963e0
-    if (h == nullptr) return;                                     // 0x004963e5..0x004963e7
-    HostFputs(msg, h);                                            // 0x004963e9..0x004963ef FUN_004a4254
+// What the matched sources bind to (both targets). Callee signatures are the matched sources' own declarations.
+extern "C" {
+int SettingsCfgFputs(const char* s, FILE* f) { return HostFputs(s, f); }
+int SettingsCfgVsprintf(char* buf, const char* fmt, char* args) {
+    return HostVsprintf(buf, fmt, reinterpret_cast<va_list>(args));
+}
+FILE* SettingsCfgFopen(const char* name, const char* mode) { return static_cast<FILE*>(HostFopen(name, mode)); }
+unsigned int SettingsCfgFread(void* buf, unsigned int size, unsigned int n, FILE* f) {
+    return HostFread(buf, size, n, f);
+}
+unsigned int SettingsCfgFwrite(const void* buf, unsigned int size, unsigned int n, FILE* f) {
+    return HostFwrite(buf, size, n, f);
+}
+int SettingsCfgFclose(FILE* f) { return HostFclose(f); }
+
+// Original address -> the storage the matched body reads and writes in this target.
+void* SettingsCfgGlobal(unsigned int a) {
+#ifdef MASHED_STANDALONE
+    switch (a) {
+    case 0x00772fbcu: return LogHandle();
+    case 0x007731e8u: return FilenameBuf();
+    case 0x00773208u: return SettingsBuf();
+    case 0x005d013cu: return const_cast<char*>(kFmtLoading);
+    case 0x005d0158u: return const_cast<char*>(kFmtSaving);
+    case 0x005cfe70u: return const_cast<char*>(kFailed);
+    case 0x005cf010u: return const_cast<char*>(kModeRead);
+    case 0x005d00d8u: return const_cast<char*>(kModeWrite);
+    default: break;
+    }
+#endif
+    return reinterpret_cast<void*>(static_cast<std::uintptr_t>(a));
 }
 
-// 0x00496400 (the 0x200-byte buffer sits under the stack cookie, 0x00496400..0x00496412)
-void ConfigLogDebugCoreV(const char* fmt, va_list ap)
-{
-    if (*LogHandle() == nullptr) return;                          // 0x00496419..0x00496420
-    char buf[0x200];
-    HostVsprintf(buf, fmt, ap);                                   // 0x00496422..0x00496437 FUN_004a42c5
-    HostFputs(buf, *LogHandle());                                 // 0x0049643c..0x00496447, the handle re-read
-}
-void ConfigLogDebugCore(const char* fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    ConfigLogDebugCoreV(fmt, ap);
-    va_end(ap);
-}
-
-// The videocfg filename / load / save functions: their only body is the byte-matched re/match/s16/00498950.c (MATCH-S16, 100%),
-// compiled in both targets by Match/MatchS16_00498950.cpp (PORT-STATE-02, L-101). Its callees bind to the per-target
-// hosts above: FUN_004a4541 / 49cf / 4b22 / 4368 = HostFopen / Fread / Fwrite / Fclose, FUN_004963e0 / 00496400 = the
-// log cores. Its .rdata reads (0x005cf010 "rb", 0x005d00d8 "wb", 0x005d013c, 0x005d0158, 0x005cfe70) are the original's
-// own bytes in the .asi and the port-state seed's in the exe (Compat/PortStateSeed.cpp, default ON). With
-// MASHED_NO_PORTSTATE_SEED=1 the exe reads an empty fopen mode and the UCRT ends the process (0xC0000409), so that
-// opt-out needs MASHED_VIDEOCFG_WRITE=0 as well.
-struct FILE_;
-extern "C" char* __cdecl ConfigFilenameGet(void);   // Match/MatchS16_00498950.cpp
-extern "C" int   __cdecl ConfigLoad(void);
-extern "C" int   __cdecl ConfigSave(void);
-extern "C" void MatchVcfgLogError(const char* fmt, ...) { ConfigLogErrorCore(fmt); }
-extern "C" void MatchVcfgLogDebug(const char* fmt, ...) {
-    va_list ap; va_start(ap, fmt); ConfigLogDebugCoreV(fmt, ap); va_end(ap);
-}
-extern "C" FILE_* MatchVcfgFopen(const char* n, const char* m) { return static_cast<FILE_*>(HostFopen(n, m)); }
-extern "C" unsigned MatchVcfgFread(void* b, unsigned s, unsigned n, FILE_* f) { return HostFread(b, s, n, f); }
-extern "C" unsigned MatchVcfgFwrite(const void* b, unsigned s, unsigned n, FILE_* f) { return HostFwrite(b, s, n, f); }
-extern "C" int MatchVcfgFclose(FILE_* f) { return HostFclose(f); }
-char* ConfigFilenameGetCore() { return ConfigFilenameGet(); }
-int   ConfigLoadCore()        { return ConfigLoad(); }
-int   ConfigSaveCore()        { return ConfigSave(); }
+// The matched bodies (exports kept from the replaced copies).
+__declspec(dllexport) void __cdecl ConfigLogError(char* msg);              // here, re/match/s16/004963e0.c
+__declspec(dllexport) void __cdecl ConfigLogDebug(const char* fmt, ...);   // Match/PortSave01_Config.cpp
+__declspec(dllexport) char* __cdecl ConfigFilenameGet(void);               // Match/PortSave01_Config.cpp
+__declspec(dllexport) int __cdecl ConfigLoad(void);                        // Match/PortSave01_Config.cpp
+__declspec(dllexport) int __cdecl ConfigSave(void);                        // Match/PortSave01_Config.cpp
+}  // extern "C"
 
 #ifdef MASHED_STANDALONE
-// The 0x200-byte buffer at 0x00773208 (the matched body's), filled by Boot/VideoCfgFirstRun.cpp's port of
-// FUN_00498ea0 before ConfigSaveCore (MASHED_VIDEOCFG_WRITE, default ON, =0 opts out).
+// The exe's private 0x200-byte buffer (0x00773208 in the original), filled by Boot/VideoCfgFirstRun.cpp's port of
+// FUN_00498ea0 before ConfigSave (MASHED_VIDEOCFG_WRITE, default ON, =0 opts out).
 void* ConfigSettingsBuf() { return SettingsBuf(); }
 #endif
 
@@ -153,7 +166,8 @@ void* g_dbgResume  = reinterpret_cast<void*>(0x00496406);
 void* g_nameResume = reinterpret_cast<void*>(0x00498915);
 void* g_loadResume = reinterpret_cast<void*>(0x00498956);
 void* g_saveResume = reinterpret_cast<void*>(0x004989b6);
-// 0x004963e0..0x004963e7 replayed with the original JE (the patched site is 0x004963e7), body resumed at 0x004963e9.
+// Original entry replay: 0x004963e0..0x004963e7 with the original JE (the patched site is 0x004963e7), body resumed at
+// 0x004963e9.
 __declspec(naked) void __cdecl LogErrorOrig(const char*) {
     __asm {
         mov  eax, dword ptr ds:[00772fbch]
@@ -164,7 +178,7 @@ __declspec(naked) void __cdecl LogErrorOrig(const char*) {
         ret
     }
 }
-// 0x00496400 SUB ESP,0x204 replayed (the patched RET), body resumed at 0x00496406.
+// Original entry replay: SUB ESP,0x204 of 0x00496400 (the patched RET), body resumed at 0x00496406.
 __declspec(naked) void __cdecl LogDebugOrig(const char*, ...) {
     __asm {
         sub  esp, 204h
@@ -213,8 +227,6 @@ void WriteAll(const char* path, const unsigned char* in, DWORD n) {
     DWORD w; WriteFile(h, in, n, &w, nullptr); CloseHandle(h);
 }
 
-volatile LONG g_live[5];   // ConfigLogError, ConfigLogDebug, ConfigFilenameGet, ConfigLoad, ConfigSave
-
 const char* const kCfg = "videocfg.bin";
 const char* const kLogTmp = "leaf_cfglog.tmp";
 const char* const kHidden = "videocfg.bin.sweep_hidden";
@@ -229,13 +241,13 @@ void Run(Fn fn, int orig, int env, const char* msg, const unsigned char* set0, O
     void* lf = nullptr;
     if (env & 1) { lf = HostFopen(kLogTmp, kModeWrite); *LogHandle() = lf; } else *LogHandle() = nullptr;
     switch (fn) {
-    case kErr:  orig ? LogErrorOrig(msg) : ConfigLogErrorCore(msg); o->ret = 0; break;
-    case kDbg:  orig ? LogDebugOrig(msg, 0x1234, "zq", 'k') : ConfigLogDebugCore(msg, 0x1234, "zq", 'k'); o->ret = 0;
+    case kErr:  orig ? LogErrorOrig(msg) : ConfigLogError(const_cast<char*>(msg)); o->ret = 0; break;
+    case kDbg:  orig ? LogDebugOrig(msg, 0x1234, "zq", 'k') : ConfigLogDebug(msg, 0x1234, "zq", 'k'); o->ret = 0;
                 break;
-    case kName: { char* r = orig ? FilenameOrig() : ConfigFilenameGetCore();
+    case kName: { char* r = orig ? FilenameOrig() : ConfigFilenameGet();
                   o->ret = (r == FilenameBuf()) ? 1 : 2; } break;
-    case kLoad: o->ret = orig ? LoadOrig() : ConfigLoadCore(); break;
-    case kSave: o->ret = orig ? SaveOrig() : ConfigSaveCore(); break;
+    case kLoad: o->ret = orig ? LoadOrig() : ConfigLoad(); break;
+    case kSave: o->ret = orig ? SaveOrig() : ConfigSave(); break;
     }
     *LogHandle() = nullptr;
     if (lf) HostFclose(lf);
@@ -287,8 +299,8 @@ extern "C" __declspec(dllexport) int __cdecl SettingsSweep()
     unsigned char patt[0x200];
     for (int i = 0; i < 0x200; ++i) patt[i] = static_cast<unsigned char>(i * 13 + 7);
     char line[200];
-    wsprintfA(line, "LIVE fn=settings err=%ld dbg=%ld name=%ld load=%ld save=%ld cfg0=%lu\r\n", g_live[0], g_live[1],
-              g_live[2], g_live[3], g_live[4], g_cfg0N);
+    // PORT-SAVE-01: the installed entries are the matched bodies, which carry no live-call counters.
+    wsprintfA(line, "LIVE fn=settings cfg0=%lu\r\n", g_cfg0N);
     Log(line);
     const char* msgs[] = { "x\n", "", "\tFAILED\n" };
     const char* fmts[] = { "plain\n", "a %d %s %c\n", "%08x|%s|%c|%%\n" };
@@ -313,17 +325,24 @@ extern "C" __declspec(dllexport) int __cdecl SettingsSweep()
     return static_cast<int>(g_nd + g_noo);
 }
 
-// The installed entries and the path1 exports (names kept from the previous copies).
-extern "C" __declspec(dllexport) void __cdecl ConfigLogError(const char* msg) {
-    InterlockedIncrement(&g_live[0]); ConfigLogErrorCore(msg);
-}
 RH_ScopedInstall(ConfigLogError, 0x004963e0);
-extern "C" __declspec(dllexport) void __cdecl ConfigLogDebug(const char* fmt, ...) {
-    InterlockedIncrement(&g_live[1]);
-    va_list ap; va_start(ap, fmt); ConfigLogDebugCoreV(fmt, ap); va_end(ap);
-}
 RH_ScopedInstall(ConfigLogDebug, 0x00496400);
-// The three videocfg filename / load / save entries are exported and installed by
-// Match/MatchS16_00498950.cpp since PORT-STATE-02: the matched body is their only body. Their live counters
-// (g_live[2..4]) are no longer incremented.
+RH_ScopedInstall(ConfigFilenameGet, 0x00498910);
+RH_ScopedInstall(ConfigLoad, 0x00498950);
+RH_ScopedInstall(ConfigSave, 0x004989b0);
 #endif
+
+// =====================================================================================================================
+// 0x004963e0: re/match/s16/004963e0.c, compiled unchanged (both targets). The preamble's MGLOBAL is defined here so the
+// log handle binds through SettingsCfgGlobal. fputs binds to SettingsCfgFputs.
+// =====================================================================================================================
+#pragma optimize("", on)
+#define MATCH_PREAMBLE
+#define MGLOBAL(T, n, a) static T &n = *(T *)SettingsCfgGlobal(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])SettingsCfgGlobal(a)
+extern "C" {
+#define FUN_004963e0 ConfigLogError
+#define fputs SettingsCfgFputs
+#include "../../../../re/match/s16/004963e0.c"
+#undef fputs
+}  // extern "C"
