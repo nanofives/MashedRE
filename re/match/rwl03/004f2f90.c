@@ -42,25 +42,20 @@ void FUN_004f2f90(undefined4 param_1,int *param_2,short param_3,short param_4,in
   int iVar2;
   short *psVar3;
   
-  psVar3 = (short *)*param_2;
-  while( true ) {
-    if (psVar3 == (short *)0x0) {
-      psVar3 = (short *)(**(code **)(DAT_007d3ff8 + 0x118))(param_1,0x30502);
-      *psVar3 = param_3;
-      psVar3[1] = param_4;
-      uVar1 = *(undefined4 *)(param_5 + param_6 * 4);
-      *(int *)(psVar3 + 4) = 0;
-      *(undefined4 *)(psVar3 + 2) = uVar1;
-      *(int *)(psVar3 + 6) = *param_2;
-      *param_2 = (int)psVar3;
+  for (psVar3 = (short *)*param_2; psVar3 != (short *)0x0; psVar3 = *(short **)(psVar3 + 6)) {
+    if (((param_3 == psVar3[1]) && (param_4 == *psVar3)) && (*(int *)(psVar3 + 4) == 0)) {
+      *(char *)(*(int *)(psVar3 + 2) + 0x20) = *(char *)(*(int *)(psVar3 + 2) + 0x20) + '';
+      iVar2 = *(int *)(param_6 + param_5 * 4);
+      *(char *)(iVar2 + 0x20) = *(char *)(iVar2 + 0x20) + '';
+      *(undefined4 *)(psVar3 + 4) = *(undefined4 *)(param_6 + param_5 * 4);
       return;
     }
-    if (((param_3 == psVar3[1]) && (param_4 == *psVar3)) && (*(int *)(psVar3 + 4) == 0)) break;
-    psVar3 = *(short **)(psVar3 + 6);
   }
-  *(char *)(*(int *)(psVar3 + 2) + 0x20) = *(char *)(*(int *)(psVar3 + 2) + 0x20) + '\x01';
-  iVar2 = *(int *)(param_6 + param_5 * 4);
-  *(char *)(iVar2 + 0x20) = *(char *)(iVar2 + 0x20) + '\x01';
-  *(undefined4 *)(psVar3 + 4) = *(undefined4 *)(param_6 + param_5 * 4);
-  return;
+  psVar3 = (short *)(**(code **)(DAT_007d3ff8 + 0x118))(param_1,0x30502);
+  *psVar3 = param_3;
+  psVar3[1] = param_4;
+  *(undefined4 *)(psVar3 + 2) = *(undefined4 *)(param_6 + param_5 * 4);
+  *(int *)(psVar3 + 4) = 0;
+  *(int *)(psVar3 + 6) = *param_2;
+  *param_2 = (int)psVar3;
 }
