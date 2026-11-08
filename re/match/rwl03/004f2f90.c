@@ -44,9 +44,9 @@ void FUN_004f2f90(undefined4 param_1,int *param_2,short param_3,short param_4,in
   
   for (psVar3 = (short *)*param_2; psVar3 != (short *)0x0; psVar3 = *(short **)(psVar3 + 6)) {
     if (((param_3 == psVar3[1]) && (param_4 == *psVar3)) && (*(int *)(psVar3 + 4) == 0)) {
-      *(char *)(*(int *)(psVar3 + 2) + 0x20) = *(char *)(*(int *)(psVar3 + 2) + 0x20) + '';
+      *(char *)(*(int *)(psVar3 + 2) + 0x20) = *(char *)(*(int *)(psVar3 + 2) + 0x20) + '\x01';
       iVar2 = *(int *)(param_6 + param_5 * 4);
-      *(char *)(iVar2 + 0x20) = *(char *)(iVar2 + 0x20) + '';
+      *(char *)(iVar2 + 0x20) = *(char *)(iVar2 + 0x20) + '\x01';
       *(undefined4 *)(psVar3 + 4) = *(undefined4 *)(param_6 + param_5 * 4);
       return;
     }
