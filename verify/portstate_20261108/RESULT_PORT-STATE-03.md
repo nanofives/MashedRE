@@ -4,7 +4,7 @@ Branch `orch/PORT-STATE-03` off `orch/PORT-STATE-01` @ `9c653e93b` (PORT-STATE-0
 `orch/integration` @ `cc56a0a68`, so the brief's `merge orch/integration` step has not run yet: see "Hand-in").
 PREREG `b4373fe39` (committed alone with the `run_nav.py --data` option, before any arm).
 
-**Verdict: DECISION** (round 2, L-100 (a), section 4). **0x004325c0** is now the byte-matched source as the one
+**Verdict: GREEN** (round 2, L-100 (a), section 4; the decision it raised, L-102, is answered (a), SSE2 kept). **0x004325c0** is now the byte-matched source as the one
 body in both targets, and `MASHED_NO_ANIM_TRUNC` is deleted. Gates and the frontend state log are unchanged on the
 committed build. One part of the brief is reverted: the `x87_tus.txt` entry for the wrapper. The bisect shows the
 /arch:IA32 compile alone moves the state log (1 of 185 and 10 of 619 `rec=` lines). The SSE2 compile reproduces the
@@ -163,10 +163,28 @@ function.
 
 ## Hand-in
 
-`orch/PORT-STATE-01` is not on `orch/integration` yet (`git merge-base --is-ancestor` = no at hand-in), so
-`git -c merge.autoStash=false merge orch/integration` has not been run. Once STATE-01 lands, the merge brings in
-only `orch/integration`'s commits after `cc56a0a68`. This branch touches `MenuNavSM.{h,cpp}`, `PortStateFrontend.h`,
-`exe_main.cpp` (`NAV_KEYS` line), `exe_sources.rsp`, `x87_tus.txt`, `hooks.csv` (3 rows) and `CHANGELOG.md`.
+L-102 answered (a): SSE2 stays for the 0x004325c0 wrapper (a measuring row PORT-STATE-03-FPU follows).
+
+PORT-STATE-01 landed (`orch/integration` @ `eee426759`). Merge `a1f3c5d49` (`git -c merge.autoStash=false merge orch/integration`):
+one conflict, in `re/analysis/CHANGELOG.md`, where both sides had prepended entries; all of them are kept and nothing
+is rewritten. `x87_tus.txt`, `exe_sources.rsp` and `asi_sources.rsp` auto-merged as a union with no duplicate lines.
+`hooks.csv` keeps the 11-column shape, and `exe_file` / `port` were re-derived after the rebuild
+(`backfill_exe_file.py`: 0 changed; `backfill_port.py`: 6 cells, all from integration's code: 00495120, 004950b0,
+00495110, 0042b950, 00433240 none -> called, 00402f80 body -> called; totals none=5305 body=586 called=260).
+
+Checks on the merged build (exe `0fa637ed...`, asi `692f74a0...`): `=== Build OK ===` for both targets, rva-lint
+`CROSS-TARGET=1 allowlisted=1 NEW=0`, asm-lint OK.
+
+| check | result |
+|---|---|
+| G-CTRL (H_DEF) | `8284be46/67931834/31fe043e` (second run). The first H_DEF self-exited 0 after 8 s with no step dump, its log ending just after race start. Re-run alone it took 127 s and gave the reference hashes. No change in between, so the first run is a one-off |
+| B (default K0/K1/K26) | `1d5bf4f9` x3 |
+| NAV_KEYS key script OFF / ON | `4e5e35a2` / `4e5e35a2` |
+| NAV_KEYS multi-screen walk OFF / ON | `efc763d4` / `efc763d4` |
+| NAV_DEMO OFF / ON | `376a1765` / `376a1765` |
+
+Raw data: `D:/MashedWT/PORT-STATE-03_data/exe_merge/`, `merge/run.log`, `merge/arms/` (first H_DEF), `merge/arms2/` (re-run),
+`merge/nav/`, `build_merge.log`.
 
 ## Raw data (not committed), `D:/MashedWT/PORT-STATE-03_data/`
 
