@@ -27,5 +27,6 @@ int FUN_00543bb0(int a, int b, int c, int d);
 // MATCH: 0x00543b90 FUN_00543b90
 int FUN_00543b90(int a, int b, int c, int d)
 {
-  return FUN_00543bb0(a + DAT_007dc634, b, c, d);
+  a += DAT_007dc634;
+  return FUN_00543bb0(a, b, c, d);
 }

@@ -30,18 +30,17 @@ MGLOBAL(int, DAT_007dc5dc, 0x007dc5dc);
 MGLOBAL(undefined4, UNK_00000000, 0x00000000);
 MGLOBAL(int, uRam00000000, 0x00000000);
 // MATCH: 0x00540100 FUN_00540100
+typedef struct { int val, b, c, d, e2; int type; } E2;
 int FUN_00540100(uint param_1,undefined4 param_2)
 {
-  int iVar2; int iVar1; byte *pb = (byte *)&param_1;
-  iVar2 = param_1; iVar1 = *(int *)(DAT_007dc5dc + iVar2);
-  *pb = 0;
-  do {
-    if (*(int *)(iVar1 + 0x14 + (param_1 & 0xff) * 0x18) == 2) {
-      *(undefined4 *)(iVar1 + (param_1 & 0xff) * 0x18) = param_2;
-      return iVar2;
-    }
-    (*pb)++;
-  } while (*pb < 2);
-  *(undefined4 *)0 = param_2;
-  return iVar2;
+  E2 *tab = *(E2 **)(DAT_007dc5dc + param_1);
+  E2 *e;
+  byte i;
+  for (i = 0; i < 2; i++) {
+    if (tab[i].type == 2) { e = &tab[i]; goto found; }
+  }
+  e = 0;
+found:
+  e->val = param_2;
+  return param_1;
 }
