@@ -9,13 +9,10 @@
 #define FUN_0042b920 ConstantGetter22  // Match/MatchS07_0042b920.cpp (both targets), PORT-TOP-01
 #define FUN_0042b950 Set7f1a0c_1000  // Match/MatchS07_0042b950.cpp (exe since PORT-TOP-01)
 #define FUN_00433240 RaceArmReset  // Match/MatchS08_00433240.cpp (exe since PORT-TOP-01)
-#define FUN_00495110 MatchS15_00492770_Call00495110
+#define FUN_00495110 Store7f1030_Qpc3Mhz  // Match/MatchS16_00495110.cpp (new body, PORT-TOP-01)
 #define FUN_004c57a0 MatchS15_00492770_Call004c57a0
 // Callees of the matched source: the old Boot/FrameDispatch.cpp body called each one through its original address, so these
 // forwarders make that same raw-address call (in the .asi an installed callee hook is reached through its JMP).
-extern "C" void MatchS15_00492770_Call00495110(void) {
-    reinterpret_cast<void (__cdecl*)()>(0x00495110u)();
-}
 extern "C" unsigned int MatchS15_00492770_Call004c57a0(void) {
     return reinterpret_cast<unsigned int (__cdecl*)()>(0x004c57a0u)();
 }
