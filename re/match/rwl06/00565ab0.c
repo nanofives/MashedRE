@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00565ab0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00565ab0: best 63.2% (regs 70.6%, ops 88.2%), class (b). callee args are ints, matrix c[16] (RwMatrix frame 0x88) found; original stores identity constants as immediates, ours hoists 0 and 1.0 into registers. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

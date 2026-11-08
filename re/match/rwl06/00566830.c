@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00566830: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00566830: best 48.4% (regs 75.8%, ops 85.5%), class (b). fabs intrinsic ok; original keeps param_2 in ebx and builds the selector with add/or/add/or/shl 2 while the compiler distributes the shift (shl 3 + shl 2); permuter variants change semantics and are not used. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -42,7 +41,7 @@ void FUN_00566830(float *param_1,float *param_2)
   uVar2 = 0x21312300 >>
           ((((param_1[0] > param_1[1]) * 2 | fVar1 < *param_1) * 2 | fVar1 < param_1[1]) << 2) & 3;
   param_1[uVar2] = 0.0;
-  uVar2 = 1 << (sbyte)uVar2 & 3;
+  uVar2 = 1 << (int)uVar2 & 3;
   uVar3 = 1 << (sbyte)uVar2 & 3;
   param_1[uVar2] = param_2[uVar3];
   param_1[uVar3] = -param_2[uVar2];

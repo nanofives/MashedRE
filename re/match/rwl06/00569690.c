@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* RESULT: pending */
+/* MATCH-RWL06 h1 0x00569690: 36.8% (regs 52.6%), class c. by-value 0x88 struct args on stack plus 12 params, raw Ghidra form only. Tried: not attempted beyond raw. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,7 +23,7 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
-void FUN_00569e90();
+void FUN_00569e90(int p0, undefined4 p1, undefined4 p2);
 MGLOBAL(int, stack0x0000003c, 0x0000003c);
 // MATCH: 0x00569690 FUN_00569690
 void FUN_00569690(int *param_1,int *param_2,int param_3,undefined4 param_4,undefined4 param_5,

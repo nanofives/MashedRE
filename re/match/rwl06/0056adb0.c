@@ -1,6 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-RWL06 0x0056adb0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 h3 0x0056adb0: best 10.6% (regs 13.1%, ops 43.6%), class (c). prologue push ebp / and esp,-16 and in_stack_* args: 16-byte-aligned frame the period compiler does not produce; ROUND replaced by a plain cast; raw form kept. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -33,7 +32,7 @@ typedef long double float10;
 MGLOBAL(undefined1, DAT_005cc32c, 0x005cc32c);
 MGLOBAL(undefined1, DAT_005cc320, 0x005cc320);
 MGLOBAL(undefined1, DAT_005cc568, 0x005cc568);
-void FUN_0056aae0(int * p0, int * p1, int p2, undefined4 p3, undefined4 p4, int p5, undefined4 p6, undefined4 p7, int p8, undefined4 p9, undefined4 p10, int p11);
+void FUN_0056aae0(int * p0, int * p1, int p2, undefined4 p3, undefined4 p4, int p5, undefined4 p6, undefined4 p7, int p8, undefined4 p9, undefined4 p10, int p11, int p12, int p13);
 float10 FUN_0056ac40();
 MGLOBAL(int, stack0x0000000c, 0x0000000c);
 MGLOBAL(int, _DAT_005cc32c, 0x005cc32c);
@@ -287,7 +286,7 @@ LAB_0056b1e6:
           local_7c = fVar1;
           if ((_DAT_005cc320 / local_90) * fVar2 * _DAT_005cc568 + _DAT_005cc320 < (float)local_58)
           {
-            local_50 = (uint)ROUND((_DAT_005cc320 / local_90) * fVar2 * local_54);
+            local_50 = (uint)((_DAT_005cc320 / local_90) * fVar2 * local_54);
             local_58 = local_50 + 1;
           }
         }

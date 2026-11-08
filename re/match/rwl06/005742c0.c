@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x005742c0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h1 0x005742c0: 11.8% (regs 19.7%), class b. 1490 B x87 function, structure only (compiles after PTR_DAT_005ceabc typed float). Tried: raw converter form with global type fix, no search. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,21 +22,27 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+double sqrt(double);
+#pragma intrinsic(sqrt)
 typedef unsigned char undefined;
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 typedef long double float10;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
-MGLOBAL(undefined *, PTR_DAT_005ceabc, 0x005ceabc);
+MGLOBAL(float, PTR_DAT_005ceabc, 0x005ceabc);
 MGLOBAL(undefined1, DAT_005cc320, 0x005cc320);
 MGLOBAL(float, DAT_005d757c, 0x005d757c);
 MGLOBAL(undefined1, DAT_005cc32c, 0x005cc32c);
-float10 FUN_0055bbf0(float * p0, int p1, float * p2);
-void FUN_005655a0(float * p0, float * p1);
+float10 FUN_0055bbf0(int p0, int p1, float * p2);
+void FUN_005655a0(float * p0, int p1);
 undefined4 FUN_00565ab0(undefined4 * p0, undefined4 * p1);
-void FUN_005748a0(float * p0, float * p1, float p2);
+void FUN_005748a0(void * p0, float * p1, float p2);
 MGLOBAL(int, _DAT_005cc320, 0x005cc320);
 MGLOBAL(int, _DAT_005cc32c, 0x005cc32c);
 // MATCH: 0x005742c0 FUN_005742c0
@@ -142,7 +147,7 @@ float10 FUN_005742c0(int param_1,uint param_2,undefined4 *param_3,float *param_4
       iStack_d0 = iStack_d0 + 0x60;
       pfVar7 = pfVar7 + 3;
     } while (uVar9 < param_2);
-    if (local_c8 < (float)PTR_DAT_005ceabc == (local_c8 == (float)PTR_DAT_005ceabc)) {
+    if (local_c8 < PTR_DAT_005ceabc == (local_c8 == PTR_DAT_005ceabc)) {
       if (param_5 == 0) {
         fVar1 = _DAT_005cc320 / local_c8;
         *param_4 = fVar1 * *param_4;

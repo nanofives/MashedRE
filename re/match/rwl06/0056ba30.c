@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* RESULT: pending */
+/* MATCH-RWL06 h1 0x0056ba30: 100.0% (regs 100.0%), class -. early return false, unsigned >0, inc after store. Tried: direct. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

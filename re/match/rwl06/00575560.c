@@ -1,6 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-RWL06 0x00575560: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 h1 0x00575560: 31.2% (regs 63.0%), class b. cmp ax 16-bit and loop reg alloc, 216 B-class int function; regs-renamed 59% (structure differs in locals/spill). Tried: ushort 0xffff compare, corrected callee prototypes, permuter 36.1 not adopted (moved a statement). cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,10 +22,8 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-undefined4 FUN_005752b0(int p0, float p1, float * p2);
-uint FUN_00578ff0(undefined4 * p0, uint p1, int p2, undefined4 * p3, uint p4, float p5);
+int FUN_005752b0(int p0, int p1, int p2);
+uint FUN_00578ff0(int p0, uint p1, int p2, int p3, int p4, int p5);
 // MATCH: 0x00575560 FUN_00575560
 int FUN_00575560(int param_1,uint param_2,uint param_3,int param_4,int param_5)
 
@@ -45,13 +42,13 @@ int FUN_00575560(int param_1,uint param_2,uint param_3,int param_4,int param_5)
   iVar3 = param_1;
   uVar6 = 0;
   if (param_3 != 0) {
-    if (*(short *)(param_2 + 0x5c) == -1) {
+    if (*(ushort *)(param_2 + 0x5c) == 0xffff) {
       local_4 = 0;
     }
     else {
       local_4 = *(uint *)(*(int *)(param_2 + 0x58) + 8);
     }
-    if (*(short *)(param_2 + 0xdc) == -1) {
+    if (*(ushort *)(param_2 + 0xdc) == 0xffff) {
       param_2 = 0;
     }
     else {
@@ -64,7 +61,7 @@ int FUN_00575560(int param_1,uint param_2,uint param_3,int param_4,int param_5)
         param_1 = iVar4;
         do {
           if (param_5 - 1U <= uVar7) break;
-          iVar5 = FUN_005752b0(param_1,*(undefined4 *)(iVar3 + 0x70),local_8);
+          iVar5 = FUN_005752b0(param_1,*(int *)(iVar3 + 0x70),local_8);
           if (iVar5 != 0) {
             uVar7 = uVar7 + 1;
             local_8 = local_8 + 0xe0;
@@ -75,8 +72,8 @@ int FUN_00575560(int param_1,uint param_2,uint param_3,int param_4,int param_5)
       }
       param_3 = 0;
       if (uVar7 != 0) {
-        param_3 = FUN_00578ff0(param_4 + 0xe0,uVar7,*(undefined4 *)(iVar3 + 0x7c),param_4,param_5,
-                               *(undefined4 *)(iVar3 + 0x74));
+        param_3 = FUN_00578ff0(param_4 + 0xe0,uVar7,*(int *)(iVar3 + 0x7c),param_4,param_5,
+                               *(int *)(iVar3 + 0x74));
       }
       if ((((param_2 | local_4) & 0x40) != 0) && (param_3 != 0)) {
         iVar5 = param_4;

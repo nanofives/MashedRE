@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x0057ae30: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x0057ae30: best 90.7% (regs 90.7%, ops 98.4%), class (a). fadd/fmul operand order and shift distribution (shl 3 + shl 2 against add,add,shl 2) are compiler canonicalisation; flips, temp t and permuter tried. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

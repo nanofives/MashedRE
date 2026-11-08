@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* RESULT: pending */
+/* MATCH-RWL06 h1 0x0057bf30: 84.6% (regs 85.2%), class b. x87 float10 temp ordering and slot reuse. Tried: if/else order, f[11] frame array, sum order, permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

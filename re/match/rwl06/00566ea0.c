@@ -1,6 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-RWL06 0x00566ea0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 h3 0x00566ea0: best 42.3% (regs 45.4%, ops 70.4%), class (b). flags fixed (was /GS), float constants, d[3] array, sqrt intrinsic; register allocation differs (extra esi/edi); structure only. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -28,8 +27,10 @@ typedef unsigned int uint;
 MGLOBAL(float, DAT_005d757c, 0x005d757c);
 MGLOBAL(undefined1, DAT_005cc320, 0x005cc320);
 MGLOBAL(undefined1, DAT_005cc33c, 0x005cc33c);
-MGLOBAL(int, _DAT_005cc320, 0x005cc320);
-MGLOBAL(int, _DAT_005cc33c, 0x005cc33c);
+MGLOBAL(float, _DAT_005cc320, 0x005cc320);
+MGLOBAL(float, _DAT_005cc33c, 0x005cc33c);
+double sqrt(double);
+#pragma intrinsic(sqrt)
 // MATCH: 0x00566ea0 FUN_00566ea0
 /* [C1 2026-05-19] Signature: `uint FUN_00566ea0(float *param_1, float *param_2, float *param_3,
    float *param_4, float *param_5, float p6
@@ -39,6 +40,7 @@ uint FUN_00566ea0(float *param_1,float *param_2,float *param_3,float *param_4,fl
                  float param_6,int param_7,int param_8)
 
 {
+  float d[3];
   float fVar1;
   float fVar2;
   float fVar3;
@@ -47,11 +49,11 @@ uint FUN_00566ea0(float *param_1,float *param_2,float *param_3,float *param_4,fl
   float fVar6;
   uint uVar7;
   
-  fVar1 = *param_4 - *param_2;
-  fVar2 = param_4[1] - param_2[1];
-  fVar3 = param_4[2] - param_2[2];
-  fVar4 = param_5[2] * fVar3 + fVar1 * *param_5 + param_5[1] * fVar2;
-  fVar5 = ((fVar3 * fVar3 + fVar1 * fVar1 + fVar2 * fVar2) - fVar4 * fVar4) - param_6 * param_6;
+  d[0] = *param_4 - *param_2;
+  d[1] = param_4[1] - param_2[1];
+  d[2] = param_4[2] - param_2[2];
+  fVar4 = param_5[2] * d[2] + d[0] * *param_5 + param_5[1] * d[1];
+  fVar5 = ((d[2] * d[2] + d[0] * d[0] + d[1] * d[1]) - fVar4 * fVar4) - param_6 * param_6;
   uVar7 = (uint)(fVar5 < DAT_005d757c);
   if (param_1 != (float *)0x0) {
     if ((uVar7 != 0) && (param_8 == 0)) {
@@ -60,7 +62,7 @@ uint FUN_00566ea0(float *param_1,float *param_2,float *param_3,float *param_4,fl
       return 1;
     }
     fVar6 = param_5[2] * param_3[2] + *param_3 * *param_5 + param_5[1] * param_3[1];
-    fVar1 = (param_3[2] * fVar3 + fVar1 * *param_3 + param_3[1] * fVar2) - fVar6 * fVar4;
+    fVar1 = (param_3[2] * d[2] + d[0] * *param_3 + param_3[1] * d[1]) - fVar6 * fVar4;
     if ((param_7 == 0) && (fVar1 < DAT_005d757c != (fVar1 == DAT_005d757c))) {
       return 0xffffffff;
     }
@@ -88,7 +90,7 @@ uint FUN_00566ea0(float *param_1,float *param_2,float *param_3,float *param_4,fl
       }
     }
     uVar7 = 1;
-    *param_1 = fVar1 - SQRT(fVar3) * fVar4;
+    *param_1 = fVar1 - sqrt(fVar3) * fVar4;
   }
   return uVar7;
 }

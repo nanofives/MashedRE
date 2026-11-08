@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00577cb0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 0x00577cb0: hand pass (h2), body kept in raw form. 29.8% regs 27.7% ops 63.3%, body kept in raw form (rewrites with float arrays, 0 < n guard, term reorder of the cross sum, dx/dy/dz locals scored 25%). Orig keeps param_2 in ebx, the counter in edi and a spilled (1-n) base; 0x00577be0 is called with float args 0.0 and 1.0. The permuter's 37.8% variants changed semantics (rejected). Class b (large x87 + register allocation). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

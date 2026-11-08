@@ -25,7 +25,11 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 typedef unsigned int uint;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 void FUN_0055b860(undefined4 * p0, undefined4 p1);
 undefined4 FUN_00564130(int p0, uint p1, uint p2);
@@ -43,7 +47,7 @@ int FUN_0057c500(void)
     *(undefined4 *)(iVar1 + 0x50) = 1;
     uVar2 = FUN_00564130(0x60,0x10,0x30900);
     *(undefined4 *)(iVar1 + 0x4c) = uVar2;
-    FUN_0055b860(iVar1,uVar2);
+    FUN_0055b860((undefined4 *)iVar1,uVar2);
     FUN_0057c1b0(*(undefined4 *)(iVar1 + 0x4c));
   }
   return iVar1;

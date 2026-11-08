@@ -43,7 +43,8 @@ undefined4 FUN_00577cb0(float * p0, uint p1, float * p2, float * p3, float * p4,
 undefined4 FUN_00577ec0(float * p0, float * p1, float p2, float p3, float * p4, float * p5, float p6, float p7, float * p8, float * p9, float * p10);
 undefined4 FUN_005784a0(uint * p0, float * p1, float * p2, float * p3, float p4);
 double fabs(double x);
-#pragma intrinsic(fabs)
+double sqrt(double x);
+#pragma intrinsic(fabs, sqrt)
 // MATCH: 0x00576880 FUN_00576880
 /* [C1 2026-05-20] Signature recovered: `uint FUN_00576880(float *vertsA, uint countA, float
    *vertsB, uint countB, float
@@ -514,7 +515,7 @@ LAB_005776fc:
   uVar11 = local_b4;
   if ((((DAT_005d757c <= *param_8) && (DAT_005ceabc < local_c4)) &&
       (((uint)param_11[0x1f] & 0x20) == 0)) && (((uint)param_11[0x3f] & 0x20) == 0)) {
-    fVar1 = DAT_005cc320 / SQRT(local_c4);
+    fVar1 = DAT_005cc320 / (float)sqrt(local_c4);
     *param_8 = local_c4 * fVar1;
     *param_7 = local_e0 * fVar1;
     param_7[1] = fVar1 * local_dc;

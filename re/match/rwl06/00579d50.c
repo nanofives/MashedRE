@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00579d50: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00579d50: best 34.7% (regs 48.4%, ops 73.7%), class (b). local arrays for the negated vector and the output vector, branches swapped; original tail-merges the second call with pushes inside both branches. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -25,7 +24,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 typedef long double float10;
-void FUN_0055c000(int p0, float * p1, float * p2, undefined4 p3);
+void FUN_0055c000(int p0, undefined4 p1, float * p2, float * p3);
 // MATCH: 0x00579d50 FUN_00579d50
 float FUN_00579d50(float *param_1,float *param_2,int param_3,int *param_4,float *param_5)
 

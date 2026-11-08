@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x0056a250: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h1 0x0056a250: 26.5% (regs 32.7%), class b. arg spill layout: original keeps 21 stack params live in many copies. Tried: extended signature to 21 params (in_stack = param_15/18/21), fabs intrinsic, permuter 29.9. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,11 +22,14 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned int undefined4;
-typedef unsigned int uint;
+double fabs(double);
+#pragma intrinsic(fabs)
 // MATCH: 0x0056a250 FUN_0056a250
-void FUN_0056a250(uint *param_1,undefined4 *param_2,int param_3,uint param_4)
-
+void FUN_0056a250(uint *param_1,undefined4 *param_2,int param_3,uint param_4,
+                  int param_5,int param_6,int param_7,int param_8,int param_9,int param_10,
+                  int param_11,int param_12,int param_13,int param_14,
+                  int param_15,int param_16,int param_17,float *param_18,int param_19,int param_20,
+                  float param_21)
 {
   float *pfVar1;
   float *pfVar2;
@@ -35,44 +37,41 @@ void FUN_0056a250(uint *param_1,undefined4 *param_2,int param_3,uint param_4)
   int iVar4;
   uint uVar5;
   uint uVar6;
-  int in_stack_0000003c;
-  float *in_stack_00000048;
-  float in_stack_00000054;
   float *local_28;
-  
+
   uVar6 = 0xffffffff;
   uVar3 = 0xffffffff;
   uVar5 = 0;
   if (param_4 != 0) {
-    local_28 = in_stack_00000048;
-    iVar4 = param_3 - in_stack_0000003c;
-    pfVar2 = (float *)(in_stack_0000003c + 8);
+    local_28 = param_18;
+    iVar4 = param_3 - param_15;
+    pfVar2 = (float *)(param_15 + 8);
     pfVar1 = (float *)(param_3 + 0xc);
     do {
-      if ((in_stack_00000054 < pfVar2[-2] * pfVar1[-3]) ||
-         (*local_28 * pfVar1[-3] < -in_stack_00000054)) {
-        in_stack_00000054 = ABS(pfVar1[-3]);
+      if ((param_21 < pfVar2[-2] * pfVar1[-3]) ||
+         (*local_28 * pfVar1[-3] < -param_21)) {
+        param_21 = (float)fabs(pfVar1[-3]);
         uVar3 = 0;
         uVar6 = uVar5;
       }
-      if ((in_stack_00000054 < pfVar2[-1] * pfVar1[-2]) ||
-         (*(float *)(((int)in_stack_00000048 - param_3) + -8 + (int)pfVar1) * pfVar1[-2] <
-          -in_stack_00000054)) {
-        in_stack_00000054 = ABS(pfVar1[-2]);
+      if ((param_21 < pfVar2[-1] * pfVar1[-2]) ||
+         (*(float *)(((int)param_18 - param_3) + -8 + (int)pfVar1) * pfVar1[-2] <
+          -param_21)) {
+        param_21 = (float)fabs(pfVar1[-2]);
         uVar3 = 1;
         uVar6 = uVar5;
       }
-      if ((in_stack_00000054 < *pfVar2 * *(float *)((int)pfVar2 + iVar4)) ||
-         (*(float *)(((int)in_stack_00000048 - in_stack_0000003c) + (int)pfVar2) *
-          *(float *)((int)pfVar2 + iVar4) < -in_stack_00000054)) {
-        in_stack_00000054 = ABS(*(float *)((int)pfVar2 + iVar4));
+      if ((param_21 < *pfVar2 * *(float *)((int)pfVar2 + iVar4)) ||
+         (*(float *)(((int)param_18 - param_15) + (int)pfVar2) *
+          *(float *)((int)pfVar2 + iVar4) < -param_21)) {
+        param_21 = (float)fabs(*(float *)((int)pfVar2 + iVar4));
         uVar3 = 2;
         uVar6 = uVar5;
       }
-      if ((in_stack_00000054 < pfVar2[1] * *pfVar1) ||
-         (*pfVar1 * *(float *)(((int)in_stack_00000048 - param_3) + (int)pfVar1) <
-          -in_stack_00000054)) {
-        in_stack_00000054 = ABS(*pfVar1);
+      if ((param_21 < pfVar2[1] * *pfVar1) ||
+         (*pfVar1 * *(float *)(((int)param_18 - param_3) + (int)pfVar1) <
+          -param_21)) {
+        param_21 = (float)fabs(*pfVar1);
         uVar3 = 3;
         uVar6 = uVar5;
       }
@@ -87,5 +86,4 @@ void FUN_0056a250(uint *param_1,undefined4 *param_2,int param_3,uint param_4)
   }
   *param_1 = 0xffffffff;
   *param_2 = 0xffffffff;
-  return;
 }

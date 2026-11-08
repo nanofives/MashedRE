@@ -27,6 +27,8 @@ typedef unsigned char undefined1;
 MGLOBAL(float, DAT_005d757c, 0x005d757c);
 MGLOBAL(float, DAT_005cc320, 0x005cc320);
 void FUN_0056d350(int * p0, float * p1, float * p2, int p3, int p4, int p5);
+double sqrt(double x);
+#pragma intrinsic(sqrt)
 // MATCH: 0x0056d3f0 FUN_0056d3f0
 /* [C1 2026-05-19] Signature: `void FUN_0056d3f0(int param_1)` (most args on stack). */
 
@@ -125,22 +127,22 @@ void FUN_0056d3f0(int param_1)
       local_4c = 0.0;
       if (local_5c[-8] != -1) {
         local_60 = local_5c[-8] * 0x30 + in_stack_00000068;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,0,0);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,0,0);
         local_94 = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
                    local_74 * local_74 + local_70 * local_70 + local_6c * local_6c;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,1,0);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,1,0);
         local_90 = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
                    local_74 * local_74 + local_70 * local_70 + local_6c * local_6c;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,2,0);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,2,0);
         local_8c = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
                    local_74 * local_74 + local_70 * local_70 + local_6c * local_6c;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,3,0);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,3,0);
         local_88 = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
@@ -148,22 +150,22 @@ void FUN_0056d3f0(int param_1)
       }
       if (*local_5c != -1) {
         local_60 = *local_5c * 0x30 + in_stack_00000068;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,0,1);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,0,1);
         local_94 = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
                    local_74 * local_74 + local_70 * local_70 + local_6c * local_6c + local_94;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,1,1);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,1,1);
         local_90 = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
                    local_74 * local_74 + local_70 * local_70 + local_6c * local_6c + local_90;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,2,1);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,2,1);
         local_8c = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
                    local_74 * local_74 + local_70 * local_70 + local_6c * local_6c + local_8c;
-        FUN_0056d350(&param_1,&local_84,local_60,local_64,3,1);
+        FUN_0056d350(&param_1,&local_84,(float *)local_60,local_64,3,1);
         local_88 = local_84 * local_84 +
                    local_80 * local_80 +
                    local_7c * local_7c +
@@ -175,22 +177,22 @@ void FUN_0056d3f0(int param_1)
       local_88 = in_stack_00000074 * *(float *)(local_44 + (int)pfVar10) + local_88;
       local_94 = fVar1;
       if (fVar1 != DAT_005d757c) {
-        local_94 = DAT_005cc320 / SQRT(fVar1);
+        local_94 = DAT_005cc320 / (float)sqrt(fVar1);
         local_58 = fVar1 * local_94;
       }
       local_90 = fVar2;
       if (fVar2 != DAT_005d757c) {
-        local_90 = DAT_005cc320 / SQRT(fVar2);
+        local_90 = DAT_005cc320 / (float)sqrt(fVar2);
         local_54 = fVar2 * local_90;
       }
       local_8c = fVar3;
       if (fVar3 != DAT_005d757c) {
-        local_8c = DAT_005cc320 / SQRT(fVar3);
+        local_8c = DAT_005cc320 / (float)sqrt(fVar3);
         local_50 = fVar3 * local_8c;
       }
       fVar1 = local_88;
       if (local_88 != DAT_005d757c) {
-        fVar1 = DAT_005cc320 / SQRT(local_88);
+        fVar1 = DAT_005cc320 / (float)sqrt(local_88);
         local_4c = local_88 * fVar1;
       }
       iVar5 = 2;

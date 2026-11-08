@@ -31,6 +31,6 @@ void FUN_0055c380(undefined4 * p0, undefined4 p1);
 undefined4 FUN_0057c1b0(undefined4 param_1)
 
 {
-  FUN_0055c380(param_1,&DAT_005e5e50);
+  FUN_0055c380((undefined4 *)param_1,(undefined4)&DAT_005e5e50);
   return param_1;
 }

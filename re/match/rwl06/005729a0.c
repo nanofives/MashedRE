@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x005729a0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h1 0x005729a0: 31.4% (regs 41.3%), class b. 3138 B structure only (45 min class), compiles after prototype fixes. Tried: raw converter form with prototype/cast fixes. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,6 +22,8 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+double sqrt(double);
+#pragma intrinsic(sqrt)
 typedef unsigned char undefined;
 typedef unsigned char undefined1;
 typedef unsigned short undefined2;
@@ -31,22 +32,26 @@ typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char byte;
 typedef long double float10;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 MGLOBAL(undefined1, DAT_005e4568, 0x005e4568);
-MGLOBAL(undefined *, PTR_DAT_005ceabc, 0x005ceabc);
+MGLOBAL(float, PTR_DAT_005ceabc, 0x005ceabc);
 MGLOBAL(undefined1, DAT_005cd07c, 0x005cd07c);
 MGLOBAL(float, DAT_005d757c, 0x005d757c);
 MGLOBAL(undefined1, DAT_005cc574, 0x005cc574);
 MGLOBAL(undefined1, DAT_005cc320, 0x005cc320);
 void FUN_004c51a0(float * p0, float * p1, int p2);
-uint * FUN_004c52f0(uint * p0, uint * p1, int p2);
-void FUN_0055bae0(int p0, float * p1, undefined4 p2);
+uint * FUN_004c52f0(void * p0, int p1, int p2);
+void FUN_0055bae0(int p0, int p1, float * p2);
 float * FUN_00561280(int p0, int p1, float * p2);
 float10 FUN_005667c0(float * p0, float * p1);
 void FUN_0056be80(int * p0, int p1, float p2);
 void FUN_005735f0(float * p0, float * p1, float * p2, float * p3);
-undefined4 FUN_00575880(float p0, int p1, int * p2, float p3);
-uint FUN_00576880(float * p0, uint p1, float * p2, uint p3, float p4, float p5, float * p6, float * p7, uint * p8, uint * p9, float * p10, float * p11);
+undefined4 FUN_00575880(int *p0, int *p1, int *p2, float p3);
+uint FUN_00576880(int p0, uint p1, int p2, uint p3, float p4, float p5, float * p6, float * p7, void * p8, void * p9, float * p10, float * p11);
 MGLOBAL(int, _DAT_005e4568, 0x005e4568);
 MGLOBAL(int, _DAT_005cd07c, 0x005cd07c);
 MGLOBAL(int, _DAT_005cc574, 0x005cc574);
@@ -172,7 +177,7 @@ undefined4 FUN_005729a0(float *param_1,int *param_2,float *param_3,float *param_
     iVar11 = *(int *)*param_2;
     piStack_22c = *(int **)(*(int *)(iVar11 + 0x10) + 4 + uVar12 * 0xc);
     pfVar14 = (float *)(piStack_22c[1] * 0x20 + *(int *)(*(int *)(*piStack_22c + 0x10) + 8));
-    fStack_23c = SQRT(pfVar14[6] * pfVar14[6] + pfVar14[5] * pfVar14[5] + pfVar14[4] * pfVar14[4]);
+    fStack_23c = sqrt(pfVar14[6] * pfVar14[6] + pfVar14[5] * pfVar14[5] + pfVar14[4] * pfVar14[4]);
     pfStack_210 = pfVar14;
     FUN_00561280(iVar11,uVar12,&fStack_1d0);
   }
@@ -192,7 +197,7 @@ undefined4 FUN_005729a0(float *param_1,int *param_2,float *param_3,float *param_
     iVar11 = *(int *)param_2[1];
     piVar13 = *(int **)(*(int *)(iVar11 + 0x10) + 4 + uVar12 * 0xc);
     pfVar15 = (float *)(piVar13[1] * 0x20 + *(int *)(*(int *)(*piVar13 + 0x10) + 8));
-    fStack_228 = SQRT(pfVar15[6] * pfVar15[6] + pfVar15[5] * pfVar15[5] + pfVar15[4] * pfVar15[4]);
+    fStack_228 = sqrt(pfVar15[6] * pfVar15[6] + pfVar15[5] * pfVar15[5] + pfVar15[4] * pfVar15[4]);
     piStack_214 = piVar13;
     pfStack_1e4 = pfVar15;
     FUN_00561280(iVar11,uVar12,&fStack_1e0);
@@ -217,7 +222,7 @@ undefined4 FUN_005729a0(float *param_1,int *param_2,float *param_3,float *param_
   fStack_1bc = fStack_1cc - fStack_1dc;
   fStack_1b8 = fStack_1c8 - fStack_1d8;
   fVar3 = fStack_1d4 + fStack_1c4;
-  fVar17 = (float10)FUN_005667c0(auStack_10c,&fStack_1c0);
+  fVar17 = (float10)FUN_005667c0((float *)auStack_10c,&fStack_1c0);
   fStack_250 = 0.0;
   fVar4 = fStack_240 * fStack_240 + fStack_248 * fStack_248 + fStack_244 * fStack_244;
   fVar18 = (float10)fStack_218 + (float10)fStack_218;
@@ -232,13 +237,13 @@ undefined4 FUN_005729a0(float *param_1,int *param_2,float *param_3,float *param_
     if ((float10)fVar3 * (float10)fVar3 < fVar17) {
       return 0;
     }
-    fStack_250 = (float)((-(float10)fVar3 - SQRT((float10)fVar3 * (float10)fVar3 - fVar17)) /
+    fStack_250 = (float)((-(float10)fVar3 - sqrt((float10)fVar3 * (float10)fVar3 - fVar17)) /
                         (float10)fVar4);
   }
   if (fStack_250 < fVar1 * fVar2) {
     fStack_250 = fVar1 * fVar2;
   }
-  if (fStack_228 + fStack_23c <= (float)PTR_DAT_005ceabc) {
+  if (fStack_228 + fStack_23c <= PTR_DAT_005ceabc) {
     fStack_238 = 3.4028235e+38;
   }
   else {
@@ -251,7 +256,7 @@ undefined4 FUN_005729a0(float *param_1,int *param_2,float *param_3,float *param_
   fVar1 = *(float *)(*(int *)(param_2[1] + 8) + 0x4c) + *(float *)(*(int *)(*param_2 + 8) + 0x4c);
   fStack_198 = *(float *)(*(int *)(param_2[1] + 8) + 0x4c) -
                *(float *)(*(int *)(*param_2 + 8) + 0x4c);
-  fStack_194 = fStack_1c4 * fStack_23c + fStack_1d4 * fStack_228 + SQRT(fVar4);
+  fStack_194 = fStack_1c4 * fStack_23c + fStack_1d4 * fStack_228 + sqrt(fVar4);
   do {
     iVar11 = *param_2;
     if (piStack_22c != (int *)0x0) {
@@ -391,14 +396,14 @@ undefined4 FUN_005729a0(float *param_1,int *param_2,float *param_3,float *param_
     }
     param_1[0xeb] = 0.0;
     param_1[0xee] = 0.0;
-    iVar11 = FUN_00575880(param_1 + 0xdf,param_1,param_2,(fStack_230 - fStack_250) * fStack_194);
+    iVar11 = FUN_00575880((int *)(param_1 + 0xdf),(int *)param_1,(int *)param_2,(fStack_230 - fStack_250) * fStack_194);
     if (iVar11 == 0) {
       return 0;
     }
-    pfVar15 = (float *)param_1[0xea];
+    pfVar15 = *(float **)&param_1[0xea];
     fStack_21c = fVar1 + pfVar15[0x44];
     pfVar14 = pfVar15 + 0x40;
-    uVar12 = FUN_00576880(pfVar15[0x14],*(undefined2 *)(pfVar15 + 0x15),pfVar15[0x34],
+    uVar12 = FUN_00576880(*(int *)&pfVar15[0x14],*(undefined2 *)(pfVar15 + 0x15),*(int *)&pfVar15[0x34],
                           *(undefined2 *)(pfVar15 + 0x35),fStack_198,pfVar15[0x43],pfVar14,
                           &fStack_21c,auStack_110,auStack_114,pfVar15,afStack_100);
     fVar2 = fStack_21c - fVar1;

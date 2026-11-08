@@ -1,6 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-RWL06 0x00578610: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 h1 0x00578610: 22.1% (regs 37.7%), class b. 398 B x87/regs, structure only. Tried: raw converter form. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,22 +22,24 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+double sqrt(double);
+#pragma intrinsic(sqrt)
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char byte;
 typedef long double float10;
-typedef int code();
+typedef int code(int,int,void *,void *);
 MGLOBAL(undefined1, DAT_005cc32c, 0x005cc32c);
 MGLOBAL(undefined1, DAT_005ce54c, 0x005ce54c);
 MGLOBAL(undefined1, DAT_005cc320, 0x005cc320);
 MGLOBAL(undefined1, DAT_005e5050, 0x005e5050);
 float10 FUN_005667c0(float * p0, float * p1);
 float10 FUN_00578b20(int * p0, float * p1, float * p2);
-float10 FUN_00578bd0(int * p0, float * p1, float * p2, float * p3);
-float10 FUN_00578cb0(int * p0, float * p1, float * p2, float * p3);
-void FUN_00578d90(float * p0, float * p1, float * p2, float * p3);
+float10 FUN_00578bd0(int * p0, void * p1, float * p2, float * p3);
+float10 FUN_00578cb0(int * p0, void * p1, float * p2, float * p3);
+void FUN_00578d90(int p0, int p1, float * p2, float * p3);
 MGLOBAL(int, _DAT_005ce54c, 0x005ce54c);
 MGLOBAL(int, _DAT_005cc320, 0x005cc320);
 MGLOBAL(int, _DAT_005e5050, 0x005e5050);
@@ -201,7 +202,7 @@ FUN_00578610(undefined4 param_1,int *param_2,float param_3,float *param_4,float 
               fStack_130 = *pfVar12 * *pfVar10 - pfVar12[-1] * pfVar10[1];
               fVar9 = fStack_130 * fStack_130 + fStack_138 * fStack_138 + fStack_134 * fStack_134;
               if (_DAT_005ce54c < fVar9) {
-                fVar9 = _DAT_005cc320 / SQRT(fVar9);
+                fVar9 = _DAT_005cc320 / sqrt(fVar9);
                 fStack_138 = fStack_138 * fVar9;
                 fStack_134 = fStack_134 * fVar9;
                 fStack_130 = fVar9 * fStack_130;
@@ -216,7 +217,7 @@ FUN_00578610(undefined4 param_1,int *param_2,float param_3,float *param_4,float 
               }
               puStack_144 = (undefined1 *)((int)puStack_144 + 1);
               pfVar12 = pfVar12 + 3;
-            } while (puStack_144 < (uint)*(ushort *)(iVar6 + 0x3a));
+            } while ((uint)puStack_144 < (uint)*(ushort *)(iVar6 + 0x3a));
           }
           uStack_128 = uStack_128 + 1;
           pfVar10 = pfVar10 + 3;

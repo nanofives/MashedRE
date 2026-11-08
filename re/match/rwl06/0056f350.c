@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x0056f350: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x0056f350: best 15.0% (regs 23.1%, ops 50.3%), class (b). compiles, sqrt/fabs intrinsics (original has 3 fsqrt); raw Ghidra form, scalar locals are arrays in the original; structure only. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -40,7 +39,7 @@ MGLOBAL(undefined4, DAT_005e57c4, 0x005e57c4);
 MGLOBAL(undefined4, DAT_005e57d0, 0x005e57d0);
 void FUN_0055b750(int * p0, float * p1, float * p2);
 void FUN_0056f0a0(int p0);
-void FUN_0056f1f0(int * p0, undefined4 * p1);
+void FUN_0056f1f0(int p0, undefined1 * p1);
 void FUN_0056fad0(float * p0, float * p1, float * p2, float * p3, int p4, int p5);
 MGLOBAL(float, _DAT_005e456c, 0x005e456c);
 MGLOBAL(float, _DAT_005cd03c, 0x005cd03c);
@@ -49,6 +48,8 @@ MGLOBAL(float, _DAT_005cc320, 0x005cc320);
 MGLOBAL(float, _DAT_005e520c, 0x005e520c);
 double sqrt(double);
 #pragma intrinsic(sqrt)
+double fabs(double);
+#pragma intrinsic(fabs)
 // MATCH: 0x0056f350 FUN_0056f350
 /* [C1 2026-05-19] Signature: `void FUN_0056f350(int param_1, float *param_2, float param_3)`. */
 
@@ -218,7 +219,7 @@ void FUN_0056f350(int param_1,float *param_2,float param_3)
             local_ec = param_2[2] * local_cc - local_c4 * *param_2;
             fVar2 = local_c8 * *param_2 - param_2[1] * local_cc;
             if (local_f0 * local_f0 + local_ec * local_ec + fVar2 * fVar2 < _DAT_005cd03c) {
-              fVar2 = ABS(*param_2);
+              fVar2 = fabs(*param_2);
               puVar7 = &DAT_005e57c4;
               if (_DAT_005cc9b4 <= fVar2) {
                 puVar7 = &DAT_005e57d0;
@@ -283,14 +284,14 @@ void FUN_0056f350(int param_1,float *param_2,float param_3)
             local_20 = (float)puVar3[8];
           }
           local_20 = -local_20;
-          FUN_0056fad0(local_78,&local_dc,&local_88,&local_94,local_e4,local_e0);
+          FUN_0056fad0((float *)local_78,&local_dc,&local_88,&local_94,(int)local_e4,(int)local_e0);
           FUN_0056f1f0(param_1,local_78);
           if ((puVar3 != (undefined4 *)0x0) && ((*(byte *)(puVar3 + 7) & 2) != 0)) {
             local_30 = puVar3[0xb];
             local_1c = (float)puVar3[10];
             local_20 = -(float)puVar3[10];
           }
-          FUN_0056fad0(local_78,&local_c0,&local_88,&local_94,local_e4,local_e0);
+          FUN_0056fad0((float *)local_78,&local_c0,&local_88,&local_94,(int)local_e4,(int)local_e0);
           FUN_0056f1f0(param_1,local_78);
           pfVar8 = local_d0;
         }

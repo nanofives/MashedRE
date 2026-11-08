@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00573670: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00573670: best 36.9% (regs 56.4%, ops 78.5%), class (b). struct-relative field access (piVar9+0x70..) and double temps for the fld/fstp copies (23.5 to 36.9); frame/register order differs (0x58 vs 0x54). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -27,10 +26,10 @@ typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 typedef unsigned short ushort;
-undefined4 FUN_0055abb0(undefined4 * p0, int p1, undefined4 p2);
-void FUN_0055bd80(int p0, int p1, undefined4 p2, undefined4 p3);
-undefined4 FUN_005729a0(float * p0, int * p1, float * p2, float * p3);
-int FUN_00575c60(undefined4 * p0, undefined4 * p1, float * p2, float * p3, float * p4, undefined4 p5);
+undefined4 FUN_0055abb0(int * p0, int p1, undefined1 * p2);
+void FUN_0055bd80(int p0, int p1, undefined4 p2, undefined1 * p3);
+undefined4 FUN_005729a0(int p0, int p1, int p2, int p3);
+int FUN_00575c60(int * p0, int * p1, int p2, undefined1 * p3, undefined1 * p4, int * p5);
 uint FUN_00576640(int * p0, uint p1, uint p2, int p3, int p4);
 // MATCH: 0x00573670 FUN_00573670
 int FUN_00573670(int param_1,int param_2,uint param_3,int param_4,int param_5,int param_6,
@@ -47,6 +46,8 @@ int FUN_00573670(int param_1,int param_2,uint param_3,int param_4,int param_5,in
   uint uVar8;
   int *piVar9;
   int local_54;
+  double dA;
+  double dB;
   int local_50;
   uint local_4c;
   undefined1 local_40 [32];
@@ -57,14 +58,16 @@ int FUN_00573670(int param_1,int param_2,uint param_3,int param_4,int param_5,in
     local_4c = 0;
     piVar9 = (int *)(param_1 + 0x37c);
     piVar2 = (int *)**(int **)(param_1 + 0x70);
-    *(undefined4 *)(param_1 + 0x3ec) = *(undefined4 *)(*piVar2 + 0xc014);
-    *(int *)(param_1 + 0x3f0) = piVar2[3];
+    dA = *(float *)(*piVar2 + 0xc014);
+    *(float *)((int)piVar9 + 0x70) = dA;
+    dB = *(float *)(piVar2 + 3);
+    *(float *)((int)piVar9 + 0x74) = dB;
     uVar3 = *(undefined4 *)(*piVar2 + 0xc018);
     if (param_3 != 0) {
       piVar5 = (int *)(param_2 + 8);
       do {
         iVar6 = 0;
-        if (*(int *)(param_1 + 0x3f4) != 0) {
+        if (*(int *)((int)piVar9 + 0x78) != 0) {
           return local_54;
         }
         iVar7 = 0;
@@ -92,10 +95,10 @@ int FUN_00573670(int param_1,int param_2,uint param_3,int param_4,int param_5,in
         else {
           FUN_0055abb0(piVar2,*piVar5,local_20);
         }
-        *(undefined4 *)(param_1 + 0x380) = 0;
-        *(undefined4 *)(param_1 + 0x398) = 0;
-        *(undefined4 *)(param_1 + 0x38c) = 0;
-        *(undefined4 *)(param_1 + 0x3d8) = 0;
+        *(undefined4 *)((int)piVar9 + 4) = 0;
+        *(undefined4 *)((int)piVar9 + 0x1c) = 0;
+        *(undefined4 *)((int)piVar9 + 0x10) = 0;
+        *(undefined4 *)((int)piVar9 + 0x5c) = 0;
         iVar7 = FUN_00575c60(piVar9,piVar5 + -2,iVar7,local_40,local_20,piVar5);
         if ((iVar7 != 0) &&
            (iVar6 = FUN_00575c60(piVar9,piVar5,iVar6,local_20,local_40,piVar5 + -2), iVar6 != 0)) {

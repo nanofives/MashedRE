@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x005757d0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x005757d0: best 100.0% (regs 100.0%, ops 100.0%), class (-). locals must be float local_c[3] (scalar locals passed by pointer lose their dead-looking stores), bVar3 = f() != 0 reused as the return value; byte-identical. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -29,7 +28,7 @@ typedef unsigned short ushort;
 #ifndef __cplusplus
 #define false 0
 #endif
-int FUN_0055c230(int p0, float * p1, undefined4 p2, float * p3, undefined4 p4);
+int FUN_0055c230(int p0, undefined4 p1, undefined4 p2, float * p3, undefined4 p4);
 // MATCH: 0x005757d0 FUN_005757d0
 int FUN_005757d0(int *param_1,int param_2)
 
@@ -51,7 +50,7 @@ int FUN_005757d0(int *param_1,int param_2)
       *(uint *)(param_2 + 0xd0) = (uint)*(ushort *)(param_2 + 0x54) * 0x10 + iVar2;
     }
     bVar3 = FUN_0055c230(*(undefined4 *)(param_1[1] + 8),*(undefined4 *)(param_1[1] + 0x10),1,
-                         param_2 + 0x100,param_2 + 0x80) != 0;
+                         (float *)(param_2 + 0x100),param_2 + 0x80) != 0;
   }
   return bVar3;
 }

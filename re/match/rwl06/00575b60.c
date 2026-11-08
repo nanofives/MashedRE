@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00575b60: hand-matched (h2). 79.8% regs 79.8% ops 90.4%. Ghidra's float param_1 / byte** args were stack slots: rewritten as int param_1 and two float locals (lo, hi) whose addresses go to 0x0055c2d0. Residual: in dot products 2 and 3 the original sums (z + x) + y, ours z + y + x for every source order of the three terms (6 permutations tried). x87 add-chain order, class a. */
+/* MATCH-RWL06 0x00575b60: hand-matched (h2). 79.8% regs 79.8% ops 90.4%. Decl fix: params (int obj, int other, float *out, byte *flags); the two float outputs of 0x0055c2d0 are plain locals (the compiler puts them in the dead argument slots, as the original does; taking &param_N instead costs 20%). Residual: orig adds the rows of the 3x3 products in order r2,r0,r1 for elements 1 and 2, ours always emits r2,r1,r0 whatever the source order, plus push edi placement. Class b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -44,12 +44,15 @@ void FUN_00575b60(int param_1,int param_2,float *param_3,byte *param_4)
     *param_3 = *pfVar3 * *(float *)(iVar2 + 0x30) +
                pfVar3[4] * *(float *)(iVar2 + 0x34) + pfVar3[8] * *(float *)(iVar2 + 0x38);
     iVar4 = *(int *)(param_1 + 0x10);
-    param_3[1] = *(float *)(iVar4 + 0x24) * *(float *)(iVar2 + 0x38) + *(float *)(iVar4 + 4) * *(float *)(iVar2 + 0x30) + *(float *)(iVar4 + 0x14) * *(float *)(iVar2 + 0x34);
+    param_3[1] = *(float *)(iVar4 + 0x24) * *(float *)(iVar2 + 0x38) +
+                 *(float *)(iVar4 + 4) * *(float *)(iVar2 + 0x30) +
+                 *(float *)(iVar4 + 0x14) * *(float *)(iVar2 + 0x34);
     iVar4 = *(int *)(param_1 + 0x10);
-    param_3[2] = *(float *)(iVar4 + 0x28) * *(float *)(iVar2 + 0x38) + *(float *)(iVar4 + 8) * *(float *)(iVar2 + 0x30) + *(float *)(iVar4 + 0x18) * *(float *)(iVar2 + 0x34);
+    param_3[2] = *(float *)(iVar4 + 0x28) * *(float *)(iVar2 + 0x38) +
+                 *(float *)(iVar4 + 8) * *(float *)(iVar2 + 0x30) +
+                 *(float *)(iVar4 + 0x18) * *(float *)(iVar2 + 0x34);
     if ((*param_4 & 1) == 0) {
-      FUN_0055c2d0(*(int *)(param_2 + 8),*(float **)(param_2 + 0x10),param_3,&lo,
-                   &hi);
+      FUN_0055c2d0(*(int *)(param_2 + 8),*(float **)(param_2 + 0x10),param_3,&lo,&hi);
       iVar4 = *(int *)(param_1 + 0x10);
       fVar5 = *(float *)(iVar4 + 0x38) * param_3[2] +
               *(float *)(iVar4 + 0x30) * *param_3 + *(float *)(iVar4 + 0x34) * param_3[1] +

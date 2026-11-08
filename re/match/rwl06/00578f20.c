@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* RESULT: pending */
+/* MATCH-RWL06 h1 0x00578f20: 64.2% (regs 71.6%), class b. loop counter kept in memory, register pressure differs. Tried: uint compare, sum order, double types, permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

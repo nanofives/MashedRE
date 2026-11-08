@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x0056ac40: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h1 0x0056ac40: 4.1% (regs 7.4%), class c. SSE xmm body (cmpltps/movmskps/andnps), rewritten as scalar 4-lane loops with extended 15-param signature; bytes cannot match under DDK cl. Tried: scalar lane form only. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,142 +22,88 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char undefined1;
-typedef unsigned int uint;
-typedef long double float10;
+/* scalar lane-by-lane form of the SSE body (cmpltps/andps/orps/movmskps/andnps/addps become 4-lane loops);
+   the original uses xmm registers, which the DDK cl cannot emit */
 MGLOBAL(float, DAT_005d757c, 0x005d757c);
-MGLOBAL(undefined1, DAT_005e5a40, 0x005e5a40);
-MGLOBAL(undefined1, UNK_005e5a44, 0x005e5a44);
-MGLOBAL(undefined1, UNK_005e5a48, 0x005e5a48);
-MGLOBAL(undefined1, UNK_005e5a4c, 0x005e5a4c);
-MGLOBAL(undefined1, DAT_005e5a70, 0x005e5a70);
-MGLOBAL(undefined1, UNK_005e5a74, 0x005e5a74);
-MGLOBAL(undefined1, UNK_005e5a78, 0x005e5a78);
-MGLOBAL(undefined1, UNK_005e5a7c, 0x005e5a7c);
-MGLOBAL(int, _UNK_005e5a74, 0x005e5a74);
-MGLOBAL(int, _DAT_005e5a70, 0x005e5a70);
-MGLOBAL(int, _UNK_005e5a78, 0x005e5a78);
-MGLOBAL(int, _UNK_005e5a7c, 0x005e5a7c);
-MGLOBAL(int, _DAT_005e5a40, 0x005e5a40);
-MGLOBAL(int, _UNK_005e5a44, 0x005e5a44);
-MGLOBAL(int, _UNK_005e5a48, 0x005e5a48);
-MGLOBAL(int, _UNK_005e5a4c, 0x005e5a4c);
+MGLOBALA(uint, DAT_005e5a70, 4, 0x005e5a70);
+MGLOBALA(float, DAT_005e5a40, 4, 0x005e5a40);
 // MATCH: 0x0056ac40 FUN_0056ac40
-/* [C1 2026-05-19] Signature: `float10 FUN_0056ac40(int *param_1, uint *param_2, float *param_3, int
-   param_4)`. */
-
-float10 FUN_0056ac40(int *param_1,uint *param_2,float *param_3,int param_4)
-
+float10 FUN_0056ac40(int *param_1,uint *param_2,float *param_3,int param_4,
+                     int param_5,int param_6,int param_7,int param_8,int param_9,int param_10,
+                     int param_11,uint *param_12,int param_13,int param_14,float param_15)
 {
-  uint *puVar1;
-  undefined1 auVar2 [16];
-  uint uVar3;
-  uint uVar4;
+  uint *U;
+  uint *V;
+  uint *M;
+  float lim[4];
+  float acc[4];
+  float sel[4];
+  float fVar9;
+  float best;
+  float tmp;
+  int k;
+  int n;
   int iVar5;
-  uint uVar6;
   uint uVar7;
-  int iVar8;
-  float10 fVar9;
-  uint uVar10;
-  uint uVar12;
-  uint uVar13;
-  undefined1 auVar11 [16];
-  uint uVar14;
-  float fVar15;
-  float fVar16;
-  float fVar17;
-  float fVar18;
-  int in_stack_00000024;
-  uint *in_stack_00000030;
-  float in_stack_0000003c;
-  float local_40;
-  int local_3c;
-  float local_30 [4];
-  float local_20;
-  uint uStack_1c;
-  uint uStack_18;
-  uint uStack_14;
-  
-  local_40 = in_stack_0000003c;
-  local_20 = 0.0;
-  uStack_1c = 0;
-  uStack_18 = 0;
-  uStack_14 = 0;
-  fVar15 = 0.0;
-  fVar16 = 0.0;
-  fVar17 = 0.0;
-  fVar18 = 0.0;
-  local_30[1] = in_stack_0000003c;
-  local_30[2] = in_stack_0000003c;
-  local_30[3] = in_stack_0000003c;
+  uint uVar6;
+
+  best = param_15;
+  for (k = 0; k < 4; k++) {
+    lim[k] = param_15;
+    acc[k] = 0.0f;
+    sel[k] = 0.0f;
+  }
   if (param_4 != 0) {
-    local_3c = param_4;
-    iVar5 = (int)param_3 - (int)in_stack_00000030;
-    in_stack_00000024 = in_stack_00000024 - (int)in_stack_00000030;
-    do {
-      puVar1 = (uint *)(iVar5 + (int)in_stack_00000030);
-      uVar7 = *puVar1;
-      uVar6 = puVar1[1];
-      uVar3 = puVar1[2];
-      uVar4 = puVar1[3];
-      puVar1 = (uint *)(in_stack_00000024 + (int)in_stack_00000030);
-      (*(uint *)((char *)&auVar2 + 4)) = -(uint)(local_30[1] < (float)(_UNK_005e5a74 ^ uVar6 & in_stack_00000030[1]));
-      (*(uint *)((char *)&auVar2 + 0)) = -(uint)(in_stack_0000003c < (float)(_DAT_005e5a70 ^ uVar7 & *in_stack_00000030)
-                            );
-      (*(uint *)((char *)&auVar11 + 4)) = -(uint)(local_30[1] < (float)(uVar6 & puVar1[1]));
-      (*(uint *)((char *)&auVar11 + 0)) = -(uint)(in_stack_0000003c < (float)(uVar7 & *puVar1));
-      (*(uint *)((char *)&auVar11 + 8)) = -(uint)(local_30[2] < (float)(uVar3 & puVar1[2]));
-      (*(uint *)((char *)&auVar11 + 12)) = -(uint)(local_30[3] < (float)(uVar4 & puVar1[3]));
-      (*(uint *)((char *)&auVar2 + 8)) = -(uint)(local_30[2] < (float)(_UNK_005e5a78 ^ uVar3 & in_stack_00000030[2]));
-      (*(uint *)((char *)&auVar2 + 12)) = -(uint)(local_30[3] < (float)(_UNK_005e5a7c ^ uVar4 & in_stack_00000030[3]));
-      auVar11 = auVar11 | auVar2;
-      iVar8 = movmskps(in_stack_00000024 + (int)in_stack_00000030,auVar11);
-      if (iVar8 != 0) {
-        uVar10 = (*(uint *)((char *)&auVar11 + 0));
-        uVar12 = (*(uint *)((char *)&auVar11 + 4));
-        uVar13 = (*(uint *)((char *)&auVar11 + 8));
-        uVar14 = (*(uint *)((char *)&auVar11 + 12));
-        local_20 = (float)(uVar10 & (uint)fVar15 | ~uVar10 & (uint)local_20);
-        uStack_1c = uVar12 & (uint)fVar16 | ~uVar12 & uStack_1c;
-        uStack_18 = uVar13 & (uint)fVar17 | ~uVar13 & uStack_18;
-        uStack_14 = uVar14 & (uint)fVar18 | ~uVar14 & uStack_14;
-        in_stack_0000003c =
-             (float)(uVar10 & ~_DAT_005e5a70 & uVar7 | ~uVar10 & (uint)in_stack_0000003c);
-        local_30[1] = (float)(uVar12 & ~_UNK_005e5a74 & uVar6 | ~uVar12 & (uint)local_30[1]);
-        local_30[2] = (float)(uVar13 & ~_UNK_005e5a78 & uVar3 | ~uVar13 & (uint)local_30[2]);
-        local_30[3] = (float)(uVar14 & ~_UNK_005e5a7c & uVar4 | ~uVar14 & (uint)local_30[3]);
+    U = (uint *)param_3;
+    V = (uint *)param_9;
+    M = param_12;
+    for (n = param_4; n != 0; n--) {
+      uint c[4];
+      int any = 0;
+      for (k = 0; k < 4; k++) {
+        uint u = U[k];
+        uint t1 = DAT_005e5a70[k] ^ (u & M[k]);
+        uint t2 = u & V[k];
+        float f1 = *(float *)&t1;
+        float f2 = *(float *)&t2;
+        c[k] = ((lim[k] < f1) || (lim[k] < f2)) ? 0xffffffffu : 0u;
+        if (c[k] != 0) any = 1;
       }
-      fVar15 = fVar15 + _DAT_005e5a40;
-      fVar16 = fVar16 + _UNK_005e5a44;
-      fVar17 = fVar17 + _UNK_005e5a48;
-      fVar18 = fVar18 + _UNK_005e5a4c;
-      in_stack_00000030 = in_stack_00000030 + 4;
-      local_3c = local_3c + -1;
-    } while (local_3c != 0);
+      if (any) {
+        for (k = 0; k < 4; k++) {
+          uint u = U[k];
+          if (c[k] != 0) {
+            sel[k] = acc[k];
+            *(uint *)&lim[k] = ~DAT_005e5a70[k] & u;
+          }
+        }
+      }
+      for (k = 0; k < 4; k++) {
+        acc[k] = acc[k] + DAT_005e5a40[k];
+      }
+      U += 4;
+      V += 4;
+      M += 4;
+    }
   }
   iVar5 = -1;
   uVar7 = 0xffffffff;
-  fVar9 = (float10)DAT_005d757c;
-  local_30[0] = in_stack_0000003c;
-  for (; param_4 != 0; param_4 = param_4 + -1) {
-    iVar8 = 4;
-    do {
-      fVar15 = *param_3;
-      param_3 = param_3 + 1;
-      iVar8 = iVar8 + -1;
-      fVar9 = (float10)fVar15 * (float10)fVar15 + fVar9;
-    } while (iVar8 != 0);
+  fVar9 = DAT_005d757c;
+  for (n = param_4, tmp = 0.0f; n != 0; n--) {
+    for (k = 0; k < 4; k++) {
+      float x = param_3[k];
+      fVar9 = x * x + fVar9;
+    }
+    param_3 += 4;
   }
-  uVar6 = 0;
-  do {
-    if (local_40 < local_30[uVar6]) {
-      local_40 = local_30[uVar6];
+  for (uVar6 = 0; uVar6 < 4; uVar6++) {
+    if (best < lim[uVar6]) {
+      best = lim[uVar6];
       uVar7 = uVar6;
     }
-    uVar6 = uVar6 + 1;
-  } while (uVar6 < 4);
+  }
   if (uVar7 != 0xffffffff) {
-    iVar5 = (int)ROUND((&local_20)[uVar7]);
+    iVar5 = (int)(sel[uVar7] + (sel[uVar7] < 0.0f ? -0.5f : 0.5f));
   }
   *param_1 = iVar5;
   *param_2 = uVar7;

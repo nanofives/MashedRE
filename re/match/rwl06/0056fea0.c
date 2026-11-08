@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL06 0x0056fea0: hand pass (h2), 100.0% regs 100.0%. Raw converter output was already right except the constant: 0x005cc32c is a float (MGLOBAL float), not undefined1/int. */
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

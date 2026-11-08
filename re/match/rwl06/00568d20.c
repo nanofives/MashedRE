@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00568d20: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00568d20: best 51.4% (regs 87.1%, ops 92.9%), class (b). double align (+0x1f) found; original keeps param_1 in esi and the new record in edi, ours swaps them; loop index forms and declaration order tried. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -26,7 +25,7 @@ typedef unsigned char bool;
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-void FUN_00564100(undefined4 * p0, undefined1 p1, uint p2);
+void FUN_00564100(undefined4 p0, undefined1 p1, uint p2);
 // MATCH: 0x00568d20 FUN_00568d20
 uint * FUN_00568d20(int param_1,uint param_2)
 

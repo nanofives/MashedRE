@@ -27,7 +27,11 @@ typedef unsigned char undefined1;
 typedef unsigned short undefined2;
 typedef unsigned int undefined4;
 typedef unsigned short ushort;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(undefined1, DAT_0062403c, 0x0062403c);
 int FUN_0055ded0(int p0, ushort p1, ushort p2);
@@ -40,8 +44,8 @@ undefined4 * FUN_0057c300(int param_1)
   undefined4 *puVar1;
   
   puVar1 = (undefined4 *)(**(code **)(DAT_007d3ff8 + 0x108))(0x34,0x30900);
-  *puVar1 = &DAT_0062403c;
-  FUN_0055ded0(puVar1,1,0);
+  *puVar1 = (undefined4)&DAT_0062403c;
+  FUN_0055ded0((int)puVar1,1,0);
   if (puVar1[1] != 0) {
     FUN_0057c550(puVar1[1]);
   }

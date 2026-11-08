@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00566420: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00566420: best 31.1% (regs 34.1%, ops 72.6%), class (b). rewritten with proper float *poly / *dpoly parameters; the original keeps x in the FPU across the loop, double locals tried and are worse. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -33,58 +32,57 @@ MGLOBAL(undefined1, DAT_005e5470, 0x005e5470);
 MGLOBAL(float, _DAT_005cc32c, 0x005cc32c);
 MGLOBAL(float, _DAT_005e5470, 0x005e5470);
 // MATCH: 0x00566420 FUN_00566420
-/* [C1 2026-05-19] Signature: `void FUN_00566420(float p1, float p2, float p3, float p4, int
-   param_5, float param_6, int param_7)`. */
-
-void FUN_00566420(float param_1,float param_2,float param_3,float param_4,int param_5,float param_6,
-                 int param_7)
+void FUN_00566420(float param_1,float param_2,float param_3,float param_4,int param_5,float *param_6,
+                 float *param_7)
 
 {
-  float fVar1;
-  float fVar2;
-  float fVar3;
-  int iVar4;
-  float fVar5;
-  int iVar6;
-  int iVar7;
-  
-  iVar4 = *(int *)&param_6;
-  iVar7 = 0x17;
-  fVar3 = (param_1 + param_2) * _DAT_005cc32c;
+  float x;
+  float f;
+  float df;
+  float nx;
+  int i;
+  int iter;
+
+  iter = 0x17;
+  x = (param_1 + param_2) * _DAT_005cc32c;
   if ((param_1 <= param_2) && (param_3 * param_4 < DAT_005d757c)) {
-    while( true ) {
-      fVar1 = *(float *)(iVar4 + param_5 * 4);
-      iVar6 = param_5;
-      while (iVar6 != 0) {
-        iVar6 = iVar6 + -1;
-        fVar1 = fVar1 * fVar3 + *(float *)(iVar4 + iVar6 * 4);
+    while (1) {
+      f = param_6[param_5];
+      i = param_5;
+      while (i != 0) {
+        i = i - 1;
+        f = f * x + param_6[i];
       }
-      fVar2 = fVar3;
-      fVar5 = fVar1;
-      if ((DAT_005d757c <= param_3 * fVar1) &&
-         (param_1 = fVar3, fVar2 = param_2, param_3 = fVar1, fVar5 = param_4,
-         DAT_005d757c <= param_4 * fVar1)) break;
-      param_4 = fVar5;
-      param_2 = fVar2;
-      fVar2 = *(float *)(param_7 + -4 + param_5 * 4);
-      iVar6 = param_5 + -1;
-      while (iVar6 != 0) {
-        iVar6 = iVar6 + -1;
-        fVar2 = fVar2 * fVar3 + *(float *)(param_7 + iVar6 * 4);
-      }
-      if ((DAT_005d757c < (fVar3 - param_1) * fVar2 - fVar1 == DAT_005d757c < fVar2) &&
-         (DAT_005d757c < (param_2 - fVar3) * fVar2 + fVar1 == DAT_005d757c < fVar2)) {
-        param_6 = fVar3 - fVar1 / fVar2;
+      if (DAT_005d757c <= param_3 * f) {
+        param_1 = x;
+        param_3 = f;
+        if (DAT_005d757c <= param_4 * f) {
+          break;
+        }
       }
       else {
-        param_6 = (param_1 + param_2) * _DAT_005cc32c;
+        param_2 = x;
+        param_4 = f;
       }
-      if ((param_6 - fVar3) * (param_6 - fVar3) < param_6 * param_6 * _DAT_005e5470) {
+      df = param_7[param_5 - 1];
+      i = param_5 - 1;
+      while (i != 0) {
+        i = i - 1;
+        df = df * x + param_7[i];
+      }
+      if ((DAT_005d757c < (x - param_1) * df - f == DAT_005d757c < df) &&
+          (DAT_005d757c < (param_2 - x) * df + f == DAT_005d757c < df)) {
+        nx = x - f / df;
+      }
+      else {
+        nx = (param_1 + param_2) * _DAT_005cc32c;
+      }
+      if ((nx - x) * (nx - x) < nx * nx * _DAT_005e5470) {
         return;
       }
-      iVar7 = iVar7 + -1;
-      fVar3 = param_6;
-      if (iVar7 == 0) {
+      iter = iter - 1;
+      x = nx;
+      if (iter == 0) {
         return;
       }
     }

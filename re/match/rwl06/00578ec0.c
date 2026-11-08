@@ -24,7 +24,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-typedef int code();
+typedef int (__cdecl *code_fn)(int *);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 void FUN_0055bad0(int p0);
 void FUN_00564190(int p0);
@@ -48,7 +48,7 @@ undefined4 FUN_00578ec0(int *param_1)
     }
     FUN_00564190(*param_1);
     param_1[1] = 0;
-    (**(code **)(DAT_007d3ff8 + 0x10c))(param_1);
+    (*(code_fn *)(DAT_007d3ff8 + 0x10c))(param_1);
   }
   return 1;
 }

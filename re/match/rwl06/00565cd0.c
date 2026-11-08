@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* RESULT: pending */
+/* MATCH-RWL06 h1 0x00565cd0: 68.3% (regs 63.4%), class a. x87 add/mul operand order canonicalised by compiler. Tried: operand flips, permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

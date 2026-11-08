@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00578ff0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00578ff0: best 13.8% (regs 30.6%, ops 66.0%), class (b). compiles (earlier cast fixes); raw Ghidra form; structure only. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -36,7 +35,7 @@ MGLOBAL(undefined1, DAT_005cc320, 0x005cc320);
 MGLOBAL(undefined1, DAT_005cc558, 0x005cc558);
 MGLOBAL(float, DAT_005ceabc, 0x005ceabc);
 float10 FUN_005667c0(float * p0, float * p1);
-undefined4 FUN_00579b50(float * p0, int p1, float p2);
+undefined4 FUN_00579b50(int p0, int p1, float p2);
 MGLOBAL(float, _DAT_005cc9b4, 0x005cc9b4);
 MGLOBAL(float, _DAT_005cc328, 0x005cc328);
 MGLOBAL(float, _DAT_005cc320, 0x005cc320);
@@ -169,7 +168,7 @@ LAB_00579108:
               if ((*(byte *)((int)puVar3 + 0xcd) == 2) && (*(byte *)(uVar8 + 0xcd) < 2)) {
                 if (((puVar3[0xb] == *(uint *)(uVar8 + 0x2c)) &&
                     ((float)puVar3[6] < *(float *)(uVar8 + 0x18))) &&
-                   (iVar6 = FUN_00579b50(puVar3,uVar8,param_6), iVar6 != 0)) {
+                   (iVar6 = FUN_00579b50((int)puVar3,(int)uVar8,param_6), iVar6 != 0)) {
                   *(undefined4 *)(uVar8 + 0xac) = 0;
                 }
               }
@@ -177,7 +176,7 @@ LAB_00579108:
                        (((*(byte *)((int)puVar3 + 0xcd) < 2 &&
                          (puVar3[0xb] == *(uint *)(uVar8 + 0x2c))) &&
                         (*(float *)(uVar8 + 0x18) < (float)puVar3[6])))) &&
-                      (iVar6 = FUN_00579b50(uVar8,puVar3,param_6), iVar6 != 0)) {
+                      (iVar6 = FUN_00579b50((int)uVar8,(int)puVar3,param_6), iVar6 != 0)) {
                 puVar3[0x2b] = 0;
                 break;
               }
@@ -226,14 +225,14 @@ LAB_00579108:
               if (((byte)puVar12[0x33] == 2) && (*(byte *)(uVar8 + 0xcc) < 2)) {
                 if (((puVar12[0xc] == *(uint *)(uVar8 + 0x30)) &&
                     ((float)puVar12[6] < *(float *)(uVar8 + 0x18))) &&
-                   (iVar6 = FUN_00579b50(puVar12,uVar8,param_6), iVar6 != 0)) {
+                   (iVar6 = FUN_00579b50((int)puVar12,(int)uVar8,param_6), iVar6 != 0)) {
                   *(undefined4 *)(uVar8 + 0xac) = 0;
                 }
               }
               else if (((*(byte *)(uVar8 + 0xcc) == 2) &&
                        ((((byte)puVar12[0x33] < 2 && (puVar12[0xc] == *(uint *)(uVar8 + 0x30))) &&
                         (*(float *)(uVar8 + 0x18) < (float)puVar12[6])))) &&
-                      (iVar6 = FUN_00579b50(uVar8,puVar12,param_6), iVar6 != 0)) {
+                      (iVar6 = FUN_00579b50((int)uVar8,(int)puVar12,param_6), iVar6 != 0)) {
                 puVar12[0x2b] = 0;
                 break;
               }
@@ -248,7 +247,7 @@ LAB_00579108:
   uVar5 = 0;
   uVar8 = 0;
   if (param_2 != 0) {
-    piVar9 = param_1 + 0x2b;
+    piVar9 = (int *)(param_1 + 0x2b);
     do {
       if (*piVar9 != 0) {
         iVar6 = iVar6 + *piVar9;
@@ -268,7 +267,7 @@ LAB_00579108:
             uVar5 = 0;
             if (local_a0 != 0) {
               pfVar11 = pfVar10 + -1;
-              piVar9 = param_4 + 0x36;
+              piVar9 = (int *)(param_4 + 0x36);
               do {
                 pfVar14 = (float *)(param_1 + *piVar9 * 0x38);
                 if (_DAT_005cc9b4 <

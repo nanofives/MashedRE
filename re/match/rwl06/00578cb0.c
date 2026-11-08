@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00578cb0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x00578cb0: best 70.3% (regs 77.0%, ops 93.2%), class (a). float local_8[2] array, compare form; x87 operand order of the dot product differs (6 permutations tried). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -27,7 +26,7 @@ typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 typedef long double float10;
 MGLOBAL(undefined1, DAT_005cc33c, 0x005cc33c);
-void FUN_0055c2d0(int p0, float * p1, float * p2, float * p3, float * p4);
+void FUN_0055c2d0(int p0, undefined4 p1, float * p2, float * p3, float * p4);
 MGLOBAL(float, _DAT_005cc33c, 0x005cc33c);
 // MATCH: 0x00578cb0 FUN_00578cb0
 float FUN_00578cb0(int *param_1,float *param_2,float *param_3,float *param_4)

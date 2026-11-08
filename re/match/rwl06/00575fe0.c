@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00575fe0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h1 0x00575fe0: 13.9% (regs 37.5%), class b. 1632 B x87 function, structure only. Tried: raw converter form with address-store cast fix. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,20 +22,26 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+double sqrt(double);
+#pragma intrinsic(sqrt)
 typedef unsigned char undefined1;
 typedef unsigned short undefined2;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 typedef unsigned char byte;
 typedef long double float10;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 #ifndef __cplusplus
 #define true 1
 #endif
 MGLOBAL(undefined1, DAT_005e5db0, 0x005e5db0);
 undefined4 * FUN_004c4600(undefined4 * p0, undefined4 * p1, undefined4 * p2);
-void FUN_0055bd70(int p0);
-void FUN_00566200(float * p0, float * p1, float * p2);
+void FUN_0055bd70(void * p0, void * p1, int p2, int p3);
+void FUN_00566200(float * p0, float * p1, void * p2);
 float10 FUN_005667c0(float * p0, float * p1);
 // MATCH: 0x00575fe0 FUN_00575fe0
 uint FUN_00575fe0(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,undefined4 *param_5
@@ -76,7 +81,7 @@ uint FUN_00575fe0(int param_1,undefined4 *param_2,undefined4 param_3,int param_4
     psVar1 = *(short **)(param_4 + 0x5c);
     if ((*(byte *)(psVar1 + 0x20) & 1) == 0) {
       if (*psVar1 != 0) {
-        param_7[4] = param_5;
+        param_7[4] = (undefined4)param_5;
         *param_7 = *param_2;
         param_7[1] = param_2[1];
         *(undefined2 *)(param_7 + 1) = (undefined2)param_3;
@@ -143,7 +148,7 @@ uint FUN_00575fe0(int param_1,undefined4 *param_2,undefined4 param_3,int param_4
                 pfVar6 = pfVar6 + 1;
               }
 LAB_005761fb:
-              FUN_00575fe0(param_1,param_2,param_3,puVar9,puVar4,local_30 + 1 + param_6,puVar11,
+              FUN_00575fe0(param_1,param_2,param_3,(int)puVar9,puVar4,local_30 + 1 + param_6,puVar11,
                            param_8,param_9,param_10);
               puVar11 = (undefined4 *)(*(int *)(param_1 + 0xc) + *(int *)(param_1 + 0x10) * 0x14);
               param_7 = puVar11;
@@ -179,7 +184,7 @@ LAB_005761fb:
             iVar8 = puVar9[0x17];
             *puVar11 = *param_2;
             *(undefined2 *)(puVar11 + 1) = (undefined2)param_3;
-            puVar11[4] = puVar4;
+            puVar11[4] = (undefined4)puVar4;
             puVar11[3] = puVar11[3] + param_6 + 1;
             if ((*(byte *)(iVar8 + 0x40) & 2) == 0) {
               if (param_5 == (undefined4 *)0x0) {
@@ -209,7 +214,7 @@ LAB_005761fb:
               *(int *)(param_1 + 0x1c) = *(int *)(param_1 + 0x1c) + 1;
             }
             else {
-              FUN_00575fe0(param_1,param_2,param_3,puVar9,puVar4,puVar11[3],param_7,0,param_9,
+              FUN_00575fe0(param_1,param_2,param_3,(int)puVar9,puVar4,puVar11[3],param_7,0,param_9,
                            param_10);
               iVar8 = *(int *)(param_1 + 0x10);
               iVar7 = *(int *)(param_1 + 0xc);
@@ -253,7 +258,7 @@ LAB_005761fb:
               pfVar13 = pfVar13 + 1;
               pfVar15 = pfVar15 + 1;
             }
-            pfVar10[0x17] = (float)&DAT_005e5db0;
+            *(int *)&pfVar10[0x17] = (int)&DAT_005e5db0;
             pfVar10[0x13] = *(float *)(param_4 + 0x4c);
             pfVar10[0x14] = *(float *)(param_4 + 0x50);
             pfVar10[0x15] = *(float *)(param_4 + 0x54);
@@ -278,8 +283,8 @@ LAB_005761fb:
             *puVar11 = *param_2;
             puVar11[1] = param_2[1];
             *(undefined2 *)(puVar11 + 1) = (undefined2)param_3;
-            puVar11[2] = pfVar10;
-            puVar11[4] = param_5;
+            puVar11[2] = (undefined4)pfVar10;
+            puVar11[4] = (undefined4)param_5;
             FUN_0055bd70(pfVar10,param_5,0,iVar8 * 0x20 + iVar7);
             puVar11[3] = (int)pfVar6[0x11] + param_6;
             param_9 = (float *)((int)param_9 + 1);

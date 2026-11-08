@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 h1 0x00565590: 100% (regs 100%). Ghidra said void; the original leaves param_1 in EAX, so the
-   function returns param_1 (return type int). Setter for [param_1+0xc018]. */
+/* MATCH-RWL06 h1 0x00565590: 100.0% (regs 100.0%), class -. returns param_1 (Ghidra said void). Tried: return type int. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE

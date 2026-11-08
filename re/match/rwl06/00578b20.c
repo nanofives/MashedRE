@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* RESULT: pending */
+/* MATCH-RWL06 h1 0x00578b20: 81.2% (regs 81.2%), class b. edi/eax load order for param_1 copy. Tried: out vars alias param slots, local_8 reuse, d>t compare, permuter. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -34,9 +34,9 @@ float10 FUN_00578b20(int *param_1,float *param_2,float *param_3)
   float d;
 
   pfVar2 = param_2;
+  piVar1 = param_1;
   FUN_0055c2d0(*(int *)(*piVar1 + 8),*(int *)(*piVar1 + 0x10),param_2,&local_8,&local_4);
   FUN_0055c2d0(*(int *)(piVar1[1] + 8),*(int *)(piVar1[1] + 0x10),pfVar2,(float *)&param_2,(float *)&param_1);
-  piVar1 = param_1;
   d = local_8 - *(float *)&param_1;
   local_8 = *(float *)&param_2 - local_4;
   if (d > local_8) {

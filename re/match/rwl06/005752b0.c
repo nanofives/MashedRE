@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x005752b0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 0x005752b0: hand-matched (h2). 56.0% regs 75.0% ops 87.5%. Fixes from the bytes: sVar1/sVar2 are uint (xor eax,eax; mov ax,[..] zero-extension), result of 0x00576880 is uint (cmp ecx,1; jb), loop counter is uint (Ghidra had float), callee prototypes corrected (0x00576880: dword args, 0x00574ad0: (int, byte*, uint, float, float, float*)). Residual: the two min() selects (orig keeps both values on the x87 stack: fld; fcompp; and eax,0x100) and block layout. Class b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -29,18 +28,19 @@ typedef unsigned int undefined4;
 typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char byte;
-undefined4 FUN_00574ad0(float * p0, float * p1, uint p2, float p3, float p4, undefined4 p5);
-uint FUN_00576880(float * p0, uint p1, float * p2, uint p3, float p4, float p5, float * p6, float * p7, uint * p8, uint * p9, float * p10, float * p11);
+undefined4 FUN_00574ad0(int p0, undefined1 * p1, uint p2, float p3, float p4, float * p5);
+uint FUN_00576880(undefined4 p0, uint p1, undefined4 p2, uint p3, undefined4 p4, undefined4 p5, float * p6, float * p7, uint * p8, uint * p9, int p10, undefined1 * p11);
 // MATCH: 0x005752b0 FUN_005752b0
 undefined4 FUN_005752b0(int param_1,float param_2,float *param_3)
 
 {
-  short sVar1;
-  short sVar2;
+  uint sVar1;
+  uint sVar2;
   ushort uVar3;
-  int iVar4;
+  uint iVar4;
   float *pfVar5;
   float fVar6;
+  uint uVar8;
   int local_114;
   int local_110;
   float local_10c;
@@ -49,8 +49,8 @@ undefined4 FUN_005752b0(int param_1,float param_2,float *param_3)
   undefined1 local_100 [256];
   
   local_10c = *(float *)(param_1 + 0x78) + *(float *)(param_1 + 0xf8);
-  sVar1 = *(short *)(param_1 + 0x54);
-  sVar2 = *(short *)(param_1 + 0xd4);
+  sVar1 = *(ushort *)(param_1 + 0x54);
+  sVar2 = *(ushort *)(param_1 + 0xd4);
   local_104 = *(float *)(param_1 + 0xf8) - *(float *)(param_1 + 0x78);
   local_108 = *(float *)(param_1 + 0x110) + local_10c;
   if (sVar1 == 1) {
@@ -66,9 +66,9 @@ undefined4 FUN_005752b0(int param_1,float param_2,float *param_3)
     local_110 = (sVar2 != 2) + 1;
   }
   iVar4 = FUN_00576880(*(undefined4 *)(param_1 + 0x50),sVar1,*(undefined4 *)(param_1 + 0xd0),sVar2,
-                       local_104,*(undefined4 *)(param_1 + 0x10c),(float *)(param_1 + 0x100),
-                       &local_108,&local_114,&local_110,param_1,local_100);
-  if ((local_108 - local_10c <= param_2) && (iVar4 != 0)) {
+                       *(undefined4 *)&local_104,*(undefined4 *)(param_1 + 0x10c),(float *)(param_1 + 0x100),
+                       &local_108,(uint *)&local_114,(uint *)&local_110,param_1,local_100);
+  if ((local_108 - local_10c <= param_2) && (0 < iVar4)) {
     *param_3 = *(float *)(param_1 + 0x100);
     param_3[1] = *(float *)(param_1 + 0x104);
     param_3[2] = *(float *)(param_1 + 0x108);
@@ -96,18 +96,18 @@ undefined4 FUN_005752b0(int param_1,float param_2,float *param_3)
     param_3[0x2b] = 0.0;
     FUN_00574ad0(param_1,local_100,iVar4,param_2,local_10c,param_3);
     if (param_3[0x2b] != 0.0) {
-      fVar6 = 0.0;
+      uVar8 = 0;
       if (param_3[0x2b] != 0.0) {
         pfVar5 = param_3 + 0xc;
         do {
-          fVar6 = (float)((int)fVar6 + 1);
+          uVar8 = uVar8 + 1;
           pfVar5[-1] = *(float *)(param_1 + 0x6c);
           *pfVar5 = *(float *)(param_1 + 0xec);
           pfVar5[-2] = 0.0;
           pfVar5[-3] = 0.0;
           pfVar5[-4] = 0.0;
           pfVar5 = pfVar5 + 10;
-        } while ((uint)fVar6 < (uint)param_3[0x2b]);
+        } while (uVar8 < (uint)param_3[0x2b]);
       }
       if (((*(byte *)(param_1 + 0x7c) & 0x40) == 0) ||
          (uVar3 = *(ushort *)(param_1 + 0x7e), uVar3 == 0xe)) {

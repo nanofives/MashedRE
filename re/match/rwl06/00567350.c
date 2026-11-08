@@ -1,6 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-RWL06 0x00567350: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 h3 0x00567350: best 8.2% (regs 54.7%, ops 62.1%), class (b). flags fixed (was /GS), param_5/4 as cdq form; the original total is built as an add chain of separately aligned terms; structure only. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -40,7 +39,7 @@ void FUN_00567350(uint param_1,int *param_2,uint *param_3,uint *param_4,int para
   uint uVar9;
   int iVar10;
   
-  iVar1 = (int)(param_5 + (param_5 >> 0x1f & 3U)) >> 2;
+  iVar1 = param_5 / 4;
   uVar8 = iVar1 * 8 + 0xfU & 0xfffffff0;
   uVar3 = param_7 * 4 + 0xfU & 0xfffffff0;
   iVar6 = iVar1 * 0x10;

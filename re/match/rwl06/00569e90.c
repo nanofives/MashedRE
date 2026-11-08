@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x00569e90: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h1 0x00569e90: 26.5% (regs 31.5%), class b. 336 B, in_stack_ vars turned into params (39), x87 + spill layout. Tried: extended signature, structure only. cxx:ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -26,7 +25,45 @@ typedef unsigned char bool;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 // MATCH: 0x00569e90 FUN_00569e90
-void FUN_00569e90(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
+void FUN_00569e90(int param_1,
+    undefined4 param_2,
+    undefined4 param_3,
+    int param_4,
+    int param_5,
+    int param_6,
+    int param_7,
+    int param_8,
+    int param_9,
+    int param_10,
+    int param_11,
+    int param_12,
+    int param_13,
+    int param_14,
+    int param_15,
+    int param_16,
+    int param_17,
+    int param_18,
+    int param_19,
+    int param_20,
+    int param_21,
+    int param_22,
+    int param_23,
+    int param_24,
+    int param_25,
+    int param_26,
+    int param_27,
+    int param_28,
+    int param_29,
+    int param_30,
+    int param_31,
+    int param_32,
+    int param_33,
+    int param_34,
+    int param_35,
+    int param_36,
+    int param_37,
+    float param_38,
+    uint param_39)
 
 {
   float fVar1;
@@ -54,13 +91,6 @@ void FUN_00569e90(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
   float *pfVar23;
   uint uVar24;
   int iVar25;
-  int in_stack_00000020;
-  int in_stack_0000002c;
-  int in_stack_00000050;
-  int in_stack_00000074;
-  int in_stack_00000080;
-  float in_stack_00000098;
-  uint in_stack_0000009c;
   float local_40;
   float local_3c;
   float local_38;
@@ -74,41 +104,41 @@ void FUN_00569e90(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
   float local_c;
   float local_8;
   
-  iVar20 = ((int)(in_stack_0000009c + ((int)in_stack_0000009c >> 0x1f & 3U)) >> 2) * 8;
-  iVar25 = *(int *)(iVar20 + in_stack_00000074);
-  iVar19 = *(int *)(iVar20 + 4 + in_stack_00000074);
+  iVar20 = ((int)(param_39 + ((int)param_39 >> 0x1f & 3U)) >> 2) * 8;
+  iVar25 = *(int *)(iVar20 + param_29);
+  iVar19 = *(int *)(iVar20 + 4 + param_29);
   if (iVar25 != -1) {
-    iVar22 = *(int *)(iVar20 + in_stack_00000080) * 0x60 + param_4;
-    uVar24 = in_stack_0000009c & 0x80000003;
+    iVar22 = *(int *)(iVar20 + param_32) * 0x60 + param_4;
+    uVar24 = param_39 & 0x80000003;
     if ((int)uVar24 < 0) {
       uVar24 = (uVar24 - 1 | 0xfffffffc) + 1;
     }
-    local_40 = in_stack_00000098 * *(float *)(iVar22 + uVar24 * 4);
-    local_3c = in_stack_00000098 * *(float *)(iVar22 + 0x10 + uVar24 * 4);
-    local_38 = in_stack_00000098 * *(float *)(iVar22 + 0x20 + uVar24 * 4);
-    local_30 = in_stack_00000098 * *(float *)(iVar22 + 0x30 + uVar24 * 4);
-    local_2c = in_stack_00000098 * *(float *)(iVar22 + 0x40 + uVar24 * 4);
-    local_28 = in_stack_00000098 * *(float *)(iVar22 + 0x50 + uVar24 * 4);
+    local_40 = param_38 * *(float *)(iVar22 + uVar24 * 4);
+    local_3c = param_38 * *(float *)(iVar22 + 0x10 + uVar24 * 4);
+    local_38 = param_38 * *(float *)(iVar22 + 0x20 + uVar24 * 4);
+    local_30 = param_38 * *(float *)(iVar22 + 0x30 + uVar24 * 4);
+    local_2c = param_38 * *(float *)(iVar22 + 0x40 + uVar24 * 4);
+    local_28 = param_38 * *(float *)(iVar22 + 0x50 + uVar24 * 4);
   }
   if (iVar19 != -1) {
-    iVar20 = *(int *)(iVar20 + 4 + in_stack_00000080) * 0x60 + param_4;
-    in_stack_0000009c = in_stack_0000009c & 0x80000003;
-    if ((int)in_stack_0000009c < 0) {
-      in_stack_0000009c = (in_stack_0000009c - 1 | 0xfffffffc) + 1;
+    iVar20 = *(int *)(iVar20 + 4 + param_32) * 0x60 + param_4;
+    param_39 = param_39 & 0x80000003;
+    if ((int)param_39 < 0) {
+      param_39 = (param_39 - 1 | 0xfffffffc) + 1;
     }
-    local_20 = in_stack_00000098 * *(float *)(iVar20 + in_stack_0000009c * 4);
-    local_1c = in_stack_00000098 * *(float *)(iVar20 + 0x10 + in_stack_0000009c * 4);
-    local_18 = in_stack_00000098 * *(float *)(iVar20 + 0x20 + in_stack_0000009c * 4);
-    local_10 = in_stack_00000098 * *(float *)(iVar20 + 0x30 + in_stack_0000009c * 4);
-    local_c = in_stack_00000098 * *(float *)(iVar20 + 0x40 + in_stack_0000009c * 4);
-    local_8 = in_stack_00000098 * *(float *)(iVar20 + 0x50 + in_stack_0000009c * 4);
+    local_20 = param_38 * *(float *)(iVar20 + param_39 * 4);
+    local_1c = param_38 * *(float *)(iVar20 + 0x10 + param_39 * 4);
+    local_18 = param_38 * *(float *)(iVar20 + 0x20 + param_39 * 4);
+    local_10 = param_38 * *(float *)(iVar20 + 0x30 + param_39 * 4);
+    local_c = param_38 * *(float *)(iVar20 + 0x40 + param_39 * 4);
+    local_8 = param_38 * *(float *)(iVar20 + 0x50 + param_39 * 4);
   }
-  if ((iVar25 != -1) && (iVar20 = 0, *(int *)(in_stack_00000050 + iVar25 * 4) != 0)) {
+  if ((iVar25 != -1) && (iVar20 = 0, *(int *)(param_20 + iVar25 * 4) != 0)) {
     do {
-      iVar22 = *(int *)(in_stack_00000020 + iVar25 * 4) + iVar20;
+      iVar22 = *(int *)(param_8 + iVar25 * 4) + iVar20;
       pfVar21 = (float *)(iVar22 * 0x60 + param_4);
       fVar1 = pfVar21[1];
-      pfVar23 = (float *)(*(int *)(in_stack_0000002c + iVar22 * 4) * 0x10 + param_1);
+      pfVar23 = (float *)(*(int *)(param_11 + iVar22 * 4) * 0x10 + param_1);
       fVar2 = pfVar21[5];
       fVar3 = pfVar21[9];
       fVar4 = pfVar21[0xd];
@@ -144,14 +174,14 @@ void FUN_00569e90(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
                    local_2c * fVar11 +
                    local_30 * fVar10 +
                    local_38 * fVar9 + local_3c * fVar8 + local_40 * fVar7 + pfVar23[2];
-    } while (iVar20 != *(int *)(in_stack_00000050 + iVar25 * 4));
+    } while (iVar20 != *(int *)(param_20 + iVar25 * 4));
   }
-  if ((iVar19 != -1) && (iVar25 = 0, *(int *)(in_stack_00000050 + iVar19 * 4) != 0)) {
+  if ((iVar19 != -1) && (iVar25 = 0, *(int *)(param_20 + iVar19 * 4) != 0)) {
     do {
-      iVar20 = *(int *)(in_stack_00000020 + iVar19 * 4) + iVar25;
+      iVar20 = *(int *)(param_8 + iVar19 * 4) + iVar25;
       pfVar21 = (float *)(iVar20 * 0x60 + param_4);
       fVar1 = pfVar21[1];
-      pfVar23 = (float *)(*(int *)(in_stack_0000002c + iVar20 * 4) * 0x10 + param_1);
+      pfVar23 = (float *)(*(int *)(param_11 + iVar20 * 4) * 0x10 + param_1);
       fVar2 = pfVar21[5];
       fVar3 = pfVar21[9];
       fVar4 = pfVar21[0xd];
@@ -187,7 +217,7 @@ void FUN_00569e90(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
                    local_c * fVar11 +
                    local_10 * fVar10 +
                    local_18 * fVar9 + local_1c * fVar8 + local_20 * fVar7 + pfVar23[2];
-    } while (iVar25 != *(int *)(in_stack_00000050 + iVar19 * 4));
+    } while (iVar25 != *(int *)(param_20 + iVar19 * 4));
   }
   return;
 }

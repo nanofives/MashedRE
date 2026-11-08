@@ -1,6 +1,5 @@
-// FLAGS: /O2 /GS /Ob1
-/* MATCH-RWL06 0x00574ad0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 h3 0x00574ad0: best 21.0% (regs 26.3%, ops 58.1%), class (b). flags fixed (was /GS), fabs/sqrt intrinsics; raw Ghidra form otherwise, structure only. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -36,6 +35,8 @@ float10 FUN_005751f0(float * p0, float * p1, float * p2);
 MGLOBAL(int, _DAT_005cc328, 0x005cc328);
 MGLOBAL(int, _DAT_005ceac0, 0x005ceac0);
 MGLOBAL(int, _DAT_005cc33c, 0x005cc33c);
+double fabs(double);
+#pragma intrinsic(fabs)
 // MATCH: 0x00574ad0 FUN_00574ad0
 /* [C1 2026-05-20] Signature recovered: `int FUN_00574ad0(float *plane_pair, float *poly_verts, uint
    vert_count, float
@@ -131,8 +132,8 @@ FUN_00574ad0(float *param_1,float *param_2,uint param_3,float param_4,float para
           local_1e0 = uVar28;
         }
         if (uVar28 != 0) {
-          fVar17 = ABS(*param_2 - pfVar24[-1]) +
-                   ABS(param_2[2] - pfVar24[1]) + ABS(param_2[1] - *pfVar24) + fVar17;
+          fVar17 = fabs(*param_2 - pfVar24[-1]) +
+                   fabs(param_2[2] - pfVar24[1]) + fabs(param_2[1] - *pfVar24) + fVar17;
         }
         uVar28 = uVar28 + 1;
         pfVar24 = pfVar24 + 4;
@@ -218,8 +219,8 @@ LAB_00574ea7:
               afStack_1c0[uVar28] = 3.4028235e+38;
             }
             else {
-              fVar30 = (float10)FUN_005751f0((int)local_120 + iVar25,(int)local_120 + iVar27,
-                                             (int)local_120 + iVar26);
+              fVar30 = (float10)FUN_005751f0((float *)((int)local_120 + iVar25),(float *)((int)local_120 + iVar27),
+                                             (float *)((int)local_120 + iVar26));
               afStack_1c0[uVar28] = (float)fVar30;
             }
             uVar20 = local_1e8 + 1;

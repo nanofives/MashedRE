@@ -1,6 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL06 0x0056f0a0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl06_20261108/results.tsv. */
+/* MATCH-RWL06 h3 0x0056f0a0: best 100.0% (regs 100.0%, ops 100.0%), class (-). iVar3 = (int)uVar4 / 4 (cdq form) and its statement position (permuter swap); byte-identical. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -26,7 +25,7 @@ typedef unsigned char bool;
 typedef unsigned int undefined4;
 typedef unsigned int uint;
 MGLOBAL(undefined4, DAT_005e5738, 0x005e5738);
-void FUN_0056f1f0(int * p0, undefined4 * p1);
+void FUN_0056f1f0(int p0, undefined4 * p1);
 // MATCH: 0x0056f0a0 FUN_0056f0a0
 void FUN_0056f0a0(int param_1)
 
@@ -47,8 +46,8 @@ void FUN_0056f0a0(int param_1)
   }
   *(uint *)(*(int *)(param_1 + 0xb8) + *(int *)(param_1 + 0xf8) * 4) =
        *(int *)(*(int *)(param_1 + 0xb8) + *(int *)(param_1 + 0xf8) * 4) + (uVar2 - uVar4);
-  iVar3 = (int)(uVar4 + ((int)uVar4 >> 0x1f & 3U)) >> 2;
   *(uint *)(param_1 + 4) = *(int *)(param_1 + 4) + uVar4;
+  iVar3 = (int)uVar4 / 4;
   *(int *)(param_1 + 0x14) = *(int *)(param_1 + 0x14) + iVar3;
   *(int *)(param_1 + 0x20) = *(int *)(param_1 + 0x20) + iVar3;
   *(int *)(param_1 + 0x2c) = *(int *)(param_1 + 0x2c) + iVar3;
