@@ -84,6 +84,28 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-08  0x004fc6f5  x86_D3DXVec2Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x004fc75e  x86_D3DXVec2TransformNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x004fc793  x86_D3DXVec3Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x004fc81e  x86_D3DXVec3TransformNormal  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x004fc87d  x86_D3DXVec4Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x0050fc7c  x3d_D3DXVec4Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x0050fcfe  x3d_D3DXVec4Normalize  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x0050fd5d  x3d_D3DXVec4Cross  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x0050fe8f  x3d_D3DXVec4BaryCentric  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x0050ff00  x3d_D3DXVec4Hermite  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0x0050ffc8  x3d_D3DXVec4CatmullRom  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  004fc6f5  x86_D3DXVec2Transform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  004fc75e  x86_D3DXVec2TransformNormal  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  004fc793  x86_D3DXVec3Transform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  004fc81e  x86_D3DXVec3TransformNormal  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  004fc87d  x86_D3DXVec4Transform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0050fc7c  x3d_D3DXVec4Transform  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0050fcfe  x3d_D3DXVec4Normalize  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0050fd5d  x3d_D3DXVec4Cross  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0050fe8f  x3d_D3DXVec4BaryCentric  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0050ff00  x3d_D3DXVec4Hermite  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
+2026-11-08  0050ffc8  x3d_D3DXVec4CatmullRom  (none)->C1  added by libid (d3dx9 9.0b Summer 2003, third-party-library[d3dx9-psgp]) evidence: verify/c4rdxlibtag11_20261108/RESULT_C4R-DXLIB-TAG11.md
 2026-11-08  0x004c5a60  FUN_004c5a60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c5a60.c; evidence: verify/c4rmatchbatch5_20261108/RESULT_C4R-MATCHBATCH-4.md
 2026-11-08  0x004ccba0  FUN_004ccba0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004ccba0.c; evidence: verify/c4rmatchbatch5_20261108/RESULT_C4R-MATCHBATCH-4.md
 2026-11-08  0x004ccc50  FUN_004ccc50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004ccc50.c; evidence: verify/c4rmatchbatch5_20261108/RESULT_C4R-MATCHBATCH-4.md
