@@ -39,6 +39,7 @@ extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key
 // PORT-STATE-03, MASHED_PORTSTATE_FRONTEND ON only: the matched bodies that run on the frontend state at its original addresses.
 extern "C" void __cdecl MenuEntryArrayInit(void);      // 0x0042d3e0, Match/MatchS07_0042d3e0.cpp (zeroes DAT_00898ac0)
 extern "C" int  __cdecl Pred497450(int param_1);        // 0x00497450, Match/MatchGFFU_00497450.cpp (reads DAT_007e96fc)
+extern "C" void __cdecl PromptRowInit0042ad10(int* idx, int a, int x, int y, int e);   // 0x0042ad10, Match/MatchS06_0042ad10.cpp
 
 namespace mashed_re {
 namespace Frontend {
@@ -731,7 +732,13 @@ void PromptStripAppend(int key, int cmp, int rel) {
     if (tag == 0) return;
     if (g_record_count >= RecordCapacity()) return;  // standalone bounds guard
     MenuRecord& r = g_records[g_record_count];
-    PromptRowInit(r, tag);
+    // PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the row init is the matched 0x0042ad10 on DAT_00898ac0 (== g_records),
+    // called as the original's prompt-row init with (0x40, 0x1ac, 0) and the record counter by pointer; the same 9 stores as
+    // PromptRowInit. Knob OFF: PromptRowInit on the port store, as before.
+    if (PortStateFrontend_On())
+        PromptRowInit0042ad10(&g_record_count, static_cast<int>(tag), 0x40, 0x1ac, 0);
+    else
+        PromptRowInit(r, tag);
     PromptStripRow row;
     PromptStripResolve(key, cmp, rel, &row);
     r.sec_id  = row.sec;
