@@ -1,0 +1,98 @@
+// FUN_0040d270 @ 0x0040d270  size=441  (MASHED.exe)
+// undefined FUN_0040d270(void)
+// callees: FUN_004074a0@0x004074a0, FUN_00407800@0x00407800, FUN_0040cf80@0x0040cf80, FUN_0040cfd0@0x0040cfd0, FUN_0040d020@0x0040d020, FUN_0040d040@0x0040d040, FUN_0040d110@0x0040d110, FUN_00411d90@0x00411d90, FUN_00426020@0x00426020, FUN_00426070@0x00426070, FUN_00426340@0x00426340, FUN_004264d0@0x004264d0, FUN_00426ba0@0x00426ba0, FUN_00426c00@0x00426c00, FUN_0042f790@0x0042f790, FUN_0042f7a0@0x0042f7a0, FUN_0042fe30@0x0042fe30, FUN_00458c70@0x00458c70, FUN_00462500@0x00462500, FUN_00462510@0x00462510, FUN_004950b0@0x004950b0, FUN_004987b0@0x004987b0, FUN_004ccde0@0x004ccde0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 promote_c2_race_end_callers-20260517] Course::Finish — lap-finish handler that also drives
+   course-load/teardown. Calls FUN_0042fe30 (RaceEndFlagIfEndMode, medal-rank gate) at TWO sites
+   (player-valid-finish/non-ghost path and player-not-finishing/ghost-tail when mode!=5). Both store
+   result as new medal rank at param_1[+0x44]. C2 plate:
+   re/analysis/promote_c2_race_end_callers/0040d270.md. Supersedes C1 plates
+   leaderboard/0x0040d270.md + track_world_initial_sweep/0040d270.md. */
+
+void FUN_0040d270(int param_1,int param_2)
+
+{
+  float fVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  undefined4 uVar5;
+  
+  iVar2 = FUN_00426ba0();
+  iVar3 = FUN_004950b0();
+  FUN_00462510();
+  if (iVar2 != 0) {
+    iVar4 = FUN_00426c00();
+    if (**(int **)(param_1 + param_2 * 4) == iVar4) {
+      iVar4 = FUN_0042f790();
+      if (iVar4 == 0) {
+        iVar2 = FUN_0042fe30();
+        iVar4 = FUN_0040d040(param_1,param_2);
+        if (iVar4 != 0) {
+          FUN_00462500();
+          FUN_0040cf80();
+          FUN_0040d110(param_1,param_2);
+        }
+        if (DAT_007f0fd0 == 5) {
+          FUN_00462500();
+          FUN_00458c70();
+          FUN_00426340();
+          uVar5 = FUN_00426020();
+          FUN_00407800(uVar5);
+        }
+        else {
+          FUN_004074a0();
+          if (*(int *)(param_1 + 0x44) == iVar2) {
+            iVar4 = FUN_00426c00();
+            if (**(int **)(param_1 + param_2 * 4) == iVar4) goto LAB_0040d3c3;
+          }
+          FUN_004264d0();
+          *(int *)(param_1 + 0x44) = iVar2;
+        }
+        goto LAB_0040d3c3;
+      }
+    }
+  }
+  FUN_004ccde0();
+  FUN_00462500();
+  if (DAT_007f0fd0 != 5) {
+    uVar5 = FUN_0042fe30();
+    FUN_004264d0(**(undefined4 **)(param_1 + param_2 * 4));
+    *(undefined4 *)(param_1 + 0x44) = uVar5;
+  }
+  FUN_0040cf80();
+  if (iVar2 != 0) {
+    FUN_0040cfd0();
+  }
+  FUN_004ccde0();
+  FUN_0040d020(param_1,param_2);
+  if (DAT_007f0fd0 == 5) {
+    FUN_00426340();
+    uVar5 = FUN_00426020();
+    FUN_00407800(uVar5);
+    FUN_0040d110(param_1,param_2);
+    FUN_004ccde0();
+  }
+  else {
+    FUN_004074a0();
+    FUN_0040d110(param_1,param_2);
+    FUN_004ccde0();
+  }
+LAB_0040d3c3:
+  FUN_0042f7a0();
+  DAT_0080332c = FUN_00426070();
+  _DAT_00803324 = 0x44c30000;
+  FUN_00411d90();
+  DAT_0063ba8c = 1;
+  iVar2 = FUN_004950b0();
+  iVar2 = iVar2 - iVar3;
+  fVar1 = (float)iVar2;
+  if (iVar2 < 0) {
+    fVar1 = fVar1 + _DAT_005cc94c;
+  }
+  FUN_004987b0("course LoadTime is %u (%.3f)\n",iVar2,(double)(fVar1 * _DAT_005ccd68));
+  return;
+}
+
+
