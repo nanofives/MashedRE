@@ -84,6 +84,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-07  0x0040ac80  FUN_0040ac80  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ac80.c; evidence: verify/c4rac80extent_20261107/RESULT_C4R-AC80-EXTENT.md
 2026-11-07  0x004ecdd9  c_D3DXVec3Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
 2026-11-07  0x0050245e  D3DXShader::compare  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md
 2026-11-07  0x00505e60  sse_D3DXVec2Transform  C1->C4  route libid (L-93): library identity, verify/c4rdxlib_20261107/d3dx_sum2003.tsv; evidence: verify/c4rdxlibfu_20261107/RESULT_C4R-DXLIB-FU.md

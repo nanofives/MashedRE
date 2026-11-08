@@ -1,0 +1,3 @@
+[1/1] 0x0040ac80 match PASS extent override: 5 members = 228 B, each byte-identical, relocheck OK (22/0)
+batch: 1 pass, 0 refused, 0 skipped (already C4), 1 rows
+wrote hooks.csv (1 rows -> C4) and 1 CHANGELOG lines

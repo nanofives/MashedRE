@@ -1,0 +1,4 @@
+196c196
+< 0x0040ac80	re/match/s02/0040ac80.c	REFUSED	whole symbol bytes equal but shorter than the original body (12/22 insns, 54.5%)
+---
+> 0x0040ac80	re/match/s02/0040ac80.c	PASS	extent override: 5 members = 228 B, each byte-identical, relocheck OK (22/0)
