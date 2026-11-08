@@ -1,0 +1,9 @@
+{
+ "target_rows": 746,
+ "sources": 736,
+ "compiles": 54084,
+ "compile_errors": 0,
+ "rows_reaching_gate": 0,
+ "rows_reaching_gate_sibling_safe": 0,
+ "rows_insn_pct_improved_over_recorded": 73
+}

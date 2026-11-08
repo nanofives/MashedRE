@@ -1,0 +1,24 @@
+range	rows	best_grid_flags	best_mean_pct	recorded_mean_pct	rows_where_a_grid_set_beats_recorded	rows_whose_best_is_the_range_best
+0x0040xxxx	30	/O2 /Ob1 /GS	84.6	84.6	0	30
+0x0041xxxx	37	/O2 /Ob1 /GS	82.6	82.6	3	34
+0x0042xxxx	27	/O2 /Ob1 /GS	86.1	86.1	0	27
+0x0043xxxx	17	/O2 /Ob1 /GS	64.3	64.3	4	13
+0x0044xxxx	21	/O2 /Ob1 /GS	76.1	80.1	0	21
+0x0045xxxx	33	/O2 /Ob1 /GS	80.0	80.0	2	32
+0x0046xxxx	19	/O2 /Ob1 /GS	74.5	74.5	2	17
+0x0047xxxx	42	/O2 /Ob0	78.1	78.1	5	38
+0x0048xxxx	39	/O2 /Ob1 /GS	79.0	79.0	2	37
+0x0049xxxx	23	/O2 /Ob1 /GS	79.4	79.4	2	21
+0x004axxxx	6	/O1 /Ob0	71.3	71.3	0	6
+0x004bxxxx	13	/O2 /Ob1 /GS	73.5	73.7	0	12
+0x004cxxxx	53	/O2 /Ob1 /G5	66.7	67.0	9	45
+0x004dxxxx	52	/O2 /Ob1 /G5	59.7	59.7	10	42
+0x004exxxx	3	/O2 /Ob1 /G5	73.1	73.1	0	3
+0x004fxxxx	23	/O2 /Ob1 /G5	60.3	64.8	3	16
+0x0051xxxx	23	/O2 /Ob1 /G5	75.5	75.5	2	21
+0x0052xxxx	38	/O2 /Ob1 /G5	81.1	81.1	0	38
+0x0054xxxx	5	/O2 /Ob1 /G5	64.3	64.3	1	4
+0x0055xxxx	13	/O2 /Ob1 /G5	75.1	75.1	2	11
+0x005axxxx	88	/O2 /Ob1 /G5	69.4	69.5	7	81
+0x005bxxxx	106	/O2 /Ob1 /G5	53.9	55.1	13	84
+0x005cxxxx	35	/O2 /Ob1 /G5	35.4	37.8	6	25
