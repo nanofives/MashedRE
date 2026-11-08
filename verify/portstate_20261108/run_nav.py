@@ -20,9 +20,8 @@ out.mkdir(parents=True, exist_ok=True)
 for f in out.glob('*'):
     if f.is_file():
         f.unlink()
-log = root / 'mashed_re.log'
-if log.exists():
-    log.unlink()
+for lf in root.glob('*.log'):
+    lf.unlink()
 env = dict(os.environ)
 for k in list(env):
     if k.startswith('MASHED_'):
@@ -40,8 +39,8 @@ try:
 except subprocess.TimeoutExpired:
     print(f'[{name}] TIMEOUT {timeout}s - stopping pid {p.pid} ONLY', flush=True)
     p.kill(); rc = p.wait(15); done = False
-if log.exists():
-    shutil.copy(log, out / 'mashed_re.log')
+for lf in root.glob('*.log'):
+    shutil.copy(lf, out / lf.name)
 bmps = sorted(out.rglob('walk_*.bmp'))
 print(f'[{name}] exit={rc} self_exited={done} {time.time()-t0:.0f}s  walk bmps={len(bmps)}', flush=True)
 allh = hashlib.sha256()
