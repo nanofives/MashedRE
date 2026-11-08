@@ -79,7 +79,7 @@ No file holds a second `// MATCH:` function. No no-size rows.
 This is the same one-line fix as orch/MATCH-RWL01's, which is not yet on orch/integration. The old group let an
 `MGLOBAL(...)` line match across the `;` into the next line, for example a call with a hex argument such as
 `(DAT_00912a24,0x301a1)`, so relocheck took `0x301a1` as the global's address. 0x00553ef0 reported
-`BAD +0x7 _DAT_007d3ff8: ours 0x000301a1`, and after the fix it reports OK. A merge with RWL01 gives the identical line.
+`BAD +0x7 _DAT_007d3ff8: ours 0x000301a1`, and after the fix it reports OK. A merge with RWL01 gives the identical line. After merging orch/integration (which already carries RWL01's fix), relocheck.py has no delta against orch/integration and all 60 relocheck.tsv rows re-ran OK with unchanged counts.
 
 ## Follow-ups
 - The 26 raw, structure-only or compile-fix-only (b) rows (listed in `results.tsv`), first the ones with ops over 85%: 0x0054ceb0,
