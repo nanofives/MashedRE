@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-08 19:07 HB-TRAIN-STACK (orch/HB-TRAIN-STACK): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261108_180414
 - 2026-11-08 17:44 PORT-STATE-01 (orch/PORT-STATE-01): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261108_163445
 - 2026-11-08 15:53 PORT-TOP-07 (orch/PORT-TOP-07), PORT-TOP-MATCH-01 (orch/PORT-TOP-MATCH-01), PORT-SAVE-01 (orch/PORT-SAVE-01): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261108_152957
 - 2026-11-08 15:03 PORT-RENDER-01 (orch/PORT-RENDER-01), PORT-TOP-01 (orch/PORT-TOP-01), PORT-RWP-01 (orch/PORT-RWP-01): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261108_142906
