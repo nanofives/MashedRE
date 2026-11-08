@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR06 2026-11-08: offset read into a plain local (the compiler homes it in param_2's slot), typed entry array, returns param_2. Supersedes the header below. */
 /* MATCH-RWL03 0x005333a0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -27,18 +28,18 @@ typedef unsigned int undefined4;
 typedef unsigned int uint;
 undefined4 FUN_004cc790(undefined4 p0, undefined4 p1, undefined4 p2);
 // MATCH: 0x005333a0 FUN_005333a0
-int *FUN_005333a0(undefined4 param_1,uint param_2)
+typedef struct { int ptr; int data[8]; } E533;
+typedef struct { int a0; int num; int a8; int ac; E533 *ents; } S533;
+S533 *FUN_005333a0(undefined4 param_1,S533 *param_2)
 {
-  int *s = (int *)param_2;
-  int *piVar1 = (int *)s[4];
-  int *piVar4 = piVar1;
+  E533 *base = param_2->ents;
   int i;
+  uint off;
 
-  for (i = 0; i < s[1]; i++) {
-    if (FUN_004cc790(param_1,(undefined4)(piVar4 + 1),0x20) == 0) return 0;
-    if (FUN_004cc790(param_1,(undefined4)&param_2,4) == 0) return 0;
-    *piVar4 = (int)(piVar1 + (param_2 / 0x24) * 9);
-    piVar4 += 9;
+  for (i = 0; i < param_2->num; i++) {
+    if (FUN_004cc790(param_1,(undefined4)base[i].data,0x20) == 0) return 0;
+    if (FUN_004cc790(param_1,(undefined4)&off,4) == 0) return 0;
+    base[i].ptr = (int)(base + off / sizeof(E533));
   }
-  return s;
+  return param_2;
 }

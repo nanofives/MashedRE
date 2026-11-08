@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR06 2026-11-08: 97.6% (was 48.2), ops 100%. Typed struct + indexed loop; aligned stored before raw. Residual: the compiler-made p3-p2 delta is homed in param_1's slot ([esp+0x14]); the original homes it in param_5's ([esp+0x24]). Supersedes the header below. */
 /* MATCH-RWL03 0x00533d00: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -34,51 +35,39 @@ MGLOBAL(undefined4, DAT_0091246c, 0x0091246c);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 undefined4 FUN_0052ddf0(int p0, int p1);
 // MATCH: 0x00533d00 FUN_00533d00
-uint * FUN_00533d00(uint param_1,undefined4 *param_2,int param_3,uint param_4,undefined4 param_5)
-
+typedef struct { uint a; int b; uint c; uint d; } E533d;
+typedef struct { uint flags; int num; uint aligned; uint raw; E533d *arr; uint f14; void *self; uint f1c; uint f20; } S533d;
+S533d *FUN_00533d00(int param_1,uint *param_2,uint *param_3,uint param_4,undefined4 param_5)
 {
-  uint *puVar1;
-  uint uVar2;
-  int iVar3;
-  int iVar4;
-  undefined4 *puVar5;
-  
-  puVar1 = (uint *)(**(code **)(DAT_007d3ff8 + 0x118))(DAT_0091246c,0x3011e);
-  uVar2 = FUN_0052ddf0(param_1,param_5);
-  puVar1[8] = uVar2;
-  *puVar1 = param_4;
-  puVar1[1] = param_1;
-  puVar1[5] = 0;
+  S533d *s;
+  uint raw;
+  int i;
+
+  s = (S533d *)(**(code **)(DAT_007d3ff8 + 0x118))(DAT_0091246c,0x3011e);
+  s->f20 = FUN_0052ddf0(param_1,param_5);
+  s->flags = param_4;
+  s->num = param_1;
+  s->f14 = 0;
   if ((param_4 & 2) == 0) {
-    uVar2 = (**(code **)(DAT_007d3ff8 + 0x108))(param_1 * 0x40 + 0xf,0x3011e);
-    puVar1[3] = uVar2;
-    puVar1[2] = uVar2 + 0xf & 0xfffffff0;
+    raw = (**(code **)(DAT_007d3ff8 + 0x108))(param_1 * 0x40 + 0xf,0x3011e);
+    s->aligned = (raw + 0xf) & 0xfffffff0;
+    s->raw = raw;
   }
   else {
-    puVar1[2] = 0;
-    puVar1[3] = 0;
+    s->aligned = 0;
+    s->raw = 0;
   }
-  uVar2 = (**(code **)(DAT_007d3ff8 + 0x108))(param_1 << 4,0x3011e);
-  iVar4 = 0;
-  puVar1[4] = uVar2;
-  if (0 < (int)param_1) {
-    iVar3 = 0;
-    puVar5 = param_2;
-    do {
-      *(undefined4 *)(iVar3 + 0xc + puVar1[4]) = 0;
-      if (param_3 != 0) {
-        *(undefined4 *)(iVar3 + puVar1[4]) = *(undefined4 *)((param_3 - (int)param_2) + (int)puVar5)
-        ;
-      }
-      *(int *)(iVar3 + 4 + puVar1[4]) = iVar4;
-      if (param_2 != (undefined4 *)0x0) {
-        *(undefined4 *)(iVar3 + 8 + puVar1[4]) = *puVar5;
-      }
-      iVar4 = iVar4 + 1;
-      puVar5 = puVar5 + 1;
-      iVar3 = iVar3 + 0x10;
-    } while (iVar4 < (int)param_1);
+  s->arr = (E533d *)(**(code **)(DAT_007d3ff8 + 0x108))(param_1 << 4,0x3011e);
+  for (i = 0; i < param_1; i++) {
+    s->arr[i].d = 0;
+    if (param_3 != 0) {
+      s->arr[i].a = param_3[i];
+    }
+    s->arr[i].b = i;
+    if (param_2 != 0) {
+      s->arr[i].c = param_2[i];
+    }
   }
-  puVar1[6] = (uint)puVar1;
-  return puVar1;
+  s->self = s;
+  return s;
 }

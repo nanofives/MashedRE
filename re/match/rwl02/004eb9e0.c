@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR06 2026-11-08: index read into a ushort local; *param_3 (range) stored before *param_4 (min). Supersedes the header below. */
 /* MATCH-RWL02 h1 0x004eb9e0: best 64.7% (regs 82.4%), residual class b. orig keeps min in ecx and max in edx, and and eax,0xffff after mov ax; ours swaps min/max registers and loads differently; permuter swapcmp + *param_4 stored before *param_3 (independent outputs). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -26,25 +27,19 @@ typedef unsigned char bool;
 // MATCH: 0x004eb9e0 FUN_004eb9e0
 void FUN_004eb9e0(ushort *param_1,int param_2,int *param_3,uint *param_4)
 {
-  uint uVar1;
-  uint uVar2;
-  uint uVar3;
+  uint mn, mx; ushort v;
   if (param_2 != 0) {
-    uVar2 = 0xffffffff;
-    uVar3 = 0;
+    mn = 0xffffffff;
+    mx = 0;
     do {
-      uVar1 = (uint)*param_1;
-      if (uVar2 >= uVar1) {
-        uVar2 = uVar1;
-      }
-      if (uVar3 <= uVar1) {
-        uVar3 = uVar1;
-      }
-      param_1 = param_1 + 1;
-      param_2 = param_2 + -1;
+      v = *param_1;
+      if (mn >= v) mn = v;
+      if (mx <= v) mx = v;
+      param_1++;
+      param_2--;
     } while (param_2 != 0);
-    *param_4 = uVar2;
-    *param_3 = (uVar3 - uVar2) + 1;
+    *param_3 = (mx - mn) + 1;
+    *param_4 = mn;
     return;
   }
   *param_3 = 0;

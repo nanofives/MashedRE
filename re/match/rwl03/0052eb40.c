@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR06 2026-11-08: 88.0% (was 76.5). Copy loop as while (n--) with index*0x40 offsets, header fields stored through param_1[3]/[5]. Residual: original loads param_4 into ecx then lea ebp,[ecx*4]; ours loads it into ebp and shl. Supersedes the header below. */
 // h3: 76.5% regs 79.4%. Memcpy/memset intrinsics replace Ghidra loops. Residual: sz4 hoist (lea ebp,[ecx*4]) and the matrix loop; class (b). NOTE the permuter's 79.6% variant used locals before assignment and was rejected.
 /* MATCH-RWL03 0x0052eb40: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
@@ -47,28 +48,23 @@ int FUN_0052eb40(int *param_1,int param_2,uint param_3,uint param_4,void *param_
   if (puVar1 != 0) {
     memset(puVar1, 0, uVar6);
     puVar1 = (char *)param_1[0xf];
-    *param_1 = param_2;
     param_1[1] = param_3;
-    uVar6 = (uint)((int)puVar1 + param_3 + 0xf) & 0xfffffff0;
-    param_1[3] = uVar6;
-    iVar3 = uVar6 + param_2 * 0x40;
-    param_1[5] = iVar3;
-    sz4 = param_4 * 4;
-    param_1[6] = iVar3 + sz4;
+    param_1[3] = (uint)((int)puVar1 + param_3 + 0xf) & 0xfffffff0;
+    *param_1 = param_2;
+    param_1[5] = param_1[3] + param_2 * 0x40;
     param_1[2] = (int)puVar1;
+    param_1[6] = param_1[5] + param_4 * 4;
     if ((param_5 != 0) && (param_3 != 0)) {
       memcpy(puVar1, param_5, param_3);
     }
-    if ((param_8 != 0) && (iVar3 = *param_1, iVar3 != 0)) {
-      iVar4 = iVar3 << 6;
-      do {
-        iVar4 = iVar4 + -0x40;
-        iVar3 = iVar3 + -1;
-        memcpy((char *)(param_1[3] + iVar4), (char *)(iVar4 + param_8), 0x40);
-      } while (iVar3 != 0);
+    if (param_8 != 0) {
+      iVar3 = *param_1;
+      while (iVar3--) {
+        memcpy((char *)(param_1[3] + iVar3 * 0x40), (char *)(param_8 + iVar3 * 0x40), 0x40);
+      }
     }
     if (param_7 != 0) {
-      memcpy((void *)param_1[5], param_7, sz4);
+      memcpy((void *)param_1[5], param_7, param_4 * 4);
     }
     if (param_6 != 0) {
       memcpy((void *)param_1[6], param_6, param_4 << 4);
