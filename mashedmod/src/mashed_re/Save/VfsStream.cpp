@@ -100,19 +100,18 @@ RH_ScopedInstall(VfsStreamRead, 0x00550980);  // re-enabled 2026-05-24 c3-safe
 
 // ---------------------------------------------------------------------------
 // 0x00550bc0  VfsStreamGetType
-// Pure leaf: return *(int*)(ctx + 8).
+// PORT-SAVE-01 (2026-11-08): the body is re/match/s24/00550bc0.c (MATCH-S24: XP DDK cl 13.00.9176 / c2 13.00.9178,
+// /O2 /Ob1 /G5, match.py 100%, relocheck OK), compiled unchanged in both targets. It reads no global and calls
+// nothing, so the preamble's defaults apply. Callers bind by name (Match/MatchS09_00451ce0.cpp).
 // Disassembly:
 //   00550BC0: 8B 44 24 04   MOV EAX, [ESP+4]    ; EAX = param1 (stream ctx ptr)
 //   00550BC4: 8B 40 08      MOV EAX, [EAX+8]    ; EAX = *(ctx + 8)
 //   00550BC7: C3            RET
 // ---------------------------------------------------------------------------
-extern "C" __declspec(dllexport) int __cdecl VfsStreamGetType(void* ctx)
-{
-    // 0x00550bc4: return *(int*)(ctx + 8)
-    auto* ctx_bytes = reinterpret_cast<std::uint8_t*>(ctx);
-    int result;
-    std::memcpy(&result, ctx_bytes + 8, sizeof(result));
-    return result;
-}
+extern "C" {
+#define FUN_00550bc0 VfsStreamGetType
+__declspec(dllexport) unsigned int __cdecl VfsStreamGetType(int param_1);
+#include "../../../../re/match/s24/00550bc0.c"
+}  // extern "C"
 
 RH_ScopedInstall(VfsStreamGetType, 0x00550bc0);  // re-enabled 2026-05-24 batch-save-f
