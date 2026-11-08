@@ -76,18 +76,17 @@ int FUN_004e8750(int param_1, int param_2)
       return -1;
     }
   }
-  iVar6 = *(int *)(param_1 + 0x18) + param_2;
+  *(int *)(param_1 + 0x18) = *(int *)(param_1 + 0x18) + param_2;
   iVar7 = 0;
-  *(int *)(param_1 + 0x18) = iVar6;
+  iVar6 = *(int *)(param_1 + 0x18);
   *(int *)(param_1 + 0x5c) = iVar1;
   iVar1 = iVar1 + iVar6 * 0x1c;
   if (0 < iVar6) {
     iVar6 = 0;
     do {
-      iVar2 = *(int *)(param_1 + 0x5c);
-      iVar2 = iVar2 + iVar6;
+      iVar2 = *(int *)(param_1 + 0x5c) + iVar6;
+      *(int *)(iVar2 + 0x14) = 0;
       *(int *)(iVar2 + 0x18) = 0;
-      *(int *)(iVar2 + 0x14 + iVar6) = 0;
       uFlags = *(unsigned int *)(param_1 + 8);
       if (((uFlags & 0x1000000) == 0) && (*(int *)(param_1 + 0x14) != 0)) {
         *(int *)(iVar2 + 0x14) = iVar1;
