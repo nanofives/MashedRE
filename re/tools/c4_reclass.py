@@ -45,6 +45,9 @@ LIB_FLAGS = {   # recorded build of each vendored library (libid_reclass.py LIBS
     "d3dx9-sum2003": "DirectX 9.0b SDK Summer 2003 d3dx9.lib member",
     "d3dx9-sum2004": "DirectX 9.0c SDK Summer 2004 d3dx9.lib member",
     "directshow-baseclasses-ddk": "XP DDK SP1 strmbase.lib member",
+    # C4R-DSHOW-BASECLASSES: DX 9.0b SDK BaseClasses source, its baseclasses.dsp Release line + /Ob1 (159/159 rows)
+    "directshow-baseclasses-sum2003": ("DirectShow BaseClasses source (DirectX 9.0b SDK Summer 2003) /Gz /MT /GX /O2 /Ob1 "
+                                       "-D NDEBUG WIN32 _MBCS _LIB _WIN32_DCOM WINVER=0x400"),
 }
 LIBID_OK = {"identical", "identical-unlisted"}
 

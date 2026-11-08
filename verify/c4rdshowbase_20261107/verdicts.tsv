@@ -1,0 +1,160 @@
+rva	route	evidence	verdict	detail
+0x0049c5d0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?NonDelegatingQueryInterface@CBaseRenderer@@UAGJABU_GUID@@PAPAX@Z
+0x0049c620	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?WaitForReceiveToComplete@CBaseRenderer@@QAEXXZ
+0x0049c690	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049c6a0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049c6b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049c6d0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CAutoLock@@QAE@XZ
+0x0049c6e0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?FindPin@CBaseRenderer@@UAGJPBGPAPAUIPin@@@Z
+0x0049c750	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049c770	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049c800	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?SignalTimerFired@CBaseRenderer@@QAEXXZ
+0x0049c810	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?CancelNotification@CBaseRenderer@@UAEJXZ
+0x0049c840	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?ScheduleSample@CBaseRenderer@@UAEHPAUIMediaSample@@@Z
+0x0049c900	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?HaveCurrentSample@CBaseRenderer@@UAEHXZ
+0x0049c930	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetCurrentSample@CBaseRenderer@@UAEPAUIMediaSample@@XZ
+0x0049c990	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?ClearPendingSample@CBaseRenderer@@UAEJXZ
+0x0049ca00	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?TimerCallback@CBaseRenderer@@QAEXXZ
+0x0049ca60	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?NotifyEndOfStream@CBaseRenderer@@QAEJXZ
+0x0049cb00	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?ResetEndOfStreamTimer@CBaseRenderer@@QAEXXZ
+0x0049cb20	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?StartStreaming@CBaseRenderer@@UAEJXZ
+0x0049cbd0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?StopStreaming@CBaseRenderer@@UAEJXZ
+0x0049cc40	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049cc80	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CRendererInputPin@@QAE@PAVCBaseRenderer@@PAJPBG@Z
+0x0049ccd0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?EndOfStream@CRendererInputPin@@UAGJXZ
+0x0049cd70	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?BeginFlush@CRendererInputPin@@UAGJXZ
+0x0049ce10	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?EndFlush@CRendererInputPin@@UAGJXZ
+0x0049ceb0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049cf00	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?QueryId@CRendererInputPin@@UAGJPAPAG@Z
+0x0049cfb0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?ResetStreamingTimes@CBaseVideoRenderer@@UAEJXZ
+0x0049d080	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?OnStopStreaming@CBaseVideoRenderer@@UAEJXZ
+0x0049d0a0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?PreparePerformanceData@CBaseVideoRenderer@@QAEXHH@Z
+0x0049d1d0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?ThrottleWait@CBaseVideoRenderer@@QAEXXZ
+0x0049d200	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?OnDirectRender@CBaseVideoRenderer@@UAEXPAUIMediaSample@@@Z
+0x0049d240	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?OnRenderStart@CBaseVideoRenderer@@UAEXPAUIMediaSample@@@Z
+0x0049d270	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?OnRenderEnd@CBaseVideoRenderer@@UAEXPAUIMediaSample@@@Z
+0x0049d920	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?get_FramesDroppedInRenderer@CBaseVideoRenderer@@UAGJPAH@Z
+0x0049d960	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?get_FramesDrawn@CBaseVideoRenderer@@UAGJPAH@Z
+0x0049d9a0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?get_AvgFrameRate@CBaseVideoRenderer@@UAGJPAH@Z
+0x0049da20	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?get_AvgSyncOffset@CBaseVideoRenderer@@UAGJPAH@Z
+0x0049da90	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?isqrt@@YGHH@Z
+0x0049db00	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetStdDev@CBaseVideoRenderer@@QAEJHPAH_J1@Z
+0x0049dcb0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?JoinFilterGraph@CBaseVideoRenderer@@UAGJPAUIFilterGraph@@PBG@Z
+0x0049dd60	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CBaseRenderer@@QAE@ABU_GUID@@PADPAUIUnknown@@PAJ@Z
+0x0049de60	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049de70	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049de80	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049de90	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CBaseRenderer@@UAE@XZ
+0x0049df70	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetMediaPositionInterface@CBaseRenderer@@UAEJABU_GUID@@PAPAX@Z
+0x0049e140	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetState@CBaseRenderer@@UAGJKPAW4_FilterState@@@Z
+0x0049e190	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?CompleteStateChange@CBaseRenderer@@UAEJW4_FilterState@@@Z
+0x0049e4b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetPin@CBaseRenderer@@UAEPAVCBasePin@@H@Z
+0x0049e580	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?EndOfStream@CBaseRenderer@@UAEJXZ
+0x0049e5c0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?BeginFlush@CBaseRenderer@@UAEJXZ
+0x0049e600	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?CompleteConnect@CBaseRenderer@@UAEJPAUIPin@@@Z
+0x0049e640	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?BreakConnect@CBaseRenderer@@UAEJXZ
+0x0049e6c0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?PrepareReceive@CBaseRenderer@@UAEJPAUIMediaSample@@@Z
+0x0049ea70	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049eab0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049ead0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049ebc0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049ebf0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??_GCBaseRenderer@@UAEPAXI@Z
+0x0049ec10	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CBaseVideoRenderer@@QAE@ABU_GUID@@PADPAUIUnknown@@PAJ@Z
+0x0049ec80	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049eca0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical _CreateMemoryAllocator@4
+0x0049ecc0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?NonDelegatingQueryInterface@CBaseFilter@@UAGJABU_GUID@@PAPAX@Z
+0x0049eeb0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049ef10	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?QueryFilterInfo@CBaseFilter@@UAGJPAU_FilterInfo@@@Z
+0x0049ef60	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?JoinFilterGraph@CBaseFilter@@UAGJPAUIFilterGraph@@PBG@Z
+0x0049f030	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?NotifyEvent@CBaseFilter@@QAEJJJJ@Z
+0x0049f090	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049f0a0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CEnumPins@@UAE@XZ
+0x0049f180	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Release@CEnumPins@@UAGKXZ
+0x0049f1b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Reset@CEnumPins@@UAGJXZ
+0x0049f1e0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Refresh@CEnumPins@@AAGJXZ
+0x0049f210	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x0049f2b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Release@CEnumMediaTypes@@UAGKXZ
+0x0049f2e0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Reset@CEnumMediaTypes@@UAGJXZ
+0x0049f300	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CBasePin@@UAE@XZ
+0x0049f420	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?AttemptConnection@CBasePin@@IAEJPAUIPin@@PBVCMediaType@@@Z
+0x0049f4d0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?TryMediaTypes@CBasePin@@IAEJPAUIPin@@PBVCMediaType@@PAUIEnumMediaTypes@@@Z
+0x0049f5b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?AgreeMediaType@CBasePin@@IAEJPAUIPin@@PBVCMediaType@@@Z
+0x0049f690	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?SetMediaType@CBasePin@@UAEJPBVCMediaType@@@Z
+0x0049f830	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?DisconnectInternal@CBasePin@@IAGJXZ
+0x0049f950	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?QueryPinInfo@CBasePin@@UAGJPAU_PinInfo@@@Z
+0x0049fa40	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x0049fac0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CBaseInputPin@@UAE@XZ
+0x0049fc80	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?BreakConnect@CBaseInputPin@@UAEJXZ
+0x0049fcc0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Receive@CBaseInputPin@@UAGJPAUIMediaSample@@@Z
+0x0049fe10	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?ReceiveMultiple@CBaseInputPin@@UAGJPAPAUIMediaSample@@JPAJ@Z
+0x0049ff30	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?BeginFlush@CBaseInputPin@@UAGJXZ
+0x0049ff60	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?EndFlush@CBaseInputPin@@UAGJXZ
+0x0049ffe0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical _AMovieSetupRegisterFilter@12
+0x004a01b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CBaseFilter@@UAE@XZ
+0x004a0220	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Stop@CBaseFilter@@UAGJXZ
+0x004a02d0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Pause@CBaseFilter@@UAGJXZ
+0x004a0380	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Run@CBaseFilter@@UAGJ_J@Z
+0x004a0550	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a0570	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Next@CEnumPins@@UAGJKPAPAUIPin@@PAK@Z
+0x004a0680	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Skip@CEnumPins@@UAGJK@Z
+0x004a06c0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a0ab0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CEnumPins@@QAE@PAVCBaseFilter@@PAV0@@Z
+0x004a0c10	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CEnumMediaTypes@@QAE@PAVCBasePin@@PAV0@@Z
+0x004a0d10	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CBasePin@@QAE@PADPAVCBaseFilter@@PAVCCritSec@@PAJPBGW4_PinDirection@@@Z
+0x004a0e90	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CBaseInputPin@@QAE@PADPAVCBaseFilter@@PAVCCritSec@@PAJPBG@Z
+0x004a0ef0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CBaseFilter@@QAE@PBDPAUIUnknown@@PAVCCritSec@@ABU_GUID@@@Z
+0x004a0fe0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CBaseObject@@QAE@PBD@Z
+0x004a1000	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CBaseObject@@QAE@XZ
+0x004a1030	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x004a1050	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical _GetInterface@8
+0x004a1080	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CUnknown@@QAE@PBDPAUIUnknown@@@Z
+0x004a10b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?NonDelegatingQueryInterface@CUnknown@@UAGJABU_GUID@@PAPAX@Z
+0x004a1100	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?NonDelegatingAddRef@CUnknown@@UAGKXZ
+0x004a1160	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CAMEvent@@QAE@H@Z
+0x004a1180	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x004a1190	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?lstrcpyWInternal@@YGPAGPAGPBG@Z
+0x004a11c0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?lstrcpynWInternal@@YGPAGPAGPBGH@Z
+0x004a1200	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?lstrcmpWInternal@@YGHPBG0@Z
+0x004a1240	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?lstrlenWInternal@@YGHPBG@Z
+0x004a1260	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?llMulDiv@@YG_J_J000@Z
+0x004a1570	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?WaitDispatchingMessages@@YGKPAXKPAUHWND__@@I0@Z
+0x004a1780	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?CompatibleTimeSetEvent@@YGIIIP6GXIIKKK@ZKI@Z
+0x004a1790	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a17a0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetTypeInfoCount@CBaseDispatch@@QAGJPAI@Z
+0x004a17c0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetTypeInfo@CBaseDispatch@@QAGJABU_GUID@@IKPAPAUITypeInfo@@@Z
+0x004a1a60	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetPeer@CPosPassThru@@AAEJPAPAUIMediaPosition@@@Z
+0x004a1ac0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetPeerSeeking@CPosPassThru@@AAEJPAPAUIMediaSeeking@@@Z
+0x004a1dc0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetSeekingLongLong@CPosPassThru@@AAEJP8IMediaSeeking@@AGJPA_J@Z0@Z
+0x004a21a0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?RegisterMediaTime@CRendererPosPassThru@@QAEJPAUIMediaSample@@@Z
+0x004a2250	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetMediaTime@CRendererPosPassThru@@UAEJPA_J0@Z
+0x004a2310	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x004a2340	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?EOS@CRendererPosPassThru@@QAEJXZ
+0x004a23e0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a2440	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CPosPassThru@@UAE@XZ
+0x004a2460	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetCurrentPosition@CPosPassThru@@UAGJPA_J@Z
+0x004a2500	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a2530	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CPosPassThru@@QAE@PBDPAUIUnknown@@PAJPAUIPin@@@Z
+0x004a25f0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a2620	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CRendererPosPassThru@@QAE@PBDPAUIUnknown@@PAJPAUIPin@@@Z
+0x004a2680	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a26b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CRendererPosPassThru@@UAE@XZ
+0x004a26e0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
+0x004a26f0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CNodeCache@CBaseList@@QAE@XZ
+0x004a2710	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CBaseList@@QAE@PAD@Z
+0x004a2730	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?RemoveAll@CBaseList@@QAEXXZ
+0x004a2770	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetNextI@CBaseList@@IBEPAXAAPAU__POSITION@@@Z
+0x004a2790	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?GetI@CBaseList@@IBEPAXPAU__POSITION@@@Z
+0x004a27b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?FindI@CBaseList@@IBEPAU__POSITION@@PAX@Z
+0x004a27f0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?AddTailI@CBaseList@@IAEPAU__POSITION@@PAX@Z
+0x004a2860	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?AddTail@CBaseList@@QAEHPAV1@@Z
+0x004a28b0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??1CBaseList@@QAE@XZ
+0x004a2920	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?InitMediaType@CMediaType@@QAEXXZ
+0x004a2940	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?IsPartiallySpecified@CMediaType@@QBEHXZ
+0x004a2980	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?MatchesPartial@CMediaType@@QBEHPBV1@@Z
+0x004a2a30	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?CopyMediaType@@YGJPAU_AMMediaType@@PBU1@@Z
+0x004a2aa0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?FreeMediaType@@YGXAAU_AMMediaType@@@Z
+0x004a2ae0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x004a2af0	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ??0CMediaType@@QAE@XZ
+0x004a2b00	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	PASS	identical ?Set@CMediaType@@QAEJABU_AMMediaType@@@Z
+0x004a2b30	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	SKIP	already C4 (no write)
+0x004a2b50	libid	verify/c4rdshowbase_20261107/rel_ob1.tsv	REFUSED	libmatch status identical-ambiguous (needs identical, one candidate)
