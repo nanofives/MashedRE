@@ -1,0 +1,74 @@
+addresses 118 {'skip': 71, 'add': 47}
+added by tag {'third-party-library[d3dx9-psgp]': 31, 'third-party-library[d3dx9-shader-compiler]': 4, 'third-party-library[d3dx9-backward-extension]': 12}
+  skip 0x004ecb01 ?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@ | ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x004ecb25 ?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@ | ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x004ecb49 ?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@ | ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x004ecb6d ?init_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1 | ambiguous: 2 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x004ed05f ?init_D3DXPSGPTessellateNPatch@@YGXPAUD3DXVECTOR3@ | ambiguous: 7 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x004ed19c ?init_D3DXVec3Hermite@@YGPAUD3DXVECTOR3@@PAU1@PBU1 | ambiguous: 2 library functions; no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x004eed25 ?init_D3DXQuaternionBaryCentric@@YGPAUD3DXQUATERNI | no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x004fc6f5 ?x86_D3DXVec2Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU | sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+  skip 0x004fc75e ?x86_D3DXVec2TransformNormal@@YGPAUD3DXVECTOR2@@PA | sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+  skip 0x004fc793 ?x86_D3DXVec3Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU | sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+  skip 0x004fc81e ?x86_D3DXVec3TransformNormal@@YGPAUD3DXVECTOR3@@PA | sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+  skip 0x004fc87d ?x86_D3DXVec4Transform@@YGPAUD3DXVECTOR4@@PAU1@PBU | sub-tag ambiguous: d3dx9.lib:obj\i386\d3dxmathx86.obj -> third-party-library[d3dx9-psgp]/third-party-library[d3dx9-shader-compiler]
+  skip 0x00505ff8 ?sse2_D3DXMatrixMultiply@@YGPAUD3DXMATRIX@@PAU1@PB | ambiguous: 2 library functions; 2 objects
+  skip 0x00508b7a TransformLoop | 2 objects; no pc_funcs entry at rva (inside 0x00508b40 FUN_00508b40); no name rule for TransformLoop
+  skip 0x00508bc0 ProcEpilog | 2 objects; no pc_funcs entry at rva (inside 0x00508b40 FUN_00508b40); no name rule for ProcEpilog
+  skip 0x00508c3a TransformLoop | 2 objects; no pc_funcs entry at rva (inside 0x00508c00 FUN_00508c00); no name rule for TransformLoop
+  skip 0x00508c80 ProcEpilog | 2 objects; no pc_funcs entry at rva (inside 0x00508c00 FUN_00508c00); no name rule for ProcEpilog
+  skip 0x00508cc0 ProcPrologue | 2 objects; size: pc_funcs body 607 B > symbol 64 B (identity covers only the first 64 B); no name rule for ProcPrologue
+  skip 0x00508d00 ScalarLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0); no name rule for ScalarLoop
+  skip 0x00508d39 SIMDMatrix | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0); no name rule for SIMDMatrix
+  skip 0x00508dfd TransformLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0); no name rule for TransformLoop
+  skip 0x00508ed1 PostTransformLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0); no name rule for PostTransformLoop
+  skip 0x00508ef9 ProcEpilog | 2 objects; no pc_funcs entry at rva (inside 0x00508cc0 FUN_00508cc0); no name rule for ProcEpilog
+  skip 0x00508f20 ProcPrologue | 2 objects; size: pc_funcs body 581 B > symbol 64 B (identity covers only the first 64 B); no name rule for ProcPrologue
+  skip 0x00508f60 ScalarLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20); no name rule for ScalarLoop
+  skip 0x00508f99 SIMDMatrix | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20); no name rule for SIMDMatrix
+  skip 0x0050905d TransformLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20); no name rule for TransformLoop
+  skip 0x00509117 PostTransformLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20); no name rule for PostTransformLoop
+  skip 0x0050913f ProcEpilog | 2 objects; no pc_funcs entry at rva (inside 0x00508f20 FUN_00508f20); no name rule for ProcEpilog
+  skip 0x00509180 ProcPrologue | 2 objects; size: pc_funcs body 438 B > symbol 64 B (identity covers only the first 64 B); no name rule for ProcPrologue
+  skip 0x005091c0 ScalarLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180); no name rule for ScalarLoop
+  skip 0x005091f9 SIMDMatrix | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180); no name rule for SIMDMatrix
+  skip 0x00509279 TransformLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180); no name rule for TransformLoop
+  skip 0x005092e8 PostTransformLoop | no sub-tag: object d3dx9.lib:obj\i386\d3dxvec2.obj matched by no d3dx9 row; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180); no name rule for PostTransformLoop
+  skip 0x00509310 ProcEpilog | 2 objects; no pc_funcs entry at rva (inside 0x00509180 FUN_00509180); no name rule for ProcEpilog
+  skip 0x0050937a TransformLoop | no pc_funcs entry at rva (inside 0x00509340 FUN_00509340); no name rule for TransformLoop
+  skip 0x005093b4 ProcEpilog | 3 objects; no pc_funcs entry at rva (inside 0x00509340 FUN_00509340); no name rule for ProcEpilog
+  skip 0x005093e0 ProcPrologue | 2 objects; size: pc_funcs body 797 B > symbol 64 B (identity covers only the first 64 B); no name rule for ProcPrologue
+  skip 0x00509420 ScalarLoop | no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0); no name rule for ScalarLoop
+  skip 0x00509459 SIMDMatrix | no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0); no name rule for SIMDMatrix
+  skip 0x00509561 TransformLoop | no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0); no name rule for TransformLoop
+  skip 0x005096af PostTransformLoop | no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0); no name rule for PostTransformLoop
+  skip 0x005096d7 ProcEpilog | 2 objects; no pc_funcs entry at rva (inside 0x005093e0 FUN_005093e0); no name rule for ProcEpilog
+  skip 0x00509700 ProcPrologue | 2 objects; size: pc_funcs body 636 B > symbol 64 B (identity covers only the first 64 B); no name rule for ProcPrologue
+  skip 0x00509740 ScalarLoop | no pc_funcs entry at rva (inside 0x00509700 FUN_00509700); no name rule for ScalarLoop
+  skip 0x00509779 SIMDMatrix | no pc_funcs entry at rva (inside 0x00509700 FUN_00509700); no name rule for SIMDMatrix
+  skip 0x0050983d TransformLoop | no pc_funcs entry at rva (inside 0x00509700 FUN_00509700); no name rule for TransformLoop
+  skip 0x0050992e PostTransformLoop | no pc_funcs entry at rva (inside 0x00509700 FUN_00509700); no name rule for PostTransformLoop
+  skip 0x00509956 ProcEpilog | 2 objects; no pc_funcs entry at rva (inside 0x00509700 FUN_00509700); no name rule for ProcEpilog
+  skip 0x0050f73f Float16Algo | no pc_funcs entry at rva (inside 0x0050f700 FUN_0050f700); no name rule for Float16Algo
+  skip 0x0050f7f2 PostFloat16Algo | no pc_funcs entry at rva (inside 0x0050f700 FUN_0050f700); no name rule for PostFloat16Algo
+  skip 0x0050f812 ProcEpilog | no pc_funcs entry at rva (inside 0x0050f700 FUN_0050f700); no name rule for ProcEpilog
+  skip 0x0050f840 ProcPrologue | size: pc_funcs body 379 B > symbol 67 B (identity covers only the first 67 B); no name rule for ProcPrologue
+  skip 0x0050f883 Float32Algo | no pc_funcs entry at rva (inside 0x0050f840 FUN_0050f840); no name rule for Float32Algo
+  skip 0x0050f982 PostFloat32Algo | no pc_funcs entry at rva (inside 0x0050f840 FUN_0050f840); no name rule for PostFloat32Algo
+  skip 0x0050f9a2 ProcEpilog | no pc_funcs entry at rva (inside 0x0050f840 FUN_0050f840); no name rule for ProcEpilog
+  skip 0x0050fc7c _x3d_D3DXVec4Transform@12 | no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+  skip 0x0050fcfe ?x3d_D3DXVec4Normalize@@YGPAUD3DXVECTOR4@@PAU1@PBU | no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+  skip 0x0050fd5d ?x3d_D3DXVec4Cross@@YGPAUD3DXVECTOR4@@PAU1@PBU1@11 | no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+  skip 0x0050fe8f ?x3d_D3DXVec4BaryCentric@@YGPAUD3DXVECTOR4@@PAU1@P | no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+  skip 0x0050ff00 ?x3d_D3DXVec4Hermite@@YGPAUD3DXVECTOR4@@PAU1@PBU1@ | no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+  skip 0x0050ffc8 ?x3d_D3DXVec4CatmullRom@@YGPAUD3DXVECTOR4@@PAU1@PB | no sub-tag: object d3dx9.lib:obj\i386\x3d_vec4.obj matched by no d3dx9 row
+  skip 0x005136c0 _a_ldexp | no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x00513700 exception | no pc_funcs entry at rva (in no pc_funcs body); no name rule for exception
+  skip 0x00513740 _a_fmod | no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x00513780 exception | no pc_funcs entry at rva (in no pc_funcs body); no name rule for exception
+  skip 0x00513820 x5 | no pc_funcs entry at rva (inside 0x005137a0 FUN_005137a0); no name rule for x5
+  skip 0x00513920 x5 | no pc_funcs entry at rva (inside 0x005138a0 FUN_005138a0); no name rule for x5
+  skip 0x005139a0 _a_tan | no pc_funcs entry at rva (in no pc_funcs body)
+  skip 0x00513a20 x5 | no pc_funcs entry at rva (in no pc_funcs body); no name rule for x5
+  skip 0x00513a9a ending | no pc_funcs entry at rva (in no pc_funcs body); no name rule for ending
+dry run: nothing written
