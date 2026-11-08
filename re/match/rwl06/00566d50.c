@@ -1,0 +1,68 @@
+// FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWL06 0x00566d50: hand-matched (h2). 75.7% regs 75.7% ops 91.0% under /O2 /Ob1 /G5 (raw file was /O2 /GS at 31.7%, the original has no cookie). Edge vector as float d[3], sqrt via intrinsic, compares spelled to the branch parity tests (< and <=). Residual: the original keeps d[] on the stack and re-loads y,x,z in its own order for the first sum and the second dot; sum term order permutations (216) did not move it. Class a/b. */
+/* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
+typedef unsigned int uint;
+MGLOBAL(float, DAT_005d757c, 0x005d757c);
+double sqrt(double x);
+#pragma intrinsic(sqrt)
+// MATCH: 0x00566d50 FUN_00566d50
+uint FUN_00566d50(float *param_1,float *param_2,float *param_3,float *param_4,float param_5)
+{
+  float d[3];
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  uint uVar5;
+
+  d[0] = *param_4 - *param_2;
+  d[1] = param_4[1] - param_2[1];
+  d[2] = param_4[2] - param_2[2];
+  fVar4 = (d[1] * d[1] + d[0] * d[0] + d[2] * d[2]) - param_5 * param_5;
+  uVar5 = (uint)(fVar4 < DAT_005d757c);
+  if (param_1 != (float *)0x0) {
+    if (uVar5 != 0) {
+      *param_1 = 0.0f;
+      param_1[1] = 1.0f;
+      return 1;
+    }
+    fVar1 = param_3[1] * d[1] + d[0] * *param_3 + param_3[2] * d[2];
+    if (fVar1 <= DAT_005d757c) {
+      return 0xffffffff;
+    }
+    fVar2 = param_3[1] * param_3[1] + *param_3 * *param_3 + param_3[2] * param_3[2];
+    param_1[1] = fVar2;
+    fVar3 = fVar1 * fVar1 - fVar2 * fVar4;
+    if (fVar3 < DAT_005d757c) {
+      return 0;
+    }
+    fVar2 = fVar1 - fVar2;
+    if ((DAT_005d757c < fVar2) && (fVar3 < fVar2 * fVar2)) {
+      return 0;
+    }
+    uVar5 = 1;
+    *param_1 = fVar1 - (float)sqrt(fVar3);
+  }
+  return uVar5;
+}
