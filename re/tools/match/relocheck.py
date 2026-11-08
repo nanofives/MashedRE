@@ -81,13 +81,46 @@ def check(src):
             elif re.fullmatch(r"FUN_[0-9a-fA-F]{8}", u):
                 exp = int(u[-8:], 16) + (stored if typ == REL_DIR32 else 0)
             elif t.get("sec", 0) > 0:                      # our own constant / string
-                csec = secs[t["sec"] - 1]["data"]
+                cs = secs[t["sec"] - 1]
+                csec = cs["data"]
                 k = t["value"] + (stored if typ == REL_DIR32 else 0)
-                ours = csec[k:k + 8] if k + 8 <= len(csec) else csec[k:]
-                try:
-                    theirs_b = match.original_bytes(theirs, len(ours)) if ours else b""
-                except Exception:
-                    theirs_b = b"<outside image>"
+                crel = [r for r in cs.get("relocs", []) if r[2] == REL_DIR32 and k <= r[0] < k + 64]
+                if crel:
+                    # a const that holds DIR32 pointers (MSVC SEH scope table $T: {prev, filter, handler} per
+                    # entry, MATCH-S17 2026-11-07): compare it to the next symbol of its section, with each
+                    # pointer resolved. A pointer into this function's section -> addr + (label - start);
+                    # FUN_<va8> / MGLOBAL -> that address. Any other target is copied from the original and
+                    # listed as unchecked.
+                    nxt = sorted(x["value"] for x in syms if x["sec"] == t["sec"] and x["value"] > t["value"])
+                    ours = bytearray(csec[k:min(nxt[0] if nxt else len(csec), k + 64)])
+                    try:
+                        theirs_b = match.original_bytes(theirs, len(ours))
+                    except Exception:
+                        theirs_b = b"<outside image>"
+                    for roff, ridx, _ in crel:
+                        j = roff - k
+                        if j + 4 > len(ours):
+                            continue
+                        rt = by_index.get(ridx, {})
+                        rst = struct.unpack_from("<i", csec, roff)[0]
+                        ru = undecorate(rt.get("name", "?"))
+                        if rt.get("sec") == s["sec"]:
+                            v = addr + (rt["value"] - start) + rst
+                        elif re.fullmatch(r"FUN_[0-9a-fA-F]{8}", ru):
+                            v = int(ru[-8:], 16) + rst
+                        elif ru in gl:
+                            v = gl[ru] + rst
+                        else:
+                            unchecked.append(f"{name}->{rt.get('name')}")
+                            v = struct.unpack_from("<I", theirs_b, j)[0] if len(theirs_b) >= j + 4 else 0
+                        struct.pack_into("<I", ours, j, v & 0xFFFFFFFF)
+                    ours = bytes(ours)
+                else:
+                    ours = csec[k:k + 8] if k + 8 <= len(csec) else csec[k:]
+                    try:
+                        theirs_b = match.original_bytes(theirs, len(ours)) if ours else b""
+                    except Exception:
+                        theirs_b = b"<outside image>"
                 n += 1
                 if ours != theirs_b:
                     bad.append(f"+{site:#x} const {name}: ours {ours.hex()} vs orig@{theirs:#010x} {theirs_b.hex()}")

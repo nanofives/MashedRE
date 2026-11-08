@@ -1,0 +1,476 @@
+rva	hooks_name	subsystem	confidence	status	library_object	lib_function	lib_size	first_diff	category	note
+0x004a2bb8	report_failure	boot	C2	differs	libcmt.lib:obj\i386\hooks.obj	?_inconsistency@@YAXXZ	45	0xc	read-modify-write memory op split or fused	mnemonic similarity 0.67; +0xc lib[mov eax, dword ptr [0]] orig[and dword ptr [ebp - 4], 0] (same-insn-start)
+0x004a2be9	__security_check_cookie	boot	C2	differs	libcmt.lib:obj\i386\ehvecdtr.obj	?ArrayUnwindFilter@@YAHPAU_EXCEPTION_POINTERS@@@Z	18	0x0	instruction selection or scheduling	mnemonic similarity 0.60; +0x0 lib[mov eax, dword ptr [eax]] orig[cmp ecx, dword ptr [0x616038]] (same-insn-start)
+0x004a2bf7	FUN_004a2bf7	boot	C2	identical	libcmt.lib:obj\i386\fpinit.obj	__cfltcvt_init	56			masked 44 B
+0x004a2c2f	FUN_004a2c2f	boot	C2	differs	libcmt.lib:obj\i386\fpinit.obj	__fpmath	13	0xa	x87 sequence (fld/fstp vs integer move, or FPU op order)	mnemonic similarity 0.67; +0xa lib[fnclex] orig[mov dword ptr [0x773994], eax] (same-insn-start)
+0x004a2d18	FUN_004a2d18	render	C2	differs	libcmt.lib:obj\i386\_wctype.obj	_iswalpha	17	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.60; +0x0 lib[push 0x103] orig[push esi] (same-insn-start)
+0x004a31e1	FUN_004a31e1	boot	C2	identical-ambiguous	libcmt.lib:obj\i386\crt0dat.obj	__lockexit	9			masked 4 B; same bytes as __unlockexit
+0x004a31ea	FUN_004a31ea	boot	C2	identical-ambiguous	libcmt.lib:obj\i386\crt0dat.obj	__lockexit	9			masked 4 B; same bytes as __unlockexit
+0x004a31f3	CrtPreInit	boot	C3	differs	libcmt.lib:obj\i386\crt0dat.obj	__cinit	90	0x22	branch displacement (earlier size difference)	mnemonic similarity 0.96; +0x22 lib[jne 0x57] orig[jne 0x62] (same-insn-start)
+0x004a3258	CrtExitCore	boot	C3	differs	libcmt.lib:obj\i386\crt0dat.obj	_doexit	197	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.91; +0x0 lib[push ebx] orig[push ebp] (same-insn-start)
+0x004a334d	CrtExitNormal_j5	boot	C3	identical	libcmt.lib:obj\i386\crt0dat.obj	__cexit	15			masked 4 B
+0x004a3384	CRT::acos	util	C2	not-compared						no library function paired
+0x004a34b0	_strncpy	boot	C2	differs	libcmt.lib:obj\i386\strncpy.obj	_strncpy	254	0x7	branch displacement (earlier size difference)	mnemonic similarity 0.85; +0x7 lib[je 0x83] orig[je 0x9f] (same-insn-start)
+0x004a3700	CRT::math_float_371d	util	C2	identical	libcmt.lib:obj\i386\sin.obj	__CIsin	174			masked 56 B
+0x004a37b0	CRT::math_float_37cd	util	C2	identical	libcmt.lib:obj\i386\cos.obj	__CIcos	174			masked 56 B
+0x004a3ac9	FUN_004a3ac9	util	C2	differs	libcmt.lib:obj\i386\strtok.obj	_strtok	165	0x5	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.95; +0x5 lib[sub esp, 0x20] orig[sub esp, 0x24] (same-insn-start)
+0x004a4158	FUN_004a4158	boot	C2	differs	libcmt.lib:obj\i386\adj_fdiv.obj	__safe_fprem	6	0x1	register allocation (same instruction, different registers)	mnemonic similarity 1.00; +0x1 lib[call 0xfffffc93] orig[call 0xfffff092] (same-insn-start)
+0x004a43d2	FUN_004a43d2	boot	C2	differs	libcmt.lib:obj\i386\ftime64.obj	__ftime64	253	0x7	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.96; +0x7 lib[sub esp, 0xbc] orig[sub esp, 0xc0] (same-insn-start)
+0x004a45c6	FUN_004a45c6	boot	C2	differs	libcmt.lib:obj\i386\purevirt.obj	__purecall	9	0x1	register allocation (same instruction, different registers)	mnemonic similarity 1.00; +0x1 lib[push 0x19] orig[push 4] (same-insn-start)
+0x004a4660	FUN_004a4660	boot	C2	differs	libcmt.lib:obj\i386\strtol.obj	_strtol	23	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.71; +0x1 lib[push 0] orig[push 4] (same-insn-start)
+0x004a467e	_calloc	boot	C2	differs	libcmt.lib:obj\i386\calloc.obj	_calloc	195	0x1c	register allocation (same instruction, different registers)	mnemonic similarity 0.83; +0x1c lib[xor edx, edx] orig[xor edi, edi] (same-insn-start)
+0x004a4728	FUN_004a4728	boot	C2	differs	libcmt.lib:obj\i386\crt0dat.obj	__unlockexit	9	0x1	register allocation (same instruction, different registers)	mnemonic similarity 0.73; +0x1 lib[push 8] orig[push 4] (same-insn-start)
+0x004a4bb7	entry	boot	C2	differs	libcmt.lib:obj\i386\wincrt0.obj	_WinMainCRTStartup	461	0xec	instruction selection or scheduling	mnemonic similarity 0.97; +0xec lib[mov dword ptr [ebp - 4], esi] orig[call 0x2cf9] (same-insn-start)
+0x004a504f	FUN_004a504f	render	C2	differs	libcmt.lib:obj\i386\output.obj	__output	1935	0x5	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.96; +0x5 lib[sub esp, 0x250] orig[sub esp, 0x254] (same-insn-start)
+0x004a57e4	FUN_004a57e4	boot	C2	differs	libcmt.lib:obj\i386\drive.obj	__getdrive	67	0x3	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.60; +0x3 lib[sub esp, 0x104] orig[sub esp, 0x10] (same-insn-start)
+0x004a583a	FUN_004a583a	boot	C2	not-compared						no library function paired
+0x004a5984	CrtSehProlog	boot	C2	differs	libcmt.lib:obj\i386\sehprolg.obj	__SEH_prolog	57	0xc	register allocation (same instruction, different registers)	mnemonic similarity 0.92; +0xc lib[mov dword ptr fs:[0], esp] orig[mov eax, dword ptr [esp + 0x10]] (same-insn-start)
+0x004a5df5	__ms_p5_test_fdiv	boot	C2	not-compared						no library function paired
+0x004a5e35	__ms_p5_mp_test_fdiv	boot	C2	differs	libcmt.lib:obj\i386\chmod.obj	__chmod	65	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.63; +0x0 lib[push dword ptr [esp + 4]] orig[push 0x5d1544] (same-insn-start)
+0x004a5f07	___endstdio	boot	C2	identical	libcmt.lib:obj\i386\_file.obj	___endstdio	20			masked 12 B
+0x004a7796	__mtdeletelocks	boot	C2	differs	libcmt.lib:obj\i386\mlock.obj	__mtdeletelocks	84	0x7	register allocation (same instruction, different registers)	mnemonic similarity 0.96; +0x7 lib[push ebp] orig[push esi] (same-insn-start)
+0x004a77eb	FUN_004a77eb	boot	C2	differs	libcmt.lib:obj\i386\xundname.obj	??2@YAPAXIAAVHeapManager@@H@Z	19	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.83; +0x0 lib[push dword ptr [esp + 0xc]] orig[push ebp] (same-insn-start)
+0x004a7800	FUN_004a7800	boot	C2	differs	libcmt.lib:obj\i386\mlock.obj	__mtinitlocknum	124	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.94; +0x0 lib[push esi] orig[push ebp] (same-insn-start)
+0x004a787f	__lock	boot	C2	differs	libcmt.lib:obj\i386\mlock.obj	__lock	46	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.92; +0x0 lib[mov eax, dword ptr [esp + 4]] orig[push ebp] (same-insn-start)
+0x004a78b0	CrtPreInitLoop	boot	C2	not-compared						no library function paired
+0x004a9410	_strlen	boot	C2	differs	libcmt.lib:obj\i386\strlen.obj	_strlen	123	0xb	branch displacement (earlier size difference)	mnemonic similarity 0.96; +0xb lib[je 0x20] orig[je 0x30] (same-insn-start)
+0x004a9744	__flushall	boot	C2	identical	libcmt.lib:obj\i386\fflush.obj	__flushall	9			masked 4 B
+0x004aa23d	FUN_004aa23d	boot	C2	identical	libcmt.lib:obj\i386\dosmap.obj	__errno	9			masked 4 B
+0x004aaf90	_memset	boot	C2	differs	libcmt.lib:obj\i386\memset.obj	_memset	88	0xb	branch displacement (earlier size difference)	mnemonic similarity 0.90; +0xb lib[je 0x53] orig[je 0x5b] (same-insn-start)
+0x004aaff0	_memcpy	boot	C2	not-compared						no library function paired
+0x004ab8d6	FUN_004ab8d6	boot	C2	not-compared						no library function paired
+0x004abc53	__setenvp	boot	C2	differs	libcmt.lib:obj\i386\wstdenvp.obj	__wsetenvp	202	0x0	register allocation (same instruction, different registers)	mnemonic similarity 0.91; +0x0 lib[push ebp] orig[push ebx] (same-insn-start)
+0x004abf28	___crtGetEnvironmentStringsA	boot	C3	differs	libcmt.lib:obj\i386\a_env.obj	___crtGetEnvironmentStringsA	294	0x4d	branch displacement (earlier size difference)	mnemonic similarity 0.92; +0x4d lib[jne 0xc9] orig[jne 0xcb] (same-insn-start)
+0x004ac560	FUN_004ac560	boot	C2	differs	libcmt.lib:obj\i386\strcat.obj	_strcpy	16	0x6	branch displacement (earlier size difference)	mnemonic similarity 1.00; +0x6 lib[jmp 0x71] orig[jmp 0x75] (same-insn-start)
+0x004ac570	FUN_004ac570	boot	C2	differs	libcmt.lib:obj\i386\strcat.obj	_strcat	224	0xc	branch displacement (earlier size difference)	mnemonic similarity 0.93; +0xc lib[je 0x1c] orig[je 0x20] (same-insn-start)
+0x004acd00	_memmove	boot	C2	not-compared						no library function paired
+0x004ad1e0	FUN_004ad1e0	render	C2	identical	libcmt.lib:obj\i386\crt0fp.obj	__fptrap	9			masked 4 B
+0x004ad3e3	FUN_004ad3e3	boot	C2	identical	libcmt.lib:obj\i386\fflush.obj	__flushall	9			masked 4 B; 1 ext ref(s) disagree with majority map
+0x004ae635	FUN_004ae635	boot	C2	differs	libcmt.lib:obj\i386\setlocal.obj	__setlocale_get_all	247	0x0	prologue / stack-frame or argument-load order	mnemonic similarity 0.67; +0x0 lib[push ecx] orig[mov eax, dword ptr [0x616d24]] (same-insn-start)
+0x004aedcf	FUN_004aedcf	boot	C2	differs	libcmt.lib:obj\i386\mbctype.obj	_setSBUpLow	380	0x5	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.98; +0x5 lib[sub esp, 0x514] orig[sub esp, 0x518] (same-insn-start)
+0x004aefd0	FUN_004aefd0	boot	C2	differs	libcmt.lib:obj\i386\mbctype.obj	__setmbcp_lk	384	0x5	operand/constant (same instruction, different immediate or displacement)	mnemonic similarity 0.98; +0x5 lib[sub esp, 0x18] orig[sub esp, 0x1c] (same-insn-start)
+0x004af2ad	FUN_004af2ad	boot	C2	differs	libcmt.lib:obj\i386\fgetchar.obj	__fgetchar	12	0x0	register allocation (same instruction, different registers)	mnemonic similarity 1.00; +0x0 lib[push 0] orig[push 0xd] (same-insn-start)
+0x004af2d4	FUN_004af2d4	util	C2	identical	libcmt.lib:obj\i386\unhandld.obj	?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z	70			masked 16 B
+0x004af31a	LAB_004af31a	util	C2	identical	libcmt.lib:obj\i386\unhandld.obj	?__CxxSetUnhandledExceptionFilter@@YAHXZ	19			masked 12 B
+0x004af32d	FUN_004af32d	util	C2	identical	libcmt.lib:obj\i386\unhandld.obj	?__CxxRestoreUnhandledExceptionFilter@@YAXXZ	13			masked 8 B
+0x004a2b60	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sprintf.obj	_sprintf	88			
+0x004a2c48	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ftol2.obj	__ftol2	117			
+0x004a2cbd	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\printf.obj	_printf	102			
+0x004a2cbd	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wprintf.obj	_wprintf	102			
+0x004a2d30	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\pow.obj	_pow	63			
+0x004a2d70	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\atan.obj	__CIatan	59			
+0x004a2d70	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\log.obj	__CIlog	59			
+0x004a2d70	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\log10.obj	__CIlog10	59			
+0x004a2d70	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\pow.obj	__CIpow	59			
+0x004a2dab	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\pow.obj	__CIpow_default	527			
+0x004a2fc0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\strchr.obj	_$$$00001	16			
+0x004a3090	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ceil_pentium4.obj	_ceil	64			
+0x004a3090	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\floor_pentium4.obj	_floor	64			
+0x004a3090	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\modf_pentium4.obj	_modf	64			
+0x004a30d0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\floor_pentium4.obj	__floor_pentium4	225			
+0x004a31b1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\crt0dat.obj	___crtExitProcess	47			
+0x004a332b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\crt0dat.obj	_exit	17			
+0x004a333c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\crt0dat.obj	__exit	17			
+0x004a3370	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\acos.obj	__CIacos	203			
+0x004a3440	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\chkstk.obj	__chkstk	61			
+0x004a35e0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\atan.obj	_atan	63			
+0x004a35e0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\log.obj	_log	63			
+0x004a35e0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\log10.obj	_log10	63			
+0x004a3620	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\atan.obj	__CIatan	59			
+0x004a3620	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\log.obj	__CIlog	59			
+0x004a3620	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\log10.obj	__CIlog10	59			
+0x004a3620	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\pow.obj	__CIpow	59			
+0x004a365b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\atan.obj	__CIatan_default	159			
+0x004a38e6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ieeemisc.obj	__copysign	33			
+0x004a3907	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ieeemisc.obj	__finite	21			
+0x004a391c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ieeemisc.obj	__fpclass	154			
+0x004a39c0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\asin.obj	__CIasin	203			
+0x004a3b84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\vsnprint.obj	__vsnprintf	86			
+0x004a3bdf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wcsncpy.obj	_wcsncpy	61			
+0x004a3c2a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z	48			
+0x004a3c61	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?_UnwindNestedFrames@@YGXPAUEHRegistrationNode@@PAUEHExceptionRecord@@@Z	82			
+0x004a3cb3	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	___CxxFrameHandler	54			
+0x004a3ce9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?CatchGuardHandler@@YA?AW4_EXCEPTION_DISPOSITION@@PAUEHExceptionRecord@@PAUCatchGuardRN@@PAX2@Z	36			
+0x004a3d0d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?TranslatorGuardHandler@@YA?AW4_EXCEPTION_DISPOSITION@@PAUEHExceptionRecord@@PAUTranslatorGuardRN@@PAX2@Z	113			
+0x004a3d7e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?_GetRangeOfTrysToCheck@@YAPBU_s_TryBlockMapEntry@@PBU_s_FuncInfo@@HHPAI1@Z	122			
+0x004a3e20	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?IsExceptionObjectToBeDestroyed@@YAHPAX@Z	33			
+0x004a3e8d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?_CallCatchBlock2@@YAPAXPAUEHRegistrationNode@@PBU_s_FuncInfo@@PAXHK@Z	81			
+0x004a3ede	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\trnsctrl.obj	?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z	175			
+0x004a3f90	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exsup.obj	__global_unwind2	32			
+0x004a3fb0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exsup.obj	__unwind_handler	34			
+0x004a3fd2	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exsup.obj	__local_unwind2	104			
+0x004a403a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exsup.obj	__abnormal_termination	35			
+0x004a4066	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exsup.obj	__NLG_Notify	24			
+0x004a407e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\onexit.obj	__onexit_lk	128			
+0x004a40fe	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\onexit.obj	___onexitinit	40			
+0x004a4126	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\onexit.obj	__onexit	56			
+0x004a415e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\onexit.obj	_atexit	18			
+0x004a4170	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\lldiv.obj	__alldiv	170			
+0x004a4220	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\llmul.obj	__allmul	52			
+0x004a42c5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\vsprintf.obj	_vsprintf	87			
+0x004a431c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fclose.obj	__fclose_lk	76			
+0x004a4368	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fclose.obj	_fclose	81			
+0x004a43b9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ctime.obj	_ctime	25			
+0x004a43b9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ctime64.obj	__ctime64	25			
+0x004a43b9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wctime.obj	__wctime	25			
+0x004a43b9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wctime64.obj	__wctime64	25			
+0x004a44e5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fopen.obj	__fsopen	92			
+0x004a44e5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wfopen.obj	__wfsopen	92			
+0x004a4541	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fopen.obj	_fopen	19			
+0x004a4541	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wfopen.obj	__wfopen	19			
+0x004a4554	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\malloc.obj	__heap_alloc	123			
+0x004a45cf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\malloc.obj	__nh_malloc	44			
+0x004a45fb	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\malloc.obj	_malloc	18			
+0x004a460d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\free.obj	_free	113			
+0x004a49cf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fread.obj	_fread	76			
+0x004a49cf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fwrite.obj	_fwrite	76			
+0x004a4b22	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fread.obj	_fread	76			
+0x004a4b22	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fwrite.obj	_fwrite	76			
+0x004a4b6e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wincrt0.obj	__amsg_exit	37			
+0x004a4b6e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wwincrt0.obj	__amsg_exit	37			
+0x004a4b93	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wincrt0.obj	_fast_error_exit	36			
+0x004a4b93	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wwincrt0.obj	_fast_error_exit	36			
+0x004a4da0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ulldvrm.obj	__aulldvrm	149			
+0x004a4e40	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ulldiv.obj	__aulldiv	104			
+0x004a4ea8	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_flsbuf.obj	__flsbuf	281			
+0x004a4fc1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\output.obj	_write_char	51			
+0x004a4ff4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\output.obj	_write_multi_char	36			
+0x004a5018	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\output.obj	_write_string	55			
+0x004a59bf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sehprolg.obj	__SEH_epilog	17			
+0x004a59d0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__forcdecpt	60			
+0x004a5a0c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__cropzeros	75			
+0x004a5a57	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__positive	26			
+0x004a5a71	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__fassign	62			
+0x004a5aaf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__shift	29			
+0x004a5acc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__cftoe2	174			
+0x004a5bee	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__cftof2	156			
+0x004a5d92	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cvt.obj	__cfltcvt	81			
+0x004a5de3	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fp8.obj	__setdefaultprecision	18			
+0x004a5e5e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	___initstdio	169			
+0x004a5f1b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__lock_file	47			
+0x004a5f1b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__unlock_file	47			
+0x004a5f4a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__lock_file2	35			
+0x004a5f4a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__unlock_file2	35			
+0x004a5f6d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__lock_file	47			
+0x004a5f6d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__unlock_file	47			
+0x004a5f9c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__lock_file2	35			
+0x004a5f9c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_file.obj	__unlock_file2	35			
+0x004a5fbf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_sftbuf.obj	__stbuf	136			
+0x004a6047	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_sftbuf.obj	__ftbuf	42			
+0x004a6071	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cpu_disp.obj	_has_osfxsr_set	53			
+0x004a6100	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\pow_pentium4.obj	__CIpow_pentium4	2896			
+0x004a6e60	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87disp.obj	__trandisp1	103			
+0x004a6ec7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87disp.obj	__trandisp2	140			
+0x004a6f53	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87disp.obj	_$$$00003	215			
+0x004a7030	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\genexcep.obj	__startTwoArgErrorHandling	23			
+0x004a7047	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\genexcep.obj	__startOneArgErrorHandling	60			
+0x004a7090	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__twoToTOS	21			
+0x004a70a5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__load_CW	23			
+0x004a70bc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__convertTOStoQNaN	25			
+0x004a70d5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__fload_withFB	67			
+0x004a7118	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__checkTOS_withFB	22			
+0x004a713b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__math_exit	42			
+0x004a7165	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__check_overflow_exit	20			
+0x004a7179	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\common.obj	__check_range_exit	163			
+0x004a721c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\powhlp.obj	__d_inttype	106			
+0x004a7286	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\powhlp.obj	__powhlp	354			
+0x004a767c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\floor.obj	__floor_default	209			
+0x004a774d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mlock.obj	__mtinitlocks	73			
+0x004a7940	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\atan_pentium4.obj	__CIatan_pentium4	747			
+0x004a7c2c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ldexp.obj	_ldexp	486			
+0x004a7e12	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\util.obj	__set_exp	42			
+0x004a7e3c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\util.obj	__get_exp	21			
+0x004a7e51	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\util.obj	__sptype	91			
+0x004a7eac	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\util.obj	__decomp	186			
+0x004a7f66	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpexcept.obj	__raise_exc	677			
+0x004a820b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpexcept.obj	__handle_exc	546			
+0x004a842d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpexcept.obj	__set_errno	40			
+0x004a8455	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpexcept.obj	__errcode	45			
+0x004a8482	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpexcept.obj	__umatherr	158			
+0x004a8520	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpexcept.obj	__handle_qnan1	83			
+0x004a8573	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpexcept.obj	__handle_qnan2	95			
+0x004a877a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpctrl.obj	__ctrlfp	36			
+0x004a879e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpctrl.obj	__set_statfp	89			
+0x004a87f7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tidtable.obj	__mtterm	30			
+0x004a8815	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tidtable.obj	__initptd	19			
+0x004a8828	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tidtable.obj	__getptd	113			
+0x004a8899	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tidtable.obj	__freeptd	363			
+0x004a8a04	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tidtable.obj	__mtinit	111			
+0x004a8ac2	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\frame.obj	?FrameUnwindFilter@@YAHPAU_EXCEPTION_POINTERS@@@Z	30			
+0x004a8ae0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\frame.obj	___FrameUnwindToState	206			
+0x004a8bae	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\frame.obj	___DestructExceptionObject	69			
+0x004a8bf3	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\frame.obj	?AdjustPointer@@YAPAXPAXABUPMD@@@Z	29			
+0x004a8c10	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\frame.obj	?CallCatchBlock@@YAPAXPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAU_CONTEXT@@PBU_s_FuncInfo@@PAXHK@Z	423			
+0x004a92de	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\hooks.obj	?terminate@@YAXXZ	53			
+0x004a9340	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\lowhelpr.obj	__CallSettingFrame@12	76			
+0x004a938c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\msize.obj	__msize	118			
+0x004a949b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\close.obj	__close_lk	131			
+0x004a951e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\close.obj	__close	155			
+0x004a95b9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_freebuf.obj	__freebuf	43			
+0x004a95e4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fflush.obj	__flush	93			
+0x004a9641	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fflush.obj	__fflush_lk	46			
+0x004a966f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fflush.obj	_flsall	213			
+0x004a974d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\asctime.obj	_asctime	267			
+0x004a9858	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\loctim64.obj	__localtime64	512			
+0x004a9cc9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tzset.obj	_cvtdate	440			
+0x004a9e81	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tzset.obj	__isindst_lk	395			
+0x004aa00c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tzset.obj	___tzset	46			
+0x004aa03a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tzset.obj	__isindst	32			
+0x004aa060	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ullrem.obj	__aullrem	117			
+0x004aa0d5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_open.obj	__openfile	360			
+0x004aa24f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\dosmap.obj	__dosmaperr	115			
+0x004aa2c2	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stream.obj	__getstream	290			
+0x004aa3e4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\heapinit.obj	___heap_select	26			
+0x004aa3fe	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\heapinit.obj	__heap_init	81			
+0x004aa44f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sbheap.obj	___sbh_heap_init	72			
+0x004aa497	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sbheap.obj	___sbh_find_block	43			
+0x004aa4c2	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sbheap.obj	___sbh_free_block	792			
+0x004aa7da	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sbheap.obj	___sbh_alloc_new_region	183			
+0x004aa891	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sbheap.obj	___sbh_alloc_new_group	262			
+0x004aa997	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sbheap.obj	___sbh_resize_block	735			
+0x004aac76	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sbheap.obj	___sbh_alloc_block	764			
+0x004aaf72	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\handler.obj	__callnewh	27			
+0x004ab32d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_filbuf.obj	__filbuf	225			
+0x004ab40e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\read.obj	__read_lk	461			
+0x004ab5db	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\locking.obj	__locking	171			
+0x004ab5db	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\lseek.obj	__lseek	171			
+0x004ab5db	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\read.obj	__read	171			
+0x004ab5db	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\write.obj	__write	171			
+0x004ab82b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\locking.obj	__locking	171			
+0x004ab82b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\lseek.obj	__lseek	171			
+0x004ab82b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\read.obj	__read	171			
+0x004ab82b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\write.obj	__write	171			
+0x004aba4d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\crt0msg.obj	__FF_MSGBANNER	57			
+0x004aba86	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\winxfltr.obj	__XcptFilter	356			
+0x004abbea	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wincmdln.obj	__wincmdln	105			
+0x004abd1a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdargv.obj	_parse_cmdline	364			
+0x004abe86	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdargv.obj	__setargv	162			
+0x004ac04a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ioinit.obj	__ioinit	510			
+0x004ac248	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\lseek.obj	__lseek_lk	116			
+0x004ac2bc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\locking.obj	__locking	171			
+0x004ac2bc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\lseek.obj	__lseek	171			
+0x004ac2bc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\read.obj	__read	171			
+0x004ac2bc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\write.obj	__write	171			
+0x004ac367	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_getbuf.obj	__getbuf	68			
+0x004ac3ab	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\isatty.obj	__isatty	42			
+0x004ac3d5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wctomb.obj	___wctomb_mt	96			
+0x004ac435	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\isctype.obj	__isctype	39			
+0x004ac435	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wctomb.obj	_wctomb	39			
+0x004ac45c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\crtmbox.obj	___crtMessageBoxA	249			
+0x004ac660	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exsup3.obj	__except_handler3	189			
+0x004ac71d	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exsup3.obj	__seh_longjmp_unwind@4	27			
+0x004ac738	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_ctype.obj	_isalpha	63			
+0x004ac777	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_ctype.obj	_isdigit	58			
+0x004ac7b1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_ctype.obj	_isxdigit	63			
+0x004ac7f0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_ctype.obj	_isspace	58			
+0x004ac82a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\_ctype.obj	_isalnum	63			
+0x004ac869	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tolower.obj	___tolower_mt	200			
+0x004ac931	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tolower.obj	_tolower	34			
+0x004ac931	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\toupper.obj	_toupper	34			
+0x004ac953	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__ZeroTail	50			
+0x004ac985	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__IncMan	77			
+0x004ac9d2	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__RoundMan	114			
+0x004aca44	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__CopyMan	27			
+0x004aca5f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__IsZeroMan	25			
+0x004aca78	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__ShrMan	123			
+0x004acaf3	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__ld12cvt	344			
+0x004acc4b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__ld12tod	22			
+0x004acc4b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__ld12tof	22			
+0x004acc61	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__ld12tod	22			
+0x004acc61	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\intrncvt.obj	__ld12tof	22			
+0x004ad0b4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\cfout.obj	___dtold	186			
+0x004ad1e9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ieee87.obj	__abstract_cw	146			
+0x004ad27b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ieee87.obj	__hw_cw	142			
+0x004ad309	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ieee87.obj	__control87	50			
+0x004ad33b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ieee87.obj	__controlfp	22			
+0x004ad351	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\closeall.obj	__fcloseall	155			
+0x004ad3f0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	_fdiv_main_routine	279			
+0x004ad507	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdiv_r	1183			
+0x004ad9a6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__fdivp_sti_st	19			
+0x004ad9b9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__fdivrp_sti_st	19			
+0x004ad9cc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdiv_m32	76			
+0x004ada18	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdiv_m64	76			
+0x004ada64	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdiv_m16i	52			
+0x004ada98	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdiv_m32i	52			
+0x004adacc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdivr_m32	76			
+0x004adb18	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdivr_m64	76			
+0x004adb64	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdivr_m16i	52			
+0x004adb98	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fdivr_m32i	52			
+0x004adbcc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__safe_fdiv	21			
+0x004adbe1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__safe_fdivr	21			
+0x004adbf6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__fprem_common	518			
+0x004addfc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fprem	178			
+0x004adeae	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__fprem1_common	518			
+0x004ae0b4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\adj_fdiv.obj	__adj_fprem1	181			
+0x004ae279	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\frnd.obj	__frnd	19			
+0x004ae28f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\initcrit.obj	___crtInitCritSecNoSpinCount@8	16			
+0x004ae29f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\initcrit.obj	___crtInitCritSecAndSpinCount	139			
+0x004ae32a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\setlocal.obj	___freetlocinfo	202			
+0x004ae3f4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\setlocal.obj	___updatetlocinfo_lk	194			
+0x004ae5fa	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\setlocal.obj	___updatetlocinfo	59			
+0x004aed77	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbctype.obj	_CPtoLCID	47			
+0x004aeda6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbctype.obj	_setSBCS	41			
+0x004aef61	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbctype.obj	___updatetmbcinfo	111			
+0x004af166	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbctype.obj	__setmbcp	336			
+0x004af2b6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbctype.obj	___initmbctable	30			
+0x004af3c8	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\validate.obj	?_ValidateRead@@YAHPBXI@Z	28			
+0x004af3c8	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\validate.obj	?_ValidateWrite@@YAHPAXI@Z	28			
+0x004af3e4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\validate.obj	?_ValidateRead@@YAHPBXI@Z	28			
+0x004af3e4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\validate.obj	?_ValidateWrite@@YAHPAXI@Z	28			
+0x004af400	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\validate.obj	?_ValidateExecute@@YAHP6GHXZ@Z	24			
+0x004af418	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\abort.obj	_abort	23			
+0x004af430	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\osfinfo.obj	__set_osfhnd	124			
+0x004af4ac	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\osfinfo.obj	__free_osfhnd	127			
+0x004af52b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\osfinfo.obj	__get_osfhandle	65			
+0x004af56c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\osfinfo.obj	__lock_fhandle	115			
+0x004af5df	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\osfinfo.obj	__unlock_fhandle	34			
+0x004af601	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\osfinfo.obj	__alloc_osfhnd	333			
+0x004af74e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\commit.obj	__commit	188			
+0x004af80a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\gmtime64.obj	__gmtime64	549			
+0x004afa30	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\llrem.obj	__allrem	178			
+0x004afbf0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\open.obj	__tsopen_lk	743			
+0x004afed7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\open.obj	__sopen	85			
+0x004afed7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wopen.obj	__wsopen	85			
+0x004aff2c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\lseeki64.obj	__lseeki64_lk	131			
+0x004affaf	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ismbbyte.obj	_x_ismbbtype	49			
+0x004affe0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ismbbyte.obj	__ismbblead	17			
+0x004afff1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\isctype.obj	___isctype_mt	119			
+0x004b0068	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\isctype.obj	__isctype	39			
+0x004b0068	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wctomb.obj	_wctomb	39			
+0x004b044b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mantold.obj	___addl	33			
+0x004b046c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mantold.obj	___add_12	94			
+0x004b04ca	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mantold.obj	___shl_12	46			
+0x004b04f8	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mantold.obj	___shr_12	45			
+0x004b0cd7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\winsig.obj	_siglookup	46			
+0x004b0d05	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\winsig.obj	_raise	377			
+0x004b0e7e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\inittime.obj	__get_lc_time	871			
+0x004b11e5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\inittime.obj	___free_lc_time	400			
+0x004b1375	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\inittime.obj	___init_time	95			
+0x004b13d4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\initnum.obj	___free_lconv_num	95			
+0x004b1433	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\initnum.obj	___init_numeric	461			
+0x004b1600	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\initmon.obj	___free_lconv_mon	217			
+0x004b16d9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\initmon.obj	___init_monetary	575			
+0x004b1b26	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\getqloc.obj	_TranslateName	96			
+0x004b1c1c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\getqloc.obj	_TestDefaultCountry	30			
+0x004b1c3a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\getqloc.obj	_crtGetLocaleInfoA@16	227			
+0x004b1d52	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\getqloc.obj	_GetPrimaryLen	29			
+0x004b2700	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbsnbico.obj	__mbsnbicoll	78			
+0x004b274e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wtombenv.obj	___wtomb_environ	107			
+0x004b2b0c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\resetstk.obj	__resetstkoflw	209			
+0x004b302f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stricmp.obj	__stricmp	105			
+0x004b3098	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\strnicmp.obj	__strnicmp	127			
+0x004b3117	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\xtoa.obj	_xtoa	62			
+0x004b3155	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\xtoa.obj	__itoa	42			
+0x004b317f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\a_cmp.obj	_strncnt	28			
+0x004b317f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\a_map.obj	_strncnt	28			
+0x004b3525	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\setenv.obj	_findenv	77			
+0x004b3572	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\setenv.obj	_copy_environ	97			
+0x004b3572	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wsetenv.obj	_copy_environ	97			
+0x004b3788	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\setmode.obj	__setmode_lk	98			
+0x004b37ea	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\w_loc.obj	___crtGetLocaleInfoW	304			
+0x004b391a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\a_loc.obj	___crtGetLocaleInfoA	320			
+0x004b3aec	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbschr.obj	__mbschr	123			
+0x004fcbca	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x004fcbca	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x004fcbca	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x004fcbca	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x004fcbca	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x004fcc18	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x004fcc18	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x004fcc18	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x004fcc18	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x004fcc18	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x004fccbc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x004fccbc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x004fccbc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x004fccbc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x004fccbc	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x004fced0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x004fced0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x004fced0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x004fced0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x004fced0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x00502a0f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x00502a0f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x00502a0f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x00502a0f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x00502a0f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x00502da6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x00502da6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x00502da6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x00502da6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x00502da6	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x005044f1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x005044f1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x005044f1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x005044f1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x005044f1	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x00510d27	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_G__non_rtti_object@@UAEPAXI@Z	28			
+0x00510d27	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_cast@@UAEPAXI@Z	28			
+0x00510d27	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gbad_typeid@@UAEPAXI@Z	28			
+0x00510d27	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\stdexcpt.obj	??_Gexception@@UAEPAXI@Z	28			
+0x00510d27	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\typinfo.obj	??_Gtype_info@@UAEPAXI@Z	28			
+0x005a7b40	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fpinit.obj	___setfflag	16			
+0x005a7b40	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\user.obj	?__set_inconsistency@@YAP6AXXZP6AXXZ@Z	16			
+0x005c1a40	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\hypot.obj	__hypothlp	631			
+0x005c1cb7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\hypot.obj	__hypot	29			
+0x005c1cd4	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fseek.obj	__fseek_lk	143			
+0x005c1d63	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fseek.obj	_fseek	73			
+0x005c1dac	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ftol.obj	__ftol	39			
+0x005c1dd3	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fprintf.obj	_fprintf	94			
+0x005c1dd3	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\fwprintf.obj	_fwprintf	94			
+0x005c1e31	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ungetc.obj	__ungetc_lk	108			
+0x005c1ea0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\longjmp.obj	_longjmp	121			
+0x005c1f1c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\setjmp3.obj	__setjmp3	123			
+0x005c2090	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ceil_pentium4.obj	_ceil	64			
+0x005c2090	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\floor_pentium4.obj	_floor	64			
+0x005c2090	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\modf_pentium4.obj	_modf	64			
+0x005c20d0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ceil_pentium4.obj	__ceil_pentium4	221			
+0x005c21e2	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\frexp.obj	_frexp	172			
+0x005c229b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\rand.obj	_rand	34			
+0x005c2435	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\time.obj	_time	57			
+0x005c2470	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\qsort.obj	_shortsort	109			
+0x005c24e0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\qsort.obj	_qsort	643			
+0x005c2770	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ehprolog.obj	__EH_prolog	31			
+0x005c278f	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\snprintf.obj	__snprintf	87			
+0x005c281e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\toupper.obj	___toupper_mt	201			
+0x005c28e7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\tolower.obj	_tolower	34			
+0x005c28e7	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\toupper.obj	_toupper	34			
+0x005c2940	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87ctran.obj	_exp	59			
+0x005c297c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87ctran.obj	__CIexp	59			
+0x005c29cb	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\clock.obj	_clock	67			
+0x005c2a0e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\clock.obj	___inittime	55			
+0x005c2a45	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\localtim.obj	_localtime	384			
+0x005c2bc5	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\strtol.obj	_strtoxl	447			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\align.obj	__aligned_realloc	23			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\spawnv.obj	__spawnv	23			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\spawnvp.obj	__spawnvp	23			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\strtoq.obj	__strtoi64	23			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wcstol.obj	_wcstol	23			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wcstoq.obj	__wcstoi64	23			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wspawnv.obj	__wspawnv	23			
+0x005c2d84	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wspawnvp.obj	__wspawnvp	23			
+0x005c2d9b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\thread.obj	__endthread	62			
+0x005c2dd9	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\thread.obj	__threadstart@4	159			
+0x005c2e79	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\thread.obj	__beginthread	145			
+0x005c2f0a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wcscat.obj	_wcscpy	28			
+0x005c2f26	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wcscmp.obj	_wcscmp	50			
+0x005c2f58	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wcslen.obj	_wcslen	22			
+0x005c2f70	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sqrt.obj	__CIsqrt	186			
+0x005c302a	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ftell.obj	__ftell_lk	354			
+0x005c318c	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\sehsupp.obj	__rt_probe_read4@4	66			
+0x005c326b	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ceil.obj	__ceil_default	209			
+0x005c3340	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87cdisp.obj	__cintrindisp2	62			
+0x005c337e	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87cdisp.obj	__cintrindisp1	61			
+0x005c33bb	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87cdisp.obj	__ctrandisp2	406			
+0x005c3551	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87cdisp.obj	__ctrandisp1	51			
+0x005c3584	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87cdisp.obj	__fload	60			
+0x005c35c0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\input.obj	__inc	22			
+0x005c4080	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\87trigh.obj	_$$$00001	252			
+0x005c4180	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\exp_pentium4.obj	__CIexp_pentium4	704			
+0x005c4440	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\gmtime.obj	_gmtime	263			
+0x005c4547	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbtowc.obj	___mbtowc_mt	192			
+0x005c4607	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbstowcs.obj	_mbstowcs	43			
+0x005c4607	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\mbtowc.obj	_mbtowc	43			
+0x005c4607	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\wcstombs.obj	_wcstombs	43			
+0x005ca2d0	(not in hooks.csv)			identical-unlisted	libcmt.lib:obj\i386\ullshr.obj	__aullshr	31			
