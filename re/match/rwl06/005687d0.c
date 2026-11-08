@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWR05 2026-11-08: 100% regs 100%, relocheck OK (was 58.7). Re-derived as one return expression summing eight 16-byte-aligned sizes in source order (AL16(x) = (x + 0xf) & ~0xf over a typed struct P {m @0x30, k @0x34, n @0x38}); separate locals or an accumulator let the compiler reorder the sum. Supersedes the header below. */
 /* MATCH-RWL06 0x005687d0: hand-matched (h2). 58.7% regs 63.0% ops 65.2%. Ghidra's decomp formula was wrong (not the bytes): rewritten from the disassembly as 8 aligned terms (n=[+0x38]: *0x60+0xf, *0x4c+0xf; m=[+0x30]: *0x80+0xf, *0x20+0x2f, *0x14+0x23, *0x10+0xf; k=[+0x34]: *0x20+0x10f, *0x120+0xf), summed in that order in the original. Every term and constant matches; the compiler reorders the add chain (k terms first) whatever the source order (tried t+= forward/reverse, temps, pairs, load order, permuter 448 compiles). Class b (term order and edi use point to inline-helper shape not found). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -23,18 +24,16 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 // MATCH: 0x005687d0 FUN_005687d0
-int FUN_005687d0(int param_1)
+#define AL16(x) (((x) + 0xf) & ~0xf)
+typedef struct { char pad[0x30]; int m; int k; int n; } P;
+int FUN_005687d0(P *p)
 {
-  int n = *(int *)(param_1 + 0x38);
-  int k = *(int *)(param_1 + 0x34);
-  int m = *(int *)(param_1 + 0x30);
-  int v0 = (n * 0x60 + 0xf) & 0xfffffff0;
-  int v1 = (n * 0x4c + 0xf) & 0xfffffff0;
-  int v2 = (m * 0x80 + 0xf) & 0xfffffff0;
-  int v3 = (m * 0x20 + 0x2f) & 0xfffffff0;
-  int v4 = (m * 0x14 + 0x23) & 0xfffffff0;
-  int v5 = (m * 0x10 + 0xf) & 0xfffffff0;
-  int v6 = (k * 0x20 + 0x10f) & 0xfffffff0;
-  int v7 = (k * 0x120 + 0xf) & 0xfffffff0;
-  return v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7;
+  return AL16(p->n * 0x60) +
+    AL16(p->n * 0x4c) +
+    AL16(p->m * 0x80) +
+    AL16((p->m + 1) * 0x20) +
+    AL16((p->m + 1) * 0x14) +
+    AL16(p->m * 0x10) +
+    AL16((p->k + 8) * 0x20) +
+    AL16(p->k * 0x120);
 }

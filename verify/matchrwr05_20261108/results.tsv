@@ -1,0 +1,80 @@
+rva	size	best%	regs%	flags	by	sha256	class	reason	before%
+0x0057c0d0	221	98.7	98.7	/O2 /Ob1 /G5	insn	60b582c6b13a5ea9	a	one mov scheduled a slot late (d,a,b vectors + two cross products as f	98.7
+0x005735f0	126	98.0	98.0	/O2 /Ob1 /G5	insn	5a9c700c7b8e881f	b	double temps; one mov ecx scheduling slot differs	98.0
+0x0057ae30	348	100.0	100.0	/O2 /Ob1 /G5	insn	2063d0edd8d57319	identical	1/3 literal, vertex sum via pointer locals a/b, idx then >> (idx*4)	90.7
+0x00566c10	141	88.9	88.9	/O2 /Ob1 /G5	insn	58a6060cef50a597	b	only the final return-1 block layout differs	88.9
+0x0057bf30	407	84.6	85.2	/O2 /Ob1 /G5	insn	0ff8d0c9f87dce20	b	x87 float10 temp ordering and slot reuse	84.6
+0x00578b20	176	90.6	90.6	/O2 /Ob1 /G5	insn	ba4085d0f7a36cde	b	-1.0f literal fixes fmul order; param_1 copy scheduling left	81.2
+0x00575b60	250	79.8	79.8	/O2 /Ob1 /G5	insn	d530826d8f266b9f	b	3x3 product term order r2,r0,r1 vs compiler r2,r1,r0	79.8
+0x00578d90	185	78.3	78.3	/O2 /Ob1 /G5	insn	75992becb3fa8b07	b	float consts at 0x5ceabc/0x5cc558, first dot term order	78.3
+0x00566b40	198	81.9	81.9	/O2 /Ob1 /G5	insn	5a9f3347b4ae61f4	a	literal for DAT_005cc320; x87 operand order left	76.7
+0x0056fad0	186	85.3	85.3	/O2 /Ob1 /G5	insn	7814cbae7f4e98f3	a	-1.0f literal; cross-product operand order canonicalised	76.5
+0x00566d50	334	75.7	75.7	/O2 /Ob1 /G5	insn	05da0d2974561d82	b	(prior run) see header	75.7
+0x00566ca0	167	73.7	73.7	/O2 /Ob1 /G5	insn	dfb7e79b4d87e717	b	second dot product emitted [2],[1],[0] under negation, tail layout	73.7
+0x00568c80	109	100.0	100.0	/O2 /Ob1 /G5	insn	274189ad8645d127	identical	arena struct: aligned value written straight to ar->cur	73.0
+0x00579c00	328	74.1	74.1	/O2 /Ob1 /G5	insn	b9da89916124ad0a	b	float literals; reg alloc left	72.2
+0x00578cb0	212	78.4	85.1	/O2 /Ob1 /G5	insn	8bd2119a80ed5a37	a	float literals; dot operand order left	70.3
+0x005784a0	366	69.6	70.3	/O2 /Ob1 /G5	insn	f0f2f5707e2ff96f	b	dz spill / frame size 0xc, dot term order	69.6
+0x00575120	208	86.7	86.7	/O2 /Ob1 /G5	insn	76e8ed9bb7aee443	b	typed structs + struct copy tail; fxch before faddp and private first return left	69.3
+0x005685f0	431	78.3	80.7	/O2 /Ob1 /G5	insn	56b2cb4c3a85d118	b	clean struct C; original pushes edi at entry (no shrink-wrap)	69.1
+0x00565cd0	118	100.0	100.0	/O2 /Ob1 /G5	insn	93580752ed07c937	identical	0.5f literal, endpoints via pointer locals a/b, (float)sqrt(...) * 0.5f	68.3
+0x00565d50	415	67.7	63.3	/O2 /Ob1 /G5	insn	65833d13c8d6b13c	b	file already compiles (float10 temps, sqrt intrinsic); float/double te	67.7
+0x00573890	313	67.6	67.6	/O2 /Ob1 /G5	insn	aa026905b0d7bb7a	b	(prior run) stack slot / operand load order	67.6
+0x00578f20	207	64.2	71.6	/O2 /Ob1 /G5	insn	f58acb1237be0949	b	loop counter kept in memory, register pressure differs	64.2
+0x005667c0	109	73.7	73.7	/O2 /Ob1 /G5	insn	66a7569eeff72c75	a	float literals; operand order left	63.4
+0x00565ab0	272	63.2	70.6	/O2 /Ob1 /G5	insn	7f9e37b12acfdc61	b	c[16] RwMatrix frame found (0x88); identity stores use registers for c	63.2
+0x00577be0	196	60.8	60.8	/O2 /Ob1 /G5	insn	6a2904e890f51291	b	x87 register-held components of p2 across both dot products	60.8
+0x00579e50	134	83.3	83.3	/O2 /Ob1 /G5	insn	d0879e0782b6f1e7	b	struct S + row pointers fix regs; dot emitted z,x,y anchored at p[i][1] left	60.4
+0x00575880	732	59.1	71.7	/O2 /Ob1 /G5	insn	3c2cd100656ba184	b	int pointer param_1, lo/hi locals (lo reuses the 0x74 slot), flag bran	59.1
+0x005659f0	179	58.8	49.0	/O2 /Ob1 /G5	insn	3c900adf314bfc0e	b	double temps t0..t5, spill pattern differs	58.8
+0x005687d0	129	100.0	100.0	/O2 /Ob1 /G5	insn	132c9d4cd58c1ee3	identical	one return expression of eight AL16 terms in source order	58.7
+0x005752b0	680	56.0	75.0	/O2 /Ob1 /G5	insn	15bfe56ca96fe83a	b	min() select shape on the x87 stack; uint types fixed	56.0
+0x0056d350	158	100.0	100.0	/O2 /Ob1 /G5	insn	8ebc2eadd7c49998	identical	typed 32-byte element table (*tab)[i].v[k]	55.9
+0x0057a250	1038	54.7	59.0	/O2 /Ob1 /G5	insn	85133527d6626c05	b	v[3]/u[3]/pts[6] arrays, param_4 is an int pointer (fMax float), fabs 	54.7
+0x00568d20	175	51.4	87.1	/O2 /Ob1 /G5	insn	022cff2f30e5ea9e	b	double align (+0x1f) found; original keeps param_1 in esi and the new 	51.4
+0x00566830	163	48.4	75.8	/O2 /Ob1 /G5	insn	682c51f2ddf1208e	b	fabs intrinsic ok; original keeps param_2 in ebx and builds the select	48.4
+0x00574a20	148	48.1	48.1	/O2 /Ob1 /G5	insn	50b64a239a912df6	c	inline cpuid asm, no intrinsic in DDK	48.1
+0x00565ef0	171	45.5	57.6	/O2 /Ob1 /G5	insn	bea9633c0fd52b44	b	fcompp vs fcom mem form and param reg order not moved	45.5
+0x0056be80	534	45.3	48.0	/O2 /Ob1 /G5	insn	86a445ffe7def1a0	b	x87 order and temp slot layout, 534 B, structure only	45.3
+0x00566050	425	43.0	43.0	/O2 /Ob1 /G5	insn	c852970e55975d6d	b	x87 scheduling, 6 derived values stored then scaled	43.0
+0x00566ea0	500	42.3	45.4	/O2 /Ob1 /G5	insn	86741b506b31f437	b	flags fixed to /G5 (was /GS), DAT consts float, d[3] array; reg alloca	42.3
+0x005670a0	532	41.8	44.2	/O2 /Ob1 /G5	insn	2ec3a369c1d7e078	b	d[3]/c[5] arrays (dead-store trap) and float constants raise ops to 92	41.8
+0x00578bd0	213	50.0	76.4	/O2 /Ob1 /G5	insn	6e9adde7ab8d62f1	b	float literals; strength-reduced pointer regs left	41.7
+0x0056bb80	337	41.3	43.1	/O2 /Ob1 /G5	insn	ea92f31507436d80	b	fabs/sin/cos intrinsics ok; compare-with-memory form and temp scheduli	41.3
+0x00568990	675	40.6	56.2	/O2 /Ob1 /G5	insn	d5a6f8a25781cd84	b	675 B integer function, frame 0x5c vs 0x54 and spill layout	40.6
+0x00566200	411	43.4	43.4	/O2 /Ob1 /G5	insn	549fbe6d32a48a0c	b	float literals	39.7
+0x00573670	544	36.9	56.4	/O2 /Ob1 /G5	insn	92512dc117eb2630	b	struct-relative field access (piVar9+0x70..) and double temps for the 	36.9
+0x00569690	342	36.8	52.6	/O2 /Ob1 /G5	insn	fcd9f3f4e122f488	c	by-value 0x88 struct args on stack plus 12 params, raw Ghidra form onl	36.8
+0x00579d50	243	34.7	48.4	/O2 /Ob1 /G5	insn	1493afba571122ee	b	arrays for locals, branch order swapped; call scheduling differs	34.7
+0x0057a9a0	1035	35.0	41.1	/O2 /Ob1 /G5	insn	0ad8429743ce6a87	b	float literals	34.1
+0x005729a0	3138	31.4	41.3	/O2 /Ob1 /G5	insn	4fa3ca4cc03d3833	b	3138 B structure only (45 min class), compiles after prototype fixes	31.4
+0x00575560	618	31.2	63.0	/O2 /Ob1 /G5	insn	8f50ba8fa58bfde0	b	cmp ax 16-bit and loop reg alloc, 216 B-class int function; regs-renam	31.2
+0x00566420	382	31.9	34.8	/O2 /Ob1 /G5	insn	7583edebdc9cece0	b	float literals	31.1
+0x00565780	620	30.3	40.4	/O2 /Ob1 /G5	insn	13330b70a2e802b5	b	loop nest layout/regalloc; int count param, inline fsqrt	30.3
+0x00577cb0	513	29.8	27.7	/O2 /Ob1 /G5	insn	8bbbc7fcedb587e6	b	loop register allocation, cross-sum order (raw kept)	29.8
+0x005739d0	1844	29.6	30.6	/O2 /Ob1 /G5	insn	36ff2d4e695bab47	b	not reworked beyond raw (structure-only budget)	29.6
+0x0056fb90	770	28.5	12.4	/O2 /Ob1 /G5	insn	512b2cbbe715139f	b	770 B quaternion/matrix x87 function, structure only	28.5
+0x00579ee0	866	28.0	33.3	/O2 /Ob1 /G5	insn	f9c3a7a44d398d31	b	not reworked beyond raw (structure unknown: GJK-style simplex det upda	28.0
+0x005665a0	542	27.8	40.7	/O2 /Ob1 /G5	insn	00e16fe7fa1cf347	b	(prior run) raw form kept	27.8
+0x0057a660	824	26.6	30.7	/O2 /Ob1 /G5	insn	31623796731a8587	b	(prior run) raw form kept	26.6
+0x00569e90	951	26.5	31.5	/O2 /Ob1 /G5	insn	8c6a73dd84b9c1b8	b	336 B, in_stack_ vars turned into params (39), x87 + spill layout	26.5
+0x0056a250	503	26.5	32.7	/O2 /Ob1 /G5	insn	e56ca993eee05bc9	b	arg spill layout: original keeps 21 stack params live in many copies	26.5
+0x0056d3f0	2375	24.3	33.1	/O2 /Ob1 /G5	insn	00f3c27d1b6852ae	b	raw form, inline sqrt and C++ callee cast fixed; real signature has si	24.3
+0x00576880	4958	23.9	36.3	/O2 /Ob1 /G5	insn	871565a31289c866	b	raw, SQRT replaced by inline sqrt; structure-only budget	23.9
+0x00578610	1287	22.1	37.7	/O2 /Ob1 /G5	insn	d5ade39da0e974a6	b	398 B x87/regs, structure only	22.1
+0x0056c8e0	434	21.1	21.1	/O2 /Ob1 /G5	insn	ad632dedb520022d	b	raw Ghidra form; original accumulates sequentially from out[] loaded f	21.1
+0x00574ad0	1615	21.0	26.3	/O2 /Ob1 /G5	insn	8693d97cef887247	b	/GS flag fixed to /G5, fabs/sqrt intrinsics; raw Ghidra form otherwise	21.0
+0x005672c0	133	18.8	43.8	/O2 /Ob1 /G5	insn	a05348308e678f57	b	long align/sum expression, compiler reschedules; single-expression for	18.8
+0x00577ec0	1497	15.1	18.8	/O2 /Ob1 /G5	insn	5ed2bdc3bc6ca8a0	b	(prior run) raw form kept	15.1
+0x0056f350	1918	15.0	23.1	/O2 /Ob1 /G5	insn	f9bb2a43252e3090	b	compiles (earlier fix), sqrt/fabs intrinsics; raw Ghidra form	15.0
+0x00575fe0	1632	13.9	37.5	/O2 /Ob1 /G5	insn	3d5445c45db3fdfe	b	1632 B x87 function, structure only	13.9
+0x00578ff0	2899	13.8	30.6	/O2 /Ob1 /G5	insn	fd44be73462230d0	b	compiles (earlier fix), raw Ghidra form	13.8
+0x005742c0	1490	11.8	19.7	/O2 /Ob1 /G5	insn	c9439a48a9b5438f	b	1490 B x87 function, structure only (compiles after PTR_DAT_005ceabc t	11.8
+0x0056adb0	1370	10.6	13.1	/O2 /Ob1 /G5	insn	2a085626d9ba9ea8	c	prologue push ebp / and esp,-16 and in_stack_* args: 16-byte-aligned f	10.6
+0x00570090	10500	9.2	11.8	/O2 /Ob1 /G5	insn	e3a9a430402af785	b	now compiles (local_2ec/2a0/pfVar13 split into pointer and float varia	9.2
+0x00567350	640	8.2	54.7	/O2 /Ob1 /G5	insn	102dd186a0578c45	b	flags fixed (was /GS), param_5/4 as cdq form; the original total is bu	8.2
+0x0056a7a0	826	7.0	13.7	/O2 /Ob1 /G5	insn	c30c6879b0ed8260	c	prologue push ebp / and esp,-16 and about 30 stack args (in_stack_*): 	7.0
+0x00575c60	890	4.4	27.4	/O2 /Ob1 /G5	insn	212e66085658db44	b	compiles (earlier fix), goto-based raw form (LAB_00575e25 ...), not re	4.4
+0x0056ac40	357	4.1	7.4	/O2 /Ob1 /G5	insn	2f1636248d3ead40	c	SSE xmm body (cmpltps/movmskps/andnps), rewritten as scalar 4-lane loo	4.1
+0x005676f0	1289	4.0	61.0	/O2 /Ob1 /G5	insn	ab94fd2690c9e7e1	b	long aligned-size add chain + arena carve; not reworked, compiler orde	4.0
+0x0056a450	836	3.3	6.4	/O2 /Ob1 /G5	insn	c628c76a919e5bf8	b	453 B, our body 451 ins vs 211 original, loops/locals shape unknown; i	3.3
