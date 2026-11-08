@@ -7,8 +7,8 @@
 // writes DAT_00692554:
 //   source name     .asi            exe
 //   DAT_00692554    [0x00692554]    [0x00692554] (the exe's image-pad owns 0x006924d8 .. 0x006925a8, exe_main.cpp B17)
-//   DAT_00613290    [0x00613290]    g_rfxDefault00613290 (Render/RfxEmitter.cpp, 0xffffffff = the anchored binary's
-//                                   file-backed value; the exe's image-pad holds 0 at 0x00613290)
+//   DAT_00613290    [0x00613290]    [0x00613290], filled by the port-state seed (PORT-STATE-02; before it, the exe bound
+//                                   a private copy of the file-backed 0xffffffff, g_rfxDefault00613290)
 // That is exactly what the replaced hand port read in each target (`param_1 ? param_1[0] : *k00613290`).
 // The body has no callees.
 #include "../Core/HookSystem.h"
@@ -19,12 +19,10 @@
 #define FUN_004769f0 ParticleEmitter_SetColour
 #pragma comment(linker, "/EXPORT:ParticleEmitter_SetColour=_ParticleEmitter_SetColour")
 
-#ifdef MASHED_STANDALONE
-extern "C" std::uint32_t g_rfxDefault00613290;
-#define MATCH_CELL_DAT_00613290 (&g_rfxDefault00613290)
-#else
+// PORT-STATE-02 (L-101): DAT_00613290 binds to its original address in both targets; in the exe the port-state seed
+// (Compat/PortStateSeed.cpp, default ON) puts the file-backed 0xffffffff there. Before, the exe bound
+// g_rfxDefault00613290 (Render/RfxEmitter.cpp, removed).
 #define MATCH_CELL_DAT_00613290 (0x00613290u)
-#endif
 #define MATCH_CELL_DAT_00692554 (0x00692554u)
 
 // This TU's preamble: the source's own preamble is skipped (MATCH_PREAMBLE), and MGLOBAL binds through the cells above.

@@ -35,11 +35,6 @@
 #include <cstdio>
 #include <cstring>
 
-#ifdef MASHED_STANDALONE
-// The exe's 0x00613290 default, by name: Match/MatchS12_004769f0.cpp (the matched 0x004769f0) binds its DAT_00613290 here
-// in the exe (PORT-RENDER-01), and 0x00476b30 below reads it through k00613290.
-extern "C" std::uint32_t g_rfxDefault00613290 = 0xffffffffu;
-#endif
 
 namespace {
 
@@ -47,20 +42,17 @@ float F(std::uint32_t u) { float f; std::memcpy(&f, &u, 4); return f; }
 std::uint32_t U(float f) { std::uint32_t u; std::memcpy(&u, &f, 4); return u; }
 
 // The null-pointer defaults. The .asi reads the original's own .data, as the original does (the negctl fixtures
-// that hold these rows at C3 seed these addresses and require the read). The exe's image-pad is zero-filled there,
-// so the exe points at the file-backed values (read from the anchored binary; no writer in the original).
+// that hold these rows at C3 seed these addresses and require the read). 0x00613288 / 0x00613290 are read only by the
+// matched 0x004769d0 / 0x004769f0 / 0x00476ae0 / 0x00476b30 now (Match/MatchS12_*.cpp), at their addresses in both
+// targets: the exe's port-state seed (Compat/PortStateSeed.cpp, default ON, PORT-STATE-02) fills them. 0x00613294 and
+// 0x006132a4 are not in the seed inventory, so the exe still points at private copies of their file-backed values.
 #ifdef MASHED_STANDALONE
-std::uint32_t s00613288[2] = {0x3f800000u, 0x3f800000u};              // 1.0, 1.0
 std::uint32_t s00613294[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};      // 0, 0, 1, 1
 std::uint32_t s006132a4[8] = {0u, 0x3f800000u, 0x3f800000u, 0x3f800000u,
                               0x3f800000u, 0u, 0u, 0u};               // 0,1,1,1,1,0,0,0
-std::uint32_t* const k00613288 = s00613288;
-std::uint32_t* const k00613290 = &g_rfxDefault00613290;
 std::uint32_t* const k00613294 = s00613294;
 std::uint32_t* const k006132a4 = s006132a4;
 #else
-std::uint32_t* const k00613288 = reinterpret_cast<std::uint32_t*>(0x00613288u);
-std::uint32_t* const k00613290 = reinterpret_cast<std::uint32_t*>(0x00613290u);
 std::uint32_t* const k00613294 = reinterpret_cast<std::uint32_t*>(0x00613294u);
 std::uint32_t* const k006132a4 = reinterpret_cast<std::uint32_t*>(0x006132a4u);
 #endif
