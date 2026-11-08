@@ -26,14 +26,13 @@ typedef struct L { struct L *next; struct L *prev; } L;
 typedef struct A { int pad[2]; L head; } A;
 typedef struct B { int pad[0xf]; A *owner; L link; } B;
 // MATCH: 0x004e6f80 FUN_004e6f80
-void FUN_004e6f80(A *a, B *b)
+A *FUN_004e6f80(A *a, B *b)
 {
-  L *head = &a->head;
-  L *link = &b->link;
-  link->prev = head;
-  link->next = head->next;
-  head->next->prev = link;
-  head->next = link;
+  b->link.next = a->head.next;
+  b->link.prev = &a->head;
+  a->head.next->prev = &b->link;
+  a->head.next = &b->link;
   b->owner = a;
+  return a;
 }
 
