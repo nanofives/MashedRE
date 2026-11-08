@@ -24,20 +24,24 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 
 MGLOBAL(int, DAT_007d722c, 0x007d722c);
+typedef struct LL6710 { struct LL6710 *next; struct LL6710 *prev; } LL6710;
+typedef struct LList6710 { LL6710 link; } LList6710;
+typedef struct C6710 { int pad[6]; LList6710 lightList; } C6710;
 // MATCH: 0x004e6710 FUN_004e6710
-int FUN_004e6710(int param_1,int (*param_2)(int,undefined4),undefined4 param_3)
+typedef int (*CB6710)(void *, void *);
+C6710 *FUN_004e6710(C6710 *clump, CB6710 callback, void *pData)
 {
-  undefined4 *puVar1;
-  undefined4 *puVar2;
-  int iVar3;
-  puVar2 = *(undefined4 **)(param_1 + 0x18);
-  do {
-    if (puVar2 == (undefined4 *)(param_1 + 0x18)) {
-      return param_1;
+  LL6710 *cur, *end, *next;
+
+  cur = clump->lightList.link.next;
+  end = &clump->lightList.link;
+  while (cur != end) {
+    void *light = (void *)((char *)cur - 4 - DAT_007d722c);
+    next = cur->next;
+    if (!(*callback)(light, pData)) {
+      return clump;
     }
-    puVar1 = (undefined4 *)*puVar2;
-    iVar3 = (*param_2)((int)puVar2 + (-4 - DAT_007d722c),param_3);
-    puVar2 = puVar1;
-  } while (iVar3 != 0);
-  return param_1;
+    cur = next;
+  }
+  return clump;
 }

@@ -29,21 +29,23 @@ typedef int code(...);
 typedef int code();
 #endif
 MGLOBAL(int, DAT_007d7230, 0x007d7230);
+typedef struct LL6760 { struct LL6760 *next; struct LL6760 *prev; } LL6760;
+typedef struct LList6760 { LL6760 link; } LList6760;
+typedef struct C6760 { int pad[4]; LList6760 lightList; } C6760;
 // MATCH: 0x004e6760 RpClumpForAllLights
-int RpClumpForAllLights(int param_1, code *param_2, undefined4 param_3)
+C6760 *RpClumpForAllLights(C6760 *clump, code *callback, void *pData)
 {
-  undefined4 *puVar1;
-  undefined4 *puVar2;
-  int iVar3;
+  LL6760 *cur, *end, *next;
 
-  puVar2 = *(undefined4 **)(param_1 + 0x10);
-  do {
-    if (puVar2 == (undefined4 *)(param_1 + 0x10)) {
-      return param_1;
+  cur = clump->lightList.link.next;
+  end = &clump->lightList.link;
+  while (cur != end) {
+    void *light = (void *)((char *)cur - 4 - DAT_007d7230);
+    next = cur->next;
+    if (!(*callback)(light, pData)) {
+      return clump;
     }
-    puVar1 = (undefined4 *)*puVar2;
-    iVar3 = (*param_2)((int)puVar2 + (-4 - DAT_007d7230), param_3);
-    puVar2 = puVar1;
-  } while (iVar3 != 0);
-  return param_1;
+    cur = next;
+  }
+  return clump;
 }
