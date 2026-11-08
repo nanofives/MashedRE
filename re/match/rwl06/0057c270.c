@@ -27,11 +27,11 @@ void FUN_0057c2e0(void);
 void FUN_004d7ff0(void);
 MGLOBAL(undefined4, DAT_007dc8d8, 0x007dc8d8);
 MGLOBAL(void *, PTR_LAB_00624058, 0x00624058);
-undefined4 RpAtomicRegisterPlugin(undefined4 p0, undefined4 p1, undefined4 p2, undefined4 p3, undefined4 p4);
+undefined4 FUN_004e7d40(undefined4 p0, undefined4 p1, undefined4 p2, undefined4 p3, undefined4 p4);
 // MATCH: 0x0057c270 FUN_0057c270
 undefined4 FUN_0057c270(void)
 {
-  DAT_007dc8d8 = RpAtomicRegisterPlugin(4,0x901,(undefined4)FUN_0057c2e0,(undefined4)FUN_004d7ff0,(undefined4)FUN_004d7ff0);
+  DAT_007dc8d8 = FUN_004e7d40(4,0x901,(undefined4)FUN_0057c2e0,(undefined4)FUN_004d7ff0,(undefined4)FUN_004d7ff0);
   PTR_LAB_00624058 = (void *)FUN_0057c2b0;
   return 1;
 }

@@ -25,11 +25,11 @@ typedef unsigned char bool;
 typedef int (*SectorCb)(int, int);
 int FUN_00562490(int, int);
 int FUN_00562500(int, int);
-int RpWorldForAllWorldSectors(int p0, SectorCb p1, int p2);
+int FUN_004e5c70(int p0, SectorCb p1, int p2);
 // MATCH: 0x00562460 FUN_00562460
 int FUN_00562460(int param_1)
 {
-  RpWorldForAllWorldSectors(param_1, FUN_00562490, 0);
-  RpWorldForAllWorldSectors(param_1, FUN_00562500, 0);
+  FUN_004e5c70(param_1, FUN_00562490, 0);
+  FUN_004e5c70(param_1, FUN_00562500, 0);
   return param_1;
 }
