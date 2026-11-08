@@ -10,12 +10,22 @@
 #define FUN_0042b950 Set7f1a0c_1000  // Match/MatchS07_0042b950.cpp (exe since PORT-TOP-01)
 #define FUN_00433240 RaceArmReset  // Match/MatchS08_00433240.cpp (exe since PORT-TOP-01)
 #define FUN_00495110 Store7f1030_Qpc3Mhz  // Match/MatchS16_00495110.cpp (new body, PORT-TOP-01)
+// FUN_004c57a0 (RwMatrixCreate shape, re/match/rwl01/004c57a0.c): the matched body reads the RW globals at 0x007d3ff8,
+// which the exe maps zero-filled, so the exe binds librw's Matrix::create (LibRw/RwBridge.cpp, L-98). The .asi keeps
+// the raw-address call (MASHED.exe's own RW core).
+#ifdef MASHED_STANDALONE
+extern "C" unsigned int __cdecl MashedRw_MatrixCreate_004c57a0(void);
+#define FUN_004c57a0 MashedRw_MatrixCreate_004c57a0
+#else
 #define FUN_004c57a0 MatchS15_00492770_Call004c57a0
-// Callees of the matched source: the old Boot/FrameDispatch.cpp body called each one through its original address, so these
-// forwarders make that same raw-address call (in the .asi an installed callee hook is reached through its JMP).
+#endif
+// .asi only: raw-address forwarder for 0x004c57a0, the call the old Boot/FrameDispatch.cpp body made (the other four
+// callees were forwarders too until PORT-TOP-01 bound them by name; verify/porttop_20261108/BINDINGS.tsv).
+#ifndef MASHED_STANDALONE
 extern "C" unsigned int MatchS15_00492770_Call004c57a0(void) {
     return reinterpret_cast<unsigned int (__cdecl*)()>(0x004c57a0u)();
 }
+#endif
 #pragma comment(linker, "/EXPORT:MainLoopInit=_MainLoopInit")
 extern "C" {
 #include "../../../../re/match/s15/00492770.c"
