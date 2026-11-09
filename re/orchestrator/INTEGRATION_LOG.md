@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-09 20:00 PORT-COL-0x00418860 (orch/PORT-COL-0x00418860), PORT-COL-ANCHOR (orch/PORT-COL-ANCHOR), PORT-SAVE-SPAN-MIRROR (orch/PORT-SAVE-SPAN-MIRROR): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_192010
 - 2026-11-09 18:57 PORT-BATCH-TOOL (orch/PORT-BATCH-TOOL): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_183105
 - 2026-11-09 18:04 PORT-TOP-04I (orch/PORT-TOP-04I): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_174217
 - 2026-11-09 17:12 PORT-TOP-04D-WALK04 (orch/PORT-TOP-04D-WALK04), PORT-X87-UNREACHED (orch/PORT-X87-UNREACHED), PORT-TOP-04H (orch/PORT-TOP-04H): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_165509
