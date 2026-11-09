@@ -83,8 +83,8 @@ char *FUN_00426060(void);
 void FUN_004e4320(char *world, char *cam);
 int FUN_004c1a00(char *cam);
 float FUN_00426e00(void);
-int FUN_00426070(float f);
-void FUN_00422570(unsigned int key, char *m, int a);
+int FUN_00426070(void);
+void FUN_00422570(unsigned int key, char *m, int a, float alpha);
 void FUN_004c19f0(char *cam);
 void FUN_004e4350(char *world, char *cam);
 char *FUN_004c0ed0(char *frame);
@@ -140,7 +140,7 @@ static void FUN_0041f8f0(CarRec *r)
     FUN_004c1bb0(r->cam, &bg, 1);
     FUN_004e4320(FUN_00426060(), r->cam);
     if (FUN_004c1a00(r->cam)) {
-      FUN_00422570(r->x290, *(char **)(r->clump + 4) + 0x10, FUN_00426070(FUN_00426e00() * r->x288 * r->avg));
+      FUN_00422570(r->x290, *(char **)(r->clump + 4) + 0x10, FUN_00426070(), FUN_00426e00() * r->x288 * r->avg);
       ((RsFn)DAT_007d3ff8[8])(8, 0);
       ((RsFn)DAT_007d3ff8[8])(6, 0);
       (*(DrawFn *)(o + 0x48))(o);
