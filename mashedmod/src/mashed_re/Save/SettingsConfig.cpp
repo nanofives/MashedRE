@@ -69,12 +69,9 @@ void*         SettingsBuf() { return s_settings; }
 // PORT-SEED-OPTOUT (verify/portstate_20261109/RESULT_PORT-SEED-OPTOUT.md): the five .rdata strings the matched config
 // bodies read, as the original holds them (MASHED.exe.unpatched). Used only when the port-state seed is OFF
 // (MASHED_NO_PORTSTATE_SEED=1). With the seed ON (default) the bodies read the seeded original addresses.
-char s_cfgLoading[27] = "Loading video cfg from %s
-";   // 0x005d013c
-char s_cfgSaving[24]  = "Saving video cfg to %s
-";      // 0x005d0158
-char s_cfgFailed[9]   = "	FAILED
-";                     // 0x005cfe70
+char s_cfgLoading[27] = "Loading video cfg from %s\n";   // 0x005d013c
+char s_cfgSaving[24]  = "Saving video cfg to %s\n";      // 0x005d0158
+char s_cfgFailed[9]   = "\tFAILED\n";                     // 0x005cfe70
 char s_cfgModeRb[3]   = "rb";                             // 0x005cf010
 char s_cfgModeWb[3]   = "wb";                             // 0x005d00d8
 int      HostFputs(const char* s, void* f)                     { return std::fputs(s, static_cast<std::FILE*>(f)); }
