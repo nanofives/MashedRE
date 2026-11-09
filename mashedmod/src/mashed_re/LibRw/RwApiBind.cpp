@@ -475,6 +475,15 @@ int MashedRw_FrameDestroy_004c0c20(int frame) {
     return 1;
 }
 
+// [PORT-TOP-04C] RpClumpDestroy (hooks.csv name of rva 0x004e6e00, no matched source): rw::Clump::destroy. Reached from
+// the matched callees of AppDestroy 0x00402a40 (0x0041c0e0 / 0x0041c2c0 / 0x0041da80 ... each guards on a nonzero global).
+int MashedRw_ClumpDestroy_004e6e00(int clump) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    BindLog("RpClumpDestroy(0x%08X) -> rw::Clump::destroy", static_cast<unsigned>(clump));
+    if (c) c->destroy();
+    return 1;
+}
+
 // void* _rwObjectHasFrameSetFrame(void* object, RwFrame* frame): re/match/s19/004c0740.c unlinks the object from its
 // old frame, stores the new frame at +0x04, links the object into the frame's object list and marks the frame dirty
 // (rva 0x004c0e50). In the knob path every caller passes a camera (0x00467110, 0x004670a0, 0x0042d420, 0x004c2bf0), so

@@ -25,7 +25,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned char undefined1;
 MGLOBAL(undefined1, DAT_0063e548, 0x0063e548);
-void FUN_004768c0(int p0);
+void FUN_004768c0(void *p0);   /* PORT-TOP-04C: the body passes &DAT_0063e548; same push as (int) under C */
 // MATCH: 0x004210f0 FUN_004210f0
 void FUN_004210f0(void)
 
