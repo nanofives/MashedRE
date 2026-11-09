@@ -11,7 +11,7 @@ T = 'PORT-TOP-04D: '
 W = 0x00492370
 
 ROWS = {  # rva -> (name or None, kind, symbol, note, level, caller)
-    0x004924f0: ('DataZeroFill', 'matched', 'DataZeroFill', T + 'Boot/SubsystemInit.cpp under MASHED_STANDALONE = re/match/topm01/004924f0.c (464 B byte-identical); the .asi keeps the raw passthrough', 1, W),
+    0x004924f0: ('DataZeroFill', 'stand-in', 'PortTop_StandIn_004924f0 (MASHED_TOP04D_DATAZERO=1 -> DataZeroFill)', T + 'matched body compiled in Boot/SubsystemInit.cpp under MASHED_STANDALONE (re/match/topm01/004924f0.c, 464 B byte-identical) but not run by default: it changes walk_04_colourselect knob ON vs OFF (its 0x007f0a40 defaults survive the hand init). The callees below run only with the switch', 1, W),
     0x00431ae0: (None, 'matched', 'DefaultParam_SetField04', T + 'Match/MatchS07_00431ae0.cpp (exe body already)', 2, 0x004924f0),
     0x00431af0: (None, 'matched', 'DefaultParam_SetField08', T + 'Match/MatchS07_00431af0.cpp (exe body already)', 2, 0x004924f0),
     0x00431b00: (None, 'matched', 'DefaultParam_SetField00', T + 'Match/MatchS07_00431b00.cpp (exe body already)', 2, 0x004924f0),
