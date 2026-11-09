@@ -7,6 +7,7 @@
 { 0x005cd5d8u, 11, "\x66\x72\x65\x6e\x63\x68\x2e\x64\x61\x74\x00" },  // s_french_dat_005cd5d8 (004274e0.c) 'french.dat'
 { 0x005cd5e4u, 12, "\x65\x6e\x67\x6c\x69\x73\x68\x2e\x64\x61\x74\x00" },  // s_english_dat_005cd5e4 (004274e0.c) 'english.dat'
 { 0x005cd640u, 5, "\x62\x69\x67\x45\x00" },  // DAT_005cd640 (004283a0.c) 'bigE'
+{ 0x005cf4a8u, 4, "\x73\x75\x6e\x00" },  // PTR_DAT_005cf4a8 (0048bbe0.c) 'sun'
 { 0x005cf698u, 9, "\x4c\x6f\x61\x64\x49\x63\x6f\x6e\x00" },  // s_LoadIcon_005cf698 (004921d0.c) 'LoadIcon'
 { 0x005cf6a4u, 16, "\x52\x57\x54\x45\x58\x44\x49\x43\x54\x49\x4f\x4e\x41\x52\x59\x00" },  // s_RWTEXDICTIONARY_005cf6a4 (004921d0.c) 'RWTEXDICTIONARY'
 { 0x005cf6b4u, 33, "\x43\x61\x6c\x6c\x69\x6e\x67\x20\x48\x61\x72\x64\x77\x61\x72\x65\x45\x78\x69\x74\x41\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x0a\x00" },  // s_Calling_HardwareExitApplication_005cf6b4 (00492370.c) 'Calling HardwareExitApplication\n'

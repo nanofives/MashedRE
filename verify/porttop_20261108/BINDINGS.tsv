@@ -57,9 +57,9 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00402f50	FUN_00402f50	stand-in	PortTop_StandIn04E_00402f50	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00403640	FUN_00403640	stand-in	PortTop_Piece_00403640	PORT-TOP-04E: hand piece (HandTop_InitRest split at this call point). piece 4: texture upload, B15 bridge, B16 thunks	2	0x00402750
 0x00404830	FUN_00404830	stand-in	PortTop_StandIn04E_00404830	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x0040bb30	FUN_0040bb30	stand-in	PortTop_StandIn04E_0040bb30	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x0040bb50	FUN_0040bb50	stand-in	PortTop_StandIn04E_0040bb50	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x0040bbb0	FUN_0040bbb0	stand-in	PortTop_StandIn04E_0040bbb0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x0040bb30	FUN_0040bb30	matched	Search40bb30	PORT-TOP-04G: Match/MatchS02_0040bb30.cpp (both targets; the .asi body left Util/PromoLoop_sessionB.cpp) = re/match/s02/0040bb30.c (BYTE-IDENTICAL 21 B, relocheck OK 2/2)	2	0x00402750
+0x0040bb50	FUN_0040bb50	matched	SpriteLookupC	PORT-TOP-04G: Match/MatchS02_0040bb50.cpp (both targets; the .asi body left Frontend/SpriteCluster.cpp) = re/match/s02/0040bb50.c (BYTE-IDENTICAL 21 B, relocheck OK 2/2)	2	0x00402750
+0x0040bbb0	FUN_0040bbb0	matched	Orig_0040bbb0	PORT-TOP-04G: Match/PortTop_0040bbb0.cpp = re/match/s02/0040bbb0.c (100.0%); sfx.piz -> fx / badges / TrackImages / Interface dictionaries in DAT_0063b8f8 / fc / 900 / 904	2	0x00402750
 0x004113b0	FUN_004113b0	stand-in	PortTop_StandIn04E_004113b0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00412890	FUN_00412890	stand-in	PortTop_StandIn04E_00412890	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00418980	thunk_FUN_0041a060	stand-in	PortTop_StandIn04E_00418980	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
@@ -311,7 +311,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004997b0	Win32ResourceLoader	matched	Win32ResourceLoader	PORT-TOP-04B: Match/MatchS16_004997b0.cpp, now also in the exe list: FindResourceA(DAT_007e9580 = the exe module, 404, RWTEXDICTIONARY) finds the copy assets/mashed_re.rc embeds	3	0x004921d0
 0x00499720	GetInputHinst	matched	GetInputHinst	PORT-TOP-04B: Match/MatchS16_00499720.cpp, now also in the exe list	4	0x004997b0
 0x004b3eb0	FUN_004b3eb0	port	PortTop_Port_004b3eb0	PORT-TOP-04B: LibRw/RwApiBind.cpp: port body from the decomp (no matched source): RW memory stream + chunk 0x23 + 0x0054f8d0 replaced by Txd/TxdDecoder (written from 0x0054f8d0) and rw::TexDictionary / rw::Texture	3	0x004921d0
-0x004c5c00	RwTexDictionaryFindNamedTexture	bound	MashedRw_TexDictionaryFindNamedTexture_004c5c00	LibRw/RwApiBind.cpp: rw::TexDictionary::find (TOP-03); reached since PORT-TOP-04B	3	0x004921d0
+0x004c5c00	RwTexDictionaryFindNamedTexture	rw	MashedRw_TexDictionaryFindNamedTexture_004c5c00	PORT-TOP-04G: LibRw/RwApiBind.cpp -> rw::TexDictionary::find (exe side of the two lookups)	3	0x0040bb50
 0x004c1d30	RwCameraCreate	bound	MashedRw_CameraCreate_004c1d30	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::create behind an RW 3.x-layout camera record (the matched callers use +0x04 / +0x18 / +0x1c / +0x60 / +0x64 directly)	5	0x004670a0
 0x004c0740	_rwObjectHasFrameSetFrame	bound	MashedRw_ObjectHasFrameSetFrame_004c0740	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setFrame (every knob-path caller passes a camera record)	5	0x004670a0
 0x004c1a40	RwCameraSetNearClipPlane	bound	MashedRw_CameraSetNearClipPlane_004c1a40	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setNearPlane	4	0x00467110
@@ -369,7 +369,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00555830	FUN_00555830	stand-in	PortTop_StandIn04C_00555830	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x00427620
 0x00556e40	FUN_00556e40	stand-in	PortTop_StandIn04C_00556e40	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x00427620
 0x00552b90	FUN_00552b90	stand-in	PortTop_StandIn04C_00552b90	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched (FontSys_Shutdown), not compiled (level 2)	3	0x00427620
-0x004ce2d0	RwImageSetPath	bound	MashedRw_ImageSetPath_004ce2d0	PORT-TOP-04E: LibRw/RwApiBind.cpp: rw::Image::setSearchPath	3	0x00428400
+0x004ce2d0	RwImageSetPath	bound	MashedRw_ImageSetPath_004ce2d0	PORT-TOP-04G: LibRw/RwApiBind.cpp (04F), called by 0x0048bbe0 too	4	0x0048bbe0
 0x004d41e0	FUN_004d41e0	shim	MashedRw_Destroy4d41e0_004d41e0	PORT-TOP-04E: LibRw/RwApiBind.cpp: no librw counterpart; null skipped, non-null logged and left alone	3	0x00496ce0
 0x004768c0	FUN_004768c0	stand-in	PortTop_StandIn04C_004768c0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	4	0x004210f0
 0x00429290	FUN_00429290	stand-in	PortTop_StandIn04E_00429290	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
@@ -377,3 +377,29 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004cc160	RwStreamClose	shim	PortTop_RwStreamClose_004cc160	PORT-TOP-04F: Match/PortTop_RwStream04F.cpp: frees the record and the copy (the original returns it to the RwGlobals +0x11c free list)	3	0x004274e0
 0x004cc5e0	RwStreamFindChunk	bound	PortTop_RwStreamFindChunk_004cc5e0	PORT-TOP-04F: Match/PortTop_RwStream04F.cpp -> exe body mashed_re::D3d9Render::Rwl_StreamFindChunk (RwWorldStream.cpp)	3	0x004b3d80
 0x004c5cb0	RwTextureRead	bound	MashedRw_TextureRead_004c5cb0	PORT-TOP-04F: LibRw/RwApiBind.cpp: rw::Texture::findCB (current dictionary), else <name>.png / .bmp from the piz mount stack or disk, WIC decode, C8888 rw::Texture linked into the current dictionary	3	0x004283a0
+0x0042a6b0	FUN_0042a6b0	matched	FUN_0042a6b0	PORT-TOP-04G: exe body Match/MatchS06_0042a6b0.cpp (re/match/s06/0042a6b0.c); its exe callees bound: 0x004b3d80 -> Orig_004b3d80 with 0 / 0 for the out pointers (declared deviation), 0x004b3d20 -> stand-in	3	0x0040bbb0
+0x0042a530	FUN_0042a530	matched	FUN_0042a530	PORT-TOP-04G: exe body Match/MatchS06_0042a530.cpp (re/match/s06/0042a530.c)	4	0x0042a6b0
+0x0042a470	FUN_0042a470	matched	FUN_0042a470	PORT-TOP-04G: exe body Match/MatchS06_0042a470.cpp (re/match/s06/0042a470.c); RwGlobals +0xcc / +0xd4 string functions on the record (LibRw/RwApiBind.cpp)	5	0x0042a530
+0x004b5350	FUN_004b5350	shim	PortTop_FsFileExists_004b5350	PORT-TOP-04G: Match/PortTop_RwStream04F.cpp: 1 when the name is in a mounted piz or on the disk under original/ (the original asks the RtFS file system, 0x00550b00)	6	0x0042a470
+0x004b3d20	FUN_004b3d20	stand-in	PortTop_StandIn04G_004b3d20	PORT-TOP-04G: Match/PortTop_0040bbb0.cpp: returns 0; its chunk-0x16 reader 0x004cf7d0 has no matched source (C2). Not reached by the sfx.piz names	4	0x0042a6b0
+0x0048bbe0	FUN_0048bbe0	matched	Orig_0048bbe0	PORT-TOP-04G: Match/PortTop_0048bbe0.cpp = re/match/s14/0048bbe0.c; RwImageSetPath(""), DAT_00722134 = RwTextureRead("sun")	3	0x0040bbb0
+0x004c5bc0	RwTexDictionaryAddTexture	rw	MashedRw_TexDictionaryAddTexture_004c5bc0	PORT-TOP-04G: LibRw/RwApiBind.cpp -> rw::TexDictionary::addFront (head insert, as rwLinkListAddLLLink)	3	0x0040bbb0
+0x004a332b	exit	crt	PortTop_Exit04G_004a332b	PORT-TOP-04G: Match/PortTop_0040bbb0.cpp -> CRT exit (the "cant open sfx dic" branch only)	3	0x0040bbb0
+0x00401000	FUN_00401000	stand-in	PortTop_StandIn04G_00401000	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): DFF / clump loader	3	0x0040bbb0
+0x00413b80	FUN_00413b80	stand-in	PortTop_StandIn04G_00413b80	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init, no matched source	3	0x0040bbb0
+0x004210b0	FUN_004210b0	stand-in	PortTop_StandIn04G_004210b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x004759b0	FUN_004759b0	stand-in	PortTop_StandIn04G_004759b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): 0x00691600 array alloc	3	0x0040bbb0
+0x00475a00	FUN_00475a00	stand-in	PortTop_StandIn04G_00475a00	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): no matched source (C2)	3	0x0040bbb0
+0x00476390	FUN_00476390	stand-in	PortTop_StandIn04G_00476390	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x004775b0	FUN_004775b0	stand-in	PortTop_StandIn04G_004775b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): atomic / clump builder	3	0x0040bbb0
+0x00477e40	FUN_00477e40	stand-in	PortTop_StandIn04G_00477e40	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x00485d90	FUN_00485d90	stand-in	PortTop_StandIn04G_00485d90	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x004862d0	FUN_004862d0	stand-in	PortTop_StandIn04G_004862d0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x00487e00	FUN_00487e00	stand-in	PortTop_StandIn04G_00487e00	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): object-shadow init	3	0x0040bbb0
+0x00489290	FUN_00489290	stand-in	PortTop_StandIn04G_00489290	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x0048a460	FUN_0048a460	stand-in	PortTop_StandIn04G_0048a460	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): strided clear 0x00709238	3	0x0040bbb0
+0x0048a830	FUN_0048a830	stand-in	PortTop_StandIn04G_0048a830	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): zero fill	3	0x0040bbb0
+0x0048ae00	FUN_0048ae00	stand-in	PortTop_StandIn04G_0048ae00	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): clump builder	3	0x0040bbb0
+0x0048e820	FUN_0048e820	stand-in	PortTop_StandIn04G_0048e820	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): no matched source (C2)	3	0x0040bbb0
+0x0048eac0	FUN_0048eac0	stand-in	PortTop_StandIn04G_0048eac0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x0048ff20	FUN_0048ff20	stand-in	PortTop_StandIn04G_0048ff20	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): file-backed table loader	3	0x0040bbb0

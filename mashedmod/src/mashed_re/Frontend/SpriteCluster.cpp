@@ -11,7 +11,7 @@
 //
 // Covers (all C2->C3):
 //   0x004c5c00  (LinkedListStringSearch deleted, dualcopy4: Util/PromoLoop_sessionB.cpp:Search4c5c00 owns this RVA)
-//   0x0040bb50  SpriteLookupC          — forwarder: FUN_004c5c00(DAT_0063b8fc, param_1)
+//   0x0040bb50  SpriteLookupC          -- moved to Match/MatchS02_0040bb50.cpp (PORT-TOP-04G)
 //   0x00430b90  ProgressBarSetA        — per-player progress bar renderer set A (void)
 //   0x00439210  LobbySlotListRender    — network lobby / player-slot list renderer (void)
 //
@@ -51,8 +51,7 @@ using FUN_0042ac50_t = float (__fastcall*)(int);
 static FUN_0042ac50_t const s_FUN_0042ac50 =
     reinterpret_cast<FUN_0042ac50_t>(0x0042ac50u);
 
-// FUN_0040bb50  SpriteLookupC  (this file; forward declaration below)
-//   — called by ProgressBarSetA via original until this reimpl is installed.
+// FUN_0040bb50  SpriteLookupC  (Match/MatchS02_0040bb50.cpp since PORT-TOP-04G)
 
 // FUN_004739f0  TextSpriteScaled (textured-quad draw)  C2   [hooks.csv 2026-07-24]
 using FUN_004739f0_t = void (__cdecl*)(void*, float, float, float, float, std::uint32_t, float, float, float, float, int, int);
@@ -156,38 +155,10 @@ static FUN_00472dc0_t const s_FUN_00472dc0 =
 // Original: FUN_004c5c00 (114 bytes, 0x004c5c00..0x004c5c72), void* __cdecl (int list_head_ptr, const char* key).
 // ref: re/analysis/sprite_gate_c3/0x004c5c00.md
 
-using FUN_004c5c00_t = void* (__cdecl*)(std::int32_t, const char*);
-// 0x004c5c00: in the asi this address holds the live E9 into Search4c5c00.
-static FUN_004c5c00_t const s_FUN_004c5c00 = reinterpret_cast<FUN_004c5c00_t>(0x004c5c00u);
-
 // ============================================================================
-// 0x0040bb50 — SpriteLookupC
+// 0x0040bb50 -- SpriteLookupC: moved to Match/MatchS02_0040bb50.cpp (PORT-TOP-04G), which compiles the byte-matched
+// source re/match/s02/0040bb50.c in both targets (not installed in the .asi, as before).
 // ============================================================================
-//
-// Original: FUN_0040bb50 (20 bytes, 0x0040bb50..0x0040bb64)
-// Signature: void* (const char* param_1)
-//
-// Forwarder: calls FUN_004c5c00(DAT_0063b8fc, param_1).
-// DAT_0063b8fc = sprite linked-list head C (global at 0x0063b8fc).
-// Returns matched node pointer or NULL.
-//
-// Constants (cited at 0x0040bb50..0x0040bb64):
-//   0x0063b8fc: global sprite list head C.
-//
-// Callee 0x004c5c00 is Util/PromoLoop_sessionB.cpp:Search4c5c00 (C3), reached through the original address.
-//
-// ref: re/analysis/hud_frontend/0x0040bb50.md
-
-// 0x0040bb50
-extern "C" __declspec(dllexport) void* __cdecl SpriteLookupC(const char* key) {
-    // 0x0040bb54: read DAT_0063b8fc — sprite table C linked-list head
-    const std::int32_t tableC =
-        *reinterpret_cast<const std::int32_t*>(0x0063b8fcu);
-    // 0x0040bb5a: call FUN_004c5c00(tableC, key)
-    return s_FUN_004c5c00(tableC, key);
-}
-
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(SpriteLookupC, 0x0040bb50);
 
 // ============================================================================
 // 0x00430b90 — ProgressBarSetA: moved to Frontend/ProgressBarSetA.cpp (drawstream 2026-10-12), re-ported

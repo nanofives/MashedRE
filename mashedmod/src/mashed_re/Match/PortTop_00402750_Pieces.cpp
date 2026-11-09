@@ -81,6 +81,7 @@ int  PortTop_HandInit_Movies(void* h);
 void PortTop_HandInit_Audio(void);
 void PortTop_HandInit_Rasters(void);
 void PortTop_HandInit_FrontendAssets(void);
+int  MashedRw_InstallRwGlobals(void);   // LibRw/RwApiBind.cpp
 
 // 1 once a piece failed (only piece 2 can: no System32 dsound.dll). Later pieces then do nothing, and the 0x00402750
 // wrapper returns 0, as HandTop_InitRest returns false.
@@ -112,6 +113,9 @@ int PortTop_Piece_00403640(int cam) {
     if (g_PortTop04E_InitFailed) return 1;
     PortTop_HandInit_Rasters();
     Log04E("0x00403640(%08X) BackBuffRasterOpen: piece 4 HandTop_InitRasters", static_cast<unsigned>(cam));
+    // [PORT-TOP-04G] the hand init just pointed 0x007d3ff8 at the B15 device again: put the RwGlobals record back (its
+    // Im2D fields copied from the device) for the matched loaders after this point (LibRw/RwApiBind.cpp).
+    MashedRw_InstallRwGlobals();
     return 1;
 }
 // rva 0x00428390 FrontendStateSet(3) -> piece 5 (frontend assets, settings, save restore, nav init, fonts)
@@ -210,10 +214,7 @@ SI(004113b0, "0x24a3c block alloc")
 SI(00558240, "RW raster create, no source")
 SI(004841d0, "0x006ce840 table init; 0 skips Rec18Create, DAT_007f0a30 stays 0")
 SI(00484170, "Rec18Create, unreached")
-SI(0040bbb0, "sprite dictionaries")
 SI(004723d0, "0x00691500 table init")
-SI(0040bb50, "sprite lookup SemiC / SemiC2; exe body exists, not run here yet")
-SI(0040bb30, "sprite lookup lensflare-fs8")
 SI(004881d0, "lens flare object create")
 SI(0047ba00, "back buffer raster consumer")
 SI(0045bae0, "powerups family")
