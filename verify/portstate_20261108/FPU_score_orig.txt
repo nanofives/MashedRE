@@ -1,0 +1,48 @@
+== D:/MashedWT/PORT-STATE-03-FPU_data/orig_sse_2.json  pid=17352 asi=D:/MashedWT/PORT-STATE-03-FPU_data/exe_l100_sse/mashed_re_dev.asi
+arm1: 367 entry rows; CW values {'0x7f': 367}; MXCSR {'0x9fa0': 367}; phase {2: 32, 3: 335}
+      dt values (top 6) [('0x3c888888', 367)]
+arm2: 600 calls; CW read before the call {'0x7f': 600}; distinct dt 1
+      orig {'non both': 17520, 'disc =F': 480}  discriminating by (K,speed): {('f8', 1.0): 480}
+arm3: 4 rounds, 48 samples; (cw, cw_after) {('0x7f', '0x7f'): 48}
+      discriminating records by (K,speed): {(-800.0, 1.0): 12, (-2000.0, 1.0): 60, (-800.0, 2.0): 12, (-2000.0, 2.0): 80}
+      o_own  {'disc =F': 164, 'non both': 1276}
+      o_53   {'disc =D': 164, 'non both': 1276}
+      t_own  {'disc =F': 164, 'non both': 1276}
+      t_53   {'disc =F': 164, 'non both': 1276}
+      o_own dt/speed/K ('0x3c6147ae', 1.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3c6147ae', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c6147ae', 2.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3c6d9168', 1.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c6d9168', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c75c28f', 1.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c75c28f', 1.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3c75c28f', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c75c28f', 2.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3ca3d70a', 1.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3ca3d70a', 1.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3ca3d70a', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3ca3d70a', 2.0, -800.0, '=F') 4
+== D:/MashedWT/PORT-STATE-03-FPU_data/orig_x87_2.json  pid=18224 asi=D:/MashedWT/PORT-STATE-03-FPU_data/exe_l100/mashed_re_dev.asi
+arm1: 364 entry rows; CW values {'0x7f': 364}; MXCSR {'0x9fa0': 364}; phase {2: 32, 3: 332}
+      dt values (top 6) [('0x3c888888', 364)]
+arm2: 600 calls; CW read before the call {'0x7f': 600}; distinct dt 1
+      orig {'non both': 17520, 'disc =F': 480}  discriminating by (K,speed): {('f8', 1.0): 480}
+arm3: 4 rounds, 48 samples; (cw, cw_after) {('0x7f', '0x7f'): 48}
+      discriminating records by (K,speed): {(-800.0, 1.0): 12, (-2000.0, 1.0): 60, (-800.0, 2.0): 12, (-2000.0, 2.0): 80}
+      o_own  {'disc =F': 164, 'non both': 1276}
+      o_53   {'disc =D': 164, 'non both': 1276}
+      t_own  {'disc =F': 164, 'non both': 1276}
+      t_53   {'disc =D': 164, 'non both': 1276}
+      o_own dt/speed/K ('0x3c6147ae', 1.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3c6147ae', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c6147ae', 2.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3c6d9168', 1.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c6d9168', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c75c28f', 1.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c75c28f', 1.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3c75c28f', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3c75c28f', 2.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3ca3d70a', 1.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3ca3d70a', 1.0, -800.0, '=F') 4
+      o_own dt/speed/K ('0x3ca3d70a', 2.0, -2000.0, '=F') 20
+      o_own dt/speed/K ('0x3ca3d70a', 2.0, -800.0, '=F') 4
