@@ -496,7 +496,8 @@ STACK['ST5L2NRA'] = STACK['ST5L2'] + ['MASHED_NO_RING_AUDIO_PASS=1']
 STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
 STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
 STACK['PSF'] = ['MASHED_PORTSTATE_FRONTEND']  # PORT-STATE-01: frontend game-mode word at DAT_0067e9fc
-STACK['NOPSS'] = ['MASHED_NO_PORTSTATE_SEED', 'MASHED_VIDEOCFG_WRITE=0']   # PORT-STATE-02 after the L-101 flip: the seed's opt-out. Since the matched videocfg swap the opt-out kills the exe at the first-run load (empty fopen mode, 0xC0000409), so it carries MASHED_VIDEOCFG_WRITE=0
+STACK['NOPSS'] = ['MASHED_NO_PORTSTATE_SEED', 'MASHED_VIDEOCFG_WRITE=0']   # PORT-STATE-02 after the L-101 flip: the seed's opt-out. Since the matched videocfg swap the opt-out kills the exe at the first-run load (empty fopen mode, 0xC0000409), so it carries MASHED_VIDEOCFG_WRITE=0 (PORT-SEED-OPTOUT made the opt-out boot without it; the stack keeps it so its arms stay comparable)
+STACK['NOPSSO'] = ['MASHED_NO_PORTSTATE_SEED']   # PORT-SEED-OPTOUT: the opt-out alone (boots since that step)
 STACK['NPSR'] = ['MASHED_NO_PORTSTATE_RECORDS=1']  # L-88 flip opt-out: the pre-flip default (gates.csv ba407a16)
 # MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)); PSG = all three port-state knobs (the selector
 # 0x0040ce80 needs the seeded course table), PSGO = the GAMEFLOW knob alone; the *A stacks race Arctic (Course_Id 0, row 3)
@@ -530,6 +531,10 @@ STACK['DDK'] = ['MASHED_AISPLINE_DDK=1']
 STACK['AL'] = ['MASHED_AILEAF=1']; STACK['ALDDK'] = ['MASHED_AILEAF=1', 'MASHED_AISPLINE_DDK=1']
 # PORT-SAVE-SPAN-MIRROR (verify/portstate_20261109/PREREG_SAVE_SPAN_MIRROR.md): 0x00404e80 steps 2-3 at the real addresses
 STACK['SSM'] = ['MASHED_SAVE_SPAN_MIRROR=1']
+# PORT-BATCH-TOOL (verify/portbatch_20261109/PREREG_PORT-BATCH-TOOL.md): BATCH = the closed-set switch the bisect driver
+# re/tools/port_batch_bisect.py passes in A4_BATCH_KNOBS (space-separated KEY=VALUE, e.g.
+# 'MASHED_BATCH_HUD=1 MASHED_BATCH_HUD_ROWS=0x0041d870'). Arms H_BATCH, B_BATCH_K0 / K1 / K26.
+STACK['BATCH'] = os.environ.get('A4_BATCH_KNOBS', '').split()
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

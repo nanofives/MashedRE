@@ -15,6 +15,23 @@
 // addresses (function-pointer casts to 0x004c0b30 / 0x00534b60 / 0x004e7e30 / 0x004e8090). None has a callable port
 // body (rva_body_scan's hit for 0x00534b60, Render/RfxEmitter.cpp PTankNormaliseFlags, is a one-argument C++ helper
 // for the flag-normalisation part only, not the 3-argument function), so these forwarders make the same raw calls.
+// [PORT-TOP-04I] exe: the forwarders call the exe bindings (no raw call into the original .text). The matched
+// 0x00402750 reaches this body on the MASHED_ORIG_TOP path:
+//  - 0x004c0b30 RwFrameCreate, 0x00534b60 RpPTankAtomicCreate: LibRw/RwApiBind.cpp (the PTank atomic is the
+//    RW-layout MashedRwPTankAtomic record, lead decision 2026-11-09).
+//  - 0x004e7e30 / 0x004e8090: the matched bodies Match/PortTop_004e7e30.cpp / Match/PortTop_004e8090.cpp.
+#ifdef MASHED_STANDALONE
+extern "C" int MashedRw_FrameCreate_004c0b30(void);
+extern "C" int MashedRw_PTankAtomicCreate_00534b60(int maxPCount, unsigned dataFlags, int platFlags);
+extern "C" int Orig_004e7e30(int p0, int p1);
+extern "C" int* Orig_004e8090(int* p0, int p1);
+extern "C" int MatchS14_004881d0_Call004c0b30(void) { return MashedRw_FrameCreate_004c0b30(); }
+extern "C" int MatchS14_004881d0_Call00534b60(int p0, unsigned int p1, int p2) { return MashedRw_PTankAtomicCreate_00534b60(p0, p1, p2); }
+extern "C" int MatchS14_004881d0_Call004e7e30(int p0, int p1) { return Orig_004e7e30(p0, p1); }
+extern "C" int* MatchS14_004881d0_Call004e8090(int p0, int p1) {
+    return Orig_004e8090(reinterpret_cast<int*>(static_cast<unsigned>(p0)), p1);
+}
+#else
 extern "C" int MatchS14_004881d0_Call004c0b30(void) {
     return reinterpret_cast<int(__cdecl*)(void)>(0x004c0b30u)();
 }
@@ -27,11 +44,16 @@ extern "C" int MatchS14_004881d0_Call004e7e30(int p0, int p1) {
 extern "C" int* MatchS14_004881d0_Call004e8090(int p0, int p1) {
     return reinterpret_cast<int*(__cdecl*)(int, int)>(0x004e8090u)(p0, p1);
 }
+#endif  // MASHED_STANDALONE
 // FUN_004880a0 -> Obj7030acCreate = Match/MatchS14_004880a0.cpp (the old TU called its own Obj7030acCreate).
 // The old body returned the guard / 0x004880a0's EAX; the matched source is void. The only caller, 0x00402918, does not
 // read EAX (next: push 0x5cc3e0; call 0x004963e0).
+#ifndef MASHED_STANDALONE
 #pragma comment(linker, "/EXPORT:Obj7030a8Create=_Obj7030a8Create")
+#endif
 extern "C" {
 #include "../../../../re/match/s14/004881d0.c"
 }
+#ifndef MASHED_STANDALONE
 RH_ScopedInstall(Obj7030a8Create, 0x004881d0);
+#endif

@@ -1,0 +1,4 @@
+group	rows	reached	blockers	head	head_shape	n_def	n_top	lint_clean	seed_clean	rvas
+powerups-001	3	default+top	DUP:1,INDIRECT:1,SEED:1	0x0045c010	rebind	3	3	0	0	0x0045baa0 0x0045bfa0 0x0045c010
+powerups-002	2	default+top	DUP:1,INDIRECT:1,SEED:1	0x0045baa0	inplace	2	2	0	0	0x0045baa0 0x0045bfa0
+powerups-003	1	no	SEED:1	0x0045b9d0	-	0	0	1	0	0x0045b9d0

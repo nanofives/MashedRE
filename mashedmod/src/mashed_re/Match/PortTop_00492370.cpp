@@ -163,6 +163,9 @@ int PortTop_Bound_00402750(void) {
         r = PortTop_HandInitRest(hinst);
         PortTop_Log("0x00402750 AppInitialiseOnBootup: stand-in HandTop_InitRest (MASHED_TOP04E_HANDINIT=1) returned %d", r);
     } else {
+        // [PORT-TOP-04G] the RwGlobals record before the matched loaders: 0x0040bbb0 runs before piece 4 and its
+        // 0x0042a6b0 calls the string functions at +0xcc / +0xd4 (LibRw/RwApiBind.cpp).
+        MashedRw_InstallRwGlobals();
         r = Orig_00402750();
         if (g_PortTop04E_InitFailed) r = 0;
         PortTop_Log("0x00402750 AppInitialiseOnBootup (matched) returned %d", r);

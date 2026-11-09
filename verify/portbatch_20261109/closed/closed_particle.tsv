@@ -1,0 +1,20 @@
+group	rows	reached	blockers	head	head_shape	n_def	n_top	lint_clean	seed_clean	rvas
+particle-001	2	top	CROSS:2	0x0048a830	rebind	0	2	0	1	0x0048a830 0x004b6480
+particle-002	1	top	CROSS:1	0x00489290	rebind	0	1	0	1	0x00489290
+particle-003	1	top	CROSS:1	0x0048a460	rebind	0	1	0	1	0x0048a460
+particle-004	1	top	none	0x0048bc10	rebind	0	1	1	1	0x0048bc10
+particle-005	2	no	CROSS:1	0x00486270	-	0	0	0	1	0x00486270 0x004894f0
+particle-006	2	no	CROSS:2	0x0048ade0	-	0	0	0	1	0x0048ade0 0x004b6480
+particle-007	2	no	CROSS:1	0x0048bb70	-	0	0	0	1	0x0048bb70 0x004b6480
+particle-008	2	no	SEED:1	0x004917a0	-	0	0	1	0	0x00490e70 0x004917a0
+particle-009	1	no	CROSS:1,SEED:1	0x00449880	-	0	0	0	0	0x00449880
+particle-010	1	no	CROSS:1	0x00486f90	-	0	0	0	1	0x00486f90
+particle-011	1	no	none	0x00487d00	-	0	0	1	1	0x00487d00
+particle-012	1	no	CROSS:1	0x00487df0	-	0	0	0	1	0x00487df0
+particle-013	1	no	CROSS:1	0x004899c0	-	0	0	0	1	0x004899c0
+particle-014	1	no	none	0x00489ce0	-	0	0	1	1	0x00489ce0
+particle-015	1	no	CROSS:1	0x00489da0	-	0	0	0	1	0x00489da0
+particle-016	1	no	INDIRECT:1	0x0048a430	-	0	0	1	1	0x0048a430
+particle-017	1	no	none	0x0048b650	-	0	0	1	1	0x0048b650
+particle-018	1	no	none	0x0048d0f0	-	0	0	1	1	0x0048d0f0
+particle-019	1	no	CROSS:1	0x0048f590	-	0	0	0	1	0x0048f590

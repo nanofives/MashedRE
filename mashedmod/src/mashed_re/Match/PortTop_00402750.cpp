@@ -24,6 +24,9 @@
 #define FUN_004274e0 LocalizationFileLoad                    // matched, Match/MatchS06_004274e0.cpp (english.dat -> DAT_0066d828), exe list since PORT-TOP-04F
 #define FUN_004b3d80 Orig_004b3d80                           // matched, Match/PortTop_004b3d80.cpp (pc.txd -> DAT_00636ac8)
 #define FUN_00425bc0 Orig_00425bc0                           // matched, Match/PortTop_00425bc0.cpp (Copters.txd -> DAT_00644150)
+#define FUN_0040bb50 SpriteLookupC                          // matched, Match/MatchS02_0040bb50.cpp (BADGES dict DAT_0063b8fc), both targets since PORT-TOP-04G
+#define FUN_0040bbb0 Orig_0040bbb0                          // matched, Match/PortTop_0040bbb0.cpp (sfx.piz dictionaries), since PORT-TOP-04G
+#define FUN_0040bb30 Search40bb30                           // matched, Match/MatchS02_0040bb30.cpp (FX dict DAT_0063b8f8), both targets since PORT-TOP-04G
 // hand pieces
 #define FUN_00496e40 PortTop_Piece_00496e40                  // piece 1: data wedge, boot chain, DirectInput
 #define FUN_00495350 PortTop_Piece_00495350                  // piece 2: dsound.dll guard, boot movies
@@ -46,11 +49,8 @@
 #define FUN_00558240 PortTop_StandIn04E_00558240
 #define FUN_004841d0 PortTop_StandIn04E_004841d0
 #define FUN_00484170 PortTop_StandIn04E_00484170
-#define FUN_0040bbb0 PortTop_StandIn04E_0040bbb0
 #define FUN_004723d0 PortTop_StandIn04E_004723d0
-#define FUN_0040bb50 PortTop_StandIn04E_0040bb50
-#define FUN_0040bb30 PortTop_StandIn04E_0040bb30
-#define FUN_004881d0 PortTop_StandIn04E_004881d0
+#define FUN_004881d0 Obj7030a8Create                        // matched, Match/MatchS14_004881d0.cpp (both targets; PTank record), since PORT-TOP-04I
 #define FUN_0047ba00 PortTop_StandIn04E_0047ba00
 #define FUN_0045bae0 PortTop_StandIn04E_0045bae0
 #define FUN_00418980 PortTop_StandIn04E_00418980
@@ -68,7 +68,7 @@
 #define FUN_00412890 PortTop_StandIn04E_00412890
 #define FUN_00471eb0 PortTop_StandIn04E_00471eb0
 #define FUN_00404830 PortTop_StandIn04E_00404830
-#define FUN_004025f0 PortTop_StandIn04E_004025f0
+#define FUN_004025f0 Orig_004025f0                          // matched, Match/PortTop_004025f0.cpp (perm clumps), since PORT-TOP-04H
 #define FUN_00402f50 PortTop_StandIn04E_00402f50
 #define FUN_004026d0 PortTop_StandIn04E_004026d0
 extern "C" {

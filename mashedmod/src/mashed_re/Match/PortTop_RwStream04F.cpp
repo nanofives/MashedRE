@@ -91,6 +91,28 @@ void* PortTop_Fs_ReadAll(const char* name, unsigned* len, const char** from) {
     return d;
 }
 
+// [PORT-TOP-04G] rva 0x004b5350 (re/match/s18/004b5350.c: return FUN_00550b00(name)). 0x00550b00 (re/match/s24/
+// 00550b00.c) picks the RtFS file system that owns the name (a "<fs>:" prefix, else the default one at DAT_007dc76c) and
+// returns its +0x4c file-exists result, 0 when there is none. The exe has no RtFSManager (PORT-TOP-03), so the binding
+// answers for the two places the stream binding above opens from: 1 when the name is in a mounted piz (PortTop_PizFs_Find)
+// or is a file on the disk under "original/", else 0. The matched 0x0042a470 (path search of 0x0042a6b0) calls it.
+int PortTop_FsFileExists_004b5350(const char* name) {
+    if (!name) return 0;
+    unsigned n = 0;
+    if (PortTop_PizFs_Find(name, &n)) return 1;
+    char path[400];
+    const char* p = name;
+    if (p[0] && p[1] == ':') p += 2;
+    while (*p == '\\' || *p == '/') ++p;
+    std::snprintf(path, sizeof(path), "original/%s", p);
+    for (char* c = path; *c; ++c) if (*c == '\\') *c = '/';
+    if (std::FILE* f = std::fopen(path, "rb")) {
+        std::fclose(f);
+        return 1;
+    }
+    return 0;
+}
+
 // RwStreamOpen binding (rva 0x004cc230). type 2 (file system) and type 3 (memory, data = {start, length}) for reading.
 void* PortTop_RwStreamOpen_004cc230(int type, int access, const void* data) {
     if (access != 1 || !data || (type != 2 && type != 3)) {
