@@ -44,7 +44,10 @@ FIXED = {  # rva -> (name or None, kind, symbol, note, level, caller)
     0x00402590: (None, 'stand-in', 'PortTop_StandIn04H_00402590', T + 'Match/PortTop_004025f0.cpp: returns 0 (0x004022a0, '
                  'same tree as 0x00402240)', 3, 0x004025f0),
 }
-FIXED_LATER = {}
+FIXED_LATER = {
+    0x0048bc10: (None, 'matched', 'Orig_0048bc10', T + 'Match/PortTop_0048bc10.cpp = re/match/s14/0048bc10.c (BYTE-IDENTICAL '
+                 '13 B): RwTextureDestroy(DAT_00722134), the sun texture 0x0048bbe0 reads; freed at exit', 3, 0x0040bd00),
+}
 FIXED.update(FIXED_LATER)
 
 

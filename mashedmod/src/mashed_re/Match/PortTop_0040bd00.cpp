@@ -7,7 +7,7 @@
 
 #define MATCH_PORT 1
 #define FUN_0040bd00 Orig_0040bd00
-#define FUN_0048bc10 PortTop_StandIn04C_0048bc10   // stand-in: matched, not compiled (level 2)
+#define FUN_0048bc10 Orig_0048bc10   // matched, Match/PortTop_0048bc10.cpp (sun texture release), since PORT-TOP-04H
 #define FUN_0048ffd0 PortTop_StandIn04C_0048ffd0   // stand-in: matched, not compiled (level 2)
 #define FUN_00477870 PortTop_StandIn04C_00477870   // stand-in: matched in group s12/00477580.c, not compiled (level 2)
 #define FUN_00475ea0 PortTop_StandIn04C_00475ea0   // stand-in: matched, not compiled (level 2)

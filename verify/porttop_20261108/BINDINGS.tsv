@@ -344,7 +344,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00486350	FUN_00486350	stand-in	PortTop_StandIn04C_00486350	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x00487140	FUN_00487140	stand-in	PortTop_StandIn04C_00487140	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; .asi-only Match/MatchS14_00487140.cpp, raw-address callees	3	0x0040bd00
 0x0048af70	FUN_0048af70	stand-in	PortTop_StandIn04C_0048af70	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
-0x0048bc10	FUN_0048bc10	stand-in	PortTop_StandIn04C_0048bc10	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
+0x0048bc10	FUN_0048bc10	matched	Orig_0048bc10	PORT-TOP-04H: Match/PortTop_0048bc10.cpp = re/match/s14/0048bc10.c (BYTE-IDENTICAL 13 B): RwTextureDestroy(DAT_00722134), the sun texture 0x0048bbe0 reads; freed at exit	3	0x0040bd00
 0x0048cf70	FUN_0048cf70	stand-in	PortTop_StandIn04C_0048cf70	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x0048fdd0	FUN_0048fdd0	stand-in	PortTop_StandIn04C_0048fdd0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x0048ffd0	FUN_0048ffd0	stand-in	PortTop_StandIn04C_0048ffd0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
