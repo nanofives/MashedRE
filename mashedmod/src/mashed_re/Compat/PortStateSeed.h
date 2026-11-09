@@ -13,6 +13,8 @@ namespace mashed_re {
 namespace Compat {
 
 // Default ON since L-101; MASHED_NO_PORTSTATE_SEED=1 (read once) opts out: no write, no log.
+// The opt-out boots on its own since PORT-SEED-OPTOUT: Save/SettingsConfig.cpp binds the matched videocfg bodies to
+// private copies of their five strings when this is false (before, it exited 0xC0000409 without MASHED_VIDEOCFG_WRITE=0).
 bool PortStateSeed_On();
 
 // WinMain entry, before any game code: copies the generated table (Compat/PortStateSeed.inc) into the pad at
