@@ -50,7 +50,7 @@
 #define FUN_004841d0 PortTop_StandIn04E_004841d0
 #define FUN_00484170 PortTop_StandIn04E_00484170
 #define FUN_004723d0 PortTop_StandIn04E_004723d0
-#define FUN_004881d0 PortTop_StandIn04E_004881d0
+#define FUN_004881d0 Obj7030a8Create                        // matched, Match/MatchS14_004881d0.cpp (both targets; PTank record), since PORT-TOP-04I
 #define FUN_0047ba00 PortTop_StandIn04E_0047ba00
 #define FUN_0045bae0 PortTop_StandIn04E_0045bae0
 #define FUN_00418980 PortTop_StandIn04E_00418980
@@ -68,7 +68,7 @@
 #define FUN_00412890 PortTop_StandIn04E_00412890
 #define FUN_00471eb0 PortTop_StandIn04E_00471eb0
 #define FUN_00404830 PortTop_StandIn04E_00404830
-#define FUN_004025f0 PortTop_StandIn04E_004025f0
+#define FUN_004025f0 Orig_004025f0                          // matched, Match/PortTop_004025f0.cpp (perm clumps), since PORT-TOP-04H
 #define FUN_00402f50 PortTop_StandIn04E_00402f50
 #define FUN_004026d0 PortTop_StandIn04E_004026d0
 extern "C" {

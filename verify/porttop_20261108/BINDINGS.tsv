@@ -52,7 +52,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004921d0	DisplayInit	matched	DisplayInit	PORT-TOP-04B: Match/MatchS15_004921d0.cpp (re/match/s15/004921d0.c 100%); its MASHED_STANDALONE branch binds every callee by name	2	0x00492270
 0x00493710	FUN_00493710	matched	Orig_00493710 (via PortTop_Bound_00493710)	Match/PortTop_00493710.cpp compiles re/match/s15/00493710.c (h8 best 94.2%, the only source). RW engine bring-up. PORT-TOP-03	2	0x00492270
 0x004a4254	FUN_004a4254	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x004963e0
-0x004025f0	FUN_004025f0	stand-in	PortTop_StandIn04E_004025f0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x004025f0	FUN_004025f0	matched	Orig_004025f0	PORT-TOP-04H: Match/PortTop_004025f0.cpp = re/match/s01/00401690.c (0x004025f0 BYTE-IDENTICAL 211 B, relocheck OK 6/6); 13 perm slots at 0x00636578: clump from "map_%d.dff", bounding box, slots +0x40 / +0x50 from the two stand-ins below	2	0x00402750
 0x004026d0	FUN_004026d0	stand-in	PortTop_StandIn04E_004026d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00402f50	FUN_00402f50	stand-in	PortTop_StandIn04E_00402f50	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00403640	FUN_00403640	stand-in	PortTop_Piece_00403640	PORT-TOP-04E: hand piece (HandTop_InitRest split at this call point). piece 4: texture upload, B15 bridge, B16 thunks	2	0x00402750
@@ -90,7 +90,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0047ba00	FUN_0047ba00	stand-in	PortTop_StandIn04E_0047ba00	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00484170	Rec18Create	stand-in	PortTop_StandIn04E_00484170	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x004841d0	FUN_004841d0	stand-in	PortTop_StandIn04E_004841d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x004881d0	Obj7030a8Create	stand-in	PortTop_StandIn04E_004881d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x004881d0	Obj7030a8Create	matched	Obj7030a8Create	PORT-TOP-04I: Match/MatchS14_004881d0.cpp (both targets; exe forwarders call the bindings) = re/match/s14/004881d0.c (100%): PTank atomic DAT_007030a8 with the "lensflare-fs8" texture	2	0x00402750
 0x00494c80	FUN_00494c80	stand-in	PortTop_StandIn04E_00494c80	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00495280	FUN_00495280	bound	PortTop_PizFs_Mount_00495280	PORT-TOP-04E: piz file system on the exe piz reader (Match/PortTop_00402750_Pieces.cpp)	2	0x00402750
 0x004952f0	FUN_004952f0	bound	PortTop_PizFs_Unmount_004952f0	PORT-TOP-04E: piz file system on the exe piz reader (Match/PortTop_00402750_Pieces.cpp)	2	0x00402750
@@ -136,7 +136,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00467070	FUN_00467070	matched	Orig_00467070	PORT-TOP-04C: Match/PortTop_00467070.cpp (re/match/s10/00467070.c): camera DAT_006905b4: frame unset, RwFrameDestroy(DAT_006905b8), RwCameraDestroy	2	0x00402a40
 0x0047ba10	thunk_FUN_00496970	matched	Orig_0047ba10	PORT-TOP-04C: Match/PortTop_0047ba10.cpp (re/match/s13/0047ba10.c): thunk: jmp 0x00496970	2	0x00402a40
 0x00484130	FUN_00484130	matched	Orig_00484130	PORT-TOP-04C: Match/PortTop_00484130.cpp (re/match/s14/00484130.c): when param_1 is nonzero: RwGlobals +0x10c on param_1 +0x10 (when nonzero) and on param_1	2	0x00402a40
-0x00489250	FUN_00489250	stand-in	PortTop_StandIn04C_00489250	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; reads DAT_007030a8 +4 / DAT_007030ac +4 with no null check (state of 0x00402750)	2	0x00402a40
+0x00489250	FUN_00489250	matched	Orig_00489250	PORT-TOP-04I: Match/PortTop_00489250.cpp = re/match/s14/00489250.c (BYTE-IDENTICAL 56 B): RwFrameDestroy + RpAtomicDestroy for both PTank atomics	2	0x00402a40
 0x00494bc0	FUN_00494bc0	matched	Orig_00494bc0	PORT-TOP-04C: Match/PortTop_00494bc0.cpp (re/match/s16/00494bc0.c): vtable +0x24 on DAT_00771a48, then Release (vtable +8) on 6 pointers at 0x00771a38..0x00771a4c, each when nonzero	2	0x00402a40
 0x00494ef0	ThunkVideoStateGet	port	ThunkVideoStateGet	PORT-TOP-04C: Boot/Teardown.cpp: the thunk 0x00494ef0 AppDestroy calls (thunk_FUN_00493f70), reads DAT_00771a04	2	0x00402a40
 0x00494f20	thunk_FUN_00494460	matched	Orig_00494f20	PORT-TOP-04C: Match/PortTop_00494f20.cpp (re/match/s16/00494f20.c): thunk: jmp 0x00494460	2	0x00402a40
@@ -229,15 +229,15 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004c0b30	RwFrameCreate	bound	MashedRw_FrameCreate_004c0b30	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Frame::create	5	0x004670a0
 0x004c1040	FUN_004c1040	rw		RW core called by level-2 node 0x0041def0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041def0
 0x004e69a0	FUN_004e69a0	rw		RW core called by level-2 node 0x0041def0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041def0
-0x004e7e30	FUN_004e7e30	rw		RW core called by level-2 node 0x0041def0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041def0
+0x004e7e30	RpAtomicSetFrame	matched	Orig_004e7e30	PORT-TOP-04I: Match/PortTop_004e7e30.cpp = re/match/rwl02/004e7e30.c: 0x004c0740, then privateFlags |= 1	4	0x004881d0
 0x004cbd30	RwStreamRead	bound	PortTop_RwStreamRead_004cbd30	PORT-TOP-04F: Match/PortTop_RwStream04F.cpp -> exe body mashed_re::Render::RwStreamCoreRead (Render/RwStreamCore.cpp)	3	0x004274e0
 0x00552920	FUN_00552920	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
 0x00553cf0	FUN_00553cf0	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
 0x00553e80	FUN_00553e80	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
 0x00553ef0	FUN_00553ef0	rw		RW core called by level-2 node 0x004275d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004275d0
 0x00556d70	FUN_00556d70	rw		RW core called by level-2 node 0x00427ca0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00427ca0
-0x004e8090	FUN_004e8090	rw		RW core called by level-2 node 0x004881d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004881d0
-0x00534b60	FUN_00534b60	rw		RW core called by level-2 node 0x004881d0. exe port=called mashedmod/src/mashed_re/Render/RfxEmitter.cpp | PORT-TOP-03: not on the knob path (caller 0x004881d0 under a stand-in). exe port=called Render/RfxEmitter.cpp	3	0x004881d0
+0x004e8090	RpMaterialSetTexture	matched	Orig_004e8090	PORT-TOP-04I: Match/PortTop_004e8090.cpp = re/match/rwl02/004e8090.c: texture +0x54 count raised (librw refCount is at +0x54 too), old texture destroyed, new one at +0x00	4	0x004881d0
+0x00534b60	RpPTankAtomicCreate	shim	MashedRw_PTankAtomicCreate_00534b60	PORT-TOP-04I: LibRw/RwApiBind.cpp: an RW-layout PTank atomic record (lead decision 2026-11-09): +0x04 frame, +0x18 geometry (+0x20 material list, +0x5c morph target), PTank block at +0x70; block +0x00 / +0x04 / +0x40 as FUN_00534d00 stores them, the rest 0	3	0x004881d0
 0x004eb3c0	FUN_004eb3c0	rw		RW core called by level-2 node 0x00496e40. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00496e40
 0x004eb9d0	FUN_004eb9d0	rw		RW core called by level-2 node 0x00496e40. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00496e40
 0x0054f8d0	FUN_0054f8d0	shim	MashedRw_TexDictStreamRead_0054f8d0	PORT-TOP-04F: LibRw/RwApiBind.cpp: chunk-0x23 dictionary decoded by Txd/TxdDecoder.h from the memory stream, built on librw (rw::TexDictionary + RwRasterBridge textures)	3	0x004b3d80
@@ -257,7 +257,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004e4d90	FUN_004e4d90	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
 0x004e5700	RpWorldDestroy	bound	MashedRw_WorldDestroy_004e5700	PORT-TOP-04E: LibRw/RwApiBind.cpp: rw::World::destroy (null skipped)	3	0x0042c2a0
 0x004e6e00	RpClumpDestroy	bound	MashedRw_ClumpDestroy_004e6e00	PORT-TOP-04C: LibRw/RwApiBind.cpp: RpClumpDestroy -> rw::Clump::destroy (new in PORT-TOP-04C)	3	0x0041c2c0
-0x004e6920	FUN_004e6920	rw		RW core called by level-2 node 0x0041e0d0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x0041e0d0
+0x004e6920	RpAtomicDestroy	shim	MashedRw_AtomicDestroy_004e6920	PORT-TOP-04I: LibRw/RwApiBind.cpp: a PTank record releases its material texture (RwTextureDestroy) and is freed; a librw atomic goes to rw::Atomic::destroy	3	0x00489250
 0x004e4320	RwPluginLinkSet	rw		RW core called by level-2 node 0x00426670. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00426670
 0x004c3040	FUN_004c3040	bound	MashedRw_EngineClose_004c3040	LibRw/RwApiBind.cpp: RwEngineClose -> rw::Engine::close	3	0x00493710
 0x004c3270	FUN_004c3270	bound	MashedRw_EngineTerm_004c3270	LibRw/RwApiBind.cpp: RwEngineTerm -> rw::Engine::term	3	0x00493710
@@ -268,7 +268,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00495780	HardwareInstallFileSystem	missing	PortTop_Missing_00495780	Match/PortTop_00493710.cpp: no-op (0x004955d0 unported; no RtFSManager in librw)	3	0x00493710
 0x00495270	HWNDGet	matched	HWNDGet	Match/MatchS16_00495270.cpp, now also in the exe list	3	0x00493710
 0x00499710	Global7e9584Get	matched	Global7e9584Get	Match/MatchS16_00499710.cpp, now also in the exe list	4	0x00495270
-0x00493640	RenderwareAttachPlugins	stand-in	MashedRw_AttachPlugins_00493640	LibRw/RwApiBind.cpp: librw plugin registration (RwBridge.cpp RegisterPlugins), between Engine::init and open as RW 3.x requires	3	0x00493710
+0x00493640	RenderwareAttachPlugins	shim	MashedRw_AttachPlugins_00493640	PORT-TOP-04I: LibRw/RwApiBind.cpp (TOP-03): now also stores 0x70, the PTank record's plugin slot, at 0x007dc57c (RpPTankPluginAttach's offset)	2	0x00493710
 0x004951f0	HardwareSetVideoMode	stand-in	PortTop_StandIn_004951f0	Match/PortTop_00493710.cpp: returns 1; the exe InitD3D9 picks the windowed mode inside the RwEngineStart binding	3	0x00493710
 0x00493600	FUN_00493600	missing	PortTop_Missing_00493600	Match/PortTop_00493710.cpp: returns 1 (0x004ce790 and its 4 function arguments unported)	3	0x00493710
 0x004a2cbd	printf	crt	PortTop_Crt_004a2cbd	Match/PortTop_00493710.cpp: CRT printf; the formatted line goes to mashed_re.log	3	0x00493710
@@ -313,7 +313,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004b3eb0	FUN_004b3eb0	port	PortTop_Port_004b3eb0	PORT-TOP-04B: LibRw/RwApiBind.cpp: port body from the decomp (no matched source): RW memory stream + chunk 0x23 + 0x0054f8d0 replaced by Txd/TxdDecoder (written from 0x0054f8d0) and rw::TexDictionary / rw::Texture	3	0x004921d0
 0x004c5c00	RwTexDictionaryFindNamedTexture	rw	MashedRw_TexDictionaryFindNamedTexture_004c5c00	PORT-TOP-04G: LibRw/RwApiBind.cpp -> rw::TexDictionary::find (exe side of the two lookups)	3	0x0040bb50
 0x004c1d30	RwCameraCreate	bound	MashedRw_CameraCreate_004c1d30	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::create behind an RW 3.x-layout camera record (the matched callers use +0x04 / +0x18 / +0x1c / +0x60 / +0x64 directly)	5	0x004670a0
-0x004c0740	_rwObjectHasFrameSetFrame	bound	MashedRw_ObjectHasFrameSetFrame_004c0740	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setFrame (every knob-path caller passes a camera record)	5	0x004670a0
+0x004c0740	_rwObjectHasFrameSetFrame	rw	MashedRw_ObjectHasFrameSetFrame_004c0740	PORT-TOP-04I: LibRw/RwApiBind.cpp: camera records (04B) and now PTank records (frame stored at +0x04, rw::Frame::updateObjects)	5	0x004e7e30
 0x004c1a40	RwCameraSetNearClipPlane	bound	MashedRw_CameraSetNearClipPlane_004c1a40	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setNearPlane	4	0x00467110
 0x004c1b10	RwCameraSetFarClipPlane	bound	MashedRw_CameraSetFarClipPlane_004c1b10	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setFarPlane	4	0x00467110
 0x004c2bf0	RwCameraClone	bound	MashedRw_CameraClone_004c2bf0	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::clone (DAT_006905b4)	4	0x00467110
@@ -344,7 +344,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00486350	FUN_00486350	stand-in	PortTop_StandIn04C_00486350	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x00487140	FUN_00487140	stand-in	PortTop_StandIn04C_00487140	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; .asi-only Match/MatchS14_00487140.cpp, raw-address callees	3	0x0040bd00
 0x0048af70	FUN_0048af70	stand-in	PortTop_StandIn04C_0048af70	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
-0x0048bc10	FUN_0048bc10	stand-in	PortTop_StandIn04C_0048bc10	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
+0x0048bc10	FUN_0048bc10	matched	Orig_0048bc10	PORT-TOP-04H: Match/PortTop_0048bc10.cpp = re/match/s14/0048bc10.c (BYTE-IDENTICAL 13 B): RwTextureDestroy(DAT_00722134), the sun texture 0x0048bbe0 reads; freed at exit	3	0x0040bd00
 0x0048cf70	FUN_0048cf70	stand-in	PortTop_StandIn04C_0048cf70	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x0048fdd0	FUN_0048fdd0	stand-in	PortTop_StandIn04C_0048fdd0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x0048ffd0	FUN_0048ffd0	stand-in	PortTop_StandIn04C_0048ffd0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
@@ -403,3 +403,15 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0048e820	FUN_0048e820	stand-in	PortTop_StandIn04G_0048e820	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): no matched source (C2)	3	0x0040bbb0
 0x0048eac0	FUN_0048eac0	stand-in	PortTop_StandIn04G_0048eac0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
 0x0048ff20	FUN_0048ff20	stand-in	PortTop_StandIn04G_0048ff20	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): file-backed table loader	3	0x0040bbb0
+0x00401630	FUN_00401630	matched	Orig_00401630	PORT-TOP-04H: Match/PortTop_00401630.cpp = re/match/s01/raw/00401630.c (BYTE-IDENTICAL 87 B, relocheck OK; the source now returns 0x004b3bf0's result, same bytes)	3	0x004025f0
+0x00401690	FUN_00401690	port	FUN_00401690 (static)	PORT-TOP-04H: the static of re/match/s01/00401690.c in Match/PortTop_004025f0.cpp: the C2 reconstruction (match.py 60.2%, residual = the vertex-loop unroll factor x8 vs x4), not a matched body	3	0x004025f0
+0x004b3bf0	FUN_004b3bf0	matched	Orig_004b3bf0	PORT-TOP-04H: Match/PortTop_004b3bf0.cpp = re/match/s18/004b3bf0.c (BYTE-IDENTICAL 98 B): stream open, find chunk 0x10, RpClumpStreamRead, RwFrameUpdateObjects, close	4	0x00401630
+0x004a2b60	sprintf	crt	PortTop_Sprintf04H_004a2b60	PORT-TOP-04H: Match/PortTop_00401630.cpp -> CRT vsprintf	4	0x00401630
+0x004e7420	RpClumpStreamRead	rw	MashedRw_ClumpStreamRead_004e7420	PORT-TOP-04H: LibRw/RwApiBind.cpp -> rw::Clump::streamRead on the knob path's memory stream (base + position), position moved by what librw read	5	0x004b3bf0
+0x004c0e50	RwFrameUpdateObjects	rw	MashedRw_FrameUpdateObjects_004c0e50	PORT-TOP-04H: LibRw/RwApiBind.cpp -> rw::Frame::updateObjects (same root test, dirty list and flag bits; the matched body reads RwGlobals +0xbc)	5	0x004b3bf0
+0x004e66d0	RpClumpForAllAtomics	rw	MashedRw_ClumpForAllAtomics_004e66d0	PORT-TOP-04H: LibRw/RwApiBind.cpp: librw atomic list in RW order (backwards: RW links read atomics at the head), stops at the first 0; callbacks get the librw atomic. No knob-path caller yet	5	0x004b3f90
+0x004b3f90	FUN_004b3f90	shim	MashedRw_ClumpFirstAtomic_004b3f90	PORT-TOP-04H: LibRw/RwApiBind.cpp: the first atomic in RW order (0x004b3f90 = RpClumpForAllAtomics with 0x004b4070, store and stop) as an RW-layout view (+0x04 frame, +0x18 geometry -> +0x14 numVertices, +0x5c morph target): librw Atomic / Geometry put those at +0x14 / +0x48	4	0x00401690
+0x004c3ac0	Vec3Magnitude	port	Vec3Magnitude	PORT-TOP-04H: exe body Math/Vec3.cpp (Math::LutLength, the RW sqrt LUT)	4	0x00401690
+0x00402240	FUN_00402240	stand-in	PortTop_StandIn04H_00402240	PORT-TOP-04H: Match/PortTop_004025f0.cpp: returns 0 (0x00401fe0 RW-layout geometry writes, RpGeometryCreate 0x004e8c70 / RpMaterialCreate 0x004e7fa0 tree unbound, 0x004c1040 no source)	3	0x004025f0
+0x00402590	FUN_00402590	stand-in	PortTop_StandIn04H_00402590	PORT-TOP-04H: Match/PortTop_004025f0.cpp: returns 0 (0x004022a0, same tree as 0x00402240)	3	0x004025f0
+0x004880a0	FUN_004880a0	matched	Obj7030acCreate	PORT-TOP-04I: Match/MatchS14_004880a0.cpp (both targets) = re/match/s14/004880a0.c (100%): PTank atomic DAT_007030ac	3	0x004881d0

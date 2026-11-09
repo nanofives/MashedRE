@@ -33,7 +33,21 @@ typedef struct MorphT { int pad[5]; V3 *verts; } MorphT;
 typedef struct Geom { int pad[5]; int numVerts; int pad2[0x11]; MorphT *morph; } Geom;
 typedef struct Atomic { int pad[6]; Geom *geom; } Atomic;
 
-extern Slot DAT_00636578[13];
+/* ---- MATCH-S02 preamble (MGLOBAL part; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
+MGLOBALA(Slot, DAT_00636578, 13, 0x00636578);
 Atomic *FUN_004b3f90(int clump);
 float FUN_004c3ac0(V3 *v);
 int FUN_00401630(int id);

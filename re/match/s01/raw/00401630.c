@@ -1,19 +1,24 @@
 // FLAGS: /O2 /GS /Ob1
 // TOOLCHAIN ddk
+#ifndef __cplusplus
+typedef unsigned char bool; typedef unsigned short wchar_t;
+#endif
 typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
 typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
 typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
 typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
 typedef unsigned short word; typedef unsigned int dword; typedef long double float10; typedef int code();
-typedef unsigned char bool; typedef unsigned int WPARAM; typedef long LPARAM; typedef long LRESULT; typedef void *HWND;
+typedef unsigned int WPARAM; typedef long LPARAM; typedef long LRESULT; typedef void *HWND;
 typedef void *HINSTANCE; typedef void *HMODULE; typedef void *HANDLE; typedef int BOOL; typedef unsigned int UINT;
 typedef unsigned long DWORD; typedef char *LPSTR; typedef const char *LPCSTR; typedef void *LPVOID; typedef unsigned short WORD;
 typedef unsigned char BYTE; typedef long LONG; typedef void *HDC; typedef void *HMENU; typedef void *HICON;
-typedef unsigned short wchar_t; typedef wchar_t *LPWSTR; typedef const wchar_t *LPCWSTR; typedef int INT_PTR;
+typedef wchar_t *LPWSTR; typedef const wchar_t *LPCWSTR; typedef int INT_PTR;
 typedef unsigned int UINT_PTR; typedef long LONG_PTR; typedef unsigned long ULONG_PTR; typedef long HRESULT;
 typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned int size_t;
+#ifndef __cplusplus
 #define true 1
 #define false 0
+#endif
 #define CONCAT11(a,b) ((ushort)(((uint)(uchar)(a)<<8)|(uchar)(b)))
 #define CONCAT12(a,b) ((uint)(((uint)(uchar)(a)<<16)|(ushort)(b)))
 #define CONCAT13(a,b) ((uint)(((uint)(uchar)(a)<<24)|((uint)(b)&0xffffff)))
@@ -32,23 +37,18 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
 
-extern uint DAT_00616038;
-undefined4 FUN_004a2b60(char * p0, undefined4 p1);
+int FUN_004a2b60(char * p0, const char * p1, ...);
 int FUN_004b3bf0(undefined4 p0, undefined4 p1, undefined4 p2);
 // MATCH: 0x00401630 FUN_00401630
 /* [C2 2026-06-02] `LoadMapModel(idx)` — formats a model filename `"map_%d.dff"` from the integer
    index `param_1` into a 256-byte stack… */
 
-void FUN_00401630(undefined4 param_1)
-
-{
-  uint unaff_retaddr;
-  undefined1 local_104 [256];
-  uint local_4;
-  
-  local_4 = DAT_00616038 ^ unaff_retaddr;
-  FUN_004a2b60(local_104,"map_%d.dff",param_1);
-  FUN_004b3bf0(local_104,0,0);
-  return;
+int FUN_00401630(undefined4 param_1)
+
+{
+  char local_104 [256];
+  
+  FUN_004a2b60(local_104,"map_%d.dff",param_1);
+  return FUN_004b3bf0((undefined4)local_104,0,0);
 }
 

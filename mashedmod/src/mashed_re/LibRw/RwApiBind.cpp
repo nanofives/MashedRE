@@ -34,6 +34,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <vector>
 
 // [PORT-TOP-04F] whole-file read from the piz mount stack, else the disk (Match/PortTop_RwStream04F.cpp).
 extern "C" void* PortTop_Fs_ReadAll(const char* name, unsigned* len, const char** from);
@@ -91,7 +92,13 @@ int MashedRw_EngineInit_004c32b0(int memFuncs, int arenaSize) {
 // original on success.
 int MashedRw_AttachPlugins_00493640(void) {
     mashed_re::LibRw::EnginePhasePlugins();
-    BindLog("0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in)");
+    // [PORT-TOP-04I] RpPTankPluginAttach is one of 0x00493640's calls. Its registration FUN_00534a80 stores the PTank
+    // plugin offset at 0x007dc57c (0x00534ac4), which the matched 0x004881d0 / 0x004880a0 read (OBJ(h) =
+    // *(atomic + [0x007dc57c])). The PTank atomics on this path are the exe's RW-layout records (MashedRwPTankAtomic
+    // below), so the shim stores that record's plugin slot offset, 0x70. The exe's RfxEmitter stand-in atomic accepts any
+    // aligned offset below 0x7c other than 0x18 (Render/RfxEmitter.cpp Create), and 0x70 is one.
+    *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007dc57cu)) = 0x70u;
+    BindLog("0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in); [0x007dc57c] = 0x70 (PTank record)");
     return 1;
 }
 
@@ -304,6 +311,7 @@ void MashedRw_Free7dc8b8_00558470(void) {}
 // librw. Frames and rasters are librw objects as they are: the game code only stores and passes them.
 // ===============================================================================================================
 namespace {
+bool PTankRecordSetFrame(int object, int frame);   // [PORT-TOP-04I] defined with MashedRwPTankAtomic below
 
 struct MashedRwCamera {                 // RW 3.x RwCamera, offsets as written by 0x004c1d30 (re/match/rwl01/004c1d30.c)
     std::uint8_t type;                  // +0x00  4 (rwCAMERA)
@@ -535,8 +543,9 @@ int MashedRw_ClumpDestroy_004e6e00(int clump) {
 // (rva 0x004c0e50). In the knob path every caller passes a camera (0x00467110, 0x004670a0, 0x0042d420, 0x004c2bf0), so
 // this binding takes the camera record: librw rw::Camera::setFrame (librw keeps the link in its own camera).
 void MashedRw_ObjectHasFrameSetFrame_004c0740(int object, int frame) {
+    if (PTankRecordSetFrame(object, frame)) return;   // [PORT-TOP-04I] a PTank atomic record (0x004e7e30's callers)
     MashedRwCamera* const c = AsCamera(FromInt<void>(object));
-    if (!c) { BindLog("0x004c0740: object %08X is not a camera record, ignored", static_cast<unsigned>(object)); return; }
+    if (!c) { BindLog("0x004c0740: object %08X is neither a camera nor a PTank record, ignored", static_cast<unsigned>(object)); return; }
     c->parent = FromInt<void>(frame);
     c->lib->setFrame(FromInt<rw::Frame>(frame));
 }
@@ -714,6 +723,265 @@ int MashedRw_TextureRead_004c5cb0(const char* name, const char* mask) {
     }
     BindLog("RwTextureRead(\"%s\"): not in the current dictionary, no .png / .bmp found, returns 0", name);
     return 0;
+}
+
+}  // extern "C"
+
+// ===============================================================================================================
+// [PORT-TOP-04H] clumps for the perm-clump loader 0x004025f0 (family 3): RpClumpStreamRead, RpClumpForAllAtomics,
+// RwFrameUpdateObjects and the first-atomic lookup 0x004b3f90.
+//
+// Layout facts these bindings rest on (RW 3.x offsets from the matched / decompiled callers, librw from rwobjects.h):
+//  - clump +0x04 = its frame: 0x004b3bf0 passes *(clump + 4) to 0x004c0e50. librw rw::Clump starts with an
+//    rw::Object (type, subType, flags, privateFlags, parent), so a librw Clump* has its frame at +0x04 too.
+//  - frame +0xa0 = root, +0x03 = privateFlags: 0x004c0e50 reads them. librw rw::Frame has the same two (asserted below),
+//    so 0x004c0e50's job is librw's rw::Frame::updateObjects.
+//  - atomic +0x18 = geometry, geometry +0x14 = numVertices, +0x5c = morph target, morph +0x14 = vertices: read by
+//    0x00401690 (re/match/s01/00401690.c). librw has numVertices at +0x14 and MorphTarget::vertices at +0x14 (asserted),
+//    but Atomic::geometry at +0x14 and Geometry::morphTargets at +0x48. So 0x004b3f90's binding hands back an RW-layout
+//    view (MashedRwAtomicView) of the librw atomic: the four fields 0x00401690 reads, nothing else.
+// ===============================================================================================================
+namespace {
+struct MashedRwGeometryView {           // the RW 3.x RpGeometry fields 0x00401690 reads
+    std::uint8_t pad00[0x14];
+    std::int32_t numVertices;           // +0x14
+    std::uint8_t pad18[0x5c - 0x18];
+    rw::MorphTarget* morphTarget;       // +0x5c (librw MorphTarget: vertices at +0x14, as RW's RpMorphTarget)
+};
+struct MashedRwAtomicView {             // the RW 3.x RpAtomic fields read through 0x004b3f90's result
+    std::uint8_t pad00[0x04];
+    rw::Frame* frame;                   // +0x04 (RwObject.parent)
+    std::uint8_t pad08[0x18 - 0x08];
+    MashedRwGeometryView* geometry;     // +0x18
+    rw::Atomic* lib;                    // exe tail
+    MashedRwGeometryView geomView;      // exe tail
+};
+static_assert(offsetof(MashedRwGeometryView, numVertices) == 0x14, "RpGeometry +0x14");
+static_assert(offsetof(MashedRwGeometryView, morphTarget) == 0x5c, "RpGeometry +0x5c");
+static_assert(offsetof(MashedRwAtomicView, frame) == 0x04, "RpAtomic +0x04");
+static_assert(offsetof(MashedRwAtomicView, geometry) == 0x18, "RpAtomic +0x18");
+static_assert(offsetof(rw::Clump, object) + offsetof(rw::Object, parent) == 0x04, "clump frame @ +0x04");
+static_assert(offsetof(rw::Frame, root) == 0xa0, "RwFrame root @ +0xa0");
+static_assert(offsetof(rw::MorphTarget, vertices) == 0x14, "RpMorphTarget verts @ +0x14");
+static_assert(offsetof(rw::Geometry, numVertices) == 0x14, "RpGeometry numVertices @ +0x14");
+// One view per call, kept to process exit (13 calls on the knob path: one per perm slot).
+std::vector<std::unique_ptr<MashedRwAtomicView>> s_atomicViews;
+
+// RW order of a clump's atomics. RW's RpClumpStreamRead 0x004e7420 links each atomic it reads at the head of the
+// clump's list (the decomp's `*(atomic + 0x44) = list; *(atomic + 0x40) = list->next; list->next->prev = ...;
+// list->next = atomic + 0x40`), and RpClumpForAllAtomics 0x004e66d0 (re/match/s21/004e66d0.c) walks from the head, so
+// the last atomic in file order comes first. librw's Clump::streamRead appends (Clump::addAtomic), so the RW order is
+// librw's list walked backwards.
+rw::Atomic* RwOrderAtomic(rw::Clump* c, rw::LLLink* l) {
+    return (l == c->atomics.end()) ? nullptr : LLLinkGetData(l, rw::Atomic, inClump);
+}
+}  // namespace
+
+extern "C" {
+
+// RpClump* RpClumpStreamRead(RwStream* stream) rva 0x004e7420 (no matched source; decomp_pc.py 2026-11-09): reads the
+// clump struct chunk (atomic count), the frame list (0x0e), the geometry list (0x1a), the atomics (0x14) and the
+// extensions, with the clump chunk header already consumed by RwStreamFindChunk(stream, 0x10) (0x004b3bf0). librw:
+// rw::Clump::streamRead, which takes the stream at the same point (it reads the struct chunk first). The streams of the
+// knob path are memory streams (Match/PortTop_RwStream04F.cpp: [0] type 3, [3] position, [4] size, [5] base), so the
+// binding reads from base + position and moves the position by what librw consumed.
+int MashedRw_ClumpStreamRead_004e7420(int stream) {
+    std::uint32_t* const s = FromInt<std::uint32_t>(stream);
+    if (!s || s[0] != 3 || s[3] > s[4]) {
+        BindLog("RpClumpStreamRead(0x%08X): binding reads memory streams only, returns 0", static_cast<unsigned>(stream));
+        return 0;
+    }
+    rw::uint8* const base = FromInt<rw::uint8>(static_cast<int>(s[5]));
+    rw::StreamMemory mem;
+    mem.open(base + s[3], s[4] - s[3]);
+    rw::Clump* const c = rw::Clump::streamRead(&mem);
+    const std::uint32_t used = mem.tell();
+    mem.close();
+    s[3] = (s[3] + used <= s[4]) ? s[3] + used : s[4];
+    int atomics = 0;
+    if (c) for (rw::LLLink* l = c->atomics.link.next; l != c->atomics.end(); l = l->next) ++atomics;
+    BindLog("RpClumpStreamRead(0x%08X) -> rw::Clump::streamRead %p (%u bytes, %d atomics)", static_cast<unsigned>(stream),
+            static_cast<void*>(c), used, atomics);
+    return ToInt(c);
+}
+
+// RpClump* RpClumpForAllAtomics(RpClump* clump, RpAtomicCallBack cb, void* data) rva 0x004e66d0 (re/match/s21/004e66d0.c):
+// calls cb(atomic, data) for each atomic from the list head, stops at the first cb that returns 0, returns the clump.
+// librw: the clump's atomic list in RW order (RwOrderAtomic above). The atomic handed to cb is the librw rw::Atomic, so
+// a callback may store or pass it but not read RW atomic fields from it. No knob-path caller reads fields: 0x004b3f90
+// binds to the view below.
+int MashedRw_ClumpForAllAtomics_004e66d0(int clump, int cb, int data) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    using Cb = int(__cdecl*)(int, int);
+    Cb const fn = reinterpret_cast<Cb>(static_cast<std::uintptr_t>(static_cast<unsigned>(cb)));
+    if (!c || !fn) return clump;
+    for (rw::LLLink* l = c->atomics.link.prev; l != c->atomics.end();) {
+        rw::LLLink* const prev = l->prev;
+        if (!fn(ToInt(RwOrderAtomic(c, l)), data)) break;
+        l = prev;
+    }
+    return clump;
+}
+
+// RwFrame* RwFrameUpdateObjects(RwFrame* frame) rva 0x004c0e50 (decomp_pc.py 2026-11-09; matched body only in the .asi's
+// Match/MatchS19_004c0e50.cpp): when the root's privateFlags (+0xa0 -> +0x03) have neither bit 0 nor bit 1 set, links
+// the root into the dirty list at RwGlobals +0xbc; then root privateFlags |= 3, frame privateFlags |= 0x0c. librw:
+// rw::Frame::updateObjects (frame.cpp: the same root test, dirty-list add and flag bits). The matched body reads
+// RwGlobals, which the knob path's record does not carry (+0xbc), so it is not the exe's binding.
+void MashedRw_FrameUpdateObjects_004c0e50(int frame) {
+    if (rw::Frame* const f = FromInt<rw::Frame>(frame)) f->updateObjects();
+}
+
+// rva 0x004b3f90 (no matched source; decomp_pc.py 2026-11-09): returns 0 for a null clump, else
+// RpClumpForAllAtomics(clump, 0x004b4070, &out) with out = 0 first, where 0x004b4070 stores its atomic argument into
+// *data and returns 0 (stop): the first atomic in RW order. Binding: that atomic (RwOrderAtomic on the list's RW head)
+// as an RW-layout view (MashedRwAtomicView above). The only knob-path caller, 0x00401690, reads atomic +0x18 ->
+// geometry +0x14 / +0x5c -> morph +0x14 and nothing else. A clump with no atomic returns 0, as 0x004b3f90 does.
+int MashedRw_ClumpFirstAtomic_004b3f90(int clump) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    if (!c) return 0;
+    rw::Atomic* const a = RwOrderAtomic(c, c->atomics.link.prev);
+    if (!a) return 0;
+    std::unique_ptr<MashedRwAtomicView> v(new MashedRwAtomicView());
+    std::memset(v.get(), 0, sizeof(*v));
+    v->lib = a;
+    v->frame = a->getFrame();
+    if (rw::Geometry* const g = a->geometry) {
+        v->geomView.numVertices = g->numVertices;
+        v->geomView.morphTarget = g->morphTargets;
+        v->geometry = &v->geomView;
+    }
+    BindLog("0x004b3f90(clump %p) -> atomic %p view %p (geometry %p, %d vertices)", static_cast<void*>(c),
+            static_cast<void*>(a), static_cast<void*>(v.get()), static_cast<void*>(a->geometry),
+            a->geometry ? a->geometry->numVertices : 0);
+    s_atomicViews.push_back(std::move(v));
+    return ToInt(s_atomicViews.back().get());
+}
+
+}  // extern "C"
+
+// ===============================================================================================================
+// [PORT-TOP-04I] PTank atomics for 0x004881d0 / 0x004880a0 (lead decision 2026-11-09: an RW-layout record, the 04B
+// camera-record pattern). librw has no PTank, so RpPTankAtomicCreate 0x00534b60 returns this record. It carries every
+// field the matched callers touch, at the RW offsets they use (re/match/s14/004881d0.c, 004880a0.c, re/match/rwl02/
+// 004e7e30.c, 004e8090.c, re/match/s14/00489250.c):
+//   atomic +0x03 privateFlags (0x004e7e30 |= 1), +0x04 frame (0x004c0740 binding), +0x18 geometry,
+//   atomic + [0x007dc57c] -> the PTank block (OBJ(h): +0x04, +0x40, +0xa4, +0xa8, +0xac),
+//   geometry +0x20 -> material list -> material[0] +0x00 texture (0x004e8090), geometry +0x5c -> morph target +0x04
+//   (16-byte bounding sphere, written whole).
+// The plugin slot sits at +0x70, the value the 0x00493640 shim stores at 0x007dc57c. Nothing in the exe draws these
+// records: they are created at boot and destroyed in AppDestroy (0x00489250 -> RpAtomicDestroy 0x004e6920 below).
+// ===============================================================================================================
+namespace {
+constexpr std::uint32_t kPTankRecordMagic = 0x4b4e5450u;   // exe-only tag
+struct MashedRwMaterialView {           // RW 3.x RpMaterial: texture at +0x00 (0x004e8090)
+    rw::Texture* texture;
+    std::uint8_t pad04[0x1c];
+};
+struct MashedRwMorphView {              // RW 3.x RpMorphTarget: parent +0x00, bounding sphere +0x04
+    void* parent;
+    float sphere[4];
+    void* verts;
+    void* normals;
+};
+struct MashedRwPTankGeometryView {      // RW 3.x RpGeometry: material list at +0x20, morph target at +0x5c
+    std::uint8_t pad00[0x20];
+    MashedRwMaterialView** materials;   // +0x20 (RpMaterialList.materials)
+    std::int32_t numMaterials;          // +0x24
+    std::int32_t space;                 // +0x28
+    std::uint8_t pad2c[0x5c - 0x2c];
+    MashedRwMorphView* morphTarget;     // +0x5c
+};
+struct MashedRwPTankAtomic {
+    std::uint8_t type, subType, flags, privateFlags;   // +0x00 RwObject
+    rw::Frame* frame;                                  // +0x04 RwObject.parent
+    std::uint8_t pad08[0x18 - 0x08];
+    MashedRwPTankGeometryView* geometry;               // +0x18
+    std::uint8_t pad1c[0x70 - 0x1c];
+    std::uint8_t* ptank;                               // +0x70 = atomic + [0x007dc57c]
+    std::uint32_t magic;                               // exe tail
+    MashedRwPTankGeometryView geom;
+    MashedRwMaterialView* matList[1];
+    MashedRwMaterialView mat;
+    MashedRwMorphView morph;
+    alignas(4) std::uint8_t ptankData[0x100];          // the PTank block (callers write up to +0xac)
+};
+static_assert(offsetof(MashedRwPTankAtomic, frame) == 0x04, "RpAtomic +0x04");
+static_assert(offsetof(MashedRwPTankAtomic, geometry) == 0x18, "RpAtomic +0x18");
+static_assert(offsetof(MashedRwPTankAtomic, ptank) == 0x70, "PTank slot = the 0x00493640 shim's [0x007dc57c]");
+static_assert(offsetof(MashedRwPTankGeometryView, materials) == 0x20, "RpGeometry +0x20");
+static_assert(offsetof(MashedRwPTankGeometryView, morphTarget) == 0x5c, "RpGeometry +0x5c");
+static_assert(offsetof(MashedRwMorphView, sphere) == 0x04, "RpMorphTarget +0x04");
+static_assert(offsetof(rw::Texture, filterAddressing) == 0x50, "RwTexture +0x50 (0x004881d0 writes 2)");
+static_assert(offsetof(rw::Texture, refCount) == 0x54, "RwTexture +0x54 (0x004e8090 raises it)");
+
+MashedRwPTankAtomic* AsPTank(int obj) {
+    MashedRwPTankAtomic* const a = FromInt<MashedRwPTankAtomic>(obj);
+    return (a && a->magic == kPTankRecordMagic) ? a : nullptr;
+}
+
+// The _rwObjectHasFrameSetFrame binding's PTank case: store the frame at +0x04 and mark it dirty (the matched body's
+// RwFrameUpdateObjects tail; librw rw::Frame::updateObjects). The record is not a librw object, so no librw link is made.
+bool PTankRecordSetFrame(int object, int frame) {
+    MashedRwPTankAtomic* const a = AsPTank(object);
+    if (!a) return false;
+    a->frame = FromInt<rw::Frame>(frame);
+    if (a->frame) a->frame->updateObjects();
+    return true;
+}
+}  // namespace
+
+// The exe's copy of 0x00534b60's flag normalisation (Render/RfxEmitter.cpp, "0x00534b60").
+namespace mashed_re { namespace Rfx { std::uint32_t PTankNormaliseFlags(std::uint32_t f); } }
+
+extern "C" {
+
+// RpAtomic* RpPTankAtomicCreate(RwInt32 maxPCount, RwUInt32 dataFlags, RwUInt32 platFlags) rva 0x00534b60 (decomp
+// 2026-11-09): normalises dataFlags (the part Render/RfxEmitter.cpp PTankNormaliseFlags ports), then FUN_00534d00(maxPCount,
+// flags, platFlags, &DAT_00623c78) builds the atomic. Binding: a MashedRwPTankAtomic record. The PTank block gets the
+// three stores Render/RfxEmitter.h cites for FUN_00534d00: +0x00 = maxPCount (0x00534d67), +0x04 = 0 (0x00534d69),
+// +0x40 = 0xffffffff (0x00534d79). [UNCERTAIN] the other FUN_00534d00 stores (+0xa0 / +0x3c, where the normalised flags go,
+// the ARRAY-layout allocation at 0x0053510c..): not decoded, left 0. No knob-path code reads them: the two callers
+// (given the "lensflare-fs8" texture) write +0x04 / +0xa4 / +0xa8 / +0xac and OR into +0x40.
+int MashedRw_PTankAtomicCreate_00534b60(int maxPCount, unsigned dataFlags, int platFlags) {
+    MashedRwPTankAtomic* const a = static_cast<MashedRwPTankAtomic*>(std::calloc(1, sizeof(MashedRwPTankAtomic)));
+    if (!a) return 0;
+    a->type = 1;                                   // rpATOMIC
+    a->magic = kPTankRecordMagic;
+    a->ptank = a->ptankData;
+    a->geometry = &a->geom;
+    a->geom.materials = a->matList;
+    a->geom.numMaterials = 1;
+    a->geom.space = 1;
+    a->matList[0] = &a->mat;
+    a->geom.morphTarget = &a->morph;
+    a->morph.parent = &a->geom;
+    std::uint32_t* const t = reinterpret_cast<std::uint32_t*>(a->ptankData);
+    t[0x00 / 4] = static_cast<std::uint32_t>(maxPCount);
+    t[0x04 / 4] = 0;
+    t[0x40 / 4] = 0xffffffffu;
+    BindLog("RpPTankAtomicCreate(%d, 0x%08X -> 0x%08X, %d) -> PTank record %p", maxPCount, dataFlags,
+            mashed_re::Rfx::PTankNormaliseFlags(dataFlags), platFlags, static_cast<void*>(a));
+    return ToInt(a);
+}
+
+// RwBool RpAtomicDestroy(RpAtomic* atomic) rva 0x004e6920 (no matched source; decomp 2026-11-09): plugin destructors
+// (0x004d8060), the instance data at +0x14 (0x004d8bd0), the geometry at +0x18 (RpGeometryDestroy 0x004e8ea0, which
+// destroys its materials and so their textures), the frame unlink (0x004c0790), then the free list at RwGlobals +0x11c;
+// returns 1. Binding: a PTank record drops its material's texture (RwTextureDestroy, the count 0x004e8090 raised) and is
+// freed; a librw atomic goes to rw::Atomic::destroy. 0x00489250 calls RwFrameDestroy on +0x04 first.
+int MashedRw_AtomicDestroy_004e6920(int atomic) {
+    if (MashedRwPTankAtomic* const a = AsPTank(atomic)) {
+        rw::Texture* const tex = a->mat.texture;
+        BindLog("RpAtomicDestroy(PTank record %p): material texture %p released, record freed", static_cast<void*>(a),
+                static_cast<void*>(tex));
+        if (tex) MashedRw_TextureDestroy_004c5a60(ToInt(tex));
+        a->magic = 0;
+        std::free(a);
+        return 1;
+    }
+    if (rw::Atomic* const la = FromInt<rw::Atomic>(atomic)) la->destroy();
+    return 1;
 }
 
 }  // extern "C"

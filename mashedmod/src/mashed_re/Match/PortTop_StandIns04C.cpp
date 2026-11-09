@@ -20,8 +20,6 @@ extern "C" {
 int PortTop_StandIn04C_004014b0() { static int once; StandInLog("0x004014b0", &once); return 0; }
 // rva 0041e0d0: matched; reads +4 of each pointer of the 0x0063d610 table with no null check (state of 0x00402750)
 int PortTop_StandIn04C_0041e0d0() { static int once; StandInLog("0x0041e0d0", &once); return 0; }
-// rva 00489250: matched; reads DAT_007030a8 +4 / DAT_007030ac +4 with no null check (state of 0x00402750)
-int PortTop_StandIn04C_00489250() { static int once; StandInLog("0x00489250", &once); return 0; }
 // rva 0041ffb0: matched; 0x004b4880(DAT_0063e490) reads +4 of a zero pointer when DAT_00636acc == 0 (state of 0x00402750)
 int PortTop_StandIn04C_0041ffb0() { static int once; StandInLog("0x0041ffb0", &once); return 0; }
 // rva 004196f0: matched; reads +4 of each pointer of the 0x0063bde0 table with no null check (state of 0x00402750)
@@ -46,8 +44,6 @@ int PortTop_StandIn04C_00486350() { static int once; StandInLog("0x00486350", &o
 int PortTop_StandIn04C_00487140() { static int once; StandInLog("0x00487140", &once); return 0; }
 // rva 0048af70: matched, not compiled (level 2)
 int __fastcall PortTop_StandIn04C_0048af70() { static int once; StandInLog("0x0048af70", &once); return 0; }
-// rva 0048bc10: matched, not compiled (level 2)
-int PortTop_StandIn04C_0048bc10() { static int once; StandInLog("0x0048bc10", &once); return 0; }
 // rva 0048cf70: matched, not compiled (level 2)
 int PortTop_StandIn04C_0048cf70() { static int once; StandInLog("0x0048cf70", &once); return 0; }
 // rva 0048fdd0: matched, not compiled (level 2)
