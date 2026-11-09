@@ -233,7 +233,6 @@ SI(00420d00, "PanelSortInit")
 SI(00412890, "loader")
 SI(00471eb0, "loader")
 SI(00404830, "car material tables")
-SI(004025f0, "perm family: clumps (0x004b3bf0 DFF reads, RpClumpStreamRead 0x004e7420 unbound)")
 SI(00402f50, "BootDefaultParamsInit; exe body exists, not run here yet")
 SI(004026d0, "BootQueueFlush(4); exe body exists, not run here yet")
 #undef SI

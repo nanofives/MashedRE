@@ -46,8 +46,6 @@ int PortTop_StandIn04C_00486350() { static int once; StandInLog("0x00486350", &o
 int PortTop_StandIn04C_00487140() { static int once; StandInLog("0x00487140", &once); return 0; }
 // rva 0048af70: matched, not compiled (level 2)
 int __fastcall PortTop_StandIn04C_0048af70() { static int once; StandInLog("0x0048af70", &once); return 0; }
-// rva 0048bc10: matched, not compiled (level 2)
-int PortTop_StandIn04C_0048bc10() { static int once; StandInLog("0x0048bc10", &once); return 0; }
 // rva 0048cf70: matched, not compiled (level 2)
 int PortTop_StandIn04C_0048cf70() { static int once; StandInLog("0x0048cf70", &once); return 0; }
 // rva 0048fdd0: matched, not compiled (level 2)

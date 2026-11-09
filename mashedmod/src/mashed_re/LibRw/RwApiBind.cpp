@@ -34,6 +34,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <vector>
 
 // [PORT-TOP-04F] whole-file read from the piz mount stack, else the disk (Match/PortTop_RwStream04F.cpp).
 extern "C" void* PortTop_Fs_ReadAll(const char* name, unsigned* len, const char** from);
@@ -714,6 +715,139 @@ int MashedRw_TextureRead_004c5cb0(const char* name, const char* mask) {
     }
     BindLog("RwTextureRead(\"%s\"): not in the current dictionary, no .png / .bmp found, returns 0", name);
     return 0;
+}
+
+}  // extern "C"
+
+// ===============================================================================================================
+// [PORT-TOP-04H] clumps for the perm-clump loader 0x004025f0 (family 3): RpClumpStreamRead, RpClumpForAllAtomics,
+// RwFrameUpdateObjects and the first-atomic lookup 0x004b3f90.
+//
+// Layout facts these bindings rest on (RW 3.x offsets from the matched / decompiled callers, librw from rwobjects.h):
+//  - clump +0x04 = its frame: 0x004b3bf0 passes *(clump + 4) to 0x004c0e50. librw rw::Clump starts with an
+//    rw::Object (type, subType, flags, privateFlags, parent), so a librw Clump* has its frame at +0x04 too.
+//  - frame +0xa0 = root, +0x03 = privateFlags: 0x004c0e50 reads them. librw rw::Frame has the same two (asserted below),
+//    so 0x004c0e50's job is librw's rw::Frame::updateObjects.
+//  - atomic +0x18 = geometry, geometry +0x14 = numVertices, +0x5c = morph target, morph +0x14 = vertices: read by
+//    0x00401690 (re/match/s01/00401690.c). librw has numVertices at +0x14 and MorphTarget::vertices at +0x14 (asserted),
+//    but Atomic::geometry at +0x14 and Geometry::morphTargets at +0x48. So 0x004b3f90's binding hands back an RW-layout
+//    view (MashedRwAtomicView) of the librw atomic: the four fields 0x00401690 reads, nothing else.
+// ===============================================================================================================
+namespace {
+struct MashedRwGeometryView {           // the RW 3.x RpGeometry fields 0x00401690 reads
+    std::uint8_t pad00[0x14];
+    std::int32_t numVertices;           // +0x14
+    std::uint8_t pad18[0x5c - 0x18];
+    rw::MorphTarget* morphTarget;       // +0x5c (librw MorphTarget: vertices at +0x14, as RW's RpMorphTarget)
+};
+struct MashedRwAtomicView {             // the RW 3.x RpAtomic fields read through 0x004b3f90's result
+    std::uint8_t pad00[0x04];
+    rw::Frame* frame;                   // +0x04 (RwObject.parent)
+    std::uint8_t pad08[0x18 - 0x08];
+    MashedRwGeometryView* geometry;     // +0x18
+    rw::Atomic* lib;                    // exe tail
+    MashedRwGeometryView geomView;      // exe tail
+};
+static_assert(offsetof(MashedRwGeometryView, numVertices) == 0x14, "RpGeometry +0x14");
+static_assert(offsetof(MashedRwGeometryView, morphTarget) == 0x5c, "RpGeometry +0x5c");
+static_assert(offsetof(MashedRwAtomicView, frame) == 0x04, "RpAtomic +0x04");
+static_assert(offsetof(MashedRwAtomicView, geometry) == 0x18, "RpAtomic +0x18");
+static_assert(offsetof(rw::Clump, object) + offsetof(rw::Object, parent) == 0x04, "clump frame @ +0x04");
+static_assert(offsetof(rw::Frame, root) == 0xa0, "RwFrame root @ +0xa0");
+static_assert(offsetof(rw::MorphTarget, vertices) == 0x14, "RpMorphTarget verts @ +0x14");
+static_assert(offsetof(rw::Geometry, numVertices) == 0x14, "RpGeometry numVertices @ +0x14");
+// One view per call, kept to process exit (13 calls on the knob path: one per perm slot).
+std::vector<std::unique_ptr<MashedRwAtomicView>> s_atomicViews;
+
+// RW order of a clump's atomics. RW's RpClumpStreamRead 0x004e7420 links each atomic it reads at the head of the
+// clump's list (the decomp's `*(atomic + 0x44) = list; *(atomic + 0x40) = list->next; list->next->prev = ...;
+// list->next = atomic + 0x40`), and RpClumpForAllAtomics 0x004e66d0 (re/match/s21/004e66d0.c) walks from the head, so
+// the last atomic in file order comes first. librw's Clump::streamRead appends (Clump::addAtomic), so the RW order is
+// librw's list walked backwards.
+rw::Atomic* RwOrderAtomic(rw::Clump* c, rw::LLLink* l) {
+    return (l == c->atomics.end()) ? nullptr : LLLinkGetData(l, rw::Atomic, inClump);
+}
+}  // namespace
+
+extern "C" {
+
+// RpClump* RpClumpStreamRead(RwStream* stream) rva 0x004e7420 (no matched source; decomp_pc.py 2026-11-09): reads the
+// clump struct chunk (atomic count), the frame list (0x0e), the geometry list (0x1a), the atomics (0x14) and the
+// extensions, with the clump chunk header already consumed by RwStreamFindChunk(stream, 0x10) (0x004b3bf0). librw:
+// rw::Clump::streamRead, which takes the stream at the same point (it reads the struct chunk first). The streams of the
+// knob path are memory streams (Match/PortTop_RwStream04F.cpp: [0] type 3, [3] position, [4] size, [5] base), so the
+// binding reads from base + position and moves the position by what librw consumed.
+int MashedRw_ClumpStreamRead_004e7420(int stream) {
+    std::uint32_t* const s = FromInt<std::uint32_t>(stream);
+    if (!s || s[0] != 3 || s[3] > s[4]) {
+        BindLog("RpClumpStreamRead(0x%08X): binding reads memory streams only, returns 0", static_cast<unsigned>(stream));
+        return 0;
+    }
+    rw::uint8* const base = FromInt<rw::uint8>(static_cast<int>(s[5]));
+    rw::StreamMemory mem;
+    mem.open(base + s[3], s[4] - s[3]);
+    rw::Clump* const c = rw::Clump::streamRead(&mem);
+    const std::uint32_t used = mem.tell();
+    mem.close();
+    s[3] = (s[3] + used <= s[4]) ? s[3] + used : s[4];
+    int atomics = 0;
+    if (c) for (rw::LLLink* l = c->atomics.link.next; l != c->atomics.end(); l = l->next) ++atomics;
+    BindLog("RpClumpStreamRead(0x%08X) -> rw::Clump::streamRead %p (%u bytes, %d atomics)", static_cast<unsigned>(stream),
+            static_cast<void*>(c), used, atomics);
+    return ToInt(c);
+}
+
+// RpClump* RpClumpForAllAtomics(RpClump* clump, RpAtomicCallBack cb, void* data) rva 0x004e66d0 (re/match/s21/004e66d0.c):
+// calls cb(atomic, data) for each atomic from the list head, stops at the first cb that returns 0, returns the clump.
+// librw: the clump's atomic list in RW order (RwOrderAtomic above). The atomic handed to cb is the librw rw::Atomic, so
+// a callback may store or pass it but not read RW atomic fields from it. No knob-path caller reads fields: 0x004b3f90
+// binds to the view below.
+int MashedRw_ClumpForAllAtomics_004e66d0(int clump, int cb, int data) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    using Cb = int(__cdecl*)(int, int);
+    Cb const fn = reinterpret_cast<Cb>(static_cast<std::uintptr_t>(static_cast<unsigned>(cb)));
+    if (!c || !fn) return clump;
+    for (rw::LLLink* l = c->atomics.link.prev; l != c->atomics.end();) {
+        rw::LLLink* const prev = l->prev;
+        if (!fn(ToInt(RwOrderAtomic(c, l)), data)) break;
+        l = prev;
+    }
+    return clump;
+}
+
+// RwFrame* RwFrameUpdateObjects(RwFrame* frame) rva 0x004c0e50 (decomp_pc.py 2026-11-09; matched body only in the .asi's
+// Match/MatchS19_004c0e50.cpp): when the root's privateFlags (+0xa0 -> +0x03) have neither bit 0 nor bit 1 set, links
+// the root into the dirty list at RwGlobals +0xbc; then root privateFlags |= 3, frame privateFlags |= 0x0c. librw:
+// rw::Frame::updateObjects (frame.cpp: the same root test, dirty-list add and flag bits). The matched body reads
+// RwGlobals, which the knob path's record does not carry (+0xbc), so it is not the exe's binding.
+void MashedRw_FrameUpdateObjects_004c0e50(int frame) {
+    if (rw::Frame* const f = FromInt<rw::Frame>(frame)) f->updateObjects();
+}
+
+// rva 0x004b3f90 (no matched source; decomp_pc.py 2026-11-09): returns 0 for a null clump, else
+// RpClumpForAllAtomics(clump, 0x004b4070, &out) with out = 0 first, where 0x004b4070 stores its atomic argument into
+// *data and returns 0 (stop): the first atomic in RW order. Binding: that atomic (RwOrderAtomic on the list's RW head)
+// as an RW-layout view (MashedRwAtomicView above). The only knob-path caller, 0x00401690, reads atomic +0x18 ->
+// geometry +0x14 / +0x5c -> morph +0x14 and nothing else. A clump with no atomic returns 0, as 0x004b3f90 does.
+int MashedRw_ClumpFirstAtomic_004b3f90(int clump) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    if (!c) return 0;
+    rw::Atomic* const a = RwOrderAtomic(c, c->atomics.link.prev);
+    if (!a) return 0;
+    std::unique_ptr<MashedRwAtomicView> v(new MashedRwAtomicView());
+    std::memset(v.get(), 0, sizeof(*v));
+    v->lib = a;
+    v->frame = a->getFrame();
+    if (rw::Geometry* const g = a->geometry) {
+        v->geomView.numVertices = g->numVertices;
+        v->geomView.morphTarget = g->morphTargets;
+        v->geometry = &v->geomView;
+    }
+    BindLog("0x004b3f90(clump %p) -> atomic %p view %p (geometry %p, %d vertices)", static_cast<void*>(c),
+            static_cast<void*>(a), static_cast<void*>(v.get()), static_cast<void*>(a->geometry),
+            a->geometry ? a->geometry->numVertices : 0);
+    s_atomicViews.push_back(std::move(v));
+    return ToInt(s_atomicViews.back().get());
 }
 
 }  // extern "C"
