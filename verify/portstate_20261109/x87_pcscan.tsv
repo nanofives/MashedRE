@@ -1,0 +1,170 @@
+tu	section	rva	class	sse2_vs_pc24	kinds	n_events	first_events	fp_ops	notes
+RwpSolverBroadphase3		0x0055a1f0	NOFP	equal		0		0	indcall@0055a62b indcall@0055a754
+RwpSolverBroadphase3		0x0055a9a0	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055abb0	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055ae50	NOFP	equal		0		0	tailjmp@0055ae66
+RwpSolverBroadphase3		0x0055b750	PC-SENSITIVE	equal	chain	9	chain@0055b78a(fmul R1/E) chain@0055b78f(fmul NF/E) chain@0055b791(fsubp R1/NF) chain@0055b79a(fmul R1/E) chain@0055b79f(fmul NF/E) chain@0055b7a1(fsubp E/NF)	36	
+RwpSolverBroadphase3		0x0055bae0	PC-SENSITIVE	equal	chain	8	chain@0055bb0e(faddp R1/R1) chain@0055bb14(faddp NF/R1) chain@0055bb21(faddp R1/R1) chain@0055bb29(faddp NF/R1) chain@0055bb36(faddp R1/R1) chain@0055bb3e(faddp NF/R1)	36	indcall@0055baf0
+RwpSolverBroadphase3		0x0055bd70	NOFP	equal		0		0	indjmp@0055bd7b
+RwpSolverBroadphase3		0x0055c0f0	PC-SENSITIVE	equal	chain	20	chain@0055c11a(faddp R1/R1) chain@0055c122(faddp NF/R1) chain@0055c130(faddp R1/R1) chain@0055c137(faddp NF/R1) chain@0055c145(faddp R1/R1) chain@0055c14c(faddp NF/R1)	83	
+RwpSolverBroadphase3		0x0055c2d0	PC-SENSITIVE	equal	chain	8	chain@0055c2f2(faddp R1/R1) chain@0055c2fa(faddp NF/R1) chain@0055c30a(faddp R1/R1) chain@0055c312(faddp NF/R1) chain@0055c323(faddp R1/R1) chain@0055c32b(faddp NF/R1)	42	indcall@0055c363
+RwpSolverCore14		0x00577be0	PC-SENSITIVE	equal	chain,cmp	20	chain@00577bfb(fmul R1/E) chain@00577bfd(faddp E/NF) chain@00577c01(fmul NF/E) chain@00577c03(faddp E/NF) chain@00577c22(fmul R1/E) chain@00577c26(fmul NF/E)	66	
+RwpSolverCore14		0x00577cb0	PC-SENSITIVE	equal	chain,cmp	38	chain@00577d38(fmul R1/E) chain@00577d3d(fmul R1/E) chain@00577d3f(fsubp NF/NF) chain@00577d41(fmul NF/E) chain@00577d47(fmul NF/E) chain@00577d4c(fmul R1/E)	108	depthmerge@00577dc8
+RwpSolverCore14		0x00577ec0	PC-SENSITIVE	equal	chain,cmp	46	chain@00577ede(fmul R1/E) chain@00577ee4(faddp E/NF) chain@00577ee8(fmul NF/E) chain@00577eea(faddp E/NF) chain@00577f04(fmul R1/E) chain@00577f06(faddp E/NF)	293	
+RwpSolverCore14		0x005784a0	PC-SENSITIVE	equal	chain,cmp	33	chain@005784db(fmul R1/E) chain@005784e1(faddp NF/R1) chain@005784ea(faddp NF/R1) chain@005784f2(fmul NF/E) chain@005784f4(fadd R1/NF) chain@00578501(fadd E/R1)	100	
+MatchS10_0045db50	MATCH-S10	0x0045db50	PC-INSENSITIVE	equal		0		6	indjmp@0045db59
+MatchS10_0045df70	MATCH-S10	0x0045df70	PC-INSENSITIVE	equal		0		12	
+MatchS10_0045dfc0	MATCH-S10	0x0045dfc0	PC-INSENSITIVE	equal		0		3	
+RwpSolverCore15	MATCH-S10	0x00576880	PC-SENSITIVE	equal	chain,cmp	156	chain@005768e3(faddp R1/R1) chain@005768eb(faddp NF/R1) chain@005768ed(fsubr NF/E) chain@005768f6(fmul NF/E) chain@005768f8(fadd NF/E) chain@00576900(fmul NF/E)	665	
+RwpSolverCore17	MATCH-S10	0x00575b60	PC-SENSITIVE	equal	chain,cmp	14	chain@00575b92(faddp R1/R1) chain@00575b99(faddp NF/R1) chain@00575bac(faddp R1/R1) chain@00575bb4(faddp NF/R1) chain@00575bc8(faddp R1/R1) chain@00575bd0(faddp NF/R1)	59	
+RwpSolverCore17	MATCH-S10	0x00575fe0	PC-SENSITIVE	equal	chain,cmp	23	cmp@00576190(R1/E) cmp@005761a4(R1/E) cmp@005761b9(R1/E) cmp@005761ca(R1/E) cmp@005761db(R1/E) cmp@005761ec(R1/E)	88	indcall@00576170 indcall@005762d7 indcall@005764b2 indcall@00576593
+RwpSolverCore17	MATCH-S10	0x00578b20	PC-SENSITIVE	equal	cmp,retst0	2	cmp@00578b79(R1/E) retst0@00578b95(R1)	23	
+RwpSolverCore17	MATCH-S10	0x00578bd0	PC-SENSITIVE	equal	chain,cmp,retst0	6	chain@00578bf0(faddp R1/R1) chain@00578bff(faddp NF/R1) chain@00578c0b(fadd NF/E) chain@00578c15(fadd NF/E) cmp@00578c38(R1/E) retst0@00578c67(R1)	36	
+RwpSolverCore17	MATCH-S10	0x00578cb0	PC-SENSITIVE	equal	chain,cmp,retst0	6	chain@00578cef(faddp R1/R1) chain@00578cf7(faddp NF/R1) chain@00578cfb(fadd NF/E) chain@00578d02(fadd NF/E) cmp@00578d1d(R1/E) retst0@00578d49(R1)	36	
+RwpSolverCore17	MATCH-S10	0x00578d90	PC-SENSITIVE	equal	chain,cmp	8	chain@00578dc6(faddp R1/R1) chain@00578dcb(fmul NF/E) chain@00578dcd(faddp R1/NF) chain@00578ddd(fadd R1/E) chain@00578de8(fadd R1/E) chain@00578df5(fadd R1/E)	44	
+RwpSolverCore17	MATCH-S10	0x00578ff0	PC-SENSITIVE	differs:intop	chain,cmp,intop	54	chain@00579432(faddp R1/R1) chain@0057943a(faddp NF/R1) cmp@0057943c(NF/E) chain@00579474(fmul R1/E) chain@00579478(fmul NF/E) chain@0057947a(faddp R1/NF)	266	depthmerge@0057962a
+RwpSolverCore17	MATCH-S10	0x0057a250	PC-SENSITIVE	equal	chain,cmp	20	chain@0057a288(fadd R1/E) chain@0057a2a8(fadd NF/E) cmp@0057a2bc(NF/E) cmp@0057a327(NF/E) cmp@0057a35e(R1/E) chain@0057a3cc(faddp R1/R1)	101	
+RwpSolverCore17	MATCH-S10	0x0057a660	PC-SENSITIVE	equal	chain,cmp,retst0	16	cmp@0057a874(E/NF) cmp@0057a8eb(E/NF) cmp@0057a962(E/NF) retst0@0057a98a(NF) chain@0057a74c(fmul R1/E) chain@0057a752(fadd NF/E)	78	
+MatchS08_004331a0	MATCH-S08	0x004331a0	NOFP	equal		0		0	tailjmp@00433231
+MatchS08_0043c000	MATCH-S08	0x0043c000	PC-SENSITIVE	equal	chain,intconv	41	chain@0043c143(fmul R1/E) intconv@0043c149(arg to 004a2c48: NF) chain@0043c192(fmul R1/E) intconv@0043c198(arg to 004a2c48: NF) chain@0043c1e1(fmul R1/E) intconv@0043c1e7(arg to 004a2c48: NF)	80	
+MatchS08_00442420	MATCH-S08	0x00442420	PC-INSENSITIVE	equal		0		1	
+MatchS08_00442c80	MATCH-S08	0x00442c80	PC-INSENSITIVE	equal		0		3	
+MatchS08_00442cc0	MATCH-S08	0x00442cc0	PC-INSENSITIVE	equal		0		2	
+MatchS08_00442ce0	MATCH-S08	0x00442ce0	PC-SENSITIVE	equal	chain,retst0	12	chain@00442d51(fadd R1/E) retst0@00442d58(NF) chain@00442d6e(fadd R1/E) retst0@00442d75(NF) chain@00442dd1(fadd R1/E) retst0@00442dd8(NF)	22	
+MatchS08_00442df0	MATCH-S08	0x00442df0	PC-INSENSITIVE	equal		0		1	
+MatchS08_00443300	MATCH-S08	0x00443300	PC-SENSITIVE	equal	chain	27	chain@00443381(fmul R1/R1) chain@0044338f(fsubp R1/R1) chain@00443399(faddp NF/R1) chain@0044339b(fsub NF/E) chain@0044339e(fmul NF/NF) chain@004433a8(fsub R1/E)	74	
+MatchS08_00449880	MATCH-S08	0x00449880	PC-INSENSITIVE	equal		0		3	
+MatchS08_0044dff0	MATCH-S08	0x0044dff0	NOFP	equal		0		0	
+MatchS08_0044e020	MATCH-S08	0x0044e020	PC-INSENSITIVE	equal		0		3	
+MatchS08_0044e050	MATCH-S08	0x0044e050	PC-INSENSITIVE	equal		0		1	
+MatchS08_0044e070	MATCH-S08	0x0044e070	PC-SENSITIVE	equal	retst0	1	retst0@0044e096(R1)	2	
+MatchS04_0041b770	MATCH-S04	0x0041b770	NOFP	equal		0		0	
+MatchS04_0041cbc0	MATCH-S04	0x0041cbc0	NOFP	equal		0		0	
+MatchS04_0041d910	MATCH-S04	0x0041d910	NOFP	equal		0		0	
+MatchS04_0041db80	MATCH-S04	0x0041db80	NOFP	equal		0		0	tailjmp@0041db85
+MatchS04_0041f100	MATCH-S04	0x0041f100	PC-INSENSITIVE	equal		0		1	
+MatchS04_0041f260	MATCH-S04	0x0041f260	NOFP	equal		0		0	
+MatchS05_00420d80	MATCH-S05	0x00420d80	PC-SENSITIVE	equal	retst0	1	retst0@00420d98(R1)	2	
+MatchS05_00420de0	MATCH-S05	0x00420de0	PC-SENSITIVE	equal	cmp	1	cmp@00420dea(R1/E)	5	
+MatchS05_00422470	MATCH-S05	0x00422470	PC-SENSITIVE	differs:intop	chain,intop,retst0	3	intop@00422494(fadd I/E) chain@0042249a(fsubr R1/E) retst0@004224cd(NW)	8	
+MatchS05_004224d0	MATCH-S05	0x004224d0	NOFP	equal		0		0	
+MatchS05_00425ab0	MATCH-S05	0x00425ab0	NOFP	equal		0		0	
+MatchS05_00425b10	MATCH-S05	0x00425b10	NOFP	equal		0		0	
+CameraEntries	bit-identity	0x00441b30	PC-INSENSITIVE	equal		0		3	
+CameraEntries	bit-identity	0x00441c80	PC-SENSITIVE	equal	chain	5	chain@00441d05(fmul R1/E) chain@00441d0b(fsubr NF/E) chain@00441d11(fmul R1/E) chain@00441d17(fsubr NF/E) chain@00441d28(fsubr R1/E)	18	
+CameraEntries	bit-identity	0x00442600	PC-SENSITIVE	equal	intconv	1	intconv@0044274c(arg to 004a2c48: NF)	1	indjmp@0044262f
+CameraEntries	bit-identity	0x00445aa0	PC-SENSITIVE	differs:intop,trans	chain,cmp,intop,trans	101	intop@00445ab1(fmul I/E) chain@00445b2e(fadd R1/E) cmp@00445b65(R1/E) chain@00445b80(fadd R1/E) cmp@00445b8c(R1/E) chain@00445ba3(fsubr R1/E)	405	
+MatchS15_00493480	MATCH-S15	0x00493480	PC-INSENSITIVE	differs:intop	intop	1	intop@00493525(fmul I/E)	3	
+PathNodes	D-11072	0x00478660	PC-SENSITIVE	equal	chain	5	chain@004787e9(fsub R1/E) chain@0047882c(fsubp R1/R1) chain@0047886a(fsubp R1/R1) chain@0047888f(fsubp R1/R1) chain@004788c4(fsubp R1/R1)	131	
+PathNodes	D-11072	0x004783f0	PC-SENSITIVE	equal	chain,cmp,widestore	16	chain@0047849e(fmul R1/R1) chain@004784a2(fmul NF/R1) chain@004784a4(faddp R1/NF) chain@004784a8(fmul NF/E) chain@004784aa(faddp R1/NF) chain@004784fd(fadd R1/E)	52	
+MatchT01G_004111c0	MATCH-T01G-FU	0x004111c0	NOFP	equal		0		0	indjmp@0041124a
+MatchS07_0042aff0	MATCH-S07	0x0042aff0	PC-SENSITIVE	equal	cmp	1	cmp@0042b0d8(R1/E)	5	
+MatchS07_0042b180	MATCH-S07	0x0042b180	PC-SENSITIVE	equal	cmp	1	cmp@0042b268(R1/E)	5	
+MatchS07_0042bde0	MATCH-S07	0x0042bde0	PC-SENSITIVE	equal	chain	1	chain@0042bec9(fadd R1/E)	16	
+MatchS07_0042d290	MATCH-S07	0x0042d290	PC-INSENSITIVE	equal		0		1	
+MatchS07_0042d300	MATCH-S07	0x0042d300	PC-INSENSITIVE	equal		0		2	
+MatchS07_0042e3a0	MATCH-S07	0x0042e3a0	NOFP	equal		0		0	
+MatchS07_0042f8d0	MATCH-S07	0x0042f8d0	PC-SENSITIVE	equal	chain	2	chain@0042f992(fadd R1/E) chain@0042f9b5(fadd R1/E)	18	
+MatchS07_0042fb70	MATCH-S07	0x0042fb70	PC-SENSITIVE	differs:intop	chain,intconv,intop	6	intop@0042fc4d(fmul I/E) chain@0042fc71(fmulp I/R1) chain@0042fc73(fmul NW/E) intop@0042fc8d(fmul I/E) intop@0042fcca(fmul I/E) intconv@0042fd93(arg to 004a2c48: NF)	22	indcall@0042fbd1 indcall@0042fbdd indcall@0042fe13 indcall@0042fe1f
+MatchS07_0042fe90	MATCH-S07	0x0042fe90	PC-SENSITIVE	differs:intop	chain,intconv,intop	6	intop@0042ff63(fmul I/E) chain@0042ff87(fmulp I/R1) chain@0042ff89(fmul NW/E) intop@0042ffa3(fmul I/E) intop@0042ffe0(fmul I/E) intconv@0043004a(arg to 004a2c48: NF)	22	indcall@0042feee indcall@0042fefa indcall@004300e0 indcall@004300ed
+MatchS07_00430b30	MATCH-S07	0x00430b30	NOFP	equal		0		0	
+MatchS07_00431b20	MATCH-S07	0x00431b20	PC-SENSITIVE	differs:dblop,trans	chain,dblop,retst0,trans	4	dblop@00431b26(fmul E/D) trans@00431b2c(fsin:R1) chain@00431b2c(into fsin R1) retst0@00431b2e(NW)	3	
+MatchS07_00431b30	MATCH-S07	0x00431b30	PC-INSENSITIVE	equal		0		1	
+MatchS07_00431b50	MATCH-S07	0x00431b50	PC-SENSITIVE	differs:dblop,trans	chain,dblop,retst0,trans	4	dblop@00431b56(fmul E/D) trans@00431b5c(fsin:R1) chain@00431b5c(into fsin R1) retst0@00431b5e(NW)	3	
+MatchS07_00431b60	MATCH-S07	0x00431b60	PC-SENSITIVE	differs:dblop,trans	chain,dblop,retst0,trans	4	dblop@00431b66(fmul E/D) trans@00431b6c(fsin:R1) chain@00431b6c(into fsin R1) retst0@00431b6e(NW)	3	
+RwpSolverMath2QuatY	x87	0x00546c50	PC-SENSITIVE	equal	chain	5	chain@00546c5a(fsubr R1/E) chain@00546c5d(fadd NF/E) chain@00546c8f(fmul R1/R1) chain@00546c9a(fmul E/R1) chain@00546ca6(fmul E/R1)	22	
+RwpSolverMath2QuatY	x87	0x004c3b30	PC-INSENSITIVE	equal		0		1	
+RwpSolverMath2Quat	SSE2	0x00546b10	PC-SENSITIVE	equal	chain,cmp	6	chain@00546b2d(fadd R1/E) cmp@00546b30(NF/E) chain@00546b3f(fadd NF/E) chain@00546b6a(fmul R1/R1) chain@00546b74(fmul E/R1) chain@00546b7f(fmul E/R1)	34	indcall@00546bb5 indcall@00546bdb
+RwpSolverMath2Quat	SSE2	0x00546bf0	PC-SENSITIVE	equal	chain	5	chain@00546bfb(fsubr R1/E) chain@00546bfd(fadd NF/E) chain@00546c2e(fmul R1/R1) chain@00546c39(fmul E/R1) chain@00546c45(fmul E/R1)	22	
+RwpSolverMath2Quat	SSE2	0x00546cb0	PC-SENSITIVE	equal	chain	5	chain@00546cba(fsubr R1/E) chain@00546cbd(fadd NF/E) chain@00546cef(fmul R1/R1) chain@00546cfa(fmul E/R1) chain@00546d05(fmul E/R1)	22	
+RwpSolverMath2Quat	SSE2	0x004c3b30	PC-INSENSITIVE	equal		0		1	
+MatchS13_00482030	MATCH-S13	0x00482030	PC-SENSITIVE	differs:intop	chain,intop	6	intop@0048203c(fadd I/E) chain@00482046(fmul R1/E) intop@00482054(fadd I/E) chain@0048205d(fdivp NF/R1) intop@0048206f(fadd I/E) chain@00482078(fsubp NF/R1)	10	indjmp@0048207c
+ProgressBarSetA	MATCH-S13	0x00430b90	PC-SENSITIVE	differs:intop	chain,intop	4	chain@00430cc3(fmulp I/R1) chain@00430cc5(fmul NW/E) intop@00430cdf(fmul I/E) intop@00430d18(fmul I/E)	21	indcall@00430bb1 indcall@00430bbe indcall@00430be2 indcall@00430bee indcall@00430f24 indcall@00430f30 indjmp@00430d4d
+MenuMenusBB	MATCH-S13	0x00427ad0	PC-SENSITIVE	equal	chain	4	chain@00427b47(fmul R1/E) chain@00427b6f(fmul R1/E) chain@00427b97(fsubr R1/E) chain@00427b9d(fsub NF/E)	19	tailjmp@00427bd9
+MatchS12_00475f30	MATCH-S12	0x00475f30	PC-SENSITIVE	equal	chain	3	chain@00475f3c(fmul R1/E) chain@00475f40(fmul NF/E) chain@00475f44(fadd NF/E)	7	
+MatchS12_00476d00	MATCH-S12	0x00476d00	PC-INSENSITIVE	equal		0		2	
+MatchS12_004769f0	MATCH-S12	0x004769f0	NOFP	equal		0		0	
+MatchS12_004773f0	MATCH-S12	0x004773f0	NOFP	equal		0		0	
+MatchS12_004773f0	MATCH-S12	0x00477730	NOFP	equal		0		0	
+ViewportScaledRectDraw	MATCH-S12	0x00428610	PC-SENSITIVE	differs:intop	chain,intop	4	intop@00428645(fmul I/E) intop@00428667(fmul I/E) chain@004286bf(fsubp R1/R1) chain@004286d7(fsubp R1/R1)	44	
+MatchS16_00495080	MATCH-S16	0x00495080	PC-SENSITIVE	equal	chain	1	chain@00495092(fadd R1/E)	4	
+WarzonePontoon	MATCH-S16	0x00451ce0	PC-INSENSITIVE	equal		0		18	
+WarzonePontoon	MATCH-S16	0x00451690	PC-INSENSITIVE	equal		0		2	
+WarzonePontoon	MATCH-S16	0x00451990	PC-INSENSITIVE	equal		0		12	
+WarzonePontoon	MATCH-S16	0x00451cc0	NOFP	equal		0		0	indcall@00451cd8
+WarzonePontoon	MATCH-S16	0x00451a50	NOFP	equal		0		0	
+MatchS09_00451990	MATCH-S09	0x00451990	PC-INSENSITIVE	equal		0		12	
+MatchS09_00451a50	MATCH-S09	0x00451a50	NOFP	equal		0		0	
+MatchS09_00452eb0	MATCH-S09	0x00452eb0	PC-INSENSITIVE	equal		0		1	
+MatchS09_00458fa0	MATCH-S09	0x00458fa0	NOFP	equal		0		0	
+MatchS09_00451690	MATCH-S09-FU	0x00451690	PC-INSENSITIVE	equal		0		2	
+MatchS09_00451ce0	MATCH-S09-FU	0x00451ce0	PC-INSENSITIVE	equal		0		18	
+MatchS09_00458920	MATCH-S09-FU	0x00458920	PC-INSENSITIVE	equal		0		4	
+MatchS06_004264d0	MATCH-S06	0x004264d0	NOFP	equal		0		0	indcall@00426549 indcall@0042655b indcall@00426570 indcall@00426595
+MatchS06_00426d20	MATCH-S06	0x00426d20	NOFP	equal		0		0	
+MatchS06_00426de0	MATCH-S06	0x00426de0	PC-INSENSITIVE	equal		0		1	
+MatchS06_00426df0	MATCH-S06	0x00426df0	PC-INSENSITIVE	equal		0		1	
+MatchS06_00426e10	MATCH-S06	0x00426e10	PC-INSENSITIVE	equal		0		3	indcall@00426e5e indcall@00426e6f indcall@00426e85 indcall@00426ea7
+MatchS06_004270f0	MATCH-S06	0x004270f0	NOFP	equal		0		0	indcall@0042710c indcall@00427118 indcall@00427124 indcall@004271b9 indcall@004271c6 indcall@004271f7 indcall@00427203 indcall@00427215 indcall@00427222 indcall@0042722e indcall@00427271 indcall@0042727c indcall@004272f5 indjmp@0042730d
+MatchS06_00427580	MATCH-S06	0x00427580	PC-INSENSITIVE	equal		0		9	
+MatchS06_00427680	MATCH-S06	0x00427680	PC-SENSITIVE	equal	chain	16	chain@004276bf(fmul R1/E) chain@0042773b(fdiv NF/E) chain@0042773f(fmul NF/E) chain@00427751(fmul R1/E) chain@00427755(fdiv NF/E) chain@00427759(fmul NF/E)	40	
+MatchS06_004278d0	MATCH-S06	0x004278d0	PC-INSENSITIVE	equal		0		3	tailjmp@00427980
+MatchS06_00427990	MATCH-S06	0x00427990	PC-SENSITIVE	equal	chain	4	chain@00427a2b(fmul R1/E) chain@00427a52(fmul R1/E) chain@00427a7a(fsubr R1/E) chain@00427a80(fsub NF/E)	19	tailjmp@00427abd
+MatchS06_00427ad0	MATCH-S06	0x00427ad0	PC-SENSITIVE	equal	chain	4	chain@00427b47(fmul R1/E) chain@00427b6f(fmul R1/E) chain@00427b97(fsubr R1/E) chain@00427b9d(fsub NF/E)	19	tailjmp@00427bd9
+MatchS06_00427be0	MATCH-S06	0x00427be0	PC-INSENSITIVE	equal		0		3	tailjmp@00427c86
+MatchS06_00427e00	MATCH-S06	0x00427e00	PC-INSENSITIVE	equal		0		3	indcall@00427e3c tailjmp@00427ef1
+MatchS06_00427f00	MATCH-S06	0x00427f00	PC-INSENSITIVE	equal		0		3	indcall@00427f24 tailjmp@00427fe4
+MatchS06_00427ff0	MATCH-S06	0x00427ff0	PC-SENSITIVE	equal	chain	1	chain@004280b6(fadd R1/E)	11	indcall@0042803c tailjmp@00428139
+MatchS06_00428140	MATCH-S06	0x00428140	PC-INSENSITIVE	equal		0		3	indcall@0042817c tailjmp@0042828f
+MatchS06_004282a0	MATCH-S06	0x004282a0	PC-SENSITIVE	equal	chain	2	chain@004282f1(fdiv NF/E) chain@00428309(fmul NF/E)	5	tailjmp@00428315
+MatchS06_00428320	MATCH-S06	0x00428320	PC-SENSITIVE	equal	chain	2	chain@0042836b(fdiv NF/E) chain@0042837f(fmul NF/E)	5	tailjmp@0042838b
+MatchS06_00428590	MATCH-S06	0x00428590	NOFP	equal		0		0	
+MatchS06_00428610	MATCH-S06	0x00428610	PC-SENSITIVE	differs:intop	chain,intop	4	intop@00428645(fmul I/E) intop@00428667(fmul I/E) chain@004286bf(fsubp R1/R1) chain@004286d7(fsubp R1/R1)	44	
+MatchS06_00428760	MATCH-S06	0x00428760	NOFP	equal		0		0	
+MatchS06_004288a0	MATCH-S06	0x004288a0	PC-SENSITIVE	equal	chain	4	chain@00428919(fadd NF/E) chain@00428922(fadd NF/E) chain@00428933(fmul NF/E) chain@00428939(fsubr NF/E)	12	
+MatchS06_00428a30	MATCH-S06	0x00428a30	PC-INSENSITIVE	equal		0		1	indcall@00428a9d indcall@00428b73 tailjmp@00428bdd
+MatchS06_00428bf0	MATCH-S06	0x00428bf0	PC-INSENSITIVE	equal		0		1	tailjmp@00428d24
+MatchS06_00428d30	MATCH-S06	0x00428d30	PC-INSENSITIVE	equal		0		3	indcall@00428dc7 indcall@00428dd3 indcall@00428de0 indcall@00428e06 indcall@00428e12 indcall@004291ee indcall@004291fa indcall@0042920a
+MatchS06_00429300	MATCH-S06	0x00429300	PC-INSENSITIVE	equal		0		1	
+MatchS06_004295a0	MATCH-S06	0x004295a0	PC-INSENSITIVE	equal		0		3	
+MatchS06_00429620	MATCH-S06	0x00429620	PC-SENSITIVE	differs:intop	chain,intop,retst0	5	intop@00429640(fmul I/E) chain@00429646(fsubr R1/E) chain@0042964c(fmul NF/E) chain@00429652(fsubr NF/E) retst0@00429659(NF)	5	
+MatchS06_00429660	MATCH-S06	0x00429660	PC-SENSITIVE	equal	chain	2	chain@00429739(fadd R1/E) chain@004297d1(fadd R1/E)	15	
+MatchS06_00429820	MATCH-S06	0x00429820	NOFP	equal		0		0	
+MatchS06_00429870	MATCH-S06	0x00429870	PC-SENSITIVE	differs:intop	cmp,intop	3	intop@0042989c(fadd I/E) intop@004298a6(fadd I/E) cmp@004298ac(R1/R1)	6	
+MatchS06_004298c0	MATCH-S06	0x004298c0	NOFP	equal		0		0	
+MatchS06_004299d0	MATCH-S06	0x004299d0	PC-INSENSITIVE	equal		0		2	
+MatchS06_00429a30	MATCH-S06	0x00429a30	PC-INSENSITIVE	equal		0		2	
+MatchS06_00429a70	MATCH-S06	0x00429a70	PC-INSENSITIVE	equal		0		1	
+MatchS06_00429aa0	MATCH-S06	0x00429aa0	PC-INSENSITIVE	equal		0		6	
+MatchS06_00429b30	MATCH-S06	0x00429b30	PC-INSENSITIVE	differs:intop	intop	1	intop@00429b5e(fdivr I/E)	4	
+MatchS06_00429b70	MATCH-S06	0x00429b70	PC-INSENSITIVE	differs:intop	intop	1	intop@00429bbc(fdivr I/E)	4	
+MatchS06_00429e10	MATCH-S06	0x00429e10	PC-SENSITIVE	equal	chain	2	chain@0042a2c2(fsub R1/E) chain@0042a35c(fsub R1/E)	20	indcall@00429ef8 indcall@0042a02d indcall@0042a335 indcall@0042a425 indjmp@0042a044
+MatchS06_0042aae0	MATCH-S06	0x0042aae0	PC-INSENSITIVE	equal		0		7	indcall@0042aaea indcall@0042ab7e indcall@0042ab8a indcall@0042ab97 indcall@0042aba4 indcall@0042abb0 indcall@0042abbd indcall@0042abf7
+MatchS06_0042ad10	MATCH-S06	0x0042ad10	PC-INSENSITIVE	equal		0		4	
+RwpSolverLeaves1X87	HB-6	0x00566200	PC-SENSITIVE	equal	chain	25	chain@0056623f(fmul R1/E) chain@00566249(fmul R1/E) chain@0056628c(fmul NF/E) chain@0056629b(faddp NF/R1) chain@005662a9(faddp NF/R1) chain@005662c3(faddp R1/R1)	130	
+RwpSolverLeaves1X87	HB-6	0x005667c0	PC-SENSITIVE	equal	chain,cmp,retst0	12	chain@005667d2(fmul R1/E) chain@005667d4(faddp E/NF) chain@005667d8(fmul NF/E) chain@005667da(faddp E/NF) cmp@005667e2(NF/E) chain@005667f7(fsqrt NF)	29	
+MatchS01	MATCH-S01	0x00401340	PC-INSENSITIVE	differs:intop	intop	1	intop@0040135a(fmul I/E)	3	
+MatchS01	MATCH-S01	0x00401570	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x004026d0	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00402f50	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00405890	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00407a60	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00409290	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00407600	NOFP	equal		0		0	
+MatchS02_00411350	MATCH-S01	0x00411350	PC-SENSITIVE	differs:intop	chain,intconv,intop	4	intop@0041135c(fadd I/E) chain@00411362(fmul R1/E) intconv@0041136a(arg to 004a2c48: NF) chain@00411385(fsubr NF/I)	8	
+MatchPilot_0046c5f0	MATCH-S01	0x0046c5f0	PC-SENSITIVE	equal	chain,cmp	12	chain@0046c61d(fmul R1/R1) chain@0046c623(fmul NF/E) chain@0046c625(fsubp R1/NF) chain@0046c62f(fmul R1/E) chain@0046c633(fmul R1/NF) chain@0046c635(fsubp E/NF)	58	
+MatchS03_00414060	MATCH-T13-SEED-WRITER	0x00414060	PC-SENSITIVE	differs:intop	chain,cmp,intop	5	chain@00414079(faddp I/R1) intop@00414096(fmul I/E) intop@004140b7(fmul I/E) cmp@004140c3(R1/E) cmp@004140da(R1/E)	21	
+PortTop_00492370	PORT-TOP-02	0x00492370	NOFP	equal		0		0	
+PortTop_00492370	PORT-TOP-02	0x00492290	NOFP	equal		0		0	
+PortTop_00493900	PORT-TOP-02	0x00493900	NOFP	equal		0		0	tailjmp@00493abb
+PortTop_00499820	PORT-TOP-02	0x00499820	NOFP	equal		0		0	indjmp@0049987b
+PortTop_00499890	PORT-TOP-02	0x00499890	NOFP	equal		0		0	indcall@004998db indcall@004998f0 indcall@00499a04 indcall@00499a25 indcall@00499a30 indcall@00499a49 indcall@00499a69
+PortTop_00499ba0	PORT-TOP-02	0x00499ba0	NOFP	equal		0		0	indcall@00499bbe indcall@00499bfb indcall@00499c0a indcall@00499c21 indcall@00499c5a indcall@00499c94
+PortTop_Leaves	PORT-TOP-02	0x00499cc0	NOFP	equal		0		0	indcall@00499cc6
+PortSave01_Config	PORT-TOP-02	0x00496400	NOFP	equal		0		0	tailjmp@00496463
+PortSave01_Config	PORT-TOP-02	0x00498910	NOFP	equal		0		0	
+PortSave01_Config	PORT-TOP-02	0x00498950	NOFP	equal		0		0	
+PortSave01_Config	PORT-TOP-02	0x004989b0	NOFP	equal		0		0	
+PortSave01_Config	PORT-TOP-02	0x004963e0	NOFP	equal		0		0	
+MatchS02_0040e470	PORT-FE-01	0x0040e470	NOFP	equal		0		0	
+MatchS08_004325c0	CONTROL	0x004325c0	PC-SENSITIVE	differs:intop	chain,cmp,intconv,intop	12	chain@0043275d(fadd R1/E) cmp@00432763(NF/E) chain@00432790(fmul R1/E) intconv@0043265c(arg to 004a2c48: NF) chain@004327a3(fmul R1/E) intconv@004327a9(arg to 004a2c48: NF)	31	depthmerge@004327d7
