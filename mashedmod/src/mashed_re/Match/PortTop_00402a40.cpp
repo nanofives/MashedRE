@@ -32,7 +32,7 @@
 #define FUN_0041ffb0 PortTop_StandIn04C_0041ffb0   // stand-in: matched; 0x004b4880(DAT_0063e490) reads +4 of a zero pointer when DAT_00636acc == 0 (state of 0x00402750)
 #define thunk_FUN_004196f0 Orig_004189e0   // thunk, Match/PortTop_004189e0.cpp
 #define thunk_FUN_004210f0 Orig_00421590   // thunk, Match/PortTop_00421590.cpp
-#define FUN_004014b0 PortTop_StandIn04C_004014b0   // stand-in: matched; reads DAT_00636570 +4 / DAT_0063656c +4 with no null check, state 0x00402750 creates (still a stand-in)
+#define FUN_004014b0 Orig_004014b0   // matched, Match/PortTop_004014b0.cpp (cup world teardown), since PORT-TOP-04J
 #define FUN_0040bd00 Orig_0040bd00   // matched, Match/PortTop_0040bd00.cpp
 #define FUN_00484130 Orig_00484130   // matched, Match/PortTop_00484130.cpp
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp
