@@ -105,7 +105,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004caea0	FUN_004caea0	stand-in	PortTop_StandIn04E_004caea0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x004d8560	FUN_004d8560	matched	UtilReturnOne4d8560	PORT-TOP-04E: exe body, Util/UtilLeaves_ab6.cpp (returns 1)	2	0x00402750
 0x00558240	FUN_00558240	stand-in	PortTop_StandIn04E_00558240	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x004014b0	FUN_004014b0	stand-in	PortTop_StandIn04C_004014b0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; reads DAT_00636570 +4 / DAT_0063656c +4 with no null check, state 0x00402750 creates (still a stand-in)	2	0x00402a40
+0x004014b0	FUN_004014b0	matched	Orig_004014b0	PORT-TOP-04J: Match/PortTop_004014b0.cpp = re/match/s01/raw/004014b0.c (BYTE-IDENTICAL 182 B): removes / destroys both lights, removes and destroys the clump and the world	2	0x00402a40
 0x004015a0	FUN_004015a0	matched	Orig_004015a0	PORT-TOP-04C: Match/PortTop_004015a0.cpp (re/match/s01/004015a0.c): RpClumpDestroy on the 13 x 0x68 slots at 0x00636578, then resets them	2	0x00402a40
 0x00403660	FUN_00403660	matched	Orig_00403660	PORT-TOP-04C: Match/PortTop_00403660.cpp (re/match/s01/00403660.c): Release of DAT_00636b70 (vtable +8) and RwRasterDestroy of DAT_00636b78, each when nonzero	2	0x00402a40
 0x0040bd00	FUN_0040bd00	matched	Orig_0040bd00	PORT-TOP-04C: Match/PortTop_0040bd00.cpp (re/match/s02/0040bd00.c): 14 calls, then RwTexDictionaryDestroy on DAT_0063b8f8..0x0063b904	2	0x00402a40
@@ -252,9 +252,9 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004d8480	RwErrSlotWrite	stand-in	PortTop_StandIn04C_004d8480	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): port body RwErrSlotWrite only in .asi-only Render/HighAB3Helpers_p6.cpp	3	0x005581f0
 0x00558180	FUN_00558180	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
 0x00558400	FUN_00558400	rw		RW core called by level-2 node 0x00558240. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x00558240
-0x004e45b0	RwFrameRemoveChild	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
-0x004e4860	RpWorldRemoveLight	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
-0x004e4d90	FUN_004e4d90	rw		RW core called by level-2 node 0x004014b0. exe port=none | PORT-TOP-03: not bound in PORT-TOP-03: not on the knob path (its caller is still a stand-in or under one) and its RW 3.x identity is not confirmed from its matched source	3	0x004014b0
+0x004e45b0	RwFrameRemoveChild	rw	MashedRw_WorldRemoveClump_004e45b0	PORT-TOP-04J: LibRw/RwApiBind.cpp: (world, clump) -> rw::World::removeClump (hooks.csv name; naming doubt aq_s4: RpWorldRemoveClump)	3	0x004014b0
+0x004e4860	RpWorldRemoveLight	rw	MashedRw_WorldRemoveLight_004e4860	PORT-TOP-04J: LibRw/RwApiBind.cpp: rw::World::removeLight	3	0x004014b0
+0x004e4d90	RpLightDestroy	rw	MashedRw_LightDestroy_004e4d90	PORT-TOP-04J: LibRw/RwApiBind.cpp: rw::Light::destroy, record freed	3	0x004014b0
 0x004e5700	RpWorldDestroy	bound	MashedRw_WorldDestroy_004e5700	PORT-TOP-04E: LibRw/RwApiBind.cpp: rw::World::destroy (null skipped)	3	0x0042c2a0
 0x004e6e00	RpClumpDestroy	bound	MashedRw_ClumpDestroy_004e6e00	PORT-TOP-04C: LibRw/RwApiBind.cpp: RpClumpDestroy -> rw::Clump::destroy (new in PORT-TOP-04C)	3	0x0041c2c0
 0x004e6920	RpAtomicDestroy	shim	MashedRw_AtomicDestroy_004e6920	PORT-TOP-04I: LibRw/RwApiBind.cpp: a PTank record releases its material texture (RwTextureDestroy) and is freed; a librw atomic goes to rw::Atomic::destroy	3	0x00489250
@@ -313,7 +313,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004b3eb0	FUN_004b3eb0	port	PortTop_Port_004b3eb0	PORT-TOP-04B: LibRw/RwApiBind.cpp: port body from the decomp (no matched source): RW memory stream + chunk 0x23 + 0x0054f8d0 replaced by Txd/TxdDecoder (written from 0x0054f8d0) and rw::TexDictionary / rw::Texture	3	0x004921d0
 0x004c5c00	RwTexDictionaryFindNamedTexture	rw	MashedRw_TexDictionaryFindNamedTexture_004c5c00	PORT-TOP-04G: LibRw/RwApiBind.cpp -> rw::TexDictionary::find (exe side of the two lookups)	3	0x0040bb50
 0x004c1d30	RwCameraCreate	bound	MashedRw_CameraCreate_004c1d30	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::create behind an RW 3.x-layout camera record (the matched callers use +0x04 / +0x18 / +0x1c / +0x60 / +0x64 directly)	5	0x004670a0
-0x004c0740	_rwObjectHasFrameSetFrame	rw	MashedRw_ObjectHasFrameSetFrame_004c0740	PORT-TOP-04I: LibRw/RwApiBind.cpp: camera records (04B) and now PTank records (frame stored at +0x04, rw::Frame::updateObjects)	5	0x004e7e30
+0x004c0740	_rwObjectHasFrameSetFrame	rw	MashedRw_ObjectHasFrameSetFrame_004c0740	PORT-TOP-04J: LibRw/RwApiBind.cpp: camera records (04B), PTank records (04I) and now light records (+0x04, rw::Light::setFrame)	5	0x00401000
 0x004c1a40	RwCameraSetNearClipPlane	bound	MashedRw_CameraSetNearClipPlane_004c1a40	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setNearPlane	4	0x00467110
 0x004c1b10	RwCameraSetFarClipPlane	bound	MashedRw_CameraSetFarClipPlane_004c1b10	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setFarPlane	4	0x00467110
 0x004c2bf0	RwCameraClone	bound	MashedRw_CameraClone_004c2bf0	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::clone (DAT_006905b4)	4	0x00467110
@@ -385,7 +385,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0048bbe0	FUN_0048bbe0	matched	Orig_0048bbe0	PORT-TOP-04G: Match/PortTop_0048bbe0.cpp = re/match/s14/0048bbe0.c; RwImageSetPath(""), DAT_00722134 = RwTextureRead("sun")	3	0x0040bbb0
 0x004c5bc0	RwTexDictionaryAddTexture	rw	MashedRw_TexDictionaryAddTexture_004c5bc0	PORT-TOP-04G: LibRw/RwApiBind.cpp -> rw::TexDictionary::addFront (head insert, as rwLinkListAddLLLink)	3	0x0040bbb0
 0x004a332b	exit	crt	PortTop_Exit04G_004a332b	PORT-TOP-04G: Match/PortTop_0040bbb0.cpp -> CRT exit (the "cant open sfx dic" branch only)	3	0x0040bbb0
-0x00401000	FUN_00401000	stand-in	PortTop_StandIn04G_00401000	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): DFF / clump loader	3	0x0040bbb0
+0x00401000	FUN_00401000	matched	Orig_00401000	PORT-TOP-04J: Match/PortTop_00401000.cpp = re/match/s01/00401000.c (BYTE-IDENTICAL 482 B): cup world (RpWorldCreate), cup.dff clump, ambient + soft-spot light records, world adds	3	0x0040bbb0
 0x00413b80	FUN_00413b80	stand-in	PortTop_StandIn04G_00413b80	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init, no matched source	3	0x0040bbb0
 0x004210b0	FUN_004210b0	stand-in	PortTop_StandIn04G_004210b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
 0x004759b0	FUN_004759b0	stand-in	PortTop_StandIn04G_004759b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): 0x00691600 array alloc	3	0x0040bbb0
@@ -406,7 +406,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00401630	FUN_00401630	matched	Orig_00401630	PORT-TOP-04H: Match/PortTop_00401630.cpp = re/match/s01/raw/00401630.c (BYTE-IDENTICAL 87 B, relocheck OK; the source now returns 0x004b3bf0's result, same bytes)	3	0x004025f0
 0x00401690	FUN_00401690	port	FUN_00401690 (static)	PORT-TOP-04H: the static of re/match/s01/00401690.c in Match/PortTop_004025f0.cpp: the C2 reconstruction (match.py 60.2%, residual = the vertex-loop unroll factor x8 vs x4), not a matched body	3	0x004025f0
 0x004b3bf0	FUN_004b3bf0	matched	Orig_004b3bf0	PORT-TOP-04H: Match/PortTop_004b3bf0.cpp = re/match/s18/004b3bf0.c (BYTE-IDENTICAL 98 B): stream open, find chunk 0x10, RpClumpStreamRead, RwFrameUpdateObjects, close	4	0x00401630
-0x004a2b60	sprintf	crt	PortTop_Sprintf04H_004a2b60	PORT-TOP-04H: Match/PortTop_00401630.cpp -> CRT vsprintf	4	0x00401630
+0x004a2b60	sprintf	crt	PortTop_Sprintf04J_004a2b60	PORT-TOP-04J: Match/PortTop_00401000.cpp: the exe CRT vsprintf (libid libcmt sprintf.obj)	4	0x00401000
 0x004e7420	RpClumpStreamRead	rw	MashedRw_ClumpStreamRead_004e7420	PORT-TOP-04H: LibRw/RwApiBind.cpp -> rw::Clump::streamRead on the knob path's memory stream (base + position), position moved by what librw read	5	0x004b3bf0
 0x004c0e50	RwFrameUpdateObjects	rw	MashedRw_FrameUpdateObjects_004c0e50	PORT-TOP-04H: LibRw/RwApiBind.cpp -> rw::Frame::updateObjects (same root test, dirty list and flag bits; the matched body reads RwGlobals +0xbc)	5	0x004b3bf0
 0x004e66d0	RpClumpForAllAtomics	rw	MashedRw_ClumpForAllAtomics_004e66d0	PORT-TOP-04H: LibRw/RwApiBind.cpp: librw atomic list in RW order (backwards: RW links read atomics at the head), stops at the first 0; callbacks get the librw atomic. No knob-path caller yet	5	0x004b3f90
@@ -415,3 +415,16 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00402240	FUN_00402240	stand-in	PortTop_StandIn04H_00402240	PORT-TOP-04H: Match/PortTop_004025f0.cpp: returns 0 (0x00401fe0 RW-layout geometry writes, RpGeometryCreate 0x004e8c70 / RpMaterialCreate 0x004e7fa0 tree unbound, 0x004c1040 no source)	3	0x004025f0
 0x00402590	FUN_00402590	stand-in	PortTop_StandIn04H_00402590	PORT-TOP-04H: Match/PortTop_004025f0.cpp: returns 0 (0x004022a0, same tree as 0x00402240)	3	0x004025f0
 0x004880a0	FUN_004880a0	matched	Obj7030acCreate	PORT-TOP-04I: Match/MatchS14_004880a0.cpp (both targets) = re/match/s14/004880a0.c (100%): PTank atomic DAT_007030ac	3	0x004881d0
+0x004c1800	FUN_004c1800	matched	Orig_004c1800	PORT-TOP-04J: Match/PortTop_004c1800.cpp = re/match/s19/004c1800.c (BYTE-IDENTICAL): RwBBoxInitialize	4	0x00401000
+0x004c1840	FUN_004c1840	matched	Orig_004c1840	PORT-TOP-04J: Match/PortTop_004c1840.cpp = re/match/s19/004c1840.c (BYTE-IDENTICAL): RwBBoxAddPoint	4	0x00401000
+0x004e5850	RpWorldCreate	rw	MashedRw_WorldCreate_004e5850	PORT-TOP-04J: LibRw/RwApiBind.cpp: rw::World::create	4	0x00401000
+0x004b5320	FUN_004b5320	matched	Orig_004b5320	PORT-TOP-04J: Match/PortTop_004b5320.cpp = re/match/s18/004b5320.c (BYTE-IDENTICAL 43 B): RpClumpForAllAtomics(clump, 0x004b5300, {mask, set})	4	0x00401000
+0x004b5300	FUN_004b5300	shim	MashedRw_AtomicGeometryFlags_004b5300	PORT-TOP-04J: LibRw/RwApiBind.cpp (no matched source): the 0x004b52f0 / 0x004b52c0 flag write on the librw atomic's geometry (+0x08, both arms). The two matched leaves stay out of the exe: the .asi has hand bodies of both (rva-lint CROSS-TARGET)	5	0x004b5320
+0x004b4080	FUN_004b4080	stand-in	PortTop_StandIn04J_004b4080	PORT-TOP-04J: Match/PortTop_00401000.cpp (logs): called only when DAT_00636ad0 != 0 (0 on the knob path: not called)	4	0x00401000
+0x0053fbb0	FUN_0053fbb0	stand-in	PortTop_StandIn04J_0053fbb0	PORT-TOP-04J: Match/PortTop_00401000.cpp (logs): called only when DAT_00636ad0 != 0 (0 on the knob path: not called)	4	0x00401000
+0x004e4dd0	RpLightCreate	shim	MashedRw_LightCreate_004e4dd0	PORT-TOP-04J: LibRw/RwApiBind.cpp: an RW-layout light record (0x004e4dd0's stores: +0x14 radius, +0x18 colour, +0x28 minusCosAngle, +0x3c) owning a rw::Light	4	0x00401000
+0x004e4900	RpLightSetColor	matched	Orig_004e4900	PORT-TOP-04J: Match/PortTop_004e4900.cpp = re/match/rwl02/004e4900.c (BYTE-IDENTICAL 77 B) on the light record	4	0x00401000
+0x004e4b90	RpLightSetConeAngle	matched	Orig_004e4b90	PORT-TOP-04J: Match/PortTop_004e4b90.cpp = re/match/rwl02/004e4b90.c (BYTE-IDENTICAL 55 B) on the light record; bounds 0x005d757c / 0x005cd108 from the rdata seed	4	0x00401000
+0x004e48e0	RpLightSetRadius	matched	Orig_004e48e0	PORT-TOP-04J: Match/PortTop_004e48e0.cpp = re/match/rwl02/004e48e0.c (BYTE-IDENTICAL 32 B) on the light record, then RwFrameUpdateObjects (bound)	4	0x00401000
+0x004e4810	RpWorldAddLight	rw	MashedRw_WorldAddLight_004e4810	PORT-TOP-04J: LibRw/RwApiBind.cpp: the light record's fields into the rw::Light, then rw::World::addLight	4	0x00401000
+0x004e4450	RwFrameAddChild	rw	MashedRw_WorldAddClump_004e4450	PORT-TOP-04J: LibRw/RwApiBind.cpp: (world, clump) -> rw::World::addClump (hooks.csv name; naming doubt aq_s4: RpWorldAddClump)	4	0x00401000

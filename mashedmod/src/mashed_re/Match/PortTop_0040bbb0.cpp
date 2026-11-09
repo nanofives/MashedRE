@@ -54,7 +54,6 @@ __declspec(noreturn) void PortTop_Exit04G_004a332b(int code) {
 }
 
 #define SI(rva, sig, args, job) void PortTop_StandIn04G_##rva sig { static int once; (void)args; StandInLog04G("0x" #rva, job, &once); }
-SI(00401000, (void), 0, "DFF / clump loader (0x004b3bf0 DFF read, RpClumpStreamRead 0x004e7420 unbound)")
 SI(00413b80, (void), 0, "effect init, no matched source")
 SI(004210b0, (void), 0, "effect init (0x00421080, 0x004770c0 emitter create, BitArrayClear)")
 SI(004759b0, (int p0), p0, "0x00691600 array alloc (RwMallocArrayZeroFill 0x00474db0, .asi-only body)")
@@ -95,7 +94,7 @@ int PortTop_StandIn04G_004b3d20(char* p0) {
 #define FUN_004c5cb0 MashedRw_TextureRead_004c5cb0         // RW: RwTextureRead
 #define FUN_004c5bc0 MashedRw_TexDictionaryAddTexture_004c5bc0  // RW: RwTexDictionaryAddTexture
 #define FUN_004c5c80 MashedRw_TexDictionarySetCurrent_004c5c80  // RW: RwTexDictionarySetCurrent
-#define FUN_00401000 PortTop_StandIn04G_00401000
+#define FUN_00401000 Orig_00401000                     // matched, Match/PortTop_00401000.cpp, since PORT-TOP-04J
 #define FUN_00413b80 PortTop_StandIn04G_00413b80
 #define FUN_004210b0 PortTop_StandIn04G_004210b0
 #define FUN_004759b0 PortTop_StandIn04G_004759b0
