@@ -6,7 +6,8 @@
 // PORT-AISPLINE-DDKORDER (2026-11-09, PREREG verify/portstate_20261109/PREREG_AISPLINE_DDKORDER.md): the matched
 // source compiles as AiSplineEval_x87_match. VS2022 /fp:precise sums it in source order, while the DDK reassociated
 // the outer sum (0x004433b9..0x004433c7), so the port's values differ from the original's (PORT-X87-PC24-AUDIT
-// finding (a)). AiSplineEval_x87_ddk evaluates the DDK's order. MASHED_AISPLINE_DDK=1 selects it, default OFF.
+// finding (a)). AiSplineEval_x87_ddk evaluates the DDK's order. Default ON since L-104 (a) (2026-11-09);
+// MASHED_NO_AISPLINE_DDK=1 opts out and selects the matched body.
 
 #include <cstdlib>
 #include <cstring>
@@ -51,15 +52,15 @@ bool DdkOn()
 {
     static int on = -1;
     if (on < 0) {
-        const char* e = std::getenv("MASHED_AISPLINE_DDK");
-        on = (e && std::strcmp(e, "1") == 0) ? 1 : 0;
+        const char* e = std::getenv("MASHED_NO_AISPLINE_DDK");
+        on = (e && std::strcmp(e, "1") == 0) ? 0 : 1;
     }
     return on == 1;
 }
 
 }  // namespace
 
-// 0x00443300 in the DDK's evaluation order (knob MASHED_AISPLINE_DDK). Index wrap and clamp as the matched source.
+// 0x00443300 in the DDK's evaluation order (default ON, opt-out MASHED_NO_AISPLINE_DDK=1). Index wrap and clamp as the matched source.
 extern "C" void AiSplineEval_x87_ddk(Path_00443300* param_1, int param_2, float param_3, float* param_4)
 {
     int i = param_2 - 1;
