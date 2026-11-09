@@ -1,0 +1,46 @@
+2026-11-09 12:18:17 H_DEF exe=55e5c513 pid=5940 exit=0 self_exited=True secs=143 | H_DEF.step.csv:13962:8284be46 H_DEF.gates.csv:54085:67931834 H_DEF.ptrace.log:27042:31fe043e
+2026-11-09 12:18:29 B_DEF_K0 exe=55e5c513 pid=13364 exit=0 self_exited=True secs=12 | B_DEF_K0.step.csv:762:1d5bf4f9
+2026-11-09 12:18:41 B_DEF_K1 exe=55e5c513 pid=9964 exit=0 self_exited=True secs=12 | B_DEF_K1.step.csv:762:1d5bf4f9
+2026-11-09 12:18:53 B_DEF_K26 exe=55e5c513 pid=17540 exit=0 self_exited=True secs=12 | B_DEF_K26.step.csv:762:1d5bf4f9
+2026-11-09 12:20:53 H_X24 exe=55e5c513 pid=6888 exit=0 self_exited=True secs=121 | H_X24.step.csv:13962:8284be46 H_X24.gates.csv:54085:67931834 H_X24.ptrace.log:27042:31fe043e
+2026-11-09 12:21:05 B_X24_K0 exe=55e5c513 pid=18928 exit=0 self_exited=True secs=12 | B_X24_K0.step.csv:762:1d5bf4f9
+2026-11-09 12:21:17 B_X24_K1 exe=55e5c513 pid=14340 exit=0 self_exited=True secs=12 | B_X24_K1.step.csv:762:1d5bf4f9
+2026-11-09 12:21:29 B_X24_K26 exe=55e5c513 pid=10792 exit=0 self_exited=True secs=12 | B_X24_K26.step.csv:762:1d5bf4f9
+2026-11-09 12:21:41 B_X24LCW_K0 exe=55e5c513 pid=19512 exit=0 self_exited=True secs=12 | B_X24LCW_K0.step.csv:762:1d5bf4f9
+2026-11-09 12:21:53 B_DEFLCW_K0 exe=55e5c513 pid=10896 exit=0 self_exited=True secs=12 | B_DEFLCW_K0.step.csv:762:1d5bf4f9
+2026-11-09 12:38:11 H_X24-2 exe=55e5c513 pid=20680 exit=0 self_exited=True secs=125 | H_X24-2.step.csv:13962:8284be46 H_X24-2.gates.csv:54085:67931834 H_X24-2.ptrace.log:27042:31fe043e
+2026-11-09 12:40:14 H_X24NCC exe=55e5c513 pid=3568 exit=0 self_exited=True secs=122 | H_X24NCC.step.csv:13962:2bb28855 H_X24NCC.gates.csv:54085:e1a6a325 H_X24NCC.ptrace.log:27042:26a01b06
+2026-11-09 12:42:16 H_X24MM exe=55e5c513 pid=6024 exit=0 self_exited=True secs=122 | H_X24MM.step.csv:13962:8284be46 H_X24MM.gates.csv:54085:67931834 H_X24MM.ptrace.log:27042:31fe043e
+2026-11-09 12:44:18 H_X24PK exe=55e5c513 pid=7724 exit=0 self_exited=True secs=122 | H_X24PK.step.csv:13962:8284be46 H_X24PK.gates.csv:54085:67931834 H_X24PK.ptrace.log:27042:31fe043e
+2026-11-09 12:46:20 H_X24NCL exe=55e5c513 pid=1696 exit=0 self_exited=True secs=122 | H_X24NCL.step.csv:13962:8284be46 H_X24NCL.gates.csv:54085:67931834 H_X24NCL.ptrace.log:27042:31fe043e
+2026-11-09 12:48:23 H_X24NL1 exe=55e5c513 pid=19680 exit=0 self_exited=True secs=123 | H_X24NL1.step.csv:13962:8284be46 H_X24NL1.gates.csv:54085:67931834 H_X24NL1.ptrace.log:27042:31fe043e
+2026-11-09 12:48:37 B_X24NCC_K0 exe=55e5c513 pid=11812 exit=0 self_exited=True secs=14 | B_X24NCC_K0.step.csv:762:b07b0855
+2026-11-09 12:48:51 B_X24MM_K0 exe=55e5c513 pid=22120 exit=0 self_exited=True secs=14 | B_X24MM_K0.step.csv:762:1d5bf4f9
+2026-11-09 12:49:04 B_X24NCL_K0 exe=55e5c513 pid=15824 exit=0 self_exited=True secs=12 | B_X24NCL_K0.step.csv:762:1d5bf4f9
+2026-11-09 12:49:16 B_X24NL1_K0 exe=55e5c513 pid=5372 exit=0 self_exited=True secs=13 | B_X24NL1_K0.step.csv:762:1d5bf4f9
+2026-11-09 12:53:36 H_NCC0 exe=55e5c513 pid=19700 exit=0 self_exited=True secs=149 | H_NCC0.step.csv:13962:2bb28855 H_NCC0.gates.csv:54085:e1a6a325 H_NCC0.ptrace.log:27042:26a01b06
+2026-11-09 12:55:38 H_MM0 exe=55e5c513 pid=19376 exit=0 self_exited=True secs=122 | H_MM0.step.csv:13962:8284be46 H_MM0.gates.csv:54085:67931834 H_MM0.ptrace.log:27042:31fe043e
+2026-11-09 12:57:40 H_NCL0 exe=55e5c513 pid=21752 exit=0 self_exited=True secs=122 | H_NCL0.step.csv:13962:8284be46 H_NCL0.gates.csv:54085:67931834 H_NCL0.ptrace.log:27042:31fe043e
+2026-11-09 12:59:42 H_NL10 exe=55e5c513 pid=6368 exit=0 self_exited=True secs=122 | H_NL10.step.csv:13962:8284be46 H_NL10.gates.csv:54085:67931834 H_NL10.ptrace.log:27042:31fe043e
+2026-11-09 12:59:53 B_NCC0_K0 exe=55e5c513 pid=15168 exit=0 self_exited=True secs=11 | B_NCC0_K0.step.csv:762:b07b0855
+2026-11-09 13:00:06 B_MM0_K0 exe=55e5c513 pid=21008 exit=0 self_exited=True secs=13 | B_MM0_K0.step.csv:762:1d5bf4f9
+2026-11-09 13:00:17 B_NCL0_K0 exe=55e5c513 pid=3216 exit=0 self_exited=True secs=12 | B_NCL0_K0.step.csv:762:1d5bf4f9
+2026-11-09 13:00:30 B_NL10_K0 exe=55e5c513 pid=21336 exit=0 self_exited=True secs=12 | B_NL10_K0.step.csv:762:1d5bf4f9
+2026-11-09 13:04:02 W_DEF exe=55e5c513 pid=11052 exit=0 self_exited=True secs=33 | W_DEF.step.csv:4663:eeb92153 W_DEF.pontoon.txt:7:a329ca22 W_DEF.seek.txt:11:fa8618df
+2026-11-09 13:04:35 W_X24 exe=55e5c513 pid=10956 exit=0 self_exited=True secs=32 | W_X24.step.csv:4663:eeb92153 W_X24.pontoon.txt:7:a329ca22 W_X24.seek.txt:11:fa8618df
+2026-11-09 13:05:06 W_X24-2 exe=55e5c513 pid=13568 exit=0 self_exited=True secs=32 | W_X24-2.step.csv:4663:eeb92153 W_X24-2.pontoon.txt:7:a329ca22 W_X24-2.seek.txt:11:fa8618df
+2026-11-09 13:05:39 W_MM0 exe=55e5c513 pid=20932 exit=0 self_exited=True secs=32 | W_MM0.step.csv:4663:eeb92153 W_MM0.pontoon.txt:7:a329ca22 W_MM0.seek.txt:11:fa8618df
+2026-11-09 13:06:11 W_X24MM exe=55e5c513 pid=14220 exit=0 self_exited=True secs=33 | W_X24MM.step.csv:4663:eeb92153 W_X24MM.pontoon.txt:7:a329ca22 W_X24MM.seek.txt:11:fa8618df
+2026-11-09 13:06:45 W_NCL0 exe=55e5c513 pid=17492 exit=0 self_exited=True secs=33 | W_NCL0.step.csv:4962:b9f47b5b W_NCL0.pontoon.txt:7:a329ca22 W_NCL0.seek.txt:12:2da4ae07
+2026-11-09 13:07:16 W_X24NCL exe=55e5c513 pid=16404 exit=0 self_exited=True secs=32 | W_X24NCL.step.csv:4962:b9f47b5b W_X24NCL.pontoon.txt:7:a329ca22 W_X24NCL.seek.txt:12:2da4ae07
+2026-11-09 13:07:51 W_NL10 exe=55e5c513 pid=18680 exit=0 self_exited=True secs=35 | W_NL10.step.csv:4663:eeb92153 W_NL10.pontoon.txt:7:a329ca22 W_NL10.seek.txt:11:fa8618df
+2026-11-09 13:08:28 W_X24NL1 exe=55e5c513 pid=21392 exit=0 self_exited=True secs=37 | W_X24NL1.step.csv:4663:eeb92153 W_X24NL1.pontoon.txt:7:a329ca22 W_X24NL1.seek.txt:11:fa8618df
+2026-11-09 13:08:59 W_NCC0 exe=55e5c513 pid=5020 exit=0 self_exited=True secs=31 | W_NCC0.step.csv:4489:8a73ed74 W_NCC0.pontoon.txt:7:a329ca22 W_NCC0.seek.txt:11:fa8618df
+2026-11-09 13:09:30 W_X24NCC exe=55e5c513 pid=11724 exit=0 self_exited=True secs=32 | W_X24NCC.step.csv:4489:8a73ed74 W_X24NCC.pontoon.txt:7:a329ca22 W_X24NCC.seek.txt:11:fa8618df
+2026-11-09 13:10:02 W_X24PK exe=55e5c513 pid=2340 exit=0 self_exited=True secs=32 | W_X24PK.step.csv:4663:eeb92153 W_X24PK.pontoon.txt:7:a329ca22 W_X24PK.seek.txt:11:fa8618df
+2026-11-09 13:18:54 D2_DEFH_1 exe=55e5c513 pid=16920 exit=0 self_exited=False secs=111 | D2_DEFH_1.motion_diag.log:1620:8e6108a8
+2026-11-09 13:20:44 D2_X24H_1 exe=55e5c513 pid=21672 exit=0 self_exited=False secs=110 | D2_X24H_1.motion_diag.log:1638:fe38081b
+2026-11-09 13:22:34 D2_DEFH_2 exe=55e5c513 pid=4160 exit=0 self_exited=False secs=110 | D2_DEFH_2.motion_diag.log:1640:dea61fb2
+2026-11-09 13:24:24 D2_X24H_2 exe=55e5c513 pid=5044 exit=0 self_exited=False secs=110 | D2_X24H_2.motion_diag.log:1629:f9fdd52f
+2026-11-09 13:26:14 D2_DEFH_3 exe=55e5c513 pid=19348 exit=0 self_exited=False secs=110 | D2_DEFH_3.motion_diag.log:1631:33652421
+2026-11-09 13:28:04 D2_X24H_3 exe=55e5c513 pid=5140 exit=0 self_exited=False secs=110 | D2_X24H_3.motion_diag.log:1629:f9fdd52f

@@ -136,6 +136,7 @@
 //   - Draw anything inside the cleared region.
 
 #include <float.h>   // _controlfp_s (D2 precision probe)
+#include "Core/X87Pc.h"   // [PORT-X87-PC24] the game thread at PC_24 from device creation on (default ON, L-105; MASHED_NO_X87_PC24=1 opts out)
 #include <windows.h>
 #include <d3d9.h>
 #define DIRECTINPUT_VERSION 0x0800
@@ -1035,16 +1036,28 @@ extern bool g_nav_demo; // defined below; gates the background-park behavior.
 bool PumpOnce() {
     // [D2 precision probe 2026-10-10] The original runs its race loop at x87 PC_24 (D-11072 P2:
     // FUN_00408610 replays 11996/11996 only at PC_24). MASHED_LOG_CW logs this thread's live
-    // precision-control bits; MASHED_X87_PC24 (default OFF) forces PC_24 here every frame.
+    // precision-control bits.
+    // [PORT-X87-PC24 2026-11-09] PC_24 (default ON since L-105, opt-out MASHED_NO_X87_PC24=1) is no longer forced PC_24 here from frame 0: InitD3D9 sets it
+    // once, right after the device exists, where the original's thread becomes 0x007f (PREREG_X87PC24.md K1). Here, once
+    // the knob was applied, a precision other than PC_24 counts one drift event and is reasserted (K2).
     {
-        static const bool s_pc24 = std::getenv("MASHED_X87_PC24") != nullptr;
         static const bool s_logcw = std::getenv("MASHED_LOG_CW") != nullptr;
-        static unsigned s_pf = 0;
-        if (s_pc24) { unsigned int t = 0; _controlfp_s(&t, _PC_24, _MCW_PC); }
+        static unsigned s_pf = 0, s_drift = 0;
+        if (mashed_re::X87::GameThreadPc24() && (_controlfp(0, 0) & _MCW_PC) != _PC_24) {
+            ++s_drift;
+            unsigned int t = 0; _controlfp_s(&t, _PC_24, _MCW_PC);
+            if (s_logcw && s_drift <= 20u) {
+                if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                    std::fprintf(lf, "[x87] drift frame=%u n=%u reasserted PC_24\n", s_pf, s_drift);
+                    std::fclose(lf);
+                }
+            }
+        }
         if (s_logcw && (s_pf % 600u) == 0u && s_pf <= 6000u) {
             if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                std::fprintf(lf, "[cw] frame=%u pc=0x%05x (_PC_24=0x%05x _PC_53=0x%05x)\n", s_pf,
-                             _controlfp(0, 0) & _MCW_PC, _PC_24, _PC_53);
+                std::fprintf(lf, "[cw] frame=%u pc=0x%05x (_PC_24=0x%05x _PC_53=0x%05x) tid=%lu knob=%d drift=%u\n", s_pf,
+                             _controlfp(0, 0) & _MCW_PC, _PC_24, _PC_53, GetCurrentThreadId(),
+                             mashed_re::X87::GameThreadPc24() ? 1 : 0, s_drift);
                 std::fclose(lf);
             }
         }
@@ -3205,6 +3218,24 @@ int CreateDeviceWatched(IDirect3D9* d3d, D3DDEVTYPE type, HWND hwnd, DWORD flags
 }
 }  // namespace
 
+// [PORT-X87-PC24 2026-11-09, flipped default ON by L-105 (a); MASHED_NO_X87_PC24=1 opts out]: the game thread at x87 PC_24 from here on, as the original's
+// thread is after its own CreateDevice (D3D9 without D3DCREATE_FPU_PRESERVE sets CW 0x007f on the calling thread; the
+// exe's call runs on CreateDeviceWatched's worker, so the game thread kept 0x027f). Only the precision field changes:
+// 0x007f and 0x027f differ in _MCW_PC alone. Runs on the thread that called InitD3D9, the game thread.
+static void ApplyX87Pc24AfterDevice() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_NO_X87_PC24"); return !(e && e[0] && e[0] != '0'); }();
+    if (!s_on) return;
+    unsigned int before = 0, t = 0;
+    _controlfp_s(&before, 0, 0);
+    _controlfp_s(&t, _PC_24, _MCW_PC);
+    mashed_re::X87::GameThreadPc24() = true;
+    if (std::FILE* log = std::fopen(kLogPath, "a")) {
+        std::fprintf(log, "[x87] PC_24 after device: tid=%lu pc 0x%05x -> 0x%05x\n", GetCurrentThreadId(),
+                     before & _MCW_PC, t & _MCW_PC);
+        std::fclose(log);
+    }
+}
+
 bool InitD3D9() {
     g_d3d = Direct3DCreate9(D3D_SDK_VERSION);
     if (!g_d3d) return false;
@@ -3297,6 +3328,7 @@ bool InitD3D9() {
                 g_device = dev;
                 g_pp = ppOut;                        // remember the params that worked
                 g_depth_disabled = (depthVariant == 1);
+                ApplyX87Pc24AfterDevice();
                 return true;
             }
             if (rc == -1) {                          // hung: HAL driver wedged — try REF once, then give up
@@ -3316,7 +3348,7 @@ bool InitD3D9() {
                             static_cast<unsigned long>(rhr), rrc == 1 ? " OK" : "");
                         std::fclose(log);
                     }
-                    if (rrc == 1) { g_device = rdev; g_pp = rpo; g_depth_disabled = true; return true; }
+                    if (rrc == 1) { g_device = rdev; g_pp = rpo; g_depth_disabled = true; ApplyX87Pc24AfterDevice(); return true; }
                 }
                 goto init_failed;
             }
