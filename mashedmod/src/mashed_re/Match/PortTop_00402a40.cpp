@@ -27,7 +27,7 @@
 #define FUN_0041ccf0 Orig_0041ccf0   // matched, Match/PortTop_0041ccf0.cpp
 #define FUN_0041c0e0 Orig_0041c0e0   // matched, Match/PortTop_0041c0e0.cpp
 #define FUN_0041b660 PortTop_StandIn04C_0041b660   // stand-in: matched only in the group source h1_grp_0041ad60.c, whose other members 0x0041ad60 / 0x0041ae20 / 0x0041b520 / 0x0041b630 already have exe bodies (one body per RVA)
-#define FUN_00489250 PortTop_StandIn04C_00489250   // stand-in: matched; reads DAT_007030a8 +4 / DAT_007030ac +4 with no null check (state of 0x00402750)
+#define FUN_00489250 Orig_00489250   // matched, Match/PortTop_00489250.cpp (PTank atomics), since PORT-TOP-04I
 #define FUN_0045b930 Orig_0045b930   // matched, Match/PortTop_0045b930.cpp
 #define FUN_0041ffb0 PortTop_StandIn04C_0041ffb0   // stand-in: matched; 0x004b4880(DAT_0063e490) reads +4 of a zero pointer when DAT_00636acc == 0 (state of 0x00402750)
 #define thunk_FUN_004196f0 Orig_004189e0   // thunk, Match/PortTop_004189e0.cpp
