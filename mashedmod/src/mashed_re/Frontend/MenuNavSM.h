@@ -153,6 +153,8 @@ bool           Nav_GameStateLoadSave(const unsigned char* data, unsigned len);
 // [D4-FU-SPANINIT-WRITERS] the same span copy + re-derive as Nav_GameStateLoadSave, from a bare
 // 0x520-byte span (the boot span when no save loaded). No magic gate.
 void           Nav_GameStateSeedSpan(const unsigned char* span);
+// [PORT-COLOURSEL-ICON] MASHED_COLOURSEL_ICON (default OFF): the colour-select icon reads the original's choice 0x0067f0c0.
+bool           ColourSelIcon_On();
 
 // --- public API ------------------------------------------------------------
 

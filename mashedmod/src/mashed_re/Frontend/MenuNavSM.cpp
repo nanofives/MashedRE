@@ -1126,7 +1126,26 @@ void Nav_FrameInputBegin() { g_nav_flag_f1a4 = 0; }
 // Any other action is not a mode-select item -> leaves game_mode unchanged. This
 // is what makes the standalone's game mode (and hence the Race/RaceModes rule
 // derived at launch) track the chosen frontend mode instead of a hard-coded id.
+} // namespace Frontend
+} // namespace mashed_re
+#include <cstdlib>   // std::getenv (PORT-COLOURSEL-ICON)
+namespace mashed_re {
+namespace Frontend {
+// [PORT-COLOURSEL-ICON 2026-11-09] MASHED_COLOURSEL_ICON (default OFF, =1 on), PREREG
+// verify/portstate_20261109/PREREG_COLOURSEL_ICON.md. The original's colour-select icon is drawn from the choice
+// 0x0067f0c0 (0x004335f0, read at 0x00433971), which LAB_0043f468 sets to 1 right after the push of screen 4
+// (0x0043f4c3 / 0x0043f4d1) for the actions 0xff3d0000 / 0xff400000.
+bool ColourSelIcon_On() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_COLOURSEL_ICON");
+        return e && e[0] == '1';
+    }();
+    return s_on;
+}
+
 void ApplyActionGameMode(std::uint32_t action) {
+    if (ColourSelIcon_On() && (action == 0xff3d0000u || action == 0xff400000u))
+        *reinterpret_cast<std::int32_t*>(0x0067f0c0u) = 1;                     // 0x0043f4d1
     // DAT_0067f17c = 0 on these five mode items (harvest L272 for 0xff3d/0xff40
     // via LAB_0043f468, L940 for 0xff4d, L825 for 0xff2c/0xff2e via
     // LAB_0043f198): the challenge row restarts at 0 when a mode is picked.

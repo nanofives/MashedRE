@@ -187,8 +187,8 @@
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 #include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default ON, L-27)
 
-// s24/s18 power-up table lives in the save-span MODEL, not at the literal
-// 0x007f0a40 (our port does not mirror the span back to the image).
+// s24/s18 power-up table: the save-span MODEL; the boot load also mirrors the span to 0x007f0a40
+// (CopySpanAndRederive, MenuNavSM.cpp; verify/portstate_20261109/RESULT_PORT-SAVE-SPAN-MIRROR.md).
 namespace mashed_re { namespace Frontend { unsigned char* Nav_SaveSpanData(); } }
 
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
@@ -6211,8 +6211,8 @@ bool RenderFrame() {
                     float ix = (85.0f * kVScale) - isw * 0.5f;
                     std::uint32_t itint = white;
                     if (h_icon == kHandleInputKbd) {
-                        const std::int32_t sel =
-                            *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
+                        const std::int32_t sel =   // MASHED_COLOURSEL_ICON: the original's choice 0x0067f0c0 (0x00433971)
+                            *reinterpret_cast<const std::int32_t*>(mashed_re::Frontend::ColourSelIcon_On() ? 0x0067f0c0u : 0x0067ea98u);
                         const float cx = (sel >= 1 && sel <= 6)
                                              ? 170.0f + (sel - 1) * 70.0f : 85.0f;
                         icx = cx;
