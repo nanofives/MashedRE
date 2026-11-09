@@ -512,6 +512,14 @@ STACK['TKD'] = ['MASHED_DET_TEST_KEY=0x1c@5406+10']; STACK['NAKOFF'] = ['-MASHED
 STACK['PSGOTK'] = STACK['PSGO'] + STACK['TK']
 # MATCH-PORTSTATE-GAMEFLOW-FU: PSGF = PSG + the 0x004929d0 racing-phase tick (MASHED_PORTSTATE_GAMEFLOW_FU)
 STACK['PSGF'] = _PSG + ['MASHED_PORTSTATE_GAMEFLOW_FU']
+# PORT-X87-PC24 (verify/portstate_20261109/PREREG_X87PC24.md): the game thread at x87 PC_24 from device creation on, the
+# same plus the D2 42 s hold, and the section-3 interaction stacks (each = X24 + one precision knob). LCW = + MASHED_LOG_CW.
+_X24 = ['MASHED_X87_PC24']
+STACK['X24'] = _X24; STACK['X24H'] = _X24 + STACK['DEFH']; STACK['X24LCW'] = _X24 + ['MASHED_LOG_CW']
+STACK['DEFLCW'] = ['MASHED_LOG_CW']
+STACK['X24NCC'] = _X24 + ['MASHED_NO_CC_PC24=1']; STACK['X24MM'] = _X24 + ['MASHED_MATMUL_PC24=1']
+STACK['X24PK'] = _X24 + ['MASHED_X87_PC24_PK53=1']; STACK['X24NCL'] = _X24 + ['MASHED_NO_COLL_LUT=1']
+STACK['X24NL1'] = _X24 + ['MASHED_NO_LEAVES1_X87=1']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

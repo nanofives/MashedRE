@@ -40,6 +40,7 @@
 #include "../Race/CarRegistrant.h"
 #include "../Math/RwLutTables.h"
 #include "../Audio/AudioWire.h"     // [D4-WSJ-WIRE] PK_Sfx -> collision with pod (MASHED_AUDIO_WIRE)
+#include "../Core/X87Pc.h"           // [PORT-X87-PC24] the thread baseline precision (MASHED_X87_PC24)
 
 #include <float.h>
 #include <cmath>
@@ -149,7 +150,8 @@ void __cdecl PK_Grant(int v, int type) {                           // FUN_0045c0
     // registry's PC_24 scope (verify/d3_mode7_20261010/cw_check_fixed.txt).
     unsigned int cw = 0, tmp = 0;
     _controlfp_s(&cw, 0, 0);
-    _controlfp_s(&tmp, _PC_53, _MCW_PC);
+    // [PORT-X87-PC24] with MASHED_X87_PC24 the thread baseline is PC_24 (the original's), so it runs there.
+    _controlfp_s(&tmp, mashed_re::X87::ThreadBaselinePc(), _MCW_PC);
     s_cbHost.grant(v, type);
     _controlfp_s(&tmp, cw & _MCW_PC, _MCW_PC);
 }
@@ -164,7 +166,7 @@ void __cdecl PK_Sfx(int id, void*) {                                            
         if (mashed_re::Audio::WireOn()) {
             unsigned int cw = 0, tmp = 0;
             _controlfp_s(&cw, 0, 0);
-            _controlfp_s(&tmp, _PC_53, _MCW_PC);
+            _controlfp_s(&tmp, mashed_re::X87::ThreadBaselinePc(), _MCW_PC);   // [PORT-X87-PC24] PC_53 unless the knob
             mashed_re::Audio::WirePickup();
             _controlfp_s(&tmp, cw & _MCW_PC, _MCW_PC);
         }
