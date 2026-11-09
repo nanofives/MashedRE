@@ -44,17 +44,8 @@
 // ref: re/analysis/c0_promotion_frontend_a/0x0040e480.md
 // ---------------------------------------------------------------------------
 
-// 0x0040e480
-extern "C" __declspec(dllexport) void __cdecl CarSlotStateSet(int param_1, std::uint32_t param_2)
-{
-    // PTR_PTR_005f2770: base pointer read from 0x005f2770; 0x34 is the fixed offset after param_1*4.
-    const std::uintptr_t base = *reinterpret_cast<const std::uint32_t*>(0x005f2770u);
-    if (base == 0) return;   // standalone image-pad only, see the header (never taken in MASHED.exe)
-    *reinterpret_cast<std::uint32_t*>(base + static_cast<std::uintptr_t>(static_cast<unsigned>(param_1)) * 4u + 0x34u)
-        = param_2;
-}
-
-RH_ScopedInstall(CarSlotStateSet, 0x0040e480);
+// MATCH-S02: the body of CarSlotStateSet moved to Match/MatchS02_0040e480.cpp (PORT-STATE-02),
+// which compiles the byte-matched source re/match/s02/0040e480.c.
 
 // ---------------------------------------------------------------------------
 // CarSlotStateGet  --  FUN_0040e470  (15 bytes, 0x0040e470..0x0040e47e)

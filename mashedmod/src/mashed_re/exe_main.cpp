@@ -177,6 +177,7 @@
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 #include "Frontend/RowMovers.h"             // FrontendModeIndex / SplitScreenTrackAssignment: matched 0x004309b0 / 0x00430830
 #include "Frontend/PortStateFrontend.h"     // MASHED_PORTSTATE_FRONTEND + the DAT_0067e9fc bridge (PORT-STATE-01)
+#include "Compat/PortStateSeed.h"           // port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out): original file-backed bytes into the pad (PORT-STATE-02, L-99 a)
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
@@ -9472,6 +9473,7 @@ static void HandTop_Prelude() {
         std::FILE* clr = std::fopen(kLogPath, "w");
         if (clr) std::fclose(clr);
     }
+    mashed_re::Compat::PortStateSeed_Log(kLogPath);   // ON only (PORT-STATE-02)
 
     // Scripted nav-demo verification harness (in-process input only). Enabled
     // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.
@@ -10448,6 +10450,9 @@ int  PortTop_WinMain(HINSTANCE, HINSTANCE, LPSTR, int);   // Match/PortTop_00492
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    // PORT-STATE-02 (L-99 a, L-101 flip): the port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out) copies the generated table of the original's
+    // file-backed .rdata/.data values into the B17 pad before any game code runs, on both top-level paths. Opt-out = no write, no log.
+    mashed_re::Compat::PortStateSeed_Apply();
     // [PORT-TOP-02] MASHED_ORIG_TOP=1 (default OFF, read once here): the matched original WinMain 0x00492370
     // and run function 0x00492290 drive the process, with the pieces above bound as stand-ins.
     {
