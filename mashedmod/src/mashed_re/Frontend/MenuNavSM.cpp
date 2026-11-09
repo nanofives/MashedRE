@@ -21,7 +21,6 @@
 // existing TextRenderer/MashedFont path instead.
 
 #include "MenuNavSM.h"
-#include "MenuAnimTick.h"
 #include "MenuNav.h"            // MenuEntryWalk: the shared 0x0042ac90 body
 #include "../Race/RaceModes.h"  // SelectionToGameMode: the host-side name of 0x0042f6b0's table (SelectionToGameMode.h)
 #include "RowMovers.h"          // challenge-row movers 0x004322c0 / 0x004323c0
@@ -36,6 +35,12 @@
 // Declaration of the kv-stream search (original FUN_0042ad90): the ONE body is Frontend/KvFind.cpp (both targets).
 // KvLookup below is its host-side name.
 extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n);
+// PORT-STATE-03, MASHED_PORTSTATE_FRONTEND ON only: the matched bodies that run on the frontend state at its original addresses.
+extern "C" void __cdecl MenuEntryArrayInit(void);      // 0x0042d3e0, Match/MatchS07_0042d3e0.cpp (zeroes DAT_00898ac0)
+extern "C" int  __cdecl Pred497450(int param_1);        // 0x00497450, Match/MatchGFFU_00497450.cpp (reads DAT_007e96fc)
+extern "C" void __cdecl PromptRowInit0042ad10(int* idx, int a, int x, int y, int e);   // 0x0042ad10, Match/MatchS06_0042ad10.cpp
+// Both knob states: the menu slide-animation tick (L-100 (a)), reads DAT_00898ac0 and four input words, see Anim_Tick.
+extern "C" int  __cdecl MenuAnimTickTwin(void);         // 0x004325c0, Match/MatchS08_004325c0.cpp
 
 namespace mashed_re {
 namespace Frontend {
@@ -157,7 +162,7 @@ const MenuGameState kFreshState = {
     0,                   // flag_ea64
     0,                   // flag_ecdc
     0,                   // flag_ed6c
-    { 0, 0, 0, 0 },      // player_active[]
+    { 0, 0, 0, 0 },      // player_active_off[]
     0,                   // has_savedata (DAT_007f0f2c)
     2,                   // has_profiles (DAT_007f0ad4) - LIVE-PROBED 2026-06-12:
                          // the original holds 2 at the menu with an all-zero
@@ -374,7 +379,13 @@ constexpr std::uint32_t kTermVal = 0xff070000u; // -0xf90000 (terminator)
 // --------------------------------------------------------------------------
 int        g_nav_depth = 0;                 // DAT_0067e9f8
 NavSlot    g_stack[kMaxNavDepth] = {};
-MenuRecord g_records[kMaxRecords] = {};     // 0x00898ac0 analogue
+MenuRecord g_records_store[kMaxRecords] = {};   // 0x00898ac0 analogue: the records with MASHED_PORTSTATE_FRONTEND OFF
+// PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the records are DAT_00898ac0 itself (PortStateFrontend.h), so a matched
+// frontend body that names DAT_00898ac0 reads and writes the records this state machine draws. Read once, like the vehicle
+// records' MASHED_PORTSTATE_RECORDS (Vehicle/VehiclePhysicsRun.cpp g_records).
+MenuRecord* const g_records = PortStateFrontend_On() ? reinterpret_cast<MenuRecord*>(kMenuRecords) : g_records_store;
+// Record capacity: 30 at DAT_00898ac0 (the original array; 0x008990d8.. are other globals), 31 in the port store as before.
+inline int RecordCapacity() { return PortStateFrontend_On() ? kOrigMenuRecords : kMaxRecords; }
 int        g_record_count = 0;
 int        g_last_dir = 0;                  // DAT_0067e844
 
@@ -401,11 +412,16 @@ int KvLookup(const std::uint32_t* table, std::uint32_t tag_key, int occurrence) 
 // and which this state machine both writes, line "g_records[rec].pad20 = row", and reads as row20), pad30 (+0x30) and the whole of entry 30.
 // So the net effect is still the old memset; the difference from the original is now explicit instead of hidden in a memset. Making the
 // reset faithful (leave pad20 stale) would change which rows the draw loop sees, which only a frontend parity capture can judge: open.
+// PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the records are DAT_00898ac0, so the 14 stores x 30 entries are the matched
+// 0x0042d3e0 itself (Match/MatchS07_0042d3e0.cpp, the export the boot's milestone B7 already calls). With the knob OFF the helper
+// MenuEntryZeroBody does the same stores on the port store. The wider clear below runs in both states.
 static_assert(offsetof(MenuRecord, pad20) == 0x20 && offsetof(MenuRecord, pad30) == 0x30 && sizeof(MenuRecord) == 0x34, "MenuRecord layout");
 void RecordsZero() {
-    MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(g_records), 30);
+    if (PortStateFrontend_On()) MenuEntryArrayInit();   // 0x0042d3e0 on DAT_00898ac0 == g_records
+    else                        MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(g_records), 30);
     for (int i = 0; i < 30; ++i) { g_records[i].pad20 = 0; g_records[i].pad30 = 0; }
-    std::memset(&g_records[30], 0, sizeof(MenuRecord));
+    // Entry 30 exists only in the port store. At DAT_00898ac0 (knob ON) it would be 0x008990d8.., other original globals.
+    if (!PortStateFrontend_On()) std::memset(&g_records[30], 0, sizeof(MenuRecord));
     g_record_count = 0;
 }
 
@@ -467,9 +483,14 @@ int Q_ListBaseY(int item_count, int spacing) {
 
 // FUN_00497450 (0x00497450) - player-active predicate. param<4 && DAT_007e96fc[
 // param*0x80] != 0. Fresh menu: all inactive. Used by the screen-0x1c grey-out.
+// PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the test is the matched 0x00497450 itself (Match/MatchGFFU_00497450.cpp,
+// [0x007e96fc + i*0x200]). The port's extra `player < 0` guard is not on that path: the one caller is the screen-0x1c loop
+// below, i in 0..3. Nothing in the exe writes DAT_007e96fc (exe_main.cpp keeps the slot types in g_input_slot_type) nor
+// player_active_off, so both paths return 0 on every call today.
 bool Q_PlayerActive(int player) {
+    if (PortStateFrontend_On()) return Pred497450(player) != 0;
     if (player < 0 || player >= 4) return false;
-    return g_game_state.player_active[player] != 0;
+    return g_game_state.player_active_off[player] != 0;
 }
 
 // FUN_00430b60 (0x00430b60) - count of active team slots (DAT_007f1a14/24/34/44
@@ -638,7 +659,7 @@ void BuildRecords(const NavSlot& slot) {
     // list is centered on virtual-Y 0xf0 (240) exactly as the original lays it out.
     constexpr int kSpacing = 0x1e;      // 30, the per-row Y step (local_c += 0x1e)
     const int base_y = Q_ListBaseY(slot.item_count, kSpacing);
-    for (int row = 0; row < slot.item_count && rec < kMaxRecords; ++row) {
+    for (int row = 0; row < slot.item_count && rec < RecordCapacity(); ++row) {
         const int prim = KvLookup(slot.desc_table, kTagItem, row);
         g_records[rec].tag       = static_cast<std::int32_t>(kTagItem);
         g_records[rec].row_index = row;
@@ -652,6 +673,12 @@ void BuildRecords(const NavSlot& slot) {
         // counter; pool0 decomp 2026-06-09) — the anim tick's type-0 settle
         // recomputes Y from this field (FUN_004325c0 @0x004326b8).
         g_records[rec].pad20     = row;
+        // +0x30: the original stores the screen's table pointer here (0x0043d2a0, re/match/s08/0043d2a0.c:302,
+        // it->def = DAT_0067ed78[lv].def). The anim tick 0x004325c0 compares it with 0x005f7370 (screen 24) and
+        // 0x005f72a0 (screen 18) only (L-100 (a)). The port's other screen tables have no original address here,
+        // so they keep 0, which equals neither (the original holds PTR_DAT_005f7638[screen]).
+        g_records[rec].pad30     = (slot.screen_id == 24) ? static_cast<std::int32_t>(kScreen24Table)
+                                 : (slot.screen_id == 18) ? static_cast<std::int32_t>(kScreen18Table) : 0;
         // Anim init (FUN_0043d2a0): slide counter +0x10 = 0x1ff (item slides in),
         // type +0x04 = 0 (not frozen). The anim tick (FUN_004325c0) drives slide
         // -> 0 then settles (type=1). Root screen items start settled (type=1,
@@ -710,9 +737,15 @@ inline int PromptRelNormalize(int rel) { return (rel == -1) ? 0 : rel; }
 void PromptStripAppend(int key, int cmp, int rel) {
     const std::uint32_t tag = PromptStripTag(key);  // keys outside 1..10, 3/7/9: no row
     if (tag == 0) return;
-    if (g_record_count >= kMaxRecords) return;     // standalone bounds guard
+    if (g_record_count >= RecordCapacity()) return;  // standalone bounds guard
     MenuRecord& r = g_records[g_record_count];
-    PromptRowInit(r, tag);
+    // PORT-STATE-03: with MASHED_PORTSTATE_FRONTEND ON the row init is the matched 0x0042ad10 on DAT_00898ac0 (== g_records),
+    // called as the original's prompt-row init with (0x40, 0x1ac, 0) and the record counter by pointer; the same 9 stores as
+    // PromptRowInit. Knob OFF: PromptRowInit on the port store, as before.
+    if (PortStateFrontend_On())
+        PromptRowInit0042ad10(&g_record_count, static_cast<int>(tag), 0x40, 0x1ac, 0);
+    else
+        PromptRowInit(r, tag);
     PromptStripRow row;
     PromptStripResolve(key, cmp, rel, &row);
     r.sec_id  = row.sec;
@@ -775,25 +808,40 @@ void FrameClockUpdate(int raw_ms) {
     g_frame_dt = static_cast<float>(g_tick_ms) * 3.3333333e-4f; // 0x0049351f
 }
 
-// FUN_004325c0 (0x004325c0): ONE body for both targets since D4-FU-MENUSPEED (2026-10-27, decision L-35 = 3),
-// MenuAnimTickBody in Frontend/MenuAnimTickTwin.cpp (citations there). This host only supplies the inputs: the
-// FUN_00493480 port's dt, g_anim_phase / g_anim_gate, the nav slot's item count for DAT_0067ece0, the
-// FUN_0042ac50 port, and the slot's screen id for the original's record +0x30 pointer match (24 = 0x005f7370,
-// 18 = 0x005f72a0). Speed is the original's rate (the MASHED_MENU_ANIM_SPEED switch was
-// removed in D5-MENUANIMSPEED once MASHED_MENU_CLOCK_FAITHFUL became default).
+// FUN_004325c0 (0x004325c0): the byte-matched body is the ONE body in both targets (PORT-STATE-03, decision L-100 (a),
+// Match/MatchS08_004325c0.cpp, export MenuAnimTickTwin). It reads its inputs at the original addresses, so this host
+// is a one-call bridge: it puts the FUN_00493480 port's dt (DAT_007f1004), g_anim_phase (DAT_0067eca4), g_anim_gate
+// (DAT_0067e914) and the nav slot's item count (DAT_0067ece0) there, calls the body, and restores the four previous
+// values. With MASHED_PORTSTATE_FRONTEND ON the records already are DAT_00898ac0. With it OFF the bridge also copies
+// records 0..29 of the port store there for the call and back after, and restores what DAT_00898ac0 held. The body's
+// one callee, 0x0042ac50 (Calc42ac50), reads no global, so nothing else observes the bridged values. Main thread only.
+// The screen match on record +0x30 (0x004326e4 / 0x0043271f) reads the table address BuildRecords stores there
+// (screens 24 / 18). Speed is the original's rate (the MASHED_MENU_ANIM_SPEED switch was removed in D5-MENUANIMSPEED
+// once MASHED_MENU_CLOCK_FAITHFUL became default).
 bool Anim_Tick() {
     const NavSlot& slot = g_stack[g_nav_depth];
-    MenuAnimTickIn in;
-    in.dt                = g_frame_dt;
-    in.phase             = g_anim_phase;
-    in.gate              = g_anim_gate;
-    in.item_total        = slot.item_count;
-    in.list_base_y       = &Q_ListBaseY;
-    in.screen_per_record = false;
-    in.screen            = slot.screen_id;
-    in.screen_24         = 24;
-    in.screen_18         = 18;
-    return MenuAnimTickBody(g_records, in) != 0;
+    float&        dtW    = *reinterpret_cast<float*>(kAnimDtWord);
+    std::int32_t& phaseW = *reinterpret_cast<std::int32_t*>(kAnimPhaseWord);
+    std::int32_t& gateW  = *reinterpret_cast<std::int32_t*>(kAnimGateWord);
+    std::int32_t& itemsW = *reinterpret_cast<std::int32_t*>(kAnimItemTotalWord);
+    const float        dt0 = dtW;
+    const std::int32_t phase0 = phaseW, gate0 = gateW, items0 = itemsW;
+    dtW = g_frame_dt; phaseW = g_anim_phase; gateW = g_anim_gate; itemsW = slot.item_count;
+    int ret;
+    if (PortStateFrontend_On()) {
+        ret = MenuAnimTickTwin();                                     // g_records == DAT_00898ac0
+    } else {
+        constexpr std::size_t kBytes = static_cast<std::size_t>(kOrigMenuRecords) * sizeof(MenuRecord);
+        unsigned char* const orig = reinterpret_cast<unsigned char*>(kMenuRecords);
+        unsigned char saved[kBytes];
+        std::memcpy(saved, orig, kBytes);
+        std::memcpy(orig, g_records_store, kBytes);
+        ret = MenuAnimTickTwin();
+        std::memcpy(g_records_store, orig, kBytes);
+        std::memcpy(orig, saved, kBytes);
+    }
+    dtW = dt0; phaseW = phase0; gateW = gate0; itemsW = items0;
+    return ret != 0;
 }
 
 } // namespace

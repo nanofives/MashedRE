@@ -187,6 +187,7 @@ MatchS06_00429b30
 MatchS06_00429b70
 MatchS06_00429e10
 MatchS06_0042aae0
+MatchS06_0042ad10
 # HB-6 (2026-10-26): disasm-order x87 bodies of 0x00566200 / 0x005667c0 (VECCAP-2), reached only under
 # MASHED_LEAVES1_X87=1 (default OFF). Measured by re/tools/veccap/replay_c3.py; verify/hb6_20261026/RESULT_HB-6.md.
 RwpSolverLeaves1X87

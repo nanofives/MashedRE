@@ -84,6 +84,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-08  0x004325c0  FUN_004325c0  C4->C4  file column only: Frontend/MenuAnimTickTwin.cpp (deleted) -> Match/MatchS08_004325c0.cpp (L-100 (a): matched source is the one body in both targets). re/match/s08/004325c0.c gained a MATCH_PORT guard around its static callee 0x0042ac50 (DDK text unchanged): match.py --bytes BYTE-IDENTICAL 564 B, 152/152 ins, relocheck OK checked=24 (unchecked __ftol, as before); src sha256 now 5c4b5ab1d8e19e54 (was 95490871ca55ac22); evidence: verify/portstate_20261108/RESULT_PORT-STATE-03.md
+2026-11-08  0x00430830  SplitScreenTrackAssignment  C4->C4  file column only: Frontend/MenuScoreSort.cpp -> Match/MatchS07_00430830.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
+2026-11-08  0x004309b0  FrontendModeIndex  C4->C4  file column only: Frontend/FrontendMode.cpp (deleted) -> Match/MatchS07_004309b0.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
 2026-11-08  0x004769f0  ParticleEmitter_SetColour  C4->C4  file column -> Match/MatchS12_004769f0.cpp (matched re/match/s12/004769f0.c is the body in both targets, port called, gates unchanged); evidence: verify/portrender_20261108/RESULT_PORT-RENDER-01.md
 2026-11-08  0x0040d270  Course::Finish  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/top07/0040d270.c; evidence: verify/porttop07_20261108/RESULT_PORT-TOP-07.md
 2026-11-08  0x004924f0  sub_004924f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/topm01/004924f0.c; evidence: verify/porttopm01_20261108/RESULT_PORT-TOP-MATCH-01.md

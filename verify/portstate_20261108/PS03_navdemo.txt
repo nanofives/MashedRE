@@ -1,0 +1,13 @@
+NAV_DEMO phase=0 01_title ok=1 depth=0 screen=1 cur=0 nrec=7
+NAV_DEMO phase=2 02_mainmenu ok=1 depth=0 screen=1 cur=0 nrec=7
+NAV_DEMO phase=4 03_singleplayer ok=1 depth=1 screen=2 cur=0 nrec=5
+NAV_DEMO phase=6 04_colourselect ok=1 depth=2 screen=4 cur=0 nrec=3
+NAV_DEMO phase=8 05_abilityselect ok=1 depth=3 screen=6 cur=0 nrec=3
+NAV_DEMO phase=10 06_challengeselect ok=1 depth=3 screen=6 cur=0 nrec=3
+NAV_DEMO phase=15 07_back_mainmenu ok=1 depth=0 screen=1 cur=0 nrec=7
+NAV_DEMO phase=18 08_options_highlighted ok=1 depth=0 screen=1 cur=2 nrec=7
+NAV_DEMO phase=20 09_options ok=1 depth=1 screen=8 cur=0 nrec=7
+NAV_DEMO phase=22 10_sound ok=1 depth=2 screen=19 cur=0 nrec=6
+NAV_DEMO phase=24 11_sound_adjusted ok=1 depth=2 screen=19 cur=0 nrec=6
+NAV_DEMO phase=27 12_back_mainmenu2 ok=1 depth=0 screen=1 cur=2 nrec=7
+NAV_DEMO phase=28 done ok=1 depth=0 screen=1 cur=2 nrec=7
