@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-09 15:21 PORT-X87-PC24 (orch/PORT-X87-PC24), PORT-X87-PC24-FLIP (orch/PORT-X87-PC24-FLIP), PORT-AISPLINE-DUALCOPY (orch/PORT-AISPLINE-DUALCOPY): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_142615
 - 2026-11-09 13:57 PORT-TOP-04F (orch/PORT-TOP-04F), PORT-AISPLINE-FLIP (orch/PORT-AISPLINE-FLIP): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_133756
 - 2026-11-09 13:13 PORT-AISPLINE-DDKORDER (orch/PORT-AISPLINE-DDKORDER): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_124725
 - 2026-11-09 12:08 PORT-TOP-04E (orch/PORT-TOP-04E), PORT-X87-PC24-AUDIT (orch/PORT-X87-PC24-AUDIT): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_115037
