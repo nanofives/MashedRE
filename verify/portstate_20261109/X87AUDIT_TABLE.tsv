@@ -1,0 +1,170 @@
+rva	tu	port	orig_cw	exe_cw	static_orig	sse2_static	static_exe	emu_n	natural_deltas	X53	X24	S	S_f32ret	match_modes	recommendation	scope	note
+0x0055a1f0	RwpSolverBroadphase3	body	0x007f x5614	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0055a9a0	RwpSolverBroadphase3	body	not reached	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0055abb0	RwpSolverBroadphase3	body	0x007f x108	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0055ae50	RwpSolverBroadphase3	body	0x007f x22528	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0055b750	RwpSolverBroadphase3	body	0x007f x36	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0055bae0	RwpSolverBroadphase3	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x0055bd70	RwpSolverBroadphase3	body	not reached	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0055c0f0	RwpSolverBroadphase3	body	0x007f x36	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0055c2d0	RwpSolverBroadphase3	body	0x007f x54	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00577be0	RwpSolverCore14	body	not reached	not probed	PC-SENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x00577cb0	RwpSolverCore14	body	0x007f x18	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00577ec0	RwpSolverCore14	body	not reached	not probed	PC-SENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x005784a0	RwpSolverCore14	body	0x007f x18	not probed	PC-SENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x0045db50	MatchS10_0045db50	body	0x007f x7576	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0045df70	MatchS10_0045df70	none	0x007f x7232	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0045dfc0	MatchS10_0045dfc0	none	0x007f x5616	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00576880	RwpSolverCore15	body	0x007f x18	not probed	PC-SENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00575b60	RwpSolverCore17	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x00575fe0	RwpSolverCore17	body	0x007f x36	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00578b20	RwpSolverCore17	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x00578bd0	RwpSolverCore17	body	0x007f x54	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00578cb0	RwpSolverCore17	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x00578d90	RwpSolverCore17	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x00578ff0	RwpSolverCore17	body	0x007f x18	not probed	PC-SENSITIVE	differs:intop	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=no [static]	-	transcription (CW only)	
+0x0057a250	RwpSolverCore17	body	not reached	not probed	PC-SENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x0057a660	RwpSolverCore17	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x004331a0	MatchS08_004331a0	called	not reached	not reached	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0043c000	MatchS08_0043c000	none	0x007f x1616	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	51	0	GREEN 51	GREEN 51	GREEN 51	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	no natural delta in 51 calls (O53 = O); static: a discriminating input exists
+0x00442420	MatchS08_00442420	none	0x007f x16842	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00442c80	MatchS08_00442c80	body	0x007f x44792	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00442cc0	MatchS08_00442cc0	called	0x007f x6844	0x007f x2818	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	the exe already calls it at 0x007f (a local PC_24 scope)
+0x00442ce0	MatchS08_00442ce0	called	0x007f x22336	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	69	0	GREEN 51	GREEN 51	GREEN 51	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	no natural delta in 69 calls (O53 = O); static: a discriminating input exists
+0x00442df0	MatchS08_00442df0	none	0x007f x350	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00443300	MatchS08_00443300	called	0x007f x971318	not reached	PC-SENSITIVE	equal	PC-SENSITIVE	80	56	RED 52/80	RED 44/80	RED 44/80	RED 44	x87@PC_53=no x87@PC_24=no SSE2=no [emu]	FIX THE BODY FIRST: rewrite the expression in the DDK order; no mode matches today	matched	port body differs at every precision: the DDK reassociated float adds the C writes left to right (VS2022 /fp:precise keeps source order)
+0x00449880	MatchS08_00449880	none	not reached	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0044dff0	MatchS08_0044dff0	none	not reached	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0044e020	MatchS08_0044e020	none	not reached	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0044e050	MatchS08_0044e050	none	not reached	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0044e070	MatchS08_0044e070	none	not reached	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x0041b770	MatchS04_0041b770	body	0x007f x4	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0041cbc0	MatchS04_0041cbc0	body	not reached	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0041d910	MatchS04_0041d910	called	0x007f x2	0x027f x1	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0041db80	MatchS04_0041db80	none	0x007f x574	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0041f100	MatchS04_0041f100	none	0x007f x9804	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0041f260	MatchS04_0041f260	none	0x007f x12	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00420d80	MatchS05_00420d80	none	0x007f x27686	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	67	11	GREEN 67	GREEN 67	GREEN 67	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	
+0x00420de0	MatchS05_00420de0	none	0x007f x12	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	12	0	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=? [emu, original bytes as proxy]	keep x87 (matches today)	matched	port legs not run (port entry reads a non-pointer arg as a pointer)
+0x00422470	MatchS05_00422470	none	0x007f x14132	not probed	PC-SENSITIVE	differs:intop	NOT_IN_IMAGE	60	40	RED 40/60	GREEN 60	GREEN 60	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	raw 80-bit ST0 differs, f32 equal (returns scored as the caller stores them, fstp m32)
+0x004224d0	MatchS05_004224d0	none	0x007f x8	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00425ab0	MatchS05_00425ab0	none	0x007f x2	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00425b10	MatchS05_00425b10	body	0x007f x2	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00441b30	CameraEntries	called	0x007f x14	0x027f x7	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00441c80	CameraEntries	called	0x007f x8427	0x027f x1638	PC-SENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00442600	CameraEntries	called	0x007f x2081	0x027f x876	PC-SENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00445aa0	CameraEntries	called	0x007f x1731	0x027f x876	PC-SENSITIVE	differs:intop,trans	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=no [static]	-	transcription (CW only)	
+0x00493480	MatchS15_00493480	body	0x007f x7234	not probed	PC-INSENSITIVE	differs:intop	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=no [static]	keep x87 (matches today)	matched	
+0x00478660	PathNodes	none	0x007f x2	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x004783f0	PathNodes	none	0x007f x2	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x004111c0	MatchT01G_004111c0	body	0x007f x5618	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0042aff0	MatchS07_0042aff0	body	0x007f x665	not probed	PC-SENSITIVE	equal	PC-INSENSITIVE	21	0	GREEN 21	GREEN 21	GREEN 21	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	no natural delta in 21 calls (O53 = O); static: a discriminating input exists
+0x0042b180	MatchS07_0042b180	body	0x007f x665	not probed	PC-SENSITIVE	equal	PC-INSENSITIVE	21	0	GREEN 21	GREEN 21	GREEN 21	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	no natural delta in 21 calls (O53 = O); static: a discriminating input exists
+0x0042bde0	MatchS07_0042bde0	body	not reached	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x0042d290	MatchS07_0042d290	none	not reached	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0042d300	MatchS07_0042d300	body	not reached	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0042e3a0	MatchS07_0042e3a0	body	0x007f x1544	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0042f8d0	MatchS07_0042f8d0	none	not reached	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x0042fb70	MatchS07_0042fb70	body	not reached	not probed	PC-SENSITIVE	differs:intop	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x0042fe90	MatchS07_0042fe90	none	not reached	not probed	PC-SENSITIVE	differs:intop	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00430b30	MatchS07_00430b30	none	not reached	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00431b20	MatchS07_00431b20	body	0x007f x1265600	not probed	PC-SENSITIVE	differs:dblop,trans	PC-SENSITIVE	80	80	RED 80/80	RED 80/80	RED 80/80	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	raw 80-bit ST0 differs, f32 equal (returns scored as the caller stores them, fstp m32)
+0x00431b30	MatchS07_00431b30	none	0x007f x1616	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00431b50	MatchS07_00431b50	body	0x007f x7616	not probed	PC-SENSITIVE	differs:dblop,trans	PC-SENSITIVE	65	65	RED 65/65	RED 65/65	RED 65/65	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	raw 80-bit ST0 differs, f32 equal (returns scored as the caller stores them, fstp m32)
+0x00431b60	MatchS07_00431b60	body	0x007f x13232	not probed	PC-SENSITIVE	differs:dblop,trans	PC-SENSITIVE	67	67	RED 67/67	RED 67/67	RED 67/67	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	raw 80-bit ST0 differs, f32 equal (returns scored as the caller stores them, fstp m32)
+0x00546c50	RwpSolverMath2QuatY	body	0x007f x29392	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x004c3b30	RwpSolverMath2QuatY	called	0x007f x256321	0x027f x876	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00546b10	RwpSolverMath2Quat	none	0x007f x29496	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00546bf0	RwpSolverMath2Quat	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x00546cb0	RwpSolverMath2Quat	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x004c3b30	RwpSolverMath2Quat	called	0x007f x256321	0x027f x876	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00482030	MatchS13_00482030	body	not reached	not probed	PC-SENSITIVE	differs:intop	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00430b90	ProgressBarSetA	none	not reached	not probed	PC-SENSITIVE	differs:intop	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x00427ad0	MenuMenusBB	body	not reached	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00475f30	MatchS12_00475f30	none	0x007f x2178	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	80	0	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=? [emu, original bytes as proxy]	keep x87 (matches today)	matched	port legs not run (port entry reads a non-pointer arg as a pointer)
+0x00476d00	MatchS12_00476d00	called	0x007f x707803	not reached	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004769f0	MatchS12_004769f0	called	0x007f x694681	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004773f0	MatchS12_004773f0	none	0x007f x320	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00477730	MatchS12_004773f0	none	0x007f x8	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00428610	ViewportScaledRectDraw	body	0x007f x1211	not probed	PC-SENSITIVE	differs:intop	NOT_IN_IMAGE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=no [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00495080	MatchS16_00495080	none	0x007f x2	not probed	PC-SENSITIVE	equal	NOT_IN_IMAGE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	no runtime effect today (port=none); PC_24 or SSE2 when it is called	matched	
+0x00451ce0	WarzonePontoon	called	not reached	not reached	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451690	WarzonePontoon	called	not reached	not reached	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451990	WarzonePontoon	called	not reached	not reached	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451cc0	WarzonePontoon	called	not reached	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451a50	WarzonePontoon	called	not reached	not reached	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451990	MatchS09_00451990	called	not reached	not reached	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451a50	MatchS09_00451a50	called	not reached	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00452eb0	MatchS09_00452eb0	none	not reached	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00458fa0	MatchS09_00458fa0	called	0x007f x34	0x027f x17	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451690	MatchS09_00451690	called	not reached	not reached	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00451ce0	MatchS09_00451ce0	called	not reached	not reached	PC-INSENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00458920	MatchS09_00458920	called	0x007f x17	0x007f x2	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	the exe already calls it at 0x007f (a local PC_24 scope)
+0x004264d0	MatchS06_004264d0	none	0x007f x2	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00426d20	MatchS06_00426d20	body	0x007f x5610	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00426de0	MatchS06_00426de0	body	0x007f x22464	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00426df0	MatchS06_00426df0	body	0x007f x22464	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00426e10	MatchS06_00426e10	none	0x007f x2	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004270f0	MatchS06_004270f0	none	0x007f x5610	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00427580	MatchS06_00427580	body	0x007f x2	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00427680	MatchS06_00427680	body	0x007f x32097	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	45	38	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=? [emu, original bytes as proxy]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	port legs not run (port entry reads a non-pointer arg as a pointer)
+0x004278d0	MatchS06_004278d0	body	0x007f x564	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00427990	MatchS06_00427990	body	not reached	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00427ad0	MatchS06_00427ad0	body	not reached	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00427be0	MatchS06_00427be0	body	not reached	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00427e00	MatchS06_00427e00	body	0x007f x20125	not probed	PC-INSENSITIVE	equal	PC-SENSITIVE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00427f00	MatchS06_00427f00	body	0x007f x108	not probed	PC-INSENSITIVE	equal	PC-SENSITIVE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00427ff0	MatchS06_00427ff0	body	not reached	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00428140	MatchS06_00428140	body	0x007f x11864	not probed	PC-INSENSITIVE	equal	PC-SENSITIVE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x004282a0	MatchS06_004282a0	called	0x007f x2712	0x007f x62	PC-SENSITIVE	equal	PC-SENSITIVE	33	33	RED 33/33	RED 33/33	RED 33/33	RED 33	x87@PC_53=no x87@PC_24=yes SSE2=? [emu, original bytes as proxy]	keep x87 (matches today)	matched	port legs VOID: X53/X24/S return NaN-indefinite in the emulator (artefact, not separated); the exe already calls it at 0x007f (a local PC_24 scope)
+0x00428320	MatchS06_00428320	body	0x007f x180	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	80	80	RED 80/80	GREEN 80	GREEN 80	GREEN	x87@PC_53=no x87@PC_24=yes SSE2=yes [emu]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00428590	MatchS06_00428590	body	0x007f x2	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00428610	MatchS06_00428610	body	0x007f x1211	not probed	PC-SENSITIVE	differs:intop	PC-SENSITIVE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=no [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00428760	MatchS06_00428760	body	0x007f x1211	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004288a0	MatchS06_004288a0	body	0x007f x180	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00428a30	MatchS06_00428a30	body	0x007f x202	not probed	PC-INSENSITIVE	equal	PC-SENSITIVE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00428bf0	MatchS06_00428bf0	body	not reached	not probed	PC-INSENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00428d30	MatchS06_00428d30	body	0x007f x208	not probed	PC-INSENSITIVE	equal	PC-SENSITIVE	0	0	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	no runtime effect today (port=body); PC_24 or SSE2 when it is called	matched	
+0x00429300	MatchS06_00429300	body	not reached	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004295a0	MatchS06_004295a0	body	not reached	not probed	PC-INSENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00429620	MatchS06_00429620	body	not reached	not probed	PC-SENSITIVE	differs:intop	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00429660	MatchS06_00429660	body	not reached	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00429820	MatchS06_00429820	body	0x007f x4	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00429870	MatchS06_00429870	body	not reached	not probed	PC-SENSITIVE	differs:intop	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x004298c0	MatchS06_004298c0	body	not reached	not probed	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004299d0	MatchS06_004299d0	body	not reached	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00429a30	MatchS06_00429a30	body	not reached	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00429a70	MatchS06_00429a70	body	not reached	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00429aa0	MatchS06_00429aa0	body	not reached	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00429b30	MatchS06_00429b30	body	0x007f x3533	not probed	PC-INSENSITIVE	differs:intop	PC-SENSITIVE	60	0	GREEN 60	GREEN 60	GREEN 60	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	
+0x00429b70	MatchS06_00429b70	body	not reached	not probed	PC-INSENSITIVE	differs:intop	PC-SENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x00429e10	MatchS06_00429e10	body	0x007f x5610	not probed	PC-SENSITIVE	equal	PC-SENSITIVE	35	0	GREEN 35	GREEN 35	GREEN 35	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	no natural delta in 35 calls (O53 = O); static: a discriminating input exists
+0x0042aae0	MatchS06_0042aae0	body	0x007f x2188	not probed	PC-INSENSITIVE	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0042ad10	MatchS06_0042ad10	none	0x007f x12	not probed	PC-INSENSITIVE	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00566200	RwpSolverLeaves1X87	body	not reached	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	-	transcription (CW only)	
+0x005667c0	RwpSolverLeaves1X87	body	0x007f x7	not probed	PC-SENSITIVE	equal	NOFP	0	-	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=yes [static]	-	transcription (CW only)	
+0x00401340	MatchS01	body	not reached	not probed	PC-INSENSITIVE	differs:intop	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=no [static]	keep x87 (matches today)	matched	
+0x00401570	MatchS01	body	0x007f x208	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004026d0	MatchS01	body	0x007f x2	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00402f50	MatchS01	called	0x007f x2	0x027f x2	NOFP	equal	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00405890	MatchS01	called	0x007f x5616	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00407a60	MatchS01	called	0x007f x2	0x027f x1	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00409290	MatchS01	called	0x007f x16	0x027f x2	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00407600	MatchS01	body	not reached	not probed	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00411350	MatchS02_00411350	body	not reached	not probed	PC-SENSITIVE	differs:intop	PC-INSENSITIVE	0	-	-	-	-	-	x87@PC_53=? x87@PC_24=? SSE2=? [static]	undetermined (not reached)	matched	
+0x0046c5f0	MatchPilot_0046c5f0	called	0x007f x112204	0x027f x874	PC-SENSITIVE	equal	PC-SENSITIVE	69	50	-	-	-	-	x87@PC_53=no x87@PC_24=yes SSE2=? [emu, original bytes as proxy]	PROPOSED: game-thread PC_24 (SSE2 not proven)	matched	port legs not run (port entry reads a non-pointer arg as a pointer)
+0x00414060	MatchS03_00414060	called	0x007f x2	0x027f x1	PC-SENSITIVE	differs:intop	PC-SENSITIVE	2	0	GREEN 2	GREEN 2	GREEN 2	GREEN	x87@PC_53=yes x87@PC_24=yes SSE2=yes [emu]	keep x87 (matches today)	matched	no natural delta in 2 calls (O53 = O); static: a discriminating input exists
+0x00492370	PortTop_00492370	called	0x027f x2	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00492290	PortTop_00492370	called	0x007f x2	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00493900	PortTop_00493900	called	0x027f x2	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00499820	PortTop_00499820	called	0x007f x87 + 0x027f x36	not probed	NOFP	equal	NOT_IN_IMAGE	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00499890	PortTop_00499890	called	0x027f x2	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00499ba0	PortTop_00499ba0	called	0x027f x2	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00499cc0	PortTop_Leaves	called	not reached	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00496400	PortSave01_Config	called	ATTACH FAIL	0x027f x2	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00498910	PortSave01_Config	called	0x027f x2	0x027f x2	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x00498950	PortSave01_Config	called	0x027f x2	0x027f x2	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004989b0	PortSave01_Config	called	not reached	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x004963e0	PortSave01_Config	called	0x007f x44 + 0x027f x14	not reached	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	
+0x0040e470	MatchS02_0040e470	called	0x007f x186262	0x007f x394	NOFP	equal	NOFP	0	-	-	-	-	-	x87@PC_53=yes x87@PC_24=yes SSE2=yes [static]	keep x87 (matches today)	matched	the exe already calls it at 0x007f (a local PC_24 scope)
+0x004325c0	MatchS08_004325c0	called	0x007f x1546	not probed	PC-SENSITIVE	differs:intop	NOFP	50	1	RED 1/50	GREEN 50	GREEN 50	GREEN	x87@PC_53=no x87@PC_24=yes SSE2=yes [emu]	control: SSE2 since PORT-STATE-03 (L-102), confirmed	control (SSE2 TU, not in x87_tus.txt)	
