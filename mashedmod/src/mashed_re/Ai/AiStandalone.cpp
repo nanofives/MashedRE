@@ -2103,6 +2103,7 @@ void Ai_CountdownAlivePoke()
         if (::VehicleSlotGetter(static_cast<std::uint32_t>(v)) == 1u) CarSlotStateSet(v, 2);   // 0x004188b0 / 0x004188c0 ...
 }
 
+// 0x00418860 Ai_Standalone_Tick
 void Ai_Standalone_Tick()
 {
     TickTrace("enter", -1);
