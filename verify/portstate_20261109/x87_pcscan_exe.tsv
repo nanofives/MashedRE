@@ -1,0 +1,170 @@
+tu	section	rva	class	sse2_vs_pc24	kinds	n_events	first_events	fp_ops	notes
+RwpSolverBroadphase3		0x0055a1f0	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055a9a0	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055abb0	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055ae50	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055b750	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055bae0	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055bd70	NOFP	equal		0		0	indjmp@000cb9fb
+RwpSolverBroadphase3		0x0055c0f0	NOFP	equal		0		0	
+RwpSolverBroadphase3		0x0055c2d0	NOFP	equal		0		0	
+RwpSolverCore14		0x00577be0	PC-INSENSITIVE	equal		0		4	
+RwpSolverCore14		0x00577cb0	NOFP	equal		0		0	
+RwpSolverCore14		0x00577ec0	PC-INSENSITIVE	equal		0		8	
+RwpSolverCore14		0x005784a0	PC-INSENSITIVE	equal		0		2	
+MatchS10_0045db50	MATCH-S10	0x0045db50	PC-INSENSITIVE	equal		0		14	indjmp@00168661
+MatchS10_0045df70	MATCH-S10	0x0045df70	NOT_IN_IMAGE				FloatStep45df70		
+MatchS10_0045dfc0	MATCH-S10	0x0045dfc0	NOT_IN_IMAGE				L2_FUN_0045dfc0		
+RwpSolverCore15	MATCH-S10	0x00576880	PC-INSENSITIVE	equal		0		4	
+RwpSolverCore17	MATCH-S10	0x00575b60	NOFP	equal		0		0	
+RwpSolverCore17	MATCH-S10	0x00575fe0	NOFP	equal		0		0	
+RwpSolverCore17	MATCH-S10	0x00578b20	NOFP	equal		0		0	
+RwpSolverCore17	MATCH-S10	0x00578bd0	NOFP	equal		0		0	
+RwpSolverCore17	MATCH-S10	0x00578cb0	NOFP	equal		0		0	
+RwpSolverCore17	MATCH-S10	0x00578d90	NOFP	equal		0		0	
+RwpSolverCore17	MATCH-S10	0x00578ff0	PC-INSENSITIVE	equal		0		2	
+RwpSolverCore17	MATCH-S10	0x0057a250	PC-INSENSITIVE	equal		0		4	
+RwpSolverCore17	MATCH-S10	0x0057a660	NOFP	equal	retst0	1	retst0@0012618a(NW)	0	
+MatchS08_004331a0	MATCH-S08	0x004331a0	PC-INSENSITIVE	equal		0		8	tailjmp@00187a4f
+MatchS08_0043c000	MATCH-S08	0x0043c000	NOT_IN_IMAGE				TimerSlotTickDispatcher		
+MatchS08_00442420	MATCH-S08	0x00442420	NOT_IN_IMAGE				CameraSlotFloatGet		
+MatchS08_00442c80	MATCH-S08	0x00442c80	NOT_IN_IMAGE				RubberBandGateMatched		
+MatchS08_00442cc0	MATCH-S08	0x00442cc0	PC-INSENSITIVE	equal		0		2	
+MatchS08_00442ce0	MATCH-S08	0x00442ce0	NOT_IN_IMAGE				RubberBandGripMatched		
+MatchS08_00442df0	MATCH-S08	0x00442df0	NOT_IN_IMAGE				RaceFloat898980Get		
+MatchS08_00443300	MATCH-S08	0x00443300	PC-SENSITIVE	equal	chain	33	chain@00187e5c(fsubp R1/R1) chain@00187e66(faddp NF/R1) chain@00187e68(fsub E/NF) chain@00187e6a(fmulp E/NF) chain@00187e6e(fsub NF/NF) chain@00187e70(fmul NF/D)	95	
+MatchS08_00449880	MATCH-S08	0x00449880	NOT_IN_IMAGE				Fill449880		
+MatchS08_0044dff0	MATCH-S08	0x0044dff0	NOT_IN_IMAGE				ItemWorldPos44dff0		
+MatchS08_0044e020	MATCH-S08	0x0044e020	NOT_IN_IMAGE				FloatLt44e020		
+MatchS08_0044e050	MATCH-S08	0x0044e050	NOT_IN_IMAGE				FloatTable8900a8Get		
+MatchS08_0044e070	MATCH-S08	0x0044e070	NOT_IN_IMAGE				DoubleIndexedFloatMul44e070		
+MatchS04_0041b770	MATCH-S04	0x0041b770	NOT_IN_IMAGE				Copy41b770		
+MatchS04_0041cbc0	MATCH-S04	0x0041cbc0	PC-INSENSITIVE	equal		0		23	
+MatchS04_0041d910	MATCH-S04	0x0041d910	PC-INSENSITIVE	equal		0		2	
+MatchS04_0041db80	MATCH-S04	0x0041db80	NOT_IN_IMAGE				Sub0041db80_HudThresholdDispatch		
+MatchS04_0041f100	MATCH-S04	0x0041f100	NOT_IN_IMAGE				FloatTable63dc64Get		
+MatchS04_0041f260	MATCH-S04	0x0041f260	NOT_IN_IMAGE				WorldMatrixCopy		
+MatchS05_00420d80	MATCH-S05	0x00420d80	NOT_IN_IMAGE				IndexedFloatPairSum420d80		
+MatchS05_00420de0	MATCH-S05	0x00420de0	NOT_IN_IMAGE				Accum420de0_impl		
+MatchS05_00422470	MATCH-S05	0x00422470	NOT_IN_IMAGE				FUN_00422470		
+MatchS05_004224d0	MATCH-S05	0x004224d0	NOT_IN_IMAGE				MenuSlotInit		
+MatchS05_00425ab0	MATCH-S05	0x00425ab0	NOT_IN_IMAGE				EntryHeaderClear		
+MatchS05_00425b10	MATCH-S05	0x00425b10	PC-INSENSITIVE	equal		0		9	
+CameraEntries	bit-identity	0x00441b30	PC-INSENSITIVE	equal		0		9	
+CameraEntries	bit-identity	0x00441c80	PC-SENSITIVE	equal	chain	3	chain@0016bd73(fsubp E/R1) chain@0016bd7f(fsubp E/R1) chain@0016bd8b(fsubp E/R1)	39	indcall@0016bcc6
+CameraEntries	bit-identity	0x00442600	PC-INSENSITIVE	equal		0		21	indcall@0016bded
+CameraEntries	bit-identity	0x00445aa0	PC-SENSITIVE	differs:dblop,trans	chain,cmp,dblop,trans,widestore	108	dblop@0016c1a5(fmul D/E) chain@0016c227(fadd R1/D) dblop@0016c22f(fadd E/D) cmp@0016c274(E/R1) chain@0016c28f(fadd R1/E) cmp@0016c2ab(E/R1)	722	depthmerge@0016c2a9 depthmerge@0016c4f2 depthmerge@0016c593 depthmerge@0016c912 depthmerge@0016c91d depthmerge@0016c934 indcall@0016c24e
+MatchS15_00493480	MATCH-S15	0x00493480	PC-INSENSITIVE	equal		0		5	indcall@001677a9
+PathNodes	D-11072	0x00478660	NOT_IN_IMAGE				FUN_00478660		
+PathNodes	D-11072	0x004783f0	NOT_IN_IMAGE				FUN_004783f0		
+MatchT01G_004111c0	MATCH-T01G-FU	0x004111c0	NOFP	equal		0		0	indcall@0016d295 indjmp@0016d2ac
+MatchS07_0042aff0	MATCH-S07	0x0042aff0	PC-INSENSITIVE	equal		0		12	
+MatchS07_0042b180	MATCH-S07	0x0042b180	PC-INSENSITIVE	equal		0		12	
+MatchS07_0042bde0	MATCH-S07	0x0042bde0	PC-SENSITIVE	differs:dblop	dblop	2	dblop@0016e433(fadd D/E) dblop@0016e44c(fsub E/D)	45	indcall@0016e37b indcall@0016e3b5 indcall@0016e3e9 indcall@0016e42a indcall@0016e46c
+MatchS07_0042d290	MATCH-S07	0x0042d290	NOT_IN_IMAGE				MenusLapTimeFmt		
+MatchS07_0042d300	MATCH-S07	0x0042d300	PC-INSENSITIVE	equal		0		2	
+MatchS07_0042e3a0	MATCH-S07	0x0042e3a0	PC-INSENSITIVE	equal		0		21	indcall@0016e749 indcall@0016e7a1 indcall@0016e7be indcall@0016e7ed indcall@0016e807 indcall@0016e839 indcall@0016e855 indcall@0016e871 indcall@0016e88d
+MatchS07_0042f8d0	MATCH-S07	0x0042f8d0	NOT_IN_IMAGE				MatchS07_0042f8d0_Core		
+MatchS07_0042fb70	MATCH-S07	0x0042fb70	PC-SENSITIVE	differs:dblop	chain,dblop	7	dblop@0016f0c9(fmul D/E) dblop@0016f0f5(fsub D/E) chain@0016f0fb(fmulp D/R1) chain@0016f0fd(fmul NW/E) dblop@0016f11d(fmul D/E) dblop@0016f13d(fmul D/E)	44	indcall@0016f04a indcall@0016f05a indcall@0016f14d indcall@0016f185 indcall@0016f24e indcall@0016f262 indcall@0016f2a4 indcall@0016f2bf indcall@0016f2f4 indcall@0016f304
+MatchS07_0042fe90	MATCH-S07	0x0042fe90	NOT_IN_IMAGE				MenuSpriteDispatchC		
+MatchS07_00430b30	MATCH-S07	0x00430b30	NOT_IN_IMAGE				FUN_00430b30		
+MatchS07_00431b20	MATCH-S07	0x00431b20	PC-SENSITIVE	differs:dblop,trans	dblop,trans,widestore	4	dblop@0016f50f(fmul E/D) widestore@0016f511(R1 m64) trans@0016f517(fsin:D) widestore@0016f519(NW m64)	7	
+MatchS07_00431b30	MATCH-S07	0x00431b30	NOT_IN_IMAGE				Float67eaa8Get		
+MatchS07_00431b50	MATCH-S07	0x00431b50	PC-SENSITIVE	differs:dblop,trans	dblop,trans,widestore	4	dblop@0016f53f(fmul E/D) widestore@0016f541(R1 m64) trans@0016f547(fsin:D) widestore@0016f549(NW m64)	7	
+MatchS07_00431b60	MATCH-S07	0x00431b60	PC-SENSITIVE	differs:dblop,trans	dblop,trans,widestore	4	dblop@0016f56f(fmul E/D) widestore@0016f571(R1 m64) trans@0016f577(fsin:D) widestore@0016f579(NW m64)	7	
+RwpSolverMath2QuatY	x87	0x00546c50	NOFP	equal		0		0	
+RwpSolverMath2QuatY	x87	0x004c3b30	PC-INSENSITIVE	equal		0		3	
+RwpSolverMath2Quat	SSE2	0x00546b10	NOFP	equal		0		0	tailjmp@000c2425
+RwpSolverMath2Quat	SSE2	0x00546bf0	NOFP	equal		0		0	
+RwpSolverMath2Quat	SSE2	0x00546cb0	NOFP	equal		0		0	
+RwpSolverMath2Quat	SSE2	0x004c3b30	PC-INSENSITIVE	equal		0		3	
+MatchS13_00482030	MATCH-S13	0x00482030	PC-SENSITIVE	differs:intop	chain,intop	5	intop@000a5efc(fadd I/E) intop@000a5f1d(fadd I/E) chain@000a5f32(fdiv R1/E) intop@000a5f42(fadd I/E) chain@000a5f4c(fsub NF/E)	14	indjmp@000a5f55
+ProgressBarSetA	MATCH-S13	0x00430b90	NOT_IN_IMAGE				ProgressBarSetA		
+MenuMenusBB	MATCH-S13	0x00427ad0	NOT_IN_IMAGE				FUN_00427ad0		
+MatchS12_00475f30	MATCH-S12	0x00475f30	NOT_IN_IMAGE				ScaledMulAdd475f30Body		
+MatchS12_00476d00	MATCH-S12	0x00476d00	PC-INSENSITIVE	equal		0		2	
+MatchS12_004769f0	MATCH-S12	0x004769f0	NOFP	equal		0		0	
+MatchS12_004773f0	MATCH-S12	0x004773f0	NOT_IN_IMAGE				Init4773f0Body		
+MatchS12_004773f0	MATCH-S12	0x00477730	NOT_IN_IMAGE				FUN_00477730		
+ViewportScaledRectDraw	MATCH-S12	0x00428610	NOT_IN_IMAGE				FUN_00428610		
+MatchS16_00495080	MATCH-S16	0x00495080	NOT_IN_IMAGE				Fwd494fd0_DoublePlusHalf		
+WarzonePontoon	MATCH-S16	0x00451ce0	NOT_IN_IMAGE				FUN_00451ce0		
+WarzonePontoon	MATCH-S16	0x00451690	NOT_IN_IMAGE				FUN_00451690		
+WarzonePontoon	MATCH-S16	0x00451990	NOT_IN_IMAGE				FUN_00451990		
+WarzonePontoon	MATCH-S16	0x00451cc0	NOT_IN_IMAGE				FUN_00451cc0		
+WarzonePontoon	MATCH-S16	0x00451a50	NOT_IN_IMAGE				FUN_00451a50		
+MatchS09_00451990	MATCH-S09	0x00451990	PC-INSENSITIVE	equal		0		15	
+MatchS09_00451a50	MATCH-S09	0x00451a50	NOFP	equal		0		0	
+MatchS09_00452eb0	MATCH-S09	0x00452eb0	NOT_IN_IMAGE				PowerupRangeGet		
+MatchS09_00458fa0	MATCH-S09	0x00458fa0	PC-INSENSITIVE	equal		0		2	
+MatchS09_00451690	MATCH-S09-FU	0x00451690	PC-INSENSITIVE	equal		0		2	
+MatchS09_00451ce0	MATCH-S09-FU	0x00451ce0	PC-SENSITIVE	equal	chain	1	chain@0018faf6(fmul R1/E)	21	
+MatchS09_00458920	MATCH-S09-FU	0x00458920	PC-INSENSITIVE	equal		0		11	tailjmp@0018fca3
+MatchS06_004264d0	MATCH-S06	0x004264d0	NOT_IN_IMAGE				FUN_004264d0		
+MatchS06_00426d20	MATCH-S06	0x00426d20	PC-INSENSITIVE	equal		0		5	indcall@0018912a indcall@00189140 indcall@0018914e
+MatchS06_00426de0	MATCH-S06	0x00426de0	PC-INSENSITIVE	equal		0		1	
+MatchS06_00426df0	MATCH-S06	0x00426df0	PC-INSENSITIVE	equal		0		1	
+MatchS06_00426e10	MATCH-S06	0x00426e10	NOT_IN_IMAGE				FUN_00426e10		
+MatchS06_004270f0	MATCH-S06	0x004270f0	NOT_IN_IMAGE				FUN_004270f0		
+MatchS06_00427580	MATCH-S06	0x00427580	PC-INSENSITIVE	equal		0		12	
+MatchS06_00427680	MATCH-S06	0x00427680	PC-SENSITIVE	differs:dblop	chain,dblop,widestore	18	chain@0018927c(fmul R1/E) widestore@00189280(NF m64) chain@0018929b(fdivrp E/NF) chain@0018929d(fmul NF/E) chain@00189355(fmul R1/E) chain@00189359(fdivrp E/NF)	62	indcall@001892d2 indcall@00189321
+MatchS06_004278d0	MATCH-S06	0x004278d0	PC-INSENSITIVE	equal		0		5	indcall@001895a4 indcall@001895bd indcall@001895fb indcall@00189605
+MatchS06_00427990	MATCH-S06	0x00427990	PC-SENSITIVE	equal	chain	3	chain@001896f0(fmul R1/E) chain@001896f9(fsubrp NF/E) chain@001896fb(fsubrp R1/NF)	30	indcall@0018967a indcall@00189693 indcall@00189733 indcall@0018973d
+MatchS06_00427ad0	MATCH-S06	0x00427ad0	PC-SENSITIVE	equal	chain	3	chain@00189808(fmul R1/E) chain@00189811(fsubrp NF/E) chain@00189813(fsubrp R1/NF)	30	indcall@00189794 indcall@001897ad indcall@0018984c indcall@00189856
+MatchS06_00427be0	MATCH-S06	0x00427be0	PC-INSENSITIVE	equal		0		5	indcall@0018989b indcall@001898b4 indcall@001898f2 indcall@001898fc
+MatchS06_00427e00	MATCH-S06	0x00427e00	PC-SENSITIVE	equal	retst0	1	retst0@00189b4a(NW)	11	indcall@00189a8d indcall@00189a94 indcall@00189a9b indcall@00189ab4 indcall@00189b2a indcall@00189b34
+MatchS06_00427f00	MATCH-S06	0x00427f00	PC-SENSITIVE	equal	retst0	1	retst0@00189c3c(NW)	11	indcall@00189b7a indcall@00189b8c indcall@00189ba5 indcall@00189c1b indcall@00189c25
+MatchS06_00427ff0	MATCH-S06	0x00427ff0	PC-SENSITIVE	differs:dblop	chain,dblop,retst0,widestore	4	widestore@00189d05(R1 m64) chain@00189d09(fadd R1/E) dblop@00189d5a(fmul D/E) retst0@00189da3(NW)	32	indcall@00189c88 indcall@00189c8f indcall@00189c96 indcall@00189caf indcall@00189d24 indcall@00189d4c indcall@00189d84 indcall@00189d8c
+MatchS06_00428140	MATCH-S06	0x00428140	PC-SENSITIVE	equal	retst0	1	retst0@00189f1a(NW)	11	indcall@00189ded indcall@00189df4 indcall@00189dfb indcall@00189ebf indcall@00189efa indcall@00189f04
+MatchS06_004282a0	MATCH-S06	0x004282a0	PC-SENSITIVE	equal	chain	2	chain@00189f8c(fdiv R1/E) chain@00189f8e(fmul NF/E)	9	
+MatchS06_00428320	MATCH-S06	0x00428320	PC-SENSITIVE	equal	chain	1	chain@0018a01d(fmul R1/E)	11	indcall@0018a002
+MatchS06_00428590	MATCH-S06	0x00428590	PC-INSENSITIVE	equal		0		2	
+MatchS06_00428610	MATCH-S06	0x00428610	PC-SENSITIVE	differs:dblop	chain,dblop	5	dblop@0018a0fb(fmul D/E) dblop@0018a11d(fmul D/E) chain@0018a1a3(fsubrp R1/E) chain@0018a1b1(fmulp R1/R1) chain@0018a1b3(fsubrp E/NF)	78	depthmerge@0018a1fc
+MatchS06_00428760	MATCH-S06	0x00428760	PC-INSENSITIVE	equal		0		8	
+MatchS06_004288a0	MATCH-S06	0x004288a0	PC-SENSITIVE	differs:dblop	chain,dblop,intconv,retst0	12	dblop@0018a350(fadd E/D) chain@0018a357(fadd R1/E) chain@0018a360(fmul NF/E) chain@0018a366(fsubr NF/E) intconv@0018a393(arg to 00189a50: NW) dblop@0018a39f(fadd E/D)	75	
+MatchS06_00428a30	MATCH-S06	0x00428a30	PC-SENSITIVE	equal	intconv	1	intconv@0018a654(arg to 00189a50: NW)	9	depthmerge@0018a666 indcall@0018a50c indcall@0018a51b indcall@0018a51f indcall@0018a527 indcall@0018a542 indcall@0018a54d indcall@0018a551 indcall@0018a57e indcall@0018a588 indcall@0018a5ab indcall@0018a5ba indcall@0018a5d7 indcall@0018a5df indcall@0018a614 indcall@0018a624 indcall@0018a65b indcall@0018a668 indcall@0018a674
+MatchS06_00428bf0	MATCH-S06	0x00428bf0	PC-SENSITIVE	equal	retst0	1	retst0@0018a7d6(NW)	17	depthmerge@0018a7ae depthmerge@0018a7c2 indcall@0018a6c9 indcall@0018a6d8 indcall@0018a6f5 indcall@0018a6fd indcall@0018a76c indcall@0018a7a3 indcall@0018a7b0 indcall@0018a7bc
+MatchS06_00428d30	MATCH-S06	0x00428d30	PC-SENSITIVE	equal	intconv,retst0	2	intconv@0018ac5d(arg to 00189a50: NW) retst0@0018acbe(NW)	107	depthmerge@0018aca5 indcall@0018a7f5 indcall@0018a7fb indcall@0018a816 indcall@0018a823 indcall@0018a827 indcall@0018a836 indcall@0018a83a indcall@0018a842 indcall@0018a85d indcall@0018a86d indcall@0018a87d indcall@0018a8b8 indcall@0018a8c8 indcall@0018a929 indcall@0018a95e indcall@0018a9f5 indcall@0018ab93 indcall@0018ac70 indcall@0018ac80 indcall@0018ac90 indcall@0018ac99 indcall@0018aca7 indcall@0018acb3
+MatchS06_00429300	MATCH-S06	0x00429300	PC-INSENSITIVE	equal		0		3	
+MatchS06_004295a0	MATCH-S06	0x004295a0	PC-SENSITIVE	equal	retst0	1	retst0@0018ae22(NW)	17	indcall@0018ada9 indcall@0018adeb
+MatchS06_00429620	MATCH-S06	0x00429620	PC-SENSITIVE	equal	chain,retst0	4	chain@0018ae6d(fsubp E/R1) chain@0018ae6f(fmul NF/E) chain@0018ae71(fsubp E/NF) retst0@0018ae74(NF)	9	
+MatchS06_00429660	MATCH-S06	0x00429660	PC-SENSITIVE	equal	chain,intconv,retst0	8	intconv@0018af40(arg to 00189a50: NW) retst0@0018af4e(NW) chain@0018af7d(fadd R1/E) retst0@0018afdc(NW) intconv@0018b041(arg to 00189a50: NW) retst0@0018b04e(NW)	73	indcall@0018ae8a indcall@0018aebe indcall@0018aec2 indcall@0018aec7 indcall@0018af54 indcall@0018af97 indcall@0018b054 indcall@0018b097
+MatchS06_00429820	MATCH-S06	0x00429820	PC-INSENSITIVE	equal		0		2	
+MatchS06_00429870	MATCH-S06	0x00429870	PC-SENSITIVE	equal	cmp	1	cmp@0018b153(R1/R1)	10	
+MatchS06_004298c0	MATCH-S06	0x004298c0	PC-INSENSITIVE	equal		0		2	
+MatchS06_004299d0	MATCH-S06	0x004299d0	PC-INSENSITIVE	equal		0		4	
+MatchS06_00429a30	MATCH-S06	0x00429a30	PC-INSENSITIVE	equal		0		2	
+MatchS06_00429a70	MATCH-S06	0x00429a70	PC-INSENSITIVE	equal		0		1	
+MatchS06_00429aa0	MATCH-S06	0x00429aa0	PC-INSENSITIVE	equal		0		6	indcall@0018b295
+MatchS06_00429b30	MATCH-S06	0x00429b30	PC-SENSITIVE	differs:dblop	dblop	1	dblop@0018b36d(fdiv E/D)	6	
+MatchS06_00429b70	MATCH-S06	0x00429b70	PC-SENSITIVE	differs:dblop	dblop	1	dblop@0018b3dc(fdiv E/D)	6	
+MatchS06_00429e10	MATCH-S06	0x00429e10	PC-SENSITIVE	equal	chain,intconv,retst0	12	intconv@0018b510(arg to 00189a50: NW) intconv@0018b53c(arg to 00189a50: NW) intconv@0018b568(arg to 00189a50: NW) intconv@0018b848(arg to 0018ae80: NW/E/E) retst0@0018b875(NW) retst0@0018bb08(NW)	90	depthmerge@0018b586 indcall@0018b41e indcall@0018b449 indcall@0018b459 indcall@0018b48b indcall@0018b494 indcall@0018b4a3 indcall@0018b4ab indcall@0018b4bb indcall@0018b579 indcall@0018b581 indcall@0018b58b indcall@0018b59b indcall@0018b604 indcall@0018b60d indcall@0018b61c indcall@0018b624 indcall@0018b634 indcall@0018b840 indcall@0018b861 indcall@0018b869 indcall@0018b8ac indcall@0018b8b5 indcall@0018b8c4 indcall@0018b8cc indcall@0018b994 indcall@0018b99e indcall@0018badd indcall@0018baf4 indcall@0018bafc indjmp@0018b64c
+MatchS06_0042aae0	MATCH-S06	0x0042aae0	PC-INSENSITIVE	equal		0		26	indcall@0018c0f0 indcall@0018c1a2 indcall@0018c1b2 indcall@0018c1c2 indcall@0018c1d2 indcall@0018c1e2 indcall@0018c1f2 indcall@0018c22a
+MatchS06_0042ad10	MATCH-S06	0x0042ad10	NOT_IN_IMAGE				FUN_0042ad10		
+RwpSolverLeaves1X87	HB-6	0x00566200	NOFP	equal		0		0	
+RwpSolverLeaves1X87	HB-6	0x005667c0	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00401340	PC-INSENSITIVE	equal		0		5	indcall@00190803 indcall@00190827 indcall@0019083b
+MatchS01	MATCH-S01	0x00401570	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x004026d0	NOFP	equal		0		0	indcall@0019074d indcall@00190758 indcall@0019075c indcall@00190764 indcall@0019076f indcall@00190772 indcall@0019077d indcall@00190783
+MatchS01	MATCH-S01	0x00402f50	PC-INSENSITIVE	equal		0		4	
+MatchS01	MATCH-S01	0x00405890	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00407a60	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00409290	NOFP	equal		0		0	
+MatchS01	MATCH-S01	0x00407600	NOFP	equal		0		0	indcall@00190903
+MatchS02_00411350	MATCH-S01	0x00411350	PC-INSENSITIVE	differs:intop	intop	1	intop@0019133c(fadd I/E)	12	
+MatchPilot_0046c5f0	MATCH-S01	0x0046c5f0	PC-SENSITIVE	differs:dblop	chain,dblop	13	chain@00190f04(fmul R1/E) chain@00190f06(fsubp E/NF) chain@00190f17(fmulp R1/R1) chain@00190f1b(fsubrp E/NF) chain@00190f26(fmulp E/R1) chain@00190f28(fsubp E/NF)	87	
+MatchS03_00414060	MATCH-T13-SEED-WRITER	0x00414060	PC-SENSITIVE	equal	chain	1	chain@00190d9f(faddp E/R1)	33	
+PortTop_00492370	PORT-TOP-02	0x00492370	NOT_IN_IMAGE				Orig_00492370		
+PortTop_00492370	PORT-TOP-02	0x00492290	NOT_IN_IMAGE				Orig_00492290		
+PortTop_00493900	PORT-TOP-02	0x00493900	NOFP	equal		0		0	
+PortTop_00499820	PORT-TOP-02	0x00499820	NOT_IN_IMAGE				Orig_00499820		
+PortTop_00499890	PORT-TOP-02	0x00499890	NOFP	equal		0		0	indcall@00166290 indcall@001662a9 indcall@001663bb indcall@001663db indcall@001663e5 indcall@001663fe indcall@0016641e
+PortTop_00499ba0	PORT-TOP-02	0x00499ba0	NOFP	equal		0		0	indcall@0016657f indcall@001665d9 indcall@001665ed indcall@0016660c indcall@00166657 indcall@00166693
+PortTop_Leaves	PORT-TOP-02	0x00499cc0	NOFP	equal		0		0	indcall@001666d7
+PortSave01_Config	PORT-TOP-02	0x00496400	NOFP	equal		0		0	
+PortSave01_Config	PORT-TOP-02	0x00498910	NOFP	equal		0		0	
+PortSave01_Config	PORT-TOP-02	0x00498950	NOFP	equal		0		0	
+PortSave01_Config	PORT-TOP-02	0x004989b0	NOFP	equal		0		0	
+PortSave01_Config	PORT-TOP-02	0x004963e0	NOFP	equal		0		0	
+MatchS02_0040e470	PORT-FE-01	0x0040e470	NOFP	equal		0		0	
+MatchS08_004325c0	CONTROL	0x004325c0	NOFP	equal		0		0	

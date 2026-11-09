@@ -22,6 +22,7 @@
 #include "RwRaceSubmit.h"
 #include "RwRasterBridge.h"
 #include "../Txd/TxdDecoder.h"
+#include "../D3d9Render/PngLoader.h"
 
 #define WITH_D3D
 #include <rw.h>
@@ -33,6 +34,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+
+// [PORT-TOP-04F] whole-file read from the piz mount stack, else the disk (Match/PortTop_RwStream04F.cpp).
+extern "C" void* PortTop_Fs_ReadAll(const char* name, unsigned* len, const char** from);
 
 namespace {
 
@@ -202,6 +206,44 @@ int MashedRw_TexDictionaryFindNamedTexture_004c5c00(int dict, const char* name) 
     rw::TexDictionary* const d = reinterpret_cast<rw::TexDictionary*>(static_cast<std::uintptr_t>(static_cast<unsigned>(dict)));
     if (!d || !name) return 0;
     return static_cast<int>(reinterpret_cast<std::uintptr_t>(d->find(name)));
+}
+
+// [PORT-TOP-04E] RwTextureDestroy 0x004c5a60 (re/match/rwl01/004c5a60.c): decrements the count at +0x54; at <= 0 runs
+// the plugin destructors of registry 0x00618138 (0x004d8060), unlinks +8 / +0xc from the dictionary list when +4 is
+// set, destroys the raster at +0 (RwRasterDestroy) and returns the record to the RwGlobals +0x11c free list. librw:
+// rw::Texture::destroy (texture.cpp: refCount--, at <= 0 plugin destruct, inDict.remove, raster->destroy, free).
+// Its caller in the AppDestroy tree, rva 0x00428400, passes DAT_0067d964 / 70 / 68 / 6c; the matched body has no null check, the
+// binding skips a null pointer (the knob path value while the fonts family is a stand-in).
+int MashedRw_TextureDestroy_004c5a60(int tex) {
+    rw::Texture* const t = reinterpret_cast<rw::Texture*>(static_cast<std::uintptr_t>(static_cast<unsigned>(tex)));
+    if (t) t->destroy();
+    BindLog("RwTextureDestroy(0x%08X) -> %s", static_cast<unsigned>(tex), t ? "rw::Texture::destroy" : "null, nothing to destroy");
+    return 1;
+}
+// RwImageSetPath 0x004ce2d0 (re/match/s20/004ce2d0.c): copies the string (length through RwGlobals +0xf4) into the
+// image module's path buffer, growing it through RwGlobals +0x110; returns the argument, 0 when the realloc fails.
+// librw: rw::Image::setSearchPath (image.cpp: frees the old paths, strdups the new one, splits at ';'). 0x00428400
+// passes 0x005cc4de, which is "" in the anchored binary.
+int MashedRw_ImageSetPath_004ce2d0(const char* path) {
+    rw::Image::setSearchPath(path);
+    BindLog("RwImageSetPath(\"%s\") -> rw::Image::setSearchPath", path ? path : "(null)");
+    return static_cast<int>(reinterpret_cast<std::uintptr_t>(path));
+}
+// RpWorldDestroy 0x004e5700. librw: rw::World::destroy. 0x0042c2a0 calls it only when DAT_0067ea00 != 0.
+int MashedRw_WorldDestroy_004e5700(int world) {
+    rw::World* const w = reinterpret_cast<rw::World*>(static_cast<std::uintptr_t>(static_cast<unsigned>(world)));
+    if (w) w->destroy();
+    BindLog("RpWorldDestroy(0x%08X) -> %s", static_cast<unsigned>(world), w ? "rw::World::destroy" : "null, nothing to destroy");
+    return 1;
+}
+// Shim for rva 0x004d41e0 (re/match/s20/004d41e0.c), which walks the 0x28-byte entries at *(p+4) calling 0x004d3e90, frees the buffer at
+// +0x20 and returns the record through RwGlobals +0x11c. 0x00496ce0 (AppDestroy tree) calls it on DAT_00773094 /
+// DAT_00773088, the two handles PCVS_Init 0x00496e40 creates. [UNCERTAIN] its RW catalog name: no identity is
+// recorded, and librw has no counterpart for the record. On the knob path PCVS_Init is the hand piece 1, which
+// creates neither handle, so both are 0. Shim: a null record is skipped; a non-null one is logged and left alone.
+void MashedRw_Destroy4d41e0_004d41e0(int rec) {
+    BindLog("0x004d41e0(0x%08X): shim, %s", static_cast<unsigned>(rec),
+            rec ? "no librw counterpart, record left alone" : "null, nothing to destroy");
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -553,25 +595,111 @@ int MashedRw_RasterShowRaster_004c7730(int raster, int dev, int flags) {
 // 404 resource and (0, 0). Those four RW calls read RwGlobals, and librw has no reader for chunk 0x23, so this port
 // body reads the chunk with the exe's decoder of that format (Txd/TxdDecoder.h, written from 0x0054f8d0) and builds
 // the dictionary on librw: rw::TexDictionary::create, one rw::Texture per entry (RwRasterBridge TextureFromTxdTexture).
-int PortTop_Port_004b3eb0(int data, int size, int lengthOut, int versionOut) {
-    (void)lengthOut; (void)versionOut;
-    const std::uint8_t* const bytes = FromInt<const std::uint8_t>(data);
-    if (!bytes || size <= 0) return 0;
+// A chunk-0x23 texture dictionary (header included) decoded by Txd/TxdDecoder.h and built on librw, one rw::Texture per
+// entry. Shared by 0x004b3eb0 (memory) and the 0x0054f8d0 binding (stream).
+static rw::TexDictionary* DictFromTxdBytes(const std::uint8_t* bytes, std::size_t size, const char* tag) {
     std::unique_ptr<mashed_re::Txd::Dictionary> txd(new mashed_re::Txd::Dictionary());
-    if (!txd->Decode(bytes, static_cast<std::size_t>(size))) {
-        BindLog("0x004b3eb0: chunk 0x23 decode failed (%s)", txd->last_error());
-        return 0;
+    if (!txd->Decode(bytes, size)) {
+        BindLog("%s: chunk 0x23 decode failed (%s)", tag, txd->last_error());
+        return nullptr;
     }
     rw::TexDictionary* const dict = rw::TexDictionary::create();
-    if (!dict) return 0;
+    if (!dict) return nullptr;
     int added = 0;
     for (std::uint32_t i = 0; i < txd->count(); ++i) {
         rw::Texture* const t = static_cast<rw::Texture*>(mashed_re::LibRw::TextureFromTxdTexture(txd->texture(i)));
         if (t) { dict->add(t); ++added; }
     }
-    BindLog("0x004b3eb0: TXD from memory (%d bytes) -> rw::TexDictionary %p with %d of %u textures", size,
+    BindLog("%s: TXD (%u bytes) -> rw::TexDictionary %p with %d of %u textures", tag, static_cast<unsigned>(size),
             static_cast<void*>(dict), added, txd->count());
+    return dict;
+}
+
+int PortTop_Port_004b3eb0(int data, int size, int lengthOut, int versionOut) {
+    (void)lengthOut; (void)versionOut;
+    const std::uint8_t* const bytes = FromInt<const std::uint8_t>(data);
+    if (!bytes || size <= 0) return 0;
+    return ToInt(DictFromTxdBytes(bytes, static_cast<std::size_t>(size), "0x004b3eb0"));
+}
+
+// [PORT-TOP-04F] rva 0x0054f8d0 (re/match/rwl04/0054f8d0.c, 54.9%, not a matched body): reads the chunk-0x23 texture
+// dictionary whose header RwStreamFindChunk has just consumed. Its callers 0x004b3d80 / 0x004b3eb0 call it right after
+// RwStreamFindChunk(stream, 0x23). Binding: the streams of the knob path are memory streams (type 3: [3] position,
+// [4] size, [5] base; Match/PortTop_RwStream04F.cpp), so it decodes from the header 12 bytes back with the exe's
+// decoder of the format (written from 0x0054f8d0, as 0x004b3eb0 above), then moves the position past the chunk.
+int MashedRw_TexDictStreamRead_0054f8d0(int stream) {
+    std::uint32_t* const s = FromInt<std::uint32_t>(stream);
+    if (!s || s[0] != 3 || s[3] < 12 || s[3] > s[4]) {
+        BindLog("0x0054f8d0(0x%08X): binding reads memory streams only, returns 0", static_cast<unsigned>(stream));
+        return 0;
+    }
+    const std::uint8_t* const base = FromInt<const std::uint8_t>(static_cast<int>(s[5]));
+    const std::uint32_t hdr = s[3] - 12;
+    std::uint32_t chunk = 0;
+    std::memcpy(&chunk, base + hdr + 4, 4);
+    rw::TexDictionary* const dict = DictFromTxdBytes(base + hdr, s[4] - hdr, "0x0054f8d0");
+    if (dict) s[3] = (s[3] + chunk <= s[4]) ? s[3] + chunk : s[4];
     return ToInt(dict);
+}
+
+// [PORT-TOP-04F] RwTextureRead rva 0x004c5cb0 (re/match/s19/004c5cb0.c): the find callback (default 0x004c7490, the
+// current dictionary only, case-insensitive), a hit gets its count raised and is returned; else the read callback
+// (default 0x004c61b0, image files), and a read texture is linked into the current dictionary when there is one; a
+// miss returns 0. librw keeps the same current dictionary (rw::TexDictionary::setCurrent, 0x004c5c80 binding above)
+// and the same find callback (rw::Texture::findCB). The read side: librw's default reader opens image files on the
+// disk only, the original's goes through the RtFS piz file system, so the binding reads "<name>.png" then
+// "<name>.bmp" (PortTop_Fs_ReadAll: piz mount stack, then the disk under "original/"), decodes it with the exe's WIC
+// decoder (D3d9Render/PngLoader.h) and builds a C8888 texture named <name>. [UNCERTAIN] the original's extension
+// order: the image formats 0x004c61b0 tries are registered at run time and no registration list is recorded; the
+// font36.piz logos are one format each (MASHEDNEWLOGO.PNG, BIGE.BMP, PROLOGICII.BMP, DOLBYDIG.BMP), so the order picks
+// no different file there. The mask name is not applied (0x004283a0 passes 0).
+int MashedRw_TextureRead_004c5cb0(const char* name, const char* mask) {
+    if (!name) return 0;
+    if (rw::Texture* const hit = rw::Texture::findCB(name)) {
+        hit->refCount++;
+        return ToInt(hit);
+    }
+    static const char* const kExt[] = {".png", ".bmp"};
+    for (const char* ext : kExt) {
+        char file[128];
+        std::snprintf(file, sizeof(file), "%s%s", name, ext);
+        unsigned len = 0;
+        const char* from = "";
+        void* const blob = PortTop_Fs_ReadAll(file, &len, &from);
+        if (!blob) continue;
+        std::uint32_t w = 0, h = 0;
+        std::uint8_t* const bgra = mashed_re::D3d9Render::DecodeImageToBGRA(static_cast<const std::uint8_t*>(blob), len, &w, &h);
+        std::free(blob);
+        if (!bgra) {
+            BindLog("RwTextureRead(\"%s\"): %s from %s did not decode", name, file, from);
+            return 0;
+        }
+        rw::Raster* const ras = rw::Raster::create(static_cast<int>(w), static_cast<int>(h), 32,
+                                                   rw::Raster::C8888 | rw::Raster::TEXTURE);
+        std::uint8_t* const dst = ras ? ras->lock(0, rw::Raster::LOCKWRITE) : nullptr;
+        if (!dst) {
+            if (ras) ras->destroy();
+            std::free(bgra);
+            return 0;
+        }
+        for (std::uint32_t y = 0; y < h; ++y)
+            std::memcpy(dst + static_cast<std::size_t>(y) * ras->stride, bgra + static_cast<std::size_t>(y) * w * 4, w * 4);
+        ras->unlock(0);
+        std::free(bgra);
+        rw::Texture* const t = rw::Texture::create(ras);
+        if (!t) { ras->destroy(); return 0; }
+        std::strncpy(t->name, name, sizeof(t->name) - 1);
+        t->name[sizeof(t->name) - 1] = '\0';
+        if (mask) {
+            std::strncpy(t->mask, mask, sizeof(t->mask) - 1);
+            t->mask[sizeof(t->mask) - 1] = '\0';
+        }
+        if (rw::TexDictionary* const cur = rw::TexDictionary::getCurrent()) cur->add(t);
+        BindLog("RwTextureRead(\"%s\"): %s from %s, %ux%u -> rw::Texture %p", name, file, from, w, h, static_cast<void*>(t));
+        return ToInt(t);
+    }
+    BindLog("RwTextureRead(\"%s\"): not in the current dictionary, no .png / .bmp found, returns 0", name);
+    return 0;
 }
 
 }  // extern "C"
