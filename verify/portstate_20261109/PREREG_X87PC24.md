@@ -112,3 +112,13 @@ A run that crashes on a piz collision (U-9677) or comes out short (D2 motion_dia
 
 No default flip, no gate reference change, no tracker edit. Finding (a) of the audit (0x00443300 DDK evaluation order)
 is a separate step.
+
+## Amendment 1 (2026-11-09, before any arm, committed alone)
+
+Reading `Collision/CarCarContacts.cpp:94-104` while wiring the stacks: `MASHED_CC_PC24` is not a precision scope. It
+selects a separate body, `VehicleCarCarContact_Pc24` (u9769), with the RW LUT length / normalise (`FUN_004c39b0` /
+`FUN_004c3ac0`), explicit float rounding of the float10 impulse terms, and `RwMatrixInvertEntry` 0x004c4dc0. Its TU is
+`/arch:SSE2` (not in `x87_tus.txt`), so the x87 CW does not reach that arithmetic. The section 3 prediction for
+`MASHED_CC_PC24` changes from **redundant** to **still needed** (H_X24NCC != H_X24). Nothing else changes.
+`MASHED_MATMUL_PC24` stays **redundant**: `RwMatrixMultiplyCPU` (`Math/RwMatrixMultiplyCpu.cpp:67`) is an inline x87
+`__asm` block, which runs at the thread's PC.
