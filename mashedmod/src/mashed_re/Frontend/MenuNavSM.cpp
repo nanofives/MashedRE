@@ -1143,6 +1143,17 @@ bool ColourSelIcon_On() {
     return s_on;
 }
 
+// [PORT-COLOURSEL-BAR-Y 2026-11-09] MASHED_COLOURSEL_BAR_Y (default OFF, =1 on), PREREG
+// verify/portstate_20261109/PREREG_COLOURSEL_BAR_Y.md: true when the knob is on and the game mode is in 0x00430760's
+// set (2, 10, 3, 4, 5), where 0x004335f0 draws one row at record y 220.0 (0x00433428), bar top y - 13.0 (0x0043381d).
+bool ColourSelBarY_SingleRow() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_COLOURSEL_BAR_Y");
+        return e && e[0] == '1';
+    }();
+    return s_on && Q_ModeIsCupFlow();
+}
+
 void ApplyActionGameMode(std::uint32_t action) {
     if (ColourSelIcon_On() && (action == 0xff3d0000u || action == 0xff400000u))
         *reinterpret_cast<std::int32_t*>(0x0067f0c0u) = 1;                     // 0x0043f4d1

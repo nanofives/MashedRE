@@ -6150,13 +6150,16 @@ bool RenderFrame() {
                 // 0x00433570..0x004335ac via FUN_00496900), which are slots
                 // 0..n-1. Was the constant 3. This machine: 3 game controllers
                 // + keyboard = 4, read live on the original (text3 live/).
-                const int   nrows4 = g_input_active_slots;
+                // MASHED_COLOURSEL_BAR_Y: the cup flow takes 0x004335f0's single-row path (0x00433726, 0x00430760).
+                const bool  csb1 = mashed_re::Frontend::ColourSelBarY_SingleRow();
+                const int   nrows4 = csb1 ? 1 : g_input_active_slots;
                 // 261.25, not 279. MEASURED bar tops (device, 1024x768):
                 //   original 309 / 364 / 418   ours 338 / 392 / 447
                 // ours sat 29 device = 18.1 virtual too LOW; the original's
                 // last bar top is 418/1.6 = 261.25. Pitch already agreed
                 // (54.5 device = 34.1 virtual vs our 34).
-                const float byLast = 261.25f * kVScale;
+                const float byLast = csb1 ? (220.0f - 13.0f) * kVScale    // 0x00433428 y 220, 0x0043381d - 13.0
+                                          : 261.25f * kVScale;
                 const float by0 = byLast - (nrows4 - 1) * bdy;
                 for (int r = 0; r < nrows4; ++r) {
                     const float by = by0 + r * bdy;
@@ -6246,7 +6249,7 @@ bool RenderFrame() {
                         const int base4 = ((n4 & 1) == 0)
                             ? (0xf0 - 0x22 / 2) - ((n4 - 1) >> 1) * 0x22
                             : 0xf0 - ((n4 - 1) >> 1) * 0x22;
-                        const float ny = static_cast<float>(base4) + 34.0f * r;
+                        const float ny = csb1 ? 220.0f : static_cast<float>(base4) + 34.0f * r;   // record y (0x00433ecc)
                         const int nw = static_cast<int>(MeasureMenuMessage(0x36, 0.8f));
                         const float nx = (static_cast<float>(nw / 2 + 4) + icx) + 15.0f;
                         const float ncell2 = 0.6f * 0.0708f * 480.f * kVScale;
