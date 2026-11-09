@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_0042c2a0 Orig_0042c2a0
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930   // RW: RwTexDictionaryDestroy -> rw::TexDictionary::destroy
-#define RpWorldDestroy PortTop_StandIn04C_004e5700   // stand-in: RW RpWorldDestroy (hooks.csv name); no librw world binding yet
+#define RpWorldDestroy MashedRw_WorldDestroy_004e5700   // RW: RpWorldDestroy -> rw::World::destroy (PORT-TOP-04E)
 extern "C" {
 #include "../../../../re/match/s07/0042c2a0.c"
 }

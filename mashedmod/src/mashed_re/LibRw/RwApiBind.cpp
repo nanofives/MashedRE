@@ -204,6 +204,44 @@ int MashedRw_TexDictionaryFindNamedTexture_004c5c00(int dict, const char* name) 
     return static_cast<int>(reinterpret_cast<std::uintptr_t>(d->find(name)));
 }
 
+// [PORT-TOP-04E] RwTextureDestroy 0x004c5a60 (re/match/rwl01/004c5a60.c): decrements the count at +0x54; at <= 0 runs
+// the plugin destructors of registry 0x00618138 (0x004d8060), unlinks +8 / +0xc from the dictionary list when +4 is
+// set, destroys the raster at +0 (RwRasterDestroy) and returns the record to the RwGlobals +0x11c free list. librw:
+// rw::Texture::destroy (texture.cpp: refCount--, at <= 0 plugin destruct, inDict.remove, raster->destroy, free).
+// Its caller in the AppDestroy tree, rva 0x00428400, passes DAT_0067d964 / 70 / 68 / 6c; the matched body has no null check, the
+// binding skips a null pointer (the knob path value while the fonts family is a stand-in).
+int MashedRw_TextureDestroy_004c5a60(int tex) {
+    rw::Texture* const t = reinterpret_cast<rw::Texture*>(static_cast<std::uintptr_t>(static_cast<unsigned>(tex)));
+    if (t) t->destroy();
+    BindLog("RwTextureDestroy(0x%08X) -> %s", static_cast<unsigned>(tex), t ? "rw::Texture::destroy" : "null, nothing to destroy");
+    return 1;
+}
+// RwImageSetPath 0x004ce2d0 (re/match/s20/004ce2d0.c): copies the string (length through RwGlobals +0xf4) into the
+// image module's path buffer, growing it through RwGlobals +0x110; returns the argument, 0 when the realloc fails.
+// librw: rw::Image::setSearchPath (image.cpp: frees the old paths, strdups the new one, splits at ';'). 0x00428400
+// passes 0x005cc4de, which is "" in the anchored binary.
+int MashedRw_ImageSetPath_004ce2d0(const char* path) {
+    rw::Image::setSearchPath(path);
+    BindLog("RwImageSetPath(\"%s\") -> rw::Image::setSearchPath", path ? path : "(null)");
+    return static_cast<int>(reinterpret_cast<std::uintptr_t>(path));
+}
+// RpWorldDestroy 0x004e5700. librw: rw::World::destroy. 0x0042c2a0 calls it only when DAT_0067ea00 != 0.
+int MashedRw_WorldDestroy_004e5700(int world) {
+    rw::World* const w = reinterpret_cast<rw::World*>(static_cast<std::uintptr_t>(static_cast<unsigned>(world)));
+    if (w) w->destroy();
+    BindLog("RpWorldDestroy(0x%08X) -> %s", static_cast<unsigned>(world), w ? "rw::World::destroy" : "null, nothing to destroy");
+    return 1;
+}
+// Shim for rva 0x004d41e0 (re/match/s20/004d41e0.c), which walks the 0x28-byte entries at *(p+4) calling 0x004d3e90, frees the buffer at
+// +0x20 and returns the record through RwGlobals +0x11c. 0x00496ce0 (AppDestroy tree) calls it on DAT_00773094 /
+// DAT_00773088, the two handles PCVS_Init 0x00496e40 creates. [UNCERTAIN] its RW catalog name: no identity is
+// recorded, and librw has no counterpart for the record. On the knob path PCVS_Init is the hand piece 1, which
+// creates neither handle, so both are 0. Shim: a null record is skipped; a non-null one is logged and left alone.
+void MashedRw_Destroy4d41e0_004d41e0(int rec) {
+    BindLog("0x004d41e0(0x%08X): shim, %s", static_cast<unsigned>(rec),
+            rec ? "no librw counterpart, record left alone" : "null, nothing to destroy");
+}
+
 // ---------------------------------------------------------------------------------------------------------------
 // Shims: RW core calls of 0x00493710 / 0x004938c0 with no librw equivalent. Each keeps the original's return value.
 
