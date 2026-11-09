@@ -3,7 +3,8 @@
 // The original's game thread runs at CW 0x007f (PC_24) from D3D9 device creation on: IDirect3D9::CreateDevice without
 // D3DCREATE_FPU_PRESERVE sets it on the calling thread, which in MASHED.exe is the game thread (SubsystemInit 0x00492270).
 // mashed_re.exe creates its device on a worker (CreateDeviceWatched, exe_main.cpp), so its game thread keeps the CRT's
-// 0x027f (PC_53) unless MASHED_X87_PC24 is set (default OFF). See verify/portstate_20261109/PREREG_X87PC24.md and
+// 0x027f (PC_53) unless InitD3D9 applies PC_24, which it does by default since L-105 (a)
+// (2026-11-09); MASHED_NO_X87_PC24=1 opts out. See verify/portstate_20261109/PREREG_X87PC24.md and
 // RESULT_PORT-X87-PC24-AUDIT.md (orch/PORT-X87-PC24-AUDIT).
 //
 // GameThreadPc24() is true only after the exe's InitD3D9 applied the knob. The dev .asi never sets it (MASHED.exe's own

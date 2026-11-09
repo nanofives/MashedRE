@@ -136,7 +136,7 @@
 //   - Draw anything inside the cleared region.
 
 #include <float.h>   // _controlfp_s (D2 precision probe)
-#include "Core/X87Pc.h"   // [PORT-X87-PC24] MASHED_X87_PC24: the game thread at PC_24 from device creation on
+#include "Core/X87Pc.h"   // [PORT-X87-PC24] the game thread at PC_24 from device creation on (default ON, L-105; MASHED_NO_X87_PC24=1 opts out)
 #include <windows.h>
 #include <d3d9.h>
 #define DIRECTINPUT_VERSION 0x0800
@@ -1037,7 +1037,7 @@ bool PumpOnce() {
     // [D2 precision probe 2026-10-10] The original runs its race loop at x87 PC_24 (D-11072 P2:
     // FUN_00408610 replays 11996/11996 only at PC_24). MASHED_LOG_CW logs this thread's live
     // precision-control bits.
-    // [PORT-X87-PC24 2026-11-09] MASHED_X87_PC24 (default OFF) no longer forces PC_24 here from frame 0: InitD3D9 sets it
+    // [PORT-X87-PC24 2026-11-09] PC_24 (default ON since L-105, opt-out MASHED_NO_X87_PC24=1) is no longer forced PC_24 here from frame 0: InitD3D9 sets it
     // once, right after the device exists, where the original's thread becomes 0x007f (PREREG_X87PC24.md K1). Here, once
     // the knob was applied, a precision other than PC_24 counts one drift event and is reasserted (K2).
     {
@@ -3218,19 +3218,19 @@ int CreateDeviceWatched(IDirect3D9* d3d, D3DDEVTYPE type, HWND hwnd, DWORD flags
 }
 }  // namespace
 
-// [PORT-X87-PC24 2026-11-09] MASHED_X87_PC24 (default OFF): the game thread at x87 PC_24 from here on, as the original's
+// [PORT-X87-PC24 2026-11-09, flipped default ON by L-105 (a); MASHED_NO_X87_PC24=1 opts out]: the game thread at x87 PC_24 from here on, as the original's
 // thread is after its own CreateDevice (D3D9 without D3DCREATE_FPU_PRESERVE sets CW 0x007f on the calling thread; the
 // exe's call runs on CreateDeviceWatched's worker, so the game thread kept 0x027f). Only the precision field changes:
 // 0x007f and 0x027f differ in _MCW_PC alone. Runs on the thread that called InitD3D9, the game thread.
 static void ApplyX87Pc24AfterDevice() {
-    static const bool s_on = [] { const char* e = std::getenv("MASHED_X87_PC24"); return e && e[0] && e[0] != '0'; }();
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_NO_X87_PC24"); return !(e && e[0] && e[0] != '0'); }();
     if (!s_on) return;
     unsigned int before = 0, t = 0;
     _controlfp_s(&before, 0, 0);
     _controlfp_s(&t, _PC_24, _MCW_PC);
     mashed_re::X87::GameThreadPc24() = true;
     if (std::FILE* log = std::fopen(kLogPath, "a")) {
-        std::fprintf(log, "[x87] MASHED_X87_PC24: tid=%lu pc 0x%05x -> 0x%05x\n", GetCurrentThreadId(),
+        std::fprintf(log, "[x87] PC_24 after device: tid=%lu pc 0x%05x -> 0x%05x\n", GetCurrentThreadId(),
                      before & _MCW_PC, t & _MCW_PC);
         std::fclose(log);
     }

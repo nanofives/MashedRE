@@ -512,10 +512,6 @@ STACK['TKD'] = ['MASHED_DET_TEST_KEY=0x1c@5406+10']; STACK['NAKOFF'] = ['-MASHED
 STACK['PSGOTK'] = STACK['PSGO'] + STACK['TK']
 # MATCH-PORTSTATE-GAMEFLOW-FU: PSGF = PSG + the 0x004929d0 racing-phase tick (MASHED_PORTSTATE_GAMEFLOW_FU)
 STACK['PSGF'] = _PSG + ['MASHED_PORTSTATE_GAMEFLOW_FU']
-# PORT-AISPLINE-DDKORDER (verify/portstate_20261109/PREREG_AISPLINE_DDKORDER.md): 0x00443300 in the DDK's add order
-STACK['DDK'] = ['MASHED_AISPLINE_DDK=1']
-# report only: the exe calls AiSplineEval_x87 only through AiLeaf_414570 (MASHED_AILEAF, AiStandalone.cpp:1056)
-STACK['AL'] = ['MASHED_AILEAF=1']; STACK['ALDDK'] = ['MASHED_AILEAF=1', 'MASHED_AISPLINE_DDK=1']
 # PORT-X87-PC24 (verify/portstate_20261109/PREREG_X87PC24.md): the game thread at x87 PC_24 from device creation on, the
 # same plus the D2 42 s hold, and the section-3 interaction stacks (each = X24 + one precision knob). LCW = + MASHED_LOG_CW.
 _X24 = ['MASHED_X87_PC24']
@@ -528,6 +524,10 @@ STACK['X24NL1'] = _X24 + ['MASHED_NO_LEAVES1_X87=1']
 STACK['NCC0'] = ['MASHED_NO_CC_PC24=1']; STACK['MM0'] = ['MASHED_MATMUL_PC24=1']
 STACK['NCL0'] = ['MASHED_NO_COLL_LUT=1']; STACK['NL10'] = ['MASHED_NO_LEAVES1_X87=1']
 STACK['NCC0H'] = STACK['NCC0'] + STACK['DEFH']; STACK['X24NCCH'] = STACK['X24NCC'] + STACK['DEFH']
+# PORT-AISPLINE-DDKORDER (verify/portstate_20261109/PREREG_AISPLINE_DDKORDER.md): 0x00443300 in the DDK's add order
+STACK['DDK'] = ['MASHED_AISPLINE_DDK=1']
+# report only: the exe calls AiSplineEval_x87 only through AiLeaf_414570 (MASHED_AILEAF, AiStandalone.cpp:1056)
+STACK['AL'] = ['MASHED_AILEAF=1']; STACK['ALDDK'] = ['MASHED_AILEAF=1', 'MASHED_AISPLINE_DDK=1']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
