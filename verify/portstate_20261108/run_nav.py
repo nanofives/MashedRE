@@ -1,4 +1,4 @@
-"""run_nav.py <exe> <name> <root> [KEY=VAL ...] [--timeout 300]
+"""run_nav.py <exe> <name> <root> [KEY=VAL ...] [--timeout 300] [--data D:/MashedWT/<step>_data]
 
 Copy of verify/dualcopy4_20261016/run_nav.py for PORT-STATE-01: the standalone's scripted menu walk
 (MASHED_NAV_DEMO=1) on one exe image with a private MASHED_ROOT and extra env (e.g. MASHED_PORTSTATE_FRONTEND=1).
@@ -11,11 +11,14 @@ from pathlib import Path
 
 args = [a for a in sys.argv[1:]]
 timeout = 300
+data = 'D:/MashedWT/PORT-STATE-01_data'      # PORT-STATE-03: --data <folder> picks another step's data folder
+if '--data' in args:
+    i = args.index('--data'); data = args[i + 1]; del args[i:i + 2]
 if '--timeout' in args:
     i = args.index('--timeout'); timeout = int(args[i + 1]); del args[i:i + 2]
 exe, name, root = args[0], args[1], Path(args[2])
 extra = dict(a.split('=', 1) for a in args[3:])
-out = Path('D:/MashedWT/PORT-STATE-01_data/nav') / name
+out = Path(data) / 'nav' / name
 out.mkdir(parents=True, exist_ok=True)
 for f in out.glob('*'):
     if f.is_file():
