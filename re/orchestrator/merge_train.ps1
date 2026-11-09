@@ -364,13 +364,20 @@ function Resolve-Batch($items, $first) {
     # HB-TRAIN-WTADD-RETRY: a throw while trying a row (worktree add, git, build setup) stops the one-at-a-time pass
     # but never loses what it already proved: the GREEN row and the bounces so far are returned and landed by the
     # caller; the throwing row and the rows after it stay queued. Train 20261106_122811 lost MATCH-S09-FU that way.
-    try { $one = Try-Batch @($it) }
+    # HB-TRAIN-STACK (2026-11-08): after the first GREEN, each later row is tried STACKED on the rows already GREEN
+    # (merged + it), so a GREEN row lands in this pass instead of being gated for nothing and left queued (train
+    # 20261108_124527 gated PORT-RENDER-01 GREEN after FE-01 and dropped it). A RED stacked try bounces only `it`:
+    # the stack without it was GREEN.
+    try { $one = Try-Batch (@($o.merged) + @($it)) }
     catch {
       $o.error = "$($it.id): $($_.Exception.Message)"
       Say "  $($it.id): threw ($($_.Exception.Message)); stopping one-at-a-time$(if ($o.res) { ", landing GREEN $($o.merged[0].id)" }), rows not merged stay queued"
       break
     }
-    if ($one.ok -and -not $o.res) { $o.res = $one; $o.merged = @($it); continue }   # first GREEN one lands this run
+    if ($one.ok) {   # GREEN (alone, or stacked on the earlier GREEN rows): it becomes the result that lands this run
+      if ($o.res) { Remove-Temp $o.res.wt }
+      $o.res = $one; $o.merged = @($o.merged) + @($it); continue
+    }
     Remove-Temp $one.wt
     if ($one.infra) { $o.infra = $one.why; Say "  $($it.id): $($one.why); stopping, the rows not merged stay queued"; break }
     if (-not $one.ok) { $o.bounced += @{ it = $it; why = $one.why; gates = $one.gates } }
@@ -738,8 +745,10 @@ if ($SelfTest) {
   Check ($o.infra -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-A' -and $o.merged.Count -eq 0 -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-B') "INFRA path: INFRA mid one-at-a-time stops there; the RED before it bounces, the row after it is not tried (calls $($script:tbCalls -join ','))"
   $o = Batch-Case @($iA) @{ 'T-A' = (TB 'red') }
   Check (-not $o.infra -and $o.bounced.Count -eq 1 -and $o.bounced[0].why -eq 'default gates changed') 'normal path: single row RED = bounced (unchanged)'
-  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'green'); 'T-B' = (TB 'red'); 'T-C' = (TB 'green') }
-  Check (-not $o.infra -and $o.merged.Count -eq 1 -and $o.merged[0].id -eq 'T-A' -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-B' -and $null -ne $o.res -and $script:removed -eq 3) "normal path: batch RED -> one at a time: first GREEN lands, RED bounced, second GREEN stays queued (temps removed $($script:removed))"
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'green'); 'T-A+T-B' = (TB 'red'); 'T-A+T-C' = (TB 'green') }
+  Check (-not $o.infra -and $o.merged.Count -eq 2 -and $o.merged[0].id -eq 'T-A' -and $o.merged[1].id -eq 'T-C' -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-B' -and $null -ne $o.res -and $script:removed -eq 3 -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-A+T-B,T-A+T-C') "normal path (HB-TRAIN-STACK): batch RED -> one at a time, later rows stacked on the GREEN ones: A and C land, B bounced (calls $($script:tbCalls -join ','), temps removed $($script:removed))"
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'red'); 'T-B' = (TB 'green'); 'T-B+T-C' = (TB 'green') }
+  Check (-not $o.infra -and $o.merged.Count -eq 2 -and $o.merged[0].id -eq 'T-B' -and $o.merged[1].id -eq 'T-C' -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-A' -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-B,T-B+T-C') "normal path (HB-TRAIN-STACK): RED first, then two GREEN stacked: B and C land, A bounced (calls $($script:tbCalls -join ','))"
   $o = Batch-Case @($iA, $iB) @{ 'T-A+T-B' = (TB 'green') }
   Check (-not $o.infra -and $o.merged.Count -eq 2 -and $o.bounced.Count -eq 0 -and $script:tbCalls.Count -eq 1) 'normal path: batch GREEN = both merged (unchanged)'
 
@@ -770,15 +779,15 @@ if ($SelfTest) {
     return $script:TB[$k]
   }
   $o = $null; $esc = ''
-  try { $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'green'); 'T-B' = 'throw'; 'T-C' = (TB 'green') } } catch { $esc = $_.Exception.Message }
-  Check (-not $esc -and $o.merged.Count -eq 1 -and $o.merged[0].id -eq 'T-A' -and $null -ne $o.res -and $o.res.ok -and $o.bounced.Count -eq 0 -and $o.error -match '^T-B: worktree add failed' -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-B') "one-at-a-time: GREEN T-A then T-B throws = no exception escapes, T-A returned for landing, T-B/T-C stay queued (calls $($script:tbCalls -join ','), escaped '$esc', error '$($o.error)')"
+  try { $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'green'); 'T-A+T-B' = 'throw'; 'T-C' = (TB 'green') } } catch { $esc = $_.Exception.Message }
+  Check (-not $esc -and $o.merged.Count -eq 1 -and $o.merged[0].id -eq 'T-A' -and $null -ne $o.res -and $o.res.ok -and $o.bounced.Count -eq 0 -and $o.error -match '^T-B: worktree add failed' -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-A+T-B') "one-at-a-time: GREEN T-A then T-B throws = no exception escapes, T-A returned for landing, T-B/T-C stay queued (calls $($script:tbCalls -join ','), escaped '$esc', error '$($o.error)')"
   $o = $null; $esc = ''
   try { $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TB 'red'); 'T-A' = (TB 'red'); 'T-B' = 'throw'; 'T-C' = (TB 'green') } } catch { $esc = $_.Exception.Message }
   Check (-not $esc -and $o.merged.Count -eq 0 -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-A' -and $o.error -match '^T-B: ') "one-at-a-time: RED T-A then T-B throws = T-A still bounced, nothing merged, error reported (escaped '$esc')"
   # the run body lands whatever Resolve-Batch returns: $merged comes from $rb.merged, the error only reaches the report
   $tb = $top[0].Body.Extent.Text
   $rbFn = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Resolve-Batch' }, $true))
-  $rbTry = $rbFn.Count -eq 1 -and @($rbFn[0].Body.FindAll({ param($n) $n -is [System.Management.Automation.Language.TryStatementAst] -and $n.Body.Extent.Text -match 'Try-Batch @\(\$it\)' -and $n.CatchClauses.Count -eq 1 }, $true)).Count -eq 1
+  $rbTry = $rbFn.Count -eq 1 -and @($rbFn[0].Body.FindAll({ param($n) $n -is [System.Management.Automation.Language.TryStatementAst] -and $n.Body.Extent.Text -match 'Try-Batch \(@\(\$o\.merged\) \+ @\(\$it\)\)' -and $n.CatchClauses.Count -eq 1 }, $true)).Count -eq 1
   Check ($rbTry -and ($tb -match '\$trainErr = \$rb\.error') -and ($tb -notmatch 'throw \$trainErr')) "AST: Resolve-Batch catches the one-at-a-time Try-Batch, the run body carries the error to the report without rethrowing before landing (try/catch=$rbTry)"
 
   # AST: the run body routes through Resolve-Batch, bounces only $bounced, and verdict INFRA wins

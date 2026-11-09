@@ -46,6 +46,7 @@ BUILD_BAT_EXE_ONLY = [
     "LibRw/RwRasterBridge.cpp",
     "LibRw/RwSceneBuild.cpp",
     "LibRw/RwRaceSubmit.cpp",
+    "LibRw/RwApiBind.cpp",          # PORT-TOP-03
 ]
 
 # `.text` window of MASHED.exe. Below TEXT_BEG the comment is a struct offset or

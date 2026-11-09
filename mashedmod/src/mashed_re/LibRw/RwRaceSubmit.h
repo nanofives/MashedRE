@@ -55,6 +55,11 @@ bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height);
 // Tear down. Does NOT release the adopted device — the exe owns that.
 void RaceSubmit_Shutdown();
 
+// PORT-TOP-03 (MASHED_ORIG_TOP, LibRw/RwApiBind.cpp): RaceSubmit_Init minus the engine bring-up, for an engine the RW
+// API binds already started on `dev`; and RaceSubmit_Shutdown minus Engine::stop/close/term.
+bool RaceSubmit_InitOnStartedEngine(HWND hwnd, IDirect3DDevice9* dev, int width, int height);
+void RaceSubmit_ShutdownSceneOnly();
+
 // Build the librw scene from the SAME parsed data TrackRenderer just used.
 // Called from the tail of TrackRenderer::Load, where `world` and `dicts` are
 // still alive (they are locals there), so no asset is parsed twice.

@@ -51,7 +51,10 @@ MGLOBAL(float, DAT_007f1004, 0x007f1004);
 MGLOBALA(MenuItemF, DAT_00898ac0, 30, 0x00898ac0);
 MGLOBALA(int, DAT_005f72a0, 52, 0x005f72a0);
 MGLOBALA(int, DAT_005f7370, 52, 0x005f7370);
-// MATCH: 0x0042ac50 FUN_0042ac50
+/* Static callee 0x0042ac50 FUN_0042ac50 (its own matched source: re/match/s06/0042ac50.c). Defined here for the DDK, so
+   the caller compiles with a known callee (EAX/ECX args, EBP kept). The port (MATCH_PORT) calls that one body by name
+   instead (PORT-STATE-03: Match/MatchS06_0042ac50.cpp, cdecl Calc42ac50), so 0x0042ac50 keeps one body per target. */
+#ifndef MATCH_PORT
 static int FUN_0042ac50(unsigned int n, int spacing)
 {
   int y;
@@ -62,6 +65,10 @@ static int FUN_0042ac50(unsigned int n, int spacing)
   }
   return y - ((n - 1) >> 1) * spacing;
 }
+#else
+#define FUN_0042ac50 Calc42ac50
+int Calc42ac50(unsigned int n, int w);
+#endif
 // MATCH: 0x004325c0 FUN_004325c0
 int FUN_004325c0(void)
 {

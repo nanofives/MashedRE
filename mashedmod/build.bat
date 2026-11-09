@@ -136,6 +136,10 @@ REM [rfx 2026-10-16] in-race car shadow / beam / HUD on librw (LibRw\RwRaceFx.h)
 cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
     /Fo"%OUT%\RwRaceFx_exe.obj" "%SRC%\LibRw\RwRaceFx.cpp"
 if errorlevel 1 (echo [ERROR] RwRaceFx exe-obj compile failed & exit /b 1)
+REM [PORT-TOP-03] the RW API binding layer for the MASHED_ORIG_TOP path (LibRw\RwApiBind.cpp). Same isolation.
+cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
+    /Fo"%OUT%\RwApiBind_exe.obj" "%SRC%\LibRw\RwApiBind.cpp"
+if errorlevel 1 (echo [ERROR] RwApiBind exe-obj compile failed & exit /b 1)
 
 REM ===========================================================================
 REM Phase C status (2026-05-25):
@@ -256,6 +260,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj
     "%OUT%\RwSceneBuild_exe.obj" ^
     "%OUT%\RwRaceSubmit_exe.obj" ^
     "%OUT%\RwRaceFx_exe.obj" ^
+    "%OUT%\RwApiBind_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
     /DELAYLOAD:d3d9.dll /DELAYLOAD:dinput8.dll ^

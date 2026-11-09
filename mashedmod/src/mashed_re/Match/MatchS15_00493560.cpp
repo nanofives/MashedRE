@@ -6,12 +6,18 @@
 
 #define MATCH_PORT 1
 #define thunk_FUN_004954f0 thunk_HwExitDispatch
+// [PORT-TOP-04A] exe: 0x004954f0 binds by name to its matched exe body (Match/PortTop_004954f0.cpp). The .asi keeps
+// the raw-address call.
+#ifdef MASHED_STANDALONE
+#define FUN_004954f0 HardwareExitApplication
+#else
 #define FUN_004954f0 MatchS15_00493560_Call004954f0
 // Callees of the matched source: the old Boot/LaunchHandshake.cpp body called each one through its original address, so these
 // forwarders make that same raw-address call (in the .asi an installed callee hook is reached through its JMP).
 extern "C" unsigned int MatchS15_00493560_Call004954f0(void) {
     return reinterpret_cast<unsigned int (__cdecl*)()>(0x004954f0u)();
 }
+#endif
 #pragma comment(linker, "/EXPORT:thunk_HwExitDispatch=_thunk_HwExitDispatch")
 extern "C" {
 #include "../../../../re/match/s15/00493560.c"

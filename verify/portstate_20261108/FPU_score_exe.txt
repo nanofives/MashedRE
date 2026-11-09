@@ -1,0 +1,20 @@
+== D:/MashedWT/PORT-STATE-03-FPU_data/exe_l100_sse_keys.json  pid=1216 asi=None
+arm1: 175 entry rows; CW values {'0x27f': 175}; MXCSR {'0x1fa0': 175}; phase {2: 175}
+      dt values (top 6) [('0x3c888888', 175)]
+arm2: 175 calls; CW read before the call {'0x27f': 175}; distinct dt 1
+      orig {'non both': 5223, 'disc =F': 27}  discriminating by (K,speed): {('f8', 1.0): 27}
+== D:/MashedWT/PORT-STATE-03-FPU_data/exe_l100_keys.json  pid=16772 asi=None
+arm1: 184 entry rows; CW values {'0x27f': 184}; MXCSR {'0x1fa0': 184}; phase {2: 184}
+      dt values (top 6) [('0x3c888888', 184)]
+arm2: 184 calls; CW read before the call {'0x27f': 184}; distinct dt 1
+      orig {'non both': 5493, 'disc =D': 27}  discriminating by (K,speed): {('f8', 1.0): 27}
+== D:/MashedWT/PORT-STATE-03-FPU_data/exe_l100_sse_walk.json  pid=7748 asi=None
+arm1: 610 entry rows; CW values {'0x27f': 610}; MXCSR {'0x1fa0': 610}; phase {2: 610}
+      dt values (top 6) [('0x3c888888', 610)]
+arm2: 610 calls; CW read before the call {'0x27f': 610}; distinct dt 1
+      orig {'non both': 18052, 'disc =F': 248}  discriminating by (K,speed): {('f8', 1.0): 248}
+== D:/MashedWT/PORT-STATE-03-FPU_data/exe_l100_walk.json  pid=14596 asi=None
+arm1: 616 entry rows; CW values {'0x27f': 616}; MXCSR {'0x1fa0': 616}; phase {2: 616}
+      dt values (top 6) [('0x3c888888', 616)]
+arm2: 616 calls; CW read before the call {'0x27f': 616}; distinct dt 1
+      orig {'non both': 18232, 'disc =D': 248}  discriminating by (K,speed): {('f8', 1.0): 248}

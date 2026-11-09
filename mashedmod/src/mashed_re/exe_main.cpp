@@ -1687,14 +1687,21 @@ bool RunNavKeysStep() {
     } else {
         return true;                     // script done, last gap elapsed
     }
+    // rec= (PORT-STATE-03): FNV-1a 32 over menu records 0..29 (30 x 0x34 bytes, wherever MASHED_PORTSTATE_FRONTEND puts them).
+    std::uint32_t recHash = 0x811c9dc5u;
+    {
+        const unsigned char* rb = reinterpret_cast<const unsigned char*>(Nav_Records());
+        for (int i = 0; i < 30 * 0x34; ++i) { recHash ^= rb[i]; recHash *= 0x01000193u; }
+    }
     std::FILE* lf = std::fopen(kLogPath, "a");
     if (lf) {
-        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d opp=%d,%d,%d\n",
+        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d opp=%d,%d,%d rec=%08x n=%d\n",
                      frame, tap, Nav_Depth(), Nav_ScreenId(), Nav_Cursor(),
                      Nav_ChallengeRow(), Nav_GameModeWord(),
                      Nav_GameState().sel_f184, Nav_GameState().ea68, Nav_NavFlagF1a4(),
                      static_cast<int>(mashed_re::Race::GameFlow_Mode()),
-                     g_frontend_phase, Nav_GameState().ea98, Nav_GameState().ea9c, Nav_GameState().eaa0);
+                     g_frontend_phase, Nav_GameState().ea98, Nav_GameState().ea9c, Nav_GameState().eaa0,
+                     static_cast<unsigned>(recHash), Nav_RecordCount());
         std::fclose(lf);
     }
     ++frame;
@@ -9413,10 +9420,14 @@ extern "C" int ExeInput_DeriveSlotsHeadless() {
 namespace mashed_re { namespace Race { void GameFlow_BootSpan(unsigned char span[0x520]); } }
 namespace mashed_re { namespace Frontend { void Nav_GameStateSeedSpan(const unsigned char* span); } }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
-    // PORT-STATE-02 (L-99 a, L-101 flip): the port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out) copies the generated table of the original's
-    // file-backed .rdata/.data values into the B17 pad before any game code runs. Opt-out = no write, no log.
-    mashed_re::Compat::PortStateSeed_Apply();
+// [PORT-TOP-02] The hand-written top level, split into the pieces the MASHED_ORIG_TOP knob path
+// (Match/PortTop_00492370.cpp) binds as stand-ins for the original WinMain 0x00492370 and run function
+// run function 0x00492290. WinMain below calls them in the same order as before the split, so the default path is the
+// same code sequence. verify/porttop_20261108/BINDINGS.tsv lists which original callee each piece stands in for.
+static int s_nav_demo_phase = 0;
+
+// exe prelude: asset root, log truncate, harness knobs, frontend piz preload, DPI awareness.
+static void HandTop_Prelude() {
     ApplyResolutionEnv();   // MASHED_HIRES=1 -> 1280x960 (else 640x480); before window+device
     // Self-locating asset root. Every data path in this exe (and the log) is
     // relative to the REPO ROOT ("original/TOASTART/..."), so a launch whose
@@ -9542,7 +9553,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             SetProcessDPIAware();
         }
     }
+}
 
+// stand-in job of 0x00499ba0 (window class + window) and 0x004996f0 (show) in the hand top level.
+static bool HandTop_CreateWindow(HINSTANCE hInstance, int nCmdShow, int* rc) {
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
     WNDCLASSEXA wc = {};
     wc.cbSize        = sizeof(wc);
@@ -9553,7 +9567,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     wc.hbrBackground = nullptr; // we own the backbuffer; don't let GDI clear under us
     wc.lpszClassName = kClassName;
     if (!RegisterClassExA(&wc)) {
-        return 1;
+        *rc = 1; return false;
     }
 
     RECT rect = {0, 0, kWidth, kHeight};
@@ -9573,14 +9587,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         nullptr);
     if (!g_hwnd) {
         UnregisterClassA(kClassName, hInstance);
-        return 2;
+        *rc = 2; return false;
     }
     PlaceDevWindow(g_hwnd);
 
     // Show + paint. Pattern from 0x004996f0 (WindowShow).
     ShowWindow(g_hwnd, nCmdShow);
     UpdateWindow(g_hwnd);
+    return true;
+}
 
+// M3-E1' librw smoke probe (default path only).
+static bool HandTop_Smoke(HINSTANCE hInstance, int* rc_out) {
     // M3-E1' (gate D2): MASHED_LIBRW_SMOKE=1 hands the window to vendored librw
     // instead of our own D3D9 path and runs the E1' acceptance probe. Gated HERE,
     // before InitD3D9, because THAT path cannot coexist with ours — the probe
@@ -9595,9 +9613,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         const int rc = mashed_re::LibRw::RunSmoke(g_hwnd, kWidth, kHeight, 600);
         DestroyWindow(g_hwnd);
         UnregisterClassA(kClassName, hInstance);
-        return rc;
+        *rc_out = rc; return false;
     }
+    return true;
+}
 
+// stand-in for 0x00492270 (SubsystemInit: RW engine init/open/start, display, viewport): D3D9 device + librw.
+static bool HandTop_InitDevice(HINSTANCE hInstance, int* rc) {
     // B17: snapshot the arena right before CreateDevice so we can diff what
     // d3d9 claims against what was free here.
     DumpRegionMap("pre-initd3d9");
@@ -9605,7 +9627,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     if (!InitD3D9()) {
         DestroyWindow(g_hwnd);
         UnregisterClassA(kClassName, hInstance);
-        return 3;
+        *rc = 3; return false;
     }
 
     // B17: snapshot again immediately after CreateDevice. The diff vs
@@ -9629,9 +9651,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         DestroyWindow(g_hwnd);
         UnregisterClassA(kClassName, hInstance);
-        return 4;
+        *rc = 4; return false;
     }
+    return true;
+}
 
+// stand-in for 0x00402750 (AppInitialiseOnBootup): data wedge, boot chain, input, audio, movies, frontend.
+static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
     // B7 (deferred to post-InitD3D9): wedge over whatever low-address
     // granules d3d9 didn't claim. Then verify + run boot chain.
     (void)MapMashedDataSection();
@@ -9652,7 +9678,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     if (mashed_re::DllGuardLoadSystem32("dsound.dll") == nullptr) {
         DestroyWindow(g_hwnd);
         UnregisterClassA(kClassName, hInstance);
-        return 5;
+        *rc = 5; return false;
     }
 
     // [D5-INTROMOVIES] boot movies (FUN_00402750 0x00402838 / 0x0040283f), before
@@ -10279,69 +10305,137 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             std::fclose(log);
         }
     }
-
-    // Main loop: pump messages + render until the user closes the window or
-    // hits ESC, or the device gets into an unrecoverable state. Per frame we
-    // also poll the keyboard (B11) and refresh the window title to reflect
-    // current key state.
-    int nav_demo_phase = 0;
     // All synchronous frontend asset loads above are complete — the boot
     // loading screen may auto-advance once its min dwell elapses.
     g_assets_loaded = true;
+    return true;
+}
+
+// Frame piece 1: deterministic frame counter. false = the MASHED_DET_FRAMES cap was reached (quit posted).
+static bool HandTop_FrameDetTick() {
+    // R10: the synthetic clock advances exactly one tick per loop iteration,
+    // so DetTicks() and the physics accumulator are both pure functions of
+    // the frame index. No-op unless MASHED_DETERMINISTIC=1.
+    ++g_det_frame;
+    if (g_det_frames_max && g_det_frame >= g_det_frames_max) {
+        PostQuitMessage(0);
+        return false;
+    }
+    return true;
+}
+
+// Frame piece 2 (after PollKeyboard): harness steps, menu navigation, input globals, game flow.
+static void HandTop_FrameUpdate() {
+    // Scripted nav-demo: inject the next in-process key edge / capture a
+    // backbuffer BMP (no-op unless MASHED_NAV_DEMO is set). Runs right after
+    // PollKeyboard so injected edges feed UpdateMenuSelection this frame.
+    if (g_nav_demo) {
+        if (RunNavDemoStep(s_nav_demo_phase)) { PostQuitMessage(0); }
+        ++s_nav_demo_phase;
+    }
+    if (g_parity) {
+        if (RunParityWalk(s_nav_demo_phase)) { PostQuitMessage(0); }
+        ++s_nav_demo_phase;
+    }
+    if (g_race_demo) {
+        if (RunRaceDemoStep(s_nav_demo_phase)) { PostQuitMessage(0); }
+        ++s_nav_demo_phase;
+    }
+    if (g_cfgedit_demo) {
+        if (RunConfigEditDemo(s_nav_demo_phase)) { PostQuitMessage(0); }
+        ++s_nav_demo_phase;
+    }
+    if (g_nav_keys) {
+        if (RunNavKeysStep()) { PostQuitMessage(0); }
+    }
+    UpdateWindowTitle();
+    // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
+    UpdateTitleSlotFromKeyboard();
+    // State-machine-driven nav: Up/Down move the cursor, Enter pushes the
+    // highlighted item's child screen, Esc/Backspace pop. Returns true only
+    // when Esc is pressed at the ROOT (nothing left to pop) -> quit the app.
+    if (UpdateMenuSelection()) {
+        PostQuitMessage(0);
+    }
+    // B14: mirror DInput keyboard state into MASHED's input globals
+    // (0x007f1044 active / 0x007f1504 processed, player 0). As of
+    // 2026-09-04 this is no longer write-only in the standalone:
+    // MenuTeamSelectTick (0x0042fa00) reads cols 0/1 of these on the
+    // Team Select screen, so changing the column mapping now changes
+    // real behaviour rather than only feeding future frontend code.
+    WriteMashedInputGlobalsFromKeyboard();
+    CookCtrlByteAFromKeyboard();   // [D3-CF-R7INPUT] MASHED_R7_INPUT (default ON since 2026-10-25)
+    // Top-level game-flow scaffold: drives the Frontend->LoadingRace->InRace
+    // state machine + the RaceSession subsystem stubs. In Frontend mode (the
+    // default — nothing requests a race yet) this is a no-op, so the menu is
+    // unaffected; the wiring is in place for when the frontend launches a race.
+    mashed_re::Race::GameFlow_Update(0.016f);
+}
+
+// stand-in for 0x00402a40 (AppDestroy).
+static void HandTop_AppDestroy() {
+    mashed_re::Audio::Shutdown();
+    ShutdownDirectInput();
+    g_small_mpg.Close();   // [D5-INTROMOVIES] FUN_00494bc0 releases the small.mpg graph
+}
+
+// stand-in for 0x004938c0 via 0x00493550 (RW engine stop/close/term).
+static void HandTop_DeviceShutdown() {
+    ShutdownD3D9();
+}
+
+// PORT-TOP-02 stand-in exports for the knob TU. extern "C" so the matched C bodies bind them by name.
+extern "C" {
+void PortTop_HandPrelude() { HandTop_Prelude(); }
+// dev harness window placement (the hand path does it right after CreateWindow). [PORT-TOP-03] the knob path's
+// device init is now the matched SubsystemInit 0x00492270 with RW on librw (PortTop_HandCreateDevice below).
+void PortTop_HandPlaceWindow() { PlaceDevWindow(g_hwnd); }
+int  PortTop_HandInitRest(HINSTANCE h) { int rc = 0; return HandTop_InitRest(h, &rc) ? 1 : 0; }
+void PortTop_HandPollKeyboard() { PollKeyboard(); }
+void PortTop_HandFrameUpdate() { if (HandTop_FrameDetTick()) HandTop_FrameUpdate(); }
+int  PortTop_HandRenderFrame() { if (!RenderFrame()) { PostQuitMessage(0); return 0; } return 1; }
+void PortTop_HandAppDestroy() { HandTop_AppDestroy(); }
+void PortTop_HandDeviceShutdown() { HandTop_DeviceShutdown(); }
+// [PORT-TOP-03] the device half of HandTop_InitDevice for the RW API binding layer's RwEngineStart
+// (LibRw/RwApiBind.cpp): the exe creates its D3D9 device, librw adopts it. Returns the device, or null.
+void* PortTop_HandCreateDevice() {
+    DumpRegionMap("pre-initd3d9");
+    if (!InitD3D9()) return nullptr;
+    DumpRegionMap("post-initd3d9");
+    return g_device;
+}
+void PortTop_SetHwnd(HWND h) { g_hwnd = h; }
+void PortTop_HandGameModeMachine() { mashed_re::Race::GameModeMachine_Tick(); }
+void PortTop_HandSetOutputActive(int active) { mashed_re::Audio::SetOutputActive(active != 0); }
+int  PortTop_Width() { return kWidth; }
+int  PortTop_Height() { return kHeight; }
+int  PortTop_WinMain(HINSTANCE, HINSTANCE, LPSTR, int);   // Match/PortTop_00492370.cpp
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    // PORT-STATE-02 (L-99 a, L-101 flip): the port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out) copies the generated table of the original's
+    // file-backed .rdata/.data values into the B17 pad before any game code runs, on both top-level paths. Opt-out = no write, no log.
+    mashed_re::Compat::PortStateSeed_Apply();
+    // [PORT-TOP-02] MASHED_ORIG_TOP=1 (default OFF, read once here): the matched original WinMain 0x00492370
+    // and run function 0x00492290 drive the process, with the pieces above bound as stand-ins.
+    {
+        char ot[8] = {};
+        if (GetEnvironmentVariableA("MASHED_ORIG_TOP", ot, sizeof(ot)) > 0 && ot[0] && ot[0] != '0')
+            return PortTop_WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+    }
+    int rc = 0;
+    HandTop_Prelude();
+    if (!HandTop_CreateWindow(hInstance, nCmdShow, &rc)) return rc;
+    if (!HandTop_Smoke(hInstance, &rc)) return rc;
+    if (!HandTop_InitDevice(hInstance, &rc)) return rc;
+    if (!HandTop_InitRest(hInstance, &rc)) return rc;
+
+    // Main loop: pump messages + render until the user closes the window or
+    // hits ESC, or the device gets into an unrecoverable state.
     while (!PumpOnce()) {
-        // R10: the synthetic clock advances exactly one tick per loop iteration,
-        // so DetTicks() and the physics accumulator are both pure functions of
-        // the frame index. No-op unless MASHED_DETERMINISTIC=1.
-        ++g_det_frame;
-        if (g_det_frames_max && g_det_frame >= g_det_frames_max) {
-            PostQuitMessage(0);
-            break;
-        }
+        if (!HandTop_FrameDetTick()) break;
         PollKeyboard();
-        // Scripted nav-demo: inject the next in-process key edge / capture a
-        // backbuffer BMP (no-op unless MASHED_NAV_DEMO is set). Runs right after
-        // PollKeyboard so injected edges feed UpdateMenuSelection this frame.
-        if (g_nav_demo) {
-            if (RunNavDemoStep(nav_demo_phase)) { PostQuitMessage(0); }
-            ++nav_demo_phase;
-        }
-        if (g_parity) {
-            if (RunParityWalk(nav_demo_phase)) { PostQuitMessage(0); }
-            ++nav_demo_phase;
-        }
-        if (g_race_demo) {
-            if (RunRaceDemoStep(nav_demo_phase)) { PostQuitMessage(0); }
-            ++nav_demo_phase;
-        }
-        if (g_cfgedit_demo) {
-            if (RunConfigEditDemo(nav_demo_phase)) { PostQuitMessage(0); }
-            ++nav_demo_phase;
-        }
-        if (g_nav_keys) {
-            if (RunNavKeysStep()) { PostQuitMessage(0); }
-        }
-        UpdateWindowTitle();
-        // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
-        UpdateTitleSlotFromKeyboard();
-        // State-machine-driven nav: Up/Down move the cursor, Enter pushes the
-        // highlighted item's child screen, Esc/Backspace pop. Returns true only
-        // when Esc is pressed at the ROOT (nothing left to pop) -> quit the app.
-        if (UpdateMenuSelection()) {
-            PostQuitMessage(0);
-        }
-        // B14: mirror DInput keyboard state into MASHED's input globals
-        // (0x007f1044 active / 0x007f1504 processed, player 0). As of
-        // 2026-09-04 this is no longer write-only in the standalone:
-        // MenuTeamSelectTick (0x0042fa00) reads cols 0/1 of these on the
-        // Team Select screen, so changing the column mapping now changes
-        // real behaviour rather than only feeding future frontend code.
-        WriteMashedInputGlobalsFromKeyboard();
-        CookCtrlByteAFromKeyboard();   // [D3-CF-R7INPUT] MASHED_R7_INPUT (default ON since 2026-10-25)
-        // Top-level game-flow scaffold: drives the Frontend->LoadingRace->InRace
-        // state machine + the RaceSession subsystem stubs. In Frontend mode (the
-        // default — nothing requests a race yet) this is a no-op, so the menu is
-        // unaffected; the wiring is in place for when the frontend launches a race.
-        mashed_re::Race::GameFlow_Update(0.016f);
+        HandTop_FrameUpdate();
         // [MATCH-PORTSTATE-GAMEFLOW-FU] MASHED_PORTSTATE_GAMEFLOW_FU (default OFF): the original game-mode machine
         // 0x004929d0 in phases 3 / 7, else its entry call 0x004927c0 (Race/GameModeMachine.cpp). OFF = no-op.
         mashed_re::Race::GameModeMachine_Tick();
@@ -10352,10 +10446,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     }
 
     // Teardown.
-    mashed_re::Audio::Shutdown();
-    ShutdownDirectInput();
-    g_small_mpg.Close();   // [D5-INTROMOVIES] FUN_00494bc0 releases the small.mpg graph
-    ShutdownD3D9();
+    HandTop_AppDestroy();
+    HandTop_DeviceShutdown();
     if (g_hwnd) {
         DestroyWindow(g_hwnd);
         g_hwnd = nullptr;

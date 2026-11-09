@@ -187,6 +187,7 @@ MatchS06_00429b30
 MatchS06_00429b70
 MatchS06_00429e10
 MatchS06_0042aae0
+MatchS06_0042ad10
 # HB-6 (2026-10-26): disasm-order x87 bodies of 0x00566200 / 0x005667c0 (VECCAP-2), reached only under
 # MASHED_LEAVES1_X87=1 (default OFF). Measured by re/tools/veccap/replay_c3.py; verify/hb6_20261026/RESULT_HB-6.md.
 RwpSolverLeaves1X87
@@ -196,6 +197,13 @@ MatchS02_00411350
 MatchPilot_0046c5f0
 # MATCH-T13-SEED-WRITER 2026-11-02: byte-matched x87 body of 0x00414060 (re/match/s03/h3_00414060.c)
 MatchS03_00414060
+# PORT-TOP-02 2026-11-08: MASHED_ORIG_TOP knob path, matched WinMain 0x00492370 / run 0x00492290 and their leaves (exe only)
+PortTop_00492370
+PortTop_00493900
+PortTop_00499820
+PortTop_00499890
+PortTop_00499ba0
+PortTop_Leaves
 PortSave01_Config
 # PORT-FE-01 2026-11-08: byte-matched body of 0x0040e470 (re/match/s02/0040e470.c), moved out of Ai/CarSlotState.cpp
 MatchS02_0040e470
