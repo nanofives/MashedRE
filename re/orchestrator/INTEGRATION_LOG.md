@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-09 17:12 PORT-TOP-04D-WALK04 (orch/PORT-TOP-04D-WALK04), PORT-X87-UNREACHED (orch/PORT-X87-UNREACHED), PORT-TOP-04H (orch/PORT-TOP-04H): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_165509
 - 2026-11-09 16:34 PORT-TOP-04G (orch/PORT-TOP-04G), PORT-SEED-OPTOUT (orch/PORT-SEED-OPTOUT), PORT-TRACKER-FILECOL (orch/PORT-TRACKER-FILECOL): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_161731
 - 2026-11-09 15:21 PORT-X87-PC24 (orch/PORT-X87-PC24), PORT-X87-PC24-FLIP (orch/PORT-X87-PC24-FLIP), PORT-AISPLINE-DUALCOPY (orch/PORT-AISPLINE-DUALCOPY): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_142615
 - 2026-11-09 13:57 PORT-TOP-04F (orch/PORT-TOP-04F), PORT-AISPLINE-FLIP (orch/PORT-AISPLINE-FLIP): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_133756
