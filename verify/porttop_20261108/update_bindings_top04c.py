@@ -39,7 +39,6 @@ for r, p in (('0045e040', '00467010'), ('00466a50', '00467010'), ('00555830', '0
 EXEBODY = {   # rva -> (kind, symbol, where)
     '00426ba0': ('matched', 'HudDrawEnabled', 'Match/MatchS06_00426ba0.cpp (exe body already)'),
     '00426c00': ('matched', 'GameStateFlagGet', 'Match/MatchS06_00426c00.cpp (exe body already)'),
-    '004114c0': ('matched', 'VtableTeardown_114c0', 'Match/MatchS02_004114c0.cpp (exe body already)'),
     '0045b350': ('matched', 'RwInitNullStub', 'Match/MatchS09_0045b350.cpp (exe body already)'),
     '004d8560': ('port', 'UtilReturnOne4d8560', 'Util/UtilLeaves_ab6.cpp (exe body already)'),
     '004671a0': ('matched', 'BackBuffRasterOpen', 'Match/MatchS11_004671a0.cpp (PORT-TOP-04B)'),

@@ -154,8 +154,9 @@ int PortTop_StandIn_00402750(void) {
 static unsigned PortTop_Dw(unsigned a) { return *reinterpret_cast<const unsigned volatile*>(a); }
 void PortTop_Bound_00402a40(void) {
     PortTop_Log("0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=%08X 0x006905b4=%08X 0x0067f18c=%08X "
-                "0x0067f190=%08X, DAT_005f9bd8=%u, DAT_00771a04=%u", PortTop_Dw(0x006905b0u), PortTop_Dw(0x006905b4u),
-                PortTop_Dw(0x0067f18cu), PortTop_Dw(0x0067f190u), PortTop_Dw(0x005f9bd8u), PortTop_Dw(0x00771a04u));
+                "0x0067f190=%08X, DAT_005f9bd8=%u, DAT_00771a04=%u, DAT_007f0a30=%08X, DAT_008a94a8=%08X",
+                PortTop_Dw(0x006905b0u), PortTop_Dw(0x006905b4u), PortTop_Dw(0x0067f18cu), PortTop_Dw(0x0067f190u),
+                PortTop_Dw(0x005f9bd8u), PortTop_Dw(0x00771a04u), PortTop_Dw(0x007f0a30u), PortTop_Dw(0x008a94a8u));
     AppDestroy();
     PortTop_Log("0x00402a40 AppDestroy (matched) returned; then HandTop_AppDestroy for the exe audio / DirectInput / small.mpg");
     PortTop_HandAppDestroy();

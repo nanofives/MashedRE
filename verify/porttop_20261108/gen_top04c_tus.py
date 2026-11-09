@@ -23,7 +23,6 @@ RW = {
 EXE = {
     'FUN_00426ba0': ('HudDrawEnabled', 'exe body, Match/MatchS06_00426ba0.cpp'),
     'FUN_00426c00': ('GameStateFlagGet', 'exe body, Match/MatchS06_00426c00.cpp'),
-    'FUN_004114c0': ('VtableTeardown_114c0', 'exe body, Match/MatchS02_004114c0.cpp'),
     'FUN_0045b350': ('RwInitNullStub', 'exe body, Match/MatchS09_0045b350.cpp'),
     'FUN_004d8560': ('UtilReturnOne4d8560', 'exe body, Util/UtilLeaves_ab6.cpp'),
     'FUN_004671a0': ('BackBuffRasterOpen', 'exe body, Match/MatchS11_004671a0.cpp'),
@@ -57,7 +56,6 @@ TUS = {
     '0045b930': ('s09/0045b930.c', 'Orig_0045b930', '5 calls, the DAT_005f9bd8 function-pointer entries of 0x005f99b0 that are nonzero, RwTexDictionaryDestroy(DAT_0068d4e0)'),
     '00467010': ('s10/00467010.c', 'Orig_00467010', '0x0045e040, 0x00466a50'),
     '00467070': ('s10/00467070.c', 'Orig_00467070', 'camera DAT_006905b4: frame unset, RwFrameDestroy(DAT_006905b8), RwCameraDestroy'),
-    '00484130': ('s14/00484130.c', 'Orig_00484130', 'when param_1 is nonzero: RwGlobals +0x10c on param_1 +0x10 (when nonzero) and on param_1'),
     '00494bc0': ('s16/00494bc0.c', 'Orig_00494bc0', 'vtable +0x24 on DAT_00771a48, then Release (vtable +8) on 6 pointers at 0x00771a38..0x00771a4c, each when nonzero'),
     '00496ce0': ('s16/00496ce0.c', 'Orig_00496ce0', '0x004d41e0(DAT_00773094), 0x004d41e0(DAT_00773088)'),
     '004b4880': ('s18/004b4880.c', 'Orig_004b4880', 'destroys a camera: frame (+0x04), rasters (+0x60, +0x64) when nonzero, the camera'),
@@ -79,6 +77,8 @@ THUNK = {
 }
 # rva -> why it is a stand-in (matched sources that are not run, and callees with no source / no exe body)
 STAND = {
+    '004114c0': 'matched (exe body VtableTeardown_114c0, Match/MatchS02_004114c0.cpp) but not run here: it calls RwGlobals +0x10c (RW free) through *(0x007d3ff8), which in the exe is the 0x34-byte B15 Im2D fake device (D3d9Render/RwIm2DBridge.cpp); +0x10c lies past it (knob_on_1 0xC0000005 in PORT-TOP-04C). Needs an RW memory-function binding',
+    '00484130': 'matched; calls RwGlobals +0x10c (RW free) through *(0x007d3ff8) when param_1 != 0, same gap as 0x004114c0',
     '004014b0': 'matched; reads DAT_00636570 +4 / DAT_0063656c +4 with no null check, state 0x00402750 creates (still a stand-in)',
     '0041e0d0': 'matched; reads +4 of each pointer of the 0x0063d610 table with no null check (state of 0x00402750)',
     '00489250': 'matched; reads DAT_007030a8 +4 / DAT_007030ac +4 with no null check (state of 0x00402750)',
