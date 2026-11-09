@@ -61,6 +61,18 @@ void MapPizPath(const char* in, char* out, std::size_t n) {
     std::snprintf(out, n, "original/%s", p);
     for (char* c = out; *c; ++c) if (*c == '\\') *c = '/';
 }
+bool PizNameEq(const char* a, const char* b) {
+    if (!a || !b) return false;
+    for (;; ++a, ++b) {
+        char x = *a, y = *b;
+        if (x == '\\') x = '/';
+        if (y == '\\') y = '/';
+        if (x >= 'A' && x <= 'Z') x = static_cast<char>(x - 'A' + 'a');
+        if (y >= 'A' && y <= 'Z') y = static_cast<char>(y - 'A' + 'a');
+        if (x != y) return false;
+        if (!x) return true;
+    }
+}
 }  // namespace
 
 extern "C" {
@@ -149,13 +161,15 @@ void PortTop_PizFs_Unmount_004952f0(void) {
     m.orig[0] = 0;
     m.path[0] = 0;
 }
-// The mounted archive holding <entry> (newest first), for the matched loaders that move off their stand-ins.
+// The mounted archive holding <entry> (newest first), for the matched loaders that move off their stand-ins. Names
+// compare case-insensitively with backslash and '/' equal (perm.piz holds "TOASTART/COMMON/PERM/COPTERS/COPTERS.TXD",
+// 0x00425bc0 asks for "ToastArt/common/perm/Copters/Copters.txd").
 const void* PortTop_PizFs_Find(const char* entry, unsigned* len) {
     for (int i = s_mountTop - 1; i >= 0; --i) {
         const mashed_re::Piz::Archive* a = s_mounts[i].arc.get();
         if (!a || !a->valid()) continue;
         for (std::uint32_t k = 0; k < a->count(); ++k) {
-            if (_stricmp(a->entry(k).name, entry) == 0) {
+            if (PizNameEq(a->entry(k).name, entry)) {
                 std::uint32_t n = 0;
                 const std::uint8_t* b = a->blob(k, &n);
                 if (len) *len = n;
@@ -190,10 +204,8 @@ void* PortTop_StandIn04E_004caea0(void) {
 #define SI(rva, job) int PortTop_StandIn04E_##rva() { static int once; StandInLog("0x" #rva, job, &once); return 0; }
 SI(00429290, "title tick, passed to 0x004b6560 as a callback only")
 SI(00494c80, "small.mpg graph setup; piece 2 plays the boot movies")
-SI(004283a0, "fonts family")
-SI(00427ca0, "fonts family; exe body FontText_HudInit, not run here yet")
-SI(004275d0, "fonts family")
-SI(004274e0, "fonts family: english.dat")
+SI(00427ca0, "fonts family; the exe copy of FontText_HudInit forwards to raw Rt2d font addresses")
+SI(004275d0, "fonts family; Rt2d font toolkit callees (0x00552920, 0x00553cf0) have no exe body")
 SI(004113b0, "0x24a3c block alloc")
 SI(00558240, "RW raster create, no source")
 SI(004841d0, "0x006ce840 table init; 0 skips Rec18Create, DAT_007f0a30 stays 0")
