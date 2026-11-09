@@ -154,6 +154,7 @@ inline int AiLutMask() {
     // [c2k93 2026-10-17] bit 0x1 + bit 0x4 (user decision, U-9752), the original's RW LUT bodies in FUN_00443dc0, and
     // [d3bc] bit 0x2, FUN_00415e20's LUT normalize (the FAITH value 7). The opt-out MASHED_NO_AI_LUT was deleted by
     // D5-KNOBS-RUNARMS-STACKS, MASHED_AI_LUT=<mask> and the seed by D5-KNOBS-E3-GEOM-AI.
+    // [PORT-AISPLINE-DUALCOPY 2026-11-09] bit 0x4 has no reader left: CatmullRom always calls the one 0x00443300 body.
     constexpr int kMask = 7;
     return s_aiLutOverride >= 0 ? s_aiLutOverride : kMask;
 #else
@@ -302,41 +303,32 @@ float SteerAngleErrorFwd(int v, float targetX, float targetZ)
 // 2026-06-30; see re/analysis/ai_spline_lookahead.md): 0x005cc31c=3.0,
 // 0x005cc358=5.0, 0x005cc35c=4.0, 0x005cc32c=0.5; param clamped to [0,1]
 // (0x005cc320=1.0 / DAT_005d757c=0).
+//
+// [PORT-AISPLINE-DUALCOPY 2026-11-09] In the standalone this is a call-through, not a body: it calls
+// AiSplineEval_x87_ddk (Match/MatchS08_00443300.cpp), the one exe body of 0x00443300 (the original's DDK add order,
+// 80/80 live and 20000/20000 synthetic against the original, PORT-AISPLINE-DDKORDER). The d3b compL arm it replaces
+// (AI LUT mask bit 0x4, the same op order, scalar SSE2 so each op rounded to float) is deleted. The count <= 0 guard is
+// the port's own and stays here: the original reads pt[] with no guard. The .asi keeps the source-order form below.
 // ===========================================================================
+#ifdef MASHED_STANDALONE
+extern "C" void AiSplineEval_x87_ddk(void* path, int idx, float t, float* out);   // 0x00443300, MatchS08_00443300.cpp
+#endif
 void CatmullRom(std::uintptr_t spline, int idx, float t, float* outX, float* outZ)
 {
     const int count = I32(spline + 0x200);
     if (count <= 0) { *outX = 0.f; *outZ = 0.f; return; }
+#ifdef MASHED_STANDALONE
+    float out[2];
+    AiSplineEval_x87_ddk(reinterpret_cast<void*>(spline), idx, t, out);   // Path_00443300: pt[64] {x, z}, count at +0x200
+    *outX = out[0];
+    *outZ = out[1];
+#else
     int i0 = idx - 1; if (i0 < 0)      i0 += count;   // P0
     int i1 = i0 + 1;  if (i1 >= count) i1 -= count;   // P1 (= idx)
     int i2 = i1 + 1;  if (i2 >= count) i2 -= count;   // P2
     int i3 = i2 + 1;  if (i3 >= count) i3 -= count;   // P3
     float t0 = t; if (t0 > 1.0f) t0 = 1.0f; else if (t0 < 0.0f) t0 = 0.0f;
     const float t2 = t0 * t0;
-#ifdef MASHED_STANDALONE
-    if (AiLutMask() & 4) {
-        // [d3b 2026-10-16] AI LUT mask bit 0x4: the listing's operand order (0x00443373..0x004433cf,
-        // verify/d3b_20261016/disasm.py), PC_24 so each x87 op rounds to float:
-        //   t3 = t2*t; A = ((2*P0 - 5*P1) + 4*P2) - P3; B = ((3*P1 - P0) - 3*P2) + P3
-        //   out = (((A*t2 + B*t3) + (P2 - P0)*t) + 2*P1) * 0.5
-        const float t3 = t2 * t0;
-        auto compL = [&](std::uintptr_t o) -> float {
-            const float P0 = F32(spline + static_cast<std::uintptr_t>(i0) * 8 + o);
-            const float P1 = F32(spline + static_cast<std::uintptr_t>(i1) * 8 + o);
-            const float P2 = F32(spline + static_cast<std::uintptr_t>(i2) * 8 + o);
-            const float P3 = F32(spline + static_cast<std::uintptr_t>(i3) * 8 + o);
-            const float A = (((P0 + P0) - P1 * 5.0f) + P2 * 4.0f) - P3;   // 0x00443383..0x0044339b
-            const float B = ((P1 * 3.0f - P0) - P2 * 3.0f) + P3;          // 0x004433a0..0x004433b4
-            float s = A * t2 + B * t3;                                    // 0x0044339e / 0x004433b7 / 0x004433b9
-            s = s + (P2 - P0) * t0;                                       // 0x004433bb..0x004433c1
-            s = s + (P1 + P1);                                            // 0x004433c3..0x004433c7
-            return s * 0.5f;                                              // 0x004433c9 (0x005cc32c)
-        };
-        *outX = compL(0);
-        *outZ = compL(4);
-        return;
-    }
-#endif
     auto comp = [&](std::uintptr_t o) -> float {
         const float P0 = F32(spline + static_cast<std::uintptr_t>(i0) * 8 + o);
         const float P1 = F32(spline + static_cast<std::uintptr_t>(i1) * 8 + o);
@@ -348,6 +340,7 @@ void CatmullRom(std::uintptr_t spline, int idx, float t, float* outX, float* out
     };
     *outX = comp(0);
     *outZ = comp(4);
+#endif
 }
 
 // Normalize a 2-float (XZ) vector in place (standalone equiv of FUN_004c3c60,
