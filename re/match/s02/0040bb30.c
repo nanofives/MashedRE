@@ -1,6 +1,8 @@
 // FLAGS: /O2 /GS /Ob1
 /* MATCH-S02 0x0040bb30: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs02_20261031/results.tsv. */
+   unchanged; globals moved to MGLOBAL. PORT-TOP-04G: the forwarder returns the callee's result (eax, which the
+   20-byte original passes through and its callers use); the return-valued form is BYTE-IDENTICAL too (21 B) and
+   relocheck OK checked=2. Score: see verify/matchs02_20261031/results.tsv. */
 /* ---- MATCH-S02 preamble (same text in every re/match/s02 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -27,14 +29,12 @@ typedef unsigned int undefined4;
 MGLOBAL(undefined4, DAT_0063b8f8, 0x0063b8f8);
 undefined4 * FUN_004c5c00(int p0, char * p1);
 // MATCH: 0x0040bb30 FUN_0040bb30
-void FUN_0040bb30(undefined4 param_1)
+undefined4 * FUN_0040bb30(char * param_1)
 
 
 
 {
 
-  FUN_004c5c00(DAT_0063b8f8,param_1);
-
-  return;
+  return FUN_004c5c00(DAT_0063b8f8,param_1);
 
 }

@@ -2164,23 +2164,8 @@ RH_ScopedInstall(Calc412130, 0x00412130);
 // MATCH-S10: the body of 0x00462760 (Pred462760) moved to Match/MatchS10_00462760.cpp,
 // which compiles the byte-matched source re/match/s10/00462760.c.
 
-// 0x0040bb30  FUN_0040bb30 (boot, NEAR-LEAF: global-list string-search wrapper)
-// void* f(query): return FUN_004c5c00(*0x63b8f8, query). Callee 0x4c5c00 (C3) = circular-list
-// case-insensitive search -> matched object or 0. Verbatim naked port; call -> mov eax,abs;call eax.
-extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Search40bb30(void)
-{
-    __asm {
-        mov  eax, dword ptr [esp+4]          // query
-        mov  ecx, dword ptr ds:[063B8F8h]    // list = *0x63b8f8
-        push eax
-        push ecx
-        mov  eax, 04C5C00h
-        call eax
-        add  esp, 8
-        ret
-    }
-}
-RH_ScopedInstall(Search40bb30, 0x0040bb30);
+// PORT-TOP-04G: the body of 0x0040bb30 (Search40bb30) moved to Match/MatchS02_0040bb30.cpp,
+// which compiles the byte-matched source re/match/s02/0040bb30.c in both targets.
 
 // [DEFERRED 2026-06-15] FUN_00423b00 (0x00423b00) gated 4-function orchestrator (3 C3 calls +
 // C2 tail 0x423670). Reimpl drafted but the callees are deep multi-branch state machines whose
