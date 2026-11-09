@@ -5,10 +5,17 @@
 #include "../Core/HookSystem.h"
 
 // Raw-address forwarder: the old body called the original FUN_004967e0 through its address (no port body).
+#ifdef MASHED_STANDALONE
+// PORT-TOP-02: in the exe the input poll has no body, so the call binds the hand keyboard poll (a stand-in,
+// Match/PortTop_00492370.cpp). Only the MASHED_ORIG_TOP knob path calls this body in the exe.
+extern "C" void PortTop_StandIn_004967e0(void);
+extern "C" void MatchS15_00492d20_Call004967e0(void) { PortTop_StandIn_004967e0(); }
+#else
 extern "C" void MatchS15_00492d20_Call004967e0(void) {
     typedef void (__cdecl* Fn)(void);
     reinterpret_cast<Fn>(0x004967e0u)();
 }
+#endif
 
 #define MATCH_PORT 1
 #define FUN_00492d20 IntroSplashFrameTickShim

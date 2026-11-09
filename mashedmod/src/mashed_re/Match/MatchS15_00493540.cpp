@@ -6,12 +6,18 @@
 
 #define MATCH_PORT 1
 #define thunk_FUN_00495150 thunk_LaunchLangGate
+// [PORT-TOP-04A] exe: 0x00495150 binds by name to its matched exe body (Match/PortTop_00495150.cpp). The .asi keeps
+// the raw-address call.
+#ifdef MASHED_STANDALONE
+#define FUN_00495150 HwInitGate_00495150
+#else
 #define FUN_00495150 MatchS15_00493540_Call00495150
 // Callees of the matched source: the old Boot/LaunchHandshake.cpp body called each one through its original address, so these
 // forwarders make that same raw-address call (in the .asi an installed callee hook is reached through its JMP).
 extern "C" bool MatchS15_00493540_Call00495150(void) {
     return reinterpret_cast<bool (__cdecl*)()>(0x00495150u)();
 }
+#endif
 #pragma comment(linker, "/EXPORT:thunk_LaunchLangGate=_thunk_LaunchLangGate")
 extern "C" {
 #include "../../../../re/match/s15/00493540.c"

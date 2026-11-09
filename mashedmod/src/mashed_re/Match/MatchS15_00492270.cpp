@@ -6,6 +6,14 @@
 
 #define MATCH_PORT 1
 #define FUN_00492270 SubsystemInit
+// [PORT-TOP-03] exe: 0x00493710 binds to its matched source compiled in Match/PortTop_00493710.cpp (RW calls on librw,
+// LibRw/RwApiBind.cpp); 0x004921d0 / 0x00428590 to the missing stubs there (their exe bodies still forward to raw
+// addresses). Reached only under MASHED_ORIG_TOP. The .asi keeps the raw-address calls.
+#ifdef MASHED_STANDALONE
+#define FUN_00493710 PortTop_Bound_00493710
+#define FUN_004921d0 PortTop_Missing_004921d0
+#define FUN_00428590 PortTop_Missing_00428590
+#else
 #define FUN_00493710 MatchS15_00492270_Call00493710
 #define FUN_004921d0 MatchS15_00492270_Call004921d0
 #define FUN_00428590 MatchS15_00492270_Call00428590
@@ -20,6 +28,7 @@ extern "C" void MatchS15_00492270_Call004921d0(void) {
 extern "C" unsigned int MatchS15_00492270_Call00428590(void) {
     return reinterpret_cast<unsigned int (__cdecl*)()>(0x00428590u)();
 }
+#endif
 #pragma comment(linker, "/EXPORT:SubsystemInit=_SubsystemInit")
 extern "C" {
 #include "../../../../re/match/s15/00492270.c"

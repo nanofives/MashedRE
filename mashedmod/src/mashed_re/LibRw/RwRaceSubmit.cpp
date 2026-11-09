@@ -355,8 +355,7 @@ void ClearTexAnim();   // [hbforest] defined with the texture-flip ring below
 
 bool RaceSubmit_Active() { return g_engine_up && g_scene_up; }
 
-bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
-    if (g_engine_up) return true;
+static void RaceSubmit_InitPrologue(HWND hwnd, int width, int height) {
     if (std::FILE* f = std::fopen(kRaceLog, "w")) std::fclose(f);
     RLog("# librw in-loop submit (E2'b step 3): static world + instanced props and cars");
     RLog("# sky, copters, particles, pickups and HUD come from the D3D9 path");
@@ -364,10 +363,9 @@ bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
     g_width  = width;
     g_height = height;
     g_hwnd_dbg = hwnd;
-    if (!EngineStartAdopted(hwnd, dev, width, height)) {
-        RLog("FAIL: EngineStartAdopted");
-        return false;
-    }
+}
+
+static bool RaceSubmit_InitEpilogue(IDirect3DDevice9* dev, int width, int height) {
     if (!BuildCamera()) { EngineStop(); return false; }
     if (FAILED(dev->CreateStateBlock(D3DSBT_ALL, &g_state_block)))
         g_state_block = nullptr;   // non-fatal; D-S3-2 just stays open
@@ -378,8 +376,26 @@ bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
     return true;
 }
 
-void RaceSubmit_Shutdown() {
-    if (!g_engine_up) return;
+bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
+    if (g_engine_up) return true;
+    RaceSubmit_InitPrologue(hwnd, width, height);
+    if (!EngineStartAdopted(hwnd, dev, width, height)) {
+        RLog("FAIL: EngineStartAdopted");
+        return false;
+    }
+    return RaceSubmit_InitEpilogue(dev, width, height);
+}
+
+// PORT-TOP-03: RaceSubmit_Init for an engine the RW API binding layer already brought up (LibRw/RwApiBind.cpp, the
+// MASHED_ORIG_TOP path: RwEngineInit / RwEngineOpen / RwEngineStart ran at the original's call sites in 0x00493710).
+bool RaceSubmit_InitOnStartedEngine(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
+    if (g_engine_up) return true;
+    RaceSubmit_InitPrologue(hwnd, width, height);
+    RLog("# engine started by the RW API binding layer (RwEngineInit/Open/Start at 0x00493710's call sites)");
+    return RaceSubmit_InitEpilogue(dev, width, height);
+}
+
+static void RaceSubmit_ShutdownScene() {
     // Lights are owned by the world once added; destroy the world last.
     if (g_state_block) { g_state_block->Release(); g_state_block = nullptr; }
     if (g_cam)   { g_cam->destroy();   g_cam   = nullptr; }
@@ -391,9 +407,24 @@ void RaceSubmit_Shutdown() {
     if (g_world) { g_world->destroy(); g_world = nullptr; }
     g_amb = g_sun = nullptr;
     g_scene_up = false;
+}
+
+void RaceSubmit_Shutdown() {
+    if (!g_engine_up) return;
+    RaceSubmit_ShutdownScene();
     EngineStop();
     g_engine_up = false;
     RLog("ok: shutdown after %lld frames, %lld instance draws", g_frames, g_inst_drawn);
+}
+
+// PORT-TOP-03: the scene half of RaceSubmit_Shutdown. The RW API binding layer runs it at RwEngineStop and leaves
+// Engine::stop / close / term to the RwEngineStop / RwEngineClose / RwEngineTerm call sites in 0x004938c0.
+void RaceSubmit_ShutdownSceneOnly() {
+    if (!g_engine_up) return;
+    RaceSubmit_ShutdownScene();
+    g_engine_up = false;
+    RLog("ok: scene shutdown after %lld frames, %lld instance draws (engine stop/close/term by the RW API binds)",
+         g_frames, g_inst_drawn);
 }
 
 bool RaceSubmit_OnTrackLoaded(const Track::World& world,
