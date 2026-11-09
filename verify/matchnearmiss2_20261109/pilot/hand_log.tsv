@@ -1,0 +1,20 @@
+0x00402b70	CLOSED	99.4->99.7(bytes 6->0)	index-form join loop; body_size 960 vs 963 (Ghidra body short)	compiles=11
+0x004967e0	NOT-CLOSED	98.8	bit7 and eax,1 folded (uchar zext): 0x80u, ==0x80, >>7, ?:, int cast, ushort load, char/signed char array (worse)	compiles=9
+0x005a9c50	NOT-CLOSED	96.7	unfolded or ecx,eax (eax=0) before +0x44 store; bitfield struct hi:4, |=, read +0x48, type-punned zero store, reorder: none keep the OR	compiles=15
+0x005b0df0	CLOSED	95.1->100	callee arity fix: FUN_005ad6a0 1 arg, FUN_005ad0b0 4 args (Ghidra swapped them)	compiles=1
+0x005a8390	CLOSED	98.5->100	RW link-list insert order with list global typed {next,prev}; next store via param_1+0x14	compiles=6
+0x005a8560	CLOSED	98.4->100	same RW link-list insert rewrite as 0x005a8390	compiles=2
+0x005a86a0	NOT-CLOSED	98.5	[esi]=dst store scheduled after the 4th dword store of the 16 B struct copy (orig: before); temp dst/src, memcpy intrinsic, __int64 pair copy, typed node struct, fieldwise copy: no	compiles=10
+0x005ab560	CLOSED	98.2->100	RW link-list insert order, list global typed {next,prev}	compiles=4
+0x005ac7e0	CLOSED	98.2->100	link zeroed via param_2 offsets (no puVar1) + RW link-list insert, prev via param_2+0x44	compiles=8
+0x004e4450	CLOSED	98.1->100	RW link-list insert with link fields addressed from param_2 (+0x20/+0x24), list typed {next,prev}; operand order of the two globals in the last statement for relocheck	compiles=13
+0x005735f0	NOT-CLOSED	98.0	mov ecx,[esp+0x10] (param_4) one slot early vs the x87 fmul; float array temps (69%), pointer temp, (float) casts, operand swap, const param, output temp: no	compiles=7
+0x0057c0d0	NOT-CLOSED	98.7	mov ecx,[esp+0x2c] (param_2) one slot early vs the x87 fmul; statement reorder (80%), operand swap, pointer temp, const param: no	compiles=4
+0x005a7ee0	CLOSED	97.7->100	list-head init through a typed {next,prev} link (next=self, prev=self), no pointer temp	compiles=5
+0x005bf8a0	NOT-CLOSED	95.7	[esi+0x13c]=0 store scheduled after the [esi+0x130] reload (orig: before); typed IUnknown vtable, store types int/void*/int*, typed owner struct, struct temp: no	compiles=8
+0x004c1210	NOT-CLOSED	98.4	list walk reads cur->next via the copy (eax) where the original reads via edx after mov edx,eax; while/for/do forms, typed RwFrame-like struct (RW source form 77.4%), next-temp: no	compiles=9
+0x004c1040	NOT-CLOSED	99.2	same frame-list walk residual as 0x004c1210 (cur->next read via eax, orig via edx); while-temp, re-read form, int** walk, reload-from-cur (90%): no	compiles=4
+0x0055ded0	NOT-CLOSED	98.4	[edx+eax-0xc] vs orig [eax+edx-0xc]; a 12-byte struct array indexed by a counter gets the addressing right but swaps the zero/counter registers ebx/edi (70.3%, 4 counter spellings); offset casts, [-3] index, char* offset: no	compiles=16
+0x00540340	NOT-CLOSED	99.4	mov esi,[eax] before mov ebx,eax (orig: copy first, then load through ebx); nested-if, separate type-5 guard, typed load, single-var form (89.7%): no	compiles=6
+0x005af070	CLOSED	97.0->100	value fix: +0x50=param_6, +0x54=param_7 (old source had them swapped, masked in the score as a const miss); ascending +0x50/+0x54/+0x58 at the end	compiles=10
+0x005c4ad0	NOT-CLOSED	96.7	imul operand order fixed by the compiler ([esi+0xc]*[esi+8] vs orig [esi+8]*[esi+0xc]) whatever the source order; casts, typed struct, temp (93.5%%), e.a store moved (95.1%%): no	compiles=10
