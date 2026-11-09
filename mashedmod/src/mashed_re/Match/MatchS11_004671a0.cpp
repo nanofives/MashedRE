@@ -6,6 +6,12 @@
 
 #define MATCH_PORT 1
 #define FUN_004671a0 BackBuffRasterOpen
+// [PORT-TOP-04B] exe: callees by name (DisplayInit / ViewportInit callees on the MASHED_ORIG_TOP path). The .asi keeps
+// the raw-address calls.
+#ifdef MASHED_STANDALONE
+#define FUN_0042b930 MenuAlphaGet        // matched, Match/MatchS07_0042b930.cpp
+#define FUN_0042f510 Vehicle0HandleGet   // matched, Match/MatchS07_0042f510.cpp
+#else
 #define FUN_0042b930 MatchS11_004671a0_Call0042b930
 #define FUN_0042f510 MatchS11_004671a0_Call0042f510
 // Callees: the old Frontend/IntroSplash.cpp (OrigVehicle0Get called 0x004671a0 itself, whose original body calls them)
@@ -16,6 +22,7 @@ extern "C" unsigned int MatchS11_004671a0_Call0042b930(void) {
 extern "C" unsigned int MatchS11_004671a0_Call0042f510(void) {
     return reinterpret_cast<unsigned int (__cdecl*)()>(0x0042f510u)();
 }
+#endif
 #pragma comment(linker, "/EXPORT:BackBuffRasterOpen=_BackBuffRasterOpen")
 extern "C" {
 #include "../../../../re/match/s11/004671a0.c"
