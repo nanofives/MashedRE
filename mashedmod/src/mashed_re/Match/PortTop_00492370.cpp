@@ -36,6 +36,7 @@ void PortTop_HandPollKeyboard(void);
 void PortTop_HandFrameUpdate(void);
 int  PortTop_HandRenderFrame(void);
 void PortTop_HandAppDestroy(void);
+void AppDestroy(void);                        // Match/PortTop_00402a40.cpp (PORT-TOP-04C)
 int  SubsystemInit(void);                      // Match/MatchS15_00492270.cpp
 void thunk_EngineStopDispatch(void);           // Match/MatchS15_00493550.cpp
 bool thunk_LaunchLangGate(void);               // Match/MatchS15_00493540.cpp
@@ -145,9 +146,19 @@ int PortTop_StandIn_00402750(void) {
     PortTop_Log("0x00402750 AppInitialiseOnBootup: stand-in HandTop_InitRest returned %d", r);
     return r;
 }
-// stand-in for 0x00402a40 AppDestroy.
-void PortTop_StandIn_00402a40(void) {
-    PortTop_Log("0x00402a40 AppDestroy: stand-in HandTop_AppDestroy");
+// [PORT-TOP-04C] 0x00402a40 AppDestroy: the matched exe body (Match/PortTop_00402a40.cpp = re/match/s01/raw/00402a40.c),
+// every callee bound by name; the callees that do not run are the named stand-ins of Match/PortTop_StandIns04C.cpp. The
+// three cameras DisplayInit 0x004921d0 made are destroyed by it (0x00467020 / 0x00467070 / 0x004b4880 on the RW camera
+// records of LibRw/RwApiBind.cpp). After it, the exe subsystems whose state is not in the original globals (exe audio,
+// DirectInput, the small.mpg graph) are shut down by the hand path (HandTop_AppDestroy): the matched body cannot see them.
+static unsigned PortTop_Dw(unsigned a) { return *reinterpret_cast<const unsigned volatile*>(a); }
+void PortTop_Bound_00402a40(void) {
+    PortTop_Log("0x00402a40 AppDestroy (matched) enter: cameras 0x006905b0=%08X 0x006905b4=%08X 0x0067f18c=%08X "
+                "0x0067f190=%08X, DAT_005f9bd8=%u, DAT_00771a04=%u, DAT_007f0a30=%08X, DAT_008a94a8=%08X",
+                PortTop_Dw(0x006905b0u), PortTop_Dw(0x006905b4u), PortTop_Dw(0x0067f18cu), PortTop_Dw(0x0067f190u),
+                PortTop_Dw(0x005f9bd8u), PortTop_Dw(0x00771a04u), PortTop_Dw(0x007f0a30u), PortTop_Dw(0x008a94a8u));
+    AppDestroy();
+    PortTop_Log("0x00402a40 AppDestroy (matched) returned; then HandTop_AppDestroy for the exe audio / DirectInput / small.mpg");
     PortTop_HandAppDestroy();
 }
 // rva 0x004c5930 RwTexDictionaryDestroy: bound to librw (LibRw/RwApiBind.cpp, rw::TexDictionary::destroy) since
@@ -229,7 +240,7 @@ int PortTop_Missing_00493480(void) { return 0; }
 #define FUN_004996f0 WindowShow                     // matched, Match/MatchS16_004996f0.cpp
 #define FUN_004963e0 PortTop_CfgLogError           // stand-in (exe body not exe-visible, see above)
 #define FUN_00402750 PortTop_StandIn_00402750
-#define FUN_00402a40 PortTop_StandIn_00402a40
+#define FUN_00402a40 PortTop_Bound_00402a40       // matched, Match/PortTop_00402a40.cpp (PORT-TOP-04C)
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930  // RW: RwTexDictionaryDestroy -> librw (PORT-TOP-03)
 #define FUN_00493550 PortTop_Bound_00493550       // matched, Match/MatchS15_00493550.cpp (PORT-TOP-03)
 #define FUN_00493560 PortTop_Bound_00493560       // matched, Match/MatchS15_00493560.cpp (PORT-TOP-04A)
