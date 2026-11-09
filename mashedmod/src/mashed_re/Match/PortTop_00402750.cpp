@@ -17,6 +17,8 @@
 #define FUN_004671a0 BackBuffRasterOpen                      // matched, Match/MatchS11_004671a0.cpp
 #define FUN_0045b350 RwInitNullStub                          // matched, Match/MatchS09_0045b350.cpp (bare RET)
 #define FUN_00499ce0 Orig_00499ce0                           // matched, Match/PortTop_00499ce0.cpp (identity matrix 0x00773928)
+#define FUN_004274d0 LangIndexSeedFromCli                    // matched, Match/MatchS06_004274d0.cpp (DAT_007f0f60 = DAT_007719e8), exe list since PORT-TOP-04E
+#define FUN_00431b40 Set67eaa8                               // matched, Match/MatchS07_00431b40.cpp (DAT_0067eaa8 = 0.3f), exe list since PORT-TOP-04E
 // hand pieces
 #define FUN_00496e40 PortTop_Piece_00496e40                  // piece 1: data wedge, boot chain, DirectInput
 #define FUN_00495350 PortTop_Piece_00495350                  // piece 2: dsound.dll guard, boot movies
@@ -36,7 +38,6 @@
 #define FUN_004283a0 PortTop_StandIn04E_004283a0
 #define FUN_00427ca0 PortTop_StandIn04E_00427ca0
 #define FUN_004275d0 PortTop_StandIn04E_004275d0
-#define FUN_004274d0 PortTop_StandIn04E_004274d0
 #define FUN_004274e0 PortTop_StandIn04E_004274e0
 #define FUN_004113b0 PortTop_StandIn04E_004113b0
 #define FUN_00558240 PortTop_StandIn04E_00558240
@@ -67,7 +68,6 @@
 #define FUN_00425bc0 PortTop_StandIn04E_00425bc0
 #define FUN_004025f0 PortTop_StandIn04E_004025f0
 #define FUN_004b3d80 PortTop_StandIn04E_004b3d80
-#define FUN_00431b40 PortTop_StandIn04E_00431b40
 #define FUN_00402f50 PortTop_StandIn04E_00402f50
 #define FUN_004026d0 PortTop_StandIn04E_004026d0
 extern "C" {
