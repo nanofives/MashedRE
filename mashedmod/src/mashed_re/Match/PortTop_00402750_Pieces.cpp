@@ -163,7 +163,7 @@ void PortTop_PizFs_Unmount_004952f0(void) {
 }
 // The mounted archive holding <entry> (newest first), for the matched loaders that move off their stand-ins. Names
 // compare case-insensitively with backslash and '/' equal (perm.piz holds "TOASTART/COMMON/PERM/COPTERS/COPTERS.TXD",
-// 0x00425bc0 asks for "ToastArt/common/perm/Copters/Copters.txd").
+// rva 0x00425bc0 asks for "ToastArt/common/perm/Copters/Copters.txd").
 const void* PortTop_PizFs_Find(const char* entry, unsigned* len) {
     for (int i = s_mountTop - 1; i >= 0; --i) {
         const mashed_re::Piz::Archive* a = s_mounts[i].arc.get();
@@ -232,9 +232,7 @@ SI(00420d00, "PanelSortInit")
 SI(00412890, "loader")
 SI(00471eb0, "loader")
 SI(00404830, "car material tables")
-SI(00425bc0, "perm family")
-SI(004025f0, "perm family")
-SI(004b3d80, "pc.txd; DAT_00636ac8 stays 0")
+SI(004025f0, "perm family: clumps (0x004b3bf0 DFF reads, RpClumpStreamRead 0x004e7420 unbound)")
 SI(00402f50, "BootDefaultParamsInit; exe body exists, not run here yet")
 SI(004026d0, "BootQueueFlush(4); exe body exists, not run here yet")
 #undef SI

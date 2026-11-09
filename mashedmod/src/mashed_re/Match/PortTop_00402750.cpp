@@ -19,11 +19,11 @@
 #define FUN_00499ce0 Orig_00499ce0                           // matched, Match/PortTop_00499ce0.cpp (identity matrix 0x00773928)
 #define FUN_004274d0 LangIndexSeedFromCli                    // matched, Match/MatchS06_004274d0.cpp (DAT_007f0f60 = DAT_007719e8), exe list since PORT-TOP-04E
 #define FUN_00431b40 Set67eaa8                               // matched, Match/MatchS07_00431b40.cpp (DAT_0067eaa8 = 0.3f), exe list since PORT-TOP-04E
-// matched bodies moved off their stand-ins in PORT-TOP-04F (fonts family)
+// matched bodies moved off their stand-ins in PORT-TOP-04F (fonts, pc.txd, perm families)
 #define FUN_004283a0 Orig_004283a0                           // matched, Match/PortTop_004283a0.cpp (four logo textures)
 #define FUN_004274e0 LocalizationFileLoad                    // matched, Match/MatchS06_004274e0.cpp (english.dat -> DAT_0066d828), exe list since PORT-TOP-04F
-#define FUN_004b3d80 PortTop_StandIn04E_004b3d80
-#define FUN_00425bc0 PortTop_StandIn04E_00425bc0
+#define FUN_004b3d80 Orig_004b3d80                           // matched, Match/PortTop_004b3d80.cpp (pc.txd -> DAT_00636ac8)
+#define FUN_00425bc0 Orig_00425bc0                           // matched, Match/PortTop_00425bc0.cpp (Copters.txd -> DAT_00644150)
 // hand pieces
 #define FUN_00496e40 PortTop_Piece_00496e40                  // piece 1: data wedge, boot chain, DirectInput
 #define FUN_00495350 PortTop_Piece_00495350                  // piece 2: dsound.dll guard, boot movies
