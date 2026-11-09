@@ -21,6 +21,9 @@
 #define FUN_0042f500 MatchS02_0040dfc0_Call0042f500
 #define FUN_0042f6a0 MatchS02_0040dfc0_Call0042f6a0
 #ifdef MASHED_STANDALONE
+extern "C" void PortBatch_0041e850(void);   // PORT-BATCH-TOOL HUD set
+extern "C" void __cdecl PortBatch_Run(const char* sub, unsigned rva, void (__cdecl* fn)(void));   // Match/PortBatch_Switch.cpp
+extern "C" void PortBatch_0041d870(void);   // PORT-BATCH-TOOL HUD set
 // MATCH-TOPDOWN-T03 (L-72): mashed_re.exe calls this body from its HUD pass, LibRw::RaceFx_RenderHud
 // (LibRw/RwRaceFx.cpp), the exe's place for FrameDispatch 0x00492e90's FUN_0040dfc0 call. The original's
 // addresses hold no code in the exe, so each callee binds to the exe's body for it:
@@ -45,10 +48,10 @@ extern "C" void MatchS02_0040dfc0_Call0041b630(void) { mashed_re::LibRw::RaceFx_
 extern "C" void MatchS02_0040dfc0_Call0041c0c0(void) { mashed_re::LibRw::RaceFx_HudBindPanels(); }
 extern "C" void MatchS02_0040dfc0_Call0041c300(void) {}
 extern "C" void MatchS02_0040dfc0_Call0041ccc0(void) {}
-extern "C" void MatchS02_0040dfc0_Call0041d870(void) {}
+extern "C" void MatchS02_0040dfc0_Call0041d870(void) { PortBatch_Run("HUD", 0x0041d870u, &PortBatch_0041d870); }
 extern "C" void MatchS02_0040dfc0_Call0041db80(void) { mashed_re::LibRw::RaceFx_HudBindLights(); }
 extern "C" void MatchS02_0040dfc0_Call0041ded0(int) {}
-extern "C" void MatchS02_0040dfc0_Call0041e850(void) {}
+extern "C" void MatchS02_0040dfc0_Call0041e850(void) { PortBatch_Run("HUD", 0x0041e850u, &PortBatch_0041e850); }
 extern "C" int MatchS02_0040dfc0_Call00426ba0(void) { return mashed_re::LibRw::RaceFx_HudBindWorldUp(); }
 extern "C" int MatchS02_0040dfc0_Call0042f500(void) { return static_cast<int>(GetDat0067ea64()); }
 extern "C" int MatchS02_0040dfc0_Call0042f6a0(void) { return static_cast<int>(GetRaceSubMode()); }

@@ -751,3 +751,6 @@
 "Match\MatchS07_00432080.cpp"
 "Match\MatchS07_0042c220.cpp"
 "Race\GameModeMachine.cpp"
+"Match\PortBatch_HUD_0041d410.cpp"
+"Match\PortBatch_HUD_0041e630.cpp"
+"Match\PortBatch_Switch.cpp"
