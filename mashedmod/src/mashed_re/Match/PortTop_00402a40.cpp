@@ -17,7 +17,7 @@
 #define FUN_00426ba0 HudDrawEnabled   // exe body, Match/MatchS06_00426ba0.cpp
 #define FUN_00426c00 GameStateFlagGet   // exe body, Match/MatchS06_00426c00.cpp
 #define FUN_0040cfd0 Orig_0040cfd0   // matched, Match/PortTop_0040cfd0.cpp
-#define FUN_004114c0 PortTop_StandIn04C_004114c0   // stand-in: matched (exe body VtableTeardown_114c0, Match/MatchS02_004114c0.cpp) but not run here: it calls RwGlobals +0x10c (RW free) through *(0x007d3ff8), which in the exe is the 0x34-byte B15 Im2D fake device (D3d9Render/RwIm2DBridge.cpp); +0x10c lies past it (knob_on_1 0xC0000005 in PORT-TOP-04C). Needs an RW memory-function binding
+#define FUN_004114c0 VtableTeardown_114c0   // exe body, Match/MatchS02_004114c0.cpp (runs since PORT-TOP-04D: RwGlobals record)
 #define FUN_0041a3d0 Orig_0041a3d0   // matched, Match/PortTop_0041a3d0.cpp
 #define FUN_0041de70 Orig_0041de70   // matched, Match/PortTop_0041de70.cpp
 #define FUN_0041c2c0 Orig_0041c2c0   // matched, Match/PortTop_0041c2c0.cpp
@@ -34,7 +34,7 @@
 #define thunk_FUN_004210f0 Orig_00421590   // thunk, Match/PortTop_00421590.cpp
 #define FUN_004014b0 PortTop_StandIn04C_004014b0   // stand-in: matched; reads DAT_00636570 +4 / DAT_0063656c +4 with no null check, state 0x00402750 creates (still a stand-in)
 #define FUN_0040bd00 Orig_0040bd00   // matched, Match/PortTop_0040bd00.cpp
-#define FUN_00484130 PortTop_StandIn04C_00484130   // stand-in: matched; calls RwGlobals +0x10c (RW free) through *(0x007d3ff8) when param_1 != 0, same gap as 0x004114c0
+#define FUN_00484130 Orig_00484130   // matched, Match/PortTop_00484130.cpp
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp
 #define FUN_005581f0 Orig_005581f0   // matched, Match/PortTop_005581f0.cpp
 #define FUN_004671a0 BackBuffRasterOpen   // exe body, Match/MatchS11_004671a0.cpp

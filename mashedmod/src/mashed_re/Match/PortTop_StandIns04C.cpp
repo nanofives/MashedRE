@@ -16,10 +16,6 @@ void StandInLog(const char* rva, int* once) {
 } // namespace
 
 extern "C" {
-// rva 004114c0: matched (exe body VtableTeardown_114c0, Match/MatchS02_004114c0.cpp) but not run here: it calls RwGlobals +0x10c (RW free) through *(0x007d3ff8), which in the exe is the 0x34-byte B15 Im2D fake device (D3d9Render/RwIm2DBridge.cpp); +0x10c lies past it (knob_on_1 0xC0000005 in PORT-TOP-04C). Needs an RW memory-function binding
-int PortTop_StandIn04C_004114c0() { static int once; StandInLog("0x004114c0", &once); return 0; }
-// rva 00484130: matched; calls RwGlobals +0x10c (RW free) through *(0x007d3ff8) when param_1 != 0, same gap as 0x004114c0
-int PortTop_StandIn04C_00484130() { static int once; StandInLog("0x00484130", &once); return 0; }
 // rva 004014b0: matched; reads DAT_00636570 +4 / DAT_0063656c +4 with no null check, state 0x00402750 creates (still a stand-in)
 int PortTop_StandIn04C_004014b0() { static int once; StandInLog("0x004014b0", &once); return 0; }
 // rva 0041e0d0: matched; reads +4 of each pointer of the 0x0063d610 table with no null check (state of 0x00402750)
