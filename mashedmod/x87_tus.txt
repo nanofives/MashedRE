@@ -207,3 +207,6 @@ PortTop_Leaves
 PortSave01_Config
 # PORT-FE-01 2026-11-08: byte-matched body of 0x0040e470 (re/match/s02/0040e470.c), moved out of Ai/CarSlotState.cpp
 MatchS02_0040e470
+# PORT-BATCH-TOOL HUD set (re/tools/port_batch_gen.py)
+PortBatch_HUD_0041d410
+PortBatch_HUD_0041e630

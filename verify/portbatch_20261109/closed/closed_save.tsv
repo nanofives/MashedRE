@@ -1,0 +1,7 @@
+group	rows	reached	blockers	head	head_shape	n_def	n_top	lint_clean	seed_clean	rvas
+save-001	5	no	CROSS:4,DUP:1,INDIRECT:1,RWGLOBALS:1,SEED:1	0x0040de00	-	0	0	0	0	0x004099a0 0x0040de00 0x004117b0 0x00430820 0x00483ca0
+save-002	4	no	CROSS:3,DUP:1	0x00430290	-	0	0	0	1	0x004099a0 0x0040dd60 0x0042a920 0x00430290
+save-003	1	no	DUP:1	0x004099e0	-	0	0	0	1	0x004099e0
+save-004	1	no	CROSS:1	0x00498d20	-	0	0	0	1	0x00498d20
+save-005	1	no	DUP:1	0x004b3b70	-	0	0	0	1	0x004b3b70
+save-006	1	no	DUP:1,INDIRECT:1	0x00550980	-	0	0	0	1	0x00550980

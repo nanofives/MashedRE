@@ -1,0 +1,879 @@
+file	rvas	open_callees
+re/match/pilot/a1_004645c0.c	0x004645c0	0x0045daf0:set-removed 0x005a6dc0:set-removed
+re/match/pilot/a2_00482820.c	0x00482820	0x004827a0:nohook 0x004827c0:nohook 0x00482800:nohook
+re/match/pilot/a3_00456760.c	0x00456760	0x004b3fc0:msvc-crt-main 0x004e6ab0:renderware
+re/match/pilot/a4_0045d250.c	0x0045d250	0x0045cb20:set-removed
+re/match/pilot/a4_00478cf0.c	0x00478cf0	0x004b3fc0:msvc-crt-main 0x004e4800:renderware 0x00546320:renderware
+re/match/pilot/a5_00410510.c	0x00410510	0x0044df80:set-removed 0x0045bf30:set-removed
+re/match/pilot/a5_00422b50.c	0x00422b50	0x00472650:set-removed
+re/match/pilot/a5_0047f4c0.c	0x0047f4c0	0x0057c4b0:qhull-2002.1
+re/match/pilot/a5_00499170.c	0x00499170	0x004c2e70:set-removed
+re/match/pilot/a6_00419090.c	0x00419090	0x004b3fc0:msvc-crt-main
+re/match/pilot/a6_00423040.c	0x00423040	0x00417450:C3
+re/match/pilot/a7_00459400.c	0x00459400	0x004e89e0:renderware 0x004e8a10:renderware
+re/match/rwl05/00558c50.c	0x00558c50	0x005c4ad0:C2
+re/match/rwl05/00559b50.c	0x00559b50	0x00559560:RenderWare-Physics-3.7 0x005595d0:RenderWare-Physics-3.7
+re/match/rwl05/0055b030.c	0x0055b030	0x0055b080:RenderWare-Physics-3.7
+re/match/rwl05/0055dc70.c	0x0055dc70	0x0055dca0:set-removed
+re/match/rwl05/0055dca0.c	0x0055dca0	0x00559b50:set-removed 0x0055f450:set-removed
+re/match/rwl05/0055f450.c	0x0055f450	0x0055f800:RenderWare-Physics-3.7
+re/match/rwl05/00562460.c	0x00562460	0x004e5c70:renderware 0x00562490:nohook
+re/match/rwl05/00562500.c	0x00562500	0x00562010:RenderWare-Physics-3.7
+re/match/rwl05/00562600.c	0x00562600	0x00562ac0:nohook
+re/match/rwl06/00567c40.c	0x00567c40	0x00574a20:RenderWare-Physics-3.7
+re/match/rwl06/0056aae0.c	0x0056aae0	0x0056a7a0:RenderWare-Physics-3.7
+re/match/rwl06/0057c220.c	0x0057c220	0x0055dff0:RenderWare-Physics-3.7
+re/match/rwl06/0057c270.c	0x0057c270	0x004e7d40:renderware 0x0057c2e0:nohook
+re/match/rwl06/0057c300.c	0x0057c300	0x0055ded0:RenderWare-Physics-3.7
+re/match/s01/00401000.c	0x00401000	0x004e48e0:renderware 0x004e4900:renderware 0x0053fbb0:renderware
+re/match/s01/004011f0.c	0x004011f0	0x004b42c0:C2 0x004c15c0:renderware
+re/match/s01/004013f0.c	0x004013f0	0x004011f0:set-removed
+re/match/s01/00401690.c	0x00401690 0x004025f0	0x00401630:C4 0x00402240:C4 0x00402590:C4 0x004b3f90:msvc-crt-main
+re/match/s01/004030d0.c	0x004030d0	0x0043df00:set-removed
+re/match/s01/00403250.c	0x00403250	0x0045bf30:set-removed
+re/match/s01/004036a0.c	0x004036a0 0x00403910	0x004938e0:C3
+re/match/s01/00405460.c	0x00405460	0x00404fa0:C2
+re/match/s01/004058c0.c	0x004058c0	0x004058b0:C4
+re/match/s01/00405920.c	0x00405920 0x00405ab0 0x00405f60 0x00406070 0x00406410 0x00406ae0	0x004726f0:C3 0x00474de0:C2 0x00476320:C2 0x004a3384:C2
+re/match/s01/004072e0.c	0x004072e0	0x00406130:C4
+re/match/s01/004073b0.c	0x004073b0	0x00406370:C4
+re/match/s01/004074a0.c	0x004074a0	0x0047f290:set-removed
+re/match/s01/004093b0.c	0x004093b0	0x004a3384:C2
+re/match/s01/00409790.c	0x00409790	0x004096a0:C4
+re/match/s02/0040ab40.c	0x0040ab40	0x00409930:C4
+re/match/s02/0040ad40.c	0x0040ad40	0x0046bf50:set-removed
+re/match/s02/0040ae30.c	0x0040ae30	0x0046bf50:set-removed
+re/match/s02/0040b090.c	0x0040b090	0x0040ad90:C2 0x0040aef0:C2
+re/match/s02/0040baa0.c	0x0040baa0	0x0053fbb0:renderware 0x0053fd30:renderware
+re/match/s02/0040bae0.c	0x0040bae0	0x004e89a0:renderware 0x0053fb70:renderware
+re/match/s02/0040bd80.c	0x0040bd80	0x0048a5d0:set-removed
+re/match/s02/0040bde0.c	0x0040bde0	0x00413f50:set-removed 0x00421560:set-removed 0x00457610:set-removed 0x00475d30:set-removed 0x00475e50:set-removed 0x00477810:set-removed 0x00486f50:set-removed 0x0048ad50:set-removed 0x0048baf0:set-removed 0x0048e7b0:set-removed 0x0048fce0:set-removed 0x0048fd10:set-removed
+re/match/s02/0040c5b0.c	0x0040c5b0	0x0040be50:C2
+re/match/s02/0040cda0.c	0x0040cda0	0x0040bb10:nohook
+re/match/s02/0040ce00.c	0x0040ce00	0x0040ca00:C2 0x00412620:C2 0x00413cb0:C2 0x004212b0:C2 0x00481a30:C2 0x00485ef0:C2 0x00486830:C2 0x0048a780:C2 0x0048ab70:C2 0x00490500:C2
+re/match/s02/0040d020.c	0x0040d020	0x00426e10:set-removed
+re/match/s02/0040d440.c	0x0040d440	0x0040d270:set-removed
+re/match/s02/0040d470.c	0x0040d470	0x004414b0:C2 0x00448220:C2
+re/match/s02/0040d590.c	0x0040d590	0x0040b290:C2
+re/match/s02/0040da50.c	0x0040da50	0x0040d8f0:C2 0x00420870:C2
+re/match/s02/0040dba0.c	0x0040dba0	0x004019d0:C2
+re/match/s02/0040ddb0.c	0x0040ddb0	0x004046a0:C2
+re/match/s02/0040de10.c	0x0040de10	0x0040ddb0:set-removed
+re/match/s02/0040de30.c	0x0040de30	0x004c1c10:set-removed
+re/match/s02/0040df20.c	0x0040df20	0x004c1c10:set-removed
+re/match/s02/0040e560.c	0x0040e560	0x00411870:C2
+re/match/s02/004103a0.c	0x004103a0	0x00411ae0:C3
+re/match/s02/00410b30.c	0x00410b30	0x00420050:C2
+re/match/s02/00411170.c	0x00411170	0x00410d10:C2 0x00411ae0:C3
+re/match/s02/00411600.c	0x00411600	0x004829d0:set-removed
+re/match/s02/00411ce0.c	0x00411ce0	0x00483a70:set-removed
+re/match/s02/00411f30.c	0x00411f30	0x004b3f90:msvc-crt-main
+re/match/s02/00412050.c	0x00412050	0x004b3f90:msvc-crt-main
+re/match/s03/h1_00412880.c	0x00412880	0x00412190:C2
+re/match/s03/h1_00418980.c	0x00418980	0x0041a060:set-removed
+re/match/s03/h1_00418990.c	0x00418990	0x004194f0:set-removed
+re/match/s03/h1_004189f0.c	0x004189f0	0x00419760:set-removed
+re/match/s03/h1_00418a30.c	0x00418a00 0x00418a30 0x00418de0 0x00418e30 0x00419090 0x004190f0 0x00419480 0x004194f0 0x00419760 0x0041a060 0x0041a180	0x00419100:C2 0x004197e0:C2 0x004b3f90:msvc-crt-main 0x004b3fc0:msvc-crt-main 0x004e69a0:renderware 0x004e7e30:renderware
+re/match/s03/h1_00418e70.c	0x00418e70	0x00476df0:set-removed
+re/match/s03/h1_00419ff0.c	0x00419ff0	0x004770c0:set-removed
+re/match/s03/h1_0041a1e0.c	0x0041a1e0 0x0041a3e0	0x0041c2d0:C4
+re/match/s03/h1_0041a4a0.c	0x0041a400 0x0041a4a0 0x0041a500 0x0041a550 0x0041a840 0x0041a8d0 0x0041a9d0 0x0041aac0 0x0041ac60 0x0041ad00	0x0041a5d0:set-removed 0x004b51d0:set-removed
+re/match/s03/h1_grp_0041ad60.c	0x0041ad60 0x0041adb0 0x0041ae20 0x0041ae60 0x0041af00 0x0041b340 0x0041b440 0x0041b450 0x0041b4d0 0x0041b520 0x0041b630 0x0041b660	0x004b3fc0:msvc-crt-main
+re/match/s03/h2_00413a00.c	0x00413a00	0x004128f0:C2
+re/match/s03/h3_004161e0.c	0x004161e0	0x00443dc0:C2
+re/match/s03/h3_00418860.c	0x00418860	0x004177b0:C2 0x00418560:C2
+re/match/s03/h3_00418a00.c	0x00418a00 0x00418a30 0x00418a70 0x00419090 0x004190f0 0x004194f0	0x004b3fc0:msvc-crt-main 0x005592f0:RenderWare-Physics-3.7
+re/match/s03/h3_0041a5d0.c	0x0041a5d0	0x004a2c48:msvc-crt-main
+re/match/s03/h4_004148b0.c	0x004148b0	0x004a2c48:msvc-crt-main
+re/match/s03/m_00417370.c	0x00417370 0x004173b0	0x004a2c48:msvc-crt-main
+re/match/s03/m_004196f0.c	0x004196f0	0x004e6920:renderware
+re/match/s03/raw_00413b80.c	0x00413b80	0x004770c0:set-removed
+re/match/s03/raw_00413bb0.c	0x00413bb0	0x004768c0:set-removed
+re/match/s03/raw_00413f50.c	0x00413f50	0x004770a0:C2
+re/match/s03/raw_004189a0.c	0x004189a0	0x0041a180:set-removed
+re/match/s03/raw_004189c0.c	0x004189c0	0x00419530:C2
+re/match/s03/raw_00418f30.c	0x00418f30	0x004770a0:C2
+re/match/s03/raw_00418f40.c	0x00418f40	0x004768c0:set-removed
+re/match/s03/raw_00419fd0.c	0x00419fd0	0x00419a00:C2
+re/match/s03/raw_0041a960.c	0x0041a960	0x0041a840:set-removed
+re/match/s03/raw_0041b4d0.c	0x0041b4d0	0x0041adb0:set-removed
+re/match/s04/0041b540.c	0x0041b540	0x0041af50:C2
+re/match/s04/0041b690.c	0x0041b690 0x0041bec0	0x004b3fc0:msvc-crt-main
+re/match/s04/0041c100.c	0x0041c100	0x004b51d0:set-removed
+re/match/s04/0041d8b0.c	0x0041d8b0	0x004b51d0:set-removed
+re/match/s04/0041db90.c	0x0041db90	0x004b51d0:set-removed
+re/match/s04/0041def0.c	0x0041def0	0x004c1040:renderware 0x004e69a0:renderware 0x004e7e30:renderware
+re/match/s04/0041e0d0.c	0x0041e0d0	0x004e6920:renderware 0x004e7e30:renderware
+re/match/s04/0041eaa0.c	0x0041eaa0	0x004770c0:set-removed 0x004b48e0:set-removed 0x004c1c10:set-removed
+re/match/s04/0041ebb0.c	0x0041ebb0	0x004770a0:C2
+re/match/s04/0041ec00.c	0x0041ec00	0x0053d060:renderware 0x0053d090:renderware
+re/match/s04/0041ecc0.c	0x0041ecc0	0x0053fba0:renderware 0x0053fbb0:renderware 0x0053fea0:renderware 0x005401d0:renderware
+re/match/s04/0041f2c0.c	0x0041f2c0	0x0053d090:renderware
+re/match/s05/0041f8f0.c	0x0041f8f0	0x00420050:C2 0x00422570:C2 0x004b42c0:C2
+re/match/s05/0041fe10.c	0x0041fe10	0x00420420:C2 0x004b3fc0:msvc-crt-main 0x004e5fc0:renderware 0x004e6920:renderware 0x004e6ab0:renderware 0x004e6fb0:renderware
+re/match/s05/0041ffb0.c	0x0041ffb0	0x0041ec00:set-removed 0x004768c0:set-removed
+re/match/s05/00420340.c	0x0041f360 0x00420340	0x00420290:C2 0x00540080:renderware 0x00540100:renderware 0x00540160:renderware
+re/match/s05/00420e00.c	0x00420e00 0x004215a0	0x00490020:C2
+re/match/s05/004210b0.c	0x004210b0	0x004770c0:set-removed
+re/match/s05/00421100.c	0x00420d80 0x00421100 0x00421160	0x00472650:set-removed 0x00472690:set-removed
+re/match/s05/00421560.c	0x00421560	0x004770a0:C2
+re/match/s05/004216b0.c	0x004216b0 0x00421720 0x004219c0	0x004c1b40:C2 0x004e6100:renderware
+re/match/s05/00421750.c	0x00421750 0x00421800	0x0055ac00:RenderWare-Physics-3.7 0x0055b650:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s05/004218b0.c	0x004218b0 0x004218d0	0x0055b940:RenderWare-Physics-3.7
+re/match/s05/004219f0.c	0x00421980 0x004219a0 0x004219f0	0x00487020:C2 0x00559ee0:RenderWare-Physics-3.7
+re/match/s05/00421c10.c	0x00421c10	0x00421980:set-removed
+re/match/s05/00421c80.c	0x00421980 0x00421c80	0x004e7e30:renderware 0x00559ee0:RenderWare-Physics-3.7
+re/match/s05/00421d20.c	0x00421960 0x00421d20	0x00559c40:RenderWare-Physics-3.7
+re/match/s05/004220d0.c	0x00421a90 0x00421ba0 0x004220d0	0x004b3fc0:msvc-crt-main 0x004c1210:renderware 0x004e5fc0:renderware 0x0055dff0:RenderWare-Physics-3.7
+re/match/s05/00422120.c	0x00421c50 0x00422120	0x00421c10:set-removed
+re/match/s05/00422140.c	0x00422140	0x00421c80:set-removed
+re/match/s05/004222d0.c	0x00421980 0x004219a0 0x00422160 0x00422290 0x004222d0	0x00421d20:C2 0x00559ee0:RenderWare-Physics-3.7
+re/match/s05/004223b0.c	0x004223b0	0x004222f0:nohook 0x004e66d0:C2
+re/match/s05/00423540.c	0x00423540	0x004cbe80:set-removed
+re/match/s05/00423670.c	0x00423670	0x00408b00:C2
+re/match/s05/00425a40.c	0x00425a40	0x00422ba0:C2 0x00424eb0:C2 0x004252c0:C2 0x00470c70:C2
+re/match/s05/00425b90.c	0x00425b90	0x004e66d0:C2
+re/match/s05/00425d50.c	0x00425d50	0x00425ca0:C2 0x004752f0:C2
+re/match/s05/00425e40.c	0x00425e40	0x004c1b40:C2 0x004e6100:renderware
+re/match/s05/00425fa0.c	0x00425fa0	0x004b3f90:msvc-crt-main 0x004e5fc0:renderware
+re/match/s06/00426340.c	0x00426340	0x00440bc0:nohook
+re/match/s06/004264d0.c	0x00426460 0x004264d0	0x004b3fc0:msvc-crt-main
+re/match/s06/00426700.c	0x00426700	0x004756e0:set-removed
+re/match/s06/00426780.c	0x00426780	0x00475010:set-removed
+re/match/s06/00426ab0.c	0x00426ab0	0x00426810:C2 0x00471ec0:C2
+re/match/s06/00426b40.c	0x00426b40	0x0045e040:set-removed 0x00478cf0:set-removed 0x0047f450:set-removed
+re/match/s06/00426e10.c	0x00426e10	0x00409680:C4 0x00409710:C4 0x00462950:C2 0x00478660:C2 0x00479330:C2 0x0047a020:C2 0x0047c0f0:C2
+re/match/s06/004270f0.c	0x004270f0	0x004b5af0:C2 0x004e5660:renderware
+re/match/s06/004275d0.c	0x004275d0	0x00552920:renderware 0x00553cf0:renderware 0x00553e80:renderware 0x00553ef0:renderware
+re/match/s07/0042c090.c	0x0042c090	0x004273e0:C2
+re/match/s07/0042c960.c	0x0042c960	0x0042c510:C2
+re/match/s07/0042fe90.c	0x0042fe90	0x0042ac00:C4
+re/match/s07/00430b90.c	0x00430b90	0x0042ac00:C4
+re/match/s08/0043bf30.c	0x0043bf30	0x00431240:C2 0x004314b0:C2 0x00431710:C2 0x004335f0:C2 0x00434720:C2 0x00439210:C3 0x0043a610:C3 0x0043aa30:C3 0x0043af10:C2
+re/match/s08/0043c000.c	0x0043c000	0x004332a0:C2
+re/match/s08/0043c5b0.c	0x0042aad0 0x0043c5b0	0x0043bf30:set-removed
+re/match/s08/0043d7c0.c	0x0043d7c0	0x0043d2a0:C2
+re/match/s08/0043df00.c	0x0043df00	0x0043d2a0:C2
+re/match/s08/00441760.c	0x00441760	0x004c15c0:renderware
+re/match/s08/00441820.c	0x00441820	0x004098a0:C4
+re/match/s08/00441990.c	0x00441990	0x00441760:set-removed 0x004c1c10:set-removed
+re/match/s08/00442600.c	0x00442600	0x00405540:C2
+re/match/s08/00444ff0.c	0x00444ff0	0x00444b60:C2 0x005586f0:renderware
+re/match/s08/004464c0.c	0x004464c0	0x00442440:C2
+re/match/s08/00448730.c	0x00448730	0x00444ff0:set-removed
+re/match/s08/00448770.c	0x00448770	0x004c15c0:renderware 0x004e6ab0:renderware
+re/match/s08/00448820.c	0x00448820	0x004c15c0:renderware 0x004e6ab0:renderware
+re/match/s08/00448880.c	0x00448880	0x004c15c0:renderware 0x004e6ab0:renderware
+re/match/s08/00448940.c	0x00448940	0x00491b20:C2 0x004b3f90:msvc-crt-main 0x004c15c0:renderware 0x004e45b0:renderware 0x004e5fc0:renderware 0x004e6ab0:renderware
+re/match/s08/00448cb0.c	0x00448cb0	0x004c15c0:renderware
+re/match/s08/00448dc0.c	0x00448dc0	0x004c15c0:renderware
+re/match/s08/00448e20.c	0x00448e20	0x004c15c0:renderware
+re/match/s08/00448ef0.c	0x00448ef0	0x00491f00:C2
+re/match/s08/004491e0.c	0x004491e0	0x004c15c0:renderware
+re/match/s08/004492b0.c	0x004492b0	0x004491e0:set-removed
+re/match/s08/004496a0.c	0x004496a0	0x0047cea0:C2
+re/match/s08/00449710.c	0x00449710	0x0047cea0:C2
+re/match/s08/00449b30.c	0x00449b30	0x004770c0:set-removed
+re/match/s08/00449ba0.c	0x00449ba0	0x00449b30:set-removed
+re/match/s08/00449bb0.c	0x00449bb0	0x004770c0:set-removed
+re/match/s08/0044aaa0.c	0x0044aaa0	0x0047d080:set-removed 0x0047d180:set-removed 0x004b47e0:set-removed
+re/match/s08/0044ab20.c	0x0044ab20	0x0047d080:set-removed
+re/match/s08/0044bbc0.c	0x0044bbc0	0x0044ba30:nohook
+re/match/s08/0044c5f0.c	0x0044c5f0	0x0044c490:C2 0x00545d30:renderware
+re/match/s08/0044c8b0.c	0x0044c8b0	0x0044c4f0:C2 0x004e4800:renderware 0x004e6ab0:renderware
+re/match/s08/0044c920.c	0x0044c920	0x0044c5f0:set-removed
+re/match/s08/0044ca40.c	0x0044ca40	0x00476860:set-removed
+re/match/s08/0044caa0.c	0x0044caa0	0x004c15c0:renderware 0x004e6ab0:renderware
+re/match/s08/0044cb00.c	0x0044cb00	0x004c15c0:renderware
+re/match/s08/0044d5e0.c	0x0044d5e0	0x004c18c0:C2 0x00547230:renderware
+re/match/s08/0044df80.c	0x0044df80	0x00557fb0:renderware
+re/match/s08/0044e190.c	0x0044e190 0x0044e240 0x0044e2d0 0x0044e310	0x004c1040:renderware 0x004e69a0:renderware 0x004e7e30:renderware 0x00557ec0:renderware 0x00558030:renderware
+re/match/s08/0044e680.c	0x0044e680	0x004e5fc0:renderware
+re/match/s08/0044ecc0.c	0x0044ecc0	0x0047d180:set-removed
+re/match/s08/0044f830.c	0x0044f830	0x004b3f90:msvc-crt-main 0x0057c210:RenderWare-Physics-3.7
+re/match/s09/00451760.c	0x00451760	0x004e66d0:C2 0x0052df20:renderware 0x0052e2c0:renderware
+re/match/s09/00451ad0.c	0x00451ad0	0x00480720:set-removed 0x00481750:set-removed
+re/match/s09/00451d80.c	0x00451d80	0x004c1b40:C2 0x004e5fc0:renderware 0x0052e2c0:renderware
+re/match/s09/00452170.c	0x00452170	0x0047d180:set-removed
+re/match/s09/004527f0.c	0x004527f0	0x004b3f90:msvc-crt-main
+re/match/s09/00452b20.c	0x00452b20	0x0057c210:RenderWare-Physics-3.7
+re/match/s09/00452f30.c	0x00452ec0 0x00452f00 0x00452f30	0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/004538b0.c	0x00453100 0x00453210 0x004532f0 0x00453730 0x004538b0	0x00453290:nohook 0x00474de0:C2 0x004b42c0:C2 0x004b5080:C2
+re/match/s09/00453eb0.c	0x00453eb0	0x00487020:C2
+re/match/s09/004540c0.c	0x004540c0	0x004c1210:renderware 0x004e6920:renderware
+re/match/s09/00454170.c	0x00454170 0x00454790	0x004c1210:renderware 0x004c15c0:renderware 0x004e43b0:renderware 0x004e4440:renderware
+re/match/s09/004541e0.c	0x004541e0	0x004c1210:renderware
+re/match/s09/004547c0.c	0x00454170 0x004547c0 0x004548a0	0x004c1210:renderware 0x004c15c0:renderware 0x004e43b0:renderware 0x004e4440:renderware 0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/00454820.c	0x00454170 0x004547c0 0x00454820	0x00454350:C2 0x004c1210:renderware 0x004c15c0:renderware 0x004e43b0:renderware 0x004e4440:renderware 0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/004548e0.c	0x004548e0	0x004b3f90:msvc-crt-main 0x004b3fc0:msvc-crt-main 0x004c1040:renderware 0x004e69a0:renderware 0x004e6ab0:renderware 0x004e7e30:renderware
+re/match/s09/00454a20.c	0x00454a20	0x004548a0:set-removed
+re/match/s09/00454bd0.c	0x00454bd0 0x00454c00	0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/00454c60.c	0x00454bd0 0x00454c60	0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/00454cd0.c	0x00454cd0	0x00476df0:set-removed
+re/match/s09/00454f80.c	0x00454f80	0x004e6ab0:renderware
+re/match/s09/00455030.c	0x00454fa0 0x00454ff0 0x00455030 0x00455910	0x00474de0:C2 0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/00455060.c	0x00455060	0x004e4450:renderware 0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/00455b50.c	0x00455b50	0x00407640:C4 0x00459620:C2
+re/match/s09/00455fe0.c	0x00455fe0	0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/00456040.c	0x00456040	0x004e4450:renderware
+re/match/s09/00456140.c	0x00456140	0x00474de0:C2
+re/match/s09/004568a0.c	0x004568a0	0x004768c0:set-removed
+re/match/s09/00456c30.c	0x00456c30	0x004770a0:C2
+re/match/s09/00456c70.c	0x00456c70	0x00455fe0:set-removed
+re/match/s09/00456c90.c	0x00456c90	0x00456c70:set-removed
+re/match/s09/00456d00.c	0x00456d00	0x00474d60:set-removed
+re/match/s09/00456f70.c	0x00456f70	0x00472650:set-removed
+re/match/s09/004570a0.c	0x004570a0	0x00457010:nohook
+re/match/s09/00457610.c	0x00457610	0x004770a0:C2
+re/match/s09/00457650.c	0x00457650	0x0044d5e0:set-removed
+re/match/s09/00458360.c	0x00457ba0 0x00458020 0x00458080 0x00458360	0x00457e10:nohook 0x00475ab0:C2 0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/004587a0.c	0x004587a0	0x004770c0:set-removed 0x004b3e40:set-removed
+re/match/s09/00458880.c	0x00458880	0x004768c0:set-removed
+re/match/s09/004588c0.c	0x004588c0	0x00490020:C2
+re/match/s09/00458c70.c	0x00458c70	0x004c15c0:renderware
+re/match/s09/00458d00.c	0x00458d00	0x00472690:set-removed
+re/match/s09/00458dd0.c	0x00458dd0	0x004e8090:renderware
+re/match/s09/00459290.c	0x00459290	0x00474d60:set-removed 0x004770c0:set-removed 0x004b3bf0:set-removed
+re/match/s09/004593b0.c	0x004593b0	0x004768c0:set-removed
+re/match/s09/00459480.c	0x00459480	0x0045a190:C2 0x00474e70:C2
+re/match/s09/00459560.c	0x00459560	0x00474d60:set-removed 0x004b5320:set-removed
+re/match/s09/004595c0.c	0x004595c0	0x00474d60:set-removed 0x004b5320:set-removed
+re/match/s09/0045a130.c	0x0045a130	0x004770a0:C2
+re/match/s09/0045a530.c	0x0045a530	0x0045a420:nohook
+re/match/s09/0045a590.c	0x0045a590	0x00465f40:set-removed 0x00472650:set-removed
+re/match/s09/0045b360.c	0x0045b360	0x004e45b0:renderware 0x004e4800:renderware
+re/match/s09/0045b990.c	0x0045b990	0x00458b10:C2
+re/match/s10/0045bae0.c	0x0045ba10 0x0045bac0 0x0045bae0 0x0045bba0 0x0045bf30	0x004039c0:C4 0x00440bc0:nohook 0x0045a190:C2
+re/match/s10/0045be90.c	0x0045be90	0x0045ba10:set-removed
+re/match/s10/0045bed0.c	0x0045bed0	0x0045ba10:set-removed 0x0045bac0:set-removed
+re/match/s10/0045c350.c	0x0045c350	0x0044d5e0:set-removed
+re/match/s10/0045cb20.c	0x0045c4e0 0x0045c510 0x0045cb20	0x0045c550:C2
+re/match/s10/0045cc80.c	0x0045cc80	0x0045cb20:set-removed
+re/match/s10/0045d1e0.c	0x0045d1e0	0x0045cd30:C2
+re/match/s10/0045d330.c	0x0045d330	0x004b44f0:set-removed
+re/match/s10/0045d3a0.c	0x0045d3a0	0x0045d1e0:set-removed 0x004657b0:set-removed
+re/match/s10/0045d3f0.c	0x0045d3f0	0x005a60b0:set-removed
+re/match/s10/0045d430.c	0x0045d430	0x005a60e0:set-removed
+re/match/s10/0045da60.c	0x0045da60	0x005a66d0:set-removed
+re/match/s10/0045da90.c	0x0045da90	0x005a89d0:set-removed
+re/match/s10/0045daf0.c	0x0045daf0	0x005a6d60:C2
+re/match/s10/0045dce0.c	0x0045dce0	0x005a6d60:C2
+re/match/s10/0045e040.c	0x0045e040	0x00546320:renderware
+re/match/s10/0045e0f0.c	0x0045e0f0	0x005a6dc0:set-removed
+re/match/s10/0045e160.c	0x0045e160	0x00546380:renderware
+re/match/s10/0045e2a0.c	0x0045e2a0	0x00546380:renderware
+re/match/s10/0045e460.c	0x0045e460	0x00472650:set-removed
+re/match/s10/0045f5f0.c	0x0045f5f0	0x00472650:set-removed 0x004b44f0:set-removed
+re/match/s10/0045faa0.c	0x0045faa0	0x0045e0f0:set-removed
+re/match/s10/0045ff50.c	0x0045ff50	0x005a6d60:C2
+re/match/s10/00460270.c	0x00460270	0x005a6dc0:set-removed
+re/match/s10/00460350.c	0x00460350	0x005a6d60:C2
+re/match/s10/00460df0.c	0x00460df0	0x005a6d60:C2
+re/match/s10/00461650.c	0x00461650	0x005a6d60:C2
+re/match/s10/004623e0.c	0x004623e0	0x005a6dc0:set-removed
+re/match/s10/004624c0.c	0x004624c0	0x00551190:renderware
+re/match/s10/00462dd0.c	0x00462dd0	0x005a8890:C2
+re/match/s10/00462ec0.c	0x00462ec0	0x00462dd0:set-removed 0x005aaa00:set-removed
+re/match/s10/00462f50.c	0x00462f50	0x005a6dc0:set-removed
+re/match/s10/00463150.c	0x00463150	0x00472650:set-removed 0x005a6dc0:set-removed
+re/match/s10/004631f0.c	0x004631f0	0x005a6dc0:set-removed
+re/match/s10/004633d0.c	0x004633d0	0x005a6dc0:set-removed
+re/match/s10/00463590.c	0x00463590	0x005a6dc0:set-removed
+re/match/s10/00463c80.c	0x00463c80	0x00461e90:C3
+re/match/s10/00463f40.c	0x00463f40	0x0045daf0:set-removed 0x00472650:set-removed 0x005a6dc0:set-removed
+re/match/s10/004642f0.c	0x004642f0	0x00461e90:C3
+re/match/s10/004644a0.c	0x004644a0	0x0045daf0:set-removed 0x005a6dc0:set-removed
+re/match/s10/00464670.c	0x00464670	0x0045daf0:set-removed 0x00472650:set-removed 0x005a6dc0:set-removed
+re/match/s10/004648b0.c	0x004648b0	0x00464670:set-removed
+re/match/s10/00464e10.c	0x00464e10	0x005459c0:renderware 0x005a6d60:C2
+re/match/s10/004652b0.c	0x004652b0	0x005459c0:renderware 0x005a6d60:C2
+re/match/s10/004656e0.c	0x004656e0	0x005a86a0:C2
+re/match/s10/004657b0.c	0x004657b0	0x005a8750:C2
+re/match/s10/00465940.c	0x00465940	0x005a6d60:C2
+re/match/s10/00465a30.c	0x00465a30	0x005a6d60:C2
+re/match/s10/00465b20.c	0x00465b20	0x005a6d60:C2
+re/match/s10/00465c10.c	0x00465c10	0x0045daf0:set-removed 0x005a6dc0:set-removed
+re/match/s10/00465ca0.c	0x00465ca0	0x005a6d60:C2
+re/match/s10/00465e80.c	0x00465e80	0x005a6d60:C2
+re/match/s10/00465f40.c	0x00465f40	0x005a6d60:C2
+re/match/s10/00466000.c	0x00466000	0x005a6d60:C2
+re/match/s10/00466100.c	0x00466100	0x0045e0f0:set-removed
+re/match/s10/004661a0.c	0x004661a0	0x0045e0f0:set-removed 0x005a66d0:set-removed
+re/match/s10/004661f0.c	0x004661f0	0x005a6d60:C2
+re/match/s10/004669b0.c	0x004669b0	0x0045d460:C2 0x004627f0:C2
+re/match/s10/00466a50.c	0x00466a50	0x005a6030:set-removed 0x005a73b0:set-removed 0x005aaa00:set-removed
+re/match/s10/00466b50.c	0x00466b50	0x0045d7a0:C2 0x0045dd60:C2 0x0045e990:C2 0x0045efe0:C2 0x00463640:C2 0x004647f0:C2 0x00464a50:C2 0x00464ca0:C2
+re/match/s11/00468980.c	0x00468980	0x004a3384:C2
+re/match/s11/0046bf50.c	0x0046bf50	0x00481780:set-removed
+re/match/s11/0046c7d0.c	0x0046c7d0	0x004a3384:C2
+re/match/s11/0046cb30.c	0x0046cb30	0x0047f1e0:set-removed
+re/match/s11/0046d400.c	0x0046d400	0x0046d3a0:nohook 0x00538c80:renderware
+re/match/s11/0046d570.c	0x0046d570	0x004a3384:C2
+re/match/s11/0046ddb0.c	0x0046c5f0 0x0046ddb0	0x00442c80:C4 0x00442ce0:C4
+re/match/s11/00470670.c	0x00470670	0x00468980:set-removed 0x0046ddb0:set-removed
+re/match/s11/00471ac0.c	0x00471ac0	0x0047d080:set-removed
+re/match/s11/00471cf0.c	0x00471cf0	0x0047d080:set-removed
+re/match/s11/004721b0.c	0x004721b0	0x00472150:nohook 0x004e89a0:renderware
+re/match/s11/004722e0.c	0x004722e0	0x004721e0:nohook 0x004e5f90:renderware
+re/match/s11/00472380.c	0x00472380	0x00472330:nohook 0x00472360:nohook 0x004e7d40:renderware
+re/match/s11/00472650.c	0x00472650	0x00534870:renderware
+re/match/s11/00472690.c	0x00472690	0x00534870:renderware
+re/match/s11/00472820.c	0x00472820	0x004a3907:msvc-crt-main
+re/match/s11/004728a0.c	0x004728a0	0x00472820:set-removed
+re/match/s11/004728f0.c	0x004728f0	0x005459c0:renderware
+re/match/s11/004729b0.c	0x004729b0	0x005459c0:renderware
+re/match/s11/00472ad0.c	0x00472ad0	0x004729b0:set-removed
+re/match/s11/00474d60.c	0x00474d60	0x00474d30:nohook 0x004e66d0:C2
+re/match/s12/00474f30.c	0x00474f30	0x00552020:renderware
+re/match/s12/00474fb0.c	0x00474fb0	0x00474f90:nohook 0x004e66d0:C2
+re/match/s12/00474fd0.c	0x00474fd0	0x00474f30:set-removed 0x00474fb0:set-removed
+re/match/s12/00475010.c	0x00475010	0x00474f50:nohook
+re/match/s12/004756e0.c	0x004756e0	0x004752f0:C2
+re/match/s12/00475830.c	0x00475830	0x00557ec0:renderware 0x00558030:renderware
+re/match/s12/004758d0.c	0x004758d0	0x004e66d0:C2
+re/match/s12/00475c10.c	0x00475c10	0x00476df0:set-removed
+re/match/s12/00475d30.c	0x00475d30	0x004770a0:C2
+re/match/s12/00475d90.c	0x00475d90	0x004768c0:set-removed
+re/match/s12/00475e50.c	0x00475e50	0x004770a0:C2
+re/match/s12/00475ea0.c	0x00475ea0	0x004768c0:set-removed
+re/match/s12/004762c0.c	0x004762c0	0x004b4510:set-removed
+re/match/s12/00476390.c	0x00476390	0x004770c0:set-removed
+re/match/s12/00476440.c	0x00476440	0x00475f90:C2
+re/match/s12/004764e0.c	0x004764e0	0x00476320:C2
+re/match/s12/004764f0.c	0x004764e0 0x004764f0	0x00476320:C2
+re/match/s12/00476650.c	0x004764e0 0x004764f0 0x00476650	0x00476320:C2
+re/match/s12/00476710.c	0x004764e0 0x004764f0 0x00476710	0x00476320:C2
+re/match/s12/004767c0.c	0x004764e0 0x004764f0 0x004767c0	0x00476320:C2
+re/match/s12/00476860.c	0x00476860	0x00476650:set-removed
+re/match/s12/00476880.c	0x00476880	0x00476710:set-removed
+re/match/s12/004768a0.c	0x004768a0	0x004767c0:set-removed
+re/match/s12/004768c0.c	0x004768c0	0x004e6920:renderware 0x004e7e30:renderware
+re/match/s12/00476df0.c	0x00476df0	0x00535700:renderware 0x00535910:renderware
+re/match/s12/004770c0.c	0x004770c0	0x004e7e30:renderware 0x004e8090:renderware 0x00534b60:renderware
+re/match/s12/00477500.c	0x00477500 0x00477810	0x005492a0:renderware 0x005493d0:renderware
+re/match/s12/00477580.c	0x00477580 0x00477870	0x004e6920:renderware 0x004e7e30:renderware 0x005495b0:renderware
+re/match/s12/004775b0.c	0x004773f0 0x004775b0	0x004b3f90:msvc-crt-main 0x004e69a0:renderware 0x004e7e30:renderware 0x005493d0:renderware
+re/match/s12/00477a10.c	0x004778e0 0x00477a10	0x004c1b40:C2
+re/match/s12/00478030.c	0x00478030	0x00477f50:C2
+re/match/s12/004780c0.c	0x004780c0	0x00477f50:C2
+re/match/s12/00478110.c	0x00478110	0x004cf2b0:renderware
+re/match/s12/00478220.c	0x00478220	0x004cd070:set-removed 0x004cd170:set-removed
+re/match/s12/00478cd0.c	0x00478cd0	0x00484580:C2
+re/match/s12/00479030.c	0x00479030	0x004b53b0:C2 0x00543da0:renderware 0x00543dc0:renderware 0x00543e30:renderware
+re/match/s12/004790e0.c	0x004790e0	0x00479330:C2 0x004e5c70:renderware
+re/match/s12/00479fb0.c	0x00479fb0	0x004e6920:renderware 0x004e7e30:renderware
+re/match/s12/0047a0f0.c	0x0047a0f0	0x00440bc0:nohook
+re/match/s12/0047a130.c	0x0047a130	0x00440bc0:nohook
+re/match/s12/0047a180.c	0x0047a180	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047a1b0.c	0x0047a1b0	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a1e0.c	0x0047a1e0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a280.c	0x0047a280	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a3a0.c	0x0047a3a0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a440.c	0x0047a440	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a4a0.c	0x0047a4a0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a540.c	0x0047a540	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a580.c	0x0047a580	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a5b0.c	0x0047a5b0	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a5e0.c	0x0047a5e0	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a610.c	0x0047a610	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a6b0.c	0x0047a6b0	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a6f0.c	0x0047a6f0	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a720.c	0x0047a720	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047a750.c	0x0047a750	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047a790.c	0x0047a790	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047a810.c	0x0047a810	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047a880.c	0x0047a880	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a8b0.c	0x0047a8b0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047a950.c	0x0047a950	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047a9b0.c	0x0047a9b0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047aa20.c	0x0047aa20	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s12/0047aa50.c	0x0047aa50	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s12/0047aaa0.c	0x0047aaa0	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0
+re/match/s13/0047aad0.c	0x0047aad0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047ab30.c	0x0047ab30	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047abd0.c	0x0047abd0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047ac80.c	0x0047ac80	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047acd0.c	0x0047acd0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047ad00.c	0x0047ad00	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047ad30.c	0x0047ad30	0x004b6fc0:lua-4.0
+re/match/s13/0047ad40.c	0x0047ad40	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047ade0.c	0x0047ade0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0
+re/match/s13/0047ae80.c	0x0047ae80	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047aef0.c	0x0047aef0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047af50.c	0x0047af50	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047afa0.c	0x0047afa0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b000.c	0x0047b000	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b0a0.c	0x0047b0a0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b110.c	0x0047b110	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b160.c	0x0047b160	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b1b0.c	0x0047b1b0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b200.c	0x0047b200	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b230.c	0x0047b230	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b280.c	0x0047b280	0x00430250:C3 0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b350.c	0x0047b350	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0 0x004b7140:lua-4.0
+re/match/s13/0047b3c0.c	0x0047b3c0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b420.c	0x0047b420	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b480.c	0x0047b480	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b500.c	0x0047b500	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b7140:lua-4.0
+re/match/s13/0047b5b0.c	0x0047b5b0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b630.c	0x0047b630	0x004b6fc0:lua-4.0 0x004b70d0:lua-4.0 0x004b7140:lua-4.0
+re/match/s13/0047b6b0.c	0x0047b6b0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b720.c	0x0047b720	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0 0x004b70d0:lua-4.0 0x004b7140:lua-4.0
+re/match/s13/0047b7d0.c	0x0047b7d0	0x00405730:C2 0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s13/0047b860.c	0x0047b860	0x004b7330:lua-4.0 0x004c0510:lua-4.0
+re/match/s13/0047b880.c	0x0047b880	0x004b7480:lua-4.0
+re/match/s13/0047b8a0.c	0x0047b8a0	0x004b7a70:lua-4.0
+re/match/s13/0047b8d0.c	0x0047b8d0	0x0047b8a0:set-removed
+re/match/s13/0047b980.c	0x0047b980	0x004b7200:lua-4.0 0x004b7250:lua-4.0
+re/match/s13/0047b9b0.c	0x0047b9b0	0x0047b860:set-removed 0x0047b880:set-removed
+re/match/s13/0047b9e0.c	0x0047b9e0	0x00496c10:set-removed
+re/match/s13/0047bf70.c	0x0047bc90 0x0047bcc0 0x0047bf70	0x0047be80:C2 0x004b53b0:C2
+re/match/s13/0047cd50.c	0x0047cd50	0x00486460:set-removed
+re/match/s13/0047d080.c	0x0047d080	0x00559c40:RenderWare-Physics-3.7 0x00559ee0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047d180.c	0x0047d180	0x0055ac00:RenderWare-Physics-3.7 0x0055dff0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047d240.c	0x0047d240	0x0055ac00:RenderWare-Physics-3.7 0x0055dff0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047d330.c	0x0047d330	0x004e43b0:renderware 0x004e4440:renderware 0x004e6920:renderware 0x004e7e30:renderware 0x00559ee0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047e9c0.c	0x0047e9c0	0x0047d640:C2 0x0047def0:C2 0x0055e200:RenderWare-Physics-3.7
+re/match/s13/0047ea60.c	0x0047ea60	0x0055ac00:RenderWare-Physics-3.7 0x0055dff0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047f1e0.c	0x0047f1e0	0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047f230.c	0x0047f230	0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047f290.c	0x0047f290	0x004e43b0:renderware 0x004e4440:renderware 0x004e6920:renderware 0x004e7e30:renderware 0x00559ee0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047f380.c	0x0047f380	0x004e43b0:renderware 0x004e4440:renderware 0x004e6920:renderware 0x004e7e30:renderware 0x00559ee0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/0047f450.c	0x0047f450	0x004827a0:nohook
+re/match/s13/0047f840.c	0x0047f840	0x0047f7d0:nohook
+re/match/s13/0047f940.c	0x0047f940	0x004e4380:renderware 0x004e69a0:renderware 0x004e7e30:renderware 0x00559c40:RenderWare-Physics-3.7 0x0055b940:RenderWare-Physics-3.7
+re/match/s13/0047fad0.c	0x0047fad0	0x004e4380:renderware 0x004e69a0:renderware 0x004e7e30:renderware 0x00559c40:RenderWare-Physics-3.7 0x0055b940:RenderWare-Physics-3.7
+re/match/s13/0047fc40.c	0x0047fc40	0x004e4380:renderware 0x004e69a0:renderware 0x004e7e30:renderware 0x00559c40:RenderWare-Physics-3.7 0x0055b940:RenderWare-Physics-3.7
+re/match/s13/0047fe00.c	0x0047fe00	0x004e4380:renderware 0x004e69a0:renderware 0x004e7e30:renderware 0x00559c40:RenderWare-Physics-3.7 0x0055b940:RenderWare-Physics-3.7
+re/match/s13/0047ff70.c	0x0047ff70	0x004e4380:renderware 0x004e69a0:renderware 0x004e7e30:renderware 0x00559c40:RenderWare-Physics-3.7 0x0055b940:RenderWare-Physics-3.7
+re/match/s13/00480100.c	0x00480100	0x00487280:C2 0x0055ac00:RenderWare-Physics-3.7 0x0055dff0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/00480340.c	0x00480340	0x004b3f50:msvc-crt-main 0x004b3f90:msvc-crt-main
+re/match/s13/00480720.c	0x00480720	0x0055ac00:RenderWare-Physics-3.7 0x0055dff0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/00481750.c	0x00481750	0x0055b650:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/00481780.c	0x00481780	0x0057c210:RenderWare-Physics-3.7
+re/match/s13/00481810.c	0x00481810	0x0055bde0:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/00481d90.c	0x00481d90	0x0055ac00:RenderWare-Physics-3.7 0x0055b650:RenderWare-Physics-3.7 0x0057c210:RenderWare-Physics-3.7
+re/match/s13/004820e0.c	0x004820e0	0x005c1cb7:msvc-crt-tail
+re/match/s13/004829d0.c	0x004829d0	0x00546b10:C3
+re/match/s13/00483a70.c	0x00483a70	0x004b5af0:C2
+re/match/s13/00483ed0.c	0x00483ed0	0x004c15c0:renderware 0x004c5a00:renderware
+re/match/s13/00484000.c	0x00484000	0x00483ed0:set-removed
+re/match/s14/00484280.c	0x00484280	0x004842d0:nohook
+re/match/s14/00484ac0.c	0x00484a50 0x00484ac0	0x004a3090:msvc-crt-main
+re/match/s14/004850e0.c	0x004850e0	0x004c15c0:renderware 0x004e5fc0:renderware 0x004e7e30:renderware
+re/match/s14/004853f0.c	0x004852e0 0x004853f0	0x00485b30:C3
+re/match/s14/004858c0.c	0x004858c0	0x004854e0:C2
+re/match/s14/00485d90.c	0x00485d90	0x004892c0:set-removed
+re/match/s14/00485e10.c	0x00485e10	0x004768c0:set-removed
+re/match/s14/00486220.c	0x00486220	0x00489910:set-removed
+re/match/s14/004862d0.c	0x004862d0	0x004770c0:set-removed
+re/match/s14/00486350.c	0x00486350	0x004768c0:set-removed
+re/match/s14/00486370.c	0x00486370 0x004864f0	0x00472650:set-removed
+re/match/s14/00486460.c	0x00486460	0x00472650:set-removed
+re/match/s14/00486610.c	0x00486610	0x004864f0:C2
+re/match/s14/00486f50.c	0x00486f50	0x004770a0:C2
+re/match/s14/00487140.c	0x00487140	0x004768c0:set-removed
+re/match/s14/00487150.c	0x00487150 0x00487e00	0x004770c0:set-removed
+re/match/s14/00487d60.c	0x00487d60	0x00476df0:set-removed
+re/match/s14/00487d70.c	0x00487d70	0x004770a0:C2
+re/match/s14/00487de0.c	0x00487de0	0x00487d70:set-removed
+re/match/s14/00487e20.c	0x00487e20	0x00535700:renderware
+re/match/s14/00487e30.c	0x00487e30	0x00535910:renderware
+re/match/s14/004880a0.c	0x004880a0	0x004e7e30:renderware 0x004e8090:renderware 0x00534b60:renderware
+re/match/s14/004881d0.c	0x004881d0	0x004e7e30:renderware 0x004e8090:renderware 0x00534b60:renderware
+re/match/s14/00489250.c	0x00489250	0x004e6920:renderware
+re/match/s14/004892c0.c	0x004892c0	0x004770c0:set-removed
+re/match/s14/00489890.c	0x00489890	0x00489500:C2
+re/match/s14/004898d0.c	0x004898d0	0x004768c0:set-removed
+re/match/s14/00489910.c	0x00489910	0x004770a0:C2
+re/match/s14/00489940.c	0x00489940	0x004892c0:set-removed
+re/match/s14/00489c30.c	0x00489c30	0x00489910:set-removed
+re/match/s14/00489c60.c	0x00489c60	0x004898d0:set-removed
+re/match/s14/0048a130.c	0x0048a060 0x0048a130	0x004c1b40:C2
+re/match/s14/0048a3c0.c	0x0048a3c0	0x004e7e30:renderware
+re/match/s14/0048a490.c	0x0048a490 0x0048a5d0	0x004b40f0:set-removed
+re/match/s14/0048a6f0.c	0x0048a6f0	0x0048a4e0:C2
+re/match/s14/0048a850.c	0x0048a850	0x00472650:set-removed
+re/match/s14/0048aa20.c	0x0048aa20	0x0048a850:set-removed
+re/match/s14/0048ad50.c	0x0048ad50	0x00499d90:C2
+re/match/s14/0048ae00.c	0x0048ae00	0x004b3f90:msvc-crt-main 0x004c1040:renderware 0x004e69a0:renderware 0x004e7e30:renderware 0x005449f0:renderware 0x00544a70:renderware 0x00544ad0:renderware 0x00544bf0:renderware
+re/match/s14/0048af70.c	0x0048af70	0x004c1210:renderware 0x004e6920:renderware 0x004e7e30:renderware
+re/match/s14/0048b960.c	0x0048b960	0x0048b440:C2 0x0048b7c0:C2 0x00544bf0:renderware
+re/match/s14/0048baf0.c	0x0048baf0	0x004770a0:C2
+re/match/s14/0048cee0.c	0x0048cee0	0x004770c0:set-removed
+re/match/s15/0048cf70.c	0x0048cf70	0x004768c0:set-removed
+re/match/s15/0048cf90.c	0x0048cf90	0x00472650:set-removed
+re/match/s15/0048e5f0.c	0x0048e5f0	0x0048d140:C2 0x0048d360:C2 0x0048d540:C2 0x0048d720:C2 0x0048d900:C2 0x0048db20:C2 0x0048dd40:C2 0x0048df60:C2 0x0048e180:C2 0x0048e360:C2
+re/match/s15/0048e7b0.c	0x0048e7b0	0x004770a0:C2
+re/match/s15/0048eac0.c	0x0048eac0	0x004770c0:set-removed
+re/match/s15/0048f290.c	0x0048f290	0x00472650:set-removed
+re/match/s15/0048f420.c	0x0048f420	0x00472650:set-removed
+re/match/s15/0048f8a0.c	0x0048f8a0	0x00472650:set-removed 0x00476df0:set-removed
+re/match/s15/0048f9f0.c	0x0048f9f0	0x00476df0:set-removed
+re/match/s15/0048fb10.c	0x0048fb10	0x00472650:set-removed 0x00476df0:set-removed
+re/match/s15/0048fce0.c	0x0048fce0	0x004770a0:C2
+re/match/s15/0048fd10.c	0x0048fd10	0x004770a0:C2
+re/match/s15/0048fd40.c	0x0048fd40	0x004770a0:C2
+re/match/s15/0048fd70.c	0x0048fd70	0x004770a0:C2
+re/match/s15/0048fdd0.c	0x0048fdd0	0x004768c0:set-removed
+re/match/s15/0048fe70.c	0x0048fe70	0x0048fe30:nohook 0x00538c80:renderware
+re/match/s15/0048fef0.c	0x0048fef0	0x0048fee0:nohook 0x004e89a0:renderware
+re/match/s15/0048ff20.c	0x0048ff20	0x0048fed0:nohook 0x004e66d0:C2
+re/match/s15/0048ffd0.c	0x0048ffd0	0x004e8090:renderware
+re/match/s15/00490000.c	0x00490000	0x004e8090:renderware
+re/match/s15/00491490.c	0x00491490	0x004910c0:C2 0x00491340:C2
+re/match/s15/004914b0.c	0x004914b0	0x00499d90:C2
+re/match/s15/00491780.c	0x00491780	0x00491590:C2
+re/match/s15/004917c0.c	0x004917c0	0x00490f50:C4 0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s15/00491860.c	0x00491860	0x00490f80:C4 0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s15/00491900.c	0x00491900	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s15/004919b0.c	0x004919b0	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s15/00491a10.c	0x00491a10	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s15/00491a70.c	0x00491a70	0x004b6fc0:lua-4.0 0x004b7090:lua-4.0
+re/match/s15/00491c00.c	0x00491c00	0x004e7e30:renderware 0x004e8090:renderware 0x00534b60:renderware 0x00535700:renderware
+re/match/s15/00491f00.c	0x00491e50 0x00491f00	0x004c1b40:C2
+re/match/s15/00492170.c	0x00492170	0x004e6920:renderware
+re/match/s15/00492d30.c	0x00492d30	0x0043dfd0:C2
+re/match/s15/00492e90.c	0x00492e90	0x00433f40:C3
+re/match/s15/004935a0.c	0x004935a0	0x0052cb00:C2
+re/match/s15/004935d0.c	0x004935d0	0x00514330:d3dx9-backward-extension
+re/match/s15/00493600.c	0x00493600	0x00513f90:d3dx9-backward-extension 0x0052d530:nohook
+re/match/s15/00493c00.c	0x00493c00	0x0049ec10:directshow-baseclasses
+re/match/s15/00493c60.c	0x00493c60	0x0049ebc0:directshow-baseclasses
+re/match/s15/00493f00.c	0x00493f00	0x004a3b84:msvc-crt-main
+re/match/s15/004943d0.c	0x004943d0	0x00493c60:set-removed
+re/match/s15/00494480.c	0x00494480	0x004938e0:C3
+re/match/s16/00494a80.c	0x00494a80	0x004944c0:C2
+re/match/s16/00494ac0.c	0x00494ac0	0x0049ec10:directshow-baseclasses
+re/match/s16/00494b20.c	0x00494b20	0x0049ebc0:directshow-baseclasses
+re/match/s16/00494c60.c	0x00494c60	0x00494b20:set-removed
+re/match/s16/00494c80.c	0x00494c80	0x004a3bdf:msvc-crt-main 0x004a3c1c:msvc-crt-main
+re/match/s16/00494f00.c	0x00494f00	0x00494a80:set-removed
+re/match/s16/00494f10.c	0x00494f10	0x00494480:set-removed
+re/match/s16/00495080.c	0x00494f40 0x00494fd0 0x00495080	0x004a2d30:msvc-crt-main
+re/match/s16/004951e0.c	0x004951e0	0x00495780:set-removed
+re/match/s16/004951f0.c	0x004951f0	0x00499400:C2
+re/match/s16/00495280.c	0x00495280	0x00402b70:C2
+re/match/s16/00495350.c	0x00495350	0x00493fd0:C2
+re/match/s16/004955d0.c	0x004955d0	0x00551190:renderware
+re/match/s16/00495780.c	0x00495780	0x004955d0:set-removed
+re/match/s16/00496490.c	0x00496490	0x004a43b9:msvc-crt-main
+re/match/s16/00496c10.c	0x004969a0 0x00496c10	0x004938e0:C3
+re/match/s16/00496d20.c	0x00496d20	0x00496d10:nohook 0x004e5c70:renderware
+re/match/s16/00496d60.c	0x00496d60	0x004d4170:renderware 0x004d4380:renderware 0x004d4dd0:renderware 0x004d4f90:renderware 0x004eb3c0:renderware
+re/match/s16/00496db0.c	0x00496db0	0x004d4170:renderware 0x004d4380:renderware 0x004d4dd0:renderware 0x004d4f90:renderware 0x004eb9d0:renderware
+re/match/s16/00496e40.c	0x00496e40	0x00496e00:nohook 0x00496e20:nohook 0x004d4f00:C2 0x004eb3c0:renderware 0x004eb9d0:renderware
+re/match/s16/00497060.c	0x00497060	0x004ed6ba:d3dx9-psgp
+re/match/s16/00497b10.c	0x00497b10	0x004976a0:nohook
+re/match/s16/004982a0.c	0x00497190 0x00497230 0x004982a0	0x00497fd0:nohook
+re/match/s16/00498810.c	0x00498810 0x00498860	0x004a43b9:msvc-crt-main 0x004cdca0:renderware 0x004cdd00:renderware 0x004cdd60:renderware
+re/match/s16/00498a00.c	0x00498a00 0x00498c00 0x00498d20 0x00498d60 0x00498e40 0x00498ea0 0x00498f60 0x00499170 0x004991f0 0x00499400	0x004a45fb:msvc-crt-main
+re/match/s16/00498d60.c	0x00498d60	0x00498ea0:C2 0x00499400:C2
+re/match/s16/00498f60.c	0x00498f60	0x00498ea0:C2 0x00499400:C2
+re/match/s16/004991f0.c	0x004991f0	0x00498ea0:C2 0x00499400:C2
+re/match/s17/004a2bb8.c	0x004a2bb8	0x004a583a:set-removed
+re/match/s17/004a2bf7.c	0x004a2bf7	0x004a59d0:msvc-crt-main 0x004a5a0c:msvc-crt-main 0x004a5a57:msvc-crt-main 0x004a5a71:msvc-crt-main 0x004a5d92:msvc-crt-main
+re/match/s17/004a31e1.c	0x004a31e1	0x004a787f:set-removed
+re/match/s17/004a31f3.c	0x004a31f3	0x004a415e:msvc-crt-main 0x004a78f4:nohook
+re/match/s17/004a3258.c	0x004a3258	0x004a31b1:msvc-crt-main
+re/match/s17/004a334d.c	0x004a334d	0x004a3258:set-removed
+re/match/s17/004a3ac9.c	0x004a3ac9	0x004a8828:msvc-crt-main
+re/match/s17/004a43d2.c	0x004a43d2	0x004aa00c:msvc-crt-main
+re/match/s17/004a467e.c	0x004a467e	0x004aac76:msvc-crt-main 0x004aaf72:msvc-crt-main 0x004aaf90:C2
+re/match/s17/004a4bb7.c	0x004a4bb7	0x004a333c:msvc-crt-main 0x004a4b6e:msvc-crt-main 0x004a4b93:msvc-crt-main 0x004a8a04:msvc-crt-main 0x004aa3fe:msvc-crt-main 0x004aba86:msvc-crt-main 0x004abbea:msvc-crt-main 0x004abe86:msvc-crt-main 0x004ac04a:msvc-crt-main
+re/match/s17/004a504f.c	0x004a4fc1 0x004a4ff4 0x004a5018 0x004a504f	0x004a45fb:msvc-crt-main 0x004a460d:msvc-crt-main 0x004a4ea8:msvc-crt-main 0x004a9410:C2 0x004ac435:msvc-crt-main
+re/match/s17/004a583a.c	0x004a583a	0x004a333c:msvc-crt-main 0x004a34b0:C2 0x004a9410:C2 0x004ac45c:msvc-crt-main 0x004ac560:C2 0x004ac570:C2
+re/match/s17/004a5e35.c	0x004a5e35	0x004a5df5:C2
+re/match/s17/004a5f07.c	0x004a5f07	0x004ad351:msvc-crt-main
+re/match/s17/004a7800.c	0x004a7800	0x004a45fb:msvc-crt-main 0x004a460d:msvc-crt-main 0x004ae29f:msvc-crt-main
+re/match/s17/004a787f.c	0x004a787f	0x004a4b6e:msvc-crt-main
+re/match/s17/004a9744.c	0x004a9744	0x004a966f:msvc-crt-main
+re/match/s17/004aa23d.c	0x004aa23d	0x004a8828:msvc-crt-main
+re/match/s17/004ab8d6.c	0x004ab8d6	0x004a34b0:C2 0x004a9410:C2 0x004ac45c:msvc-crt-main 0x004ac560:C2 0x004ac570:C2
+re/match/s17/004abc53.c	0x004abc53	0x004a45fb:msvc-crt-main 0x004a460d:msvc-crt-main 0x004a9410:C2 0x004ac560:C2 0x004af2b6:msvc-crt-main
+re/match/s17/004abf28.c	0x004abf28	0x004a45fb:msvc-crt-main 0x004a460d:msvc-crt-main 0x004aaff0:C2
+re/match/s17/004ad1e0.c	0x004ad1e0	0x004a4b6e:msvc-crt-main
+re/match/s17/004aedcf.c	0x004aedcf	0x004b008f:msvc-crt-main 0x004b24f8:msvc-crt-main
+re/match/s17/004aefd0.c	0x004aed77 0x004aefd0	0x004aeda6:msvc-crt-main
+re/match/s17/004af2d4.c	0x004af2d4	0x004a92de:msvc-crt-main 0x004af400:msvc-crt-main
+re/match/s17/004af31a.c	0x004af31a	0x004af2d4:set-removed
+re/match/s18/004b3bb0.c	0x004b3bb0	0x004cbe80:set-removed
+re/match/s18/004b3bf0.c	0x004b3bf0	0x004e7420:renderware
+re/match/s18/004b3c60.c	0x004b3c60	0x004e99b0:renderware
+re/match/s18/004b3cc0.c	0x004b3cc0	0x00545260:renderware
+re/match/s18/004b3d20.c	0x004b3d20	0x004cf7d0:C2
+re/match/s18/004b3de0.c	0x004b3de0	0x0052daf0:renderware
+re/match/s18/004b3e40.c	0x004b3e40	0x004e7420:renderware
+re/match/s18/004b4000.c	0x004b4000	0x004b3fc0:msvc-crt-main
+re/match/s18/004b4010.c	0x004b4010	0x004b3f20:nohook 0x004e6760:renderware
+re/match/s18/004b4050.c	0x004b4050	0x004b3f90:msvc-crt-main
+re/match/s18/004b4080.c	0x004b4080	0x004b4070:nohook 0x004e89a0:renderware
+re/match/s18/004b40f0.c	0x004b40f0	0x004b4070:nohook 0x004e89a0:renderware
+re/match/s18/004b4120.c	0x004b4120	0x004b40f0:set-removed
+re/match/s18/004b4150.c	0x004b4150	0x005493d0:renderware 0x00549610:renderware 0x00549620:renderware
+re/match/s18/004b41b0.c	0x004b41b0	0x004b3f20:nohook 0x004e5c70:renderware
+re/match/s18/004b41f0.c	0x004b41f0	0x004b3f20:nohook 0x004e5c30:renderware
+re/match/s18/004b4230.c	0x004b4230	0x004b3f20:nohook 0x004e5bf0:renderware
+re/match/s18/004b4270.c	0x004b4270	0x004b4230:set-removed
+re/match/s18/004b4280.c	0x004b4280	0x004b3f20:nohook
+re/match/s18/004b44f0.c	0x004b44f0	0x00534870:renderware
+re/match/s18/004b4510.c	0x004b4510	0x00534870:renderware
+re/match/s18/004b47c0.c	0x004b47c0	0x0052e0e0:renderware
+re/match/s18/004b47e0.c	0x004b47e0	0x00532a60:renderware 0x00532b80:renderware
+re/match/s18/004b48e0.c	0x004b48e0	0x004c15c0:renderware 0x004c5a00:renderware
+re/match/s18/004b4a80.c	0x004b4a80	0x004b49b0:nohook 0x00538c80:renderware
+re/match/s18/004b4ad0.c	0x004b4ad0	0x004b4a80:set-removed
+re/match/s18/004b4b20.c	0x004b4b20	0x004b4a80:set-removed
+re/match/s18/004b4b60.c	0x004b4b60	0x004b4a80:set-removed
+re/match/s18/004b4c80.c	0x004b4c80	0x004b4bb0:nohook 0x00538c80:renderware
+re/match/s18/004b4cd0.c	0x004b4cd0	0x004b4c80:set-removed
+re/match/s18/004b4d10.c	0x004b4d10	0x004b4c80:set-removed
+re/match/s18/004b4e20.c	0x004b4e20	0x004b4d60:nohook 0x0053c5d0:renderware
+re/match/s18/004b4e70.c	0x004b4e70	0x004b4e20:set-removed
+re/match/s18/004b5030.c	0x004b5030	0x004b4eb0:nohook 0x004e5c70:renderware
+re/match/s18/004b5190.c	0x004b5190	0x00543d40:renderware 0x00543d70:renderware 0x00543df0:renderware
+re/match/s18/004b51d0.c	0x004b51d0	0x004b3fc0:msvc-crt-main
+re/match/s18/004b5320.c	0x004b5320	0x004b5300:nohook 0x004e66d0:C2
+re/match/s18/004b5360.c	0x004b5360	0x005507b0:renderware
+re/match/s18/004b5580.c	0x004b5580	0x004b5560:nohook 0x004e66d0:C2
+re/match/s18/004b59c0.c	0x004b59c0	0x004cd070:set-removed 0x004cd430:set-removed
+re/match/s18/004b60c0.c	0x004b60c0	0x004b5d90:C2
+re/match/s18/004b6540.c	0x004b6540	0x004b6640:C2
+re/match/s18/004b6570.c	0x004b6570	0x004b6940:set-removed
+re/match/s18/004b67e0.c	0x004b67e0	0x005c1d63:msvc-crt-tail
+re/match/s18/004b6940.c	0x004b6710 0x004b6940	0x004a34b0:C2 0x005507a0:renderware
+re/match/s18/004b7fd0.c	0x004b7fd0	0x004b7ff0:lua-4.0
+re/match/s18/004b8080.c	0x004b8080	0x004b7ff0:lua-4.0
+re/match/s19/004c07b0.c	0x004c07b0	0x004cc9e0:renderware
+re/match/s19/004c0830.c	0x004c0830	0x004cc9f0:renderware
+re/match/s19/004c1680.c	0x004c1680	0x004c4670:set-removed
+re/match/s19/004c1c10.c	0x004c1c10	0x004d8480:C3/standin-only
+re/match/s19/004c1cf0.c	0x004c1cf0	0x004c0790:renderware
+re/match/s19/004c2c90.c	0x004c2c90	0x004d8480:C3/standin-only
+re/match/s19/004c2d90.c	0x004c2d90	0x004d7de0:renderware
+re/match/s19/004c2de0.c	0x004c2de0	0x004c2c90:set-removed
+re/match/s19/004c2e10.c	0x004c2e10	0x004c2c90:set-removed
+re/match/s19/004c2e40.c	0x004c2e40	0x004c2c90:set-removed
+re/match/s19/004c2e70.c	0x004c2e70	0x004c2c90:set-removed
+re/match/s19/004c2ea0.c	0x004c2ea0	0x004c2c90:set-removed
+re/match/s19/004c2ed0.c	0x004c2ed0	0x004c2c90:set-removed
+re/match/s19/004c2f30.c	0x004c2f30	0x004c2c90:set-removed
+re/match/s19/004c3270.c	0x004c3270	0x004d7ca0:set-removed
+re/match/s19/004c35f0.c	0x004c35f0	0x004c3670:nohook 0x004c37d0:nohook
+re/match/s19/004c3c60.c	0x004c3c60	0x004d8480:C3/standin-only
+re/match/s19/004c40b0.c	0x004c40b0	0x004c40e0:nohook
+re/match/s19/004c4430.c	0x004c4430	0x004cc9f0:renderware
+re/match/s19/004c4470.c	0x004c4470	0x004c40e0:nohook 0x004cc9e0:renderware
+re/match/s19/004c4670.c	0x004c4670	0x004c4680:C2
+re/match/s19/004c5010.c	0x004c5010	0x004d8480:C3/standin-only
+re/match/s19/004c5ae0.c	0x004c5ae0	0x004d8480:C3/standin-only
+re/match/s19/004c5b50.c	0x004c5b50	0x004d8480:C3/standin-only
+re/match/s19/004c7730.c	0x004c7730	0x004d8c40:C3
+re/match/s20/004c7a60.c	0x004c7a60	0x004cfa00:set-removed
+re/match/s20/004c8e50.c	0x004c8e50	0x004c9290:nohook 0x004ca160:nohook 0x004cab30:nohook 0x004cac10:nohook 0x004cff20:C2 0x004d0290:C2 0x004d0520:nohook 0x004d05b0:nohook 0x004d0640:nohook 0x004d0fc0:nohook 0x004d0fe0:nohook 0x004d1000:zlib-1.1.3
+re/match/s20/004c9ad0.c	0x004c9ad0	0x004cc7f0:renderware 0x004ccc50:renderware 0x004ccde0:renderware 0x004d1d70:C2 0x004dc8e0:renderware 0x004e08b0:renderware
+re/match/s20/004cbd30.c	0x004cbd30	0x004d8480:C3/standin-only
+re/match/s20/004cbe80.c	0x004cbe80	0x004d8480:C3/standin-only
+re/match/s20/004cc160.c	0x004cc160	0x004d8480:C3/standin-only
+re/match/s20/004cc400.c	0x004cc400	0x004d8480:C3/standin-only
+re/match/s20/004cc580.c	0x004cc580	0x004cbe80:set-removed
+re/match/s20/004cc6e0.c	0x004cc6e0	0x004cbe80:set-removed
+re/match/s20/004cc770.c	0x004cc770	0x004cbe80:set-removed
+re/match/s20/004cc790.c	0x004cc790	0x004d8480:C3/standin-only
+re/match/s20/004cd070.c	0x004cd070	0x004d40d0:C2 0x004d8480:C3/standin-only
+re/match/s20/004cd170.c	0x004cd170	0x004d40d0:C2 0x004d8480:C3/standin-only
+re/match/s20/004cd2d0.c	0x004cd2d0	0x004d40d0:C2 0x004d8480:C3/standin-only
+re/match/s20/004cd430.c	0x004cd430	0x004d40d0:C2 0x004d8480:C3/standin-only 0x004e12b0:renderware 0x004e14a0:renderware
+re/match/s20/004ce2d0.c	0x004ce2d0	0x004d8480:C3/standin-only
+re/match/s20/004ce390.c	0x004ce390	0x004ce480:C2
+re/match/s20/004ce6c0.c	0x004ce6c0	0x004ce480:C2 0x004ce6f0:nohook
+re/match/s20/004ceba0.c	0x004ceba0	0x004d8480:C3/standin-only
+re/match/s20/004cefd0.c	0x004cefd0	0x004d8480:C3/standin-only
+re/match/s20/004cf430.c	0x004cf430	0x004e1ac0:renderware
+re/match/s20/004cf460.c	0x004cf460	0x004e1ce0:renderware
+re/match/s20/004cfa00.c	0x004cfa00	0x004c7690:renderware 0x004cfdd0:nohook 0x004cfdf0:nohook
+re/match/s20/004cfe20.c	0x004cfe20	0x004cc7f0:renderware
+re/match/s20/004cfe40.c	0x004cfe40	0x004cc9f0:renderware
+re/match/s20/004d1d20.c	0x004d1d20	0x004d1640:C2
+re/match/s20/004d2c80.c	0x004d2c80	0x004d8480:C3/standin-only 0x004ddcb0:renderware
+re/match/s20/004d2e30.c	0x004d2e30	0x004d8480:C3/standin-only
+re/match/s20/004d3d50.c	0x004d3d50	0x004cc9f0:renderware 0x004e1780:renderware
+re/match/s20/004d41e0.c	0x004d41e0	0x004d3e90:C2
+re/match/s21/004d7ca0.c	0x004d7ca0	0x004cc9f0:renderware 0x004cca80:nohook 0x004d7d70:nohook
+re/match/s21/004d8530.c	0x004d8530	0x004d3db0:renderware
+re/match/s21/004d8550.c	0x004d8550	0x004d3d50:set-removed
+re/match/s21/004d8570.c	0x004d8570	0x004a34b0:C2 0x004a3860:msvc-crt-main 0x004a3a90:msvc-crt-main 0x004a9410:C2 0x004ac560:C2 0x004ac570:C2 0x004af340:msvc-crt-main 0x005c2300:C2
+re/match/s21/004d87a0.c	0x004d87a0	0x004cbe80:set-removed
+re/match/s21/004d8b70.c	0x004d8b70	0x004d8eb0:set-removed
+re/match/s21/004d8eb0.c	0x004d8eb0	0x004e2ff0:renderware
+re/match/s21/004d9050.c	0x004d9050	0x004d94a0:C2
+re/match/s21/004daa40.c	0x004daa40	0x004cc7f0:renderware
+re/match/s21/004daaf0.c	0x004daaf0	0x004cc9f0:renderware
+re/match/s21/004db550.c	0x004db550	0x004cba80:C2
+re/match/s21/004ec130.c	0x004ec130	0x004cbb70:C3 0x004cbbd0:C2 0x004e6100:renderware
+re/match/s22/004f0800.c	0x004f0800	0x004f4470:set-removed
+re/match/s22/004f0810.c	0x004f0810	0x004f4340:renderware 0x004f43f0:renderware
+re/match/s22/004f0940.c	0x004f0940	0x004e1ac0:renderware
+re/match/s22/004f1f00.c	0x004f1f00	0x004e55d0:renderware
+re/match/s22/004f3ce0.c	0x004f3ce0	0x004e8400:renderware
+re/match/s22/004f42d0.c	0x004f42d0	0x004f4310:nohook 0x004f8580:C2
+re/match/s22/004f4470.c	0x004f4470	0x004cc9f0:renderware 0x004f8730:C2
+re/match/s22/004f4510.c	0x004f4510	0x004e4bd0:renderware 0x004f4540:nohook 0x004f4570:nohook 0x004f4660:nohook
+re/match/s22/004fb0e0.c	0x004fb0e0	0x004ed6ba:d3dx9-psgp 0x004ed903:d3dx9-psgp 0x004ed983:d3dx9-psgp
+re/match/s22/004fb4d0.c	0x004fb4d0	0x004ecf53:d3dx9-psgp
+re/match/s23/00516d20.c	0x00516d20	0x00520930:libpng
+re/match/s23/00516da0.c	0x00516da0	0x005207c0:libpng
+re/match/s23/005171a0.c	0x005171a0	0x00516de0:C2 0x00520930:libpng
+re/match/s23/00517940.c	0x00517940	0x00516d30:libpng-1.0.12 0x0051c9f0:libpng-1.0.12 0x00520960:libpng-1.0.12 0x00522ce0:C2 0x00523110:libpng-1.0.12 0x00523140:libpng-1.0.12 0x00523170:C2 0x00527ee0:C2 0x00528200:libpng-1.0.12 0x00528810:C2 0x00528ba0:libpng-1.0.12
+re/match/s23/00518080.c	0x00518080	0x00516de0:C2 0x00520870:libpng
+re/match/s23/00518140.c	0x00518140	0x00520930:libpng 0x00522b00:zlib-1.1.3
+re/match/s23/00519270.c	0x00519270	0x00515710:libpng-1.0.12 0x00515740:libpng-1.0.12 0x00515770:d3dx9-backward-extension 0x005157c0:libpng-1.0.12 0x005159d0:d3dx9-backward-extension 0x00519820:C2 0x00519af0:libpng-1.0.12 0x00519e30:libpng-1.0.12 0x0051a6c0:C2 0x0051b750:C2 0x0051bb40:C2 0x0051c100:libpng-1.0.12
+re/match/s23/0051ca90.c	0x0051ca90	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/0051d0f0.c	0x0051d0f0	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/0051d1b0.c	0x0051d1b0	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/0051d340.c	0x0051d340	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/0051d400.c	0x0051d400	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2 0x0051e7f0:C2 0x00520930:libpng
+re/match/s23/0051d560.c	0x0051d560	0x005208c0:libpng 0x00520930:libpng 0x00521520:C2
+re/match/s23/0051d800.c	0x0051d800	0x00516bb0:libpng-1.0.12 0x00516d50:C2 0x00520930:libpng 0x00521410:C2
+re/match/s23/0051d900.c	0x0051d900	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2 0x0051e7f0:C2 0x00520930:libpng
+re/match/s23/0051db30.c	0x0051db30	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/0051e230.c	0x0051e230	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2 0x0051ca60:libpng-1.0.12
+re/match/s23/0051e4a0.c	0x0051e4a0	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2 0x0051ca60:libpng-1.0.12
+re/match/s23/0051e6f0.c	0x0051e6f0	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/0051ed60.c	0x0051ed60	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/0051f240.c	0x0051f240	0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2
+re/match/s23/00520640.c	0x00520640	0x005150e0:libpng-1.0.12 0x00516bb0:libpng-1.0.12 0x00516d30:libpng-1.0.12 0x00516d50:C2 0x0051f4f0:C2 0x00521520:C2
+re/match/s23/00523640.c	0x00523640	0x00515fd0:d3dx9-backward-extension
+re/match/s23/00527c30.c	0x00527c30	0x00516a70:d3dx9-backward-extension 0x00516d50:C2 0x0051c9f0:libpng-1.0.12 0x005208c0:libpng 0x00520930:libpng
+re/match/s23/0052b750.c	0x0052b750	0x0052bf20:zlib-1.1.3
+re/match/s23/0052bf40.c	0x0052bf40	0x0052bff0:C2
+re/match/s23/0052d7e0.c	0x0052d7e0	0x004cbe80:set-removed
+re/match/s23/0052d980.c	0x0052d980	0x004d8480:C3/standin-only
+re/match/s23/00534920.c	0x00534920	0x00534950:nohook 0x00534990:nohook
+re/match/s24/00550390.c	0x00550390	0x00551510:renderware
+re/match/s24/00550430.c	0x00550430	0x00551510:renderware
+re/match/s24/005512d0.c	0x005512d0	0x00551410:renderware 0x00551460:renderware
+re/match/s24/00552a60.c	0x00552a60	0x00552b50:nohook
+re/match/s24/00552b60.c	0x00552b60	0x005540d0:renderware 0x00555360:C2 0x00556d20:renderware
+re/match/s24/00552b90.c	0x00552b90	0x00552a60:set-removed 0x00554050:set-removed 0x00555280:set-removed 0x00556ce0:set-removed 0x005571c0:set-removed 0x00557220:set-removed
+re/match/s24/00554050.c	0x00554050	0x004cc9f0:renderware 0x00553e80:renderware
+re/match/s24/00554150.c	0x00554150	0x00553e80:renderware
+re/match/s24/00555280.c	0x00555280	0x004cc9f0:renderware
+re/match/s24/00555830.c	0x00555830	0x00553e80:renderware
+re/match/s24/00555910.c	0x00555910	0x005507b0:renderware 0x00550a20:renderware 0x005551d0:renderware 0x00555af0:C2 0x00555ff0:C2 0x00556780:C2
+re/match/s24/00556ce0.c	0x00556ce0	0x004cc9f0:renderware
+re/match/s24/005571c0.c	0x005571c0	0x004cc9f0:renderware
+re/match/s24/00557220.c	0x00557220	0x004cc9f0:renderware
+re/match/s24/005572b0.c	0x005572b0	0x005572c0:C2
+re/match/s24/00558100.c	0x00558100	0x004e5f90:renderware 0x00557b70:nohook
+re/match/s25/005a5f00.c	0x005a5f00	0x005a5fd0:nohook 0x005a6010:nohook
+re/match/s25/005a6030.c	0x005a6030	0x005a6010:nohook
+re/match/s25/005a60b0.c	0x005a60b0	0x005a6ea0:C2 0x005a6f30:C2 0x005aab00:C2
+re/match/s25/005a60e0.c	0x005a60e0	0x005aab70:C2
+re/match/s25/005a6280.c	0x005a6280	0x005aa560:C2
+re/match/s25/005a65a0.c	0x005a65a0	0x005a9d00:C2
+re/match/s25/005a6670.c	0x005a6670	0x005a7520:set-removed
+re/match/s25/005a66d0.c	0x005a66d0	0x005a7520:set-removed
+re/match/s25/005a6710.c	0x005a6710	0x005a6df0:set-removed
+re/match/s25/005a6dc0.c	0x005a6dc0	0x005a6d60:C2
+re/match/s25/005a6df0.c	0x005a6df0	0x005a6d60:C2
+re/match/s25/005a73b0.c	0x005a73b0	0x005a6cb0:C2 0x005a71f0:C2
+re/match/s25/005a7460.c	0x005a7460	0x005a6dc0:set-removed 0x005a6df0:set-removed
+re/match/s25/005a7520.c	0x005a7520	0x005a75b0:C2
+re/match/s25/005a7560.c	0x005a7560	0x005a75b0:C2
+re/match/s25/005a7b00.c	0x005a7b00	0x005addd0:C3
+re/match/s25/005a7f70.c	0x005a7f70	0x005aa560:C2
+re/match/s25/005a89d0.c	0x005a89d0	0x005b0cf0:C3
+re/match/s25/005a8e70.c	0x005a8e70	0x005aa560:C2
+re/match/s25/005a9be0.c	0x005a9be0	0x005aa330:C2
+re/match/s25/005a9de0.c	0x005a9de0	0x005ad320:C2
+re/match/s25/005a9ff0.c	0x005a9ff0	0x005aa180:nohook
+re/match/s25/005aa8a0.c	0x005aa8a0	0x005aa8d0:nohook 0x005aaac0:C2
+re/match/s25/005aaa00.c	0x005aaa00	0x005a9f60:C2
+re/match/s25/005aabe0.c	0x005aabe0	0x005aac00:nohook
+re/match/s25/005aacf0.c	0x005aacf0	0x005aac20:C2
+re/match/s25/005ab150.c	0x005ab150	0x005ab180:set-removed
+re/match/s25/005ab180.c	0x005ab180	0x005ab620:C2
+re/match/s25/005ab190.c	0x005ab190	0x005ab560:C2
+re/match/s25/005ab2f0.c	0x005ab2f0	0x005ab100:nohook 0x005ab560:C2
+re/match/s25/005ab340.c	0x005ab340	0x005ab100:nohook 0x005ab560:C2
+re/match/s25/005ac900.c	0x005ac900	0x005ac930:nohook
+re/match/s26/005ad6f0.c	0x005ad6f0	0x005a61b0:C2
+re/match/s26/005ad730.c	0x005ad730	0x005a61b0:C2
+re/match/s26/005ad8d0.c	0x005ad8d0	0x005ad730:set-removed
+re/match/s26/005ad980.c	0x005ad980	0x005ad770:C2
+re/match/s26/005ada40.c	0x005ada40	0x005b35e0:C3
+re/match/s26/005adbe0.c	0x005adbe0	0x005b3620:C2
+re/match/s26/005add60.c	0x005add60	0x005adc10:C2
+re/match/s26/005aeaf0.c	0x005aeaf0	0x004a45fb:msvc-crt-main
+re/match/s26/005aeb30.c	0x005aeb30	0x005ad420:C2
+re/match/s26/005aef30.c	0x005aef30	0x005aef70:nohook
+re/match/s26/005aefc0.c	0x005aefc0	0x005af070:C2
+re/match/s26/005af010.c	0x005af010	0x005af510:set-removed
+re/match/s26/005af260.c	0x005af260	0x005af180:C2 0x005af230:C2 0x005af2a0:nohook
+re/match/s26/005af510.c	0x005af510	0x005af690:C2 0x005af7d0:C2 0x005af8f0:C2
+re/match/s26/005af600.c	0x005af600	0x005af180:C2 0x005af670:nohook
+re/match/s26/005af740.c	0x005af740	0x005af180:C2 0x005af780:nohook
+re/match/s26/005b0360.c	0x005b0360	0x005b03e0:C2
+re/match/s26/005b0970.c	0x005b0970	0x005aa560:C2 0x005b0a70:nohook
+re/match/s27/005b11f0.c	0x005b11f0	0x005b1240:nohook 0x005b1250:nohook
+re/match/s27/005b1500.c	0x005b1500	0x005ab150:set-removed
+re/match/s27/005b15d0.c	0x005b15d0	0x005b1500:set-removed
+re/match/s27/005b34f0.c	0x005b34f0	0x005ad420:C2
+re/match/s27/005b3b30.c	0x005b3b30	0x005b3a00:C2
+re/match/s27/005b3b60.c	0x005b3b60	0x005b3a00:C2
+re/match/s27/005b6760.c	0x005b6760	0x005b6b00:C3
+re/match/s27/005b73e0.c	0x005b73e0	0x005ad420:C2
+re/match/s27/005b7880.c	0x005b7880	0x005b7e20:set-removed
+re/match/s27/005b7b30.c	0x005b7b30	0x005b0f90:C3 0x005b29e0:C2
+re/match/s27/005b7e20.c	0x005b7e20	0x005b3300:C2
+re/match/s27/005b8570.c	0x005b8570	0x005aa560:C2
+re/match/s27/005b8be0.c	0x005b8be0	0x005aaa00:set-removed 0x005b9460:set-removed
+re/match/s27/005b9460.c	0x005b9460	0x005b92e0:C2 0x005bbf60:C2
+re/match/s27/005b9e30.c	0x005b9e30	0x005aa560:C2
+re/match/s27/005ba720.c	0x005ba720	0x005aabe0:set-removed 0x005bc860:set-removed
+re/match/s27/005ba760.c	0x005ba760	0x005aabe0:set-removed
+re/match/s27/005ba780.c	0x005ba780	0x005bb000:C2
+re/match/s27/005bb820.c	0x005bb820	0x005aba20:C2
+re/match/s27/005bbbb0.c	0x005bbbb0	0x005ad420:C2
+re/match/s27/005bc640.c	0x005bc640	0x005be160:set-removed
+re/match/s27/005bc800.c	0x005bc800	0x005ad420:C2
+re/match/s27/005bc860.c	0x005bc860	0x005ae250:C2
+re/match/s27/005bcc70.c	0x005bcc70	0x005bcd80:C2
+re/match/s28/005bdc70.c	0x005bdc70	0x005bdd00:nohook
+re/match/s28/005be0f0.c	0x005be0f0	0x005bf610:set-removed
+re/match/s28/005be160.c	0x005be160	0x005bf690:C4
+re/match/s28/005be1b0.c	0x005be1b0	0x005bf670:C2
+re/match/s28/005be450.c	0x005be450	0x005bcc70:set-removed 0x005bec10:set-removed
+re/match/s28/005be8c0.c	0x005be8c0	0x005bf610:set-removed
+re/match/s28/005beaa0.c	0x005beaa0	0x005be8c0:set-removed
+re/match/s28/005bec10.c	0x005bec10	0x005bf690:C4
+re/match/s28/005bef20.c	0x005bef20	0x005c2f0a:msvc-crt-tail
+re/match/s28/005bf000.c	0x005bf000	0x005c2f0a:msvc-crt-tail 0x005c2f58:msvc-crt-tail
+re/match/s28/005bf230.c	0x005bf230	0x005bc920:C2 0x005beae0:C2 0x005bfd10:C2 0x005c2f0a:msvc-crt-tail
+re/match/s28/005bf370.c	0x005bf370	0x005bcc70:set-removed 0x005bec10:set-removed
+re/match/s28/005bf610.c	0x005bf610	0x005bf670:C2
+re/match/s28/005bfe60.c	0x005bfe60	0x005bf670:C2 0x005c0e00:msvc-crt-tail
+re/match/s28/005c2025.c	0x005c2025	0x004a8828:msvc-crt-main 0x004ae5fa:msvc-crt-main 0x004af340:msvc-crt-main 0x004b319b:msvc-crt-main
+re/match/s28/005c21ba.c	0x005c21ba	0x005c3340:msvc-crt-tail
+re/match/s28/005c228e.c	0x005c228e	0x004a8828:msvc-crt-main
+re/match/s28/005c22bd.c	0x005c22bd	0x004a9410:C2 0x005c35d6:C2
+re/match/s28/005c27e6.c	0x005c27e6	0x004a9410:C2 0x004ac7f0:msvc-crt-main
+re/match/s28/005c31d0.c	0x005c31d0	0x004acc4b:msvc-crt-main 0x004b0609:msvc-crt-main
+re/match/s28/005c4640.c	0x005c4640	0x004e1ac0:renderware
+re/match/s28/005c4780.c	0x005c4780	0x004e1ac0:renderware
+re/match/s28/005c4bb0.c	0x005c4bb0	0x004d8480:C3/standin-only
+re/match/s28/005c6bb0.c	0x005c6bb0	0x005aa560:C2
+re/match/s28/005c7990.c	0x005c7990	0x005aa560:C2
+re/match/s28/005c7ee0.c	0x005c7ee0	0x005c98d0:C2 0x005c9d10:C2
+re/match/s28/005c7f80.c	0x005c7f80	0x005aaa00:set-removed
+re/match/s28/005c7fb0.c	0x005c7fb0	0x005bb000:C2
+re/match/s28/005c7fe0.c	0x005c7fe0	0x005aab00:C2
+re/match/s28/005c8980.c	0x005c8980	0x005aab00:C2
+re/match/s28/005c90a0.c	0x005c90a0	0x005c8910:C2
+re/match/s28/005c91f0.c	0x005c91f0	0x005aba20:C2
+re/match/s28/005c9680.c	0x005c9680	0x005ad420:C2
+re/match/s28/005c96e0.c	0x005c96e0	0x005ad420:C2
+re/match/s28/005c9740.c	0x005c9740	0x005c9770:C3
+re/match/top07/0040d270.c	0x0040d270	0x00407800:C2 0x004ccde0:renderware
+re/match/topm01/0040d110.c	0x0040d110	0x0040cea0:C2 0x00420420:C2

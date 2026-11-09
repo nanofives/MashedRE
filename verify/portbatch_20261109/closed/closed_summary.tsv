@@ -1,0 +1,24 @@
+subsystem	groups	closed_rows	reached_default_groups	reached_top_groups	default_set_rows	largest_default_group	largest_default_rows	clean_default_set_rows	clean_heads
+ai	31	39	11	11	16	ai-001	6	0	
+audio	157	229	0	0	0	-	0	0	
+boot	25	34	0	14	0	-	0	0	
+camera	3	3	0	0	0	-	0	0	
+debug-overlay	1	1	0	0	0	-	0	0	
+frontend	40	75	5	10	19	frontend-001	6	0	
+gameplay	116	170	14	19	25	gameplay-001	2	0	
+hud	22	47	6	9	23	hud-001	4	4	0x0041d870 0x0041e850
+input	5	18	0	1	0	-	0	0	
+particle	19	22	0	4	0	-	0	0	
+physics	1	1	0	0	0	-	0	0	
+powerups	3	4	2	2	3	powerups-001	3	0	
+render	260	357	5	24	16	render-001	2	0	
+save	6	12	0	0	0	-	0	0	
+sky	4	4	0	0	0	-	0	0	
+smplfzx	7	18	0	0	0	-	0	0	
+third-party-library[RenderWare-Physics-3.7]	75	100	0	0	0	-	0	0	
+track	5	5	0	0	0	-	0	0	
+unknown	6	7	0	0	0	-	0	0	
+util	94	120	9	13	14	util-001	6	0	
+vehicle	31	54	8	9	12	vehicle-001	5	1	0x00496900
+video	1	1	0	0	0	-	0	0	
+world-objects	1	1	0	0	0	-	0	0	
