@@ -53,6 +53,8 @@
 #ifndef MASHED_STANDALONE
 #include <windows.h>
 #include "../Core/HookSystem.h"
+#else
+#include "../Compat/PortStateSeed.h"
 #endif
 
 namespace {
@@ -64,6 +66,17 @@ unsigned char s_settings[0x200];
 void**        LogHandle()   { return &s_logHandle; }
 char*         FilenameBuf() { return s_filenameBuf; }
 void*         SettingsBuf() { return s_settings; }
+// PORT-SEED-OPTOUT (verify/portstate_20261109/RESULT_PORT-SEED-OPTOUT.md): the five .rdata strings the matched config
+// bodies read, as the original holds them (MASHED.exe.unpatched). Used only when the port-state seed is OFF
+// (MASHED_NO_PORTSTATE_SEED=1). With the seed ON (default) the bodies read the seeded original addresses.
+char s_cfgLoading[27] = "Loading video cfg from %s
+";   // 0x005d013c
+char s_cfgSaving[24]  = "Saving video cfg to %s
+";      // 0x005d0158
+char s_cfgFailed[9]   = "	FAILED
+";                     // 0x005cfe70
+char s_cfgModeRb[3]   = "rb";                             // 0x005cf010
+char s_cfgModeWb[3]   = "wb";                             // 0x005d00d8
 int      HostFputs(const char* s, void* f)                     { return std::fputs(s, static_cast<std::FILE*>(f)); }
 int      HostVsprintf(char* b, const char* f, va_list a)       { return std::vsprintf(b, f, a); }
 void*    HostFopen(const char* p, const char* m)               { return _fsopen(p, m, _SH_DENYNO); }
@@ -121,11 +134,25 @@ void* SettingsCfgGlobal(unsigned int a) {
     case 0x00772fbcu: return LogHandle();
     case 0x007731e8u: return FilenameBuf();
     case 0x00773208u: return SettingsBuf();
+    default: break;
+    }
     // PORT-STATE-02 (L-101): the five .rdata strings (0x005d013c, 0x005d0158, 0x005cfe70, 0x005cf010, 0x005d00d8)
     // fall through to their original addresses: the port-state seed (Compat/PortStateSeed.cpp, default ON) fills them.
-    // With MASHED_NO_PORTSTATE_SEED=1 they read empty and the first-run load ends the process (0xC0000409, an empty
-    // fopen mode), so that opt-out needs MASHED_VIDEOCFG_WRITE=0.
-    default: break;
+    // PORT-SEED-OPTOUT: with MASHED_NO_PORTSTATE_SEED=1 nothing fills them (zeros), and the first-run load passed an
+    // empty fopen mode from 0x005cf010 to UCRT _fsopen, whose invalid-parameter handler ended the process with
+    // 0xC0000409 (common_fsopen -> _invalid_parameter_noinfo, from ConfigLoad+0x20). The opt-out binds the bodies to
+    // the private copies above instead. The binding is made by the bodies' MGLOBALA dynamic initializers, before
+    // WinMain's PortStateSeed_Apply, so it follows the knob, not the apply result (a refused seed, FNV mismatch, is a
+    // build fault the seed --check lint stops).
+    if (!mashed_re::Compat::PortStateSeed_On()) {
+        switch (a) {
+        case 0x005d013cu: return s_cfgLoading;
+        case 0x005d0158u: return s_cfgSaving;
+        case 0x005cfe70u: return s_cfgFailed;
+        case 0x005cf010u: return s_cfgModeRb;
+        case 0x005d00d8u: return s_cfgModeWb;
+        default: break;
+        }
     }
 #endif
     return reinterpret_cast<void*>(static_cast<std::uintptr_t>(a));
