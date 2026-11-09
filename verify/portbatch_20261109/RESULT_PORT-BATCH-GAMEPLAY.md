@@ -59,6 +59,17 @@ the same data. Where the exe hand body is a stand-in, takes caller-supplied inpu
 swap would change what the exe computes and needs caller rewrites, which is a behaviour change, not a swap. Those rows
 are NOT-SAFE in the sense of MATCH-S11-FU-VEHBASE.
 
+Grouped by reason (added on orch/PORT-BATCH-FRONTEND at the lead's request; one reason per row, "not reached" rows
+carry their own blocker in brackets; the per-row detail follows):
+
+| reason | rows |
+|---|---|
+| swapped (5) | 0x00407b00 FUN_00407b00; 0x00407b70 FUN_00407b70; 0x00407d70 RangeTableCountGroup; 0x00407db0 RangeTableGroupOffset; 0x005c9d00 GetRaceEndTrigger |
+| stand-in (3) | 0x00451820 FUN_00451820; 0x0045bff0 Pred45bff0; 0x0045c110 FUN_0045c110 |
+| caller-supplied inputs (2) | 0x0040b890 FUN_0040b890; 0x0040b8e0 FUN_0040b8e0 |
+| port-side value (4) | 0x0041f360 GatedSwitch636ad0; 0x0046c7b0 VehicleSlotGetter; 0x0046cbb0 VehicleCarStateRead; 0x0046d4a0 PtrCompute881ec8 |
+| not reached (11) | 0x00409a80 FUN_00409a80 [none]; 0x0040ba60 Active4Slots40ba60 [CROSS]; 0x0040e4b0 Race::GetSoleFinishedPlayer [none]; 0x00414220 FUN_00414220 [none]; 0x00417750 FUN_00417750 [none]; 0x0042c1a0 StateAdvance2to3 [CROSS]; 0x0045cab0 SlotAliveState45cab0 [CROSS]; 0x0045d0e0 FUN_0045d0e0 [SEED]; 0x0045dff0 FUN_0045dff0 [none]; 0x0046be10 Write46be10 [none]; 0x00472550 Table691508Get [CROSS] |
+
 | rva | name | reason |
 |---|---|---|
 | 0x0046c7b0 | VehicleSlotGetter | VEHBASE (ledger MATCH-S11-FU-VEHBASE): rebased vehicle record |
