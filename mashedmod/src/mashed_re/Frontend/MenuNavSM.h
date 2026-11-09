@@ -155,7 +155,7 @@ bool           Nav_GameStateLoadSave(const unsigned char* data, unsigned len);
 void           Nav_GameStateSeedSpan(const unsigned char* span);
 // [PORT-COLOURSEL-ICON] MASHED_COLOURSEL_ICON (default OFF): the colour-select icon reads the original's choice 0x0067f0c0.
 bool           ColourSelIcon_On();
-// [PORT-COLOURSEL-BAR-Y] MASHED_COLOURSEL_BAR_Y (default OFF) and the cup flow: one colour-select row at record y 220.
+// [PORT-COLOURSEL-BAR-Y] default ON since L-110 (a), opt-out MASHED_NO_COLOURSEL_BAR_Y=1, and the cup flow: one colour-select row at record y 220.
 bool           ColourSelBarY_SingleRow();
 
 // --- public API ------------------------------------------------------------
