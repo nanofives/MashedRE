@@ -25,6 +25,10 @@ PAT = re.compile(r'MGLOBALA\(char,\s*(s_\w+),\s*(\w+),\s*(0x[0-9a-fA-F]+)\)')
 # MGLOBAL(char, DAT_005cd640, 0x005cd640) = "bigE"). Seeded up to and including its NUL, and only when the address
 # lies in a section that is not writable (a string constant, not a variable).
 PAT1 = re.compile(r'MGLOBAL\(char,\s*(\w+),\s*(0x[0-9a-fA-F]+)\)')
+# PORT-TOP-04G: a pointer-typed global whose ADDRESS the source passes as a string (re/match/s14/0048bbe0.c
+# MGLOBAL(void *, PTR_DAT_005cf4a8, 0x005cf4a8) passed as &PTR_DAT_005cf4a8 = "sun"). Same rule as PAT1 (read-only
+# section, up to and including the NUL), and only when "&<name>" appears in the source.
+PAT2 = re.compile(r'MGLOBAL\(void \*,\s*(\w+),\s*(0x[0-9a-fA-F]+)\)')
 IMAGE_SCN_MEM_WRITE = 0x80000000
 
 
@@ -38,7 +42,9 @@ def main(srcs):
     for s in srcs:
         for name, n, addr in PAT.findall(open(s, encoding='utf-8').read()):
             rows[int(addr, 16)] = (name, int(n, 0), os.path.basename(s))
-        for name, addr in PAT1.findall(open(s, encoding='utf-8').read()):
+        text = open(s, encoding='utf-8').read()
+        pairs = PAT1.findall(text) + [(n, a) for n, a in PAT2.findall(text) if re.search(r'&\s*' + n + r'\b', text)]
+        for name, addr in pairs:
             va = int(addr, 16)
             sec = next((x for x in pe.sections
                         if x.VirtualAddress <= va - base < x.VirtualAddress + x.Misc_VirtualSize), None)

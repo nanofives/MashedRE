@@ -642,6 +642,20 @@ int MashedRw_TexDictStreamRead_0054f8d0(int stream) {
     return ToInt(dict);
 }
 
+// [PORT-TOP-04G] RwTexDictionaryAddTexture rva 0x004c5bc0 (re/match/s19/004c5bc0.c): when the texture is in a
+// dictionary it is unlinked (rwLinkListRemoveLLLink on +lInDictionary), texture->dict = dict, and it is linked at the head
+// of dict->texturesInDict (rwLinkListAddLLLink inserts after the list head); returns the texture. librw:
+// rw::TexDictionary::addFront (inDict.remove when t->dict, t->dict = this, textures.add = head insert). 0x0040bbb0
+// calls it only when RwTextureRead("test") returned a texture.
+int MashedRw_TexDictionaryAddTexture_004c5bc0(int dict, int tex) {
+    rw::TexDictionary* const d = reinterpret_cast<rw::TexDictionary*>(static_cast<std::uintptr_t>(static_cast<unsigned>(dict)));
+    rw::Texture* const t = reinterpret_cast<rw::Texture*>(static_cast<std::uintptr_t>(static_cast<unsigned>(tex)));
+    if (d && t) d->addFront(t);
+    BindLog("RwTexDictionaryAddTexture(0x%08X, 0x%08X) -> rw::TexDictionary::addFront", static_cast<unsigned>(dict),
+            static_cast<unsigned>(tex));
+    return tex;
+}
+
 // [PORT-TOP-04F] RwTextureRead rva 0x004c5cb0 (re/match/s19/004c5cb0.c): the find callback (default 0x004c7490, the
 // current dictionary only, case-insensitive), a hit gets its count raised and is returned; else the read callback
 // (default 0x004c61b0, image files), and a read texture is linked into the current dictionary when there is one; a
@@ -717,7 +731,11 @@ int MashedRw_TextureRead_004c5cb0(const char* name, const char* mask) {
 namespace {
 struct MashedRwGlobals {
     std::uint8_t dev[0x34];          // +0x00..+0x33: copied from the B15 device (+0x18 / +0x20 / +0x30 used)
-    std::uint8_t pad34[0x108 - 0x34];
+    std::uint8_t pad34[0xcc - 0x34];
+    void* rwstrcpy;                  // +0xcc  [PORT-TOP-04G] strcpy(dst, src): re/match/s06/0042a470.c, 0042a6b0.c
+    void* padd0;                     // +0xd0
+    void* rwstrcat;                  // +0xd4  [PORT-TOP-04G] strcat(dst, src): re/match/s06/0042a470.c, 0042a6b0.c
+    std::uint8_t padd8[0x108 - 0xd8];
     void* rwmalloc;                  // +0x108
     void* rwfree;                    // +0x10c
     void* rwrealloc;                 // +0x110
@@ -727,7 +745,12 @@ struct MashedRwGlobals {
 static_assert(offsetof(MashedRwGlobals, rwmalloc) == 0x108, "RwGlobals malloc @ +0x108");
 static_assert(offsetof(MashedRwGlobals, rwfree) == 0x10c, "RwGlobals free @ +0x10c");
 static_assert(offsetof(MashedRwGlobals, rwrealloc) == 0x110, "RwGlobals realloc @ +0x110");
+static_assert(offsetof(MashedRwGlobals, rwstrcpy) == 0xcc, "RwGlobals strcpy @ +0xcc");
+static_assert(offsetof(MashedRwGlobals, rwstrcat) == 0xd4, "RwGlobals strcat @ +0xd4");
 MashedRwGlobals s_rwGlobals;
+
+char* __cdecl RwGlobalsStrcpy(char* d, const char* s) { return std::strcpy(d, s); }
+char* __cdecl RwGlobalsStrcat(char* d, const char* s) { return std::strcat(d, s); }
 
 void* __cdecl RwGlobalsMalloc(std::size_t n, unsigned hint) { return rw::Engine::memfuncs.rwmalloc(n, hint); }
 void __cdecl RwGlobalsFree(void* p) {
@@ -743,23 +766,33 @@ void* __cdecl RwGlobalsCalloc(std::size_t n, std::size_t sz, unsigned hint) {
 }  // namespace
 
 extern "C" {
-// Called once on the knob path after the hand init (PortTop_StandIn_00402750) has installed the B15 bridge. Returns 1
-// when 0x007d3ff8 now points at the record, 0 when there was no device to copy (bridge not installed).
+// Called on the knob path (Match/PortTop_00492370.cpp, Match/PortTop_00402750_Pieces.cpp). [PORT-TOP-04G] it runs three
+// times: before the matched 0x00402750 (0x007d3ff8 is 0 then: the record goes in with its Im2D fields zero, which no
+// body reads before piece 4 draws), after piece 4 (0x00403640, which installs the B15 bridge and so points 0x007d3ff8 at
+// the B15 device again: the device's fields are copied and the record goes back), and after 0x00402750 returns (the
+// record is already there: nothing changes). The matched loaders between these points call the string functions at
+// +0xcc / +0xd4 (0x0042a6b0 inside 0x0040bbb0, which runs before piece 4). Returns 1.
 int MashedRw_InstallRwGlobals(void) {
     void** const slot = reinterpret_cast<void**>(static_cast<std::uintptr_t>(0x007d3ff8u));
     void* const dev = *slot;
-    if (!dev) {
-        BindLog("RwGlobals: 0x007d3ff8 is 0 (no B15 device), record not installed");
-        return 0;
+    if (dev == static_cast<void*>(&s_rwGlobals)) {
+        BindLog("RwGlobals: 0x007d3ff8 already points at the record %p", static_cast<void*>(&s_rwGlobals));
+        return 1;
     }
-    std::memcpy(s_rwGlobals.dev, dev, sizeof(s_rwGlobals.dev));
+    if (dev) std::memcpy(s_rwGlobals.dev, dev, sizeof(s_rwGlobals.dev));
+    s_rwGlobals.rwstrcpy = reinterpret_cast<void*>(&RwGlobalsStrcpy);
+    s_rwGlobals.rwstrcat = reinterpret_cast<void*>(&RwGlobalsStrcat);
     s_rwGlobals.rwmalloc = reinterpret_cast<void*>(&RwGlobalsMalloc);
     s_rwGlobals.rwfree = reinterpret_cast<void*>(&RwGlobalsFree);
     s_rwGlobals.rwrealloc = reinterpret_cast<void*>(&RwGlobalsRealloc);
     s_rwGlobals.rwcalloc = reinterpret_cast<void*>(&RwGlobalsCalloc);
     *slot = &s_rwGlobals;
-    BindLog("RwGlobals: 0x007d3ff8 %p (B15 device) -> record %p; Im2D +0x18/+0x20/+0x30 copied, memory functions at "
-            "+0x108..+0x114 on librw", dev, static_cast<void*>(&s_rwGlobals));
+    if (dev)
+        BindLog("RwGlobals: 0x007d3ff8 %p (B15 device) -> record %p; Im2D +0x18/+0x20/+0x30 copied, strcpy / strcat at "
+                "+0xcc / +0xd4, memory functions at +0x108..+0x114 on librw", dev, static_cast<void*>(&s_rwGlobals));
+    else
+        BindLog("RwGlobals: 0x007d3ff8 is 0 (no B15 device yet) -> record %p with Im2D fields zero; strcpy / strcat at "
+                "+0xcc / +0xd4, memory functions at +0x108..+0x114 on librw", static_cast<void*>(&s_rwGlobals));
     return 1;
 }
 }  // extern "C"
