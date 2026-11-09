@@ -64,11 +64,6 @@ unsigned char s_settings[0x200];
 void**        LogHandle()   { return &s_logHandle; }
 char*         FilenameBuf() { return s_filenameBuf; }
 void*         SettingsBuf() { return s_settings; }
-const char*   kFmtLoading = "Loading video cfg from %s\n";   // 0x005d013c
-const char*   kFmtSaving  = "Saving video cfg to %s\n";      // 0x005d0158
-const char*   kFailed     = "\tFAILED\n";                    // 0x005cfe70
-const char*   kModeRead   = "rb";                            // 0x005cf010
-const char*   kModeWrite  = "wb";                            // 0x005d00d8
 int      HostFputs(const char* s, void* f)                     { return std::fputs(s, static_cast<std::FILE*>(f)); }
 int      HostVsprintf(char* b, const char* f, va_list a)       { return std::vsprintf(b, f, a); }
 void*    HostFopen(const char* p, const char* m)               { return _fsopen(p, m, _SH_DENYNO); }
@@ -126,11 +121,10 @@ void* SettingsCfgGlobal(unsigned int a) {
     case 0x00772fbcu: return LogHandle();
     case 0x007731e8u: return FilenameBuf();
     case 0x00773208u: return SettingsBuf();
-    case 0x005d013cu: return const_cast<char*>(kFmtLoading);
-    case 0x005d0158u: return const_cast<char*>(kFmtSaving);
-    case 0x005cfe70u: return const_cast<char*>(kFailed);
-    case 0x005cf010u: return const_cast<char*>(kModeRead);
-    case 0x005d00d8u: return const_cast<char*>(kModeWrite);
+    // PORT-STATE-02 (L-101): the five .rdata strings (0x005d013c, 0x005d0158, 0x005cfe70, 0x005cf010, 0x005d00d8)
+    // fall through to their original addresses: the port-state seed (Compat/PortStateSeed.cpp, default ON) fills them.
+    // With MASHED_NO_PORTSTATE_SEED=1 they read empty and the first-run load ends the process (0xC0000409, an empty
+    // fopen mode), so that opt-out needs MASHED_VIDEOCFG_WRITE=0.
     default: break;
     }
 #endif

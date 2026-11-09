@@ -1,0 +1,82 @@
+diff --git a/mashedmod/exe_sources.rsp b/mashedmod/exe_sources.rsp
+index a1a934f65..bda3c4dc1 100644
+--- a/mashedmod/exe_sources.rsp
++++ b/mashedmod/exe_sources.rsp
+@@ -158,6 +158,7 @@
+ "D3d9Render\MenuStringTable.cpp"
+ "Compat\StandaloneRvaThunks.cpp"
+ "Compat\PortStateSeed.cpp"
++"Match\MatchS16_00498950_exp.cpp"
+ "Stubs\HookSystemNoOp.cpp"
+ "Frontend\MenuInit.cpp"
+ "Frontend\MenuButtonDetect.cpp"
+diff --git a/mashedmod/src/mashed_re/Match/MatchS16_00498950_exp.cpp b/mashedmod/src/mashed_re/Match/MatchS16_00498950_exp.cpp
+new file mode 100644
+index 000000000..22ea5fdad
+--- /dev/null
++++ b/mashedmod/src/mashed_re/Match/MatchS16_00498950_exp.cpp
+@@ -0,0 +1,17 @@
++// PORT-STATE-02 EXPERIMENT E (not merged; kept as verify/portstate_20261108/E_matched_videocfg.patch): the exe runs the
++// byte-matched re/match/s16/00498950.c (MATCH-S16, 100%) for 0x00498910 / 0x00498950 / 0x004989b0 in place of the hand
++// bodies in Save/SettingsConfig.cpp. Its .rdata reads (0x005cf010 "rb", 0x005d00d8 "wb", 0x005d013c, 0x005d0158,
++// 0x005cfe70) are what MASHED_PORTSTATE_SEED supplies. Callees bind to exe thunks in Save/SettingsConfig.cpp.
++#define MATCH_PORT 1
++#define FUN_00498910 MatchVcfgFilenameGet
++#define FUN_00498950 MatchVcfgLoad
++#define FUN_004989b0 MatchVcfgSave
++#define FUN_004963e0 MatchVcfgLogError
++#define FUN_00496400 MatchVcfgLogDebug
++#define FUN_004a4541 MatchVcfgFopen
++#define FUN_004a49cf MatchVcfgFread
++#define FUN_004a4b22 MatchVcfgFwrite
++#define FUN_004a4368 MatchVcfgFclose
++extern "C" {
++#include "../../../../re/match/s16/00498950.c"
++}
+diff --git a/mashedmod/src/mashed_re/Save/SettingsConfig.cpp b/mashedmod/src/mashed_re/Save/SettingsConfig.cpp
+index 5ceaa02c4..1f3d8efcc 100644
+--- a/mashedmod/src/mashed_re/Save/SettingsConfig.cpp
++++ b/mashedmod/src/mashed_re/Save/SettingsConfig.cpp
+@@ -48,8 +48,8 @@ void*         s_logHandle = nullptr;
+ char          s_filenameBuf[16];
+ unsigned char s_settings[0x200];
+ void**        LogHandle()   { return &s_logHandle; }
+-char*         FilenameBuf() { return s_filenameBuf; }
+-void*         SettingsBuf() { return s_settings; }
++char*         FilenameBuf() { return reinterpret_cast<char*>(0x007731e8u); }   // EXPERIMENT E: the matched body's buffers
++void*         SettingsBuf() { return reinterpret_cast<void*>(0x00773208u); }
+ const char*   kFilename   = "videocfg.bin";                 // 0x005d012c
+ const char*   kFmtLoading = "Loading video cfg from %s\n";   // 0x005d013c
+ const char*   kFmtSaving  = "Saving video cfg to %s\n";      // 0x005d0158
+@@ -116,6 +116,7 @@ void ConfigLogDebugCore(const char* fmt, ...)
+     va_end(ap);
+ }
+ 
++#ifndef MASHED_STANDALONE   // EXPERIMENT E: the exe takes the matched bodies (Match/MatchS16_00498950_exp.cpp)
+ // 0x00498910
+ char* ConfigFilenameGetCore()
+ {
+@@ -153,6 +154,23 @@ int ConfigSaveCore()
+     HostFclose(f);                                                // 0x004989e9..0x004989ea
+     return 1;
+ }
++#else
++struct FILE_;
++extern "C" char* MatchVcfgFilenameGet(void);
++extern "C" int   MatchVcfgLoad(void);
++extern "C" int   MatchVcfgSave(void);
++extern "C" void MatchVcfgLogError(const char* fmt, ...) { ConfigLogErrorCore(fmt); }
++extern "C" void MatchVcfgLogDebug(const char* fmt, ...) {
++    va_list ap; va_start(ap, fmt); ConfigLogDebugCoreV(fmt, ap); va_end(ap);
++}
++extern "C" FILE_* MatchVcfgFopen(const char* n, const char* m) { return static_cast<FILE_*>(HostFopen(n, m)); }
++extern "C" unsigned MatchVcfgFread(void* b, unsigned s, unsigned n, FILE_* f) { return HostFread(b, s, n, f); }
++extern "C" unsigned MatchVcfgFwrite(const void* b, unsigned s, unsigned n, FILE_* f) { return HostFwrite(b, s, n, f); }
++extern "C" int MatchVcfgFclose(FILE_* f) { return HostFclose(f); }
++char* ConfigFilenameGetCore() { return MatchVcfgFilenameGet(); }
++int   ConfigLoadCore()        { return MatchVcfgLoad(); }
++int   ConfigSaveCore()        { return MatchVcfgSave(); }
++#endif
+ 
+ #ifdef MASHED_STANDALONE
+ // The exe's private 0x200-byte buffer (0x00773208 in the original), filled by Boot/VideoCfgFirstRun.cpp's port of

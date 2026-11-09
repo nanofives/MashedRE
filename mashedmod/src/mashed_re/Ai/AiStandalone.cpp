@@ -115,6 +115,7 @@ extern "C" void __cdecl CarSlotStateSet(int, std::uint32_t);
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   // 0x0046c7b0 (u9747 countdown poke)
 // FUN_00417180: the one body, Ai/AiBankSwitch.cpp (same reason for global scope).
 extern "C" void __cdecl AiBankSwitch(int);
+extern "C" long double __cdecl Float61313cGet();   // Match/MatchS11_0046dd80.cpp (0x0046dd80 matched)
 extern "C" unsigned int GetAiLapCounter(int);   // Match/MatchS01_00407a20.cpp (0x00407a20 matched)
 // FUN_00417640: the one body, Ai/AiPostStepBrake.cpp.
 extern "C" void __cdecl AiPostStepPowerupBrake(int, std::uint8_t*);
@@ -1631,7 +1632,7 @@ std::uintptr_t SelectSpline(int v)
 // open stub, see re/analysis/D3_AI_TICK_WIRING_2026-09-14.md.
 inline void CarSlotStateSet(int v, std::int32_t state)
 {
-    ::CarSlotStateSet(v, static_cast<std::uint32_t>(state));   // Ai/CarSlotState.cpp, null-base guard inside
+    ::CarSlotStateSet(v, static_cast<std::uint32_t>(state));   // Match/MatchS02_0040e480.cpp (matched; the seed makes 0x005f2770 non-null)
 }
 
 // FUN_0046dd80/0046dd90 getter/setter pair used by AiPreTickRubberBand: reads
@@ -1640,7 +1641,7 @@ inline void CarSlotStateSet(int v, std::int32_t state)
 // for v=0; Vehicle/VehicleStruct.h's `Vc::off::kGearTorque1`, WS-A1). Kept as
 // local direct-address helpers (not a Host callback) since both addresses are
 // fixed .data locations, consistent with this file's existing convention.
-inline float GearConstGet()               { return F32(0x0061313cu); }
+inline float GearConstGet()               { return static_cast<float>(Float61313cGet()); }   // FUN_0046dd80, Match/MatchS11_0046dd80.cpp (PORT-STATE-02)
 inline void  GearConstSet(int v, float f) { F32(0x008815a0u + static_cast<std::uintptr_t>(v) * 0xd04u + 0x154u) = f; }
 
 // x87 ST0 round-to-int approximation (project convention for STANDALONE ports:
