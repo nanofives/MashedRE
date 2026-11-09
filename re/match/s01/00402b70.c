@@ -1,5 +1,7 @@
 // FLAGS: /O2 /GS /Ob1
-/* a2 0x00402b70 (960 B). Best: 99.4%.
+/* a2 0x00402b70 (960 B). Best: 99.4%. MATCH-NEARMISS-2-pilot 2026-11-09: index-form join loop
+   `strcat(out, dirs[i])` (no stepping pointer) -> whole symbol 963 B BYTE-IDENTICAL; the 345/344 insn count is
+   pc_funcs body_size 960 vs contiguous 963 (final epilogue jmp). History below is the pre-pilot state.
    Path normaliser (dirs split on \ or /, 8.3 checks, PS2/XBOX/PLATFORM -> PC, upper-case, join).
    g2s did not compile. Written from the disassembly with intrinsic strcpy/strcat/strlen/strcmp
    (strcmp against a literal becomes repe cmpsb), `char path[50] = ""` and `char tmp[128] = ""`
@@ -67,11 +69,9 @@ char *FUN_00402b70(char *out, char *in)
       sprintf(dirs[i], "%s", "PC");
   }
   sprintf(out, "");
-  p = dirs[0];
   for (i = 0; i < ndirs; i++) {
-    strcat(out, p);
+    strcat(out, dirs[i]);
     strcat(out, sep);
-    p += 9;
   }
   _strupr(name);
   _strupr(ext);
