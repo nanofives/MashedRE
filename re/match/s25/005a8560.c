@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-NEARMISS-2-pilot 2026-11-09: 100% BYTE-IDENTICAL by hand, same rewrite as 0x005a8390: RW list-link insert order (link->next = list.next through param_1+0x14, link->prev = &list through param_1+0x18, list.next->prev = link, list.next = link) with DAT_007dcad8 typed as a {next, prev} link. The older note below describes the pre-pilot residual. */
 /* best 98.4% (regs 98.4%, ops 100.0%) via match_permute (store of &DAT_007dcad8 moved ahead of the piVar2 load). Residual: position of the
    list-head load (original loads it before the +0x18 store). Same list-link residual as 0x005a8390. Class (b). */
 /* MATCH-S25 0x005a8560: hand-matched (h1). */
@@ -26,7 +27,8 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 
 MGLOBAL(void *, DAT_007dcae0, 0x007dcae0);
-MGLOBAL(int *, DAT_007dcad8, 0x007dcad8);
+typedef struct LL { struct LL *next; struct LL *prev; } LL;
+MGLOBAL(LL, DAT_007dcad8, 0x007dcad8);
 __declspec(dllimport) unsigned long __stdcall WaitForSingleObject(void *hHandle, unsigned long dwMilliseconds);
 __declspec(dllimport) int __stdcall ReleaseSemaphore(void *hSemaphore, long lReleaseCount, long *lpPreviousCount);
 undefined4 FUN_005af010(int p0);
@@ -39,7 +41,6 @@ void FUN_005a8640(void);
 int FUN_005a8560(int param_1)
 {
   int *piVar1;
-  int *piVar2;
   int iVar3;
   FUN_005af010(param_1 + 0xec);
   if (((*(byte *)(param_1 + 0xd9c) & 1) != 0) && (*(int *)(param_1 + 0xf4) >= 5)) {
@@ -57,11 +58,10 @@ int FUN_005a8560(int param_1)
       *(undefined4 *)(param_1 + 0x18) = 0;
       *piVar1 = 0;
     }
-    *(int **)(param_1 + 0x18) = (int *)&DAT_007dcad8;
-    piVar2 = DAT_007dcad8;
-    *piVar1 = (int)piVar2;
-    DAT_007dcad8[1] = (int)piVar1;
-    DAT_007dcad8 = piVar1;
+    *(LL **)(param_1 + 0x14) = DAT_007dcad8.next;
+    *(LL **)(param_1 + 0x18) = &DAT_007dcad8;
+    DAT_007dcad8.next->prev = (LL *)piVar1;
+    DAT_007dcad8.next = (LL *)piVar1;
     *(uint *)(param_1 + 0xd9c) = *(uint *)(param_1 + 0xd9c) & 0xfffffffe;
     ReleaseSemaphore(DAT_007dcae0,1,(long *)0x0);
   }

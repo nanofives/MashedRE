@@ -102,6 +102,15 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-09  0x005a8390  FUN_005a8390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8390.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x005a8560  FUN_005a8560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8560.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x005ab560  FUN_005ab560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005ab560.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x005ac7e0  FUN_005ac7e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005ac7e0.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x004e4450  RwFrameAddChild  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl02/004e4450.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x005a7ee0  FUN_005a7ee0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a7ee0.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x00402b70  FUN_00402b70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s01/00402b70.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x005b0df0  FUN_005b0df0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005b0df0.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
+2026-11-09  0x005af070  FUN_005af070  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005af070.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
 2026-11-08  0x004325c0  FUN_004325c0  C4->C4  file column only: Frontend/MenuAnimTickTwin.cpp (deleted) -> Match/MatchS08_004325c0.cpp (L-100 (a): matched source is the one body in both targets). re/match/s08/004325c0.c gained a MATCH_PORT guard around its static callee 0x0042ac50 (DDK text unchanged): match.py --bytes BYTE-IDENTICAL 564 B, 152/152 ins, relocheck OK checked=24 (unchecked __ftol, as before); src sha256 now 5c4b5ab1d8e19e54 (was 95490871ca55ac22); evidence: verify/portstate_20261108/RESULT_PORT-STATE-03.md
 2026-11-08  0x00430830  SplitScreenTrackAssignment  C4->C4  file column only: Frontend/MenuScoreSort.cpp -> Match/MatchS07_00430830.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
 2026-11-08  0x004309b0  FrontendModeIndex  C4->C4  file column only: Frontend/FrontendMode.cpp (deleted) -> Match/MatchS07_004309b0.cpp (PORT-STATE-01 made the matched source the one body in both targets); evidence: verify/portstate_20261108/RESULT_PORT-STATE-01.md
