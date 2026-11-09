@@ -7,7 +7,7 @@
 
 #define MATCH_PORT 1
 #define FUN_00496ce0 Orig_00496ce0
-#define FUN_004d41e0 PortTop_StandIn04C_004d41e0   // stand-in: RW-range, matched s20; no binding yet
+#define FUN_004d41e0 MashedRw_Destroy4d41e0_004d41e0   // RW shim, LibRw/RwApiBind.cpp (PORT-TOP-04E)
 extern "C" {
 #include "../../../../re/match/s16/00496ce0.c"
 }

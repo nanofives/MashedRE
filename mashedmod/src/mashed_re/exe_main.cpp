@@ -9657,7 +9657,16 @@ static bool HandTop_InitDevice(HINSTANCE hInstance, int* rc) {
 }
 
 // stand-in for 0x00402750 (AppInitialiseOnBootup): data wedge, boot chain, input, audio, movies, frontend.
-static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
+// [PORT-TOP-04E] HandTop_InitRest is split into five pieces at the call points of AppInitialiseOnBootup, so the
+// matched body (Match/PortTop_00402750.cpp, MASHED_ORIG_TOP=1 only) calls each piece where the original calls the
+// callee doing that job. The default path runs the five in the same order as before (HandTop_InitRest below).
+//   piece 1 HandTop_InitDataInput      at 0x00496e40 PCVS_Init (0x004027c4)
+//   piece 2 HandTop_InitMovies         at 0x00495350 HardwareShowIntroVideo (0x00402838)
+//   piece 3 HandTop_InitAudio          at 0x004669b0 sound engine init hub
+//   piece 4 HandTop_InitRasters        at 0x00403640 BackBuffRasterOpen wrapper ("Calling BackBuffRasterOpen")
+//   piece 5 HandTop_InitFrontendAssets at 0x00428390 FrontendStateSet(3)
+// Piece 1: data wedge, boot chain, DirectInput keyboard.
+static void HandTop_InitDataInput(HINSTANCE hInstance) {
     // B7 (deferred to post-InitD3D9): wedge over whatever low-address
     // granules d3d9 didn't claim. Then verify + run boot chain.
     (void)MapMashedDataSection();
@@ -9667,7 +9676,10 @@ static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
     // B11: DirectInput8 keyboard. Failure is non-fatal — render loop still
     // works; the window title just won't reflect key state.
     (void)InitDirectInput(hInstance);
+}
 
+// Piece 2: the dsound.dll guard and the boot movies. false (rc = 5) when System32's dsound.dll does not load.
+static bool HandTop_InitMovies(HINSTANCE hInstance, int* rc) {
     // D5-SHIM-GUARD-DSOUND: dsound.dll from System32 only, before its first user.
     // DSOUND.dll is no longer a static import (Audio::Init resolves
     // DirectSoundCreate8 with GetProcAddress), and the movie graphs below
@@ -9684,7 +9696,11 @@ static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
     // [D5-INTROMOVIES] boot movies (FUN_00402750 0x00402838 / 0x0040283f), before
     // the menu music starts. Always (L-63; the MASHED_INTRO_MOVIES knob was deleted by D5-KNOBS-E5-REST).
     RunBootIntroMovies();
+    return true;
+}
 
+// Piece 3: the exe audio backend, the permanent SFX bank and the menu music.
+static void HandTop_InitAudio() {
     // Real audio backend (DirectSound). Non-fatal: if no audio device is
     // present, RaceSession's ambience becomes a logged no-op.
     (void)mashed_re::Audio::Init(g_hwnd);
@@ -9697,7 +9713,10 @@ static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
     // music-state controller switches this to the cdaudio race track on the
     // Race state edge and back to menu on exit.
     mashed_re::Audio::MusicSetState(mashed_re::Audio::MusicState::Menu);
+}
 
+// Piece 4: the wedge probe, the texture upload, the B15 Im2D bridge and the B16 RVA thunks.
+static void HandTop_InitRasters() {
     // B14: one-time wedge probe — write a test byte to MASHED's input
     // active byte (0x007f1044) and read it back. If the wedge has the
     // 0x007f0000 granule committed, the readback will match; otherwise
@@ -9796,7 +9815,10 @@ static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
             std::fclose(log);
         }
     }
+}
 
+// Piece 5: the frontend assets (B19), settings, save restore, nav init, fonts, string table, the B17 summary line.
+static void HandTop_InitFrontendAssets() {
     // B19a: load the real menu background + logo PNGs (Perm.piz/BACKGROUND.PNG,
     // Font36.piz/MASHEDLOGO.PNG) via WIC, upload them, and register them with the
     // bridge. Failure is non-fatal (the chrome + title quad still render). Needs
@@ -10308,6 +10330,15 @@ static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
     // All synchronous frontend asset loads above are complete — the boot
     // loading screen may auto-advance once its min dwell elapses.
     g_assets_loaded = true;
+}
+
+// stand-in for 0x00402750 (AppInitialiseOnBootup) on the default path: the five pieces in order.
+static bool HandTop_InitRest(HINSTANCE hInstance, int* rc) {
+    HandTop_InitDataInput(hInstance);
+    if (!HandTop_InitMovies(hInstance, rc)) return false;
+    HandTop_InitAudio();
+    HandTop_InitRasters();
+    HandTop_InitFrontendAssets();
     return true;
 }
 
@@ -10391,6 +10422,12 @@ void PortTop_HandPrelude() { HandTop_Prelude(); }
 // device init is now the matched SubsystemInit 0x00492270 with RW on librw (PortTop_HandCreateDevice below).
 void PortTop_HandPlaceWindow() { PlaceDevWindow(g_hwnd); }
 int  PortTop_HandInitRest(HINSTANCE h) { int rc = 0; return HandTop_InitRest(h, &rc) ? 1 : 0; }
+// [PORT-TOP-04E] the five pieces of HandTop_InitRest, called by the matched 0x00402750 (Match/PortTop_00402750.cpp).
+void PortTop_HandInit_DataInput(HINSTANCE h) { HandTop_InitDataInput(h); }
+int  PortTop_HandInit_Movies(HINSTANCE h) { int rc = 0; return HandTop_InitMovies(h, &rc) ? 1 : 0; }
+void PortTop_HandInit_Audio() { HandTop_InitAudio(); }
+void PortTop_HandInit_Rasters() { HandTop_InitRasters(); }
+void PortTop_HandInit_FrontendAssets() { HandTop_InitFrontendAssets(); }
 void PortTop_HandPollKeyboard() { PollKeyboard(); }
 void PortTop_HandFrameUpdate() { if (HandTop_FrameDetTick()) HandTop_FrameUpdate(); }
 int  PortTop_HandRenderFrame() { if (!RenderFrame()) { PostQuitMessage(0); return 0; } return 1; }
