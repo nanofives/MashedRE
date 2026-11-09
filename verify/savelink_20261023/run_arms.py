@@ -520,6 +520,10 @@ STACK['DEFLCW'] = ['MASHED_LOG_CW']
 STACK['X24NCC'] = _X24 + ['MASHED_NO_CC_PC24=1']; STACK['X24MM'] = _X24 + ['MASHED_MATMUL_PC24=1']
 STACK['X24PK'] = _X24 + ['MASHED_X87_PC24_PK53=1']; STACK['X24NCL'] = _X24 + ['MASHED_NO_COLL_LUT=1']
 STACK['X24NL1'] = _X24 + ['MASHED_NO_LEAVES1_X87=1']
+# the same knobs with MASHED_X87_PC24 OFF (controls: does the knob move G-CTRL / B at all?)
+STACK['NCC0'] = ['MASHED_NO_CC_PC24=1']; STACK['MM0'] = ['MASHED_MATMUL_PC24=1']
+STACK['NCL0'] = ['MASHED_NO_COLL_LUT=1']; STACK['NL10'] = ['MASHED_NO_LEAVES1_X87=1']
+STACK['NCC0H'] = STACK['NCC0'] + STACK['DEFH']; STACK['X24NCCH'] = STACK['X24NCC'] + STACK['DEFH']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

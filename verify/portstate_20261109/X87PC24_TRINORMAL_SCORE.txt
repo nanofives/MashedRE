@@ -1,0 +1,3 @@
+EDX=p1,ECX=p2 calls 452 {'O24=off': 0, 'O24=on': 0, 'O53=off': 0, 'O53=on': 0, 'nowrite': 0}
+EDX=p2,ECX=p1 calls 452 {'O24=off': 372, 'O24=on': 452, 'O53=off': 205, 'O53=on': 173, 'nowrite': 0}
+assignment used (max O53=off + O24=on): EDX=p2,ECX=p1
