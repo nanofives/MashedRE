@@ -213,6 +213,22 @@ static void** const g_DAT_00771960 =
 // Re-pickup condition: all 5 C1 callees promoted to C2+.
 // ---------------------------------------------------------------------------
 
+#ifdef MASHED_STANDALONE
+// [PORT-TOP-04D] exe: the body is the byte-matched source re/match/topm01/004924f0.c (464 B, relocheck OK), reached only
+// from the matched WinMain 0x00492370 on the MASHED_ORIG_TOP path (Match/PortTop_00492370.cpp). Callees bind by name to
+// their exe bodies; no raw-address call. The .asi keeps the passthrough below.
+#define MATCH_PORT 1
+#define FUN_004924f0 DataZeroFill
+#define FUN_00431ae0 DefaultParam_SetField04   // exe body, Match/MatchS07_00431ae0.cpp
+#define FUN_00431af0 DefaultParam_SetField08   // exe body, Match/MatchS07_00431af0.cpp
+#define FUN_00431b00 DefaultParam_SetField00   // exe body, Match/MatchS07_00431b00.cpp
+#define FUN_00431b10 BootParamSet2             // matched, Match/MatchS07_00431b10.cpp (exe since PORT-TOP-04D)
+#define FUN_00431d00 CarSelectReset            // exe body, Match/MatchS07_00431d00.cpp
+#define FUN_0045b350 RwInitNullStub            // exe body, Match/MatchS09_0045b350.cpp
+extern "C" {
+#include "../../../../re/match/topm01/004924f0.c"
+}
+#else
 using DataZeroFill_t = void (__cdecl*)();
 static DataZeroFill_t const s_orig_DataZeroFill =
     reinterpret_cast<DataZeroFill_t>(0x004924f0u);
@@ -221,5 +237,6 @@ static DataZeroFill_t const s_orig_DataZeroFill =
 extern "C" __declspec(dllexport) void __cdecl DataZeroFill() {
     s_orig_DataZeroFill();
 }
+#endif
 
 // MASS-DISABLED 2026-05-24 c3-boot-hangs: RH_ScopedInstall(DataZeroFill, 0x004924f0);

@@ -36,7 +36,9 @@ void PortTop_HandPollKeyboard(void);
 void PortTop_HandFrameUpdate(void);
 int  PortTop_HandRenderFrame(void);
 void PortTop_HandAppDestroy(void);
-void AppDestroy(void);                        // Match/PortTop_00402a40.cpp (PORT-TOP-04C)
+void AppDestroy(void);
+int  DataZeroFill(void);                       // Boot/SubsystemInit.cpp, matched 0x004924f0 (PORT-TOP-04D)
+int  MashedRw_InstallRwGlobals(void);          // LibRw/RwApiBind.cpp (PORT-TOP-04D)                        // Match/PortTop_00402a40.cpp (PORT-TOP-04C)
 int  SubsystemInit(void);                      // Match/MatchS15_00492270.cpp
 void thunk_EngineStopDispatch(void);           // Match/MatchS15_00493550.cpp
 bool thunk_LaunchLangGate(void);               // Match/MatchS15_00493540.cpp
@@ -119,8 +121,18 @@ int PortTop_Bound_00493540(int, int) {
     return r;
 }
 // stand-in for 0x004924f0 (zero-fill 0x007f0f60 + boot params): the hand boot chain (exe_main ExecuteFrontendBootChain
-// steps 1-3) does this job inside the 0x00402750 stand-in. The range is zero at this point (zero-initialised pad).
+// steps 1-3) does this job inside the 0x00402750 stand-in. [PORT-TOP-04D] The matched body is compiled into the exe
+// (Boot/SubsystemInit.cpp, re/match/topm01/004924f0.c) but not run by default: on the knob path it changes the colour
+// select screen (walk_04: player 1's keyboard icon moves right), because its 0x007f0a40 table defaults survive the hand
+// init, which zeroes only 0x007f0f60.. and does not restore 0x007f0a40 from the save (exe_main.cpp:189). Diagnostic
+// switch MASHED_TOP04D_DATAZERO=1 runs it (verify/porttop_20261108/RESULT_PORT-TOP-04D.md).
 int PortTop_StandIn_004924f0(void) {
+    const char* const v = std::getenv("MASHED_TOP04D_DATAZERO");
+    if (v && v[0] == '1') {
+        const int r = DataZeroFill();
+        PortTop_Log("0x004924f0 DataZeroFill (matched, MASHED_TOP04D_DATAZERO=1) returned %d", r);
+        return r;
+    }
     PortTop_Log("0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)");
     return 1;
 }
@@ -142,6 +154,9 @@ int PortTop_Bound_00492270(void) {
 int PortTop_StandIn_00402750(void) {
     void* hinst = *reinterpret_cast<void* volatile*>(0x007e9580u);
     const int r = PortTop_HandInitRest(hinst);
+    // [PORT-TOP-04D] the RW memory functions behind 0x007d3ff8 (LibRw/RwApiBind.cpp): the B15 bridge the hand init just
+    // installed keeps its Im2D slots, the matched teardown's +0x10c free goes to librw.
+    MashedRw_InstallRwGlobals();
     PortTop_NoFocusPause();
     PortTop_Log("0x00402750 AppInitialiseOnBootup: stand-in HandTop_InitRest returned %d", r);
     return r;
@@ -234,7 +249,7 @@ int PortTop_Missing_00493480(void) { return 0; }
 #define FUN_00499ba0 Orig_00499ba0                  // matched, PortTop_00499ba0.cpp
 #define FUN_00493900 Orig_00493900                  // matched (66.9% source), PortTop_00493900.cpp
 #define FUN_00493540 PortTop_Bound_00493540       // matched, Match/MatchS15_00493540.cpp (PORT-TOP-04A)
-#define FUN_004924f0 PortTop_StandIn_004924f0
+#define FUN_004924f0 PortTop_StandIn_004924f0  // stand-in; MASHED_TOP04D_DATAZERO=1 runs the matched DataZeroFill (PORT-TOP-04D)
 #define FUN_00492270 PortTop_Bound_00492270       // matched, Match/MatchS15_00492270.cpp (PORT-TOP-03)
 #define FUN_005c9d00 GetRaceEndTrigger              // port, Util/GameStateGetters.cpp
 #define FUN_004996f0 WindowShow                     // matched, Match/MatchS16_004996f0.cpp

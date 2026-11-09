@@ -4,7 +4,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00499ba0	sub_00499ba0	matched	Orig_00499ba0	re/match/s16/00499ba0.c (h6), Match/PortTop_00499ba0.cpp. Creates the window (class MASHED, WndProc 0x00499820)	1	0x00492370
 0x00493900	sub_00493900	matched	Orig_00493900	re/match/s15/00493900.c, best 66.9% (hooks C2), the only source. Match/PortTop_00493900.cpp. Parses -vs/-cs/-l switches	1	0x00492370
 0x00493540	thunk_LaunchLangGate	matched	thunk_LaunchLangGate (via PortTop_Bound_00493540)	PORT-TOP-04A: Match/MatchS15_00493540.cpp, MASHED_STANDALONE binds 0x00495150 by name; the bool result is widened to int for WinMain	1	0x00492370
-0x004924f0	sub_004924f0	stand-in	PortTop_StandIn_004924f0	job done by the hand boot chain steps 1-3 (ExecuteFrontendBootChain) inside the 0x00402750 stand-in. exe body Boot/SubsystemInit.cpp is a tunnel to the original address	1	0x00492370
+0x004924f0	DataZeroFill	stand-in	PortTop_StandIn_004924f0 (MASHED_TOP04D_DATAZERO=1 -> DataZeroFill)	PORT-TOP-04D: matched body compiled in Boot/SubsystemInit.cpp under MASHED_STANDALONE (re/match/topm01/004924f0.c, 464 B byte-identical) but not run by default: it changes walk_04_colourselect knob ON vs OFF (its 0x007f0a40 defaults survive the hand init). The callees below run only with the switch	1	0x00492370
 0x00492270	SubsystemInit	matched	SubsystemInit (via PortTop_Bound_00492270)	Match/MatchS15_00492270.cpp; its MASHED_STANDALONE branch binds 0x00493710 to the matched bring-up (RW on librw) and 0x004921d0 / 0x00428590 to missing stubs. PORT-TOP-03	1	0x00492370
 0x005c9d00	GetRaceEndTrigger	port	GetRaceEndTrigger	Util/GameStateGetters.cpp (xor eax,eax; ret). Also a WinMain callee	1	0x00492370
 0x004996f0	WindowShow	matched	WindowShow	mashedmod/src/mashed_re/Match/MatchS16_004996f0.cpp	1	0x00492370
@@ -42,11 +42,11 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00433240	FUN_00433240	matched	RaceArmReset	PORT-TOP-01: re/match/s08/00433240.c	2	0x00492770
 0x004c57a0	FontCtxMatrix_AllocInit	bound	MashedRw_MatrixCreate_004c57a0	LibRw/RwBridge.cpp (PORT-TOP-01): RwMatrixCreate shape -> rw::Matrix::create (identity, flags 0x20003). matched body reads RwGlobals at 0x007d3ff8 (+0x118 freelist alloc, hint 0x3000d); the exe maps that zero-filled, so it would fault. librw Matrix::create = same 64-byte matrix, identity, flags 0x20003. Stored at 0x007e9dc0, no exe reader	2	0x00492770
 0x00495150	FUN_00495150	matched	HwInitGate_00495150	PORT-TOP-04A: Match/PortTop_00495150.cpp (gen_top04a_tus.py), re/match/s16/00495150.c 100%	2	0x00493540
-0x00431ae0	FUN_00431ae0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431ae0.cpp; hooks C4	2	0x004924f0
-0x00431af0	FUN_00431af0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431af0.cpp; hooks C4	2	0x004924f0
-0x00431b00	FUN_00431b00	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Match/MatchS07_00431b00.cpp; hooks C4	2	0x004924f0
-0x00431b10	BootParamSet2	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004924f0
-0x00431d00	FUN_00431d00	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchS07_00431d00.cpp; hooks C4	2	0x004924f0
+0x00431ae0	FUN_00431ae0	matched	DefaultParam_SetField04	PORT-TOP-04D: Match/MatchS07_00431ae0.cpp (exe body already)	2	0x004924f0
+0x00431af0	FUN_00431af0	matched	DefaultParam_SetField08	PORT-TOP-04D: Match/MatchS07_00431af0.cpp (exe body already)	2	0x004924f0
+0x00431b00	FUN_00431b00	matched	DefaultParam_SetField00	PORT-TOP-04D: Match/MatchS07_00431b00.cpp (exe body already)	2	0x004924f0
+0x00431b10	BootParamSet2	matched	BootParamSet2	PORT-TOP-04D: Match/MatchS07_00431b10.cpp, now also in the exe list	2	0x004924f0
+0x00431d00	FUN_00431d00	matched	CarSelectReset	PORT-TOP-04D: Match/MatchS07_00431d00.cpp (exe body already)	2	0x004924f0
 0x0045b350	RwInitNullStub	matched	RwInitNullStub	PORT-TOP-04C: Match/MatchS09_0045b350.cpp (exe body already)	2	0x00402a40
 0x00428590	ViewportInit	matched	ViewportInit	PORT-TOP-04B: Match/MatchS06_00428590.cpp (100%); MASHED_STANDALONE binds every callee by name	2	0x00492270
 0x004921d0	DisplayInit	matched	DisplayInit	PORT-TOP-04B: Match/MatchS15_004921d0.cpp (re/match/s15/004921d0.c 100%); its MASHED_STANDALONE branch binds every callee by name	2	0x00492270
@@ -111,7 +111,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0040bd00	FUN_0040bd00	matched	Orig_0040bd00	PORT-TOP-04C: Match/PortTop_0040bd00.cpp (re/match/s02/0040bd00.c): 14 calls, then RwTexDictionaryDestroy on DAT_0063b8f8..0x0063b904	2	0x00402a40
 0x0040cf80	FUN_0040cf80	matched	Orig_0040cf80	PORT-TOP-04C: Match/PortTop_0040cf80.cpp (re/match/s02/0040cf80.c): when 0x0041f320(i) is nonzero for any i < 4: 0x0041a980, 0x00422140, 0x0041ec00(0..3), 0x0045b350, 0x0040cf40	2	0x00402a40
 0x0040cfd0	FUN_0040cfd0	matched	Orig_0040cfd0	PORT-TOP-04C: Match/PortTop_0040cfd0.cpp (re/match/s02/0040cfd0.c): 11 calls and DAT_0080332c = 0	2	0x00402a40
-0x004114c0	FUN_004114c0	stand-in	PortTop_StandIn04C_004114c0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched (exe body VtableTeardown_114c0, Match/MatchS02_004114c0.cpp) but not run here: it calls RwGlobals +0x10c (RW free) through *(0x007d3ff8), which in the exe is the 0x34-byte B15 Im2D fake device (D3d9Render/RwIm2DBridge.cpp); +0x10c lies past it (knob_on_1 0xC0000005 in PORT-TOP-04C). Needs an RW memory-function binding	2	0x00402a40
+0x004114c0	FUN_004114c0	matched	VtableTeardown_114c0	PORT-TOP-04D: Match/MatchS02_004114c0.cpp: runs on the knob path since the RwGlobals record (its +0x10c free goes to librw)	2	0x00402a40
 0x004189e0	thunk_FUN_004196f0	matched	Orig_004189e0	PORT-TOP-04C: Match/PortTop_004189e0.cpp (re/match/s03/h1_004189e0.c): thunk: jmp 0x004196f0	2	0x00402a40
 0x0041a3d0	FUN_0041a3d0	matched	Orig_0041a3d0	PORT-TOP-04C: Match/PortTop_0041a3d0.cpp (re/match/s03/raw_0041a3d0.c): RpClumpDestroy(DAT_0063c620)	2	0x00402a40
 0x0041b660	FUN_0041b660	stand-in	PortTop_StandIn04C_0041b660	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched only in the group source h1_grp_0041ad60.c, whose other members 0x0041ad60 / 0x0041ae20 / 0x0041b520 / 0x0041b630 already have exe bodies (one body per RVA)	2	0x00402a40
@@ -135,7 +135,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00467020	FUN_00467020	matched	Orig_00467020	PORT-TOP-04C: Match/PortTop_00467020.cpp (PORT-TOP-04B): destroys the 0x004671a0(-1) camera record	2	0x00402a40
 0x00467070	FUN_00467070	matched	Orig_00467070	PORT-TOP-04C: Match/PortTop_00467070.cpp (re/match/s10/00467070.c): camera DAT_006905b4: frame unset, RwFrameDestroy(DAT_006905b8), RwCameraDestroy	2	0x00402a40
 0x0047ba10	thunk_FUN_00496970	matched	Orig_0047ba10	PORT-TOP-04C: Match/PortTop_0047ba10.cpp (re/match/s13/0047ba10.c): thunk: jmp 0x00496970	2	0x00402a40
-0x00484130	FUN_00484130	stand-in	PortTop_StandIn04C_00484130	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; calls RwGlobals +0x10c (RW free) through *(0x007d3ff8) when param_1 != 0, same gap as 0x004114c0	2	0x00402a40
+0x00484130	FUN_00484130	matched	Orig_00484130	PORT-TOP-04C: Match/PortTop_00484130.cpp (re/match/s14/00484130.c): when param_1 is nonzero: RwGlobals +0x10c on param_1 +0x10 (when nonzero) and on param_1	2	0x00402a40
 0x00489250	FUN_00489250	stand-in	PortTop_StandIn04C_00489250	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; reads DAT_007030a8 +4 / DAT_007030ac +4 with no null check (state of 0x00402750)	2	0x00402a40
 0x00494bc0	FUN_00494bc0	matched	Orig_00494bc0	PORT-TOP-04C: Match/PortTop_00494bc0.cpp (re/match/s16/00494bc0.c): vtable +0x24 on DAT_00771a48, then Release (vtable +8) on 6 pointers at 0x00771a38..0x00771a4c, each when nonzero	2	0x00402a40
 0x00494ef0	ThunkVideoStateGet	port	ThunkVideoStateGet	PORT-TOP-04C: Boot/Teardown.cpp: the thunk 0x00494ef0 AppDestroy calls (thunk_FUN_00493f70), reads DAT_00771a04	2	0x00402a40

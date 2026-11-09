@@ -380,6 +380,10 @@ int MashedRw_CameraClone_004c2bf0(int camera) {
 int MashedRw_CameraDestroy_004c1cf0(int camera) {
     MashedRwCamera* const c = AsCamera(FromInt<void>(camera));
     if (!c) return 0;
+    // [PORT-TOP-04D] one line per destroyed camera (closes the PORT-TOP-04C trace gap).
+    BindLog("RwCameraDestroy(%08X) -> rw::Camera::destroy: librw camera %p, rasters %p / %p",
+            static_cast<unsigned>(camera), static_cast<void*>(c->lib), static_cast<void*>(c->frameBuffer),
+            static_cast<void*>(c->zBuffer));
     c->lib->destroy();
     std::free(c);
     return 1;
@@ -570,4 +574,64 @@ int PortTop_Port_004b3eb0(int data, int size, int lengthOut, int versionOut) {
     return ToInt(dict);
 }
 
+}  // extern "C"
+
+// ---------------------------------------------------------------------------------------------------------------
+// [PORT-TOP-04D] RwGlobals (RwEngineInstance) for the MASHED_ORIG_TOP path. Matched game bodies call the RW memory
+// functions through the pointer at 0x007d3ff8: free at +0x10c (0x004114c0, 0x00484130; re/analysis/boot_app_init_d3/
+// 0x004114c0.md "free at DAT_007d3ff8+0x10c"), alloc at +0x108 (re/analysis/bucket_004ddfb0/0x004e8750.md), realloc
+// at +0x110 (re/analysis/bucket_004c4270/0x004ce2d0.md "+0x110 (RwRealloc)"). Without this, 0x007d3ff8 holds the B15 Im2D
+// fake device (D3d9Render/RwIm2DBridge.cpp, 0x34 bytes) and +0x10c lies past it (PORT-TOP-04C knob_on_1: 0xC0000005).
+//
+// The record keeps the RW 3.x layout the frontend's Im2D draws read (+0x18 near-screen Z, +0x20 render-state set,
+// +0x30 Im2D primitive: the same three fields the B15 device fills, copied from it) and puts librw's memory functions
+// (rw::Engine::memfuncs) at +0x108..+0x114. The free call is not routed through the B15 device.
+namespace {
+struct MashedRwGlobals {
+    std::uint8_t dev[0x34];          // +0x00..+0x33: copied from the B15 device (+0x18 / +0x20 / +0x30 used)
+    std::uint8_t pad34[0x108 - 0x34];
+    void* rwmalloc;                  // +0x108
+    void* rwfree;                    // +0x10c
+    void* rwrealloc;                 // +0x110
+    void* rwcalloc;                  // +0x114
+    std::uint8_t tail[0x100];        // zero: nothing on the knob path reads past +0x114 (no reader found)
+};
+static_assert(offsetof(MashedRwGlobals, rwmalloc) == 0x108, "RwGlobals malloc @ +0x108");
+static_assert(offsetof(MashedRwGlobals, rwfree) == 0x10c, "RwGlobals free @ +0x10c");
+static_assert(offsetof(MashedRwGlobals, rwrealloc) == 0x110, "RwGlobals realloc @ +0x110");
+MashedRwGlobals s_rwGlobals;
+
+void* __cdecl RwGlobalsMalloc(std::size_t n, unsigned hint) { return rw::Engine::memfuncs.rwmalloc(n, hint); }
+void __cdecl RwGlobalsFree(void* p) {
+    BindLog("RwGlobals +0x10c free(%p) -> rw::Engine::memfuncs.rwfree", p);
+    if (p) rw::Engine::memfuncs.rwfree(p);
+}
+void* __cdecl RwGlobalsRealloc(void* p, std::size_t n, unsigned hint) { return rw::Engine::memfuncs.rwrealloc(p, n, hint); }
+void* __cdecl RwGlobalsCalloc(std::size_t n, std::size_t sz, unsigned hint) {
+    void* const p = rw::Engine::memfuncs.rwmalloc(n * sz, hint);
+    if (p) std::memset(p, 0, n * sz);
+    return p;
+}
+}  // namespace
+
+extern "C" {
+// Called once on the knob path after the hand init (PortTop_StandIn_00402750) has installed the B15 bridge. Returns 1
+// when 0x007d3ff8 now points at the record, 0 when there was no device to copy (bridge not installed).
+int MashedRw_InstallRwGlobals(void) {
+    void** const slot = reinterpret_cast<void**>(static_cast<std::uintptr_t>(0x007d3ff8u));
+    void* const dev = *slot;
+    if (!dev) {
+        BindLog("RwGlobals: 0x007d3ff8 is 0 (no B15 device), record not installed");
+        return 0;
+    }
+    std::memcpy(s_rwGlobals.dev, dev, sizeof(s_rwGlobals.dev));
+    s_rwGlobals.rwmalloc = reinterpret_cast<void*>(&RwGlobalsMalloc);
+    s_rwGlobals.rwfree = reinterpret_cast<void*>(&RwGlobalsFree);
+    s_rwGlobals.rwrealloc = reinterpret_cast<void*>(&RwGlobalsRealloc);
+    s_rwGlobals.rwcalloc = reinterpret_cast<void*>(&RwGlobalsCalloc);
+    *slot = &s_rwGlobals;
+    BindLog("RwGlobals: 0x007d3ff8 %p (B15 device) -> record %p; Im2D +0x18/+0x20/+0x30 copied, memory functions at "
+            "+0x108..+0x114 on librw", dev, static_cast<void*>(&s_rwGlobals));
+    return 1;
+}
 }  // extern "C"
