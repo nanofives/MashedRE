@@ -149,16 +149,28 @@ int PortTop_Bound_00492270(void) {
     PortTop_Log("0x00492270 SubsystemInit (matched) returned %d", r);
     return r;
 }
-// stand-in for 0x00402750 AppInitialiseOnBootup: the rest of the hand init (wedge, boot chain, input, dsound guard,
-// boot movies, audio, frontend assets). Returns nonzero on success like 0x00402750.
-int PortTop_StandIn_00402750(void) {
-    void* hinst = *reinterpret_cast<void* volatile*>(0x007e9580u);
-    const int r = PortTop_HandInitRest(hinst);
+// rva 0x00402750 AppInitialiseOnBootup: the matched exe body (Match/PortTop_00402750.cpp) since PORT-TOP-04E. Its callees
+// bind to matched exe bodies, to the five pieces of the hand init (HandTop_InitRest split at its call points), to the
+// piz file system on the exe's piz reader, or to stand-ins (Match/PortTop_00402750_Pieces.cpp). Diagnostic switch
+// MASHED_TOP04E_HANDINIT=1 runs the old stand-in (the whole hand init in one call) instead.
+int Orig_00402750(void);
+extern int g_PortTop04E_InitFailed;
+int PortTop_Bound_00402750(void) {
+    int r;
+    const char* const v = std::getenv("MASHED_TOP04E_HANDINIT");
+    if (v && v[0] == '1') {
+        void* hinst = *reinterpret_cast<void* volatile*>(0x007e9580u);
+        r = PortTop_HandInitRest(hinst);
+        PortTop_Log("0x00402750 AppInitialiseOnBootup: stand-in HandTop_InitRest (MASHED_TOP04E_HANDINIT=1) returned %d", r);
+    } else {
+        r = Orig_00402750();
+        if (g_PortTop04E_InitFailed) r = 0;
+        PortTop_Log("0x00402750 AppInitialiseOnBootup (matched) returned %d", r);
+    }
     // [PORT-TOP-04D] the RW memory functions behind 0x007d3ff8 (LibRw/RwApiBind.cpp): the B15 bridge the hand init just
     // installed keeps its Im2D slots, the matched teardown's +0x10c free goes to librw.
     MashedRw_InstallRwGlobals();
     PortTop_NoFocusPause();
-    PortTop_Log("0x00402750 AppInitialiseOnBootup: stand-in HandTop_InitRest returned %d", r);
     return r;
 }
 // [PORT-TOP-04C] 0x00402a40 AppDestroy: the matched exe body (Match/PortTop_00402a40.cpp = re/match/s01/raw/00402a40.c),
@@ -254,7 +266,7 @@ int PortTop_Missing_00493480(void) { return 0; }
 #define FUN_005c9d00 GetRaceEndTrigger              // port, Util/GameStateGetters.cpp
 #define FUN_004996f0 WindowShow                     // matched, Match/MatchS16_004996f0.cpp
 #define FUN_004963e0 PortTop_CfgLogError           // stand-in (exe body not exe-visible, see above)
-#define FUN_00402750 PortTop_StandIn_00402750
+#define FUN_00402750 PortTop_Bound_00402750       // matched, Match/PortTop_00402750.cpp (PORT-TOP-04E)
 #define FUN_00402a40 PortTop_Bound_00402a40       // matched, Match/PortTop_00402a40.cpp (PORT-TOP-04C)
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930  // RW: RwTexDictionaryDestroy -> librw (PORT-TOP-03)
 #define FUN_00493550 PortTop_Bound_00493550       // matched, Match/MatchS15_00493550.cpp (PORT-TOP-03)

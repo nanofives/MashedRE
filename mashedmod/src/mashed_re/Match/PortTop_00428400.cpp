@@ -7,8 +7,8 @@
 
 #define MATCH_PORT 1
 #define FUN_00428400 Orig_00428400
-#define FUN_004ce2d0 PortTop_StandIn04C_004ce2d0   // stand-in: RW RwImageSetPath (rw catalog match); no binding yet
-#define FUN_004c5a60 PortTop_StandIn04C_004c5a60   // stand-in: RW-range, matched rwl01; no binding yet
+#define FUN_004ce2d0 MashedRw_ImageSetPath_004ce2d0   // RW: RwImageSetPath -> rw::Image::setSearchPath (PORT-TOP-04E)
+#define FUN_004c5a60 MashedRw_TextureDestroy_004c5a60   // RW: RwTextureDestroy -> rw::Texture::destroy (PORT-TOP-04E)
 extern "C" {
 #include "../../../../re/match/s06/00428400.c"
 }

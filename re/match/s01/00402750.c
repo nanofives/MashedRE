@@ -1,4 +1,26 @@
 // FLAGS: /O2 /GS /Ob1
+/* ---- MATCH-S02 preamble (same text in every re/match/s02 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
 /* a1 0x00402750 (722 B; the switch tables at 0x00402a24/0x00402a2c follow it). Best: 100.0% BYTES-OK.
    Start: g2s did not compile (Ghidra stack confusion). Rewritten from the disassembly: two RGBA locals for
    FUN_00558240, a 24-byte video-mode struct for FUN_004c2ed0, block-scoped RGBA + V2 for FUN_00484170,
@@ -11,13 +33,13 @@ typedef struct { int width, height, depth, flags, refRate, format; } VideoMode;
 typedef struct IDevVtbl IDevVtbl;
 typedef struct IDev { IDevVtbl *vt; } IDev;
 struct IDevVtbl { void *pad[57]; long (__stdcall *SetRenderState)(IDev *d, int s, int v); };
-extern int DAT_00773920;
-extern IDev *DAT_00771a0c;
-extern int DAT_007f09e4;
-extern int DAT_007f0a30;
-extern int DAT_008aa318;
-extern int DAT_008aa314;
-extern int DAT_00636ac8;
+MGLOBAL(int, DAT_00773920, 0x00773920);
+MGLOBAL(IDev *, DAT_00771a0c, 0x00771a0c);
+MGLOBAL(int, DAT_007f09e4, 0x007f09e4);
+MGLOBAL(int, DAT_007f0a30, 0x007f0a30);
+MGLOBAL(int, DAT_008aa318, 0x008aa318);
+MGLOBAL(int, DAT_008aa314, 0x008aa314);
+MGLOBAL(int, DAT_00636ac8, 0x00636ac8);
 int FUN_00429290(void);
 void FUN_004025f0(void);
 void FUN_004026d0(int p0);

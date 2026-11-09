@@ -96,19 +96,11 @@ int PortTop_StandIn04C_00555830() { static int once; StandInLog("0x00555830", &o
 int PortTop_StandIn04C_00556e40() { static int once; StandInLog("0x00556e40", &once); return 0; }
 // rva 00552b90: matched (FontSys_Shutdown), not compiled (level 2)
 int PortTop_StandIn04C_00552b90() { static int once; StandInLog("0x00552b90", &once); return 0; }
-// rva 004ce2d0: RW RwImageSetPath (rw catalog match); no binding yet
-int PortTop_StandIn04C_004ce2d0() { static int once; StandInLog("0x004ce2d0", &once); return 0; }
-// rva 004c5a60: RW-range, matched rwl01; no binding yet
-int PortTop_StandIn04C_004c5a60() { static int once; StandInLog("0x004c5a60", &once); return 0; }
-// rva 004d41e0: RW-range, matched s20; no binding yet
-int PortTop_StandIn04C_004d41e0() { static int once; StandInLog("0x004d41e0", &once); return 0; }
 // rva 004d7ff0: port body RwIdentityPassthrough only in .asi-only Render/HighAB3Helpers_p6.cpp
 int PortTop_StandIn04C_004d7ff0() { static int once; StandInLog("0x004d7ff0", &once); return 0; }
 // rva 004d8480: port body RwErrSlotWrite only in .asi-only Render/HighAB3Helpers_p6.cpp
 int PortTop_StandIn04C_004d8480() { static int once; StandInLog("0x004d8480", &once); return 0; }
 // rva 004768c0: matched, not compiled (level 2)
 int PortTop_StandIn04C_004768c0() { static int once; StandInLog("0x004768c0", &once); return 0; }
-// rva 004e5700: RW RpWorldDestroy (hooks.csv name); no librw world binding yet
-int PortTop_StandIn04C_004e5700() { static int once; StandInLog("0x004e5700", &once); return 0; }
 } // extern "C"
 #endif // MASHED_STANDALONE
