@@ -1,0 +1,6 @@
+D2_DEFH_1.motion_diag.log: slip1500=0.1935 in slip2000=0.2514 in drvmed=1928.3500 in n=('373', '644', '1412') H1 398/400 median 1333.9
+D2_DEFH_2.motion_diag.log: slip1500=0.1930 in slip2000=0.2515 in drvmed=1917.1000 in n=('383', '647', '1432') H1 398/400 median 1333.9
+D2_DEFH_3.motion_diag.log: slip1500=0.1935 in slip2000=0.2515 in drvmed=1921.4200 in n=('374', '647', '1423') H1 398/400 median 1333.9
+D2_X24H_1.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1919.6200 in n=('381', '647', '1430') H1 398/400 median 1333.9
+D2_X24H_2.motion_diag.log: slip1500=0.1935 in slip2000=0.2515 in drvmed=1921.9800 in n=('373', '647', '1421') H1 398/400 median 1333.9
+D2_X24H_3.motion_diag.log: slip1500=0.1935 in slip2000=0.2515 in drvmed=1921.9800 in n=('373', '647', '1421') H1 398/400 median 1333.9
