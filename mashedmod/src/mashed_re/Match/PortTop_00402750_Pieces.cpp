@@ -95,7 +95,7 @@ void PortTop_Piece_004669b0(void) {
     Log04E("0x004669b0 sound init: piece 3 HandTop_InitAudio");
 }
 // rva 0x00403640 BackBuffRasterOpen wrapper -> piece 4 (wedge probe, texture upload, B15 bridge, B16 thunks).
-// 0x00403640 returns 1 (re/match/s01/raw/00403640.c).
+// The original returns 1 (re/match/s01/raw/00403640.c), and so does the piece.
 int PortTop_Piece_00403640(int cam) {
     if (g_PortTop04E_InitFailed) return 1;
     PortTop_HandInit_Rasters();
