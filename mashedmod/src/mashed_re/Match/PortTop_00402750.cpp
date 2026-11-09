@@ -68,7 +68,7 @@
 #define FUN_00412890 PortTop_StandIn04E_00412890
 #define FUN_00471eb0 PortTop_StandIn04E_00471eb0
 #define FUN_00404830 PortTop_StandIn04E_00404830
-#define FUN_004025f0 PortTop_StandIn04E_004025f0
+#define FUN_004025f0 Orig_004025f0                          // matched, Match/PortTop_004025f0.cpp (perm clumps), since PORT-TOP-04H
 #define FUN_00402f50 PortTop_StandIn04E_00402f50
 #define FUN_004026d0 PortTop_StandIn04E_004026d0
 extern "C" {

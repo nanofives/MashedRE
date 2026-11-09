@@ -52,7 +52,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004921d0	DisplayInit	matched	DisplayInit	PORT-TOP-04B: Match/MatchS15_004921d0.cpp (re/match/s15/004921d0.c 100%); its MASHED_STANDALONE branch binds every callee by name	2	0x00492270
 0x00493710	FUN_00493710	matched	Orig_00493710 (via PortTop_Bound_00493710)	Match/PortTop_00493710.cpp compiles re/match/s15/00493710.c (h8 best 94.2%, the only source). RW engine bring-up. PORT-TOP-03	2	0x00492270
 0x004a4254	FUN_004a4254	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x004963e0
-0x004025f0	FUN_004025f0	stand-in	PortTop_StandIn04E_004025f0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x004025f0	FUN_004025f0	matched	Orig_004025f0	PORT-TOP-04H: Match/PortTop_004025f0.cpp = re/match/s01/00401690.c (0x004025f0 BYTE-IDENTICAL 211 B, relocheck OK 6/6); 13 perm slots at 0x00636578: clump from "map_%d.dff", bounding box, slots +0x40 / +0x50 from the two stand-ins below	2	0x00402750
 0x004026d0	FUN_004026d0	stand-in	PortTop_StandIn04E_004026d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00402f50	FUN_00402f50	stand-in	PortTop_StandIn04E_00402f50	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00403640	FUN_00403640	stand-in	PortTop_Piece_00403640	PORT-TOP-04E: hand piece (HandTop_InitRest split at this call point). piece 4: texture upload, B15 bridge, B16 thunks	2	0x00402750
@@ -403,3 +403,14 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0048e820	FUN_0048e820	stand-in	PortTop_StandIn04G_0048e820	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): no matched source (C2)	3	0x0040bbb0
 0x0048eac0	FUN_0048eac0	stand-in	PortTop_StandIn04G_0048eac0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
 0x0048ff20	FUN_0048ff20	stand-in	PortTop_StandIn04G_0048ff20	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): file-backed table loader	3	0x0040bbb0
+0x00401630	FUN_00401630	matched	Orig_00401630	PORT-TOP-04H: Match/PortTop_00401630.cpp = re/match/s01/raw/00401630.c (BYTE-IDENTICAL 87 B, relocheck OK; the source now returns 0x004b3bf0's result, same bytes)	3	0x004025f0
+0x00401690	FUN_00401690	port	FUN_00401690 (static)	PORT-TOP-04H: the static of re/match/s01/00401690.c in Match/PortTop_004025f0.cpp: the C2 reconstruction (match.py 60.2%, residual = the vertex-loop unroll factor x8 vs x4), not a matched body	3	0x004025f0
+0x004b3bf0	FUN_004b3bf0	matched	Orig_004b3bf0	PORT-TOP-04H: Match/PortTop_004b3bf0.cpp = re/match/s18/004b3bf0.c (BYTE-IDENTICAL 98 B): stream open, find chunk 0x10, RpClumpStreamRead, RwFrameUpdateObjects, close	4	0x00401630
+0x004a2b60	sprintf	crt	PortTop_Sprintf04H_004a2b60	PORT-TOP-04H: Match/PortTop_00401630.cpp -> CRT vsprintf	4	0x00401630
+0x004e7420	RpClumpStreamRead	rw	MashedRw_ClumpStreamRead_004e7420	PORT-TOP-04H: LibRw/RwApiBind.cpp -> rw::Clump::streamRead on the knob path's memory stream (base + position), position moved by what librw read	5	0x004b3bf0
+0x004c0e50	RwFrameUpdateObjects	rw	MashedRw_FrameUpdateObjects_004c0e50	PORT-TOP-04H: LibRw/RwApiBind.cpp -> rw::Frame::updateObjects (same root test, dirty list and flag bits; the matched body reads RwGlobals +0xbc)	5	0x004b3bf0
+0x004e66d0	RpClumpForAllAtomics	rw	MashedRw_ClumpForAllAtomics_004e66d0	PORT-TOP-04H: LibRw/RwApiBind.cpp: librw atomic list in RW order (backwards: RW links read atomics at the head), stops at the first 0; callbacks get the librw atomic. No knob-path caller yet	5	0x004b3f90
+0x004b3f90	FUN_004b3f90	shim	MashedRw_ClumpFirstAtomic_004b3f90	PORT-TOP-04H: LibRw/RwApiBind.cpp: the first atomic in RW order (0x004b3f90 = RpClumpForAllAtomics with 0x004b4070, store and stop) as an RW-layout view (+0x04 frame, +0x18 geometry -> +0x14 numVertices, +0x5c morph target): librw Atomic / Geometry put those at +0x14 / +0x48	4	0x00401690
+0x004c3ac0	Vec3Magnitude	port	Vec3Magnitude	PORT-TOP-04H: exe body Math/Vec3.cpp (Math::LutLength, the RW sqrt LUT)	4	0x00401690
+0x00402240	FUN_00402240	stand-in	PortTop_StandIn04H_00402240	PORT-TOP-04H: Match/PortTop_004025f0.cpp: returns 0 (0x00401fe0 RW-layout geometry writes, RpGeometryCreate 0x004e8c70 / RpMaterialCreate 0x004e7fa0 tree unbound, 0x004c1040 no source)	3	0x004025f0
+0x00402590	FUN_00402590	stand-in	PortTop_StandIn04H_00402590	PORT-TOP-04H: Match/PortTop_004025f0.cpp: returns 0 (0x004022a0, same tree as 0x00402240)	3	0x004025f0
