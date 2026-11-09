@@ -11,7 +11,8 @@ A4_BATCH_KNOBS='MASHED_BATCH_<TAG>=1 [MASHED_BATCH_<TAG>_ROWS=<heads>]'. Hashes:
 step.csv / gates.csv / ptrace.log, B = sha8 of each B arm's step.csv (the merge train's definition,
 re/orchestrator/merge_train.json), captures = sha256/16 of walk_NN_*.bmp (the cmp_caps.py list of PORT-TOP-04E..G).
 
-Order: OFF, ON (all heads). If ON != OFF anywhere, the heads are split in halves and each half that still moves is
+Order: OFF, ON, OFF, ON (all heads). A side whose two passes differ is UNSTABLE and nothing is bisected. If both
+sides repeat and ON != OFF anywhere, the heads are split in halves and each half that still moves is
 split again, down to single heads (a half that moves only together with the other is reported as one unit). The
 responsible heads are then excluded and the rest is gated ON again. Every pass goes to <data>/<label>/ and one line of
 <data>/passes.tsv; the final table is written to verify/portbatch_20261109/bisect_<TAG>.tsv.
@@ -134,15 +135,30 @@ def main(argv):
     g = Gate(argv)
     heads = [int(x, 16) for x in opt(argv, '--heads').replace(' ', ',').split(',') if x]
     table = []
-    off = None
+    off = off2 = on2 = None
+    verdict = ''
+    # OFF, ON, OFF, ON (the PORT-TOP-04G capture order): a difference must repeat on both sides before it is
+    # bisected. Run 1 of this step found 11 of 12 OFF captures off the 04E list on the first nav run in a fresh
+    # root copy while ON matched 12/12; one OFF pass alone would have sent that to the bisect.
     if '--no-off' not in argv:
         off = g.run('off', None)
         table.append(('OFF', '-', off))
     on = g.run('on_all', 'all')
     table.append(('ON', 'all', on))
-    base = off or dict(gctrl=g.ref['gctrl'], b=g.ref['b'], nav=g.ref['nav'] if g.nav else [])
+    if '--no-off' not in argv:
+        off2 = g.run('off2', None)
+        table.append(('OFF repeat', '-', off2))
+        on2 = g.run('on_all2', 'all')
+        table.append(('ON repeat', 'all', on2))
+    base = off2 or dict(gctrl=g.ref['gctrl'], b=g.ref['b'], nav=g.ref['nav'] if g.nav else [])
     responsible = []
-    if g.moved(on, base):
+    stable = True
+    if off2 is not None:
+        if g.moved(off, off2) or g.moved(on, on2):
+            stable = False
+            verdict = 'UNSTABLE: a side does not repeat (OFF %s, ON %s); not bisected' % (
+                'repeats' if not g.moved(off, off2) else 'differs', 'repeats' if not g.moved(on, on2) else 'differs')
+    if stable and g.moved(on, base):
         responsible = bisect(g, heads, base, on)
         keep = [h for h in heads if not any(h in u for u in responsible)]
         if keep:
@@ -156,6 +172,8 @@ def main(argv):
         lines.append('\t'.join([name, hs, '/'.join(r['gctrl']), '/'.join(r['b']), nav,
                                 str(r['gctrl'] == ref['gctrl']), str(r['b'] == ref['b']), r['label']]))
     lines.append('responsible\t%s' % (' | '.join(' '.join('0x%08x' % h for h in u) for u in responsible) or 'none'))
+    if verdict:
+        lines.append('verdict\t' + verdict)
     txt = '\n'.join(lines) + '\n'
     print(txt)
     dst = ROOT / 'verify' / 'portbatch_20261109' / ('bisect_%s.tsv' % g.tag)
