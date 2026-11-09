@@ -514,6 +514,8 @@ STACK['PSGOTK'] = STACK['PSGO'] + STACK['TK']
 STACK['PSGF'] = _PSG + ['MASHED_PORTSTATE_GAMEFLOW_FU']
 # PORT-AISPLINE-DDKORDER (verify/portstate_20261109/PREREG_AISPLINE_DDKORDER.md): 0x00443300 in the DDK's add order
 STACK['DDK'] = ['MASHED_AISPLINE_DDK=1']
+# report only: the exe calls AiSplineEval_x87 only through AiLeaf_414570 (MASHED_AILEAF, AiStandalone.cpp:1056)
+STACK['AL'] = ['MASHED_AILEAF=1']; STACK['ALDDK'] = ['MASHED_AILEAF=1', 'MASHED_AISPLINE_DDK=1']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
