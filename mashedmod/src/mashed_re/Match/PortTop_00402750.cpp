@@ -50,7 +50,7 @@
 #define FUN_004841d0 PortTop_StandIn04E_004841d0
 #define FUN_00484170 PortTop_StandIn04E_00484170
 #define FUN_004723d0 PortTop_StandIn04E_004723d0
-#define FUN_004881d0 PortTop_StandIn04E_004881d0
+#define FUN_004881d0 Obj7030a8Create                        // matched, Match/MatchS14_004881d0.cpp (both targets; PTank record), since PORT-TOP-04I
 #define FUN_0047ba00 PortTop_StandIn04E_0047ba00
 #define FUN_0045bae0 PortTop_StandIn04E_0045bae0
 #define FUN_00418980 PortTop_StandIn04E_00418980
