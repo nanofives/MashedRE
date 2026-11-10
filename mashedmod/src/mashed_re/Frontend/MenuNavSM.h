@@ -153,11 +153,11 @@ bool           Nav_GameStateLoadSave(const unsigned char* data, unsigned len);
 // [D4-FU-SPANINIT-WRITERS] the same span copy + re-derive as Nav_GameStateLoadSave, from a bare
 // 0x520-byte span (the boot span when no save loaded). No magic gate.
 void           Nav_GameStateSeedSpan(const unsigned char* span);
-// [PORT-COLOURSEL-ICON] MASHED_COLOURSEL_ICON (default OFF): the colour-select icon reads the original's choice 0x0067f0c0.
+// [PORT-COLOURSEL-ICON] default ON since L-112 (a), opt-out MASHED_NO_COLOURSEL_ICON=1: the colour-select icon reads the original's choice 0x0067f0c0.
 bool           ColourSelIcon_On();
 // [PORT-COLOURSEL-BAR-Y] default ON since L-110 (a), opt-out MASHED_NO_COLOURSEL_BAR_Y=1, and the cup flow: one colour-select row at record y 220.
 bool           ColourSelBarY_SingleRow();
-// [PORT-COLOURSEL-LEFTRIGHT] MASHED_COLOURSEL_BORDER (default OFF): the single-row bar drawn as the original's five rects.
+// [PORT-COLOURSEL-LEFTRIGHT] default ON since L-112 (a), opt-out MASHED_NO_COLOURSEL_BORDER=1: the single-row bar drawn as the original's five rects.
 bool           ColourSelBorder_On();
 
 // --- public API ------------------------------------------------------------

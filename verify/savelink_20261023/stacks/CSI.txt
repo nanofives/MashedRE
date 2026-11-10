@@ -1,2 +1,3 @@
+# Since L-112 (a) (PORT-COLOURSEL-ICON-FLIP) MASHED_COLOURSEL_ICON is default ON and the =1 line below is a no-op. Opt-out stack: NOCSIX.
 # PORT-COLOURSEL-ICON (verify/portstate_20261109/PREREG_COLOURSEL_ICON.md): the icon reads 0x0067f0c0
 MASHED_COLOURSEL_ICON=1
