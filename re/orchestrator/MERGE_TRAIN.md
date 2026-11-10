@@ -51,6 +51,13 @@ conflict and gates "not run: merge conflict", and the rest of the batch is merge
 failure after the merge (build, lint, gates) uses the one-at-a-time path. In drain mode a RED pass whose only bounces
 are conflicts does not stop the drain (the rest landed through the full gates).
 
+### Text-only and -Full (HB-TRAIN-MATCH-TEXTONLY)
+`re/match/**` counts as text-only unless the build reads the file (`merge_train.json` `text_only_unless_built`;
+an entry in `mashedmod/exe_sources.rsp` / `asi_sources.rsp`, or an `#include` from a mashedmod source such as
+`re/match/t01g/004111c0.c`, followed through includes inside re/match). A text-only batch skips build and gates even
+under `-Full`. `-Full` forces build, gates and the full set only when the batch holds a decided-flip row; otherwise it
+is dropped and logged. `-ForceFull` keeps the old meaning.
+
 ### Drain mode (HB-TRAIN-DRAIN)
 `merge_train.ps1 -Drain` chains passes while the queue is non-empty and fast-forwards race/first-frame-parity and main
 after each GREEN pass with unchanged hashes, then runs the LAN release check. A batch holding a decided-flip row

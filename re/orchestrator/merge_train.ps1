@@ -16,6 +16,12 @@
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1            # one batch
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Full      # force build+gates+full set (D2 x3, 13 tracks)
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Plan      # print what it would merge, change nothing
+
+  -Full (HB-TRAIN-MATCH-TEXTONLY, 2026-11-10) counts only when the batch holds a decided-flip row (see Test-FlipRow);
+  otherwise it is dropped and logged, and a full_set_paths file still brings the full set in. A text-only batch skips
+  build and gates even under -Full (no build input changed, so the exe cannot change). -ForceFull keeps the old
+  meaning of -Full (build + default gates + full set whatever the batch). re/match/** is text-only unless the build
+  references the file (an .rsp entry, or an #include from mashedmod sources, followed through re/match includes).
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Drain     # passes back to back until the queue is empty (HB-TRAIN-DRAIN)
 
   -Drain (HB-TRAIN-DRAIN, 2026-11-10): runs one pass after another (each a child `merge_train.ps1 -NoFlip -ResultJson`,
@@ -28,7 +34,7 @@
 #>
 [CmdletBinding()]
 param([switch]$Full, [switch]$Plan, [int]$Max = 0, [switch]$KeepTemp, [switch]$SelfTest,
-      [switch]$Drain, [switch]$NoFlip, [string]$ResultJson = '')
+      [switch]$Drain, [switch]$NoFlip, [string]$ResultJson = '', [switch]$ForceFull)
 $ErrorActionPreference = 'Stop'
 
 $HERE = $PSScriptRoot
@@ -41,6 +47,7 @@ $TS = Get-Date -Format 'yyyyMMdd_HHmmss'
 $DATA = Join-Path $(if ($SelfTest) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_selftest' } else { $CFG.data }) $(if ($Drain -and -not $SelfTest) { "drain_$TS" } else { $TS })
 New-Item -ItemType Directory -Force -Path $DATA | Out-Null
 $LOG = Join-Path $DATA 'merge_train.log'
+$FullEff = [bool]$ForceFull   # HB-TRAIN-MATCH-TEXTONLY: the pass body sets it from -Full and the batch (Resolve-FullFlag)
 
 function Say([string]$m) { $l = "[mtrain $(Get-Date -Format HH:mm:ss)] $m"; Write-Host $l; Add-Content -LiteralPath $LOG -Value $l }
 # HB-EOL: tracked text files are written with LF, never the CRLF that Set-Content produces on Windows.
@@ -173,6 +180,66 @@ function Cleanup-Step([string]$branch, [string]$intBranch) {
   if ($script:GITRC -ne 0) { Say "  cleanup $branch`: git branch --delete refused, branch kept: $(($o | Select-Object -First 1))" }
   else { Say "  cleanup $branch`: worktree and branch removed" }
 }
+# ---- HB-TRAIN-MATCH-TEXTONLY: re/match/** is text-only unless the build references it ---------------------------
+# Match pilots write re/match/<slice>/<rva>.c; only some are compiled into the exe/.asi, through an #include from a
+# mashedmod TU (e.g. mashedmod/src/mashed_re/Match/MatchS01.cpp -> re/match/s01/00401340.c) or an .rsp entry. A
+# match-only batch used to build and run every gate (about 17 of 20 min of such a pass).
+function Get-RepoRel([string]$wt, [string]$full) {
+  $root = [IO.Path]::GetFullPath($wt).TrimEnd('\', '/') + '\'
+  $f = [IO.Path]::GetFullPath($full)
+  if (-not $f.StartsWith($root, [StringComparison]::OrdinalIgnoreCase)) { return '' }
+  return ($f.Substring($root.Length) -replace '\\', '/')
+}
+# The set of repo-relative re/match paths the build reads ('*' = all of them: a build script names re/match itself).
+function Get-BuildMatchRefs([string]$wt) {
+  $roots = @($CFG.text_only_unless_built); if (-not $roots.Count -or -not $roots[0]) { $roots = @('re/match/') }
+  $set = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+  $todo = New-Object 'System.Collections.Generic.Queue[string]'
+  function Under([string]$rel) { foreach ($r in $roots) { if ($rel -and $rel.StartsWith($r, [StringComparison]::OrdinalIgnoreCase)) { return $true } }; return $false }
+  $mm = Join-Path $wt 'mashedmod'
+  foreach ($bs in @('build.bat', 'build_objs.ps1')) {
+    $bp = Join-Path $mm $bs
+    if ((Test-Path -LiteralPath $bp) -and (Select-String -LiteralPath $bp -Pattern 're[\\/]match' -Quiet)) { return @('*') }
+  }
+  $srcRoot = Join-Path $mm 'src\mashed_re'
+  foreach ($rsp in @('exe_sources.rsp', 'asi_sources.rsp')) {
+    $rp = Join-Path $mm $rsp
+    if (-not (Test-Path -LiteralPath $rp)) { continue }
+    foreach ($ln in @(Get-Content -LiteralPath $rp)) {
+      $e = $ln.Trim().Trim('"'); if (-not $e -or $e.StartsWith('#')) { continue }
+      $rel = Get-RepoRel $wt (Join-Path $srcRoot $e)
+      if ((Under $rel) -and $set.Add($rel)) { $todo.Enqueue($rel) }
+    }
+  }
+  $files = @(Get-ChildItem -LiteralPath $mm -Recurse -File -Include *.cpp, *.c, *.h, *.hpp, *.inl -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\(build|deps)\\' })
+  if ($files.Count) {
+    # a mashedmod file sits outside re/, so a path into re/match/ names "match" (seed scan only; the walk below reads all)
+    foreach ($m in @(Select-String -LiteralPath ($files | ForEach-Object FullName) -Pattern '^\s*#\s*include\s*"([^"]*match[^"]*)"')) {
+      $rel = Get-RepoRel $wt (Join-Path (Split-Path $m.Path -Parent) $m.Matches[0].Groups[1].Value)
+      if ((Under $rel) -and $set.Add($rel)) { $todo.Enqueue($rel) }
+    }
+  }
+  while ($todo.Count) {   # a referenced re/match file can include its own siblings
+    $rel = $todo.Dequeue(); $fp = Join-Path $wt $rel
+    if (-not (Test-Path -LiteralPath $fp -PathType Leaf)) { continue }
+    foreach ($m in @(Select-String -LiteralPath $fp -Pattern '^\s*#\s*include\s*"([^"]+)"')) {
+      $r2 = Get-RepoRel $wt (Join-Path (Split-Path $fp -Parent) $m.Matches[0].Groups[1].Value)
+      if ((Under $r2) -and $set.Add($r2)) { $todo.Enqueue($r2) }
+    }
+  }
+  return @($set)
+}
+# One changed path: text-only by the globs, or under a text_only_unless_built root and not read by the build.
+function Test-TextOnlyPath([string]$f, $matchRefs) {
+  if (Like-Any $f $CFG.text_only_globs) { return $true }
+  $roots = @($CFG.text_only_unless_built); if (-not $roots.Count -or -not $roots[0]) { $roots = @('re/match/') }
+  foreach ($r in $roots) {
+    if ($f.StartsWith($r, [StringComparison]::OrdinalIgnoreCase)) { return (@($matchRefs) -notcontains '*') -and (@($matchRefs) -notcontains $f) }
+  }
+  return $false
+}
+# -Full counts only with a decided flip in the batch; -ForceFull always.
+function Resolve-FullFlag([bool]$full, [bool]$force, $flips) { return [bool]($force -or ($full -and @($flips).Count -gt 0)) }
 function Merge-One([string]$wt, $item) {
   $msg = "Merge $($item.branch) ($($item.id)) via merge train"
   $o = Git -C $wt -c merge.autoStash=false merge --no-ff -m $msg $item.branch
@@ -430,10 +497,13 @@ function Try-Batch($items) {
       Say "  merged $($it.id) ($($it.branch))"
     }
     $changed = @((Git -C $wt diff --name-only "$base..HEAD") | Where-Object { $_ })
-    $textOnly = -not $Full -and (@($changed | Where-Object { -not (Like-Any $_ $CFG.text_only_globs) }).Count -eq 0)
-    # -Full forces the full set too: a decided flip can change a default outside full_set_paths
+    # HB-TRAIN-MATCH-TEXTONLY: re/match/** is text-only unless the build reads it; a flip pass (effective -Full) is
+    # always built and gated.
+    $mRefs = @(); if (@($changed | Where-Object { -not (Like-Any $_ $CFG.text_only_globs) -and $_ -like 're/match/*' }).Count) { $mRefs = @(Get-BuildMatchRefs $wt) }
+    $textOnly = -not $FullEff -and (@($changed | Where-Object { -not (Test-TextOnlyPath $_ $mRefs) }).Count -eq 0)
+    # The effective -Full forces the full set too: a decided flip can change a default outside full_set_paths
     # (D3-CF-SNAP-FLIP's default lives in D3d9Render/TrackRenderer.cpp and merged without D2 / 13 tracks).
-    $needFull = $Full -or (@($changed | Where-Object { $f = $_; @($CFG.full_set_paths | Where-Object { $f.StartsWith($_) }).Count -gt 0 }).Count -gt 0)
+    $needFull = $FullEff -or (@($changed | Where-Object { $f = $_; @($CFG.full_set_paths | Where-Object { $f.StartsWith($_) }).Count -gt 0 }).Count -gt 0)
     $r.textOnly = $textOnly
     Say "  changed $($changed.Count) file(s); text-only=$textOnly full-set=$needFull"
     # HB-LINT-408A50: lint the tree the LAN release builds from, a clean git archive of HEAD with the paths in
@@ -595,7 +665,7 @@ function Invoke-ReleaseStep([int]$n) {
 }
 function Invoke-PassChild([string]$rj) {
   $a = @('-NoProfile', '-File', $PSCommandPath, '-NoFlip', '-ResultJson', $rj)
-  if ($Full) { $a += '-Full' }; if ($Max -gt 0) { $a += @('-Max', "$Max") }; if ($KeepTemp) { $a += '-KeepTemp' }
+  if ($Full) { $a += '-Full' }; if ($ForceFull) { $a += '-ForceFull' }; if ($Max -gt 0) { $a += @('-Max', "$Max") }; if ($KeepTemp) { $a += '-KeepTemp' }
   & pwsh @a 2>&1 | ForEach-Object { Write-Host "  | $_" }
   $rc = $LASTEXITCODE
   if (-not (Test-Path -LiteralPath $rj)) { return @{ verdict = 'ERROR'; why = "pass exited rc=$rc without writing $rj" } }
@@ -834,6 +904,54 @@ if ($SelfTest) {
   $cTree = @((Git -C $cO.res.wt diff --name-only "$base..HEAD") | Where-Object { $_ })
   Check ((($cTree | Sort-Object) -join ',') -eq 'notes/c.txt,notes/conf.txt' -and ((Get-Content (Join-Path $cO.res.wt 'notes\conf.txt') -Raw) -match '^A')) "conflict-skip (real merge): the landed tree holds A's conf.txt and C's c.txt only ($($cTree -join ','))"
   Remove-Temp $cO.res.wt
+
+  # --- HB-TRAIN-MATCH-TEXTONLY (real Try-Batch on the fake repo): re/match files the build does not read are text-only
+  New-Item -ItemType Directory -Force -Path (Join-Path $fake 'mashedmod\src\mashed_re\Match'), (Join-Path $fake 're\match\t01g'), (Join-Path $fake 're\match\s99'), (Join-Path $fake 're\match\rsp1') | Out-Null
+  Put 'mashedmod\src\mashed_re\Match\MatchT01g.cpp' "// fake TU`n#include `"../../../../re/match/t01g/004111c0.c`"`n"
+  Put 'mashedmod\exe_sources.rsp' "`"exe_main.cpp`"`n`"..\..\..\re\match\rsp1\a.c`"`n"
+  Put 'mashedmod\asi_sources.rsp' "`"dllmain.cpp`"`n"
+  Put 're\match\t01g\004111c0.c' "#include `"common.h`"`nint f(void){return 1;}`n"
+  Put 're\match\t01g\common.h' "#define X 1`n"
+  Put 're\match\rsp1\a.c' "int a;`n"
+  Put 're\match\s99\00499999.c' "int g(void){return 2;}`n"
+  Put 're\match\s99\RESULT.json' "{}`n"
+  Git -C $fake add mashedmod re | Out-Null; Git -C $fake commit -q -m 'match base' | Out-Null
+  $mrefs = @(Get-BuildMatchRefs $fake)
+  Check ((($mrefs | Sort-Object) -join ',') -eq 're/match/rsp1/a.c,re/match/t01g/004111c0.c,re/match/t01g/common.h') "match-textonly: build refs = rsp entry + #include from a mashedmod TU + the include inside it ($(($mrefs | Sort-Object) -join ','))"
+  $mcases = [ordered]@{
+    'm-free'   = @{ files = @('re\match\s99\00499999.c', 're\match\s99\RESULT.json'); text = $true }
+    'm-incl'   = @{ files = @('re\match\t01g\004111c0.c'); text = $false }
+    'm-trans'  = @{ files = @('re\match\t01g\common.h'); text = $false }
+    'm-rsp'    = @{ files = @('re\match\rsp1\a.c'); text = $false }
+    'm-mix'    = @{ files = @('re\match\s99\00499999.c', 'mashedmod\src\mashed_re\Match\MatchT01g.cpp'); text = $false }
+  }
+  foreach ($k in $mcases.Keys) {
+    Git -C $fake checkout -q -b "step-$k" integration | Out-Null
+    foreach ($fl in $mcases[$k].files) { Put $fl "// changed by $k`n$((Get-Content (Join-Path $fake $fl) -Raw))" }
+    Git -C $fake add mashedmod re | Out-Null; Git -C $fake commit -q -m "step $k" | Out-Null
+    Git -C $fake checkout -q integration | Out-Null
+  }
+  $base = (Git -C $fake rev-parse integration) | Select-Object -First 1
+  foreach ($k in $mcases.Keys) {
+    $res = Try-Batch @(@{ id = "T-$k"; branch = "step-$k" })
+    if ($mcases[$k].text) { Check ($res.ok -and $res.textOnly -and $res.gates -match '^not run: text-only') "match-textonly: $k (re/match files no build reads) = text-only, no build, no gates (gates '$($res.gates)')" }
+    else { Check (-not $res.textOnly -and $res.why -match '^build failed') "match-textonly: $k = not text-only, the train goes on to the build (fake repo has no build.bat: '$($res.why)')" }
+    Remove-Temp $res.wt
+  }
+  $FullEff = $true
+  $res = Try-Batch @(@{ id = 'T-m-free'; branch = 'step-m-free' })
+  Check (-not $res.textOnly -and $res.why -match '^build failed') "match-textonly: a flip pass (effective -Full) still builds and gates a match-only batch ('$($res.why)')"
+  Remove-Temp $res.wt; $FullEff = $false
+  Put 'mashedmod\build_objs.ps1' "# compiles re\match\*.c directly`n"
+  Check ((@(Get-BuildMatchRefs $fake) -join ',') -eq '*') 'match-textonly: a build script naming re/match makes every re/match file a build input'
+  Remove-Item -LiteralPath (Join-Path $fake 'mashedmod\build_objs.ps1') -Force
+  Check (-not (Test-TextOnlyPath 're/match/s99/x.c' @('*')) -and (Test-TextOnlyPath 're/match/s99/x.c' @('re/match/t01g/a.c')) -and -not (Test-TextOnlyPath 're/matchx/a.c' @()) -and -not (Test-TextOnlyPath 're/tools/match/match.py' @())) 'match-textonly: Test-TextOnlyPath only frees re/match/ (not re/matchx/, not re/tools/match/)'
+  # -Full only with a decided flip
+  Check (-not (Resolve-FullFlag $true $false @()) -and (Resolve-FullFlag $true $false @('X-FLIP')) -and (Resolve-FullFlag $false $true @()) -and -not (Resolve-FullFlag $false $false @('X-FLIP'))) 'match-textonly: -Full counts only with a decided flip in the batch, -ForceFull always, no flag never'
+  # live tree: the spec's example is a build input, and most of re/match is not
+  $liveRefs = @(Get-BuildMatchRefs (Resolve-Path (Join-Path $HERE '..\..')).Path)
+  $liveAll = @(Get-ChildItem -LiteralPath (Join-Path $HERE '..\..\re\match') -Recurse -File -ErrorAction SilentlyContinue).Count
+  Check (($liveRefs -contains 're/match/t01g/004111c0.c') -and ($liveRefs -contains 're/match/s01/00401340.c') -and ($liveRefs -notcontains '*') -and $liveRefs.Count -lt $liveAll) "match-textonly (live tree): t01g/004111c0.c and s01/00401340.c are build inputs; $($liveRefs.Count) of $liveAll re/match files are"
 
   # --- HB-D2RERUN: fake arm runner, the second d2_arms arm comes back short (1485 lines) on the first run
   # The arm names come from merge_train.json (D2_DEF_n until run 23, D2_DEFH_n since); the second arm is the short one.
@@ -1184,8 +1302,11 @@ Say "batch: $(($batch | ForEach-Object { "$($_.id)=$($_.branch)" }) -join ' ')  
 if ($Plan) { exit 0 }
 # HB-TRAIN-DRAIN: a drain pass never merges a decided flip; it stops before any merge and the lead runs the flip alone
 # with -Full after committing the refs (MERGE_TRAIN.md "Decided default flips").
+$flips = @(); if ($NoFlip -or $Full) { $flips = @(Get-BatchFlips $batch) }
+$FullEff = Resolve-FullFlag ([bool]$Full) ([bool]$ForceFull) $flips
+if ($Full -and -not $FullEff) { Say "-Full dropped: no decided-flip row in the batch (HB-TRAIN-MATCH-TEXTONLY); full_set_paths still bring the full set in, -ForceFull keeps the old -Full" }
+elseif ($FullEff) { Say "full set forced: $(if ($ForceFull) { '-ForceFull' } else { "-Full with decided flip(s) $($flips -join ', ')" })" }
 if ($NoFlip) {
-  $flips = @(Get-BatchFlips $batch)
   if ($flips.Count) {
     Say "decided-flip row(s) in the batch: $($flips -join ', '); nothing merged, every row stays queued"
     Write-PassResult $ResultJson @{ verdict = 'FLIP'; data = $DATA; flips = $flips; batch = @($batch | ForEach-Object id); merged = @(); bounced = @() }
