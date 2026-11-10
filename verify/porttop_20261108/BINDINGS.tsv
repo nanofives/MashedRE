@@ -336,7 +336,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00494460	FUN_00494460	matched	IntroVideoClose	PORT-TOP-04C: Match/MatchS15_00494460.cpp, now also in the exe list; MASHED_STANDALONE binds 0x00494320 / 0x004c7650 by name	3	0x00494f20
 0x004196f0	FUN_004196f0	stand-in	PortTop_StandIn04C_004196f0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; reads +4 of each pointer of the 0x0063bde0 table with no null check (state of 0x00402750)	3	0x004189e0
 0x004b6700	FUN_004b6700	stand-in	PortTop_StandIn04C_004b6700	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; its only port body Zero4b6700 is in the .asi-only multi-function Util/PromoLoop_sessionB.cpp	3	0x004b6550
-0x00413bb0	FUN_00413bb0	stand-in	PortTop_StandIn04C_00413bb0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; port body only in .asi-only Util/PromoLoop_round256.cpp	3	0x0040bd00
+0x00413bb0	FUN_00413bb0	matched	Orig_00413bb0	PORT-OT-HUD: Match/PortTop_00413bb0.cpp = re/match/s03/raw_00413bb0.c (BYTE-IDENTICAL 12 B): 0x004768c0(&DAT_0063bd50). ORIGTOP-ONLY CROSS-TARGET vs Render/PromoLoop_round256.cpp	3	0x0040bd00
 0x00475d90	FUN_00475d90	stand-in	PortTop_StandIn04C_00475d90	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x00475ea0	FUN_00475ea0	stand-in	PortTop_StandIn04C_00475ea0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x00477870	FUN_00477870	stand-in	PortTop_StandIn04C_00477870	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched in group s12/00477580.c, not compiled (level 2)	3	0x0040bd00
@@ -371,7 +371,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00552b90	FUN_00552b90	stand-in	PortTop_StandIn04C_00552b90	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched (FontSys_Shutdown), not compiled (level 2)	3	0x00427620
 0x004ce2d0	RwImageSetPath	bound	MashedRw_ImageSetPath_004ce2d0	PORT-TOP-04G: LibRw/RwApiBind.cpp (04F), called by 0x0048bbe0 too	4	0x0048bbe0
 0x004d41e0	FUN_004d41e0	shim	MashedRw_Destroy4d41e0_004d41e0	PORT-TOP-04E: LibRw/RwApiBind.cpp: no librw counterpart; null skipped, non-null logged and left alone	3	0x00496ce0
-0x004768c0	FUN_004768c0	stand-in	PortTop_StandIn04C_004768c0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	4	0x004210f0
+0x004768c0	FUN_004768c0	stand-in	PortTop_StandIn04C_004768c0 (from 0x004210f0); Orig_004768c0 (from 0x00413bb0)	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing) for the caller 0x004210f0, whose record 0x0063e548 the stand-in 0x004210b0 never builds. PORT-OT-HUD: the matched copy Match/PortTop_004768c0.cpp = re/match/s12/004768c0.c (BYTE-IDENTICAL 211 B) runs from 0x00413bb0 on the record 0x0063bd50	4	0x004210f0
 0x00429290	FUN_00429290	stand-in	PortTop_StandIn04E_00429290	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x004cc230	RwStreamOpen	shim	PortTop_RwStreamOpen_004cc230	PORT-TOP-04F: Match/PortTop_RwStream04F.cpp: type 2 reads the file from the piz mount stack or the disk under original/ and returns a type-3 memory stream over the copy (no RtFSManager in the exe)	3	0x004274e0
 0x004cc160	RwStreamClose	shim	PortTop_RwStreamClose_004cc160	PORT-TOP-04F: Match/PortTop_RwStream04F.cpp: frees the record and the copy (the original returns it to the RwGlobals +0x11c free list)	3	0x004274e0
@@ -386,7 +386,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004c5bc0	RwTexDictionaryAddTexture	rw	MashedRw_TexDictionaryAddTexture_004c5bc0	PORT-TOP-04G: LibRw/RwApiBind.cpp -> rw::TexDictionary::addFront (head insert, as rwLinkListAddLLLink)	3	0x0040bbb0
 0x004a332b	exit	crt	PortTop_Exit04G_004a332b	PORT-TOP-04G: Match/PortTop_0040bbb0.cpp -> CRT exit (the "cant open sfx dic" branch only)	3	0x0040bbb0
 0x00401000	FUN_00401000	matched	Orig_00401000	PORT-TOP-04J: Match/PortTop_00401000.cpp = re/match/s01/00401000.c (BYTE-IDENTICAL 482 B): cup world (RpWorldCreate), cup.dff clump, ambient + soft-spot light records, world adds	3	0x0040bbb0
-0x00413b80	FUN_00413b80	stand-in	PortTop_StandIn04G_00413b80	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init, no matched source	3	0x0040bbb0
+0x00413b80	FUN_00413b80	matched	Orig_00413b80	PORT-OT-HUD: Match/PortTop_00413b80.cpp = re/match/s03/raw_00413b80.c (BYTE-IDENTICAL 43 B): 0x004770c0(&DAT_0063bd50, 0x37, 0x14, 0x0040bb30("VehicleIcons")), 0x00476cb0(&DAT_0063bd50, 5, 6)	3	0x0040bbb0
 0x004210b0	FUN_004210b0	stand-in	PortTop_StandIn04G_004210b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
 0x004759b0	FUN_004759b0	stand-in	PortTop_StandIn04G_004759b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): 0x00691600 array alloc	3	0x0040bbb0
 0x00475a00	FUN_00475a00	stand-in	PortTop_StandIn04G_00475a00	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): no matched source (C2)	3	0x0040bbb0
@@ -430,3 +430,5 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004e4450	RwFrameAddChild	rw	MashedRw_WorldAddClump_004e4450	PORT-TOP-04J: LibRw/RwApiBind.cpp: (world, clump) -> rw::World::addClump (hooks.csv name; naming doubt aq_s4: RpWorldAddClump)	4	0x00401000
 0x00496940	FUN_00496940	matched	Orig_00496940	PORT-OT-BOOT: Match/PortTop_00496940.cpp = re/match/s16/00496940.c: DAT_00773078 = DAT_00771a0c, DAT_0077307c = RwRasterCreate(0, 0, 0, 0x84) (bound)	3	0x0047ba00
 0x004b6520	ZeroFillWrapper	matched	Orig_004b6520	PORT-OT-BOOT: Match/PortTop_004b6520.cpp = re/match/s18/004b6520.c: 0x004b64e0(dst, 0, size) = exe MemsetInline	3	0x00420d00
+0x004770c0	FUN_004770c0	matched	Orig_004770c0	PORT-OT-HUD: Match/PortTop_004770c0.cpp = re/match/s12/004770c0.c (BYTE-IDENTICAL 801 B), exe-only copy for 0x00413b80: PTank record via RpPTankAtomicCreate, arrays via 0x00474db0. ORIGTOP-ONLY DUP-IN-TARGET vs Render/RfxEmitter.cpp Create (hand body, port Emitter struct, default path)	4	0x00413b80
+0x00474db0	RwMallocArrayZeroFill	matched	Orig_00474db0	PORT-OT-HUD: Match/PortTop_00474db0.cpp = re/match/s11/00474db0.c (BYTE-IDENTICAL 42 B): RwGlobals +0x108 (librw malloc), then 0x004b6520. ORIGTOP-ONLY CROSS-TARGET vs Match/MatchS11_00474db0.cpp	5	0x004770c0

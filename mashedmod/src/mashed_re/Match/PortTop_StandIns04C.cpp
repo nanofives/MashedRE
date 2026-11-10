@@ -26,8 +26,6 @@ int PortTop_StandIn04C_004196f0() { static int once; StandInLog("0x004196f0", &o
 int PortTop_StandIn04C_0041b660() { static int once; StandInLog("0x0041b660", &once); return 0; }
 // rva 004b6700: matched; its only port body Zero4b6700 is in the .asi-only multi-function Util/PromoLoop_sessionB.cpp
 int PortTop_StandIn04C_004b6700() { static int once; StandInLog("0x004b6700", &once); return 0; }
-// rva 00413bb0: matched; port body only in .asi-only Util/PromoLoop_round256.cpp
-int PortTop_StandIn04C_00413bb0() { static int once; StandInLog("0x00413bb0", &once); return 0; }
 // rva 00475d90: matched, not compiled (level 2)
 int PortTop_StandIn04C_00475d90() { static int once; StandInLog("0x00475d90", &once); return 0; }
 // rva 00475ea0: matched, not compiled (level 2)

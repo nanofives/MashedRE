@@ -19,7 +19,7 @@
 #define FUN_0048cf70 PortTop_StandIn04C_0048cf70   // stand-in: matched, not compiled (level 2)
 #define FUN_00485e10 PortTop_StandIn04C_00485e10   // stand-in: matched, not compiled (level 2)
 #define FUN_00486350 PortTop_StandIn04C_00486350   // stand-in: matched, not compiled (level 2)
-#define FUN_00413bb0 PortTop_StandIn04C_00413bb0   // stand-in: matched; port body only in .asi-only Util/PromoLoop_round256.cpp
+#define FUN_00413bb0 Orig_00413bb0   // matched, Match/PortTop_00413bb0.cpp (ORIGTOP-ONLY), since PORT-OT-HUD
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930   // RW: RwTexDictionaryDestroy -> rw::TexDictionary::destroy
 extern "C" {
 #include "../../../../re/match/s02/0040bd00.c"
