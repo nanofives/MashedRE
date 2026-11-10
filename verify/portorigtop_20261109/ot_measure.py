@@ -3,7 +3,8 @@
   py -3.12 verify/portorigtop_20261109/ot_measure.py lists                 # the two row sets -> <data>/ot_rows.json
   py -3.12 verify/portorigtop_20261109/ot_measure.py probe --exe E --root R [--secs 30]   # under mashed_lock: one
         knob-ON boot (MASHED_ORIG_TOP=1), reads the exe's own memory -> <data>/probe.json
-  py -3.12 verify/portorigtop_20261109/ot_measure.py verdict               # -> verify/portorigtop_20261109/OT_MEASURE.tsv
+  py -3.12 verify/portorigtop_20261109/ot_measure.py verdict [--orig <orig_probe.json>]   # -> .../OT_MEASURE.tsv
+        (--orig: ot_orig_probe.py output; a zero data field the original also holds at 0 counts as OK)
 
 <data> = D:/MashedWT/PORT-OT-MEASURE_data (or --data).
 
@@ -341,6 +342,11 @@ def verdict(data):
     last = ss[-1] if ss else {}
     first = ss[0] if ss else {}
     rng = seed_ranges()
+    # [PORT-OT-RWG-SLOTS] --orig <orig_probe.json> (ot_orig_probe.py): a data field the exe holds at 0 is OK when the
+    # original holds 0 there too (RwGlobals +0x18 near-screen Z is 0.0f in MASHED.exe); call slots still need non-null.
+    op = opt(sys.argv[1:], "--orig")
+    olast = (json.load(open(op))["samples"] or [{}])[-1] if op else {}
+    oslots = olast.get("slots") or {}
     out = ["rva\tname\tsubsystem\trwg_verdict\trwg_detail\tseed_verdict\tseed_detail"]
     cnt = collections.Counter()
     for k in sorted(rows):
@@ -355,7 +361,7 @@ def verdict(data):
                 fmt = lambda o: ("+0x%x" % o) if isinstance(o, int) else ("+[0x%s]+%s" % tuple(o[1:].split("+")))
                 val = lambda o: sl.get(str(o))
                 miss = [o for o in r["rwg_call_slots"] if not val(o)]
-                zero = [o for o in r["rwg_data_offs"] if not val(o)]
+                zero = [o for o in r["rwg_data_offs"] if not val(o) and not (op and oslots.get(str(o)) == 0)]
                 rd = "RwGlobals=0x%08x; call slots %s; data %s" % (
                     g, " ".join("%s=%s" % (fmt(o), hex(val(o) or 0)) for o in r["rwg_call_slots"]) or "-",
                     " ".join("%s=%s" % (fmt(o), hex(val(o) or 0)) for o in r["rwg_data_offs"]) or "-")
@@ -369,6 +375,9 @@ def verdict(data):
                     rd += "; null call slot: " + " ".join(fmt(o) for o in miss)
                 if zero:
                     rd += "; zero data field: " + " ".join(fmt(o) for o in zero)
+                if op:
+                    rd += "; original: " + " ".join("%s=%s" % (fmt(o), hex(oslots.get(str(o)) or 0))
+                                                    for o in r["rwg_call_slots"] + r["rwg_data_offs"])
             cnt["rwg " + rv] += 1
         if "seed" in r:
             bad, how = [], []
