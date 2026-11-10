@@ -82,6 +82,7 @@ void PortTop_HandInit_Audio(void);
 void PortTop_HandInit_Rasters(void);
 void PortTop_HandInit_FrontendAssets(void);
 int  MashedRw_InstallRwGlobals(void);   // LibRw/RwApiBind.cpp
+void Orig_00428390(int state);          // Match/PortTop_00428390.cpp (PORT-OT-FRONTEND)
 
 // 1 once a piece failed (only piece 2 can: no System32 dsound.dll). Later pieces then do nothing, and the 0x00402750
 // wrapper returns 0, as HandTop_InitRest returns false.
@@ -118,11 +119,14 @@ int PortTop_Piece_00403640(int cam) {
     MashedRw_InstallRwGlobals();
     return 1;
 }
-// rva 0x00428390 FrontendStateSet(3) -> piece 5 (frontend assets, settings, save restore, nav init, fonts)
+// rva 0x00428390 FrontendStateSet(3) -> the matched body (Match/PortTop_00428390.cpp, DAT_0067d960 = state, PORT-OT-FRONTEND),
+// then piece 5 (frontend assets, settings, save restore, nav init, fonts)
 void PortTop_Piece_00428390(int state) {
+    Orig_00428390(state);
     if (g_PortTop04E_InitFailed) return;
     PortTop_HandInit_FrontendAssets();
-    Log04E("0x00428390 FrontendStateSet(%d): piece 5 HandTop_InitFrontendAssets", state);
+    Log04E("0x00428390 FrontendStateSet(%d): matched body ran (DAT_0067d960 = %d), piece 5 HandTop_InitFrontendAssets",
+           state, *reinterpret_cast<volatile int*>(0x0067d960u));
 }
 
 // ---- piz file system ----
