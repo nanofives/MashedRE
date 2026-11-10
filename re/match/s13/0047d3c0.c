@@ -1,4 +1,10 @@
 // FLAGS: /O2 /GS /Ob1
+/* MATCH-RACEPATH-SHIFT 2026-11-09: 91.9% / 265 bad B -> 96.5% / 67 bad B, 173 -> 170 insns, symbol 649 -> 638 B
+   (first divergence stays at +0xb2). `v.y = (float)(v.y * (double)DAT_005cc9dc)` (pilot lever: double
+   intermediate, the global float operand gives fmul dword, no qword constant) stops 9176 keeping the scale in an
+   x87 register; v.z as `(float)((0, v.z) * (0, (double)DAT_005cc9dc))`. Left: v.x scale (ours fld k; fmul st(2),
+   original fxch st(1); fmul [k]; 8 spellings tried), v.z still loads k first, and the e0 stack temp (5 forms, a
+   named temp is worse). Permuter after these: 671 compiles, no gain. The text below is the earlier state. */
 /* MATCH-S13 0x0047d3c0 (h4): best 91.9% (regs 91.9%, ops 96.5%). By hand from decomp (raw 40%): RGBA byte struct, V3 struct copy *dst = pos (gives the interleaved store/reload of the stack vector), scale by 0x005cc9dc as a separate step, unsigned loop index (jb + unsigned fild fixup), 1-arg FUN_0055dec0 / 4-arg FUN_00559c40, float-arg callees. The permuter reached 94.2% by computing v.z before v.y, but that loads the globals in a different order from the original (relocheck BAD), so the natural order is kept. Residual: the 0x005cc9dc scale keeps the constant in an x87 register (fld k; fmul st(i)) where the original uses fmul mem three times and reloads v.z, and the e0 value goes through a stack temp at esp+0x14 for the last 0x00883dec copy in the original. Tried: single-expression components, separate temp vector, forceinline scale function, k*v order, float temp t for e0 (worse), do-while loop. Class (b) source shape. */
 /* ---- MATCH-S13 preamble (same text in every re/match/s13 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -96,8 +102,8 @@ void FUN_0047d3c0(int param_1)
   v.y = (DAT_00881664 - DAT_00881634) * DAT_005cc32c;
   v.z = (DAT_00881638 - DAT_00881650) * DAT_005cc32c;
   v.x *= DAT_005cc9dc;
-  v.y *= DAT_005cc9dc;
-  v.z *= DAT_005cc9dc;
+  v.y = (float)(v.y * (double)DAT_005cc9dc);
+  v.z = (float)((0, v.z) * (0, (double)DAT_005cc9dc));
   DAT_008816d8 = (-DAT_0088163c - DAT_00881630) * DAT_005cc32c;
   DAT_008816dc = -(DAT_00881634 + v.y);
   DAT_008816e0 = (-DAT_00881650 - DAT_00881638) * DAT_005cc32c;

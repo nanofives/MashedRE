@@ -1,4 +1,12 @@
 // FLAGS: /O2 /GS /Ob1
+/* MATCH-RACEPATH-SHIFT 2026-11-09: 90.2% / 214 bad B -> 97.0% / 93 bad B (first divergence +0x11f -> +0x1f5).
+   (1) GY/GZ return the field as a comma rvalue `(0, p->y)`: the first value is spilled with fld/fstp to the dead
+   out_ang slot as in the original. (2) `d.y = -GY(h, 3) + GY(h, 0)` (same value as GY(h,0) - GY(h,3), negation is
+   exact): restores the original call order (n=0 first) and its fsubr. (3) s3/s4 back in x,y,z order (the old
+   permuter order gave the same count before (1)/(2), 4 B worse after). Left: residual (2) below (the place==100
+   compare and the edi/esi pops sit inside the s3.z/s4 multiplies in the original), one lea base/index swap
+   (i = place - 4 + DAT_0063a5e4: 6 operand orders, no change) and the r.z fstp position in three tails.
+   Permuter after these: 1532 compiles, no byte gain. The text below is the earlier state. */
 /* a6 0x00408b00 (1883 B + 3 jump tables): best 90.2% (bad214/1932), g2s did not compile.
    Locals (esp0-rel): V2 a (-0x68), V2 up {0,1} (-0x60, its slot reused for r), V3 d (-0x54), base (-0x48),
    s1 (-0x3c), fwd (-0x30), s3 (-0x24), s2 (-0x18), s4 (-0xc). FUN_004c3c60 / FUN_004726b0 are 2D
@@ -30,8 +38,8 @@ double FUN_004a3384(double x);  /* acos, CRT stack entry */
 float FUN_004c39b0(V3 *out, V3 *in);
 float FUN_004c3c60(V2 *out, V2 *in);
 static __inline float GX(int h, int n) { return FUN_00426d00(h, n)->x; }
-static __inline float GY(int h, int n) { return FUN_00426d00(h, n)->y; }
-static __inline float GZ(int h, int n) { return FUN_00426d00(h, n)->z; }
+static __inline float GY(int h, int n) { return (0, FUN_00426d00(h, n)->y); }
+static __inline float GZ(int h, int n) { return (0, FUN_00426d00(h, n)->z); }
 // MATCH: 0x00408b00 FUN_00408b00
 void FUN_00408b00(int h, int place, int ncars, V3 *out, float *out_ang)
 {
@@ -59,8 +67,8 @@ void FUN_00408b00(int h, int place, int ncars, V3 *out, float *out_ang)
         ang = 360.0f - ang;
     *out_ang = ang;
     d.x = FUN_00426d00(h, 0)->x - FUN_00426d00(h, 3)->x;
-    d.y = GY(h, 0) - GY(h, 3);
-    d.z = GZ(h, 0) - GZ(h, 3);
+    d.y = -GY(h, 3) + GY(h, 0);
+    d.z = -GZ(h, 3) + GZ(h, 0);
     FUN_004c39b0(&d, &d);
     s1.x = d.x * 0.4f;
     s1.y = d.y * 0.4f;
@@ -68,12 +76,12 @@ void FUN_00408b00(int h, int place, int ncars, V3 *out, float *out_ang)
     s2.x = fwd.x * 1.1f;
     s2.y = fwd.y * 1.1f;
     s2.z = fwd.z * 1.1f;
+    s3.x = fwd.x * 2.2f;
     s3.y = fwd.y * 2.2f;
     s3.z = fwd.z * 2.2f;
-    s4.z = fwd.z * 3.3f;
-    s3.x = fwd.x * 2.2f;
     s4.x = fwd.x * 3.3f;
     s4.y = fwd.y * 3.3f;
+    s4.z = fwd.z * 3.3f;
     if (place == 100) {
         r.x = base.x + s3.x;
         r.y = base.y + s3.y;
