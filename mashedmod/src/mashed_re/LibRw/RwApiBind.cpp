@@ -34,7 +34,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <mutex>
+#include <unordered_map>
 #include <vector>
+
+#include "../Math/RwLutTables.h"
 
 // [PORT-TOP-04F] whole-file read from the piz mount stack, else the disk (Match/PortTop_RwStream04F.cpp).
 extern "C" void* PortTop_Fs_ReadAll(const char* name, unsigned* len, const char** from);
@@ -1216,13 +1220,20 @@ struct MashedRwGlobals {
     void* rwfree;                    // +0x10c
     void* rwrealloc;                 // +0x110
     void* rwcalloc;                  // +0x114
-    std::uint8_t tail[0x100];        // zero: nothing on the knob path reads past +0x114 (no reader found)
+    // [PORT-OT-RWG-MODULES] below: zero unless MASHED_ORIG_TOP_RWMOD=1 (RegisterRwModules). MASHED.exe values from the
+    // original-side probe (verify/portorigtop_20261109/ORIG_RWG.json, RESULT_PORT-OT-RWG-MODULES.md).
+    void* flalloc;                   // +0x118 freelist alloc, original 0x004cca80
+    void* flfree;                    // +0x11c freelist free, original 0x004ccba0
+    std::uint8_t mod[0x440 - 0x120]; // +0x120..+0x43f: the module data at +0x134 / +0x14c / +0x170 / +0x3f4
 };
 static_assert(offsetof(MashedRwGlobals, rwmalloc) == 0x108, "RwGlobals malloc @ +0x108");
 static_assert(offsetof(MashedRwGlobals, rwfree) == 0x10c, "RwGlobals free @ +0x10c");
 static_assert(offsetof(MashedRwGlobals, rwrealloc) == 0x110, "RwGlobals realloc @ +0x110");
 static_assert(offsetof(MashedRwGlobals, rwstrcpy) == 0xcc, "RwGlobals strcpy @ +0xcc");
 static_assert(offsetof(MashedRwGlobals, rwstrcat) == 0xd4, "RwGlobals strcat @ +0xd4");
+static_assert(offsetof(MashedRwGlobals, flalloc) == 0x118, "RwGlobals freelist alloc @ +0x118");
+static_assert(offsetof(MashedRwGlobals, flfree) == 0x11c, "RwGlobals freelist free @ +0x11c");
+static_assert(sizeof(MashedRwGlobals) == 0x440, "RwGlobals record covers +0x3f4 + 0x40 and +0x170 + 0x220");
 MashedRwGlobals s_rwGlobals;
 
 char* __cdecl RwGlobalsStrcpy(char* d, const char* s) { return std::strcpy(d, s); }
@@ -1238,6 +1249,157 @@ void* __cdecl RwGlobalsCalloc(std::size_t n, std::size_t sz, unsigned hint) {
     void* const p = rw::Engine::memfuncs.rwmalloc(n * sz, hint);
     if (p) std::memset(p, 0, n * sz);
     return p;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// [PORT-OT-RWG-MODULES] MASHED_ORIG_TOP_RWMOD=1 (default OFF; verify/portorigtop_20261109/PREREG_PORT-OT-RWG-MODULES.md).
+// Read only here, and this file's installer runs only on the MASHED_ORIG_TOP path, so the default path never sees it.
+// ON: the four RW module-offset globals hold MASHED.exe's values and the record carries each module's data, so the
+// matched module readers (0x004c3b30 ... 0x004ce8e0) and the exe's own readers of those globals (Math/RwLutGuard.h,
+// Collision/RwpSolverMath2.cpp, Render/TextureLoaderCluster.cpp, ...) find bound slots instead of offset 0.
+bool RwModKnob() {
+    static const bool s = [] {
+        const char* const e = std::getenv("MASHED_ORIG_TOP_RWMOD");
+        return e && e[0] == '1';
+    }();
+    return s;
+}
+
+// Freelist header, as 0x004cca80 / 0x004ccba0 read it: +0x0 entry size (imul at 0x004ccaf1, div at 0x004ccbde),
+// +0x4 entries per block (0x004ccaa8, 0x004ccbc1), +0x8 bitmap bytes (0x004cca8e, 0x004ccbab), +0xc alignment
+// (0x004ccaf5..0x004ccb06: entries are rounded up to it), +0x10 the block list head (0x004cca8b, 0x004ccba8), +0x18
+// flags (0x004ccc03: bit 2 releases an empty block). The four headers the modules point at live at their original
+// addresses (the exe maps the original data range).
+struct FlEntry { void* raw; void* fl; };
+std::mutex s_flMu;
+std::unordered_map<void*, FlEntry> s_flLive;
+
+// RwGlobals +0x118 = 0x004cca80 (freelist alloc, cdecl (freeList, hint) -> entry or 0). Binding: one allocation per
+// entry through the RwGlobals +0x108 memory function (the one 0x004cca80 allocates its blocks with, 0x004ccb48), entry
+// size and alignment from the header, no block pool. The entry is remembered with its freelist for +0x11c.
+void* __cdecl RwGlobalsFreeListAlloc(void* fl, unsigned hint) {
+    if (!fl) return nullptr;
+    const std::uint32_t* const h = static_cast<const std::uint32_t*>(fl);
+    const std::uint32_t size = h[0];
+    const std::uint32_t align = h[3] ? h[3] : 1u;
+    std::uint8_t* const raw = static_cast<std::uint8_t*>(rw::Engine::memfuncs.rwmalloc(size + align - 1u, hint));
+    if (!raw) return nullptr;
+    void* const p = reinterpret_cast<void*>((reinterpret_cast<std::uintptr_t>(raw) + align - 1u) &
+                                            ~static_cast<std::uintptr_t>(align - 1u));
+    std::lock_guard<std::mutex> lk(s_flMu);
+    s_flLive[p] = FlEntry{raw, fl};
+    return p;
+}
+// RwGlobals +0x11c = 0x004ccba0 (freelist free, cdecl (freeList, entry); re/match/rwl01/004ccba0.c): an entry outside
+// every block of that freelist returns 0 and frees nothing (0x004ccbd3..0x004ccbd9), else the entry is released and
+// the freelist is returned (0x004ccc42 mov eax, edi). Binding: the same two results over the entries +0x118 handed out.
+void* __cdecl RwGlobalsFreeListFree(void* fl, void* p) {
+    void* raw = nullptr;
+    {
+        std::lock_guard<std::mutex> lk(s_flMu);
+        const auto it = s_flLive.find(p);
+        if (it == s_flLive.end() || it->second.fl != fl) return nullptr;
+        raw = it->second.raw;
+        s_flLive.erase(it);
+    }
+    rw::Engine::memfuncs.rwfree(raw);
+    return fl;
+}
+}  // namespace
+
+// Exe bodies the vector and matrix modules bind (Math/RwV3dTransformPointsCPU.cpp, Math/RwMatrixMultiplyCpu.cpp).
+extern "C" void* __cdecl RwV3dTransformPointsCPU_C(void* dst, const void* src, int count, const void* m);
+extern "C" void* __cdecl RwV3dTransformVectorsCPU_C(void* dst, const void* src, int count, const void* m);
+extern "C" void __cdecl RwMatrixMultiplyCPU_C(void* out, const void* A, const void* B);
+
+namespace {
+// Vector module +0x8 = 0x004dc4a0: the body of 0x004dc370 (+0xc) for one point, same SSE order (0x004dc4fa..0x004dc50c
+// against 0x004dc3d2..0x004dc3e7), cdecl (out, in, matrix), returns out (0x004dc524).
+void* __cdecl RwModPointSingle(void* out, const void* in, const void* m) {
+    RwV3dTransformPointsCPU_C(out, in, 1, m);
+    return out;
+}
+// Vector module +0x10 = 0x004dc530: the body of 0x004dc410 (+0x14) for one vector, same order (0x004dc57e..0x004dc58d
+// against 0x004dc466..0x004dc478), cdecl (out, in, matrix), returns out (0x004dc5a5).
+void* __cdecl RwModVectorSingle(void* out, const void* in, const void* m) {
+    RwV3dTransformVectorsCPU_C(out, in, 1, m);
+    return out;
+}
+
+// MASHED.exe values (original-side probe, ORIG_RWG.json "mods"): *(0x007d3ffc) = 0x134, *(0x007d4028) = 0x14c,
+// *(0x007d4054) = 0x3f4, *(0x007d4628) = 0x170.
+constexpr std::uint32_t kModVector = 0x134, kModMatrix = 0x14c, kModTexture = 0x3f4, kModImage = 0x170;
+
+struct FlHeaderInit { std::uint32_t addr, entrySize, perBlock, bitmapBytes, align, flags; };
+// The four freelist headers, words +0x0 / +0x4 / +0x8 / +0xc / +0x18 as MASHED.exe holds them (original-side probe
+// "dumps", RESULT_PORT-OT-RWG-MODULES.md). The block list (+0x10 / +0x14) starts empty (self-linked).
+const FlHeaderInit kFlHeaders[] = {
+    // addr, +0x0 entry size, +0x4 entries per block, +0x8 bitmap bytes, +0xc alignment, +0x18 flags; read at 3.02 .. 33.02 s.
+    {0x007d4004u, 0x40u, 0x100u, 0x20u, 4u, 3u},   // matrix module +0x0 (RwMatrix is 0x40 bytes, re/match/s19/004c4600.c)
+    {0x007d4030u, 0x18u, 0x5u, 0x1u, 4u, 3u},      // texture module +0xc (RwTexDictionary 0x18, re/match/s19/004c5890.c)
+    {0x007d405cu, 0x60u, 0x80u, 0x10u, 4u, 3u},    // texture module +0x8
+    {0x007d4604u, 0x34u, 0x80u, 0x10u, 4u, 3u},    // image module +0x218 (ImgFmt 0x34, re/match/s20/004ce790.c)
+};
+
+void Put(std::uint32_t off, std::uint32_t v) {
+    std::memcpy(reinterpret_cast<std::uint8_t*>(&s_rwGlobals) + off, &v, sizeof v);
+}
+std::uint32_t U(const void* p) { return static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(p)); }
+
+void RegisterRwModules() {
+    // RwGlobals +0x118 / +0x11c: original 0x004cca80 / 0x004ccba0.
+    s_rwGlobals.flalloc = reinterpret_cast<void*>(&RwGlobalsFreeListAlloc);
+    s_rwGlobals.flfree = reinterpret_cast<void*>(&RwGlobalsFreeListFree);
+    // Vector module (+0x134). Original: +0x0 0x0cc00048 / +0x4 0x0cc04050 (heap: the sqrt / inv-sqrt LUT roots,
+    // Math/RwLutGuard.h), +0x8 0x004dc4a0, +0xc 0x004dc370, +0x10 0x004dc530, +0x14 0x004dc410.
+    Put(kModVector + 0x0, U(mashed_re::Math::RwLutSqrtTable()));     // == the original's table (Math/RwLutTables.cpp)
+    Put(kModVector + 0x4, U(mashed_re::Math::RwLutInvSqrtTable()));
+    Put(kModVector + 0x8, U(reinterpret_cast<void*>(&RwModPointSingle)));
+    Put(kModVector + 0xc, U(reinterpret_cast<void*>(&RwV3dTransformPointsCPU_C)));
+    Put(kModVector + 0x10, U(reinterpret_cast<void*>(&RwModVectorSingle)));
+    Put(kModVector + 0x14, U(reinterpret_cast<void*>(&RwV3dTransformVectorsCPU_C)));
+    // Matrix module (+0x14c = vector module +0x18). Original: +0x0 0x007d4004 (freelist header), +0x4 0x00020000,
+    // +0x8 0x005cb2a0 (RwDeviceMatrixMultiply, exe body RwMatrixMultiplyCPU_C), +0xc / +0x10 / +0x14 0x3c23d70a.
+    // +0x18 0x007d3e78 / +0x1c 0x007d45a0 / +0x20 0x007d3e9c stay 0: no reader of them on the knob path found.
+    Put(kModMatrix + 0x0, 0x007d4004u);
+    Put(kModMatrix + 0x4, 0x00020000u);
+    Put(kModMatrix + 0x8, U(reinterpret_cast<void*>(&RwMatrixMultiplyCPU_C)));
+    Put(kModMatrix + 0xc, 0x3c23d70au);
+    Put(kModMatrix + 0x10, 0x3c23d70au);
+    Put(kModMatrix + 0x14, 0x3c23d70au);
+    // Image module (+0x170). Original: +0x218 0x007d4604 (freelist header, re/match/s20/004ce790.c Mod.freeList),
+    // +0x21c 0x0cc0d5ec (heap: the registered image formats, Mod.formats). The exe starts the list empty: the formats
+    // are registered by 0x00493600, which the knob path has not ported (Match/PortTop_00493710.cpp returns 1).
+    // +0x0..+0x217 (original: +0x0 0x007d4630, +0x4 heap, +0x8 0x100, then bytes 00 01 02 ...) stay 0: no reader found.
+    Put(kModImage + 0x218, 0x007d4604u);
+    Put(kModImage + 0x21c, 0u);
+    // Texture module (+0x3f4). Original: +0x0 / +0x4 heap (the dictionary list, re/match/s19/004c5890.c TG.texDictList,
+    // holding the original's dictionaries), +0x8 0x007d405c and +0xc 0x007d4030 (freelist headers), +0x1c 0 (the current
+    // dictionary, Render/TextureLoaderCluster.cpp). The exe's dictionaries are librw's, so the list starts empty
+    // (self-linked, as rwLinkListInitialize leaves it). +0x14 0x004c61b0 / +0x18 0x004c7490 / +0x2c 0x004c7200 /
+    // +0x30 0x004c6140 are original code addresses with no exe body: left 0, no reader on the knob path found.
+    const std::uint32_t head = U(reinterpret_cast<std::uint8_t*>(&s_rwGlobals) + kModTexture);
+    Put(kModTexture + 0x0, head);
+    Put(kModTexture + 0x4, head);
+    Put(kModTexture + 0x8, 0x007d405cu);
+    Put(kModTexture + 0xc, 0x007d4030u);
+    Put(kModTexture + 0x1c, 0u);
+    for (const FlHeaderInit& f : kFlHeaders) {
+        std::uint32_t* const h = reinterpret_cast<std::uint32_t*>(static_cast<std::uintptr_t>(f.addr));
+        h[0] = f.entrySize;
+        h[1] = f.perBlock;
+        h[2] = f.bitmapBytes;
+        h[3] = f.align;
+        h[4] = h[5] = f.addr + 0x10u;   // empty block list
+        h[6] = f.flags;
+    }
+    *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d3ffcu)) = kModVector;
+    *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4028u)) = kModMatrix;
+    *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4054u)) = kModTexture;
+    *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4628u)) = kModImage;
+    BindLog("RwGlobals [MASHED_ORIG_TOP_RWMOD]: modules registered (0x007d3ffc 0x134, 0x007d4028 0x14c, 0x007d4054 0x3f4, "
+            "0x007d4628 0x170), freelist alloc / free at +0x118 / +0x11c, record %p size 0x%X",
+            static_cast<void*>(&s_rwGlobals), static_cast<unsigned>(sizeof(s_rwGlobals)));
 }
 }  // namespace
 
@@ -1263,6 +1425,9 @@ int MashedRw_InstallRwGlobals(void) {
     s_rwGlobals.rwrealloc = reinterpret_cast<void*>(&RwGlobalsRealloc);
     s_rwGlobals.rwcalloc = reinterpret_cast<void*>(&RwGlobalsCalloc);
     *slot = &s_rwGlobals;
+    // [PORT-OT-RWG-MODULES] only once the B15 device has been seen (the install after piece 4): before that, piece 4
+    // points 0x007d3ff8 at the 0x34-byte B15 device for a while, and registered offsets would index past it.
+    if (dev && RwModKnob()) RegisterRwModules();
     if (dev)
         BindLog("RwGlobals: 0x007d3ff8 %p (B15 device) -> record %p; Im2D +0x18/+0x20/+0x30 copied, strcpy / strcat at "
                 "+0xcc / +0xd4, memory functions at +0x108..+0x114 on librw", dev, static_cast<void*>(&s_rwGlobals));
