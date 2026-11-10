@@ -49,9 +49,9 @@
 #define FUN_00558240 PortTop_StandIn04E_00558240
 #define FUN_004841d0 PortTop_StandIn04E_004841d0
 #define FUN_00484170 PortTop_StandIn04E_00484170
-#define FUN_004723d0 PortTop_StandIn04E_004723d0
+#define FUN_004723d0 Orig_004723d0                          // matched, Match/PortTop_004723d0.cpp (0x00691500 table), since PORT-OT-BOOT
 #define FUN_004881d0 Obj7030a8Create                        // matched, Match/MatchS14_004881d0.cpp (both targets; PTank record), since PORT-TOP-04I
-#define FUN_0047ba00 PortTop_StandIn04E_0047ba00
+#define FUN_0047ba00 Orig_0047ba00                          // matched, Match/PortTop_0047ba00.cpp (-> 0x00496940 raster), since PORT-OT-BOOT
 #define FUN_0045bae0 PortTop_StandIn04E_0045bae0
 #define FUN_00418980 PortTop_StandIn04E_00418980
 #define FUN_0041b450 PortTop_StandIn04E_0041b450
@@ -64,13 +64,13 @@
 #define FUN_0041db90 PortTop_StandIn04E_0041db90
 #define FUN_0041a1e0 PortTop_StandIn04E_0041a1e0
 #define FUN_0041eaa0 PortTop_StandIn04E_0041eaa0
-#define FUN_00420d00 PortTop_StandIn04E_00420d00
-#define FUN_00412890 PortTop_StandIn04E_00412890
-#define FUN_00471eb0 PortTop_StandIn04E_00471eb0
-#define FUN_00404830 PortTop_StandIn04E_00404830
+#define FUN_00420d00 Orig_00420d00                          // matched, Match/PortTop_00420d00.cpp (PanelSortInit), since PORT-OT-BOOT
+#define FUN_00412890 Orig_00412890                          // matched, Match/PortTop_00412890.cpp (quad index table, headlight), since PORT-OT-BOOT
+#define FUN_00471eb0 Orig_00471eb0                          // matched, Match/PortTop_00471eb0.cpp (thunk -> 0x00471df0), since PORT-OT-BOOT
+#define FUN_00404830 Orig_00404830                          // matched, Match/PortTop_00404830.cpp (car material tables), since PORT-OT-BOOT
 #define FUN_004025f0 Orig_004025f0                          // matched, Match/PortTop_004025f0.cpp (perm clumps), since PORT-TOP-04H
-#define FUN_00402f50 PortTop_StandIn04E_00402f50
-#define FUN_004026d0 PortTop_StandIn04E_004026d0
+#define FUN_00402f50 BootDefaultParamsInit                  // matched, Match/MatchS01.cpp (both targets; 0x00636ae8 block), since PORT-OT-BOOT
+#define FUN_004026d0 Orig_004026d0                          // matched, Match/PortTop_004026d0.cpp (n camera clear / show passes), since PORT-OT-BOOT
 extern "C" {
 #include "../../../../re/match/s01/00402750.c"
 }

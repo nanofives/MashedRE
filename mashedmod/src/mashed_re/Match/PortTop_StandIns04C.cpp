@@ -68,8 +68,6 @@ int PortTop_StandIn04C_004725f0() { static int once; StandInLog("0x004725f0", &o
 int PortTop_StandIn04C_00426b40() { static int once; StandInLog("0x00426b40", &once); return 0; }
 // rva 00405400: matched; port body only in .asi-only Util/PromoLoop_round53.cpp
 int PortTop_StandIn04C_00405400() { static int once; StandInLog("0x00405400", &once); return 0; }
-// rva 00471df0: matched, but its source also holds static 0x00471530, whose body is the .asi-only Match/MatchS11_00471530.cpp
-int PortTop_StandIn04C_00471df0() { static int once; StandInLog("0x00471df0", &once); return 0; }
 // rva 004114e0: matched; port body ReplayCleanup only in .asi-only Replay.cpp
 int PortTop_StandIn04C_004114e0() { static int once; StandInLog("0x004114e0", &once); return 0; }
 // rva 00412010: matched; reads DAT_0063bb38[i] +0x3c with no null check (state of 0x00402750)
