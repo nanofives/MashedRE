@@ -11,9 +11,9 @@
 #define FUN_0045bed0 PortTop_StandIn04C_0045bed0   // stand-in: matched, not compiled (level 2)
 #define FUN_0045bf30 PortTop_StandIn04C_0045bf30   // stand-in: matched in group s10/0045bae0.c, not compiled (level 2)
 #define FUN_00426c00 GameStateFlagGet   // exe body, Match/MatchS06_00426c00.cpp
-#define FUN_004725f0 PortTop_StandIn04C_004725f0   // stand-in: matched; .asi-only Match/MatchS11_004725f0.cpp binds 0x0046be10 to the .asi-only Write46be10
+#define FUN_004725f0 Orig_004725f0   // matched, Match/PortTop_004725f0.cpp (its callee 0x0046be10 is the exe-only Match/PortTop_0046be10.cpp), since PORT-OT-GAMEPLAY
 #define FUN_00426b40 PortTop_StandIn04C_00426b40   // stand-in: matched, not compiled (level 2)
-#define FUN_00405400 PortTop_StandIn04C_00405400   // stand-in: matched; port body only in .asi-only Util/PromoLoop_round53.cpp
+#define FUN_00405400 Orig_00405400   // matched, Match/PortTop_00405400.cpp, since PORT-OT-GAMEPLAY
 #define FUN_00484c90 Zero484c90   // exe body, Match/MatchS14_00484c90.cpp
 #define FUN_00471df0 Orig_00471df0   // matched, Match/PortTop_00471df0.cpp (its static callee 0x00471530 is ORIGTOP-ONLY against the .asi-only Match/MatchS11_00471530.cpp), since PORT-OT-BOOT
 #define FUN_004114e0 PortTop_StandIn04C_004114e0   // stand-in: matched; port body ReplayCleanup only in .asi-only Replay.cpp

@@ -52,20 +52,14 @@ int PortTop_StandIn04C_0041a980() { static int once; StandInLog("0x0041a980", &o
 int PortTop_StandIn04C_00422140() { static int once; StandInLog("0x00422140", &once); return 0; }
 // rva 0041ec00: matched, not compiled (level 2)
 int PortTop_StandIn04C_0041ec00() { static int once; StandInLog("0x0041ec00", &once); return 0; }
-// rva 0040cf40: matched; .asi-only Match/MatchS02_0040cf40.cpp, raw-address callees
-int PortTop_StandIn04C_0040cf40() { static int once; StandInLog("0x0040cf40", &once); return 0; }
 // rva 00490000: matched, not compiled (level 2)
 int PortTop_StandIn04C_00490000() { static int once; StandInLog("0x00490000", &once); return 0; }
 // rva 0045bed0: matched, not compiled (level 2)
 int PortTop_StandIn04C_0045bed0() { static int once; StandInLog("0x0045bed0", &once); return 0; }
 // rva 0045bf30: matched in group s10/0045bae0.c, not compiled (level 2)
 int PortTop_StandIn04C_0045bf30() { static int once; StandInLog("0x0045bf30", &once); return 0; }
-// rva 004725f0: matched; .asi-only Match/MatchS11_004725f0.cpp binds 0x0046be10 to the .asi-only Write46be10
-int PortTop_StandIn04C_004725f0() { static int once; StandInLog("0x004725f0", &once); return 0; }
 // rva 00426b40: matched, not compiled (level 2)
 int PortTop_StandIn04C_00426b40() { static int once; StandInLog("0x00426b40", &once); return 0; }
-// rva 00405400: matched; port body only in .asi-only Util/PromoLoop_round53.cpp
-int PortTop_StandIn04C_00405400() { static int once; StandInLog("0x00405400", &once); return 0; }
 // rva 004114e0: matched; port body ReplayCleanup only in .asi-only Replay.cpp
 int PortTop_StandIn04C_004114e0() { static int once; StandInLog("0x004114e0", &once); return 0; }
 // rva 00412010: matched; reads DAT_0063bb38[i] +0x3c with no null check (state of 0x00402750)
