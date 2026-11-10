@@ -22,6 +22,8 @@
     "run13_reference": "verify/run13p3_20261029/tracks_score_sub_p3.txt"
   },
   "text_only_globs": ["*.md", "*.txt", "verify/*", "re/analysis/*", "hooks.csv"],
+  "text_only_unless_built": ["re/match/"],
+  "text_only_unless_built_note": "HB-TRAIN-MATCH-TEXTONLY 2026-11-10: a changed file under these roots is text-only unless the build reads it (listed in mashedmod/exe_sources.rsp or asi_sources.rsp, or #included from a mashedmod source, followed through includes inside the root; a build script naming re/match makes every file a build input). merge_train.ps1 Get-BuildMatchRefs.",
   "conflict_union": ["mashedmod/build.bat", "mashedmod/exe_sources.rsp", "mashedmod/asi_sources.rsp", "re/analysis/CHANGELOG.md"],
   "conflict_halt_note": "every other conflicted file halts the branch (frida-sweep SKILL.md:61-64,107); hooks_registry.py, hooks.csv, STUBS.md, UNCERTAINTIES.md are resolved by hand"
 }

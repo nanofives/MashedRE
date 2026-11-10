@@ -121,6 +121,11 @@ evidence, `re/` tools that no build reads) runs WITHOUT it. `-Full` on a text-on
 for nothing and holds `mashed_lock` past an hour. Queue the two kinds in separate passes. Known gap: the train's own
 text-only check counts any `.py` under `re/tools/` or `verify/` as a build input, so such a pass still builds and
 runs the default gates (kept on purpose: gate scorers live there).
+Since HB-TRAIN-MATCH-TEXTONLY (2026-11-10) the train applies this itself: `-Full` counts only when the batch holds a
+decided-flip row (id `-FLIP`/`FLIP-` or "decided flip" in the title) and is dropped with a log line otherwise
+(`full_set_paths` still bring the full set in); a text-only batch skips build and gates even under `-Full`; and a
+`re/match/**` file is text-only unless the build reads it (an `.rsp` entry or an `#include` from mashedmod, about 790 of
+4035 files on 2026-11-10). `-ForceFull` keeps the old `-Full`. So passing `-Full` on a mixed queue costs nothing.
 
 ### Decided default flips (MERGE_TRAIN.md "Decided default flips")
 A row that flips a default on a user decision changes the gate hashes. It records its expected new
