@@ -25,8 +25,14 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 typedef unsigned int uint;
+#ifdef __cplusplus
+/* ATOMIC-VIEW: the port (C++) passes the material pointer as C does; the DDK text below is unchanged */
+int FUN_0053fbb0(int *p0, int p1);
+int FUN_0053fd30(int *p0, int p1, undefined4 p2, undefined4 p3, undefined4 p4);
+#else
 int FUN_0053fbb0(uint p0, int p1);
 int FUN_0053fd30(uint p0, int p1, undefined4 p2, undefined4 p3, undefined4 p4);
+#endif
 // MATCH: 0x0040baa0 FUN_0040baa0
 int * FUN_0040baa0(int *param_1,undefined4 *param_2)
 
