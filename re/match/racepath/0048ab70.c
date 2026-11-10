@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-RACEPATH-FRESH 0x0048ab70 (first hand source; raw g2s 31.3%): NOT CLOSED, 93.2% insn, 41 B differ
+/* MATCH-RACEPATH-FRESH 0x0048ab70 (first hand source; raw g2s 31.3%): NOT CLOSED (FRESH 93.2% insn, 41 B differ; FRESH2 91.2% insn, 34 B differ)
    (468 B whole symbol). The bitmap walk matches with Ghidra's own shape: two nested loops (word skip,
    byte load) with the not-found step `next: i = k*8+8` at the bottom of the inner loop and the 8-way
    switch after it, `break` = found, `default: goto next` (0x0048ab83..0x0048abf6). The template form of
@@ -8,7 +8,14 @@
    strength-reduced; the second field written becomes the base, so a.z is written second to get
    EBP = 0x0071ba38. Residual: d.y operand order (fld scale; fmul vel.y at 0x0048ac5c), the a.y store
    placed after a.z, and the pos.x / pos.y fadd operand order. Tried: swaps, comma rvalues, dblgreedy
-   (220 variants), 30 store orders. */
+   (220 variants), 30 store orders. 
+   MATCH-RACEPATH-FRESH2 (34 B): a.x, a.y, a.z written in natural order and d.y as a double product
+   `(float)((double)scale * vel.y)`: the d.y load order (fld scale; fmul vel.y at 0x0048ac5c) and the a.y slot now
+   match. Residual: the pointer base is EBP = &a.y, the original's is &a.z (0x0071ba38), so every vertex store
+   displacement is off by 4, plus the col.g / col.b byte stores scheduled before the a.x fstp (the original puts
+   them after it) and the pos.x fadd order (fld vel.x; fadd pos.x at 0x0048accd). Tried: 9 orders of the 10 vertex
+   stores with a.x/a.y/a.z in order (none gives base &a.z), d.y as W/V/F/comma, pos.x as E/F/comma/`+=`, d as a
+   double struct. */
 /* ---- MATCH-S07 preamble (same text in every re/match/s07 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -102,12 +109,12 @@ found:
             i++;
         } else {
             d.x = p->vel.x * p->scale;
-            d.y = p->scale * p->vel.y;
+            d.y = (float)((double)p->scale * p->vel.y);
             d.z = p->vel.z * p->scale;
             a = p->col.a;
             DAT_0071ba30[n2].a.x = d.x + p->pos.x;
-            DAT_0071ba30[n2].a.z = d.z + p->pos.z;
             DAT_0071ba30[n2].a.y = d.y + p->pos.y;
+            DAT_0071ba30[n2].a.z = d.z + p->pos.z;
             DAT_0071ba30[n2].col.r = p->col.r;
             DAT_0071ba30[n2].col.g = p->col.g;
             DAT_0071ba30[n2].col.b = p->col.b;
