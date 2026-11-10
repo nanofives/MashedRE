@@ -1,5 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 h1 0x005b10e0 (38 B). Best 42.9% (regs 78.6%), residual class (b). table entry {fn,u16} call fn(p1,v,p4): orig loads ushort via [tab+idx*8+4] before lea; tried struct/local/hoist forms + permuter 120s. */
+/* MATCH-S26 h1 0x005b10e0 (38 B). Best 42.9% (regs 78.6%), residual class (b). table entry {fn,u16} call fn(p1,v,p4): orig loads ushort via [tab+idx*8+4] before lea; tried struct/local/hoist forms + permuter 120s.
+   MATCH-RACEPATH-PILOT 2026-11-09: CLOSED, 38 B BYTE-IDENTICAL. The u16 is read into an int local before the call
+   (xor eax,eax; mov ax,[ecx+edx*8+4] ahead of the lea) and the function returns the callee's int (eax is left as the
+   callee's on ret). With a void return the same local gives the old 42.9%; an unsigned short local gives and eax,0xffff. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -22,11 +25,11 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef struct Ent { void (*fn)(int, int, int); unsigned short v; } Ent;
+typedef struct Ent { int (*fn)(int, int, int); unsigned short v; } Ent;
 typedef struct Obj { char pad[8]; Ent *tab; } Obj;
 // MATCH: 0x005b10e0 FUN_005b10e0
-void FUN_005b10e0(int param_1,Obj *param_2,int param_3,int param_4)
+int FUN_005b10e0(int param_1,Obj *param_2,int param_3,int param_4)
 {
-  Ent *e = &param_2->tab[param_3];
-  e->fn(param_1, e->v, param_4);
+  int v = param_2->tab[param_3].v;
+  return param_2->tab[param_3].fn(param_1, v, param_4);
 }

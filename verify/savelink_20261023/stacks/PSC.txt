@@ -1,0 +1,2 @@
+# MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
+MASHED_PORTSTATE_COURSE

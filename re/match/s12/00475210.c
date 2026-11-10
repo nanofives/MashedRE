@@ -2,7 +2,10 @@
 /* 0x00475210: best 93.1% (regs 93.1%, ops 100%). Tried: shared nr local (83.1%), (-info.r) per component (93.1%),
    in-place info.r negate (69%), separate tmp vector (65.5%), all operand orders of the adds/muls (no effect),
    statement reorders, float* params, pointer to out, permuter (no gain).
-   Residual (b): the y/z sums load out.y/out.z before param_1->y/z (original loads param_1 first); 4 instructions. */
+   Residual (b): the y/z sums load out.y/out.z before param_1->y/z (original loads param_1 first); 4 instructions.
+   MATCH-RACEPATH-PILOT 2026-11-09: CLOSED, 182 B BYTE-IDENTICAL. The y and z sums are done in double and cast back
+   (`(float)(param_1->y + (double)out.y)`): the compiler then loads param_1->y first and adds the out.y slot, as the
+   original does. The float form loads the out.y slot first whatever the operand order. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -39,7 +42,7 @@ int FUN_00475210(Vec3 *param_1, int param_2)
 
   if (FUN_004b4b60(FUN_0045bfe0(param_1, &info)) != 0) {
     out.x = info.v.x * (-info.r); out.y = info.v.y * (-info.r); out.z = info.v.z * (-info.r);
-    out.x = param_1->x + out.x; out.y = param_1->y + out.y; out.z = param_1->z + out.z;
+    out.x = param_1->x + out.x; out.y = (float)(param_1->y + (double)out.y); out.z = (float)(param_1->z + (double)out.z);
     out.x += info.v.x * 0.02f; out.y += info.v.y * 0.02f; out.z += info.v.z * 0.02f;
     FUN_004b5080(param_2, info.m, &out);
     return 1;

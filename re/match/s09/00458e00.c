@@ -70,7 +70,7 @@ int FUN_00458e00(V3_00458e00 *p, int type)
   while (i != 0) {
     i--;
     r = &DAT_0068b198[i];
-    dx = r->home.x - p->x;
+    { float hx = r->home.x; dx = hx - p->x; }  /* named float local: fld [ecx] first (MATCH-X87-CASTLEVER-PILOT) */
     dy = r->home.y - p->y;
     dz = r->home.z - p->z;
     t = dy * dy;

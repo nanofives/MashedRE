@@ -157,6 +157,8 @@ void           Nav_GameStateSeedSpan(const unsigned char* span);
 bool           ColourSelIcon_On();
 // [PORT-COLOURSEL-BAR-Y] default ON since L-110 (a), opt-out MASHED_NO_COLOURSEL_BAR_Y=1, and the cup flow: one colour-select row at record y 220.
 bool           ColourSelBarY_SingleRow();
+// [PORT-COLOURSEL-LEFTRIGHT] MASHED_COLOURSEL_BORDER (default OFF): the single-row bar drawn as the original's five rects.
+bool           ColourSelBorder_On();
 
 // --- public API ------------------------------------------------------------
 

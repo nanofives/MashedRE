@@ -5,7 +5,11 @@
    pointer), 0.001f literal (the global reversed fld/fmul), permuter store order.
    Residual (b): the fade fstp lands one store later than the original (after the b store instead of
    before the rate store). Tried all orders of the a/fade/rate/b/follow/col stores (inline product and
-   `param_4 = param_4 * 0.001f` first), `0.001f * param_4`, chained a=b, int copy of the colour. */
+   `param_4 = param_4 * 0.001f` first), `0.001f * param_4`, chained a=b, int copy of the colour. 
+   MATCH-RACEPATH-X87A 2026-11-09: CLOSED, 287 B BYTE-IDENTICAL. The fade is stored as the product, first:
+   `DAT_0076a100[i].fade = param_4 * 0.001f;` ahead of the a / b / rate stores, with no write back to param_4
+   (param_4 has no later reader). That places the fstp to +0x2c ahead of the store to +0x24, as at 0x0048f865.
+   11 other orders of the four stores and the scaled param_4 (double temp included) stay at 6..16 B. */
 /* ---- MATCH-S15 preamble (same text in every re/match/s15 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -63,9 +67,8 @@ void FUN_0048f780(Vec3_48f7 *param_1, float param_2, Col_48f7 *param_3, float pa
             DAT_0076a100[i].vel.x = FUN_00472650(0.0025f, 0.005f);
             DAT_0076a100[i].vel.y = FUN_00472650(0.01f, 0.02f);
             DAT_0076a100[i].vel.z = FUN_00472650(0.0025f, 0.005f);
-            param_4 = param_4 * 0.001f;
+            DAT_0076a100[i].fade = param_4 * 0.001f;
             DAT_0076a100[i].a = param_2;
-            DAT_0076a100[i].fade = param_4;
             DAT_0076a100[i].b = param_2;
             DAT_0076a100[i].rate = param_5;
             DAT_0076a100[i].col = *param_3;

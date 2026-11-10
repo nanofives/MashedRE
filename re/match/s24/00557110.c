@@ -40,7 +40,6 @@ typedef struct {
   int pad4;
   unsigned int flags; /* +0x64 */
 } Line2;
-MGLOBAL(float, DAT_005d757c, 0x005d757c);
 // MATCH: 0x00557110 FUN_00557110
 Line2 *FUN_00557110(Line2 *param_1, V2d *param_2, V2d *param_3, V2d *param_4, V2d *param_5)
 {
@@ -50,8 +49,9 @@ Line2 *FUN_00557110(Line2 *param_1, V2d *param_2, V2d *param_3, V2d *param_4, V2
   param_1->p1 = *param_2;
   param_1->d1.x = param_3->x - param_2->x;
   param_1->d1.y = param_3->y - param_2->y;
-  if (param_1->d0.x == DAT_005d757c && param_1->d0.y == DAT_005d757c &&
-      param_1->d1.x == DAT_005d757c && param_1->d1.y == DAT_005d757c) {
+  /* 0.0f literal: 0x005d757c is .rdata 00000000, a __real@ constant (MATCH-X87-CASTLEVER-OPORDER) */
+  if (param_1->d0.x == 0.0f && param_1->d0.y == 0.0f &&
+      param_1->d1.x == 0.0f && param_1->d1.y == 0.0f) {
     param_1->flags &= ~2;
     return param_1;
   }

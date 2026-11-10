@@ -7,3 +7,4 @@
 # relocheck OK. evidence = the RESULT that proved the extent from the binary (Ghidra body ranges + bytes).
 rva	source	members	evidence
 0040ac80	re/match/s02/0040ac80.c	FUN_0040ac80@0040ac80:54,_FUN_0040abc0@0040abc0:31,_FUN_0040abe0@0040abe0:31,_FUN_0040ac00@0040ac00:62,_FUN_0040ac40@0040ac40:50	verify/c4rac80extent_20261107/RESULT_C4R-AC80-EXTENT.md
+004111c0	re/match/t01g/004111c0.c	FUN_004111c0@004111c0:355,_FUN_0040dd80@0040dd80:46,_FUN_0040ddf0@0040ddf0:16,_FUN_0040feb0@0040feb0:572,_FUN_00410130@00410130:391,_FUN_00410ab0@00410ab0:118	verify/matchracepath_20261109/frame/RESULT_MATCH-RACEPATH-FRAME.md

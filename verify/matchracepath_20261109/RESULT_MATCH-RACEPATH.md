@@ -1,0 +1,122 @@
+# RESULT MATCH-RACEPATH (L1 section, race-path C4 by match for the ORIG_TOP route, L-111), 2026-11-09
+
+**Verdict: GREEN. 26 race-path rows C2/C3 -> C4 by route match on 11 enqueued slice branches. 0x004111c0 is C4.**
+
+Lead branch `orch/MATCH-RACEPATH` (this file and the inventory only). Every slice used `re/tools/match/match.py`
+(XP DDK cl 13.00.9176 / c2 13.00.9178) with each file's own FLAGS, `relocheck.py` OK, promotion through
+`re/tools/c4_reclass.py batch --apply`. No mashedmod/ edit and no game run in any slice. The only changed source that
+mashedmod includes is `re/match/t01g/004111c0.c` (port TU `Match/MatchT01G_004111c0.cpp`). Its change is DDK-side
+only (`#ifndef MATCH_PORT`), so the merge train's build and gates cover it.
+
+## Inventory (lead, `lead/`)
+
+`lead/inv.py` builds `lead/inv.tsv` from `orch/PORT-ORIGTOP-SIZE:verify/portorigtop_20261109/race_point.tsv`: every
+race_load / race_run row below C4 (game C0..C3 plus non-C4 RW-Physics, RW core, CRT, Lua, qhull). 185 rows: 153 with
+a source under re/match (the gate refused all 153 on the base, `D:/MashedWT/MATCH-RACEPATH_data/gate_all.log`, SHA-256
+9ee32276f5c50b0a683612227119b3c24169932b2c2717fe8a4f824e8c0d26c8), 32 with none. Only 8 RW-Physics rows on the path
+were below C4, not 25. The "13.7 KB" for 0x004111c0 in hooks.csv was stale: its whole symbol was already
+BYTE-IDENTICAL, and the gate refused it on extent only.
+
+## Slices
+
+| slice | rows | closed | yield | C4 rows | branch @ sha |
+|---|---|---|---|---|---|
+| FRAME | 3 | 1 | exempt | 0x004111c0 (extent override, 6 members = 1498 B) | orch/MATCH-RACEPATH-FRAME @ cbb6eaf73 |
+| PILOT (near-miss 1..36 B, never pooled) | 20 | 6 | 30% | 0x00477920 0x00476320 0x00475210 0x00415e20 0x00417640 0x005b10e0 | orch/MATCH-RACEPATH-PILOT @ 837246574 |
+| BIG | 2 | 1 | exempt | 0x00446520 (7,412 B) | orch/MATCH-RACEPATH-BIG @ db505a5ef |
+| X87A (near-miss, already permuted) | 34 | 8 | 24% | 0x00412cf0 0x00464a50 0x004726f0 0x0048f780 0x00422570 0x00442a60 0x004c1210 0x005a86a0 | orch/MATCH-RACEPATH-X87A @ 0b7cb8ef4 |
+| X87B (near-miss 40..155 B) | 12 worked | 1 | 8%, stopped | 0x0041f120 | orch/MATCH-RACEPATH-X87B @ 14c1faada |
+| SHIFT (high insn%, many bad B) | 6 worked | 0 | 0%, stopped | none (3 sources improved) | orch/MATCH-RACEPATH-SHIFT @ 92293401b |
+| BIG2 | 2 | 0 | exempt | none (0x0046f6c0 44.3 -> 50.7%, 0x00469df0 30.1 -> 63.1%) | orch/MATCH-RACEPATH-BIG2 @ 44f5b5b1a |
+| FRESH (no hand source, <= 600 B) | 7 worked | 4 | 57% | 0x004844a0 0x00484580 0x0040d8f0 0x00410860 | orch/MATCH-RACEPATH-FRESH @ 636b61e23 |
+| FRESH2 (base FRESH) | 6 worked | 3 | 50% | 0x0048aff0 0x0048b230 0x0048b440 | orch/MATCH-RACEPATH-FRESH2 @ e40d20acf |
+| FRESH3 (no hand source, 700..1014 B) | 6 worked | 1 | 17%, stopped | 0x00418560 | orch/MATCH-RACEPATH-FRESH3 @ e06f10e42 |
+| FRESH4 (no hand source, 1.1..1.8 KB) | 3 worked | 1 | 33% | 0x004177b0 | orch/MATCH-RACEPATH-FRESH4 @ d616310a5 |
+
+Each slice's RESULT is `verify/matchracepath_20261109/<slice>/RESULT_MATCH-RACEPATH-<SLICE>.md` on its branch.
+
+Yield by type: no hand source up to 600 B 7/13 (54%). Near-misses up to about 30 B 14/54 (26%). Near-misses of
+40..155 B 1/12 (8%). Large bodies with a shifted tail 0/6. No hand source of 700 B and more 2/9 (22%).
+
+## Levers found (each one closed rows that earlier slices had marked unreachable)
+
+1. Double intermediate cast back to float, `(float)(a + (double)b)`, or a named double temporary
+   `{ double t = a - b; x = (float)t; }` (PILOT, X87A). A double literal that turns into `fmul qword` is a false gain.
+2. A comma rvalue `(0, p->f)` makes cl load the struct field into ST0 before the frame operand, and
+   `p->a = (0, p->a) + v` does the same for `+=` (BIG: 16 statements in 0x00446520).
+3. Fix the first length change first. One statement 6 B too long shifted 2,509 of 0x00446520's 2,725 bad bytes (BIG).
+4. Floats that g2s declares as `_DAT_005c....` externs are `__real@` literals. Write the literal (FRESH).
+5. A same-TU `static` callee takes its argument in EAX. Switch cases each keep their own call pair. Data shape matters
+   against `/GS` cookies. cl unrolls a 4-step constant loop (FRESH).
+
+## The cast lever, for MATCH-X87-CASTLEVER (before / after, from the slice branches)
+
+This section is here and not in the X87A / X87B RESULTs, because those branches were already enqueued. The
+rows are the ones each form closed. Every after-form keeps the value and type: a float expression widened to double
+and narrowed again computes the same float on x87, where the original also evaluates in extended precision.
+
+1. Double intermediate, cast back (PILOT: 0x00476320, 0x00475210, 0x00415e20, 0x00417640). `re/match/s12/00476320.c`:
+   ```c
+   param_1[2] = param_2[2] + z;                    /* before: z's stack slot loads first */
+   param_1[2] = (float)(param_2[2] + (double)z);   /* after: param_2[2] loads first, z is the fadd operand */
+   ```
+2. Named double temporary (X87A: 0x00412cf0, 0x00464a50, 0x00422570). `re/match/s05/00422570.c`, one statement
+   fixed all 16 differing bytes:
+   ```c
+   dx = DAT_006403b8[i].x - s.c.x;                                    /* before */
+   { double tx = DAT_006403b8[i].x - s.c.x; dx = (float)tx; }         /* after */
+   ```
+   On 0x00412cf0 the cast form of item 1 reached 2 B and the named temporary closed it.
+3. Named float local for one operand (X87A: 0x004726f0). `float a = param_1[1];` read before the sum schedules its
+   `fld [eax+4]` ahead of the second pointer load (0x004726f4). The converse, a compiler temporary in place of a named
+   local, closed 0x00477920 (PILOT).
+4. Comma rvalue (BIG: 0x00446520, 16 statements; X87A: 0x00442a60). `re/match/s08/00446520.c` and
+   `re/match/s08/00442a60.c`:
+   ```c
+   vln.x += vah.x * param_1->f9a4;                 /* before: frame operand first */
+   vln.x += vah.x * (0, param_1->f9a4);            /* after: fld [ecx+0x9a4] first, as in the original */
+   p->a += vbr;                                    /* before */
+   p->a = (0, p->a) + vbr;                         /* after */
+   DAT_008989b0[a] = FUN_004c3ac0(&v.x) * 0.8f;          /* before */
+   DAT_008989b0[a] = (0, FUN_004c3ac0(&v.x)) * 0.8f;     /* after: counter load moves ahead of the fmul (0x00442c46) */
+   ```
+   X87B's largest partial gains came from this form too: 0x0048d360 / 0x0048d540 136 -> 38 B, 0x0041faf0 59 -> 12 B,
+   0x00459000 55 -> 30 B (`x87b/variants/`).
+5. Embedded assignment against a length change (BIG: 0x00446520, 2,509 of its 2,725 bad bytes):
+   ```c
+   vcl = (float)(acos(vay) * 57.2958f); vay = 90.0f - (180.0f - vcl);        /* before: fstp; fld; fsub, 6 B longer */
+   vay = 90.0f - (180.0f - (vcl = (float)(acos(vay) * 57.2958f)));           /* after: fst; fsubr, vcl stays in ST0 */
+   ```
+
+Guard: a double literal (`(double)0.95f`) turns the constant into `fmul qword`, which the original never has. Two
+such false gains were thrown out in PILOT (0x00458a40, 0x00425ca0). Search tool: PILOT `tools/dblgreedy.py`. X87A's
+copy adds transforms W (named double temporary) and F (named float local). Both are scratch tools under
+`verify/matchracepath_20261109/{pilot,x87a}/tools/`, not part of `re/tools/match/`.
+
+## Follow-ups filed on this branch (L0, 2026-11-09)
+
+- U-9801 (UNCERTAINTIES, semantic): the return type of 0x0055ae50. It stays refused C4. Marker in
+  `re/analysis/bucket_00557fb0/0x0055ae50.md`, CHANGELOG line below `<!-- ENTRIES -->`.
+- `re/HARNESS_BACKLOG.md` item 7: the match_permute.py mulswap precedence bug.
+- The 3 race-path s14 rows: 0x00487020 was worked in X87A (7 B, not closed). In X87B, 0x0048aa50 was worked by hand
+  (43 -> 17 B, not closed), and 0x0048a780 got only the mechanical passes (124 B, not closed).
+
+## What remains on the race path (159 rows below C4)
+
+- Near-closes worth one more pass: 0x00488e70 7 B, 0x0040aef0 12 B, 0x00411ae0 27 B, 0x0048ab70 34 B,
+  0x00414c30 50 B (racepath sources), and the 2..10 B partials in PILOT and X87A `results.tsv`.
+- No hand source yet: 0x0040ca00 (907 B), 0x004128f0 (1014 B), 0x0040be50 (1849 B), 0x00487280 (2678 B),
+  0x004883b0 (2745 B), 0x0040eee0 (3356 B). Library residue (CRT acos/atan/0x004a3700/0x004a371d, Lua 0x004b70d0,
+  qhull 0x0057ca30) belongs to the libid route, not match.
+- Big, by match %: 0x0040e590 84.6%, 0x00443dc0 57.5%, 0x0046f6c0 50.7%, 0x00469df0 63.1% (frame size first).
+- Parked under the 30% rule: near-misses of 40 B and more (`lead/poolB.tsv`, 21 rows never worked) and the 9
+  unworked SHIFT rows.
+- Open question: 0x0055ae50 is 27 B BYTE-IDENTICAL with a `void` return, but the unmatched caller source
+  0x0047def0 compares its return with 6 and 7. The PILOT refused it.
+
+## Tool notes
+
+- `re/tools/match/match_permute.py` mulswap ignores operator precedence. FRAME rejected a variant at 87.3% that
+  changed behaviour (`frame/variants/0040e590_permute_rejected.c`).
+- `re/tools/decomp_pc.py` run from a worktree resolves `mashed_pool/` under the worktree and fails. Run the main
+  checkout's copy (FRESH3, FRESH4).

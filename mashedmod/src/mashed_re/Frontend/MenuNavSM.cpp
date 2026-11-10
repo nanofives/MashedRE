@@ -1156,9 +1156,29 @@ bool ColourSelBarY_SingleRow() {
     return s_on && Q_ModeIsCupFlow();
 }
 
+// [PORT-COLOURSEL-LEFTRIGHT 2026-11-09] MASHED_COLOURSEL_BORDER (default OFF, =1 on), PREREG
+// verify/portstate_20261109/PREREG_COLOURSEL_LEFTRIGHT.md: the single-row bar as the original's five rects.
+bool ColourSelBorder_On() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_COLOURSEL_BORDER");
+        return e && e[0] == '1';
+    }();
+    return s_on;
+}
+
 void ApplyActionGameMode(std::uint32_t action) {
     if (ColourSelIcon_On() && (action == 0xff3d0000u || action == 0xff400000u))
         *reinterpret_cast<std::int32_t*>(0x0067f0c0u) = 1;                     // 0x0043f4d1
+    // [PORT-COLOURSEL-COMMIT 2026-11-10, U-9672] colour-select forward 0xff1d0000 (0x0043e557), cup flow only
+    // (FUN_00430760 != 0, 0x0043e563..0x0043e56a): DAT_007f1a1c = 0 when the choice 0x0067f0c0 is 0 (0x0043e571 /
+    // 0x0043e575, ebx = 0), else choice - 1 (0x0043e57d dec / 0x0043e57e store), before the FUN_0043d2a0(6,0) push
+    // (0x0043e586). The race livery reads it (exe_main launch, FUN_0040d110). PREREG
+    // verify/portstate_20261109/PREREG_COLOURSEL_COMMIT.md. Not ported here: FUN_00431d00 (0x0043e58e) and
+    // DAT_0067ea78 = 0 (0x0043e593).
+    if (ColourSelIcon_On() && action == 0xff1d0000u && Q_ModeIsCupFlow()) {
+        const std::int32_t ch = *reinterpret_cast<const std::int32_t*>(0x0067f0c0u);
+        *reinterpret_cast<std::int32_t*>(0x007f1a1cu) = (ch == 0) ? 0 : ch - 1;
+    }
     // DAT_0067f17c = 0 on these five mode items (harvest L272 for 0xff3d/0xff40
     // via LAB_0043f468, L940 for 0xff4d, L825 for 0xff2c/0xff2e via
     // LAB_0043f198): the challenge row restarts at 0 when a mode is picked.

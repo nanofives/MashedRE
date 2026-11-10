@@ -1,5 +1,5 @@
 // FLAGS: /Od
-/* MATCH-S08 0x00446520: 94.9% (regs 94.9%, ops 99.0%) by hand (h8); raw did not compile.
+/* MATCH-S08 0x00446520: 100% BYTE-IDENTICAL 7412 B (MATCH-RACEPATH-BIG 2026-11-09; was 94.9% / 2725 bad B).
    FLAGS ARE /Od, NOT /O2 /GS /Ob1: this function is unoptimized code (every local in [ebp-x], for loops as
    jmp/inc/cmp, `xor eax,eax; test eax,eax; jne` tails = do { } while (0) vector macros, _CIsin/_CIcos/_CIatan
    calls). The caller has to decide whether a per-file /Od FLAGS line is acceptable for the port.
@@ -16,11 +16,16 @@
    vch=l18, vcn=v14, vcy=l8
    2. /Od keeps ST0 across consecutive statements that store the same variable (x = a; x /= b; x = sin(x) ...),
       and `x * 2.0f` compiles to fadd st(0), st(0). FUN_004b4cd0 takes (FUN_0045bfe0(), &seg, hit).
-   Residual (a): the original evaluates a pointer-based operand before a frame operand (fld [p+0x964];
-   fsubr [ebp-x], fld [p+0x970]; fadd [ebp-x], and 180 - x with x still in ST0 as fsubr). 9176 loads the frame
-   operand first for every form tried (operand order, (*p).f, p[0].f, casts, +=, (&p->a)->x, -(p - w)). The
-   game was linked by VS.NET 2002 (13.00.9466); a 9176/9466 /Od operand-order difference is the likely cause,
-   not provable without 9466. Matrix local is float[16] (64 B, 8-aligned: the original's 4-byte gap). */
+   3. (MATCH-RACEPATH-BIG) The 2725 differing bytes were one 6-byte growth at +0x2f1 shifting every later byte:
+      `vcl = ...; vay = 90 - (180 - vcl);` reloaded vcl. The original keeps it in ST0 (fst [ebp-0x1d0];
+      fsubr [180.0]), which is the assignment expression `vay = 90 - (180 - (vcl = ...))`.
+   4. (MATCH-RACEPATH-BIG) The old "residual (a)" (param_1 field loaded before the frame operand, 16 statements,
+      216 B) is reproduced by 9176, so the 9176/9466 hypothesis is not needed: written as an rvalue,
+      `(0, param_1->f)`, the field is evaluated into ST0 first, as in the original. Same value, same type; only the
+      lvalue-ness of the operand changes. Tried and not used: (double) casts (they fix the pointer+pointer and the
+      compound forms, but move the frame operand first in frame-op-pointer, and (float)(double) adds a spill and
+      grows the frame), `(&p->a)->x`, `(&p->a.x)[0]`, volatile, unary +, and C++ (/Tp breaks finding 2).
+      Matrix local is float[16] (64 B, 8-aligned: the original's 4-byte gap). */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -230,9 +235,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
     }
     vln = vad;
     do {
-      vln.x += vah.x * param_1->f9a4;
-      vln.y += vah.y * param_1->f9a4;
-      vln.z += vah.z * param_1->f9a4;
+      vln.x += vah.x * (0, param_1->f9a4);
+      vln.y += vah.y * (0, param_1->f9a4);
+      vln.z += vah.z * (0, param_1->f9a4);
     } while (0);
     FUN_004c51a0(vkq, &vln, 0);
     vog.x = (float)sin((float)DAT_007f0ff0 * 0.0001f);
@@ -480,8 +485,7 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
   if (vay > 1.0f) {
     vay = 1.0f;
   }
-  vcl = (float)(acos(vay) * 57.2958f);
-  vay = 90.0f - (180.0f - vcl);
+  vay = 90.0f - (180.0f - (vcl = (float)(acos(vay) * 57.2958f)));
   viq = (float)(-3.95f - vim * 0.25 / 5.0);
   do {
     vbr.x *= viq;
@@ -544,9 +548,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
   }
   vgy = 0;
   do {
-    vbr.x = vby.x - param_1->a964.x;
-    vbr.y = vby.y - param_1->a964.y;
-    vbr.z = vby.z - param_1->a964.z;
+    vbr.x = vby.x - (0, param_1->a964.x);
+    vbr.y = vby.y - (0, param_1->a964.y);
+    vbr.z = vby.z - (0, param_1->a964.z);
   } while (0);
   viq = FUN_004c3ac0(&vbr);
   if (viq > 5.0f) {
@@ -571,9 +575,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
     param_1->f99c = 0.0f;
   }
   do {
-    vbr.x = vby.x - param_1->a964.x;
-    vbr.y = vby.y - param_1->a964.y;
-    vbr.z = vby.z - param_1->a964.z;
+    vbr.x = vby.x - (0, param_1->a964.x);
+    vbr.y = vby.y - (0, param_1->a964.y);
+    vbr.z = vby.z - (0, param_1->a964.z);
   } while (0);
   do {
     vbr.x *= 0.05f;
@@ -581,9 +585,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
     vbr.z *= 0.05f;
   } while (0);
   do {
-    param_1->a970.x += vbr.x;
-    param_1->a970.y += vbr.y;
-    param_1->a970.z += vbr.z;
+    param_1->a970.x = (0, param_1->a970.x) + vbr.x;
+    param_1->a970.y = (0, param_1->a970.y) + vbr.y;
+    param_1->a970.z = (0, param_1->a970.z) + vbr.z;
   } while (0);
   do {
     param_1->a970.x *= 0.8f;
@@ -591,9 +595,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
     param_1->a970.z *= 0.8f;
   } while (0);
   do {
-    vbr.x = param_1->a964.x + param_1->a970.x;
-    vbr.y = param_1->a964.y + param_1->a970.y;
-    vbr.z = param_1->a964.z + param_1->a970.z;
+    vbr.x = (0, param_1->a964.x) + param_1->a970.x;
+    vbr.y = (0, param_1->a964.y) + param_1->a970.y;
+    vbr.z = (0, param_1->a964.z) + param_1->a970.z;
   } while (0);
   do {
     vmr.x = vby.x - vbr.x;
@@ -612,9 +616,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
   vcn.y = vno;
   vcn.z = vhh;
   do {
-    vbr.x = vcn.x - param_1->a97c.x;
-    vbr.y = vcn.y - param_1->a97c.y;
-    vbr.z = vcn.z - param_1->a97c.z;
+    vbr.x = vcn.x - (0, param_1->a97c.x);
+    vbr.y = vcn.y - (0, param_1->a97c.y);
+    vbr.z = vcn.z - (0, param_1->a97c.z);
   } while (0);
   do {
     vbr.x *= 0.05f;
@@ -622,9 +626,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
     vbr.z *= 0.05f;
   } while (0);
   do {
-    param_1->a988.x += vbr.x;
-    param_1->a988.y += vbr.y;
-    param_1->a988.z += vbr.z;
+    param_1->a988.x = (0, param_1->a988.x) + vbr.x;
+    param_1->a988.y = (0, param_1->a988.y) + vbr.y;
+    param_1->a988.z = (0, param_1->a988.z) + vbr.z;
   } while (0);
   do {
     param_1->a988.x *= 0.8f;
@@ -632,9 +636,9 @@ void FUN_00446520(Cam_00446520 *param_1, int param_2)
     param_1->a988.z *= 0.8f;
   } while (0);
   do {
-    vbr.x = param_1->a97c.x + param_1->a988.x;
-    vbr.y = param_1->a97c.y + param_1->a988.y;
-    vbr.z = param_1->a97c.z + param_1->a988.z;
+    vbr.x = (0, param_1->a97c.x) + param_1->a988.x;
+    vbr.y = (0, param_1->a97c.y) + param_1->a988.y;
+    vbr.z = (0, param_1->a97c.z) + param_1->a988.z;
   } while (0);
   do {
     vmr.x = vcn.x - vbr.x;

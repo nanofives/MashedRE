@@ -1,0 +1,12 @@
+rva	source	subsystem	miss_type	before_pct	after_pct	before_bad_bytes	after_bad_bytes	verdict	detail	compiles	best_variant	sha256_after
+0x004844a0	re/match/racepath/004844a0.c	debug-overlay	fresh	44.3	91.0 (213 B BYTE-IDENTICAL, Ghidra body 212 B)	-	0	CLOSED	static callee: world in EAX from 0x00484580, unread stack arg; byte-struct colour in the loop	~3	-	98ba366dedcc7ea228053cdf3bbdddf305ca70133be59a277b3f7944d9c9a322
+0x00484580	re/match/racepath/004844a0.c	debug-overlay	fresh	compile-fail	100.0	-	0	CLOSED	old world read before the +0xc store; per-case 4292d0+4292c0 pairs; else-first 0x00484310 call	~7	-	98ba366dedcc7ea228053cdf3bbdddf305ca70133be59a277b3f7944d9c9a322
+0x0040d8f0	re/match/racepath/0040d8f0.c	gameplay	fresh	40.2	100.0	-	0	CLOSED	float matrix type (no /GS cookie); slot table int[4][4] indexed [car][i]; assignment-in-condition create; 4-step zero loop; literals 450.0f/0.05f	~19	-	e016f5c1553830a4660939d8eca78b287d6e7954b97e13cf5d0e4a5f5b9c3516
+0x00410860	re/match/racepath/00410860.c	util	fresh	70.4	100.0	-	0	CLOSED	4 checks as one loop (cl unrolls); `if (n==0) T=400; T+=2;`; goto won tail	~8	-	949c9452a261add765e7182894d94698e532325c2b540696ccff8bba1d46cef6
+0x0040aef0	re/match/racepath/0040aef0.c	gameplay	fresh	34.7	97.6	-	12	NOT-CLOSED	literals for -1/1/0.99/0; dblgreedy W v.z + F pos.x; residual fld pos.y / v.y one slot after a push	~350	-	a7ee5be42df774870c92e65a68f357ecef244897dec34ba8eeea50532bdae5c9
+0x0048ab70	re/match/racepath/0048ab70.c	particle	fresh	31.3	93.2	-	41	NOT-CLOSED	scan = Ghidra nested-loop shape with goto next; indexed vertex buffer, a.z second for EBP bias; residual d.y operand order, a.y store slot, pos.x/pos.y fadd order	~520	-	3111f408dbfe8f9978c84a5156efd89fa41322a06dcb24fcd02340dbf488cd7f
+0x00411ae0	re/match/racepath/00411ae0.c	vehicle	fresh	43.9	97.2	-	27	NOT-CLOSED	identity-matrix macro shape; `== 0` branch first through a local; residual sum reassociation at 0x00411b43 and the &best store slot	~110	-	e63018a3cffc8af75681d6ff0761879fd982253e21f3876f6417c3160bc1c2ce
+0x0048b440	-	particle	fresh	33.3	-	-	-	NOT-WORKED	handoff: see RESULT	0	-	-
+0x0048b230	-	particle	fresh	23.4	-	-	-	NOT-WORKED	handoff: see RESULT	0	-	-
+0x0048aff0	-	particle	fresh	43.8	-	-	-	NOT-WORKED	handoff: see RESULT	0	-	-
+0x00412620	-	render	fresh	17.6	-	-	-	NOT-WORKED	handoff: see RESULT	0	-	-

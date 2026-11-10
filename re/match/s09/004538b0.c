@@ -177,7 +177,7 @@ static int FUN_00453730(Rec *rec)
   line.start = rec->pos;
   { float vx = rec->vel.x, vy = rec->vel.y, vz = rec->vel.z;
   line.end.x = vx + line.start.x;
-  line.end.y = vy + line.start.y;
+  line.end.y = (float)(vy + (double)(line.start.y));
   line.end.z = vz + line.start.z; }
   if (FUN_004b4cd0(FUN_0045bfe0(), &line, &hit) != 0) {
     t = hit.f38;
@@ -187,7 +187,7 @@ static int FUN_00453730(Rec *rec)
     col.a = 0x80;
     if (FUN_0045c350(&hit, &rec->pos) == 0) {
       FUN_004b4650(&out, &line.start, &line.end, t);
-      out.x += hit.v0.x * 0.05f;
+      { float hx = hit.v0.x * 0.05f; out.x = out.x + hx; }  /* MATCH-X87-CASTLEVER-OPORDER: 24 -> 16 B with the y cast above */
       out.y += hit.v0.y * 0.05f;
       out.z += hit.v0.z * 0.05f;
       FUN_004b5080(&mat, &hit.v10, &out);
