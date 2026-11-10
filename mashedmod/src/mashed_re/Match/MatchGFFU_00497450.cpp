@@ -7,15 +7,16 @@
 
 #define MATCH_PORT 1
 #define FUN_00497450 Pred497450
-// 0x00496900 SlotActiveThunk: E9 4B 0B 00 00 = jmp 0x00497450 (0x00496905 + 0xb4b). A jmp thunk has no C source
-// form; its body here forwards to this TU's 0x00497450 body (same return value, the thunk's only effect).
-extern "C" int __cdecl Pred497450(int param_1);
-extern "C" __declspec(dllexport) unsigned int __cdecl SlotActiveThunk(int player_idx) {
-    return static_cast<unsigned int>(Pred497450(player_idx));   // cited 0x00496900 -> 0x00497450
-}
-RH_ScopedInstall(SlotActiveThunk, 0x00496900);   // moved out of Util/PromoLoop_round24.cpp (called 0x00497450 by address)
+// 0x00496900 SlotActiveThunk: E9 4B 0B 00 00 = jmp 0x00497450 (0x00496905 + 0xb4b).
+// PORT-BATCH-FRONTEND (D4, L-107 (a), 2026-11-09): the hand forwarder that sat here is replaced by the byte-matched
+// re/match/s16/00496900.c (100%, relocheck OK), compiled under the same exported name in both targets. Same prototype
+// (one int argument, the 0x00497450 result in eax); the one exe caller, Match/MatchS07_0042c220.cpp, binds it by name.
+#define FUN_00496900 SlotActiveThunk
 #pragma comment(linker, "/EXPORT:Pred497450=_Pred497450")
+#pragma comment(linker, "/EXPORT:SlotActiveThunk=_SlotActiveThunk")
 extern "C" {
 #include "../../../../re/match/gffu/00497450.c"
+#include "../../../../re/match/s16/00496900.c"
 }
+RH_ScopedInstall(SlotActiveThunk, 0x00496900);   // moved out of Util/PromoLoop_round24.cpp, now the matched body
 RH_ScopedInstall(Pred497450, 0x00497450);

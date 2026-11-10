@@ -31,6 +31,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <cstdio>
+#include <cstdlib>
 
 // Declaration of the kv-stream search (original FUN_0042ad90): the ONE body is Frontend/KvFind.cpp (both targets).
 // KvLookup below is its host-side name.
@@ -1545,6 +1547,7 @@ void              Nav_GameStateReset() { g_game_state = kFreshState; }
 static unsigned char g_save_span[0x520];
 
 static void CopySpanAndRederive(const unsigned char* src);
+static void SaveDeserializeTail(const unsigned char* data);
 
 bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
     constexpr unsigned kSaveSize  = 0x24FA0;     // gamesave.bin total
@@ -1556,7 +1559,44 @@ bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
     std::memcpy(&magic, data, 4);
     if (magic != 0xDEADBEEFu) return false;
     CopySpanAndRederive(data + kSpanFile);
+    SaveDeserializeTail(data);
     return true;
+}
+
+// [PORT-SAVE-SPAN-MIRROR 2026-11-09] MASHED_SAVE_SPAN_MIRROR (default OFF, =1 on), PREREG
+// verify/portstate_20261109/PREREG_SAVE_SPAN_MIRROR.md. CopySpanAndRederive is step 1 of 0x00404e80
+// (Save::DeserializeFromBuffer). This adds its steps 2 and 3 at the real addresses, from the loaded save bytes
+// (save buffer 0x00803358 = data + 0):
+//   step 2, 0x00404e93..0x00404eb2: for i = 0..11, *(u32*)(0x007f105c + i*0x4c) = (u8)span[0x514 + i]
+//           (the span lands at 0x007f0a40, so span + 0x514 = 0x007f0f54)
+//   step 3, 0x00404eb4..0x00404ed2: 0x008a95ac = *(u32*)0x00828254 (data + 0x24efc). If *(u32*)0x008a94a8 != 0,
+//           rep movsd 0x928f dwords from 0x0080335c (data + 4) to that pointer.
+// Watched on the original: 0x00404e91 is the only writer of 0x007f0a40 after 0x004924f0 (RESULT section 2).
+static void SaveDeserializeTail(const unsigned char* data) {
+    static const int s_on = [] {
+        const char* e = std::getenv("MASHED_SAVE_SPAN_MIRROR");
+        return (e && e[0] == '1') ? 1 : 0;
+    }();
+    if (!s_on) return;
+    constexpr unsigned kSpanFile = 0x24A40;     // 0x00827d98 - 0x00803358
+    unsigned vals[12];
+    for (unsigned i = 0; i < 12; ++i) {        // 0x00404e93..0x00404eb2
+        vals[i] = data[kSpanFile + 0x514 + i];
+        *reinterpret_cast<std::uint32_t*>(0x007f105cu + i * 0x4cu) = vals[i];
+    }
+    std::uint32_t v95ac;
+    std::memcpy(&v95ac, data + (0x00828254u - 0x00803358u), 4);
+    *reinterpret_cast<std::uint32_t*>(0x008a95acu) = v95ac;                  // 0x00404ec1
+    const std::uint32_t p94a8 = *reinterpret_cast<const std::uint32_t*>(0x008a94a8u);   // 0x00404eb4
+    if (p94a8 != 0)                                                          // 0x00404eba / 0x00404ec6
+        std::memcpy(reinterpret_cast<void*>(static_cast<std::uintptr_t>(p94a8)), data + 4, 0x928fu * 4u);   // 0x00404ed2
+    if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(f, "[save-span-mirror] 0x00404e80 steps 2-3: 0x007f105c+i*0x4c = %u %u %u %u %u %u %u %u %u %u %u %u;"
+                        " 0x008a95ac = 0x%08x; 0x008a94a8 = 0x%08x (%s)\n",
+                     vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], vals[6], vals[7], vals[8], vals[9],
+                     vals[10], vals[11], v95ac, p94a8, p94a8 ? "block copied" : "null, no block copy");
+        std::fclose(f);
+    }
 }
 
 void Nav_GameStateSeedSpan(const unsigned char* span) {

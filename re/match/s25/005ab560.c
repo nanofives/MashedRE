@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-NEARMISS-2-pilot 2026-11-09: 100% BYTE-IDENTICAL by hand: the queue insert written in RW list-link order (link->next = list.next, link->prev = &list, list.next->prev = link, list.next = link) with DAT_007dd624 typed as a {next, prev} link instead of an int*. Same rewrite as 0x005a8390 / 0x005a8560. The older note below describes the pre-pilot residual. */
 /* MATCH-S25 h3 0x005ab560: by hand. Best 98.2% (regs 98.2%, ops 100.0%, 57/57 ins). Fields addressed from piVar1 = param_1 + 1 (esi base) instead of param_1: 61 -> 88%; not hoisting the DAT_007dd624 read out of the else branch: 98%. Residual (a): one load (mov eax,[0x7dd624]) is placed after the sentinel store in ours, before it in the original; a temp before the store fixes the order but changes the second load's register (93%). Imports declared dllimport stdcall. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -25,7 +26,8 @@ typedef unsigned char bool;
 __declspec(dllimport) unsigned long __stdcall WaitForSingleObject(void * hHandle, unsigned long dwMilliseconds);
 __declspec(dllimport) int __stdcall ReleaseSemaphore(void * hSemaphore, long lReleaseCount, long * lpPreviousCount);
 MGLOBAL(void *, DAT_007dd620, 0x007dd620);
-MGLOBAL(int *, DAT_007dd624, 0x007dd624);
+typedef struct LL { struct LL *next; struct LL *prev; } LL;
+MGLOBAL(LL, DAT_007dd624, 0x007dd624);
 MGLOBAL(int *, DAT_007dd62c, 0x007dd62c);
 MGLOBAL(undefined1, DAT_007dd61c, 0x007dd61c);
 int FUN_005aeed0(undefined1 * p0);
@@ -51,10 +53,10 @@ void FUN_005ab560(int *param_1,int param_2,int param_3,int param_4,int param_5)
     FUN_005ab710(piVar1[7],piVar1[4],0,1,param_1);
     return;
   }
-  piVar1[1] = (int)&DAT_007dd624;
-  *piVar1 = (int)DAT_007dd624;
-  *(int **)((int)DAT_007dd624 + 4) = piVar1;
-  DAT_007dd624 = piVar1;
+  ((LL *)piVar1)->next = DAT_007dd624.next;
+  ((LL *)piVar1)->prev = &DAT_007dd624;
+  DAT_007dd624.next->prev = (LL *)piVar1;
+  DAT_007dd624.next = (LL *)piVar1;
   piVar1[2] = 2;
   ReleaseSemaphore(DAT_007dd620,1,(long *)0);
   return;

@@ -1,0 +1,1232 @@
+rva	name	subsystem	confidence	port	shape	root_def	root_top	blockers	exe_body	file	rebind	callees	seeds_missing
+0x00401f10	FUN_00401f10	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s01/00401f10.c		0x0040e340:bound 0x00412130:set 0x004e6680:set	
+0x00402fb0	FUN_00402fb0	hud	C4	none		0	0	none		re/match/s01/00402fb0.c		0x00427e00:bound	
+0x00403050	FUN_00403050	frontend	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Frontend/SkeletonAndScatter_t6.cpp	re/match/s01/00403050.c		0x00402fb0:set 0x00428760:bound	
+0x00403160	Sub00403160_SubMode0BViewport	hud	C4	none	rebind	1	1	CROSS,RWGLOBALS,INDIRECT	HUD/HudBatch.cpp	re/match/s01/00403160.c	Match/MatchS02_0040dfc0.cpp:0x0040dfc0->MatchS02_0040dfc0_Call00403160	0x00402fb0:set 0x00428760:bound 0x004671a0:bound 0x004c19f0:bound 0x004c1a00:bound 0x004c1c80:bound	
+0x004034a0	FUN_004034a0	render	C4	none		0	0	INDIRECT		re/match/s01/004034a0.c		0x004963e0:bound 0x00496400:bound 0x00498bc0:bound 0x00498bd0:bound 0x00498be0:set 0x00498bf0:bound 0x004c77c0:rw	
+0x00403c60	FUN_00403c60	hud	C4	none		0	0	none		re/match/s01/00403c60.c		0x00427ad0:bound	
+0x00403d30	Render_00403d30	render	C4	none		0	0	CROSS	Render/LowRvaMixed_q3.cpp	re/match/s01/00403d30.c		0x00427ad0:bound	
+0x00403db0	FUN_00403db0	render	C4	none		0	0	none		re/match/s01/00403db0.c		0x00427ad0:bound	
+0x00403ed0	Render_00403ed0	render	C4	none		0	0	CROSS	Render/LowRvaMixed_q3.cpp	re/match/s01/00403ed0.c		0x00427ad0:bound	
+0x00403fa0	FUN_00403fa0	render	C4	none		0	0	none		re/match/s01/00403fa0.c		0x00403c60:set 0x00403d30:set 0x00403db0:set 0x00403ed0:set 0x004041c0:set 0x0040e350:bound 0x00427e00:bound 0x004c19f0:bound 0x004c1a00:bound 0x004c1c80:bound	
+0x004041c0	FUN_004041c0	render	C4	none		0	0	none		re/match/s01/004041c0.c		0x00417730:bound 0x00427e00:bound	
+0x00404320	PerModeRenderMachine	render	C4	none		0	0	CROSS,RWGLOBALS	Render/PerModeRender.cpp	re/match/s01/00403fa0.c		0x00403c60:set 0x00403d30:set 0x00403db0:set 0x00403ed0:set 0x004041c0:set 0x0040e350:bound 0x00427e00:bound 0x004c19f0:bound 0x004c1a00:bound 0x004c1c80:bound	
+0x00404650	FUN_00404650	render	C4	none		0	0	none		re/match/s01/00404650.c		0x0041f290:set 0x004c1480:set 0x004e6680:set	
+0x00404830	FUN_00404830	boot	C4	 MASHED_STANDALONE only; not hooked	rebind	0	1	none		re/match/s01/00404830.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_00404830		
+0x004053d0	TrackDataSlotSet	render	C4	none		0	0	CROSS	Render/LowRvaSetters_o2.cpp	re/match/s01/004053d0.c			
+0x00405400	Clear639d70x3	gameplay	C4	none	rebind	0	1	CROSS	Util/PromoLoop_round53.cpp	re/match/s01/004053d0.c	Match/PortTop_0040cfd0.cpp:0x0040cfd0->PortTop_StandIn04C_00405400		
+0x00405420	ReplayCursorReset	util	C4	none		0	0	CROSS	Render/PromoLoop_round11.cpp	re/match/s01/004053d0.c			
+0x00405430	Pred405430	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s01/004053d0.c			
+0x00405780	FUN_00405780	gameplay	C4	none		0	0	none		re/match/s01/00405780.c		0x004a2b60:bound	
+0x00406950	FUN_00406950	gameplay	C4	none		0	0	none		re/match/s01/00406950.c		0x00458f20:set 0x0045c330:bound	
+0x00407550	SubsystemARecordFind	gameplay	C4	none		0	0	CROSS	Gameplay/SubsystemARecordFind.cpp	re/match/s01/00407550.c			
+0x004075b0	ItemPosRet4075b0	gameplay	C4	body		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s01/004075b0.c			
+0x004077e0	FloatIdx639de0	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_round61.cpp	re/match/s01/004077e0.c			
+0x00407b00	FUN_00407b00	gameplay	C4	called	inplace	1	1	DUP	Gameplay/RangeTable_ah1.cpp	re/match/s01/00407b00.c		0x00426090:bound	
+0x00407b70	FUN_00407b70	gameplay	C4	called	inplace	1	1	DUP	Gameplay/RangeTable_ah1.cpp	re/match/s01/00407b70.c		0x00426090:bound	
+0x00407d70	RangeTableCountGroup	gameplay	C4	called	inplace	1	1	DUP	Gameplay/RangeTable_ah1.cpp	re/match/s01/00407d70.c		0x00426090:bound	
+0x00407db0	RangeTableGroupOffset	gameplay	C4	called	inplace	1	1	DUP	Gameplay/RangeTable_ah1.cpp	re/match/s01/00407db0.c		0x00426090:bound	
+0x00408a70	FrontendC2RoundI	frontend	C4	body		0	0	CROSS	Frontend/MenuMixed.cpp	re/match/s01/00408a70.c		0x004a2cbd:bound	
+0x00409300	FUN_00409300	gameplay	C4	body		0	0	DUP	Gameplay/RangeTable_ah1.cpp	re/match/s01/00409300.c		0x00426090:bound	
+0x00409330	FUN_00409330	gameplay	C4	body		0	0	DUP	Gameplay/RangeTable_ah1.cpp	re/match/s01/00409330.c		0x00426090:bound	
+0x004095a0	FUN_004095a0	gameplay	C4	none		0	0	none		re/match/s01/004095a0.c		0x00426c00:bound 0x004a2b60:bound	
+0x004099a0	Save::AutosaveTrigger	save	C4	body		0	0	DUP	Save/GameSaveVFS.cpp	re/match/s02/004099a0.c			
+0x004099e0	SaveStatusClear	save	C4	body		0	0	DUP	Save/GameSave.cpp	re/match/s02/004099e0.c			
+0x00409a80	FUN_00409a80	gameplay	C4	none		0	0	none		re/match/s02/00409a80.c		0x0042c1a0:set 0x0045b350:bound 0x005c9d00:bound	
+0x0040ac80	FUN_0040ac80	util	C4	none		0	0	none		re/match/s02/0040ac80.c		0x0042c1a0:set	
+0x0040acd0	FUN_0040acd0	frontend	C4	none		0	0	none		re/match/s02/0040acd0.c			
+0x0040b180	FUN_0040b180	util	C4	called	inplace	1	1	DUP	D3d9Render/TrackRenderer.cpp	re/match/s02/0040b180.c		0x0040e340:bound 0x0042f500:bound	
+0x0040b410	RaceScoreTimerGet	util	C4	none		0	0	CROSS	Util/PromoLoop_round10.cpp	re/match/s02/0040b410.c			
+0x0040b420	IndexedTableLookup	gameplay	C4	none		0	0	CROSS	Gameplay/ScoreMasks_ah3.cpp	re/match/s02/0040b420.c			
+0x0040b460	MenuMenusBD	frontend	C4	none		0	0	CROSS	Frontend/MenuMenusB.cpp	re/match/s02/0040b460.c		0x00417740:bound	
+0x0040b890	FUN_0040b890	gameplay	C4	called	inplace	1	1	DUP	Gameplay/Thresholds_ah4.cpp	re/match/s02/0040b890.c		0x0040e340:bound 0x0042f500:bound	
+0x0040b8e0	FUN_0040b8e0	gameplay	C4	called	inplace	1	1	DUP	Gameplay/Thresholds_ah4.cpp	re/match/s02/0040b8e0.c		0x0040e340:bound 0x0042f500:bound	
+0x0040b930	PlayerScoreThresholdMask	gameplay	C4	body		0	0	CROSS	Gameplay/ScoreMasks_ah3.cpp	re/match/s02/0040b930.c		0x0040b8e0:bound	
+0x0040b970	Bool0Out8a94e0	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_round67.cpp	re/match/s02/0040b970.c			
+0x0040b9a0	MaxScoreFlags40b9a0	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s02/0040b9a0.c		0x0046c7b0:bound	
+0x0040ba00	BoolMinOut8a94e0	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_round67.cpp	re/match/s02/0040ba00.c			
+0x0040ba60	Active4Slots40ba60	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s02/0040ba60.c		0x0046c7b0:bound	
+0x0040cd90	thunk_FUN_00425ef0	gameplay	C4	none		0	0	CROSS	Gameplay/ScoreMasks_ah3.cpp	re/match/s02/0040cd90.c		0x00425ef0:bound	
+0x0040cf40	FUN_0040cf40	gameplay	C4	none	rebind	0	1	CROSS	Match/MatchS02_0040cf40.cpp	re/match/s02/0040cf40.c	Match/PortTop_0040cf80.cpp:0x0040cf80->PortTop_StandIn04C_0040cf40	0x004c5a60:rw	
+0x0040d040	Course::ValidateCarsFinished	util	C4	none		0	0	none		re/match/s02/0040d040.c		0x0041efc0:set 0x0041f320:bound 0x0042f6a0:bound 0x00431d70:set	
+0x0040d430	FUN_0040d430	gameplay	C4	none		0	0	CROSS	Gameplay/ScoreMasks_ah3.cpp	re/match/s02/0040d430.c			
+0x0040dbd0	SubStateEnter4	util	C4	called	inplace	1	1	DUP	Race/SubStateMachine.cpp	re/match/s02/0040dbd0.c		0x0041b520:bound 0x0041d910:bound 0x0041e080:bound 0x0042f500:bound 0x0042f6a0:bound 0x0045b350:bound	
+0x0040dc70	FUN_0040dc70	gameplay	C4	none		0	0	CROSS	Gameplay/ScoreMasks_ah3.cpp	re/match/s02/0040dc70.c			
+0x0040dc80	UtilFloat63b910Get	util	C4	none		0	0	CROSS	Util/PromoLoop_round9.cpp	re/match/s02/0040dc80.c			
+0x0040dc90	UtilSlotIndexCondGet	util	C4	none		0	0	CROSS	Util/PromoLoop_round9.cpp	re/match/s02/0040dc90.c			
+0x0040dcb0	FUN_0040dcb0	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s02/0040dcb0.c			
+0x0040dd60	Race::GuardConcludedAndP1Won	save	C4	none		0	0	CROSS	Save/Race_Guard.cpp	re/match/s02/0040dd60.c			
+0x0040de00	thunk_FUN_004117b0	save	C4	none		0	0	CROSS	Save/ReplayThunk.cpp	re/match/s02/0040de00.c		0x004117b0:set	
+0x0040df60	ConditionalRenderSubPass	render	C4	none		0	0	CROSS	Render/LowRvaMixed_q3.cpp	re/match/s02/0040df60.c		0x00401f10:set 0x0042f6a0:bound	
+0x0040e170	Set63ba7c	util	C4	none		0	0	CROSS	Util/PromoLoop_round32.cpp	re/match/s02/0040e170.c			
+0x0040e180	MostSeparatedPair	vehicle	C4	called	inplace	1	1	DUP	Race/MostSepPair.cpp	re/match/s02/0040e180.c		0x0046c7b0:bound 0x0046cbb0:bound 0x0046d4a0:bound 0x004c3ac0:set	
+0x0040e360	RaceMode::Set	util	C4	none		0	0	CROSS	Util/PromoLoop_round10.cpp	re/match/s02/0040e360.c			
+0x0040e4a0	ElapsedTimeGet	ai	C4	none		0	0	CROSS,SEED	Util/PromoLoop_round26.cpp	re/match/s02/0040e4a0.c			0x005f29b8
+0x0040e4b0	Race::GetSoleFinishedPlayer	util	C4	none		0	0	none		re/match/s02/0040e4b0.c		0x0046c7b0:bound	
+0x0040e500	FUN_0040e500	gameplay	C4	none		0	0	SEED		re/match/s02/0040e500.c		0x0040b6d0:bound 0x0042f500:bound	0x005f29bc
+0x004113b0	FUN_004113b0	boot	C4	none	rebind	0	1	SEED,RWGLOBALS,INDIRECT		re/match/s02/004113b0.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_004113b0	0x00482900:set 0x004987b0:bound	0x005f29d0
+0x004114e0	ReplayCleanup	vehicle	C4	none	rebind	0	1	CROSS	Vehicle/Replay.cpp	re/match/s02/004114e0.c	Match/PortTop_0040cfd0.cpp:0x0040cfd0->PortTop_StandIn04C_004114e0	0x00483a40:set	
+0x00411530	Replay::GetTimeAtIdx	vehicle	C4	none		0	0	CROSS	Save/ReplayGetTimeAtIdx.cpp	re/match/s02/00411530.c		0x00411350:bound	
+0x00411580	ReplayGetBestTime	vehicle	C4	none		0	0	CROSS	Vehicle/Replay.cpp	re/match/s02/00411580.c		0x00411530:set	
+0x004115c0	ReplayGetCurrentTime	vehicle	C4	none		0	0	CROSS	Vehicle/Replay.cpp	re/match/s02/004115c0.c		0x00411530:set	
+0x00411750	ReplayStartLap	vehicle	C4	none		0	0	CROSS	Vehicle/Replay.cpp	re/match/s02/00411750.c		0x0042f6a0:bound 0x00482860:set 0x00483a30:set	
+0x004117b0	ReplaySave	vehicle	C4	none		0	0	CROSS,SEED,RWGLOBALS,INDIRECT	Vehicle/Replay.cpp	re/match/s02/004117b0.c		0x004099a0:set 0x00426c00:bound 0x00430820:set 0x00483ca0:set 0x004987b0:bound	0x00616038 0x005f29c8
+0x00411d90	Replay::CreateOrLoad	vehicle	C4	none		0	0	SEED,RWGLOBALS,INDIRECT		re/match/topm01/00411d90.c		0x00411350:bound 0x00411750:set 0x00426c00:bound 0x004299d0:bound 0x0042f6a0:bound 0x00430820:set 0x00482900:set 0x00482930:set 0x00483d10:set 0x004987b0:bound 0x004a2cbd:bound	0x005f29d0
+0x00412010	FUN_00412010	gameplay	C4	none	rebind	0	1	none		re/match/s02/00412010.c	Match/PortTop_0045b930.cpp:0x0045b930->PortTop_StandIn04C_00412010		
+0x00412100	FUN_00412100	render	C4	none		0	0	INDIRECT		re/match/s02/00412100.c			
+0x00412130	FUN_00412130	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s03/h2_00412130.c		0x0042f6a0:bound	
+0x00412890	FUN_00412890	boot	C4	none	rebind	0	1	none		re/match/s03/h2_00412890.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_00412890	0x0040bb30:bound	
+0x00413a40	FUN_00413a40	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s03/perm_00413a40.c			
+0x00413c70	FUN_00413c70	vehicle	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s03/h2_00413c70.c			
+0x00413f20	ZeroFill60_63bc60	util	C4	none		0	0	CROSS	Util/PromoLoop_round69.cpp	re/match/s03/h1_00413f20.c			
+0x00413fe0	FUN_00413fe0	ai	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s03/h2_00413fe0.c			
+0x00414030	AiSplineBankTimerReset	ai	C4	none		0	0	CROSS	Ai/PromoLoop_round1.cpp	re/match/s03/raw_00414030.c			
+0x00414220	FUN_00414220	util	C4	none		0	0	none		re/match/s03/h2_00414220.c		0x0040e470:bound 0x0040e4b0:set	
+0x00414300	FUN_00414300	ai	C2	called	inplace	1	1	DUP,NONC4	Ai/AiTargetClosest.cpp	re/match/s03/h4_00414300.c		0x00408a50:bound 0x0040e370:bound 0x0040e470:bound 0x00426bb0:bound 0x0046d4a0:bound 0x0046d510:bound 0x0046d6d0:set 0x004c3ac0:set 0x004c3b30:bound	
+0x00414490	FUN_00414490	ai	C4	called	inplace	1	1	DUP	Ai/AiTargetClosest.cpp	re/match/s03/h2_00414490.c		0x0040e350:bound 0x0046d510:bound 0x004c39b0:bound	
+0x00414a70	FUN_00414a70	ai	C4	called	inplace	1	1	DUP	Ai/AiTargetClosest.cpp	re/match/s03/h4_00414300.c		0x00408a50:bound 0x0040e370:bound 0x0040e470:bound 0x00426bb0:bound 0x0046d4a0:bound 0x0046d510:bound 0x0046d6d0:set 0x004c3ac0:set 0x004c3b30:bound	
+0x004150e0	FUN_004150e0	ai	C4	none		0	0	none		re/match/s03/h2_004150e0.c			
+0x00415190	AiLeaderProgressRangeGate	ai	C4	none		0	0	CROSS	Ai/AiTargeting.cpp	re/match/s03/h2_00415190.c		0x0040e470:bound 0x00442cc0:bound	
+0x00415200	AiVehicle0ZeroProgressGuard	ai	C4	none		0	0	CROSS	Ai/AiTargeting.cpp	re/match/s03/h1_00415200.c		0x00442cc0:bound	
+0x00415860	InteractionCooldownSet	ai	C4	none		0	0	CROSS	Util/PromoLoop_round24.cpp	re/match/s03/raw_00415860.c			
+0x00415d00	FUN_00415d00	ai	C4	none		0	0	none		re/match/s03/h2_00415d00.c		0x00443d10:set 0x0046d4a0:bound 0x0046d510:bound 0x004c3bf0:bound	
+0x00416230	Table89a500Set	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_round50.cpp	re/match/s03/raw_00416230.c			
+0x004173e0	FUN_004173e0	render	C4	none		0	0	none		re/match/s03/h2_004173e0.c			
+0x00417530	FUN_00417530	gameplay	C4	none		0	0	CROSS	Gameplay/SparseGrid_ag.cpp	re/match/s03/h2_00417530.c			
+0x00417750	FUN_00417750	gameplay	C4	none		0	0	none		re/match/s03/h3_00417750.c		0x00413fa0:bound 0x00414220:set 0x004241b0:bound	
+0x00417cf0	FUN_00417cf0	ai	C4	called	inplace	1	1	DUP	Ai/AiStandalone.cpp	re/match/s03/h2_00417cf0.c		0x00417730:bound 0x0046d4a0:bound	
+0x00418db0	FUN_00418db0	render	C4	none		0	0	INDIRECT		re/match/s03/raw_00418db0.c			
+0x00418e50	Fill64_63c508	render	C4	none		0	0	CROSS	Util/PromoLoop_round68.cpp	re/match/s03/raw_00418e50.c			
+0x0041a5b0	GhostSlotSet63c6ec	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_round62.cpp	re/match/s03/raw_0041a5b0.c			
+0x0041a8b0	GhostSlotSet63c6f0	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_round62.cpp	re/match/s03/raw_0041a8b0.c			
+0x0041a980	FUN_0041a980	render	C4	none	rebind	0	1	none		re/match/s03/raw_0041a980.c	Match/PortTop_0040cf80.cpp:0x0040cf80->PortTop_StandIn04C_0041a980	0x004b6520:bound	
+0x0041a9b0	FUN_0041a9b0	vehicle	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s03/raw_0041a9b0.c		0x0041a8b0:set	
+0x0041ae60	FUN_0041ae60	render	C4	none		0	0	none		re/match/s03/h3_0041af50.c		0x0040b420:set 0x0040b6d0:bound 0x0040b890:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041af00	FUN_0041af00	render	C4	none		0	0	none		re/match/s03/h3_0041af50.c		0x0040b420:set 0x0040b6d0:bound 0x0040b890:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041af50	FUN_0041af50	render	C2	none		0	0	NONC4		re/match/s03/h3_0041af50.c		0x0040b420:set 0x0040b6d0:bound 0x0040b890:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041b340	FUN_0041b340	hud	C4	none		0	0	INDIRECT		re/match/s04/0041b630.c			
+0x0041b440	EmitterDtorClumpAt5c	render	C4	none		0	0	none		re/match/s04/0041b660.c		0x004c5930:bound 0x004e6e00:rw	
+0x0041b510	HudCounterReset	hud	C4	none		0	0	CROSS	Boot/PromoLoop_round12.cpp	re/match/s03/raw_0041b510.c			
+0x0041b630	HudSlotLoopB630	hud	C4	body		0	0	DUP	HUD/HudDispatch.cpp	re/match/s04/0041b630.c			
+0x0041b660	FUN_0041b660	boot	C4	none		0	0	none		re/match/s04/0041b660.c		0x004c5930:bound 0x004e6e00:rw	
+0x0041b720	FUN_0041b720	render	C4	none		0	0	CROSS	Match/MatchS04_0041b720.cpp	re/match/s04/0041b720.c		0x004b6520:bound	
+0x0041b7a0	FUN_0041b7a0	render	C4	none		0	0	none		re/match/s04/0041c090.c		0x0040b6d0:bound 0x0040b890:bound 0x0040b930:set 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041bf20	FUN_0041bf20	hud	C4	none		0	0	CROSS	Match/MatchS04_0041b720.cpp	re/match/s04/0041b720.c		0x004b6520:bound	
+0x0041c090	FUN_0041c090	hud	C4	none		0	0	none		re/match/s04/0041c090.c		0x0040b6d0:bound 0x0040b890:bound 0x0040b930:set 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041c380	FUN_0041c380	render	C4	none		0	0	none		re/match/pilot/a7_0041c380.c		0x0040b890:bound 0x0040e340:bound 0x0042f500:bound	
+0x0041c410	HudStandingsRowUpdate	hud	C3	body		0	0	CROSS,SEED,NONC4	HUD/HudStandingsRowUpdate.cpp	re/match/s04/0041c410.c		0x0040b420:set 0x0040b540:bound 0x0040b6d0:bound 0x0040b890:bound 0x0040b930:set 0x0040b970:set 0x0040b9a0:set 0x0040ba00:set 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	0x005cc8f0 0x005f337c
+0x0041cb80	sub_0041cb80	util	C4	none		0	0	none		re/match/s04/0041cb80.c		0x0040b890:bound 0x0040e340:bound 0x0041c380:set	
+0x0041cc50	HudSlotUpdateCc50	hud	C4	body		0	0	DUP	HUD/HudDispatch.cpp	re/match/s04/0041c410.c		0x0040b420:set 0x0040b540:bound 0x0040b6d0:bound 0x0040b890:bound 0x0040b930:set 0x0040b970:set 0x0040b9a0:set 0x0040ba00:set 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041cdb0	FUN_0041cdb0	render	C4	none		0	0	CROSS	Match/MatchS04_0041cdb0.cpp	re/match/s04/0041cdb0.c		0x004b6520:bound	
+0x0041ce00	FUN_0041ce00	render	C2	none		0	0	SEED,NONC4		re/match/s04/0041d830.c		0x0040b420:set 0x0040b540:bound 0x0040b6d0:bound 0x0040b890:bound 0x0040b930:set 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	0x005cd118 0x005cc8f0 0x005f33c4
+0x0041d410	FUN_0041d410	hud	C4	none		0	0	INDIRECT		re/match/s04/0041d410.c			
+0x0041d730	sub_0041d730	util	C4	none		0	0	CROSS	Match/MatchS04_0041cdb0.cpp	re/match/s04/0041cdb0.c		0x004b6520:bound	
+0x0041d830	FUN_0041d830	hud	C4	none		0	0	none		re/match/s04/0041d830.c		0x0040b420:set 0x0040b540:bound 0x0040b6d0:bound 0x0040b890:bound 0x0040b930:set 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041d870	sub_0041d870	hud	C4	none	rebind	1	1	none		re/match/s04/0041d410.c	Match/MatchS02_0040dfc0.cpp:0x0040dfc0->MatchS02_0040dfc0_Call0041d870		
+0x0041db80	Sub0041db80_HudThresholdDispatch	hud	C4	none	rebind	1	1	CROSS	Match/MatchS04_0041db80.cpp	re/match/s04/0041db80.c	Match/MatchS02_0040dfc0.cpp:0x0040dfc0->MatchS02_0040dfc0_Call0041db80		
+0x0041dc30	FUN_0041dc30	frontend	C4	none		0	0	SEED		re/match/s04/0041dca0.c		0x00417730:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	0x005cc574 0x005cc31c
+0x0041dca0	FUN_0041dca0	hud	C2	none		0	0	SEED,NONC4		re/match/s04/0041dca0.c		0x00417730:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	0x005cc574 0x005cc31c
+0x0041e140	Global63d7e0Get	gameplay	C4	none		0	0	CROSS	Match/MatchS04_0041e140.cpp	re/match/s04/0041e140.c			
+0x0041e150	FUN_0041e150	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s04/0041e6c0.c		0x0040e350:bound 0x00411580:set 0x004115c0:set 0x00429a70:bound 0x00429a80:bound 0x00429a90:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041e170	FUN_0041e170	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s04/0041e6c0.c		0x0040e350:bound 0x00411580:set 0x004115c0:set 0x00429a70:bound 0x00429a80:bound 0x00429a90:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041e1c0	FUN_0041e1c0	gameplay	C4	none		0	0	none		re/match/s04/0041e6c0.c		0x0040e350:bound 0x00411580:set 0x004115c0:set 0x00429a70:bound 0x00429a80:bound 0x00429a90:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041e1e0	FUN_0041e1e0	gameplay	C4	none		0	0	none		re/match/s04/0041e6c0.c		0x0040e350:bound 0x00411580:set 0x004115c0:set 0x00429a70:bound 0x00429a80:bound 0x00429a90:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041e4b0	FUN_0041e4b0	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s04/0041e6c0.c		0x0040e350:bound 0x00411580:set 0x004115c0:set 0x00429a70:bound 0x00429a80:bound 0x00429a90:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041e630	FUN_0041e630	hud	C4	none		0	0	INDIRECT		re/match/s04/0041e850.c			
+0x0041e6c0	FUN_0041e6c0	hud	C2	none		0	0	NONC4		re/match/s04/0041e6c0.c		0x0040e350:bound 0x00411580:set 0x004115c0:set 0x00429a70:bound 0x00429a80:bound 0x00429a90:bound 0x004c13e0:set 0x004c1480:set 0x004c51a0:bound	
+0x0041e850	sub_0041e850	hud	C4	none	rebind	1	1	none		re/match/s04/0041e850.c	Match/MatchS02_0040dfc0.cpp:0x0040dfc0->MatchS02_0040dfc0_Call0041e850		
+0x0041e8b0	TrackNodeDispatch14	render	C4	none		0	0	CROSS,INDIRECT	Match/MatchS04_0041e8b0.cpp	re/match/s04/0041e8b0.c			
+0x0041e8c0	TrackNodeDispatch18	render	C4	none		0	0	CROSS,INDIRECT	Match/MatchS04_0041e8c0.cpp	re/match/s04/0041e8c0.c			
+0x0041e8d0	FUN_0041e8d0	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e8d0.c			
+0x0041e8e0	FUN_0041e8e0	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e8e0.c			
+0x0041e8f0	TrackNodeDispatch24	render	C4	none		0	0	CROSS,INDIRECT	Match/MatchS04_0041e8f0.cpp	re/match/s04/0041e8f0.c			
+0x0041e900	FUN_0041e900	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e900.c			
+0x0041e910	FUN_0041e910	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e910.c			
+0x0041e920	FUN_0041e920	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e920.c			
+0x0041e930	FUN_0041e930	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e930.c			
+0x0041e940	FUN_0041e940	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e940.c			
+0x0041e950	FUN_0041e950	gameplay	C4	none		0	0	INDIRECT		re/match/s04/0041e950.c			
+0x0041e960	FUN_0041e960	ai	C4	none		0	0	INDIRECT		re/match/s04/0041e960.c			
+0x0041e970	TrackNodeDispatch44	render	C4	none		0	0	CROSS,INDIRECT	Match/MatchS04_0041e970.cpp	re/match/s04/0041e970.c			
+0x0041e980	TrackNodeRecordFind	render	C4	none		0	0	CROSS,SEED	Match/MatchS04_0041e980.cpp	re/match/s04/0041e980.c			0x005f37a0 0x005f33f8
+0x0041e9b0	TrackNodeFieldCmp10	render	C4	none		0	0	CROSS	Match/MatchS04_0041e9b0.cpp	re/match/s04/0041e9b0.c			
+0x0041e9d0	TrackNodeFnPtrGet14	render	C4	none		0	0	CROSS	Match/MatchS04_0041e9d0.cpp	re/match/s04/0041e9d0.c			
+0x0041e9e0	TrackNodeFnPtrGet18	render	C4	none		0	0	CROSS	Match/MatchS04_0041e9e0.cpp	re/match/s04/0041e9e0.c			
+0x0041e9f0	GlobalField63d7e4_1c	gameplay	C4	none		0	0	none		re/match/s04/0041e9f0.c			
+0x0041ea00	GlobalField63d7e4_20	gameplay	C4	none		0	0	none		re/match/s04/0041ea00.c			
+0x0041ea10	GlobalField63d7e4_24	render	C4	none		0	0	none		re/match/s04/0041ea10.c			
+0x0041ea20	GlobalField63d7e4_28	gameplay	C4	none		0	0	none		re/match/s04/0041ea20.c			
+0x0041ea30	GlobalField63d7e4_2c	gameplay	C4	none		0	0	none		re/match/s04/0041ea30.c			
+0x0041ea40	GlobalField63d7e4_30	gameplay	C4	none		0	0	none		re/match/s04/0041ea40.c			
+0x0041ea50	GlobalField63d7e4_34	gameplay	C4	none		0	0	none		re/match/s04/0041ea50.c			
+0x0041ea60	GlobalField63d7e4_38	gameplay	C4	none		0	0	none		re/match/s04/0041ea60.c			
+0x0041ea70	GlobalField63d7e4_3c	gameplay	C4	none		0	0	none		re/match/s04/0041ea70.c			
+0x0041ea80	GlobalField63d7e4_40	ai	C4	none		0	0	CROSS	Match/MatchS04_0041ea80.cpp	re/match/s04/0041ea80.c			
+0x0041ea90	TrackNodeFnPtrGet44	render	C4	none		0	0	CROSS	Match/MatchS04_0041ea90.cpp	re/match/s04/0041ea90.c			
+0x0041ede0	Flag0041ede0	util	C4	none		0	0	CROSS	Match/MatchS04_0041ede0.cpp	re/match/s04/0041ede0.c			
+0x0041ee50	Flag41ee50	util	C4	none		0	0	CROSS	Match/MatchS04_0041ee50.cpp	re/match/s04/0041ee50.c			
+0x0041eeb0	Flag0041eeb0	gameplay	C4	none		0	0	CROSS	Match/MatchS04_0041eeb0.cpp	re/match/s04/0041eeb0.c			
+0x0041ef60	Player::WriteFieldZero	util	C4	none		0	0	CROSS	Match/MatchS04_0041ef60.cpp	re/match/s04/0041ef60.c			
+0x0041ef80	FlagToggle63dc74	util	C4	none		0	0	CROSS	Match/MatchS04_0041ef80.cpp	re/match/s04/0041ef80.c			
+0x0041efc0	Car::GetLapProgress	util	C4	none		0	0	CROSS	Match/MatchS04_0041efc0.cpp	re/match/s04/0041efc0.c			
+0x0041efe0	BitExtract63dc74	gameplay	C4	none		0	0	CROSS	Match/MatchS04_0041efe0.cpp	re/match/s04/0041efe0.c			
+0x0041f030	TriggerStructRead	ai	C4	none		0	0	CROSS	Match/MatchS04_0041f030.cpp	re/match/s04/0041f030.c			
+0x0041f060	FUN_0041f060	gameplay	C4	none		0	0	none		re/match/s04/0041f060.c		0x004c0ed0:set	
+0x0041f0d0	MaskGet41f0d0	gameplay	C4	none		0	0	CROSS	Match/MatchS04_0041f0d0.cpp	re/match/s04/0041f0d0.c			
+0x0041f100	FloatTable63dc64Get	gameplay	C4	none		0	0	CROSS	Match/MatchS04_0041f100.cpp	re/match/s04/0041f100.c			
+0x0041f1e0	FUN_0041f1e0	util	C4	none		0	0	none		re/match/s04/0041f1e0.c		0x004c0ed0:set	
+0x0041f220	FUN_0041f220	gameplay	C4	none		0	0	none		re/match/s04/0041f220.c		0x004c0ed0:set	
+0x0041f260	WorldMatrixCopy	util	C4	none		0	0	CROSS	Match/MatchS04_0041f260.cpp	re/match/s04/0041f260.c			
+0x0041f290	FUN_0041f290	gameplay	C4	none		0	0	none		re/match/s04/0041f290.c		0x004c0ed0:set	
+0x0041f300	Table63dc6cGet	gameplay	C4	none		0	0	CROSS	Match/MatchS04_0041f300.cpp	re/match/s04/0041f300.c			
+0x0041f330	FUN_0041f330	gameplay	C4	none		0	0	SEED		re/match/s05/00420230.c			0x005f5fe0 0x005f37a8
+0x0041f360	GatedSwitch636ad0	gameplay	C4		inplace	1	1	DUP	Vehicle/CarMaterialTables.cpp	re/match/s04/0041f360.c			
+0x0041f3d0	FUN_0041f3d0	gameplay	C4	none		0	0	none		re/match/s04/0041f3d0.c		0x0046bd60:set 0x0046bda0:set 0x004c1340:set 0x004c1520:set	
+0x0041f4f0	FUN_0041f4f0	gameplay	C4	none		0	0	none		re/match/s04/0041f4f0.c		0x0046bce0:set 0x0046bd20:set 0x004c1340:set 0x004c1520:set	
+0x0041f880	FUN_0041f880	gameplay	C4	none		0	0	none		re/match/s05/0041f880.c		0x00422aa0:bound	
+0x00420230	FUN_00420230	track	C4	none		0	0	SEED,RWGLOBALS,INDIRECT		re/match/s05/00420230.c			0x005cd288 0x005cd280
+0x00420d00	PanelSortInit	boot	C4	none	rebind	0	1	CROSS	Boot/PanelSortInit.cpp	re/match/s05/00420d00.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_00420d00	0x004b6520:bound	
+0x00420d80	FUN_00420d80	gameplay	C4	none		0	0	CROSS	Match/MatchS05_00420d80.cpp	re/match/s05/00420d80.c			
+0x00420da0	TblRetPtrout63e4b8_0	gameplay	C4	none		0	0	CROSS	Match/MatchS05_00420da0.cpp	re/match/s05/00420da0.c			
+0x00420dc0	TblRetPtrout63e4b8_4	gameplay	C4	none		0	0	CROSS	Match/MatchS05_00420dc0.cpp	re/match/s05/00420dc0.c			
+0x00420de0	FUN_00420de0	vehicle	C4	none		0	0	CROSS	Match/MatchS05_00420de0.cpp	re/match/s05/00420de0.c			
+0x00421060	FUN_00421060	gameplay	C4	none		0	0	CROSS	Match/MatchS05_00421060.cpp	re/match/s05/00421060.c		0x004b6520:bound	
+0x00421080	Fill63e5a4	gameplay	C4	none		0	0	CROSS	Match/MatchS05_00421080.cpp	re/match/s05/00421080.c			
+0x004215c0	FUN_004215c0	frontend	C4	none		0	0	CROSS	Match/MatchS05_00420de0.cpp	re/match/s05/00420de0.c			
+0x004215e0	FUN_004215e0	render	C4	none		0	0	CROSS	Match/MatchS05_00420de0.cpp	re/match/s05/00420de0.c			
+0x00421630	FUN_00421630	render	C4	none		0	0	none		re/match/s05/00421630.c		0x0041f220:set 0x004215e0:set 0x004c3d90:set 0x004c4dc0:bound	
+0x00421690	FUN_00421690	render	C4	none		0	0	CROSS	Match/MatchS05_00421060.cpp	re/match/s05/00421060.c		0x004b6520:bound	
+0x004223f0	FUN_004223f0	gameplay	C4	none		0	0	CROSS	Match/MatchS05_00422470.cpp	re/match/pilot/m_00422470.c		0x00422440:set	
+0x00422440	FUN_00422440	gameplay	C4	none		0	0	CROSS,SEED	Math/CosineLerp.cpp	re/match/s05/00422440.c			0x005cd310
+0x00422470	FUN_00422470	frontend	C4	none		0	0	CROSS	Match/MatchS05_00422470.cpp	re/match/pilot/a7_00422470.c		0x004223f0:set 0x00422440:set	
+0x004224d0	MenuSlotInit	frontend	C4	none		0	0	CROSS,SEED	Match/MatchS05_004224d0.cpp	re/match/s05/004224d0.c		0x004b6520:bound	0x005f6154
+0x00422ac0	FUN_00422ac0	render	C4	none		0	0	CROSS	Match/MatchS05_00422ac0.cpp	re/match/s05/00422ac0.c			
+0x00422af0	SlotWordSet	render	C4	none		0	0	CROSS	Match/MatchS05_00422af0.cpp	re/match/s05/00422af0.c			
+0x00422fd0	FrontendRaceResultsDispatch	frontend	C4	none		0	0	CROSS	Match/MatchS05_00422fd0.cpp	re/match/s05/00422fd0.c		0x0040e470:bound 0x004215c0:set 0x0045ba00:bound 0x0046c5c0:bound 0x0046c790:bound	
+0x004233e0	HeadingAtan2ToGameAngle	ai	C4	called	inplace	1	1	DUP	Ai/HeadingAtan2.cpp	re/match/s05/004233e0.c			
+0x004235b0	FUN_004235b0	render	C4	none		0	0	CROSS	Match/MatchS05_004235b0.cpp	re/match/s05/004235b0.c		0x00423480:bound 0x00495280:bound 0x004952f0:bound 0x004cbd30:rw 0x004cc160:bound 0x004cc230:bound 0x004cc5e0:bound	
+0x00423630	AiDataBufInit	render	C4	none		0	0	CROSS	Match/MatchS05_00423630.cpp	re/match/s05/00423630.c			
+0x00423b20	CarSnapshotDwordGet	vehicle	C4	none		0	0	CROSS	Match/MatchS05_00423b20.cpp	re/match/s05/00423b20.c			
+0x00423b40	PlayerScoreAccA	frontend	C4	none		0	0	CROSS	Match/MatchS05_00423b40.cpp	re/match/s05/00423b40.c		0x0042f6a0:bound	
+0x00423b60	PlayerScoreAccB	frontend	C4	none		0	0	CROSS	Match/MatchS05_00423b60.cpp	re/match/s05/00423b60.c		0x0042f6a0:bound	
+0x00423b80	PlayerScoreAccC	frontend	C4	none		0	0	CROSS	Match/MatchS05_00423b80.cpp	re/match/s05/00423b80.c		0x0042f6a0:bound	
+0x00423ba0	PlayerScoreAccD	frontend	C4	none		0	0	CROSS	Match/MatchS05_00423ba0.cpp	re/match/s05/00423ba0.c		0x0042f6a0:bound	
+0x00423bc0	PlayerScoreTeamAccC	frontend	C4	none		0	0	CROSS	Match/MatchS05_00423bc0.cpp	re/match/s05/00423bc0.c		0x0042f500:bound	
+0x00423c40	PlayerScoreTeamAccBase	frontend	C4	none		0	0	CROSS	Match/MatchS05_00423c40.cpp	re/match/s05/00423c40.c		0x0042f500:bound	
+0x004241c0	FUN_004241c0	frontend	C4	none		0	0	CROSS	Match/MatchS05_004241c0.cpp	re/match/s05/004241c0.c		0x0042f500:bound	
+0x00424270	FUN_00424270	frontend	C4	none		0	0	none		re/match/s05/00424270.c		0x0040e340:bound 0x00423b40:set 0x00423b60:set 0x00423b80:set 0x00423ba0:set 0x00423bc0:set 0x00423c40:set 0x00423cc0:bound 0x00423d50:bound 0x00423dd0:bound 0x00423e60:bound 0x00423ee0:bound 0x00423f60:bound 0x00423ff0:bound 0x00424070:bound 0x0042f500:bound	
+0x00425ab0	EntryHeaderClear	render	C4	none		0	0	CROSS	Match/MatchS05_00425ab0.cpp	re/match/s05/00425ab0.c			
+0x00425bf0	FUN_00425bf0	frontend	C4	none		0	0	none		re/match/s05/00425bf0.c		0x00495280:bound	
+0x00425ea0	FUN_00425ea0	frontend	C4	none		0	0	none		re/match/s05/00425ea0.c		0x004e6e00:rw	
+0x00426030	FUN_00426030	render	C4	none		0	0	SEED		re/match/s05/00426030.c		0x0041e8f0:set 0x0041e9b0:set 0x0041ea10:set	0x005f616c
+0x00426060	TrackPhysWorld1Get	render	C4	none		0	0	CROSS	Match/MatchS05_00426060.cpp	re/match/s05/00426060.c			
+0x00426070	TrackPhysWorld2Get	render	C4	none		0	0	CROSS	Match/MatchS06_00426070.cpp	re/match/s06/00426070.c			
+0x004260c0	TrackPhysWorld3Get	render	C4	none		0	0	CROSS	Match/MatchS06_004260c0.cpp	re/match/s06/004260c0.c			
+0x00426630	PitchParamSet	util	C4	none		0	0	none		re/match/s06/00426630.c			
+0x00426640	FUN_00426640	render	C4	none		0	0	none		re/match/s06/00426640.c		0x0041e950:set 0x0041e9b0:set 0x0041ea70:set	
+0x00426670	WorldRenderDispatch_Begin	render	C4	none		0	0	CROSS	Match/MatchS06_00426670.cpp	re/match/s06/00426670.c		0x004e4320:set	
+0x004266b0	WorldRenderDispatch_End	render	C4	none		0	0	CROSS	Match/MatchS06_004266b0.cpp	re/match/s06/004266b0.c		0x004e4350:set	
+0x004266f0	PitchParam2Set	util	C4	none		0	0	none		re/match/s06/004266f0.c			
+0x00426c50	FUN_00426c50	frontend	C4	none		0	0	none		re/match/s06/00426c50.c		0x0041e940:set 0x0041ea60:set	
+0x00426c90	FUN_00426c90	ai	C4	none		0	0	none		re/match/s06/00426c90.c		0x0041e960:set 0x0041ea80:set	
+0x00426cd0	TrackSlotArrayReset	render	C4	none		0	0	CROSS	Match/MatchS06_00426cd0.cpp	re/match/s06/00426cd0.c			
+0x00426e00	TrackLoaderFloatGet	render	C4	none		0	0	none		re/match/s06/00426e00.c			
+0x00428390	FrontendStateSet	frontend	C4	none	rebind	0	1	CROSS	Match/MatchS06_00428390.cpp	re/match/s06/00428390.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_Piece_00428390		
+0x00429840	RaceStateLatchSet	ai	C4	none		0	0	CROSS	Match/MatchS06_00429840.cpp	re/match/s06/00429840.c			
+0x00429860	RaceStateFlagGet	ai	C4	none		0	0	CROSS	Match/MatchS06_00429860.cpp	re/match/s06/00429860.c			
+0x004298e0	TimeDisplay::InitForLap	hud	C4	none		0	0	none		re/match/s06/004298e0.c		0x00411580:set 0x00430b00:bound	
+0x0042a920	Frontend::PostTrophyEvent	save	C4	none		0	0	CROSS	Match/MatchS06_0042a920.cpp	re/match/s06/0042a920.c			
+0x0042a940	MenuTableSearch	frontend	C4	none		0	0	CROSS,SEED	Match/MatchS06_0042a940.cpp	re/match/s06/0042a940.c		0x0040ce80:bound	0x005f6754
+0x0042a980	MenuTableSearchAlt	frontend	C4	none		0	0	CROSS,SEED	Match/MatchS06_0042a980.cpp	re/match/s06/0042a980.c		0x0040ce80:bound	0x005f6754
+0x0042a9f0	GetFadeAlpha	render	C4	none		0	0	CROSS	Match/MatchS06_0042a9f0.cpp	re/match/s06/0042a9f0.c			
+0x0042ad10	FUN_0042ad10	frontend	C4	body		0	0	DUP,DUPFILE	Match/MatchS06_0042ad10.cpp	re/match/s08/00432b30.c		0x0042a9c0:bound 0x0042b920:bound	
+0x0042add0	FUN_0042add0	frontend	C4	none		0	0	DUPFILE		re/match/s08/00432b30.c		0x0042a9c0:bound 0x0042b920:bound	
+0x0042b900	Global67eca4Get	util	C4	none		0	0	CROSS	Match/MatchS07_0042b900.cpp	re/match/s07/0042b900.c			
+0x0042c010	FUN_0042c010	render	C4	none		0	0	none		re/match/s07/0042c010.c		0x0042b8b0:bound 0x0042b8c0:bound 0x00472b10:set	
+0x0042c150	FUN_0042c150	util	C4	none		0	0	CROSS	Match/MatchS07_0042c150.cpp	re/match/s07/0042c150.c			
+0x0042c1a0	StateAdvance2to3	util	C4	none		0	0	CROSS	Match/MatchS07_0042c1a0.cpp	re/match/s07/0042c1a0.c			
+0x0042c1f0	FUN_0042c1f0	util	C4	none		0	0	CROSS	Match/MatchS07_0042c1f0.cpp	re/match/s07/0042c1f0.c		0x00496900:set	
+0x0042c300	FUN_0042c300	util	C4	none		0	0	CROSS	Match/MatchS07_0042c300.cpp	re/match/s07/0042c300.c		0x00427780:bound	
+0x0042c3c0	FUN_0042c3c0	util	C4	none		0	0	SEED		re/match/s07/0042c3c0.c		0x00427780:bound 0x004a2b60:bound	0x005cc950 0x005cd788 0x005cd78c
+0x0042c7c0	FUN_0042c7c0	util	C4	none		0	0	CROSS	Match/MatchS07_0042c7c0.cpp	re/match/s07/0042c7c0.c		0x00427780:bound	
+0x0042d290	MenusLapTimeFmt	frontend	C4	none		0	0	CROSS,SEED	Match/MatchS07_0042d290.cpp	re/match/s07/0042d290.c		0x004a2b60:bound	0x005cd794 0x005cd798 0x005cd7a0
+0x0042d390	GetRaceStateField	render	C4	none		0	0	CROSS	Match/MatchS07_0042d390.cpp	re/match/s07/0042d390.c			
+0x0042e590	SpriteAnimFrameThunk	frontend	C4	none		0	0	CROSS,SEED	Match/MatchS07_0042e590.cpp	re/match/s07/0042e590.c		0x0040bb70:bound	0x005f79d8
+0x0042f400	FUN_0042f400	frontend	C4	none		0	0	none		re/match/s07/0042f400.c		0x00427780:bound 0x004a2b60:bound	
+0x0042f520	ViewportBlockPtrGet	render	C4	none		0	0	CROSS	Match/MatchS07_0042f520.cpp	re/match/s07/0042f520.c			
+0x0042f6b0	MenuModeSync	frontend	C4	body		0	0	DUP,DUPFILE	Match/MatchS07_0042f6b0.cpp	re/match/s08/004322c0.c		0x0042aa00:bound	
+0x0042f760	Global67f19cGet	audio	C4	none		0	0	CROSS	Match/MatchS07_0042f760.cpp	re/match/s07/0042f760.c			
+0x0042f770	Global67f1a0Get	audio	C4	none		0	0	CROSS	Match/MatchS07_0042f770.cpp	re/match/s07/0042f770.c			
+0x0042f780	Global67f1a4Get	audio	C4	none		0	0	CROSS	Match/MatchS07_0042f780.cpp	re/match/s07/0042f780.c			
+0x0042f790	GhostMode::IsActive	util	C4	none		0	0	CROSS	Match/MatchS07_0042f790.cpp	re/match/s07/0042f790.c			
+0x0042f7a0	GhostMode::Clear	util	C4	none		0	0	CROSS	Match/MatchS07_0042f7a0.cpp	re/match/s07/0042f7a0.c			
+0x0042f8d0	MenuMenusBC	frontend	C4	none		0	0	CROSS	Match/MatchS07_0042f8d0.cpp	re/match/s07/0042f8d0.c		0x00472c60:bound	
+0x0042fab0	SpriteSlotDispatch	frontend	C4	body		0	0	CROSS,SEED	Match/MatchS07_0042fab0.cpp	re/match/s07/0042fab0.c		0x0040bb90:bound	0x005cd898 0x005cd88c 0x005cd880 0x005cd878 0x005cd870 0x005cd864 0x005cd858 0x005cd850 0x005cd844 0x005cd838
+0x0042fe70	VehicleDword67ea80Get	vehicle	C4	none		0	0	CROSS	Match/MatchS07_0042fe70.cpp	re/match/s07/0042fe70.c			
+0x00430120	FUN_00430120	frontend	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s07/00430120.c		0x00427e00:bound	
+0x00430290	Championship::Complete	save	C4	none		0	0	CROSS	Match/MatchS07_00430290.cpp	re/match/s07/00430290.c		0x004099a0:set 0x0040dd60:set 0x0042a920:set	
+0x00430760	IsMultiplayerMode	frontend	C4	body		0	0	DUP	Frontend/MenuScoreGetters.cpp	re/match/s07/00430760.c			
+0x00430820	Global67ed6cGet	util	C4	none		0	0	CROSS	Match/MatchS07_00430820.cpp	re/match/s07/00430820.c			
+0x00430830	SplitScreenTrackAssignment	frontend	C4	called	inplace	1	1	DUP,DUPFILE	Match/MatchS07_00430830.cpp	re/match/s08/004322c0.c		0x0042aa00:bound	
+0x00430910	MenuOptionSlotGet	frontend	C4	body		0	0	DUP,DUPFILE	Frontend/FrontendState.cpp	re/match/s08/004322c0.c		0x0042aa00:bound	
+0x00430b30	FUN_00430b30	frontend	C4	none		0	0	CROSS	Match/MatchS07_00430b30.cpp	re/match/s07/00430b30.c			
+0x00431b30	Float67eaa8Get	util	C4	none		0	0	CROSS	Match/MatchS07_00431b30.cpp	re/match/s07/00431b30.c			
+0x00431d70	Course::GetLeaderIndex	util	C4	none		0	0	CROSS	Match/MatchS07_00431d70.cpp	re/match/s07/00431d70.c			
+0x00432230	RecEq231	audio	C4	none		0	0	CROSS	Match/MatchS07_00432230.cpp	re/match/s07/00432230.c			
+0x00432260	RecEq232	audio	C4	none		0	0	CROSS	Match/MatchS08_00432260.cpp	re/match/s08/00432260.c			
+0x00432290	Trigger432290	util	C4	none		0	0	CROSS	Match/MatchS08_00432290.cpp	re/match/s08/00432290.c			
+0x004322c0	FUN_004322c0	frontend	C4	none		0	0	DUPFILE		re/match/s08/004322c0.c		0x0042aa00:bound	
+0x004323c0	MenuCursorBack	frontend	C4	body		0	0	DUP,DUPFILE	Frontend/FrontendNav.cpp	re/match/s08/004323c0.c			
+0x00432450	FUN_00432450	frontend	C4	none		0	0	none		re/match/s08/00432450.c		0x0042bfb0:bound 0x0042c1a0:set	
+0x004324a0	FUN_004324a0	frontend	C4	none		0	0	none		re/match/s08/004324a0.c		0x0042b930:bound 0x0042bf30:bound 0x0042c1d0:bound 0x0042c1f0:set 0x0042c220:bound 0x0042c280:bound 0x00432450:set	
+0x00432800	FUN_00432800	frontend	C4	none		0	0	none		re/match/s08/00432800.c		0x0040e480:bound 0x0042f500:bound 0x00430830:bound 0x00430b60:bound 0x00492d10:set 0x00496900:set	
+0x00432b30	MenuPromptStrip	frontend	C4	called	inplace	1	1	DUP,DUPFILE	Frontend/PromptStripTwin.cpp	re/match/s08/00432b30.c		0x0042a9c0:bound 0x0042b920:bound	
+0x004391b0	FUN_004391b0	frontend	C4	none		0	0	SEED		re/match/s08/004391b0.c		0x0040bb90:bound 0x00430760:bound	0x005cda3c 0x005cda44 0x005cd970
+0x00441490	FUN_00441490	camera	C4	none		0	0	none		re/match/s08/00441490.c		0x004c0c20:bound	
+0x00441700	Camera::SetupFOV	util	C4	none		0	0	SEED		re/match/s08/00441700.c		0x004c1c80:bound	0x005cc950
+0x004417e0	FUN_004417e0	util	C4	none		0	0	none		re/match/s08/004417e0.c		0x004671a0:bound	
+0x00441c80	CamCarMidpoint441c80	util	C4	called	inplace	1	1	DUP	Race/CameraEntries.cpp	re/match/s08/00441c80.c		0x0040e180:set 0x0046d4a0:bound	
+0x00442410	CameraSlotFieldPtrGet	camera	C4	none		0	0	CROSS	Match/MatchS08_00442410.cpp	re/match/s08/00442410.c			
+0x00442420	CameraSlotFloatGet	camera	C4	none		0	0	CROSS	Match/MatchS08_00442420.cpp	re/match/s08/00442420.c			
+0x00442a20	Camera::InitWithMatrix	util	C4	none		0	0	none		re/match/s08/00442a20.c		0x00441700:set	
+0x00442df0	RaceFloat898980Get	vehicle	C4	none		0	0	CROSS	Match/MatchS08_00442df0.cpp	re/match/s08/00442df0.c			
+0x00443080	AiTargetEnableGet	ai	C4	body		0	0	CROSS	Match/MatchS08_00443080.cpp	re/match/s08/00443080.c			
+0x00443090	Ret897ff0	world-objects	C4	none		0	0	CROSS	Match/MatchS08_00443090.cpp	re/match/s08/00443090.c			
+0x004430a0	Util897fe0Set	util	C4	none		0	0	CROSS	Match/MatchS08_004430a0.cpp	re/match/s08/004430a0.c			
+0x004430b0	Util897fe0Get	util	C4	none		0	0	CROSS	Match/MatchS08_004430b0.cpp	re/match/s08/004430b0.c			
+0x004430c0	FUN_004430c0	frontend	C4	none		0	0	none		re/match/s08/004430c0.c		0x0042b930:bound 0x0042f520:set	
+0x004430e0	FUN_004430e0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s08/004430e0.c			
+0x00443210	FUN_00443210	render	C4	none		0	0	none		re/match/s08/00443210.c		0x004430e0:set	
+0x00443d10	FUN_00443d10	ai	C4	none		0	0	none		re/match/s08/00443d10.c			
+0x004495d0	GlobalFieldGet896278	unknown	C4	none		0	0	CROSS	Match/MatchS08_004495d0.cpp	re/match/s08/004495d0.c			
+0x00449880	FUN_00449880	particle	C4	none		0	0	CROSS,SEED	Match/MatchS08_00449880.cpp	re/match/s08/00449880.c			0x005f96d0
+0x0044bc30	FUN_0044bc30	render	C4	none		0	0	none		re/match/s08/0044bc30.c		0x004c1340:set 0x004c1520:set	
+0x0044c370	GlobalFieldGet896000	render	C4	none		0	0	CROSS	Match/MatchS08_0044c370.cpp	re/match/s08/0044c370.c			
+0x0044c740	FUN_0044c740	render	C4	none		0	0	none		re/match/s08/0044c740.c			
+0x0044d6e0	Set684b34	render	C4	none		0	0	CROSS	Match/MatchS08_0044d6e0.cpp	re/match/s08/0044d6e0.c			
+0x0044dfe0	Ret50	audio	C4	none		0	0	CROSS	Match/MatchS08_0044dfe0.cpp	re/match/s08/0044dfe0.c			
+0x0044dff0	ItemWorldPos44dff0	audio	C4	none		0	0	CROSS	Match/MatchS08_0044dff0.cpp	re/match/s08/0044dff0.c			
+0x0044e020	FloatLt44e020	audio	C4	none		0	0	CROSS,SEED	Match/MatchS08_0044e020.cpp	re/match/s08/0044e020.c			0x005ce2d8
+0x0044e050	FloatTable8900a8Get	audio	C4	none		0	0	CROSS	Match/MatchS08_0044e050.cpp	re/match/s08/0044e050.c			
+0x0044e070	FUN_0044e070	audio	C4	none		0	0	CROSS	Match/MatchS08_0044e070.cpp	re/match/s08/0044e070.c			
+0x00450300	FUN_00450300	gameplay	C4	none		0	0	none		re/match/s08/00450300.c		0x0040e350:bound 0x00472520:set 0x00472560:set	
+0x00451060	FUN_00451060	gameplay	C4	none		0	0	none		re/match/s08/00451060.c		0x00467210:bound 0x004840d0:set 0x004c1480:set	
+0x00451680	WarzonePontoonSetResetCb	gameplay	C4	none		0	0	none		re/match/s08/00451680.c			
+0x004516d0	FUN_004516d0	render	C4	none		0	0	SEED		re/match/s09/004516d0.c		0x004987b0:bound	0x005cd444
+0x00451730	FUN_00451730	gameplay	C4	none		0	0	none		re/match/s09/00451730.c		0x004c1740:set	
+0x00451820	FUN_00451820	gameplay	C4	called		0	0	DUP	Track/WarzonePontoon.cpp	re/match/s09/00451820.c		0x0040e340:bound 0x0046be10:set 0x0046d4a0:bound 0x004c4dc0:bound 0x004c52f0:bound	
+0x00452130	WarzonePontoonDraw	render	C4	none		0	0	none		re/match/s09/00452130.c		0x004e6680:set	
+0x00452140	FUN_00452140	gameplay	C4	none		0	0	none		re/match/s09/00452140.c		0x00451990:bound	
+0x00452160	PowerupTargetPtrGet	ai	C4	none		0	0	CROSS	Match/MatchS09_00452160.cpp	re/match/s09/00452160.c			
+0x004522d0	FUN_004522d0	audio	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Match/MatchS09_004522d0.cpp	re/match/s09/004522d0.c			
+0x004523f0	FUN_004523f0	gameplay	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s09/004523f0.c		0x004e6e00:rw	
+0x00452ad0	WarzoneSlot7	render	C4	none		0	0	none		re/match/s09/00452ad0.c		0x00451cc0:bound	
+0x00452af0	WarzoneSlot6	render	C4	none		0	0	none		re/match/s09/00452af0.c		0x00451cc0:bound 0x0047d100:set	
+0x00452ea0	Table88ff50Get	ai	C4	none		0	0	CROSS	Match/MatchS09_00452ea0.cpp	re/match/s09/00452ea0.c			
+0x00452eb0	PowerupRangeGet	ai	C4	none		0	0	CROSS	Match/MatchS09_00452eb0.cpp	re/match/s09/00452eb0.c			
+0x00453f30	Fill6870b4	vehicle	C4	none		0	0	CROSS	Match/MatchS09_00453f30.cpp	re/match/s09/00453f30.c			
+0x00454130	FUN_00454130	render	C4	none		0	0	INDIRECT		re/match/s09/00454130.c			
+0x00454a30	Table688304Get	gameplay	C4	none		0	0	CROSS	Match/MatchS09_00454a30.cpp	re/match/s09/00454a30.c			
+0x00454c10	FUN_00454c10	render	C4	none		0	0	none		re/match/s09/00454c10.c		0x00465ca0:bound	
+0x00455100	FUN_00455100	render	C4	none		0	0	SEED		re/match/s09/00455100.c		0x004c1520:set	0x00614708
+0x00455b40	PowerupTable6885e0Get	ai	C4	none		0	0	CROSS	Match/MatchS09_00455b40.cpp	re/match/s09/00455b40.c			
+0x00456ce0	FUN_00456ce0	gameplay	C4	none		0	0	none		re/match/s09/00456ce0.c			
+0x00456eb0	FUN_00456eb0	gameplay	C4	none		0	0	none		re/match/s09/004577f0.c			
+0x004577f0	FUN_004577f0	gameplay	C4	none		0	0	none		re/match/s09/004577f0.c			
+0x00458630	FUN_00458630	frontend	C4	none		0	0	SEED		re/match/s09/00458630.c		0x004c5c00:bound	0x005ce59c 0x005ce594 0x005ce58c 0x005ce580 0x005ce578 0x005ce568 0x005ce560 0x005ce558 0x005ce4fc 0x005ce550 0x005cd130
+0x00458bf0	FUN_00458bf0	util	C4	none		0	0	none		re/match/s09/00458bf0.c			
+0x00458f20	FUN_00458f20	gameplay	C4	none		0	0	CROSS	Match/MatchS09_00458f20.cpp	re/match/s09/00458f20.c			
+0x00458f80	FUN_00458f80	gameplay	C4	none		0	0	CROSS	Match/MatchS09_00458f80.cpp	re/match/s09/00458f80.c		0x00458f20:set	
+0x00458fd0	FUN_00458fd0	gameplay	C4	none		0	0	none		re/match/s09/00458fd0.c		0x00458e00:bound 0x00458fa0:bound	
+0x00459540	PoolJReset68ba00	gameplay	C4	none		0	0	CROSS	Match/MatchS09_00459540.cpp	re/match/s09/00459540.c			
+0x0045a0d0	Table68ba04Get	gameplay	C4	none		0	0	CROSS	Match/MatchS09_0045a0d0.cpp	re/match/s09/0045a0d0.c			
+0x0045a0f0	VehPwrState68ba00Get	ai	C4	none		0	0	CROSS	Match/MatchS09_0045a0f0.cpp	re/match/s09/0045a0f0.c			
+0x0045a110	PtrGet68ba1c	gameplay	C4	none		0	0	CROSS	Match/MatchS09_0045a110.cpp	re/match/s09/0045a110.c			
+0x0045b9d0	FUN_0045b9d0	powerups	C4	none		0	0	SEED		re/match/s10/0045b9d0.c			0x005f99bc
+0x0045baa0	PowerupTypeLookup	powerups	C4	called	inplace	1	1	DUP,SEED	Powerup/PowerupTypeSearch.cpp	re/match/s10/0045bfa0.c			0x005f9998
+0x0045bfa0	PowerupSlotActivate	powerups	C4	none		0	0	INDIRECT		re/match/s10/0045bfa0.c			
+0x0045bfd0	thunk_FUN_00426060	gameplay	C4	none		0	0	none		re/match/s10/0045bfd0.c		0x00426060:set	
+0x0045bfe0	Bezier::GetLocate	util	C4	none		0	0	CROSS	Match/MatchS10_0045bfe0.cpp	re/match/s10/0045bfe0.c			
+0x0045bff0	Pred45bff0	gameplay	C4	none	rebind	1	1	CROSS	Match/MatchS10_0045bff0.cpp	re/match/s10/0045bff0.c	Match/MatchS10_0045c330.cpp:0x0045c330->MatchS10_0045c330_Call0045bff0		
+0x0045c010	PowerupPickupWrapper	powerups	C4	none	rebind	1	1	none		re/match/s10/0045c010.c	Match/MatchS09_00458920.cpp:0x00458920->PK_Grant	0x0045bfa0:set	
+0x0045c110	FUN_0045c110	gameplay	C4	called	inplace	1	1	DUP	Powerup/PowerupContact.cpp	re/match/s10/0045c110.c		0x00472550:set	
+0x0045c4e0	ArgSearch45c4e0	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045c4e0.cpp	re/match/s10/0045cbe0.c		0x0045c640:set	
+0x0045c510	FUN_0045c510	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045c510.cpp	re/match/s10/0045c510.c			
+0x0045c640	Sel88fbc4	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045c640.cpp	re/match/s10/0045c6b0.c			
+0x0045c6b0	FUN_0045c6b0	audio	C4	none		0	0	none		re/match/s10/0045c6b0.c			
+0x0045c720	FUN_0045c720	audio	C4	none		0	0	SEED		re/match/s10/0045c720.c			0x005fd190 0x005fe268 0x005ff340 0x00600418 0x006014f0 0x006025c8
+0x0045c7f0	FUN_0045c7f0	audio	C4	none		0	0	CROSS	Match/MatchS10_0045c7f0.cpp	re/match/s10/0045c7f0.c		0x0040e350:bound 0x0040e450:bound	
+0x0045c810	FUN_0045c810	util	C4	none		0	0	CROSS	Match/MatchS10_0045c810.cpp	re/match/s10/0045c810.c			
+0x0045c820	FUN_0045c820	audio	C4	none		0	0	none		re/match/s10/0045c820.c			
+0x0045c850	Table88f09cClear	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045c850.cpp	re/match/s10/0045c850.c			
+0x0045c860	Clear88f0a0x4	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045c860.cpp	re/match/s10/0045c860.c			
+0x0045c880	FUN_0045c880	gameplay	C4	none		0	0	SEED		re/match/s10/0045c880.c			0x005cc344 0x005cc358 0x005cd0fc 0x005ce4b8 0x005cd30c 0x005cc56c 0x005cd0b0 0x005cc8f0 0x005ce654
+0x0045ca30	FUN_0045ca30	gameplay	C4	none		0	0	CROSS,SEED	Match/MatchS10_0045ca30.cpp	re/match/s10/0045ca30.c			0x005cc34c 0x005cca00
+0x0045cab0	SlotAliveState45cab0	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045cab0.cpp	re/match/s10/0045cab0.c		0x0046c7b0:bound 0x0046cbb0:bound	
+0x0045caf0	EqPredicate7f1a18	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045caf0.cpp	re/match/s10/0045caf0.c			
+0x0045cbe0	FUN_0045cbe0	gameplay	C4	none		0	0	none		re/match/s10/0045cbe0.c		0x0045c640:set	
+0x0045cc50	FUN_0045cc50	audio	C4	none		0	0	none		re/match/s10/0045cc50.c		0x0040e350:bound 0x0045cbe0:set	
+0x0045cfe0	FUN_0045cfe0	audio	C4	none		0	0	none		re/match/s10/0045cfe0.c		0x0045c640:set 0x0045cbe0:set	
+0x0045d080	FUN_0045d080	gameplay	C4	none		0	0	none		re/match/s10/0045d080.c		0x0045c640:set 0x0045cbe0:set	
+0x0045d0e0	FUN_0045d0e0	gameplay	C4	none		0	0	SEED		re/match/s10/0045d0e0.c		0x0040e470:bound 0x00431b70:bound 0x0045cab0:set 0x0045dff0:set	0x005ce658
+0x0045dbe0	FloatSlider2Adjust	util	C4	none		0	0	none		re/match/s10/0045dbe0.c		0x00493f70:set 0x004943f0:set	
+0x0045dc80	FUN_0045dc80	audio	C4	none		0	0	none		re/match/s10/0045dc80.c		0x0045c860:set 0x005a8960:set 0x005a89a0:bound	
+0x0045dd50	Table8aa300Get	gameplay	C4	none		0	0	CROSS	Match/MatchS10_0045dd50.cpp	re/match/s10/0045dd50.c			
+0x0045df70	FloatStep45df70	util	C4	none		0	0	CROSS,SEED	Match/MatchS10_0045df70.cpp	re/match/s10/0045df70.c			0x006036c0
+0x0045dfc0	FUN_0045dfc0	util	C4	none		0	0	CROSS,SEED	Match/MatchS10_0045dfc0.cpp	re/match/s10/0045dfc0.c		0x0045df70:set	0x006036cc
+0x0045dff0	FUN_0045dff0	gameplay	C4	none		0	0	none		re/match/s10/0045dff0.c		0x00408ad0:bound	
+0x00462500	Set603868_1	track	C4	none		0	0	CROSS,SEED	Match/MatchS10_00462500.cpp	re/match/s10/00462500.c		0x00462510:set	0x00603868
+0x00462510	Set603868_0	track	C4	none		0	0	CROSS,SEED	Match/MatchS10_00462510.cpp	re/match/s10/00462510.c		0x00462500:set	0x00603868
+0x00462520	FUN_00462520	audio	C4	none		0	0	none		re/match/s10/00462520.c		0x00430790:bound	
+0x004625b0	AudioCharacterBankPathsBuild	audio	C4	body		0	0	DUP,SEED	Audio/AudioCharacterBankPaths.cpp	re/match/s10/004625b0.c		0x004a2b60:bound	0x006041f0
+0x00462760	FUN_00462760	audio	C4	none		0	0	CROSS	Match/MatchS10_00462760.cpp	re/match/s10/00462760.c		0x005a89a0:bound 0x005a89b0:bound	
+0x004627b0	AudioStateActive	audio	C4	none		0	0	CROSS	Match/MatchS10_004627b0.cpp	re/match/s10/004627b0.c			
+0x004672d0	FUN_004672d0	render	C4	none		0	0	none		re/match/s11/004672d0.c		0x0042b930:bound 0x0042f510:bound	
+0x00467300	VehicleCollisionWinTrigger	vehicle	C4	none		0	0	CROSS	Match/MatchS11_00467300.cpp	re/match/s11/00467300.c		0x00413c70:set	
+0x00467650	VehicleWheelDrivetrainUpdate	vehicle	C4	called	inplace	1	1	DUP	Vehicle/Integrate2.cpp	re/match/s11/00467650.c		0x0040e340:bound 0x0040e350:bound 0x004c39b0:bound 0x004c3ac0:set 0x004c3df0:bound 0x004c4d20:bound	
+0x0046b1c0	VehicleSlotAabbExpand	vehicle	C4	called	inplace	1	1	DUP	Vehicle/VehicleContactHull.cpp	re/match/s11/0046b1c0.c			
+0x0046b540	VehicleSpawnInit	vehicle	C4	called	inplace	1	1	DUP	Vehicle/VehicleInit.cpp	re/match/s11/0046b540.c		0x0040ce80:bound 0x0042f6a0:bound 0x00430790:bound 0x00431d70:set 0x004c3b30:bound	
+0x0046baa0	FUN_0046baa0	util	C4	called	inplace	1	1	DUP	Race/SubStateCallees.cpp	re/match/s11/0046baa0.c			
+0x0046bce0	FUN_0046bce0	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046bce0.cpp	re/match/pilot/a1_0046bce0.c			
+0x0046bd20	VehTbl8820a0Get3	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046bd20.cpp	re/match/s11/0046bd20.c			
+0x0046bd60	Idx2Wheel881744Get	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046bd60.cpp	re/match/s11/0046bd60.c			
+0x0046bda0	FUN_0046bda0	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046bda0.cpp	re/match/s11/0046bda0.c			
+0x0046be10	Write46be10	gameplay	C4	none		0	0	none		re/match/s11/0046be10.c			
+0x0046be50	FUN_0046be50	gameplay	C4	none		0	0	none		re/match/s11/0046be50.c			
+0x0046c700	EntityScoreFieldAdd	frontend	C4	none		0	0	CROSS	Match/MatchS11_0046c700.cpp	re/match/s11/0046c700.c			
+0x0046c730	Table882198Get	ai	C4	called	inplace	1	1	DUP	Race/SubStateCallees.cpp	re/match/s11/0046c730.c			
+0x0046c750	Table882194Get	ai	C4	called	inplace	1	1	DUP	Race/SubStateCallees.cpp	re/match/s11/0046c750.c			
+0x0046c7b0	VehicleSlotGetter	vehicle	C4	called	inplace	1	1	DUP	Vehicle/VehicleState.cpp	re/match/s11/0046c7b0.c			
+0x0046cbb0	VehicleCarStateRead	vehicle	C4	called	inplace	1	1	DUP	Vehicle/VehicleState.cpp	re/match/s11/0046cbb0.c			
+0x0046d2e0	WheelGet46d2e0	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s11/0046d2e0.c			
+0x0046d320	Idx2Wheel881790Get	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046d320.cpp	re/match/s11/0046d320.c			
+0x0046d360	Idx2Wheel881738Get	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046d360.cpp	re/match/s11/0046d360.c			
+0x0046d4a0	PtrCompute881ec8	ai	C4	called	inplace	1	1	DUP	Vehicle/VehicleRecordPtr.cpp	re/match/s11/0046d4a0.c			
+0x0046d4d0	VehiclePhysicsMatrixSet	vehicle	C4	none		0	0	CROSS	Match/MatchS11_0046d4d0.cpp	re/match/s11/0046d4d0.c			
+0x0046d660	VehTbl881f50Get3	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046d660.cpp	re/match/s11/0046d660.c			
+0x0046d6a0	VehTbl8820acGet1	ai	C4	none		0	0	CROSS	Match/MatchS11_0046d6a0.cpp	re/match/s11/0046d6a0.c			
+0x0046d6d0	VehTbl881f84Get1	ai	C4	none		0	0	CROSS	Match/MatchS11_0046d6d0.cpp	re/match/s11/0046d6d0.c			
+0x0046d740	VehicleVec3At6E4Set	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046d740.cpp	re/match/s11/0046d740.c			
+0x0046d780	LaunchRevRelease	ai	C4	called	inplace	1	1	DUP	Vehicle/LaunchRevCharge.cpp	re/match/s11/0046d780.c		0x00422b50:bound	
+0x0046d7f0	LaunchRevChargeTick	ai	C4	called	inplace	1	1	DUP	Vehicle/LaunchRevCharge.cpp	re/match/s11/0046d7f0.c			
+0x0046d880	FUN_0046d880	gameplay	C4	none		0	0	none		re/match/s11/0046d880.c			
+0x0046dbe0	VehicleRacePositionGet	vehicle	C4	called	inplace	1	1	DUP	Vehicle/VehicleState.cpp	re/match/pilot/f_0046dbe0.c			
+0x0046dc20	VehicleOOBDebugDraw	vehicle	C4	none		0	0	none		re/match/s11/0046dc20.c		0x0040e350:bound	
+0x0046dd90	VehField8816f4Set	gameplay	C4	none		0	0	CROSS	Match/MatchS11_0046dd90.cpp	re/match/s11/0046dd90.c			
+0x00471430	FUN_00471430	gameplay	C4	none		0	0	none		re/match/s11/00471430.c			
+0x00471450	FUN_00471450	gameplay	C4	none		0	0	none		re/match/s11/00471450.c			
+0x00471490	FUN_00471490	gameplay	C4	none		0	0	none		re/match/s11/00471490.c			
+0x004714f0	RegisterTrackEventCallback	track	C4	none		0	0	none		re/match/s11/004714f0.c			
+0x00471530	ClearTable471530	gameplay	C4	none		0	0	CROSS	Match/MatchS11_00471530.cpp	re/match/s11/00471df0.c			
+0x00471560	FUN_00471560	gameplay	C4	none		0	0	none		re/match/s11/00471560.c			
+0x004715a0	FUN_004715a0	ai	C4	none		0	0	none		re/match/pilot/a3_004715a0.c		0x0047ce40:set	
+0x00471df0	FUN_00471df0	boot	C4	none	rebind	0	1	none		re/match/s11/00471df0.c	Match/PortTop_0040cfd0.cpp:0x0040cfd0->PortTop_StandIn04C_00471df0		
+0x00471eb0	thunk_FUN_00471df0	boot	C4	none	rebind	0	1	none		re/match/s11/00471eb0.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_00471eb0	0x00471df0:set	
+0x004723d0	Init691500	boot	C4	none	rebind	0	1	CROSS	Match/MatchS11_004723d0.cpp	re/match/s11/004723d0.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_004723d0		
+0x00472500	CondGet691500	gameplay	C4	none		0	0	CROSS	Match/MatchS11_00472500.cpp	re/match/s11/00472500.c			
+0x00472520	Table69150cSet	gameplay	C4	none		0	0	CROSS	Match/MatchS11_00472520.cpp	re/match/s11/00472520.c			
+0x00472550	Table691508Get	gameplay	C4	none		0	0	CROSS	Match/MatchS11_00472550.cpp	re/match/s11/00472550.c			
+0x00472560	FUN_00472560	gameplay	C4	none		0	0	CROSS	Match/MatchS11_00472560.cpp	re/match/s11/00472560.c		0x0046be10:set	
+0x004725c0	FUN_004725c0	render	C4	none		0	0	none		re/match/s11/004725c0.c		0x004e6680:set	
+0x004725f0	FUN_004725f0	gameplay	C4	none	rebind	0	1	CROSS	Match/MatchS11_004725f0.cpp	re/match/s11/004725f0.c	Match/PortTop_0040cfd0.cpp:0x0040cfd0->PortTop_StandIn04C_004725f0	0x0046be10:set	
+0x00472640	Set86ecc8	util	C4	none		0	0	CROSS	Match/MatchS11_00472640.cpp	re/match/s11/00472640.c			
+0x004726b0	FUN_004726b0	gameplay	C4	none		0	0	CROSS,SEED	Match/MatchS11_004726b0.cpp	re/match/s11/004726b0.c			0x005cc33c
+0x00472740	FUN_00472740	gameplay	C4	none		0	0	none		re/match/s11/00472740.c			
+0x00472b10	FUN_00472b10	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s11/00472b10.c			
+0x00473220	FUN_00473220	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s11/00473220.c		0x0042b8b0:bound 0x0042b8c0:bound	
+0x004733b0	FUN_004733b0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s11/004733b0.c		0x0042b8b0:bound 0x0042b8c0:bound	
+0x004739f0	TextSpriteScaled	frontend	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s11/004739f0.c		0x0042b8b0:bound 0x0042b8c0:bound	
+0x00473ee0	LogoOverlayDraw	frontend	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Frontend/LogoOverlayTwin.cpp	re/match/s11/00473ee0.c		0x0042b8b0:bound 0x0042b8c0:bound 0x00473220:set 0x004733b0:set 0x004c3b30:bound	
+0x00474d80	ByteFlag474d80	render	C4	none		0	0	CROSS	Match/MatchS11_00474d80.cpp	re/match/s11/00474d80.c			
+0x00474db0	RwMallocArrayZeroFill	render	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Match/MatchS11_00474db0.cpp	re/match/s11/00474db0.c		0x004b6520:bound	
+0x00475180	FUN_00475180	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s12/00475180.c			
+0x004752d0	FUN_004752d0	render	C4	none		0	0	none		re/match/s12/004752d0.c			
+0x004759b0	Arrays691600Alloc	render	C4	none	rebind	0	1	CROSS	Match/MatchS12_004759b0.cpp	re/match/s12/004759b0.c	Match/PortTop_0040bbb0.cpp:0x0040bbb0->PortTop_StandIn04G_004759b0	0x00474db0:set	
+0x00475a60	PendingOpQueueFlush	util	C4	none		0	0	CROSS	Match/MatchS12_00475a60.cpp	re/match/s12/00475a60.c		0x004b6520:bound	
+0x00475ef0	FUN_00475ef0	render	C4	none		0	0	CROSS	Match/MatchS12_00475ef0.cpp	re/match/pilot/a1_00475ef0.c		0x004b6520:bound	
+0x00475f30	FUN_00475f30	render	C4	none		0	0	CROSS,SEED	Match/MatchS12_00475f30.cpp	re/match/s12/00475f30.c			0x00613278 0x00613258 0x00613274
+0x00475f50	FUN_00475f50	render	C4	none		0	0	none		re/match/s12/00475f50.c			
+0x00476430	thunk_FUN_00475ef0	util	C4	none		0	0	none		re/match/s12/00476430.c		0x00475ef0:set	
+0x00476a40	ParticleEmitter_SetRGBA	render	C4	body		0	0	DUP	Render/RfxEmitter.cpp	re/match/s12/00476a40.c			
+0x00476a80	Copy476a80	render	C4	body		0	0	DUP	Render/RfxEmitter.cpp	re/match/s12/00476a80.c			
+0x00476c10	Batch476c10	vehicle	C4	body		0	0	DUP	Render/RfxEmitter.cpp	re/match/s12/00476c10.c			
+0x00476c60	Batch476c60	render	C4	body		0	0	DUP	Render/RfxEmitter.cpp	re/match/s12/00476c60.c			
+0x004773f0	FUN_004773f0	render	C4	none		0	0	CROSS	Match/MatchS12_004773f0.cpp	re/match/s12/004773f0.c		0x00477730:set	
+0x00477450	FUN_00477450	render	C4	none		0	0	CROSS,SEED	Match/MatchS12_00477450.cpp	re/match/s12/00477450.c		0x00477760:set	0x006132cc
+0x00477490	FUN_00477490	render	C4	none		0	0	none		re/match/s12/00477490.c		0x004c13e0:set 0x004c1480:set	
+0x00477730	FUN_00477730	render	C4	none		0	0	none		re/match/s12/00477730.c			
+0x00477760	FUN_00477760	render	C4	none		0	0	SEED		re/match/s12/00477760.c			0x006132cc
+0x004777d0	FUN_004777d0	util	C4	none		0	0	none		re/match/s12/004777d0.c		0x00477490:set	
+0x004778e0	FUN_004778e0	render	C4	none		0	0	none		re/match/s12/004778e0.c		0x004b6520:bound	
+0x00477920	FUN_00477920	util	C2	none		0	0	NONC4		re/match/s12/004778e0.c		0x004b6520:bound	
+0x00477b40	FUN_00477b40	util	C4	none		0	0	CROSS	Match/MatchS12_00477b40.cpp	re/match/s12/00477b40.c		0x004b6520:bound	
+0x00477b60	FUN_00477b60	render	C4	none		0	0	CROSS	Match/MatchS12_00477b60.cpp	re/match/s12/00477b60.c			
+0x00477e00	Table69318cSet	render	C4	none		0	0	CROSS	Match/MatchS12_00477e00.cpp	re/match/s12/00477e00.c			
+0x00477e40	FUN_00477e40	render	C4	none	rebind	0	1	SEED		re/match/s12/00477e40.c	Match/PortTop_0040bbb0.cpp:0x0040bbb0->PortTop_StandIn04G_00477e40	0x0040bb30:bound 0x00477b40:set	0x005ceb10
+0x004781b0	FUN_004781b0	vehicle	C4	none		0	0	none		re/match/s12/004781b0.c		0x004cc160:bound 0x004cc230:bound 0x004cc5e0:bound 0x004ce2d0:bound	
+0x00478200	FUN_00478200	track	C4	none		0	0	SEED		re/match/s12/00478200.c		0x004987b0:bound 0x004a332b:bound	0x005ceb18
+0x00478cb0	FUN_00478cb0	physics	C4	none		0	0	CROSS	Match/MatchS12_00478cb0.cpp	re/match/s12/00478cb0.c			
+0x0047a7d0	Lap_Line_End	track	C4	none		0	0	none		re/match/s12/0047a7d0.c			
+0x0047a7f0	Lap_Line_Change	track	C4	none		0	0	none		re/match/s12/0047a7f0.c			
+0x0047b250	Place_Powerup	gameplay	C4	none		0	0	SEED		re/match/s13/0047b250.c		0x00458e00:bound 0x00458fa0:bound	0x006132fc 0x00613300
+0x0047ba00	FUN_0047ba00	boot	C4	none	rebind	0	1	none		re/match/s13/0047ba00.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_0047ba00	0x00496940:set	
+0x0047c0b0	ClearColl47c0b0	track	C4	none		0	0	CROSS	Match/MatchS13_0047c0b0.cpp	re/match/s13/0047c0b0.c			
+0x0047ccb0	FUN_0047ccb0	gameplay	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s13/0047ccb0.c		0x004c0c20:bound	
+0x0047cdc0	StoreDistSq47cdc0	render	C4	none		0	0	CROSS	Match/MatchS13_0047cdc0.cpp	re/match/s13/0047cdc0.c			
+0x0047cde0	FUN_0047cde0	gameplay	C4	none		0	0	none		re/match/s13/0047cde0.c			
+0x0047ce00	Table6c9438Get	gameplay	C4	none		0	0	CROSS	Match/MatchS13_0047ce00.cpp	re/match/s13/0047ce00.c			
+0x0047ce20	FUN_0047ce20	gameplay	C4	none		0	0	none		re/match/s13/0047ce20.c			
+0x0047ce40	Search47ce40	physics	C4	none		0	0	CROSS	Match/MatchS13_0047ce40.cpp	re/match/s13/0047ce40.c			
+0x0047ce70	Global6c6eb0Get	gameplay	C4	none		0	0	CROSS	Match/MatchS13_0047ce70.cpp	re/match/s13/0047ce70.c			
+0x0047ce80	Table6c9758Get	gameplay	C4	none		0	0	CROSS	Match/MatchS13_0047ce80.cpp	re/match/s13/0047ce80.c			
+0x0047d100	FUN_0047d100	physics	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s13/0047d100.c		0x004b5240:set	
+0x0047d130	Table6c71d8Get	gameplay	C4	none		0	0	CROSS	Match/MatchS13_0047d130.cpp	re/match/s13/0047d130.c			
+0x0047f480	FUN_0047f480	gameplay	C4	none		0	0	none		re/match/s13/0047f480.c		0x0055dd60:set 0x00562560:set	
+0x00482730	PhysicsBodySetMaterialColor	vehicle	C4	none		0	0	CROSS	Match/MatchS13_00482730.cpp	re/match/s13/00482730.c			
+0x00482860	FUN_00482860	vehicle	C4	none		0	0	CROSS	Match/MatchS13_00482860.cpp	re/match/s13/00482860.c			
+0x00482900	ReplayGetSize	vehicle	C4	none		0	0	CROSS,SEED	Save/ReplayGetSize.cpp	re/match/s13/00482900.c		0x004987b0:bound	0x005cc728 0x005cf24c
+0x00482930	Replay::New	vehicle	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s13/00482930.c		0x00482860:set 0x00482900:set	
+0x00483a30	FUN_00483a30	vehicle	C4	none		0	0	CROSS	Match/MatchS13_00483a30.cpp	re/match/s13/00483a30.c			
+0x00483a40	FUN_00483a40	vehicle	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s13/00483a40.c			
+0x00483ca0	FUN_00483ca0	vehicle	C4	none		0	0	CROSS	Match/MatchS13_00483ca0.cpp	re/match/pilot/a4_00483ca0.c			
+0x00483d10	Replay::Load	vehicle	C4	none		0	0	SEED,RWGLOBALS,INDIRECT		re/match/s13/00483d10.c		0x00482930:set 0x004a2cbd:bound 0x004cbd30:rw 0x004cc160:bound 0x004cc230:bound	0x005cf260
+0x00483fa0	FUN_00483fa0	vehicle	C4	none		0	0	none		re/match/s13/00483fa0.c		0x004c0c20:bound 0x004c1cf0:bound 0x004c5860:set 0x004c5a60:rw 0x004c7650:rw	
+0x00484060	FUN_00484060	vehicle	C4	none		0	0	none		re/match/s13/00484060.c		0x00483fa0:set	
+0x004840b0	FUN_004840b0	vehicle	C4	body		0	0	DUP	Vehicle/ShapeOwnerHandlePool.cpp	re/match/s13/004840b0.c			
+0x004840d0	JointPtr6ce81cGet	vehicle	C4	none		0	0	CROSS	Match/MatchS14_004840d0.cpp	re/match/s14/004840d0.c			
+0x004840f0	FUN_004840f0	vehicle	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s14/004841d0.c			
+0x00484170	Rec18Create	boot	C4	none	rebind	0	1	CROSS,RWGLOBALS,INDIRECT	Match/MatchS14_00484170.cpp	re/match/s14/00484170.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_00484170		
+0x004841d0	FUN_004841d0	boot	C4	none	rebind	0	1	SEED		re/match/s14/004841d0.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_StandIn04E_004841d0		0x00613328 0x006136e8 0x006138a8 0x00613b28
+0x004842b0	Clear4842b0	debug-overlay	C4	none		0	0	CROSS	Match/MatchS14_004842b0.cpp	re/match/s14/004842b0.c			
+0x004850b0	FUN_004850b0	smplfzx	C4	none		0	0	CROSS	Match/MatchS14_004850b0.cpp	re/match/s14/004850b0.c			
+0x00485340	FUN_00485340	vehicle	C4	body		0	0	CROSS	Match/MatchS14_00485340.cpp	re/match/s14/00485340.c			
+0x00485360	DynObjListGetCount	vehicle	C4	none		0	0	CROSS	Match/MatchS14_00485360.cpp	re/match/s14/00485360.c			
+0x00485370	DynamicObjectListGetBase	vehicle	C4	none		0	0	CROSS	Match/MatchS14_00485370.cpp	re/match/s14/00485370.c			
+0x00485380	FUN_00485380	vehicle	C4	none		0	0	none		re/match/s14/00485420.c		0x00485340:set 0x004a332b:bound	
+0x00485420	FUN_00485420	vehicle	C4	none		0	0	none		re/match/s14/00485420.c		0x00485340:set 0x004a332b:bound	
+0x00485460	FUN_00485460	smplfzx	C4	none		0	0	none		re/match/s14/00485460.c		0x00451730:set 0x004c1800:set 0x004c1840:set 0x004c3d90:set	
+0x00485a00	FUN_00485a00	smplfzx	C4	none		0	0	CROSS	Match/MatchS14_00485a00.cpp	re/match/s14/00485a00.c			
+0x00485a70	PoolInsert485a70	smplfzx	C4	none		0	0	CROSS	Match/MatchS14_00485a70.cpp	re/match/s14/00485a70.c			
+0x00485bd0	StackPop485bd0	smplfzx	C4	none		0	0	CROSS	Match/MatchS14_00485bd0.cpp	re/match/s14/00485bd0.c			
+0x00485bf0	StackPush485bf0	smplfzx	C4	none		0	0	CROSS	Match/MatchS14_00485bf0.cpp	re/match/s14/00485bf0.c		0x004a332b:bound	
+0x00485c20	FUN_00485c20	smplfzx	C4	none		0	0	none		re/match/s14/00485c20.c		0x0041f1e0:set	
+0x00485e50	FUN_00485e50	particle	C4	none		0	0	none		re/match/s14/00485c20.c		0x0041f1e0:set	
+0x00486270	FUN_00486270	particle	C4	none		0	0	none		re/match/s14/00486270.c		0x004894f0:set	
+0x00486f90	FUN_00486f90	particle	C4	none		0	0	CROSS	Match/MatchS14_00486f90.cpp	re/match/s14/00486f90.c			
+0x00487d00	Particle3rdEmitterSubmit	particle	C4	none		0	0	none		re/match/s14/00487d00.c		0x004769f0:bound 0x00476a10:bound 0x00476d00:bound	
+0x00487df0	Set703058_0	particle	C4	none		0	0	CROSS	Match/MatchS14_00487df0.cpp	re/match/s14/00487df0.c			
+0x00487e40	FUN_00487e40	sky	C4	none		0	0	CROSS	Match/MatchS14_00487e40.cpp	re/match/s14/00487e40.c			
+0x00487e70	FUN_00487e70	sky	C4	none		0	0	none		re/match/s14/00487e70.c			
+0x00488390	Table86ae38Set	sky	C4	none		0	0	CROSS	Match/MatchS14_00488390.cpp	re/match/s14/00488390.c			
+0x004891f0	FUN_004891f0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s14/004891f0.c			
+0x00489240	SkySecondaryDispatch	sky	C4	none		0	0	INDIRECT		re/match/s14/00489240.c			
+0x00489290	FUN_00489290	particle	C4	none	rebind	0	1	CROSS	Match/MatchS14_00489290.cpp	re/match/s14/00489290.c	Match/PortTop_0040bbb0.cpp:0x0040bbb0->PortTop_StandIn04G_00489290		
+0x004893a0	FUN_004893a0	gameplay	C4	none		0	0	CROSS	Match/MatchS14_004893a0.cpp	re/match/s14/004893a0.c		0x00476cb0:bound	
+0x004893b0	FUN_004893b0	gameplay	C4	none		0	0	CROSS	Match/MatchS14_004893b0.cpp	re/match/s14/004893b0.c			
+0x004893d0	FUN_004893d0	frontend	C4	none		0	0	CROSS	Match/MatchS14_004893d0.cpp	re/match/s14/004893d0.c			
+0x00489450	ContRecSet450	gameplay	C4	none		0	0	CROSS	Match/MatchS14_00489450.cpp	re/match/s14/00489450.c			
+0x00489480	ContRecSet480	gameplay	C4	none		0	0	CROSS	Match/MatchS14_00489480.cpp	re/match/s14/00489480.c			
+0x004894a0	ContRecSet4a0	gameplay	C4	none		0	0	CROSS	Match/MatchS14_004894a0.cpp	re/match/s14/004894a0.c			
+0x004894f0	Clear894f0	gameplay	C4	none		0	0	CROSS	Match/MatchS14_004894f0.cpp	re/match/s14/004894f0.c			
+0x004899c0	FUN_004899c0	particle	C4	none		0	0	CROSS	Match/MatchS14_004899c0.cpp	re/match/s14/004899c0.c			
+0x00489ce0	FUN_00489ce0	particle	C4	none		0	0	none		re/match/s14/00489ce0.c			
+0x00489da0	FUN_00489da0	particle	C4	none		0	0	CROSS	Match/MatchS14_00489da0.cpp	re/match/s14/00489da0.c			
+0x0048a430	FUN_0048a430	particle	C4	none		0	0	INDIRECT		re/match/s14/0048a430.c			
+0x0048a460	StridedClear2_709238	particle	C4	none	rebind	0	1	CROSS	Match/MatchS14_0048a460.cpp	re/match/s14/0048a460.c	Match/PortTop_0040bbb0.cpp:0x0040bbb0->PortTop_StandIn04G_0048a460		
+0x0048a630	FUN_0048a630	ai	C4	none		0	0	CROSS	Match/MatchS14_0048a630.cpp	re/match/s14/0048a630.c			
+0x0048a830	FUN_0048a830	particle	C4	none	rebind	0	1	CROSS	Match/MatchS14_0048a830.cpp	re/match/s14/0048a830.c	Match/PortTop_0040bbb0.cpp:0x0040bbb0->PortTop_StandIn04G_0048a830	0x004b6480:set	
+0x0048ade0	FUN_0048ade0	particle	C4	none		0	0	CROSS	Match/MatchS14_0048ade0.cpp	re/match/s14/0048ade0.c		0x004b6480:set	
+0x0048b650	FUN_0048b650	particle	C4	none		0	0	none		re/match/s14/0048b650.c			
+0x0048bb70	FUN_0048bb70	particle	C4	none		0	0	none		re/match/s14/0048bb70.c		0x004b6480:set	
+0x0048bc10	FUN_0048bc10	particle	C4	none	rebind	0	1	none		re/match/s14/0048bc10.c	Match/PortTop_0040bd00.cpp:0x0040bd00->PortTop_StandIn04C_0048bc10	0x004c5a60:rw	
+0x0048d0f0	FUN_0048d0f0	particle	C4	none		0	0	none		re/match/s15/0048d0f0.c			
+0x0048ebc0	FUN_0048ebc0	render	C4	none		0	0	CROSS	Match/MatchS15_0048ebc0.cpp	re/match/s15/0048ebc0.c			
+0x0048f260	Clear48f260	util	C4	none		0	0	CROSS	Match/MatchS15_0048f260.cpp	re/match/s15/0048f260.c			
+0x0048f590	FUN_0048f590	particle	C4	none		0	0	CROSS	Match/MatchS15_0048f590.cpp	re/match/s15/0048f590.c			
+0x0048f680	StridedClear76a100	util	C4	none		0	0	CROSS	Match/MatchS15_0048f680.cpp	re/match/s15/0048f680.c			
+0x0048f6b0	StridedClear766a00	util	C4	none		0	0	CROSS	Match/MatchS15_0048f6b0.cpp	re/match/s15/0048f6b0.c			
+0x0048f6e0	StridedClear770718	util	C4	none		0	0	CROSS	Match/MatchS15_0048f6e0.cpp	re/match/s15/0048f6e0.c			
+0x0048f710	StridedClear769f50	util	C4	none		0	0	CROSS	Match/MatchS15_0048f710.cpp	re/match/s15/0048f710.c			
+0x0048f740	FUN_0048f740	util	C4	none		0	0	none		re/match/s15/0048f740.c		0x0048f6b0:set 0x0048f6e0:set 0x0048f710:set	
+0x00490380	FUN_00490380	util	C4	none		0	0	none		re/match/s15/00490380.c		0x004c1340:set 0x004c13e0:set 0x004c1520:set	
+0x00490490	FUN_00490490	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s15/00490490.c		0x004e6680:set	
+0x00490e50	FUN_00490e50	render	C4	none		0	0	none		re/match/s15/00490e50.c		0x004987b0:bound 0x004a332b:bound	
+0x00490e70	FUN_00490e70	render	C4	none		0	0	SEED		re/match/s15/00490e70.c			0x00616030 0x00616031 0x00616032 0x00616033 0x00616034 0x00616035 0x00616036 0x006146c0 0x006146c4 0x006146c8 0x006146cc 0x006146d4 0x006146d8 0x006146dc 0x006146e4 0x006146b0 0x006146b4 0x006146b8 0x006146bc
+0x00490fb0	FUN_00490fb0	render	C4	none		0	0	SEED		re/match/s15/00490fb0.c			0x006146c0 0x006146c4 0x006146c8 0x006146cc
+0x00490ff0	FUN_00490ff0	render	C4	none		0	0	CROSS,SEED	Match/MatchS15_00490ff0.cpp	re/match/s15/00490ff0.c			0x006146b4 0x006146b0
+0x00491010	FUN_00491010	render	C4	none		0	0	CROSS,SEED	Match/MatchS15_00491010.cpp	re/match/s15/00491010.c			0x006146b8 0x006146bc
+0x00491030	FUN_00491030	render	C4	none		0	0	SEED		re/match/s15/00491030.c			0x006146d4 0x006146d8 0x006146dc 0x006146e4
+0x00491070	RainColorInit	render	C4	none		0	0	CROSS,SEED	Match/MatchS15_00491070.cpp	re/match/s15/00491070.c			0x00616030 0x00616031 0x00616032 0x00616033
+0x00491530	FUN_00491530	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s15/00491530.c			
+0x004917a0	RainEnable	particle	C4	none		0	0	none		re/match/s15/004917a0.c		0x00490e70:set	
+0x00491bd0	ClearVB491bd0	render	C4	none		0	0	CROSS	Match/MatchS15_00491bd0.cpp	re/match/s15/00491bd0.c			
+0x004921b0	FUN_004921b0	render	C4	none		0	0	INDIRECT		re/match/s15/004921b0.c			
+0x004924c0	Set6147b4Triple	render	C4	none		0	0	CROSS	Match/MatchS15_004924c0.cpp	re/match/s15/004924c0.c			
+0x004924e0	FogColorGetter	render	C4	none		0	0	CROSS	Match/MatchS15_004924e0.cpp	re/match/s15/004924e0.c			
+0x00492d10	Global771968Get	util	C4	none		0	0	CROSS	Match/MatchS15_00492d10.cpp	re/match/s15/00492d10.c			
+0x00493390	FUN_00493390	util	C4	none		0	0	none		re/match/s15/00493390.c		0x004950b0:bound	
+0x00493570	Set77196c_1	util	C4	none		0	0	CROSS	Match/MatchS15_00493570.cpp	re/match/s15/00493570.c			
+0x00493580	Set771970_1	util	C4	none		0	0	CROSS	Match/MatchS15_00493580.cpp	re/match/s15/00493580.c			
+0x00493590	Set771968_1	util	C4	none		0	0	CROSS	Match/MatchS15_00493590.cpp	re/match/s15/00493590.c			
+0x00493ac0	LAB_00493ac0	util	C4	none		0	0	none		re/match/s15/00493ac0.c			
+0x00493b40	Ret3	util	C4	none		0	0	CROSS	Match/MatchS15_00493b40.cpp	re/match/s15/00493b40.c			
+0x00493b50	FUN_00493b50	util	C4	none		0	0	SEED		re/match/s15/00493b50.c		0x00493ac0:set 0x00493b40:set	0x006147dc
+0x00493bc0	FUN_00493bc0	util	C4	none		0	0	none		re/match/s15/00493bc0.c			
+0x00493f70	VideoStateFlagGet	frontend	C4	none		0	0	CROSS	Match/MatchS15_00493f70.cpp	re/match/s15/00493f70.c			
+0x00493f80	IntroVideoDimGetter	frontend	C4	none		0	0	CROSS	Match/MatchS15_00493f80.cpp	re/match/s15/00493f80.c			
+0x00493fc0	AspectRatioGlobalGet	frontend	C4	none		0	0	CROSS	Match/MatchS15_00493fc0.cpp	re/match/s15/00493fc0.c			
+0x004942b0	FUN_004942b0	video	C4	none		0	0	INDIRECT		re/match/s15/004942b0.c			
+0x004943f0	FUN_004943f0	audio	C4	none		0	0	INDIRECT		re/match/s15/004943f0.c			
+0x004944b0	FUN_004944b0	util	C4	none		0	0	CROSS	Match/MatchS16_004944b0.cpp	re/match/s16/004944b0.c			
+0x00494ee0	thunk_FUN_004d8560	util	C4	none		0	0	none		re/match/s16/00494ee0.c		0x004d8560:bound	
+0x00494ef0	ThunkVideoStateGet	boot	C4	called	inplace	0	1	DUP	Boot/Teardown.cpp	re/match/s16/00494ef0.c		0x00493f70:set	
+0x00494f30	AspectRatioSnapshot	frontend	C4	none		0	0	CROSS	Match/MatchS16_00494f30.cpp	re/match/s16/00494f30.c		0x00493fc0:set	
+0x004952f0	FUN_004952f0	render	C4	none	rebind	0	1	SEED		re/match/s16/004952f0.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_PizFs_Unmount_004952f0 Match/PortTop_0040bbb0.cpp:0x0040bbb0->?	0x00496400:bound 0x004b65c0:set	0x00616038
+0x00495790	Global772facGet	input	C4	none		0	0	CROSS	Match/MatchS16_00495790.cpp	re/match/s16/00495790.c			
+0x004957a0	FUN_004957a0	input	C4	none		0	0	CROSS	Match/MatchS16_004957a0.cpp	re/match/s16/004957a0.c			
+0x00495830	JoypadStrcpy	input	C4	none		0	0	CROSS	Match/MatchS16_00495830.cpp	re/match/s16/00495830.c			
+0x00495870	FUN_00495870	input	C2	none		0	0	NONC4,INDIRECT		re/match/s16/00495fe0.c		0x004b6480:set	
+0x00495fe0	FUN_00495fe0	input	C4	none		0	0	none		re/match/s16/00495fe0.c		0x004b6480:set	
+0x004960e0	sub_004960e0	boot	C4	none	rebind	0	1	INDIRECT		re/match/s16/004960e0.c	Match/PortTop_00499820.cpp:0x00499820->PortTop_StandIn_004960e0		
+0x00496100	FUN_00496100	input	C4	none		0	0	INDIRECT		re/match/s16/00496100.c		0x004b6480:set 0x004b6520:bound	
+0x004963d0	thunk_FUN_00496370	input	C4	none		0	0	none		re/match/s16/004963d0.c		0x00496370:bound	
+0x00496470	sub_00496470	boot	C4	none	rebind	0	1	none		re/match/s16/00496470.c	Match/PortTop_00499820.cpp:0x00499820->PortTop_Missing_00496470		
+0x00496530	FUN_00496530	input	C4	none		0	0	none		re/match/s16/004967e0.c		0x0045b350:bound 0x004957a0:set 0x00495fe0:set 0x00496100:set 0x004972b0:set 0x00497310:set 0x00497450:bound 0x004b6520:bound	
+0x004967e0	FUN_004967e0	input	C2	none	rebind	0	1	CROSS,NONC4	Frontend/IntroSplash.cpp	re/match/s16/004967e0.c	Match/MatchS15_00492d20.cpp:0x00492d20->MatchS15_00492d20_Call004967e0	0x0045b350:bound 0x004957a0:set 0x00495fe0:set 0x00496100:set 0x004972b0:set 0x00497310:set 0x00497450:bound 0x004b6520:bound	
+0x00496900	SlotActiveThunk	vehicle	C4	none	rebind	1	1	none		re/match/s16/00496900.c	Match/MatchS07_0042c220.cpp:0x0042c220->MatchS07_0042c220_Fwd00496900	0x00497450:bound	
+0x00496910	Global772ffcGet	input	C4	none		0	0	CROSS	Match/MatchS16_00496910.cpp	re/match/s16/00496910.c			
+0x00496920	TimerTable772ffcGet	util	C4	none		0	0	CROSS	Match/MatchS16_00496920.cpp	re/match/s16/00496920.c			
+0x00496930	Table773030Get	util	C4	none		0	0	CROSS	Match/MatchS16_00496930.cpp	re/match/s16/00496930.c			
+0x00496940	FUN_00496940	render	C4	none		0	0	none		re/match/s16/00496940.c		0x004c77c0:rw	
+0x00496d00	FUN_00496d00	util	C4	none		0	0	none		re/match/s16/00496d00.c			
+0x00496ec0	FUN_00496ec0	render	C4	none		0	0	none		re/match/s16/00496ec0.c		0x004c0ed0:set 0x004c4dc0:bound	
+0x00497000	Proj497000	render	C4	none		0	0	CROSS	Match/MatchS16_00497000.cpp	re/match/s16/00497000.c			
+0x00497190	FUN_00497190	input	C4	none		0	0	CROSS,SEED	Match/MatchS16_004971b0.cpp	re/match/s16/004971b0.c		0x00496400:bound 0x004a2b60:bound 0x004a4368:bound 0x004a4541:bound 0x004a49cf:bound	0x005d000c
+0x004971b0	ControllerConfigLoad_j5	input	C4	none		0	0	CROSS,SEED	Match/MatchS16_004971b0.cpp	re/match/s16/004971b0.c		0x00496400:bound 0x004a2b60:bound 0x004a4368:bound 0x004a4541:bound 0x004a49cf:bound	0x005d0064 0x005d0044 0x005d001c
+0x00497230	FUN_00497230	input	C4	none		0	0	SEED		re/match/s16/00497230.c		0x00496400:bound 0x004a2b60:bound 0x004a4368:bound 0x004a4541:bound 0x004a4b22:bound	0x005d00dc 0x005d00b8 0x005d0090
+0x004972b0	FUN_004972b0	input	C4	none		0	0	none		re/match/s16/004972b0.c		0x00495790:set 0x004957a0:set 0x00496100:set 0x004b6520:bound	
+0x00497310	FUN_00497310	input	C4	none		0	0	none		re/match/s16/00497310.c			
+0x00497470	FUN_00497470	frontend	C4	none		0	0	none		re/match/s16/00497470.c			
+0x004974b0	FUN_004974b0	frontend	C4	none		0	0	none		re/match/s16/004974b0.c		0x00499740:set	
+0x00498a00	FUN_00498a00	render	C4	called		0	0	DUP	Boot/VideoCfgFirstRun.cpp	re/match/pilot/a6_00498d60.c			
+0x00498be0	RenderBitDepthGet	render	C4	none		0	0	CROSS	Match/MatchS16_00498be0.cpp	re/match/s16/00498be0.c			
+0x00498d20	ReadModeFromCombo_j5	save	C4	none		0	0	CROSS	Match/MatchS16_00498d20.cpp	re/match/pilot/a2_00498d20.c			
+0x00498d60	PopulateModeCombo	save	C4	none		0	0	CROSS	Match/MatchS16_00498d60.cpp	re/match/pilot/a6_00498d60.c			
+0x00499740	SetControlTextFromResource_i3	save	C4	none		0	0	CROSS	Match/MatchS16_00499740.cpp	re/match/pilot/a6_00499740.c			
+0x0049a0a0	FUN_0049a0a0	render	C4	none		0	0	none		re/match/s16/0049a0a0.c		0x0045b350:bound 0x0049a2e0:set 0x0049a740:set	
+0x0049a0e0	FUN_0049a0e0	render	C4	none		0	0	none		re/match/s16/0049a0e0.c		0x0045b350:bound 0x0049a730:set 0x0049aae0:set	
+0x0049a150	FUN_0049a150	render	C4	none		0	0	none		re/match/s16/0049a150.c		0x0045b350:bound 0x0049ab10:set	
+0x0049a2e0	Set77396c	render	C4	none		0	0	CROSS	Match/MatchS16_0049a2e0.cpp	re/match/s16/0049a2e0.c			
+0x0049a730	FUN_0049a730	render	C4	none		0	0	none		re/match/s16/0049a730.c		0x00426c00:bound	
+0x0049a740	Set773978	render	C4	none		0	0	CROSS	Match/MatchS16_0049a740.cpp	re/match/s16/0049a740.c			
+0x0049aae0	FUN_0049aae0	render	C4	none		0	0	SEED		re/match/s16/0049aae0.c		0x004cbad0:set 0x004cbb20:set	0x005d0438 0x005d0518
+0x0049ab10	FUN_0049ab10	render	C4	none		0	0	none		re/match/s16/0049ab10.c		0x004cbb50:set	
+0x004a31ea	FUN_004a31ea	boot	C4	none		0	0	none		re/match/s17/004a31ea.c		0x004a77eb:set	
+0x004a45c6	FUN_004a45c6	boot	C4	none		0	0	none		re/match/s17/004a45c6.c		0x004a77eb:set	
+0x004a4660	FUN_004a4660	boot	C4	none		0	0	none		re/match/s17/004a4660.c		0x004a77eb:set	
+0x004a4728	FUN_004a4728	boot	C4	none		0	0	none		re/match/s17/004a4728.c		0x004a77eb:set	
+0x004a77eb	FUN_004a77eb	boot	C4	none		0	0	SEED		re/match/s17/004a77eb.c			0x00616408
+0x004a78b0	CrtPreInitLoop	boot	C4	none		0	0	CROSS	Boot/CrtInit.cpp	re/match/s17/004a78b0.c			
+0x004ad3e3	FUN_004ad3e3	boot	C4	none		0	0	none		re/match/s17/004ad3e3.c		0x004a77eb:set	
+0x004af2ad	FUN_004af2ad	boot	C4	none		0	0	none		re/match/s17/004af2ad.c		0x004a77eb:set	
+0x004af32d	FUN_004af32d	util	C4	none		0	0	none		re/match/s17/004af32d.c			
+0x004b3b70	FileReadWrapper_i3	save	C4	body		0	0	DUP	Save/FileWrappers.cpp	re/match/s18/004b3b70.c		0x004cbd30:rw 0x004cc160:bound 0x004cc230:bound	
+0x004b40c0	FUN_004b40c0	render	C4	none		0	0	none		re/match/s18/004b40c0.c			
+0x004b4130	FUN_004b4130	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s18/004b4130.c		0x004b40c0:set	
+0x004b4140	FUN_004b4140	render	C4	none		0	0	CROSS	Render/ElemArrayCopyAll.cpp	re/match/s18/004b4140.c		0x004b4130:set	
+0x004b4650	FUN_004b4650	render	C4	body		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s18/004b4650.c			
+0x004b46b0	FUN_004b46b0	render	C4	body		0	0	DUP	Render/RenderLeaves_ae1.cpp	re/match/s18/004b46b0.c			
+0x004b5240	FUN_004b5240	vehicle	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s18/004b5240.c			
+0x004b5260	FUN_004b5260	render	C4	none		0	0	none		re/match/s18/004b5260.c		0x004b4130:set 0x004b4140:set	
+0x004b52c0	FUN_004b52c0	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s18/004b52c0.c			
+0x004b52f0	FUN_004b52f0	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s18/004b52f0.c		0x004b52c0:set	
+0x004b5350	thunk_FUN_00550b00	render	C4	none	rebind	0	1	none		re/match/s18/004b5350.c	Match/MatchS06_0042a470.cpp:0x0042a470->MatchS06_0042a470_Call004b5350	0x00550b00:set	
+0x004b5370	thunk_FUN_00550910	render	C4	none		0	0	none		re/match/s18/004b5370.c		0x00550910:set	
+0x004b5380	thunk_FUN_00550950	render	C4	none		0	0	none		re/match/s18/004b5380.c		0x00550950:set	
+0x004b5390	thunk_FUN_005509b0	render	C4	none		0	0	none		re/match/s18/004b5390.c		0x005509b0:set	
+0x004b53a0	thunk_FUN_00550bc0	render	C4	none		0	0	none		re/match/s18/004b53a0.c		0x00550bc0:bound	
+0x004b6480	BitArrayClear	util	C4	none		0	0	CROSS	Input/DirectInput.cpp	re/match/s18/004b6480.c			
+0x004b64e0	FUN_004b64e0	util	C4	body		0	0	DUP	Input/MemsetInline_ag1.cpp	re/match/s18/004b64e0.c			
+0x004b6520	ZeroFillWrapper	util	C4	none	rebind	0	1	none		re/match/s18/004b6520.c	Match/PortTop_00496010.cpp:0x00496010->PortTop_ZeroFill_00496010	0x004b64e0:bound	
+0x004b6560	BootGlobalPairSetThunk	boot	C4	none	rebind	0	1	CROSS	Boot/PromoLoop_round6.cpp	re/match/s18/004b6560.c	Match/PortTop_00402750.cpp:0x00402750->PortTop_PizFs_SetIdle_004b6560	0x004b6610:set	
+0x004b6590	thunk_FUN_004b67a0	render	C4	none		0	0	none		re/match/s18/004b6590.c		0x004b67a0:set	
+0x004b65a0	Global7d3e4cGetThunk	vehicle	C4	none		0	0	CROSS	Util/PromoLoop_round30.cpp	re/match/s18/004b65a0.c		0x004b68e0:set	
+0x004b65b0	thunk_FUN_004b68f0	vehicle	C4	none		0	0	none		re/match/s18/004b65b0.c		0x004b68f0:set	
+0x004b65c0	FUN_004b65c0	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s18/004b65c0.c			
+0x004b65e0	FUN_004b65e0	render	C4	body		0	0	DUP	Render/RenderLeaves_ae3.cpp	re/match/s18/004b65e0.c			
+0x004b6610	BootGlobalPairSet	boot	C4	none		0	0	CROSS	Boot/PromoLoop_round6.cpp	re/match/s18/004b6610.c			
+0x004b6700	FUN_004b6700	render	C4	none	rebind	0	1	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s18/004b6700.c	Match/PortTop_004b6550.cpp:0x004b6550->PortTop_StandIn04C_004b6700		
+0x004b6710	FUN_004b6710	render	C4	none		0	0	none		re/match/s18/004b6710.c		0x004a4541:bound	
+0x004b6770	FUN_004b6770	render	C4	none		0	0	none		re/match/s18/004b6770.c		0x004a4368:bound	
+0x004b67a0	FUN_004b67a0	render	C4	none		0	0	CROSS	Compat/PizWin32Bypass.cpp	re/match/s18/004b67a0.c		0x004b65e0:bound 0x004b6770:set 0x00550790:set	
+0x004b68e0	Global7d3e4cGet	render	C4	none		0	0	CROSS	Util/PromoLoop_round30.cpp	re/match/s18/004b68e0.c			
+0x004b68f0	FUN_004b68f0	render	C4	none		0	0	none		re/match/s18/004b68f0.c		0x004b302f:bound	
+0x004b6b00	StoreEaxAtEcx	render	C4	none		0	0	CROSS	Render/StoreEaxAtEcx.cpp	re/match/s18/004b6b00.c			
+0x004b6b90	FUN_004b6b90	render	C4	none		0	0	none		re/match/s18/004b6b90.c			
+0x004c0740	FUN_004c0740	render	C4	none	rebind	0	1	none		re/match/s19/004c0740.c	Match/PortTop_0042d420.cpp:0x0042d420->MashedRw_ObjectHasFrameSetFrame_004c0740 Match/PortTop_00467070.cpp:0x00467070->? Match/PortTop_00467110.cpp:0x00467110->? Match/PortTop_004b4880.cpp:0x004b4880->?	0x004c0e50:set	
+0x004c0ad0	FUN_004c0ad0	unknown	C4	none		0	0	none		re/match/s19/004c0ad0.c			
+0x004c0b10	FUN_004c0b10	render	C4	none		0	0	CROSS	Match/MatchS19_004c0b10.cpp	re/match/s19/004c0b10.c			
+0x004c0b70	FUN_004c0b70	unknown	C4	none		0	0	SEED		re/match/s19/004c0b70.c		0x004d8000:set	0x00617f78
+0x004c0e50	FUN_004c0e50	render	C4	none		0	0	CROSS,RWGLOBALS	Match/MatchS19_004c0e50.cpp	re/match/s19/004c0e50.c			
+0x004c0ed0	FUN_004c0ed0	render	C4	none		0	0	none		re/match/s19/004c0ed0.c		0x004d8350:set	
+0x004c0ef0	FUN_004c0ef0	unknown	C4	none		0	0	none		re/match/s19/004c0ef0.c			
+0x004c1300	FUN_004c1300	unknown	C4	none		0	0	none		re/match/s19/004c1300.c			
+0x004c1340	FUN_004c1340	render	C4	none		0	0	RWGLOBALS		re/match/s19/004c1340.c		0x004c51a0:bound	
+0x004c13e0	FUN_004c13e0	render	C4	none		0	0	RWGLOBALS		re/match/s19/004c13e0.c		0x004c5010:bound	
+0x004c1480	FUN_004c1480	render	C4	none		0	0	RWGLOBALS		re/match/s19/004c1480.c		0x004c52f0:bound	
+0x004c1520	FUN_004c1520	render	C4	none		0	0	RWGLOBALS		re/match/s19/004c1520.c		0x004c4d20:bound	
+0x004c1740	FUN_004c1740	unknown	C4	none		0	0	none		re/match/s19/004c1740.c			
+0x004c1800	FUN_004c1800	unknown	C4	none		0	0	none		re/match/s19/004c1800.c			
+0x004c1840	FUN_004c1840	unknown	C4	none		0	0	none		re/match/s19/004c1840.c			
+0x004c1a10	FUN_004c1a10	render	C4	none		0	0	none		re/match/s19/004c1a10.c		0x004c0e50:set	
+0x004c1a40	FUN_004c1a40	render	C4	none	rebind	0	1	none		re/match/s19/004c1a40.c	Match/PortTop_0042d560.cpp:0x0042d560->MashedRw_CameraSetNearClipPlane_004c1a40 Match/PortTop_0042f660.cpp:0x0042f660->? Match/PortTop_00467110.cpp:0x00467110->?	0x004c0e50:set 0x004c1a70:bound	
+0x004c1b10	FUN_004c1b10	render	C4	none	rebind	0	1	none		re/match/s19/004c1b10.c	Match/PortTop_0042d560.cpp:0x0042d560->MashedRw_CameraSetFarClipPlane_004c1b10 Match/PortTop_0042f660.cpp:0x0042f660->? Match/PortTop_00467110.cpp:0x00467110->?	0x004c0e50:set 0x004c1a70:bound	
+0x004c1bb0	IntroSplashRenderState	frontend	C4	none	rebind	0	1	CROSS,RWGLOBALS	Match/MatchS19_004c1bb0.cpp	re/match/s19/004c1bb0.c	Match/MatchS06_00428590.cpp:0x00428590->IntroSplashRenderState		
+0x004c1c80	FUN_004c1c80	hud	C4	none	rebind	0	1	CROSS	Match/MatchS19_004c1c80.cpp	re/match/s19/004c1c80.c	Match/PortTop_0042d4a0.cpp:0x0042d4a0->MashedRw_CameraSetViewWindow_004c1c80 Match/PortTop_00467110.cpp:0x00467110->?	0x004c0e50:set	
+0x004c2d70	RwPluginRegistryFrozen	render	C4	none		0	0	CROSS	Match/MatchS19_004c2d70.cpp	re/match/s19/004c2d70.c			
+0x004c2d80	FUN_004c2d80	unknown	C4	none		0	0	none		re/match/s19/004c2d80.c			
+0x004c2dc0	FUN_004c2dc0	render	C4	none		0	0	SEED		re/match/s19/004c2dc0.c		0x004d7db0:bound	0x00617fe0
+0x004c3ac0	Vec3Magnitude	util	C4	none		0	0	RWGLOBALS		re/match/s19/004c3ac0.c			
+0x004c3b30	FastSqrt	util	C4	called	inplace	1	1	DUP,RWGLOBALS	Math/RwLutTables.cpp	re/match/s19/004c3b30.c			
+0x004c3b90	FastInvSqrt	util	C4	none		0	0	RWGLOBALS		re/match/s19/004c3b90.c			
+0x004c3bf0	Vec2Length	render	C4	called	inplace	1	1	DUP,RWGLOBALS	Math/RwV2d.cpp	re/match/s19/004c3bf0.c			
+0x004c3d60	FUN_004c3d60	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c3d60.c			
+0x004c3d90	FUN_004c3d90	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c3d90.c			
+0x004c3dc0	FUN_004c3dc0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c3dc0.c			
+0x004c4270	MatrixOrthoResidual4c4270	render	C4	body		0	0	DUP	Math/MatrixOrthoResidual.cpp	re/match/s19/004c4270.c			
+0x004c42d0	MatrixNormResidual4c42d0	render	C4	body		0	0	DUP	Math/MatrixOrthoResidual.cpp	re/match/s19/004c42d0.c			
+0x004c4530	FUN_004c4530	render	C4	none		0	0	RWGLOBALS		re/match/s19/004c4530.c		0x004c4270:bound 0x004c42d0:bound 0x004c4360:bound	
+0x004c45f0	FUN_004c45f0	render	C4	none		0	0	CROSS	Match/MatchS19_004c45f0.cpp	re/match/s19/004c45f0.c			
+0x004c4600	RwMatrixMultiply	render	C4	body		0	0	DUP,RWGLOBALS,INDIRECT	Collision/RwpSolverMath2.cpp	re/match/s19/004c4600.c			
+0x004c5770	FUN_004c5770	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c5770.c			
+0x004c5800	FUN_004c5800	render	C4	none		0	0	CROSS,RWGLOBALS	Match/MatchS19_004c5800.cpp	re/match/s19/004c5800.c			
+0x004c5820	FUN_004c5820	render	C4	none		0	0	CROSS,RWGLOBALS	Match/MatchS19_004c5820.cpp	re/match/s19/004c5820.c			
+0x004c5830	FUN_004c5830	render	C4	none		0	0	CROSS,RWGLOBALS	Match/MatchS19_004c5830.cpp	re/match/s19/004c5830.c			
+0x004c5850	FUN_004c5850	render	C4	none		0	0	CROSS,RWGLOBALS	Match/MatchS19_004c5850.cpp	re/match/s19/004c5850.c			
+0x004c5860	FUN_004c5860	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c5860.c			
+0x004c5890	RwTexDictionaryCreate	render	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Match/MatchS19_004c5890.cpp	re/match/s19/004c5890.c		0x004d8000:set	
+0x004c59c0	FUN_004c59c0	render	C4	none		0	0	none		re/match/s19/004c59c0.c			
+0x004c5bc0	FUN_004c5bc0	render	C4	none	rebind	0	1	CROSS	Match/MatchS19_004c5bc0.cpp	re/match/s19/004c5bc0.c	Match/PortTop_0040bbb0.cpp:0x0040bbb0->MashedRw_TexDictionaryAddTexture_004c5bc0		
+0x004c5c00	FUN_004c5c00	frontend	C4	none	rebind	0	1	CROSS	Match/MatchS19_004c5c00.cpp	re/match/s19/004c5c00.c	Match/MatchS02_0040bb30.cpp:0x0040bb30->MatchS02_0040bb30_Call004c5c00 Match/MatchS02_0040bb50.cpp:0x0040bb50->MatchS02_0040bb50_Call004c5c00 Match/MatchS15_004921d0.cpp:0x004921d0->MashedRw_TexDictionaryFindNamedTexture_004c5c00		
+0x004c5c80	FUN_004c5c80	render	C4	none	rebind	0	1	CROSS,RWGLOBALS	Match/MatchS19_004c5c80.cpp	re/match/s19/004c5c80.c	Match/PortTop_0040bbb0.cpp:0x0040bbb0->MashedRw_TexDictionarySetCurrent_004c5c80 Match/PortTop_00425bc0.cpp:0x00425bc0->?		
+0x004c5ca0	FUN_004c5ca0	render	C4	none		0	0	CROSS,RWGLOBALS	Match/MatchS19_004c5ca0.cpp	re/match/s19/004c5ca0.c			
+0x004c5dd0	FUN_004c5dd0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c5dd0.c			
+0x004c6140	FUN_004c6140	render	C4	none		0	0	SEED,RWGLOBALS,INDIRECT		re/match/s19/004c6140.c			0x005d8b68
+0x004c75c0	FUN_004c75c0	render	C4	none		0	0	CROSS,RWGLOBALS	Match/MatchS19_004c75c0.cpp	re/match/s19/004c75c0.c			
+0x004c75e0	ViewportOriginGetter	frontend	C4	none		0	0	CROSS	Match/MatchS19_004c75e0.cpp	re/match/s19/004c75e0.c			
+0x004c7600	RasterUnlock	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c7600.c			
+0x004c7620	FUN_004c7620	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c7620.c			
+0x004c76c0	FUN_004c76c0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s19/004c76c0.c			
+0x004c76f0	RasterCanLock	render	C4	none		0	0	RWGLOBALS		re/match/s19/004c76f0.c			
+0x004c7760	FUN_004c7760	render	C4	none	rebind	0	1	RWGLOBALS,INDIRECT		re/match/s19/004c7760.c	Match/PortTop_0042d4a0.cpp:0x0042d4a0->MashedRw_RasterSubRaster_004c7760 Match/PortTop_0042f530.cpp:0x0042f530->?		
+0x004c7860	RasterMipLock	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s20/004c7860.c			
+0x004c79f0	FUN_004c79f0	render	C4	none		0	0	none		re/match/s20/004c79f0.c			
+0x004c7a20	FUN_004c7a20	render	C4	none		0	0	none		re/match/s20/004c7a20.c			
+0x004c8650	rwD3D9RenderStateCacheInvalidate	render	C4	none		0	0	CROSS,SEED	Render/D3D9Helpers_p4.cpp	re/match/s20/004c8650.c			0x006181c8 0x006181cc 0x006181d0 0x006181d4 0x006181d8
+0x004c8740	FUN_004c8740	render	C4	none		0	0	SEED		re/match/s20/004c8740.c			0x006181b4 0x006181b8 0x006181bc 0x006181c0 0x006181b0
+0x004c8800	FUN_004c8800	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004c8800.c			0x006181b0 0x006181b8 0x006181c0 0x006181c4
+0x004c9f50	RwGlobal7d4134Set	render	C4	none		0	0	CROSS	Boot/PromoLoop_round6.cpp	re/match/s20/004c9f50.c			
+0x004c9f60	FUN_004c9f60	render	C4	none		0	0	SEED		re/match/s20/004c9f60.c			0x006181b4 0x006181b8 0x006181bc 0x006181c0
+0x004cae90	RwCapsBlockPtrGet	render	C4	none		0	0	CROSS,SEED	Render/PromoLoop_round11.cpp	re/match/s20/004cae90.c			0x00618220
+0x004cafd0	FUN_004cafd0	render	C4	none		0	0	none		re/match/s20/004cafd0.c			
+0x004cb070	FUN_004cb070	render	C4	none		0	0	SEED		re/match/s20/004cb070.c			0x006181cc 0x006181c8
+0x004cb0b0	FUN_004cb0b0	render	C4	none		0	0	SEED		re/match/s20/004cb0b0.c			0x006181d0
+0x004cb0f0	FUN_004cb0f0	render	C4	none		0	0	SEED		re/match/s20/004cb0f0.c			0x006181d4
+0x004cb130	FUN_004cb130	render	C4	none		0	0	none		re/match/s20/004cb130.c			
+0x004cb190	FUN_004cb190	render	C4	none		0	0	none		re/match/s20/004cb190.c			
+0x004cb2c0	FUN_004cb2c0	render	C4	none		0	0	SEED		re/match/s20/004cb2c0.c			0x006181d8
+0x004cb2f0	FUN_004cb2f0	render	C4	none		0	0	none		re/match/s20/004cb2f0.c		0x004d53b0:set	
+0x004cb740	FUN_004cb740	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s20/004cb740.c			
+0x004cb840	FUN_004cb840	render	C4	none		0	0	INDIRECT		re/match/s20/004cb840.c			
+0x004cbad0	FUN_004cbad0	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004cbad0.c			0x006181d0
+0x004cbb00	FUN_004cbb00	render	C4	none		0	0	INDIRECT		re/match/s20/004cbb00.c			
+0x004cbb20	FUN_004cbb20	render	C4	none		0	0	INDIRECT		re/match/s20/004cbb20.c			
+0x004cbb50	RwComReleaseThunk	render	C4	none		0	0	CROSS,INDIRECT	Render/RwComReleaseThunk.cpp	re/match/s20/004cbb50.c			
+0x004cbb60	GetRenderStateBlockPtr	render	C4	body		0	0	DUP	Render/BatchAB_s1.cpp	re/match/s20/004cbb60.c			
+0x004cbc60	RwGlobal7d4598Set	render	C4	none		0	0	CROSS	Render/PromoLoop_round3.cpp	re/match/s20/004cbc60.c			
+0x004cbc70	RwGlobal7d4598Get	render	C4	none		0	0	CROSS	Render/PromoLoop_round3.cpp	re/match/s20/004cbc70.c			
+0x004cbc80	RwGlobal7d459cSet	render	C4	none		0	0	CROSS	Render/PromoLoop_round3.cpp	re/match/s20/004cbc80.c			
+0x004cbc90	RwGlobal7d459cGet	render	C4	none		0	0	CROSS	Util/PromoLoop_round26.cpp	re/match/s20/004cbc90.c			
+0x004cc4f0	FUN_004cc4f0	render	C4	none		0	0	none		re/match/s20/004cc4f0.c			
+0x004cc7e0	RwGlobal6182b0Set	render	C4	none		0	0	CROSS,SEED	Util/PromoLoop_round8.cpp	re/match/s20/004cc7e0.c			0x006182b0
+0x004ccce0	FUN_004ccce0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s20/004ccce0.c			
+0x004ccf20	FUN_004ccf20	render	C4	none		0	0	none		re/match/s20/004ccf20.c			
+0x004cd060	AllocatorSlotGet	render	C4	none		0	0	CROSS,RWGLOBALS	Render/RenderSubmit_o4.cpp	re/match/s20/004cd060.c			
+0x004cd140	RwRenderCommandBufferReset	render	C4	none		0	0	CROSS	Render/RenderSubmit_o4.cpp	re/match/s20/004cd140.c			
+0x004cde20	FUN_004cde20	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s20/004cde20.c			
+0x004cde50	FUN_004cde50	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s20/004cde50.c			
+0x004ce690	FUN_004ce690	render	C4	none		0	0	none		re/match/s20/004ce690.c		0x00550b00:set	
+0x004ce790	FUN_004ce790	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s20/004ce790.c			
+0x004ce8e0	FUN_004ce8e0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s20/004ce8e0.c			
+0x004ceaf0	FUN_004ceaf0	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s20/004ceaf0.c			
+0x004cf9e0	FUN_004cf9e0	render	C4	none		0	0	none		re/match/s20/004cf9e0.c		0x004c5a60:rw	
+0x004cfee0	RasterPluginByteGet	render	C4	body		0	0	DUP	Render/StateBatchGetters.cpp	re/match/s20/004cfee0.c			
+0x004cff00	FUN_004cff00	render	C4	none		0	0	CROSS	Render/RpMaterialNibble_wf1.cpp	re/match/s20/004cff00.c			
+0x004d38b0	rwD3D8CheckTextureFormat	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004d38b0.c			0x006181b0
+0x004d38f0	rwD3D8CreateTextureWithFormat	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004d38f0.c			0x006181b0
+0x004d3950	rwD3D8CreateMipmapTexture	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004d3950.c			0x006181b0
+0x004d39b0	rwD3D8CreateCubeTexture	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004d39b0.c			0x006181b0
+0x004d3a10	rwD3D8CheckAutoMipMap	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004d3a10.c			0x006181b0
+0x004d3a60	rwD3D8CheckAutoMipMapAlpha	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004d3a60.c			0x006181b0
+0x004d3ab0	rwD3D8CheckAutoMipMapCube	render	C4	none		0	0	SEED,INDIRECT		re/match/s20/004d3ab0.c			0x006181b0
+0x004d40c0	GetPipelinePtr	render	C4	body		0	0	DUP	Render/BatchAB_s1.cpp	re/match/s20/004d40c0.c			
+0x004d4bf0	FUN_004d4bf0	render	C4	none		0	0	none		re/match/s21/004d4bf0.c			
+0x004d52d0	FUN_004d52d0	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s21/004d52d0.c			
+0x004d5310	RasterImageCopy	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s21/004d5310.c			
+0x004d5340	RasterLockRead	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s21/004d5340.c			
+0x004d53b0	D3d9State_Flush	render	C4	none		0	0	CROSS,INDIRECT	Render/D3d9StateCache.cpp	re/match/s21/004d53b0.c			
+0x004d5480	FUN_004d5480	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s21/004d5480.c			
+0x004d54d0	FUN_004d54d0	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s21/004d54d0.c			
+0x004d54f0	FUN_004d54f0	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s21/004d54f0.c			
+0x004d5550	FUN_004d5550	render	C4	none		0	0	none		re/match/s21/004d5550.c			
+0x004d5570	D3d9State_SetSampler	render	C4	none		0	0	CROSS,INDIRECT	Render/D3d9StateCache.cpp	re/match/s21/004d5570.c			
+0x004d55b0	FUN_004d55b0	render	C4	none		0	0	INDIRECT		re/match/s21/004d55b0.c			
+0x004d6b90	D3d9State_SetStage0Filter	render	C4	none		0	0	CROSS	Render/D3d9StateCache.cpp	re/match/s21/004d6b90.c			
+0x004d6c40	FUN_004d6c40	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s21/004d6c40.c			
+0x004d6c90	FUN_004d6c90	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s21/004d6c90.c			
+0x004d6ce0	FUN_004d6ce0	render	C4	none		0	0	INDIRECT		re/match/s21/004d6ce0.c			
+0x004d6e60	TexStageCacheGet	render	C4	none		0	0	CROSS	Boot/PromoLoop_round12.cpp	re/match/s21/004d6e60.c			
+0x004d6e70	FUN_004d6e70	render	C4	none		0	0	SEED,INDIRECT		re/match/s21/004d6e70.c		0x004d6ce0:set	0x005d8c94 0x005d8ca8
+0x004d71f0	FUN_004d71f0	render	C4	body		0	0	DUP	Render/RenderStateSettersA.cpp	re/match/s21/004d71f0.c			
+0x004d7200	FUN_004d7200	render	C4	body		0	0	DUP	Render/RenderStateSettersA.cpp	re/match/s21/004d7200.c			
+0x004d7250	FUN_004d7250	render	C4	body		0	0	DUP	Render/RenderStateSettersA.cpp	re/match/s21/004d7250.c			
+0x004d72a0	FUN_004d72a0	render	C4	body		0	0	DUP	Render/RenderStateSettersA.cpp	re/match/s21/004d72a0.c			
+0x004d72f0	FUN_004d72f0	render	C4	body		0	0	DUP	Render/RenderStateSettersA.cpp	re/match/s21/004d72f0.c			
+0x004d7340	FUN_004d7340	render	C4	body		0	0	DUP	Render/RenderStateSettersA.cpp	re/match/s21/004d7340.c			
+0x004d7390	FUN_004d7390	render	C4	none		0	0	CROSS	Render/RenderStateSettersB.cpp	re/match/s21/004d7390.c			
+0x004d73e0	FUN_004d73e0	render	C4	none		0	0	CROSS	Render/RenderStateSettersB.cpp	re/match/s21/004d73e0.c			
+0x004d7430	FUN_004d7430	render	C4	none		0	0	CROSS	Render/RenderStateSettersB.cpp	re/match/s21/004d7430.c			
+0x004d7ac0	D3d9State_FogBlendToggle	render	C4	none		0	0	CROSS	Render/D3d9StateCache.cpp	re/match/s21/004d7ac0.c			
+0x004d7bc0	FUN_004d7bc0	render	C4	none		0	0	CROSS	Render/RenderStateSettersB.cpp	re/match/s21/004d7bc0.c			
+0x004d7c10	FUN_004d7c10	render	C4	none		0	0	CROSS	Render/RenderStateSettersB.cpp	re/match/s21/004d7c10.c		0x004d7bc0:set	
+0x004d7c60	FUN_004d7c60	render	C4	none		0	0	SEED		re/match/s21/004d7c60.c			0x00618424 0x00618420
+0x004d7db0	RwPluginExtensionSlotGet	render	C4	body		0	0	DUP	Render/BatchAB_s6.cpp	re/match/s21/004d7db0.c			
+0x004d7ff0	RwIdentityPassthrough	render	C4	none	rebind	0	1	CROSS	Render/HighAB3Helpers_p6.cpp	re/match/s21/004d7ff0.c	Match/PortTop_005581f0.cpp:0x005581f0->PortTop_StandIn04C_004d7ff0		
+0x004d8000	FUN_004d8000	frontend	C4	none		0	0	none		re/match/s21/004d8000.c			
+0x004d8060	RwPluginListDestructDispatch	render	C4	none		0	0	CROSS	Render/PromoLoop_round255.cpp	re/match/s21/004d8060.c			
+0x004d8090	RwPluginListCopyDispatch	render	C4	none		0	0	CROSS	Render/PromoLoop_round253.cpp	re/match/s21/004d8090.c			
+0x004d8280	FUN_004d8280	render	C4	none		0	0	INDIRECT		re/match/s21/004d8280.c		0x004c4600:bound	
+0x004d8350	FUN_004d8350	render	C4	none		0	0	none		re/match/s21/004d8350.c		0x004c4600:bound 0x004d83d0:set	
+0x004d83d0	RwFrameSyncDirtyChildren	render	C4	none		0	0	none		re/match/s21/004d83d0.c		0x004c4600:bound	
+0x004d8430	rwID_ERRORMODULE_ctor	render	C4	none		0	0	RWGLOBALS		re/match/s21/004d8430.c			
+0x004d8470	RwErrorModuleDtor	render	C4	none		0	0	CROSS	Render/PromoLoop_round251.cpp	re/match/s21/004d8470.c			
+0x004d84e0	RwErrorGet	render	C4	none		0	0	RWGLOBALS		re/match/s21/004d84e0.c			
+0x004d8560	FUN_004d8560	util	C4	called	inplace	1	1	DUP	Util/UtilLeaves_ab6.cpp	re/match/s21/004d8560.c			
+0x004d8680	RwStricmp	render	C4	body		0	0	DUP	Render/RwStricmp.cpp	re/match/s21/004d8680.c			
+0x004d86d0	RwStrupr	render	C4	body		0	0	DUP	Render/RwStrCase.cpp	re/match/s21/004d86d0.c			
+0x004d8700	RwStrlwr	render	C4	body		0	0	DUP	Render/RwStrCase.cpp	re/match/s21/004d8700.c			
+0x004d8730	RwStrchr	render	C4	body		0	0	DUP	Render/RwStrSearch.cpp	re/match/s21/004d8730.c			
+0x004d8750	RwStrrchr	render	C4	body		0	0	DUP	Render/RwStrSearch.cpp	re/match/s21/004d8750.c			
+0x004d8770	RwStringGetSizeAligned	render	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Render/RwString.cpp	re/match/s21/004d8770.c			
+0x004d8fa0	rwID_CHUNKGROUPMODULE_ctor	render	C4	none		0	0	SEED,RWGLOBALS		re/match/s21/004d8fa0.c			0x0061842c 0x00618428
+0x004da430	FUN_004da430	render	C4	none		0	0	none		re/match/s21/004da430.c			
+0x004da480	FUN_004da480	render	C4	none		0	0	none		re/match/s21/004da480.c		0x004d9a60:bound	
+0x004dab70	FUN_004dab70	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s21/004dab70.c			
+0x004db770	FUN_004db770	render	C4	none		0	0	none		re/match/s21/004db770.c		0x004cb070:set 0x004cb0b0:set 0x004cb0f0:set 0x004cb130:set 0x004d53b0:set 0x004d5480:set 0x004d54f0:set 0x004d6e60:set	
+0x004df8d0	PixEncode1555	render	C4	body		0	0	DUP	Render/BatchAB_s3.cpp	re/match/s21/004df8d0.c			
+0x004df910	PixEncode4444	render	C4	body		0	0	DUP	Render/BatchAB_s3.cpp	re/match/s21/004df910.c			
+0x004df950	PixEncodeA8R3G3B2	render	C4	body		0	0	DUP	Render/BatchAB_s3.cpp	re/match/s21/004df950.c			
+0x004df980	PixEncodeX4R4G4B4	render	C4	body		0	0	DUP	Render/BatchAB_s3.cpp	re/match/s21/004df980.c			
+0x004df9b0	FUN_004df9b0	render	C4	body		0	0	DUP	Render/BatchAB_s3.cpp	re/match/s21/004df9b0.c			
+0x004df9e0	PixEncodeX8R8G8B8	render	C4	body		0	0	DUP	Render/BatchAB_s3.cpp	re/match/s21/004df9e0.c			
+0x004dfa10	FUN_004dfa10	render	C4	none		0	0	CROSS	Render/RgbPackEncoder_wfb0f.cpp	re/match/s21/004dfa10.c			
+0x004dfa40	FUN_004dfa40	render	C4	none		0	0	CROSS	Render/BgraReorder_wf.cpp	re/match/s21/004dfa40.c			
+0x004dfa70	FUN_004dfa70	render	C4	none		0	0	CROSS	Render/PixReadU32_wf.cpp	re/match/s21/004dfa70.c			
+0x004dfaa0	FUN_004dfaa0	render	C4	none		0	0	CROSS	Render/PixPassthrough16.cpp	re/match/s21/004dfaa0.c			
+0x004e4320	RwPluginLinkSet	render	C4	none		0	0	none		re/match/s21/004e4320.c		0x004c0e50:set	
+0x004e4350	FUN_004e4350	render	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s21/004e4350.c			
+0x004e6680	RpClumpRender	render	C4	none		0	0	INDIRECT		re/match/s21/004e6680.c		0x004c0ed0:set	
+0x004ec720	Store_Deref14_Off00	render	C4	none		0	0	CROSS	Render/PromoLoop_round252.cpp	re/match/s21/004ec720.c			
+0x004ec730	FUN_004ec730	render	C4	none		0	0	none		re/match/s21/004ec730.c			
+0x004ec740	Store_Deref14_Off0c	render	C4	none		0	0	CROSS	Render/PromoLoop_round252.cpp	re/match/s21/004ec740.c			
+0x004ec750	FUN_004ec750	render	C4	none		0	0	none		re/match/s21/004ec750.c			
+0x004ecb67	thunk_FUN_004ecb5a	render	C4	none		0	0	SEED		re/match/s21/004ecb67.c			0x006187c4
+0x004f07a0	FUN_004f07a0	render	C4	none		0	0	RWGLOBALS		re/match/s22/004f07a0.c			
+0x004f07d0	FUN_004f07d0	render	C4	none		0	0	RWGLOBALS		re/match/s22/004f07d0.c			
+0x004f0900	FUN_004f0900	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s22/004f0900.c			
+0x004f0d80	CountedStride0cForAll	render	C4	none		0	0	CROSS	Render/PromoLoop_round255.cpp	re/match/s22/004f0d80.c			
+0x004f1130	FUN_004f1130	render	C4	none		0	0	RWGLOBALS		re/match/s22/004f1130.c			
+0x004f1800	FUN_004f1800	render	C4	none		0	0	INDIRECT		re/match/s22/004f1800.c			
+0x004f3030	FUN_004f3030	render	C4	none		0	0	none		re/match/s22/004f3030.c			
+0x004f3bc0	FUN_004f3bc0	render	C4	none		0	0	none		re/match/s22/004f3bc0.c			
+0x004f3bd0	IndexedDwordFetch	render	C4	none		0	0	CROSS	Render/PromoLoop_round252.cpp	re/match/s22/004f3bd0.c			
+0x004f3cb0	PtrArrayFindLastIndex	render	C4	body		0	0	DUP	Render/StateBatchGetters.cpp	re/match/s22/004f3cb0.c			
+0x004f43b0	FUN_004f43b0	render	C4	none		0	0	RWGLOBALS		re/match/s22/004f43b0.c		0x004d41e0:bound 0x004f07a0:set	
+0x004f4900	FUN_004f4900	render	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s22/004f4900.c			
+0x004f5020	FUN_004f5020	render	C4	none		0	0	CROSS,SEED	Render/PluginFields_ah4.cpp	re/match/s22/004f5020.c			0x005dae40
+0x004f77f0	FUN_004f77f0	render	C4	none		0	0	none		re/match/s22/004f77f0.c			
+0x004f7dc0	FUN_004f7dc0	render	C4	none		0	0	SEED		re/match/s22/004f7dc0.c			0x005dae88 0x005cf00c 0x005dae98 0x005ceb90
+0x004f81b0	FUN_004f81b0	render	C4	none		0	0	SEED		re/match/s22/004f81b0.c			0x005dae88 0x005cf00c 0x005dae98 0x005ceb90
+0x004f8400	FUN_004f8400	render	C4	none		0	0	none		re/match/s22/004f8400.c			
+0x004f8490	FUN_004f8490	render	C4	none		0	0	SEED		re/match/s22/004f8490.c		0x004f8400:set	0x005cc33c
+0x004f8640	FUN_004f8640	render	C4	none		0	0	CROSS	Render/PluginFields_ah4.cpp	re/match/s22/004f8640.c			
+0x004f8660	PluginDataDwordA	render	C4	body		0	0	DUP	Render/StateBatchGetters.cpp	re/match/s22/004f8660.c			
+0x004f8670	FUN_004f8670	render	C4	none		0	0	CROSS	Render/PluginFields_ah4.cpp	re/match/s22/004f8670.c			
+0x004f8690	PluginDataDwordB	render	C4	body		0	0	DUP	Render/StateBatchGetters.cpp	re/match/s22/004f8690.c			
+0x004fb050	FUN_004fb050	render	C4	none		0	0	SEED		re/match/s22/004fb050.c			0x006199b0
+0x00516bf0	png_set_write_fn	util	C4	none		0	0	SEED		re/match/s23/00516bf0.c		0x00517270:set	0x00621404 0x0062143c
+0x00517200	FUN_00517200	util	C4	none		0	0	none		re/match/s23/00517200.c			
+0x00517250	FUN_00517250	util	C4	none		0	0	INDIRECT		re/match/s23/00517250.c			
+0x00517270	FUN_00517270	util	C4	none		0	0	INDIRECT		re/match/s23/00517270.c			
+0x005172b0	FUN_005172b0	util	C4	none		0	0	INDIRECT		re/match/s23/005172b0.c		0x005172f0:set	
+0x005172f0	FUN_005172f0	util	C4	none		0	0	SEED		re/match/s23/005172f0.c			0x005e336c
+0x00517380	FUN_00517380	util	C4	none		0	0	INDIRECT		re/match/s23/00517380.c		0x005172f0:set	
+0x00518570	Rmw518570	util	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s23/00518570.c			
+0x00518580	FUN_00518580	util	C4	none		0	0	none		re/match/s23/00518580.c			
+0x00518590	FUN_00518590	util	C4	none		0	0	none		re/match/s23/00518590.c			
+0x005196f0	FUN_005196f0	util	C4	none		0	0	none		re/match/s23/005196f0.c			
+0x005199f0	FUN_005199f0	util	C4	none		0	0	none		re/match/s23/005199f0.c			
+0x00519bc0	FUN_00519bc0	util	C4	none		0	0	none		re/match/s23/00519bc0.c			
+0x00519f70	FUN_00519f70	util	C4	none		0	0	none		re/match/s23/00519f70.c			
+0x0051bd70	FUN_0051bd70	util	C4	none		0	0	none		re/match/s23/0051bd70.c			
+0x0051ca10	FUN_0051ca10	util	C4	none		0	0	SEED		re/match/s23/0051ca10.c		0x00517270:set	0x006216a8 0x00621674
+0x0051f810	FUN_0051f810	util	C4	none		0	0	SEED		re/match/s23/0051f810.c			0x005e32c4 0x005e32e0
+0x005209d0	Set5209d0	util	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s23/005209d0.c			
+0x00520ef0	FUN_00520ef0	util	C4	none		0	0	none		re/match/s23/00520ef0.c			
+0x00522970	FUN_00522970	util	C4	none		0	0	none		re/match/s23/00522970.c			
+0x00528630	FUN_00528630	util	C4	none		0	0	SEED		re/match/s23/00528630.c		0x00517270:set	0x006227f0
+0x00528e20	zcfree	util	C4	none		0	0	none		re/match/s23/00528e20.c			
+0x00528e30	FUN_00528e30	util	C4	none		0	0	SEED		re/match/s23/00528e30.c			0x006228d8 0x006228ec 0x00622900
+0x00528ef0	FUN_00528ef0	util	C4	none		0	0	none		re/match/s23/00528ef0.c			
+0x00529050	FUN_00529050	util	C4	none		0	0	none		re/match/s23/00529050.c			
+0x0052da20	FUN_0052da20	util	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s23/0052da20.c			
+0x0052ddc0	FUN_0052ddc0	util	C4	none		0	0	none		re/match/s23/0052ddc0.c			
+0x0052de60	FUN_0052de60	util	C4	called	inplace	1	1	DUP	Track/WarzonePontoon.cpp	re/match/s23/0052de60.c			
+0x00550790	FsManager7dc76cSet	util	C4	none		0	0	CROSS	Util/PromoLoop_round17.cpp	re/match/s24/00550790.c			
+0x00550910	FUN_00550910	save	C4	none		0	0	INDIRECT		re/match/s24/00550910.c			
+0x00550950	RwsStreamRead	audio	C4	none		0	0	CROSS,INDIRECT	Rws/RwsStreamRead.cpp	re/match/s24/00550950.c			
+0x00550980	VfsStreamRead	save	C4	body		0	0	DUP,INDIRECT	Save/VfsStream.cpp	re/match/s24/00550980.c			
+0x005509b0	FUN_005509b0	audio	C4	none		0	0	INDIRECT		re/match/s24/005509b0.c			
+0x00550af0	FUN_00550af0	audio	C4	none		0	0	INDIRECT		re/match/s24/00550af0.c			
+0x00550b00	VfsFileExists	save	C4	body		0	0	DUP,RWGLOBALS,INDIRECT	Save/GameSaveVFS.cpp	re/match/s24/00550b00.c			
+0x00550be0	FUN_00550be0	util	C4	none		0	0	INDIRECT		re/match/s24/00550be0.c			
+0x00550c30	FUN_00550c30	util	C4	none		0	0	none		re/match/s24/00550c30.c			
+0x00550d80	FUN_00550d80	util	C4	none		0	0	none		re/match/s24/00550d80.c			
+0x00551050	FUN_00551050	util	C4	none		0	0	none		re/match/s24/00551050.c			
+0x00551180	RtFSHandlerCancel	util	C4	none		0	0	CROSS	Util/RtFSHandlerCancel.cpp	re/match/s24/00551180.c			
+0x00551290	FUN_00551290	util	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s24/00551290.c			
+0x005514e0	RtFSHandler_IsEOF	util	C4	none		0	0	CROSS	Util/RtFSHandler.cpp	re/match/s24/005514e0.c			
+0x00552750	FontCtx_ResetTransform	hud	C4	none		0	0	CROSS	HUD/TextCluster.cpp	re/match/s24/00552750.c			
+0x00552840	FontCtx_SetRotation	hud	C4	body		0	0	DUP	Frontend/BatchAA_s1.cpp	re/match/s24/00552840.c		0x004c4d20:bound	
+0x00552c10	FontSys_InitRenderState	hud	C4	none		0	0	CROSS	HUD/FontCtx.cpp	re/match/s24/00552c10.c		0x004c57a0:rw 0x00552750:set	
+0x00552d10	FontMatrix_Push	hud	C4	none		0	0	CROSS	HUD/FontCtx.cpp	re/match/s24/00552d10.c		0x004c57a0:rw	
+0x00552d70	ViewportStackPop	render	C4	none		0	0	CROSS	Render/HighAB3Helpers_p6.cpp	re/match/s24/00552d70.c			
+0x00552da0	FontCtx_SetScale	hud	C4	none		0	0	CROSS	HUD/FontCtx.cpp	re/match/s24/00552da0.c		0x004c5010:bound	
+0x00552df0	FontCtx_SetTranslation	hud	C4	none		0	0	CROSS	HUD/FontCtx.cpp	re/match/s24/00552df0.c		0x004c51a0:bound	
+0x00552e40	FontCtx_FlushMatrix	hud	C4	none		0	0	CROSS	HUD/FontCtx.cpp	re/match/s24/00552e40.c		0x004c0ed0:set 0x004c4600:bound 0x004c4dc0:bound 0x004c5010:bound 0x004c51a0:bound	
+0x00554010	FUN_00554010	hud	C4	none		0	0	none		re/match/s24/00554010.c		0x0055deb0:bound 0x005c4da0:set	
+0x005554d0	FUN_005554d0	hud	C4	none	rebind	1	1	CROSS	HUD/HudBatch.cpp	re/match/s24/005554d0.c	Match/MatchS06_004282a0.cpp:0x004282a0->MatchS06_004282a0_Call005554d0	0x005c4d30:set	
+0x005555b0	FUN_005555b0	render	C4	none		0	0	INDIRECT		re/match/s24/005555b0.c		0x005c4d30:set	
+0x00556cc0	SetDat00912a20	hud	C4	body		0	0	DUP	Frontend/BatchAA_s3.cpp	re/match/s24/00556cc0.c			
+0x00556cd0	GetDat00912a20	hud	C4	called	inplace	0	1	DUP	Frontend/BatchAA_s6.cpp	re/match/s24/00556cd0.c			
+0x00556e40	FUN_00556e40	hud	C4	none	rebind	0	1	RWGLOBALS,INDIRECT		re/match/s24/00556e40.c	Match/PortTop_00427620.cpp:0x00427620->PortTop_StandIn04C_00556e40	0x004c5a60:rw	
+0x005571e0	FontSys_InitFontPool	hud	C4	none		0	0	SEED		re/match/s24/005571e0.c			0x00623f6c 0x00623f68
+0x00557250	FontSys_InitDataPools	hud	C4	none		0	0	SEED		re/match/s24/00557250.c			0x00623f7c 0x00623f78 0x00623f74 0x00623f70
+0x00558140	FUN_00558140	gameplay	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s24/00558140.c			
+0x00558470	sub_00558470	render	C4	none	rebind	0	1	RWGLOBALS,INDIRECT		re/match/s24/00558470.c	Match/MatchS15_004938c0.cpp:0x004938c0->MashedRw_Free7dc8b8_00558470		
+0x00558c80	FUN_00558c80	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00558c80.c		0x005c4d50:set	
+0x00558ca0	FUN_00558ca0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00558ca0.c			
+0x00558d30	FUN_00558d30	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl05/00558d30.c		0x0055deb0:bound 0x0055dec0:bound 0x005c4d20:set 0x005c4d50:set 0x005c4df0:set 0x005c4e10:set	
+0x00559ba0	FUN_00559ba0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00559ba0.c		0x00564190:set	
+0x00559bc0	FUN_00559bc0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00559bc0.c			
+0x00559be0	FUN_00559be0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00559be0.c			
+0x00559c00	FUN_00559c00	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00559c00.c			
+0x00559c20	FUN_00559c20	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00559c20.c			
+0x0055a140	FUN_0055a140	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055a140.c			
+0x0055ac50	FUN_0055ac50	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	INDIRECT		re/match/rwl05/0055ac50.c			
+0x0055ad20	FUN_0055ad20	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055ad20.c			
+0x0055ad30	FUN_0055ad30	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	INDIRECT		re/match/rwl05/0055ad30.c			
+0x0055ade0	FUN_0055ade0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	INDIRECT		re/match/rwl05/0055ade0.c			
+0x0055ae70	PhysicsSceneBodySetShapeFlags	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055ae70.c		0x00564c80:bound 0x00565200:bound 0x00565260:bound 0x00565570:set	
+0x0055af40	FUN_0055af40	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS	Lane2/L2_0055af40.cpp	re/match/rwl05/0055af40.c		0x00565590:set	
+0x0055af60	FUN_0055af60	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055af60.c			
+0x0055af70	FUN_0055af70	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055af70.c			
+0x0055af80	FUN_0055af80	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055af80.c			
+0x0055afc0	FUN_0055afc0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055afc0.c			
+0x0055b060	FUN_0055b060	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS	Lane2/L2_0055b060.cpp	re/match/rwl05/0055b060.c		0x00559be0:set	
+0x0055b860	FUN_0055b860	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055b860.c			
+0x0055b930	FUN_0055b930	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055b930.c		0x0055bad0:set	
+0x0055ba90	FUN_0055ba90	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	INDIRECT		re/match/rwl05/0055ba90.c		0x00564190:set	
+0x0055bab0	PhysicsBodySetDamping	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055bab0.c			
+0x0055bac0	FUN_0055bac0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055bac0.c			
+0x0055bad0	FUN_0055bad0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	INDIRECT		re/match/rwl05/0055bad0.c			
+0x0055bd70	FUN_0055bd70	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP,INDIRECT	Collision/RwpSolverBroadphase3.cpp	re/match/rwl05/0055bd70.c			
+0x0055bd80	FUN_0055bd80	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP,INDIRECT	Collision/RwpSolverGlue5.cpp	re/match/rwl05/0055bd80.c		0x004c4600:bound	
+0x0055c380	FUN_0055c380	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055c380.c			
+0x0055c490	FUN_0055c490	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055c490.c			
+0x0055c4a0	PhysicsBodySetRestitution	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS	Lane2/L2_0055c4a0.cpp	re/match/rwl05/0055c4a0.c			
+0x0055c4f0	PhysicsBodySetFriction	vehicle	C4	none		0	0	CROSS	Vehicle/PhysicsBodySetFriction.cpp	re/match/s24/0055c4f0.c			
+0x0055c540	FUN_0055c540	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	SEED		re/match/rwl05/0055c540.c		0x0055c380:set	0x005e4f50
+0x0055c810	PhysicsBodySetLinearVelocity	vehicle	C4	none		0	0	CROSS,SEED	Vehicle/PhysicsBodySetLinearVelocity.cpp	re/match/s24/0055c810.c		0x0055c380:set	0x005e4fe0
+0x0055cd40	FUN_0055cd40	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	SEED		re/match/rwl05/0055cd40.c			0x005cc33c
+0x0055dd60	FUN_0055dd60	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl05/0055dd60.c		0x00559ba0:set 0x0055fdd0:set	
+0x0055ddd0	FUN_0055ddd0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055ddd0.c			
+0x0055de20	FUN_0055de20	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055de20.c			
+0x0055de60	FUN_0055de60	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055de60.c			
+0x0055dec0	FUN_0055dec0	util	C4	body		0	0	DUP	Util/UtilLeaves_ab6.cpp	re/match/s24/0055dec0.c			
+0x0055df90	FUN_0055df90	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl05/0055df90.c			
+0x0055e190	FUN_0055e190	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl05/0055e190.c			
+0x0055e2d0	FUN_0055e2d0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055e2d0.c		0x00559c00:set 0x0055e330:set	
+0x0055e300	FUN_0055e300	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055e300.c		0x00559c20:set 0x0055e190:set	
+0x0055e330	FUN_0055e330	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055e330.c			
+0x0055e440	FUN_0055e440	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	SEED		re/match/rwl05/0055e440.c		0x0055c380:set	0x005e51c8
+0x0055f480	FUN_0055f480	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055f480.c			
+0x0055fdd0	FUN_0055fdd0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl05/0055fdd0.c		0x00564190:set	
+0x0055fe10	FUN_0055fe10	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055fe10.c			
+0x0055fe30	FUN_0055fe30	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055fe30.c			
+0x0055fe40	FUN_0055fe40	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/0055fe40.c			
+0x00561ea0	FUN_00561ea0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	SEED		re/match/rwl05/00561ea0.c			0x00623fac
+0x00561ec0	FUN_00561ec0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	SEED		re/match/rwl05/00561ec0.c			0x00623fb0
+0x00562520	FUN_00562520	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Lane2/L2_00562520.cpp	re/match/rwl05/00562520.c			
+0x00562560	FUN_00562560	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl05/00562560.c			
+0x00562580	FUN_00562580	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00562580.c			
+0x005625e0	FUN_005625e0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/005625e0.c			
+0x00562fd0	FUN_00562fd0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	SEED		re/match/rwl05/00562fd0.c		0x0055c380:set	0x005e5338
+0x00563810	FUN_00563810	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Lane2/L2_00563810.cpp	re/match/rwl05/00563810.c			
+0x00563de0	FUN_00563de0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00563de0.c			
+0x00564100	FUN_00564100	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00564100.c			
+0x00564130	FUN_00564130	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Lane2/L2_00564130.cpp	re/match/rwl05/00564130.c			
+0x00564190	FUN_00564190	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl05/00564190.c			
+0x00565160	FUN_00565160	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverLeaves1.cpp	re/match/rwl05/00565160.c			
+0x00565570	FUN_00565570	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl05/00565570.c			
+0x00565590	FUN_00565590	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00565590.c			
+0x00565bc0	FUN_00565bc0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00565bc0.c			
+0x00565c20	FUN_00565c20	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00565c20.c		0x004c3ac0:set	
+0x00565cd0	FUN_00565cd0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00565cd0.c			
+0x00565fa0	FUN_00565fa0	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverLeaves1.cpp	re/match/rwl06/00565fa0.c			
+0x005663a0	FUN_005663a0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/005663a0.c			
+0x005668e0	FUN_005668e0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl06/005668e0.c		0x0055bad0:set 0x00564190:set	
+0x00566aa0	FUN_00566aa0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	INDIRECT		re/match/rwl06/00566aa0.c			
+0x00567630	FUN_00567630	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00567630.c			
+0x005687a0	FUN_005687a0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/005687a0.c			
+0x005687d0	FUN_005687d0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/005687d0.c			
+0x00568860	FUN_00568860	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00568860.c			
+0x00568c40	FUN_00568c40	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00568c40.c			
+0x00568c80	FUN_00568c80	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00568c80.c			
+0x00568cf0	FUN_00568cf0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00568cf0.c			
+0x0056b9d0	FUN_0056b9d0	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore22.cpp	re/match/rwl06/0056b9d0.c		0x0056b7a0:bound 0x00573670:bound	
+0x0056ba30	FUN_0056ba30	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore21.cpp	re/match/rwl06/0056ba30.c		0x00568990:bound 0x0056b7a0:bound	
+0x0056cf90	FUN_0056cf90	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore7.cpp	re/match/rwl06/0056cf90.c			
+0x0056d350	FUN_0056d350	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore8.cpp	re/match/rwl06/0056d350.c			
+0x0056f0a0	FUN_0056f0a0	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore9.cpp	re/match/rwl06/0056f0a0.c		0x0056f1f0:bound	
+0x0056fea0	FUN_0056fea0	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore10.cpp	re/match/rwl06/0056fea0.c			
+0x00574230	FUN_00574230	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	INDIRECT		re/match/rwl06/00574230.c			
+0x005748a0	FUN_005748a0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/005748a0.c			
+0x00574ac0	FUN_00574ac0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/00574ac0.c			
+0x005751f0	FUN_005751f0	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore16.cpp	re/match/rwl06/005751f0.c			
+0x005757d0	FUN_005757d0	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore18.cpp	re/match/rwl06/005757d0.c		0x0055c230:bound	
+0x00578e50	FUN_00578e50	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore19.cpp	re/match/rwl06/00578e50.c		0x005757d0:bound 0x00578610:bound	
+0x00578ec0	FUN_00578ec0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl06/00578ec0.c		0x0055bad0:set 0x00564190:set	
+0x0057adb0	FUN_0057adb0	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore19.cpp	re/match/rwl06/0057adb0.c		0x005757d0:bound 0x0057a9a0:bound	
+0x0057ae20	FUN_0057ae20	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpSolverCore16.cpp	re/match/rwl06/0057ae20.c			
+0x0057ae30	FUN_0057ae30	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/0057ae30.c			
+0x0057c1b0	FUN_0057c1b0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/0057c1b0.c		0x0055c380:set	
+0x0057c2b0	FUN_0057c2b0	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/0057c2b0.c		0x004c0e50:set 0x0057c440:bound	
+0x0057c370	FUN_0057c370	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/rwl06/0057c370.c		0x0055df90:set 0x0057c550:set	
+0x0057c420	FUN_0057c420	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	none		re/match/rwl06/0057c420.c		0x0055bd80:bound	
+0x0057c440	FUN_0057c440	third-party-library[RenderWare-Physics-3.7]	C4	body		0	0	DUP	Collision/RwpVtableKV2.cpp	re/match/rwl06/0057c440.c		0x004c45f0:set 0x004c51a0:bound	
+0x0057c500	RWP37WorldCreate	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Lane2/L2_0057c500.cpp	re/match/rwl06/0057c500.c		0x0055b860:set 0x00564130:set 0x0057c1b0:set	
+0x0057c550	FUN_0057c550	third-party-library[RenderWare-Physics-3.7]	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Lane2/L2_0057c550.cpp	re/match/rwl06/0057c550.c		0x0055b930:set 0x00564190:set	
+0x005a5910	FUN_005a5910	audio	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s25/005a5910.c		0x0055df90:set 0x00564190:set 0x005a5d60:set	
+0x005a5b30	FUN_005a5b30	audio	C4	none		0	0	none		re/match/s25/005a5b30.c		0x0055b060:set 0x0055e300:set	
+0x005a5d60	FUN_005a5d60	audio	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s25/005a5d60.c		0x005a5d90:set	
+0x005a5d90	FUN_005a5d90	audio	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s25/005a5d90.c		0x0055b930:set 0x00562560:set 0x00564190:set	
+0x005a5f60	FUN_005a5f60	audio	C4	none		0	0	none		re/match/s25/005a5f60.c			
+0x005a6070	FUN_005a6070	audio	C4	none		0	0	INDIRECT		re/match/s25/005a6070.c			
+0x005a6110	FUN_005a6110	audio	C4	none		0	0	SEED		re/match/s25/005a6110.c		0x005ad080:set	0x00632c28 0x00632c2c 0x00632c38
+0x005a6150	FUN_005a6150	audio	C4	none		0	0	SEED		re/match/s25/005a6150.c		0x005ad080:set	0x00632c3c 0x00632c40 0x00632c4c
+0x005a6190	Clamp5a6190	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s25/005a6190.c			
+0x005a6c60	FUN_005a6c60	audio	C4	none		0	0	none		re/match/s25/005a6c60.c		0x005ae800:bound	
+0x005a6c90	AudioPoolFreeGuardB	audio	C4	none		0	0	CROSS	Audio/AudioPoolFreeGuards.cpp	re/match/s25/005a6c90.c		0x005ae920:bound	
+0x005a6d90	FUN_005a6d90	audio	C4	none		0	0	INDIRECT		re/match/s25/005a6d90.c			
+0x005a6e10	FUN_005a6e10	audio	C4	none		0	0	CROSS	Lane2/L2_005a6e10.cpp	re/match/s25/005a6e10.c		0x005a6d90:set	
+0x005a7420	FUN_005a7420	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s25/005a7420.c			
+0x005a7920	FUN_005a7920	audio	C4	none		0	0	none		re/match/s25/005a7920.c		0x005ae0b0:bound 0x005ae800:bound	
+0x005a79a0	FUN_005a79a0	audio	C4	none		0	0	none		re/match/s25/005a79a0.c		0x005a7a40:set 0x005a7ea0:set 0x005abcf0:set 0x005ade90:bound	
+0x005a7a40	FUN_005a7a40	audio	C4	none		0	0	none		re/match/s25/005a7a40.c		0x005ade60:bound	
+0x005a7a60	FUN_005a7a60	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s25/005a7a60.c			
+0x005a7aa0	FUN_005a7aa0	audio	C4	none		0	0	none		re/match/s25/005a7aa0.c		0x005adf60:set	
+0x005a7af0	FUN_005a7af0	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s25/005a7af0.c		0x005aded0:bound	
+0x005a7b50	Global7dcabcGet	audio	C4	none		0	0	CROSS	Util/PromoLoop_round32.cpp	re/match/s25/005a7b50.c			
+0x005a7e70	FUN_005a7e70	audio	C4	none		0	0	none		re/match/s25/005a7e70.c		0x005ade10:set	
+0x005a7ea0	FUN_005a7ea0	audio	C4	none		0	0	none		re/match/s25/005a7ea0.c		0x004522d0:set 0x005ae030:bound 0x005ae920:bound	
+0x005a8960	FUN_005a8960	audio	C4	none		0	0	CROSS	Audio/AudioVoiceQueueSet.cpp	re/match/s25/005a8960.c		0x005b0dc0:set	
+0x005a89a0	FUN_005a89a0	audio	C4	body		0	0	DUP	Audio/AudioFieldGetters.cpp	re/match/s25/005a89a0.c			
+0x005a89b0	FUN_005a89b0	audio	C4	body		0	0	DUP	Audio/AudioFieldGetters.cpp	re/match/s25/005a89b0.c			
+0x005a89c0	FUN_005a89c0	audio	C4	body		0	0	DUP	Audio/AudioFieldGetters.cpp	re/match/s25/005a89c0.c			
+0x005a9e10	AudioSubStructTwoCallInit	audio	C4	none		0	0	none		re/match/s25/005a9e10.c		0x005adfe0:set 0x005ae010:set	
+0x005a9e40	FUN_005a9e40	audio	C4	body		0	0	DUP,INDIRECT	Audio/AudioDSound.cpp	re/match/s25/005a9e40.c			
+0x005aa030	FUN_005aa030	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s25/005aa030.c			
+0x005aa1e0	FUN_005aa1e0	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s25/005aa1e0.c		0x005adf30:bound	
+0x005aa900	FUN_005aa900	audio	C4	none		0	0	none		re/match/s25/005aa900.c		0x005aa9c0:set	
+0x005aa9c0	FUN_005aa9c0	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s25/005aa9c0.c			
+0x005aad40	FUN_005aad40	audio	C4	none		0	0	CROSS	Audio/TimerGetters_ah5.cpp	re/match/s25/005aad40.c			
+0x005aadc0	FUN_005aadc0	audio	C4	none		0	0	none		re/match/s25/005aadc0.c		0x005aea50:set	
+0x005aaff0	FUN_005aaff0	audio	C4	none		0	0	none		re/match/s25/005aaff0.c		0x005ab040:set	
+0x005ab040	FUN_005ab040	util	C4	none		0	0	none		re/match/s25/005ab040.c			
+0x005ab070	FUN_005ab070	audio	C4	none		0	0	CROSS	Audio/TimerGetters_ah5.cpp	re/match/s25/005ab070.c			
+0x005ab370	FUN_005ab370	audio	C4	body		0	0	DUP	Audio/AudioFieldGetters.cpp	re/match/s25/005ab370.c			
+0x005ab980	FUN_005ab980	audio	C4	none		0	0	none		re/match/s25/005ab980.c			
+0x005abcb0	AudioWaveNodeFree	audio	C4	body		0	0	DUP	Audio/AudioRws.cpp	re/match/s25/005abcb0.c		0x004522d0:set 0x005ae920:bound	
+0x005abcf0	FUN_005abcf0	audio	C4	none		0	0	CROSS	Audio/MixedC3Sweep.cpp	re/match/s25/005abcf0.c		0x005a7e70:set 0x005abcb0:bound 0x005ac740:bound 0x005ae030:bound	
+0x005abf80	AudioWaveVtableSlot1cDispatch	audio	C4	body		0	0	DUP	Audio/RwsStream.cpp	re/match/s25/005abf80.c			
+0x005ac5f0	AudioFmtDescEqual	audio	C4	body		0	0	DUP	Audio/RwsFmt.cpp	re/match/s25/005ac5f0.c		0x005adf30:bound	
+0x005ac650	FUN_005ac650	audio	C4	none		0	0	SEED		re/match/s25/005ac650.c		0x005adf30:bound	0x005e6424 0x005e6414 0x005e6434 0x005e6444 0x005e6454 0x005e6474 0x005e64b4
+0x005ac740	AudioSubStructBufCleanup	audio	C4	body		0	0	DUP	Audio/AudioRws.cpp	re/match/s25/005ac740.c		0x004522d0:set	
+0x005ac7b0	AudioSubStructDualInit	audio	C4	body		0	0	DUP	Audio/AudioRws.cpp	re/match/s25/005ac7b0.c		0x005adfe0:set 0x005ae010:set	
+0x005ac880	FUN_005ac880	audio	C4	none		0	0	INDIRECT		re/match/s25/005ac880.c		0x004522d0:set 0x005a7a60:set 0x005ae030:bound 0x005ae7e0:set 0x005ae920:bound	
+0x005ac980	AudioFmtDescCopy	audio	C4	body		0	0	DUP	Audio/AudioRwsLeaves.cpp	re/match/s25/005ac980.c			
+0x005ac9e0	AudioFmtEntryMatch	audio	C4	body		0	0	DUP	Audio/RwsFmt.cpp	re/match/s26/005ac9e0.c		0x005adf30:bound	
+0x005aca40	FUN_005aca40	audio	C4	none		0	0	none		re/match/s26/005aca40.c		0x004522d0:set	
+0x005aca80	AudioFmtSizeCalc	audio	C4	body		0	0	DUP	Audio/AudioRwsLeaves.cpp	re/match/s26/005aca80.c			
+0x005acd60	AudioFmtGlobalScan	audio	C4	body		0	0	DUP,SEED	Audio/AudioRws.cpp	re/match/s26/005acd60.c		0x005adf30:bound	0x00633674
+0x005ad080	FUN_005ad080	audio	C4	none		0	0	none		re/match/s26/005ad080.c			
+0x005ad2e0	FUN_005ad2e0	audio	C4	body		0	0	DUP	Audio/AudioQueuePop.cpp	re/match/s26/005ad2e0.c		0x004522d0:set	
+0x005ad540	FUN_005ad540	audio	C4	body		0	0	DUP	Audio/AudioRws.cpp	re/match/s26/005ad540.c		0x005adfe0:set 0x005ae010:set	
+0x005ad570	FUN_005ad570	audio	C4	none		0	0	none		re/match/s26/005ad570.c		0x005ae0b0:bound 0x005ae800:bound	
+0x005ad5f0	FUN_005ad5f0	audio	C4	none		0	0	INDIRECT		re/match/s26/005ad5f0.c		0x004522d0:set 0x005ae030:bound 0x005ae920:bound	
+0x005ad6a0	FUN_005ad6a0	audio	C4	none		0	0	none		re/match/s26/005ad6a0.c		0x005adf30:bound	
+0x005ad8b0	AudioPoolFreeGuardC	audio	C4	none		0	0	CROSS	Audio/AudioPoolFreeGuards.cpp	re/match/s26/005ad8b0.c		0x005ae920:bound	
+0x005ade10	AudioListRemoveByValue	audio	C4	none		0	0	none		re/match/s26/005ade10.c		0x005ae920:bound	
+0x005ade60	AudioListIndexOfKey	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab1.cpp	re/match/s26/005ade60.c			
+0x005ade90	AudioListDrain	audio	C4	body		0	0	DUP	Audio/AudioPool.cpp	re/match/s26/005ade90.c		0x005ae920:bound	
+0x005aded0	AudioListNodeCount	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab1.cpp	re/match/s26/005aded0.c			
+0x005adef0	FUN_005adef0	audio	C4	none		0	0	none		re/match/s26/005adef0.c			
+0x005adf30	AudioFmtKeyCompare	audio	C4	body		0	0	DUP	Audio/AudioFmtKey.cpp	re/match/s26/005adf30.c			
+0x005adf60	FUN_005adf60	audio	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s26/005adf60.c			
+0x005adfe0	AudioSubStructLinkBuffer	audio	C4	none		0	0	none		re/match/s26/005adfe0.c		0x005ae050:bound	
+0x005ae010	AudioSubStructLinkDevice	audio	C4	none		0	0	none		re/match/s26/005ae010.c		0x005ae080:bound	
+0x005ae030	AudioSubStructCleanup	audio	C4	body		0	0	DUP	Audio/AudioRws.cpp	re/match/s26/005ae030.c		0x005ae050:bound 0x005ae080:bound	
+0x005ae050	AudioSubStructBFree	audio	C4	body		0	0	DUP	Audio/AudioRws.cpp	re/match/s26/005ae050.c		0x004522d0:set	
+0x005ae080	AudioSubStructAFree	audio	C4	body		0	0	DUP	Audio/AudioRws.cpp	re/match/s26/005ae080.c		0x005ae920:bound	
+0x005ae0b0	AudioSubStructZeroInit	audio	C4	body		0	0	DUP	Audio/AudioRwsLeaves.cpp	re/match/s26/005ae0b0.c			
+0x005ae0c0	AudioWaveFmtCopy	audio	C4	body		0	0	DUP	Audio/AudioRwsLeaves.cpp	re/match/s26/005ae0c0.c		0x005aeca0:bound	
+0x005ae300	FUN_005ae300	audio	C4	none		0	0	none		re/match/s26/005ae300.c		0x005ae470:set	
+0x005ae330	FUN_005ae330	audio	C4	none		0	0	none		re/match/s26/005ae330.c		0x005ae380:set	
+0x005ae380	AudioPoolFreeGuardA	audio	C4	none		0	0	CROSS	Audio/AudioPoolFreeGuards.cpp	re/match/s26/005ae380.c		0x005ae920:bound	
+0x005ae400	FUN_005ae400	audio	C4	none		0	0	none		re/match/s26/005ae400.c		0x005ae4b0:set 0x005ae550:set 0x005ae590:set	
+0x005ae470	FUN_005ae470	audio	C4	none		0	0	none		re/match/s26/005ae470.c		0x005aea00:set	
+0x005ae4b0	thunk_FUN_004522d0	audio	C4	none		0	0	none		re/match/s26/005ae4b0.c		0x004522d0:set	
+0x005ae550	FUN_005ae550	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005ae550.c			
+0x005ae590	AudioArenaBlockIsFree	audio	C4	none		0	0	none		re/match/s26/005ae590.c			
+0x005ae780	AudioPoolDestroy	audio	C4	body		0	0	DUP	Audio/AudioPool.cpp	re/match/s26/005ae780.c		0x004522d0:set 0x005ae920:bound	
+0x005ae7e0	FUN_005ae7e0	audio	C4	none		0	0	none		re/match/s26/005ae7e0.c		0x005ae780:bound	
+0x005aea00	FUN_005aea00	audio	C4	none		0	0	CROSS,RWGLOBALS,INDIRECT	Audio/MixedC3Sweep.cpp	re/match/s26/005aea00.c			
+0x005aea10	AudioAlignedAlloc	audio	C4	body		0	0	DUP	Audio/AudioMemory.cpp	re/match/s26/005aea10.c		0x005aea00:set	
+0x005aea40	AudioAlignedFree	audio	C4	none		0	0	none		re/match/s26/005aea40.c		0x004522d0:set	
+0x005aea50	FUN_005aea50	audio	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s26/005aea50.c			
+0x005aeb80	FUN_005aeb80	audio	C4	none		0	0	none		re/match/s26/005aeb80.c		0x005ad5f0:set	
+0x005aec00	AudioByteReverse	audio	C4	body		0	0	DUP	Audio/AudioMemory.cpp	re/match/s26/005aec00.c			
+0x005aed20	AudioVectorLengthFast	audio	C4	body		0	0	DUP,SEED	Audio/AudioVecLength.cpp	re/match/s26/005aed20.c			0x00633b48
+0x005aee20	AudioBitScanForward	audio	C4	body		0	0	DUP	Audio/AudioMemory.cpp	re/match/s26/005aee20.c			
+0x005aeea0	AudioSemaphoreCreate	audio	C4	body		0	0	DUP	Audio/AudioDSound.cpp	re/match/s26/005aeea0.c			
+0x005aeed0	FUN_005aeed0	audio	C4	none		0	0	none		re/match/s26/005aeed0.c			
+0x005aef00	AudioThreadDescInit	audio	C4	body		0	0	DUP	Audio/AudioDSound.cpp	re/match/s26/005aef00.c			
+0x005aefa0	FUN_005aefa0	audio	C4	body		0	0	DUP	Audio/AtomicExchangeStore.cpp	re/match/s26/005aefa0.c			
+0x005af040	FUN_005af040	audio	C4	none		0	0	none		re/match/s26/005af040.c		0x005af700:set 0x005b1110:set	
+0x005af200	AudioChainWalk	audio	C4	body		0	0	DUP	Audio/AudioChainWalk.cpp	re/match/s26/005af200.c			
+0x005af2d0	FUN_005af2d0	audio	C4	none		0	0	none		re/match/s26/005af2d0.c		0x005af300:set 0x005af430:set 0x005af470:set	
+0x005af300	FUN_005af300	audio	C4	none		0	0	none		re/match/s26/005af300.c		0x005b1110:set	
+0x005af430	FUN_005af430	audio	C4	none		0	0	none		re/match/s26/005af430.c		0x005b1110:set	
+0x005af470	FUN_005af470	audio	C4	none		0	0	none		re/match/s26/005af470.c		0x005af300:set 0x005af430:set	
+0x005af700	FUN_005af700	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005af700.c			
+0x005af7a0	FUN_005af7a0	audio	C4	none		0	0	none		re/match/s26/005af7a0.c		0x005b1140:set	
+0x005b0700	AudioListMinKeySelect	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab1.cpp	re/match/s26/005b0700.c			
+0x005b0a90	FUN_005b0a90	audio	C4	none		0	0	none		re/match/s26/005b0a90.c		0x005aea00:set	
+0x005b0b10	FUN_005b0b10	audio	C4	none		0	0	none		re/match/s26/005b0b10.c		0x004522d0:set	
+0x005b0b40	FUN_005b0b40	audio	C4	none		0	0	none		re/match/s26/005b0b40.c		0x005b0b10:set	
+0x005b0b60	FUN_005b0b60	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005b0b60.c			
+0x005b0b90	Init5b0b90	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005b0b90.c			
+0x005b0c70	Init5b0c70	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005b0c70.c			
+0x005b0ca0	CmdBuild5b0ca0Set	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005b0ca0.c			
+0x005b0dc0	CmdBuild5b0dc0Set	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005b0dc0.c			
+0x005b0e70	FUN_005b0e70	audio	C4	none		0	0	INDIRECT		re/match/s26/005b0e70.c			
+0x005b0ec0	FUN_005b0ec0	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005b0ec0.c			
+0x005b0f10	Init5b0f10	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s26/005b0f10.c			
+0x005b1030	FUN_005b1030	audio	C4	none		0	0	none		re/match/s26/005b1030.c		0x005b10e0:bound	
+0x005b1080	FUN_005b1080	audio	C4	none		0	0	none		re/match/s26/005b1080.c			
+0x005b10d0	thunk_FUN_005b10a0	audio	C4	none		0	0	none		re/match/s26/005b10d0.c		0x005b10a0:bound	
+0x005b1110	FUN_005b1110	audio	C4	none		0	0	none		re/match/s26/005b1110.c		0x005b10e0:bound	
+0x005b1140	FUN_005b1140	audio	C4	none		0	0	none		re/match/s26/005b1140.c		0x005b10a0:bound	
+0x005b1160	RingHeaderInit	audio	C4	body		0	0	DUP	Audio/RingHeaderInit.cpp	re/match/s27/005b1160.c			
+0x005b11d0	FUN_005b11d0	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s27/005b11d0.c			
+0x005b2fd0	FUN_005b2fd0	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s27/005b2fd0.c			
+0x005b3540	FUN_005b3540	audio	C4	none		0	0	none		re/match/s27/005b3540.c		0x005ad5f0:set	
+0x005b3550	FUN_005b3550	audio	C4	none		0	0	none		re/match/s27/005b3550.c		0x004522d0:set 0x005ae030:bound	
+0x005b3580	FUN_005b3580	audio	C4	body		0	0	DUP	Audio/AudioList_ag.cpp	re/match/s27/005b3580.c			
+0x005b36f0	FUN_005b36f0	audio	C4	none		0	0	SEED		re/match/s27/005b36f0.c		0x005ac9e0:bound	0x00634550
+0x005b7010	FUN_005b7010	audio	C4	none		0	0	INDIRECT		re/match/s27/005b7010.c		0x005b0f40:bound	
+0x005b70e0	FUN_005b70e0	audio	C4	none		0	0	SEED		re/match/s27/005b70e0.c		0x005b0f10:set	0x00634274
+0x005b7430	FUN_005b7430	audio	C4	none		0	0	none		re/match/s27/005b7430.c		0x005ad5f0:set	
+0x005b8040	FUN_005b8040	audio	C4	none		0	0	none		re/match/s27/005b8040.c		0x005aeea0:bound	
+0x005b8080	FUN_005b8080	audio	C4	none		0	0	none		re/match/s27/005b8080.c			
+0x005b8090	FUN_005b8090	audio	C4	none		0	0	none		re/match/s27/005b8090.c			
+0x005b8130	FUN_005b8130	audio	C4	none		0	0	none		re/match/s27/005b8130.c			
+0x005b81d0	FUN_005b81d0	audio	C4	none		0	0	none		re/match/s27/005b81d0.c			
+0x005b9320	FUN_005b9320	audio	C4	none		0	0	none		re/match/s27/005b9320.c		0x005bc020:set	
+0x005b93a0	FUN_005b93a0	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s27/005b93a0.c			
+0x005b9410	AudioSourceLoopSet	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab3.cpp	re/match/s27/005b9410.c			
+0x005baf40	AudioRendererField3cSet	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab3.cpp	re/match/s27/005baf40.c			
+0x005baf60	AudioBufFieldSet	audio	C4	body		0	0	DUP	Audio/AudioDSound.cpp	re/match/s27/005baf60.c			
+0x005baf90	AudioDSoundRelease	audio	C4	none		0	0	INDIRECT		re/match/s27/005baf90.c			
+0x005bbb20	FUN_005bbb20	audio	C4	none		0	0	SEED		re/match/s27/005bbb20.c		0x005ad080:set 0x005bbb70:set	0x00635194 0x006351dc 0x006351ec
+0x005bbb70	FUN_005bbb70	audio	C4	none		0	0	SEED		re/match/s27/005bbb70.c		0x005ad080:set	0x006351b8 0x006351e4 0x006351fc
+0x005bbc00	FUN_005bbc00	audio	C4	none		0	0	none		re/match/s27/005bbc00.c		0x005ad5f0:set	
+0x005bbf30	FUN_005bbf30	audio	C4	none		0	0	INDIRECT		re/match/s27/005bbf30.c			
+0x005bc020	FUN_005bc020	audio	C4	none		0	0	INDIRECT		re/match/s27/005bc020.c			
+0x005bc400	AudioDSoundQIChain	audio	C4	none		0	0	SEED,INDIRECT		re/match/s27/005bc400.c			0x005d09bc 0x005d09dc
+0x005bc450	AudioSlotPairZero	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab3.cpp	re/match/s27/005bc450.c			
+0x005bc750	FUN_005bc750	audio	C4	none		0	0	SEED,INDIRECT		re/match/s27/005bc750.c			0x005d09ac
+0x005bc850	FUN_005bc850	audio	C4	none		0	0	none		re/match/s27/005bc850.c		0x005ad5f0:set	
+0x005bc880	FUN_005bc880	audio	C4	none		0	0	none		re/match/s27/005bc880.c		0x005ae330:set	
+0x005bc900	FUN_005bc900	audio	C4	none		0	0	none		re/match/s27/005bc900.c			
+0x005bcb80	AudioMediaSubtypeFromTag	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab3.cpp	re/match/s27/005bcb80.c			
+0x005bcbb0	FUN_005bcbb0	audio	C4	none		0	0	none		re/match/s27/005bcbb0.c		0x005ae400:set	
+0x005bcca0	FUN_005bcca0	audio	C4	none		0	0	INDIRECT		re/match/s27/005bcca0.c			
+0x005bcd10	FUN_005bcd10	audio	C4	none		0	0	none		re/match/s27/005bcd10.c			
+0x005bd500	FUN_005bd500	audio	C4	none		0	0	INDIRECT		re/match/s27/005bd500.c			
+0x005bd610	FUN_005bd610	audio	C4	none		0	0	INDIRECT		re/match/s27/005bd610.c			
+0x005bd9e0	FUN_005bd9e0	audio	C4	none		0	0	SEED		re/match/s28/005bd9e0.c		0x005b0f10:set	0x00634274
+0x005bde50	ClearDesc5bde50	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s28/005bde50.c			
+0x005bdef0	FUN_005bdef0	audio	C4	none		0	0	INDIRECT		re/match/s28/005bdef0.c			
+0x005be080	FUN_005be080	audio	C4	none		0	0	SEED		re/match/s28/005be080.c			0x005d0b3c
+0x005be140	FUN_005be140	audio	C4	body		0	0	DUP	Audio/AudioRwsLeaves.cpp	re/match/s28/005be140.c			
+0x005be190	AudioRwsSubZeroInit	audio	C4	body		0	0	DUP	Audio/AudioRwsLeaves.cpp	re/match/s28/005be190.c			
+0x005be5f0	FUN_005be5f0	audio	C4	none		0	0	INDIRECT		re/match/s28/005be5f0.c		0x005bcca0:set	
+0x005be630	FUN_005be630	audio	C4	none		0	0	INDIRECT		re/match/s28/005be630.c			
+0x005be720	FUN_005be720	audio	C4	none		0	0	SEED		re/match/s28/005be720.c			0x005d0bac
+0x005be930	AudioClear5be930	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s28/005be930.c			
+0x005be940	FUN_005be940	audio	C4	none		0	0	SEED,INDIRECT		re/match/s28/005be940.c		0x005adf30:bound 0x005bf6d0:set	0x005d0b9c
+0x005beb50	Init5beb50	audio	C4	none		0	0	CROSS,SEED	Util/PromoLoop_sessionB.cpp	re/match/s28/005beb50.c			0x00635948
+0x005beba0	FUN_005beba0	audio	C4	none		0	0	SEED,INDIRECT		re/match/s28/005beba0.c		0x005adf30:bound 0x005bf6d0:set	0x005d0b5c 0x005d0b6c 0x005d1134
+0x005bedc0	FUN_005bedc0	audio	C4	none		0	0	INDIRECT		re/match/s28/005bedc0.c			
+0x005bf470	FUN_005bf470	audio	C4	none		0	0	SEED,INDIRECT		re/match/s28/005bf470.c			0x005d0bac
+0x005bf660	Audio3DwordZero	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab4.cpp	re/match/s28/005bf660.c			
+0x005bf6d0	FUN_005bf6d0	audio	C4	none		0	0	INDIRECT		re/match/s28/005bf6d0.c		0x005adf30:bound	
+0x005bf7d0	AudioCb5bf7d0Set	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s28/005bf7d0.c			
+0x005bfa20	FUN_005bfa20	audio	C4	none		0	0	INDIRECT		re/match/s28/005bfa20.c			
+0x005bfb20	FUN_005bfb20	audio	C4	none		0	0	INDIRECT		re/match/s28/005bfb20.c			
+0x005bfb90	FUN_005bfb90	audio	C4	none		0	0	INDIRECT		re/match/s28/005bfb90.c			
+0x005bfcc0	AudioCounterPairGet	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab4.cpp	re/match/s28/005bfcc0.c			
+0x005bfed0	FUN_005bfed0	audio	C4	none		0	0	INDIRECT		re/match/s28/005bfed0.c			
+0x005c47b0	FUN_005c47b0	boot	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s28/005c47b0.c			
+0x005c4ab0	FUN_005c4ab0	boot	C4	none		0	0	none		re/match/s28/005c4ab0.c			
+0x005c4ba0	FUN_005c4ba0	boot	C4	none		0	0	none		re/match/s28/005c4ba0.c			
+0x005c4d20	FUN_005c4d20	boot	C4	none		0	0	none		re/match/s28/005c4d20.c			
+0x005c4d30	CondGet5c4d30	boot	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s28/005c4d30.c			
+0x005c4d50	FUN_005c4d50	boot	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s28/005c4d50.c			
+0x005c4da0	FUN_005c4da0	boot	C4	none		0	0	RWGLOBALS,INDIRECT		re/match/s28/005c4da0.c			
+0x005c4df0	FUN_005c4df0	boot	C4	none		0	0	none		re/match/s28/005c4df0.c			
+0x005c4e10	FUN_005c4e10	boot	C4	none		0	0	none		re/match/s28/005c4e10.c			
+0x005c6b40	FUN_005c6b40	boot	C4	none		0	0	none		re/match/s28/005c6b40.c			
+0x005c7070	FUN_005c7070	audio	C4	none		0	0	none		re/match/s28/005c7070.c		0x005c75c0:set	
+0x005c7570	FUN_005c7570	audio	C4	none		0	0	none		re/match/s28/005c7570.c		0x005ab040:set	
+0x005c75b0	AudioVoiceField8cGet	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab4.cpp	re/match/s28/005c75b0.c			
+0x005c75c0	FUN_005c75c0	audio	C4	none		0	0	none		re/match/s28/005c75c0.c			
+0x005c8eb0	FUN_005c8eb0	audio	C4	none		0	0	SEED		re/match/s28/005c8eb0.c		0x005b0f10:set	0x00634274
+0x005c9120	Init5c9120	audio	C4	none		0	0	CROSS	Util/PromoLoop_sessionB.cpp	re/match/s28/005c9120.c			
+0x005c9220	thunk_FUN_005abcf0	audio	C4	none		0	0	none		re/match/s28/005c9220.c		0x005abcf0:set	
+0x005c9380	AudioBitBufSizeCalc	audio	C4	body		0	0	DUP	Audio/AudioLeaves_ab4.cpp	re/match/s28/005c9380.c			
+0x005c9490	FUN_005c9490	audio	C4	none		0	0	none		re/match/s28/005c9490.c		0x004522d0:set 0x005ae920:bound	
+0x005c96d0	FUN_005c96d0	audio	C4	none		0	0	none		re/match/s28/005c96d0.c		0x005ad5f0:set	
+0x005c9d00	GetRaceEndTrigger	util	C4	called	inplace	1	1	DUP	Util/GameStateGetters.cpp	re/match/gffu/005c9d00.c			

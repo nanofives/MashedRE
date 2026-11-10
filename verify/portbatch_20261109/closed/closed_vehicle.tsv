@@ -1,0 +1,32 @@
+group	rows	reached	blockers	head	head_shape	n_def	n_top	lint_clean	seed_clean	rvas
+vehicle-001	5	default+top	DUP:4,RWGLOBALS:1	0x0040e180	inplace	5	5	0	1	0x0040e180 0x0046c7b0 0x0046cbb0 0x0046d4a0 0x004c3ac0
+vehicle-002	3	default+top	CROSS:1,DUP:2,RWGLOBALS:1	0x0046b540	inplace	3	3	0	1	0x00431d70 0x0046b540 0x004c3b30
+vehicle-003	2	default+top	DUP:1,RWGLOBALS:1	0x00467650	inplace	2	2	0	1	0x00467650 0x004c3ac0
+vehicle-004	1	default+top	DUP:1	0x0046b1c0	inplace	1	1	0	1	0x0046b1c0
+vehicle-005	1	default+top	DUP:1	0x0046c7b0	inplace	1	1	0	1	0x0046c7b0
+vehicle-006	1	default+top	DUP:1	0x0046cbb0	inplace	1	1	0	1	0x0046cbb0
+vehicle-007	1	default+top	DUP:1	0x0046dbe0	inplace	1	1	0	1	0x0046dbe0
+vehicle-008	1	default+top	none	0x00496900	rebind	1	1	1	1	0x00496900
+vehicle-009	2	top	CROSS:1,INDIRECT:1,RWGLOBALS:1	0x004114e0	rebind	0	2	0	1	0x004114e0 0x00483a40
+vehicle-010	8	no	CROSS:5,INDIRECT:3,RWGLOBALS:3,SEED:3	0x00411d90	-	0	0	0	0	0x00411750 0x00411d90 0x00430820 0x00482860 0x00482900 0x00482930 0x00483a30 0x00483d10
+vehicle-011	3	no	CROSS:3	0x00420de0	-	0	0	0	1	0x00420de0 0x004215c0 0x004215e0
+vehicle-012	3	no	INDIRECT:1,RWGLOBALS:1	0x00484060	-	0	0	0	1	0x00483fa0 0x00484060 0x004c5860
+vehicle-013	3	no	CROSS:1	0x00485380	-	0	0	0	1	0x00485340 0x00485380 0x00485420
+vehicle-014	2	no	CROSS:2	0x0041a9b0	-	0	0	0	1	0x0041a8b0 0x0041a9b0
+vehicle-015	2	no	CROSS:2	0x00467300	-	0	0	0	1	0x00413c70 0x00467300
+vehicle-016	2	no	CROSS:2	0x004b65a0	-	0	0	0	1	0x004b65a0 0x004b68e0
+vehicle-017	2	no	none	0x004b65b0	-	0	0	1	1	0x004b65b0 0x004b68f0
+vehicle-018	2	no	CROSS:1,SEED:1	0x0055c810	-	0	0	0	0	0x0055c380 0x0055c810
+vehicle-019	1	no	CROSS:1	0x00423b20	-	0	0	0	1	0x00423b20
+vehicle-020	1	no	CROSS:1	0x0042fe70	-	0	0	0	1	0x0042fe70
+vehicle-021	1	no	CROSS:1	0x00442df0	-	0	0	0	1	0x00442df0
+vehicle-022	1	no	CROSS:1	0x00453f30	-	0	0	0	1	0x00453f30
+vehicle-023	1	no	CROSS:1	0x0046d4d0	-	0	0	0	1	0x0046d4d0
+vehicle-024	1	no	none	0x0046dc20	-	0	0	1	1	0x0046dc20
+vehicle-025	1	no	DUP:1	0x00476c10	-	0	0	0	1	0x00476c10
+vehicle-026	1	no	none	0x004781b0	-	0	0	1	1	0x004781b0
+vehicle-027	1	no	CROSS:1	0x00482730	-	0	0	0	1	0x00482730
+vehicle-028	1	no	DUP:1	0x004840b0	-	0	0	0	1	0x004840b0
+vehicle-029	1	no	CROSS:1	0x00485360	-	0	0	0	1	0x00485360
+vehicle-030	1	no	CROSS:1	0x00485370	-	0	0	0	1	0x00485370
+vehicle-031	1	no	CROSS:1	0x0055c4f0	-	0	0	0	1	0x0055c4f0

@@ -312,6 +312,7 @@ void MashedRw_Free7dc8b8_00558470(void) {}
 // ===============================================================================================================
 namespace {
 bool PTankRecordSetFrame(int object, int frame);   // [PORT-TOP-04I] defined with MashedRwPTankAtomic below
+bool LightRecordSetFrame(int object, int frame);   // [PORT-TOP-04J] defined with MashedRwLight below
 
 struct MashedRwCamera {                 // RW 3.x RwCamera, offsets as written by 0x004c1d30 (re/match/rwl01/004c1d30.c)
     std::uint8_t type;                  // +0x00  4 (rwCAMERA)
@@ -540,12 +541,13 @@ int MashedRw_ClumpDestroy_004e6e00(int clump) {
 
 // void* _rwObjectHasFrameSetFrame(void* object, RwFrame* frame): re/match/s19/004c0740.c unlinks the object from its
 // old frame, stores the new frame at +0x04, links the object into the frame's object list and marks the frame dirty
-// (rva 0x004c0e50). In the knob path every caller passes a camera (0x00467110, 0x004670a0, 0x0042d420, 0x004c2bf0), so
-// this binding takes the camera record: librw rw::Camera::setFrame (librw keeps the link in its own camera).
+// (rva 0x004c0e50). Knob-path callers pass a camera (0x00467110, 0x004670a0, 0x0042d420, 0x004c2bf0), a PTank record
+// (PORT-TOP-04I) or a light record (0x00401000 / 0x004014b0, PORT-TOP-04J). For a camera this binding takes the camera record: librw rw::Camera::setFrame (librw keeps the link in its own camera).
 void MashedRw_ObjectHasFrameSetFrame_004c0740(int object, int frame) {
     if (PTankRecordSetFrame(object, frame)) return;   // [PORT-TOP-04I] a PTank atomic record (0x004e7e30's callers)
+    if (LightRecordSetFrame(object, frame)) return;   // [PORT-TOP-04J] a light record (0x00401000, 0x004014b0)
     MashedRwCamera* const c = AsCamera(FromInt<void>(object));
-    if (!c) { BindLog("0x004c0740: object %08X is neither a camera nor a PTank record, ignored", static_cast<unsigned>(object)); return; }
+    if (!c) { BindLog("0x004c0740: object %08X is neither a camera, a PTank record nor a light record, ignored", static_cast<unsigned>(object)); return; }
     c->parent = FromInt<void>(frame);
     c->lib->setFrame(FromInt<rw::Frame>(frame));
 }
@@ -982,6 +984,212 @@ int MashedRw_AtomicDestroy_004e6920(int atomic) {
     }
     if (rw::Atomic* const la = FromInt<rw::Atomic>(atomic)) la->destroy();
     return 1;
+}
+
+}  // extern "C"
+
+// ===============================================================================================================
+// [PORT-TOP-04J] the cup world of 0x00401000 / 0x004014b0 (family 1): RpWorldCreate, the lights, the world's clump.
+//
+// The matched 0x00401000 writes one RW-layout light field itself (DAT_0063656c->flags = 1, +0x02) and calls the matched
+// light leaves RpLightSetColor 0x004e4900 (+0x18..+0x24, +0x03), RpLightSetConeAngle 0x004e4b90 (+0x28) and
+// RpLightSetRadius 0x004e48e0 (+0x14, then the frame at +0x04). librw rw::Light keeps radius / colour / cone at other
+// offsets (an ObjectWithFrame of 0x14 bytes plus the plugin base), so RpLightCreate 0x004e4dd0 returns an RW-layout record
+// (the 04B camera / 04I PTank pattern) that owns a librw rw::Light. The record's fields go to the librw light in
+// RpWorldAddLight 0x004e4810, the first binding that hands the light to librw (0x00401000 calls every setter before it).
+// The world is a librw rw::World (RpWorldCreate 0x004e5850). No matched body on the knob path reads world fields: the
+// world calls (0x004e4810 / 0x004e4860 / 0x004e4450 / 0x004e45b0) are bindings. Nothing in the exe renders this world.
+// ===============================================================================================================
+namespace {
+constexpr std::uint32_t kLightRecordMagic = 0x5448474cu;   // exe-only tag
+struct MashedRwLight {                  // RW 3.x RpLight, offsets as written by 0x004e4dd0 (re/match/rwl02/004e4dd0.c)
+    std::uint8_t type, subType, flags, privateFlags;   // +0x00 RwObject
+    void* parent;                                      // +0x04 frame
+    void* lFrameNext;                                  // +0x08 RwObjectHasFrame.lFrame
+    void* lFramePrev;                                  // +0x0c
+    void* sync;                                        // +0x10
+    float radius;                                      // +0x14
+    float color[4];                                    // +0x18 RwRGBAReal
+    float minusCosAngle;                               // +0x28
+    void* sectorsNext;                                 // +0x2c WorldSectorsInLight
+    void* sectorsPrev;                                 // +0x30
+    void* inWorldNext;                                 // +0x34
+    void* inWorldPrev;                                 // +0x38
+    std::uint16_t lightFrame;                          // +0x3c
+    std::uint16_t pad3e;
+    std::uint32_t magic;                               // exe tail
+    rw::Light* lib;
+};
+static_assert(offsetof(MashedRwLight, parent) == 0x04, "RpLight +0x04");
+static_assert(offsetof(MashedRwLight, radius) == 0x14, "RpLight radius +0x14 (0x004e48e0)");
+static_assert(offsetof(MashedRwLight, color) == 0x18, "RpLight colour +0x18 (0x004e4900)");
+static_assert(offsetof(MashedRwLight, minusCosAngle) == 0x28, "RpLight minusCosAngle +0x28 (0x004e4b90)");
+static_assert(offsetof(MashedRwLight, sectorsNext) == 0x2c, "RpLight +0x2c (0x004e4dd0, 0x004e4860)");
+static_assert(offsetof(MashedRwLight, inWorldNext) == 0x34, "RpLight +0x34 (0x004e4810)");
+static_assert(offsetof(MashedRwLight, lightFrame) == 0x3c, "RpLight +0x3c (0x004e4dd0)");
+static_assert(offsetof(rw::Geometry, flags) == 0x08, "RpGeometry flags @ +0x08 (0x004b52c0)");
+
+MashedRwLight* AsLight(int obj) {
+    MashedRwLight* const l = FromInt<MashedRwLight>(obj);
+    return (l && l->magic == kLightRecordMagic) ? l : nullptr;
+}
+
+// The record's RW fields into the librw light: radius +0x14, colour +0x18, minusCosAngle +0x28, flags +0x02 and
+// privateFlags +0x03 (0x004e4900's grey-colour bit, the bit librw Light::setColor keeps in privateFlags).
+void LightRecordSync(MashedRwLight* l) {
+    rw::Light* const ll = l->lib;
+    if (!ll) return;
+    ll->radius = l->radius;
+    ll->color.red = l->color[0];
+    ll->color.green = l->color[1];
+    ll->color.blue = l->color[2];
+    ll->color.alpha = l->color[3];
+    ll->minusCosAngle = l->minusCosAngle;
+    ll->setFlags(l->flags);
+    ll->object.object.privateFlags = l->privateFlags;
+}
+
+// The _rwObjectHasFrameSetFrame binding's light case: the frame at +0x04 and librw's ObjectWithFrame::setFrame (which
+// links the light into the frame and marks it dirty, the matched body's 0x004c0e50 tail).
+bool LightRecordSetFrame(int object, int frame) {
+    MashedRwLight* const l = AsLight(object);
+    if (!l) return false;
+    l->parent = FromInt<void>(frame);
+    if (l->lib) l->lib->setFrame(FromInt<rw::Frame>(frame));
+    return true;
+}
+}  // namespace
+
+extern "C" {
+
+// RpWorld* RpWorldCreate(RwBBox* bbox) rva 0x004e5850 (re/match/rwl02/004e5850.c, C2): allocates the world (type hint
+// 0x3000b), its sector tree and plugin data. librw: rw::World::create (empty light / clump lists, librw keeps no bbox).
+// Call site: 0x00401000 with the (-100..100)^3 box.
+int MashedRw_WorldCreate_004e5850(int bbox) {
+    rw::World* const w = rw::World::create(FromInt<rw::BBox>(bbox));
+    BindLog("RpWorldCreate(bbox %08X) -> rw::World::create %p", static_cast<unsigned>(bbox), static_cast<void*>(w));
+    return ToInt(w);
+}
+
+// RpLight* RpLightCreate(RwInt32 type) rva 0x004e4dd0 (re/match/rwl02/004e4dd0.c BYTE-IDENTICAL): allocates through
+// RwGlobals +0x118 and stores type 3 (+0x00), subType = type (+0x01), colour 1,1,1,1 (+0x18..+0x24), frame 0 (+0x04),
+// sync 0x004d7ff0 (+0x10), radius 0 (+0x14), minusCosAngle 0 (+0x28), privateFlags 1 (+0x03), the self-linked list at
+// +0x2c, +0x34 / +0x38 = 0, +0x3c = RwGlobals +0x0a (int16) - 1, flags 3 (+0x02), then the plugin constructors
+// (0x004d8000). Binding: a MashedRwLight with those stores (sync 0: nothing calls it through the record) and a librw
+// rw::Light::create(type) (librw uses the same type numbers: 2 = AMBIENT, 0x82 = SOFTSPOT).
+int MashedRw_LightCreate_004e4dd0(int type) {
+    MashedRwLight* const l = static_cast<MashedRwLight*>(std::calloc(1, sizeof(MashedRwLight)));
+    if (!l) return 0;
+    l->type = 3;
+    l->subType = static_cast<std::uint8_t>(type);
+    l->color[0] = l->color[1] = l->color[2] = l->color[3] = 1.0f;
+    l->privateFlags = 1;
+    l->sectorsNext = l->sectorsPrev = &l->sectorsNext;
+    const std::uintptr_t g = *reinterpret_cast<const std::uintptr_t*>(static_cast<std::uintptr_t>(0x007d3ff8u));
+    const std::int16_t k = g ? *reinterpret_cast<const std::int16_t*>(g + 0x0a) : 0;
+    l->lightFrame = static_cast<std::uint16_t>(k - 1);
+    l->flags = 3;
+    l->magic = kLightRecordMagic;
+    l->lib = rw::Light::create(type);
+    BindLog("RpLightCreate(0x%X) -> light record %p (rw::Light %p)", static_cast<unsigned>(type), static_cast<void*>(l),
+            static_cast<void*>(l->lib));
+    return ToInt(l);
+}
+
+// RwBool RpLightDestroy(RpLight* light) rva 0x004e4d90 (re/match/rwl02/004e4d90.c BYTE-IDENTICAL): plugin destructors
+// (0x004d8060), frame unlink (0x004c0790), free through RwGlobals +0x11c, returns 1. Binding: rw::Light::destroy (which
+// unsets the frame) and the record is freed. Call site: 0x004014b0, after RpWorldRemoveLight.
+int MashedRw_LightDestroy_004e4d90(int light) {
+    MashedRwLight* const l = AsLight(light);
+    if (!l) {
+        BindLog("RpLightDestroy(0x%08X): not a light record, ignored", static_cast<unsigned>(light));
+        return 1;
+    }
+    BindLog("RpLightDestroy(light record %p) -> rw::Light::destroy %p, record freed", static_cast<void*>(l),
+            static_cast<void*>(l->lib));
+    if (l->lib) l->lib->destroy();
+    l->magic = 0;
+    std::free(l);
+    return 1;
+}
+
+// RpWorld* RpWorldAddLight(RpWorld* world, RpLight* light) rva 0x004e4810 (re/match/rwl02/004e4810.c BYTE-IDENTICAL):
+// stores the world in the light's plugin slot ([0x007d7178]), links the light at world +0x3c (subType < 0x80) or, after
+// RwFrameUpdateObjects on its frame, at world +0x34, returns the world. Binding: the record's fields into the librw
+// light (LightRecordSync), then rw::World::addLight (the same < POINT split, the same frame update).
+int MashedRw_WorldAddLight_004e4810(int world, int light) {
+    rw::World* const w = FromInt<rw::World>(world);
+    MashedRwLight* const l = AsLight(light);
+    if (!w || !l || !l->lib) {
+        BindLog("RpWorldAddLight(0x%08X, 0x%08X): world or light record missing, ignored", static_cast<unsigned>(world),
+                static_cast<unsigned>(light));
+        return world;
+    }
+    LightRecordSync(l);
+    w->addLight(l->lib);
+    BindLog("RpWorldAddLight(world %p, light record %p type 0x%02X flags %u radius %g colour %g/%g/%g/%g minusCos %g) -> "
+            "rw::World::addLight", static_cast<void*>(w), static_cast<void*>(l), l->subType, l->flags,
+            static_cast<double>(l->radius), static_cast<double>(l->color[0]), static_cast<double>(l->color[1]),
+            static_cast<double>(l->color[2]), static_cast<double>(l->color[3]), static_cast<double>(l->minusCosAngle));
+    return world;
+}
+
+// RpWorld* RpWorldRemoveLight(RpWorld* world, RpLight* light) rva 0x004e4860 (re/match/rwl02/004e4860.c BYTE-IDENTICAL):
+// clears the plugin slot, frees the light's sector links (+0x2c list), unlinks +0x34, returns the world. Binding:
+// rw::World::removeLight when the librw light is in a world.
+int MashedRw_WorldRemoveLight_004e4860(int world, int light) {
+    MashedRwLight* const l = AsLight(light);
+    rw::World* const w = FromInt<rw::World>(world);
+    if (w && l && l->lib && l->lib->world) w->removeLight(l->lib);
+    BindLog("RpWorldRemoveLight(%p, light record %p) -> rw::World::removeLight", static_cast<void*>(w), static_cast<void*>(l));
+    return world;
+}
+
+// rva 0x004e4450 (re/match/rwl02/004e4450.c, C2; hooks.csv name RwFrameAddChild, naming doubt aq_s4: RpWorldAddClump):
+// (world, clump): links the clump at world +0x2c, counts it (+0x24), stores the world in the clump's plugin slot
+// ([0x007d7174]), adds the clump's atomics / lights / cameras (0x004e66d0 / 0x004e6760 / 0x004e6710 callbacks), then
+// updates the clump frame, returns the world. librw: rw::World::addClump (the same three lists, the same frame update).
+int MashedRw_WorldAddClump_004e4450(int world, int clump) {
+    rw::World* const w = FromInt<rw::World>(world);
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    if (w && c && !c->world) w->addClump(c);
+    BindLog("0x004e4450(world %p, clump %p) -> rw::World::addClump", static_cast<void*>(w), static_cast<void*>(c));
+    return world;
+}
+
+// rva 0x004e45b0 (re/match/rwl02/004e45b0.c BYTE-IDENTICAL; hooks.csv name RwFrameRemoveChild, naming doubt aq_s4:
+// RpWorldRemoveClump): (world, clump): when the clump's world slot is set, uncounts and unlinks it, removes its atomics,
+// lights and cameras and clears the slot, returns the world. Else the error path, returns 0. librw: rw::World::removeClump.
+int MashedRw_WorldRemoveClump_004e45b0(int world, int clump) {
+    rw::World* const w = FromInt<rw::World>(world);
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    if (!c || !c->world) {
+        BindLog("0x004e45b0(world %p, clump %p): clump in no world, returns 0", static_cast<void*>(w), static_cast<void*>(c));
+        return 0;
+    }
+    c->world->removeClump(c);
+    BindLog("0x004e45b0(world %p, clump %p) -> rw::World::removeClump", static_cast<void*>(w), static_cast<void*>(c));
+    return world;
+}
+
+// rva 0x004b5300 (no matched source; disassembly 0x004b5300..0x004b531c): the RpClumpForAllAtomics callback of 0x004b5320.
+// Calls 0x004b52f0(atomic, data[0], data[1]) and returns the atomic. 0x004b52f0 (re/match/s18/004b52f0.c, BYTE-IDENTICAL)
+// reads the geometry at RW atomic +0x18 and calls 0x004b52c0 (re/match/s18/004b52c0.c, BYTE-IDENTICAL): geometry +0x08
+// |= mask when set != 0, else &= ~mask. The ForAllAtomics binding hands this callback a librw rw::Atomic (geometry at
+// +0x14), so the binding does that work on librw: a->geometry->flags, which sits at +0x08 as in RW (asserted above).
+// The two matched leaves stay out of the exe: the .asi has hand bodies of both (Util/PromoLoop_sessionB.cpp Or4b52c0 /
+// Thunk4b52f0), and one RVA has one body per target (rva-lint CROSS-TARGET). Call site: 0x00401000 -> 0x004b5320(cup
+// clump, 0x40, 1).
+void* MashedRw_AtomicGeometryFlags_004b5300(void* atomic, void* data) {
+    rw::Atomic* const a = static_cast<rw::Atomic*>(atomic);
+    const unsigned* const d = static_cast<const unsigned*>(data);
+    if (!a || !a->geometry) return atomic;
+    const std::uint32_t before = a->geometry->flags;
+    if (d[1]) a->geometry->flags = before | d[0];      // 0x004b52c0 set arm
+    else      a->geometry->flags = before & ~d[0];     // 0x004b52c0 clear arm
+    BindLog("0x004b5300(atomic %p): mask 0x%X, set %u: geometry %p flags 0x%08X -> 0x%08X", atomic, d[0], d[1],
+            static_cast<void*>(a->geometry), before, a->geometry->flags);
+    return atomic;
 }
 
 }  // extern "C"

@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-NEARMISS-2-pilot 2026-11-09: 100% BYTE-IDENTICAL by hand. The head insert written as the RW list-link order (link->next = list.next through param_1+0x14, link->prev = &list through param_1+0x18, list.next->prev = link, list.next = link) with DAT_007dcad8 typed as a {next, prev} link instead of an int*. The older note below describes the pre-pilot residual. */
 /* best 98.5% (regs 98.5%, ops 100.0%) via match_permute (store of &DAT_007dcad8 moved before the iVar3 load). Residual: one scratch
    register in the list-link sequence (original: mov eax,[DAT]; ... mov ecx,[DAT]; ours swaps the load position). Class (b). */
 /* MATCH-S25 0x005a8390: hand-matched (h1). */
@@ -27,7 +28,8 @@ typedef unsigned char bool;
 
 MGLOBAL(int, DAT_007dcb68, 0x007dcb68);
 MGLOBAL(void *, DAT_007dcae0, 0x007dcae0);
-MGLOBAL(int *, DAT_007dcad8, 0x007dcad8);
+typedef struct LL { struct LL *next; struct LL *prev; } LL;
+MGLOBAL(LL, DAT_007dcad8, 0x007dcad8);
 __declspec(dllimport) unsigned long __stdcall WaitForSingleObject(void *hHandle, unsigned long dwMilliseconds);
 __declspec(dllimport) int __stdcall ReleaseSemaphore(void *hSemaphore, long lReleaseCount, long *lpPreviousCount);
 int FUN_005aefc0(int p0, int p1, undefined4 p2, undefined4 p3, undefined4 p4, undefined4 p5);
@@ -53,11 +55,10 @@ int FUN_005a8390(int param_1,int param_2,undefined4 *param_3)
   if (DAT_007dcb68 != 0) {
     WaitForSingleObject(DAT_007dcae0,0xffffffff);
   }
-  *(int **)(param_1 + 0x18) = (int *)&DAT_007dcad8;
-  iVar3 = (int)DAT_007dcad8;
-  *piVar1 = iVar3;
-  *(int **)((int)DAT_007dcad8 + 4) = piVar1;
-  DAT_007dcad8 = piVar1;
+  *(LL **)(param_1 + 0x14) = DAT_007dcad8.next;
+  *(LL **)(param_1 + 0x18) = &DAT_007dcad8;
+  DAT_007dcad8.next->prev = (LL *)piVar1;
+  DAT_007dcad8.next = (LL *)piVar1;
   if (DAT_007dcb68 != 0) {
     ReleaseSemaphore(DAT_007dcae0,1,(long *)0x0);
   }

@@ -1,0 +1,6 @@
+pass	heads	G-CTRL	B	nav_vs_04E	G-CTRL_eq_ref	B_eq_ref	label
+OFF	-	8284be46/67931834/31fe043e	1d5bf4f9/1d5bf4f9/1d5bf4f9	12/12	True	True	r2_01_off
+ON	all	8284be46/67931834/31fe043e	1d5bf4f9/1d5bf4f9/1d5bf4f9	12/12	True	True	r2_02_on_all
+OFF repeat	-	8284be46/67931834/31fe043e	1d5bf4f9/1d5bf4f9/1d5bf4f9	12/12	True	True	r2_03_off2
+ON repeat	all	8284be46/67931834/31fe043e	1d5bf4f9/1d5bf4f9/1d5bf4f9	12/12	True	True	r2_04_on_all2
+responsible	none

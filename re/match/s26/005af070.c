@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-NEARMISS-2-pilot 2026-11-09: 100% BYTE-IDENTICAL by hand. The pre-pilot source stored param_6 to +0x54 and param_7 to +0x50; the original stores param_7 (eax, loaded at [esp+0x24] after the add esp,4) to +0x54 and param_6 (edx, loaded at [esp+0x24] with the call arg still pushed) to +0x50. With that corrected, the three trailing fields written in ascending order (+0x50 = param_6, +0x54 = param_7, +0x58 = param_8) after +0x44 reproduce the original schedule. The older note below describes the pre-pilot residual. */
 /* MATCH-S26 0x005af070 (h3): 97.0% exact, regs 98.5%. Residual class (b) store scheduling of [esi+0x50]/[esi+0x54]: original stores 0x54 early and 0x50 after 0x44; 6 source orderings tried. FUN_005af140 is a function (was MGLOBAL byte, 82.6%); Ghidra param roles 6/7 swapped for 0x50/0x54. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -60,14 +61,14 @@ int FUN_005af070(int param_1,undefined4 *param_2,undefined4 param_3,undefined4 p
         *(undefined4 *)(param_1 + 0x14) = 0;
         *(undefined4 *)(param_1 + 0x40) = 0;
         *(undefined4 *)(param_1 + 0x10) = 0;
-        *(undefined4 *)(param_1 + 0x54) = param_6;
         *(code **)(param_1 + 0x28) = (code *)FUN_005af140;
         *(int *)(param_1 + 0x2c) = param_1;
         *(undefined4 *)(param_1 + 0x38) = 1;
         *(undefined4 *)(param_1 + 0x34) = 0x3f800000;
         *(undefined4 *)(param_1 + 8) = 6;
         *(undefined4 *)(param_1 + 0x44) = 0x20;
-        *(undefined4 *)(param_1 + 0x50) = param_7;
+        *(undefined4 *)(param_1 + 0x50) = param_6;
+        *(undefined4 *)(param_1 + 0x54) = param_7;
         *(undefined4 *)(param_1 + 0x58) = param_8;
         return param_1;
       }
