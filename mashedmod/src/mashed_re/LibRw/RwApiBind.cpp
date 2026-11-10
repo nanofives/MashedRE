@@ -794,11 +794,14 @@ void* MashedRw_RtPNGImageWrite_00513f90(void* image, const char* name) {
 //    view (MashedRwAtomicView) of the librw atomic: the four fields 0x00401690 reads, nothing else.
 // ===============================================================================================================
 namespace {
-struct MashedRwGeometryView {           // the RW 3.x RpGeometry fields 0x00401690 reads
-    std::uint8_t pad00[0x14];
+struct MashedRwGeometryView {           // the RW 3.x RpGeometry fields 0x00401690 / 0x0048fef0 read
+    std::uint8_t pad00[0x08];
+    std::uint32_t flags;                // +0x08 (RpGeometry.flags; PORT-OT-TRIPOOL: 0x0048fef0 ORs 0x40 at 0x0048fef8)
+    std::uint8_t pad0c[0x14 - 0x0c];
     std::int32_t numVertices;           // +0x14
     std::uint8_t pad18[0x5c - 0x18];
     rw::MorphTarget* morphTarget;       // +0x5c (librw MorphTarget: vertices at +0x14, as RW's RpMorphTarget)
+    rw::Geometry* lib;                  // exe tail: the librw geometry this view copies (owner of flags)
 };
 struct MashedRwAtomicView {             // the RW 3.x RpAtomic fields read through 0x004b3f90's result
     std::uint8_t pad00[0x04];
@@ -810,6 +813,10 @@ struct MashedRwAtomicView {             // the RW 3.x RpAtomic fields read throu
     rw::Atomic* lib;                    // exe tail
     MashedRwGeometryView geomView;      // exe tail
 };
+static_assert(offsetof(MashedRwGeometryView, flags) == 0x08, "RpGeometry +0x08");
+static_assert(offsetof(rw::Geometry, flags) == 0x08, "librw Geometry flags @ +0x08 (RW's offset too)");
+static_assert(rw::Geometry::MODULATE == 0x40, "rpGEOMETRYMODULATEMATERIALCOLOR = 0x40 in both");
+static_assert(offsetof(rw::Material, texture) == 0x00, "RpMaterial texture @ +0x00 (0x004e8090 reads it)");
 static_assert(offsetof(MashedRwGeometryView, numVertices) == 0x14, "RpGeometry +0x14");
 static_assert(offsetof(MashedRwGeometryView, morphTarget) == 0x5c, "RpGeometry +0x5c");
 static_assert(offsetof(MashedRwAtomicView, frame) == 0x04, "RpAtomic +0x04");
@@ -829,6 +836,33 @@ std::vector<std::unique_ptr<MashedRwAtomicView>> s_atomicViews;
 // librw's list walked backwards.
 rw::Atomic* RwOrderAtomic(rw::Clump* c, rw::LLLink* l) {
     return (l == c->atomics.end()) ? nullptr : LLLinkGetData(l, rw::Atomic, inClump);
+}
+
+// One RW-layout view of librw atomic `a` owned by clump `c`, for the binding of 0x004b3f90 and for the call site of
+// PORT-OT-TRIPOOL's 0x0048fef0. The view owns nothing: frame, clump and geometry stay the librw objects' own, and the geometry
+// view's flags are a copy that MashedRw_GeometryForAllMaterials_004e89a0 writes back to `lib` (see there).
+MashedRwAtomicView* NewAtomicView(rw::Atomic* a, rw::Clump* c) {
+    std::unique_ptr<MashedRwAtomicView> v(new MashedRwAtomicView());
+    std::memset(v.get(), 0, sizeof(*v));
+    v->lib = a;
+    v->frame = a->getFrame();
+    v->clump = c;
+    if (rw::Geometry* const g = a->geometry) {
+        v->geomView.flags = g->flags;
+        v->geomView.numVertices = g->numVertices;
+        v->geomView.morphTarget = g->morphTargets;
+        v->geomView.lib = g;
+        v->geometry = &v->geomView;
+    }
+    s_atomicViews.push_back(std::move(v));
+    return s_atomicViews.back().get();
+}
+
+// The view whose geometry view is `p`, or null (p is then taken as a librw geometry).
+MashedRwGeometryView* AsGeometryView(void* p) {
+    for (const auto& v : s_atomicViews)
+        if (p == &v->geomView) return &v->geomView;
+    return nullptr;
 }
 }  // namespace
 
@@ -900,21 +934,54 @@ int MashedRw_ClumpFirstAtomic_004b3f90(int clump) {
     if (!c) return 0;
     rw::Atomic* const a = RwOrderAtomic(c, c->atomics.link.prev);
     if (!a) return 0;
-    std::unique_ptr<MashedRwAtomicView> v(new MashedRwAtomicView());
-    std::memset(v.get(), 0, sizeof(*v));
-    v->lib = a;
-    v->frame = a->getFrame();
-    v->clump = c;
-    if (rw::Geometry* const g = a->geometry) {
-        v->geomView.numVertices = g->numVertices;
-        v->geomView.morphTarget = g->morphTargets;
-        v->geometry = &v->geomView;
-    }
+    MashedRwAtomicView* const v = NewAtomicView(a, c);
     BindLog("0x004b3f90(clump %p) -> atomic %p view %p (geometry %p, %d vertices)", static_cast<void*>(c),
-            static_cast<void*>(a), static_cast<void*>(v.get()), static_cast<void*>(a->geometry),
+            static_cast<void*>(a), static_cast<void*>(v), static_cast<void*>(a->geometry),
             a->geometry ? a->geometry->numVertices : 0);
-    s_atomicViews.push_back(std::move(v));
-    return ToInt(s_atomicViews.back().get());
+    return ToInt(v);
+}
+
+// [PORT-OT-TRIPOOL] the RW-layout view of a librw atomic that RpClumpForAllAtomics (binding above) handed to a
+// callback, for the matched 0x0048fef0, which reads atomic +0x18 (0x0048fef5) as the geometry. The 0x0048ff20 call
+// site passes the slot's atomic (+0x08, stored by the matched callback 0x0048fed0) and the slot's clump (+0x04).
+// Returns 0 for a null atomic.
+int MashedRw_AtomicView_0048fef0(int atomic, int clump) {
+    rw::Atomic* const a = FromInt<rw::Atomic>(atomic);
+    if (!a) return 0;
+    return ToInt(NewAtomicView(a, FromInt<rw::Clump>(clump)));
+}
+
+// RpGeometry* RpGeometryForAllMaterials(RpGeometry* geometry, RpMaterialCallBack cb, void* data) rva 0x004e89a0
+// (re/match/rwl02/004e89a0.c, 76.7%, not the L-115 class, so this is a binding, not that body). Disassembly of
+// MASHED.exe.unpatched: count = geometry +0x24 (0x004e89aa), cached at [esp+0x14] (0x004e89af); for i < count,
+// cb(materials[i], data) with materials = geometry +0x20 (0x004e89bd / 0x004e89c1), stop when cb returns 0
+// (0x004e89cc); returns geometry (0x004e89d7). librw: the same walk over Geometry::matList in list order.
+// An RW-layout geometry view (MashedRwAtomicView::geomView) is resolved to its librw geometry first, and the view's
+// +0x08 flags are written to it: the matched 0x0048fef0 ORs 0x40 into the view at 0x0048fef8 and calls this binding
+// right after (0x0048ff07), so this is the first point the librw geometry, the flags' one owner, can take the store.
+// Any other pointer is taken as a librw geometry. Returns the pointer it was given.
+int MashedRw_GeometryForAllMaterials_004e89a0(int geometry, int cb, int data) {
+    rw::Geometry* g = FromInt<rw::Geometry>(geometry);
+    static int s_logged = 0;
+    if (MashedRwGeometryView* const gv = AsGeometryView(g)) {
+        g = gv->lib;
+        if (g) {
+            if (s_logged < 2)
+                BindLog("RpGeometryForAllMaterials(view %p -> geometry %p): flags %08X -> %08X (view +0x08), %d materials",
+                        static_cast<void*>(gv), static_cast<void*>(g), g->flags, gv->flags, g->matList.numMaterials);
+            g->flags = gv->flags;
+        }
+    } else if (s_logged < 2) {
+        BindLog("RpGeometryForAllMaterials(geometry %p): librw geometry", static_cast<void*>(g));
+    }
+    ++s_logged;
+    using Cb = int(__cdecl*)(int, int);
+    Cb const fn = reinterpret_cast<Cb>(static_cast<std::uintptr_t>(static_cast<unsigned>(cb)));
+    if (!g || !fn) return geometry;
+    const rw::int32 n = g->matList.numMaterials;
+    for (rw::int32 i = 0; i < n; ++i)
+        if (!fn(ToInt(g->matList.materials[i]), data)) break;
+    return geometry;
 }
 
 }  // extern "C"
