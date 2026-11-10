@@ -1154,6 +1154,16 @@ bool ColourSelBarY_SingleRow() {
     return s_on && Q_ModeIsCupFlow();
 }
 
+// [PORT-COLOURSEL-LEFTRIGHT 2026-11-09] MASHED_COLOURSEL_BORDER (default OFF, =1 on), PREREG
+// verify/portstate_20261109/PREREG_COLOURSEL_LEFTRIGHT.md: the single-row bar as the original's five rects.
+bool ColourSelBorder_On() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_COLOURSEL_BORDER");
+        return e && e[0] == '1';
+    }();
+    return s_on;
+}
+
 void ApplyActionGameMode(std::uint32_t action) {
     if (ColourSelIcon_On() && (action == 0xff3d0000u || action == 0xff400000u))
         *reinterpret_cast<std::int32_t*>(0x0067f0c0u) = 1;                     // 0x0043f4d1
