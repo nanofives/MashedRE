@@ -114,6 +114,8 @@ int PortTop_StandIn04G_004b3d20(char* p0) {
 // that edits a neighbouring line of the list does not touch the same lines.
 #undef FUN_004759b0
 #define FUN_004759b0 Orig_004759b0                       // matched, Match/PortTop_004759b0.cpp, since PORT-OT-RENDER
+#undef FUN_00475a00
+#define FUN_00475a00 Orig_00475a00                       // L-115 near-match body, Match/PortTop_00475a00.cpp, since PORT-OT-RENDER-2
 #undef FUN_00476390
 #define FUN_00476390 Orig_00476390                       // matched, Match/PortTop_00476390.cpp, since PORT-OT-RENDER
 #undef FUN_00477e40
