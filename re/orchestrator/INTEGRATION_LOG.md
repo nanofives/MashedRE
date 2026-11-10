@@ -1,5 +1,8 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-09 23:28 PORT-COLOURSEL-BAR-Y-FLIP (orch/PORT-COLOURSEL-BAR-Y-FLIP), HB-LINT-ORIGTOP-CLASS (orch/HB-LINT-ORIGTOP-CLASS): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261109_225142
+- 2026-11-09 22:50 PORT-ORIGTOP-SIZE (orch/PORT-ORIGTOP-SIZE), PORT-OT-MEASURE (orch/PORT-OT-MEASURE): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261109_224644
+- 2026-11-09 22:24 PORT-BATCH-GAMEPLAY (orch/PORT-BATCH-GAMEPLAY), PORT-BATCH-FRONTEND (orch/PORT-BATCH-FRONTEND): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_210953
 - 2026-11-09 20:51 PORT-TOP-04J (orch/PORT-TOP-04J), MATCH-NEARMISS-2-PILOT (orch/MATCH-NEARMISS-2-pilot), MATCH-NEARMISS-2 (orch/MATCH-NEARMISS-2): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_201727
 - 2026-11-09 20:00 PORT-COL-0x00418860 (orch/PORT-COL-0x00418860), PORT-COL-ANCHOR (orch/PORT-COL-ANCHOR), PORT-SAVE-SPAN-MIRROR (orch/PORT-SAVE-SPAN-MIRROR): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_192010
 - 2026-11-09 18:57 PORT-BATCH-TOOL (orch/PORT-BATCH-TOOL): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261109_183105
