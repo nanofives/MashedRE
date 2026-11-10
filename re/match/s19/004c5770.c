@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef MATCH_PORT
+typedef int code(int, undefined4);  /* port: C++ needs the two arguments of the RwGlobals +0x11c call in the type */
+#else
 typedef int code();
+#endif
 MGLOBAL(int, DAT_007d4028, 0x007d4028);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x004c5770 FUN_004c5770

@@ -62,8 +62,6 @@ int PortTop_StandIn04C_0045bf30() { static int once; StandInLog("0x0045bf30", &o
 int PortTop_StandIn04C_00426b40() { static int once; StandInLog("0x00426b40", &once); return 0; }
 // rva 00412010: matched; reads DAT_0063bb38[i] +0x3c with no null check (state of 0x00402750)
 int PortTop_StandIn04C_00412010() { static int once; StandInLog("0x00412010", &once); return 0; }
-// rva 00458880: matched, not compiled (level 2)
-int PortTop_StandIn04C_00458880() { static int once; StandInLog("0x00458880", &once); return 0; }
 // rva 004593b0: matched, not compiled (level 2)
 int PortTop_StandIn04C_004593b0() { static int once; StandInLog("0x004593b0", &once); return 0; }
 // rva 00404820: matched (raw g2s source, no MGLOBAL), not compiled (level 2)

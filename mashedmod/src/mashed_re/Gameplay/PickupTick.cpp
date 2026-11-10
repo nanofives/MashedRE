@@ -466,6 +466,22 @@ void PickupCb_MaybeReplay() {
     }
 }
 
+// PORT-OT-PICKUPPOOL: on the MASHED_ORIG_TOP teardown only (Match/PortTop_0045b930.cpp, before the matched 0x00458880).
+// The hand code is the only writer of the pool's +0x00 words in the exe (BindAll). Each word that still holds this TU's
+// own fake object goes back to 0, the value the original's builder 0x004587a0 would leave unwritten here (it does not
+// run on that path). Returns how many it released, and counts any other non-zero word in *foreign. The default path
+// never calls this.
+int PickupsOrig_ReleasePool(int* foreign) {
+    int released = 0, other = 0;
+    for (int i = 0; i < kMax; ++i) {
+        std::uintptr_t* const w = reinterpret_cast<std::uintptr_t*>(kPool + i * kStride);
+        if (*w == reinterpret_cast<std::uintptr_t>(&s_obj[i])) { *w = 0; ++released; }
+        else if (*w != 0) ++other;
+    }
+    if (foreign) *foreign = other;
+    return released;
+}
+
 void PickupsOrig_OnSpawn(unsigned char* entry) {
     BindAll();
     FakeObj* o = *reinterpret_cast<FakeObj**>(entry);
