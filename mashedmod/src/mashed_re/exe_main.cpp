@@ -2257,6 +2257,15 @@ static void MenuLaunchRace(int launchMode) {
         const std::int32_t colcur =
             *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
         cfg.cars[0].colour = (colcur >= 1 && colcur <= 6) ? colcur - 1 : 0;
+        // [PORT-COLOURSEL-COMMIT, U-9672] MASHED_COLOURSEL_ICON in the cup flow (FUN_00430760's mode set): the
+        // original's livery is slot 0's DAT_007f1a1c (FUN_0040d110, TrackRenderer.cpp ResolveCarLiveries), which the
+        // colour-select confirm commits from the choice 0x0067f0c0 (0x0043e56c..0x0043e57e, MenuNavSM
+        // ApplyActionGameMode). The 0..5 range guard is the port's colour table bound.
+        if (mashed_re::Frontend::ColourSelIcon_On() &&
+            (launchMode == 2 || launchMode == 10 || (launchMode >= 3 && launchMode <= 5))) {
+            const std::int32_t slotcol = *reinterpret_cast<const std::int32_t*>(0x007f1a1cu);
+            cfg.cars[0].colour = (slotcol >= 0 && slotcol <= 5) ? slotcol : 0;
+        }
         char cc[8] = {};
         if (GetEnvironmentVariableA("MASHED_CAR_COLOUR", cc, sizeof(cc)) > 0)
             cfg.cars[0].colour = std::atoi(cc);
