@@ -1,0 +1,272 @@
+######## 0x004026d0
+0 0x004026d0 FUN_004026d0               exe   FUN_004026d0 MatchS01.cpp
+######## 0x00402f50
+0 0x00402f50 FUN_00402f50               exe   FUN_00402f50 MatchS01.cpp
+######## 0x00404830
+0 0x00404830 FUN_00404830               gen   re/match/s01/00404830.c
+######## 0x00412890
+0 0x00412890 FUN_00412890               gen   re/match/s03/h2_00412890.c
+1   0x0040bb30 FUN_0040bb30               exe   FUN_0040bb30 MatchS02_0040bb30.cpp
+######## 0x00418980
+0 0x00418980 thunk_FUN_0041a060         gen   re/match/s03/h1_00418980.c
+1   0x0041a060 FUN_0041a060               gen   re/match/s03/h1_00418a30.c
+2     0x00413c70 FUN_00413c70               asitu Idx2RecordCondSet413c70 PromoLoop_sessionB.cpp
+2     0x004661a0 FUN_004661a0               gen   re/match/s10/004661a0.c
+2     0x00418e50 Fill64_63c508              asitu Fill64_63c508 PromoLoop_round68.cpp
+2     0x00419ff0 FUN_00419ff0               gen   re/match/s03/h1_00419ff0.c
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c
+2     0x004b3fc0 FUN_004b3fc0               none  -
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c
+2     0x004b52c0 FUN_004b52c0               asitu Or4b52c0 PromoLoop_sessionB.cpp
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp
+2     0x0040bb30 FUN_0040bb30               exe   FUN_0040bb30 MatchS02_0040bb30.cpp
+2     0x004770c0 FUN_004770c0               exe   Create RfxEmitter.cpp
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80
+2     0x004b3f90 FUN_004b3f90               rw    MashedRw_ClumpFirstAtomic_004b3f90
+2     0x004e69a0 FUN_004e69a0               gen   re/match/rwl02/004e69a0.c
+2     0x004c0b30 FUN_004c0b30               rw    MashedRw_FrameCreate_004c0b30
+2     0x004e7e30 FUN_004e7e30               exe   FUN_004e7e30 PortTop_004e7e30.cpp
+2     0x0042fe50 RaceEndAltFlagIfEndMode    exe   FUN_0042fe50 MatchS07_0042fe50.cpp
+2     0x00419fd0 FUN_00419fd0               gen   re/match/s03/raw_00419fd0.c
+2     0x00418e70 FUN_00418e70               gen   re/match/s03/h1_00418e70.c
+2     0x00476df0 FUN_00476df0               exe   Flush RfxEmitter.cpp
+2     0x00418a00 FUN_00418a00               gen   re/match/s03/h1_00418a30.c
+2     0x00418a30 FUN_00418a30               asitu Init418a30 PromoLoop_sessionB.cpp
+2     0x00418de0 FUN_00418de0               asitu VehicleEliminationSlotPostInit_Body Damage.cpp
+2     0x00418e30 FUN_00418e30               gen   re/match/s03/h1_00418a30.c
+2     0x00419090 FUN_00419090               gen   re/match/pilot/a6_00419090.c
+2     0x004190f0 ClearEax4190f0             asitu ClearEax4190f0 PromoLoop_round44.cpp
+2     0x00419480 FUN_00419480               gen   re/match/s03/h1_00418a30.c
+2     0x004194f0 FUN_004194f0               gen   re/match/s03/h1_00418a30.c
+2     0x00419760 FUN_00419760               asitu VehicleEliminationSlotInit Damage.cpp
+2     0x004197e0 FUN_004197e0               none  -
+2     0x00419100 FUN_00419100               none  -
+2     0x0041a180 FUN_0041a180               gen   re/match/s03/h1_00418a30.c
+######## 0x0041b660
+0 0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c
+1   0x004b3fc0 FUN_004b3fc0               none  -
+1   0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c
+2     0x00543d40 FUN_00543d40               gen   re/match/rwl04/00543d40.c
+2     0x00543d70 FUN_00543d70               gen   re/match/rwl04/00543d70.c
+2     0x00543df0 FUN_00543df0               gen   re/match/rwl04/00543df0.c
+2     0x0055deb0 RwpWorldSolverHandle_RegAb exe   RwpWorldSolverHandle_impl RwpIntegrator.cpp
+1   0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c
+2     0x004b64e0 FUN_004b64e0               exe   MemsetInline MemsetInline_ag1.cpp
+1   0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c
+2     0x004b4140 FUN_004b4140               asitu  ElemArrayCopyAll.cpp
+2     0x004b4130 FUN_004b4130               asitu Thunk4b4130 PromoLoop_sessionB.cpp
+1   0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c
+2     0x004c5010 RwMatrixScale              exe    RwMatrixScale.cpp
+1   0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp
+1   0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp
+1   0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80
+1   0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930
+1   0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp
+1   0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp
+1   0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp
+1   0x0041adb0 FUN_0041adb0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x004b3fc0 FUN_004b3fc0               none  - (dup)
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c (dup)
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c (dup)
+2     0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c (dup)
+2     0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c (dup)
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp (dup)
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp (dup)
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80 (dup)
+2     0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930 (dup)
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp (dup)
+2     0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp (dup)
+2     0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp (dup)
+2     0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp
+2     0x0041ae60 FUN_0041ae60               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041af00 FUN_0041af00               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b340 FUN_0041b340               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b440 EmitterDtorClumpAt5c       gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b450 FUN_0041b450               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b4d0 FUN_0041b4d0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+2     0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+2     0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+1   0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp
+1   0x0041ae60 FUN_0041ae60               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x004b3fc0 FUN_004b3fc0               none  - (dup)
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c (dup)
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c (dup)
+2     0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c (dup)
+2     0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c (dup)
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp (dup)
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp (dup)
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80 (dup)
+2     0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930 (dup)
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp (dup)
+2     0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp (dup)
+2     0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp (dup)
+2     0x0041adb0 FUN_0041adb0               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp (dup)
+2     0x0041af00 FUN_0041af00               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b340 FUN_0041b340               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b440 EmitterDtorClumpAt5c       gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b450 FUN_0041b450               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b4d0 FUN_0041b4d0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+2     0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+2     0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+1   0x0041af00 FUN_0041af00               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x004b3fc0 FUN_004b3fc0               none  - (dup)
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c (dup)
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c (dup)
+2     0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c (dup)
+2     0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c (dup)
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp (dup)
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp (dup)
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80 (dup)
+2     0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930 (dup)
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp (dup)
+2     0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp (dup)
+2     0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp (dup)
+2     0x0041adb0 FUN_0041adb0               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp (dup)
+2     0x0041ae60 FUN_0041ae60               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b340 FUN_0041b340               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b440 EmitterDtorClumpAt5c       gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b450 FUN_0041b450               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b4d0 FUN_0041b4d0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+2     0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+2     0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+1   0x0041b340 FUN_0041b340               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x004b3fc0 FUN_004b3fc0               none  - (dup)
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c (dup)
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c (dup)
+2     0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c (dup)
+2     0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c (dup)
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp (dup)
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp (dup)
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80 (dup)
+2     0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930 (dup)
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp (dup)
+2     0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp (dup)
+2     0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp (dup)
+2     0x0041adb0 FUN_0041adb0               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp (dup)
+2     0x0041ae60 FUN_0041ae60               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041af00 FUN_0041af00               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b440 EmitterDtorClumpAt5c       gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b450 FUN_0041b450               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b4d0 FUN_0041b4d0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+2     0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+2     0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+1   0x0041b440 EmitterDtorClumpAt5c       gen   re/match/s03/h1_grp_0041ad60.c
+2     0x004b3fc0 FUN_004b3fc0               none  - (dup)
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c (dup)
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c (dup)
+2     0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c (dup)
+2     0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c (dup)
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp (dup)
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp (dup)
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80 (dup)
+2     0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930 (dup)
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp (dup)
+2     0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp (dup)
+2     0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp (dup)
+2     0x0041adb0 FUN_0041adb0               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp (dup)
+2     0x0041ae60 FUN_0041ae60               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041af00 FUN_0041af00               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b340 FUN_0041b340               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b450 FUN_0041b450               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b4d0 FUN_0041b4d0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+2     0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+2     0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+1   0x0041b450 FUN_0041b450               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x004b3fc0 FUN_004b3fc0               none  - (dup)
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c (dup)
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c (dup)
+2     0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c (dup)
+2     0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c (dup)
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp (dup)
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp (dup)
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80 (dup)
+2     0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930 (dup)
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp (dup)
+2     0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp (dup)
+2     0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp (dup)
+2     0x0041adb0 FUN_0041adb0               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp (dup)
+2     0x0041ae60 FUN_0041ae60               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041af00 FUN_0041af00               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b340 FUN_0041b340               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b440 EmitterDtorClumpAt5c       gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b4d0 FUN_0041b4d0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+2     0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+2     0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+1   0x0041b4d0 FUN_0041b4d0               gen   re/match/s03/h1_grp_0041ad60.c
+2     0x004b3fc0 FUN_004b3fc0               none  - (dup)
+2     0x004b5190 FUN_004b5190               gen   re/match/s18/004b5190.c (dup)
+2     0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c (dup)
+2     0x004b5260 FUN_004b5260               gen   re/match/s18/004b5260.c (dup)
+2     0x004c13e0 FUN_004c13e0               gen   re/match/s19/004c13e0.c (dup)
+2     0x0042a5d0 FUN_0042a5d0               exe   FUN_0042a5d0 MatchS06_0042a5d0.cpp (dup)
+2     0x0042a6b0 FUN_0042a6b0               exe   FUN_0042a6b0 MatchS06_0042a6b0.cpp (dup)
+2     0x004c5c80 FUN_004c5c80               rw    MashedRw_TexDictionarySetCurrent_004c5c80 (dup)
+2     0x004c5930 sub_004c5930               rw    MashedRw_TexDictionaryDestroy_004c5930 (dup)
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp (dup)
+2     0x0040b890 FUN_0040b890               exe   GridCount8or12Core Thresholds_ah4.cpp (dup)
+2     0x0041ad60 ParticleEmitterCtorA       exe   ParticleEmitterCtorA_impl ParticleEmitterCtors.cpp (dup)
+2     0x0041adb0 FUN_0041adb0               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041ae20 FUN_0041ae20               exe   FUN_0041ae20 SubStateCallees.cpp (dup)
+2     0x0041ae60 FUN_0041ae60               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041af00 FUN_0041af00               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b340 FUN_0041b340               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b440 EmitterDtorClumpAt5c       gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b450 FUN_0041b450               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+2     0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+2     0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+2     0x0041b660 FUN_0041b660               gen   re/match/s03/h1_grp_0041ad60.c (dup)
+1   0x0041b520 FUN_0041b520               exe   Update41b520 SubStateCallees.cpp
+1   0x0041b630 HudSlotLoopB630            exe   HudSlotLoopB630 HudDispatch.cpp
+######## 0x0041e0d0
+0 0x0041e0d0 FUN_0041e0d0               gen   re/match/s04/0041e0d0.c
+1   0x004c0c20 FUN_004c0c20               rw    MashedRw_FrameDestroy_004c0c20
+1   0x004e6920 FUN_004e6920               rw    MashedRw_AtomicDestroy_004e6920
+1   0x004e7e30 FUN_004e7e30               exe   FUN_004e7e30 PortTop_004e7e30.cpp
+1   0x004e6e00 RpClumpDestroy             rw    MashedRw_ClumpDestroy_004e6e00
+######## 0x00420d00
+0 0x00420d00 PanelSortInit              asitu PanelSortInit PanelSortInit.cpp
+1   0x004b6520 ZeroFillWrapper            gen   re/match/s18/004b6520.c
+2     0x004b64e0 FUN_004b64e0               exe   MemsetInline MemsetInline_ag1.cpp
+######## 0x00471df0
+0 0x00471df0 FUN_00471df0               gen   re/match/s11/00471df0.c
+1   0x00471530 ClearTable471530           asitu FUN_00471530 MatchS11_00471530.cpp
+######## 0x00471eb0
+0 0x00471eb0 thunk_FUN_00471df0         gen   re/match/s11/00471eb0.c
+1   0x00471df0 FUN_00471df0               gen   re/match/s11/00471df0.c
+2     0x00471530 ClearTable471530           asitu FUN_00471530 MatchS11_00471530.cpp
+######## 0x004723d0
+0 0x004723d0 Init691500                 asitu FUN_004723d0 MatchS11_004723d0.cpp
+######## 0x0047ba00
+0 0x0047ba00 FUN_0047ba00               gen   re/match/topm01/0047ba00.c
+1   0x00496940 FUN_00496940               gen   re/match/s16/00496940.c
+2     0x004c77c0 FUN_004c77c0               rw    MashedRw_RasterCreate_004c77c0
+######## 0x00484170
+0 0x00484170 Rec18Create                asitu FUN_00484170 MatchS14_00484170.cpp
+######## 0x004841d0
+0 0x004841d0 FUN_004841d0               gen   re/match/topm01/004841d0.c
+1   0x004840f0 FUN_004840f0               asitu Count4840f0 PromoLoop_sessionB.cpp
+2     0x004841d0 FUN_004841d0               gen   re/match/topm01/004841d0.c (dup)
+######## 0x004924f0
+0 0x004924f0 sub_004924f0               exe   DataZeroFill SubsystemInit.cpp
+######## 0x005c4d20
+0 0x005c4d20 FUN_005c4d20               gen   re/match/s28/005c4d20.c
+######## 0x005c4d30
+0 0x005c4d30 CondGet5c4d30              asitu CondGet5c4d30 PromoLoop_sessionB.cpp
+######## 0x005c4d50
+0 0x005c4d50 FUN_005c4d50               gen   re/match/s28/005c4d50.c
+######## 0x005c4df0
+0 0x005c4df0 FUN_005c4df0               gen   re/match/s28/005c4df0.c
+######## 0x005c4e10
+0 0x005c4e10 FUN_005c4e10               gen   re/match/s28/005c4e10.c
