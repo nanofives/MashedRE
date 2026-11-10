@@ -128,13 +128,13 @@ static void FUN_00405ab0(S_EC *s, V3 *target)
         V3 d;
         FUN_00476320(&d, &size, 10.0f);
         d.x = d.x * 0.023f;
-        d.y = d.y * 0.023f;
+        { double t = d.y * 0.023f; d.y = (float)t; }
         d.z = d.z * 0.023f;
         FUN_0048aa20(mpos, 1, &d, 0, &ofs, 2.0f);
         FUN_0048aa20(target, 1, &d, 0, &ofs, 2.0f);
     }
     FUN_00474de0(target, &t, 0.1f);
-    t.x += FUN_00472650(-0.2f, 0.2f);
+    t.x = (0, t.x) + (FUN_00472650(-0.2f, 0.2f));
     t.y += FUN_00472650(-0.2f, 0.2f);
     t.z += FUN_00472650(-0.2f, 0.2f);
     FUN_00456140(&t, 0.6f);
@@ -159,7 +159,7 @@ static void FUN_00405ab0(S_EC *s, V3 *target)
         w.y = -0.3f;
     w.z = 0.0f;
     w.x = (FUN_004173a0() * (1.0f/14.0f) + 0.05f) * w.x;
-    w.y = (FUN_004173a0() * (1.0f/14.0f) + 0.05f) * w.y;
+    w.y = (float)((FUN_004173a0() * (1.0f/14.0f) + 0.05f) * (double)(w.y));
     w.z = (FUN_004173a0() * (1.0f/14.0f) + 0.05f) * w.z;
     FUN_0046d740(&w, 0);
     s->p7c = *mpos;

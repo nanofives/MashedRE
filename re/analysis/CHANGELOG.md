@@ -102,6 +102,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  0x00557110  FUN_00557110  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00557110.c; evidence: verify/matchx87castlever_20261110/oporder/RESULT_MATCH-X87-CASTLEVER-OPORDER.md
 2026-11-10  0x0040ad90  FUN_0040ad90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ad90.c; evidence: verify/matchx87castlever_20261110/pilot/RESULT_MATCH-X87-CASTLEVER-PILOT.md
 2026-11-10  0x00414f00  AiTrackObjSeek  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a1_00414f00.c; evidence: verify/matchx87castlever_20261110/pilot/RESULT_MATCH-X87-CASTLEVER-PILOT.md
 2026-11-10  0x0044e0a0  FUN_0044e0a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e0a0.c; evidence: verify/matchx87castlever_20261110/pilot/RESULT_MATCH-X87-CASTLEVER-PILOT.md
