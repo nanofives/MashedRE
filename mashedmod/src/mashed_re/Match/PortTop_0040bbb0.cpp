@@ -119,6 +119,18 @@ int PortTop_StandIn04G_004b3d20(char* p0) {
 #define FUN_00476390 Orig_00476390                       // matched, Match/PortTop_00476390.cpp, since PORT-OT-RENDER
 #undef FUN_00477e40
 #define FUN_00477e40 Orig_00477e40                       // matched, Match/PortTop_00477e40.cpp, since PORT-OT-RENDER
+#undef FUN_00489290
+#define FUN_00489290 Orig_00489290                       // matched, Match/PortTop_00489290.cpp, since PORT-OT-OTHER
+#undef FUN_00487e00
+#define FUN_00487e00 Orig_00487e00                       // matched, Match/PortTop_00487e00.cpp, since PORT-OT-OTHER
+#undef FUN_00485d90
+#define FUN_00485d90 Orig_00485d90                       // matched, Match/PortTop_00485d90.cpp, since PORT-OT-OTHER
+#undef FUN_004862d0
+#define FUN_004862d0 Orig_004862d0                       // matched, Match/PortTop_004862d0.cpp, since PORT-OT-OTHER
+#undef FUN_0048eac0
+#define FUN_0048eac0 Orig_0048eac0                       // matched, Match/PortTop_0048eac0.cpp, since PORT-OT-OTHER
+#undef FUN_0048a460
+#define FUN_0048a460 Orig_0048a460                       // matched, Match/PortTop_0048a460.cpp, since PORT-OT-OTHER
 extern "C" {
 #include "../../../../re/match/s02/0040bbb0.c"
 }

@@ -347,13 +347,13 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00475d90	FUN_00475d90	stand-in	PortTop_StandIn04C_00475d90	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x00475ea0	FUN_00475ea0	matched	Orig_00475ea0	PORT-OT-RENDER: Match/PortTop_00475ea0.cpp = re/match/s12/00475ea0.c: 0x004768c0 on the five records 0x00476390 builds	3	0x0040bd00
 0x00477870	FUN_00477870	stand-in	PortTop_StandIn04C_00477870	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched in group s12/00477580.c, not compiled (level 2)	3	0x0040bd00
-0x00485e10	FUN_00485e10	stand-in	PortTop_StandIn04C_00485e10	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
-0x00486350	FUN_00486350	stand-in	PortTop_StandIn04C_00486350	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
-0x00487140	FUN_00487140	stand-in	PortTop_StandIn04C_00487140	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; .asi-only Match/MatchS14_00487140.cpp, raw-address callees	3	0x0040bd00
+0x00485e10	FUN_00485e10	matched	Orig_00485e10	PORT-OT-OTHER: Match/PortTop_00485e10.cpp = re/match/s14/00485e10.c: 0x004768c0(pool + 0x10) + RwGlobals +0x10c on the four pools 0x00485d90 takes	3	0x0040bd00
+0x00486350	FUN_00486350	matched	Orig_00486350	PORT-OT-OTHER: Match/PortTop_00486350.cpp = re/match/s14/00486350.c: 0x004768c0 on 0x006fe700 / 0x006fe740	3	0x0040bd00
+0x00487140	FUN_00487140	matched	Orig_00487140	PORT-OT-OTHER: Match/PortTop_00487140.cpp = re/match/s14/00487140.c: 0x004768c0(0x00703068). ORIGTOP-ONLY CROSS-TARGET vs .asi-only Match/MatchS14_00487140.cpp	3	0x0040bd00
 0x0048af70	FUN_0048af70	stand-in	PortTop_StandIn04C_0048af70	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x0048bc10	FUN_0048bc10	matched	Orig_0048bc10	PORT-TOP-04H: Match/PortTop_0048bc10.cpp = re/match/s14/0048bc10.c (BYTE-IDENTICAL 13 B): RwTextureDestroy(DAT_00722134), the sun texture 0x0048bbe0 reads; freed at exit	3	0x0040bd00
 0x0048cf70	FUN_0048cf70	stand-in	PortTop_StandIn04C_0048cf70	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
-0x0048fdd0	FUN_0048fdd0	stand-in	PortTop_StandIn04C_0048fdd0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
+0x0048fdd0	FUN_0048fdd0	matched	Orig_0048fdd0	PORT-OT-OTHER: Match/PortTop_0048fdd0.cpp = re/match/s15/0048fdd0.c: 0x004768c0 on the nine records 0x0048eac0 builds	3	0x0040bd00
 0x0048ffd0	FUN_0048ffd0	stand-in	PortTop_StandIn04C_0048ffd0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040bd00
 0x0041a980	FUN_0041a980	matched	Orig_0041a980	PORT-OT-RENDER: Match/PortTop_0041a980.cpp = re/match/s03/raw_0041a980.c (preamble now MATCH-S02, BYTE-IDENTICAL): RpClumpDestroy on 0x0063c7b8[0..1], then zero them. Runs only when 0x0041f320(i) != 0	3	0x0040cf80
 0x00422140	FUN_00422140	stand-in	PortTop_StandIn04C_00422140	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040cf80
@@ -403,15 +403,18 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004775b0	FUN_004775b0	stand-in	PortTop_StandIn04G_004775b0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): atomic / clump builder	3	0x0040bbb0
 0x00477e40	FUN_00477e40	matched	Orig_00477e40	PORT-OT-RENDER: Match/PortTop_00477e40.cpp = re/match/s12/00477e40.c: DAT_00693190 = 0x0040bb30(0x005ceb10), 0x00477b40	3	0x0040bbb0
 0x00477b40	FUN_00477b40	matched	Orig_00477b40	PORT-OT-RENDER: Match/PortTop_00477b40.cpp = re/match/s12/00477b40.c: 0x004b6520 on 0x00693198 (0x2c000) and 0x006bf198 (0x20). ORIGTOP-ONLY CROSS-TARGET vs .asi-only Match/MatchS12_00477b40.cpp	4	0x00477e40
-0x00485d90	FUN_00485d90	stand-in	PortTop_StandIn04G_00485d90	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
-0x004862d0	FUN_004862d0	stand-in	PortTop_StandIn04G_004862d0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
-0x00487e00	FUN_00487e00	stand-in	PortTop_StandIn04G_00487e00	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): object-shadow init	3	0x0040bbb0
-0x00489290	FUN_00489290	stand-in	PortTop_StandIn04G_00489290	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
-0x0048a460	FUN_0048a460	stand-in	PortTop_StandIn04G_0048a460	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): strided clear 0x00709238	3	0x0040bbb0
+0x00485d90	FUN_00485d90	matched	Orig_00485d90	PORT-OT-OTHER: Match/PortTop_00485d90.cpp = re/match/s14/00485d90.c: four 0x004892c0 pools into the records at 0x006fde10	3	0x0040bbb0
+0x004893a0	FUN_004893a0	matched	Orig_004893a0	PORT-OT-OTHER: Match/PortTop_004893a0.cpp = re/match/s14/004893a0.c: 0x00476cb0(p + 0x10, a, b). ORIGTOP-ONLY CROSS-TARGET vs .asi-only Match/MatchS14_004893a0.cpp	4	0x00485d90
+0x004892c0	FUN_004892c0	matched	Orig_004892c0	PORT-OT-OTHER: Match/PortTop_004892c0.cpp = re/match/s14/004892c0.c: first free pool at 0x00703118 (m_58 != 0), 0x004770c0 + 0x00476cb0 + 0x00474db0 items. Exe-only	4	0x00485d90
+0x004862d0	FUN_004862d0	matched	Orig_004862d0	PORT-OT-OTHER: Match/PortTop_004862d0.cpp = re/match/s14/004862d0.c: 150 records at 0x006fe790 cleared, 0x004770c0 records 0x006fe700 / 0x006fe740	3	0x0040bbb0
+0x00487e00	FUN_00487e00	matched	Orig_00487e00	PORT-OT-OTHER: Match/PortTop_00487e00.cpp = re/match/s14/00487150.c: 0x00487150 builds the record 0x00703068 (0x004770c0 0x80c, 0x00476cb0 5, 6)	3	0x0040bbb0
+0x00487150	FUN_00487150	matched	Orig_00487150	PORT-OT-OTHER: Match/PortTop_00487e00.cpp = re/match/s14/00487150.c (static in the source)	4	0x00487e00
+0x00489290	FUN_00489290	matched	Orig_00489290	PORT-OT-OTHER: Match/PortTop_00489290.cpp = re/match/s14/00489290.c: the 100 pools at 0x00703118 get m_54 = 0, m_58 = 1. ORIGTOP-ONLY CROSS-TARGET vs .asi-only Match/MatchS14_00489290.cpp	3	0x0040bbb0
+0x0048a460	FUN_0048a460	matched	Orig_0048a460	PORT-OT-OTHER: Match/PortTop_0048a460.cpp = re/match/s14/0048a460.c: dwords +0 / +4 = 0 per 0x330-byte record 0x00709238..0x00713198. ORIGTOP-ONLY CROSS-TARGET vs .asi-only Match/MatchS14_0048a460.cpp	3	0x0040bbb0
 0x0048a830	FUN_0048a830	stand-in	PortTop_StandIn04G_0048a830	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): zero fill	3	0x0040bbb0
 0x0048ae00	FUN_0048ae00	stand-in	PortTop_StandIn04G_0048ae00	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): clump builder	3	0x0040bbb0
 0x0048e820	FUN_0048e820	stand-in	PortTop_StandIn04G_0048e820	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): no matched source (C2)	3	0x0040bbb0
-0x0048eac0	FUN_0048eac0	stand-in	PortTop_StandIn04G_0048eac0	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): effect init	3	0x0040bbb0
+0x0048eac0	FUN_0048eac0	matched	Orig_0048eac0	PORT-OT-OTHER: Match/PortTop_0048eac0.cpp = re/match/s15/0048eac0.c: nine 0x004770c0 records 0x007668f8..0x007706d8	3	0x0040bbb0
 0x0048ff20	FUN_0048ff20	stand-in	PortTop_StandIn04G_0048ff20	PORT-TOP-04G: stand-in in Match/PortTop_0040bbb0.cpp (logs its first call, does nothing): file-backed table loader	3	0x0040bbb0
 0x00401630	FUN_00401630	matched	Orig_00401630	PORT-TOP-04H: Match/PortTop_00401630.cpp = re/match/s01/raw/00401630.c (BYTE-IDENTICAL 87 B, relocheck OK; the source now returns 0x004b3bf0's result, same bytes)	3	0x004025f0
 0x00401690	FUN_00401690	port	FUN_00401690 (static)	PORT-TOP-04H: the static of re/match/s01/00401690.c in Match/PortTop_004025f0.cpp: the C2 reconstruction (match.py 60.2%, residual = the vertex-loop unroll factor x8 vs x4), not a matched body	3	0x004025f0

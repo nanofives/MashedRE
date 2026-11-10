@@ -13,12 +13,12 @@
 #define FUN_00475ea0 Orig_00475ea0   // matched, Match/PortTop_00475ea0.cpp, since PORT-OT-RENDER
 #define FUN_00475d90 PortTop_StandIn04C_00475d90   // stand-in: matched, not compiled (level 2)
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp
-#define FUN_0048fdd0 PortTop_StandIn04C_0048fdd0   // stand-in: matched, not compiled (level 2)
+#define FUN_0048fdd0 Orig_0048fdd0   // matched, Match/PortTop_0048fdd0.cpp, since PORT-OT-OTHER
 #define FUN_0048af70 PortTop_StandIn04C_0048af70   // stand-in: matched, not compiled (level 2)
-#define FUN_00487140 PortTop_StandIn04C_00487140   // stand-in: matched; .asi-only Match/MatchS14_00487140.cpp, raw-address callees
+#define FUN_00487140 Orig_00487140   // matched, Match/PortTop_00487140.cpp, since PORT-OT-OTHER
 #define FUN_0048cf70 PortTop_StandIn04C_0048cf70   // stand-in: matched, not compiled (level 2)
-#define FUN_00485e10 PortTop_StandIn04C_00485e10   // stand-in: matched, not compiled (level 2)
-#define FUN_00486350 PortTop_StandIn04C_00486350   // stand-in: matched, not compiled (level 2)
+#define FUN_00485e10 Orig_00485e10   // matched, Match/PortTop_00485e10.cpp, since PORT-OT-OTHER
+#define FUN_00486350 Orig_00486350   // matched, Match/PortTop_00486350.cpp, since PORT-OT-OTHER
 #define FUN_00413bb0 Orig_00413bb0   // matched, Match/PortTop_00413bb0.cpp (ORIGTOP-ONLY), since PORT-OT-HUD
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930   // RW: RwTexDictionaryDestroy -> rw::TexDictionary::destroy
 extern "C" {

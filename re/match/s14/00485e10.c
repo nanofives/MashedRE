@@ -24,9 +24,17 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(int);
+#else
 typedef int code();
+#endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
+#ifdef __cplusplus
+MGLOBAL(int, DAT_006fde14, 0x006fde14); /* port: C++ will not convert &(undefined4) to int*; same address */
+#else
 MGLOBAL(undefined4, DAT_006fde14, 0x006fde14);
+#endif
 void FUN_004768c0(int p0);
 // MATCH: 0x00485e10 FUN_00485e10
 void FUN_00485e10(void)
