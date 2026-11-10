@@ -189,6 +189,19 @@ const void* PortTop_PizFs_Find(const char* entry, unsigned* len) {
     return nullptr;
 }
 
+// [POWERUPINIT-A] rva 0x004b68f0 binding (re/match/s18/004b68f0.c: the +0x78 word of the first entry whose name
+// rva 0x004b302f compares equal to <name>, in the 0x80-byte directory the original's piz reader copies to 0x0090dac0, count
+// 0x008ad9a8, 0x004b6a4a..0x004b6ab0; 0 when none matches). Entry +0x78 is the length (Piz/PizReader.h). The exe's piz
+// reader keeps its directories in Piz::Archive and never fills 0x0090dac0, so the binding answers from the mount stack:
+// the length of <name> in the newest mount holding it, else 0. The original searches only the directory it loaded last.
+// Caller on the MASHED_ORIG_TOP path: the matched 0x004b65b0 (Match/PortTop_004b65b0.cpp), from 0x004587a0 / 0x00411f30.
+int PortTop_PizFs_EntryLength_004b68f0(const char* name) {
+    unsigned n = 0;
+    const void* const b = name ? PortTop_PizFs_Find(name, &n) : nullptr;
+    Log04E("[PIZ_FS] 0x004b68f0(\"%s\") binding: %s, length %u", name ? name : "(null)", b ? "found" : "not mounted", b ? n : 0u);
+    return b ? static_cast<int>(n) : 0;
+}
+
 // ---- 0x004caea0: stand-in device ----
 namespace {
 long __stdcall FakeDevSetRenderState(void* self, int state, int value) {
@@ -218,7 +231,6 @@ SI(004113b0, "0x24a3c block alloc")
 SI(00558240, "RW raster create, no source")
 SI(004841d0, "0x006ce840 table init; 0 skips Rec18Create, DAT_007f0a30 stays 0")
 SI(00484170, "Rec18Create, unreached")
-SI(0045bae0, "powerups family")
 SI(00418980, "powerups family")
 SI(0041b450, "Panel family")
 SI(0041bec0, "Panel family")

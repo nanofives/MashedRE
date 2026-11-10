@@ -1,5 +1,6 @@
 // FLAGS: /O2 /GS /Ob1
 // TOOLCHAIN ddk
+#ifndef __cplusplus
 typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
 typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
 typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
@@ -31,8 +32,13 @@ typedef long double unkbyte10; typedef unsigned int uintptr_t; typedef unsigned 
 #define SEXT14(a) ((int)(signed char)(a))
 #define SEXT24(a) ((int)(short)(a))
 #define SEXT48(a) ((longlong)(int)(a))
+#else  /* C++ port (MATCH_PORT): the body uses undefined4 only */
+typedef unsigned int undefined4;
+#endif
 
+#ifndef MATCH_PORT
 extern undefined4 DAT_00636c00;
+#endif
 undefined4 FUN_0042a5d0(char * p0);
 // MATCH: 0x004039c0 FUN_004039c0
 void FUN_004039c0(void)

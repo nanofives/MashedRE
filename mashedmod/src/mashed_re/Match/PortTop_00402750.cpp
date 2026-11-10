@@ -52,7 +52,7 @@
 #define FUN_004723d0 Orig_004723d0                          // matched, Match/PortTop_004723d0.cpp (0x00691500 table), since PORT-OT-BOOT
 #define FUN_004881d0 Obj7030a8Create                        // matched, Match/MatchS14_004881d0.cpp (both targets; PTank record), since PORT-TOP-04I
 #define FUN_0047ba00 Orig_0047ba00                          // matched, Match/PortTop_0047ba00.cpp (-> 0x00496940 raster), since PORT-OT-BOOT
-#define FUN_0045bae0 PortTop_StandIn04E_0045bae0
+#define FUN_0045bae0 PortTop_PWI_Call0045bae0                 // matched, Match/PortTop_0045bae0.cpp (type-table stand-ins, L-114 Lua binding), since POWERUPINIT-A
 #define FUN_00418980 PortTop_StandIn04E_00418980
 #define FUN_0041b450 PortTop_StandIn04E_0041b450
 #define FUN_0041bec0 PortTop_StandIn04E_0041bec0

@@ -805,6 +805,8 @@ struct MashedRwAtomicView {             // the RW 3.x RpAtomic fields read throu
     rw::Frame* frame;                   // +0x04 (RwObject.parent)
     std::uint8_t pad08[0x18 - 0x08];
     MashedRwGeometryView* geometry;     // +0x18
+    std::uint8_t pad1c[0x3c - 0x1c];
+    rw::Clump* clump;                   // +0x3c (RpAtomic.clump; POWERUPINIT-A: 0x00412010 reads it)
     rw::Atomic* lib;                    // exe tail
     MashedRwGeometryView geomView;      // exe tail
 };
@@ -812,6 +814,7 @@ static_assert(offsetof(MashedRwGeometryView, numVertices) == 0x14, "RpGeometry +
 static_assert(offsetof(MashedRwGeometryView, morphTarget) == 0x5c, "RpGeometry +0x5c");
 static_assert(offsetof(MashedRwAtomicView, frame) == 0x04, "RpAtomic +0x04");
 static_assert(offsetof(MashedRwAtomicView, geometry) == 0x18, "RpAtomic +0x18");
+static_assert(offsetof(MashedRwAtomicView, clump) == 0x3c, "RpAtomic +0x3c");
 static_assert(offsetof(rw::Clump, object) + offsetof(rw::Object, parent) == 0x04, "clump frame @ +0x04");
 static_assert(offsetof(rw::Frame, root) == 0xa0, "RwFrame root @ +0xa0");
 static_assert(offsetof(rw::MorphTarget, vertices) == 0x14, "RpMorphTarget verts @ +0x14");
@@ -889,6 +892,9 @@ void MashedRw_FrameUpdateObjects_004c0e50(int frame) {
 // *data and returns 0 (stop): the first atomic in RW order. Binding: that atomic (RwOrderAtomic on the list's RW head)
 // as an RW-layout view (MashedRwAtomicView above). The only knob-path caller, 0x00401690, reads atomic +0x18 ->
 // geometry +0x14 / +0x5c -> morph +0x14 and nothing else. A clump with no atomic returns 0, as 0x004b3f90 does.
+// [POWERUPINIT-A] the second knob-path caller, 0x00411f30, stores the view in DAT_0063bb38[i], and the matched
+// teardown 0x00412010 reads atomic +0x3c (RpAtomic.clump, the clump the atomic belongs to) and destroys it. The view
+// carries that field: the clump argument, which owns the atomic.
 int MashedRw_ClumpFirstAtomic_004b3f90(int clump) {
     rw::Clump* const c = FromInt<rw::Clump>(clump);
     if (!c) return 0;
@@ -898,6 +904,7 @@ int MashedRw_ClumpFirstAtomic_004b3f90(int clump) {
     std::memset(v.get(), 0, sizeof(*v));
     v->lib = a;
     v->frame = a->getFrame();
+    v->clump = c;
     if (rw::Geometry* const g = a->geometry) {
         v->geomView.numVertices = g->numVertices;
         v->geomView.morphTarget = g->morphTargets;
