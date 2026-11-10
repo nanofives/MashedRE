@@ -119,6 +119,9 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-09  0x0048f780  FUN_0048f780  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f780.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
 2026-11-09  0x00422570  FUN_00422570  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422570.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
 2026-11-09  0x0041f120  Player::ComputeVehicleToCameraVec  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f120.c; evidence: verify/matchracepath_20261109/x87b/RESULT_MATCH-RACEPATH-X87B.md
+2026-11-09  0x0048aff0  FUN_0048aff0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
+2026-11-09  0x0048b230  FUN_0048b230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
+2026-11-09  0x0048b440  FUN_0048b440  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
 2026-11-09  0x004844a0  FUN_004844a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/004844a0.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
 2026-11-09  0x00484580  FUN_00484580  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/004844a0.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
 2026-11-09  0x0040d8f0  FUN_0040d8f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0040d8f0.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
