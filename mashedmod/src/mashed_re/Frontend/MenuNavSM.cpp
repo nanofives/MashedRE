@@ -43,6 +43,7 @@ extern "C" int  __cdecl Pred497450(int param_1);        // 0x00497450, Match/Mat
 extern "C" void __cdecl PromptRowInit0042ad10(int* idx, int a, int x, int y, int e);   // 0x0042ad10, Match/MatchS06_0042ad10.cpp
 // Both knob states: the menu slide-animation tick (L-100 (a)), reads DAT_00898ac0 and four input words, see Anim_Tick.
 extern "C" int  __cdecl MenuAnimTickTwin(void);         // 0x004325c0, Match/MatchS08_004325c0.cpp
+extern "C" void __cdecl CarSelectReset(void);           // 0x00431d00, Match/MatchS07_00431d00.cpp (PORT-COLOURSEL-OPPCOL)
 
 namespace mashed_re {
 namespace Frontend {
@@ -1173,11 +1174,16 @@ void ApplyActionGameMode(std::uint32_t action) {
     // (FUN_00430760 != 0, 0x0043e563..0x0043e56a): DAT_007f1a1c = 0 when the choice 0x0067f0c0 is 0 (0x0043e571 /
     // 0x0043e575, ebx = 0), else choice - 1 (0x0043e57d dec / 0x0043e57e store), before the FUN_0043d2a0(6,0) push
     // (0x0043e586). The race livery reads it (exe_main launch, FUN_0040d110). PREREG
-    // verify/portstate_20261109/PREREG_COLOURSEL_COMMIT.md. Not ported here: FUN_00431d00 (0x0043e58e) and
-    // DAT_0067ea78 = 0 (0x0043e593).
+    // verify/portstate_20261109/PREREG_COLOURSEL_COMMIT.md.
+    // [PORT-COLOURSEL-OPPCOL 2026-11-10] then the arm's tail: FUN_00431d00 (call 0x0043e58e; the exe body is the
+    // byte-matched CarSelectReset, Match/MatchS07_00431d00.cpp) and DAT_0067ea78 = 0 (0x0043e593, ebx = 0). The original
+    // runs both after the FUN_0043d2a0(6,0) push, which has no direct xref to any of the eight globals. PREREG
+    // verify/portstate_20261109/PREREG_COLOURSEL_OPPCOL.md.
     if (ColourSelIcon_On() && action == 0xff1d0000u && Q_ModeIsCupFlow()) {
         const std::int32_t ch = *reinterpret_cast<const std::int32_t*>(0x0067f0c0u);
         *reinterpret_cast<std::int32_t*>(0x007f1a1cu) = (ch == 0) ? 0 : ch - 1;
+        CarSelectReset();                                                     // 0x0043e58e
+        *reinterpret_cast<std::int32_t*>(0x0067ea78u) = 0;                    // 0x0043e593
     }
     // DAT_0067f17c = 0 on these five mode items (harvest L272 for 0xff3d/0xff40
     // via LAB_0043f468, L940 for 0xff4d, L825 for 0xff2c/0xff2e via

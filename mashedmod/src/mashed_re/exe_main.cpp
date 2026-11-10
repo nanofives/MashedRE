@@ -2221,6 +2221,53 @@ static int FrontendModeIndexGate(int launchMode) {
     return ret;
 }
 
+// [PORT-COLOURSEL-OPPCOL 2026-11-10, U-9672] FUN_00413f90's table (0x00413f90: return &DAT_005f2b10), .data
+// 0x005f2b10..0x005f2d7f of original/MASHED.exe.unpatched (only xref FUN_00413f90). Row = DAT_0067f17c * 0x30, tier
+// +0x10 for mode 4 / +0x20 for mode 5, entry {count, c1, c2, c3}. Baked: the exe's image pad does not hold it
+// (Compat/PortStateSeed.inc has no 0x005f2b10 entry).
+static const std::int32_t kOppColourTable[13][3][4] = {
+    {{1, 0, -1, -1}, {3, 2, 3, 4}, {2, 5, 1, 2}},     // 0x005f2b10
+    {{2, 2, 3, -1}, {2, 3, 1, -1}, {3, 3, 4, 5}},     // 0x005f2b40
+    {{3, 4, 1, 0}, {1, 5, -1, -1}, {1, 0, 1, 2}},     // 0x005f2b70
+    {{3, 0, 3, 5}, {2, 1, 0, -1}, {3, 0, 1, 2}},      // 0x005f2ba0
+    {{2, 0, 1, -1}, {3, 2, 3, 1}, {1, 3, 4, 2}},      // 0x005f2bd0
+    {{2, 4, 5, -1}, {3, 3, 1, 4}, {3, 0, 1, 2}},      // 0x005f2c00
+    {{3, 2, 3, 5}, {3, 4, 5, 1}, {3, 2, 4, 1}},       // 0x005f2c30
+    {{3, 0, 2, 1}, {3, 1, 3, 5}, {3, 0, 1, 2}},       // 0x005f2c60
+    {{3, 3, 5, 1}, {3, 5, 0, 2}, {3, 1, 0, 4}},       // 0x005f2c90
+    {{2, 0, 1, 2}, {2, 3, 4, 5}, {1, 0, 1, 2}},       // 0x005f2cc0
+    {{3, 1, 3, 5}, {1, 2, 4, 5}, {3, 2, 4, 5}},       // 0x005f2cf0
+    {{3, 1, 2, 5}, {3, 3, 2, 5}, {3, 0, 1, 2}},       // 0x005f2d20
+    {{3, 1, 0, 4}, {3, 0, 2, 3}, {3, 0, 1, 2}},       // 0x005f2d50
+};
+
+// The challenge launch's opponent colour loop (action 0xff260000, DAT_0067e9fc 3/4/5), one copy per event arm in the
+// original: 0x80000 0x0043eb4a..0x0043ebb9, 0x50000 0x0043ec6d.., 0x20000/0x30000/0xb0000/0x60000 0x0043edfa..,
+// 0x00000/0x10000/0xc0000 0x0043ef4f.., 0x90000/0xa0000 0x0043f080..; events 0x70000 / 0x40000 run none. For i = 1..count:
+// c = c_i (0x0043eb74); if c == DAT_007f1a1c (read 0x0043eb76 / 0x0043ec98 / 0x0043ee26 / 0x0043ef7a / 0x0043f0ab), the
+// first k in 0..5 with k != DAT_007f1a1c, k != c1, k != c2, k != c3 replaces it (0x0043eb86..0x0043eba2), none keeps c;
+// stored at 0x007f1a2c + (i-1)*0x10 (0x0043eba4 / 0x0043eccc / 0x0043ee60 / 0x0043efac / 0x0043f0dc). Only the colour
+// stores are ported (slot +0 / +4 and FUN_0040e480(i,2) are not). Returns the count written (0 = no loop).
+static int ChallengeLaunchOpponentColours(int mode, int row) {
+    const int ev = mashed_re::Race::RaceModes::EventType(mode, row);   // DAT_005f65c8 high word, -1 off the table
+    if (ev < 0 || ev == 0x7 || ev == 0x4) return 0;
+    if (row < 0 || row >= 13) return 0;
+    const std::int32_t* e = kOppColourTable[row][mode - 3];
+    const std::int32_t pc = *reinterpret_cast<const std::int32_t*>(0x007f1a1cu);
+    int n = e[0];
+    if (n > 3) n = 3;
+    for (int i = 1; i <= n; ++i) {
+        std::int32_t c = e[i];
+        if (c == pc) {
+            for (std::int32_t k = 0; k < 6; ++k) {
+                if (k != pc && k != e[1] && k != e[2] && k != e[3]) { c = k; break; }
+            }
+        }
+        *reinterpret_cast<std::int32_t*>(0x007f1a2cu + static_cast<std::uint32_t>(i - 1) * 0x10u) = c;
+    }
+    return n;
+}
+
 static void MenuLaunchRace(int launchMode) {
     char piz[160];
     RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
@@ -2265,6 +2312,17 @@ static void MenuLaunchRace(int launchMode) {
             (launchMode == 2 || launchMode == 10 || (launchMode >= 3 && launchMode <= 5))) {
             const std::int32_t slotcol = *reinterpret_cast<const std::int32_t*>(0x007f1a1cu);
             cfg.cars[0].colour = (slotcol >= 0 && slotcol <= 5) ? slotcol : 0;
+        }
+        // [PORT-COLOURSEL-OPPCOL, U-9672] ICON on, cup modes 3/4/5: the opponents' colours of the challenge launch
+        // (ChallengeLaunchOpponentColours, row = DAT_0067f17c = Nav_ChallengeRow()), which the livery reads per slot as
+        // slot 0's (FUN_0040d110). Slots past the entry's count keep the old value (0). PREREG
+        // verify/portstate_20261109/PREREG_COLOURSEL_OPPCOL.md.
+        if (mashed_re::Frontend::ColourSelIcon_On() && launchMode >= 3 && launchMode <= 5) {
+            const int nopp = ChallengeLaunchOpponentColours(launchMode, mashed_re::Frontend::Nav_ChallengeRow());
+            for (int i = 1; i <= nopp; ++i) {
+                const std::int32_t oc = *reinterpret_cast<const std::int32_t*>(0x007f1a1cu + static_cast<std::uint32_t>(i) * 0x10u);
+                cfg.cars[i].colour = (oc >= 0 && oc <= 5) ? oc : 0;
+            }
         }
         char cc[8] = {};
         if (GetEnvironmentVariableA("MASHED_CAR_COLOUR", cc, sizeof(cc)) > 0)

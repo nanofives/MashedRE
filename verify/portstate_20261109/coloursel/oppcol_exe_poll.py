@@ -1,0 +1,70 @@
+"""oppcol_exe_poll.py --exe <mashed_re.exe> --root <root> --out <json> --keys e,e,r [--env K=V ...] [--limit 60]
+
+PORT-COLOURSEL-OPPCOL arms 2/3 (exe side; copy of commit_exe_poll.py plus the FUN_00431d00 globals, DAT_0067ea78 and
+the slot colours 0x007f1a2c/3c/4c, and the livery / voice-bank lines of <root>/mashed_re.log copied into the JSON). Spawns the exe with MASHED_GOTO=1 (main menu) and MASHED_NAV_KEYS=<keys>
+(exe_main.cpp RunNavKeysStep: one key per 30 frames once the menu is up, then the exe quits), PORT-TOP-04D's settings
+baseline restored first. Frida-attached, it polls ADDRS every 20 ms and records each change (one row per change, the
+columns in ADDRS order, stored as res['addrs']). Spawned pid only. Run inside test-slot + mashed_lock.py run.
+"""
+import argparse, json, os, shutil, time
+from pathlib import Path
+import frida
+
+ap = argparse.ArgumentParser()
+ap.add_argument('--exe', required=True)
+ap.add_argument('--root', required=True)
+ap.add_argument('--out', required=True)
+ap.add_argument('--keys', required=True)
+ap.add_argument('--env', action='append', default=[])
+ap.add_argument('--limit', type=float, default=60)
+a = ap.parse_args()
+ADDRS = [0x0067f0c0, 0x0067e9f8, 0x007f1a1c, 0x007f1a2c, 0x007f1a3c, 0x007f1a4c,
+         0x0067ea74, 0x0067ea78, 0x0067ea90, 0x0067ea94, 0x0067ea98, 0x0067ea9c, 0x0067eaa0, 0x0067eaac]
+AGENT = r'''
+rpc.exports = { rd: function (l) { return l.map(function (x) { try { return ptr(x).readS32(); } catch (e) { return null; } }); } };
+'''
+
+
+def main():
+    lp = os.path.join(a.root, 'mashed_re.log')
+    if os.path.exists(lp): os.remove(lp)
+    shutil.copyfile('D:/MashedWT/PORT-TOP-04D_data/settings_baseline.bin', os.path.join(a.root, 'mashed_re_settings.bin'))
+    env = {k: v for k, v in os.environ.items() if not k.upper().startswith('MASHED_')}
+    env.update({'MASHED_ROOT': a.root, 'MASHED_GOTO': '1', 'MASHED_NAV_KEYS': a.keys})
+    for kv in a.env:
+        k, v = kv.split('=', 1); env[k] = v
+    res = {'addrs': ['0x%08x' % x for x in ADDRS], 'env': {k: v for k, v in env.items() if k.startswith('MASHED_')}, 'changes': []}
+    dev = frida.get_local_device()
+    pid = dev.spawn(a.exe, cwd=a.root, env=env)
+    print('spawned pid', pid, flush=True)
+    try:
+        s = dev.attach(pid); sc = s.create_script(AGENT); sc.load(); E = sc.exports_sync
+        dev.resume(pid)
+        t0 = time.time(); last = None
+        while time.time() - t0 < a.limit:
+            try:
+                v = E.rd(ADDRS)
+            except Exception:
+                break
+            if v != last:
+                res['changes'].append([round(time.time() - t0, 2)] + v)
+                print('t=%.2f ' % (time.time() - t0) + ' '.join('%x=%s' % (x & 0xffff, y) for x, y in zip(ADDRS, v)), flush=True)
+                last = v
+            time.sleep(0.02)
+    finally:
+        try:
+            dev.kill(pid); print('killed own pid', pid, flush=True)
+        except Exception as e:
+            print('kill', e, flush=True)
+        time.sleep(0.5)
+        try:
+            res['log'] = [l.rstrip() for l in open(lp, errors='replace') if 'livery:' in l or 'voice bank' in l]
+        except OSError as e:
+            res['log'] = ['no log: %s' % e]
+        for l in res['log']: print(l, flush=True)
+        Path(a.out).write_text(json.dumps(res, indent=1))
+        print('->', a.out, flush=True)
+
+
+if __name__ == '__main__':
+    main()
