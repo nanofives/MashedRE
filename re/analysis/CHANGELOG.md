@@ -10,7 +10,17 @@ complete against the repo's history. Trying to be both is what made it drift twi
 per-lane docs plus `git log` cover the other half.
 
 **Ordering: NEWEST FIRST.** One entry per line, starting `YYYY-MM-DD`. New entries are
-**prepended immediately below the `<!-- ENTRIES -->` marker**, never appended to the end.
+**prepended immediately below the `<!-- ENTRIES -->`2026-11-10  0x004b5560  FUN_004b5560  (none)->C1  added (POWERUPINIT-B): RpClumpForAllAtomics callback pushed by 0x004b5580 (push 0x4b5560 at 0x004b5589); calls 0x004b5260 (render) and returns its first argument; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x00452f70  FUN_00452f70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 8 of 0x005f9998 (+0x14 pointer at 0x005f9bac, the only xref); strings smoke / mortar.dff / MortarRound.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x00454e40  FUN_00454e40  (none)->C1  added (POWERUPINIT-B): tail-jump target of 0x00454e70 (jmp at 0x00454f65) and of 0x00454f70; loops 0x00454bd0 (ESI) over 4 x 0x14 at 0x00688358 and 0x00454c00 (EAX) over 4 x 0x18 at 0x006882f8; callees filed render; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x00454e70  FUN_00454e70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 6 of 0x005f9998 (+0x14 pointer at 0x005f9b2c, the only xref); strings flashunit.dff / lensflare-fs8; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x00455400  FUN_00455400  (none)->C1  added (POWERUPINIT-B): type-table init, slot 2 of 0x005f9998 (+0x14 pointer at 0x005f9a2c, the only xref); strings smoke / MissileLauncher.dff / missile.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x004576f0  FUN_004576f0  (none)->C1  added (POWERUPINIT-B): type-table init, slot 7 of 0x005f9998 (+0x14 pointer at 0x005f9b6c, the only xref); strings oil / oilShine / oilslicker.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x004583a0  FUN_004583a0  (none)->C1  added (POWERUPINIT-B): type-table init, slot 3 of 0x005f9998 (+0x14 pointer at 0x005f9a6c, the only xref); strings MineDropper.dff / Mine.dff / lensflare-fs8; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x0045a6b0  FUN_0045a6b0  (none)->C1  added (POWERUPINIT-B): type-table init, slot 4 of 0x005f9998 (+0x14 pointer at 0x005f9aac, the only xref); strings FlameThrower.dff / exp_cloud2; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x0045b810  FUN_0045b810  (none)->C1  added (POWERUPINIT-B): tail-jump target of 0x0045b830 (jmp at 0x0045b918) and of 0x0045b920; loops 0x0045b360 (ESI) over 4 x 0x24 at 0x0068d158; callee filed gameplay; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x0045b830  FUN_0045b830  (none)->C1  added (POWERUPINIT-B): type-table init, slot 5 of 0x005f9998 (+0x14 pointer at 0x005f9aec, the only xref); string shotgun.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+ marker**, never appended to the end.
 2026-11-09  0x0045b350  RwInitNullStub  C4->C4  file column only: Input/DirectInput.cpp -> Match/MatchS09_0045b350.cpp (PORT-TOP-04B..G: the matched source is the one body in both targets, the old TU holds none, rva-lint NEW=0); evidence: verify/portstate_20261109/RESULT_PORT-TRACKER-FILECOL.md
 2026-11-09  0x0042b930  MenuAlphaGet  C4->C4  file column only: Frontend/MenuGetters.cpp -> Match/MatchS07_0042b930.cpp (PORT-TOP-04B..G: the matched source is the one body in both targets, the old TU holds none, rva-lint NEW=0); evidence: verify/portstate_20261109/RESULT_PORT-TRACKER-FILECOL.md
 2026-11-09  0x004769d0  ParticleEmitter_SetVelocity  C4->C4  file column only: Render/RfxEmitter.cpp -> Match/MatchS12_004769d0.cpp (PORT-STATE-02: the matched source is the one body in both targets, the old TU holds none, rva-lint NEW=0); evidence: verify/portstate_20261109/RESULT_PORT-TRACKER-FILECOL.md
@@ -102,6 +112,16 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  0x00452f70  FUN_00452f70  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/00452f70.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x00454e40  FUN_00454e40  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/00454e40.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x00454e70  FUN_00454e70  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/00454e70.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x004576f0  FUN_004576f0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/004576f0.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x004583a0  FUN_004583a0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/004583a0.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x0045a6b0  FUN_0045a6b0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/0045a6b0.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x0045b810  FUN_0045b810  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/0045b810.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x0045b830  FUN_0045b830  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/0045b830.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x004b3fc0  FUN_004b3fc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/004b3fc0.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+2026-11-10  0x004b5560  FUN_004b5560  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/004b5560.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00404830  FUN_00404830  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: 13 fields -> 11 (the unquoted rtex notes text after "(generated from the decomp" returned inside the quoted notes cell, exe_file/port cells left empty for the backfills); evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
 2026-11-10  0x004464c0  CameraEntry::DispatchAll  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: 9 fields -> 11 (the missing empty exe_file/port cells added, notes unchanged); evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
 2026-11-10  0x0041f360  GatedSwitch636ad0  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: the notes text ", compiled by both targets (...); the standalone car set-up calls it" moved from the exe_file cell back into the notes cell; evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
