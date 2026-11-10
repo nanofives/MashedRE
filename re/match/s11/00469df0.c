@@ -70,19 +70,10 @@ typedef struct {
 MGLOBAL(EvQ_00469df0, DAT_007e9de0, 0x007e9de0);
 MGLOBAL(int, DAT_007f1030, 0x007f1030);
 MGLOBAL(int, DAT_00803320, 0x00803320);
-MGLOBAL(float, DAT_005d757c, 0x005d757c);
-MGLOBAL(float, DAT_005cc320, 0x005cc320);
-MGLOBAL(float, DAT_005cc32c, 0x005cc32c);
-MGLOBAL(float, DAT_005cc33c, 0x005cc33c);
-MGLOBAL(float, DAT_005cea50, 0x005cea50);
 MGLOBAL(float, DAT_005cc568, 0x005cc568);
 MGLOBAL(float, DAT_005ce194, 0x005ce194);
-MGLOBAL(float, DAT_005cea4c, 0x005cea4c);
-MGLOBAL(float, DAT_005cd50c, 0x005cd50c);
-MGLOBAL(float, DAT_005ce268, 0x005ce268);
-MGLOBAL(float, DAT_005cc328, 0x005cc328);
 int FUN_0040e350(void);
-void *FUN_004c39b0(V3_00469df0 *out, const V3_00469df0 *in);
+float FUN_004c39b0(V3_00469df0 *out, const V3_00469df0 *in);
 float FUN_004c3ac0(const V3_00469df0 *v);
 void *FUN_004c3df0(V3_00469df0 *out, const V3_00469df0 *in, int n, const void *m);
 void *FUN_004c4dc0(void *out, const Mat_00469df0 *m);
@@ -124,9 +115,9 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     cnt = 0;
     side[1] = 0;
     side[0] = 0;
-    sz = DAT_005d757c;
-    sy = DAT_005d757c;
-    sx = DAT_005d757c;
+    sz = 0.0f;
+    sy = 0.0f;
+    sx = 0.0f;
     do {
         c = a;
         if (k != 0) c = b;
@@ -174,10 +165,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[0].x;
         da.y = o->q[0].y;
         da.z = o->q[0].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
@@ -187,10 +178,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[1].x;
         da.y = o->q[1].y;
         da.z = o->q[1].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
@@ -200,10 +191,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[2].x;
         da.y = o->q[2].y;
         da.z = o->q[2].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
@@ -212,10 +203,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[3].x;
         da.y = o->q[3].y;
         da.z = o->q[3].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
@@ -223,45 +214,45 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         }
         k++;
     } while (k < 2);
-    if (cnt == 0) return 0;
-    inv = DAT_005cc320 / (float)cnt;
-    sx = inv * sx;
-    sy = inv * sy;
-    sz = inv * sz;
-    da.x = sx - pb->x;
-    da.y = sy - pb->y;
-    da.z = sz - pb->z;
+    if (cnt != 0) {
+    inv = 1.0f / (float)cnt;
+    n3.x = inv * sx;
+    n3.y = inv * sy;
+    n3.z = inv * sz;
+    da.x = n3.x - pb->x;
+    da.y = n3.y - pb->y;
+    da.z = n3.z - pb->z;
     ra = da;
     FUN_004c39b0(&da, &da);
-    db.x = sx - pa->x;
-    db.y = sy - pa->y;
-    db.z = sz - pa->z;
+    db.x = n3.x - pa->x;
+    db.y = n3.y - pa->y;
+    db.z = n3.z - pa->z;
     rb.v = db;
     FUN_004c39b0(&db, &db);
     vb = &b->vel;
     va = &a->vel;
-    ta.x = b->spin.x * DAT_005cea50 + b->vel.x;
+    ta.x = b->spin.x * 600.0f + b->vel.x;
     ib.z = 0.0f;
     ib.y = 0.0f;
     ib.x = 0.0f;
     ia.z = 0.0f;
     ia.y = 0.0f;
     ia.x = 0.0f;
-    ta.y = b->spin.y * DAT_005cea50 + b->vel.y;
-    ta.z = b->spin.z * DAT_005cea50 + b->vel.z;
-    tb.x = a->spin.x * DAT_005cea50 + a->vel.x;
-    tb.y = a->spin.y * DAT_005cea50 + a->vel.y;
-    tb.z = a->spin.z * DAT_005cea50 + a->vel.z;
+    ta.y = b->spin.y * 600.0f + b->vel.y;
+    ta.z = b->spin.z * 600.0f + b->vel.z;
+    tb.x = a->spin.x * 600.0f + a->vel.x;
+    tb.y = a->spin.y * 600.0f + a->vel.y;
+    tb.z = a->spin.z * 600.0f + a->vel.z;
     la = FUN_004c3ac0(&ta);
     lb = FUN_004c3ac0(&tb);
     dot = tb.z * ta.z + tb.x * ta.x + tb.y * ta.y;
-    if (la != DAT_005d757c) {
-        f = dot * (DAT_005cc320 / la);
-        if (lb != DAT_005d757c) f = f / lb;
-        f = -((DAT_005cc320 / la) * lb * f);
-        if (f > DAT_005d757c) f = DAT_005d757c;
-        else if (f < DAT_005cc33c) f = DAT_005cc33c;
-        f = f + DAT_005cc320;
+    if (la != 0.0f) {
+        f = dot * (1.0f / la);
+        if (lb != 0.0f) f = f / lb;
+        f = -((1.0f / la) * lb * f);
+        if (f > 0.0f) f = 0.0f;
+        else if (f < -1.0f) f = -1.0f;
+        f = f + 1.0f;
         n2.y = f * ta.y;
         n2.z = f * ta.z;
         ib.x = ta.x * f;
@@ -271,13 +262,13 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         ia.y = -n2.y;
         ia.z = -n2.z;
     }
-    if (lb != DAT_005d757c) {
-        f = dot * (DAT_005cc320 / lb);
-        if (la != DAT_005d757c) f = f / la;
-        f = -((DAT_005cc320 / lb) * la * f);
-        if (f > DAT_005d757c) f = DAT_005d757c;
-        else if (f < DAT_005cc33c) f = DAT_005cc33c;
-        f = f + DAT_005cc320;
+    if (lb != 0.0f) {
+        f = dot * (1.0f / lb);
+        if (la != 0.0f) f = f / la;
+        f = -((1.0f / lb) * la * f);
+        if (f > 0.0f) f = 0.0f;
+        else if (f < -1.0f) f = -1.0f;
+        f = f + 1.0f;
         n2.y = f * tb.y;
         n2.z = f * tb.z;
         ia.x = ia.x + tb.x * f;
@@ -287,18 +278,18 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         ib.y = ib.y - n2.y;
         ib.z = ib.z - n2.z;
     }
-    vb->x = ia.x * DAT_005cc32c + vb->x;
-    b->vel.y = ia.y * DAT_005cc32c + b->vel.y;
-    b->vel.z = ia.z * DAT_005cc32c + b->vel.z;
-    va->x = ib.x * DAT_005cc32c + va->x;
-    a->vel.y = ib.y * DAT_005cc32c + a->vel.y;
-    a->vel.z = ib.z * DAT_005cc32c + a->vel.z;
+    vb->x = ia.x * 0.5f + vb->x;
+    b->vel.y = ia.y * 0.5f + b->vel.y;
+    b->vel.z = ia.z * 0.5f + b->vel.z;
+    va->x = ib.x * 0.5f + va->x;
+    a->vel.y = ib.y * 0.5f + a->vel.y;
+    a->vel.z = ib.z * 0.5f + a->vel.z;
     h = FUN_004c3ac0(&ia);
     sum = FUN_004c3ac0(&ib) + h;
     if (DAT_00803320 < 3) h = DAT_005cc568;
     if (DAT_00803320 == 3 || DAT_00803320 == 4) h = DAT_005ce194;
-    imp = sum * DAT_005cea4c;
-    if (DAT_005cc320 < sum * DAT_005cea4c) imp = DAT_005cc320;
+    imp = sum * 2e-07f;
+    if (1.0f < sum * 2e-07f) imp = 1.0f;
     imp = imp * h;
     if (imp < DAT_005ce194) imp = 200.0f;
     FUN_004c39b0(&n0, vb);
@@ -311,7 +302,7 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     n1.z = n1.z - db.z;
     FUN_004c39b0(&n0, &n0);
     FUN_004c39b0(&n1, &n1);
-    f = imp * DAT_005cd50c;
+    f = imp * -0.5f;
     vb->x = vb->x - n0.x * f;
     b->vel.y = b->vel.y - n0.y * f;
     b->vel.z = b->vel.z - n0.z * f;
@@ -331,35 +322,35 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     FUN_004c4dc0(&inv_m, &a->mat[a->f9ac]);
     FUN_004c3df0(&db, &rb.v, 1, &inv_m);
     f = imp;
-    if (da.x < DAT_005d757c) {
-        if (da.z < DAT_005d757c) f = -imp;
+    if (da.x < 0.0f) {
+        if (da.z < 0.0f) f = -imp;
     } else {
-        if (da.z > DAT_005d757c) f = -imp;
+        if (da.z > 0.0f) f = -imp;
     }
     if (b->f010 == 0) {
-        b->spin.y = f * DAT_005ce268 + b->spin.y;
+        b->spin.y = f * 0.0005f + b->spin.y;
     } else {
-        f = f * DAT_005cc328;
+        f = f * 0.01f;
         b->f9bc = 0.0f;
         b->f9c4 = 0.0f;
         b->f9c0 = f;
     }
-    if (db.x < DAT_005d757c) {
-        if (db.z < DAT_005d757c) imp = -imp;
+    if (db.x < 0.0f) {
+        if (db.z < 0.0f) imp = -imp;
     } else {
-        if (db.z > DAT_005d757c) imp = -imp;
+        if (db.z > 0.0f) imp = -imp;
     }
     if (a->f010 == 0) {
-        a->spin.y = imp * DAT_005ce268 + a->spin.y;
+        a->spin.y = imp * 0.0005f + a->spin.y;
     } else {
-        imp = imp * DAT_005cc328;
+        imp = imp * 0.01f;
         a->f9bc = 0.0f;
         a->f9c4 = 0.0f;
         a->f9c0 = imp;
     }
-    rb.ev[0] = sx;
-    rb.ev[1] = sy;
-    rb.ev[2] = sz;
+    rb.ev[0] = n3.x;
+    rb.ev[1] = n3.y;
+    rb.ev[2] = n3.z;
     diff = side[0] != side[1];
     if (side[0] >= side[1]) {
         wa = b->f000;
@@ -411,6 +402,8 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     DAT_007e9de0.count++;
     if (DAT_007e9de0.count >= 0x100) DAT_007e9de0.count = 0;
     return p3 == 0;
+    }
+    return 0;
 }
 
 #ifndef MATCH_PORT
