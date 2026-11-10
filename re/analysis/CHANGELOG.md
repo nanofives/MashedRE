@@ -10,7 +10,7 @@ complete against the repo's history. Trying to be both is what made it drift twi
 per-lane docs plus `git log` cover the other half.
 
 **Ordering: NEWEST FIRST.** One entry per line, starting `YYYY-MM-DD`. New entries are
-**prepended immediately below the `<!-- ENTRIES -->`2026-11-10  0x004b5560  FUN_004b5560  (none)->C1  added (POWERUPINIT-B): RpClumpForAllAtomics callback pushed by 0x004b5580 (push 0x4b5560 at 0x004b5589); calls 0x004b5260 (render) and returns its first argument; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
+**prepended immediately below the `<!-- ENTRIES -->` marker**, never appended to the end.
 2026-11-10  0x00452f70  FUN_00452f70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 8 of 0x005f9998 (+0x14 pointer at 0x005f9bac, the only xref); strings smoke / mortar.dff / MortarRound.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e40  FUN_00454e40  (none)->C1  added (POWERUPINIT-B): tail-jump target of 0x00454e70 (jmp at 0x00454f65) and of 0x00454f70; loops 0x00454bd0 (ESI) over 4 x 0x14 at 0x00688358 and 0x00454c00 (EAX) over 4 x 0x18 at 0x006882f8; callees filed render; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e70  FUN_00454e70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 6 of 0x005f9998 (+0x14 pointer at 0x005f9b2c, the only xref); strings flashunit.dff / lensflare-fs8; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
@@ -20,7 +20,7 @@ per-lane docs plus `git log` cover the other half.
 2026-11-10  0x0045a6b0  FUN_0045a6b0  (none)->C1  added (POWERUPINIT-B): type-table init, slot 4 of 0x005f9998 (+0x14 pointer at 0x005f9aac, the only xref); strings FlameThrower.dff / exp_cloud2; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x0045b810  FUN_0045b810  (none)->C1  added (POWERUPINIT-B): tail-jump target of 0x0045b830 (jmp at 0x0045b918) and of 0x0045b920; loops 0x0045b360 (ESI) over 4 x 0x24 at 0x0068d158; callee filed gameplay; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x0045b830  FUN_0045b830  (none)->C1  added (POWERUPINIT-B): type-table init, slot 5 of 0x005f9998 (+0x14 pointer at 0x005f9aec, the only xref); string shotgun.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
- marker**, never appended to the end.
+2026-11-10  0x004b5560  FUN_004b5560  (none)->C1  added (POWERUPINIT-B): RpClumpForAllAtomics callback pushed by 0x004b5580 (push 0x4b5560 at 0x004b5589); calls 0x004b5260 (render) and returns its first argument; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-09  0x0045b350  RwInitNullStub  C4->C4  file column only: Input/DirectInput.cpp -> Match/MatchS09_0045b350.cpp (PORT-TOP-04B..G: the matched source is the one body in both targets, the old TU holds none, rva-lint NEW=0); evidence: verify/portstate_20261109/RESULT_PORT-TRACKER-FILECOL.md
 2026-11-09  0x0042b930  MenuAlphaGet  C4->C4  file column only: Frontend/MenuGetters.cpp -> Match/MatchS07_0042b930.cpp (PORT-TOP-04B..G: the matched source is the one body in both targets, the old TU holds none, rva-lint NEW=0); evidence: verify/portstate_20261109/RESULT_PORT-TRACKER-FILECOL.md
 2026-11-09  0x004769d0  ParticleEmitter_SetVelocity  C4->C4  file column only: Render/RfxEmitter.cpp -> Match/MatchS12_004769d0.cpp (PORT-STATE-02: the matched source is the one body in both targets, the old TU holds none, rva-lint NEW=0); evidence: verify/portstate_20261109/RESULT_PORT-TRACKER-FILECOL.md
@@ -112,6 +112,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  0x004b3fc0  FUN_004b3fc0  C4->C4  refiled third-party-library[msvc-crt-main] -> render (L-116), status waived-platform-crt -> mapped (out of the L-67 band waiver; game RpClump walker, calls 0x004e66d0 with callback 0x004b3f20); c4=match re/match/s29/004b3fc0.c byte-identical + relocheck OK; also repaired line 13 of this header, which the POWERUPINIT-B insert had split; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00452f70  FUN_00452f70  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/00452f70.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e40  FUN_00454e40  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/00454e40.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e70  FUN_00454e70  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/00454e70.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
