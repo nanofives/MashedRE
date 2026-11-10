@@ -2,8 +2,10 @@
 
 L2 worker `cmwb3bps015lwsc1bjg9b2bc5` for lead `cmw7xu1960f37p41557tefpnd`. Branch `orch/POWERUPINIT-C`. It was cut from `orch/POWERUPINIT-B` `386cd1e6b`, then rebased onto `orch/integration`
 `3f1efb22b` once POWERUPINIT-B, PORT-OT-TRIPOOL and REFILE-4B3FC0 had merged. Every measurement below is on the rebased
-tree. The first pass, on the pre-rebase tree (exe `737cf5a6…`), gave the same verdicts. Its files are in
-`D:/MashedWT/POWERUPINIT-C_data/pre_rebase/`. The BINDINGS updater chains after `update_bindings_tripool.py`.
+tree. This tree also carries the lead-review fixes (0x004b3f20 matched, 0x0045a3a0 a stand-in). Two earlier passes gave the
+same verdicts, and their files are kept:
+- the pre-rebase tree (exe `737cf5a6…`), in `D:/MashedWT/POWERUPINIT-C_data/pre_rebase/`
+- the rebased tree before the fixes (exe `f44a08df…`), in `rebase1/` The BINDINGS updater chains after `update_bindings_tripool.py`.
 
 ## What changed
 
@@ -31,9 +33,9 @@ Callees, all bound by name, with no raw-address call:
 | 0x0045b810 (tail of 0x0045b830) | `Orig_0045b810`, static 0x0045b360 | matched | new Match/PortTop_0045b810.cpp = re/match/s29/0045b810.c |
 | 0x00458360 (from 0x004583a0) | `Orig_00458360`, statics 0x00458020 / 0x00457ba0 | matched | new Match/PortTop_00458360.cpp = re/match/s09/00458360.c |
 | 0x004b3fc0 | `Orig_004b3fc0` | matched | new Match/PortTop_004b3fc0.cpp = re/match/s29/004b3fc0.c |
-| 0x004b3f20 (its callback) | `PortTop_004b3fc0_Cb004b3f20` | port (exe-only copy) | same TU, written from the disassembly 0x004b3f20..0x004b3f41: no Ghidra function, no row, no source |
+| 0x004b3f20 (its callback) | `Orig_004b3f20` | matched | new Match/PortTop_004b3f20.cpp = re/match/s29/004b3f20.c (this row: BYTE-IDENTICAL 34 B, relocheck OK, C4 by match) |
 | 0x004b5240 | `Orig_004b5240` | matched | new Match/PortTop_004b5240.cpp = re/match/s18/004b5240.c |
-| 0x0045a3a0 | `PortTop_0045a3a0_Copy` | port (exe-only copy) | new Match/PortTop_0045a3a0.cpp = re/match/s09/0045a3a0.c at 81.0% (register-allocation residual only) |
+| 0x0045a3a0 | `PortTop_PWI_StandIn_0045a3a0` | stand-in | Match/PortTop_0045a6b0.cpp (section "0x0045a3a0 and L-115" below) |
 | 0x0040cda0 | `PortTop_PWI_StandIn_0040cda0` | stand-in | Match/PortTop_004576f0.cpp |
 | 0x004e6ab0 RpClumpClone | `MashedRw_ClumpClone_004e6ab0` | bound | LibRw/RwApiBind.cpp: rw::Clump::clone |
 | 0x004e4800 | `MashedRw_ClumpGetWorld_004e4800` | bound | rw::Clump::world |
@@ -92,10 +94,63 @@ Nothing new on this path. 0x0045b930 calls the +0x18 slots (`PTR_FUN_005f99b0`),
 per-type update) is uncalled. The clones are never added to a world and never destroyed. That is the same lifetime as
 the 0x00459290 lazer clones in POWERUPINIT-A.
 
+### 0x004b3f20 matched (lead review, L0 correction)
+
+The first commit ran an exe-only copy of the callback written from the disassembly. L0 does not allow a hand body on
+the knob path, so the callback was byte-matched instead:
+- **Source:** `re/match/s29/004b3f20.c`. Both context words are loaded into locals before the branch.
+- **match.py --bytes:** 100.0%, 15/15 instructions, 34 B BYTE-IDENTICAL.
+- **relocheck:** OK 0/0.
+- **pc_funcs.csv:** already held the 34 B extent (0x004b3f20..0x004b3f41).
+- **hooks.csv:** row added at C1 through re-classify (`render`, as its caller 0x004b3fc0 after REFILE-4B3FC0), then
+  `c4_reclass.py batch --apply --strict --result` this file: 1 pass, C1 -> C4.
+- **Exe:** Match/PortTop_004b3f20.cpp compiles it as `Orig_004b3f20`, and 0x004b3fc0 binds its callback to it.
+
+### 0x0045a3a0 and L-115
+
+0x0045a3a0 runs on this path: the matched 0x0045a6b0 calls it once per flame record. Both boots log 4 calls, the first
+on record 0x0068BC98 (knob_on_1.log:423).
+
+1. **Byte match:** not reached. Best 81.0% (re/match/s09/0045a3a0.c, regs 90.5%). POWERUPINIT-B tried 9 forms this
+   week, listed in its RESULT, and the s09 header lists the earlier ones.
+2. **L-115 proof of the residual (a new class, register choice; for L0 / Mariano, NOT applied).** The whole diff of
+   match.py --show, ours on the left, the original with addresses on the right:
+   ```
+      !                                       | 0x0045a3a1 push ebp
+      !                                       | 0x0045a3a2 mov ebp, dword ptr [esp + 0xc]
+      ! lea ebx, [ebx]                        | 0x0045a3ad nop        (loop-head padding, both no-ops)
+      ! mov eax, dword ptr [esp + 0x10]       |
+      ! mov dword ptr [eax], ecx              | 0x0045a400 mov dword ptr [ebp], ecx
+      ! mov dword ptr [eax + 0x14], ecx       | 0x0045a403 mov dword ptr [ebp + 0x14], ecx
+      ! mov dword ptr [eax + 0x18], ecx       | 0x0045a406 mov dword ptr [ebp + 0x18], ecx
+      ! mov dword ptr [eax + 0xc], 0x3f800000 | 0x0045a409 mov dword ptr [ebp + 0xc], 0x3f800000
+      !                                       | 0x0045a410 pop ebp
+   ```
+   - **Same pointer.** Both read the same stack word. The original reads param_1 at entry: [esp+0xc] after push ebx and
+     push ebp is entry+4. Ours reads it after the loop: [esp+0x10] after push ebx, esi, edi is entry+4. In
+     0x0045a3a6..0x0045a3fe the original writes EBP nowhere, and no instruction in the body writes the stack: the loop's
+     only stores go through EAX, derived from the constant 0x0068d76c (the global table). So the slot still holds
+     param_1 when ours reads it.
+   - **Same stores.** Same four, in the same order, with the same values (ECX = 0 from `xor ecx, ecx`, and the
+     immediate 0x3f800000).
+   - **Registers on return.** EBP is saved and restored by the original and untouched by ours, so it is equal on return.
+     EAX is not a return value (void) and is caller-saved scratch in cdecl.
+   - **Not observable.** The only other difference is the 4-byte saved-EBP push below ESP, which no caller can see.
+
+   This class (register choice for a reloaded argument) is not one L-115 admits today (only SIB base/index order is).
+   So the exe runs the stand-in, and the proof goes to L0.
+3. **Stand-in:** `PortTop_PWI_StandIn_0045a3a0` in Match/PortTop_0045a6b0.cpp logs and returns. What it leaves undone:
+   - Zeroing fields 0..6, 8, 11 and 12 of the 4 x 5 x 5 0x34-byte table at 0x0068bd00..0x0068d150. The pad starts
+     zero-filled, and no exe code writes that range.
+   - Record +0x00 / +0x14 / +0x18 = 0, which is already the pad's 0.
+   - Record +0x0c = 1.0f, which stays 0. The only reader on this path would be the per-type update 0x0045bba0, which is
+     uncalled.
+   Match/PortTop_0045a3a0.cpp (the 81% copy) is deleted and out of exe_sources.rsp.
+
 ## rva-lint
 
 - One new ORIGTOP-ONLY pair: CROSS-TARGET 0x004b5240 (exe-only Match/PortTop_004b5240.cpp vs asi-only
-  Util/PromoLoop_sessionB.cpp), allowlisted with the tag. All 13 new TUs carry `// RVA-LINT: ORIGTOP-ONLY`.
+  Util/PromoLoop_sessionB.cpp), allowlisted with the tag. All 13 new TUs (Match/PortTop_004b3f20.cpp in, the 0x0045a3a0 copy out) carry `// RVA-LINT: ORIGTOP-ONLY`.
 - The first lint run also flagged DUP-IN-TARGET 0x00457ba0. It was a false call-through hit from a comment line in
   RwApiBind.cpp that started `// 0x00457ba0 ...` above the 0x004e4800 binding; the comment was reworded.
 - Final: `35 known, NEW=0`, `ORIGTOP-ONLY=33 (46 marked TU(s))`, OK.
@@ -113,9 +168,9 @@ Machine rules:
 | check | result |
 |---|---|
 | syntax | `cl /Zs /EHa /W3 /O2 /std:c++17 /DMASHED_STANDALONE` on the 13 new and 2 edited TUs: no error |
-| build (`MASHED_NO_DEPLOY=1`) | `=== Build OK ===`, `[skip] MASHED_NO_DEPLOY set: mashed_re_dev.asi NOT deployed`. mashed_re.exe sha256 `f44a08dfb68d429d703c7a364e9e04781a76ed6ce981d1b967c5968c0297d400` |
-| knob-ON boot, RWMOD off (`knob_boot.py knob_on_1 <root> 300 MASHED_ORIG_TOP=1 MASHED_DET_FRAMES=3000`) | `exited rc=0 (0x00000000) after 47.6 s`, :1206 `WinMain 0x00492370 returned 0 after 3000 frames`. :375 entry 0 first clone `108D1658`, :419 entry 3 `108D12D8`, :431 entry 4 `108D1FF8`, :454 entry 5 `108D1C40`, :462 entry 6 `108D1930`, :476 entry 7 `108D19D8`, :551 entry 8 `108D22D0`. :376-377 entries 1, 2 stand-ins. Four 0x0040cda0 stand-in calls, 0 trap lines, 0 part-code -1 lines. A's lines unchanged: :785 0x00412010 matched (6, 6), :793 0x00458880 matched (0, 0), :828 0x004593b0 stand-in (RWMOD off) |
-| knob-ON boot, RWMOD on (+ `MASHED_ORIG_TOP_RWMOD=1`) | `exited rc=0 (0x00000000) after 41.2 s`, :1220 `returned 0 after 3000 frames`. :380-556 the same seven matched entries, :833 `0x004593b0: matched body (RWMOD on)` |
+| build (`MASHED_NO_DEPLOY=1`) | `=== Build OK ===`, `[skip] MASHED_NO_DEPLOY set: mashed_re_dev.asi NOT deployed`. mashed_re.exe sha256 `70c97e79be3132760c5ad80fd1c53afd1ee15419482fd6e7bfd5c976ec0c2056` |
+| knob-ON boot, RWMOD off (`knob_boot.py knob_on_1 <root> 300 MASHED_ORIG_TOP=1 MASHED_DET_FRAMES=3000`) | `exited rc=0 (0x00000000) after 51.9 s`, :1210 `WinMain 0x00492370 returned 0 after 3000 frames`. Seven `matched body returned` lines, :375 entry 0 through :555 entry 8. :376-377 entries 1, 2 stand-ins. Four 0x0040cda0 and four 0x0045a3a0 stand-in calls (first at :423), 0 trap lines, 0 part-code -1 lines. A's lines unchanged: :789 0x00412010 matched (6, 6), :797 0x00458880 matched (0, 0), :832 0x004593b0 stand-in (RWMOD off) |
+| knob-ON boot, RWMOD on (+ `MASHED_ORIG_TOP_RWMOD=1`) | `exited rc=0 (0x00000000) after 51.7 s`, :1224 `returned 0 after 3000 frames`. :380-560 the same seven matched entries, :837 `0x004593b0: matched body (RWMOD on) (1, 0)`, the same counts as POWERUPINIT-A's run |
 | 12 captures, RWMOD off (`CAPFLAKE_DATA=<data> CAPFLAKE_ROOT=<root> capflake_runs.py nav1 OFF@dflt ON@dflt OFF@dflt ON@dflt`) | 4/4 `rc=0 pinned pos=55 hash=28538c74 class=E eqE=12`. Both ON logs: 7 `matched body returned`, `WinMain returned 0 after 578 frames` |
 | 12 captures, RWMOD on (arm `nav_rwmod`, `MASHED_ORIG_TOP_RWMOD=1`) | 4/4 `rc=0 pinned pos=55 hash=28538c74 class=E eqE=12`, both ON logs 7 matched |
 | walk_04 | `ba34030d1b7e2fe4` in all 8 rows. No capture moved (eqE=12 everywhere). runs.tsv is byte-identical to POWERUPINIT-A's (sha256 f560646e…) |
@@ -134,36 +189,36 @@ TUs. The unchanged G-CTRL and B gates are consistent with that.
 PORT-OT-TRIPOOL), which reproduces the integration file's 481 rows. Then it writes this row's 23 rows:
 - The seven inits: stand-in -> matched.
 - 0x004548e0 / 0x00455400: stand-in, with the new reasons.
-- Matched: 0x00454e40, 0x0045b810, 0x00458360, 0x004b3fc0, 0x004b5240.
-- Port: 0x004b3f20, 0x0045a3a0.
-- Stand-in: 0x0040cda0.
+- Matched: 0x00454e40, 0x0045b810, 0x00458360, 0x004b3fc0, 0x004b3f20, 0x004b5240.
+- Stand-in: 0x0040cda0, 0x0045a3a0.
 - Bound: 0x004e6ab0, 0x004e4800, 0x004b5190, 0x004b52f0, 0x004c13e0, 0x004c0ed0.
 
-Result: 481 -> 494 rows; matched 224 -> 236, stand-in 70 -> 64, port 45 -> 47, bound 43 -> 49, rw 30 -> 29.
+Result: 481 -> 494 rows; matched 224 -> 237, stand-in 70 -> 65, port 45 -> 45, bound 43 -> 49, rw 30 -> 29. This row adds no port (hand-body) row.
 
 `backfill_exe_file.py`: 16 rows given an exe_file, none with more than one TU. Then `backfill_port.py` on this build:
-`none=5099 body=553 called=515`, 18 rows changed.
+`none=5100 body=553 called=515`. 18 rows differ from orch/integration.
 - none / empty -> called: 0x00452f70, 0x00454e40, 0x00454e70, 0x00456760, 0x004576f0, 0x00457ba0, 0x00458020, 0x00458360,
-  0x004583a0, 0x0045a3a0, 0x0045a6b0, 0x0045b810, 0x0045b830, 0x004b3fc0, 0x004b5240.
+  0x004583a0, 0x0045a6b0, 0x0045b810, 0x0045b830, 0x004b3fc0, 0x004b3f20 (new row), 0x004b5240.
+- 0x0045a3a0 stays none (stand-in).
 - none -> body: 0x00458080 (compiled, not called).
 - empty -> none: 0x00455400, 0x004b5560 (rows added by POWERUPINIT-B).
 
 The statics 0x00454bd0 / 0x00454c00 / 0x0045b360 keep their port value. Their copies in the s29 sources carry no
 `// MATCH:` line, because their MATCH lines live in s09.
 
-## Raw files (D:/MashedWT/POWERUPINIT-C_data, rebased tree, not committed)
+## Raw files (D:/MashedWT/POWERUPINIT-C_data, final tree, not committed)
 
 | file | sha256 |
 |---|---|
-| build.log | e21cec1f0a605b577757f1f618b2393ccc72b9f1072a0ff965bf18226f591198 |
-| mashed_re.exe (copy of the measured build) | f44a08dfb68d429d703c7a364e9e04781a76ed6ce981d1b967c5968c0297d400 |
-| knob_on_1.log / .stdout | be4a021f855e9a196e5d206a1875ecb48e8ce5697b976b8c44fa7922490cf861 / 847766db37c42f37d675edbc3784f5d48a0172e6315db4fd8277e451934248a7 |
-| knob_on_rwmod.log / .stdout | bd3e0dbbed0eec3362381717471458e21e3ae86afccef0370f38aae7f420d1bd / f7ef3f6a14958fa7d6fc0cd307649ad8998c04bb6d1e25acb98370defdae81fb |
+| build.log | 2dae2c521918129d… |
+| mashed_re.exe (copy of the measured build) | 70c97e79be3132760c5ad80fd1c53afd1ee15419482fd6e7bfd5c976ec0c2056 |
+| knob_on_1.log / .stdout | 3bd6213ec34dbf1a… / 5b760406e667df9f… |
+| knob_on_rwmod.log / .stdout | 2f3db6a69a242e3a… / e3386eb0c8916556… |
 | runs.tsv | f560646e9825f27b38517ec0c4d851cd17931fc8944763b7fbaa1d1204796438 |
-| capflake_nav1.stdout / capflake_rwmod.stdout | 939ebed395cd75fe44d28669a415491d557b2bc1df379fec29b60227e9da9ed2 / c4a88299db4e9353869d1c81a2bb0474bc16c4e4e3b541b1ff11409322ae2b7a |
-| nav1/r01..r04 logs | 86528224… / c9e0fd28… / ff5e96d9… / 21cdd4b2… |
-| nav_rwmod/r01..r04 logs | 479c2f2b… / a625a27d… / 1883683b… / 70bfdcbf… |
-| arms.stdout | 4a7bdc573fb61217b9c65a5fc366ac723bd0bcc540b71b8e7f08f1e50687edf5 |
+| capflake_nav1.stdout / capflake_rwmod.stdout | 7b8505af404f4661… / 3b599ee0dc17cb96… |
+| nav1/r01..r04 logs | 106cde62… / 37f226a0… / 47c6ad87… / d90076ee… |
+| nav_rwmod/r01..r04 logs | 0cc13b95… / b0980c19… / cac44f3e… / a1f3e70d… |
+| arms.stdout | c963046039b688ef… |
 | arms/H_DEF.step.csv / gates.csv / ptrace.log | 8284be46… / 67931834… / 31fe043e… |
 | arms/B_DEF_K0, K1, K26 .step.csv | 1d5bf4f9… (all three) |
 
@@ -171,6 +226,6 @@ The statics 0x00454bd0 / 0x00454c00 / 0x0045b360 keep their port value. Their co
 
 - **POWERUPINIT-D1:** entry 1 (0x004548e0), librw bindings for RpAtomicClone / RpAtomicSetFrame / RwFrameAddChild on
   the 0x004b3f90 view's atom, plus the 0x004548a0 tree.
-- **POWERUPINIT-B2:** entry 2 (0x00455400, 94.0%) and 0x0045a3a0 (81.0%). When 0x0045a3a0 matches, its BINDINGS row
-  moves from port to matched.
+- **POWERUPINIT-B2:** entry 2 (0x00455400, 94.0%) and 0x0045a3a0 (81.0%). 0x0045a3a0 moves from stand-in to matched when it
+  byte-matches, or earlier if L0 admits the register-choice class (proof above).
 - **0x0040bb10:** match the 0x0040cda0 callback, which retires the entry 7 stand-in (it also needs the 0x004672d0 camera).

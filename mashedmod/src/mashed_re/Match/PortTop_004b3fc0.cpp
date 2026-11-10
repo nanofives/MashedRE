@@ -5,24 +5,16 @@
 // Callees bind by name, no raw-address call:
 //  - 0x004e66d0 RpClumpForAllAtomics = MashedRw_ClumpForAllAtomics_004e66d0 (LibRw/RwApiBind.cpp: librw atomics in RW
 //    order), through the call-through below.
-//  - 0x004b3f20 (the callback; no Ghidra function, no hooks.csv row, no matched source) = the exe-only copy
-//    PortTop_004b3fc0_Cb004b3f20 below, written from the disassembly 0x004b3f20..0x004b3f41 (capstone on
-//    MASHED.exe.unpatched): ecx = context +0x04 (the count pointer), edx = context +0x00 (the out array); when the out
-//    array is non-zero, out[*count] = atomic; then ++*count either way; returns the atomic.
+//  - 0x004b3f20 (the callback) = Orig_004b3f20 (Match/PortTop_004b3f20.cpp = re/match/s29/004b3f20.c, BYTE-IDENTICAL).
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_004b3fc0 Orig_004b3fc0
-#define FUN_004b3f20 PortTop_004b3fc0_Cb004b3f20
+#define FUN_004b3f20 Orig_004b3f20
 #define FUN_004e66d0 PortTop_004b3fc0_Call004e66d0
 extern "C" {
 #include "../../../../re/match/s29/004b3fc0.c"
 int MashedRw_ClumpForAllAtomics_004e66d0(int clump, int cb, int data);
-void *PortTop_004b3fc0_Cb004b3f20(void *atomic, Ctx004b3fc0 *ctx) {
-    if (ctx->out != 0) ctx->out[*ctx->count] = atomic;
-    ++*ctx->count;
-    return atomic;
-}
 // RpClumpForAllAtomics call-through (not a body): the source's typed arguments as the binding's ints.
 void *PortTop_004b3fc0_Call004e66d0(void *clump, void *(*cb)(void *, Ctx004b3fc0 *), void *data) {
     return reinterpret_cast<void *>(static_cast<unsigned long>(static_cast<unsigned>(MashedRw_ClumpForAllAtomics_004e66d0(

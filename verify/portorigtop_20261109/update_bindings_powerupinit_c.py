@@ -57,15 +57,16 @@ FIXED = {  # rva -> (name or None, kind, symbol, note, level, caller)
                  '0x00458020 / 0x00457ba0; the uncalled 0x00458080 / 0x004582f0 callees bind to logging traps)' + EV,
                  4, 0x004583a0),
     0x004b3fc0: (None, 'matched', 'Orig_004b3fc0', T + 'Match/PortTop_004b3fc0.cpp = re/match/s29/004b3fc0.c; '
-                 'RpClumpForAllAtomics -> MashedRw_ClumpForAllAtomics_004e66d0, callback 0x004b3f20 -> the exe-only copy '
-                 'PortTop_004b3fc0_Cb004b3f20 (no source; from the disassembly)' + EV, 4, 0x00456760),
-    0x004b3f20: (None, 'port', 'PortTop_004b3fc0_Cb004b3f20', T + 'Match/PortTop_004b3fc0.cpp: exe-only copy of the '
-                 'RpClumpForAllAtomics callback (no Ghidra function, no hooks.csv row, no matched source), written from the '
-                 'disassembly 0x004b3f20..0x004b3f41' + EV, 5, 0x004b3fc0),
+                 'RpClumpForAllAtomics -> MashedRw_ClumpForAllAtomics_004e66d0, callback 0x004b3f20 -> Orig_004b3f20' + EV,
+                 4, 0x00456760),
+    0x004b3f20: (None, 'matched', 'Orig_004b3f20', T + 'Match/PortTop_004b3f20.cpp = re/match/s29/004b3f20.c (BYTE-IDENTICAL '
+                 '34 B, relocheck OK, C4 by match): the RpClumpForAllAtomics callback of 0x004b3fc0' + EV, 5, 0x004b3fc0),
     0x004b5240: (None, 'matched', 'Orig_004b5240', T + 'Match/PortTop_004b5240.cpp = re/match/s18/004b5240.c: atomic +0x02 '
                  'bit 0x04 = rw::Object::flags / rw::Atomic::RENDER on the librw atomic' + EV, 4, 0x004583a0),
-    0x0045a3a0: (None, 'port', 'PortTop_0045a3a0_Copy', T + 'Match/PortTop_0045a3a0.cpp: the s09 source at 81.0% (register '
-                 'allocation residual only), not a byte match' + EV, 4, 0x0045a6b0),
+    0x0045a3a0: (None, 'stand-in', 'PortTop_PWI_StandIn_0045a3a0', T + 'Match/PortTop_0045a6b0.cpp (logs, does nothing): '
+                 're/match/s09/0045a3a0.c is 81.0%, residual register allocation, not SIB order, so L-115 does not admit it. '
+                 'Left undone: the 0x0068bd00 table zeroing (pad zero) and record +0x0c = 1.0f; no reader on this path' + EV,
+                 4, 0x0045a6b0),
     0x0040cda0: (None, 'stand-in', 'PortTop_PWI_StandIn_0040cda0', T + 'Match/PortTop_004576f0.cpp (logs, does nothing): '
                  'matched source re/match/s02/0040cda0.c, but its RpClumpForAllAtomics callback 0x0040bb10 has no matched '
                  'source' + EV, 4, 0x004576f0),
