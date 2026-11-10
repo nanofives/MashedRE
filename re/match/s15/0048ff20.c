@@ -31,7 +31,13 @@ typedef struct Slot_48ff20 {
     int rest[17];      /* +0x0c */
 } Slot_48ff20;
 MGLOBALA(Slot_48ff20, DAT_0086a4a0, 30, 0x0086a4a0);
+#ifndef MATCH_PORT
 MGLOBALA(char, s_Tri_dff_005cf4f8, 8, 0x005cf4f8);
+#else
+/* port: the exe does not load the original .rdata (its image pad reads 0), so the string is a copy of the 8 bytes
+   at 0x005cf4f8 in MASHED.exe.unpatched (PORT-OT-TRIPOOL) */
+static char s_Tri_dff_005cf4f8[8] = "Tri.dff";
+#endif
 void FUN_004b6520(char *buf, int n);
 void FUN_004b65a0(void);
 int FUN_004b65b0(char *name);

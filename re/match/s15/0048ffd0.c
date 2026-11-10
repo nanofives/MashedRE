@@ -25,7 +25,12 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 MGLOBAL(undefined4, DAT_0086a4a4, 0x0086a4a4);
+#ifndef MATCH_PORT
 int * FUN_004e8090(int * p0, int p1);
+#else
+/* port (PORT-OT-TRIPOOL): the call passes the slot word, so the port prototype takes it as is */
+int * FUN_004e8090(undefined4 p0, int p1);
+#endif
 undefined4 FUN_004e6e00(int p0);
 // MATCH: 0x0048ffd0 FUN_0048ffd0
 void FUN_0048ffd0(void)

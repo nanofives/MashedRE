@@ -102,6 +102,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  U-4034  UNCERTAINTIES  Active->struck  0x0048fed0 is the RpClumpForAllAtomics callback of 0x0048ff20 (store atomic at data+0x08 at 0x0048fed8, return it), matched BYTE-IDENTICAL 12 B as re/match/s15/0048fed0.c and C4 (evidence: verify/portorigtop_20261109/RESULT_PORT-OT-TRIPOOL.md)
+2026-11-10  0x0048fed0  FUN_0048fed0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fed0.c; evidence: verify/portorigtop_20261109/RESULT_PORT-OT-TRIPOOL.md
+2026-11-10  0x0048fee0  FUN_0048fee0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048fee0.c; evidence: verify/portorigtop_20261109/RESULT_PORT-OT-TRIPOOL.md
 2026-11-10  0x00404830  FUN_00404830  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: 13 fields -> 11 (the unquoted rtex notes text after "(generated from the decomp" returned inside the quoted notes cell, exe_file/port cells left empty for the backfills); evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
 2026-11-10  0x004464c0  CameraEntry::DispatchAll  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: 9 fields -> 11 (the missing empty exe_file/port cells added, notes unchanged); evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
 2026-11-10  0x0041f360  GatedSwitch636ad0  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: the notes text ", compiled by both targets (...); the standalone car set-up calls it" moved from the exe_file cell back into the notes cell; evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md

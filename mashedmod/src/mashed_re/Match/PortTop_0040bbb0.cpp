@@ -134,6 +134,8 @@ int PortTop_StandIn04G_004b3d20(char* p0) {
 #define FUN_0048a460 Orig_0048a460                       // matched, Match/PortTop_0048a460.cpp, since PORT-OT-OTHER
 #undef FUN_0048a830
 #define FUN_0048a830 Orig_0048a830                       // matched, Match/PortTop_0048a830.cpp, since PORT-OT-OTHER-2
+#undef FUN_0048ff20
+#define FUN_0048ff20 PortTop_TriPool_Call0048ff20        // matched, Match/PortTop_0048ff20.cpp, since PORT-OT-TRIPOOL
 extern "C" {
 #include "../../../../re/match/s02/0040bbb0.c"
 }

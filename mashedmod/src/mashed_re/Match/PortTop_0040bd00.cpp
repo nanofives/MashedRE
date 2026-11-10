@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_0040bd00 Orig_0040bd00
 #define FUN_0048bc10 Orig_0048bc10   // matched, Match/PortTop_0048bc10.cpp (sun texture release), since PORT-TOP-04H
-#define FUN_0048ffd0 PortTop_StandIn04C_0048ffd0   // stand-in: matched, not compiled (level 2)
+#define FUN_0048ffd0 PortTop_TriPool_Call0048ffd0   // matched, Match/PortTop_0048ffd0.cpp (runs when 0x0048ff20 built the 30 slots), since PORT-OT-TRIPOOL
 #define FUN_00477870 PortTop_StandIn04C_00477870   // stand-in: matched in group s12/00477580.c, not compiled (level 2)
 #define FUN_00475ea0 Orig_00475ea0   // matched, Match/PortTop_00475ea0.cpp, since PORT-OT-RENDER
 #define FUN_00475d90 Orig_00475d90   // matched, Match/PortTop_00475d90.cpp, since PORT-OT-RENDER-2

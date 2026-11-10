@@ -7,7 +7,7 @@
 
 #define MATCH_PORT 1
 #define FUN_0040cfd0 Orig_0040cfd0
-#define FUN_00490000 PortTop_StandIn04C_00490000   // stand-in: matched, not compiled (level 2)
+#define FUN_00490000 PortTop_TriPool_Call00490000   // matched, Match/PortTop_00490000.cpp (runs when 0x0048ff20 built the 30 slots), since PORT-OT-TRIPOOL
 #define FUN_0045bed0 PortTop_StandIn04C_0045bed0   // stand-in: matched, not compiled (level 2)
 #define FUN_0045bf30 PortTop_StandIn04C_0045bf30   // stand-in: matched in group s10/0045bae0.c, not compiled (level 2)
 #define FUN_00426c00 GameStateFlagGet   // exe body, Match/MatchS06_00426c00.cpp
