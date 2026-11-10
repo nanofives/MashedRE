@@ -1,0 +1,76 @@
+group	rows	reached	blockers	head	head_shape	n_def	n_top	lint_clean	seed_clean	rvas
+third-party-library_RenderWare-Physics-3.7_-001	6	no	DUP:1,INDIRECT:2,RWGLOBALS:2	0x00558d30	-	0	0	0	1	0x00558d30 0x0055dec0 0x005c4d20 0x005c4d50 0x005c4df0 0x005c4e10
+third-party-library_RenderWare-Physics-3.7_-002	6	no	CROSS:1,INDIRECT:5,RWGLOBALS:4	0x0057c370	-	0	0	0	1	0x0055b930 0x0055bad0 0x0055df90 0x00564190 0x0057c370 0x0057c550
+third-party-library_RenderWare-Physics-3.7_-003	5	no	CROSS:2,INDIRECT:2,RWGLOBALS:2	0x0057c500	-	0	0	0	1	0x0055b860 0x0055c380 0x00564130 0x0057c1b0 0x0057c500
+third-party-library_RenderWare-Physics-3.7_-004	4	no	CROSS:2,DUP:1,RWGLOBALS:1	0x0057c2b0	-	0	0	0	1	0x004c0e50 0x004c45f0 0x0057c2b0 0x0057c440
+third-party-library_RenderWare-Physics-3.7_-005	3	no	none	0x0055e2d0	-	0	0	1	1	0x00559c00 0x0055e2d0 0x0055e330
+third-party-library_RenderWare-Physics-3.7_-006	3	no	INDIRECT:3,RWGLOBALS:2	0x005668e0	-	0	0	0	1	0x0055bad0 0x00564190 0x005668e0
+third-party-library_RenderWare-Physics-3.7_-007	3	no	INDIRECT:3,RWGLOBALS:2	0x00578ec0	-	0	0	0	1	0x0055bad0 0x00564190 0x00578ec0
+third-party-library_RenderWare-Physics-3.7_-008	3	no	DUP:2,INDIRECT:2,RWGLOBALS:1	0x0057c420	-	0	0	0	1	0x004c4600 0x0055bd80 0x0057c420
+third-party-library_RenderWare-Physics-3.7_-009	2	no	INDIRECT:1,RWGLOBALS:1	0x00558c80	-	0	0	0	1	0x00558c80 0x005c4d50
+third-party-library_RenderWare-Physics-3.7_-010	2	no	none	0x0055ae70	-	0	0	1	1	0x0055ae70 0x00565570
+third-party-library_RenderWare-Physics-3.7_-011	2	no	CROSS:1	0x0055af40	-	0	0	0	1	0x0055af40 0x00565590
+third-party-library_RenderWare-Physics-3.7_-012	2	no	INDIRECT:2,RWGLOBALS:1	0x0055ba90	-	0	0	0	1	0x0055ba90 0x00564190
+third-party-library_RenderWare-Physics-3.7_-013	2	no	SEED:1	0x0055c540	-	0	0	1	0	0x0055c380 0x0055c540
+third-party-library_RenderWare-Physics-3.7_-014	2	no	SEED:1	0x0055e440	-	0	0	1	0	0x0055c380 0x0055e440
+third-party-library_RenderWare-Physics-3.7_-015	2	no	SEED:1	0x00562fd0	-	0	0	1	0	0x0055c380 0x00562fd0
+third-party-library_RenderWare-Physics-3.7_-016	2	no	RWGLOBALS:1	0x00565c20	-	0	0	0	1	0x004c3ac0 0x00565c20
+third-party-library_RenderWare-Physics-3.7_-017	2	no	DUP:2	0x00578e50	-	0	0	0	1	0x005757d0 0x00578e50
+third-party-library_RenderWare-Physics-3.7_-018	2	no	DUP:2	0x0057adb0	-	0	0	0	1	0x005757d0 0x0057adb0
+third-party-library_RenderWare-Physics-3.7_-019	1	no	none	0x00558ca0	-	0	0	1	1	0x00558ca0
+third-party-library_RenderWare-Physics-3.7_-020	1	no	none	0x00559bc0	-	0	0	1	1	0x00559bc0
+third-party-library_RenderWare-Physics-3.7_-021	1	no	none	0x0055a140	-	0	0	1	1	0x0055a140
+third-party-library_RenderWare-Physics-3.7_-022	1	no	INDIRECT:1	0x0055ac50	-	0	0	1	1	0x0055ac50
+third-party-library_RenderWare-Physics-3.7_-023	1	no	none	0x0055ad20	-	0	0	1	1	0x0055ad20
+third-party-library_RenderWare-Physics-3.7_-024	1	no	INDIRECT:1	0x0055ad30	-	0	0	1	1	0x0055ad30
+third-party-library_RenderWare-Physics-3.7_-025	1	no	INDIRECT:1	0x0055ade0	-	0	0	1	1	0x0055ade0
+third-party-library_RenderWare-Physics-3.7_-026	1	no	none	0x0055af60	-	0	0	1	1	0x0055af60
+third-party-library_RenderWare-Physics-3.7_-027	1	no	none	0x0055af70	-	0	0	1	1	0x0055af70
+third-party-library_RenderWare-Physics-3.7_-028	1	no	none	0x0055af80	-	0	0	1	1	0x0055af80
+third-party-library_RenderWare-Physics-3.7_-029	1	no	none	0x0055afc0	-	0	0	1	1	0x0055afc0
+third-party-library_RenderWare-Physics-3.7_-030	1	no	none	0x0055bab0	-	0	0	1	1	0x0055bab0
+third-party-library_RenderWare-Physics-3.7_-031	1	no	none	0x0055bac0	-	0	0	1	1	0x0055bac0
+third-party-library_RenderWare-Physics-3.7_-032	1	no	DUP:1,INDIRECT:1	0x0055bd70	-	0	0	0	1	0x0055bd70
+third-party-library_RenderWare-Physics-3.7_-033	1	no	none	0x0055c490	-	0	0	1	1	0x0055c490
+third-party-library_RenderWare-Physics-3.7_-034	1	no	CROSS:1	0x0055c4a0	-	0	0	0	1	0x0055c4a0
+third-party-library_RenderWare-Physics-3.7_-035	1	no	SEED:1	0x0055cd40	-	0	0	1	0	0x0055cd40
+third-party-library_RenderWare-Physics-3.7_-036	1	no	none	0x0055ddd0	-	0	0	1	1	0x0055ddd0
+third-party-library_RenderWare-Physics-3.7_-037	1	no	none	0x0055de20	-	0	0	1	1	0x0055de20
+third-party-library_RenderWare-Physics-3.7_-038	1	no	none	0x0055de60	-	0	0	1	1	0x0055de60
+third-party-library_RenderWare-Physics-3.7_-039	1	no	none	0x0055f480	-	0	0	1	1	0x0055f480
+third-party-library_RenderWare-Physics-3.7_-040	1	no	none	0x0055fe10	-	0	0	1	1	0x0055fe10
+third-party-library_RenderWare-Physics-3.7_-041	1	no	none	0x0055fe30	-	0	0	1	1	0x0055fe30
+third-party-library_RenderWare-Physics-3.7_-042	1	no	none	0x0055fe40	-	0	0	1	1	0x0055fe40
+third-party-library_RenderWare-Physics-3.7_-043	1	no	SEED:1	0x00561ea0	-	0	0	1	0	0x00561ea0
+third-party-library_RenderWare-Physics-3.7_-044	1	no	SEED:1	0x00561ec0	-	0	0	1	0	0x00561ec0
+third-party-library_RenderWare-Physics-3.7_-045	1	no	CROSS:1,INDIRECT:1,RWGLOBALS:1	0x00562520	-	0	0	0	1	0x00562520
+third-party-library_RenderWare-Physics-3.7_-046	1	no	none	0x00562580	-	0	0	1	1	0x00562580
+third-party-library_RenderWare-Physics-3.7_-047	1	no	none	0x005625e0	-	0	0	1	1	0x005625e0
+third-party-library_RenderWare-Physics-3.7_-048	1	no	CROSS:1,INDIRECT:1,RWGLOBALS:1	0x00563810	-	0	0	0	1	0x00563810
+third-party-library_RenderWare-Physics-3.7_-049	1	no	none	0x00563de0	-	0	0	1	1	0x00563de0
+third-party-library_RenderWare-Physics-3.7_-050	1	no	none	0x00564100	-	0	0	1	1	0x00564100
+third-party-library_RenderWare-Physics-3.7_-051	1	no	DUP:1	0x00565160	-	0	0	0	1	0x00565160
+third-party-library_RenderWare-Physics-3.7_-052	1	no	none	0x00565bc0	-	0	0	1	1	0x00565bc0
+third-party-library_RenderWare-Physics-3.7_-053	1	no	none	0x00565cd0	-	0	0	1	1	0x00565cd0
+third-party-library_RenderWare-Physics-3.7_-054	1	no	DUP:1	0x00565fa0	-	0	0	0	1	0x00565fa0
+third-party-library_RenderWare-Physics-3.7_-055	1	no	none	0x005663a0	-	0	0	1	1	0x005663a0
+third-party-library_RenderWare-Physics-3.7_-056	1	no	INDIRECT:1	0x00566aa0	-	0	0	1	1	0x00566aa0
+third-party-library_RenderWare-Physics-3.7_-057	1	no	none	0x00567630	-	0	0	1	1	0x00567630
+third-party-library_RenderWare-Physics-3.7_-058	1	no	none	0x005687a0	-	0	0	1	1	0x005687a0
+third-party-library_RenderWare-Physics-3.7_-059	1	no	none	0x005687d0	-	0	0	1	1	0x005687d0
+third-party-library_RenderWare-Physics-3.7_-060	1	no	none	0x00568860	-	0	0	1	1	0x00568860
+third-party-library_RenderWare-Physics-3.7_-061	1	no	none	0x00568c40	-	0	0	1	1	0x00568c40
+third-party-library_RenderWare-Physics-3.7_-062	1	no	none	0x00568c80	-	0	0	1	1	0x00568c80
+third-party-library_RenderWare-Physics-3.7_-063	1	no	none	0x00568cf0	-	0	0	1	1	0x00568cf0
+third-party-library_RenderWare-Physics-3.7_-064	1	no	DUP:1	0x0056b9d0	-	0	0	0	1	0x0056b9d0
+third-party-library_RenderWare-Physics-3.7_-065	1	no	DUP:1	0x0056ba30	-	0	0	0	1	0x0056ba30
+third-party-library_RenderWare-Physics-3.7_-066	1	no	DUP:1	0x0056cf90	-	0	0	0	1	0x0056cf90
+third-party-library_RenderWare-Physics-3.7_-067	1	no	DUP:1	0x0056d350	-	0	0	0	1	0x0056d350
+third-party-library_RenderWare-Physics-3.7_-068	1	no	DUP:1	0x0056f0a0	-	0	0	0	1	0x0056f0a0
+third-party-library_RenderWare-Physics-3.7_-069	1	no	DUP:1	0x0056fea0	-	0	0	0	1	0x0056fea0
+third-party-library_RenderWare-Physics-3.7_-070	1	no	INDIRECT:1	0x00574230	-	0	0	1	1	0x00574230
+third-party-library_RenderWare-Physics-3.7_-071	1	no	none	0x005748a0	-	0	0	1	1	0x005748a0
+third-party-library_RenderWare-Physics-3.7_-072	1	no	none	0x00574ac0	-	0	0	1	1	0x00574ac0
+third-party-library_RenderWare-Physics-3.7_-073	1	no	DUP:1	0x005751f0	-	0	0	0	1	0x005751f0
+third-party-library_RenderWare-Physics-3.7_-074	1	no	DUP:1	0x0057ae20	-	0	0	0	1	0x0057ae20
+third-party-library_RenderWare-Physics-3.7_-075	1	no	none	0x0057ae30	-	0	0	1	1	0x0057ae30

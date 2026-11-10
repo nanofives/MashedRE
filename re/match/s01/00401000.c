@@ -1,4 +1,26 @@
 // FLAGS: /O2 /GS /Ob1
+/* ---- MATCH-S02 preamble (same text in every re/match/s02 source; not part of any function body) ----
+   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+#ifndef MATCH_PREAMBLE
+#define MATCH_PREAMBLE
+typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
+typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
+typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
+typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
+typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+#ifdef __cplusplus
+/* port: a global is a reference to its original address (the exe maps the original data range) */
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#define MGLOBALA(T, n, N, a) extern T n[N]
+#endif
+#endif
+/* ---- end preamble ---- */
 /* a1 0x00401000 (482 B). Best: 100.0% BYTES-OK. Start (g2s) 72.1%.
    Fixes: locals as real typed objects (V3 min/max, RGBAf ambient/colour, 24-byte BBox, char[256] name; the
    declaration order above gives the original frame layout); float prototypes for RpLightSetConeAngle /
@@ -9,13 +31,13 @@ typedef struct { float x, y, z; } V3;
 typedef struct { float r, g, b, a; } RGBAf;
 typedef struct { V3 sup, inf; } BBox;
 typedef struct RpLight { unsigned char type, subType, flags, privateFlags; void *parent; } RpLight;
-extern int DAT_00636568;
-extern int DAT_00636560;
-extern int DAT_00636564;
-extern int DAT_00636ad0;
-extern float DAT_00636574;
-extern RpLight *DAT_00636570;
-extern RpLight *DAT_0063656c;
+MGLOBAL(int, DAT_00636568, 0x00636568);
+MGLOBAL(int, DAT_00636560, 0x00636560);
+MGLOBAL(int, DAT_00636564, 0x00636564);
+MGLOBAL(int, DAT_00636ad0, 0x00636ad0);
+MGLOBAL(float, DAT_00636574, 0x00636574);
+MGLOBAL(RpLight *, DAT_00636570, 0x00636570);
+MGLOBAL(RpLight *, DAT_0063656c, 0x0063656c);
 int FUN_004671a0(int p0);
 int FUN_004a2b60(char *buf, const char *fmt, ...);
 int FUN_004b3bf0(char *name, int a, int b);

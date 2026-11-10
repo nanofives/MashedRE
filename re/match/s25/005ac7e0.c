@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-NEARMISS-2-pilot 2026-11-09: 100% BYTE-IDENTICAL by hand. The link at param_2+0x40 is zeroed through param_2 (+0x44 then +0x40, no puVar1 pointer, which moves the cmp to its original slot) and inserted in RW list-link order: link->next = list->next, prev through param_2+0x44, list->next->prev = link, list->next = link, with a {next, prev} link type. The older note below describes the pre-pilot residual. */
 /* MATCH-S25 0x005ac7e0 (h2): best 98.2% (regs 98.2%), class a. cmp eax,edi scheduled one store earlier in the original; permuter and reorder tried. relocheck BAD only because the code differs from the original. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -30,12 +31,11 @@ MGLOBAL(undefined1, DAT_007dd65c, 0x007dd65c);
 void FUN_005aca40(int p0, undefined4 p1, undefined4 p2);
 void FUN_005ae0b0(int p0);
 uint FUN_005ae800(int * p0, undefined4 p1);
+typedef struct LL { struct LL *next; struct LL *prev; } LL;
 // MATCH: 0x005ac7e0 FUN_005ac7e0
 int FUN_005ac7e0(int param_1,int param_2)
 
 {
-  undefined4 *puVar1;
-  int *piVar2;
   
   if (param_2 == 0) {
     param_2 = FUN_005ae800((int *)&DAT_007dd65c,0x30805);
@@ -58,17 +58,16 @@ int FUN_005ac7e0(int param_1,int param_2)
   *(undefined4 *)(param_2 + 0x38) = 4;
   *(undefined4 *)(param_2 + 0x3c) = 0;
   FUN_005aca40(param_2,0,0);
-  puVar1 = (undefined4 *)(param_2 + 0x40);
   *(undefined4 *)(param_2 + 0x44) = 0;
-  *puVar1 = 0;
+  *(undefined4 *)(param_2 + 0x40) = 0;
   if (param_1 == 0) {
     param_1 = DAT_009146fc;
   }
   *(int *)(param_2 + 0x30) = param_1;
-  piVar2 = (int *)(param_1 + 0x20);
-  *puVar1 = *(undefined4 *)(param_1 + 0x20);
-  *(int **)(param_2 + 0x44) = piVar2;
-  *(undefined4 **)(*piVar2 + 4) = puVar1;
-  *piVar2 = (int)puVar1;
+  { LL *link = (LL *)(param_2 + 0x40); LL *list = (LL *)(param_1 + 0x20);
+  link->next = list->next;
+  *(LL **)(param_2 + 0x44) = list;
+  list->next->prev = link;
+  list->next = link; }
   return param_2;
 }

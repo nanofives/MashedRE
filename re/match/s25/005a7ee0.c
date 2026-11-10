@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-NEARMISS-2-pilot 2026-11-09: 100% BYTE-IDENTICAL by hand: the list-head init at param_1+0xc written as rwLinkListInitialize order through a typed {next, prev} link (next = self, then prev = self), no piVar1 temp, then param_1[5] = 0. The older note below describes the pre-pilot residual. */
 /* MATCH-S25 h3 0x005a7ee0: by hand + permuter. Best 97.7% (regs 97.7%, 44/44 ins). Residual (a): one store order, original does [esi+0x14]=0 before [eax]=eax (list head self-link); the swap that fixes it moves lea edi/[esi+0x10] store out of order instead (95.5% the other way). piVar2 += 4 for the +0x10 step, permuter swap of the two list-head stores. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -28,15 +29,15 @@ MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 void FUN_005ae0c0(int * p0, int * p1, undefined4 p2);
 void FUN_005ae010(int * p0, int * p1);
 void FUN_005adfe0(int * p0, int * p1);
+typedef struct LL { struct LL *next; struct LL *prev; } LL;
 // MATCH: 0x005a7ee0 FUN_005a7ee0
 int * FUN_005a7ee0(int *param_1,undefined4 param_2)
 {
   int *piVar1;
   int *piVar2;
-  piVar1 = param_1 + 3;
   piVar2 = param_1 + 9;
-  param_1[4] = (int)piVar1;
-  *piVar1 = (int)piVar1;
+  ((LL *)(param_1 + 3))->next = (LL *)(param_1 + 3);
+  ((LL *)(param_1 + 3))->prev = (LL *)(param_1 + 3);
   param_1[5] = 0;
   if (*param_1 != 0) {
     FUN_005ae0c0(piVar2,piVar2,param_2);

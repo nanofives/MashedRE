@@ -16,8 +16,6 @@ void StandInLog(const char* rva, int* once) {
 } // namespace
 
 extern "C" {
-// rva 004014b0: matched; reads DAT_00636570 +4 / DAT_0063656c +4 with no null check, state 0x00402750 creates (still a stand-in)
-int PortTop_StandIn04C_004014b0() { static int once; StandInLog("0x004014b0", &once); return 0; }
 // rva 0041e0d0: matched; reads +4 of each pointer of the 0x0063d610 table with no null check (state of 0x00402750)
 int PortTop_StandIn04C_0041e0d0() { static int once; StandInLog("0x0041e0d0", &once); return 0; }
 // rva 0041ffb0: matched; 0x004b4880(DAT_0063e490) reads +4 of a zero pointer when DAT_00636acc == 0 (state of 0x00402750)

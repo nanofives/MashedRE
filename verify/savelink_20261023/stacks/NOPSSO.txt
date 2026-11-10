@@ -1,0 +1,2 @@
+# PORT-SEED-OPTOUT: the opt-out alone (boots since that step)
+MASHED_NO_PORTSTATE_SEED

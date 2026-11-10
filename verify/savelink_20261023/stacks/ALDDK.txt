@@ -1,0 +1,4 @@
+# PORT-AISPLINE-DDKORDER (verify/portstate_20261109/PREREG_AISPLINE_DDKORDER.md): 0x00443300 in the DDK's add order
+# report only: the exe calls AiSplineEval_x87 only through AiLeaf_414570 (MASHED_AILEAF, AiStandalone.cpp:1056)
+MASHED_AILEAF=1
+MASHED_AISPLINE_DDK=1
