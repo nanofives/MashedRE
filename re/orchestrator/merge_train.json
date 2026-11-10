@@ -8,7 +8,7 @@
   "runner": "verify/savelink_20261023/run_arms.py",
   "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["8284be46", "67931834", "31fe043e"], "retries": 1 },
   "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["1d5bf4f9", "1d5bf4f9", "1d5bf4f9"] },
-  "full_set_paths": ["mashedmod/src/mashed_re/Vehicle/", "mashedmod/src/mashed_re/Ai/", "mashedmod/src/mashed_re/Collision/"],
+  "full_set_paths": ["mashedmod/", "re/match/"],
   "full": {
     "vsum": "verify/savelink_20261023/vsum.py",
     "ai_speed_env": "re/tools/ai_speed_env.py",
