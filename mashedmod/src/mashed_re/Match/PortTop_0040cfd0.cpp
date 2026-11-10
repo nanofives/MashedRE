@@ -15,7 +15,7 @@
 #define FUN_00426b40 PortTop_StandIn04C_00426b40   // stand-in: matched, not compiled (level 2)
 #define FUN_00405400 PortTop_StandIn04C_00405400   // stand-in: matched; port body only in .asi-only Util/PromoLoop_round53.cpp
 #define FUN_00484c90 Zero484c90   // exe body, Match/MatchS14_00484c90.cpp
-#define FUN_00471df0 PortTop_StandIn04C_00471df0   // stand-in: matched, but its source also holds static 0x00471530, whose body is the .asi-only Match/MatchS11_00471530.cpp
+#define FUN_00471df0 Orig_00471df0   // matched, Match/PortTop_00471df0.cpp (its static callee 0x00471530 is ORIGTOP-ONLY against the .asi-only Match/MatchS11_00471530.cpp), since PORT-OT-BOOT
 #define FUN_004114e0 PortTop_StandIn04C_004114e0   // stand-in: matched; port body ReplayCleanup only in .asi-only Replay.cpp
 extern "C" {
 #include "../../../../re/match/s02/0040cfd0.c"
