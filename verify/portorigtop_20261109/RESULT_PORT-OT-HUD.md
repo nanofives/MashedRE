@@ -153,5 +153,8 @@ the merge with orch/integration's cells for them, and the backfill on this build
 - 0x004210b0 / 0x004210f0 (effect init / teardown of the record 0x0063e548) are the same shape as this pair: 0x004210b0
   calls 0x00421080, 0x004770c0 and a bit-array clear. With `Orig_004770c0` and `Orig_004768c0` now in the exe, that
   pair can swap next (then 0x004768c0's last stand-in caller goes and its BINDINGS row becomes `matched`).
-- The two +0x11c rows (0x00555830, 0x00556e40) wait on the RwGlobals slot binding (PORT-OT-RWG-SLOTS).
+- The two +0x11c rows (0x00555830, 0x00556e40): PORT-OT-RWG-MODULES (orch/PORT-OT-RWG-MODULES `07a9a01c3`, queued,
+  knob `MASHED_ORIG_TOP_RWMOD=1`, ORIG_TOP-only) releases them (verify/portorigtop_20261109/RWG_MODULES_RELEASED.tsv).
+  The lead named it after this commit was made, so it is not merged here. A follow-up swaps both on top of it, and
+  their swaps must run only with RWMOD on.
 - Harness: `run_arms.py` could `os.makedirs(OUT, exist_ok=True)` before the first copy.
