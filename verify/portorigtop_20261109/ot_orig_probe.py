@@ -8,7 +8,9 @@ same sample marks as ot_measure.py, reads with ReadProcessMemory:
   - every RwGlobals offset the ot_rows.json rows use (call slots, data fields, "m<addr>+<disp>" module reads),
   - the four module-offset globals and 0x40 bytes of module data at RwGlobals + offset,
   - the whole RwGlobals block 0x0..0x200 (hex) at each sample.
-Writes <data>/orig_probe.json. Only reads; kills only the PID it spawned. Run it inside test-slot + mashed_lock.
+[PORT-OT-RWG-MODULES] --modlen <n> (default 0x40): bytes of module data read per module. --dump <a:n>[,<a:n>...]:
+also read n bytes at each absolute address a (hex) per sample ("dumps"). --out <name> (default orig_probe.json).
+Writes <data>/<out>. Only reads; kills only the PID it spawned. Run it inside test-slot + mashed_lock.
 """
 from __future__ import annotations
 
@@ -30,6 +32,8 @@ def main(argv):
     data = pathlib.Path(M.opt(argv, "--data"))
     root = pathlib.Path(M.opt(argv, "--root"))
     secs = float(M.opt(argv, "--secs", "30"))
+    modlen = int(M.opt(argv, "--modlen", "0x40"), 0)
+    dumps = [(int(a, 16), int(n, 0)) for a, n in (x.split(":") for x in M.opt(argv, "--dump", "").split(",") if x)]
     rows = json.load(open(data / "ot_rows.json"))
     offs = sorted({o for r in rows.values() for o in r.get("rwg_call_slots", []) + r.get("rwg_data_offs", [])},
                   key=lambda o: (isinstance(o, str), str(o)))
@@ -66,8 +70,13 @@ def main(argv):
                 s["slots"][str(o)] = int.from_bytes(v, "little") if v else None
             for ma, mo in s["mods"].items():
                 if mo is not None:
-                    v = M.rpm(h, s["rwg"] + mo, 0x40)
+                    v = M.rpm(h, s["rwg"] + mo, modlen)
                     s["moddata"][ma] = v.hex() if v else None
+        if dumps:
+            s["dumps"] = {}
+            for a, n in dumps:
+                v = M.rpm(h, a, n)
+                s["dumps"]["%08x" % a] = v.hex() if v else None
         samples.append(s)
         print("sample t=%.1f rwg=%s mods=%s" % (s["t"], hex(s["rwg"]) if s["rwg"] else s["rwg"],
                                                  {k: (hex(v) if v is not None else v) for k, v in s["mods"].items()}),
@@ -78,7 +87,7 @@ def main(argv):
         rc = p.wait()
         print("killed own pid", p.pid)
     M.k32.CloseHandle(h)
-    out = data / "orig_probe.json"
+    out = data / M.opt(argv, "--out", "orig_probe.json")
     json.dump({"exe": str(exe), "root": str(root), "rc": rc, "samples": samples}, open(out, "w"), indent=1)
     print("orig probe rc=%s samples=%d -> %s" % (rc, len(samples), out))
     return 0

@@ -1,0 +1,15 @@
+rva	name	subsystem	blocker_before	now
+0x004c3b30	FastSqrt	util	module offset 0 (not registered): [0x007d3ffc]; zero data field: +[0x007d3ffc]+0x0	OK
+0x004c3b90	FastInvSqrt	util	module offset 0 (not registered): [0x007d3ffc]; zero data field: +[0x007d3ffc]+0x4	OK
+0x004c3bf0	Vec2Length	render	module offset 0 (not registered): [0x007d3ffc]; zero data field: +[0x007d3ffc]+0x0	OK
+0x004c3d60	FUN_004c3d60	render	module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0x8	OK
+0x004c3d90	FUN_004c3d90	render	module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0xc	OK
+0x004c3dc0	FUN_004c3dc0	render	module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0x10	OK
+0x004c3df0	RwV3dTransformPoints	render	module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0x14	OK
+0x004c4600	RwMatrixMultiply	render	module offset 0 (not registered): [0x007d4028]; zero data field: +[0x007d4028]+0x4	OK
+0x004c5770	FUN_004c5770	render	module offset 0 (not registered): [0x007d4028]; null call slot: +0x11c; zero data field: +[0x007d4028]+0x0	OK
+0x004c5890	RwTexDictionaryCreate	render	module offset 0 (not registered): [0x007d4054]; null call slot: +0x118; zero data field: +[0x007d4054]+0x0 +[0x007d4054]+0xc	OK
+0x00554050	FontCanvas_Shutdown	hud	null call slot: +0x11c	OK
+0x00555280	FontSys_ShutdownContextPool	hud	null call slot: +0x11c	OK
+0x00555830	FUN_00555830	hud	null call slot: +0x11c	OK
+0x00556e40	FUN_00556e40	hud	null call slot: +0x11c	OK
