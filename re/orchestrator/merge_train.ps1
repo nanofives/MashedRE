@@ -364,8 +364,26 @@ function Run-Gates([string]$wt, $r, [bool]$needFull) {
 # Step-2 outcome of a batch. On RED re-merges one branch at a time (first GREEN lands this run). HB-TRAIN-INFRA-PRECHECK:
 # an INFRA result bounces nothing and stops the pass, so every row not merged stays queued for the next pass.
 # Returns a hashtable (never dot-sourced): res, merged, bounced, infra (reason or '').
+# HB-TRAIN-CONFLICT-SKIP (2026-11-10): a merge conflict found while merging the batch (before build or gates) sets that
+# branch aside (bounced, reason conflict, no gate run charged to it) and the rest is merged and gated again as ONE
+# batch, as often as conflicts come up. Only a failure after the merge (build, lint, gates) keeps the one-at-a-time
+# path. Pass 20261110_042108 took 39 min (two full gate sets) because PORT-OT-FRONTEND conflicted on hooks.csv at 04:22.
 function Resolve-Batch($items, $first) {
   $o = @{ res = $first; merged = @(); bounced = @(); infra = ''; error = '' }
+  while (-not $first.ok -and $first.conflict -and $first.bad) {
+    Remove-Temp $first.wt
+    $o.bounced += @{ it = $first.bad; why = $first.why; gates = 'not run: merge conflict, set aside before build and gates'; conflict = $true }
+    $items = @($items | Where-Object { $_.id -ne $first.bad.id })
+    Say "  conflict: $($first.bad.id) set aside ($($first.why)); $(if ($items.Count) { "gating the other $($items.Count) row(s) as one batch" } else { 'no row left in the batch' })"
+    if (-not $items.Count) { $o.res = $null; return $o }
+    try { $first = Try-Batch $items }
+    catch {
+      $o.error = "$(($items | ForEach-Object id) -join '+'): $($_.Exception.Message)"
+      Say "  batch after the conflict threw ($($_.Exception.Message)); rows not merged stay queued"
+      $o.res = $null; return $o
+    }
+    $o.res = $first
+  }
   if ($first.ok) { $o.merged = @($items); return $o }
   Remove-Temp $first.wt
   $o.res = $null
@@ -404,11 +422,11 @@ function Tracker-Lint([string]$wt, [string]$baseRef) {
 }
 function Try-Batch($items) {
   $wt = New-Temp $base
-  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false; hashes = $null; textOnly = $false }
+  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false; hashes = $null; textOnly = $false; conflict = $false }
   try {
     foreach ($it in $items) {
       $m = Merge-One $wt $it
-      if (-not $m.ok) { $r.ok = $false; $r.why = $m.why; $r.bad = $it; return $r }
+      if (-not $m.ok) { $r.ok = $false; $r.why = $m.why; $r.bad = $it; $r.conflict = $true; return $r }   # HB-TRAIN-CONFLICT-SKIP: before build and gates
       Say "  merged $($it.id) ($($it.branch))"
     }
     $changed = @((Git -C $wt diff --name-only "$base..HEAD") | Where-Object { $_ })
@@ -500,11 +518,11 @@ function Get-DrainStop($p, $refsNow) {
   switch ([string]$p.verdict) {
     'FLIP' { return "FLIP: decided-flip row(s) in the batch ($(@($p.flips) -join ', ')), left queued: run them alone with -Full after the refs are committed (MERGE_TRAIN.md)" }
     'INFRA' { return "INFRA: $($p.infra)" }
-    'RED' { return "RED: bounced [$((@($p.bounced) | ForEach-Object { "$($_.id): $($_.why)" }) -join '; ')]$(if ($p.error) { " error [$($p.error)]" })" }
+    'RED' { if ($p.conflict_only) { break }; return "RED: bounced [$((@($p.bounced) | ForEach-Object { "$($_.id): $($_.why)" }) -join '; ')]$(if ($p.error) { " error [$($p.error)]" })" }
     'GREEN' { }
     default { return "ERROR: pass verdict '$($p.verdict)' $($p.why)" }
   }
-  if (-not @($p.merged).Count) { return 'ERROR: GREEN pass with nothing merged' }
+  if (-not @($p.merged).Count) { if ($p.conflict_only) { return '' }; return 'ERROR: GREEN pass with nothing merged' }
   $used = $p.refs
   if ($used -and ((@($used.gctrl) -join '/') -ne ($refsNow.gctrl -join '/') -or (@($used.b) -join '/') -ne ($refsNow.b -join '/'))) {
     return "HASH: merge_train.json refs changed during the pass (G-CTRL $(@($used.gctrl) -join '/') -> $($refsNow.gctrl -join '/'), B $(@($used.b) -join '/') -> $($refsNow.b -join '/'))"
@@ -595,14 +613,16 @@ function Invoke-Drain([string]$int) {
     $stop = Get-DrainStop $p (Read-Refs)
     $line = "pass $n $($p.verdict): merged [$(@($p.merged) -join ' ')] gates $($p.gates)"
     if ($stop) { $lines += $line; break }
+    if ($p.conflict_only) { $line += " (set aside on a merge conflict: $((@($p.bounced) | ForEach-Object { $_.id }) -join ' '))" }
+    if (-not @($p.merged).Count) { $lines += "$line; nothing merged, no fast-forward"; continue }   # conflict-only pass: every row bounced
     $adv = Advance-Main $int
     if (-not $adv.ok) { $stop = "ERROR: fast-forward of $($DCFG.parity_branch)/$($DCFG.main_branch) refused: $($adv.why)"; $lines += $line; break }
     $line += "; $($DCFG.parity_branch) + $($DCFG.main_branch) -> $($adv.new.Substring(0,9))"
     $rel = Invoke-ReleaseStep $n
     $line += "; release $($rel.text)"; $lines += $line
     if ($rel.stop) { $stop = $rel.stop; break }
-    if ($n -eq [int]$DCFG.max_passes) { $stop = "STOP: max_passes $($DCFG.max_passes) reached with rows still queued" }
   }
+  if (-not $stop -and $n -gt [int]$DCFG.max_passes -and @(Get-Queue).Count) { $stop = "STOP: max_passes $($DCFG.max_passes) reached with rows still queued" }
   $verdict = if (-not $stop) { 'GREEN' } else { ($stop -split ':')[0] }
   $final = (Git rev-parse --short $int) | Select-Object -First 1
   $report = @(
@@ -794,6 +814,27 @@ if ($SelfTest) {
   $leak = @($src | Where-Object { Like-Any $_ $CFG.text_only_globs })
   Check ($leak.Count -eq 0) "control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: $($leak -join ','))"
 
+  # --- HB-TRAIN-CONFLICT-SKIP (real merges on the fake repo): A merges, B conflicts with A on a file outside
+  # conflict_union, C is clean. B is set aside with no gate run, A+C are merged again and gated as ONE batch.
+  New-Item -ItemType Directory -Force -Path (Join-Path $fake 'notes') | Out-Null
+  Put 'notes\conf.txt' "base`n"; Git -C $fake add notes | Out-Null; Git -C $fake commit -q -m 'conf base' | Out-Null
+  foreach ($cv in @(@('cA', 'notes\conf.txt', "A`n"), @('cB', 'notes\conf.txt', "B`n"), @('cC', 'notes\c.txt', "c`n"))) {
+    Git -C $fake checkout -q -b "step-$($cv[0])" integration | Out-Null
+    Put $cv[1] $cv[2]; Git -C $fake add notes | Out-Null; Git -C $fake commit -q -m "step $($cv[0])" | Out-Null
+    Git -C $fake checkout -q integration | Out-Null
+  }
+  $base = (Git -C $fake rev-parse integration) | Select-Object -First 1
+  $cItems = @(@{ id = 'T-cA'; branch = 'step-cA' }, @{ id = 'T-cB'; branch = 'step-cB' }, @{ id = 'T-cC'; branch = 'step-cC' })
+  $mark = @(Get-Content -LiteralPath $LOG).Count
+  $cFirst = Try-Batch $cItems
+  $cO = Resolve-Batch $cItems $cFirst
+  $cLog = @(Get-Content -LiteralPath $LOG | Select-Object -Skip $mark)
+  $mergedA = @($cLog | Where-Object { $_ -match 'merged T-cA ' }).Count
+  Check ($cFirst.conflict -and $cFirst.bad.id -eq 'T-cB' -and $cO.res.ok -and (($cO.merged | ForEach-Object id) -join ',') -eq 'T-cA,T-cC' -and $cO.bounced.Count -eq 1 -and $cO.bounced[0].it.id -eq 'T-cB' -and $cO.bounced[0].conflict -and $cO.bounced[0].gates -match '^not run: merge conflict' -and $mergedA -eq 2 -and -not ($cLog -match 're-merging one at a time') -and ($cLog -match 'conflict: T-cB set aside')) "conflict-skip (real merge): B conflicts on notes/conf.txt = set aside with no gate run, A+C merged again and gated as one batch (A merged $mergedA times, one-at-a-time not used, merged $(($cO.merged | ForEach-Object id) -join ','))"
+  $cTree = @((Git -C $cO.res.wt diff --name-only "$base..HEAD") | Where-Object { $_ })
+  Check ((($cTree | Sort-Object) -join ',') -eq 'notes/c.txt,notes/conf.txt' -and ((Get-Content (Join-Path $cO.res.wt 'notes\conf.txt') -Raw) -match '^A')) "conflict-skip (real merge): the landed tree holds A's conf.txt and C's c.txt only ($($cTree -join ','))"
+  Remove-Temp $cO.res.wt
+
   # --- HB-D2RERUN: fake arm runner, the second d2_arms arm comes back short (1485 lines) on the first run
   # The arm names come from merge_train.json (D2_DEF_n until run 23, D2_DEFH_n since); the second arm is the short one.
   $f = $CFG.full; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
@@ -925,6 +966,18 @@ if ($SelfTest) {
   Check (-not $o.infra -and $o.merged.Count -eq 2 -and $o.merged[0].id -eq 'T-B' -and $o.merged[1].id -eq 'T-C' -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-A' -and ($script:tbCalls -join ',') -eq 'T-A+T-B+T-C,T-A,T-B,T-B+T-C') "normal path (HB-TRAIN-STACK): RED first, then two GREEN stacked: B and C land, A bounced (calls $($script:tbCalls -join ','))"
   $o = Batch-Case @($iA, $iB) @{ 'T-A+T-B' = (TB 'green') }
   Check (-not $o.infra -and $o.merged.Count -eq 2 -and $o.bounced.Count -eq 0 -and $script:tbCalls.Count -eq 1) 'normal path: batch GREEN = both merged (unchanged)'
+  # HB-TRAIN-CONFLICT-SKIP routing (fake Try-Batch): a conflict sets the row aside and re-gates the rest as one batch
+  function TBC($bad) { @{ ok = $false; wt = 'fake'; why = 'conflict needs a hand merge (frida-sweep recipe): hooks.csv'; gates = 'not run'; infra = $false; conflict = $true; bad = $bad } }
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TBC $iB); 'T-A+T-C' = (TB 'green') }
+  Check ((($script:tbCalls) -join ',') -eq 'T-A+T-B+T-C,T-A+T-C' -and (($o.merged | ForEach-Object id) -join ',') -eq 'T-A,T-C' -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-B' -and $o.bounced[0].conflict -and $null -ne $o.res -and $o.res.ok) "conflict-skip: B conflicts = B set aside, A+C gated once as one batch and land (calls $($script:tbCalls -join ','))"
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TBC $iA); 'T-B+T-C' = (TBC $iC); 'T-B' = (TB 'green') }
+  Check ((($script:tbCalls) -join ',') -eq 'T-A+T-B+T-C,T-B+T-C,T-B' -and (($o.merged | ForEach-Object id) -join ',') -eq 'T-B' -and (($o.bounced | ForEach-Object { $_.it.id }) -join ',') -eq 'T-A,T-C') "conflict-skip: two conflicts in a row = both set aside, B gated alone once (calls $($script:tbCalls -join ','))"
+  $o = Batch-Case @($iA, $iB, $iC) @{ 'T-A+T-B+T-C' = (TBC $iB); 'T-A+T-C' = (TB 'red'); 'T-A' = (TB 'green') }
+  Check ((($script:tbCalls) -join ',') -eq 'T-A+T-B+T-C,T-A+T-C,T-A,T-A+T-C' -and (($o.merged | ForEach-Object id) -join ',') -eq 'T-A' -and (($o.bounced | ForEach-Object { "$($_.it.id)$(if ($_.conflict) { ':c' })" }) -join ',') -eq 'T-B:c,T-C') "conflict-skip: the rest gate-RED = the one-at-a-time path runs on the rest only (calls $($script:tbCalls -join ','))"
+  $o = Batch-Case @($iA) @{ 'T-A' = (TBC $iA) }
+  Check ($script:tbCalls.Count -eq 1 -and $o.merged.Count -eq 0 -and $o.bounced.Count -eq 1 -and $o.bounced[0].conflict -and $null -eq $o.res -and -not $o.infra) 'conflict-skip: a single conflicting row = bounced (conflict), no second Try-Batch'
+  $o = Batch-Case @($iA, $iB) @{ 'T-A+T-B' = (TBC $iB); 'T-A' = (TB 'infra') }
+  Check ($o.infra -and $o.bounced.Count -eq 1 -and $o.bounced[0].it.id -eq 'T-B' -and $o.merged.Count -eq 0) 'conflict-skip: the rest INFRA = conflict row bounced, the rest stays queued (INFRA)'
 
   # --- HB-TRAIN-WTADD-RETRY (a): New-Temp retries a failing `git worktree add` and logs git's message
   $realAdd = ${function:Invoke-WtAdd}
@@ -1082,6 +1135,15 @@ if ($SelfTest) {
   # 10. empty queue at the start: no pass at all
   $d = Drain-Case @() 0 @{}
   Check ($d.verdict -eq 'GREEN' -and $script:passN -eq 0 -and $d.report[4] -match 'queue empty') 'drain 10: empty queue = no pass, GREEN'
+  # HB-TRAIN-CONFLICT-SKIP: a RED pass whose only bounces were merge conflicts does not stop the drain
+  $cb = @(@{ id = 'Q2'; why = 'conflict needs a hand merge (frida-sweep recipe): hooks.csv'; conflict = $true })
+  $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $true; bounced = $cb }) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
+  $h = Heads
+  Check ($d.verdict -eq 'GREEN' -and $script:passN -eq 2 -and $h[0] -eq $h[2] -and $h[1] -eq $h[2] -and ($script:ev -join ',') -eq 'pass1,release1,pass2,release2' -and $d.report[-1] -match 'set aside on a merge conflict: Q2') "drain 12: conflict-only RED pass = the rest is fast-forwarded and released, drain goes on (events $($script:ev -join ','))"
+  $d = Drain-Case @((@{ take = 1; res = (PR 'RED' @{ conflict_only = $true; merged = @(); bounced = $cb; hashes = $null; gates = '' }) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
+  Check ($d.verdict -eq 'GREEN' -and ($script:ev -join ',') -eq 'pass1,pass2,release2' -and $d.report[-1] -match 'nothing merged, no fast-forward') "drain 12: conflict-only pass with nothing merged = no fast-forward, no release, next pass (events $($script:ev -join ','))"
+  $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $false; bounced = @(@{ id = 'Q2'; why = 'default gates changed'; conflict = $false }) }) })) 2 @{}
+  Check ($d.verdict -eq 'RED') 'drain 12: a gate-RED bounce still stops the drain'
   # 11. AST: the drain dispatch sits before Write-TrainPid and the batch pick, and the pass refuses flips before Enter-PassPriority
   $txt = Get-Content -LiteralPath $PSCommandPath -Raw
   $iDrain = $txt.LastIndexOf('$d = Invoke-Drain $INT'); $iPid = $txt.LastIndexOf("`nWrite-TrainPid"); $iFlip = $txt.LastIndexOf('$flips = @(Get-BatchFlips $batch)'); $iPrio = $txt.LastIndexOf("`nEnter-PassPriority")
@@ -1193,13 +1255,14 @@ $report = @(
   "evidence: $LOG",
   "gates: $(if ($res) { $res.gates } elseif ($infra -and -not $bounced.Count) { "not scored: $infraGates" } else { ($bounced | ForEach-Object { $_.gates }) -join ' | ' })",
   "decision: none",
-  "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $($_.why)" }) -join '; ')]$(if ($infra) { " infra [$infra; rows not merged stay queued, re-run the train on a live display]" })$(if ($trainErr) { " error [$trainErr; rows not merged stay queued, re-run the train]" })"
+  "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $(if ($_.conflict) { 'set aside, ' })$($_.why)" }) -join '; ')]$(if ($infra) { " infra [$infra; rows not merged stay queued, re-run the train on a live display]" })$(if ($trainErr) { " error [$trainErr; rows not merged stay queued, re-run the train]" })"
 )
 $report | Set-Content (Join-Path $DATA 'REPORT.txt') -Encoding utf8
 # HB-TRAIN-DRAIN: the structured outcome the drain driver reads (gates hashes, refs used, text-only, merged / bounced)
 Write-PassResult $ResultJson @{
   verdict = $verdict; data = $DATA; batch = @($batch | ForEach-Object id); merged = @($merged | ForEach-Object id)
-  bounced = @($bounced | ForEach-Object { @{ id = $_.it.id; why = $_.why } }); infra = $infra; error = $trainErr
+  bounced = @($bounced | ForEach-Object { @{ id = $_.it.id; why = $_.why; conflict = [bool]$_.conflict } }); infra = $infra; error = $trainErr
+  conflict_only = [bool]($verdict -eq 'RED' -and $bounced.Count -and -not $trainErr -and @($bounced | Where-Object { -not $_.conflict }).Count -eq 0 -and ($merged.Count -or $bounced.Count -eq $batch.Count))
   gates = $(if ($res) { $res.gates } else { '' }); hashes = $(if ($res) { $res.hashes } else { $null }); text_only = [bool]($res -and $res.textOnly)
   refs = @{ gctrl = @($CFG.gctrl.ref); b = @($CFG.b.ref) }; base = $base; int_after = (Git rev-parse $INT | Select-Object -First 1)
 }
