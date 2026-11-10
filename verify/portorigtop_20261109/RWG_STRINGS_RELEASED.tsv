@@ -1,0 +1,5 @@
+rva	name	subsystem	blocker_before	now
+0x004113b0	FUN_004113b0	boot	null call slot: +0xc4	OK
+0x00427840	FontText_UTF16WidenCopy	hud	null call slot: +0xf4	OK
+0x00555910	LAB_00555910	hud	null call slot: +0xe8 +0xf4	OK
+0x005adf60	FUN_005adf60	audio	null call slot: +0xe8	OK
