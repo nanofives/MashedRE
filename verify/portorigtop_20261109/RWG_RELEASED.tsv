@@ -1,0 +1,18 @@
+rva	name	subsystem	was_missing	seed_verdict_now
+0x00401f10	FUN_00401f10	render	null call slot: +0x20	-
+0x0042aae0	MenuIm2DQuad	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00472b10	FUN_00472b10	render	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00472c60	ChromeBaseDraw	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00472dc0	FUN_00472dc0	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00472f40	TextGradientV0V1Override	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x004730b0	TextGradientV2V3Override	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00473220	FUN_00473220	render	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x004733b0	FUN_004733b0	render	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00473540	GradientQuadHorizAlpha	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x004736c0	BorderQuadFourAlpha	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00473870	TextSpriteUVExplicit	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x004739f0	TextSpriteScaled	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00473ee0	LogoOverlayDraw	frontend	null call slot: +0x20 +0x30; zero data field: +0x18	-
+0x00477810	FUN_00477810	render	null call slot: +0x20	-
+0x004891f0	FUN_004891f0	render	null call slot: +0x20	-
+0x00490490	FUN_00490490	render	null call slot: +0x20	-
