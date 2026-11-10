@@ -12,6 +12,10 @@ namespace Gameplay {
 // (+0x00) and resets its frame as FUN_004c15c0 does (identity, translation 0).
 void PickupsOrig_OnSpawn(unsigned char* entry);
 
+// PORT-OT-PICKUPPOOL: MASHED_ORIG_TOP teardown only. Zeroes each pool +0x00 word that holds this code's own fake
+// object; returns the count, *foreign = the other non-zero words.
+int PickupsOrig_ReleasePool(int* foreign);
+
 // FUN_0045bba0's FUN_00459000 call (0x0040fcd0), before the registry publish.
 void Pickups_FrameTick();
 

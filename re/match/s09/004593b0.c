@@ -28,7 +28,11 @@ typedef unsigned int undefined4;
 MGLOBAL(int, DAT_0068bb58, 0x0068bb58);
 MGLOBAL(undefined1, DAT_0068b9b8, 0x0068b9b8);
 MGLOBAL(undefined4, DAT_0068ba30, 0x0068ba30);
+#ifdef MATCH_PORT
+void FUN_004768c0(void *p0);  /* port: C++ takes the record address as a pointer (Match/PortTop_004593b0.cpp) */
+#else
 void FUN_004768c0(int p0);
+#endif
 undefined4 FUN_004c5770(undefined4 p0);
 undefined4 FUN_004c5930(int p0);
 undefined4 FUN_004e6e00(int p0);
