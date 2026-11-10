@@ -49,6 +49,58 @@ Yield by type: no hand source up to 600 B 7/13 (54%). Near-misses up to about 30
 5. A same-TU `static` callee takes its argument in EAX. Switch cases each keep their own call pair. Data shape matters
    against `/GS` cookies. cl unrolls a 4-step constant loop (FRESH).
 
+## The cast lever, for MATCH-X87-CASTLEVER (before / after, from the slice branches)
+
+This section is here and not in the X87A / X87B RESULTs, because those branches were already enqueued. The
+rows are the ones each form closed. Every after-form keeps the value and type: a float expression widened to double
+and narrowed again computes the same float on x87, where the original also evaluates in extended precision.
+
+1. Double intermediate, cast back (PILOT: 0x00476320, 0x00475210, 0x00415e20, 0x00417640). `re/match/s12/00476320.c`:
+   ```c
+   param_1[2] = param_2[2] + z;                    /* before: z's stack slot loads first */
+   param_1[2] = (float)(param_2[2] + (double)z);   /* after: param_2[2] loads first, z is the fadd operand */
+   ```
+2. Named double temporary (X87A: 0x00412cf0, 0x00464a50, 0x00422570). `re/match/s05/00422570.c`, one statement
+   fixed all 16 differing bytes:
+   ```c
+   dx = DAT_006403b8[i].x - s.c.x;                                    /* before */
+   { double tx = DAT_006403b8[i].x - s.c.x; dx = (float)tx; }         /* after */
+   ```
+   On 0x00412cf0 the cast form of item 1 reached 2 B and the named temporary closed it.
+3. Named float local for one operand (X87A: 0x004726f0). `float a = param_1[1];` read before the sum schedules its
+   `fld [eax+4]` ahead of the second pointer load (0x004726f4). The converse, a compiler temporary in place of a named
+   local, closed 0x00477920 (PILOT).
+4. Comma rvalue (BIG: 0x00446520, 16 statements; X87A: 0x00442a60). `re/match/s08/00446520.c` and
+   `re/match/s08/00442a60.c`:
+   ```c
+   vln.x += vah.x * param_1->f9a4;                 /* before: frame operand first */
+   vln.x += vah.x * (0, param_1->f9a4);            /* after: fld [ecx+0x9a4] first, as in the original */
+   p->a += vbr;                                    /* before */
+   p->a = (0, p->a) + vbr;                         /* after */
+   DAT_008989b0[a] = FUN_004c3ac0(&v.x) * 0.8f;          /* before */
+   DAT_008989b0[a] = (0, FUN_004c3ac0(&v.x)) * 0.8f;     /* after: counter load moves ahead of the fmul (0x00442c46) */
+   ```
+   X87B's largest partial gains came from this form too: 0x0048d360 / 0x0048d540 136 -> 38 B, 0x0041faf0 59 -> 12 B,
+   0x00459000 55 -> 30 B (`x87b/variants/`).
+5. Embedded assignment against a length change (BIG: 0x00446520, 2,509 of its 2,725 bad bytes):
+   ```c
+   vcl = (float)(acos(vay) * 57.2958f); vay = 90.0f - (180.0f - vcl);        /* before: fstp; fld; fsub, 6 B longer */
+   vay = 90.0f - (180.0f - (vcl = (float)(acos(vay) * 57.2958f)));           /* after: fst; fsubr, vcl stays in ST0 */
+   ```
+
+Guard: a double literal (`(double)0.95f`) turns the constant into `fmul qword`, which the original never has. Two
+such false gains were thrown out in PILOT (0x00458a40, 0x00425ca0). Search tool: PILOT `tools/dblgreedy.py`. X87A's
+copy adds transforms W (named double temporary) and F (named float local). Both are scratch tools under
+`verify/matchracepath_20261109/{pilot,x87a}/tools/`, not part of `re/tools/match/`.
+
+## Follow-ups filed on this branch (L0, 2026-11-09)
+
+- U-9801 (UNCERTAINTIES, semantic): the return type of 0x0055ae50. It stays refused C4. Marker in
+  `re/analysis/bucket_00557fb0/0x0055ae50.md`, CHANGELOG line below `<!-- ENTRIES -->`.
+- `re/HARNESS_BACKLOG.md` item 7: the match_permute.py mulswap precedence bug.
+- The 3 race-path s14 rows: 0x00487020 was worked in X87A (7 B, not closed). In X87B, 0x0048aa50 was worked by hand
+  (43 -> 17 B, not closed), and 0x0048a780 got only the mechanical passes (124 B, not closed).
+
 ## What remains on the race path (159 rows below C4)
 
 - Near-closes worth one more pass: 0x00488e70 7 B, 0x0040aef0 12 B, 0x00411ae0 27 B, 0x0048ab70 34 B,
