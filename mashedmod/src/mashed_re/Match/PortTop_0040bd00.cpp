@@ -11,7 +11,7 @@
 #define FUN_0048ffd0 PortTop_StandIn04C_0048ffd0   // stand-in: matched, not compiled (level 2)
 #define FUN_00477870 PortTop_StandIn04C_00477870   // stand-in: matched in group s12/00477580.c, not compiled (level 2)
 #define FUN_00475ea0 Orig_00475ea0   // matched, Match/PortTop_00475ea0.cpp, since PORT-OT-RENDER
-#define FUN_00475d90 PortTop_StandIn04C_00475d90   // stand-in: matched, not compiled (level 2)
+#define FUN_00475d90 Orig_00475d90   // matched, Match/PortTop_00475d90.cpp, since PORT-OT-RENDER-2
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp
 #define FUN_0048fdd0 Orig_0048fdd0   // matched, Match/PortTop_0048fdd0.cpp, since PORT-OT-OTHER
 #define FUN_0048af70 PortTop_StandIn04C_0048af70   // stand-in: matched, not compiled (level 2)

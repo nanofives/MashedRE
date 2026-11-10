@@ -5,9 +5,8 @@
 // Callee binds by name, no raw-address call: 0x00474db0 -> Orig_00474db0 (Match/PortTop_00474db0.cpp: RwGlobals +0x108
 // librw malloc + 0x004b6520 zero fill).
 // Shared state: no other exe TU reads or writes 0x00691600..0x00691617.
-// The teardown 0x00475d90 stays a stand-in: it runs 0x004768c0 on each 0x40-byte record of DAT_00691608, and those records
-// are filled by 0x00475a00 (no matched source, a stand-in), so with zero-filled records 0x004768c0's first read is
-// *(0 + 4). The four blocks are not freed at exit on this path.
+// The two records are filled by 0x00475a00 (Match/PortTop_00475a00.cpp, an L-115 near-match body since PORT-OT-RENDER-2),
+// and the teardown 0x00475d90 (Match/PortTop_00475d90.cpp) frees them and the four blocks at AppDestroy.
 // The other body of this RVA is the .asi-only Match/MatchS12_004759b0.cpp, so this TU is the ORIGTOP-ONLY class.
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
