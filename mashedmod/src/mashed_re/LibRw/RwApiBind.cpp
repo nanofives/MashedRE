@@ -1353,6 +1353,10 @@ void* __cdecl RwGlobalsFreeListFree(void* fl, void* p) {
 }
 }  // namespace
 
+// [PORT-OT-HUD-2] The same knob for the MASHED_ORIG_TOP call sites whose matched bodies call RwGlobals +0x11c
+// (Match/PortTop_00427620.cpp selectors for 0x00555830 / 0x00556e40). 1 = MASHED_ORIG_TOP_RWMOD=1.
+extern "C" int MashedRw_RwModKnob(void) { return RwModKnob() ? 1 : 0; }
+
 // Exe bodies the vector and matrix modules bind (Math/RwV3dTransformPointsCPU.cpp, Math/RwMatrixMultiplyCpu.cpp).
 extern "C" void* __cdecl RwV3dTransformPointsCPU_C(void* dst, const void* src, int count, const void* m);
 extern "C" void* __cdecl RwV3dTransformVectorsCPU_C(void* dst, const void* src, int count, const void* m);
