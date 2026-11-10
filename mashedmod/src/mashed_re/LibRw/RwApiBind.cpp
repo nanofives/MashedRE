@@ -1518,6 +1518,16 @@ void RegisterRwModules() {
     BindLog("RwGlobals [MASHED_ORIG_TOP_RWMOD]: image formats via 0x00493600 %s (%d), image +0x21c = 0x%08X",
             fmt < 0 ? "not reached" : "ran", fmt,
             *reinterpret_cast<const std::uint32_t*>(reinterpret_cast<const std::uint8_t*>(&s_rwGlobals) + kModImage + 0x21c));
+    // The nodes as re/match/s20/004ce790.c lays them out: +0x0 lower-case ".ext", +0x14 upper-case, +0x28 read,
+    // +0x2c write, +0x30 next.
+    for (const std::uint8_t* n = *reinterpret_cast<std::uint8_t* const*>(reinterpret_cast<const std::uint8_t*>(&s_rwGlobals) +
+                                                                       kModImage + 0x21c);
+         n; n = *reinterpret_cast<std::uint8_t* const*>(n + 0x30)) {
+        BindLog("  image format node %p: \"%.19s\" / \"%.19s\" read %p write %p next %p", static_cast<const void*>(n),
+                reinterpret_cast<const char*>(n), reinterpret_cast<const char*>(n + 0x14),
+                *reinterpret_cast<void* const*>(n + 0x28), *reinterpret_cast<void* const*>(n + 0x2c),
+                *reinterpret_cast<void* const*>(n + 0x30));
+    }
     BindLog("RwGlobals [MASHED_ORIG_TOP_RWMOD]: modules registered (0x007d3ffc 0x134, 0x007d4028 0x14c, 0x007d4054 0x3f4, "
             "0x007d4628 0x170), freelist alloc / free at +0x118 / +0x11c, string slots +0xc4 +0xd0 +0xdc +0xe8 +0xf4 +0xf8 "
             "+0xfc, device slots +0x24 +0x34, record %p size 0x%X",
