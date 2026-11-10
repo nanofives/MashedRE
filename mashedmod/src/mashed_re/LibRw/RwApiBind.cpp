@@ -731,6 +731,52 @@ int MashedRw_TextureRead_004c5cb0(const char* name, const char* mask) {
     return 0;
 }
 
+// [PORT-OT-IMAGE-FMT] the four RW toolkit image functions 0x00493600 hands to 0x004ce790 (directly or through the read
+// wrappers 0x004935a0 / 0x004935d0, Match/PortTop_004ce790.cpp). librw provides all four (deps/librw/src/bmp.cpp,
+// png.cpp), so they bind rather than being ported. Disassembly of original/MASHED.exe.unpatched:
+//  - rva 0x0052cb00 BMP reader (re/match/s23/0052cb00.c header: RwStream open / read, 'BM' magic, RwImageCreate).
+//  - rva 0x0052d530 BMP writer (image [esp+4], name [esp+8]): 0x4cc230(2, 2, name) at 0x0052d53e, bytes 0x42 / 0x4d
+//    through 0x4cbe80 (at 0x0052d56d / 0x0052d57f). Returns the image (at 0x0052d7c5 mov eax, ebp), 0 when the open
+//    fails (at 0x0052d7d0).
+//  - rva 0x00514330 PNG reader (name [ebp+8]): 0x4cc230(2, 1, name) at 0x0051434b, then 0x5173f0 with "1.0.12"
+//    (string at 0x00620e1c).
+//  - rva 0x00513f90 PNG writer (image [ebp+8], name [ebp+0xc]): 0x4cc230(2, 2, name) at 0x00513fb6, then 0x514d00 with
+//    "1.0.12". A null name or image skips the write (at 0x00513fa1 / 0x00513fa9). The image is returned (at 0x005142bd).
+// Images on the knob path are librw objects (the RW API binding layer), so the image argument and result are rw::Image*.
+// librw opens the file through rw::engine->filefuncs (fopen on the disk), not through the RtFS piz file system the
+// original's RwStreamOpen uses. No ORIG_TOP row calls them yet: 0x004ce8e0's caller 0x00498810 sits under a stand-in.
+// The readers check the file first: rw::readPNG asserts that the file exists (png.cpp: assert(data != nil)).
+static bool ImageFileExists(const char* name) {
+    if (!name) return false;
+    void* const f = rw::engine->filefuncs.rwfopen(name, "rb");
+    if (!f) return false;
+    rw::engine->filefuncs.rwfclose(f);
+    return true;
+}
+void* MashedRw_RtBMPImageRead_0052cb00(const char* name) {
+    rw::Image* const img = ImageFileExists(name) ? rw::readBMP(name) : nullptr;
+    BindLog("RtBMPImageRead(\"%s\") -> rw::readBMP %p", name ? name : "(null)", static_cast<void*>(img));
+    return img;
+}
+void* MashedRw_RtPNGImageRead_00514330(const char* name) {
+    rw::Image* const img = ImageFileExists(name) ? rw::readPNG(name) : nullptr;
+    BindLog("RtPNGImageRead(\"%s\") -> rw::readPNG %p", name ? name : "(null)", static_cast<void*>(img));
+    return img;
+}
+void* MashedRw_RtBMPImageWrite_0052d530(void* image, const char* name) {
+    if (!image || !name) return nullptr;
+    rw::writeBMP(static_cast<rw::Image*>(image), name);
+    BindLog("RtBMPImageWrite(%p, \"%s\") -> rw::writeBMP", image, name);
+    return image;
+}
+void* MashedRw_RtPNGImageWrite_00513f90(void* image, const char* name) {
+    if (image && name) {
+        rw::writePNG(static_cast<rw::Image*>(image), name);
+        BindLog("RtPNGImageWrite(%p, \"%s\") -> rw::writePNG", image, name);
+    }
+    return image;
+}
+
 }  // extern "C"
 
 // ===============================================================================================================
@@ -1358,6 +1404,8 @@ std::size_t __cdecl RwGlobalsStrlen(const char* s) { return std::strlen(s); }
 extern "C" void __cdecl RwStrupr(char* s);
 extern "C" void __cdecl RwStrlwr(char* s);
 extern "C" char* __cdecl RwStrrchr(char* s, char c);
+// [PORT-OT-IMAGE-FMT] Match/PortTop_00493600.cpp: runs the matched 0x00493600 once if 0x00493710 reached it (-1 if not).
+extern "C" int PortTop_RunPending_00493600(void);
 // [PORT-OT-RWG-DEVSLOTS] Render/D3d9StateCache.cpp: the exe body of 0x004d6910 (hooks.csv D3d9State_Get, C3).
 // D3d9Render/RwIm2DBridge.cpp: the B15 bridge's indexed Im2D draw (from the disassembly of 0x004dbc90).
 extern "C" std::uint32_t __cdecl D3d9State_Get(std::uint32_t state_enum, std::uint32_t* out);
@@ -1435,8 +1483,8 @@ void RegisterRwModules() {
     Put(kModMatrix + 0x10, 0x3c23d70au);
     Put(kModMatrix + 0x14, 0x3c23d70au);
     // Image module (+0x170). Original: +0x218 0x007d4604 (freelist header, re/match/s20/004ce790.c Mod.freeList),
-    // +0x21c 0x0cc0d5ec (heap: the registered image formats, Mod.formats). The exe starts the list empty: the formats
-    // are registered by 0x00493600, which the knob path has not ported (Match/PortTop_00493710.cpp returns 1).
+    // +0x21c 0x0cc0d5ec (heap: the registered image formats, Mod.formats). The list starts empty here and the
+    // [PORT-OT-IMAGE-FMT] deferred 0x00493600 fills it at the end of this function (bmp, then png at the head).
     // +0x0..+0x217 (original: +0x0 0x007d4630, +0x4 heap, +0x8 0x100, then bytes 00 01 02 ...) stay 0: no reader found.
     Put(kModImage + 0x218, 0x007d4604u);
     Put(kModImage + 0x21c, 0u);
@@ -1464,6 +1512,22 @@ void RegisterRwModules() {
     *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4028u)) = kModMatrix;
     *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4054u)) = kModTexture;
     *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4628u)) = kModImage;
+    // [PORT-OT-IMAGE-FMT] 0x00493710 reached 0x00493600 before this record existed (Match/PortTop_00493600.cpp). It runs
+    // now, on the slots, freelist header and module offset set above: 0x004ce790 x2 ("bmp", "png").
+    const int fmt = PortTop_RunPending_00493600();
+    BindLog("RwGlobals [MASHED_ORIG_TOP_RWMOD]: image formats via 0x00493600 %s (%d), image +0x21c = 0x%08X",
+            fmt < 0 ? "not reached" : "ran", fmt,
+            *reinterpret_cast<const std::uint32_t*>(reinterpret_cast<const std::uint8_t*>(&s_rwGlobals) + kModImage + 0x21c));
+    // The nodes as re/match/s20/004ce790.c lays them out: +0x0 lower-case ".ext", +0x14 upper-case, +0x28 read,
+    // +0x2c write, +0x30 next.
+    for (const std::uint8_t* n = *reinterpret_cast<std::uint8_t* const*>(reinterpret_cast<const std::uint8_t*>(&s_rwGlobals) +
+                                                                       kModImage + 0x21c);
+         n; n = *reinterpret_cast<std::uint8_t* const*>(n + 0x30)) {
+        BindLog("  image format node %p: \"%.19s\" / \"%.19s\" read %p write %p next %p", static_cast<const void*>(n),
+                reinterpret_cast<const char*>(n), reinterpret_cast<const char*>(n + 0x14),
+                *reinterpret_cast<void* const*>(n + 0x28), *reinterpret_cast<void* const*>(n + 0x2c),
+                *reinterpret_cast<void* const*>(n + 0x30));
+    }
     BindLog("RwGlobals [MASHED_ORIG_TOP_RWMOD]: modules registered (0x007d3ffc 0x134, 0x007d4028 0x14c, 0x007d4054 0x3f4, "
             "0x007d4628 0x170), freelist alloc / free at +0x118 / +0x11c, string slots +0xc4 +0xd0 +0xdc +0xe8 +0xf4 +0xf8 "
             "+0xfc, device slots +0x24 +0x34, record %p size 0x%X",
@@ -1478,6 +1542,9 @@ extern "C" {
 // the B15 device again: the device's fields are copied and the record goes back), and after 0x00402750 returns (the
 // record is already there: nothing changes). The matched loaders between these points call the string functions at
 // +0xcc / +0xd4 (0x0042a6b0 inside 0x0040bbb0, which runs before piece 4). Returns 1.
+// [PORT-OT-IMAGE-FMT] the knob, for Match/PortTop_00493600.cpp (1 = MASHED_ORIG_TOP_RWMOD=1).
+int MashedRw_RwModKnob(void) { return RwModKnob() ? 1 : 0; }
+
 int MashedRw_InstallRwGlobals(void) {
     void** const slot = reinterpret_cast<void**>(static_cast<std::uintptr_t>(0x007d3ff8u));
     void* const dev = *slot;

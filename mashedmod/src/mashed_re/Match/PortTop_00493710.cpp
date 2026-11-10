@@ -47,13 +47,10 @@ int PortTop_StandIn_004951f0(void) {
     PortTop93_Log("0x004951f0 HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)");
     return 1;
 }
-// rva 0x00493600: two 0x004ce790 calls with (&PTR_DAT_005cf74c, 0x004935a0, 0x0052d530) and (&PTR_DAT_005cf748,
-// rva 0x004935d0, 0x00513f90) (re/match/s15/00493600.c). None of the five has an exe body; the exe decodes textures in its
-// own TXD reader. Missing: returns 1 (both calls succeeded).
-int PortTop_Missing_00493600(void) {
-    PortTop93_Log("0x00493600: missing (0x004ce790 and its 4 function arguments unported), returns 1");
-    return 1;
-}
+// rva 0x00493600: two 0x004ce790 calls with ("bmp", 0x004935a0, 0x0052d530) and ("png", 0x004935d0, 0x00513f90)
+// (re/match/s15/00493600.c). [PORT-OT-IMAGE-FMT] bound to PortTop_Bound_00493600 (Match/PortTop_00493600.cpp): with
+// MASHED_ORIG_TOP_RWMOD=1 the matched body runs from RegisterRwModules once the RwGlobals image module exists; with the
+// knob OFF it returns 1 without registering, as the missing stub did.
 // rva 0x004936f0 / 0x00493700: function pointers 0x00493710 hands to 0x004cbc80 / 0x004cbc60. Not in hooks.csv, no exe
 // body. The RW API shims keep the pointers and never call them; these exist so the matched source links.
 void PortTop_Missing_004936f0(void) { PortTop93_Log("0x004936f0 called: missing body"); }
@@ -106,7 +103,7 @@ void PortTop_Missing_00428450(int x, int y) {
 #define FUN_004c2f00 MashedRw_EngineGetCurrentMode_004c2f00  // RW: RwEngineGetCurrentMode -> rw::Engine::getCurrentVideoMode
 #define FUN_004c2ed0 MashedRw_EngineGetModeInfo_004c2ed0     // RW: RwEngineGetModeInfo -> rw::Engine::getVideoModeInfo
 #define FUN_004a2cbd PortTop_Crt_004a2cbd                    // CRT printf -> mashed_re.log
-#define FUN_00493600 PortTop_Missing_00493600                // missing
+#define FUN_00493600 PortTop_Bound_00493600                  // matched, Match/PortTop_00493600.cpp (deferred under RWMOD)
 #define FUN_005584c0 MashedRw_Alloc7dc8b8_005584c0           // RW core -> shim
 #define FUN_004c5c80 MashedRw_TexDictionarySetCurrent_004c5c80  // RW: RwTexDictionarySetCurrent -> rw::TexDictionary::setCurrent
 #define FUN_004cbc90 MashedRw_Get7d459c_004cbc90             // RW core global get -> shim
