@@ -208,6 +208,20 @@ address (the refile), reads each member's `@comp.id` from `--lib`, and skips row
 (a second run writes nothing). Bucket by address: `0x004a0000..0x004b4000` -> `-main`, `0x005c0000..0x005d0000` ->
 `-tail`, anything else -> `[msvc-crt]`.
 
+### C1 row for a game function that has none (HB-CHANGELOG-MARKER)
+
+Before a `c4_reclass.py` match promotion of an RVA with no `hooks.csv` row, add the C1 row with the helper. Never use
+inline Python: three rows in a row (POWERUPINIT-B, -C, MATCH-40BB10) anchored on the first textual `<!-- ENTRIES -->`,
+which is the header prose, and split it.
+
+```
+py -3.12 re\tools\c1_add.py --rva 0x<rva> --subsystem <sub> --file <matched source> --why "<xref / call site / strings>" --result <RESULT.md> --tag <ROW>
+```
+
+It appends the 11-field row (C1, mapped, `exe_file` / `port` empty) and prepends one `(none)->C1` CHANGELOG line below
+the one line EQUAL to the marker. It refuses when the row exists, the RESULT is missing, or the marker line is not
+exactly one. Self-test: `py -3.12 -m pytest re/tools/tests/test_c1_add.py`.
+
 ### Library rows from libid: add missing rows, refile misfiled ones (no C4)
 
 A libmatch TSV also lists library functions that are identical at an address with **no** hooks.csv row, or at a row
