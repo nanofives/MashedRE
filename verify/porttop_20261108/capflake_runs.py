@@ -1,7 +1,7 @@
 """PORT-TOP-KNOBON-CAPFLAKE driver (call it inside test-slot + mashed_lock).
 
 usage: capflake_runs.py <arm> <spec> [<spec> ...]
-  spec = ON | OFF | ON@<ms> | OFF@<ms>
+  spec = ON | OFF | ON@<ms> | OFF@<ms> | ON@dflt | OFF@dflt
          ON/OFF = MASHED_ORIG_TOP=1 or unset; @<ms> = MASHED_DET_MPG_PIN=<ms> (no @ = pin OFF)
 Each spec is one nav-demo run (MASHED_NAV_DEMO=1 MASHED_DETERMINISTIC=1) with the settings baseline restored first.
 Appends one row per run to <D>/runs.tsv: arm, run, top knob, pin, freeze line (mode/pos/hash), capture class, 12 hashes.
@@ -10,8 +10,8 @@ Capture class: E = the 04E list, X = the 04G f2 / 04J p1 outlier list, '?' = nei
 import hashlib, os, re, shutil, subprocess, sys
 
 W = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
-D = 'D:/MashedWT/PORT-TOP-KNOBON-CAPFLAKE_data'
-R = 'D:/MashedWT/PORT-TOP-KNOBON-CAPFLAKE_rootK'
+D = os.environ.get('CAPFLAKE_DATA', 'D:/MashedWT/PORT-TOP-KNOBON-CAPFLAKE_data')
+R = os.environ.get('CAPFLAKE_ROOT', 'D:/MashedWT/PORT-TOP-KNOBON-CAPFLAKE_rootK')
 BASE = 'D:/MashedWT/PORT-TOP-04E_data/settings_baseline.bin'
 E = ['83c8cbb913899494', '24249b644e3e8057', 'feb2c803554cd028', '2871487f1fcef51c', '9f02cb91d09e0500',
      'b1f095c07072b28d', '3465159db8526481', '843e3fc49d166754', '5db0164fb2c6df8c', 'ca2f64dc5e7a9407',
@@ -46,8 +46,8 @@ def main():
         kv = ['MASHED_NAV_DEMO=1', 'MASHED_DETERMINISTIC=1', 'MASHED_VERIFY_OUT=' + out]
         if knob == 'ON':
             kv.append('MASHED_ORIG_TOP=1')
-        if pin:
-            kv.append('MASHED_DET_MPG_PIN=' + pin)
+        if pin != 'dflt':   # @dflt = leave it to knob_boot.py (HB-CAPTURE-MPGPIN default: 0)
+            kv.append('MASHED_DET_MPG_PIN=' + pin)   # empty = off
         env = dict(os.environ, PORTTOP_OUT=ad, PYTHONWARNINGS='ignore')
         env.pop('MASHED_ORIG_TOP', None)
         env.pop('MASHED_DET_MPG_PIN', None)

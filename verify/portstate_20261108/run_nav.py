@@ -30,7 +30,8 @@ for k in list(env):
     if k.startswith('MASHED_'):
         env.pop(k)
 env.update({'MASHED_ROOT': str(root), 'MASHED_MUTE': '1', 'MASHED_VERIFY_OUT': str(out),
-            'MASHED_WIN_POS': 'primary-bl', 'MASHED_SETTINGS_DEFAULTS': '1'})
+            'MASHED_WIN_POS': 'primary-bl', 'MASHED_SETTINGS_DEFAULTS': '1',
+            'MASHED_DET_MPG_PIN': '0'})   # HB-CAPTURE-MPGPIN (acts only with MASHED_DETERMINISTIC=1); extra may override
 if 'MASHED_NAV_KEYS' not in extra:      # MASHED_GOTO + MASHED_NAV_KEYS = the key-script route (logs NAV_KEYS, quits)
     env['MASHED_NAV_DEMO'] = '1'
 env.update(extra)
