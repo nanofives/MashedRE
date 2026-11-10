@@ -548,7 +548,15 @@ def stale(build: pathlib.Path) -> str | None:
 
 def main(argv) -> int:
     if "--merge-driver" in argv:
+        # HB-HOOKSCSV-ROWMERGE (2026-11-10): the registered `hooksport` driver now runs the row-level
+        # merge keyed by rva (scripts/hookscsv_merge.py). It covers the pre-`port` branch case too
+        # (missing columns count as unchanged). The old line-based merge_driver() stays callable
+        # with --merge-driver-lines.
+        import hookscsv_merge
         k = argv.index("--merge-driver")
+        return hookscsv_merge.driver(*argv[k + 1:k + 4])
+    if "--merge-driver-lines" in argv:
+        k = argv.index("--merge-driver-lines")
         return merge_driver(*argv[k + 1:k + 4])
     check = "--check" in argv
     text = CSV_PATH.read_bytes().decode("utf-8")
