@@ -5,7 +5,7 @@ Run it inside the test slot and the machine lock (test-slot OUTSIDE, mashed_lock
       py -3.12 re/tools/port_batch_bisect.py --tag HUD --heads 0x0041d870,0x0041e850'
 
 One gate pass = verify/savelink_20261023/run_arms.py (H_<stack>, B_<stack>_K0 / K1 / K26) and the 12 nav-demo
-captures (verify/porttop_20261108/knob_boot.py, MASHED_NAV_DEMO=1 MASHED_DETERMINISTIC=1, the PORT-TOP-04E settings
+captures (verify/porttop_20261108/knob_boot.py, MASHED_NAV_DEMO=1 MASHED_DETERMINISTIC=1 MASHED_DET_MPG_PIN=0, the PORT-TOP-04E settings
 baseline restored first). The OFF pass uses the DEF stack; an ON pass uses the BATCH stack with
 A4_BATCH_KNOBS='MASHED_BATCH_<TAG>=1 [MASHED_BATCH_<TAG>_ROWS=<heads>]'. Hashes: G-CTRL = sha8 of the H arm's
 step.csv / gates.csv / ptrace.log, B = sha8 of each B arm's step.csv (the merge train's definition,
@@ -92,7 +92,8 @@ class Gate:
             shutil.copyfile(SETTINGS, os.path.join(self.rootk, 'mashed_re_settings.bin'))
             e2 = dict(os.environ, PORTTOP_OUT=str(out), PYTHONWARNINGS='ignore')
             subprocess.call([sys.executable, 'verify/porttop_20261108/knob_boot.py', 'navdemo', self.rootk, '300'] + kn +
-                            ['MASHED_NAV_DEMO=1', 'MASHED_DETERMINISTIC=1', 'MASHED_VERIFY_OUT=' + str(nav)],
+                            ['MASHED_NAV_DEMO=1', 'MASHED_DETERMINISTIC=1', 'MASHED_DET_MPG_PIN=0',   # HB-CAPTURE-MPGPIN
+                             'MASHED_VERIFY_OUT=' + str(nav)],
                             cwd=ROOT, env=e2)
             for k in sorted(NAV_REF):
                 f = [x for x in os.listdir(nav) if x.startswith(k + '_') and x.endswith('.bmp')]

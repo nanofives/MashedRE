@@ -19,9 +19,15 @@ def main():
     label, root, tmo = sys.argv[1], sys.argv[2], float(sys.argv[3])
     env = dict(os.environ)
     env['MASHED_ROOT'] = root
+    keys = set()
     for kv in sys.argv[4:]:
         k, v = kv.split('=', 1)
         env[k] = v
+        keys.add(k)
+    # HB-CAPTURE-MPGPIN: 12-capture nav-demo runs freeze the frontend.mpg backdrop on frame 0
+    # (PORT-TOP-KNOBON-CAPFLAKE). A caller that passes MASHED_DET_MPG_PIN itself (empty = off) wins.
+    if env.get('MASHED_NAV_DEMO') == '1' and 'MASHED_DET_MPG_PIN' not in keys             and 'MASHED_DET_MPG_PIN' not in os.environ:
+        env['MASHED_DET_MPG_PIN'] = '0'
     log = os.path.join(root, 'mashed_re.log')
     if os.path.exists(log):
         os.remove(log)
