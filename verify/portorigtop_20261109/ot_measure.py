@@ -261,7 +261,14 @@ def probe(argv, data):
     secs = float(opt(argv, "--secs", "30"))
     offs = sorted({o for r in rows.values() for o in r.get("rwg_call_slots", []) + r.get("rwg_data_offs", [])},
                   key=lambda o: (isinstance(o, str), str(o)))
-    addrs = sorted({(int(s["addr"], 16), s["size"]) for r in rows.values() for s in r.get("seed", [])})
+    # one read per address at the largest size any row uses (two rows can read one address at two sizes; keying the
+    # sample by address used to keep whichever read came last)
+    amax = {}
+    for r in rows.values():
+        for s in r.get("seed", []):
+            a = int(s["addr"], 16)
+            amax[a] = max(amax.get(a, 0), s["size"])
+    addrs = sorted(amax.items())
     env = dict(os.environ, MASHED_ROOT=root, MASHED_ORIG_TOP="1", MASHED_DET_FRAMES=opt(argv, "--frames", "3000"))
     p = subprocess.Popen([exe], cwd=root, env=env)
     print("spawned pid", p.pid, flush=True)
