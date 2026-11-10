@@ -79,6 +79,8 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x005ce38c	s_Reset_with_matrix_005ce38c	.rdata	string	18	-	1	0x00452170
 0x005ce3a0	s_we_have_reset_the_pontoon_005ce3a0	.rdata	string	27	-	1	0x00452170
 0x005ce4b8	DAT_005ce4b8	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005ce4bc	s_GatlingGun_dff_005ce4bc	.rdata	string	15	origtop	1	0x00456760
+0x005ce4cc	s_flash_005ce4cc	.rdata	string	6	origtop	1	0x00456760
 0x005ce4fc	s_oil_005ce4fc	.rdata	string	4	origtop	1	0x00458630
 0x005ce548	DAT_005ce548	.rdata	scalar/array	4	origtop	1	0x00458920
 0x005ce54c	DAT_005ce54c	.rdata	scalar/array	4	origtop	1	0x00472820
@@ -176,6 +178,7 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x005f9788	DAT_005f9788	.data	scalar/array	1	cmt	2	0x00451820 0x00451ad0
 0x005f978c	DAT_005f978c	.data	scalar/array	4	-	1	0x00452170
 0x005f9790	DAT_005f9790	.data	scalar/array	4	-	1	0x00452170
+0x005f9820	DAT_005f9820	.data	scalar/array	16	origtop	1	0x004583a0
 0x005f99c4	PTR_FUN_005f99c4	.data	pointer	4	-	1	0x0045bed0
 0x005f9bd8	DAT_005f9bd8	.data	scalar/array	4	cmt	1	0x0045bed0
 0x005fd190	DAT_005fd190	.data	scalar/array	1	origtop	1	0x0045c720

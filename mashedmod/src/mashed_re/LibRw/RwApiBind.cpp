@@ -1316,6 +1316,73 @@ void* MashedRw_AtomicGeometryFlags_004b5300(void* atomic, void* data) {
     return atomic;
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// [POWERUPINIT-C] RW calls of the powerup type-table inits (Match/PortTop_00452f70.cpp .. PortTop_0045b830.cpp). Each
+// init loads a clump through the matched 0x0042a5d0 (a librw rw::Clump), clones it, and collects the clone's atomics
+// through 0x004b3fc0 -> RpClumpForAllAtomics (the binding above hands out librw rw::Atomic pointers). So every atomic,
+// frame and clump these bindings receive is a librw object.
+// ---------------------------------------------------------------------------------------------------------------
+
+// rva 0x004e6ab0 RpClumpClone (re/match/rwl02/004e6ab0.c, C2): a new clump with copies of the frame hierarchy and the
+// atomics, out of any world. librw: rw::Clump::clone.
+int MashedRw_ClumpClone_004e6ab0(int clump) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    rw::Clump* const n = c ? c->clone() : nullptr;
+    BindLog("0x004e6ab0(clump %p) -> rw::Clump::clone %p", static_cast<void*>(c), static_cast<void*>(n));
+    return ToInt(n);
+}
+
+// rva 0x004e4800 (re/match/rwl02/004e4800.c, BYTE-IDENTICAL): returns the dword at clump + [0x007d7174], the clump's
+// world plugin slot. Every caller on this path passes a clump: 0x00454bd0 (entry +0x10), 0x0045b360 (slot
+// +0x1c), 0x00457ba0 (mine +0x58) and 0x00458020 (dropper +0x14). librw: rw::Clump::world.
+int MashedRw_ClumpGetWorld_004e4800(int clump) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    return c ? ToInt(c->world) : 0;
+}
+
+// rva 0x004b5190 (re/match/s18/004b5190.c, BYTE-IDENTICAL): atomic +0x18 (the geometry) -> user-data array p1, element
+// p2 as an int (0x00543d70 / 0x00543df0). librw: rw::UserDataArray on a->geometry. The original has no guard for a
+// geometry without user data. The binding returns -1 there, which no init's switch takes (cases 0..6), and logs it.
+int MashedRw_AtomicPartCode_004b5190(int atomic, int array, int element) {
+    rw::Atomic* const a = FromInt<rw::Atomic>(atomic);
+    rw::Geometry* const g = a ? a->geometry : nullptr;
+    if (!g || rw::UserDataArray::geometryGetCount(g) <= array) {
+        BindLog("0x004b5190(atomic %p, %d, %d): no user-data array, returns -1", static_cast<void*>(a), array, element);
+        return -1;
+    }
+    rw::UserDataArray* const u = rw::UserDataArray::geometryGet(g, array);
+    if (!u || u->numElements <= element) {
+        BindLog("0x004b5190(atomic %p, %d, %d): no element, returns -1", static_cast<void*>(a), array, element);
+        return -1;
+    }
+    return u->getInt(element);
+}
+
+// rva 0x004b52f0 (re/match/s18/004b52f0.c, BYTE-IDENTICAL): geometry (atomic +0x18) -> 0x004b52c0: geometry +0x08 |=
+// mask when set != 0, else &= ~mask. The same work as the 0x004b5300 binding above, on a->geometry->flags.
+void MashedRw_AtomicGeometryFlags_004b52f0(int atomic, int mask, int set) {
+    unsigned d[2] = {static_cast<unsigned>(mask), static_cast<unsigned>(set)};
+    MashedRw_AtomicGeometryFlags_004b5300(FromInt<void>(atomic), d);
+}
+
+// rva 0x004c13e0 RwFrameScale (re/match/s19/004c13e0.c, BYTE-IDENTICAL): 0x004c5010 on the frame matrix (+0x10) with
+// (v, combine), then the dirty-list link of the root, returns the frame. librw: rw::Frame::scale. RW and librw number
+// the combine ops the same way (0 replace, 1 preconcat, 2 postconcat).
+int MashedRw_FrameScale_004c13e0(int frame, const void* v, int combine) {
+    rw::Frame* const f = FromInt<rw::Frame>(frame);
+    if (f && v) f->scale(static_cast<const rw::V3d*>(v), static_cast<rw::CombineOp>(combine));
+    BindLog("0x004c13e0(frame %p, combine %d) -> rw::Frame::scale", static_cast<void*>(f), combine);
+    return frame;
+}
+
+// rva 0x004c0ed0 RwFrameGetLTM (re/match/s19/004c0ed0.c, BYTE-IDENTICAL): syncs the hierarchy when the root is dirty
+// (0x004d8350), returns frame +0x50 (the LTM). librw: rw::Frame::getLTM. rw::Matrix has RW's 0x40-byte layout.
+void* MashedRw_FrameGetLTM_004c0ed0(int frame) {
+    rw::Frame* const f = FromInt<rw::Frame>(frame);
+    static_assert(sizeof(rw::Matrix) == 0x40, "RwMatrix is 0x40 bytes");
+    return f ? static_cast<void*>(f->getLTM()) : nullptr;
+}
+
 }  // extern "C"
 
 // ---------------------------------------------------------------------------------------------------------------

@@ -139,26 +139,38 @@ void PortTop_PWI_Call004587a0(void) {
                     *reinterpret_cast<const unsigned*>(static_cast<unsigned long>(0x0068b9acu)));
 }
 
-// The nine init stand-ins (one per type-table entry, the reasons in the header).
-#define PWI_INIT(i, rva, why)                                                                                      \
-    static void PortTop_PWI_InitStandIn_##i(void) {                                                                \
-        PortTop_PWI_Log("type table entry %u (+0x14 = 0x%08X in the original): init stand-in, not run: " why,       \
-                        static_cast<unsigned>(i), 0x##rva##u);                                                    \
-    }
-PWI_INIT(0, 00456760, "matched source, callees not on this path (0x004b3fc0 has no source), row POWERUPINIT-C")
-PWI_INIT(1, 004548e0, "matched source, callees not on this path (0x004b3fc0 has no source), row POWERUPINIT-C")
-PWI_INIT(2, 00455400, "no hooks.csv row, no matched source, row POWERUPINIT-B")
-PWI_INIT(3, 004583a0, "no hooks.csv row, no matched source, row POWERUPINIT-B")
-PWI_INIT(4, 0045a6b0, "no hooks.csv row, no matched source, row POWERUPINIT-B")
-PWI_INIT(5, 0045b830, "no hooks.csv row, no matched source, row POWERUPINIT-B")
-PWI_INIT(6, 00454e70, "no hooks.csv row, no matched source, row POWERUPINIT-B")
-PWI_INIT(7, 004576f0, "no hooks.csv row, no matched source, row POWERUPINIT-B")
-PWI_INIT(8, 00452f70, "no hooks.csv row, no matched source, row POWERUPINIT-B")
+// The nine type-table inits (+0x14). POWERUPINIT-C: seven run their matched bodies (Match/PortTop_<rva>.cpp), each
+// through a forwarder that logs the call and the records the init wrote. Two stay stand-ins:
+//  - entry 1, 0x004548e0 (DepthCharge): it clones the atom 0x004b3f90 returns. In the exe that is the RW-layout view
+//    MashedRwAtomicView (LibRw/RwApiBind.cpp), not a librw atomic, and 0x004e69a0 (RpAtomicClone), 0x004e7e30
+//    (RpAtomicSetFrame), 0x004c1040 and the 0x004548a0 tree (0x004547c0, 0x00454170 with 0x004c1210 / 0x004c15c0 /
+//    0x004e43b0 / 0x004e4440) have no librw binding for it. Row POWERUPINIT-D1.
+//  - entry 2, 0x00455400 (Missile): no byte match (94.0%, POWERUPINIT-B). Row POWERUPINIT-B2.
+void Orig_00456760(void);
+void Orig_004583a0(void);
+void Orig_0045a6b0(void);
+void Orig_0045b830(void);
+void Orig_00454e70(void);
+void Orig_004576f0(void);
+void Orig_00452f70(void);
+#define PWI_INIT(i, rva, why)                                                                                          static void PortTop_PWI_InitStandIn_##i(void) {                                                                        PortTop_PWI_Log("type table entry %u (+0x14 = 0x%08X in the original): init stand-in, not run: " why,                               static_cast<unsigned>(i), 0x##rva##u);                                                        }
+PWI_INIT(1, 004548e0, "its 0x004b3f90 atom is the RW-layout view, no librw clone/frame bindings, row POWERUPINIT-D1")
+PWI_INIT(2, 00455400, "no byte match (94.0 percent), row POWERUPINIT-B2")
 #undef PWI_INIT
+static unsigned PortTop_PWI_Dw(unsigned a);
+#define PWI_MATCHED(i, rva, rec, what)                                                                                 static void PortTop_PWI_Init_##i(void) {                                                                               Orig_##rva();                                                                                                      PortTop_PWI_Log("type table entry %u: rva 0x" #rva ": matched body returned, " what " = %08X",                                     static_cast<unsigned>(i), PortTop_PWI_Dw(rec));                                                }
+PWI_MATCHED(0, 00456760, 0x006886b8u, "first clone (0x006886b8)")
+PWI_MATCHED(3, 004583a0, 0x0068a368u, "first mine clone (0x0068a368)")
+PWI_MATCHED(4, 0045a6b0, 0x0068bb80u, "first flame clone (0x0068bb80)")
+PWI_MATCHED(5, 0045b830, 0x0068d174u, "first shotgun clone (0x0068d174)")
+PWI_MATCHED(6, 00454e70, 0x00688368u, "first flashunit clone (0x00688368)")
+PWI_MATCHED(7, 004576f0, 0x0068a25cu, "first oil clone (0x0068a25c)")
+PWI_MATCHED(8, 00452f70, 0x00684e4cu, "first mortar clone (0x00684e4c)")
+#undef PWI_MATCHED
 static void (*const s_pwiInit[9])(void) = {
-    PortTop_PWI_InitStandIn_0, PortTop_PWI_InitStandIn_1, PortTop_PWI_InitStandIn_2,
-    PortTop_PWI_InitStandIn_3, PortTop_PWI_InitStandIn_4, PortTop_PWI_InitStandIn_5,
-    PortTop_PWI_InitStandIn_6, PortTop_PWI_InitStandIn_7, PortTop_PWI_InitStandIn_8,
+    PortTop_PWI_Init_0, PortTop_PWI_InitStandIn_1, PortTop_PWI_InitStandIn_2,
+    PortTop_PWI_Init_3, PortTop_PWI_Init_4, PortTop_PWI_Init_5,
+    PortTop_PWI_Init_6, PortTop_PWI_Init_7, PortTop_PWI_Init_8,
 };
 
 static unsigned PortTop_PWI_Dw(unsigned a) { return *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(a)); }
@@ -180,7 +192,7 @@ void PortTop_PWI_Call0045bae0(void) {
             ++kept;
         }
     }
-    PortTop_PWI_Log("rva 0x0045bae0: type table +0x14 slots: %u stand-ins stored, %u already non-zero, of 9", seeded, kept);
+    PortTop_PWI_Log("rva 0x0045bae0: type table +0x14 slots: %u init pointers stored (7 matched, 2 stand-ins), %u already non-zero, of 9", seeded, kept);
     Orig_0045bae0();
     PortTop_PWI_Log("rva 0x0045bae0: matched body returned: DAT_0068d4e0 = %08X, DAT_0068bb58 = %08X, record 0x0068b9b8 +0x04 = %08X",
                     PortTop_PWI_Dw(0x0068d4e0u), PortTop_PWI_Dw(0x0068bb58u), PortTop_PWI_Dw(0x0068b9bcu));
