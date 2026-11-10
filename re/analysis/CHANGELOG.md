@@ -11,6 +11,21 @@ per-lane docs plus `git log` cover the other half.
 
 **Ordering: NEWEST FIRST.** One entry per line, starting `YYYY-MM-DD`. New entries are
 **prepended immediately below the `<!-- ENTRIES -->` marker**, never appended to the end.
+Several skill docs said "append" while the file was prepend-ordered; that mismatch is part
+of how `2dee9c67` (2026-07-30) came to *overwrite* the file, destroying 477 entries
+(recovered 2026-08-15).
+
+**This file is append-only in spirit: never rewrite or truncate it.** If an entry was
+wrong, add a new entry correcting it — do not edit history.
+
+**Do not cite entries by line number.** Prepending shifts every line below. Cite by date
+plus subject (e.g. "CHANGELOG 2026-06-18 physics-chain C4-DEBT DISPOSITION"). Existing
+line-number citations elsewhere in the repo predate this rule and are shifted by the
+length of this header.
+
+Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
+
+<!-- ENTRIES -->
 2026-11-10  0x004b3f20  FUN_004b3f20  (none)->C1  added (POWERUPINIT-C): RpClumpForAllAtomics callback pushed by 0x004b3fc0 (push 0x4b3f20 at 0x004b3fd8); Ghidra has no function here (extent 34 B in re/console/pc_funcs.csv); evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-C.md
 2026-11-10  0x00452f70  FUN_00452f70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 8 of 0x005f9998 (+0x14 pointer at 0x005f9bac, the only xref); strings smoke / mortar.dff / MortarRound.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e40  FUN_00454e40  (none)->C1  added (POWERUPINIT-B): tail-jump target of 0x00454e70 (jmp at 0x00454f65) and of 0x00454f70; loops 0x00454bd0 (ESI) over 4 x 0x14 at 0x00688358 and 0x00454c00 (EAX) over 4 x 0x18 at 0x006882f8; callees filed render; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
@@ -98,21 +113,6 @@ per-lane docs plus `git log` cover the other half.
 2026-11-01  0x0042fa00  MenuTeamSelectTick  C3->C4  route match (c4=match), exe-callers=1 (RenderFrame ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
 2026-11-01  0x0042f6a0  GetRaceSubMode  C3->C4  route match (c4=match), exe-callers=3 (RaceEndFlagIfEndMode ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
 2026-11-01  0x0042fe30  RaceEndFlagIfEndMode  C4->C4  adds route match (c4=match) next to the frida route, exe-callers=1 (PickupPoolSpawn ... WinMain); evidence: verify/matchrc_20261101/RESULT_MATCH-RC-S06S07.md
-Several skill docs said "append" while the file was prepend-ordered; that mismatch is part
-of how `2dee9c67` (2026-07-30) came to *overwrite* the file, destroying 477 entries
-(recovered 2026-08-15).
-
-**This file is append-only in spirit: never rewrite or truncate it.** If an entry was
-wrong, add a new entry correcting it — do not edit history.
-
-**Do not cite entries by line number.** Prepending shifts every line below. Cite by date
-plus subject (e.g. "CHANGELOG 2026-06-18 physics-chain C4-DEBT DISPOSITION"). Existing
-line-number citations elsewhere in the repo predate this rule and are shifted by the
-length of this header.
-
-Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
-
-<!-- ENTRIES -->
 2026-11-10  0x0040bb10  FUN_0040bb10  (none)->C1  added (MATCH-40BB10): RpClumpForAllAtomics callback passed by 0x0040cda0 (re/match/s02/0040cda0.c); calls 0x0040bae0(atomic, data) and returns the atomic; Ghidra function present (re/console/pc_funcs.csv 23 B); evidence: verify/portorigtop_20261109/RESULT_MATCH-40BB10.md
 2026-11-10  0x0040bb10  FUN_0040bb10  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/0040bb10.c; evidence: verify/portorigtop_20261109/RESULT_MATCH-40BB10.md
 2026-11-10  0x004b3f20  FUN_004b3f20  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/004b3f20.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-C.md
