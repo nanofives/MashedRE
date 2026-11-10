@@ -1,0 +1,10 @@
+[1/4] 0x0040ad90 match PASS byte-identical 148 B, relocheck OK (4/0)
+[2/4] 0x00414f00 match PASS byte-identical 274 B, relocheck OK (10/4)
+[3/4] 0x0044e0a0 match PASS byte-identical 239 B, relocheck OK (10/0)
+[4/4] 0x00458e00 match PASS byte-identical 274 B, relocheck OK (10/0)
+batch: 4 pass, 0 refused, 0 skipped (already C4), 4 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-10  0x0040ad90  FUN_0040ad90  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s02/0040ad90.c; evidence: <RESULT>
+  2026-11-10  0x00414f00  AiTrackObjSeek  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a1_00414f00.c; evidence: <RESULT>
+  2026-11-10  0x0044e0a0  FUN_0044e0a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e0a0.c; evidence: <RESULT>
+  2026-11-10  0x00458e00  PickupPoolSpawn  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458e00.c; evidence: <RESULT>

@@ -1,0 +1,4 @@
+rva	route	evidence	verdict	detail
+0x0048aff0	match	re/match/racepath/0048aff0.c	PASS	byte-identical 576 B, relocheck OK (11/0)
+0x0048b230	match	re/match/racepath/0048aff0.c	PASS	byte-identical 519 B, relocheck OK (26/0)
+0x0048b440	match	re/match/racepath/0048aff0.c	PASS	byte-identical 524 B, relocheck OK (19/1)

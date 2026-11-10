@@ -28,6 +28,10 @@
 #   --screen N   push nav screen N via FUN_0043d2a0(N, 0) before capturing
 #                (omit = capture at whatever screen is up, i.e. the title).
 #   --frames K   consecutive frames to capture (default 4).
+#   --nav STEPS  reach the screen through the real menu inputs instead of a push (HB-MENUBURST-NAV,
+#                2026-11-09): confirm | left | right | up | down | wait:S, comma separated. Needed for states a
+#                push skips, e.g. the colour select in the cup flow (LAB_0043f468 sets the game mode and
+#                0x0067f0c0): --nav confirm,confirm,confirm. --peek 0x..,.. reads dwords after the nav.
 #
 # Output: { "<label>_f<i>": [ {"v": "<hex>", "r": ["0x..rva", ...]}, ... ] }
 import argparse
@@ -71,8 +75,30 @@ const RVA_POST=0x0042bf30, RVA_MODAL_FLAG=0x0067eab0, RVA_MODAL_RAMP=0x0067eab8;
 const RVA_MODAL_AUX=0x0067ea5c, RVA_MODAL_BIASON=0x0067ead4;
 let nav=null, postFn=null, collecting=0, frames={}, texts={}, order=[], cur=null;
 let drawHooked=0, textHooked=0;
+// --nav (HB-MENUBURST-NAV): drive the REAL menu input path instead of a bare FUN_0043d2a0 push, so states set on
+// the way (e.g. LAB_0043f468's game mode and 0x0067f0c0) are reached. Two in-process mechanisms, both already used
+// by repo tools: confirm = the FUN_00497310 return override for player 0 (re/frida/nav_agent.js, control code 4);
+// directions = player 0's cooked edge flag 0x007f1044 + col written at FUN_004967e0 onLeave (the per-frame input
+// manager; re/frida/input_feed_cooked.py), col 0=left 1=right 2=up 3=down. No OS input is injected.
+const RVA_RES=0x00497310, RVA_MGR=0x004967e0, RVA_EDGE=0x007f1044;
+let navHooked=0, pressCtrl=-1, pressUntil=0, edgeCol=-1, edgeLeft=0;
 function abs(r){return ptr(r+DELTA);}
 rpc.exports={
+  navinit:function(){
+    if(navHooked) return 1;
+    Interceptor.attach(abs(RVA_RES), {
+      onEnter(a){ const sp=this.context.esp; this.p=sp.add(4).readS32(); this.c=sp.add(8).readS32(); },
+      onLeave(ret){ if(this.p===0 && this.c===pressCtrl && Date.now()<pressUntil) ret.replace(ptr(0xff)); }
+    });
+    Interceptor.attach(abs(RVA_MGR), { onLeave(){
+      if(edgeLeft>0 && edgeCol>=0){ try{ abs(RVA_EDGE+edgeCol).writeU8(0xff); }catch(e){} edgeLeft--; }
+    }});
+    navHooked=1; return 1;
+  },
+  press:function(c,ms){ pressCtrl=c; pressUntil=Date.now()+ms; return 1; },
+  edge:function(col,n){ edgeCol=col; edgeLeft=n; return 1; },
+  depth:function(){ return abs(RVA_DEPTH).readS32(); },
+  peek:function(list){ return list.map(function(a){ try{ return abs(a).readU32()>>>0; }catch(e){ return null; } }); },
   init:function(){
     const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
     DELTA=m.base.toUInt32()-IMG;
@@ -199,9 +225,17 @@ def main():
                          "arming, then wait for the alpha ramp to pass 0x28. Six "
                          "ints; the rejection arms at 0x0043f3e2.. pass e.g. "
                          "'0xd6,0,1,0x2d,0,0'")
+    ap.add_argument("--nav", default=None, metavar="STEP,..",
+                    help="reach the screen through the real menu inputs (HB-MENUBURST-NAV): comma list of "
+                         "confirm | left | right | up | down | wait:SECONDS. confirm presses control 4 until the "
+                         "menu depth rises (6 tries); a direction writes player 0's cooked edge flag for 3 "
+                         "input frames. Runs after the title is up, before --screen/--post-modal. "
+                         "walk_04 (colour select, cup flow): confirm,confirm,confirm")
+    ap.add_argument("--peek", default=None, metavar="0xADDR,..",
+                    help="read these dwords after --nav and after the burst; printed and stored in *.peek.json")
     args = ap.parse_args()
     label = args.label or (f"scr{args.screen}" if args.screen is not None
-                           else "title")
+                           else ("nav" if args.nav else "title"))
 
     env = dict(os.environ)
     # Stock behaviour by default. A caller that wants the .asi's hooks LIVE
@@ -224,6 +258,36 @@ def main():
     while time.time() < end and E.phase() != 3:
         time.sleep(0.2)
     time.sleep(1.5)
+
+    peeks = {}
+    peek_addrs = [int(t, 16) for t in args.peek.split(",")] if args.peek else []
+    if args.nav:
+        E.navinit()
+        cols = {"left": 0, "right": 1, "up": 2, "down": 3}
+        for step in [t.strip() for t in args.nav.split(",") if t.strip()]:
+            if step == "confirm":
+                d0 = E.depth()
+                for _ in range(6):
+                    E.press(4, 180)
+                    t_end = time.time() + 2.5
+                    while time.time() < t_end and E.depth() <= d0:
+                        time.sleep(0.1)
+                    if E.depth() > d0:
+                        break
+                print(f"nav confirm: depth {d0} -> {E.depth()}")
+                time.sleep(1.0)
+            elif step in cols:
+                E.edge(cols[step], 3)
+                time.sleep(0.8)
+                print(f"nav {step}: depth {E.depth()}")
+            elif step.startswith("wait:"):
+                time.sleep(float(step[5:]))
+            else:
+                raise SystemExit(f"--nav: unknown step {step!r}")
+        time.sleep(args.settle)
+        if peek_addrs:
+            peeks["after_nav"] = {f"0x{a:08x}": v for a, v in zip(peek_addrs, E.peek(peek_addrs))}
+            print("peek after nav", peeks["after_nav"])
 
     if args.screen is not None:
         print(f"push {args.screen} -> depth", E.push(args.screen))
@@ -263,6 +327,10 @@ def main():
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, indent=1))
     print("->", out)
+    if peek_addrs:
+        peeks["after_burst"] = {f"0x{a:08x}": v for a, v in zip(peek_addrs, E.peek(peek_addrs))}
+        print("peek after burst", peeks["after_burst"])
+        out.with_suffix(".peek.json").write_text(json.dumps(peeks, indent=1))
     if args.text_trace:
         tout = out.with_suffix(".text.json")
         tdata = json.loads(E.textreport())

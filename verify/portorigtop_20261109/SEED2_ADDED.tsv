@@ -1,0 +1,186 @@
+addr	glob	size	action	detail	rows
+0x005cc31c	DAT_005cc31c	4	added	.rdata	0x0041dc30
+0x005cc324	DAT_005cc324	4	added	.rdata	0x00429620
+0x005cc33c	DAT_005cc33c	4	added	.rdata	0x004726b0
+0x005cc344	DAT_005cc344	4	added	.rdata	0x0045c880
+0x005cc34c	DAT_005cc34c	4	added	.rdata	0x0045ca30
+0x005cc358	DAT_005cc358	4	added	.rdata	0x0045c880
+0x005cc35c	DAT_005cc35c	4	added	.rdata	0x00482030
+0x005cc56c	DAT_005cc56c	4	added	.rdata	0x0045c880
+0x005cc574	DAT_005cc574	4	added	.rdata	0x0041dc30
+0x005cc728	DAT_005cc728	4	added	.rdata	0x00482900
+0x005cc750	DAT_005cc750	4	added	.rdata	0x0048f8a0 0x0048f9f0 0x0048fb10
+0x005cc8f0	DAT_005cc8f0	4	added	.rdata	0x0045c880
+0x005cc950	DAT_005cc950	4	added	.rdata	0x0042c3c0 0x00441700 0x0048f290
+0x005cc99c	DAT_005cc99c	4	added	.rdata	0x00421160
+0x005cc9d0	DAT_005cc9d0	4	added	.rdata	0x0048f290
+0x005cc9e0	DAT_005cc9e0	4	added	.rdata	0x00421100
+0x005cca00	DAT_005cca00	4	added	.rdata	0x0045ca30
+0x005ccca0	s_scorch_005ccca0	7	added	.rdata	0x004862d0
+0x005ccd04	DAT_005ccd04	4	added	.rdata	0x00429620
+0x005cd0b0	DAT_005cd0b0	4	added	.rdata	0x0045c880
+0x005cd0fc	DAT_005cd0fc	4	added	.rdata	0x0045c880
+0x005cd130	s_airstrike_005cd130	10	added	.rdata	0x00458630
+0x005cd1bc	s_team1panel_005cd1bc	11	added	.rdata	0x0041bec0
+0x005cd1c8	s_team0panel_005cd1c8	11	added	.rdata	0x0041bec0
+0x005cd1d4	s_KCPanel_dff_005cd1d4	12	added	.rdata	0x0041c100
+0x005cd208	s_teameppanel_dff_005cd208	16	added	.rdata	0x0041d6e0
+0x005cd218	s_startlights_dff_005cd218	16	added	.rdata	0x0041d8b0
+0x005cd23c	s_RacePanel_dff_005cd23c	14	added	.rdata	0x0041db90
+0x005cd2b4	DAT_005cd2b4	4	added	.rdata	0x00421100
+0x005cd30c	DAT_005cd30c	4	added	.rdata	0x0045c880
+0x005cd310	DAT_005cd310	4	added	.rdata	0x00422440
+0x005cd5f0	DAT_005cd5f0	4	added	.rdata	0x00427580
+0x005cd5f4	DAT_005cd5f4	4	added	.rdata	0x00427580
+0x005cd5f8	DAT_005cd5f8	4	added	.rdata	0x00427580
+0x005cd6c4	DAT_005cd6c4	4	added	.rdata	0x00429620
+0x005cd6c8	DAT_005cd6c8	4	added	.rdata	0x00429b30 0x00429b70
+0x005cd788	DAT_005cd788	4	added	.rdata	0x0042c3c0
+0x005cd78c	s__2f_005cd78c	5	added	.rdata	0x0042c3c0
+0x005cd794	s_d_005cd794	4	added	.rdata	0x0042d290
+0x005cd798	s_sd_005cd798	8	added	.rdata	0x0042d290
+0x005cd7a0	s_0_005cd7a0	4	added	.rdata	0x0042d290
+0x005cd7ac	s_check_005cd7ac	6	added	.rdata	0x0042ee00
+0x005cd7b4	s_dot_005cd7b4	4	added	.rdata	0x0042ee00
+0x005cd7b8	s_lock_005cd7b8	5	added	.rdata	0x0042ee00
+0x005cd7c0	s_QuickRace_005cd7c0	10	added	.rdata	0x0042ee40
+0x005cd7cc	s_MultiPlayer_005cd7cc	12	added	.rdata	0x0042ee40
+0x005cd7d8	s_GoldCup_005cd7d8	8	added	.rdata	0x0042ee40
+0x005cd7e0	s_SilverCup_005cd7e0	10	added	.rdata	0x0042ee40
+0x005cd7ec	s_BronzeCup_005cd7ec	10	added	.rdata	0x0042ee40
+0x005cd7f8	s_GoldMedal_005cd7f8	10	added	.rdata	0x0042ee40
+0x005cd804	s_SilverMedal_005cd804	12	added	.rdata	0x0042ee40
+0x005cd810	s_BronzeMedal_005cd810	12	added	.rdata	0x0042ee40
+0x005cd81c	s_TimeTrial_005cd81c	10	added	.rdata	0x0042ee40
+0x005cd838	s_NFLSurvival_005cd838	12	added	.rdata	0x0042fab0
+0x005cd844	s_NFLFugitive_005cd844	12	added	.rdata	0x0042fab0
+0x005cd850	s_NFLBomb_005cd850	8	added	.rdata	0x0042fab0
+0x005cd858	s_NFLCopter_005cd858	10	added	.rdata	0x0042fab0
+0x005cd864	s_NFLShadow_005cd864	10	added	.rdata	0x0042fab0
+0x005cd870	s_NFLPink_005cd870	8	added	.rdata	0x0042fab0
+0x005cd878	s_NFLGold_005cd878	8	added	.rdata	0x0042fab0
+0x005cd880	s_NFLMelon_005cd880	9	added	.rdata	0x0042fab0
+0x005cd88c	s_NFLBluejay_005cd88c	11	added	.rdata	0x0042fab0
+0x005cd898	s_NFLRed_005cd898	7	added	.rdata	0x0042fab0
+0x005cd8f0	DAT_005cd8f0	8	added	.rdata	0x00431b50 0x00431b60
+0x005cd970	s_Star_005cd970	5	added	.rdata	0x004391b0
+0x005cda3c	s_tick_005cda3c	5	added	.rdata	0x004391b0
+0x005cda44	s_Lock_005cda44	5	added	.rdata	0x004391b0
+0x005ce18c	DAT_005ce18c	4	added	.rdata	0x0048f9f0
+0x005ce2d8	DAT_005ce2d8	4	added	.rdata	0x0044e020
+0x005ce4b8	DAT_005ce4b8	4	added	.rdata	0x0045c880
+0x005ce4fc	s_oil_005ce4fc	4	added	.rdata	0x00458630
+0x005ce548	DAT_005ce548	4	added	.rdata	0x00458920
+0x005ce54c	DAT_005ce54c	4	added	.rdata	0x00472820
+0x005ce550	s_chaos_005ce550	6	added	.rdata	0x00458630
+0x005ce558	s_flare_005ce558	6	added	.rdata	0x00458630
+0x005ce560	s_shotgun_005ce560	8	added	.rdata	0x00458630
+0x005ce568	s_flamethrower_005ce568	13	added	.rdata	0x00458630
+0x005ce578	s_missile_005ce578	8	added	.rdata	0x00458630
+0x005ce580	s_depthcharge_005ce580	12	added	.rdata	0x00458630
+0x005ce58c	s_mortar_005ce58c	7	added	.rdata	0x00458630
+0x005ce594	s_mine_005ce594	5	added	.rdata	0x00458630
+0x005ce59c	s_machinegun_005ce59c	11	added	.rdata	0x00458630
+0x005ce5f8	s_exp_cloud2_005ce5f8	11	added	.rdata	0x00485d90 0x004862d0
+0x005ce654	DAT_005ce654	4	added	.rdata	0x0045c880
+0x005ce658	DAT_005ce658	4	added	.rdata	0x0045d0e0
+0x005ceaf0	s_hemisphere_dff_005ceaf0	15	added	.rdata	0x004775b0
+0x005ceb00	s_shockwave_dff_005ceb00	14	added	.rdata	0x004775b0
+0x005ceb10	DAT_005ceb10	1	added	.rdata	0x00477e40
+0x005ceb90	DAT_005ceb90	4	added	.rdata	0x00494f40
+0x005cf24c	s_Replay_size_is__d_005cf24c	19	added	.rdata	0x00482900
+0x005cf9d0	PTR_LAB_005cf9d0	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x00494ac0 0x00494b20
+0x005cfaac	DAT_005cfaac	1	added	.rdata	0x00494ac0
+0x005cfac4	DAT_005cfac4	16	added	.rdata	0x00494c80
+0x005cfae4	s_Could_not_create_texture_render_005cfae4	51	added	.rdata	0x00494c80
+0x005cfb48	s_Could_not_render_source_output_p_005cfb48	45	added	.rdata	0x00494c80
+0x005cfb78	s_Could_not_find_output_pin___hr_0_005cfb78	36	added	.rdata	0x00494c80
+0x005cfb9c	u_Output_005cfb9c	28	added	.rdata	0x00494c80
+0x005cfbac	s_Could_not_add_source_filter_to_g_005cfbac	47	added	.rdata	0x00494c80
+0x005cfbe0	s_Could_not_add_source_filter_to_g_005cfbe0	73	added	.rdata	0x00494c80
+0x005cfc2c	u_SOURCE_005cfc2c	28	added	.rdata	0x00494c80
+0x005cfc3c	s_Could_not_add_renderer_filter_to_005cfc3c	49	added	.rdata	0x00494c80
+0x005cfc70	u_TEXTURERENDERER_005cfc70	64	added	.rdata	0x00494c80
+0x005cfd30	PTR_FUN_005cfd30	4	code-pointer	holds original function entries 0x0049de60: needs a binding, not a seed	0x00494ac0 0x00494b20
+0x005cfd70	PTR_LAB_005cfd70	4	code-pointer	holds original function entries 0x0049dc20: needs a binding, not a seed	0x00494ac0 0x00494b20
+0x005cfe34	DAT_005cfe34	4	added	.rdata	0x00494f40
+0x005d0abc	DAT_005d0abc	16	added	.rdata	0x00494c80
+0x005d0bbc	DAT_005d0bbc	16	added	.rdata	0x00494c80
+0x005d0bcc	DAT_005d0bcc	16	added	.rdata	0x00494c80
+0x005d0c4c	DAT_005d0c4c	16	added	.rdata	0x00494c80
+0x005d0e74	PTR_LAB_005d0e74	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x00494ac0 0x00494b20
+0x005d0e88	PTR_LAB_005d0e88	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x00494ac0 0x00494b20
+0x005e4fe0	DAT_005e4fe0	1	added	.rdata	0x0055c810
+0x005e6414	DAT_005e6414	1	added	.rdata	0x005ac650
+0x005e6424	DAT_005e6424	1	added	.rdata	0x005ac650
+0x005e6434	DAT_005e6434	1	added	.rdata	0x005ac650
+0x005e6444	DAT_005e6444	1	added	.rdata	0x005ac650
+0x005e6454	DAT_005e6454	1	added	.rdata	0x005ac650
+0x005e6474	DAT_005e6474	1	added	.rdata	0x005ac650
+0x005e64b4	DAT_005e64b4	1	added	.rdata	0x005ac650
+0x005f29b8	DAT_005f29b8	4	added	.data	0x0040e4a0
+0x005f29bc	DAT_005f29bc	4	added	.data	0x0040e500
+0x005f29d0	DAT_005f29d0	4	added	.data	0x004113b0
+0x005f334c	DAT_005f334c	4	added	.data	0x0041b770 0x0041c010
+0x005f337c	DAT_005f337c	4	added	.data	0x0041cbc0
+0x005f616c	_DAT_005f616c	4	added	.data	0x00426030
+0x005f65b0	PTR_DAT_005f65b0	4	added+target	points at string 0x005cd29c (5 B), seeded too	0x0042a5d0
+0x005f6754	DAT_005f6754	4	added	.data	0x0042a940 0x0042a980
+0x005f79d8	DAT_005f79d8	104	added	.data	0x0042e590
+0x005f9998	DAT_005f9998	32	code-pointer	holds original function entries 0x00456040 0x00456760 0x004568a0 0x004568d0: needs a binding, not a seed	0x0045baa0 0x0045bf30
+0x005f99bc	PTR_thunk_FUN_00456c70_005f99bc	4	code-pointer	holds original function entries 0x00456c90: needs a binding, not a seed	0x0045b9d0
+0x005f99c0	PTR_FUN_005f99c0	4	code-pointer	holds original function entries 0x0045b350: needs a binding, not a seed	0x0045be90
+0x005fd190	DAT_005fd190	1	added	.data	0x0045c720
+0x005fe268	DAT_005fe268	1	added	.data	0x0045c720
+0x005ff340	DAT_005ff340	1	added	.data	0x0045c720
+0x00600418	DAT_00600418	1	added	.data	0x0045c720
+0x006014f0	DAT_006014f0	1	added	.data	0x0045c720
+0x006025c8	DAT_006025c8	1	added	.data	0x0045c720
+0x006036c0	DAT_006036c0	4	added	.data	0x0045df70
+0x006036cc	DAT_006036cc	4	added	.data	0x0045dfc0
+0x00613258	DAT_00613258	4	added	.data	0x00475f30
+0x00613274	DAT_00613274	4	added	.data	0x00475f30
+0x00613278	DAT_00613278	4	added	.data	0x00475f30
+0x006132cc	DAT_006132cc	4	added	.data	0x00477450 0x00477760
+0x006132fc	DAT_006132fc	4	added	.data	0x0047b200 0x0047b250
+0x00613300	DAT_00613300	4	added	.data	0x0047b230 0x0047b250
+0x00613328	DAT_00613328	60	added	.data	0x004841d0
+0x006136e8	DAT_006136e8	28	added	.data	0x004841d0
+0x006138a8	DAT_006138a8	40	added	.data	0x004841d0
+0x00613b28	DAT_00613b28	104	added	.data	0x004841d0
+0x006145b0	DAT_006145b0	64	added	.data	0x0048f9f0 0x0048fb10
+0x006147dc	PTR_FUN_006147dc	4	code-pointer	holds original function entries 0x00493b50: needs a binding, not a seed	0x00493b50 0x00494c80
+0x006147e0	PTR_s_toastart_pc_movies_small_mpg_006147e0	4	added+target	points at string 0x005cfcf0 (29 B), seeded too	0x00494c80
+0x00616028	DAT_00616028	4	added	.data	0x00498bc0
+0x0061602c	DAT_0061602c	4	added	.data	0x00498bd0
+0x00616038	DAT_00616038	4	added	.data	0x0047b8d0
+0x006160c0	DAT_006160c0	4	added	.data	0x004a43d2
+0x00616670	DAT_00616670	4	added	.data	0x004a43d2
+0x00617378	DAT_00617378	2	added	.data	0x00555910
+0x00623eac	s_METRICS3_00623eac	10	added	.data	0x00555910
+0x00623eb8	s_METRICS2_00623eb8	10	added	.data	0x00555910
+0x00623ec4	s_METRICS1_00623ec4	10	added	.data	0x00555910
+0x00623ed0	DAT_00623ed0	5	added	.data	0x00555910
+0x00623f68	DAT_00623f68	4	added	.data	0x005571e0
+0x00623f6c	DAT_00623f6c	4	added	.data	0x005571e0
+0x00623f70	DAT_00623f70	4	added	.data	0x00557250
+0x00623f74	DAT_00623f74	4	added	.data	0x00557250
+0x00623f78	DAT_00623f78	4	added	.data	0x00557250
+0x00623f7c	DAT_00623f7c	4	added	.data	0x00557250
+0x00632c28	PTR_LAB_00632c28	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005a6110
+0x00632c2c	PTR_LAB_00632c2c	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005a6110
+0x00632c38	PTR_LAB_00632c38	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005a6110
+0x00632c3c	PTR_LAB_00632c3c	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005a6150
+0x00632c40	PTR_LAB_00632c40	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005a6150
+0x00632c4c	PTR_LAB_00632c4c	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005a6150
+0x00633674	PTR_DAT_00633674	4	added	data pointer to 0x005e6414 (.rdata, not a string: target not seeded)	0x005acd60
+0x00634550	PTR_PTR_00634550	408	code-pointer	holds original function entries 0x005b41f0 0x005b3e60 0x005b3e60 0x005b41f0 0x005b41f0 0x005b3e60: needs a binding, not a seed	0x005b36f0
+0x00635194	PTR_LAB_00635194	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005bbb20
+0x006351b8	PTR_LAB_006351b8	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005bbb70
+0x006351dc	PTR_LAB_006351dc	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005bbb20
+0x006351e4	PTR_LAB_006351e4	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005bbb70
+0x006351ec	PTR_LAB_006351ec	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005bbb20
+0x006351fc	PTR_LAB_006351fc	4	code-pointer	holds original function entries (PTR_ to code): needs a binding, not a seed	0x005bbb70
+0x005cd794	s_d_005cd794	4	merged	union with 0x005cd794 -> 4 B	
+0x005cfbac	s_Could_not_add_source_filter_to_g_005cfbac	47	merged	union with 0x005cfb9c -> 63 B	
+0x005cfc3c	s_Could_not_add_renderer_filter_to_005cfc3c	49	merged	union with 0x005cfc2c -> 65 B	

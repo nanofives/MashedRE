@@ -1,15 +1,105 @@
 addr	glob	section	kind	size	exe	n_rows	rows
+0x005cc31c	DAT_005cc31c	.rdata	scalar/array	4	origtop	1	0x0041dc30
 0x005cc320	DAT_005cc320	.rdata	scalar/array	4	lit	1	0x0046b540
+0x005cc324	DAT_005cc324	.rdata	scalar/array	4	origtop	1	0x00429620
 0x005cc32c	DAT_005cc32c	.rdata	scalar/array	4	lit	1	0x00495080
+0x005cc33c	DAT_005cc33c	.rdata	scalar/array	4	origtop	1	0x004726b0
+0x005cc344	DAT_005cc344	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005cc34c	DAT_005cc34c	.rdata	scalar/array	4	origtop	1	0x0045ca30
+0x005cc358	DAT_005cc358	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005cc35c	DAT_005cc35c	.rdata	scalar/array	4	origtop	1	0x00482030
 0x005cc558	DAT_005cc558	.rdata	scalar/array	4	name	1	0x0046b540
+0x005cc56c	DAT_005cc56c	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005cc574	DAT_005cc574	.rdata	scalar/array	4	origtop	1	0x0041dc30
+0x005cc728	DAT_005cc728	.rdata	scalar/array	4	origtop	1	0x00482900
+0x005cc750	DAT_005cc750	.rdata	scalar/array	4	origtop	3	0x0048f8a0 0x0048f9f0 0x0048fb10
+0x005cc8f0	DAT_005cc8f0	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005cc950	DAT_005cc950	.rdata	scalar/array	4	origtop	3	0x0042c3c0 0x00441700 0x0048f290
+0x005cc99c	DAT_005cc99c	.rdata	scalar/array	4	origtop	1	0x00421160
 0x005cc9c0	DAT_005cc9c0	.rdata	scalar/array	4	cmt	1	0x0044d5e0
+0x005cc9d0	DAT_005cc9d0	.rdata	scalar/array	4	origtop	1	0x0048f290
+0x005cc9e0	DAT_005cc9e0	.rdata	scalar/array	4	origtop	1	0x00421100
+0x005cca00	DAT_005cca00	.rdata	scalar/array	4	origtop	1	0x0045ca30
 0x005ccac0	DAT_005ccac0	.rdata	scalar/array	4	lit	2	0x0042aff0 0x0042b180
+0x005ccca0	s_scorch_005ccca0	.rdata	string	7	origtop	1	0x004862d0
+0x005ccd04	DAT_005ccd04	.rdata	scalar/array	4	origtop	1	0x00429620
+0x005cd0b0	DAT_005cd0b0	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005cd0fc	DAT_005cd0fc	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005cd130	s_airstrike_005cd130	.rdata	string	10	origtop	1	0x00458630
+0x005cd1bc	s_team1panel_005cd1bc	.rdata	string	11	origtop	1	0x0041bec0
+0x005cd1c8	s_team0panel_005cd1c8	.rdata	string	11	origtop	1	0x0041bec0
+0x005cd1d4	s_KCPanel_dff_005cd1d4	.rdata	string	12	origtop	1	0x0041c100
+0x005cd208	s_teameppanel_dff_005cd208	.rdata	string	16	origtop	1	0x0041d6e0
+0x005cd218	s_startlights_dff_005cd218	.rdata	string	16	origtop	1	0x0041d8b0
+0x005cd23c	s_RacePanel_dff_005cd23c	.rdata	string	14	origtop	1	0x0041db90
+0x005cd29c	s_ptrtarget_005cd29c	.rdata	string	5	origtop	1	0x0042a5d0
+0x005cd2b4	DAT_005cd2b4	.rdata	scalar/array	4	origtop	1	0x00421100
+0x005cd30c	DAT_005cd30c	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005cd310	DAT_005cd310	.rdata	scalar/array	4	origtop	1	0x00422440
 0x005cd314	DAT_005cd314	.rdata	scalar/array	4	cmt	1	0x00472650
-0x005cd794	DAT_005cd794	.rdata	scalar/array	3	-	1	0x0042f400
+0x005cd5f0	DAT_005cd5f0	.rdata	scalar/array	4	origtop	1	0x00427580
+0x005cd5f4	DAT_005cd5f4	.rdata	scalar/array	4	origtop	1	0x00427580
+0x005cd5f8	DAT_005cd5f8	.rdata	scalar/array	4	origtop	1	0x00427580
+0x005cd6c4	DAT_005cd6c4	.rdata	scalar/array	4	origtop	1	0x00429620
+0x005cd6c8	DAT_005cd6c8	.rdata	scalar/array	4	origtop	2	0x00429b30 0x00429b70
+0x005cd788	DAT_005cd788	.rdata	scalar/array	4	origtop	1	0x0042c3c0
+0x005cd78c	s__2f_005cd78c	.rdata	string	5	origtop	1	0x0042c3c0
+0x005cd794	DAT_005cd794+s_d_005cd794	.rdata	scalar/array	4	-	2	0x0042d290 0x0042f400
+0x005cd798	s_sd_005cd798	.rdata	string	8	origtop	1	0x0042d290
+0x005cd7a0	s_0_005cd7a0	.rdata	string	4	origtop	1	0x0042d290
+0x005cd7ac	s_check_005cd7ac	.rdata	string	6	origtop	1	0x0042ee00
+0x005cd7b4	s_dot_005cd7b4	.rdata	string	4	origtop	1	0x0042ee00
+0x005cd7b8	s_lock_005cd7b8	.rdata	string	5	origtop	1	0x0042ee00
+0x005cd7c0	s_QuickRace_005cd7c0	.rdata	string	10	origtop	1	0x0042ee40
+0x005cd7cc	s_MultiPlayer_005cd7cc	.rdata	string	12	origtop	1	0x0042ee40
+0x005cd7d8	s_GoldCup_005cd7d8	.rdata	string	8	origtop	1	0x0042ee40
+0x005cd7e0	s_SilverCup_005cd7e0	.rdata	string	10	origtop	1	0x0042ee40
+0x005cd7ec	s_BronzeCup_005cd7ec	.rdata	string	10	origtop	1	0x0042ee40
+0x005cd7f8	s_GoldMedal_005cd7f8	.rdata	string	10	origtop	1	0x0042ee40
+0x005cd804	s_SilverMedal_005cd804	.rdata	string	12	origtop	1	0x0042ee40
+0x005cd810	s_BronzeMedal_005cd810	.rdata	string	12	origtop	1	0x0042ee40
+0x005cd81c	s_TimeTrial_005cd81c	.rdata	string	10	origtop	1	0x0042ee40
+0x005cd838	s_NFLSurvival_005cd838	.rdata	string	12	origtop	1	0x0042fab0
+0x005cd844	s_NFLFugitive_005cd844	.rdata	string	12	origtop	1	0x0042fab0
+0x005cd850	s_NFLBomb_005cd850	.rdata	string	8	origtop	1	0x0042fab0
+0x005cd858	s_NFLCopter_005cd858	.rdata	string	10	origtop	1	0x0042fab0
+0x005cd864	s_NFLShadow_005cd864	.rdata	string	10	origtop	1	0x0042fab0
+0x005cd870	s_NFLPink_005cd870	.rdata	string	8	origtop	1	0x0042fab0
+0x005cd878	s_NFLGold_005cd878	.rdata	string	8	origtop	1	0x0042fab0
+0x005cd880	s_NFLMelon_005cd880	.rdata	string	9	origtop	1	0x0042fab0
+0x005cd88c	s_NFLBluejay_005cd88c	.rdata	string	11	origtop	1	0x0042fab0
+0x005cd898	s_NFLRed_005cd898	.rdata	string	7	origtop	1	0x0042fab0
+0x005cd8f0	DAT_005cd8f0	.rdata	scalar/array	8	origtop	2	0x00431b50 0x00431b60
+0x005cd970	s_Star_005cd970	.rdata	string	5	origtop	1	0x004391b0
+0x005cda3c	s_tick_005cda3c	.rdata	string	5	origtop	1	0x004391b0
+0x005cda44	s_Lock_005cda44	.rdata	string	5	origtop	1	0x004391b0
+0x005ce18c	DAT_005ce18c	.rdata	scalar/array	4	origtop	1	0x0048f9f0
+0x005ce2d8	DAT_005ce2d8	.rdata	scalar/array	4	origtop	1	0x0044e020
 0x005ce368	s_movement_is___f___f___f__005ce368	.rdata	string	26	-	1	0x00451ad0
 0x005ce38c	s_Reset_with_matrix_005ce38c	.rdata	string	18	-	1	0x00452170
 0x005ce3a0	s_we_have_reset_the_pontoon_005ce3a0	.rdata	string	27	-	1	0x00452170
+0x005ce4b8	DAT_005ce4b8	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005ce4fc	s_oil_005ce4fc	.rdata	string	4	origtop	1	0x00458630
+0x005ce548	DAT_005ce548	.rdata	scalar/array	4	origtop	1	0x00458920
+0x005ce54c	DAT_005ce54c	.rdata	scalar/array	4	origtop	1	0x00472820
+0x005ce550	s_chaos_005ce550	.rdata	string	6	origtop	1	0x00458630
+0x005ce558	s_flare_005ce558	.rdata	string	6	origtop	1	0x00458630
+0x005ce560	s_shotgun_005ce560	.rdata	string	8	origtop	1	0x00458630
+0x005ce568	s_flamethrower_005ce568	.rdata	string	13	origtop	1	0x00458630
+0x005ce578	s_missile_005ce578	.rdata	string	8	origtop	1	0x00458630
+0x005ce580	s_depthcharge_005ce580	.rdata	string	12	origtop	1	0x00458630
+0x005ce58c	s_mortar_005ce58c	.rdata	string	7	origtop	1	0x00458630
+0x005ce594	s_mine_005ce594	.rdata	string	5	origtop	1	0x00458630
+0x005ce59c	s_machinegun_005ce59c	.rdata	string	11	origtop	1	0x00458630
+0x005ce5f8	s_exp_cloud2_005ce5f8	.rdata	string	11	origtop	2	0x00485d90 0x004862d0
+0x005ce654	DAT_005ce654	.rdata	scalar/array	4	origtop	1	0x0045c880
+0x005ce658	DAT_005ce658	.rdata	scalar/array	4	origtop	1	0x0045d0e0
+0x005ceaf0	s_hemisphere_dff_005ceaf0	.rdata	string	15	origtop	1	0x004775b0
+0x005ceb00	s_shockwave_dff_005ceb00	.rdata	string	14	origtop	1	0x004775b0
+0x005ceb10	DAT_005ceb10	.rdata	scalar/array	1	origtop	1	0x00477e40
+0x005ceb90	DAT_005ceb90	.rdata	scalar/array	4	origtop	1	0x00494f40
 0x005cf010	DAT_005cf010	.rdata	scalar/array	3	lit	1	0x00498950
+0x005cf24c	s_Replay_size_is__d_005cf24c	.rdata	string	19	origtop	1	0x00482900
 0x005cf6b4	s_Calling_HardwareExitApplication_005cf6b4	.rdata	string	33	-	1	0x00492370
 0x005cf6d8	s_Calling_SoftwareTidyUpBeforeExiting_005cf6d8	.rdata	string	37	-	1	0x00492370
 0x005cf700	s_Calling_AppDestroy_005cf700	.rdata	string	20	-	1	0x00492370
@@ -24,16 +114,48 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x005cf8bc	s__cs0_005cf8bc	.rdata	string	5	-	1	0x00493900
 0x005cf8c4	s__vs1_005cf8c4	.rdata	string	5	-	1	0x00493900
 0x005cf8cc	s__vs0_005cf8cc	.rdata	string	5	-	1	0x00493900
+0x005cfaac	DAT_005cfaac	.rdata	scalar/array	1	origtop	1	0x00494ac0
 0x005cfabc	s_MASHED_005cfabc	.rdata	string	7	-	1	0x00499ba0
+0x005cfac4	DAT_005cfac4	.rdata	scalar/array	16	origtop	1	0x00494c80
+0x005cfae4	s_Could_not_create_texture_render_005cfae4	.rdata	string	51	origtop	1	0x00494c80
+0x005cfb48	s_Could_not_render_source_output_p_005cfb48	.rdata	string	45	origtop	1	0x00494c80
+0x005cfb78	s_Could_not_find_output_pin___hr_0_005cfb78	.rdata	string	36	origtop	1	0x00494c80
+0x005cfb9c	u_Output_005cfb9c+s_Could_not_add_source_filter_to_g_005cfbac	.rdata	scalar/array	63	origtop	1	0x00494c80
+0x005cfbe0	s_Could_not_add_source_filter_to_g_005cfbe0	.rdata	string	73	origtop	1	0x00494c80
+0x005cfc2c	u_SOURCE_005cfc2c+s_Could_not_add_renderer_filter_to_005cfc3c	.rdata	scalar/array	65	origtop	1	0x00494c80
+0x005cfc70	u_TEXTURERENDERER_005cfc70	.rdata	scalar/array	64	origtop	1	0x00494c80
+0x005cfcf0	s_ptrtarget_005cfcf0	.rdata	string	29	origtop	1	0x00494c80
+0x005cfe34	DAT_005cfe34	.rdata	scalar/array	4	origtop	1	0x00494f40
 0x005cfe70	s_FAILED_005cfe70	.rdata	string	9	lit	1	0x00498950
 0x005d00d8	DAT_005d00d8	.rdata	scalar/array	3	lit	1	0x004989b0
 0x005d013c	s_Loading_005d013c	.rdata	string	27	lit	1	0x00498950
 0x005d0158	s_Saving_005d0158	.rdata	string	24	lit	1	0x004989b0
 0x005d0170	s_fmt_005d0170	.rdata	string	16	cmt	1	0x00498a00
 0x005d041c	s_MASHED__D3D9___Release__005d041c	.rdata	string	24	-	1	0x00499ba0
+0x005d0abc	DAT_005d0abc	.rdata	scalar/array	16	origtop	1	0x00494c80
+0x005d0bbc	DAT_005d0bbc	.rdata	scalar/array	16	origtop	1	0x00494c80
+0x005d0bcc	DAT_005d0bcc	.rdata	scalar/array	16	origtop	1	0x00494c80
+0x005d0c4c	DAT_005d0c4c	.rdata	scalar/array	16	origtop	1	0x00494c80
+0x005e4fe0	DAT_005e4fe0	.rdata	scalar/array	1	origtop	1	0x0055c810
+0x005e6414	DAT_005e6414	.rdata	scalar/array	1	origtop	1	0x005ac650
+0x005e6424	DAT_005e6424	.rdata	scalar/array	1	origtop	1	0x005ac650
+0x005e6434	DAT_005e6434	.rdata	scalar/array	1	origtop	1	0x005ac650
+0x005e6444	DAT_005e6444	.rdata	scalar/array	1	origtop	1	0x005ac650
+0x005e6454	DAT_005e6454	.rdata	scalar/array	1	origtop	1	0x005ac650
+0x005e6474	DAT_005e6474	.rdata	scalar/array	1	origtop	1	0x005ac650
+0x005e64b4	DAT_005e64b4	.rdata	scalar/array	1	origtop	1	0x005ac650
 0x005f2770	PTR_PTR_005f2770	.data	pointer	4	lit	5	0x0040ce80 0x0040d440 0x0040e180 0x0040e470 0x0040e480
+0x005f29b8	DAT_005f29b8	.data	scalar/array	4	origtop	1	0x0040e4a0
+0x005f29bc	DAT_005f29bc	.data	scalar/array	4	origtop	1	0x0040e500
+0x005f29d0	DAT_005f29d0	.data	scalar/array	4	origtop	1	0x004113b0
+0x005f334c	DAT_005f334c	.data	scalar/array	4	origtop	2	0x0041b770 0x0041c010
+0x005f337c	DAT_005f337c	.data	scalar/array	4	origtop	1	0x0041cbc0
+0x005f616c	_DAT_005f616c	.data	scalar/array	4	origtop	1	0x00426030
+0x005f65b0	PTR_DAT_005f65b0	.data	scalar/array	4	origtop	1	0x0042a5d0
+0x005f6754	DAT_005f6754	.data	scalar/array	4	origtop	2	0x0042a940 0x0042a980
 0x005f72a0	DAT_005f72a0	.data	scalar/array	208	lit	1	0x004325c0
 0x005f7370	DAT_005f7370	.data	scalar/array	208	lit	1	0x004325c0
+0x005f79d8	DAT_005f79d8	.data	scalar/array	104	origtop	1	0x0042e590
 0x005f7a48	DAT_005f7a48	.data	scalar/array	4	lit	1	0x00442600
 0x005f7bd0	DAT_005f7bd0	.data	scalar/array	4	lit	1	0x00442600
 0x005f7e48	DAT_005f7e48	.data	scalar/array	4	lit	1	0x00442600
@@ -56,6 +178,14 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x005f9790	DAT_005f9790	.data	scalar/array	4	-	1	0x00452170
 0x005f99c4	PTR_FUN_005f99c4	.data	pointer	4	-	1	0x0045bed0
 0x005f9bd8	DAT_005f9bd8	.data	scalar/array	4	cmt	1	0x0045bed0
+0x005fd190	DAT_005fd190	.data	scalar/array	1	origtop	1	0x0045c720
+0x005fe268	DAT_005fe268	.data	scalar/array	1	origtop	1	0x0045c720
+0x005ff340	DAT_005ff340	.data	scalar/array	1	origtop	1	0x0045c720
+0x00600418	DAT_00600418	.data	scalar/array	1	origtop	1	0x0045c720
+0x006014f0	DAT_006014f0	.data	scalar/array	1	origtop	1	0x0045c720
+0x006025c8	DAT_006025c8	.data	scalar/array	1	origtop	1	0x0045c720
+0x006036c0	DAT_006036c0	.data	scalar/array	4	origtop	1	0x0045df70
+0x006036cc	DAT_006036cc	.data	scalar/array	4	origtop	1	0x0045dfc0
 0x00604574	DAT_00604574	.data	scalar/array	4	-	1	0x00465ca0
 0x00613108	DAT_00613108	.data	scalar/array	4	lit	1	0x0046b540
 0x00613110	DAT_00613110	.data	scalar/array	4	cmt	1	0x0046b540
@@ -64,10 +194,20 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x00613130	DAT_00613130	.data	scalar/array	4	lit	1	0x0046b540
 0x00613138	DAT_00613138	.data	scalar/array	4	cmt	1	0x0046ddb0
 0x0061313c	DAT_0061313c	.data	scalar/array	4	lit	2	0x0046b540 0x0046dd80
+0x00613258	DAT_00613258	.data	scalar/array	4	origtop	1	0x00475f30
+0x00613274	DAT_00613274	.data	scalar/array	4	origtop	1	0x00475f30
+0x00613278	DAT_00613278	.data	scalar/array	4	origtop	1	0x00475f30
 0x00613288	DAT_00613288	.data	scalar/array	8	lit	2	0x004769d0 0x00476ae0
 0x00613290	DAT_00613290	.data	scalar/array	4	lit	2	0x004769f0 0x00476b30
 0x006132c4	DAT_006132c4	.data	scalar/array	4	name	1	0x004770c0
 0x006132c8	DAT_006132c8	.data	scalar/array	4	name	1	0x004770c0
+0x006132cc	DAT_006132cc	.data	scalar/array	4	origtop	2	0x00477450 0x00477760
+0x006132fc	DAT_006132fc	.data	scalar/array	4	origtop	2	0x0047b200 0x0047b250
+0x00613300	DAT_00613300	.data	scalar/array	4	origtop	2	0x0047b230 0x0047b250
+0x00613328	DAT_00613328	.data	scalar/array	60	origtop	1	0x004841d0
+0x006136e8	DAT_006136e8	.data	scalar/array	28	origtop	1	0x004841d0
+0x006138a8	DAT_006138a8	.data	scalar/array	40	origtop	1	0x004841d0
+0x00613b28	DAT_00613b28	.data	scalar/array	104	origtop	1	0x004841d0
 0x006142a0	DAT_006142a0	.data	scalar/array	16	-	1	0x00487e70
 0x006142b0	DAT_006142b0	.data	scalar/array	16	-	1	0x00487e70
 0x006142c0	DAT_006142c0	.data	scalar/array	16	-	1	0x00487e70
@@ -91,6 +231,7 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x0061447c	DAT_0061447c	.data	scalar/array	16	-	1	0x00487e70
 0x0061448c	DAT_0061448c	.data	scalar/array	16	-	1	0x00487e70
 0x006144b0	DAT_006144b0	.data	scalar/array	16	-	1	0x00487e70
+0x006145b0	DAT_006145b0	.data	scalar/array	64	origtop	2	0x0048f9f0 0x0048fb10
 0x006146f0	DAT_006146f0	.data	scalar/array	12	cmt	2	0x00441820 0x00468980
 0x006146fc	DAT_006146fc	.data	scalar/array	12	lit	1	0x00441820
 0x00614718	DAT_00614718	.data	scalar/array	52	lit	1	0x00429aa0
@@ -98,4 +239,22 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x006147b8	DAT_006147b8	.data	scalar/array	4	-	1	0x004926c0
 0x006147bc	DAT_006147bc	.data	scalar/array	4	-	1	0x00493900
 0x006147c0	DAT_006147c0	.data	scalar/array	4	cmt	1	0x00493900
+0x006147e0	PTR_s_toastart_pc_movies_small_mpg_006147e0	.data	scalar/array	4	origtop	1	0x00494c80
+0x00616028	DAT_00616028	.data	scalar/array	4	origtop	1	0x00498bc0
+0x0061602c	DAT_0061602c	.data	scalar/array	4	origtop	1	0x00498bd0
+0x00616038	DAT_00616038	.data	scalar/array	4	origtop	1	0x0047b8d0
+0x006160c0	DAT_006160c0	.data	scalar/array	4	origtop	1	0x004a43d2
+0x00616670	DAT_00616670	.data	scalar/array	4	origtop	1	0x004a43d2
+0x00617378	DAT_00617378	.data	scalar/array	2	origtop	1	0x00555910
 0x00618150	DAT_00618150	.data	scalar/array	4	-	1	0x004c5930
+0x00623eac	s_METRICS3_00623eac	.data	string	10	origtop	1	0x00555910
+0x00623eb8	s_METRICS2_00623eb8	.data	string	10	origtop	1	0x00555910
+0x00623ec4	s_METRICS1_00623ec4	.data	string	10	origtop	1	0x00555910
+0x00623ed0	DAT_00623ed0	.data	scalar/array	5	origtop	1	0x00555910
+0x00623f68	DAT_00623f68	.data	scalar/array	4	origtop	1	0x005571e0
+0x00623f6c	DAT_00623f6c	.data	scalar/array	4	origtop	1	0x005571e0
+0x00623f70	DAT_00623f70	.data	scalar/array	4	origtop	1	0x00557250
+0x00623f74	DAT_00623f74	.data	scalar/array	4	origtop	1	0x00557250
+0x00623f78	DAT_00623f78	.data	scalar/array	4	origtop	1	0x00557250
+0x00623f7c	DAT_00623f7c	.data	scalar/array	4	origtop	1	0x00557250
+0x00633674	PTR_DAT_00633674	.data	scalar/array	4	origtop	1	0x005acd60

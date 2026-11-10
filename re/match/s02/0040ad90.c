@@ -50,7 +50,7 @@ void FUN_0040ad90(int param_1, float param_2, float param_3)
   FUN_0046d4a0(&m, param_1);
   {
     double s = param_2 * 360.0f;
-    v.x = m->at.x * s;
+    { float atx = m->at.x; v.x = atx * s; }  /* named float local: fld [at.x] before s (MATCH-X87-CASTLEVER-PILOT) */
     v.y = m->at.y * s;
     v.z = m->at.z * s;
   }

@@ -1,0 +1,34 @@
+=== PLAN H_CSIX exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\PORT-COLOURSEL-LEFTRIGHT\mashedmod\build\mashed_re.exe limit=900 wall=None
+    MASHED_AI_STEPDUMP=D:\MashedWT\kfdot_data\arms\H_CSIX.step.csv
+    MASHED_CAR=1
+    MASHED_COLOURSEL_BORDER=1
+    MASHED_COLOURSEL_ICON=1
+    MASHED_DETERMINISTIC=1
+    MASHED_DET_FRAMES=14400
+    MASHED_DET_NO_AMBIENT_KEYS=1
+    MASHED_GAME_MODE=10
+    MASHED_MUTE=1
+    MASHED_PLAYERTRACE=1
+    MASHED_ROOT=D:\MashedWT\kfdot_root
+    MASHED_ROUND=1
+    MASHED_ROUND_RULE=0
+    MASHED_TRACK_VIEW=Training
+    MASHED_U9186_GATES=D:\MashedWT\kfdot_data\arms\H_CSIX.gates.csv
+    MASHED_WIN_POS=primary-bl
+=== PLAN B_CSIX_K1 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\PORT-COLOURSEL-LEFTRIGHT\mashedmod\build\mashed_re.exe limit=600 wall=None
+    MASHED_AI_STEPDUMP=D:\MashedWT\kfdot_data\arms\B_CSIX_K1.step.csv
+    MASHED_CAR=1
+    MASHED_COLOURSEL_BORDER=1
+    MASHED_COLOURSEL_ICON=1
+    MASHED_DETERMINISTIC=1
+    MASHED_DET_FRAMES=1200
+    MASHED_DET_NO_AMBIENT_KEYS=1
+    MASHED_GAME_MODE=10
+    MASHED_MUTE=1
+    MASHED_RING_SKIP=1
+    MASHED_ROOT=D:\MashedWT\kfdot_root
+    MASHED_ROUND=1
+    MASHED_ROUND_RULE=0
+    MASHED_TRACK_VIEW=Training
+    MASHED_WIN_POS=primary-bl
+DONE

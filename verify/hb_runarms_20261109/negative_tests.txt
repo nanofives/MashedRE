@@ -1,0 +1,20 @@
+## duplicate of an in-file tag (FULLGO)
+run_arms: duplicate stack tag 'FULLGO': C:\Users\maria\AppData\Local\Temp\claude\2279e0b7f1f09563\3cbd20ce-2734-400f-9bb4-4a1ce2f79770\scratchpad\neg\x\stacks\FULLGO.txt vs the existing tag 'FULLGO' (in-file STACK). Pick a new tag.
+exit=1
+## case-only duplicate of an in-file tag (fullgo vs FULLGO)
+run_arms: duplicate stack tag 'fullgo': C:\Users\maria\AppData\Local\Temp\claude\2279e0b7f1f09563\3cbd20ce-2734-400f-9bb4-4a1ce2f79770\scratchpad\neg\x\stacks\fullgo.txt vs the existing tag 'FULLGO' (in-file STACK). Pick a new tag.
+exit=1
+## include cycle
+run_arms: stack include cycle CYA -> CYB -> CYA
+exit=1
+## unknown include
+run_arms: stacks/UNK.txt includes unknown stack 'NOSUCH'
+exit=1
+## bad tag name (A-B)
+run_arms: bad stack file name 'A-B.txt' (tag must be [A-Za-z0-9_]+, no "-", it ends the tag in an arm name)
+exit=1
+## valid new stack (control)
+DONE
+exit=0
+ZNEW = ['MASHED_X87_PC24', 'MASHED_DRIVE_HOLD_MS=42000', 'MASHED_NEW=1']
+(a case-only clash between two files, e.g. x24.txt next to X24.txt, cannot exist on NTFS: the second write replaces the first)

@@ -1,0 +1,4 @@
+# HB-GATE-FLAKE-GAMEFLOW: reproduce the g1 H_PSGO outlier. R7P = the R7 test press at r7frame 4308 (the frame the
+# g1 Enter landed on). TK = an ambient Enter (DIK 0x1c) reported by the device for det_frames 5406..5415, as g1's log
+# shows, with the drop knob removed. TKD = the same press with the drop knob (base_env) kept. NAKOFF = no drop knob.
+MASHED_DET_TEST_KEY=0x1c@5406+10
