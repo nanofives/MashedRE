@@ -87,6 +87,19 @@ float FUN_004c3ac0(const V3_00469df0 *v);
 void *FUN_004c3df0(V3_00469df0 *out, const V3_00469df0 *in, int n, const void *m);
 void *FUN_004c4dc0(void *out, const Mat_00469df0 *m);
 
+static __inline V3_00469df0 Sub_00469df0(const V3_00469df0 *a, const V3_00469df0 *p)
+{
+    V3_00469df0 r;
+    r.x = a->x - p->x;
+    r.y = a->y - p->y;
+    r.z = a->z - p->z;
+    return r;
+}
+static __inline float Dot_00469df0(const V3_00469df0 *n, V3_00469df0 d)
+{
+    return n->z * d.z + d.y * n->y + d.x * n->x;
+}
+
 // MATCH: 0x00469df0 FUN_00469df0
 static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
 {
@@ -96,9 +109,9 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     int side[2];
     float sx, sy, sz, inv;
     V3_00469df0 P0, P1, P2, P3;
-    float n3x, n3y, n3z;
+    V3_00469df0 n3;
+    float nx, ny, nz, ex, ey, ez;
     V3_00469df0 n0, n1, n2, nn;
-    float x, y, z;
     V3_00469df0 da, db, ra, ia, ib, ta, tb;
     struct { V3_00469df0 v; float e[2]; float ev[16]; } rb;
     float la, lb, dot, f, sum, imp, h;
@@ -117,73 +130,96 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     do {
         c = a;
         if (k != 0) c = b;
-        P0 = c->q[0];
-        P1 = c->q[1];
-        P3 = c->q[3];
-        P2 = c->q[2];
-        n0.x = (P1.z - P0.z) * c->n.y - (P1.y - P0.y) * c->n.z;
-        n0.y = (P1.x - P0.x) * c->n.z - (P1.z - P0.z) * c->n.x;
-        n0.z = (P1.y - P0.y) * c->n.x - (P1.x - P0.x) * c->n.y;
-        n1.x = (P3.z - P1.z) * c->n.y - (P3.y - P1.y) * c->n.z;
-        n1.y = (P3.x - P1.x) * c->n.z - (P3.z - P1.z) * c->n.x;
-        n1.z = (P3.y - P1.y) * c->n.x - (P3.x - P1.x) * c->n.y;
-        n2.x = (P2.z - P3.z) * c->n.y - (P2.y - P3.y) * c->n.z;
-        n2.y = (P2.x - P3.x) * c->n.z - (P2.z - P3.z) * c->n.x;
-        n2.z = (P2.y - P3.y) * c->n.x - (P2.x - P3.x) * c->n.y;
-        n3x = (P0.z - P2.z) * c->n.y - (P0.y - P2.y) * c->n.z;
-        n3y = (P0.x - P2.x) * c->n.z - (P0.z - P2.z) * c->n.x;
-        n3z = (P0.y - P2.y) * c->n.x - (P0.x - P2.x) * c->n.y;
+        nx = c->n.x;
+        ny = c->n.y;
+        nz = c->n.z;
+        P0.x = c->q[0].x;
+        P0.y = c->q[0].y;
+        P0.z = c->q[0].z;
+        P1.x = c->q[1].x;
+        P1.y = c->q[1].y;
+        P1.z = c->q[1].z;
+        P3.x = c->q[3].x;
+        P3.y = c->q[3].y;
+        P3.z = c->q[3].z;
+        P2.x = c->q[2].x;
+        P2.y = c->q[2].y;
+        P2.z = c->q[2].z;
+        ex = P1.x - P0.x;
+        ey = P1.y - P0.y;
+        ez = P1.z - P0.z;
+        n0.x = ez * ny - ey * nz;
+        n0.y = ex * nz - ez * nx;
+        n0.z = ey * nx - ex * ny;
+        ex = P3.x - P1.x;
+        ey = P3.y - P1.y;
+        ez = P3.z - P1.z;
+        n1.x = ez * ny - ey * nz;
+        n1.y = ex * nz - ez * nx;
+        n1.z = ey * nx - ex * ny;
+        ex = P2.x - P3.x;
+        ey = P2.y - P3.y;
+        ez = P2.z - P3.z;
+        n2.x = ez * ny - ey * nz;
+        n2.y = ex * nz - ez * nx;
+        n2.z = ey * nx - ex * ny;
+        ex = P0.x - P2.x;
+        ey = P0.y - P2.y;
+        ez = P0.z - P2.z;
+        n3.x = ez * ny - ey * nz;
+        n3.y = ex * nz - ez * nx;
+        n3.z = ey * nx - ex * ny;
         o = b;
         if (k != 0) o = a;
-        x = o->q[0].x;
-        y = o->q[0].y;
-        z = o->q[0].z;
-        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
-            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
-            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
-            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
-            sx = sx + x;
+        da.x = o->q[0].x;
+        da.y = o->q[0].y;
+        da.z = o->q[0].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+            sx = sx + da.x;
             cnt++;
-            sy = y + sy;
+            sy = da.y + sy;
             side[k] = side[k] + 1;
-            sz = z + sz;
+            sz = da.z + sz;
         }
-        x = o->q[1].x;
-        y = o->q[1].y;
-        z = o->q[1].z;
-        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
-            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
-            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
-            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
-            sx = sx + x;
+        da.x = o->q[1].x;
+        da.y = o->q[1].y;
+        da.z = o->q[1].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+            sx = sx + da.x;
             cnt++;
-            sy = y + sy;
+            sy = da.y + sy;
             side[k] = side[k] + 1;
-            sz = z + sz;
+            sz = da.z + sz;
         }
-        x = o->q[2].x;
-        y = o->q[2].y;
-        z = o->q[2].z;
-        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
-            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
-            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
-            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
-            sx = sx + x;
+        da.x = o->q[2].x;
+        da.y = o->q[2].y;
+        da.z = o->q[2].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+            sx = sx + da.x;
             cnt++;
-            sy = y + sy;
-            sz = z + sz;
+            sy = da.y + sy;
+            sz = da.z + sz;
         }
-        x = o->q[3].x;
-        y = o->q[3].y;
-        z = o->q[3].z;
-        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
-            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
-            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
-            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
-            sx = sx + x;
+        da.x = o->q[3].x;
+        da.y = o->q[3].y;
+        da.z = o->q[3].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < DAT_005d757c &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < DAT_005d757c &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < DAT_005d757c &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < DAT_005d757c) {
+            sx = sx + da.x;
             cnt++;
-            sy = y + sy;
-            sz = z + sz;
+            sy = da.y + sy;
+            sz = da.z + sz;
         }
         k++;
     } while (k < 2);
@@ -325,19 +361,7 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     rb.ev[1] = sy;
     rb.ev[2] = sz;
     diff = side[0] != side[1];
-    if (side[0] < side[1]) {
-        wa = a->f000;
-        wb = b->f000;
-        rb.ev[3] = db.x; rb.ev[4] = db.y; rb.ev[5] = db.z;
-        rb.ev[9] = ib.x; rb.ev[10] = ib.y; rb.ev[11] = ib.z;
-        rb.ev[6] = da.x; rb.ev[7] = da.y; rb.ev[8] = da.z;
-        rb.ev[12] = ia.x; rb.ev[13] = ia.y; rb.ev[14] = ia.z;
-        st = FUN_0040e350();
-        if (st == 1 || st == 2 || st == 3 || st == 4 || st == 5) return p3 == 0;
-        DAT_007e9de0.type[DAT_007e9de0.count] = 4;
-        DAT_007e9de0.time[DAT_007e9de0.count] = DAT_007f1030;
-        DAT_007e9de0.who[DAT_007e9de0.count] = a->f000 + 0xff00;
-    } else {
+    if (side[0] >= side[1]) {
         wa = b->f000;
         wb = a->f000;
         rb.ev[3] = da.x; rb.ev[4] = da.y; rb.ev[5] = da.z;
@@ -349,17 +373,40 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         DAT_007e9de0.type[DAT_007e9de0.count] = 4;
         DAT_007e9de0.time[DAT_007e9de0.count] = DAT_007f1030;
         DAT_007e9de0.who[DAT_007e9de0.count] = b->f000 + 0xff00;
-    }
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f00 = wa;
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f04 = wb;
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f08 = diff;
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f0c = rb.v.x;
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f10 = rb.v.y;
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f14 = rb.v.z;
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f18 = rb.e[0];
-    DAT_007e9de0.hdr[DAT_007e9de0.count].f1c = rb.e[1];
-    for (k = 0; k < 16; k++) {
-        DAT_007e9de0.ev[DAT_007e9de0.count].v[k] = rb.ev[k];
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f00 = wa;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f04 = wb;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f08 = diff;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f0c = rb.v.x;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f10 = rb.v.y;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f14 = rb.v.z;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f18 = rb.e[0];
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f1c = rb.e[1];
+        for (k = 0; k < 16; k++) {
+            DAT_007e9de0.ev[DAT_007e9de0.count].v[k] = rb.ev[k];
+        }
+    } else {
+        wa = a->f000;
+        wb = b->f000;
+        rb.ev[3] = db.x; rb.ev[4] = db.y; rb.ev[5] = db.z;
+        rb.ev[9] = ib.x; rb.ev[10] = ib.y; rb.ev[11] = ib.z;
+        rb.ev[6] = da.x; rb.ev[7] = da.y; rb.ev[8] = da.z;
+        rb.ev[12] = ia.x; rb.ev[13] = ia.y; rb.ev[14] = ia.z;
+        st = FUN_0040e350();
+        if (st == 1 || st == 2 || st == 3 || st == 4 || st == 5) return p3 == 0;
+        DAT_007e9de0.type[DAT_007e9de0.count] = 4;
+        DAT_007e9de0.time[DAT_007e9de0.count] = DAT_007f1030;
+        DAT_007e9de0.who[DAT_007e9de0.count] = a->f000 + 0xff00;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f00 = wa;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f04 = wb;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f08 = diff;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f0c = rb.v.x;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f10 = rb.v.y;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f14 = rb.v.z;
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f18 = rb.e[0];
+        DAT_007e9de0.hdr[DAT_007e9de0.count].f1c = rb.e[1];
+        for (k = 0; k < 16; k++) {
+            DAT_007e9de0.ev[DAT_007e9de0.count].v[k] = rb.ev[k];
+        }
     }
     DAT_007e9de0.count++;
     if (DAT_007e9de0.count >= 0x100) DAT_007e9de0.count = 0;
