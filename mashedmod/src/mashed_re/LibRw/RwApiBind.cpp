@@ -951,6 +951,70 @@ int MashedRw_AtomicView_0048fef0(int atomic, int clump) {
     return ToInt(NewAtomicView(a, FromInt<rw::Clump>(clump)));
 }
 
+// [ATOMIC-VIEW] RpClumpForAllAtomics rva 0x004e66d0 for a call site whose callback is a matched body that reads the
+// RW 3.x RpAtomic layout (0x0040cda0 -> 0x0040bb10 -> 0x0040bae0 reads the geometry at atomic +0x18, 0x0040bae0
+// first instruction after the 0x0053fb70 call). The same walk as MashedRw_ClumpForAllAtomics_004e66d0 above (librw
+// atomics in RW order, stop when the callback returns 0), but each atomic is handed over as its RW-layout view
+// (NewAtomicView, the 0x004b3f90 / 0x0048fef0 view). Returns the clump.
+int MashedRw_ClumpForAllAtomicsAsViews_004e66d0(int clump, int cb, int data) {
+    rw::Clump* const c = FromInt<rw::Clump>(clump);
+    using Cb = int(__cdecl*)(int, int);
+    Cb const fn = reinterpret_cast<Cb>(static_cast<std::uintptr_t>(static_cast<unsigned>(cb)));
+    if (!c || !fn) return clump;
+    int n = 0;
+    for (rw::LLLink* l = c->atomics.link.prev; l != c->atomics.end();) {
+        rw::LLLink* const prev = l->prev;
+        ++n;
+        if (!fn(ToInt(NewAtomicView(RwOrderAtomic(c, l), c)), data)) break;
+        l = prev;
+    }
+    BindLog("0x004e66d0(clump %p) as views: %d atomics", static_cast<void*>(c), n);
+    return clump;
+}
+
+// rva 0x0053fb70 RpMatFXAtomicEnableEffects (third-party-library[renderware]): flags the atomic for the MatFX
+// pipeline. librw: rw::MatFX::enableEffects. Takes an RW-layout view (resolved to its librw atomic) or a librw atomic.
+// Returns the pointer it was given.
+int MashedRw_MatFXAtomicEnableEffects_0053fb70(int atomic) {
+    rw::Atomic* a = FromInt<rw::Atomic>(atomic);
+    for (const auto& v : s_atomicViews)
+        if (static_cast<void*>(v.get()) == static_cast<void*>(a)) { a = v->lib; break; }
+    if (a) rw::MatFX::enableEffects(a);
+    BindLog("0x0053fb70(%08X) -> rw::MatFX::enableEffects(atomic %p)", static_cast<unsigned>(atomic), static_cast<void*>(a));
+    return atomic;
+}
+
+// rva 0x0053fbb0 RpMatFXMaterialSetEffects (third-party-library[renderware]): (material, effect). RW's rpMATFXEFFECT
+// numbering (0 none, 1 bump, 2 env, 3 bump+env, 4 dual, 5 uv, 6 dual+uv) is librw's MatFX enum order
+// (deps/librw/src/rwplugins.h). librw rw::Material keeps the texture at +0x00 as RpMaterial does (static_assert above),
+// which is the one field the matched caller 0x0040baa0 reads. Returns the material.
+int MashedRw_MatFXMaterialSetEffects_0053fbb0(int material, int effect) {
+    static_assert(rw::MatFX::ENVMAP == 2 && rw::MatFX::DUAL == 4, "rpMATFXEFFECT numbering");
+    rw::Material* const m = FromInt<rw::Material>(material);
+    if (m) rw::MatFX::setEffects(m, static_cast<rw::uint32>(effect));
+    BindLog("0x0053fbb0(material %p, %d) -> rw::MatFX::setEffects", static_cast<void*>(m), effect);
+    return material;
+}
+
+// rva 0x0053fd30 RpMatFXMaterialSetupEnvMap (third-party-library[renderware]): (material, texture, frame,
+// useFrameBufferAlpha, coefficient). librw: the material's MatFX env effect gets the texture (addRef, as RW refcounts
+// it), the frame, the FB-alpha flag and the coefficient. Returns the material, 0 when the material has no MatFX data.
+int MashedRw_MatFXMaterialSetupEnvMap_0053fd30(int material, int texture, int frame, int fbAlpha, float coef) {
+    rw::Material* const m = FromInt<rw::Material>(material);
+    rw::MatFX* const fx = m ? rw::MatFX::get(m) : nullptr;
+    if (!fx) {
+        BindLog("0x0053fd30(material %p): no MatFX data, returns 0", static_cast<void*>(m));
+        return 0;
+    }
+    fx->setEnvTexture(FromInt<rw::Texture>(texture));
+    fx->setEnvFrame(FromInt<rw::Frame>(frame));
+    fx->setEnvFBAlpha(fbAlpha);
+    fx->setEnvCoefficient(coef);
+    BindLog("0x0053fd30(material %p, texture %08X, frame %08X, fbAlpha %d, coef %g) -> MatFX env",
+            static_cast<void*>(m), static_cast<unsigned>(texture), static_cast<unsigned>(frame), fbAlpha, coef);
+    return material;
+}
+
 // RpGeometry* RpGeometryForAllMaterials(RpGeometry* geometry, RpMaterialCallBack cb, void* data) rva 0x004e89a0
 // (re/match/rwl02/004e89a0.c, 76.7%, not the L-115 class, so this is a binding, not that body). Disassembly of
 // MASHED.exe.unpatched: count = geometry +0x24 (0x004e89aa), cached at [esp+0x14] (0x004e89af); for i < count,
