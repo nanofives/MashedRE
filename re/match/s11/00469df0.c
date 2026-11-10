@@ -103,7 +103,8 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     V3_00469df0 n3;
     float nx, ny, nz, ex, ey, ez;
     V3_00469df0 n0, n1, n2, nn;
-    V3_00469df0 da, db, ra, ia, ib, ta, tb;
+    V3_00469df0 ra, ia, ib, ta, tb;
+    V3_00469df0 dd[2];
     struct { V3_00469df0 v; float e[2]; float ev[16]; } rb;
     float la, lb, dot, f, sum, imp, h;
     int wa, wb, st, diff;
@@ -162,55 +163,55 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         n3.z = ey * nx - ex * ny;
         o = b;
         if (k != 0) o = a;
-        da.x = o->q[0].x;
-        da.y = o->q[0].y;
-        da.z = o->q[0].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
-            sx = sx + da.x;
+        dd[0].x = o->q[0].x;
+        dd[0].y = o->q[0].y;
+        dd[0].z = o->q[0].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&dd[0], &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&dd[0], &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&dd[0], &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&dd[0], &P[2])) < 0.0f) {
+            sx = sx + dd[0].x;
             cnt++;
-            sy = da.y + sy;
+            sy = dd[0].y + sy;
             side[k] = side[k] + 1;
-            sz = da.z + sz;
+            sz = dd[0].z + sz;
         }
-        da.x = o->q[1].x;
-        da.y = o->q[1].y;
-        da.z = o->q[1].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
-            sx = sx + da.x;
+        dd[0].x = o->q[1].x;
+        dd[0].y = o->q[1].y;
+        dd[0].z = o->q[1].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&dd[0], &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&dd[0], &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&dd[0], &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&dd[0], &P[2])) < 0.0f) {
+            sx = sx + dd[0].x;
             cnt++;
-            sy = da.y + sy;
+            sy = dd[0].y + sy;
             side[k] = side[k] + 1;
-            sz = da.z + sz;
+            sz = dd[0].z + sz;
         }
-        da.x = o->q[2].x;
-        da.y = o->q[2].y;
-        da.z = o->q[2].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
-            sx = sx + da.x;
+        dd[0].x = o->q[2].x;
+        dd[0].y = o->q[2].y;
+        dd[0].z = o->q[2].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&dd[0], &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&dd[0], &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&dd[0], &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&dd[0], &P[2])) < 0.0f) {
+            sx = sx + dd[0].x;
             cnt++;
-            sy = da.y + sy;
-            sz = da.z + sz;
+            sy = dd[0].y + sy;
+            sz = dd[0].z + sz;
         }
-        da.x = o->q[3].x;
-        da.y = o->q[3].y;
-        da.z = o->q[3].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
-            sx = sx + da.x;
+        dd[0].x = o->q[3].x;
+        dd[0].y = o->q[3].y;
+        dd[0].z = o->q[3].z;
+        if (Dot_00469df0(&n0, Sub_00469df0(&dd[0], &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&dd[0], &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&dd[0], &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&dd[0], &P[2])) < 0.0f) {
+            sx = sx + dd[0].x;
             cnt++;
-            sy = da.y + sy;
-            sz = da.z + sz;
+            sy = dd[0].y + sy;
+            sz = dd[0].z + sz;
         }
         k++;
     } while (k < 2);
@@ -219,16 +220,16 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     n3.x = inv * sx;
     n3.y = inv * sy;
     n3.z = inv * sz;
-    da.x = n3.x - pb->x;
-    da.y = n3.y - pb->y;
-    da.z = n3.z - pb->z;
-    ra = da;
-    FUN_004c39b0(&da, &da);
-    db.x = n3.x - pa->x;
-    db.y = n3.y - pa->y;
-    db.z = n3.z - pa->z;
-    rb.v = db;
-    FUN_004c39b0(&db, &db);
+    dd[0].x = n3.x - pb->x;
+    dd[0].y = n3.y - pb->y;
+    dd[0].z = n3.z - pb->z;
+    ra = dd[0];
+    FUN_004c39b0(&dd[0], &dd[0]);
+    dd[1].x = n3.x - pa->x;
+    dd[1].y = n3.y - pa->y;
+    dd[1].z = n3.z - pa->z;
+    rb.v = dd[1];
+    FUN_004c39b0(&dd[1], &dd[1]);
     vb = &b->vel;
     va = &a->vel;
     ta.x = b->spin.x * 600.0f + b->vel.x;
@@ -294,12 +295,12 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     if (imp < DAT_005ce194) imp = 200.0f;
     FUN_004c39b0(&n0, vb);
     FUN_004c39b0(&n1, va);
-    n0.x = n0.x - da.x;
-    n0.y = n0.y - da.y;
-    n0.z = n0.z - da.z;
-    n1.x = n1.x - db.x;
-    n1.y = n1.y - db.y;
-    n1.z = n1.z - db.z;
+    n0.x = n0.x - dd[0].x;
+    n0.y = n0.y - dd[0].y;
+    n0.z = n0.z - dd[0].z;
+    n1.x = n1.x - dd[1].x;
+    n1.y = n1.y - dd[1].y;
+    n1.z = n1.z - dd[1].z;
     FUN_004c39b0(&n0, &n0);
     FUN_004c39b0(&n1, &n1);
     f = imp * -0.5f;
@@ -309,23 +310,23 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     va->x = va->x - n1.x * f;
     a->vel.y = a->vel.y - n1.y * f;
     a->vel.z = a->vel.z - f * n1.z;
-    vb->x = vb->x - da.x * imp;
-    b->vel.y = b->vel.y - da.y * imp;
-    b->vel.z = b->vel.z - da.z * imp;
-    va->x = va->x - db.x * imp;
-    a->vel.y = a->vel.y - db.y * imp;
-    a->vel.z = a->vel.z - db.z * imp;
+    vb->x = vb->x - dd[0].x * imp;
+    b->vel.y = b->vel.y - dd[0].y * imp;
+    b->vel.z = b->vel.z - dd[0].z * imp;
+    va->x = va->x - dd[1].x * imp;
+    a->vel.y = a->vel.y - dd[1].y * imp;
+    a->vel.z = a->vel.z - dd[1].z * imp;
     if (b->faec == 0) b->faec = 0x1e0;
     if (a->faec == 0) a->faec = 0x1e0;
     FUN_004c4dc0(&inv_m, &b->mat[b->f9ac]);
-    FUN_004c3df0(&da, &ra, 1, &inv_m);
+    FUN_004c3df0(&dd[0], &ra, 1, &inv_m);
     FUN_004c4dc0(&inv_m, &a->mat[a->f9ac]);
-    FUN_004c3df0(&db, &rb.v, 1, &inv_m);
+    FUN_004c3df0(&dd[1], &rb.v, 1, &inv_m);
     f = imp;
-    if (da.x < 0.0f) {
-        if (da.z < 0.0f) f = -imp;
+    if (dd[0].x < 0.0f) {
+        if (dd[0].z < 0.0f) f = -imp;
     } else {
-        if (da.z > 0.0f) f = -imp;
+        if (dd[0].z > 0.0f) f = -imp;
     }
     if (b->f010 == 0) {
         b->spin.y = f * 0.0005f + b->spin.y;
@@ -335,10 +336,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         b->f9c4 = 0.0f;
         b->f9c0 = f;
     }
-    if (db.x < 0.0f) {
-        if (db.z < 0.0f) imp = -imp;
+    if (dd[1].x < 0.0f) {
+        if (dd[1].z < 0.0f) imp = -imp;
     } else {
-        if (db.z > 0.0f) imp = -imp;
+        if (dd[1].z > 0.0f) imp = -imp;
     }
     if (a->f010 == 0) {
         a->spin.y = imp * 0.0005f + a->spin.y;
@@ -355,9 +356,9 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     if (side[0] >= side[1]) {
         wa = b->f000;
         wb = a->f000;
-        rb.ev[3] = da.x; rb.ev[4] = da.y; rb.ev[5] = da.z;
+        rb.ev[3] = dd[0].x; rb.ev[4] = dd[0].y; rb.ev[5] = dd[0].z;
         rb.ev[9] = ia.x; rb.ev[10] = ia.y; rb.ev[11] = ia.z;
-        rb.ev[6] = db.x; rb.ev[7] = db.y; rb.ev[8] = db.z;
+        rb.ev[6] = dd[1].x; rb.ev[7] = dd[1].y; rb.ev[8] = dd[1].z;
         rb.ev[12] = ib.x; rb.ev[13] = ib.y; rb.ev[14] = ib.z;
         st = FUN_0040e350();
         if (st == 1 || st == 2 || st == 3 || st == 4 || st == 5) return p3 == 0;
@@ -378,9 +379,9 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     } else {
         wa = a->f000;
         wb = b->f000;
-        rb.ev[3] = db.x; rb.ev[4] = db.y; rb.ev[5] = db.z;
+        rb.ev[3] = dd[1].x; rb.ev[4] = dd[1].y; rb.ev[5] = dd[1].z;
         rb.ev[9] = ib.x; rb.ev[10] = ib.y; rb.ev[11] = ib.z;
-        rb.ev[6] = da.x; rb.ev[7] = da.y; rb.ev[8] = da.z;
+        rb.ev[6] = dd[0].x; rb.ev[7] = dd[0].y; rb.ev[8] = dd[0].z;
         rb.ev[12] = ia.x; rb.ev[13] = ia.y; rb.ev[14] = ia.z;
         st = FUN_0040e350();
         if (st == 1 || st == 2 || st == 3 || st == 4 || st == 5) return p3 == 0;
