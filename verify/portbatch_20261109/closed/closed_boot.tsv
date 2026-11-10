@@ -1,0 +1,26 @@
+group	rows	reached	blockers	head	head_shape	n_def	n_top	lint_clean	seed_clean	rvas
+boot-001	3	top	CROSS:1,DUP:1	0x00420d00	rebind	0	3	0	1	0x00420d00 0x004b64e0 0x004b6520
+boot-002	3	top	CROSS:1	0x00471eb0	rebind	0	3	0	1	0x00471530 0x00471df0 0x00471eb0
+boot-003	2	top	CROSS:1,INDIRECT:1,RWGLOBALS:1,SEED:2	0x004113b0	rebind	0	2	0	0	0x004113b0 0x00482900
+boot-004	2	top	CROSS:1	0x00471df0	rebind	0	2	0	1	0x00471530 0x00471df0
+boot-005	2	top	none	0x0047ba00	rebind	0	2	1	1	0x0047ba00 0x00496940
+boot-006	2	top	CROSS:1,SEED:1	0x004841d0	rebind	0	2	0	0	0x004840f0 0x004841d0
+boot-007	2	top	CROSS:1,DUP:1	0x00494ef0	inplace	0	2	0	1	0x00493f70 0x00494ef0
+boot-008	2	top	CROSS:2	0x004b6560	rebind	0	2	0	1	0x004b6560 0x004b6610
+boot-009	1	top	none	0x00404830	rebind	0	1	1	1	0x00404830
+boot-010	1	top	none	0x00412890	rebind	0	1	1	1	0x00412890
+boot-011	1	top	CROSS:1	0x004723d0	rebind	0	1	0	1	0x004723d0
+boot-012	1	top	CROSS:1,INDIRECT:1,RWGLOBALS:1	0x00484170	rebind	0	1	0	1	0x00484170
+boot-013	1	top	INDIRECT:1	0x004960e0	rebind	0	1	1	1	0x004960e0
+boot-014	1	top	none	0x00496470	rebind	0	1	1	1	0x00496470
+boot-015	2	no	SEED:1	0x004a31ea	-	0	0	1	0	0x004a31ea 0x004a77eb
+boot-016	2	no	SEED:1	0x004a45c6	-	0	0	1	0	0x004a45c6 0x004a77eb
+boot-017	2	no	SEED:1	0x004a4660	-	0	0	1	0	0x004a4660 0x004a77eb
+boot-018	2	no	SEED:1	0x004a4728	-	0	0	1	0	0x004a4728 0x004a77eb
+boot-019	2	no	SEED:1	0x004ad3e3	-	0	0	1	0	0x004a77eb 0x004ad3e3
+boot-020	2	no	SEED:1	0x004af2ad	-	0	0	1	0	0x004a77eb 0x004af2ad
+boot-021	1	no	CROSS:1	0x004a78b0	-	0	0	0	1	0x004a78b0
+boot-022	1	no	INDIRECT:1,RWGLOBALS:1	0x005c47b0	-	0	0	0	1	0x005c47b0
+boot-023	1	no	none	0x005c4ab0	-	0	0	1	1	0x005c4ab0
+boot-024	1	no	none	0x005c4ba0	-	0	0	1	1	0x005c4ba0
+boot-025	1	no	none	0x005c6b40	-	0	0	1	1	0x005c6b40

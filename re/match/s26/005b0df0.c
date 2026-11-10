@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 0x005b0df0: 95.1% (regs 95.1%, ops 97.6%). Whole stream identical except stack cleanup: original emits add esp,4 right after the 4-arg call (before push eax for the nested 1-arg call) and add esp,0x10 at the end; the DDK emits one add esp,0x14. Same effect as 005af690. Tried nested expression, K&R () callee protos, split statements. Class (a). cxx pending. */
+/* MATCH-NEARMISS-2-pilot 2026-11-09: 100% BYTE-IDENTICAL. The decomp had the two callee arities swapped: FUN_005ad6a0 takes 1 arg and FUN_005ad0b0 takes 4 (their own matched sources), so the call is FUN_005ad0b0(FUN_005ad6a0(&DAT_005e6de0), *param_1, p3[5], p3[6]); the add esp,4 / add esp,0x10 split is the two cdecl cleanups. Pre-pilot note follows.
+   MATCH-S26 0x005b0df0: 95.1% (regs 95.1%, ops 97.6%). Whole stream identical except stack cleanup: original emits add esp,4 right after the 4-arg call (before push eax for the nested 1-arg call) and add esp,0x10 at the end; the DDK emits one add esp,0x14. Same effect as 005af690. Tried nested expression, K&R () callee protos, split statements. Class (a). cxx pending. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -25,8 +26,8 @@ typedef unsigned char bool;
 typedef unsigned char undefined1;
 typedef unsigned int undefined4;
 MGLOBAL(undefined1, DAT_005e6de0, 0x005e6de0);
-int FUN_005ad0b0(int p0);
-int FUN_005ad6a0(undefined1 *p0, int p1, int p2, int p3);
+int FUN_005ad0b0(int p0, int p1, int p2, int p3); /* 4 args: re/match/s26/005ad0b0.c */
+int FUN_005ad6a0(undefined1 *p0);                  /* 1 arg: re/match/s26/005ad6a0.c */
 // MATCH: 0x005b0df0 FUN_005b0df0
 int * FUN_005b0df0(int *param_1,int param_2,int *param_3)
 {
@@ -51,6 +52,6 @@ int * FUN_005b0df0(int *param_1,int param_2,int *param_3)
   puVar1[0xb] = param_3[4];
   puVar1[8] = 1;
   puVar1[10] = 2;
-  *puVar1 = FUN_005ad0b0(FUN_005ad6a0(&DAT_005e6de0,*param_1,param_3[5],param_3[6]));
+  *puVar1 = FUN_005ad0b0(FUN_005ad6a0(&DAT_005e6de0),*param_1,param_3[5],param_3[6]);
   return param_1;
 }

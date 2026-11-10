@@ -1,0 +1,5 @@
+[1/2] 0x0047c0f0 match PASS byte-identical 111 B, relocheck OK (10/0)
+[2/2] 0x00550da0 match REFUSED no hooks.csv row (add it first: C1 by the identity)
+batch: 1 pass, 1 refused, 0 skipped (already C4), 2 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-09  0x0047c0f0  FUN_0047c0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c0f0.c; evidence: <RESULT>

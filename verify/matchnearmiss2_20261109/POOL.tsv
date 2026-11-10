@@ -1,0 +1,125 @@
+rva	source	conf	subsystem	ledger_pct	live_pct	bytes_bad	bytes_n	ins	ours_diff	orig_diff	asm	miss_type	orig_sample
+0x005af070	re/match/s26/005af070.c	C2	audio	97.0	97.0	38	207	67/67 ins	2	2	-	const	mov dword ptr [esi + 0x54], eax ; mov dword ptr [esi + 0x50], edx
+0x005c4ad0	re/match/s28/005c4ad0.c	C2	boot	96.7	96.7	12	205	61/61 ins	2	2	-	const	mov edx, dword ptr [esi + 8] ; imul edx, dword ptr [esi + 0xc]
+0x0042f530	re/match/s07/0042f530.c	C2	render	96.9	96.9	6	299	97/97 ins	3	3	-	const+other	jge 0x42f568 ; mov esi, eax ; xor eax, eax
+0x004332a0	re/match/s08/004332a0.c	C2	frontend	97.3	97.3	60	835	262/262 ins	7	7	-	const+other+regalloc	jne 0x4335af ; je 0x4335b5 ; mov dword ptr [esi], 0xffffffff
+0x004c9cd0	re/match/s20/004c9cd0.c	C2	render	96.5	96.5	44	471	143/143 ins	5	5	-	const+other+regalloc	push esi ; mov ecx, dword ptr [eax] ; je 0x4c9e3b
+0x004d7480	re/match/s21/004d7480.c	C2	render	96.2	96.2	82	1600	447/447 ins	17	17	-	const+other+regalloc	je 0x4d75de ; je 0x4d75de ; mov edx, dword ptr [ecx*4 + 0x5d8c54]
+0x00426810	re/match/s06/00426810.c	C2	render	97.9	97.9	29	672	142/142 ins	3	3	-	const+regalloc	mov dword ptr [esp + 0xa4], eax ; mov byte ptr [esp + 0x34], al ; movzx ecx, byte ptr [0x5f6176]
+0x004046a0	re/match/s01/004046a0.c	C2	util	96.8	96.8	6	377	94/94 ins	3	3	-	const+regalloc	mov dword ptr [0x5ea0b4], edx ; mov dword ptr [0x7f0fe0], edi ; jmp 0x404775
+0x00402b70	re/match/s01/00402b70.c	C2	util	99.4	99.4	6	963	345/344 ins	2	1	-	count	jle 0x402e14
+0x004967e0	re/match/s16/004967e0.c	C2	input	98.8	98.8	26	281	85/86 ins	0	1	-	count	and eax, 1
+0x004cd900	re/match/rwl01/004cd900.c	C2	third-party-library[renderware]	97.2	97.2	6	608	141/144 ins	1	4	-	count	jne 0x4cd957 ; xor eax, eax ; pop ebx
+0x004627f0	re/match/s10/004627f0.c	C2	audio	96.8	96.8	61	347	93/94 ins	2	3	-	count	or dword ptr [eax + 0x70], 0x10 ; or dword ptr [eax + 0x70], 0x40 ; mov dword ptr [0x68f61c], eax
+0x005a9c50	re/match/s25/005a9c50.c	C2	audio	96.7	96.7	52	169	59/60 ins	1	2	-	count	or ecx, eax ; mov word ptr [esi + 0x44], ax
+0x00550da0	re/match/s24/00550da0.c	(no row)		96.4	96.4	41	366	138/139 ins	4	5	-	count	je 0x550ef0 ; mov dword ptr [esi + 0x20], ebp ; jmp 0x550ef7
+0x00555f20	re/match/s24/00555f20.c	C2	hud	96.1	96.1	12	204	77/76 ins	3	2	-	count	mov edx, dword ptr [0x7d3ff8] ; lea ebx, [ecx + 1]
+0x004b61c0	re/match/s18/004b61c0.c	C2	render	95.9	95.9	398	703	219/218 ins	9	8	-	count	je 0x4b6477 ; jl 0x4b6396 ; jl 0x4b62be
+0x00408610	re/match/s01/00408610.c	C2	gameplay	95.8	95.8	32	1073	332/327 ins	14	9	-	count	mov eax, dword ptr [esi + 0xd8] ; mov ecx, dword ptr [esi + 0xd0] ; push eax
+0x00461e90	re/match/s10/00461e90.c	C3	gameplay	95.8	95.8	209	1364	307/301 ins	13	7	-	count	ja 0x46235b ; jne 0x4622dc ; jne 0x4622dc
+0x004c5f60	re/match/rwl01/004c5f60.c	C2	third-party-library[renderware]	95.6	95.6	7	471	111/114 ins	2	5	-	count	jne 0x4c5fb9 ; xor eax, eax ; pop esi
+0x00498510	re/match/s16/00498510.c	C2	input	95.3	95.3	11	665	171/164 ins	8	1	-	count	mov ecx, 0x80
+0x005b0df0	re/match/s26/005b0df0.c	C2	audio	95.1	95.1	12	113	40/41 ins	1	2	-	count	add esp, 4 ; add esp, 0x10
+0x004744a0	re/match/s11/004744a0.c	C2	render	99.6	99.6	6	998	269/269 ins	1	1	-	order	fstp dword ptr [esp + 0x38]
+0x0045e990	re/match/s10/0045e990.c	C2	audio	99.5	99.5	18	1610	444/444 ins	2	2	-	order	mov dword ptr [esp + 0x28], 0xc28c0000 ; add eax, 0x58
+0x00429bd0	re/match/s06/00429bd0.c	C2	util	99.4	99.4	4	575	167/167 ins	1	1	-	order	push 6
+0x00442a60	re/match/s08/00442a60.c	C2	util	99.4	99.4	6	531	157/157 ins	1	1	-	order	mov eax, dword ptr [esp + 0x10]
+0x004d4a20	re/match/s21/004d4a20.c	C2	render	99.4	99.4	4	462	157/157 ins	1	1	-	order	add eax, 0xc
+0x00407800	re/match/s01/00407800.c	C2	gameplay	99.3	99.3	8	498	138/138 ins	1	1	-	order	mov dword ptr [esi + 0xb0], 0
+0x00420050	re/match/s05/00420050.c	C2	render	99.3	99.3	9	474	151/151 ins	1	1	-	order	fmul dword ptr [esi + 0x284]
+0x00484de0	re/match/s14/00484de0.c	C2	world-objects	99.2	99.2	14	394	130/130 ins	1	1	-	order	mov dword ptr [esp + 0x18], eax
+0x00412cf0	re/match/s03/h2_00412cf0.c	C2	hud	99.0	99.0	7	313	98/98 ins	1	1	-	order	fstp dword ptr [esp + 0x54]
+0x00458e00	re/match/s09/00458e00.c	C3	gameplay	99.0	99.0	3	274	101/101 ins	1	1	-	order	fld dword ptr [ecx]
+0x00482ae0	re/match/s13/00482ae0.c	C3	vehicle	99.0	99.0	4	301	100/100 ins	1	1	-	order	mov eax, dword ptr [esp + 0xc]
+0x0041fcc0	re/match/s05/0041fcc0.c	C2	render	98.9	98.9	7	329	92/92 ins	1	1	-	order	pop esi
+0x004818d0	re/match/s13/004818d0.c	C2	vehicle	98.9	98.9	6	339	94/94 ins	1	1	-	order	mov dword ptr [esp + 0x10], ecx
+0x0041e6c0	re/match/s04/0041e6c0.c	C2	hud	98.8	98.8	15	385	81/81 ins	1	1	-	order	fstp dword ptr [esp + 0x14]
+0x0044c4f0	re/match/pilot/a2_0044c4f0.c	C2	render	98.8	98.8	9	250	80/80 ins	1	1	-	order	mov dword ptr [ebx + 0x3c], eax
+0x0057c0d0	re/match/rwl06/0057c0d0.c	C2	third-party-library[RenderWare-Physics-3.7]	98.7	98.7	8	221	79/79 ins	1	1	-	order	mov ecx, dword ptr [esp + 0x2c]
+0x0045c030	re/match/s10/0045c030.c	C2	gameplay	98.6	98.6	6	211	71/71 ins	1	1	-	order	fstp st(0)
+0x004d4f00	re/match/s21/004d4f00.c	C2	render	98.5	98.5	11	142	66/66 ins	1	1	-	order	mov edi, dword ptr [ebx + 8]
+0x005a8390	re/match/s25/005a8390.c	C2	audio	98.5	98.5	4	195	65/65 ins	1	1	-	order	mov eax, dword ptr [0x7dcad8]
+0x005a86a0	re/match/s25/005a86a0.c	C2	audio	98.5	98.5	4	176	66/66 ins	1	1	-	order	mov dword ptr [esi], ecx
+0x0044e0a0	re/match/s08/0044e0a0.c	C2	util	98.4	98.4	7	239	64/64 ins	1	1	-	order	fstp dword ptr [esp + 0x30]
+0x004809e0	re/match/s13/004809e0.c	C2	vehicle	98.4	98.4	9	398	124/124 ins	2	2	-	order	fld dword ptr [esp + 0x28] ; fmul dword ptr [0x5cd8fc]
+0x005a8560	re/match/s25/005a8560.c	C2	audio	98.4	98.4	5	215	64/64 ins	1	1	-	order	mov ecx, dword ptr [0x7dcad8]
+0x00477e60	re/match/s12/00477e60.c	C2	render	98.3	98.3	3	154	60/60 ins	1	1	-	order	faddp st(1)
+0x005ab560	re/match/s25/005ab560.c	C2	audio	98.2	98.2	4	185	57/57 ins	1	1	-	order	mov eax, dword ptr [0x7dd624]
+0x005ac7e0	re/match/s25/005ac7e0.c	C2	audio	98.2	98.2	5	148	55/55 ins	1	1	-	order	cmp eax, edi
+0x00491340	re/match/s15/00491340.c	C2	render	98.1	98.1	10	323	107/107 ins	2	2	-	order	fld dword ptr [edi] ; fsub dword ptr [esp + 0x14]
+0x004e4450	re/match/rwl02/004e4450.c	C2	third-party-library[renderware]	98.1	98.1	6	143	53/53 ins	1	1	-	order	lea ebp, [eax + edi]
+0x005735f0	re/match/rwl06/005735f0.c	C2	third-party-library[RenderWare-Physics-3.7]	98.0	98.0	6	126	49/49 ins	1	1	-	order	fmul st(1)
+0x0040ad90	re/match/s02/0040ad90.c	C2	gameplay	97.9	97.9	3	148	47/47 ins	1	1	-	order	fmul st(1)
+0x004785e0	re/match/s12/004785e0.c	C2	util	97.8	97.8	7	121	46/46 ins	1	1	-	order	fld st(0)
+0x005a7ee0	re/match/s25/005a7ee0.c	C2	audio	97.7	97.7	13	135	44/44 ins	1	1	-	order	mov dword ptr [esi + 0x14], 0
+0x00556e90	re/match/s24/00556e90.c	C2	render	97.5	97.5	35	631	198/198 ins	5	5	-	order	mov edx, dword ptr [esp + 0x1c] ; mov esi, dword ptr [esp + 0x18] ; xor edx, edx
+0x0047c0f0	re/match/s13/0047c0f0.c	C2	track	97.3	97.3	4	111	37/37 ins	1	1	-	order	mov dword ptr [0x6c2fe8], eax
+0x004c3040	re/match/s19/004c3040.c	C2	render	97.1	97.1	5	102	34/34 ins	1	1	-	order	add eax, 0x10
+0x004f8730	re/match/s22/004f8730.c	C2	render	96.7	96.7	4	103	30/30 ins	1	1	-	order	pop edi
+0x00557110	re/match/s24/00557110.c	C3	hud	96.5	96.5	12	169	57/57 ins	2	2	-	order	fld dword ptr [ecx + 0x28] ; fcomp dword ptr [0x5d757c]
+0x00477f00	re/match/s12/00477f00.c	C2	render	96.4	96.4	7	70	28/28 ins	1	1	-	order	fld dword ptr [esi + 4]
+0x0052fdb0	re/match/rwl03/0052fdb0.c	C2	third-party-library[renderware]	96.2	96.2	33	213	79/79 ins	3	3	-	order	mov ecx, dword ptr [ebp + 0x14] ; xor esi, esi ; add ecx, 2
+0x004726f0	re/match/s11/004726f0.c	C3	gameplay	95.8	95.8	7	72	24/24 ins	1	1	-	order	fld dword ptr [eax + 4]
+0x005bf8a0	re/match/s28/005bf8a0.c	C2	audio	95.7	95.7	11	73	23/23 ins	1	1	-	order	mov dword ptr [esi + 0x13c], 0
+0x004d1e30	re/match/s20/004d1e30.c	C2	render	99.1	99.1	19	1296	423/423 ins	4	4	-	other	push ebp ; not edi ; shr edi, 0xf
+0x0048a4e0	re/match/s14/0048a4e0.c	C2	particle	98.8	98.8	2	238	84/84 ins	1	1	-	other	cmp ecx, ebp
+0x0051cbe0	re/match/s23/0051cbe0.c	C2	util	98.8	98.8	12	992	248/248 ins	3	3	-	other	cmp byte ptr [esi + 0x125], cl ; je 0x51cee9 ; jmp 0x51ceef
+0x00405730	re/match/s01/00405730.c	C2	gameplay	96.2	96.2	5	80	26/26 ins	1	1	-	other	mov dword ptr [esi + 0x63a220], eax
+0x004d4310	re/match/s21/004d4310.c	C2	render	95.7	95.7	9	108	47/47 ins	2	2	-	other	mov eax, dword ptr [esp + 0x10] ; je 0x4d4374
+0x0044c490	re/match/s08/0044c490.c	C2	render	95.5	95.5	62	95	22/22 ins	1	1	-	other	mov edx, dword ptr [eax]
+0x0047a320	re/match/s12/0047a320.c	C2	track	95.2	95.2	44	115	42/42 ins	2	2	-	other	lea esp, [esp] ; add esi, 0x218
+0x00516de0	re/match/s23/00516de0.c	C2	util	98.4	98.4	20	946	306/306 ins	5	5	-	other+regalloc	push ebp ; push esi ; mov edi, dword ptr [esp + 0x14]
+0x004ebb00	re/match/rwl02/004ebb00.c	C2	third-party-library[renderware]	98.1	98.1	3	296	108/108 ins	2	2	-	other+regalloc	mov eax, dword ptr [esp + 0x10] ; lea ecx, [eax - 2]
+0x0051bb40	re/match/s23/0051bb40.c	C2	util	98.1	98.1	19	555	209/209 ins	4	4	-	other+regalloc	push ebp ; push esi ; push edi
+0x00527a40	re/match/s23/00527a40.c	C2	util	97.8	97.8	19	481	183/183 ins	4	4	-	other+regalloc	mov eax, dword ptr [esp + 0x44] ; add edx, ebx ; push ecx
+0x00528810	re/match/s23/00528810.c	C2	util	97.8	97.8	46	912	270/270 ins	6	6	-	other+regalloc	push ebx ; push ebp ; mov esi, dword ptr [esp + 0x20]
+0x0051f4f0	re/match/s23/0051f4f0.c	C2	util	97.6	97.6	45	793	247/247 ins	6	6	-	other+regalloc	push ebx ; mov esi, dword ptr [esp + 0x14] ; push edi
+0x004039f0	re/match/s01/004039f0.c	C2	util	97.1	97.1	39	611	171/171 ins	5	5	-	other+regalloc	mov edx, dword ptr [edx + 8] ; push ebx ; mov dword ptr [esp + 0x10], eax
+0x00551a50	re/match/rwl04/00551a50.c	C2	third-party-library[renderware]	96.4	96.4	3	121	56/56 ins	2	2	-	other+regalloc	mov eax, dword ptr [esp + 0x14] ; lea edx, [eax + 8]
+0x00519820	re/match/s23/00519820.c	C2	util	96.3	96.3	33	455	164/164 ins	6	6	-	other+regalloc	push esi ; cmp al, 3 ; push edi
+0x004f3be0	re/match/rwl03/004f3be0.c	C2	third-party-library[renderware]	95.6	95.6	42	193	68/68 ins	3	3	-	other+regalloc	jle 0x4f3c12 ; lea edi, [eax*4 + 0x50] ; push edi
+0x004db3e0	re/match/rwl01/004db3e0.c	C2	third-party-library[renderware]	95.2	95.2	9	368	105/105 ins	5	5	-	other+regalloc	mov edx, dword ptr [eax] ; call dword ptr [edx + 8] ; mov ecx, dword ptr [eax]
+0x00540340	re/match/rwl03/00540340.c	C2	third-party-library[renderware]	99.4	99.4	2	454	154/154 ins	1	1	-	regalloc	mov esi, dword ptr [ebx]
+0x00433f40	re/match/s08/00433f40.c	C3	frontend	99.3	99.3	2	1048	270/270 ins	2	2	-	regalloc	add eax, edx ; push eax
+0x004c1040	re/match/rwl01/004c1040.c	C2	third-party-library[renderware]	99.2	99.2	1	461	120/120 ins	1	1	-	regalloc	mov eax, dword ptr [edx + 0x9c]
+0x004c0c20	re/match/s19/004c0c20.c	C2	render	98.9	98.9	1	330	92/92 ins	1	1	-	regalloc	mov eax, dword ptr [ecx + 0x9c]
+0x004c0f00	re/match/s19/004c0f00.c	C2	render	98.8	98.8	1	313	80/80 ins	1	1	-	regalloc	mov eax, dword ptr [edx + 0x9c]
+0x00424eb0	re/match/s05/00424eb0.c	C2	util	98.6	98.6	5	1039	347/347 ins	5	5	-	regalloc	mov eax, dword ptr [esp + 0x18] ; push esi ; xor edx, edx
+0x004c1210	re/match/rwl01/004c1210.c	C2	third-party-library[renderware]	98.4	98.4	1	232	62/62 ins	1	1	-	regalloc	mov eax, dword ptr [edx + 0x9c]
+0x0055ded0	re/match/rwl05/0055ded0.c	C3	third-party-library[RenderWare-Physics-3.7]	98.4	98.4	1	183	64/64 ins	1	1	-	regalloc	mov dword ptr [eax + edx - 0xc], edi
+0x005ae920	re/match/s26/005ae920.c	C3	audio	96.8	96.8	3	211	94/94 ins	3	3	-	regalloc	mov cl, byte ptr [esi + edx + 8] ; mov byte ptr [esi + edx + 8], cl ; mov dl, byte ptr [eax + esi + 8]
+0x00429310	re/match/s06/00429310.c	C2	util	98.3	98.3	16	644	175/175 ins	3	3	-	stack	mov ecx, dword ptr [esp + 0x48] ; mov edx, dword ptr [esp + 8] ; mov eax, dword ptr [esp + 0xc]
+0x0047f6d0	re/match/s13/0047f6d0.c	C2	gameplay	97.9	97.9	2	251	94/94 ins	2	2	-	stack	mov dword ptr [esp + 0x20], edx ; mov ecx, dword ptr [esp + 0x20]
+0x00533d00	re/match/rwl03/00533d00.c	C2	third-party-library[renderware]	97.6	97.6	2	247	85/85 ins	2	2	-	stack	mov dword ptr [esp + 0x24], ebx ; mov ebx, dword ptr [esp + 0x24]
+0x00517da0	re/match/s23/00517da0.c	C2	util	97.1	97.1	5	83	35/35 ins	1	1	-	stack	mov dword ptr [esp + 0x14], eax
+0x005c4e20	re/match/s28/005c4e20.c	C2	boot	95.0	95.0	6	383	121/121 ins	6	6	-	stack	mov dword ptr [esp + 0x18], 1 ; mov dword ptr [esp + 0x18], 0 ; mov dword ptr [esp + 0x14], 4
+0x004064c0	re/match/s01/004064c0.c	C2	gameplay	99.4	99.4	19	1167	326/326 ins	2	2	-	x87	fstp dword ptr [esp + 0x24] ; mov dword ptr [0x63a5d4], edx
+0x0041c410	re/match/s04/0041c410.c	C3	hud	99.4	99.4	8	1420	308/308 ins	2	2	-	x87	fld dword ptr [esp + 0x2c] ; fmul dword ptr [0x5cd118]
+0x00455150	re/match/s09/00455150.c	C2	gameplay	99.4	99.4	5	521	166/166 ins	1	1	-	x87	fstp dword ptr [esp + 0x2c]
+0x00555af0	re/match/s24/00555af0.c	C2	hud	99.3	99.3	2	1072	301/301 ins	2	2	-	x87	mov dword ptr [esp + 0x5c], edx ; fild dword ptr [esp + 0x5c]
+0x00405920	re/match/s01/00405920.c	C2	gameplay	99.2	99.2	7	398	132/132 ins	1	1	-	x87	fld dword ptr [esp + 0x14]
+0x00473c20	re/match/s11/00473c20.c	C2	gameplay	99.0	99.0	2	697	191/191 ins	2	2	-	x87	fst dword ptr [esp + 0x14] ; mov edx, dword ptr [esp + 0x14]
+0x00431240	re/match/s07/00431240.c	C2	frontend	98.9	98.9	15	622	184/184 ins	2	2	-	x87	mov dword ptr [esp + 0x2c], eax ; fild dword ptr [esp + 0x34]
+0x00495870	re/match/s16/00495fe0.c	C2	input	98.9	98.9	70	1544	380/380 ins	4	4	-	x87	mov eax, dword ptr [esi + 0x2c8] ; fst dword ptr [esi + 0x2cc] ; fxch st(1)
+0x0041ce00	re/match/s04/0041ce00.c	C2	render	98.7	98.7	8	1548	305/303 ins	4	2	-	x87	fld dword ptr [esp + 0x2c] ; fmul dword ptr [0x5cd118]
+0x0048f780	re/match/s15/0048f780.c	C2	particle	98.6	98.6	7	287	69/69 ins	1	1	-	x87	fstp dword ptr [esi + 0x76a12c]
+0x00422570	re/match/s05/00422570.c	C2	render	98.5	98.5	16	890	266/266 ins	4	4	-	x87	fld dword ptr [eax + 0x10] ; fadd dword ptr [ebx + 0xf3c] ; fld dword ptr [eax + 0x1c]
+0x00464a50	re/match/s10/00464a50.c	C2	audio	98.3	98.3	7	587	180/178 ins	3	1	-	x87	fstp dword ptr [esp + esi*4 + 0x34]
+0x00454350	re/match/s09/00454350.c	C2	gameplay	98.2	98.2	37	994	281/281 ins	5	5	-	x87	mov eax, dword ptr [esp + 0x10] ; fstp dword ptr [esp + 0x28] ; fld dword ptr [0x5ce42c]
+0x0042d5a0	re/match/s07/0042d5a0.c	C2	frontend	98.1	98.1	8	3580	429/429 ins	8	8	-	x87	mov dword ptr [esp + 0x20], eax ; mov dword ptr [esp + 0x20], eax ; fild dword ptr [esp + 0x20]
+0x00414300	re/match/s03/h4_00414300.c	C2	ai	97.8	97.8	4	398	134/134 ins	3	3	-	x87	fld dword ptr [esp + 8] ; fmul st(2) ; fmul st(2)
+0x00457100	re/match/pilot/a2_00457100.c	C2	gameplay	97.7	97.7	100	1285	309/309 ins	7	7	-	x87	fstp dword ptr [esp + 0x84] ; fld dword ptr [esp + 0xd4] ; fmul dword ptr [0x5ce4f0]
+0x00467350	re/match/s11/00467350.c	C2	vehicle	97.5	97.5	30	767	240/240 ins	6	6	-	x87	fld dword ptr [esi + 0x9a0] ; fmul dword ptr [esp + 0x14] ; fld dword ptr [esi + 0x99c]
+0x004910c0	re/match/s15/004910c0.c	C2	render	97.2	97.2	5	626	181/177 ins	5	1	-	x87	fstp dword ptr [esp + 0x1c]
+0x004307a0	re/match/s07/004307a0.c	C3	frontend	97.1	97.1	5	117	35/35 ins	1	1	-	x87	fcomp dword ptr [esp + 8]
+0x0041d930	re/match/s04/0041d930.c	C3	hud	97.0	97.0	8	336	67/67 ins	2	2	-	x87	fld dword ptr [esp + 0x20] ; fmul dword ptr [0x5cd118]
+0x00448220	re/match/s08/00448220.c	C2	frontend	97.0	97.0	81	1235	367/367 ins	11	11	-	x87	fld dword ptr [esp + 0x3c] ; fmul dword ptr [esp + 0x14] ; fstp dword ptr [esp + 0x40]
+0x00405ab0	re/match/s01/00405920.c	C2	gameplay	96.9	96.9	42	1192	292/292 ins	9	9	-	x87	fld dword ptr [esp + 0x3c] ; fmul dword ptr [0x5cc9a8] ; fstp dword ptr [esp + 0x48]
+0x0045b390	re/match/s09/0045b390.c	C2	gameplay	96.9	96.9	45	839	224/224 ins	7	7	-	x87	fld st(1) ; fmul dword ptr [esp + 0x28] ; fadd dword ptr [esp + 0x20]
+0x0041c180	re/match/s04/0041c180.c	C2	hud	96.7	96.7	8	311	61/61 ins	2	2	-	x87	fld dword ptr [esp + 0x20] ; fmul dword ptr [0x5cd074]
+0x00475f90	re/match/s12/00475f90.c	C2	render	96.4	96.4	6	814	225/218 ins	8	1	-	x87	fadd dword ptr [esp + 0x20]
+0x0041af50	re/match/s03/h3_0041af50.c	C2	render	96.3	96.3	163	994	267/269 ins	8	10	-	x87	mov dword ptr [esp + 0x34], edi ; fld dword ptr [esp + 0x30] ; fmul dword ptr [0x5cd118]
+0x00487020	re/match/s14/00487020.c	C2	render	96.3	96.3	7	284	82/82 ins	3	3	-	x87	fxch st(1) ; fmul dword ptr [esp + 0x34] ; fxch st(1)
+0x00414f00	re/match/pilot/a1_00414f00.c	C3	ai	95.8	95.8	18	274	95/95 ins	4	4	-	x87	fld dword ptr [eax + 0x30] ; fsubr dword ptr [esi] ; fld dword ptr [eax + 0x38]
+0x00453730	re/match/s09/004538b0.c	C2	gameplay	95.3	95.3	24	377	106/106 ins	5	5	-	x87	fld dword ptr [edi + 0x3c] ; fadd dword ptr [esp + 0x20] ; fstp dword ptr [esp + 0x30]
+0x004752f0	re/match/s12/004752f0.c	C2	render	95.0	95.0	236	1003	301/299 ins	15	13	-	x87	xor ecx, ecx ; mov dword ptr [eax + 0x30], ecx ; mov dword ptr [eax + 0x34], ecx

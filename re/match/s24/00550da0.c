@@ -1,4 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-NEARMISS-2-B (2026-11-09): BYTE-IDENTICAL at 369 bytes, relocheck OK. The state-2 store is one statement after
+   the in-range / overflow if-else; 9176 sinks it into both arms as the original does (the per-arm stores of h4 got hoisted). */
 /* MATCH-S24 0x00550da0 (h4): nosize.py 94.9% (regs 94.9%; 96.4% at the real 369-byte size): no Ghidra size; the original ends at the
    ret at 0x00550f10 (369 bytes, then 90 padding; next known entry 0x00551090). File read (RtFSHandler read):
    overlapped ReadFile with a CreateEventA event when +0x18 is set, else a plain ReadFile that advances the
@@ -88,13 +90,12 @@ unsigned long FUN_00550da0(int param_1, void *param_2, unsigned long param_3)
     pos = *(int *)(param_1 + 8);
     newpos = pos + got;
     if (newpos >= pos) {
-      *(int *)(param_1 + 0x20) = 2;
       *(int *)(param_1 + 8) += got;
     } else {
       *(int *)(param_1 + 8) = newpos + 0x80000001;
       *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + 1;
-      *(int *)(param_1 + 0x20) = 2;
     }
+    *(int *)(param_1 + 0x20) = 2;
   } else {
     *(int *)(param_1 + 0x20) = 4;
   }

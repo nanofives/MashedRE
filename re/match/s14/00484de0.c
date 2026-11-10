@@ -1,4 +1,7 @@
 // FLAGS: /O2 /GS /Ob1
+/* MATCH-NEARMISS-2-B (2026-11-09): 99.2%, 14 -> 8 differing bytes. The zero test reads obj->ncells and n is assigned after
+   it: the spill of n now follows the je, but lea ecx,[edi+eax*4+0x24] is still scheduled after the spill (original: before).
+   Tried 15 more forms (pc from the field, while/for countdowns, if-block, unsigned n, declaration order). */
 /* MATCH-S14 0x00484de0 (h2): world-object pair pass over the grid cells. 99.2% (regs 99.2%, ops 99.2%).
    Raw: compile error (code* cast). Moved: record/cell structs, obj = &DAT_006dccb8[i] inside an indexed loop
    (a pointer IV gave a second IV at +0x10, 52%), callback cached in a local, sum written dz*dz + (dx*dx + dy*dy)
@@ -67,8 +70,8 @@ void FUN_00484de0(void)
 
   for (i = 0; i < DAT_006e70cc; i++) {
     obj = &DAT_006dccb8[i];
+    if (obj->ncells == 0) continue;
     n = obj->ncells;
-    if (n == 0) continue;
     pc = &obj->cells[n];
     do {
       cell = *--pc;

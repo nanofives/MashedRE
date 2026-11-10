@@ -1,0 +1,9 @@
+0x00402b70	OK	checked=22	unchecked=15	00402b70.c	  unchecked: @__security_check_cookie@4,___security_cookie,__strupr,_sprintf,_strchr
+0x005b0df0	OK	checked=3	unchecked=0	005b0df0.c	
+0x005a8390	OK	checked=11	unchecked=2	005a8390.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005a8560	OK	checked=13	unchecked=2	005a8560.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005ab560	OK	checked=11	unchecked=3	005ab560.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x005ac7e0	OK	checked=5	unchecked=0	005ac7e0.c	
+0x004e4450	OK	checked=11	unchecked=0	004e4450.c	
+0x005a7ee0	OK	checked=8	unchecked=0	005a7ee0.c	
+0x005af070	OK	checked=5	unchecked=0	005af070.c	

@@ -529,6 +529,12 @@ STACK['NCC0H'] = STACK['NCC0'] + STACK['DEFH']; STACK['X24NCCH'] = STACK['X24NCC
 STACK['DDK'] = ['MASHED_AISPLINE_DDK=1']
 # report only: the exe calls AiSplineEval_x87 only through AiLeaf_414570 (MASHED_AILEAF, AiStandalone.cpp:1056)
 STACK['AL'] = ['MASHED_AILEAF=1']; STACK['ALDDK'] = ['MASHED_AILEAF=1', 'MASHED_AISPLINE_DDK=1']
+# PORT-SAVE-SPAN-MIRROR (verify/portstate_20261109/PREREG_SAVE_SPAN_MIRROR.md): 0x00404e80 steps 2-3 at the real addresses
+STACK['SSM'] = ['MASHED_SAVE_SPAN_MIRROR=1']
+# PORT-BATCH-TOOL (verify/portbatch_20261109/PREREG_PORT-BATCH-TOOL.md): BATCH = the closed-set switch the bisect driver
+# re/tools/port_batch_bisect.py passes in A4_BATCH_KNOBS (space-separated KEY=VALUE, e.g.
+# 'MASHED_BATCH_HUD=1 MASHED_BATCH_HUD_ROWS=0x0041d870'). Arms H_BATCH, B_BATCH_K0 / K1 / K26.
+STACK['BATCH'] = os.environ.get('A4_BATCH_KNOBS', '').split()
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
