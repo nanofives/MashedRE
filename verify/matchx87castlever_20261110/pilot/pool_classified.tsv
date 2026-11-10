@@ -1,0 +1,69 @@
+rva	source	bytes_bad	bytes_n	pct	diff_lines	x87_lines	x87_share	source_pool	conf	first_diffs
+0x004c0c20	re/match/s19/004c0c20.c	1	330	98.9	1	0	0.00	c4rnearmiss	C2	mov eax, dword ptr [eax + 0x9c] | mov eax, dword ptr [ecx + 0x9c]
+0x004c0f00	re/match/s19/004c0f00.c	1	313	98.8	1	0	0.00	c4rnearmiss	C2	mov eax, dword ptr [eax + 0x9c] | mov eax, dword ptr [edx + 0x9c]
+0x00433f40	re/match/s08/00433f40.c	2	1048	99.3	2	0	0.00	c4rnearmiss	C3	add edx, eax | add eax, edx ;; push edx | push eax
+0x00473c20	re/match/s11/00473c20.c	2	697	99.0	2	1	0.50	matchnearmiss2	C2	fst dword ptr [esp + 8] | fst dword ptr [esp + 0x14] ;; mov edx, dword ptr [esp + 8] | mov edx, dword ptr [esp + 0x14]
+0x0047f6d0	re/match/s13/0047f6d0.c	2	251	97.9	2	0	0.00	c4rnearmiss	C2	mov dword ptr [esp + 0x28], edx | mov dword ptr [esp + 0x20], edx ;; mov ecx, dword ptr [esp + 0x28] | mov ecx, dword ptr [esp + 0x20]
+0x0048a4e0	re/match/s14/0048a4e0.c	2	238	98.8	1	0	0.00	c4rnearmiss	C2	test ecx, ecx | cmp ecx, ebp
+0x00555af0	re/match/s24/00555af0.c	2	1072	99.3	2	1	0.50	matchnearmiss2	C2	mov dword ptr [esp + 0x50], edx | mov dword ptr [esp + 0x5c], edx ;; fild dword ptr [esp + 0x50] | fild dword ptr [esp + 0x5c]
+0x0040ad90	re/match/s02/0040ad90.c	3	148	97.9	2	2	1.00	c4rnearmiss	C2	| fmul st(1) ;; fmul st(1) |
+0x00458e00	re/match/s09/00458e00.c	3	274	99.0	2	2	1.00	c4rnearmiss	C3	| fld dword ptr [ecx] ;; fld dword ptr [ecx] |
+0x00429bd0	re/match/s06/00429bd0.c	4	575	99.4	2	0	0.00	c4rnearmiss	C2	| push 6 ;; push 6 |
+0x004d4a20	re/match/s21/004d4a20.c	4	462	99.4	2	0	0.00	c4rnearmiss	C2	| add eax, 0xc ;; add eax, 0xc |
+0x004f8730	re/match/s22/004f8730.c	4	103	96.7	2	0	0.00	c4rnearmiss	C2	| pop edi ;; pop edi |
+0x00405730	re/match/s01/00405730.c	5	80	96.2	2	0	0.00	c4rnearmiss	C2	| mov dword ptr [esi + 0x63a220], eax ;; mov dword ptr [esi], eax |
+0x004307a0	re/match/s07/004307a0.c	5	117	97.1	2	2	1.00	matchnearmiss2	C3	| fcomp dword ptr [esp + 8] ;; fcomp dword ptr [esp + 4] |
+0x00455150	re/match/s09/00455150.c	5	521	99.4	2	2	1.00	matchnearmiss2	C2	fstp dword ptr [esp + 0x28] | ;; | fstp dword ptr [esp + 0x2c]
+0x004910c0	re/match/s15/004910c0.c	5	626	97.2	6	2	0.33	matchnearmiss2	C2	| fstp dword ptr [esp + 0x1c] ;; fstp dword ptr [esp + 0x20] | ;; pop esi | ;; pop ebx |
+0x004c3040	re/match/s19/004c3040.c	5	102	97.1	2	0	0.00	c4rnearmiss	C2	| add eax, 0x10 ;; add eax, 0x10 |
+0x00517da0	re/match/s23/00517da0.c	5	83	97.1	2	0	0.00	c4rnearmiss	C2	mov dword ptr [esp + 0x10], eax | ;; | mov dword ptr [esp + 0x14], eax
+0x004046a0	re/match/s01/004046a0.c	6	377	96.8	4	0	0.00	c4rnearmiss	C2	mov dword ptr [0], edi | mov dword ptr [0x5ea0b4], edx ;; | mov dword ptr [0x7f0fe0], edi ;; mov dword ptr [0], edi | ;; jmp 0xcf | jmp 0x404775
+0x0042f530	re/match/s07/0042f530.c	6	299	96.9	6	0	0.00	c4rnearmiss	C2	| jge 0x42f568 ;; | mov esi, eax ;; | xor eax, eax ;; jge 0x3a |
+0x00405920	re/match/s01/00405920.c	7	398	99.2	2	2	1.00	matchnearmiss2	C2	| fld dword ptr [esp + 0x14] ;; fld dword ptr [esp + 0x10] |
+0x0044e0a0	re/match/s08/0044e0a0.c	7	239	98.4	2	2	1.00	c4rnearmiss	C2	| fstp dword ptr [esp + 0x30] ;; fstp dword ptr [esp + 0x30] |
+0x004785e0	re/match/s12/004785e0.c	7	121	97.8	2	2	1.00	c4rnearmiss	C2	| fld st(0) ;; fld st(0) |
+0x00407800	re/match/s01/00407800.c	8	498	99.3	2	0	0.00	c4rnearmiss	C2	| mov dword ptr [esi + 0xb0], 0 ;; mov dword ptr [esi + 0xb0], 0 |
+0x0041c180	re/match/s04/0041c180.c	8	311	96.7	3	3	1.00	matchnearmiss2	C2	| fld dword ptr [esp + 0x20] ;; fld dword ptr [esp + 0x24] | fmul dword ptr [0x5cd074] ;; fmul dword ptr [0] |
+0x0041ce00	re/match/s04/0041ce00.c	8	1548	98.7	5	3	0.60	matchnearmiss2	C2	| fld dword ptr [esp + 0x2c] ;; fld dword ptr [esp + 0x30] | fmul dword ptr [0x5cd118] ;; fmul dword ptr [0] | ;; add esp, 0x60 |
+0x0042d5a0	re/match/s07/0042d5a0.c	8	3580	98.1	8	4	0.50	matchnearmiss2	C2	mov dword ptr [esp + 0x1c], eax | mov dword ptr [esp + 0x20], eax ;; mov dword ptr [esp + 0x24], eax | mov dword ptr [esp + 0x20], eax ;; fild dword ptr [esp + 0x24] | fild dword ptr [esp + 0x20] ;; mov dword ptr [esp + 0x30], edx | mov dword ptr [esp + 0x2c], edx
+0x00484de0	re/match/s14/00484de0.c	8	394	99.2	2	0	0.00	c4rnearmiss	C2	| lea ecx, [edi + eax*4 + 0x24] ;; lea ecx, [edi + eax*4 + 0x24] |
+0x0044c4f0	re/match/pilot/a2_0044c4f0.c	9	250	98.8	2	0	0.00	c4rnearmiss	C2	| mov dword ptr [ebx + 0x3c], eax ;; mov dword ptr [ebx + 0x3c], eax |
+0x004d4310	re/match/s21/004d4310.c	9	108	95.7	3	0	0.00	c4rnearmiss	C2	| mov eax, dword ptr [esp + 0x10] ;; je 0x60 | je 0x4d4374 ;; mov eax, dword ptr [esp + 0x10] |
+0x00498510	re/match/s16/00498510.c	11	665	95.3	9	0	0.00	c4rnearmiss	C2	mov ecx, 0x80 | ;; | mov ecx, 0x80 ;; call 0x292 | ;; pop edi |
+0x004d4f00	re/match/s21/004d4f00.c	11	142	98.5	2	0	0.00	c4rnearmiss	C2	mov edi, dword ptr [ebx + 8] | ;; | mov edi, dword ptr [ebx + 8]
+0x0051cbe0	re/match/s23/0051cbe0.c	12	992	98.8	4	0	0.00	c4rnearmiss	C2	mov dl, byte ptr [esi + 0x125] | cmp byte ptr [esi + 0x125], cl ;; | je 0x51cee9 ;; cmp dl, cl | jmp 0x51ceef ;; jne 0x30f |
+0x00555f20	re/match/s24/00555f20.c	12	204	96.1	4	0	0.00	c4rnearmiss	C2	| mov edx, dword ptr [0x7d3ff8] ;; mov edx, dword ptr [0] | ;; inc ecx | ;; mov ebx, ecx | lea ebx, [ecx + 1]
+0x00557110	re/match/s24/00557110.c	12	169	96.5	4	4	1.00	c4rnearmiss	C3	| fld dword ptr [ecx + 0x28] ;; | fcomp dword ptr [0x5d757c] ;; fld dword ptr [ecx + 0x28] | ;; fcomp dword ptr [0] |
+0x0041e6c0	re/match/s04/0041e6c0.c	15	385	98.8	2	2	1.00	c4rnearmiss	C2	fstp dword ptr [esp + 0x14] | ;; | fstp dword ptr [esp + 0x14]
+0x00431240	re/match/s07/00431240.c	15	622	98.9	4	2	0.50	matchnearmiss2	C2	mov dword ptr [esp + 0x28], eax | ;; | mov dword ptr [esp + 0x2c], eax ;; fild dword ptr [esp + 0x30] | ;; | fild dword ptr [esp + 0x34]
+0x00414f00	re/match/pilot/a1_00414f00.c	18	274	95.8	6	6	1.00	matchnearmiss2	C3	fld dword ptr [esi] | ;; fsub dword ptr [eax + 0x30] | fld dword ptr [eax + 0x30] ;; | fsubr dword ptr [esi] ;; fld dword ptr [esi + 8] | fld dword ptr [eax + 0x38]
+0x0045e990	re/match/s10/0045e990.c	18	1610	99.5	4	0	0.00	c4rnearmiss	C2	| mov dword ptr [esp + 0x28], 0xc28c0000 ;; | add eax, 0x58 ;; mov dword ptr [esp + 0x28], 0xc28c0000 | ;; add eax, 0x58 |
+0x004064c0	re/match/s01/004064c0.c	19	1167	99.4	4	2	0.50	matchnearmiss2	C2	| fstp dword ptr [esp + 0x24] ;; fstp dword ptr [esp + 0x28] | ;; mov dword ptr [0], edx | ;; | mov dword ptr [0x63a5d4], edx
+0x004d1e30	re/match/s20/004d1e30.c	19	1296	99.1	8	0	0.00	c4rnearmiss	C2	not edx | ;; shr edx, 0xf | ;; and edx, 1 | ;; push ebp |
+0x0051bb40	re/match/s23/0051bb40.c	19	555	98.1	7	0	0.00	c4rnearmiss	C2	| push ebp ;; | push esi ;; jne 0x229 | push edi ;; | jne 0x51bd66
+0x00527a40	re/match/s23/00527a40.c	19	481	97.8	7	0	0.00	c4rnearmiss	C2	add edx, ebx | mov eax, dword ptr [esp + 0x44] ;; | add edx, ebx ;; | push ecx ;; | push esi
+0x00516de0	re/match/s23/00516de0.c	20	946	98.4	8	0	0.00	c4rnearmiss	C2	| push ebp ;; | push esi ;; mov edi, dword ptr [esp + 0xc] | mov edi, dword ptr [esp + 0x14] ;; je 0x3af | je 0x51718d
+0x00453730	re/match/s09/004538b0.c	24	377	95.3	9	9	1.00	matchnearmiss2	C2	| fld dword ptr [edi + 0x3c] ;; fld dword ptr [edi + 0x3c] | fadd dword ptr [esp + 0x20] ;; fadd dword ptr [esp + 0x24] | ;; | fstp dword ptr [esp + 0x30]
+0x004967e0	re/match/s16/004967e0.c	26	281	98.8	1	0	0.00	c4rnearmiss	C2	| and eax, 1
+0x00519820	re/match/s23/00519820.c	33	455	96.3	12	0	0.00	c4rnearmiss	C2	cmp al, 3 | ;; je 0x19e | ;; | push esi ;; | cmp al, 3
+0x00556e90	re/match/s24/00556e90.c	35	631	97.5	10	2	0.20	c4rnearmiss	C2	| mov edx, dword ptr [esp + 0x1c] ;; mov edx, dword ptr [esp + 0x1c] | ;; | mov esi, dword ptr [esp + 0x18] ;; | xor edx, edx
+0x004039f0	re/match/s01/004039f0.c	39	611	97.1	10	0	0.00	c4rnearmiss	C2	mov dword ptr [esp + 0xc], eax | ;; | mov edx, dword ptr [edx + 8] ;; | push ebx ;; | mov dword ptr [esp + 0x10], eax
+0x00405ab0	re/match/s01/00405920.c	42	1192	96.9	16	16	1.00	matchnearmiss2	C2	| fld dword ptr [esp + 0x3c] ;; fld dword ptr [esp + 0x40] | fmul dword ptr [0x5cc9a8] ;; fmul dword ptr [0] | ;; | fstp dword ptr [esp + 0x48]
+0x004c9cd0	re/match/s20/004c9cd0.c	44	471	96.5	8	0	0.00	c4rnearmiss	C2	| push esi ;; | mov ecx, dword ptr [eax] ;; mov ecx, dword ptr [eax] | ;; je 0x16c | je 0x4c9e3b
+0x0045b390	re/match/s09/0045b390.c	45	839	96.9	13	9	0.69	matchnearmiss2	C2	| fld st(1) ;; fld st(1) | fmul dword ptr [esp + 0x28] ;; fmul dword ptr [esp + 0x28] | ;; | fadd dword ptr [esp + 0x20]
+0x0051f4f0	re/match/s23/0051f4f0.c	45	793	97.6	10	0	0.00	c4rnearmiss	C2	| push ebx ;; mov esi, dword ptr [esp + 0x10] | mov esi, dword ptr [esp + 0x14] ;; | push edi ;; jb 0x314 | jb 0x51f802
+0x00528810	re/match/s23/00528810.c	46	912	97.8	10	0	0.00	c4rnearmiss	C2	| push ebx ;; | push ebp ;; mov esi, dword ptr [esp + 0x18] | mov esi, dword ptr [esp + 0x20] ;; | push edi
+0x004332a0	re/match/s08/004332a0.c	60	835	97.3	9	0	0.00	c4rnearmiss	C2	jne 0x317 | jne 0x4335af ;; jne 0x2e5 | je 0x4335b5 ;; mov dword ptr [esi], 0xffffffff | ;; jmp 0x30a |
+0x004627f0	re/match/s10/004627f0.c	61	347	96.8	5	0	0.00	c4rnearmiss	C2	or dword ptr [eax + 0x70], 0x50 | ;; | or dword ptr [eax + 0x70], 0x10 ;; | or dword ptr [eax + 0x70], 0x40 ;; mov dword ptr [0], eax |
+0x0044c490	re/match/s08/0044c490.c	62	95	95.5	2	0	0.00	c4rnearmiss	C2	mov edx, dword ptr [eax + 0x40] | ;; | mov edx, dword ptr [eax]
+0x0045a190	re/match/s09/0045a190.c	64	515	93.0	18	14	0.78	x87b-auto	C2	add edi, -0x58 | sub edi, 0x58 ;; | fsub dword ptr [esp + 0x2c] ;; fsub dword ptr [esp + 0x30] | ;; | fld dword ptr [eax + 8]
+0x00495870	re/match/s16/00495fe0.c	70	1544	98.9	8	4	0.50	matchnearmiss2	C2	| mov eax, dword ptr [esi + 0x2c8] ;; | fst dword ptr [esi + 0x2cc] ;; mov eax, dword ptr [esi + 0x2c8] | ;; fld st(1) |
+0x004d7480	re/match/s21/004d7480.c	82	1600	96.2	21	0	0.00	c4rnearmiss	C2	je 0x15d | je 0x4d75de ;; je 0x15d | je 0x4d75de ;; mov eax, dword ptr [ecx*4] | ;; mov dword ptr [0], eax |
+0x00457100	re/match/pilot/a2_00457100.c	100	1285	97.7	13	13	1.00	matchnearmiss2	C2	fld dword ptr [0] | ;; fmul dword ptr [esp + 0xd4] | ;; fstp dword ptr [esp + 0x88] | ;; fld dword ptr [0] |
+0x005acda0	re/match/s26/005acda0.c	106	164	44.3	44	11	0.25	x87b-auto	C2	sub esp, 8 | sub esp, 0xc ;; mov esi, dword ptr [esp + 0x14] | mov esi, dword ptr [esp + 0x18] ;; | mov ebx, eax ;; | call 0x5ac650
+0x00421d20	re/match/s05/00421d20.c	134	939	94.5	23	11	0.48	x87b-auto	C2	mov ecx, dword ptr [esi + 4] | ;; | mov ecx, dword ptr [esi + 4] ;; | fmul dword ptr [0x5cc564] ;; fmul dword ptr [0] |
+0x0048d360	re/match/s15/0048d360.c	136	456	90.6	19	7	0.37	x87b-auto	C2	jge 0x19e | jge 0x48d50b ;; jl 0x19e | jl 0x48d50b ;; | mov eax, 9 ;; mov eax, 9 |
+0x0048d540	re/match/s15/0048d540.c	136	456	90.6	19	7	0.37	x87b-auto	C2	jge 0x19e | jge 0x48d6eb ;; jl 0x19e | jl 0x48d6eb ;; | mov eax, 0xa ;; mov eax, 0xa |
+0x0047ba20	re/match/s13/0047ba20.c	144	230	60.8	46	32	0.70	x87b-auto	C2	mov ecx, dword ptr [esp + 0x18] | ;; fld dword ptr [ecx] | ;; lea edx, [eax + eax*2 + 0x24] | lea ecx, [eax + eax*2 + 0x24] ;; lea eax, [eax + eax*2] | lea edx, [eax + eax*2]
+0x00461e90	re/match/s10/00461e90.c	209	1364	95.8	13	0	0.00	c4rnearmiss	C3	ja 0x4dd | ja 0x46235b ;; jne 0x448 | jne 0x4622dc ;; jne 0x448 | jne 0x4622dc ;; je 0x4a9 | je 0x462074
+0x004b61c0	re/match/s18/004b61c0.c	398	703	95.9	9	0	0.00	c4rnearmiss	C2	je 0x2b9 | je 0x4b6477 ;; jl 0x1d8 | jl 0x4b6396 ;; mov edi, edi | ;; jl 0x100 | jl 0x4b62be

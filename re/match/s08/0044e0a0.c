@@ -57,7 +57,7 @@ void FUN_0044e0a0(Obj_0044e0a0 *param_1)
     FUN_0046d4a0(&h, param_1->id);
     b.x = *(float *)(h + 0x20) * 300.0f;
     b.y = *(float *)(h + 0x24) * 300.0f;
-    b.z = *(float *)(h + 0x28) * 300.0f;
+    { double tz = *(float *)(h + 0x28) * 300.0f; b.z = (float)tz; }  /* named double temporary (MATCH-X87-CASTLEVER-PILOT) */
     b.x = FUN_004b4510(-50.0f, 50.0f);
     FUN_00480720(param_1->id);
     FUN_00481750(param_1->id, &b, &a);
