@@ -19,6 +19,11 @@ responsible heads are then excluded and the rest is gated ON again. Every pass g
 
 Options: --data <dir> (default D:/MashedWT/PORT-BATCH-TOOL_data), --root <gate root>, --rootk <nav root>,
 --no-nav, --no-off (reuse nothing: OFF is not run, ON is compared with the refs only), --label-prefix <p>.
+
+Build mode (L-107 (a), PORT-BATCH-GAMEPLAY): --exe-off <base exe> --exe-on <batch exe>. There is no switch: OFF runs the
+base build and ON the batch build, both with the DEF stack (run_arms A4_EXE, knob_boot KNOB_EXE). Copy each build's exe
+out of mashedmod/build before the next build. When ON moves and repeats, the driver does not split anything itself:
+rebuild with halves of the rows swapped and gate each half exe with --no-off --exe-on <half exe> (bisect by rebuilding).
 """
 from __future__ import annotations
 
@@ -55,6 +60,9 @@ class Gate:
         self.rootk = opt(argv, '--rootk', 'D:/MashedWT/PORT-BATCH-TOOL_rootK')
         self.nav = '--no-nav' not in argv
         self.prefix = opt(argv, '--label-prefix', '')
+        self.exe_off = opt(argv, '--exe-off')
+        self.exe_on = opt(argv, '--exe-on')
+        self.build_mode = bool(self.exe_on)
         mt = json.load(open(ROOT / 're' / 'orchestrator' / 'merge_train.json'))
         self.ref = dict(gctrl=mt['gctrl']['ref'], b=mt['b']['ref'], nav=[NAV_REF[k] for k in sorted(NAV_REF)])
         self.data.mkdir(parents=True, exist_ok=True)
@@ -74,16 +82,24 @@ class Gate:
         label = '%s%02d_%s' % (self.prefix, self.n, label)
         out = self.data / label
         (out / 'arms').mkdir(parents=True, exist_ok=True)
-        kn = self.knobs(heads)
-        stack = 'BATCH' if kn else 'DEF'
+        exe = None
+        if self.build_mode:
+            exe = self.exe_off if heads is None else self.exe_on
+            kn = []
+            stack = 'DEF'
+        else:
+            kn = self.knobs(heads)
+            stack = 'BATCH' if kn else 'DEF'
         env = dict(os.environ, A4_ROOT=self.root, A4_OUT=str(out / 'arms'), A4_BATCH_KNOBS=' '.join(kn),
                    PYTHONWARNINGS='ignore')
+        if exe:
+            env['A4_EXE'] = exe
         arms = ['H_%s' % stack] + ['B_%s_K%s' % (stack, k) for k in ('0', '1', '26')]
         t0 = time.time()
-        print('--- pass %s knobs=%s' % (label, kn or 'none'), flush=True)
+        print('--- pass %s knobs=%s exe=%s' % (label, kn or 'none', exe or 'worktree build'), flush=True)
         rc = subprocess.call([sys.executable, 'verify/savelink_20261023/run_arms.py'] + arms, cwd=ROOT, env=env)
         a = out / 'arms'
-        res = dict(label=label, knobs=' '.join(kn), rc=rc,
+        res = dict(label=label, knobs=' '.join(kn) or (('exe=' + exe) if exe else ''), rc=rc,
                    gctrl=[sha8(a / ('H_%s.%s' % (stack, x))) for x in ('step.csv', 'gates.csv', 'ptrace.log')],
                    b=[sha8(a / ('B_%s_K%s.step.csv' % (stack, k))) for k in ('0', '1', '26')], nav=[])
         if self.nav:
@@ -91,6 +107,8 @@ class Gate:
             nav.mkdir(exist_ok=True)
             shutil.copyfile(SETTINGS, os.path.join(self.rootk, 'mashed_re_settings.bin'))
             e2 = dict(os.environ, PORTTOP_OUT=str(out), PYTHONWARNINGS='ignore')
+            if exe:
+                e2['KNOB_EXE'] = exe
             subprocess.call([sys.executable, 'verify/porttop_20261108/knob_boot.py', 'navdemo', self.rootk, '300'] + kn +
                             ['MASHED_NAV_DEMO=1', 'MASHED_DETERMINISTIC=1', 'MASHED_VERIFY_OUT=' + str(nav)],
                             cwd=ROOT, env=e2)
@@ -158,7 +176,9 @@ def main(argv):
             stable = False
             verdict = 'UNSTABLE: a side does not repeat (OFF %s, ON %s); not bisected' % (
                 'repeats' if not g.moved(off, off2) else 'differs', 'repeats' if not g.moved(on, on2) else 'differs')
-    if stable and g.moved(on, base):
+    if stable and g.moved(on, base) and g.build_mode:
+        verdict = 'MOVED (build mode): rebuild with halves of the rows and gate each half exe with --no-off --exe-on'
+    elif stable and g.moved(on, base):
         responsible = bisect(g, heads, base, on)
         keep = [h for h in heads if not any(h in u for u in responsible)]
         if keep:

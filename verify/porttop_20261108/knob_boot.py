@@ -11,7 +11,7 @@ import sys
 import time
 
 W = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
-EXE = os.path.join(W, 'mashedmod', 'build', 'mashed_re.exe')
+EXE = os.environ.get('KNOB_EXE', os.path.join(W, 'mashedmod', 'build', 'mashed_re.exe'))   # PORT-BATCH-GAMEPLAY: KNOB_EXE overrides
 OUT = os.environ.get('PORTTOP_OUT', 'D:/MashedWT/PORT-TOP-02_data')   # PORT-TOP-03: PORTTOP_OUT overrides
 
 
