@@ -10,9 +10,8 @@ complete against the repo's history. Trying to be both is what made it drift twi
 per-lane docs plus `git log` cover the other half.
 
 **Ordering: NEWEST FIRST.** One entry per line, starting `YYYY-MM-DD`. New entries are
-**prepended immediately below the `<!-- ENTRIES -->`2026-11-10  0x0040bb10  FUN_0040bb10  (none)->C1  added (MATCH-40BB10): RpClumpForAllAtomics callback passed by 0x0040cda0 (re/match/s02/0040cda0.c); calls 0x0040bae0(atomic, data) and returns the atomic; Ghidra function present (re/console/pc_funcs.csv 23 B); evidence: verify/portorigtop_20261109/RESULT_MATCH-40BB10.md
+**prepended immediately below the `<!-- ENTRIES -->` marker**, never appended to the end.
 2026-11-10  0x004b3f20  FUN_004b3f20  (none)->C1  added (POWERUPINIT-C): RpClumpForAllAtomics callback pushed by 0x004b3fc0 (push 0x4b3f20 at 0x004b3fd8); Ghidra has no function here (extent 34 B in re/console/pc_funcs.csv); evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-C.md
- marker**, never appended to the end.
 2026-11-10  0x00452f70  FUN_00452f70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 8 of 0x005f9998 (+0x14 pointer at 0x005f9bac, the only xref); strings smoke / mortar.dff / MortarRound.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e40  FUN_00454e40  (none)->C1  added (POWERUPINIT-B): tail-jump target of 0x00454e70 (jmp at 0x00454f65) and of 0x00454f70; loops 0x00454bd0 (ESI) over 4 x 0x14 at 0x00688358 and 0x00454c00 (EAX) over 4 x 0x18 at 0x006882f8; callees filed render; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e70  FUN_00454e70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 6 of 0x005f9998 (+0x14 pointer at 0x005f9b2c, the only xref); strings flashunit.dff / lensflare-fs8; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
@@ -114,6 +113,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  0x0040bb10  FUN_0040bb10  (none)->C1  added (MATCH-40BB10): RpClumpForAllAtomics callback passed by 0x0040cda0 (re/match/s02/0040cda0.c); calls 0x0040bae0(atomic, data) and returns the atomic; Ghidra function present (re/console/pc_funcs.csv 23 B); evidence: verify/portorigtop_20261109/RESULT_MATCH-40BB10.md
 2026-11-10  0x0040bb10  FUN_0040bb10  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/0040bb10.c; evidence: verify/portorigtop_20261109/RESULT_MATCH-40BB10.md
 2026-11-10  0x004b3f20  FUN_004b3f20  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s29/004b3f20.c; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-C.md
 2026-11-10  0x004b3fc0  FUN_004b3fc0  C4->C4  refiled third-party-library[msvc-crt-main] -> render (L-116), status waived-platform-crt -> mapped (out of the L-67 band waiver; game RpClump walker, calls 0x004e66d0 with callback 0x004b3f20); c4=match re/match/s29/004b3fc0.c byte-identical + relocheck OK; also repaired line 13 of this header, which the POWERUPINIT-B insert had split; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
