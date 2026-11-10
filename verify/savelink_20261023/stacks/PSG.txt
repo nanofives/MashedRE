@@ -1,0 +1,5 @@
+# MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)). PSG = all three port-state knobs (the selector
+# 0x0040ce80 needs the seeded course table), PSGO = the GAMEFLOW knob alone, the *A stacks race Arctic (Course_Id 0, row 3)
+MASHED_PORTSTATE_COURSE
+MASHED_PORTSTATE_RECORDS
+MASHED_PORTSTATE_GAMEFLOW

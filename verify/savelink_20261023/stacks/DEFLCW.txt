@@ -1,0 +1,3 @@
+# PORT-X87-PC24 (verify/portstate_20261109/PREREG_X87PC24.md): the game thread at x87 PC_24 from device creation on, the
+# same plus the D2 42 s hold, and the section-3 interaction stacks (each = X24 + one precision knob). LCW = + MASHED_LOG_CW.
+MASHED_LOG_CW
