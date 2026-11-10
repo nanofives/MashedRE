@@ -178,6 +178,7 @@ addr	glob	section	kind	size	exe	n_rows	rows
 0x005f9788	DAT_005f9788	.data	scalar/array	1	cmt	2	0x00451820 0x00451ad0
 0x005f978c	DAT_005f978c	.data	scalar/array	4	-	1	0x00452170
 0x005f9790	DAT_005f9790	.data	scalar/array	4	-	1	0x00452170
+0x005f9808	DAT_005f9808	.data	scalar/array	12	origtop	1	0x004548e0
 0x005f9820	DAT_005f9820	.data	scalar/array	16	origtop	1	0x004583a0
 0x005f99c4	PTR_FUN_005f99c4	.data	pointer	4	-	1	0x0045bed0
 0x005f9bd8	DAT_005f9bd8	.data	scalar/array	4	cmt	1	0x0045bed0
