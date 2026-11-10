@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-10 16:34 POWERUPINIT-A (orch/POWERUPINIT-A), TL-MATCH-LUA (orch/TL-MATCH-LUA): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261110_161211
 - 2026-11-10 16:11 PORT-OT-RENDER-2 (orch/PORT-OT-RENDER-2): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261110_154527
 - 2026-11-10 15:16 PORT-OT-POWERUPINIT (orch/PORT-OT-POWERUPINIT): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261110_151410
 - 2026-11-10 15:13 PORT-OT-TRACKLOAD (orch/PORT-OT-TRACKLOAD): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261110_151157
