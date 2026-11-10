@@ -13,6 +13,17 @@
    Held static callees (all 100%, BYTE-IDENTICAL): 0x0040fc00 (arg in ESI), 0x004102f0 (arg in EBX, source from
      re/match/s02/004102f0.c), 0x004103a0 (arg in EAX, source from re/match/s02/004103a0.c). PTR_PTR_005f2770 is
      `char *` here for both; 0x004102f0's index written as *(int *)(PTR + 0x34 + i * 4), still 100%.
+   Extent (MATCH-RACEPATH-FRAME, 2026-11-09): Ghidra's body of 0x004111c0 is 1498 B in 6 ranges, because cases 1, 2,
+     8, 9 and 11 tail-JMP into functions Ghidra has no entry for (0x0041125f -> 0x0040feb0, 0x00411272 -> 0x00410130,
+     0x004112f2 -> 0x0040dd80, 0x004112fb -> 0x0040ddf0, 0x0041131e -> 0x00410ab0). Those five are the `// HIDDEN:`
+     functions below (DDK only), each insn 100% at its Ghidra range and whole symbol BYTE-IDENTICAL; 355 + 46 + 16 +
+     572 + 391 + 118 = 1498 (re/tools/match/extent_overrides.tsv, verify/matchracepath_20261109/frame/). What moved
+     them: 0x0040feb0 / 0x00410130 use 0x0040fc00's case order (2, 6/10, 3/4/5, default) with case 3/4/5 falling
+     into the default tail; 0x00410ab0 needs a volatile read of 0x0063b91c (else cl loads 0x007f100c first: fld/fadd
+     operands swapped, caught by relocheck), `!(x < K)` (test ah,5 / jnp) and a non-static HELD 0x0040e460 defined
+     before it (cl then keeps ECX/EDX live across the call at 0x00410b0c, as the original does; static gives it an
+     EAX argument instead). 0x0040ffc2 calls the bare-RET stub 0x0045b350 with no argument, so the DDK side declares
+     it without a prototype.
    Residual: none. */
 /* ---- MATCH-S07 preamble (same text in every re/match/s07 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -75,16 +86,11 @@ void FUN_0040d470(int p0);
 void FUN_0040da50(uint p0);
 void FUN_0040dba0(void);
 void FUN_0040dbd0(uint p0);
-void FUN_0040dd80(void);
-void FUN_0040ddf0(void);
 void FUN_0040de00(void);
 int FUN_0040e350(void);
 void FUN_0040e560(void);
 void FUN_0040e590(void);
-void FUN_0040feb0(void);
-void FUN_00410130(void);
 void FUN_00410860(void);
-void FUN_00410ab0(void);
 void FUN_00411170(uint p0);
 void FUN_00411ae0(int p0, uint p1);
 void FUN_00411d60(void);
@@ -123,7 +129,11 @@ int FUN_0042f500(void);
 int FUN_0042f6a0(void);
 int FUN_00430820(void);
 void FUN_00448700(int p0, int p1);
+#ifndef MATCH_PORT
+void FUN_0045b350();  /* bare RET stub; 0x0040ffc2 calls it with no argument */
+#else
 void FUN_0045b350(int p0);
+#endif
 void FUN_0045bba0(void);
 int FUN_00467210(int p0);
 int FUN_0046baa0(int p0);
@@ -330,6 +340,337 @@ static void FUN_004103a0(int delta)
 }
 #else
 void FUN_004103a0(int delta);
+#endif
+
+/* ---- 0x004111c0 extent members (MATCH-RACEPATH-FRAME): the five functions 0x004111c0 tail-jumps to.
+   DDK only (match.py / c4_reclass extent gate); the port build (MATCH_PORT) keeps the extern declarations. ---- */
+#ifndef MATCH_PORT
+typedef struct { int m_0; int m_4; int m_8; int m_c; } Rec7f1a14;
+MGLOBAL(int, DAT_0063b90c, 0x0063b90c);
+MGLOBAL(float, DAT_0063b91c, 0x0063b91c);
+MGLOBAL(int, DAT_0063ba80, 0x0063ba80);
+MGLOBAL(float, DAT_005cc574, 0x005cc574);
+MGLOBAL(int, DAT_007f0fd8, 0x007f0fd8);
+MGLOBALA(char, DAT_007f1041, 1, 0x007f1041);
+MGLOBALA(char, DAT_007f1042, 1, 0x007f1042);
+MGLOBALA(char, DAT_007f1501, 1, 0x007f1501);
+MGLOBALA(char, DAT_007f1502, 1, 0x007f1502);
+MGLOBALA(Rec7f1a14, DAT_007f1a14, 4, 0x007f1a14);
+MGLOBAL(int, DAT_008a94d0, 0x008a94d0);
+
+int FUN_004a2cbd(const char *fmt, ...);
+void FUN_00401570(int p0);
+void FUN_004046a0(void);
+void FUN_004073b0(void);
+void FUN_00407a60(void);
+void FUN_0040b180(void);
+void FUN_0040bd80(void);
+void FUN_0040ddb0(void);
+int FUN_0040e340(void);
+MGLOBAL(int, DAT_0063b908, 0x0063b908);
+// HELD: 0x0040e460 (body elsewhere, re/match/s02/0040e460.c; this copy exists only so the DDK knows the callee keeps
+// ECX/EDX, which 0x00410ab0 relies on across its call at 0x00410b0c; not compiled in the port)
+void FUN_0040e460(int param_1)
+{
+  DAT_0063b908 = param_1;
+}
+void FUN_0040e480(int p0, int p1);
+void FUN_00414060(void);
+void FUN_00414180(void);
+void FUN_00414220(void);
+void FUN_00418990(void);
+void FUN_00419760(int p0, int p1);
+void FUN_0041b4d0(void);
+void FUN_0041b510(void);
+void FUN_0041bf20(void);
+void FUN_0041c010(void);
+void FUN_0041cb80(void);
+void FUN_0041cbc0(void);
+void FUN_0041d730(void);
+void FUN_0041d820(void);
+void FUN_0041e130(int p0);
+void FUN_0041eda0(int p0, int p1);
+void FUN_0041f000(int p0, int *p1);
+void FUN_00420d40(void);
+void FUN_00422120(void);
+void FUN_004222c0(void);
+void FUN_00422b10(void);
+void FUN_00425b10(void);
+int FUN_00426c00(void);
+void FUN_00426c10(int p0);
+void FUN_00426c30(int p0);
+void FUN_00426c70(int p0);
+void FUN_0042aab0(void);
+void FUN_004425d0(void);
+void FUN_00458bf0(void);
+void FUN_00459560(void);
+void FUN_0045b9d0(void);
+void FUN_0045ba00(int p0, int p1);
+void FUN_0045be90(void);
+void FUN_0045bed0(void);
+void FUN_0046b1c0(int p0, int *p1);
+void FUN_0046b540(int p0);
+void FUN_0046c5c0(int p0);
+void FUN_00471ac0(void);
+void FUN_00471cf0(void);
+void FUN_00475a60(void);
+void FUN_00476430(void);
+void FUN_00477730(void);
+void FUN_00477b40(void);
+void FUN_00480100(void);
+void FUN_00484c90(void);
+void FUN_0048f260(void);
+void FUN_004904d0(void);
+
+// HIDDEN: 0x0040dd80 _FUN_0040dd80 46
+static void FUN_0040dd80(void)
+{
+  FUN_00414220();
+  FUN_00426c70(**(int **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  FUN_0045bed0();
+  DAT_0063ba8c = 2;
+}
+
+// HIDDEN: 0x0040ddf0 _FUN_0040ddf0 16
+static void FUN_0040ddf0(void)
+{
+  FUN_0040ddb0();
+  DAT_0063ba8c = 10;
+}
+
+// HIDDEN: 0x0040feb0 _FUN_0040feb0 572
+static void FUN_0040feb0(void)
+{
+  int buf[6];
+  int i;
+
+  if (FUN_0042f6a0() == 0xb) {
+    FUN_0040e480(0, 2);
+    FUN_0040e480(1, 2);
+    FUN_0040e480(2, 2);
+    FUN_0040e480(3, 0);
+  }
+  DAT_0063ba80 = 0;
+  FUN_00426c10(**(int **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  DAT_005f29b8 = 0xff;
+  FUN_00422b10();
+  DAT_007f101c = 0;
+  DAT_007f0ff4 = 0;
+  DAT_007f0ff8 = 0;
+  FUN_004a2cbd("start of race\n");
+  FUN_004425d0();
+  FUN_00425b10();
+  FUN_00459560();
+  DAT_008a94d0 = 0;
+  for (i = 0; i < 4; i++) {
+    if (*(int *)(PTR_PTR_005f2770 + 0x34 + i * 4) == 0) {
+      FUN_0041eda0(i, 0);
+      FUN_0046c5c0(i);
+      FUN_0045ba00(i, 4);
+    }
+    else {
+      FUN_0041f000(i, buf);
+      FUN_0046b1c0(i, buf);
+      FUN_0046b540(i);
+      FUN_0041eda0(i, 1);
+      FUN_0045ba00(i, 1);
+      DAT_008a94d0 = DAT_008a94d0 + 1;
+    }
+  }
+  FUN_0040b180();
+  FUN_0040bd80();
+  FUN_0045b350();
+  FUN_00414060();
+  FUN_00484c90();
+  FUN_0045b350(1);
+  FUN_00477b40();
+  FUN_00475a60();
+  FUN_0045be90();
+  FUN_00476430();
+  FUN_00477730();
+  FUN_00418990();
+  FUN_00420d40();
+  FUN_004222c0();
+  switch (FUN_0042f6a0()) {
+  case 2:
+    FUN_0041e130(1);
+    goto done;
+  case 6:
+  case 10:
+    if (FUN_0042f500() != 0 && DAT_007f0fd0 != 2) {
+      FUN_0041bf20();
+      FUN_0041d730();
+    }
+    else {
+      FUN_0041b4d0();
+      FUN_0041cb80();
+    }
+    goto done;
+  case 3:
+  case 4:
+  case 5:
+    switch (DAT_007f0fd0) {
+    case 7:
+      FUN_00419760(0, 1);
+      FUN_00401570(FUN_00426c00());
+      break;
+    case 10:
+      FUN_004046a0();
+    case 4:
+    case 8:
+    case 9:
+      FUN_00401570(FUN_00426c00());
+      break;
+    case 5:
+      break;
+    default:
+      if (FUN_0042f500() != 0) {
+        FUN_0041bf20();
+        FUN_0041d730();
+      }
+      else {
+        FUN_0041b4d0();
+        FUN_0041cb80();
+      }
+      break;
+    }
+  default:
+    if (FUN_0042f500() != 0) {
+      FUN_0041bf20();
+      FUN_0041d730();
+    }
+    else {
+      FUN_0041b4d0();
+      FUN_0041cb80();
+    }
+    break;
+  }
+done:
+  FUN_00458bf0();
+  FUN_00407a60();
+  FUN_00471cf0();
+  DAT_005f29b8 = 100000;
+  DAT_0063ba8c = 2;
+}
+
+// HIDDEN: 0x00410130 _FUN_00410130 391
+static void FUN_00410130(void)
+{
+  FUN_00480100();
+  FUN_00471ac0();
+  FUN_0042aab0();
+  if (DAT_007f0fd0 == 2) {
+    DAT_007f0fd8 = DAT_007f0fd8 + 1;
+    if (DAT_007f0fd8 < 0 || DAT_007f0fd8 >= FUN_0040e340()) {
+      DAT_007f0fd8 = 0;
+    }
+  }
+  FUN_0040e590();
+  DAT_007f1014 = DAT_007f0ff4 > DAT_007f1018;
+  FUN_00426c30(**(int **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  FUN_0040bd80();
+  FUN_0045b9d0();
+  FUN_00476430();
+  FUN_00477730();
+  FUN_00418990();
+  FUN_00420d40();
+  FUN_00422120();
+  FUN_00477b40();
+  switch (FUN_0042f6a0()) {
+  case 2:
+    goto done;
+  case 6:
+  case 10:
+    if (FUN_0042f500() != 0 && DAT_007f0fd0 != 2) {
+      FUN_0041c010();
+      FUN_0041d820();
+    }
+    else {
+      FUN_0041b510();
+      FUN_0041cbc0();
+    }
+    goto done;
+  case 3:
+  case 4:
+  case 5:
+    switch (DAT_007f0fd0) {
+    case 7:
+      FUN_00419760(0, 1);
+      break;
+    case 10:
+      FUN_004046a0();
+      break;
+    case 4:
+    case 5:
+    case 8:
+    case 9:
+      break;
+    default:
+      if (FUN_0042f500() != 0) {
+        FUN_0041c010();
+        FUN_0041d820();
+      }
+      else {
+        FUN_0041b510();
+        FUN_0041cbc0();
+      }
+      break;
+    }
+  default:
+    if (FUN_0042f500() != 0) {
+      FUN_0041c010();
+      FUN_0041d820();
+    }
+    else {
+      FUN_0041b510();
+      FUN_0041cbc0();
+    }
+    break;
+  }
+done:
+  FUN_00414180();
+  FUN_004904d0();
+  FUN_0048f260();
+  FUN_004073b0();
+  if (DAT_005f29b8 == 100000) {
+    DAT_0063ba8c = 3;
+  }
+  else {
+    DAT_0063ba8c = 4;
+    DAT_005f29b8 = 12000;
+    FUN_0040d470(1);
+  }
+  if (DAT_007f0fd0 == 6) {
+    DAT_0063ba8c = 4;
+  }
+}
+
+// HIDDEN: 0x00410ab0 _FUN_00410ab0 118
+static void FUN_00410ab0(void)
+{
+  int i;
+  int s;
+
+  DAT_0063b91c = *(volatile float *)&DAT_0063b91c + DAT_007f100c;
+  if (!(DAT_0063b91c < DAT_005cc574)) {
+    for (i = 0; i < 4; i++) {
+      s = DAT_007f1a14[i].m_0;
+      if (s != -1 &&
+          ((DAT_007f1042[s * 0x4c] != 0 && DAT_007f1502[s * 0x4c] == 0) ||
+           (DAT_007f1041[s * 0x4c] != 0 && DAT_007f1501[s * 0x4c] == 0))) {
+        DAT_0063ba8c = 9;
+        FUN_0040e460(1);
+        DAT_0063b90c = 0;
+      }
+    }
+  }
+}
+#else
+void FUN_0040dd80(void);
+void FUN_0040ddf0(void);
+void FUN_0040feb0(void);
+void FUN_00410130(void);
+void FUN_00410ab0(void);
 #endif
 
 // MATCH: 0x004111c0 FUN_004111c0

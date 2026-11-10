@@ -1,0 +1,5 @@
+start 84.6% (regs-renamed 84.8%, in place 8.3%)
+round 1: 87.2% (regs-renamed 87.4%, in place 8.4%) via mulswap (395 variants)
+round 2: 87.3% (regs-renamed 87.5%, in place 8.8%) via move (395 variants)
+round 3: no improvement (395 variants)
+best 87.3% (regs-renamed 87.5%, in place 8.8%) after 1425 compiles -> log\permute\0040e590.c

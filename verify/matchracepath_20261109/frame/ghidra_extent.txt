@@ -1,0 +1,542 @@
+function FUN_004111c0 entry 004111c0
+body_min 0040dd80 body_max 00411322 num_addresses 1498 num_ranges 6
+range 0040dd80 0040ddad len 46
+range 0040ddf0 0040ddff len 16
+range 0040feb0 004100eb len 572
+range 00410130 004102b6 len 391
+range 00410ab0 00410b25 len 118
+range 004111c0 00411322 len 355
+insn 0040dd80 e89b640000 CALL 0x00414220
+insn 0040dd85 a170275f00 MOV EAX,[0x005f2770]
+insn 0040dd8a 8b0d78ba6300 MOV ECX,dword ptr [0x0063ba78]
+insn 0040dd90 8b1488 MOV EDX,dword ptr [EAX + ECX*0x4]
+insn 0040dd93 8b02 MOV EAX,dword ptr [EDX]
+insn 0040dd95 50 PUSH EAX
+insn 0040dd96 e8d58e0100 CALL 0x00426c70
+insn 0040dd9b 83c404 ADD ESP,0x4
+insn 0040dd9e e82de10400 CALL 0x0045bed0
+insn 0040dda3 c7058cba630002000000 MOV dword ptr [0x0063ba8c],0x2
+insn 0040ddad c3 RET
+insn 0040ddf0 e8bbffffff CALL 0x0040ddb0
+insn 0040ddf5 c7058cba63000a000000 MOV dword ptr [0x0063ba8c],0xa
+insn 0040ddff c3 RET
+insn 0040feb0 83ec18 SUB ESP,0x18
+insn 0040feb3 53 PUSH EBX
+insn 0040feb4 e8e7f70100 CALL 0x0042f6a0
+insn 0040feb9 33db XOR EBX,EBX
+insn 0040febb 83f80b CMP EAX,0xb
+insn 0040febe 7525 JNZ 0x0040fee5
+insn 0040fec0 6a02 PUSH 0x2
+insn 0040fec2 53 PUSH EBX
+insn 0040fec3 e8b8e5ffff CALL 0x0040e480
+insn 0040fec8 6a02 PUSH 0x2
+insn 0040feca 6a01 PUSH 0x1
+insn 0040fecc e8afe5ffff CALL 0x0040e480
+insn 0040fed1 6a02 PUSH 0x2
+insn 0040fed3 6a02 PUSH 0x2
+insn 0040fed5 e8a6e5ffff CALL 0x0040e480
+insn 0040feda 53 PUSH EBX
+insn 0040fedb 6a03 PUSH 0x3
+insn 0040fedd e89ee5ffff CALL 0x0040e480
+insn 0040fee2 83c420 ADD ESP,0x20
+insn 0040fee5 a170275f00 MOV EAX,[0x005f2770]
+insn 0040feea 8b0d78ba6300 MOV ECX,dword ptr [0x0063ba78]
+insn 0040fef0 891d80ba6300 MOV dword ptr [0x0063ba80],EBX
+insn 0040fef6 8b1488 MOV EDX,dword ptr [EAX + ECX*0x4]
+insn 0040fef9 8b02 MOV EAX,dword ptr [EDX]
+insn 0040fefb 56 PUSH ESI
+insn 0040fefc 57 PUSH EDI
+insn 0040fefd 50 PUSH EAX
+insn 0040fefe e80d6d0100 CALL 0x00426c10
+insn 0040ff03 c705b8295f00ff000000 MOV dword ptr [0x005f29b8],0xff
+insn 0040ff0d e8fe2b0100 CALL 0x00422b10
+insn 0040ff12 68e4cd5c00 PUSH 0x5ccde4
+insn 0040ff17 891d1c107f00 MOV dword ptr [0x007f101c],EBX
+insn 0040ff1d 891df40f7f00 MOV dword ptr [0x007f0ff4],EBX
+insn 0040ff23 891df80f7f00 MOV dword ptr [0x007f0ff8],EBX
+insn 0040ff29 e88f2d0900 CALL 0x004a2cbd
+insn 0040ff2e 83c408 ADD ESP,0x8
+insn 0040ff31 e89a260300 CALL 0x004425d0
+insn 0040ff36 e8d55b0100 CALL 0x00425b10
+insn 0040ff3b e820960400 CALL 0x00459560
+insn 0040ff40 891dd0948a00 MOV dword ptr [0x008a94d0],EBX
+insn 0040ff46 33f6 XOR ESI,ESI
+insn 0040ff48 bf34000000 MOV EDI,0x34
+insn 0040ff4d 8d4900 LEA ECX,[ECX]
+insn 0040ff50 8b0d70275f00 MOV ECX,dword ptr [0x005f2770]
+insn 0040ff56 391c0f CMP dword ptr [EDI + ECX*0x1],EBX
+insn 0040ff59 751a JNZ 0x0040ff75
+insn 0040ff5b 53 PUSH EBX
+insn 0040ff5c 56 PUSH ESI
+insn 0040ff5d e83eee0000 CALL 0x0041eda0
+insn 0040ff62 56 PUSH ESI
+insn 0040ff63 e858c60500 CALL 0x0046c5c0
+insn 0040ff68 6a04 PUSH 0x4
+insn 0040ff6a 56 PUSH ESI
+insn 0040ff6b e890ba0400 CALL 0x0045ba00
+insn 0040ff70 83c414 ADD ESP,0x14
+insn 0040ff73 eb3a JMP 0x0040ffaf
+insn 0040ff75 8d54240c LEA EDX,[ESP + 0xc]
+insn 0040ff79 52 PUSH EDX
+insn 0040ff7a 56 PUSH ESI
+insn 0040ff7b e880f00000 CALL 0x0041f000
+insn 0040ff80 8d442414 LEA EAX,[ESP + 0x14]
+insn 0040ff84 50 PUSH EAX
+insn 0040ff85 56 PUSH ESI
+insn 0040ff86 e835b20500 CALL 0x0046b1c0
+insn 0040ff8b 56 PUSH ESI
+insn 0040ff8c e8afb50500 CALL 0x0046b540
+insn 0040ff91 6a01 PUSH 0x1
+insn 0040ff93 56 PUSH ESI
+insn 0040ff94 e807ee0000 CALL 0x0041eda0
+insn 0040ff99 6a01 PUSH 0x1
+insn 0040ff9b 56 PUSH ESI
+insn 0040ff9c e85fba0400 CALL 0x0045ba00
+insn 0040ffa1 a1d0948a00 MOV EAX,[0x008a94d0]
+insn 0040ffa6 83c424 ADD ESP,0x24
+insn 0040ffa9 40 INC EAX
+insn 0040ffaa a3d0948a00 MOV [0x008a94d0],EAX
+insn 0040ffaf 83c704 ADD EDI,0x4
+insn 0040ffb2 46 INC ESI
+insn 0040ffb3 83ff44 CMP EDI,0x44
+insn 0040ffb6 7c98 JL 0x0040ff50
+insn 0040ffb8 e8c3b1ffff CALL 0x0040b180
+insn 0040ffbd e8bebdffff CALL 0x0040bd80
+insn 0040ffc2 e889b30400 CALL 0x0045b350
+insn 0040ffc7 e894400000 CALL 0x00414060
+insn 0040ffcc e8bf4c0700 CALL 0x00484c90
+insn 0040ffd1 6a01 PUSH 0x1
+insn 0040ffd3 e878b30400 CALL 0x0045b350
+insn 0040ffd8 83c404 ADD ESP,0x4
+insn 0040ffdb e8607b0600 CALL 0x00477b40
+insn 0040ffe0 e87b5a0600 CALL 0x00475a60
+insn 0040ffe5 e8a6be0400 CALL 0x0045be90
+insn 0040ffea e841640600 CALL 0x00476430
+insn 0040ffef e83c770600 CALL 0x00477730
+insn 0040fff4 e897890000 CALL 0x00418990
+insn 0040fff9 e8420d0100 CALL 0x00420d40
+insn 0040fffe e8bd220100 CALL 0x004222c0
+insn 00410003 e898f60100 CALL 0x0042f6a0
+insn 00410008 83c0fe ADD EAX,-0x2
+insn 0041000b 83f808 CMP EAX,0x8
+insn 0041000e 5f POP EDI
+insn 0041000f 5e POP ESI
+insn 00410010 0f878f000000 JA 0x004100a5
+insn 00410016 0fb688fc004100 MOVZX ECX,byte ptr [EAX + 0x4100fc]
+insn 0041001d ff248dec004100 JMP dword ptr [ECX*0x4 + 0x4100ec]
+insn 00410024 6a01 PUSH 0x1
+insn 00410026 e805e10000 CALL 0x0041e130
+insn 0041002b 83c404 ADD ESP,0x4
+insn 0041002e e991000000 JMP 0x004100c4
+insn 00410033 e8c8f40100 CALL 0x0042f500
+insn 00410038 85c0 TEST EAX,EAX
+insn 0041003a 747e JZ 0x004100ba
+insn 0041003c 833dd00f7f0002 CMP dword ptr [0x007f0fd0],0x2
+insn 00410043 eb67 JMP 0x004100ac
+insn 00410045 a1d00f7f00 MOV EAX,[0x007f0fd0]
+insn 0041004a 83c0fc ADD EAX,-0x4
+insn 0041004d 83f806 CMP EAX,0x6
+insn 00410050 7734 JA 0x00410086
+insn 00410052 ff248508014100 JMP dword ptr [EAX*0x4 + 0x410108]
+insn 00410059 6a01 PUSH 0x1
+insn 0041005b 53 PUSH EBX
+insn 0041005c e8ff960000 CALL 0x00419760
+insn 00410061 e89a6b0100 CALL 0x00426c00
+insn 00410066 50 PUSH EAX
+insn 00410067 e80415ffff CALL 0x00401570
+insn 0041006c 83c40c ADD ESP,0xc
+insn 0041006f eb34 JMP 0x004100a5
+insn 00410071 e82a46ffff CALL 0x004046a0
+insn 00410076 e8856b0100 CALL 0x00426c00
+insn 0041007b 50 PUSH EAX
+insn 0041007c e8ef14ffff CALL 0x00401570
+insn 00410081 83c404 ADD ESP,0x4
+insn 00410084 eb1f JMP 0x004100a5
+insn 00410086 e875f40100 CALL 0x0042f500
+insn 0041008b 85c0 TEST EAX,EAX
+insn 0041008d 740c JZ 0x0041009b
+insn 0041008f e88cbe0000 CALL 0x0041bf20
+insn 00410094 e897d60000 CALL 0x0041d730
+insn 00410099 eb0a JMP 0x004100a5
+insn 0041009b e830b40000 CALL 0x0041b4d0
+insn 004100a0 e8dbca0000 CALL 0x0041cb80
+insn 004100a5 e856f40100 CALL 0x0042f500
+insn 004100aa 85c0 TEST EAX,EAX
+insn 004100ac 740c JZ 0x004100ba
+insn 004100ae e86dbe0000 CALL 0x0041bf20
+insn 004100b3 e878d60000 CALL 0x0041d730
+insn 004100b8 eb0a JMP 0x004100c4
+insn 004100ba e811b40000 CALL 0x0041b4d0
+insn 004100bf e8bcca0000 CALL 0x0041cb80
+insn 004100c4 e8278b0400 CALL 0x00458bf0
+insn 004100c9 e89279ffff CALL 0x00407a60
+insn 004100ce e81d1c0600 CALL 0x00471cf0
+insn 004100d3 c705b8295f00a0860100 MOV dword ptr [0x005f29b8],0x186a0
+insn 004100dd c7058cba630002000000 MOV dword ptr [0x0063ba8c],0x2
+insn 004100e7 5b POP EBX
+insn 004100e8 83c418 ADD ESP,0x18
+insn 004100eb c3 RET
+insn 00410130 e8cbff0600 CALL 0x00480100
+insn 00410135 e886190600 CALL 0x00471ac0
+insn 0041013a e871a90100 CALL 0x0042aab0
+insn 0041013f 833dd00f7f0002 CMP dword ptr [0x007f0fd0],0x2
+insn 00410146 751f JNZ 0x00410167
+insn 00410148 ff05d80f7f00 INC dword ptr [0x007f0fd8]
+insn 0041014e 780d JS 0x0041015d
+insn 00410150 e8ebe1ffff CALL 0x0040e340
+insn 00410155 3905d80f7f00 CMP dword ptr [0x007f0fd8],EAX
+insn 0041015b 7c0a JL 0x00410167
+insn 0041015d c705d80f7f0000000000 MOV dword ptr [0x007f0fd8],0x0
+insn 00410167 e824e4ffff CALL 0x0040e590
+insn 0041016c 8b0df40f7f00 MOV ECX,dword ptr [0x007f0ff4]
+insn 00410172 8b1518107f00 MOV EDX,dword ptr [0x007f1018]
+insn 00410178 33c0 XOR EAX,EAX
+insn 0041017a 3bca CMP ECX,EDX
+insn 0041017c 8b1570275f00 MOV EDX,dword ptr [0x005f2770]
+insn 00410182 0f9fc0 SETG AL
+insn 00410185 a314107f00 MOV [0x007f1014],EAX
+insn 0041018a a178ba6300 MOV EAX,[0x0063ba78]
+insn 0041018f 8b0c82 MOV ECX,dword ptr [EDX + EAX*0x4]
+insn 00410192 8b11 MOV EDX,dword ptr [ECX]
+insn 00410194 52 PUSH EDX
+insn 00410195 e8966a0100 CALL 0x00426c30
+insn 0041019a 83c404 ADD ESP,0x4
+insn 0041019d e8debbffff CALL 0x0040bd80
+insn 004101a2 e829b80400 CALL 0x0045b9d0
+insn 004101a7 e884620600 CALL 0x00476430
+insn 004101ac e87f750600 CALL 0x00477730
+insn 004101b1 e8da870000 CALL 0x00418990
+insn 004101b6 e8850b0100 CALL 0x00420d40
+insn 004101bb e8601f0100 CALL 0x00422120
+insn 004101c0 e87b790600 CALL 0x00477b40
+insn 004101c5 e8d6f40100 CALL 0x0042f6a0
+insn 004101ca 83c0fe ADD EAX,-0x2
+insn 004101cd 83f808 CMP EAX,0x8
+insn 004101d0 7768 JA 0x0041023a
+insn 004101d2 0fb680c8024100 MOVZX EAX,byte ptr [EAX + 0x4102c8]
+insn 004101d9 ff2485b8024100 JMP dword ptr [EAX*0x4 + 0x4102b8]
+insn 004101e0 e81bf30100 CALL 0x0042f500
+insn 004101e5 85c0 TEST EAX,EAX
+insn 004101e7 7466 JZ 0x0041024f
+insn 004101e9 833dd00f7f0002 CMP dword ptr [0x007f0fd0],0x2
+insn 004101f0 eb4f JMP 0x00410241
+insn 004101f2 a1d00f7f00 MOV EAX,[0x007f0fd0]
+insn 004101f7 83c0fc ADD EAX,-0x4
+insn 004101fa 83f806 CMP EAX,0x6
+insn 004101fd 771c JA 0x0041021b
+insn 004101ff ff2485d4024100 JMP dword ptr [EAX*0x4 + 0x4102d4]
+insn 00410206 6a01 PUSH 0x1
+insn 00410208 6a00 PUSH 0x0
+insn 0041020a e851950000 CALL 0x00419760
+insn 0041020f 83c408 ADD ESP,0x8
+insn 00410212 eb26 JMP 0x0041023a
+insn 00410214 e88744ffff CALL 0x004046a0
+insn 00410219 eb1f JMP 0x0041023a
+insn 0041021b e8e0f20100 CALL 0x0042f500
+insn 00410220 85c0 TEST EAX,EAX
+insn 00410222 740c JZ 0x00410230
+insn 00410224 e8e7bd0000 CALL 0x0041c010
+insn 00410229 e8f2d50000 CALL 0x0041d820
+insn 0041022e eb0a JMP 0x0041023a
+insn 00410230 e8dbb20000 CALL 0x0041b510
+insn 00410235 e886c90000 CALL 0x0041cbc0
+insn 0041023a e8c1f20100 CALL 0x0042f500
+insn 0041023f 85c0 TEST EAX,EAX
+insn 00410241 740c JZ 0x0041024f
+insn 00410243 e8c8bd0000 CALL 0x0041c010
+insn 00410248 e8d3d50000 CALL 0x0041d820
+insn 0041024d eb0a JMP 0x00410259
+insn 0041024f e8bcb20000 CALL 0x0041b510
+insn 00410254 e867c90000 CALL 0x0041cbc0
+insn 00410259 e8223f0000 CALL 0x00414180
+insn 0041025e e86d020800 CALL 0x004904d0
+insn 00410263 e8f8ef0700 CALL 0x0048f260
+insn 00410268 e84371ffff CALL 0x004073b0
+insn 0041026d 813db8295f00a0860100 CMP dword ptr [0x005f29b8],0x186a0
+insn 00410277 750c JNZ 0x00410285
+insn 00410279 c7058cba630003000000 MOV dword ptr [0x0063ba8c],0x3
+insn 00410283 eb1e JMP 0x004102a3
+insn 00410285 6a01 PUSH 0x1
+insn 00410287 c7058cba630004000000 MOV dword ptr [0x0063ba8c],0x4
+insn 00410291 c705b8295f00e02e0000 MOV dword ptr [0x005f29b8],0x2ee0
+insn 0041029b e8d0d1ffff CALL 0x0040d470
+insn 004102a0 83c404 ADD ESP,0x4
+insn 004102a3 833dd00f7f0006 CMP dword ptr [0x007f0fd0],0x6
+insn 004102aa 750a JNZ 0x004102b6
+insn 004102ac c7058cba630004000000 MOV dword ptr [0x0063ba8c],0x4
+insn 004102b6 c3 RET
+insn 00410ab0 d9051cb96300 FLD float ptr [0x0063b91c]
+insn 00410ab6 d8050c107f00 FADD float ptr [0x007f100c]
+insn 00410abc d9151cb96300 FST float ptr [0x0063b91c]
+insn 00410ac2 d81d74c55c00 FCOMP float ptr [0x005cc574]
+insn 00410ac8 dfe0 FNSTSW AX
+insn 00410aca f6c405 TEST AH,0x5
+insn 00410acd 7b56 JNP 0x00410b25
+insn 00410acf b9141a7f00 MOV ECX,0x7f1a14
+insn 00410ad4 33d2 XOR EDX,EDX
+insn 00410ad6 8b01 MOV EAX,dword ptr [ECX]
+insn 00410ad8 83f8ff CMP EAX,-0x1
+insn 00410adb 743d JZ 0x00410b1a
+insn 00410add 6bc04c IMUL EAX,EAX,0x4c
+insn 00410ae0 389042107f00 CMP byte ptr [EAX + 0x7f1042],DL
+insn 00410ae6 7408 JZ 0x00410af0
+insn 00410ae8 389002157f00 CMP byte ptr [EAX + 0x7f1502],DL
+insn 00410aee 7410 JZ 0x00410b00
+insn 00410af0 389041107f00 CMP byte ptr [EAX + 0x7f1041],DL
+insn 00410af6 7422 JZ 0x00410b1a
+insn 00410af8 389001157f00 CMP byte ptr [EAX + 0x7f1501],DL
+insn 00410afe 751a JNZ 0x00410b1a
+insn 00410b00 6a01 PUSH 0x1
+insn 00410b02 c7058cba630009000000 MOV dword ptr [0x0063ba8c],0x9
+insn 00410b0c e84fd9ffff CALL 0x0040e460
+insn 00410b11 83c404 ADD ESP,0x4
+insn 00410b14 89150cb96300 MOV dword ptr [0x0063b90c],EDX
+insn 00410b1a 83c110 ADD ECX,0x10
+insn 00410b1d 81f9541a7f00 CMP ECX,0x7f1a54
+insn 00410b23 7cb1 JL 0x00410ad6
+insn 00410b25 c3 RET
+insn 004111c0 51 PUSH ECX
+insn 004111c1 ff051c107f00 INC dword ptr [0x007f101c]
+insn 004111c7 e8d4590100 CALL 0x00426ba0
+insn 004111cc 85c0 TEST EAX,EAX
+insn 004111ce 0f8418010000 JZ 0x004112ec
+insn 004111d4 6828d76600 PUSH 0x66d728
+insn 004111d9 e8e2cc1400 CALL 0x0055dec0
+insn 004111de 83c404 ADD ESP,0x4
+insn 004111e1 83f805 CMP EAX,0x5
+insn 004111e4 7527 JNZ 0x0041120d
+insn 004111e6 8d442400 LEA EAX,[ESP]
+insn 004111ea 50 PUSH EAX
+insn 004111eb 6828d76600 PUSH 0x66d728
+insn 004111f0 e8db800100 CALL 0x004292d0
+insn 004111f5 6a00 PUSH 0x0
+insn 004111f7 6828d76600 PUSH 0x66d728
+insn 004111fc e8bf800100 CALL 0x004292c0
+insn 00411201 8b4c2410 MOV ECX,dword ptr [ESP + 0x10]
+insn 00411205 51 PUSH ECX
+insn 00411206 e825540100 CALL 0x00426630
+insn 0041120b eb2a JMP 0x00411237
+insn 0041120d 83f806 CMP EAX,0x6
+insn 00411210 7528 JNZ 0x0041123a
+insn 00411212 8d542400 LEA EDX,[ESP]
+insn 00411216 52 PUSH EDX
+insn 00411217 6828d76600 PUSH 0x66d728
+insn 0041121c e8af800100 CALL 0x004292d0
+insn 00411221 6a00 PUSH 0x0
+insn 00411223 6828d76600 PUSH 0x66d728
+insn 00411228 e893800100 CALL 0x004292c0
+insn 0041122d 8b442410 MOV EAX,dword ptr [ESP + 0x10]
+insn 00411231 50 PUSH EAX
+insn 00411232 e8b9540100 CALL 0x004266f0
+insn 00411237 83c414 ADD ESP,0x14
+insn 0041123a a18cba6300 MOV EAX,[0x0063ba8c]
+insn 0041123f 48 DEC EAX
+insn 00411240 83f80a CMP EAX,0xa
+insn 00411243 0f87a3000000 JA 0x004112ec
+insn 00411249 56 PUSH ESI
+insn 0041124a ff248524134100 JMP dword ptr [EAX*0x4 + 0x411324]
+insn 00411251 c705c80f7f0000000000 MOV dword ptr [0x007f0fc8],0x0
+insn 0041125b 5e POP ESI
+insn 0041125c 83c404 ADD ESP,0x4
+insn 0041125f e94cecffff JMP 0x0040feb0
+insn 00411264 c705c80f7f0000000000 MOV dword ptr [0x007f0fc8],0x0
+insn 0041126e 5e POP ESI
+insn 0041126f 83c404 ADD ESP,0x4
+insn 00411272 e9b9eeffff JMP 0x00410130
+insn 00411277 8b74240c MOV ESI,dword ptr [ESP + 0xc]
+insn 0041127b 53 PUSH EBX
+insn 0041127c 8bde MOV EBX,ESI
+insn 0041127e c705c80f7f0000000000 MOV dword ptr [0x007f0fc8],0x0
+insn 00411288 e863f0ffff CALL 0x004102f0
+insn 0041128d e86ee9ffff CALL 0x0040fc00
+insn 00411292 5b POP EBX
+insn 00411293 5e POP ESI
+insn 00411294 59 POP ECX
+insn 00411295 c3 RET
+insn 00411296 8b74240c MOV ESI,dword ptr [ESP + 0xc]
+insn 0041129a 56 PUSH ESI
+insn 0041129b c705c80f7f0000000000 MOV dword ptr [0x007f0fc8],0x0
+insn 004112a5 e826c9ffff CALL 0x0040dbd0
+insn 004112aa 83c404 ADD ESP,0x4
+insn 004112ad e84ee9ffff CALL 0x0040fc00
+insn 004112b2 5e POP ESI
+insn 004112b3 59 POP ECX
+insn 004112b4 c3 RET
+insn 004112b5 8b74240c MOV ESI,dword ptr [ESP + 0xc]
+insn 004112b9 8bc6 MOV EAX,ESI
+insn 004112bb e8e0f0ffff CALL 0x004103a0
+insn 004112c0 e83be9ffff CALL 0x0040fc00
+insn 004112c5 5e POP ESI
+insn 004112c6 59 POP ECX
+insn 004112c7 c3 RET
+insn 004112c8 8b74240c MOV ESI,dword ptr [ESP + 0xc]
+insn 004112cc 56 PUSH ESI
+insn 004112cd e89efeffff CALL 0x00411170
+insn 004112d2 83c404 ADD ESP,0x4
+insn 004112d5 e826e9ffff CALL 0x0040fc00
+insn 004112da 5e POP ESI
+insn 004112db 59 POP ECX
+insn 004112dc c3 RET
+insn 004112dd e87ef5ffff CALL 0x00410860
+insn 004112e2 8b74240c MOV ESI,dword ptr [ESP + 0xc]
+insn 004112e6 e815e9ffff CALL 0x0040fc00
+insn 004112eb 5e POP ESI
+insn 004112ec 59 POP ECX
+insn 004112ed c3 RET
+insn 004112ee 5e POP ESI
+insn 004112ef 83c404 ADD ESP,0x4
+insn 004112f2 e989caffff JMP 0x0040dd80
+insn 004112f7 5e POP ESI
+insn 004112f8 83c404 ADD ESP,0x4
+insn 004112fb e9f0caffff JMP 0x0040ddf0
+insn 00411300 e8fbcaffff CALL 0x0040de00
+insn 00411305 8b74240c MOV ESI,dword ptr [ESP + 0xc]
+insn 00411309 e8f2e8ffff CALL 0x0040fc00
+insn 0041130e 5e POP ESI
+insn 0041130f 59 POP ECX
+insn 00411310 c3 RET
+insn 00411311 8b74240c MOV ESI,dword ptr [ESP + 0xc]
+insn 00411315 e8e6e8ffff CALL 0x0040fc00
+insn 0041131a 5e POP ESI
+insn 0041131b 83c404 ADD ESP,0x4
+insn 0041131e e98df7ffff JMP 0x00410ab0
+func_entry_in_window 0040ddb0 FUN_0040ddb0 body 0040ddb0..0040dde1 n=50
+func_entry_in_window 0040de00 thunk_FUN_004117b0 body 0040de00..0040de04 n=5
+byte 0040dd80 e8 insn owner=004111c0
+byte 0040dd81 9b insn owner=004111c0
+byte 0040dd82 64 insn owner=004111c0
+byte 0040dd83 00 insn owner=004111c0
+byte 0040dd84 00 insn owner=004111c0
+byte 0040dd85 a1 insn owner=004111c0
+byte 0040dd86 70 insn owner=004111c0
+byte 0040dd87 27 insn owner=004111c0
+byte 0040dd88 5f insn owner=004111c0
+byte 0040dd89 00 insn owner=004111c0
+byte 0040dd8a 8b insn owner=004111c0
+byte 0040dd8b 0d insn owner=004111c0
+byte 0040dd8c 78 insn owner=004111c0
+byte 0040dd8d ba insn owner=004111c0
+byte 0040dd8e 63 insn owner=004111c0
+byte 0040dd8f 00 insn owner=004111c0
+byte 0040dd90 8b insn owner=004111c0
+byte 0040dd91 14 insn owner=004111c0
+byte 0040dd92 88 insn owner=004111c0
+byte 0040dd93 8b insn owner=004111c0
+byte 0040dd94 02 insn owner=004111c0
+byte 0040dd95 50 insn owner=004111c0
+byte 0040dd96 e8 insn owner=004111c0
+byte 0040dd97 d5 insn owner=004111c0
+byte 0040dd98 8e insn owner=004111c0
+byte 0040dd99 01 insn owner=004111c0
+byte 0040dd9a 00 insn owner=004111c0
+byte 0040dd9b 83 insn owner=004111c0
+byte 0040dd9c c4 insn owner=004111c0
+byte 0040dd9d 04 insn owner=004111c0
+byte 0040dd9e e8 insn owner=004111c0
+byte 0040dd9f 2d insn owner=004111c0
+byte 0040dda0 e1 insn owner=004111c0
+byte 0040dda1 04 insn owner=004111c0
+byte 0040dda2 00 insn owner=004111c0
+byte 0040dda3 c7 insn owner=004111c0
+byte 0040dda4 05 insn owner=004111c0
+byte 0040dda5 8c insn owner=004111c0
+byte 0040dda6 ba insn owner=004111c0
+byte 0040dda7 63 insn owner=004111c0
+byte 0040dda8 00 insn owner=004111c0
+byte 0040dda9 02 insn owner=004111c0
+byte 0040ddaa 00 insn owner=004111c0
+byte 0040ddab 00 insn owner=004111c0
+byte 0040ddac 00 insn owner=004111c0
+byte 0040ddad c3 insn owner=004111c0
+byte 0040ddae 90 data owner=-
+byte 0040ddaf 90 data owner=-
+byte 0040ddb0 e8 insn owner=0040ddb0
+byte 0040ddb1 9b insn owner=0040ddb0
+byte 0040ddb2 99 insn owner=0040ddb0
+byte 0040ddb3 00 insn owner=0040ddb0
+byte 0040ddb4 00 insn owner=0040ddb0
+byte 0040ddb5 a1 insn owner=0040ddb0
+byte 0040ddb6 70 insn owner=0040ddb0
+byte 0040ddb7 27 insn owner=0040ddb0
+byte 0040ddb8 5f insn owner=0040ddb0
+byte 0040ddb9 00 insn owner=0040ddb0
+byte 0040ddba 8b insn owner=0040ddb0
+byte 0040ddbb 0d insn owner=0040ddb0
+byte 0040ddbc 78 insn owner=0040ddb0
+byte 0040ddbd ba insn owner=0040ddb0
+byte 0040ddbe 63 insn owner=0040ddb0
+byte 0040ddbf 00 insn owner=0040ddb0
+byte 0040ddc0 8b insn owner=0040ddb0
+byte 0040ddc1 14 insn owner=0040ddb0
+byte 0040ddc2 88 insn owner=0040ddb0
+byte 0040ddc3 8b insn owner=0040ddb0
+byte 0040ddc4 02 insn owner=0040ddb0
+byte 0040ddc5 50 insn owner=0040ddb0
+byte 0040ddc6 e8 insn owner=0040ddb0
+byte 0040ddc7 85 insn owner=0040ddb0
+byte 0040ddc8 8e insn owner=0040ddb0
+byte 0040ddc9 01 insn owner=0040ddb0
+byte 0040ddca 00 insn owner=0040ddb0
+byte 0040ddcb 83 insn owner=0040ddb0
+byte 0040ddcc c4 insn owner=0040ddb0
+byte 0040ddcd 04 insn owner=0040ddb0
+byte 0040ddce e8 insn owner=0040ddb0
+byte 0040ddcf 8d insn owner=0040ddb0
+byte 0040ddd0 7c insn owner=0040ddb0
+byte 0040ddd1 06 insn owner=0040ddb0
+byte 0040ddd2 00 insn owner=0040ddb0
+byte 0040ddd3 e8 insn owner=0040ddb0
+byte 0040ddd4 58 insn owner=0040ddb0
+byte 0040ddd5 e1 insn owner=0040ddb0
+byte 0040ddd6 04 insn owner=0040ddb0
+byte 0040ddd7 00 insn owner=0040ddb0
+byte 0040ddd8 e8 insn owner=0040ddb0
+byte 0040ddd9 53 insn owner=0040ddb0
+byte 0040ddda 86 insn owner=0040ddb0
+byte 0040dddb 06 insn owner=0040ddb0
+byte 0040dddc 00 insn owner=0040ddb0
+byte 0040dddd e9 insn owner=0040ddb0
+byte 0040ddde be insn owner=0040ddb0
+byte 0040dddf 68 insn owner=0040ddb0
+byte 0040dde0 ff insn owner=0040ddb0
+byte 0040dde1 ff insn owner=0040ddb0
+byte 0040dde2 90 data owner=-
+byte 0040dde3 90 data owner=-
+byte 0040dde4 90 data owner=-
+byte 0040dde5 90 data owner=-
+byte 0040dde6 90 data owner=-
+byte 0040dde7 90 data owner=-
+byte 0040dde8 90 data owner=-
+byte 0040dde9 90 data owner=-
+byte 0040ddea 90 data owner=-
+byte 0040ddeb 90 data owner=-
+byte 0040ddec 90 data owner=-
+byte 0040dded 90 data owner=-
+byte 0040ddee 90 data owner=-
+byte 0040ddef 90 data owner=-
+byte 0040ddf0 e8 insn owner=004111c0
+byte 0040ddf1 bb insn owner=004111c0
+byte 0040ddf2 ff insn owner=004111c0
+byte 0040ddf3 ff insn owner=004111c0
+byte 0040ddf4 ff insn owner=004111c0
+byte 0040ddf5 c7 insn owner=004111c0
+byte 0040ddf6 05 insn owner=004111c0
+byte 0040ddf7 8c insn owner=004111c0
+byte 0040ddf8 ba insn owner=004111c0
+byte 0040ddf9 63 insn owner=004111c0
+byte 0040ddfa 00 insn owner=004111c0
+byte 0040ddfb 0a insn owner=004111c0
+byte 0040ddfc 00 insn owner=004111c0
+byte 0040ddfd 00 insn owner=004111c0
+byte 0040ddfe 00 insn owner=004111c0
+byte 0040ddff c3 insn owner=004111c0
+byte 0040de00 e9 insn owner=0040de00
+probe 0040dd80 function_at=- containing=FUN_004111c0@004111c0
+probe 0040ddb0 function_at=FUN_0040ddb0 containing=FUN_0040ddb0@0040ddb0
+probe 0040ddf0 function_at=- containing=FUN_004111c0@004111c0
+probe 0040feb0 function_at=- containing=FUN_004111c0@004111c0
+probe 004100ec function_at=- containing=-
+probe 00410130 function_at=- containing=FUN_004111c0@004111c0
+probe 004102b8 function_at=- containing=-
+probe 00410ab0 function_at=- containing=FUN_004111c0@004111c0
+probe 00411324 function_at=- containing=-

@@ -1,0 +1,4 @@
+[1/1] 0x004111c0 match PASS extent override: 6 members = 1498 B, each byte-identical, relocheck OK (179/0)
+batch: 1 pass, 0 refused, 0 skipped (already C4), 1 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-09  0x004111c0  FUN_004111c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/t01g/004111c0.c; evidence: <RESULT>
