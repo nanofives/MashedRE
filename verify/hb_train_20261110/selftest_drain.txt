@@ -1,0 +1,93 @@
+SELFTEST PASS: both branches merged, second one by union-resolve
+SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+SELFTEST PASS: clean merged step: worktree and branch removed
+SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+SELFTEST PASS: guard: body ends without removing its temp (foreign-tip skip shape), finally removed it
+SELFTEST PASS: guard: forced throw in the body, exception propagates AND finally removed the temp
+SELFTEST PASS: guard: body that cleans up after itself, nothing left, registry empty
+SELFTEST PASS: guard: two temps, one removed by the body, finally removed only the other
+SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+SELFTEST PASS: control: the old dot-sourcing wrapper reproduces the crash (No se puede convertir el valor "System.Object[]" de tipo "System.Object[]" al tipo "System.Management.Automation.ScriptBlock".)
+SELFTEST PASS: control: the old wrapper loses the body's $merged (function-local)
+SELFTEST PASS: new shape: $body assignment works and $merged/$bounced reach the code after the guard
+SELFTEST PASS: AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors 0, top-level tries 1)
+SELFTEST PASS: AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: Body)
+SELFTEST PASS: AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=True inner=1)
+SELFTEST PASS: priority hold: held=true for this PID inside the body, a throw propagates AND the finally releases it (held=False)
+SELFTEST PASS: priority hold: status shows PRIORITY-HOLD pid=8244
+SELFTEST PASS: priority hold: a new non-priority solo open waits while held (blocked=True), an ordinary acquire does not (ok=True), the solo opens after release (opened=True)
+SELFTEST PASS: tracker: rc-ok (hooks.csv + CHANGELOG only) is text-only, no build, lint OK with the base's 9-column row pre-existing (ok=True gates='not run: text-only change (no build input touched)')
+SELFTEST PASS: tracker: bad-ncol bounced by the tracker lint with NEW NCOL rva=00401030 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 32f503c5c7a4d172bd30a62309b4dab74da14024) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\tracker_lint.txt)')
+SELFTEST PASS: tracker: bad-conf bounced by the tracker lint with NEW CONF rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 32f503c5c7a4d172bd30a62309b4dab74da14024) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\tracker_lint.txt)')
+SELFTEST PASS: tracker: bad-dup bounced by the tracker lint with NEW DUP rva=00401010 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 4 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 32f503c5c7a4d172bd30a62309b4dab74da14024) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\tracker_lint.txt)')
+SELFTEST PASS: tracker: bad-quote bounced by the tracker lint with NEW PARSE (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 0 rows, UNCERTAINTIES.md 2 ids, pre-existing=0 NEW=1 (base 32f503c5c7a4d172bd30a62309b4dab74da14024) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\tracker_lint.txt)')
+SELFTEST PASS: tracker: bad-udup bounced by the tracker lint with NEW UDUP U-0002 (why='tracker_lint: [tracker-lint] FAIL -- hooks.csv 3 rows, UNCERTAINTIES.md 2 ids, pre-existing=1 NEW=1 (base 32f503c5c7a4d172bd30a62309b4dab74da14024) (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\tracker_lint.txt)')
+SELFTEST PASS: control: hooks.csv was not text-only under the old globs, is under merge_train.json
+SELFTEST PASS: control: build inputs and tools stay non-text-only, the hooks.csv glob is root-only (leaks: )
+SELFTEST PASS: short-once: D2_DEFH_2 rerun once (2 runs), others not rerun, 0 arms short
+SELFTEST PASS: short-always: reruns bounded at 2, arm still reported short (runs=3)
+SELFTEST PASS: full-length logs: no rerun
+SELFTEST PASS: unit: arm log with CreateDevice hr=0x8876086A and no device = INFRA reason
+SELFTEST PASS: unit: hr=0x8876086C in one of two arm logs = INFRA, names that arm
+SELFTEST PASS: unit: 0x8876086A followed by a working CreateDevice is not the signature (falls to ALL-MISSING)
+SELFTEST PASS: unit: all MISSING, log present, no signature = ALL-MISSING (caller probes)
+SELFTEST PASS: unit: all MISSING and no arm log = INFRA (runner never ran the exe)
+SELFTEST PASS: unit: one hash present, clean log = not INFRA
+SELFTEST PASS: unit: D2 form (no hashes), clean log = not INFRA
+SELFTEST PASS: INFRA path: precheck BLOCKED = INFRA before any arm (arms run 0, why 'INFRA: render precheck RENDER: BLOCKED - fake probe')
+SELFTEST PASS: normal path: precheck OK, refs match = GREEN, one probe, no rerun (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/5d43806c/5d43806c')
+SELFTEST PASS: normal path: a changed B hash is still RED 'default gates changed' (gates 'G-CTRL 8908d8f0/d93a9a5a/74dbcd8b  B 5d43806c/d0798aaf/5d43806c (ref 5d43806c/5d43806c/5d43806c)')
+SELFTEST PASS: INFRA path: 0x8876086A arm (display slept after the precheck) = INFRA, no G-CTRL rerun, B not run (runs H_DEF)
+SELFTEST PASS: INFRA path: precheck UNKNOWN goes on to the arms, the 0x8876086A arm makes it INFRA
+SELFTEST PASS: INFRA path: arms that wrote nothing = INFRA (why 'INFRA: all gate hashes MISSING and no arm wrote a log (the runner or the lock never ran the exe)')
+SELFTEST PASS: INFRA path: all-MISSING with clean logs, post-arm probe BLOCKED = INFRA (probes 2)
+SELFTEST PASS: normal path: all-MISSING with a live display stays RED (a broken exe is bounced, not held) (gates 'G-CTRL MISSING/MISSING/MISSING (ref 8908d8f0/d93a9a5a/74dbcd8b)  B MISSING/MISSING/MISSING (ref 5d43806c/5d43806c/5d43806c) (all MISSING, render probe OK: a boot failure of the merged exe, not a display fault)')
+SELFTEST PASS: normal path: a 0x8876086A attempt followed by a working device is not INFRA, the changed hash stays RED
+SELFTEST PASS: INFRA path: single row INFRA = 0 bounced, 0 merged, row left queued (INFRA: D3D9-NOTAVAIL (CreateDevice hr=0x8876086A/C) in H_DEF)
+SELFTEST PASS: INFRA path: 3-row batch INFRA = 0 bounced, no one-at-a-time re-merge (Try-Batch calls 1)
+SELFTEST PASS: INFRA path: INFRA mid one-at-a-time stops there; the RED before it bounces, the row after it is not tried (calls T-A+T-B+T-C,T-A,T-B)
+SELFTEST PASS: normal path: single row RED = bounced (unchanged)
+SELFTEST PASS: normal path (HB-TRAIN-STACK): batch RED -> one at a time, later rows stacked on the GREEN ones: A and C land, B bounced (calls T-A+T-B+T-C,T-A,T-A+T-B,T-A+T-C, temps removed 3)
+SELFTEST PASS: normal path (HB-TRAIN-STACK): RED first, then two GREEN stacked: B and C land, A bounced (calls T-A+T-B+T-C,T-A,T-B,T-B+T-C)
+SELFTEST PASS: normal path: batch GREEN = both merged (unchanged)
+SELFTEST PASS: wtadd: add fails twice then succeeds = temp created on attempt 3, registered once, both git messages in the train log (calls 3, err '')
+SELFTEST PASS: wtadd: three failures = throw after the last try with git's message ('worktree add failed after 3 attempts at integration: fatal: fake add failure 3 for integration')
+SELFTEST PASS: one-at-a-time: GREEN T-A then T-B throws = no exception escapes, T-A returned for landing, T-B/T-C stay queued (calls T-A+T-B+T-C,T-A,T-A+T-B, escaped '', error 'T-B: worktree add failed after 3 attempts at abc123: fatal: fake for T-A+T-B')
+SELFTEST PASS: one-at-a-time: RED T-A then T-B throws = T-A still bounced, nothing merged, error reported (escaped '')
+SELFTEST PASS: AST: Resolve-Batch catches the one-at-a-time Try-Batch, the run body carries the error to the report without rethrowing before landing (try/catch=True)
+SELFTEST PASS: AST: run body = Try-Batch -> Resolve-Batch, red-merge only for $bounced, verdict INFRA when $infra
+SELFTEST PASS: merge_train.json unchanged by the selftest (sha256 06DDBBFFDF7F)
+SELFTEST PASS: drain: Select-Batch keeps the old pick (stops before a solo row, a solo head merges alone): A,B / S
+SELFTEST PASS: drain: Test-FlipRow by id (-FLIP / FLIP-) or 'decided flip' in the title (wrong: )
+SELFTEST PASS: drain: Get-BatchFlips reads each row's ledger title (Q-DEC,Q-2-FLIP)
+SELFTEST PASS: drain: pass result file round-trips (verdict, merged, hashes), LF only
+drain case events: pass1,release1,pass2,release2,publish2,pass3,release3 -> GREEN 
+SELFTEST PASS: drain 1: GREEN x3 (one text-only) = parity and main follow integration after every pass, publish (DUE after pass 2) finishes before pass 3, stops on the empty queue (events pass1,release1,pass2,release2,publish2,pass3,release3)
+drain case events: pass1,release1,pass2 -> RED RED: bounced [Q3: default gates changed]
+SELFTEST PASS: drain 2: RED pass 2 = stop, no fast-forward and no release after it (verdict RED, stop 'RED: bounced [Q3: default gates changed]')
+drain case events: pass1 -> INFRA INFRA: D3D9-NOTAVAIL in H_DEF
+SELFTEST PASS: drain 3: INFRA = stop after the pass, nothing fast-forwarded, no release (INFRA: D3D9-NOTAVAIL in H_DEF)
+drain case events: pass1 -> HASH HASH: gate hashes differ from the refs (G-CTRL aaaaaaaa/eeeeeeee/cccccccc vs aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd vs dddddddd/dddddddd/dddddddd)
+SELFTEST PASS: drain 4a: GREEN with a hash unlike the refs = stop HASH, no fast-forward (HASH: gate hashes differ from the refs (G-CTRL aaaaaaaa/eeeeeeee/cccccccc vs aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd vs dddddddd/dddddddd/dddddddd))
+drain case events: pass1 -> HASH HASH: merge_train.json refs changed during the pass (G-CTRL 11111111/bbbbbbbb/cccccccc -> aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd -> dddddddd/dddddddd/dddddddd)
+SELFTEST PASS: drain 4b: refs in merge_train.json moved during the pass = stop HASH (HASH: merge_train.json refs changed during the pass (G-CTRL 11111111/bbbbbbbb/cccccccc -> aaaaaaaa/bbbbbbbb/cccccccc, B dddddddd/dddddddd/dddddddd -> dddddddd/dddddddd/dddddddd))
+drain case events: pass1 -> FLIP FLIP: decided-flip row(s) in the batch (D4-FLIP-X), left queued: run them alone with -Full after the refs are committed (MERGE_TRAIN.md)
+SELFTEST PASS: drain 5: decided-flip batch = stop FLIP, nothing moved (FLIP: decided-flip row(s) in the batch (D4-FLIP-X), left queued: run them alone with -Full after the refs are committed (MERGE_TRAIN.md))
+drain case events: pass1,wait,release1 -> GREEN 
+SELFTEST PASS: drain 6: index.lock = one wait and a retry, then both heads equal integration (events pass1,wait,release1)
+drain case events: pass1 -> ERROR ERROR: fast-forward of race/first-frame-parity/main refused: main @ 179692562 is not an ancestor of integration @ 831985ac0: not a fast-forward, nothing moved
+SELFTEST PASS: drain 7: main diverged = refused, race/first-frame-parity not moved either (ERROR: fast-forward of race/first-frame-parity/main refused: main @ 179692562 is not an ancestor of integration @ 831985ac0: not a fast-forward, nothing moved)
+drain case events: pass1 -> ERROR ERROR: fast-forward of race/first-frame-parity/main refused: the main checkout has 'other' checked out, not race/first-frame-parity
+SELFTEST PASS: drain 8: main checkout not on race/first-frame-parity = refused (ERROR: fast-forward of race/first-frame-parity/main refused: the main checkout has 'other' checked out, not race/first-frame-parity)
+drain case events: pass1,release1 -> ERROR ERROR: release_due.py rc=2: ERROR x
+SELFTEST PASS: drain 9a: release_due ERROR = stop before the next pass (ERROR: release_due.py rc=2: ERROR x)
+drain case events: pass1,release1,publish1 -> ERROR ERROR: publish.sh rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\publish_pass1.log)
+SELFTEST PASS: drain 9b: publish.sh failed = stop, no retry, no next pass (ERROR: publish.sh rc=1 (C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\publish_pass1.log))
+drain case events:  -> GREEN 
+SELFTEST PASS: drain 10: empty queue = no pass, GREEN
+SELFTEST PASS: drain 11: dispatch before the pass body, flip refusal before the priority hold and any merge (offsets 87189 < 87296, 88226 < 89241)
+SELFTEST PASS: drain 11: the drain driver takes no mashed_lock / priority hold of its own (only the passes do) (0 refs)
+SELFTEST done: 0 failure(s)
+SELFTEST PASS (0 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261110_070132\merge_train.log

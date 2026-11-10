@@ -105,6 +105,16 @@ nothing bounced, the rows stay queued, not a finding). Do not fix anything. Fina
 ```
 On an INFRA report (HB-TRAIN-INFRA-PRECHECK), re-run the train once the display is awake. Do not re-run it in a loop.
 
+**Drain mode (HB-TRAIN-DRAIN, 2026-11-10).** `merge_train.ps1 -Drain` runs the passes itself, back to back, while the
+queue is non-empty, and after each GREEN pass whose gate hashes equal the `merge_train.json` refs (or a text-only pass)
+it does the autopilot step: `git merge --ff-only orch/integration` in the main checkout (race/first-frame-parity, retried
+on index.lock), `git update-ref refs/heads/main <new> <old>`, a check that both equal orch/integration, then
+`release_due.py` and on DUE `publish.sh`, waited for before the next pass. It stops with one `REPORT merge-train-drain`
+on RED, INFRA, HASH (a hash or a ref moved), FLIP (a decided-flip row in the batch: nothing merged, run it alone with
+`-Full` per the flip protocol) or ERROR. It never pushes. Each pass keeps its own priority hold; the driver takes no
+lock (wrap it in test-slot if wanted: slot outside, mashed_lock inside). A drain run with `-Full` passes `-Full` to
+every pass. Driver log and `pass<N>.result.json` files: `D:/MashedWT/mtrain_data/drain_<ts>/`.
+
 When to pass `-Full` (run 20): a queue that touches `mashedmod/src` or another build input, and every decided
 flip, runs WITH `-Full` (a default can live outside `full_set_paths`). A text-only queue (trackers, docs, `verify/`
 evidence, `re/` tools that no build reads) runs WITHOUT it. `-Full` on a text-only row runs D2 x3 and the 13 tracks
