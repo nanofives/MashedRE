@@ -270,7 +270,14 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00499710	Global7e9584Get	matched	Global7e9584Get	Match/MatchS16_00499710.cpp, now also in the exe list	4	0x00495270
 0x00493640	RenderwareAttachPlugins	shim	MashedRw_AttachPlugins_00493640	PORT-TOP-04I: LibRw/RwApiBind.cpp (TOP-03): now also stores 0x70, the PTank record's plugin slot, at 0x007dc57c (RpPTankPluginAttach's offset)	2	0x00493710
 0x004951f0	HardwareSetVideoMode	stand-in	PortTop_StandIn_004951f0	Match/PortTop_00493710.cpp: returns 1; the exe InitD3D9 picks the windowed mode inside the RwEngineStart binding	3	0x00493710
-0x00493600	FUN_00493600	missing	PortTop_Missing_00493600	Match/PortTop_00493710.cpp: returns 1 (0x004ce790 and its 4 function arguments unported)	3	0x00493710
+0x00493600	FUN_00493600	matched	Orig_00493600	re/match/s15/00493600.c (100%), Match/PortTop_00493600.cpp. PORT-OT-IMAGE-FMT: under MASHED_ORIG_TOP_RWMOD=1 the call site PortTop_Bound_00493600 defers it to RegisterRwModules (LibRw/RwApiBind.cpp); knob OFF returns 1 as the old missing stub	3	0x00493710
+0x004ce790	FUN_004ce790	matched	Orig_004ce790	re/match/s20/004ce790.c (100%), Match/PortTop_004ce790.cpp. RwImageRegisterImageFormat on the RwGlobals record (image module +0x218 / +0x21c), MASHED_ORIG_TOP_RWMOD only (PORT-OT-IMAGE-FMT)	4	0x00493600
+0x004935a0	FUN_004935a0	port	PortTop_ImgRead_004935a0	Match/PortTop_004ce790.cpp: hand port from the disassembly (0x004935a5..0x004935c1), returns 0x0052cb00's result. Stored as the "bmp" read function at node +0x28 (PORT-OT-IMAGE-FMT)	4	0x00493600
+0x004935d0	FUN_004935d0	port	PortTop_ImgRead_004935d0	Match/PortTop_004ce790.cpp: hand port from the disassembly (0x004935d5..0x004935f1), returns 0x00514330's result. Stored as the "png" read function at node +0x28 (PORT-OT-IMAGE-FMT)	4	0x00493600
+0x0052d530	FUN_0052d530	bound	MashedRw_RtBMPImageWrite_0052d530	LibRw/RwApiBind.cpp: RW toolkit BMP writer -> rw::writeBMP, returns the image (0x0052d7c5). "bmp" write function at node +0x2c (PORT-OT-IMAGE-FMT)	4	0x00493600
+0x00513f90	FUN_00513f90	bound	MashedRw_RtPNGImageWrite_00513f90	LibRw/RwApiBind.cpp: RW toolkit PNG writer -> rw::writePNG, returns the image (0x005142bd). "png" write function at node +0x2c (PORT-OT-IMAGE-FMT)	4	0x00493600
+0x0052cb00	image_library_bmp_loader	bound	MashedRw_RtBMPImageRead_0052cb00	LibRw/RwApiBind.cpp: RW toolkit BMP reader -> rw::readBMP (PORT-OT-IMAGE-FMT)	5	0x004935a0
+0x00514330	FUN_00514330	bound	MashedRw_RtPNGImageRead_00514330	LibRw/RwApiBind.cpp: RW toolkit PNG reader -> rw::readPNG (PORT-OT-IMAGE-FMT)	5	0x004935d0
 0x004a2cbd	printf	crt	PortTop_Crt_004a2cbd	Match/PortTop_00493710.cpp: CRT printf; the formatted line goes to mashed_re.log	3	0x00493710
 0x004936f0	FUN_004936f0	missing	PortTop_Missing_004936f0	Match/PortTop_00493710.cpp: pointer argument only (not in hooks.csv); the RW shims never call it	3	0x00493710
 0x00493700	FUN_00493700	missing	PortTop_Missing_00493700	Match/PortTop_00493710.cpp: pointer argument only (not in hooks.csv); the RW shims never call it	3	0x00493710
