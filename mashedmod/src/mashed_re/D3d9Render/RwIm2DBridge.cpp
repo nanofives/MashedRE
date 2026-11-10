@@ -120,62 +120,9 @@ void __cdecl Bridge_SetRenderState(int state, int value) {
     }
 }
 
-// RwIm2DRenderPrimitive replacement (device + 0x30). Reads `count` source verts
-// from `verts` (= DAT_00898a20) and submits them to D3D9 as a screen-space
-// (pre-transformed) triangle strip. The reimpls always emit 4 verts in
-// TL,TR,BL,BR order — a quad as a 2-triangle strip.
-void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
-    if (!g_device || !verts || count < 3 || count > 64) return;
-
-    const SrcVert* src = reinterpret_cast<const SrcVert*>(verts);
-
-    // Parity harness (MASHED_DBG_DRAWSTREAM): record the raw source blob +
-    // mirrored state before any conversion. No-op when the env var is unset.
-    DrawStreamDump_OnDraw(verts, count, g_curTexHandle, g_alphaBlend,
-                          g_srcBlend, g_dstBlend, _ReturnAddress());
-
-    // One-shot draw logger (MASHED_DBG_DRAWLOG=1): dump the first 150 bridge
-    // draws to the log so a white-flood painter can be identified exactly.
-    {
-        static int s_dbg = -1;
-        if (s_dbg == -1)
-            s_dbg = (GetEnvironmentVariableA("MASHED_DBG_DRAWLOG", nullptr, 0) != 0)
-                        ? 150 : 0;
-        if (s_dbg > 0) {
-            --s_dbg;
-            if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
-                std::fprintf(f,
-                    "DRAWLOG n=%d v0=(%.1f,%.1f) v3=(%.1f,%.1f) col=%08lx "
-                    "blend=%d tex=%ld\n",
-                    count, src[0].x, src[0].y,
-                    src[count - 1].x, src[count - 1].y,
-                    static_cast<unsigned long>(src[0].color),
-                    g_alphaBlend ? 1 : 0,
-                    static_cast<long>(g_curTexHandle));
-                std::fclose(f);
-            }
-        }
-    }
-    D3DVert        dst[64];
-    for (int i = 0; i < count; ++i) {
-        // No half-pixel shift: a -0.5 correction was briefly added here to
-        // fix glyph-edge "ticks", but those were really the FGDC20 atlas
-        // pixel-base bug (0x438 vs 0x43c, see MashedFont.cpp). With the
-        // atlas fixed, the shift only moved all texture content up-left by
-        // ~half a texel vs the original (anaglyph evidence
-        // verify/font_anaglyph_exit.png). Submit coordinates raw, exactly
-        // as captured from MASHED's own vertex stream.
-        dst[i].x     = src[i].x;
-        dst[i].y     = src[i].y;
-        dst[i].z     = src[i].z;
-        // RHW must be non-zero for pre-transformed verts; the reimpl writes 1.0f
-        // into +0x0c, but guard against a zeroed buffer.
-        dst[i].rhw   = (src[i].w != 0.0f) ? src[i].w : 1.0f;
-        dst[i].color = src[i].color;
-        dst[i].u     = src[i].u;
-        dst[i].v     = src[i].v;
-    }
-
+// The device state both bridge draws set before submitting (FVF, texture, stage, sampler and blend states).
+// Factored out of Bridge_DrawPrimitive unchanged ([PORT-OT-RWG-DEVSLOTS], so the +0x34 draw sets the same).
+void ApplyBridgeDrawState() {
     g_device->SetFVF(kBridgeFVF);
 
     IDirect3DTexture9* tex = ResolveTexture(g_curTexHandle);
@@ -241,11 +188,108 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
         g_device->SetRenderState(D3DRS_SRCBLEND,  static_cast<DWORD>(sb));
         g_device->SetRenderState(D3DRS_DESTBLEND, static_cast<DWORD>(db));
     }
+}
+
+// RwIm2DRenderPrimitive replacement (device + 0x30). Reads `count` source verts
+// from `verts` (= DAT_00898a20) and submits them to D3D9 as a screen-space
+// (pre-transformed) triangle strip. The reimpls always emit 4 verts in
+// TL,TR,BL,BR order — a quad as a 2-triangle strip.
+void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
+    if (!g_device || !verts || count < 3 || count > 64) return;
+
+    const SrcVert* src = reinterpret_cast<const SrcVert*>(verts);
+
+    // Parity harness (MASHED_DBG_DRAWSTREAM): record the raw source blob +
+    // mirrored state before any conversion. No-op when the env var is unset.
+    DrawStreamDump_OnDraw(verts, count, g_curTexHandle, g_alphaBlend,
+                          g_srcBlend, g_dstBlend, _ReturnAddress());
+
+    // One-shot draw logger (MASHED_DBG_DRAWLOG=1): dump the first 150 bridge
+    // draws to the log so a white-flood painter can be identified exactly.
+    {
+        static int s_dbg = -1;
+        if (s_dbg == -1)
+            s_dbg = (GetEnvironmentVariableA("MASHED_DBG_DRAWLOG", nullptr, 0) != 0)
+                        ? 150 : 0;
+        if (s_dbg > 0) {
+            --s_dbg;
+            if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(f,
+                    "DRAWLOG n=%d v0=(%.1f,%.1f) v3=(%.1f,%.1f) col=%08lx "
+                    "blend=%d tex=%ld\n",
+                    count, src[0].x, src[0].y,
+                    src[count - 1].x, src[count - 1].y,
+                    static_cast<unsigned long>(src[0].color),
+                    g_alphaBlend ? 1 : 0,
+                    static_cast<long>(g_curTexHandle));
+                std::fclose(f);
+            }
+        }
+    }
+    D3DVert        dst[64];
+    for (int i = 0; i < count; ++i) {
+        // No half-pixel shift: a -0.5 correction was briefly added here to
+        // fix glyph-edge "ticks", but those were really the FGDC20 atlas
+        // pixel-base bug (0x438 vs 0x43c, see MashedFont.cpp). With the
+        // atlas fixed, the shift only moved all texture content up-left by
+        // ~half a texel vs the original (anaglyph evidence
+        // verify/font_anaglyph_exit.png). Submit coordinates raw, exactly
+        // as captured from MASHED's own vertex stream.
+        dst[i].x     = src[i].x;
+        dst[i].y     = src[i].y;
+        dst[i].z     = src[i].z;
+        // RHW must be non-zero for pre-transformed verts; the reimpl writes 1.0f
+        // into +0x0c, but guard against a zeroed buffer.
+        dst[i].rhw   = (src[i].w != 0.0f) ? src[i].w : 1.0f;
+        dst[i].color = src[i].color;
+        dst[i].u     = src[i].u;
+        dst[i].v     = src[i].v;
+    }
+
+    ApplyBridgeDrawState();
 
     g_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,
                               static_cast<UINT>(count - 2),
                               dst, sizeof(D3DVert));
     ++g_drawCount;
+}
+
+// [PORT-OT-RWG-DEVSLOTS] RwIm2DRenderIndexedPrimitive replacement (RwGlobals +0x34; MASHED.exe holds 0x004dbc90 there,
+// original-side probe ORIG_RWG.json). Only the MASHED_ORIG_TOP_RWMOD record points at it (LibRw/RwApiBind.cpp); the
+// default path never calls it. From the disassembly of 0x004dbc90 (verify/portorigtop_20261109/PREREG_PORT-OT-RWG-
+// DEVSLOTS.md):
+//  - (primType, vertices, numVertices, 16-bit indices, numIndices): [esp+0xc] at 0x004dbc98, then [esp+0x20 / +0x24 /
+//    +0x28 / +0x2c] after the four pushes (0x004dbca0, 0x004dbcfc, 0x004dbdc3 `mov ax, word ptr [ecx + edx*2]`).
+//  - primitive count from numIndices, jump table 0x004dc144: 1 -> n / 2, 2 -> n - 1, 3 -> n / 3, 4 -> n - 2,
+//    5 -> n - 2 (0x004dbcbc..0x004dbcf2), other -> 0 (0x004dbcf8).
+//  - D3D primitive type = 0x005d8d8c[primType] = {0, 2, 3, 4, 5, 6}.
+//  - vertices are 7 dwords (0x1c), copied raw (`rep movsd`, ecx = 7, 0x004dbddf..0x004dbde9) except for the camera
+//    raster offset at [[0x00911d60] + 0x60] + 0x1c / + 0x1e (0x004dbda2..0x004dbe8e), which Bridge_DrawPrimitive (+0x30)
+//    does not add either.
+//  - both of its paths (expand through the indices then DrawPrimitive vtable +0x144 at 0x004dbec2, or
+//    DrawIndexedPrimitive vtable +0x148 at 0x004dc10e) draw the same primitives; it returns hr >= 0 (0x004dbedb).
+// primType outside 1..5: returns 0 without a draw. [UNCERTAIN] 0x004dbc90 still submits a 0-primitive draw for those and
+// returns the device's result; no ORIG_TOP row passes such a type (0x00413a40 and 0x004430e0 pass 3).
+int __cdecl Bridge_DrawIndexedPrimitive(int primType, void* verts, int numVerts, const void* indices, int numIndices) {
+    if (!g_device || !verts || !indices || numVerts <= 0 || numIndices <= 0) return 0;
+    static const D3DPRIMITIVETYPE kPrim[6] = {static_cast<D3DPRIMITIVETYPE>(0), D3DPT_LINELIST, D3DPT_LINESTRIP,
+                                              D3DPT_TRIANGLELIST, D3DPT_TRIANGLESTRIP, D3DPT_TRIANGLEFAN};  // 0x005d8d8c
+    int prims = 0;
+    switch (primType) {
+    case 1: prims = numIndices / 2; break;
+    case 2: prims = numIndices - 1; break;
+    case 3: prims = numIndices / 3; break;
+    case 4:
+    case 5: prims = numIndices - 2; break;
+    default: return 0;
+    }
+    if (prims <= 0) return 0;
+    ApplyBridgeDrawState();
+    const HRESULT hr = g_device->DrawIndexedPrimitiveUP(kPrim[primType], 0, static_cast<UINT>(numVerts),
+                                                        static_cast<UINT>(prims), indices, D3DFMT_INDEX16, verts,
+                                                        sizeof(SrcVert));
+    ++g_drawCount;
+    return hr >= 0 ? 1 : 0;
 }
 
 }  // namespace
@@ -330,3 +374,10 @@ std::uint32_t RwIm2DBridge_DrawCount() { return g_drawCount; }
 
 }  // namespace D3d9Render
 }  // namespace mashed_re
+
+// [PORT-OT-RWG-DEVSLOTS] the +0x34 draw, for the MASHED_ORIG_TOP_RWMOD record in LibRw/RwApiBind.cpp (declared there
+// without this TU's d3d9 header).
+extern "C" int __cdecl RwIm2DBridge_RenderIndexedPrimitive(int primType, void* verts, int numVerts, const void* indices,
+                                                           int numIndices) {
+    return mashed_re::D3d9Render::Bridge_DrawIndexedPrimitive(primType, verts, numVerts, indices, numIndices);
+}
