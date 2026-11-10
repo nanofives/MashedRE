@@ -2797,6 +2797,13 @@ bool UpdateMenuSelection() {
             if (rgt_now && !rgt_prev)      csel_dir = +1;
             else if (lft_now && !lft_prev) csel_dir = -1;
             if (csel_dir != 0) {
+                // [PORT-COLOURSEL-LEFTRIGHT] MASHED_COLOURSEL_ICON: the original's cup-flow left/right moves the
+                // choice 0x0067f0c0, floor 1 / ceiling 6 (0x00433486 dec, 0x004334bb inc), which the icon reads.
+                if (mashed_re::Frontend::ColourSelIcon_On()) {
+                    std::int32_t& ch = *reinterpret_cast<std::int32_t*>(0x0067f0c0u);
+                    if (csel_dir < 0 && ch > 1) --ch;
+                    else if (csel_dir > 0 && ch < 6) ++ch;
+                }
                 CarSelectCycleColour(0, csel_dir);
                 // mirror the port-local render index to the live cursor
                 const int v = *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
@@ -6175,9 +6182,21 @@ bool RenderFrame() {
                 const float by0 = byLast - (nrows4 - 1) * bdy;
                 for (int r = 0; r < nrows4; ++r) {
                     const float by = by0 + r * bdy;
+                    if (csb1 && mashed_re::Frontend::ColourSelBorder_On()) {
+                        // [PORT-COLOURSEL-LEFTRIGHT] MASHED_COLOURSEL_BORDER: the original's single-row bar, five rects
+                        // (HB-MENUBURST-NAV draw list): fill 48,207 534x26 (0x0043387c), left 46,207 2x26 (0x004338b5),
+                        // top 46,207 538x2 (0x004338ec), bottom 46,231 538x2 (0x00433926), right 582,207 2x26 (0x00433971).
+                        const float y0 = by;   // 207 virtual on this path
+                        HudIm2DQuad(0, 48.0f * kVScale, y0, 534.0f * kVScale, 26.0f * kVScale, rowFill, uv_full);
+                        HudIm2DQuad(0, 46.0f * kVScale, y0, 2.0f * kVScale, 26.0f * kVScale, rowBord, uv_full);
+                        HudIm2DQuad(0, 46.0f * kVScale, y0, 538.0f * kVScale, 2.0f * kVScale, rowBord, uv_full);
+                        HudIm2DQuad(0, 46.0f * kVScale, y0 + 24.0f * kVScale, 538.0f * kVScale, 2.0f * kVScale, rowBord, uv_full);
+                        HudIm2DQuad(0, 582.0f * kVScale, y0, 2.0f * kVScale, 26.0f * kVScale, rowBord, uv_full);
+                    } else {
                     HudIm2DQuad(0, bx, by, bw, bh, rowFill, uv_full);
                     HudIm2DQuad(0, bx, by, bw, bt2, rowBord, uv_full);
                     HudIm2DQuad(0, bx, by + bh - bt2, bw, bt2, rowBord, uv_full);
+                    }
                     // Device icon: rows 0-2 joypad, row 3 keyboard in the
                     // reference capture (a device assignment we do not model).
                     // NEUTRAL, not tinted, and SQUARE. MEASURED on orig_s4:
