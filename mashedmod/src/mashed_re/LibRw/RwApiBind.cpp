@@ -1015,6 +1015,91 @@ int MashedRw_MatFXMaterialSetupEnvMap_0053fd30(int material, int texture, int fr
     return material;
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// [ATOMIC-VIEW-2] RW calls of the DepthCharge init 0x004548e0 (type-table entry 1) and its 0x004548a0 tree
+// (Match/PortTop_004548e0.cpp, Match/PortTop_004548a0.cpp). All seven are RW 3.x library functions
+// (hooks.csv third-party-library[renderware]); their matched bodies walk RW's own frame / atomic layouts
+// (RwFrame child list at +0x98 / +0x9c, root at +0xa0, the world plugin slot), which the exe's librw objects do not
+// have, so each is a librw binding.
+// ---------------------------------------------------------------------------------------------------------------
+
+// rva 0x004e69a0 RpAtomicClone (re/match/rwl02/004e69a0.c): a new atomic with the source's type / flags, no frame and
+// the same geometry, in no world. librw: rw::Atomic::clone (Object::copy leaves the parent nil). The 0x004548e0 caller
+// passes the RW-layout view from 0x004b3f90, which resolves to its librw atomic. Returns the librw clone.
+int MashedRw_AtomicClone_004e69a0(int atomic) {
+    rw::Atomic* a = FromInt<rw::Atomic>(atomic);
+    for (const auto& v : s_atomicViews)
+        if (static_cast<void*>(v.get()) == static_cast<void*>(a)) { a = v->lib; break; }
+    rw::Atomic* const n = a ? a->clone() : nullptr;
+    BindLog("0x004e69a0(%08X) -> rw::Atomic::clone(atomic %p) %p", static_cast<unsigned>(atomic), static_cast<void*>(a),
+            static_cast<void*>(n));
+    return ToInt(n);
+}
+
+// rva 0x004e7e30 RpAtomicSetFrame (re/match/rwl02/004e7e30.c) for a librw atomic: links the atomic to the frame and
+// marks it dirty (privateFlags |= 1 in RW, WORLDBOUNDDIRTY in librw). The exe's Orig_004e7e30 stays the body for the
+// RW-layout PTank records (Match/PortTop_004e7e30.cpp). librw: rw::Atomic::setFrame. Returns the atomic.
+int MashedRw_AtomicSetFrame_004e7e30(int atomic, int frame) {
+    rw::Atomic* const a = FromInt<rw::Atomic>(atomic);
+    if (a) {
+        a->setFrame(FromInt<rw::Frame>(frame));
+        a->object.object.privateFlags |= rw::Atomic::WORLDBOUNDDIRTY;
+    }
+    return atomic;
+}
+
+// rva 0x004c1040 RwFrameAddChild (re/match/rwl01/004c1040.c, C2): (parent, child); unlinks the child from its old
+// parent, links it at the head of the parent's child list, re-roots it and marks the hierarchy dirty. librw:
+// rw::Frame::addChild(child, append = 0), the same head insertion. Returns the parent.
+int MashedRw_FrameAddChild_004c1040(int parent, int child) {
+    rw::Frame* const p = FromInt<rw::Frame>(parent);
+    rw::Frame* const c = FromInt<rw::Frame>(child);
+    if (p && c) p->addChild(c, 0);
+    return parent;
+}
+
+// rva 0x004c15c0 RwFrameSetIdentity (re/match/rwl01/004c15c0.c): the frame matrix (+0x10) to identity with type
+// flags |= 0x20003, then the root on the dirty list. librw: matrix.setIdentity() and updateObjects(). Returns nothing.
+void MashedRw_FrameSetIdentity_004c15c0(int frame) {
+    rw::Frame* const f = FromInt<rw::Frame>(frame);
+    if (!f) return;
+    f->matrix.setIdentity();
+    f->updateObjects();
+}
+
+// rva 0x004c1210 RwFrameRemoveChild (re/match/rwl01/004c1210.c, C4 by match, a RenderWare library function): unlinks
+// the frame from its parent, re-roots it and its children, marks it dirty. librw: rw::Frame::removeChild. Returns the
+// frame. The matched body walks the RW child list (+0x98 / +0x9c), so it cannot run on a librw frame.
+int MashedRw_FrameRemoveChild_004c1210(int frame) {
+    rw::Frame* const f = FromInt<rw::Frame>(frame);
+    if (f) f->removeChild();
+    return frame;
+}
+
+// rva 0x004e4440 RpAtomicGetWorld (re/match/rwl02/004e4440.c): the dword at atomic + [0x007d7170], the atomic's world
+// plugin slot. librw: rw::Atomic::world.
+int MashedRw_AtomicGetWorld_004e4440(int atomic) {
+    rw::Atomic* const a = FromInt<rw::Atomic>(atomic);
+    return a ? ToInt(a->world) : 0;
+}
+
+// rva 0x004e43b0 RpWorldRemoveAtomic (re/match/rwl02/004e43b0.c): (world, atomic); unlinks the atomic from the world's
+// sectors and clears its world slot. librw: rw::World::removeAtomic. Returns the world.
+int MashedRw_WorldRemoveAtomic_004e43b0(int world, int atomic) {
+    rw::World* const w = FromInt<rw::World>(world);
+    rw::Atomic* const a = FromInt<rw::Atomic>(atomic);
+    if (w && a && a->world == w) w->removeAtomic(a);
+    return world;
+}
+
+// rva 0x004c39b0 RwV3dNormalize (re/match/s19/004c39b0.c, hooks.csv RwV3dNormalize C2): (out, in) with RW's sqrt /
+// inverse-sqrt lookup tables. The exe holds the original's two tables (Math/RwLutTables.cpp), and LutNormalize is this
+// function's arithmetic on them. The original's zero-length error report (0x004d7ff0 / 0x004d8480) is not raised.
+// Returns the length.
+float MashedRw_V3dNormalize_004c39b0(float* out, const float* in) {
+    return mashed_re::Math::LutNormalize(out, in);
+}
+
 // RpGeometry* RpGeometryForAllMaterials(RpGeometry* geometry, RpMaterialCallBack cb, void* data) rva 0x004e89a0
 // (re/match/rwl02/004e89a0.c, 76.7%, not the L-115 class, so this is a binding, not that body). Disassembly of
 // MASHED.exe.unpatched: count = geometry +0x24 (0x004e89aa), cached at [esp+0x14] (0x004e89af); for i < count,
