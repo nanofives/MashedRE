@@ -16,7 +16,7 @@
 #include <cstdio>
 #include "../Core/HookSystem.h"
 
-namespace mashed_re { namespace Gameplay { int PickupsOrig_ReleasePool(int* foreign); } }
+namespace mashed_re { namespace Gameplay { int PickupsOrig_ReleasePool(int* foreign); int PickupsOrig_BuiltLent(); } }
 extern "C" {
 int MashedRw_RwModKnob(void);
 void Orig_00458880(void);                    // matched, Match/PortTop_00458880.cpp
@@ -38,7 +38,28 @@ void PortTop_0045b930_Call00458880(void) {
     }
     PortTop_0045b930_Log("0x00458880", "matched body after the hand pickup code released its binds (released, foreign)",
                          released, foreign);
+    // [POWERUPINIT-A] the clumps the matched builder 0x004587a0 stored are back in their +0x00 words (BindAll lent them):
+    // count them for the log, then the matched body destroys them.
+    int clumps = 0;
+    for (int i = 0; i < 25; ++i) if (*reinterpret_cast<const unsigned int*>(static_cast<unsigned long>(0x0068b198u + 0x50u * i))) ++clumps;
+    PortTop_0045b930_Log("0x00458880", "POWERUPINIT-A: builder clumps in the pool, entries the hand tick borrowed (clumps, lent)",
+                         clumps, mashed_re::Gameplay::PickupsOrig_BuiltLent());
     Orig_00458880();
+}
+// [POWERUPINIT-A] rva 0x00412010 call site: the matched Orig_00412010 (Match/PortTop_00412010.cpp) when all six records
+// at 0x0063bb38 (stride 0x2c) hold an atomic, else the stand-in. Its body reads *(DAT_0063bb38[i] + 0x3c) with no null
+// check (re/match/s02/00412010.c). The records are built by the matched 0x00411f30 from 0x0045bae0
+// (Match/PortTop_0045bae0.cpp): DAT_0063bb38[i] = 0x004b3f90(clump), an RW-layout atomic view whose +0x3c is the clump
+// (LibRw/RwApiBind.cpp). A record is 0 only when its DFF read returned no clump.
+int PortTop_StandIn04C_00412010();
+void Orig_00412010(void);
+void PortTop_0045b930_Call00412010(void) {
+    int built = 0;
+    for (int i = 0; i < 6; ++i) if (*reinterpret_cast<const unsigned int*>(static_cast<unsigned long>(0x0063bb38u + 0x2cu * i))) ++built;
+    PortTop_0045b930_Log("0x00412010", built == 6 ? "matched body (records built, of 6)" : "stand-in, not run (records built, of 6)",
+                         built, 6);
+    if (built == 6) Orig_00412010();
+    else PortTop_StandIn04C_00412010();
 }
 void PortTop_0045b930_Call004593b0(void) {
     const int on = MashedRw_RwModKnob() != 0;
@@ -50,7 +71,7 @@ void PortTop_0045b930_Call004593b0(void) {
 
 #define MATCH_PORT 1
 #define FUN_0045b930 Orig_0045b930
-#define FUN_00412010 PortTop_StandIn04C_00412010   // stand-in: matched; reads DAT_0063bb38[i] +0x3c with no null check (state of 0x00402750)
+#define FUN_00412010 PortTop_0045b930_Call00412010   // POWERUPINIT-A: record check + matched Orig_00412010 (above)
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp
 #define FUN_00458880 PortTop_0045b930_Call00458880   // pool release + matched Orig_00458880 (above)
 #define FUN_004593b0 PortTop_0045b930_Call004593b0   // RWMOD selector: Orig_004593b0 / stand-in (above)

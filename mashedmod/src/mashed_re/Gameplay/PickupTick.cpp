@@ -96,9 +96,28 @@ void FrameIdentity(unsigned char* fr) {
     std::memcpy(fr + 0x38, &one, 4);       // at.z
 }
 
+// [POWERUPINIT-A] MASHED_ORIG_TOP only: the matched builder 0x004587a0 ran (Match/PortTop_0045bae0.cpp) and stored 25
+// librw clumps at the pool's +0x00 words. Those clumps belong to the builder and the matched teardown 0x00458880 end to
+// end: this TU never reads or writes through them. The verbatim tick (PK_459000) writes its frame through
+// +0x00 -> +0x04 at RW 3.x RwFrame offsets (modelling matrix +0x10, translation +0x40). librw's rw::Frame puts
+// objectList at +0x10 and the matrix at +0x18 (deps/librw/src/rwobjects.h:48-51), so the tick cannot run on a librw
+// clump's frame. So PickupsOrig_SetPoolBuilt records each builder clump in s_built[i] when the builder returns, and
+// BindAll lends the word: it binds its fake object there, as on the default path, and marks the entry lent.
+// PickupsOrig_ReleasePool puts s_built[i] back before the matched teardown. The default path never sets
+// s_origPoolBuilt, so BindAll is unchanged there.
+bool          s_origPoolBuilt = false;
+std::uintptr_t s_built[kMax] = {};
+bool          s_lent[kMax] = {};
+long          s_builtForeign = 0;   // BindAll met a non-zero word that is neither the fake object nor the builder clump
+
 void BindAll() {
     for (int i = 0; i < kMax; ++i) {
         s_obj[i].frame = s_frame[i];
+        std::uintptr_t* const w = reinterpret_cast<std::uintptr_t*>(kPool + i * kStride);
+        if (s_origPoolBuilt && *w != 0 && *w != reinterpret_cast<std::uintptr_t>(&s_obj[i])) {
+            if (*w == s_built[i]) s_lent[i] = true;
+            else ++s_builtForeign;
+        }
         *reinterpret_cast<FakeObj**>(kPool + i * kStride) = &s_obj[i];
     }
 }
@@ -466,20 +485,41 @@ void PickupCb_MaybeReplay() {
     }
 }
 
-// PORT-OT-PICKUPPOOL: on the MASHED_ORIG_TOP teardown only (Match/PortTop_0045b930.cpp, before the matched 0x00458880).
-// The hand code is the only writer of the pool's +0x00 words in the exe (BindAll). Each word that still holds this TU's
-// own fake object goes back to 0, the value the original's builder 0x004587a0 would leave unwritten here (it does not
-// run on that path). Returns how many it released, and counts any other non-zero word in *foreign. The default path
-// never calls this.
+// PORT-OT-PICKUPPOOL / POWERUPINIT-A: on the MASHED_ORIG_TOP teardown only (Match/PortTop_0045b930.cpp, before the
+// matched 0x00458880). Each +0x00 word that holds this TU's own fake object s_obj[i] gets back what was there before
+// BindAll lent it: the builder's clump s_built[i] (0x004587a0 ran), else 0. A word that already holds s_built[i] (never
+// lent) stays. Nothing else is touched, and no object is freed here. Returns how many fake objects it took back, and
+// counts in *foreign every other non-zero word, plus every BindAll call that met a third value. The default path never
+// calls this.
 int PickupsOrig_ReleasePool(int* foreign) {
-    int released = 0, other = 0;
+    int released = 0, other = static_cast<int>(s_builtForeign);
     for (int i = 0; i < kMax; ++i) {
         std::uintptr_t* const w = reinterpret_cast<std::uintptr_t*>(kPool + i * kStride);
-        if (*w == reinterpret_cast<std::uintptr_t>(&s_obj[i])) { *w = 0; ++released; }
-        else if (*w != 0) ++other;
+        if (*w == reinterpret_cast<std::uintptr_t>(&s_obj[i])) { *w = s_built[i]; ++released; }
+        else if (*w != 0 && *w != s_built[i]) ++other;
     }
     if (foreign) *foreign = other;
     return released;
+}
+
+// POWERUPINIT-A: the 0x004587a0 call-site forwarder (Match/PortTop_0045bae0.cpp) calls this after the matched builder
+// returns, MASHED_ORIG_TOP only. Returns how many of the 25 +0x00 words hold a clump (non-zero).
+int PickupsOrig_SetPoolBuilt() {
+    s_origPoolBuilt = true;
+    int n = 0;
+    for (int i = 0; i < kMax; ++i) {
+        s_built[i] = *reinterpret_cast<const std::uintptr_t*>(kPool + i * kStride);
+        s_lent[i] = false;
+        if (s_built[i] != 0) ++n;
+    }
+    return n;
+}
+
+// POWERUPINIT-A: how many entries BindAll lent (bound its fake object over the builder clump), for the teardown log.
+int PickupsOrig_BuiltLent() {
+    int n = 0;
+    for (int i = 0; i < kMax; ++i) if (s_lent[i]) ++n;
+    return n;
 }
 
 void PickupsOrig_OnSpawn(unsigned char* entry) {
