@@ -1,5 +1,8 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S11 0x00469df0 (h2): 30.1% (regs 33.3%, ops 70.7%), first structural pass of a 5060 B function.
+/* MATCH-RACEPATH-BIG2 (2026-11-09): 30.1% -> 63.1% (regs 66.6%, ops 92.4%), 1204/1219 ins; structural fixes
+   and what remains: verify/matchracepath_20261109/big2/RESULT_MATCH-RACEPATH-BIG2.md. The S11 notes below on
+   EDI/ESI args, frame size and constants are superseded there.
+   MATCH-S11 0x00469df0 (h2): 30.1% (regs 33.3%, ops 70.7%), first structural pass of a 5060 B function.
    Raw converter did not compile (C4234 __thiscall). Two car records (the 0xd04 record of 0x008815a0) come in
    EAX (a) and ECX (b), plus two stack args (cdecl, the caller pops 8): static callee plus a stand-in caller
    (built only outside MATCH_PORT; real caller 0x004709a0, call at 0x00470bcd). Shape: 2-pass do/while over

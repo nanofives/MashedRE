@@ -1,5 +1,7 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S11 0x0046f6c0 (h5): best 44.3% (regs 53.4%, ops 90.0%), 885/893 ins. Raw 5.8%.
+/* MATCH-RACEPATH-BIG2 (2026-11-09): 44.3% -> 50.7% (regs 58.5%, ops 96.4%), 895/893 ins; structural fixes and
+   what remains: verify/matchracepath_20261109/big2/RESULT_MATCH-RACEPATH-BIG2.md. History below is the S11 pass.
+   MATCH-S11 0x0046f6c0 (h5): best 44.3% (regs 53.4%, ops 90.0%), 885/893 ins. Raw 5.8%.
    Static callee: ctx in EAX (push ebx / mov ebx, eax), car in EDI (never written), flag on the stack. Real
    callers 0x004704c0, 0x004709a0 (matched in their own files with a stand-in for this function) and 0x00470c70;
    a stand-in caller sits at the end (#ifndef MATCH_PORT). This file also holds the static callee 0x0046c5f0

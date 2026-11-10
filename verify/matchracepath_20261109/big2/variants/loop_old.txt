@@ -1,0 +1,71 @@
+    do {
+        c = a;
+        if (k != 0) c = b;
+        P0 = c->q[0];
+        P1 = c->q[1];
+        P3 = c->q[3];
+        P2 = c->q[2];
+        n0.x = (P1.z - P0.z) * c->n.y - (P1.y - P0.y) * c->n.z;
+        n0.y = (P1.x - P0.x) * c->n.z - (P1.z - P0.z) * c->n.x;
+        n0.z = (P1.y - P0.y) * c->n.x - (P1.x - P0.x) * c->n.y;
+        n1.x = (P3.z - P1.z) * c->n.y - (P3.y - P1.y) * c->n.z;
+        n1.y = (P3.x - P1.x) * c->n.z - (P3.z - P1.z) * c->n.x;
+        n1.z = (P3.y - P1.y) * c->n.x - (P3.x - P1.x) * c->n.y;
+        n2.x = (P2.z - P3.z) * c->n.y - (P2.y - P3.y) * c->n.z;
+        n2.y = (P2.x - P3.x) * c->n.z - (P2.z - P3.z) * c->n.x;
+        n2.z = (P2.y - P3.y) * c->n.x - (P2.x - P3.x) * c->n.y;
+        n3x = (P0.z - P2.z) * c->n.y - (P0.y - P2.y) * c->n.z;
+        n3y = (P0.x - P2.x) * c->n.z - (P0.z - P2.z) * c->n.x;
+        n3z = (P0.y - P2.y) * c->n.x - (P0.x - P2.x) * c->n.y;
+        o = b;
+        if (k != 0) o = a;
+        x = o->q[0].x;
+        y = o->q[0].y;
+        z = o->q[0].z;
+        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
+            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
+            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
+            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
+            sx = sx + x;
+            cnt++;
+            sy = y + sy;
+            side[k] = side[k] + 1;
+            sz = z + sz;
+        }
+        x = o->q[1].x;
+        y = o->q[1].y;
+        z = o->q[1].z;
+        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
+            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
+            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
+            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
+            sx = sx + x;
+            cnt++;
+            sy = y + sy;
+            side[k] = side[k] + 1;
+            sz = z + sz;
+        }
+        x = o->q[2].x;
+        y = o->q[2].y;
+        z = o->q[2].z;
+        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
+            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
+            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
+            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
+            sx = sx + x;
+            cnt++;
+            sy = y + sy;
+            sz = z + sz;
+        }
+        x = o->q[3].x;
+        y = o->q[3].y;
+        z = o->q[3].z;
+        if ((x - P0.x) * n0.x + (y - P0.y) * n0.y + n0.z * (z - P0.z) < DAT_005d757c &&
+            (x - P1.x) * n1.x + (y - P1.y) * n1.y + n1.z * (z - P1.z) < DAT_005d757c &&
+            (x - P3.x) * n2.x + (y - P3.y) * n2.y + n2.z * (z - P3.z) < DAT_005d757c &&
+            (x - P2.x) * n3x + (y - P2.y) * n3y + n3z * (z - P2.z) < DAT_005d757c) {
+            sx = sx + x;
+            cnt++;
+            sy = y + sy;
+            sz = z + sz;
+        }
