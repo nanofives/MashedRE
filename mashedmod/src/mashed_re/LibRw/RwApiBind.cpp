@@ -1358,6 +1358,11 @@ std::size_t __cdecl RwGlobalsStrlen(const char* s) { return std::strlen(s); }
 extern "C" void __cdecl RwStrupr(char* s);
 extern "C" void __cdecl RwStrlwr(char* s);
 extern "C" char* __cdecl RwStrrchr(char* s, char c);
+// [PORT-OT-RWG-DEVSLOTS] Render/D3d9StateCache.cpp: the exe body of 0x004d6910 (hooks.csv D3d9State_Get, C3).
+// D3d9Render/RwIm2DBridge.cpp: the B15 bridge's indexed Im2D draw (from the disassembly of 0x004dbc90).
+extern "C" std::uint32_t __cdecl D3d9State_Get(std::uint32_t state_enum, std::uint32_t* out);
+extern "C" int __cdecl RwIm2DBridge_RenderIndexedPrimitive(int primType, void* verts, int numVerts, const void* indices,
+                                                           int numIndices);
 
 namespace {
 // +0xf8 = 0x004d86d0 / +0xfc = 0x004d8700: eax is loaded with s at entry (0x004d86d0 `mov eax,[esp+4]`) and kept, so the
@@ -1399,6 +1404,16 @@ void RegisterRwModules() {
     Put(0xf4, U(reinterpret_cast<void*>(&RwGlobalsStrlen)));
     Put(0xf8, U(reinterpret_cast<void*>(&RwGlobalsStrupr)));
     Put(0xfc, U(reinterpret_cast<void*>(&RwGlobalsStrlwr)));
+    // [PORT-OT-RWG-DEVSLOTS] device slots. Original (ORIG_RWG.json): +0x24 0x004d6910, +0x34 0x004dbc90. +0x20 / +0x30
+    // (0x004d7480 / 0x004dba60 in the original) already hold the B15 bridge's set-state / draw, copied from the device.
+    // +0x24 is the exe body of 0x004d6910: it reads the exe's bytes at the input caches 0x007d6ae8..0x007d6bf8 /
+    // 0x007d58b8, which the bridge's set-state (+0x20) does not write. The two ORIG_TOP readers (0x00413a40: states 0x14
+    // and 0xe) only hand the value back to +0x20 afterwards, and the bridge ignores both states.
+    // +0x34 is the bridge's indexed draw (0x00413a40, 0x004430e0: primType 3).
+    // +0x60 (original 0x004de1b0, RW image <- raster) stays 0: its row 0x004d52d0 reads the raster at +0x22 in the RW 3.x
+    // layout, and the knob path's rasters are rw::Raster (PREREG_PORT-OT-RWG-DEVSLOTS.md).
+    Put(0x24, U(reinterpret_cast<void*>(&D3d9State_Get)));
+    Put(0x34, U(reinterpret_cast<void*>(&RwIm2DBridge_RenderIndexedPrimitive)));
     // RwGlobals +0x118 / +0x11c: original 0x004cca80 / 0x004ccba0.
     s_rwGlobals.flalloc = reinterpret_cast<void*>(&RwGlobalsFreeListAlloc);
     s_rwGlobals.flfree = reinterpret_cast<void*>(&RwGlobalsFreeListFree);
@@ -1451,7 +1466,7 @@ void RegisterRwModules() {
     *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4628u)) = kModImage;
     BindLog("RwGlobals [MASHED_ORIG_TOP_RWMOD]: modules registered (0x007d3ffc 0x134, 0x007d4028 0x14c, 0x007d4054 0x3f4, "
             "0x007d4628 0x170), freelist alloc / free at +0x118 / +0x11c, string slots +0xc4 +0xd0 +0xdc +0xe8 +0xf4 +0xf8 "
-            "+0xfc, record %p size 0x%X",
+            "+0xfc, device slots +0x24 +0x34, record %p size 0x%X",
             static_cast<void*>(&s_rwGlobals), static_cast<unsigned>(sizeof(s_rwGlobals)));
 }
 }  // namespace

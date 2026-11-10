@@ -651,6 +651,7 @@
 "Render\RenderLeaves_ae2.cpp"
 "Render\RenderLeaves_ae3.cpp"
 "Render\RenderStateSettersA.cpp"
+"Render\D3d9StateCache.cpp"
 "Frontend\FrontendLeaves_ad2.cpp"
 "Frontend\MenuLeaves_af5.cpp"
 "Render\CameraProjCoeffs.cpp"
