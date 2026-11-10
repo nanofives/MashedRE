@@ -79,7 +79,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004274e0	FUN_004274e0	matched	LocalizationFileLoad	PORT-TOP-04F: Match/MatchS06_004274e0.cpp (now in both targets) = re/match/s06/004274e0.c (BYTE-IDENTICAL 148 B, relocheck OK 12/12); english.dat -> DAT_0066d828	2	0x00402750
 0x004275d0	FUN_004275d0	stand-in	PortTop_StandIn04E_004275d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x00427ca0	FontText_HudInit	stand-in	PortTop_StandIn04E_00427ca0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x00428390	FrontendStateSet	stand-in	PortTop_Piece_00428390	PORT-TOP-04E: hand piece (HandTop_InitRest split at this call point). piece 5: frontend assets	2	0x00402750
+0x00428390	FrontendStateSet	matched	Orig_00428390 (then PortTop_Piece_00428390 hand piece 5)	PORT-OT-FRONTEND: Match/PortTop_00428390.cpp = re/match/s06/00428390.c (match.py 100%): DAT_0067d960 = param_1. Called first by PortTop_Piece_00428390 (Match/PortTop_00402750_Pieces.cpp), which then runs hand piece 5 (frontend assets). ORIGTOP-ONLY CROSS-TARGET vs Match/MatchS06_00428390.cpp	2	0x00402750
 0x004283a0	FUN_004283a0	matched	Orig_004283a0	PORT-TOP-04F: Match/PortTop_004283a0.cpp = re/match/s06/004283a0.c (BYTE-IDENTICAL 92 B, relocheck OK 15/15); four logo textures	2	0x00402750
 0x00431b40	Set67eaa8	matched	Set67eaa8	PORT-TOP-04E: matched, Match/MatchS07_00431b40.cpp (DAT_0067eaa8 = 0.3f), exe list since PORT-TOP-04E	2	0x00402750
 0x0045bae0	FUN_0045bae0	stand-in	PortTop_StandIn04E_0045bae0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750

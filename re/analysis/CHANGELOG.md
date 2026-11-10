@@ -102,6 +102,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  0x00404830  FUN_00404830  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: 13 fields -> 11 (the unquoted rtex notes text after "(generated from the decomp" returned inside the quoted notes cell, exe_file/port cells left empty for the backfills); evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
+2026-11-10  0x004464c0  CameraEntry::DispatchAll  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: 9 fields -> 11 (the missing empty exe_file/port cells added, notes unchanged); evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
+2026-11-10  0x0041f360  GatedSwitch636ad0  C4->C4  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: the notes text ", compiled by both targets (...); the standalone car set-up calls it" moved from the exe_file cell back into the notes cell; evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
+2026-11-10  0x00420870  FUN_00420870  C2->C2  tracker hygiene (PORT-OT-FRONTEND, no C-level change): hooks.csv record repaired: 12 fields -> 11 (unquoted notes with commas now one quoted cell); evidence: verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md
 2026-11-09  0x0047c0f0  FUN_0047c0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c0f0.c; evidence: verify/matchnearmiss2_20261109/RESULT_MATCH-NEARMISS-2.md
 2026-11-09  0x005a8390  FUN_005a8390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8390.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
 2026-11-09  0x005a8560  FUN_005a8560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8560.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
