@@ -1,0 +1,7 @@
+rva	route	evidence	verdict	detail
+0x00477920	match	re/match/s12/00477920.c	PASS	byte-identical 231 B, relocheck OK (11/1)
+0x005b10e0	match	re/match/s26/005b10e0.c	PASS	byte-identical 38 B, relocheck OK (0/0)
+0x00415e20	match	re/match/s03/h2_00415e20.c	PASS	byte-identical 567 B, relocheck OK (39/0)
+0x00475210	match	re/match/s12/00475210.c	PASS	byte-identical 182 B, relocheck OK (6/0)
+0x00476320	match	re/match/s12/00476320.c	PASS	byte-identical 103 B, relocheck OK (3/0)
+0x00417640	match	re/match/s03/h3_00417640.c	PASS	byte-identical 237 B, relocheck OK (8/4)

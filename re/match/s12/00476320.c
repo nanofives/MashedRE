@@ -4,7 +4,10 @@
    fld p2[1]; fadd st(1); fstp st(0). Residual: p1[2] = p2[2] + z loads p2[2] first in the original (ours loads the
    spilled z), and the discarded FUN_004c39b0 result is popped before add esp (ours after). Tried: struct V3 form,
    RW macro forms (x*s, +=), operand swaps, double/int/void callee return, double x/z/s, permuter (no gain).
-   Class (b). */
+   Class (b).
+   MATCH-RACEPATH-PILOT 2026-11-09: CLOSED, 103 B BYTE-IDENTICAL. The z sum is done in double and cast back
+   (`(float)(param_2[2] + (double)z)`): param_2[2] loads first, the z spill is the fadd operand, and the result's
+   fstp st(0) after the call moves past add esp like the original. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -46,6 +49,6 @@ void FUN_00476320(float *param_1, float *param_2, float param_3)
   param_1[2] = z;
   param_1[0] = x + param_2[0];
   param_1[1] = param_2[1] + y;
-  param_1[2] = param_2[2] + z;
+  param_1[2] = (float)(param_2[2] + (double)z);
   FUN_004c39b0(param_1, param_1);
 }
