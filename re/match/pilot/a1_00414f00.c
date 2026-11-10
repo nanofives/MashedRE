@@ -15,6 +15,8 @@
    Class: (a) candidate: x87 operand selection (fld second operand + fsubr) on the components whose
    memory base register (eax = rec reloaded from [esp+0x20]) is needed first or freed next; no source form
    tried produces fsubr here.
+   CLOSED 2026-11-10 (MATCH-X87-CASTLEVER-PILOT): comma rvalue `(0, *(float *)(rec + 0x30))` on x and z makes cl
+   load the rec field first (fld [eax+0x30] ; fsubr [esi]) -> 100%, byte-identical. Value unchanged (comma yields the field).
    Callees: all cdecl (plain ret). FUN_00452eb0 returns float on st(0); FUN_004c3ac0(V3 ptr) returns float. */
 typedef struct { float x, y, z; } V3;
 extern float DAT_005cc32c, DAT_005cc72c, DAT_005cc348, DAT_005cc564;
@@ -42,9 +44,9 @@ int FUN_00414f00(int param_1, int param_2, float *out, int car)
       FUN_0046d6d0(&a, car);
       FUN_0046d570(&b, car);
       FUN_0046d4a0(&rec, car);
-      v.x = pos[0] - *(float *)(rec + 0x30);
+      v.x = pos[0] - (0, *(float *)(rec + 0x30));
       v.y = pos[1] - *(float *)(rec + 0x34);
-      v.z = pos[2] - *(float *)(rec + 0x38);
+      v.z = pos[2] - (0, *(float *)(rec + 0x38));
       d = FUN_004c3ac0(&v);
       if (d > DAT_005cc348) {
         out[0] = pos[0];
