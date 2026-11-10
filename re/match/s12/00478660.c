@@ -1,6 +1,17 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S12 0x00478660: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchs12_20261102/results.tsv. */
+/* TL-MATCH-LUA 0x00478660 (by hand, 2026-11-10): 79.1% (regs 79.1%, ops 93.9%), 444/446 ins. Raw g2s 22.6%.
+   Shape: per AI polygon i, RwRGBA key {i, i>>8, 0, 0xff} -> FUN_004b5030 two 0x30 triangles; quad = tri 0 verts
+   plus the first tri 1 vertex not equal (FUN_004b46b0) to any of them; normal via the register-arg 0x004785e0
+   (HELD static copy); centre via FUN_004b4550; local RwMatrix {right = (0,1,0) x at, up = at x right, at, pos},
+   FUN_004c45f0 / FUN_004c4dc0 inverse / FUN_004c3d90 transform of the 4 corners; quadrant classify into c[0..3].
+   Moves that scored: classify as a macro (an __inline helper stayed a call) 18.6 -> 41.0%; the commuted retests
+   (`0.0f > x`) stop jump threading 41 -> 47%; p assigned just before the first use (ebp keeps &c[0], p = ebp-0x18)
+   47 -> 79.1%. Residual (b): (1) the original re-tests x before the y test of c1 and c3 (no jump threading); the
+   only spelling found that keeps that (`x < 0.0`) emits fcomp qword, the original fcomp dword [0x005d757c]; plain
+   spellings thread (ours drops the retest, 404 ins), so this file keeps the commuted retest, which loads the
+   constant first (fld K / fcomp x); (2) x87 scheduling of the right / up cross products; (3) lea edi from ebp
+   instead of esi. Not SIB base/index order. Tried: declaration orders (no effect), pointer walk p++, a corner
+   pointer, global float for 0.0, __inline Cross, local y-axis vector, separate tx/ty temps. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -23,264 +34,104 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char undefined1;
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-typedef long double float10;
-MGLOBAL(float, DAT_005d757c, 0x005d757c);
-void FUN_004783f0(int p0);
-void __fastcall FUN_004785e0();
-void FUN_004987b0(undefined4 p0);
-void FUN_004b4550(float * p0, float * p1, int p2);
-undefined4 FUN_004b46b0(float * p0, float * p1);
-undefined4 FUN_004b5030(undefined4 p0, undefined4 p1, undefined4 p2, undefined4 p3);
-float10 FUN_004c39b0(float * p0, float * p1);
-undefined4 FUN_004c3d90(undefined4 p0, undefined4 p1, undefined4 p2, undefined4 p3);
-void FUN_004c45f0(int p0);
-float * FUN_004c4dc0(float * p0, float * p1);
-// MATCH: 0x00478660 FUN_00478660
-void FUN_00478660(int param_1,int param_2)
+typedef struct { float x, y, z; } RwV3d;
+typedef struct { RwV3d right; unsigned int flags; RwV3d up; unsigned int pad1; RwV3d at; unsigned int pad2;
+                 RwV3d pos; unsigned int pad3; } RwMatrix;
+typedef struct { unsigned char red, green, blue, alpha; } RwRGBA;
+typedef struct { RwV3d v[3]; RwV3d n; } PolyTri;      /* 0x30, FUN_004b5030 output */
+typedef struct { RwV3d v[3]; } Tri3;
+typedef struct { RwV3d at; RwV3d pos; RwV3d c[4]; int pad; } AiPoly; /* 0x4c, course block +0xc1c0 */
 
+void FUN_004783f0(int p0);
+void FUN_004987b0(const char *fmt, ...);
+void FUN_004b4550(RwV3d *out, RwV3d *pts, int n);
+int FUN_004b46b0(RwV3d *a, RwV3d *b);
+int FUN_004b5030(int world, RwRGBA *key, PolyTri *out, int n);
+float FUN_004c39b0(RwV3d *out, RwV3d *in);
+RwV3d *FUN_004c3d90(RwV3d *out, RwV3d *in, int n, RwMatrix *m);
+RwMatrix *FUN_004c45f0(RwMatrix *m);
+RwMatrix *FUN_004c4dc0(RwMatrix *out, RwMatrix *in);
+
+#ifndef MATCH_PORT
+// HELD: 0x004785e0 (body in re/match/s12/004785e0.c; this copy exists only so the DDK compiles the caller as the original; not compiled in the port)
+static void FUN_004785e0(float *p, float *out, int norm)
 {
-  int iVar1;
-  undefined4 *puVar2;
-  int iVar3;
-  int iVar4;
-  undefined4 *puVar5;
-  undefined4 *puVar6;
-  undefined1 uStack_178;
-  undefined1 uStack_177;
-  undefined1 uStack_176;
-  undefined1 uStack_175;
-  undefined4 auStack_174 [4];
-  undefined4 uStack_164;
-  undefined4 uStack_160;
-  undefined4 uStack_15c;
-  undefined4 uStack_158;
-  undefined4 uStack_154;
-  undefined4 uStack_150;
-  undefined4 uStack_14c;
-  undefined4 uStack_148;
-  undefined4 uStack_144;
-  undefined4 uStack_140;
-  undefined4 uStack_13c;
-  float fStack_138;
-  float fStack_134;
-  float fStack_12c;
-  float fStack_128;
-  float fStack_120;
-  float fStack_11c;
-  float fStack_114;
-  float fStack_110;
-  float fStack_108;
-  float fStack_104;
-  float fStack_100;
-  float fStack_f8;
-  float fStack_f4;
-  float fStack_f0;
-  float fStack_e8;
-  float fStack_e4;
-  float fStack_e0;
-  undefined4 uStack_d8;
-  undefined4 uStack_d4;
-  undefined4 uStack_d0;
-  int local_c8;
-  undefined4 auStack_c4 [9];
-  undefined1 auStack_a0 [64];
-  undefined4 auStack_60 [12];
-  undefined4 auStack_30 [12];
-  
-  iVar3 = *(int *)(param_2 + 0x14);
-  *(int *)(param_1 + 0x16240) = iVar3;
-  local_c8 = iVar3;
-  FUN_004987b0("Number of AI polygons is %d\n",iVar3);
-  iVar4 = 0;
-  if (0 < iVar3) {
-    puVar5 = (undefined4 *)(param_1 + 0xc1d8);
-    do {
-      uStack_177 = (undefined1)((uint)iVar4 >> 8);
-      uStack_176 = 0;
-      uStack_175 = 0xff;
-      uStack_178 = (undefined1)iVar4;
-      FUN_004b5030(param_2,&uStack_178,auStack_60,2);
-      puVar2 = auStack_60;
-      puVar6 = auStack_174;
-      for (iVar3 = 9; iVar3 != 0; iVar3 = iVar3 + -1) {
-        *puVar6 = *puVar2;
-        puVar2 = puVar2 + 1;
-        puVar6 = puVar6 + 1;
-      }
-      puVar2 = auStack_30;
-      puVar6 = auStack_c4;
-      for (iVar3 = 9; iVar3 != 0; iVar3 = iVar3 + -1) {
-        *puVar6 = *puVar2;
-        puVar2 = puVar2 + 1;
-        puVar6 = puVar6 + 1;
-      }
-      iVar3 = 0;
-      puVar2 = auStack_c4;
-      do {
-        uStack_144 = *puVar2;
-        uStack_140 = puVar2[1];
-        uStack_13c = puVar2[2];
-        iVar1 = FUN_004b46b0(&uStack_144,auStack_174);
-        if (((iVar1 == 0) && (iVar1 = FUN_004b46b0(&uStack_144,auStack_174 + 3), iVar1 == 0)) &&
-           (iVar1 = FUN_004b46b0(&uStack_144,&uStack_15c), iVar1 == 0)) {
-          uStack_150 = uStack_144;
-          uStack_14c = uStack_140;
-          uStack_148 = uStack_13c;
-          break;
-        }
-        iVar3 = iVar3 + 1;
-        puVar2 = puVar2 + 3;
-      } while (iVar3 < 3);
-      FUN_004785e0(1);
-      FUN_004b4550(puVar5 + -3,auStack_174,4);
-      uStack_d4 = puVar5[-2];
-      uStack_d0 = puVar5[-1];
-      uStack_d8 = puVar5[-3];
-      fStack_e4 = (float)puVar5[-5];
-      fStack_e0 = (float)puVar5[-4];
-      fStack_108 = fStack_e0 - fStack_e4 * DAT_005d757c;
-      fStack_e8 = (float)puVar5[-6];
-      fStack_104 = fStack_e8 * DAT_005d757c - fStack_e0 * DAT_005d757c;
-      fStack_100 = fStack_e4 * DAT_005d757c - fStack_e8;
-      FUN_004c39b0(&fStack_108,&fStack_108);
-      fStack_f8 = fStack_100 * fStack_e4 - fStack_104 * fStack_e0;
-      fStack_f4 = fStack_108 * fStack_e0 - fStack_100 * fStack_e8;
-      fStack_f0 = fStack_104 * fStack_e8 - fStack_108 * fStack_e4;
-      FUN_004c39b0(&fStack_f8,&fStack_f8);
-      FUN_004c45f0(&fStack_108);
-      FUN_004c4dc0(auStack_a0,&fStack_108);
-      FUN_004c3d90(&fStack_138,auStack_174,4,auStack_a0);
-      if (DAT_005d757c <= fStack_138) {
-LAB_0047897c:
-        if (DAT_005d757c < fStack_138) {
-          if (fStack_134 <= DAT_005d757c) {
-            if ((DAT_005d757c < fStack_138) && (fStack_134 < DAT_005d757c)) {
-              puVar2 = puVar5 + 9;
-              goto LAB_004789dc;
-            }
-          }
-          else {
-            puVar5[6] = auStack_174[0];
-            puVar5[7] = auStack_174[1];
-            puVar5[8] = auStack_174[2];
-          }
-        }
-      }
-      else {
-        puVar2 = puVar5;
-        if (DAT_005d757c <= fStack_134) {
-          if ((DAT_005d757c <= fStack_138) || (fStack_134 <= DAT_005d757c)) goto LAB_0047897c;
-          puVar5[3] = auStack_174[0];
-          puVar5[4] = auStack_174[1];
-          puVar5[5] = auStack_174[2];
-        }
-        else {
-LAB_004789dc:
-          *puVar2 = auStack_174[0];
-          puVar2[1] = auStack_174[1];
-          puVar2[2] = auStack_174[2];
-        }
-      }
-      if (DAT_005d757c <= fStack_12c) {
-LAB_00478a54:
-        if (DAT_005d757c < fStack_12c) {
-          if (fStack_128 <= DAT_005d757c) {
-            if ((DAT_005d757c < fStack_12c) && (fStack_128 < DAT_005d757c)) {
-              puVar2 = puVar5 + 9;
-              goto LAB_00478ab4;
-            }
-          }
-          else {
-            puVar5[6] = auStack_174[3];
-            puVar5[7] = uStack_164;
-            puVar5[8] = uStack_160;
-          }
-        }
-      }
-      else {
-        puVar2 = puVar5;
-        if (DAT_005d757c <= fStack_128) {
-          if ((DAT_005d757c <= fStack_12c) || (fStack_128 <= DAT_005d757c)) goto LAB_00478a54;
-          puVar5[3] = auStack_174[3];
-          puVar5[4] = uStack_164;
-          puVar5[5] = uStack_160;
-        }
-        else {
-LAB_00478ab4:
-          *puVar2 = auStack_174[3];
-          puVar2[1] = uStack_164;
-          puVar2[2] = uStack_160;
-        }
-      }
-      if (DAT_005d757c <= fStack_120) {
-LAB_00478b2c:
-        if (DAT_005d757c < fStack_120) {
-          if (fStack_11c <= DAT_005d757c) {
-            if ((DAT_005d757c < fStack_120) && (fStack_11c < DAT_005d757c)) {
-              puVar2 = puVar5 + 9;
-              goto LAB_00478b8c;
-            }
-          }
-          else {
-            puVar5[6] = uStack_15c;
-            puVar5[7] = uStack_158;
-            puVar5[8] = uStack_154;
-          }
-        }
-      }
-      else {
-        puVar2 = puVar5;
-        if (DAT_005d757c <= fStack_11c) {
-          if ((DAT_005d757c <= fStack_120) || (fStack_11c <= DAT_005d757c)) goto LAB_00478b2c;
-          puVar5[3] = uStack_15c;
-          puVar5[4] = uStack_158;
-          puVar5[5] = uStack_154;
-        }
-        else {
-LAB_00478b8c:
-          *puVar2 = uStack_15c;
-          puVar2[1] = uStack_158;
-          puVar2[2] = uStack_154;
-        }
-      }
-      if (DAT_005d757c <= fStack_114) {
-LAB_00478c04:
-        if (DAT_005d757c < fStack_114) {
-          if (fStack_110 <= DAT_005d757c) {
-            if ((DAT_005d757c < fStack_114) && (fStack_110 < DAT_005d757c)) {
-              puVar2 = puVar5 + 9;
-              goto LAB_00478c64;
-            }
-          }
-          else {
-            puVar5[6] = uStack_150;
-            puVar5[7] = uStack_14c;
-            puVar5[8] = uStack_148;
-          }
-        }
-      }
-      else {
-        puVar2 = puVar5;
-        if (DAT_005d757c <= fStack_110) {
-          if ((DAT_005d757c <= fStack_114) || (fStack_110 <= DAT_005d757c)) goto LAB_00478c04;
-          puVar5[3] = uStack_150;
-          puVar5[4] = uStack_14c;
-          puVar5[5] = uStack_148;
-        }
-        else {
-LAB_00478c64:
-          *puVar2 = uStack_150;
-          puVar2[1] = uStack_14c;
-          puVar2[2] = uStack_148;
-        }
-      }
-      iVar4 = iVar4 + 1;
-      puVar5 = puVar5 + 0x13;
-    } while (iVar4 < local_c8);
+  float ax, ay, az;
+  float b[3];
+
+  ax = p[3] - p[0];
+  ay = p[4] - p[1];
+  az = p[5] - p[2];
+  b[0] = p[6] - p[0];
+  b[1] = p[7] - p[1];
+  b[2] = p[8] - p[2];
+  out[0] = b[2] * ay - b[1] * az;
+  out[1] = b[0] * az - b[2] * ax;
+  out[2] = b[1] * ax - b[0] * ay;
+  if (norm) {
+    FUN_004c39b0((RwV3d *)out, (RwV3d *)out);
   }
-  FUN_004783f0(param_1);
-  return;
+}
+#else
+void FUN_004785e0(float *p, float *out, int norm);
+#endif
+
+#define CORNER(p, t, q)   if ((t).x < 0.0f && (t).y < 0.0f) (p)->c[0] = (q);   else if (0.0f > (t).x && (t).y > 0.0f) (p)->c[1] = (q);   else if ((t).x > 0.0f && (t).y > 0.0f) (p)->c[2] = (q);   else if (0.0f < (t).x && (t).y < 0.0f) (p)->c[3] = (q)
+
+// MATCH: 0x00478660 FUN_00478660
+void FUN_00478660(int course, int world)
+{
+  int n;
+  int i;
+  int k;
+  AiPoly *p;
+  RwRGBA key;
+  RwV3d q[4];
+  RwV3d cand;
+  RwV3d t[4];
+  RwMatrix m;
+  Tri3 t2;
+  RwMatrix inv;
+  PolyTri tri[2];
+
+  n = *(int *)(world + 0x14);
+  *(int *)(course + 0x16240) = n;
+  FUN_004987b0("Number of AI polygons is %d\n", n);
+  for (i = 0; i < n; i++) {
+    key.red = (unsigned char)i;
+    key.green = (unsigned char)(i >> 8);
+    key.blue = 0;
+    key.alpha = 0xff;
+    FUN_004b5030(world, &key, tri, 2);
+    *(Tri3 *)q = *(Tri3 *)tri[0].v;
+    t2 = *(Tri3 *)tri[1].v;
+    for (k = 0; k < 3; k++) {
+      cand = t2.v[k];
+      if (!FUN_004b46b0(&cand, &q[0]) && !FUN_004b46b0(&cand, &q[1]) && !FUN_004b46b0(&cand, &q[2])) {
+        q[3] = cand;
+        break;
+      }
+    }
+    p = &((AiPoly *)(course + 0xc1c0))[i];
+    FUN_004785e0(&q[0].x, &p->at.x, 1);
+    FUN_004b4550(&p->pos, q, 4);
+    m.pos = p->pos;
+    m.at = p->at;
+    m.right.x = m.at.z - m.at.y * 0.0f;
+    m.right.y = m.at.x * 0.0f - m.at.z * 0.0f;
+    m.right.z = m.at.y * 0.0f - m.at.x;
+    FUN_004c39b0(&m.right, &m.right);
+    m.up.x = m.right.z * m.at.y - m.right.y * m.at.z;
+    m.up.y = m.right.x * m.at.z - m.right.z * m.at.x;
+    m.up.z = m.right.y * m.at.x - m.right.x * m.at.y;
+    FUN_004c39b0(&m.up, &m.up);
+    FUN_004c45f0(&m);
+    FUN_004c4dc0(&inv, &m);
+    FUN_004c3d90(t, q, 4, &inv);
+    CORNER(p, t[0], q[0]);
+    CORNER(p, t[1], q[1]);
+    CORNER(p, t[2], q[2]);
+    CORNER(p, t[3], q[3]);
+  }
+  FUN_004783f0(course);
 }
