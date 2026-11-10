@@ -7,8 +7,10 @@
      repeated constants in registers itself. */
 void *memset(void *d, int c, unsigned int n);
 #pragma intrinsic(memset)
+#ifndef MATCH_PORT
 extern int DAT_00639cc8[40];
 extern int DAT_00636c08[40][13][6];
+#endif
 // MATCH: 0x00404830 FUN_00404830
 void FUN_00404830(void)
 {

@@ -82,6 +82,7 @@ void PortTop_HandInit_Audio(void);
 void PortTop_HandInit_Rasters(void);
 void PortTop_HandInit_FrontendAssets(void);
 int  MashedRw_InstallRwGlobals(void);   // LibRw/RwApiBind.cpp
+void Orig_00428390(int state);          // Match/PortTop_00428390.cpp (PORT-OT-FRONTEND)
 
 // 1 once a piece failed (only piece 2 can: no System32 dsound.dll). Later pieces then do nothing, and the 0x00402750
 // wrapper returns 0, as HandTop_InitRest returns false.
@@ -118,11 +119,14 @@ int PortTop_Piece_00403640(int cam) {
     MashedRw_InstallRwGlobals();
     return 1;
 }
-// rva 0x00428390 FrontendStateSet(3) -> piece 5 (frontend assets, settings, save restore, nav init, fonts)
+// rva 0x00428390 FrontendStateSet(3) -> the matched body (Match/PortTop_00428390.cpp, DAT_0067d960 = state, PORT-OT-FRONTEND),
+// then piece 5 (frontend assets, settings, save restore, nav init, fonts)
 void PortTop_Piece_00428390(int state) {
+    Orig_00428390(state);
     if (g_PortTop04E_InitFailed) return;
     PortTop_HandInit_FrontendAssets();
-    Log04E("0x00428390 FrontendStateSet(%d): piece 5 HandTop_InitFrontendAssets", state);
+    Log04E("0x00428390 FrontendStateSet(%d): matched body ran (DAT_0067d960 = %d), piece 5 HandTop_InitFrontendAssets",
+           state, *reinterpret_cast<volatile int*>(0x0067d960u));
 }
 
 // ---- piz file system ----
@@ -214,8 +218,6 @@ SI(004113b0, "0x24a3c block alloc")
 SI(00558240, "RW raster create, no source")
 SI(004841d0, "0x006ce840 table init; 0 skips Rec18Create, DAT_007f0a30 stays 0")
 SI(00484170, "Rec18Create, unreached")
-SI(004723d0, "0x00691500 table init")
-SI(0047ba00, "back buffer raster consumer")
 SI(0045bae0, "powerups family")
 SI(00418980, "powerups family")
 SI(0041b450, "Panel family")
@@ -228,12 +230,6 @@ SI(0041c100, "Panel family")
 SI(0041db90, "Panel family")
 SI(0041a1e0, "Panel family")
 SI(0041eaa0, "particle emitters")
-SI(00420d00, "PanelSortInit")
-SI(00412890, "loader")
-SI(00471eb0, "loader")
-SI(00404830, "car material tables")
-SI(00402f50, "BootDefaultParamsInit; exe body exists, not run here yet")
-SI(004026d0, "BootQueueFlush(4); exe body exists, not run here yet")
 #undef SI
 }  // extern "C"
 #endif  // MASHED_STANDALONE
