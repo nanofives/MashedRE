@@ -1,0 +1,37 @@
+    diff = side[0] != side[1];
+    if (side[0] < side[1]) {
+        wa = a->f000;
+        wb = b->f000;
+        rb.ev[3] = db.x; rb.ev[4] = db.y; rb.ev[5] = db.z;
+        rb.ev[9] = ib.x; rb.ev[10] = ib.y; rb.ev[11] = ib.z;
+        rb.ev[6] = da.x; rb.ev[7] = da.y; rb.ev[8] = da.z;
+        rb.ev[12] = ia.x; rb.ev[13] = ia.y; rb.ev[14] = ia.z;
+        st = FUN_0040e350();
+        if (st == 1 || st == 2 || st == 3 || st == 4 || st == 5) return p3 == 0;
+        DAT_007e9de0.type[DAT_007e9de0.count] = 4;
+        DAT_007e9de0.time[DAT_007e9de0.count] = DAT_007f1030;
+        DAT_007e9de0.who[DAT_007e9de0.count] = a->f000 + 0xff00;
+    } else {
+        wa = b->f000;
+        wb = a->f000;
+        rb.ev[3] = da.x; rb.ev[4] = da.y; rb.ev[5] = da.z;
+        rb.ev[9] = ia.x; rb.ev[10] = ia.y; rb.ev[11] = ia.z;
+        rb.ev[6] = db.x; rb.ev[7] = db.y; rb.ev[8] = db.z;
+        rb.ev[12] = ib.x; rb.ev[13] = ib.y; rb.ev[14] = ib.z;
+        st = FUN_0040e350();
+        if (st == 1 || st == 2 || st == 3 || st == 4 || st == 5) return p3 == 0;
+        DAT_007e9de0.type[DAT_007e9de0.count] = 4;
+        DAT_007e9de0.time[DAT_007e9de0.count] = DAT_007f1030;
+        DAT_007e9de0.who[DAT_007e9de0.count] = b->f000 + 0xff00;
+    }
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f00 = wa;
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f04 = wb;
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f08 = diff;
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f0c = rb.v.x;
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f10 = rb.v.y;
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f14 = rb.v.z;
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f18 = rb.e[0];
+    DAT_007e9de0.hdr[DAT_007e9de0.count].f1c = rb.e[1];
+    for (k = 0; k < 16; k++) {
+        DAT_007e9de0.ev[DAT_007e9de0.count].v[k] = rb.ev[k];
+    }
