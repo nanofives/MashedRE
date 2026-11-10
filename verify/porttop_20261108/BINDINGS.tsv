@@ -53,15 +53,15 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00493710	FUN_00493710	matched	Orig_00493710 (via PortTop_Bound_00493710)	Match/PortTop_00493710.cpp compiles re/match/s15/00493710.c (h8 best 94.2%, the only source). RW engine bring-up. PORT-TOP-03	2	0x00492270
 0x004a4254	FUN_004a4254	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C2	2	0x004963e0
 0x004025f0	FUN_004025f0	matched	Orig_004025f0	PORT-TOP-04H: Match/PortTop_004025f0.cpp = re/match/s01/00401690.c (0x004025f0 BYTE-IDENTICAL 211 B, relocheck OK 6/6); 13 perm slots at 0x00636578: clump from "map_%d.dff", bounding box, slots +0x40 / +0x50 from the two stand-ins below	2	0x00402750
-0x004026d0	FUN_004026d0	stand-in	PortTop_StandIn04E_004026d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x00402f50	FUN_00402f50	stand-in	PortTop_StandIn04E_00402f50	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x004026d0	FUN_004026d0	matched	Orig_004026d0	PORT-OT-BOOT: Match/PortTop_004026d0.cpp = re/match/s01/004026d0.c (BYTE-IDENTICAL), callees by name (MatchS01.cpp BootQueueFlush calls them at original addresses the exe does not map); ORIGTOP-ONLY DUP-IN-TARGET	2	0x00402750
+0x00402f50	FUN_00402f50	matched	BootDefaultParamsInit	PORT-OT-BOOT: Match/MatchS01.cpp = re/match/s01/00402f50.c (both targets, the 0x00636ae8 block at its original address)	2	0x00402750
 0x00403640	FUN_00403640	stand-in	PortTop_Piece_00403640	PORT-TOP-04E: hand piece (HandTop_InitRest split at this call point). piece 4: texture upload, B15 bridge, B16 thunks	2	0x00402750
-0x00404830	FUN_00404830	stand-in	PortTop_StandIn04E_00404830	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x00404830	FUN_00404830	matched	Orig_00404830	PORT-OT-BOOT: Match/PortTop_00404830.cpp = re/match/s01/00404830.c (BYTE-IDENTICAL 1474 B): the two car material tables at 0x00639cc8 / 0x00636c08 (the hand body in Vehicle/CarMaterialTables.cpp keeps its own storage)	2	0x00402750
 0x0040bb30	FUN_0040bb30	matched	Search40bb30	PORT-TOP-04G: Match/MatchS02_0040bb30.cpp (both targets; the .asi body left Util/PromoLoop_sessionB.cpp) = re/match/s02/0040bb30.c (BYTE-IDENTICAL 21 B, relocheck OK 2/2)	2	0x00402750
 0x0040bb50	FUN_0040bb50	matched	SpriteLookupC	PORT-TOP-04G: Match/MatchS02_0040bb50.cpp (both targets; the .asi body left Frontend/SpriteCluster.cpp) = re/match/s02/0040bb50.c (BYTE-IDENTICAL 21 B, relocheck OK 2/2)	2	0x00402750
 0x0040bbb0	FUN_0040bbb0	matched	Orig_0040bbb0	PORT-TOP-04G: Match/PortTop_0040bbb0.cpp = re/match/s02/0040bbb0.c (100.0%); sfx.piz -> fx / badges / TrackImages / Interface dictionaries in DAT_0063b8f8 / fc / 900 / 904	2	0x00402750
 0x004113b0	FUN_004113b0	stand-in	PortTop_StandIn04E_004113b0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x00412890	FUN_00412890	stand-in	PortTop_StandIn04E_00412890	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x00412890	FUN_00412890	matched	Orig_00412890	PORT-OT-BOOT: Match/PortTop_00412890.cpp = re/match/s03/h2_00412890.c (BYTE-IDENTICAL 86 B): quad index table 0x0089d4a0, DAT_0063bc54 = 0x0040bb30("headlight")	2	0x00402750
 0x00418980	thunk_FUN_0041a060	stand-in	PortTop_StandIn04E_00418980	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x0041a1e0	FUN_0041a1e0	stand-in	PortTop_StandIn04E_0041a1e0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x0041b450	FUN_0041b450	stand-in	PortTop_StandIn04E_0041b450	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
@@ -73,7 +73,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0041db90	FUN_0041db90	stand-in	PortTop_StandIn04E_0041db90	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x0041def0	FUN_0041def0	stand-in	PortTop_StandIn04E_0041def0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x0041eaa0	FUN_0041eaa0	stand-in	PortTop_StandIn04E_0041eaa0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x00420d00	PanelSortInit	stand-in	PortTop_StandIn04E_00420d00	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x00420d00	PanelSortInit	matched	Orig_00420d00	PORT-OT-BOOT: Match/PortTop_00420d00.cpp = re/match/s05/00420d00.c: 0x004b6520(0x0063e4b8, 0x90) and four dwords; ORIGTOP-ONLY CROSS-TARGET vs Boot/PanelSortInit.cpp	2	0x00402750
 0x00425bc0	FUN_00425bc0	matched	Orig_00425bc0	PORT-TOP-04F: Match/PortTop_00425bc0.cpp = re/match/s05/00425bc0.c (BYTE-IDENTICAL 46 B, relocheck OK 5/5); Copters.txd from perm.piz -> DAT_00644150	2	0x00402750
 0x004274d0	LangIndexSeedFromCli	matched	LangIndexSeedFromCli	PORT-TOP-04E: matched, Match/MatchS06_004274d0.cpp (DAT_007f0f60 = DAT_007719e8), exe list since PORT-TOP-04E	2	0x00402750
 0x004274e0	FUN_004274e0	matched	LocalizationFileLoad	PORT-TOP-04F: Match/MatchS06_004274e0.cpp (now in both targets) = re/match/s06/004274e0.c (BYTE-IDENTICAL 148 B, relocheck OK 12/12); english.dat -> DAT_0066d828	2	0x00402750
@@ -85,9 +85,9 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0045bae0	FUN_0045bae0	stand-in	PortTop_StandIn04E_0045bae0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x004669b0	FUN_004669b0	stand-in	PortTop_Piece_004669b0	PORT-TOP-04E: hand piece (HandTop_InitRest split at this call point). piece 3: exe audio, permdict.rws, menu music	2	0x00402750
 0x004671a0	BackBuffRasterOpen	matched	BackBuffRasterOpen	PORT-TOP-04E: matched, Match/MatchS11_004671a0.cpp	2	0x00402750
-0x00471eb0	thunk_FUN_00471df0	stand-in	PortTop_StandIn04E_00471eb0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x004723d0	Init691500	stand-in	PortTop_StandIn04E_004723d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
-0x0047ba00	FUN_0047ba00	stand-in	PortTop_StandIn04E_0047ba00	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
+0x00471eb0	thunk_FUN_00471df0	matched	Orig_00471eb0	PORT-OT-BOOT: Match/PortTop_00471eb0.cpp = re/match/s11/00471eb0.c (jmp 0x00471df0)	2	0x00402750
+0x004723d0	Init691500	matched	Orig_004723d0	PORT-OT-BOOT: Match/PortTop_004723d0.cpp = re/match/s11/004723d0.c: the ten 0x00691500 entries; ORIGTOP-ONLY CROSS-TARGET vs Match/MatchS11_004723d0.cpp	2	0x00402750
+0x0047ba00	FUN_0047ba00	matched	Orig_0047ba00	PORT-OT-BOOT: Match/PortTop_0047ba00.cpp = re/match/topm01/0047ba00.c (BYTE-IDENTICAL 14 B): returns 0x00496940(param_1)	2	0x00402750
 0x00484170	Rec18Create	stand-in	PortTop_StandIn04E_00484170	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x004841d0	FUN_004841d0	stand-in	PortTop_StandIn04E_004841d0	PORT-TOP-04E: Match/PortTop_00402750_Pieces.cpp (logs its first call, returns 0)	2	0x00402750
 0x004881d0	Obj7030a8Create	matched	Obj7030a8Create	PORT-TOP-04I: Match/MatchS14_004881d0.cpp (both targets; exe forwarders call the bindings) = re/match/s14/004881d0.c (100%): PTank atomic DAT_007030a8 with the "lensflare-fs8" texture	2	0x00402750
@@ -358,7 +358,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004725f0	FUN_004725f0	stand-in	PortTop_StandIn04C_004725f0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; .asi-only Match/MatchS11_004725f0.cpp binds 0x0046be10 to the .asi-only Write46be10	3	0x0040cfd0
 0x00426b40	FUN_00426b40	stand-in	PortTop_StandIn04C_00426b40	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0040cfd0
 0x00405400	FUN_00405400	stand-in	PortTop_StandIn04C_00405400	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; port body only in .asi-only Util/PromoLoop_round53.cpp	3	0x0040cfd0
-0x00471df0	FUN_00471df0	stand-in	PortTop_StandIn04C_00471df0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, but its source also holds static 0x00471530, whose body is the .asi-only Match/MatchS11_00471530.cpp	3	0x0040cfd0
+0x00471df0	FUN_00471df0	matched	Orig_00471df0	PORT-OT-BOOT: Match/PortTop_00471df0.cpp = re/match/s11/00471df0.c (100%), with its file-static callee 0x00471530 (ORIGTOP-ONLY CROSS-TARGET vs Match/MatchS11_00471530.cpp)	3	0x00471eb0
 0x004114e0	FUN_004114e0	stand-in	PortTop_StandIn04C_004114e0	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; port body ReplayCleanup only in .asi-only Replay.cpp	3	0x0040cfd0
 0x00412010	FUN_00412010	stand-in	PortTop_StandIn04C_00412010	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched; reads DAT_0063bb38[i] +0x3c with no null check (state of 0x00402750)	3	0x0045b930
 0x00458880	FUN_00458880	stand-in	PortTop_StandIn04C_00458880	PORT-TOP-04C: Match/PortTop_StandIns04C.cpp (logs, does nothing): matched, not compiled (level 2)	3	0x0045b930
@@ -428,3 +428,5 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004e48e0	RpLightSetRadius	matched	Orig_004e48e0	PORT-TOP-04J: Match/PortTop_004e48e0.cpp = re/match/rwl02/004e48e0.c (BYTE-IDENTICAL 32 B) on the light record, then RwFrameUpdateObjects (bound)	4	0x00401000
 0x004e4810	RpWorldAddLight	rw	MashedRw_WorldAddLight_004e4810	PORT-TOP-04J: LibRw/RwApiBind.cpp: the light record's fields into the rw::Light, then rw::World::addLight	4	0x00401000
 0x004e4450	RwFrameAddChild	rw	MashedRw_WorldAddClump_004e4450	PORT-TOP-04J: LibRw/RwApiBind.cpp: (world, clump) -> rw::World::addClump (hooks.csv name; naming doubt aq_s4: RpWorldAddClump)	4	0x00401000
+0x00496940	FUN_00496940	matched	Orig_00496940	PORT-OT-BOOT: Match/PortTop_00496940.cpp = re/match/s16/00496940.c: DAT_00773078 = DAT_00771a0c, DAT_0077307c = RwRasterCreate(0, 0, 0, 0x84) (bound)	3	0x0047ba00
+0x004b6520	ZeroFillWrapper	matched	Orig_004b6520	PORT-OT-BOOT: Match/PortTop_004b6520.cpp = re/match/s18/004b6520.c: 0x004b64e0(dst, 0, size) = exe MemsetInline	3	0x00420d00

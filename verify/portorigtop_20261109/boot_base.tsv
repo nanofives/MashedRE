@@ -1,0 +1,66 @@
+rva	subsystem	name	binding	matched_files	exe_file	rwglobals	nonzero_data
+0x004014b0	boot	FUN_004014b0	matched		mashedmod/src/mashed_re/Match/PortTop_004014b0.cpp	0	0
+0x004015a0	boot	FUN_004015a0	matched	re/match/s01/004015a0.c	mashedmod/src/mashed_re/Match/PortTop_004015a0.cpp	0	0
+0x004026d0	boot	FUN_004026d0	stand-in	re/match/s01/004026d0.c	mashedmod/src/mashed_re/Match/MatchS01.cpp	0	0
+0x00402f50	boot	FUN_00402f50	stand-in	re/match/s01/00402f50.c	mashedmod/src/mashed_re/Match/MatchS01.cpp	0	0
+0x00403660	boot	FUN_00403660	matched	re/match/s01/00403660.c	mashedmod/src/mashed_re/Match/PortTop_00403660.cpp	0	0
+0x00404830	boot	FUN_00404830	stand-in	re/match/s01/00404830.c	Vehicle/CarMaterialTables_dirt.inc	0	0
+0x0040bb30	boot	FUN_0040bb30	matched	re/match/s02/0040bb30.c	mashedmod/src/mashed_re/Match/MatchS02_0040bb30.cpp	0	0
+0x004114c0	boot	FUN_004114c0	matched	re/match/s02/004114c0.c	mashedmod/src/mashed_re/Match/MatchS02_004114c0.cpp	1	0
+0x00412890	boot	FUN_00412890	stand-in	re/match/s03/h2_00412890.c		0	0
+0x00418980	boot	thunk_FUN_0041a060	stand-in	re/match/s03/h1_00418980.c		0	0
+0x004189e0	boot	thunk_FUN_004196f0	matched	re/match/s03/h1_004189e0.c	mashedmod/src/mashed_re/Match/PortTop_004189e0.cpp	0	0
+0x0041a3d0	boot	FUN_0041a3d0	matched	re/match/s03/raw_0041a3d0.c	mashedmod/src/mashed_re/Match/PortTop_0041a3d0.cpp	0	0
+0x0041b660	boot	FUN_0041b660	stand-in	re/match/s03/h1_grp_0041ad60.c|re/match/s04/0041b660.c		0	0
+0x0041c0e0	boot	FUN_0041c0e0	matched	re/match/s04/0041beb0.c	mashedmod/src/mashed_re/Match/PortTop_0041c0e0.cpp	0	0
+0x0041c2c0	boot	FUN_0041c2c0	matched	re/match/s04/0041c2c0.c	mashedmod/src/mashed_re/Match/PortTop_0041c2c0.cpp	0	0
+0x0041ccf0	boot	FUN_0041ccf0	matched	re/match/s04/0041cb00.c	mashedmod/src/mashed_re/Match/PortTop_0041ccf0.cpp	0	0
+0x0041d890	boot	FUN_0041d890	matched	re/match/s04/0041d6d0.c	mashedmod/src/mashed_re/Match/PortTop_0041d890.cpp	0	0
+0x0041da80	boot	FUN_0041da80	matched	re/match/s04/0041da80.c	mashedmod/src/mashed_re/Match/PortTop_0041da80.cpp	0	0
+0x0041de70	boot	FUN_0041de70	matched	re/match/s04/0041de70.c	mashedmod/src/mashed_re/Match/PortTop_0041de70.cpp	0	0
+0x0041e0d0	boot	FUN_0041e0d0	stand-in	re/match/s04/0041e0d0.c		0	0
+0x00420d00	boot	PanelSortInit	stand-in	re/match/s05/00420d00.c		0	0
+0x00421590	boot	thunk_FUN_004210f0	matched	re/match/s05/00421590.c	mashedmod/src/mashed_re/Match/PortTop_00421590.cpp	0	0
+0x00425bc0	boot	FUN_00425bc0	matched	re/match/s05/00425bc0.c	mashedmod/src/mashed_re/Match/PortTop_00425bc0.cpp	0	0
+0x00425ed0	boot	FUN_00425ed0	matched	re/match/s05/00425ed0.c	mashedmod/src/mashed_re/Match/PortTop_00425ed0.cpp	0	0
+0x004283a0	boot	FUN_004283a0	matched	re/match/s06/004283a0.c	mashedmod/src/mashed_re/Match/PortTop_004283a0.cpp	0	1
+0x00428400	boot	FUN_00428400	matched	re/match/s06/00428400.c	mashedmod/src/mashed_re/Match/PortTop_00428400.cpp	0	0
+0x0042c2a0	boot	FUN_0042c2a0	matched	re/match/s07/0042c2a0.c	mashedmod/src/mashed_re/Match/PortTop_0042c2a0.cpp	0	0
+0x00431ae0	boot	FUN_00431ae0	matched	re/match/s07/00431ae0.c	mashedmod/src/mashed_re/Match/MatchS07_00431ae0.cpp	0	0
+0x00431af0	boot	FUN_00431af0	matched	re/match/s07/00431af0.c	mashedmod/src/mashed_re/Match/MatchS07_00431af0.cpp	0	0
+0x00431b00	boot	FUN_00431b00	matched	re/match/s07/00431b00.c	mashedmod/src/mashed_re/Match/MatchS07_00431b00.cpp	0	0
+0x00431b10	boot	BootParamSet2	matched	re/match/s07/00431b10.c	mashedmod/src/mashed_re/Match/MatchS07_00431b10.cpp	0	0
+0x00431b40	boot	Set67eaa8	matched	re/match/s07/00431b40.c	mashedmod/src/mashed_re/Match/MatchS07_00431b40.cpp	0	0
+0x00467020	boot	FUN_00467020	matched	re/match/s10/00467020.c	mashedmod/src/mashed_re/Match/PortTop_00467020.cpp	0	0
+0x00467070	boot	FUN_00467070	matched	re/match/s10/00467070.c	mashedmod/src/mashed_re/Match/PortTop_00467070.cpp	0	0
+0x00471df0	boot	FUN_00471df0	stand-in	re/match/s11/00471df0.c		0	0
+0x00471eb0	boot	thunk_FUN_00471df0	stand-in	re/match/s11/00471eb0.c		0	0
+0x004723d0	boot	Init691500	stand-in	re/match/s11/004723d0.c		0	0
+0x0047ba00	boot	FUN_0047ba00	stand-in	re/match/s13/0047ba00.c|re/match/topm01/0047ba00.c		0	0
+0x0047ba10	boot	thunk_FUN_00496970	matched	re/match/s13/0047ba10.c	mashedmod/src/mashed_re/Match/PortTop_0047ba10.cpp	0	0
+0x00484130	boot	FUN_00484130	matched	re/match/s14/00484130.c	mashedmod/src/mashed_re/Match/PortTop_00484130.cpp	1	0
+0x00484170	boot	Rec18Create	stand-in	re/match/s14/00484170.c		1	1
+0x004841d0	boot	FUN_004841d0	stand-in	re/match/s14/004841d0.c|re/match/topm01/004841d0.c		0	1
+0x004881d0	boot	Obj7030a8Create	matched	re/match/s14/004881d0.c	mashedmod/src/mashed_re/Match/MatchS14_004881d0.cpp	0	0
+0x00489250	boot	FUN_00489250	matched	re/match/s14/00489250.c	mashedmod/src/mashed_re/Match/PortTop_00489250.cpp	0	0
+0x004921d0	boot	DisplayInit	matched	re/match/s15/004921d0.c	mashedmod/src/mashed_re/Match/MatchS15_004921d0.cpp	0	1
+0x004924f0	boot	sub_004924f0	stand-in	re/match/s15/004924f0.c|re/match/topm01/004924f0.c	mashedmod/src/mashed_re/Boot/SubsystemInit.cpp	0	0
+0x00493540	boot	thunk_LaunchLangGate	matched	re/match/s15/00493540.c	mashedmod/src/mashed_re/Match/MatchS15_00493540.cpp	0	0
+0x00493550	boot	thunk_EngineStopDispatch	matched	re/match/s15/00493550.c	mashedmod/src/mashed_re/Match/MatchS15_00493550.cpp	0	0
+0x00493560	boot	thunk_FUN_004954f0	matched	re/match/s15/00493560.c	mashedmod/src/mashed_re/Match/MatchS15_00493560.cpp	0	0
+0x00493900	boot	sub_00493900	matched	re/match/s15/00493900.c|re/match/topm01/00493900.c	mashedmod/src/mashed_re/Match/PortTop_00493900.cpp	0	1
+0x00494bc0	boot	FUN_00494bc0	matched	re/match/s16/00494bc0.c	mashedmod/src/mashed_re/Match/PortTop_00494bc0.cpp	0	0
+0x00494f20	boot	thunk_FUN_00494460	matched	re/match/s16/00494f20.c	mashedmod/src/mashed_re/Match/PortTop_00494f20.cpp	0	0
+0x00496ce0	boot	FUN_00496ce0	matched	re/match/s16/00496ce0.c	mashedmod/src/mashed_re/Match/PortTop_00496ce0.cpp	0	0
+0x00499690	boot	WindowMsgPump	matched	re/match/s16/00499690.c	mashedmod/src/mashed_re/Match/MatchS16_00499690.cpp	0	0
+0x004996f0	boot	WindowShow	matched	re/match/s16/004996f0.c	mashedmod/src/mashed_re/Match/MatchS16_004996f0.cpp	0	0
+0x00499730	boot	BootPtr773818Get	matched	re/match/s16/00499730.c	mashedmod/src/mashed_re/Match/MatchS16_00499730.cpp	0	0
+0x00499820	boot	sub_00499820	matched	re/match/s16/00499820.c	mashedmod/src/mashed_re/Match/PortTop_00499820.cpp	0	0
+0x00499cc0	boot	sub_00499cc0	matched	re/match/s16/00499cc0.c	mashedmod/src/mashed_re/Match/PortTop_Leaves.cpp	0	0
+0x004b4880	boot	FUN_004b4880	matched	re/match/s18/004b4880.c	mashedmod/src/mashed_re/Match/PortTop_004b4880.cpp	0	0
+0x004b6550	boot	thunk_FUN_004b6700	matched	re/match/s18/004b6550.c	mashedmod/src/mashed_re/Match/PortTop_004b6550.cpp	0	0
+0x005c4d20	boot	FUN_005c4d20	-	re/match/s28/005c4d20.c		0	0
+0x005c4d30	boot	CondGet5c4d30	-	re/match/s28/005c4d30.c		0	0
+0x005c4d50	boot	FUN_005c4d50	-	re/match/s28/005c4d50.c		1	0
+0x005c4df0	boot	FUN_005c4df0	-	re/match/s28/005c4df0.c		0	0
+0x005c4e10	boot	FUN_005c4e10	-	re/match/s28/005c4e10.c		0	0

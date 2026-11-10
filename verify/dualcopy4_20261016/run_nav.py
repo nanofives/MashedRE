@@ -21,7 +21,8 @@ env = dict(os.environ)
 for k in ("MASHED_GOTO", "MASHED_NAV_KEYS", "MASHED_RACE_DEMO", "MASHED_RESULT_DEMO", "MASHED_DBG_DRAWSTREAM", "MASHED_PLAYERTRACE"):
     env.pop(k, None)
 env.update({"MASHED_ROOT": str(ROOT), "MASHED_MUTE": "1", "MASHED_NAV_DEMO": "1", "MASHED_VERIFY_OUT": str(out),
-            "MASHED_WIN_POS": "primary-bl", "MASHED_SETTINGS_DEFAULTS": "1"})
+            "MASHED_WIN_POS": "primary-bl", "MASHED_SETTINGS_DEFAULTS": "1",
+            "MASHED_DET_MPG_PIN": "0"})   # HB-CAPTURE-MPGPIN (acts only with MASHED_DETERMINISTIC=1)
 t0 = time.time()
 p = subprocess.Popen([str(Path(exe).resolve())], cwd=str(ROOT), env=env)
 print(f"[{name}] pid={p.pid}", flush=True)

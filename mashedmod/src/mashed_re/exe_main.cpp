@@ -5055,6 +5055,18 @@ bool RenderFrame() {
         // chrome-on-black: skip the non-deterministic video/PNG backdrop entirely
     } else if (g_menu_video.ready()) {
         g_menu_video.Update();
+        // PORT-TOP-KNOBON-CAPFLAKE probe: which frontend.mpg frame the
+        // deterministic freeze took (log only, once).
+        static bool s_det_logged = false;
+        if (!s_det_logged && g_menu_video.det_uploaded()) {
+            s_det_logged = true;
+            if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                std::fprintf(lf, "F1 frontend.mpg det freeze: %s pos=%lld hash=%08x\n",
+                             g_menu_video.det_pinned() ? "pinned" : "live",
+                             g_menu_video.det_pos(), g_menu_video.det_hash());
+                std::fclose(lf);
+            }
+        }
         struct VRHW { float x, y, z, rhw; float u, v; };
         // Ground truth (log/menu_draw_dump.json draw 0): the original submits
         // the video as a 512x512 quad at the origin, 1:1 texel-to-virtual-px

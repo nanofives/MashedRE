@@ -34,6 +34,9 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   Run 4 committed ~400 MB of raw arm folders. Do not repeat it.
 
 ## Builds and game runs
+- 12-capture checks (nav-demo walk_01..12) run with `MASHED_DET_MPG_PIN=0`, so the frontend.mpg backdrop freezes on
+  frame 0 and the captures do not depend on machine load (PORT-TOP-KNOBON-CAPFLAKE). `knob_boot.py` sets it on
+  nav-demo runs unless the caller passes it. Harness only, not the deterministic-mode default.
 - Build from your worktree: `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"`.
   Never redeploy `original\mashed_re_dev.asi` (file a decision row if one is needed).
 - Game runs: private root `D:\MashedWT\<step>_root` (robocopy of `original\` with
