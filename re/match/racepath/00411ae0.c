@@ -5,7 +5,14 @@
    as the binary does at 0x00411b74). The time select needs a local and the `== 0` branch first
    (0x00411aee jne). Residual: the final sum is reassociated: ours (bb1c + d) + b7a, the original
    (b7a + bb1c) + d at 0x00411b43; and the &best store is scheduled before the 0x0063bb0c test. Tried 19
-   term orders, locals for the sum and the difference, int/uint widths, ternary forms. */
+   term orders, locals for the sum and the difference, int/uint widths, ternary forms.
+   MATCH-RACEPATH-NEAR (27 -> 13 B): `pair.best = &best` after the two identity blocks puts the &best store after
+   the 0x0063bb0c test (lea/mov at 0x00411b94); pair is read only by FUN_0041ad00, so the value is unchanged.
+   Residual 13 B: the &best store is still two instructions early (before the 0x0063bb0c load), and the sum
+   reassociation at 0x00411b43. The final add order did not move in 175 compiles: 36 parenthesised orders of
+   (07f107a, 0063bb1c, diff) x 5 diff spellings, all 120 flat orders of the five terms, the sum split into
+   statements / param t / a diff local, int and uint casts on each term, comma rvalues, __inline helpers, a
+   ternary. Only the division order changes (b39 first = 13 B, b38 first = 19 B). */
 /* ---- MATCH-S07 preamble (same text in every re/match/s07 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -67,11 +74,11 @@ void FUN_00411ae0(int unused, uint t)
         DAT_0063bb1c = *(uint *)(DAT_0063bb10 + 0x174);
     if (FUN_0042f6a0() - 2 == 0) {
         pair.ghost = &gx.m;
-        pair.best = &best;
         gx.a = 1;
         gx.b = 0;
         MatSetIdentity(&best);
         MatSetIdentity(&gx.m);
+        pair.best = &best;
         if (DAT_0063bb0c != 0)
             FUN_00482c10(DAT_0063bb0c, &gx.m, DAT_0063bb1c);
         if (DAT_0063bb10 != 0)
