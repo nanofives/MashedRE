@@ -5,7 +5,11 @@
    d.y / d.z as assign-then-subtract (d.y = p->y; d.y = me.y - d.y gives fld [p+4] / fsubr, as in the
    original; me.x - p->x stays plain), third loop as for + break on i >= n. Remaining: the original stores the
    0x004c3ac0 result (fstp dist[i]) before popping the two cdecl args, ours pops first. Tried: float/double/
-   long double return, temp variable, do-while first loop, statement orders, permuter 287 compiles. Class (b). */
+   long double return, temp variable, do-while first loop, statement orders, permuter 287 compiles. Class (b). 
+   MATCH-RACEPATH-X87A 2026-11-09: CLOSED, 587 B BYTE-IDENTICAL (insn below 100% only because the Ghidra body is
+   584 B, the symbol 587 B). The z difference goes through a named double temporary (`double dz = me.z - d.z;
+   d.z = (float)dz;`), the form that closed 0x00412cf0. The value is a float difference widened and narrowed
+   again: unchanged. */
 /* ---- MATCH-S10 preamble (same text in every re/match/s10 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -78,7 +82,7 @@ void FUN_00464a50(void)
       d.y = p->y;
       d.y = me.y - d.y;
       d.z = p->z;
-      d.z = me.z - d.z;
+      { double dz = me.z - d.z; d.z = (float)dz; }
       dist[i] = FUN_004c3ac0(&d);
     }
     do {

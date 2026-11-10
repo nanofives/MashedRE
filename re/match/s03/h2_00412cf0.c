@@ -7,7 +7,11 @@
    permutations, 93.9 -> 98.0); alpha * (f * f * 255.0f) (-> 99.0).
    Residual: `fstp [len]` after the FUN_004c3ac0 call lands after `add esi,0x20` in ours, before it in the
    original (0x00412d33). Tried copy order, declaration order, struct-member copies, double len.
-   Class: (b) one-instruction scheduling. */
+   Class: (b) one-instruction scheduling.
+   MATCH-RACEPATH-X87A 2026-11-09: CLOSED, 313 B BYTE-IDENTICAL. The z difference goes through a named double
+   temporary (`double dz = a->pos.z - d.z; d.z = (float)dz;`). That moves the fstp of len ahead of add esi,0x20
+   as at 0x00412d33. The plain double cast `(float)(a->pos.z - (double)d.z)` gives 2 B (fsub operand order flips),
+   so the named temporary is the form. The value is a float difference widened and narrowed again: unchanged. */
 typedef struct { float x, y, z; } V3;
 typedef struct {
   V3 pos;                      /* +0x00 */
@@ -37,7 +41,7 @@ void FUN_00412cf0(Particle *out, Body *a, Body *b, float alpha, float t, float l
     d.y = b->pos.y;
     d.y = a->pos.y - d.y;
     d.z = b->pos.z;
-    d.z = a->pos.z - d.z;
+    { double dz = a->pos.z - d.z; d.z = (float)dz; }
     len = FUN_004c3ac0(&d);
     vb = b->dir;
     va = a->dir;

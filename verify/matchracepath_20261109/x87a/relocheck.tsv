@@ -1,0 +1,10 @@
+rva	verdict	checked	unchecked	source	note
+0x004c0ad0	OK	checked=0	unchecked=0	004c1210.c	
+0x004c1210	OK	checked=5	unchecked=0	004c1210.c	
+0x005a86a0	OK	checked=4	unchecked=2	005a86a0.c	  unchecked: __imp__ReleaseSemaphore@12,__imp__WaitForSingleObject@8
+0x00442a60	OK	checked=26	unchecked=0	00442a60.c	
+0x00412cf0	OK	checked=7	unchecked=1	h2_00412cf0.c	  unchecked: __ftol
+0x00464a50	OK	checked=27	unchecked=0	00464a50.c	
+0x004726f0	OK	checked=4	unchecked=0	004726f0.c	
+0x0048f780	OK	checked=26	unchecked=0	0048f780.c	
+0x00422570	OK	checked=18	unchecked=2	00422570.c	  unchecked: __chkstk,__ftol

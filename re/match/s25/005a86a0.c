@@ -1,5 +1,8 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S25 0x005a86a0 (h2): best 98.5% (regs 98.5%), class a. one store ([esi]=ecx) sits between the 3rd and 4th struct dwords in the original. relocheck BAD only because the code differs from the original. */
+/* MATCH-S25 0x005a86a0 (h2): best 98.5% (regs 98.5%), class a. one store ([esi]=ecx) sits between the 3rd and 4th struct dwords in the original. relocheck BAD only because the code differs from the original.
+   MATCH-RACEPATH-X87A 2026-11-09: CLOSED, 176 B BYTE-IDENTICAL. The pointer store goes through the address
+   expression, `*(int *)(param_1 + 0x28) = param_1 + 0x30;`, not through piVar1 (same address). That lets the
+   compiler place it between the 3rd and 4th dwords of the struct copy as at 0x005a86d4. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -39,7 +42,7 @@ void FUN_005a86a0(int param_1,int *param_2)
   piVar1[0] = param_2[0];
   piVar1[1] = param_2[1];
   *(V4_005a86a0 *)(param_1 + 0x30) = *(V4_005a86a0 *)*param_2;
-  piVar1[0] = param_1 + 0x30;
+  *(int *)(param_1 + 0x28) = param_1 + 0x30;
   param_2 = (int *)*param_2;
   if (param_2[1] == 1) {
     FUN_004a34b0((char *)(param_1 + 0x40),(char *)*param_2,0x80);

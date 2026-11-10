@@ -4,7 +4,10 @@
    obj x/z read into float locals before the subtraction, v.y = 0 stored before v.x.
    Residual (a): one scheduling difference, the original loads the loop counter `a` (mov eax,[esp+0x10]) before
    `fmul 0.8` after the FUN_004c3ac0 call, ours after it. Tried: 0.8f * f(), a float temp, a second store
-   statement, a named 0.8 global, double return type, V3* prototype, (float)(x * 0.8); permuter 257 compiles. */
+   statement, a named 0.8 global, double return type, V3* prototype, (float)(x * 0.8); permuter 257 compiles. 
+   MATCH-RACEPATH-X87A 2026-11-09: CLOSED, 531 B BYTE-IDENTICAL. The call result is a comma rvalue,
+   `DAT_008989b0[a] = (0, FUN_004c3ac0(&v.x)) * 0.8f;` (lever from MATCH-RACEPATH-BIG 0x00446520). That loads the
+   counter `a` before the fmul as at 0x00442c46. Same value and type: the comma expression is the float return. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -119,7 +122,7 @@ void FUN_00442a60(void)
         v.y = 0.0f;
         v.x = pos.x - ox;
         v.z = pos.z - oz;
-        DAT_008989b0[a] = FUN_004c3ac0(&v.x) * 0.8f;
+        DAT_008989b0[a] = (0, FUN_004c3ac0(&v.x)) * 0.8f;
       }
     }
   }

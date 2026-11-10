@@ -13,7 +13,11 @@
    to entry+0x10 like the original (89.1 -> 98.5).
    Residual (b): the 2nd and 3rd y += r->f3c load f3c first (fld [ebx+0xf3c]; fadd [eax+..]) where the original
    loads the vertex first; the 1st one matches. Tried +=, a + b, b + a, a float* to f3c, a TriPos/V3 pointer
-   for d, separate increment, explicit cast, and match_permute (no gain). */
+   for d, separate increment, explicit cast, and match_permute (no gain). 
+   MATCH-RACEPATH-X87A 2026-11-09: CLOSED, 890 B BYTE-IDENTICAL. The x difference to DAT_006403b8[i] goes through a
+   named double temporary (`double tx = DAT_006403b8[i].x - s.c.x; dx = (float)tx;`), the form that closed
+   0x00412cf0 and 0x00464a50. It fixes all 16 differing bytes (the fld/fadd operand order of the two later
+   [ebx+0xf3c] sums). The value is a float difference widened and narrowed again: unchanged. */
 /* ---- MATCH-S05 preamble (same text in every re/match/s05 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -95,7 +99,7 @@ void FUN_00422570(int i, char *mtx, int world, float alpha)
   s.c = *pos;
   n = 0;
   s.r = 1.5f;
-  dx = DAT_006403b8[i].x - s.c.x;
+  { double tx = DAT_006403b8[i].x - s.c.x; dx = (float)tx; }
   dy = DAT_006403b8[i].y - s.c.y;
   dz = DAT_006403b8[i].z - s.c.z;
   if (dz * dz + (dx * dx + dy * dy) > 0.125) {
