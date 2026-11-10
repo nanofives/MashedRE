@@ -1,3 +1,4 @@
+# Since L-110 (a) / L-112 (a) BAR_Y and ICON are default ON and the =1 lines below are no-ops. Opt-out stack: NOCSIX.
 # PORT-COLOURSEL-BAR-Y (verify/portstate_20261109/PREREG_COLOURSEL_BAR_Y.md)
 MASHED_COLOURSEL_BAR_Y=1
 MASHED_COLOURSEL_ICON=1

@@ -1134,14 +1134,14 @@ void Nav_FrameInputBegin() { g_nav_flag_f1a4 = 0; }
 #include <cstdlib>   // std::getenv (PORT-COLOURSEL-ICON)
 namespace mashed_re {
 namespace Frontend {
-// [PORT-COLOURSEL-ICON 2026-11-09] MASHED_COLOURSEL_ICON (default OFF, =1 on), PREREG
+// [PORT-COLOURSEL-ICON 2026-11-09] default ON since L-112 (a) (MASHED_NO_COLOURSEL_ICON=1 opts out), PREREG
 // verify/portstate_20261109/PREREG_COLOURSEL_ICON.md. The original's colour-select icon is drawn from the choice
 // 0x0067f0c0 (0x004335f0, read at 0x00433971), which LAB_0043f468 sets to 1 right after the push of screen 4
 // (0x0043f4c3 / 0x0043f4d1) for the actions 0xff3d0000 / 0xff400000.
 bool ColourSelIcon_On() {
     static const bool s_on = [] {
-        const char* e = std::getenv("MASHED_COLOURSEL_ICON");
-        return e && e[0] == '1';
+        const char* e = std::getenv("MASHED_NO_COLOURSEL_ICON");
+        return !(e && e[0] == '1');
     }();
     return s_on;
 }
@@ -1157,12 +1157,12 @@ bool ColourSelBarY_SingleRow() {
     return s_on && Q_ModeIsCupFlow();
 }
 
-// [PORT-COLOURSEL-LEFTRIGHT 2026-11-09] MASHED_COLOURSEL_BORDER (default OFF, =1 on), PREREG
+// [PORT-COLOURSEL-LEFTRIGHT 2026-11-09] default ON since L-112 (a) (MASHED_NO_COLOURSEL_BORDER=1 opts out), PREREG
 // verify/portstate_20261109/PREREG_COLOURSEL_LEFTRIGHT.md: the single-row bar as the original's five rects.
 bool ColourSelBorder_On() {
     static const bool s_on = [] {
-        const char* e = std::getenv("MASHED_COLOURSEL_BORDER");
-        return e && e[0] == '1';
+        const char* e = std::getenv("MASHED_NO_COLOURSEL_BORDER");
+        return !(e && e[0] == '1');
     }();
     return s_on;
 }

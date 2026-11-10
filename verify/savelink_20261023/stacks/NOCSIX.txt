@@ -1,0 +1,4 @@
+# PORT-COLOURSEL-ICON-FLIP (verify/portstate_20261110/RESULT_PORT-COLOURSEL-ICON-FLIP.md): opt out of the L-112 (a)
+# defaults, i.e. the colour-select icon/commit/opponent colours (ICON) and the five-rect bar (BORDER) as before the flip.
+MASHED_NO_COLOURSEL_ICON=1
+MASHED_NO_COLOURSEL_BORDER=1
