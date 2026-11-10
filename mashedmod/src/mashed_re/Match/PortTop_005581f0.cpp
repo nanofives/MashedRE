@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_005581f0 Orig_005581f0
 #define FUN_004c7650 MashedRw_RasterDestroy_004c7650   // RW: RwRasterDestroy -> rw::Raster::destroy
-#define FUN_004d7ff0 PortTop_StandIn04C_004d7ff0   // stand-in: port body RwIdentityPassthrough only in .asi-only Render/HighAB3Helpers_p6.cpp
+#define FUN_004d7ff0 Orig_004d7ff0   // matched, Match/PortTop_004d7ff0.cpp (ORIGTOP-ONLY), since PORT-OT-RENDER
 #define FUN_004d8480 PortTop_StandIn04C_004d8480   // stand-in: port body RwErrSlotWrite only in .asi-only Render/HighAB3Helpers_p6.cpp
 extern "C" {
 #include "../../../../re/match/s24/005581f0.c"

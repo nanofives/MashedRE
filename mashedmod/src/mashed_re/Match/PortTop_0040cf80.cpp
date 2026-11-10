@@ -8,7 +8,7 @@
 #define MATCH_PORT 1
 #define FUN_0040cf80 Orig_0040cf80
 #define FUN_0041f320 Table63d830Get   // matched, Match/MatchS04_0041f320.cpp (exe since PORT-TOP-04C)
-#define FUN_0041a980 PortTop_StandIn04C_0041a980   // stand-in: matched (raw g2s source, no MGLOBAL), not compiled (level 2)
+#define FUN_0041a980 Orig_0041a980   // matched, Match/PortTop_0041a980.cpp, since PORT-OT-RENDER
 #define FUN_00422140 PortTop_StandIn04C_00422140   // stand-in: matched, not compiled (level 2)
 #define FUN_0041ec00 PortTop_StandIn04C_0041ec00   // stand-in: matched, not compiled (level 2)
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp

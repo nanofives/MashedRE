@@ -111,6 +111,14 @@ int PortTop_StandIn04G_004b3d20(char* p0) {
 #define FUN_0048e820 PortTop_StandIn04G_0048e820
 #define FUN_0048eac0 PortTop_StandIn04G_0048eac0
 #define FUN_0048ff20 PortTop_StandIn04G_0048ff20
+// Rebound off the stand-ins above (their SI definitions stay, unreferenced). Kept in one block below the list so a row
+// that edits a neighbouring line of the list does not touch the same lines.
+#undef FUN_004759b0
+#define FUN_004759b0 Orig_004759b0                       // matched, Match/PortTop_004759b0.cpp, since PORT-OT-RENDER
+#undef FUN_00476390
+#define FUN_00476390 Orig_00476390                       // matched, Match/PortTop_00476390.cpp, since PORT-OT-RENDER
+#undef FUN_00477e40
+#define FUN_00477e40 Orig_00477e40                       // matched, Match/PortTop_00477e40.cpp, since PORT-OT-RENDER
 extern "C" {
 #include "../../../../re/match/s02/0040bbb0.c"
 }
