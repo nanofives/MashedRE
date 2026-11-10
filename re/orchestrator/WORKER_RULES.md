@@ -56,6 +56,10 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
 ## What a change may do
 - Behaviour changes ship as a **default-OFF knob + a committed PREREG** (PREREG committed alone,
   before its arms). Never flip a default. The flip is a decision row.
+- A knob's arm stack goes in **its own file** `verify/savelink_20261023/stacks/<TAG>.txt` (one knob per line,
+  `@<TAG>` includes another stack, `#` comments), never a new `STACK[...]` line in `run_arms.py`. Two rows
+  appending to that tail conflicted in the merge train 4 times on 2026-11-09. A tag that already exists is an
+  error. `A4_PLAN=1 py.exe -3.12 verify/savelink_20261023/run_arms.py H_<TAG>` prints the env without a launch.
 - Default gates must stay unchanged on your exe: the `gctrl.ref` and `b.ref` values in
   `re/orchestrator/merge_train.json` (since the D3-CF-U9779 flip, 2026-10-25: G-CTRL
   `ef5f2e10/57f7ff83/b4f4b55a`, B `c37d4c0c/0a8f9806/7013671d`; read the file, it wins over this line)

@@ -7,6 +7,10 @@ usage: py -3.12 run_arms.py <arm> [<arm> ...]
   W_<tag>[-<rep>]     Warzone live (pontoon recipe): rule 8, 3600 frames, PONTOON_TRACE + SEEK_TRACE + AI_STEPDUMP
   WL_<tag>[-<rep>]    the same at 18000 frames (300 s, the length of the original's OP3 capture): full-race no-crash arm
 <tag> selects a knob stack from STACK. Tag DEF = the plain (new, dflip) default, no knob.
+To ADD a stack, write verify/savelink_20261023/stacks/<TAG>.txt (one knob per line, '@<TAG>' includes another stack,
+'#' comments), never a new STACK[...] line in this file: per-stack files keep two rows' additions out of each other's
+merge (HB-RUNARMS-STACKFILES, verify/hb_runarms_20261109/RESULT_HB-RUNARMS-STACKFILES.md). A tag already defined is an error.
+A4_PLAN=1: print each arm's exe and MASHED_* env and exit without launching (no file is touched).
 The exe runs with MASHED_ROOT = a private copy of original/ (the root CONTAINS original\), so CWD-relative
 logs land in ROOT, never in the shared main tree. Every run appends one provenance line to RUNLOG.txt.
 """
@@ -273,6 +277,11 @@ def tag_of(rest):
 
 
 def run(name, env, files, limit, exe, cwd_logs=('mashed_re.log', 'player_trace.log', 'motion_diag.log', 'a5g_diag.log'), wall=None):
+    if os.environ.get('A4_PLAN'):   # HB-RUNARMS-STACKFILES: plan only, no launch, no file removed or written
+        print(f'=== PLAN {name} exe={exe} limit={limit} wall={wall}', flush=True)
+        for k, v in sorted(env.items()):
+            if k.startswith('MASHED_'): print(f'    {k}={v}', flush=True)
+        return
     for f in [os.path.join(ROOT, c) for c in cwd_logs] + files:
         if os.path.exists(f): os.remove(f)
     t0 = time.time()
@@ -493,52 +502,62 @@ for _c in (1, 3):
     STACK[f'RS8RD{_c}'] = STACK[f'RD{_c}'] + ['MASHED_RING_SKIP=8']
 # D4-DC-77b0-ST5-RING: MASHED_ST5_LEG2 now also runs the audio-pass ring draws before the state-2 roll; NRA opts out
 STACK['ST5L2NRA'] = STACK['ST5L2'] + ['MASHED_NO_RING_AUDIO_PASS=1']
-STACK['PSC'] = ['MASHED_PORTSTATE_COURSE']   # MATCH-PORTSTATE-COURSE: course table port-state (L-78 (c))
-STACK['PSR'] = ['MASHED_PORTSTATE_RECORDS']  # MATCH-PORTSTATE-RECORDS: car record block port-state (L-78 (c))
-STACK['PSF'] = ['MASHED_PORTSTATE_FRONTEND']  # PORT-STATE-01: frontend game-mode word at DAT_0067e9fc
-STACK['NOPSS'] = ['MASHED_NO_PORTSTATE_SEED', 'MASHED_VIDEOCFG_WRITE=0']   # PORT-STATE-02 after the L-101 flip: the seed's opt-out. Since the matched videocfg swap the opt-out kills the exe at the first-run load (empty fopen mode, 0xC0000409), so it carries MASHED_VIDEOCFG_WRITE=0 (PORT-SEED-OPTOUT made the opt-out boot without it; the stack keeps it so its arms stay comparable)
-STACK['NOPSSO'] = ['MASHED_NO_PORTSTATE_SEED']   # PORT-SEED-OPTOUT: the opt-out alone (boots since that step)
-STACK['NPSR'] = ['MASHED_NO_PORTSTATE_RECORDS=1']  # L-88 flip opt-out: the pre-flip default (gates.csv ba407a16)
-# MATCH-PORTSTATE-GAMEFLOW: game-mode machine port-state (L-78 (c)); PSG = all three port-state knobs (the selector
-# 0x0040ce80 needs the seeded course table), PSGO = the GAMEFLOW knob alone; the *A stacks race Arctic (Course_Id 0, row 3)
-_PSG = ['MASHED_PORTSTATE_COURSE', 'MASHED_PORTSTATE_RECORDS', 'MASHED_PORTSTATE_GAMEFLOW']
-STACK['PSG'] = _PSG; STACK['PSGO'] = ['MASHED_PORTSTATE_GAMEFLOW']
-STACK['DEFA'] = ['MASHED_TRACK_VIEW=Arctic']; STACK['PSGA'] = _PSG + ['MASHED_TRACK_VIEW=Arctic']
-# HB-GATE-FLAKE-GAMEFLOW: reproduce the g1 H_PSGO outlier. R7P = the R7 test press at r7frame 4308 (the frame the
-# g1 Enter landed on); TK = an ambient Enter (DIK 0x1c) reported by the device for det_frames 5406..5415, as g1's log
-# shows, with the drop knob removed; TKD = the same press with the drop knob (base_env) kept; NAKOFF = no drop knob.
-STACK['R7P'] = ['MASHED_R7_INPUT_PRESS=4308']; STACK['PSGOR7P'] = STACK['PSGO'] + STACK['R7P']
-STACK['TK'] = ['-MASHED_DET_NO_AMBIENT_KEYS', 'MASHED_DET_TEST_KEY=0x1c@5406+10']
-STACK['TKD'] = ['MASHED_DET_TEST_KEY=0x1c@5406+10']; STACK['NAKOFF'] = ['-MASHED_DET_NO_AMBIENT_KEYS']
-STACK['PSGOTK'] = STACK['PSGO'] + STACK['TK']
-# MATCH-PORTSTATE-GAMEFLOW-FU: PSGF = PSG + the 0x004929d0 racing-phase tick (MASHED_PORTSTATE_GAMEFLOW_FU)
-STACK['PSGF'] = _PSG + ['MASHED_PORTSTATE_GAMEFLOW_FU']
-# PORT-X87-PC24 (verify/portstate_20261109/PREREG_X87PC24.md): the game thread at x87 PC_24 from device creation on, the
-# same plus the D2 42 s hold, and the section-3 interaction stacks (each = X24 + one precision knob). LCW = + MASHED_LOG_CW.
-_X24 = ['MASHED_X87_PC24']
-STACK['X24'] = _X24; STACK['X24H'] = _X24 + STACK['DEFH']; STACK['X24LCW'] = _X24 + ['MASHED_LOG_CW']
-STACK['DEFLCW'] = ['MASHED_LOG_CW']
-STACK['X24NCC'] = _X24 + ['MASHED_NO_CC_PC24=1']; STACK['X24MM'] = _X24 + ['MASHED_MATMUL_PC24=1']
-STACK['X24PK'] = _X24 + ['MASHED_X87_PC24_PK53=1']; STACK['X24NCL'] = _X24 + ['MASHED_NO_COLL_LUT=1']
-STACK['X24NL1'] = _X24 + ['MASHED_NO_LEAVES1_X87=1']
-# the same knobs with MASHED_X87_PC24 OFF (controls: does the knob move G-CTRL / B at all?)
-STACK['NCC0'] = ['MASHED_NO_CC_PC24=1']; STACK['MM0'] = ['MASHED_MATMUL_PC24=1']
-STACK['NCL0'] = ['MASHED_NO_COLL_LUT=1']; STACK['NL10'] = ['MASHED_NO_LEAVES1_X87=1']
-STACK['NCC0H'] = STACK['NCC0'] + STACK['DEFH']; STACK['X24NCCH'] = STACK['X24NCC'] + STACK['DEFH']
-# PORT-AISPLINE-DDKORDER (verify/portstate_20261109/PREREG_AISPLINE_DDKORDER.md): 0x00443300 in the DDK's add order
-STACK['DDK'] = ['MASHED_AISPLINE_DDK=1']
-# report only: the exe calls AiSplineEval_x87 only through AiLeaf_414570 (MASHED_AILEAF, AiStandalone.cpp:1056)
-STACK['AL'] = ['MASHED_AILEAF=1']; STACK['ALDDK'] = ['MASHED_AILEAF=1', 'MASHED_AISPLINE_DDK=1']
-# PORT-COLOURSEL-ICON (verify/portstate_20261109/PREREG_COLOURSEL_ICON.md): the icon reads 0x0067f0c0
-STACK['CSI'] = ['MASHED_COLOURSEL_ICON=1']
-# PORT-COLOURSEL-BAR-Y (verify/portstate_20261109/PREREG_COLOURSEL_BAR_Y.md)
-STACK['CSB'] = ['MASHED_COLOURSEL_BAR_Y=1']; STACK['CSIB'] = ['MASHED_COLOURSEL_BAR_Y=1', 'MASHED_COLOURSEL_ICON=1']
-# PORT-SAVE-SPAN-MIRROR (verify/portstate_20261109/PREREG_SAVE_SPAN_MIRROR.md): 0x00404e80 steps 2-3 at the real addresses
-STACK['SSM'] = ['MASHED_SAVE_SPAN_MIRROR=1']
 # PORT-BATCH-TOOL (verify/portbatch_20261109/PREREG_PORT-BATCH-TOOL.md): BATCH = the closed-set switch the bisect driver
 # re/tools/port_batch_bisect.py passes in A4_BATCH_KNOBS (space-separated KEY=VALUE, e.g.
 # 'MASHED_BATCH_HUD=1 MASHED_BATCH_HUD_ROWS=0x0041d870'). Arms H_BATCH, B_BATCH_K0 / K1 / K26.
 STACK['BATCH'] = os.environ.get('A4_BATCH_KNOBS', '').split()
+# HB-RUNARMS-STACKFILES (verify/hb_runarms_20261109): a NEW stack goes in its own file stacks/<TAG>.txt next to this
+# script, not in the lines above, so two rows that each add a stack never touch the same lines (the merge train
+# hand-merged this tail 4 times on 2026-11-09). Format: '#' comment lines, blank lines ignored, one knob per line written
+# exactly as in a STACK list ('MASHED_X', 'MASHED_X=v', '-MASHED_X'), and '@<TAG>' = the knobs of stack <TAG> (in-file or
+# another file) in place. Files load after every in-file definition, so they get no <tag>T trace twin and in-file lines
+# cannot read them. A file tag already defined in-file (or by another file) is an error, never an override.
+STACK_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'stacks')
+
+
+def load_stack_files(stack, d):
+    import re
+    if not os.path.isdir(d):
+        return
+    raw = {}
+    for fn in sorted(os.listdir(d)):
+        if not fn.endswith('.txt'):
+            continue
+        tag = fn[:-4]
+        if not re.fullmatch(r'[A-Za-z0-9_]+', tag):
+            sys.exit(f'run_arms: bad stack file name {fn!r} (tag must be [A-Za-z0-9_]+, no "-", it ends the tag in an arm name)')
+        clash = [t for t in list(stack) + list(raw) if t.upper() == tag.upper()]
+        if clash:
+            sys.exit(f'run_arms: duplicate stack tag {tag!r}: {os.path.join(d, fn)} vs the existing tag {clash[0]!r} '
+                     f'({"in-file STACK" if clash[0] in stack else "another stacks/ file"}). Pick a new tag.')
+        with open(os.path.join(d, fn), encoding='utf-8') as f:
+            raw[tag] = [l.strip() for l in f if l.strip() and not l.strip().startswith('#')]
+    done = {}
+
+    def resolve(tag, path):
+        if tag in done:
+            return done[tag]
+        if tag in path:
+            sys.exit('run_arms: stack include cycle ' + ' -> '.join(path + [tag]))
+        out = []
+        for item in raw[tag]:
+            if item.startswith('@'):
+                ref = item[1:]
+                if ref in raw:
+                    out += resolve(ref, path + [tag])
+                elif ref in stack:
+                    out += stack[ref]
+                else:
+                    sys.exit(f'run_arms: stacks/{tag}.txt includes unknown stack {ref!r}')
+            else:
+                out.append(item)
+        done[tag] = out
+        return out
+    for tag in raw:
+        stack[tag] = list(resolve(tag, []))
+
+
+load_stack_files(STACK, STACK_DIR)
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

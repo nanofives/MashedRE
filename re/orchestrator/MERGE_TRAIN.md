@@ -22,6 +22,9 @@ The runner is a per-lane copy of `verify/savelink_20261023/run_arms.py`, set up 
 - It runs from the root as cwd and kills only its own PID (267-283).
 - Every run appends one line to `OUT/RUNLOG.txt` with `file:lines:sha8` (295-297). It does not create `OUT` (NEXT_SESSION.md:327).
 - Usage line: `py -3.12 run_arms.py <arm>...` (run_arms.py:3).
+- Stacks added since HB-RUNARMS-STACKFILES (2026-11-09) live one per file in `verify/savelink_20261023/stacks/<TAG>.txt`,
+  merged into `STACK` after the in-file definitions (duplicate tag = exit 1). New files never conflict in the train.
+  `A4_PLAN=1` prints each arm's env without launching.
 - **It takes no mashed_lock.** It has no lock import at all.
 - Base env for H/B arms: `MASHED_MUTE=1 TRACK_VIEW=Training CAR=1 ROUND=1 ROUND_RULE=0 GAME_MODE=10 WIN_POS=primary-bl DETERMINISTIC=1 DET_FRAMES=N` (242-247).
 

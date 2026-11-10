@@ -1,0 +1,2 @@
+# L-88 flip opt-out: the pre-flip default (gates.csv ba407a16)
+MASHED_NO_PORTSTATE_RECORDS=1
