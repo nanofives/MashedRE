@@ -5,6 +5,7 @@
 
 #include <dshow.h>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #pragma comment(lib, "strmiids.lib")
@@ -30,6 +31,63 @@ struct ISampleGrabberCompat : public IUnknown {
     virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(IMediaSample**) = 0;
     virtual HRESULT STDMETHODCALLTYPE SetCallback(ISampleGrabberCB*, long) = 0;
 };
+
+// ---- PORT-TOP-KNOBON-CAPFLAKE: MASHED_DET_MPG_PIN=<ms> (default OFF) ----
+// The R10b freeze below takes whatever buffer GetCurrentBuffer() holds at the
+// first Update(), and how far the real-time graph has got by then depends on
+// machine load: the 04G f2 / 04J p1 nav captures froze on a different
+// frontend.mpg frame (diff only in the backdrop rect, x 0..509). With the knob,
+// the grabber's BufferCB (streaming thread) copies the first sample whose start
+// time is >= <ms>, and the graph runs with no reference clock (SetSyncSource
+// NULL) so no sample is ever late or dropped. The frame is then a function of
+// the file alone.
+struct MpegDetPinCB : public ISampleGrabberCB {
+    double target_s = 0.0;
+    unsigned char* buf = nullptr;
+    long len = 0;
+    volatile LONG got = 0;        // 1 once buf holds the pinned frame
+    double got_time = -1.0;
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override {
+        if (!ppv) return E_POINTER;
+        if (riid == IID_IUnknown) { *ppv = static_cast<IUnknown*>(this); return S_OK; }
+        *ppv = nullptr;
+        return E_NOINTERFACE;
+    }
+    ULONG STDMETHODCALLTYPE AddRef() override { return 2; }    // owned by MpegVideoTexture
+    ULONG STDMETHODCALLTYPE Release() override { return 1; }
+    HRESULT STDMETHODCALLTYPE SampleCB(double, IMediaSample*) override { return S_OK; }
+    HRESULT STDMETHODCALLTYPE BufferCB(double t, BYTE* p, long n) override {
+        if (got || !buf || !p || n <= 0 || t + 1e-4 < target_s) return S_OK;
+        std::memcpy(buf, p, static_cast<size_t>(n < len ? n : len));
+        got_time = t;
+        InterlockedExchange(&got, 1);
+        return S_OK;
+    }
+};
+
+static unsigned Fnv1a(const unsigned char* p, long n) {
+    unsigned h = 2166136261u;
+    for (long i = 0; i < n; ++i) { h ^= p[i]; h *= 16777619u; }
+    return h;
+}
+
+static int DetModeOn() {
+    static int s_det = -1;
+    if (s_det < 0) {
+        char b[8] = {};
+        s_det = (GetEnvironmentVariableA("MASHED_DETERMINISTIC", b, sizeof(b)) > 0
+                 && b[0] == '1') ? 1 : 0;
+    }
+    return s_det;
+}
+
+// <0 = knob off. Read per Open() (cheap, a handful of calls per boot).
+static double DetPinTargetSeconds() {
+    char b[32] = {};
+    if (GetEnvironmentVariableA("MASHED_DET_MPG_PIN", b, sizeof(b)) == 0 || !b[0])
+        return -1.0;
+    return std::atof(b) / 1000.0;
+}
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -212,6 +270,20 @@ bool MpegVideoTexture::Open(IDirect3DDevice9* dev, const char* mpg_path,
     if (!opt.loop)   // only the non-looping streams read their events (Ended())
         graph_->QueryInterface(IID_IMediaEventEx, reinterpret_cast<void**>(&event_));
     if (!ctrl_) return fail("IMediaControl", E_NOINTERFACE);
+    // PORT-TOP-KNOBON-CAPFLAKE knob (default OFF; see MpegDetPinCB).
+    if (opt.loop && opt.run && DetModeOn()) {
+        const double tgt = DetPinTargetSeconds();
+        if (tgt >= 0.0) {
+            pin_ = new MpegDetPinCB();
+            pin_->target_s = tgt;
+            pin_->len = buf_len_;
+            pin_->buf = new unsigned char[static_cast<unsigned>(buf_len_)];
+            IMediaFilter* mf = nullptr;
+            graph_->QueryInterface(IID_IMediaFilter, reinterpret_cast<void**>(&mf));
+            if (mf) { mf->SetSyncSource(nullptr); mf->Release(); }
+            grab_->SetCallback(pin_, 1);   // 1 = BufferCB
+        }
+    }
     if (opt.run) ctrl_->Run();
     ready_ = true;
     return true;
@@ -232,16 +304,25 @@ void MpegVideoTexture::Update() {
     // menu still shows real video rather than a black hole, and the frame is
     // reproducible. Outside deterministic mode nothing changes — the backdrop
     // animates exactly as before.
-    static int s_det = -1;
-    if (s_det < 0) {
-        char b[8] = {};
-        s_det = (GetEnvironmentVariableA("MASHED_DETERMINISTIC", b, sizeof(b)) > 0
-                 && b[0] == '1') ? 1 : 0;
-    }
+    const int s_det = DetModeOn();
     if (s_det && det_uploaded_) return;
     long sz = buf_len_;
-    if (FAILED(grab_->GetCurrentBuffer(&sz, reinterpret_cast<long*>(buf_))) || sz <= 0)
-        return;
+    if (pin_) {
+        // MASHED_DET_MPG_PIN: upload the pinned sample, then stop the graph
+        // (nothing reads it again in deterministic mode).
+        if (!pin_->got) return;
+        std::memcpy(buf_, pin_->buf, static_cast<size_t>(buf_len_));
+        det_pos_ = static_cast<long long>(pin_->got_time * 1e7 + 0.5);
+        if (ctrl_) ctrl_->Stop();
+    } else {
+        if (FAILED(grab_->GetCurrentBuffer(&sz, reinterpret_cast<long*>(buf_))) || sz <= 0)
+            return;
+        if (s_det && seek_) {   // probe only: where the live graph was at the freeze
+            LONGLONG cur = -1;
+            if (SUCCEEDED(seek_->GetCurrentPosition(&cur))) det_pos_ = cur;
+        }
+    }
+    if (s_det) det_hash_ = Fnv1a(buf_, buf_len_);
     // loop: rewind when the stream reaches its end
     if (loop_ && seek_) {
         LONGLONG cur = 0, dur = 0;
@@ -286,7 +367,11 @@ void MpegVideoTexture::Close() {
     if (ctrl_) { ctrl_->Stop(); ctrl_->Release(); ctrl_ = nullptr; }
     if (event_) { event_->Release(); event_ = nullptr; }
     if (seek_) { seek_->Release(); seek_ = nullptr; }
-    if (grab_) { grab_->Release(); grab_ = nullptr; }
+    if (grab_) {
+        if (pin_) grab_->SetCallback(nullptr, 1);
+        grab_->Release(); grab_ = nullptr;
+    }
+    if (pin_) { delete[] pin_->buf; delete pin_; pin_ = nullptr; }
     if (graph_) { graph_->Release(); graph_ = nullptr; }
     if (tex_) { tex_->Release(); tex_ = nullptr; }
     delete[] buf_;

@@ -18,6 +18,7 @@ struct IMediaControl;
 struct IMediaSeeking;
 struct IMediaEventEx;
 struct ISampleGrabberCompat;
+struct MpegDetPinCB;
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -53,6 +54,13 @@ public:
     unsigned tex_width() const { return tw_; }
     unsigned tex_height() const { return th_; }
     long audio_hr() const { return audio_hr_; }   // last Render() result on the extra pins
+    // PORT-TOP-KNOBON-CAPFLAKE probe: under MASHED_DETERMINISTIC, the frozen
+    // frame's FNV-1a hash and stream position (100 ns units; pinned mode: the
+    // sample start time) once the one upload has happened.
+    bool det_uploaded() const { return det_uploaded_; }
+    unsigned det_hash() const { return det_hash_; }
+    long long det_pos() const { return det_pos_; }
+    bool det_pinned() const { return pin_ != nullptr; }
 
 private:
     IGraphBuilder*       graph_ = nullptr;
@@ -74,6 +82,12 @@ private:
     // So the backdrop lands on a different video frame every run. Freeze after the
     // first upload in deterministic mode; see Update().
     bool                 det_uploaded_ = false;
+    unsigned             det_hash_ = 0;
+    long long            det_pos_ = -1;
+    // MASHED_DET_MPG_PIN=<ms> (default OFF, deterministic mode, looping streams
+    // only): freeze on the first decoded sample whose start time is >= <ms>
+    // instead of whatever GetCurrentBuffer holds at the first Update().
+    MpegDetPinCB*        pin_ = nullptr;
 };
 
 }  // namespace D3d9Render
