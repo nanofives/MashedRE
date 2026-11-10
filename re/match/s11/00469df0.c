@@ -99,7 +99,7 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
     uint k, cnt;
     int side[2];
     float sx, sy, sz, inv;
-    V3_00469df0 P0, P1, P2, P3;
+    V3_00469df0 P[4];
     V3_00469df0 n3;
     float nx, ny, nz, ex, ey, ez;
     V3_00469df0 n0, n1, n2, nn;
@@ -124,39 +124,39 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         nx = c->n.x;
         ny = c->n.y;
         nz = c->n.z;
-        P0.x = c->q[0].x;
-        P0.y = c->q[0].y;
-        P0.z = c->q[0].z;
-        P1.x = c->q[1].x;
-        P1.y = c->q[1].y;
-        P1.z = c->q[1].z;
-        P3.x = c->q[3].x;
-        P3.y = c->q[3].y;
-        P3.z = c->q[3].z;
-        P2.x = c->q[2].x;
-        P2.y = c->q[2].y;
-        P2.z = c->q[2].z;
-        ex = P1.x - P0.x;
-        ey = P1.y - P0.y;
-        ez = P1.z - P0.z;
+        P[0].x = c->q[0].x;
+        P[0].y = c->q[0].y;
+        P[0].z = c->q[0].z;
+        P[1].x = c->q[1].x;
+        P[1].y = c->q[1].y;
+        P[1].z = c->q[1].z;
+        P[3].x = c->q[3].x;
+        P[3].y = c->q[3].y;
+        P[3].z = c->q[3].z;
+        P[2].x = c->q[2].x;
+        P[2].y = c->q[2].y;
+        P[2].z = c->q[2].z;
+        ex = P[1].x - P[0].x;
+        ey = P[1].y - P[0].y;
+        ez = P[1].z - P[0].z;
         n0.x = ez * ny - ey * nz;
         n0.y = ex * nz - ez * nx;
         n0.z = ey * nx - ex * ny;
-        ex = P3.x - P1.x;
-        ey = P3.y - P1.y;
-        ez = P3.z - P1.z;
+        ex = P[3].x - P[1].x;
+        ey = P[3].y - P[1].y;
+        ez = P[3].z - P[1].z;
         n1.x = ez * ny - ey * nz;
         n1.y = ex * nz - ez * nx;
         n1.z = ey * nx - ex * ny;
-        ex = P2.x - P3.x;
-        ey = P2.y - P3.y;
-        ez = P2.z - P3.z;
+        ex = P[2].x - P[3].x;
+        ey = P[2].y - P[3].y;
+        ez = P[2].z - P[3].z;
         n2.x = ez * ny - ey * nz;
         n2.y = ex * nz - ez * nx;
         n2.z = ey * nx - ex * ny;
-        ex = P0.x - P2.x;
-        ey = P0.y - P2.y;
-        ez = P0.z - P2.z;
+        ex = P[0].x - P[2].x;
+        ey = P[0].y - P[2].y;
+        ez = P[0].z - P[2].z;
         n3.x = ez * ny - ey * nz;
         n3.y = ex * nz - ez * nx;
         n3.z = ey * nx - ex * ny;
@@ -165,10 +165,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[0].x;
         da.y = o->q[0].y;
         da.z = o->q[0].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
@@ -178,10 +178,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[1].x;
         da.y = o->q[1].y;
         da.z = o->q[1].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
@@ -191,10 +191,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[2].x;
         da.y = o->q[2].y;
         da.z = o->q[2].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
@@ -203,10 +203,10 @@ static int FUN_00469df0(Car_00469df0 *b, int p2, int p3, Car_00469df0 *a)
         da.x = o->q[3].x;
         da.y = o->q[3].y;
         da.z = o->q[3].z;
-        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P0)) < 0.0f &&
-            Dot_00469df0(&n1, Sub_00469df0(&da, &P1)) < 0.0f &&
-            Dot_00469df0(&n2, Sub_00469df0(&da, &P3)) < 0.0f &&
-            Dot_00469df0(&n3, Sub_00469df0(&da, &P2)) < 0.0f) {
+        if (Dot_00469df0(&n0, Sub_00469df0(&da, &P[0])) < 0.0f &&
+            Dot_00469df0(&n1, Sub_00469df0(&da, &P[1])) < 0.0f &&
+            Dot_00469df0(&n2, Sub_00469df0(&da, &P[3])) < 0.0f &&
+            Dot_00469df0(&n3, Sub_00469df0(&da, &P[2])) < 0.0f) {
             sx = sx + da.x;
             cnt++;
             sy = da.y + sy;
