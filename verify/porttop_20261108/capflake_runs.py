@@ -13,7 +13,10 @@ W = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 D = os.environ.get('CAPFLAKE_DATA', 'D:/MashedWT/PORT-TOP-KNOBON-CAPFLAKE_data')
 R = os.environ.get('CAPFLAKE_ROOT', 'D:/MashedWT/PORT-TOP-KNOBON-CAPFLAKE_rootK')
 BASE = 'D:/MashedWT/PORT-TOP-04E_data/settings_baseline.bin'
-E = ['83c8cbb913899494', '24249b644e3e8057', 'feb2c803554cd028', '2871487f1fcef51c', '9f02cb91d09e0500',
+# walk_04 (colour select) = 4d53d93f87f0332d since BAR_Y went default ON (L-110 (a), Frontend/MenuNavSM.cpp:1148):
+# verify/portstate_20261109/RESULT_PORT-COLOURSEL-BAR-Y.md:49 (BAR_Y ON), all four PORT-OT-FRONTEND runs
+# (verify/portorigtop_20261109/RESULT_PORT-OT-FRONTEND.md). The 04E value before it was 2871487f1fcef51c (BAR_Y OFF).
+E = ['83c8cbb913899494', '24249b644e3e8057', 'feb2c803554cd028', '4d53d93f87f0332d', '9f02cb91d09e0500',
      'b1f095c07072b28d', '3465159db8526481', '843e3fc49d166754', '5db0164fb2c6df8c', 'ca2f64dc5e7a9407',
      '536f710d21e50619', '6d41bc3ac8ad8d8a']
 X = ['83c8cbb913899494', '2b5487e980ea0a9f', 'e2a771a4c1404c0b', '618605e4c0b573dc', 'e4adbce36b493a28',
