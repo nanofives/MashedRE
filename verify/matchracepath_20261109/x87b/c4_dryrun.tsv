@@ -1,0 +1,4 @@
+[1/1] 0x0041f120 match PASS byte-identical 150 B, relocheck OK (2/0)
+batch: 1 pass, 0 refused, 0 skipped (already C4), 1 rows
+dry run: nothing written. CHANGELOG lines that --apply would prepend:
+  2026-11-09  0x0041f120  Player::ComputeVehicleToCameraVec  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s04/0041f120.c; evidence: <RESULT>

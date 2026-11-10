@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S04 0x0041f120 by hand (h9): best 89.1% (regs 89.1%, ops 95.7%), 46/46 ins. Raw g2s 45.7%. Moved it: per-player record PSlot at DAT_0063d9e0 (0x2ac bytes; pos V3 +0x258, car +0x29c; Ghidra's DAT_0063dc38/3c/40/7c are record offsets) via a local PSlot*, and the parenthesised (y*y + x*x) + z*z (cl keeps the parenthesised association; without parens it emits z*z first). Residual: one scheduling slot, the original loads s->pos.x before mov ecx,[ecx+4] and does add ecx,0x40 before fsub [ecx]; ours folds fsub [ecx+0x40] first. Tried: local frame/V3 pointers, RwV3dSub macro (expression repeated), static __inline V3Sub/CarPos helpers, a 3-step loop, early return, a car local, permuter (6 rounds, no gain). Class (b). */
+/* MATCH-S04 0x0041f120 by hand (h9): best 89.1% (regs 89.1%, ops 95.7%), 46/46 ins. Raw g2s 45.7%. Moved it: per-player record PSlot at DAT_0063d9e0 (0x2ac bytes; pos V3 +0x258, car +0x29c; Ghidra's DAT_0063dc38/3c/40/7c are record offsets) via a local PSlot*, and the parenthesised (y*y + x*x) + z*z (cl keeps the parenthesised association; without parens it emits z*z first). Residual: one scheduling slot, the original loads s->pos.x before mov ecx,[ecx+4] and does add ecx,0x40 before fsub [ecx]; ours folds fsub [ecx+0x40] first. Tried: local frame/V3 pointers, RwV3dSub macro (expression repeated), static __inline V3Sub/CarPos helpers, a 3-step loop, early return, a car local, permuter (6 rounds, no gain). Class (b). CLOSED 2026-11-09 (MATCH-RACEPATH-X87B): a named float local `sx = s->pos.x` read before p is formed gives the original's load order; whole symbol 150 B BYTE-IDENTICAL, relocheck OK. */
 /* ---- MATCH-S04 preamble (same text in every re/match/s04 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -43,8 +43,9 @@ int FUN_0041f120(int param_1, float *param_2, float *param_3)
   V3 d;
   V3 *p;
   if (s->car != 0) {
+    float sx = s->pos.x;
     p = &(*(Frm **)(s->car + 4))->m.pos;
-    d.x = s->pos.x - p->x;
+    d.x = sx - p->x;
     d.y = s->pos.y - p->y;
     d.z = s->pos.z - p->z;
     if (param_3 != 0)
