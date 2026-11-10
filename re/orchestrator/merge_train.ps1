@@ -16,9 +16,19 @@
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1            # one batch
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Full      # force build+gates+full set (D2 x3, 13 tracks)
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Plan      # print what it would merge, change nothing
+  pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Drain     # passes back to back until the queue is empty (HB-TRAIN-DRAIN)
+
+  -Drain (HB-TRAIN-DRAIN, 2026-11-10): runs one pass after another (each a child `merge_train.ps1 -NoFlip -ResultJson`,
+  so every pass runs the newest script on orch/integration and keeps its own per-pass priority hold) while the queue
+  is non-empty. After each GREEN pass whose gate hashes equal the merge_train.json refs (or that was text-only), it
+  fast-forwards race/first-frame-parity in the main checkout and main (update-ref with the old value), checks both equal
+  orch/integration, runs release_due.py and on DUE waits for publish.sh, then starts the next pass. It stops and
+  reports on RED, INFRA, a hash change, a decided-flip row in the batch (left queued for its own -Full pass), or any
+  error. Never pushes. Wrap the driver in test-slot if a slot is wanted: the slot stays outside, mashed_lock inside.
 #>
 [CmdletBinding()]
-param([switch]$Full, [switch]$Plan, [int]$Max = 0, [switch]$KeepTemp, [switch]$SelfTest)
+param([switch]$Full, [switch]$Plan, [int]$Max = 0, [switch]$KeepTemp, [switch]$SelfTest,
+      [switch]$Drain, [switch]$NoFlip, [string]$ResultJson = '')
 $ErrorActionPreference = 'Stop'
 
 $HERE = $PSScriptRoot
@@ -28,7 +38,7 @@ $RM = Join-Path $HERE 'roadmap.ps1'
 $LOCKPY = Join-Path $HERE 'mashed_lock.py'
 $DIAG = Join-Path $MAIN 'scripts\diag.py'
 $TS = Get-Date -Format 'yyyyMMdd_HHmmss'
-$DATA = Join-Path $(if ($SelfTest) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_selftest' } else { $CFG.data }) $TS
+$DATA = Join-Path $(if ($SelfTest) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_selftest' } else { $CFG.data }) $(if ($Drain -and -not $SelfTest) { "drain_$TS" } else { $TS })
 New-Item -ItemType Directory -Force -Path $DATA | Out-Null
 $LOG = Join-Path $DATA 'merge_train.log'
 
@@ -237,7 +247,7 @@ function Test-RenderProbe([string]$wt) {
 function Gate-Default([string]$wt) {
   $out = Join-Path $DATA 'arms'
   $g = $CFG.gctrl; $b = $CFG.b
-  $res = @{ ok = $true; text = ''; infra = $false; why = '' }
+  $res = @{ ok = $true; text = ''; infra = $false; why = ''; hashes = $null }
   $tries = 0; $gArms = @(); $inf = ''
   do {
     $arm = if ($tries -eq 0) { $g.arm } else { "$($g.arm)-$($tries + 1)" }
@@ -252,12 +262,14 @@ function Gate-Default([string]$wt) {
   if ($inf -and $inf -ne 'ALL-MISSING') {
     $res.ok = $false; $res.infra = $true; $res.why = $inf
     $res.text = "G-CTRL $($h -join '/')  B not run (INFRA: $inf)"
+    $res.hashes = @{ gctrl = @($h); b = @() }
     return $res
   }
   Run-Arms $wt $b.arms $out | Out-Null
   $hb = @($b.arms | ForEach-Object { Sha8 (Join-Path $out "$_.step.csv") })
   $bok = (($hb -join '/') -eq ($b.ref -join '/'))
   $res.ok = $gok -and $bok
+  $res.hashes = @{ gctrl = @($h); b = @($hb) }   # HB-TRAIN-DRAIN: the drain compares these to the refs after the pass
   $res.text = "G-CTRL $($h -join '/')$(if($gok){''}else{' (ref ' + ($g.ref -join '/') + ')'})  B $($hb -join '/')$(if($bok){''}else{' (ref ' + ($b.ref -join '/') + ')'})"
   if (-not $res.ok) {
     $inf = Get-ArmInfra $out ($gArms + $b.arms) ($h + $hb)
@@ -338,7 +350,7 @@ function Run-Gates([string]$wt, $r, [bool]$needFull) {
   Say "  render precheck: $($pr.text)"
   if ($pr.status -eq 'BLOCKED') { $r.ok = $false; $r.infra = $true; $r.gates = 'not run: render precheck BLOCKED'; $r.why = "INFRA: render precheck $($pr.text)"; return $r }
   $gd = Gate-Default $wt
-  $r.gates = $gd.text; Say "  gates: $($gd.text)"
+  $r.gates = $gd.text; $r.hashes = $gd.hashes; Say "  gates: $($gd.text)"
   if ($gd.infra) { $r.ok = $false; $r.infra = $true; $r.why = "INFRA: $($gd.why)"; return $r }
   if (-not $gd.ok) { $r.ok = $false; $r.why = "default gates changed"; return $r }
   if ($needFull) {
@@ -392,7 +404,7 @@ function Tracker-Lint([string]$wt, [string]$baseRef) {
 }
 function Try-Batch($items) {
   $wt = New-Temp $base
-  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false }
+  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false; hashes = $null; textOnly = $false }
   try {
     foreach ($it in $items) {
       $m = Merge-One $wt $it
@@ -404,6 +416,7 @@ function Try-Batch($items) {
     # -Full forces the full set too: a decided flip can change a default outside full_set_paths
     # (D3-CF-SNAP-FLIP's default lives in D3d9Render/TrackRenderer.cpp and merged without D2 / 13 tracks).
     $needFull = $Full -or (@($changed | Where-Object { $f = $_; @($CFG.full_set_paths | Where-Object { $f.StartsWith($_) }).Count -gt 0 }).Count -gt 0)
+    $r.textOnly = $textOnly
     Say "  changed $($changed.Count) file(s); text-only=$textOnly full-set=$needFull"
     # HB-LINT-408A50: lint the tree the LAN release builds from, a clean git archive of HEAD with the paths in
     # scripts/lan_release/archive_paths.txt. Every batch, text-only included (merge_train.json counts *.txt as
@@ -442,6 +455,167 @@ function Try-Batch($items) {
   } finally {
     $r.sha = (Git -C $wt rev-parse HEAD) | Select-Object -First 1
   }
+}
+
+# ---- HB-TRAIN-DRAIN: batch pick, decided-flip check, pass result file, drain driver ---------------------------
+# 2026-11-10: the train sat idle 00:10-03:01 with about 15 branches queued (it ran one pass, then waited for the lead),
+# plus about 10 min between later passes. -Drain runs the passes back to back and does the lead's autopilot step
+# (memory roadmap-loop-autopilot: fast-forward race/first-frame-parity and main on GREEN with unchanged hashes, then
+# the LAN release check) itself. Every stop condition hands control back to the lead with a REPORT.
+$DCFG = [ordered]@{
+  parity_branch = 'race/first-frame-parity'; main_branch = 'main'; max_passes = 20
+  flip_id_rx = '(^|-)FLIP(-|$)'; flip_title_rx = '(?i)\bdecided[ -]flips?\b'
+  lock_tries = 8; lock_wait_sec = 15
+}
+if ($CFG.PSObject.Properties['drain']) { foreach ($p in $CFG.drain.PSObject.Properties) { $DCFG[$p.Name] = $p.Value } }
+function Select-Batch($queue, [int]$cap) {
+  $b = @()
+  foreach ($q in @($queue)) {
+    if ($q.solo) { if ($b.Count -eq 0) { $b = @($q) }; break }   # a solo branch merges alone
+    $b += $q
+    if ($b.Count -ge $cap) { break }
+  }
+  return $b
+}
+function Get-Queue { @((& pwsh -NoProfile -File $RM queue) | Out-String | ConvertFrom-Json -DateKind String) }
+function Get-LedgerRow([string]$id) { try { return ((& pwsh -NoProfile -File $RM get $id) | Out-String | ConvertFrom-Json -DateKind String) } catch { return $null } }
+# A decided flip (MERGE_TRAIN.md "Decided default flips") changes the refs and must run alone with -Full after L0 has
+# committed the new refs. Recognised by the row id (D4-FLIP-L29-L30, D3-SUBSTATE-FLIP, ...) or a title naming a
+# decided flip. A false positive only stops the drain (the lead runs the row), it never merges anything.
+function Test-FlipRow($row) {
+  if (-not $row) { return $false }
+  return (([string]$row.id -match $DCFG.flip_id_rx) -or ([string]$row.title -match $DCFG.flip_title_rx))
+}
+function Get-BatchFlips($batch) {
+  @(foreach ($q in @($batch)) { $row = Get-LedgerRow $q.id; if (-not $row) { $row = $q }; if (Test-FlipRow $row) { [string]$q.id } })
+}
+function Write-PassResult([string]$path, [hashtable]$o) {
+  if (-not $path) { return }
+  Write-Lf $path @(($o | ConvertTo-Json -Depth 8))
+}
+function Read-Refs { $c = Get-Content (Join-Path $HERE 'merge_train.json') -Raw | ConvertFrom-Json; return @{ gctrl = @($c.gctrl.ref); b = @($c.b.ref) } }
+function Wait-Drain([int]$s) { if ($s -gt 0) { Start-Sleep -Seconds $s } }
+# '' = the drain may go on after this pass; anything else is the stop reason.
+function Get-DrainStop($p, $refsNow) {
+  switch ([string]$p.verdict) {
+    'FLIP' { return "FLIP: decided-flip row(s) in the batch ($(@($p.flips) -join ', ')), left queued: run them alone with -Full after the refs are committed (MERGE_TRAIN.md)" }
+    'INFRA' { return "INFRA: $($p.infra)" }
+    'RED' { return "RED: bounced [$((@($p.bounced) | ForEach-Object { "$($_.id): $($_.why)" }) -join '; ')]$(if ($p.error) { " error [$($p.error)]" })" }
+    'GREEN' { }
+    default { return "ERROR: pass verdict '$($p.verdict)' $($p.why)" }
+  }
+  if (-not @($p.merged).Count) { return 'ERROR: GREEN pass with nothing merged' }
+  $used = $p.refs
+  if ($used -and ((@($used.gctrl) -join '/') -ne ($refsNow.gctrl -join '/') -or (@($used.b) -join '/') -ne ($refsNow.b -join '/'))) {
+    return "HASH: merge_train.json refs changed during the pass (G-CTRL $(@($used.gctrl) -join '/') -> $($refsNow.gctrl -join '/'), B $(@($used.b) -join '/') -> $($refsNow.b -join '/'))"
+  }
+  if ($p.hashes) {
+    $g = @($p.hashes.gctrl) -join '/'; $b = @($p.hashes.b) -join '/'
+    if ($g -ne ($refsNow.gctrl -join '/') -or $b -ne ($refsNow.b -join '/')) { return "HASH: gate hashes differ from the refs (G-CTRL $g vs $($refsNow.gctrl -join '/'), B $b vs $($refsNow.b -join '/'))" }
+  } elseif (-not $p.text_only) { return 'ERROR: GREEN pass with gates run but no hashes recorded' }
+  return ''
+}
+# Fast-forward race/first-frame-parity (checked out in the main checkout) and main to the integration tip. Both must be
+# ancestors of it (checked before anything moves). index.lock = another git in the main checkout: retry, never delete it.
+function Advance-Main([string]$int) {
+  $pb = $DCFG.parity_branch; $mb = $DCFG.main_branch
+  $new = (Git rev-parse $int) | Select-Object -First 1
+  $cur = (Git -C $MAIN symbolic-ref --short -q HEAD) | Select-Object -First 1
+  if ($cur -ne $pb) { return @{ ok = $false; why = "the main checkout has '$cur' checked out, not $pb" } }
+  $oldP = (Git rev-parse $pb) | Select-Object -First 1; $oldM = (Git rev-parse $mb) | Select-Object -First 1
+  foreach ($pr in @(@($pb, $oldP), @($mb, $oldM))) {
+    $null = Git merge-base --is-ancestor $pr[1] $new
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "$($pr[0]) @ $($pr[1].Substring(0,9)) is not an ancestor of $int @ $($new.Substring(0,9)): not a fast-forward, nothing moved" } }
+  }
+  if ($oldP -ne $new) {
+    $tries = [int]$DCFG.lock_tries
+    for ($i = 1; $i -le $tries; $i++) {
+      $o = @(Git -C $MAIN -c merge.autoStash=false merge --ff-only -q $int)
+      if ($script:GITRC -eq 0) { Say "drain: $pb fast-forwarded $($oldP.Substring(0,9)) -> $($new.Substring(0,9))$(if ($i -gt 1) { " on attempt $i" })"; break }
+      $txt = (@($o | ForEach-Object { "$_".Trim() } | Where-Object { $_ }) -join ' | ')
+      if ($txt -match 'index\.lock' -and $i -lt $tries) { Say "drain: ff of $pb blocked by index.lock (attempt $i/$tries), retry in $($DCFG.lock_wait_sec) s: $txt"; Wait-Drain ([int]$DCFG.lock_wait_sec); continue }
+      return @{ ok = $false; why = "git merge --ff-only $int in the main checkout failed rc=$($script:GITRC) (attempt $i/$tries): $txt" }
+    }
+  }
+  if ($oldM -ne $new) {
+    $o = Git update-ref "refs/heads/$mb" $new $oldM
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "update-ref $mb failed: $o" } }
+    Say "drain: $mb $($oldM.Substring(0,9)) -> $($new.Substring(0,9)) (update-ref, old value checked)"
+  }
+  $p2 = (Git rev-parse $pb) | Select-Object -First 1; $m2 = (Git rev-parse $mb) | Select-Object -First 1; $i2 = (Git rev-parse $int) | Select-Object -First 1
+  if ($p2 -ne $i2 -or $m2 -ne $i2) { return @{ ok = $false; why = "after the fast-forward $pb=$p2 $mb=$m2 $int=$i2 (not all equal)" } }
+  return @{ ok = $true; old_parity = $oldP; old_main = $oldM; new = $new }
+}
+function Find-GitBash {
+  $g = (Get-Command git.exe -ErrorAction SilentlyContinue).Source
+  if ($g) { $b = Join-Path (Split-Path (Split-Path $g -Parent) -Parent) 'bin\bash.exe'; if (Test-Path $b) { return $b } }
+  return 'C:\Program Files\Git\bin\bash.exe'
+}
+function Invoke-ReleaseDue {
+  Push-Location $MAIN
+  try { $o = @(& py.exe -3.12 (Join-Path $MAIN 'scripts\lan_release\release_due.py') 2>&1 | ForEach-Object { "$_" }); $rc = $LASTEXITCODE } finally { Pop-Location }
+  return @{ rc = $rc; first = (@($o) | Select-Object -First 1); text = $o }
+}
+function Invoke-Publish([string]$plog) {
+  Push-Location $MAIN
+  try { & (Find-GitBash) scripts/lan_release/publish.sh 2>&1 | ForEach-Object { Add-Content -LiteralPath $plog -Value "$_" }; $rc = $LASTEXITCODE } finally { Pop-Location }
+  return $rc
+}
+# release_due.py exit 0 = DUE, 1 = NOT_DUE, 2 = ERROR. '' = go on, else the stop reason.
+function Invoke-ReleaseStep([int]$n) {
+  $rd = Invoke-ReleaseDue
+  Say "drain: release_due rc=$($rd.rc): $($rd.first)"
+  if ($rd.rc -eq 1) { return @{ stop = ''; text = "NOT_DUE" } }
+  if ($rd.rc -ne 0) { return @{ stop = "ERROR: release_due.py rc=$($rd.rc): $($rd.first)"; text = "ERROR" } }
+  $plog = Join-Path $DATA "publish_pass$n.log"
+  Say "drain: DUE, publish.sh running (log $plog); the next pass waits for it"
+  $prc = Invoke-Publish $plog
+  $tail = @(Get-Content -LiteralPath $plog -ErrorAction SilentlyContinue | Select-Object -Last 1)
+  Say "drain: publish.sh rc=$prc $tail"
+  if ($prc -ne 0) { return @{ stop = "ERROR: publish.sh rc=$prc ($plog)"; text = "publish FAILED rc=$prc" } }
+  return @{ stop = ''; text = "published ($tail)" }
+}
+function Invoke-PassChild([string]$rj) {
+  $a = @('-NoProfile', '-File', $PSCommandPath, '-NoFlip', '-ResultJson', $rj)
+  if ($Full) { $a += '-Full' }; if ($Max -gt 0) { $a += @('-Max', "$Max") }; if ($KeepTemp) { $a += '-KeepTemp' }
+  & pwsh @a 2>&1 | ForEach-Object { Write-Host "  | $_" }
+  $rc = $LASTEXITCODE
+  if (-not (Test-Path -LiteralPath $rj)) { return @{ verdict = 'ERROR'; why = "pass exited rc=$rc without writing $rj" } }
+  return (Get-Content -LiteralPath $rj -Raw | ConvertFrom-Json -AsHashtable)
+}
+function Invoke-Drain([string]$int) {
+  $passes = @(); $stop = ''; $lines = @()
+  for ($n = 1; $n -le [int]$DCFG.max_passes; $n++) {
+    $q = @(Get-Queue)
+    if (-not $q.Count) { $stop = ''; Say "drain: queue empty after $($n - 1) pass(es)"; break }
+    Say "drain: pass $n starts, $($q.Count) row(s) queued"
+    $p = Invoke-PassChild (Join-Path $DATA "pass$n.result.json")
+    $passes += $p
+    Say "drain: pass $n verdict $($p.verdict) merged [$(@($p.merged) -join ' ')] bounced [$((@($p.bounced) | ForEach-Object { $_.id }) -join ' ')] data $($p.data)"
+    $stop = Get-DrainStop $p (Read-Refs)
+    $line = "pass $n $($p.verdict): merged [$(@($p.merged) -join ' ')] gates $($p.gates)"
+    if ($stop) { $lines += $line; break }
+    $adv = Advance-Main $int
+    if (-not $adv.ok) { $stop = "ERROR: fast-forward of $($DCFG.parity_branch)/$($DCFG.main_branch) refused: $($adv.why)"; $lines += $line; break }
+    $line += "; $($DCFG.parity_branch) + $($DCFG.main_branch) -> $($adv.new.Substring(0,9))"
+    $rel = Invoke-ReleaseStep $n
+    $line += "; release $($rel.text)"; $lines += $line
+    if ($rel.stop) { $stop = $rel.stop; break }
+    if ($n -eq [int]$DCFG.max_passes) { $stop = "STOP: max_passes $($DCFG.max_passes) reached with rows still queued" }
+  }
+  $verdict = if (-not $stop) { 'GREEN' } else { ($stop -split ':')[0] }
+  $final = (Git rev-parse --short $int) | Select-Object -First 1
+  $report = @(
+    'REPORT merge-train-drain',
+    "verdict: $verdict",
+    "branch: $int @ $final",
+    "evidence: $LOG",
+    "gates: $(if ($passes.Count) { $passes[-1].gates } else { 'not run: queue empty' })",
+    "decision: none",
+    "next: $($passes.Count) pass(es): $($lines -join ' | ')$(if ($stop) { " | stopped: $stop" } else { ' | queue drained' })"
+  )
+  $report | Set-Content (Join-Path $DATA 'REPORT.txt') -Encoding utf8
+  return @{ verdict = $verdict; stop = $stop; passes = $passes; report = $report }
 }
 
 # ---- self test (HB-TRAIN3): fake repo + fake arm runner, never reads the live queue ------------------
@@ -795,28 +969,168 @@ if ($SelfTest) {
   Check (($tb -match '\$rb = Resolve-Batch \$batch \$res') -and ($tb -match '\$bounced = @\(\$rb\.bounced\)') -and ($tb -match "foreach \(\`$b in \`$bounced\) \{\s*Ledger set \`$b\.it\.id red-merge") -and ($tb -match "\`$verdict = if \(\`$infra\) \{ 'INFRA' \}")) 'AST: run body = Try-Batch -> Resolve-Batch, red-merge only for $bounced, verdict INFRA when $infra'
   Check ((Get-FileHash -Algorithm SHA256 $cfgPath).Hash -eq $cfgSha0) "merge_train.json unchanged by the selftest (sha256 $($cfgSha0.Substring(0,12)))"
 
+  # --- HB-TRAIN-DRAIN: drain driver on a fake main checkout (race/first-frame-parity checked out, main + integration
+  # branches), fake queue, fake pass child, fake release_due / publish. Never reads the live queue, never runs a game.
+  $sel = @(Select-Batch @(@{ id = 'A' }, @{ id = 'B' }, @{ id = 'S'; solo = $true }, @{ id = 'C' }) 3)
+  $sel2 = @(Select-Batch @(@{ id = 'S'; solo = $true }, @{ id = 'A' }) 3)
+  Check ((($sel | ForEach-Object id) -join ',') -eq 'A,B' -and (($sel2 | ForEach-Object id) -join ',') -eq 'S') "drain: Select-Batch keeps the old pick (stops before a solo row, a solo head merges alone): $(($sel | ForEach-Object id) -join ',') / $(($sel2 | ForEach-Object id) -join ',')"
+  $flipRows = [ordered]@{ 'D4-FLIP-L29-L30' = 'flip two knobs'; 'D3-SUBSTATE-FLIP' = 'x'; 'MATCH-PORTSTATE-X' = 'A gate move when ON = its own decided-flip decision'; 'PORT-OT-HUD' = 'Port the HUD'; 'HB-FLIPPER' = 'not a flip id'; 'PORT-X' = 'flip the default after review' }
+  $want = @{ 'D4-FLIP-L29-L30' = $true; 'D3-SUBSTATE-FLIP' = $true; 'MATCH-PORTSTATE-X' = $true; 'PORT-OT-HUD' = $false; 'HB-FLIPPER' = $false; 'PORT-X' = $false }
+  $bad = @($flipRows.Keys | Where-Object { (Test-FlipRow @{ id = $_; title = $flipRows[$_] }) -ne $want[$_] })
+  Check ($bad.Count -eq 0) "drain: Test-FlipRow by id (-FLIP / FLIP-) or 'decided flip' in the title (wrong: $($bad -join ','))"
+  function Get-LedgerRow([string]$id) { return @{ id = $id; title = $(if ($id -eq 'Q-DEC') { 'L-99 decided flip of X' } else { 'ordinary port row' }) } }
+  $bf = @(Get-BatchFlips @(@{ id = 'Q-1' }, @{ id = 'Q-DEC' }, @{ id = 'Q-2-FLIP' }))
+  Check (($bf -join ',') -eq 'Q-DEC,Q-2-FLIP') "drain: Get-BatchFlips reads each row's ledger title ($($bf -join ','))"
+  $rjT = Join-Path $DATA 'pr_unit.json'
+  Write-PassResult $rjT @{ verdict = 'GREEN'; merged = @('A'); hashes = @{ gctrl = @('1', '2', '3'); b = @('4', '5', '6') }; text_only = $false; refs = @{ gctrl = @('1', '2', '3'); b = @('4', '5', '6') } }
+  $rb2 = Get-Content -LiteralPath $rjT -Raw | ConvertFrom-Json -AsHashtable
+  Check ($rb2.verdict -eq 'GREEN' -and (@($rb2.merged) -join ',') -eq 'A' -and (@($rb2.hashes.b) -join '/') -eq '4/5/6' -and @([IO.File]::ReadAllBytes($rjT) | Where-Object { $_ -eq 13 }).Count -eq 0) 'drain: pass result file round-trips (verdict, merged, hashes), LF only'
+
+  $fd = Join-Path ([IO.Path]::GetTempPath()) "mtrain_selftest_drain_$TS"
+  New-Item -ItemType Directory -Force -Path $fd | Out-Null
+  $MAIN = $fd
+  $null = Git -C $fd init -q -b race/first-frame-parity
+  Git -C $fd config user.email t@t | Out-Null; Git -C $fd config user.name t | Out-Null
+  [IO.File]::WriteAllText((Join-Path $fd 'a.txt'), "base`n"); Git -C $fd add a.txt | Out-Null; Git -C $fd commit -q -m base | Out-Null
+  Git -C $fd branch main | Out-Null; Git -C $fd branch integration | Out-Null
+  $DCFG.lock_wait_sec = 0; $DCFG.lock_tries = 3
+  $refsT = @{ gctrl = @('aaaaaaaa', 'bbbbbbbb', 'cccccccc'); b = @('dddddddd', 'dddddddd', 'dddddddd') }
+  function Read-Refs { return $script:refsNow }
+  function Get-Queue { if ($script:qLeft -le 0) { return @() }; return @(1..$script:qLeft | ForEach-Object { @{ id = "Q$_"; branch = "orch/Q$_" } }) }
+  function Advance-Int {   # what a GREEN (or partly GREEN) pass does to the integration branch
+    $tree = (Git -C $fd rev-parse 'integration^{tree}') | Select-Object -First 1
+    $c = (Git -C $fd commit-tree $tree '-p' integration '-m' "pass $($script:passN)") | Select-Object -First 1
+    Git -C $fd update-ref refs/heads/integration $c | Out-Null
+  }
+  function Invoke-PassChild([string]$rj) {
+    $k = $script:dplan[$script:passN]; $script:passN++
+    $script:ev += "pass$($script:passN)"
+    if ($k.advance) { Advance-Int }
+    if ($k.take) { $script:qLeft -= $k.take }
+    if ($k.lockfile) { [IO.File]::WriteAllText((Join-Path $fd '.git\index.lock'), '') }
+    return $k.res
+  }
+  function Wait-Drain([int]$s) { $script:ev += 'wait'; Remove-Item -LiteralPath (Join-Path $fd '.git\index.lock') -Force -ErrorAction SilentlyContinue }
+  function Invoke-ReleaseDue { $script:ev += "release$($script:passN)"; $r = $script:rel[$script:passN]; if ($null -eq $r) { $r = 1 }; return @{ rc = $r; first = @('DUE x', 'NOT_DUE x', 'ERROR x')[$r]; text = @() } }
+  function Invoke-Publish([string]$plog) { $script:ev += "publish$($script:passN)"; Add-Content -LiteralPath $plog -Value 'deployed fake'; return $script:pubRc }
+  function PR([string]$v, [hashtable]$x) {
+    $o = @{ verdict = $v; data = 'fake'; merged = @('Q1'); bounced = @(); gates = 'G-CTRL aaaaaaaa/bbbbbbbb/cccccccc  B dddddddd/dddddddd/dddddddd'; hashes = @{ gctrl = $refsT.gctrl; b = $refsT.b }; text_only = $false; refs = @{ gctrl = $refsT.gctrl; b = $refsT.b }; infra = ''; error = '' }
+    foreach ($kk in $x.Keys) { $o[$kk] = $x[$kk] }; return $o
+  }
+  function Heads { @('race/first-frame-parity', 'main', 'integration' | ForEach-Object { (Git -C $fd rev-parse $_) | Select-Object -First 1 }) }
+  function Drain-Case([object[]]$steps, [int]$q, [hashtable]$rel, [int]$pubRc = 0) {
+    $script:dplan = $steps; $script:passN = 0; $script:ev = @(); $script:qLeft = $q; $script:rel = $rel; $script:pubRc = $pubRc; $script:refsNow = $refsT
+    $d = Invoke-Drain 'integration'
+    Say "  drain case events: $($script:ev -join ',') -> $($d.verdict) $($d.stop)"
+    return $d
+  }
+  $G = @{ advance = $true; take = 1 }
+  # 1. three GREEN passes (one text-only), release DUE after pass 2: publish runs before pass 3; stops on an empty queue
+  $d = Drain-Case @(
+    ($G + @{ res = (PR 'GREEN' @{}) }),
+    ($G + @{ res = (PR 'GREEN' @{ merged = @('Q2', 'Q3'); hashes = $null; text_only = $true; gates = 'not run: text-only change (no build input touched)' }) }),
+    ($G + @{ res = (PR 'GREEN' @{}) })) 3 @{ 2 = 0 }
+  $h = Heads
+  Check ($d.verdict -eq 'GREEN' -and $script:passN -eq 3 -and $h[0] -eq $h[2] -and $h[1] -eq $h[2] -and ($script:ev -join ',') -eq 'pass1,release1,pass2,release2,publish2,pass3,release3' -and $d.report[-1] -match 'queue drained') "drain 1: GREEN x3 (one text-only) = parity and main follow integration after every pass, publish (DUE after pass 2) finishes before pass 3, stops on the empty queue (events $($script:ev -join ','))"
+  # 2. GREEN then RED: stop after pass 2, parity/main stay at pass 1's tip although the RED pass landed a GREEN row
+  $h0 = Heads
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{}) }), ($G + @{ res = (PR 'RED' @{ merged = @('Q2'); bounced = @(@{ id = 'Q3'; why = 'default gates changed' }) }) })) 5 @{}
+  $h = Heads
+  Check ($d.verdict -eq 'RED' -and $script:passN -eq 2 -and $h[0] -eq $h[1] -and $h[0] -ne $h[2] -and $d.stop -match 'Q3: default gates changed' -and ($script:ev -join ',') -eq 'pass1,release1,pass2') "drain 2: RED pass 2 = stop, no fast-forward and no release after it (verdict $($d.verdict), stop '$($d.stop)')"
+  Git -C $fd update-ref refs/heads/race/first-frame-parity $h[2] | Out-Null; Git -C $fd reset -q --hard $h[2] | Out-Null; Git -C $fd update-ref refs/heads/main $h[2] | Out-Null
+  # 3. INFRA: stop, nothing moves
+  $h0 = Heads
+  $d = Drain-Case @(@{ take = 0; res = (PR 'INFRA' @{ merged = @(); infra = 'D3D9-NOTAVAIL in H_DEF' }) }) 4 @{}
+  $h = Heads
+  Check ($d.verdict -eq 'INFRA' -and $script:passN -eq 1 -and ($h -join ',') -eq ($h0 -join ',') -and ($script:ev -join ',') -eq 'pass1') "drain 3: INFRA = stop after the pass, nothing fast-forwarded, no release ($($d.stop))"
+  # 4. GREEN whose hashes differ from the refs re-read after the pass, and refs that moved during the pass
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{ hashes = @{ gctrl = @('aaaaaaaa', 'eeeeeeee', 'cccccccc'); b = $refsT.b } }) })) 4 @{}
+  $h = Heads
+  Check ($d.verdict -eq 'HASH' -and $h[0] -ne $h[2] -and $d.stop -match 'aaaaaaaa/eeeeeeee/cccccccc' -and ($script:ev -join ',') -eq 'pass1') "drain 4a: GREEN with a hash unlike the refs = stop HASH, no fast-forward ($($d.stop))"
+  Git -C $fd reset -q --hard $h[2] | Out-Null; Git -C $fd update-ref refs/heads/main $h[2] | Out-Null
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{ refs = @{ gctrl = @('11111111', 'bbbbbbbb', 'cccccccc'); b = $refsT.b } }) })) 4 @{}
+  Check ($d.verdict -eq 'HASH' -and $d.stop -match 'refs changed during the pass') "drain 4b: refs in merge_train.json moved during the pass = stop HASH ($($d.stop))"
+  $h = Heads; Git -C $fd reset -q --hard $h[2] | Out-Null; Git -C $fd update-ref refs/heads/main $h[2] | Out-Null
+  # 5. FLIP: the pass refused the batch, nothing merged
+  $h0 = Heads
+  $d = Drain-Case @(@{ take = 0; res = (PR 'FLIP' @{ merged = @(); flips = @('D4-FLIP-X') }) }) 2 @{}
+  $h = Heads
+  Check ($d.verdict -eq 'FLIP' -and ($h -join ',') -eq ($h0 -join ',') -and $d.stop -match 'D4-FLIP-X') "drain 5: decided-flip batch = stop FLIP, nothing moved ($($d.stop))"
+  # 6. index.lock in the main checkout at the fast-forward: retried after a wait, then GREEN
+  $d = Drain-Case @(($G + @{ lockfile = $true; res = (PR 'GREEN' @{}) })) 1 @{}
+  $h = Heads; $logTxt = Get-Content -LiteralPath $LOG -Raw
+  Check ($d.verdict -eq 'GREEN' -and $h[0] -eq $h[2] -and $h[1] -eq $h[2] -and ($script:ev -join ',') -eq 'pass1,wait,release1' -and $logTxt -match 'blocked by index\.lock \(attempt 1/3\)' -and $logTxt -match 'fast-forwarded .* on attempt 2') "drain 6: index.lock = one wait and a retry, then both heads equal integration (events $($script:ev -join ','))"
+  # 7. main not an ancestor of integration: refused before anything moves
+  $side = (Git -C $fd commit-tree ((Git -C $fd rev-parse 'main^{tree}') | Select-Object -First 1) '-p' main '-m' side) | Select-Object -First 1
+  Git -C $fd update-ref refs/heads/main $side | Out-Null
+  $pBefore = (Git -C $fd rev-parse race/first-frame-parity) | Select-Object -First 1
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
+  $h = Heads
+  Check ($d.verdict -eq 'ERROR' -and $d.stop -match 'main @ .* is not an ancestor' -and $h[0] -eq $pBefore -and $h[1] -eq $side) "drain 7: main diverged = refused, race/first-frame-parity not moved either ($($d.stop))"
+  Git -C $fd update-ref refs/heads/main $h[0] | Out-Null
+  # 8. main checkout on another branch: refused
+  Git -C $fd checkout -q -b other | Out-Null
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
+  Check ($d.verdict -eq 'ERROR' -and $d.stop -match "has 'other' checked out") "drain 8: main checkout not on race/first-frame-parity = refused ($($d.stop))"
+  Git -C $fd checkout -q race/first-frame-parity | Out-Null
+  $h = Heads; Git -C $fd reset -q --hard $h[2] | Out-Null; Git -C $fd update-ref refs/heads/main $h[2] | Out-Null
+  # 9. release ERROR and a failed publish both stop the drain after the fast-forward
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{}) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{ 1 = 2 }
+  Check ($d.verdict -eq 'ERROR' -and $d.stop -match 'release_due\.py rc=2' -and $script:passN -eq 1) "drain 9a: release_due ERROR = stop before the next pass ($($d.stop))"
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{}) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{ 1 = 0 } 1
+  Check ($d.verdict -eq 'ERROR' -and $d.stop -match 'publish\.sh rc=1' -and $script:passN -eq 1 -and ($script:ev -join ',') -eq 'pass1,release1,publish1') "drain 9b: publish.sh failed = stop, no retry, no next pass ($($d.stop))"
+  # 10. empty queue at the start: no pass at all
+  $d = Drain-Case @() 0 @{}
+  Check ($d.verdict -eq 'GREEN' -and $script:passN -eq 0 -and $d.report[4] -match 'queue empty') 'drain 10: empty queue = no pass, GREEN'
+  # 11. AST: the drain dispatch sits before Write-TrainPid and the batch pick, and the pass refuses flips before Enter-PassPriority
+  $txt = Get-Content -LiteralPath $PSCommandPath -Raw
+  $iDrain = $txt.LastIndexOf('$d = Invoke-Drain $INT'); $iPid = $txt.LastIndexOf("`nWrite-TrainPid"); $iFlip = $txt.LastIndexOf('$flips = @(Get-BatchFlips $batch)'); $iPrio = $txt.LastIndexOf("`nEnter-PassPriority")
+  Check ($iDrain -gt 0 -and $iDrain -lt $iPid -and $iFlip -gt $iPid -and $iFlip -lt $iPrio) "drain 11: dispatch before the pass body, flip refusal before the priority hold and any merge (offsets $iDrain < $iPid, $iFlip < $iPrio)"
+  $locks = @([regex]::Matches(($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in 'Invoke-Drain', 'Advance-Main', 'Invoke-ReleaseStep', 'Invoke-PassChild' }, $true) | ForEach-Object { $_.Extent.Text }) -join "`n", 'LOCKPY|prio-hold|solo-begin'))
+  Check ($locks.Count -eq 0) "drain 11: the drain driver takes no mashed_lock / priority hold of its own (only the passes do) ($($locks.Count) refs)"
+  Remove-Item -LiteralPath $fd -Recurse -Force -ErrorAction SilentlyContinue
+
   Say "SELFTEST done: $fails failure(s)"
   Write-Output "SELFTEST $(if ($fails) { 'FAIL' } else { 'PASS' }) ($fails failure(s)) log $LOG"
   exit $(if ($fails) { 1 } else { 0 })
+}
+
+$INT = if ($env:MASHED_MTRAIN_INT) { $env:MASHED_MTRAIN_INT } else { $CFG.integration_branch }
+# HB-TRAIN-DRAIN: the driver takes no lock and no worktree itself; each pass is a child process with its own PID file,
+# reclaim, priority hold and REPORT.
+if ($Drain -and -not $Plan) {
+  Say "drain: start (max_passes $($DCFG.max_passes), passes$(if ($Full) { ' -Full' })$(if ($Max -gt 0) { " -Max $Max" }), log $LOG)"
+  $d = Invoke-Drain $INT
+  $d.report | Write-Output
+  exit $(if ($d.verdict -eq 'GREEN') { 0 } else { 1 })
 }
 
 Write-TrainPid
 if (-not $Plan) { Reclaim-DeadTrains }
 
 # ---- 1. pick the batch -------------------------------------------------------------
-$queue = @((& pwsh -NoProfile -File $RM queue) | Out-String | ConvertFrom-Json -DateKind String)
-if (-not $queue -or $queue.Count -eq 0) { Say 'queue empty'; Write-Output "REPORT merge-train`nverdict: GREEN`nbranch: (nothing queued)`nnext: none"; exit 0 }
-$cap = if ($Max -gt 0) { $Max } else { [int]$CFG.batch_max }
-$batch = @()
-foreach ($q in $queue) {
-  if ($q.solo) { if ($batch.Count -eq 0) { $batch = @($q) }; break }   # a solo branch merges alone
-  $batch += $q
-  if ($batch.Count -ge $cap) { break }
+$queue = @(Get-Queue)
+if (-not $queue -or $queue.Count -eq 0) {
+  Say 'queue empty'
+  Write-PassResult $ResultJson @{ verdict = 'EMPTY'; data = $DATA; merged = @(); bounced = @() }
+  Write-Output "REPORT merge-train`nverdict: GREEN`nbranch: (nothing queued)`nnext: none"; exit 0
 }
-$INT = if ($env:MASHED_MTRAIN_INT) { $env:MASHED_MTRAIN_INT } else { $CFG.integration_branch }
+$cap = if ($Max -gt 0) { $Max } else { [int]$CFG.batch_max }
+$batch = @(Select-Batch $queue $cap)
 $base = (Git rev-parse $INT) | Select-Object -First 1
 Say "batch: $(($batch | ForEach-Object { "$($_.id)=$($_.branch)" }) -join ' ')  base $INT@$($base.Substring(0,9))"
 if ($Plan) { exit 0 }
+# HB-TRAIN-DRAIN: a drain pass never merges a decided flip; it stops before any merge and the lead runs the flip alone
+# with -Full after committing the refs (MERGE_TRAIN.md "Decided default flips").
+if ($NoFlip) {
+  $flips = @(Get-BatchFlips $batch)
+  if ($flips.Count) {
+    Say "decided-flip row(s) in the batch: $($flips -join ', '); nothing merged, every row stays queued"
+    Write-PassResult $ResultJson @{ verdict = 'FLIP'; data = $DATA; flips = $flips; batch = @($batch | ForEach-Object id); merged = @(); bounced = @() }
+    Write-Output "REPORT merge-train`nverdict: FLIP`nbranch: $INT @ $($base.Substring(0,9))`nevidence: $LOG`ngates: not run: decided flip in the batch`ndecision: none`nnext: run [$($flips -join ' ')] alone with -Full after the refs are committed"
+    exit 0
+  }
+}
 
 # ---- 2. run the batch; on RED, one at a time ----------------------------------------
 # HB-TRAINFIX: steps 2 and 3 run inside a script-scope try/finally (see Clear-Temps), never a dot-sourcing wrapper
@@ -882,4 +1196,11 @@ $report = @(
   "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $($_.why)" }) -join '; ')]$(if ($infra) { " infra [$infra; rows not merged stay queued, re-run the train on a live display]" })$(if ($trainErr) { " error [$trainErr; rows not merged stay queued, re-run the train]" })"
 )
 $report | Set-Content (Join-Path $DATA 'REPORT.txt') -Encoding utf8
+# HB-TRAIN-DRAIN: the structured outcome the drain driver reads (gates hashes, refs used, text-only, merged / bounced)
+Write-PassResult $ResultJson @{
+  verdict = $verdict; data = $DATA; batch = @($batch | ForEach-Object id); merged = @($merged | ForEach-Object id)
+  bounced = @($bounced | ForEach-Object { @{ id = $_.it.id; why = $_.why } }); infra = $infra; error = $trainErr
+  gates = $(if ($res) { $res.gates } else { '' }); hashes = $(if ($res) { $res.hashes } else { $null }); text_only = [bool]($res -and $res.textOnly)
+  refs = @{ gctrl = @($CFG.gctrl.ref); b = @($CFG.b.ref) }; base = $base; int_after = (Git rev-parse $INT | Select-Object -First 1)
+}
 $report | Write-Output

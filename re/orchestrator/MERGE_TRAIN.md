@@ -45,6 +45,12 @@ Notes on the table:
 - Verdict INFRA (HB-TRAIN-INFRA-PRECHECK, 2026-11-02): before the arms, `diag.py probe-render --exe <merged exe> --cwd <root>` runs under the lock. A BLOCKED probe, the D3D9-NOTAVAIL signature (`CreateDevice ... hr=0x8876086A/C`) in any arm log, arms that wrote no log, or all-MISSING hashes followed by a BLOCKED probe give INFRA: nothing is bounced, the one-at-a-time re-merge stops, the rows not merged stay queued. All-MISSING with a probe that is not BLOCKED stays RED (a boot failure of the merged exe). Run 31 pass 2 (20261102_091940) bounced MATCH-S08FU-NOTES on a sleeping display before this existed.
 - The live refs are `merge_train.json` `gctrl.ref` / `b.ref`, not the table above. Since the D3-CF-U9779 flip (2026-10-24) they are G-CTRL `ef5f2e10 / 57f7ff83 / b4f4b55a`, B `c37d4c0c / 0a8f9806 / 7013671d`; the table's hashes are the pre-flip defaults (`MASHED_NU7` opt-out).
 
+### Drain mode (HB-TRAIN-DRAIN)
+`merge_train.ps1 -Drain` chains passes while the queue is non-empty and fast-forwards race/first-frame-parity and main
+after each GREEN pass with unchanged hashes, then runs the LAN release check. A batch holding a decided-flip row
+(id `-FLIP`/`FLIP-`, or "decided flip" in the ledger title) is refused before any merge and stops the drain, so the
+protocol below still runs by hand. Detail: the script header and roadmap-loop SKILL.md.
+
 ### Decided default flips
 A row that changes the default gates on purpose (a user-decided knob flip, e.g. L-4) would be bounced RED against the old refs. Protocol:
 1. The flip row records its expected new G-CTRL and B hashes (ledger note + its RESULT).
