@@ -1,0 +1,5 @@
+# PORT-STATE-02 after the L-101 flip: the seed's opt-out. Since the matched videocfg swap the opt-out kills the exe at
+# the first-run load (empty fopen mode, 0xC0000409), so it carries MASHED_VIDEOCFG_WRITE=0 (PORT-SEED-OPTOUT made the
+# opt-out boot without it. The stack keeps it so its arms stay comparable)
+MASHED_NO_PORTSTATE_SEED
+MASHED_VIDEOCFG_WRITE=0
