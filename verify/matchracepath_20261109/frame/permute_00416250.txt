@@ -1,0 +1,3 @@
+start 88.9% (regs-renamed 88.9%, in place 87.6%)
+round 1: no improvement (256 variants)
+best 88.9% (regs-renamed 88.9%, in place 87.6%) after 576 compiles -> log\permute\00416250.c

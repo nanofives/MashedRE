@@ -78,14 +78,44 @@ Applied with `--apply --result` (this file): `batch_apply.txt`. The file's other
 so they are certified only as members of 0x004111c0's extent. Port axis unchanged: the port compiles none of the five
 bodies (MATCH_PORT keeps the extern declarations); a port body for them is port work, not part of this row.
 
-## 4. Task 2: 0x00416250
+## 4. Task 2: 0x00416250 (NOT closed, 88.9%, 116 bad bytes, unchanged)
 
-(filled below)
+Both sources scored now with `match.py --bytes`: `re/match/t01g/00416250.c` 88.9% (regs 97.7%, ops 98.5%), 605/605
+insns, 2015 B whole symbol, 116 bad bytes (first at +0x339); `re/match/s03/h4_00416250.c` 58.2% (74.5 / 92.2), 602/605,
+2011 B, 864 bad bytes (first at +0x12). The s03 file has nothing t01g lacks (its +0x64 state offset is the error t01g
+already fixed), so t01g is the base. The residual is the one t01g records: (1) the `volatile float steer` copy loads
+first (`fld steer; fcomp b` where the original has `fld b; fcomp [steer]`, 3 sites per history block), (2) EBX/EDI
+swapped (car*0x74 base vs `out`), visible in the diff from the first block on.
 
-## 5. Task 3: 0x0040e590
+One bounded attempt: `match_permute.py --rounds 8 --walk 80 --seed 7 --jobs 4 --time 1500 --only
+move,swap,commute,signed,initsplit,incform` (register-allocation rewrites; the earlier session's run was seed 1, all
+kinds, 431 compiles): **no improvement in 576 compiles** (`permute_00416250.txt`). Source unchanged.
+Observation for (1), from 0x00410ab0 in this slice: under 9176 a `volatile` operand is always the one loaded first, so
+`volatile` cannot give `fld b; fcomp [steer]`; the original keeps `steer` in memory as the second operand without
+volatile semantics. No form for that was found here.
 
-(filled below)
+## 5. Task 3: 0x0040e590 (NOT closed, 84.6%, 798 bad bytes, unchanged)
+
+Not an extent case: Ghidra body 2 ranges (0x0040e590..0x0040ea3e, 0x0040ea40..0x0040eec8, cache
+log/ghidra_funcfacts.jsonl), 2360 B = pc_funcs body_size. The 798 bad bytes are the three class-b residuals the
+source records (last-loop strength reduction, case-2 nested switch test order, register colouring in the mode-4
+post-pass).
+
+One bounded attempt: `match_permute.py --rounds 6 --walk 60 --seed 11 --jobs 4 --time 900` (all rewrites), 1425
+compiles (`permute_0040e590.txt`). It reported 84.6 -> 87.3% (round 1 mulswap, round 2 move). **Rejected**, both
+accepted rewrites change behaviour:
+- mulswap turned `place = DAT_0063b9b8[DAT_008a94b0 * 4 + k];` into `place = 4 * DAT_0063b9b8[DAT_008a94b0 + k];`
+  (a different element, times 4): `rw_mulswap` swapped `DAT_0063b9b8[DAT_008a94b0` as if it were one operand of `*`.
+- move put `FUN_0046b540(i)` before `FUN_0041f000` / `FUN_0046b1c0`; the original calls them in the order
+  0x0041f000 (0x0040ed57), 0x0046b1c0 (0x0040ed62), 0x0046b540 (0x0040ed68), 0x0046baa0 (0x0040ed6e), which is the
+  existing source's order.
+- whole-symbol bad bytes rose 798 -> 822 with the variant. Kept as `variants/0040e590_permute_rejected.c` for the
+  tool note; source unchanged.
+
+Tool note for the lead (no tool change made, per scope): `rw_mulswap` does not respect `[` precedence, and the
+instruction score can rise for a call reorder, so a permuter "best" needs an equivalence check before `--write`.
 
 ## Files
 `ghidra_extent.txt`, `FuncRangesPC.java` (copy of verify/c4rac80extent_20261107/), `batch_frame.tsv`,
-`batch_dryrun.txt`, `batch_apply.txt`, `results.tsv`, `lint_before.txt`, `lint_after.txt`.
+`batch_dryrun.txt`, `batch_apply.txt`, `results.tsv`, `lint_before.txt`, `lint_after.txt`, `permute_00416250.txt`,
+`permute_0040e590.txt`, `variants/0040e590_permute_rejected.c`.
