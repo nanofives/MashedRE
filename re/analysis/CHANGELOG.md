@@ -102,6 +102,13 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-09  0x0048aff0  FUN_0048aff0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
+2026-11-09  0x0048b230  FUN_0048b230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
+2026-11-09  0x0048b440  FUN_0048b440  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
+2026-11-09  0x004844a0  FUN_004844a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/004844a0.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
+2026-11-09  0x00484580  FUN_00484580  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/004844a0.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
+2026-11-09  0x0040d8f0  FUN_0040d8f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0040d8f0.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
+2026-11-09  0x00410860  FUN_00410860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/00410860.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
 2026-11-09  0x0047c0f0  FUN_0047c0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c0f0.c; evidence: verify/matchnearmiss2_20261109/RESULT_MATCH-NEARMISS-2.md
 2026-11-09  0x005a8390  FUN_005a8390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8390.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
 2026-11-09  0x005a8560  FUN_005a8560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8560.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
