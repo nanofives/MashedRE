@@ -102,6 +102,14 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-09  0x004c1210  FUN_004c1210  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c1210.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
+2026-11-09  0x005a86a0  FUN_005a86a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a86a0.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
+2026-11-09  0x00442a60  Spectator::ComputeDistances  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/00442a60.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
+2026-11-09  0x00412cf0  FUN_00412cf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00412cf0.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
+2026-11-09  0x00464a50  FUN_00464a50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s10/00464a50.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
+2026-11-09  0x004726f0  FUN_004726f0  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s11/004726f0.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
+2026-11-09  0x0048f780  FUN_0048f780  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048f780.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
+2026-11-09  0x00422570  FUN_00422570  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s05/00422570.c; evidence: verify/matchracepath_20261109/x87a/RESULT_MATCH-RACEPATH-X87A.md
 2026-11-09  0x0047c0f0  FUN_0047c0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c0f0.c; evidence: verify/matchnearmiss2_20261109/RESULT_MATCH-NEARMISS-2.md
 2026-11-09  0x005a8390  FUN_005a8390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8390.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
 2026-11-09  0x005a8560  FUN_005a8560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8560.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
