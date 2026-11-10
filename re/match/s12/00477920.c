@@ -6,6 +6,9 @@
    at 0x005cd784). Residue: the original stores the new age to the local first (fst [esp+0xc]; fstp [edi+8]), ours
    the other way. Tried a = t->age = x, t->age = a = x, +=, separate statements, local-first forms, permuter
    (140 compiles, no gain). Class (b). Tail (pop ebx/pop ecx/ret) lies past the Ghidra size.
+   MATCH-RACEPATH-PILOT 2026-11-09: CLOSED, whole symbol 231 B BYTE-IDENTICAL. The age is written back with no `a`
+   (t->age = DAT_007f100c + t->age) and the first compare and the division read t->age: the compiler's own CSE spill
+   of t->age gives the original fst [esp+0xc] before fstp [edi+8]. insn 96.0% is the Ghidra body (228 B) vs symbol 231 B.
    This file holds 0x00477920 and its static ESI-arg callee 0x004778e0 (100%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -68,12 +71,12 @@ void FUN_00477920(void)
     Trail *t;
     for (i = 0; i < 256; i++) {
         t = &DAT_00693198[i];
-        a = t->age = DAT_007f100c + t->age;
+        t->age = DAT_007f100c + t->age;
         if (DAT_006bf198[i >> 3] & (1 << (i & 7))) {
-            if (t->count == 0 && a > 1.0f) {
+            if (t->count == 0 && t->age > 1.0f) {
                 FUN_004778e0(i);
             } else {
-                a = a / t->life;
+                a = t->age / t->life;
                 if (a > 1.0f) {
                     FUN_004778e0(i);
                 } else if (t->count != 0 && t->f2ac != 0.0f) {

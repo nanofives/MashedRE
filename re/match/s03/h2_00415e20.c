@@ -12,7 +12,11 @@
    Residual (both halves, 4 instructions): original 0x00415ec7 fld v.z / fld v.x / fmul 0 / fsubp (v.z first),
    ours fld v.x / fmul 0 / fsub v.z / fchs. Tried v.z*1.0f - ..., -(x) + z, z + -(x), 0.0f*v.x, extern zero,
    (v.z*0 + v.z) - ...: none loads v.z first. Class: (b) unknown source form (same x87 operand-order family
-   as the pilot's fsubr residue and h2 0x00412e30); no evidence it is compiler-version. */
+   as the pilot's fsubr residue and h2 0x00412e30); no evidence it is compiler-version.
+   MATCH-RACEPATH-PILOT 2026-11-09: CLOSED, whole symbol 567 B BYTE-IDENTICAL. Sign test written
+   `(float)(v.z - (double)(v.x * 0.0f)) < 0.0f`: the double subtraction loads v.z first (fld v.z / fld v.x / fmul 0 /
+   fsubp), the float cast keeps the compare against the float 0.0f (fcomp dword, not qword). insn 96.3% is the Ghidra
+   body (551 B) vs the 567 B symbol. */
 typedef struct { float x, y, z; } V3;
 #ifndef MATCH_PORT
 int FUN_0046d4a0(int *out, int car);
@@ -38,7 +42,7 @@ float FUN_00415e20(int car, float tx, float tz)
   if (c < -1.0) c = -1.0f;
   if (c > 1.0) c = 1.0f;
   a1 = (float)(FUN_004a3384(c) * 57.29578f);
-  if (-(v.x * 0.0f - v.z) < 0.0f) a1 = -a1;
+  if ((float)(v.z - (double)(v.x * 0.0f)) < 0.0f) a1 = -a1;
   while (a1 <= 0.0f) a1 += 360.0f;
 
   FUN_0046d510(&v, car);
@@ -49,7 +53,7 @@ float FUN_00415e20(int car, float tx, float tz)
   if (c < -1.0) c = -1.0f;
   if (c > 1.0) c = 1.0f;
   a2 = (float)(FUN_004a3384(c) * 57.29578f);
-  if (-(v.x * 0.0f - v.z) < 0.0f) a2 = -a2;
+  if ((float)(v.z - (double)(v.x * 0.0f)) < 0.0f) a2 = -a2;
   while (a2 <= 0.0f) a2 += 360.0f;
 
   d = a1 - a2;

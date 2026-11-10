@@ -1,0 +1,7 @@
+0x004778e0	OK	checked=3	unchecked=0	00477920.c	
+0x00477920	OK	checked=11	unchecked=1	00477920.c	  unchecked: __ftol
+0x005b10e0	OK	checked=0	unchecked=0	005b10e0.c	
+0x00415e20	OK	checked=39	unchecked=0	h2_00415e20.c	
+0x00475210	OK	checked=6	unchecked=0	00475210.c	
+0x00476320	OK	checked=3	unchecked=0	00476320.c	
+0x00417640	OK	checked=8	unchecked=4	h3_00417640.c	  unchecked: _DAT_005cc568,_DAT_005cc72c,_DAT_005ccad0,_DAT_0089a52c

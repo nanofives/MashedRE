@@ -10,7 +10,11 @@
    pre-read, local order swaps (obj/pos, a/b), (void) / if() on the 4c3ac0 return, !(a <= c), the
    permuter (0 variants generated). d[0] -= o form made it worse (81.6%).
    Class: (a) compiler-version x87 scheduling (both spots: the original schedules an fld earlier, above an
-   integer op, than 13.00.9176/9178 does). */
+   integer op, than 13.00.9176/9178 does).
+   MATCH-RACEPATH-PILOT 2026-11-09: CLOSED, 237 B BYTE-IDENTICAL, so class (a) above is refuted: both spots are
+   source form. Spot 1: obj->x read into a float local first (`float ox = ...; d[0] = pos[0] - ox`) gives fld
+   [eax+0x30] / fsubr [esi]. Spot 2: d[2] computed in double and cast back (`(float)(pos[2] - (double)...)`)
+   hoists the fld a above add esp,0x1c. */
 typedef struct Rec74 { int f0; char pad[0x70]; } Rec74;
 #ifndef MATCH_PORT
 extern Rec74 DAT_0089a52c[];
@@ -41,9 +45,9 @@ void FUN_00417640(int idx, unsigned char *out)
     FUN_0046d6d0(&a, idx);
     FUN_0046d570(&b, idx);
     FUN_0046d4a0(&obj, idx);
-    d[0] = pos[0] - *(float *)(obj + 0x30);
+    { float ox = *(float *)(obj + 0x30); d[0] = pos[0] - ox; }
     d[1] = pos[1] - *(float *)(obj + 0x34);
-    d[2] = pos[2] - *(float *)(obj + 0x38);
+    d[2] = (float)(pos[2] - (double)*(float *)(obj + 0x38));
     FUN_004c3ac0(d);
     if (a > DAT_005cc568 && b < DAT_005ccad0) {
       out[4] = 0;

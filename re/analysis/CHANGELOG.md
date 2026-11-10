@@ -103,6 +103,12 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
 2026-11-09  0x004111c0  FUN_004111c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/t01g/004111c0.c; evidence: verify/matchracepath_20261109/frame/RESULT_MATCH-RACEPATH-FRAME.md
+2026-11-09  0x00477920  FUN_00477920  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00477920.c; evidence: verify/matchracepath_20261109/pilot/RESULT_MATCH-RACEPATH-PILOT.md
+2026-11-09  0x005b10e0  AudioTableDispatchAt8  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s26/005b10e0.c; evidence: verify/matchracepath_20261109/pilot/RESULT_MATCH-RACEPATH-PILOT.md
+2026-11-09  0x00415e20  AiSteeringAngleError  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h2_00415e20.c; evidence: verify/matchracepath_20261109/pilot/RESULT_MATCH-RACEPATH-PILOT.md
+2026-11-09  0x00475210  FUN_00475210  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00475210.c; evidence: verify/matchracepath_20261109/pilot/RESULT_MATCH-RACEPATH-PILOT.md
+2026-11-09  0x00476320  FUN_00476320  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s12/00476320.c; evidence: verify/matchracepath_20261109/pilot/RESULT_MATCH-RACEPATH-PILOT.md
+2026-11-09  0x00417640  FUN_00417640  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s03/h3_00417640.c; evidence: verify/matchracepath_20261109/pilot/RESULT_MATCH-RACEPATH-PILOT.md
 2026-11-09  0x0047c0f0  FUN_0047c0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c0f0.c; evidence: verify/matchnearmiss2_20261109/RESULT_MATCH-NEARMISS-2.md
 2026-11-09  0x005a8390  FUN_005a8390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8390.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
 2026-11-09  0x005a8560  FUN_005a8560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8560.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
