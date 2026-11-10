@@ -55,7 +55,7 @@ typedef struct Wheel_0046f6c0 {
   V3_0046f6c0 n;
   char p3[0xc4 - 0xa0];
 } Wheel_0046f6c0;
-typedef struct Query_0046f6c0 { V3_0046f6c0 p; float r; int a, b; int n; } Query_0046f6c0;
+typedef struct Query_0046f6c0 { V3_0046f6c0 p; int r; int a, b; int n; } Query_0046f6c0;
 MGLOBAL(int, DAT_0088e650, 0x0088e650);
 MGLOBALA(int, DAT_0088e5e0, 4, 0x0088e5e0);
 MGLOBALA(V3_0046f6c0, DAT_00881560, 4, 0x00881560);
@@ -134,6 +134,8 @@ static void FUN_0046f6c0(int flag, int *ctx, char *car)
   Mat_0046f6c0 rot;
 
   m = (Mtx_0046f6c0 *)(car + I_0046f6c0(0x9ac) * 0x40 + 0x928);
+  a = 0;
+  b = 0;
   DAT_0088e650 = 0;
   z.x = 0.0f;
   z.y = 0.0f;
@@ -153,14 +155,12 @@ static void FUN_0046f6c0(int flag, int *ctx, char *car)
   FUN_0046c5f0(&DAT_0088e620[0].x, &DAT_0088e620[3].x, &DAT_0088e620[2].x, (float *)(car + 0x9c8));
   q.n = 3;
   q.p = m->pos;
-  q.r = F_0046f6c0(0x4a4);
+  q.r = I_0046f6c0(0x4a4);
   DAT_0088e60c = 0;
   DAT_0088e654 = (int)ctx;
   FUN_00538c80(ctx[2], &q, FUN_00468b80, &DAT_00828320);
   FUN_0046cc40(car, &DAT_00828320);
 
-  a = 0;
-  b = 0;
   if (W_0046f6c0(0)->state == 1) {
     f = W_0046f6c0(0)->len;
     if (f >= 0.02f)
@@ -258,21 +258,21 @@ static void FUN_0046f6c0(int flag, int *ctx, char *car)
     f = W_0046f6c0(1)->len;
     if (f < 0.0f)
       f = -f;
-    if (best < f) {
+    if (f > best) {
       idx = 1;
       best = f;
     }
     f = W_0046f6c0(2)->len;
     if (f < 0.0f)
       f = -f;
-    if (best < f) {
+    if (f > best) {
       idx = 2;
       best = f;
     }
     f = W_0046f6c0(3)->len;
     if (f < 0.0f)
       f = -f;
-    if (best < f)
+    if (f > best)
       idx = 3;
     sx -= ax[idx];
     count = 3;
@@ -288,26 +288,27 @@ static void FUN_0046f6c0(int flag, int *ctx, char *car)
   m->pos.z = m->pos.z - inv * S.z;
   if (count == 3) {
     if (W_0046f6c0(0)->state == 1) {
+      i0 = 0;
       if (W_0046f6c0(1)->state == 1) {
         if (W_0046f6c0(2)->state == 1) {
           W_0046f6c0(3)->n = W_0046f6c0(2)->n;
           W_0046f6c0(3)->state = 1;
           W_0046f6c0(3)->len = W_0046f6c0(2)->len;
           W_0046f6c0(3)->id = W_0046f6c0(2)->id;
-          i0 = 0; i1 = 1; i2 = 2;
+          i1 = 1; i2 = 2;
         } else {
           W_0046f6c0(2)->n = W_0046f6c0(3)->n;
           W_0046f6c0(2)->id = W_0046f6c0(3)->id;
           W_0046f6c0(2)->state = 1;
           W_0046f6c0(2)->len = W_0046f6c0(3)->len;
-          i0 = 0; i1 = 1; i2 = 3;
+          i1 = 1; i2 = 3;
         }
       } else {
         W_0046f6c0(1)->state = 1;
         W_0046f6c0(1)->n = W_0046f6c0(0)->n;
         W_0046f6c0(1)->len = W_0046f6c0(0)->len;
         W_0046f6c0(1)->id = W_0046f6c0(0)->id;
-        i0 = 0; i1 = 3; i2 = 2;
+        i1 = 3; i2 = 2;
       }
     } else {
       W_0046f6c0(0)->n = W_0046f6c0(1)->n;
@@ -356,19 +357,19 @@ static void FUN_0046f6c0(int flag, int *ctx, char *car)
   axis.x = N.z * F_0046f6c0(0x9cc) - N.y * F_0046f6c0(0x9d0);
   axis.y = N.x * F_0046f6c0(0x9d0) - N.z * F_0046f6c0(0x9c8);
   axis.z = N.y * F_0046f6c0(0x9c8) - N.x * F_0046f6c0(0x9cc);
-  f = N.x * F_0046f6c0(0x9c8) + N.y * F_0046f6c0(0x9cc) + N.z * F_0046f6c0(0x9d0);
+  f = N.z * F_0046f6c0(0x9d0) + (N.x * F_0046f6c0(0x9c8) + N.y * F_0046f6c0(0x9cc));
   if ((axis.x != 0.0f || axis.y != 0.0f || axis.z != 0.0f) && (f < 0.999f || prevcnt < 3)) {
     if (f < -1.0f)
       f = -1.0f;
     else if (f > 1.0f)
       f = 1.0f;
-    ang = (float)(FUN_004a3384(f) * 57.29578f);
+    ang = (float)FUN_004a3384(f) * 57.29578f;
     if (flag != 0 && ang > 2.5f)
       ang = 2.5f;
-    save = m->pos;
+    u = m->pos;
     FUN_004c4d20(&rot, &axis, ang, 0);
     FUN_004c52f0(m, &rot, 2);
-    m->pos = save;
+    m->pos = u;
   }
 tail:
   for (k = 0, w = W_0046f6c0(0); k < 4; k++, w++) {
@@ -376,12 +377,12 @@ tail:
       continue;
     if (w->tag == (int)0xff020202) {
       w->state = 0;
-      c.x = w->n.x * 1000.0f;
-      c.y = w->n.y * 1000.0f;
-      c.z = w->n.z * 1000.0f;
-      F_0046f6c0(0x9b0) = c.x + F_0046f6c0(0x9b0);
-      F_0046f6c0(0x9b4) = c.y + F_0046f6c0(0x9b4);
-      F_0046f6c0(0x9b8) = c.z + F_0046f6c0(0x9b8);
+      u.x = w->n.x * 1000.0f;
+      u.y = w->n.y * 1000.0f;
+      u.z = w->n.z * 1000.0f;
+      F_0046f6c0(0x9b0) = u.x + F_0046f6c0(0x9b0);
+      F_0046f6c0(0x9b4) = u.y + F_0046f6c0(0x9b4);
+      F_0046f6c0(0x9b8) = u.z + F_0046f6c0(0x9b8);
     }
     if (w->n.y < 0.7f) {
       w->state = 0;
@@ -392,50 +393,56 @@ tail:
       F_0046f6c0(0x9b4) = u.y + F_0046f6c0(0x9b4);
       F_0046f6c0(0x9b8) = u.z + F_0046f6c0(0x9b8);
       FUN_004c39b0(&u, (V3_0046f6c0 *)(car + 0x9b0));
+      axis.x = u.z * w->n.y - u.y * w->n.z;
+      axis.y = u.x * w->n.z - u.z * w->n.x;
+      axis.z = u.y * w->n.x - u.x * w->n.y;
       f = F_0046f6c0(0x9e4) * 0.00001f;
-      c.x = (u.z * w->n.y - u.y * w->n.z) * f;
-      c.y = (u.x * w->n.z - u.z * w->n.x) * f;
-      c.z = (u.y * w->n.x - u.x * w->n.y) * f;
-      F_0046f6c0(0x144) = c.x + F_0046f6c0(0x144);
-      F_0046f6c0(0x148) = c.y + F_0046f6c0(0x148);
-      F_0046f6c0(0x14c) = c.z + F_0046f6c0(0x14c);
+      axis.x *= f;
+      axis.y *= f;
+      axis.z *= f;
+      F_0046f6c0(0x144) = axis.x + F_0046f6c0(0x144);
+      F_0046f6c0(0x148) = axis.y + F_0046f6c0(0x148);
+      F_0046f6c0(0x14c) = axis.z + F_0046f6c0(0x14c);
     }
   }
   f = (float)count;
   F_0046f6c0(0x9e0) = f;
   if (I_0046f6c0(0x9f0) == 0 && f != 0.0f && f <= 2.0f) {
-    a = 0;
+    count = 0;
     S.z = 0.0f;
     S.y = 0.0f;
     sx = 0.0f;
     if (W_0046f6c0(0)->state != 1) {
-      a = 1;
+      count = 1;
       sx = F_0046f6c0(0x9f8);
       S.y = F_0046f6c0(0x9fc);
       S.z = F_0046f6c0(0xa00);
     }
     if (W_0046f6c0(1)->state != 1) {
       sx += F_0046f6c0(0xa04);
-      a++;
+      count++;
       S.y = F_0046f6c0(0xa08) + S.y;
       S.z = F_0046f6c0(0xa0c) + S.z;
     }
     if (W_0046f6c0(2)->state != 1) {
       sx += F_0046f6c0(0xa10);
-      a++;
+      count++;
       S.y = F_0046f6c0(0xa14) + S.y;
       S.z = F_0046f6c0(0xa18) + S.z;
     }
     if (W_0046f6c0(3)->state != 1) {
       sx += F_0046f6c0(0xa1c);
-      a++;
+      count++;
       S.y = F_0046f6c0(0xa20) + S.y;
       S.z = F_0046f6c0(0xa24) + S.z;
     }
-    inv = 1.0f / a;
-    S.x = F_0046f6c0(0x958) - inv * sx;
-    S.y = F_0046f6c0(0x95c) - inv * S.y;
-    S.z = F_0046f6c0(0x960) - inv * S.z;
+    inv = 1.0f / count;
+    S.x = inv * sx;
+    S.y = inv * S.y;
+    S.z = inv * S.z;
+    S.x = F_0046f6c0(0x958) - S.x;
+    S.y = F_0046f6c0(0x95c) - S.y;
+    S.z = F_0046f6c0(0x960) - S.z;
     FUN_004c39b0(&S, &S);
     S.x *= -20.0f;
     S.y = 0.0f;
