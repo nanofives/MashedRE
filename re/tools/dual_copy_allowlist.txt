@@ -14,6 +14,16 @@
 #   CROSS-TARGET   a body in an exe-only TU and a body in an asi-only TU
 #   DUP-INSTALL    two ACTIVE RH_ScopedInstall for one RVA in .asi TUs (U-9065 class)
 #
+# ORIGTOP-ONLY class (HB-LINT-ORIGTOP-CLASS, L-111 (a), 2026-11-09). A line prefixed `ORIGTOP-ONLY ` is NOT part of
+# the D4 burn-down: it is a byte-matched body that runs only under MASHED_ORIG_TOP (the matched WinMain 0x00492370
+# route), sitting beside the hand body the default path still runs. The lint accepts such a line only when exactly
+# one body of the pair is in an EXE-ONLY TU carrying the marker line `// RVA-LINT: ORIGTOP-ONLY` and the other is
+# not; a tag on any other finding, or a class pair on an untagged line, fails the build. The lint prints the D4
+# burn-down count and the ORIGTOP-ONLY count separately.
+#   Format: ORIGTOP-ONLY <CHECK>:<rva-8hex>:<comma-separated sorted TU paths>   # citation
+# THE WHOLE CLASS IS DELETED AT THE ORIG_TOP FLIP: when the matched route becomes the default, the hand bodies go,
+# every ORIGTOP-ONLY line goes with them, and the marker lines are removed from the TUs.
+#
 # The `audit=` tag is the verdict that row carried in the 2026-09-29 audit CSV.
 # `audit=UNREVIEWED` and rows with no tag are STRUCTURAL CANDIDATES that no one
 # has compared body-to-body yet -- they are allowlisted so the guard can go live,
