@@ -1,8 +1,8 @@
 """PORT-OT-HUD-2 (L-111 (a) step 1): BINDINGS.tsv rows for the effect pair swapped onto matched bodies on the
 MASHED_ORIG_TOP path (0x004210b0 init / 0x004210f0 teardown of the record at 0x0063e548), the two HUD font teardown rows
 released by PORT-OT-RWG-MODULES (0x00555830 / 0x00556e40, run only with MASHED_ORIG_TOP_RWMOD=1), and their exe-only
-matched callees. Runs update_bindings_othud.py first (which runs the FRONTEND, OT-BOOT and 04J updaters), then writes the
-rows below. Idempotent.
+matched callees. Runs the chain tips update_bindings_otgameplay.py, _otvehicle.py and _otother.py first (each runs
+update_bindings_othud.py and the FRONTEND, OT-BOOT and 04J updaters), then writes the rows below. Idempotent.
 0x00556e40's row is `matched` with its selector named: the matched body is what runs when MASHED_ORIG_TOP_RWMOD=1 and the
 handle is non-zero. Its knob-path run still takes the stand-in, because the four handles are written only by 0x00427ca0,
 still a stand-in (RESULT_PORT-OT-HUD-2.md).
@@ -52,7 +52,9 @@ FIXED = {  # rva -> (name or None, kind, symbol, note, level, caller)
 
 
 def main():
-    subprocess.check_call([sys.executable, os.path.join(HERE, 'update_bindings_othud.py')])
+    # Chain tips on orch/integration 8e45017e1: GAMEPLAY, VEHICLE and OTHER (OTHER runs RENDER); each runs update_bindings_othud.py.
+    for u in ('update_bindings_otgameplay.py', 'update_bindings_otvehicle.py', 'update_bindings_otother.py'):
+        subprocess.check_call([sys.executable, os.path.join(HERE, u)])
     lines = open(TSV, encoding='utf-8').read().splitlines()
     head, rows = lines[0], [ln.split('\t') for ln in lines[1:] if ln.strip()]
     idx = {int(r[0], 16): r for r in rows}
