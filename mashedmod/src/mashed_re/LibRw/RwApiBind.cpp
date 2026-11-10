@@ -1326,6 +1326,47 @@ void* __cdecl RwModVectorSingle(void* out, const void* in, const void* m) {
     return out;
 }
 
+// [PORT-OT-RWG-STRINGS] the RwGlobals string slots the ORIG_TOP rows call (same knob). MASHED.exe values from the
+// original-side probe (RwGlobals block, verify/portorigtop_20261109/RESULT_PORT-OT-RWG-STRINGS.md); each binding keeps the
+// original's arguments and result.
+// +0xc4 = 0x004a2b60 (hooks.csv: libid identical to libcmt _sprintf). Call: re/match/s02/004113b0.c "%sAll%d.rep".
+int __cdecl RwGlobalsSprintf(char* d, const char* fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    const int n = std::vsprintf(d, fmt, ap);
+    va_end(ap);
+    return n;
+}
+// +0xd0 = 0x004a34b0 (hooks.csv _strncpy, CRT). Call: re/match/s20/004ce790.c (dst, src, 0x12).
+char* __cdecl RwGlobalsStrncpy(char* d, const char* s, std::size_t n) { return std::strncpy(d, s, n); }
+// +0xe8 = 0x004af340 (msvc-crt): bytes compared unsigned until the first difference or a common NUL; 0 when equal
+// (0x004af380), else sbb / shl 1 / add 1 = -1 when the first string's byte is below the second's, +1 above
+// (0x004af384..0x004af38b).
+int __cdecl RwGlobalsStrcmp(const char* a, const char* b) {
+    const unsigned char* x = reinterpret_cast<const unsigned char*>(a);
+    const unsigned char* y = reinterpret_cast<const unsigned char*>(b);
+    for (;; ++x, ++y) {
+        if (*x != *y) return *x < *y ? -1 : 1;
+        if (*x == 0) return 0;
+    }
+}
+// +0xf4 = 0x004a9410 (hooks.csv _strlen, CRT).
+std::size_t __cdecl RwGlobalsStrlen(const char* s) { return std::strlen(s); }
+}  // namespace
+
+// Render/RwStrCase.cpp, Render/RwStrSearch.cpp: the exe bodies of 0x004d86d0 / 0x004d8700 / 0x004d8750 (hooks.csv C4).
+extern "C" void __cdecl RwStrupr(char* s);
+extern "C" void __cdecl RwStrlwr(char* s);
+extern "C" char* __cdecl RwStrrchr(char* s, char c);
+
+namespace {
+// +0xf8 = 0x004d86d0 / +0xfc = 0x004d8700: eax is loaded with s at entry (0x004d86d0 `mov eax,[esp+4]`) and kept, so the
+// original returns s; the exe bodies return void, so these wrappers return s.
+char* __cdecl RwGlobalsStrupr(char* s) { RwStrupr(s); return s; }
+char* __cdecl RwGlobalsStrlwr(char* s) { RwStrlwr(s); return s; }
+// +0xdc = 0x004d8750 (RwStrrchr). Call: re/match/s20/004ce8e0.c (name, 0x2e).
+char* __cdecl RwGlobalsStrrchr(char* s, int c) { return RwStrrchr(s, static_cast<char>(c)); }
+
 // MASHED.exe values (original-side probe, ORIG_RWG.json "mods"): *(0x007d3ffc) = 0x134, *(0x007d4028) = 0x14c,
 // *(0x007d4054) = 0x3f4, *(0x007d4628) = 0x170.
 constexpr std::uint32_t kModVector = 0x134, kModMatrix = 0x14c, kModTexture = 0x3f4, kModImage = 0x170;
@@ -1347,6 +1388,17 @@ void Put(std::uint32_t off, std::uint32_t v) {
 std::uint32_t U(const void* p) { return static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(p)); }
 
 void RegisterRwModules() {
+    // [PORT-OT-RWG-STRINGS] string slots: original +0xc4 0x004a2b60, +0xd0 0x004a34b0, +0xdc 0x004d8750, +0xe8 0x004af340,
+    // +0xf4 0x004a9410, +0xf8 0x004d86d0, +0xfc 0x004d8700. +0xc8 / +0xd8 / +0xe0 / +0xe4 / +0xec / +0xf0 / +0x100 / +0x104
+    // (original 0x004a42c5 / 0x005c2300 / 0x004d8730 / 0x004a3860 / 0x004a3a90 / 0x004d8680 / 0x004a3ac9 / 0x005c22bd)
+    // stay 0: no ORIG_TOP row calls them (ot_measure.py lists).
+    Put(0xc4, U(reinterpret_cast<void*>(&RwGlobalsSprintf)));
+    Put(0xd0, U(reinterpret_cast<void*>(&RwGlobalsStrncpy)));
+    Put(0xdc, U(reinterpret_cast<void*>(&RwGlobalsStrrchr)));
+    Put(0xe8, U(reinterpret_cast<void*>(&RwGlobalsStrcmp)));
+    Put(0xf4, U(reinterpret_cast<void*>(&RwGlobalsStrlen)));
+    Put(0xf8, U(reinterpret_cast<void*>(&RwGlobalsStrupr)));
+    Put(0xfc, U(reinterpret_cast<void*>(&RwGlobalsStrlwr)));
     // RwGlobals +0x118 / +0x11c: original 0x004cca80 / 0x004ccba0.
     s_rwGlobals.flalloc = reinterpret_cast<void*>(&RwGlobalsFreeListAlloc);
     s_rwGlobals.flfree = reinterpret_cast<void*>(&RwGlobalsFreeListFree);
@@ -1398,7 +1450,8 @@ void RegisterRwModules() {
     *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4054u)) = kModTexture;
     *reinterpret_cast<volatile std::uint32_t*>(static_cast<std::uintptr_t>(0x007d4628u)) = kModImage;
     BindLog("RwGlobals [MASHED_ORIG_TOP_RWMOD]: modules registered (0x007d3ffc 0x134, 0x007d4028 0x14c, 0x007d4054 0x3f4, "
-            "0x007d4628 0x170), freelist alloc / free at +0x118 / +0x11c, record %p size 0x%X",
+            "0x007d4628 0x170), freelist alloc / free at +0x118 / +0x11c, string slots +0xc4 +0xd0 +0xdc +0xe8 +0xf4 +0xf8 "
+            "+0xfc, record %p size 0x%X",
             static_cast<void*>(&s_rwGlobals), static_cast<unsigned>(sizeof(s_rwGlobals)));
 }
 }  // namespace
