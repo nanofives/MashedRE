@@ -124,6 +124,7 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-10  0x00414f00  AiTrackObjSeek  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/pilot/a1_00414f00.c; evidence: verify/matchx87castlever_20261110/pilot/RESULT_MATCH-X87-CASTLEVER-PILOT.md
 2026-11-10  0x0044e0a0  FUN_0044e0a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s08/0044e0a0.c; evidence: verify/matchx87castlever_20261110/pilot/RESULT_MATCH-X87-CASTLEVER-PILOT.md
 2026-11-10  0x00458e00  PickupPoolSpawn  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s09/00458e00.c; evidence: verify/matchx87castlever_20261110/pilot/RESULT_MATCH-X87-CASTLEVER-PILOT.md
+2026-11-10  0x0040ca00  FUN_0040ca00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0040ca00.c; evidence: verify/matchracepath_20261110/near/RESULT_MATCH-RACEPATH-NEAR.md
 2026-11-09  0x0048aff0  FUN_0048aff0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
 2026-11-09  0x0048b230  FUN_0048b230  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
 2026-11-09  0x0048b440  FUN_0048b440  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/0048aff0.c; evidence: verify/matchracepath_20261109/fresh2/RESULT_MATCH-RACEPATH-FRESH2.md
