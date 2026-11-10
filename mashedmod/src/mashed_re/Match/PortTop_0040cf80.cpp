@@ -12,7 +12,7 @@
 #define FUN_00422140 PortTop_StandIn04C_00422140   // stand-in: matched, not compiled (level 2)
 #define FUN_0041ec00 PortTop_StandIn04C_0041ec00   // stand-in: matched, not compiled (level 2)
 #define FUN_0045b350 RwInitNullStub   // exe body, Match/MatchS09_0045b350.cpp
-#define FUN_0040cf40 PortTop_StandIn04C_0040cf40   // stand-in: matched; .asi-only Match/MatchS02_0040cf40.cpp, raw-address callees
+#define FUN_0040cf40 Orig_0040cf40   // matched, Match/PortTop_0040cf40.cpp (0x004c5a60 binds to the RW binding), since PORT-OT-GAMEPLAY
 extern "C" {
 #include "../../../../re/match/s02/0040cf80.c"
 }

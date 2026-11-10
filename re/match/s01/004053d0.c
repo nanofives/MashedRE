@@ -5,9 +5,17 @@
      0x00405430 does fld on it.
    - 0x004053d0: store order d74, d78, d70 in source gives the original's d74, d70, d78 schedule (g2s 75%).
    - 0x00405430: two early `return 0;` (second on `>`), then `return 1;` (g2s `&&` form 69.2%). */
+#ifdef MATCH_PORT
+/* PORT-OT-GAMEPLAY: Match/PortTop_00405400.cpp compiles this file in the exe; globals are references to their
+   original addresses (the exe maps the original data range). C under the DDK is unchanged. */
+static float &DAT_00639d74 = *(float *)0x00639d74;
+static int &DAT_00639d70 = *(int *)0x00639d70;
+static int &DAT_00639d78 = *(int *)0x00639d78;
+#else
 extern float DAT_00639d74;
 extern int DAT_00639d70;
 extern int DAT_00639d78;
+#endif
 // MATCH: 0x004053d0 FUN_004053d0
 void FUN_004053d0(int param_1, int param_2)
 {
