@@ -1,0 +1,192 @@
+rva	name	subsystem	rwg_verdict	rwg_detail	seed_verdict	seed_detail
+0x00401f10	FUN_00401f10	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0; data -; null call slot: +0x20		
+0x0040ce80	PtrTable5f2770Get	gameplay			OK	0x005f2770 seeded
+0x0040d250	DoubleDerefIndexedGetter	frontend			OK	0x005f2770 seeded
+0x0040e180	MostSeparatedPair	vehicle			OK	0x005f2770 seeded
+0x0040e370	FUN_0040e370	util			OK	0x005f2770 seeded
+0x0040e470	CarSlotStateGet	frontend			OK	0x005f2770 seeded
+0x0040e480	CarSlotStateSet	frontend			OK	0x005f2770 seeded
+0x0040e4a0	ElapsedTimeGet	ai			needs seed rule	0x005f29b8 DAT_005f29b8(4B, .data) exe=00000000 orig=ff000000
+0x0040e4b0	Race::GetSoleFinishedPlayer	util			OK	0x005f2770 seeded
+0x0040e500	FUN_0040e500	gameplay			needs seed rule	0x005f29bc DAT_005f29bc(4B, .data) exe=00000000 orig=ffffffff
+0x004113b0	FUN_004113b0	boot	needs binding	RwGlobals=0x00ff8290; call slots +0xc4=0x0 +0x108=0x1b7480; data -; null call slot: +0xc4	needs seed rule	0x005f29d0 DAT_005f29d0(4B, .data) exe=00000000 orig=1e000000
+0x004114c0	FUN_004114c0	boot	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00413a40	FUN_00413a40	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x24=0x0 +0x34=0x0; data -; null call slot: +0x20 +0x24 +0x34		
+0x0041b770	FUN_0041b770	render			needs seed rule	0x005f334c DAT_005f334c(4B, .data) exe=00000000 orig=6666e63e
+0x0041bec0	FUN_0041bec0	boot			needs seed rule	0x005cd1c8 s_team0panel_005cd1c8(11B, .rdata) exe=0000000000000000 orig=7465616d3070616e; 0x005cd1bc s_team1panel_005cd1bc(11B, .rdata) exe=0000000000000000 orig=7465616d3170616e
+0x0041c010	HudConstTableInitAndSweep	hud			needs seed rule	0x005f334c DAT_005f334c(4B, .data) exe=00000000 orig=6666e63e
+0x0041c100	FUN_0041c100	boot			needs seed rule	0x005cd1d4 s_KCPanel_dff_005cd1d4(12B, .rdata) exe=0000000000000000 orig=4b4350616e656c2e
+0x0041cbc0	FloatTableInit	util			needs seed rule	0x005f337c DAT_005f337c(4B, .data) exe=00000000 orig=8fc2f53e
+0x0041d6e0	FUN_0041d6e0	boot			needs seed rule	0x005cd208 s_teameppanel_dff_005cd208(16B, .rdata) exe=0000000000000000 orig=7465616d65707061
+0x0041d8b0	FUN_0041d8b0	boot			needs seed rule	0x005cd218 s_startlights_dff_005cd218(16B, .rdata) exe=0000000000000000 orig=73746172746c6967
+0x0041db90	FUN_0041db90	boot			needs seed rule	0x005cd23c s_RacePanel_dff_005cd23c(14B, .rdata) exe=0000000000000000 orig=5261636550616e65
+0x0041dc30	FUN_0041dc30	frontend			needs seed rule	0x005cc574 DAT_005cc574(4B, .rdata) exe=00000000 orig=00000040; 0x005cc31c DAT_005cc31c(4B, .rdata) exe=00000000 orig=00004040
+0x00421100	FUN_00421100	render			needs seed rule	0x005cd2b4 DAT_005cd2b4(4B, .rdata) exe=00000000 orig=00004841; 0x005cc9e0 DAT_005cc9e0(4B, .rdata) exe=00000000 orig=0000c841
+0x00421160	FUN_00421160	render			needs seed rule	0x005cc99c DAT_005cc99c(4B, .rdata) exe=00000000 orig=9a99993e
+0x00422440	FUN_00422440	gameplay			needs seed rule	0x005cd310 DAT_005cd310(4B, .rdata) exe=00000000 orig=db0f4940
+0x00426030	FUN_00426030	render			needs seed rule	0x005f616c _DAT_005f616c(4B, .data) exe=00000000 orig=01000000
+0x004274e0	FUN_004274e0	frontend			OK	0x005cd5e4 seeded; 0x005cd5d8 seeded; 0x005cd5cc seeded; 0x005cd5c0 seeded; 0x005cd5b4 seeded; 0x005cd5ac seeded
+0x00427580	FUN_00427580	frontend			needs seed rule	0x005cd5f0 DAT_005cd5f0(4B, .rdata) exe=00000000 orig=7777273f; 0x005cd5f4 DAT_005cd5f4(4B, .rdata) exe=00000000 orig=1111b13e; 0x005cd5f8 DAT_005cd5f8(4B, .rdata) exe=00000000 orig=0000103f
+0x00427840	FontText_UTF16WidenCopy	hud	needs binding	RwGlobals=0x00ff8290; call slots +0xf4=0x0; data -; null call slot: +0xf4		
+0x004283a0	FUN_004283a0	boot			OK	0x005cd640 seeded
+0x00429620	FUN_00429620	hud			needs seed rule	0x005cc324 DAT_005cc324(4B, .rdata) exe=00000000 orig=8988083d; 0x005ccd04 DAT_005ccd04(4B, .rdata) exe=00000000 orig=0000fa43; 0x005cd6c4 DAT_005cd6c4(4B, .rdata) exe=00000000 orig=0000eb43
+0x00429aa0	GameStateSlotsFill	util			OK	0x00614718 seeded
+0x00429b30	FUN_00429b30	frontend			needs seed rule	0x005cd6c8 DAT_005cd6c8(4B, .rdata) exe=00000000 orig=00803b47
+0x00429b70	FUN_00429b70	frontend			needs seed rule	0x005cd6c8 DAT_005cd6c8(4B, .rdata) exe=00000000 orig=00803b47
+0x0042a470	FUN_0042a470	render	OK	RwGlobals=0x00ff8290; call slots +0xcc=0x1b74e0 +0xd4=0x1b74a0; data -		
+0x0042a5d0	FUN_0042a5d0	render	OK	RwGlobals=0x00ff8290; call slots +0xcc=0x1b74e0 +0xd4=0x1b74a0; data -	needs seed rule	0x005f65b0 PTR_DAT_005f65b0(4B, .data) exe=00000000 orig=9cd25c00
+0x0042a940	MenuTableSearch	frontend			needs seed rule	0x005f6754 DAT_005f6754(4B, .data) exe=00000000 orig=06000000
+0x0042a980	MenuTableSearchAlt	frontend			needs seed rule	0x005f6754 DAT_005f6754(4B, .data) exe=00000000 orig=06000000
+0x0042aae0	MenuIm2DQuad	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x0042aff0	MenuButtonDetectA	frontend			OK	0x005ccac0 seeded
+0x0042b180	MenuButtonDetectB	frontend			OK	0x005ccac0 seeded
+0x0042c3c0	FUN_0042c3c0	util			needs seed rule	0x005cc950 DAT_005cc950(4B, .rdata) exe=00000000 orig=0000403f; 0x005cd788 DAT_005cd788(4B, .rdata) exe=00000000 orig=d8d2233c; 0x005cd78c s__2f_005cd78c(5B, .rdata) exe=0000000000 orig=252e326600
+0x0042d290	MenusLapTimeFmt	frontend			needs seed rule	0x005cd798 s_sd_005cd798(8B, .rdata) exe=0000000000000000 orig=2573256400000000; 0x005cd7a0 s_0_005cd7a0(4B, .rdata) exe=00000000 orig=30000000
+0x0042e590	SpriteAnimFrameThunk	frontend			needs seed rule	0x005f79d8 DAT_005f79d8(104B, .data) exe=0000000000000000 orig=b4785f00c0785f00
+0x0042ee00	SpriteSlotGate	frontend			needs seed rule	0x005cd7b8 s_lock_005cd7b8(5B, .rdata) exe=0000000000 orig=6c6f636b00; 0x005cd7b4 s_dot_005cd7b4(4B, .rdata) exe=00000000 orig=646f7400; 0x005cd7ac s_check_005cd7ac(6B, .rdata) exe=000000000000 orig=636865636b00
+0x0042ee40	FrontendModeDispatch	frontend			needs seed rule	0x005cd81c s_TimeTrial_005cd81c(10B, .rdata) exe=0000000000000000 orig=54696d6554726961; 0x005cd810 s_BronzeMedal_005cd810(12B, .rdata) exe=0000000000000000 orig=42726f6e7a654d65; 0x005cd804 s_SilverMedal_005cd804(12B, .rdata) exe=0000000000000000 orig=53696c7665724d65; 0x005cd7f8 s_GoldMedal_005cd7f8(10B, .rdata) exe=0000000000000000 orig=476f6c644d656461; 0x005cd7ec s_BronzeCup_005cd7ec(10B, .rdata) exe=0000000000000000 orig=42726f6e7a654375; 0x005cd7e0 s_SilverCup_005cd7e0(10B, .rdata) exe=0000000000000000 orig=53696c7665724375; 0x005cd7d8 s_GoldCup_005cd7d8(8B, .rdata) exe=0000000000000000 orig=476f6c6443757000; 0x005cd7cc s_MultiPlayer_005cd7cc(12B, .rdata) exe=0000000000000000 orig=4d756c7469506c61; 0x005cd7c0 s_QuickRace_005cd7c0(10B, .rdata) exe=0000000000000000 orig=517569636b526163
+0x0042f400	FUN_0042f400	frontend			OK	0x005cd794 seeded
+0x0042fab0	SpriteSlotDispatch	frontend			needs seed rule	0x005cd898 s_NFLRed_005cd898(7B, .rdata) exe=00000000000000 orig=4e464c52656400; 0x005cd88c s_NFLBluejay_005cd88c(11B, .rdata) exe=0000000000000000 orig=4e464c426c75656a; 0x005cd880 s_NFLMelon_005cd880(9B, .rdata) exe=0000000000000000 orig=4e464c4d656c6f6e; 0x005cd878 s_NFLGold_005cd878(8B, .rdata) exe=0000000000000000 orig=4e464c476f6c6400; 0x005cd870 s_NFLPink_005cd870(8B, .rdata) exe=0000000000000000 orig=4e464c50696e6b00; 0x005cd864 s_NFLShadow_005cd864(10B, .rdata) exe=0000000000000000 orig=4e464c536861646f; 0x005cd858 s_NFLCopter_005cd858(10B, .rdata) exe=0000000000000000 orig=4e464c436f707465; 0x005cd850 s_NFLBomb_005cd850(8B, .rdata) exe=0000000000000000 orig=4e464c426f6d6200; 0x005cd844 s_NFLFugitive_005cd844(12B, .rdata) exe=0000000000000000 orig=4e464c4675676974; 0x005cd838 s_NFLSurvival_005cd838(12B, .rdata) exe=0000000000000000 orig=4e464c5375727669
+0x00431b50	SinGlobalProduct431b50	util			needs seed rule	0x005cd8f0 DAT_005cd8f0(8B, .rdata) exe=0000000000000000 orig=1f85eb51b81ef93f
+0x00431b60	SinGlobalProduct431b60	util			needs seed rule	0x005cd8f0 DAT_005cd8f0(8B, .rdata) exe=0000000000000000 orig=1f85eb51b81ef93f
+0x004325c0	FUN_004325c0	frontend			OK	0x005f72a0 seeded; 0x005f7370 seeded
+0x004391b0	FUN_004391b0	frontend			needs seed rule	0x005cda3c s_tick_005cda3c(5B, .rdata) exe=0000000000 orig=7469636b00; 0x005cda44 s_Lock_005cda44(5B, .rdata) exe=0000000000 orig=4c6f636b00; 0x005cd970 s_Star_005cd970(5B, .rdata) exe=0000000000 orig=5374617200
+0x00441700	Camera::SetupFOV	util			needs seed rule	0x005cc950 DAT_005cc950(4B, .rdata) exe=00000000 orig=0000403f
+0x004430e0	FUN_004430e0	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x34=0x0; data +0x18=0x0; null call slot: +0x20 +0x34; zero data field: +0x18		
+0x0044e020	FloatLt44e020	audio			needs seed rule	0x005ce2d8 DAT_005ce2d8(4B, .rdata) exe=00000000 orig=8fc275bc
+0x004522d0	FUN_004522d0	audio	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00458630	FUN_00458630	frontend			needs seed rule	0x005ce59c s_machinegun_005ce59c(11B, .rdata) exe=0000000000000000 orig=6d616368696e6567; 0x005ce594 s_mine_005ce594(5B, .rdata) exe=0000000000 orig=6d696e6500; 0x005ce58c s_mortar_005ce58c(7B, .rdata) exe=00000000000000 orig=6d6f7274617200; 0x005ce580 s_depthcharge_005ce580(12B, .rdata) exe=0000000000000000 orig=6465707468636861; 0x005ce578 s_missile_005ce578(8B, .rdata) exe=0000000000000000 orig=6d697373696c6500; 0x005ce568 s_flamethrower_005ce568(13B, .rdata) exe=0000000000000000 orig=666c616d65746872; 0x005ce560 s_shotgun_005ce560(8B, .rdata) exe=0000000000000000 orig=73686f7467756e00; 0x005ce558 s_flare_005ce558(6B, .rdata) exe=000000000000 orig=666c61726500; 0x005ce4fc s_oil_005ce4fc(4B, .rdata) exe=00000000 orig=6f696c00; 0x005ce550 s_chaos_005ce550(6B, .rdata) exe=000000000000 orig=6368616f7300; 0x005cd130 s_airstrike_005cd130(10B, .rdata) exe=0000000000000000 orig=616972737472696b
+0x00458920	FUN_00458920	gameplay			OK	0x005ce548 exe holds original bytes
+0x0045b9d0	FUN_0045b9d0	powerups			needs seed rule	0x005f99bc PTR_thunk_FUN_00456c70_005f99bc(4B, .data) exe=00000000 orig=906c4500
+0x0045baa0	PowerupTypeLookup	powerups			needs seed rule	0x005f9998 DAT_005f9998(32B, .data) exe=0000000000000000 orig=0900000040604500
+0x0045be90	FUN_0045be90	powerups			needs seed rule	0x005f99c0 PTR_FUN_005f99c0(4B, .data) exe=00000000 orig=50b34500
+0x0045bed0	PowerupRoundCleanup	powerups			OK	0x005f9bd8 seeded; 0x005f99c4 seeded
+0x0045bf30	PowerupTeardownAll	powerups			needs seed rule	0x005f9998 DAT_005f9998(32B, .data) exe=0000000000000000 orig=0900000040604500
+0x0045c720	FUN_0045c720	audio			needs seed rule	0x005fd190 DAT_005fd190(1B, .data) exe=00 orig=01; 0x005fe268 DAT_005fe268(1B, .data) exe=00 orig=02; 0x005ff340 DAT_005ff340(1B, .data) exe=00 orig=03; 0x00600418 DAT_00600418(1B, .data) exe=00 orig=04; 0x006014f0 DAT_006014f0(1B, .data) exe=00 orig=05; 0x006025c8 DAT_006025c8(1B, .data) exe=00 orig=06
+0x0045c880	FUN_0045c880	gameplay			needs seed rule	0x005cc344 DAT_005cc344(4B, .rdata) exe=00000000 orig=0000a0c0; 0x005cc358 DAT_005cc358(4B, .rdata) exe=00000000 orig=0000a040; 0x005cd0fc DAT_005cd0fc(4B, .rdata) exe=00000000 orig=cdccccbd; 0x005ce4b8 DAT_005ce4b8(4B, .rdata) exe=00000000 orig=cdcc4cbe; 0x005cd30c DAT_005cd30c(4B, .rdata) exe=00000000 orig=cdccccbe; 0x005cc56c DAT_005cc56c(4B, .rdata) exe=00000000 orig=cdcccc3d; 0x005cd0b0 DAT_005cd0b0(4B, .rdata) exe=00000000 orig=000040bf; 0x005cc8f0 DAT_005cc8f0(4B, .rdata) exe=00000000 orig=9a99193e; 0x005ce654 DAT_005ce654(4B, .rdata) exe=00000000 orig=0000e0bf
+0x0045ca30	FUN_0045ca30	gameplay			needs seed rule	0x005cc34c DAT_005cc34c(4B, .rdata) exe=00000000 orig=000000c0; 0x005cca00 DAT_005cca00(4B, .rdata) exe=00000000 orig=000080c0
+0x0045d0e0	FUN_0045d0e0	gameplay			needs seed rule	0x005ce658 DAT_005ce658(4B, .rdata) exe=00000000 orig=00007c42
+0x0045df70	FloatStep45df70	util			needs seed rule	0x006036c0 DAT_006036c0(4B, .data) exe=00000000 orig=0000803f
+0x0045dfc0	FUN_0045dfc0	util			needs seed rule	0x006036cc DAT_006036cc(4B, .data) exe=00000000 orig=0000803f
+0x0046b540	VehicleSpawnInit	vehicle			OK	0x00613108 seeded; 0x00613110 seeded; 0x00613114 seeded; 0x00613118 seeded; 0x00613130 seeded; 0x0061313c seeded; 0x005cc558 seeded; 0x005cc320 seeded
+0x0046dd80	Float61313cGet	gameplay			OK	0x0061313c seeded
+0x00472650	FUN_00472650	util			OK	0x005cd314 seeded
+0x004726b0	FUN_004726b0	gameplay			needs seed rule	0x005cc33c DAT_005cc33c(4B, .rdata) exe=00000000 orig=000080bf
+0x00472740	FUN_00472740	gameplay			OK	0x005cc320 seeded
+0x00472820	FUN_00472820	util			needs seed rule	0x005ce54c DAT_005ce54c(4B, .rdata) exe=00000000 orig=bd378635
+0x00472b10	FUN_00472b10	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00472c60	ChromeBaseDraw	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00472dc0	FUN_00472dc0	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00472f40	TextGradientV0V1Override	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x004730b0	TextGradientV2V3Override	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00473220	FUN_00473220	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x004733b0	FUN_004733b0	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00473540	GradientQuadHorizAlpha	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x004736c0	BorderQuadFourAlpha	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00473870	TextSpriteUVExplicit	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x004739f0	TextSpriteScaled	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00473ee0	LogoOverlayDraw	frontend	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0 +0x30=0x0; data +0x18=0x0; null call slot: +0x20 +0x30; zero data field: +0x18		
+0x00474db0	RwMallocArrayZeroFill	render	OK	RwGlobals=0x00ff8290; call slots +0x108=0x1b7480; data -		
+0x00475d90	FUN_00475d90	render	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00475f30	FUN_00475f30	render			needs seed rule	0x00613278 DAT_00613278(4B, .data) exe=00000000 orig=0000003f; 0x00613258 DAT_00613258(4B, .data) exe=00000000 orig=00000040; 0x00613274 DAT_00613274(4B, .data) exe=00000000 orig=cdcccc3d
+0x004762c0	FUN_004762c0	util			OK	0x005cc320 seeded
+0x004768c0	FUN_004768c0	render	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x004769d0	ParticleEmitter_SetVelocity	render			OK	0x00613288 seeded
+0x004769f0	ParticleEmitter_SetColour	render			OK	0x00613290 seeded
+0x00476ae0	Batch476ae0	render			OK	0x00613288 seeded
+0x00476b30	FUN_00476b30	render			OK	0x00613290 seeded
+0x004770c0	FUN_004770c0	vehicle			OK	0x006132c4 seeded; 0x006132c8 seeded
+0x00477450	FUN_00477450	render			needs seed rule	0x006132cc DAT_006132cc(4B, .data) exe=00000000 orig=ffffffff
+0x004775b0	FUN_004775b0	render			needs seed rule	0x005ceb00 s_shockwave_dff_005ceb00(14B, .rdata) exe=0000000000000000 orig=73686f636b776176; 0x005ceaf0 s_hemisphere_dff_005ceaf0(15B, .rdata) exe=0000000000000000 orig=68656d6973706865
+0x00477760	FUN_00477760	render			needs seed rule	0x006132cc DAT_006132cc(4B, .data) exe=00000000 orig=ffffffff
+0x00477810	FUN_00477810	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0; data -; null call slot: +0x20		
+0x00477e40	FUN_00477e40	render			needs seed rule	0x005ceb10 DAT_005ceb10(1B, .rdata) exe=00 orig=74
+0x0047ade0	RWP_Object	render	needs binding	RwGlobals=0x00ff8290; call slots +0x0=0x0; data -; null call slot: +0x0		
+0x0047b200	Set_Current_Type	render			needs seed rule	0x006132fc DAT_006132fc(4B, .data) exe=00000000 orig=ffffffff
+0x0047b230	Set_Current_Respawn_Time	render			needs seed rule	0x00613300 DAT_00613300(4B, .data) exe=00000000 orig=0000f042
+0x0047b250	Place_Powerup	gameplay			needs seed rule	0x006132fc DAT_006132fc(4B, .data) exe=00000000 orig=ffffffff; 0x00613300 DAT_00613300(4B, .data) exe=00000000 orig=0000f042
+0x0047b8d0	FUN_0047b8d0	track			needs seed rule	0x00616038 DAT_00616038(4B, .data) exe=00000000 orig=4ee640bb
+0x00482030	SubStripQuadUV	vehicle			needs seed rule	0x005cc35c DAT_005cc35c(4B, .rdata) exe=00000000 orig=00008040
+0x004820e0	FUN_004820e0	vehicle			OK	0x005cc320 seeded; 0x005cc32c seeded
+0x00482900	ReplayGetSize	vehicle			needs seed rule	0x005cc728 DAT_005cc728(4B, .rdata) exe=00000000 orig=00007042; 0x005cf24c s_Replay_size_is__d_005cf24c(19B, .rdata) exe=0000000000000000 orig=5265706c61792073
+0x00483a40	FUN_00483a40	vehicle	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00484130	FUN_00484130	boot	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00484170	Rec18Create	boot	OK	RwGlobals=0x00ff8290; call slots +0x108=0x1b7480; data -	OK	0x005cc320 seeded
+0x004841d0	FUN_004841d0	boot			needs seed rule	0x00613328 DAT_00613328(60B, .data) exe=0000000000000000 orig=4000401040204080; 0x006136e8 DAT_006136e8(28B, .data) exe=0000000000000000 orig=4000401040804070; 0x006138a8 DAT_006138a8(40B, .data) exe=0000000000000000 orig=0000800080008080; 0x00613b28 DAT_00613b28(104B, .data) exe=0000000000000000 orig=0000408040808000
+0x00485d90	FUN_00485d90	particle			needs seed rule	0x005ce5f8 s_exp_cloud2_005ce5f8(11B, .rdata) exe=0000000000000000 orig=6578705f636c6f75
+0x00485e10	FUN_00485e10	particle	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x004862d0	FUN_004862d0	particle			needs seed rule	0x005ce5f8 s_exp_cloud2_005ce5f8(11B, .rdata) exe=0000000000000000 orig=6578705f636c6f75; 0x005ccca0 s_scorch_005ccca0(7B, .rdata) exe=00000000000000 orig=73636f72636800
+0x004891f0	FUN_004891f0	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0; data -; null call slot: +0x20		
+0x004892c0	FUN_004892c0	particle			OK	0x005cc320 seeded
+0x004898d0	FUN_004898d0	gameplay	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00489c60	FUN_00489c60	particle	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x0048bbe0	FUN_0048bbe0	particle			OK	0x005cf4a8 seeded
+0x0048f290	FUN_0048f290	render			needs seed rule	0x005cc9d0 DAT_005cc9d0(4B, .rdata) exe=00000000 orig=00000043; 0x005cc950 DAT_005cc950(4B, .rdata) exe=00000000 orig=0000403f
+0x0048f8a0	FUN_0048f8a0	particle			needs seed rule	0x005cc750 DAT_005cc750(4B, .rdata) exe=00000000 orig=00008041
+0x0048f9f0	FUN_0048f9f0	particle			needs seed rule	0x005ce18c DAT_005ce18c(4B, .rdata) exe=00000000 orig=0ad7a33c; 0x005cc750 DAT_005cc750(4B, .rdata) exe=00000000 orig=00008041; 0x006145b0 DAT_006145b0(64B, .data) exe=0000000000000000 orig=0000000000000000
+0x0048fb10	FUN_0048fb10	particle			needs seed rule	0x005cc750 DAT_005cc750(4B, .rdata) exe=00000000 orig=00008041; 0x006145b0 DAT_006145b0(48B, .data) exe=0000000000000000 orig=0000000000000000
+0x00490490	FUN_00490490	render	needs binding	RwGlobals=0x00ff8290; call slots +0x20=0x0; data -; null call slot: +0x20		
+0x00491530	FUN_00491530	render	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x004921d0	DisplayInit	boot			OK	0x005cf6a4 seeded; 0x005cf698 seeded
+0x00493900	sub_00493900	boot			OK	0x006147bc seeded; 0x006147c0 seeded; 0x005cf8cc seeded; 0x005cf8c4 seeded; 0x005cf8bc seeded; 0x005cf8b4 seeded; 0x005cf8b0 seeded; 0x005cf8ac seeded; 0x005cf8a8 seeded; 0x005cf8a4 seeded; 0x005cf8a0 seeded; 0x005cf89c seeded
+0x00493b50	FUN_00493b50	util			needs seed rule	0x006147dc PTR_FUN_006147dc(4B, .data) exe=00000000 orig=503b4900
+0x00493f00	FUN_00493f00	util			OK	0x005cfabc seeded
+0x00494ac0	FUN_00494ac0	util			needs seed rule	0x005cf9d0 PTR_LAB_005cf9d0(4B, .rdata) exe=00000000 orig=00dd4900; 0x005cfaac DAT_005cfaac(1B, .rdata) exe=00 orig=40; 0x005cfd30 PTR_FUN_005cfd30(4B, .rdata) exe=00000000 orig=60de4900; 0x005cfd70 PTR_LAB_005cfd70(4B, .rdata) exe=00000000 orig=20dc4900; 0x005d0e74 PTR_LAB_005d0e74(4B, .rdata) exe=00000000 orig=80424900; 0x005d0e88 PTR_LAB_005d0e88(4B, .rdata) exe=00000000 orig=50424900
+0x00494b20	FUN_00494b20	render			needs seed rule	0x005cf9d0 PTR_LAB_005cf9d0(4B, .rdata) exe=00000000 orig=00dd4900; 0x005cfd30 PTR_FUN_005cfd30(4B, .rdata) exe=00000000 orig=60de4900; 0x005cfd70 PTR_LAB_005cfd70(4B, .rdata) exe=00000000 orig=20dc4900; 0x005d0e74 PTR_LAB_005d0e74(4B, .rdata) exe=00000000 orig=80424900; 0x005d0e88 PTR_LAB_005d0e88(4B, .rdata) exe=00000000 orig=50424900
+0x00494c80	FUN_00494c80	util			needs seed rule	0x006147e0 PTR_s_toastart_pc_movies_small_mpg_006147e0(4B, .data) exe=00000000 orig=f0fc5c00; 0x006147dc PTR_FUN_006147dc(4B, .data) exe=00000000 orig=503b4900; 0x005cfac4 DAT_005cfac4(16B, .rdata) exe=0000000000000000 orig=b668a856d40ace11; 0x005d0abc DAT_005d0abc(16B, .rdata) exe=0000000000000000 orig=a968a856d40ace11; 0x005d0bbc DAT_005d0bbc(16B, .rdata) exe=0000000000000000 orig=b268a856d40ace11; 0x005d0bcc DAT_005d0bcc(16B, .rdata) exe=0000000000000000 orig=b168a856d40ace11; 0x005d0c4c DAT_005d0c4c(16B, .rdata) exe=0000000000000000 orig=b3eb36e44f52ce11; 0x005cfc70 u_TEXTURERENDERER_005cfc70(64B, .rdata) exe=0000000000000000 orig=5400450058005400; 0x005cfc2c u_SOURCE_005cfc2c(28B, .rdata) exe=0000000000000000 orig=53004f0055005200; 0x005cfb9c u_Output_005cfb9c(28B, .rdata) exe=0000000000000000 orig=4f00750074007000; 0x005cfc3c s_Could_not_add_renderer_filter_to_005cfc3c(49B, .rdata) exe=0000000000000000 orig=436f756c64206e6f; 0x005cfbe0 s_Could_not_add_source_filter_to_g_005cfbe0(73B, .rdata) exe=0000000000000000 orig=436f756c64206e6f; 0x005cfbac s_Could_not_add_source_filter_to_g_005cfbac(47B, .rdata) exe=0000000000000000 orig=436f756c64206e6f; 0x005cfb78 s_Could_not_find_output_pin___hr_0_005cfb78(36B, .rdata) exe=0000000000000000 orig=436f756c64206e6f; 0x005cfb48 s_Could_not_render_source_output_p_005cfb48(45B, .rdata) exe=0000000000000000 orig=436f756c64206e6f; 0x005cfae4 s_Could_not_create_texture_render_005cfae4(51B, .rdata) exe=0000000000000000 orig=436f756c64206e6f
+0x00494f40	FUN_00494f40	render			needs seed rule	0x005ceb90 DAT_005ceb90(4B, .rdata) exe=00000000 orig=8180803b; 0x005cfe34 DAT_005cfe34(4B, .rdata) exe=00000000 orig=00ff7f47
+0x00495080	Fwd494fd0_DoublePlusHalf	frontend			OK	0x005cc32c seeded
+0x00498950	ConfigLoad	save			OK	0x005d013c seeded; 0x005cf010 seeded; 0x005cfe70 seeded
+0x004989b0	ConfigSave	save			OK	0x005d0158 seeded; 0x005d00d8 seeded
+0x00498bc0	VideoGetRenderWidth	render			needs seed rule	0x00616028 DAT_00616028(4B, .data) exe=00000000 orig=80020000
+0x00498bd0	VideoGetRenderHeight	render			needs seed rule	0x0061602c DAT_0061602c(4B, .data) exe=00000000 orig=e0010000
+0x00499ba0	sub_00499ba0	boot			OK	0x005cfabc seeded; 0x005d041c seeded
+0x004a43d2	FUN_004a43d2	boot			needs seed rule	0x00616670 DAT_00616670(4B, .data) exe=00000000 orig=80700000; 0x006160c0 DAT_006160c0(4B, .data) exe=00000000 orig=ffffffff
+0x004b4510	FUN_004b4510	util			OK	0x005cd314 seeded
+0x004c1680	FUN_004c1680	render	needs binding	RwGlobals=0x00ff8290; call slots -; data +0xbc=0x0; zero data field: +0xbc		
+0x004c3b30	FastSqrt	util	needs binding	RwGlobals=0x00ff8290; call slots -; data +[0x007d3ffc]+0x0=0x0; module offset 0 (not registered): [0x007d3ffc]; zero data field: +[0x007d3ffc]+0x0		
+0x004c3b90	FastInvSqrt	util	needs binding	RwGlobals=0x00ff8290; call slots -; data +[0x007d3ffc]+0x4=0x0; module offset 0 (not registered): [0x007d3ffc]; zero data field: +[0x007d3ffc]+0x4		
+0x004c3bf0	Vec2Length	render	needs binding	RwGlobals=0x00ff8290; call slots -; data +[0x007d3ffc]+0x0=0x0; module offset 0 (not registered): [0x007d3ffc]; zero data field: +[0x007d3ffc]+0x0		
+0x004c3d60	FUN_004c3d60	render	needs binding	RwGlobals=0x00ff8290; call slots +[0x007d3ffc]+0x8=0x0; data -; module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0x8		
+0x004c3d90	FUN_004c3d90	render	needs binding	RwGlobals=0x00ff8290; call slots +[0x007d3ffc]+0xc=0x0; data -; module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0xc		
+0x004c3dc0	FUN_004c3dc0	render	needs binding	RwGlobals=0x00ff8290; call slots +[0x007d3ffc]+0x10=0x0; data -; module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0x10		
+0x004c3df0	RwV3dTransformPoints	render	needs binding	RwGlobals=0x00ff8290; call slots +[0x007d3ffc]+0x14=0x0; data -; module offset 0 (not registered): [0x007d3ffc]; null call slot: +[0x007d3ffc]+0x14		
+0x004c4600	RwMatrixMultiply	render	needs binding	RwGlobals=0x00ff8290; call slots -; data +[0x007d4028]+0x4=0x0; module offset 0 (not registered): [0x007d4028]; zero data field: +[0x007d4028]+0x4		
+0x004c5770	FUN_004c5770	render	needs binding	RwGlobals=0x00ff8290; call slots +0x11c=0x0; data +[0x007d4028]+0x0=0x0; module offset 0 (not registered): [0x007d4028]; null call slot: +0x11c; zero data field: +[0x007d4028]+0x0		
+0x004c5890	RwTexDictionaryCreate	render	needs binding	RwGlobals=0x00ff8290; call slots +0x118=0x0; data +[0x007d4054]+0x0=0x0 +[0x007d4054]+0xc=0x0; module offset 0 (not registered): [0x007d4054]; null call slot: +0x118; zero data field: +[0x007d4054]+0x0 +[0x007d4054]+0xc	OK	0x00618150 seeded
+0x004ce790	FUN_004ce790	render	needs binding	RwGlobals=0x00ff8290; call slots +0xd0=0x0 +0xe8=0x0 +0xf8=0x0 +0xfc=0x0 +0x118=0x0; data +[0x007d4628]+0x218=0x6a170000 +[0x007d4628]+0x21c=0x0; module offset 0 (not registered): [0x007d4628]; null call slot: +0xd0 +0xe8 +0xf8 +0xfc +0x118; zero data field: +[0x007d4628]+0x21c		
+0x004ce8e0	FUN_004ce8e0	render	needs binding	RwGlobals=0x00ff8290; call slots +0xdc=0x0 +0xe8=0x0; data +[0x007d4628]+0x21c=0x0; module offset 0 (not registered): [0x007d4628]; null call slot: +0xdc +0xe8; zero data field: +[0x007d4628]+0x21c		
+0x004d52d0	FUN_004d52d0	render	needs binding	RwGlobals=0x00ff8290; call slots +0x60=0x0; data -; null call slot: +0x60		
+0x004e4b90	RpLightSetConeAngle	third-party-library[renderware]			OK	0x005cd108 seeded
+0x00554050	FontCanvas_Shutdown	hud	needs binding	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450 +0x11c=0x0; data -; null call slot: +0x11c		
+0x00555280	FontSys_ShutdownContextPool	hud	needs binding	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450 +0x11c=0x0; data -; null call slot: +0x11c		
+0x00555830	FUN_00555830	hud	needs binding	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450 +0x11c=0x0; data -; null call slot: +0x11c		
+0x00555910	LAB_00555910	hud	needs binding	RwGlobals=0x00ff8290; call slots +0xd4=0x1b74a0 +0xe8=0x0 +0xf4=0x0 +0x10c=0x1b7450; data +0x108=0x1b7480; null call slot: +0xe8 +0xf4	needs seed rule	0x00617378 DAT_00617378(2B, .data) exe=0000 orig=7200; 0x00623eac s_METRICS3_00623eac(10B, .data) exe=0000000000000000 orig=4d45545249435333; 0x00623eb8 s_METRICS2_00623eb8(10B, .data) exe=0000000000000000 orig=4d45545249435332; 0x00623ec4 s_METRICS1_00623ec4(10B, .data) exe=0000000000000000 orig=4d45545249435331; 0x00623ed0 DAT_00623ed0(5B, .data) exe=0000000000 orig=2e6d657400
+0x00556ce0	FontSys_ShutdownBuffers	hud	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00556e40	FUN_00556e40	hud	needs binding	RwGlobals=0x00ff8290; call slots +0x11c=0x0; data -; null call slot: +0x11c		
+0x005571e0	FontSys_InitFontPool	hud			needs seed rule	0x00623f6c DAT_00623f6c(4B, .data) exe=00000000 orig=01000000; 0x00623f68 DAT_00623f68(4B, .data) exe=00000000 orig=20000000
+0x00557250	FontSys_InitDataPools	hud			needs seed rule	0x00623f7c DAT_00623f7c(4B, .data) exe=00000000 orig=01000000; 0x00623f78 DAT_00623f78(4B, .data) exe=00000000 orig=20000000; 0x00623f74 DAT_00623f74(4B, .data) exe=00000000 orig=01000000; 0x00623f70 DAT_00623f70(4B, .data) exe=00000000 orig=20000000
+0x00558d30	FUN_00558d30	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x0055c810	PhysicsBodySetLinearVelocity	vehicle			needs seed rule	0x005e4fe0 DAT_005e4fe0(1B, .rdata) exe=00 orig=05
+0x0055dd60	FUN_0055dd60	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x0055df90	FUN_0055df90	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x0055fdd0	FUN_0055fdd0	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00562560	FUN_00562560	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00563810	FUN_00563810	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x00564130	FUN_00564130	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x108=0x1b7480; data -		
+0x00564190	FUN_00564190	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x0057c300	RWP37BodyCreate	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x108=0x1b7480; data -		
+0x0057c370	FUN_0057c370	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x0057c500	RWP37WorldCreate	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x108=0x1b7480; data -		
+0x0057c550	FUN_0057c550	third-party-library[RenderWare-Physics-3.7]	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
+0x005a6110	FUN_005a6110	audio			needs seed rule	0x00632c28 PTR_LAB_00632c28(4B, .data) exe=00000000 orig=a08e5a00; 0x00632c2c PTR_LAB_00632c2c(4B, .data) exe=00000000 orig=50af5a00; 0x00632c38 PTR_LAB_00632c38(4B, .data) exe=00000000 orig=50ad5a00
+0x005a6150	FUN_005a6150	audio			needs seed rule	0x00632c3c PTR_LAB_00632c3c(4B, .data) exe=00000000 orig=80915a00; 0x00632c40 PTR_LAB_00632c40(4B, .data) exe=00000000 orig=a0af5a00; 0x00632c4c PTR_LAB_00632c4c(4B, .data) exe=00000000 orig=a0ad5a00
+0x005ac650	FUN_005ac650	audio			needs seed rule	0x005e6424 DAT_005e6424(1B, .rdata) exe=00 orig=17; 0x005e6414 DAT_005e6414(1B, .rdata) exe=00 orig=98; 0x005e6434 DAT_005e6434(1B, .rdata) exe=00 orig=82; 0x005e6444 DAT_005e6444(1B, .rdata) exe=00 orig=b0; 0x005e6454 DAT_005e6454(1B, .rdata) exe=00 orig=2b; 0x005e6474 DAT_005e6474(1B, .rdata) exe=00 orig=6e; 0x005e64b4 DAT_005e64b4(1B, .rdata) exe=00 orig=93
+0x005acd60	AudioFmtGlobalScan	audio			needs seed rule	0x00633674 PTR_DAT_00633674(4B, .data) exe=00000000 orig=14645e00
+0x005adf60	FUN_005adf60	audio	needs binding	RwGlobals=0x00ff8290; call slots +0xe8=0x0; data -; null call slot: +0xe8		
+0x005aea00	FUN_005aea00	audio	OK	RwGlobals=0x00ff8290; call slots +0x108=0x1b7480; data -		
+0x005aea50	FUN_005aea50	audio	OK	RwGlobals=0x00ff8290; call slots +0x114=0x1b7420; data -		
+0x005b36f0	FUN_005b36f0	audio			needs seed rule	0x00634550 PTR_PTR_00634550(408B, .data) exe=0000000000000000 orig=686a5e00d04d5b00
+0x005bbb20	FUN_005bbb20	audio			needs seed rule	0x00635194 PTR_LAB_00635194(4B, .data) exe=00000000 orig=a09e5b00; 0x006351dc PTR_LAB_006351dc(4B, .data) exe=00000000 orig=50b85b00; 0x006351ec PTR_LAB_006351ec(4B, .data) exe=00000000 orig=40ee5a00
+0x005bbb70	FUN_005bbb70	audio			needs seed rule	0x006351b8 PTR_LAB_006351b8(4B, .data) exe=00000000 orig=e0ce5b00; 0x006351e4 PTR_LAB_006351e4(4B, .data) exe=00000000 orig=a0925c00; 0x006351fc PTR_LAB_006351fc(4B, .data) exe=00000000 orig=707f5b00
+0x005c4d50	FUN_005c4d50	boot	OK	RwGlobals=0x00ff8290; call slots +0x10c=0x1b7450; data -		
