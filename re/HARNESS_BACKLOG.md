@@ -218,6 +218,8 @@ idling or reviving dead batch lanes.
   plan the branch copy lacked). `original/gamesave.bin` was left untouched throughout.
 
 
+7. **`re/tools/match/match_permute.py` mulswap ignores operator precedence (filed 2026-11-09, MATCH-RACEPATH).** The mulswap mutation swaps the operands of a `*` without respecting precedence, so a variant can change the value of the expression while the score goes up. MATCH-RACEPATH-FRAME rejected an 87.3% variant of 0x0040e590 for this reason (`verify/matchracepath_20261109/frame/variants/0040e590_permute_rejected.c`). Until it is fixed, every permuter variant must be read for semantics before it is kept. Fix: build the swap on the parsed expression tree (or parenthesize both operands), and add a self-test with `a * b + c` and `a + b * c`.
+
 ## Done
 
 - **T1 delegation-reach test — DONE 2026-07-06: SHELL-BLOCKED.** The account2 worker has no shell

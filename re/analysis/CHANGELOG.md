@@ -128,6 +128,7 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-09  0x00410860  FUN_00410860  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/00410860.c; evidence: verify/matchracepath_20261109/fresh/RESULT_MATCH-RACEPATH-FRESH.md
 2026-11-09  0x00418560  FUN_00418560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/00418560.c; evidence: verify/matchracepath_20261109/fresh3/RESULT_MATCH-RACEPATH-FRESH3.md
 2026-11-09  0x004177b0  FUN_004177b0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/racepath/004177b0.c; evidence: verify/matchracepath_20261109/fresh4/RESULT_MATCH-RACEPATH-FRESH4.md
+2026-11-09  U-9801  UNCERTAINTIES  filed  0x0055ae50 return type: void is 27 B BYTE-IDENTICAL but caller source 0x0047def0 compares the return with 6/7, so C4 stays refused (evidence: verify/matchracepath_20261109/RESULT_MATCH-RACEPATH.md)
 2026-11-09  0x0047c0f0  FUN_0047c0f0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s13/0047c0f0.c; evidence: verify/matchnearmiss2_20261109/RESULT_MATCH-NEARMISS-2.md
 2026-11-09  0x005a8390  FUN_005a8390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8390.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
 2026-11-09  0x005a8560  FUN_005a8560  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005a8560.c; evidence: verify/matchnearmiss2_20261109/pilot/RESULT_MATCH-NEARMISS-2-pilot.md
