@@ -1,0 +1,22 @@
+0x004c7a70	93.2%	rwd01/004c7a70	NOT-PROVEN	unsupported: instruction stmxcsr dword ptr [esp + 0xc] (fallback: stack address
+0x004d1e30	99.1%	s20/004d1e30	NOT-PROVEN	ret-esp: ours: esp = esp0-64 at ret
+0x00540340	100.0%	rwl03/00540340	NOT-PROVEN	ret-esp: ours: esp = esp0-44 at ret
+0x004d7480	96.2%	s21/004d7480	NOT-PROVEN	switch-table: region ours +0x14 / orig 0x004d7494: no relocated entries at ours
+0x004db3e0	95.2%	rwl01/004db3e0	NOT-PROVEN	call-regargs: region ours +0x147 / orig 0x004db527 call ld32(st0(st0(Mc0(call0(
+0x004c9eb0	94.8%	s20/004c9eb0	NOT-PROVEN	call-target: region ours +0x13 / orig 0x004c9ec1: ld32(st0(st0(st0(st0(st0(st0(
+0x004d1640	99.8%	s20/004d1640	NOT-PROVEN	ret-esp: ours: esp = esp0-52 at ret
+0x004d6200	100.0%	s21/004d6200	
+0x004cb4c0	90.2%	s20/004cb4c0	NOT-PROVEN	branch-condition: region ours +0xa9 / orig 0x004cb56c: P1('slt',(phi32((169, 50
+0x004d5bc0	100.0%	s21/004d5bc0	
+0x004dba60	87.6%	s21/004dba60	NOT-PROVEN	switch-table: region ours +0x30 / orig 0x004dba90: no relocated entries at ours
+0x004c90a0	100.0%	rwl01/004c90a0	NOT-PROVEN	switch-index: region ours +0x76 / orig 0x004c9116: (zx32(ld8(Mc0(call0(ld32(st0
+0x004cb600	100.0%	rwl01/004cb600	NOT-PROVEN	ret-esp: ours: esp = esp0-12 at ret
+0x004dc5b0	100.0%	rwl01/004dc5b0	NOT-PROVEN	ret-esp: ours: esp = esp0-28 at ret
+0x004d0290	76.4%	s20/004d0290	NOT-PROVEN	call-args: region ours +0xd5 / orig 0x004d0364 call ld32(st0(st0(st0(st0(M00(),
+0x004cff20	62.5%	s20/004cff20	NOT-PROVEN	call-args: region ours +0xf / orig 0x004cff32 call 0x4d8480 arg 0: (esp0+-0x40)
+0x004d2980	97.1%	rwl01/004d2980	NOT-PROVEN	call-regargs: region ours +0x5b / orig 0x004d29db call ld32(st0(st0(st0(Mc0(cal
+0x004cb8a0	71.3%	rwl01/004cb8a0	NOT-PROVEN	call-regargs: region ours +0x8d / orig 0x004cb92c call ld32(st0(M00(),0x7d4148,
+0x004e0920	46.3%	rwl01/004e0920	NOT-PROVEN	call-args: region ours +0x0 / orig 0x004e0920 call ld32(st0(M00(),0x7d7108,0x0,
+0x004cb330	64.9%	rwl01/004cb330	NOT-PROVEN	indirect-call-esp-reset: orig: ESP restored from a register in a function with 
+0x005412d0	55.6%	rwl04/005412d0	NOT-PROVEN	call-sequence: region ours +0x0 / orig 0x005412d0: 1 vs 0 calls
+0x005405c0	23.8%	rwl03/005405c0	NOT-PROVEN	call-args: region ours +0x61 / orig 0x0054066f call 0x4d6e70 arg 0: esi_in | 0x

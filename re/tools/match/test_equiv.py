@@ -62,6 +62,27 @@ CASES = {
     "neg_loop_bound": ("NOT-PROVEN", None),
     "loop_ptr": ("EQUIV", None),
     "neg_loop_stride": ("NOT-PROVEN", None),
+    # A6, calls through a pointer (EQUIV-CALLEE-POPS)
+    "com_ident": ("EQUIV", None),
+    "com_stdcall": ("EQUIV", None),
+    "com_cdecl": ("EQUIV", None),
+    "com_loop": ("EQUIV", None),
+    "mxcsr": ("EQUIV-IF-CALLERS-IGNORE", ("edx",)),
+    "neg_com_argcount": ("NOT-PROVEN", "call-args"),
+    "neg_com_order": ("NOT-PROVEN", "call-target"),
+    "neg_com_conv": ("NOT-PROVEN", "ret-esp"),
+    "com_ambiguous": ("EQUIV", None),
+    "neg_com_solution": ("NOT-PROVEN", None),
+    "neg_mxcsr": ("NOT-PROVEN", None),
+}
+
+# A6 rules a case must (True) or must not (False) report
+RULES = {
+    "com_ident": ("A6-pinned-pop", True),
+    "com_stdcall": ("A6-pinned-pop", True),
+    "com_cdecl": ("A6-pinned-pop", True),
+    "com_loop": ("A6-pinned-pop", True),
+    "com_ambiguous": ("A6-pop-solution", True),
 }
 
 # rva -> (source, expected verdict, note)
@@ -114,6 +135,9 @@ def check_case(name):
         ok = r.get("kind") == extra
     if ok and want == "EQUIV-IF-CALLERS-IGNORE" and extra:
         ok = tuple(sorted(r.get("regs", []))) == tuple(sorted(extra))
+    if ok and name in RULES and r["verdict"] != "NOT-PROVEN":
+        rule, must = RULES[name]
+        ok = (rule in r.get("rules", [])) == must
     return ok, r
 
 
