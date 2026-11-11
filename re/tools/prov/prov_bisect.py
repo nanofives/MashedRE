@@ -48,7 +48,8 @@ def main():
     bodies = {b["rva"].lower(): b for b in json.loads(pathlib.Path(a.bodies).read_text())["bodies"] if b["status"] == "OK"}
     cen = {r["rva"].lower(): r for r in json.loads((pathlib.Path(a.census) / "prov.json").read_text())["rows"]}
     want = [x.lower() for x in a.rvas.split(",") if x] or list(bodies)
-    todo = [r for r in want if r in bodies and cen.get(r, {}).get("calls_total", 0) > 0]
+    race = lambda c: (c.get("calls_total") or 0) - (c.get("calls_before_warp") or 0)   # calls from the warp on
+    todo = [r for r in want if r in bodies and race(cen.get(r, {})) > 0]
     print(f"{len(want)} bodies, {len(todo)} executed in the census", flush=True)
     state_f = DATA / f"{a.tag}_state.jsonl"
     done = {}
@@ -87,6 +88,8 @@ def main():
                     c = calls.get(r, {})
                     rec = {"rva": r, "verdict": kind, "n": v["identical_for"], "ticks": v["ticks"], "run": label,
                            "group": len(grp), "calls_total": c.get("calls_total"), "calls_to_anchor": c.get("calls_to_anchor"),
+                           "calls_before_warp": c.get("calls_before_warp"), "calls_race": race(c) if c else None,
+                           "notes": v.get("notes"),
                            "jmp_ok": inst.get(r, {}).get("jmp_ok"), "site_before": inst.get(r, {}).get("site_before"),
                            "first": v.get("first"), "rc": v.get("rc")}
                     f.write(json.dumps(rec) + "\n")

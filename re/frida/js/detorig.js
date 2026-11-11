@@ -436,6 +436,7 @@ function tickDump() {
 // CModule, no JS on the hot path), the census of which functions run in this scenario.
 const PROV = CFG.prov || null;
 let PV = null;
+let PV_AT = null;
 function provInstall() {
   if (!PROV) return null;
   const bodies = PROV.bodies || [], count = PROV.count || [];
@@ -496,7 +497,7 @@ void onEnter(GumInvocationContext *ic) { unsigned int *c = GUM_IC_GET_FUNC_DATA(
 function provSnap() { if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
 function provReport() {
   if (!PV) return;
-  const rows = PV.names.map((rva, i) => ({ rva, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
+  const rows = PV.names.map((rva, i) => ({ rva, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
   send({ kind: 'prov', rows, installed: PV.installed });
 }
 
@@ -515,12 +516,16 @@ function install() {
     res.push([va.toString(16), real.toString(), stub.toString()]);
   }
   if (TK) { Interceptor.attach(ga(TICK.va), TK.cm); res.push(['tick', TICK.va.toString(16)]); }
+  // PROV-INSITU bodies / counters go live here, at the menu, not at the warp: work done inside the warp's clock call
+  // (14 patchCode calls, or 326 Interceptor attaches) moved the frame-timer phase by one tick in 2 of 4 runs
+  PV_AT = provInstall();
+  if (PV_AT) res.push(['prov', PV_AT]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
   schedule(CFG.warpAt, () => {
     warpN = N();
-    const pv = provInstall();
     const pins = warp();
-    if (pv) pins.prov = pv;
+    if (PV_AT) pins.prov = PV_AT;
+    if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
     if (CFG.callLog) D.add(0x34).writeU32(1);
     send({ kind: 'warp', n: warpN, pins });
     setActive(1);

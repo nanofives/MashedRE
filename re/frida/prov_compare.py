@@ -20,11 +20,6 @@ def diffs(ra, rb, nblk, n):
     return [{j for j in range(2, 2 + nblk) if ra[i][j] != rb[i][j]} for i in range(n)]
 
 
-# LOAD-LENGTH rule (PROV-INSITU, measured 2026-11-11): the float 0x007f1010 in the frame-timer block holds a value set
-# during the load, so at tick 0 it differs between two runs whose load took a different number of main-thread clock
-# calls (x_ref 119 calls 0x43a26719, x_b1b / g95 118 calls 0x43a264f7), and the block is equal again from tick 1.
-# Applied only at tick 0, only when the load lengths differ, only when that block is the one bad block and the raw
-# copy of 0x007f0c00..0x007f1400 shows 0x007f1010 as the only differing dword.
 def _masked():
     """MASK:* rows of re/frida/warp_normalize.tsv (OS-assigned, library-owned, set before any hook) plus the RULE rows
     that hold OS handles / messages / the stdout cursor (HWND, WINMSG, FILEPTR). The STACKROW / RINGSTALE / RWPAD /
@@ -45,19 +40,26 @@ def _masked():
 
 MASKED = _masked()
 MASKED_LIST = sorted(MASKED)
-LOADLEN_BLOCK, LOADLEN_DWORDS = 0x007f1000, {0x007f1010}
+
+
+# TIMER-PHASE rule (PROV-INSITU, measured 2026-11-11): three dwords of the frame-timer block hold values set during
+# the load and rewritten at the first tick: 0x007f1010 (float), 0x007f102c and 0x007f1030 (one 50,000-count step
+# apart between runs). At tick 0 they differ between unmodified-body runs: x_b1b (body 0x00477e60, 0 calls before the
+# race anchor) and g95 against x_ref, with load lengths 118 / 119, and t95_150443_001_14 at 119 / 119. The block is
+# equal again from tick 1 in all of them. Applied only at tick 0, only when that block is the one bad block and the
+# raw copy of 0x007f0c00..0x007f1400 shows no other differing dword in it. Any reader that used the tick-0 values
+# would move state that the later ticks still compare.
+LOADLEN_BLOCK, LOADLEN_DWORDS = 0x007f1000, {0x007f1010, 0x007f102c, 0x007f1030}
 
 
 def loadlen_rule(x, y, bad, raw_va, nblk, blk, mr, ma, notes):
-    if mr["race"].get("dn_warp") == ma["race"].get("dn_warp"):
-        return False
     if [DATA_LO + (j - 2) * blk for j in bad] != [LOADLEN_BLOCK]:
         return False
     words = {raw_va[j - 2 - nblk] for j in range(2 + nblk, len(x)) if x[j] != y[j]
              and LOADLEN_BLOCK <= raw_va[j - 2 - nblk] < LOADLEN_BLOCK + blk}
     if not raw_va or not any(LOADLEN_BLOCK <= v < LOADLEN_BLOCK + blk for v in raw_va) or not words or not words <= LOADLEN_DWORDS:
         return False
-    notes.append(f"tick 0: {sorted(hex(w) for w in words)} differ with load lengths {mr['race'].get('dn_warp')} / {ma['race'].get('dn_warp')} (LOAD-LENGTH rule)")
+    notes.append(f"tick 0: {sorted(hex(w) for w in words)} differ, load lengths {mr['race'].get('dn_warp')} / {ma['race'].get('dn_warp')} (TIMER-PHASE rule)")
     return True
 
 
