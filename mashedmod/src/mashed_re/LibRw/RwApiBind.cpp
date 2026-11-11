@@ -44,6 +44,27 @@
 extern "C" void* PortTop_Fs_ReadAll(const char* name, unsigned* len, const char** from);
 
 namespace {
+// [CLUMP-TEXREAD] RW 3.x's texture find callback 0x004c7490 (RwTextureRead 0x004c5cb0 calls it through the texture
+// module's +0x18 slot; nothing installs another): with a current dictionary (module +0x10, set by 0x004c5c80) it
+// searches that one only (0x004c74af..); with none it walks the module's dictionary list from its head (0x004c7529..),
+// every dictionary in turn, comparing names case-insensitively, first hit wins. RwTexDictionaryCreate 0x004c5890 links a
+// new dictionary at the list head (0x004c58d4..), so the walk is newest first. librw's defaultFindCB searches the
+// current dictionary only and returns nil without one ("TODO: RW searches *all* TXDs otherwise",
+// deps/librw/src/texture.cpp:307), which left e.g. oilslicker.dff's `PowerUpModelsFinal` null with the current
+// dictionary 0 (original-side read: every RwTextureRead of the powerup inits runs with the current dictionary 0 and
+// resolves from PowerUpModels.txd; verify/portorigtop_20261109/RESULT_CLUMP-TEXREAD.md).
+// librw keeps its dictionary list private, so the bindings keep the RW list of the dictionaries they create (every
+// dictionary of the MASHED_ORIG_TOP path: DictFromTxdBytes below), newest last, and RwTexDictionaryDestroy removes one.
+std::vector<rw::TexDictionary*> s_rwTexDicts;
+
+rw::Texture* RwRuleFindTexture(const char* name) {
+    if (!name) return nullptr;
+    if (rw::TexDictionary* const cur = rw::TexDictionary::getCurrent()) return cur->find(name);
+    for (auto it = s_rwTexDicts.rbegin(); it != s_rwTexDicts.rend(); ++it)
+        if (rw::Texture* const t = (*it)->find(name)) return t;
+    return nullptr;
+}
+
 
 void BindLog(const char* fmt, ...) {
     if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
@@ -206,7 +227,11 @@ int MashedRw_TexDictionarySetCurrent_004c5c80(int dict) {
 // destroyed, plugin destructors, unlink, free). WinMain 0x00492370 calls it on DAT_0077195c (set by 0x004921d0).
 int MashedRw_TexDictionaryDestroy_004c5930(int dict) {
     rw::TexDictionary* const d = reinterpret_cast<rw::TexDictionary*>(static_cast<std::uintptr_t>(static_cast<unsigned>(dict)));
-    if (d) d->destroy();
+    if (d) {
+        for (auto it = s_rwTexDicts.begin(); it != s_rwTexDicts.end(); ++it)
+            if (*it == d) { s_rwTexDicts.erase(it); break; }   // [CLUMP-TEXREAD]
+        d->destroy();
+    }
     BindLog("RwTexDictionaryDestroy(0x%08X) -> rw::TexDictionary::destroy", static_cast<unsigned>(dict));
     return 1;
 }
@@ -610,6 +635,8 @@ int MashedRw_RasterShowRaster_004c7730(int raster, int dev, int flags) {
 // 404 resource and (0, 0). Those four RW calls read RwGlobals, and librw has no reader for chunk 0x23, so this port
 // body reads the chunk with the exe's decoder of that format (Txd/TxdDecoder.h, written from 0x0054f8d0) and builds
 // the dictionary on librw: rw::TexDictionary::create, one rw::Texture per entry (RwRasterBridge TextureFromTxdTexture).
+// [CLUMP-TEXREAD] RwRuleFindTexture / s_rwTexDicts (RW's find rule 0x004c7490): see the top of this file.
+
 // A chunk-0x23 texture dictionary (header included) decoded by Txd/TxdDecoder.h and built on librw, one rw::Texture per
 // entry. Shared by 0x004b3eb0 (memory) and the 0x0054f8d0 binding (stream).
 static rw::TexDictionary* DictFromTxdBytes(const std::uint8_t* bytes, std::size_t size, const char* tag) {
@@ -627,6 +654,7 @@ static rw::TexDictionary* DictFromTxdBytes(const std::uint8_t* bytes, std::size_
     }
     BindLog("%s: TXD (%u bytes) -> rw::TexDictionary %p with %d of %u textures", tag, static_cast<unsigned>(size),
             static_cast<void*>(dict), added, txd->count());
+    s_rwTexDicts.push_back(dict);   // [CLUMP-TEXREAD] the RW dictionary list (RwRuleFindTexture)
     return dict;
 }
 
@@ -684,7 +712,7 @@ int MashedRw_TexDictionaryAddTexture_004c5bc0(int dict, int tex) {
 // no different file there. The mask name is not applied (0x004283a0 passes 0).
 int MashedRw_TextureRead_004c5cb0(const char* name, const char* mask) {
     if (!name) return 0;
-    if (rw::Texture* const hit = rw::Texture::findCB(name)) {
+    if (rw::Texture* const hit = RwRuleFindTexture(name)) {   // [CLUMP-TEXREAD] 0x004c7490's rule
         hit->refCount++;
         return ToInt(hit);
     }
@@ -883,7 +911,11 @@ int MashedRw_ClumpStreamRead_004e7420(int stream) {
     rw::uint8* const base = FromInt<rw::uint8>(static_cast<int>(s[5]));
     rw::StreamMemory mem;
     mem.open(base + s[3], s[4] - s[3]);
+    // [CLUMP-TEXREAD] the material reader resolves texture names through rw::Texture::findCB: RW's rule for this read.
+    rw::Texture* (*const saveFind)(const char*) = rw::Texture::findCB;
+    rw::Texture::findCB = RwRuleFindTexture;
     rw::Clump* const c = rw::Clump::streamRead(&mem);
+    rw::Texture::findCB = saveFind;
     const std::uint32_t used = mem.tell();
     mem.close();
     s[3] = (s[3] + used <= s[4]) ? s[3] + used : s[4];

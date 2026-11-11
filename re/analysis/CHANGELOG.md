@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  U-9802  UNCERTAINTIES  Active->struck  the exe's clump read now resolves material textures with RW's find rule (current dictionary, else every dictionary newest first, 0x004c7490); the oil slick reaches 0x0053fd30 4 times as in the original (evidence: verify/portorigtop_20261109/RESULT_CLUMP-TEXREAD.md)
 2026-11-10  0x004b3f20  FUN_004b3f20  (none)->C1  added (POWERUPINIT-C): RpClumpForAllAtomics callback pushed by 0x004b3fc0 (push 0x4b3f20 at 0x004b3fd8); Ghidra has no function here (extent 34 B in re/console/pc_funcs.csv); evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-C.md
 2026-11-10  0x00452f70  FUN_00452f70  (none)->C1  added (POWERUPINIT-B): type-table init, slot 8 of 0x005f9998 (+0x14 pointer at 0x005f9bac, the only xref); strings smoke / mortar.dff / MortarRound.dff; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
 2026-11-10  0x00454e40  FUN_00454e40  (none)->C1  added (POWERUPINIT-B): tail-jump target of 0x00454e70 (jmp at 0x00454f65) and of 0x00454f70; loops 0x00454bd0 (ESI) over 4 x 0x14 at 0x00688358 and 0x00454c00 (EAX) over 4 x 0x18 at 0x006882f8; callees filed render; evidence: verify/portorigtop_20261109/RESULT_POWERUPINIT-B.md
