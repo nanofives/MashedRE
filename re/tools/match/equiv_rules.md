@@ -135,7 +135,7 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
     these solutions.
   - One solution (rule `A6-pinned-pop`): the proof runs once with it. Several (`A6-pop-solution`): the proof runs
     once per solution and the verdict is the weakest one. More than `POP_SOLUTIONS_MAX` (32) solutions, or more
-    than 2^16 candidate assignments, gives `NOT-PROVEN callee-pop-ambiguous`. Several solutions happen when one
+    than 2^12 candidate assignments, gives `NOT-PROVEN callee-pop-ambiguous`. Several solutions happen when one
     path holds two such calls and no join or return separates them: a cdecl call with a deferred `add esp` and a
     `__stdcall` call read the same as the reverse.
   - Ours (`A6-paired-pop`): our call through a pointer takes the count of the original's call at the same index in

@@ -1471,6 +1471,8 @@ class Ctx:
             if side is self.sides[1]:
                 # A6, the original: the pop count is one solution of its own stack equations (pin_pops); the
                 # proof is run once per solution (check_sides)
+                if self.popsol is LAZY_POPS:
+                    raise NeedPops()
                 if self.popsol is not None:
                     pin = self.popsol.get(cs.address)
                     if pin is not None:
@@ -2069,7 +2071,12 @@ def _table_targets(side, cs):
     return out or None
 
 
-SOLUTION_SPACE_MAX = 1 << 16    # pin_pops: largest product of free-pop ranges that is enumerated
+class NeedPops(Exception):
+    """The proof reached the original's first call through a pointer with no A6 solution yet (check_sides)."""
+
+
+LAZY_POPS = object()            # Ctx.popsol before pin_pops ran: computed only when a proof needs it
+SOLUTION_SPACE_MAX = 1 << 12    # pin_pops: largest product of free-pop ranges that is enumerated
 POP_SOLUTIONS_MAX = 32          # largest number of original-side pop solutions proved one by one
 
 
@@ -2085,6 +2092,10 @@ def pin_pops(side, callee_info):
     {"why": reason} when the walk cannot follow the body (an ESP write that is not push/pop/add/sub imm, an
     unresolved callee, an inconsistent system)."""
     from fractions import Fraction
+    code, base = side.body()
+    if not any(c.mnemonic == "call" and c.operands and c.operands[0].type != X.X86_OP_IMM and
+               callee_info(side, c) == ("var",) for c in _MD.disasm(code, base)):
+        return {"pins": {}, "free": [], "solutions": [{}]}        # no call through a pointer: nothing to solve
     forms, eqs, sites = {}, [], set()
     work = [(side.entry, 0, ())]
     steps = 0
@@ -2232,6 +2243,7 @@ def pin_pops(side, callee_info):
         return {"why": f"{len(free)} free pops, {total} candidate assignments", "pins": pins, "free": free}
     sols = []
     import itertools
+    varforms = [(k, d) for k, d in set(forms.values()) if d]      # the ESP forms that involve an unknown
     for combo in itertools.product(*rng):
         val = dict(zip(fcols, combo))
         full = {}
@@ -2248,7 +2260,7 @@ def pin_pops(side, callee_info):
             full[vs[j]] = c
         if any(full[v] > -callk[v] for v in vs):
             continue
-        if any(k + sum(c * full[v] for v, c in d) > 0 for k, d in forms.values()):
+        if any(k + sum(c * full[v] for v, c in d) > 0 for k, d in varforms):
             continue
         sols.append(full)
     if not sols:
@@ -2971,6 +2983,12 @@ def check_sides(A, B, res, addr, out=None, trace=False):
                     res.resolve(A, symrec, struct.unpack_from("<i", A.code, off)[0], typ)
                 except NotProven:
                     pass
+    # the stack equations need every direct callee's summary, which is costly on a large call graph: solve them only
+    # when the proof reaches a call through a pointer on the original's side
+    try:
+        return _check_once(A, B, res, addr, dict(out), trace, LAZY_POPS, True)
+    except NeedPops:
+        pass
     pp = Ctx(A, B, False, res).pins(B)
     sols = pp.get("solutions")
     if not sols:
