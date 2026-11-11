@@ -5,7 +5,7 @@
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
-#define FUN_004c5890 RwCore_004c5890
+#define FUN_004c5890 RwCoreBind_TexDictionaryCreate_004c5890   // binding entry, RwCore/RwCore_Bind_004c5890.cpp
 #define FUN_004c5f60 RwCore_004c5f60
 #define FUN_004c6140 RwCore_004c6140
 #define FUN_004cc9f0 RwCore_004cc9f0

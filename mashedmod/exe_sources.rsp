@@ -892,6 +892,7 @@
 "RwCore\RwCore_Crt.cpp"
 "RwCore\RwCore_Missing.cpp"
 "RwCore\RwCore_Hand.cpp"
+"RwCore\RwCore_Bind_004c5890.cpp"
 "RwCore\RwCore_004dba60.cpp"
 "RwCore\RwCore_004c75c0.cpp"
 "RwCore\RwCore_004dcbb0.cpp"
