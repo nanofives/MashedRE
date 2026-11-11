@@ -236,21 +236,6 @@ int MashedRw_TexDictionaryDestroy_004c5930(int dict) {
     return 1;
 }
 
-// [HUDINIT-A] RwTexDictionary* RwTexDictionaryCreate(void) 0x004c5890: the matched body (re/match/s19/004c5890.c,
-// BYTE-IDENTICAL 152 B) takes a 0x18-byte record from the texture module's freelist through RwGlobals +0x118, sets
-// type 6 / subType 0, links it at the head of the module's dictionary list, makes its texture list empty and runs the
-// dictionary plugin constructors (0x004d8000 on the registry 0x00618150). librw: rw::TexDictionary::create does the same
-// (texture.cpp: object init, empty texture list, plugin constructors). librw owns the exe's textures and dictionaries
-// end to end (RwTextureRead 0x004c5cb0, RwTexDictionaryDestroy 0x004c5930 and RwTexDictionarySetCurrent 0x004c5c80 are
-// bound above), so no second, RW 3.x-layout dictionary is made. Caller: 0x00555360 (Rt2d open, writes DAT_00912a1c /
-// DAT_00912a20), which is a logging stand-in on the knob path until L0 rules on its L-115 proof (RESULT_HUDINIT-A.md), so
-// this binding is not reached yet. The dictionary 0x00912a20 holds is destroyed by the matched 0x00427620 (AppDestroy).
-int MashedRw_TexDictionaryCreate_004c5890(void) {
-    rw::TexDictionary* const d = rw::TexDictionary::create();
-    BindLog("RwTexDictionaryCreate() -> rw::TexDictionary::create %p", static_cast<void*>(d));
-    return static_cast<int>(reinterpret_cast<std::uintptr_t>(d));
-}
-
 // RwTexture* RwTexDictionaryFindNamedTexture(RwTexDictionary* dict, const RwChar* name): the matched body
 // (re/match/s19/004c5c00.c) walks the dictionary's texture list comparing names. librw: rw::TexDictionary::find.
 int MashedRw_TexDictionaryFindNamedTexture_004c5c00(int dict, const char* name) {

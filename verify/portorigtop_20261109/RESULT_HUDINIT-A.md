@@ -1,4 +1,4 @@
-# RESULT HUDINIT-A (2026-11-10): GREEN, the Rt2d open 0x00552b60 runs on exe bodies under MASHED_ORIG_TOP with RWMOD; two near-match callees on stand-ins pending an L-115 ruling
+# RESULT HUDINIT-A (2026-11-10, restacked 2026-11-11 run 37 under L-129 (a)): GREEN, the Rt2d open 0x00552b60 runs on exe bodies under MASHED_ORIG_TOP with RWMOD; two near-match callees on stand-ins pending an L-115 ruling; no new librw binding
 
 L2 worker `cmwb4f8nh18ymsc1bf03upqca` for lead `cmw7xu1960f37p41557tefpnd`, L-111 step 1, chain 1 of the PORT-OT-HUDINIT
 split (A = Rt2d open, B = brushes + the 0x00427ca0 swap, C = font read).
@@ -19,7 +19,8 @@ How the conflicts were resolved:
 
 Lead decisions for this row:
 - the whole 0x00427ca0 body runs only with `MASHED_ORIG_TOP_RWMOD=1`, behind a selector;
-- the Rt2d dictionary binds to `rw::TexDictionary`.
+- the Rt2d dictionary binds to `rw::TexDictionary`. **Withdrawn by L-129 (a), run 37:** that binding is dropped (see
+  "Run 37" at the end); 0x004c5890 gets its byte-matched source on the RW core in RWC-BIND-4C5890.
 
 L0 ruling (2026-11-10, after the first pass): no hand body written from disassembly or decompiled text runs on the knob
 path. A near-match source runs only with an L-115 proof of a class L0 has accepted, and the only accepted class is SIB
@@ -156,8 +157,9 @@ else-chains, a pointer return type, game flags, a 60-order store sweep and 260 p
 
 `match.py --bytes` on this tree for every matched source above. No re/match source was edited, so no `#ifndef MATCH_PORT`
 guard was needed. The one new source is 0x00552b50. 0x005c4d30 (matched, PORT-OT-HUD-2) sits on 0x00553f40's dead
-branch. `MashedRw_TexDictionaryCreate_004c5890` (LibRw/RwApiBind.cpp, `rw::TexDictionary::create`) is kept for
-0x00555360 and is not reached while that is a stand-in.
+branch. 0x004c5890 (RwTexDictionaryCreate, called only by 0x00555360) has no binding on this path: the librw
+binding `MashedRw_TexDictionaryCreate_004c5890` of the first passes was dropped by L-129 (a) (run 37), and nothing
+that remains calls it while 0x00555360 is a stand-in.
 
 **0x004cc820, the binding.** It binds onto the exe freelist, the one RwGlobals +0x118 / +0x11c implement under RWMOD
 (one allocation per entry, entry size at header +0x0, alignment at +0xc). It fills the header fields that allocator
@@ -313,3 +315,43 @@ called=532`. orch/integration `5fc6a43e4` has `none=5096 called=521 body=552`.
 | arms/H_DEF.gates.csv | 6793183492e0c0822570ad71254f9fdf27568b77c81a25c56347f1616863d58c |
 | arms/H_DEF.ptrace.log | 31fe043e261d2df943fa3dd5688b74da4e8329eb00ea87f090539bb7e854c5e3 |
 | arms/B_DEF_K0.step.csv, B_DEF_K1.step.csv, B_DEF_K26.step.csv | 1d5bf4f980bf7eb48ac98211f4fb50ff58a04d1ad408d18695d79ddd8fcf8457 (all three) |
+
+## Run 37: L-129 (a), the 0x004c5890 librw binding dropped (2026-11-11)
+
+Ruling L-129 (a) (Mariano 2026-11-11): drop the new librw binding `MashedRw_TexDictionaryCreate_004c5890`
+(`rw::TexDictionary::create`, LibRw/RwApiBind.cpp:248 on 8b97ec6a9), land the rest of chain 1. 0x004c5890 gets its
+byte-matched source on the RW core in the new row RWC-BIND-4C5890, ahead of NEARMATCH-555360 and the HUDINIT-B restack.
+
+What changed:
+- 8b97ec6a9 was cherry-picked onto orch/integration `778b8b91d` with no conflict (BINDINGS.tsv auto-merged). The old tip
+  is kept as `orch/HUDINIT-A-pre129`.
+- The binding function and its comment block are removed from LibRw/RwApiBind.cpp (15 lines). Nothing else changes.
+- Nothing that remains calls 0x004c5890. Its only caller on this path is 0x00555360, which is the logging stand-in
+  `PortTop_StandInHIA_00555360`. No TU, BINDINGS.tsv row or hooks.csv row named the binding. The new TUs bind no RW
+  function except the ones already bound before this row (`MashedRw_MatrixCreate_004c57a0` in PortTop_00552c10.cpp,
+  PORT-TOP-01). No piece of chain 1 is cut.
+- `update_bindings_hudinit_a.py` re-run on the new base: BINDINGS.tsv unchanged (538 rows). `scripts/backfill_exe_file.py`
+  (0 changed) and `scripts/backfill_port.py` (`none=5086 body=554 called=539`, 0 rows changed): hooks.csv already
+  current.
+
+Checks on this tree (data `D:/MashedWT/HUDINIT-A_data6`, root `D:/MashedWT/HUDINIT-A_root`; every launch inside
+`test-slot` with `mashed_lock.py run` inside it; G-CTRL / B are left to the merge train):
+
+| check | result |
+|---|---|
+| default build (`MASHED_NO_DEPLOY=1`) | `=== Build OK ===`, `.asi NOT deployed`. mashed_re.exe `120ab3be...`. rva-lint `OK -- no NEW duplicate bodies (38 known)`, ORIGTOP-ONLY 36. `[portstate-seed] OK: 272 entries` |
+| object build (`MASHED_DDKOBJ=1`) | `=== Build OK ===`, `[ddkobj] link rc=0`. mashed_re_ddk.exe `ecaebe61...` |
+| `ddkobj.py check` | `IDENTICAL 552, DIFFERENT 8, not-in-map 3`. All 11 chain-1 units (0x004cc9e0, 0x00552750, 0x00552a60, 0x00552b50, 0x00552b60, 0x00552c10, 0x00553f40, 0x005540d0, 0x00556d20, 0x005571e0, 0x00557250) IDENTICAL, diff_bytes 0. The 8 DIFFERENT are the rows verify/ddkobj_20261111 already lists (0x00493900, 0x00493710, 0x0042f530, 0x00475a00, 0x0048e820, 0x00414060, 0x004929d0, 0x0045a3a0) |
+| knob-ON boot, RWMOD off | `exited rc=0 (0x00000000) after 33.0 s`. :189 `rva 0x00427ca0: RWMOD off: stand-in only`, :190 the 04E stand-in line. `WinMain 0x00492370 returned 0 after 3000 frames` |
+| knob-ON boot, RWMOD on | `exited rc=0 (0x00000000) after 30.8 s`. :245..:256 are the Verdict lines above, line for line (five `RwFreeListCreate` headers, both stand-ins, `Rt2d open(camera 0x00000000) ran: 0x00557250=1 0x005540d0=1 0x00556d20=1 0x00555360=0 0x005571e0=1 0x00552c10=1 0x00552a60=0`, dictionary 0x00912a1c / 0x00912a20 = 0). No `RwTexDictionaryCreate` line. `WinMain ... returned 0 after 3000 frames` |
+| 12 captures, RWMOD off (arm `nav1`, OFF/ON/OFF/ON @dflt) | 4/4 `rc=0 pinned pos=55 hash=28538c74 class=E eqE=12`. ON logs: 5 `RWMOD off` lines each |
+| 12 captures, RWMOD on (arm `nav_rwmod`) | 4/4 `rc=0 pinned pos=55 hash=28538c74 class=E eqE=12`. Both ON logs carry one `Rt2d open(camera` line, no `TexDictionaryCreate`, and `WinMain 0x00492370 returned 0 after 578 frames` |
+| walk_04 | `ba34030d1b7e2fe4` in all 8 runs |
+
+| raw file (not committed) | sha256 |
+|---|---|
+| build.log | 8c84f7ae18948becec4e4b5143abb34f50108507086fc0d6a68b44d1360c5311 |
+| knob_on_1.log | ebed0999471a35d1aff22b1cbeefd6276e16a93231be07165eef0d0434c3f7eb |
+| knob_on_rwmod.log | 74d112c292317742640b828c69015796c7b651ae58168966a418e7ff54e182c2 |
+| build_ddkobj.log | f726341fe2345600c340a73a974882896b6b42e019e05c73e408ed31819b3c64 |
+| runs.tsv | f560646e9825f27b38517ec0c4d851cd17931fc8944763b7fbaa1d1204796438 |
