@@ -123,3 +123,21 @@ Raw (not committed), `D:/MashedWT/DDKOBJ-TRAIN_data`:
   rule: the original's globals at their original addresses). That is a port decision, and it is not part of this row.
 - The variadic form is the only parser extension. The next unparsed form a DDK object needs will fail the train
   pass that brings it, by design. Extend `fnlike_target` / `classify_unparsed_define`, and add a `selftest` case.
+
+## 6. Rebase onto df08d4cea (MATCH-REBASE-3, 2026-11-11)
+
+The merge train set this branch aside on a `re/orchestrator/merge_train.ps1` conflict with HB-V5-SKILL (landed). Rebased
+onto `orch/integration` df08d4cea. HB-V5-SKILL added `Format-Bounced` / `New-LogLines` / `Add-RedLogLine` and a
+`Bounced:` clause on the merged-pass log line. This branch added an `Object build:` clause to that same line. Both are
+kept, in this order: `<gates>. Bounced: ... . Object build: ... . Run data ...`. The HB-V5-SKILL self-test regex on the
+Bounced clause still matches.
+
+Checks re-run on the rebased tree (logs in `D:/MashedWT/DDKOBJ-TRAIN_data/*_rebase.log`):
+- `merge_train.ps1 -SelfTest` (test-slot): SELFTEST PASS, 0 failures, HB-V5-SKILL's RED-pass checks and ddkobj 13 included.
+- `ddkobj.py selftest`: OK, 0 failures.
+- default build (`MASHED_NO_DEPLOY=1`): rc 0, exe and asi built.
+- object build (`MASHED_DDKOBJ=1`): rc 0, `=== Build OK ===`.
+- `ddkobj.py check`: IDENTICAL 534/544, DIFFERENT 7 [0x0042f530 0x0045a3a0 0x00475a00 0x0048e820 0x004929d0 0x00493710
+  0x00493900], not-in-map 3, units linked 536/583, refusals 47 (static-register-convention=38,
+  wrapper-redefines-globals=9). 0x00414060 is now IDENTICAL (on integration since the first run). The committed
+  `BYTECHECK.tsv` / `ddkobj_summary.json` are the pre-rebase extract.
