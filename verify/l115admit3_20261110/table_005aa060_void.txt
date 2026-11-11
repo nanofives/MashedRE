@@ -1,0 +1,11 @@
+0x005aa060 _FUN_005aa060: 82 B whole symbol, 8 relocation-masked bytes, 4 differing bytes, instruction layout identical, mapping ours->original: eax->ecx, ecx->edx
+
+| # | address | original byte | our byte | field | original instruction | our instruction | label |
+|---|---|---|---|---|---|---|---|
+| 1 | 0x005aa09e | `4c` | `44` | bits 3-5 (ModRM reg) | mov ecx, dword ptr [esp + 0x30] | mov eax, dword ptr [esp + 0x30] | explained by register eax->ecx |
+| 2 | 0x005aa0a5 | `c9` | `c0` | bits 0-2 (ModRM r/m) + bits 3-5 (ModRM reg) | test ecx, ecx | test eax, eax | explained by register eax->ecx |
+| 3 | 0x005aa0a9 | `54` | `4c` | bits 3-5 (ModRM reg) | mov edx, dword ptr [esp + 0x18] | mov ecx, dword ptr [esp + 0x18] | explained by register ecx->edx |
+| 4 | 0x005aa0ad | `11` | `08` | bits 0-2 (ModRM r/m) + bits 3-5 (ModRM reg) | mov dword ptr [ecx], edx | mov dword ptr [eax], ecx | explained by register eax->ecx, ecx->edx |
+
+differing bytes outside any instruction: 0
+verdict: all explained
