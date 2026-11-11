@@ -139,6 +139,11 @@ def exe_wrappers():
             continue
         defs, incs, ptrabs = {}, [], {}
         for line in active_lines(txt, {"MASHED_STANDALONE", "__cplusplus", "_MSC_VER", "_WIN32"}):
+            if re.match(r"^\s*#\s*define\s+MGLOBALA?\s*\(", line):
+                # the wrapper binds the source's globals to its own cells (MATCH_CELL_*, exe_main.cpp:3575), not to
+                # the original addresses: a DDK object cannot follow a runtime pointer, so its units are refused
+                defs["@mglobal"] = line.strip()
+                continue
             m = DEF_RE.match(line)
             if m:
                 defs[m.group(1)] = m.group(2)
@@ -236,10 +241,20 @@ def parse_source(path: pathlib.Path):
     cview = list(active_lines(t, {"_MSC_VER", "_WIN32"}))
     pview = list(active_lines(t, {"MATCH_PORT", "__cplusplus", "MASHED_STANDALONE", "_MSC_VER", "_WIN32"}))
     excluded = func_defs(cview) - func_defs(pview)
+    # data the port defines itself with an initializer (0x0048ff20: `static char s_Tri_dff_005cf4f8[8] = "Tri.dff";`
+    # under MATCH_PORT, MGLOBALA in C). The exe arena is zero there, so the DDK object reads a copy of the original bytes.
+    port_copies = {}
+    for line in pview:
+        m = PORTCOPY_RE.match(line)
+        if m and m.group(1) in glob and "0x" not in m.group(3):
+            # size: the declared element count (bytes for char arrays, the only form present today), else one dword
+            port_copies[m.group(1)] = int(m.group(2)) if m.group(2) else 4
     return {"text": t, "flags": flags, "lang": lang, "toolchain": tc, "matches": matches, "ported": ported,
-            "globals": glob, "port_excluded": excluded}
+            "globals": glob, "port_excluded": excluded, "port_copies": port_copies}
 
 
+# `static T NAME[N] = <init>;` / `static T NAME = <init>;` at file scope: groups (N, NAME, init)
+PORTCOPY_RE = re.compile(r"^static\s+(?:const\s+)?\w[\w\s\*]*?\b([A-Za-z_]\w*)\s*(?:\[\s*(\d*)\s*\])?\s*=\s*([^;]*);")
 _FDEF_RE = re.compile(r"^(?!\s*(?:if|for|while|switch|return|else|do|case)\b)\s*[A-Za-z_][\w\s\*]*?\b([A-Za-z_]\w*)\s*\(")
 
 
@@ -350,6 +365,7 @@ def main_build(a):
     defmap = default_link_symbols() | crt
     abs_syms = {}
     abs_calls = {}
+    data_copies = {}
 
     def bind_to(s, target, label):
         """Rename undefined symbol s to what a wrapper binds its name to; returns the class label."""
@@ -509,6 +525,11 @@ def main_build(a):
                     addr = int(mm.group(1), 16)
             if s.value != 0:
                 cls = "common"
+            elif addr is not None and not s.is_func and plain in info["port_copies"]:
+                nm = f"__ddkcopy_{addr:08x}"
+                data_copies[nm] = M.pe().get_data(addr - 0x00400000, info["port_copies"][plain])
+                s.name = nm
+                cls = "data-copy"
             elif addr is not None and not s.is_func:
                 nm = f"__ddkabs_{addr:08x}"
                 abs_syms[nm] = addr
@@ -546,6 +567,11 @@ def main_build(a):
             rec["status"] = "skip:lang-" + info["lang"]
             report["units"].append(rec)
             continue
+        if "@mglobal" in defs:
+            rec["status"] = "fail:wrapper-redefines-globals"
+            rec["evidence"] = defs["@mglobal"]
+            report["units"].append(rec)
+            continue
         obj, log = ddk_compile(src, info, objdir, u["wrapper"].stem)
         if obj is None:
             rec["status"] = "fail:ddk-compile"
@@ -569,6 +595,14 @@ def main_build(a):
             continue
         for new, rva in edits:
             wrapper_edits[u["wrapper"]].append((new, rva))
+        # SafeSEH: cl 13.00 predates the @feat.00 flag, and one unmarked object makes the linker drop the exe's whole
+        # safe-handler table. An object that registers no SEH handler (no __except_handler* reference, no .sxdata)
+        # is SafeSEH-compatible by definition, so it is marked; one that does is left unmarked and reported.
+        seh = any(s.name.startswith(("__except_handler", "___except_handler")) for s in co.syms) or \
+            any(x.name == ".sxdata" for x in co.sections)
+        if not seh and not any(s.name == "@feat.00" for s in co.syms):
+            co.add_symbol("@feat.00", 1, CE.IMAGE_SYM_ABSOLUTE, 0, CE.IMAGE_SYM_CLASS_STATIC)
+        rec["safeseh_marked"] = not seh
         co.save(obj)
         rec["obj"] = str(obj)
         rec["drectve"] = co.drectve().strip()
@@ -644,6 +678,9 @@ def main_build(a):
     absobj = objdir / "ddk_abs.obj"
     abs_syms["__ddk_dropped"] = 0
     CE.build_absolute_obj(absobj, abs_syms)
+    copyobj = objdir / "ddk_copies.obj"
+    CE.build_data_obj(copyobj, data_copies)
+    report["data_copies"] = {k: v.hex() for k, v in data_copies.items()}
     thunkobj = objdir / "ddk_thunks.obj"
     CE.build_thunk_obj(thunkobj, abs_calls)
     report["n_abs_call_thunks"] = len(abs_calls)
@@ -656,7 +693,7 @@ def main_build(a):
     for l in deflink:
         lines.append(swap.get(str(pathlib.Path(l)).lower(), l))
     ddk_objs = [str(u["obj"]) for u in units if "obj" in u]
-    lines += ddk_objs + [str(absobj), str(thunkobj)]
+    lines += ddk_objs + [str(absobj), str(thunkobj), str(copyobj)]
     (out / "link_ddk.rsp").write_text("\n".join('"' + l + '"' for l in lines) + "\n")
     report["n_units"] = len(units)
     report["n_ddk_objs"] = len(ddk_objs)

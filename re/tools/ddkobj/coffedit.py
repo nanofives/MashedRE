@@ -205,6 +205,41 @@ def build_thunk_obj(path, targets: dict[str, int]):
     pathlib.Path(path).write_bytes(hdr + sec + bytes(code) + bytes(symtab) + bytes(strtab))
 
 
+def build_data_obj(path, items: dict[str, bytes]):
+    """One read-only .rdata section holding each blob (4-byte aligned), one external symbol per blob."""
+    data = bytearray()
+    offs = {}
+    for n, b in sorted(items.items()):
+        while len(data) % 4:
+            data += b"\0"
+        offs[n] = len(data)
+        data += b
+    strtab = bytearray(b"\0\0\0\0")
+    symtab = bytearray()
+
+    def sym(name, value, sec, typ, cls, aux=b""):
+        nonlocal strtab, symtab
+        nb = name.encode()
+        if len(nb) <= 8:
+            raw = nb.ljust(8, b"\0")
+        else:
+            raw = b"\0\0\0\0" + struct.pack("<I", len(strtab))
+            strtab += nb + b"\0"
+        symtab += raw + struct.pack("<IhHBB", value, sec, typ, cls, len(aux) // 18) + aux
+
+    sym("@feat.00", 1, IMAGE_SYM_ABSOLUTE, 0, IMAGE_SYM_CLASS_STATIC)
+    sym(".rdata", 0, 1, 0, IMAGE_SYM_CLASS_STATIC, struct.pack("<IHHIHBB", len(data), 0, 0, 0, 0, 0, 0).ljust(18, b"\0"))
+    for n, o in offs.items():
+        sym(n, o, 1, 0, IMAGE_SYM_CLASS_EXTERNAL)
+    struct.pack_into("<I", strtab, 0, len(strtab))
+    rawptr = 20 + 40
+    symptr = rawptr + len(data)
+    flags = 0x40000040 | 0x00300000   # INITIALIZED_DATA | READ | ALIGN_4BYTES
+    sec = b".rdata\0\0" + struct.pack("<IIIIIIHHI", 0, 0, len(data), rawptr, 0, 0, 0, 0, flags)
+    hdr = struct.pack("<HHIIIHH", 0x14C, 1, 0, symptr, len(symtab) // 18, 0, 0)
+    pathlib.Path(path).write_bytes(hdr + sec + bytes(data) + bytes(symtab) + bytes(strtab))
+
+
 def undecorate(name: str) -> str:
     n = name
     if n.startswith("_") or n.startswith("@"):

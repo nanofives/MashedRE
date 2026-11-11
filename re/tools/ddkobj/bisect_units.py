@@ -45,9 +45,13 @@ def probe(units, tag, knob, log):
     if "link rc=0" not in b.stdout:
         return "LINKFAIL"
     kv = ["MASHED_DET_FRAMES=3000"] + (["MASHED_ORIG_TOP=1"] if knob == "on" else [])
+    if NAV:   # the 12-capture nav-demo walk (the settings baseline restored first, as capflake_runs.py does)
+        import shutil
+        shutil.copyfile("D:/MashedWT/PORT-TOP-04E_data/settings_baseline.bin", ROOT + "/mashed_re_settings.bin")
+        kv = ["MASHED_NAV_DEMO=1", "MASHED_DETERMINISTIC=1", f"MASHED_VERIFY_OUT={DATA}/{tag}"] +              (["MASHED_ORIG_TOP=1"] if knob == "on" else [])
     env_exe = str(OUT / "mashed_re_ddk.exe")
     cmd = ["py", "-3.12", str(ORCH), "run", "--label", "DDKOBJ-SPIKE", "--",
-           "py", "-3.12", str(W / "verify/porttop_20261108/knob_boot.py"), tag, ROOT, "40"] + kv
+           "py", "-3.12", str(W / "verify/porttop_20261108/knob_boot.py"), tag, ROOT, "300" if NAV else "40"] + kv
     import os
     env = dict(os.environ, KNOB_EXE=env_exe, PORTTOP_OUT=DATA)
     pathlib.Path(DATA).mkdir(parents=True, exist_ok=True)
@@ -59,6 +63,9 @@ def probe(units, tag, knob, log):
     log.flush()
     print(f"[probe] {tag} n={len(units)} -> {res} {code}", flush=True)
     return res
+
+
+NAV = "--nav" in sys.argv
 
 
 def main():
