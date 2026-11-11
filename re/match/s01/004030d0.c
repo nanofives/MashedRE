@@ -1,7 +1,10 @@
 // FLAGS: /O2 /GS /Ob1
 /* a2 0x004030d0 (137 B). Best: 100%.
    g2s 55.0%: floats typed as int, compare direction. Fixed: float globals, memset intrinsic over an
-   8 x 0x4c slot array at 0x007f1038 (bytes +9/+0xa), int-index loop. */
+   8 x 0x4c slot array at 0x007f1038 (bytes +9/+0xa), int-index loop.
+   MATCH-EXACT-DATA 2026-11-11: `DAT_00636ae8 = DAT_00636ae8 + DAT_007f1004` was byte-identical with the fld / fadd
+   operands swapped (cl loads the addend first; relocheck did not check DAT_ names then). The original is
+   fld [0x00636ae8] at +0x9, fadd [0x007f1004] at +0x10. Reading the addend into a local first gives that order. */
 typedef unsigned int size_t;
 void *memset(void *d, int c, size_t n);
 #pragma intrinsic(memset)
@@ -25,8 +28,10 @@ void FUN_00472640(int p0);
 void FUN_004030d0(void)
 {
   int i;
+  float step;
   if (FUN_0042c1c0() == 0) {
-    DAT_00636ae8 = DAT_00636ae8 + DAT_007f1004;
+    step = DAT_007f1004;
+    DAT_00636ae8 = DAT_00636ae8 + step;
     FUN_00472640(0);
     FUN_0042b950();
     if (DAT_00636ae8 > DAT_00636aec) {

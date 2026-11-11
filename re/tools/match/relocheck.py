@@ -9,6 +9,10 @@ the target our object names and compares it with the operand the original holds 
   function    `FUN_<va8>` (any decoration) -> 0x<va8>
   constant    a symbol of our object's own data section (`__real@...`, string literals) -> the original operand
               must point at bytes equal to ours
+  named data  a Ghidra address-suffixed label (`DAT_<va8>`, `_DAT_<va8>`, `PTR_..._<va8>`, `s_..._<va8>`, `UNK_`,
+              `BYTE_` ...) -> 0x<va8> + stored addend (MATCH-EXACT-DATA, 2026-11-11). Before this these were listed as
+              unchecked, so a source that swapped two data operands (0x00414060: the fld / fmul constants) still
+              passed; `--no-named-data` restores the old behaviour.
   same-section labels (jump tables) are already checked by match.py's byte compare and are skipped here.
 Everything else (imports, CRT helpers such as __ftol, file-static data) is listed as unchecked by name.
 
@@ -21,6 +25,8 @@ import match
 
 RE_G = re.compile(r"MGLOBALA?\(\s*[^,]+?,\s*(\w+)\s*,\s*(?:[^,;\n]+,\s*)?(0x[0-9a-fA-F]+)\s*\)")
 REL_DIR32, REL_REL32 = 0x06, 0x14
+# Ghidra labels that carry their own address as an 8-hex suffix (FUN_ / thunk_FUN_ have their own branches)
+RE_NAMED = re.compile(r"(?:DAT|UNK|BYTE|WORD|DWORD|QWORD|FLOAT|DOUBLE|PTR_\w+|s_\w*|u_\w*)_([0-9a-fA-F]{8})")
 
 
 def undecorate(n):
@@ -28,7 +34,7 @@ def undecorate(n):
     return n.split("@")[0]
 
 
-def check(src):
+def check(src, named_data=True):
     text = src.read_text()
     gl = {name: int(a, 16) for name, a in RE_G.findall(text)}
     fl = match.file_flags(text) or match.DEFAULT_FLAGS
@@ -66,6 +72,8 @@ def check(src):
             exp = None
             if u in gl:
                 exp = gl[u] + stored
+            elif named_data and RE_NAMED.fullmatch(u):
+                exp = int(u[-8:], 16) + (stored if typ == REL_DIR32 else 0)
             elif re.fullmatch(r"thunk_FUN_[0-9a-fA-F]{8}", u):
                 # Ghidra names a jmp thunk after its target: the original operand must be a thunk (E9 rel32)
                 # that lands on that target
@@ -135,10 +143,12 @@ def check(src):
 
 
 if __name__ == "__main__":
-    for a in sys.argv[1:]:
+    args = sys.argv[1:]
+    nd = "--no-named-data" not in args
+    for a in [x for x in args if x != "--no-named-data"]:
         p = pathlib.Path(a)
         try:
-            res = check(p)
+            res = check(p, named_data=nd)
         except SystemExit as e:
             print(f"{p.name}\tERROR\t{str(e).splitlines()[0][:120]}"); continue
         for r in res:

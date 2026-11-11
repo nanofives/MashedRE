@@ -4,7 +4,10 @@
    FUN_00413fa0 were wrong (the caller pushes nothing, push ecx is the float local). Last gap: four -1.0f
    stores as float constants each emit mov [m], imm32. The original loads 0xbf800000 into eax once, which
    cl does for int stores of the same constant, so DAT_0089a870..87c are declared int and get the bit
-   pattern (port: they hold -1.0f as float). Class: none left. */
+   pattern (port: they hold -1.0f as float). Class: none left.
+   MATCH-EXACT-DATA 2026-11-11: the multiply was written DAT_0089a37c * DAT_005cc32c, which is also byte-identical
+   with the two operands swapped (relocheck did not check DAT_ names then). The original loads 0x0089a37c at +0x15
+   and 0x005cc32c at +0xf, so the source order is DAT_005cc32c * DAT_0089a37c; relocheck now checks all 20. */
 #ifndef MATCH_PORT
 extern float DAT_0089a37c;
 extern float DAT_005cc32c;
@@ -28,7 +31,7 @@ void FUN_00414060(void)
 {
   float f;
 
-  f = (float)DAT_0089a384[FUN_00413fa0()] + DAT_0089a37c * DAT_005cc32c;
+  f = (float)DAT_0089a384[FUN_00413fa0()] + DAT_005cc32c * DAT_0089a37c;
   if (FUN_0042f6a0() == 6)
     f = (float)FUN_00431d80() * DAT_005cd088;
   if (FUN_0042f6a0() == 10)
