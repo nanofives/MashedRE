@@ -1852,7 +1852,12 @@ void Put(std::uint32_t off, std::uint32_t v) {
 }
 std::uint32_t U(const void* p) { return static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(p)); }
 
-void RegisterRwModules() {
+// [HUDINIT-A] the record's own slots under MASHED_ORIG_TOP_RWMOD=1: the string functions (+0xc4..+0xfc) and the
+// freelist alloc / free (+0x118 / +0x11c). They are fields of this record, not module offsets, so they are set at every
+// install, the first one included (before the matched 0x00402750). 0x00402750 calls 0x00427ca0 at 0x00402750.c:137,
+// before piece 4 (:159), and 0x00427ca0's first call, the Rt2d open 0x00552b60, allocates through +0x118 and +0xf4.
+// The module offsets and headers (RegisterRwModules) still wait for the B15 device.
+void RegisterRwEarlySlots() {
     // [PORT-OT-RWG-STRINGS] string slots: original +0xc4 0x004a2b60, +0xd0 0x004a34b0, +0xdc 0x004d8750, +0xe8 0x004af340,
     // +0xf4 0x004a9410, +0xf8 0x004d86d0, +0xfc 0x004d8700. +0xc8 / +0xd8 / +0xe0 / +0xe4 / +0xec / +0xf0 / +0x100 / +0x104
     // (original 0x004a42c5 / 0x005c2300 / 0x004d8730 / 0x004a3860 / 0x004a3a90 / 0x004d8680 / 0x004a3ac9 / 0x005c22bd)
@@ -1864,6 +1869,13 @@ void RegisterRwModules() {
     Put(0xf4, U(reinterpret_cast<void*>(&RwGlobalsStrlen)));
     Put(0xf8, U(reinterpret_cast<void*>(&RwGlobalsStrupr)));
     Put(0xfc, U(reinterpret_cast<void*>(&RwGlobalsStrlwr)));
+    // RwGlobals +0x118 / +0x11c: original 0x004cca80 / 0x004ccba0.
+    s_rwGlobals.flalloc = reinterpret_cast<void*>(&RwGlobalsFreeListAlloc);
+    s_rwGlobals.flfree = reinterpret_cast<void*>(&RwGlobalsFreeListFree);
+}
+
+void RegisterRwModules() {
+    RegisterRwEarlySlots();
     // [PORT-OT-RWG-DEVSLOTS] device slots. Original (ORIG_RWG.json): +0x24 0x004d6910, +0x34 0x004dbc90. +0x20 / +0x30
     // (0x004d7480 / 0x004dba60 in the original) already hold the B15 bridge's set-state / draw, copied from the device.
     // +0x24 is the exe body of 0x004d6910: it reads the exe's bytes at the input caches 0x007d6ae8..0x007d6bf8 /
@@ -1877,9 +1889,6 @@ void RegisterRwModules() {
     Put(0x34, U(reinterpret_cast<void*>(&RwIm2DBridge_RenderIndexedPrimitive)));
     Put(0x60, U(reinterpret_cast<void*>(&MashedRw_ImageGetRaster_004de1b0)));
     RasterBindSelfTest();
-    // RwGlobals +0x118 / +0x11c: original 0x004cca80 / 0x004ccba0.
-    s_rwGlobals.flalloc = reinterpret_cast<void*>(&RwGlobalsFreeListAlloc);
-    s_rwGlobals.flfree = reinterpret_cast<void*>(&RwGlobalsFreeListFree);
     // Vector module (+0x134). Original: +0x0 0x0cc00048 / +0x4 0x0cc04050 (heap: the sqrt / inv-sqrt LUT roots,
     // Math/RwLutGuard.h), +0x8 0x004dc4a0, +0xc 0x004dc370, +0x10 0x004dc530, +0x14 0x004dc410.
     Put(kModVector + 0x0, U(mashed_re::Math::RwLutSqrtTable()));     // == the original's table (Math/RwLutTables.cpp)
@@ -1975,6 +1984,7 @@ int MashedRw_InstallRwGlobals(void) {
     s_rwGlobals.rwrealloc = reinterpret_cast<void*>(&RwGlobalsRealloc);
     s_rwGlobals.rwcalloc = reinterpret_cast<void*>(&RwGlobalsCalloc);
     *slot = &s_rwGlobals;
+    if (RwModKnob()) RegisterRwEarlySlots();   // [HUDINIT-A] record slots from the first install on
     // [PORT-OT-RWG-MODULES] only once the B15 device has been seen (the install after piece 4): before that, piece 4
     // points 0x007d3ff8 at the 0x34-byte B15 device for a while, and registered offsets would index past it.
     if (dev && RwModKnob()) RegisterRwModules();
