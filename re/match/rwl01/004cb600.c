@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-DRIVER 2026-11-11: 78.6% -> 100%. Moved by: int return (mov eax,edx / mov eax,1, not bool), and the FUN_004cb740 test written as an empty 'if (== 0) {}' arm with 'else return 1', which puts the check block inline before the copy tail and the 'return 1' epilogue at the end. */
 /* h3 hand-match: best 78.6% (regs 81.0%), class b. Struct form right (Rec6c 0x6c array, Blk68 copy gives rep movsd, realloc/malloc arms, COM call 0xcc __stdcall, setge result). Residual: original lays out grow code, then the FUN_004cb740 check block, then the shared copy tail with the early 'return 1' epilogue shared at the very end; ours emits the check block and its own epilogue after the tail. Tried: if/else flip, malloc/realloc arm order, permuter (84.5% variant makes the counter unsigned which changes behaviour: rejected). */
 /* MATCH-RWL01 0x004cb600: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl01_20261107/results.tsv. */
@@ -44,11 +45,9 @@ MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int *, DAT_007d4110, 0x007d4110);
 undefined4 FUN_004cb740(int * p0, Rec6c * p1);
 // MATCH: 0x004cb600 FUN_004cb600
-bool FUN_004cb600(int param_1,int *param_2)
-
+int FUN_004cb600(int param_1,int *param_2)
 {
   int iVar2;
-  
   iVar2 = DAT_007d456c;
   if (param_1 >= DAT_007d456c) {
     DAT_007d456c = param_1 + 1;
@@ -63,10 +62,10 @@ bool FUN_004cb600(int param_1,int *param_2)
       iVar2++;
     }
   }
+  else if (FUN_004cb740(param_2,&DAT_007d4570[param_1]) == 0) {
+  }
   else {
-    if (FUN_004cb740(param_2,&DAT_007d4570[param_1]) != 0) {
-      return true;
-    }
+    return 1;
   }
   DAT_007d4570[param_1].b = *(Blk68 *)param_2;
   iVar2 = (*(int (__stdcall *)(int *,int,int *))*(int *)(*DAT_007d4110 + 0xcc))(DAT_007d4110,param_1,param_2);

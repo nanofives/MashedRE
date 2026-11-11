@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-DRIVER 2026-11-11: 62.5% -> 62.5% (ops 91.9 -> 92.6%, 281 -> 283/283 ins). Behaviour fix only: both RWERROR blocks stored pluginID = 1 after the FUN_004d8480 call (a dead store the compiler dropped); it is now stored first, as the original does (mov [esp+0x20], 1 before the call). Prologue residual unchanged (same shrink-wrap class as 0x004d0290). */
 /* MATCH-S20 0x004cff20 (h1): 62.5% (regs 68.2%). Raw converter 25.8%. Structure is right (ops 92.9%):
    the residual is the stack frame. The original frame is 0x44 with ebx/ebp/edi saved at entry and keeps the
    type-2/5 source surface in the raster parameter's slot and the texture pointer spilled there; ours is 0x50
@@ -76,9 +77,9 @@ int FUN_004cff20(unsigned char **pixels, RwRaster *raster, int accessMode)
 
   if (raster->cpPixels != 0) {
     RwError err;
+    err.pluginID = 1;
     err.errorCode = FUN_004d7ff0(0x8000000e);
     FUN_004d8480(&err);
-    err.pluginID = 1;
     return 0;
   }
   rasExt = RASEXT(raster);
@@ -174,9 +175,9 @@ int FUN_004cff20(unsigned char **pixels, RwRaster *raster, int accessMode)
   default:
     {
       RwError err;
+      err.pluginID = 1;
       err.errorCode = FUN_004d7ff0(0x8000000e);
       FUN_004d8480(&err);
-      err.pluginID = 1;
       return 0;
     }
   }

@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-DRIVER 2026-11-11: 73.4% -> 76.4%. Moved by: cases end in break with one 'return 1' after the switch (RW RWRETURN shape), +0xb = 0xff stored before the privateFlags clear in case 0/4 (permuter). Residual unchanged: the original saves ebp/edi in the prologue; ours sinks them past the cpPixels early exit (inverting the test to 'if (cpPixels != 0) {...}' gets the prologue right but moves the error block to the end, 67%). */
 /* MATCH-S20 0x004d0290 (h2): 73.4% (regs 81.5%). Raw 19.3%. D3D9 raster unlock shape: RwRaster / raster-extension
    structs (cube:4/face:4 and automipmapgen:4/compressed:4 bitfields), UnlockRect +0x38 / Release +8,
    GetCubeMapSurface / GetSurfaceLevel +0x48, UpdateSurface +0x78 with RECT/POINT locals, mipmap regeneration
@@ -85,17 +86,17 @@ int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
     param_2->cpPixels = 0;
     if ((param_2->privateFlags & 4) && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0 &&
         ext->automipmapgen == 0) {
-      param_2->privateFlags &= ~6;
       ext->lockedMipLevel = 0xff;
+      param_2->privateFlags &= ~6;
       top = param_2;
       do {
         top = top->parent;
       } while (top != top->parent);
       FUN_004c5dd0(top, 0);
-      return 1;
+      break;
     }
     param_2->privateFlags &= ~6;
-    return 1;
+    break;
   case 2:
   case 5:
     param_2->width = param_2->originalWidth;
@@ -145,11 +146,11 @@ int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
         ext->lockedMipLevel = 0xff;
         FUN_004c5dd0(top, 0);
       }
-      return 1;
+      break;
     }
     (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
     param_2->privateFlags &= ~6;
-    return 1;
+    break;
   default:
     {
       RwError err;
@@ -159,4 +160,5 @@ int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
     }
     return 0;
   }
+  return 1;
 }

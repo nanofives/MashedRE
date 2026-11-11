@@ -14,6 +14,11 @@
    the depth byte at DAT_005d8bf4[(fmt >> 8 & 0xf) * 8] and DAT_00911f9c. Type 2: the 16-bit format word of
    DAT_00911b00[DAT_009120e8]. Type 1: 0x700 / 0x900 by DAT_00911f9c. Requested formats on types 1/2 and unknown
    types raise RWERROR 0x8000000d. The jump table at 0x004d1d08 follows the Ghidra size. FLAGS /G5 (RW core). */
+/* RWC-DRIVER (2026-11-11): 92.4% -> 99.8%. The 16-bit early return is now `format += 0x200; break;` (same value:
+   req == 0 there), which keeps the original's in-place `... esi, 0x200; pop edi; mov eax, esi` tail and all jump
+   offsets. Residual: that one opcode (`add esi` vs the original's `or esi`). `format |= 0x200; break;` and every
+   |= spelling tried (8 forms) get cross-jumped into the 0x100 path's `or esi, 0x200` tail (547 ins, 91.7%);
+   permuter 1008 compiles from that form: 0 gains. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -173,7 +178,10 @@ unsigned int FUN_004d1640(int param_1, unsigned int param_2)
       unsigned int req = format & 0xf00;
       if (req == 0) {
         if (DAT_00911f9c == 16) {
-          return format | 0x200;
+          /* req == 0 here, so += equals |= 0x200. `format |= 0x200; break;` is cross-jumped by cl into the
+             0x100 path's `or esi, 0x200` tail (547 ins); the original keeps this block with its own tail. */
+          format += 0x200;
+          break;
         }
         if (CheckCamTexFormat(0x16)) {
           format |= 0x600;

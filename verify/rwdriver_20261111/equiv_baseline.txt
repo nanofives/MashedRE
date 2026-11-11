@@ -1,0 +1,41 @@
+== 0x004d1e30
+0x004d1e30	NOT-PROVEN	ret-esp: ours: esp = esp0-64 at ret
+== 0x004d7480
+0x004d7480	NOT-PROVEN	switch-table: region ours +0x14 / orig 0x004d7494: no relocated entries at ours +0x5c4
+== 0x004db3e0
+0x004db3e0	NOT-PROVEN	call-regargs: region ours +0x147 / orig 0x004db527 call ld32(st0(st0(Mc0(call0(0x4cba80,((esp0+-0x68),),(('eax', ld32(Mc0(call0(ld32(st0(st0(st0(...,...,...,4),(...+-0x60),0x4e20,4),(esp0+-0x64),ld32(Mc0(...),0x7d4110),4),(ld32(st0(...,...,...,4),ld32(...,...))+0x6c)),((esp0+-0
+== 0x00540340
+0x00540340	NOT-PROVEN	ret-esp: ours: esp = esp0-44 at ret
+== 0x004c90a0
+0x004c90a0	NOT-PROVEN	call-regargs: region ours +0x1d / orig 0x004c90d7 call ld32(M00(),(ld32(M00(),0x7d3ff8)+0x108)): (('ecx', ld32(M00(),0x7d3ff8)), ('edx', edx_in)) | (('ecx', ld32(M00(),0x7d4130)), ('edx', (ld32(M00(),0x911f80)*20+0x14)))
+== 0x004c9eb0
+0x004c9eb0	NOT-PROVEN	call-target: region ours +0x13 / orig 0x004c9ec1: ld32(st0(st0(st0(st0(st0(st0(...,...,...,4),(...+-0x18),esi_in,4),(esp0+-0x1c),edi_in,4),(esp0+-0x20),0x17,4),(esp0+-0x24),ld32(st0(st0(st0(...,...,...,4),(...+-0x1c),edi_in,4),(esp0+-0x20),0x17,4),0x7d410c),4),(esp0+-0x28),ld32
+== 0x004cb330
+0x004cb330	NOT-PROVEN	branch-condition: region ours +0x50 / orig 0x004cb415: 1 | P1('ne',0x0,ld32(M00(),(arg32(4)*4+0x7d4158)))
+== 0x004cb4c0
+0x004cb4c0	NOT-PROVEN	branch-condition: region ours +0xa9 / orig 0x004cb56c: P1('slt',(phi32((169, 5027180),(('A', 'r', 'eax'), ('B', 'r', 'eax')))+0x4),0x618298) | P1('ne',0x0,(phi32((169, 5027180),(('B', 'r', 'edx'),))+-0x1))
+== 0x004cb600
+0x004cb600	NOT-PROVEN	ret-esp: ours: esp = esp0-12 at ret
+== 0x004cb8a0
+0x004cb8a0	NOT-PROVEN	call-args: region ours +0x98 / orig 0x004cb92c call ld32(st0(M00(),0x7d4148,(ld32(M00(),0x7d4148)+0x10),4),(ld32(M00(),0x7d3ff8)+0x108)) arg 1: (none) | 0x1040411
+== 0x004cff20
+0x004cff20	NOT-PROVEN	call-args: region ours +0xf / orig 0x004cff32 call 0x4d8480 arg 0: (esp0+-0x40) | (esp0+-0x38)
+== 0x004d0290
+0x004d0290	NOT-PROVEN	call-args: region ours +0xd0 / orig 0x004d0364 call ld32(st0(st0(st0(st0(M00(),(arg32(8)+0x4),0x0,4),(arg32(8)+0xc),ld32(M00(),(arg32(8)+0x28)),4),(arg32(8)+0x10),ld32(M00(),(arg32(8)+0x2c)),4),(arg32(8)+0x18),0x0,4),(ld32(st0(st0(st0(st0(...,...,...,4),(...+0xc),ld32(...,...),
+== 0x004d1640
+0x004d1640	NOT-PROVEN	ret-esp: ours: esp = esp0-52 at ret
+== 0x004d2980
+0x004d2980	NOT-PROVEN	call-regargs: region ours +0x1a / orig 0x004d299f call 0x4ddcb0: (('ecx', ins32(ld32(M00(),(and32(shr32(ins32(0x0,ld8(...,...),8),0x8),0xf)*8+0x5d8bf0)),ld8(st0(M00(),(arg32(8)+0x18),ld32(M00(),(and32(shr32(...,...),0xf)*8+0x5d8bf0)),4),(and32(shr32(ins32(0x0,ld8(...,...),8),0x
+== 0x004d5bc0
+0x004d5bc0	NOT-PROVEN	branch-condition: region ours +0x81 / orig 0x004d5c41: P1('eq',0x0,ld32(phi0((126, 5069886),(('A', 'm'),)),0x7d58d8)) | P1('eq',0x0,ld32(phi0((126, 5069886),(('B', 'm'),)),0x7d58d8))
+== 0x004d6200
+== 0x004dba60
+0x004dba60	NOT-PROVEN	switch-table: region ours +0x30 / orig 0x004dba90: no relocated entries at ours +0x214
+== 0x004dc5b0
+0x004dc5b0	NOT-PROVEN	ret-esp: ours: esp = esp0-28 at ret
+== 0x004e0920
+0x004e0920	NOT-PROVEN	call-args: region ours +0x0 / orig 0x004e0920 call ld32(st0(M00(),0x7d7108,0x0,4),(ld32(st0(M00(),0x7d7108,0x0,4),ld32(M00(),0x7d4110))+0x6c)) arg 8: ecx_in | ebx_in
+== 0x005405c0
+0x005405c0	NOT-PROVEN	call-args: region ours +0x61 / orig 0x0054066f call 0x4d6e70 arg 0: esi_in | 0x0
+== 0x005412d0
+0x005412d0	NOT-PROVEN	call-sequence: region ours +0x0 / orig 0x005412d0: 1 vs 0 calls
