@@ -1,0 +1,16 @@
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/n_a vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/n_b: 2724 ticks, block 1024 B, load calls [118, 118]
+  constant blocks: 26  NEW blocks: 2  N misaligned at: None
+  IDENTICAL-FOR-N = 2 of 2724
+n_a vs n_b: raw 0/15, normalized 15/15, race-state 15/15
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t_b vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t_c: 2724 ticks, block 1024 B, load calls [119, 118]
+  constant blocks: 44  NEW blocks: 4  N misaligned at: None
+  IDENTICAL-FOR-N = 3 of 2724
+t_b vs t_c: raw 0/15, normalized 15/15, race-state 15/15
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t_c vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t_h: 2724 ticks, block 1024 B, load calls [118, 118]
+  constant blocks: 27  NEW blocks: 3  N misaligned at: None
+  IDENTICAL-FOR-N = 1 of 2724
+t_c vs t_h: raw 0/15, normalized 15/15, race-state 15/15
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t_b vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t_neg: 2724 ticks, block 1024 B, load calls [119, 123]
+  constant blocks: 54  NEW blocks: 463  N misaligned at: 1080
+  IDENTICAL-FOR-N = 1 of 2724
+t_b vs t_neg: raw 0/15, normalized 0/15, race-state 0/15

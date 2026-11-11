@@ -1,0 +1,178 @@
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_a vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_b: 2724 ticks, block 1024 B, load calls [119, 118]
+  constant blocks: 23  NEW blocks: 3  N misaligned at: 8
+  IDENTICAL-FOR-N = 2 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 178
+    RAW 0x7dd000 first differs at tick 2: 00000000 vs 01a9ce30
+    RAW 0x7dd004 first differs at tick 2: 00000000 vs 01a9d000
+    RAW 0x7dd00c first differs at tick 2: 00000000 vs 0134ae54
+    RAW 0x7dd018 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd01c first differs at tick 2: 00000000 vs 00057800
+    RAW 0x7dd020 first differs at tick 2: 00000000 vs 01a9e400
+    RAW 0x7dd024 first differs at tick 2: 00000000 vs 01a9d190
+    RAW 0x7dd02c first differs at tick 2: 00000000 vs 0134ae58
+    RAW 0x7dd038 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd03c first differs at tick 2: 00000000 vs 0005f000
+    RAW 0x7dd040 first differs at tick 2: 00000000 vs 01a9e5b8
+    RAW 0x7dd044 first differs at tick 2: 00000000 vs 01a9d320
+    RAW 0x7dd04c first differs at tick 2: 00000000 vs 0134ae5c
+    RAW 0x7dd058 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd05c first differs at tick 2: 00000000 vs 00066800
+    RAW 0x7dd060 first differs at tick 2: 00000000 vs 01a9e770
+    RAW 0x7dd064 first differs at tick 2: 00000000 vs 01a9d4b0
+    RAW 0x7dd06c first differs at tick 2: 00000000 vs 0134ae60
+    RAW 0x7dd078 first differs at tick 2: 00000000 vs 0000a000
+    RAW 0x7dd07c first differs at tick 2: 00000000 vs 0006e000
+t2_a vs t2_b: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'PTR': 3316, 'OFFSET': 6, 'RESIDUE': 19, 'MODOFFSET': 97, 'RULE:WINMSG': 2} periods {'60': 97}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  unexplained by page {}
+
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_a vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_c: 2724 ticks, block 1024 B, load calls [119, 119]
+  constant blocks: 23  NEW blocks: 3  N misaligned at: 8
+  IDENTICAL-FOR-N = 2 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 178
+    RAW 0x6147d8 first differs at tick 0: 00000001 vs 00000000
+    RAW 0x7dd000 first differs at tick 2: 00000000 vs 01a9ce30
+    RAW 0x7dd004 first differs at tick 2: 00000000 vs 01a9d000
+    RAW 0x7dd00c first differs at tick 2: 00000000 vs 0134ae54
+    RAW 0x7dd018 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd01c first differs at tick 2: 00000000 vs 00057800
+    RAW 0x7dd020 first differs at tick 2: 00000000 vs 01a9e400
+    RAW 0x7dd024 first differs at tick 2: 00000000 vs 01a9d190
+    RAW 0x7dd02c first differs at tick 2: 00000000 vs 0134ae58
+    RAW 0x7dd038 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd03c first differs at tick 2: 00000000 vs 0005f000
+    RAW 0x7dd040 first differs at tick 2: 00000000 vs 01a9e5b8
+    RAW 0x7dd044 first differs at tick 2: 00000000 vs 01a9d320
+    RAW 0x7dd04c first differs at tick 2: 00000000 vs 0134ae5c
+    RAW 0x7dd058 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd05c first differs at tick 2: 00000000 vs 00066800
+    RAW 0x7dd060 first differs at tick 2: 00000000 vs 01a9e770
+    RAW 0x7dd064 first differs at tick 2: 00000000 vs 01a9d4b0
+    RAW 0x7dd06c first differs at tick 2: 00000000 vs 0134ae60
+    RAW 0x7dd078 first differs at tick 2: 00000000 vs 0000a000
+t2_a vs t2_c: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'PTR': 3316, 'OFFSET': 6, 'RESIDUE': 18, 'MODOFFSET': 97, 'RULE:WINMSG': 2} periods {'60': 97}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  unexplained by page {}
+
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_b vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_c: 2724 ticks, block 1024 B, load calls [118, 119]
+  constant blocks: 24  NEW blocks: 1  N misaligned at: None
+  IDENTICAL-FOR-N = 5 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 1
+    RAW 0x6147d8 first differs at tick 0: 00000001 vs 00000000
+    0x614400 tick 5: classes ['TOGGLE']
+t2_b vs t2_c: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'PTR': 3316, 'OFFSET': 6, 'RESIDUE': 19, 'MODOFFSET': 97, 'RULE:WINMSG': 2} periods {'60': 97}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  unexplained by page {}
+
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_a vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_h: 2724 ticks, block 1024 B, load calls [119, 118]
+  constant blocks: 12  NEW blocks: 4  N misaligned at: 8
+  IDENTICAL-FOR-N = 2 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 178
+    RAW 0x6147d8 first differs at tick 0: 00000001 vs 00000000
+    RAW 0x7dd000 first differs at tick 2: 00000000 vs 01a9ce30
+    RAW 0x7dd004 first differs at tick 2: 00000000 vs 01a9d000
+    RAW 0x7dd00c first differs at tick 2: 00000000 vs 0134ae54
+    RAW 0x7dd018 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd01c first differs at tick 2: 00000000 vs 00057800
+    RAW 0x7dd020 first differs at tick 2: 00000000 vs 01a9e400
+    RAW 0x7dd024 first differs at tick 2: 00000000 vs 01a9d190
+    RAW 0x7dd02c first differs at tick 2: 00000000 vs 0134ae58
+    RAW 0x7dd038 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd03c first differs at tick 2: 00000000 vs 0005f000
+    RAW 0x7dd040 first differs at tick 2: 00000000 vs 01a9e5b8
+    RAW 0x7dd044 first differs at tick 2: 00000000 vs 01a9d320
+    RAW 0x7dd04c first differs at tick 2: 00000000 vs 0134ae5c
+    RAW 0x7dd058 first differs at tick 2: 00000000 vs 00007800
+    RAW 0x7dd05c first differs at tick 2: 00000000 vs 00066800
+    RAW 0x7dd060 first differs at tick 2: 00000000 vs 01a9e770
+    RAW 0x7dd064 first differs at tick 2: 00000000 vs 01a9d4b0
+    RAW 0x7dd06c first differs at tick 2: 00000000 vs 0134ae60
+    RAW 0x7dd078 first differs at tick 2: 00000000 vs 0000a000
+t2_a vs t2_h: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 17, 'OFFSET': 4, 'PTR': 3315, 'MODOFFSET': 1, 'RULE:RING4': 2, 'RULE:WINMSG': 2} periods {'4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  unexplained by page {}
+
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_b vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_h: 2724 ticks, block 1024 B, load calls [118, 118]
+  constant blocks: 23  NEW blocks: 1  N misaligned at: None
+  IDENTICAL-FOR-N = 5 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 1
+    RAW 0x6147d8 first differs at tick 0: 00000001 vs 00000000
+    0x614400 tick 5: classes ['TOGGLE']
+t2_b vs t2_h: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 17, 'OFFSET': 6, 'PTR': 3315, 'MODOFFSET': 98, 'RULE:RING4': 2, 'RULE:WINMSG': 2} periods {'60': 97, '4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  unexplained by page {}
+
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_c vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_h: 2724 ticks, block 1024 B, load calls [119, 118]
+  constant blocks: 23  NEW blocks: 1  N misaligned at: None
+  IDENTICAL-FOR-N = 106 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 1
+    RAW 0x6147d8 first differs at tick 42: 00000000 vs 00000001
+    0x614400 tick 106: classes ['TOGGLE']
+t2_c vs t2_h: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'TOGGLE': 2, 'RESIDUE': 19, 'PTR': 2863, 'MODOFFSET': 98, 'OFFSET': 5, 'RULE:RING4': 2, 'RULE:WINMSG': 2} periods {'60': 97, '4': 1}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  unexplained by page {}
+
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_b vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_neg: 2724 ticks, block 1024 B, load calls [118, 118]
+  constant blocks: 23  NEW blocks: 477  N misaligned at: 1080
+  IDENTICAL-FOR-N = 4 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 110
+    RAW 0x6147d8 first differs at tick 0: 00000001 vs 00000000
+    RAW 0x6036cc first differs at tick 387: 3f800000 vs 3f266666
+    RAW 0x6036c0 first differs at tick 388: 3f7ffffa vs 3f799994
+    RAW 0x6dcee8 first differs at tick 932: 410afa87 vs 410c49e9
+    RAW 0x6dceec first differs at tick 932: be9992d1 vs be9e30f5
+    RAW 0x6dcef0 first differs at tick 932: c10cb87e vs c10cc336
+    RAW 0x6dcf74 first differs at tick 934: 410ae2eb vs 410bdece
+    RAW 0x6dcf78 first differs at tick 934: be47fcad vs be64bd2b
+    RAW 0x6dcf7c first differs at tick 934: c1193326 vs c1189b8c
+    RAW 0x6dd000 first differs at tick 948: 410ba6ef vs 410ad5e9
+    RAW 0x6dd004 first differs at tick 948: bed57512 vs bee8c406
+    RAW 0x6dd008 first differs at tick 948: c0d3d96f vs c0d2a666
+    RAW 0x6dd08c first differs at tick 1050: 4149795c vs 4147e42b
+    RAW 0x6dd090 first differs at tick 1050: bf790e97 vs bfa9a364
+    RAW 0x6dd094 first differs at tick 1050: 408572ae vs 4086248f
+    RAW 0x6dcdd0 first differs at tick 1064: 41593fe7 vs 41593122
+    RAW 0x6dcdd4 first differs at tick 1064: bf806551 vs bf7f2c88
+    RAW 0x6dcdd8 first differs at tick 1064: 408c1031 vs 408bf5b2
+    RAW 0x6036dc first differs at tick 1066: 00000004 vs 00000001
+    RAW 0x6dccb8 first differs at tick 1067: 41b48faf vs 41b4913d
+t2_b vs t2_neg: raw 0/15, normalized 0/15, race-state 0/15
+  classes {'UNEXPLAINED': 35616, 'TOGGLE': 1517, 'MODOFFSET': 417, 'RESIDUE': 17, 'PTR': 2932, 'RULE:WINMSG': 2, 'RULE:STACKROW': 1094} periods {'3': 69, '19': 2, '5': 25, '6': 7, '7': 11, '8': 1, '15': 3, '2': 60, '21': 1, '23': 1, '9': 3, '13': 1, '14': 3, '
+  unexplained per checkpoint [376, 2031, 5086, 6593, 9671, 17965, 18961, 23815, 27480, 28580, 30044, 31702, 30236, 31065, 29968]
+  unexplained by page {'car records 0x008815a0 (4 x 0xd04)': 1309, 'other page 0x007e5000': 1024, 'other page 0x007e4000': 986, 'other page 0x0071c000': 896, 'other page 0x0071d000': 896, 'other page 0x0071e000': 896, 'other page 0x007e3000': 896, 'other page 
+
+D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_h vs D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_neg: 2724 ticks, block 1024 B, load calls [118, 118]
+  constant blocks: 22  NEW blocks: 477  N misaligned at: 1080
+  IDENTICAL-FOR-N = 4 of 2724
+  raw words: 1792, differing (non-PTR) at some tick: 110
+    RAW 0x6147d8 first differs at tick 1: 00000000 vs 00000001
+    RAW 0x6036cc first differs at tick 387: 3f800000 vs 3f266666
+    RAW 0x6036c0 first differs at tick 388: 3f7ffffa vs 3f799994
+    RAW 0x6dcee8 first differs at tick 932: 410afa87 vs 410c49e9
+    RAW 0x6dceec first differs at tick 932: be9992d1 vs be9e30f5
+    RAW 0x6dcef0 first differs at tick 932: c10cb87e vs c10cc336
+    RAW 0x6dcf74 first differs at tick 934: 410ae2eb vs 410bdece
+    RAW 0x6dcf78 first differs at tick 934: be47fcad vs be64bd2b
+    RAW 0x6dcf7c first differs at tick 934: c1193326 vs c1189b8c
+    RAW 0x6dd000 first differs at tick 948: 410ba6ef vs 410ad5e9
+    RAW 0x6dd004 first differs at tick 948: bed57512 vs bee8c406
+    RAW 0x6dd008 first differs at tick 948: c0d3d96f vs c0d2a666
+    RAW 0x6dd08c first differs at tick 1050: 4149795c vs 4147e42b
+    RAW 0x6dd090 first differs at tick 1050: bf790e97 vs bfa9a364
+    RAW 0x6dd094 first differs at tick 1050: 408572ae vs 4086248f
+    RAW 0x6dcdd0 first differs at tick 1064: 41593fe7 vs 41593122
+    RAW 0x6dcdd4 first differs at tick 1064: bf806551 vs bf7f2c88
+    RAW 0x6dcdd8 first differs at tick 1064: 408c1031 vs 408bf5b2
+    RAW 0x6036dc first differs at tick 1066: 00000004 vs 00000001
+    RAW 0x6dccb8 first differs at tick 1067: 41b48faf vs 41b4913d
+t2_h vs t2_neg: raw 0/15, normalized 0/15, race-state 0/15
+  classes {'UNEXPLAINED': 35616, 'TOGGLE': 1517, 'MODOFFSET': 416, 'RESIDUE': 16, 'PTR': 2932, 'RULE:WINMSG': 2, 'RULE:STACKROW': 1094} periods {'3': 69, '19': 2, '5': 25, '6': 7, '7': 11, '8': 1, '15': 3, '2': 60, '21': 1, '23': 1, '9': 3, '13': 1, '14': 3, '
+  unexplained per checkpoint [376, 2031, 5086, 6593, 9671, 17965, 18961, 23815, 27480, 28581, 30044, 31702, 30236, 31065, 29968]
+  unexplained by page {'car records 0x008815a0 (4 x 0xd04)': 1309, 'other page 0x007e5000': 1024, 'other page 0x007e4000': 986, 'other page 0x0071c000': 896, 'other page 0x0071d000': 896, 'other page 0x0071e000': 896, 'other page 0x007e3000': 896, 'other page 
+

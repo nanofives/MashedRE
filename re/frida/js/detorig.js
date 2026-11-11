@@ -184,6 +184,22 @@ function pinRngs() {
   return { ptd: ptd.toString(), holdrand_before: before, rw_ring: buf.toString(), rw_cursors_before: cursBefore };
 }
 
+// Tick-clock pin (cfg.tick.pin, REPLAY-ORACLE-DESIGN): the frame timer's state was last written from the REAL clock
+// before the install. Rewrite it from the virtual clock so the first virtual tick has a delta of one tick:
+// DAT_007f1030 last sample and DAT_007f102c 1 s mark (FUN_00493390, stores 0x00493459 / 0x00493478) = the value
+// FUN_004950b0 returns now ((Q * 3,000,000) / QPF, QPF = DAT_00771e70, re/match/s16/004950b0.c), DAT_00771984 drift
+// = 0 (only FUN_00493390 references it, nondet_scan.txt), and FUN_00492e90's ms marks DAT_00771998 / DAT_0077199c
+// = that value / 3000 (0x00492ecd: DAT_007719a0 = FUN_004950b0() / 3000).
+function pinTimer() {
+  const q = (BigInt(D.add(0x14).readU32()) << 32n) | BigInt(D.add(0x10).readU32());
+  const qpf = BigInt(ga(0x00771e70).readU32()) | (BigInt(ga(0x00771e74).readU32()) << 32n);
+  const v = Number(((q * 3000000n) / qpf) & 0xffffffffn) >>> 0;
+  const before = [0x007f1030, 0x007f102c, 0x00771984, 0x00771998, 0x0077199c].map((a) => ga(a).readU32());
+  ga(0x007f1030).writeU32(v); ga(0x007f102c).writeU32(v); ga(0x00771984).writeU32(0);
+  ga(0x00771998).writeU32(Math.floor(v / 3000)); ga(0x0077199c).writeU32(Math.floor(v / 3000));
+  return { v, before };
+}
+
 function warp() {
   const s = CFG.scen;
   ga(0x0063ba7c).writeS32(s.track);   // TRACK_ENG
@@ -195,6 +211,7 @@ function warp() {
   const e480 = new NativeFunction(ga(0x0040e480), 'void', ['int', 'int'], 'mscdecl');
   for (let k = 0; k < 4; k++) e480(k, k === 0 ? 1 : (k < s.cars ? 2 : 0));
   const pins = pinRngs();
+  if (TICK && TICK.pin) pins.timer = pinTimer();
   ga(0x00771968).writeU8(2);          // PHASE := load + spawn
   return pins;
 }
@@ -258,8 +275,76 @@ function watchArm() {
   return 'watch armed on ' + n + ' threads: ' + addrs.map((a) => a.toString()).join(',');
 }
 
+// ---------------------------------------------------------------- tick clock + per-tick block hashes (REPLAY-ORACLE-DESIGN)
+// cfg.tick = {va, qtick, ttick, cap, block}. A native listener (CModule onEnter, no JavaScript) on cfg.tick.va
+// (FUN_00493390, the frame timer, entered once per main-loop iteration from FUN_00493480) advances the virtual
+// clock by qtick QPC counts / ttick ms. With cfg.qstep = cfg.step = 0 the clock is then a function of the tick
+// count only: every main-thread clock read inside one frame returns the same value, so neither the number of
+// clock calls per frame nor the number of piz polls during the load can reach a clock-derived value.
+// From the race anchor on (tst[0] = 1) the same listener hashes the writable image in cfg.tick.block-byte blocks
+// (FNV-1a over dwords, a dword in [0x00995000, 0x30000000) with the low two bits clear is hashed as 0: the
+// detorig.is_ptr heap rule), then appends the cfg.tick.raw ranges verbatim and stores [tick, N, hash per block] per tick, up to cfg.tick.cap ticks.
+const TICK = CFG.tick || null;
+let TK = null;
+if (TICK) {
+  const nw = (DATA_HI - DATA_LO) >>> 2;
+  const bw = TICK.block >>> 2;
+  const nblk = Math.ceil(nw / bw);
+  const raw = (TICK.raw || []).map(([lo, hi]) => [lo, (hi - lo) >>> 2]);
+  const rawW = raw.reduce((a, r) => a + r[1], 0);
+  const recw = 2 + nblk + rawW;
+  const rawCopy = raw.map(([lo, n]) => `  { const unsigned int *s = (const unsigned int *)0x${ga(lo).toString(16).replace('0x', '')}; for (i = 0; i < ${n}u; i++) rec[o++] = s[i]; }`).join(' ');
+  const buf = K(Memory.alloc(TICK.cap * recw * 4));
+  const st = K(Memory.alloc(64));
+  for (let i = 0; i < 16; i++) st.add(i * 4).writeU32(0);
+  const src = `
+#include <gum/guminterceptor.h>
+extern volatile unsigned int dblk[16];
+extern volatile unsigned int tst[16];
+extern unsigned int tbuf[];
+void onEnter(GumInvocationContext *ic) {
+  unsigned long long q = ((unsigned long long)dblk[5] << 32) | dblk[4];
+  q += ${TICK.qtick >>> 0}u;
+  dblk[4] = (unsigned int)q; dblk[5] = (unsigned int)(q >> 32);
+  dblk[0] += ${TICK.ttick >>> 0}u;
+  tst[2]++;
+  if (!tst[0] || tst[1] >= ${TICK.cap >>> 0}u) return;
+  unsigned int *rec = tbuf + tst[1] * ${recw}u;
+  rec[0] = tst[2]; rec[1] = dblk[12];
+  const unsigned int *p = (const unsigned int *)0x${ga(DATA_LO).toString(16).replace('0x', '')};
+  unsigned int b, i, w = 0;
+  for (b = 0; b < ${nblk}u; b++) {
+    unsigned int h = 2166136261u;
+    for (i = 0; i < ${bw}u && w < ${nw}u; i++, w++) {
+      unsigned int v = p[w];
+      if (v >= 0x00995000u && v < 0x30000000u && !(v & 3u)) v = 0;
+      h = (h ^ v) * 16777619u;
+    }
+    rec[2 + b] = h;
+  }
+  { unsigned int o = 2 + ${nblk}u;
+${rawCopy}
+  }
+  tst[1]++;
+}
+`;
+  const cmT = K(new CModule(src, { dblk: D, tst: st, tbuf: buf }));
+  TK = { nblk, recw, buf, st, cm: cmT };
+}
+function tickDump() {
+  if (!TK) return;
+  const n = TK.st.add(4).readU32();
+  const recb = TK.recw * 4;
+  const per = Math.max(1, Math.floor((4 << 20) / recb));
+  for (let i = 0; i < n; i += per) {
+    const m = Math.min(per, n - i);
+    send({ kind: 'ticks', first: i, count: m, total: n, nblk: TK.nblk, recw: TK.recw, block: TICK.block, raw: TICK.raw || [] },
+         TK.buf.add(i * recb).readByteArray(m * recb));
+  }
+}
+
 // ---------------------------------------------------------------- install
-const SLOTS = [[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
+const SLOTS =[[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
 function install() {
   // input first (inactive until the warp), then the clock slots
   ORIG_CELL.writePointer(Interceptor.replaceFast(RESOLVER, cm.repl));   // replaceFast returns the original's trampoline
@@ -272,6 +357,7 @@ function install() {
     slot.writePointer(stub);
     res.push([va.toString(16), real.toString(), stub.toString()]);
   }
+  if (TK) { Interceptor.attach(ga(TICK.va), TK.cm); res.push(['tick', TICK.va.toString(16)]); }
   schedule(CFG.warpAt, () => {
     warpN = N();
     const pins = warp();
@@ -290,7 +376,8 @@ function install() {
         schedule(N() + 1, watch); return;
       }
       raceN = N();
-      if (CFG.callLog) {
+      if (TK) TK.st.writeU32(1);
+      if (CFG.callLog && !CFG.callLogRace) {
         D.add(0x34).writeU32(0);
         const cnt = D.add(0x38).readU32();
         send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
@@ -307,12 +394,22 @@ function install() {
       // negative control: +1 on the RenderWare RNG word at the ring cursor (cfg.negctl = 1), or on a VA
       if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
       else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
-      send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, frames_7f101c: ga(0x007f101c).readU32(),
+      send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, tick: TK ? TK.st.add(8).readU32() : null, frames_7f101c: ga(0x007f101c).readU32(),
              clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness() });
       if (CFG.watch && CFG.watch.length) send({ kind: 'info', msg: watchArm() });
       for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
       CFG.ckpts.forEach((dn, k) => schedule(raceN + dn, () => checkpoint(k)));
-      schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => { setDue(0xffffffff); send({ kind: 'done', n: N() }); });
+      schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => {
+        setDue(0xffffffff);
+        if (TK) TK.st.writeU32(0);
+        if (CFG.callLog && CFG.callLogRace) {
+          D.add(0x34).writeU32(0);
+          const cnt = D.add(0x38).readU32();
+          send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
+        }
+        tickDump();
+        send({ kind: 'done', n: N() });
+      });
     };
     schedule(warpN + 1, watch);
   });

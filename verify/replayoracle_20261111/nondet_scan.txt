@@ -1,0 +1,552 @@
+# IAT slots in scope
+  0x005cc08c  KERNEL32.dll!CreateEventA
+  0x005cc140  KERNEL32.dll!CreateFileA
+  0x005cc0d0  KERNEL32.dll!CreateThread
+  0x005cc014  DINPUT8.dll!DirectInput8Create
+  0x005cc068  KERNEL32.dll!EnterCriticalSection
+  0x005cc0d4  KERNEL32.dll!ExitThread
+  0x005cc1e0  KERNEL32.dll!GetCurrentProcessId
+  0x005cc05c  KERNEL32.dll!GetCurrentThreadId
+  0x005cc100  KERNEL32.dll!GetOverlappedResult
+  0x005cc1c8  KERNEL32.dll!GetSystemTimeAsFileTime
+  0x005cc0c8  KERNEL32.dll!GetTickCount
+  0x005cc1cc  KERNEL32.dll!HeapAlloc
+  0x005cc1ac  KERNEL32.dll!HeapCreate
+  0x005cc060  KERNEL32.dll!InitializeCriticalSection
+  0x005cc248  USER32.dll!MsgWaitForMultipleObjects
+  0x005cc270  USER32.dll!PeekMessageA
+  0x005cc0c4  KERNEL32.dll!QueryPerformanceCounter
+  0x005cc030  KERNEL32.dll!QueryPerformanceFrequency
+  0x005cc1a4  KERNEL32.dll!ReadFile
+  0x005cc074  KERNEL32.dll!ResetEvent
+  0x005cc070  KERNEL32.dll!SetEvent
+  0x005cc0bc  KERNEL32.dll!SetThreadPriority
+  0x005cc034  KERNEL32.dll!Sleep
+  0x005cc0a8  KERNEL32.dll!VirtualAlloc
+  0x005cc07c  KERNEL32.dll!WaitForMultipleObjects
+  0x005cc090  KERNEL32.dll!WaitForSingleObject
+  0x005cc27c  USER32.dll!WaitMessage
+  0x005cc2ac  WINMM.dll!timeBeginPeriod
+  0x005cc2b4  WINMM.dll!timeGetTime
+# not imported: GetAsyncKeyState, GetCursorPos, GetKeyState, GetKeyboardState, GetLocalTime, GetMessageA, GetSystemTime, GlobalMemoryStatus, SleepEx, XInputGetState, _beginthread, _beginthreadex, _time64, clock, joyGetDevCapsA, joyGetPosEx, time
+
+# references to each IAT slot (instruction -> containing function)
+
+## CreateEventA (IAT 0x005cc08c): 3 reference(s)
+  0x004a116e  call dword ptr [0x5cc08c]                in 0x004a1160 FUN_004a1160
+  0x00550dea  call dword ptr [0x5cc08c]                in 0x00550da0 FUN_00550da0
+  0x00550f4d  call dword ptr [0x5cc08c]                in 0x00550f20 FUN_00550f20
+
+## CreateFileA (IAT 0x005cc140): 4 reference(s)
+  0x004afdcd  call dword ptr [0x5cc140]                in 0x004afbf0 FUN_004afbf0
+  0x004b6740  call dword ptr [0x5cc140]                in 0x004b6710 FUN_004b6710
+  0x00510450  call dword ptr [0x5cc140]                in 0x0051039a FUN_0051039a
+  0x00550d18  call dword ptr [0x5cc140]                in 0x00550c50 FUN_00550c50
+
+## CreateThread (IAT 0x005cc0d0): 1 reference(s)
+  0x005c2eca  call dword ptr [0x5cc0d0]                in 0x005c2e79 __beginthread
+
+## DirectInput8Create (IAT 0x005cc014): 1 reference(s)
+  0x0049b300  jmp dword ptr [0x5cc014]                 in 0x0049b300 DirectInput8Create
+
+## EnterCriticalSection (IAT 0x005cc068): 73 reference(s)
+  0x0049c6ba  call dword ptr [0x5cc068]                in 0x0049c6b0 FUN_0049c6b0
+  0x0049c90b  call dword ptr [0x5cc068]                in 0x0049c900 FUN_0049c900
+  0x0049c955  call dword ptr [0x5cc068]                in 0x0049c930 FUN_0049c930
+  0x0049c9b5  call dword ptr [0x5cc068]                in 0x0049c990 FUN_0049c990
+  0x0049ca25  call dword ptr [0x5cc068]                in 0x0049ca00 FUN_0049ca00
+  0x0049ca85  call dword ptr [0x5cc068]                in 0x0049ca60 FUN_0049ca60
+  0x0049cb45  call dword ptr [0x5cc068]                in 0x0049cb20 FUN_0049cb20
+  0x0049cbf5  call dword ptr [0x5cc068]                in 0x0049cbd0 FUN_0049cbd0
+  0x0049cc4b  call dword ptr [0x5cc068]                in 0x0049cc40 FUN_0049cc40
+  0x0049ccec  mov ebp, dword ptr [0x5cc068]            in 0x0049ccd0 FUN_0049ccd0
+  0x0049cd87  mov ebx, dword ptr [0x5cc068]            in 0x0049cd70 FUN_0049cd70
+  0x0049ce2c  mov ebp, dword ptr [0x5cc068]            in 0x0049ce10 FUN_0049ce10
+  0x0049d93c  call dword ptr [0x5cc068]                in 0x0049d920 FUN_0049d920
+  0x0049d97c  call dword ptr [0x5cc068]                in 0x0049d960 FUN_0049d960
+  0x0049d9bc  call dword ptr [0x5cc068]                in 0x0049d9a0 FUN_0049d9a0
+  0x0049da3c  call dword ptr [0x5cc068]                in 0x0049da20 FUN_0049da20
+  0x0049db32  call dword ptr [0x5cc068]                in 0x0049db00 FUN_0049db00
+  0x0049df98  call dword ptr [0x5cc068]                in 0x0049df70 FUN_0049df70
+  0x0049e214  call dword ptr [0x5cc068]                in 0x0049e1f0 FUN_0049e1f0
+  0x0049e2e5  call dword ptr [0x5cc068]                in 0x0049e2c0 FUN_0049e2c0
+  0x0049e3d5  call dword ptr [0x5cc068]                in 0x0049e3b0 FUN_0049e3b0
+  0x0049e4d8  call dword ptr [0x5cc068]                in 0x0049e4b0 FUN_0049e4b0
+  0x0049e6e4  call dword ptr [0x5cc068]                in 0x0049e6c0 FUN_0049e6c0
+  0x0049e764  call dword ptr [0x5cc068]                in 0x0049e6c0 FUN_0049e6c0
+  0x0049e8a6  mov ebx, dword ptr [0x5cc068]            in 0x0049e850 FUN_0049e850
+  0x0049ea80  call dword ptr [0x5cc068]                in 0x0049ea70 FUN_0049ea70
+  0x0049eb21  call dword ptr [0x5cc068]                in 0x0049eae0 FUN_0049eae0
+  0x0049edd4  call dword ptr [0x5cc068]                in 0x0049edb0 FUN_0049edb0
+  0x0049ee65  call dword ptr [0x5cc068]                in 0x0049ee20 FUN_0049ee20
+  0x0049ef84  call dword ptr [0x5cc068]                in 0x0049ef60 FUN_0049ef60
+  0x0049f71f  call dword ptr [0x5cc068]                in 0x0049f6e0 FUN_0049f6e0
+  0x0049f8e5  call dword ptr [0x5cc068]                in 0x0049f8a0 FUN_0049f8a0
+  0x0049fa5a  call dword ptr [0x5cc068]                in 0x0049fa50 FUN_0049fa50
+  0x0049fba4  call dword ptr [0x5cc068]                in 0x0049fb70 FUN_0049fb70
+  0x0049fc34  call dword ptr [0x5cc068]                in 0x0049fc00 FUN_0049fc00
+  0x0049ff3a  call dword ptr [0x5cc068]                in 0x0049ff30 FUN_0049ff30
+  0x0049ff6a  call dword ptr [0x5cc068]                in 0x0049ff60 FUN_0049ff60
+  0x004a0245  call dword ptr [0x5cc068]                in 0x004a0220 FUN_004a0220
+  0x004a02f6  call dword ptr [0x5cc068]                in 0x004a02d0 FUN_004a02d0
+  0x004a03a6  call dword ptr [0x5cc068]                in 0x004a0380 FUN_004a0380
+  0x004a0955  call dword ptr [0x5cc068]                in 0x004a0910 FUN_004a0910
+  0x004a0a43  call dword ptr [0x5cc068]                in 0x004a0a20 FUN_004a0a20
+  0x004a21c5  call dword ptr [0x5cc068]                in 0x004a21a0 FUN_004a21a0
+  0x004a2272  call dword ptr [0x5cc068]                in 0x004a2250 FUN_004a2250
+  0x004a2318  call dword ptr [0x5cc068]                in 0x004a2310 FUN_004a2310
+  0x004a236d  call dword ptr [0x5cc068]                in 0x004a2340 FUN_004a2340
+  0x004a5f43  call dword ptr [0x5cc068]                in 0x004a5f1b __lock_file
+  0x004a5f66  call dword ptr [0x5cc068]                in 0x004a5f4a __lock_file2
+  0x004a78a7  call dword ptr [0x5cc068]                in 0x004a787f __lock
+  0x004aa3a0  call dword ptr [0x5cc068]                in 0x004aa2c2 __getstream
+  0x004af5d2  call dword ptr [0x5cc068]                in 0x004af56c FUN_004af56c
+  0x004af680  call dword ptr [0x5cc068]                in 0x004af601 FUN_004af601
+  0x00550596  call dword ptr [0x5cc068]                in 0x00550580 FUN_00550580
+  0x00550921  call dword ptr [0x5cc068]                in 0x00550910 FUN_00550910
+  0x005becdd  call dword ptr [0x5cc068]                in (no function)
+  0x005bed0d  call dword ptr [0x5cc068]                in (no function)
+  0x005bed3e  call dword ptr [0x5cc068]                in (no function)
+  0x005bedcd  call dword ptr [0x5cc068]                in 0x005bedc0 FUN_005bedc0
+  0x005bee1d  call dword ptr [0x5cc068]                in (no function)
+  0x005bef6e  call dword ptr [0x5cc068]                in (no function)
+  0x005bf8b9  call dword ptr [0x5cc068]                in 0x005bf8a0 FUN_005bf8a0
+  0x005bfe6c  call dword ptr [0x5cc068]                in 0x005bfe60 FUN_005bfe60
+  0x005bfedd  call dword ptr [0x5cc068]                in 0x005bfed0 FUN_005bfed0
+  0x005c036d  call dword ptr [0x5cc068]                in 0x005c0360 FUN_005c0360
+  0x005c060d  call dword ptr [0x5cc068]                in 0x005c0600 FUN_005c0600
+  0x005c073c  call dword ptr [0x5cc068]                in 0x005c0730 FUN_005c0730
+  0x005c0f0a  call dword ptr [0x5cc068]                in 0x005c0ef0 FUN_005c0ef0
+  0x005c0fa7  call dword ptr [0x5cc068]                in (no function)
+  0x005c114f  call dword ptr [0x5cc068]                in 0x005c1140 FUN_005c1140
+  0x005c1247  call dword ptr [0x5cc068]                in (no function)
+  0x005c12c4  call dword ptr [0x5cc068]                in (no function)
+  0x005c138b  call dword ptr [0x5cc068]                in 0x005c1380 FUN_005c1380
+  0x005c13ca  call dword ptr [0x5cc068]                in 0x005c13c0 FUN_005c13c0
+
+## ExitThread (IAT 0x005cc0d4): 1 reference(s)
+  0x005c2dd2  call dword ptr [0x5cc0d4]                in 0x005c2d9b FUN_005c2d9b
+
+## GetCurrentProcessId (IAT 0x005cc1e0): 1 reference(s)
+  0x004a57fb  call dword ptr [0x5cc1e0]                in 0x004a57e4 FUN_004a57e4
+
+## GetCurrentThreadId (IAT 0x005cc05c): 5 reference(s)
+  0x0049c675  call dword ptr [0x5cc05c]                in 0x0049c620 FUN_0049c620
+  0x004a1760  call dword ptr [0x5cc05c]                in 0x004a1570 FUN_004a1570
+  0x004a5803  call dword ptr [0x5cc05c]                in 0x004a57e4 FUN_004a57e4
+  0x004a8877  call dword ptr [0x5cc05c]                in 0x004a8828 __getptd
+  0x004a8a59  call dword ptr [0x5cc05c]                in 0x004a8a04 FUN_004a8a04
+
+## GetOverlappedResult (IAT 0x005cc100): 2 reference(s)
+  0x004b686d  mov ebp, dword ptr [0x5cc100]            in 0x004b67e0 FUN_004b67e0
+  0x005510ef  call dword ptr [0x5cc100]                in 0x00551090 FUN_00551090
+
+## GetSystemTimeAsFileTime (IAT 0x005cc1c8): 5 reference(s)
+  0x004a4406  call dword ptr [0x5cc1c8]                in 0x004a43d2 FUN_004a43d2
+  0x004a57ef  call dword ptr [0x5cc1c8]                in 0x004a57e4 FUN_004a57e4
+  0x005c243e  call dword ptr [0x5cc1c8]                in 0x005c2435 FID_conflict:__time32
+  0x005c29d5  call dword ptr [0x5cc1c8]                in 0x005c29cb _clock
+  0x005c2a18  call dword ptr [0x5cc1c8]                in 0x005c2a0e ___inittime
+
+## GetTickCount (IAT 0x005cc0c8): 3 reference(s)
+  0x004a159b  call dword ptr [0x5cc0c8]                in 0x004a1570 FUN_004a1570
+  0x004a1683  call dword ptr [0x5cc0c8]                in 0x004a1570 FUN_004a1570
+  0x004a580b  call dword ptr [0x5cc0c8]                in 0x004a57e4 FUN_004a57e4
+
+## HeapAlloc (IAT 0x005cc1cc): 5 reference(s)
+  0x004a45b7  call dword ptr [0x5cc1cc]                in 0x004a4554 __heap_alloc
+  0x004a4700  call dword ptr [0x5cc1cc]                in 0x004a467e _calloc
+  0x004a4819  call dword ptr [0x5cc1cc]                in 0x004a4739 _realloc
+  0x004aa45c  call dword ptr [0x5cc1cc]                in 0x004aa44f ___sbh_heap_init
+  0x004aa83a  call dword ptr [0x5cc1cc]                in 0x004aa7da ___sbh_alloc_new_region
+
+## HeapCreate (IAT 0x005cc1ac): 1 reference(s)
+  0x004aa40f  call dword ptr [0x5cc1ac]                in 0x004aa3fe __heap_init
+
+## InitializeCriticalSection (IAT 0x005cc060): 6 reference(s)
+  0x0049dde1  mov ebp, dword ptr [0x5cc060]            in 0x0049dd60 FUN_0049dd60
+  0x004a2656  call dword ptr [0x5cc060]                in 0x004a2620 FUN_004a2620
+  0x004ae293  call dword ptr [0x5cc060]                in 0x004ae28f ___crtInitCritSecNoSpinCount@8
+  0x00550375  call dword ptr [0x5cc060]                in 0x00550350 FUN_00550350
+  0x005beb18  call dword ptr [0x5cc060]                in 0x005beae0 FUN_005beae0
+  0x005c0e35  call dword ptr [0x5cc060]                in 0x005c0e00 FUN_005c0e00
+
+## MsgWaitForMultipleObjects (IAT 0x005cc248): 1 reference(s)
+  0x004a1608  call dword ptr [0x5cc248]                in 0x004a1570 FUN_004a1570
+
+## PeekMessageA (IAT 0x005cc270): 4 reference(s)
+  0x0049969d  call dword ptr [0x5cc270]                in 0x00499690 FUN_00499690
+  0x0049c638  mov edi, dword ptr [0x5cc270]            in 0x0049c620 FUN_0049c620
+  0x004a1638  mov edi, dword ptr [0x5cc270]            in 0x004a1570 FUN_004a1570
+  0x004a174c  call dword ptr [0x5cc270]                in 0x004a1570 FUN_004a1570
+
+## QueryPerformanceCounter (IAT 0x005cc0c4): 4 reference(s)
+  0x004950c8  call dword ptr [0x5cc0c4]                in 0x004950b0 FUN_004950b0
+  0x004a5817  call dword ptr [0x5cc0c4]                in 0x004a57e4 FUN_004a57e4
+  0x005aafb5  call dword ptr [0x5cc0c4]                in (no function)
+  0x005ab052  call dword ptr [0x5cc0c4]                in 0x005ab040 FUN_005ab040
+
+## QueryPerformanceFrequency (IAT 0x005cc030): 2 reference(s)
+  0x00495128  call dword ptr [0x5cc030]                in 0x00495120 FUN_00495120
+  0x005aafca  call dword ptr [0x5cc030]                in (no function)
+
+## ReadFile (IAT 0x005cc1a4): 5 reference(s)
+  0x004ab483  call dword ptr [0x5cc1a4]                in 0x004ab40e FUN_004ab40e
+  0x004ab54d  call dword ptr [0x5cc1a4]                in 0x004ab40e FUN_004ab40e
+  0x004b685d  call dword ptr [0x5cc1a4]                in 0x004b67e0 FUN_004b67e0
+  0x00550e16  call dword ptr [0x5cc1a4]                in 0x00550da0 FUN_00550da0
+  0x00550eb9  call dword ptr [0x5cc1a4]                in 0x00550da0 FUN_00550da0
+
+## ResetEvent (IAT 0x005cc074): 4 reference(s)
+  0x0049c830  call dword ptr [0x5cc074]                in 0x0049c810 FUN_0049c810
+  0x0049e0ab  call dword ptr [0x5cc074]                in 0x0049e0a0 FUN_0049e0a0
+  0x0049e1de  call dword ptr [0x5cc074]                in 0x0049e190 FUN_0049e190
+  0x0049e5cd  call dword ptr [0x5cc074]                in 0x0049e5c0 FUN_0049e5c0
+
+## SetEvent (IAT 0x005cc070): 11 reference(s)
+  0x0049c873  call dword ptr [0x5cc070]                in 0x0049c840 FUN_0049c840
+  0x0049cba6  call dword ptr [0x5cc070]                in 0x0049cb20 FUN_0049cb20
+  0x0049de3b  call dword ptr [0x5cc070]                in 0x0049dd60 FUN_0049dd60
+  0x0049e0ba  call dword ptr [0x5cc070]                in 0x0049e0a0 FUN_0049e0a0
+  0x0049e1a7  call dword ptr [0x5cc070]                in 0x0049e190 FUN_0049e190
+  0x0049e1ce  call dword ptr [0x5cc070]                in 0x0049e190 FUN_0049e190
+  0x0049e286  call dword ptr [0x5cc070]                in 0x0049e1f0 FUN_0049e1f0
+  0x0049e421  call dword ptr [0x5cc070]                in 0x0049e3b0 FUN_0049e3b0
+  0x0049e59c  call dword ptr [0x5cc070]                in 0x0049e580 FUN_0049e580
+  0x0049e80c  call dword ptr [0x5cc070]                in 0x0049e6c0 FUN_0049e6c0
+  0x0049e921  call dword ptr [0x5cc070]                in 0x0049e850 FUN_0049e850
+
+## SetThreadPriority (IAT 0x005cc0bc): 3 reference(s)
+  0x004a16ce  call dword ptr [0x5cc0bc]                in 0x004a1570 FUN_004a1570
+  0x004a170f  call dword ptr [0x5cc0bc]                in 0x004a1570 FUN_004a1570
+  0x005aef5e  call dword ptr [0x5cc0bc]                in 0x005aef30 FUN_005aef30
+
+## Sleep (IAT 0x005cc034): 8 reference(s)
+  0x004953ab  mov ebp, dword ptr [0x5cc034]            in 0x00495350 FUN_00495350
+  0x0049c631  mov ebx, dword ptr [0x5cc034]            in 0x0049c620 FUN_0049c620
+  0x0049d1ec  call dword ptr [0x5cc034]                in 0x0049d1d0 FUN_0049d1d0
+  0x0049d1f5  call dword ptr [0x5cc034]                in 0x0049d1d0 FUN_0049d1d0
+  0x005a8530  call dword ptr [0x5cc034]                in 0x005a84d0 FUN_005a84d0
+  0x005aef91  call dword ptr [0x5cc034]                in 0x005aef70 FUN_005aef70
+  0x005bb579  call dword ptr [0x5cc034]                in 0x005bb380 FUN_005bb380
+  0x005c1175  mov ebx, dword ptr [0x5cc034]            in 0x005c1140 FUN_005c1140
+
+## VirtualAlloc (IAT 0x005cc0a8): 3 reference(s)
+  0x004aa858  call dword ptr [0x5cc0a8]                in 0x004aa7da ___sbh_alloc_new_region
+  0x004aa8e3  call dword ptr [0x5cc0a8]                in 0x004aa891 ___sbh_alloc_new_group
+  0x004b2bac  call dword ptr [0x5cc0a8]                in 0x004b2b0c FUN_004b2b0c
+
+## WaitForMultipleObjects (IAT 0x005cc07c): 3 reference(s)
+  0x0049e0ec  mov edi, dword ptr [0x5cc07c]            in 0x0049e0d0 FUN_0049e0d0
+  0x004a15bd  call dword ptr [0x5cc07c]                in 0x004a1570 FUN_004a1570
+  0x004a16ea  call dword ptr [0x5cc07c]                in 0x004a1570 FUN_004a1570
+
+## WaitForSingleObject (IAT 0x005cc090): 46 reference(s)
+  0x005a8363  call dword ptr [0x5cc090]                in (no function)
+  0x005a8406  call dword ptr [0x5cc090]                in 0x005a8390 FUN_005a8390
+  0x005a8478  call dword ptr [0x5cc090]                in 0x005a8460 FUN_005a8460
+  0x005a84e1  mov ebp, dword ptr [0x5cc090]            in 0x005a84d0 FUN_005a84d0
+  0x005a85cd  call dword ptr [0x5cc090]                in 0x005a8560 FUN_005a8560
+  0x005a8724  call dword ptr [0x5cc090]                in 0x005a86a0 FUN_005a86a0
+  0x005a875d  call dword ptr [0x5cc090]                in 0x005a8750 FUN_005a8750
+  0x005a8858  call dword ptr [0x5cc090]                in (no function)
+  0x005a889a  call dword ptr [0x5cc090]                in 0x005a8890 FUN_005a8890
+  0x005a8968  call dword ptr [0x5cc090]                in 0x005a8960 FUN_005a8960
+  0x005a89d8  call dword ptr [0x5cc090]                in 0x005a89d0 FUN_005a89d0
+  0x005a8a38  call dword ptr [0x5cc090]                in (no function)
+  0x005a8a89  call dword ptr [0x5cc090]                in (no function)
+  0x005a8acf  call dword ptr [0x5cc090]                in (no function)
+  0x005a8bf9  call dword ptr [0x5cc090]                in (no function)
+  0x005ab516  mov esi, dword ptr [0x5cc090]            in (no function)
+  0x005ab5a0  call dword ptr [0x5cc090]                in 0x005ab560 FUN_005ab560
+  0x005ab62d  mov edi, dword ptr [0x5cc090]            in 0x005ab620 FUN_005ab620
+  0x005ab73f  call dword ptr [0x5cc090]                in 0x005ab710 FUN_005ab710
+  0x005ab849  call dword ptr [0x5cc090]                in 0x005ab710 FUN_005ab710
+  0x005aeedb  call dword ptr [0x5cc090]                in 0x005aeed0 FUN_005aeed0
+  0x005b1627  call dword ptr [0x5cc090]                in 0x005b15e0 FUN_005b15e0
+  0x005b2749  call dword ptr [0x5cc090]                in 0x005b2220 FUN_005b2220
+  0x005b282f  call dword ptr [0x5cc090]                in 0x005b2820 FUN_005b2820
+  0x005b29f0  call dword ptr [0x5cc090]                in 0x005b29e0 FUN_005b29e0
+  0x005b2b09  mov edi, dword ptr [0x5cc090]            in 0x005b2b00 FUN_005b2b00
+  0x005b3246  call dword ptr [0x5cc090]                in 0x005b30e0 FUN_005b30e0
+  0x005b3345  call dword ptr [0x5cc090]                in 0x005b3300 FUN_005b3300
+  0x005b809b  call dword ptr [0x5cc090]                in 0x005b8090 FUN_005b8090
+  0x005b813b  call dword ptr [0x5cc090]                in 0x005b8130 FUN_005b8130
+  0x005b81db  call dword ptr [0x5cc090]                in 0x005b81d0 FUN_005b81d0
+  0x005bb038  call dword ptr [0x5cc090]                in 0x005bb000 FUN_005bb000
+  0x005bccab  call dword ptr [0x5cc090]                in 0x005bcca0 FUN_005bcca0
+  0x005bcd1c  call dword ptr [0x5cc090]                in 0x005bcd10 FUN_005bcd10
+  0x005bcdac  call dword ptr [0x5cc090]                in 0x005bcda0 FUN_005bcda0
+  0x005be480  call dword ptr [0x5cc090]                in 0x005be450 FUN_005be450
+  0x005be4d1  mov ebx, dword ptr [0x5cc090]            in 0x005be4d0 FUN_005be4d0
+  0x005bfbc1  call dword ptr [0x5cc090]                in (no function)
+  0x005bfcb3  call dword ptr [0x5cc090]                in (no function)
+  0x005c127a  call dword ptr [0x5cc090]                in (no function)
+  0x005c12a3  call dword ptr [0x5cc090]                in (no function)
+  0x005c7028  call dword ptr [0x5cc090]                in 0x005c6f50 FUN_005c6f50
+  0x005c7081  call dword ptr [0x5cc090]                in 0x005c7070 FUN_005c7070
+  0x005c75d1  call dword ptr [0x5cc090]                in 0x005c75c0 FUN_005c75c0
+  0x005c7f1a  call dword ptr [0x5cc090]                in 0x005c7ee0 FUN_005c7ee0
+  0x005c7feb  call dword ptr [0x5cc090]                in 0x005c7fe0 FUN_005c7fe0
+
+## WaitMessage (IAT 0x005cc27c): 1 reference(s)
+  0x004996d5  call dword ptr [0x5cc27c]                in 0x00499690 FUN_00499690
+
+## timeBeginPeriod (IAT 0x005cc2ac): 1 reference(s)
+  0x0049cb63  call dword ptr [0x5cc2ac]                in 0x0049cb20 FUN_0049cb20
+
+## timeGetTime (IAT 0x005cc2b4): 6 reference(s)
+  0x0049cfc7  call dword ptr [0x5cc2b4]                in 0x0049cfb0 FUN_0049cfb0
+  0x0049d083  call dword ptr [0x5cc2b4]                in 0x0049d080 FUN_0049d080
+  0x0049d25b  call dword ptr [0x5cc2b4]                in 0x0049d240 FUN_0049d240
+  0x0049d273  call dword ptr [0x5cc2b4]                in 0x0049d270 FUN_0049d270
+  0x0049d9c9  call dword ptr [0x5cc2b4]                in 0x0049d9a0 FUN_0049d9a0
+  0x005ab063  jmp dword ptr [0x5cc2b4]                 in 0x005ab040 FUN_005ab040
+
+# direct references to the game-side wrappers
+
+## CRT _rand 0x005c229b: 2 site(s)
+  0x004c03b4  in (no function)
+  0x00564317  in 0x00564310 FUN_00564310
+
+## RW ring RNG FUN_00534870 0x00534870: 5 site(s)
+  0x00472651  in 0x00472650 FUN_00472650
+  0x00472691  in 0x00472690 FUN_00472690
+  0x004b44f1  in 0x004b44f0 FUN_004b44f0
+  0x004b4511  in 0x004b4510 FUN_004b4510
+  0x00534a67  in 0x00534990 FUN_00534990
+
+## FUN_004950b0 QPC->3MHz 0x004950b0: 15 site(s)
+  0x0040d27b  in 0x0040d270 FUN_0040d270
+  0x0040d3f1  in 0x0040d270 FUN_0040d270
+  0x00428ae5  in 0x00428a30 FUN_00428a30
+  0x00428aef  in 0x00428a30 FUN_00428a30
+  0x00492719  in 0x004926c0 FUN_004926c0
+  0x00492d31  in 0x00492d30 FUN_00492d30
+  0x00492e0a  in 0x00492d30 FUN_00492d30
+  0x00492e27  in 0x00492d30 FUN_00492d30
+  0x00492eae  in 0x00492e90 FUN_00492e90
+  0x00492eb5  in 0x00492e90 FUN_00492e90
+  0x004932e3  in 0x00492e90 FUN_00492e90
+  0x004932ef  in 0x00492e90 FUN_00492e90
+  0x00493310  in 0x00492e90 FUN_00492e90
+  0x00493392  in 0x00493390 FUN_00493390
+  0x00495110  in 0x00495110 FUN_00495110
+
+## FUN_005ab040 audio clock (QPC or timeGetTime) 0x005ab040: 6 site(s)
+  0x005a6ea4  in 0x005a6ea0 FUN_005a6ea0
+  0x005aaff0  in 0x005aaff0 FUN_005aaff0
+  0x005ab011  in 0x005ab010 FUN_005ab010
+  0x005c6ff6  in 0x005c6f50 FUN_005c6f50
+  0x005c7589  in 0x005c7570 FUN_005c7570
+  0x005c7f20  in 0x005c7ee0 FUN_005c7ee0
+
+## FUN_00497310 control resolver 0x00497310: 13 site(s)
+  0x004965af  in 0x00496530 FUN_00496530
+  0x004965bd  in 0x00496530 FUN_00496530
+  0x004965cb  in 0x00496530 FUN_00496530
+  0x004965d9  in 0x00496530 FUN_00496530
+  0x004965e7  in 0x00496530 FUN_00496530
+  0x004965f5  in 0x00496530 FUN_00496530
+  0x00496603  in 0x00496530 FUN_00496530
+  0x00496611  in 0x00496530 FUN_00496530
+  0x00496622  in 0x00496530 FUN_00496530
+  0x0049663c  in 0x00496530 FUN_00496530
+  0x00496658  in 0x00496530 FUN_00496530
+  0x00496674  in 0x00496530 FUN_00496530
+  0x00496690  in 0x00496530 FUN_00496530
+
+## FUN_00493390 frame timer 0x00493390: 1 site(s)
+  0x00493480  in 0x00493480 FUN_00493480
+
+## __getptd 0x004a8828: 59 site(s)
+  0x004a3ae0  in 0x004a3ac9 FUN_004a3ac9
+  0x004a3e03  in 0x004a3df8 FUN_004a3df8
+  0x004a3e11  in 0x004a3df8 FUN_004a3df8
+  0x004a3e20  in 0x004a3e20 FUN_004a3e20
+  0x004a3e42  in 0x004a3e41 _FindAndUnlinkFrame
+  0x004a3e53  in 0x004a3e41 _FindAndUnlinkFrame
+  0x004a3e63  in 0x004a3e41 _FindAndUnlinkFrame
+  0x004a3f53  in 0x004a3ede FUN_004a3ede
+  0x004a8acf  in 0x004a8ac2 FUN_004a8ac2
+  0x004a8af5  in 0x004a8ae0 ___FrameUnwindToState
+  0x004a8b93  in 0x004a8b93 FUN_004a8b93
+  0x004a8ba1  in 0x004a8b93 FUN_004a8b93
+  0x004a8c42  in 0x004a8c10 FUN_004a8c10
+  0x004a8c4d  in 0x004a8c10 FUN_004a8c10
+  0x004a8c58  in 0x004a8c10 FUN_004a8c10
+  0x004a8c60  in 0x004a8c10 FUN_004a8c10
+  0x004a8d62  in 0x004a8d53 FUN_004a8d53
+  0x004a8d6d  in 0x004a8d53 FUN_004a8d53
+  0x004a8faf  in 0x004a8f9a FUN_004a8f9a
+  0x004a90a7  in 0x004a905a FUN_004a905a
+  0x004a90b6  in 0x004a905a FUN_004a905a
+  0x004a90c1  in 0x004a905a FUN_004a905a
+  0x004a92ea  in 0x004a92de terminate
+  0x004a92f9  in 0x004a92de terminate
+  0x004a9752  in 0x004a974d FUN_004a974d
+  0x004aa23d  in 0x004aa23d FUN_004aa23d
+  0x004aa246  in 0x004aa246 FUN_004aa246
+  0x004aa250  in 0x004aa24f __dosmaperr
+  0x004aa277  in 0x004aa24f __dosmaperr
+  0x004aa285  in 0x004aa24f __dosmaperr
+  0x004aa2a6  in 0x004aa24f __dosmaperr
+  0x004aa2b4  in 0x004aa24f __dosmaperr
+  0x004aba8d  in 0x004aba86 __XcptFilter
+  0x004ac435  in 0x004ac435 _wctomb
+  0x004ac738  in 0x004ac738 _isalpha
+  0x004ac777  in 0x004ac777 _isdigit
+  0x004ac7b1  in 0x004ac7b1 _isxdigit
+  0x004ac7f0  in 0x004ac7f0 _isspace
+  0x004ac82a  in 0x004ac82a _isalnum
+  0x004ac931  in 0x004ac931 _tolower
+  0x004ae3f5  in 0x004ae3f4 FUN_004ae3f4
+  0x004aef79  in 0x004aef61 ___updatetmbcinfo
+  0x004af825  in 0x004af80a __gmtime64
+  0x004afae4  in 0x004afae2 _atol
+  0x004b0068  in 0x004b0068 FUN_004b0068
+  0x004b0d67  in 0x004b0d05 _raise
+  0x004b2703  in 0x004b2700 __mbsnbicoll
+  0x004b3034  in 0x004b302f __stricmp
+  0x004b309d  in 0x004b3098 __strnicmp
+  0x004b3aef  in 0x004b3aec __mbschr
+  0x005c193d  in 0x005c192c __strupr
+  0x005c2025  in 0x005c2025 _strcoll
+  0x005c228e  in 0x005c228e FUN_005c228e
+  0x005c229b  in 0x005c229b _rand
+  0x005c28e7  in 0x005c28e7 FUN_005c28e7
+  0x005c2bcc  in 0x005c2bc5 strtoxl
+  0x005c2da7  in 0x005c2d9b FUN_005c2d9b
+  0x005c444b  in 0x005c4440 _gmtime
+  0x005c4607  in 0x005c4607 _mbtowc
+
+# every absolute reference to the clock-derived globals (written from FUN_004950b0 / FUN_005ab040 values)
+
+## 0x007f0ffc frame delta (FUN_00493390): 2 reference(s)
+  0x004933b1  mov dword ptr [0x7f0ffc], ecx                in 0x00493390 FUN_00493390
+  0x004933c6  mov dword ptr [0x7f0ffc], ecx                in 0x00493390 FUN_00493390
+
+## 0x00771984 drift (FUN_00493390): 5 reference(s)
+  0x00493397  mov ecx, dword ptr [0x771984]                in 0x00493390 FUN_00493390
+  0x004933df  mov dword ptr [0x771984], ecx                in 0x00493390 FUN_00493390
+  0x004933ec  mov dword ptr [0x771984], 0                  in 0x00493390 FUN_00493390
+  0x00493400  mov dword ptr [0x771984], ecx                in 0x00493390 FUN_00493390
+  0x0049340e  mov dword ptr [0x771984], ecx                in 0x00493390 FUN_00493390
+
+## 0x007f1010 now*3.33e-7 float (FUN_00493390): 11 reference(s)
+  0x0040863f  fld dword ptr [0x7f1010]                     in 0x00408610 FUN_00408610
+  0x0040893f  fld dword ptr [0x7f1010]                     in 0x00408610 FUN_00408610
+  0x0040fdf9  fadd dword ptr [0x7f1010]                    in 0x0040fc00 FUN_0040fc00
+  0x0040fdff  fstp dword ptr [0x7f1010]                    in 0x0040fc00 FUN_0040fc00
+  0x004291b6  fld dword ptr [0x7f1010]                     in 0x00428d30 FUN_00428d30
+  0x004291cf  fstp dword ptr [0x7f1010]                    in 0x00428d30 FUN_00428d30
+  0x0042e65a  fld dword ptr [0x7f1010]                     in 0x0042e5b0 FUN_0042e5b0
+  0x0042e8b3  fld dword ptr [0x7f1010]                     in 0x0042e8b0 FUN_0042e8b0
+  0x00474167  fld dword ptr [0x7f1010]                     in 0x00473ee0 FUN_00473ee0
+  0x00474561  fld dword ptr [0x7f1010]                     in 0x004744a0 FUN_004744a0
+  0x0049344b  fstp dword ptr [0x7f1010]                    in 0x00493390 FUN_00493390
+
+## 0x007f1030 last sample (FUN_00493390): 42 reference(s)
+  0x0040b39a  mov eax, dword ptr [0x7f1030]                in 0x0040b290 FUN_0040b290
+  0x0040c5d9  mov ecx, dword ptr [0x7f1030]                in 0x0040c5b0 FUN_0040c5b0
+  0x0040fdeb  mov ecx, dword ptr [0x7f1030]                in 0x0040fc00 FUN_0040fc00
+  0x0040fe0f  fild dword ptr [0x7f1030]                    in 0x0040fc00 FUN_0040fc00
+  0x0040fe24  mov dword ptr [0x7f1030], eax                in 0x0040fc00 FUN_0040fc00
+  0x00422be7  mov edx, dword ptr [0x7f1030]                in 0x00422ba0 FUN_00422ba0
+  0x0042559b  mov ecx, dword ptr [0x7f1030]                in 0x004252c0 FUN_004252c0
+  0x0042570b  mov eax, dword ptr [0x7f1030]                in 0x004252c0 FUN_004252c0
+  0x00425824  mov eax, dword ptr [0x7f1030]                in 0x004252c0 FUN_004252c0
+  0x004258ae  mov edx, dword ptr [0x7f1030]                in 0x004252c0 FUN_004252c0
+  0x0042596f  mov edx, dword ptr [0x7f1030]                in 0x004252c0 FUN_004252c0
+  0x004259c5  mov eax, dword ptr [0x7f1030]                in 0x004252c0 FUN_004252c0
+  0x00447c33  mov eax, dword ptr [0x7f1030]                in 0x00446520 FUN_00446520
+  0x0044bb54  mov ecx, dword ptr [0x7f1030]                in 0x0044ba30 FUN_0044ba30
+  0x0044c40e  mov eax, dword ptr [0x7f1030]                in 0x0044c380 FUN_0044c380
+  0x0045cc9c  mov eax, dword ptr [0x7f1030]                in 0x0045cc80 FUN_0045cc80
+  0x004648c7  mov eax, dword ptr [0x7f1030]                in 0x004648b0 FUN_004648b0
+  0x004675e8  mov eax, dword ptr [0x7f1030]                in 0x00467350 FUN_00467350
+  0x00469194  mov ecx, dword ptr [0x7f1030]                in 0x00468d80 FUN_00468d80
+  0x0046930e  mov edx, dword ptr [0x7f1030]                in 0x00468d80 FUN_00468d80
+  0x00469cc2  mov edx, dword ptr [0x7f1030]                in 0x00469aa0 FUN_00469aa0
+  0x0046aece  mov edx, dword ptr [0x7f1030]                in 0x00469df0 FUN_00469df0
+  0x0046b083  mov edx, dword ptr [0x7f1030]                in 0x00469df0 FUN_00469df0
+  0x0046c5cc  mov ecx, dword ptr [0x7f1030]                in 0x0046c5c0 FUN_0046c5c0
+  0x0046ce7a  mov edx, dword ptr [0x7f1030]                in 0x0046cc40 FUN_0046cc40
+  0x0046d078  mov ecx, dword ptr [0x7f1030]                in 0x0046cc40 FUN_0046cc40
+  0x0046d1ab  mov edx, dword ptr [0x7f1030]                in 0x0046cc40 FUN_0046cc40
+  0x0046dc7b  mov eax, dword ptr [0x7f1030]                in 0x0046dc20 FUN_0046dc20
+  0x004712ad  mov ecx, dword ptr [0x7f1030]                in 0x00470c70 FUN_00470c70
+  0x0047d870  mov eax, dword ptr [0x7f1030]                in 0x0047d640 FUN_0047d640
+  0x0047d9f3  mov edx, dword ptr [0x7f1030]                in 0x0047d640 FUN_0047d640
+  0x0047db2c  mov edx, dword ptr [0x7f1030]                in 0x0047d640 FUN_0047d640
+  0x0047dc66  mov ecx, dword ptr [0x7f1030]                in 0x0047d640 FUN_0047d640
+  0x0047e004  mov eax, dword ptr [0x7f1030]                in 0x0047def0 FUN_0047def0
+  0x0047e0f7  mov eax, dword ptr [0x7f1030]                in 0x0047def0 FUN_0047def0
+  0x0047e268  mov ecx, dword ptr [0x7f1030]                in 0x0047def0 FUN_0047def0
+  0x0047e3c2  mov eax, dword ptr [0x7f1030]                in 0x0047def0 FUN_0047def0
+  0x0047e5eb  mov edx, dword ptr [0x7f1030]                in 0x0047def0 FUN_0047def0
+  0x0047e7ac  mov edx, dword ptr [0x7f1030]                in 0x0047def0 FUN_0047def0
+  0x0049339d  mov edi, dword ptr [0x7f1030]                in 0x00493390 FUN_00493390
+  0x00493459  mov dword ptr [0x7f1030], edx                in 0x00493390 FUN_00493390
+  0x00495115  mov dword ptr [0x7f1030], eax                in 0x00495110 FUN_00495110
+
+## 0x007f102c 1 s mark (FUN_00493390): 2 reference(s)
+  0x0049343c  mov ecx, dword ptr [0x7f102c]                in 0x00493390 FUN_00493390
+  0x00493478  mov dword ptr [0x7f102c], eax                in 0x00493390 FUN_00493390
+
+## 0x007f1024 per-second counter: 2 reference(s)
+  0x00493462  mov edx, dword ptr [0x7f1024]                in 0x00493390 FUN_00493390
+  0x0049346e  mov dword ptr [0x7f1024], 0                  in 0x00493390 FUN_00493390
+
+## 0x007f1028 per-second counter latch: 1 reference(s)
+  0x00493468  mov dword ptr [0x7f1028], edx                in 0x00493390 FUN_00493390
+
+## 0x00771994 60-frame accumulator (FUN_004926c0): 3 reference(s)
+  0x0049271e  mov ecx, dword ptr [0x771994]                in 0x004926c0 FUN_004926c0
+  0x00492731  mov dword ptr [0x771994], ecx                in 0x004926c0 FUN_004926c0
+  0x00492758  mov dword ptr [0x771994], 0                  in 0x004926c0 FUN_004926c0
+
+## 0x0077197c 60-frame average (FUN_004926c0): 1 reference(s)
+  0x00492752  mov dword ptr [0x77197c], edx                in 0x004926c0 FUN_004926c0
+
+## 0x007719a0 ms now (FUN_00492e90): 2 reference(s)
+  0x00492ecd  mov dword ptr [0x7719a0], edx                in 0x00492e90 FUN_00492e90
+  0x00493340  mov edx, dword ptr [0x7719a0]                in 0x00492e90 FUN_00492e90
+
+## 0x00771988 float s (FUN_00492e90): 1 reference(s)
+  0x00492f01  fstp dword ptr [0x771988]                    in 0x00492e90 FUN_00492e90
+
+## 0x00771998 ms base (FUN_00492e90): 3 reference(s)
+  0x00492ed5  mov dword ptr [0x771998], edx                in 0x00492e90 FUN_00492e90
+  0x00492edb  mov ecx, dword ptr [0x771998]                in 0x00492e90 FUN_00492e90
+  0x0049334f  mov dword ptr [0x771998], edx                in 0x00492e90 FUN_00492e90
+
+## 0x0077199c 1 s mark ms (FUN_00492e90): 2 reference(s)
+  0x00492ee5  mov ecx, dword ptr [0x77199c]                in 0x00492e90 FUN_00492e90
+  0x00492f19  mov dword ptr [0x77199c], edx                in 0x00492e90 FUN_00492e90
+
+## 0x00771990 fps latch (FUN_00492e90): 1 reference(s)
+  0x00492f0e  mov dword ptr [0x771990], eax                in 0x00492e90 FUN_00492e90
+
+## 0x007719a4 fps counter (FUN_00492e90): 4 reference(s)
+  0x00492f09  mov eax, dword ptr [0x7719a4]                in 0x00492e90 FUN_00492e90
+  0x00492f13  mov dword ptr [0x7719a4], ebx                in 0x00492e90 FUN_00492e90
+  0x00493335  mov ecx, dword ptr [0x7719a4]                in 0x00492e90 FUN_00492e90
+  0x00493355  mov dword ptr [0x7719a4], ecx                in 0x00492e90 FUN_00492e90
+
+## 0x007719a8 tick duration (FUN_00492d30): 2 reference(s)
+  0x00492e11  mov dword ptr [0x7719a8], eax                in 0x00492d30 FUN_00492d30
+  0x00492e2e  mov dword ptr [0x7719a8], eax                in 0x00492d30 FUN_00492d30
+
+## 0x007dca50 audio clock lo (FUN_005a6ea0): 7 reference(s)
+  0x005a66e8  mov ecx, dword ptr [0x7dca50]                in 0x005a66d0 FUN_005a66d0
+  0x005a6f08  mov ecx, dword ptr [0x7dca50]                in 0x005a6ea0 FUN_005a6ea0
+  0x005a6f16  mov dword ptr [0x7dca50], ecx                in 0x005a6ea0 FUN_005a6ea0
+  0x005a6ffb  mov eax, dword ptr [0x7dca50]                in 0x005a6f30 FUN_005a6f30
+  0x005a702c  mov edx, dword ptr [0x7dca50]                in 0x005a6f30 FUN_005a6f30
+  0x005a7097  mov ecx, dword ptr [0x7dca50]                in 0x005a6f30 FUN_005a6f30
+  0x005a70b1  mov ecx, dword ptr [0x7dca50]                in 0x005a6f30 FUN_005a6f30
+
+## 0x007dca54 audio clock hi (FUN_005a6ea0): 2 reference(s)
+  0x005a6eb0  mov edx, dword ptr [0x7dca54]                in 0x005a6ea0 FUN_005a6ea0
+  0x005a6f10  mov dword ptr [0x7dca54], esi                in 0x005a6ea0 FUN_005a6ea0
