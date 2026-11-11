@@ -1567,6 +1567,96 @@ void* MashedRw_FrameGetLTM_004c0ed0(int frame) {
 }  // extern "C"
 
 // ---------------------------------------------------------------------------------------------------------------
+// [RWG-RASTER-BIND] RwImageSetFromRaster (rva 0x004d52d0) and RwGlobals +0x60 = stdFunc[rwSTANDARDIMAGEGETRASTER]
+// (original 0x004de1b0) on rw::Raster. Identity of 0x004d52d0 (verify/portorigtop_20261109/RESULT_RWG-RASTER-BIND.md):
+// its 51 bytes (re/match/s21/004d52d0.c, BYTE-IDENTICAL) call RwGlobals +0x60 with (image, raster, 0), which is
+// stdFunc[6] = rwSTANDARDIMAGEGETRASTER "Get image from a raster" (rwplcore.h:5693, stdFunc at +0x48 after the 0x38-byte
+// RwDevice at +0x10, rwplcore.h:6289-6301 / 5834-5855; RwStandardFunc(pOut, pInOut, nI) rwplcore.h:5743), then on success
+// tests raster +0x22 bit 0 = RwRaster.privateFlags rwRASTERGAMMACORRECTED (rwcore.h:1622 / 1588) and ORs image +0x0
+// with 2 = RwImage.flags rwIMAGEGAMMACORRECTED (rwcore.h:2263 / 2244), returning the image or 0: the contract of
+// RwImage *RwImageSetFromRaster(RwImage *, RwRaster *) (rwcore.h:4141). Its caller 0x00498810 is RW's WriteRaster
+// sequence (gta-reversed common.cpp:107-115): create(raster w +0xc, h +0x10, 32), allocate pixels, this, write, destroy.
+// The image is the RW 3.x RwImage (the game-code caller 0x00555ff0 reads depth +0xc, stride +0x10, cpPixels +0x14);
+// the raster is the knob path's rw::Raster (texture->raster, MashedRw_TextureRead_004c5cb0).
+struct MashedRwImageRW {          // RW 3.x RwImage, rwcore.h:2263
+    std::int32_t flags, width, height, depth, stride;
+    std::uint8_t* cpPixels;
+    std::uint8_t* palette;
+};
+static_assert(offsetof(MashedRwImageRW, depth) == 0x0c && offsetof(MashedRwImageRW, stride) == 0x10 &&
+              offsetof(MashedRwImageRW, cpPixels) == 0x14, "RwImage layout");
+
+extern "C" {
+
+// RwGlobals +0x60 (original 0x004de1b0, the D3D9 driver's image-from-raster). pOut = RW-layout image with pixels,
+// pInOut = rw::Raster. librw: rw::Raster::toImage (driver rasterToImage) then convertTo32, copied row by row into the
+// image's pixels. Only 32-bit images are filled: both callers (0x00498810, 0x00555ff0) create the image at depth 0x20.
+// [UNCERTAIN] (U-9803) the 4 / 8-bit image branches of 0x004de1b0 (re/match/rwl01/004de1b0.c, 56.8%) are not reproduced; a
+// non-32-bit image returns 0 here. Evidence missing: a knob-path caller with another depth (none exists).
+int __cdecl MashedRw_ImageGetRaster_004de1b0(void* out, void* inOut, int nI) {
+    MashedRwImageRW* const img = static_cast<MashedRwImageRW*>(out);
+    rw::Raster* const ras = static_cast<rw::Raster*>(inOut);
+    (void)nI;
+    if (!img || !ras || !img->cpPixels || img->depth != 32) return 0;
+    rw::Image* const tmp = ras->toImage();
+    if (!tmp) return 0;
+    if (tmp->depth != 32) tmp->convertTo32();
+    const int w = tmp->width < img->width ? tmp->width : img->width;
+    const int h = tmp->height < img->height ? tmp->height : img->height;
+    for (int y = 0; y < h; ++y)
+        std::memcpy(img->cpPixels + y * img->stride, tmp->pixels + y * tmp->stride, static_cast<std::size_t>(w) * 4u);
+    tmp->destroy();
+    return 1;
+}
+
+// rva 0x004d52d0 RwImageSetFromRaster. Same steps as the matched body, with the raster read as rw::Raster: the
+// RwGlobals +0x60 call through the live record at 0x007d3ff8, then rw::Raster::privateFlags bit 0 (librw sets none of
+// its raster privateFlags bits, so a knob-path raster never carries rwRASTERGAMMACORRECTED).
+void* __cdecl MashedRw_ImageSetFromRaster_004d52d0(void* image, void* raster) {
+    using StdFn = int(__cdecl*)(void*, void*, int);
+    const std::uint8_t* const g = *reinterpret_cast<std::uint8_t* const*>(static_cast<std::uintptr_t>(0x007d3ff8u));
+    StdFn fn = nullptr;
+    if (g) std::memcpy(&fn, g + 0x60, sizeof fn);
+    if (!fn || !fn(image, raster, 0)) return nullptr;
+    if (static_cast<rw::Raster*>(raster)->privateFlags & 1) static_cast<MashedRwImageRW*>(image)->flags |= 2;
+    return image;
+}
+
+}  // extern "C"
+
+namespace {
+// MASHED_DBG_RASTERBIND_SELFTEST=1 (default off, evidence only): a 4 x 3 C8888 rw::Raster set from a known RGBA image,
+// read back through MashedRw_ImageSetFromRaster_004d52d0 into an RW-layout 32-bit image; then the same with
+// privateFlags bit 0 set. Logs the byte compare and the image flags. No live caller of 0x004d52d0 exists yet.
+void RasterBindSelfTest() {
+    if (!std::getenv("MASHED_DBG_RASTERBIND_SELFTEST") || !rw::engine) return;
+    const int W = 4, H = 3;
+    rw::Image* const src = rw::Image::create(W, H, 32);
+    src->allocate();
+    for (int i = 0; i < W * H * 4; ++i) src->pixels[i] = static_cast<std::uint8_t>(0x11 + i * 7);
+    for (int i = 3; i < W * H * 4; i += 4) src->pixels[i] = 0xff;   // opaque, so no alpha path differs
+    rw::Raster* const ras = rw::Raster::create(W, H, 32, rw::Raster::C8888 | rw::Raster::TEXTURE);
+    if (!ras) { src->destroy(); BindLog("[RWG-RASTER-BIND] self-test: raster create failed"); return; }
+    ras->setFromImage(src);
+    std::uint8_t px[W * H * 4] = {};
+    MashedRwImageRW img = {0, W, H, 32, W * 4, px, nullptr};
+    void* const r1 = MashedRw_ImageSetFromRaster_004d52d0(&img, ras);
+    int diff = 0;
+    for (int i = 0; i < W * H * 4; ++i) diff += px[i] != src->pixels[i];
+    const std::int32_t f1 = img.flags;
+    ras->privateFlags |= 1;
+    img.flags = 0;
+    void* const r2 = MashedRw_ImageSetFromRaster_004d52d0(&img, ras);
+    BindLog("[RWG-RASTER-BIND] self-test 0x004d52d0 on rw::Raster %dx%d C8888: ret %s, %d of %d bytes differ "
+            "(first px %02x%02x%02x%02x), flags %d; privateFlags|=1: ret %s, flags %d",
+            W, H, r1 == &img ? "image" : "NULL", diff, W * H * 4, px[0], px[1], px[2], px[3], f1,
+            r2 == &img ? "image" : "NULL", img.flags);
+    ras->destroy();
+    src->destroy();
+}
+}  // namespace
+
+// ---------------------------------------------------------------------------------------------------------------
 // [PORT-TOP-04D] RwGlobals (RwEngineInstance) for the MASHED_ORIG_TOP path. Matched game bodies call the RW memory
 // functions through the pointer at 0x007d3ff8: free at +0x10c (0x004114c0, 0x00484130; re/analysis/boot_app_init_d3/
 // 0x004114c0.md "free at DAT_007d3ff8+0x10c"), alloc at +0x108 (re/analysis/bucket_004ddfb0/0x004e8750.md), realloc
@@ -1780,10 +1870,13 @@ void RegisterRwModules() {
     // 0x007d58b8, which the bridge's set-state (+0x20) does not write. The two ORIG_TOP readers (0x00413a40: states 0x14
     // and 0xe) only hand the value back to +0x20 afterwards, and the bridge ignores both states.
     // +0x34 is the bridge's indexed draw (0x00413a40, 0x004430e0: primType 3).
-    // +0x60 (original 0x004de1b0, RW image <- raster) stays 0: its row 0x004d52d0 reads the raster at +0x22 in the RW 3.x
-    // layout, and the knob path's rasters are rw::Raster (PREREG_PORT-OT-RWG-DEVSLOTS.md).
+    // [RWG-RASTER-BIND] +0x60 = stdFunc[rwSTANDARDIMAGEGETRASTER] (original 0x004de1b0) on rw::Raster. Its one row,
+    // 0x004d52d0 (RwImageSetFromRaster), is bound too (MashedRw_ImageSetFromRaster_004d52d0): the matched body would read
+    // the rw::Raster at RW 3.x +0x22, inside librw's `privateFlags` int (+0xc..+0x22 differ).
     Put(0x24, U(reinterpret_cast<void*>(&D3d9State_Get)));
     Put(0x34, U(reinterpret_cast<void*>(&RwIm2DBridge_RenderIndexedPrimitive)));
+    Put(0x60, U(reinterpret_cast<void*>(&MashedRw_ImageGetRaster_004de1b0)));
+    RasterBindSelfTest();
     // RwGlobals +0x118 / +0x11c: original 0x004cca80 / 0x004ccba0.
     s_rwGlobals.flalloc = reinterpret_cast<void*>(&RwGlobalsFreeListAlloc);
     s_rwGlobals.flfree = reinterpret_cast<void*>(&RwGlobalsFreeListFree);
