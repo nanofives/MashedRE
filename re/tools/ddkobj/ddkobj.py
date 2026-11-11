@@ -129,6 +129,8 @@ def active_lines(txt: str, defined: set):
 def exe_wrappers():
     """[(wrapper path, [(source path, defines-in-effect dict)])] for every exe TU that includes a re/match source."""
     rsp = [l.strip().strip('"') for l in (MOD / "exe_sources.rsp").read_text().splitlines() if l.strip()]
+    # DDKOBJ_EXTRA_WRAPPERS (os.pathsep list of absolute paths): extra exe TUs, used only by `selftest` fixtures
+    rsp += [x for x in os.environ.get("DDKOBJ_EXTRA_WRAPPERS", "").split(os.pathsep) if x.strip()]
     out = []
     for rel in rsp:
         p = SRC / rel
@@ -137,7 +139,7 @@ def exe_wrappers():
         txt = p.read_text(encoding="utf-8", errors="replace")
         if "re/match/" not in txt and "re\\match\\" not in txt:
             continue
-        defs, incs, ptrabs = {}, [], {}
+        defs, incs, ptrabs, kconst = {}, [], {}, {}
         for line in active_lines(txt, {"MASHED_STANDALONE", "__cplusplus", "_MSC_VER", "_WIN32"}):
             if re.match(r"^\s*#\s*define\s+MGLOBALA?\s*\(", line):
                 # the wrapper binds the source's globals to its own cells (MATCH_CELL_*, exe_main.cpp:3575), not to
@@ -166,6 +168,13 @@ def exe_wrappers():
             if m:   # `static auto* const p = reinterpret_cast<T>(0x00xxxxxx);` then `#define FUN_x p`
                 ptrabs[m.group(1)] = m.group(2)
                 continue
+            m = KCONST_RE.match(line)
+            if m:   # `static const std::uintptr_t k_005d757c = 0x005d757cu;` (an address a data #define names)
+                kconst[m.group(1)] = int(m.group(2), 16)
+            m = DEFANY_RE.match(line)
+            if m:   # DDKOBJ-TRAIN: a #define none of the forms above parses (RESULT_DDKOBJ-SPIKE section 10 item 9)
+                defs[m.group(1)] = classify_unparsed_define(m.group(1), m.group(2), kconst, line.strip())
+                continue
             m = UNDEF_RE.match(line)
             if m:
                 defs.pop(m.group(1), None)
@@ -177,6 +186,35 @@ def exe_wrappers():
         if incs:
             out.append((p, rel, incs))
     return out
+
+
+# DDKOBJ-TRAIN (RESULT_DDKOBJ-SPIKE section 10 items 1 and 9): a wrapper #define that none of DEF_RE / DEFQ_RE /
+# DEFFN_RE / DEFABS_RE / PTRABS_RE parses is no longer skipped. Before 2026-11-11 such a line was ignored, and a DDK
+# object reference to its name fell through to the suffix address or the cross-wrapper binding, which is a guess.
+# Classes (value stored in the wrapper's defines, under the name):
+#   @samedata          a data name `<x>_<addr8>` whose body names exactly that address (directly or through a
+#                      `static const ... k = 0x...;` constant): the absolute binding the tool already uses. OK.
+#   @portdata:<line>   a data name `<x>_<addr8>` whose body names no original address (a port cell, a function call,
+#                      a port table): the DDK object cannot follow it. The unit is refused like MGLOBAL / MATCH_CELL.
+#   @unparsed:<line>   anything else. When a DDK object references the name, the object build FAILS.
+# A name nobody references (MATCH_PORT, SSC_REC, say(...)) costs nothing: the check runs per referenced symbol.
+DEFANY_RE = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)(.*)$")
+KCONST_RE = re.compile(r"^\s*static\s+const\s+[\w:]+\s+([A-Za-z_]\w*)\s*=\s*0x(00[4-9a-fA-F][0-9a-fA-F]{5})u?\s*;")
+_ADDR_RE = re.compile(r"\b0x(00[4-9a-fA-F][0-9a-fA-F]{5})u?\b")
+_DATA_NAME_RE = re.compile(r"^(?!FUN_|thunk_)[A-Za-z_]\w*_([0-9a-fA-F]{8})$")
+
+
+def classify_unparsed_define(name: str, body: str, kconst: dict, line: str) -> str:
+    m = _DATA_NAME_RE.match(name)
+    if m and not body.startswith("("):   # object-like data define (a function-like one starts with its params)
+        own = int(m.group(1), 16)
+        addrs = {int(a, 16) for a in _ADDR_RE.findall(body)}
+        addrs |= {v for k, v in kconst.items() if re.search(r"\b" + re.escape(k) + r"\b", body)}
+        if addrs == {own}:
+            return "@samedata"
+        if not addrs:
+            return "@portdata:" + line
+    return "@unparsed:" + line
 
 
 DEFQ_RE = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)\s+((?:::)?[A-Za-z_]\w*(?:::[A-Za-z_]\w*)+)\s*(?://.*)?$")
@@ -200,6 +238,13 @@ def wrapper_statics(wpath: pathlib.Path):
 def fnlike_target(params: str, body: str):
     """`Target(args)` when the macro body calls one function with the macro's parameters in order (casts allowed)."""
     ps = [x.strip() for x in params.split(",") if x.strip()]
+    # DDKOBJ-TRAIN: `#define FUN_x(a, ...) T(a)` (Match/PortTop_004039c0.cpp: the source pushes 3 arguments, the exe
+    # body takes 1). The named parameters must still appear in order. The variadic tail is dropped or forwarded
+    # (__VA_ARGS__). Safe only for a caller-cleans call: the DDK reference keeps its decoration (`_x` for cdecl), so a
+    # stdcall reference (`_x@N`) does not resolve against a cdecl exe body and the unit is refused as unbindable.
+    if ps and ps[-1] == "...":
+        ps = ps[:-1]
+        body = body.replace("__VA_ARGS__", "")
     m = None
     for mm in re.finditer(r"([A-Za-z_]\w*)\s*\(", body):
         if mm.group(1) not in _TYPEWORDS:
@@ -422,7 +467,8 @@ def main_build(a):
     for _w, _r, incs in wr:
         for _s, d in incs:
             for k, v in d.items():
-                if k.startswith(("FUN_", "DAT_", "thunk_")):
+                if k.startswith(("FUN_", "DAT_", "thunk_")) and not v.startswith(("@samedata", "@portdata:",
+                                                                                     "@unparsed:")):
                     gseen[k].add(v)
     gdefs = {k: next(iter(v)) for k, v in gseen.items() if len(v) == 1}
     report["global_bindings"] = {"consistent": len(gdefs), "conflicting": sum(1 for v in gseen.values() if len(v) > 1)}
@@ -478,6 +524,12 @@ def main_build(a):
                         return rec
                 s.cls = CE.IMAGE_SYM_CLASS_EXTERNAL   # MATCH_STATIC: static under C, external under the port
                 tgt = defs.get(plain, plain)
+                if tgt.startswith(("@unparsed:", "@samedata", "@portdata:")):   # DDKOBJ-TRAIN: no exe name to take
+                    rec["status"] = "fail:unparsed-wrapper-define"
+                    rec["fatal"] = True
+                    rec["evidence"] = f"{plain}: {tgt}"
+                    rec["unbindable"] = []
+                    return rec
                 new = CE.redecorate(s.name, tgt)
                 rec["defs"].append({"rva": f"0x{match_plain[plain]:08x}", "ddk": s.name, "exe": new, "sec": s.sec})
                 s.name = new
@@ -518,7 +570,22 @@ def main_build(a):
                 rec.setdefault("dropped_refs", []).append(s.name)
                 s.name = "__ddk_dropped"
                 continue
+            # DDKOBJ-TRAIN: the wrapper's #define of this name, when the tool could not parse it as a binding
+            dv = defs.get(plain, "")
+            if dv.startswith("@unparsed:") or (dv == "@samedata" and s.is_func):
+                rec["status"] = "fail:unparsed-wrapper-define"
+                rec["fatal"] = True
+                rec["evidence"] = f"{plain}: {dv[10:] if dv.startswith('@unparsed:') else 'data #define on a function'}"
+                rec["unbindable"] = []
+                return rec
+            if dv.startswith("@portdata:"):
+                rec["status"] = "fail:wrapper-redefines-globals"
+                rec["evidence"] = dv[10:]
+                rec["unbindable"] = []
+                return rec
             addr = info["globals"].get(plain)
+            if not s.is_func and dv.startswith("@abs:"):
+                addr = int(dv[5:], 16)    # `#define DAT_x (*(T*)0x00yyyyyy)`: the wrapper's address wins
             if addr is None and not s.is_func:
                 mm = re.search(r"_([0-9a-fA-F]{8})$", plain)
                 if mm and 0x00400000 <= int(mm.group(1), 16) < 0x00a00000:
@@ -535,7 +602,7 @@ def main_build(a):
                 abs_syms[nm] = addr
                 s.name = nm
                 cls = "data-abs"
-            elif plain in defs:
+            elif plain in defs and dv != "@samedata":
                 cls = bind_to(s, defs[plain], "wrapper-bound")
             elif plain in exe_names:
                 cls = "in-set"
@@ -561,7 +628,7 @@ def main_build(a):
 
     for u in units:
         src, info, defs = u["src"], u["info"], u["defs"]
-        rec = {"src": str(src.relative_to(ROOT)).replace("\\", "/"), "wrapper": u["wrel"], "rvas": [f"0x{r:08x}" for r in u["rvas"]],
+        rec = {"src": str(src.relative_to(ROOT) if src.is_relative_to(ROOT) else src).replace("\\", "/"), "wrapper": u["wrel"], "rvas": [f"0x{r:08x}" for r in u["rvas"]],
                "status": "ok", "undef": [], "defs": []}
         if info["lang"] != "c":
             rec["status"] = "skip:lang-" + info["lang"]
@@ -587,6 +654,20 @@ def main_build(a):
             if r["status"] != "ok" or not r["unbindable"]:
                 break
         co, rec = attempt
+        # SafeSEH: cl 13.00 predates the @feat.00 flag, and one unmarked object makes the linker drop the exe's whole
+        # safe-handler table. An object that registers no SEH handler (no __except_handler* reference, no .sxdata)
+        # is SafeSEH-compatible by definition, so it is marked below. One that does cannot be marked honestly.
+        # DDKOBJ-TRAIN (RESULT_DDKOBJ-SPIKE section 10 item 4): such an object now FAILS the object build instead
+        # of being linked unmarked and reported. Checked before the unbindable refusal, so a later binding fix
+        # cannot let it in silently.
+        seh = any(s.name.startswith(("__except_handler", "___except_handler")) for s in co.syms) or \
+            any(x.name == ".sxdata" for x in co.sections)
+        if rec["status"] == "ok" and seh:
+            rec["status"] = "fail:seh-unmarked"
+            rec["fatal"] = True
+            rec["evidence"] = "registers SEH handlers (" + ", ".join(sorted(
+                {s.name for s in co.syms if s.name.startswith(("__except_handler", "___except_handler"))} |
+                {x.name for x in co.sections if x.name == ".sxdata"})) + "): @feat.00 would be a false SafeSEH claim"
         if rec["status"] == "ok" and rec["unbindable"]:
             rec["status"] = "fail:unbindable-callee"   # stays on its VS2022 body in the variant
         edits = rec.pop("_edits", [])
@@ -595,19 +676,27 @@ def main_build(a):
             continue
         for new, rva in edits:
             wrapper_edits[u["wrapper"]].append((new, rva))
-        # SafeSEH: cl 13.00 predates the @feat.00 flag, and one unmarked object makes the linker drop the exe's whole
-        # safe-handler table. An object that registers no SEH handler (no __except_handler* reference, no .sxdata)
-        # is SafeSEH-compatible by definition, so it is marked; one that does is left unmarked and reported.
-        seh = any(s.name.startswith(("__except_handler", "___except_handler")) for s in co.syms) or \
-            any(x.name == ".sxdata" for x in co.sections)
-        if not seh and not any(s.name == "@feat.00" for s in co.syms):
+        if not any(s.name == "@feat.00" for s in co.syms):
             co.add_symbol("@feat.00", 1, CE.IMAGE_SYM_ABSOLUTE, 0, CE.IMAGE_SYM_CLASS_STATIC)
-        rec["safeseh_marked"] = not seh
+        rec["safeseh_marked"] = True
         co.save(obj)
         rec["obj"] = str(obj)
         rec["drectve"] = co.drectve().strip()
         u["obj"] = obj
         report["units"].append(rec)
+
+    # DDKOBJ-TRAIN: the two fail-loudly classes stop the object build here (no wrapper recompile, no link).
+    fatal = [r for r in report["units"] if r.get("fatal")]
+    if fatal:
+        report["fatal"] = [{"src": r["src"], "wrapper": r["wrapper"], "status": r["status"],
+                            "evidence": r.get("evidence", "")} for r in fatal]
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "ddkobj_build.json").write_text(json.dumps(report, indent=1, default=str))
+        for r in fatal:
+            print(f"[ddkobj] FATAL {r['status']}: {r['src']} (wrapper {r['wrapper']}): {r.get('evidence', '')}")
+        print(f"[ddkobj] object build FAILED: {len(fatal)} unit(s) in a fail-loudly class "
+              f"(RESULT_DDKOBJ-SPIKE section 10 items 4 and 9)")
+        return 3
 
     # wrapper recompile (variant only): same flags as build_objs.ps1 plus /Ob0, so VS2022 cannot inline a matched body
     # into another function of the wrapper (an inlined copy would keep running VS2022 code where the DDK body is meant)
@@ -877,7 +966,119 @@ def main_check(a):
             w.writerow(r)
     c = collections.Counter(r["result"] for r in rows)
     print(f"[ddkobj check] {dict(c)} -> {out / 'BYTECHECK.tsv'}")
+    # DDKOBJ-TRAIN: one summary the merge train reports (IDENTICAL count, refusals, differences)
+    st = collections.Counter(u["status"] for u in rep["units"])
+    summ = {"identical": c.get("IDENTICAL", 0), "different": c.get("DIFFERENT", 0),
+            "not_in_map": c.get("not-in-map", 0), "functions": len(rows),
+            "units": len(rep["units"]), "units_linked": st.get("ok", 0),
+            "refusals": {k: v for k, v in sorted(st.items()) if k.startswith("fail:")},
+            "skips": {k: v for k, v in sorted(st.items()) if k.startswith("skip:")},
+            "different_rvas": sorted(r["rva"] for r in rows if r["result"] == "DIFFERENT"),
+            "not_in_map_rvas": sorted(r["rva"] for r in rows if r["result"] == "not-in-map")}
+    (out / "ddkobj_summary.json").write_text(json.dumps(summ, indent=1))
+    ref = ",".join(f"{k[5:]}={v}" for k, v in summ["refusals"].items()) or "none"
+    print(f"[ddkobj summary] IDENTICAL {summ['identical']}/{summ['functions']}  DIFFERENT {summ['different']} "
+          f"[{' '.join(summ['different_rvas'])}]  not-in-map {summ['not_in_map']}  units linked "
+          f"{summ['units_linked']}/{summ['units']}  refusals {sum(summ['refusals'].values())} ({ref})")
     return 0
+
+
+# ------------------------------------------------------------------ selftest (DDKOBJ-TRAIN)
+# Four fixture units outside the tree (temp dir, wrappers fed through DDKOBJ_EXTRA_WRAPPERS, RVAs in the PE header
+# range 0x00400010..0x00400050 so no real unit is selected with them). Needs the default build's objects (link.rsp)
+# and tools\vc7ddk, like `build`.
+_ST_SRC = {
+    # an object that registers an SEH handler (__try/__except -> __except_handler3 + .sxdata): fails the build
+    "seh": ("0x00400010", "int FUN_00400010(int a)\n{\n    int r = 0;\n    __try { r = 100 / a; }\n"
+                          "    __except (1) { r = -1; }\n    return r;\n}\n",
+            "#define FUN_00400010 DdkSt_Seh\n"),
+    # a callee bound by a function-like #define the tool does not parse (arguments swapped): fails the build
+    "def": ("0x00400020", "int FUN_00400030(int a, int b);\nint FUN_00400020(int a)\n{\n"
+                          "    return FUN_00400030(a, 2) + 1;\n}\n",
+            "#define FUN_00400020 DdkSt_Def\n#define FUN_00400030(a, b) DdkSt_Callee((b), (a))\n"),
+    # a data name the wrapper re-binds to a port cell: the unit is refused, the build goes on
+    "port": ("0x00400040", "#ifndef MATCH_PORT\nextern int DAT_00400044;\n#endif\nint FUN_00400040(void)\n{\n    return DAT_00400044 + 1;\n}\n",
+             "#define FUN_00400040 DdkSt_Port\n#define DAT_00400044 (g_ddkst_cell)\n"),
+    # a data name the wrapper binds to its own address through a k_ constant: parsed, linked as data-abs
+    "same": ("0x00400050", "#ifndef MATCH_PORT\nextern int DAT_00400054;\n#endif\nint FUN_00400050(void)\n{\n    return DAT_00400054 + 1;\n}\n",
+             "static const std::uintptr_t k_00400054 = 0x00400054u;\n#define FUN_00400050 DdkSt_Same\n"
+             "#define DAT_00400054 (*reinterpret_cast<const int*>(k_00400054))\n"),
+}
+
+
+def _st_write(tmp: pathlib.Path):
+    (tmp / "re" / "match").mkdir(parents=True, exist_ok=True)
+    (tmp / "w").mkdir(exist_ok=True)
+    wr = []
+    for k, (rva, body, defs) in _ST_SRC.items():
+        fn = "FUN_" + rva[2:]
+        (tmp / "re" / "match" / f"ddkst_{k}.c").write_text(f"// FLAGS: /O2\n// MATCH: {rva} {fn}\n" + body)
+        w = tmp / "w" / f"DdkSt_{k}.cpp"
+        w.write_text("#include <cstdint>\n#ifdef MASHED_STANDALONE\n#define MATCH_PORT 1\n" + defs +
+                     'extern "C" {\n#include "../re/match/ddkst_' + k + '.c"\n}\n#endif\n')
+        wr.append(str(w))
+    return wr
+
+
+def main_selftest(a):
+    import tempfile
+    fails = []
+
+    def check(ok, what):
+        print(f"[ddkobj selftest] {'PASS' if ok else 'FAIL'}: {what}")
+        if not ok:
+            fails.append(what)
+    # pure classification
+    kc = {"k_00400054": 0x00400054}
+    check(classify_unparsed_define("DAT_00400054", " (*reinterpret_cast<const int*>(k_00400054))", kc, "x")
+          == "@samedata", "k_ constant naming the same address -> @samedata")
+    check(classify_unparsed_define("DAT_00400054", " (g_cell)", kc, "x").startswith("@portdata:"),
+          "data name bound to a port cell -> @portdata")
+    check(classify_unparsed_define("DAT_00400054", " (*(int*)0x00400058u)", kc, "x").startswith("@unparsed:"),
+          "data name bound to another address in an unparsed form -> @unparsed")
+    check(classify_unparsed_define("FUN_00400030", "(a, b) DdkSt_Callee((b), (a))", kc, "x").startswith("@unparsed:"),
+          "function-like define with the arguments swapped -> @unparsed")
+    check(fnlike_target("name, ...", "FUN_0042a5d0(name)") == "FUN_0042a5d0",
+          "variadic tail dropped (PortTop_004039c0.cpp form) -> parsed, binds FUN_0042a5d0")
+    check(fnlike_target("a, ...", "T((a), __VA_ARGS__)") == "T", "variadic tail forwarded -> parsed")
+    check(fnlike_target("a, b", "T((b), (a))") is None, "swapped arguments -> not parsed")
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="ddkst_"))
+    os.environ["DDKOBJ_EXTRA_WRAPPERS"] = os.pathsep.join(_st_write(tmp))
+    try:
+        def run(keys, tag):
+            out = tmp / ("out_" + tag)
+            ns = argparse.Namespace(units=",".join(_ST_SRC[k][0] for k in keys), units_file="", matched_only=False,
+                                    out=str(out), link=False)
+            rc = main_build(ns)
+            rep = json.loads((out / "ddkobj_build.json").read_text())
+            by = {}
+            for u in rep["units"]:
+                for k in keys:
+                    if u["src"].endswith(f"ddkst_{k}.c") or pathlib.Path(u["src"]).name == f"ddkst_{k}.c":
+                        by[k] = u
+            return rc, rep, by
+        rc, rep, by = run(["seh", "def", "port", "same"], "all")
+        check(rc == 3, f"all four fixtures: build returns 3 (got {rc})")
+        check(by.get("seh", {}).get("status") == "fail:seh-unmarked" and by["seh"].get("fatal"),
+              f"SEH object -> fail:seh-unmarked, fatal ({by.get('seh', {}).get('status')}: {by.get('seh', {}).get('evidence')})")
+        check(by.get("def", {}).get("status") == "fail:unparsed-wrapper-define" and by["def"].get("fatal"),
+              f"unparsed #define -> fail:unparsed-wrapper-define, fatal ({by.get('def', {}).get('evidence')})")
+        check(by.get("port", {}).get("status") == "fail:wrapper-redefines-globals" and not by["port"].get("fatal"),
+              "port-cell data #define -> fail:wrapper-redefines-globals, not fatal")
+        check(by.get("same", {}).get("status") == "ok", f"k_ same-address data #define -> ok ({by.get('same', {}).get('status')})")
+        check(len(rep.get("fatal", [])) == 2, f"build json lists 2 fatal units ({len(rep.get('fatal', []))})")
+        rc, rep, by = run(["port", "same"], "clean")
+        check(rc == 0, f"without the two fatal fixtures the build goes on (rc {rc})")
+        und = {x["orig"]: x for x in by.get("same", {}).get("undef", [])}
+        check(und.get("DAT_00400054", {}).get("class") == "data-abs" and
+              und["DAT_00400054"]["name"] == "__ddkabs_00400054", f"same-address data binds to __ddkabs_00400054 ({und.get('DAT_00400054')})")
+        check(by.get("same", {}).get("safeseh_marked") is True, "non-SEH object is marked @feat.00")
+    finally:
+        os.environ.pop("DDKOBJ_EXTRA_WRAPPERS", None)
+        if not a.keep:
+            shutil.rmtree(tmp, ignore_errors=True)
+    print(f"[ddkobj selftest] {'OK' if not fails else 'FAILED'}: {len(fails)} failure(s)" + ("" if not a.keep else f" (kept {tmp})"))
+    return 1 if fails else 0
 
 
 def main(argv=None):
@@ -891,8 +1092,10 @@ def main(argv=None):
     b.add_argument("--link", action="store_true")
     c = sub.add_parser("check")
     c.add_argument("--out", default=str(BUILD / "ddkobj"))
+    s = sub.add_parser("selftest")
+    s.add_argument("--keep", action="store_true")
     a = p.parse_args(argv)
-    return main_build(a) if a.cmd == "build" else main_check(a)
+    return {"build": main_build, "check": main_check, "selftest": main_selftest}[a.cmd](a)
 
 
 if __name__ == "__main__":
