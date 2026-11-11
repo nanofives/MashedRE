@@ -1,0 +1,853 @@
+page	families (distinct referenced addresses)
+0x005ea000	util 4; render 3; vehicle 2; track 1; save 1
+0x005eb000	(none: no absolute reference)
+0x005ec000	(none: no absolute reference)
+0x005ed000	(none: no absolute reference)
+0x005ee000	(none: no absolute reference)
+0x005ef000	(none: no absolute reference)
+0x005f0000	(none: no absolute reference)
+0x005f1000	(none: no absolute reference)
+0x005f2000	util 7; render 4; vehicle 3; ai 3; gameplay 2; frontend 1; track 1; save 1; boot 1
+0x005f3000	gameplay 4; render 4; vehicle 3; hud 1
+0x005f4000	(none: no absolute reference)
+0x005f5000	gameplay 1
+0x005f6000	render 11; frontend 9; vehicle 1
+0x005f7000	frontend 5; render 4; vehicle 2; camera 1
+0x005f8000	(none: no absolute reference)
+0x005f9000	no-function 25; gameplay 5; render 4; util 2; particle 2; boot 1; powerups 1; vehicle 1
+0x005fa000	(none: no absolute reference)
+0x005fb000	(none: no absolute reference)
+0x005fc000	gameplay 2
+0x005fd000	(none: no absolute reference)
+0x005fe000	(none: no absolute reference)
+0x005ff000	(none: no absolute reference)
+0x00600000	(none: no absolute reference)
+0x00601000	(none: no absolute reference)
+0x00602000	(none: no absolute reference)
+0x00603000	audio 5; util 3; track 1
+0x00604000	audio 5
+0x00605000	audio 10
+0x00606000	(none: no absolute reference)
+0x00607000	(none: no absolute reference)
+0x00608000	(none: no absolute reference)
+0x00609000	(none: no absolute reference)
+0x0060a000	(none: no absolute reference)
+0x0060b000	(none: no absolute reference)
+0x0060c000	render 1
+0x0060d000	(none: no absolute reference)
+0x0060e000	(none: no absolute reference)
+0x0060f000	(none: no absolute reference)
+0x00610000	(none: no absolute reference)
+0x00611000	(none: no absolute reference)
+0x00612000	render 1
+0x00613000	vehicle 17; render 14; audio 12; gameplay 3; util 1
+0x00614000	render 22; util 13; vehicle 6; sky 4; no-function 4; gameplay 3; boot 3; video 1; input 1
+0x00615000	no-hooks-row 1; frontend 1
+0x00616000	third-party-library[msvc-crt-main] 76; boot 22; render 17; third-party-library[msvc-crt-tail] 11; no-function 7; save 3; third-party-library[lua-4.0] 2; hud 1; track 1; util 1; frontend 1; gameplay 1; vehicle 1; ai 1; audio 1; particle 1; input 1
+0x00617000	third-party-library[lua-4.0] 6; third-party-library[renderware] 4; render 3; boot 2; audio 2
+0x00618000	third-party-library[d3dx9-psgp] 44; third-party-library[renderware] 37; no-function 36; render 35; no-hooks-row 29
+0x00619000	render 20; third-party-library[d3dx9-psgp] 1
+0x0061a000	third-party-library[d3dx9-shader-compiler] 4
+0x0061b000	third-party-library[d3dx9-psgp] 50; third-party-library[d3dx9-shader-compiler] 7
+0x0061c000	third-party-library[d3dx9-psgp] 11; no-hooks-row 10
+0x0061d000	(none: no absolute reference)
+0x0061e000	(none: no absolute reference)
+0x0061f000	(none: no absolute reference)
+0x00620000	third-party-library[d3dx9-backward-extension] 100; no-function 13
+0x00621000	util 3
+0x00622000	util 3; third-party-library[zlib-1.1.3] 2
+0x00623000	no-hooks-row 18; third-party-library[renderware] 16; hud 10; third-party-library[RenderWare-Physics-3.7] 3; util 1; no-function 1
+0x00624000	third-party-library[RenderWare-Physics-3.7] 1; third-party-library[qhull-2002.1] 1
+0x00625000	(none: no absolute reference)
+0x00626000	(none: no absolute reference)
+0x00627000	(none: no absolute reference)
+0x00628000	(none: no absolute reference)
+0x00629000	(none: no absolute reference)
+0x0062a000	third-party-library[qhull-2002.1] 3
+0x0062b000	(none: no absolute reference)
+0x0062c000	third-party-library[qhull-2002.1-continuation] 1
+0x0062d000	(none: no absolute reference)
+0x0062e000	(none: no absolute reference)
+0x0062f000	(none: no absolute reference)
+0x00630000	(none: no absolute reference)
+0x00631000	(none: no absolute reference)
+0x00632000	audio 2
+0x00633000	audio 5; no-function 3
+0x00634000	audio 7
+0x00635000	boot 3; third-party-library[msvc-crt-tail] 1; no-function 1
+0x00636000	util 15; boot 14; hud 13; render 9; save 5; gameplay 4; frontend 3; vehicle 2; track 2; no-function 1
+0x00637000	(none: no absolute reference)
+0x00638000	(none: no absolute reference)
+0x00639000	boot 13; render 3; gameplay 3; util 3; vehicle 1
+0x0063a000	gameplay 39; util 5; vehicle 2; render 2; no-hooks-row 1
+0x0063b000	util 17; render 13; vehicle 13; gameplay 10; boot 7; save 6; frontend 5; track 5; hud 2; ai 2
+0x0063c000	hud 25; render 11; boot 10; gameplay 4; util 2
+0x0063d000	boot 32; frontend 16; hud 13; render 9; gameplay 8; track 6; util 5; ai 2
+0x0063e000	boot 8; render 4; gameplay 3; track 2; frontend 1
+0x0063f000	gameplay 1; render 1
+0x00640000	render 1
+0x00641000	(none: no absolute reference)
+0x00642000	(none: no absolute reference)
+0x00643000	(none: no absolute reference)
+0x00644000	frontend 11; ai 3; render 3; boot 1
+0x00645000	(none: no absolute reference)
+0x00646000	render 1
+0x00647000	(none: no absolute reference)
+0x00648000	(none: no absolute reference)
+0x00649000	(none: no absolute reference)
+0x0064a000	(none: no absolute reference)
+0x0064b000	(none: no absolute reference)
+0x0064c000	(none: no absolute reference)
+0x0064d000	(none: no absolute reference)
+0x0064e000	(none: no absolute reference)
+0x0064f000	(none: no absolute reference)
+0x00650000	(none: no absolute reference)
+0x00651000	(none: no absolute reference)
+0x00652000	(none: no absolute reference)
+0x00653000	(none: no absolute reference)
+0x00654000	(none: no absolute reference)
+0x00655000	(none: no absolute reference)
+0x00656000	render 3; frontend 1
+0x00657000	render 10; frontend 2; no-function 1
+0x00658000	(none: no absolute reference)
+0x00659000	(none: no absolute reference)
+0x0065a000	(none: no absolute reference)
+0x0065b000	(none: no absolute reference)
+0x0065c000	(none: no absolute reference)
+0x0065d000	(none: no absolute reference)
+0x0065e000	(none: no absolute reference)
+0x0065f000	(none: no absolute reference)
+0x00660000	(none: no absolute reference)
+0x00661000	(none: no absolute reference)
+0x00662000	(none: no absolute reference)
+0x00663000	(none: no absolute reference)
+0x00664000	(none: no absolute reference)
+0x00665000	(none: no absolute reference)
+0x00666000	(none: no absolute reference)
+0x00667000	(none: no absolute reference)
+0x00668000	(none: no absolute reference)
+0x00669000	(none: no absolute reference)
+0x0066a000	(none: no absolute reference)
+0x0066b000	(none: no absolute reference)
+0x0066c000	(none: no absolute reference)
+0x0066d000	render 9; frontend 5; util 2; hud 2; camera 1
+0x0066e000	(none: no absolute reference)
+0x0066f000	(none: no absolute reference)
+0x00670000	(none: no absolute reference)
+0x00671000	(none: no absolute reference)
+0x00672000	(none: no absolute reference)
+0x00673000	(none: no absolute reference)
+0x00674000	(none: no absolute reference)
+0x00675000	(none: no absolute reference)
+0x00676000	(none: no absolute reference)
+0x00677000	(none: no absolute reference)
+0x00678000	(none: no absolute reference)
+0x00679000	(none: no absolute reference)
+0x0067a000	(none: no absolute reference)
+0x0067b000	(none: no absolute reference)
+0x0067c000	(none: no absolute reference)
+0x0067d000	frontend 16; hud 13; util 6; render 5; boot 5; no-function 2
+0x0067e000	frontend 144; util 81; render 24; vehicle 17; boot 3; hud 2; save 1; audio 1
+0x0067f000	frontend 20; util 5; render 3; audio 3; boot 2; save 1; vehicle 1
+0x00680000	(none: no absolute reference)
+0x00681000	(none: no absolute reference)
+0x00682000	(none: no absolute reference)
+0x00683000	no-function 6; render 6; util 3; camera 1
+0x00684000	no-function 97; gameplay 26; render 8; ai 2; particle 1; powerups 1
+0x00685000	(none: no absolute reference)
+0x00686000	(none: no absolute reference)
+0x00687000	gameplay 2
+0x00688000	gameplay 11; no-function 8; vehicle 3; powerups 2; render 1
+0x00689000	(none: no absolute reference)
+0x0068a000	gameplay 1
+0x0068b000	vehicle 4; gameplay 4; no-function 3; frontend 1; util 1
+0x0068c000	(none: no absolute reference)
+0x0068d000	vehicle 4; no-function 3; util 2; boot 1; frontend 1; gameplay 1; render 1
+0x0068e000	(none: no absolute reference)
+0x0068f000	audio 35; util 9; render 6; no-function 1
+0x00690000	audio 39; util 20; render 5; boot 3; no-function 3; gameplay 1; camera 1
+0x00691000	boot 41; render 7; util 5; gameplay 2; no-function 1; track 1
+0x00692000	render 32; vehicle 13
+0x00693000	render 7
+0x00694000	(none: no absolute reference)
+0x00695000	(none: no absolute reference)
+0x00696000	(none: no absolute reference)
+0x00697000	(none: no absolute reference)
+0x00698000	(none: no absolute reference)
+0x00699000	(none: no absolute reference)
+0x0069a000	(none: no absolute reference)
+0x0069b000	(none: no absolute reference)
+0x0069c000	(none: no absolute reference)
+0x0069d000	(none: no absolute reference)
+0x0069e000	(none: no absolute reference)
+0x0069f000	(none: no absolute reference)
+0x006a0000	(none: no absolute reference)
+0x006a1000	(none: no absolute reference)
+0x006a2000	(none: no absolute reference)
+0x006a3000	(none: no absolute reference)
+0x006a4000	(none: no absolute reference)
+0x006a5000	(none: no absolute reference)
+0x006a6000	(none: no absolute reference)
+0x006a7000	(none: no absolute reference)
+0x006a8000	(none: no absolute reference)
+0x006a9000	(none: no absolute reference)
+0x006aa000	(none: no absolute reference)
+0x006ab000	(none: no absolute reference)
+0x006ac000	(none: no absolute reference)
+0x006ad000	(none: no absolute reference)
+0x006ae000	(none: no absolute reference)
+0x006af000	(none: no absolute reference)
+0x006b0000	(none: no absolute reference)
+0x006b1000	(none: no absolute reference)
+0x006b2000	(none: no absolute reference)
+0x006b3000	(none: no absolute reference)
+0x006b4000	(none: no absolute reference)
+0x006b5000	(none: no absolute reference)
+0x006b6000	(none: no absolute reference)
+0x006b7000	(none: no absolute reference)
+0x006b8000	(none: no absolute reference)
+0x006b9000	(none: no absolute reference)
+0x006ba000	(none: no absolute reference)
+0x006bb000	(none: no absolute reference)
+0x006bc000	(none: no absolute reference)
+0x006bd000	(none: no absolute reference)
+0x006be000	(none: no absolute reference)
+0x006bf000	track 6; render 5; vehicle 4
+0x006c0000	(none: no absolute reference)
+0x006c1000	(none: no absolute reference)
+0x006c2000	no-function 4; track 2; camera 2
+0x006c3000	no-function 11; gameplay 2; physics 2; vehicle 2
+0x006c4000	(none: no absolute reference)
+0x006c5000	(none: no absolute reference)
+0x006c6000	physics 4; gameplay 3; vehicle 3; render 2; no-function 1; hud 1
+0x006c7000	physics 1; gameplay 1; no-function 1; hud 1; vehicle 1
+0x006c8000	(none: no absolute reference)
+0x006c9000	gameplay 3; vehicle 2; physics 2; hud 1
+0x006ca000	vehicle 2
+0x006cb000	(none: no absolute reference)
+0x006cc000	(none: no absolute reference)
+0x006cd000	(none: no absolute reference)
+0x006ce000	vehicle 7; audio 1; render 1; no-function 1; physics 1; gameplay 1
+0x006cf000	debug-overlay 19; no-hooks-row 7
+0x006d0000	(none: no absolute reference)
+0x006d1000	(none: no absolute reference)
+0x006d2000	(none: no absolute reference)
+0x006d3000	(none: no absolute reference)
+0x006d4000	(none: no absolute reference)
+0x006d5000	(none: no absolute reference)
+0x006d6000	(none: no absolute reference)
+0x006d7000	(none: no absolute reference)
+0x006d8000	(none: no absolute reference)
+0x006d9000	(none: no absolute reference)
+0x006da000	(none: no absolute reference)
+0x006db000	(none: no absolute reference)
+0x006dc000	world-objects 1
+0x006dd000	(none: no absolute reference)
+0x006de000	(none: no absolute reference)
+0x006df000	(none: no absolute reference)
+0x006e0000	(none: no absolute reference)
+0x006e1000	(none: no absolute reference)
+0x006e2000	(none: no absolute reference)
+0x006e3000	(none: no absolute reference)
+0x006e4000	(none: no absolute reference)
+0x006e5000	(none: no absolute reference)
+0x006e6000	(none: no absolute reference)
+0x006e7000	util 4; world-objects 3; smplfzx 2; vehicle 2; ai 1
+0x006e8000	(none: no absolute reference)
+0x006e9000	(none: no absolute reference)
+0x006ea000	(none: no absolute reference)
+0x006eb000	(none: no absolute reference)
+0x006ec000	(none: no absolute reference)
+0x006ed000	(none: no absolute reference)
+0x006ee000	(none: no absolute reference)
+0x006ef000	(none: no absolute reference)
+0x006f0000	(none: no absolute reference)
+0x006f1000	(none: no absolute reference)
+0x006f2000	(none: no absolute reference)
+0x006f3000	(none: no absolute reference)
+0x006f4000	(none: no absolute reference)
+0x006f5000	(none: no absolute reference)
+0x006f6000	(none: no absolute reference)
+0x006f7000	(none: no absolute reference)
+0x006f8000	(none: no absolute reference)
+0x006f9000	(none: no absolute reference)
+0x006fa000	vehicle 1; smplfzx 1
+0x006fb000	(none: no absolute reference)
+0x006fc000	(none: no absolute reference)
+0x006fd000	(none: no absolute reference)
+0x006fe000	particle 3
+0x006ff000	(none: no absolute reference)
+0x00700000	(none: no absolute reference)
+0x00701000	(none: no absolute reference)
+0x00702000	(none: no absolute reference)
+0x00703000	particle 4; render 4; sky 3; boot 3; util 3; gameplay 1
+0x00704000	(none: no absolute reference)
+0x00705000	(none: no absolute reference)
+0x00706000	particle 9; no-function 3
+0x00707000	(none: no absolute reference)
+0x00708000	(none: no absolute reference)
+0x00709000	(none: no absolute reference)
+0x0070a000	(none: no absolute reference)
+0x0070b000	(none: no absolute reference)
+0x0070c000	(none: no absolute reference)
+0x0070d000	(none: no absolute reference)
+0x0070e000	(none: no absolute reference)
+0x0070f000	(none: no absolute reference)
+0x00710000	(none: no absolute reference)
+0x00711000	(none: no absolute reference)
+0x00712000	(none: no absolute reference)
+0x00713000	(none: no absolute reference)
+0x00714000	(none: no absolute reference)
+0x00715000	particle 1
+0x00716000	(none: no absolute reference)
+0x00717000	(none: no absolute reference)
+0x00718000	(none: no absolute reference)
+0x00719000	(none: no absolute reference)
+0x0071a000	(none: no absolute reference)
+0x0071b000	(none: no absolute reference)
+0x0071c000	(none: no absolute reference)
+0x0071d000	(none: no absolute reference)
+0x0071e000	(none: no absolute reference)
+0x0071f000	particle 11
+0x00720000	particle 2
+0x00721000	(none: no absolute reference)
+0x00722000	particle 32; no-function 3
+0x00723000	(none: no absolute reference)
+0x00724000	(none: no absolute reference)
+0x00725000	(none: no absolute reference)
+0x00726000	(none: no absolute reference)
+0x00727000	(none: no absolute reference)
+0x00728000	(none: no absolute reference)
+0x00729000	(none: no absolute reference)
+0x0072a000	(none: no absolute reference)
+0x0072b000	(none: no absolute reference)
+0x0072c000	(none: no absolute reference)
+0x0072d000	(none: no absolute reference)
+0x0072e000	(none: no absolute reference)
+0x0072f000	(none: no absolute reference)
+0x00730000	(none: no absolute reference)
+0x00731000	(none: no absolute reference)
+0x00732000	(none: no absolute reference)
+0x00733000	(none: no absolute reference)
+0x00734000	(none: no absolute reference)
+0x00735000	(none: no absolute reference)
+0x00736000	(none: no absolute reference)
+0x00737000	(none: no absolute reference)
+0x00738000	(none: no absolute reference)
+0x00739000	(none: no absolute reference)
+0x0073a000	(none: no absolute reference)
+0x0073b000	(none: no absolute reference)
+0x0073c000	(none: no absolute reference)
+0x0073d000	(none: no absolute reference)
+0x0073e000	(none: no absolute reference)
+0x0073f000	(none: no absolute reference)
+0x00740000	(none: no absolute reference)
+0x00741000	(none: no absolute reference)
+0x00742000	(none: no absolute reference)
+0x00743000	(none: no absolute reference)
+0x00744000	(none: no absolute reference)
+0x00745000	(none: no absolute reference)
+0x00746000	(none: no absolute reference)
+0x00747000	(none: no absolute reference)
+0x00748000	(none: no absolute reference)
+0x00749000	(none: no absolute reference)
+0x0074a000	(none: no absolute reference)
+0x0074b000	(none: no absolute reference)
+0x0074c000	(none: no absolute reference)
+0x0074d000	(none: no absolute reference)
+0x0074e000	(none: no absolute reference)
+0x0074f000	(none: no absolute reference)
+0x00750000	(none: no absolute reference)
+0x00751000	(none: no absolute reference)
+0x00752000	(none: no absolute reference)
+0x00753000	(none: no absolute reference)
+0x00754000	(none: no absolute reference)
+0x00755000	(none: no absolute reference)
+0x00756000	(none: no absolute reference)
+0x00757000	(none: no absolute reference)
+0x00758000	(none: no absolute reference)
+0x00759000	(none: no absolute reference)
+0x0075a000	(none: no absolute reference)
+0x0075b000	(none: no absolute reference)
+0x0075c000	(none: no absolute reference)
+0x0075d000	(none: no absolute reference)
+0x0075e000	(none: no absolute reference)
+0x0075f000	(none: no absolute reference)
+0x00760000	(none: no absolute reference)
+0x00761000	(none: no absolute reference)
+0x00762000	(none: no absolute reference)
+0x00763000	(none: no absolute reference)
+0x00764000	(none: no absolute reference)
+0x00765000	(none: no absolute reference)
+0x00766000	particle 2; render 1
+0x00767000	(none: no absolute reference)
+0x00768000	(none: no absolute reference)
+0x00769000	render 3
+0x0076a000	render 1
+0x0076b000	(none: no absolute reference)
+0x0076c000	(none: no absolute reference)
+0x0076d000	render 3
+0x0076e000	(none: no absolute reference)
+0x0076f000	(none: no absolute reference)
+0x00770000	render 1
+0x00771000	boot 27; render 23; util 17; frontend 12; video 10; no-function 4; input 4; no-hooks-row 3; hud 2; gameplay 2; particle 1; vehicle 1; audio 1; save 1
+0x00772000	input 11; no-hooks-row 3; boot 2; save 1; util 1
+0x00773000	third-party-library[msvc-crt-main] 84; render 41; boot 27; input 22; save 19; no-hooks-row 10; no-function 8; frontend 4; util 3; third-party-library[directshow-baseclasses] 2; audio 1; vehicle 1; gameplay 1
+0x00774000	(none: no absolute reference)
+0x00775000	(none: no absolute reference)
+0x00776000	(none: no absolute reference)
+0x00777000	(none: no absolute reference)
+0x00778000	(none: no absolute reference)
+0x00779000	(none: no absolute reference)
+0x0077a000	(none: no absolute reference)
+0x0077b000	(none: no absolute reference)
+0x0077c000	(none: no absolute reference)
+0x0077d000	(none: no absolute reference)
+0x0077e000	(none: no absolute reference)
+0x0077f000	(none: no absolute reference)
+0x00780000	(none: no absolute reference)
+0x00781000	(none: no absolute reference)
+0x00782000	(none: no absolute reference)
+0x00783000	(none: no absolute reference)
+0x00784000	(none: no absolute reference)
+0x00785000	(none: no absolute reference)
+0x00786000	(none: no absolute reference)
+0x00787000	(none: no absolute reference)
+0x00788000	(none: no absolute reference)
+0x00789000	(none: no absolute reference)
+0x0078a000	(none: no absolute reference)
+0x0078b000	(none: no absolute reference)
+0x0078c000	(none: no absolute reference)
+0x0078d000	(none: no absolute reference)
+0x0078e000	(none: no absolute reference)
+0x0078f000	(none: no absolute reference)
+0x00790000	(none: no absolute reference)
+0x00791000	(none: no absolute reference)
+0x00792000	(none: no absolute reference)
+0x00793000	(none: no absolute reference)
+0x00794000	(none: no absolute reference)
+0x00795000	(none: no absolute reference)
+0x00796000	(none: no absolute reference)
+0x00797000	(none: no absolute reference)
+0x00798000	(none: no absolute reference)
+0x00799000	(none: no absolute reference)
+0x0079a000	(none: no absolute reference)
+0x0079b000	(none: no absolute reference)
+0x0079c000	(none: no absolute reference)
+0x0079d000	(none: no absolute reference)
+0x0079e000	(none: no absolute reference)
+0x0079f000	(none: no absolute reference)
+0x007a0000	(none: no absolute reference)
+0x007a1000	(none: no absolute reference)
+0x007a2000	(none: no absolute reference)
+0x007a3000	(none: no absolute reference)
+0x007a4000	(none: no absolute reference)
+0x007a5000	(none: no absolute reference)
+0x007a6000	(none: no absolute reference)
+0x007a7000	(none: no absolute reference)
+0x007a8000	(none: no absolute reference)
+0x007a9000	(none: no absolute reference)
+0x007aa000	(none: no absolute reference)
+0x007ab000	(none: no absolute reference)
+0x007ac000	(none: no absolute reference)
+0x007ad000	(none: no absolute reference)
+0x007ae000	(none: no absolute reference)
+0x007af000	(none: no absolute reference)
+0x007b0000	(none: no absolute reference)
+0x007b1000	(none: no absolute reference)
+0x007b2000	(none: no absolute reference)
+0x007b3000	(none: no absolute reference)
+0x007b4000	(none: no absolute reference)
+0x007b5000	(none: no absolute reference)
+0x007b6000	(none: no absolute reference)
+0x007b7000	(none: no absolute reference)
+0x007b8000	(none: no absolute reference)
+0x007b9000	(none: no absolute reference)
+0x007ba000	(none: no absolute reference)
+0x007bb000	render 1
+0x007bc000	(none: no absolute reference)
+0x007bd000	(none: no absolute reference)
+0x007be000	(none: no absolute reference)
+0x007bf000	(none: no absolute reference)
+0x007c0000	(none: no absolute reference)
+0x007c1000	(none: no absolute reference)
+0x007c2000	(none: no absolute reference)
+0x007c3000	(none: no absolute reference)
+0x007c4000	(none: no absolute reference)
+0x007c5000	(none: no absolute reference)
+0x007c6000	(none: no absolute reference)
+0x007c7000	(none: no absolute reference)
+0x007c8000	(none: no absolute reference)
+0x007c9000	(none: no absolute reference)
+0x007ca000	(none: no absolute reference)
+0x007cb000	(none: no absolute reference)
+0x007cc000	(none: no absolute reference)
+0x007cd000	(none: no absolute reference)
+0x007ce000	(none: no absolute reference)
+0x007cf000	(none: no absolute reference)
+0x007d0000	(none: no absolute reference)
+0x007d1000	(none: no absolute reference)
+0x007d2000	(none: no absolute reference)
+0x007d3000	render 19; third-party-library[renderware] 7; boot 5; no-hooks-row 3; util 2; hud 1; frontend 1; vehicle 1; gameplay 1; track 1; ai 1; no-function 1; audio 1; debug-overlay 1; particle 1; save 1; third-party-library[d3dx9-backward-extension] 1; third-party-library[RenderWare-Physics-3.7] 1; third-party-library[qhull-2002.1] 1; third-party-library[qhull-2002.1-continuation] 1; third-party-library[d3dx9-fx] 1
+0x007d4000	render 98; third-party-library[renderware] 42; no-hooks-row 18; no-function 6; util 1; boot 1; frontend 1
+0x007d5000	render 85
+0x007d6000	render 48; third-party-library[renderware] 6
+0x007d7000	third-party-library[renderware] 102; no-function 51; no-hooks-row 29; render 27
+0x007d8000	(none: no absolute reference)
+0x007d9000	render 16; no-function 5
+0x007da000	third-party-library[d3dx9-shader-compiler] 10
+0x007db000	third-party-library[d3dx9-shader-compiler] 8; third-party-library[d3dx9-psgp] 4; no-hooks-row 1; util 1; third-party-library[renderware] 1
+0x007dc000	third-party-library[renderware] 86; no-function 52; no-hooks-row 49; audio 40; third-party-library[qhull-2002.1] 26; render 9; util 8; third-party-library[RenderWare-Physics-3.7] 6; save 4; third-party-library[qhull-2002.1-continuation] 4; vehicle 1; sky 1; boot 1; particle 1; track 1; third-party-library[msvc-crt] 1
+0x007dd000	no-function 28; audio 15
+0x007de000	audio 5; no-hooks-row 4; no-function 4; third-party-library[msvc-crt-tail] 3
+0x007df000	(none: no absolute reference)
+0x007e0000	(none: no absolute reference)
+0x007e1000	(none: no absolute reference)
+0x007e2000	no-function 1
+0x007e3000	(none: no absolute reference)
+0x007e4000	(none: no absolute reference)
+0x007e5000	(none: no absolute reference)
+0x007e6000	(none: no absolute reference)
+0x007e7000	(none: no absolute reference)
+0x007e8000	(none: no absolute reference)
+0x007e9000	boot 5; no-hooks-row 3; frontend 2; gameplay 2; ai 2; audio 2; vehicle 2; hud 2; save 2; render 1; input 1
+0x007ea000	hud 3; frontend 2; gameplay 2; ai 2; no-hooks-row 2; audio 2; vehicle 2
+0x007eb000	(none: no absolute reference)
+0x007ec000	vehicle 1; hud 1
+0x007ed000	(none: no absolute reference)
+0x007ee000	(none: no absolute reference)
+0x007ef000	(none: no absolute reference)
+0x007f0000	frontend 41; save 28; boot 25; util 17; vehicle 13; render 12; gameplay 7; ai 4; audio 3; hud 2; no-function 2; track 1; input 1
+0x007f1000	frontend 102; util 66; vehicle 42; ai 31; hud 13; render 11; gameplay 5; boot 3; camera 2; no-function 2; no-hooks-row 2; audio 1; particle 1; input 1
+0x007f2000	(none: no absolute reference)
+0x007f3000	(none: no absolute reference)
+0x007f4000	(none: no absolute reference)
+0x007f5000	(none: no absolute reference)
+0x007f6000	(none: no absolute reference)
+0x007f7000	(none: no absolute reference)
+0x007f8000	(none: no absolute reference)
+0x007f9000	(none: no absolute reference)
+0x007fa000	(none: no absolute reference)
+0x007fb000	(none: no absolute reference)
+0x007fc000	(none: no absolute reference)
+0x007fd000	(none: no absolute reference)
+0x007fe000	(none: no absolute reference)
+0x007ff000	(none: no absolute reference)
+0x00800000	(none: no absolute reference)
+0x00801000	ai 2; gameplay 1; render 1
+0x00802000	(none: no absolute reference)
+0x00803000	vehicle 6; no-function 4; util 2; boot 2; track 2; ai 2; save 1; no-hooks-row 1; physics 1; render 1
+0x00804000	(none: no absolute reference)
+0x00805000	(none: no absolute reference)
+0x00806000	(none: no absolute reference)
+0x00807000	(none: no absolute reference)
+0x00808000	(none: no absolute reference)
+0x00809000	(none: no absolute reference)
+0x0080a000	(none: no absolute reference)
+0x0080b000	(none: no absolute reference)
+0x0080c000	(none: no absolute reference)
+0x0080d000	(none: no absolute reference)
+0x0080e000	(none: no absolute reference)
+0x0080f000	(none: no absolute reference)
+0x00810000	(none: no absolute reference)
+0x00811000	(none: no absolute reference)
+0x00812000	(none: no absolute reference)
+0x00813000	(none: no absolute reference)
+0x00814000	(none: no absolute reference)
+0x00815000	(none: no absolute reference)
+0x00816000	(none: no absolute reference)
+0x00817000	(none: no absolute reference)
+0x00818000	(none: no absolute reference)
+0x00819000	(none: no absolute reference)
+0x0081a000	(none: no absolute reference)
+0x0081b000	(none: no absolute reference)
+0x0081c000	(none: no absolute reference)
+0x0081d000	(none: no absolute reference)
+0x0081e000	(none: no absolute reference)
+0x0081f000	(none: no absolute reference)
+0x00820000	(none: no absolute reference)
+0x00821000	(none: no absolute reference)
+0x00822000	(none: no absolute reference)
+0x00823000	(none: no absolute reference)
+0x00824000	(none: no absolute reference)
+0x00825000	(none: no absolute reference)
+0x00826000	(none: no absolute reference)
+0x00827000	(none: no absolute reference)
+0x00828000	render 6; save 1; boot 1
+0x00829000	(none: no absolute reference)
+0x0082a000	(none: no absolute reference)
+0x0082b000	(none: no absolute reference)
+0x0082c000	(none: no absolute reference)
+0x0082d000	(none: no absolute reference)
+0x0082e000	(none: no absolute reference)
+0x0082f000	(none: no absolute reference)
+0x00830000	(none: no absolute reference)
+0x00831000	(none: no absolute reference)
+0x00832000	(none: no absolute reference)
+0x00833000	(none: no absolute reference)
+0x00834000	(none: no absolute reference)
+0x00835000	(none: no absolute reference)
+0x00836000	(none: no absolute reference)
+0x00837000	(none: no absolute reference)
+0x00838000	(none: no absolute reference)
+0x00839000	(none: no absolute reference)
+0x0083a000	(none: no absolute reference)
+0x0083b000	(none: no absolute reference)
+0x0083c000	(none: no absolute reference)
+0x0083d000	(none: no absolute reference)
+0x0083e000	(none: no absolute reference)
+0x0083f000	(none: no absolute reference)
+0x00840000	(none: no absolute reference)
+0x00841000	(none: no absolute reference)
+0x00842000	(none: no absolute reference)
+0x00843000	(none: no absolute reference)
+0x00844000	(none: no absolute reference)
+0x00845000	(none: no absolute reference)
+0x00846000	(none: no absolute reference)
+0x00847000	(none: no absolute reference)
+0x00848000	(none: no absolute reference)
+0x00849000	(none: no absolute reference)
+0x0084a000	(none: no absolute reference)
+0x0084b000	(none: no absolute reference)
+0x0084c000	(none: no absolute reference)
+0x0084d000	(none: no absolute reference)
+0x0084e000	(none: no absolute reference)
+0x0084f000	(none: no absolute reference)
+0x00850000	(none: no absolute reference)
+0x00851000	(none: no absolute reference)
+0x00852000	(none: no absolute reference)
+0x00853000	(none: no absolute reference)
+0x00854000	(none: no absolute reference)
+0x00855000	(none: no absolute reference)
+0x00856000	(none: no absolute reference)
+0x00857000	(none: no absolute reference)
+0x00858000	(none: no absolute reference)
+0x00859000	(none: no absolute reference)
+0x0085a000	(none: no absolute reference)
+0x0085b000	(none: no absolute reference)
+0x0085c000	(none: no absolute reference)
+0x0085d000	(none: no absolute reference)
+0x0085e000	(none: no absolute reference)
+0x0085f000	(none: no absolute reference)
+0x00860000	(none: no absolute reference)
+0x00861000	(none: no absolute reference)
+0x00862000	(none: no absolute reference)
+0x00863000	(none: no absolute reference)
+0x00864000	(none: no absolute reference)
+0x00865000	(none: no absolute reference)
+0x00866000	(none: no absolute reference)
+0x00867000	(none: no absolute reference)
+0x00868000	(none: no absolute reference)
+0x00869000	render 1
+0x0086a000	render 6; no-function 3
+0x0086b000	(none: no absolute reference)
+0x0086c000	smplfzx 6; vehicle 1; physics 1; render 1; sky 1
+0x0086d000	(none: no absolute reference)
+0x0086e000	gameplay 3; no-hooks-row 2; no-function 2; render 2; frontend 2; util 1; physics 1
+0x0086f000	(none: no absolute reference)
+0x00870000	(none: no absolute reference)
+0x00871000	(none: no absolute reference)
+0x00872000	(none: no absolute reference)
+0x00873000	(none: no absolute reference)
+0x00874000	(none: no absolute reference)
+0x00875000	(none: no absolute reference)
+0x00876000	(none: no absolute reference)
+0x00877000	(none: no absolute reference)
+0x00878000	(none: no absolute reference)
+0x00879000	(none: no absolute reference)
+0x0087a000	(none: no absolute reference)
+0x0087b000	(none: no absolute reference)
+0x0087c000	(none: no absolute reference)
+0x0087d000	(none: no absolute reference)
+0x0087e000	(none: no absolute reference)
+0x0087f000	(none: no absolute reference)
+0x00880000	(none: no absolute reference)
+0x00881000	vehicle 16
+0x00882000	vehicle 7
+0x00883000	vehicle 8
+0x00884000	(none: no absolute reference)
+0x00885000	(none: no absolute reference)
+0x00886000	(none: no absolute reference)
+0x00887000	(none: no absolute reference)
+0x00888000	(none: no absolute reference)
+0x00889000	(none: no absolute reference)
+0x0088a000	(none: no absolute reference)
+0x0088b000	(none: no absolute reference)
+0x0088c000	(none: no absolute reference)
+0x0088d000	(none: no absolute reference)
+0x0088e000	vehicle 13; util 3; audio 2; render 2; no-hooks-row 2; no-function 1; gameplay 1
+0x0088f000	no-function 13; gameplay 12; util 9; audio 7; render 2; ai 1
+0x00890000	(none: no absolute reference)
+0x00891000	(none: no absolute reference)
+0x00892000	(none: no absolute reference)
+0x00893000	(none: no absolute reference)
+0x00894000	no-function 17; gameplay 4; audio 1
+0x00895000	no-function 36; gameplay 2
+0x00896000	no-function 37; render 13; util 5; frontend 1; unknown 1
+0x00897000	util 2; ai 1; vehicle 1
+0x00898000	frontend 50; render 22; hud 18; gameplay 18; util 12; input 7; camera 4; vehicle 4; no-function 2; save 1; ai 1
+0x00899000	frontend 95; render 24; util 12; hud 4; ai 1; save 1
+0x0089a000	frontend 26; ai 11; util 11; gameplay 6; vehicle 1
+0x0089b000	(none: no absolute reference)
+0x0089c000	(none: no absolute reference)
+0x0089d000	(none: no absolute reference)
+0x0089e000	(none: no absolute reference)
+0x0089f000	(none: no absolute reference)
+0x008a0000	(none: no absolute reference)
+0x008a1000	(none: no absolute reference)
+0x008a2000	(none: no absolute reference)
+0x008a3000	(none: no absolute reference)
+0x008a4000	(none: no absolute reference)
+0x008a5000	(none: no absolute reference)
+0x008a6000	(none: no absolute reference)
+0x008a7000	(none: no absolute reference)
+0x008a8000	(none: no absolute reference)
+0x008a9000	util 37; frontend 28; gameplay 18; no-function 13; save 7; boot 2; hud 1; render 1
+0x008aa000	third-party-library[msvc-crt-main] 24; boot 8; audio 7; util 6; gameplay 3; third-party-library[msvc-crt-tail] 2
+0x008ab000	third-party-library[msvc-crt-main] 6; boot 5; render 1
+0x008ac000	(none: no absolute reference)
+0x008ad000	no-hooks-row 12; render 4
+0x008ae000	(none: no absolute reference)
+0x008af000	(none: no absolute reference)
+0x008b0000	(none: no absolute reference)
+0x008b1000	(none: no absolute reference)
+0x008b2000	(none: no absolute reference)
+0x008b3000	(none: no absolute reference)
+0x008b4000	(none: no absolute reference)
+0x008b5000	(none: no absolute reference)
+0x008b6000	(none: no absolute reference)
+0x008b7000	(none: no absolute reference)
+0x008b8000	(none: no absolute reference)
+0x008b9000	(none: no absolute reference)
+0x008ba000	(none: no absolute reference)
+0x008bb000	(none: no absolute reference)
+0x008bc000	(none: no absolute reference)
+0x008bd000	(none: no absolute reference)
+0x008be000	(none: no absolute reference)
+0x008bf000	(none: no absolute reference)
+0x008c0000	(none: no absolute reference)
+0x008c1000	(none: no absolute reference)
+0x008c2000	(none: no absolute reference)
+0x008c3000	(none: no absolute reference)
+0x008c4000	(none: no absolute reference)
+0x008c5000	(none: no absolute reference)
+0x008c6000	(none: no absolute reference)
+0x008c7000	(none: no absolute reference)
+0x008c8000	(none: no absolute reference)
+0x008c9000	(none: no absolute reference)
+0x008ca000	(none: no absolute reference)
+0x008cb000	(none: no absolute reference)
+0x008cc000	(none: no absolute reference)
+0x008cd000	boot 2
+0x008ce000	(none: no absolute reference)
+0x008cf000	(none: no absolute reference)
+0x008d0000	(none: no absolute reference)
+0x008d1000	(none: no absolute reference)
+0x008d2000	(none: no absolute reference)
+0x008d3000	(none: no absolute reference)
+0x008d4000	(none: no absolute reference)
+0x008d5000	(none: no absolute reference)
+0x008d6000	(none: no absolute reference)
+0x008d7000	(none: no absolute reference)
+0x008d8000	(none: no absolute reference)
+0x008d9000	(none: no absolute reference)
+0x008da000	(none: no absolute reference)
+0x008db000	(none: no absolute reference)
+0x008dc000	(none: no absolute reference)
+0x008dd000	(none: no absolute reference)
+0x008de000	(none: no absolute reference)
+0x008df000	(none: no absolute reference)
+0x008e0000	(none: no absolute reference)
+0x008e1000	(none: no absolute reference)
+0x008e2000	(none: no absolute reference)
+0x008e3000	(none: no absolute reference)
+0x008e4000	(none: no absolute reference)
+0x008e5000	(none: no absolute reference)
+0x008e6000	(none: no absolute reference)
+0x008e7000	(none: no absolute reference)
+0x008e8000	(none: no absolute reference)
+0x008e9000	(none: no absolute reference)
+0x008ea000	(none: no absolute reference)
+0x008eb000	(none: no absolute reference)
+0x008ec000	(none: no absolute reference)
+0x008ed000	render 3; boot 2
+0x008ee000	(none: no absolute reference)
+0x008ef000	(none: no absolute reference)
+0x008f0000	(none: no absolute reference)
+0x008f1000	(none: no absolute reference)
+0x008f2000	(none: no absolute reference)
+0x008f3000	(none: no absolute reference)
+0x008f4000	(none: no absolute reference)
+0x008f5000	(none: no absolute reference)
+0x008f6000	(none: no absolute reference)
+0x008f7000	(none: no absolute reference)
+0x008f8000	(none: no absolute reference)
+0x008f9000	(none: no absolute reference)
+0x008fa000	(none: no absolute reference)
+0x008fb000	(none: no absolute reference)
+0x008fc000	(none: no absolute reference)
+0x008fd000	(none: no absolute reference)
+0x008fe000	(none: no absolute reference)
+0x008ff000	(none: no absolute reference)
+0x00900000	(none: no absolute reference)
+0x00901000	(none: no absolute reference)
+0x00902000	(none: no absolute reference)
+0x00903000	(none: no absolute reference)
+0x00904000	(none: no absolute reference)
+0x00905000	(none: no absolute reference)
+0x00906000	(none: no absolute reference)
+0x00907000	(none: no absolute reference)
+0x00908000	(none: no absolute reference)
+0x00909000	(none: no absolute reference)
+0x0090a000	(none: no absolute reference)
+0x0090b000	(none: no absolute reference)
+0x0090c000	(none: no absolute reference)
+0x0090d000	render 3
+0x0090e000	(none: no absolute reference)
+0x0090f000	(none: no absolute reference)
+0x00910000	(none: no absolute reference)
+0x00911000	render 168; no-hooks-row 15; third-party-library[renderware] 13; no-function 5; util 1; frontend 1; boot 1
+0x00912000	hud 47; render 24; third-party-library[renderware] 24; no-hooks-row 22; no-function 6
+0x00913000	third-party-library[qhull-2002.1-continuation] 795; third-party-library[qhull-2002.1] 244; hud 5; third-party-library[renderware] 4; no-hooks-row 3; no-function 1; gameplay 1; third-party-library[RenderWare-Physics-3.7] 1
+0x00914000	third-party-library[qhull-2002.1] 113; third-party-library[qhull-2002.1-continuation] 79; audio 2; no-function 1; third-party-library[d3dx9-fx] 1
+0x00915000	(none: no absolute reference)
+
+# family	pages referenced
+render	81
+no-function	52
+util	49
+gameplay	48
+vehicle	46
+boot	37
+frontend	33
+audio	29
+hud	25
+no-hooks-row	25
+save	19
+ai	19
+track	15
+particle	15
+third-party-library[renderware]	12
+input	9
+physics	8
+camera	7
+third-party-library[qhull-2002.1]	6
+third-party-library[d3dx9-psgp]	5
+third-party-library[RenderWare-Physics-3.7]	5
+third-party-library[qhull-2002.1-continuation]	5
+sky	4
+third-party-library[msvc-crt-main]	4
+third-party-library[msvc-crt-tail]	4
+third-party-library[d3dx9-shader-compiler]	4
+powerups	3
+smplfzx	3
+video	2
+third-party-library[lua-4.0]	2
+third-party-library[d3dx9-backward-extension]	2
+debug-overlay	2
+world-objects	2
+third-party-library[d3dx9-fx]	2
+third-party-library[zlib-1.1.3]	1
+third-party-library[directshow-baseclasses]	1
+third-party-library[msvc-crt]	1
+unknown	1

@@ -147,6 +147,7 @@ def report(A, B, nlist=20):
     out["race_state_identical"] = sum(1 for b in rs if not b)
     out["race_state_diffs"] = {k: b for k, b in enumerate(rs) if b}
     out["witness"] = {"a": (ma.get("race") or {}).get("witness"), "b": (mb.get("race") or {}).get("witness")}
+    out["_cls"] = {DATA_LO + 4 * i: c for i, c in cls.items()}   # per-dword class (dropped from --json)
     out["race_anchor"] = {"a": {f: (ma.get("race") or {}).get(f) for f in ("n", "dn_warp", "frames_7f101c", "clk_7f0ff0")},
                           "b": {f: (mb.get("race") or {}).get(f) for f in ("n", "dn_warp", "frames_7f101c", "clk_7f0ff0")}}
     return out
@@ -160,7 +161,7 @@ if __name__ == "__main__":
     a = ap.parse_args()
     r = report(a.a, a.b, a.list)
     if a.json:
-        Path(a.json).write_text(json.dumps(r, indent=1))
+        Path(a.json).write_text(json.dumps({k: v for k, v in r.items() if k != "_cls"}, indent=1))
     K = r["checkpoints"]
     print(f"{Path(a.a).name} vs {Path(a.b).name}: raw {r['raw_identical']}/{K}, normalized {r['normalized_identical']}/{K}, "
           f"race-state {r['race_state_identical']}/{K}")

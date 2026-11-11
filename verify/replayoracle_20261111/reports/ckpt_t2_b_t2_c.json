@@ -1,0 +1,278 @@
+{
+ "a": "D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_b",
+ "b": "D:/MashedWT/REPLAY-ORACLE-DESIGN_data/t2_c",
+ "checkpoints": 15,
+ "raw_identical": 0,
+ "class_counts": {
+  "TOGGLE": 2,
+  "PTR": 3316,
+  "OFFSET": 6,
+  "RESIDUE": 19,
+  "MODOFFSET": 97,
+  "RULE:WINMSG": 2
+ },
+ "by_class_and_page": {
+  "PTR other page 0x0063d000": 469,
+  "PTR other page 0x0068f000": 286,
+  "PTR other page 0x00703000": 235,
+  "PTR other page 0x0063c000": 221,
+  "PTR other page 0x00636000": 152,
+  "PTR other page 0x007ee000": 122,
+  "PTR other page 0x00688000": 117,
+  "PTR other page 0x0063e000": 114,
+  "PTR other page 0x007eb000": 109,
+  "PTR other page 0x006c7000": 108,
+  "PTR other page 0x0068a000": 101,
+  "PTR other page 0x00720000": 96,
+  "PTR other page 0x0086a000": 90,
+  "PTR other page 0x00722000": 88,
+  "PTR other page 0x007dc000": 71,
+  "PTR other page 0x0068b000": 68,
+  "PTR other page 0x007ef000": 60,
+  "PTR other page 0x006cf000": 59,
+  "PTR other page 0x00704000": 48,
+  "MODOFFSET other page 0x00868000": 48,
+  "MODOFFSET other page 0x00869000": 48,
+  "PTR other page 0x0063b000": 44,
+  "PTR other page 0x00692000": 44,
+  "PTR other page 0x007d7000": 40,
+  "PTR other page 0x007d4000": 39,
+  "PTR other page 0x0063f000": 32,
+  "PTR other page 0x006fb000": 28,
+  "PTR other page 0x006fc000": 28,
+  "PTR other page 0x00766000": 24,
+  "PTR other page 0x00640000": 21,
+  "PTR other page 0x00618000": 20,
+  "PTR other page 0x00899000": 20,
+  "PTR other page 0x0068d000": 19,
+  "PTR other page 0x006fa000": 19,
+  "PTR other page 0x007dd000": 18,
+  "PTR other page 0x00685000": 16,
+  "PTR other page 0x00771000": 16,
+  "PTR other page 0x00656000": 15,
+  "PTR other page 0x00686000": 15,
+  "PTR other page 0x00691000": 14,
+  "PTR other page 0x007ed000": 12,
+  "PTR other page 0x00657000": 11,
+  "PTR other page 0x00693000": 11,
+  "PTR other page 0x006dd000": 11,
+  "PTR other page 0x00912000": 11,
+  "PTR other page 0x0076d000": 10,
+  "PTR other page 0x0067d000": 9,
+  "PTR other page 0x00684000": 9,
+  "PTR other page 0x00690000": 9,
+  "PTR other page 0x006fd000": 9,
+  "PTR other page 0x00773000": 9,
+  "PTR pickup slots 0x0088fbe0": 9,
+  "PTR other page 0x006fe000": 8,
+  "PTR car records 0x008815a0 (4 x 0xd04)": 8,
+  "PTR other page 0x00617000": 6,
+  "PTR other page 0x00644000": 6,
+  "PTR other page 0x007d3000": 6,
+  "PTR other page 0x007de000": 6,
+  "PTR other page 0x008aa000": 6,
+  "PTR other page 0x00641000": 5,
+  "PTR other page 0x00642000": 5,
+  "PTR other page 0x00643000": 5,
+  "PTR other page 0x0076a000": 5,
+  "PTR other page 0x00770000": 5,
+  "PTR other page 0x00616000": 4,
+  "PTR other page 0x006c9000": 4,
+  "PTR other page 0x007d6000": 4,
+  "RESIDUE other page 0x007dc000": 4,
+  "RESIDUE other page 0x00636000": 3,
+  "PTR other page 0x00706000": 3,
+  "RESIDUE other page 0x007dd000": 3,
+  "PTR other page 0x008ab000": 3,
+  "PTR other page 0x00623000": 2,
+  "RESIDUE other page 0x0067d000": 2,
+  "PTR other page 0x0067f000": 2,
+  "PTR other page 0x006dc000": 2,
+  "PTR other page 0x00772000": 2,
+  "OFFSET other page 0x007dc000": 2,
+  "RULE:WINMSG other page 0x007e9000": 2,
+  "PTR other page 0x007f0000": 2,
+  "PTR other page 0x00914000": 2,
+  "TOGGLE other page 0x00614000": 1,
+  "OFFSET other page 0x00616000": 1,
+  "RESIDUE other page 0x0067e000": 1,
+  "RESIDUE other page 0x0067f000": 1,
+  "PTR other page 0x006ce000": 1,
+  "MODOFFSET other page 0x00771000": 1,
+  "OFFSET other page 0x00771000": 1,
+  "TOGGLE other page 0x00771000": 1,
+  "RESIDUE other page 0x00772000": 1,
+  "RESIDUE other page 0x007d4000": 1,
+  "OFFSET other page 0x007d7000": 1,
+  "RESIDUE other page 0x007de000": 1,
+  "RESIDUE other page 0x007e9000": 1,
+  "PTR other page 0x007e9000": 1,
+  "OFFSET frame timer block 0x007f0ff0..0x007f1034": 1,
+  "PTR other page 0x00803000": 1,
+  "PTR other page 0x0086e000": 1,
+  "PTR other page 0x00898000": 1,
+  "PTR other page 0x008a9000": 1,
+  "PTR other page 0x008cd000": 1,
+  "PTR other page 0x008ed000": 1,
+  "PTR other page 0x00911000": 1,
+  "RESIDUE other page 0x00912000": 1
+ },
+ "modoffset_periods": {
+  "60": 97
+ },
+ "unexplained_per_checkpoint": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "normalized_identical": 15,
+ "unexplained_by_page": {},
+ "unexplained_sample": [],
+ "residue": [
+  {
+   "va": "0x636ac4",
+   "a": "42d00000",
+   "b": "42d20000"
+  },
+  {
+   "va": "0x636ae8",
+   "a": "403eeee4",
+   "b": "4034443a"
+  },
+  {
+   "va": "0x636afc",
+   "a": "41900011",
+   "b": "4188000f"
+  },
+  {
+   "va": "0x67d858",
+   "a": "389e6973",
+   "b": "4403667c"
+  },
+  {
+   "va": "0x67d974",
+   "a": "41b15de4",
+   "b": "41b2f77e"
+  },
+  {
+   "va": "0x67e848",
+   "a": "00000000",
+   "b": "00000002"
+  },
+  {
+   "va": "0x67f0b8",
+   "a": "00000003",
+   "b": "00000001"
+  },
+  {
+   "va": "0x772fb0",
+   "a": "00180468",
+   "b": "0018047e"
+  },
+  {
+   "va": "0x7d4104",
+   "a": "00180468",
+   "b": "0018047e"
+  },
+  {
+   "va": "0x7dcae0",
+   "a": "000008d4",
+   "b": "000008b8"
+  },
+  {
+   "va": "0x7dcb50",
+   "a": "00000ab4",
+   "b": "00000aac"
+  },
+  {
+   "va": "0x7dcb54",
+   "a": "000008a8",
+   "b": "0000089c"
+  },
+  {
+   "va": "0x7dcdf0",
+   "a": "12128735",
+   "b": "380de7b5"
+  },
+  {
+   "va": "0x7dd618",
+   "a": "00000b84",
+   "b": "00000b9c"
+  },
+  {
+   "va": "0x7dd61c",
+   "a": "000008ec",
+   "b": "00000b58"
+  },
+  {
+   "va": "0x7dd620",
+   "a": "00000a10",
+   "b": "00000bcc"
+  },
+  {
+   "va": "0x7de100",
+   "a": "0ebd24c0",
+   "b": "33d6a5b4"
+  },
+  {
+   "va": "0x7e9584",
+   "a": "00180468",
+   "b": "0018047e"
+  },
+  {
+   "va": "0x9120fc",
+   "a": "00180468",
+   "b": "0018047e"
+  }
+ ],
+ "race_state_identical": 15,
+ "race_state_diffs": {},
+ "witness": {
+  "a": [
+   [
+    "468980",
+    217
+   ],
+   [
+    "470670",
+    81
+   ]
+  ],
+  "b": [
+   [
+    "468980",
+    217
+   ],
+   [
+    "470670",
+    81
+   ]
+  ]
+ },
+ "race_anchor": {
+  "a": {
+   "n": 718,
+   "dn_warp": 118,
+   "frames_7f101c": 0,
+   "clk_7f0ff0": 9050
+  },
+  "b": {
+   "n": 719,
+   "dn_warp": 119,
+   "frames_7f101c": 0,
+   "clk_7f0ff0": 8550
+  }
+ }
+}
