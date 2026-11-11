@@ -65,11 +65,14 @@ What the finished `mashed_re.exe` is:
    - **admitted:** `re/tools/match/equiv.py` proves the compiled body equivalent to the original (same calls, same
      memory, same registers at return): verdict EQUIV in default mode, or EQUIV-IF-CALLERS-IGNORE with every caller
      scanned as ignoring, the exposed-frame rule included. No per-function decision. Recorded in `ADMITTED.tsv`.
-     It counts on the port axis, never as C4. x87 instruction order stays excluded.
+     It counts on the port axis. Admitted is not C4 by that status alone (L-128): it becomes C4 only through the
+     replay form of the frida route (`re/CONFIDENCE.md`, `c4=frida-replay`). x87 instruction order stays excluded.
    - **provisional:** the tool cannot prove it. The source may still run on the knob path in place of a hand
      stand-in so the path reaches the oracle. It is listed in `PROVISIONAL.tsv`, and it never counts toward the
      port DoD. About half of the unproven sources sampled have a real difference (wrong argument, register argument,
      call order), so a provisional body is expected to be wrong until the oracle or source work says otherwise.
+     Provisional is not C4 by that status alone (L-128): a body that replays the reference identically with its JMP
+     live in the original meets the replay form of the frida route and takes `c4=frida-replay`.
    - **stand-in:** no source yet. Hand code bound at the RVA, as today.
 2. **Two builds from one tree.**
    - The **default build**: VS2022 compiles everything. It needs no old compiler. It is the fallback and what a
@@ -326,6 +329,7 @@ Answered on 2026-11-11 (Mariano), full text in `log/orch/DECISIONS.md`:
 | L-125 | Role of the object build | (a) the build the oracle measures and the path is developed against |
 | L-126 | Admission rule for unmatched bodies | admit EQUIV and EQUIV-IF-CALLERS-IGNORE where every caller ignores, exposed-frame rule adopted, x87 excluded, `--relax-icall` a count only; provisional bodies allowed on the knob path |
 | L-127 | This file, the freeze list, the standing classes | landed as written; P1 and P2 adopted |
+| L-128 | Does a rough source that replays the reference race identically inside the original, JMP live, count as C4 by the frida route? | yes ("promote it"): replay form of the frida route, tag `c4=frida-replay`; install check, body executed, no STUB and the Write-set leg stay; admitted and provisional (L-126) are not C4 by that status alone; byte-matched and replay-verified counts reported apart; rubric text landed by `C4-REPLAY-RULE` |
 
 Still to come back as decision rows, each with its evidence: the final form of L-120 (after `DDKOBJ-CRTMATH`), the
 final form of L-121 (after the `PORTSTATE-IMAGE` design), a fallback from the RW core to bindings if `RWC-CORE-RUN`

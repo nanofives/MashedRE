@@ -114,13 +114,28 @@ dropped: they moved, unchanged, to the port axis. Rows promoted before L-93 keep
 
 ### C4 routes (L-93, Mariano 2026-11-07; static routes first written 2026-10-31)
 
-A row is C4 by **any one** of three routes. Each route is recorded in `hooks.csv` `notes` (`c4=match`, `c4=libid`, or
-the frida CSV) and in the `re-classify` evidence fields. Tools: `re/tools/match/`, batch gate `re/tools/c4_reclass.py`.
+A row is C4 by **any one** of three routes. Each route is recorded in `hooks.csv` `notes` (`c4=match`, `c4=libid`,
+`c4=frida-replay` with the RESULT path, or the frida CSV) and in the `re-classify` evidence fields. Tools: `re/tools/match/`, batch gate `re/tools/c4_reclass.py`.
 Measurements behind the static routes: `verify/matchpilot_20261030/RESULT_MATCH-PILOT.md`,
 `verify/libidentity_20261030/RESULT_LIB-IDENTITY.md`.
 
-- **frida (unchanged).** A clean `diff-original` run on a canonical scenario with the hook installed, plus the
-  Write-set leg (both above, under C3).
+- **frida.** A clean `diff-original` run on a canonical scenario with the hook installed, plus the
+  Write-set leg (both above, under C3). Since L-128 (Mariano, 2026-11-11) the route has a replay form, below.
+  - **frida, replay form (`c4=frida-replay`, L-128).** The canonical scenario may be the **replay reference race**
+    (the 2,724-tick reference of the replay oracle), and the clean diff may be the **per-tick compare reporting
+    IDENTICAL-FOR-N** over that reference, with the body's inline JMP live in the original. Nothing else in the
+    route is relaxed. Every leg must hold and be cited:
+    1. **install check:** the inline JMP is live (the path2 / install-witness result, as for the plain route);
+    2. **body executed:** the run shows the body ran (call count above 0 in the run, not only installed);
+    3. **no STUB** in the body (`STUBS.md` has no row for it);
+    4. **Write-set leg** (L-38 / L-40 / L-54) as written under C3: a body whose stores the compare did not cover
+       stays C3;
+    5. **IDENTICAL-FOR-N** names the compare tool, the reference, N, and the committed result path.
+    This is the only route open to a rough (unmatched, admitted or provisional) body. Being admitted
+    (`ADMITTED.tsv`, L-126) or provisional (`PROVISIONAL.tsv`) is **not** C4 by that status alone: such a body is C4
+    when it meets this form, and not before. The evidence certifies behaviour on the reference, not bytes: a
+    replay-verified row is **not** byte-matched, and reports carry the two counts apart (`c4=match` /
+    `c4=libid` / `c4=frida-replay`; hooks.csv `notes` tag, never merged into one C4 total).
 - **`match` (game code).** C4 when **all** of these hold, and nothing else is asked:
   1. The reconstructed source is **byte-identical** under `re/tools/match/match.py` (relocated operands masked; the
      whole-symbol `--bytes` compare reports no differing byte, and the instruction compare is 100% or the original's

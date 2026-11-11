@@ -65,7 +65,7 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   `ef5f2e10/57f7ff83/b4f4b55a`, B `c37d4c0c/0a8f9806/7013671d`; read the file, it wins over this line)
   (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`).
 - Trackers only through `re-classify`. C4 has three routes (L-93, 2026-11-07, `re/CONFIDENCE.md`): a
-  canonical-scenario run with the hook installed (frida), a byte match (`match.py` byte-identical with the recorded
+  canonical-scenario run with the hook installed (frida; replay form since L-128, `c4=frida-replay`), a byte match (`match.py` byte-identical with the recorded
   DDK compiler and flags, `relocheck.py` OK, not naked or asm-only), or a library identity (`libid`). The static
   routes certify the RE only, need no exe body, caller or gate, and are applied with `re/tools/c4_reclass.py batch`.
   Master Ghidra only through ghidra-sweep.
@@ -94,6 +94,12 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   may run on the knob path only as a provisional body listed in `PROVISIONAL.tsv`. Neither is C4. A conditional
   verdict with a caller that reads or is unknown, and any proof that needs `--relax-icall`, is a decision row.
   x87 instruction order is never admitted.
+  Admitted or provisional is not C4 by that status alone (L-128): a body takes C4 only through the replay form of
+  the frida route (`re/CONFIDENCE.md`, "C4 routes"): replay reference race with the inline JMP live, per-tick compare
+  IDENTICAL-FOR-N, plus install check, body executed, no STUB and the Write-set leg (L-38 / L-40 / L-54). Tag
+  `c4=frida-replay` and the RESULT path in `hooks.csv` notes, promote through re-classify
+  (`c4_reclass.py batch`, route `frida-replay`). Report byte-matched (`c4=match`, `c4=libid`) and replay-verified
+  counts apart, never as one C4 total.
 - **Standing classes (L-127).** P1: a flip on the knob path whose captures and logs are unchanged ON against OFF on
   OFF / ON / OFF / ON passes lands without a decision row. P2: a refile of a function to another subsystem on identity
   evidence. Log each use in `DECISIONS.md` as "auto, class P1" or "auto, class P2" with the evidence path. A flip on
