@@ -1,0 +1,33 @@
+rva	name	confidence	group	libid	library_objects	callers_in_reach
+0x004a2c48	FUN_004a2c48	C4	helpers	identical-unlisted	ftol2.obj	149
+0x004a2d30	FUN_004a2d30	C4	math	identical	pow.obj	2
+0x004a2fd0	FUN_004a2fd0	C2	string_misc	differs	strchr.obj	2
+0x004a3090	FUN_004a3090	C4	math	identical-ambiguous	ceil_pentium4.obj	3
+0x004a3440	CrtStackProbe	C4	helpers	identical-unlisted	chkstk.obj	5
+0x004a3480	FUN_004a3480	C2	string_misc	differs	strrchr.obj	2
+0x004a3620	CRT::atan	C2	math	identical-unlisted	atan.obj log.obj log10.obj	1
+0x004a371d	FUN_004a371d	C2	math	differs	sin.obj	1
+0x004a37cd	FUN_004a37cd	C2	math	differs	cos.obj	1
+0x004a3907	FUN_004a3907	C4	math	identical	ieeemisc.obj	1
+0x004a39d4	FUN_004a39d4	C2	math	not-compared		1
+0x004a3b84	FUN_004a3b84	C4	stdio_time	identical-unlisted	vsnprint.obj	1
+0x004a3bda	FUN_004a3bda	C4	heap	identical	delete.obj	1
+0x004a3bdf	FUN_004a3bdf	C4	string_misc	identical	wcsncpy.obj	2
+0x004a3c1c	FUN_004a3c1c	C4	heap	identical-ambiguous	_wctype.obj	2
+0x004a4170	__alldiv	C4	helpers	identical-unlisted	lldiv.obj	1
+0x004a4220	__allmul	C4	helpers	identical-unlisted	llmul.obj	1
+0x004a4254	FUN_004a4254	C2	stdio_time	differs	fputs.obj	2
+0x004a4368	FUN_004a4368	C4	stdio_time	identical	fclose.obj	2
+0x004a43b9	FUN_004a43b9	C2	stdio_time	identical-unlisted	ctime.obj ctime64.obj wctime.obj wctime64.obj	1
+0x004a4541	FsopenSafe	C2	stdio_time	identical-unlisted	fopen.obj wfopen.obj	2
+0x004a45fb	_malloc	C4	heap	identical-unlisted	malloc.obj	1
+0x004a460d	_free	C4	heap	identical-unlisted	free.obj	1
+0x004a49cf	FUN_004a49cf	C2	stdio_time	identical-ambiguous	fread.obj	1
+0x004a4b22	FUN_004a4b22	C2	stdio_time	identical-ambiguous	fread.obj	1
+0x004a4e40	FUN_004a4e40	C4	helpers	identical	ulldiv.obj	1
+0x004a70d5	FUN_004a70d5	C4	math	identical	common.obj	1
+0x004a7118	FUN_004a7118	C4	math	identical	common.obj	2
+0x004aa00c	FUN_004aa00c	C4	stdio_time	identical	tzset.obj	1
+0x004aa060	FUN_004aa060	C4	helpers	identical	ullrem.obj	1
+0x005a7b40	AudioCtxSwap5a7b40	C3	string_misc	identical-unlisted	fpinit.obj user.obj	1
+0x005c1cb7	FUN_005c1cb7	C4	math	identical	hypot.obj	1
