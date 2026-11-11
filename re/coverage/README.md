@@ -82,6 +82,14 @@ Reached C2 rows: 1,918. By subsystem:
 | world-objects, sky, d3dx9-fx | 2, 2, 2 |
 | msvc-crt, smplfzx, d3dx9-shader-compiler | 1, 1, 1 |
 
+## Refresh, 2026-11-11 (RWC-CENSUS, `verify/rwccensus_20261111/RESULT_RWC-CENSUS.md`)
+
+Same tool and scenario, 6,378 entry VAs (6,427 hooks.csv rows, 218 of them new RW-band C1 rows). Reached
+(majority of 3): 3,305. Run agreement: menu 0.00%, race 2.52% (gate FAIL, machine under load from concurrent test
+slots). Against the 2026-10-11 census on the shared 5,888 VAs: any-phase 3 lost (the joypad functions 0x004957a0,
+0x00495830, 0x00495870, no controller attached) and 1 gained. The race_load / race_run split moved (689 functions
+now race_run only): use `reached_race`, not the split columns, as the stable figure.
+
 ## Static spot-check of 5 "unreached" rows
 
 Sampling: one C2 row with R=0 per subsystem in gameplay, frontend, render, vehicle and audio, drawn with
