@@ -1,0 +1,22 @@
+symbol _FUN_0048e820: 664 B (code + switch table), 260 relocation-masked bytes, 18 differing bytes in 18 instructions, 0 unexplained
+| # | off | our bytes | ours | original bytes | original | diff bytes | class |
+|---|---|---|---|---|---|---|---|
+| 1 | +0x05 | `be 11 00 00 00` | mov esi, 0x11 | `bf 11 00 00 00` | mov edi, 0x11 | 1 | ESI<->EDI |
+| 2 | +0x0a | `bf 00 00 80 3f` | mov edi, 0x3f800000 | `be 00 00 80 3f` | mov esi, 0x3f800000 | 1 | ESI<->EDI |
+| 3 | +0x16 | `4e` | dec esi | `4f` | dec edi | 1 | ESI<->EDI |
+| 4 | +0x17 | `8b c6` | mov eax, esi | `8b c7` | mov eax, edi | 1 | ESI<->EDI |
+| 5 | +0x2c | `8b c6` | mov eax, esi | `8b c7` | mov eax, edi | 1 | ESI<->EDI |
+| 6 | +0x34 | `8d 56 ff` | lea edx, [esi - 1] | `8d 57 ff` | lea edx, [edi - 1] | 1 | ESI<->EDI |
+| 7 | +0x68 | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 8 | +0xa8 | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 9 | +0xde | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 10 | +0x10d | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 11 | +0x14d | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 12 | +0x17a | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 13 | +0x1b0 | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 14 | +0x1ed | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 15 | +0x1fb | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 16 | +0x209 | `8b ce` | mov ecx, esi | `8b cf` | mov ecx, edi | 1 | ESI<->EDI |
+| 17 | +0x234 | `89 b9 04 00 00 00` | mov dword ptr [ecx + 4], edi | `89 b1 44 21 72 00` | mov dword ptr [ecx + 0x722144], esi | 1 | ESI<->EDI |
+| 18 | +0x249 | `85 f6` | test esi, esi | `85 ff` | test edi, edi | 1 | ESI<->EDI |
+differing bytes outside any instruction (table / pad): 0
