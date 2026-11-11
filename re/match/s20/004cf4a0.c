@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S20 0x004cf4a0 (h4): 74.3% (regs 74.3%). RwTextureStreamWrite shape: texture chunk header (id 6, size from
    the 0x004cf460 sum, version 0x37002, build 10), struct header (1, 4), one dword = (raster && !(cFormat & 0x10) ? 1

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* h3 hand-match: best 84.8% (regs 84.8%), class b. Only the placement of the return-0 epilogue differs: original emits it right after the first 0x004cc580 test (later fails jump back to it), ours puts it at the end. Tried: early return 0, original wrapper form, for-loop with return 0 inside, permuter (no gain). */
 /* MATCH-RWL01 0x004e1d20: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body

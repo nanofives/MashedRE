@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL04 0x00549900 h1: best 94.9% (regs 94.9%, ops 94.9%). Residue: orig second operand (float)b is 'fisub dword [esp]' on the zero-extended temp, ours 'fild qword; fsubp'. Tried unsigned/int/long/double casts and locals. Class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -33,7 +34,7 @@ int FUN_00549900(S4 *param_1)
   float fVar1;
   D6 *puVar2;
   
-  puVar2 = (D6 *)(DAT_007dc720 + DAT_007d3ff8);
+  puVar2 = (D6 *)(DAT_007d3ff8 + DAT_007dc720);
   puVar2->s = *param_1;
   fVar1 = DAT_005cc320 / (param_1->d - param_1->c);
   puVar2->f = fVar1;

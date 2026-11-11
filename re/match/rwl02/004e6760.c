@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // h2 hand-matched. 54.8% (regs 54.8%, ops 71.0%). Raw Ghidra do-while form scores best; struct/while/for forms (41-45%) and a 200 s permuter run were worse. Residual: original evaluates end = clump+0x10 after loading the first link, keeps cb/data in ebx/edi and end in ebp, tests the first link before loading args. Class (b).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL05 0x005584c0: hand-matched (h3). 90.0% (regs 90.0, ops 93.3). only the first `return 0` block layout (original has an inline ret after the first test, ours shares the ret) differs; tried != 0 nesting, return of the global, local result. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

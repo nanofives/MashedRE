@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /GS /Ob1 /G5
 /* MATCH-S19 0x004c5cb0 (h6): 89.4%, regs 90.6%. RwTextureRead shape: find slot (texture globals +0x18) with refCount++ early return, read slot (+0x14), RWERROR local struct with an if/else on maskName (the ternary was 63.5), RwTexDictionaryAddTexture inlined via the link macros. Residual (b): the original pushes edi in the prologue (before the find call), 9176 shrink-wraps it past the early return (same class as 0x004c5930). Tried: single-exit if/else-if form (35.6), function-scope RwError, assign-in-condition, double currentTexDict read, flags (game 81.2, /G6 81.2, /Oy- 73.3), permuter 99 compiles. cxx ok. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

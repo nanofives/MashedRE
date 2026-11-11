@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /GS /Ob1 /G5
 /* MATCH-S19 0x004c5930 (h4): 89.1% (regs 91.3%). RwTexDictionaryDestroy shape: clear current dict (plugin +0x10), ForAll loop calling FUN_004c5a60(tex,0), FUN_004d8060 plugin deinit, unlink lInInstance, freelist free slot +0x11c (plugin +0xc). Residual: 9176 shrink-wraps push/pop esi around the loop only; the original pushes esi in the prologue. Tried function-scope locals, for form, dict copy, __forceinline ForAll helper with the callback, permuter 92 compiles. relocheck BAD only from the shifted offsets. h6 resume: inline loop in the body, do-while with pre-check, function-scope next, __inline (not inlined: 41%), flags (no /G5 78.7, /Ob2 and /GS- same 89.1): no move. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

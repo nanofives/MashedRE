@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004d8480 (h4): 85.7% (regs 85.7%, ops 92.9%). Moved from the raw 67.9% by reading param_1[1] into a block local (gives the original's push edi / mov edi / test esi,edi / pop edi) and by testing the set bit first (if (hi & 0x80000000) {0} else {*p}). __int64 forms of either test gave 20%. Residual: ours shrink-wraps push esi past the first (lo != 0) early return, the original pushes it in the prologue and pops on both paths. That is the S19 shrink-wrap class, so no permuter run. Class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -27,16 +28,16 @@ MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 // MATCH: 0x004d8480 FUN_004d8480
 int *FUN_004d8480(int *param_1)
 {
-  if ((*(int *)(DAT_007d6c5c + DAT_007d3ff8) == 0) &&
-     (*(int *)(DAT_007d6c5c + 4 + DAT_007d3ff8) == (int)0x80000000)) {
+  if ((*(int *)(DAT_007d3ff8 + DAT_007d6c5c) == 0) &&
+     (*(int *)(DAT_007d3ff8 + 4 + DAT_007d6c5c) == (int)0x80000000)) {
     int hi = param_1[1];
     if (hi & 0x80000000) {
-      *(int *)(DAT_007d6c5c + DAT_007d3ff8) = 0;
+      *(int *)(DAT_007d3ff8 + DAT_007d6c5c) = 0;
     }
     else {
-      *(int *)(DAT_007d6c5c + DAT_007d3ff8) = *param_1;
+      *(int *)(DAT_007d3ff8 + DAT_007d6c5c) = *param_1;
     }
-    *(int *)(DAT_007d6c5c + 4 + DAT_007d3ff8) = param_1[1];
+    *(int *)(DAT_007d3ff8 + 4 + DAT_007d6c5c) = param_1[1];
   }
   return param_1;
 }

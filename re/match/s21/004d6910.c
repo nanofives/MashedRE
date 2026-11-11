@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004d6910 (h2): 89.1% (regs 92.5%, ops 99.3%). Render-state getter: switch (state) over 1..0x1e
    (jump table at 0x004d6b18, `dec eax; cmp eax,0x1d`) writing one cached global to *value and returning 1;

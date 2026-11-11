@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL04 0x00551c40 h1: best 80.5% (regs 80.5%, ops 85.4%). Orig has no shrink-wrap (push edi at entry, 3 duplicated epilogues returning eax); ours shrink-wraps edi and emits xor eax,eax on 2nd fail. Tried nested/early-return/uint callee return/struct vtable. Class (a)/(b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

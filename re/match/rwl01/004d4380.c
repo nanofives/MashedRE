@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL01 0x004d4380: 17.2% regs 28.5%.  class (b) Raw Ghidra form only (budget); ops 72.8% but frame and register allocation differ (original sub esp,0x14 + push ebx).. */
+// TOOLCHAIN rw9044
+/* RWC-MATCH-MOD40A 0x004d4380: typed rewrite, best 37.5% under rw9044 (was 17.2% raw Ghidra form, ddk). Checked against the original disassembly branch by branch (RESULT_RWC-MATCH-MOD40A.md). The topological-sort context passed to 0x004d4bf0 is a struct {pipeline, next = 0}, as the original builds it at 0x004d44f4 / 0x004d44f8 (esp+0x10 = ebx, esp+0x14 = edi = 0) and passes at 0x004d458e; the raw form wrote next to a separate local the compiler drops as dead. Residual: pipeline/zero/numNodes register rotation (original ebx/edi/esi), two error tails cross-jumped that the original keeps apart, scratch-size arithmetic order. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -31,324 +32,245 @@ typedef int code();
 #endif
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_00911ae0, 0x00911ae0);
-MGLOBAL(int *, DAT_007d4718, 0x007d4718);
-MGLOBAL(int *, DAT_007d4714, 0x007d4714);
-undefined4 FUN_004d4910(int p0, undefined4 p1);
-undefined4 FUN_004d4a20(int p0, int p1);
-void FUN_004d4bf0(int * p0, int p1);
-undefined4 FUN_004d7ff0(undefined4 p0);
-undefined4 * FUN_004d8480(undefined4 * p0);
-int FUN_004e2090(int p0);
+typedef struct Cnt4380 { int a; int b; int c; } Cnt4380;
+typedef struct Ref4380 { uint id; int b; int c; } Ref4380;
+typedef struct Node4380 Node4380;
+typedef struct Pipe4380 Pipe4380;
+typedef struct Def4380 {
+  int f0; int f4;
+  int (*init)(struct Def4380 *);                  /* +0x08 */
+  void (*term)(struct Def4380 *);                 /* +0x0c */
+  int (*nodeInit)(Node4380 *);                    /* +0x10 */
+  void (*nodeTerm)(Node4380 *);                   /* +0x14 */
+  int (*nodeConfig)(Node4380 *, Pipe4380 *);      /* +0x18 */
+  int f1c;
+  uint numRefs;                                   /* +0x20 */
+  Ref4380 *refs;                                  /* +0x24 */
+  int f28; int f2c; int f30;
+  uint privSize;                                  /* +0x34 */
+  int f38;
+  int refCount;                                   /* +0x3c */
+} Def4380;
+struct Node4380 { Def4380 *nodeDef; uint numOutputs; uint *outputs; int pad[4]; Cnt4380 *topSort; int pad2[2]; };
+struct Pipe4380 { int locked; uint numNodes; Node4380 *nodes; int pad[5]; char *mem; uint memSize; uint entry; };
+typedef struct Sorter4380 { Pipe4380 *pipe; int next; } Sorter4380;
+typedef struct Err4380 { int a; int b; } Err4380;
+MGLOBAL(Cnt4380 *, DAT_007d4714, 0x007d4714);
+MGLOBAL(uint *, DAT_007d4718, 0x007d4718);
+int FUN_004d4910(Pipe4380 * p0, uint p1);
+int FUN_004d4a20(Pipe4380 * p0, Pipe4380 * p1);
+void FUN_004d4bf0(Sorter4380 * p0, uint p1);
+int FUN_004d7ff0(int p0, ...);
+void FUN_004d8480(Err4380 * p0);
+int FUN_004e2090(Pipe4380 * p0);
+#define ERR4380(code) { Err4380 err; err.a = 1; err.b = FUN_004d7ff0(code); FUN_004d8480(&err); }
+#define MAXNODES4380 (*(uint *)(DAT_007d3ff8 + DAT_00911ae0 + 0x38))
 // MATCH: 0x004d4380 FUN_004d4380
-int * FUN_004d4380(int *param_1)
-
+Pipe4380 * FUN_004d4380(Pipe4380 *pipeline)
 {
-  int *piVar1;
-  int iVar2;
-  code *pcVar3;
-  int *piVar4;
-  int iVar5;
-  uint uVar6;
-  int *piVar7;
-  int iVar8;
-  int iVar9;
-  uint *puVar10;
-  uint uVar11;
-  undefined4 *puVar12;
-  int iVar13;
-  int *piVar14;
-  int *piVar15;
-  uint uVar16;
-  undefined4 uVar17;
-  int *local_14;
-  undefined4 local_10;
-  int local_c;
-  int *local_8;
-  undefined4 local_4;
-  
-  piVar4 = param_1;
-  if (param_1 == (int *)0x0) {
-    local_8 = (int *)0x1;
-    local_4 = FUN_004d7ff0(0x80000016);
-    FUN_004d8480((undefined4 *)&local_8);
-    return (int *)0x0;
-  }
-  if (*param_1 == 0) {
-    local_8 = (int *)0x1;
-    local_4 = FUN_004d7ff0(0x34);
-    FUN_004d8480((undefined4 *)&local_8);
-  }
-  else {
-    piVar7 = (int *)param_1[1];
-    if (piVar7 == (int *)0x0) {
-LAB_004d47f2:
-      *piVar4 = 0;
-      return piVar4;
-    }
-    local_c = 0;
-    if ((piVar7 <= (int *)param_1[10]) || (*(int *)(param_1[2] + param_1[10] * 0x28) == 0)) {
-      local_8 = (int *)0x1;
-      local_4 = FUN_004d7ff0(0x24);
-      FUN_004d8480((undefined4 *)&local_8);
-      return (int *)0x0;
-    }
-    param_1 = (int *)0x0;
-    local_8 = (int *)0x0;
-    while (piVar15 = (int *)0xffffffff, piVar7 != (int *)0x0) {
-      piVar14 = (int *)piVar4[2];
-      local_14 = piVar7;
-      do {
-        iVar13 = *(int *)(*piVar14 + 0x20);
-        if (iVar13 != 0) {
-          puVar10 = *(uint **)(*piVar14 + 0x24);
-          do {
-            piVar1 = (int *)*puVar10;
-            if ((local_8 < piVar1) && (piVar1 < piVar15)) {
-              piVar15 = piVar1;
-            }
-            puVar10 = puVar10 + 3;
-            iVar13 = iVar13 + -1;
-          } while (iVar13 != 0);
-        }
-        piVar14 = piVar14 + 10;
-        local_14 = (int *)((int)local_14 - 1);
-      } while (local_14 != (int *)0x0);
-      local_14 = (int *)0x0;
-      if (piVar15 == (int *)0xffffffff) break;
-      param_1 = (int *)((int)param_1 + 1);
-      local_8 = piVar15;
-    }
-    iVar8 = *(int *)(DAT_00911ae0 + 0x38 + DAT_007d3ff8);
-    uVar16 = iVar8 * 0xb4;
-    iVar13 = (int)piVar7 * 0x28;
-    if (piVar7 != (int *)0x0) {
-      iVar13 = iVar13 + *(int *)(piVar4[2] + 4) * (int)piVar7 * 4;
-    }
-    iVar5 = (((int)piVar7 + 5U) * (int)param_1 + ((int)param_1 + 1) * (int)piVar7) * 4;
-    if (piVar7 != (int *)0x0) {
-      piVar15 = (int *)piVar4[2];
-      local_14 = piVar7;
-      do {
-        iVar9 = *piVar15;
-        iVar2 = *(int *)(iVar9 + 0x34);
-        if (iVar2 != 0) {
-          iVar5 = iVar5 + iVar2;
-        }
-        piVar15 = piVar15 + 10;
-        iVar5 = iVar5 + *(int *)(iVar9 + 0x20) * 4;
-        local_14 = (int *)((int)local_14 - 1);
-      } while (local_14 != (int *)0x0);
-    }
-    uVar11 = iVar5 + (int)param_1 * 0x1c + 0x14 +
-             iVar8 * 0xc + ((int)param_1 * 0x34 + 0x14) * (int)piVar7 + iVar13;
-    if (uVar16 < uVar11) {
-      uVar16 = uVar11;
-    }
-    if ((uVar16 <= (uint)piVar4[9]) || (iVar13 = FUN_004d4910((int)piVar4,uVar16), iVar13 != 0)) {
-      DAT_007d4714 = (int *)(piVar4[8] + uVar16);
-      DAT_007d4718 = (int *)0x0;
-      piVar7 = (int *)piVar4[2];
-      uVar11 = 0;
-      local_14 = piVar4;
-      local_10 = 0;
-      if (piVar4[1] != 0) {
+  uint numNodes;
+  uint numClusters;
+  uint total;
+  uint outTotal;
+  uint i;
+  int k;
+
+  if (pipeline != 0) {
+    if (pipeline->locked) {
+    numNodes = pipeline->numNodes;
+    if (numNodes != 0) {
+    uint lockSize;
+    uint size;
+    uint maxNodes;
+    uint id;
+    outTotal = 0;
+    if (pipeline->entry < numNodes && pipeline->nodes[pipeline->entry].nodeDef != 0) {
+    /* count the distinct cluster ids referenced by the node definitions */
+    numClusters = 0;
+    id = 0;
+    for (;;) {
+      uint last = id;
+      id = (uint)-1;
+      if (numNodes > 0) {
+        Node4380 *node = pipeline->nodes;
+        uint n = numNodes;
         do {
-          if (*piVar7 != 0) {
-            *(undefined4 *)(piVar7[7] + 4) = 0;
-            *(undefined4 *)piVar7[7] = 0;
-          }
-          piVar7 = piVar7 + 10;
-          uVar11 = uVar11 + 1;
-        } while (uVar11 < (uint)piVar4[1]);
-      }
-      piVar7 = (int *)piVar4[2];
-      uVar11 = 0;
-      if (piVar4[1] != 0) {
-        do {
-          if ((*piVar7 != 0) && (iVar13 = piVar7[1], iVar13 != 0)) {
-            piVar15 = (int *)piVar7[2];
+          uint r = node->nodeDef->numRefs;
+          if (r > 0) {
+            Ref4380 *ref = node->nodeDef->refs;
             do {
-              if (*piVar15 != -1) {
-                piVar14 = *(int **)(piVar4[2] + 0x1c + *piVar15 * 0x28);
-                *piVar14 = *piVar14 + 1;
-              }
-              piVar15 = piVar15 + 1;
-              iVar13 = iVar13 + -1;
-            } while (iVar13 != 0);
+              if (ref->id > last && ref->id < id) id = ref->id;
+              ref++;
+            } while (--r);
           }
-          piVar7 = piVar7 + 10;
-          uVar11 = uVar11 + 1;
-        } while (uVar11 < (uint)piVar4[1]);
+          node++;
+        } while (--n);
       }
-      uVar11 = piVar4[10];
-      if (**(int **)(piVar4[2] + 0x1c + uVar11 * 0x28) != 0) {
-        uVar17 = 0x24;
-LAB_004d45ea:
-        local_8 = (int *)0x1;
-        local_4 = FUN_004d7ff0(uVar17);
-        FUN_004d8480((undefined4 *)&local_8);
-        return (int *)0x0;
-      }
-      uVar6 = 0;
-      if (piVar4[1] != 0) {
-        puVar12 = (undefined4 *)(piVar4[2] + 0x1c);
+      if (id == (uint)-1) break;
+      numClusters++;
+    }
+    maxNodes = MAXNODES4380;
+    lockSize = maxNodes * 0xb4;
+    size = numNodes * sizeof(Node4380);
+    if (numNodes > 0) size += pipeline->nodes->numOutputs * numNodes * sizeof(uint);
+    size = maxNodes * 0xc + ((numClusters * 0x34 + 0x14) * numNodes + size);
+    {
+      uint extra = ((numNodes + 5) * numClusters + (numClusters + 1) * numNodes) * 4;
+      if (numNodes > 0) {
+        Node4380 *node = pipeline->nodes;
+        uint n = numNodes;
         do {
-          if ((uVar6 != uVar11) && (*(int *)*puVar12 == 0)) {
-            local_8 = (int *)0x1;
-            local_4 = FUN_004d7ff0(0x22);
-            FUN_004d8480((undefined4 *)&local_8);
-            return (int *)0x0;
-          }
-          uVar6 = uVar6 + 1;
-          puVar12 = puVar12 + 10;
-        } while (uVar6 < (uint)piVar4[1]);
+          Def4380 *d = node->nodeDef;
+          if (d->privSize) extra += d->privSize;
+          node++;
+          extra += d->numRefs * 4;
+        } while (--n);
       }
-      FUN_004d4bf0((int *)&local_14,uVar11);
-      uVar11 = 0;
-      if (piVar4[1] != 0) {
-        piVar7 = (int *)(piVar4[2] + 0x1c);
+      size = extra + numClusters * 0x1c + size + 0x14;
+    }
+    total = lockSize;
+    if (size > lockSize) total = size;
+    if (total > pipeline->memSize) {
+      if (!FUN_004d4910(pipeline, total)) return 0;
+    }
+    {
+    Sorter4380 sorter;
+    DAT_007d4718 = 0;
+    DAT_007d4714 = (Cnt4380 *)(pipeline->mem + total);
+    sorter.pipe = pipeline;
+    sorter.next = 0;
+    {
+    Node4380 *node = pipeline->nodes;
+    for (i = 0; i < pipeline->numNodes; i++) {
+      if (node->nodeDef != 0) {
+        node->topSort->b = 0;
+        node->topSort->a = 0;
+      }
+      node++;
+    }
+    }
+    {
+    Node4380 *node = pipeline->nodes;
+    for (i = 0; i < pipeline->numNodes; i++) {
+      if (node->nodeDef != 0 && node->numOutputs != 0) {
+        uint *out = node->outputs;
+        uint n = node->numOutputs;
         do {
-          if (*(int *)*piVar7 != ((int *)*piVar7)[1]) {
-            uVar17 = 0x1c;
-            goto LAB_004d45ea;
-          }
-          uVar11 = uVar11 + 1;
-          piVar7 = piVar7 + 10;
-        } while (uVar11 < (uint)piVar4[1]);
+          if (*out != (uint)-1) pipeline->nodes[*out].topSort->a++;
+          out++;
+        } while (--n);
       }
-      piVar4[10] = 0;
-      iVar13 = *(int *)(DAT_00911ae0 + 0x38 + DAT_007d3ff8);
-      local_14 = (int *)(piVar4[2] + iVar13 * 0x28);
-      param_1 = (int *)piVar4[1];
-      DAT_007d4714 = local_14 + iVar13 * 0x20 + (int)param_1 * 3 + -3;
-      piVar7 = (int *)(piVar4[8] + -0xc + uVar16);
-      if (-1 < (int)param_1 + -1) {
-        iVar13 = ((int)param_1 + -1) * 0x28;
-        piVar15 = DAT_007d4714;
-        do {
-          DAT_007d4714 = piVar15 + -3;
-          *piVar7 = *piVar15;
-          piVar7[1] = piVar15[1];
-          piVar7[2] = piVar15[2];
-          *(int **)(iVar13 + 0x1c + piVar4[2]) = piVar7;
-          piVar7 = piVar7 + -3;
-          param_1 = (int *)((int)param_1 + -1);
-          iVar13 = iVar13 + -0x28;
-          piVar15 = DAT_007d4714;
-        } while (param_1 != (int *)0x0);
-      }
-      iVar13 = piVar4[2];
-      param_1 = (int *)0x0;
-      piVar7 = (int *)(iVar13 + piVar4[1] * 0x28);
-      if (piVar4[1] != 0) {
-        iVar8 = 0;
-        do {
-          iVar5 = *(int *)(iVar13 + 4 + iVar8);
-          piVar15 = local_14;
-          piVar14 = piVar7;
-          if (iVar5 == 0) {
-            *(undefined4 *)(iVar13 + 8 + iVar8) = 0;
-          }
-          else {
-            for (; iVar5 != 0; iVar5 = iVar5 + -1) {
-              *piVar14 = *piVar15;
-              piVar15 = piVar15 + 1;
-              piVar14 = piVar14 + 1;
-            }
-            *(int **)(iVar8 + 8 + piVar4[2]) = piVar7;
-          }
-          iVar13 = piVar4[2];
-          local_14 = local_14 + 0x20;
-          iVar5 = *(int *)(iVar13 + 4 + iVar8);
-          local_c = local_c + iVar5;
-          iVar8 = iVar8 + 0x28;
-          piVar7 = piVar7 + iVar5;
-          param_1 = (int *)((int)param_1 + 1);
-        } while ((int *)param_1 < (int *)piVar4[1]);
-      }
-      DAT_007d4718 = local_14 + local_c;
-      local_8 = DAT_007d4714;
-      iVar13 = FUN_004e2090((int)piVar4);
-      if (iVar13 == 0) {
-        iVar13 = FUN_004d4910((int)piVar4,(int)DAT_007d4718 - piVar4[8]);
-        if (iVar13 == 0) {
-LAB_004d486f:
-          FUN_004d4a20((int)piVar4,(int)piVar4);
-          return (int *)0x0;
-        }
-        uVar16 = 0;
-        if (piVar4[1] != 0) {
-          iVar13 = 0;
-          do {
-            uVar16 = uVar16 + 1;
-            *(undefined4 *)(iVar13 + 0x1c + piVar4[2]) = 0;
-            iVar13 = iVar13 + 0x28;
-          } while (uVar16 < (uint)piVar4[1]);
-        }
-        param_1 = (int *)(piVar4[1] + -1);
-        if (-1 < (int)param_1) {
-          iVar13 = (int)param_1 * 0x28;
-          do {
-            iVar8 = piVar4[2];
-            iVar5 = *(int *)(iVar13 + iVar8);
-            iVar9 = *(int *)(iVar5 + 0x3c);
-            *(int *)(iVar5 + 0x3c) = iVar9 + 1;
-            if (((iVar9 == 0) && (*(code **)(iVar5 + 8) != (code *)0x0)) &&
-               (iVar9 = (**(code **)(iVar5 + 8))(iVar5), iVar9 == 0)) {
-LAB_004d4818:
-              uVar16 = piVar4[1];
-              uVar11 = (uVar16 - (int)param_1) - 1;
-              goto LAB_004d482b;
-            }
-            if ((*(code **)(iVar5 + 0x10) != (code *)0x0) &&
-               (iVar8 = (**(code **)(iVar5 + 0x10))(iVar13 + iVar8), iVar8 == 0)) {
-              iVar13 = *(int *)(iVar5 + 0x3c) + -1;
-              *(int *)(iVar5 + 0x3c) = iVar13;
-              if ((iVar13 == 0) && (*(code **)(iVar5 + 0xc) != (code *)0x0)) {
-                (**(code **)(iVar5 + 0xc))(iVar5);
-              }
-              goto LAB_004d4818;
-            }
-            iVar13 = iVar13 + -0x28;
-            param_1 = (int *)((int)param_1 + -1);
-          } while (-1 < (int)param_1);
-        }
-        iVar13 = piVar4[1] + -1;
-        if (-1 < iVar13) {
-          iVar8 = iVar13 * 0x28;
-          do {
-            pcVar3 = *(code **)(*(int *)(iVar8 + piVar4[2]) + 0x18);
-            if ((pcVar3 != (code *)0x0) && (iVar5 = (*pcVar3)(iVar8 + piVar4[2],piVar4), iVar5 == 0)
-               ) {
-              uVar11 = piVar4[1];
-              uVar16 = uVar11;
-LAB_004d482b:
-              uVar11 = uVar16 - uVar11;
-              if (uVar11 < uVar16) {
-                iVar13 = uVar11 * 0x28;
-                do {
-                  iVar8 = *(int *)(piVar4[2] + iVar13);
-                  if (*(code **)(iVar8 + 0x14) != (code *)0x0) {
-                    (**(code **)(iVar8 + 0x14))((int *)(piVar4[2] + iVar13));
-                  }
-                  iVar5 = *(int *)(iVar8 + 0x3c) + -1;
-                  *(int *)(iVar8 + 0x3c) = iVar5;
-                  if ((iVar5 == 0) && (*(code **)(iVar8 + 0xc) != (code *)0x0)) {
-                    (**(code **)(iVar8 + 0xc))(iVar8);
-                  }
-                  uVar11 = uVar11 + 1;
-                  iVar13 = iVar13 + 0x28;
-                } while (uVar11 < (uint)piVar4[1]);
-              }
-              goto LAB_004d486f;
-            }
-            iVar13 = iVar13 + -1;
-            iVar8 = iVar8 + -0x28;
-          } while (-1 < iVar13);
-        }
-        goto LAB_004d47f2;
+      node++;
+    }
+    }
+    if (pipeline->nodes[pipeline->entry].topSort->a != 0) {
+      ERR4380(0x24)
+      return 0;
+    }
+    for (i = 0; i < pipeline->numNodes; i++) {
+      if (i != pipeline->entry && pipeline->nodes[i].topSort->a == 0) {
+        ERR4380(0x22)
+        return 0;
       }
     }
+    FUN_004d4bf0(&sorter, pipeline->entry);
+    }
+    for (i = 0; i < pipeline->numNodes; i++) {
+      Cnt4380 *ts = pipeline->nodes[i].topSort;
+      if (ts->a != ts->b) {
+        ERR4380(0x1c)
+        return 0;
+      }
+    }
+    pipeline->entry = 0;
+    {
+      /* lock block = [maxNodes nodes][maxNodes x 32 outputs][maxNodes count blocks]:
+         move the count blocks to the top of the scratch, then pack the outputs after the nodes */
+      uint *srcOut;
+      Cnt4380 *src;
+      Cnt4380 *dst;
+      uint *dstOut;
+      maxNodes = MAXNODES4380;
+      srcOut = (uint *)&pipeline->nodes[maxNodes];
+      src = (Cnt4380 *)(srcOut + maxNodes * 32) + pipeline->numNodes - 1;
+      dst = (Cnt4380 *)(pipeline->mem + total) - 1;
+      for (k = (int)pipeline->numNodes - 1; k >= 0; k--) {
+        *dst = *src;
+        src--;
+        pipeline->nodes[k].topSort = dst;
+        dst--;
+      }
+      dstOut = (uint *)&pipeline->nodes[pipeline->numNodes];
+      for (i = 0; i < pipeline->numNodes; i++) {
+        uint n = pipeline->nodes[i].numOutputs;
+        if (n == 0) {
+          pipeline->nodes[i].outputs = 0;
+        }
+        else {
+          uint *s = srcOut;
+          uint *d = dstOut;
+          for (; n != 0; n--) *d++ = *s++;
+          pipeline->nodes[i].outputs = dstOut;
+        }
+        srcOut += 32;
+        n = pipeline->nodes[i].numOutputs;
+        outTotal += n;
+        dstOut += n;
+      }
+      DAT_007d4714 = src;
+      DAT_007d4718 = srcOut + outTotal;
+    }
+    if (FUN_004e2090(pipeline) != 0) return 0;
+    if (!FUN_004d4910(pipeline, (char *)DAT_007d4718 - pipeline->mem)) goto fail;
+    for (i = 0; i < pipeline->numNodes; i++) pipeline->nodes[i].topSort = 0;
+    {
+      uint done;
+      uint j;
+      for (k = (int)pipeline->numNodes - 1; k >= 0; k--) {
+        Node4380 *node = &pipeline->nodes[k];
+        Def4380 *d = node->nodeDef;
+        if (d->refCount++ == 0 && d->init != 0 && !d->init(d)) {
+          done = pipeline->numNodes - k - 1;
+          goto undo;
+        }
+        if (d->nodeInit != 0 && !d->nodeInit(node)) {
+          if (--d->refCount == 0 && d->term != 0) d->term(d);
+          done = pipeline->numNodes - k - 1;
+          goto undo;
+        }
+      }
+      for (k = (int)pipeline->numNodes - 1; k >= 0; k--) {
+        Node4380 *node = &pipeline->nodes[k];
+        if (node->nodeDef->nodeConfig != 0 && !node->nodeDef->nodeConfig(node, pipeline)) {
+          done = pipeline->numNodes;
+          goto undo;
+        }
+      }
+      goto ok;
+undo:
+      for (j = pipeline->numNodes - done; j < pipeline->numNodes; j++) {
+        Node4380 *node = &pipeline->nodes[j];
+        Def4380 *d = node->nodeDef;
+        if (d->nodeTerm != 0) d->nodeTerm(node);
+        if (--d->refCount == 0 && d->term != 0) d->term(d);
+      }
+fail:
+      FUN_004d4a20(pipeline, pipeline);
+      return 0;
+    }
+    }
+    else {
+      ERR4380(0x24)
+      return 0;
+    }
+    }
+ok:
+    pipeline->locked = 0;
+    return pipeline;
+    }
+    else ERR4380(0x34)
+    return 0;
   }
-  return (int *)0x0;
+  ERR4380(0x80000016)
+  return 0;
 }

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S20 0x004cba80 (h2): 90.3% (regs 90.3%). Raw 47.1%. 12-byte entry table {obj, a, b}, Release through a
    __stdcall slot +8, unsigned return compared <= 0 (gives the original's ja). Tried: break vs return, pointer walk

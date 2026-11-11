@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL04 0x0054b6d0 h1: best 70.3% (regs 100%, ops 100%): same 37 instructions, register choice differs (ours esi for running sum, orig ecx). Tried temps, operand order, statement split, permuter. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

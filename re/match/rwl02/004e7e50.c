@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // h2 hand-matched. 88.0% (regs 88.0%): original has a separate `pop esi; ret` for the first failed test (eax already 0), ours merges both zero returns into one `xor eax,eax` tail. Tried: iVar1 returns, compound ||/&& condition, nested-if forms (72%). Class (b).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

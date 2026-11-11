@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL02 h3 0x004e6920: hand-written. Residual (a): original pushes edi at function entry (before the first call), ours pushes it later; shrink-wrap class. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL05 0x00563df0: hand-matched (h3). 66.7% (regs 75.6). semantically exact form. residue: original `lea [p2+p3*2+2]; shl 3`, ours folds to lea [..*8+0x10] and uses ebp. A permuter variant at 86% swapped p2/p3 in the size sum (not equivalent) and was rejected. class (a)/(b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

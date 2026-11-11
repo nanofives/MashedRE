@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL04 0x00544d20 (h2): 86.7% (regs 86.7). Callee 0x004e7d40 is the registered-plugin call (raw's undefined RpAtomicRegisterPlugin), fn addresses passed as (void*)FUN_x, int return, if(x<0) return 0 chain with final 'return 1' (setge folded). Residue: original keeps a separate 'xor eax,eax; ret' after the 2nd and 3rd tests, ours merges them into one shared exit. class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

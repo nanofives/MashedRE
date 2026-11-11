@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // h2: 90.7% (regs 90.7%). Residual: original pushes edi at entry, ours shrink-wraps the push past the first early-out (known class a). /O1, /GS, /G6, /Oy- worse; permuter 100 compiles no gain.
 /* MATCH-RWL02 0x004e6470: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004d42b0 (h1, by hand): best 77.8% exact, regs 88.9% (raw 55.6%). Bump allocator: size rounded to 4,
    DAT_007d4718 += size, over DAT_007d4714 -> undo + RWERROR(0x80000013, size) via _rwerror 0x004d7ff0 (varargs) and

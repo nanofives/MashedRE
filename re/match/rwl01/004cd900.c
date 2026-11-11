@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL01 0x004cd900: 97.2% regs 97.2%.  class (a/b) Fixed float arg (FUN_004cf160(1.0f), was pushed as converted int) 96.5 -> 97.2. Only diff: original keeps the first failure return inline (jne; xor eax,eax; pop ebx; ret) while ours tail-merges it into a later failure block (3 insns).. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

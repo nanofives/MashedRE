@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWR01 2026-11-08: 78.6% (regs 78.6%), was 70.6%. head then cur, compare head != cur, early return param_1 inside the loop; remaining: the original loads param_1 into eax before the pushes and uses lea for head (ours keeps it in edi). Class (b). */
 /* MATCH-RWL02 h3 0x004e5bf0: hand-written. */
