@@ -5,6 +5,7 @@
 ;   FUN_0040bb30: cdecl, 1 stack argument, no register argument
 ;   FUN_0048cee0: reads EDI as a register argument
 .686
+.xmm
 .model flat
 EXTERN FUN_0040bb30:PROC
 EXTERN FUN_0048cee0:PROC
@@ -642,4 +643,252 @@ neg_loop_stride_b PROC
     jne @nls_b1
     ret
 neg_loop_stride_b ENDP
+
+; ------------------------------------------------------------------ A6: calls through a pointer (EQUIV-CALLEE-POPS)
+; A COM method call: this in ECX, vtable in EAX, __stdcall (the callee pops its arguments, no add esp after it).
+com_ident_a PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    mov dword ptr ds:[G1], eax
+    ret
+com_ident_a ENDP
+com_ident_b PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    mov dword ptr ds:[G1], eax
+    ret
+com_ident_b ENDP
+
+com_stdcall_a PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    test eax, eax
+    jl @cs_a9
+    push 1
+    call FUN_0040bb30
+    add esp, 4
+    mov eax, [esp+4]
+    mov eax, [eax]
+    push 0
+    push dword ptr [esp+8]
+    call dword ptr [eax+70h]
+@cs_a9:
+    ret
+com_stdcall_a ENDP
+com_stdcall_b PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    db 68h, 07h, 0, 0, 0                ; push 7 (imm32)
+    push ecx
+    call dword ptr [eax+6Ch]
+    test eax, eax
+    jl @cs_b9
+    db 68h, 01h, 0, 0, 0                ; push 1 (imm32)
+    call FUN_0040bb30
+    add esp, 4
+    mov eax, [esp+4]
+    mov eax, [eax]
+    push 0
+    push dword ptr [esp+8]
+    call dword ptr [eax+70h]
+@cs_b9:
+    ret
+com_stdcall_b ENDP
+
+com_cdecl_a PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    add esp, 8
+    mov dword ptr ds:[G1], eax
+    ret
+com_cdecl_a ENDP
+com_cdecl_b PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    db 6Ah, 07h                         ; push 7 (imm8)
+    push ecx
+    call dword ptr [eax+6Ch]
+    add esp, 8
+    mov dword ptr ds:[G1], eax
+    ret
+com_cdecl_b ENDP
+
+com_loop_a PROC
+    push esi
+    mov esi, [esp+8]
+@cl_a1:
+    mov ecx, [esp+12]
+    mov eax, [ecx]
+    push esi
+    push ecx
+    call dword ptr [eax+6Ch]
+    dec esi
+    jne @cl_a1
+    pop esi
+    ret
+com_loop_a ENDP
+com_loop_b PROC
+    push esi
+    mov esi, [esp+8]
+@cl_b1:
+    db 8Bh, 8Ch, 24h, 0Ch, 0, 0, 0      ; mov ecx, [esp+12] (disp32)
+    mov eax, [ecx]
+    push esi
+    push ecx
+    call dword ptr [eax+6Ch]
+    dec esi
+    jne @cl_b1
+    pop esi
+    ret
+com_loop_b ENDP
+
+mxcsr_a PROC
+    push ecx
+    stmxcsr dword ptr [esp]
+    mov eax, [esp]
+    mov dword ptr ds:[G1], eax
+    ldmxcsr dword ptr ds:[G2]
+    pop ecx
+    ret
+mxcsr_a ENDP
+mxcsr_b PROC
+    push ecx
+    stmxcsr dword ptr [esp]
+    mov edx, [esp]
+    mov dword ptr ds:[G1], edx
+    ldmxcsr dword ptr ds:[G2]
+    pop ecx
+    mov eax, edx
+    ret
+mxcsr_b ENDP
+
+; wrong prototype arg count: ours passes one argument, the original two
+neg_com_argcount_a PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    ret
+neg_com_argcount_a ENDP
+neg_com_argcount_b PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 8
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    ret
+neg_com_argcount_b ENDP
+
+; swapped call order
+neg_com_order_a PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push ecx
+    call dword ptr [eax+6Ch]
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push ecx
+    call dword ptr [eax+70h]
+    ret
+neg_com_order_a ENDP
+neg_com_order_b PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push ecx
+    call dword ptr [eax+70h]
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push ecx
+    call dword ptr [eax+6Ch]
+    ret
+neg_com_order_b ENDP
+
+; ours typed cdecl (caller cleans), the original __stdcall
+neg_com_conv_a PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    add esp, 8
+    ret
+neg_com_conv_a ENDP
+neg_com_conv_b PROC
+    mov ecx, [esp+4]
+    mov eax, [ecx]
+    push 7
+    push ecx
+    call dword ptr [eax+6Ch]
+    ret
+neg_com_conv_b ENDP
+
+; two calls through a pointer whose pops the stack equations cannot separate (P1 + P2 = 4): a deferred cdecl
+; cleanup and a __stdcall callee read the same as the reverse. Proven once per solution (both pass: same shape).
+com_ambiguous_a PROC
+    mov eax, [esp+4]
+    push 1
+    call dword ptr [eax+10h]
+    mov eax, [esp+8]
+    db 68h, 02h, 0, 0, 0                ; push 2 (imm32)
+    call dword ptr [eax+14h]
+    add esp, 4
+    ret
+com_ambiguous_a ENDP
+com_ambiguous_b PROC
+    mov eax, [esp+4]
+    push 1
+    call dword ptr [eax+10h]
+    mov eax, [esp+8]
+    push 2
+    call dword ptr [eax+14h]
+    add esp, 4
+    ret
+com_ambiguous_b ENDP
+
+; the same ambiguity, but ours is right only under one solution (P1 = 0, P2 = 4): under (4, 0) ours pushes its
+; second argument over its own return address
+neg_com_solution_a PROC
+    mov eax, [esp+4]
+    push 1
+    call dword ptr [eax+10h]
+    add esp, 4
+    mov eax, [esp+8]
+    push 2
+    call dword ptr [eax+14h]
+    ret
+neg_com_solution_a ENDP
+neg_com_solution_b PROC
+    mov eax, [esp+4]
+    push 1
+    call dword ptr [eax+10h]
+    mov eax, [esp+8]
+    push 2
+    call dword ptr [eax+14h]
+    add esp, 4
+    ret
+neg_com_solution_b ENDP
+
+; MXCSR loaded from different words
+neg_mxcsr_a PROC
+    ldmxcsr dword ptr ds:[G2]
+    ret
+neg_mxcsr_a ENDP
+neg_mxcsr_b PROC
+    ldmxcsr dword ptr ds:[G3]
+    ret
+neg_mxcsr_b ENDP
 END

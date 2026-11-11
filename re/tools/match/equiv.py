@@ -1082,7 +1082,7 @@ CMOVCC = {"cmov" + k[1:]: v for k, v in CC_OF.items()}
 
 
 class Region:
-    __slots__ = ("events", "texts", "x87", "jmps", "end", "pcs")
+    __slots__ = ("events", "texts", "x87", "jmps", "end", "pcs", "pops", "paired")
 
 
 class State:
@@ -1097,8 +1097,10 @@ class State:
 
 
 class Ctx:
-    def __init__(self, A, B, strict, resolver, trace=False):
+    def __init__(self, A, B, strict, resolver, trace=False, popsol=None, popsol_unique=True):
         self.sides = (A, B)
+        self.popsol = popsol            # A6: original-side call pc -> pop count (one solution of pin_pops)
+        self.popsol_unique = popsol_unique
         self.strict = strict
         self.res = resolver
         self.trace = trace
@@ -1112,6 +1114,7 @@ class Ctx:
         self.retdiff = set()        # registers that differ at some return
         self.retdiff_detail = {}
         self.pairs_seen = []
+        self._pins = {}
 
     # ------------------------------------------------------------ constants
     def ro_fold(self, a, sz):
@@ -1453,6 +1456,7 @@ class Ctx:
                 raise NotProven("unsupported", "__chkstk with a variable size")
             st.r["esp"] = add(st.r["esp"], C(-sz.a[0]))
             region.events.append(("chkstk", sz))
+            region.pops.append(None)
             return
         if info.get("indirect"):
             # A4: a function-pointer call pops nothing (cdecl); a wrong guess shows up as an unbalanced stack at
@@ -1462,12 +1466,36 @@ class Ctx:
             if self.esp_reset[side.name]:
                 raise NotProven("indirect-call-esp-reset", f"{side.name}: ESP restored from a register in a function "
                                 f"with a call through {show(tgt)}")
-            self.used.add("A4-indirect")
-            n = self.cleanup(side, cs)
-            info = {"P": 0, "N": n, "livein": frozenset() if self.relax_icall else frozenset(("ecx", "edx")),
-                    "eax_def": False, "noreturn": False}
+            livein = frozenset() if self.relax_icall else frozenset(("ecx", "edx"))
+            pin = None
+            if side is self.sides[1]:
+                # A6, the original: the pop count is one solution of its own stack equations (pin_pops); the
+                # proof is run once per solution (check_sides)
+                if self.popsol is LAZY_POPS:
+                    raise NeedPops()
+                if self.popsol is not None:
+                    pin = self.popsol.get(cs.address)
+                    if pin is not None:
+                        self.used.add("A6-pinned-pop" if self.popsol_unique else "A6-pop-solution")
+            else:
+                # A6, ours: the pop count of the original's call paired with this one (same index in the same
+                # region). The targets are then compared as equal terms, so both sides call the same function
+                # and the copied count is that function's real one whenever the original's is.
+                k = len(region.events)
+                if region.paired is not None and k < len(region.paired) and region.paired[k] is not None:
+                    pin = region.paired[k]
+                    self.used.add("A6-paired-pop")
+            if pin is not None:
+                n = pin // 4 if pin else self.cleanup(side, cs)
+                info = {"P": pin, "N": n, "livein": livein, "eax_def": False, "noreturn": False, "pin": pin}
+            else:
+                self.used.add("A4-indirect")
+                n = self.cleanup(side, cs)
+                info = {"P": 0, "N": n, "livein": livein, "eax_def": False, "noreturn": False, "pin": 0}
         P_, N_, livein = info["P"], info["N"], info["livein"]
         regargs = tuple((r, st.r[r]) for r in sorted(livein))
+        if "pin" in info:
+            regargs = regargs + (("pop", info["pin"]),)      # a call through a pointer: its pop count is observed
         if self.strict:
             args = (st.r["esp"],)
         else:
@@ -1495,6 +1523,7 @@ class Ctx:
                              else load(st.m, add(self.esp0, C(k + 4 * i)), 4, self) for i in range(n))
         key = mk("call", 0, tgt, args, regargs, st.m, st.x)
         region.events.append(key)
+        region.pops.append(info.get("pin"))
         if info.get("noreturn"):
             region.end = ("halt",)
             return "halt"
@@ -1520,6 +1549,41 @@ class Ctx:
                 self.swrite(st, k + 4 * i, mk("argc", 32, key, i, old), 4)
         st.r["esp"] = add(st.r["esp"], C(P_))
         return None
+
+    def pins(self, side):
+        """A6 pop counts of this side's calls through a pointer (pin_pops), computed once per side."""
+        p = self._pins.get(side.name)
+        if p is None:
+            if self.esp_reset[side.name]:
+                p = {"why": "esp reset"}
+            else:
+                p = pin_pops(side, self.pin_callee)
+            self._pins[side.name] = p
+        return p
+
+    def pin_callee(self, side, cs):
+        """pin_pops callee facts: ("pop", P), ("halt",), ("chkstk",), ("var",) for a call through a pointer, or
+        None when the callee cannot be resolved. Uses the same resolution as do_call."""
+        op = cs.operands[0]
+        try:
+            if op.type == X.X86_OP_IMM:
+                tgt = self.target(side, None, cs, op)
+                info = self.res.callee(tgt)
+                if info.get("chkstk"):
+                    return ("chkstk",)
+                if info.get("noreturn"):
+                    return ("halt",)
+                P_ = info.get("P")
+                if P_ is None and tgt.op == "c":
+                    P_ = ret_pop(tgt.a[0])
+                return ("pop", P_) if P_ is not None else None
+            if op.type == X.X86_OP_MEM and not op.mem.base and not op.mem.index:
+                a = self.reloc_value(side, cs, "disp", op.mem.disp & M32)
+                if a.op == "c" and a.a[0] in self.res.import_pop:
+                    return ("pop", self.res.import_pop[a.a[0]])
+        except NotProven:
+            return None
+        return ("var",)
 
     # ------------------------------------------------------------ one instruction
     def step(self, side, st, cs, region):
@@ -1690,6 +1754,17 @@ class Ctx:
             return ("jcc", CC_OF[mn])
         elif mn in ("int3", "hlt", "ud2"):
             return ("halt",)
+        elif mn in ("stmxcsr", "ldmxcsr") and ops and ops[0].type == X.X86_OP_MEM and ops[0].size == 4:
+            # MXCSR is part of the floating-point state term st.x (which already stands for the whole FP state:
+            # entry symbol, then a function of the previous state at every FP instruction and call). stmxcsr
+            # stores a function of that term; ldmxcsr makes the term a function of the old term and the loaded
+            # word. Equal terms still mean equal values, so this adds no assumption. They are not x87
+            # instructions, so the x87 region rule does not apply to them.
+            a = self.addr(side, st, cs, ops[0])
+            if mn == "stmxcsr":
+                self.memwrite(side, st, a, mk("mxcsr", 32, st.x), 4)
+            else:
+                st.x = mk("Xmx", 0, st.x, self.memread(side, st, a, 4))
         else:
             raise NotProven("unsupported", f"instruction {mn} {cs.op_str}")
         return None
@@ -1752,9 +1827,10 @@ class Ctx:
         return None
 
     # ------------------------------------------------------------ regions
-    def run_region(self, side, st, pc):
+    def run_region(self, side, st, pc, paired=None):
         reg = Region()
         reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+        reg.pops, reg.paired = [], paired
         seen = set()
         while True:
             if pc in seen:
@@ -1963,6 +2039,235 @@ def esp_reset_any(side):
     return False
 
 
+def _table_targets(side, cs):
+    """Entries of a `jmp [idx*4 + table]` jump table that land inside the body, or None when cs is not one."""
+    op = cs.operands[0]
+    if op.type != X.X86_OP_MEM or op.mem.base or not op.mem.index or op.mem.scale != 4:
+        return None
+    out = []
+    if isinstance(side, ObjSide):
+        r = side.field(cs, "disp")
+        if r is None or r[0].get("sec") != side.secidx:
+            return None
+        off = r[0]["value"] + r[2]
+        while True:
+            e = side.relocs.get(off)
+            if e is None or e[0].get("sec") != side.secidx:
+                break
+            t = e[0]["value"] + struct.unpack_from("<i", side.code, off)[0]
+            if not side.internal(t):
+                break
+            out.append(t)
+            off += 4
+        return out or None
+    k = op.mem.disp & M32
+    while True:
+        raw = image().bytes(k, 4)
+        e = struct.unpack("<I", raw)[0] if raw else 0
+        if not side.internal(e):
+            break
+        out.append(e)
+        k += 4
+    return out or None
+
+
+class NeedPops(Exception):
+    """The proof reached the original's first call through a pointer with no A6 solution yet (check_sides)."""
+
+
+LAZY_POPS = object()            # Ctx.popsol before pin_pops ran: computed only when a proof needs it
+SOLUTION_SPACE_MAX = 1 << 12    # pin_pops: largest product of free-pop ranges that is enumerated
+POP_SOLUTIONS_MAX = 32          # largest number of original-side pop solutions proved one by one
+
+
+def pin_pops(side, callee_info):
+    """A6: the pop count of every call through a pointer, solved from the body's own stack discipline.
+
+    ESP is tracked as an entry-relative linear form `k + sum c_i * P_i`, with one unknown P_i per call site whose
+    callee is not known (callee_info returns ("var",)). Every other ESP change is concrete. The equations are the
+    facts every MSVC frame-pointer-omitted body keeps: one ESP offset per instruction whatever path reaches it (a
+    join), and ESP at the entry offset at every `ret` and every tail jump. A P_i is pinned only when the system
+    determines it uniquely (its reduced row has no free unknown), so a pinned value is the callee's real pop count
+    for every execution on which the body keeps that discipline. Returns {"pins": {pc: P}, "free": [pc...]} or
+    {"why": reason} when the walk cannot follow the body (an ESP write that is not push/pop/add/sub imm, an
+    unresolved callee, an inconsistent system)."""
+    from fractions import Fraction
+    code, base = side.body()
+    if not any(c.mnemonic == "call" and c.operands and c.operands[0].type != X.X86_OP_IMM and
+               callee_info(side, c) == ("var",) for c in _MD.disasm(code, base)):
+        return {"pins": {}, "free": [], "solutions": [{}]}        # no call through a pointer: nothing to solve
+    forms, eqs, sites = {}, [], set()
+    work = [(side.entry, 0, ())]
+    steps = 0
+    while work:
+        pc, k, d = work.pop()
+        eax_imm = None
+        while True:
+            steps += 1
+            if steps > 200000:
+                return {"why": "body too large"}
+            form = (k, d)
+            if not side.internal(pc):
+                return {"why": f"walk left the body at {side.label(pc)}"}
+            if pc in forms:
+                if forms[pc] != form:
+                    k0, d0 = forms[pc]
+                    dd = dict(d)
+                    for v, c in d0:
+                        dd[v] = dd.get(v, 0) - c
+                    eqs.append((k - k0, dd))
+                break
+            forms[pc] = form
+            try:
+                cs = side.decode(pc)
+            except NotProven as e:
+                return {"why": f"decode {e.detail}"}
+            mn, ops = cs.mnemonic, cs.operands
+            nxt = pc + cs.size
+            if mn == "push":
+                k -= 4 if ops[0].type == X.X86_OP_IMM else ops[0].size
+            elif mn == "pop":
+                k += ops[0].size
+            elif mn in ("add", "sub") and ops and ops[0].type == X.X86_OP_REG and cs.reg_name(ops[0].reg) == "esp":
+                if ops[1].type != X.X86_OP_IMM:
+                    return {"why": f"esp write {side.label(pc)}"}
+                imm = ops[1].imm & M32
+                imm = imm - (1 << 32) if imm >= 0x80000000 else imm
+                k += imm if mn == "add" else -imm
+            elif mn == "call":
+                ci = callee_info(side, cs)
+                if ci is None:
+                    return {"why": f"callee {side.label(pc)}"}
+                if ci[0] == "halt":
+                    break
+                if ci[0] == "chkstk":
+                    if eax_imm is None:
+                        return {"why": f"__chkstk size {side.label(pc)}"}
+                    k -= eax_imm
+                elif ci[0] == "pop":
+                    k += ci[1]
+                else:
+                    sites.add(pc)
+                    dd = dict(d)
+                    dd[pc] = dd.get(pc, 0) + 1
+                    d = tuple(sorted(dd.items()))
+                eax_imm = None
+                pc = nxt
+                continue
+            elif mn in ("ret", "retn"):
+                eqs.append((k, dict(d)))
+                break
+            elif mn in ("int3", "hlt", "ud2"):
+                break
+            elif mn == "jmp":
+                op = ops[0]
+                if op.type == X.X86_OP_IMM and side.field(cs, "imm") is None and side.internal(op.imm):
+                    pc = op.imm
+                    continue
+                tt = _table_targets(side, cs) if op.type == X.X86_OP_MEM else None
+                if tt:
+                    for t in tt:
+                        work.append((t, k, d))
+                    break
+                if op.type == X.X86_OP_MEM and op.mem.index:
+                    return {"why": f"unread jump table {side.label(pc)}"}
+                eqs.append((k, dict(d)))          # tail jump: ESP at the entry offset
+                break
+            elif cs.group(capstone.CS_GRP_JUMP):
+                if ops[0].type != X.X86_OP_IMM or not side.internal(ops[0].imm):
+                    return {"why": f"conditional jump out of the body {side.label(pc)}"}
+                work.append((ops[0].imm, k, d))
+            else:
+                try:
+                    _, wr = cs.regs_access()
+                except Exception:
+                    return {"why": f"regs {side.label(pc)}"}
+                wrn = {cs.reg_name(r) for r in wr}
+                if "esp" in wrn or "sp" in wrn:
+                    return {"why": f"esp write {side.label(pc)}"}
+                if "eax" in wrn or "ax" in wrn or "al" in wrn or "ah" in wrn:
+                    eax_imm = (ops[1].imm & M32) if (mn == "mov" and ops[0].type == X.X86_OP_REG and
+                                                      cs.reg_name(ops[0].reg) == "eax" and
+                                                      ops[1].type == X.X86_OP_IMM) else None
+            pc = nxt
+    if not sites:
+        return {"pins": {}, "free": [], "solutions": [{}]}
+    vs = sorted(sites)
+    callk = {v: forms[v][0] for v in vs}           # constant part of the ESP form at each site
+    col = {v: i for i, v in enumerate(vs)}
+    rows = []
+    for k, dd in eqs:
+        r = [Fraction(0)] * (len(vs) + 1)
+        for v, c in dd.items():
+            if c:
+                r[col[v]] += c
+        r[-1] = Fraction(-k)
+        rows.append(r)
+    # reduced row echelon form
+    piv, ri = [], 0
+    for ci in range(len(vs)):
+        p = next((i for i in range(ri, len(rows)) if rows[i][ci] != 0), None)
+        if p is None:
+            continue
+        rows[ri], rows[p] = rows[p], rows[ri]
+        f = rows[ri][ci]
+        rows[ri] = [x / f for x in rows[ri]]
+        for i in range(len(rows)):
+            if i != ri and rows[i][ci] != 0:
+                g = rows[i][ci]
+                rows[i] = [a - g * b for a, b in zip(rows[i], rows[ri])]
+        piv.append(ci)
+        ri += 1
+    for r in rows[ri:]:
+        if r[-1] != 0:
+            return {"why": "inconsistent stack equations"}
+    pins = {}
+    for i, ci in enumerate(piv):
+        r = rows[i]
+        if any(r[j] != 0 for j in range(len(vs)) if j != ci):
+            continue
+        val = r[-1]
+        if val.denominator != 1 or val < 0 or int(val) % 4:
+            return {"why": f"pop {val} at {side.label(vs[ci])}"}
+        pins[vs[ci]] = int(val)
+    free = [v for v in vs if v not in pins]
+    # every solution of the system: each pop a multiple of 4 in [0, -k] (k = the constant part of the ESP offset
+    # at the call; the callee pops only slots inside this frame, and the other pops only raise ESP), and ESP at or
+    # below the entry offset at every instruction. A free pop is any free-column value; pivots follow from them.
+    fcols = [j for j in range(len(vs)) if j not in piv]           # the unknowns the system leaves free
+    rng = [range(0, max(0, -callk[vs[j]]) + 1, 4) for j in fcols]
+    total = 1
+    for r_ in rng:
+        total *= len(r_)
+    if total > SOLUTION_SPACE_MAX:
+        return {"why": f"{len(free)} free pops, {total} candidate assignments", "pins": pins, "free": free}
+    sols = []
+    import itertools
+    varforms = [(k, d) for k, d in set(forms.values()) if d]      # the ESP forms that involve an unknown
+    for combo in itertools.product(*rng):
+        val = dict(zip(fcols, combo))
+        full = {}
+        ok = True
+        for i, ci in enumerate(piv):
+            x = rows[i][-1] - sum(rows[i][j] * val[j] for j in fcols)
+            if x.denominator != 1 or x < 0 or int(x) % 4:
+                ok = False
+                break
+            full[vs[ci]] = int(x)
+        if not ok:
+            continue
+        for j, c in zip(fcols, combo):
+            full[vs[j]] = c
+        if any(full[v] > -callk[v] for v in vs):
+            continue
+        if any(k + sum(c * full[v] for v, c in d) > 0 for k, d in varforms):
+            continue
+        sols.append(full)
+    if not sols:
+        return {"why": "no solution of the stack equations"}
+    return {"pins": pins, "free": free, "solutions": sols}
+
+
 def strip_frame(m, esp0):
     """Memory after return without the stores into this function's own frame (esp0 + k, k < 0): that storage is
     dead once the function returns (A1'), and an escaped pointer to it cannot be used after the return."""
@@ -2114,8 +2419,8 @@ class Explorer:
             ctx.pairs_seen.append(pair)
             if ctx.trace:
                 print(f"  pair {A.label(pair[0])} / {B.label(pair[1])}")
-            ra = ctx.run_region(A, sa, pair[0])
-            rb = ctx.run_region(B, sb, pair[1])
+            rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+            ra = ctx.run_region(A, sa, pair[0], rb.pops)
             LAST_PCS.setdefault("A", set()).update(ra.pcs)
             LAST_PCS.setdefault("B", set()).update(rb.pcs)
             here = f"{A.name} {A.label(pair[0])} / {B.name} {B.label(pair[1])}"
@@ -2662,12 +2967,64 @@ def check_function(src_text, secs, syms, addr, sym, trace=False, size=None, orig
 
 
 def check_sides(A, B, res, addr, out=None, trace=False):
-    """The proof for two code providers (ours, original). Used by check_function and by the synthetic tests."""
+    """The proof for two code providers (ours, original). Used by check_function and by the synthetic tests.
+
+    A6: the original's calls through a pointer get their pop counts from pin_pops. With one solution the proof
+    runs once. With several (the stack equations do not separate some pops), it runs once per solution, up to
+    POP_SOLUTIONS_MAX, and the verdict is the weakest of the runs. The real counts are one of the solutions, so
+    the verdict holds for them."""
     out = {"addr": addr} if out is None else out
+    if isinstance(A, ObjSide):
+        # resolve our import relocations first: Resolver.import_pop (IAT address -> pop count from our decoration)
+        # is what makes the original's `call [IAT]` an import call, and the original now runs first (A6)
+        for off, (symrec, typ) in sorted(A.relocs.items()):
+            if symrec.get("name", "").startswith("__imp_"):
+                try:
+                    res.resolve(A, symrec, struct.unpack_from("<i", A.code, off)[0], typ)
+                except NotProven:
+                    pass
+    # the stack equations need every direct callee's summary, which is costly on a large call graph: solve them only
+    # when the proof reaches a call through a pointer on the original's side
+    try:
+        return _check_once(A, B, res, addr, dict(out), trace, LAZY_POPS, True)
+    except NeedPops:
+        pass
+    pp = Ctx(A, B, False, res).pins(B)
+    sols = pp.get("solutions")
+    if not sols:
+        sols = [None]                     # no solution set (pp["why"]): A4 for every call through a pointer
+        if pp.get("why"):
+            out["pop_why"] = pp["why"]
+    elif len(sols) > POP_SOLUTIONS_MAX:
+        out.update(verdict="NOT-PROVEN", kind="callee-pop-ambiguous",
+                   detail=f"{len(sols)} solutions of the original's stack equations for {len(pp['free'])} calls "
+                          f"through a pointer ({', '.join(B.label(v) for v in pp['free'])}); limit {POP_SOLUTIONS_MAX}")
+        return out
+    runs = []
+    for i, sol in enumerate(sols):
+        o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+        if o["verdict"] == "NOT-PROVEN":
+            if len(sols) > 1:
+                o["detail"] = f"pop solution {i + 1}/{len(sols)} {{{', '.join(f'{B.label(k)}:{v}' for k, v in sorted(sol.items()))}}}: " + o["detail"]
+            return o
+        runs.append(o)
+    if len(runs) == 1:
+        return runs[0]
+    best = max(runs, key=lambda o: len(o.get("regs", ())))
+    for o in runs:
+        if not set(o.get("regs", ())) <= set(best.get("regs", ())):
+            best = dict(best, verdict="NOT-PROVEN", kind="callee-pop-solutions",
+                        detail="return registers differ between pop solutions")
+            return best
+    best["pop_solutions"] = len(runs)
+    return best
+
+
+def _check_once(A, B, res, addr, out, trace, popsol, popsol_unique):
     results = {}
     for strict in (False, True):
         reset_keep = None
-        ctx = Ctx(A, B, strict, res, trace)
+        ctx = Ctx(A, B, strict, res, trace, popsol, popsol_unique)
         try:
             Explorer(ctx).run()
             results[strict] = ("EQUIV", ctx)
@@ -2751,6 +3108,8 @@ def fmt(r):
         extra = f" (fallback: {r['fallback']})" if r.get("fallback") else ""
         return f"{a}\tNOT-PROVEN\t{r['kind']}: {r['detail']}{extra}"
     cls = ",".join(r["classes"]) or "BYTE-IDENTICAL"
+    if r.get("pop_solutions"):
+        cls += f"; {r['pop_solutions']} pop solutions"
     if r["verdict"] == "EQUIV":
         return f"{a}\tEQUIV\t[{cls}]"
     cl = r["callers"]

@@ -115,11 +115,38 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
 - **A2, flags are dead at return.** No MSVC-compiled caller reads EFLAGS after a call.
 - **A3, entry machine state is shared.** Both bodies start from the same registers, stack and memory. This includes
   the frame bytes below the entry ESP: they keep their entry content until a call could have written them.
-- **A4, calls through a pointer pop nothing (cdecl).**
+- **A4, calls through a pointer pop nothing (cdecl).** Since EQUIV-CALLEE-POPS (2026-11-11) this is the fallback
+  for a call A6 gives no count for (A6 found no solution set, or the call is not paired with one of the original's).
   - Check: a wrong guess leaves ESP unbalanced at every later return, and the return check catches it. The rule is
     refused (`indirect-call-esp-reset`) when either side restores ESP from another register.
   - Registers: by default ECX and EDX count as read by such a call, so they must be equal.
   - `--relax-icall` (A4'): assumes they are not read. It is reported as a separate count, never as the default.
+- **A6, the original keeps MSVC stack discipline** (EQUIV-CALLEE-POPS, 2026-11-11). Applies only to calls through a
+  pointer (a vtable slot `call [ecx+0x6c]`, a function-pointer global, `call esi`). Direct calls and import calls
+  keep their counts from the callee summary and the import decoration.
+  - Statement: in the original's body ESP has one entry-relative offset at each instruction whatever path reaches
+    it, ESP is at the entry offset at every `ret` and every tail jump, ESP is never above the entry offset, and a
+    callee pops only slots inside this frame. This is the frame-pointer-omitted code MSVC emits. A body that writes
+    ESP other than by push, pop, call, ret and add/sub imm gets no A6 (it is the `indirect-call-esp-reset` case).
+  - Solving (`pin_pops`): ESP is walked over the original's control-flow graph as a linear form `k + sum P_i`, one
+    unknown P_i per call through a pointer. The statement gives one equation per join and per return or tail jump.
+    The tool enumerates every solution with each P_i a multiple of 4 in `[0, -k_i]` (`k_i` = the constant part of
+    the ESP offset at the call) and ESP at or below the entry offset everywhere. The real pop counts are one of
+    these solutions.
+  - One solution (rule `A6-pinned-pop`): the proof runs once with it. Several (`A6-pop-solution`): the proof runs
+    once per solution and the verdict is the weakest one. More than `POP_SOLUTIONS_MAX` (32) solutions, or more
+    than 2^12 candidate assignments, gives `NOT-PROVEN callee-pop-ambiguous`. Several solutions happen when one
+    path holds two such calls and no join or return separates them: a cdecl call with a deferred `add esp` and a
+    `__stdcall` call read the same as the reverse.
+  - Ours (`A6-paired-pop`): our call through a pointer takes the count of the original's call at the same index in
+    the same region. The count is part of the call record, and the targets must be the same term, so both sides
+    call the same function. The copied count is therefore that function's real count whenever the original's is.
+    Ours needs no discipline assumption: a wrong typing in our source (a `__stdcall` COM method declared cdecl)
+    shows up as an unbalanced ESP at our return (`ret-esp`) or as different argument slots.
+  - Not used: the source's prototypes. The count is a fact of the original's bytes plus A6, never of our typing.
+  - Callee summaries (`summary()`, the facts of an original callee) still use A4 for the calls through a pointer
+    inside the callee. A callee that makes a `__stdcall` COM call therefore has no summary (`r7`): every register
+    counts as read at a call to it, and its argument count comes from A5.
 - **A5, arity of a callee whose argument count is unknown** (varargs, or a callee body the walk cannot follow).
   - Counted: the bytes this side's cleanup releases right after the call, or else the pushes right before the call
     in the same region.
@@ -139,7 +166,10 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
   - `rep` string operations with a variable count;
   - `scas`, `cmps`, `lods`;
   - `pushf`, `std`;
-  - SSE;
+  - SSE, except `stmxcsr` / `ldmxcsr` (since EQUIV-CALLEE-POPS). MXCSR is part of the floating-point state term:
+    `stmxcsr` stores a function of that term, and `ldmxcsr` makes the term a function of the old term and the
+    loaded word. No assumption is added. Their order relative to x87 instructions shows up in the term;
+    the x87 region rule does not apply to them.
   - `lock`;
   - segment registers other than FS (FS:[k] is plain memory);
   - a conditional jump out of the function;
@@ -149,7 +179,12 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
 
 `py -3.12 re/tools/match/test_equiv.py` runs the following, one `[N/M]` line each:
 
-- 38 synthetic pairs from `equiv_tests/cases.asm`, positives and negatives per class;
+- 49 synthetic pairs from `equiv_tests/cases.asm`, positives and negatives per class. The 11 A6 / MXCSR pairs
+  (EQUIV-CALLEE-POPS): `com_ident` (byte-identical control), `com_stdcall` (a `__stdcall` COM call checked by an
+  early return, then a cdecl call, then a second COM call), `com_cdecl` (caller cleanup), `com_loop` (a COM call in
+  a loop), `com_ambiguous` (two calls the equations cannot separate, proven once per solution), `mxcsr`; negatives
+  `neg_com_argcount` (wrong prototype argument count), `neg_com_order` (swapped call order), `neg_com_conv` (cdecl
+  against `__stdcall`), `neg_com_solution` (ours right under one pop solution only), `neg_mxcsr`;
 - the six reference rows.
 
 `py -3.12 re/tools/match/equiv_mutate.py` mutates our side of every proven pair. Every mutant must come out
