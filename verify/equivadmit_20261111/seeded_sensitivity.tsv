@@ -1,0 +1,67 @@
+rva	ins_addr	mutation	same	inconclusive	differs	seen
+0x00485b30	0x00485bb0	movzx ecx, word ptr [ecx + 0xc] disp+4	7	0	9	1
+0x00485b30	0x00485b6f	mov dword ptr [edx + 8], eax disp+4	10	0	6	1
+0x00485b30	0x00485b58	mov dword ptr [eax + 4], ebx disp+4	15	0	1	1
+0x00485b30	0x00485b79	mov ecx, dword ptr [ecx + 8] disp+4	14	0	2	1
+0x00485b30	0x00485b5d	mov dword ptr [edx + 4], ebx disp+4	14	0	2	1
+0x00485b30	0x00485bb4	mov edx, dword ptr [edx + 0x10] disp+4	6	0	10	1
+0x00485b30	0x00485b88	mov ecx, dword ptr [ecx + 8] disp+4	14	0	2	1
+0x00485b30	0x00485baa	mov dword ptr [ecx + 8], ebx disp+4	6	0	10	1
+0x004938e0	0x004938ee	mov ecx, dword ptr [esp + 8] disp+4	0	0	16	1
+0x004938e0	0x004938e0	mov eax, dword ptr [esp + 4] disp+4	16	0	0	0
+0x004938e0	0x004938f2	mov edx, dword ptr [0x911ae4] disp+4	16	0	0	0
+0x004b61c0	0x004b639a	mov edx, dword ptr [esp + 0x18] disp+4	2	0	14	1
+0x004b61c0	0x004b6457	mov ecx, dword ptr [0x7d3ff8] disp+4	9	7	0	0
+0x004b61c0	0x004b630c	movzx ebx, byte ptr [esi + 1] disp+4	6	0	10	1
+0x004b61c0	0x004b6377	shl edx, 8 imm+1	6	0	10	1
+0x004b61c0	0x004b6326	mov dword ptr [eax - 0x4c], edx disp+4	6	0	10	1
+0x004b61c0	0x004b6387	add edx, 4 imm+1	16	0	0	0
+0x004b61c0	0x004b6332	mov dword ptr [eax - 0x44], edx disp+4	6	0	10	1
+0x004b61c0	0x004b6467	mov edx, dword ptr [0x7d3ff8] disp+4	1	15	0	0
+0x005a8890	0x005a88c1	lea edx, [ebx + 0xd78] disp+4	0	0	16	1
+0x005a8890	0x005a8890	mov eax, dword ptr [0x7dcae0] disp+4	16	0	0	0
+0x005a8890	0x005a88a0	mov eax, dword ptr [esp + 0x10] disp+4	1	0	15	1
+0x005a8890	0x005a889a	call dword ptr [0x5cc090] disp+4	0	16	0	0
+0x005a8890	0x005a88de	lea edx, [ebx + 0x154] disp+4	0	0	16	1
+0x005a8890	0x005a8902	mov dword ptr [edx + 4], eax disp+4	0	0	16	1
+0x005a8890	0x005a8927	mov edx, dword ptr [ebx + 0x18] disp+4	15	0	1	1
+0x005a8890	0x005a8943	add eax, 0xc imm+1	0	0	16	1
+0x005aaac0	0x005aaae0	add esp, 8 imm+1	2	14	0	0
+0x005aaac0	0x005aaad9	lea eax, [esi - 4] disp+4	16	0	0	0
+0x005aaac0	0x005aaad5	mov ebx, dword ptr [esp + 0x10] disp+4	2	0	14	1
+0x005aaac0	0x005aaac9	cmp esi, 0x7dccf0 imm+1	14	0	2	1
+0x005aaac0	0x005aaad1	mov edi, dword ptr [esp + 0x14] disp+4	16	0	0	0
+0x005aaac0	0x005aaae9	cmp esi, 0x7dccf0 imm+1	2	14	0	0
+0x005aaac0	0x005aaac2	mov esi, dword ptr [0x7dccf0] disp+4	0	16	0	0
+0x005aab00	0x005aab00	mov eax, dword ptr [esp + 8] disp+4	12	0	4	1
+0x005aab00	0x005aab32	lea edi, [esi + 0xc] disp+4	0	16	0	0
+0x005aab00	0x005aab3c	mov edx, dword ptr [esi - 0x14] disp+4	6	0	10	1
+0x005aab00	0x005aab35	mov esi, dword ptr [esi + 0xc] disp+4	0	16	0	0
+0x005aab00	0x005aab1d	add esp, 4 imm+1	12	4	0	0
+0x005aab00	0x005aab06	mov esi, dword ptr [esp + 0xc] disp+4	0	16	0	0
+0x005aab00	0x005aab4e	add esp, 4 imm+1	6	10	0	0
+0x005aab00	0x005aab22	mov eax, dword ptr [esp + 0x10] disp+4	16	0	0	0
+0x005ab410	0x005ab410	sub esp, 0x14 imm+1	0	16	0	0
+0x005ab410	0x005ab4b2	mov dword ptr [0x7dd60c], esi disp+4	9	7	0	0
+0x005ab410	0x005ab492	mov eax, 1 imm+1	8	7	1	1
+0x005ab410	0x005ab4ac	mov dword ptr [0x7dd608], esi disp+4	9	7	0	0
+0x005ab410	0x005ab546	mov ecx, dword ptr [0x7dd620] disp+4	9	7	0	0
+0x005ab410	0x005ab501	mov eax, 1 imm+1	9	7	0	0
+0x005ab410	0x005ab449	lea edx, [esp + 8] disp+4	9	7	0	0
+0x005ab410	0x005ab528	mov edi, dword ptr [0x5cc088] disp+4	9	7	0	0
+0x005ad320	0x005ad405	mov eax, dword ptr [esp + 0x10] disp+4	15	0	1	1
+0x005ad320	0x005ad350	mov dword ptr [esp + 0x14], eax disp+4	14	2	0	0
+0x005ad320	0x005ad344	mov dword ptr [esp + 0x10], 1 imm+1	16	0	0	0
+0x005ad320	0x005ad3ff	mov dword ptr [esp + 0x24], eax disp+4	15	1	0	0
+0x005ad320	0x005ad363	mov eax, dword ptr [esp + 0x18] disp+4	16	0	0	0
+0x005ad320	0x005ad3c5	mov edx, dword ptr [esp + 0x20] disp+4	16	0	0	0
+0x005ad320	0x005ad33a	mov di, word ptr [ecx + 0xc] disp+4	16	0	0	0
+0x005ad320	0x005ad3e8	add esi, 0x18 imm+1	16	0	0	0
+0x005ae920	0x005ae98b	mov byte ptr [esi + edx + 8], cl disp+4	8	0	8	1
+0x005ae920	0x005ae939	mov eax, dword ptr [esp + 0x18] disp+4	3	0	13	1
+0x005ae920	0x005ae961	div dword ptr [ebp] disp+4	13	0	3	1
+0x005ae920	0x005ae9e4	mov dword ptr [esi + 4], edi disp+4	13	0	3	1
+0x005ae920	0x005ae9e9	mov dword ptr [ecx + 4], esi disp+4	13	0	3	1
+0x005ae920	0x005ae969	lea ecx, [edx*8] disp+4	14	0	2	1
+0x005ae920	0x005ae92b	mov ebx, dword ptr [ebp + 8] disp+4	3	0	13	1
+0x005ae920	0x005ae9d8	mov dword ptr [eax + 4], esi disp+4	12	0	4	1

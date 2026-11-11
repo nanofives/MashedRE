@@ -1,0 +1,34 @@
+rva	source	best_pct	bytes_bad	bytes_n	subsystem	hooks_conf	verdict	classes	regs	callers_all_ignore	kind	detail	rules	local_callees
+0x00407be0	re/match/s01/00407be0.c	67.6	76	223	gameplay	C2	EQUIV	ENC,LAYOUT,VALUE-FLOW					jmp-threading	
+0x00408b00	re/match/s01/00408b00.c	90.2	214	1932	util	C2	EQUIV	ENC,SIB,ORDER,VALUE-FLOW					A1-exposed,A5-arity,no-return	
+0x0040b290	re/match/s02/0040b290.c	86.6	97	381	frontend	C2	EQUIV	VALUE-FLOW					jmp-threading	
+0x00417180	re/match/s03/h4_00417180.c	76.8	283	487	ai	C3	EQUIV	ORDER,FRAME,VALUE-FLOW					jmp-threading	_FUN_00414030
+0x00417450	re/match/s03/h2_00417450.c	73.6	138	192	gameplay	C3	EQUIV	ENC,LAYOUT,VALUE-FLOW					jmp-threading,polarity	
+0x0041f770	re/match/s05/0041f770.c	91.5	110	250	gameplay	C2	EQUIV	ENC,LAYOUT					A1-exposed,jmp-threading	
+0x00429310	re/match/s06/00429310.c	98.3	16	644	util	C2	EQUIV	VALUE-FLOW					x87-barrier	
+0x00429bd0	re/match/s06/00429bd0.c	99.4	4	575	util	C2	EQUIV	ORDER,FRAME					A4-indirect,A5-arity,x87-barrier	
+0x0042aa00	re/match/s06/0042aa00.c	76.8	57	169	frontend	C3	EQUIV	ENC,ORDER,LAYOUT,FRAME,VALUE-FLOW					jmp-threading	
+0x004332a0	re/match/s08/004332a0.c	97.3	60	835	frontend	C2	EQUIV	LAYOUT,VALUE-FLOW					jmp-threading,polarity	_FUN_0042ac50,_FUN_00430760
+0x00448220	re/match/s08/00448220.c	97.0	81	1235	frontend	C2	EQUIV	LAYOUT,VALUE-FLOW					jmp-threading	
+0x0045c480	re/match/s10/0045c480.c	55.0	26	82	util	C3	EQUIV	FRAME,VALUE-FLOW						
+0x00475a00	re/match/pilot/a3_00475a00.c	93.1	2	91	render	C2	EQUIV	SIB						
+0x0047cea0	re/match/s13/0047cea0.c	94.0	3	127	physics	C2	EQUIV	SIB,VALUE-FLOW						
+0x00484de0	re/match/s14/00484de0.c	99.2	14	394	world-objects	C2	EQUIV	ORDER					A4-indirect	
+0x00485b30	re/match/s14/00485b30.c	46.9	118	147	smplfzx	C3	EQUIV	ENC,LAYOUT,FRAME,VALUE-FLOW					jmp-threading,polarity	
+0x0048a4e0	re/match/s14/0048a4e0.c	98.8	2	238	particle	C2	EQUIV	VALUE-FLOW					jmp-threading	
+0x004938e0	re/match/s15/004938e0.c	80.0	4	28	util	C3	EQUIV	ENC,VALUE-FLOW						
+0x00498ea0	re/match/s16/00498a00.c	91.1	7	183	render	C2	EQUIV	SIB,ORDER					A4-indirect,A5-arity,call-args-all	_FUN_00498a00
+0x004b61c0	re/match/s18/004b61c0.c	95.9	398	703	render	C2	EQUIV	ENC					A4-indirect,jmp-threading	
+0x004c18c0	re/match/s19/004c18c0.c	65.2	76	98	unknown	C2	EQUIV	LAYOUT					polarity	
+0x004d4f00	re/match/s21/004d4f00.c	98.5	11	142	render	C2	EQUIV	ORDER					A4-indirect	
+0x00555360	re/match/s24/00555360.c	94.4	55	353	hud	C2	EQUIV-IF-CALLERS-IGNORE	ORDER,LAYOUT,VALUE-FLOW	eax	True			A4-indirect,polarity	
+0x005a6b70	re/match/s25/005a6b70.c	84.6	136	224	audio	C2	EQUIV	ORDER,LAYOUT,VALUE-FLOW					jmp-threading,polarity	
+0x005a8890	re/match/s25/005a8890.c	88.2	40	207	audio	C2	EQUIV	REG,LAYOUT,VALUE-FLOW						
+0x005aa7a0	re/match/s25/005aa7a0.c	82.1	12	57	audio	C2	EQUIV	LAYOUT					polarity	
+0x005aaac0	re/match/s25/005aaac0.c	77.3	17	53	audio	C2	EQUIV	ORDER,LAYOUT,FRAME,VALUE-FLOW					A4-indirect	
+0x005aab00	re/match/s25/005aab00.c	77.8	60	93	audio	C2	EQUIV	VALUE-FLOW					A4-indirect,jmp-threading	
+0x005ab410	re/match/s25/005ab410.c	75.4	53	148	audio	C3	EQUIV	LAYOUT,VALUE-FLOW					A1-exposed,polarity	
+0x005ace70	re/match/s26/005ace70.c	89.7	242	364	audio	C2	EQUIV	LAYOUT					polarity	
+0x005ad320	re/match/s26/005ad320.c	65.2	204	257	audio	C2	EQUIV	FRAME,VALUE-FLOW						
+0x005ae3a0	re/match/s26/005ae3a0.c	84.8	11	90	audio	C2	EQUIV	VALUE-FLOW						
+0x005ae920	re/match/s26/005ae920.c	96.8	3	211	audio	C3	EQUIV	SIB						

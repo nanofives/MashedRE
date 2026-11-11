@@ -3,6 +3,12 @@ machine states and compare what a caller can observe.
 
     py -3.12 re/tools/match/equiv_dyn.py <src.c> --only 0x<rva> [--runs 32]
     py -3.12 re/tools/match/equiv_dyn.py --tsv verify/equivcheck_20261111/measure_v2.tsv [--runs 32] [--out <tsv>]
+    ... [--seeded] [--seed N]   seeded inputs (EQUIV-ADMIT-1): sparse pages (one dword in 8 nonzero: a small count, a
+                                heap-page pointer or a hash word), the per-RVA builders of equiv_seeds.py, and stubs
+                                that return EAX = 0 one call in four. For rows whose uniform-random runs never end
+                                (circular lists, loops on a callee result). The comparison is unchanged.
+A `call [IAT slot]` is stubbed with the import's own pop count (from its __imp_ decoration), so __stdcall imports
+leave the stack balanced (EQUIV-ADMIT-1; before, 0x005a8890 ended every run 20 bytes low and inconclusive).
 
 What one run does
 * One memory layout for both runs: the whole original image at its base, our compiled section at 0x20000000 (every
@@ -39,6 +45,7 @@ sys.path.insert(0, str(HERE))
 import importlib, os  # noqa: E402
 equiv = importlib.import_module(os.environ.get("EQUIV_MODULE", "equiv"))  # noqa: E402
 import match  # noqa: E402
+import equiv_seeds  # noqa: E402
 
 M32 = 0xFFFFFFFF
 OURS_BASE = 0x20000000
@@ -55,8 +62,34 @@ REGS = [("eax", R.UC_X86_REG_EAX), ("ecx", R.UC_X86_REG_ECX), ("edx", R.UC_X86_R
 FPREGS = [getattr(R, f"UC_X86_REG_FP{i}") for i in range(8)]
 
 
+SEEDED = False   # --seeded: sparse pages (EQUIV-ADMIT-1), so list walks and loop bounds read from memory terminate
+
+
 def page_bytes(base):
-    return hashlib.blake2b(struct.pack("<I", base), digest_size=64).digest() * (PAGE // 64)
+    if not SEEDED:
+        return hashlib.blake2b(struct.pack("<I", base), digest_size=64).digest() * (PAGE // 64)
+    # Seeded-input mode: a page is zero except one dword in 8, which is a small count (0..7), a pointer to the start of
+    # another heap page, or a hash word, chosen from a hash of the page address. NULL next pointers and small counts
+    # end the list walks and loops that make the uniform-random picture inconclusive.
+    out = bytearray(PAGE)
+    h = hashlib.blake2b(struct.pack("<I", base), digest_size=64).digest()
+    k = 0
+    for off in range(0, PAGE, 32):
+        if k + 4 > len(h):
+            h = hashlib.blake2b(h, digest_size=64).digest()
+            k = 0
+        sel, w = h[k], struct.unpack_from("<I", h, k)[0]
+        k += 4
+        if sel < 96:
+            v = w & 7
+        elif sel < 160:
+            v = HEAP + (w % 0x100) * PAGE
+        elif sel < 192:
+            v = w
+        else:
+            v = 0
+        struct.pack_into("<I", out, off, v)
+    return bytes(out)
 
 
 class Layout:
@@ -79,6 +112,9 @@ class Layout:
         name = symrec.get("name", "?")
         sec = symrec.get("sec", 0)
         a = self.res.sym_address(name) if sec != self.ours_sec else None
+        if a is not None and name.startswith("__imp_"):
+            m = __import__("re").search(r"@(\d+)$", name)
+            self.res.import_pop[(a + field) & M32] = int(m.group(1)) if m else 0
         if a is not None:
             # a name that carries the original's address (FUN_/DAT_/MGLOBAL/symmap) goes to the original, as in
             # equiv.py, even when this object defines a body of that name
@@ -146,9 +182,13 @@ def run_one(layout, body, state, max_ins=MAXI):
     """One execution. Returns the observable record or ('inconclusive', why)."""
     uc = Uc(UC_ARCH_X86, UC_MODE_32)
     layout.build(uc)
-    stack, regs = state
+    stack, regs = state[0], state[1]
+    seed = state[2] if len(state) > 2 else None
     uc.mem_write(STACK_LO, stack)
     uc.mem_write(ESP0, struct.pack("<I", SENTINEL))
+    if seed:
+        for addr, data in seed.get("mem", ()):
+            seeded_write(uc, addr, data)
     for (name, rid), v in zip(REGS, regs):
         uc.reg_write(rid, v)
     uc.reg_write(R.UC_X86_REG_ESP, ESP0)
@@ -207,7 +247,7 @@ def run_one(layout, body, state, max_ins=MAXI):
                     fault = (str(e), count[0], eip)
                     break
         if not pending:
-            return ("inconclusive", "instruction limit")
+            return ("inconclusive", f"instruction limit at eip 0x{uc.reg_read(R.UC_X86_REG_EIP):08x}")
         kind, addr = pending[0]
         if kind == "limit":
             return ("inconclusive", "instruction limit")
@@ -219,7 +259,24 @@ def run_one(layout, body, state, max_ins=MAXI):
         tgt = equiv.resolve_thunk(addr) if equiv.image().in_image(addr) else addr
         name = next((n for n, v in layout.ext.items() if v == addr), None)
         livein = ()
-        if tgt < OURS_BASE:
+        # a `call dword ptr [IAT slot]` (FF 15 <slot>) reaches the slot's file value, not a function: take the pop
+        # count from the import's decoration (equiv.Resolver.import_pop) and name the record by the import, so a
+        # __stdcall import does not leave the stack unbalanced (EQUIV-ADMIT-1: 0x005a8890's WaitForSingleObject /
+        # ReleaseSemaphore left ESP 20 bytes low and every run ended inconclusive)
+        imp = None
+        try:
+            cb = bytes(uc.mem_read((ret - 6) & M32, 6))
+            if cb[0] == 0xFF and cb[1] == 0x15:
+                slot = struct.unpack_from("<I", cb, 2)[0]
+                if slot in getattr(layout.res, "import_pop", {}):
+                    imp = slot
+        except UcError:
+            pass
+        if imp is not None:
+            P = layout.res.import_pop[imp]
+            N = P // 4
+            name = "imp:" + "!".join(equiv.image().iat.get(imp, ("?", hex(imp))))
+        elif tgt < OURS_BASE:
             s = equiv.summary(tgt)
             P = s["P"] if s["P"] is not None else (equiv.ret_pop(tgt) or 0)
             N = s["N"] if s["N"] is not None else 0
@@ -231,7 +288,10 @@ def run_one(layout, body, state, max_ins=MAXI):
         rec = (name or tgt, args, tuple((r, uc.reg_read(rid[r])) for r in livein))
         events.append(rec)
         h = hashlib.blake2b(repr(rec).encode(), digest_size=12).digest()
-        uc.reg_write(R.UC_X86_REG_EAX, struct.unpack_from("<I", h, 0)[0])
+        uc.reg_write(R.UC_X86_REG_EAX, 0 if SEEDED and h[0] % 4 == 0 else struct.unpack_from("<I", h, 0)[0])
+        if seed and seed.get("effect"):
+            for addr, data in seed["effect"](tgt, args, h):
+                seeded_write(uc, addr, data)
         uc.reg_write(R.UC_X86_REG_ECX, struct.unpack_from("<I", h, 4)[0])
         uc.reg_write(R.UC_X86_REG_EDX, struct.unpack_from("<I", h, 8)[0])
         uc.reg_write(R.UC_X86_REG_ESP, esp + 4 + P)
@@ -252,6 +312,33 @@ def run_one(layout, body, state, max_ins=MAXI):
         "count": count[0],
     }
     return out
+
+
+def seeded_write(uc, addr, data):
+    """Write seed bytes, mapping (with the page filler) any page not mapped yet."""
+    for base in range(addr & ~(PAGE - 1), addr + len(data), PAGE):
+        try:
+            uc.mem_map(base, PAGE, UC_PROT_ALL)
+            uc.mem_write(base, page_bytes(base))
+        except UcError:
+            pass
+    uc.mem_write(addr, bytes(data))
+
+
+def seeded_state(rng, rva):
+    """random_state, then the RVA's seed (equiv_seeds.SEEDS) overrides the stack arguments and registers it names."""
+    stack, regs = random_state(rng)
+    fn = equiv_seeds.SEEDS.get(rva) if SEEDED else None
+    if fn is None:
+        return stack, regs
+    sd = fn(rng)
+    st = bytearray(stack)
+    for i, v in enumerate(sd.get("args", ()), 1):
+        struct.pack_into("<I", st, ESP0 - STACK_LO + 4 * i, v & M32)
+    regs = list(regs)
+    for k, v in sd.get("regs", {}).items():
+        regs[[n for n, _ in REGS].index(k)] = v & M32
+    return bytes(st), regs, sd
 
 
 def random_state(rng):
@@ -291,12 +378,12 @@ def compare(a, b, ignore=()):
     return "same"
 
 
-def check(layout, bodyA, bodyB, runs=32, seed=1, ignore=()):
+def check(layout, bodyA, bodyB, runs=32, seed=1, ignore=(), rva=None):
     rng = random.Random(seed)
     tally = {"same": 0, "inconclusive": 0, "differs": 0}
     first = None
     for _ in range(runs):
-        st = random_state(rng)
+        st = seeded_state(rng, rva)
         ra = run_one(layout, bodyA, st)
         rb = run_one(layout, bodyB, st)
         c = compare(ra, rb, ignore)
@@ -341,7 +428,11 @@ def main():
     ap.add_argument("--out", default="")
     ap.add_argument("--verdicts", default="EQUIV,EQUIV-IF-CALLERS-IGNORE")
     ap.add_argument("--shard", default="0/1")
+    ap.add_argument("--seeded", action="store_true", help="sparse seeded memory pages (see page_bytes)")
+    ap.add_argument("--seed", type=int, default=1)
     a = ap.parse_args()
+    global SEEDED
+    SEEDED = a.seeded
     rows = []
     want = set(a.verdicts.split(","))
     si, sn = (int(x) for x in a.shard.split("/"))
@@ -356,7 +447,7 @@ def main():
     for i, (src, rva, ign) in enumerate(rows, 1):
         try:
             layout, bA, bB = bodies_for(src, rva)
-            tally, first = check(layout, bA, bB, a.runs, ignore=ign)
+            tally, first = check(layout, bA, bB, a.runs, seed=a.seed, ignore=ign, rva=rva)
             status = "DIFFERS" if tally["differs"] else ("SAME" if tally["same"] else "INCONCLUSIVE")
         except BaseException as e:  # noqa: BLE001  (a failed compile raises SystemExit)
             tally, first, status = {"same": 0, "inconclusive": 0, "differs": 0}, f"error: {str(e).splitlines()[0] if str(e) else type(e).__name__}"[:200], "ERROR"

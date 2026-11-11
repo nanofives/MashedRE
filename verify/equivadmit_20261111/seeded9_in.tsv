@@ -1,0 +1,10 @@
+rva	source	best_pct	bytes_bad	bytes_n	subsystem	hooks_conf	verdict	classes	regs	callers_all_ignore	kind	detail	rules	local_callees
+0x00485b30	re/match/s14/00485b30.c	46.9	118	147	smplfzx	C3	EQUIV	ENC,LAYOUT,FRAME,VALUE-FLOW					jmp-threading,polarity	
+0x004938e0	re/match/s15/004938e0.c	80.0	4	28	util	C3	EQUIV	ENC,VALUE-FLOW						
+0x004b61c0	re/match/s18/004b61c0.c	95.9	398	703	render	C2	EQUIV	ENC					A4-indirect,jmp-threading	
+0x005a8890	re/match/s25/005a8890.c	88.2	40	207	audio	C2	EQUIV	REG,LAYOUT,VALUE-FLOW						
+0x005aaac0	re/match/s25/005aaac0.c	77.3	17	53	audio	C2	EQUIV	ORDER,LAYOUT,FRAME,VALUE-FLOW					A4-indirect	
+0x005aab00	re/match/s25/005aab00.c	77.8	60	93	audio	C2	EQUIV	VALUE-FLOW					A4-indirect,jmp-threading	
+0x005ab410	re/match/s25/005ab410.c	75.4	53	148	audio	C3	EQUIV	LAYOUT,VALUE-FLOW					A1-exposed,polarity	
+0x005ad320	re/match/s26/005ad320.c	65.2	204	257	audio	C2	EQUIV	FRAME,VALUE-FLOW						
+0x005ae920	re/match/s26/005ae920.c	96.8	3	211	audio	C3	EQUIV	SIB						
