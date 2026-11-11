@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-11 16:39 L115-HUDINIT-PROOFS (orch/L115-HUDINIT-PROOFS): not run: text-only change (no build input touched). Bounced: HUDINIT-A (orch/HUDINIT-A): set aside, conflict needs a hand merge (frida-sweep recipe): hooks.csv. Run data D:\MashedWT\mtrain_data\20261111_163441
 - 2026-11-11 16:14 BIND-CRT-STDIO (orch/BIND-CRT-STDIO), RWC-DRIVER (orch/RWC-DRIVER), MATCH-LEDGER-REFRESH (orch/MATCH-LEDGER-REFRESH), RWC-DEVICE (orch/RWC-DEVICE), EQUIV-ADMIT-1 (orch/EQUIV-ADMIT-1): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Bounced: MATCH-RT2D-FONT-2 (orch/MATCH-RT2D-FONT-2): set aside, conflict needs a hand merge (frida-sweep recipe): hooks.csv. Run data D:\MashedWT\mtrain_data\20261111_154512
 - 2026-11-11 15:42 C4-REPLAY-RULE (orch/C4-REPLAY-RULE), HB-V5-SKILL (orch/HB-V5-SKILL), RWC-CENSUS (orch/RWC-CENSUS), MATCH-EXACT-DATA (orch/MATCH-EXACT-DATA): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_145625
 - 2026-11-11 08:31 ROADMAP-V5 (orch/ROADMAP-V5): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261111_082943
