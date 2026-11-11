@@ -50,7 +50,7 @@ FIXED = {  # rva -> (name or None, kind, symbol, note, level, caller)
     0x00552a60: ('FontSys_SetActiveCamera', 'matched', 'Orig_00552a60', T + 'Match/PortTop_00552a60.cpp = '
                  're/match/s24/00552a60.c (BYTE-IDENTICAL 236 B). Camera 0 on this path: DAT_00912c0c = 0, returns 0' + EV,
                  4, OPEN),
-    0x00552b50: (None, 'matched', 'Orig_00552b50', T + 'Match/PortTop_00552b50.cpp = re/match/s24/00552b50.c (new source, '
+    0x00552b50: (None, 'matched', 'Orig_00552b50', T + 'Match/PortTop_00552b50.cpp = re/match/rt2d/00552b50.c (MATCH-RT2D-FONT source, '
                  'BYTE-IDENTICAL 6 B, relocheck OK 1/1): jmp dword ptr [0x00912c58]. Installed at camera +0x1c only for a '
                  'non-zero camera, so not called on this path' + EV, 5, 0x00552a60),
     0x00552750: ('FontCtx_ResetTransform', 'matched', 'Orig_00552750', T + 'Match/PortTop_00552750.cpp = '

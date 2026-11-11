@@ -355,3 +355,33 @@ Checks on this tree (data `D:/MashedWT/HUDINIT-A_data6`, root `D:/MashedWT/HUDIN
 | knob_on_rwmod.log | 74d112c292317742640b828c69015796c7b651ae58168966a418e7ff54e182c2 |
 | build_ddkobj.log | f726341fe2345600c340a73a974882896b6b42e019e05c73e408ed31819b3c64 |
 | runs.tsv | f560646e9825f27b38517ec0c4d851cd17931fc8944763b7fbaa1d1204796438 |
+
+## Rebase onto orch/MATCH-RT2D-FONT (MATCH-REBASE-3, 2026-11-11). Must merge AFTER MATCH-RT2D-FONT
+
+The merge train set this branch aside on a hooks.csv conflict. Lead ruling (option A): the branch is **stacked on
+orch/MATCH-RT2D-FONT a7560ddb0** (itself on orch/integration df08d4cea), so it carries that row's commits and must
+merge after it (queue order MATCH-RT2D-FONT, MATCH-RT2D-FONT-2, then this row).
+
+- 0x00552b50: integration has its C1 row from RWC-CENSUS (third-party-library[renderware]). MATCH-RT2D-FONT promotes it
+  to C4 with `re/match/rt2d/00552b50.c`. This branch's duplicate `re/match/s24/00552b50.c` (same code, other comments)
+  is **deleted**. `Match/PortTop_00552b50.cpp` now includes `re/match/rt2d/00552b50.c`. This branch's own c1_add and C4 for
+  0x00552b50 are not re-applied, because row 1 owns them. `update_bindings_hudinit_a.py` now names the rt2d source, and the
+  re-run rewrote the BINDINGS.tsv row (545 rows). No other file references the s24 path (the table row above at "new
+  re/match/s24/00552b50.c" is history).
+- hooks.csv and CHANGELOG: MATCH-RT2D-FONT's copies taken as-is. Then `scripts/backfill_exe_file.py` and
+  `scripts/backfill_port.py` were run after the build. Only this row's 11 rows were kept from their output (exe_file +
+  port = called on 0x004cc9e0 0x00552750 0x00552a60 0x00552b50 0x00552b60 0x00552c10 0x00553f40 0x005540d0 0x00556d20
+  0x005571e0 0x00557250). The tool also filled 217 rows that come from integration drift, not from this row: 215 empty
+  port cells -> none, plus 0x0053d2b0 and 0x00557a60 (exe_file and port = called). Those were left out so the diff
+  stays on this row's lines. The full output is kept at D:/MashedWT/HUDINIT-A-rebase_data/hooks.csv.full-backfill.
+  tracker_lint OK (base a7560ddb0, NEW=0).
+
+Checks on the rebased tree (data D:/MashedWT/HUDINIT-A-rebase_data):
+
+| check | result |
+|---|---|
+| default build | rc 0, `=== Build OK ===`, rva-lint OK (38 known, NEW=0), ORIGTOP-ONLY 36 |
+| object build (`MASHED_DDKOBJ=1`) | rc 0, `=== Build OK ===` |
+| `ddkobj.py check` | IDENTICAL 553, DIFFERENT 7, not-in-map 3. 0x00552b50 `_Orig_00552b50` IDENTICAL, diff_bytes 0, src re/match/rt2d/00552b50.c |
+| match.py / relocheck on re/match/rt2d/00552b50.c | 100%, 6 B BYTE-IDENTICAL, relocheck OK 1/0 |
+| knob-ON boot, RWMOD on (test-slot + mashed_lock) | `Rt2d open(camera 0x00000000) ran: 0x00557250=1 0x005540d0=1 0x00556d20=1 0x00555360=0 0x005571e0=1 0x00552c10=1 0x00552a60=0`, same as above. `WinMain 0x00492370 returned 0 after 3000 frames`. log sha256 61da39efa383bd9c073521e86a6c621abe59f5697ebaa73009bdfffd868f96ef |
