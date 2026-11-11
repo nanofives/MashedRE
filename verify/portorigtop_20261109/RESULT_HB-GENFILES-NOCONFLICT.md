@@ -88,7 +88,14 @@ APPEND)` edits BINDINGS.tsv in place with only that row's delta, is idempotent a
 ## Gates
 
 - rva-lint OK: 35 known, NEW=0.
-- Build and G-CTRL / B: see the "Build and gates" section below.
+- Build OK (exit 0, 0 errors; the build input change is the `.inc` header comment only).
+- G-CTRL `8284be46` / `67931834` / `31fe043e` and B `1d5bf4f9` x3, all **unchanged**.
+  - Runner: `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`
+  - `A4_ROOT=D:/MashedWT/POWERUPINIT-C_rootA`, `A4_OUT=D:/MashedWT/HB-GENFILES-NOCONFLICT_data/arms`
+  - Wrapped as test-slot, then mashed_lock.
+- The drivers are registered in the shared clone config: `py -3.12 scripts/genfiles_merge.py --install`, run with
+  no merge train process alive. `merge_train.ps1` needed no change, since git config plus `.gitattributes` are
+  enough.
 
 ## Note for the worker brief
 
