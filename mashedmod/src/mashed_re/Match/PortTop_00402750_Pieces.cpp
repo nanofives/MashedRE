@@ -78,6 +78,7 @@ bool PizNameEq(const char* a, const char* b) {
 extern "C" {
 void PortTop_HandInit_DataInput(void* h);
 int  PortTop_HandInit_Movies(void* h);
+void PortTop_MovieBind_SelfTest(void);   // Match/PortTop_MovieBind.cpp
 void PortTop_HandInit_Audio(void);
 void PortTop_HandInit_Rasters(void);
 void PortTop_HandInit_FrontendAssets(void);
@@ -101,6 +102,7 @@ void PortTop_Piece_00495350(void) {
     const int ok = PortTop_HandInit_Movies(Hinst());
     if (!ok) g_PortTop04E_InitFailed = 1;
     Log04E("0x00495350 HardwareShowIntroVideo: piece 2 HandTop_InitMovies returned %d", ok);
+    if (ok) PortTop_MovieBind_SelfTest();   // PORT-OT-BIND-D3D, MASHED_DBG_MOVIEBIND_SELFTEST=1 only (default off)
 }
 // rva 0x004669b0 sound engine init hub -> piece 3 (exe audio, permdict.rws bank, menu music)
 void PortTop_Piece_004669b0(void) {

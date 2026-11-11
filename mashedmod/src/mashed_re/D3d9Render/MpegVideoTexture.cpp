@@ -96,6 +96,7 @@ bool MpegVideoTexture::Open(IDirect3DDevice9* dev, const char* mpg_path,
                             char* err, unsigned err_len,
                             const MpegOpenOptions& opt) {
     loop_ = opt.loop;
+    flip_ = opt.flip;
     ended_ = false;
     audio_hr_ = 0;
     auto fail = [&](const char* what, HRESULT hr) {
@@ -340,7 +341,7 @@ void MpegVideoTexture::Update() {
         for (unsigned y = 0; y < h_; ++y)
             std::memcpy(static_cast<unsigned char*>(lr.pBits) +
                             y * static_cast<unsigned>(lr.Pitch),
-                        buf_ + (h_ - 1 - y) * stride, stride);
+                        buf_ + (flip_ ? (h_ - 1 - y) : y) * stride, stride);
         tex_->UnlockRect(0);
         det_uploaded_ = true;   // R10b: one upload is enough in deterministic mode
     }
@@ -361,6 +362,18 @@ bool MpegVideoTexture::Ended() {
         event_->FreeEventParams(code, p1, p2);
     }
     return ended_;
+}
+
+long MpegVideoTexture::QueryGraph(const GUID& iid, void** out) const {
+    if (!out) return E_POINTER;
+    *out = nullptr;
+    return graph_ ? graph_->QueryInterface(iid, out) : E_NOINTERFACE;
+}
+
+long MpegVideoTexture::QueryGrabberFilter(const GUID& iid, void** out) const {
+    if (!out) return E_POINTER;
+    *out = nullptr;
+    return grab_ ? grab_->QueryInterface(iid, out) : E_NOINTERFACE;
 }
 
 void MpegVideoTexture::Close() {

@@ -10561,6 +10561,8 @@ int  PortTop_HandInit_Movies(HINSTANCE h) { int rc = 0; return HandTop_InitMovie
 void PortTop_HandInit_Audio() { HandTop_InitAudio(); }
 void PortTop_HandInit_Rasters() { HandTop_InitRasters(); }
 void PortTop_HandInit_FrontendAssets() { HandTop_InitFrontendAssets(); }
+// [PORT-OT-BIND-D3D] the exe device, the only device, for the DirectShow movie binding (Match/PortTop_MovieBind.cpp).
+IDirect3DDevice9* PortTop_ExeDevice() { return g_device; }
 void PortTop_HandPollKeyboard() { PollKeyboard(); }
 void PortTop_HandFrameUpdate() { if (HandTop_FrameDetTick()) HandTop_FrameUpdate(); }
 int  PortTop_HandRenderFrame() { if (!RenderFrame()) { PostQuitMessage(0); return 0; } return 1; }
