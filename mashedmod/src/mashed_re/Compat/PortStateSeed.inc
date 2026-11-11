@@ -3,13 +3,13 @@
 // addresses, for exactly the addresses of the inventory below. Consumer: Compat/PortStateSeed.cpp.
 // inventory: verify/portstate_20261108/SEED_CANDIDATES.tsv
 // binary:    original/MASHED.exe.unpatched sha256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
-// entries 263, bytes 3192
+// entries 272, bytes 3231
 // FNV-1a 32 over (addr u32 LE, len u32 LE, bytes) per entry in address order:
-#define MASHED_PORTSTATE_SEED_ENTRIES 263u
-#define MASHED_PORTSTATE_SEED_BYTES 3192u
-#define MASHED_PORTSTATE_SEED_FNV1A 0xce5a7775u
+#define MASHED_PORTSTATE_SEED_ENTRIES 272u
+#define MASHED_PORTSTATE_SEED_BYTES 3231u
+#define MASHED_PORTSTATE_SEED_FNV1A 0x5ecb7d52u
 
-static const unsigned char kPortStateSeedData[3192] = {
+static const unsigned char kPortStateSeedData[3231] = {
     // 0x005cc31c DAT_005cc31c (.rdata, 4)
     0x00, 0x00, 0x40, 0x40,
     // 0x005cc320 DAT_005cc320 (.rdata, 4)
@@ -597,6 +597,20 @@ static const unsigned char kPortStateSeedData[3192] = {
     0x72, 0x00,
     // 0x00618150 DAT_00618150 (.data, 4)
     0x18, 0x00, 0x00, 0x00,
+    // 0x00623e8c DAT_00623e8c (.data, 4)
+    0x20, 0x00, 0x00, 0x00,
+    // 0x00623e90 DAT_00623e90 (.data, 4)
+    0x01, 0x00, 0x00, 0x00,
+    // 0x00623e94 DAT_00623e94 (.data, 4)
+    0x08, 0x00, 0x00, 0x00,
+    // 0x00623e98 DAT_00623e98 (.data, 4)
+    0x01, 0x00, 0x00, 0x00,
+    // 0x00623e9c DAT_00623e9c (.data, 4)
+    0x10, 0x00, 0x00, 0x00,
+    // 0x00623ea0 DAT_00623ea0 (.data, 4)
+    0x01, 0x00, 0x00, 0x00,
+    // 0x00623ea4 s_fonts__00623ea4 (.data, 7)
+    0x66, 0x6f, 0x6e, 0x74, 0x73, 0x5c, 0x00,
     // 0x00623eac s_METRICS3_00623eac (.data, 10)
     0x4d, 0x45, 0x54, 0x52, 0x49, 0x43, 0x53, 0x33, 0x0a, 0x00,
     // 0x00623eb8 s_METRICS2_00623eb8 (.data, 10)
@@ -605,6 +619,10 @@ static const unsigned char kPortStateSeedData[3192] = {
     0x4d, 0x45, 0x54, 0x52, 0x49, 0x43, 0x53, 0x31, 0x0a, 0x00,
     // 0x00623ed0 DAT_00623ed0 (.data, 5)
     0x2e, 0x6d, 0x65, 0x74, 0x00,
+    // 0x00623f60 DAT_00623f60 (.data, 4)
+    0x08, 0x00, 0x00, 0x00,
+    // 0x00623f64 DAT_00623f64 (.data, 4)
+    0x01, 0x00, 0x00, 0x00,
     // 0x00623f68 DAT_00623f68 (.data, 4)
     0x20, 0x00, 0x00, 0x00,
     // 0x00623f6c DAT_00623f6c (.data, 4)
@@ -621,7 +639,7 @@ static const unsigned char kPortStateSeedData[3192] = {
     0x14, 0x64, 0x5e, 0x00,
 };
 
-static const PortStateSeedEntry kPortStateSeedEntries[263] = {
+static const PortStateSeedEntry kPortStateSeedEntries[272] = {
     { 0x005cc31cu,    4u,    0u },   // DAT_005cc31c, read by -
     { 0x005cc320u,    4u,    4u },   // DAT_005cc320, read by -
     { 0x005cc324u,    4u,    8u },   // DAT_005cc324, read by -
@@ -874,15 +892,24 @@ static const PortStateSeedEntry kPortStateSeedEntries[263] = {
     { 0x00616670u,    4u, 3119u },   // DAT_00616670, read by -
     { 0x00617378u,    2u, 3123u },   // DAT_00617378, read by -
     { 0x00618150u,    4u, 3125u },   // DAT_00618150, read by -
-    { 0x00623eacu,   10u, 3129u },   // s_METRICS3_00623eac, read by -
-    { 0x00623eb8u,   10u, 3139u },   // s_METRICS2_00623eb8, read by -
-    { 0x00623ec4u,   10u, 3149u },   // s_METRICS1_00623ec4, read by -
-    { 0x00623ed0u,    5u, 3159u },   // DAT_00623ed0, read by -
-    { 0x00623f68u,    4u, 3164u },   // DAT_00623f68, read by -
-    { 0x00623f6cu,    4u, 3168u },   // DAT_00623f6c, read by -
-    { 0x00623f70u,    4u, 3172u },   // DAT_00623f70, read by -
-    { 0x00623f74u,    4u, 3176u },   // DAT_00623f74, read by -
-    { 0x00623f78u,    4u, 3180u },   // DAT_00623f78, read by -
-    { 0x00623f7cu,    4u, 3184u },   // DAT_00623f7c, read by -
-    { 0x00633674u,    4u, 3188u },   // PTR_DAT_00633674, read by -
+    { 0x00623e8cu,    4u, 3129u },   // DAT_00623e8c, read by -
+    { 0x00623e90u,    4u, 3133u },   // DAT_00623e90, read by -
+    { 0x00623e94u,    4u, 3137u },   // DAT_00623e94, read by -
+    { 0x00623e98u,    4u, 3141u },   // DAT_00623e98, read by -
+    { 0x00623e9cu,    4u, 3145u },   // DAT_00623e9c, read by -
+    { 0x00623ea0u,    4u, 3149u },   // DAT_00623ea0, read by -
+    { 0x00623ea4u,    7u, 3153u },   // s_fonts__00623ea4, read by -
+    { 0x00623eacu,   10u, 3160u },   // s_METRICS3_00623eac, read by -
+    { 0x00623eb8u,   10u, 3170u },   // s_METRICS2_00623eb8, read by -
+    { 0x00623ec4u,   10u, 3180u },   // s_METRICS1_00623ec4, read by -
+    { 0x00623ed0u,    5u, 3190u },   // DAT_00623ed0, read by -
+    { 0x00623f60u,    4u, 3195u },   // DAT_00623f60, read by -
+    { 0x00623f64u,    4u, 3199u },   // DAT_00623f64, read by -
+    { 0x00623f68u,    4u, 3203u },   // DAT_00623f68, read by -
+    { 0x00623f6cu,    4u, 3207u },   // DAT_00623f6c, read by -
+    { 0x00623f70u,    4u, 3211u },   // DAT_00623f70, read by -
+    { 0x00623f74u,    4u, 3215u },   // DAT_00623f74, read by -
+    { 0x00623f78u,    4u, 3219u },   // DAT_00623f78, read by -
+    { 0x00623f7cu,    4u, 3223u },   // DAT_00623f7c, read by -
+    { 0x00633674u,    4u, 3227u },   // PTR_DAT_00633674, read by -
 };
