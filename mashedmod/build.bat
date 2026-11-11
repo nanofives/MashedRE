@@ -268,6 +268,20 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
+REM ===========================================================================
+REM DDKOBJ variant (DDKOBJ-SPIKE, 2026-11-11). OPT-IN ONLY: set MASHED_DDKOBJ=1. Builds a SECOND exe,
+REM build\ddkobj\mashed_re_ddk.exe, that links the XP DDK objects of the byte-matched re/match sources (the certified
+REM bytes) in place of the VS2022 compile of the same text. Reads the default exe's objects and link.rsp, writes only
+REM under build\ddkobj, and never touches mashed_re.exe, its objects or its link line. Needs tools\vc7ddk (the main
+REM checkout's). MASHED_DDKOBJ_UNITS=0x...,0x... limits the set (default: every matched source the exe wrappers include).
+REM Tool and design: re\tools\ddkobj\ddkobj.py, verify\ddkobj_20261111\RESULT_DDKOBJ-SPIKE.md.
+REM ===========================================================================
+if "%MASHED_DDKOBJ%"=="1" (
+    py -3.12 "%ROOT%..\re\tools\ddkobj\ddkobj.py" build --units "%MASHED_DDKOBJ_UNITS%" --out "%OUT%\ddkobj" --link
+    if errorlevel 1 (echo [ERROR] DDKOBJ variant build failed & exit /b 1)
+    py -3.12 "%ROOT%..\re\tools\ddkobj\ddkobj.py" check --out "%OUT%\ddkobj"
+)
+
 echo === Building mashed_re_dev.asi ===
 pushd "%SRC%"
 REM Per-TU object cache (2026-09-09): build_objs.ps1 compiles only the stale subset of
