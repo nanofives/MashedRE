@@ -161,3 +161,14 @@ No build or gate ran on this branch (match-only row). The next object build shou
   `sweep_rest_err.txt` e25e85c938faa2feac00d2471812a2f5130d1ece3097865d22eb4b6a2f04993e.
 - Sources: `rw9044_files.txt` + the 18 core files in `batch_c4_core.tsv` (one `// TOOLCHAIN rw9044` line each, plus
   the two operand-order fixes), `re/match/rwl05/00554390.c`.
+
+## Rebase onto orch/integration 8bc7026f0 (REBASE-RUN37-B, 2026-11-11)
+
+- 9e36314ac (the compiler row, 57 C4) was already in integration. Only 4e0021b23 replayed, conflicting in
+  `re/match/rwl05/00554390.c` with MATCH-RT2D-FONT-2 (integration's copy equals f97f6798f's, the base 4e0021b23 was written on).
+- Scored each side under its recorded TOOLCHAIN with `match.py`: integration's copy 62.6% (tc=ddk, 353/439), the branch copy
+  86.1% (tc=rw9044, 429/439). Kept the branch copy (`// TOOLCHAIN rw9044` retained), byte-identical to 4e0021b23's.
+- `c4_reclass.py batch` dry run over the 58 rows of batch_c4*.tsv: 57 SKIP already C4, 1 REFUSED 0x00550c50 (no hooks.csv
+  row, refused in the original run too), 0 writes (`c4_dryrun_rebase_8bc7026f0.tsv`).
+- `relocheck.py` on the 57 sources plus 00554390.c: 58 lines OK (every promoted row), 1 BAD = 0x00554390 (86.1%, not promoted), as on the branch tip
+  (`relocheck_rebase_8bc7026f0.tsv`).

@@ -1,3 +1,5 @@
+// TOOLCHAIN rw9044
+/* MATCH-RW-COMPILER-9044 (2026-11-11): 86.1% under rw9044 (62.6% under the DDK). rw9044 gives one epilogue per return and the 0x30 frame; the outline-loop reads use two block-scoped temporaries (t1 at [esp+0x44], t2 at [esp+0x48], the original's param homes). Residual: the original zeroes ebp before the isOutline test and keeps i at [esp+0x10] in both loops, plus a separate outline fail tail. */
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RT2D-FONT 2026-11-11 0x00554390: 62.6% (regs 62.6%, ops 73.6%), 353/439 ins (was 33.5% raw g2s). Rewritten from the disassembly: Font (0x144 B) and Glyph (0x20 B) structs, memset intrinsics, outline branch (isOutline != 0, falls through first in the original) and bitmap branch with TXD save/restore. Residual (b): the original pushes ebx/ebp/esi/edi at entry and gives every early `return 0` its own epilogue that returns the zero already in eax; DDK 9176 here shrink-wraps ebp/esi/edi past the first return and cross-jumps the later returns into one block with xor eax,eax. Tried: read helper typed as returning a pointer, 7 flag sets (/G5 is right). Needs Opus-high shaping of the return structure. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -126,25 +128,26 @@ Font *FUN_00554390(void *stream)
     g = FUN_005c4d30(font->glyphs);
     for (i = 0; i < font->count; i++) {
       void *path = 0;
-      if (!FUN_004cc790(stream, &n, 4)) {
+      int t1, t2;
+      if (!FUN_004cc790(stream, &t1, 4)) {
         goto fail;
       }
       if (!FUN_004cc790(stream, &g->code, 4)) {
         goto fail;
       }
-      if (!FUN_004cc790(stream, &n, 4)) {
+      if (!FUN_004cc790(stream, &t1, 4)) {
         goto fail;
       }
-      if (n == 5) {
+      if (t1 == 5) {
         if (!FUN_004cc5e0(stream, 0x1a1, 0, 0)) {
           goto fail;
         }
         path = FUN_00554200(stream);
-        if (!FUN_004cc790(stream, &n, 4)) {
+        if (!FUN_004cc790(stream, &t2, 4)) {
           goto fail;
         }
       }
-      if (!FUN_004cc790(stream, &n, 4)) {
+      if (!FUN_004cc790(stream, &t1, 4)) {
         goto fail;
       }
       g->path = path;
@@ -154,7 +157,8 @@ Font *FUN_00554390(void *stream)
     return font;
 fail:
     FUN_00555830(font);
-    return 0;
+    font = 0;
+    return font;
   }
   oldTxd = FUN_004c5ca0();
   FUN_004c5c80(DAT_00912a20);
