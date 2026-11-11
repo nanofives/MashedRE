@@ -1,0 +1,13 @@
+ours 442 B / 131 ins, original 449 B / 133 ins, aligned equal pairs 125
+aligned pairs with a byte difference (relocation sites masked; their targets are in the key): 3
+
+| # | kind | ours (offset: bytes / instruction) | original (address: bytes / instruction) |
+|---|---|---|---|
+| 1 | insert | (none) | 0x0045545b `be dc 00 00 00` mov esi, 0xdc |
+| 2 | delete | +0x060 `be dc 00 00 00` mov esi, 0xdc | (none) |
+| 3 | insert | (none) | 0x00455473 `83 ef 6c` sub edi, 0x6c |
+| 4 | delete | +0x076 `83 ef 6c` sub edi, 0x6c | (none) |
+| 5 | replace | +0x181 `3b f5` cmp esi, ebp<br>+0x183 `89 af 00 84 68 00` mov dword ptr [edi + 0x688400], ebp<br>+0x189 `89 af 10 84 68 00` mov dword ptr [edi + 0x688410], ebp<br>+0x18f `89 af d8 83 68 00` mov dword ptr [edi + 0x6883d8], ebp | 0x00455581 `8b 44 24 14` mov eax, dword ptr [esp + 0x14]<br>0x00455585 `6b c0 6c` imul eax, eax, 0x6c<br>0x00455588 `3b fd` cmp edi, ebp<br>0x0045558a `89 a8 00 84 68 00` mov dword ptr [eax + 0x688400], ebp<br>0x00455590 `89 a8 10 84 68 00` mov dword ptr [eax + 0x688410], ebp<br>0x00455596 `89 a8 d8 83 68 00` mov dword ptr [eax + 0x6883d8], ebp |
+| 6 | pair, 1 bytes differ | +0x195 `0f 85 ca fe ff ff` jne 0x455465 | 0x0045559c `0f 85 c3 fe ff ff` jne 0x455465 |
+| 7 | pair, 1 bytes differ | +0x1a0 `e8 5b 18 09 00` call 0x4e6e00 | 0x004555a7 `e8 54 18 09 00` call 0x4e6e00 |
+| 8 | pair, 1 bytes differ | +0x1aa `e8 51 18 09 00` call 0x4e6e00 | 0x004555b1 `e8 4a 18 09 00` call 0x4e6e00 |
