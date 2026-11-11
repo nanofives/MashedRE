@@ -1,0 +1,87 @@
+    0 push ecx
+    1 push esi
+    2 call 7
+    7 mov esi, eax
+    9 test esi, esi
+    b jne 0x10
+    d pop esi
+    e pop ecx
+    f ret 
+   10 push ebx
+   11 push ebp
+   12 mov ebp, dword ptr [esp + 0x14]
+   16 push edi
+   17 lea eax, [esp + 0x10]
+   1b push 4
+   1d push eax
+   1e push ebp
+   1f call 0x24
+   24 add esp, 0xc
+   27 test eax, eax
+   29 je 0x70
+   2b mov ecx, dword ptr [esp + 0x10]
+   2f and ecx, 0xff000000
+   35 cmp ecx, 0x1000000
+   3b jl 0x70
+   3d push 4
+   3f push esi
+   40 push ebp
+   41 call 0x46
+   46 add esp, 0xc
+   49 test eax, eax
+   4b je 0x70
+   4d lea edx, [esi + 4]
+   50 push 4
+   52 push edx
+   53 push ebp
+   54 call 0x59
+   59 add esp, 0xc
+   5c test eax, eax
+   5e je 0x70
+   60 mov eax, dword ptr [esi + 0xc]
+   63 test eax, eax
+   65 je 0x78
+   67 push esi
+   68 call 0x6d
+   6d add esp, 4
+   70 pop edi
+   71 pop ebp
+   72 pop ebx
+   73 xor eax, eax
+   75 pop esi
+   76 pop ecx
+   77 ret 
+   78 mov eax, dword ptr [esi + 8]
+   7b xor ebx, ebx
+   7d test eax, eax
+   7f jle 0x9e
+   81 mov edi, esi
+   83 push 4
+   85 push edi
+   86 push ebp
+   87 call 0x8c
+   8c add esp, 0xc
+   8f test eax, eax
+   91 je 0x70
+   93 mov eax, dword ptr [esi + 8]
+   96 inc ebx
+   97 add edi, 4
+   9a cmp ebx, eax
+   9c jl 0x83
+   9e pop edi
+   9f pop ebp
+   a0 mov eax, esi
+   a2 pop ebx
+   a3 pop esi
+   a4 pop ecx
+   a5 ret 
+   a6 nop 
+   a7 nop 
+   a8 nop 
+   a9 nop 
+   aa nop 
+   ab nop 
+   ac nop 
+   ad nop 
+   ae nop 
+   af nop 

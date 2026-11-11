@@ -1,0 +1,25 @@
+# compiler probe, 2026-11-11 (scratch wrapper m6.py adds SimGolf's VC6 toolchains to match.py; ddk = tools/vc7ddk)
+0x00554390 ddk /O2 /Ob1 /G5: 62.6% (regs 62.6%, ops 73.6%)  353/439 ins
+0x00554390 vc6 /O2 /Ob1 /G5: 80.9% (regs 80.9%, ops 93.4%)  429/439 ins
+0x00554390 sp5 /O2 /Ob1 /G5: 80.9% (regs 80.9%, ops 93.4%)  429/439 ins
+0x00554200 ddk /O2 /Ob1 /G5: 69.5% (regs 75.9%, ops 86.5%)  139/141 ins
+0x00554200 vc6 /O2 /Ob1 /G5: 69.5% (regs 75.9%, ops 86.5%)  139/141 ins
+0x00554200 sp5 /O2 /Ob1 /G5: 69.5% (regs 75.9%, ops 86.5%)  139/141 ins
+0x00556e90 ddk /O2 /Ob1 /G5: 99.0% (regs 99.0%, ops 99.0%)  198/198 ins
+0x00556e90 vc6 /O2 /Ob1 /G5: 86.9% (regs 86.9%, ops 92.9%)  198/198 ins
+0x00556e90 sp5 /O2 /Ob1 /G5: 86.9% (regs 86.9%, ops 92.9%)  198/198 ins
+0x00557110 ddk /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  57/57 ins
+0x00557110 vc6 /O2 /Ob1 /G5: 86.0% (regs 86.0%, ops 93.0%)  57/57 ins
+0x00557110 sp5 /O2 /Ob1 /G5: 86.0% (regs 86.0%, ops 93.0%)  57/57 ins
+0x00552920 ddk /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  82/82 ins
+0x00552920 vc6 /O2 /Ob1 /G5: 54.8% (regs 71.4%, ops 89.3%)  84/82 ins
+0x00552920 sp5 /O2 /Ob1 /G5: 54.8% (regs 71.4%, ops 89.3%)  84/82 ins
+0x00553cf0 ddk /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  87/87 ins
+0x00553cf0 vc6 /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  87/87 ins
+0x00553cf0 sp5 /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  87/87 ins
+0x005c4ad0 ddk /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  61/61 ins
+0x005c4ad0 vc6 /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  61/61 ins
+0x005c4ad0 sp5 /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  61/61 ins
+0x005c4c60 ddk /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  71/71 ins
+0x005c4c60 vc6 /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  71/71 ins
+0x005c4c60 sp5 /O2 /Ob1 /G5: 100.0% (regs 100.0%, ops 100.0%)  71/71 ins
