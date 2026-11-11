@@ -7,34 +7,34 @@ reach_class	bind:bound	51
 reach_class	norow	32	
 reach_class	fam:rwphysics	30	
 reach_class	bind:port	29	
-reach_class	fam:crt	26	
 reach_class	bind:rw	25	
+reach_class	fam:crt	22	
 reach_class	fam:d3d-dshow	22	
 reach_class	bind:shim	21	
+reach_class	bind:crt	14	
 reach_class	game-c4	13	
-reach_class	bind:crt	10	
 reach_class	fam:rt2d	6	
 reach_class	game-c4-hand	4	
 reach_class	fam:lua	3	
 reach_class	fam:qhull	1	
 runnable	C4-by-match rows in reach	1653	
 runnable	already running (BINDINGS matched)	215	
-runnable	runnable with no new family bound	1063	
-family_alone	game-c0c3	240	functions to bind in reach: 326  (named / >=20)
+runnable	runnable with no new family bound	1064	
+family_alone	game-c0c3	241	functions to bind in reach: 326  (named / >=20)
 family_alone	fam:rwcore	52	functions to bind in reach: 64  (named / >=20)
 family_alone	fam:lua	41	functions to bind in reach: 3  (named / >=20)
 family_alone	fam:rwphysics	37	functions to bind in reach: 30  (named / >=20)
-family_alone	fam:crt	27	functions to bind in reach: 26  (named / >=20)
+family_alone	fam:crt	26	functions to bind in reach: 22  (named / >=20)
 family_alone	norow	17	functions to bind in reach: 32
+family_alone	fam:d3d-dshow	4	functions to bind in reach: 22  (named / >=20)
 family_alone	fam:rt2d	4	functions to bind in reach: 6  (named / >=20)
 family_alone	game-c4	2	functions to bind in reach: 13
-family_alone	fam:d3d-dshow	1	functions to bind in reach: 22  (named / >=20)
 family_alone	fam:qhull	0	functions to bind in reach: 1
 family_alone	game-c4-hand	0	functions to bind in reach: 4
-cumulative	+fam:lua	1104	cost 3
-cumulative	+fam:rt2d	1108	cost 6
-cumulative	+fam:d3d-dshow	1109	cost 22
-cumulative	+fam:crt	1140	cost 26
+cumulative	+fam:lua	1105	cost 3
+cumulative	+fam:rt2d	1109	cost 6
+cumulative	+fam:crt	1135	cost 22
+cumulative	+fam:d3d-dshow	1140	cost 22
 cumulative	+fam:rwphysics	1177	cost 30
 cumulative	+fam:rwcore	1236	cost 64
 cumulative	+game-c0c3	1558	cost 326
