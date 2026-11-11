@@ -15,6 +15,10 @@ batch     Reads a TSV with columns `rva`, `route`, `evidence` (header required; 
             route match   evidence = the matched source (.c, repo-relative, carrying `// MATCH: 0x<rva> <sym>`).
                           The gate recompiles it now (match.compare, --bytes) and runs relocheck on it, so the evidence
                           is the source as it is in the tree, not a score recorded earlier.
+            route frida-replay  (L-128) evidence = a committed RESULT file naming the RVA with the lines
+                          `IDENTICAL-FOR-<N> ...`, `install-check: ...`, `body-executed: ...`, `write-set: ...`.
+                          Refused: a missing line, N = 0, `write-set: not-covered`, a STUB marker in hooks.csv
+                          notes. Tag `c4=frida-replay`; counted apart from match / libid in the summary line.
             route libid   evidence = a libmatch TSV (libidentity_functions.tsv layout: rva, status, library_object,
                           lib_function, ...). The row must be `identical` / `identical-unlisted` with one candidate.
           Every row is gated on its own; a refused row is reported with the failing criterion and skipped. Rows
@@ -371,6 +375,32 @@ def gate_extent(rva, src, ev, ext, path, text):
                   f"({nrel}/{len(unch_all)})"), note
 
 
+def gate_replay(rva, res_rel, hooks_notes):
+    """L-128: replay form of the frida route. Evidence = RESULT text; checks the cited legs are present."""
+    path = ROOT / res_rel
+    if not path.is_file():
+        return False, f"RESULT {res_rel} not found", None
+    txt = path.read_text(encoding="utf-8", errors="replace")
+    if not re.search(r"(?i)0x0*" + rva.lstrip("0") + r"\b", txt):
+        return False, f"0x{rva} not named in {res_rel}", None
+    m = re.search(r"IDENTICAL-FOR-(\d+)", txt)
+    if not m or int(m.group(1)) == 0:
+        return False, "no IDENTICAL-FOR-N (N > 0) line", None
+    legs = {}
+    for leg in ("install-check", "body-executed", "write-set"):
+        lm = re.search(r"(?im)^\s*" + leg + r":\s*(\S.*)$", txt)
+        if not lm:
+            return False, f"missing leg line `{leg}:`", None
+        legs[leg] = lm.group(1).strip()
+    if re.match(r"(?i)not[- ]covered", legs["write-set"]):
+        return False, "write-set not covered (stays C3, L-40)", None
+    if re.match(r"(?i)(0\b|none|no\b)", legs["body-executed"]):
+        return False, "body not executed in the run", None
+    if re.search(r"\bSTUB\b", hooks_notes or ""):
+        return False, "STUB marker in hooks.csv notes", None
+    return True, f"IDENTICAL-FOR-{m.group(1)}", f"replay IDENTICAL-FOR-{m.group(1)}; install: {legs['install-check']}; write-set: {legs['write-set']}"
+
+
 def gate_libid(rva, tsv_rel, cache):
     path = ROOT / tsv_rel
     if not path.is_file():
@@ -412,6 +442,7 @@ def cmd_batch(a):
     date = a.date or datetime.date.today().isoformat()
     cache, log, report, seen = {}, [], [], set()
     npass = nref = nskip = 0
+    by_route = {}
     total = len(batch)
     for k, b in enumerate(batch, 1):
         route, evid = b["route"].strip(), b["evidence"].strip().replace("\\", "/")
@@ -431,8 +462,10 @@ def cmd_batch(a):
                 ok, detail, note = gate_match(rva, evid, evals.get(evid, {}))
             elif route == "libid":
                 ok, detail, note = gate_libid(rva, evid, cache)
+            elif route == "frida-replay":
+                ok, detail, note = gate_replay(rva, evid, parse_line(lines[ri], col)[col["notes"]])
             else:
-                ok, detail, note = False, f"unknown route {route!r} (match | libid)", None
+                ok, detail, note = False, f"unknown route {route!r} (match | libid | frida-replay)", None
         seen.add(rva)
         verdict = "PASS" if ok else ("SKIP" if ok is None else "REFUSED")
         print(f"[{k}/{total}] 0x{rva} {route} {verdict} {detail}", flush=True)
@@ -444,16 +477,18 @@ def cmd_batch(a):
             nref += 1
             continue
         npass += 1
+        by_route[route] = by_route.get(route, 0) + 1
         r = parse_line(lines[index[rva]], col)
         old = r[col["confidence"]] or "C0"
         res = a.result or "<RESULT>"
-        frag = f"{date} C4 by route {route} (L-93): c4={route}; {note}; {res}"
+        frag = f"{date} C4 by route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): c4={route}; {note}; {res}"
         r[col["confidence"]] = "C4"
         r[col["notes"]] = (r[col["notes"]] + " | " if r[col["notes"]] else "") + frag
         lines[index[rva]] = dump_line(r)
-        why = ("byte-identical + relocheck OK" if route == "match" else "library identity") + f", {evid}"
-        log.append(f"{date}  0x{rva}  {r[col['name']]}  {old}->C4  route {route} (L-93): {why}; evidence: {res}")
-    print(f"batch: {npass} pass, {nref} refused, {nskip} skipped (already C4), {total} rows")
+        why = {"match": "byte-identical + relocheck OK", "libid": "library identity"}.get(route, "replay IDENTICAL-FOR-N, JMP live") + f", {evid}"
+        log.append(f"{date}  0x{rva}  {r[col['name']]}  {old}->C4  route {route} ({'L-128' if route == 'frida-replay' else 'L-93'}): {why}; evidence: {res}")
+    print(f"batch: {npass} pass, {nref} refused, {nskip} skipped (already C4), {total} rows"
+          + ("  [by route: " + ", ".join(f"{k}={v}" for k, v in sorted(by_route.items())) + "]" if by_route else ""))
     if a.report:
         with open(a.report, "w", encoding="utf-8", newline="") as f:
             w = csv.writer(f, delimiter="\t", lineterminator="\n")

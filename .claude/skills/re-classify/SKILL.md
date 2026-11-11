@@ -35,6 +35,7 @@ For each promotion request, the skill **must** check the corresponding gate from
 | C2 | decomp read end-to-end; `re/analysis/<sub>/<func>.md` exists with shape (args/return/reads/writes), every const/offset cited; NO-GUESSING |
 | C3 | semantics stated; reimplementation lives at `mashedmod/src/mashed_re/...`; build is clean; hooked via `RH_ScopedInstall`; runtime-toggleable; at least one caller AND one callee at C2+ |
 | C4 (frida) | `diff-original` CSV produced on a canonical scenario with the hook installed; clean diff vs original; no stubs in this function's body |
+| C4 (frida, replay form, L-128) | the replay reference race is the canonical scenario and the per-tick compare reports `IDENTICAL-FOR-N` with the inline JMP live; install check, body executed, no STUB and the Write-set leg (L-38 / L-40 / L-54) all cited in one RESULT; tag `c4=frida-replay`; batch via `c4_reclass.py` route `frida-replay` |
 | C4 (static, L-93) | `match` (byte-identical + relocheck OK, not naked / asm-only) or `libid` (identical, one candidate) evidence, see "Evidence types `match` and `libid`" below; no exe body, caller or gate check; batch via `c4_reclass.py` |
 
 For each refusal, the skill states **exactly which gate criterion failed** and what evidence would unblock it.
@@ -149,6 +150,23 @@ Checks before stamping C4 (the batch tool below runs exactly these):
 - `hooks.csv` `notes` gets `c4=match` or `c4=libid` plus the evidence (command, compiler, flags, relocheck counts and
   unchecked names, source sha256, RESULT); the CHANGELOG evidence column cites the RESULT. `file`, `exe_file` and
   `status` are not touched.
+
+### Evidence type `frida-replay` (C4 by L-128, 2026-11-11)
+
+The replay form of the frida route (`re/CONFIDENCE.md`, "C4 routes"). Use it for a rough (admitted, provisional or
+unmatched) body that replays the reference race identically inside the original. Admitted / provisional status is
+not C4 by itself. Required fields; refuse and name the missing one if any is absent. The evidence is one committed
+RESULT file that names the RVA and carries these lines (the batch gate checks them):
+
+```
+IDENTICAL-FOR-<N> <compare tool> <reference race> <ticks>
+install-check: <inline JMP live: path2 / install witness>
+body-executed: <call count in the run, above 0>
+write-set: <statically-empty | compared <n> pages/regions CLEAN | not-covered>
+```
+
+`write-set: not-covered` is refused (the row stays C3, L-40). A `STUB` marker in the body is refused. `hooks.csv`
+`notes` gets `c4=frida-replay` plus the RESULT path. Count these rows apart from `c4=match` / `c4=libid` in every report.
 
 ### Batch C4 (L-93): many rows, one transaction
 
