@@ -360,6 +360,7 @@ extern "C" __declspec(allocate(".CRT$XLB"))
     PIMAGE_TLS_CALLBACK g_b17_tls_cb = B17_TlsReserve;
 
 int VideoCfgFirstRunWrite(IDirect3D9* d3d);   // Boot/VideoCfgFirstRun.cpp, MASHED_VIDEOCFG_WRITE (default ON, =0 opts out)
+#include "Compat/D3d9Wrap.h"                  // [RWC-DEVICE] in-exe d3d9 wrapper (MASHED_RWC_DEVICE, knob path only)
 
 namespace {
 
@@ -374,6 +375,9 @@ bool               g_active        = true;
 // directly.
 IDirect3D9*        g_d3d           = nullptr;
 IDirect3DDevice9*  g_device        = nullptr;
+// [RWC-DEVICE] set only by PortTop_HandCreateDevice (the MASHED_ORIG_TOP path) when MASHED_RWC_DEVICE=1: InitD3D9 then
+// takes its IDirect3D9 from the in-exe wrapper (Compat/D3d9Wrap.cpp). Never set on the default path.
+bool               g_rwc_wrap      = false;
 D3DPRESENT_PARAMETERS g_pp         = {};
 bool               g_depth_disabled = false;  // set if device fell back to no auto-depth
 
@@ -3311,7 +3315,7 @@ static void ApplyX87Pc24AfterDevice() {
 }
 
 bool InitD3D9() {
-    g_d3d = Direct3DCreate9(D3D_SDK_VERSION);
+    g_d3d = g_rwc_wrap ? MashedD3D9Wrap_Direct3DCreate9(D3D_SDK_VERSION) : Direct3DCreate9(D3D_SDK_VERSION);
     if (!g_d3d) return false;
 
     // 0x00499400 first-run branch: the original writes its default videocfg.bin before the device exists.
@@ -10572,6 +10576,7 @@ void PortTop_HandDeviceShutdown() { HandTop_DeviceShutdown(); }
 // (LibRw/RwApiBind.cpp): the exe creates its D3D9 device, librw adopts it. Returns the device, or null.
 void* PortTop_HandCreateDevice() {
     DumpRegionMap("pre-initd3d9");
+    g_rwc_wrap = MashedD3D9Wrap_Enabled();   // [RWC-DEVICE] default OFF
     if (!InitD3D9()) return nullptr;
     DumpRegionMap("post-initd3d9");
     return g_device;
