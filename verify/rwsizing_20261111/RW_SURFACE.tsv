@@ -1,0 +1,276 @@
+rva	name	tracker_sub	component	route_class	binding	phase	conf	mstate	size	game_callers_in_reach	callers
+0x004c0740	FUN_004c0740	render	rwcore	bind:rw	rw	menu+race_load	C4	C4-match	75	8	0x00401000 0x004014b0 0x0042d420 0x00467070 0x004670a0 0x00467110 0x004b4880 0x004b48e0
+0x004c0b30	FUN_004c0b30	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load	C4	C4-match	50	16	0x00401000 0x00402240 0x00402590 0x0041def0 0x0041eaa0 0x0042d420 0x004548e0 0x004670a0
+0x004c0c20	FUN_004c0c20	render	rwcore	bind:bound	bound	not-run	C2	near95	329	16	0x004014b0 0x0041e0d0 0x0041ffb0 0x00421c80 0x004540c0 0x00467020 0x00467070 0x004768c0
+0x004c0e50	FUN_004c0e50	render	rwcore	bind:rw	rw	menu+race_load+race_run	C4	C4-match	124	10	0x004011f0 0x00459480 0x0047d180 0x0047d240 0x0047ea60 0x0047eb30 0x00480100 0x00480720
+0x004c0ed0	FUN_004c0ed0	render	rwcore	bind:bound	bound	menu+race_load+race_run	C4	C4-match	30	19	0x00405ab0 0x00406160 0x00406410 0x004064c0 0x00406ce0 0x0041f060 0x0041f1e0 0x0041f220
+0x004c1040	FUN_004c1040	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load	C2	near95	460	5	0x00402240 0x00402590 0x0041def0 0x004548e0 0x0048ae00
+0x004c1210	FUN_004c1210	third-party-library[renderware]	rwcore	bind:bound	bound	race_load	C4	C4-match	231	3	0x004540c0 0x00454170 0x0048af70
+0x004c1340	FUN_004c1340	render	rwcore	match	-	menu+race_load+race_run	C4	C4-match	145	21	0x004011f0 0x004019d0 0x00406160 0x00412620 0x00419100 0x00419a00 0x0041def0 0x0041f3d0
+0x004c13e0	FUN_004c13e0	render	rwcore	bind:bound	bound	menu+race_run	C4	C4-match	145	16	0x004011f0 0x004019d0 0x00412620 0x0041a250 0x0041ae60 0x0041af00 0x0041af50 0x0041b7a0
+0x004c1480	FUN_004c1480	render	rwcore	match	-	race_load+race_run	C4	C4-match	145	33	0x004011f0 0x004019d0 0x00401da0 0x00404650 0x00405460 0x00406070 0x00406ce0 0x004073b0
+0x004c1520	FUN_004c1520	render	rwcore	match	-	race_load+race_run	C4	C4-match	150	15	0x004011f0 0x00419a00 0x0041a5d0 0x0041f3d0 0x0041f4f0 0x0041f770 0x00420870 0x00425ca0
+0x004c15c0	FUN_004c15c0	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load+race_run	C4	C4-match	179	7	0x004011f0 0x00419a00 0x00426d20 0x00441760 0x00454170 0x00459620 0x004b48e0
+0x004c1680	FUN_004c1680	render	rwcore	match	-	race_load+race_run	C4	C4-match	136	1	0x0041f8f0
+0x004c1800	FUN_004c1800	unknown	rwcore	match	matched	menu+race_load	C4	C4-match	51	1	0x00401000
+0x004c1840	FUN_004c1840	unknown	rwcore	match	matched	menu+race_load	C4	C4-match	124	1	0x00401000
+0x004c18c0	FUN_004c18c0	unknown	rwcore	game-c0c3	-	not-run	C2	lower	112	1	0x0044d5e0
+0x004c19f0	RwVtableSlot07Call	frontend	rwcore	match	matched	menu+race_load+race_run	C4	C4-match	10	15	0x004013f0 0x004026d0 0x00403160 0x00404320 0x00419530 0x0041f8f0 0x00420050 0x00428590
+0x004c1a00	IntroSplashVtableSlot6	frontend	rwcore	match	matched	menu+race_load+race_run	C4	C4-match	10	15	0x004013f0 0x004026d0 0x00403160 0x00404320 0x00419530 0x0041f8f0 0x00420050 0x00428590
+0x004c1a40	FUN_004c1a40	render	rwcore	bind:bound	bound	menu	C4	C4-match	43	3	0x0042d560 0x0042f660 0x00467110
+0x004c1b10	FUN_004c1b10	render	world-bsp	bind:bound	bound	menu+race_load	C4	C4-match	43	5	0x00426810 0x0042d560 0x0042f660 0x00467110 0x004910c0
+0x004c1b40	FUN_004c1b40	unknown	rwcore	game-c0c3	-	race_load+race_run	C2	lower	103	7	0x00420050 0x004216b0 0x00425e40 0x00477a10 0x0047c160 0x00481a30 0x004910c0
+0x004c1bb0	IntroSplashRenderState	frontend	rwcore	bind:bound	bound	menu+race_load+race_run	C4	C4-match	39	9	0x004026d0 0x0041f8f0 0x00428590 0x00428a30 0x00428bf0 0x00428d30 0x00429e10 0x00492e90
+0x004c1be0	sub_004c1be0	frontend	rwcore	match	matched	menu+race_load+race_run	C4	C4-match	34	7	0x004026d0 0x00428590 0x00428a30 0x00428bf0 0x00428d30 0x00492e90 0x00495350
+0x004c1c10	Camera::SetProjection	util	rwcore	match	-	menu+race_load+race_run	C4	C4-match	101	7	0x0040de30 0x0040df20 0x00419530 0x0041eaa0 0x00441990 0x00448220 0x004b48e0
+0x004c1c80	FUN_004c1c80	hud	rwcore	bind:bound	bound	menu+race_load+race_run	C4	C4-match	63	15	0x00403160 0x00404320 0x00405460 0x0040de30 0x0040df20 0x00419530 0x0041eaa0 0x00428d30
+0x004c1cf0	FUN_004c1cf0	render	rwcore	bind:bound	bound	not-run	C4	C4-match	53	3	0x00467020 0x00467070 0x004b4880
+0x004c1d30	FUN_004c1d30	third-party-library[renderware]	rwcore	bind:bound	bound	menu	C4	C4-match	170	3	0x0042d420 0x004670a0 0x004b48e0
+0x004c2bf0	FUN_004c2bf0	third-party-library[renderware]	rwcore	bind:bound	bound	menu	C4	C4-match	156	1	0x00467110
+0x004c2de0	RwEngineGetNumSubSystems	render	rwcore	match	-	menu	C4	C4-match	42	1	0x00498c00
+0x004c2e10	RwEngineGetSubSystemInfo	render	rwcore	match	-	menu	C4	C4-match	42	1	0x00498c00
+0x004c2e40	RwEngineGetCurrentSubSystem	render	rwcore	match	-	menu	C4	C4-match	44	1	0x00498c00
+0x004c2e70	RwEngineSetSubSystem	render	rwcore	match	-	menu	C4	C4-match	35	2	0x00498c00 0x00499400
+0x004c2ea0	RwEngineGetNumVideoModes	render	rwcore	match	-	menu	C4	C4-match	44	1	0x00498c00
+0x004c2ed0	RwEngineGetModeInfo	render	rwcore	bind:bound	bound	menu	C4	C4-match	42	5	0x00402750 0x004921d0 0x00493710 0x00498c00 0x00499400
+0x004c2f00	RwEngineGetCurrentMode	render	rwcore	bind:bound	bound	menu	C4	C4-match	44	4	0x00402750 0x004921d0 0x00493710 0x00498c00
+0x004c2f30	RwEngineSetVideoMode	render	rwcore	match	-	menu	C4	C4-match	35	2	0x00498c00 0x00499400
+0x004c2fb0	RwEngineStart	render	rwcore	bind:bound	bound	menu	C2	lower	129	1	0x00493710
+0x004c3040	sub_004c3040	render	rwcore	bind:bound	bound	not-run	C2	near95	101	1	0x00493710
+0x004c30b0	RwEngineOpen	third-party-library[renderware]	rwcore	bind:bound	bound	menu	C2	lower	446	1	0x00493710
+0x004c3270	sub_004c3270	render	rwcore	bind:bound	bound	not-run	C4	C4-match	49	1	0x00493710
+0x004c32b0	RwEngineInit	render	rwcore	bind:bound	bound	menu	C2	lower	767	1	0x00493710
+0x004c39b0	RwV3dNormalize	render	rwcore	bind:bound	bound	menu+race_load+race_run	C2	lower	270	54	0x00405540 0x00405920 0x004069d0 0x00407e20 0x00408b00 0x004093b0 0x0040be50 0x00414490
+0x004c3ac0	Vec3Magnitude	util	rwcore	bind:port	port	menu+race_load+race_run	C4	C4-match	111	45	0x00405920 0x004069d0 0x0040be50 0x0040ca00 0x0040e180 0x00412cf0 0x00412e30 0x00412f30
+0x004c3b30	FastSqrt	util	rwcore	match	-	menu+race_load+race_run	C4	C4-match	83	11	0x00414300 0x00441990 0x00441d40 0x00442e00 0x00445aa0 0x00446520 0x00459620 0x0046b540
+0x004c3bf0	Vec2Length	render	rwcore	match	-	race_load+race_run	C4	C4-match	100	5	0x0040ae30 0x00415d00 0x00416060 0x00443dc0 0x00445aa0
+0x004c3c60	Vec2Normalize	render	rwcore	match	-	race_load+race_run	C4	C4-match	249	3	0x00408b00 0x00443dc0 0x00445aa0
+0x004c3d60	FUN_004c3d60	render	rwcore	match	-	menu+race_load+race_run	C4	C4-match	37	3	0x00419a00 0x00471780 0x0048a4e0
+0x004c3d90	FUN_004c3d90	render	rwcore	match	-	menu+race_load+race_run	C4	C4-match	42	10	0x0040c690 0x004128f0 0x00421630 0x00422570 0x004568d0 0x00469aa0 0x0046da80 0x0046f6c0
+0x004c3dc0	FUN_004c3dc0	render	rwcore	match	-	not-run	C4	C4-match	37	1	0x00426810
+0x004c3df0	RwV3dTransformPoints	render	rwcore	match	-	race_load+race_run	C4	C4-match	42	16	0x00441820 0x00441d40 0x00446520 0x00467650 0x00468d80 0x004694e0 0x00469df0 0x0046d510
+0x004c45f0	FUN_004c45f0	render	rwcore	match	-	race_load+race_run	C4	C4-match	11	17	0x00418aa0 0x0041faf0 0x0041fcc0 0x00454350 0x00459480 0x00459620 0x0045c030 0x0047d180
+0x004c4600	RwMatrixMultiply	render	rwcore	match	-	menu+race_load+race_run	C4	C4-match	110	1	0x004b42c0
+0x004c4670	thunk_FUN_004c4680	render	rwcore	match	-	race_load+race_run	C4	C4-match	4	1	0x0046e9e0
+0x004c4d20	RwMatrixRotate	render	rwcore	game-c0c3	-	race_load+race_run	C2	lower	154	24	0x004019d0 0x00401da0 0x00406ce0 0x0040aef0 0x00419100 0x0041faf0 0x0041fcc0 0x00426810
+0x004c4dc0	RwMatrixInvertEntry	util	rwcore	game-c0c3	-	menu+race_load+race_run	C3	lower	224	9	0x00406ce0 0x00419a00 0x00421630 0x00451990 0x004568d0 0x00469df0 0x00471780 0x00487280
+0x004c5010	RwMatrixScale	render	rwcore	match	-	menu+race_load+race_run	C4	C4-match	397	10	0x004019d0 0x00401da0 0x00419100 0x0041faf0 0x0041fcc0 0x00454350 0x00459480 0x00486370
+0x004c51a0	RwMatrixTranslate	render	rwcore	game-c0c3	-	menu+race_load+race_run	C3	lower	322	34	0x004019d0 0x00401da0 0x00404fa0 0x00406ce0 0x0040aef0 0x00419100 0x0041a250 0x0041af50
+0x004c52f0	RwMatrixCombine	render	rwcore	game-c0c3	-	race_load+race_run	C3	lower	377	7	0x00406ce0 0x0041faf0 0x0041fcc0 0x00451990 0x0046f6c0 0x0047d180 0x004b5d90
+0x004c5470	FUN_004c5470	render	rwcore	game-c0c3	-	not-run	C2	lower	524	1	0x00406ce0
+0x004c5770	FUN_004c5770	render	rwcore	match	matched	not-run	C4	C4-match	34	1	0x004593b0
+0x004c57a0	FontCtxMatrix_AllocInit	third-party-library[renderware]	rt2d	bind:bound	bound	menu+race_load	C4	C4-match	82	2	0x00459290 0x00492770
+0x004c5930	sub_004c5930	boot	rwcore	bind:bound	bound	not-run	C2	lower	132	13	0x00402a40 0x0040bd00 0x0041b660 0x0041ccf0 0x0041ec00 0x00425ed0 0x00427620 0x0042c2a0
+0x004c5a00	FUN_004c5a00	third-party-library[renderware]	rwcore	fam:rwcore	-	menu+race_load	C2	lower	89	1	0x004b48e0
+0x004c5a60	FUN_004c5a60	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load+race_run	C4	C4-match	120	3	0x0040cf40 0x00428400 0x0048bc10
+0x004c5bc0	FUN_004c5bc0	render	rwcore	bind:rw	rw	menu+race_load	C4	C4-match	57	1	0x0040bbb0
+0x004c5c00	FUN_004c5c00	frontend	rwcore	bind:rw	rw	menu+race_load+race_run	C4	C4-match	114	7	0x0040bb30 0x0040bb50 0x0040bb70 0x0040bb90 0x0042bcb0 0x00458630 0x004921d0
+0x004c5c80	FUN_004c5c80	render	rwcore	bind:bound	bound	menu+race_load	C4	C4-match	20	11	0x0040bbb0 0x0041b450 0x0041bec0 0x0041cb10 0x0041d6e0 0x00425bc0 0x004548e0 0x00456760
+0x004c5cb0	FUN_004c5cb0	render	rwcore	bind:bound	bound	menu+race_load	C2	lower	230	3	0x0040bbb0 0x004283a0 0x0048bbe0
+0x004c75e0	ViewportOriginGetter	frontend	rwcore	match	-	menu	C4	C4-match	26	5	0x004036a0 0x00493fd0 0x004969a0 0x004b55a0 0x004b5750
+0x004c7650	FUN_004c7650	third-party-library[renderware]	rwcore	bind:bound	bound	menu	C4	C4-match	61	5	0x00403660 0x00467020 0x00494460 0x004b4880 0x004b48e0
+0x004c7760	FUN_004c7760	render	rwcore	bind:bound	bound	menu	C4	C4-match	88	2	0x0042d4a0 0x0042f530
+0x004c77c0	FUN_004c77c0	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load	C4	C4-match	153	6	0x004034a0 0x0042d420 0x004670a0 0x00494a80 0x00496940 0x004b48e0
+0x004c9eb0	DeviceModeBestBelowSet	render	d3d9	bind:shim	shim	menu	C3	lower	146	1	0x00493710
+0x004c9f50	RwGlobal7d4134Set	render	rwcore	bind:shim	shim	menu	C4	C4-match	9	1	0x00493710
+0x004c9f60	FUN_004c9f60	render	d3d9	bind:shim	shim	menu	C4	C4-match	66	1	0x00493710
+0x004caea0	FUN_004caea0	render	d3d9	game-c0c3	stand-in	menu	C2	lower	299	1	0x00402750
+0x004cb130	FUN_004cb130	render	d3d9	match	-	menu+race_load+race_run	C4	C4-match	89	1	0x00499d90
+0x004cb330	FUN_004cb330	third-party-library[renderware]	d3d9	fam:rwcore	-	menu+race_load+race_run	C2	lower	343	1	0x00499d90
+0x004cbb60	GetRenderStateBlockPtr	render	rwcore	match	-	menu	C4	C4-match	5	1	0x004951f0
+0x004cbc60	RwGlobal7d4598Set	render	rwcore	bind:shim	shim	menu	C4	C4-match	9	1	0x00493710
+0x004cbc70	RwGlobal7d4598Get	render	rwcore	bind:shim	shim	menu	C4	C4-match	5	1	0x00493710
+0x004cbc80	RwGlobal7d459cSet	render	rwcore	bind:shim	shim	menu	C4	C4-match	9	1	0x00493710
+0x004cbc90	RwGlobal7d459cGet	render	rwcore	bind:shim	shim	menu	C4	C4-match	5	1	0x00493710
+0x004cbd30	RwStreamRead	render	rtfs	bind:bound	bound	menu+race_load	C4	C4-match	317	5	0x004274e0 0x004b3b70 0x005a7b60 0x005ab380 0x005abfa0
+0x004cbe80	RwStreamWrite	save	rtfs	match	-	not-run	C4	C4-match	444	2	0x004096a0 0x00423540
+0x004cc050	RwStreamSkip	render	rtfs	game-c0c3	-	menu	C3	lower	249	2	0x005a7b60 0x005ab410
+0x004cc160	FUN_004cc160	frontend	rtfs	bind:shim	shim	menu+race_load	C4	C4-match	178	11	0x004096a0 0x00423540 0x004274e0 0x00427880 0x0045d460 0x004781b0 0x004b3b70 0x004b3bf0
+0x004cc230	FUN_004cc230	frontend	rtfs	bind:shim	shim	menu+race_load	C2	lower	439	11	0x004096a0 0x00423540 0x004274e0 0x00427880 0x0045d460 0x004781b0 0x004b3b70 0x004b3bf0
+0x004cc580	FUN_004cc580	render	rwcore	match	-	not-run	C4	C4-match	81	2	0x004096a0 0x00423540
+0x004cc5e0	FUN_004cc5e0	render	rtfs	bind:bound	bound	menu+race_load	C2	lower	243	7	0x00427880 0x0045d460 0x004781b0 0x004b3bf0 0x004b3d20 0x004b3d80 0x004b3e40
+0x004cd070	RwRenderPrimitiveSubmit	render	im2d-im3d	match	-	menu+race_load+race_run	C4	C4-match	195	8	0x004228f0 0x004729b0 0x00477a10 0x00478220 0x004b59c0 0x004b5af0 0x004b5d90 0x004b61c0
+0x004cd140	RwRenderCommandBufferReset	render	im2d-im3d	match	-	menu+race_load+race_run	C4	C4-match	46	8	0x004228f0 0x004729b0 0x00477a10 0x00478220 0x004b59c0 0x004b5af0 0x004b5d90 0x004b61c0
+0x004cd170	FUN_004cd170	render	im2d-im3d	match	-	menu+race_load+race_run	C4	C4-match	317	2	0x00478220 0x004b61c0
+0x004cd2d0	RwRenderIndexedSubmit	render	im2d-im3d	match	-	race_run	C4	C4-match	318	2	0x004228f0 0x00477a10
+0x004cd430	FUN_004cd430	render	im2d-im3d	match	-	not-run	C4	C4-match	197	4	0x004729b0 0x004b59c0 0x004b5af0 0x004b5d90
+0x004cdca0	FUN_004cdca0	third-party-library[renderware]	rwcore	bind:rw	rw	menu+race_load	C4	C4-match	86	1	0x00498810
+0x004cdd00	FUN_004cdd00	third-party-library[renderware]	rwcore	bind:rw	rw	menu+race_load	C4	C4-match	85	1	0x00498810
+0x004cdd60	FUN_004cdd60	third-party-library[renderware]	rwcore	bind:rw	rw	menu+race_load	C2	lower	187	1	0x00498810
+0x004ce2d0	FUN_004ce2d0	render	rwcore	bind:bound	bound	menu	C4	C4-match	185	4	0x004283a0 0x00428400 0x004781b0 0x0048bbe0
+0x004ce790	FUN_004ce790	render	rwcore	match	matched	menu	C4	C4-match	327	1	0x00493600
+0x004ce8e0	FUN_004ce8e0	render	rwcore	match	-	not-run	C4	C4-match	132	1	0x00498810
+0x004cf7d0	FUN_004cf7d0	render	rwcore	game-c0c3	-	not-run	C2	lower	513	1	0x004b3d20
+0x004d4170	FUN_004d4170	third-party-library[renderware]	rwcore	fam:rwcore	-	menu	C4	C4-match	101	2	0x00496d60 0x00496db0
+0x004d41e0	FUN_004d41e0	render	rwcore	bind:shim	shim	not-run	C4	C4-match	110	3	0x00496ce0 0x00496d60 0x00496db0
+0x004d4380	FUN_004d4380	third-party-library[renderware]	rwcore	fam:rwcore	-	menu	C2	lower	1411	2	0x00496d60 0x00496db0
+0x004d4dd0	FUN_004d4dd0	third-party-library[renderware]	rwcore	fam:rwcore	-	menu	C2	lower	290	2	0x00496d60 0x00496db0
+0x004d4f00	FUN_004d4f00	render	rwcore	game-c0c3	-	menu	C2	near95	141	1	0x00496e40
+0x004d4f90	FUN_004d4f90	third-party-library[renderware]	rwcore	fam:rwcore	-	menu	C2	lower	507	2	0x00496d60 0x00496db0
+0x004d52d0	FUN_004d52d0	render	rwcore	bind:bound	bound	menu	C4	C4-match	50	1	0x00498810
+0x004d53b0	D3d9State_Flush	render	d3d9	match	-	menu+race_load+race_run	C4	C4-match	194	1	0x00499d90
+0x004d5480	FUN_004d5480	render	rwcore	match	-	menu+race_load+race_run	C4	C4-match	66	1	0x00499d90
+0x004d8560	FUN_004d8560	util	rwcore	match	matched	menu+race_load+race_run	C4	C4-match	5	3	0x00402750 0x00402a40 0x00466b50
+0x004e4320	RwPluginLinkSet	render	rwcore	bind:rw	rw	race_load+race_run	C4	C4-match	38	4	0x004013f0 0x0041f8f0 0x00420050 0x00426670
+0x004e4350	FUN_004e4350	render	rwcore	match	-	race_load+race_run	C4	C4-match	32	4	0x004013f0 0x0041f8f0 0x00420050 0x004266b0
+0x004e43b0	FUN_004e43b0	third-party-library[renderware]	rwcore	bind:bound	bound	not-run	C4	C4-match	134	5	0x00454170 0x00454350 0x0047d330 0x0047f290 0x0047f380
+0x004e4440	FUN_004e4440	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load	C4	C4-match	13	5	0x00454170 0x00454350 0x0047d330 0x0047f290 0x0047f380
+0x004e4450	RwFrameAddChild	third-party-library[renderware]	world-bsp	bind:rw	rw	menu+race_load+race_run	C4	C4-match	142	1	0x00401000
+0x004e45b0	RwFrameRemoveChild	third-party-library[renderware]	world-bsp	bind:rw	rw	race_run	C4	C4-match	159	3	0x004014b0 0x004547c0 0x00478cf0
+0x004e4800	FUN_004e4800	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load+race_run	C4	C4-match	13	2	0x004547c0 0x00478cf0
+0x004e4810	RpWorldAddLight	third-party-library[renderware]	world-bsp	bind:rw	rw	menu+race_load	C4	C4-match	70	1	0x00401000
+0x004e4860	RpWorldRemoveLight	third-party-library[renderware]	world-bsp	bind:rw	rw	not-run	C4	C4-match	118	2	0x004014b0 0x00478cf0
+0x004e48e0	FUN_004e48e0	third-party-library[renderware]	world-bsp	match	matched	menu	C4	C4-match	31	1	0x00401000
+0x004e4900	FUN_004e4900	third-party-library[renderware]	world-bsp	match	matched	menu+race_load+race_run	C4	C4-match	76	2	0x00401000 0x00420050
+0x004e4b90	RpLightSetConeAngle	third-party-library[renderware]	world-bsp	match	matched	menu	C4	C4-match	54	1	0x00401000
+0x004e4d90	FUN_004e4d90	third-party-library[renderware]	rwcore	bind:rw	rw	not-run	C4	C4-match	53	1	0x004014b0
+0x004e4dd0	RpLightCreate	third-party-library[renderware]	world-bsp	bind:shim	shim	menu+race_load	C4	C4-match	143	1	0x00401000
+0x004e5660	RwEngineForAllPlugins	third-party-library[renderware]	world-bsp	fam:rwcore	-	race_load+race_run	C4	C4-match	30	3	0x004270f0 0x00484310 0x004844a0
+0x004e5700	RpWorldDestroy	third-party-library[renderware]	world-bsp	bind:bound	bound	not-run	C4	C4-match	287	3	0x004014b0 0x0042c2a0 0x00478cf0
+0x004e5820	FUN_004e5820	third-party-library[renderware]	world-bsp	fam:rwcore	-	race_load+race_run	C4	C4-match	20	2	0x00484310 0x004844a0
+0x004e5840	FUN_004e5840	third-party-library[renderware]	world-bsp	fam:rwcore	-	race_load+race_run	C4	C4-match	7	2	0x00484310 0x004844a0
+0x004e5850	RpWorldCreate	third-party-library[renderware]	world-bsp	bind:rw	rw	menu	C2	lower	922	1	0x00401000
+0x004e5bf0	FUN_004e5bf0	third-party-library[renderware]	world-bsp	fam:rwcore	-	not-run	C2	lower	56	1	0x004b4230
+0x004e5c70	RpWorldForAllWorldSectors	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C4	C4-match	88	1	0x004b41b0
+0x004e5fc0	FUN_004e5fc0	third-party-library[renderware]	skin-anim	fam:rwcore	-	menu+race_load+race_run	C2	lower	317	1	0x00425fa0
+0x004e6100	RpAtomicGetWorldBoundingSphere	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load+race_run	C2	lower	326	5	0x00419a00 0x004216b0 0x00425e40 0x00454350 0x00481a30
+0x004e6680	RpClumpRender	render	rwcore	match	-	race_load+race_run	C4	C4-match	64	11	0x004013f0 0x00401ee0 0x00401f10 0x00404650 0x00406130 0x00420050 0x00426d90 0x00458b10
+0x004e66d0	RpClumpForAllAtomics	render	rwcore	bind:rw	rw	menu+race_load+race_run	C2	lower	56	7	0x0045a190 0x00474d60 0x00474fb0 0x0048ff20 0x004b3fc0 0x004b5320 0x004b5580
+0x004e67b0	RpAtomicCreate	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C4	C4-match	200	3	0x00402240 0x00402590 0x00482140
+0x004e68a0	FUN_004e68a0	third-party-library[renderware]	rwcore	fam:rwcore	-	menu+race_load	C4	C4-match	123	3	0x00402240 0x00402590 0x00482140
+0x004e6920	FUN_004e6920	third-party-library[renderware]	rwcore	bind:shim	shim	race_load	C2	lower	126	9	0x0041e0d0 0x004540c0 0x004768c0 0x00477580 0x0047d330 0x0047f290 0x0047f380 0x00489250
+0x004e69a0	FUN_004e69a0	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load	C4	C4-match	257	4	0x0041def0 0x004548e0 0x004775b0 0x0048ae00
+0x004e6ab0	FUN_004e6ab0	third-party-library[renderware]	rwcore	bind:bound	bound	menu+race_load	C2	lower	591	3	0x0041cb10 0x004548e0 0x00456760
+0x004e6d80	FUN_004e6d80	third-party-library[renderware]	rwcore	fam:rwcore	-	menu+race_load	C4	C4-match	112	2	0x00402240 0x00402590
+0x004e6e00	RpClumpDestroy	third-party-library[renderware]	world-bsp	bind:bound	bound	menu+race_load	C2	lower	376	27	0x004014b0 0x004015a0 0x00404820 0x004074a0 0x00412010 0x0041a3d0 0x0041a980 0x0041b440
+0x004e6f80	FUN_004e6f80	third-party-library[renderware]	rwcore	fam:rwcore	-	menu+race_load	C4	C4-match	36	2	0x00402240 0x00402590
+0x004e7420	RpClumpStreamRead	third-party-library[renderware]	world-bsp	bind:rw	rw	menu+race_load	C2	lower	2206	3	0x004781b0 0x004b3bf0 0x004b3e40
+0x004e7e30	FUN_004e7e30	third-party-library[renderware]	rwcore	match	matched	menu+race_load	C4	C4-match	30	18	0x00402240 0x00402590 0x0041def0 0x0041e0d0 0x00421c80 0x004548e0 0x004768c0 0x004770c0
+0x004e7fa0	FUN_004e7fa0	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C4	C4-match	130	3	0x00401fe0 0x004022a0 0x00482140
+0x004e8030	FUN_004e8030	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C4	C4-match	93	3	0x00401fe0 0x004022a0 0x00482140
+0x004e8090	FUN_004e8090	third-party-library[renderware]	world-bsp	match	matched	menu+race_load+race_run	C4	C4-match	38	7	0x00458dd0 0x004770c0 0x004880a0 0x004881d0 0x0048ffd0 0x00490000 0x00490020
+0x004e8640	FUN_004e8640	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C2	lower	268	3	0x00401fe0 0x004022a0 0x00482140
+0x004e8910	FUN_004e8910	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C4	C4-match	34	3	0x00401fe0 0x004022a0 0x00482140
+0x004e8940	FUN_004e8940	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C4	C4-match	81	3	0x00401fe0 0x004022a0 0x00482140
+0x004e89a0	FUN_004e89a0	third-party-library[renderware]	world-bsp	bind:rw	rw	menu+race_load+race_run	C4	C4-match	61	3	0x0048fef0 0x004b4080 0x004b40f0
+0x004e89e0	FUN_004e89e0	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu	C4	C4-match	43	1	0x00459400
+0x004e8a10	FUN_004e8a10	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C2	lower	594	4	0x00401fe0 0x004022a0 0x00459400 0x00482140
+0x004e8c70	FUN_004e8c70	third-party-library[renderware]	world-bsp	fam:rwcore	-	menu+race_load	C2	lower	542	3	0x00401fe0 0x004022a0 0x00482140
+0x004e8ea0	FUN_004e8ea0	third-party-library[renderware]	rwcore	fam:rwcore	-	menu+race_load	C4	C4-match	164	3	0x00402240 0x00402590 0x00482140
+0x004eb3c0	FUN_004eb3c0	third-party-library[renderware]	world-bsp	bind:rw	rw	menu	C4	C4-match	5	2	0x00496d60 0x00496e40
+0x004eb9d0	FUN_004eb9d0	third-party-library[renderware]	world-bsp	bind:rw	rw	menu	C4	C4-match	5	2	0x00496db0 0x00496e40
+0x004ec740	Store_Deref14_Off0c	render	rwcore	match	-	menu	C4	C4-match	14	1	0x00496e40
+0x004ec750	FUN_004ec750	render	rwcore	match	-	menu	C4	C4-match	10	1	0x00496e40
+0x00532a60	FUN_00532a60	third-party-library[renderware]	skin-anim	fam:rwcore	-	not-run	C2	lower	280	3	0x00404fa0 0x004752f0 0x004b47e0
+0x00532b80	RpHAnimStdKeyFrameInterpolate	third-party-library[renderware]	skin-anim	fam:rwcore	-	not-run	C3	lower	1042	1	0x004b47e0
+0x00534870	FUN_00534870	third-party-library[renderware]	rtmath	fam:rwcore	-	menu+race_load+race_run	C4	C4-match	165	4	0x00472650 0x00472690 0x004b44f0 0x004b4510
+0x00534b60	FUN_00534b60	third-party-library[renderware]	rwcore	bind:shim	shim	menu+race_load	C2	lower	401	3	0x004770c0 0x004880a0 0x004881d0
+0x00535700	FUN_00535700	third-party-library[renderware]	skin-anim	fam:rwcore	-	race_load+race_run	C2	lower	247	3	0x00476df0 0x004883b0 0x00488e70
+0x00535910	FUN_00535910	third-party-library[renderware]	skin-anim	fam:rwcore	-	race_load+race_run	C4	C4-match	33	3	0x00476df0 0x004883b0 0x00488e70
+0x00538c80	FUN_00538c80	third-party-library[renderware]	skin-anim	fam:rwcore	-	race_load+race_run	C4	C4-match	201	8	0x00408610 0x0046d400 0x0046da80 0x0046f6c0 0x00487280 0x0048fe70 0x004b4a80 0x004b4c80
+0x0053c5d0	FUN_0053c5d0	third-party-library[renderware]	world-bsp	fam:rwcore	-	not-run	C4	C4-match	265	1	0x004b4e20
+0x0053d060	FUN_0053d060	third-party-library[renderware]	world-bsp	fam:rwcore	-	not-run	C4	C4-match	40	1	0x0041ec00
+0x0053d090	FUN_0053d090	third-party-library[renderware]	world-bsp	fam:rwcore	-	race_load	C4	C4-match	19	2	0x0041ec00 0x0041f2c0
+0x0053fbb0	FUN_0053fbb0	third-party-library[renderware]	world-bsp	bind:bound	bound	menu+race_load	C2	lower	355	1	0x00401000
+0x00540080	FUN_00540080	third-party-library[renderware]	rtmath	fam:rwcore	-	not-run	C4	C4-match	113	1	0x00420340
+0x00540100	FUN_00540100	third-party-library[renderware]	rtmath	fam:rwcore	-	race_load	C4	C4-match	94	1	0x00420340
+0x00540160	FUN_00540160	third-party-library[renderware]	rtmath	fam:rwcore	-	race_load+race_run	C4	C4-match	96	1	0x00420340
+0x005449f0	FUN_005449f0	third-party-library[renderware]	rtmath	fam:rwcore	-	menu+race_load	C4	C4-match	120	1	0x0048ae00
+0x00544a70	FUN_00544a70	third-party-library[renderware]	rtmath	fam:rwcore	-	menu+race_load	C2	lower	95	1	0x0048ae00
+0x00544ad0	FUN_00544ad0	third-party-library[renderware]	rtmath	fam:rwcore	-	menu+race_load	C2	lower	280	1	0x0048ae00
+0x00544bf0	FUN_00544bf0	third-party-library[renderware]	rtmath	fam:rwcore	-	menu+race_run	C2	lower	290	4	0x0041f770 0x0048ae00 0x0048b230 0x0048b960
+0x005459c0	FUN_005459c0	third-party-library[renderware]	rtmath	fam:rwcore	-	not-run	C2	lower	879	3	0x00464e10 0x004652b0 0x004729b0
+0x00546320	FUN_00546320	third-party-library[renderware]	rtmath	fam:rwcore	-	not-run	C4	C4-match	86	2	0x0045e040 0x00478cf0
+0x00546b10	FUN_00546b10	vehicle	rtmath	game-c0c3	-	race_load+race_run	C3	lower	213	1	0x004829d0
+0x00546e70	FUN_00546e70	vehicle	rtmath	game-c0c3	-	race_run	C2	lower	948	3	0x00404fa0 0x004752f0 0x00482c10
+0x00547230	FUN_00547230	third-party-library[renderware]	rtmath	fam:rwcore	-	race_load+race_run	C2	lower	528	2	0x0044d5e0 0x00487280
+0x005492a0	FUN_005492a0	third-party-library[renderware]	rtmath	fam:rwcore	-	not-run	C4	C4-match	14	1	0x00477500
+0x005493d0	FUN_005493d0	third-party-library[renderware]	rtmath	fam:rwcore	-	menu	C4	C4-match	14	3	0x00477500 0x004775b0 0x004b4150
+0x005495b0	FUN_005495b0	third-party-library[renderware]	rt2d	fam:rt2d	-	not-run	C4	C4-match	82	1	0x00477870
+0x00549610	FUN_00549610	third-party-library[renderware]	rt2d	fam:rt2d	-	menu	C4	C4-match	11	1	0x004b4150
+0x00549620	FUN_00549620	third-party-library[renderware]	rt2d	fam:rt2d	-	menu	C4	C4-match	29	1	0x004b4150
+0x0054f8d0	FUN_0054f8d0	third-party-library[renderware]	rwcore	bind:shim	shim	menu+race_load	C2	lower	1153	1	0x004b3d80
+0x00550350	RtFSManagerOpen	third-party-library[renderware]	rtfs	bind:shim	shim	menu	C4	C4-match	53	1	0x00493710
+0x00550390	sub_00550390	render	rwcore	bind:shim	shim	not-run	C4	C4-match	105	1	0x00493710
+0x00550430	FUN_00550430	util	rwcore	match	-	menu	C4	C4-match	157	1	0x004624c0
+0x00550be0	FUN_00550be0	util	rwcore	match	-	menu+race_load+race_run	C4	C4-match	73	2	0x0045d3f0 0x00462ec0
+0x00551190	FUN_00551190	third-party-library[renderware]	rt2d	fam:rt2d	-	menu	C2	lower	250	1	0x004624c0
+0x00552750	FontCtx_ResetTransform	hud	rt2d	match	-	menu+race_load+race_run	C4	C4-match	237	4	0x004275d0 0x00427e00 0x00427ff0 0x00428140
+0x00552840	FontCtx_SetRotation	hud	rt2d	match	-	not-run	C4	C4-match	78	1	0x00427ff0
+0x00552920	FUN_00552920	third-party-library[renderware]	rt2d	bind:rw	rw	menu	C2	lower	315	1	0x004275d0
+0x00552a60	FontSys_SetActiveCamera	hud	rt2d	match	-	menu	C4	C4-match	235	1	0x004275d0
+0x00552b60	FontSys_InitSeq	hud	rt2d	match	-	menu	C4	C4-match	44	1	0x00427ca0
+0x00552b90	FontSys_Shutdown	hud	rt2d	match	stand-in	not-run	C4	C4-match	126	1	0x00427620
+0x00552d10	FontMatrix_Push	hud	rt2d	match	-	menu+race_load+race_run	C4	C4-match	86	9	0x004275d0 0x004278d0 0x00427990 0x00427ad0 0x00427be0 0x00427e00 0x00427f00 0x00427ff0
+0x00552d70	ViewportStackPop	render	rt2d	match	-	menu+race_load+race_run	C4	C4-match	38	9	0x004275d0 0x004278d0 0x00427990 0x00427ad0 0x00427be0 0x00427e00 0x00427f00 0x00427ff0
+0x00552df0	FontCtx_SetTranslation	hud	rt2d	match	-	menu+race_load+race_run	C4	C4-match	72	1	0x00427ff0
+0x00553cf0	FUN_00553cf0	third-party-library[renderware]	rt2d	bind:rw	rw	menu	C2	lower	261	1	0x004275d0
+0x00553e80	FUN_00553e80	third-party-library[renderware]	rt2d	fam:rt2d	stand-in	menu	C4	C4-match	99	1	0x004275d0
+0x00553ef0	FUN_00553ef0	third-party-library[renderware]	rt2d	bind:rw	rw	menu	C4	C4-match	71	1	0x004275d0
+0x00554390	FUN_00554390	third-party-library[renderware]	rt2d	fam:rt2d	-	menu	C2	lower	1109	1	0x00427880
+0x005554d0	FUN_005554d0	hud	rt2d	match	-	menu+race_load+race_run	C4	C4-match	218	3	0x00427680 0x004282a0 0x00428320
+0x005555b0	FUN_005555b0	render	rt2d	match	-	not-run	C4	C4-match	632	4	0x004278d0 0x00427990 0x00427ad0 0x00427be0
+0x00555830	FUN_00555830	hud	rt2d	match	matched	not-run	C4	C4-match	214	1	0x00427620
+0x00556ca0	FUN_00556ca0	hud	rt2d	game-c0c3	-	menu+race_load+race_run	C2	lower	21	4	0x00427e00 0x00427f00 0x00427ff0 0x00428140
+0x00556cc0	SetDat00912a20	hud	rt2d	match	-	menu	C4	C4-match	9	1	0x00427ca0
+0x00556cd0	GetDat00912a20	hud	rt2d	bind:port	port	not-run	C4	C4-match	5	1	0x00427620
+0x00556d70	FUN_00556d70	third-party-library[renderware]	rt2d	bind:rw	rw	menu	C4	C4-match	194	1	0x00427ca0
+0x00556e40	FUN_00556e40	hud	rt2d	match	matched	not-run	C4	C4-match	66	1	0x00427620
+0x00556e90	FUN_00556e90	render	rt2d	game-c0c3	-	menu+race_load+race_run	C2	near95	630	9	0x004278d0 0x00427990 0x00427ad0 0x00427be0 0x00427ca0 0x00427e00 0x00427f00 0x00427ff0
+0x00557fb0	FUN_00557fb0	third-party-library[renderware]	rt2d	fam:rwcore	-	not-run	C4	C4-match	86	1	0x0044df80
+0x00558100	FUN_00558100	gameplay	rt2d	match	-	not-run	C4	C4-match	62	1	0x0044df80
+0x00558140	FUN_00558140	gameplay	rt2d	match	-	not-run	C4	C4-match	50	1	0x0044df80
+0x005581f0	FUN_005581f0	boot	rt2d	match	matched	not-run	C4	C4-match	69	1	0x00402a40
+0x00558240	FUN_00558240	third-party-library[renderware]	rt2d	fam:rwcore	stand-in	menu	C2	lower	432	1	0x00402750
+0x005584c0	FUN_005584c0	third-party-library[renderware]	rt2d	bind:shim	shim	menu	C2	lower	132	1	0x00493710
+0x005586f0	FUN_005586f0	third-party-library[renderware]	rwcore	fam:rwcore	-	not-run	C2	lower	361	2	0x00444b60 0x00444ff0
+0x00558b40	FUN_00558b40	gameplay	rwcore	game-c0c3	-	not-run	C2	lower	257	2	0x004197e0 0x00459620
+0x00558d30	FUN_00558d30	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	181	1	0x00478cf0
+0x00559040	FUN_00559040	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C3	lower	674	1	0x00479100
+0x005592f0	FUN_005592f0	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	not-run	C2	lower	609	1	0x00418a70
+0x00559c40	PhysicsSceneBodyRegister	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C3	lower	659	3	0x00421960 0x0047d080 0x0047d3c0
+0x00559ee0	FUN_00559ee0	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C3	lower	262	5	0x00421980 0x0047d080 0x0047d330 0x0047f290 0x0047f380
+0x0055ab30	FUN_0055ab30	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	116	3	0x0047d180 0x0047d240 0x00480100
+0x0055ac00	RwpShapeActiveBitSet	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	77	14	0x004064c0 0x00406ce0 0x00421750 0x00421800 0x00471780 0x0047cea0 0x0047d180 0x0047d240
+0x0055ac50	FUN_0055ac50	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	196	3	0x00471780 0x0047cea0 0x0047cf20
+0x0055ad30	FUN_0055ad30	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	160	7	0x00421750 0x00421800 0x00471780 0x0047cea0 0x0047cf20 0x00480720 0x00480b70
+0x0055ade0	FUN_0055ade0	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	101	4	0x0047cf20 0x0047d180 0x0047d240 0x00480100
+0x0055ae50	FUN_0055ae50	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C3	lower	26	1	0x0047def0
+0x0055ae70	PhysicsSceneBodySetShapeFlags	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load+race_run	C4	C4-match	198	4	0x00421d20 0x0047d3c0 0x00480720 0x004809e0
+0x0055af80	FUN_0055af80	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	58	1	0x00482820
+0x0055afc0	FUN_0055afc0	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	97	2	0x0047f450 0x00482820
+0x0055b650	FUN_0055b650	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_run	C3	lower	250	6	0x00421800 0x00471780 0x0047cea0 0x00480b70 0x00480d60 0x00481750
+0x0055b940	PhysicsBodySetMass	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load	C3	lower	328	1	0x0047d3c0
+0x0055bab0	PhysicsBodySetDamping	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	11	1	0x0047d3c0
+0x0055bb70	FUN_0055bb70	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	not-run	C4	C4-other	114	1	0x00459620
+0x0055bd80	FUN_0055bd80	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load+race_run	C4	C4-match	84	1	0x00480100
+0x0055bde0	FUN_0055bde0	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	not-run	C2	lower	533	1	0x00459620
+0x0055c000	RwpGjkSupportMap	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load	C3	lower	229	1	0x00481e00
+0x0055c4a0	PhysicsBodySetRestitution	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	75	2	0x00471780 0x0047d3c0
+0x0055c4f0	PhysicsBodySetFriction	vehicle	rwphysics	match	-	race_load	C4	C4-match	75	1	0x0047d3c0
+0x0055c810	PhysicsBodySetLinearVelocity	vehicle	rwphysics	match	-	race_load	C4	C4-match	43	1	0x0047d3c0
+0x0055dd60	FUN_0055dd60	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	98	1	0x0047f480
+0x0055de20	FUN_0055de20	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	60	1	0x00482820
+0x0055deb0	RwpWorldSolverHandle_RegAbi	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	menu+race_load+race_run	C4	C4-other	7	2	0x004292d0 0x0047eb30
+0x0055dec0	FUN_0055dec0	util	rwphysics	match	-	race_load+race_run	C4	C4-match	6	14	0x00409790 0x0040b090 0x004111c0 0x00421960 0x00421980 0x004270f0 0x0047d080 0x0047d3c0
+0x0055dff0	RwpBodyRefreshGate	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	82	7	0x0047d180 0x0047d240 0x0047ea60 0x0047eb30 0x00480100 0x00480720 0x004809e0
+0x0055e200	RwpSolverContextSet	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	10	1	0x0047e9c0
+0x0055fe50	FUN_0055fe50	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	76	1	0x0047e9c0
+0x0055fea0	FUN_0055fea0	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	202	1	0x0047e9c0
+0x0055ff70	FUN_0055ff70	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	27	1	0x0047e9c0
+0x0055ff90	FUN_0055ff90	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	602	1	0x0047e9c0
+0x00561040	FUN_00561040	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	565	1	0x0047e9c0
+0x00561390	FUN_00561390	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	2238	1	0x0047e9c0
+0x00561c50	FUN_00561c50	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	516	1	0x0047e9c0
+0x00561e60	FUN_00561e60	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	30	1	0x0047e9c0
+0x00561e80	FUN_00561e80	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	30	1	0x0047e9c0
+0x00562460	FUN_00562460	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	37	1	0x0047eb30
+0x00562560	FUN_00562560	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	25	2	0x00478cf0 0x0047f480
+0x00563810	FUN_00563810	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	44	1	0x004826d0
+0x0057c210	RwpBodyTableLookup	third-party-library[RenderWare-Physics-3.7]	rwphysics	fam:rwphysics	-	race_load+race_run	C4	C4-other	13	31	0x004064c0 0x00406ce0 0x00421750 0x00421800 0x00459620 0x00471780 0x00471ec0 0x0047cea0
+0x0057c220	RWP37WorldSlotAssign	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	73	1	0x0047d3c0
+0x0057c300	RWP37BodyCreate	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	101	1	0x0047d3c0
+0x0057c370	FUN_0057c370	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	not-run	C4	C4-match	42	4	0x00421c80 0x0047d330 0x0047f290 0x0047f380
+0x0057c420	FUN_0057c420	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load+race_run	C4	C4-match	29	3	0x0047d180 0x0047d240 0x00480100
+0x0057c500	RWP37WorldCreate	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	74	1	0x0047d3c0
+0x0057c550	FUN_0057c550	third-party-library[RenderWare-Physics-3.7]	rwphysics	match	-	race_load	C4	C4-match	61	1	0x0047d3c0

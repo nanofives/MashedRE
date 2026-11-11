@@ -1,0 +1,219 @@
+rva	name	subsystem	size	t1_sites	t1_objects	t2_rw_globals	t2_deref	binding	t3_ids	obj_t1	obj_t3	phys_or_math_only	librw_relevant
+0x0043c5b0	MenuDrawLoop	frontend	3301	0		0x007d3ff8	0x007d3ff8[+0x20]	under-stand-in	-	-	-	n	y
+0x00444ff0	FUN_00444ff0	ai	2706	0		0x007d3ff8	0x007d3ff8[+0xc4]	-	buf{005586f0}[256]	-	0x005586f0	n	y
+0x00430b90	FUN_00430b90	frontend	1693	0		0x007d3ff8	0x007d3ff8[+0x20]	under-stand-in	-	-	-	n	y
+0x00429e10	FUN_00429e10	render	1593	0		0x007d3ff8	0x007d3ff8[+0x20]	-	font{004c19f0,004c1a00,004c1c80}[0x68]	-	0x004c19f0 0x004c1a00 0x004c1c80	n	y
+0x00473ee0	LogoOverlayDraw	frontend	1460	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x00428d30	FUN_00428d30	frontend	1291	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00492e90	FUN_00492e90	boot	1236	0		0x007d3ff8	0x007d3ff8[+0x20]	stand-in	v{004c1c80}[0,1,2]	-	0x004c1c80	n	y
+0x0041b7a0	FUN_0041b7a0	render	1048	0			-	-	p{004c13e0,004c1480,004c51a0}[flags,frame,ids,parts,pos,vis] parts{004c13e0}[2]	-	0x004c13e0 0x004c1480	n	y
+0x00478cf0	CourseAssetDestroy	track	826	0			-	-	t{004c5930,00546320,00558d30,00562560}[clumpA,clumpB,clumps,clumps8,light1,light2]	-	0x004c5930	n	y
+0x00404320	PerModeRenderMachine	render	807	0		0x007d3ff8	0x007d3ff8[+0x0,+0x20]	under-stand-in	cam{004c19f0,004c1a00,004c1c80}[0x68,0x6c] saved{004c1c80}[0,1,2] vw{004c1c80}[0,1,2]	-	0x004c19f0 0x004c1a00 0x004c1c80	n	y
+0x004770c0	FUN_004770c0	vehicle	800	0		0x007dc57c	-	matched	param_1{004e7e30,004e8090}[0xb,0xc,1,10,2,4]	-	0x004e7e30 0x004e8090	n	y
+0x00402750	AppInitialiseOnBootup	boot	721	1	FUN_004caea0[+0x0]		-	matched	DAT_00771a0c{004caea0}[vt]	0x004caea0	0x004caea0	n	y
+0x0042fb70	MenuSpriteDispatchB	frontend	700	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004270f0	CourseRenderFrame	render	689	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00476df0	FUN_00476df0	render	686	0		0x007dc57c	-	-	p{00535700,00535910}[col,count,mat,obj,pos,uv]	-	0x00535700 0x00535910	n	y
+0x0042fe90	MenuSpriteDispatchC	frontend	646	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0041a5d0	FUN_0041a5d0	gameplay	616	0			-	-	ang0{004c1520}[4] ang1{004c1520}[4] f{004c1520}[parent] m{004c1480}[16] rec{004c1480,004c1520}[a,ang0,ang1,fade,frame,m] rot{004c1520}[0,1,2,3]	-	0x004c1480 0x004c1520	n	y
+0x004739f0	TextSpriteScaled	frontend	556	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x00483a70	FUN_00483a70	render	545	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0041f8f0	FUN_0041f8f0	render	499	0		0x007d3ff8	0x007d3ff8[+0x20]	-	r{004c1340,004c1680,004c19f0,004c1a00,004c1bb0,004e4320,004e4350}[avg,cam,clump,col,frame,idx]	-	0x004c1340 0x004c1680 0x004c19f0 0x004c1a00 0x004c1bb0 0x004e4320 0x004e4350	n	y
+0x00410b30	sub_00410b30	render	467	0		0x007d3ff8	0x007d3ff8[+0x0,+0x20]	under-stand-in	-	-	-	n	y
+0x00478220	FUN_00478220	render	449	0		0x007d3ff8	0x007d3ff8[+0x20]	-	idx{004cd070}[0,1,2,3,4,5] v{004cd070}[0,1,2,3,4,5]	-	0x004cd070	n	y
+0x00428a30	FUN_00428a30	frontend	433	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004736c0	BorderQuadFourAlpha	frontend	423	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x00441990	FUN_00441990	util	406	0			-	-	param_1{004c1c10}[at,fov,frame,pitch,roll,yaw]	-	0x004c1c10	n	y
+0x00473220	FUN_00473220	render	393	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x004733b0	FUN_004733b0	render	393	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x0048b960	FUN_0048b960	particle	386	0			-	-	rec{004c1340,00544bf0}[a,accum,alpha,atomic,b,count]	-	0x004c1340	n	y
+0x00472dc0	FUN_00472dc0	frontend	378	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x00473870	TextSpriteUVExplicit	frontend	378	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x00473540	GradientQuadHorizAlpha	frontend	375	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x00472f40	TextGradientV0V1Override	frontend	361	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x004730b0	TextGradientV2V3Override	frontend	361	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x0048ae00	FUN_0048ae00	particle	356	0			-	stand-in	geo{004e69a0,00544ad0,00544bf0}[0x18]	-	0x004e69a0	n	y
+0x00472c60	ChromeBaseDraw	frontend	346	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x00427ca0	FontText_HudInit	hud	343	0			-	stand-in	txd{00556cc0}[11]	-	0x00556cc0	n	y
+0x00428140	FUN_00428140	frontend	339	0		0x007d3ff8	0x007d3ff8[+0x20]	-	pos{00556ca0}[2] text{00556ca0}[128]	-	0x00556ca0	n	y
+0x00427ff0	FontText_DrawTextRotated	hud	333	0		0x007d3ff8	0x007d3ff8[+0x20]	-	off{00552df0}[0,1,2] pos{00556ca0}[0,1,2] text{00556ca0}[128]	-	0x00552df0 0x00556ca0	n	y
+0x00472b10	FUN_00472b10	render	330	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x004881d0	Obj7030a8Create	boot	322	0		0x007dc57c	-	matched	DAT_007030a8{00534b60}[0x18] param_1{004e8090}[0x50]	-	0x004e8090 0x00534b60	n	y
+0x004548e0	FUN_004548e0	vehicle	317	0			-	matched	f30{004e69a0,004e7e30}[f4]	-	0x004e69a0 0x004e7e30	n	y
+0x00413a40	FUN_00413a40	render	309	0		0x007d3ff8	0x007d3ff8[+0x20,+0x24,+0x34]	-	-	-	-	n	y
+0x00427990	FUN_00427990	render	305	0			-	-	pos{005555b0}[0,1,2,3,4] text{005555b0}[256]	-	0x005555b0	n	y
+0x00430120	FUN_00430120	frontend	299	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004b59c0	FUN_004b59c0	render	299	0		0x007d3ff8	0x007d3ff8[+0x20]	-	v{004cd070}[0,1,2]	-	0x004cd070	n	y
+0x004880a0	Obj7030acCreate	sky	294	0		0x007dc57c	-	matched	DAT_007030ac{00534b60}[0x18] param_1{004e8090}[0x50]	-	0x004e8090 0x00534b60	n	y
+0x00477a10	FUN_00477a10	render	289	0		0x007d3ff8	0x007d3ff8[+0x0,+0x20,+0x24]	-	t{004c1b40,004cd070}[count,i2b4,radius,sphere]	-	0x004c1b40 0x004cd070	n	y
+0x004430e0	FUN_004430e0	render	288	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x34]	-	-	-	-	n	y
+0x00422160	FUN_00422160	render	288	0			-	-	e{004c1340}[clump,vis]	-	0x004c1340	n	y
+0x0042aae0	MenuIm2DQuad	frontend	286	0		0x007d3ff8	0x007d3ff8[+0x18,+0x20,+0x30]	-	-	-	-	n	y
+0x004729b0	FUN_004729b0	render	285	0			-	-	v{004cd070}[0,1,2]	-	0x004cd070	n	y
+0x0041f3d0	FUN_0041f3d0	gameplay	280	0			-	-	frame{004c1340,004c1520}[0x40,4] r{004c1520}[mode,spin,wheelA,wheelB,x290]	-	0x004c1340 0x004c1520	n	y
+0x0041eaa0	FUN_0041eaa0	boot	270	0			-	stand-in	uv{004c1c80}[0,1,2]	-	0x004c1c80	n	y
+0x00427ad0	MenuMenusBB	frontend	269	0			-	-	pos{005555b0}[0,1,2,3,4] text{005555b0}[256]	-	0x005555b0	n	y
+0x004829d0	Replay::WriteFrame	vehicle	266	0		0x007d3ff8	0x007d3ff8[+0x108]	-	cur{00546b10}[next,p,q,t] m{00546b10}[pos] r{00546b10}[count,cur,n170,started,t174,t178]	-	-	n	y
+0x004113b0	FUN_004113b0	boot	259	0		0x007d3ff8	0x007d3ff8[+0xc4,+0x108]	stand-in	-	-	-	n	y
+0x00427680	FontText_ComputeScreenXY	hud	247	0			-	-	pos{005555b0}[2] text{005554d0,005555b0}[0,64]	-	0x005554d0 0x005555b0	n	y
+0x00427e00	FUN_00427e00	frontend	245	0		0x007d3ff8	0x007d3ff8[+0x20]	-	pos{00556ca0}[2] text{00556ca0}[128]	-	0x00556ca0	n	y
+0x004073b0	FUN_004073b0	util	236	0			-	-	clump{004c1480}[frame] r{004c1480}[clump,f48,f4c,f5c,f64,f68]	-	0x004c1480	n	y
+0x00427f00	FUN_00427f00	hud	232	0		0x007d3ff8	0x007d3ff8[+0x20]	-	pos{00556ca0}[2] text{00556ca0}[512]	-	0x00556ca0	n	y
+0x00403160	Sub00403160_SubMode0BViewport	hud	229	0		0x007d3ff8	0x007d3ff8[+0x20]	-	cam{004c19f0,004c1a00,004c1c80}[viewWindow]	-	0x004c19f0 0x004c1a00 0x004c1c80	n	y
+0x0040de30	sub_0040de30	render	228	0			-	under-stand-in	frame{004c1480}[modelling] param_1{004c1c10,004c1c80}[parent,projectionType,viewWindow]	-	0x004c1480 0x004c1c10 0x004c1c80	n	y
+0x00405460	FUN_00405460	util	222	0			-	-	scale{004c1c80}[0,1,2]	-	0x004c1c80	n	y
+0x004844a0	FUN_004844a0	debug-overlay	212	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004768c0	FUN_004768c0	render	210	0		0x007d3ff8	0x007d3ff8[+0x10c]	matched	param_1{004e6920,004e7e30}[0x10,0x14,0x18,0x1c,0x20,0x24]	-	0x004e6920 0x004e7e30	n	y
+0x0047f380	FUN_0047f380	gameplay	205	1	RwpBodyTableLookup[+0x24]		-	-	iVar2{004c0c20,004e43b0,004e4440,00559ee0,0057c210,0057c370}[0x24]	-	0x004c0c20 0x004e43b0 0x004e4440	n	y
+0x00401f10	FUN_00401f10	render	201	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00496c10	FUN_00496c10	render	201	0		0x007d3ff8	0x007d3ff8[+0x0]	-	-	-	-	n	y
+0x004072e0	FUN_004072e0	render	197	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004b48e0	FUN_004b48e0	render	196	3	FUN_004c1d30[+0x60,+0x64] FUN_004c5a00[+0x50]		-	-	iVar1{004c5a00,004c7650,004c77c0}[0x50] iVar4{004c0740,004c1c10,004c1d30}[0x60,100]	0x004c1d30 0x004c5a00	0x004c0740 0x004c1c10 0x004c1d30 0x004c5a00 0x004c7650 0x004c77c0	n	y
+0x00406070	FUN_00406070	gameplay	191	0			-	-	e{004c1480}[f4,f8,fc,h10,obj,vel] frame{004c1480}[pos] obj{004c1480}[frame]	-	0x004c1480	n	y
+0x0042d4a0	FUN_0042d4a0	render	189	0			-	matched	rect{004c7760}[0,1,2,3,4] scale{004c1c80}[0,1,2]	-	0x004c1c80 0x004c7760	n	y
+0x00475d90	FUN_00475d90	render	183	0		0x007d3ff8	0x007d3ff8[+0x10c]	matched	-	-	-	n	y
+0x0041ec00	FUN_0041ec00	gameplay	181	0			-	stand-in	a{0053d060,0053d090}[geometry] p{004e6e00}[clump,objs]	-	0x004e6e00 0x0053d060 0x0053d090	n	y
+0x004013f0	FUN_004013f0	hud	180	0		0x007d3ff8	0x007d3ff8[+0x0,+0x20]	-	-	-	-	n	y
+0x004278d0	FUN_004278d0	render	180	0			-	-	text{005555b0}[512]	-	0x005555b0	n	y
+0x00459480	FUN_00459480	gameplay	178	0			-	-	p{004c0e50,004c45f0}[clump,f10,f1c,f30,f34,f3c] v{004c5010}[0,1,2,3]	-	0x004c0e50	n	y
+0x00498860	FUN_00498860	util	170	0		0x007d3ff8	0x007d3ff8[+0xd4]	under-stand-in	-	-	-	n	y
+0x00427be0	FUN_00427be0	render	170	0			-	-	text{005555b0}[512]	-	0x005555b0	n	y
+0x00403910	FUN_00403910	render	169	0		0x007d3ff8	0x007d3ff8[+0x0]	-	-	-	-	n	y
+0x0048ff20	FUN_0048ff20	particle	169	0			-	matched	s{004e66d0}[atomic,clump,count]	-	0x004e66d0	n	y
+0x0042a470	FUN_0042a470	render	166	0		0x007d3ff8	0x007d3ff8[+0xcc,+0xd4]	matched	-	-	-	n	y
+0x004b47e0	FUN_004b47e0	render	158	0			-	-	k{00532a60,00532b80}[time]	-	0x00532a60 0x00532b80	n	y
+0x0041f4f0	FUN_0041f4f0	gameplay	157	0			-	-	frame{004c1340,004c1520}[0x40]	-	0x004c1340 0x004c1520	n	y
+0x004921d0	DisplayInit	boot	155	0			-	matched	local_18{004c2ed0}[6]	-	0x004c2ed0	n	y
+0x0046d400	FUN_0046d400	render	152	0			-	-	param_4{00538c80}[8]	-	0x00538c80	n	y
+0x00421c80	FUN_00421c80	render	146	0			-	-	e{004e7e30,0057c370}[clump,obj] rec{004e6e00}[g,model]	-	0x004e6e00 0x004e7e30	n	y
+0x004277a0	TextCtrlCodeRemap	frontend	146	0			-	-	text{005555b0}[512]	-	0x005555b0	n	y
+0x0047ade0	RWP_Object	render	144	0		0x007d3ff8	-	-	-	-	-	n	y
+0x0047c160	sub_0047c160	camera	140	0			-	-	d{004c1b40}[0x4e] param_1{004c0ed0,004c1b40}[4]	-	0x004c0ed0 0x004c1b40	n	y
+0x0048a6f0	FUN_0048a6f0	particle	140	0			-	-	param_1{004c1340,004c39b0}[1] v{004c1520,004c39b0}[3]	-	0x004c1340 0x004c1520	n	y
+0x0047d330	FUN_0047d330	gameplay	137	1	RwpBodyTableLookup[+0x24]		-	-	iVar1{004c0c20,004e43b0,004e4440,00559ee0,0057c210,0057c370}[0x24]	-	0x004c0c20 0x004e43b0 0x004e4440	n	y
+0x005a7ee0	FUN_005a7ee0	audio	134	0		0x007d3ff8	0x007d3ff8[+0xf4]	-	-	-	-	n	y
+0x0048ad50	FUN_0048ad50	particle	133	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00467110	FUN_00467110	render	132	0			-	matched	local_8{004c1c80}[0,1,2]	-	0x004c1c80	n	y
+0x004756e0	FUN_004756e0	render	131	0			-	-	buf{004c1480}[16]	-	0x004c1480	n	y
+0x0042a6b0	FUN_0042a6b0	vehicle	128	0		0x007d3ff8	0x007d3ff8[+0xcc,+0xd4]	matched	-	-	-	n	y
+0x00459400	FUN_00459400	gameplay	127	0			-	-	g{004e89e0,004e8a10}[numVerts,uv]	-	0x004e89e0 0x004e8a10	n	y
+0x0048af70	FUN_0048af70	particle	127	0			-	stand-in	atomic{004e6920,004e7e30}[4] rec{004c0c20}[atomic,frame]	-	0x004c0c20 0x004e6920 0x004e7e30	n	y
+0x00411ce0	Ghost::SetupRender	vehicle	126	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00403050	FUN_00403050	frontend	124	0		0x007d3ff8	0x007d3ff8[+0x20]	under-stand-in	-	-	-	n	y
+0x0042d420	FUN_0042d420	render	122	5	FUN_004c1d30[+0x4,+0x60,+0x64]		-	matched	iVar1{004c0740,004c1d30}[0x60,100,4]	0x004c1d30	0x004c0740 0x004c1d30	n	y
+0x004951f0	HardwareSetVideoMode	render	121	1	GetRenderStateBlockPtr[+0xc4]		-	stand-in	DAT_00771e58{004cbb60}[0xc4,0xcc]	0x004cbb60	0x004cbb60	n	y
+0x004282a0	MenuMenusBA	frontend	121	0			-	-	text{005554d0}[512]	-	0x005554d0	n	y
+0x00496e40	PCVS_Init	boot	120	2	FUN_004eb3c0[+0x0] FUN_004eb9d0[+0x0]		-	stand-in	-	0x004eb3c0 0x004eb9d0	-	n	y
+0x00454820	FUN_00454820	gameplay	117	0			-	-	f20{004c1480}[f4]	-	0x004c1480	n	y
+0x0048baf0	FUN_0048baf0	particle	116	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00441760	Camera::Apply	util	116	0			-	-	iVar2{004c1340,004c15c0}[0x10] param_1{004c1340,004c4d20}[0x24,0x34,0x38,0x3c,0x84]	-	0x004c1340 0x004c15c0	n	y
+0x004914b0	RainRender	render	114	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00428320	FUN_00428320	frontend	111	0			-	-	text{005554d0}[512]	-	0x005554d0	n	y
+0x00487d70	FUN_00487d70	particle	110	0		0x007d3ff8	0x007d3ff8[+0x20,+0x24]	-	-	-	-	n	y
+0x00426d20	FUN_00426d20	frontend	105	0			-	-	axis{004c1520}[0,1,2,3]	-	0x004c1520	n	y
+0x00477490	FUN_00477490	render	105	0			-	-	d{004c13e0,004c1480}[age,m,obj,rate,t,tmax] obj{004c13e0,004c1480}[1] v{004c13e0}[0,1,2,3]	-	0x004c13e0 0x004c1480	n	y
+0x0042a5d0	FUN_0042a5d0	render	102	0		0x007d3ff8	0x007d3ff8[+0xcc,+0xd4]	matched	-	-	-	n	y
+0x0048e7b0	FUN_0048e7b0	particle	99	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004b3bf0	FUN_004b3bf0	vehicle	97	1	RpClumpStreamRead[+0x4]		-	matched	iVar3{004c0e50,004e7420}[4]	0x004e7420	0x004c0e50 0x004e7420	n	y
+0x004216b0	FUN_004216b0	render	96	0		0x007d3ff8	0x007d3ff8[+0x0]	-	e{004c1b40}[atomic,vis]	-	0x004c1b40	n	y
+0x00454170	FUN_00454170	gameplay	96	0			-	-	f34{004c1210,004c15c0}[f4] p{004c1210,004c15c0,004e43b0,004e4440}[f0,f28,f2c,f30,f34,f38]	-	0x004c1210 0x004c15c0 0x004e43b0 0x004e4440	n	y
+0x00477810	FUN_00477810	render	93	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004b4150	FUN_004b4150	render	92	2	FUN_005493d0[+0x8,+0x30]		-	-	geo{005493d0,00549610,00549620}[0x30,8]	-	0x00549610 0x00549620	n	y
+0x00476b30	FUN_00476b30	render	91	0		0x007dc57c	-	-	-	-	-	n	y
+0x00489c60	FUN_00489c60	particle	91	0		0x007d3ff8	0x007d3ff8[+0x10c]	-	-	-	-	n	y
+0x0048fd70	FUN_0048fd70	render	88	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00491530	FUN_00491530	render	88	0		0x007d3ff8	0x007d3ff8[+0x10c]	-	-	-	-	n	y
+0x004b4880	FUN_004b4880	boot	87	0			-	matched	param_1{004c0740,004c1cf0}[0x60,100,4]	-	0x004c0740 0x004c1cf0	n	y
+0x00425e40	FUN_00425e40	render	85	0		0x007d3ff8	0x007d3ff8[+0x0]	-	body{004c1b40}[render] e{004c1b40}[anim,body,clump,part0,part1]	-	0x004c1b40	n	y
+0x004547c0	FUN_004547c0	gameplay	83	0			-	-	e{004e45b0,004e4800}[f0,f10,f20,f24,f28,f8]	-	0x004e45b0 0x004e4800	n	y
+0x00441700	Camera::SetupFOV	util	82	0			-	-	param_1{004c1c80}[0x24,0x58,0x6c,0x70,0x84] vw{004c1c80}[0,1,2]	-	0x004c1c80	n	y
+0x00484170	Rec18Create	boot	81	0		0x007d3ff8	0x007d3ff8[+0x108]	stand-in	-	-	-	n	y
+0x0045a130	FUN_0045a130	gameplay	80	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00475d30	FUN_00475d30	render	80	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00475e50	FUN_00475e50	render	78	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00476c10	Batch476c10	vehicle	78	0		0x007dc57c	-	-	-	-	-	n	y
+0x00486220	FUN_00486220	particle	78	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0048a490	FUN_0048a490	particle	76	0			-	-	r{004c1480}[at10,obj]	-	0x004c1480	n	y
+0x0041ebb0	FUN_0041ebb0	render	75	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004891f0	FUN_004891f0	render	71	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00476b90	Batch476b90	render	70	0		0x007dc57c	-	-	-	-	-	n	y
+0x00476c60	Batch476c60	render	70	0		0x007dc57c	-	-	-	-	-	n	y
+0x005c4d50	FUN_005c4d50	boot	68	0		0x007d3ff8	0x007d3ff8[+0x10c]	matched	-	-	-	n	y
+0x00476ae0	Batch476ae0	render	67	0		0x007dc57c	-	-	-	-	-	n	y
+0x00476cb0	Batch476cb0	vehicle	67	0		0x007dc57c	-	-	-	-	-	n	y
+0x004593b0	FUN_004593b0	gameplay	67	0			-	matched	puVar1{004c5770,004e6e00}[7]	-	0x004e6e00	n	y
+0x00467020	FUN_00467020	boot	67	0			-	matched	param_1{004c1cf0,004c7650}[0x60,100,4]	-	0x004c1cf0 0x004c7650	n	y
+0x00427880	FUN_00427880	frontend	66	0			-	-	name{004cc230}[64]	-	0x004cc230	n	y
+0x00413f50	FUN_00413f50	hud	63	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0040df20	sub_0040df20	render	56	0			-	under-stand-in	param_1{004c1c10,004c1c80}[4]	-	0x004c1c10 0x004c1c80	n	y
+0x00427840	FontText_UTF16WidenCopy	hud	53	0		0x007d3ff8	0x007d3ff8[+0xf4]	-	text{005555b0}[512]	-	0x005555b0	n	y
+0x00484130	FUN_00484130	boot	53	0		0x007d3ff8	0x007d3ff8[+0x10c]	matched	-	-	-	n	y
+0x00485e10	FUN_00485e10	particle	51	0		0x007d3ff8	0x007d3ff8[+0x10c]	matched	-	-	-	n	y
+0x00490490	FUN_00490490	render	51	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0041f2c0	FUN_0041f2c0	gameplay	51	0			-	-	iVar1{0053d090}[0x18]	-	0x0053d090	n	y
+0x0041f1e0	FUN_0041f1e0	util	50	1	FUN_004c0ed0[+0x0]		-	-	p{004c0ed0}[1]	0x004c0ed0	0x004c0ed0	n	y
+0x0041f220	FUN_0041f220	gameplay	50	1	FUN_004c0ed0[+0x0]		-	-	s{004c0ed0}[obj]	0x004c0ed0	0x004c0ed0	n	y
+0x004898d0	FUN_004898d0	gameplay	49	0		0x007d3ff8	-	-	-	-	-	n	y
+0x00457610	FUN_00457610	gameplay	48	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x00486f50	FUN_00486f50	particle	48	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x004b40f0	FUN_004b40f0	render	46	0			-	-	param_1{004e89a0}[0x18]	-	0x004e89a0	n	y
+0x0041f060	FUN_0041f060	gameplay	45	1	FUN_004c0ed0[+0x0]		-	-	-	0x004c0ed0	-	n	y
+0x00476be0	Batch476be0	render	45	0		0x007dc57c	-	-	-	-	-	n	y
+0x00492e60	sub_00492e60	render	43	0			-	under-stand-in	v{004c1c80}[0,1,2]	-	0x004c1c80	n	y
+0x00477580	FUN_00477580	render	42	0			-	-	d{004e6920,004e7e30}[obj] obj{004e6920,004e7e30}[1]	-	0x004e6920 0x004e7e30	n	y
+0x004219c0	FUN_004219c0	render	41	0		0x007d3ff8	0x007d3ff8[+0x0]	-	-	-	-	n	y
+0x00474db0	RwMallocArrayZeroFill	render	41	0		0x007d3ff8	0x007d3ff8[+0x108]	matched	-	-	-	n	y
+0x00483a40	FUN_00483a40	vehicle	40	0		0x007d3ff8	0x007d3ff8[+0x10c]	matched	-	-	-	n	y
+0x00489c30	FUN_00489c30	particle	40	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0048ffd0	FUN_0048ffd0	particle	40	0			-	matched	puVar1{004e6e00,004e8090}[2]	-	0x004e6e00 0x004e8090	n	y
+0x00418a70	FUN_00418a70	render	39	0		0x007d3ff8	0x007d3ff8[+0x0]	-	-	-	-	n	y
+0x0041b660	FUN_0041b660	boot	39	0			-	stand-in	rec{004c13e0}[clump,clump4,flags,i70,idx64,slot] slot{004c13e0}[0,0x14,1,10,11,12]	-	0x004c13e0	n	y
+0x00421560	FUN_00421560	render	38	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0048fce0	FUN_0048fce0	particle	38	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0048fd10	FUN_0048fd10	particle	38	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0048fd40	FUN_0048fd40	particle	38	0		0x007d3ff8	0x007d3ff8[+0x20]	-	-	-	-	n	y
+0x0041f290	FUN_0041f290	gameplay	35	0			-	-	p{004c0ed0}[1]	-	0x004c0ed0	n	y
+0x0048fef0	FUN_0048fef0	particle	34	0			-	matched	g{004e89a0}[8]	-	0x004e89a0	n	y
+0x005adf60	FUN_005adf60	audio	33	0		0x007d3ff8	-	-	-	-	-	n	y
+0x004114c0	FUN_004114c0	boot	26	0		0x007d3ff8	0x007d3ff8[+0x10c]	matched	-	-	-	n	y
+0x004522d0	FUN_004522d0	audio	11	0		0x007d3ff8	-	-	-	-	-	n	y
+0x005aea00	FUN_005aea00	audio	11	0		0x007d3ff8	-	-	-	-	-	n	y
+0x005aea50	FUN_005aea50	audio	10	0		0x007d3ff8	-	-	-	-	-	n	y
+0x00446520	FUN_00446520	util	7411	0			-	-	vkg{004c3df0,004c4d20}[16]	-	-	y	n
+0x00467650	VehicleWheelDrivetrainUpdate	vehicle	4907	0			-	-	car{004c39b0,004c3ac0,004c4d20}[dir,f498,f49c,f54,f5c,f9e0] wh{004c3ac0,004c3df0}[cnt,dir,f10,f14,f90,f94]	-	-	y	n
+0x0046ddb0	VehicleWheelForceIntegrator	vehicle	3104	0			-	-	c{004c3df0,004c4d20}[cur,f10,f150,f154,f158,f2c] w{004c3ac0,004c3df0,004c4d20}[3,contact,f20,f94,f98,f9c]	-	-	y	n
+0x0046b540	VehicleSpawnInit	vehicle	1367	0			-	-	c{004c3b30}[center,f004,f010,f050,f054,f058] pts{004c3b30}[0,1,2,3] w{004c3b30}[0,1,2,3,f14,len]	-	-	y	n
+0x00422570	FUN_00422570	render	889	0			-	-	out{004c3d90}[0,1,2,3] p{004c3d90}[0,1,2] r{004c3d90}[col,count,f38,f3c,tri]	-	-	y	n
+0x00480720	VehicleRespawnPlace	vehicle	702	6	RwpBodyTableLookup[+0x10,+0x20,+0x24]		-	-	dst{004c3df0,004c45f0}[pos] obj{0055ac00,0055ad30,0055ae70,0055dff0,0057c210}[0x10,0x20,0x24]	-	-	y	n
+0x00480100	FUN_00480100	physics	561	7	RwpBodyTableLookup[+0x10,+0x20,+0x24]		-	-	buf{0055ab30}[8] r{0055ab30,0055ac00,0055ade0,0055bd80,0055dff0,0057c210}[0x10,0x20,0x24] w{0055ade0}[0x60]	-	-	y	n
+0x0048b230	FUN_0048b230	particle	518	0			-	-	r{00544bf0}[f0c,f10,f14,f18,f1c,f20]	-	-	y	n
+0x0048a850	FUN_0048a850	particle	456	0			-	-	p{004c39b0}[accel,color,f20,life,pos,size]	-	-	y	n
+0x00414a70	FUN_00414a70	ai	446	0			-	-	v{004c3ac0}[0,1,2,3]	-	-	y	n
+0x00468980	VehicleAeroStabilizer	vehicle	436	0			-	-	m{004c4d20}[0,1,10,2,8,9]	-	-	y	n
+0x00441820	CameraPath::SamplePoint	util	356	0			-	-	e{004c4d20}[x,y,z] m{004c3df0,004c4d20}[16] param_2{004c3df0}[x,y,z]	-	-	y	n
+0x004764f0	FUN_004764f0	util	346	0			-	-	r{004c39b0}[a,active,b,da,db,ratio]	-	-	y	n
+0x00415d00	FUN_00415d00	ai	281	0			-	-	dir{004c3bf0}[0,1,2]	-	-	y	n
+0x00459290	FUN_00459290	vehicle	279	1	FontCtxMatrix_AllocInit[+0x28]		-	matched	mat{004c57a0}[at,flags,pos,right,up]	-	-	y	n
+0x0044d5e0	DepthChargePathSafetyCheck	powerups	240	0			-	-	v{00547230}[0,1,2,3,4,5]	-	-	y	n
+0x00417640	FUN_00417640	ai	236	0			-	-	d{004c3ac0}[0,1,2,3]	-	-	y	n
+0x0047d240	VehiclePhysicsBodyPlace	vehicle	235	6	RwpBodyTableLookup[+0x10,+0x20,+0x24]		-	-	axis{004c4d20}[0,1,2,3] buf{0055ab30}[8] m{004c45f0,004c4d20}[0x30,0x34,0x38] obj{0055ab30,0055ac00,0055ade0,0055dff0,0057c210}[0x10,0x20,0x24] w{0055ade0}[0x60]	-	-	y	n
+0x0047f290	FUN_0047f290	gameplay	232	1	RwpBodyTableLookup[+0x24]		-	-	iVar2{00559ee0,0057c210,0057c370}[0x24]	-	-	y	n
+0x00486370	FUN_00486370	particle	227	1	RwMatrixScale[+0x0]		-	-	m{004c5010}[pos]	-	-	y	n
+0x00420340	FUN_00420340	gameplay	216	0			-	-	s{00540080,00540100,00540160}[ev,f274,f278,f27c,f284,flags]	-	-	y	n
+0x00414490	FUN_00414490	ai	213	0			-	-	out{004c39b0}[0,1]	-	-	y	n
+0x0047ea60	FUN_0047ea60	vehicle	203	2	RwpBodyTableLookup[+0x10,+0x24]		-	-	iVar2{0055ac00,0055dff0,0057c210}[0x10,0x24] local_c{004c3df0,004c51a0}[0,1,2,3]	-	-	y	n
+0x00451990	FUN_00451990	gameplay	190	0			-	-	m{004c52f0}[12,14] param_1{004c4dc0,004c52f0}[0x14,0x1c,0x20,0x28,0x54,0x94]	-	-	y	n
+0x0047d180	FUN_0047d180	gameplay	176	6	RwpBodyTableLookup[+0x10,+0x20,+0x24]		-	-	buf{0055ab30}[8] obj{0055ab30,0055ac00,0055ade0,0055dff0,0057c210}[0x10,0x20,0x24] w{0055ade0}[0x60]	-	-	y	n
+0x00421750	FUN_00421750	render	164	4	RwpBodyTableLookup[+0x10,+0x20,+0x24]		-	-	f{0055ac00,0055ad30,0057c210}[h,idx,w] w{0055ac00,0055ad30}[bits]	-	-	y	n
+0x00421800	FUN_00421800	render	163	4	RwpBodyTableLookup[+0x10,+0x20,+0x24]		-	-	f{0055ac00,0055ad30,0057c210}[h,idx,w] n{0055b650}[a,idx] w{0055ac00,0055ad30}[bits]	-	-	y	n
+0x00481780	FUN_00481780	vehicle	141	1	RwpBodyTableLookup[+0x10]		-	-	-	-	-	y	n
+0x00477500	FUN_00477500	render	117	1	FUN_005492a0[+0x4]		-	-	d{005492a0}[col,obj,t,tmax] mat{005492a0}[4]	-	-	y	n
+0x0047e9c0	PhysicsSceneInitSequence	vehicle	117	0			-	-	param_1{0055fe50,0055fea0,0055ff70,0055ff90,00561040,00561390,00561c50,00561e60,00561e80}[0x8c,0x90]	-	-	y	n
+0x0047d080	FUN_0047d080	physics	104	3	RwpBodyTableLookup[+0x8,+0x24]		-	-	obj{00559c40,00559ee0,0057c210}[0x24,8]	-	-	y	n
+0x00476320	FUN_00476320	render	102	0			-	-	param_1{004c39b0}[0,1,2]	-	-	y	n
+0x004762c0	FUN_004762c0	util	92	0			-	-	param_1{004c3b30}[0,1,2]	-	-	y	n
+0x0046d510	VehicleVelocityWorldGet	ai	83	0			-	-	v{004c3df0}[0,1,2]	-	-	y	n
+0x0047f230	FUN_0047f230	gameplay	81	1	RwpBodyTableLookup[+0x10]		-	-	iVar3{0057c210}[0x10]	-	-	y	n
+0x0047f1e0	FUN_0047f1e0	gameplay	79	1	RwpBodyTableLookup[+0x10]		-	-	iVar2{0057c210}[0x10]	-	-	y	n
+0x0047d150	SlotObjectField8	gameplay	40	1	RwpBodyTableLookup[+0x10]		-	-	-	-	-	y	n
+0x00481750	FUN_00481750	vehicle	39	1	RwpBodyTableLookup[+0x10]		-	-	-	-	-	y	n
