@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S24 0x00556e90 (h2): 97.5% (regs 97.5%), 198/198 instructions. Colour twin of 0x00557110: RGBA8 ->
+/* MATCH-RT2D-FONT 2026-11-11: 98.0% with the zero compares written as the 0.0f literal (0x005d757c is a .rdata __real@ 0.0f, as in the 100% twin 0x00557110); permuter 395 compiles no gain. MATCH-S24 0x00556e90 (h2): 97.5% (regs 97.5%), 198/198 instructions. Colour twin of 0x00557110: RGBA8 ->
    RGBAReal for c0 (+0x00, from param_5), d0 (+0x18, param_4 minus c0), c1 (+0x30, param_2), d1 (+0x48, param_3
    minus c1), raw RGBA8 copy of *param_5 at +0x60, bit 0 of +0x64 set unless all deltas are 0 and c0 == c1.
    Flags: /O2 /Ob1 /G5 97.5%, the raw converter's /O2 /GS /Ob1 gives 65.7% on this source. Residual: three
@@ -71,13 +71,13 @@ ColLine *FUN_00556e90(ColLine *param_1, RGBA8 *param_2, RGBA8 *param_3, RGBA8 *p
   param_1->d1.blue = param_1->d1.blue - param_1->c1.blue;
   param_1->d1.alpha = param_1->d1.alpha - param_1->c1.alpha;
   param_1->raw = *param_5;
-  if (param_1->d0.red == DAT_005d757c && param_1->d1.red == DAT_005d757c &&
+  if (param_1->d0.red == 0.0f && param_1->d1.red == 0.0f &&
       param_1->c0.red == param_1->c1.red &&
-      param_1->d0.green == DAT_005d757c && param_1->d1.green == DAT_005d757c &&
+      param_1->d0.green == 0.0f && param_1->d1.green == 0.0f &&
       param_1->c0.green == param_1->c1.green &&
-      param_1->d0.blue == DAT_005d757c && param_1->d1.blue == DAT_005d757c &&
+      param_1->d0.blue == 0.0f && param_1->d1.blue == 0.0f &&
       param_1->c0.blue == param_1->c1.blue &&
-      param_1->d0.alpha == DAT_005d757c && param_1->d1.alpha == DAT_005d757c &&
+      param_1->d0.alpha == 0.0f && param_1->d1.alpha == 0.0f &&
       param_1->c0.alpha == param_1->c1.alpha) {
     param_1->flags &= ~1;
     return param_1;
