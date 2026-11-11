@@ -1,5 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d6200 (h4): 90.5% (regs 90.5%, ops ~100%). Render-state reset rewritten from odis (raw 74.1%). An RSSET(state, value) macro over the {value, dirty} cache at 0x007d57f8 (dirty = 1 before the queue store), the three saved cache values as a local array, the -1 fill through one local, the 8x0x21 stage-cache fill as counted do-whiles over an int* at .dirty, DAT_007d6c24/6c28/6c00/6c04/6c08 as floats (gives the original's eax zero stores), RSSET(0x17) and RSSET(7) as two if/else pairs, the 8-stage SetTexture/sampler loop, and the tail call to FUN_004d53b0. Residual: one zero store. The original keeps eax = 0 for all four float stores and loads 0x7d5928 into ecx first. Ours runs out of eax after three and stores imm 0, so every later jump displacement shifts. The permuter moved the DAT_007d6c08 store below the first two RSSETs (that is this file, 716 compiles, +0.7). Array lengths in MGLOBALA are placeholders [UNCERTAIN]. Class (b). */
+/* MATCH-S21 0x004d6200 (h4): 90.5% (regs 90.5%, ops ~100%). Render-state reset rewritten from odis (raw 74.1%). An RSSET(state, value) macro over the {value, dirty} cache at 0x007d57f8 (dirty = 1 before the queue store), the three saved cache values as a local array, the -1 fill through one local, the 8x0x21 stage-cache fill as counted do-whiles over an int* at .dirty, DAT_007d6c24/6c28/6c00/6c04/6c08 as floats (gives the original's eax zero stores), RSSET(0x17) and RSSET(7) as two if/else pairs, the 8-stage SetTexture/sampler loop, and the tail call to FUN_004d53b0. Residual: one zero store. The original keeps eax = 0 for all four float stores and loads 0x7d5928 into ecx first. Ours runs out of eax after three and stores imm 0, so every later jump displacement shifts. The permuter moved the DAT_007d6c08 store below the first two RSSETs (that is this file, 716 compiles, +0.7). Array lengths in MGLOBALA are placeholders [UNCERTAIN]. Class (b).
+   RWC-DRIVER (2026-11-11): 100% (relocheck OK). Moved by: the DAT_007d6c24 store after the 0x007d5120 zero loop and
+   DAT_007d6c08 back next to DAT_007d6c04 (before the 0x26/0x1c RSSETs), so all four float zero stores run in order on eax. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -127,16 +129,16 @@ void FUN_004d6200(void)
   }
   DAT_007d6c18 = 0;
   for (i = 0; i < 0x70; i++) DAT_007d4f60[i] = inv;
-  DAT_007d6c24 = 0.0f;
   for (i = 0; i < 0x11; i++) DAT_007d5120[i] = 0;
+  DAT_007d6c24 = 0.0f;
   DAT_007d6c28 = 0.0f;
   DAT_007d6c00 = 0.0f;
   DAT_007d6c04 = 0.0f;
+  DAT_007d6c08 = 0.0f;
   DAT_007d6c1c = 0;
   DAT_007d6c20 = 0;
   RSSET(0x26, DAT_007d6b24);
   RSSET(0x1c, DAT_007d6b1c);
-  DAT_007d6c08 = 0.0f;
   if ((DAT_00911fc4 & 0x100) && (DAT_00911fc4 & 0x100000)) {
     RSSET(0x23, DAT_005d8c54[DAT_007d6b20]);
     RSSET(0x8c, 0);

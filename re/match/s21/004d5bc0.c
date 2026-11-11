@@ -14,7 +14,10 @@
    Residual: (1) both cache-init loops base their pointer on the second struct field in the original
    (`[ecx]` = changed, `[ecx-4]` = value; `[eax-4]`/`[eax]` for the stage cache) and on the first in ours;
    (2) the five zero stores around the 0x007d5120 memset use eax (the memset value) in the original, edx in ours.
-   Class (b). */
+   Class (b).
+   RWC-DRIVER (2026-11-11): 100% (relocheck OK). Moved by: DAT_007d6c24/6c28/6c00/6c04/6c08 typed float (the
+   original's eax zero stores), the stage-cache fill as counted do-whiles over an int* at .dirty (89.8%), then the
+   permuter's swap: the DAT_007d6c24 store after the 0x007d5120 memset in source (100%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -56,11 +59,11 @@ MGLOBALA(StageInfo, DAT_007d6b30, 8, 0x007d6b30);
 MGLOBAL(IDirect3DDevice9 *, DAT_007d4110, 0x007d4110);
 MGLOBAL(unsigned int, DAT_00911fc4, 0x00911fc4);
 MGLOBAL(unsigned int, DAT_00911fe0, 0x00911fe0);
-MGLOBAL(int, DAT_007d6c24, 0x007d6c24);
-MGLOBAL(int, DAT_007d6c28, 0x007d6c28);
-MGLOBAL(int, DAT_007d6c00, 0x007d6c00);
-MGLOBAL(int, DAT_007d6c04, 0x007d6c04);
-MGLOBAL(int, DAT_007d6c08, 0x007d6c08);
+MGLOBAL(float, DAT_007d6c24, 0x007d6c24);
+MGLOBAL(float, DAT_007d6c28, 0x007d6c28);
+MGLOBAL(float, DAT_007d6c00, 0x007d6c00);
+MGLOBAL(float, DAT_007d6c04, 0x007d6c04);
+MGLOBAL(float, DAT_007d6c08, 0x007d6c08);
 MGLOBAL(int, DAT_007d6c18, 0x007d6c18);
 MGLOBAL(int, DAT_007d6c1c, 0x007d6c1c);
 MGLOBAL(int, DAT_007d6c20, 0x007d6c20);
@@ -113,7 +116,6 @@ void FUN_004d5bc0(void)
 {
   int i, j;
   unsigned int u;
-  StateEnt *e;
   memset(DAT_007d54b0, 0xff, sizeof(DAT_007d54b0));
   DAT_007d54b0[0x22] = 0;
   DAT_007d54b0[0x8b] = 0;
@@ -125,17 +127,21 @@ void FUN_004d5bc0(void)
   }
   memset(DAT_007d5e88, 0xff, sizeof(DAT_007d5e88));
   DAT_007d6c14 = 0;
-  e = &DAT_007d4720[0][0];
-  for (i = 0; i < 8; i++) {
-    for (j = 0; j < 0x21; j++) {
-      e->value = -1;
-      e->dirty = 0;
-      e++;
-    }
+  {
+    int *p = &DAT_007d4720[0][0].dirty;
+    i = 8;
+    do {
+      j = 0x21;
+      do {
+        p[-1] = -1;
+        *p = 0;
+        p += 2;
+      } while (--j);
+    } while (--i);
   }
   memset(DAT_007d4f60, 0xff, sizeof(DAT_007d4f60));
-  DAT_007d6c24 = 0;
   memset(DAT_007d5120, 0, sizeof(DAT_007d5120));
+  DAT_007d6c24 = 0;
   DAT_007d6c28 = 0;
   DAT_007d6c00 = 0;
   DAT_007d6c04 = 0;

@@ -2,6 +2,9 @@
 // h3: 93.7% regs 93.7%. Branch order flipped (mask != 0 first, 0x148 call arm first), typed callee prototypes. Residual: deferred add esp merging and ebx/eax for piVar3; class (a).
 /* MATCH-RWL03 0x00540340: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
+/* RWC-DRIVER (2026-11-11): 99.4% -> 100% (relocheck OK). Moved by: no named piVar1; the plugin-data lookup
+   (EXT_540340) written out at each use, piVar3 assigned in its own if, then the record test through piVar3
+   (cl CSEs the three lookups and loads through ebx after `mov ebx, eax`, as the original does). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -39,19 +42,22 @@ int FUN_004cb330(int p0, void *p1);
 void FUN_004d53b0(void);
 void FUN_004d54f0(int p0, int p1, int p2);
 int FUN_004d6e70(int p0, int p1);
+#define EXT_540340(p) (*(int **)(DAT_007dc5dc + *(int *)((p) + 8)))
 // MATCH: 0x00540340 FUN_00540340
 void FUN_00540340(int param_1,int param_2,byte param_3,int param_4)
 {
-  int *piVar1;
   float *puVar2;
   int *piVar3;
 
   piVar3 = (int *)0;
   if ((param_3 & 0x84) != 0) {
     FUN_004d6e70(param_4,0);
-    piVar1 = *(int **)(DAT_007dc5dc + *(int *)(param_2 + 8));
-    if ((((piVar1 != (int *)0x0) && (piVar1[0xc] == 5)) &&
-        (piVar3 = piVar1, puVar2 = (float *)*piVar3, puVar2 != (float *)0x0)) &&
+    /* the plugin-data lookup is written out three times (CSE'd by cl); a named copy lets cl propagate it and
+       load through eax instead of the original's `mov ebx, eax; mov esi, [ebx]` */
+    if ((EXT_540340(param_2) != (int *)0x0) && (EXT_540340(param_2)[0xc] == 5)) {
+      piVar3 = EXT_540340(param_2);
+    }
+    if ((piVar3 != (int *)0x0) && (puVar2 = (float *)*piVar3, puVar2 != (float *)0x0) &&
        ((((int *)puVar2)[3] & 0x20000) == 0)) {
       FUN_004d54f0(0,0x18,2);
       DAT_00623d38 = puVar2[0];

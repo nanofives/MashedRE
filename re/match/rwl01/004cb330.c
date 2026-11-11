@@ -1,4 +1,5 @@
-// FLAGS: /O2 /Ob1 /G5
+// FLAGS: /O2 /Ob1 /G5 /Oy-
+/* RWC-DRIVER 2026-11-11: 18.6% -> 64.9% (56.1% under plain /O2 /Ob1 /G5). D3D SetTransform(state, matrix) cache, sibling of s20/004cb4c0. The ebp frame is a compiler flag: the original's frame holds one 4-byte slot ([ebp-4], the spilled compare counter of the matrix arm) and nothing in the body needs a frame (no alloca, no local array, no setjmp, no __try), so /Oy- as in 004cb4c0. Rewritten: Mat16 struct, cache array 0x007d4158[state], dword compare as static __inline helper, rep movsd struct copy, +0xb0 __stdcall, flag 0x007d4154 = 0 (matrix) / 1 (identity 0x005d8b90) when state == 0x100. Residual: the matrix arm keeps param_2 in ebx for the whole arm; the original uses no ebx, spills the counter to [ebp-4] and reloads param_2 from its slot. Permuter 264 compiles: no gain. */
 /* h3 hand-match: best 24.6% (regs 45.6%), class b. Not worked beyond raw output (budget spent on higher-yield rows). Two source copies are visible in the original (param_2 given vs default palette 0x005d8b90, different register allocation, flag 0x007d4154 = 0 vs 1 only when index 0x100): needs a hand rewrite as two specialised bodies; compare loop keeps its counter in [ebp-4] in the first copy. */
 /* MATCH-RWL01 0x004cb330: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl01_20261107/results.tsv. */
@@ -33,87 +34,52 @@ typedef int code();
 #ifndef __cplusplus
 #define true 1
 #endif
+typedef struct { int m[16]; } Mat16;
+typedef long (__stdcall *setxf_fn)(int *, int, Mat16 *);
 MGLOBAL(undefined4, DAT_007d4568, 0x007d4568);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int *, DAT_007d4110, 0x007d4110);
-MGLOBAL(undefined4, DAT_007d4154, 0x007d4154);
-MGLOBAL(undefined4, DAT_005d8b90, 0x005d8b90);
-MGLOBAL(undefined4, DAT_007d4158, 0x007d4158);
-// MATCH: 0x004cb330 FUN_004cb330
-
-bool FUN_004cb330(int param_1,int *param_2)
-
+MGLOBAL(int, DAT_007d4154, 0x007d4154);
+MGLOBAL(Mat16, DAT_005d8b90, 0x005d8b90);
+MGLOBALA(Mat16 *, DAT_007d4158, 0x104, 0x007d4158);
+static __inline int s_cmp(const int *a, const int *b, unsigned int n)
 {
-  undefined4 uVar1;
-  int *piVar2;
-  int iVar3;
-  int iVar4;
-  undefined4 *puVar5;
-  int *piVar6;
-  undefined4 *puVar7;
-  int local_8;
-  
-  iVar3 = (&DAT_007d4158)[param_1];
-  if (param_2 == (int *)0x0) {
-    if (iVar3 == 0) {
-LAB_004cb41c:
-      uVar1 = (**(code **)(DAT_007d3ff8 + 0x118))(DAT_007d4568,0x30411);
-      (&DAT_007d4158)[param_1] = uVar1;
+  while (n != 0) {
+    if (*a != *b) return 1;
+    a++;
+    b++;
+    n--;
+  }
+  return 0;
+}
+// MATCH: 0x004cb330 FUN_004cb330
+int FUN_004cb330(int param_1,Mat16 *param_2)
+{
+  long r;
+  if (param_2 != 0) {
+    if (DAT_007d4158[param_1] != 0 && s_cmp(DAT_007d4158[param_1]->m, param_2->m, 16) == 0) {
+      return 1;
     }
-    else {
-      piVar2 = (int *)&DAT_005d8b90;
-      iVar4 = 0x10;
-      while (*(int *)(iVar3 + -0x5d8b90 + (int)piVar2) == *piVar2) {
-        piVar2 = piVar2 + 1;
-        iVar4 = iVar4 + -1;
-        if (iVar4 == 0) {
-          return true;
-        }
-      }
-      if (iVar3 == 0) goto LAB_004cb41c;
+    if (DAT_007d4158[param_1] == 0) {
+      DAT_007d4158[param_1] = (Mat16 *)(**(code **)(DAT_007d3ff8 + 0x118))(DAT_007d4568,0x30411);
     }
-    puVar5 = &DAT_005d8b90;
-    puVar7 = (undefined4 *)(&DAT_007d4158)[param_1];
-    for (iVar3 = 0x10; iVar3 != 0; iVar3 = iVar3 + -1) {
-      *puVar7 = *puVar5;
-      puVar5 = puVar5 + 1;
-      puVar7 = puVar7 + 1;
-    }
-    iVar3 = (**(code **)(*DAT_007d4110 + 0xb0))(DAT_007d4110,param_1,&DAT_005d8b90);
+    *DAT_007d4158[param_1] = *param_2;
+    r = (*(setxf_fn *)(*DAT_007d4110 + 0xb0))(DAT_007d4110,param_1,param_2);
     if (param_1 == 0x100) {
-      DAT_007d4154 = 1;
+      DAT_007d4154 = 0;
     }
-    goto LAB_004cb479;
+    return r >= 0;
   }
-  if (iVar3 == 0) {
-LAB_004cb381:
-    uVar1 = (**(code **)(DAT_007d3ff8 + 0x118))(DAT_007d4568,0x30411);
-    (&DAT_007d4158)[param_1] = uVar1;
+  if (DAT_007d4158[param_1] != 0 && s_cmp(DAT_007d4158[param_1]->m, DAT_005d8b90.m, 16) == 0) {
+    return 1;
   }
-  else {
-    local_8 = 0x10;
-    piVar2 = param_2;
-    while (*(int *)((iVar3 - (int)param_2) + (int)piVar2) == *piVar2) {
-      piVar2 = piVar2 + 1;
-      local_8 = local_8 + -1;
-      if (local_8 == 0) {
-        return true;
-      }
-    }
-    if (iVar3 == 0) goto LAB_004cb381;
+  if (DAT_007d4158[param_1] == 0) {
+    DAT_007d4158[param_1] = (Mat16 *)(**(code **)(DAT_007d3ff8 + 0x118))(DAT_007d4568,0x30411);
   }
-  piVar2 = param_2;
-  piVar6 = (int *)(&DAT_007d4158)[param_1];
-  for (iVar3 = 0x10; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *piVar6 = *piVar2;
-    piVar2 = piVar2 + 1;
-    piVar6 = piVar6 + 1;
-  }
-  iVar3 = (**(code **)(*DAT_007d4110 + 0xb0))(DAT_007d4110,param_1,param_2);
+  *DAT_007d4158[param_1] = DAT_005d8b90;
+  r = (*(setxf_fn *)(*DAT_007d4110 + 0xb0))(DAT_007d4110,param_1,&DAT_005d8b90);
   if (param_1 == 0x100) {
-    DAT_007d4154 = 0;
-    return -1 < iVar3;
+    DAT_007d4154 = 1;
   }
-LAB_004cb479:
-  return -1 < iVar3;
+  return r >= 0;
 }
