@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-11  0x004d4dd0  FUN_004d4dd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004d4dd0.c; evidence: verify/rwcmatchmod40a_20261111/RESULT_RWC-MATCH-MOD40A.md
 2026-11-11  0x004d8480  RwErrSlotWrite  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d8480.c; evidence: verify/rwcompiler9044_20261111/RESULT_MATCH-RW-COMPILER-9044.md
 2026-11-11  0x004c2f60  FUN_004c2f60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2f60.c; evidence: verify/rwcompiler9044_20261111/RESULT_MATCH-RW-COMPILER-9044.md
 2026-11-11  0x004c2fb0  RwEngineStart  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c2fb0.c; evidence: verify/rwcompiler9044_20261111/RESULT_MATCH-RW-COMPILER-9044.md
