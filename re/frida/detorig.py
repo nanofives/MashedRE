@@ -127,6 +127,8 @@ def run(args):
                                            else args.prov_count.split(",")) if x.strip()]
             cfg["prov"] = {"bodies": bodies, "count": cnt}
             print(f"  prov: {len(bodies)} bodies, {len(cnt)} counters", flush=True)
+        if args.warp_clock:
+            cfg["warpClock"] = args.warp_clock
         meta["cfg"] = {k: v for k, v in cfg.items() if k != "prov"}
         if "prov" in cfg:
             meta["prov_cfg"] = {"bodies": [b["rva"] for b in cfg["prov"]["bodies"]], "count": cfg["prov"]["count"], "file": args.prov}
@@ -321,6 +323,7 @@ if __name__ == "__main__":
     ap.add_argument("--audio-off", choices=["warp", "anchor"], default="", help="suspend every non-main thread whose start address is in MASHED.exe (the __beginthread audio workers) at the warp or the race anchor")
     ap.add_argument("--poison", choices=["stale", "pos"], default="", help="overwrite the unwritten event-ring fields at every ring consumer from the race anchor on (pos = also type-4 +0x24, a read field)")
     ap.add_argument("--poison-value", default="0x7fc0dead", help="poison dword (hex)")
+    ap.add_argument("--warp-clock", type=int, default=0, help="tick clock: set the virtual T / Q to start + K ticks at the warp, before the timer pin (PROV-INSITU)")
     ap.add_argument("--prov", default="", help="PROV-INSITU bodies JSON (re/tools/prov/provlink.py): inline JMP to each DDK body from the warp on")
     ap.add_argument("--prov-rvas", default="", help="comma list: only these bodies of --prov")
     ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")

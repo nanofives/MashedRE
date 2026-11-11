@@ -260,6 +260,18 @@ function warp() {
   const e480 = new NativeFunction(ga(0x0040e480), 'void', ['int', 'int'], 'mscdecl');
   for (let k = 0; k < 4; k++) e480(k, k === 0 ? 1 : (k < s.cars ? 2 : 0));
   const pins = pinRngs();
+  // PROV-INSITU (cfg.warpClock = K ticks): the virtual clock at the warp is the start value plus however many ticks the
+  // menu ran since the install, and that count is not a function of N (the warp is scheduled on clock calls). Runs one
+  // tick apart then pin the frame timer one 50,000-count step apart (0x007f102c / 0x007f1030), and the race reads it:
+  // blocks 0x0068f400 / 0x006c2400 differ from tick 2 in every such run. Setting T and Q to fixed values here, before
+  // pinTimer, makes the pinned timer the same in every run.
+  if (TICK && TICK.pin && CFG.warpClock) {
+    const k = BigInt(CFG.warpClock);
+    const q = BigInt(CFG.q0) + k * BigInt(TICK.qtick);
+    D.add(0x10).writeU32(Number(q & 0xffffffffn)); D.add(0x14).writeU32(Number(q >> 32n));
+    D.writeU32((CFG.t0 + CFG.warpClock * TICK.ttick) >>> 0);
+    pins.warpClock = { k: CFG.warpClock, q: q.toString() };
+  }
   if (TICK && TICK.pin) pins.timer = pinTimer();
   const nw = pinNorm('warp');
   if (nw) pins.norm = nw;
