@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-11 15:42 C4-REPLAY-RULE (orch/C4-REPLAY-RULE), HB-V5-SKILL (orch/HB-V5-SKILL), RWC-CENSUS (orch/RWC-CENSUS), MATCH-EXACT-DATA (orch/MATCH-EXACT-DATA): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_145625
 - 2026-11-11 08:31 ROADMAP-V5 (orch/ROADMAP-V5): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261111_082943
 - 2026-11-11 08:25 EQUIV-CHECK (orch/EQUIV-CHECK): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261111_081618
 - 2026-11-11 08:03 DDKOBJ-SPIKE (orch/DDKOBJ-SPIKE): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_073305
