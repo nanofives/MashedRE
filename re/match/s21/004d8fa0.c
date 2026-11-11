@@ -41,7 +41,7 @@ undefined4 FUN_004d8fa0(undefined4 param_1,int param_2)
   undefined4 uVar1;
   
   DAT_007d6c64 = param_2;
-  uVar1 = thunk_FUN_004cc820(0x21,DAT_00618428,4,DAT_0061842c,&DAT_007d6c6c,0x40412);
+  uVar1 = (undefined4)thunk_FUN_004cc820(0x21,DAT_00618428,4,DAT_0061842c,(uint *)&DAT_007d6c6c,0x40412);
   *(undefined4 *)(DAT_007d3ff8 + DAT_007d6c64) = uVar1;
   if (*(int *)(DAT_007d3ff8 + DAT_007d6c64) == 0) {
     return 0;

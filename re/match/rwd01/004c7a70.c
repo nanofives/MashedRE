@@ -185,7 +185,7 @@ static __forceinline void MultisampleLevels(void)
         DAT_006181b4 = level;
     }
     if (VCALL(VFnMS, DAT_007d4108, 11)(DAT_007d4108, DAT_007d410c, DAT_006181b0, DAT_00911f84.Format,
-                                       windowed, 1, &level) >= 0) {
+                                       windowed, 1, (unsigned long *)&level) >= 0) {
       DAT_006181bc = level + 1;
       if (DAT_006181bc > DAT_006181b4)
         DAT_006181b4 = DAT_006181bc;

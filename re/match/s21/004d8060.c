@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 // MATCH: 0x004d8060 FUN_004d8060
 int FUN_004d8060(int param_1,undefined4 param_2)
 

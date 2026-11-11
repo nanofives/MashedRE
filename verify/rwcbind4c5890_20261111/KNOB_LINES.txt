@@ -1,0 +1,20 @@
+vs_core  [RWC_CORE] data seed: 7 ranges, 9 code-pointer fix-ups, 0 faults (device block 0x00618224 -> 001A2260)
+vs_core  [RWC_CORE] RwEngineInit 0x004c32b0(0, 0, 0x200000) = 1; RwGlobals [0x007d3ff8] = 007D3EC8, engine status +0x124 = 1
+vs_core  [RWC_CORE] 0x00493640 RenderwareAttachPlugins: not run on the RW core path (no plugin attaches; returns 1)
+vs_core  [RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=015904F8) = 1; IDirect3D9 [0x007d4108] = 04660378
+vs_core  [RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 016EA584; RwGlobals 01647690, module offset 0x3F4, texdict freelist 007D4030, list head 01647A84 -> 016EA594; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+vs_core  [RWC_CORE] AV at 001B0CEA (exe+0x1A0CEA) read 6E35EC40; eax 08EE9538 ecx 65475700 edx 00000001 ebx 08EE9560 esi 08EE957C edi 00000000 esp 011EFD9C
+vs_core  [RWC_CORE] AV stack exe offsets: +0x19F36E +0x607FE0 +0x1A10D9 +0x608558 +0x901D00 +0x19E41C +0x196E2D +0x979680 +0x19C942 +0x607FE0 +0x18F5D6 +0x159D4A +0x158CA7 +0x158F0F +0x159435 +0x212D9 +0x247427 +0x306C08 +0x247477 +0x226375 +0x2263F9 +0x2263F9 +0x2272B0 +0x2263F9
+vs_core  [RWC_CORE] probe: RwGlobals 01647690 (expect 007D3EC8), IDirect3D9 [0x007d4108] 04660378, device [0x007d4110] 08E33638, presents 0
+vs_core  [RWC_CORE] probe: texture module offset [0x007d4054] = 0x3F4, instances [0x007d4058] = 1; texture freelist [RwGlobals+off+8] = 007D405C, texdict freelist [RwGlobals+off+0xc] = 007D4030, current texdict [+0x10] = 016EA584, [0x007d4080] = 016EA584
+vs_core  [RWC_CORE] probe: device block in RwGlobals: +0x10 fpSystem 3F800000, +0x20 RenderStateSet 001A1420, +0x30 Im2D prim 001A0920, +0x34 Im2D indexed 001A00B0; curCamera +0x0 00000000
+ddk_core [RWC_CORE] data seed: 7 ranges, 9 code-pointer fix-ups, 0 faults (device block 0x00618224 -> 00022760)
+ddk_core [RWC_CORE] RwEngineInit 0x004c32b0(0, 0, 0x200000) = 1; RwGlobals [0x007d3ff8] = 007D3EC8, engine status +0x124 = 1
+ddk_core [RWC_CORE] 0x00493640 RenderwareAttachPlugins: not run on the RW core path (no plugin attaches; returns 1)
+ddk_core [RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=025005F2) = 1; IDirect3D9 [0x007d4108] = 046758A8
+ddk_core [RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 01664C6C; RwGlobals 015F02C0, module offset 0x3F4, texdict freelist 007D4030, list head 015F06B4 -> 01664C7C; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+ddk_core [RWC_CORE] AV at 00030257 (exe+0x20257) read 6BD099F8; eax 00000000 ecx 62E1B000 edx 08EEE9F0 ebx 011EFDD4 esi 00000001 edi 08DF3E00 esp 011EFD64
+ddk_core [RWC_CORE] AV stack exe offsets: +0x607FE0 +0x1E588 +0x1EAD7 +0x607FE0 +0x20639 +0x608558 +0x1DBF2 +0x1713D +0x1C35F +0x607FE0 +0x19FE96 +0x3E0D +0x176566 +0x33C7 +0x175FC6 +0x357D +0x176427 +0x40759 +0x246487 +0x305B88 +0x2464D7 +0x2253A5 +0x225429 +0x225429 +0x2262E0 +0x225429
+ddk_core [RWC_CORE] probe: RwGlobals 015F02C0 (expect 007D3EC8), IDirect3D9 [0x007d4108] 046758A8, device [0x007d4110] 08E22878, presents 0
+ddk_core [RWC_CORE] probe: texture module offset [0x007d4054] = 0x3F4, instances [0x007d4058] = 1; texture freelist [RwGlobals+off+8] = 007D405C, texdict freelist [RwGlobals+off+0xc] = 007D4030, current texdict [+0x10] = 01664C6C, [0x007d4080] = 01664C6C
+ddk_core [RWC_CORE] probe: device block in RwGlobals: +0x10 fpSystem 3F800000, +0x20 RenderStateSet 00021940, +0x30 Im2D prim 00020E40, +0x34 Im2D indexed 001B0970; curCamera +0x0 00000000
