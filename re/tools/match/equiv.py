@@ -49,7 +49,8 @@ import match  # noqa: E402
 M32 = 0xFFFFFFFF
 MASK = {1: 1, 8: 0xFF, 16: 0xFFFF, 32: M32, 64: (1 << 64) - 1, 80: (1 << 80) - 1}
 CALLEE_SAVED = ("ebx", "esi", "edi", "ebp")
-RELAX_ICALL = False   # --relax-icall: assume A4' (a call through a pointer reads no register); reported separately
+RELAX_ICALL = False
+LAST_PCS: dict = {}   # pcs executed by the last proof, per side (mutation harness)   # --relax-icall: assume A4' (a call through a pointer reads no register); reported separately
 GPR = ("eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi")
 SUB = {}
 for _r in "abcd":
@@ -88,6 +89,7 @@ _TAB: dict = {}
 
 
 def reset_terms():
+    LAST_PCS.clear()
     _TAB.clear()
     _HAS.clear()
 
@@ -772,23 +774,51 @@ def ret_pop(va):
     return out
 
 
+UNKNOWN = {"P": None, "N": None, "livein": ALLREGS, "eax_def": False, "noreturn": False, "known": False}
+_INPROG: set = set()
+_FRAMES: list = []
+MAX_DEPTH = 40           # call-graph depth followed (deeper: conservative, uncached)
+sys.setrecursionlimit(20000)
+
+
 def _sfail(va, why):
-    _SUMM[va] = dict(_SUMM[va], why=why)
-    return _SUMM[va]
+    return dict(UNKNOWN, why=why)
 
 
 def summary(va, depth=0):
     """Callee facts from the original image: pop count P, stack-argument slots read N, registers read before
-    written (live-in), whether EAX is written on every path to a return. None fields = unknown."""
+    written (live-in), whether EAX is written on every path to a return. None fields = unknown.
+
+    Order-independent: a result that depended on a cycle (a callee still being summarised) or on the depth cut-off
+    is conservative for that query and is not cached, so every query of an address gives the same answer whatever
+    was asked before it."""
     va = resolve_thunk(va)
     if va in _SUMM:
         return _SUMM[va]
-    _SUMM[va] = {"P": None, "N": None, "livein": ALLREGS, "eax_def": False, "noreturn": False, "known": False}
+    if va in _INPROG or depth > MAX_DEPTH:
+        for f in _FRAMES:
+            f["taint"] = True
+        return dict(UNKNOWN)
+    _INPROG.add(va)
+    _FRAMES.append({"taint": False})
+    try:
+        res = _summary_body(va, depth)
+    finally:
+        _INPROG.discard(va)
+        fr = _FRAMES.pop()
+    if not fr["taint"]:
+        _SUMM[va] = res
+    return res
+
+
+def _summary_body(va, depth):
     size = match.ghidra_size(va)
     if size is None:
         return _sfail(va, "r2")
     img = image()
     lo, hi = va, va + size
+    later = [e for e in match.function_table() if e > va]
+    next_entry = min(later) if later else hi
     states = {va: (0, None, {r: 0 for r in ALLREGS})}
     work = [va]
     livein, N, pops, eax_def = set(), 0, set(), True
@@ -805,6 +835,8 @@ def summary(va, depth=0):
             visited += 1
             if visited > 20000:
                 return _sfail(va, "r3")
+            if pc >= next_entry:
+                break          # fell into the next function: the call before it does not return
             b = img.bytes(pc, 16)
             if b is None:
                 return _sfail(va, "r4")
@@ -910,10 +942,7 @@ def summary(va, depth=0):
                 tgt = ops[0].imm if ops[0].type == X.X86_OP_IMM else None
                 if tgt is not None:
                     tgt = resolve_thunk(tgt)
-                    if depth < 3:
-                        s2 = summary(tgt, depth + 1)
-                    else:
-                        s2 = {"P": None, "livein": ALLREGS, "noreturn": False}
+                    s2 = summary(tgt, depth + 1)
                     for r in s2["livein"]:
                         if (dfn[r] & 7) != 7:
                             livein.add(r)
@@ -954,9 +983,21 @@ def summary(va, depth=0):
             if is_jmp or is_jcc:
                 if ops[0].type != X.X86_OP_IMM:
                     m_ = ops[0].mem if ops[0].type == X.X86_OP_MEM else None
-                    if not (is_jmp and m_ is not None and not m_.base and m_.index and m_.scale == 4
-                            and lo <= (m_.disp & M32) < hi + 0x400):
-                        return _sfail(va, "r8")      # indirect jump that is not a jump table: unknown
+                    if is_jmp and not (m_ is not None and not m_.base and m_.index and m_.scale == 4
+                                       and lo <= (m_.disp & M32) < hi + 0x400):
+                        # indirect tail jump: A4 (a function-pointer target pops nothing, reads no register
+                        # unless --relax-icall is off: then ECX / EDX count as read)
+                        for r in (() if RELAX_ICALL else ("ecx", "edx")):
+                            if (dfn[r] & 7) != 7:
+                                livein.add(r)
+                        ind_assumed = True
+                        pops.add(0)
+                        eax_def = False
+                        if esp != 0:
+                            return _sfail(va, "r8b")
+                        break
+                    if not is_jmp:
+                        return _sfail(va, "r8")
                     # jump table: every entry up to the first one outside the body (over-approximation)
                     k = m_.disp & M32
                     while True:
@@ -981,7 +1022,7 @@ def summary(va, depth=0):
                 tgt = ops[0].imm
                 if not (lo <= tgt < hi):
                     # tail call
-                    s2 = summary(tgt, depth + 1) if depth < 3 else {"P": None, "livein": ALLREGS}
+                    s2 = summary(tgt, depth + 1)
                     for r in s2["livein"]:
                         if (dfn[r] & 7) != 7:
                             livein.add(r)
@@ -1022,7 +1063,6 @@ def summary(va, depth=0):
            "livein": frozenset(livein), "eax_def": eax_def and bool(pops), "noreturn": not pops, "known": len(pops) <= 1}
     if len(pops) > 1:
         res["P"] = None
-    _SUMM[va] = res
     return res
 
 
@@ -1042,11 +1082,11 @@ class Region:
 class State:
     """One side's machine state. r: full registers; f: flags; x: x87; m: memory chain; s: private stack
     {offset: (term, size)} (default mode only)."""
-    __slots__ = ("r", "f", "x", "m", "s", "xf")
+    __slots__ = ("r", "f", "x", "m", "s", "xf", "cl")
 
     def copy(self):
         n = State()
-        n.r, n.f, n.x, n.m, n.s, n.xf = dict(self.r), self.f, self.x, self.m, dict(self.s), self.xf
+        n.r, n.f, n.x, n.m, n.s, n.xf, n.cl = dict(self.r), self.f, self.x, self.m, dict(self.s), self.xf, self.cl
         return n
 
 
@@ -1098,7 +1138,8 @@ class Ctx:
         st.m = self.mem0
         st.s = {}
         st.xf = None
-        return st
+        st.cl = None          # highest ESP offset of any call so far on this path: frame bytes below it may hold
+        return st             # a callee's leftovers; bytes at or above it still hold the entry contents
 
     def stack_off(self, a, st=None):
         """Default mode: offset k when a == esp0 + k and the slot is private; None when the access goes to memory
@@ -1189,7 +1230,7 @@ class Ctx:
             if k < off + sz and off < k + s:
                 parts.append((k, v, s))
         if not parts:
-            return self.sinit(side, off, sz)
+            return self.sinit(side, off, sz, st)
         if sz == 8:
             return cat64(self.sread(side, st, off, 4), self.sread(side, st, off + 4, 4))
         bs = []
@@ -1200,24 +1241,30 @@ class Ctx:
                     bs.append(ext(v, 8 * (o - k), 8))
                     break
             else:
-                bs.append(self.sinit(side, o, 1))
+                bs.append(self.sinit(side, o, 1, st))
         val = zx(bs[0], 32)
         for i in range(1, sz):
             val = ins(val, bs[i], 8 * i)
         return ext(val, 0, 8 * sz) if sz != 4 else val
 
-    def sinit(self, side, off, sz):
-        """Initial content of a private stack slot: the caller's argument dwords (shared by both sides, offset >= 0)
-        or this side's uninitialised frame (offset < 0)."""
+    def sinit(self, side, off, sz, st=None):
+        """Content of a private stack slot this side has not written: the caller's argument dwords and the frame
+        bytes as they were at entry are the same machine state on both sides (shared terms); a frame byte that was
+        below ESP at an earlier call may hold that callee's leftovers (this side's own term)."""
         if sz == 8:
-            return cat64(self.sinit(side, off, 4), self.sinit(side, off + 4, 4))
+            return cat64(self.sinit(side, off, 4, st), self.sinit(side, off + 4, 4, st))
         base = off - (off % 4)
-        atom = mk("arg", 32, base) if base >= 0 else mk("undef", 32, side.name, base)
+        if base >= 0:
+            atom = mk("arg", 32, base)
+        elif st is not None and st.cl is not None and base < st.cl:
+            atom = mk("undef", 32, side.name, base)
+        else:
+            atom = mk("below", 32, base)
         if off == base and sz == 4:
             return atom
         if off + sz <= base + 4:
             return ext(atom, 8 * (off - base), 8 * sz)
-        bs = [self.sinit(side, off + i, 1) for i in range(sz)]
+        bs = [self.sinit(side, off + i, 1, st) for i in range(sz)]
         val = zx(bs[0], 32)
         for i in range(1, sz):
             val = ins(val, bs[i], 8 * i)
@@ -1445,6 +1492,8 @@ class Ctx:
         if info.get("noreturn"):
             region.end = ("halt",)
             return "halt"
+        if P_ is None and tgt.op == "c":
+            P_ = ret_pop(tgt.a[0])          # every `ret` in the callee's body agrees
         if P_ is None:
             raise NotProven("callee-pop-unknown", f"callee {show(tgt)}")
         eb, cb, db = st.r["eax"], st.r["ecx"], st.r["edx"]
@@ -1457,6 +1506,7 @@ class Ctx:
         if not self.strict:
             k = self.esp_off(st)
             st.s = {o: e for o, e in st.s.items() if o >= k}       # the callee's frame below esp is garbage
+            st.cl = k if st.cl is None else max(st.cl, k)
             for i in range(len(args)):
                 if st.xf is not None and st.xf <= k + 4 * i < 0:
                     continue
@@ -1840,6 +1890,49 @@ class Ctx:
         return cs.mnemonic + " " + ",".join(parts)
 
 
+X87_STRICT = False   # --x87-strict: a region with any x87 instruction must be identical text on both sides
+
+
+def _is_x87(t):
+    m = t.split(" ", 1)[0]
+    return m.startswith("f") or m == "wait"
+
+
+def x87_rule(ta, tb, here):
+    """x87 exclusion. The x87 instructions of the region must be the same instructions with the same operands in the
+    same order, and every other instruction must stay between the same two x87 instructions (segments compared as
+    mnemonic multisets: register renaming and reordering of integer code inside a segment are left to the proof).
+    Calls are segment boundaries too. --x87-strict: the whole region must be identical text."""
+    def fail(i, why):
+        xa = ta[i] if i < len(ta) else "(end)"
+        xb = tb[i] if i < len(tb) else "(end)"
+        raise NotProven("x87-region", f"region {here} {why} at instruction {i}: {xa} | {xb}")
+    if X87_STRICT:
+        i = next((i for i, (x, y) in enumerate(zip(ta, tb)) if x != y), min(len(ta), len(tb)))
+        fail(i, "differs")
+    def split(ts):
+        segs, cur, bars = [], [], []
+        for t in ts:
+            if _is_x87(t) or t.startswith("call "):
+                segs.append(sorted(x.split(" ", 1)[0] for x in cur))
+                bars.append(t)
+                cur = []
+            else:
+                cur.append(t)
+        segs.append(sorted(x.split(" ", 1)[0] for x in cur))
+        return segs, bars
+    sa, ba = split(ta)
+    sb, bb = split(tb)
+    if ba != bb:
+        i = next((i for i, (x, y) in enumerate(zip(ba, bb)) if x != y), min(len(ba), len(bb)))
+        raise NotProven("x87-region", f"region {here} x87 instruction {i} differs: "
+                        f"{ba[i] if i < len(ba) else '(end)'} | {bb[i] if i < len(bb) else '(end)'}")
+    for i, (x, y) in enumerate(zip(sa, sb)):
+        if x != y:
+            raise NotProven("x87-region", f"region {here}: integer code moved across x87 instruction {i} "
+                            f"({ba[i - 1] if i else '(region start)'}): {x} | {y}")
+
+
 def esp_reset_any(side):
     """True when the linear disassembly of the body writes ESP other than by push/pop/call/ret/add/sub imm."""
     if isinstance(side, ObjSide):
@@ -1973,6 +2066,9 @@ class Explorer:
         sa, sb = State(), State()
         for st, side, keys in ((sa, "A", keysA), (sb, "B", keysB)):
             st.r, st.s, st.xf = {}, {}, None
+            cls_ = [(arr[e][0] if side == "A" else arr[e][1]).cl for e in edges]
+            cls_ = [c for c in cls_ if c is not None]
+            st.cl = max(cls_) if cls_ else None
             for k in keys:
                 v = val[part[(side,) + k]]
                 if k[0] == "r":
@@ -1989,7 +2085,7 @@ class Explorer:
                     st.xf = None if v.op == "noxf" else (v.a[0] - (1 << 32) if v.a[0] >= 0x80000000 else v.a[0])
                 else:
                     st.s[k[1]] = (v, 4)
-        sig = tuple(sorted(((l, val[part[l]].id) for l in locs), key=repr))
+        sig = tuple(sorted(((l, val[part[l]].id) for l in locs), key=repr)) + (("cl", sa.cl, sb.cl),)
         return sa, sb, sig
 
     def run(self):
@@ -2014,6 +2110,8 @@ class Explorer:
                 print(f"  pair {A.label(pair[0])} / {B.label(pair[1])}")
             ra = ctx.run_region(A, sa, pair[0])
             rb = ctx.run_region(B, sb, pair[1])
+            LAST_PCS.setdefault("A", set()).update(ra.pcs)
+            LAST_PCS.setdefault("B", set()).update(rb.pcs)
             here = f"{A.name} {A.label(pair[0])} / {B.name} {B.label(pair[1])}"
             if ra.jmps or rb.jmps:
                 ctx.used.add("jmp-threading")
@@ -2024,11 +2122,8 @@ class Explorer:
                 if ea is not eb:
                     raise NotProven(*self.why_call(ea, eb, here))
             if (ra.x87 or rb.x87) and ra.texts != rb.texts:
-                i = next((i for i, (x, y) in enumerate(zip(ra.texts, rb.texts)) if x != y),
-                         min(len(ra.texts), len(rb.texts)))
-                xa = ra.texts[i] if i < len(ra.texts) else "(end)"
-                xb = rb.texts[i] if i < len(rb.texts) else "(end)"
-                raise NotProven("x87-region", f"region {here} instruction {i}: {xa} | {xb}")
+                x87_rule(ra.texts, rb.texts, here)
+                ctx.used.add("x87-barrier")
             ka, kb = ra.end[0], rb.end[0]
             if ka != kb:
                 raise NotProven("cfg-mismatch", f"region {here}: {ka} vs {kb}")
@@ -2237,6 +2332,9 @@ class Resolver:
             if any(va == v and undecorate(k) in ("chkstk", "alloca_probe") for k, v in sm.items()):
                 return {"chkstk": True}
             return summary(va)
+        d, _k = to_lin(tgt)
+        if any(t.op == "unres" for t in d):
+            raise NotProven("unresolved-callee", show(tgt))
         # indirect: an import through the IAT
         if tgt.op == "ld" and tgt.a[1].op == "c" and tgt.a[1].a[0] in self.import_pop:
             n = self.import_pop[tgt.a[1].a[0]]
@@ -2596,6 +2694,11 @@ def check_sides(A, B, res, addr, out=None, trace=False):
         out.update(verdict="NOT-PROVEN", kind=e.kind, detail=e.detail)
         return out
     classes, sigma = attribute(A, B, ctx.used, frame_needed)
+    if isinstance(A, ObjSide):
+        loc = sorted({r[0]["name"] for r in A.relocs.values() if r[0].get("type") == 0x20 and r[0].get("sec", 0) > 0
+                      and r[0].get("sec") != A.secidx})
+        if loc:
+            out["local_callees"] = loc     # bodies this source defines and calls: an admission must cover them too
     out["classes"] = classes
     out["mode"] = mode
     out["rules"] = sorted(ctx.used)
@@ -2658,9 +2761,11 @@ def main():
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--trace", action="store_true")
     ap.add_argument("--relax-icall", action="store_true")
+    ap.add_argument("--x87-strict", action="store_true")
     a = ap.parse_args()
-    global RELAX_ICALL
+    global RELAX_ICALL, X87_STRICT
     RELAX_ICALL = a.relax_icall
+    X87_STRICT = a.x87_strict
     only = {int(x, 16) for x in a.only.split(",")} if a.only else None
     allres = []
     for s in a.src:

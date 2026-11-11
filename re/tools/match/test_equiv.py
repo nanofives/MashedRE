@@ -15,7 +15,8 @@ import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-import equiv  # noqa: E402
+import importlib, os  # noqa: E402
+equiv = importlib.import_module(os.environ.get("EQUIV_MODULE", "equiv"))  # noqa: E402
 
 ML = pathlib.Path(r"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx86\x86\ml.exe")
 ROOT = HERE.parents[2]

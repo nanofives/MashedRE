@@ -18,9 +18,12 @@ ROOT = HERE.parents[2]
 LEDGER = ROOT / "re" / "analysis" / "match_ledger.tsv"
 
 
+TOOL = HERE / "equiv.py"
+
+
 def run(args):
     src, rvas, relax = args
-    cmd = [sys.executable, str(HERE / "equiv.py"), str(ROOT / src), "--only", ",".join(f"0x{r:08x}" for r in rvas),
+    cmd = [sys.executable, str(TOOL), str(ROOT / src), "--only", ",".join(f"0x{r:08x}" for r in rvas),
            "--json"] + (["--relax-icall"] if relax else [])
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=240, cwd=str(ROOT))
@@ -47,7 +50,12 @@ def main():
     ap.add_argument("--jobs", type=int, default=6)
     ap.add_argument("--relax-icall", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--tool", default="", help="a frozen copy of equiv.py in this directory (for long runs)")
+    ap.add_argument("--proven-in", default="", help="only the rows proven (EQUIV / IF) in this earlier TSV")
     a = ap.parse_args()
+    global TOOL
+    if a.tool:
+        TOOL = HERE / a.tool
     rows = [ln.split("\t") for ln in LEDGER.read_text().splitlines()[1:] if ln.strip()]
     meta = {}
     by_src = collections.defaultdict(list)
@@ -57,6 +65,11 @@ def main():
         addr = int(r[0], 16)
         meta[addr] = r
         by_src[r[1]].append(addr)
+    if a.proven_in:
+        keep = {int(ln.split("\t")[0], 16) for ln in pathlib.Path(a.proven_in).read_text().splitlines()[1:]
+                if ln.split("\t")[7] != "NOT-PROVEN"}
+        by_src = {k: [x for x in v if x in keep] for k, v in by_src.items()}
+        by_src = {k: v for k, v in by_src.items() if v}
     items = sorted(by_src.items())
     if a.limit:
         items = items[:a.limit]
@@ -70,12 +83,13 @@ def main():
             for x in res:
                 m = meta.get(x["addr"])
                 out.append((x, src, m))
-    lines = ["rva\tsource\tbest_pct\tbytes_bad\tbytes_n\tsubsystem\thooks_conf\tverdict\tclasses\tregs\tcallers_all_ignore\tkind\tdetail"]
+    lines = ["rva\tsource\tbest_pct\tbytes_bad\tbytes_n\tsubsystem\thooks_conf\tverdict\tclasses\tregs\tcallers_all_ignore\tkind\tdetail\trules\tlocal_callees"]
     for x, src, m in sorted(out, key=lambda t: t[0]["addr"]):
         lines.append("\t".join([
             f"0x{x['addr']:08x}", src, m[3] if m else "", m[4] if m else "", m[5] if m else "", m[13] if m else "",
             m[12] if m else "", x["verdict"], ",".join(x.get("classes", [])), ",".join(x.get("regs", [])),
-            str(x.get("callers_all_ignore", "")), x.get("kind", ""), str(x.get("detail", "")).replace("\t", " ")[:300]]))
+            str(x.get("callers_all_ignore", "")), x.get("kind", ""), str(x.get("detail", "")).replace("\t", " ")[:300],
+            ",".join(x.get("rules", [])), ",".join(x.get("local_callees", []))]))
     pathlib.Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     pathlib.Path(a.out).write_text("\n".join(lines) + "\n")
     c = collections.Counter(x["verdict"] for x, _, _ in out)
