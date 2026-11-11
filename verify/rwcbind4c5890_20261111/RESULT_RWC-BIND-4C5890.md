@@ -103,3 +103,18 @@ past module 0x40a (RWC-MATCH-MOD40A) and the NEARMATCH-555360 restack onto this 
 
 `D:/MashedWT/RWC-BIND-4C5890_data`, with sha256 in `RAW_SHA256.txt`: the 4 arm logs, the arm driver transcript, both build
 logs and both exes.
+
+## Rebase onto orch/integration 8bc7026f0 (REBASE-RUN37-B, 2026-11-11)
+
+- Text conflict in `re/tools/dual_copy_allowlist.txt` (RWC-CORE-RUN commit): HUDINIT-A's three `00552750/00552b60/00552c10`
+  rows against the RWC-CORE-RUN block. Resolved as the union, HUDINIT-A rows first, then the RWC-CORE-RUN block. 0 lines removed.
+- Semantic conflict found by rva-lint on the default build: `DUP-IN-TARGET 0x004cc9e0`, HUDINIT-A's
+  `Match/PortTop_004cc9e0.cpp` (`Orig_004cc9e0`) and RWC-CORE-RUN's `RwCore/RwCore_004cc9e0.cpp` (`RwCore_004cc9e0`), both
+  the 100% source `re/match/rwl01/004cc9e0.c` under distinct names. One `ORIGTOP-ONLY DUP-IN-TARGET:004cc9e0` row added.
+- Default build OK (rva-lint 93 findings, allowlisted 93, NEW 0). Object build (`MASHED_DDKOBJ=1`) OK.
+- `ddkobj.py check`: IDENTICAL 709, DIFFERENT 80, not-in-map 3 (`BYTECHECK_rebase_8bc7026f0.tsv`). Against the pre-rebase
+  check (97 DIFFERENT) and integration's `verify/ddkobjtrain_20261111/BYTECHECK.tsv` (8 DIFFERENT): 0 DIFFERENT rows in
+  neither baseline, 0 rows IDENTICAL in a baseline and DIFFERENT now, 17 pre-rebase DIFFERENT rows now IDENTICAL
+  (integration's rw9044 sources). 8 pre-rebase rows (0x00404e00..0x00404f80, 0x00414180) are refusals under integration's
+  ddkobj.py and are absent from integration's check too. 0x004c5890 `_RwCore_004c5890` IDENTICAL.
+- No gates: top-down row (knob path only), per WORKER_RULES row kinds.
