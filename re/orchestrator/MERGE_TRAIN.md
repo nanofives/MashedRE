@@ -64,6 +64,16 @@ after each GREEN pass with unchanged hashes, then runs the LAN release check. A 
 (id `-FLIP`/`FLIP-`, or "decided flip" in the ledger title) is refused before any merge and stops the drain, so the
 protocol below still runs by hand. Detail: the script header and roadmap-loop SKILL.md.
 
+Since HB-TRAIN-FLIP-DECISION (2026-11-11) a third rule also marks a decided flip: the row's ledger `decision` field
+holds an L-n **and** its title names a default turned ON (`default ON` / `default-ON`, never `default-OFF`). Both regexes
+are in `$DCFG` (`flip_decision_rx`, `flip_decision_title_rx`) and can be overridden from `merge_train.json` `drain`.
+The decision field alone is not enough: it stays set after the answer, and on 2026-11-11 it was set on 100 of 646 rows,
+81 of them merged through the train as ordinary rows (knob default-OFF ports, policy carriers like L115-ADMIT-1/2).
+The note is never read, so near-match rows that cite L-115/L-117/L-118 do not stop a drain. Ledger counts that day:
+id/title rule 43 rows, decision alone 100 (88 new), decision + `default ON` title 8 (2 new: D3-CF-COLLLUT, HB-FULLCHECK-R17).
+To make the train treat a flip row as one, name it `-FLIP`, put "decided flip" in its title, or give it its L-n and a
+`... default ON` title.
+
 ### Decided default flips
 A row that changes the default gates on purpose (a user-decided knob flip, e.g. L-4) would be bounced RED against the old refs. Protocol:
 1. The flip row records its expected new G-CTRL and B hashes (ledger note + its RESULT).

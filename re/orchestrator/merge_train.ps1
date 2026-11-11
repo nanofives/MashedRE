@@ -31,6 +31,8 @@
   orch/integration, runs release_due.py and on DUE waits for publish.sh, then starts the next pass. It stops and
   reports on RED, INFRA, a hash change, a decided-flip row in the batch (left queued for its own -Full pass), or any
   error. Never pushes. Wrap the driver in test-slot if a slot is wanted: the slot stays outside, mashed_lock inside.
+  A decided-flip row (Test-FlipRow): id -FLIP / FLIP-, "decided flip" in the ledger title, or (HB-TRAIN-FLIP-DECISION,
+  2026-11-11) an L-n in the ledger `decision` field together with a title naming a default turned ON.
 #>
 [CmdletBinding()]
 param([switch]$Full, [switch]$Plan, [int]$Max = 0, [switch]$KeepTemp, [switch]$SelfTest,
@@ -553,6 +555,7 @@ function Try-Batch($items) {
 $DCFG = [ordered]@{
   parity_branch = 'race/first-frame-parity'; main_branch = 'main'; max_passes = 20
   flip_id_rx = '(^|-)FLIP(-|$)'; flip_title_rx = '(?i)\bdecided[ -]flips?\b'
+  flip_decision_rx = '^L-\d+$'; flip_decision_title_rx = '(?i)\bdefault[ -]ON\b'
   lock_tries = 8; lock_wait_sec = 15
 }
 if ($CFG.PSObject.Properties['drain']) { foreach ($p in $CFG.drain.PSObject.Properties) { $DCFG[$p.Name] = $p.Value } }
@@ -570,9 +573,16 @@ function Get-LedgerRow([string]$id) { try { return ((& pwsh -NoProfile -File $RM
 # A decided flip (MERGE_TRAIN.md "Decided default flips") changes the refs and must run alone with -Full after L0 has
 # committed the new refs. Recognised by the row id (D4-FLIP-L29-L30, D3-SUBSTATE-FLIP, ...) or a title naming a
 # decided flip. A false positive only stops the drain (the lead runs the row), it never merges anything.
+# HB-TRAIN-FLIP-DECISION (2026-11-11): also a row whose ledger `decision` field holds an L-n AND whose title names a
+# default turned ON. The decision field alone is not a flip marker: it stays set after the answer, and on 2026-11-11
+# 100 of 646 rows carried one, 81 of them merged through the train as ordinary rows (knob default-OFF ports, policy
+# carriers such as L115-ADMIT-1/2). Only the row's structured `decision` field and its title are read, never the note,
+# so a near-match row that cites L-115/L-117/L-118 without its own decision never flags.
 function Test-FlipRow($row) {
   if (-not $row) { return $false }
-  return (([string]$row.id -match $DCFG.flip_id_rx) -or ([string]$row.title -match $DCFG.flip_title_rx))
+  if (([string]$row.id -match $DCFG.flip_id_rx) -or ([string]$row.title -match $DCFG.flip_title_rx)) { return $true }
+  $dec = if ($row -is [System.Collections.IDictionary]) { $row['decision'] } elseif ($row.PSObject.Properties['decision']) { $row.decision } else { '' }
+  return (([string]$dec -match $DCFG.flip_decision_rx) -and ([string]$row.title -match $DCFG.flip_decision_title_rx))
 }
 function Get-BatchFlips($batch) {
   @(foreach ($q in @($batch)) { $row = Get-LedgerRow $q.id; if (-not $row) { $row = $q }; if (Test-FlipRow $row) { [string]$q.id } })
@@ -1152,6 +1162,22 @@ if ($SelfTest) {
   function Get-LedgerRow([string]$id) { return @{ id = $id; title = $(if ($id -eq 'Q-DEC') { 'L-99 decided flip of X' } else { 'ordinary port row' }) } }
   $bf = @(Get-BatchFlips @(@{ id = 'Q-1' }, @{ id = 'Q-DEC' }, @{ id = 'Q-2-FLIP' }))
   Check (($bf -join ',') -eq 'Q-DEC,Q-2-FLIP') "drain: Get-BatchFlips reads each row's ledger title ($($bf -join ','))"
+  # HB-TRAIN-FLIP-DECISION: the ledger decision field (an L-n) plus a title naming a default turned ON. Rows modelled on
+  # the live ledger of 2026-11-11 (D3-CF-COLLLUT, L115-ADMIT-2, PORT-STATE-03, a near-match row citing L-115 in its note).
+  $decRows = @(
+    @{ case = 'decided flip (decision L-26, default ON title, no FLIP in id)'; want = $true; row = @{ id = 'D3-CF-COLLLUT'; title = 'COLL_LUT faithful path default ON? (U-9775 resolved with the A5 timer knob)'; decision = 'L-26'; note = '' } }
+    @{ case = 'decided flip as a ledger object (PSCustomObject, decision L-92)'; want = $true; row = [pscustomobject]@{ id = 'D4-ST5-ON'; title = 'L-91 (a): MASHED_ST5_LEG2 default ON (opt-out MASHED_NO_ST5_LEG2=1)'; decision = 'L-92'; note = '' } }
+    @{ case = 'near-match row citing L-n in note and title, no decision'; want = $false; row = @{ id = 'MATCH-NEAR-0048e820'; title = 'admit 0x0048e820 (85.5%) under L-115 / L-118, default ON once admitted'; decision = ''; note = 'L-115 L-117 L-118 near-match' } }
+    @{ case = 'decision carrier with its own L-n, no default ON'; want = $false; row = @{ id = 'L115-ADMIT-2'; title = 'Decision carrier: admit 0x0048e820 (85.5%) per function under L-115/L-117'; decision = 'L-118'; note = 'L-115' } }
+    @{ case = 'decided port behind a default-OFF knob'; want = $false; row = @{ id = 'PORT-STATE-03'; title = 'Frontend menu records at their original address 0x00898ac0 behind a default-OFF knob'; decision = 'L-100'; note = '' } }
+    @{ case = 'decision field not an L-n (P0-1)'; want = $false; row = @{ id = 'D1-R1'; title = 'capture default ON'; decision = 'P0-1'; note = '' } }
+    @{ case = 'plain row'; want = $false; row = @{ id = 'PORT-OT-HUD'; title = 'Port the HUD'; decision = ''; note = '' } }
+  )
+  $badDec = @($decRows | Where-Object { (Test-FlipRow $_.row) -ne $_.want } | ForEach-Object case)
+  Check ($badDec.Count -eq 0) "flip-decision: decision L-n + 'default ON' title flags, near-match L-n citations / default-OFF / plain rows do not (wrong: $($badDec -join '; '))"
+  function Get-LedgerRow([string]$id) { switch ($id) { 'Q-COLL' { return @{ id = $id; title = 'COLL_LUT default ON?'; decision = 'L-26' } } 'Q-NEAR' { return @{ id = $id; title = 'admit 0x0048e820 under L-115'; decision = ''; note = 'L-117' } } default { return @{ id = $id; title = 'ordinary port row'; decision = '' } } } }
+  $bf2 = @(Get-BatchFlips @(@{ id = 'Q-1' }, @{ id = 'Q-NEAR' }, @{ id = 'Q-COLL' }))
+  Check (($bf2 -join ',') -eq 'Q-COLL') "flip-decision: Get-BatchFlips reads the ledger decision field (flags $($bf2 -join ','), not the near-match row)"
   $rjT = Join-Path $DATA 'pr_unit.json'
   Write-PassResult $rjT @{ verdict = 'GREEN'; merged = @('A'); hashes = @{ gctrl = @('1', '2', '3'); b = @('4', '5', '6') }; text_only = $false; refs = @{ gctrl = @('1', '2', '3'); b = @('4', '5', '6') } }
   $rb2 = Get-Content -LiteralPath $rjT -Raw | ConvertFrom-Json -AsHashtable
