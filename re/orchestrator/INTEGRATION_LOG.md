@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-11 00:08 PORT-OT-BIND-CRT (orch/PORT-OT-BIND-CRT): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261111_000640
 - 2026-11-11 00:05 HB-TRAIN-FLIP-DECISION (orch/HB-TRAIN-FLIP-DECISION): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261110_235744
 - 2026-11-10 23:56 TL-MATCH-479330-B (orch/TL-MATCH-479330-B): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261110_235512
 - 2026-11-10 23:53 L115-ADMIT-3-TABLE (orch/L115-ADMIT-3-TABLE), TL-MATCH-479330 (orch/TL-MATCH-479330): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261110_235108
