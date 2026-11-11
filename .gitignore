@@ -149,3 +149,6 @@ original/gamesave.bin.refbak_*
 # Ghidra master-project backups taken before bulk writes. 80 MB each; never commit.
 /Mashed.rep.bak-*/
 /Mashed.gpr.bak-*
+
+# BIND-CRT-STDIO: knob-path (MASHED_ORIG_TOP) write overlay, never original/
+origtop_rw/

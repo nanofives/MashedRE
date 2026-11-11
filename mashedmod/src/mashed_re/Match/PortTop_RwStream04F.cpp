@@ -49,13 +49,11 @@ struct PortStream {
     void* copy;
 };
 
+extern "C" void PortTop_Fs_DiskPath(const char* name, char* path, unsigned size);
+
 void* ReadDisk(const char* name, unsigned* len) {
     char path[400];
-    const char* p = name;
-    if (p[0] && p[1] == ':') p += 2;
-    while (*p == '\\' || *p == '/') ++p;
-    std::snprintf(path, sizeof(path), "original/%s", p);
-    for (char* c = path; *c; ++c) if (*c == '\\') *c = '/';
+    PortTop_Fs_DiskPath(name, path, sizeof(path));
     std::FILE* f = std::fopen(path, "rb");
     if (!f) return nullptr;
     std::fseek(f, 0, SEEK_END);
@@ -101,11 +99,7 @@ int PortTop_FsFileExists_004b5350(const char* name) {
     unsigned n = 0;
     if (PortTop_PizFs_Find(name, &n)) return 1;
     char path[400];
-    const char* p = name;
-    if (p[0] && p[1] == ':') p += 2;
-    while (*p == '\\' || *p == '/') ++p;
-    std::snprintf(path, sizeof(path), "original/%s", p);
-    for (char* c = path; *c; ++c) if (*c == '\\') *c = '/';
+    PortTop_Fs_DiskPath(name, path, sizeof(path));
     if (std::FILE* f = std::fopen(path, "rb")) {
         std::fclose(f);
         return 1;
@@ -168,4 +162,15 @@ int PortTop_RwStreamFindChunk_004cc5e0(void* stream, int type, int* lenOut, unsi
 }
 
 }  // extern "C"
+// The one disk-path rule of the knob path's file access (BIND-CRT-STDIO factored it out of ReadDisk and
+// PortTop_FsFileExists_004b5350; the 0x004a4541 fopen binding, Match/PortTop_CrtStdio.cpp, uses it too): drop a
+// drive prefix and leading separators, prefix "original/", forward slashes.
+extern "C" void PortTop_Fs_DiskPath(const char* name, char* path, unsigned size) {
+    const char* p = name;
+    if (p[0] && p[1] == ':') p += 2;
+    while (*p == '\\' || *p == '/') ++p;
+    std::snprintf(path, size, "original/%s", p);
+    for (char* c = path; *c; ++c) if (*c == '\\') *c = '/';
+}
+
 #endif  // MASHED_STANDALONE

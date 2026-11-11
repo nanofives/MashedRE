@@ -3,15 +3,15 @@ reach	functions reached from 0x00492370 (direct + reloc edges)	2316	direct calls
 reach_class	match	1653	
 reach_class	game-c0c3	326	
 reach_class	fam:rwcore	64	
-reach_class	bind:bound	51	
+reach_class	bind:bound	52	
 reach_class	norow	32	
 reach_class	fam:rwphysics	30	
 reach_class	bind:port	29	
 reach_class	bind:rw	25	
-reach_class	fam:crt	22	
-reach_class	fam:d3d-dshow	22	
+reach_class	bind:crt	22	
+reach_class	fam:d3d-dshow	21	
 reach_class	bind:shim	21	
-reach_class	bind:crt	14	
+reach_class	fam:crt	14	
 reach_class	game-c4	13	
 reach_class	fam:rt2d	6	
 reach_class	game-c4-hand	4	
@@ -19,28 +19,27 @@ reach_class	fam:lua	3
 reach_class	fam:qhull	1	
 runnable	C4-by-match rows in reach	1653	
 runnable	already running (BINDINGS matched)	215	
-runnable	runnable with no new family bound	1064	
-family_alone	game-c0c3	241	functions to bind in reach: 326  (named / >=20)
+runnable	runnable with no new family bound	1075	
+family_alone	game-c0c3	244	functions to bind in reach: 326  (named / >=20)
 family_alone	fam:rwcore	52	functions to bind in reach: 64  (named / >=20)
 family_alone	fam:lua	41	functions to bind in reach: 3  (named / >=20)
 family_alone	fam:rwphysics	37	functions to bind in reach: 30  (named / >=20)
-family_alone	fam:crt	26	functions to bind in reach: 22  (named / >=20)
 family_alone	norow	17	functions to bind in reach: 32
-family_alone	fam:d3d-dshow	4	functions to bind in reach: 22  (named / >=20)
+family_alone	fam:crt	16	functions to bind in reach: 14
 family_alone	fam:rt2d	4	functions to bind in reach: 6  (named / >=20)
+family_alone	fam:d3d-dshow	3	functions to bind in reach: 21  (named / >=20)
 family_alone	game-c4	2	functions to bind in reach: 13
 family_alone	fam:qhull	0	functions to bind in reach: 1
 family_alone	game-c4-hand	0	functions to bind in reach: 4
-cumulative	+fam:lua	1105	cost 3
-cumulative	+fam:rt2d	1109	cost 6
-cumulative	+fam:crt	1135	cost 22
-cumulative	+fam:d3d-dshow	1140	cost 22
-cumulative	+fam:rwphysics	1177	cost 30
-cumulative	+fam:rwcore	1236	cost 64
-cumulative	+game-c0c3	1558	cost 326
-final	runnable with every binding family bound (no C0..C3 matching)	1236	
-caveat	of those, read RwGlobals (DAT_007d3ff8)	71	0x00401f10 0x004113b0 0x004114c0 0x00413a40 0x00427840 0x0042a470 0x0042a5d0 0x0042aae0 0x004430e0 0x004522d0 0x00472b10 0x00472c60 0x00472dc0 0x00472f40 0x004730b0 0x00473220 0x004733b0 0x00473540 0x004736c0 0x00473870 0x004739f0 0x00473ee0 0x00474db0 0x00475d90 0x004768c0 0x00477810 0x0047ade0 0x00483a40 0x00484130 0x00484170 0x00485e10 0x004891f0 0x004898d0 0x00489c60 0x00490490 0x00491530 0x004c1680 0x004c3b30 0x004c3b90 0x004c3bf0 0x004c3d60 0x004c3d90 0x004c3dc0 0x004c3df0 0x004c4600 0x004c5770 0x004c5890 0x004ce790 0x004ce8e0 0x00554050 0x00555280 0x00555830 0x00555910 0x00556ce0 0x00556e40 0x00558d30 0x0055dd60 0x0055df90 0x0055fdd0 0x00562560 0x00563810 0x00564130 0x00564190 0x0057c300 0x0057c370 0x0057c500 0x0057c550 0x005adf60 0x005aea00 0x005aea50 0x005c4d50
-caveat	of those, read nonzero original .data/.rdata	128	
+cumulative	+fam:lua	1116	cost 3
+cumulative	+fam:rt2d	1120	cost 6
+cumulative	+fam:d3d-dshow	1123	cost 21
+cumulative	+fam:rwphysics	1160	cost 30
+cumulative	+fam:rwcore	1217	cost 64
+cumulative	+game-c0c3	1532	cost 326
+final	runnable with every binding family bound (no C0..C3 matching)	1217	
+caveat	of those, read RwGlobals (DAT_007d3ff8)	70	0x00401f10 0x004113b0 0x004114c0 0x00413a40 0x00427840 0x0042a470 0x0042aae0 0x004430e0 0x004522d0 0x00472b10 0x00472c60 0x00472dc0 0x00472f40 0x004730b0 0x00473220 0x004733b0 0x00473540 0x004736c0 0x00473870 0x004739f0 0x00473ee0 0x00474db0 0x00475d90 0x004768c0 0x00477810 0x0047ade0 0x00483a40 0x00484130 0x00484170 0x00485e10 0x004891f0 0x004898d0 0x00489c60 0x00490490 0x00491530 0x004c1680 0x004c3b30 0x004c3b90 0x004c3bf0 0x004c3d60 0x004c3d90 0x004c3dc0 0x004c3df0 0x004c4600 0x004c5770 0x004c5890 0x004ce790 0x004ce8e0 0x00554050 0x00555280 0x00555830 0x00555910 0x00556ce0 0x00556e40 0x00558d30 0x0055dd60 0x0055df90 0x0055fdd0 0x00562560 0x00563810 0x00564130 0x00564190 0x0057c300 0x0057c370 0x0057c500 0x0057c550 0x005adf60 0x005aea00 0x005aea50 0x005c4d50
+caveat	of those, read nonzero original .data/.rdata	115	
 dual	TOTAL	89	
 dual	audio	22	0x005a89a0 0x005a89b0 0x005a89c0 0x005a9e40 0x005abf80 0x005ac5f0 0x005ac740 0x005ac980 0x005ac9e0 0x005aca80 0x005acd60 0x005ad2e0 0x005ade60 0x005aded0 0x005adf30 0x005ae050 0x005ae0b0 0x005aea10 0x005aec00 0x005b10e0 0x005baf40 0x005baf60
 dual	ai	12	0x00414490 0x004148b0 0x004177b0 0x00417cf0 0x00422b50 0x004233e0 0x00443080 0x0046c730 0x0046c750 0x0046d4a0 0x0046d780 0x0046d7f0
