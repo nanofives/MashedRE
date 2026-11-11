@@ -18,8 +18,8 @@ What one run does
 
 What it cannot cover: callee side effects (memory a real callee would write and the body later reads), aliasing
 between stack slots and incoming pointers (A1; random pointers never hit the stack), paths that random inputs do
-not reach, x87 precision-control effects of real callees, and timing. A run that exceeds 200,000 instructions or
-faults in both bodies at the same instruction count is "inconclusive", not a pass.
+not reach, x87 precision-control effects of real callees, and timing. A run with a leg over 3 s or 200,000
+instructions between stubs, or more than 300 calls, is "inconclusive", not a pass.
 """
 from __future__ import annotations
 
@@ -182,31 +182,32 @@ def run_one(layout, body, state, max_ins=MAXI):
             writes[addr + i] = (value >> (8 * i)) & 0xFF
 
     def on_code(uc_, addr, size, _):
-        count[0] += 1
-        if count[0] > max_ins:
-            pending.append(("limit", addr))
-            uc_.emu_stop()
-            return
-        if addr == SENTINEL or not (body.lo <= addr < body.hi):
-            pending.append(("out", addr))
-            uc_.emu_stop()
+        # hooked only outside the body: reaching here is a call or a jump out of it
+        pending.append(("out", addr))
+        uc_.emu_stop()
 
     uc.hook_add(UC_HOOK_MEM_READ_UNMAPPED | UC_HOOK_MEM_WRITE_UNMAPPED, on_unmapped)
     uc.hook_add(UC_HOOK_MEM_WRITE, on_write)
-    uc.hook_add(UC_HOOK_CODE, on_code)
+    if body.lo > 0:
+        uc.hook_add(UC_HOOK_CODE, on_code, None, 0, body.lo - 1)
+    uc.hook_add(UC_HOOK_CODE, on_code, None, body.hi, 0xFFFFFFFF)
     pc = body.entry
     fault = None
     while True:
         pending.clear()
         try:
-            uc.emu_start(pc, 0)
+            uc.emu_start(pc, 0, 3_000_000, max_ins)      # 3 s or 200,000 instructions per leg
         except UcError as e:
             if not pending:
-                fault = (str(e), count[0], uc.reg_read(R.UC_X86_REG_EIP))
-                break
+                eip = uc.reg_read(R.UC_X86_REG_EIP)
+                if "FETCH_UNMAPPED" in str(e) and not (body.lo <= eip < body.hi):
+                    # a call through a pointer into unmapped memory: stub it like any other external call
+                    pending.append(("out", eip))
+                else:
+                    fault = (str(e), count[0], eip)
+                    break
         if not pending:
-            fault = ("stopped", count[0], uc.reg_read(R.UC_X86_REG_EIP))
-            break
+            return ("inconclusive", "instruction limit")
         kind, addr = pending[0]
         if kind == "limit":
             return ("inconclusive", "instruction limit")
@@ -237,7 +238,7 @@ def run_one(layout, body, state, max_ins=MAXI):
         if ret == SENTINEL:
             break
         pc = ret
-        if len(events) > 2000:
+        if len(events) > 300:
             return ("inconclusive", "too many calls")
     out = {
         "events": events,
@@ -307,11 +308,7 @@ def check(layout, bodyA, bodyB, runs=32, seed=1, ignore=()):
 
 
 def bodies_for(src, rva):
-    # run the proof first in this process, so the callee summaries the stubs use are the ones the proof compared
-    try:
-        equiv.check_source(pathlib.Path(src), {rva})
-    except BaseException:  # noqa: BLE001
-        pass
+    # callee summaries are order-independent (equiv.summary), so the stubs see the facts the proof compared
     text = pathlib.Path(src).read_text()
     obj = match.compile_obj(pathlib.Path(src), match.file_flags(text) or match.DEFAULT_FLAGS, match.file_lang(text),
                             match.file_toolchain(text))

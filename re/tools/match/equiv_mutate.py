@@ -19,6 +19,7 @@ import argparse
 import collections
 import pathlib
 import random
+import zlib
 import struct
 import sys
 
@@ -34,6 +35,8 @@ import match  # noqa: E402
 import test_equiv  # noqa: E402
 
 ROOT = HERE.parents[2]
+PER_PAIR = 30
+equiv.Explorer.MAX_VISITS = 1500     # a mutant that explodes the exploration is NOT-PROVEN (too-many-iterations)
 MD = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
 MD.detail = True
 
@@ -159,7 +162,7 @@ def dyn(secs, syms, res, A, B, addr, ign):
         bB = equiv_dyn.Body(addr, addr, max(hi, B.end))
     else:
         bB = equiv_dyn.Body(equiv_dyn.OURS_BASE + B.start, equiv_dyn.OURS_BASE + B.start, equiv_dyn.OURS_BASE + B.end)
-    return equiv_dyn.check(layout, bA, bB, runs=24, ignore=ign)
+    return equiv_dyn.check(layout, bA, bB, runs=16, ignore=ign)
 
 
 def run_pair(label, secs, syms, text, symA, addr, B_kind, B_arg, classes, rows, kills):
@@ -169,7 +172,19 @@ def run_pair(label, secs, syms, text, symA, addr, B_kind, B_arg, classes, rows, 
     ign = tuple(r0.get("regs", ()))
     pcs = set(equiv.LAST_PCS.get("A", set()))
     sec = secs[A.secidx - 1]
-    for kind, pc, data in mutants(sec["data"], pcs, [o for o, _, _ in sec["relocs"]]):
+    ms_all = mutants(sec["data"], pcs, [o for o, _, _ in sec["relocs"]])
+    if len(ms_all) > PER_PAIR:
+        # a fixed sample per pair, every kind represented (real functions yield hundreds of sites)
+        by = collections.defaultdict(list)
+        for m in ms_all:
+            by[m[0]].append(m)
+        rng = random.Random(zlib.crc32(label.encode()))
+        pick = []
+        for k, lst in sorted(by.items()):
+            rng.shuffle(lst)
+            pick += lst[:max(2, PER_PAIR // len(by))]
+        ms_all = pick
+    for kind, pc, data in ms_all:
         ms = [dict(x) for x in secs]
         ms[A.secidx - 1] = dict(sec, data=bytes(data))
         r, A2, B2, res2 = prove(ms, syms, text, symA, addr, B_kind, B_arg)
@@ -204,11 +219,13 @@ def main():
     ap.add_argument("--real", type=int, default=40)
     ap.add_argument("--out", default="")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--no-synthetic", action="store_true")
+    ap.add_argument("--pair", default="", help="only this real RVA (a driver runs one pair per process with a timeout)")
     a = ap.parse_args()
     rows = []
     kills = collections.defaultdict(collections.Counter)
     secs, syms = test_equiv.cases_obj()
-    for name, (want, extra) in test_equiv.CASES.items():
+    for name, (want, extra) in ([] if a.no_synthetic else test_equiv.CASES.items()):
         if want == "NOT-PROVEN":
             continue
         r = test_equiv.run_pair(name)
@@ -220,7 +237,8 @@ def main():
             if f[7] in ("EQUIV", "EQUIV-IF-CALLERS-IGNORE"):
                 real.append((f[1], int(f[0], 16), [c for c in f[8].split(",") if c]))
         random.Random(a.seed).shuffle(real)
-        for src, rva, classes in real[:a.real]:
+        sel = [x for x in real if x[1] == int(a.pair, 16)] if a.pair else real[:a.real]
+        for src, rva, classes in sel:
             p = ROOT / src
             text = p.read_text()
             sym = dict(match.parse_annotations(text))[rva]

@@ -1,0 +1,195 @@
+rva	source	verdict_regs_ignored	same	inconclusive	differs	first_difference
+0x00405730	re/match/s01/00405730.c		16	0	0	
+0x00407be0	re/match/s01/00407be0.c		16	0	0	
+0x00408b00	re/match/s01/00408b00.c		16	0	0	
+0x0040ad90	re/match/s02/0040ad90.c		16	0	0	
+0x0040b290	re/match/s02/0040b290.c		16	0	0	
+0x00412cf0	re/match/s03/h2_00412cf0.c		16	0	0	
+0x00414f00	re/match/pilot/a1_00414f00.c		16	0	0	
+0x00415e20	re/match/s03/h2_00415e20.c		16	0	0	
+0x00417180	re/match/s03/h4_00417180.c		16	0	0	
+0x00417450	re/match/s03/h2_00417450.c		16	0	0	
+0x00417640	re/match/s03/h3_00417640.c		16	0	0	
+0x0041f120	re/match/s04/0041f120.c		16	0	0	
+0x0041f770	re/match/s05/0041f770.c		16	0	0	
+0x00429bd0	re/match/s06/00429bd0.c		16	0	0	
+0x0042aa00	re/match/s06/0042aa00.c		16	0	0	
+0x00430250	re/match/s07/00430250.c		16	0	0	
+0x00430670	re/match/s07/00430670.c	ecx	16	0	0	
+0x004332a0	re/match/s08/004332a0.c		16	0	0	
+0x00442a60	re/match/s08/00442a60.c		16	0	0	
+0x00448220	re/match/s08/00448220.c		16	0	0	
+0x0044c490	re/match/s08/0044c490.c		16	0	0	
+0x0044c4f0	re/match/pilot/a2_0044c4f0.c		16	0	0	
+0x0044e190	re/match/s08/0044e190.c	edx,ecx	12	4	0	
+0x00455150	re/match/s09/00455150.c		16	0	0	
+0x00458e00	re/match/s09/00458e00.c		16	0	0	
+0x0045a3a0	re/match/s09/0045a3a0.c	eax	16	0	0	
+0x0045c480	re/match/s10/0045c480.c		16	0	0	
+0x00464a50	re/match/s10/00464a50.c		0	16	0	
+0x004726f0	re/match/s11/004726f0.c		16	0	0	
+0x00475210	re/match/s12/00475210.c		16	0	0	
+0x00475a00	re/match/pilot/a3_00475a00.c		16	0	0	
+0x00476320	re/match/s12/00476320.c		16	0	0	
+0x0047ba00	re/match/s13/0047ba00.c		16	0	0	
+0x0047cea0	re/match/s13/0047cea0.c		16	0	0	
+0x0047f6d0	re/match/s13/0047f6d0.c		16	0	0	
+0x00484de0	re/match/s14/00484de0.c		16	0	0	
+0x00485b30	re/match/s14/00485b30.c		7	9	0	
+0x0048a4e0	re/match/s14/0048a4e0.c		16	0	0	
+0x0048f780	re/match/s15/0048f780.c		16	0	0	
+0x00490020	re/match/s15/00490020.c	edx,ecx	16	0	0	
+0x00493640	re/match/s15/00493640.c		16	0	0	
+0x004938e0	re/match/s15/004938e0.c		1	15	0	
+0x00498ea0	re/match/s16/00498a00.c		16	0	0	
+0x004b61c0	re/match/s18/004b61c0.c		2	14	0	
+0x004c0c20	re/match/s19/004c0c20.c		0	16	0	
+0x004c0f00	re/match/s19/004c0f00.c		0	16	0	
+0x004c1040	re/match/rwl01/004c1040.c		0	16	0	
+0x004c1210	re/match/rwl01/004c1210.c		0	16	0	
+0x004c18c0	re/match/s19/004c18c0.c		16	0	0	
+0x004c2f60	re/match/s19/004c2f60.c	edx,ecx	16	0	0	
+0x004c3040	re/match/s19/004c3040.c		16	0	0	
+0x004c5cb0	re/match/s19/004c5cb0.c		16	0	0	
+0x004cb490	re/match/s20/004cb490.c		16	0	0	
+0x004cd500	re/match/s20/004cd500.c	edx,ecx	16	0	0	
+0x004cd900	re/match/rwl01/004cd900.c		16	0	0	
+0x004cf4a0	re/match/s20/004cf4a0.c	eax	16	0	0	
+0x004d0660	re/match/s20/004d0660.c		16	0	0	
+0x004d4250	re/match/s21/004d4250.c	ecx	16	0	0	
+0x004d42b0	re/match/s21/004d42b0.c	ecx	16	0	0	
+0x004d4310	re/match/s21/004d4310.c		0	16	0	
+0x004d4910	re/match/rwl01/004d4910.c	edx,ecx	0	16	0	
+0x004d4f00	re/match/s21/004d4f00.c		12	4	0	
+0x004d7100	re/match/s21/004d7100.c	eax,ecx	16	0	0	
+0x004d8480	re/match/s21/004d8480.c	edx,ecx	16	0	0	
+0x004da4f0	re/match/s21/004da4f0.c		16	0	0	
+0x004daa00	re/match/s21/004daa00.c	edx	1	15	0	
+0x004dfab0	re/match/s21/004dfab0.c	ecx	16	0	0	
+0x004dfb10	re/match/s21/004dfb10.c	ecx	16	0	0	
+0x004dfb60	re/match/s21/004dfb60.c	ecx	16	0	0	
+0x004e1670	re/match/rwl01/004e1670.c	ecx	16	0	0	
+0x004e1d20	re/match/rwl01/004e1d20.c		1	15	0	
+0x004e1df0	re/match/s21/004e1df0.c		0	16	0	
+0x004e4450	re/match/rwl02/004e4450.c		16	0	0	
+0x004e5bf0	re/match/rwl02/004e5bf0.c		0	16	0	
+0x004e5ef0	re/match/rwl02/004e5ef0.c	eax	16	0	0	
+0x004e6470	re/match/rwl02/004e6470.c		16	0	0	
+0x004e6650	re/match/rwl02/004e6650.c		0	16	0	
+0x004e6710	re/match/rwl02/004e6710.c		0	16	0	
+0x004e6760	re/match/rwl02/004e6760.c		0	16	0	
+0x004e6920	re/match/rwl02/004e6920.c		16	0	0	
+0x004e7cc0	re/match/rwl02/004e7cc0.c		16	0	0	
+0x004e7e50	re/match/rwl02/004e7e50.c	eax	16	0	0	
+0x004e8440	re/match/rwl02/004e8440.c	eax	16	0	0	
+0x004e98d0	re/match/rwl02/004e98d0.c	eax	16	0	0	
+0x004e9910	re/match/rwl02/004e9910.c	eax	16	0	0	
+0x004ebb00	re/match/rwl02/004ebb00.c		1	15	0	
+0x004f0ae0	re/match/rwl03/004f0ae0.c		16	0	0	
+0x004f0dc0	re/match/s22/004f0dc0.c		0	16	0	
+0x004f10e0	re/match/s22/004f10e0.c	ecx	16	0	0	
+0x004f13d0	re/match/s22/004f13d0.c	edx,ecx	16	0	0	
+0x004f3be0	re/match/rwl03/004f3be0.c		16	0	0	
+0x004f3d40	re/match/s22/004f3d40.c	eax,ecx	12	4	0	
+0x004f4270	re/match/s22/004f4270.c		16	0	0	
+0x004f8580	re/match/s22/004f8580.c		16	0	0	
+0x004f8730	re/match/s22/004f8730.c		16	0	0	
+0x00516d50	re/match/s23/00516d50.c		16	0	0	
+0x00516de0	re/match/s23/00516de0.c		14	2	0	
+0x00517da0	re/match/s23/00517da0.c		9	7	0	
+0x0051b750	re/match/s23/0051b750.c		16	0	0	
+0x0051bb40	re/match/s23/0051bb40.c		16	0	0	
+0x0051cb40	re/match/s23/0051cb40.c		16	0	0	
+0x0051fa50	re/match/s23/0051fa50.c	ecx	0	16	0	
+0x00522b50	re/match/s23/00522b50.c		16	0	0	
+0x005232c0	re/match/s23/005232c0.c		16	0	0	
+0x0052aa40	re/match/s23/0052aa40.c	eax	16	0	0	
+0x0052c4a0	re/match/s23/0052c4a0.c		16	0	0	
+0x0052fe90	re/match/rwl03/0052fe90.c	eax	16	0	0	
+0x00533d00	re/match/rwl03/00533d00.c		6	10	0	
+0x00538600	re/match/rwl03/00538600.c		16	0	0	
+0x0053eaa0	re/match/rwl03/0053eaa0.c		16	0	0	
+0x0053fd30	re/match/rwl03/0053fd30.c		16	0	0	
+0x00543e50	re/match/rwl04/00543e50.c	eax,ecx	16	0	0	
+0x00544d20	re/match/rwl04/00544d20.c		16	0	0	
+0x0054b6d0	re/match/rwl04/0054b6d0.c	ecx	16	0	0	
+0x0054b8c0	re/match/rwl04/0054b8c0.c	eax	16	0	0	
+0x00551190	re/match/rwl04/00551190.c		16	0	0	
+0x00551a50	re/match/rwl04/00551a50.c		0	16	0	
+0x00551ad0	re/match/rwl04/00551ad0.c	edx,ecx	16	0	0	
+0x00551c40	re/match/rwl04/00551c40.c	eax	16	0	0	
+0x00555360	re/match/s24/00555360.c	eax	16	0	0	
+0x00557110	re/match/s24/00557110.c		16	0	0	
+0x005584c0	re/match/rwl05/005584c0.c	eax	16	0	0	
+0x00559560	re/match/rwl05/00559560.c	eax,edx	16	0	0	
+0x0055ae50	re/match/rwl05/0055ae50.c		16	0	0	
+0x0055ded0	re/match/rwl05/0055ded0.c		9	7	0	
+0x00563df0	re/match/rwl05/00563df0.c		1	15	0	
+0x00565ab0	re/match/rwl06/00565ab0.c		16	0	0	
+0x00566c10	re/match/rwl06/00566c10.c		16	0	0	
+0x005672c0	re/match/rwl06/005672c0.c	eax	16	0	0	
+0x005685f0	re/match/rwl06/005685f0.c		16	0	0	
+0x005a62b0	re/match/s25/005a62b0.c	eax	16	0	0	
+0x005a6340	re/match/s25/005a6340.c		16	0	0	
+0x005a6b70	re/match/s25/005a6b70.c		16	0	0	
+0x005a7ee0	re/match/s25/005a7ee0.c		16	0	0	
+0x005a8390	re/match/s25/005a8390.c		16	0	0	
+0x005a8560	re/match/s25/005a8560.c		13	3	0	
+0x005a86a0	re/match/s25/005a86a0.c		15	1	0	
+0x005a8890	re/match/s25/005a8890.c		0	16	0	
+0x005a9c50	re/match/s25/005a9c50.c		16	0	0	
+0x005aa060	re/match/s25/005aa060.c		16	0	0	
+0x005aa7a0	re/match/s25/005aa7a0.c		16	0	0	
+0x005aa7e0	re/match/s25/005aa7e0.c	edx,ecx	16	0	0	
+0x005aaac0	re/match/s25/005aaac0.c		0	16	0	
+0x005aab00	re/match/s25/005aab00.c		0	16	0	
+0x005ab010	re/match/s25/005ab010.c	ecx	16	0	0	
+0x005ab090	re/match/s25/005ab090.c		16	0	0	
+0x005ab410	re/match/s25/005ab410.c		0	16	0	
+0x005ab560	re/match/s25/005ab560.c		0	16	0	
+0x005ac540	re/match/s25/005ac540.c	eax,ecx	16	0	0	
+0x005ac7e0	re/match/s25/005ac7e0.c		16	0	0	
+0x005acd10	re/match/s26/005acd10.c	eax,ecx	16	0	0	
+0x005ace70	re/match/s26/005ace70.c		16	0	0	
+0x005ad320	re/match/s26/005ad320.c		0	16	0	
+0x005ad9d0	re/match/s26/005ad9d0.c		16	0	0	
+0x005addd0	re/match/s26/005addd0.c		16	0	0	
+0x005ae3a0	re/match/s26/005ae3a0.c		16	0	0	
+0x005ae920	re/match/s26/005ae920.c		6	10	0	
+0x005aea60	re/match/s26/005aea60.c	ecx	16	0	0	
+0x005aeda0	re/match/s26/005aeda0.c	eax	16	0	0	
+0x005af070	re/match/s26/005af070.c		16	0	0	
+0x005af170	re/match/s26/005af170.c	ecx	16	0	0	
+0x005af230	re/match/s26/005af230.c	eax	0	16	0	
+0x005af8f0	re/match/s26/005af8f0.c		16	0	0	
+0x005b0bb0	re/match/s26/005b0bb0.c	edx,ecx	0	16	0	
+0x005b0cf0	re/match/s26/005b0cf0.c	edx,ecx	0	16	0	
+0x005b0df0	re/match/s26/005b0df0.c		16	0	0	
+0x005b0f40	re/match/s26/005b0f40.c		16	0	0	
+0x005b10e0	re/match/s26/005b10e0.c		16	0	0	
+0x005b2de0	re/match/s27/005b2de0.c	edx,ecx	16	0	0	
+0x005b35e0	re/match/s27/005b35e0.c	eax,edx,ecx	0	16	0	
+0x005b3620	re/match/s27/005b3620.c	edx,ecx	0	16	0	
+0x005b3670	re/match/s27/005b3670.c		0	16	0	
+0x005b66c0	re/match/s27/005b66c0.c	edx	16	0	0	
+0x005b6a40	re/match/s27/005b6a40.c	eax,edx,ecx	16	0	0	
+0x005b7110	re/match/s27/005b7110.c		16	0	0	
+0x005b73b0	re/match/s27/005b73b0.c		14	2	0	
+0x005bbed0	re/match/s27/005bbed0.c		14	2	0	
+0x005bcd80	re/match/s27/005bcd80.c		0	16	0	
+0x005bcda0	re/match/s27/005bcda0.c		0	16	0	
+0x005bce80	re/match/s27/005bce80.c	eax,ecx	16	0	0	
+0x005bdff0	re/match/s28/005bdff0.c	eax,ecx	16	0	0	
+0x005bf710	re/match/s28/005bf710.c		16	0	0	
+0x005bfa40	re/match/s28/005bfa40.c		16	0	0	
+0x005bfd10	re/match/s28/005bfd10.c	eax	16	0	0	
+0x005c4670	re/match/s28/005c4670.c	edx,ecx	16	0	0	
+0x005c4ad0	re/match/s28/005c4ad0.c		16	0	0	
+0x005c4c60	re/match/s28/005c4c60.c	edx,ecx	16	0	0	
+0x005c4e20	re/match/s28/005c4e20.c		16	0	0	
+0x005c6b60	re/match/s28/005c6b60.c	ecx	16	0	0	
+0x005c9730	re/match/s28/005c9730.c	ecx	16	0	0	
+0x005c98d0	re/match/s28/005c98d0.c	edx	16	0	0	
+0x00407800	re/match/s01/00407800.c		16	0	0	(re-run row, timed out in the first v4 pass)
+0x00429310	re/match/s06/00429310.c		16	0	0	(re-run row, timed out in the first v4 pass)
+0x0044e0a0	re/match/s08/0044e0a0.c		16	0	0	(re-run row, timed out in the first v4 pass)

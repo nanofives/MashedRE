@@ -776,6 +776,7 @@ def ret_pop(va):
 
 UNKNOWN = {"P": None, "N": None, "livein": ALLREGS, "eax_def": False, "noreturn": False, "known": False}
 _INPROG: set = set()
+_TOP: dict = {}
 _FRAMES: list = []
 MAX_DEPTH = 40           # call-graph depth followed (deeper: conservative, uncached)
 sys.setrecursionlimit(20000)
@@ -795,6 +796,9 @@ def summary(va, depth=0):
     va = resolve_thunk(va)
     if va in _SUMM:
         return _SUMM[va]
+    top = not _INPROG and depth == 0
+    if top and va in _TOP:
+        return _TOP[va]           # a query that starts with nothing in progress always gives the same answer
     if va in _INPROG or depth > MAX_DEPTH:
         for f in _FRAMES:
             f["taint"] = True
@@ -808,6 +812,8 @@ def summary(va, depth=0):
         fr = _FRAMES.pop()
     if not fr["taint"]:
         _SUMM[va] = res
+    if top:
+        _TOP[va] = res
     return res
 
 
