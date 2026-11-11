@@ -1,0 +1,28 @@
+{
+ "identical": 533,
+ "different": 8,
+ "not_in_map": 3,
+ "functions": 544,
+ "units": 583,
+ "units_linked": 536,
+ "refusals": {
+  "fail:static-register-convention": 38,
+  "fail:wrapper-redefines-globals": 9
+ },
+ "skips": {},
+ "different_rvas": [
+  "0x00414060",
+  "0x0042f530",
+  "0x0045a3a0",
+  "0x00475a00",
+  "0x0048e820",
+  "0x004929d0",
+  "0x00493710",
+  "0x00493900"
+ ],
+ "not_in_map_rvas": [
+  "0x004053d0",
+  "0x00405420",
+  "0x00405430"
+ ]
+}

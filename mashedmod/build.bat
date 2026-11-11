@@ -270,7 +270,7 @@ if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
 REM ===========================================================================
 REM DDKOBJ variant (DDKOBJ-SPIKE, 2026-11-11). OPT-IN ONLY: set MASHED_DDKOBJ=1. Builds a SECOND exe,
-REM build\ddkobj\mashed_re_ddk.exe, that links the XP DDK objects of the byte-matched re/match sources (the certified
+REM build\ddkobj\mashed_re_ddk.exe, that links the XP DDK objects of the byte-matched sources the exe wrappers include (the certified
 REM bytes) in place of the VS2022 compile of the same text. Reads the default exe's objects and link.rsp, writes only
 REM under build\ddkobj, and never touches mashed_re.exe, its objects or its link line. Needs tools\vc7ddk (the main
 REM checkout's). MASHED_DDKOBJ_UNITS=0x...,0x... limits the set (default: every matched source the exe wrappers include).
@@ -280,7 +280,15 @@ if "%MASHED_DDKOBJ%"=="1" (
     py -3.12 "%ROOT%..\re\tools\ddkobj\ddkobj.py" build --units "%MASHED_DDKOBJ_UNITS%" --out "%OUT%\ddkobj" --link
     if errorlevel 1 (echo [ERROR] DDKOBJ variant build failed & exit /b 1)
     py -3.12 "%ROOT%..\re\tools\ddkobj\ddkobj.py" check --out "%OUT%\ddkobj"
+    if errorlevel 1 (echo [ERROR] DDKOBJ byte check failed to run & exit /b 1)
 )
+REM DDKOBJ-TRAIN (2026-11-11): the build step above exits 3 (no link) on two fail-loudly classes: an object that
+REM registers SEH handlers (it cannot be marked @feat.00, and one unmarked object drops the exe's safe-handler
+REM table), and a wrapper #define form ddkobj.py does not parse for a name a DDK object references. The merge train
+REM sets MASHED_DDKOBJ=1 on every pass that builds and reports build\ddkobj\ddkobj_summary.json.
+REM Never write the matched-source folder's path in this file: merge_train.ps1 Get-BuildMatchRefs then treats every
+REM file under it as a build input (it did from DDKOBJ-SPIKE to DDKOBJ-TRAIN). The units are the files the exe
+REM wrappers include, which the train already follows.
 
 echo === Building mashed_re_dev.asi ===
 pushd "%SRC%"

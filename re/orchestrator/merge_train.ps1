@@ -512,9 +512,30 @@ function Tracker-Lint([string]$wt, [string]$baseRef) {
   $o | Set-Content $tlog
   return @{ ok = ($rc -eq 0); rc = $rc; last = (($o | Select-Object -Last 1) -as [string]); log = $tlog; out = @($o) }
 }
+# DDKOBJ-TRAIN (2026-11-11, RESULT_DDKOBJ-SPIKE section 10 items 4 and 9): the object build's reported step. Reads what
+# build.bat's MASHED_DDKOBJ=1 block wrote under mashedmod\build\ddkobj: ddkobj_build.json (units, refusals, and
+# `fatal` when a fail-loudly class stopped it before the link) and ddkobj_summary.json (ddkobj.py check: IDENTICAL
+# count, DIFFERENT rvas, refusals). ran = $false when the block never started (the default exe build failed first).
+# A DIFFERENT row is reported, not failed: 0x00414060 is a 100% match.py source whose fld/fmul operands differ.
+function Get-DdkobjStep([string]$wt) {
+  $d = Join-Path $wt 'mashedmod\build\ddkobj'
+  $bj = Join-Path $d 'ddkobj_build.json'; $sj = Join-Path $d 'ddkobj_summary.json'
+  if (-not (Test-Path $bj)) { return @{ ran = $false; ok = $false; line = 'not run (no mashedmod\build\ddkobj\ddkobj_build.json)'; summary = $null } }
+  $b = Get-Content $bj -Raw | ConvertFrom-Json
+  if ($b.PSObject.Properties['fatal'] -and @($b.fatal).Count) {
+    $f = @($b.fatal | ForEach-Object { "$($_.status) $([IO.Path]::GetFileName($_.src)) [$($_.evidence)]" })
+    return @{ ran = $true; ok = $false; line = "FAILED: $($f.Count) unit(s) in a fail-loudly class: $($f -join '; ')"; summary = $null }
+  }
+  if (-not (Test-Path $sj)) { return @{ ran = $true; ok = $false; line = 'FAILED: no ddkobj_summary.json (variant link or byte check did not complete, see build.log)'; summary = $null } }
+  $s = Get-Content $sj -Raw | ConvertFrom-Json
+  $ref = @($s.refusals.PSObject.Properties | ForEach-Object { "$($_.Name -replace '^fail:', '')=$($_.Value)" })
+  $nref = 0; foreach ($p in $s.refusals.PSObject.Properties) { $nref += [int]$p.Value }
+  $line = "IDENTICAL $($s.identical)/$($s.functions), DIFFERENT $($s.different)$(if (@($s.different_rvas).Count) { " [$(@($s.different_rvas) -join ' ')]" }), not-in-map $($s.not_in_map), units linked $($s.units_linked)/$($s.units), refusals $nref$(if ($ref.Count) { " ($($ref -join ', '))" })"
+  return @{ ran = $true; ok = $true; line = $line; summary = $s }
+}
 function Try-Batch($items) {
   $wt = New-Temp $base
-  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false; hashes = $null; textOnly = $false; conflict = $false }
+  $r = @{ ok = $true; wt = $wt; why = ''; gates = 'not run'; sha = '' ; bad = $null; infra = $false; hashes = $null; textOnly = $false; conflict = $false; ddkobj = 'not run' }
   try {
     foreach ($it in $items) {
       $m = Merge-One $wt $it
@@ -551,12 +572,17 @@ function Try-Batch($items) {
     if (-not $tl.ok) { $r.ok = $false; $r.why = "tracker_lint: $($tl.last) ($($tl.log))"; return $r }
     Say "  tracker lint OK: $($tl.last)"
     if ($textOnly) { $r.gates = 'not run: text-only change (no build input touched)'; return $r }
-    # build both targets, never deploy
+    # build both targets, never deploy. DDKOBJ-TRAIN: plus the object build (MASHED_DDKOBJ=1: build.bat runs
+    # ddkobj.py build --link and check after the exe link), on every pass that builds.
     $blog = Join-Path $DATA 'build.log'
-    $env:MASHED_NO_DEPLOY = '1'
+    $env:MASHED_NO_DEPLOY = '1'; $env:MASHED_DDKOBJ = '1'
     Push-Location $wt
-    try { & cmd /c "call mashedmod\build.bat > `"$blog`" 2>&1"; $brc = $LASTEXITCODE } finally { Pop-Location; Remove-Item env:MASHED_NO_DEPLOY -ErrorAction SilentlyContinue }
+    try { & cmd /c "call mashedmod\build.bat > `"$blog`" 2>&1"; $brc = $LASTEXITCODE } finally { Pop-Location; Remove-Item env:MASHED_NO_DEPLOY, env:MASHED_DDKOBJ -ErrorAction SilentlyContinue }
     $exe = Join-Path $wt 'mashedmod\build\mashed_re.exe'; $asi = Join-Path $wt 'mashedmod\build\mashed_re_dev.asi'
+    $dk = Get-DdkobjStep $wt
+    $r.ddkobj = $dk.line
+    Say "  object build: $($dk.line)"
+    if ($dk.ran -and -not $dk.ok) { $r.ok = $false; $r.why = "object build: $($dk.line) ($blog)"; return $r }
     if ($brc -ne 0 -or -not (Test-Path $exe) -or -not (Test-Path $asi)) { $r.ok = $false; $r.why = "build failed rc=$brc ($blog)"; return $r }
     Say "  build OK exe=$(Sha8 $exe) asi=$(Sha8 $asi)"
     Push-Location $wt
@@ -1332,6 +1358,31 @@ if ($SelfTest) {
   Check ($locks.Count -eq 0) "drain 11: the drain driver takes no mashed_lock / priority hold of its own (only the passes do) ($($locks.Count) refs)"
   Remove-Item -LiteralPath $fd -Recurse -Force -ErrorAction SilentlyContinue
 
+  # 13. DDKOBJ-TRAIN: the object build step (Get-DdkobjStep on fake build\ddkobj outputs; AST of the Try-Batch wiring)
+  $dkw = Join-Path $DATA 'ddkobj_fake'; $dkd = Join-Path $dkw 'mashedmod\build\ddkobj'
+  New-Item -ItemType Directory -Force -Path $dkd | Out-Null
+  $dk = Get-DdkobjStep $dkw
+  Check (-not $dk.ran -and $dk.line -match '^not run') "ddkobj 13: no build json = not run, not a failure ($($dk.line))"
+  Write-Lf (Join-Path $dkd 'ddkobj_build.json') @('{"units": [], "fatal": [{"src": "re/match/x/ddkst_seh.c", "wrapper": "W.cpp", "status": "fail:seh-unmarked", "evidence": "registers SEH handlers (__except_handler3)"}, {"src": "re/match/x/ddkst_def.c", "wrapper": "W.cpp", "status": "fail:unparsed-wrapper-define", "evidence": "FUN_00400030: #define FUN_00400030(a, ...) X(a)"}]}')
+  $dk = Get-DdkobjStep $dkw
+  Check ($dk.ran -and -not $dk.ok -and $dk.line -match '^FAILED: 2 unit' -and $dk.line -match 'seh-unmarked ddkst_seh\.c' -and $dk.line -match 'unparsed-wrapper-define ddkst_def\.c') "ddkobj 13: fatal units fail the step and are named ($($dk.line))"
+  Write-Lf (Join-Path $dkd 'ddkobj_build.json') @('{"units": []}')
+  $dk = Get-DdkobjStep $dkw
+  Check ($dk.ran -and -not $dk.ok -and $dk.line -match 'no ddkobj_summary\.json') "ddkobj 13: a build json with no summary (link or check died) fails the step ($($dk.line))"
+  Write-Lf (Join-Path $dkd 'ddkobj_summary.json') @('{"identical": 541, "different": 2, "not_in_map": 3, "functions": 546, "units": 590, "units_linked": 530, "refusals": {"fail:static-register-convention": 38, "fail:wrapper-redefines-globals": 9}, "skips": {}, "different_rvas": ["0x00414060", "0x00493900"], "not_in_map_rvas": []}')
+  $dk = Get-DdkobjStep $dkw
+  Check ($dk.ran -and $dk.ok -and $dk.line -eq 'IDENTICAL 541/546, DIFFERENT 2 [0x00414060 0x00493900], not-in-map 3, units linked 530/590, refusals 47 (static-register-convention=38, wrapper-redefines-globals=9)') "ddkobj 13: summary = reported step, DIFFERENT reported not failed ($($dk.line))"
+  Remove-Item -LiteralPath $dkw -Recurse -Force -ErrorAction SilentlyContinue
+  $tbFn = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Try-Batch' -and $n.Body.Extent.Text -match 'New-Temp' }, $true))
+  $tbt = if ($tbFn.Count -eq 1) { $tbFn[0].Body.Extent.Text } else { '' }
+  $iEnv = $tbt.IndexOf("`$env:MASHED_DDKOBJ = '1'"); $iBat = $tbt.IndexOf('call mashedmod\build.bat'); $iDk = $tbt.IndexOf('$dk = Get-DdkobjStep $wt')
+  $iFail = $tbt.IndexOf('object build: $($dk.line)'); $iBf = $tbt.IndexOf('build failed rc='); $iGates = $tbt.IndexOf('Run-Gates $wt')
+  $iTxt = $tbt.IndexOf('if ($textOnly)')
+  Check ($tbFn.Count -eq 1 -and $iTxt -ge 0 -and $iTxt -lt $iEnv -and $iEnv -lt $iBat -and $iBat -lt $iDk -and $iDk -lt $iFail -and $iFail -lt $iBf -and $iBf -lt $iGates -and $tbt -match 'Remove-Item env:MASHED_NO_DEPLOY, env:MASHED_DDKOBJ') "ddkobj 13: AST: every pass that builds sets MASHED_DDKOBJ=1 for build.bat, reads the step before the build-failed check and the gates, and clears the env (offsets $iTxt<$iEnv<$iBat<$iDk<$iFail<$iBf<$iGates)"
+  $bat = Join-Path (Split-Path (Split-Path $HERE)) 'mashedmod\build.bat'
+  $bt = if (Test-Path $bat) { Get-Content -LiteralPath $bat -Raw } else { '' }
+  Check ($bt -match 'ddkobj\.py" build [^\r\n]*--link\s*[\r\n]+\s*if errorlevel 1 \(echo \[ERROR\] DDKOBJ variant build failed & exit /b 1\)' -and $bt -match 'ddkobj\.py" check [^\r\n]*[\r\n]+\s*if errorlevel 1 \(echo \[ERROR\] DDKOBJ byte check failed') "ddkobj 13: build.bat fails on a failed object build and on a failed byte check ($bat)"
+
   Say "SELFTEST done: $fails failure(s)"
   Write-Output "SELFTEST $(if ($fails) { 'FAIL' } else { 'PASS' }) ($fails failure(s)) log $LOG"
   exit $(if ($fails) { 1 } else { 0 })
@@ -1407,7 +1458,7 @@ if ($merged.Count) {
   }
 }
 if ($merged.Count) {
-  $line = "- $(Get-Date -Format 'yyyy-MM-dd HH:mm') $(($merged | ForEach-Object { "$($_.id) ($($_.branch))" }) -join ', '): $($res.gates).$(if ($bounced.Count) { " Bounced: $(Format-Bounced $bounced)." }) Run data $DATA"
+  $line = "- $(Get-Date -Format 'yyyy-MM-dd HH:mm') $(($merged | ForEach-Object { "$($_.id) ($($_.branch))" }) -join ', '): $($res.gates).$(if ($bounced.Count) { " Bounced: $(Format-Bounced $bounced)." }) Object build: $(if ($res.ddkobj) { $res.ddkobj } else { 'not run' }). Run data $DATA"
   $il = Join-Path $wt 're\orchestrator\INTEGRATION_LOG.md'
   Write-Lf $il (New-LogLines $il $line)
   Git -C $wt add -- 're/orchestrator/INTEGRATION_LOG.md' | Out-Null
@@ -1439,6 +1490,7 @@ $report = @(
   "branch: $INT @ $final",
   "evidence: $LOG",
   "gates: $(if ($res) { $res.gates } elseif ($infra -and -not $bounced.Count) { "not scored: $infraGates" } else { ($bounced | ForEach-Object { $_.gates }) -join ' | ' })",
+  "ddkobj: $(if ($res -and $res.ddkobj) { $res.ddkobj } else { 'not run' })",
   "decision: none",
   "next: merged [$(($merged | ForEach-Object id) -join ' ')] bounced [$(($bounced | ForEach-Object { "$($_.it.id): $(if ($_.conflict) { 'set aside, ' })$($_.why)" }) -join '; ')]$(if ($infra) { " infra [$infra; rows not merged stay queued, re-run the train on a live display]" })$(if ($trainErr) { " error [$trainErr; rows not merged stay queued, re-run the train]" })"
 )
@@ -1448,7 +1500,7 @@ Write-PassResult $ResultJson @{
   verdict = $verdict; data = $DATA; batch = @($batch | ForEach-Object id); merged = @($merged | ForEach-Object id)
   bounced = @($bounced | ForEach-Object { @{ id = $_.it.id; why = $_.why; conflict = [bool]$_.conflict } }); infra = $infra; error = $trainErr
   conflict_only = [bool]($verdict -eq 'RED' -and $bounced.Count -and -not $trainErr -and @($bounced | Where-Object { -not $_.conflict }).Count -eq 0 -and ($merged.Count -or $bounced.Count -eq $batch.Count))
-  gates = $(if ($res) { $res.gates } else { '' }); hashes = $(if ($res) { $res.hashes } else { $null }); text_only = [bool]($res -and $res.textOnly)
+  gates = $(if ($res) { $res.gates } else { '' }); ddkobj = $(if ($res -and $res.ddkobj) { $res.ddkobj } else { 'not run' }); hashes = $(if ($res) { $res.hashes } else { $null }); text_only = [bool]($res -and $res.textOnly)
   refs = @{ gctrl = @($CFG.gctrl.ref); b = @($CFG.b.ref) }; base = $base; int_after = (Git rev-parse $INT | Select-Object -First 1)
 }
 $report | Write-Output
