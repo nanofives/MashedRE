@@ -69,3 +69,13 @@ Result: 2 passed (test_cases, test_references), `verify/rt2dfont_20261111/test_e
 Nothing here touches `mashed_re.exe` or the knob path. What the font loaders still need on the top-down path:
 0x00554390, 0x00554200 and 0x00556e90 matched (or admitted under L-126 / provisional), then an exe Rt2d port drawn
 through the exe's Im2D path (RESULT_PORT-TOP-04G.md:153-154).
+
+## Rebase onto d8f323c9a (MATCH-REBASE-3, 2026-11-11)
+
+The merge train set this branch aside on a hooks.csv / CHANGELOG conflict. Rebased onto `orch/integration`
+d8f323c9a with integration's `hooks.csv` and `re/analysis/CHANGELOG.md` taken as-is, then the promotions re-applied
+with the batch tool. `c1_add.py` for 0x00552b50 was not re-run: integration already carries its C1 row (RWC-CENSUS,
+`verify/rwccensus_20261111/RESULT_RWC-CENSUS.md`), so the batch promotes that row C1->C4. Re-apply output
+(`verify/rt2dfont_20261111/c4_apply_rebase.txt`): 5 pass, 0 refused, relocheck OK on all five against the current
+relocheck (named data operands compared): 0x00552920 17/0, 0x00552b50 1/0, 0x00553cf0 12/0, 0x005c4ad0 7/0,
+0x005c4c60 3/0. `test_equiv.py` re-run after the rebase: see `verify/rt2dfont_20261111/test_equiv_rebase.txt`.

@@ -1,0 +1,7 @@
+[1/5] 0x00552920 match PASS byte-identical 316 B, relocheck OK (17/0)
+[2/5] 0x00552b50 match PASS byte-identical 6 B, relocheck OK (1/0)
+[3/5] 0x00553cf0 match PASS byte-identical 262 B, relocheck OK (12/0)
+[4/5] 0x005c4ad0 match PASS byte-identical 205 B, relocheck OK (7/0)
+[5/5] 0x005c4c60 match PASS byte-identical 186 B, relocheck OK (3/0)
+batch: 5 pass, 0 refused, 0 skipped (already C4), 5 rows  [by route: match=5]
+wrote hooks.csv (5 rows -> C4) and 5 CHANGELOG lines
