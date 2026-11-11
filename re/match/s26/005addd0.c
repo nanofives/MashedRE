@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S26 h1 0x005addd0 (49 B). Best 88.2% (regs 88.2%), residual class (b). only the null-check layout differs (orig jne body; ret; body vs ours je end); tried if/return, if-block, else forms, permuter 150s. */
+/* MATCH-S26 h1 0x005addd0 (49 B). BYTE-IDENTICAL (TL-MATCH-REST 2026-11-10): the function returns the new node, so the null path is `if (n == 0) return n;` and cl lays out test / jne body / ret. Before: 88.2% as void (je end layout). Whether a caller reads the return value does not change this body. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -25,14 +25,15 @@ typedef unsigned char bool;
 unsigned int FUN_005ae800(int * p0, int p1);
 MGLOBAL(unsigned char, DAT_009146c0, 0x009146c0);
 // MATCH: 0x005addd0 FUN_005addd0
-void FUN_005addd0(int *param_1,int param_2)
+int *FUN_005addd0(int *param_1,int param_2)
 {
   int *n = (int *)FUN_005ae800((int *)&DAT_009146c0,0x30804);
   int t;
-  if (n == 0) return;
+  if (n == 0) return n;
   n[2] = param_2; t = *param_1;
   n[1] = (int)param_1;
   *n = t;
   *(int **)(*param_1 + 4) = n;
   *param_1 = (int)n;
+  return n;
 }
