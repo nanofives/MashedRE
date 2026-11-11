@@ -6,9 +6,8 @@
 // PortTop_FontSysInit_00552b60(camera) below keeps it and the 0x00552a60 forwarder passes it on.
 //
 // Callees: exe bodies of this step (Match/PortTop_<rva>.cpp), no raw-address call; each forwarder records the result.
-// 0x00555360 is the logging stand-in PortTop_StandInHIA_00555360 (returns 0): its 94.4% source has a residual outside the
-// L-115 class (RESULT_HUDINIT-A.md, L-115 proofs), so its outputs 0x00912a08 / 0x00912a0c / 0x00912a10 / 0x00912a14 /
-// 0x00912a18 / 0x00912a1c / 0x00912a20 / 0x0091325c / 0x00913260 / 0x00913100 and the 0x00912700 table are not written.
+// 0x00555360 runs its unedited 94.4% source as a near-match body (L-115 / L-117 = (a), NEARMATCH-555360; byte table
+// verify/portorigtop_20261109/RESULT_L115-HUDINIT-PROOFS.md), Match/PortTop_00555360.cpp.
 //
 // Owner of the Rt2d globals in the exe: this chain. It is the only writer of 0x00912500..0x0091320c (0x00912a00 brush
 // list, 0x00912a04, 0x00912a08 font list, 0x00912a0c path, 0x00912a14, 0x00912a1c / 0x00912a20 dictionary, 0x00912a24 /
@@ -35,7 +34,7 @@ void FUN_00427ca0(void);              // matched, Match/MatchS06_00427ca0.cpp (e
 unsigned int Orig_00557250(void);
 unsigned int Orig_005540d0(void);
 unsigned int Orig_00556d20(void);
-int PortTop_StandInHIA_00555360();  // stand-in, Match/PortTop_StandInsHIA.cpp (94.4% source, L-115 class not yet ruled)
+int Orig_00555360(void);            // near-match (L-115 / L-117), Match/PortTop_00555360.cpp
 unsigned int Orig_005571e0(void);
 int Orig_00552c10(void);
 int Orig_00552a60(int camera);
@@ -53,7 +52,7 @@ extern "C" {
 unsigned int PortTop_00552b60_Call00557250(void) { return static_cast<unsigned int>(s_ret[0] = static_cast<int>(Orig_00557250())); }
 unsigned int PortTop_00552b60_Call005540d0(void) { return static_cast<unsigned int>(s_ret[1] = static_cast<int>(Orig_005540d0())); }
 unsigned int PortTop_00552b60_Call00556d20(void) { return static_cast<unsigned int>(s_ret[2] = static_cast<int>(Orig_00556d20())); }
-unsigned int PortTop_00552b60_Call00555360(void) { return static_cast<unsigned int>(s_ret[3] = PortTop_StandInHIA_00555360()); }
+unsigned int PortTop_00552b60_Call00555360(void) { return static_cast<unsigned int>(s_ret[3] = Orig_00555360()); }
 unsigned int PortTop_00552b60_Call005571e0(void) { return static_cast<unsigned int>(s_ret[4] = static_cast<int>(Orig_005571e0())); }
 unsigned int PortTop_00552b60_Call00552c10(void) { return static_cast<unsigned int>(s_ret[5] = Orig_00552c10()); }
 unsigned int PortTop_00552b60_Call00552a60(void) { return static_cast<unsigned int>(s_ret[6] = Orig_00552a60(s_camera)); }
@@ -64,7 +63,7 @@ unsigned int PortTop_00552b60_Call00552a60(void) { return static_cast<unsigned i
 #define FUN_00557250 PortTop_00552b60_Call00557250   // Match/PortTop_00557250.cpp (two freelists)
 #define FUN_005540d0 PortTop_00552b60_Call005540d0   // Match/PortTop_005540d0.cpp (canvas list + 0x00553f40)
 #define FUN_00556d20 PortTop_00552b60_Call00556d20   // Match/PortTop_00556d20.cpp (0x2400 buffer, brush list)
-#define FUN_00555360 PortTop_00552b60_Call00555360   // the stand-in (font lists, path, dictionary are not made)
+#define FUN_00555360 PortTop_00552b60_Call00555360   // near-match Orig_00555360 (font lists, path, dictionary)
 #define FUN_005571e0 PortTop_00552b60_Call005571e0   // Match/PortTop_005571e0.cpp (one freelist)
 #define FUN_00552c10 PortTop_00552b60_Call00552c10   // Match/PortTop_00552c10.cpp (matrix stack, render state)
 #define FUN_00552a60 PortTop_00552b60_Call00552a60   // Match/PortTop_00552a60.cpp, with the camera (tail jmp 0x00552b88)
