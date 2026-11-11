@@ -1,0 +1,46 @@
+[
+ {
+  "count": 1997,
+  "pc_after_store": "0x4658e7",
+  "backtrace": "0x14dbbbf0|0x4658e7|0x45d3d8|0x466dd7|0x5a60cc|0xffffffff",
+  "tid": 17640,
+  "first_n": 5004,
+  "first_values": [
+   "0x0",
+   "0x6"
+  ]
+ },
+ {
+  "count": 1,
+  "pc_after_store": "0x4658e7",
+  "backtrace": "0x14dbbbf0|0x4658e7",
+  "tid": 17640,
+  "first_n": 4992,
+  "first_values": [
+   "0x0",
+   "0x3"
+  ]
+ },
+ {
+  "count": 1,
+  "pc_after_store": "0x4863e4",
+  "backtrace": "0x3f99999a|0x4863e4",
+  "tid": 17640,
+  "first_n": 10993,
+  "first_values": [
+   "0x4671a5",
+   "0x6"
+  ]
+ },
+ {
+  "count": 1,
+  "pc_after_store": "0x4863e4",
+  "backtrace": "0x3f2db6ed|0x4863e4",
+  "tid": 17640,
+  "first_n": 18974,
+  "first_values": [
+   "0x63ffa0",
+   "0x6"
+  ]
+ }
+]

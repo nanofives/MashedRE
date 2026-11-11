@@ -84,7 +84,70 @@ def rule_stackrow(wa, wb, k, i):
     return 0 <= off < 0x100 * 0x40 and 0x28 <= off % 0x40 <= 0x3c
 
 
-RULES = [("RING4", rule_ring4), ("ACC60", rule_acc60), ("WINMSG", rule_winmsg), ("STACKROW", rule_stackrow)]
+HWND_COPIES = (0x007e9584, 0x00772fb0, 0x007d4104, 0x009120fc)
+
+
+def rule_hwnd(wa, wb, k, i):
+    # RO-WARP-NORMALIZE: DAT_007e9584 = CreateWindowExA (0x00499c9a, FUN_00499ba0); 0x00772fb0 (0x00496038 / 0x004960a9),
+    # 0x007d4104 (0x004c7e06) and 0x009120fc (0x004c81d5) hold the same handle. OS-assigned, so explained when each
+    # run's value equals that run's DAT_007e9584.
+    va = DATA_LO + 4 * i
+    if va not in HWND_COPIES:
+        return False
+    return wa[k][i] == wa[k][W(0x007e9584)] and wb[k][i] == wb[k][W(0x007e9584)]
+
+
+def rule_fileptr(wa, wb, k, i):
+    # RO-WARP-NORMALIZE: printf (0x004a2cbd) writes to the FILE at 0x00616110 (mov esi, 0x616110 at 0x004a2cc9);
+    # write_char stores each byte through its +0 cursor and increments it (0x004a4fd4 / 0x004a4fd6). The race start
+    # prints "start of race" (0x0040ff29, format 0x005ccde4). The cursor is a heap address, unaligned, so the PTR rule
+    # misses it. Explained when cursor - buffer base (+8, 0x00616118) is the same in both runs.
+    if DATA_LO + 4 * i != 0x00616110:
+        return False
+    j = W(0x00616118)
+    return (wa[k][i] - wa[k][j]) & 0xffffffff == (wb[k][i] - wb[k][j]) & 0xffffffff
+
+
+# RO-STACKROW-READERS: the event-ring dwords each row's producer writes, by row type DAT_007e9de4[row]. Every producer
+# that writes payload copies 16 stack dwords (rep / loop stores [reg*4 + 0x007ec9e4]); the rest of the row is stack
+# left by earlier calls, or, for types whose producer writes no payload, the previous occupant's payload.
+#   3  FUN_00469aa0 (0x00469cc8 / 0x00469da3): local_40[0..3], local_30..local_1c       -> dwords 0..9
+#   4  FUN_00469df0 (0x0046aed4, 0x0046b089): local_80[0..14] (its locals are zeroed, then computed) -> dwords 0..14
+#   8  FUN_0047def0 (0x0047e5f1, 0x0047e7b2): afStack_6c[0], [1], [9..14]                  -> dwords 0, 1, 9..14
+#   10 FUN_0047def0 (0x0047e26e, 0x0047e3c7): afStack_6c[0 .. 3n-1], [12..14], n = header dword 2 (DAT_007ea9ec)
+#   no payload store near the type store: 1 (0x004712b3), 5 (0x00425829), 7 (0x004675ed), 0xb (0x0044bb5a,
+#   0x0044c413), 0x2ff01 (0x0040b39f), 0x3ff01..0x3ff04 (0x004255a1..0x004259ca)                    -> no dword
+# Types 6 and 9 copy 16 dwords too; which of them their producers write was not traced [UNCERTAIN], so they are compared.
+RING_WRITTEN = {3: set(range(10)), 4: set(range(15)), 8: {0, 1, *range(9, 15)},
+                1: set(), 5: set(), 7: set(), 0xb: set(), 0x2ff01: set(), 0x3ff01: set(), 0x3ff02: set(), 0x3ff03: set(), 0x3ff04: set()}
+
+
+def rule_ringstale(wa, wb, k, i):
+    off = DATA_LO + 4 * i - 0x007ec9e4
+    if not (0 <= off < 0x100 * 0x40):
+        return False
+    r, j = off // 0x40, (off % 0x40) // 4
+    ta, tb = wa[k][W(0x007e9de4) + r], wb[k][W(0x007e9de4) + r]
+    if ta != tb:
+        return False
+    if ta == 10:
+        na, nb = wa[k][W(0x007ea9ec) + 8 * r], wb[k][W(0x007ea9ec) + 8 * r]
+        return na == nb and na < 5 and j not in set(range(3 * na)) | {12, 13, 14}
+    return ta in RING_WRITTEN and j not in RING_WRITTEN[ta]
+
+
+def rule_rwpad(wa, wb, k, i):
+    # RO-STACKROW-READERS: FUN_00486370 copies a 16-dword RwMatrix (rep movsd 0x004863e4, source = FUN_004c5010's
+    # result) into record +0x30 of the 150 x 0x7c particle ring at 0x006fe790 (index DAT_00703038, 0x004863a5..0x004863a8).
+    # Matrix pads m[7], m[11], m[15] (record +0x4c, +0x5c, +0x6c) hold what the caller's stack matrix left there: a code
+    # address 0x004671a5 in run n3_w2 (watch, pc 0x004863e4). Not read by the RW matrix code.
+    off = DATA_LO + 4 * i - 0x006fe790
+    return 0 <= off < 150 * 0x7c and off % 0x7c in (0x4c, 0x5c, 0x6c)
+
+
+RULES = [("RING4", rule_ring4), ("ACC60", rule_acc60), ("WINMSG", rule_winmsg), ("STACKROW", rule_stackrow),
+         ("RINGSTALE", rule_ringstale), ("RWPAD", rule_rwpad),
+         ("HWND", rule_hwnd), ("FILEPTR", rule_fileptr)]
 
 
 def load(d):
@@ -97,7 +160,12 @@ def load(d):
     return meta, ck, words
 
 
-def report(A, B, nlist=20):
+def report(A, B, nlist=20, norm=None):
+    # norm: re/frida/warp_normalize.tsv (RO-WARP-NORMALIZE). Its MASK:<family> rows become that class.
+    mask = {}
+    if norm:
+        from detorig import load_norm
+        mask = {va: c for va, c in load_norm(norm)["mask"].items() if c.startswith("MASK:")}
     ma, ca, wa = load(A); mb, cb, wb = load(B)
     K = min(len(wa), len(wb)); n = len(wa[0])
     out = {"a": str(A), "b": str(B), "checkpoints": K}
@@ -107,6 +175,7 @@ def report(A, B, nlist=20):
         vals = [(wa[k][i], wb[k][i]) for k in range(K)]
         if all(a == b for a, b in vals): continue
         if all(a == b or is_ptr_pair(a, b) for a, b in vals): cls[i] = "PTR"; continue
+        if DATA_LO + 4 * i in mask: cls[i] = mask[DATA_LO + 4 * i]; continue
         rule = next((name for name, fn in RULES
                      if all(wa[k][i] == wb[k][i] or is_ptr_pair(wa[k][i], wb[k][i]) or fn(wa, wb, k, i) for k in range(K))), None)
         if rule: cls[i] = "RULE:" + rule; continue
@@ -158,8 +227,9 @@ if __name__ == "__main__":
     ap.add_argument("a"); ap.add_argument("b")
     ap.add_argument("--list", type=int, default=20)
     ap.add_argument("--json", default="")
+    ap.add_argument("--norm", default="", help="re/frida/warp_normalize.tsv: score its MASK rows as MASK:<family>")
     a = ap.parse_args()
-    r = report(a.a, a.b, a.list)
+    r = report(a.a, a.b, a.list, a.norm or None)
     if a.json:
         Path(a.json).write_text(json.dumps({k: v for k, v in r.items() if k != "_cls"}, indent=1))
     K = r["checkpoints"]

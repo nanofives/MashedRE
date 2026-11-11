@@ -1,0 +1,43 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=16772 (DDKOBJ-SPIKE); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=15512 (RO-WARP-NORMALIZE)
+[1/5] sp_a start 06:56:16
+[sp_a] exit 0 06:57:18
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2d205c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf98', 'rw_cursors_before': [225492900, 225492888], 'timer': {'v': 969117647, 'before': [969117647, 966549445, 149896, 323022, 322139]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8650], ['771978', 53], ['77198c', 173], ['868348', 53], ['86838c', 53], ['8683d0', 53], ['868414', 53], ['86
+  call log 119 calls
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[2/5] sp_pos start 06:57:18
+[sp_pos] exit 0 06:58:26
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2d205c0', 'holdrand_before': 1, 'rw_ring': '0xd73bf98', 'rw_cursors_before': [225689508, 225689496], 'timer': {'v': 969117647, 'before': [969117647, 966535480, 149896, 323022, 322139]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 9250], ['771978', 5], ['77198c', 185], ['868348', 5], ['86838c', 5], ['8683d0', 5], ['868414', 5], ['868458'
+  call log 118 calls
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2723 x 3245 blocks
+=== rc=0 ckpts=15
+[3/5] ao_a start 06:58:28
+[ao_a] exit 0 06:59:42
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x11e05c0', 'holdrand_before': 1, 'rw_ring': '0xd58bf98', 'rw_cursors_before': [223920036, 223920024], 'timer': {'v': 969117647, 'before': [969117647, 966516197, 149896, 323022, 322139]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8750], ['771978', 55], ['77198c', 175], ['868348', 55], ['86838c', 55], ['8683d0', 55], ['868414', 55], ['86
+  call log 126 calls
+  race anchor N=726 dn_warp=126 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[4/5] ao_b start 06:59:42
+[ao_b] exit 0 07:00:47
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2cf05c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf98', 'rw_cursors_before': [225492900, 225492888], 'timer': {'v': 969117647, 'before': [969117647, 966544835, 149896, 323022, 322139]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 9150], ['771978', 3], ['77198c', 183], ['868348', 3], ['86838c', 3], ['8683d0', 3], ['868414', 3], ['868458'
+  call log 119 calls
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[5/5] ao_k start 07:00:47
+[ao_k] exit 0 07:01:58
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x13805c0', 'holdrand_before': 1, 'rw_ring': '0xd5cbf98', 'rw_cursors_before': [224182180, 224182168], 'timer': {'v': 969117647, 'before': [969117647, 1160740515, 149898, 323022, 385902]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8700], ['771978', 54], ['77198c', 174], ['868348', 54], ['86838c', 54], ['8683d0', 54], ['868414', 54], ['8
+  call log 123 calls
+  race anchor N=723 dn_warp=123 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[mashed-lock] released 'mashed_machine' pid=15512

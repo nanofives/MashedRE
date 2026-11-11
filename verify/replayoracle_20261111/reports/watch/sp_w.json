@@ -1,0 +1,24 @@
+[
+ {
+  "count": 2,
+  "pc_after_store": "0x4863e4",
+  "backtrace": "0x3f99999a|0x4863e4",
+  "tid": 4496,
+  "first_n": 10992,
+  "first_values": [
+   "0x0",
+   "0x100"
+  ]
+ },
+ {
+  "count": 2,
+  "pc_after_store": "0x4863e4",
+  "backtrace": "0x3f2db6ed|0x4863e4",
+  "tid": 4496,
+  "first_n": 18973,
+  "first_values": [
+   "0x3c8b62bc",
+   "0x559fb6"
+  ]
+ }
+]

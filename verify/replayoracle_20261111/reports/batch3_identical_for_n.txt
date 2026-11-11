@@ -1,0 +1,27 @@
+## n3_a vs n3_b
+  constant blocks: 10  NEW blocks: 4  N misaligned at: None
+  IDENTICAL-FOR-N = 215 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 5], ['0x771800', 131], ['0x7dd000', 1]]
+## n3_a vs n3_c
+  constant blocks: 10  NEW blocks: 4  N misaligned at: None
+  IDENTICAL-FOR-N = 215 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 2], ['0x771800', 123], ['0x7dd000', 1]]
+## n3_a vs n3_h
+  constant blocks: 10  NEW blocks: 4  N misaligned at: None
+  IDENTICAL-FOR-N = 215 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 1], ['0x771800', 129], ['0x7dd000', 1]]
+## n3_b vs n3_c
+  constant blocks: 10  NEW blocks: 3  N misaligned at: None
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 2], ['0x771800', 122], ['0x7dd000', 6]]
+## n3_b vs n3_h
+  constant blocks: 10  NEW blocks: 3  N misaligned at: None
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 1], ['0x771800', 128], ['0x7dd000', 3]]
+## n3_c vs n3_h
+  constant blocks: 10  NEW blocks: 3  N misaligned at: None
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 7], ['0x771800', 122], ['0x7dd000', 3]]
+## n3_a vs n3_w
+  constant blocks: 10  NEW blocks: 5  N misaligned at: None
+  IDENTICAL-FOR-N = 215 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 3], ['0x771800', 136], ['0x7dd000', 1]]
+## n3_b vs n3_neg
+  constant blocks: 10  NEW blocks: 480  N misaligned at: 8
+  IDENTICAL-FOR-N = 7 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 2], ['0x771800', 130], ['0x7dc400', 5], ['0x7dd000', 4]]
+## n3_h vs n3_neg
+  constant blocks: 10  NEW blocks: 480  N misaligned at: 8
+  IDENTICAL-FOR-N = 7 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 1], ['0x771800', 65], ['0x7dc400', 5], ['0x7dd000', 3]]
