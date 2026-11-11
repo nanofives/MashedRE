@@ -130,8 +130,11 @@ Measurements behind the static routes: `verify/matchpilot_20261030/RESULT_MATCH-
   2. `re/tools/match/relocheck.py` reports **OK** for that function. `match.py` masks every relocation, so 100% alone
      does not show that each global, callee or constant is the right one: MATCH-S02 found two sources at 100% that
      stored to swapped arrays (0x0040b250, 0x0040b810; `verify/matchs02_20261031/RESULT_MATCH-S02.md`). relocheck
-     resolves each relocation (`MGLOBAL` names, `FUN_<rva>` callees, own constants and strings) against the original's
-     operand and lists the rest (imports, CRT helpers, file-static data) as unchecked by name. Those names go in the
+     resolves each relocation (`MGLOBAL` names, `FUN_<rva>` callees, Ghidra address-suffixed data names such as
+     `DAT_<va8>` / `_DAT_<va8>` / `PTR_..._<va8>` / `s_..._<va8>`, own constants and strings) against the original's
+     operand and lists the rest. Named data has been checked since 2026-11-11 (MATCH-EXACT-DATA): before that, two C4
+     sources at 100% loaded swapped float operands (0x00414060, 0x004030d0;
+     `verify/matchexactdata_20261111/RESULT_MATCH-EXACT-DATA.md`). It lists the rest (imports, CRT helpers, file-static data) as unchecked by name. Those names go in the
      evidence.
   3. The source is **not a naked inline-asm transcription** (`__declspec(naked)`), and its body is **not only inline
      `__asm`** inside a compiled C frame (SimGolf G26 rule, 2026-11-02: one `__asm` block plus declarations and a
