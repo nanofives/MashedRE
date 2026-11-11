@@ -14,18 +14,49 @@ Ledger: `pwsh -NoProfile -File $ORCH\re\orchestrator\roadmap.ps1 <cmd>` (live di
 Rules every child reads: `$ORCH\re\orchestrator\WORKER_RULES.md`. Decisions: `log\orch\DECISIONS.md`.
 
 ## Start of a run
+0. `roadmap.ps1 run <N>` (the run number of your kickoff). Every claim / set / enqueue / decision / add from then on
+   stamps the row with it (`run`, `runs`), so `roadmap.ps1 list -Run <N> [-Stage merged]` counts what a run moved.
+   Children inherit it through the ledger and pass nothing.
 1. `roadmap.ps1 status` and `mcp__happy__list_children`. Adopt nothing you did not spawn this
    run: a live row whose owner is not one of your children and whose `updated` is older than
    2 h goes back to `open` with `set <id> open "orphaned by run N-1"` (its branch stays).
 2. Count open rows in the `## Loop decisions` and `## Phase 0` tables of DECISIONS.md. If any
    were answered since the last run, re-open their rows (`set <id> open "<answer>"`).
-3. Plan the wave: group the `ready` rows by `section`, lowest wave first. One lead per section.
+3. Plan the wave: group the `ready` rows by `section`, lowest wave first. One lead per section. Skip rows whose
+   note starts "FROZEN by ROADMAP v5" (hand-path work, L-127): they are not planned until Mariano names one.
+
+## Row kinds (ROADMAP v5, L-127, 2026-11-11)
+Tell each lead the kind of every row it gets, and put the kind in the worker task. Full table: WORKER_RULES.md
+"Row kinds and what the worker runs".
+- **Top-down row** (touches only PortTop wrappers, bindings, `re/match` sources or other files the default path does
+  not execute): the worker runs both builds (the default VS2022 build and the object build, `set MASHED_DDKOBJ=1`),
+  `py.exe -3.12 re/tools/ddkobj/ddkobj.py check` (IDENTICAL for every substituted 100% source; a refused unit keeps
+  its VS2022 body and the RESULT names the reason), the knob boot, its self-test, and the menu walk when menu code
+  changed. **No G-CTRL, no B, no 12 captures x 4 in the worker**: those hashes are computed with the knob off and
+  cannot see the change. The merge train runs the default gates once per batch.
+- **Race-path row**, once `RO-ORACLE-GATE` exists: the above plus the replay oracle on the object build (L-125).
+- **Default-path row**: as before, default gates unchanged on the worker's exe, PREREG for a behaviour change.
+- **Match-only, tracker and text rows**: no build, no gates, a text-only train pass.
+- **RenderWare (L-124)**: on the top-down path the route is the matched RW core on d3d9. A brief that adds a new librw
+  binding there is wrong: rewrite it before spawning.
+- **Unmatched bodies (L-126)**: `re/tools/match/equiv.py` decides. EQUIV in default mode, or EQUIV-IF-CALLERS-IGNORE
+  with every caller scanned as ignoring (exposed-frame rule A1' included), is admitted with no decision row and
+  recorded in `ADMITTED.tsv`. A NOT-PROVEN source may replace a hand stand-in on the knob path only as a listed
+  provisional body (`PROVISIONAL.tsv`), never counted toward the port DoD. Neither status is C4 (L-128: C4 only by
+  a route of `re/CONFIDENCE.md`). Still a decision row: a conditional verdict with a caller that reads or is
+  unknown, any proof that needs `--relax-icall`, any x87 instruction-order admission.
+- **Standing classes (L-127)**: P1, a flip on the knob path whose captures and logs are unchanged ON against OFF on
+  OFF / ON / OFF / ON passes, and P2, a refile of a function to another subsystem on identity evidence, land
+  without a decision row. Do not file `roadmap.ps1 decision` for them: append one line to `log\orch\DECISIONS.md`
+  ("auto, class P1" or "auto, class P2", row id, evidence path) so Mariano can reverse it. A flip on the default
+  path, and anything that moves a gate hash, is still a decision row.
 
 ## Caps (decision 5)
 - 4 live leads, 6 live workers in total, 12 workers per run. Leads get at most 3 workers each
   (Mariano 2026-10-29, raised from 3 / 4 / 8 / 2).
-- Test slots are machine-wide (LIVING-PC: 6, shared with SimGolf / SimCity). Text-only and static legs take no
-  slot; prefer them when `test-slot --status` shows the slots full. A train's D2 arms still need the machine alone.
+- Test slots are machine-wide (LIVING-PC: 8 since 2026-11-09, shared with SimGolf / SimCity, with the memory gate
+  as the real limit: each run is capped at 8 GB and waits for free memory before it starts; workspace `CLAUDE.md`).
+  Text-only and static legs take no slot; prefer them when `test-slot --status` shows the slots full. A train's D2 arms still need the machine alone.
 - Keep the pool fed: when the ready rows cannot fill the live-worker cap, spawn a scoping lead that cuts new
   standalone or text-only steps into the ledger (roadmap.ps1 add) from ROADMAP.md, DEFERRED.md and the open
   RESULT follow-ups. It ports nothing itself.
@@ -86,7 +117,9 @@ Steps (ledger ids): <ids>. Ledger: pwsh -NoProfile -File <ORCH>\re\orchestrator\
 You never implement and never merge. For each step, in dependency order, at most 2 workers live:
 claim it for the worker you spawn (roadmap.ps1 claim <id> <worker-session-id> -Parent <your-session-id>),
 spawn the worker on claude3 with the holding prompt, then send its task with yolo:true:
-"<step task: the row's title + next + evidence, the worktree/branch name orch/<id>, WORKER_RULES.md>".
+"<step task: the row's title + next + evidence, its row kind (top-down / race-path / default-path / text) and what
+that kind runs per WORKER_RULES.md "Row kinds", the worktree/branch name orch/<id>, WORKER_RULES.md>".
+Row kinds: <id: kind, one per step>. Never claim a row whose note starts "FROZEN by ROADMAP v5".
 Model: claude-opus-5-5 high for RE/port work, claude-sonnet-5-5 medium for text-only steps.
 When a worker reports: GREEN -> read its RESULT file, accept it, roadmap.ps1 enqueue <id> -Branch orch/<id> -Sha <sha>.
 RED/BLOCKED -> set the row blocked with the reason. DECISION -> roadmap.ps1 decision <id> "<question/options/evidence/recommendation>".
@@ -104,6 +137,10 @@ Repeat until it prints "branch: (nothing queued)", a RED, or an INFRA (display a
 nothing bounced, the rows stay queued, not a finding). Do not fix anything. Final message: the last REPORT block it printed.
 ```
 On an INFRA report (HB-TRAIN-INFRA-PRECHECK), re-run the train once the display is awake. Do not re-run it in a loop.
+`re/orchestrator/INTEGRATION_LOG.md` gets one line per pass that merged or bounced a row (HB-V5-SKILL, 2026-11-11): a
+mixed pass names its bounced rows on the merged line, and a pass that bounced rows and merged nothing commits a
+"RED, nothing merged" line on orch/integration by itself (a ledger-only tip the next pass folds). An INFRA pass that
+bounced nothing writes no line.
 
 **Drain mode (HB-TRAIN-DRAIN, 2026-11-10).** `merge_train.ps1 -Drain` runs the passes itself, back to back, while the
 queue is non-empty, and after each GREEN pass whose gate hashes equal the `merge_train.json` refs (or a text-only pass)
@@ -164,6 +201,7 @@ automatic notice wake you. If you must block inside a turn, poll the ledger row 
 Stop when any holds: every section dry or parked on decisions; 8 workers spent; two event
 rounds with no ledger transition (`events.jsonl` unchanged); your context past ~60%.
 On stop: close every child (`list_children`, then `close_child` each), `roadmap.ps1 status`,
+`roadmap.ps1 list -Run <N>` (its last line is the run's count by stage, for the kickoff),
 `roadmap.ps1 snapshot "orch: ledger snapshot run <N>"`, then write the kickoff below.
 `race/first-frame-parity` moves only when Mariano says. Never push. Never redeploy the shared .asi.
 
@@ -178,6 +216,6 @@ Detail: CLAUDE.md "LAN release of the standalone".
 ## Kickoff template (end of every run)
 ```
 /loop Roadmap loop run <N+1>. Read C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/.claude/skills/roadmap-loop/SKILL.md and act as the L0 conductor it describes.
-Last run: <merged ids> merged into orch/integration @ <sha>; <blocked/red ids>; decisions open: <ids>.
-Start with roadmap.ps1 status. Sections to lead first: <sections with ready rows>. Caps 4 leads / 6 workers / 12 per run, 3 per lead.
+Last run: <merged ids> merged into orch/integration @ <sha>; <blocked/red ids>; decisions open: <ids>; rows moved: <list -Run N summary line>.
+Start with roadmap.ps1 run <N+1>, then roadmap.ps1 status. Sections to lead first: <sections with ready rows>. Caps 4 leads / 6 workers / 12 per run, 3 per lead.
 ```

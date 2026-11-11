@@ -19,15 +19,23 @@
   pwsh -NoProfile -File re/orchestrator/roadmap.ps1 fleet
   pwsh -NoProfile -File re/orchestrator/roadmap.ps1 get D5-PDOD
   pwsh -NoProfile -File re/orchestrator/roadmap.ps1 snapshot "<commit message>"
+  pwsh -NoProfile -File re/orchestrator/roadmap.ps1 run 37            # L0, start of a run: set the current run tag
+  pwsh -NoProfile -File re/orchestrator/roadmap.ps1 run               # print the current run tag
+  pwsh -NoProfile -File re/orchestrator/roadmap.ps1 list -Run 37 [-Stage merged]   # rows a run moved
+
+  Run tag (HB-V5-SKILL, 2026-11-11): the ledger holds the current run number (top-level `run`, set by L0 with
+  `run <n>`). claim, set, enqueue, decision and add stamp it on the row: `run` = the last run that moved the row,
+  `runs` = every run that moved it. events.jsonl lines carry it too. -Run <n> on a write command overrides the
+  ledger value. Rows last moved before the tag existed have no `runs` and are not counted by `list -Run`.
 #>
 [CmdletBinding()]
 param(
-  [Parameter(Position=0)][ValidateSet('status','next','claim','set','fleet','get','enqueue','dequeue','queue','decision','add','snapshot')][string]$Cmd = 'status',
+  [Parameter(Position=0)][ValidateSet('status','next','claim','set','fleet','get','enqueue','dequeue','queue','decision','add','snapshot','run','list')][string]$Cmd = 'status',
   [Parameter(Position=1)][string]$Id,
   [Parameter(Position=2)][string]$Arg2,
   [Parameter(Position=3)][string]$Arg3,
   [string]$Branch, [string]$Worktree, [string]$Evidence, [string]$Parent, [string]$Owner,
-  [string]$Sha, [int]$Wave = -1, [switch]$NoSolo, [switch]$Force
+  [string]$Sha, [int]$Wave = -1, [switch]$NoSolo, [switch]$Force, [int]$Run = -1, [string]$Stage
 )
 $ErrorActionPreference = 'Stop'
 
@@ -74,8 +82,18 @@ function Save($s) {
   Write-Lf $tmp (($s | ConvertTo-Json -Depth 8) -join "`n")
   Move-Item -LiteralPath $tmp -Destination $LEDGER -Force
 }
+# HB-V5-SKILL run tag: -Run wins, else the ledger's current run, else none (0).
+function Cur-Run($s) { if ($Run -ge 0) { return $Run }; if ($s.PSObject.Properties.Name -contains 'run' -and $s.run) { return [int]$s.run }; return 0 }
+function Tag-Run($s, $r) {
+  $n = Cur-Run $s
+  if ($n -le 0) { return }
+  Ensure-Field $r 'run' 0; Ensure-Field $r 'runs' @()
+  $r.run = $n
+  if (@($r.runs) -notcontains $n) { $r.runs = @(@($r.runs) + $n) }
+}
 function Log-Event($row, $from, $to, $note) {
   $e = [ordered]@{ at = Now; id = $row.id; from = $from; to = $to; owner = $row.owner; note = $note }
+  if ($row.PSObject.Properties.Name -contains 'run' -and $row.run) { $e.run = $row.run }
   Append-Lf $EVENTS ($e | ConvertTo-Json -Compress)
 }
 function Row($s, $id) {
@@ -120,7 +138,7 @@ switch ($Cmd) {
     $s = Load
     $by = $s.rows | Group-Object stage
     $counts = ($STAGES | ForEach-Object { $g = $by | Where-Object Name -eq $_; if ($g) { "$_ $($g.Count)" } }) -join ' | '
-    Write-Output "roadmap ledger $($s.updated)  rows $($s.rows.Count): $counts"
+    Write-Output "roadmap ledger $($s.updated)  run $(Cur-Run $s)  rows $($s.rows.Count): $counts"
     $live = @($s.rows | Where-Object { $_.stage -in $LIVE_STAGES })
     if ($live) {
       Write-Output "live:"
@@ -149,7 +167,7 @@ switch ($Cmd) {
       if (-not $ok) { Write-Output "REFUSED $Id is '$($r.stage)' owner=$($r.owner)"; exit 1 }
       if (-not (Deps-Met $s $r) -and -not $Force) { Write-Output "REFUSED $Id deps not met: $(@($r.deps) -join ',')"; exit 1 }
       $from = $r.stage; $r.stage = 'claimed'; $r.owner = $Arg2; $r.updated = Now
-      Apply-Opts $r
+      Apply-Opts $r; Tag-Run $s $r
       Save $s; Log-Event $r $from 'claimed' ''
       Write-Output "CLAIMED $Id by $Arg2"
     }
@@ -162,7 +180,7 @@ switch ($Cmd) {
       $from = $r.stage; $r.stage = $Arg2; $r.updated = Now
       if ($Arg3) { $r.note = $Arg3 }
       if ($Arg2 -eq 'open') { $r.owner = '' }
-      Apply-Opts $r
+      Apply-Opts $r; Tag-Run $s $r
       Save $s; Log-Event $r $from $Arg2 $Arg3
       Write-Output "SET $Id $from -> $Arg2"
     }
@@ -176,7 +194,7 @@ switch ($Cmd) {
       $q = @($q | Where-Object { $_.id -ne $Id })
       $q += [pscustomobject]@{ id = $Id; branch = $br; sha = $Sha; solo = [bool]$r.solo; at = Now }
       Write-Lf $QUEUE ((ConvertTo-Json -InputObject @($q) -Depth 4) -join "`n")
-      $from = $r.stage; $r.stage = 'merge-queued'; $r.branch = $br; $r.updated = Now
+      $from = $r.stage; $r.stage = 'merge-queued'; $r.branch = $br; $r.updated = Now; Tag-Run $s $r
       Save $s; Log-Event $r $from 'merge-queued' $br
       Write-Output "ENQUEUED $Id ($br) position $($q.Count)"
     }
@@ -203,7 +221,7 @@ switch ($Cmd) {
         Append-Lf $DECIDE "`n## Loop decisions (filed by the roadmap loop)`n`n| id | row | question / options / evidence | filed | answer |`n|---|---|---|---|---|"
       }
       Append-Lf $DECIDE ("| {0} | {1} | {2} | {3} | **open** |" -f $did, $Id, ($Arg2 -replace '\|','/'), (Now))
-      $from = $r.stage; $r.stage = 'decision'; $r.decision = $did; $r.updated = Now
+      $from = $r.stage; $r.stage = 'decision'; $r.decision = $did; $r.updated = Now; Tag-Run $s $r
       Save $s; Log-Event $r $from 'decision' $did
       Write-Output "DECISION $did filed for $Id"
     }
@@ -217,6 +235,7 @@ switch ($Cmd) {
       $s.rows += [pscustomobject][ordered]@{ id = $Id; section = $Arg2; title = $Arg3; stage = 'open'; owner = ''; parent = $Parent;
         branch = ''; worktree = ''; evidence = $Evidence; deps = @(); needs = @(); solo = $false; decision = '';
         wave = $(if ($Wave -ge 0) { $Wave } else { 9 }); next = ''; note = ''; updated = Now }
+      Tag-Run $s ($s.rows[-1])
       Save $s; Write-Output "ADDED $Id"
     }
   }
@@ -229,6 +248,32 @@ switch ($Cmd) {
     }
     $lock = & py.exe -3.12 (Join-Path $PSScriptRoot 'mashed_lock.py') status 2>&1
     Write-Output "game lock: $($lock -join ' / ')"
+  }
+  'run' {
+    # run [<n>]: print the current run tag, or set it (L0 does this at the start of every run)
+    if (-not $Id) { Write-Output "run $(Cur-Run (Load))"; break }
+    if ($Id -notmatch '^\d+$') { throw "usage: run [<n>]" }
+    With-Lock {
+      $s = Load
+      $old = Cur-Run $s
+      if ($s.PSObject.Properties.Name -notcontains 'run') { $s | Add-Member -NotePropertyName run -NotePropertyValue 0 }
+      $s.run = [int]$Id
+      Save $s
+      Append-Lf $EVENTS ([ordered]@{ at = Now; id = ''; from = "run $old"; to = "run $Id"; owner = ''; note = 'run tag set' } | ConvertTo-Json -Compress)
+      Write-Output "RUN $old -> $Id"
+    }
+  }
+  'list' {
+    # list [-Run n] [-Stage s]: one line per row, filtered by a run that moved it and/or its stage
+    $s = Load
+    $rows = @($s.rows | Where-Object { $Run -lt 0 -or (($_.PSObject.Properties.Name -contains 'runs') -and (@($_.runs) -contains $Run)) } |
+      Where-Object { -not $Stage -or $_.stage -eq $Stage })
+    foreach ($r in $rows) {
+      $rr = if ($r.PSObject.Properties.Name -contains 'runs') { (@($r.runs) -join ',') } else { '' }
+      Write-Output ("{0,-24} {1,-12} runs={2,-8} {3,4} {4}" -f $r.id, $r.stage, $rr, (Age $r.updated), (Short $r.note 70))
+    }
+    $by = ($rows | Group-Object stage | Sort-Object Name | ForEach-Object { "$($_.Name) $($_.Count)" }) -join ' | '
+    Write-Output ("{0} row(s){1}{2}: {3}" -f $rows.Count, $(if ($Run -ge 0) { " in run $Run" }), $(if ($Stage) { " at $Stage" }), $by)
   }
   'snapshot' {
     $dst = Join-Path $ORCH_WT 're\orchestrator\ledger'
