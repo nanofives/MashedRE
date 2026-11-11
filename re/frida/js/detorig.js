@@ -45,6 +45,8 @@
 //                   each hit sends {kind:'watch', pc, bt, value, n} (pc = the instruction after the store)
 //   callLog         log every main-thread clock call from the warp to the race anchor (PROMOTE-DETORIG-LOADHOLD):
 //                   64 bytes per call = [N, kind (0 tgt, 1 qpc), esp[0..13]], sent with the race anchor
+//   norm, normAt    [[va, width, value], ...] boot-counter pins (re/frida/warp_normalize.tsv, RO-WARP-NORMALIZE),
+//                   written at 'warp', 'anchor' or 'both'
 'use strict';
 const CFG = DETORIG_CFG;
 const IMG = 0x400000;
@@ -184,6 +186,69 @@ function pinRngs() {
   return { ptd: ptd.toString(), holdrand_before: before, rw_ring: buf.toString(), rw_cursors_before: cursBefore };
 }
 
+// Tick-clock pin (cfg.tick.pin, REPLAY-ORACLE-DESIGN): the frame timer's state was last written from the REAL clock
+// before the install. Rewrite it from the virtual clock so the first virtual tick has a delta of one tick:
+// DAT_007f1030 last sample and DAT_007f102c 1 s mark (FUN_00493390, stores 0x00493459 / 0x00493478) = the value
+// FUN_004950b0 returns now ((Q * 3,000,000) / QPF, QPF = DAT_00771e70, re/match/s16/004950b0.c), DAT_00771984 drift
+// = 0 (only FUN_00493390 references it, nondet_scan.txt), and FUN_00492e90's ms marks DAT_00771998 / DAT_0077199c
+// = that value / 3000 (0x00492ecd: DAT_007719a0 = FUN_004950b0() / 3000).
+function pinTimer() {
+  const q = (BigInt(D.add(0x14).readU32()) << 32n) | BigInt(D.add(0x10).readU32());
+  const qpf = BigInt(ga(0x00771e70).readU32()) | (BigInt(ga(0x00771e74).readU32()) << 32n);
+  const v = Number(((q * 3000000n) / qpf) & 0xffffffffn) >>> 0;
+  const before = [0x007f1030, 0x007f102c, 0x00771984, 0x00771998, 0x0077199c].map((a) => ga(a).readU32());
+  ga(0x007f1030).writeU32(v); ga(0x007f102c).writeU32(v); ga(0x00771984).writeU32(0);
+  ga(0x00771998).writeU32(Math.floor(v / 3000)); ga(0x0077199c).writeU32(Math.floor(v / 3000));
+  return { v, before };
+}
+
+// Boot-counter normalisation (cfg.norm, RO-WARP-NORMALIZE): the PIN rows of re/frida/warp_normalize.tsv, expanded by
+// detorig.py to [[va, width, value], ...]. Each is written on the main thread at the warp and/or at the race anchor
+// (cfg.normAt). The writers and readers that justify each row are cited in the TSV.
+function pinNorm(where) {
+  if (!CFG.norm || !CFG.norm.length || !(CFG.normAt === 'both' || CFG.normAt === where)) return null;
+  let changed = 0;
+  const sample = [];
+  for (const [va, w, v] of CFG.norm) {
+    const p = ga(va);
+    const old = w === 1 ? p.readU8() : (w === 2 ? p.readU16() : p.readU32());
+    if (old !== (v >>> 0)) { changed++; if (sample.length < 8) sample.push([va.toString(16), old]); }
+    if (w === 1) p.writeU8(v); else if (w === 2) p.writeU16(v); else p.writeU32(v >>> 0);
+  }
+  return { at: where, rows: CFG.norm.length, changed, sample };
+}
+
+// Audio thread off (cfg.audioOff = 'warp' | 'anchor', RO-AUDIO-ISOLATION). CreateThread (IAT 0x005cc0d0) has one
+// caller, CRT __beginthread (0x005c2eca), whose one caller is the audio worker spawner FUN_005aef30 (DESIGN 1.5). So
+// every thread whose Win32 start address lies inside MASHED.exe, other than the main thread, is a __beginthread
+// worker. They are suspended (SuspendThread) at the chosen point and stay suspended until the process is killed.
+// DirectShow / D3D / Frida threads start outside MASHED.exe and are left alone.
+function audioOff(where) {
+  if (CFG.audioOff !== where) return null;
+  const k32 = Process.getModuleByName('kernel32.dll');
+  const ntdll = Process.getModuleByName('ntdll.dll');
+  const OpenThread = new NativeFunction(k32.getExportByName('OpenThread'), 'pointer', ['uint32', 'int', 'uint32'], 'stdcall');
+  const SuspendThread = new NativeFunction(k32.getExportByName('SuspendThread'), 'uint32', ['pointer'], 'stdcall');
+  const CloseHandle = new NativeFunction(k32.getExportByName('CloseHandle'), 'int', ['pointer'], 'stdcall');
+  const NtQIT = new NativeFunction(ntdll.getExportByName('NtQueryInformationThread'), 'uint32', ['pointer', 'uint32', 'pointer', 'uint32', 'pointer'], 'stdcall');
+  const lo = M.base.toUInt32() >>> 0, hi = (lo + M.size) >>> 0;
+  const out = { suspended: [], other: [] };
+  const buf = Memory.alloc(8);
+  for (const t of Process.enumerateThreads()) {
+    const h = OpenThread(0x0042, 0, t.id);          // THREAD_SUSPEND_RESUME | THREAD_QUERY_INFORMATION
+    if (h.isNull()) { out.other.push([t.id, 'open failed']); continue; }
+    buf.writeU32(0);
+    NtQIT(h, 9, buf, 4, NULL);                      // ThreadQuerySetWin32StartAddress
+    const sa = buf.readU32() >>> 0;
+    if (t.id !== CFG.main && sa >= lo && sa < hi) {
+      const prev = SuspendThread(h);
+      out.suspended.push([t.id, '0x' + (sa - lo + IMG).toString(16), prev]);
+    } else out.other.push([t.id, '0x' + sa.toString(16)]);
+    CloseHandle(h);
+  }
+  return out;
+}
+
 function warp() {
   const s = CFG.scen;
   ga(0x0063ba7c).writeS32(s.track);   // TRACK_ENG
@@ -195,6 +260,11 @@ function warp() {
   const e480 = new NativeFunction(ga(0x0040e480), 'void', ['int', 'int'], 'mscdecl');
   for (let k = 0; k < 4; k++) e480(k, k === 0 ? 1 : (k < s.cars ? 2 : 0));
   const pins = pinRngs();
+  if (TICK && TICK.pin) pins.timer = pinTimer();
+  const nw = pinNorm('warp');
+  if (nw) pins.norm = nw;
+  const ao = audioOff('warp');
+  if (ao) pins.audioOff = ao;
   ga(0x00771968).writeU8(2);          // PHASE := load + spawn
   return pins;
 }
@@ -258,8 +328,109 @@ function watchArm() {
   return 'watch armed on ' + n + ' threads: ' + addrs.map((a) => a.toString()).join(',');
 }
 
+// ---------------------------------------------------------------- tick clock + per-tick block hashes (REPLAY-ORACLE-DESIGN)
+// cfg.tick = {va, qtick, ttick, cap, block}. A native listener (CModule onEnter, no JavaScript) on cfg.tick.va
+// (FUN_00493390, the frame timer, entered once per main-loop iteration from FUN_00493480) advances the virtual
+// clock by qtick QPC counts / ttick ms. With cfg.qstep = cfg.step = 0 the clock is then a function of the tick
+// count only: every main-thread clock read inside one frame returns the same value, so neither the number of
+// clock calls per frame nor the number of piz polls during the load can reach a clock-derived value.
+// From the race anchor on (tst[0] = 1) the same listener hashes the writable image in cfg.tick.block-byte blocks
+// (FNV-1a over dwords, a dword in [0x00995000, 0x30000000) with the low two bits clear is hashed as 0: the
+// detorig.is_ptr heap rule), then appends the cfg.tick.raw ranges verbatim and stores [tick, N, hash per block] per tick, up to cfg.tick.cap ticks.
+const TICK = CFG.tick || null;
+let TK = null;
+if (TICK) {
+  const nw = (DATA_HI - DATA_LO) >>> 2;
+  const bw = TICK.block >>> 2;
+  const nblk = Math.ceil(nw / bw);
+  const raw = (TICK.raw || []).map(([lo, hi]) => [lo, (hi - lo) >>> 2]);
+  const rawW = raw.reduce((a, r) => a + r[1], 0);
+  const recw = 2 + nblk + rawW;
+  const rawCopy = raw.map(([lo, n]) => `  { const unsigned int *s = (const unsigned int *)0x${ga(lo).toString(16).replace('0x', '')}; for (i = 0; i < ${n}u; i++) rec[o++] = s[i]; }`).join(' ');
+  const buf = K(Memory.alloc(TICK.cap * recw * 4));
+  const st = K(Memory.alloc(64));
+  for (let i = 0; i < 16; i++) st.add(i * 4).writeU32(0);
+  const src = `
+#include <gum/guminterceptor.h>
+extern volatile unsigned int dblk[16];
+extern volatile unsigned int tst[16];
+extern unsigned int tbuf[];
+void onEnter(GumInvocationContext *ic) {
+  unsigned long long q = ((unsigned long long)dblk[5] << 32) | dblk[4];
+  q += ${TICK.qtick >>> 0}u;
+  dblk[4] = (unsigned int)q; dblk[5] = (unsigned int)(q >> 32);
+  dblk[0] += ${TICK.ttick >>> 0}u;
+  tst[2]++;
+  if (!tst[0] || tst[1] >= ${TICK.cap >>> 0}u) return;
+  unsigned int *rec = tbuf + tst[1] * ${recw}u;
+  rec[0] = tst[2]; rec[1] = dblk[12];
+  const unsigned int *p = (const unsigned int *)0x${ga(DATA_LO).toString(16).replace('0x', '')};
+  unsigned int b, i, w = 0;
+  for (b = 0; b < ${nblk}u; b++) {
+    unsigned int h = 2166136261u;
+    for (i = 0; i < ${bw}u && w < ${nw}u; i++, w++) {
+      unsigned int v = p[w];
+      if (v >= 0x00995000u && v < 0x30000000u && !(v & 3u)) v = 0;
+      h = (h ^ v) * 16777619u;
+    }
+    rec[2 + b] = h;
+  }
+  { unsigned int o = 2 + ${nblk}u;
+${rawCopy}
+  }
+  tst[1]++;
+}
+`;
+  const cmT = K(new CModule(src, { dblk: D, tst: st, tbuf: buf }));
+  TK = { nblk, recw, buf, st, cm: cmT };
+}
+// Stale-field poison (cfg.poison, RO-STACKROW-READERS): the event ring 0x007ec9e4 (256 rows x 0x40, type word
+// DAT_007e9de4[row]) is filled from 16 stack dwords per row, and each producer writes only some of them. At the entry
+// of every ring consumer (FUN_00422ba0, FUN_0040be50, FUN_004648b0) a native listener overwrites, in every row, the
+// fields that row's producer leaves unwritten, so a consumer that read one would see the poison:
+//   type 3 (FUN_00469aa0, 0x00469cc8): dwords 10..15 (+0x28..+0x3c)      type 4 (FUN_00469df0): dword 15 (+0x3c)
+//   type 8 (FUN_0047def0, 0x0047e5f1 / 0x0047e7b2): dwords 2..8 and 15
+// mode 'pos' (positive control) also overwrites type-4 dword 9 (+0x24), which FUN_00469df0 writes and 0x00422e6a reads.
+const POISON = CFG.poison || null;
+let PZ = null;
+if (POISON) {
+  const st = K(Memory.alloc(16)); st.writeU32(0); st.add(4).writeU32(0);
+  const src = `
+#include <gum/guminterceptor.h>
+extern volatile unsigned int pst[4];
+void onEnter(GumInvocationContext *ic) {
+  unsigned int *ring = (unsigned int *)0x${ga(0x007ec9e4).toString(16).replace('0x', '')};
+  const unsigned int *typ = (const unsigned int *)0x${ga(0x007e9de4).toString(16).replace('0x', '')};
+  unsigned int r, j, v = ${POISON.value >>> 0}u;
+  if (!pst[0]) return;
+  pst[1]++;
+  for (r = 0; r < 256u; r++) {
+    unsigned int *row = ring + r * 16u;
+    unsigned int t = typ[r];
+    if (t == 3u) { for (j = 10; j < 16; j++) row[j] = v; }
+    else if (t == 4u) { row[15] = v; ${POISON.mode === 'pos' ? 'row[9] = v;' : ''} }
+    else if (t == 8u) { for (j = 2; j < 9; j++) row[j] = v; row[15] = v; }
+  }
+}
+`;
+  const cmP = K(new CModule(src, { pst: st }));
+  PZ = { st, cm: cmP, at: [0x00422ba0, 0x0040be50, 0x004648b0] };
+}
+
+function tickDump() {
+  if (!TK) return;
+  const n = TK.st.add(4).readU32();
+  const recb = TK.recw * 4;
+  const per = Math.max(1, Math.floor((4 << 20) / recb));
+  for (let i = 0; i < n; i += per) {
+    const m = Math.min(per, n - i);
+    send({ kind: 'ticks', first: i, count: m, total: n, nblk: TK.nblk, recw: TK.recw, block: TICK.block, raw: TICK.raw || [] },
+         TK.buf.add(i * recb).readByteArray(m * recb));
+  }
+}
+
 // ---------------------------------------------------------------- install
-const SLOTS = [[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
+const SLOTS =[[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
 function install() {
   // input first (inactive until the warp), then the clock slots
   ORIG_CELL.writePointer(Interceptor.replaceFast(RESOLVER, cm.repl));   // replaceFast returns the original's trampoline
@@ -272,6 +443,8 @@ function install() {
     slot.writePointer(stub);
     res.push([va.toString(16), real.toString(), stub.toString()]);
   }
+  if (TK) { Interceptor.attach(ga(TICK.va), TK.cm); res.push(['tick', TICK.va.toString(16)]); }
+  if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
   schedule(CFG.warpAt, () => {
     warpN = N();
     const pins = warp();
@@ -290,12 +463,18 @@ function install() {
         schedule(N() + 1, watch); return;
       }
       raceN = N();
-      if (CFG.callLog) {
+      if (TK) TK.st.writeU32(1);
+      if (PZ) PZ.st.writeU32(1);
+      if (CFG.callLog && !CFG.callLogRace) {
         D.add(0x34).writeU32(0);
         const cnt = D.add(0x38).readU32();
         send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
       }
       const pins3 = pinRngs();
+      const na = pinNorm('anchor');
+      if (na) pins3.norm = na;
+      const ao3 = audioOff('anchor');
+      if (ao3) pins3.audioOff = ao3;
       // Re-base the clock: the load takes 118 or 122 main-thread calls (measured 2026-11-01), so without this the
       // race starts at a run-dependent Q. T / Q become the values of an anchor at N = warpAt + 200.
       if (CFG.rebase) {
@@ -307,12 +486,23 @@ function install() {
       // negative control: +1 on the RenderWare RNG word at the ring cursor (cfg.negctl = 1), or on a VA
       if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
       else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
-      send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, frames_7f101c: ga(0x007f101c).readU32(),
+      send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, tick: TK ? TK.st.add(8).readU32() : null, frames_7f101c: ga(0x007f101c).readU32(),
              clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness() });
       if (CFG.watch && CFG.watch.length) send({ kind: 'info', msg: watchArm() });
       for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
       CFG.ckpts.forEach((dn, k) => schedule(raceN + dn, () => checkpoint(k)));
-      schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => { setDue(0xffffffff); send({ kind: 'done', n: N() }); });
+      schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => {
+        setDue(0xffffffff);
+        if (TK) TK.st.writeU32(0);
+        if (CFG.callLog && CFG.callLogRace) {
+          D.add(0x34).writeU32(0);
+          const cnt = D.add(0x38).readU32();
+          send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
+        }
+        tickDump();
+        if (PZ) { PZ.st.writeU32(0); send({ kind: 'info', msg: 'poison listener calls ' + PZ.st.add(4).readU32() }); }
+        send({ kind: 'done', n: N() });
+      });
     };
     schedule(warpN + 1, watch);
   });

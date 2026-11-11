@@ -1,0 +1,49 @@
+# Boot-counter normalisation set for the replay oracle (RO-WARP-NORMALIZE, 2026-11-11).
+# Every dword that differed between two tick-clock runs of the original (verify/replayoracle_20261111 batch 2, classes
+# RESIDUE / OFFSET / MODOFFSET / TOGGLE / RULE) has one row here. Both sides apply it the same way:
+#   PIN          write `value` (hex) on the main thread at the warp and again at the race anchor (first main-thread
+#                clock call that sees DAT_00771968 == 3). `count` rows at `stride` (hex) from `va`. width in bytes.
+#   MASK:<fam>   not pinned: the value is OS-assigned, set before any hook can run, or owned by a library the exe
+#                replaces. The compare drops these dwords (detorig_report.py --norm). width = span in bytes.
+#   RULE:<name>  not pinned: compared by a rule in detorig_report.py (RULES).
+# Writer / reader RVAs: absolute-operand scan of .text of MASHED.exe.unpatched (capstone) plus the decompilation
+# cited in verify/replayoracle_20261111/RESULT_RO-WARP-NORMALIZE.md. Consumed by re/frida/detorig.py --normalize.
+va	count	stride	width	action	value	writer	readers	note
+0x007f0ff0	1	0	4	PIN	0	0x00493453 FUN_00493390 += 0x32 per tick; 0x00492679 FUN_004924f0 = 0	0x00401343 FUN_00401340; 0x0044660b 0x0044687c 0x00446893 FUN_00446520 (fild, in the DAT_007f0fd0 == 5 camera branch)	frame counter, counts menu ticks before the warp; value = FUN_004924f0's reset
+0x00771978	1	0	4	PIN	0	0x00492737 FUN_004926c0 += 1; 0x00492762 = 0 at 0x3c	0x00492728	60-tick counter; value = its own reset
+0x00771994	1	0	4	PIN	0	0x00492731 FUN_004926c0 += QPC delta; 0x00492758 = 0 at 0x3c	0x0049271e	accumulator paired with 0x00771978; value = its own reset
+0x0077198c	1	0	4	PIN	1	0x0049334a FUN_00492e90 += 1 per call	0x00492ec3 (== 0 test: then DAT_00771998 = DAT_007719a0); 0x0049333b	call counter; only read as == 0; 1 keeps the branch every booted run takes
+0x00868348	96	0x44	4	PIN	0	0x004924a8 FUN_00492440 row+0x28 += 1; 0x0049249c = 0 at 0x3c	0x00492447	96 rows x 0x44 at 0x00868320, FUN_00492e90 loop 0x00868320..0x00869ca0 (+0x44); 60-tick counter per row
+0x0086834c	96	0x44	4	PIN	0	0x0049245e FUN_00492440 row+0x2c += row+0x20; 0x00492493 = 0 at 0x3c	0x00492453	row sum A, reset with the counter
+0x00868350	96	0x44	4	PIN	0	0x00492461 FUN_00492440 row+0x30 += row+0x24; 0x00492499 = 0 at 0x3c	0x00492444	row sum B, reset with the counter
+0x00636ac4	1	0	4	PIN	0	0x00401e4b FUN_00401da0 (fstp)	0x00401e30 0x00401e91 FUN_00401da0	frontend float, constant after the menu
+0x00636ae8	1	0	4	PIN	0	0x00402f52 FUN_00402f50; 0x00402f80 = 0; 0x00403124; 0x004030e6 (fstp)	0x004030d9 0x004030f9	frontend float; value = the store at 0x00402f80
+0x00636afc	1	0	4	PIN	0	0x00402ff9 (fstp)	0x00402fb3 0x00402fe2	frontend float
+0x0067d858	1	0	4	PIN	0	0x00428aea FUN_00428a30 = FUN_004950b0()	0x00428af4 FUN_00428a30 (24000000 compare)	title-screen clock sample from the real clock
+0x0067d974	1	0	4	PIN	3fc90fdb	0x004285d4 FUN_00428590 = 0x3fc90fdb; 0x00428578 (fstp)	0x00428453 0x00428568	frontend float; value = the store at 0x004285d4
+0x0067e848	1	0	4	PIN	0	0x0042e6ad FUN_0042e5b0 += esi	0x0042e745	frontend sprite-cycle counter (index & 0xf)
+0x0067f0b8	1	0	4	PIN	0	0x0042e6bf 0x0042e6df FUN_0042e5b0	0x0042e6b3 0x0042e6d7	frontend sprite-cycle counter (index & 0xf)
+0x00616110	1	0	4	RULE:FILEPTR	-	0x004a4fd6 write_char (inc [FILE+0]) via printf 0x004a2cbd (FILE 0x00616110, 0x004a2cc9)	0x004a4fd2	printf stream cursor; race start prints "start of race" at 0x0040ff29 (watch, run n3_w). Heap buffer, cursor - base (+8) is compared
+0x00616038	1	0	4	MASK:crt-cookie	-	0x004a5825 0x004a582d FUN_004a57e4 (GetSystemTimeAsFileTime, PID, TID, GetTickCount, QPC)	every /GS prologue (0x00401006 ...)	__security_cookie: cannot change while /GS frames are live; only a process-start install (RO-ORIG-ASI) can set it
+0x007de100	1	0	8	MASK:crt-clock	-	0x005c2a35 0x005c2a3a ___inittime (GetSystemTimeAsFileTime)	0x005c29e9 0x005c29f2 clock()	clock() base; clock() reads the real FILETIME, so a pin would not make clock() equal
+0x007e9584	1	0	4	RULE:HWND	-	0x00499c9a FUN_00499ba0 = CreateWindowExA	0x00499522 0x00499608 ...	game window handle, OS-assigned
+0x00772fb0	1	0	4	RULE:HWND	-	0x00496038 0x004960a9 FUN_00496010	0x00495fa5	copy of the window handle
+0x007d4104	1	0	4	RULE:HWND	-	0x004c7e06 FUN_004c7a70	0x004c7daf ...	RenderWare device window (HWND)
+0x009120fc	1	0	4	RULE:HWND	-	0x004c81d5 FUN_004c7a70	-	copy of 0x007d4104
+0x007d70c8	1	0	4	MASK:renderware	-	0x004dc8bf FUN_004dc8a0 (slot + 1 mod 4) ...	0x004dcbbb ...	dynamic VB ring slot; the ring 0x007d70cc..0x007d70ec is RULE:RING4
+0x007d70cc	1	0	32	RULE:RING4	-	0x004dccc8 FUN_004dcbb0	-	ring fill offsets / capacities, rotated by 0x007d70c8
+0x007d7108	1	0	4	MASK:renderware	-	0x004e0943 FUN_004e0920 = 0; 0x004e0f4e = 0; 0x004e1019 += ebx	0x004e0fea (index start passed to device vtable +0x148 at 0x004e1007)	dynamic index-buffer fill offset; render-internal, the exe uses librw
+0x007dc948	1	0	5816	MASK:audio	-	audio engine code 0x005a59bc..0x005ba1b3 (displacement scan, verify/replayoracle_20261111/audio_readers.tsv) and the audio thread	no game-code reader by displacement; game code stores only (0x0045d4a1..0x0045d4b9, 0x00462aa1..0x00462ab9 -> 0x007dcaa8 / 0x007dcaac)	audio-engine globals 0x007dc948..0x007de000 (0x007dc958, 0x007dca50, 0x007dcae0, 0x007dcb50/54, 0x007dcdf0, 0x007dd618..0x007dd620 differ); RESULT_RO-AUDIO-ISOLATION.md
+0x007dc764	1	0	4	MASK:rw-fs	-	0x005505dc FUN_00550580 (hooks.csv third-party-library[renderware]); written after the overlapped reads of FUN_00550da0 / FUN_00551090 (DESIGN 1.5)	-	values 0x3e5 / 0x3e4 differed in batch 1; 0x007dc000..0x007dc948 is RenderWare / RW-Physics / qhull state, NOT audio, and stays compared
+0x006147d8	1	0	4	MASK:os	-	0x00493eeb 0x0049479a (= 1)	0x00494485	flag set on the window-message path (TOGGLE class, values 0..1)
+0x00771a00	1	0	4	MASK:os	-	0x00493ef0 0x00494794	0x00493c90 0x00493cb9 0x00493eb7 0x00493edf	flag written next to 0x006147d8 (TOGGLE class, values 0..1)
+0x0077391c	1	0	4	MASK:os	-	0x0049985e FUN_004997b0 (4-argument callback, ret 0x10) = ([esp+0xc] == 1)	0x004996cc (main-loop gate; no_focus_pause makes 0x004996d3 jump past WaitMessage)	window-focus flag; changed at tick 215 in run n3_a only
+0x007e95a0	1	0	28	RULE:WINMSG	-	PeekMessageA 0x0049969d	-	MSG filled by Windows
+0x007ec9e4	256	0x40	64	RULE:STACKROW	-	0x00469d90..0x00469daa FUN_00469aa0	see RESULT_RO-STACKROW-READERS.md	ring rows; the rule only drops fields +0x28..+0x3c
+0x007ec9e4	256	0x40	64	RULE:RINGSTALE	-	the ring producers (detorig_report.py RING_WRITTEN)	0x0040be50 0x00422ba0 0x004648b0 read only written dwords (RESULT_RO-STACKROW-READERS.md)	per-type unwritten payload dwords; types 6 and 9 compared [UNCERTAIN]
+0x006fe7dc	150	0x7c	4	RULE:RWPAD	-	0x004863e4 FUN_00486370 (rep movsd of an RwMatrix into the particle ring 0x006fe790)	-	RwMatrix pad m[7]; stale stack
+0x006fe7ec	150	0x7c	4	RULE:RWPAD	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[11]; held code address 0x004671a5 (run n3_w2)
+0x006fe7fc	150	0x7c	4	RULE:RWPAD	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[15]; stale stack
+0x006036cc	1	0	4	MASK:audio-glue	-	0x0046590c (= 0x3f266666) 0x00465918 (= 0x3f800000) FUN_004657b0, chosen by FUN_005a89a0(voice) == 6	0x0045dfc0 0x0045dfd3 FUN_0045dfc0	duck target; follows the audio engine's voice status (+0xD6C), which the audio thread advances
+0x006036c0	1	0	4	MASK:audio-glue	-	0x0045df8d 0x0045dfb0 FUN_0045df70 (steps toward 0x006036cc); 0x00466f5c = 0	0x0045dd80 FUN_0045dd60 (voice volume -> FUN_005a6dc0)	duck level
+0x006904c4	1	0	24	MASK:audio-glue	-	0x004658e1 FUN_004657b0 (= FUN_005a89a0(voice)); 0x0045dcbb (= 6); 0x00462f23	0x004658a8 FUN_004657b0	per-channel voice status copy, 6 channels (0x006904c8 differed with the audio thread suspended)

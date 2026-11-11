@@ -1,0 +1,57 @@
+[
+ {
+  "count": 422,
+  "pc_after_store": "0x4658e7",
+  "backtrace": "0x14c1bbf0|0x4658e7",
+  "tid": 12264,
+  "first_n": 4991,
+  "first_values": [
+   "0x3",
+   "0x3f800000"
+  ]
+ },
+ {
+  "count": 421,
+  "pc_after_store": "0x465916",
+  "backtrace": "0x3f1f9f7d|0x465916|0x769f5d49|0x779ec88b|0x779ec811",
+  "tid": 12264,
+  "first_n": 4991,
+  "first_values": [
+   "0x3",
+   "0x3f266666"
+  ]
+ },
+ {
+  "count": 421,
+  "pc_after_store": "0x465922",
+  "backtrace": "0x3f1f9f7d|0x465922|0x769f5d49|0x779ec88b|0x779ec811",
+  "tid": 12264,
+  "first_n": 4991,
+  "first_values": [
+   "0x3",
+   "0x3f800000"
+  ]
+ },
+ {
+  "count": 368,
+  "pc_after_store": "0x465916",
+  "backtrace": "0x1aff74|0x465916|0x769f5d49|0x779ec88b|0x779ec811",
+  "tid": 12264,
+  "first_n": 939,
+  "first_values": [
+   "0x0",
+   "0x3f266666"
+  ]
+ },
+ {
+  "count": 368,
+  "pc_after_store": "0x465922",
+  "backtrace": "0x1aff74|0x465922|0x769f5d49|0x779ec88b|0x779ec811",
+  "tid": 12264,
+  "first_n": 939,
+  "first_values": [
+   "0x0",
+   "0x3f800000"
+  ]
+ }
+]

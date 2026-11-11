@@ -1,0 +1,71 @@
+{
+ "rows": 246,
+ "verdicts": {
+  "linkable": 181,
+  "blocked": 65
+ },
+ "block_classes": {
+  "in-set": 59,
+  "unbound": 7,
+  "bind-missing": 6,
+  "crt-absent": 1
+ },
+ "undef_classes": {
+  "data": 522,
+  "in-set": 363,
+  "bind:bound": 160,
+  "crt": 57,
+  "in-variant": 51,
+  "bind:stand-in": 44,
+  "bind:shim": 37,
+  "wrapper-name": 28,
+  "bind:rw": 27,
+  "unbound": 23,
+  "exe-name": 18,
+  "bind:port": 8,
+  "bind:missing": 7,
+  "bind:crt": 5,
+  "bind-missing:stand-in": 5,
+  "bind-missing:port": 3,
+  "crt-absent": 1
+ },
+ "top_unbound": {
+  "FUN_00476c10": 4,
+  "FUN_00476880": 2,
+  "FUN_00453eb0": 1,
+  "FUN_00477760": 1,
+  "FUN_00475ab0": 1,
+  "FUN_00457e10": 1,
+  "FUN_00476df0": 1,
+  "FUN_004c1480": 1,
+  "FUN_00440bc0": 1,
+  "FUN_00453f60": 1,
+  "FUN_00459000": 1,
+  "FUN_0045a190": 1,
+  "FUN_0045c010": 1,
+  "FUN_0045c350": 1,
+  "FUN_004b4b60": 1,
+  "FUN_0045bfe0": 1,
+  "FUN_0041f060": 1,
+  "FUN_00476c60": 1,
+  "FUN_004b64e0": 1
+ },
+ "top_crt_absent": {
+  "__free": 1
+ },
+ "top_unknown": {},
+ "top_bind_missing": {
+  "FUN_0047b9b0 bind-missing:port": 1,
+  "FUN_00492e90 bind-missing:stand-in": 1,
+  "FUN_00492d30 bind-missing:stand-in": 1,
+  "FUN_004967e0 bind-missing:stand-in": 1,
+  "FUN_004b302f bind-missing:port": 1,
+  "FUN_004a3ac9 bind-missing:port": 1,
+  "FUN_004960e0 bind-missing:stand-in": 1,
+  "FUN_00553e80 bind-missing:stand-in": 1
+ },
+ "crt_math": {},
+ "link": {
+  "attempted": false
+ }
+}

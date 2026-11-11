@@ -1,5 +1,12 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-11 08:31 ROADMAP-V5 (orch/ROADMAP-V5): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261111_082943
+- 2026-11-11 08:25 EQUIV-CHECK (orch/EQUIV-CHECK): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261111_081618
+- 2026-11-11 08:03 DDKOBJ-SPIKE (orch/DDKOBJ-SPIKE): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_073305
+- 2026-11-11 07:32 RO-WARP-NORMALIZE (orch/RO-WARP-NORMALIZE): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261111_071754
+- 2026-11-11 06:27 RW-SIZING (orch/RW-SIZING), REPLAY-ORACLE-DESIGN (orch/REPLAY-ORACLE-DESIGN): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261111_054600
+- 2026-11-11 01:18 PORT-OT-BIND-D3D (orch/PORT-OT-BIND-D3D): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_010239
+- 2026-11-11 01:02 BIND-CRT-HEAP (orch/BIND-CRT-HEAP): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_004220
 - 2026-11-11 00:33 BIND-CRT-HELPERS (orch/BIND-CRT-HELPERS): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_001512
 - 2026-11-11 00:08 PORT-OT-BIND-CRT (orch/PORT-OT-BIND-CRT): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261111_000640
 - 2026-11-11 00:05 HB-TRAIN-FLIP-DECISION (orch/HB-TRAIN-FLIP-DECISION): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261110_235744

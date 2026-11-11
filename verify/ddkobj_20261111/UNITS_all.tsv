@@ -1,0 +1,584 @@
+src	wrapper	rvas	status	exe_names	undef_classes	static_promotions	externalized	local_helpers	ext_statics
+re/match/s04/0041e870.c	Match\MatchS04_0041e870.cpp	0x0041e870	ok	_TrackNodeRecordScan	data-abs=3				0
+re/match/s11/0046dd80.c	Match\MatchS11_0046dd80.cpp	0x0046dd80	ok	_Float61313cGet	data-abs=1				0
+re/match/s02/0040e480.c	Match\MatchS02_0040e480.cpp	0x0040e480	ok	_CarSlotStateSet	data-abs=1				0
+re/match/s02/0040e470.c	Match\MatchS02_0040e470.cpp	0x0040e470	ok	_CarSlotStateGet	data-abs=1				0
+re/match/s02/0040ce80.c	Match\MatchS02_0040ce80.cpp	0x0040ce80	ok	_PtrTable5f2770Get	data-abs=1				0
+re/match/s13/0047c160.c	Match\MatchS13_0047c160.cpp	0x0047c160	ok	_CameraPathNodeContainTest	data-abs=4 wrapper-bound=3				0
+re/match/s13/0047c270.c	Match\MatchS13_0047c270.cpp	0x0047c230 0x0047c270	fail:static-register-convention			FUN_0047c230:REG			0
+re/match/s13/0047c2d0.c	Match\MatchS13_0047c2d0.cpp	0x0047c1f0 0x0047c2d0	fail:static-register-convention			FUN_0047c1f0:REG			0
+re/match/s13/0047d150.c	Match\MatchS13_0047d150.cpp	0x0047d150	ok	_SlotObjectField8	data-abs=1 wrapper-bound=1				0
+re/match/s13/0047ea40.c	Match\MatchS13_0047ea40.cpp	0x0047ea40	ok	_RwpSceneStepWrapper	exe-by-name=1				0
+re/match/s13/00482030.c	Match\MatchS13_00482030.cpp	0x00482030	ok	_SubStripQuadUV	data-abs=2				0
+re/match/s13/004826d0.c	Match\MatchS13_004826d0.cpp	0x004826d0	ok	_PhysicsCollisionBodyCreate	data-abs=1 exe-by-name=2 wrapper-bound=1				0
+re/match/s12/00476b30.c	Match\MatchS12_00476b30.cpp	0x00476b30	ok	_Set476b30	data-abs=2				0
+re/match/s12/00476ae0.c	Match\MatchS12_00476ae0.cpp	0x00476ae0	ok	_Batch476ae0	data-abs=2				0
+re/match/s12/004769f0.c	Match\MatchS12_004769f0.cpp	0x004769f0	fail:wrapper-redefines-globals						0
+re/match/s12/004769d0.c	Match\MatchS12_004769d0.cpp	0x004769d0	ok	_ParticleEmitter_SetVelocity	data-abs=1				0
+re/match/s12/004769a0.c	Match\MatchS12_004769a0.cpp	0x004769a0	ok	_ParticleEmitter_SetPosition	data-abs=1				0
+re/match/s12/00476a10.c	Match\MatchS12_00476a10.cpp	0x00476a10	ok	_Copy476a10	data-abs=2				0
+re/match/s12/00476a30.c	Match\MatchS12_00476a30.cpp	0x00476a30	ok	_ParticleEmitter_SetScalar	data-abs=1				0
+re/match/s12/00476b90.c	Match\MatchS12_00476b90.cpp	0x00476b90	ok	_Batch476b90	data-abs=2				0
+re/match/s12/00476be0.c	Match\MatchS12_00476be0.cpp	0x00476be0	ok	_Batch476be0	data-abs=1				0
+re/match/s12/00476cb0.c	Match\MatchS12_00476cb0.cpp	0x00476cb0	ok	_Batch476cb0	data-abs=1				0
+re/match/s12/00476d00.c	Match\MatchS12_00476d00.cpp	0x00476d00	ok	_MultiArrayScatter476d00	data-abs=6				0
+re/match/s12/00478cc0.c	Match\MatchS12_00478cc0.cpp	0x00478cc0	ok	_RenderWorldStateZeroFill					0
+re/match/s11/004671c0.c	Match\MatchS11_004671c0.cpp	0x004671c0	ok	_GetOverlayCamera	data-abs=1				0
+re/match/s11/004671d0.c	Match\MatchS11_004671d0.cpp	0x004671d0	ok	_FollowTargetField40_impl	data-abs=1 wrapper-bound=2				0
+re/match/s11/00467210.c	Match\MatchS11_00467210.cpp	0x00467210	ok	_FollowTargetField10_impl	data-abs=1 wrapper-bound=2				0
+re/match/s11/00468b40.c	Match\MatchS11_00468b40.cpp	0x00468b40	ok	_VehicleContactHistoryLookup					0
+re/match/s11/0046b4f0.c	Match\MatchS11_0046b4f0.cpp	0x0046b4f0	ok	_UtilTableRead46b4f0	data-abs=1				0
+re/match/s11/0046c570.c	Match\MatchS11_0046c570.cpp	0x0046c570	ok	_VehicleDampVec3	data-abs=1				0
+re/match/s11/0046c6d0.c	Match\MatchS11_0046c6d0.cpp	0x0046c6d0	ok	_VehicleEntitySlotRead	data-abs=1				0
+re/match/s11/0046c770.c	Match\MatchS11_0046c770.cpp	0x0046c770	ok	_VehicleDestructionStateGetter	data-abs=1				0
+re/match/s11/0046cbe0.c	Match\MatchS11_0046cbe0.cpp	0x0046cbe0	ok	_VehicleCarStateSet	data-abs=1				0
+re/match/s11/0046cc10.c	Match\MatchS11_0046cc10.cpp	0x0046cc10	ok	_VehicleFloatFieldAsInt	crt=1 data-abs=1				0
+re/match/s11/0046d510.c	Match\MatchS11_0046d510.cpp	0x0046d510	ok	_VehicleVelocityWorldGet	data-abs=2 wrapper-bound=1				0
+re/match/s11/0046d700.c	Match\MatchS11_0046d700.cpp	0x0046d700	ok	_VehicleVec3At9C8Get	data-abs=1				0
+re/match/s11/0046dc00.c	Match\MatchS11_0046dc00.cpp	0x0046dc00	ok	_EntityFieldSet	data-abs=1				0
+re/match/s11/00472c60.c	Match\MatchS11_00472c60.cpp	0x00472c60	ok	_ChromeBaseDraw	data-abs=2 wrapper-bound=2				0
+re/match/s11/00472dc0.c	Match\MatchS11_00472dc0.cpp	0x00472dc0	ok	_Im2DTriangleDraw	data-abs=2 wrapper-bound=2				0
+re/match/s11/00472f40.c	Match\MatchS11_00472f40.cpp	0x00472f40	ok	_TextGradientV0V1Override	data-abs=2 wrapper-bound=2				0
+re/match/s11/004730b0.c	Match\MatchS11_004730b0.cpp	0x004730b0	ok	_TextGradientV2V3Override	data-abs=2 wrapper-bound=2				0
+re/match/s11/00473540.c	Match\MatchS11_00473540.cpp	0x00473540	ok	_GradientQuadHorizAlpha	data-abs=2 wrapper-bound=2				0
+re/match/s11/004736c0.c	Match\MatchS11_004736c0.cpp	0x004736c0	ok	_BorderQuadFourAlpha	data-abs=2 wrapper-bound=2				0
+re/match/s11/00473870.c	Match\MatchS11_00473870.cpp	0x00473870	ok	_TextSpriteUVExplicit	data-abs=2				0
+re/match/s11/00474e60.c	Match\MatchS11_00474e60.cpp	0x00474e60	ok	_DegToRad					0
+re/match/s11/0046c5c0.c	Match\MatchS11_0046c5c0.cpp	0x0046c5c0	ok	_VehicleSlotInit	data-abs=2				0
+re/match/s11/0046c790.c	Match\MatchS11_0046c790.cpp	0x0046c790	ok	_VehicleSlotFieldSet	data-abs=1				0
+re/match/s03/h1_00414120.c	Frontend\SmallLeaves_t1.cpp	0x00414120	ok	_CopyTable005f2a70To0089a384	data-abs=2				0
+re/match/s05/0041f710.c	Match\MatchS05_0041f710.cpp	0x0041f710	fail:static-register-convention			FUN_0041f710:REG			0
+re/match/s05/00420d40.c	Match\MatchS05_00420d40.cpp	0x00420d40	ok	_TimerStructArrayClear	data-abs=1 wrapper-bound=1				0
+re/match/s05/00421930.c	Match\MatchS05_00421930.cpp	0x00421930	ok	_BodyGeometryFirstDword	wrapper-bound=1				0
+re/match/s05/004222c0.c	Match\MatchS05_004222c0.cpp	0x004222c0	ok	_TimerInitThunk	wrapper-bound=1				0
+re/match/s05/00422a80.c	Match\MatchS05_00422a80.cpp	0x00422a80	ok	_SlotBlockZero	data-abs=1 wrapper-bound=1				0
+re/match/s05/00422aa0.c	Match\MatchS05_00422aa0.cpp	0x00422aa0	ok	_SlotFieldSet	data-abs=1				0
+re/match/s05/00422b10.c	Match\MatchS05_00422b10.cpp	0x00422b10	ok	_TimerDwordClear	data-abs=1				0
+re/match/s05/00422b30.c	Match\MatchS05_00422b30.cpp	0x00422b30	ok	_TimerArrayClear	data-abs=1				0
+re/match/s05/00423270.c	Match\MatchS05_00423270.cpp	0x00423270	ok	_TabCycler	data-abs=6				0
+re/match/s05/00423320.c	Match\MatchS05_00423320.cpp	0x00423320	ok	_CursorMover	data-abs=10				0
+re/match/s05/00423480.c	Match\MatchS05_00423480.cpp	0x00423480	ok	_AiFilenameBuild	crt=2 data-abs=1 wrapper-bound=2				0
+re/match/s05/00423b00.c	Match\MatchS05_00423b00.cpp	0x00423b00	ok	_FrontendInputDispatch	data-abs=1 in-set=2 wrapper-bound=2				0
+re/match/s05/00423cc0.c	Match\MatchS05_00423cc0.cpp	0x00423cc0	ok	_PlayerScoreTeamAccGatedB	data-abs=2 in-set=1 wrapper-bound=1				0
+re/match/s05/00423d50.c	Match\MatchS05_00423d50.cpp	0x00423d50	ok	_PlayerScoreTeamAccBaseB	data-abs=2 in-set=1				0
+re/match/s05/00423dd0.c	Match\MatchS05_00423dd0.cpp	0x00423dd0	ok	_PlayerScoreTeamAccGatedC	data-abs=2 in-set=1 wrapper-bound=1				0
+re/match/s05/00423e60.c	Match\MatchS05_00423e60.cpp	0x00423e60	ok	_PlayerScoreTeamAccCumB	data-abs=2 in-set=1				0
+re/match/s05/00423ee0.c	Match\MatchS05_00423ee0.cpp	0x00423ee0	ok	_PlayerBlock2Field00Get	data-abs=2 in-set=1				0
+re/match/s05/00423f60.c	Match\MatchS05_00423f60.cpp	0x00423f60	ok	_PlayerBlock2Field04Get	data-abs=2 in-set=1 wrapper-bound=1				0
+re/match/s05/00423ff0.c	Match\MatchS05_00423ff0.cpp	0x00423ff0	ok	_PlayerBlock2Field50Get	data-abs=2 in-set=1				0
+re/match/s05/00424070.c	Match\MatchS05_00424070.cpp	0x00424070	ok	_PlayerBlock2Field08Get	data-abs=2 in-set=1 wrapper-bound=1				0
+re/match/s05/00424100.c	Match\MatchS05_00424100.cpp	0x00424100	ok	_TeamBlockZeroGet	data-abs=12 in-set=1				0
+re/match/s05/004241b0.c	Match\MatchS05_004241b0.cpp	0x004241b0	ok	_GetDat008994c0	data-abs=1				0
+re/match/s05/004248b0.c	Match\MatchS05_004248b0.cpp	0x004248b0	ok	_PerCarSnapshotInit	data-abs=2				0
+re/match/s05/00424920.c	Match\MatchS05_00424920.cpp	0x00424920	ok	_EndOfRoundAccumulator	data-abs=64				0
+re/match/s05/00425b10.c	Match\MatchS05_00425b10.cpp	0x00425b10	ok	_TimerGlobalZero	data-abs=8				0
+re/match/s05/00425b70.c	Match\MatchS05_00425b70.cpp	0x00425b70	ok	_SlotFieldSetter	data-abs=2				0
+re/match/s05/00425c00.c	Match\MatchS05_00425c00.cpp	0x00425c00	ok	_CopterClumpRegister	crt=2 data-abs=3 wrapper-bound=4				0
+re/match/s05/00425ee0.c	Match\MatchS05_00425ee0.cpp	0x00425ee0	ok	_SlotWordPtrGet	data-abs=1				0
+re/match/s05/00425ef0.c	Match\MatchS05_00425ef0.cpp	0x00425ef0	ok	_ActiveSlotCount	data-abs=16				0
+re/match/s05/00426020.c	Match\MatchS05_00426020.cpp	0x00426020	ok	_GlobalDat00646e58Get	data-abs=1				0
+re/match/s03/h2_00413bc0.c	HUD\ScenarioLeaves_sa1.cpp	0x00413bc0	fail:static-register-convention			FUN_00413bc0:REG			0
+re/match/s03/h2_00415020.c	HUD\ScenarioWriters_sa2s2.cpp	0x00415020	ok	_AiLastPlaceFrustration	abs-call=2 data-abs=5				0
+re/match/s19/004c19f0.c	Match\MatchS19_004c19f0.cpp	0x004c19f0	ok	_RwVtableSlot07Call					0
+re/match/s19/004c2f00.c	Match\MatchS19_004c2f00.cpp	0x004c2f00	ok	_RwEngineGetCurrentMode	data-abs=1 wrapper-bound=1				0
+re/match/s19/004c3df0.c	Match\MatchS19_004c3df0.cpp	0x004c3df0	ok	_RwV3dTransformPoints	data-abs=2				0
+re/match/s16/00498bc0.c	Match\MatchS16_00498bc0.cpp	0x00498bc0	ok	_VideoGetRenderWidth	data-abs=1				0
+re/match/s16/00498bd0.c	Match\MatchS16_00498bd0.cpp	0x00498bd0	ok	_VideoGetRenderHeight	data-abs=1				0
+re/match/s16/00498bf0.c	Match\MatchS16_00498bf0.cpp	0x00498bf0	ok	_DisplayActiveFlagGet	data-abs=1				0
+re/match/s16/00499690.c	Match\MatchS16_00499690.cpp	0x00499690	ok	_WindowMsgPump	data-abs=3 exe-by-name=4				0
+re/match/s16/004996f0.c	Match\MatchS16_004996f0.cpp	0x004996f0	ok	_WindowShow	data-abs=1 exe-by-name=2				0
+re/match/s15/004904d0.c	Match\MatchS15_004904d0.cpp	0x004904d0	ok	_UtilZeroTable86a4a0	data-abs=1				0
+re/match/s15/00490f50.c	Match\MatchS15_00490f50.cpp	0x00490f50	ok	_ByteQuadSet50Body	data-abs=4				0
+re/match/s15/00490f80.c	Match\MatchS15_00490f80.cpp	0x00490f80	ok	_ByteQuadSet80Body	data-abs=4				0
+re/match/s15/004921d0.c	Match\MatchS15_004921d0.cpp	0x004921d0	ok	_DisplayInit	data-abs=4 in-set=6 wrapper-bound=6				0
+re/match/s15/00492270.c	Match\MatchS15_00492270.cpp	0x00492270	ok	_SubsystemInit	in-set=2 wrapper-bound=1				0
+re/match/s15/004922e0.c	Match\MatchS15_004922e0.cpp	0x004922e0	ok	_CarEventTrigger	data-abs=2 in-set=2				0
+re/match/s15/00492340.c	Match\MatchS15_00492340.cpp	0x00492340	ok	_CarSlotInit	data-abs=1				0
+re/match/s15/00492440.c	Match\MatchS15_00492440.cpp	0x00492440	ok	_RenderStatsAccumulate					0
+re/match/s15/00492770.c	Match\MatchS15_00492770.cpp	0x00492770	ok	_MainLoopInit	data-abs=6 in-set=4 wrapper-bound=1				0
+re/match/s15/00492370.c	Match\PortTop_00492370.cpp	0x00492370	ok	_Orig_00492370@16	data-abs=5 in-set=6 wrapper-bound=9				0
+re/match/s15/00492290.c	Match\PortTop_00492370.cpp	0x00492290	ok	_Orig_00492290	data-abs=1 in-set=2 wrapper-bound=6				0
+re/match/s15/00493900.c	Match\PortTop_00493900.cpp	0x00493900	ok	_Orig_00493900	crt=2 data-abs=15 in-set=1 wrapper-bound=2				0
+re/match/s16/00499820.c	Match\PortTop_00499820.cpp	0x00499820	ok	_Orig_00499820@16	data-abs=2 exe-by-name=1 wrapper-bound=3				0
+re/match/s16/00499890.c	Match\PortTop_00499890.cpp	0x00499890	ok	_Orig_00499890	crt=4 data-abs=1 exe-by-name=3 wrapper-bound=1				0
+re/match/s16/00499ba0.c	Match\PortTop_00499ba0.cpp	0x00499ba0	ok	_Orig_00499ba0	data-abs=5 exe-by-name=6 in-set=2 wrapper-bound=2				0
+re/match/s16/00499cc0.c	Match\PortTop_Leaves.cpp	0x00499cc0	ok	_Orig_00499cc0	data-abs=2 exe-by-name=1				0
+re/match/s15/00492d20.c	Match\MatchS15_00492d20.cpp	0x00492d20	ok	_IntroSplashFrameTickShim	wrapper-bound=1				0
+re/match/s16/00499730.c	Match\MatchS16_00499730.cpp	0x00499730	ok	_BootPtr773818Get	data-abs=1				0
+re/match/s15/00493710.c	Match\PortTop_00493710.cpp	0x00493710	ok	_Orig_00493710	data-abs=11 in-set=3 wrapper-bound=26				0
+re/match/s15/00493600.c	Match\PortTop_00493600.cpp	0x00493600	ok	_Orig_00493600	data-abs=2 in-set=1 wrapper-bound=4				0
+re/match/s20/004ce790.c	Match\PortTop_004ce790.cpp	0x004ce790	ok	_Orig_004ce790	data-abs=2				0
+re/match/s16/00495270.c	Match\MatchS16_00495270.cpp	0x00495270	ok	_HWNDGet	in-set=1				0
+re/match/s16/00499710.c	Match\MatchS16_00499710.cpp	0x00499710	ok	_Global7e9584Get	data-abs=1				0
+re/match/s09/0045b350.c	Match\MatchS09_0045b350.cpp	0x0045b350	ok	_RwInitNullStub					0
+re/match/s16/004955b0.c	Match\MatchS16_004955b0.cpp	0x004955b0	ok	_DInputInitPredicate	in-set=1				0
+re/match/s16/00495530.c	Match\MatchS16_00495530.cpp	0x00495530	ok	_CreateDInputObject	crt=1 data-abs=2 in-set=1 wrapper-bound=1				0
+re/match/s16/00495520.c	Match\MatchS16_00495520.cpp	0x00495520	ok	_Get771e78	data-abs=1				0
+re/match/s16/00495150.c	Match\PortTop_00495150.cpp	0x00495150	ok	_HwInitGate_00495150	data-abs=3 in-set=3 wrapper-bound=3				0
+re/match/s16/00496040.c	Match\PortTop_00496040.cpp	0x00496040	ok	_JoypadEnumerate_00496040	data-abs=1 in-set=2 wrapper-bound=1				0
+re/match/s16/00496320.c	Match\PortTop_00496320.cpp	0x00496320	ok	_KeyboardDeviceCreate_00496320	data-abs=4				0
+re/match/s16/004987b0.c	Match\PortTop_004987b0.cpp	0x004987b0	ok	_DbgPrintf_004987b0	crt=3 wrapper-bound=1				0
+re/match/s16/004954f0.c	Match\PortTop_004954f0.cpp	0x004954f0	ok	_HardwareExitApplication	exe-by-name=1 in-set=5 wrapper-bound=1				0
+re/match/s16/00496370.c	Match\PortTop_00496370.cpp	0x00496370	ok	_KeyboardRelease_00496370	data-abs=1 in-set=1				0
+re/match/s16/00496010.c	Match\PortTop_00496010.cpp	0x00496010	ok	_JoypadsDestroy_00496010	data-abs=5 in-set=1 wrapper-static=1				0
+re/match/s16/00495e80.c	Match\PortTop_00495e80.cpp	0x00495e80	ok	_JoypadsRelease_00495e80	data-abs=2 in-set=1				0
+re/match/s16/00495580.c	Match\PortTop_00495580.cpp	0x00495580	ok	_DInputRelease_00495580	data-abs=1 in-set=1				0
+re/match/s16/00498b60.c	Match\PortTop_00498b60.cpp	0x00498b60	ok	_FreeTables_00498b60	data-abs=4 wrapper-bound=1				0
+re/match/s16/004955c0.c	Match\PortTop_004955c0.cpp	0x004955c0	ok	_Thunk_004955c0	in-set=1				0
+re/match/s07/0042b890.c	Match\MatchS07_0042b890.cpp	0x0042b890	ok	_RenderWidthSet	data-abs=1				0
+re/match/s07/0042b8a0.c	Match\MatchS07_0042b8a0.cpp	0x0042b8a0	ok	_RenderHeightSet	data-abs=1				0
+re/match/s16/004997b0.c	Match\MatchS16_004997b0.cpp	0x004997b0	ok	_Win32ResourceLoader	crt=4 in-set=1				0
+re/match/s16/00499720.c	Match\MatchS16_00499720.cpp	0x00499720	ok	_GetInputHinst	data-abs=1				0
+re/match/s19/004c1a00.c	Match\MatchS19_004c1a00.cpp	0x004c1a00	ok	_IntroSplashVtableSlot6					0
+re/match/s11/004671a0.c	Match\MatchS11_004671a0.cpp	0x004671a0	ok	_BackBuffRasterOpen	data-abs=1 in-set=2				0
+re/match/s11/00467110.c	Match\PortTop_00467110.cpp	0x004670a0 0x00467110	fail:static-register-convention			FUN_004670a0:REG			0
+re/match/s10/00467020.c	Match\PortTop_00467020.cpp	0x00467020	ok	_Orig_00467020	wrapper-bound=3				0
+re/match/s07/0042d420.c	Match\PortTop_0042d420.cpp	0x0042d420	ok	_Orig_0042d420	in-set=1 wrapper-bound=4				0
+re/match/s07/0042d560.c	Match\PortTop_0042d560.cpp	0x0042d560	ok	_Orig_0042d560	data-abs=1 in-set=2 wrapper-bound=2				0
+re/match/s07/0042d4a0.c	Match\PortTop_0042d4a0.cpp	0x0042d4a0	ok	_Orig_0042d4a0	data-abs=1 in-set=3 wrapper-bound=2				0
+re/match/s07/0042f660.c	Match\PortTop_0042f660.cpp	0x0042f660	ok	_DefaultViewportCameraInit	data-abs=1 in-set=2 wrapper-bound=2				0
+re/match/s07/0042f530.c	Match\PortTop_0042f530.cpp	0x0042f530	ok	_Orig_0042f530	data-abs=6 in-set=3 wrapper-bound=1				0
+re/match/s19/004c1be0.c	Match\PortTop_004c1be0.cpp	0x004c1be0	ok	_Orig_004c1be0	wrapper-bound=1				0
+re/match/s04/0041f320.c	Match\MatchS04_0041f320.cpp	0x0041f320	ok	_Table63d830Get	data-abs=1				0
+re/match/s15/00494460.c	Match\MatchS15_00494460.cpp	0x00494460	ok	_IntroVideoClose	data-abs=2 in-set=1 wrapper-bound=1				0
+re/match/s16/00494a80.c	Match\MatchS16_00494a80.cpp	0x00494a80	ok	_FUN_00494a80	data-abs=3 wrapper-bound=2				0
+re/match/s01/raw/00402a40.c	Match\PortTop_00402a40.cpp	0x00402a40	ok	_AppDestroy	data-abs=5 in-set=37 wrapper-bound=6				0
+re/match/s01/00402750.c	Match\PortTop_00402750.cpp	0x00402750	ok	_Orig_00402750	data-abs=7 in-set=23 wrapper-bound=35				0
+re/match/s16/00499ce0.c	Match\PortTop_00499ce0.cpp	0x00499ce0	ok	_Orig_00499ce0	data-abs=1				0
+re/match/s06/004283a0.c	Match\PortTop_004283a0.cpp	0x004283a0	ok	_Orig_004283a0	data-abs=6 wrapper-bound=2				0
+re/match/s18/004b3d80.c	Match\PortTop_004b3d80.cpp	0x004b3d80	ok	_Orig_004b3d80	wrapper-bound=4				0
+re/match/s05/00425bc0.c	Match\PortTop_00425bc0.cpp	0x00425bc0	ok	_Orig_00425bc0	data-abs=2 in-set=1 wrapper-bound=1				0
+re/match/s06/004274e0.c	Match\MatchS06_004274e0.cpp	0x004274e0	ok	_LocalizationFileLoadBody	data-abs=9 wrapper-bound=3				0
+re/match/s06/004274d0.c	Match\MatchS06_004274d0.cpp	0x004274d0	ok	_LangIndexSeedFromCli	data-abs=2				0
+re/match/s07/00431b40.c	Match\MatchS07_00431b40.cpp	0x00431b40	ok	_Set67eaa8	data-abs=1				0
+re/match/s01/004015a0.c	Match\PortTop_004015a0.cpp	0x004015a0	ok	_Orig_004015a0	data-abs=2 wrapper-bound=1				0
+re/match/s01/00403660.c	Match\PortTop_00403660.cpp	0x00403660	ok	_Orig_00403660	data-abs=2 wrapper-bound=1				0
+re/match/s02/0040bd00.c	Match\PortTop_0040bd00.cpp	0x0040bd00	ok	_Orig_0040bd00	data-abs=4 in-set=9 wrapper-bound=5				0
+re/match/s02/0040cf80.c	Match\PortTop_0040cf80.cpp	0x0040cf80	ok	_Orig_0040cf80	in-set=4 wrapper-bound=2				0
+re/match/s02/0040cfd0.c	Match\PortTop_0040cfd0.cpp	0x0040cfd0	ok	_Orig_0040cfd0	data-abs=1 in-set=6 wrapper-bound=4				0
+re/match/s02/004114e0.c	Match\PortTop_004114e0.cpp	0x004114e0	ok	_Orig_004114e0	data-abs=5 in-set=1				0
+re/match/s13/00483a40.c	Match\PortTop_00483a40.cpp	0x00483a40	ok	_Orig_00483a40	data-abs=1				0
+re/match/s03/raw_0041a3d0.c	Match\PortTop_0041a3d0.cpp	0x0041a3d0	ok	_Orig_0041a3d0	data-abs=1 wrapper-bound=1				0
+re/match/s04/0041beb0.c	Match\PortTop_0041c0e0.cpp	0x0041beb0 0x0041c0e0	fail:static-register-convention			FUN_0041beb0:REG			0
+re/match/s04/0041c2c0.c	Match\PortTop_0041c2c0.cpp	0x0041c2c0	ok	_Orig_0041c2c0	data-abs=1 wrapper-bound=1				0
+re/match/s04/0041cb00.c	Match\PortTop_0041ccf0.cpp	0x0041cb00 0x0041ccf0	fail:static-register-convention			FUN_0041cb00:REG			0
+re/match/s04/0041d6d0.c	Match\PortTop_0041d890.cpp	0x0041d6d0 0x0041d890	fail:static-register-convention			FUN_0041d6d0:REG			0
+re/match/s04/0041da80.c	Match\PortTop_0041da80.cpp	0x0041da80	ok	_Orig_0041da80	data-abs=1 wrapper-bound=1				0
+re/match/s04/0041de70.c	Match\PortTop_0041de70.cpp	0x0041de70	ok	_Orig_0041de70	data-abs=1 wrapper-bound=1				0
+re/match/s05/00425ed0.c	Match\PortTop_00425ed0.cpp	0x00425ed0	ok	_Orig_00425ed0	data-abs=1 wrapper-bound=1				0
+re/match/s06/00427620.c	Match\PortTop_00427620.cpp	0x00427620	ok	_Orig_00427620	data-abs=5 wrapper-bound=5				0
+re/match/s06/00428400.c	Match\PortTop_00428400.cpp	0x00428400	ok	_Orig_00428400	data-abs=5 wrapper-bound=2				0
+re/match/s07/0042c2a0.c	Match\PortTop_0042c2a0.cpp	0x0042c2a0	ok	_Orig_0042c2a0	data-abs=2 wrapper-bound=2				0
+re/match/s09/0045b930.c	Match\PortTop_0045b930.cpp	0x0045b930	ok	_Orig_0045b930	data-abs=3 in-set=1 wrapper-bound=5				0
+re/match/s10/00467010.c	Match\PortTop_00467010.cpp	0x00467010	ok	_Orig_00467010	wrapper-bound=2				0
+re/match/s10/00467070.c	Match\PortTop_00467070.cpp	0x00467070	ok	_Orig_00467070	data-abs=2 wrapper-bound=3				0
+re/match/s16/00494bc0.c	Match\PortTop_00494bc0.cpp	0x00494bc0	ok	_Orig_00494bc0	data-abs=6				0
+re/match/s16/00496ce0.c	Match\PortTop_00496ce0.cpp	0x00496ce0	ok	_Orig_00496ce0	data-abs=2 wrapper-bound=1				0
+re/match/s18/004b4880.c	Match\PortTop_004b4880.cpp	0x004b4880	ok	_Orig_004b4880	wrapper-bound=4				0
+re/match/s24/005581f0.c	Match\PortTop_005581f0.cpp	0x005581f0	ok	_Orig_005581f0	in-set=1 wrapper-bound=2				0
+re/match/s05/004210f0.c	Match\PortTop_004210f0.cpp	0x004210f0	ok	_Orig_004210f0	data-abs=1 wrapper-bound=1				0
+re/match/s16/00496970.c	Match\PortTop_00496970.cpp	0x00496970	ok	_Orig_00496970	data-abs=1 wrapper-bound=1				0
+re/match/s15/00494320.c	Match\PortTop_00494320.cpp	0x00494320	ok	_Orig_00494320	data-abs=8				0
+re/match/s03/h1_004189e0.c	Match\PortTop_004189e0.cpp	0x004189e0	ok	_Orig_004189e0	wrapper-bound=1				0
+re/match/s05/00421590.c	Match\PortTop_00421590.cpp	0x00421590	ok	_Orig_00421590	in-set=1				0
+re/match/s16/00494f20.c	Match\PortTop_00494f20.cpp	0x00494f20	ok	_Orig_00494f20	in-set=1				0
+re/match/s13/0047ba10.c	Match\PortTop_0047ba10.cpp	0x0047ba10	ok	_Orig_0047ba10	in-set=1				0
+re/match/s18/004b6550.c	Match\PortTop_004b6550.cpp	0x004b6550	ok	_Orig_004b6550	wrapper-bound=1				0
+re/match/s14/00484130.c	Match\PortTop_00484130.cpp	0x00484130	ok	_Orig_00484130	data-abs=1				0
+re/match/s07/00431b10.c	Match\MatchS07_00431b10.cpp	0x00431b10	ok	_BootParamSet2	data-abs=1				0
+re/match/s07/0042b950.c	Match\MatchS07_0042b950.cpp	0x0042b950	ok	_Set7f1a0c_1000	data-abs=1				0
+re/match/s08/00433240.c	Match\MatchS08_00433240.cpp	0x00433240	ok	_RaceArmReset	data-abs=7 in-set=2				0
+re/match/s16/00495110.c	Match\MatchS16_00495110.cpp	0x00495110	ok	_Store7f1030_Qpc3Mhz	data-abs=1 wrapper-bound=1				0
+re/match/s16/004950b0.c	Match\MatchS16_004950b0.cpp	0x004950b0	ok	_QpcTimeScaledTo3Mhz	crt=3 data-abs=1				0
+re/match/s16/00495120.c	Match\MatchS16_00495120.cpp	0x00495120	ok	_TimerQpfStore	crt=1 data-abs=2				0
+re/match/s15/004926c0.c	Match\MatchS15_004926c0.cpp	0x004926c0	ok	_AudioTickAndAvg	data-abs=4 wrapper-bound=5				0
+re/match/s15/00492e60.c	Match\MatchS15_00492e60.cpp	0x00492e60	ok	_SetDefaultViewWindow	wrapper-bound=2				0
+re/match/s15/00493480.c	Match\MatchS15_00493480.cpp	0x00493480	ok	_FpsDiscretise	data-abs=3 wrapper-bound=1				0
+re/match/s15/00493540.c	Match\MatchS15_00493540.cpp	0x00493540	ok	_thunk_LaunchLangGate	in-set=1				0
+re/match/s15/00493550.c	Match\MatchS15_00493550.cpp	0x00493550	ok	_thunk_EngineStopDispatch	in-set=1				0
+re/match/s15/00493560.c	Match\MatchS15_00493560.cpp	0x00493560	ok	_thunk_HwExitDispatch	in-set=1				0
+re/match/s15/004938c0.c	Match\MatchS15_004938c0.cpp	0x004938c0	ok	_SoftwareTidyUpBeforeExiting	wrapper-bound=5				0
+re/match/topm01/004924f0.c	Boot\SubsystemInit.cpp	0x004924f0	ok	_DataZeroFill	data-abs=12 in-set=6				0
+re/match/s04/0041b770.c	Match\MatchS04_0041b770.cpp	0x0041b770 0x0041c010	fail:static-register-convention			FUN_0041b770:REG			0
+re/match/s04/0041bc50.c	Match\MatchS04_0041bc50.cpp	0x0041bc50 0x0041c0c0	fail:static-register-convention			FUN_0041bc50:REG			0
+re/match/s04/0041c2d0.c	Match\MatchS04_0041c2d0.cpp	0x0041c2d0 0x0041c300	fail:static-register-convention			FUN_0041c2d0:REG			0
+re/match/s04/0041c320.c	Match\MatchS04_0041c320.cpp	0x0041c320 0x0041cb10	fail:static-register-convention			FUN_0041c320:REG			0
+re/match/s04/0041c9a0.c	Match\MatchS04_0041c9a0.cpp	0x0041c9a0 0x0041ccc0	fail:static-register-convention			FUN_0041c9a0:REG			0
+re/match/s04/0041cbc0.c	Match\MatchS04_0041cbc0.cpp	0x0041cbc0	ok	_FloatTableInit	data-abs=2				0
+re/match/s04/0041cd20.c	Match\MatchS04_0041cd20.cpp	0x0041cd20 0x0041d6e0	fail:static-register-convention			FUN_0041cd20:REG			0
+re/match/s04/0041d820.c	Match\MatchS04_0041d820.cpp	0x0041d820	ok	_TimerSlotClear	data-abs=1				0
+re/match/s04/0041d910.c	Match\MatchS04_0041d910.cpp	0x0041d910	ok	_Clear63d584Pair	data-abs=2				0
+re/match/s04/0041da90.c	Match\MatchS04_0041da90.cpp	0x0041da90	ok	_DeltaTimeOutGet	data-abs=1				0
+re/match/s04/0041e080.c	Match\MatchS04_0041e080.cpp	0x0041e080	ok	_ScoreboardStateZeroInit	data-abs=12				0
+re/match/s04/0041e130.c	Match\MatchS04_0041e130.cpp	0x0041e130	ok	_TimerTrackSetter	data-abs=1				0
+re/match/s04/0041eda0.c	Match\MatchS04_0041eda0.cpp	0x0041eda0	ok	_TimerBitFieldSet	data-abs=1				0
+re/match/s04/0041f000.c	Match\MatchS04_0041f000.cpp	0x0041f000	ok	_TimerSlotDataCopy	data-abs=1				0
+re/match/s04/0041f090.c	Match\MatchS04_0041f090.cpp	0x0041f090	ok	_GetPlayerStateBits	data-abs=1				0
+re/match/s04/0041f1c0.c	Match\MatchS04_0041f1c0.cpp	0x0041f1c0	ok	_GetEventFlag	data-abs=1				0
+re/match/s08fu/00413f90.c	Match\MatchS08FU_00413f90.cpp	0x00413f90	ok	_TimerGetBasePtr	data-abs=1				0
+re/match/s10/0045ba00.c	Match\MatchS10_0045ba00.cpp	0x0045ba00	ok	_RaceResultIndexedStore	data-abs=1				0
+re/match/s10/0045c330.c	Match\MatchS10_0045c330.cpp	0x0045c330	ok	_PredNot45c330	wrapper-bound=1				0
+re/match/s10/0045db50.c	Match\MatchS10_0045db50.cpp	0x0045db50	ok	_FloatSliderStep	data-abs=1				0
+re/match/s03/h1_00417730.c	Vehicle\VehicleState.cpp	0x00417730	ok	_VehicleRaceAngleGet	data-abs=1				0
+re/match/s03/h1_0041ae20.c	Race\SubStateCallees.cpp	0x0041ae20 0x0041b520	fail:static-register-convention			FUN_0041ae20:REG			0
+re/match/s03/h2_00414180.c	Race\SubStateMachine.cpp	0x00414180	ok	_FUN_00414180	crt=1 cxx-bound=1 data-abs=8				0
+re/match/t01g/004111c0.c	Match\MatchT01G_004111c0.cpp	0x0040fc00 0x004102f0 0x004111c0	fail:static-register-convention			FUN_0040fc00:REG			0
+re/match/s07/0042aeb0.c	Match\MatchS07_0042aeb0.cpp	0x0042aeb0	ok	_MenuReadinessCheckB	data-abs=6 wrapper-bound=1				0
+re/match/s07/0042af50.c	Match\MatchS07_0042af50.cpp	0x0042af50	ok	_MenuReadinessCheckC	data-abs=7 wrapper-bound=1				0
+re/match/s07/0042aff0.c	Match\MatchS07_0042aff0.cpp	0x0042aff0	ok	_MenuButtonDetectA	data-abs=9 wrapper-bound=1				0
+re/match/s07/0042b180.c	Match\MatchS07_0042b180.cpp	0x0042b180	ok	_MenuButtonDetectB	data-abs=9 wrapper-bound=1				0
+re/match/s07/0042b310.c	Match\MatchS07_0042b310.cpp	0x0042b310	ok	_MenuButtonDetectC	data-abs=7 wrapper-bound=1				0
+re/match/s07/0042b540.c	Match\MatchS07_0042b540.cpp	0x0042b540	ok	_MenuButtonDetectD	data-abs=7 wrapper-bound=1				0
+re/match/s07/0042b770.c	Match\MatchS07_0042b770.cpp	0x0042b770	ok	_MenuButtonDetectE	data-abs=18 wrapper-bound=1				0
+re/match/s07/0042b8b0.c	Match\MatchS07_0042b8b0.cpp	0x0042b8b0	ok	_ScreenWidthGet	data-abs=1				0
+re/match/s07/0042b8c0.c	Match\MatchS07_0042b8c0.cpp	0x0042b8c0	ok	_ScreenHeightGet	data-abs=1				0
+re/match/s07/0042b8d0.c	Match\MatchS07_0042b8d0.cpp	0x0042b8d0	ok	_StatePhaseIsIdle	data-abs=1				0
+re/match/s07/0042b8e0.c	Match\MatchS07_0042b8e0.cpp	0x0042b8e0	ok	_StatePhaseIsTwo	data-abs=1				0
+re/match/s07/0042b8f0.c	Match\MatchS07_0042b8f0.cpp	0x0042b8f0	ok	_StatePhaseIsFinal	data-abs=1				0
+re/match/s07/0042b910.c	Match\MatchS07_0042b910.cpp	0x0042b910	ok	_RaceEndConstGet					0
+re/match/s07/0042b920.c	Match\MatchS07_0042b920.cpp	0x0042b920	ok	_ConstantGetter22					0
+re/match/s07/0042b930.c	Match\MatchS07_0042b930.cpp	0x0042b930	ok	_MenuAlphaGet	data-abs=1				0
+re/match/s07/0042b940.c	Match\MatchS07_0042b940.cpp	0x0042b940	ok	_StatePhaseSubSet	data-abs=1				0
+re/match/s07/0042b960.c	Match\MatchS07_0042b960.cpp	0x0042b960	ok	_CarSlotInit1P	data-abs=3 wrapper-bound=1				0
+re/match/s07/0042b9e0.c	Match\MatchS07_0042b9e0.cpp	0x0042b9e0	ok	_CarSlotAssign	data-abs=3 wrapper-bound=1				0
+re/match/s07/0042bb60.c	Match\MatchS07_0042bb60.cpp	0x0042bb60	ok	_MenuTeamBalance	data-abs=2				0
+re/match/s07/0042bde0.c	Match\MatchS07_0042bde0.cpp	0x0042bde0	ok	_HudRectEmitter5	wrapper-bound=1				0
+re/match/s07/0042bf30.c	Match\MatchS07_0042bf30.cpp	0x0042bf30	ok	_Post0042bf30	data-abs=10				0
+re/match/s07/0042bfb0.c	Match\MatchS07_0042bfb0.cpp	0x0042bfb0	ok	_MenuStateParamStore	data-abs=8 in-set=1				0
+re/match/s07/0042c1c0.c	Match\MatchS07_0042c1c0.cpp	0x0042c1c0	ok	_RaceInterruptFlagGet	data-abs=1				0
+re/match/s07/0042c1d0.c	Match\MatchS07_0042c1d0.cpp	0x0042c1d0	ok	_RaceStateArrayZero	data-abs=1				0
+re/match/s07/0042c2d0.c	Match\MatchS07_0042c2d0.cpp	0x0042c2d0	ok	_GetDat0067ecb4	data-abs=1				0
+re/match/s07/0042c2e0.c	Match\MatchS07_0042c2e0.cpp	0x0042c2e0	ok	_GetDat0067ecb8	data-abs=1				0
+re/match/s07/0042d300.c	Match\MatchS07_0042d300.cpp	0x0042d300	ok	_TimeDiffDecompose					0
+re/match/s07/0042d3a0.c	Match\MatchS07_0042d3a0.cpp	0x0042d3a0	ok	_RaceTransitionBufZero	data-abs=1				0
+re/match/s07/0042d3e0.c	Match\MatchS07_0042d3e0.cpp	0x0042d3e0	ok	_MenuEntryArrayInit	data-abs=1				0
+re/match/s07/0042e3a0.c	Match\MatchS07_0042e3a0.cpp	0x0042e3a0	ok	_MenuChromeShellA	data-abs=6 wrapper-bound=4				0
+re/match/s07/0042ebe0.c	Match\MatchS07_0042ebe0.cpp	0x0042ebe0	ok	_FrontendPlayerSlotCheck	data-abs=1				0
+re/match/s07/0042ee00.c	Match\MatchS07_0042ee00.cpp	0x0042ee00	ok	_SpriteSlotGate	data-abs=3 wrapper-bound=1				0
+re/match/s07/0042ee40.c	Match\MatchS07_0042ee40.cpp	0x0042ee40	ok	_FrontendModeDispatch	data-abs=11 in-set=1				0
+re/match/s07/0042ef40.c	Match\MatchS07_0042ef40.cpp	0x0042ef40	ok	_VehicleUnlockFlagGet	data-abs=1				0
+re/match/s07/0042f020.c	Match\MatchS07_0042f020.cpp	0x0042f020	fail:static-register-convention			FUN_0042f020:REG			0
+re/match/s07/0042f0b0.c	Match\MatchS07_0042f0b0.cpp	0x0042f0b0	ok	_GetFrameCounterPlus73	data-abs=1				0
+re/match/s07/0042f500.c	Match\MatchS07_0042f500.cpp	0x0042f500	ok	_GetDat0067ea64	data-abs=1				0
+re/match/s07/0042f510.c	Match\MatchS07_0042f510.cpp	0x0042f510	ok	_Vehicle0HandleGet	data-abs=1				0
+re/match/s07/0042f6a0.c	Match\MatchS07_0042f6a0.cpp	0x0042f6a0	ok	_GetRaceSubMode	data-abs=1				0
+re/match/s07/00430830.c	Match\MatchS07_00430830.cpp	0x00430830	ok	_SplitScreenTrackAssignment	data-abs=8				0
+re/match/s07/004309b0.c	Match\MatchS07_004309b0.cpp	0x004309b0	ok	_FrontendModeIndex	data-abs=1				0
+re/match/s07/0042f6b0.c	Match\MatchS07_0042f6b0.cpp	0x0042f6b0	ok	_MenuModeSync	data-abs=2				0
+re/match/s07/0042f7b0.c	Match\MatchS07_0042f7b0.cpp	0x0042f7b0	ok	_FrontendCursorUpdate	data-abs=3				0
+re/match/s07/0042fa00.c	Match\MatchS07_0042fa00.cpp	0x0042fa00	ok	_MenuTeamSelectTick	data-abs=4				0
+re/match/s07/0042fb70.c	Match\MatchS07_0042fb70.cpp	0x0042fb70	ok	_MenuSpriteDispatchB	crt=1 data-abs=11 wrapper-bound=5			_FUN_0042ac00 _FUN_0042ac50 _FUN_0042b8b0 _FUN_0042b8c0	0
+re/match/s07/0042fe30.c	Match\MatchS07_0042fe30.cpp	0x0042fe30	ok	_RaceEndFlagIfEndMode	data-abs=1 in-set=1				0
+re/match/s07/0042fe50.c	Match\MatchS07_0042fe50.cpp	0x0042fe50	ok	_RaceEndAltFlagIfEndMode	data-abs=1 in-set=1				0
+re/match/s07/0042fe80.c	Match\MatchS07_0042fe80.cpp	0x0042fe80	ok	_GetRaceEndFlag	data-abs=1				0
+re/match/s07/00430790.c	Match\MatchS07_00430790.cpp	0x00430790	ok	_GetDat0067f17c	data-abs=1				0
+re/match/s07/00430a10.c	Match\MatchS07_00430a10.cpp	0x00430a10	ok	_HudSlotTypePlayer0	data-abs=1				0
+re/match/s07/00430a60.c	Match\MatchS07_00430a60.cpp	0x00430a60	ok	_HudSlotTypePlayer1	data-abs=1				0
+re/match/s07/00430ab0.c	Match\MatchS07_00430ab0.cpp	0x00430ab0	ok	_HudSlotTypePlayer2	data-abs=1				0
+re/match/s07/00430b00.c	Match\MatchS07_00430b00.cpp	0x00430b00	ok	_TimeDisplaySetEntry	data-abs=3				0
+re/match/s07/00430b60.c	Match\MatchS07_00430b60.cpp	0x00430b60	ok	_MenuSlotCount	data-abs=4				0
+re/match/s07/00431ae0.c	Match\MatchS07_00431ae0.cpp	0x00431ae0	ok	_DefaultParam_SetField04	data-abs=1				0
+re/match/s07/00431af0.c	Match\MatchS07_00431af0.cpp	0x00431af0	ok	_DefaultParam_SetField08	data-abs=1				0
+re/match/s07/00431b00.c	Match\MatchS07_00431b00.cpp	0x00431b00	ok	_DefaultParam_SetField00	data-abs=1				0
+re/match/s07/00431b20.c	Match\MatchS07_00431b20.cpp	0x00431b20	ok	_SinGlobalProduct431b20	data-abs=2				0
+re/match/s07/00431b50.c	Match\MatchS07_00431b50.cpp	0x00431b50	ok	_SinGlobalProduct431b50	data-abs=2				0
+re/match/s07/00431b60.c	Match\MatchS07_00431b60.cpp	0x00431b60	ok	_SinGlobalProduct431b60	data-abs=2				0
+re/match/s07/00431b70.c	Match\MatchS07_00431b70.cpp	0x00431b70	ok	_MenuFlagDat007f0f10Get	data-abs=1				0
+re/match/s07/00431b80.c	Match\MatchS07_00431d00.cpp	0x00431b80 0x00431d00	fail:static-register-convention			FUN_00431b80:REG			0
+re/match/s07/00431d90.c	Match\MatchS07_00431d90.cpp	0x00431d90	ok	_FrontendPanelFlagAdvance	data-abs=19				0
+re/match/s07/00431f30.c	Match\MatchS07_00431f30.cpp	0x00431f30	ok	_FrontendPageIdDispatch	data-abs=18 in-set=1				0
+re/match/s14/00484c70.c	Match\MatchS14_00484c70.cpp	0x00484c70	ok	_WorldObjectsBaseGet	data-abs=2				0
+re/match/s14/00484c90.c	Match\MatchS14_00484c90.cpp	0x00484c90	ok	_Zero484c90	data-abs=3				0
+re/match/s14/00484cf0.c	Match\MatchS14_00484cf0.cpp	0x00484cf0	ok	_RG_484cf0	data-abs=4 wrapper-bound=2				0
+re/match/s14/00485070.c	Match\MatchS14_00485070.cpp	0x00485070	ok	_RG_485070	data-abs=4 wrapper-bound=2				0
+re/match/s14/004853b0.c	Match\MatchS14_004853b0.cpp	0x004853b0	ok	_SmplFzxStateBlockGetLoggedBody	data-abs=1 wrapper-bound=2				0
+re/match/s08/004325c0.c	Match\MatchS08_004325c0.cpp	0x004325c0	ok	_MenuAnimTickTwin	crt=1 data-abs=7			_FUN_0042ac50	0
+re/match/s08/00432ad0.c	Match\MatchS08_00432ad0.cpp	0x00432ad0	ok	_MenuDimOverlayFadeStep	data-abs=2 wrapper-bound=1				0
+re/match/s08/004331a0.c	Match\MatchS08_004331a0.cpp	0x004331a0	ok	_RaceFinalizeOnce	data-abs=9 in-set=3				0
+re/match/s08/00436810.c	Match\MatchS08_00436810.cpp	0x00436810	ok	_LocalPlayerSlotCheck	data-abs=1 wrapper-bound=1				0
+re/match/s08/0043aee0.c	Match\MatchS08_0043aee0.cpp	0x0043aee0	ok	_MenuSlotFlagSetCurrent	data-abs=3 wrapper-bound=1				0
+re/match/s08/004425d0.c	Match\MatchS08_004425d0.cpp	0x004425d0	ok	_UtilZeroTable8964c0	data-abs=2				0
+re/match/s08/00442c80.c	Match\MatchS08_00442c80.cpp	0x00442c80	ok	_RubberBandGateMatched	data-abs=2 wrapper-bound=1				0
+re/match/s08/00442cc0.c	Match\MatchS08_00442cc0.cpp	0x00442cc0	ok	_AiVehicleFloat4Get	data-abs=2				0
+re/match/s08/00442ce0.c	Match\MatchS08_00442ce0.cpp	0x00442ce0	ok	_RubberBandGripMatched	data-abs=3 in-set=1 wrapper-bound=1				0
+re/match/s08/00443300.c	Match\MatchS08_00443300.cpp	0x00443300	ok	_AiSplineEval_x87_match					0
+re/match/s08/00448700.c	Match\MatchS08_00448700.cpp	0x00448700	ok	_VehicleSeedWritePair	data-abs=3 wrapper-bound=1				0
+re/match/s08/0044b000.c	Match\MatchS08_0044b000.cpp	0x0044b000	ok	_SlotRecordPositionPtr	data-abs=1 wrapper-bound=1				0
+re/match/s06/00426080.c	Match\MatchS06_00426080.cpp	0x00426080	ok	_GlobalDat00656ed8Get	data-abs=1				0
+re/match/s06/00426090.c	Match\MatchS06_00426090.cpp	0x00426090	ok	_GlobalDat0066ce58Get	data-abs=1				0
+re/match/s06/004260a0.c	Match\MatchS06_004260a0.cpp	0x004260a0	ok	_GetDat00657438	data-abs=1				0
+re/match/s06/004260b0.c	Match\MatchS06_004260b0.cpp	0x004260b0	ok	_GetDat0065743c	data-abs=1				0
+re/match/s06/004260e0.c	Match\MatchS06_004260e0.cpp	0x004260e0	ok	_FUN_004260e0	data-abs=2				0
+re/match/s06/004262f0.c	Match\MatchS06_004262f0.cpp	0x004262f0	ok	_FUN_004262f0	data-abs=4 in-set=2 wrapper-bound=2				0
+re/match/s06/00426ba0.c	Match\MatchS06_00426ba0.cpp	0x00426ba0	ok	_HudDrawEnabled	data-abs=1				0
+re/match/s06/00426bb0.c	Match\MatchS06_00426bb0.cpp	0x00426bb0	ok	_Global66d6d8Get	data-abs=1				0
+re/match/s06/00426bc0.c	Match\MatchS06_00426bc0.cpp	0x00426bc0	ok	_GetDat0066d6e0	data-abs=1				0
+re/match/s06/00426bd0.c	Match\MatchS06_00426bd0.cpp	0x00426bd0	ok	_GetTableEntry0066d658	data-abs=2				0
+re/match/s06/00426c00.c	Match\MatchS06_00426c00.cpp	0x00426c00	ok	_GameStateFlagGet	data-abs=1				0
+re/match/s06/00426c10.c	Match\MatchS06_00426c10.cpp	0x00426c10	ok	_TimerDispatch10	data-abs=1 wrapper-bound=3				0
+re/match/s06/00426c30.c	Match\MatchS06_00426c30.cpp	0x00426c30	ok	_TimerDispatch30	data-abs=1 wrapper-bound=2				0
+re/match/s06/00426c70.c	Match\MatchS06_00426c70.cpp	0x00426c70	ok	_TimerDispatch70	data-abs=1 wrapper-bound=2				0
+re/match/s06/00426cb0.c	Match\MatchS06_00426cb0.cpp	0x00426cb0	ok	_SlotIndexToPtr	data-abs=1				0
+re/match/s06/00426cc0.c	Match\MatchS06_00426cc0.cpp	0x00426cc0	ok	_VehicleTable4cPtrGet	data-abs=1				0
+re/match/s06/00426cf0.c	Match\MatchS06_00426cf0.cpp	0x00426cf0	ok	_GetDat0066d6e4	data-abs=1				0
+re/match/s06/00426d00.c	Match\MatchS06_00426d00.cpp	0x00426d00	ok	_FrontendArraySlotGet	data-abs=1				0
+re/match/s06/00426d20.c	Match\MatchS06_00426d20.cpp	0x00426d20	ok	_FUN_00426d20	data-abs=2 wrapper-bound=3				0
+re/match/s06/00426d90.c	Match\MatchS06_00426d90.cpp	0x00426d90	ok	_HandleArrayRelease	data-abs=1 wrapper-bound=1				0
+re/match/s06/00426dc0.c	Match\MatchS06_00426dc0.cpp	0x00426dc0	ok	_FrontendRaycastForward	data-abs=1 wrapper-bound=1				0
+re/match/s06/00426de0.c	Match\MatchS06_00426de0.cpp	0x00426de0	ok	_FrontendFloatGet426de0	data-abs=1				0
+re/match/s06/00426df0.c	Match\MatchS06_00426df0.cpp	0x00426df0	ok	_FrontendFloatGet426df0	data-abs=1				0
+re/match/s06/00427580.c	Match\MatchS06_00427580.cpp	0x00427580	ok	_FrontendQuadParamInit427580	data-abs=9				0
+re/match/s06/00427680.c	Match\MatchS06_00427680.cpp	0x00427680	fail:static-register-convention			FUN_00427680:REG			0
+re/match/s06/00427780.c	Match\MatchS06_00427780.cpp	0x00427780	ok	_FontText_StringTableLookup	data-abs=1				0
+re/match/s06/004277a0.c	Match\MatchS06_004277a0.cpp	0x004277a0	fail:static-register-convention			FUN_004277a0:REG			0
+re/match/s06/00427840.c	Match\MatchS06_00427840.cpp	0x00427840	fail:static-register-convention			FUN_00427840:REG			0
+re/match/s06/00427880.c	Match\MatchS06_00427880.cpp	0x00427880	fail:static-register-convention			FUN_00427880:REG			0
+re/match/s06/004278d0.c	Match\MatchS06_004278d0.cpp	0x004278d0	ok	_FUN_004278d0	crt=2 data-abs=3 in-set=1 wrapper-bound=4			_FUN_004277a0	0
+re/match/s06/00427990.c	Match\MatchS06_00427990.cpp	0x00427990	ok	_FUN_00427990	crt=2 data-abs=4 in-set=1 wrapper-bound=4			_FUN_004277a0	0
+re/match/s06/00427ad0.c	Match\MatchS06_00427ad0.cpp	0x00427ad0	ok	_MenuMenusBB	crt=2 data-abs=4 in-set=1 wrapper-bound=4			_FUN_004277a0	0
+re/match/s06/00427be0.c	Match\MatchS06_00427be0.cpp	0x00427be0	ok	_FUN_00427be0	crt=2 data-abs=4 wrapper-bound=4			_FUN_00427840	0
+re/match/s06/00427c90.c	Match\MatchS06_00427c90.cpp	0x00427c90	ok	_GetDat0067d84c	data-abs=1				0
+re/match/s06/00427ca0.c	Match\MatchS06_00427ca0.cpp	0x00427ca0	ok	_FUN_00427ca0	crt=2 data-abs=6 in-set=2 wrapper-bound=4		_FUN_00427880		1
+re/match/s06/00427e00.c	Match\MatchS06_00427e00.cpp	0x00427e00	ok	_FUN_00427e00	crt=2 data-abs=3 in-set=3 wrapper-bound=5		_FUN_00427680 _FUN_004277a0		1
+re/match/s06/00427f00.c	Match\MatchS06_00427f00.cpp	0x00427f00	ok	_FUN_00427f00	crt=2 data-abs=3 in-set=2 wrapper-bound=4		_FUN_00427680 _FUN_00427840		1
+re/match/s06/00427ff0.c	Match\MatchS06_00427ff0.cpp	0x00427ff0	ok	_FUN_00427ff0	crt=2 data-abs=3 in-set=3 wrapper-bound=7		_FUN_00427680 _FUN_004277a0		1
+re/match/s06/00428140.c	Match\MatchS06_00428140.cpp	0x00428140	ok	_FUN_00428140	crt=2 data-abs=4 in-set=3 wrapper-bound=5		_FUN_00427680 _FUN_004277a0		1
+re/match/s06/004282a0.c	Match\MatchS06_004282a0.cpp	0x004282a0	fail:wrapper-redefines-globals						0
+re/match/s06/00428320.c	Match\MatchS06_00428320.cpp	0x00428320	ok	_TextWidthMeasureB	crt=2 data-abs=3 wrapper-bound=1			_FUN_00427840	0
+re/match/s06/00428590.c	Match\MatchS06_00428590.cpp	0x00428590	ok	_ViewportInit	data-abs=1 in-set=4 wrapper-bound=2				0
+re/match/s06/00428610.c	Match\MatchS06_00428610.cpp	0x00428610	ok	_ViewportScaledRectDraw	data-abs=2 in-set=2 wrapper-bound=1				0
+re/match/s06/00428760.c	Match\MatchS06_00428760.cpp	0x00428760	ok	_ViewportScaledRectDraw_Arg7Zero	in-set=1				0
+re/match/s06/004288a0.c	Match\MatchS06_004288a0.cpp	0x004288a0	ok	_FUN_004288a0	data-abs=2 in-set=3				0
+re/match/s06/00428a30.c	Match\MatchS06_00428a30.cpp	0x00428a30	ok	_FUN_00428a30	crt=3 data-abs=5 in-set=5 wrapper-bound=7				0
+re/match/s06/00428bf0.c	Match\MatchS06_00428bf0.cpp	0x00428bf0	ok	_TitleBuildInfoRender	crt=3 data-abs=2 in-set=5 wrapper-bound=6				0
+re/match/s06/00428d30.c	Match\MatchS06_00428d30.cpp	0x00428d30	ok	_FUN_00428d30	data-abs=3 in-set=9 wrapper-bound=9				0
+re/match/s06/00429290.c	Match\MatchS06_00429290.cpp	0x00429240 0x00429290	fail:static-register-convention			FUN_00429240:REG			0
+re/match/s06/004292c0.c	Match\MatchS06_004292c0.cpp	0x004292c0	ok	_UtilWritePtr					0
+re/match/s06/004292d0.c	Match\MatchS06_004292d0.cpp	0x004292d0	ok	_FUN_004292d0	wrapper-bound=1		_FUN_0055deb0		0
+re/match/s06/00429300.c	Match\MatchS06_00429300.cpp	0x00429300	ok	_HudOverlayFloatGet	data-abs=1				0
+re/match/s06/004295a0.c	Match\MatchS06_004295a0.cpp	0x004295a0	ok	_HudDualLabelRender	data-abs=1 in-set=1 wrapper-bound=1				0
+re/match/s06/00429620.c	Match\MatchS06_00429620.cpp	0x00429620	ok	_FUN_00429620	crt=1 data-abs=4 in-set=1				0
+re/match/s06/00429660.c	Match\MatchS06_00429660.cpp	0x00429660	ok	_FUN_00429660	data-abs=1 in-set=3 wrapper-bound=3				0
+re/match/s06/00429820.c	Match\MatchS06_00429820.cpp	0x00429820	ok	_Clear8991b0Pair	data-abs=2				0
+re/match/s06/00429870.c	Match\MatchS06_00429870.cpp	0x00429870	ok	_LapTimeALessThanB	data-abs=6				0
+re/match/s06/004298c0.c	Match\MatchS06_004298c0.cpp	0x004298c0	ok	_Clear67d99c_x4	data-abs=4				0
+re/match/s06/004299d0.c	Match\MatchS06_004299d0.cpp	0x004299d0	ok	_TimeRecordWriteTrackBest	data-abs=6 in-set=1				0
+re/match/s06/00429a30.c	Match\MatchS06_00429a30.cpp	0x00429a30	ok	_MenuMenusBE	data-abs=6 in-set=1				0
+re/match/s06/00429a70.c	Match\MatchS06_00429a70.cpp	0x00429a70	ok	_LapFracGetBySlot	data-abs=1				0
+re/match/s06/00429a80.c	Match\MatchS06_00429a80.cpp	0x00429a80	ok	_LapLapsGetBySlot	data-abs=1				0
+re/match/s06/00429a90.c	Match\MatchS06_00429a90.cpp	0x00429a90	ok	_LapSecsGetBySlot	data-abs=1				0
+re/match/s06/00429aa0.c	Match\MatchS06_00429aa0.cpp	0x00429aa0	ok	_GameStateSlotsFill	crt=1 data-abs=7 in-set=1 wrapper-bound=1				0
+re/match/s06/00429b30.c	Match\MatchS06_00429b30.cpp	0x00429b30	ok	_Init429b30	data-abs=3 in-set=2				0
+re/match/s06/00429b70.c	Match\MatchS06_00429b70.cpp	0x00429b70	ok	_Init429b70	data-abs=4 in-set=2				0
+re/match/s06/00429e10.c	Match\MatchS06_00429e10.cpp	0x00429e10	ok	_FUN_00429e10	data-abs=7 in-set=8 wrapper-bound=11				0
+re/match/s06/0042a470.c	Match\MatchS06_0042a470.cpp	0x0042a470	ok	_FUN_0042a470	data-abs=2 wrapper-bound=1				0
+re/match/s06/0042a530.c	Match\MatchS06_0042a530.cpp	0x0042a530	ok	_FUN_0042a530	in-set=2				0
+re/match/s06/0042a5d0.c	Match\MatchS06_0042a5d0.cpp	0x0042a5d0	ok	_FUN_0042a5d0	crt=1 data-abs=4 in-set=1 wrapper-bound=1				0
+re/match/s06/0042a640.c	Match\MatchS06_0042a640.cpp	0x0042a640	ok	_PathBuilderLoad	crt=1 data-abs=4 in-set=1 wrapper-bound=1				0
+re/match/s06/0042a6b0.c	Match\MatchS06_0042a6b0.cpp	0x0042a6b0	ok	_FUN_0042a6b0	crt=1 data-abs=4 in-set=1 wrapper-bound=2				0
+re/match/s06/0042a740.c	Match\MatchS06_0042a740.cpp	0x0042a740	ok	_FUN_0042a740	data-abs=5 in-set=1 wrapper-bound=5				0
+re/match/s06/0042a7f0.c	Match\MatchS06_0042a7f0.cpp	0x0042a7f0	ok	_FUN_0042a7f0	crt=1 data-abs=4 in-set=1 wrapper-bound=1				0
+re/match/s06/0042a860.c	Match\MatchS06_0042a860.cpp	0x0042a860	ok	_FUN_0042a860	crt=1 data-abs=4 in-set=1 wrapper-bound=1				0
+re/match/s06/0042a8d0.c	Match\MatchS06_0042a8d0.cpp	0x0042a8d0	ok	_FUN_0042a8d0	data-abs=3				0
+re/match/s06/0042a9c0.c	Match\MatchS06_0042a9c0.cpp	0x0042a9c0	ok	_ModeCodeLookup	data-abs=1				0
+re/match/s06/0042aab0.c	Match\MatchS06_0042aab0.cpp	0x0042aab0	ok	_UtilInit898a90	data-abs=2				0
+re/match/s06/0042aad0.c	Match\MatchS06_0042aad0.cpp	0x0042aad0	fail:static-register-convention			FUN_0042aad0:REG			0
+re/match/s06/0042aae0.c	Match\MatchS06_0042aae0.cpp	0x0042aae0	ok	_MenuIm2DQuad	data-abs=5				0
+re/match/s06/0042ac00.c	Match\MatchS06_0042ac00.cpp	0x0042ac00	fail:static-register-convention			FUN_0042ac00:REG			0
+re/match/s06/0042ac50.c	Match\MatchS06_0042ac50.cpp	0x0042ac50	fail:static-register-convention			FUN_0042ac50:REG			0
+re/match/s06/0042ac90.c	Match\MatchS06_0042ac90.cpp	0x0042ac90	ok	_MenuEntryGet	data-abs=3				0
+re/match/s06/0042ad10.c	Match\MatchS06_0042ad10.cpp	0x0042ad10	fail:static-register-convention			FUN_0042ad10:REG			0
+re/match/s06/0042ad90.c	Match\MatchS06_0042ad90.cpp	0x0042ad90	fail:static-register-convention			FUN_0042ad90:REG			0
+re/match/s06/0042ae10.c	Match\MatchS06_0042ae10.cpp	0x0042ae10	ok	_MenuReadinessCheckA	data-abs=6 in-set=1				0
+re/match/s03/h1_0041ad60.c	Render\ParticleEmitterCtors.cpp	0x0041ad60	fail:static-register-convention			FUN_0041ad60:REG			0
+re/match/s24/00550bc0.c	Save\VfsStream.cpp	0x00550bc0	ok	_VfsStreamGetType					0
+re/match/s01/00404e80.c	Save\GameSaveBuffer.cpp	0x00404e80 0x00404ee0	ok	_DeserializeFromBuffer _SerializeToBuffer	data-abs=9				0
+re/match/s01/00404e50.c	Save\GameSave.cpp	0x00404e50 0x00404f50 0x00404f80	ok	_SaveLoad _SaveWrite _SaveFileExists	data-abs=2 wrapper-bound=1 wrapper-static=3				0
+re/match/s16/004963e0.c	Save\SettingsConfig.cpp	0x004963e0	fail:wrapper-redefines-globals						0
+re/match/s16/00496400.c	Match\PortSave01_Config.cpp	0x00496400	fail:wrapper-redefines-globals						0
+re/match/s16/00498910.c	Match\PortSave01_Config.cpp	0x00498910 0x00498950 0x004989b0	fail:wrapper-redefines-globals						0
+re/match/s09/00451990.c	Match\MatchS09_00451990.cpp	0x00451990	ok	_WarzonePontoonBoxCarry	exe-by-name=1 wrapper-bound=1				0
+re/match/s09/00451a50.c	Match\MatchS09_00451a50.cpp	0x00451a50	ok	_WarzonePontoonTrackBody	exe-by-name=1 wrapper-bound=2				0
+re/match/s09/00451cc0.c	Match\MatchS09_00451cc0.cpp	0x00451cc0	ok	_WarzonePontoonDeactivate					0
+re/match/s09/004576b0.c	Match\MatchS09_004576b0.cpp	0x004576b0	ok	_AnyActive4576b0	data-abs=2				0
+re/match/s09/00458fa0.c	Match\MatchS09_00458fa0.cpp	0x00458fa0	ok	_TtlSet68b1b0	data-abs=1				0
+re/match/s09/00451690.c	Match\MatchS09_00451690.cpp	0x00451690	ok	_WarzonePontoonLoopCb	wrapper-bound=2				0
+re/match/s09/00451ce0.c	Match\MatchS09_00451ce0.cpp	0x00451ce0	ok	_WarzonePontoonSample	in-set=1				0
+re/match/s09/00458920.c	Match\MatchS09_00458920.cpp	0x00458920	ok	_PK_458920	data-abs=2 in-set=2 wrapper-bound=6		_FUN_00458570		1
+re/match/s01/00404e00.c	Vehicle\CarMaterialTables.cpp	0x00404e00 0x00404e20	ok	_IdxPtr404e00 _IdxPtr404e20	data-abs=4				0
+re/match/s01/00401340.c	Match\MatchS01.cpp	0x00401340	ok	_CupSpinSpeedAndColor	abs-call=2 data-abs=4				0
+re/match/s01/00401570.c	Match\MatchS01.cpp	0x00401570 0x00401ee0	ok	_EntryTableScanByKey _EntityTableSelectUpdate	abs-call=2 data-abs=2				0
+re/match/s01/004026d0.c	Match\MatchS01.cpp	0x004026d0	ok	_BootQueueFlush	abs-call=5				0
+re/match/s01/00402f50.c	Match\MatchS01.cpp	0x00402f50 0x00402f80	ok	_BootDefaultParamsInit _CupFloatInit	data-abs=1				0
+re/match/s01/00405890.c	Match\MatchS01.cpp	0x00405890	ok	_Pred405890	data-abs=2				0
+re/match/s01/00407a60.c	Match\MatchS01.cpp	0x00407a60 0x00408a50 0x00408ad0	ok	_UtilTableInit8a9620 _PerCarRaceProgressGet _RaceScoreFloatGetBySlot	data-abs=1				0
+re/match/s01/00409290.c	Match\MatchS01.cpp	0x00409290	ok	_SnapNodeToSafeStartLines	in-set=2				0
+re/match/s01/00407600.c	Match\MatchS01.cpp	0x00407600	ok	_PlayerPositionPtr	abs-call=1 data-abs=1				0
+re/match/s01/00407a20.c	Match\MatchS01_00407a20.cpp	0x00407a20	ok	_GetAiLapCounter	data-abs=1				0
+re/match/s01/00407cd0.c	Match\MatchS01_00407cd0.cpp	0x00407cd0	ok	_PP_407cd0	in-set=1				0
+re/match/s02/0040b6b0.c	Match\MatchS02_0040b6b0.cpp	0x0040b6b0	ok	_ModeScoreGetBySlot	data-abs=1				0
+re/match/s02/0040b7a0.c	Match\MatchS02_0040b7a0.cpp	0x0040b7a0	ok	_HotkeyStringBaseGet	data-abs=1				0
+re/match/s02/0040b7b0.c	Match\MatchS02_0040b7b0.cpp	0x0040b7b0	ok	_PlayerHotkeyTableGet	data-abs=4				0
+re/match/s02/0040ad20.c	Match\MatchS02_0040ad20.cpp	0x0040ad20	ok	_FrontendGlobalGet	data-abs=1				0
+re/match/s02/0040b6c0.c	Match\MatchS02_0040b6c0.cpp	0x0040b6c0	ok	_FrontendArrayGet	data-abs=1				0
+re/match/s02/0040b620.c	Match\MatchS02_0040b620.cpp	0x0040b620	ok	_SlotSortByModeScore	data-abs=2				0
+re/match/s02/00411d60.c	Match\MatchS02_00411d60.cpp	0x00411d60	ok	_ReplayCheckTimer	data-abs=2 in-set=1				0
+re/match/s02/0040d250.c	Match\MatchS02_0040d250.cpp	0x0040d250	ok	_DoubleDerefIndexedGetter	data-abs=2				0
+re/match/s02/0040bb70.c	Match\MatchS02_0040bb70.cpp	0x0040bb70	ok	_SpriteLookupTableA	data-abs=1 wrapper-bound=1				0
+re/match/s02/0040bb90.c	Match\MatchS02_0040bb90.cpp	0x0040bb90	ok	_SpriteLookupTableB	data-abs=1 wrapper-bound=1				0
+re/match/s02/0040bb50.c	Match\MatchS02_0040bb50.cpp	0x0040bb50	ok	_SpriteLookupC	data-abs=1 wrapper-bound=1				0
+re/match/s02/0040bb30.c	Match\MatchS02_0040bb30.cpp	0x0040bb30	ok	_Search40bb30	data-abs=1 wrapper-bound=1				0
+re/match/s02/0040bbb0.c	Match\PortTop_0040bbb0.cpp	0x0040bbb0	ok	_Orig_0040bbb0	data-abs=6 in-set=17 wrapper-bound=11				0
+re/match/s12/004759b0.c	Match\PortTop_004759b0.cpp	0x004759b0	ok	_Orig_004759b0	data-abs=5 in-set=1				0
+re/match/s12/00475ef0.c	Match\PortTop_00475ef0.cpp	0x00475ef0	ok	_Orig_00475ef0	data-abs=2 wrapper-bound=1				0
+re/match/s12/00476390.c	Match\PortTop_00476390.cpp	0x00476390	ok	_Orig_00476390	data-abs=3 in-set=1 wrapper-bound=3				0
+re/match/s12/00475ea0.c	Match\PortTop_00475ea0.cpp	0x00475ea0	ok	_Orig_00475ea0	data-abs=3 wrapper-bound=1				0
+re/match/s12/00477e40.c	Match\PortTop_00477e40.cpp	0x00477e40	ok	_Orig_00477e40	data-abs=2 in-set=1 wrapper-static=1				0
+re/match/s12/00477b40.c	Match\PortTop_00477b40.cpp	0x00477b40	ok	_Orig_00477b40	data-abs=2 in-set=1				0
+re/match/s03/raw_0041a980.c	Match\PortTop_0041a980.cpp	0x0041a980	ok	_Orig_0041a980	data-abs=1 wrapper-bound=1 wrapper-static=1				0
+re/match/s21/004d7ff0.c	Match\PortTop_004d7ff0.cpp	0x004d7ff0	ok	_Orig_004d7ff0					0
+re/match/s12/00475a00.c	Match\PortTop_00475a00.cpp	0x00475a00	ok	_Orig_00475a00	data-abs=4 wrapper-bound=2				0
+re/match/s12/00475d90.c	Match\PortTop_00475d90.cpp	0x00475d90	ok	_Orig_00475d90	data-abs=6 in-set=1				0
+re/match/s14/00489290.c	Match\PortTop_00489290.cpp	0x00489290	ok	_Orig_00489290	data-abs=1				0
+re/match/s14/00487150.c	Match\PortTop_00487e00.cpp	0x00487150 0x00487e00	fail:static-register-convention			FUN_00487150:REG			0
+re/match/s14/00487140.c	Match\PortTop_00487140.cpp	0x00487140	ok	_Orig_00487140	data-abs=1 in-set=1				0
+re/match/s14/004892c0.c	Match\PortTop_004892c0.cpp	0x004892c0	ok	_Orig_004892c0	data-abs=2 in-set=3				0
+re/match/s14/004893a0.c	Match\PortTop_004893a0.cpp	0x004893a0	ok	_Orig_004893a0	in-set=1				0
+re/match/s14/00485d90.c	Match\PortTop_00485d90.cpp	0x00485d90	ok	_Orig_00485d90	data-abs=2 in-set=3				0
+re/match/s14/00485e10.c	Match\PortTop_00485e10.cpp	0x00485e10	ok	_Orig_00485e10	data-abs=2 in-set=1				0
+re/match/s14/004862d0.c	Match\PortTop_004862d0.cpp	0x004862d0	ok	_Orig_004862d0	data-abs=5 in-set=4				0
+re/match/s14/00486350.c	Match\PortTop_00486350.cpp	0x00486350	ok	_Orig_00486350	data-abs=2 wrapper-static=1				0
+re/match/s15/0048eac0.c	Match\PortTop_0048eac0.cpp	0x0048eac0	ok	_Orig_0048eac0	data-abs=9 wrapper-static=2				0
+re/match/s15/0048fdd0.c	Match\PortTop_0048fdd0.cpp	0x0048fdd0	ok	_Orig_0048fdd0	data-abs=9 wrapper-static=1				0
+re/match/s14/0048cee0.c	Match\PortTop_0048cee0.cpp	0x0048cee0	fail:static-register-convention			FUN_0048cee0:REG			0
+re/match/s15/0048cf70.c	Match\PortTop_0048cf70.cpp	0x0048cf70	ok	_Orig_0048cf70	data-abs=1 in-set=1				0
+re/match/s15/0048e820.c	Match\PortTop_0048e820.cpp	0x0048e820	ok	_Orig_0048e820	data-abs=3 wrapper-bound=2				0
+re/match/s14/0048a460.c	Match\PortTop_0048a460.cpp	0x0048a460	ok	_Orig_0048a460	data-abs=1				0
+re/match/s14/0048bbe0.c	Match\PortTop_0048bbe0.cpp	0x0048bbe0	ok	_Orig_0048bbe0	data-abs=2 wrapper-static=2				0
+re/match/s18/004b3bf0.c	Match\PortTop_004b3bf0.cpp	0x004b3bf0	ok	_Orig_004b3bf0	wrapper-bound=5				0
+re/match/s01/raw/00401630.c	Match\PortTop_00401630.cpp	0x00401630	ok	_Orig_00401630	crt=2 in-set=1 wrapper-bound=1				0
+re/match/s01/00401690.c	Match\PortTop_004025f0.cpp	0x00401690 0x004025f0	fail:static-register-convention			FUN_00401690:REG			0
+re/match/s14/0048bc10.c	Match\PortTop_0048bc10.cpp	0x0048bc10	ok	_Orig_0048bc10	data-abs=1 wrapper-static=1				0
+re/match/s14/004881d0.c	Match\MatchS14_004881d0.cpp	0x004881d0	ok	_Obj7030a8Create	data-abs=3 in-set=1 wrapper-bound=4				0
+re/match/s14/004880a0.c	Match\MatchS14_004880a0.cpp	0x004880a0	ok	_Obj7030acCreate	data-abs=2 wrapper-bound=4				0
+re/match/rwl02/004e7e30.c	Match\PortTop_004e7e30.cpp	0x004e7e30	ok	_Orig_004e7e30	wrapper-bound=1				0
+re/match/rwl02/004e8090.c	Match\PortTop_004e8090.cpp	0x004e8090	ok	_Orig_004e8090	wrapper-bound=1				0
+re/match/s14/00489250.c	Match\PortTop_00489250.cpp	0x00489250	ok	_Orig_00489250	data-abs=2 wrapper-bound=2				0
+re/match/s01/00401000.c	Match\PortTop_00401000.cpp	0x00401000	ok	_Orig_00401000	crt=2 data-abs=7 in-set=8 wrapper-bound=9				0
+re/match/s01/raw/004014b0.c	Match\PortTop_004014b0.cpp	0x004014b0	ok	_Orig_004014b0	data-abs=4 wrapper-bound=7				0
+re/match/s19/004c1800.c	Match\PortTop_004c1800.cpp	0x004c1800	ok	_Orig_004c1800					0
+re/match/s19/004c1840.c	Match\PortTop_004c1840.cpp	0x004c1840	ok	_Orig_004c1840					0
+re/match/rwl02/004e4900.c	Match\PortTop_004e4900.cpp	0x004e4900	ok	_Orig_004e4900					0
+re/match/rwl02/004e4b90.c	Match\PortTop_004e4b90.cpp	0x004e4b90	ok	_Orig_004e4b90	data-abs=2				0
+re/match/rwl02/004e48e0.c	Match\PortTop_004e48e0.cpp	0x004e48e0	ok	_Orig_004e48e0	wrapper-bound=1				0
+re/match/s18/004b5320.c	Match\PortTop_004b5320.cpp	0x004b5320	ok	_Orig_004b5320	wrapper-bound=2				0
+re/match/s01/004026d0.c	Match\PortTop_004026d0.cpp	0x004026d0	ok	_Orig_004026d0	in-set=4 wrapper-bound=1				0
+re/match/s01/00404830.c	Match\PortTop_00404830.cpp	0x00404830	ok	_Orig_00404830	data-abs=2				0
+re/match/s03/h2_00412890.c	Match\PortTop_00412890.cpp	0x00412890	ok	_Orig_00412890	data-abs=2 in-set=1				0
+re/match/s16/00496940.c	Match\PortTop_00496940.cpp	0x00496940	ok	_Orig_00496940	data-abs=3 wrapper-bound=1				0
+re/match/topm01/0047ba00.c	Match\PortTop_0047ba00.cpp	0x0047ba00	ok	_Orig_0047ba00	in-set=1				0
+re/match/s18/004b6520.c	Match\PortTop_004b6520.cpp	0x004b6520	ok	_Orig_004b6520	wrapper-bound=1				0
+re/match/s05/00420d00.c	Match\PortTop_00420d00.cpp	0x00420d00	ok	_Orig_00420d00	data-abs=5 wrapper-static=1				0
+re/match/s11/00471df0.c	Match\PortTop_00471df0.cpp	0x00471530 0x00471df0	ok	_FUN_00471530 _Orig_00471df0	data-abs=5	FUN_00471530:std			0
+re/match/s11/00471eb0.c	Match\PortTop_00471eb0.cpp	0x00471eb0	ok	_Orig_00471eb0	in-set=1				0
+re/match/s11/004723d0.c	Match\PortTop_004723d0.cpp	0x004723d0	ok	_Orig_004723d0	data-abs=40				0
+re/match/s06/00428390.c	Match\PortTop_00428390.cpp	0x00428390	ok	_Orig_00428390	data-abs=1				0
+re/match/s03/raw_00413b80.c	Match\PortTop_00413b80.cpp	0x00413b80	ok	_Orig_00413b80	data-abs=1 wrapper-static=3				0
+re/match/s12/004770c0.c	Match\PortTop_004770c0.cpp	0x004770c0	ok	_Orig_004770c0	data-abs=16 wrapper-bound=12				0
+re/match/s11/00474db0.c	Match\PortTop_00474db0.cpp	0x00474db0	ok	_Orig_00474db0	data-abs=1 in-set=1				0
+re/match/s03/raw_00413bb0.c	Match\PortTop_00413bb0.cpp	0x00413bb0	ok	_Orig_00413bb0	data-abs=1 wrapper-static=1				0
+re/match/s12/004768c0.c	Match\PortTop_004768c0.cpp	0x004768c0	ok	_Orig_004768c0	data-abs=1 in-set=2 wrapper-bound=2				0
+re/match/s02/0040ad30.c	Match\MatchS02_0040ad30.cpp	0x0040ad30	ok	_UtilSet8a95ac	data-abs=1				0
+re/match/s02/0040b250.c	Match\MatchS02_0040b250.cpp	0x0040b250	ok	_UtilReset8a9500	data-abs=2				0
+re/match/s02/0040b430.c	Match\MatchS02_0040b430.cpp	0x0040b430	ok	_UtilFieldAdd8a94f0	data-abs=1				0
+re/match/s02/0040b6d0.c	Match\MatchS02_0040b6d0.cpp	0x0040b6d0	ok	_UtilArrayGet8a94e0	data-abs=1				0
+re/match/s02/0040e340.c	Match\MatchS02_0040e340.cpp	0x0040e340	ok	_GetLiveCarCount	data-abs=1				0
+re/match/s02/0040e350.c	Match\MatchS02_0040e350.cpp	0x0040e350	ok	_GetRenderSubMode	data-abs=1				0
+re/match/s03/h1_004173a0.c	Match\MatchS03_004173a0.cpp	0x004173a0	ok	_Float89a360Get	data-abs=1				0
+re/match/s03/h2_00413fa0.c	Match\MatchS03_00413fa0.cpp	0x00413fa0	ok	_Calc413fa0	in-set=2				0
+re/match/s03/h3_00414060.c	Match\MatchS03_00414060.cpp	0x00414060	ok	_Race89a360Compute	data-abs=12 in-set=4				0
+re/match/s07/00431d80.c	Match\MatchS07_00431d80.cpp	0x00431d80	ok	_TiebreakFlagGet	data-abs=1				0
+re/match/pilot/a5_0046c5f0.c	Match\MatchPilot_0046c5f0.cpp	0x0046c5f0 0x0046da80	fail:static-register-convention			FUN_0046c5f0:REG			0
+re/match/s02/0040e370.c	Match\MatchS02_0040e370.cpp	0x0040e370	ok	_IsCarSlotActive	data-abs=1				0
+re/match/s02/0040b810.c	Match\MatchS02_0040b810.cpp	0x0040b810	ok	_TimerGlobalsReset	data-abs=6				0
+re/match/s02/0040e3a0.c	Match\MatchS02_0040e3a0.cpp	0x0040e3a0	ok	_PlayerColorTableGet	wrapper-bound=1				0
+re/match/s02/0040dfc0.c	Match\MatchS02_0040dfc0.cpp	0x0040dfc0	ok	_HudIngameDispatch	data-abs=2 wrapper-bound=13				0
+re/match/s02/004114c0.c	Match\MatchS02_004114c0.cpp	0x004114c0	ok	_VtableTeardown_114c0	data-abs=2				0
+re/match/s02/00411350.c	Match\MatchS02_00411350.cpp	0x00411350	ok	_ReplayTimeFormat	crt=1				0
+re/match/s02/0040e450.c	Match\MatchS02_0040e450.cpp	0x0040e450	ok	_Flag63b908Get	data-abs=1				0
+re/match/s02/0040e460.c	Match\MatchS02_0040e460.cpp	0x0040e460	ok	_Flag63b908Set	data-abs=1				0
+re/match/s02/0040b6e0.c	Match\MatchS02_0040b6e0.cpp	0x0040b6e0	ok	_Add40b6e0	data-abs=1 in-set=1				0
+re/match/s02/0040b540.c	Match\MatchS02_0040b540.cpp	0x0040b540	ok	_PlayerScoreRankOrder	data-abs=4 in-set=1				0
+re/match/s02/0040b700.c	Match\MatchS02_0040b700.cpp	0x0040b700	ok	_Counters8a9530Inc	data-abs=5 in-set=2				0
+re/match/gffu/004927c0.c	Match\MatchGFFU_004927c0.cpp	0x004927c0	ok	_Step771980Advance	data-abs=19				0
+re/match/gffu/00417740.c	Match\MatchGFFU_00417740.cpp	0x00417740	ok	_Float89a870ToInt	crt=1 data-abs=1				0
+re/match/gffu/00497450.c	Match\MatchGFFU_00497450.cpp	0x00497450	ok	_Pred497450	data-abs=1				0
+re/match/s16/00496900.c	Match\MatchGFFU_00497450.cpp	0x00496900	ok	_SlotActiveThunk	in-set=1				0
+re/match/s07/0042c2f0.c	Match\MatchS07_0042c2f0.cpp	0x0042c2f0	ok	_SetDat0067ecb8	data-abs=1				0
+re/match/s07/0042c280.c	Match\MatchS07_0042c280.cpp	0x0042c280	ok	_Init42c280	in-set=1				0
+re/match/s07/00432080.c	Match\MatchS07_00432080.cpp	0x00432080	ok	_RaceEndCheckFinish	data-abs=10 in-set=1 wrapper-bound=1				0
+re/match/s07/0042c220.c	Match\MatchS07_0042c220.cpp	0x0042c220	ok	_FUN_0042c220	data-abs=2 wrapper-bound=2				0
+re/match/gffu/004929d0.c	Race\GameModeMachine.cpp	0x004929d0	ok	_GameModeMachine_004929d0	data-abs=6 in-set=26 wrapper-bound=4				0
+re/match/s04/0041d410.c	Match\PortBatch_HUD_0041d410.cpp	0x0041d410 0x0041d870	fail:static-register-convention			FUN_0041d410:REG			0
+re/match/s04/0041e850.c	Match\PortBatch_HUD_0041e630.cpp	0x0041e630 0x0041e850	fail:static-register-convention			FUN_0041e630:REG			0
+re/match/s01/00407b00.c	Match\PortBatch_GAMEPLAY_00407b00.cpp	0x00407b00	ok	_RangeTableFindGroup	in-set=1				0
+re/match/s01/00407b70.c	Match\PortBatch_GAMEPLAY_00407b70.cpp	0x00407b70	ok	_RangeTableMemberTest	in-set=1				0
+re/match/s01/00407d70.c	Match\PortBatch_GAMEPLAY_00407d70.cpp	0x00407d70	ok	_RangeTableCountGroup	in-set=1				0
+re/match/s01/00407db0.c	Match\PortBatch_GAMEPLAY_00407db0.cpp	0x00407db0	ok	_RangeTableGroupOffset	in-set=1				0
+re/match/gffu/005c9d00.c	Match\PortBatch_GAMEPLAY_005c9d00.cpp	0x005c9d00	ok	_GetRaceEndTrigger					0
+re/match/s01/004053d0.c	Match\PortTop_00405400.cpp	0x004053d0 0x00405400 0x00405420 0x00405430	ok	_Orig_004053d0 _Orig_00405400 _Orig_00405420 _Orig_00405430	data-abs=3				0
+re/match/s02/0040cf40.c	Match\PortTop_0040cf40.cpp	0x0040cf40	ok	_Orig_0040cf40	data-abs=2 wrapper-bound=1				0
+re/match/s11/0046be10.c	Match\PortTop_0046be10.cpp	0x0046be10	ok	_Orig_0046be10	data-abs=1				0
+re/match/s09/00458880.c	Match\PortTop_00458880.cpp	0x00458880	ok	_Orig_00458880	data-abs=3 wrapper-bound=3				0
+re/match/s09/004593b0.c	Match\PortTop_004593b0.cpp	0x004593b0	ok	_Orig_004593b0	data-abs=3 in-set=1 wrapper-bound=3				0
+re/match/s19/004c5770.c	Match\PortTop_004c5770.cpp	0x004c5770	ok	_Orig_004c5770	data-abs=2				0
+re/match/s10/0045bae0.c	Match\PortTop_0045bae0.cpp	0x0045ba10 0x0045bac0 0x0045bae0 0x0045bf30 0x0045bba0	fail:static-register-convention			FUN_0045ba10:REG			0
+re/match/s09/00459290.c	Match\PortTop_00459290.cpp	0x00459290	ok	_Orig_00459290	data-abs=3 in-set=5 wrapper-bound=4				0
+re/match/s09/004587a0.c	Match\PortTop_004587a0.cpp	0x004587a0	ok	_Orig_004587a0	crt=2 data-abs=3 in-set=8 wrapper-bound=1				0
+re/match/s09/00453f30.c	Match\PortTop_00453f30.cpp	0x00453f30	ok	_Orig_00453f30	data-abs=1				0
+re/match/s02/00411f30.c	Match\PortTop_00411f30.cpp	0x00411f30	ok	_Orig_00411f30	crt=2 data-abs=2 in-set=7 wrapper-bound=2				0
+re/match/s01/raw/004039c0.c	Match\PortTop_004039c0.cpp	0x004039c0	ok	_Orig_004039c0	data-abs=1 in-set=1				0
+re/match/s18/004b3e40.c	Match\PortTop_004b3e40.cpp	0x004b3e40	ok	_Orig_004b3e40	wrapper-bound=4				0
+re/match/s15/0048fed0.c	Match\PortTop_0048fed0.cpp	0x0048fed0	ok	_Orig_0048fed0					0
+re/match/s15/0048fee0.c	Match\PortTop_0048fee0.cpp	0x0048fee0	ok	_Orig_0048fee0					0
+re/match/s15/0048fef0.c	Match\PortTop_0048fef0.cpp	0x0048fef0	ok	_Orig_0048fef0	in-set=1 wrapper-bound=1				0
+re/match/s15/0048ff20.c	Match\PortTop_0048ff20.cpp	0x0048ff20	ok	_Orig_0048ff20	crt=2 data-abs=1 data-copy=1 in-set=6 wrapper-bound=2				0
+re/match/s15/0048ffd0.c	Match\PortTop_0048ffd0.cpp	0x0048ffd0	ok	_Orig_0048ffd0	data-abs=1 wrapper-bound=2				0
+re/match/s15/00490000.c	Match\PortTop_00490000.cpp	0x00490000	ok	_Orig_00490000	data-abs=1 wrapper-bound=1				0
+re/match/s18/004b3b70.c	Match\PortTop_004b3b70.cpp	0x004b3b70	ok	_Orig_004b3b70	wrapper-bound=3				0
+re/match/s18/004b65a0.c	Match\PortTop_004b65a0.cpp	0x004b65a0	ok	_Orig_004b65a0	in-set=1				0
+re/match/s18/004b65b0.c	Match\PortTop_004b65b0.cpp	0x004b65b0	ok	_Orig_004b65b0	wrapper-bound=1				0
+re/match/s18/004b68e0.c	Match\PortTop_004b68e0.cpp	0x004b68e0	ok	_Orig_004b68e0	data-abs=1				0
+re/match/s12/004781b0.c	Match\PortTop_004781b0.cpp	0x004781b0	ok	_Orig_004781b0	wrapper-bound=1 wrapper-static=4				0
+re/match/s11/00474d60.c	Match\PortTop_00474d60.cpp	0x00474d60	ok	_Orig_00474d60	wrapper-bound=1			_FUN_00474d30__ddk00474d60	0
+re/match/s02/00412010.c	Match\PortTop_00412010.cpp	0x00412010	ok	_Orig_00412010	data-abs=2 wrapper-bound=1				0
+re/match/s11/004725f0.c	Match\PortTop_004725f0.cpp	0x004725f0	ok	_Orig_004725f0	data-abs=1 in-set=1				0
+re/match/s05/004210b0.c	Match\PortTop_004210b0.cpp	0x004210b0	ok	_Orig_004210b0	data-abs=2 in-set=1 wrapper-bound=1 wrapper-static=2				0
+re/match/s05/00421080.c	Match\PortTop_00421080.cpp	0x00421080	ok	_Orig_00421080	data-abs=2				0
+re/match/s18/004b6480.c	Match\PortTop_004b6480.cpp	0x004b6480	ok	_Orig_004b6480					0
+re/match/s24/00555830.c	Match\PortTop_00555830.cpp	0x00555830	ok	_Orig_00555830	data-abs=2 wrapper-bound=4				0
+re/match/s24/00556e40.c	Match\PortTop_00556e40.cpp	0x00556e40	ok	_Orig_00556e40	data-abs=2 wrapper-bound=1				0
+re/match/s28/005c4d30.c	Match\PortTop_005c4d30.cpp	0x005c4d30	ok	_Orig_005c4d30					0
+re/match/s28/005c4d50.c	Match\PortTop_005c4d50.cpp	0x005c4d50	ok	_Orig_005c4d50	data-abs=1				0
+re/match/s14/0048a830.c	Match\PortTop_0048a830.cpp	0x0048a830	ok	_Orig_0048a830	data-abs=2 wrapper-bound=1				0
+re/match/s29/004b3fc0.c	Match\PortTop_004b3fc0.cpp	0x004b3fc0	ok	_Orig_004b3fc0	in-set=1 wrapper-bound=1				0
+re/match/s18/004b5240.c	Match\PortTop_004b5240.cpp	0x004b5240	ok	_Orig_004b5240					0
+re/match/s09/00456760.c	Match\PortTop_00456760.cpp	0x00456760	ok	_Orig_00456760	data-abs=4 in-set=6 wrapper-bound=4				0
+re/match/s29/004583a0.c	Match\PortTop_004583a0.cpp	0x004583a0	ok	_Orig_004583a0	data-abs=6 in-set=8 wrapper-bound=4				0
+re/match/s09/0045a3a0.c	Match\PortTop_0045a6b0.cpp	0x0045a3a0	ok	_Orig_0045a3a0	data-abs=1				0
+re/match/s29/0045a6b0.c	Match\PortTop_0045a6b0.cpp	0x0045a6b0	ok	_Orig_0045a6b0	data-abs=2 in-set=5 wrapper-bound=5				0
+re/match/s29/0045b830.c	Match\PortTop_0045b830.cpp	0x0045b830	ok	_Orig_0045b830	data-abs=2 in-set=5 wrapper-bound=5				0
+re/match/s29/00454e70.c	Match\PortTop_00454e70.cpp	0x00454e70	ok	_Orig_00454e70	data-abs=3 in-set=8 wrapper-bound=4				0
+re/match/s29/004576f0.c	Match\PortTop_004576f0.cpp	0x004576f0	ok	_Orig_004576f0	data-abs=3 in-set=5 wrapper-bound=3			_FUN_00456d00	0
+re/match/s29/00452f70.c	Match\PortTop_00452f70.cpp	0x00452f70	ok	_Orig_00452f70	data-abs=2 in-set=7 wrapper-bound=3				0
+re/match/s29/00454e40.c	Match\PortTop_00454e40.cpp	0x00454e40	ok	_Orig_00454e40	data-abs=2 wrapper-bound=2			_FUN_00454bd0 _FUN_00454c00	0
+re/match/s29/0045b810.c	Match\PortTop_0045b810.cpp	0x0045b810	ok	_Orig_0045b810	data-abs=1 wrapper-bound=2			_FUN_0045b360	0
+re/match/s09/00458360.c	Match\PortTop_00458360.cpp	0x00457ba0 0x00458020 0x00458080 0x00458360	fail:static-register-convention			FUN_00457ba0:REG			0
+re/match/s29/004b3f20.c	Match\PortTop_004b3f20.cpp	0x004b3f20	ok	_Orig_004b3f20					0
+re/match/s02/0040cda0.c	Match\PortTop_0040cda0.cpp	0x0040cda0	ok	_Orig_0040cda0	data-abs=1 in-set=3 wrapper-bound=1				0
+re/match/s29/0040bb10.c	Match\PortTop_0040bb10.cpp	0x0040bb10	ok	_Orig_0040bb10	in-set=1				0
+re/match/s02/0040bae0.c	Match\PortTop_0040bae0.cpp	0x0040bae0	ok	_Orig_0040bae0	in-set=1 wrapper-bound=2				0
+re/match/s02/0040baa0.c	Match\PortTop_0040baa0.cpp	0x0040baa0	ok	_Orig_0040baa0	wrapper-bound=2				0
+re/match/s11/004672d0.c	Match\PortTop_004672d0.cpp	0x004672d0	ok	_Orig_004672d0	data-abs=1 in-set=2				0
+re/match/s09/004548e0.c	Match\PortTop_004548e0.cpp	0x004548e0	ok	_Orig_004548e0	data-abs=5 in-set=5 wrapper-bound=9				0
+re/match/s09/004548a0.c	Match\PortTop_004548a0.cpp	0x00454170 0x004547c0 0x004548a0	fail:static-register-convention			FUN_00454170:REG			0

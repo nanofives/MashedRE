@@ -1,0 +1,3 @@
+t2_b (batch 2, no pins) vs n3_b (batch 3, pins): race-state 15/15  normalized 15/15  diffs {}
+t2_c (batch 2, no pins) vs n3_c (batch 3, pins): race-state 15/15  normalized 15/15  diffs {}
+t2_neg (batch 2, no pins) vs n3_neg (batch 3, pins): race-state 15/15  normalized 15/15  diffs {}

@@ -88,12 +88,30 @@ def run(args):
             print("error: attach failed"); return 3
         main = main_thread_of(pid)
         print(f"  main thread {main}", flush=True)
-        cfg = {"main": main, "t0": 0x01000000, "step": 1, "q0": 0x40000000, "qstep": args.qstep,
+        cfg = {"main": main, "t0": 0x01000000, "step": 1, "q0": int(args.q0, 16), "qstep": args.qstep,
                "warpAt": args.warp_at, "scen": SCENARIO, "input": INPUT, "ckpts": CKPTS,
                "holdrand": 0x12345678, "witness": [0x00468980, 0x00470670],
                "negctl": int(args.negctl, 16) if args.negctl else 0, "rebase": args.rebase,
                "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
-               "watch": [int(x, 16) for x in args.watch.split(",") if x][:2]}
+               "watch": [int(x, 16) for x in args.watch.split(",") if x][:2],
+               "callLogRace": args.call_log_race}
+        if args.audio_off:
+            cfg["audioOff"] = args.audio_off   # RO-AUDIO-ISOLATION: suspend the __beginthread workers (detorig.js audioOff)
+        if args.poison:
+            # RO-STACKROW-READERS: poison the event-ring fields each row's producer leaves unwritten (detorig.js, cfg.poison)
+            cfg["poison"] = {"mode": args.poison, "value": int(args.poison_value, 16)}
+        if args.normalize:
+            cfg["norm"] = load_norm(args.normalize)["pin"]; cfg["normAt"] = args.normalize_at
+            print(f"  normalise {len(cfg['norm'])} dwords at {args.normalize_at} ({args.normalize})", flush=True)
+        if args.clock == "tick" or args.tick_hash:
+            # REPLAY-ORACLE-DESIGN: per-tick block hashes at --tick-va (detorig.js, cfg.tick). With --clock tick the
+            # clock also advances only there; with --clock n --tick-hash it keeps the pilot's per-call steps.
+            tick = args.clock == "tick"
+            if tick:
+                cfg["step"] = 0; cfg["qstep"] = 0
+            cfg["tick"] = {"va": int(args.tick_va, 16), "qtick": args.qtick if tick else 0, "ttick": args.ttick if tick else 0,
+                           "cap": args.tick_cap, "block": args.tick_block, "pin": tick,
+                           "raw": [[int(x, 16), int(y, 16)] for x, y in (r.split("-") for r in args.tick_raw.split(",") if r)]}
         meta["cfg"] = cfg
         src = "const DETORIG_CFG = " + json.dumps(cfg) + ";\n" + (HERE / "js" / "detorig.js").read_text(encoding="utf-8")
         state = {"done": False, "err": None}
@@ -121,6 +139,12 @@ def run(args):
                 meta["warp"] = p; print(f"  warp at N={p['n']} pins={p['pins']}", flush=True)
             elif p["kind"] == "race":
                 meta["race"] = p; print(f"  race anchor N={p['n']} dn_warp={p['dn_warp']} frames={p['frames_7f101c']} clk={p['clk_7f0ff0']}/{p['clk_7f0ff4']} witness={p['witness']}", flush=True)
+            elif p["kind"] == "ticks":
+                with open(out / "ticks.bin", "ab" if p["first"] else "wb") as f:
+                    f.write(data)
+                meta["ticks"] = {"total": p["total"], "nblk": p["nblk"], "recw": p["recw"], "block": p["block"], "raw": p.get("raw"), "file": "ticks.bin"}
+                if p["first"] + p["count"] >= p["total"]:
+                    print(f"  ticks {p['total']} x {p['nblk']} blocks", flush=True)
             elif p["kind"] == "done":
                 state["done"] = True
             else:
@@ -171,10 +195,35 @@ REGIONS = [
 ]
 
 
+PTR_LO = 0x00995000
+
+
 def is_ptr(v):
     # Heap range on this machine (0x0146xxxx..0x0f9xxxxx seen 2026-11-01), dword-aligned. The same bit
     # pattern as a float is a magnitude below 4.7e-10, so a float is not taken for a pointer in practice.
-    return 0x01000000 <= v < 0x30000000 and v & 3 == 0
+    # REPLAY-ORACLE-DESIGN (2026-11-11): lower bound moved from 0x01000000 to PTR_LO = 0x00995000, the end of
+    # MASHED.exe's image (ImageBase + SizeOfImage): run t_b put heap blocks at 0x00d0a644 / 0x00d0eee0.
+    return PTR_LO <= v < 0x30000000 and v & 3 == 0
+
+
+def load_norm(path):
+    """re/frida/warp_normalize.tsv (RO-WARP-NORMALIZE). Columns: va count stride width action value writer readers note.
+    action PIN = write `value` at the warp / race anchor (both sides). MASK:<family> / RULE:<name> = not pinned, scored by
+    detorig_report.py as that class. Returns {"pin": [[va, width, value], ...], "mask": {va: class}}."""
+    pin, mask = [], {}
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#") or line.startswith("va\t"):
+            continue
+        f = line.split("\t")
+        va, cnt, stride, width, action = int(f[0], 16), int(f[1]), int(f[2], 16), int(f[3]), f[4]
+        for k in range(cnt):
+            a = va + k * stride
+            if action == "PIN":
+                pin.append([a, width, int(f[5], 16)])
+            else:
+                for j in range(0, max(width, 4), 4):
+                    mask[a + j] = action
+    return {"pin": pin, "mask": mask}
 
 
 def is_ptr_pair(a, b):
@@ -230,6 +279,22 @@ if __name__ == "__main__":
     ap.add_argument("--watch", default="", help="comma list (max 2) of hex VAs: hardware write watchpoints from the race anchor on (watch.jsonl)")
     ap.add_argument("--call-log", action="store_true", help="log every main-thread clock call from the warp to the race anchor (calllog.bin, 64 B per call)")
     ap.add_argument("--qstep", type=int, default=15000, help="QPC counts per main-thread QPC call")
+    ap.add_argument("--clock", choices=["n", "tick"], default="n",
+                    help="n: the clock advances per main-thread call (pilot); tick: only at --tick-va's entry (REPLAY-ORACLE-DESIGN)")
+    ap.add_argument("--tick-va", default="0x00493390", help="tick boundary: FUN_00493390 frame timer, once per main-loop iteration")
+    ap.add_argument("--qtick", type=int, default=166667, help="QPC counts per tick (QPF 10^7 / 60)")
+    ap.add_argument("--ttick", type=int, default=17, help="timeGetTime / GetTickCount ms per tick")
+    ap.add_argument("--tick-cap", type=int, default=3000, help="ticks hashed from the race anchor on")
+    ap.add_argument("--tick-block", type=int, default=1024, help="bytes per hashed block")
+    ap.add_argument("--tick-hash", action="store_true", help="per-tick block hashes with --clock n")
+    ap.add_argument("--tick-raw", default="", help="comma list of LO-HI hex VA ranges copied raw into every tick record")
+    ap.add_argument("--q0", default="0x40000000", help="virtual QPC start (low dword)")
+    ap.add_argument("--call-log-race", action="store_true", help="keep the call log on past the race anchor (until 4096 calls)")
+    ap.add_argument("--normalize", default="", help="boot-counter normalisation file (re/frida/warp_normalize.tsv): its PIN rows are written on the original")
+    ap.add_argument("--normalize-at", choices=["warp", "anchor", "both"], default="both", help="when the PIN rows are written")
+    ap.add_argument("--audio-off", choices=["warp", "anchor"], default="", help="suspend every non-main thread whose start address is in MASHED.exe (the __beginthread audio workers) at the warp or the race anchor")
+    ap.add_argument("--poison", choices=["stale", "pos"], default="", help="overwrite the unwritten event-ring fields at every ring consumer from the race anchor on (pos = also type-4 +0x24, a read field)")
+    ap.add_argument("--poison-value", default="0x7fc0dead", help="poison dword (hex)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--menu-wait", type=float, default=2.0)
     ap.add_argument("--timeout", type=float, default=600)

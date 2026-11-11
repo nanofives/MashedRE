@@ -1,0 +1,8 @@
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 5], ['0x7dc400', 2], ['0x7dd000', 2]]
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 11], ['0x7dc400', 2], ['0x7dd000', 2]]
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 11], ['0x771800', 122], ['0x7dc400', 2], ['0x7dd000', 2]]
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 5]]
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 5]]
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 106]]
+  IDENTICAL-FOR-N = 7 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 4], ['0x7dc400', 118]]
+  IDENTICAL-FOR-N = 7 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x007dc400-0x007dd400: [['0x614400', 4], ['0x7dc400', 118]]

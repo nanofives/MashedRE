@@ -1,0 +1,94 @@
+{
+ "rows": 1065,
+ "verdicts": {
+  "linkable": 987,
+  "blocked": 78
+ },
+ "block_classes": {
+  "unbound": 63,
+  "bind-missing": 10,
+  "in-set": 7,
+  "unknown": 5,
+  "crt-absent": 1
+ },
+ "undef_classes": {
+  "data": 2173,
+  "in-set": 629,
+  "crt": 361,
+  "unbound": 179,
+  "bind:bound": 172,
+  "in-variant": 128,
+  "exe-name": 31,
+  "bind:shim": 29,
+  "bind:rw": 27,
+  "wrapper-name": 17,
+  "bind:crt": 14,
+  "bind:port": 12,
+  "unknown": 5,
+  "bind-missing:port": 5,
+  "bind:missing": 3,
+  "bind-missing:crt": 3,
+  "bind:stand-in": 2,
+  "crt-math": 1,
+  "bind-missing:rw": 1,
+  "bind-missing:bound": 1,
+  "crt-absent": 1,
+  "bind-missing:stand-in": 1
+ },
+ "top_unbound": {
+  "FUN_004b6fc0": 21,
+  "FUN_004b7090": 18,
+  "FUN_004c1480": 8,
+  "FUN_004c51a0": 8,
+  "FUN_00490e50": 6,
+  "FUN_0041a5d0": 4,
+  "FUN_004b70d0": 4,
+  "FUN_004b7140": 4,
+  "FUN_00440bc0": 3,
+  "FUN_00453f60": 3,
+  "FUN_00459000": 3,
+  "FUN_0045a190": 3,
+  "FUN_00476880": 3,
+  "FUN_0045c350": 3,
+  "FUN_004b4b60": 3,
+  "FUN_004c2f30": 3,
+  "FUN_004c2ea0": 3,
+  "FUN_004c2e10": 3,
+  "FUN_004c2e70": 3,
+  "FUN_004c2de0": 3,
+  "FUN_004c2e40": 3,
+  "FUN_00499740": 3,
+  "FUN_00472650": 2,
+  "FUN_004661a0": 2,
+  "FUN_004b52c0": 2
+ },
+ "top_crt_absent": {
+  "__free": 1
+ },
+ "top_unknown": {
+  "_FUN_stand_in_a": 2,
+  "_UseUv": 1,
+  "_DAT_stand_in_mat": 1,
+  "_thunk_FUN_00419760": 1
+ },
+ "top_bind_missing": {
+  "FUN_0047b9b0 bind-missing:port": 3,
+  "FUN_004a45fb bind-missing:crt": 3,
+  "FUN_004e4320 bind-missing:rw": 1,
+  "FUN_004b302f bind-missing:port": 1,
+  "FUN_004a3ac9 bind-missing:port": 1,
+  "FUN_004944c0 bind-missing:bound": 1,
+  "FUN_004960e0 bind-missing:stand-in": 1
+ },
+ "crt_math": {
+  "_floor": 1
+ },
+ "link": {
+  "attempted": true,
+  "added_wrapperless": 606,
+  "rc": 0,
+  "lnk_errors": 0,
+  "objects_with_errors": 0,
+  "top_errors": []
+ }
+}

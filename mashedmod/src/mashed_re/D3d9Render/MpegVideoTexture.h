@@ -32,6 +32,10 @@ struct MpegOpenOptions {
                          // as the original's IGraphBuilder::Render on the source pin does
     bool run   = true;   // false: build the graph only, never IMediaControl::Run
     bool pow2  = false;  // texture padded to powers of two (0x00494820, TextureCaps & POW2)
+    bool flip  = true;   // true: rows stored top-down (the standalone's quads put v = 0 at the top).
+                         // false: rows kept in the decoder's bottom-up DIB order, as the original's
+                         // texture renderer stores them (its quad puts v = max at the top vertex).
+                         // PORT-OT-BIND-D3D: the bound 0x004944c0 uses false.
 };
 
 class MpegVideoTexture {
@@ -54,6 +58,10 @@ public:
     unsigned tex_width() const { return tw_; }
     unsigned tex_height() const { return th_; }
     long audio_hr() const { return audio_hr_; }   // last Render() result on the extra pins
+    // PORT-OT-BIND-D3D: QueryInterface on the filter graph, and on the SampleGrabber filter (the filter
+    // that receives the decoded frames). Each returns an AddRef'd pointer the caller owns, or an error.
+    long QueryGraph(const struct _GUID& iid, void** out) const;
+    long QueryGrabberFilter(const struct _GUID& iid, void** out) const;
     // PORT-TOP-KNOBON-CAPFLAKE probe: under MASHED_DETERMINISTIC, the frozen
     // frame's FNV-1a hash and stream position (100 ns units; pinned mode: the
     // sample start time) once the one upload has happened.
@@ -74,6 +82,7 @@ private:
     unsigned             w_ = 0, h_ = 0;
     unsigned             tw_ = 0, th_ = 0;   // texture size (= w_/h_ unless pow2)
     bool                 loop_ = true;
+    bool                 flip_ = true;
     bool                 ended_ = false;
     long                 audio_hr_ = 0;
     bool                 ready_ = false;
