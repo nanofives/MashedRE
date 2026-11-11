@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-10  0x005aa060  FUN_005aa060  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s25/005aa060.c; evidence: verify/portorigtop_20261109/RESULT_L115-ADMIT-3-TABLE.md
 2026-11-10  0x0047f7d0  FUN_0047f7d0  (none)->C1  added (TL-MATCH-REST): callback argument of 0x0047f840 at 0x0047f8f7 (re/analysis/pointer_callers_2026-10-11.tsv); in the 0x00426e10 track-loader closure (verify/portorigtop_20261109/tl_closure.py, norow). Source re/match/tlr/0047f7d0.c is a near miss, not matched (verify/tlmatchrest_20261110/scores.tsv); evidence: verify/portorigtop_20261109/RESULT_TL-MATCH-REST.md
 2026-11-10  0x005ac930  FUN_005ac930  (none)->C1  added (TL-MATCH-REST): callback argument of 0x005ac900 at 0x005ac90e (re/analysis/pointer_callers_2026-10-11.tsv); in the 0x00426e10 track-loader closure (verify/portorigtop_20261109/tl_closure.py, norow). Source re/match/tlr/005ac930.c is a near miss, not matched (verify/tlmatchrest_20261110/scores.tsv); evidence: verify/portorigtop_20261109/RESULT_TL-MATCH-REST.md
 2026-11-10  0x005ac770  FUN_005ac770  (none)->C1  added (TL-MATCH-REST): callback argument of 0x005ac210 at 0x005ac324 (re/analysis/pointer_callers_2026-10-11.tsv); in the 0x00426e10 track-loader closure (verify/portorigtop_20261109/tl_closure.py, norow). Source re/match/tlr/005ac770.c is a near miss, not matched (verify/tlmatchrest_20261110/scores.tsv); evidence: verify/portorigtop_20261109/RESULT_TL-MATCH-REST.md
