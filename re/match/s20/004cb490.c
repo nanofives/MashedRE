@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5 /Oy-
 /* MATCH-S20 0x004cb490 (h1): 83.3% (regs 88.9%) with FLAGS /O2 /Ob1 /G5 /Oy- (55.6% under /O2 /Ob1 /G5).
    The original has an ebp frame (push ebp; mov ebp, esp) in an RW core where the neighbours have none, and saves both

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL02 h1 0x004e6710: best 54.8% (regs 54.8%), residual class b. orig tests the list head once and pushes regs before it, bottom-tested loop with ecx cursor; tried do/while, while, rotated; raw do-while kept (54.8), permuter flat. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

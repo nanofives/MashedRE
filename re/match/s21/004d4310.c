@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004d4310 (h4): 95.7% (regs 95.7%). Rewritten from odis with structs (entries stride 0x28 holding Sub*, Sub count +0x20 / items +0x24 stride 0xc), unsigned for-loops, and last = min at the outer loop head (raw 42.6%). Residual: one instruction moves. The original reloads the spilled count into eax before 'cmp edi,-1', so both the found-none exit and the inc share it. Ours reloads after the je. Tried break / return-in-loop / else-return / count++ in the for header, permuter 112 compiles 0 gains. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

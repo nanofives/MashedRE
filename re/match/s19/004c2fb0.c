@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /GS /Ob1
 /* MATCH-S19 0x004c2fb0 (h2): 75.6%, regs 88.9%. Hand: Ghidra nesting (success path inline, failure falls to the stop call). Residual (b): same lea esi prologue as 0x004c2f60 and a rotated scratch register choice (ecx/edx vs eax/ecx) on the RwGlobals reloads. Permuter's 86.7% variant moves the +0x124 store before the calls (changes behaviour), rejected. h6 resume: typed RwGlobals pointer with a dev member, int return of the last request, flagscan over 19 flag sets (all 76.9 or lower): no move. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

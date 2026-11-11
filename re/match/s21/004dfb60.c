@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004dfb60 (h4): 28.1% (regs 78.1%, ops 81.2%). Signed int form (raw unsigned form 15.6%: original divides with the signed magic 0x291ee171 / sar 0xc). Residual: constant-multiply expansion. Ours builds 59 as 3*5*4-1 and 30 as 3*5*2 with lea; the original builds 59 as ((8a-a)*4+a)*2+a and 30 with imul 0x1e. Same in every term order, with named locals, and under /O2 /Ob1, /G6, /Op, /Ox, /O1. Class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

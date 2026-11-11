@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* RWC-DRIVER round 2: no change. Tried a walking item pointer (68.3%), &table[n] local (71.3%), operand order (70.7%), sizeof-form count (71.3%). */
 /* RWC-DRIVER 2026-11-11: 43.3% -> 71.3% (regs 87.8%, ops 97.0%, 164/164 ins). Moved by: 8-byte element / 12-byte cache-item structs, int return, every COM call __stdcall (+4 and +0x158 included; the raw cdecl typing was wrong), the dword compare as a static __inline helper (gives the original's param_1-walking loop and the count reload), 'if (n >= count) {grow, create} else {found}' block order, the found arm as 'decl != 0 ? +4 : +0x158 create'. Residual: register choice when a global table pointer is loaded (original loads it into a scratch register and lea's into another; ours adds in place) and the load order of count/table in the creation stores; permuter 536 compiles found only a store reorder that changes the original's store order (rejected). */

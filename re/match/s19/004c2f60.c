@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /GS /Ob1
 /* MATCH-S19 0x004c2f60 (h2): 76.9%, regs 92.3%. Hand: device pointer (RwGlobals+0x10) held in a local across the calls. Residual (b): original loads RwGlobals into eax before push esi and forms esi with lea; here mov esi/add esi. Tried typed RwGlobals struct, separate g local; permuter 67 compiles no gain. h6 resume: typed RwGlobals pointer with a dev member, int return of the last request, flagscan over 19 flag sets (all 76.9 or lower): no move. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

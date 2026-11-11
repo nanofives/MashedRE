@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL02 h1 0x004e7cc0: best 90.9% (regs 90.9%), residual class a. callee-saved edi is pushed in the prologue by the original, ours sinks the push past the first call (shrink-wrap class); permuter flat at 90.9. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

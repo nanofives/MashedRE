@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // h2 hand-matched. 83.3% (regs 86.1%, ops 92.6%). Tri-strip to tri-list copy, param_4 != 0 (offset) branch first, odd-index branch first. Residual: original tests the skip-all case as test ecx,ecx; jbe on cnt = n-2 and keeps out=0 in edx/[esp+0x1c], ours compares n with 2 and re-materialises 0. cnt != 0 / 0 < cnt forms and a 240 s permuter run did not help. Class (b).
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

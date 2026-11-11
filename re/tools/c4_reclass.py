@@ -47,6 +47,9 @@ MATCHDIR = pathlib.Path(__file__).resolve().parent / "match"
 EXTENTS = MATCHDIR / "extent_overrides.tsv"
 MARKER = "<!-- ENTRIES -->"
 COMPILER = "XP DDK cl 13.00.9176 / c2 13.00.9178"
+# Recorded compilers for the match route (re/CONFIDENCE.md). rw9044 = L-131 (2026-11-11): the Rich prodid 0x30 build
+# 9044 objects (RenderWare), VC6 SP5 front end + Processor Pack c2 13.00.9044.
+RECORDED = {"ddk": COMPILER, "rw9044": "VC6 SP5 cl 12.00.8804 + Processor Pack c2 13.00.9044 (L-131)"}
 LIB_FLAGS = {   # recorded build of each vendored library (libid_reclass.py LIBS / PNGZLIB, RESULT_LIB-IDENTITY)
     "lua-4.0": "Lua 4.0 /Og /Oi /Ot /Oy /Ob1 /GF /G5",
     "qhull-2002.1": "qhull 2002.1 /Og /Oi /Ot /Oy /Ob2 /GF /G5",
@@ -290,8 +293,9 @@ def gate_match(rva, src, ev):
         return False, "STUB marker in the function body", None
     if ev.get("_error"):
         return False, f"match/relocheck failed: {ev['_error']}", None
-    if ev.get("_toolchain") != "ddk":
-        return False, f"toolchain {ev.get('_toolchain')} is not the recorded compiler (ddk = {COMPILER})", None
+    if ev.get("_toolchain") not in RECORDED:
+        return False, (f"toolchain {ev.get('_toolchain')} is not a recorded compiler "
+                       f"({', '.join(f'{k} = {v}' for k, v in RECORDED.items())})"), None
     ext = load_extents().get(rva)
     if ext is not None:
         return gate_extent(rva, src, ev, ext, path, text)
@@ -312,7 +316,7 @@ def gate_match(rva, src, ev):
         return False, f"relocheck {st}" + (f": {'; '.join(rbad)[:200]}" if rbad else ""), None
     sha = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
     how = "insn 100.0%" if r["acc"] == 1 else f"insn {100 * r['acc']:.1f}% (Ghidra body short, {r['n_mine']}/{r['n_orig']})"
-    note = (f"match.py {src} --bytes BYTE-IDENTICAL {r['bytes_n']} B, {how} ({COMPILER}, {r['flags']}, "
+    note = (f"match.py {src} --bytes BYTE-IDENTICAL {r['bytes_n']} B, {how} ({RECORDED[ev['_toolchain']]}, {r['flags']}, "
             f"{ev.get('_lang', 'c')}); relocheck OK checked={n} unchecked={len(unch)}"
             + (f" [{','.join(unch)}]" if unch else "") + f"; src sha256 {sha}")
     return True, f"byte-identical {r['bytes_n']} B, relocheck OK ({n}/{len(unch)})", note
@@ -367,7 +371,7 @@ def gate_extent(rva, src, ev, ext, path, text):
     sha = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
     r = ev.get(rva, {})
     note = (f"match.py {src} --bytes, extent override {tsv} ({len(mem)} members = pc_funcs body {body} B: "
-            f"{', '.join(parts)} [ghidra/obj B]; each BYTE-IDENTICAL, insn 100.0%) ({COMPILER}, "
+            f"{', '.join(parts)} [ghidra/obj B]; each BYTE-IDENTICAL, insn 100.0%) ({RECORDED[ev['_toolchain']]}, "
             f"{r.get('flags', ev.get('_flags'))}, {ev.get('_lang', 'c')}); relocheck OK checked={nrel} "
             f"unchecked={len(unch_all)}" + (f" [{','.join(unch_all)}]" if unch_all else "")
             + f"; extent proof {ext['evidence']}; src sha256 {sha}")

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL04 0x00551a50 (h2): 96.4% (regs 98.2). Structured loops (do-while 2 outer, uVar3 >= count). Residue: orig reloads param into eax then lea edx,[eax+8], ours mov edx,[esp+14];add edx,8; tried &p[2], char* arithmetic, init order, permuter 134 compiles. class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

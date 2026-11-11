@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004dfab0 (h1, by hand): best 36.4% exact, regs 60.6% (raw 28.1%). Luminance (r*30+g*59+b*11)/100
    (signed divide), times alpha, unsigned /255. Residual: multiply-by-constant decomposition. The original builds

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWR06 2026-11-08: 97.6% (was 48.2), ops 100%. Typed struct + indexed loop; aligned stored before raw. Residual: the compiler-made p3-p2 delta is homed in param_1's slot ([esp+0x14]); the original homes it in param_5's ([esp+0x24]). Supersedes the header below. */
 /* MATCH-RWL03 0x00533d00: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body

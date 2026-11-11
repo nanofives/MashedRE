@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S24 0x00546b10 (h1): 86.0% (regs 89.5%). RtQuatConvertFromMatrix shape: result = (q && m), if (result)
    {...}, return result (keeps 1 in ebx); the trace sum written twice (no trace local) so the x87 sum is reused in

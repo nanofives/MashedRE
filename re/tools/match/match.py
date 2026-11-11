@@ -10,7 +10,9 @@ Source annotations (one per function, on the line before its definition):
     // MATCH: 0x<va> <decorated-or-plain symbol name>          (module MASHED.exe implied; "MASHED.exe" may precede)
     // FLAGS: /O2                                               (--flags overrides; default DEFAULT_FLAGS)
     // LANG c | c++                                             (default c: Rich prodid 28 = Utc13 C, 373 objects)
-    // TOOLCHAIN ddk | vc19                                     (default ddk = cl 13.00.9176 / c2 13.00.9178)
+    // TOOLCHAIN ddk | rw9044 | vc19                            (default ddk = cl 13.00.9176 / c2 13.00.9178)
+                                                                (rw9044 = RenderWare rows, L-131: VC6 SP5 cl 12.00.8804
+                                                                 + Processor Pack c2 13.00.9044, Rich prodid 0x30)
 `--only 0x<addr>` compares one annotated function (used by match_permute.py).
 
 Comparison: the function's bytes come from its own COMDAT section (/Gy is always passed). Every relocation site in
@@ -45,6 +47,11 @@ _VC19 = pathlib.Path(r"C:\Program Files (x86)\Microsoft Visual Studio\2022\Build
 TOOLCHAINS = {
     "ddk": {"bin": MAIN / "tools" / "vc7ddk" / "bin", "extra": [],
             "label": "cl/c1/c1xx 13.00.9176 + c2 13.00.9178 (XP DDK)"},
+    # L-131 (2026-11-11): the 349 Rich prodid 0x30 build 9044 objects (Utc12_2_C) are the VC6 SP5 Processor Pack
+    # back end. tools/vc6pp/bin = cl.exe 12.00.8804 + c1.dll 12.00.8867 + c1xx.dll 12.00.8964 (VC6 SP5) and c2.dll
+    # 13.00.9044 from vcpp5.exe (Microsoft download, verify/rwcompiler9044_20261111/RESULT_MATCH-RW-COMPILER-9044.md).
+    "rw9044": {"bin": MAIN / "tools" / "vc6pp" / "bin", "extra": [],
+               "label": "VC6 SP5 cl 12.00.8804 + Processor Pack c2 13.00.9044"},
     "vc19": {"bin": _VC19, "extra": ["/GS-", "/arch:IA32"], "label": "cl 19.44.35207 (VS 2022)"},
 }
 REG = re.compile(r"\b(e?[abcd]x|[abcd][lh]|e?[sd]i|e?bp|st\(\d\)|xmm\d)\b")

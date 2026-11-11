@@ -141,7 +141,11 @@ Measurements behind the static routes: `verify/matchpilot_20261030/RESULT_MATCH-
      whole-symbol `--bytes` compare reports no differing byte, and the instruction compare is 100% or the original's
      Ghidra body is shorter than the symbol) with the recorded compiler, XP DDK `cl` 13.00.9176 / `c2` 13.00.9178
      (`tools/vc7ddk`, `// TOOLCHAIN ddk`, the default), and the flags recorded in the source (`// FLAGS:`; game code
-     `/O2 /GS /Ob1`, as C, x87; `/G5` breaks game code).
+     `/O2 /GS /Ob1`, as C, x87; `/G5` breaks game code). **RenderWare rows may record a second compiler (L-131,
+     2026-11-11):** `// TOOLCHAIN rw9044` = VC6 SP5 `cl` 12.00.8804 / `c1` 12.00.8867 with the Visual C++ 6.0
+     Processor Pack `c2` 13.00.9044 (`tools/vc6pp`, from Microsoft's `vcpp5.exe`), the compiler of the 349 Rich
+     prodid 0x30 build 9044 objects (`verify/rwcompiler9044_20261111/RESULT_MATCH-RW-COMPILER-9044.md`). The source
+     names which of the two it was matched under, and the C4 note records it (`c4_reclass.py` `RECORDED`).
   2. `re/tools/match/relocheck.py` reports **OK** for that function. `match.py` masks every relocation, so 100% alone
      does not show that each global, callee or constant is the right one: MATCH-S02 found two sources at 100% that
      stored to swapped arrays (0x0040b250, 0x0040b810; `verify/matchs02_20261031/RESULT_MATCH-S02.md`). relocheck

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004dfb10 (h2): 20.0% (regs 60.0%, ops 66.7%). RwRGBA -> (green*59 + blue*11 + red*30)/100 (signed
    divide, magic 0x51eb851f) | alpha << 8. Operation order matches.
