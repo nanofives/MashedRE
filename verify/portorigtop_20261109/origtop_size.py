@@ -204,6 +204,10 @@ def main(argv):
             return "game-c4-hand" if (r.get("exe_file") or "").strip() else "game-c4"
         return "game-c0c3"
     C = {a: cls(a) for a in fset}
+    if "--assume-bound" in argv:   # PORT-OT-BIND-CRT: treat the listed rvas (one 0x... per line) as bound
+        for l in open(argv[argv.index("--assume-bound") + 1], encoding="utf-8"):
+            if l.strip().startswith("0x"):
+                C[int(l.split()[0], 16)] = "bind:crt"
 
     # reach
     reach, stack = {TOP}, [TOP]
@@ -226,6 +230,14 @@ def main(argv):
                 dreach.add(c)
                 stack.append(c)
 
+    if "--list" in argv:   # PORT-OT-BIND-CRT: print the reached members of one class, e.g. --list fam:crt
+        want = argv[argv.index("--list") + 1]
+        callers = collections.Counter(c for a in reach for c in edges.get(a, ()) if C[a] not in (want,))
+        for a in sorted(x for x in reach if C[x] == want):
+            r = H.get(a) or {}
+            print("0x%08x	%s	%s	%s	callers_in_reach=%d" % (a, r.get("name", "-"), r.get("subsystem", "-"),
+                  r.get("confidence", "-"), callers[a]))
+        return 0
     match_r = {a for a in reach if C[a] == "match"}
 
     def runnable(sat_classes):
