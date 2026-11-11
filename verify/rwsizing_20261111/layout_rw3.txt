@@ -1,0 +1,286 @@
+class RwObject	size(8):
+	+---
+ 0	| type
+ 1	| subType
+ 2	| flags
+ 3	| privateFlags
+ 4	| parent
+	+---
+
+class RwMemoryFunctions	size(16):
+	+---
+ 0	| rwmalloc
+ 4	| rwfree
+ 8	| rwrealloc
+12	| rwcalloc
+	+---
+
+class RwStringFunctions	size(68):
+	+---
+ 0	| vecSprintf
+ 4	| vecVsprintf
+ 8	| vecStrcpy
+12	| vecStrncpy
+16	| vecStrcat
+20	| vecStrncat
+24	| vecStrrchr
+28	| vecStrchr
+32	| vecStrstr
+36	| vecStrcmp
+40	| vecStrncmp
+44	| vecStricmp
+48	| vecStrlen
+52	| vecStrupr
+56	| vecStrlwr
+60	| vecStrtok
+64	| vecSscanf
+	+---
+
+class RwMatrixTag	size(64):
+	+---
+ 0	| RwV3d right
+12	| flags
+16	| RwV3d up
+28	| pad1
+32	| RwV3d at
+44	| pad2
+48	| RwV3d pos
+60	| pad3
+	+---
+
+class RwDevice	size(56):
+	+---
+ 0	| gammaCorrection
+ 4	| fpSystem
+ 8	| zBufferNear
+12	| zBufferFar
+16	| fpRenderStateSet
+20	| fpRenderStateGet
+24	| fpIm2DRenderLine
+28	| fpIm2DRenderTriangle
+32	| fpIm2DRenderPrimitive
+36	| fpIm2DRenderIndexedPrimitive
+40	| fpIm3DRenderLine
+44	| fpIm3DRenderTriangle
+48	| fpIm3DRenderPrimitive
+52	| fpIm3DRenderIndexedPrimitive
+	+---
+
+class RwGlobals	size(300):
+	+---
+ 0	| curCamera
+ 4	| curWorld
+ 8	| renderFrame
+10	| lightFrame
+12	| pad
+16	| RwDevice dOpenDevice
+72	| stdFunc
+188	| RwLinkList dirtyFrameList
+196	| RwStringFunctions stringFuncs
+264	| RwMemoryFunctions memoryFuncs
+280	| memoryAlloc
+284	| memoryFree
+288	| metrics
+292	| RwEngineStatus engineStatus
+296	| resArenaInitSize
+	+---
+
+class RwRaster	size(52):
+	+---
+ 0	| parent
+ 4	| cpPixels
+ 8	| palette
+12	| width
+16	| height
+20	| depth
+24	| stride
+28	| nOffsetX
+30	| nOffsetY
+32	| cType
+33	| cFlags
+34	| privateFlags
+35	| cFormat
+36	| originalPixels
+40	| originalWidth
+44	| originalHeight
+48	| originalStride
+	+---
+
+class RwImage	size(28):
+	+---
+ 0	| flags
+ 4	| width
+ 8	| height
+12	| depth
+16	| stride
+20	| cpPixels
+24	| palette
+	+---
+
+class RwTexDictionary	size(24):
+	+---
+ 0	| RwObject object
+ 8	| RwLinkList texturesInDict
+16	| RwLLLink lInInstance
+	+---
+
+class RwTexture	size(88):
+	+---
+ 0	| raster
+ 4	| dict
+ 8	| RwLLLink lInDictionary
+16	| name
+48	| mask
+80	| filterAddressing
+84	| refCount
+	+---
+
+class RwFrame	size(164):
+	+---
+ 0	| RwObject object
+ 8	| RwLLLink inDirtyListLink
+16	| RwMatrixTag modelling
+80	| RwMatrixTag ltm
+144	| RwLinkList objectList
+152	| child
+156	| next
+160	| root
+	+---
+
+class RwObjectHasFrame	size(20):
+	+---
+ 0	| RwObject object
+ 8	| RwLLLink lFrame
+16	| sync
+	+---
+
+class RwCamera	size(388):
+	+---
+ 0	| RwObjectHasFrame object
+20	| RwCameraProjection projectionType
+24	| beginUpdate
+28	| endUpdate
+32	| RwMatrixTag viewMatrix
+96	| frameBuffer
+100	| zBuffer
+104	| RwV2d viewWindow
+112	| RwV2d recipViewWindow
+120	| RwV2d viewOffset
+128	| nearPlane
+132	| farPlane
+136	| fogPlane
+140	| zScale
+144	| zShift
+148	| frustumPlanes
+268	| RwBBox frustumBoundBox
+292	| frustumCorners
+	+---
+
+class RpMaterial	size(28):
+	+---
+ 0	| texture
+ 4	| RwRGBA color
+ 8	| pipeline
+12	| RwSurfaceProperties surfaceProps
+24	| refCount
+26	| pad
+	+---
+
+class RpGeometry	size(96):
+	+---
+ 0	| RwObject object
+ 8	| flags
+12	| lockedSinceLastInst
+14	| refCount
+16	| numTriangles
+20	| numVertices
+24	| numMorphTargets
+28	| numTexCoordSets
+32	| RpMaterialList matList
+44	| triangles
+48	| preLitLum
+52	| texCoords
+84	| mesh
+88	| repEntry
+92	| morphTarget
+	+---
+
+class RpWorldSector	size(136):
+	+---
+ 0	| type
+ 4	| triangles
+ 8	| vertices
+12	| normals
+16	| texCoords
+48	| preLitLum
+52	| repEntry
+56	| RwLinkList collAtomicsInWorldSector
+64	| RwLinkList lightsInWorldSector
+72	| RwBBox boundingBox
+96	| RwBBox tightBoundingBox
+120	| mesh
+124	| pipeline
+128	| matListWindowBase
+130	| numVertices
+132	| numTriangles
+134	| pad
+	+---
+
+class RpLight	size(64):
+	+---
+ 0	| RwObjectHasFrame object
+20	| radius
+24	| RwRGBAReal color
+40	| minusCosAngle
+44	| RwLinkList WorldSectorsInLight
+52	| RwLLLink inWorld
+60	| lightFrame
+62	| pad
+	+---
+
+class RpClump	size(44):
+	+---
+ 0	| RwObject object
+ 8	| RwLinkList atomicList
+16	| RwLinkList lightList
+24	| RwLinkList cameraList
+32	| RwLLLink inWorldLink
+40	| callback
+	+---
+
+class RpAtomic	size(112):
+	+---
+ 0	| RwObjectHasFrame object
+20	| repEntry
+24	| geometry
+28	| RwSphere boundingSphere
+44	| RwSphere worldBoundingSphere
+60	| clump
+64	| RwLLLink inClumpLink
+72	| renderCallBack
+76	| RpInterpolator interpolator
+96	| renderFrame
+98	| pad
+100	| RwLinkList llWorldSectorsInAtomic
+108	| pipeline
+	+---
+
+class RpWorld	size(112):
+	+---
+ 0	| RwObject object
+ 8	| flags
+12	| RpWorldRenderOrder renderOrder
+16	| RpMaterialList matList
+28	| rootSector
+32	| numTexCoordSets
+36	| numClumpsInWorld
+40	| currentClumpLink
+44	| RwLinkList clumpList
+52	| RwLinkList lightList
+60	| RwLinkList directionalLightList
+68	| RwV3d worldOrigin
+80	| RwBBox boundingBox
+104	| renderCallBack
+108	| pipeline
+	+---
+

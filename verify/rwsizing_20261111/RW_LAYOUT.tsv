@@ -1,0 +1,172 @@
+rw3_type	rw3_size	rw3_off	rw3_field	width	librw_type	librw_size	librw_field	librw_off	status	game_reads
+RwObject	8	0x00	type	1	rw::Object	8	type	0x00	same	
+RwObject	8	0x01	subType	1	rw::Object	8	subType	0x01	same	
+RwObject	8	0x02	flags	1	rw::Object	8	flags	0x02	same	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW-2.md (atom +0x02 via 0x004b5240)
+RwObject	8	0x03	privateFlags	1	rw::Object	8	privateFlags	0x03	same	
+RwObject	8	0x04	parent	4	rw::Object	8	parent	0x04	same	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW-2.md (atom +0x04 frame; frame +0x04 parent)
+RwObjectHasFrame	20	0x00	object	8	rw::ObjectWithFrame	20	object	0x00	same	RW_INLINE_READERS.tsv T1 (+0x04 on the 0x004c1d30 / 0x004e7420 return)
+RwObjectHasFrame	20	0x08	lFrame	8	rw::ObjectWithFrame	20	inFrame	0x08	same	
+RwObjectHasFrame	20	0x10	sync	4	rw::ObjectWithFrame	20	syncCB	0x10	same	
+RwFrame	164	0x00	object	8	rw::Frame	164	object	0x00	same	
+RwFrame	164	0x08	inDirtyListLink	8	rw::Frame	164	inDirtyList	0x08	same	
+RwFrame	164	0x10	modelling	64	rw::Frame	164	matrix	0x18	moved	
+RwFrame	164	0x50	ltm	64	rw::Frame	164	ltm	0x58	moved	
+RwFrame	164	0x90	objectList	8	rw::Frame	164	objectList	0x10	moved	
+RwFrame	164	0x98	child	4	rw::Frame	164	child	0x98	same	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW-2.md (frame +0x98, 0x004c1210 / 0x004c1040 / 0x004c15c0)
+RwFrame	164	0x9c	next	4	rw::Frame	164	next	0x9c	same	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW-2.md (frame +0x9c)
+RwFrame	164	0xa0	root	4	rw::Frame	164	root	0xa0	same	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW-2.md (frame +0xa0)
+RwMatrixTag	64	0x00	right	12	rw::Matrix	64	right	0x00	same	
+RwMatrixTag	64	0x0c	flags	4	rw::Matrix	64	flags	0x0c	same	
+RwMatrixTag	64	0x10	up	12	rw::Matrix	64	up	0x10	same	
+RwMatrixTag	64	0x1c	pad1	4	rw::Matrix	64	pad1	0x1c	same	
+RwMatrixTag	64	0x20	at	12	rw::Matrix	64	at	0x20	same	
+RwMatrixTag	64	0x2c	pad2	4	rw::Matrix	64	pad2	0x2c	same	
+RwMatrixTag	64	0x30	pos	12	rw::Matrix	64	pos	0x30	same	
+RwMatrixTag	64	0x3c	pad3	4	rw::Matrix	64	pad3	0x3c	same	
+RwRaster	52	0x00	parent	4	rw::Raster	72	parent	0x3c	moved	
+RwRaster	52	0x04	cpPixels	4	rw::Raster	72	pixels	0x24	moved	
+RwRaster	52	0x08	palette	4	rw::Raster	72	palette	0x28	moved	
+RwRaster	52	0x0c	width	4	rw::Raster	72	width	0x14	moved	verify/portorigtop_20261109/RESULT_RWG-RASTER-BIND.md (0x004cdca0(raster+0xc, raster+0x10, 0x20))
+RwRaster	52	0x10	height	4	rw::Raster	72	height	0x18	moved	verify/portorigtop_20261109/RESULT_RWG-RASTER-BIND.md (raster +0x10)
+RwRaster	52	0x14	depth	4	rw::Raster	72	depth	0x1c	moved	
+RwRaster	52	0x18	stride	4	rw::Raster	72	stride	0x20	moved	
+RwRaster	52	0x1c	nOffsetX	2	rw::Raster	72	offsetX	0x40	moved	
+RwRaster	52	0x1e	nOffsetY	2	rw::Raster	72	offsetY	0x44	moved	
+RwRaster	52	0x20	cType	1	rw::Raster	72	type	0x04	moved	
+RwRaster	52	0x21	cFlags	1	rw::Raster	72	flags	0x08	moved	
+RwRaster	52	0x22	privateFlags	1	rw::Raster	72	privateFlags	0x0c	moved	verify/portorigtop_20261109/RESULT_RWG-RASTER-BIND.md:58 (raster +0x22 bit 0, 0x004d52d0)
+RwRaster	52	0x23	cFormat	1	rw::Raster	72	format	0x10	moved	
+RwRaster	52	0x24	originalPixels	4	rw::Raster	72	originalPixels	0x2c	moved	
+RwRaster	52	0x28	originalWidth	4	rw::Raster	72	originalWidth	0x30	moved	
+RwRaster	52	0x2c	originalHeight	4	rw::Raster	72	originalHeight	0x34	moved	
+RwRaster	52	0x30	originalStride	4	rw::Raster	72	originalStride	0x38	moved	
+RwTexture	88	0x00	raster	4	rw::Texture	96	raster	0x00	same	
+RwTexture	88	0x04	dict	4	rw::Texture	96	dict	0x04	same	verify/portorigtop_20261109/RESULT_CLUMP-TEXREAD.md (texture +0x04)
+RwTexture	88	0x08	lInDictionary	8	rw::Texture	96	inDict	0x08	same	
+RwTexture	88	0x10	name	32	rw::Texture	96	name	0x10	same	
+RwTexture	88	0x30	mask	32	rw::Texture	96	mask	0x30	same	
+RwTexture	88	0x50	filterAddressing	4	rw::Texture	96	filterAddressing	0x50	same	RW_INLINE_READERS.tsv T1 (+0x50 on the 0x004c5a00 return)
+RwTexture	88	0x54	refCount	4	rw::Texture	96	refCount	0x54	same	
+RwTexDictionary	24	0x00	object	8	rw::TexDictionary	24	object	0x00	same	
+RwTexDictionary	24	0x08	texturesInDict	8	rw::TexDictionary	24	textures	0x08	same	
+RwTexDictionary	24	0x10	lInInstance	8	rw::TexDictionary	24	inGlobalList	0x10	same	
+RwImage	28	0x00	flags	4	rw::Image	32	flags	0x00	same	
+RwImage	28	0x04	width	4	rw::Image	32	width	0x04	same	
+RwImage	28	0x08	height	4	rw::Image	32	height	0x08	same	
+RwImage	28	0x0c	depth	4	rw::Image	32	depth	0x0c	same	
+RwImage	28	0x10	stride	4	rw::Image	32	stride	0x14	moved	
+RwImage	28	0x14	cpPixels	4	rw::Image	32	pixels	0x18	moved	
+RwImage	28	0x18	palette	4	rw::Image	32	palette	0x1c	moved	
+RwCamera	388	0x00	object	20	rw::Camera	536	object	0x00	same	
+RwCamera	388	0x14	projectionType	4	rw::Camera	536	projection	0x38	moved	
+RwCamera	388	0x18	beginUpdate	4	rw::Camera	536	beginUpdateCB	0x14	moved	
+RwCamera	388	0x1c	endUpdate	4	rw::Camera	536	endUpdateCB	0x18	moved	
+RwCamera	388	0x20	viewMatrix	64	rw::Camera	536	viewMatrix	0x3c	moved	
+RwCamera	388	0x60	frameBuffer	4	rw::Camera	536	frameBuffer	0x174	moved	RW_INLINE_READERS.tsv T1 (+0x60 on the 0x004c1d30 return); RESULT_RWG-RASTER-BIND.md
+RwCamera	388	0x64	zBuffer	4	rw::Camera	536	zBuffer	0x178	moved	RW_INLINE_READERS.tsv T1 (+0x64 on the 0x004c1d30 return)
+RwCamera	388	0x68	viewWindow	8	rw::Camera	536	viewWindow	0x1c	moved	RW_INLINE_READERS.tsv T3 (+0x68 / +0x6c, 0x004c1c80 callers)
+RwCamera	388	0x70	recipViewWindow	8	rw::Camera	536	-	-	absent	
+RwCamera	388	0x78	viewOffset	8	rw::Camera	536	viewOffset	0x24	moved	
+RwCamera	388	0x80	nearPlane	4	rw::Camera	536	nearPlane	0x2c	moved	
+RwCamera	388	0x84	farPlane	4	rw::Camera	536	farPlane	0x30	moved	
+RwCamera	388	0x88	fogPlane	4	rw::Camera	536	fogPlane	0x34	moved	
+RwCamera	388	0x8c	zScale	4	rw::Camera	536	zScale	0x7c	moved	
+RwCamera	388	0x90	zShift	4	rw::Camera	536	zShift	0x80	moved	
+RwCamera	388	0x94	frustumPlanes	120	rw::Camera	536	frustumPlanes	0x84	moved	
+RwCamera	388	0x10c	frustumBoundBox	24	rw::Camera	536	frustumBoundBox	0x15c	moved	
+RwCamera	388	0x124	frustumCorners	96	rw::Camera	536	frustumCorners	0xfc	moved	
+RpAtomic	112	0x00	object	20	rw::Atomic	84	object	0x00	same	
+RpAtomic	112	0x14	repEntry	4	rw::Atomic	84	-	-	absent	
+RpAtomic	112	0x18	geometry	4	rw::Atomic	84	geometry	0x14	moved	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW.md (atomic +0x18; 0x0048fef0, 0x0040baa0 view)
+RpAtomic	112	0x1c	boundingSphere	16	rw::Atomic	84	boundingSphere	0x18	moved	
+RpAtomic	112	0x2c	worldBoundingSphere	16	rw::Atomic	84	worldBoundingSphere	0x28	moved	
+RpAtomic	112	0x3c	clump	4	rw::Atomic	84	clump	0x38	moved	
+RpAtomic	112	0x40	inClumpLink	8	rw::Atomic	84	inClump	0x3c	moved	
+RpAtomic	112	0x48	renderCallBack	4	rw::Atomic	84	renderCB	0x48	same	
+RpAtomic	112	0x4c	interpolator	20	rw::Atomic	84	-	-	absent	
+RpAtomic	112	0x60	renderFrame	2	rw::Atomic	84	-	-	absent	
+RpAtomic	112	0x62	pad	2	rw::Atomic	84	-	-	absent	
+RpAtomic	112	0x64	llWorldSectorsInAtomic	8	rw::Atomic	84	-	-	absent	
+RpAtomic	112	0x6c	pipeline	4	rw::Atomic	84	pipeline	0x44	moved	
+RpGeometry	96	0x00	object	8	rw::Geometry	100	object	0x00	same	
+RpGeometry	96	0x08	flags	4	rw::Geometry	100	flags	0x08	same	re/match/s15/0048fef0.c (geometry +0x08 |= 0x40)
+RpGeometry	96	0x0c	lockedSinceLastInst	2	rw::Geometry	100	lockedSinceInst	0x0c	width	
+RpGeometry	96	0x0e	refCount	2	rw::Geometry	100	refCount	0x60	moved	
+RpGeometry	96	0x10	numTriangles	4	rw::Geometry	100	numTriangles	0x10	same	
+RpGeometry	96	0x14	numVertices	4	rw::Geometry	100	numVertices	0x14	same	
+RpGeometry	96	0x18	numMorphTargets	4	rw::Geometry	100	numMorphTargets	0x18	same	
+RpGeometry	96	0x1c	numTexCoordSets	4	rw::Geometry	100	numTexCoordSets	0x1c	same	
+RpGeometry	96	0x20	matList	12	rw::Geometry	100	matList	0x4c	moved	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW-2.md / RESULT_PORT-OT-HUD.md (geometry +0x20 / +0x24 materials)
+RpGeometry	96	0x2c	triangles	4	rw::Geometry	100	triangles	0x20	moved	
+RpGeometry	96	0x30	preLitLum	4	rw::Geometry	100	colors	0x24	moved	
+RpGeometry	96	0x34	texCoords	32	rw::Geometry	100	texCoords	0x28	moved	
+RpGeometry	96	0x54	mesh	4	rw::Geometry	100	meshHeader	0x58	moved	
+RpGeometry	96	0x58	repEntry	4	rw::Geometry	100	instData	0x5c	moved	
+RpGeometry	96	0x5c	morphTarget	4	rw::Geometry	100	morphTargets	0x48	moved	
+RpClump	44	0x00	object	8	rw::Clump	44	object	0x00	same	
+RpClump	44	0x08	atomicList	8	rw::Clump	44	atomics	0x08	same	
+RpClump	44	0x10	lightList	8	rw::Clump	44	lights	0x10	same	
+RpClump	44	0x18	cameraList	8	rw::Clump	44	cameras	0x18	same	
+RpClump	44	0x20	inWorldLink	8	rw::Clump	44	inWorld	0x24	moved	
+RpClump	44	0x28	callback	4	rw::Clump	44	-	-	absent	
+RpMaterial	28	0x00	texture	4	rw::Material	28	texture	0x00	same	verify/portorigtop_20261109/RESULT_ATOMIC-VIEW.md (material +0x00, 0x0040baa0)
+RpMaterial	28	0x04	color	4	rw::Material	28	color	0x04	same	
+RpMaterial	28	0x08	pipeline	4	rw::Material	28	pipeline	0x14	moved	
+RpMaterial	28	0x0c	surfaceProps	12	rw::Material	28	surfaceProps	0x08	moved	
+RpMaterial	28	0x18	refCount	2	rw::Material	28	refCount	0x18	width	
+RpMaterial	28	0x1a	pad	2	rw::Material	28	-	-	absent	
+RpLight	64	0x00	object	20	rw::Light	72	object	0x00	same	
+RpLight	64	0x14	radius	4	rw::Light	72	radius	0x14	same	
+RpLight	64	0x18	color	16	rw::Light	72	color	0x18	same	
+RpLight	64	0x28	minusCosAngle	4	rw::Light	72	minusCosAngle	0x28	same	
+RpLight	64	0x2c	WorldSectorsInLight	8	rw::Light	72	-	-	absent	
+RpLight	64	0x34	inWorld	8	rw::Light	72	inWorld	0x2c	moved	
+RpLight	64	0x3c	lightFrame	2	rw::Light	72	-	-	absent	
+RpLight	64	0x3e	pad	2	rw::Light	72	-	-	absent	
+RpWorld	112	0x00	object	8	rw::World	32	object	0x00	same	
+RpWorld	112	0x08	flags	4	rw::World	32	-	-	absent	
+RpWorld	112	0x0c	renderOrder	4	rw::World	32	-	-	absent	
+RpWorld	112	0x10	matList	12	rw::World	32	-	-	absent	
+RpWorld	112	0x1c	rootSector	4	rw::World	32	-	-	absent	
+RpWorld	112	0x20	numTexCoordSets	4	rw::World	32	-	-	absent	
+RpWorld	112	0x24	numClumpsInWorld	4	rw::World	32	-	-	absent	
+RpWorld	112	0x28	currentClumpLink	4	rw::World	32	-	-	absent	
+RpWorld	112	0x2c	clumpList	8	rw::World	32	clumps	0x18	moved	
+RpWorld	112	0x34	lightList	8	rw::World	32	localLights	0x08	moved	
+RpWorld	112	0x3c	directionalLightList	8	rw::World	32	globalLights	0x10	moved	
+RpWorld	112	0x44	worldOrigin	12	rw::World	32	-	-	absent	
+RpWorld	112	0x50	boundingBox	24	rw::World	32	-	-	absent	
+RpWorld	112	0x68	renderCallBack	4	rw::World	32	-	-	absent	
+RpWorld	112	0x6c	pipeline	4	rw::World	32	-	-	absent	
+RpWorldSector	136	0x00	type	4	-	-	-	-	absent	
+RpWorldSector	136	0x04	triangles	4	-	-	-	-	absent	
+RpWorldSector	136	0x08	vertices	4	-	-	-	-	absent	
+RpWorldSector	136	0x0c	normals	4	-	-	-	-	absent	
+RpWorldSector	136	0x10	texCoords	32	-	-	-	-	absent	
+RpWorldSector	136	0x30	preLitLum	4	-	-	-	-	absent	
+RpWorldSector	136	0x34	repEntry	4	-	-	-	-	absent	
+RpWorldSector	136	0x38	collAtomicsInWorldSector	8	-	-	-	-	absent	
+RpWorldSector	136	0x40	lightsInWorldSector	8	-	-	-	-	absent	
+RpWorldSector	136	0x48	boundingBox	24	-	-	-	-	absent	
+RpWorldSector	136	0x60	tightBoundingBox	24	-	-	-	-	absent	
+RpWorldSector	136	0x78	mesh	4	-	-	-	-	absent	
+RpWorldSector	136	0x7c	pipeline	4	-	-	-	-	absent	
+RpWorldSector	136	0x80	matListWindowBase	2	-	-	-	-	absent	
+RpWorldSector	136	0x82	numVertices	2	-	-	-	-	absent	
+RpWorldSector	136	0x84	numTriangles	2	-	-	-	-	absent	
+RpWorldSector	136	0x86	pad	2	-	-	-	-	absent	
+RwGlobals	300	0x00	curCamera	4	rw::Engine	172	currentCamera	0x00	same	RW_INLINE_READERS.tsv T2 (+0x00, 10 functions)
+RwGlobals	300	0x04	curWorld	4	rw::Engine	172	currentWorld	0x04	same	
+RwGlobals	300	0x08	renderFrame	2	rw::Engine	172	-	-	absent	
+RwGlobals	300	0x0a	lightFrame	2	rw::Engine	172	-	-	absent	
+RwGlobals	300	0x0c	pad	4	rw::Engine	172	-	-	absent	
+RwGlobals	300	0x10	dOpenDevice	56	rw::Engine	172	-	-	absent	RW_INLINE_READERS.tsv T2 (+0x18 z 14, +0x20 RenderStateSet 65, +0x24 3, +0x30 Im2DRenderPrimitive 13, +0x34 2 functions); RESULT_PORT-OT-RWG-SLOTS.md
+RwGlobals	300	0x48	stdFunc	116	rw::Engine	172	-	-	absent	verify/portorigtop_20261109/RESULT_RWG-RASTER-BIND.md (+0x60 = stdFunc[6])
+RwGlobals	300	0xbc	dirtyFrameList	8	rw::Engine	172	frameDirtyList	0x08	moved	
+RwGlobals	300	0xc4	stringFuncs	68	rw::Engine	172	-	-	absent	RW_INLINE_READERS.tsv T2 (+0xc4 / +0xcc / +0xd4 / +0xf4)
+RwGlobals	300	0x108	memoryFuncs	16	rw::Engine	172	-	-	absent	RW_INLINE_READERS.tsv T2 (+0x108 malloc 4, +0x10c free 9)
+RwGlobals	300	0x118	memoryAlloc	4	rw::Engine	172	-	-	absent	verify/portorigtop_20261109/RESULT_PORT-OT-HUD-2.md (+0x118)
+RwGlobals	300	0x11c	memoryFree	4	rw::Engine	172	-	-	absent	verify/portorigtop_20261109/RESULT_PORT-OT-HUD.md (+0x11c RwGlobalsFreeListFree)
+RwGlobals	300	0x120	metrics	4	rw::Engine	172	-	-	absent	
+RwGlobals	300	0x124	engineStatus	4	rw::Engine	172	-	-	absent	
+RwGlobals	300	0x128	resArenaInitSize	4	rw::Engine	172	-	-	absent	

@@ -1,0 +1,229 @@
+class rw::Matrix	size(64):
+	+---
+ 0	| V3d right
+12	| flags
+16	| V3d up
+28	| pad1
+32	| V3d at
+44	| pad2
+48	| V3d pos
+60	| pad3
+	+---
+
+class rw::Device	size(72):
+	+---
+ 0	| zNear
+ 4	| zFar
+ 8	| beginUpdate
+12	| endUpdate
+16	| clearCamera
+20	| showRaster
+24	| rasterRenderFast
+28	| setRenderState
+32	| getRenderState
+36	| im2DRenderLine
+40	| im2DRenderTriangle
+44	| im2DRenderPrimitive
+48	| im2DRenderIndexedPrimitive
+52	| im3DTransform
+56	| im3DRenderPrimitive
+60	| im3DRenderIndexedPrimitive
+64	| im3DEnd
+68	| system
+	+---
+
+class rw::Engine	size(172):
+	+---
+ 0	| currentCamera
+ 4	| currentWorld
+ 8	| LinkList frameDirtyList
+16	| FileFunctions filefuncs
+44	| driver
+96	| Device device
+168	| dummyDefaultPipeline
+	+---
+
+class rw::Object	size(8):
+	+---
+ 0	| type
+ 1	| subType
+ 2	| flags
+ 3	| privateFlags
+ 4	| parent
+	+---
+
+class rw::Frame	size(164):
+	+---
+ 0	| Object object
+ 8	| LLLink inDirtyList
+16	| LinkList objectList
+24	| Matrix matrix
+88	| Matrix ltm
+152	| child
+156	| next
+160	| root
+	+---
+
+class rw::ObjectWithFrame	size(20):
+	+---
+ 0	| Object object
+ 8	| LLLink inFrame
+16	| syncCB
+	+---
+
+class rw::Image	size(32):
+	+---
+ 0	| flags
+ 4	| width
+ 8	| height
+12	| depth
+16	| bpp
+20	| stride
+24	| pixels
+28	| palette
+	+---
+
+class rw::Raster	size(72):
+	+---
+ 0	| platform
+ 4	| type
+ 8	| flags
+12	| privateFlags
+16	| format
+20	| width
+24	| height
+28	| depth
+32	| stride
+36	| pixels
+40	| palette
+44	| originalPixels
+48	| originalWidth
+52	| originalHeight
+56	| originalStride
+60	| parent
+64	| offsetX
+68	| offsetY
+	+---
+
+class rw::Texture	size(96):
+	+---
+ 0	| raster
+ 4	| dict
+ 8	| LLLink inDict
+16	| name
+48	| mask
+80	| filterAddressing
+84	| refCount
+88	| LLLink inGlobalList
+	+---
+
+class rw::Material	size(28):
+	+---
+ 0	| texture
+ 4	| RGBA color
+ 8	| SurfaceProperties surfaceProps
+20	| pipeline
+24	| refCount
+	+---
+
+class rw::Geometry	size(100):
+	+---
+ 0	| Object object
+ 8	| flags
+12	| lockedSinceInst
+  	| <alignment member> (size=2)
+16	| numTriangles
+20	| numVertices
+24	| numMorphTargets
+28	| numTexCoordSets
+32	| triangles
+36	| colors
+40	| texCoords
+72	| morphTargets
+76	| MaterialList matList
+88	| meshHeader
+92	| instData
+96	| refCount
+	+---
+
+class rw::Atomic	size(84):
+	+---
+ 0	| ObjectWithFrame object
+20	| geometry
+24	| Sphere boundingSphere
+40	| Sphere worldBoundingSphere
+56	| clump
+60	| LLLink inClump
+68	| pipeline
+72	| renderCB
+76	| world
+80	| originalSync
+	+---
+
+class rw::Light	size(72):
+	+---
+ 0	| ObjectWithFrame object
+20	| radius
+24	| RGBAf color
+40	| minusCosAngle
+44	| LLLink inWorld
+52	| clump
+56	| LLLink inClump
+64	| world
+68	| originalSync
+	+---
+
+class rw::Camera	size(536):
+	+---
+ 0	| ObjectWithFrame object
+20	| beginUpdateCB
+24	| endUpdateCB
+28	| V2d viewWindow
+36	| V2d viewOffset
+44	| nearPlane
+48	| farPlane
+52	| fogPlane
+56	| projection
+60	| Matrix viewMatrix
+124	| zScale
+128	| zShift
+132	| frustumPlanes
+252	| frustumCorners
+348	| BBox frustumBoundBox
+372	| frameBuffer
+376	| zBuffer
+380	| RawMatrix devView
+444	| RawMatrix devProj
+508	| clump
+512	| LLLink inClump
+520	| world
+524	| originalSync
+528	| originalBeginUpdate
+532	| originalEndUpdate
+	+---
+
+class rw::Clump	size(44):
+	+---
+ 0	| Object object
+ 8	| LinkList atomics
+16	| LinkList lights
+24	| LinkList cameras
+32	| world
+36	| LLLink inWorld
+	+---
+
+class rw::World	size(32):
+	+---
+ 0	| Object object
+ 8	| LinkList localLights
+16	| LinkList globalLights
+24	| LinkList clumps
+	+---
+
+class rw::TexDictionary	size(24):
+	+---
+ 0	| Object object
+ 8	| LinkList textures
+16	| LLLink inGlobalList
+	+---
+
