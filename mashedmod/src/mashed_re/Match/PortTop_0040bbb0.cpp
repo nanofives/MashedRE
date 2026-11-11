@@ -118,6 +118,8 @@ int PortTop_StandIn04G_004b3d20(char* p0) {
 #define FUN_00475a00 Orig_00475a00                       // L-115 near-match body, Match/PortTop_00475a00.cpp, since PORT-OT-RENDER-2
 #undef FUN_00476390
 #define FUN_00476390 Orig_00476390                       // matched, Match/PortTop_00476390.cpp, since PORT-OT-RENDER
+#undef FUN_0048e820
+#define FUN_0048e820 PortTop_PS3_Call0048e820            // L-118 near-match body, Match/PortTop_0048e820.cpp, since PARTICLE-3-SWAP
 #undef FUN_00477e40
 #define FUN_00477e40 Orig_00477e40                       // matched, Match/PortTop_00477e40.cpp, since PORT-OT-RENDER
 #undef FUN_00489290

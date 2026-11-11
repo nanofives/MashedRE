@@ -26,7 +26,7 @@ typedef unsigned char bool;
 typedef unsigned char undefined;
 typedef unsigned char undefined1;
 MGLOBAL(undefined1, DAT_00722470, 0x00722470);
-void FUN_004768c0(int p0);
+void FUN_004768c0(void *p0);   /* PARTICLE-3-SWAP: pointer parameter so the port (C++) compiles; bytes unchanged */
 // MATCH: 0x0048cf70 FUN_0048cf70
 void FUN_0048cf70(void)
 
