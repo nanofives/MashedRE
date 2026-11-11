@@ -47,3 +47,22 @@ passes the world in EAX. A port of this body needs an EAX bridge for that call (
 glue as PARTICLE-3-SWAP's EDI bridge).
 
 rva-lint: OK, 0 new. No mashedmod/ change.
+
+## Second pass (TL-MATCH-479330-B, 2026-11-10): PARKED at 97.2%
+
+This was the last pass the brief allows: the instance loop only, three tries. Each was scored with
+`match.py --bytes`. None beat 97.2%, so `re/match/s12/00479330.c` is unchanged.
+
+| try | change | score | frame |
+|---|---|---|---|
+| 1 | the lights block declares its own count; the instance loop uses a plain `int count` and `int tmp[6]` | 92.8% (regs 92.8%, ops 99.5%), 823/825 ins | 0x448 |
+| 2 | one wrapper block around the instance `for` holding count / buf / tmp | 92.8% (same bytes as try 1) | 0x448 |
+| 3 | `count` in a two-int struct `{count, pad}` whose address is never taken, plus a separate `tmp[6]` | 93.1% (regs 93.2%, ops 99.5%), 823/825 ins | 0x44c |
+
+Tries 1 and 2 put `count` in EDI as the original does. In every block shape or scope tried, though, its stack slot
+does not land inside the lights array's space. The frame then grows by 4 bytes and every later stack offset moves.
+
+**Parked:** 0x00479330 stays at **97.2%** (regs 99.5%, ops 99.6%), 826/825 ins, 72 bytes, C2. The residual is the one
+recorded above: in the instance loop 0x00479c40..0x00479d59 the original keeps `count` (EDI) and `buf` (ESI) in
+registers across the two calls and stores them at loop entry. Ours reloads `count` from an address-taken struct
+slot. The open problem is a plain register `count` whose slot still overlaps the lights array. No round three.
