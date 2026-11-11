@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-// best 96.7 (ops 100). Residual: imul operand order ([esi+0xc]*[esi+8] vs original [esi+8]*[esi+0xc]); swapping source order, temp, permuter (148 compiles) did not move it. Class (a). ErrRec 8-byte stack struct is the fix for the sub esp,8 frame.
+// MATCH-RT2D-FONT 2026-11-11: 100% (was 96.7). SList struct (elems, filled, alloced, entrySize) with entrySize stored after alloced (permute "move"); the store order fixes the imul operand order in the error path.
 /* MATCH-S28 0x005c4ad0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchs28_20261107/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -29,34 +29,33 @@ typedef unsigned int uint;
 typedef void *(*AllocFn)(int, unsigned int);
 typedef void (*FreeFn)(void *);
 typedef struct { undefined4 a; undefined4 b; } ErrRec;
+typedef struct { unsigned char *elems; int filled; int alloced; int entrySize; } SList;
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 undefined4 FUN_004d7ff0(undefined4 p0, int p1);
 undefined4 *FUN_004d8480(ErrRec *p0);
 // MATCH: 0x005c4ad0 FUN_005c4ad0
-int *FUN_005c4ad0(int param_1, uint param_2)
+SList *FUN_005c4ad0(int param_1, uint param_2)
 {
-  int *piVar1;
-  int iVar2;
-  ErrRec e;
-
-  piVar1 = (int *)(*(AllocFn *)(DAT_007d3ff8 + 0x108))(0x10, 0x30000);
-  if (piVar1 == (int *)0x0) {
+  SList *l;
+  l = (SList *)(*(AllocFn *)(DAT_007d3ff8 + 0x108))(0x10, 0x30000);
+  if (!l) {
+    ErrRec e;
     e.a = 1;
-    e.b = FUN_004d7ff0(0x80000013, 0x10);
+    e.b = FUN_004d7ff0(0x80000013, sizeof(SList));
     FUN_004d8480(&e);
-    return (int *)0x0;
+    return 0;
   }
-  piVar1[3] = param_1;
-  piVar1[1] = 0;
-  piVar1[2] = 0x14;
-  iVar2 = (int)(*(AllocFn *)(DAT_007d3ff8 + 0x108))(param_1 * 0x14, param_2 | 0x1000000);
-  *piVar1 = iVar2;
-  if (iVar2 == 0) {
+  l->filled = 0;
+  l->alloced = 0x14;
+  l->entrySize = param_1;
+  l->elems = (unsigned char *)(*(AllocFn *)(DAT_007d3ff8 + 0x108))(l->entrySize * l->alloced, param_2 | 0x1000000);
+  if (!l->elems) {
+    ErrRec e;
     e.a = 1;
-    e.b = FUN_004d7ff0(0x80000013, piVar1[3] * piVar1[2]);
+    e.b = FUN_004d7ff0(0x80000013, l->alloced * l->entrySize);
     FUN_004d8480(&e);
-    (*(FreeFn *)(DAT_007d3ff8 + 0x10c))(piVar1);
-    return (int *)0x0;
+    (*(FreeFn *)(DAT_007d3ff8 + 0x10c))(l);
+    return 0;
   }
-  return piVar1;
+  return l;
 }

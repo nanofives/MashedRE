@@ -1,0 +1,2 @@
+py -3.12 -m pytest -q re/tools/match/test_equiv.py (2026-11-11, after the rebase onto orch/integration)
+2 passed in 8.68s

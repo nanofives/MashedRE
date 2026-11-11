@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S28 0x005c4c60: 93.0% (regs 94.4%). Flags /O2 /Ob1 /G5 (not /O1: 50.7->90.1), compare as p1+n >= cap, return value computed before the index store (->93.0), /4 as signed division, both cdecl callees + cdecl vtbl call. Residual: instruction schedule of the final imul/add/store (orig loads [esi] after imul; ours earlier); permuter no gain. Class: b. */
+/* MATCH-S28 0x005c4c60: 100% (MATCH-RT2D-FONT 2026-11-11: return value computed as *p + p[1]*p[3] before the p[1] += n store; was 93.0 with the index loaded into a temp first). Flags /O2 /Ob1 /G5. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -47,9 +47,9 @@ int FUN_005c4c60(int *param_1, int param_2, int param_3)
     *param_1 = iVar2;
     param_1[2] = iVar1 / 4 + iVar1 + param_2;
   }
-  iVar1 = param_1[1];
-  iVar2 = param_1[3] * iVar1 + *param_1;
-  param_1[1] = iVar1 + param_2;
+  iVar2 = *param_1 + param_1[1] * param_1[3];
+  param_1[1] += param_2;
   return iVar2;
+
 }
 

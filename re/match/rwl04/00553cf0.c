@@ -1,5 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL04 0x00553cf0 h1: best 40.9% (regs 72.0%, ops 87.1%); structure only (262 B, inlined clear of the 0x00553590 body plus list loop). Orig keeps param_1 in esi / list ptr in ebp with the return value reloaded from stack; ours allocates differently. Class (b). */
+/* MATCH-RT2D-FONT 2026-11-11 0x00553cf0: 100% (was 40.9). The 0x00553590 body (100% on its own) is a __forceinline helper returning DAT_00912a28, its result held in a local and passed to 0x00553620 / 0x00553c50; the -1 test written as if/else on path->b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -38,59 +38,63 @@ int FUN_00553e80(int p0);
 void FUN_005c4ba0(int p0);
 int FUN_005c4d30(int p0);
 int FUN_005c4d50(int p0);
-// MATCH: 0x00553cf0 FUN_00553cf0
-Ls * FUN_00553cf0(Ls *param_1,float *param_2)
+static __forceinline Top *Empty_00553590(void)
 {
-  float fVar1;
-  Obj *piVar2;
+  Obj *piVar1;
+  int iVar2;
   Top *puVar3;
-  int iVar4;
-  Ls *piVar5;
-  
-  iVar4 = param_1->a;
-  if (param_1->b == -1) {
-    iVar4 = FUN_005c4d30(iVar4);
-  }
-  fVar1 = *(float *)(iVar4 + 4);
-  param_2[2] = fVar1;
-  *param_2 = fVar1;
-  fVar1 = *(float *)(iVar4 + 8);
-  param_2[3] = fVar1;
-  param_2[1] = fVar1;
-  piVar5 = param_1;
-  do {
-    puVar3 = DAT_00912a28;
-    if (piVar5->d == 0) {
-      piVar2 = DAT_00912a28->p14;
-      if (piVar2 != 0) {
-        iVar4 = piVar2->f;
-        if (piVar2->a != 0) {
-          if (piVar2->b == -1) {
-            FUN_005c4d50(piVar2->a);
-          }
-          else {
-            DAT_007d3ff8->fn10c(piVar2->a);
-          }
-        }
-        piVar2->a = 0;
-        DAT_007d3ff8->fn11c(DAT_00912a24,(int)piVar2);
-        FUN_00553e80(iVar4);
+
+  puVar3 = DAT_00912a28;
+  piVar1 = puVar3->p14;
+  if (piVar1 != 0) {
+    iVar2 = piVar1->f;
+    if (piVar1->a != 0) {
+      if (piVar1->b == -1) {
+        FUN_005c4d50(piVar1->a);
       }
-      puVar3->p14 = 0;
-      FUN_005c4ba0(puVar3->a);
-      puVar3->c8 = 0;
-      puVar3->cC = 1;
-      puVar3->p18 = puVar3;
-      puVar3 = DAT_00912a28;
-      FUN_00553620(DAT_00912a28,piVar5);
-      FUN_00553c50(puVar3,param_2);
+      else {
+        DAT_007d3ff8->fn10c(piVar1->a);
+      }
+    }
+    piVar1->a = 0;
+    DAT_007d3ff8->fn11c(DAT_00912a24,(int)piVar1);
+    FUN_00553e80(iVar2);
+  }
+  puVar3->p14 = 0;
+  FUN_005c4ba0(puVar3->a);
+  puVar3->c8 = 0;
+  puVar3->cC = 1;
+  puVar3->p18 = puVar3;
+  return DAT_00912a28;
+}
+// MATCH: 0x00553cf0 FUN_00553cf0
+Ls *FUN_00553cf0(Ls *path, float *bbox)
+{
+  int node;
+  Ls *p;
+
+  if (path->b == -1) {
+    node = FUN_005c4d30(path->a);
+  }
+  else {
+    node = path->a;
+  }
+  bbox[0] = bbox[2] = *(float *)(node + 4);
+  bbox[1] = bbox[3] = *(float *)(node + 8);
+  p = path;
+  do {
+    if (p->d == 0) {
+      Top *t;
+      t = Empty_00553590();
+      FUN_00553620(t, p);
+      FUN_00553c50(t, bbox);
     }
     else {
-      FUN_00553c50(piVar5,param_2);
+      FUN_00553c50(p, bbox);
     }
-    piVar5 = piVar5->next;
-  } while (piVar5 != 0);
-  param_2[2] = param_2[2] - *param_2;
-  param_2[3] = param_2[3] - param_2[1];
-  return param_1;
+    p = p->next;
+  } while (p != 0);
+  bbox[2] = bbox[2] - bbox[0];
+  bbox[3] = bbox[3] - bbox[1];
+  return path;
 }

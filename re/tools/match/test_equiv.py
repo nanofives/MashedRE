@@ -71,8 +71,8 @@ REFERENCES = {
     0x00555360: ("re/match/s24/00555360.c", "EQUIV-IF-CALLERS-IGNORE", "L-117 admitted: return blocks + store order"),
     0x0048e820: ("re/match/s15/0048e820.c", "NOT-PROVEN", "L-118 admitted with the PortTop EDI wrapper; the "
                  "unedited source passes the wrong EDI to 0x0048cee0"),
-    0x005c4ad0: ("re/match/s28/005c4ad0.c", "EQUIV", "held: imul operand order + a local whose address escapes (A1')"),
-    0x00556e90: ("re/match/s24/00556e90.c", "NOT-PROVEN", "held: moves scheduled across x87 (excluded)"),
+    0x005c4ad0: ("re/tools/match/equiv_tests/refs/005c4ad0_held.c", "EQUIV", "held: imul operand order + a local whose address escapes (A1'); frozen copy, the live source is 100% since MATCH-RT2D-FONT"),
+    0x00556e90: ("re/tools/match/equiv_tests/refs/00556e90_held.c", "NOT-PROVEN", "held: moves scheduled across x87 (excluded); frozen copy of the 97.5% source"),
 }
 
 _OBJ = None
