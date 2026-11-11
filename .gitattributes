@@ -26,3 +26,12 @@ re/orchestrator/INTEGRATION_LOG.md text eol=lf
 # with git merge-file, and carries `port` back by RVA. Undefined driver = git's normal text merge.
 # Register once per clone: git config merge.hooksport.driver "py -3.12 scripts/backfill_port.py --merge-driver %O %A %B"
 /hooks.csv merge=hooksport
+
+# Generated port-state files (HB-GENFILES-NOCONFLICT): two ORIG_TOP rows in flight both append to these, so a line
+# merge conflicts. scripts/genfiles_merge.py merges by record (BINDINGS by rva, SEED_CANDIDATES and the .inc by
+# address), re-renders the .inc through re/tools/gen_portstate_seed.py, and conflicts loudly (markers, exit 1) only
+# on a real disagreement. Undefined driver = git's normal text merge.
+# Register once per clone: py -3.12 scripts/genfiles_merge.py --install
+/verify/porttop_20261108/BINDINGS.tsv merge=genbindings
+/verify/portstate_20261108/SEED_CANDIDATES.tsv merge=genseedtsv
+/mashedmod/src/mashed_re/Compat/PortStateSeed.inc merge=genseedinc
