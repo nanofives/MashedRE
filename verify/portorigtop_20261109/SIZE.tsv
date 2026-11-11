@@ -1,57 +1,56 @@
 section	key	value	detail
-reach	functions reached from 0x00492370 (direct + reloc edges)	2338	direct calls only: 2184; reloc tables used: 71
-reach_class	match	1629	
-reach_class	game-c0c3	357	
-reach_class	fam:rwcore	81	
-reach_class	norow	44	
-reach_class	bind:bound	34	
-reach_class	fam:crt	33	
+reach	functions reached from 0x00492370 (direct + reloc edges)	2316	direct calls only: 2165; reloc tables used: 71
+reach_class	match	1653	
+reach_class	game-c0c3	326	
+reach_class	fam:rwcore	64	
+reach_class	bind:bound	51	
+reach_class	norow	32	
 reach_class	fam:rwphysics	30	
-reach_class	bind:port	26	
+reach_class	bind:port	29	
+reach_class	fam:crt	26	
 reach_class	bind:rw	25	
-reach_class	fam:d3d-dshow	24	
-reach_class	bind:shim	19	
-reach_class	game-c4	15	
-reach_class	fam:lua	7	
-reach_class	fam:rt2d	5	
-reach_class	bind:crt	4	
+reach_class	fam:d3d-dshow	22	
+reach_class	bind:shim	21	
+reach_class	game-c4	13	
+reach_class	bind:crt	10	
+reach_class	fam:rt2d	6	
 reach_class	game-c4-hand	4	
+reach_class	fam:lua	3	
 reach_class	fam:qhull	1	
-runnable	C4-by-match rows in reach	1629	
-runnable	already running (BINDINGS matched)	121	
-runnable	runnable with no new family bound	996	
-family_alone	game-c0c3	209	functions to bind in reach: 357  (named / >=20)
-family_alone	fam:crt	53	functions to bind in reach: 33  (named / >=20)
-family_alone	fam:rwcore	37	functions to bind in reach: 81  (named / >=20)
-family_alone	fam:rwphysics	32	functions to bind in reach: 30  (named / >=20)
-family_alone	fam:lua	18	functions to bind in reach: 7  (named / >=20)
-family_alone	norow	16	functions to bind in reach: 44
-family_alone	fam:rt2d	2	functions to bind in reach: 5  (named / >=20)
-family_alone	game-c4	2	functions to bind in reach: 15
-family_alone	fam:d3d-dshow	1	functions to bind in reach: 24  (named / >=20)
+runnable	C4-by-match rows in reach	1653	
+runnable	already running (BINDINGS matched)	215	
+runnable	runnable with no new family bound	1063	
+family_alone	game-c0c3	240	functions to bind in reach: 326  (named / >=20)
+family_alone	fam:rwcore	52	functions to bind in reach: 64  (named / >=20)
+family_alone	fam:lua	41	functions to bind in reach: 3  (named / >=20)
+family_alone	fam:rwphysics	37	functions to bind in reach: 30  (named / >=20)
+family_alone	fam:crt	27	functions to bind in reach: 26  (named / >=20)
+family_alone	norow	17	functions to bind in reach: 32
+family_alone	fam:rt2d	4	functions to bind in reach: 6  (named / >=20)
+family_alone	game-c4	2	functions to bind in reach: 13
+family_alone	fam:d3d-dshow	1	functions to bind in reach: 22  (named / >=20)
 family_alone	fam:qhull	0	functions to bind in reach: 1
 family_alone	game-c4-hand	0	functions to bind in reach: 4
-cumulative	+fam:rt2d	998	cost 5
-cumulative	+fam:lua	1016	cost 7
-cumulative	+fam:d3d-dshow	1017	cost 24
-cumulative	+fam:rwphysics	1049	cost 30
-cumulative	+fam:crt	1135	cost 33
-cumulative	+fam:rwcore	1207	cost 81
-cumulative	+game-c0c3	1541	cost 357
-final	runnable with every binding family bound (no C0..C3 matching)	1207	
-caveat	of those, read RwGlobals (DAT_007d3ff8)	72	0x00401f10 0x004113b0 0x004114c0 0x00413a40 0x00427840 0x0042a470 0x0042a5d0 0x0042aae0 0x004430e0 0x004522d0 0x00472b10 0x00472c60 0x00472dc0 0x00472f40 0x004730b0 0x00473220 0x004733b0 0x00473540 0x004736c0 0x00473870 0x004739f0 0x00473ee0 0x00474db0 0x00475d90 0x004768c0 0x00477810 0x0047ade0 0x00483a40 0x00484130 0x00484170 0x00485e10 0x004891f0 0x004898d0 0x00489c60 0x00490490 0x00491530 0x004c1680 0x004c3b30 0x004c3b90 0x004c3bf0 0x004c3d60 0x004c3d90 0x004c3dc0 0x004c3df0 0x004c4600 0x004c5770 0x004c5890 0x004ce790 0x004ce8e0 0x004d52d0 0x00554050 0x00555280 0x00555830 0x00555910 0x00556ce0 0x00556e40 0x00558d30 0x0055dd60 0x0055df90 0x0055fdd0 0x00562560 0x00563810 0x00564130 0x00564190 0x0057c300 0x0057c370 0x0057c500 0x0057c550 0x005adf60 0x005aea00 0x005aea50 0x005c4d50
-caveat	of those, read nonzero original .data/.rdata	123	
-dual	TOTAL	92	
-dual	audio	21	0x005a89a0 0x005a89b0 0x005a89c0 0x005a9e40 0x005abf80 0x005ac5f0 0x005ac740 0x005ac980 0x005ac9e0 0x005aca80 0x005acd60 0x005ad2e0 0x005ade60 0x005aded0 0x005adf30 0x005ae050 0x005ae0b0 0x005aea10 0x005aec00 0x005baf40 0x005baf60
-dual	gameplay	11	0x004075b0 0x00407b00 0x00407b70 0x00407d70 0x00407db0 0x00409330 0x0040b890 0x0040b8e0 0x0040b930 0x0041f360 0x0045c110
-dual	render	11	0x00476a40 0x00476c60 0x00476df0 0x00498a00 0x00498e40 0x004b4050 0x004b4650 0x004c3bf0 0x004c4600 0x004cbb60 0x004d40c0
+cumulative	+fam:lua	1104	cost 3
+cumulative	+fam:rt2d	1108	cost 6
+cumulative	+fam:d3d-dshow	1109	cost 22
+cumulative	+fam:crt	1140	cost 26
+cumulative	+fam:rwphysics	1177	cost 30
+cumulative	+fam:rwcore	1236	cost 64
+cumulative	+game-c0c3	1558	cost 326
+final	runnable with every binding family bound (no C0..C3 matching)	1236	
+caveat	of those, read RwGlobals (DAT_007d3ff8)	71	0x00401f10 0x004113b0 0x004114c0 0x00413a40 0x00427840 0x0042a470 0x0042a5d0 0x0042aae0 0x004430e0 0x004522d0 0x00472b10 0x00472c60 0x00472dc0 0x00472f40 0x004730b0 0x00473220 0x004733b0 0x00473540 0x004736c0 0x00473870 0x004739f0 0x00473ee0 0x00474db0 0x00475d90 0x004768c0 0x00477810 0x0047ade0 0x00483a40 0x00484130 0x00484170 0x00485e10 0x004891f0 0x004898d0 0x00489c60 0x00490490 0x00491530 0x004c1680 0x004c3b30 0x004c3b90 0x004c3bf0 0x004c3d60 0x004c3d90 0x004c3dc0 0x004c3df0 0x004c4600 0x004c5770 0x004c5890 0x004ce790 0x004ce8e0 0x00554050 0x00555280 0x00555830 0x00555910 0x00556ce0 0x00556e40 0x00558d30 0x0055dd60 0x0055df90 0x0055fdd0 0x00562560 0x00563810 0x00564130 0x00564190 0x0057c300 0x0057c370 0x0057c500 0x0057c550 0x005adf60 0x005aea00 0x005aea50 0x005c4d50
+caveat	of those, read nonzero original .data/.rdata	128	
+dual	TOTAL	89	
+dual	audio	22	0x005a89a0 0x005a89b0 0x005a89c0 0x005a9e40 0x005abf80 0x005ac5f0 0x005ac740 0x005ac980 0x005ac9e0 0x005aca80 0x005acd60 0x005ad2e0 0x005ade60 0x005aded0 0x005adf30 0x005ae050 0x005ae0b0 0x005aea10 0x005aec00 0x005b10e0 0x005baf40 0x005baf60
+dual	ai	12	0x00414490 0x004148b0 0x004177b0 0x00417cf0 0x00422b50 0x004233e0 0x00443080 0x0046c730 0x0046c750 0x0046d4a0 0x0046d780 0x0046d7f0
+dual	render	12	0x00476a40 0x00476c60 0x00476df0 0x00498a00 0x00498e40 0x004b4050 0x004b4650 0x004c3bf0 0x004c4600 0x004cbb60 0x004d40c0 0x004d53b0
 dual	frontend	10	0x00408a70 0x0040e470 0x00426cb0 0x004298c0 0x0042fab0 0x00430760 0x00430910 0x00431b70 0x004323c0 0x00432b30
-dual	vehicle	10	0x0040e180 0x00468b40 0x0046b1c0 0x0046b540 0x0046c7b0 0x0046cbb0 0x0046dbe0 0x00476c10 0x004770c0 0x00485340
-dual	ai	10	0x004148b0 0x00417cf0 0x00422b50 0x004233e0 0x00443080 0x0046c730 0x0046c750 0x0046d4a0 0x0046d780 0x0046d7f0
-dual	util	8	0x0040b180 0x0040dbd0 0x00422120 0x00441c80 0x0046baa0 0x004b64e0 0x004c3b30 0x0055dec0
-dual	save	3	0x004099a0 0x004b3b70 0x00550980
+dual	util	9	0x0040b180 0x0040dbd0 0x00422120 0x00441c80 0x00442a60 0x0046baa0 0x004b64e0 0x004c3b30 0x0055dec0
+dual	vehicle	9	0x0040e180 0x00468b40 0x0046b1c0 0x0046b540 0x0046c7b0 0x0046cbb0 0x0046dbe0 0x00476c10 0x00485340
+dual	gameplay	7	0x004075b0 0x00409330 0x0040b890 0x0040b8e0 0x0040b930 0x0041f360 0x0045c110
 dual	hud	3	0x0041a3e0 0x0041b630 0x00556cc0
-dual	powerups	2	0x0045baa0 0x0045bac0
-dual	boot	1	0x00404830
+dual	save	2	0x004099a0 0x00550980
+dual	powerups	1	0x0045baa0
 dual	world-objects	1	0x00484a50
 dual	third-party-library[RenderWare-Physics-3.7]	1	0x0055bd80
