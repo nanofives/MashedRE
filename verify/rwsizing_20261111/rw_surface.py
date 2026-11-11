@@ -173,6 +173,21 @@ def main(argv):
           sum(1 for r in unb if r["phase"] not in ("not-run", "uncensused")))
     print("RW-band nodes the route expands as game code (matched RW rows not labelled renderware):", len(expanded_rw),
           collections.Counter(C[a] for a in expanded_rw).most_common())
+
+    def grp(a):
+        if RW[a]["component"] == "rwphysics":
+            return "rwphysics"
+        if 0x004c3700 <= a < 0x004c5800:
+            return "math-band"
+        return RW[a]["component"]
+    with open(HERE / "RW_EXPANDED_ON_ROUTE.tsv", "w", newline="", encoding="utf-8") as fh:
+        fh.write("rva\tname\ttracker_sub\tgroup\troute_class\tbinding\tphase\n")
+        for a in expanded_rw:
+            fh.write("0x%08x\t%s\t%s\t%s\t%s\t%s\t%s\n" % (a, RW[a]["name"], RW[a]["tracker_sub"], grp(a), C[a],
+                                                        B.get(a, "-"), RW[a]["phase"]))
+    obj = [a for a in expanded_rw if grp(a) not in ("rwphysics", "math-band", "rtmath")]
+    print("  object-touching (not math / physics):", len(obj), collections.Counter(C[a] for a in obj).most_common(),
+          " executed:", sum(1 for a in obj if RW[a]["phase"] not in ("not-run", "uncensused")))
     # ---- bindings ----
     bc, nlines = bind_classes()
     with open(HERE / "RW_BIND_CLASS.tsv", "w", newline="", encoding="utf-8") as fh:

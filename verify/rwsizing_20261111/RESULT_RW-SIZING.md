@@ -13,7 +13,7 @@ Scripts (this folder, all static, all re-runnable):
 | `rw_surface.py` | `RW_SURFACE.tsv`, `RW_BIND_CLASS.tsv`, `RW_INLINE_READERS.tsv` | the option (A) binding surface, the binding bodies, the inline-offset readers |
 | `rw_layout.py` | `RW_LAYOUT.tsv` | RW 3.x against librw, field by field, from two compiled probes |
 | `origtop_size.py --list fam:rwcore` / `fam:rt2d` (PORT-ORIGTOP-SIZE's tool) | `RWCORE_TO_BIND.tsv` | the RW core / Rt2d rows to bind in reach |
-| (inline, below) | `RW_EXPANDED_ON_ROUTE.tsv` | RW-band functions the route runs as matched game code |
+| `rw_surface.py` | `RW_EXPANDED_ON_ROUTE.tsv` | RW-band functions the route runs as matched game code |
 | `probe_rw3.*`, `probe_librw.*` | `layout_rw3.txt`, `layout_librw.txt` | MSVC 19.44 `/d1reportAllClassLayout` dumps |
 | `d3dx_link_test.*` | (stdout) | the Summer 2003 `d3dx9.lib` linked into a VS2022 /MT exe |
 
