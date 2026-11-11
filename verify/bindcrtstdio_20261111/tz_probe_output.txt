@@ -1,0 +1,84 @@
+== TZ=ART3 DDK libcmt
+timezone=10800 daylight=0 dstbias=-3600
+tzname0=ART tzname1=
+localtime=2004-11-09 08:33:20 isdst=0 yday=313
+ctime64=Tue Nov 09 08:33:20 2004
+localtime_jun=2005-06-28 20:06:40 isdst=0
+== TZ=ART3 VS2022 UCRT
+timezone=10800 daylight=0 dstbias=-3600
+tzname0=ART tzname1=
+localtime=2004-11-09 08:33:20 isdst=0 yday=313
+ctime64=Tue Nov  9 08:33:20 2004
+localtime_jun=2005-06-28 20:06:40 isdst=0
+== TZ=CET-1CEST DDK libcmt
+timezone=-3600 daylight=67 dstbias=-3600
+tzname0=CET tzname1=CES
+localtime=2004-11-09 12:33:20 isdst=0 yday=313
+ctime64=Tue Nov 09 12:33:20 2004
+localtime_jun=2005-06-29 01:06:40 isdst=1
+== TZ=CET-1CEST VS2022 UCRT
+timezone=-3600 daylight=1 dstbias=-3600
+tzname0=CET tzname1=CES
+localtime=2004-11-09 12:33:20 isdst=0 yday=313
+ctime64=Tue Nov  9 12:33:20 2004
+localtime_jun=2005-06-29 01:06:40 isdst=1
+== TZ=EST5EDT DDK libcmt
+timezone=18000 daylight=69 dstbias=-3600
+tzname0=EST tzname1=EDT
+localtime=2004-11-09 06:33:20 isdst=0 yday=313
+ctime64=Tue Nov 09 06:33:20 2004
+localtime_jun=2005-06-28 19:06:40 isdst=1
+== TZ=EST5EDT VS2022 UCRT
+timezone=18000 daylight=1 dstbias=-3600
+tzname0=EST tzname1=EDT
+localtime=2004-11-09 06:33:20 isdst=0 yday=313
+ctime64=Tue Nov  9 06:33:20 2004
+localtime_jun=2005-06-28 19:06:40 isdst=1
+== TZ=GMT0BST DDK libcmt
+timezone=0 daylight=66 dstbias=-3600
+tzname0=GMT tzname1=BST
+localtime=2004-11-09 11:33:20 isdst=0 yday=313
+ctime64=Tue Nov 09 11:33:20 2004
+localtime_jun=2005-06-29 00:06:40 isdst=1
+== TZ=GMT0BST VS2022 UCRT
+timezone=0 daylight=1 dstbias=-3600
+tzname0=GMT tzname1=BST
+localtime=2004-11-09 11:33:20 isdst=0 yday=313
+ctime64=Tue Nov  9 11:33:20 2004
+localtime_jun=2005-06-29 00:06:40 isdst=1
+== TZ=JST-9 DDK libcmt
+timezone=-32400 daylight=0 dstbias=-3600
+tzname0=JST tzname1=
+localtime=2004-11-09 20:33:20 isdst=0 yday=313
+ctime64=Tue Nov 09 20:33:20 2004
+localtime_jun=2005-06-29 08:06:40 isdst=0
+== TZ=JST-9 VS2022 UCRT
+timezone=-32400 daylight=0 dstbias=-3600
+tzname0=JST tzname1=
+localtime=2004-11-09 20:33:20 isdst=0 yday=313
+ctime64=Tue Nov  9 20:33:20 2004
+localtime_jun=2005-06-29 08:06:40 isdst=0
+== TZ=PST8PDT DDK libcmt
+timezone=28800 daylight=80 dstbias=-3600
+tzname0=PST tzname1=PDT
+localtime=2004-11-09 03:33:20 isdst=0 yday=313
+ctime64=Tue Nov 09 03:33:20 2004
+localtime_jun=2005-06-28 16:06:40 isdst=1
+== TZ=PST8PDT VS2022 UCRT
+timezone=28800 daylight=1 dstbias=-3600
+tzname0=PST tzname1=PDT
+localtime=2004-11-09 03:33:20 isdst=0 yday=313
+ctime64=Tue Nov  9 03:33:20 2004
+localtime_jun=2005-06-28 16:06:40 isdst=1
+== TZ=sys DDK libcmt
+timezone=10800 daylight=0 dstbias=0
+tzname0=Hora estándar de Argentina tzname1=Hora de verano de Argentina
+localtime=2004-11-09 08:33:20 isdst=0 yday=313
+ctime64=Tue Nov 09 08:33:20 2004
+localtime_jun=2005-06-28 20:06:40 isdst=0
+== TZ=sys VS2022 UCRT
+timezone=10800 daylight=0 dstbias=0
+tzname0=Hora estándar de Argentina tzname1=Hora de verano de Argentina
+localtime=2004-11-09 08:33:20 isdst=0 yday=313
+ctime64=Tue Nov  9 08:33:20 2004
+localtime_jun=2005-06-28 20:06:40 isdst=0

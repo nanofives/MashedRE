@@ -9,7 +9,7 @@ from bindings_rows import apply
 T = 'BIND-CRT-STDIO: '
 EV = ' (verify/portorigtop_20261109/RESULT_BIND-CRT-STDIO.md)'
 ROWS = [
-    (0x004a4541, 'fopen', 'MashedCrt_fopen_004a4541', 'std::fopen on PortTop_Fs_DiskPath; write modes return NULL',
+    (0x004a4541, 'fopen', 'MashedCrt_fopen_004a4541', 'std::fopen on PortTop_Fs_DiskPath; write modes go to the origtop_rw overlay, reads prefer it',
      'libid identical-unlisted fopen.obj/wfopen.obj, narrow by its callers; fix_fopen contract kept (NULL, never garbage)'),
     (0x004a4254, 'fputs', 'MashedCrt_fputs_004a4254', 'std::fputs',
      'libid DIFFERS (prologue / arg-load order, 0.82); code: lock, strlen, _stbuf, __fwrite_lk, _ftbuf, (written == len) ? 0 : -1 = VC7 fputs'),

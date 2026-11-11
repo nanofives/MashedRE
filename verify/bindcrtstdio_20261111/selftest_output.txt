@@ -1,0 +1,25 @@
+[1] read, no overlay -> original/ PASS
+[2] wb -> overlay file opened PASS
+[3] wb leaves original/ unchanged PASS  ORIG-VIDEO
+[4] wb wrote origtop_rw/videocfg.bin PASS  NEW-VIDEO
+[5] read prefers overlay PASS
+[6] at copies original/ then appends PASS  ORIG-LOG|APPENDED
+[7] at leaves original/ unchanged PASS
+[8] wb creates nested overlay dirs PASS
+[9] read of a missing file -> NULL PASS
+[10] MASHED_ORIGTOP_WRITE_DIR moves the overlay PASS
+[11] off: write mode -> NULL PASS
+[12] off: read -> original/ PASS
+[13] NULL name / mode -> NULL PASS
+[14] vsnprintf %e three-digit exponent PASS  1.000000e+000
+[15] vsnprintf %.0f 2.5 -> 3 PASS  3
+[16] vsnprintf truncation -> -1, no terminator PASS
+[17] vsnprintf inf -> 1.#INF00 PASS  1.#INF00
+[18] tzset mirror = DDK (PST8PDT) PASS  timezone=28800 daylight=80 dstbias=-3600
+[19] tzset mirror = DDK (JST-9) PASS  timezone=-32400 daylight=0
+[20] ctime64 = DDK text PASS  Tue Nov 09 03:33:20 2004
+
+[21] ctime64 two-digit day untouched PASS  Tue Jun 28 16:06:40 2005
+
+[22] ctime64 negative -> NULL PASS
+SELFTEST OK: 22/22 passed
