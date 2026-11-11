@@ -166,6 +166,7 @@
 "D3d9Render\MenuStringTable.cpp"
 "Compat\StandaloneRvaThunks.cpp"
 "Compat\PortStateSeed.cpp"
+"Compat\D3d9Wrap.cpp"
 "Stubs\HookSystemNoOp.cpp"
 "Frontend\MenuInit.cpp"
 "Frontend\MenuButtonDetect.cpp"
