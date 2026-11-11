@@ -90,6 +90,20 @@ unsigned s_shim7d4598 = 0, s_shim7d459c = 0;
 
 extern "C" {
 
+// [RWC-CORE-RUN] RwCore/RwCore_Knob.cpp: MASHED_RWC_CORE (default OFF, MASHED_ORIG_TOP path only) runs the engine
+// bring-up on the matched RW core bodies instead of librw. These bindings stay as the fallback (L-124).
+bool RwCore_Enabled(void);
+int  RwCore_EngineInit(int memFuncs, int initFlags);
+int  RwCore_EngineOpen(int* params);
+int  RwCore_EngineStart(void);
+int  RwCore_EngineStop(void);
+int  RwCore_EngineClose(void);
+int  RwCore_EngineTerm(void);
+int  RwCore_Set7d4134(int v);
+int  RwCore_SetRefresh(int v);
+int  RwCore_Set7d413c(int v);
+void RwCore_Log(const char* fmt, ...);
+
 // exe side (exe_main.cpp PORT-TOP export block)
 void* PortTop_HandCreateDevice(void);
 void  PortTop_HandDeviceShutdown(void);
@@ -105,6 +119,7 @@ int   PortTop_Height(void);
 // passes two arguments, both results of the xor-eax stub 0x005c9d00 (= 0). librw: rw::Engine::init() with its default
 // memory functions (the call accepts a MemoryFunctions*; NULL selects the default, as RW 3.x does for NULL memFuncs).
 int MashedRw_EngineInit_004c32b0(int memFuncs, int arenaSize) {
+    if (RwCore_Enabled()) return RwCore_EngineInit(memFuncs, arenaSize);   // [RWC-CORE-RUN]
     (void)memFuncs; (void)arenaSize;
     const bool ok = mashed_re::LibRw::EnginePhaseInit();
     BindLog("RwEngineInit -> rw::Engine::init %s", ok ? "ok" : "FAILED");
@@ -116,6 +131,10 @@ int MashedRw_EngineInit_004c32b0(int memFuncs, int arenaSize) {
 // too. Stand-in: librw's plugin set (RwBridge.cpp RegisterPlugins, the list the hand path registers). Returns 1 like the
 // original on success.
 int MashedRw_AttachPlugins_00493640(void) {
+    if (RwCore_Enabled()) {   // [RWC-CORE-RUN] neither librw registration nor the matched 0x00493640 (67.9%) on the core path
+        RwCore_Log("0x00493640 RenderwareAttachPlugins: not run on the RW core path (no plugin attaches; returns 1)");
+        return 1;
+    }
     mashed_re::LibRw::EnginePhasePlugins();
     // [PORT-TOP-04I] RpPTankPluginAttach is one of 0x00493640's calls. Its registration FUN_00534a80 stores the PTank
     // plugin offset at 0x007dc57c (0x00534ac4), which the matched 0x004881d0 / 0x004880a0 read (OBJ(h) =
@@ -130,6 +149,7 @@ int MashedRw_AttachPlugins_00493640(void) {
 // RwBool RwEngineOpen(RwEngineOpenParams* params), params->displayID = the window (0x00495270 HWNDGet writes
 // DAT_007e9584 into the first dword at 0x00493710). librw: rw::Engine::open({window}) + select the last subsystem.
 int MashedRw_EngineOpen_004c30b0(int* params) {
+    if (RwCore_Enabled()) return RwCore_EngineOpen(params);   // [RWC-CORE-RUN]
     s_rwWindow = params ? reinterpret_cast<HWND>(static_cast<std::uintptr_t>(static_cast<unsigned>(params[0]))) : nullptr;
     const bool ok = mashed_re::LibRw::EnginePhaseOpen(s_rwWindow);
     s_rwOpen = ok;
@@ -141,6 +161,7 @@ int MashedRw_EngineOpen_004c30b0(int* params) {
 // librw adopts it and starts (rw::Engine::start), then the librw race renderer takes the camera / state block step it
 // takes after the hand bring-up (RaceSubmit_InitOnStartedEngine).
 int MashedRw_EngineStart_004c2fb0(void) {
+    if (RwCore_Enabled()) return RwCore_EngineStart();   // [RWC-CORE-RUN]
     void* const dev = PortTop_HandCreateDevice();
     if (!dev) { BindLog("RwEngineStart: exe InitD3D9 FAILED"); return 0; }
     if (!mashed_re::LibRw::EnginePhaseStartAdopted(dev)) {
@@ -161,6 +182,7 @@ int MashedRw_EngineStart_004c2fb0(void) {
 // buffers while the device still exists), then the exe releases its device (ShutdownD3D9) -- the counterpart of the
 // device creation in the RwEngineStart binding.
 int MashedRw_EngineStop_004c2f60(void) {
+    if (RwCore_Enabled()) return RwCore_EngineStop();   // [RWC-CORE-RUN]
     if (!s_rwStarted) { BindLog("RwEngineStop: engine not started"); return 0; }
     mashed_re::LibRw::RaceSubmit_ShutdownSceneOnly();
     rw::Engine::stop();
@@ -172,6 +194,7 @@ int MashedRw_EngineStop_004c2f60(void) {
 
 // RwBool RwEngineClose(void). librw: rw::Engine::close.
 int MashedRw_EngineClose_004c3040(void) {
+    if (RwCore_Enabled()) return RwCore_EngineClose();   // [RWC-CORE-RUN]
     if (!s_rwOpen) { BindLog("RwEngineClose: engine not open"); return 0; }
     rw::Engine::close();
     s_rwOpen = false;
@@ -181,6 +204,7 @@ int MashedRw_EngineClose_004c3040(void) {
 
 // RwBool RwEngineTerm(void). librw: rw::Engine::term. The matched 0x004938c0 / 0x00493710 declare it bool / void.
 int MashedRw_EngineTerm_004c3270(void) {
+    if (RwCore_Enabled()) return RwCore_EngineTerm();   // [RWC-CORE-RUN]
     rw::Engine::term();
     BindLog("RwEngineTerm -> rw::Engine::term");
     return 1;
@@ -303,9 +327,10 @@ void MashedRw_RtFSManagerClose_00550390(void) {
 // (re/match/s20/004c9f60.c); 0x00493710 passes 1. All three are RW D3D9-driver settings taken before RwEngineStart;
 // librw has none of them, and the exe's device is created windowed by InitD3D9 (refresh rate not applicable).
 // Shims: keep the value, change nothing in librw.
-void MashedRw_D3D9Set7d4134_004c9f50(int v) { s_shim7d4134 = static_cast<unsigned>(v); }
-void MashedRw_D3D9SetRefreshRate_004c9eb0(unsigned v) { s_shim6181c4 = v; }
-void MashedRw_D3D9Set7d413c_004c9f60(int v) { s_shim7d413c = static_cast<unsigned>(v); }
+// [RWC-CORE-RUN] on the RW core path the three run their matched / provisional bodies (the driver reads them).
+void MashedRw_D3D9Set7d4134_004c9f50(int v) { if (RwCore_Enabled()) { RwCore_Set7d4134(v); return; } s_shim7d4134 = static_cast<unsigned>(v); }
+void MashedRw_D3D9SetRefreshRate_004c9eb0(unsigned v) { if (RwCore_Enabled()) { RwCore_SetRefresh(static_cast<int>(v)); return; } s_shim6181c4 = v; }
+void MashedRw_D3D9Set7d413c_004c9f60(int v) { if (RwCore_Enabled()) { RwCore_Set7d413c(v); return; } s_shim7d413c = static_cast<unsigned>(v); }
 
 // rva 0x004cbc60 / 0x004cbc70 set / get the dword at 0x007d4598; 0x004cbc80 / 0x004cbc90 set / get the dword at 0x007d459c
 // (re/match/s20/004cbc60.c .. 004cbc90.c). 0x00493710 saves the old values to 0x007719dc / 0x007719d8 and installs the

@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 #ifndef __cplusplus
 #define true 1
 #endif

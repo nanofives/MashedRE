@@ -37,7 +37,7 @@ uint * thunk_FUN_004cc820(int p0, uint p1, uint p2, int p3, uint * p4, uint p5);
 undefined4 FUN_004d7c60(void)
 
 {
-  DAT_007d6c50 = thunk_FUN_004cc820(0x3c,DAT_00618420,4,DAT_00618424,&DAT_007d6c2c,0x40000);
+  DAT_007d6c50 = (int)thunk_FUN_004cc820(0x3c,DAT_00618420,4,DAT_00618424,(uint *)&DAT_007d6c2c,0x40000);
   if (DAT_007d6c50 == 0) {
     return 0;
   }

@@ -44,7 +44,7 @@ typedef int code();
 #endif
 MGLOBAL(int, DAT_00911ae4, 0x00911ae4);
 MGLOBAL(undefined1, DAT_005d8bf5, 0x005d8bf5);
-extern char s_Conversion_to_compressed_rasters_00618510[];
+MGLOBALA(char, s_Conversion_to_compressed_rasters_00618510, 0x34, 0x00618510);
 MGLOBAL(undefined4, DAT_00911b00, 0x00911b00);
 undefined4 FUN_004c7600(int * p0);
 int FUN_004c7620(int * p0);
