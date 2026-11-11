@@ -21,7 +21,10 @@ Node classes:
   game-c4-hand C4 game code with no matched body and an exe hand body (could bind to it, as BINDINGS `port` rows do)
   game-c4      C4 game code with no matched body and no exe body
   game-c0c3    C0..C3 game code (needs matching first)
-  norow        a function entry with no hooks.csv row
+  (admitted)   EQUIV-ADMIT-1, L-126: a row of re/match/ADMITTED.tsv (equiv.py proved its source's DDK body equivalent)
+               is classed `match`, satisfied when every callee is, and counted apart in SIZE.tsv. Never C4.
+               --no-admitted reproduces the counts before L-126; --out <dir> writes somewhere else.
+  norow       a function entry with no hooks.csv row
 Reach = closure from 0x00492370 over the edges, not expanding bind / family nodes.
 Runnable = greatest fixpoint: a `match` node in reach is runnable when every callee is runnable, bind, or a bound family.
 """
@@ -43,6 +46,17 @@ RACE = [0x00492290, 0x004929d0, 0x00492d30, 0x0043d7c0, 0x0043dfd0, 0x004111c0, 
 EXE_DEF = pathlib.Path(r"C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe.unpatched")
 BIND_SAT = {"bound", "port", "rw", "shim", "crt"}   # stand-in: replaced by the route, so expanded
 OUT = ROOT / "verify" / "portorigtop_20261109"
+ADMITTED = ROOT / "re" / "match" / "ADMITTED.tsv"
+
+
+def load_admitted(path=ADMITTED):
+    """RVAs of the L-126 admission record (first column of its 0x... rows)."""
+    out = set()
+    if path.exists():
+        for ln in path.read_text(encoding="utf-8").splitlines():
+            if ln.startswith("0x"):
+                out.add(int(ln.split("\t", 1)[0], 16))
+    return out
 
 
 def load_bounds():
@@ -164,7 +178,11 @@ def family_of(r):
 
 
 def main(argv):
-    exe = pathlib.Path(argv[argv.index("--exe") + 1]) if "--exe" in argv else EXE_DEF
+    global OUT
+    if "--out" in argv:
+        OUT = pathlib.Path(argv[argv.index("--out") + 1])
+    adm = set() if "--no-admitted" in argv else load_admitted()
+    exe =pathlib.Path(argv[argv.index("--exe") + 1]) if "--exe" in argv else EXE_DEF
     ent, bounds = load_bounds()
     fset = set(ent)
     dedge = direct_edges()
@@ -189,6 +207,8 @@ def main(argv):
         r = H.get(a)
         if k == "matched":
             return "match"
+        if a in adm:
+            return "match"      # L-126 admitted body (re/match/ADMITTED.tsv)
         if a in plat:
             return "fam:d3d-dshow"
         if r is None:
@@ -313,7 +333,8 @@ def main(argv):
     lines.append("reach\tfunctions reached from 0x00492370 (direct + reloc edges)\t%d\tdirect calls only: %d; reloc tables used: %d" % (len(reach), len(dreach), ntab))
     for k, v in sorted(collections.Counter(C[a] for a in reach).items(), key=lambda x: -x[1]):
         lines.append("reach_class\t%s\t%d\t" % (k, v))
-    lines.append("runnable\tC4-by-match rows in reach\t%d\t" % len(match_r))
+    lines.append("runnable\tC4-by-match rows in reach\t%d\tL-126 admitted rows (re/match/ADMITTED.tsv) included: %d" % (
+        len(match_r), sum(1 for a in match_r if a in adm)))
     lines.append("runnable\talready running (BINDINGS matched)\t%d\t" % sum(1 for a in match_r if B.get(a) == "matched"))
     lines.append("runnable\trunnable with no new family bound\t%d\t" % len(base))
     for k in sorted(classes, key=lambda k: -alone[k]):
