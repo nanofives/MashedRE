@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-10 23:44 PARTICLE-3-SWAP (orch/PARTICLE-3-SWAP): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261110_232212
 - 2026-11-10 23:08 PORT-OT-PARTICLE-3 (orch/PORT-OT-PARTICLE-3), POWERUPINIT-B2 (orch/POWERUPINIT-B2): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261110_230653
 - 2026-11-10 23:06 RWG-RASTER-BIND (orch/RWG-RASTER-BIND): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261110_224458
 - 2026-11-10 22:30 NEARMATCH-45A3A0 (orch/NEARMATCH-45A3A0): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261110_220844
