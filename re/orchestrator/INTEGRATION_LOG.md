@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-11-11 07:32 RO-WARP-NORMALIZE (orch/RO-WARP-NORMALIZE): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261111_071754
 - 2026-11-11 06:27 RW-SIZING (orch/RW-SIZING), REPLAY-ORACLE-DESIGN (orch/REPLAY-ORACLE-DESIGN): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9. Run data D:\MashedWT\mtrain_data\20261111_054600
 - 2026-11-11 01:18 PORT-OT-BIND-D3D (orch/PORT-OT-BIND-D3D): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_010239
 - 2026-11-11 01:02 BIND-CRT-HEAP (orch/BIND-CRT-HEAP): G-CTRL 8284be46/67931834/31fe043e  B 1d5bf4f9/1d5bf4f9/1d5bf4f9; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261111_004220
