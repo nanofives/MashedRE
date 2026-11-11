@@ -1,0 +1,35 @@
+## n3_b vs sp_a
+  constant blocks: 10  NEW blocks: 22  N misaligned at: None
+  IDENTICAL-FOR-N = 932 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x0077391c-0x00773920,0x007dc948-0x007de000,0x007dc764-0x007dc768,0x007ec9e4-0x007f09e4: [['0x614400', 2], ['0x771800', 130], ['0x7ec800', 321], ['0x7ecc00', 341], ['0x7ed000', 408], ['0x7ed400', 613], ['0x7ed800', 756], ['0x7edc00', 860], ['0x7ee000', 952], ['0x7ee400', 1063], ['0x7ee800', 1066], ['0x7eec00', 10
+   new [['0x614400', 2, 'other page 0x00614000'], ['0x771800', 130, 'other page 0x00771000'], ['0x7ec800', 321, 'other page 0x007ec000'], ['0x7ecc00', 341, 'other page 0x007ec000'], ['0x7ed000', 408, 'other page 0x007ed000'], ['0x7ed400', 613, 'other page 0x007ed000'], ['0x7ed800', 756, 'other page 0x007ed000'], ['0x7edc00', 860, 'other page 0x007ed000']]
+   ignored new [['0x614400', 2], ['0x771800', 130], ['0x7ec800', 321], ['0x7ecc00', 341], ['0x7ed000', 408], ['0x7ed400', 613], ['0x7ed800', 756], ['0x7edc00', 860]]
+## n3_c vs sp_a
+  constant blocks: 10  NEW blocks: 23  N misaligned at: None
+  IDENTICAL-FOR-N = 932 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x0077391c-0x00773920,0x007dc948-0x007de000,0x007dc764-0x007dc768,0x007ec9e4-0x007f09e4: [['0x614400', 8], ['0x771800', 122], ['0x7dd000', 6], ['0x7ec800', 321], ['0x7ecc00', 341], ['0x7ed000', 408], ['0x7ed400', 613], ['0x7ed800', 756], ['0x7edc00', 860], ['0x7ee000', 952], ['0x7ee400', 1063], ['0x7ee800', 1066]
+   new [['0x7dd000', 6, 'other page 0x007dd000'], ['0x614400', 8, 'other page 0x00614000'], ['0x771800', 122, 'other page 0x00771000'], ['0x7ec800', 321, 'other page 0x007ec000'], ['0x7ecc00', 341, 'other page 0x007ec000'], ['0x7ed000', 408, 'other page 0x007ed000'], ['0x7ed400', 613, 'other page 0x007ed000'], ['0x7ed800', 756, 'other page 0x007ed000']]
+   ignored new [['0x614400', 8], ['0x771800', 122], ['0x7dd000', 6], ['0x7ec800', 321], ['0x7ecc00', 341], ['0x7ed000', 408], ['0x7ed400', 613], ['0x7ed800', 756]]
+## n3_b vs sp_pos
+  constant blocks: 10  NEW blocks: 490  N misaligned at: 967
+  IDENTICAL-FOR-N = 385 of 2723  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x0077391c-0x00773920,0x007dc948-0x007de000,0x007dc764-0x007dc768,0x007ec9e4-0x007f09e4: [['0x614400', 1], ['0x771800', 122], ['0x7dc400', 385], ['0x7ec800', 321], ['0x7ecc00', 341], ['0x7ed000', 408], ['0x7ed400', 613], ['0x7ed800', 756], ['0x7edc00', 849], ['0x7ee000', 902], ['0x7ee400', 951], ['0x7ee800', 968]
+   new [['0x614400', 1, 'other page 0x00614000'], ['0x771800', 122, 'other page 0x00771000'], ['0x7ec800', 321, 'other page 0x007ec000'], ['0x7ecc00', 341, 'other page 0x007ec000'], ['0x613000', 385, 'other page 0x00613000'], ['0x68f400', 385, 'other page 0x0068f000'], ['0x690400', 385, 'other page 0x00690000'], ['0x715c00', 385, 'other page 0x00715000']]
+   ignored new [['0x614400', 1], ['0x771800', 122], ['0x7dc400', 385], ['0x7ec800', 321], ['0x7ecc00', 341], ['0x7ed000', 408], ['0x7ed400', 613], ['0x7ed800', 756]]
+## n3_b vs ao_a
+  constant blocks: 10  NEW blocks: 4  N misaligned at: None
+  IDENTICAL-FOR-N = 388 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x0077391c-0x00773920,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 20], ['0x771800', 128]]
+   new [['0x614400', 20, 'other page 0x00614000'], ['0x771800', 128, 'other page 0x00771000'], ['0x603400', 388, 'other page 0x00603000'], ['0x690400', 388, 'other page 0x00690000']]
+   ignored new [['0x614400', 20], ['0x771800', 128]]
+## n3_c vs ao_a
+  constant blocks: 10  NEW blocks: 5  N misaligned at: None
+  IDENTICAL-FOR-N = 388 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x0077391c-0x00773920,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 1], ['0x771800', 122], ['0x7dd000', 6]]
+   new [['0x614400', 1, 'other page 0x00614000'], ['0x7dd000', 6, 'other page 0x007dd000'], ['0x771800', 122, 'other page 0x00771000'], ['0x603400', 388, 'other page 0x00603000'], ['0x690400', 388, 'other page 0x00690000']]
+   ignored new [['0x614400', 1], ['0x771800', 122], ['0x7dd000', 6]]
+## n3_b vs ao_b
+  constant blocks: 10  NEW blocks: 5  N misaligned at: None
+  IDENTICAL-FOR-N = 388 of 2724  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x0077391c-0x00773920,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 2], ['0x771800', 123], ['0x773800', 3]]
+   new [['0x614400', 2, 'other page 0x00614000'], ['0x773800', 3, 'other page 0x00773000'], ['0x771800', 123, 'other page 0x00771000'], ['0x603400', 388, 'other page 0x00603000'], ['0x690400', 388, 'other page 0x00690000']]
+   ignored new [['0x614400', 2], ['0x771800', 123], ['0x773800', 3]]
+## ao_a vs ao_b
+  constant blocks: 10  NEW blocks: 3  N misaligned at: None
+  IDENTICAL-FOR-N = 2724 of 2724  (every tick: no NEW block)  ignoring 0x006147d8-0x006147dc,0x00771a00-0x00771a04,0x0077391c-0x00773920,0x007dc948-0x007de000,0x007dc764-0x007dc768: [['0x614400', 1], ['0x771800', 62], ['0x773800', 3]]
+   new [['0x614400', 1, 'other page 0x00614000'], ['0x773800', 3, 'other page 0x00773000'], ['0x771800', 62, 'other page 0x00771000']]
+   ignored new [['0x614400', 1], ['0x771800', 62], ['0x773800', 3]]

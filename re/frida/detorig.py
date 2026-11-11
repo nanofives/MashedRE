@@ -95,6 +95,14 @@ def run(args):
                "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
                "watch": [int(x, 16) for x in args.watch.split(",") if x][:2],
                "callLogRace": args.call_log_race}
+        if args.audio_off:
+            cfg["audioOff"] = args.audio_off   # RO-AUDIO-ISOLATION: suspend the __beginthread workers (detorig.js audioOff)
+        if args.poison:
+            # RO-STACKROW-READERS: poison the event-ring fields each row's producer leaves unwritten (detorig.js, cfg.poison)
+            cfg["poison"] = {"mode": args.poison, "value": int(args.poison_value, 16)}
+        if args.normalize:
+            cfg["norm"] = load_norm(args.normalize)["pin"]; cfg["normAt"] = args.normalize_at
+            print(f"  normalise {len(cfg['norm'])} dwords at {args.normalize_at} ({args.normalize})", flush=True)
         if args.clock == "tick" or args.tick_hash:
             # REPLAY-ORACLE-DESIGN: per-tick block hashes at --tick-va (detorig.js, cfg.tick). With --clock tick the
             # clock also advances only there; with --clock n --tick-hash it keeps the pilot's per-call steps.
@@ -198,6 +206,26 @@ def is_ptr(v):
     return PTR_LO <= v < 0x30000000 and v & 3 == 0
 
 
+def load_norm(path):
+    """re/frida/warp_normalize.tsv (RO-WARP-NORMALIZE). Columns: va count stride width action value writer readers note.
+    action PIN = write `value` at the warp / race anchor (both sides). MASK:<family> / RULE:<name> = not pinned, scored by
+    detorig_report.py as that class. Returns {"pin": [[va, width, value], ...], "mask": {va: class}}."""
+    pin, mask = [], {}
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#") or line.startswith("va\t"):
+            continue
+        f = line.split("\t")
+        va, cnt, stride, width, action = int(f[0], 16), int(f[1]), int(f[2], 16), int(f[3]), f[4]
+        for k in range(cnt):
+            a = va + k * stride
+            if action == "PIN":
+                pin.append([a, width, int(f[5], 16)])
+            else:
+                for j in range(0, max(width, 4), 4):
+                    mask[a + j] = action
+    return {"pin": pin, "mask": mask}
+
+
 def is_ptr_pair(a, b):
     """A heap-layout difference, not a value difference: the heap starts 0x40000 apart between OFF runs
     and at non-page offsets when the .asi installs hooks (measured 2026-11-01)."""
@@ -262,6 +290,11 @@ if __name__ == "__main__":
     ap.add_argument("--tick-raw", default="", help="comma list of LO-HI hex VA ranges copied raw into every tick record")
     ap.add_argument("--q0", default="0x40000000", help="virtual QPC start (low dword)")
     ap.add_argument("--call-log-race", action="store_true", help="keep the call log on past the race anchor (until 4096 calls)")
+    ap.add_argument("--normalize", default="", help="boot-counter normalisation file (re/frida/warp_normalize.tsv): its PIN rows are written on the original")
+    ap.add_argument("--normalize-at", choices=["warp", "anchor", "both"], default="both", help="when the PIN rows are written")
+    ap.add_argument("--audio-off", choices=["warp", "anchor"], default="", help="suspend every non-main thread whose start address is in MASHED.exe (the __beginthread audio workers) at the warp or the race anchor")
+    ap.add_argument("--poison", choices=["stale", "pos"], default="", help="overwrite the unwritten event-ring fields at every ring consumer from the race anchor on (pos = also type-4 +0x24, a read field)")
+    ap.add_argument("--poison-value", default="0x7fc0dead", help="poison dword (hex)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--menu-wait", type=float, default=2.0)
     ap.add_argument("--timeout", type=float, default=600)

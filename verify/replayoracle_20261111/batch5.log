@@ -1,0 +1,26 @@
+[mashed-lock] HELD 'mashed_machine' pid=4248 (RO-WARP-NORMALIZE)
+[1/3] ao_w start 07:04:41
+[ao_w] exit 0 07:05:41
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2d305c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf98', 'rw_cursors_before': [225492900, 225492888], 'timer': {'v': 969117647, 'before': [969117647, 1841539163, 149898, 323022, 612815]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8550], ['771978', 51], ['77198c', 171], ['868348', 51], ['86838c', 51], ['8683d0', 51], ['868414', 51], ['8
+  call log 118 calls
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[2/3] sp_w start 07:05:41
+[sp_w] exit 0 07:06:43
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2b705c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf98', 'rw_cursors_before': [225492900, 225492888], 'timer': {'v': 969117647, 'before': [969117647, 2024892484, 149898, 323022, 674967]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 9200], ['771978', 4], ['77198c', 184], ['868348', 4], ['86838c', 4], ['8683d0', 4], ['868414', 4], ['868458
+  call log 118 calls
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[3/3] n3_w2 start 07:06:43
+[n3_w2] exit 0 07:07:48
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2e005c0', 'holdrand_before': 1, 'rw_ring': '0xd73bf98', 'rw_cursors_before': [225689508, 225689496], 'timer': {'v': 969117647, 'before': [969117647, 2225272769, 149898, 323022, 741760]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8650], ['771978', 53], ['77198c', 173], ['868348', 53], ['86838c', 53], ['8683d0', 53], ['868414', 53], ['8
+  call log 119 calls
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[mashed-lock] released 'mashed_machine' pid=4248

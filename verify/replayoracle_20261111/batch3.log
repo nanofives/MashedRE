@@ -1,0 +1,54 @@
+tee: 'D:/MashedWT/RO-WARP-NORMALIZE_data/batch3.log': No such file or directory
+[mashed-lock] WAITING — 'mashed_machine' held by pid=15764 (DDKOBJ-SPIKE); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=14716 (RO-WARP-NORMALIZE)
+[1/6] n3_a start 06:48:29
+[n3_a] exit 0 06:49:32
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2bf05c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf98', 'rw_cursors_before': [225492900, 225492888], 'timer': {'v': 969117647, 'before': [969117647, 3223925177, 149896, 323022, 1074648]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 8500], ['771978', 50], ['77198c', 170], ['868348', 50], ['86838c', 50], ['8683d0', 50], ['868414', 50], ['
+  call log 120 calls
+  race anchor N=720 dn_warp=120 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[2/6] n3_b start 06:49:32
+[n3_b] exit 0 06:50:31
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2d405c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf98', 'rw_cursors_before': [225492900, 225492888], 'timer': {'v': 969117647, 'before': [969117647, 3408292665, 149896, 323022, 1136097]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 9050], ['771978', 1], ['77198c', 181], ['868348', 1], ['86838c', 1], ['8683d0', 1], ['868414', 1], ['86845
+  call log 118 calls
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[3/6] n3_c start 06:50:31
+[n3_c] exit 0 06:51:36
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2d005c0', 'holdrand_before': 1, 'rw_ring': '0xd6dbf98', 'rw_cursors_before': [225296292, 225296280], 'timer': {'v': 969117647, 'before': [969117647, 3603385868, 149896, 323022, 1201119]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 9200], ['771978', 4], ['77198c', 184], ['868348', 4], ['86838c', 4], ['8683d0', 4], ['868414', 4], ['86845
+  call log 118 calls
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[4/6] n3_h start 06:51:36
+[n3_h] exit 0 06:52:42
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2d605c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf98', 'rw_cursors_before': [225492900, 225492888], 'timer': {'v': 969117647, 'before': [969117647, 3787008152, 149896, 323022, 1262319]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 8700], ['771978', 54], ['77198c', 174], ['868348', 54], ['86838c', 54], ['8683d0', 54], ['868414', 54], ['
+  call log 118 calls
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[5/6] n3_neg start 06:52:42
+[n3_neg] exit 0 06:53:41
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2c905c0', 'holdrand_before': 1, 'rw_ring': '0xd73bf98', 'rw_cursors_before': [225689508, 225689496], 'timer': {'v': 969117647, 'before': [969117647, 3977904859, 149896, 323022, 1325968]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 8950], ['771978', 59], ['771994', 827], ['77198c', 179], ['868348', 59], ['86838c', 59], ['8683d0', 59], [
+  call log 119 calls
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[6/6] n3_w start 06:53:41
+[n3_w] exit 0 06:54:50
+  normalise 299 dwords at both (re/frida/warp_normalize.tsv)
+  warp at N=600 pins={'ptd': '0x2cb05c0', 'holdrand_before': 1, 'rw_ring': '0xd5cbf98', 'rw_cursors_before': [224182180, 224182168], 'timer': {'v': 969117647, 'before': [969117647, 4163530615, 149896, 323022, 1387836]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 9100], ['771978', 2], ['77198c', 182], ['868348', 2], ['86838c', 2], ['8683d0', 2], ['868414', 2], ['86845
+  call log 119 calls
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[mashed-lock] released 'mashed_machine' pid=14716
+
+[exited with code 1]

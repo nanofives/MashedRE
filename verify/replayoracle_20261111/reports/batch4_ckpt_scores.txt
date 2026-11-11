@@ -1,0 +1,12 @@
+n3_b sp_pos normalized 0 race 4 {'UNEXPLAINED': 36741, 'TOGGLE': 1408, 'MODOFFSET': 397, 'MASK:os': 2, 'MASK:crt-cookie': 1, 'PTR': 2907, 'RULE:HWND': 4, 'MASK:renderware': 2, 'RULE:RING4': 1, 'MASK:audio': 15, 'MASK:crt-clock': 2, 'RULE:WINMSG': 2, 'RULE:STACKROW': 1448}
+race diffs {"4": {"car records 0x008815a0 (4 x 0xd04)": 977, "cooked input 0x007f1038": 2, "previous cooked input 0x007f14f8": 2, "pickup slots 0x0088fbe0": 129, "holdrand": "differs", "rw_ring": "differs", "rw_cur": "differs"}, "5": {"car records 0x008815a0 (4 x 0xd04)": 1034, "frame timer block 0x007f0ff0..0x007f1034": 2, "cooked input 0x007f1038": 2, "previous cooked input 0x007f14f8": 2, "pickup slots 0x0088fbe0": 131, "holdrand": "differs", "rw_ring": "differs", "rw_cur": "differs", "clk_7f
+non-masked by page [('0x7e5000', 1024), ('0x7e4000', 994), ('0x7eb000', 972), ('0x7e3000', 928), ('0x7ea000', 911), ('0x71c000', 896), ('0x71d000', 896), ('0x71e000', 896), ('0x76b000', 865), ('0x76a000', 842), ('0x76c000', 836), ('0x71b000', 828), ('0x71a000', 827), ('0x63f000', 805), ('0x719000', 792), ('0x718000', 787), ('0x716000', 781), ('0x717000', 780), ('0x7ec000', 771), ('0x63e000', 737)]
+first ['0x5f29b8', '0x5f2a4c', '0x5fda2c', '0x5fda34', '0x5fda38', '0x5fda3c', '0x5fda44', '0x5fda4c', '0x5fda50', '0x5fdc10', '0x5fdc18', '0x5fdc1c', '0x5fdc20', '0x5fdc28', '0x5fdc30', '0x5fdc34', '0x6130c4', '0x616110', '0x616114', '0x618258', '0x61826c', '0x618288', '0x61828c', '0x618290', '0x623d5c', '0x624048', '0x63a5e0', '0x63b8f0', '0x63ba80', '0x63ba8c', '0x63bb1c', '0x63bc58', '0x63bc5c', '0x63bc60', '0x63bc68', '0x63bc9c', '0x63bca4', '0x63bcd8', '0x63bce0', '0x63bd90']
+n3_b ao_k normalized 2 race 15 {'UNEXPLAINED': 3, 'MASK:os': 2, 'MASK:crt-cookie': 1, 'RULE:FILEPTR': 1, 'PTR': 3315, 'RULE:HWND': 4, 'MASK:renderware': 2, 'RULE:RING4': 2, 'MASK:audio': 9, 'MASK:crt-clock': 2, 'RULE:WINMSG': 5}
+race diffs {}
+non-masked by page [('0x603000', 2), ('0x690000', 1)]
+first ['0x6036c0', '0x6036cc', '0x6904c8']
+ao_a ao_b normalized 15 race 15 {'MASK:os': 2, 'MASK:crt-cookie': 1, 'RULE:FILEPTR': 1, 'PTR': 3315, 'RULE:HWND': 4, 'MASK:renderware': 2, 'RULE:RING4': 2, 'MASK:audio': 9, 'MASK:crt-clock': 1, 'RULE:WINMSG': 4}
+race diffs {}
+non-masked by page []
+first []
