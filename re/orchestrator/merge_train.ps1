@@ -73,6 +73,29 @@ function Git {
   $o = & git.exe @a 2>&1; $script:GITRC = $LASTEXITCODE; return $o
 }
 function Ledger { param([Parameter(ValueFromRemainingArguments)]$a) & pwsh -NoProfile -File $RM @a | ForEach-Object { Say "ledger: $_" } }
+
+# HB-V5-SKILL: INTEGRATION_LOG.md records RED passes too. Before, a line was written only when a row merged, so a pass
+# that bounced every row left no trace in the tracked log (only in D:\MashedWT\mtrain_data). Lines are newest first.
+function Format-Bounced($bounced) { (@($bounced) | ForEach-Object { "$($_.it.id) ($($_.it.branch)): $(if ($_.conflict) { 'set aside, ' })$($_.why)" }) -join '; ' }
+function New-LogLines([string]$il, [string]$line) {
+  $ilLines = @(if (Test-Path $il) { Get-Content $il } else { '# orch/integration log (merge train, newest first)' })
+  return @($ilLines[0], '', $line) + @($ilLines | Select-Object -Skip 1 | Where-Object { $_ -ne '' })
+}
+# A pass that merged nothing has no temp worktree commit to carry the line: commit it, alone, in the worktree that holds
+# the integration branch (the same place `roadmap.ps1 snapshot` commits). The next pass folds such a ledger-only tip.
+function Add-RedLogLine([string]$line) {
+  $wl = (Git -C $MAIN worktree list --porcelain) -join "`n"
+  $held = [regex]::Matches($wl, "worktree (.+)\nHEAD \w+\nbranch refs/heads/$([regex]::Escape($INT))(\n|$)")
+  if (-not $held.Count) { Say "RED pass not logged: $INT is not checked out in any worktree"; return $false }
+  $w = $held[0].Groups[1].Value
+  $il = Join-Path $w 're\orchestrator\INTEGRATION_LOG.md'
+  Write-Lf $il (New-LogLines $il $line)
+  Git -C $w add -- 're/orchestrator/INTEGRATION_LOG.md' | Out-Null
+  $o = Git -C $w commit -q -m 'orch: integration log, RED pass' -m 'Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>' -- 're/orchestrator/INTEGRATION_LOG.md'
+  if ($script:GITRC -ne 0) { Say "RED pass log commit failed: $o"; return $false }
+  Say "  RED pass logged in $INT ($((Git -C $w rev-parse --short HEAD) | Select-Object -First 1))"
+  return $true
+}
 function Sha8([string]$p) { if (Test-Path $p) { (Get-FileHash -Algorithm SHA256 $p).Hash.Substring(0, 8).ToLower() } else { 'MISSING' } }
 function Like-Any([string]$f, $globs) { foreach ($g in $globs) { if ($f -like $g) { return $true } } return $false }
 
@@ -758,6 +781,19 @@ if ($SelfTest) {
   Git -C $fake merge --ff-only -q (Git -C $wt rev-parse HEAD | Select-Object -First 1) 2>&1 | Out-Null
   Remove-Temp $wt
 
+  # --- HB-V5-SKILL: a RED pass that merged nothing still writes INTEGRATION_LOG.md (one commit, that file only, newest first)
+  $h0 = (Git -C $fake rev-parse HEAD) | Select-Object -First 1
+  $fb = @(@{ it = @{ id = 'T-R'; branch = 'step-r' }; why = 'default gates changed'; gates = 'G-CTRL x/y/z' }, @{ it = @{ id = 'T-S'; branch = 'step-s' }; why = 'conflict'; conflict = $true; gates = 'not run' })
+  $ok1 = Add-RedLogLine "- 2026-01-01 00:00 RED, nothing merged. Bounced: $(Format-Bounced $fb). Run data X"
+  $ok2 = Add-RedLogLine '- 2026-01-01 00:01 RED, second'
+  $rl = @(Get-Content (Join-Path $fake 're\orchestrator\INTEGRATION_LOG.md'))
+  $rf = @((Git -C $fake diff --name-only "$h0..HEAD") | Where-Object { $_ })
+  $rn = [int]((Git -C $fake rev-list --count "$h0..HEAD") | Select-Object -First 1)
+  $rcr = @([IO.File]::ReadAllBytes((Join-Path $fake 're\orchestrator\INTEGRATION_LOG.md')) | Where-Object { $_ -eq 13 }).Count
+  Check ($ok1 -and $ok2 -and $rn -eq 2 -and ($rf -join ',') -eq 're/orchestrator/INTEGRATION_LOG.md' -and $rl[0] -like '# orch/integration log*' -and $rl[2] -eq '- 2026-01-01 00:01 RED, second' -and $rl[3] -match 'T-R \(step-r\): default gates changed; T-S \(step-s\): set aside, conflict' -and $rcr -eq 0) "RED pass log: 2 commits touching only INTEGRATION_LOG.md, newest first, bounced rows named, 0 CR (commits $rn, files $($rf -join ','), CR $rcr)"
+  $tbAll = (Get-Content $PSCommandPath -Raw)
+  Check ($tbAll -match 'if \(-not \$merged\.Count -and \$bounced\.Count\) \{' -and $tbAll -match '\$\(if \(\$bounced\.Count\) \{ " Bounced: \$\(Format-Bounced \$bounced\)\." \}\)') 'RED pass log: the run body calls Add-RedLogLine when nothing merged, and a mixed pass names its bounced rows on the merged line'
+
   # --- HB-WTCLEAN: three step branches, all merged into integration, three different cleanup outcomes
   foreach ($n in 'clean', 'dirty', 'ahead') { Git -C $fake branch "step-$n" integration | Out-Null }
   Git -C $fake worktree add -q (Join-Path $fake ".worktrees\step-clean") step-clean | Out-Null
@@ -1371,11 +1407,9 @@ if ($merged.Count) {
   }
 }
 if ($merged.Count) {
-  $line = "- $(Get-Date -Format 'yyyy-MM-dd HH:mm') $(($merged | ForEach-Object { "$($_.id) ($($_.branch))" }) -join ', '): $($res.gates). Run data $DATA"
+  $line = "- $(Get-Date -Format 'yyyy-MM-dd HH:mm') $(($merged | ForEach-Object { "$($_.id) ($($_.branch))" }) -join ', '): $($res.gates).$(if ($bounced.Count) { " Bounced: $(Format-Bounced $bounced)." }) Run data $DATA"
   $il = Join-Path $wt 're\orchestrator\INTEGRATION_LOG.md'
-  if (-not (Test-Path $il)) { Write-Lf $il @('# orch/integration log (merge train, newest first)', '') }
-  $ilLines = @(Get-Content $il); $new = @($ilLines[0], '', $line) + @($ilLines | Select-Object -Skip 1 | Where-Object { $_ -ne '' })
-  Write-Lf $il $new
+  Write-Lf $il (New-LogLines $il $line)
   Git -C $wt add -- 're/orchestrator/INTEGRATION_LOG.md' | Out-Null
   Git -C $wt commit -q -m "orch: integration log, $(($merged | ForEach-Object id) -join ', ')" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" | Out-Null
   $sha = (Git -C $wt rev-parse HEAD) | Select-Object -First 1
@@ -1391,6 +1425,10 @@ if ($merged.Count) {
   }
   Remove-Temp $wt
   foreach ($br in @($merged | ForEach-Object { $_.branch } | Select-Object -Unique)) { Cleanup-Step $br $INT }
+}
+if (-not $merged.Count -and $bounced.Count) {
+  $gl = (@($bounced) | ForEach-Object { $_.gates } | Select-Object -Unique) -join ' | '
+  $null = Add-RedLogLine "- $(Get-Date -Format 'yyyy-MM-dd HH:mm') RED, nothing merged. Bounced: $(Format-Bounced $bounced). Gates: $gl.$(if ($trainErr) { " Error: $trainErr." }) Run data $DATA"
 }
 } finally { try { Clear-Temps } finally { Exit-PassPriority } }
 

@@ -1,0 +1,3 @@
+SELFTEST FAIL (1 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261111_130309\merge_train.log
+[mtrain 13:05:27]   SELFTEST FAIL: match-textonly (live tree): t01g/004111c0.c and s01/00401340.c are build inputs; 1 of 4061 re/match files are
+SELFTEST FAIL (1 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261111_130309\merge_train.log
