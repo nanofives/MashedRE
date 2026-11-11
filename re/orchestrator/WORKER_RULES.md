@@ -74,6 +74,32 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
 - Do not edit `ROADMAP.md` or `re/NEXT_SESSION.md` unless the step's deliverable is that text
   (example: D5-PDOD). The merge train writes the status line.
 
+## Row kinds and what the worker runs (ROADMAP v5, L-127, 2026-11-11)
+
+| Row kind | The worker runs | The merge train runs |
+|---|---|---|
+| **Top-down row**: touches only PortTop wrappers, bindings, `re/match` sources or other files the default path does not execute | both builds (`set MASHED_DDKOBJ=1` for the object build), `py.exe -3.12 re/tools/ddkobj/ddkobj.py check`, the knob boot, its self-test, and the menu walk when menu code changed. **No G-CTRL, no B, no 12 captures x 4**: those hashes are computed with the knob off and cannot see the change | the default gates once per batch |
+| **Race-path row**, once the oracle exists (`RO-ORACLE-GATE`) | the above plus the oracle on the menu-less race | the oracle gate |
+| **Default-path row** | as before: default gates unchanged on your exe, PREREG for a behaviour change | as before |
+| **Match-only, tracker and text rows** | no build, no gates | text-only pass |
+
+- **Object build.** `ddkobj.py check` must report IDENTICAL for every substituted function whose source is 100%. A
+  unit the tool refuses keeps its VS2022 body: put the refusal reason in the RESULT, do not work around it. The replay
+  oracle is measured on the object build (L-125).
+- **RenderWare (L-124).** On the top-down path the RW route is the matched RW core on d3d9. Add no new librw binding
+  there. The existing bindings stay as the fallback until the first menu frame renders on the RW core.
+- **Unmatched bodies (L-126).** `py.exe -3.12 re/tools/match/equiv.py` decides: EQUIV in default mode, or
+  EQUIV-IF-CALLERS-IGNORE with every caller scanned as ignoring, is admitted with no decision row. Record it in
+  `ADMITTED.tsv` (tool commit, source and flags, verdict line, caller scan, cross-check tally). A NOT-PROVEN source
+  may run on the knob path only as a provisional body listed in `PROVISIONAL.tsv`. Neither is C4. A conditional
+  verdict with a caller that reads or is unknown, and any proof that needs `--relax-icall`, is a decision row.
+  x87 instruction order is never admitted.
+- **Standing classes (L-127).** P1: a flip on the knob path whose captures and logs are unchanged ON against OFF on
+  OFF / ON / OFF / ON passes lands without a decision row. P2: a refile of a function to another subsystem on identity
+  evidence. Log each use in `DECISIONS.md` as "auto, class P1" or "auto, class P2" with the evidence path. A flip on
+  the default path, and anything that moves a gate hash, is still a decision row.
+- **Frozen rows.** Rows whose note starts "FROZEN by ROADMAP v5" are hand-path work. Do not claim them.
+
 ## Ledger transitions (you write your own)
 `claim <id> <session-id> -Parent <lead-id>` then `set <id> working "<note>" -Branch orch/<id> -Worktree <path>`,
 then `set <id> review` with `-Evidence verify/<lane>_<yyyymmdd>/RESULT_<step>.md`.
