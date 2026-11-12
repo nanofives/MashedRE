@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S28 h1 0x005c7500 : 89.3% (regs 89.3, ops 100). By hand: the original float->int is inline (fnstcw / or ah,0xc / fldcw / fistp), not __ftol, so one inline __asm macro block sits in the compiled body (allowed by the brief); it writes the new control word into param_1's own stack slot (mov word ptr param_1) and p=param_1 keeps the pointer in esi. The 64-bit divide is a 4-arg call 0x004a4e40 (unsigned div). Remaining diff: the saved control word lands at [esp+4] instead of [esp+6]; local order not movable by declaration order, struct, array or pad variants. Residual class (b). */
 

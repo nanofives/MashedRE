@@ -146,6 +146,12 @@ Measurements behind the static routes: `verify/matchpilot_20261030/RESULT_MATCH-
      Processor Pack `c2` 13.00.9044 (`tools/vc6pp`, from Microsoft's `vcpp5.exe`), the compiler of the 349 Rich
      prodid 0x30 build 9044 objects (`verify/rwcompiler9044_20261111/RESULT_MATCH-RW-COMPILER-9044.md`). The source
      names which of the two it was matched under, and the C4 note records it (`c4_reclass.py` `RECORDED`).
+     **Per-object compiler (L-131, extended by L-133 (1), 2026-11-11):** the compiler is a property of the object,
+     not of the library. Every object whose Rich header carries prodid 0x30 (build 9044) takes `// TOOLCHAIN rw9044`,
+     whatever it contains: RenderWare core and audio, libpng/zlib, Lua 4.0. Objects with any other prodid keep the
+     default `ddk`. The source records which one it was matched under. A source that is byte-identical only under
+     the other compiler is not C4 under this one. Evidence:
+     `verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md`.
   2. `re/tools/match/relocheck.py` reports **OK** for that function. `match.py` masks every relocation, so 100% alone
      does not show that each global, callee or constant is the right one: MATCH-S02 found two sources at 100% that
      stored to swapped arrays (0x0040b250, 0x0040b810; `verify/matchs02_20261031/RESULT_MATCH-S02.md`). relocheck

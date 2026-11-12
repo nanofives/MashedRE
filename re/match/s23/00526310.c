@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00526310 (h4): libpng 1.0.12 pngrutil.c png_handle_hIST. Best 92.0% (regs 92.0%).
    Written from the official source with the original's inlining mirrored by hand: png_crc_read, png_crc_finish,

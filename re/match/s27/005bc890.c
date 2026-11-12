@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // MATCH-S27 0x005bc890: 72.0% (regs 78%). Struct copy + intrinsic memcpy give the rep movs. Residual: original pushes ebx/ebp/esi/edi before the first call (no shrink-wrap), ours pushes them after the null check; layout of the free path otherwise equal. Flags /O2 /GS /O1 /Oy- tried. Class: a.
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

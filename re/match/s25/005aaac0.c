@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S25 h3 0x005aaac0: by hand. Best 77.3% (regs 81.8%). Residual (a): ebx/edi pushes and the param loads are shrink-wrapped past the empty-list early exit in our output, the original pushes ebx/esi/edi first and loads edi/ebx after the je. Same class as the S19/S21/S24 shrink-wrap residual; while/for/do-while spellings tried, no change. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

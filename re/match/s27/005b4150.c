@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // MATCH-S27 0x005b4150: 90.0% (regs 90%). Compiled-body macro FTOL_INLINE (__asm fnstcw/fld/or ah,12/fldcw/fistp/fldcw) reproduces the original's inline truncation (54 -> 75%); unsigned operands for the int->float converts (75 -> 90%). Residual: original divides/multiplies with fidiv/fimul dword on a zero-extended stack temp, ours uses fild qword + fdivp/fmulp; unsigned/int/__int64 spellings tried. Class: b.
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
