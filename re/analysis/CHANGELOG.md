@@ -57,6 +57,9 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-12  0x00486830  FUN_00486830  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwsprom_20261112/RESULT_PROV-WRITESET-PROMOTE.md; evidence: verify/provwsprom_20261112/RESULT_PROV-WRITESET-PROMOTE.md
 2026-11-12  0x0048ab70  FUN_0048ab70  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwsprom_20261112/RESULT_PROV-WRITESET-PROMOTE.md; evidence: verify/provwsprom_20261112/RESULT_PROV-WRITESET-PROMOTE.md
 2026-11-12  0x00521520  FUN_00521520  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00521520.c; evidence: verify/matchreloc_20261112/RESULT_MATCH-RELOC-521520.md
+2026-11-12  0x004c5f60  rwID_TEXTUREMODULE_ctor  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c5f60.c; evidence: verify/rwcmatch_s01_20261112/RESULT_RWC-MATCH-S01.md
+2026-11-12  0x004caea0  FUN_004caea0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004caea0.c; evidence: verify/rwcmatch_s01_20261112/RESULT_RWC-MATCH-S01.md
+2026-11-12  0x004c5a00  FUN_004c5a00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c5a00.c; evidence: verify/rwcmatch_s01_20261112/RESULT_RWC-MATCH-S01.md
 2026-11-11  0x004b71c0  FUN_004b71c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b71c0.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md
 2026-11-11  0x004c18c0  FUN_004c18c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c18c0.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md
 2026-11-11  0x00516c40  png_sig_cmp  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00516c40.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md

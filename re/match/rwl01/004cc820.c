@@ -1,4 +1,6 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH-S01 (2026-11-12): 98.0% (regs 99.3%) under rw9044 (was 95.4%). Kept one permuter move (two independent stores in the block loop). Its second move (DAT_007d45cc load after the param_5[8] store) scored 98.7% but changes the order of a load and a store that can alias, so it was reverted. Residual: two loads hoisted earlier in the original (the param_4 test before the four header stores, and the DAT_007d45cc load before the lea of param_5+7). Not a match. */
 /* h3 hand-match: best 74.5% (regs 78.4%), class b. Zeroing loops (rep stosd + rep stosb) are memset(p+2,0,n) with #pragma intrinsic(memset) (55.6 -> 74.5); alloc/realloc arms flipped (realloc arm inline); param_4 as uint with >0 test (jbe). Residual: original saves ebx/ebp/esi/edi at entry (ours pushes esi/ebp later) and a different copy of the a few scheduling choices. */
 /* MATCH-RWL01 0x004cc820: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl01_20261107/results.tsv. */
@@ -102,8 +104,8 @@ uint * FUN_004cc820(int param_1,uint param_2,uint param_3,uint param_4,uint *par
       puVar3[1] = 0;
       *puVar3 = 0;
       uVar4 = *puVar1;
-      puVar3[1] = (uint)puVar1;
       *puVar3 = uVar4;
+      puVar3[1] = (uint)puVar1;
       *(uint **)(*puVar1 + 4) = puVar3;
       *puVar1 = (uint)puVar3;
       memset(puVar3 + 2, 0, uVar5);
