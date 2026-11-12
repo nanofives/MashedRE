@@ -287,12 +287,14 @@ extern "C" {
 #include "../../../../re/match/s15/00492370.c"
 #include "../../../../re/match/s15/00492290.c"
 
+int ProvBody_0043dfd0_SelfTest(void);
 int PortTop_WinMain(void* hInstance, void* hPrevInstance, char* lpCmdLine, int nCmdShow) {
     PortTop_HandPrelude();
     s_focusPause = (std::getenv("MASHED_ORIG_TOP_FOCUSPAUSE") != nullptr);
     PortTop_Log("MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over");
     PortTop_SeedRdata();
     PortTop_NoFocusPause();
+    ProvBody_0043dfd0_SelfTest();   // PROVISIONAL-BODIES: MASHED_PROV_43DFD0_SELFTEST=1 only (default off)
     const int r = Orig_00492370(static_cast<int>(reinterpret_cast<std::uintptr_t>(hInstance)),
                                 static_cast<int>(reinterpret_cast<std::uintptr_t>(hPrevInstance)),
                                 static_cast<int>(reinterpret_cast<std::uintptr_t>(lpCmdLine)), nCmdShow);
