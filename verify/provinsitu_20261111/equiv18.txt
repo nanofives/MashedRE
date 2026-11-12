@@ -1,0 +1,18 @@
+[1/18] 0x00424eb0	NOT-PROVEN	indirect-call-esp-reset: ours: ESP restored from a register in a function with a call through od32(3,0) (fallback: the exposed frame differs between the paths into a join)
+[2/18] 0x00448220	NOT-PROVEN	call-memory: region ours +0x3b4 / orig 0x004485d4 call 0x442e00: memory differs (st0(st0(st0(st0(st0(st0(st0(...,...,...,4),(...+-0x98),0x897fe0,4),(esp0+-0x48),x87o32(X0(...,'fadd',('m4',),...),'fstp'),4),(esp0+-0x38),x87o32(X0(X0(...,'fld',('m4',),...),'fmul',('m4',),ld32(...,...)),'fstp'),4),(esp0+-0x44),x87o32(X0(X0(X0(...,'fstp',('m4',),None),'fld',('m4',),x87o32(...,'fs
+[3/18] 0x00468d80	NOT-PROVEN	x87-region: region ours +0x37 / orig 0x00468db7 x87 instruction 0 differs: fld m4[esp+0x3c] | fld m4[esp+0x44]
+[4/18] 0x0046e9e0	NOT-PROVEN	call-args: region ours +0x5c / orig 0x0046ea3c call 0x46d700 arg 1: ld32(st0(st0(st0(Mc0(call0(0x40e350,(),(),Mc0(...),Xc0(...))),(ebx_in+0x30),x87o32(X0(X0(...,'fxch',('st(0)', 'st(1)'),None),'fadd',('m4',),ld32(...,...)),'fstp'),4),(ebx_in+0x34),x87o32(X0(X0(X0(...,'fstp',('m4',),None),'fld',('m4',),0x0),'fadd',('m4',),ld32(st0(...,...,...,4),(...+0x34))),'fstp'),4),(ebx_in
+[5/18] 0x00481e00	NOT-PROVEN	x87-region: region ours +0xb5 / orig 0x00481eb5 x87 instruction 3 differs: fstp m4[edx+0xfffffff0] | fstp m4[ecx+0xfffffff0]
+[6/18] 0x00441d40	NOT-PROVEN	call-args: region ours +0x0 / orig 0x00441d40 call 0x441c80 arg 0: (esp0+-0x58) | (esp0+-0x68)
+[7/18] 0x00442e00	NOT-PROVEN	call-args: region ours +0x0 / orig 0x00442e00 call 0x4c3ac0 arg 0: (esp0+-0x14) | (esp0+-0x10) (fallback: argument-area address escapes (passed to a callee))
+[8/18] 0x00443440	NOT-PROVEN	branch-condition: region ours +0x29 / orig 0x00443469: P1('sle',ld32(st0(st0(st0(st0(st0(...,...,...,1),(...+-0x136),0x0,1),(and32(...,...)+-0x135),0xff,1),(and32((...+-0x4),0xfffffff8)+-0x118),x87o32(X0(X0(...,'fld',('m4',),...),'fadd',('m4',),0x40800000),'fstp'),4),(and32((esp0+-0x4),0xfffffff8)+-0x114),x87o32(X0(X0(X0(...,'fstp',('m4',),None),'fld',('m4',),ld32(...,...)),'
+[9/18] 0x00443dc0	NOT-PROVEN	x87-region: region ours +0x24 / orig 0x00443de4 x87 instruction 2 differs: fstp m4[esp+0x44] | fstp m4[esp+0x48]
+[10/18] 0x00445aa0	NOT-PROVEN	call-regargs: region ours +0x0 / orig 0x00445aa0 call 0x441c80: (('ebp', arg32(8)), ('edi', edi_in)) | (('ebp', ebp_in), ('edi', arg32(8)))
+[11/18] 0x00469aa0	NOT-PROVEN	callee-pop-unknown: callee 0x468d80
+[12/18] 0x004709a0	NOT-PROVEN	call-args: region ours +0x24 / orig 0x004709be call 0x4a2c48 arg 0: edi_in | below32(-28)
+[13/18] 0x00479100	NOT-PROVEN	call-memory: region ours +0x76 / orig 0x00479176 call 0x559040: memory differs (st0(st0(st0(st0(st0(st0(st0(...,...,...,4),(...+-0x44),x87o32(...,'fstp'),4),(esp0+-0xb0),(ld32(...,...)+zx32(...)*12),4),(esp0+-0xb4),(ld32(st0(...,...,...,4),(...+0x8))+zx32(ld16(...,...))*12),4),(esp0+-0xb8),(ld32(st0(st0(...,...,...,4),(...+-0xa8),ebx_in,4),(ld32(...,...)+0x8))+zx32(ld16(st0(.
+[14/18] 0x00469df0	NOT-PROVEN	x87-region: region ours +0x0 / orig 0x00469df0 x87 instruction 6 differs: fld m4[esp+0x88] | fld m4[esp+0x84]
+[15/18] 0x0046ef70	NOT-PROVEN	x87-region: region ours +0xaa / orig 0x0046f024 x87 instruction 0 differs: fld m4[esi+0x28] | fld m4[esi+0x2c]
+[16/18] 0x0046f6c0	NOT-PROVEN	call-args: region ours +0x0 / orig 0x0046f6c0 call 0x4a2c48 arg 3: 0x0 | below32(-272)
+[17/18] 0x004c51a0	NOT-PROVEN	call-sequence: region ours +0xf / orig 0x004c5285: 2 vs 0 calls
+[18/18] 0x00487180	NOT-PROVEN	call-sequence: region ours +0x0 / orig 0x00487180: 10 vs 1 calls

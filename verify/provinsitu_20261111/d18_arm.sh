@@ -21,8 +21,8 @@ py -3.12 /c/Users/maria/Desktop/Proyectos/Mashed/re/orchestrator/mashed_lock.py 
    --normalize re/frida/warp_normalize.tsv --load-sleep-ms 0 --warp-clock 2000 "${P[@]}" > $D/$L.log 2>&1
 echo "[$L] exit $? $(date +%T)"
 grep -E "prov rows|prov install|race anchor|=== rc|agent error" $D/$L.log | cut -c1-160 | tail -4
-if [ -d $D/d18_r1 ] && [ -d $D/d18_r2 ] && [ "$L" != d18_r1 ] && [ "$L" != d18_r2 ]; then
-  py -3.12 re/frida/prov_compare.py $D/$L $D/d18_r1 $D/d18_r2 --pair $I/x_ref,$I/x_ref2 --json $D/$L.verdict.json 2>&1 | head -3
-  py -3.12 re/tools/prov/prov_ticks_all.py $D/$L $D/d18_r1 $D/d18_r2 --pair $I/x_ref,$I/x_ref2 > $D/$L.ticks.txt 2>&1
+if [ -d $D/d18_r2 ] && [ -d $D/d18_r3 ] && [ "${L#d18_r}" = "$L" ]; then
+  py -3.12 re/frida/prov_compare.py $D/$L $D/d18_r2 $D/d18_r3 --pair $I/x_ref,$I/x_ref2 --json $D/$L.verdict.json 2>&1 | head -3
+  py -3.12 re/tools/prov/prov_ticks_all.py $D/$L $D/d18_r2 $D/d18_r3 --pair $I/x_ref,$I/x_ref2 > $D/$L.ticks.txt 2>&1
   head -6 $D/$L.ticks.txt
 fi
