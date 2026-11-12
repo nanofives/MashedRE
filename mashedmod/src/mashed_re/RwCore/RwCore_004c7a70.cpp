@@ -31,7 +31,7 @@
 #define FUN_004dd050 RwCoreHand_004dd050
 #define FUN_004dd0b0 RwCoreHand_004dd0b0
 #define FUN_004dd140 RwCoreHand_Direct3DCreate9
-#define FUN_005cb000 RwCoreMissing_005cb000
+#define FUN_005cb000 RwCoreLift_005cb000
 #define FUN_005cb07f RwCoreMissing_005cb07f
 #define FUN_005cb0ef RwCoreMissing_005cb0ef
 #define FUN_005cb160 RwCoreMissing_005cb160

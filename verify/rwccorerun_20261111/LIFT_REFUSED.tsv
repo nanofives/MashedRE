@@ -1,0 +1,95 @@
+rva	reason
+0x004721e0	unresolved call target 0x004721b0 at 0x004722b8
+0x004a3370	unresolved call target 0x004a7118 at 0x004a3376
+0x004c5eef	inside a known function (a label, not a function start)
+0x004c9290	indirect call dword ptr [0x5cc21c] at 0x004c92fd
+0x004ca160	indirect call dword ptr [0x5cc21c] at 0x004ca2e4
+0x004d15f0	inside a known function (a label, not a function start)
+0x004d1630	inside a known function (a label, not a function start)
+0x004d3112	inside a known function (a label, not a function start)
+0x004d3141	inside a known function (a label, not a function start)
+0x004d31bb	inside a known function (a label, not a function start)
+0x004d31ea	inside a known function (a label, not a function start)
+0x004d31ec	inside a known function (a label, not a function start)
+0x004d33ef	inside a known function (a label, not a function start)
+0x004d6dfb	inside a known function (a label, not a function start)
+0x004d8922	inside a known function (a label, not a function start)
+0x004dbc90	indirect jmp dword ptr [eax*4 + 0x4dc144] at 0x004dbcb5
+0x004dc602	inside a known function (a label, not a function start)
+0x004dc6d7	inside a known function (a label, not a function start)
+0x004dcb2f	inside a known function (a label, not a function start)
+0x004dcc4c	inside a known function (a label, not a function start)
+0x004dd2bd	inside a known function (a label, not a function start)
+0x004ddd47	inside a known function (a label, not a function start)
+0x004de35a	inside a known function (a label, not a function start)
+0x004de3a6	inside a known function (a label, not a function start)
+0x004deb20	inside a known function (a label, not a function start)
+0x004deede	inside a known function (a label, not a function start)
+0x004defc4	inside a known function (a label, not a function start)
+0x004df030	indirect jmp dword ptr [edi*4 + 0x4df0fc] at 0x004df064
+0x004e0b70	indirect jmp dword ptr [eax*4 + 0x4e1244] at 0x004e0d1e
+0x004e18c8	inside a known function (a label, not a function start)
+0x004e1bf5	inside a known function (a label, not a function start)
+0x004e219f	inside a known function (a label, not a function start)
+0x004e21eb	inside a known function (a label, not a function start)
+0x004e25f9	inside a known function (a label, not a function start)
+0x004e2604	inside a known function (a label, not a function start)
+0x004e26e8	inside a known function (a label, not a function start)
+0x004e277c	inside a known function (a label, not a function start)
+0x004e27a9	inside a known function (a label, not a function start)
+0x004e27bc	inside a known function (a label, not a function start)
+0x004e281e	inside a known function (a label, not a function start)
+0x004e2826	inside a known function (a label, not a function start)
+0x004e2a16	inside a known function (a label, not a function start)
+0x004e2c21	inside a known function (a label, not a function start)
+0x004e2c69	inside a known function (a label, not a function start)
+0x004e2d1e	inside a known function (a label, not a function start)
+0x004e2df6	inside a known function (a label, not a function start)
+0x004e2f00	inside a known function (a label, not a function start)
+0x004e3267	inside a known function (a label, not a function start)
+0x004e3850	indirect jmp dword ptr [eax + 0x10] at 0x004e3877
+0x004e3880	indirect jmp dword ptr [ecx + 0x14] at 0x004e389d
+0x004e60e6	inside a known function (a label, not a function start)
+0x004e838b	inside a known function (a label, not a function start)
+0x004e83be	inside a known function (a label, not a function start)
+0x004e8cdc	inside a known function (a label, not a function start)
+0x004e8e3a	inside a known function (a label, not a function start)
+0x004e93c9	inside a known function (a label, not a function start)
+0x004e959f	inside a known function (a label, not a function start)
+0x004e9640	inside a known function (a label, not a function start)
+0x004e96bf	inside a known function (a label, not a function start)
+0x004e97a4	inside a known function (a label, not a function start)
+0x004ebd00	indirect jmp dword ptr [eax*4 + 0x4ec114] at 0x004ec043
+0x004ef726	indirect jmp dword ptr [eax*4 + 0x4ef893] at 0x004ef765
+0x004ef8b3	indirect jmp dword ptr [eax*4 + 0x4efa93] at 0x004ef8f5
+0x004efab3	indirect jmp dword ptr [eax*4 + 0x4efc39] at 0x004efaf0
+0x004efc59	indirect jmp dword ptr [eax*4 + 0x4efe6a] at 0x004efc99
+0x004f3610	inside a known function (a label, not a function start)
+0x004f3616	inside a known function (a label, not a function start)
+0x004f3619	inside a known function (a label, not a function start)
+0x004f5ec0	indirect jmp dword ptr [ebp*4 + 0x4f682c] at 0x004f5ed4
+0x004fb9aa	inside a known function (a label, not a function start)
+0x004fbd78	indirect call dword ptr [0x5cc00c] at 0x004fbd8e
+0x004fbdd5	unresolved code-pointer immediate target 0x005ca695 at 0x004fbdd5
+0x0050f1c4	indirect jmp dword ptr [eax*4 + 0x50f32c] at 0x0050f1ff
+0x0050f34c	indirect jmp dword ptr [eax*4 + 0x50f552] at 0x0050f386
+0x0050f572	indirect jmp dword ptr [eax*4 + 0x50f6a4] at 0x0050f5a8
+0x0052eaf5	inside a known function (a label, not a function start)
+0x00532fa0	inside a known function (a label, not a function start)
+0x0053db75	inside a known function (a label, not a function start)
+0x0053ed20	indirect jmp dword ptr [eax*4 + 0x53f134] at 0x0053edc3
+0x0053fc99	inside a known function (a label, not a function start)
+0x0053fcec	inside a known function (a label, not a function start)
+0x0053ff05	inside a known function (a label, not a function start)
+0x0054005c	inside a known function (a label, not a function start)
+0x0054029b	inside a known function (a label, not a function start)
+0x00543500	indirect jmp dword ptr [edx*4 + 0x5436f8] at 0x0054366f
+0x00543758	inside a known function (a label, not a function start)
+0x0054375a	inside a known function (a label, not a function start)
+0x005437e1	inside a known function (a label, not a function start)
+0x00551770	unresolved call target 0x0052df40 at 0x005517be
+0x005518f0	unresolved call target 0x0052de60 at 0x005519da
+0x005cb07f	inside a known function (a label, not a function start)
+0x005cb0ef	inside a known function (a label, not a function start)
+0x005cb160	inside a known function (a label, not a function start)
+0x005cb432	inside a known function (a label, not a function start)

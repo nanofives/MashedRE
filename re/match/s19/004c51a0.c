@@ -25,7 +25,7 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
 typedef unsigned int uint;
-extern char s_Invalid_combination_type_0061811c[];
+MGLOBALA(char, s_Invalid_combination_type_0061811c, 0x1c, 0x0061811c);
 MGLOBAL(uint, UNK_0000000c, 0x0000000c);
 undefined4 FUN_004d7ff0(undefined4 p0, ...);
 undefined4 * FUN_004d8480(undefined4 * p0);

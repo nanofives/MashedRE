@@ -169,6 +169,17 @@ static void RwCore_Probe(void) {
     }
 }
 
+int RwCore_00493640(void);
+// RWC-PLUGIN-ATTACH: RenderwareAttachPlugins 0x00493640 on the RW core, between RwEngineInit and RwEngineOpen as in
+// the original (0x00493710). Its attaches register their plugins in the registries of the seeded data range; the
+// constructors run at RwEngineStart.
+int RwCore_AttachPlugins(void) {
+    const int r = RwCore_00493640();
+    RwCore_Log("RenderwareAttachPlugins 0x00493640() = %d on the RW core; [0x007dc57c] (PTank plugin offset, 0x00534ac4) = 0x%X",
+               r, U32(0x007dc57cu));
+    return r;
+}
+
 int RwCore_EngineStart(void) {
     const int r = RwCore_004c2fb0();
     RwCore_Log("RwEngineStart 0x004c2fb0() = %d", r);

@@ -24,7 +24,11 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef unsigned int undefined4;
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 undefined4 FUN_00550b00(char * p0);
 // MATCH: 0x004ce690 FUN_004ce690
 undefined4 FUN_004ce690(undefined4 param_1,undefined4 *param_2)
@@ -32,7 +36,7 @@ undefined4 FUN_004ce690(undefined4 param_1,undefined4 *param_2)
 {
   int iVar1;
   
-  iVar1 = FUN_00550b00(param_1);
+  iVar1 = FUN_00550b00((char *)param_1);
   if (iVar1 != 0) {
     iVar1 = (*(code *)*param_2)(param_1);
     param_2[1] = iVar1;

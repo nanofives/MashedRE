@@ -96,6 +96,7 @@ bool RwCore_Enabled(void);
 int  RwCore_EngineInit(int memFuncs, int initFlags);
 int  RwCore_EngineOpen(int* params);
 int  RwCore_EngineStart(void);
+int  RwCore_AttachPlugins(void);
 int  RwCore_EngineStop(void);
 int  RwCore_EngineClose(void);
 int  RwCore_EngineTerm(void);
@@ -131,9 +132,8 @@ int MashedRw_EngineInit_004c32b0(int memFuncs, int arenaSize) {
 // too. Stand-in: librw's plugin set (RwBridge.cpp RegisterPlugins, the list the hand path registers). Returns 1 like the
 // original on success.
 int MashedRw_AttachPlugins_00493640(void) {
-    if (RwCore_Enabled()) {   // [RWC-CORE-RUN] neither librw registration nor the matched 0x00493640 (67.9%) on the core path
-        RwCore_Log("0x00493640 RenderwareAttachPlugins: not run on the RW core path (no plugin attaches; returns 1)");
-        return 1;
+    if (RwCore_Enabled()) {   // [RWC-CORE-RUN run 38] the matched 0x00493640 (re/match/s15/00493640.c) on the RW core
+        return RwCore_AttachPlugins();
     }
     mashed_re::LibRw::EnginePhasePlugins();
     // [PORT-TOP-04I] RpPTankPluginAttach is one of 0x00493640's calls. Its registration FUN_00534a80 stores the PTank

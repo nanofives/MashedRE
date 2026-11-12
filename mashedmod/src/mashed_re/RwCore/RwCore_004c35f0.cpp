@@ -6,9 +6,9 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_004c35f0 RwCore_004c35f0
-#define FUN_004c3670 RwCoreMissing_004c3670
+#define FUN_004c3670 RwCoreLift_004c3670
 #define FUN_004c3730 RwV3dTransformPoint
-#define FUN_004c37d0 RwCoreMissing_004c37d0
+#define FUN_004c37d0 RwCoreLift_004c37d0
 #define FUN_004c3880 RwV3dTransformVector
 extern "C" {
 #include "../../../../re/match/s19/004c35f0.c"

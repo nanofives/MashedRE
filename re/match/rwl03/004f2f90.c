@@ -27,7 +27,11 @@ typedef unsigned int undefined4;
 #ifdef __cplusplus
 typedef int (__cdecl code)(...);
 #else
+#ifdef __cplusplus
+typedef int code(...);
+#else
 typedef int code();
+#endif
 #endif
 #ifndef __cplusplus
 #define true 1
