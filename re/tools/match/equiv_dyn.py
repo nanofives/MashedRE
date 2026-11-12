@@ -18,7 +18,9 @@ What one run does
 * Registers and the 16 stack arguments are random (half of them pointers into the random heap).
 * Execution leaving the function body (a call or a tail jump) is stubbed: the stub records (target, the callee's
   stack arguments per equiv.summary, ECX, EDX), returns EAX = a hash of that record, pops the callee's argument
-  bytes, and resumes at the return address. Callees have no side effects in this model.
+  bytes, and resumes at the return address. Callees have no side effects in this model. A call through a pointer
+  pops the count A6 pinned for that site (equiv.pin_pops, the same count the proof used) and records P/4 arguments
+  (EQUIV-A6-5BE9F0-DYN); an unpinned one pops what the target's summary says (0 outside the image).
 * Observables compared: the stub records in order, the final value of every non-stack byte written, EBX ESI EDI
   EBP ESP, EAX/ECX/EDX (except registers the verdict lists as callers-ignore), the x87 registers and status word.
 
@@ -174,8 +176,9 @@ class Layout:
 
 
 class Body:
-    def __init__(self, entry, lo, hi):
+    def __init__(self, entry, lo, hi, pins=None):
         self.entry, self.lo, self.hi = entry, lo, hi
+        self.pins = pins or {}      # return address of a call through a pointer -> its A6 pop count (EQUIV-A6-5BE9F0-DYN)
 
 
 def run_one(layout, body, state, max_ins=MAXI):
@@ -272,7 +275,14 @@ def run_one(layout, body, state, max_ins=MAXI):
                     imp = slot
         except UcError:
             pass
-        if imp is not None:
+        if imp is None and ret in body.pins:
+            # a call through a pointer whose pop count A6 pinned from the body's own stack equations (equiv.pin_pops):
+            # the stub pops what the proof assumed. Before, a pointer target outside the image popped 0, so a
+            # __stdcall method call left ESP 4 bytes low per call, and a body that reads an argument after the call
+            # read the saved registers instead (0x005be9f0: 2 false DIFFERS from push order alone)
+            P = body.pins[ret]
+            N = P // 4
+        elif imp is not None:
             P = layout.res.import_pop[imp]
             N = P // 4
             name = "imp:" + "!".join(equiv.image().iat.get(imp, ("?", hex(imp))))
@@ -413,8 +423,20 @@ def bodies_for(src, rva):
     t = match.function_table()
     later = [e for e in t if e > rva]
     hi = min(later) if later else rva + size
-    bA = Body(OURS_BASE + A.start - 0, OURS_BASE + A.start, OURS_BASE + A.end)
-    bB = Body(rva, rva, max(hi, rva + size))
+    # A6 pop counts of the calls through a pointer, keyed by the call's return address in the Unicorn layout (ours:
+    # section offset + OURS_BASE). Only uniquely pinned sites: a free one keeps the old stub (pop from the target)
+    ctx = equiv.Ctx(A, B, False, res)
+    pins = {}
+    for side, base in ((A, OURS_BASE), (B, 0)):
+        pp = {}
+        try:
+            for pc, P in ctx.pins(side).get("pins", {}).items():
+                pp[base + pc + side.decode(pc).size] = P
+        except Exception:  # noqa: BLE001  (no pins: the stub falls back to the target's pop)
+            pp = {}
+        pins[side.name] = pp
+    bA = Body(OURS_BASE + A.start - 0, OURS_BASE + A.start, OURS_BASE + A.end, pins["ours"])
+    bB = Body(rva, rva, max(hi, rva + size), pins["orig"])
     # self-recursion in ours resolves to the original's entry: treat that entry as inside ours too
     return layout, bA, bB
 
