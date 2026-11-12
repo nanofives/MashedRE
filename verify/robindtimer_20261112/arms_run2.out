@@ -1,0 +1,354 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=18312 (RO-MENU-REPLAY); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=16252 (RO-BIND-TIMER)
+spawned pid 4144
+vs_off: exited rc=0 (0x00000000) after 12.4 s, log -> D:/MashedWT/RO-BIND-TIMER_data\vs_off.log
+  Milestone B10: frontend boot chain start
+    [7] MainLoopInit returned 1
+  Milestone B10: frontend boot chain complete
+  B17-SUMMARY reached-main-loop chrome=YES thunks=6/6
+spawned pid 4376
+vs_on_knoboff: exited rc=0 (0x00000000) after 12.3 s, log -> D:/MashedWT/RO-BIND-TIMER_data\vs_on_knoboff.log
+  [ORIG_TOP] MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over
+  [ORIG_TOP] rdata seed: 39/39 strings written
+  [ORIG_TOP] cfglog: Operating System:
+  [ORIG_TOP] cfglog: Professional
+  [ORIG_TOP] cfglog:  (Build 9200)
+  [ORIG_TOP] cfglog:
+  [ORIG_TOP] dinput seed: 3/3 written; c_dfDIKeyboard header equals the original's (0x18 0x10 2 0x100 0x100)
+  [ORIG_TOP] 0x00498510 controller defaults: missing (show=1 lang=0)
+  [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+  [ORIG_TOP] 0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)
+  [ORIG_TOP] cfglog: Calling RwEngineInit
+  [RW_BIND] RwEngineInit -> rw::Engine::init ok
+  [ORIG_TOP] cfglog: Calling RtFSManagerOpen
+  [RW_BIND] RtFSManagerOpen(-1): shim, librw has no RtFSManager
+  [ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
+  [ORIG_TOP] 0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)
+  [ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
+  [RW_BIND] 0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in); [0x007dc57c] = 0x70 (PTank record)
+  [ORIG_TOP] cfglog: Calling RwEngineOpen
+  [RW_BIND] RwEngineOpen(hwnd=000404FE) -> rw::Engine::open ok
+  [ORIG_TOP] cfglog: Calling HardwareSetVideoMode
+  [ORIG_TOP] 0x004951f0 HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)
+  [ORIG_TOP] cfglog: Calling RwEngineStart
+  [RW_BIND] RwEngineStart -> exe device 08DD2FA0 adopted, rw::Engine::start ok
+  [ORIG_TOP] printf: 	Using video mode 0 : 3840x2160
+  [ORIG_TOP] printf: At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 99532800 = -78749696 bytes of video memory free
+  [ORIG_TOP] 0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+  [RW_BIND] 0x005584c0: shim, no librw counterpart (two RW-heap buffers, no exe reader)
+  [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08E8B780, librw camera 08E36560
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x2) -> rw::Raster::create 0469BA78
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x1) -> rw::Raster::create 0469B508
+  [RW_BIND] RwCameraClone(08E8B780) -> rw::Camera::clone: record 08E8B280
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08E8B460, librw camera 08E33C68
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 0469BB60
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 0469B7C0
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08E8B820, librw camera 08E32F78
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 0469BC48
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 0469AEB0
+  [RW_BIND] 0x004b3eb0: TXD (33932 bytes) -> rw::TexDictionary 08DE0E40 with 1 of 1 textures
+  [RW_BIND] RwCameraClear(08E8B780, 000000ff, 3) -> rw::Camera::clear
+  [RW_BIND] camera begin update 08E8B780 -> rw::Camera::beginUpdate, BeginScene ok
+  [ORIG_TOP] 0x00428450 loading-disc draw (32, -32): missing body, not drawn
+  [RW_BIND] camera end update 08E8B780 -> EndScene, rw::Camera::endUpdate
+  [RW_BIND] RwRasterShowRaster(0469BA78, flags 1) -> Present on the adopted device: 0x00000000
+  [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+  [ORIG_TOP] cfglog: Calling AppInitialiseOnBootup
+  [RW_BIND] RwGlobals: 0x007d3ff8 is 0 (no B15 device yet) -> record 0102B908 with Im2D fields zero; strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+  [ORIG_TOP] cfglog: Setting up PIZ file system
+  [ORIG_TOP] [PIZ_FS] 0x004b6540 file system setup, mode flag 0 (exe piz reader, Piz/PizReader.h)
+  [ORIG_TOP] [PIZ_FS] 0x004b6560 callback 00177190 arg 0 recorded (not called by the exe reader)
+  [ORIG_TOP] cfglog: 	OK
+  [ORIG_TOP] cfglog: Calling PCVS_Init
+  Milestone B10: frontend boot chain start
+    [7] MainLoopInit returned 1
+  Milestone B10: frontend boot chain complete
+  [ORIG_TOP] 0x00496e40 PCVS_Init: piece 1 HandTop_InitDataInput (data wedge, boot chain, DirectInput)
+  [ORIG_TOP] 0x004caea0: stand-in device 003105C8 (SetRenderState slot +0xe4 records only)
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x19, 5) recorded, not sent to the D3D9 device
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x18, 0) recorded, not sent to the D3D9 device
+  ... 1080 more; last:
+  [RW_BIND] RwEngineStop -> rw::Engine::stop, exe device released
+  [RW_BIND] RwEngineClose -> rw::Engine::close
+  [RW_BIND] RwEngineTerm -> rw::Engine::term
+  [ORIG_TOP] cfglog: Calling HardwareExitApplication
+  [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+  [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+spawned pid 17940
+vs_on: exited rc=0 (0x00000000) after 12.7 s, log -> D:/MashedWT/RO-BIND-TIMER_data\vs_on.log
+  [ORIG_TOP] MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over
+  [ORIG_TOP] rdata seed: 39/39 strings written
+  [ORIG_TOP] cfglog: Operating System:
+  [ORIG_TOP] cfglog: Professional
+  [ORIG_TOP] cfglog:  (Build 9200)
+  [ORIG_TOP] cfglog:
+  [ORIG_TOP] dinput seed: 3/3 written; c_dfDIKeyboard header equals the original's (0x18 0x10 2 0x100 0x100)
+  [ORIG_TOP] 0x00498510 controller defaults: missing (show=1 lang=0)
+  [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+  [ORIG_TOP] 0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)
+  [ORIG_TOP] cfglog: Calling RwEngineInit
+  [RW_BIND] RwEngineInit -> rw::Engine::init ok
+  [ORIG_TOP] cfglog: Calling RtFSManagerOpen
+  [RW_BIND] RtFSManagerOpen(-1): shim, librw has no RtFSManager
+  [ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
+  [ORIG_TOP] 0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)
+  [ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
+  [RW_BIND] 0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in); [0x007dc57c] = 0x70 (PTank record)
+  [ORIG_TOP] cfglog: Calling RwEngineOpen
+  [RW_BIND] RwEngineOpen(hwnd=000A0808) -> rw::Engine::open ok
+  [ORIG_TOP] cfglog: Calling HardwareSetVideoMode
+  [ORIG_TOP] 0x004951f0 HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)
+  [ORIG_TOP] cfglog: Calling RwEngineStart
+  [RW_BIND] RwEngineStart -> exe device 08F682C0 adopted, rw::Engine::start ok
+  [ORIG_TOP] printf: 	Using video mode 0 : 3840x2160
+  [ORIG_TOP] printf: At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 99532800 = -78749696 bytes of video memory free
+  [ORIG_TOP] 0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+  [RW_BIND] 0x005584c0: shim, no librw counterpart (two RW-heap buffers, no exe reader)
+  [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 09048DD8, librw camera 0905E110
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x2) -> rw::Raster::create 0181AF48
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x1) -> rw::Raster::create 0181B118
+  [RW_BIND] RwCameraClone(09048DD8) -> rw::Camera::clone: record 09048F18
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 090488D8, librw camera 0905E560
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 0181B5A0
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 090976D8
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 09048E78, librw camera 0905E788
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 09096CE0
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 09097250
+  [RW_BIND] 0x004b3eb0: TXD (33932 bytes) -> rw::TexDictionary 08F4C750 with 1 of 1 textures
+  [RW_BIND] RwCameraClear(09048DD8, 000000ff, 3) -> rw::Camera::clear
+  [RW_BIND] camera begin update 09048DD8 -> rw::Camera::beginUpdate, BeginScene ok
+  [ORIG_TOP] 0x00428450 loading-disc draw (32, -32): missing body, not drawn
+  [RW_BIND] camera end update 09048DD8 -> EndScene, rw::Camera::endUpdate
+  [RW_BIND] RwRasterShowRaster(0181AF48, flags 1) -> Present on the adopted device: 0x00000000
+  [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+  [ORIG_TOP] cfglog: Calling AppInitialiseOnBootup
+  [RW_BIND] RwGlobals: 0x007d3ff8 is 0 (no B15 device yet) -> record 0102B908 with Im2D fields zero; strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+  [ORIG_TOP] cfglog: Setting up PIZ file system
+  [ORIG_TOP] [PIZ_FS] 0x004b6540 file system setup, mode flag 0 (exe piz reader, Piz/PizReader.h)
+  [ORIG_TOP] [PIZ_FS] 0x004b6560 callback 00177190 arg 0 recorded (not called by the exe reader)
+  [ORIG_TOP] cfglog: 	OK
+  [ORIG_TOP] cfglog: Calling PCVS_Init
+  Milestone B10: frontend boot chain start
+    [7] MainLoopInit returned 1
+  Milestone B10: frontend boot chain complete
+  [ORIG_TOP] 0x00496e40 PCVS_Init: piece 1 HandTop_InitDataInput (data wedge, boot chain, DirectInput)
+  [ORIG_TOP] 0x004caea0: stand-in device 003105C8 (SetRenderState slot +0xe4 records only)
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x19, 5) recorded, not sent to the D3D9 device
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x18, 0) recorded, not sent to the D3D9 device
+  ... 1087 more; last:
+  [RW_BIND] RwEngineClose -> rw::Engine::close
+  [RW_BIND] RwEngineTerm -> rw::Engine::term
+  [ORIG_TOP] cfglog: Calling HardwareExitApplication
+  [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+  [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+  [ORIG_TOP] [OT_TIMER] self-test PASS (0 of 6000 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0; bodies at 001794D0 / 001793F0 / 00179580
+spawned pid 15732
+ddk_on: exited rc=0 (0x00000000) after 13.0 s, log -> D:/MashedWT/RO-BIND-TIMER_data\ddk_on.log
+  [ORIG_TOP] MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over
+  [ORIG_TOP] rdata seed: 39/39 strings written
+  [ORIG_TOP] cfglog: Operating System:
+  [ORIG_TOP] cfglog: Professional
+  [ORIG_TOP] cfglog:  (Build 9200)
+  [ORIG_TOP] cfglog:
+  [ORIG_TOP] dinput seed: 3/3 written; c_dfDIKeyboard header equals the original's (0x18 0x10 2 0x100 0x100)
+  [ORIG_TOP] 0x00498510 controller defaults: missing (show=1 lang=0)
+  [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+  [ORIG_TOP] 0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)
+  [ORIG_TOP] cfglog: Calling RwEngineInit
+  [RW_BIND] RwEngineInit -> rw::Engine::init ok
+  [ORIG_TOP] cfglog: Calling RtFSManagerOpen
+  [RW_BIND] RtFSManagerOpen(-1): shim, librw has no RtFSManager
+  [ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
+  [ORIG_TOP] 0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)
+  [ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
+  [RW_BIND] 0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in); [0x007dc57c] = 0x70 (PTank record)
+  [ORIG_TOP] cfglog: Calling RwEngineOpen
+  [RW_BIND] RwEngineOpen(hwnd=00090862) -> rw::Engine::open ok
+  [ORIG_TOP] cfglog: Calling HardwareSetVideoMode
+  [ORIG_TOP] 0x004951f0 HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)
+  [ORIG_TOP] cfglog: Calling RwEngineStart
+  [RW_BIND] RwEngineStart -> exe device 08DC2E80 adopted, rw::Engine::start ok
+  [ORIG_TOP] printf: 	Using video mode 0 : 3840x2160
+  [ORIG_TOP] printf: At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 99532800 = -78749696 bytes of video memory free
+  [ORIG_TOP] 0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+  [RW_BIND] 0x005584c0: shim, no librw counterpart (two RW-heap buffers, no exe reader)
+  [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08EA7568, librw camera 08EC50F8
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x2) -> rw::Raster::create 08ECC750
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x1) -> rw::Raster::create 08ECC3B0
+  [RW_BIND] RwCameraClone(08EA7568) -> rw::Camera::clone: record 08EA7CE8
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08EA7D88, librw camera 08D541C8
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 08ECCAF0
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 08ECC838
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08EA7B08, librw camera 08D550E0
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 08ECC010
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 08ECC0F8
+  [RW_BIND] 0x004b3eb0: TXD (33932 bytes) -> rw::TexDictionary 08DAD650 with 1 of 1 textures
+  [RW_BIND] RwCameraClear(08EA7568, 000000ff, 3) -> rw::Camera::clear
+  [RW_BIND] camera begin update 08EA7568 -> rw::Camera::beginUpdate, BeginScene ok
+  [ORIG_TOP] 0x00428450 loading-disc draw (32, -32): missing body, not drawn
+  [RW_BIND] camera end update 08EA7568 -> EndScene, rw::Camera::endUpdate
+  [RW_BIND] RwRasterShowRaster(08ECC750, flags 1) -> Present on the adopted device: 0x00000000
+  [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+  [ORIG_TOP] cfglog: Calling AppInitialiseOnBootup
+  [RW_BIND] RwGlobals: 0x007d3ff8 is 0 (no B15 device yet) -> record 0102B8F8 with Im2D fields zero; strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+  [ORIG_TOP] cfglog: Setting up PIZ file system
+  [ORIG_TOP] [PIZ_FS] 0x004b6540 file system setup, mode flag 0 (exe piz reader, Piz/PizReader.h)
+  [ORIG_TOP] [PIZ_FS] 0x004b6560 callback 00193350 arg 0 recorded (not called by the exe reader)
+  [ORIG_TOP] cfglog: 	OK
+  [ORIG_TOP] cfglog: Calling PCVS_Init
+  Milestone B10: frontend boot chain start
+    [7] MainLoopInit returned 1
+  Milestone B10: frontend boot chain complete
+  [ORIG_TOP] 0x00496e40 PCVS_Init: piece 1 HandTop_InitDataInput (data wedge, boot chain, DirectInput)
+  [ORIG_TOP] 0x004caea0: stand-in device 003105C8 (SetRenderState slot +0xe4 records only)
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x19, 5) recorded, not sent to the D3D9 device
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x18, 0) recorded, not sent to the D3D9 device
+  ... 1087 more; last:
+  [RW_BIND] RwEngineClose -> rw::Engine::close
+  [RW_BIND] RwEngineTerm -> rw::Engine::term
+  [ORIG_TOP] cfglog: Calling HardwareExitApplication
+  [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+  [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+  [ORIG_TOP] [OT_TIMER] self-test PASS (0 of 6000 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0; bodies at 000158B0 / 000157D0 / 00015970
+spawned pid 15740
+ddk_on_knoboff: exited rc=0 (0x00000000) after 12.0 s, log -> D:/MashedWT/RO-BIND-TIMER_data\ddk_on_knoboff.log
+  [ORIG_TOP] MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over
+  [ORIG_TOP] rdata seed: 39/39 strings written
+  [ORIG_TOP] cfglog: Operating System:
+  [ORIG_TOP] cfglog: Professional
+  [ORIG_TOP] cfglog:  (Build 9200)
+  [ORIG_TOP] cfglog:
+  [ORIG_TOP] dinput seed: 3/3 written; c_dfDIKeyboard header equals the original's (0x18 0x10 2 0x100 0x100)
+  [ORIG_TOP] 0x00498510 controller defaults: missing (show=1 lang=0)
+  [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+  [ORIG_TOP] 0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)
+  [ORIG_TOP] cfglog: Calling RwEngineInit
+  [RW_BIND] RwEngineInit -> rw::Engine::init ok
+  [ORIG_TOP] cfglog: Calling RtFSManagerOpen
+  [RW_BIND] RtFSManagerOpen(-1): shim, librw has no RtFSManager
+  [ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
+  [ORIG_TOP] 0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)
+  [ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
+  [RW_BIND] 0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in); [0x007dc57c] = 0x70 (PTank record)
+  [ORIG_TOP] cfglog: Calling RwEngineOpen
+  [RW_BIND] RwEngineOpen(hwnd=0011015C) -> rw::Engine::open ok
+  [ORIG_TOP] cfglog: Calling HardwareSetVideoMode
+  [ORIG_TOP] 0x004951f0 HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)
+  [ORIG_TOP] cfglog: Calling RwEngineStart
+  [RW_BIND] RwEngineStart -> exe device 08F5E4E0 adopted, rw::Engine::start ok
+  [ORIG_TOP] printf: 	Using video mode 0 : 3840x2160
+  [ORIG_TOP] printf: At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 99532800 = -78749696 bytes of video memory free
+  [ORIG_TOP] 0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+  [RW_BIND] 0x005584c0: shim, no librw counterpart (two RW-heap buffers, no exe reader)
+  [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08F5E218, librw camera 090528A8
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x2) -> rw::Raster::create 09037E20
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x1) -> rw::Raster::create 090378B0
+  [RW_BIND] RwCameraClone(08F5E218) -> rw::Camera::clone: record 08F5D958
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08F5DC78, librw camera 01862080
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 090376E0
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 09037428
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08F5E2B8, librw camera 018626F8
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 09037998
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 090381C0
+  [RW_BIND] 0x004b3eb0: TXD (33932 bytes) -> rw::TexDictionary 08FA5E50 with 1 of 1 textures
+  [RW_BIND] RwCameraClear(08F5E218, 000000ff, 3) -> rw::Camera::clear
+  [RW_BIND] camera begin update 08F5E218 -> rw::Camera::beginUpdate, BeginScene ok
+  [ORIG_TOP] 0x00428450 loading-disc draw (32, -32): missing body, not drawn
+  [RW_BIND] camera end update 08F5E218 -> EndScene, rw::Camera::endUpdate
+  [RW_BIND] RwRasterShowRaster(09037E20, flags 1) -> Present on the adopted device: 0x00000000
+  [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+  [ORIG_TOP] cfglog: Calling AppInitialiseOnBootup
+  [RW_BIND] RwGlobals: 0x007d3ff8 is 0 (no B15 device yet) -> record 0102B8F8 with Im2D fields zero; strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+  [ORIG_TOP] cfglog: Setting up PIZ file system
+  [ORIG_TOP] [PIZ_FS] 0x004b6540 file system setup, mode flag 0 (exe piz reader, Piz/PizReader.h)
+  [ORIG_TOP] [PIZ_FS] 0x004b6560 callback 00193350 arg 0 recorded (not called by the exe reader)
+  [ORIG_TOP] cfglog: 	OK
+  [ORIG_TOP] cfglog: Calling PCVS_Init
+  Milestone B10: frontend boot chain start
+    [7] MainLoopInit returned 1
+  Milestone B10: frontend boot chain complete
+  [ORIG_TOP] 0x00496e40 PCVS_Init: piece 1 HandTop_InitDataInput (data wedge, boot chain, DirectInput)
+  [ORIG_TOP] 0x004caea0: stand-in device 003105C8 (SetRenderState slot +0xe4 records only)
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x19, 5) recorded, not sent to the D3D9 device
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x18, 0) recorded, not sent to the D3D9 device
+  ... 1080 more; last:
+  [RW_BIND] RwEngineStop -> rw::Engine::stop, exe device released
+  [RW_BIND] RwEngineClose -> rw::Engine::close
+  [RW_BIND] RwEngineTerm -> rw::Engine::term
+  [ORIG_TOP] cfglog: Calling HardwareExitApplication
+  [ORIG_TOP] 0x00493560 -> 0x004954f0 HardwareExitApplication (matched) returned 0; DirectInput 0x00771e78 = released, keyboard 0x00772fb8 = released
+  [ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+spawned pid 16132
+vs_audio: exited rc=4576240 (0x0045D3F0) after 1.8 s, log -> D:/MashedWT/RO-BIND-TIMER_data\vs_audio.log
+  [ORIG_TOP] MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over
+  [ORIG_TOP] rdata seed: 39/39 strings written
+  [ORIG_TOP] cfglog: Operating System:
+  [ORIG_TOP] cfglog: Professional
+  [ORIG_TOP] cfglog:  (Build 9200)
+  [ORIG_TOP] cfglog:
+  [ORIG_TOP] dinput seed: 3/3 written; c_dfDIKeyboard header equals the original's (0x18 0x10 2 0x100 0x100)
+  [ORIG_TOP] 0x00498510 controller defaults: missing (show=1 lang=0)
+  [ORIG_TOP] 0x00493540 -> 0x00495150 boot gate (matched) returned 1; QPF at 0x00771e70 = 10000000; DirectInput 0x00771e78 = created, keyboard 0x00772fb8 = created, joypads 0x00772fac = 0
+  [ORIG_TOP] 0x004924f0 data init: stand-in (hand boot chain steps 1-3, run inside the 0x00402750 stand-in)
+  [ORIG_TOP] cfglog: Calling RwEngineInit
+  [RW_BIND] RwEngineInit -> rw::Engine::init ok
+  [ORIG_TOP] cfglog: Calling RtFSManagerOpen
+  [RW_BIND] RtFSManagerOpen(-1): shim, librw has no RtFSManager
+  [ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
+  [ORIG_TOP] 0x00495780 HardwareInstallFileSystem: missing (0x004955d0 unported, no RtFSManager in librw)
+  [ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
+  [RW_BIND] 0x00493640 RenderwareAttachPlugins -> librw plugin registration (stand-in); [0x007dc57c] = 0x70 (PTank record)
+  [ORIG_TOP] cfglog: Calling RwEngineOpen
+  [RW_BIND] RwEngineOpen(hwnd=00040864) -> rw::Engine::open ok
+  [ORIG_TOP] cfglog: Calling HardwareSetVideoMode
+  [ORIG_TOP] 0x004951f0 HardwareSetVideoMode: stand-in (exe InitD3D9 picks the windowed mode at RwEngineStart)
+  [ORIG_TOP] cfglog: Calling RwEngineStart
+  [RW_BIND] RwEngineStart -> exe device 08DDBF20 adopted, rw::Engine::start ok
+  [ORIG_TOP] printf: 	Using video mode 0 : 3840x2160
+  [ORIG_TOP] printf: At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 99532800 = -78749696 bytes of video memory free
+  [ORIG_TOP] 0x00493600: missing (MASHED_ORIG_TOP_RWMOD off: no image module), returns 1
+  [RW_BIND] 0x005584c0: shim, no librw counterpart (two RW-heap buffers, no exe reader)
+  [ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08EC2B00, librw camera 08ECAF80
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x2) -> rw::Raster::create 017ADD48
+  [RW_BIND] RwRasterCreate(640, 480, 0, 0x1) -> rw::Raster::create 017ADA90
+  [RW_BIND] RwCameraClone(08EC2B00) -> rw::Camera::clone: record 08EC2BA0
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08EC3000, librw camera 08ED2E90
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 017ADC60
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 017ADE30
+  [RW_BIND] RwCameraCreate -> rw::Camera::create: record 08EC2EC0, librw camera 08ED30B8
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x2) -> rw::Raster::create 08F01EE8
+  [RW_BIND] RwRasterCreate(0, 0, 0, 0x1) -> rw::Raster::create 08F01E00
+  [RW_BIND] 0x004b3eb0: TXD (33932 bytes) -> rw::TexDictionary 08DFD910 with 1 of 1 textures
+  [RW_BIND] RwCameraClear(08EC2B00, 000000ff, 3) -> rw::Camera::clear
+  [RW_BIND] camera begin update 08EC2B00 -> rw::Camera::beginUpdate, BeginScene ok
+  [ORIG_TOP] 0x00428450 loading-disc draw (32, -32): missing body, not drawn
+  [RW_BIND] camera end update 08EC2B00 -> EndScene, rw::Camera::endUpdate
+  [RW_BIND] RwRasterShowRaster(017ADD48, flags 1) -> Present on the adopted device: 0x00000000
+  [ORIG_TOP] 0x00492270 SubsystemInit (matched) returned 1
+  [ORIG_TOP] cfglog: Calling AppInitialiseOnBootup
+  [RW_BIND] RwGlobals: 0x007d3ff8 is 0 (no B15 device yet) -> record 0102B908 with Im2D fields zero; strcpy / strcat at +0xcc / +0xd4, memory functions at +0x108..+0x114 on librw
+  [ORIG_TOP] cfglog: Setting up PIZ file system
+  [ORIG_TOP] [PIZ_FS] 0x004b6540 file system setup, mode flag 0 (exe piz reader, Piz/PizReader.h)
+  [ORIG_TOP] [PIZ_FS] 0x004b6560 callback 00177190 arg 0 recorded (not called by the exe reader)
+  [ORIG_TOP] cfglog: 	OK
+  [ORIG_TOP] cfglog: Calling PCVS_Init
+  Milestone B10: frontend boot chain start
+    [7] MainLoopInit returned 1
+  Milestone B10: frontend boot chain complete
+  [ORIG_TOP] 0x00496e40 PCVS_Init: piece 1 HandTop_InitDataInput (data wedge, boot chain, DirectInput)
+  [ORIG_TOP] 0x004caea0: stand-in device 003105C8 (SetRenderState slot +0xe4 records only)
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x19, 5) recorded, not sent to the D3D9 device
+  [ORIG_TOP] 0x004caea0 device stand-in: SetRenderState(0x18, 0) recorded, not sent to the D3D9 device
+  ... 513 more; last:
+  [ORIG_TOP] 0x00492770 MainLoopInit returned 1
+  [ORIG_TOP] first frame: run function 0x00492290 loop entered
+  [ORIG_TOP] frame 0 rendered (1)
+  [ORIG_TOP] [OT_TIMER] MASHED_OT_AUDIOTICK on: 0x004926c0 runs its matched exe body
+  [ORIG_TOP] [OT_TIMER] STOP: the matched 0x004926c0 called original 0x0045D3F0 (DAT_006147b8 = 1); the exe has no body for it. Return address 0017943A
+  [ORIG_TOP] [OT_TIMER] self-test PASS (0 of 0 checks failed), 0x00493480 calls 0, 0x004926c0 calls 0; bodies at 001794D0 / 001793F0 / 00179580
+[mashed-lock] released 'mashed_machine' pid=16252
