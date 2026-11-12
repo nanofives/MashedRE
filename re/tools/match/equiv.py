@@ -470,10 +470,29 @@ def F_(kind, *a):
 MEM0 = None
 
 
+A7_HITS = [0]           # uses of A7 in the current proof (Ctx resets it; check reports it in rules)
+
+
+def _stack_image(d1, k1, s1, d2, k2, s2):
+    """A7: the entry-ESP-relative address esp0 + k never lies inside the mapped image (the thread stack is not
+    in the PE image). True when one side is exactly `esp0 + k` and the other a constant whose whole access lies
+    inside [image lo, image hi)."""
+    if d1 or not d2 or len(d2) != 1:
+        return False
+    (t, c), = d2.items()
+    if c != 1 or t.op != "s" or t.a[0] != "esp0":
+        return False
+    img = image()
+    return img.lo <= (k1 & M32) and (k1 & M32) + s1 <= img.hi
+
+
 def disjoint(a, sa, b, sb):
     da, ka = to_lin(a)
     db, kb = to_lin(b)
     if da != db:
+        if _stack_image(da, ka, sa, db, kb, sb) or _stack_image(db, kb, sb, da, ka, sa):
+            A7_HITS[0] += 1
+            return True
         return False
     diff = (kb - ka) & M32
     return diff >= sa and ((1 << 32) - diff) >= sb
@@ -782,6 +801,20 @@ MAX_DEPTH = 40           # call-graph depth followed (deeper: conservative, unca
 sys.setrecursionlimit(20000)
 
 
+ALIGN_BASE = 0x1000000   # virtual ESP offset after `and esp, imm` (summary only)
+
+
+def const_idiom(cs):
+    """`or r, -1` / `and r, 0`: the result (and every flag) is a constant, so r is written, not read. Counting it
+    read gave false live-ins and false call-regargs (0x0040e187 / 0x0040e18f: EDI / EBP for 0x00441c80,
+    PROV-DIVERGED-18 section 5)."""
+    ops = cs.operands
+    if cs.mnemonic not in ("or", "and") or len(ops) != 2 or ops[0].type != X.X86_OP_REG or ops[1].type != X.X86_OP_IMM:
+        return False
+    m = (1 << (8 * ops[0].size)) - 1
+    return (ops[1].imm & m) == (m if cs.mnemonic == "or" else 0)
+
+
 def _sfail(va, why):
     return dict(UNKNOWN, why=why)
 
@@ -832,6 +865,8 @@ def _summary_body(va, depth):
     unknown_n = False
     ind_assumed = esp_reset = False
     visited = 0
+    nr_ends = []           # path ends other than a ret: why the function is no-return when no path reaches a ret
+    tail_unknown = []      # tail jumps to a callee whose summary is unknown (neither a pop count nor no-return)
     while work:
         pc = work.pop()
         esp, ebp, dfn = states[pc]
@@ -863,8 +898,8 @@ def _summary_body(va, depth):
             rdn = [cs.reg_name(r) for r in rd]
             wrn = [cs.reg_name(r) for r in wr]
             ops = cs.operands
-            zero_idiom = mn in ("xor", "sub", "sbb") and len(ops) == 2 and ops[0].type == X.X86_OP_REG \
-                and ops[1].type == X.X86_OP_REG and ops[0].reg == ops[1].reg
+            zero_idiom = (mn in ("xor", "sub", "sbb") and len(ops) == 2 and ops[0].type == X.X86_OP_REG
+                          and ops[1].type == X.X86_OP_REG and ops[0].reg == ops[1].reg) or const_idiom(cs)
             save = mn == "push" and len(ops) == 1 and ops[0].type == X.X86_OP_REG and \
                 _reg_parts(cs.reg_name(ops[0].reg))[0] in ALLREGS and \
                 (dfn.get(_reg_parts(cs.reg_name(ops[0].reg))[0], 0) & 7) != 7 and esp is not None
@@ -944,6 +979,16 @@ def _summary_body(va, depth):
                 esp = ebp + 4 if ebp is not None else None
                 ebp = None
                 esp_reset = True
+            elif mn == "and" and ops[0].type == X.X86_OP_REG and cs.reg_name(ops[0].reg) == "esp" and \
+                    ops[1].type == X.X86_OP_IMM and esp is not None and ebp is not None:
+                # frame alignment under a frame pointer (`push ebp; mov ebp, esp; and esp, -8`): the distance to
+                # the entry ESP becomes unknown, so ESP moves to a virtual base far below every real offset. Saves
+                # pushed after it stay tracked (0x00498a00's push esi / push edi were counted as reads: false
+                # live-ins ESI / EDI, then a false call-regargs in 0x00499400). Arguments are reached through EBP
+                # only (no ESP offset to them exists), and ESP must come back through EBP: a ret with ESP != 0 is
+                # still r7, so a body that never restores it stays unknown.
+                esp = esp - ALIGN_BASE
+                esp_reset = True
             elif "esp" in wrn and mn not in ("call", "ret"):
                 esp = None
                 esp_reset = True
@@ -964,6 +1009,7 @@ def _summary_body(va, depth):
                         if esp is not None and k >= esp and (k < esp + 4 * nargs if nargs is not None else k in recent):
                             livein.add(r)
                     if s2.get("noreturn"):
+                        nr_ends.append(f"call 0x{tgt:08x} @0x{pc:08x} ({s2.get('nr_why', '?')})")
                         break
                     pp = s2["P"] if s2.get("P") is not None else ret_pop(tgt)
                 else:
@@ -988,6 +1034,7 @@ def _summary_body(va, depth):
                         return _sfail(va, "r7")
                 break
             if mn in ("int3", "hlt", "ud2"):
+                nr_ends.append(f"{mn} @0x{pc:08x}")
                 break
             is_jmp = mn == "jmp"
             is_jcc = cs.group(capstone.CS_GRP_JUMP) and not is_jmp
@@ -1042,6 +1089,10 @@ def _summary_body(va, depth):
                     if not s2.get("eax_def"):
                         eax_def = False
                     if is_jmp:
+                        if s2.get("noreturn"):
+                            nr_ends.append(f"jmp 0x{tgt:08x} @0x{pc:08x} ({s2.get('nr_why', '?')})")
+                        elif s2.get("P") is None:
+                            tail_unknown.append(f"jmp 0x{tgt:08x} @0x{pc:08x} ({s2.get('why', 'pop count unknown')})")
                         break
                 else:
                     st = (esp, ebp, dict(dfn))
@@ -1072,6 +1123,16 @@ def _summary_body(va, depth):
         unknown_n = unknown_n or (pc if "pc" in dir() else -1)
     res = {"n_why": unknown_n, "P": (next(iter(pops)) if len(pops) == 1 else None), "N": None if unknown_n else N,
            "livein": frozenset(livein), "eax_def": eax_def and bool(pops), "noreturn": not pops, "known": len(pops) <= 1}
+    if not pops and tail_unknown:
+        # a path that tail-jumps to an unknown callee may return through it: not proof of no-return (the same
+        # family as r11). Unknown pop count instead, so a caller asks ret_pop() or stops at callee-pop-unknown.
+        res["noreturn"] = False
+        res["known"] = False
+        res["why"] = "r12: tail " + "; ".join(tail_unknown[:2])
+    elif not pops:
+        # why no path reaches a ret: every path end, nested callees' reasons inline (capped, it is a report field)
+        w = "; ".join(nr_ends[:4]) + (f"; +{len(nr_ends) - 4} more" if len(nr_ends) > 4 else "")
+        res["nr_why"] = (w or "no path end reached")[:400]
     if len(pops) > 1:
         res["P"] = None
     return res
@@ -1117,6 +1178,8 @@ class Ctx:
         self.maxcall_side = -(1 << 31)
         self.esp_reset = {A.name: esp_reset_any(A), B.name: esp_reset_any(B)}
         self.retdiff = set()        # registers that differ at some return
+        A7_HITS[0] = 0
+        self.halts = {}             # path ends at a no-return callee or a trap: (side, site) -> text, every such path
         self.retdiff_detail = {}
         self.pairs_seen = []
         self._pins = {}
@@ -1530,7 +1593,8 @@ class Ctx:
         region.events.append(key)
         region.pops.append(info.get("pin"))
         if info.get("noreturn"):
-            region.end = ("halt",)
+            region.end = ("halt", f"{side.name} {side.label(cs.address)} call {show(tgt)}: no-return, "
+                                  f"{info.get('nr_why', 'no reason recorded')}")
             return "halt"
         if P_ is None and tgt.op == "c":
             P_ = ret_pop(tgt.a[0])          # every `ret` in the callee's body agrees
@@ -1909,7 +1973,7 @@ class Ctx:
                 reg.end = ("ret", t[1])
                 return reg
             if kind == "halt":
-                reg.end = ("halt",)
+                reg.end = ("halt", f"{side.name} {side.label(pc)} {cs.mnemonic}: trap")
                 return reg
 
     def static_target(self, side, t):
@@ -2465,6 +2529,8 @@ class Explorer:
                 # paths return, so the record shows it (PROV-DIVERGED-18: 0x00448220 was EQUIV with 2/3 of the body
                 # behind such a call and the tag absent, because its early-return paths reached a ret).
                 ctx.used.add("no-return")
+                for r in (ra, rb):
+                    ctx.halts.setdefault(r.end[1], None)
             elif ka == "ind":
                 for nxt in self.switch_pairs(ra, rb, here):
                     self.arrivals.setdefault(nxt, {})[(pair, ("sw",) + nxt)] = (sa.copy(), sb.copy())
@@ -2912,8 +2978,8 @@ def caller_reads(site, reg, depth=0, seen=None):
         rdp = {SUB.get(cs.reg_name(r), (None,))[0] for r in rd}
         wrfull = {cs.reg_name(r) for r in wr}
         mn = cs.mnemonic
-        zero_idiom = mn in ("xor", "sub") and len(cs.operands) == 2 and cs.operands[0].type == X.X86_OP_REG and \
-            cs.operands[1].type == X.X86_OP_REG and cs.operands[0].reg == cs.operands[1].reg
+        zero_idiom = (mn in ("xor", "sub") and len(cs.operands) == 2 and cs.operands[0].type == X.X86_OP_REG and
+                      cs.operands[1].type == X.X86_OP_REG and cs.operands[0].reg == cs.operands[1].reg) or const_idiom(cs)
         if reg in rdp and not zero_idiom and mn not in ("call",):
             return "reads"
         if mn == "call":
@@ -3072,7 +3138,11 @@ def _check_once(A, B, res, addr, out, trace, popsol, popsol_unique):
             out["local_callees"] = loc     # bodies this source defines and calls: an admission must cover them too
     out["classes"] = classes
     out["mode"] = mode
+    if A7_HITS[0]:
+        ctx.used.add("A7-stack-image")
     out["rules"] = sorted(ctx.used)
+    if ctx.halts:
+        out["halts"] = list(ctx.halts)       # every path that ends at a no-return callee (or a trap), with the reason
     if res.unresolved:
         out["unresolved_unused"] = sorted(res.unresolved)
     if ctx.retdiff:
@@ -3118,6 +3188,8 @@ def fmt(r):
     cls = ",".join(r["classes"]) or "BYTE-IDENTICAL"
     if r.get("pop_solutions"):
         cls += f"; {r['pop_solutions']} pop solutions"
+    if r.get("halts"):
+        cls += "; unchecked after no-return: " + " | ".join(r["halts"])
     if r["verdict"] == "EQUIV":
         return f"{a}\tEQUIV\t[{cls}]"
     cl = r["callers"]
