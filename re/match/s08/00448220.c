@@ -192,7 +192,7 @@ skip:
   b.x = a.x - pos.x;
   b.y = a.y - pos.y;
   b.z = a.z - pos.z;
-  f = DAT_005cc320 / FUN_004c3ac0(&b) * DAT_005cc950 * DAT_005ce1ec;
+  f = DAT_005ce1ec / FUN_004c3ac0(&b) * DAT_005cc950 * DAT_005cc320;
   if (mode == -1 || flag != 0) {
     f = 1.0f;
   }

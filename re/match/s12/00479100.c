@@ -6,7 +6,11 @@
    (orig computes v0,v1,v2 into edx,esi,eax before pushing; ours computes each at its push), and the colour loads
    scheduled into the d[2] sum in the original. Tried: param_1 as char pointer or void pointer, local order, geom as a struct,
    RpTriangle struct indexing, vertex temps (early/late), pos copy by field, early-return layout, permuter (its
-   commute rewrites were semantically wrong, discarded). */
+   commute rewrites were semantically wrong, discarded).
+   PROV-DIVERGED-18 (2026-11-11): d[0] was a VALUE difference: the DDK reassociated the one-expression form to
+   (m0*x + m8*z) + m4*y + m12 where the original sums (m8*z + m4*y) + m0*x + m12 (after the call at 0x0047920a);
+   d[1] and d[2] already compiled in the original order. Replay: DIVERGED@161 (block 0x0063dc00). Now one statement
+   per term: 70.9% (regs 79.4%, ops 78.8%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -84,7 +88,7 @@ int FUN_00479100(int param_1, Line_00479100 *param_2, float *param_3, float *par
   pos.z = dir.z * hit.t + pos.z;
   FUN_00559040(m, &unk, (float *)(verts + tri[0] * 0xc), (float *)(verts + tri[1] * 0xc),
                (float *)(verts + tri[2] * 0xc));
-  d[0] = m[8] * pos.z + m[4] * pos.y + m[0] * pos.x + m[12];
+  d[0] = m[8] * pos.z; d[0] = d[0] + m[4] * pos.y; d[0] = d[0] + m[0] * pos.x; d[0] = d[0] + m[12];
   d[1] = m[9] * pos.z + m[5] * pos.y + m[1] * pos.x + m[13];
   d[2] = m[10] * pos.z + m[6] * pos.y + m[2] * pos.x + m[14];
   c0 = cols[tri[0]];

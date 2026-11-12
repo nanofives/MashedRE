@@ -8,7 +8,13 @@
    fold it into 360, and &car->contact[j] taken at the first contact store.
    Residual (b): the contact pointer is strength-reduced to +0x20 in EDI (original +0x18 = vel, in EBP), which
    swaps EDI/EBP uses and some local slots (frame size matches, 0xa8); dot term order (canonicalised); keep-and-pop of
-   the clamped dot. Permuter 570 compiles: no gain. */
+   the clamped dot. Permuter 570 compiles: no gain.
+   PROV-DIVERGED-18 (2026-11-11): the spin scale was a VALUE difference. The original multiplies the length by 360
+   (0x005ccac4), then c->f14, then 0x005cea44 (0x00469071 / 0x0046907d); the one-expression form compiled to length * f14 *
+   0x005cea44 * 360 (reassociated), and the replay diverged at tick 408 by 1 ULP (0x00881c64 body 0x3d82ea2a / orig
+   0x3d82ea29). Now one statement per multiply with 360 as a const global. The contact dot after the normalize
+   (n . vel) was reassociated the same way, to (z + y) + x where the original sums (y + x) + z: now one statement
+   per term. Score 82.1% (regs 85.1%, ops 96.3%), unchanged. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -91,6 +97,7 @@ typedef struct EvQ_00468d80 {
 MGLOBAL(EvQ_00468d80, DAT_007e9de0, 0x007e9de0);
 MGLOBAL(int, DAT_007f1030, 0x007f1030);
 MGLOBAL(float, DAT_005cea44, 0x005cea44);
+MGLOBAL(const float, DAT_005ccac4, 0x005ccac4);
 MGLOBAL(unsigned int, DAT_0088e60c, 0x0088e60c);
 static __inline void V3Scale_00468d80(V3_00468d80 *o, V3_00468d80 *a, float s) { o->x = a->x * s; o->y = a->y * s; o->z = a->z * s; }
 static __inline void V3Add_00468d80(V3_00468d80 *o, V3_00468d80 *a, V3_00468d80 *b) { o->x = a->x + b->x; o->y = a->y + b->y; o->z = a->z + b->z; }
@@ -168,14 +175,14 @@ void FUN_00468d80(Car_00468d80 *car, Tri_00468d80 *tri)
               FUN_004c4d20(&rot, &car->spin, 90.0f, 0);
               FUN_004c3df0(&arm, &c->pt, 1, &rot);
               FUN_004c39b0(&arm, &arm);
-              s = FUN_004c3ac0(&car->spin) * 360.0f * c->f14 * DAT_005cea44;
+              s = FUN_004c3ac0(&car->spin); s = s * DAT_005ccac4; s = s * c->f14; s = s * DAT_005cea44;
               V3Scale_00468d80(&arm, &arm, s);
             }
             V3Add_00468d80(&c->vel, &car->vel, &arm);
             mag = FUN_004c3ac0(&c->vel);
             if (mag > 0.0001f) {
               FUN_004c39b0(&c->vel, &c->vel);
-              dot = e->n.x * c->vel.x + e->n.y * c->vel.y + e->n.z * c->vel.z;
+              dot = e->n.x * c->vel.x; dot = dot + e->n.y * c->vel.y; dot = dot + e->n.z * c->vel.z;
               if (dot < 0.0f) {
                 if (dot < -1.0f) dot = -1.0f;
                 mag = mag * dot;

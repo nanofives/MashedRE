@@ -7,7 +7,9 @@
    slot and the wobble temp in param_8's slot; ours keeps 3 locals (0xc), which shifts every esp offset. The
    pitch wobble keeps (float)DAT_007f101c and the pitch on the x87 stack in the original; ours spills both.
    Tried: inline helpers for the angle/sqrt (not inlined, worse), reusing dz for |dxz|, reusing param_8 for the
-   wobble temp, 6 forms of the fov expression, 5 forms of the atan term, declaration order (no effect). */
+   wobble temp, 6 forms of the fov expression, 5 forms of the atan term, declaration order (no effect).
+   PROV-DIVERGED-18 (2026-11-11): the sway step 0.004291845f compiled to 0x3b8ca29b; the original's
+   0x005ce02c is 0x3b8ca29c (1 ULP, 0x00442fe8). Now reads the original's word. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -30,6 +32,7 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
+MGLOBAL(const float, DAT_005ce02c, 0x005ce02c);
 typedef struct {
   float x;
   float y;
@@ -109,7 +112,7 @@ void FUN_00442e00(Cam_00442e00 *param_1, V3_00442e00 eye, V3_00442e00 target, fl
   }
   param_1->pitch = 360.0f - a;
   param_8 = (float)sin(0.05f * DAT_007f101c) + (float)sin(DAT_007f101c * 0.012820513f);
-  param_1->pitch += (param_8 * 0.5f + (float)sin(DAT_007f101c * 0.004291845f)) * 0.5f * param_9;
+  param_1->pitch += (param_8 * 0.5f + (float)sin(DAT_007f101c * DAT_005ce02c)) * 0.5f * param_9;
   param_8 = (float)sin(0.1f * DAT_007f101c) * 0.125f + (float)sin(DAT_007f101c * 0.012048192f);
   param_1->roll = 0.0f;
   param_1->yaw += ((float)sin((FUN_00472650(0.0f, 60.0f) + DAT_007f101c) * 0.016666668f) * 0.0625f + param_8) * param_9;
