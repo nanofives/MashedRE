@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S26 0x005ad0b0 (h3): 56.2% exact, regs 73.4%. Residual class (b) callbacks/arity typed (FUN_005ad320 3 args, FUN_005aea00 uint,uint), permuter reordered independent stores (56.2%); original reloads param_1 in the list search loop. */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): list insert node->next = head->next (0x005ad2b6 mov ecx,[ebx]; 0x005ad2bf mov [eax],ecx); the old text stored the container *(param_2 + 0x4c). Best now 44.3%. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -119,8 +120,7 @@ LAB_005ad165:
         }
         piVar2 = piVar6 + 5;
         piVar6[6] = (int)piVar1;
-        *piVar2 = iVar4;
-        iVar4 = *piVar1;
+        *piVar2 = *piVar1;
         *(int **)(*piVar1 + 4) = piVar2;
         *piVar1 = (int)piVar2;
         return piVar6;

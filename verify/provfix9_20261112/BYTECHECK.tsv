@@ -1,0 +1,879 @@
+rva	exe_symbol	exe_va	size	relocs_masked	abs_data_refs_exact	diff_bytes	result	first_diff	vs_copy_in_map	src
+0x0041e870	_TrackNodeRecordScan	0x00011000	64	0	4	0	IDENTICAL		False	re/match/s04/0041e870.c
+0x0046dd80	_Float61313cGet	0x00011040	16	0	1	0	IDENTICAL		False	re/match/s11/0046dd80.c
+0x0040e480	_CarSlotStateSet	0x00011050	32	0	1	0	IDENTICAL		False	re/match/s02/0040e480.c
+0x0040e470	_CarSlotStateGet	0x00011070	16	0	1	0	IDENTICAL		False	re/match/s02/0040e470.c
+0x0040ce80	_PtrTable5f2770Get	0x00011080	32	0	1	0	IDENTICAL		False	re/match/s02/0040ce80.c
+0x0047c160	_CameraPathNodeContainTest	0x000110a0	144	3	5	0	IDENTICAL		False	re/match/s13/0047c160.c
+0x0047c230	___ddkreg_0047c230	0x00011130	64	1	0	0	IDENTICAL		False	re/match/s13/0047c270.c
+0x0047c270	_CameraPathAllNodesEq2	0x00011170	96	1	4	0	IDENTICAL		False	re/match/s13/0047c270.c
+0x0047c1f0	___ddkreg_0047c1f0	0x000111d0	64	1	0	0	IDENTICAL		False	re/match/s13/0047c2d0.c
+0x0047c2d0	_CameraPathAnyNodeNonzero	0x00011210	96	1	4	0	IDENTICAL		False	re/match/s13/0047c2d0.c
+0x0047d150	_SlotObjectField8	0x00011270	48	1	1	0	IDENTICAL		False	re/match/s13/0047d150.c
+0x0047ea40	_RwpSceneStepWrapper	0x000112a0	32	1	0	0	IDENTICAL		False	re/match/s13/0047ea40.c
+0x00482030	_SubStripQuadUV	0x000112c0	176	8	3	0	IDENTICAL		False	re/match/s13/00482030.c
+0x004826d0	_PhysicsCollisionBodyCreate	0x00011370	96	3	1	0	IDENTICAL		False	re/match/s13/004826d0.c
+0x00476b30	_Set476b30	0x000113d0	96	0	4	0	IDENTICAL		False	re/match/s12/00476b30.c
+0x00476ae0	_Batch476ae0	0x00011430	80	0	3	0	IDENTICAL		False	re/match/s12/00476ae0.c
+0x004769d0	_ParticleEmitter_SetVelocity	0x00011480	32	2	1	0	IDENTICAL		False	re/match/s12/004769d0.c
+0x004769a0	_ParticleEmitter_SetPosition	0x000114a0	48	3	1	0	IDENTICAL		False	re/match/s12/004769a0.c
+0x00476a10	_Copy476a10	0x000114d0	32	0	2	0	IDENTICAL		False	re/match/s12/00476a10.c
+0x00476a30	_ParticleEmitter_SetScalar	0x000114f0	16	0	1	0	IDENTICAL		False	re/match/s12/00476a30.c
+0x00476b90	_Batch476b90	0x00011500	80	0	3	0	IDENTICAL		False	re/match/s12/00476b90.c
+0x00476be0	_Batch476be0	0x00011550	48	0	2	0	IDENTICAL		False	re/match/s12/00476be0.c
+0x00476cb0	_Batch476cb0	0x00011580	80	0	3	0	IDENTICAL		False	re/match/s12/00476cb0.c
+0x00476d00	_MultiArrayScatter476d00	0x000115d0	240	2	11	0	IDENTICAL		False	re/match/s12/00476d00.c
+0x00478cc0	_RenderWorldStateZeroFill	0x000116c0	16	0	0	0	IDENTICAL		False	re/match/s12/00478cc0.c
+0x004671c0	_GetOverlayCamera	0x000116d0	16	0	1	0	IDENTICAL		False	re/match/s11/004671c0.c
+0x004671d0	_FollowTargetField40_impl	0x000116e0	64	2	2	0	IDENTICAL		False	re/match/s11/004671d0.c
+0x00467210	_FollowTargetField10_impl	0x00011720	64	2	2	0	IDENTICAL		False	re/match/s11/00467210.c
+0x00468b40	_VehicleContactHistoryLookup	0x00011760	64	0	0	0	IDENTICAL		False	re/match/s11/00468b40.c
+0x0046b4f0	_UtilTableRead46b4f0	0x000117a0	80	0	1	0	IDENTICAL		False	re/match/s11/0046b4f0.c
+0x0046c570	_VehicleDampVec3	0x000117f0	80	3	1	0	IDENTICAL		False	re/match/s11/0046c570.c
+0x0046c6d0	_VehicleEntitySlotRead	0x00011840	48	0	1	0	IDENTICAL		False	re/match/s11/0046c6d0.c
+0x0046c770	_VehicleDestructionStateGetter	0x00011870	32	0	1	0	IDENTICAL		False	re/match/s11/0046c770.c
+0x0046cbe0	_VehicleCarStateSet	0x00011890	48	0	2	0	IDENTICAL		False	re/match/s11/0046cbe0.c
+0x0046cc10	_VehicleFloatFieldAsInt	0x000118c0	48	1	1	0	IDENTICAL		False	re/match/s11/0046cc10.c
+0x0046d510	_VehicleVelocityWorldGet	0x000118f0	96	1	5	0	IDENTICAL		False	re/match/s11/0046d510.c
+0x0046d700	_VehicleVec3At9C8Get	0x00011950	64	0	3	0	IDENTICAL		False	re/match/s11/0046d700.c
+0x0046dc00	_EntityFieldSet	0x00011990	32	0	1	0	IDENTICAL		False	re/match/s11/0046dc00.c
+0x00472c60	_ChromeBaseDraw	0x000119b0	352	8	16	0	IDENTICAL		False	re/match/s11/00472c60.c
+0x00472dc0	_Im2DTriangleDraw	0x00011b10	384	12	14	0	IDENTICAL		False	re/match/s11/00472dc0.c
+0x00472f40	_TextGradientV0V1Override	0x00011c90	368	8	18	0	IDENTICAL		False	re/match/s11/00472f40.c
+0x004730b0	_TextGradientV2V3Override	0x00011e00	368	8	18	0	IDENTICAL		False	re/match/s11/004730b0.c
+0x00473540	_GradientQuadHorizAlpha	0x00011f70	384	8	20	0	IDENTICAL		False	re/match/s11/00473540.c
+0x004736c0	_BorderQuadFourAlpha	0x000120f0	432	8	20	0	IDENTICAL		False	re/match/s11/004736c0.c
+0x00473870	_TextSpriteUVExplicit	0x000122a0	384	0	28	0	IDENTICAL		False	re/match/s11/00473870.c
+0x00474e60	_DegToRad	0x00012420	16	1	0	0	IDENTICAL		False	re/match/s11/00474e60.c
+0x0046c5c0	_VehicleSlotInit	0x00012430	48	0	2	0	IDENTICAL		False	re/match/s11/0046c5c0.c
+0x0046c790	_VehicleSlotFieldSet	0x00012460	32	0	1	0	IDENTICAL		False	re/match/s11/0046c790.c
+0x00414120	_CopyTable005f2a70To0089a384	0x00012480	96	0	6	0	IDENTICAL		False	re/match/s03/h1_00414120.c
+0x0041f710	___ddkreg_0041f710	0x000124e0	96	1	0	0	IDENTICAL		False	re/match/s05/0041f710.c
+0x00420d40	_TimerStructArrayClear	0x00012550	64	1	2	0	IDENTICAL		False	re/match/s05/00420d40.c
+0x00421930	_BodyGeometryFirstDword	0x00012590	48	1	0	0	IDENTICAL		False	re/match/s05/00421930.c
+0x004222c0	_TimerInitThunk	0x000125c0	16	1	0	0	IDENTICAL		False	re/match/s05/004222c0.c
+0x00422a80	_SlotBlockZero	0x000125d0	32	1	1	0	IDENTICAL		False	re/match/s05/00422a80.c
+0x00422aa0	_SlotFieldSet	0x000125f0	32	0	1	0	IDENTICAL		False	re/match/s05/00422aa0.c
+0x00422b10	_TimerDwordClear	0x00012610	32	0	1	0	IDENTICAL		False	re/match/s05/00422b10.c
+0x00422b30	_TimerArrayClear	0x00012630	32	0	1	0	IDENTICAL		False	re/match/s05/00422b30.c
+0x00423270	_TabCycler	0x00012650	176	0	11	0	IDENTICAL		False	re/match/s05/00423270.c
+0x00423320	_CursorMover	0x00012700	192	0	21	0	IDENTICAL		False	re/match/s05/00423320.c
+0x00423480	_AiFilenameBuild	0x000127c0	192	5	3	0	IDENTICAL		False	re/match/s05/00423480.c
+0x00423b00	_FrontendInputDispatch	0x00012880	32	4	1	0	IDENTICAL		False	re/match/s05/00423b00.c
+0x00423cc0	_PlayerScoreTeamAccGatedB	0x000128a0	144	2	11	0	IDENTICAL		False	re/match/s05/00423cc0.c
+0x00423d50	_PlayerScoreTeamAccBaseB	0x00012930	128	1	11	0	IDENTICAL		False	re/match/s05/00423d50.c
+0x00423dd0	_PlayerScoreTeamAccGatedC	0x000129b0	144	2	11	0	IDENTICAL		False	re/match/s05/00423dd0.c
+0x00423e60	_PlayerScoreTeamAccCumB	0x00012a40	128	1	11	0	IDENTICAL		False	re/match/s05/00423e60.c
+0x00423ee0	_PlayerBlock2Field00Get	0x00012ac0	128	1	11	0	IDENTICAL		False	re/match/s05/00423ee0.c
+0x00423f60	_PlayerBlock2Field04Get	0x00012b40	144	2	11	0	IDENTICAL		False	re/match/s05/00423f60.c
+0x00423ff0	_PlayerBlock2Field50Get	0x00012bd0	128	1	11	0	IDENTICAL		False	re/match/s05/00423ff0.c
+0x00424070	_PlayerBlock2Field08Get	0x00012c50	144	2	11	0	IDENTICAL		False	re/match/s05/00424070.c
+0x00424100	_TeamBlockZeroGet	0x00012ce0	176	1	15	0	IDENTICAL		False	re/match/s05/00424100.c
+0x004241b0	_GetDat008994c0	0x00012d90	16	0	1	0	IDENTICAL		False	re/match/s05/004241b0.c
+0x004248b0	_PerCarSnapshotInit	0x00012da0	112	0	16	0	IDENTICAL		False	re/match/s05/004248b0.c
+0x00424920	_EndOfRoundAccumulator	0x00012e10	608	0	96	0	IDENTICAL		False	re/match/s05/00424920.c
+0x00425b10	_TimerGlobalZero	0x00013070	96	0	8	0	IDENTICAL		False	re/match/s05/00425b10.c
+0x00425b70	_SlotFieldSetter	0x000130d0	32	0	2	0	IDENTICAL		False	re/match/s05/00425b70.c
+0x00425c00	_CopterClumpRegister	0x000130f0	160	10	4	0	IDENTICAL		False	re/match/s05/00425c00.c
+0x00425ee0	_SlotWordPtrGet	0x00013190	16	0	1	0	IDENTICAL		False	re/match/s05/00425ee0.c
+0x00425ef0	_ActiveSlotCount	0x000131a0	176	0	16	0	IDENTICAL		False	re/match/s05/00425ef0.c
+0x00426020	_GlobalDat00646e58Get	0x00013250	16	0	1	0	IDENTICAL		False	re/match/s05/00426020.c
+0x00413bc0	___ddkreg_00413bc0	0x00013260	176	0	4	0	IDENTICAL		False	re/match/s03/h2_00413bc0.c
+0x00415020	_AiLastPlaceFrustration	0x00013320	192	3	9	0	IDENTICAL		False	re/match/s03/h2_00415020.c
+0x004c19f0	_RwVtableSlot07Call	0x000133e0	16	0	0	0	IDENTICAL		False	re/match/s19/004c19f0.c
+0x004c2f00	_RwEngineGetCurrentMode	0x000133f0	48	1	1	0	IDENTICAL		False	re/match/s19/004c2f00.c
+0x004c3df0	_RwV3dTransformPoints	0x00013420	48	0	2	0	IDENTICAL		False	re/match/s19/004c3df0.c
+0x00498bc0	_VideoGetRenderWidth	0x00013450	16	0	1	0	IDENTICAL		False	re/match/s16/00498bc0.c
+0x00498bd0	_VideoGetRenderHeight	0x00013460	16	0	1	0	IDENTICAL		False	re/match/s16/00498bd0.c
+0x00498bf0	_DisplayActiveFlagGet	0x00013470	16	0	1	0	IDENTICAL		False	re/match/s16/00498bf0.c
+0x00499690	_WindowMsgPump	0x00013480	96	4	6	0	IDENTICAL		False	re/match/s16/00499690.c
+0x004996f0	_WindowShow	0x000134e0	32	2	2	0	IDENTICAL		False	re/match/s16/004996f0.c
+0x004904d0	_UtilZeroTable86a4a0	0x00013500	48	0	2	0	IDENTICAL		False	re/match/s15/004904d0.c
+0x00490f50	_ByteQuadSet50Body	0x00013530	48	0	4	0	IDENTICAL		False	re/match/s15/00490f50.c
+0x00490f80	_ByteQuadSet80Body	0x00013560	48	0	4	0	IDENTICAL		False	re/match/s15/00490f80.c
+0x004921d0	_DisplayInit	0x00013590	160	12	4	0	IDENTICAL		False	re/match/s15/004921d0.c
+0x00492270	_SubsystemInit	0x00013630	32	3	0	0	IDENTICAL		False	re/match/s15/00492270.c
+0x004922e0	_CarEventTrigger	0x00013650	96	2	2	0	IDENTICAL		False	re/match/s15/004922e0.c
+0x00492340	_CarSlotInit	0x000136b0	48	0	1	0	IDENTICAL		False	re/match/s15/00492340.c
+0x00492440	_RenderStatsAccumulate	0x000136e0	128	0	0	0	IDENTICAL		False	re/match/s15/00492440.c
+0x00492770	_MainLoopInit	0x00013760	80	5	6	0	IDENTICAL		False	re/match/s15/00492770.c
+0x00492370	_Orig_00492370@16	0x000137b0	208	18	6	0	IDENTICAL		False	re/match/s15/00492370.c
+0x00492290	_Orig_00492290	0x00013880	80	8	2	0	IDENTICAL		False	re/match/s15/00492290.c
+0x00493900	_Orig_00493900	0x000138d0	480	15	24	392	DIFFERENT	+0x13	False	re/match/s15/00493900.c
+0x00499820	_Orig_00499820@16	0x00013ab0	112	4	2	0	IDENTICAL		False	re/match/s16/00499820.c
+0x00499890	_Orig_00499890	0x00013b20	784	46	7	0	IDENTICAL		False	re/match/s16/00499890.c
+0x00499ba0	_Orig_00499ba0	0x00013e30	288	10	6	0	IDENTICAL		False	re/match/s16/00499ba0.c
+0x00499cc0	_Orig_00499cc0	0x00013f50	32	1	2	0	IDENTICAL		False	re/match/s16/00499cc0.c
+0x00492d20	_IntroSplashFrameTickShim	0x00013f70	16	1	0	0	IDENTICAL		False	re/match/s15/00492d20.c
+0x00499730	_BootPtr773818Get	0x00013f80	16	0	1	0	IDENTICAL		False	re/match/s16/00499730.c
+0x00493710	_Orig_00493710	0x00013f90	432	41	11	236	DIFFERENT	+0x24	False	re/match/s15/00493710.c
+0x00493600	_Orig_00493600	0x00014140	64	6	2	0	IDENTICAL		False	re/match/s15/00493600.c
+0x004ce790	_Orig_004ce790	0x00014180	336	0	13	0	IDENTICAL		False	re/match/s20/004ce790.c
+0x00495270	_HWNDGet	0x000142d0	16	1	0	0	IDENTICAL		False	re/match/s16/00495270.c
+0x00499710	_Global7e9584Get	0x000142e0	16	0	1	0	IDENTICAL		False	re/match/s16/00499710.c
+0x0045b350	_RwInitNullStub	0x000142f0	16	0	0	0	IDENTICAL		False	re/match/s09/0045b350.c
+0x004955b0	_DInputInitPredicate	0x00014300	16	1	0	0	IDENTICAL		False	re/match/s16/004955b0.c
+0x00495530	_CreateDInputObject	0x00014310	80	6	2	0	IDENTICAL		False	re/match/s16/00495530.c
+0x00495520	_Get771e78	0x00014360	16	0	1	0	IDENTICAL		False	re/match/s16/00495520.c
+0x00495150	_HwInitGate_00495150	0x00014370	144	14	3	0	IDENTICAL		False	re/match/s16/00495150.c
+0x00496040	_JoypadEnumerate_00496040	0x00014400	96	9	2	0	IDENTICAL		False	re/match/s16/00496040.c
+0x00496320	_KeyboardDeviceCreate_00496320	0x00014460	80	0	6	0	IDENTICAL		False	re/match/s16/00496320.c
+0x004987b0	_DbgPrintf_004987b0	0x000144b0	96	4	0	0	IDENTICAL		False	re/match/s16/004987b0.c
+0x004954f0	_HardwareExitApplication	0x00014510	48	7	0	0	IDENTICAL		False	re/match/s16/004954f0.c
+0x00496370	_KeyboardRelease_00496370	0x00014540	64	2	4	0	IDENTICAL		False	re/match/s16/00496370.c
+0x00496010	_JoypadsDestroy_00496010	0x00014580	48	2	5	0	IDENTICAL		False	re/match/s16/00496010.c
+0x00495e80	_JoypadsRelease_00495e80	0x000145b0	96	4	3	0	IDENTICAL		False	re/match/s16/00495e80.c
+0x00495580	_DInputRelease_00495580	0x00014610	48	2	2	0	IDENTICAL		False	re/match/s16/00495580.c
+0x00498b60	_FreeTables_00498b60	0x00014640	96	4	6	0	IDENTICAL		False	re/match/s16/00498b60.c
+0x004955c0	_Thunk_004955c0	0x000146a0	16	1	0	0	IDENTICAL		False	re/match/s16/004955c0.c
+0x0042b890	_RenderWidthSet	0x000146b0	16	0	1	0	IDENTICAL		False	re/match/s07/0042b890.c
+0x0042b8a0	_RenderHeightSet	0x000146c0	16	0	1	0	IDENTICAL		False	re/match/s07/0042b8a0.c
+0x004997b0	_Win32ResourceLoader	0x000146d0	112	5	0	0	IDENTICAL		False	re/match/s16/004997b0.c
+0x00499720	_GetInputHinst	0x00014740	16	0	1	0	IDENTICAL		False	re/match/s16/00499720.c
+0x004c1a00	_IntroSplashVtableSlot6	0x00014750	16	0	0	0	IDENTICAL		False	re/match/s19/004c1a00.c
+0x004671a0	_BackBuffRasterOpen	0x00014760	32	2	1	0	IDENTICAL		False	re/match/s11/004671a0.c
+0x004670a0	___ddkreg_004670a0	0x00014780	112	6	5	0	IDENTICAL		False	re/match/s11/00467110.c
+0x00467110	_Orig_00467110	0x000147f0	144	7	7	0	IDENTICAL		False	re/match/s11/00467110.c
+0x00467020	_Orig_00467020	0x00014880	80	4	0	0	IDENTICAL		False	re/match/s10/00467020.c
+0x0042d420	_Orig_0042d420	0x000148d0	128	6	0	0	IDENTICAL		False	re/match/s07/0042d420.c
+0x0042d560	_Orig_0042d560	0x00014950	64	4	2	0	IDENTICAL		False	re/match/s07/0042d560.c
+0x0042d4a0	_Orig_0042d4a0	0x00014990	192	9	3	0	IDENTICAL		False	re/match/s07/0042d4a0.c
+0x0042f660	_DefaultViewportCameraInit	0x00014a50	64	4	2	0	IDENTICAL		False	re/match/s07/0042f660.c
+0x0042f530	_Orig_0042f530	0x00014a90	304	8	7	6	DIFFERENT	+0x32	False	re/match/s07/0042f530.c
+0x004c1be0	_Orig_004c1be0	0x00014bc0	48	1	0	0	IDENTICAL		False	re/match/s19/004c1be0.c
+0x0041f320	_Table63d830Get	0x00014bf0	16	0	1	0	IDENTICAL		False	re/match/s04/0041f320.c
+0x00494460	_IntroVideoClose	0x00014c00	32	2	3	0	IDENTICAL		False	re/match/s15/00494460.c
+0x00494a80	_FUN_00494a80	0x00014c20	64	2	3	0	IDENTICAL		False	re/match/s16/00494a80.c
+0x00402a40	_AppDestroy	0x00014c60	304	44	6	0	IDENTICAL		False	re/match/s01/raw/00402a40.c
+0x00402750	_Orig_00402750	0x00014d90	752	89	8	0	IDENTICAL		False	re/match/s01/00402750.c
+0x00499ce0	_Orig_00499ce0	0x00015080	176	0	16	0	IDENTICAL		False	re/match/s16/00499ce0.c
+0x004283a0	_Orig_004283a0	0x00015130	96	8	7	0	IDENTICAL		False	re/match/s06/004283a0.c
+0x004b3d80	_Orig_004b3d80	0x00015190	96	4	0	0	IDENTICAL		False	re/match/s18/004b3d80.c
+0x00425bc0	_Orig_00425bc0	0x000151f0	48	3	2	0	IDENTICAL		False	re/match/s05/00425bc0.c
+0x004274e0	_LocalizationFileLoadBody	0x00015220	160	10	9	0	IDENTICAL		False	re/match/s06/004274e0.c
+0x004274d0	_LangIndexSeedFromCli	0x000152c0	16	0	2	0	IDENTICAL		False	re/match/s06/004274d0.c
+0x00431b40	_Set67eaa8	0x000152d0	16	0	1	0	IDENTICAL		False	re/match/s07/00431b40.c
+0x004015a0	_Orig_004015a0	0x000152e0	144	3	3	0	IDENTICAL		False	re/match/s01/004015a0.c
+0x00403660	_Orig_00403660	0x00015370	64	1	4	0	IDENTICAL		False	re/match/s01/00403660.c
+0x0040bd00	_Orig_0040bd00	0x000153b0	128	18	4	0	IDENTICAL		False	re/match/s02/0040bd00.c
+0x0040cf80	_Orig_0040cf80	0x00015430	80	6	0	0	IDENTICAL		False	re/match/s02/0040cf80.c
+0x0040cfd0	_Orig_0040cfd0	0x00015480	80	10	1	0	IDENTICAL		False	re/match/s02/0040cfd0.c
+0x004114e0	_Orig_004114e0	0x000154d0	80	2	7	0	IDENTICAL		False	re/match/s02/004114e0.c
+0x00483a40	_Orig_00483a40	0x00015520	48	0	2	0	IDENTICAL		False	re/match/s13/00483a40.c
+0x0041a3d0	_Orig_0041a3d0	0x00015550	16	1	1	0	IDENTICAL		False	re/match/s03/raw_0041a3d0.c
+0x0041beb0	___ddkreg_0041beb0	0x00015560	16	1	0	0	IDENTICAL		False	re/match/s04/0041beb0.c
+0x0041c0e0	_Orig_0041c0e0	0x00015570	32	1	2	0	IDENTICAL		False	re/match/s04/0041beb0.c
+0x0041c2c0	_Orig_0041c2c0	0x00015590	16	1	1	0	IDENTICAL		False	re/match/s04/0041c2c0.c
+0x0041cb00	___ddkreg_0041cb00	0x000155a0	16	1	0	0	IDENTICAL		False	re/match/s04/0041cb00.c
+0x0041ccf0	_Orig_0041ccf0	0x000155b0	48	2	3	0	IDENTICAL		False	re/match/s04/0041cb00.c
+0x0041d6d0	___ddkreg_0041d6d0	0x000155e0	16	1	0	0	IDENTICAL		False	re/match/s04/0041d6d0.c
+0x0041d890	_Orig_0041d890	0x000155f0	32	1	2	0	IDENTICAL		False	re/match/s04/0041d6d0.c
+0x0041da80	_Orig_0041da80	0x00015610	16	1	1	0	IDENTICAL		False	re/match/s04/0041da80.c
+0x0041de70	_Orig_0041de70	0x00015620	16	1	1	0	IDENTICAL		False	re/match/s04/0041de70.c
+0x00425ed0	_Orig_00425ed0	0x00015630	16	1	1	0	IDENTICAL		False	re/match/s05/00425ed0.c
+0x00427620	_Orig_00427620	0x00015640	96	8	6	0	IDENTICAL		False	re/match/s06/00427620.c
+0x00428400	_Orig_00428400	0x000156a0	80	5	5	0	IDENTICAL		False	re/match/s06/00428400.c
+0x0042c2a0	_Orig_0042c2a0	0x000156f0	48	2	2	0	IDENTICAL		False	re/match/s07/0042c2a0.c
+0x0045b930	_Orig_0045b930	0x00015720	96	6	4	0	IDENTICAL		False	re/match/s09/0045b930.c
+0x00467010	_Orig_00467010	0x00015780	16	2	0	0	IDENTICAL		False	re/match/s10/00467010.c
+0x00467070	_Orig_00467070	0x00015790	48	3	3	0	IDENTICAL		False	re/match/s10/00467070.c
+0x00494bc0	_Orig_00494bc0	0x000157c0	160	0	13	0	IDENTICAL		False	re/match/s16/00494bc0.c
+0x00496ce0	_Orig_00496ce0	0x00015860	32	2	2	0	IDENTICAL		False	re/match/s16/00496ce0.c
+0x004b4880	_Orig_004b4880	0x00015880	96	5	0	0	IDENTICAL		False	re/match/s18/004b4880.c
+0x005581f0	_Orig_005581f0	0x000158e0	80	3	0	0	IDENTICAL		False	re/match/s24/005581f0.c
+0x004210f0	_Orig_004210f0	0x00015930	16	1	1	0	IDENTICAL		False	re/match/s05/004210f0.c
+0x00496970	_Orig_00496970	0x00015940	48	1	2	0	IDENTICAL		False	re/match/s16/00496970.c
+0x00494320	_Orig_00494320	0x00015970	176	0	15	0	IDENTICAL		False	re/match/s15/00494320.c
+0x004189e0	_Orig_004189e0	0x00015a20	16	1	0	0	IDENTICAL		False	re/match/s03/h1_004189e0.c
+0x00421590	_Orig_00421590	0x00015a30	16	1	0	0	IDENTICAL		False	re/match/s05/00421590.c
+0x00494f20	_Orig_00494f20	0x00015a40	16	1	0	0	IDENTICAL		False	re/match/s16/00494f20.c
+0x0047ba10	_Orig_0047ba10	0x00015a50	16	1	0	0	IDENTICAL		False	re/match/s13/0047ba10.c
+0x004b6550	_Orig_004b6550	0x00015a60	16	1	0	0	IDENTICAL		False	re/match/s18/004b6550.c
+0x00492d30	_Orig_00492d30	0x00015a70	304	25	8	0	IDENTICAL		False	re/match/s15/00492d30.c
+0x004030d0	_Orig_004030d0	0x00015ba0	144	4	12	0	IDENTICAL		False	re/match/s01/004030d0.c
+0x0043d7c0	_Orig_0043d7c0	0x00015c30	1856	58	123	0	IDENTICAL		False	re/match/s08/0043d7c0.c
+0x00498810	___ddkreg_00498810	0x00016370	80	5	0	4	DIFFERENT	+0xc	False	re/match/s16/00498810.c
+0x00498860	_Orig_00498860	0x000163c0	176	6	3	0	IDENTICAL		False	re/match/s16/00498810.c
+0x004929d0	_Orig_004929d0	0x00016470	832	53	22	0	IDENTICAL		False	re/match/s15/004929d0.c
+0x0040d440	_Orig_0040d440	0x000167b0	48	1	4	0	IDENTICAL		False	re/match/s02/0040d440.c
+0x00472640	_Set86ecc8	0x000167e0	16	0	1	0	IDENTICAL		False	re/match/s11/00472640.c
+0x0042c150	_Scan42c150	0x000167f0	80	0	3	0	IDENTICAL		False	re/match/s07/0042c150.c
+0x00493570	_Set77196c_1	0x00016840	16	0	1	0	IDENTICAL		False	re/match/s15/00493570.c
+0x00493580	_Set771970_1	0x00016850	16	0	1	0	IDENTICAL		False	re/match/s15/00493580.c
+0x00496920	_TimerTable772ffcGet	0x00016860	16	0	1	0	IDENTICAL		False	re/match/s16/00496920.c
+0x00484130	_Orig_00484130	0x00016870	64	0	2	0	IDENTICAL		False	re/match/s14/00484130.c
+0x00431b10	_BootParamSet2	0x000168b0	16	0	1	0	IDENTICAL		False	re/match/s07/00431b10.c
+0x0042b950	_Set7f1a0c_1000	0x000168c0	16	0	1	0	IDENTICAL		False	re/match/s07/0042b950.c
+0x00433240	_RaceArmReset	0x000168d0	96	2	8	0	IDENTICAL		False	re/match/s08/00433240.c
+0x00495110	_Store7f1030_Qpc3Mhz	0x00016930	16	1	1	0	IDENTICAL		False	re/match/s16/00495110.c
+0x004950b0	_QpcTimeScaledTo3Mhz	0x00016940	96	3	2	0	IDENTICAL		False	re/match/s16/004950b0.c
+0x00496930	_Table773030Get	0x000169a0	16	0	1	0	IDENTICAL		False	re/match/s16/00496930.c
+0x00495120	_TimerQpfStore	0x000169b0	48	1	2	0	IDENTICAL		False	re/match/s16/00495120.c
+0x004926c0	_AudioTickAndAvg	0x000169e0	176	7	10	0	IDENTICAL		False	re/match/s15/004926c0.c
+0x00492e60	_SetDefaultViewWindow	0x00016a90	48	2	0	0	IDENTICAL		False	re/match/s15/00492e60.c
+0x00493480	_FpsDiscretise	0x00016ac0	192	2	7	0	IDENTICAL		False	re/match/s15/00493480.c
+0x00493390	_PortTop_Bound_00493390	0x00016b80	240	3	19	0	IDENTICAL		False	re/match/s15/00493390.c
+0x00493540	_thunk_LaunchLangGate	0x00016c70	16	1	0	0	IDENTICAL		False	re/match/s15/00493540.c
+0x00493550	_thunk_EngineStopDispatch	0x00016c80	16	1	0	0	IDENTICAL		False	re/match/s15/00493550.c
+0x00493560	_thunk_HwExitDispatch	0x00016c90	16	1	0	0	IDENTICAL		False	re/match/s15/00493560.c
+0x004938c0	_SoftwareTidyUpBeforeExiting	0x00016ca0	32	5	0	0	IDENTICAL		False	re/match/s15/004938c0.c
+0x004924f0	_DataZeroFill	0x00016cc0	464	19	31	0	IDENTICAL		False	re/match/topm01/004924f0.c
+0x0041b770	___ddkreg_0041b770	0x00016e90	48	0	1	0	IDENTICAL		False	re/match/s04/0041b770.c
+0x0041c010	_HudConstTableInitAndSweep	0x00016ec0	128	1	4	0	IDENTICAL		False	re/match/s04/0041b770.c
+0x0041bc50	___ddkreg_0041bc50	0x00016f50	608	0	0	0	IDENTICAL		False	re/match/s04/0041bc50.c
+0x0041c0c0	_HudDispatchSlot2	0x000171b0	32	1	2	0	IDENTICAL		False	re/match/s04/0041bc50.c
+0x0041c2d0	___ddkreg_0041c2d0	0x000171e0	48	0	0	0	IDENTICAL		False	re/match/s04/0041c2d0.c
+0x0041c300	_HudDispatchMode5	0x00017210	32	1	2	0	IDENTICAL		False	re/match/s04/0041c2d0.c
+0x0041c320	___ddkreg_0041c320	0x00017240	96	3	0	0	IDENTICAL		False	re/match/s04/0041c320.c
+0x0041cb10	_FUN_0041cb10		112				not-in-map			re/match/s04/0041c320.c
+0x0041c9a0	___ddkreg_0041c9a0	0x000172b0	352	4	0	0	IDENTICAL		False	re/match/s04/0041c9a0.c
+0x0041ccc0	_HudSlotLoopCcc0	0x00017410	48	1	2	0	IDENTICAL		False	re/match/s04/0041c9a0.c
+0x0041cbc0	_FloatTableInit	0x00017440	144	0	2	0	IDENTICAL		False	re/match/s04/0041cbc0.c
+0x0041cd20	___ddkreg_0041cd20	0x000174d0	144	4	0	0	IDENTICAL		False	re/match/s04/0041cd20.c
+0x0041d6e0	_FUN_0041d6e0		80				not-in-map			re/match/s04/0041cd20.c
+0x0041d820	_TimerSlotClear	0x00017570	16	0	1	0	IDENTICAL		False	re/match/s04/0041d820.c
+0x0041d910	_Clear63d584Pair	0x00017580	32	0	2	0	IDENTICAL		False	re/match/s04/0041d910.c
+0x0041da90	_DeltaTimeOutGet	0x000175a0	32	0	1	0	IDENTICAL		False	re/match/s04/0041da90.c
+0x0041e080	_ScoreboardStateZeroInit	0x000175c0	80	0	12	0	IDENTICAL		False	re/match/s04/0041e080.c
+0x0041e130	_TimerTrackSetter	0x00017610	16	0	1	0	IDENTICAL		False	re/match/s04/0041e130.c
+0x0041eda0	_TimerBitFieldSet	0x00017620	64	0	1	0	IDENTICAL		False	re/match/s04/0041eda0.c
+0x0041f000	_TimerSlotDataCopy	0x00017660	48	0	1	0	IDENTICAL		False	re/match/s04/0041f000.c
+0x0041f090	_GetPlayerStateBits	0x00017690	64	0	1	0	IDENTICAL		False	re/match/s04/0041f090.c
+0x0041f1c0	_GetEventFlag	0x000176d0	32	0	1	0	IDENTICAL		False	re/match/s04/0041f1c0.c
+0x00413f90	_TimerGetBasePtr	0x000176f0	16	0	1	0	IDENTICAL		False	re/match/s08fu/00413f90.c
+0x0045ba00	_RaceResultIndexedStore	0x00017700	16	0	1	0	IDENTICAL		False	re/match/s10/0045ba00.c
+0x0045c330	_PredNot45c330	0x00017710	32	1	0	0	IDENTICAL		False	re/match/s10/0045c330.c
+0x0045db50	_FloatSliderStep	0x00017730	144	10	8	0	IDENTICAL		False	re/match/s10/0045db50.c
+0x00417730	_VehicleRaceAngleGet	0x000177c0	16	0	1	0	IDENTICAL		False	re/match/s03/h1_00417730.c
+0x0041ae20	___ddkreg_0041ae20	0x000177d0	64	0	1	0	IDENTICAL		False	re/match/s03/h1_0041ae20.c
+0x0041b520	_Update41b520	0x00017810	32	1	2	0	IDENTICAL		False	re/match/s03/h1_0041ae20.c
+0x0040fc00	___ddkreg_0040fc00	0x00017840	688	63	28	0	IDENTICAL		False	re/match/t01g/004111c0.c
+0x004102f0	___ddkreg_004102f0	0x00017af0	176	8	6	0	IDENTICAL		False	re/match/t01g/004111c0.c
+0x004111c0	_FUN_004111c0	0x00017ba0	400	38	11	0	IDENTICAL		False	re/match/t01g/004111c0.c
+0x0042aeb0	_MenuReadinessCheckB	0x00017d50	160	1	9	0	IDENTICAL		False	re/match/s07/0042aeb0.c
+0x0042af50	_MenuReadinessCheckC	0x00017df0	160	1	10	0	IDENTICAL		False	re/match/s07/0042af50.c
+0x0042aff0	_MenuButtonDetectA	0x00017e90	400	2	27	0	IDENTICAL		False	re/match/s07/0042aff0.c
+0x0042b180	_MenuButtonDetectB	0x00018020	400	2	27	0	IDENTICAL		False	re/match/s07/0042b180.c
+0x0042b310	_MenuButtonDetectC	0x000181b0	560	2	37	0	IDENTICAL		False	re/match/s07/0042b310.c
+0x0042b540	_MenuButtonDetectD	0x000183e0	560	2	37	0	IDENTICAL		False	re/match/s07/0042b540.c
+0x0042b770	_MenuButtonDetectE	0x00018610	288	1	20	0	IDENTICAL		False	re/match/s07/0042b770.c
+0x0042b8b0	_ScreenWidthGet	0x00018730	16	0	1	0	IDENTICAL		False	re/match/s07/0042b8b0.c
+0x0042b8c0	_ScreenHeightGet	0x00018740	16	0	1	0	IDENTICAL		False	re/match/s07/0042b8c0.c
+0x0042b8d0	_StatePhaseIsIdle	0x00018750	16	0	1	0	IDENTICAL		False	re/match/s07/0042b8d0.c
+0x0042b8e0	_StatePhaseIsTwo	0x00018760	16	0	1	0	IDENTICAL		False	re/match/s07/0042b8e0.c
+0x0042b8f0	_StatePhaseIsFinal	0x00018770	16	0	1	0	IDENTICAL		False	re/match/s07/0042b8f0.c
+0x0042b910	_RaceEndConstGet	0x00018780	16	0	0	0	IDENTICAL		False	re/match/s07/0042b910.c
+0x0042b920	_ConstantGetter22	0x00018790	16	0	0	0	IDENTICAL		False	re/match/s07/0042b920.c
+0x0042b930	_MenuAlphaGet	0x000187a0	16	0	1	0	IDENTICAL		False	re/match/s07/0042b930.c
+0x0042b940	_StatePhaseSubSet	0x000187b0	16	0	1	0	IDENTICAL		False	re/match/s07/0042b940.c
+0x0042b960	_CarSlotInit1P	0x000187c0	128	4	7	0	IDENTICAL		False	re/match/s07/0042b960.c
+0x0042b9e0	_CarSlotAssign	0x00018840	384	2	12	0	IDENTICAL		False	re/match/s07/0042b9e0.c
+0x0042bb60	_MenuTeamBalance	0x000189c0	336	0	14	0	IDENTICAL		False	re/match/s07/0042bb60.c
+0x0042bde0	_HudRectEmitter5	0x00018b10	336	8	0	0	IDENTICAL		False	re/match/s07/0042bde0.c
+0x0042bf30	_Post0042bf30	0x00018c60	128	0	13	0	IDENTICAL		False	re/match/s07/0042bf30.c
+0x0042bfb0	_MenuStateParamStore	0x00018ce0	96	1	8	0	IDENTICAL		False	re/match/s07/0042bfb0.c
+0x0042c1c0	_RaceInterruptFlagGet	0x00018d40	16	0	1	0	IDENTICAL		False	re/match/s07/0042c1c0.c
+0x0042c1d0	_RaceStateArrayZero	0x00018d50	32	0	1	0	IDENTICAL		False	re/match/s07/0042c1d0.c
+0x0042c2d0	_GetDat0067ecb4	0x00018d70	16	0	1	0	IDENTICAL		False	re/match/s07/0042c2d0.c
+0x0042c2e0	_GetDat0067ecb8	0x00018d80	16	0	1	0	IDENTICAL		False	re/match/s07/0042c2e0.c
+0x0042d300	_TimeDiffDecompose	0x00018d90	144	0	0	0	IDENTICAL		False	re/match/s07/0042d300.c
+0x0042d3a0	_RaceTransitionBufZero	0x00018e20	64	0	2	0	IDENTICAL		False	re/match/s07/0042d3a0.c
+0x0042d3e0	_MenuEntryArrayInit	0x00018e60	64	0	2	0	IDENTICAL		False	re/match/s07/0042d3e0.c
+0x0042e3a0	_MenuChromeShellA	0x00018ea0	496	9	8	0	IDENTICAL		False	re/match/s07/0042e3a0.c
+0x0042ebe0	_FrontendPlayerSlotCheck	0x00019090	400	0	3	0	IDENTICAL		False	re/match/s07/0042ebe0.c
+0x0042ee00	_SpriteSlotGate	0x00019220	64	3	3	0	IDENTICAL		False	re/match/s07/0042ee00.c
+0x0042ee40	_FrontendModeDispatch	0x00019260	256	19	11	0	IDENTICAL		False	re/match/s07/0042ee40.c
+0x0042ef40	_VehicleUnlockFlagGet	0x00019360	224	17	5	0	IDENTICAL		False	re/match/s07/0042ef40.c
+0x0042f020	___ddkreg_0042f020	0x00019440	144	10	6	0	IDENTICAL		False	re/match/s07/0042f020.c
+0x0042f0b0	_GetFrameCounterPlus73	0x000194e0	16	0	1	0	IDENTICAL		False	re/match/s07/0042f0b0.c
+0x0042f500	_GetDat0067ea64	0x000194f0	16	0	1	0	IDENTICAL		False	re/match/s07/0042f500.c
+0x0042f510	_Vehicle0HandleGet	0x00019500	16	0	1	0	IDENTICAL		False	re/match/s07/0042f510.c
+0x0042f6a0	_GetRaceSubMode	0x00019510	16	0	1	0	IDENTICAL		False	re/match/s07/0042f6a0.c
+0x00430830	_SplitScreenTrackAssignment	0x00019520	224	10	10	0	IDENTICAL		False	re/match/s07/00430830.c
+0x004309b0	_FrontendModeIndex	0x00019600	96	10	1	0	IDENTICAL		False	re/match/s07/004309b0.c
+0x0042f6b0	_MenuModeSync	0x00019660	176	13	10	0	IDENTICAL		False	re/match/s07/0042f6b0.c
+0x0042f7b0	_FrontendCursorUpdate	0x00019710	288	0	4	0	IDENTICAL		False	re/match/s07/0042f7b0.c
+0x0042fa00	_MenuTeamSelectTick	0x00019830	176	0	9	0	IDENTICAL		False	re/match/s07/0042fa00.c
+0x0042fb70	_MenuSpriteDispatchB	0x00019970	704	20	21	0	IDENTICAL		False	re/match/s07/0042fb70.c
+0x0042fe30	_RaceEndFlagIfEndMode	0x00019c30	32	1	1	0	IDENTICAL		False	re/match/s07/0042fe30.c
+0x0042fe50	_RaceEndAltFlagIfEndMode	0x00019c50	32	1	1	0	IDENTICAL		False	re/match/s07/0042fe50.c
+0x0042fe80	_GetRaceEndFlag	0x00019c70	16	0	1	0	IDENTICAL		False	re/match/s07/0042fe80.c
+0x00430790	_GetDat0067f17c	0x00019c80	16	0	1	0	IDENTICAL		False	re/match/s07/00430790.c
+0x00430a10	_HudSlotTypePlayer0	0x00019c90	80	10	1	0	IDENTICAL		False	re/match/s07/00430a10.c
+0x00430a60	_HudSlotTypePlayer1	0x00019ce0	80	10	1	0	IDENTICAL		False	re/match/s07/00430a60.c
+0x00430ab0	_HudSlotTypePlayer2	0x00019d30	80	10	1	0	IDENTICAL		False	re/match/s07/00430ab0.c
+0x00430b00	_TimeDisplaySetEntry	0x00019d80	48	0	3	0	IDENTICAL		False	re/match/s07/00430b00.c
+0x00430b60	_MenuSlotCount	0x00019db0	48	0	4	0	IDENTICAL		False	re/match/s07/00430b60.c
+0x00431ae0	_DefaultParam_SetField04	0x00019de0	16	0	1	0	IDENTICAL		False	re/match/s07/00431ae0.c
+0x00431af0	_DefaultParam_SetField08	0x00019df0	16	0	1	0	IDENTICAL		False	re/match/s07/00431af0.c
+0x00431b00	_DefaultParam_SetField00	0x00019e00	16	0	1	0	IDENTICAL		False	re/match/s07/00431b00.c
+0x00431b20	_SinGlobalProduct431b20	0x00019e10	16	0	2	0	IDENTICAL		False	re/match/s07/00431b20.c
+0x00431b50	_SinGlobalProduct431b50	0x00019e20	16	0	2	0	IDENTICAL		False	re/match/s07/00431b50.c
+0x00431b60	_SinGlobalProduct431b60	0x00019e30	16	0	2	0	IDENTICAL		False	re/match/s07/00431b60.c
+0x00431b70	_MenuFlagDat007f0f10Get	0x00019e40	16	0	1	0	IDENTICAL		False	re/match/s07/00431b70.c
+0x00431b80	___ddkreg_00431b80	0x00019e50	384	0	29	0	IDENTICAL		False	re/match/s07/00431b80.c
+0x00431d00	_CarSelectReset	0x00019fd0	112	3	7	0	IDENTICAL		False	re/match/s07/00431b80.c
+0x00431d90	_FrontendPanelFlagAdvance	0x0001a040	416	0	38	0	IDENTICAL		False	re/match/s07/00431d90.c
+0x00431f30	_FrontendPageIdDispatch	0x0001a1e0	336	21	18	0	IDENTICAL		False	re/match/s07/00431f30.c
+0x00484c70	_WorldObjectsBaseGet	0x0001a330	32	0	2	0	IDENTICAL		False	re/match/s14/00484c70.c
+0x00484c90	_Zero484c90	0x0001a350	96	0	4	0	IDENTICAL		False	re/match/s14/00484c90.c
+0x00484cf0	_RG_484cf0	0x0001a3b0	240	2	15	0	IDENTICAL		False	re/match/s14/00484cf0.c
+0x00485070	_RG_485070	0x0001a4a0	64	2	5	0	IDENTICAL		False	re/match/s14/00485070.c
+0x004853b0	_SmplFzxStateBlockGetLoggedBody	0x0001a4e0	64	3	1	0	IDENTICAL		False	re/match/s14/004853b0.c
+0x004325c0	_MenuAnimTickTwin	0x0001a520	576	15	12	0	IDENTICAL		False	re/match/s08/004325c0.c
+0x00432ad0	_MenuDimOverlayFadeStep	0x0001a760	96	1	8	0	IDENTICAL		False	re/match/s08/00432ad0.c
+0x004331a0	_RaceFinalizeOnce	0x0001a7c0	160	3	17	0	IDENTICAL		False	re/match/s08/004331a0.c
+0x00436810	_LocalPlayerSlotCheck	0x0001a860	208	1	5	0	IDENTICAL		False	re/match/s08/00436810.c
+0x0043aee0	_MenuSlotFlagSetCurrent	0x0001a930	48	1	3	0	IDENTICAL		False	re/match/s08/0043aee0.c
+0x004425d0	_UtilZeroTable8964c0	0x0001a960	48	0	3	0	IDENTICAL		False	re/match/s08/004425d0.c
+0x00442c80	_RubberBandGateMatched	0x0001a990	64	2	2	0	IDENTICAL		False	re/match/s08/00442c80.c
+0x00442cc0	_AiVehicleFloat4Get	0x0001a9d0	32	0	2	0	IDENTICAL		False	re/match/s08/00442cc0.c
+0x00442ce0	_RubberBandGripMatched	0x0001a9f0	256	16	3	0	IDENTICAL		False	re/match/s08/00442ce0.c
+0x00443300	_AiSplineEval_x87_match	0x0001aaf0	320	14	0	0	IDENTICAL		False	re/match/s08/00443300.c
+0x00448700	_VehicleSeedWritePair	0x0001ac30	48	1	3	0	IDENTICAL		False	re/match/s08/00448700.c
+0x0044b000	_SlotRecordPositionPtr	0x0001ac60	32	1	1	0	IDENTICAL		False	re/match/s08/0044b000.c
+0x00426080	_GlobalDat00656ed8Get	0x0001ac80	16	0	1	0	IDENTICAL		False	re/match/s06/00426080.c
+0x00426090	_GlobalDat0066ce58Get	0x0001ac90	16	0	1	0	IDENTICAL		False	re/match/s06/00426090.c
+0x004260a0	_GetDat00657438	0x0001aca0	16	0	1	0	IDENTICAL		False	re/match/s06/004260a0.c
+0x004260b0	_GetDat0065743c	0x0001acb0	16	0	1	0	IDENTICAL		False	re/match/s06/004260b0.c
+0x004260e0	_FUN_004260e0	0x0001acc0	528	10	15	0	IDENTICAL		False	re/match/s06/004260e0.c
+0x004262f0	_FUN_004262f0	0x0001aed0	80	4	5	0	IDENTICAL		False	re/match/s06/004262f0.c
+0x00426ba0	_HudDrawEnabled	0x0001af20	16	0	1	0	IDENTICAL		False	re/match/s06/00426ba0.c
+0x00426bb0	_Global66d6d8Get	0x0001af30	16	0	1	0	IDENTICAL		False	re/match/s06/00426bb0.c
+0x00426bc0	_GetDat0066d6e0	0x0001af40	16	0	1	0	IDENTICAL		False	re/match/s06/00426bc0.c
+0x00426bd0	_GetTableEntry0066d658	0x0001af50	48	0	2	0	IDENTICAL		False	re/match/s06/00426bd0.c
+0x00426c00	_GameStateFlagGet	0x0001af80	16	0	1	0	IDENTICAL		False	re/match/s06/00426c00.c
+0x00426c10	_TimerDispatch10	0x0001af90	32	3	1	0	IDENTICAL		False	re/match/s06/00426c10.c
+0x00426c30	_TimerDispatch30	0x0001afb0	32	2	1	0	IDENTICAL		False	re/match/s06/00426c30.c
+0x00426c70	_TimerDispatch70	0x0001afd0	32	2	1	0	IDENTICAL		False	re/match/s06/00426c70.c
+0x00426cb0	_SlotIndexToPtr	0x0001aff0	16	0	1	0	IDENTICAL		False	re/match/s06/00426cb0.c
+0x00426cc0	_VehicleTable4cPtrGet	0x0001b000	16	0	1	0	IDENTICAL		False	re/match/s06/00426cc0.c
+0x00426cf0	_GetDat0066d6e4	0x0001b010	16	0	1	0	IDENTICAL		False	re/match/s06/00426cf0.c
+0x00426d00	_FrontendArraySlotGet	0x0001b020	32	0	1	0	IDENTICAL		False	re/match/s06/00426d00.c
+0x00426d20	_FUN_00426d20	0x0001b040	112	3	3	0	IDENTICAL		False	re/match/s06/00426d20.c
+0x00426d90	_HandleArrayRelease	0x0001b0b0	48	1	1	0	IDENTICAL		False	re/match/s06/00426d90.c
+0x00426dc0	_FrontendRaycastForward	0x0001b0e0	32	1	1	0	IDENTICAL		False	re/match/s06/00426dc0.c
+0x00426de0	_FrontendFloatGet426de0	0x0001b100	16	0	1	0	IDENTICAL		False	re/match/s06/00426de0.c
+0x00426df0	_FrontendFloatGet426df0	0x0001b110	16	0	1	0	IDENTICAL		False	re/match/s06/00426df0.c
+0x00427580	_FrontendQuadParamInit427580	0x0001b120	80	0	10	0	IDENTICAL		False	re/match/s06/00427580.c
+0x00427680	___ddkreg_00427680	0x0001b170	256	13	6	0	IDENTICAL		False	re/match/s06/00427680.c
+0x00427780	_FontText_StringTableLookup	0x0001b2a0	32	0	2	0	IDENTICAL		False	re/match/s06/00427780.c
+0x004277a0	___ddkreg_004277a0	0x0001b2c0	160	0	0	0	IDENTICAL		False	re/match/s06/004277a0.c
+0x00427840	___ddkreg_00427840	0x0001b370	64	0	1	0	IDENTICAL		False	re/match/s06/00427840.c
+0x00427880	___ddkreg_00427880	0x0001b3c0	80	4	0	0	IDENTICAL		False	re/match/s06/00427880.c
+0x004278d0	_FUN_004278d0	0x0001b420	192	9	4	0	IDENTICAL		False	re/match/s06/004278d0.c
+0x00427990	_FUN_00427990	0x0001b4e0	320	14	5	0	IDENTICAL		False	re/match/s06/00427990.c
+0x00427ad0	_MenuMenusBB	0x0001b620	272	14	5	0	IDENTICAL		False	re/match/s06/00427ad0.c
+0x00427be0	_FUN_00427be0	0x0001b730	176	8	4	0	IDENTICAL		False	re/match/s06/00427be0.c
+0x00427c90	_GetDat0067d84c	0x0001b7e0	16	0	1	0	IDENTICAL		False	re/match/s06/00427c90.c
+0x00427ca0	_FUN_00427ca0	0x0001b7f0	352	21	10	0	IDENTICAL		False	re/match/s06/00427ca0.c
+0x00427e00	_FUN_00427e00	0x0001b950	256	11	4	0	IDENTICAL		False	re/match/s06/00427e00.c
+0x00427f00	_FUN_00427f00	0x0001ba50	240	9	4	0	IDENTICAL		False	re/match/s06/00427f00.c
+0x00427ff0	_FUN_00427ff0	0x0001bb40	336	15	4	0	IDENTICAL		False	re/match/s06/00427ff0.c
+0x00428140	_FUN_00428140	0x0001bc90	352	11	6	0	IDENTICAL		False	re/match/s06/00428140.c
+0x00428320	_TextWidthMeasureB	0x0001bdf0	112	6	2	0	IDENTICAL		False	re/match/s06/00428320.c
+0x00428590	_ViewportInit	0x0001be60	128	9	1	0	IDENTICAL		False	re/match/s06/00428590.c
+0x00428610	_ViewportScaledRectDraw	0x0001bee0	336	7	2	0	IDENTICAL		False	re/match/s06/00428610.c
+0x00428760	_ViewportScaledRectDraw_Arg7Zero	0x0001c030	48	1	0	0	IDENTICAL		False	re/match/s06/00428760.c
+0x004288a0	_FUN_004288a0	0x0001c060	400	15	2	0	IDENTICAL		False	re/match/s06/004288a0.c
+0x00428a30	_FUN_00428a30	0x0001c1f0	448	29	8	0	IDENTICAL		False	re/match/s06/00428a30.c
+0x00428bf0	_TitleBuildInfoRender	0x0001c3b0	320	20	2	0	IDENTICAL		False	re/match/s06/00428bf0.c
+0x00428d30	_FUN_00428d30	0x0001c4f0	1296	35	11	0	IDENTICAL		False	re/match/s06/00428d30.c
+0x00429240	___ddkreg_00429240	0x0001ca00	80	10	0	0	IDENTICAL		False	re/match/s06/00429290.c
+0x00429290	_FUN_00429290	0x0001ca50	48	5	0	0	IDENTICAL		False	re/match/s06/00429290.c
+0x004292c0	_UtilWritePtr	0x0001ca80	16	0	0	0	IDENTICAL		False	re/match/s06/004292c0.c
+0x004292d0	_FUN_004292d0	0x0001ca90	48	1	0	0	IDENTICAL		False	re/match/s06/004292d0.c
+0x00429300	_HudOverlayFloatGet	0x0001cac0	16	0	1	0	IDENTICAL		False	re/match/s06/00429300.c
+0x004295a0	_HudDualLabelRender	0x0001cad0	128	4	1	0	IDENTICAL		False	re/match/s06/004295a0.c
+0x00429620	_FUN_00429620	0x0001cb50	64	2	4	0	IDENTICAL		False	re/match/s06/00429620.c
+0x00429660	_FUN_00429660	0x0001cb90	448	23	2	0	IDENTICAL		False	re/match/s06/00429660.c
+0x00429820	_Clear8991b0Pair	0x0001cd50	32	0	2	0	IDENTICAL		False	re/match/s06/00429820.c
+0x00429870	_LapTimeALessThanB	0x0001cd70	80	0	6	0	IDENTICAL		False	re/match/s06/00429870.c
+0x004298c0	_Clear67d99c_x4	0x0001cdc0	32	0	4	0	IDENTICAL		False	re/match/s06/004298c0.c
+0x004299d0	_TimeRecordWriteTrackBest	0x0001cde0	96	3	9	0	IDENTICAL		False	re/match/s06/004299d0.c
+0x00429a30	_MenuMenusBE	0x0001ce40	64	3	6	0	IDENTICAL		False	re/match/s06/00429a30.c
+0x00429a70	_LapFracGetBySlot	0x0001ce80	16	0	1	0	IDENTICAL		False	re/match/s06/00429a70.c
+0x00429a80	_LapLapsGetBySlot	0x0001ce90	16	0	1	0	IDENTICAL		False	re/match/s06/00429a80.c
+0x00429a90	_LapSecsGetBySlot	0x0001cea0	16	0	1	0	IDENTICAL		False	re/match/s06/00429a90.c
+0x00429aa0	_GameStateSlotsFill	0x0001ceb0	144	9	12	0	IDENTICAL		False	re/match/s06/00429aa0.c
+0x00429b30	_Init429b30	0x0001cf40	64	2	4	0	IDENTICAL		False	re/match/s06/00429b30.c
+0x00429b70	_Init429b70	0x0001cf80	96	4	5	0	IDENTICAL		False	re/match/s06/00429b70.c
+0x00429e10	_FUN_00429e10	0x0001cfe0	1632	87	20	0	IDENTICAL		False	re/match/s06/00429e10.c
+0x0042a470	_FUN_0042a470	0x0001d640	192	11	9	0	IDENTICAL		False	re/match/s06/0042a470.c
+0x0042a530	_FUN_0042a530	0x0001d700	160	9	0	0	IDENTICAL		False	re/match/s06/0042a530.c
+0x0042a5d0	_FUN_0042a5d0	0x0001d7a0	112	3	8	0	IDENTICAL		False	re/match/s06/0042a5d0.c
+0x0042a640	_PathBuilderLoad	0x0001d810	112	3	8	0	IDENTICAL		False	re/match/s06/0042a640.c
+0x0042a6b0	_FUN_0042a6b0	0x0001d880	144	4	9	0	IDENTICAL		False	re/match/s06/0042a6b0.c
+0x0042a740	_FUN_0042a740	0x0001d910	176	6	9	0	IDENTICAL		False	re/match/s06/0042a740.c
+0x0042a7f0	_FUN_0042a7f0	0x0001d9c0	112	3	8	0	IDENTICAL		False	re/match/s06/0042a7f0.c
+0x0042a860	_FUN_0042a860	0x0001da30	112	3	8	0	IDENTICAL		False	re/match/s06/0042a860.c
+0x0042a8d0	_FUN_0042a8d0	0x0001daa0	80	0	6	0	IDENTICAL		False	re/match/s06/0042a8d0.c
+0x0042a9c0	_ModeCodeLookup	0x0001daf0	48	0	1	0	IDENTICAL		False	re/match/s06/0042a9c0.c
+0x0042aab0	_UtilInit898a90	0x0001db20	32	0	2	0	IDENTICAL		False	re/match/s06/0042aab0.c
+0x0042aad0	___ddkreg_0042aad0	0x0001db40	16	0	1	0	IDENTICAL		False	re/match/s06/0042aad0.c
+0x0042aae0	_MenuIm2DQuad	0x0001db60	288	0	26	0	IDENTICAL		False	re/match/s06/0042aae0.c
+0x0042ac00	___ddkreg_0042ac00	0x000198e0	80	0	0	0	IDENTICAL		False	re/match/s06/0042ac00.c
+0x0042ac50	___ddkreg_0042ac50	0x00019930	64	0	0	0	IDENTICAL		False	re/match/s06/0042ac50.c
+0x0042ac90	_MenuEntryGet	0x0001dca0	128	0	3	0	IDENTICAL		False	re/match/s06/0042ac90.c
+0x0042ad10	___ddkreg_0042ad10	0x0001dd20	128	0	9	0	IDENTICAL		False	re/match/s06/0042ad10.c
+0x0042ad90	___ddkreg_0042ad90	0x0001ddc0	64	0	0	0	IDENTICAL		False	re/match/s06/0042ad90.c
+0x0042ae10	_MenuReadinessCheckA	0x0001de20	160	1	10	0	IDENTICAL		False	re/match/s06/0042ae10.c
+0x0041ad60	___ddkreg_0041ad60	0x0001dec0	80	3	0	0	IDENTICAL		False	re/match/s03/h1_0041ad60.c
+0x00550bc0	_VfsStreamGetType	0x0001df20	16	0	0	0	IDENTICAL		False	re/match/s24/00550bc0.c
+0x00451990	_WarzonePontoonBoxCarry	0x0001df30	192	3	0	0	IDENTICAL		False	re/match/s09/00451990.c
+0x00451a50	_WarzonePontoonTrackBody	0x0001dff0	128	4	0	0	IDENTICAL		False	re/match/s09/00451a50.c
+0x00451cc0	_WarzonePontoonDeactivate	0x0001e070	32	0	0	0	IDENTICAL		False	re/match/s09/00451cc0.c
+0x004576b0	_AnyActive4576b0	0x0001e090	64	0	2	0	IDENTICAL		False	re/match/s09/004576b0.c
+0x00458fa0	_TtlSet68b1b0	0x0001e0d0	48	0	1	0	IDENTICAL		False	re/match/s09/00458fa0.c
+0x00451690	_WarzonePontoonLoopCb	0x0001e100	64	2	0	0	IDENTICAL		False	re/match/s09/00451690.c
+0x00451ce0	_WarzonePontoonSample	0x0001e140	160	4	0	0	IDENTICAL		False	re/match/s09/00451ce0.c
+0x00458920	_PK_458920	0x0001e1e0	288	8	2	0	IDENTICAL		False	re/match/s09/00458920.c
+0x00401340	_CupSpinSpeedAndColor	0x0001e300	176	3	4	0	IDENTICAL		False	re/match/s01/00401340.c
+0x00401570	_EntryTableScanByKey	0x0001e3b0	48	0	4	0	IDENTICAL		False	re/match/s01/00401570.c
+0x00401ee0	_EntityTableSelectUpdate	0x0001e3e0	48	3	1	0	IDENTICAL		False	re/match/s01/00401570.c
+0x004026d0	_BootQueueFlush	0x0001e410	128	8	0	0	IDENTICAL		False	re/match/s01/004026d0.c
+0x00402f50	_BootDefaultParamsInit	0x0001e490	48	0	7	0	IDENTICAL		False	re/match/s01/00402f50.c
+0x00402f80	_CupFloatInit	0x0001e4c0	48	0	4	0	IDENTICAL		False	re/match/s01/00402f50.c
+0x00405890	_Pred405890	0x0001e4f0	32	0	2	0	IDENTICAL		False	re/match/s01/00405890.c
+0x00407a60	_UtilTableInit8a9620	0x0001e510	48	0	2	0	IDENTICAL		False	re/match/s01/00407a60.c
+0x00408a50	_PerCarRaceProgressGet	0x0001e540	32	0	1	0	IDENTICAL		False	re/match/s01/00407a60.c
+0x00408ad0	_RaceScoreFloatGetBySlot	0x0001e560	32	0	1	0	IDENTICAL		False	re/match/s01/00407a60.c
+0x00409290	_SnapNodeToSafeStartLines	0x0001e580	112	2	0	0	IDENTICAL		False	re/match/s01/00409290.c
+0x00407600	_PlayerPositionPtr	0x0001e5f0	32	1	1	0	IDENTICAL		False	re/match/s01/00407600.c
+0x00407a20	_GetAiLapCounter	0x0001e610	32	0	1	0	IDENTICAL		False	re/match/s01/00407a20.c
+0x00407cd0	_PP_407cd0	0x0001e630	160	1	0	0	IDENTICAL		False	re/match/s01/00407cd0.c
+0x0040b6b0	_ModeScoreGetBySlot	0x0001e6d0	16	0	1	0	IDENTICAL		False	re/match/s02/0040b6b0.c
+0x0040b7a0	_HotkeyStringBaseGet	0x0001e6e0	16	0	1	0	IDENTICAL		False	re/match/s02/0040b7a0.c
+0x0040b7b0	_PlayerHotkeyTableGet	0x0001e6f0	96	5	4	0	IDENTICAL		False	re/match/s02/0040b7b0.c
+0x0040ad20	_FrontendGlobalGet	0x0001e750	16	0	1	0	IDENTICAL		False	re/match/s02/0040ad20.c
+0x0040b6c0	_FrontendArrayGet	0x0001e760	16	0	1	0	IDENTICAL		False	re/match/s02/0040b6c0.c
+0x0040b620	_SlotSortByModeScore	0x0001e770	144	0	3	0	IDENTICAL		False	re/match/s02/0040b620.c
+0x00411d60	_ReplayCheckTimer	0x0001e800	48	1	2	0	IDENTICAL		False	re/match/s02/00411d60.c
+0x0040d250	_DoubleDerefIndexedGetter	0x0001e830	32	0	2	0	IDENTICAL		False	re/match/s02/0040d250.c
+0x0040bb70	_SpriteLookupTableA	0x0001e850	32	1	1	0	IDENTICAL		False	re/match/s02/0040bb70.c
+0x0040bb90	_SpriteLookupTableB	0x0001e870	32	1	1	0	IDENTICAL		False	re/match/s02/0040bb90.c
+0x0040bb50	_SpriteLookupC	0x0001e890	32	1	1	0	IDENTICAL		False	re/match/s02/0040bb50.c
+0x0040bb30	_Search40bb30	0x0001e8b0	32	1	1	0	IDENTICAL		False	re/match/s02/0040bb30.c
+0x0040bbb0	_Orig_0040bbb0	0x0001e8d0	336	44	8	0	IDENTICAL		False	re/match/s02/0040bbb0.c
+0x004759b0	_Orig_004759b0	0x0001ea20	80	4	5	0	IDENTICAL		False	re/match/s12/004759b0.c
+0x00475ef0	_Orig_00475ef0	0x0001ea70	64	1	3	0	IDENTICAL		False	re/match/s12/00475ef0.c
+0x00476390	_Orig_00476390	0x0001eab0	160	9	5	0	IDENTICAL		False	re/match/s12/00476390.c
+0x00475ea0	_Orig_00475ea0	0x0001eb50	80	3	5	0	IDENTICAL		False	re/match/s12/00475ea0.c
+0x00477e40	_Orig_00477e40	0x0001eba0	32	2	2	0	IDENTICAL		False	re/match/s12/00477e40.c
+0x00477b40	_Orig_00477b40	0x0001ebc0	32	2	2	0	IDENTICAL		False	re/match/s12/00477b40.c
+0x0041a980	_Orig_0041a980	0x0001ebe0	48	2	2	0	IDENTICAL		False	re/match/s03/raw_0041a980.c
+0x004d7ff0	_Orig_004d7ff0	0x0001ec10	16	0	0	0	IDENTICAL		False	re/match/s21/004d7ff0.c
+0x00475a00	_Orig_00475a00	0x0001ec20	96	2	7	2	DIFFERENT	+0x41	False	re/match/s12/00475a00.c
+0x00475d90	_Orig_00475d90	0x0001ec80	192	1	17	0	IDENTICAL		False	re/match/s12/00475d90.c
+0x00489290	_Orig_00489290	0x0001ed40	48	0	2	0	IDENTICAL		False	re/match/s14/00489290.c
+0x00487150	___ddkreg_00487150	0x0001ed70	48	2	2	0	IDENTICAL		False	re/match/s14/00487150.c
+0x00487e00	_Orig_00487e00	0x0001eda0	32	1	1	0	IDENTICAL		False	re/match/s14/00487150.c
+0x00487140	_Orig_00487140	0x0001edc0	16	1	1	0	IDENTICAL		False	re/match/s14/00487140.c
+0x004892c0	_Orig_004892c0	0x0001edd0	224	3	4	0	IDENTICAL		False	re/match/s14/004892c0.c
+0x004893a0	_Orig_004893a0	0x0001eeb0	16	1	0	0	IDENTICAL		False	re/match/s14/004893a0.c
+0x00485d90	_Orig_00485d90	0x0001eec0	128	3	3	0	IDENTICAL		False	re/match/s14/00485d90.c
+0x00485e10	_Orig_00485e10	0x0001ef40	64	1	2	0	IDENTICAL		False	re/match/s14/00485e10.c
+0x004862d0	_Orig_004862d0	0x0001ef80	128	6	8	0	IDENTICAL		False	re/match/s14/004862d0.c
+0x00486350	_Orig_00486350	0x0001f000	32	2	2	0	IDENTICAL		False	re/match/s14/00486350.c
+0x0048eac0	_Orig_0048eac0	0x0001f020	256	27	9	0	IDENTICAL		False	re/match/s15/0048eac0.c
+0x0048fdd0	_Orig_0048fdd0	0x0001f120	96	9	9	0	IDENTICAL		False	re/match/s15/0048fdd0.c
+0x0048cee0	___ddkreg_0048cee0		144				not-in-map			re/match/s14/0048cee0.c
+0x0048cf70	_Orig_0048cf70	0x0001f180	32	1	1	0	IDENTICAL		False	re/match/s15/0048cf70.c
+0x0048e820	_Orig_0048e820	0x0001f230	672	19	46	0	IDENTICAL		False	re/match/s15/0048e820.c
+0x0048a460	_Orig_0048a460	0x0001f4d0	48	0	1	0	IDENTICAL		False	re/match/s14/0048a460.c
+0x0048bbe0	_Orig_0048bbe0	0x0001f500	48	2	2	0	IDENTICAL		False	re/match/s14/0048bbe0.c
+0x004b3bf0	_Orig_004b3bf0	0x0001f530	112	5	0	0	IDENTICAL		False	re/match/s18/004b3bf0.c
+0x00401630	_Orig_00401630	0x0001f5a0	96	5	0	0	IDENTICAL		False	re/match/s01/raw/00401630.c
+0x00401690	___ddkreg_00401690	0x0001f600	1280	9	0	713	DIFFERENT	+0x6	False	re/match/s01/00401690.c
+0x004025f0	_Orig_004025f0	0x0001fb00	224	4	2	0	IDENTICAL		False	re/match/s01/00401690.c
+0x0048bc10	_Orig_0048bc10	0x0001fbe0	16	1	1	0	IDENTICAL		False	re/match/s14/0048bc10.c
+0x004881d0	_Obj7030a8Create	0x0001fbf0	336	5	17	0	IDENTICAL		False	re/match/s14/004881d0.c
+0x004880a0	_Obj7030acCreate	0x0001fd40	304	4	15	0	IDENTICAL		False	re/match/s14/004880a0.c
+0x004e7e30	_Orig_004e7e30	0x0001fe70	32	1	0	0	IDENTICAL		False	re/match/rwl02/004e7e30.c
+0x004e8090	_Orig_004e8090	0x0001fe90	48	1	0	0	IDENTICAL		False	re/match/rwl02/004e8090.c
+0x00489250	_Orig_00489250	0x0001fec0	64	4	4	0	IDENTICAL		False	re/match/s14/00489250.c
+0x00401000	_Orig_00401000	0x0001ff00	496	23	19	0	IDENTICAL		False	re/match/s01/00401000.c
+0x004014b0	_Orig_004014b0	0x000200f0	192	11	14	0	IDENTICAL		False	re/match/s01/raw/004014b0.c
+0x004c1800	_Orig_004c1800	0x000201b0	64	0	0	0	IDENTICAL		False	re/match/s19/004c1800.c
+0x004c1840	_Orig_004c1840	0x000201f0	128	0	0	0	IDENTICAL		False	re/match/s19/004c1840.c
+0x004e4900	_Orig_004e4900	0x00020270	80	0	0	0	IDENTICAL		False	re/match/rwl02/004e4900.c
+0x004e4b90	_Orig_004e4b90	0x000202c0	64	0	2	0	IDENTICAL		False	re/match/rwl02/004e4b90.c
+0x004e48e0	_Orig_004e48e0	0x00020300	32	1	0	0	IDENTICAL		False	re/match/rwl02/004e48e0.c
+0x004b5320	_Orig_004b5320	0x00020320	48	2	0	0	IDENTICAL		False	re/match/s18/004b5320.c
+0x004026d0	_Orig_004026d0	0x00020350	128	8	0	0	IDENTICAL		False	re/match/s01/004026d0.c
+0x00404830	_Orig_00404830	0x000203d0	1488	0	17	0	IDENTICAL		False	re/match/s01/00404830.c
+0x00412890	_Orig_00412890	0x000209a0	96	2	3	0	IDENTICAL		False	re/match/s03/h2_00412890.c
+0x00496940	_Orig_00496940	0x00020a00	48	1	3	0	IDENTICAL		False	re/match/s16/00496940.c
+0x0047ba00	_Orig_0047ba00	0x00020a30	16	1	0	0	IDENTICAL		False	re/match/topm01/0047ba00.c
+0x004b6520	_Orig_004b6520	0x00020a40	32	1	0	0	IDENTICAL		False	re/match/s18/004b6520.c
+0x00420d00	_Orig_00420d00	0x00020a60	64	1	5	0	IDENTICAL		False	re/match/s05/00420d00.c
+0x00471530	_FUN_00471530	0x00020aa0	48	0	3	0	IDENTICAL		False	re/match/s11/00471df0.c
+0x00471df0	_Orig_00471df0	0x00020ad0	192	1	6	0	IDENTICAL		False	re/match/s11/00471df0.c
+0x00471eb0	_Orig_00471eb0	0x00020b90	16	1	0	0	IDENTICAL		False	re/match/s11/00471eb0.c
+0x004723d0	_Orig_004723d0	0x00020ba0	304	0	40	0	IDENTICAL		False	re/match/s11/004723d0.c
+0x00428390	_Orig_00428390	0x00020cd0	16	0	1	0	IDENTICAL		False	re/match/s06/00428390.c
+0x00413b80	_Orig_00413b80	0x00020ce0	48	4	2	0	IDENTICAL		False	re/match/s03/raw_00413b80.c
+0x004770c0	_Orig_004770c0	0x00020d10	816	18	22	0	IDENTICAL		False	re/match/s12/004770c0.c
+0x00474db0	_Orig_00474db0	0x00021040	48	1	1	0	IDENTICAL		False	re/match/s11/00474db0.c
+0x00413bb0	_Orig_00413bb0	0x00021070	16	1	1	0	IDENTICAL		False	re/match/s03/raw_00413bb0.c
+0x004768c0	_Orig_004768c0	0x00021080	224	4	7	0	IDENTICAL		False	re/match/s12/004768c0.c
+0x0040ad30	_UtilSet8a95ac	0x00021160	16	0	1	0	IDENTICAL		False	re/match/s02/0040ad30.c
+0x0040b250	_UtilReset8a9500	0x00021170	64	0	8	0	IDENTICAL		False	re/match/s02/0040b250.c
+0x0040b430	_UtilFieldAdd8a94f0	0x000211b0	48	0	3	0	IDENTICAL		False	re/match/s02/0040b430.c
+0x0040b6d0	_UtilArrayGet8a94e0	0x000211e0	16	0	1	0	IDENTICAL		False	re/match/s02/0040b6d0.c
+0x0040e340	_GetLiveCarCount	0x000211f0	16	0	1	0	IDENTICAL		False	re/match/s02/0040e340.c
+0x0040e350	_GetRenderSubMode	0x00021200	16	0	1	0	IDENTICAL		False	re/match/s02/0040e350.c
+0x004173a0	_Float89a360Get	0x00021210	16	0	1	0	IDENTICAL		False	re/match/s03/h1_004173a0.c
+0x00413fa0	_Calc413fa0	0x00021220	64	2	0	0	IDENTICAL		False	re/match/s03/h2_00413fa0.c
+0x00414060	_Race89a360Compute	0x00021260	192	5	15	0	IDENTICAL		False	re/match/s03/h3_00414060.c
+0x00431d80	_TiebreakFlagGet	0x00021320	16	0	1	0	IDENTICAL		False	re/match/s07/00431d80.c
+0x0046c5f0	___ddkreg_0046c5f0	0x00021330	224	4	0	0	IDENTICAL		False	re/match/pilot/a5_0046c5f0.c
+0x0040e370	_IsCarSlotActive	0x00021430	48	0	1	0	IDENTICAL		False	re/match/s02/0040e370.c
+0x0040b810	_TimerGlobalsReset	0x00021460	128	0	21	0	IDENTICAL		False	re/match/s02/0040b810.c
+0x0040e3a0	_PlayerColorTableGet	0x000214e0	176	8	0	0	IDENTICAL		False	re/match/s02/0040e3a0.c
+0x0040dfc0	_HudIngameDispatch	0x00021590	432	53	5	0	IDENTICAL		False	re/match/s02/0040dfc0.c
+0x004114c0	_VtableTeardown_114c0	0x00021740	32	0	2	0	IDENTICAL		False	re/match/s02/004114c0.c
+0x00411350	_ReplayTimeFormat	0x00021760	96	3	0	0	IDENTICAL		False	re/match/s02/00411350.c
+0x0040e450	_Flag63b908Get	0x000217c0	16	0	1	0	IDENTICAL		False	re/match/s02/0040e450.c
+0x0040e460	_Flag63b908Set	0x000217d0	16	0	1	0	IDENTICAL		False	re/match/s02/0040e460.c
+0x0040b6e0	_Add40b6e0	0x000217e0	32	1	2	0	IDENTICAL		False	re/match/s02/0040b6e0.c
+0x0040b540	_PlayerScoreRankOrder	0x00021800	224	1	6	0	IDENTICAL		False	re/match/s02/0040b540.c
+0x0040b700	_Counters8a9530Inc	0x000218e0	160	7	5	0	IDENTICAL		False	re/match/s02/0040b700.c
+0x004927c0	_Step771980Advance	0x00021980	528	5	37	0	IDENTICAL		False	re/match/gffu/004927c0.c
+0x00417740	_Float89a870ToInt	0x00021b90	16	1	1	0	IDENTICAL		False	re/match/gffu/00417740.c
+0x00497450	_Pred497450	0x00021ba0	32	0	1	0	IDENTICAL		False	re/match/gffu/00497450.c
+0x00496900	_SlotActiveThunk	0x00021bc0	16	1	0	0	IDENTICAL		False	re/match/s16/00496900.c
+0x0042c2f0	_SetDat0067ecb8	0x00021bd0	16	0	1	0	IDENTICAL		False	re/match/s07/0042c2f0.c
+0x0042c280	_Init42c280	0x00021be0	32	1	0	0	IDENTICAL		False	re/match/s07/0042c280.c
+0x00432080	_RaceEndCheckFinish	0x00021c00	432	2	42	0	IDENTICAL		False	re/match/s07/00432080.c
+0x0042c220	_FUN_0042c220	0x00021db0	96	2	3	0	IDENTICAL		False	re/match/s07/0042c220.c
+0x004929d0	_GameModeMachine_004929d0	0x00021e10	832	53	22	47	DIFFERENT	+0x3	False	re/match/gffu/004929d0.c
+0x0041d410	___ddkreg_0041d410	0x00022150	704	0	0	0	IDENTICAL		False	re/match/s04/0041d410.c
+0x0041d870	_PortBatch_0041d870	0x00022410	32	1	2	0	IDENTICAL		False	re/match/s04/0041d410.c
+0x0041e630	___ddkreg_0041e630	0x00022430	144	0	0	0	IDENTICAL		False	re/match/s04/0041e850.c
+0x0041e850	_PortBatch_0041e850	0x000224c0	32	1	2	0	IDENTICAL		False	re/match/s04/0041e850.c
+0x00407b00	_RangeTableFindGroup	0x000224e0	112	1	0	0	IDENTICAL		False	re/match/s01/00407b00.c
+0x00407b70	_RangeTableMemberTest	0x00022550	112	1	0	0	IDENTICAL		False	re/match/s01/00407b70.c
+0x00407d70	_RangeTableCountGroup	0x000225c0	64	1	0	0	IDENTICAL		False	re/match/s01/00407d70.c
+0x00407db0	_RangeTableGroupOffset	0x00022600	112	1	0	0	IDENTICAL		False	re/match/s01/00407db0.c
+0x005c9d00	_GetRaceEndTrigger	0x00022670	16	0	0	0	IDENTICAL		False	re/match/gffu/005c9d00.c
+0x004053d0	_Orig_004053d0		48				not-in-map			re/match/s01/004053d0.c
+0x00405400	_Orig_00405400	0x00022680	32	0	3	0	IDENTICAL		False	re/match/s01/004053d0.c
+0x00405420	_Orig_00405420		16				not-in-map			re/match/s01/004053d0.c
+0x00405430	_Orig_00405430		48				not-in-map			re/match/s01/004053d0.c
+0x0040cf40	_Orig_0040cf40	0x000226a0	64	2	4	0	IDENTICAL		False	re/match/s02/0040cf40.c
+0x0046be10	_Orig_0046be10	0x000226e0	64	0	2	0	IDENTICAL		False	re/match/s11/0046be10.c
+0x00458880	_Orig_00458880	0x00022720	64	3	4	0	IDENTICAL		False	re/match/s09/00458880.c
+0x004593b0	_Orig_004593b0	0x00022760	80	4	3	0	IDENTICAL		False	re/match/s09/004593b0.c
+0x004c5770	_Orig_004c5770	0x000227b0	48	0	2	0	IDENTICAL		False	re/match/s19/004c5770.c
+0x0045ba10	___ddkreg_0045ba10	0x000227e0	144	1	0	0	IDENTICAL		False	re/match/s10/0045bae0.c
+0x0045bac0	___ddkreg_0045bac0		32				not-in-map			re/match/s10/0045bae0.c
+0x0045bae0	_Orig_0045bae0	0x00022870	192	12	7	0	IDENTICAL		False	re/match/s10/0045bae0.c
+0x0045bf30	_Orig_0045bf30		112				not-in-map			re/match/s10/0045bae0.c
+0x0045bba0	_Orig_0045bba0		752				not-in-map			re/match/s10/0045bae0.c
+0x00459290	_Orig_00459290	0x00022930	288	12	6	0	IDENTICAL		False	re/match/s09/00459290.c
+0x004587a0	_Orig_004587a0	0x00022a50	224	15	4	0	IDENTICAL		False	re/match/s09/004587a0.c
+0x00453f30	_Orig_00453f30	0x00022b30	48	0	1	0	IDENTICAL		False	re/match/s09/00453f30.c
+0x00411f30	_Orig_00411f30	0x00022b60	224	14	3	0	IDENTICAL		False	re/match/s02/00411f30.c
+0x004039c0	_Orig_004039c0	0x00022c40	32	2	1	0	IDENTICAL		False	re/match/s01/raw/004039c0.c
+0x004b3e40	_Orig_004b3e40	0x00022c60	112	4	0	0	IDENTICAL		False	re/match/s18/004b3e40.c
+0x0048fed0	_Orig_0048fed0	0x00022cd0	16	0	0	0	IDENTICAL		False	re/match/s15/0048fed0.c
+0x0048fee0	_Orig_0048fee0	0x00022ce0	16	0	0	0	IDENTICAL		False	re/match/s15/0048fee0.c
+0x0048fef0	_Orig_0048fef0	0x00022cf0	48	2	0	0	IDENTICAL		False	re/match/s15/0048fef0.c
+0x0048ff20	_Orig_0048ff20	0x00022d20	176	12	2	0	IDENTICAL		False	re/match/s15/0048ff20.c
+0x0048ffd0	_Orig_0048ffd0	0x00022dd0	48	2	1	0	IDENTICAL		False	re/match/s15/0048ffd0.c
+0x00490000	_Orig_00490000	0x00022e00	32	1	1	0	IDENTICAL		False	re/match/s15/00490000.c
+0x004b3b70	_Orig_004b3b70	0x00022e20	64	3	0	0	IDENTICAL		False	re/match/s18/004b3b70.c
+0x004b65a0	_Orig_004b65a0	0x00022e60	16	1	0	0	IDENTICAL		False	re/match/s18/004b65a0.c
+0x004b65b0	_Orig_004b65b0	0x00022e70	16	1	0	0	IDENTICAL		False	re/match/s18/004b65b0.c
+0x004b68e0	_Orig_004b68e0	0x00022e80	16	0	1	0	IDENTICAL		False	re/match/s18/004b68e0.c
+0x004781b0	_Orig_004781b0	0x00022e90	80	5	0	0	IDENTICAL		False	re/match/s12/004781b0.c
+0x00474d60	_Orig_00474d60	0x00022f10	32	2	0	0	IDENTICAL		False	re/match/s11/00474d60.c
+0x00412010	_Orig_00412010	0x00022f30	64	2	4	0	IDENTICAL		False	re/match/s02/00412010.c
+0x004725f0	_Orig_004725f0	0x00022f70	80	2	2	0	IDENTICAL		False	re/match/s11/004725f0.c
+0x004210b0	_Orig_004210b0	0x00022fc0	64	5	2	0	IDENTICAL		False	re/match/s05/004210b0.c
+0x00421080	_Orig_00421080	0x00023000	48	0	3	0	IDENTICAL		False	re/match/s05/00421080.c
+0x004b6480	_Orig_004b6480	0x00023030	96	0	0	0	IDENTICAL		False	re/match/s18/004b6480.c
+0x00555830	_Orig_00555830	0x00023090	224	4	3	0	IDENTICAL		False	re/match/s24/00555830.c
+0x004cc9e0	_Orig_004cc9e0	0x00023170	16	1	0	0	IDENTICAL		False	re/match/rwl01/004cc9e0.c
+0x00552750	_Orig_00552750	0x00023180	240	0	28	0	IDENTICAL		False	re/match/s24/00552750.c
+0x00552a60	_Orig_00552a60	0x00023270	240	2	21	0	IDENTICAL		False	re/match/s24/00552a60.c
+0x00552b50	_Orig_00552b50	0x00023360	16	0	1	0	IDENTICAL		False	re/match/rt2d/00552b50.c
+0x00552b60	_Orig_00552b60	0x00023370	48	7	1	0	IDENTICAL		False	re/match/s24/00552b60.c
+0x00552c10	_Orig_00552c10	0x000233a0	256	2	30	0	IDENTICAL		False	re/match/s24/00552c10.c
+0x00553f40	_Orig_00553f40	0x000234a0	208	5	1	0	IDENTICAL		False	re/match/rwl04/00553f40.c
+0x005540d0	_Orig_005540d0	0x00023570	128	3	6	0	IDENTICAL		False	re/match/rwl04/005540d0.c
+0x00556d20	_Orig_00556d20	0x000235f0	80	1	6	0	IDENTICAL		False	re/match/rwl05/00556d20.c
+0x005571e0	_Orig_005571e0	0x00023640	64	1	4	0	IDENTICAL		False	re/match/s24/005571e0.c
+0x00557250	_Orig_00557250	0x00023680	96	2	8	0	IDENTICAL		False	re/match/s24/00557250.c
+0x00556cc0	_Orig_00556cc0	0x000236e0	16	0	1	0	IDENTICAL		False	re/match/s24/00556cc0.c
+0x00556d70	_Orig_00556d70	0x000236f0	208	3	2	0	IDENTICAL		False	re/match/rwl05/00556d70.c
+0x00557110	_Orig_00557110	0x000237c0	176	4	0	0	IDENTICAL		False	re/match/s24/00557110.c
+0x00555360	_Orig_00555360	0x00023870	368	4	29	79	DIFFERENT	+0x2d	False	re/match/s24/00555360.c
+0x00556e40	_Orig_00556e40	0x000239e0	80	1	2	0	IDENTICAL		False	re/match/s24/00556e40.c
+0x005c4d30	_Orig_005c4d30	0x00023a30	32	0	0	0	IDENTICAL		False	re/match/s28/005c4d30.c
+0x005c4d50	_Orig_005c4d50	0x00023a50	80	0	2	0	IDENTICAL		False	re/match/s28/005c4d50.c
+0x0048a830	_Orig_0048a830	0x00023aa0	32	1	2	0	IDENTICAL		False	re/match/s14/0048a830.c
+0x004b3fc0	_Orig_004b3fc0	0x00023ac0	64	2	0	0	IDENTICAL		False	re/match/s29/004b3fc0.c
+0x004b5240	_Orig_004b5240	0x00023b00	32	0	0	0	IDENTICAL		False	re/match/s18/004b5240.c
+0x00456760	_Orig_00456760	0x00023b20	320	18	13	0	IDENTICAL		False	re/match/s09/00456760.c
+0x004583a0	_Orig_004583a0	0x00023c60	304	18	14	0	IDENTICAL		False	re/match/s29/004583a0.c
+0x0045a3a0	_Orig_0045a3a0	0x00023d90	128	0	2	36	DIFFERENT	+0x1	False	re/match/s09/0045a3a0.c
+0x0045a6b0	_Orig_0045a6b0	0x00023e10	224	12	4	0	IDENTICAL		False	re/match/s29/0045a6b0.c
+0x0045b830	_Orig_0045b830	0x00023ef0	240	12	5	0	IDENTICAL		False	re/match/s29/0045b830.c
+0x00454e70	_Orig_00454e70	0x00023fe0	256	14	8	0	IDENTICAL		False	re/match/s29/00454e70.c
+0x004576f0	_Orig_004576f0	0x00024100	192	15	6	0	IDENTICAL		False	re/match/s29/004576f0.c
+0x00452f70	_Orig_00452f70	0x000241c0	320	18	4	0	IDENTICAL		False	re/match/s29/00452f70.c
+0x00454e40	_Orig_00454e40	0x00024340	48	2	4	0	IDENTICAL		False	re/match/s29/00454e40.c
+0x0045b810	_Orig_0045b810	0x000243a0	32	1	2	0	IDENTICAL		False	re/match/s29/0045b810.c
+0x00457ba0	___ddkreg_00457ba0	0x000243c0	112	2	0	0	IDENTICAL		False	re/match/s09/00458360.c
+0x00458020	___ddkreg_00458020	0x00024430	96	4	0	0	IDENTICAL		False	re/match/s09/00458360.c
+0x00458080	___ddkreg_00458080		624				not-in-map			re/match/s09/00458360.c
+0x00458360	_Orig_00458360	0x00024490	64	2	4	0	IDENTICAL		False	re/match/s09/00458360.c
+0x004b3f20	_Orig_004b3f20	0x000244d0	48	0	0	0	IDENTICAL		False	re/match/s29/004b3f20.c
+0x0040cda0	_Orig_0040cda0	0x00024500	96	5	1	0	IDENTICAL		False	re/match/s02/0040cda0.c
+0x0040bb10	_Orig_0040bb10	0x00024560	32	1	0	0	IDENTICAL		False	re/match/s29/0040bb10.c
+0x0040bae0	_Orig_0040bae0	0x00024580	48	3	0	0	IDENTICAL		False	re/match/s02/0040bae0.c
+0x0040baa0	_Orig_0040baa0	0x000245b0	64	3	0	0	IDENTICAL		False	re/match/s02/0040baa0.c
+0x004672d0	_Orig_004672d0	0x000245f0	48	2	2	0	IDENTICAL		False	re/match/s11/004672d0.c
+0x004548e0	_Orig_004548e0	0x00024620	320	20	11	0	IDENTICAL		False	re/match/s09/004548e0.c
+0x00454170	___ddkreg_00454170	0x00024760	112	5	0	0	IDENTICAL		False	re/match/s09/004548a0.c
+0x004547c0	___ddkreg_004547c0	0x000247d0	96	4	0	0	IDENTICAL		False	re/match/s09/004548a0.c
+0x004548a0	_Orig_004548a0	0x00024830	64	2	4	0	IDENTICAL		False	re/match/s09/004548a0.c
+0x004dba60	_RwCore_004dba60	0x00024870	560	9	14	41	DIFFERENT	+0x4f	False	re/match/s21/004dba60.c
+0x004c75c0	_RwCore_004c75c0	0x00024aa0	32	0	2	0	IDENTICAL		False	re/match/s19/004c75c0.c
+0x004dcbb0	_RwCore_004dcbb0	0x00024ac0	384	1	22	179	DIFFERENT	+0x0	False	re/match/rwl01/004dcbb0.c
+0x004dcaa0	_RwCore_004dcaa0	0x00024c40	224	0	7	0	IDENTICAL		False	re/match/rwl01/004dcaa0.c
+0x004db770	_RwCore_004db770	0x00024d20	208	18	2	0	IDENTICAL		False	re/match/s21/004db770.c
+0x004d54f0	_RwCore_004d54f0	0x00024df0	96	0	8	0	IDENTICAL		False	re/match/s21/004d54f0.c
+0x004cb0b0	_RwCore_004cb0b0	0x00024e50	64	0	4	0	IDENTICAL		False	re/match/s20/004cb0b0.c
+0x004cb070	_RwCore_004cb070	0x00024e90	64	0	5	0	IDENTICAL		False	re/match/s20/004cb070.c
+0x004cb0f0	_RwCore_004cb0f0	0x00024ed0	64	0	4	0	IDENTICAL		False	re/match/s20/004cb0f0.c
+0x004cb130	_RwCore_004cb130	0x00024f10	96	0	7	0	IDENTICAL		False	re/match/s20/004cb130.c
+0x004d6e60	_RwCore_004d6e60	0x00024f70	16	0	1	0	IDENTICAL		False	re/match/s21/004d6e60.c
+0x004d5480	_RwCore_004d5480	0x00024f80	80	0	7	0	IDENTICAL		False	re/match/s21/004d5480.c
+0x004d53b0	_RwCore_004d53b0	0x00024fd0	208	0	19	0	IDENTICAL		False	re/match/s21/004d53b0.c
+0x004d6910	_RwCore_004d6910	0x000250a0	640	31	28	0	IDENTICAL		False	re/match/s21/004d6910.c
+0x004d5480	_RwCoreCopy_004d7480_004d5480	0x00025320	80	0	7	0	IDENTICAL		False	re/match/s21/004d7480.c
+0x004d7480	_RwCore_004d7480	0x00025370	1600	49	122	0	IDENTICAL		False	re/match/s21/004d7480.c
+0x004d72f0	_RwCore_004d72f0	0x000259b0	80	0	9	0	IDENTICAL		False	re/match/s21/004d72f0.c
+0x004d6c40	_RwCore_004d6c40	0x00025a00	80	0	9	0	IDENTICAL		False	re/match/s21/004d6c40.c
+0x004d6c90	_RwCore_004d6c90	0x00025a50	80	0	9	0	IDENTICAL		False	re/match/s21/004d6c90.c
+0x004d7c10	_RwCore_004d7c10	0x00025aa0	80	0	9	0	IDENTICAL		False	re/match/s21/004d7c10.c
+0x004d7390	_RwCore_004d7390	0x00025af0	80	0	8	0	IDENTICAL		False	re/match/s21/004d7390.c
+0x004d7200	_RwCore_004d7200	0x00025b40	80	0	8	0	IDENTICAL		False	re/match/s21/004d7200.c
+0x004d7ac0	_RwCore_004d7ac0	0x00025b90	256	0	29	0	IDENTICAL		False	re/match/s21/004d7ac0.c
+0x004d7bc0	_RwCore_004d7bc0	0x00025c90	80	0	9	0	IDENTICAL		False	re/match/s21/004d7bc0.c
+0x004d6b90	_RwCore_004d6b90	0x00025ce0	176	0	15	0	IDENTICAL		False	re/match/s21/004d6b90.c
+0x004d7340	_RwCore_004d7340	0x00025d90	80	0	9	0	IDENTICAL		False	re/match/s21/004d7340.c
+0x004d7430	_RwCore_004d7430	0x00025de0	80	0	8	0	IDENTICAL		False	re/match/s21/004d7430.c
+0x004d7250	_RwCore_004d7250	0x00025e30	80	0	9	0	IDENTICAL		False	re/match/s21/004d7250.c
+0x004d72a0	_RwCore_004d72a0	0x00025e80	80	0	9	0	IDENTICAL		False	re/match/s21/004d72a0.c
+0x004d73e0	_RwCore_004d73e0	0x00025ed0	80	0	8	0	IDENTICAL		False	re/match/s21/004d73e0.c
+0x004d6ce0	_RwCore_004d6ce0	0x00025f20	384	0	33	0	IDENTICAL		False	re/match/s21/004d6ce0.c
+0x004d7100	_RwCore_004d7100	0x000260a0	240	0	27	216	DIFFERENT	+0x1	False	re/match/s21/004d7100.c
+0x004c7a70	_RwCore_004c7a70	0x00026190	3040	86	178	1318	DIFFERENT	+0x142	False	re/match/rwd01/004c7a70.c
+0x004c8740	_RwCore_004c8740	0x00026d70	192	0	17	0	IDENTICAL		False	re/match/s20/004c8740.c
+0x004dc4a0	_RwCore_004dc4a0	0x00026e30	176	0	0	171	DIFFERENT	+0x3	False	re/match/rwl01/004dc4a0.c
+0x004dc160	_RwCore_004dc160	0x00026ee0	128	0	0	128	DIFFERENT	+0x0	False	re/match/s21/004dc160.c
+0x004c8c70	_RwCore_004c8c70	0x00026f60	480	5	35	387	DIFFERENT	+0x3a	False	re/match/s20/004c8c70.c
+0x004cc9f0	_RwCore_004cc9f0	0x00027140	144	0	4	0	IDENTICAL		False	re/match/rwl01/004cc9f0.c
+0x004db550	_RwCore_004db550	0x000271d0	96	1	7	0	IDENTICAL		False	re/match/s21/004db550.c
+0x004cba80	_RwCore_004cba80	0x00027230	80	0	3	0	IDENTICAL		False	re/match/s20/004cba80.c
+0x005cb42b	_RwCore_005cb42b	0x000142f0	16	0	0	16	DIFFERENT	+0x0	False	re/match/rwl06/005cb42b.c
+0x004dcdc0	_RwCore_004dcdc0	0x00027280	464	4	34	415	DIFFERENT	+0x0	False	re/match/rwl01/004dcdc0.c
+0x004cfe40	_RwCore_004cfe40	0x00027450	160	2	14	0	IDENTICAL		False	re/match/s20/004cfe40.c
+0x004cfe20	_RwCore_004cfe20	0x000274f0	32	1	1	0	IDENTICAL		False	re/match/s20/004cfe20.c
+0x004cc7f0	_RwCore_004cc7f0	0x00027510	48	1	0	0	IDENTICAL		False	re/match/rwl01/004cc7f0.c
+0x004cc820	_RwCore_004cc820	0x00027540	448	0	13	14	DIFFERENT	+0xa8	False	re/match/rwl01/004cc820.c
+0x004db3e0	_RwCore_004db3e0	0x00027700	368	2	18	13	DIFFERENT	+0x148	False	re/match/rwl01/004db3e0.c
+0x004cb8a0	_RwCore_004cb8a0	0x00027870	480	0	25	0	IDENTICAL		False	re/match/rwl01/004cb8a0.c
+0x004c8e50	_RwCore_004c8e50	0x00027a50	592	28	0	0	IDENTICAL		False	re/match/s20/004c8e50.c
+0x004ddd60	_RwCore_004ddd60	0x00027ca0	560	3	0	511	DIFFERENT	+0x11	False	re/match/rwl01/004ddd60.c
+0x004d8480	_RwCore_004d8480	0x00027ed0	96	0	4	0	IDENTICAL		False	re/match/s21/004d8480.c
+0x004ddfb0	_RwCore_004ddfb0	0x00027f30	448	2	0	415	DIFFERENT	+0x4	False	re/match/rwl01/004ddfb0.c
+0x004dd150	_RwCore_004dd150	0x000280f0	400	0	1	0	IDENTICAL		False	re/match/rwl01/004dd150.c
+0x004d0290	_RwCore_004d0290	0x00028280	656	13	5	436	DIFFERENT	+0x53	False	re/match/s20/004d0290.c
+0x004c5dd0	_RwCore_004c5dd0	0x00028510	48	0	2	0	IDENTICAL		False	re/match/s19/004c5dd0.c
+0x004de1b0	_RwCore_004de1b0	0x00028540	448	9	4	388	DIFFERENT	+0x2	False	re/match/rwl01/004de1b0.c
+0x004de390	_RwCore_004de390	0x00028700	1168	9	1	1023	DIFFERENT	+0xc	False	re/match/rwl01/004de390.c
+0x004de800	_RwCore_004de800	0x00028b90	816	47	1	559	DIFFERENT	+0x0	False	re/match/rwl01/004de800.c
+0x004dee20	_RwCore_004dee20	0x00028ec0	32	0	0	0	IDENTICAL		False	re/match/rwl01/004dee20.c
+0x004c7620	_RwCore_004c7620	0x00028ee0	48	0	1	0	IDENTICAL		False	re/match/s19/004c7620.c
+0x004c7600	_RwCore_004c7600	0x00028f10	32	0	1	0	IDENTICAL		False	re/match/s19/004c7600.c
+0x004c76c0	_RwCore_004c76c0	0x00028f30	48	0	1	0	IDENTICAL		False	re/match/s19/004c76c0.c
+0x004c7860	_RwCore_004c7860	0x00028f60	64	0	1	0	IDENTICAL		False	re/match/s20/004c7860.c
+0x004cff20	_RwCore_004cff20	0x00028fa0	864	11	4	734	DIFFERENT	+0x4a	False	re/match/s20/004cff20.c
+0x004df120	_RwCore_004df120	0x00029300	1648	27	7	1402	DIFFERENT	+0x2	False	re/match/rwl01/004df120.c
+0x004df750	_RwCore_004df750	0x00029970	288	33	0	0	IDENTICAL		False	re/match/rwl01/004df750.c
+0x004dfa40	_RwCore_004dfa40	0x00029a90	48	0	0	0	IDENTICAL		False	re/match/s21/004dfa40.c
+0x004df910	_RwCore_004df910	0x00029ac0	64	0	0	0	IDENTICAL		False	re/match/s21/004df910.c
+0x004df870	_RwCore_004df870	0x00029b00	48	0	0	0	IDENTICAL		False	re/match/rwl01/004df870.c
+0x004df8d0	_RwCore_004df8d0	0x00029b30	64	0	0	0	IDENTICAL		False	re/match/s21/004df8d0.c
+0x004dfab0	_RwCore_004dfab0	0x00029b70	96	0	0	0	IDENTICAL		False	re/match/s21/004dfab0.c
+0x004df8a0	_RwCore_004df8a0	0x00029bd0	48	0	0	0	IDENTICAL		False	re/match/rwl01/004df8a0.c
+0x004dfb60	_RwCore_004dfb60	0x00029c00	96	0	0	0	IDENTICAL		False	re/match/s21/004dfb60.c
+0x004dfa70	_RwCore_004dfa70	0x00029c60	48	0	0	0	IDENTICAL		False	re/match/s21/004dfa70.c
+0x004df9e0	_RwCore_004df9e0	0x00029c90	48	0	0	0	IDENTICAL		False	re/match/s21/004df9e0.c
+0x004df950	_RwCore_004df950	0x00029cc0	48	0	0	0	IDENTICAL		False	re/match/s21/004df950.c
+0x004df9b0	_RwCore_004df9b0	0x00029cf0	48	0	0	0	IDENTICAL		False	re/match/s21/004df9b0.c
+0x004dfb10	_RwCore_004dfb10	0x00029d20	80	0	0	0	IDENTICAL		False	re/match/s21/004dfb10.c
+0x004df980	_RwCore_004df980	0x00029d70	48	0	0	0	IDENTICAL		False	re/match/s21/004df980.c
+0x004dfa10	_RwCore_004dfa10	0x00029da0	48	0	0	0	IDENTICAL		False	re/match/s21/004dfa10.c
+0x004dfaa0	_RwCore_004dfaa0	0x00029dd0	16	0	0	0	IDENTICAL		False	re/match/s21/004dfaa0.c
+0x004e02d0	_RwCore_004e02d0	0x00029de0	1520	66	4	1043	DIFFERENT	+0x2b	False	re/match/s21/004e02d0.c
+0x004db2e0	_RwCore_004db2e0	0x0002a3d0	256	19	0	0	IDENTICAL		False	re/match/rwl01/004db2e0.c
+0x004dabd0	_RwCore_004dabd0	0x0002a4d0	864	11	14	758	DIFFERENT	+0x2	False	re/match/s21/004dabd0.c
+0x004daff0	_RwCore_004daff0	0x0002a830	720	0	20	622	DIFFERENT	+0x45	False	re/match/s21/004daff0.c
+0x004cdca0	_RwCore_004cdca0	0x0002ab00	96	1	3	0	IDENTICAL		False	re/match/rwl01/004cdca0.c
+0x004d8000	_RwCore_004d8000	0x0002ab60	96	0	0	0	IDENTICAL		False	re/match/s21/004d8000.c
+0x004cdd00	_RwCore_004cdd00	0x0002abc0	96	1	4	0	IDENTICAL		False	re/match/rwl01/004cdd00.c
+0x004d8060	_RwCore_004d8060	0x0002ac20	48	0	0	0	IDENTICAL		False	re/match/s21/004d8060.c
+0x004cecb0	_RwCore_004cecb0	0x0002ac50	464	2	0	237	DIFFERENT	+0x72	False	re/match/s20/004cecb0.c
+0x004cde20	_RwCore_004cde20	0x0002ae20	48	0	1	0	IDENTICAL		False	re/match/s20/004cde20.c
+0x004cdd60	_RwCore_004cdd60	0x0002ae50	192	2	1	150	DIFFERENT	+0x12	False	re/match/rwl01/004cdd60.c
+0x004dee40	_RwCore_004dee40	0x0002af10	480	4	3	443	DIFFERENT	+0x0	False	re/match/rwl01/004dee40.c
+0x004d38b0	_RwCore_004d38b0	0x0002b0f0	64	0	4	0	IDENTICAL		False	re/match/s20/004d38b0.c
+0x004dfbc0	_RwCore_004dfbc0	0x0002b130	1760	11	1	1249	DIFFERENT	+0x1	False	re/match/s21/004dfbc0.c
+0x004d9050	_RwCore_004d9050	0x0002b890	784	4	12	0	IDENTICAL		False	re/match/s21/004d9050.c
+0x004d9360	_RwCore_004d9360	0x0002bba0	320	0	7	87	DIFFERENT	+0xa4	False	re/match/s21/004d9360.c
+0x004daaf0	_RwCore_004daaf0	0x0002bce0	128	2	2	0	IDENTICAL		False	re/match/s21/004daaf0.c
+0x004dab70	_RwCore_004dab70	0x0002bd60	96	1	1	0	IDENTICAL		False	re/match/s21/004dab70.c
+0x004da4f0	_RwCore_004da4f0	0x0002bdc0	1296	4	20	84	DIFFERENT	+0x2	False	re/match/s21/004da4f0.c
+0x004daa00	_RwCore_004daa00	0x0002c2d0	48	0	0	42	DIFFERENT	+0x1	False	re/match/s21/004daa00.c
+0x004d9530	_RwCore_004d9530	0x0002c3c0	1344	13	13	1142	DIFFERENT	+0x2	False	re/match/s21/004d9530.c
+0x004d9ba0	_RwCore_004d9ba0	0x0002c900	352	1	0	45	DIFFERENT	+0x6	False	re/match/s21/004d9ba0.c
+0x004d9a60	_RwCore_004d9a60	0x0002ca60	160	4	7	140	DIFFERENT	+0x0	False	re/match/s21/004d9a60.c
+0x004d9d00	_RwCore_004d9d00	0x0002cb00	480	2	0	57	DIFFERENT	+0x6	False	re/match/s21/004d9d00.c
+0x004d9ee0	_RwCore_004d9ee0	0x0002cce0	288	0	4	32	DIFFERENT	+0x5c	False	re/match/s21/004d9ee0.c
+0x004da270	_RwCore_004da270	0x0002ce00	448	2	8	107	DIFFERENT	+0x11	False	re/match/s21/004da270.c
+0x004da000	_RwCore_004da000	0x0002cfc0	624	1	7	39	DIFFERENT	+0x14a	False	re/match/s21/004da000.c
+0x004daa40	_RwCore_004daa40	0x0002d230	176	1	3	0	IDENTICAL		False	re/match/s21/004daa40.c
+0x004d2340	_RwCore_004d2340	0x0002d2e0	1440	35	25	1219	DIFFERENT	+0x7	False	re/match/s20/004d2340.c
+0x004d38f0	_RwCore_004d38f0	0x0002d880	96	0	8	0	IDENTICAL		False	re/match/s20/004d38f0.c
+0x004d3950	_RwCore_004d3950	0x0002d8e0	96	0	7	0	IDENTICAL		False	re/match/s20/004d3950.c
+0x004d3a60	_RwCore_004d3a60	0x0002d940	80	0	5	0	IDENTICAL		False	re/match/s20/004d3a60.c
+0x004d2c80	_RwCore_004d2c80	0x0002d990	432	5	12	0	IDENTICAL		False	re/match/s20/004d2c80.c
+0x004ddcb0	_RwCore_004ddcb0	0x0002db40	192	0	5	143	DIFFERENT	+0x23	False	re/match/rwl01/004ddcb0.c
+0x004d2e30	_RwCore_004d2e30	0x0002dc00	608	5	37	0	IDENTICAL		False	re/match/s20/004d2e30.c
+0x004d2980	_RwCore_004d2980	0x0002de60	768	4	36	0	IDENTICAL		False	re/match/rwl01/004d2980.c
+0x004d3a10	_RwCore_004d3a10	0x0002e160	80	0	5	0	IDENTICAL		False	re/match/s20/004d3a10.c
+0x004d3090	_RwCore_004d3090	0x0002e1b0	864	11	29	792	DIFFERENT	+0x5	False	re/match/rwl01/004d3090.c
+0x004dcd50	_RwCore_004dcd50	0x0002e510	112	6	4	0	IDENTICAL		False	re/match/rwl01/004dcd50.c
+0x004dc9e0	_RwCore_004dc9e0	0x0002e580	192	2	17	0	IDENTICAL		False	re/match/rwl01/004dc9e0.c
+0x004c90a0	_RwCore_004c90a0	0x0002e640	496	4	27	0	IDENTICAL		False	re/match/rwl01/004c90a0.c
+0x004dc410	_RwCore_004dc410	0x00022670	16	0	0	16	DIFFERENT	+0x0	False	re/match/rwl01/004dc410.c
+0x004d5480	_RwCoreCopy_004d5bc0_004d5480	0x00025320	80	0	7	0	IDENTICAL		False	re/match/s21/004d5bc0.c
+0x004d5bc0	_RwCore_004d5bc0	0x0002e830	1600	33	143	0	IDENTICAL		False	re/match/s21/004d5bc0.c
+0x004d5570	_RwCore_004d5570	0x0002ee70	64	0	3	0	IDENTICAL		False	re/match/s21/004d5570.c
+0x004c35f0	_RwCore_004c35f0	0x0002eeb0	128	4	8	0	IDENTICAL		False	re/match/s19/004c35f0.c
+0x004dc280	_RwCore_004dc280	0x0002ef30	96	0	0	94	DIFFERENT	+0x0	False	re/match/s21/004dc280.c
+0x004dc530	_RwCore_004dc530	0x0002ef90	155	0	0	151	DIFFERENT	+0x3	False	re/match/rwl01/004dc530.c
+0x004dc370	_RwCore_004dc370	0x00022670	16	0	0	16	DIFFERENT	+0x0	False	re/match/rwl01/004dc370.c
+0x004c40b0	_RwCore_004c40b0	0x0002f030	48	1	2	0	IDENTICAL		False	re/match/s19/004c40b0.c
+0x004c8650	_RwCore_004c8650	0x0002f060	64	0	8	0	IDENTICAL		False	re/match/s20/004c8650.c
+0x004c8800	_RwCore_004c8800	0x0002f0a0	1136	6	98	0	IDENTICAL		False	re/match/s20/004c8800.c
+0x004dc300	_RwCore_004dc300	0x0002f510	179	2	0	166	DIFFERENT	+0x3	False	re/match/rwl01/004dc300.c
+0x004c8690	_RwCore_004c8690	0x0002f5d0	176	2	12	0	IDENTICAL		False	re/match/rwl01/004c8690.c
+0x004ccc50	_RwCore_004ccc50	0x0002f680	144	0	1	0	IDENTICAL		False	re/match/rwl01/004ccc50.c
+0x004dc1f0	_RwCore_004dc1f0	0x0002f710	112	0	0	111	DIFFERENT	+0x0	False	re/match/s21/004dc1f0.c
+0x004c9f60	_RwCore_004c9f60	0x0002f780	80	0	8	0	IDENTICAL		False	re/match/s20/004c9f60.c
+0x004c9eb0	_RwCore_004c9eb0	0x0002f7d0	160	0	10	0	IDENTICAL		False	re/match/s20/004c9eb0.c
+0x004c9f50	_RwCore_004c9f50	0x0002f870	16	0	1	0	IDENTICAL		False	re/match/s20/004c9f50.c
+0x004c3270	_RwCore_004c3270	0x0002f880	64	2	2	0	IDENTICAL		False	re/match/s19/004c3270.c
+0x004ccf20	_RwCore_004ccf20	0x0002f8c0	320	0	17	0	IDENTICAL		False	re/match/s20/004ccf20.c
+0x004d7ca0	_RwCore_004d7ca0	0x0002fa00	208	4	11	0	IDENTICAL		False	re/match/s21/004d7ca0.c
+0x004ccce0	_RwCore_004ccce0	0x0002fad0	256	0	2	0	IDENTICAL		False	re/match/s20/004ccce0.c
+0x004c3040	_RwCore_004c3040	0x0002fbd0	112	1	8	5	DIFFERENT	+0xa	False	re/match/s19/004c3040.c
+0x004c2c90	_RwCore_004c2c90	0x0002fc40	224	9	2	0	IDENTICAL		False	re/match/s19/004c2c90.c
+0x004c2f60	_RwCore_004c2f60	0x0002fd20	80	3	4	0	IDENTICAL		False	re/match/s19/004c2f60.c
+0x004c2fb0	_RwCore_004c2fb0	0x0002fd70	144	5	5	0	IDENTICAL		False	re/match/s19/004c2fb0.c
+0x004cf160	_RwCore_004cf160	0x0002fe00	256	4	16	116	DIFFERENT	+0x8	False	re/match/s20/004cf160.c
+0x004c30b0	_RwCore_004c30b0	0x0002ff00	448	10	18	347	DIFFERENT	+0x1f	False	re/match/rwl01/004c30b0.c
+0x004cae90	_RwCore_004cae90	0x000300c0	16	0	1	0	IDENTICAL		False	re/match/s20/004cae90.c
+0x004c32b0	_RwCore_004c32b0	0x000300d0	784	55	23	497	DIFFERENT	+0x0	False	re/match/s19/004c32b0.c
+0x004c3e90	_RwCore_004c3e90	0x000303e0	496	8	18	413	DIFFERENT	+0x11	False	re/match/rwl01/004c3e90.c
+0x004c1940	_RwCore_004c1940	0x000305d0	64	1	6	0	IDENTICAL		False	re/match/rwl01/004c1940.c
+0x004d8550	_RwCore_004d8550	0x00030610	16	1	0	0	IDENTICAL		False	re/match/s21/004d8550.c
+0x004d3d50	_RwCore_004d3d50	0x00030620	96	2	8	0	IDENTICAL		False	re/match/s20/004d3d50.c
+0x004e1780	_RwCore_004e1780	0x00030680	96	0	3	0	IDENTICAL		False	re/match/rwl01/004e1780.c
+0x004d8a80	_RwCore_004d8a80	0x000306e0	240	5	5	0	IDENTICAL		False	re/match/rwl01/004d8a80.c
+0x004e2fa0	_RwCore_004e2fa0	0x000307d0	80	0	0	0	IDENTICAL		False	re/match/rwl02/004e2fa0.c
+0x004d7c60	_RwCore_004d7c60	0x00030820	64	1	5	0	IDENTICAL		False	re/match/s21/004d7c60.c
+0x004cfa00	_RwCore_004cfa00	0x00030860	976	3	140	0	IDENTICAL		False	re/match/s20/004cfa00.c
+0x004c7690	_RwCore_004c7690	0x00030c30	48	1	1	0	IDENTICAL		False	re/match/rwl01/004c7690.c
+0x004d7de0	_RwCore_004d7de0	0x00030c60	512	9	15	457	DIFFERENT	+0x0	False	re/match/rwl01/004d7de0.c
+0x004c2d70	_RwCore_004c2d70	0x00030e60	16	0	1	0	IDENTICAL		False	re/match/s19/004c2d70.c
+0x004c78a0	_RwCore_004c78a0	0x00030e70	64	1	6	0	IDENTICAL		False	re/match/rwl01/004c78a0.c
+0x004d8fa0	_RwCore_004d8fa0	0x00030eb0	96	1	10	0	IDENTICAL		False	re/match/s21/004d8fa0.c
+0x004d8b70	_RwCore_004d8b70	0x00030f10	96	2	8	0	IDENTICAL		False	re/match/s21/004d8b70.c
+0x004d8eb0	_RwCore_004d8eb0	0x00030f70	240	1	17	0	IDENTICAL		False	re/match/s21/004d8eb0.c
+0x004e2ff0	_RwCore_004e2ff0	0x00031060	128	0	0	0	IDENTICAL		False	re/match/rwl02/004e2ff0.c
+0x004d9030	_RwCore_004d9030	0x000310e0	16	0	2	0	IDENTICAL		False	re/match/rwl01/004d9030.c
+0x004d9000	_RwCore_004d9000	0x000310f0	48	1	4	0	IDENTICAL		False	re/match/rwl01/004d9000.c
+0x004cd900	_RwCore_004cd900	0x00031120	608	8	54	0	IDENTICAL		False	re/match/rwl01/004cd900.c
+0x004d8470	_RwCore_004d8470	0x00031380	16	0	2	0	IDENTICAL		False	re/match/s21/004d8470.c
+0x004d8570	_RwCore_004d8570	0x00031390	272	17	17	0	IDENTICAL		False	re/match/s21/004d8570.c
+0x004c4470	_RwCore_004c4470	0x000314a0	192	2	14	0	IDENTICAL		False	re/match/s19/004c4470.c
+0x004cc9e0	_RwCore_004cc9e0	0x00031560	16	1	0	0	IDENTICAL		False	re/match/rwl01/004cc9e0.c
+0x004c1980	_RwCore_004c1980	0x00031570	112	1	11	0	IDENTICAL		False	re/match/rwl01/004c1980.c
+0x004cd850	_RwCore_004cd850	0x000315e0	176	4	15	0	IDENTICAL		False	re/match/rwl01/004cd850.c
+0x004e1990	_RwCore_004e1990	0x00031690	96	7	0	0	IDENTICAL		False	re/match/rwl01/004e1990.c
+0x004d41e0	_RwCore_004d41e0	0x000316f0	112	1	3	0	IDENTICAL		False	re/match/s20/004d41e0.c
+0x004d3e90	_RwCore_004d3e90	0x00031760	560	0	8	524	DIFFERENT	+0x5	False	re/match/s20/004d3e90.c
+0x004cd550	_RwCore_004cd550	0x00031990	704	18	44	0	IDENTICAL		False	re/match/s20/004cd550.c
+0x004e08b0	_RwCore_004e08b0	0x00031c50	112	3	8	0	IDENTICAL		False	re/match/rwl01/004e08b0.c
+0x004e19f0	_RwCore_004e19f0	0x00031cc0	160	12	0	0	IDENTICAL		False	re/match/rwl01/004e19f0.c
+0x004e0920	_RwCore_004e0920	0x00031d60	576	6	15	504	DIFFERENT	+0x16	False	re/match/rwl01/004e0920.c
+0x004e12a0	_RwCore_004e12a0	0x00031fa0	16	0	1	0	IDENTICAL		False	re/match/rwl01/004e12a0.c
+0x004d4f90	_RwCore_004d4f90	0x00031fb0	512	6	2	462	DIFFERENT	+0x0	False	re/match/rwl01/004d4f90.c
+0x004d5190	_RwCore_004d5190	0x000321b0	320	6	4	272	DIFFERENT	+0x0	False	re/match/s21/004d5190.c
+0x004d4380	_RwCore_004d4380	0x000322f0	1344	11	9	1123	DIFFERENT	+0x4	False	re/match/rwl01/004d4380.c
+0x004d4a20	_RwCore_004d4a20	0x00032830	464	2	5	4	DIFFERENT	+0x1b8	False	re/match/s21/004d4a20.c
+0x004d4910	_RwCore_004d4910	0x00032a00	272	2	1	209	DIFFERENT	+0x2a	False	re/match/rwl01/004d4910.c
+0x004e2090	_RwCore_004e2090	0x00032b10	816	18	0	675	DIFFERENT	+0x2	False	re/match/rwl02/004e2090.c
+0x004e2b60	_RwCore_004e2b60	0x00032e40	144	0	0	0	IDENTICAL		False	re/match/rwl02/004e2b60.c
+0x004e2930	_RwCore_004e2930	0x00032ed0	528	3	0	482	DIFFERENT	+0x2	False	re/match/rwl02/004e2930.c
+0x004d4250	_RwCore_004d4250	0x000330e0	96	2	4	0	IDENTICAL		False	re/match/s21/004d4250.c
+0x004e2530	_RwCore_004e2530	0x00033140	288	1	0	262	DIFFERENT	+0x0	False	re/match/rwl02/004e2530.c
+0x004d4310	_RwCore_004d4310	0x00033260	112	0	0	0	IDENTICAL		False	re/match/s21/004d4310.c
+0x004e2420	_RwCore_004e2420	0x000332d0	80	2	0	0	IDENTICAL		False	re/match/rwl02/004e2420.c
+0x004e2500	_RwCore_004e2500	0x00033320	48	0	0	0	IDENTICAL		False	re/match/rwl02/004e2500.c
+0x004e2650	_RwCore_004e2650	0x00033350	592	0	0	567	DIFFERENT	+0x2	False	re/match/rwl02/004e2650.c
+0x004e2470	_RwCore_004e2470	0x000335a0	144	0	0	48	DIFFERENT	+0x34	False	re/match/rwl02/004e2470.c
+0x004e2bf0	_RwCore_004e2bf0	0x00033630	896	10	0	822	DIFFERENT	+0x4	False	re/match/rwl02/004e2bf0.c
+0x004d42b0	_RwCore_004d42b0	0x000339b0	96	2	4	0	IDENTICAL		False	re/match/s21/004d42b0.c
+0x004e3160	_RwCore_004e3160	0x00033a10	576	0	0	556	DIFFERENT	+0x0	False	re/match/rwl02/004e3160.c
+0x004d4bf0	_RwCore_004d4bf0	0x00033c50	480	1	0	0	IDENTICAL		False	re/match/s21/004d4bf0.c
+0x004d4170	_RwCore_004d4170	0x00033e30	112	2	2	0	IDENTICAL		False	re/match/rwl01/004d4170.c
+0x004d4dd0	_RwCore_004d4dd0	0x00033ea0	304	4	2	0	IDENTICAL		False	re/match/rwl01/004d4dd0.c
+0x004e1960	_RwCore_004e1960	0x00033fd0	48	2	0	0	IDENTICAL		False	re/match/rwl01/004e1960.c
+0x004cd500	_RwCore_004cd500	0x00034000	80	0	8	18	DIFFERENT	+0x17	False	re/match/s20/004cd500.c
+0x004e18f0	_RwCore_004e18f0	0x00034050	112	7	0	0	IDENTICAL		False	re/match/rwl01/004e18f0.c
+0x004e1290	_RwCore_004e1290	0x000340c0	16	0	1	0	IDENTICAL		False	re/match/rwl01/004e1290.c
+0x004c4430	_RwCore_004c4430	0x000340d0	64	1	6	0	IDENTICAL		False	re/match/s19/004c4430.c
+0x004c5e00	_RwCore_004c5e00	0x00034110	336	4	23	242	DIFFERENT	+0x4c	False	re/match/rwl01/004c5e00.c
+0x004c5a60	_RwCore_004c5a60	0x00034260	128	2	3	0	IDENTICAL		False	re/match/rwl01/004c5a60.c
+0x004c7650	_RwCore_004c7650	0x000342e0	64	1	4	0	IDENTICAL		False	re/match/rwl01/004c7650.c
+0x004ccba0	_RwCore_004ccba0	0x00034320	176	0	1	0	IDENTICAL		False	re/match/rwl01/004ccba0.c
+0x004cdb60	_RwCore_004cdb60	0x000343d0	320	2	26	0	IDENTICAL		False	re/match/rwl01/004cdb60.c
+0x004d8530	_RwCore_004d8530	0x00034510	32	1	1	0	IDENTICAL		False	re/match/s21/004d8530.c
+0x004d3db0	_RwCore_004d3db0	0x00034530	224	4	20	0	IDENTICAL		False	re/match/rwl01/004d3db0.c
+0x004e17e0	_RwCore_004e17e0	0x00034610	272	2	4	0	IDENTICAL		False	re/match/rwl01/004e17e0.c
+0x004e15f0	_RwCore_004e15f0	0x00034720	128	1	0	0	IDENTICAL		False	re/match/rwl01/004e15f0.c
+0x004e13f0	_RwCore_004e13f0	0x000347a0	160	2	1	149	DIFFERENT	+0x0	False	re/match/rwl01/004e13f0.c
+0x004e1e70	_RwCore_004e1e70	0x00034840	224	4	3	202	DIFFERENT	+0x4	False	re/match/rwl01/004e1e70.c
+0x004cd810	_RwCore_004cd810	0x00034920	64	2	6	0	IDENTICAL		False	re/match/rwl01/004cd810.c
+0x004d9040	_RwCore_004d9040	0x00034960	16	0	2	0	IDENTICAL		False	re/match/rwl01/004d9040.c
+0x004cc7e0	_RwCore_004cc7e0	0x00034970	16	0	1	0	IDENTICAL		False	re/match/s20/004cc7e0.c
+0x004c78e0	_RwCore_004c78e0	0x00034980	272	1	30	0	IDENTICAL		False	re/match/rwl01/004c78e0.c
+0x004c07b0	_RwCore_004c07b0	0x00034a90	128	1	12	0	IDENTICAL		False	re/match/s19/004c07b0.c
+0x004c5f60	_RwCore_004c5f60	0x00034b10	480	10	48	0	IDENTICAL		False	re/match/rwl01/004c5f60.c
+0x004c6140	_RwCore_004c6140	0x00034cf0	112	0	3	0	IDENTICAL		False	re/match/s19/004c6140.c
+0x004c5890	_RwCore_004c5890	0x00034d60	160	1	11	0	IDENTICAL		False	re/match/s19/004c5890.c
+0x004cbca0	_RwCore_004cbca0	0x00034e00	96	1	10	0	IDENTICAL		False	re/match/rwl01/004cbca0.c
+0x004d8430	_RwCore_004d8430	0x00034e60	64	0	6	0	IDENTICAL		False	re/match/s21/004d8430.c
+0x004cce20	_RwCore_004cce20	0x00034ea0	208	5	12	0	IDENTICAL		False	re/match/rwl01/004cce20.c
+0x004cbd00	_RwCore_004cbd00	0x00034f70	48	1	4	0	IDENTICAL		False	re/match/rwl01/004cbd00.c
+0x004c3e20	_RwCore_004c3e20	0x00034fa0	112	0	10	6	DIFFERENT	+0x1c	False	re/match/rwl01/004c3e20.c
+0x004c0830	_RwCore_004c0830	0x00035010	64	1	6	0	IDENTICAL		False	re/match/s19/004c0830.c
