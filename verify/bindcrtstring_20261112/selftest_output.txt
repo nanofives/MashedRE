@@ -1,0 +1,9 @@
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+[1/6] strchr image==binding PASS (100000 cases)
+[2/6] strrchr image==binding PASS (100000 cases)
+[3/6] wcsncpy image==binding PASS (20000 cases)
+[4/6] empty string, c=0 and absent PASS (6 cases)
+[5/6] c > 0xff truncates to char PASS (4 cases)
+[6/6] c = 0 returns the terminator PASS (4 cases)
+6/6 PASS
