@@ -7,7 +7,7 @@ ROOT=D:/MashedWT/PORT-OT-SEED-CODEPTR_root
 COMMON="MASHED_WIN_POS=primary-bl MASHED_DET_FRAMES=600"
 DDK="$(pwd)/mashedmod/build/ddkobj/mashed_re_ddk.exe"
 py -3.12 verify/porttop_20261108/knob_boot.py vs_off $ROOT 180 $COMMON
-py -3.12 verify/porttop_20261108/knob_boot.py vs_on_optout $ROOT 180 $COMMON MASHED_ORIG_TOP=1 MASHED_NO_OT_CODEPTR=1
-py -3.12 verify/porttop_20261108/knob_boot.py vs_on $ROOT 180 $COMMON MASHED_ORIG_TOP=1
-KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_on $ROOT 180 $COMMON MASHED_ORIG_TOP=1
-KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_on_optout $ROOT 180 $COMMON MASHED_ORIG_TOP=1 MASHED_NO_OT_CODEPTR=1
+py -3.12 verify/porttop_20261108/knob_boot.py vs_on_knoboff $ROOT 180 $COMMON MASHED_ORIG_TOP=1
+py -3.12 verify/porttop_20261108/knob_boot.py vs_on $ROOT 180 $COMMON MASHED_ORIG_TOP=1 MASHED_OT_CODEPTR=1
+KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_on $ROOT 180 $COMMON MASHED_ORIG_TOP=1 MASHED_OT_CODEPTR=1
+KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_on_knoboff $ROOT 180 $COMMON MASHED_ORIG_TOP=1

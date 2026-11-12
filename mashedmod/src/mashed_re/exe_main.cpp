@@ -9612,6 +9612,7 @@ static void HandTop_Prelude() {
         if (clr) std::fclose(clr);
     }
     mashed_re::Compat::PortStateSeed_Log(kLogPath);   // ON only (PORT-STATE-02)
+    mashed_re::Compat::PortTopCodePtr_Log(kLogPath);  // PORT-OT-SEED-CODEPTR: the lines held since WinMain
 
     // Scripted nav-demo verification harness (in-process input only). Enabled
     // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.
