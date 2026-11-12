@@ -1,4 +1,7 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH run 40: compiles (was C2115/C2069). FUN_0053e430, FUN_0053e730, FUN_0053e760 prototypes copied from their own
+   sources in re/match/rwl03. 28.1% rw9044, 24.1% ddk, not worked further. */
 /* MATCH-RWL03 0x0053dea0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -40,12 +43,12 @@ MGLOBAL(undefined1, DAT_005cd120, 0x005cd120);
 undefined4 FUN_004d7ff0(undefined4 p0);
 undefined4 * FUN_004d8480(undefined4 * p0);
 void FUN_0053de50(int * p0);
-void FUN_0053e430(float p0, float p1, float p2, int * p3);
+void FUN_0053e430(int p0, int p1, float p2, int * p3);
 float10 FUN_0053e5d0(int p0, uint * p1, int p2);
 float10 FUN_0053e690(float p0, float p1);
 void FUN_0053e6f0(int p0);
-void FUN_0053e730(undefined2 p0, undefined2 p1);
-void FUN_0053e760(undefined4 p0, undefined4 p1, undefined4 p2);
+undefined4 * FUN_0053e730(undefined2 p0, undefined2 p1);
+undefined4 * FUN_0053e760(undefined4 p0, undefined4 p1, undefined4 p2);
 void FUN_005c24e0(undefined1 * p0, uint p1, uint p2, undefined * p3);
 MGLOBAL(int, _DAT_005cd03c, 0x005cd03c);
 MGLOBAL(int, _DAT_005cd120, 0x005cd120);

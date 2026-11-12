@@ -1,0 +1,10 @@
+rva	source	toolchain	before	after	after_regs	note
+0x004d4f00	re/match/s21/004d4f00.c	ddk	98.5	100.0	100.0	
+0x004cc820	re/match/rwl01/004cc820.c	rw9044	98.0	99.3	99.3	
+0x00534b60	re/match/rwl03/00534b60.c	rw9044	95.6	98.5	99.3	
+0x004c1040	re/match/rwl01/004c1040.c	ddk	99.2	99.2	100.0	
+0x004d1e30	re/match/s20/004d1e30.c	ddk	99.1	99.1	98.6	
+0x004f0ae0	re/match/rwl03/004f0ae0.c	ddk	81.8	81.8	100.0	
+0x004f1fb0	re/match/rwl03/004f1fb0.c	ddk	compile-fail	37.0	66.5	
+0x0053dea0	re/match/rwl03/0053dea0.c	rw9044	compile-fail	28.1	44.4	
+0x00538d60	re/match/rwl03/00538d60.c	ddk	compile-fail	12.3	22.3	

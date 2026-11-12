@@ -1,5 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004d4f00 (h1, by hand): best 98.5% exact, regs 98.5% (raw 74.2%, esi/edi swapped). Find by name in a
+/* RWC-MATCH run 40: 100% BYTE-IDENTICAL (ddk). Fix: test param_1->count, then load count and elems inside the
+   branch (count read twice, no store between, same values). History below.
+   MATCH-S21 0x004d4f00 (h1, by hand): best 98.5% exact, regs 98.5% (raw 74.2%, esi/edi swapped). Find by name in a
    40-byte element array (count +4, elems +8), optionally starting after a given element; strcmp through
    RwGlobals+0xe8; *index = count - remaining or -1. Moves: reading elems next to count, before the count test
    (74.2 -> 98.5: fixes the esi/edi assignment). Residual: one load. The original loads elems after the param_3
@@ -41,9 +43,9 @@ Elem_ *FUN_004d4f00(List_ *param_1,const char *param_2,Elem_ *param_3,int *param
   int n;
 
   if (param_1 != 0 && param_2 != 0) {
-    n = param_1->count;
-    e = param_1->elems;
-    if (n != 0) {
+    if (param_1->count != 0) {
+      n = param_1->count;
+      e = param_1->elems;
       if (param_3 != 0) {
         while (e != param_3 && n > 0) {
           e++;

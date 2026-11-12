@@ -1,6 +1,10 @@
 // TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL03 0x00534b60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
+/* RWC-MATCH run 40 (2026-11-12): 98.5% (regs 99.3%) under rw9044, was 95.6%. With `f8 == 0 && f1 == 0` cl threads the
+   f8 == 1 arm past the second f8 test (an extra jmp the original does not have). Testing f1 first stops the threading
+   (both tests are pure, same values). Residual: the original tests f8 then f1 there, without threading. 49 compare-form x
+   flag-type variants and the permuter (425 compiles) did not reach it.
+   MATCH-RWL03 0x00534b60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -74,7 +78,7 @@ void FUN_00534b60(undefined4 param_1,uint param_2,undefined4 param_3)
       v = v & 0xffffffdf;
     }
   }
-  if (f8 == 0 && f1 == 0) {
+  if (f1 == 0 && f8 == 0) {
     v = v | 1;
   }
   if ((v & 0x30000000) == 0) {
