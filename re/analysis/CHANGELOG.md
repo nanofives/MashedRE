@@ -26,6 +26,14 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-12  0x00422ba0  FUN_00422ba0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
+2026-11-12  0x004568d0  FUN_004568d0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
+2026-11-12  0x004809e0  VehicleRespawnTeleport  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
+2026-11-12  0x004818d0  FUN_004818d0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
+2026-11-12  0x00485ef0  FUN_00485ef0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
+2026-11-12  0x0048b7c0  FUN_0048b7c0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
+2026-11-12  0x0048d360  FUN_0048d360  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
+2026-11-12  0x0048d540  FUN_0048d540  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
 2026-11-12  0x00440bc0  FUN_00440bc0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/tlr/00440bc0.c; evidence: verify/provfix9_20261112/RESULT_PROV-FIX-9.md
 2026-11-12  0x004f0ae0  FUN_004f0ae0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/004f0ae0.c; evidence: verify/match_20261112/RESULT_MATCH-RWC-NEAR-B.md
 2026-11-12  0x004c1040  FUN_004c1040  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c1040.c; evidence: verify/match_20261112/RESULT_MATCH-RWC-NEAR.md
