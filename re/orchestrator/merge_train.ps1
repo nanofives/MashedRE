@@ -37,7 +37,8 @@
 #>
 [CmdletBinding()]
 param([switch]$Full, [switch]$Plan, [int]$Max = 0, [switch]$KeepTemp, [switch]$SelfTest,
-      [switch]$Drain, [switch]$NoFlip, [string]$ResultJson = '', [switch]$ForceFull)
+      [switch]$Drain, [switch]$NoFlip, [string]$ResultJson = '', [switch]$ForceFull,
+      [switch]$Gate, [switch]$Override, [string]$QueueFile = '', [string]$GateNow = '')
 $ErrorActionPreference = 'Stop'
 
 $HERE = $PSScriptRoot
@@ -47,7 +48,7 @@ $RM = Join-Path $HERE 'roadmap.ps1'
 $LOCKPY = Join-Path $HERE 'mashed_lock.py'
 $DIAG = Join-Path $MAIN 'scripts\diag.py'
 $TS = Get-Date -Format 'yyyyMMdd_HHmmss'
-$DATA = Join-Path $(if ($SelfTest) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_selftest' } else { $CFG.data }) $(if ($Drain -and -not $SelfTest) { "drain_$TS" } else { $TS })
+$DATA = Join-Path $(if ($SelfTest) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_selftest' } elseif ($Gate) { Join-Path ([IO.Path]::GetTempPath()) 'mtrain_gate' } else { $CFG.data }) $(if ($Drain -and -not $SelfTest) { "drain_$TS" } else { $TS })
 New-Item -ItemType Directory -Force -Path $DATA | Out-Null
 $LOG = Join-Path $DATA 'merge_train.log'
 $FullEff = [bool]$ForceFull   # HB-TRAIN-MATCH-TEXTONLY: the pass body sets it from -Full and the batch (Resolve-FullFlag)
@@ -175,11 +176,20 @@ function Reclaim-DeadTrains {
 # ordinary acquires, windows already open and the train's own priority calls do not. The 2026-11-01 starvations
 # were all a solo window opened during the 4-8 min of merge+build before the first `run --priority` claim.
 # Best effort: a failed write only reopens the old gap, so it warns and the pass goes on.
+# HB-TRAIN-SOLO-WINDOW (b): the hold now starts after merge + archive lint + tracker lint + build + lint_rva_bodies
+# (7-16 min of CPU/disk work that touches no game), at the point Try-Batch is about to run the gates. Config
+# `priority_scope`: "games" (default) = hold only for the game legs, "pass" = the old behaviour (whole pass).
+# Enter is idempotent (Resolve-Batch calls Try-Batch again one at a time) and Exit releases only a hold that was taken.
+$script:PrioHeld = $false
 function Enter-PassPriority {
+  if ($script:PrioHeld) { return }
+  $script:PrioHeld = $true
   try { $o = & py.exe -3.12 $LOCKPY prio-hold --owner-pid $PID --label "merge-train:$TS" 2>&1; Say "priority: $(($o | Select-Object -Last 1)) rc=$LASTEXITCODE" }
   catch { Say "WARN priority hold not registered: $($_.Exception.Message)" }
 }
 function Exit-PassPriority {
+  if (-not $script:PrioHeld) { Say 'priority: no hold taken in this pass (build/lint only), nothing to release'; return }
+  $script:PrioHeld = $false
   try { $o = & py.exe -3.12 $LOCKPY prio-release --owner-pid $PID 2>&1; Say "priority: $(($o | Select-Object -Last 1)) rc=$LASTEXITCODE" }
   catch { Say "WARN priority release failed (stale once this PID exits): $($_.Exception.Message)" }
 }
@@ -639,6 +649,8 @@ function Try-Batch($items) {
     $lint | Set-Content (Join-Path $DATA 'lint.txt')
     if ($lrc -ne 0) { $r.ok = $false; $r.why = "lint_rva_bodies: $(($lint | Select-Object -Last 1))"; return $r }
     Say "  lint OK: $(($lint | Select-Object -Last 1))"
+    # HB-TRAIN-SOLO-WINDOW (b): the game legs start here, so the hold starts here (comment above the function).
+    Enter-PassPriority
     return (Run-Gates $wt $r $needFull)
   } finally {
     $r.sha = (Git -C $wt rev-parse HEAD) | Select-Object -First 1
@@ -666,7 +678,37 @@ function Select-Batch($queue, [int]$cap) {
   }
   return $b
 }
-function Get-Queue { @((& pwsh -NoProfile -File $RM queue) | Out-String | ConvertFrom-Json -DateKind String) }
+function Get-Queue {
+  # -QueueFile reads a copy of the queue (tests); the live file is only read through roadmap.ps1 queue.
+  if ($QueueFile) { return @((Get-Content -LiteralPath $QueueFile -Raw) | ConvertFrom-Json -DateKind String) }
+  @((& pwsh -NoProfile -File $RM queue) | Out-String | ConvertFrom-Json -DateKind String)
+}
+# HB-TRAIN-SOLO-WINDOW (a): batching start gate. Run 39 ran 12 rows as 6 passes of 37-49 min, and each pass held
+# the machine solo, so boot rows waited ~4.1 h. A train starts only at start_gate.min_rows queued rows, or once the
+# oldest queued row has waited start_gate.max_wait_min minutes. -Gate prints one line and exits 0 (START) or 3 (WAIT);
+# -Override starts regardless. The L0 conductor calls `merge_train.ps1 -Gate` before it starts a pass or a -Drain.
+# Pure function: no side effects, takes the queue and the clock.
+function Test-StartGate($queue, [datetime]$nowUtc, [bool]$override) {
+  $sg = @{ enabled = $true; min_rows = 3; max_wait_min = 60 }
+  if ($CFG.PSObject.Properties['start_gate']) { foreach ($p in $CFG.start_gate.PSObject.Properties) { $sg[$p.Name] = $p.Value } }
+  $rows = @($queue | Where-Object { $_ })
+  $oldest = $null
+  foreach ($q in $rows) {
+    [DateTimeOffset]$t = [DateTimeOffset]::MinValue
+    if ($q.at -and [DateTimeOffset]::TryParse("$($q.at)", [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal, [ref]$t)) {
+      if ($null -eq $oldest -or $t.UtcDateTime -lt $oldest) { $oldest = $t.UtcDateTime }
+    }
+  }
+  $waitMin = if ($null -ne $oldest) { [math]::Round(($nowUtc - $oldest).TotalMinutes, 1) } else { 0 }
+  $o = [ordered]@{ start = $false; reason = ''; rows = $rows.Count; oldest_wait_min = $waitMin; min_rows = [int]$sg.min_rows; max_wait_min = [int]$sg.max_wait_min }
+  if (-not $rows.Count) { $o.reason = 'queue empty' }
+  elseif ($override) { $o.start = $true; $o.reason = 'override' }
+  elseif (-not [bool]$sg.enabled) { $o.start = $true; $o.reason = 'start_gate disabled in merge_train.json' }
+  elseif ($rows.Count -ge [int]$sg.min_rows) { $o.start = $true; $o.reason = "$($rows.Count) rows queued >= $($sg.min_rows)" }
+  elseif ($null -ne $oldest -and $waitMin -ge [int]$sg.max_wait_min) { $o.start = $true; $o.reason = "oldest row waited $waitMin min >= $($sg.max_wait_min)" }
+  else { $o.reason = "$($rows.Count) row(s) < $($sg.min_rows) and oldest waited $waitMin min < $($sg.max_wait_min)" }
+  return [pscustomobject]$o
+}
 function Get-LedgerRow([string]$id) { try { return ((& pwsh -NoProfile -File $RM get $id) | Out-String | ConvertFrom-Json -DateKind String) } catch { return $null } }
 # A decided flip (MERGE_TRAIN.md "Decided default flips") changes the refs and must run alone with -Full after L0 has
 # committed the new refs. Recognised by the row id (D4-FLIP-L29-L30, D3-SUBSTATE-FLIP, ...) or a title naming a
@@ -980,9 +1022,15 @@ if ($SelfTest) {
   Check ($dots.Count -eq 0 -and $wrappedBody.Count -eq 0 -and $sbParams.Count -eq 1 -and $sbParams[0] -eq 'Body') "AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: $($sbParams -join ','))"
 
   # --- HB-MASHEDLOCK-EARLY-PRIORITY: the pass-wide priority hold, against a private MASHED_LOCK_DIR (never the live lock)
-  $hp = $top.Count -eq 1 -and $top[0].Body.Statements.Count -gt 0 -and $top[0].Body.Statements[0].Extent.Text -eq 'Enter-PassPriority'
+  # HB-TRAIN-SOLO-WINDOW (b): the first statement is now the priority_scope=pass fallback; the default hold is taken in
+  # Try-Batch after the build and lint legs, immediately before Run-Gates (offsets checked below).
+  $hp = $top.Count -eq 1 -and $top[0].Body.Statements.Count -gt 0 -and $top[0].Body.Statements[0].Extent.Text -match "priority_scope\)`" -eq 'pass'\) \{ Enter-PassPriority \}"
+  $tbx = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Try-Batch' -and $n.Body.Extent.Text -match 'New-Temp' }, $true))
+  $tbxt = if ($tbx.Count -eq 1) { $tbx[0].Body.Extent.Text } else { '' }
+  $iB = $tbxt.IndexOf('call mashedmod\build.bat'); $iL = $tbxt.IndexOf('scripts\lint_rva_bodies.py'); $iE = $tbxt.IndexOf('Enter-PassPriority'); $iG = $tbxt.IndexOf('return (Run-Gates $wt')
+  Check ($iB -ge 0 -and $iB -lt $iL -and $iL -lt $iE -and $iE -lt $iG -and $tbxt.IndexOf('Enter-PassPriority', $iE + 1) -lt 0) "priority window: Try-Batch takes the hold once, after build.bat ($iB) and lint_rva_bodies ($iL), right before Run-Gates ($iE < $iG)"
   $inner = @($top | ForEach-Object { $_.Finally.FindAll({ param($n) $n -is [System.Management.Automation.Language.TryStatementAst] -and $n.Body.Extent.Text -match '\bClear-Temps\b' -and $null -ne $n.Finally -and $n.Finally.Extent.Text -match '\bExit-PassPriority\b' }, $true) })
-  Check ($hp -and $inner.Count -eq 1) "AST: Enter-PassPriority is the first statement of the run-body try (before Try-Batch), Exit-PassPriority runs in a finally after Clear-Temps (first=$hp inner=$($inner.Count))"
+  Check ($hp -and $inner.Count -eq 1) "AST: the run-body try starts with the priority_scope=pass fallback only, Exit-PassPriority runs in a finally after Clear-Temps (first=$hp inner=$($inner.Count))"
   $oldLd = $env:MASHED_LOCK_DIR; $env:MASHED_LOCK_DIR = Join-Path $DATA 'lockdir'
   New-Item -ItemType Directory -Force -Path $env:MASHED_LOCK_DIR | Out-Null
   $hf = Join-Path $env:MASHED_LOCK_DIR "mashed_machine_priolinger_$PID.lock"
@@ -1457,10 +1505,25 @@ if ($SelfTest) {
   Check ($mainTxt -match "elseif \(\`$d\.verdict -eq 'PARTIAL'\) \{ 2 \}") 'drain 12d: -Drain exits 2 on PARTIAL (0 GREEN, 1 any stop)'
   # 11. AST: the drain dispatch sits before Write-TrainPid and the batch pick, and the pass refuses flips before Enter-PassPriority
   $txt = Get-Content -LiteralPath $PSCommandPath -Raw
-  $iDrain = $txt.LastIndexOf('$d = Invoke-Drain $INT'); $iPid = $txt.LastIndexOf("`nWrite-TrainPid"); $iFlip = $txt.LastIndexOf('$flips = @(Get-BatchFlips $batch)'); $iPrio = $txt.LastIndexOf("`nEnter-PassPriority")
+  $iDrain = $txt.LastIndexOf('$d = Invoke-Drain $INT'); $iPid = $txt.LastIndexOf("`nWrite-TrainPid"); $iFlip = $txt.LastIndexOf('$flips = @(Get-BatchFlips $batch)'); $iPrio = $txt.LastIndexOf("`nif (`"`$(`$CFG.priority_scope)`" -eq 'pass') { Enter-PassPriority }")
   Check ($iDrain -gt 0 -and $iDrain -lt $iPid -and $iFlip -gt $iPid -and $iFlip -lt $iPrio) "drain 11: dispatch before the pass body, flip refusal before the priority hold and any merge (offsets $iDrain < $iPid, $iFlip < $iPrio)"
   $locks = @([regex]::Matches(($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in 'Invoke-Drain', 'Advance-Main', 'Invoke-ReleaseStep', 'Invoke-PassChild' }, $true) | ForEach-Object { $_.Extent.Text }) -join "`n", 'LOCKPY|prio-hold|solo-begin'))
   Check ($locks.Count -eq 0) "drain 11: the drain driver takes no mashed_lock / priority hold of its own (only the passes do) ($($locks.Count) refs)"
+  # --- HB-TRAIN-SOLO-WINDOW (a): the start gate, a pure function over a fake queue and a fixed clock
+  $t0 = [datetime]::Parse('2026-11-12T12:00:00Z', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal -bor [Globalization.DateTimeStyles]::AdjustToUniversal)
+  $fq = { param($ats) @($ats | ForEach-Object -Begin { $i = 0 } -Process { $i++; [pscustomobject]@{ id = "G$i"; branch = "orch/G$i"; at = $_ } }) }
+  $g1 = Test-StartGate (& $fq @('2026-11-12T11:50:00Z')) $t0 $false
+  $g2 = Test-StartGate (& $fq @('2026-11-12T11:50:00Z', '2026-11-12T11:55:00Z', '2026-11-12T11:58:00Z')) $t0 $false
+  $g3 = Test-StartGate (& $fq @('2026-11-12T10:59:00Z', '2026-11-12T11:55:00Z')) $t0 $false
+  $g4 = Test-StartGate (& $fq @('2026-11-12T11:50:00Z')) $t0 $true
+  $g5 = Test-StartGate @() $t0 $true
+  $g6 = Test-StartGate (& $fq @('2026-11-12T11:01:00Z')) $t0 $false
+  Check ((-not $g1.start) -and $g1.oldest_wait_min -eq 10) "gate: 1 row waiting 10 min = WAIT ($($g1.reason))"
+  Check ($g2.start -and $g2.rows -eq 3) "gate: 3 rows = START ($($g2.reason))"
+  Check ($g3.start -and $g3.oldest_wait_min -eq 61) "gate: 2 rows, oldest waited 61 min = START ($($g3.reason))"
+  Check ($g4.start -and $g4.reason -eq 'override') "gate: -Override starts a 1-row queue ($($g4.reason))"
+  Check ((-not $g5.start) -and $g5.reason -eq 'queue empty') "gate: empty queue never starts, even with -Override ($($g5.reason))"
+  Check (-not $g6.start) "gate: 59 min wait is still WAIT ($($g6.reason))"
   Remove-Item -LiteralPath $fd -Recurse -Force -ErrorAction SilentlyContinue
 
   # 13. DDKOBJ-TRAIN: the object build step (Get-DdkobjStep on fake build\ddkobj outputs; AST of the Try-Batch wiring)
@@ -1494,6 +1557,13 @@ if ($SelfTest) {
 }
 
 $INT = if ($env:MASHED_MTRAIN_INT) { $env:MASHED_MTRAIN_INT } else { $CFG.integration_branch }
+# HB-TRAIN-SOLO-WINDOW (a): -Gate only reads the queue and answers; no PID file, no lock, no worktree, no merge.
+if ($Gate) {
+  $nowU = if ($GateNow) { [datetime]::Parse($GateNow, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal -bor [Globalization.DateTimeStyles]::AdjustToUniversal) } else { (Get-Date).ToUniversalTime() }
+  $g = Test-StartGate @(Get-Queue) $nowU ([bool]$Override)
+  Write-Output "GATE $(if ($g.start) { 'START' } else { 'WAIT' }): $($g.reason) (rows=$($g.rows) oldest_wait_min=$($g.oldest_wait_min) min_rows=$($g.min_rows) max_wait_min=$($g.max_wait_min))"
+  exit $(if ($g.start) { 0 } else { 3 })
+}
 # HB-TRAIN-DRAIN: the driver takes no lock and no worktree itself; each pass is a child process with its own PID file,
 # reclaim, priority hold and REPORT.
 if ($Drain -and -not $Plan) {
@@ -1538,7 +1608,7 @@ if ($NoFlip) {
 # HB-MASHEDLOCK-EARLY-PRIORITY: the priority hold opens first thing inside it and the finally releases it, so every
 # exit (GREEN, RED, conflict, bounce, throw) ends it. Queue empty and -Plan exit above, before any hold exists.
 try {
-Enter-PassPriority
+if ("$($CFG.priority_scope)" -eq 'pass') { Enter-PassPriority }   # old behaviour: hold from before the first merge
 $res = Try-Batch $batch
 $infraGates = $res.gates
 $rb = Resolve-Batch $batch $res
