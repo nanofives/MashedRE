@@ -37,5 +37,6 @@
 { 0x005cf8c4u, 5, "\x2d\x76\x73\x31\x00" },  // s__vs1_005cf8c4 (00493900.c) '-vs1'
 { 0x005cf8ccu, 5, "\x2d\x76\x73\x30\x00" },  // s__vs0_005cf8cc (00493900.c) '-vs0'
 { 0x005cfabcu, 7, "\x4d\x41\x53\x48\x45\x44\x00" },  // s_MASHED_005cfabc (00499ba0.c) 'MASHED'
+{ 0x005d0120u, 10, "\x25\x2e\x31\x39\x73\x2e\x25\x68\x75\x00" },  // s_fmt_005d0120 (00498810.c) '%.19s.%hu'
 { 0x005d041cu, 24, "\x4d\x41\x53\x48\x45\x44\x20\x5b\x44\x33\x44\x39\x5d\x20\x5b\x52\x65\x6c\x65\x61\x73\x65\x5d\x00" },  // s_MASHED__D3D9___Release__005d041c (00499ba0.c) 'MASHED [D3D9] [Release]'
 { 0x005d757cu, 4, "\x00\x00\x00\x00" },  // DAT_005d757c (004e4b90.c) float 0.0

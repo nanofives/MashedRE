@@ -10495,7 +10495,13 @@ static bool HandTop_FrameDetTick() {
 }
 
 // Frame piece 2 (after PollKeyboard): harness steps, menu navigation, input globals, game flow.
-static void HandTop_FrameUpdate() {
+// [PORT-TOP-05] split into four pieces so the knob path can run the matched frame machine with the menu piece at its
+// frontend-machine call (Match/PortTop_00492d30.cpp). The default path runs the four in the same order (HandTop_FrameUpdate).
+//   a HandTop_FrameHarness      dev harness steps + window title (no original counterpart)
+//   b HandTop_FrameMenu         menu navigation (on the knob path, the frontend machine's stand-in)
+//   c HandTop_FrameInputGlobals DInput keyboard -> MASHED input globals
+//   d HandTop_FrameGameFlow     the hand session (Frontend -> LoadingRace -> InRace)
+static void HandTop_FrameHarness() {
     // Scripted nav-demo: inject the next in-process key edge / capture a
     // backbuffer BMP (no-op unless MASHED_NAV_DEMO is set). Runs right after
     // PollKeyboard so injected edges feed UpdateMenuSelection this frame.
@@ -10521,12 +10527,16 @@ static void HandTop_FrameUpdate() {
     UpdateWindowTitle();
     // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
     UpdateTitleSlotFromKeyboard();
+}
+static void HandTop_FrameMenu() {
     // State-machine-driven nav: Up/Down move the cursor, Enter pushes the
     // highlighted item's child screen, Esc/Backspace pop. Returns true only
     // when Esc is pressed at the ROOT (nothing left to pop) -> quit the app.
     if (UpdateMenuSelection()) {
         PostQuitMessage(0);
     }
+}
+static void HandTop_FrameInputGlobals() {
     // B14: mirror DInput keyboard state into MASHED's input globals
     // (0x007f1044 active / 0x007f1504 processed, player 0). As of
     // 2026-09-04 this is no longer write-only in the standalone:
@@ -10535,11 +10545,19 @@ static void HandTop_FrameUpdate() {
     // real behaviour rather than only feeding future frontend code.
     WriteMashedInputGlobalsFromKeyboard();
     CookCtrlByteAFromKeyboard();   // [D3-CF-R7INPUT] MASHED_R7_INPUT (default ON since 2026-10-25)
+}
+static void HandTop_FrameGameFlow() {
     // Top-level game-flow scaffold: drives the Frontend->LoadingRace->InRace
     // state machine + the RaceSession subsystem stubs. In Frontend mode (the
     // default — nothing requests a race yet) this is a no-op, so the menu is
     // unaffected; the wiring is in place for when the frontend launches a race.
     mashed_re::Race::GameFlow_Update(0.016f);
+}
+static void HandTop_FrameUpdate() {
+    HandTop_FrameHarness();
+    HandTop_FrameMenu();
+    HandTop_FrameInputGlobals();
+    HandTop_FrameGameFlow();
 }
 
 // stand-in for 0x00402a40 (AppDestroy).
@@ -10571,6 +10589,11 @@ void PortTop_HandInit_FrontendAssets() { HandTop_InitFrontendAssets(); }
 IDirect3DDevice9* PortTop_ExeDevice() { return g_device; }
 void PortTop_HandPollKeyboard() { PollKeyboard(); }
 void PortTop_HandFrameUpdate() { if (HandTop_FrameDetTick()) HandTop_FrameUpdate(); }
+// [PORT-TOP-05] the pieces of HandTop_FrameUpdate for the matched 0x00492d30 (Match/PortTop_00492d30.cpp).
+int  PortTop_HandFrameBegin() { if (!HandTop_FrameDetTick()) return 0; HandTop_FrameHarness(); return 1; }
+void PortTop_HandFrameMenu() { HandTop_FrameMenu(); }
+void PortTop_HandFrameInputGlobals() { HandTop_FrameInputGlobals(); }
+void PortTop_HandFrameGameFlow() { HandTop_FrameGameFlow(); }
 int  PortTop_HandRenderFrame() { if (!RenderFrame()) { PostQuitMessage(0); return 0; } return 1; }
 void PortTop_HandAppDestroy() { HandTop_AppDestroy(); }
 void PortTop_HandDeviceShutdown() { HandTop_DeviceShutdown(); }

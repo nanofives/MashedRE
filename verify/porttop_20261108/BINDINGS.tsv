@@ -17,9 +17,9 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00499cc0	sub_00499cc0	matched	Orig_00499cc0	re/match/s16/00499cc0.c, Match/PortTop_Leaves.cpp. DestroyWindow + returns the pump MSG wParam	1	0x00492370
 0x00492770	MainLoopInit	matched	MainLoopInit (via PortTop_MainLoopInit)	PORT-TOP-04A: Match/MatchS15_00492770.cpp called directly; the SEH guard is gone (callees bound by PORT-TOP-01, QPF stored by the gate first)	1	0x00492290
 0x00499690	WindowMsgPump	matched	WindowMsgPump	mashedmod/src/mashed_re/Match/MatchS16_00499690.cpp. Focus gate kept open (DAT_0077391c=1) as the reference no_focus_pause patch does; MASHED_ORIG_TOP_FOCUSPAUSE=1 keeps WaitMessage	1	0x00492290
-0x004929d0	FUN_004929d0	port	PortTop_Port_004929d0 -> GameModeMachine_Tick	mashedmod/src/mashed_re/Race/GameModeMachine.cpp wrapper the hand loop calls (no-op unless MASHED_PORTSTATE_GAMEFLOW_FU=1, which runs the matched 0x004929d0)	1	0x00492290
+0x004929d0	FUN_004929d0	matched	Orig_004929d0	PORT-TOP-05: re/match/s15/004929d0.c (100%), Match/PortTop_004929d0.cpp, callees bound by name; MASHED_TOP05_HANDFRAME=1 runs the old GameModeMachine_Tick. verify/porttop05_20261112/RESULT_PORT-TOP-05.md	1	0x00492290
 0x00492d20	IntroSplashFrameTickShim	matched	IntroSplashFrameTickShim	mashedmod/src/mashed_re/Match/MatchS15_00492d20.cpp, now also in the exe list (its 0x004967e0 forwarder binds the stand-in in the exe)	1	0x00492290
-0x00492d30	GameTickStateMachine7	stand-in	PortTop_StandIn_00492d30 -> HandTop_FrameDetTick + HandTop_FrameUpdate	hand frame update (det frame cap, harness steps, menu nav, input globals, GameFlow_Update). 0x00492d30 dispatches on DAT_00771968, unported tree. PORT-TOP-05	1	0x00492290
+0x00492d30	GameTickStateMachine7	matched	Orig_00492d30	PORT-TOP-05: re/match/s15/00492d30.c (100%), Match/PortTop_00492d30.cpp via PortTop_Bound_00492d30 (det frame cap + harness before, input globals when 0x0043dfd0 did not run + GameFlow_Update after); MASHED_TOP05_HANDFRAME=1 runs the old stand-in. verify/porttop05_20261112/RESULT_PORT-TOP-05.md	1	0x00492290
 0x00492e90	FUN_00492e90	stand-in	PortTop_StandIn_00492e90 -> RenderFrame	hand RenderFrame; device loss posts WM_QUIT. PORT-TOP-05	1	0x00492290
 0x004926c0	AudioTickAndAvg	missing	PortTop_Missing_004926c0	exe body AudioTickAndAvg (MatchS15_004926c0.cpp) forwards its 5 callees raw (none has an exe body). No-op	1	0x00492290
 0x00493480	FpsDiscretise	missing	PortTop_Missing_00493480	exe body FpsDiscretise forwards raw to 0x00493390 (no exe body). No-op; hand pacing is the present/limiter in RenderFrame	1	0x00492290
@@ -153,7 +153,7 @@ rva	name	kind	exe_symbol	note	level	caller
 0x0040b6d0	FUN_0040b6d0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b6d0.cpp; hooks C4	2	0x004929d0
 0x0040b6e0	FUN_0040b6e0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b6e0.cpp; hooks C4	2	0x004929d0
 0x0040b700	FUN_0040b700	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040b700.cpp; hooks C4	2	0x004929d0
-0x0040d440	FUN_0040d440	missing		parent runs on the knob path, callee has no exe body. exe port=none ; hooks C4	2	0x004929d0
+0x0040d440	FUN_0040d440	matched	Orig_0040d440	PORT-TOP-05: re/match/s02/0040d440.c, Match/PortTop_0040d440.cpp; callee 0x0040d270 = stand-in PortTop_StandIn05_0040d270 (the hand path loads the course at the menu launch). verify/porttop05_20261112/RESULT_PORT-TOP-05.md	2	0x004929d0
 0x0040e340	GetLiveCarCount	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040e340.cpp; hooks C4	2	0x004929d0
 0x0040e350	GetRenderSubMode	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040e350.cpp|mashedmod/src/mashed_re/Vehicle/ForceIntegratorStubs.cpp; hooks C4	2	0x004929d0
 0x0040e450	Flag63b908Get	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS02_0040e450.cpp; hooks C4	2	0x004929d0
@@ -177,13 +177,13 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004331a0	RaceFinalizeOnce	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS08_004331a0.cpp; hooks C4	2	0x004929d0
 0x00448700	VehicleSeedWritePair	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchS08_00448700.cpp; hooks C4	2	0x004929d0
 0x004927c0	FUN_004927c0	port	(inside the parent exe body)	bound by the parent's exe body. exe port=called mashedmod/src/mashed_re/Match/MatchGFFU_004927c0.cpp; hooks C4	2	0x004929d0
-0x004030d0	FUN_004030d0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
-0x004111c0	FUN_004111c0	under-stand-in		parent bound to a stand-in, not reached. exe port=body mashedmod/src/mashed_re/Match/MatchT01G_004111c0.cpp; hooks C2	2	0x00492d30
-0x0043d7c0	FUN_0043d7c0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
-0x0043dfd0	FUN_0043dfd0	under-stand-in		parent bound to a stand-in, not reached. exe port=called mashedmod/src/mashed_re/Race/RaceModes.cpp; hooks C2	2	0x00492d30
+0x004030d0	FUN_004030d0	matched	Orig_004030d0	PORT-TOP-05: re/match/s01/004030d0.c (100%, MGLOBAL form), Match/PortTop_004030d0.cpp; 0x0043df00 stand-in (level 2). verify/porttop05_20261112/RESULT_PORT-TOP-05.md	2	0x00492d30
+0x004111c0	FUN_004111c0	stand-in	PortTop_StandIn05_004111c0	PORT-TOP-05: counting stand-in; the knob path race is the hand session (GameFlow_Update after 0x00492d30). Exe body MatchT01G_004111c0.cpp not bound here. verify/porttop05_20261112/RESULT_PORT-TOP-05.md	2	0x00492d30
+0x0043d7c0	FUN_0043d7c0	matched	Orig_0043d7c0	PORT-TOP-05: re/match/s08/0043d7c0.c (100%), Match/PortTop_0043d7c0.cpp; 0x0040ab40/0x0040ac80/0x0040de10/0x0040e360/0x0043d2a0 stand-ins (Match/PortTop_StandIns05.cpp). verify/porttop05_20261112/RESULT_PORT-TOP-05.md	2	0x00492d30
+0x0043dfd0	FUN_0043dfd0	stand-in	PortTop_StandIn05_0043dfd0 -> HandTop_FrameMenu + HandTop_FrameInputGlobals	PORT-TOP-05: the hand menu navigation and input globals. The provisional body (ProvS08_0043dfd0.cpp, PROVISIONAL.tsv) is not wired. verify/porttop05_20261112/RESULT_PORT-TOP-05.md	2	0x00492d30
 0x004950b0	QpcTimeScaledTo3Mhz	stand-in	MatchS16_00495110_Call004950b0	PORT-TOP-04A: retired on the knob path (QPF is stored by 0x00495120 before 0x00495110 runs; the stand-in's store branch does not fire); still needed on the default path, whose boot chain calls MainLoopInit without the gate. Retire with the default flip	3	0x00495110
-0x00496920	TimerTable772ffcGet	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
-0x00498860	FUN_00498860	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492d30
+0x00496920	TimerTable772ffcGet	matched	TimerTable772ffcGet	PORT-TOP-05: Match/MatchS16_00496920.cpp now in the exe list too (one body, both targets). verify/porttop05_20261112/RESULT_PORT-TOP-05.md	2	0x00492d30
+0x00498860	FUN_00498860	matched	PortTop_Bound05_00498860 -> Orig_00498860	PORT-TOP-05: re/match/s16/00498810.c (0x00498860 100%, static 0x00498810 86.7%), Match/PortTop_00498860.cpp; ddkobj refuses the unit (static-register-convention), VS2022 body kept; 0x004ce8e0 stand-in, CRT adapters. verify/porttop05_20261112/RESULT_PORT-TOP-05.md	2	0x00492d30
 0x00403050	FUN_00403050	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
 0x00404320	PerModeRenderMachine	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
 0x0040de30	sub_0040de30	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00492e90
