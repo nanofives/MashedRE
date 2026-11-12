@@ -1,4 +1,14 @@
 // TOOLCHAIN rw9044
+/* MATCH-RT2D-RESID run 40 (2026-11-12): 100.0% under rw9044, BYTE-IDENTICAL (1110 B), relocheck OK (39 checked).
+   One change from the 92.5% form: the outline loop indexes the glyph array (`g[i].code`, `g[i].path`) with the same
+   counter i as the bitmap loops, instead of walking a pointer (`g->code`, `g++`) with a second counter. c2 then
+   strength-reduces g[i] to a pointer that it creates in the loop preheader, after the guard (`mov ebp,eax` at
+   0x005545be follows the `jle` at 0x005545b8), so ebp is free until then and holds the constant 0 for
+   `cmp [ebx],ebp` (0x00554595), the guard `cmp ecx,ebp` (0x005545b2) and the counter store (0x005545b4). The hoisted
+   `i = 0` and the counter j of runs 38 and 39 are gone: each loop is a plain `for (i = 0; i < font->count; i++)`.
+   Kept from run 39: `char name[36]`. With name[32] the same source is 93.8% (frame 0x2c, every [esp+N] above the
+   name shifted). [UNCERTAIN: what the original declares in the 4 bytes at [esp+0x3c]; no instruction of
+   0x00554390 references them. Evidence missing: the original source.] The comments below are the history. */
 /* MATCH-RT2D-RESID run 39 (2026-11-12): 92.5% under rw9044 (regs 92.7%, ops 98.4%, 439/439 ins), was 90.2%.
    Two changes: (1) the outline loop counter is its own variable j = i (spilled at [esp+0x10] as in the original,
    0x005545b4), the first bitmap loop keeps i, so i is in ebp for the bitmap loop and the bitmap glyph pointer shares
@@ -95,7 +105,6 @@ Font *FUN_00554390(void *stream)
   Font *font;
   unsigned int version;
   int i;
-  int j;
   Glyph *g;
 
   font = FUN_005551d0();
@@ -149,16 +158,15 @@ Font *FUN_00554390(void *stream)
   FUN_005c4c60(font->glyphs, font->count, 0x30190);
   g = FUN_005c4d30(font->glyphs);
   memset(g, 0, font->count * sizeof(Glyph));
-  i = 0;
   if (font->isOutline) {
     int t1;
     g = FUN_005c4d30(font->glyphs);
-    for (j = i; j < font->count; j++) {
+    for (i = 0; i < font->count; i++) {
       void *path = 0;
       if (!FUN_004cc790(stream, &t1, 4)) {
         goto fail;
       }
-      if (!FUN_004cc790(stream, &g->code, 4)) {
+      if (!FUN_004cc790(stream, &g[i].code, 4)) {
         goto fail;
       }
       if (!FUN_004cc790(stream, &t1, 4)) {
@@ -176,8 +184,7 @@ Font *FUN_00554390(void *stream)
       if (!FUN_004cc790(stream, &t1, 4)) {
         goto fail;
       }
-      g->path = path;
-      g++;
+      g[i].path = path;
     }
     font->cb = (void *)FUN_005547f0;
     if (0) {
@@ -192,7 +199,7 @@ fail:
     oldTxd = FUN_004c5ca0();
     FUN_004c5c80(DAT_00912a20);
     g = FUN_005c4d30(font->glyphs);
-    for (; i < font->count; i++) {
+    for (i = 0; i < font->count; i++) {
       if (!FUN_004cc790(stream, g[i].uv, 0x10) ||
           !FUN_004cc790(stream, &g[i].code, 4) ||
           FUN_004cbd30(stream, &g[i].texIndex, 1) != 1) {
