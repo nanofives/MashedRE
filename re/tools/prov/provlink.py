@@ -235,7 +235,16 @@ def main():
     for r in rvas:
         m = meas.get(r)
         if not m:
-            bodies.append({"rva": r, "status": "NOSOURCE"}); continue
+            # newer sources than measure_v4.tsv (re/match/racepath, re/match/tlr): the first file that annotates it
+            import subprocess as _sp
+            hit = [f for f in sorted((ROOT / "re" / "match").rglob("*.c"))
+                   if re.search(r"//\s*MATCH:\s*(?:MASHED\.exe\s+)?" + r + r"(?![0-9a-fA-F])", f.read_text(errors="replace"), re.I)]
+            if not hit:
+                bodies.append({"rva": r, "status": "NOSOURCE"}); continue
+            out = _sp.run([sys.executable, str(HERE.parent / "match" / "match.py"), str(hit[0]), "--only", r],
+                          capture_output=True, text=True).stdout
+            pm = re.search(r"([0-9.]+)%", out)
+            m = {"source": str(hit[0].relative_to(ROOT)).replace("\\", "/"), "best_pct": pm.group(1) if pm else "0", "verdict": "-"}
         src = ROOT / m["source"]
         res = link(src, int(r, 16))
         res.update({"rva": r, "source": m["source"], "pct": float(m["best_pct"] or 0), "equiv": m["verdict"]})

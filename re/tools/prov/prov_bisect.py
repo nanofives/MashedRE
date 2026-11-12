@@ -69,8 +69,20 @@ def main():
             continue
         nrun += 1
         label = f"{a.tag}_{STAMP}_{nrun:03d}_{len(grp)}"
-        d = run_arm(label, a.bodies, grp)
-        v = verdict(d, a.ref, a.ref2, [p.split(",") for p in a.pair])
+        for attempt in range(3):
+            d = run_arm(label if not attempt else f"{label}r{attempt}", a.bodies, grp)
+            log = (DATA / f"{d.name}.log")
+            # a Frida attach failure (detorig rc 3, "attach failed") is the harness, not the body: run it again
+            if log.exists() and "attach failed" in log.read_text(errors="replace"):
+                print(f"  attach failed, retry {attempt + 1}", flush=True)
+                continue
+            break
+        label = d.name
+        try:
+            v = verdict(d, a.ref, a.ref2, [p.split(",") for p in a.pair])
+        except Exception as e:
+            print(f"  verdict failed: {e}", flush=True)
+            v = {"verdict": "NO-TICKS", "identical_for": 0, "ticks": 0, "first": None, "rc": None}
         (DATA / f"{label}.verdict.json").write_text(json.dumps(v, indent=1))
         try:
             pv = json.loads((d / "prov.json").read_text())
