@@ -21,8 +21,8 @@ rva	name	kind	exe_symbol	note	level	caller
 0x00492d20	IntroSplashFrameTickShim	matched	IntroSplashFrameTickShim	mashedmod/src/mashed_re/Match/MatchS15_00492d20.cpp, now also in the exe list (its 0x004967e0 forwarder binds the stand-in in the exe)	1	0x00492290
 0x00492d30	GameTickStateMachine7	matched	Orig_00492d30	PORT-TOP-05: re/match/s15/00492d30.c (100%), Match/PortTop_00492d30.cpp via PortTop_Bound_00492d30 (det frame cap + harness before, input globals when 0x0043dfd0 did not run + GameFlow_Update after); MASHED_TOP05_HANDFRAME=1 runs the old stand-in. verify/porttop05_20261112/RESULT_PORT-TOP-05.md	1	0x00492290
 0x00492e90	FUN_00492e90	stand-in	PortTop_StandIn_00492e90 -> RenderFrame	hand RenderFrame; device loss posts WM_QUIT. PORT-TOP-05	1	0x00492290
-0x004926c0	AudioTickAndAvg	missing	PortTop_Missing_004926c0	exe body AudioTickAndAvg (MatchS15_004926c0.cpp) forwards its 5 callees raw (none has an exe body). No-op	1	0x00492290
-0x00493480	FpsDiscretise	missing	PortTop_Missing_00493480	exe body FpsDiscretise forwards raw to 0x00493390 (no exe body). No-op; hand pacing is the present/limiter in RenderFrame	1	0x00492290
+0x004926c0	AudioTickAndAvg	matched	AudioTickAndAvg	RO-BIND-TIMER: Match/MatchS15_004926c0.cpp (100%), run through PortTop_Timer_004926c0 under MASHED_OT_AUDIOTICK=1 (default OFF: no-op as before). DAT_006147b8 is file-initialised to 1, so the audio branch runs on frame 0 and stops at 0x0045d3f0. Callees bind by name: 0x004950b0, 0x00496930 matched; 0x0045d3f0 / 0x00466b50 / 0x0045d430 named stops	1	0x00492290
+0x00493480	FpsDiscretise	matched	FpsDiscretise	RO-BIND-TIMER: Match/MatchS15_00493480.cpp (100%), run through PortTop_Timer_00493480 under MASHED_OT_TIMER=1 (default OFF: returns 0 as before). Callee 0x00493390 binds to PortTop_Bound_00493390	1	0x00492290
 0x00499820	sub_00499820	matched	Orig_00499820	re/match/s16/00499820.c (h6), Match/PortTop_00499820.cpp. Window procedure of the knob window	2	0x00499ba0
 0x00498bc0	VideoGetRenderWidth	matched	VideoGetRenderWidth	PORT-TOP-04E: matched, Match/MatchS16_00498bc0.cpp	2	0x00402750
 0x00498bd0	VideoGetRenderHeight	matched	VideoGetRenderHeight	PORT-TOP-04E: matched, Match/MatchS16_00498bd0.cpp	2	0x00402750
@@ -210,11 +210,11 @@ rva	name	kind	exe_symbol	note	level	caller
 0x004c1bb0	RwCameraClear	bound	MashedRw_CameraClear_004c1bb0	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::clear. The matched body (Match/MatchS19_004c1bb0.cpp, .asi) calls RwGlobals +0x9c, absent in the exe, so the binding is the exe path	3	0x00428590
 0x004c1be0	sub_004c1be0	matched	Orig_004c1be0	PORT-TOP-04B: Match/PortTop_004c1be0.cpp (gen_top04b_tus.py) (re/match/s19/004c1be0.c)	3	0x00428590
 0x004c1c80	RwCameraSetViewWindow	bound	MashedRw_CameraSetViewWindow_004c1c80	PORT-TOP-04B: LibRw/RwApiBind.cpp: rw::Camera::setViewWindow	4	0x00467110
-0x0045d3f0	FUN_0045d3f0	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
-0x0045d430	FUN_0045d430	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
-0x00466b50	FUN_00466b50	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
-0x00496930	Table773030Get	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x004926c0
-0x00493390	FUN_00493390	under-stand-in		parent bound to a stand-in, not reached. exe port=none ; hooks C4	2	0x00493480
+0x0045d3f0	FUN_0045d3f0	missing	PortTop_Stop_0045d3f0	RO-BIND-TIMER: named stop (log + exit code = rva). Reached only while DAT_006147b8 != 0. Exe body L2_FUN_0045d3f0 is asi-only and its callees 0x00550be0 / 0x005a60b0 have no exe body	2	0x004926c0
+0x0045d430	FUN_0045d430	missing	PortTop_Stop_0045d430	RO-BIND-TIMER: named stop (log + exit code = rva). Reached only while DAT_006147b8 != 0. No exe body	2	0x004926c0
+0x00466b50	FUN_00466b50	missing	PortTop_Stop_00466b50	RO-BIND-TIMER: named stop (log + exit code = rva). Reached only while DAT_006147b8 != 0. No exe body (57 callees)	2	0x004926c0
+0x00496930	Table773030Get	matched	Table773030Get	RO-BIND-TIMER: Match/MatchS16_00496930.cpp (100%) now also in exe_sources.rsp (leaf)	2	0x004926c0
+0x00493390	FUN_00493390	matched	PortTop_Bound_00493390	RO-BIND-TIMER: Match/PortTop_00493390.cpp (re/match/s15/00493390.c, 100%), exe only. Callee 0x004950b0 -> QpcTimeScaledTo3Mhz	2	0x00493480
 0x004c2fb0	RwEngineStart	bound	MashedRw_EngineStart_004c2fb0	LibRw/RwApiBind.cpp: RwEngineStart -> exe InitD3D9 device, adopted, rw::Engine::start, librw race renderer camera / state block	3	0x00493710
 0x004c30b0	RwEngineOpen	bound	MashedRw_EngineOpen_004c30b0	LibRw/RwApiBind.cpp: RwEngineOpen(params.displayID = hwnd) -> rw::Engine::open + last subsystem	3	0x00493710
 0x004c32b0	RwEngineInit	bound	MashedRw_EngineInit_004c32b0	LibRw/RwApiBind.cpp: RwEngineInit -> rw::Engine::init	3	0x00493710

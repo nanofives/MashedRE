@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <intrin.h>
 
 #define MATCH_PORT 1
 
@@ -46,6 +47,7 @@ unsigned int thunk_HwExitDispatch(void);       // Match/MatchS15_00493560.cpp
 void PortTop_SeedDInput(void);                 // Match/PortTop_InputPort.cpp
 void PortTop_HandGameModeMachine(void);
 void PortTop_SetHwnd(void* hwnd);
+void PortTop_Bound_00493390(void);             // Match/PortTop_00493390.cpp (RO-BIND-TIMER)
 int  MainLoopInit(void);                       // Match/MatchS15_00492770.cpp
 __declspec(dllimport) void __stdcall PostQuitMessage(int nExitCode);
 
@@ -298,12 +300,121 @@ int PortTop_StandIn_00492e90(void) {
     ++s_frame;
     return r;
 }
-// rva 0x004926c0 AudioTickAndAvg: the exe body exists (Match/MatchS15_004926c0.cpp) but its 5 callees have none and its
-// forwarders call raw original addresses, which fault in the exe. Not called; the hand audio runs on its own thread.
-void PortTop_Missing_004926c0(void) {}
-// rva 0x00493480 FpsDiscretise: the exe body exists but forwards to raw 0x00493390 (no exe body). Not called; the hand
-// frame pacing is the device present + limiter inside RenderFrame.
-int PortTop_Missing_00493480(void) { return 0; }
+// ---- RO-BIND-TIMER (replay oracle 2): the tick boundary and the clock globals, sub-knob MASHED_OT_TIMER ----
+// With MASHED_OT_TIMER=1 (default OFF) the matched run loop's last call runs its matched exe body FpsDiscretise
+// (Match/MatchS15_00493480.cpp), whose callee 0x00493390 binds to Match/PortTop_00493390.cpp. With
+// MASHED_OT_AUDIOTICK=1 (default OFF, own sub-knob) the call before it runs the matched AudioTickAndAvg
+// (Match/MatchS15_004926c0.cpp). Its audio branch runs whenever DAT_006147b8 != 0, and that word is file-initialised
+// to 1 (.data, seeded by Compat/PortStateSeed.inc), so on frame 0 it calls 0x0045d3f0, which has no exe body: a named
+// stop ends the process (verify/robindtimer_20261112/RESULT_RO-BIND-TIMER.md). Off, each stays the no-op it was (the
+// hand frame pacing is the device present + limiter inside RenderFrame). Every call runs a self-test against an
+// independent model of the matched sources (re/match/s15/00493390.c, 00493480.c, 004926c0.c), from the globals read
+// before it.
+int  FpsDiscretise(void);                      // Match/MatchS15_00493480.cpp
+void AudioTickAndAvg(void);                    // Match/MatchS15_004926c0.cpp
+static int s_otTimer = -1, s_otAudio = -1;
+static unsigned s_tmCalls480 = 0, s_tmCalls6c0 = 0, s_tmChecks = 0, s_tmFails = 0;
+static int OtTimerOn(void) {
+    if (s_otTimer < 0) {
+        const char* const v = std::getenv("MASHED_OT_TIMER");
+        s_otTimer = (v && v[0] && v[0] != '0') ? 1 : 0;
+        PortTop_Log("[OT_TIMER] MASHED_OT_TIMER %s: %s", s_otTimer ? "on" : "off",
+                    s_otTimer ? "0x00493480 (-> 0x00493390) runs its matched exe body" : "0x00493480 stays a no-op");
+    }
+    return s_otTimer;
+}
+static int OtAudioOn(void) {
+    if (s_otAudio < 0) {
+        const char* const v = std::getenv("MASHED_OT_AUDIOTICK");
+        s_otAudio = (v && v[0] && v[0] != '0') ? 1 : 0;
+        PortTop_Log("[OT_TIMER] MASHED_OT_AUDIOTICK %s: 0x004926c0 %s", s_otAudio ? "on" : "off",
+                    s_otAudio ? "runs its matched exe body" : "stays a no-op");
+    }
+    return s_otAudio;
+}
+static int&      MemI(unsigned a) { return *reinterpret_cast<int*>(static_cast<std::uintptr_t>(a)); }
+static unsigned& MemU(unsigned a) { return *reinterpret_cast<unsigned*>(static_cast<std::uintptr_t>(a)); }
+static unsigned  FBits(float f) { unsigned u; std::memcpy(&u, &f, 4); return u; }
+static unsigned  MemFBits(unsigned a) { return MemU(a); }
+static void TmCheck(bool ok, const char* what, unsigned got, unsigned want) {
+    ++s_tmChecks;
+    if (!ok && ++s_tmFails <= 8)
+        PortTop_Log("[OT_TIMER] self-test FAIL %s: got 0x%08X expected 0x%08X (call %u)", what, got, want, s_tmCalls480);
+}
+static void PortTop_TimerSummary(void);
+static void PortTop_Stop(unsigned rva, void* ret) {
+    PortTop_Log("[OT_TIMER] STOP: the matched 0x004926c0 called original 0x%08X (DAT_006147b8 = %d); the exe has no "
+                "body for it. Return address %p", rva, MemI(0x006147b8u), ret);
+    PortTop_TimerSummary();
+    std::exit(static_cast<int>(rva));
+}
+unsigned PortTop_Stop_0045d3f0(int) { PortTop_Stop(0x0045d3f0u, _ReturnAddress()); return 0; }
+void     PortTop_Stop_00466b50(int) { PortTop_Stop(0x00466b50u, _ReturnAddress()); }
+unsigned PortTop_Stop_0045d430(void) { PortTop_Stop(0x0045d430u, _ReturnAddress()); return 0; }
+
+// Dispatcher (not a body) for the matched AudioTickAndAvg. Model (re/match/s15/004926c0.c): DAT_00771978 counts up and wraps to 0 at 60, where
+// DAT_0077197c = DAT_00771994 / 60 and DAT_00771994 = 0. Otherwise DAT_00771994 grows by a QPC delta (>= 0).
+void PortTop_Timer_004926c0(void) {
+    if (!OtAudioOn()) return;
+    const int cnt0 = MemI(0x00771978u), acc0 = MemI(0x00771994u);
+    AudioTickAndAvg();
+    ++s_tmCalls6c0;
+    const int cnt1 = MemI(0x00771978u), acc1 = MemI(0x00771994u);
+    if (cnt0 + 1 == 60) {
+        TmCheck(cnt1 == 0, "6c0 counter wrap", cnt1, 0);
+        TmCheck(acc1 == 0, "6c0 accumulator reset", acc1, 0);
+        TmCheck(MemI(0x0077197cu) >= acc0 / 60, "6c0 average >= old/60", MemI(0x0077197cu), acc0 / 60);
+    } else {
+        TmCheck(cnt1 == cnt0 + 1, "6c0 counter", cnt1, cnt0 + 1);
+        TmCheck(acc1 >= acc0, "6c0 accumulator grows", acc1, acc0);
+    }
+}
+// Dispatcher (not a body) for the matched FpsDiscretise and its callee. Model of both from the globals before the call. The only free input
+// is now = the QPC/3 MHz value 0x00493390 stores into DAT_007f1030.
+int PortTop_Timer_00493480(void) {
+    if (!OtTimerOn()) return 0;
+    const int r84 = MemI(0x00771984u), r1030 = MemI(0x007f1030u), rff0 = MemI(0x007f0ff0u);
+    const unsigned r102c = MemU(0x007f102cu);
+    const int r1024 = MemI(0x007f1024u), r1028 = MemI(0x007f1028u), r9d4 = MemI(0x007719d4u);
+    const int ret = FpsDiscretise();
+    ++s_tmCalls480;
+    const unsigned now = MemU(0x007f1030u);
+    // 0x00493390
+    const unsigned t = now + static_cast<unsigned>(r84);
+    int ffc = static_cast<int>(t - static_cast<unsigned>(r1030));
+    if (ffc > 200000) ffc = 200000; else if (ffc < 0) ffc = -ffc;
+    int d = ffc - 50000;
+    if (d > -64 && d < 64) d = 0; else { if (d < -2) d += 2; if (d > 2) d -= 2; }
+    TmCheck(MemI(0x007f0ffcu) == ffc, "390 DAT_007f0ffc", MemI(0x007f0ffcu), ffc);
+    TmCheck(MemI(0x00771984u) == d, "390 DAT_00771984", MemI(0x00771984u), d);
+    const unsigned f1010 = FBits(static_cast<float>(now) * 3.3333333e-07f);
+    TmCheck(MemFBits(0x007f1010u) == f1010, "390 DAT_007f1010", MemFBits(0x007f1010u), f1010);
+    TmCheck(MemI(0x007f0ff0u) == rff0 + 50, "390 DAT_007f0ff0 += 50", MemI(0x007f0ff0u), rff0 + 50);
+    const bool win = t > r102c + 3000000u;
+    TmCheck(MemI(0x007f1028u) == (win ? r1024 : r1028), "390 DAT_007f1028", MemI(0x007f1028u), win ? r1024 : r1028);
+    TmCheck(MemU(0x007f102cu) == (win ? t : r102c), "390 DAT_007f102c", MemU(0x007f102cu), win ? t : r102c);
+    // 0x00493480 on DAT_007f1000 = 50 (0x00493390 stores it at 0x004933d5): t snaps to 50, a = acc + 50
+    int a = r9d4 + 50, n = 0;
+    if (a >= 50) { n = static_cast<int>(static_cast<unsigned>(a) / 50u); a -= n * 50; }
+    if (a > 47) { ++n; a = 0; } else if (a < 3) a = 0;
+    TmCheck(MemI(0x007719d4u) == a, "480 DAT_007719d4", MemI(0x007719d4u), a);
+    TmCheck(MemI(0x007f1000u) == n * 50, "480 DAT_007f1000", MemI(0x007f1000u), n * 50);
+    const unsigned dt = FBits(static_cast<float>(n * 50) * 0.00033333333f);
+    TmCheck(MemFBits(0x007f1004u) == dt, "480 DAT_007f1004", MemFBits(0x007f1004u), dt);
+    TmCheck(ret == 1, "480 return", ret, 1);
+    if (s_tmCalls480 == 1 || (s_tmCalls480 % 120) == 0)
+        PortTop_Log("[OT_TIMER] call %u: now %u, DAT_007f1000 %d, DAT_007f0ffc %d, DAT_00771984 %d, DAT_007f0ff0 %d, "
+                    "DAT_00771978 %d; checks %u failed %u", s_tmCalls480, now, MemI(0x007f1000u), MemI(0x007f0ffcu),
+                    MemI(0x00771984u), MemI(0x007f0ff0u), MemI(0x00771978u), s_tmChecks, s_tmFails);
+    return ret;
+}
+static void PortTop_TimerSummary(void) {
+    if (s_otTimer != 1 && s_otAudio != 1) return;
+    PortTop_Log("[OT_TIMER] self-test %s (%u of %u checks failed), 0x00493480 calls %u, 0x004926c0 calls %u; bodies at "
+                "%p / %p / %p", s_tmFails ? "FAIL" : "PASS", s_tmFails, s_tmChecks, s_tmCalls480, s_tmCalls6c0,
+                reinterpret_cast<void*>(&FpsDiscretise), reinterpret_cast<void*>(&AudioTickAndAvg),
+                reinterpret_cast<void*>(&PortTop_Bound_00493390));
+}
 
 } // extern "C"
 
@@ -332,8 +443,8 @@ int PortTop_Missing_00493480(void) { return 0; }
 #define FUN_004929d0 PortTop_Bound_004929d0     // matched, Match/PortTop_004929d0.cpp (PORT-TOP-05)
 #define FUN_00492d30 PortTop_Bound_00492d30     // matched, Match/PortTop_00492d30.cpp (PORT-TOP-05)
 #define FUN_00492e90 PortTop_StandIn_00492e90
-#define FUN_004926c0 PortTop_Missing_004926c0
-#define FUN_00493480 PortTop_Missing_00493480
+#define FUN_004926c0 PortTop_Timer_004926c0     // RO-BIND-TIMER: matched body under MASHED_OT_AUDIOTICK=1, else no-op
+#define FUN_00493480 PortTop_Timer_00493480     // RO-BIND-TIMER: matched body under MASHED_OT_TIMER=1, else returns 0
 
 extern "C" {
 #include "../../../../re/match/s15/00492370.c"
@@ -351,6 +462,7 @@ int PortTop_WinMain(void* hInstance, void* hPrevInstance, char* lpCmdLine, int n
                                 static_cast<int>(reinterpret_cast<std::uintptr_t>(hPrevInstance)),
                                 static_cast<int>(reinterpret_cast<std::uintptr_t>(lpCmdLine)), nCmdShow);
     PortTop_Log("WinMain 0x00492370 returned %d after %u frames", r, s_frame);
+    PortTop_TimerSummary();
     return r;
 }
 } // extern "C"
