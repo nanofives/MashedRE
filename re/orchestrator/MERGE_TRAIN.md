@@ -127,3 +127,8 @@ No caller exists in `scripts/` or `mashedmod/`, and none of the gate runners tak
 - Exit codes: 2 if the path is missing or not a directory, 1 if the worktree is dirty or refuses removal, 0 on success.
 - `--all-stale` keeps any worktree that is dirty, has commits ahead of `main`, or whose index changed less than `--min-age-days` ago (default 3). It prints `removed N, kept M` (441-488).
 - frida-sweep's teardown runs it per merged branch, followed by `git branch -d` (never `-D`) (SKILL.md:97-98).
+
+## Start gate and priority window (HB-TRAIN-SOLO-WINDOW, 2026-11-12)
+- `merge_train.ps1 -Gate` (optional `-Override`) reads the queue and exits 0 (START) at `start_gate.min_rows` (3) queued rows or once the oldest has waited `start_gate.max_wait_min` (60), else 3 (WAIT). The L0 conductor calls it before a pass or `-Drain`. Side-effect free. `-QueueFile` / `-GateNow` are for tests.
+- The mashed_lock priority hold now starts in Try-Batch after merge, lints and build, right before the gates (`priority_scope` `games`). `pass` restores the old whole-pass hold. Gate content is unchanged (L-138).
+
