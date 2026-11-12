@@ -59,8 +59,27 @@ def loadlen_rule(x, y, bad, raw_va, nblk, blk, mr, ma, notes):
              and LOADLEN_BLOCK <= raw_va[j - 2 - nblk] < LOADLEN_BLOCK + blk}
     if not raw_va or not any(LOADLEN_BLOCK <= v < LOADLEN_BLOCK + blk for v in raw_va) or not words or not words <= LOADLEN_DWORDS:
         return False
-    notes.append(f"tick 0: {sorted(hex(w) for w in words)} differ, load lengths {mr['race'].get('dn_warp')} / {ma['race'].get('dn_warp')} (TIMER-PHASE rule)")
+    notes.append(f"race tick 0: {sorted(hex(w) for w in words)} differ, load lengths {mr['race'].get('dn_warp')} / {ma['race'].get('dn_warp')} (TIMER-PHASE rule)")
     return True
+
+
+PHASE_NAME = {0: "boot", 1: "menu", 2: "load", 3: "race"}
+
+
+def segments(meta):
+    """RO-MENU-REPLAY boot mode: [[name, first record, last record], ...] from the tick phase bytes (detorig.py phase_runs).
+    The warp tick ends the menu segment. Runs made without --boot have no phases: one 'race' segment."""
+    ph = (meta.get("ticks") or {}).get("phases")
+    if not ph:
+        return None
+    return [[PHASE_NAME.get(p, f"phase{p}"), a, b] for p, a, b in ph]
+
+
+def segment_of(segs, i):
+    for name, a, b in segs or []:
+        if a <= i <= b:
+            return name
+    return None
 
 
 def verdict(run, ref_a, ref_b, extra_pairs=()):
@@ -93,6 +112,8 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
     rawpos = {v: 2 + nblk + k for k, v in enumerate(raw_va)}
     first = None
     notes = []
+    # TIMER-PHASE applies at the race's first tick: record 0 in a warp-at-menu run, the first phase-3 record in a boot run
+    race0 = next((a for name, a, b in (segments(ma) or []) if name == "race"), 0)
     for i in range(n):
         x, y = rr[i], ra[i]
         if (x[1] - mr["race"]["n"]) != (y[1] - ma["race"]["n"]):
@@ -111,7 +132,7 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
                     bad.append(j)
             elif j not in allowed and not any(lo <= w < lo + blk for w in MASKED_LIST):
                 bad.append(j)
-        if i == 0 and bad and loadlen_rule(x, y, bad, raw_va, nblk, blk, mr, ma, notes):
+        if i == race0 and bad and loadlen_rule(x, y, bad, raw_va, nblk, blk, mr, ma, notes):
             bad = []
         if bad:
             raw = [(hex(raw_va[j - 2 - nblk]), f"{x[j]:08x}", f"{y[j]:08x}") for j in range(2 + nblk, len(x))
@@ -123,7 +144,31 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
            "verdict": ("IDENTICAL-FOR-N" if n >= n0 else "INCOMPLETE") if first is None else "DIVERGED", "identical_for": n if first is None else first["tick"],
            "first": first, "rc": mr.get("rc"), "exit": mr.get("exit"), "notes": notes,
            "dn_warp": [mr["race"].get("dn_warp"), ma["race"].get("dn_warp")]}
+    segs = segments(ma)
+    if segs:
+        # boot mode: the segments of the reference, the run's own, and where the first divergence falls
+        rep["segments"] = segs
+        rep["run_segments"] = segments(mr)
+        rep["segments_match"] = rep["run_segments"] == segs[:len(rep["run_segments"] or [])] if rep["run_segments"] else None
+        if first:
+            first["segment"] = segment_of(segs, first["tick"])
+        rep["identical_by_segment"] = {name: max(0, min(b, rep["identical_for"] - 1) - a + 1) for name, a, b in segs}
+        rep["ticks_by_segment"] = {name: b - a + 1 for name, a, b in segs}
+        # BOOT-CLASS (RO-MENU-REPLAY, measured 2026-11-12): unmodified boot runs fall into classes that stay apart for
+        # the whole run: the tick-0 value of 0x007f1030 (frame-timer block; 4 values seen in 25 runs, r5 vs r3 then
+        # diverges at race tick 1752 in 0x00618000 with the timer dwords masked) and 0x006147d8 (MASK:os; runs with 1
+        # against references with 0 differ in 0x00773c00 / 0x00911c00 from tick 0). Recorded, not scored: a run whose
+        # class differs from its reference's is re-run or scored against a same-class reference.
+        def cls(r):
+            return {hex(w): f"{r[0][rawpos[w]]:08x}" for w in BOOT_CLASS_DWORDS if w in rawpos} if r else {}
+        rep["boot_class"] = {"run": cls(rr), "ref": cls(ra), "ref2": cls(rb)}
+        rep["boot_class_match"] = rep["boot_class"]["run"] == rep["boot_class"]["ref"] == rep["boot_class"]["ref2"]
+        if not rep["boot_class_match"]:
+            notes.append(f"BOOT-CLASS mismatch {rep['boot_class']}: verdict not body evidence")
     return rep
+
+
+BOOT_CLASS_DWORDS = (0x007f1030, 0x006147d8)
 
 
 if __name__ == "__main__":
@@ -134,8 +179,10 @@ if __name__ == "__main__":
     a = ap.parse_args()
     r = verdict(a.run, a.ref_a, a.ref_b, [p.split(",") for p in a.pair])
     print(f"{a.run}: {r['verdict']} {r['identical_for']} of {r['ticks']} (allowed blocks {len(r['allowed_blocks'])}, rc {r['rc']})")
+    if r.get("segments"):
+        print(f"  segments {r['segments']}  identical by segment {r['identical_by_segment']}  run segments match {r['segments_match']}")
     if r["first"]:
-        print(f"  first divergence tick {r['first']['tick']}: {r['first']['nblocks']} blocks {r['first']['blocks'][:8]}")
+        print(f"  first divergence tick {r['first']['tick']} ({r['first'].get('segment')}): {r['first']['nblocks']} blocks {r['first']['blocks'][:8]}")
         for w in r["first"]["raw"][:10]:
             print("   raw", w)
     if a.json:
