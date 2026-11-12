@@ -1,3 +1,5 @@
+// TOOLCHAIN rw9044
+// RWC-MATCH-S02: 100% under rw9044 with return clump inside the loop in place of break (same exits, same value).
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S21 0x004e66d0 (h4): 70.6% (regs 76.5%). RpClumpForAllAtomics, same ForAll form as the S19 100% 0x004c59c0 (next read before the callback, break on NULL). Residual: ours keeps clump in ecx and tail-duplicates the empty-list return (mov eax,ecx; pops); the original computes the terminator from eax, overwrites it with cur, and its empty-list je goes to the shared epilogue that reloads clump from [esp+0x14]. Tried: cur/end order, end->next, Ghidra's do-while form (42.9), permuter 92 compiles 0 gains. Class (b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -34,7 +36,7 @@ RpClump *FUN_004e66d0(RpClump *clump, RpAtomicCallBack callback, void *pData)
   RwLLLink *end = &clump->atomicList.link;
   while (cur != end) {
     RwLLLink *next = cur->next;
-    if (!callback((RpAtomic *)((char *)cur - 0x40), pData)) break;
+    if (!callback((RpAtomic *)((char *)cur - 0x40), pData)) return clump;
     cur = next;
   }
   return clump;
