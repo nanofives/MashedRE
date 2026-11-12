@@ -89,7 +89,7 @@ RULES = {
 REFERENCES = {
     0x00475a00: ("re/match/pilot/a3_00475a00.c", "EQUIV", "L-115 admitted: SIB base/index order"),
     0x0045a3a0: ("re/match/s09/0045a3a0.c", "EQUIV-IF-CALLERS-IGNORE", "L-115 admitted: EAX differs at return"),
-    0x00555360: ("re/match/s24/00555360.c", "EQUIV-IF-CALLERS-IGNORE", "L-117 admitted: return blocks + store order"),
+    0x00555360: ("re/tools/match/equiv_tests/refs/00555360_held.c", "EQUIV-IF-CALLERS-IGNORE", "L-117 admitted: return blocks + store order; frozen copy of the 94.4% DDK source, the live source is 100% under rw9044 since MATCH-RT2D-RESID run 40"),
     0x0048e820: ("re/match/s15/0048e820.c", "NOT-PROVEN", "L-118 admitted with the PortTop EDI wrapper; the "
                  "unedited source passes the wrong EDI to 0x0048cee0"),
     0x005c4ad0: ("re/tools/match/equiv_tests/refs/005c4ad0_held.c", "EQUIV", "held: imul operand order + a local whose address escapes (A1'); frozen copy, the live source is 100% since MATCH-RT2D-FONT"),
