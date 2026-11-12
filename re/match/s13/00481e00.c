@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-// h11: 86.5% (regs 96.5%, ops 97.6%). Hand from decomp (raw did not compile). DAT_006ce818 is file-static (pilot finding 2: its load is scheduled before the float stores through the returned pointer).
+// h11: 86.5% (regs 96.5%, ops 97.6%). Hand from decomp (raw did not compile). DAT_006ce818 is file-static (pilot finding 2: its load is scheduled before the float stores through the returned pointer). PROV-DIVERGED-18 (2026-11-11): that file-static was a WRONG BODY under the DDK: the count lived in the object's own BSS, so the body never wrote 0x006ce818 (replay DIVERGED@2, 0x006ce818 body 0 / orig 0x75; the linked blob's one absolute store went to blob +0x230). Now the C build names the original's word too: now 85.9% (regs 94.7%, ops 95.9%).
 /* MATCH-S13 0x00481e00: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchs13_20261102/results.tsv. */
 /* ---- MATCH-S13 preamble (same text in every re/match/s13 source; not part of any function body) ----
@@ -25,11 +25,7 @@ typedef unsigned char bool;
 #endif
 /* ---- end preamble ---- */
 typedef struct { float x; float y; float z; } V3;
-#ifndef __cplusplus
-static unsigned int DAT_006ce818;
-#else
 MGLOBAL(unsigned int, DAT_006ce818, 0x006ce818);
-#endif
 MGLOBALA(V3, DAT_006ce278, 120, 0x006ce278);
 MGLOBAL(double, DAT_005cf240, 0x005cf240);
 MGLOBAL(float, DAT_005cf23c, 0x005cf23c);

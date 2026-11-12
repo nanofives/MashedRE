@@ -152,6 +152,13 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
     in the same region.
   - Mismatch: if the two sides count differently, the call records differ (NOT-PROVEN).
   - Otherwise: when neither count exists, every frame slot between ESP and the entry ESP is compared.
+- **no-return** (tag `no-return`): a call to a callee whose summary reaches no `ret` ends the path there, and nothing
+  after the call is compared on either side. Tagged whenever any path ends this way, also when other paths return
+  (since PROV-DIVERGED-18, 2026-11-11). A summary walk that runs into the next function-table entry is not a
+  no-return callee: it gives no summary (`r11`). Before that fix, CRT acos `0x004a3384` (Ghidra size 9, it continues
+  at the next table entry `0x004a338d`) was summarised no-return, so was `0x00408b00`, and `0x00448220` came out
+  EQUIV with every instruction after its first `0x00408b00` call (`0x00448475`) unchecked, the tag absent. The
+  replay diverged at tick 1116 (`verify/provinsitu_20261111/RESULT_PROV-DIVERGED-18.md`).
 
 ## 5. Excluded on purpose
 

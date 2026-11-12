@@ -842,7 +842,12 @@ def _summary_body(va, depth):
             if visited > 20000:
                 return _sfail(va, "r3")
             if pc >= next_entry:
-                break          # fell into the next function: the call before it does not return
+                # Fell into the next function-table entry. That is not proof that the call before it does not
+                # return: CRT acos 0x004a3384 (Ghidra size 9) calls 0x004a70d5 and continues at 0x004a338d, a
+                # separate table entry, and that call returns. Treating the fall-through as no-return made
+                # 0x004a3384, then 0x00408b00, no-return, and the 0x00448220 walk stopped at its first call to
+                # 0x00408b00 (0x00448475) with EQUIV over the unchecked rest (PROV-DIVERGED-18). Unknown instead.
+                return _sfail(va, "r11")
             b = img.bytes(pc, 16)
             if b is None:
                 return _sfail(va, "r4")
@@ -2456,7 +2461,10 @@ class Explorer:
                 rets += 1
                 self.check_ret(sa, sb, ra, rb, here)
             elif ka == "halt":
-                pass
+                # a path ends at a call summarised as no-return: nothing after it is compared. Tag it even when other
+                # paths return, so the record shows it (PROV-DIVERGED-18: 0x00448220 was EQUIV with 2/3 of the body
+                # behind such a call and the tag absent, because its early-return paths reached a ret).
+                ctx.used.add("no-return")
             elif ka == "ind":
                 for nxt in self.switch_pairs(ra, rb, here):
                     self.arrivals.setdefault(nxt, {})[(pair, ("sw",) + nxt)] = (sa.copy(), sb.copy())

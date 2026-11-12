@@ -11,7 +11,13 @@
    mode test; (2) the thrust products t*dt*G*g*0.0001*(1/3000): ours reassociates (loads G or folds the two
    literals) where the original multiplies left to right in place; (3) x87 stack scheduling in the cross-product
    rows and the `== 7` block (same reassociation). Splitting the product into statements did not stop it. The
-   permuter's best (82.3%) moved statements past their uses (rejected). */
+   permuter's best (82.3%) moved statements past their uses (rejected).
+   PROV-DIVERGED-18 (2026-11-11): residual (2) is a VALUE difference, not only a score one. The replay diverged at tick
+   116 by 1-2 ULP (0x0063d928 body 0x3d126547 / orig 0x3d126549). The original multiplies left to right through
+   0x005cd03c (0.0001) and 0x005cc948 (1/3000) at the thrust products (0x0046eb95/9d/a3 and 0x0046ec3a/42/48) and
+   0x005cc948 then +0x9e4 then 0x005ce268 (0.0005) at the `== 7` block (0x0046edbb..0x0046edc7); the literal form let the DDK fold or reorder
+   them. Now one statement per multiply with the constants as const globals: the DDK emits the original's order
+   (score below). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -36,6 +42,9 @@ typedef unsigned char bool;
 /* ---- end preamble ---- */
 typedef struct V3_0046e9e0 { float x, y, z; } V3_0046e9e0;
 MGLOBAL(float, DAT_00613108, 0x00613108);
+MGLOBAL(const float, DAT_005cd03c, 0x005cd03c);
+MGLOBAL(const float, DAT_005cc948, 0x005cc948);
+MGLOBAL(const float, DAT_005ce268, 0x005ce268);
 int FUN_0040e350(void);
 void FUN_0046d700(V3_0046e9e0 *out, int id);
 void FUN_004c4670(float *out, float *in);
@@ -99,7 +108,7 @@ static void FUN_0046e9e0(float dt, unsigned char *pad, char *car, float *cur, fl
         t = f * t;
       }
       if (t != 0.0f) {
-        f = t * dt * DAT_00613108 * g * 0.0001f * 0.00033333333f;
+        f = t * dt; f = f * DAT_00613108; f = f * g; f = f * DAT_005cd03c; f = f * DAT_005cc948;
         v.x = dir.x * f;
         v.y = dir.y * f;
         v.z = dir.z * f;
@@ -118,7 +127,7 @@ static void FUN_0046e9e0(float dt, unsigned char *pad, char *car, float *cur, fl
         t = f * t;
       }
       if (t != 0.0f) {
-        f = t * dt * DAT_00613108 * g * 0.0001f * 0.00033333333f;
+        f = t * dt; f = f * DAT_00613108; f = f * g; f = f * DAT_005cd03c; f = f * DAT_005cc948;
         s = -f;
         v.x = dir.x * s;
         v.y = s * dir.y;
@@ -150,7 +159,7 @@ static void FUN_0046e9e0(float dt, unsigned char *pad, char *car, float *cur, fl
     F_0046e9e0(0x14c) = acc.z + F_0046e9e0(0x14c);
   }
   if (FUN_0040e350() == 7 && I_0046e9e0(4) == 1) {
-    f = (dt + dt) * 0.00033333333f * F_0046e9e0(0x9e4) * 0.0005f;
+    f = (dt + dt) * DAT_005cc948; f = f * F_0046e9e0(0x9e4); f = f * DAT_005ce268;
     acc.x = dir.x * f;
     acc.y = dir.y * f;
     acc.z = dir.z * f;
