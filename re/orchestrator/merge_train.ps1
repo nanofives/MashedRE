@@ -30,7 +30,8 @@
   fast-forwards race/first-frame-parity in the main checkout and main (update-ref with the old value), checks both equal
   orch/integration, runs release_due.py and on DUE waits for publish.sh, then starts the next pass. It stops and
   reports on RED, INFRA, a hash change, a decided-flip row in the batch (left queued for its own -Full pass), or any
-  error. Never pushes. Wrap the driver in test-slot if a slot is wanted: the slot stays outside, mashed_lock inside.
+  error. A drain that ran out the queue but set rows aside on a merge conflict reports PARTIAL (exit 2), not GREEN
+  (HB-DRAIN-VERDICT). Never pushes. Wrap the driver in test-slot if a slot is wanted: the slot stays outside, mashed_lock inside.
   A decided-flip row (Test-FlipRow): id -FLIP / FLIP-, "decided flip" in the ledger title, or (HB-TRAIN-FLIP-DECISION,
   2026-11-11) an L-n in the ledger `decision` field together with a title naming a default turned ON.
 #>
@@ -731,7 +732,7 @@ function Invoke-PassChild([string]$rj) {
   return (Get-Content -LiteralPath $rj -Raw | ConvertFrom-Json -AsHashtable)
 }
 function Invoke-Drain([string]$int) {
-  $passes = @(); $stop = ''; $lines = @()
+  $passes = @(); $stop = ''; $lines = @(); $aside = @()
   for ($n = 1; $n -le [int]$DCFG.max_passes; $n++) {
     $q = @(Get-Queue)
     if (-not $q.Count) { $stop = ''; Say "drain: queue empty after $($n - 1) pass(es)"; break }
@@ -742,7 +743,7 @@ function Invoke-Drain([string]$int) {
     $stop = Get-DrainStop $p (Read-Refs)
     $line = "pass $n $($p.verdict): merged [$(@($p.merged) -join ' ')] gates $($p.gates)"
     if ($stop) { $lines += $line; break }
-    if ($p.conflict_only) { $line += " (set aside on a merge conflict: $((@($p.bounced) | ForEach-Object { $_.id }) -join ' '))" }
+    if ($p.conflict_only) { $ids = @(@($p.bounced) | ForEach-Object { $_.id }); $aside += $ids; $line += " (set aside on a merge conflict: $($ids -join ' '))" }
     if (-not @($p.merged).Count) { $lines += "$line; nothing merged, no fast-forward"; continue }   # conflict-only pass: every row bounced
     $adv = Advance-Main $int
     if (-not $adv.ok) { $stop = "ERROR: fast-forward of $($DCFG.parity_branch)/$($DCFG.main_branch) refused: $($adv.why)"; $lines += $line; break }
@@ -752,7 +753,11 @@ function Invoke-Drain([string]$int) {
     if ($rel.stop) { $stop = $rel.stop; break }
   }
   if (-not $stop -and $n -gt [int]$DCFG.max_passes -and @(Get-Queue).Count) { $stop = "STOP: max_passes $($DCFG.max_passes) reached with rows still queued" }
-  $verdict = if (-not $stop) { 'GREEN' } else { ($stop -split ':')[0] }
+  # HB-DRAIN-VERDICT (2026-11-12): a conflict-only RED pass lets the drain go on (HB-TRAIN-CONFLICT-SKIP), but the
+  # drain verdict must not read GREEN when rows were set aside (run 37: pass 1 RED, HUDINIT-A set aside on hooks.csv,
+  # drain GREEN). A stop keeps its own verdict; otherwise any set-aside row makes it PARTIAL (exit 2), else GREEN.
+  $verdict = if ($stop) { ($stop -split ':')[0] } elseif ($aside.Count) { 'PARTIAL' } else { 'GREEN' }
+  $asideTxt = if ($aside.Count) { " | set aside on a merge conflict, needs a hand merge (frida-sweep recipe) and a re-queue: $($aside -join ' ')" } else { '' }
   $final = (Git rev-parse --short $int) | Select-Object -First 1
   $report = @(
     'REPORT merge-train-drain',
@@ -761,10 +766,10 @@ function Invoke-Drain([string]$int) {
     "evidence: $LOG",
     "gates: $(if ($passes.Count) { $passes[-1].gates } else { 'not run: queue empty' })",
     "decision: none",
-    "next: $($passes.Count) pass(es): $($lines -join ' | ')$(if ($stop) { " | stopped: $stop" } else { ' | queue drained' })"
+    "next: $($passes.Count) pass(es): $($lines -join ' | ')$(if ($stop) { " | stopped: $stop" } else { ' | queue drained' })$asideTxt"
   )
   $report | Set-Content (Join-Path $DATA 'REPORT.txt') -Encoding utf8
-  return @{ verdict = $verdict; stop = $stop; passes = $passes; report = $report }
+  return @{ verdict = $verdict; stop = $stop; passes = $passes; report = $report; aside = $aside }
 }
 
 # ---- self test (HB-TRAIN3): fake repo + fake arm runner, never reads the live queue ------------------
@@ -1345,11 +1350,18 @@ if ($SelfTest) {
   $cb = @(@{ id = 'Q2'; why = 'conflict needs a hand merge (frida-sweep recipe): hooks.csv'; conflict = $true })
   $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $true; bounced = $cb }) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
   $h = Heads
-  Check ($d.verdict -eq 'GREEN' -and $script:passN -eq 2 -and $h[0] -eq $h[2] -and $h[1] -eq $h[2] -and ($script:ev -join ',') -eq 'pass1,release1,pass2,release2' -and $d.report[-1] -match 'set aside on a merge conflict: Q2') "drain 12: conflict-only RED pass = the rest is fast-forwarded and released, drain goes on (events $($script:ev -join ','))"
+  Check ($d.verdict -eq 'PARTIAL' -and $d.report[1] -eq 'verdict: PARTIAL' -and @($d.aside) -join ',' -eq 'Q2' -and $d.report[-1] -match 'needs a hand merge .*: Q2$' -and $script:passN -eq 2 -and $h[0] -eq $h[2] -and $h[1] -eq $h[2] -and ($script:ev -join ',') -eq 'pass1,release1,pass2,release2' -and $d.report[-1] -match 'set aside on a merge conflict: Q2') "drain 12 (HB-DRAIN-VERDICT: verdict PARTIAL, not GREEN): conflict-only RED pass = the rest is fast-forwarded and released, drain goes on (events $($script:ev -join ','))"
   $d = Drain-Case @((@{ take = 1; res = (PR 'RED' @{ conflict_only = $true; merged = @(); bounced = $cb; hashes = $null; gates = '' }) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
-  Check ($d.verdict -eq 'GREEN' -and ($script:ev -join ',') -eq 'pass1,pass2,release2' -and $d.report[-1] -match 'nothing merged, no fast-forward') "drain 12: conflict-only pass with nothing merged = no fast-forward, no release, next pass (events $($script:ev -join ','))"
+  Check ($d.verdict -eq 'PARTIAL' -and ($script:ev -join ',') -eq 'pass1,pass2,release2' -and $d.report[-1] -match 'nothing merged, no fast-forward') "drain 12 (PARTIAL): conflict-only pass with nothing merged = no fast-forward, no release, next pass (events $($script:ev -join ','))"
   $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $false; bounced = @(@{ id = 'Q2'; why = 'default gates changed'; conflict = $false }) }) })) 2 @{}
   Check ($d.verdict -eq 'RED') 'drain 12: a gate-RED bounce still stops the drain'
+  # HB-DRAIN-VERDICT: a later stop keeps its own verdict and still lists the earlier set-aside rows
+  $d = Drain-Case @(($G + @{ res = (PR 'RED' @{ conflict_only = $true; bounced = $cb }) }), @{ take = 0; res = (PR 'INFRA' @{ merged = @(); infra = 'D3D9-NOTAVAIL in H_DEF' }) }) 3 @{}
+  Check ($d.verdict -eq 'INFRA' -and $d.report[-1] -match 'stopped: INFRA' -and $d.report[-1] -match 'needs a hand merge .*: Q2$') "drain 12b: set-aside then INFRA = verdict INFRA, set-aside row still named ($($d.verdict))"
+  $d = Drain-Case @(($G + @{ res = (PR 'GREEN' @{}) }), ($G + @{ res = (PR 'GREEN' @{}) })) 2 @{}
+  Check ($d.verdict -eq 'GREEN' -and $d.report[-1] -notmatch 'set aside') "drain 12c: no set-aside = GREEN, no set-aside clause ($($d.verdict))"
+  $mainTxt = Get-Content -LiteralPath $PSCommandPath -Raw
+  Check ($mainTxt -match "elseif \(\`$d\.verdict -eq 'PARTIAL'\) \{ 2 \}") 'drain 12d: -Drain exits 2 on PARTIAL (0 GREEN, 1 any stop)'
   # 11. AST: the drain dispatch sits before Write-TrainPid and the batch pick, and the pass refuses flips before Enter-PassPriority
   $txt = Get-Content -LiteralPath $PSCommandPath -Raw
   $iDrain = $txt.LastIndexOf('$d = Invoke-Drain $INT'); $iPid = $txt.LastIndexOf("`nWrite-TrainPid"); $iFlip = $txt.LastIndexOf('$flips = @(Get-BatchFlips $batch)'); $iPrio = $txt.LastIndexOf("`nEnter-PassPriority")
@@ -1395,7 +1407,7 @@ if ($Drain -and -not $Plan) {
   Say "drain: start (max_passes $($DCFG.max_passes), passes$(if ($Full) { ' -Full' })$(if ($Max -gt 0) { " -Max $Max" }), log $LOG)"
   $d = Invoke-Drain $INT
   $d.report | Write-Output
-  exit $(if ($d.verdict -eq 'GREEN') { 0 } else { 1 })
+  exit $(if ($d.verdict -eq 'GREEN') { 0 } elseif ($d.verdict -eq 'PARTIAL') { 2 } else { 1 })
 }
 
 Write-TrainPid
