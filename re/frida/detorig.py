@@ -55,6 +55,36 @@ def main_thread_of(pid, timeout=40.0):
     return None
 
 
+class _Spawned:
+    """subprocess.Popen-like handle for a frida-spawned pid (RO-MENU-REPLAY boot mode): poll / kill / returncode."""
+    def __init__(self, pid):
+        self.pid = pid; self.returncode = None
+        k = ctypes.windll.kernel32
+        self._h = k.OpenProcess(0x0001 | 0x1000 | 0x00100000, False, pid)   # TERMINATE | QUERY_LIMITED | SYNCHRONIZE
+
+    def poll(self):
+        if self.returncode is None and self._h:
+            c = wt.DWORD()
+            if ctypes.windll.kernel32.GetExitCodeProcess(self._h, ctypes.byref(c)) and c.value != 259:
+                self.returncode = c.value
+        return self.returncode
+
+    def kill(self):
+        if self._h:
+            ctypes.windll.kernel32.TerminateProcess(self._h, 1)
+
+
+def phase_runs(ph):
+    """Tick phase bytes -> [[phase, first record, last record], ...] (record k = tick k + 1 in boot mode)."""
+    out = []
+    for i, v in enumerate(ph):
+        if out and out[-1][0] == v:
+            out[-1][2] = i
+        else:
+            out.append([v, i, i])
+    return out
+
+
 def run(args):
     import frida
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
@@ -70,14 +100,22 @@ def run(args):
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     for k in ("MASHED_PHYS_C4_SELFTEST", "MASHED_SHADOW_AB"):
         env.pop(k, None)
-    proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
-    pid = proc.pid
+    dev = None
+    if args.boot:
+        # RO-MENU-REPLAY: spawn suspended, so the agent installs at the PE entry point (detorig.js, cfg.boot)
+        import frida
+        dev = frida.get_local_device()
+        pid = dev.spawn(str(EXE), cwd=str(EXE.parent), env=env)
+        proc = _Spawned(pid)
+    else:
+        proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+        pid = proc.pid
     print(f"=== detorig {args.label} pid={pid} hooks={args.hooks or '-'} exe={EXE}", flush=True)
     meta = {"label": args.label, "pid": pid, "hooks": args.hooks, "exe": str(EXE), "fps": args.fps,
             "scenario": SCENARIO, "input": INPUT, "ckpts": CKPTS, "ckpt": []}
     rc = 1
     try:
-        dev = frida.get_local_device()
+        dev = dev or frida.get_local_device()
         sess = None
         for _ in range(200):
             try:
@@ -86,8 +124,8 @@ def run(args):
                 time.sleep(0.1)
         if sess is None:
             print("error: attach failed"); return 3
-        main = main_thread_of(pid)
-        print(f"  main thread {main}", flush=True)
+        main = 0 if args.boot else main_thread_of(pid)
+        print(f"  main thread {main}" + (" (set at the entry point)" if args.boot else ""), flush=True)
         cfg = {"main": main, "t0": 0x01000000, "step": 1, "q0": int(args.q0, 16), "qstep": args.qstep,
                "warpAt": args.warp_at, "scen": SCENARIO, "input": INPUT, "ckpts": CKPTS,
                "holdrand": 0x12345678, "witness": [0x00468980, 0x00470670],
@@ -129,6 +167,14 @@ def run(args):
             print(f"  prov: {len(bodies)} bodies, {len(cnt)} counters", flush=True)
         if args.warp_clock:
             cfg["warpClock"] = args.warp_clock
+        if args.boot:
+            # RO-MENU-REPLAY boot mode: tick clock and per-tick hashes from the entry point, warp at --warp-tick
+            if "tick" not in cfg or not cfg["tick"]["pin"]:
+                raise SystemExit("--boot needs --clock tick")
+            cfg["boot"] = True; cfg["warpTick"] = args.warp_tick; cfg["menuCkpt"] = args.menu_ckpt
+            cfg["bootStep"] = args.boot_step; cfg["bootQstep"] = args.boot_qstep
+            if args.neg_tick:
+                cfg["negTick"] = args.neg_tick
         meta["cfg"] = {k: v for k, v in cfg.items() if k != "prov"}
         if "prov" in cfg:
             meta["prov_cfg"] = {"bodies": [b["rva"] for b in cfg["prov"]["bodies"]], "count": cfg["prov"]["count"], "file": args.prov}
@@ -154,6 +200,8 @@ def run(args):
                 (out / "calllog.bin").write_bytes(data or b"")
                 meta["calllog"] = {"count": p["count"], "rec": p["rec"], "file": "calllog.bin"}
                 print(f"  call log {p['count']} calls", flush=True)
+            elif p["kind"] == "boot":
+                meta["boot"] = p["boot"]; print(f"  boot install at entry {p['boot'].get('ep')} main={p['boot'].get('main')}", flush=True)
             elif p["kind"] == "warp":
                 meta["warp"] = p; print(f"  warp at N={p['n']} pins={p['pins']}", flush=True)
             elif p["kind"] == "race":
@@ -161,7 +209,10 @@ def run(args):
             elif p["kind"] == "ticks":
                 with open(out / "ticks.bin", "ab" if p["first"] else "wb") as f:
                     f.write(data)
-                meta["ticks"] = {"total": p["total"], "nblk": p["nblk"], "recw": p["recw"], "block": p["block"], "raw": p.get("raw"), "file": "ticks.bin"}
+                if p["first"] == 0 and p.get("phases") is not None:
+                    meta["tick_phases"] = phase_runs(p["phases"])
+                meta["ticks"] = {"total": p["total"], "nblk": p["nblk"], "recw": p["recw"], "block": p["block"], "raw": p.get("raw"), "file": "ticks.bin",
+                                 **({"phases": meta["tick_phases"]} if "tick_phases" in meta else {})}
                 if p["first"] + p["count"] >= p["total"]:
                     print(f"  ticks {p['total']} x {p['nblk']} blocks", flush=True)
             elif p["kind"] == "wlog":
@@ -190,14 +241,24 @@ def run(args):
 
         scr = sess.create_script(src); scr.on("message", on_msg); scr.load()
         E = scr.exports_sync
-        t_end = time.time() + 60
+        if args.boot:
+            dev.resume(pid)
+            t_end = time.time() + 30
+            while time.time() < t_end and not E.boot() and not state["err"]:
+                time.sleep(0.05)
+            if not E.boot():
+                print("  boot install did not run"); return 7
+            t_end = 0
+        else:
+            t_end = time.time() + 60
         while time.time() < t_end and E.phase() != 1:
             if proc.poll() is not None: print("  game exited before the menu"); return 4
             time.sleep(0.25)
-        if E.phase() != 1:
-            print("  timeout waiting for the menu"); return 5
-        time.sleep(args.menu_wait)
-        print("  install", E.install(), flush=True)
+        if not args.boot:
+            if E.phase() != 1:
+                print("  timeout waiting for the menu"); return 5
+            time.sleep(args.menu_wait)
+            print("  install", E.install(), flush=True)
         t_end = time.time() + args.timeout
         last = 0
         while time.time() < t_end and not state["done"] and not state["err"]:
@@ -205,6 +266,9 @@ def run(args):
                 print(f"  game exited rc={proc.returncode}"); meta["exit"] = proc.returncode; break
             if time.time() - last > 5:
                 try: print("  stats", E.stats(), flush=True)
+                except Exception as e: print("  stats failed", e)
+                try:
+                    if args.boot and args.where: print("  where", E.where(), flush=True)
                 except Exception as e: print("  stats failed", e)
                 last = time.time()
             time.sleep(0.2)
@@ -338,6 +402,13 @@ if __name__ == "__main__":
     ap.add_argument("--prov-wlog", type=int, default=0, help="PROV-WRITESET: single-step log of the first N calls of every --prov body (detorig.js wsInstall)")
     ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
+    ap.add_argument("--boot", action="store_true", help="RO-MENU-REPLAY: frida-spawn, install at the PE entry point, hash every tick from boot (needs --clock tick)")
+    ap.add_argument("--warp-tick", type=int, default=0, help="boot mode: tick (from process start) at which the warp runs; must find the main menu")
+    ap.add_argument("--boot-step", type=int, default=1, help="boot mode: ms per main-thread timeGetTime / GetTickCount call before the first tick")
+    ap.add_argument("--boot-qstep", type=int, default=15000, help="boot mode: QPC counts per main-thread QPC call before the first tick")
+    ap.add_argument("--where", action="store_true", help="boot mode: print the main thread's backtrace with every stats line")
+    ap.add_argument("--neg-tick", type=int, default=0, help="boot mode: apply --negctl at this tick instead of the race anchor")
+    ap.add_argument("--menu-ckpt", action="store_true", help="boot mode: full-image checkpoint k=100 at the warp, before its writes")
     ap.add_argument("--menu-wait", type=float, default=2.0)
     ap.add_argument("--timeout", type=float, default=600)
     ap.add_argument("--compare", nargs=2, metavar=("DIR_A", "DIR_B"))

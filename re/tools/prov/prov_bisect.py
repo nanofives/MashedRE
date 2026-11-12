@@ -20,10 +20,13 @@ DATA = pathlib.Path("D:/MashedWT/PROV-INSITU_data")
 STAMP = time.strftime("%H%M%S")
 ARM = ROOT / "verify" / "provinsitu_20261111" / "run_arm.sh"
 LOCK = pathlib.Path(r"C:\Users\maria\Desktop\Proyectos\Mashed\re\orchestrator\mashed_lock.py")
+ARM_LOCKS = False
 
 
 def run_arm(label, bodies, rvas, extra=()):
-    cmd = ["py", "-3.12", str(LOCK), "run", "--label", "PROV-INSITU", "--", "bash", str(ARM).replace("\\", "/"), label,
+    # RO-MENU-REPLAY: --arm / --data / --arm-locks; an arm script that takes the game lock itself runs without LOCK
+    pre = [] if ARM_LOCKS else ["py", "-3.12", str(LOCK), "run", "--label", "PROV-INSITU", "--"]
+    cmd = pre + ["bash", str(ARM).replace("\\", "/"), label,
            "--prov", str(bodies).replace("\\", "/"), "--prov-rvas", ",".join(rvas), *extra]
     t = time.time()
     r = subprocess.run(cmd, capture_output=True, text=True)
@@ -44,12 +47,24 @@ def main():
     ap.add_argument("--pair", action="append", default=[], help="A,B: another reference pair (prov_compare --pair)")
     ap.add_argument("--group", type=int, default=0, help="start from chunks of this size (expected defect rate ~ 1/size)")
     ap.add_argument("--split-first", action="store_true", help="the whole set is known to diverge: start from its halves")
+    ap.add_argument("--data", default="", help="RO-MENU-REPLAY: data folder (default the PROV-INSITU one)")
+    ap.add_argument("--arm", default="", help="RO-MENU-REPLAY: arm script (default verify/provinsitu_20261111/run_arm.sh)")
+    ap.add_argument("--arm-locks", action="store_true", help="the arm script takes the game lock itself")
+    ap.add_argument("--any-segment", action="store_true",
+                    help="RO-MENU-REPLAY boot mode: test every body the census saw run in any segment (boot, menu, load, race)")
     a = ap.parse_args()
+    global DATA, ARM, ARM_LOCKS
+    if a.data:
+        DATA = pathlib.Path(a.data)
+    if a.arm:
+        ARM = pathlib.Path(a.arm).resolve()
+    ARM_LOCKS = a.arm_locks
     bodies = {b["rva"].lower(): b for b in json.loads(pathlib.Path(a.bodies).read_text())["bodies"] if b["status"] == "OK"}
     cen = {r["rva"].lower(): r for r in json.loads((pathlib.Path(a.census) / "prov.json").read_text())["rows"]}
     want = [x.lower() for x in a.rvas.split(",") if x] or list(bodies)
     race = lambda c: (c.get("calls_total") or 0) - (c.get("calls_before_warp") or 0)   # calls from the warp on
-    todo = [r for r in want if r in bodies and race(cen.get(r, {})) > 0]
+    ran = (lambda c: (c.get("calls_total") or 0) > 0) if a.any_segment else (lambda c: race(c) > 0)
+    todo = [r for r in want if r in bodies and ran(cen.get(r, {}))]
     print(f"{len(want)} bodies, {len(todo)} executed in the census", flush=True)
     state_f = DATA / f"{a.tag}_state.jsonl"
     done = {}
@@ -103,7 +118,8 @@ def main():
                            "calls_before_warp": c.get("calls_before_warp"), "calls_race": race(c) if c else None,
                            "notes": v.get("notes"),
                            "jmp_ok": inst.get(r, {}).get("jmp_ok"), "site_before": inst.get(r, {}).get("site_before"),
-                           "first": v.get("first"), "rc": v.get("rc")}
+                           "first": v.get("first"), "rc": v.get("rc"),
+                           "identical_by_segment": v.get("identical_by_segment"), "segments_match": v.get("segments_match")}
                     f.write(json.dumps(rec) + "\n")
                     done[r] = rec
             continue
