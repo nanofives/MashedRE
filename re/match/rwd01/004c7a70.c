@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWD01 0x004c7a70 _rwDeviceSystemFn (2811 B): by hand, best 93.2% (regs 93.9%, ops 98.3%, 814/821 ins). Not matched; relocheck
    BAD only because the code is not yet byte-identical (offsets shift).
@@ -38,6 +39,20 @@
    `or eax, 0x8000` (every C form tried gives the byte op in 9176). (4) case 5 / 6: register choice
    (original keeps eax free in case 5 and loads out after the first record field in case 6). Main-body
    permuter 746 compiles: only gain was a read through an uninitialised pointer, rejected. */
+/* RWC-DRIVER-2 (2026-11-11): 93.2% -> 97.0% (ops 100%, 821/821 ins) under TOOLCHAIN rw9044 (L-131; 93.1% there
+   before these edits). Moved by: case 7 written in the switch (`if (...) { ...; return 1; } break;`) instead of the
+   D3D9UseMode helper, whose return value VC6 kept in a stack temp with an extra epilogue; case 0 returns early on
+   a NULL Direct3DCreate9 result (VC6 gives it its own epilogue, as the original at 0x004c7c95); `in >= 0` in case 6
+   (the DDK-only `in > -1` is gone); the case 0x11 MXCSR update as a 5-instruction inline __asm block (stmxcsr / mov
+   eax / or eax, 0x8000 / mov / ldmxcsr), since every intrinsic form gives `or ah, 0x80` under both compilers. The body
+   stays compiled C (CONFIDENCE.md C4 gate 3 allows inline __asm inside real C work).
+   Residual: only jump displacements. Case 7's two multisample-failure branches (jl / jbe after the vtable +0x2c call
+   with type 1) go to case 16's copy of the `mov eax, edi` return tail (near jumps, 8 bytes more) where the original
+   sends them to case 7's own copy at 0x004c7bcd and sends case 16's branches there too. Every later target is 8 bytes
+   off. Tried: case 16 before / after case 7 or last (80-82%), case 16 as an int helper, MultisampleLevels expanded in
+   either case or returning int, a goto from case 16 into case 7 (85.0%, drops case 16's copy), plain static helpers
+   under /Ob2, permuter 319 compiles. 0x004db3e0 shows the same choice (original: the earlier copy of a duplicated
+   return tail; ours: the later). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -192,21 +207,6 @@ static __forceinline void MultisampleLevels(void)
     }
 }
 
-static __forceinline int D3D9UseMode(int in)
-{
-    if (DAT_007d4120 == 0 && in >= 0 && in < DAT_007d4128) {
-      ModeRec *rec;
-      DAT_007d4100 = in;
-      rec = &DAT_007d4130[in];
-      DAT_00911f84 = rec->mode;
-      DAT_00911f98 = rec->flags;
-      FORMAT_DEPTH(DAT_00911f94, rec->mode.Format)
-      MultisampleLevels();
-      return 1;
-    }
-    return 0;
-}
-
 static __forceinline int D3D9Focus(int in)
 {
     if (DAT_007d4110 != 0) {
@@ -227,7 +227,9 @@ static __forceinline int D3D9Open(void *inOut)
     int i;
     DAT_007d4104 = *(void **)inOut;
     DAT_007d4108 = FUN_004dd140(0x1f);
-    if (DAT_007d4108 != 0) {
+    if (DAT_007d4108 == 0)
+      return 0;
+    {
     DAT_007d3ff8->strcpyFn(DAT_00911d80, DAT_00618298);
     numAdapters = VCALL(VFn0, DAT_007d4108, 4)(DAT_007d4108);
     DAT_007d410c = 0;
@@ -257,7 +259,6 @@ static __forceinline int D3D9Open(void *inOut)
     DAT_007d4594 = FUN_004dd0b0();
     return 1;
     }
-    return 0;
 }
 
 static __forceinline int D3D9Start(void)
@@ -326,7 +327,17 @@ int rwDeviceSystemFn(int request, void *out, void *inOut, int in)
 {
   switch (request) {
   case 7:
-    return D3D9UseMode(in);
+    if (DAT_007d4120 == 0 && in >= 0 && in < DAT_007d4128) {
+      ModeRec *rec;
+      DAT_007d4100 = in;
+      rec = &DAT_007d4130[in];
+      DAT_00911f84 = rec->mode;
+      DAT_00911f98 = rec->flags;
+      FORMAT_DEPTH(DAT_00911f94, rec->mode.Format)
+      MultisampleLevels();
+      return 1;
+    }
+    break;
   case 5:
     if (DAT_007d4130 == 0)
       FUN_004c90a0();
@@ -335,7 +346,7 @@ int rwDeviceSystemFn(int request, void *out, void *inOut, int in)
   case 6:
     if (DAT_007d4130 == 0)
       FUN_004c90a0();
-    if (in > -1 && in < DAT_007d4128) {
+    if (in >= 0 && in < DAT_007d4128) {
       int *vm = (int *)out;
       vm[0] = DAT_007d4130[in].mode.Width;
       vm[1] = DAT_007d4130[in].mode.Height;
@@ -414,8 +425,16 @@ int rwDeviceSystemFn(int request, void *out, void *inOut, int in)
     return 1;
   case 17:
     FUN_005cb404();
-    if (DAT_007d458c != 0)
-      _mm_setcsr((_mm_getcsr() & ~0x8000) | 0x8000);
+    if (DAT_007d458c != 0) {
+      unsigned int csr;
+      __asm {
+        stmxcsr csr
+        mov eax, csr
+        or eax, 0x8000
+        mov csr, eax
+        ldmxcsr csr
+      }
+    }
     FUN_004c40b0((void *)FUN_005cb2a0);
     if (DAT_007d458c != 0) {
       if (DAT_007d4590 != 0 && DAT_007d4594 == 0)

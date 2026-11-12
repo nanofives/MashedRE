@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S20 0x004d1640 (h1): 92.4% (regs 92.4%, ops 99.6%). Raw converter 36.9% (game flags). Moved by: texture
    probe as a __forceinline helper with the adapter format read into a local first (61.1% -> 75.8%), the requested-
@@ -19,6 +20,8 @@
    offsets. Residual: that one opcode (`add esi` vs the original's `or esi`). `format |= 0x200; break;` and every
    |= spelling tried (8 forms) get cross-jumped into the 0x100 path's `or esi, 0x200` tail (547 ins, 91.7%);
    permuter 1008 compiles from that form: 0 gains. Class (b). */
+/* RWC-DRIVER-2 (2026-11-11): 100% under TOOLCHAIN rw9044 (L-131) with the plain `format |= 0x200; break;`. The
+   VC6 + 9044 compiler does not cross-jump that block into the 0x100 tail (the DDK does, 91.7%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -178,9 +181,7 @@ unsigned int FUN_004d1640(int param_1, unsigned int param_2)
       unsigned int req = format & 0xf00;
       if (req == 0) {
         if (DAT_00911f9c == 16) {
-          /* req == 0 here, so += equals |= 0x200. `format |= 0x200; break;` is cross-jumped by cl into the
-             0x100 path's `or esi, 0x200` tail (547 ins); the original keeps this block with its own tail. */
-          format += 0x200;
+          format |= 0x200;
           break;
         }
         if (CheckCamTexFormat(0x16)) {

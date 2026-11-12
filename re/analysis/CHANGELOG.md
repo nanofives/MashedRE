@@ -69,6 +69,9 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-11  0x005acda0  FUN_005acda0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md; evidence: verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md
 2026-11-11  0x0040c690  FUN_0040c690  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md; evidence: verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md
 2026-11-11  0x00411ae0  Ghost::PlaybackTick  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md; evidence: verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md
+2026-11-11  0x004d1640  FUN_004d1640  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d1640.c; evidence: verify/rwdriver2_20261111/RESULT_RWC-DRIVER-2.md
+2026-11-11  0x004c9eb0  DeviceModeBestBelowSet  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004c9eb0.c; evidence: verify/rwdriver2_20261111/RESULT_RWC-DRIVER-2.md
+2026-11-11  0x004d2980  rwD3D8NativeTextureRasterCreate  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004d2980.c; evidence: verify/rwdriver2_20261111/RESULT_RWC-DRIVER-2.md
 2026-11-11  0x00552920  FUN_00552920  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl04/00552920.c; evidence: verify/rt2dfont_20261111/RESULT_MATCH-RT2D-FONT.md
 2026-11-11  0x00552b50  FUN_00552b50  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rt2d/00552b50.c; evidence: verify/rt2dfont_20261111/RESULT_MATCH-RT2D-FONT.md
 2026-11-11  0x00553cf0  FUN_00553cf0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl04/00553cf0.c; evidence: verify/rt2dfont_20261111/RESULT_MATCH-RT2D-FONT.md
