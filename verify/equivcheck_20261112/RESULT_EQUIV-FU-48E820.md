@@ -60,6 +60,41 @@ That is the EQUIV-NORETURN-RECHECK commit, already merged in `3ef5b2da2`.
 - G-CTRL and B were not run. This is a top-down-only file (`RVA-LINT: ORIGTOP-ONLY`) and the default path does not
   execute it.
 
+## Build legs (lead request, run 2026-11-12 11:02, after the hold cleared)
+
+| Check | Result |
+|---|---|
+| Default build + object build (`MASHED_NO_DEPLOY=1`, `MASHED_DDKOBJ=1`, `mashedmod\build.bat`) | `=== Build OK ===`. `mashed_re.exe` sha256 `7edc34427d33b3b651b121b149fe69e43a443c1e5355e118d6df58e176f3b0fc`. `mashed_re_ddk.exe` sha256 `ef0d5556fb9fec8c86b9a5571cfebcc8d0d9e2c93133392b245b93abb1bcaa07`. Log: `D:/MashedWT/EQUIV-FU-48E820_data/build.log`, sha256 `a9922628be90d8acc3270c3e9497bc62923be65c4f25dc89bdae80637c4b18f2` |
+| rva-lint | First build: 2 NEW findings on 0x004b6480. A comment starting `// 0x004b6480 bridge:` above the type adapter bound the adapter as a second body. The comment was reworded. Then OK: 96 known, 0 new |
+| `ddkobj.py check`, 0x0048e820 | BYTECHECK.tsv `0x0048e820 _Orig_0048e820 0x0001cca0 672 19 46 0 IDENTICAL` (s15 unit status `ok`) |
+| ddkobj, local 0x0048cee0 copy | The s15 unit keeps the static copy as `local_helpers: _FUN_0048cee0`. So the DDK 0x0048e820 calls its own DDK copy with the EDI convention. The copy's callees bound to `_Search40bb30`, `_Orig_004770c0` and `_Batch476cb0` through the wrapper defines. `ddkobj.py check` covers only MATCH definitions, so `verify/equivcheck_20261112/check_local_cee0.py` applies the same masking to that symbol: `0x0048cee0 _FUN_0048cee0 exe_va=0x0001cc10 size=144 relocs_masked=12 abs_data_refs_exact=2 diff_bytes=0 IDENTICAL` |
+| ddkobj totals | IDENTICAL 716/796, DIFFERENT 77, not-in-map 3, units linked 786/834, refusals 47. Neither RVA is in the DIFFERENT list. `re/match/s14/0048cee0.c` stays refused, `fail:static-register-convention` as before |
+| BINDINGS | `verify/equivcheck_20261112/update_bindings_equivfu48e820.py` (bindings_rows.apply): 0x0048e820 `near-match` -> `matched`, level 4 (near-match 3 -> 2 rows overall) |
+| Knob boots | **NOT RUN.** See the handoff |
+
+## HANDOFF (2026-11-12 ~11:55, LIVING-PC reboot coordinator: token leak, automatic reboot pending)
+
+- **Done and committed:** the source fix, the port wrapper, both builds, ddkobj check, the local-copy check and the
+  BINDINGS row.
+- **Boots:**
+  - The boot run was stopped before any game started. It had a test slot and was queued on `mashed_lock` behind
+    RO-MENU-REPLAY.
+  - I stopped it and killed my own PID tree (2940 / 4064) so the slot is free for the reboot.
+  - No `mashed_re.exe` of mine was ever spawned.
+- **Next, after the reboot:**
+  1. Rebuild, because `mashedmod/build` is in this worktree and survives the reboot, but rebuild if in doubt. Use
+     `cmd /c "set MASHED_NO_DEPLOY=1&& set MASHED_DDKOBJ=1&& mashedmod\build.bat"`, and only when
+     `mashed_lock.py status` shows no PRIORITY-HOLD or SOLO.
+  2. Run `test-slot bash verify/equivcheck_20261112/run_boots.sh > D:/MashedWT/EQUIV-FU-48E820_data/boots.out 2>&1`
+     in the background, with a long timeout. It runs two knob boots, `knob_on` (default exe) and `knob_on_ddk`
+     (DDK exe), each with `MASHED_ORIG_TOP=1 MASHED_DET_FRAMES=3000` on the private root
+     `D:/MashedWT/EQUIV-FU-48E820_root`. Logs go to `D:/MashedWT/EQUIV-FU-48E820_data/knob_on*.log`.
+  3. Self-test pass: in both logs, rc=0 and the line `[ORIG_TOP] rva 0x0048e820: matched body ran (EQUIV-FU-48E820);
+     0x0048cee0 built 17 of 17 records`, plus the 0x0048cf70 line with 17. The reference is PARTICLE-3-SWAP
+     `knob_on.log:346`, 17 of 17.
+  4. Fill the Knob boots row above, commit, run `roadmap.ps1 set EQUIV-FU-48E820 review -Evidence ...`, and send the
+     REPORT.
+
 ## Trackers and admission records
 
 - **0x0048e820:**

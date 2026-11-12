@@ -32,7 +32,7 @@ extern "C" {
 void Orig_004b6480(unsigned char* param_1, int param_2);
 }  // extern "C"
 
-// 0x004b6480 bridge: the s15 source declares (void *, unsigned int), Orig_004b6480 takes (unsigned char *, int).
+// Type adapter for the bit-clear callee: the s15 source declares (void *, unsigned int), Orig_004b6480 takes (unsigned char *, int).
 extern "C" void PortTop_PS3_BitClear_004b6480(void* p0, unsigned int p1) {
     Orig_004b6480(static_cast<unsigned char*>(p0), static_cast<int>(p1));
 }
