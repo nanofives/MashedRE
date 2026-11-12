@@ -120,7 +120,9 @@ def link(src: pathlib.Path, rva: int):
             blob.append(0xCC)
         layout[si] = len(blob)
         order.append(si)
-        blob.extend(sec["data"] if sec["data"] else b"\0" * 0)
+        # RO-BOOT-CRASH-3: a section with no raw data (.bss) takes its SizeOfRawData in zeros. It used to take 0 bytes,
+        # so its symbols aliased whatever was placed next (or the blob end).
+        blob.extend(sec["data"] if sec["data"] else b"\0" * sec.get("size", 0))
         for _, symidx, _ in sec["relocs"]:
             t = by_index.get(symidx, {})
             ts = t.get("sec", 0)
@@ -128,11 +130,18 @@ def link(src: pathlib.Path, rva: int):
                 place(ts)
 
     def is_external_fun(t, from_sec):
-        """A defined FUN_<va8> other than the target is taken from the original (one body per RVA under test)."""
+        """Defined symbols that are taken from the original (one body per RVA under test, everything else original):
+        a FUN_<va8> other than the target, and (RO-BOOT-CRASH-3) a data symbol named for an original address
+        (DAT_<va8>, PTR_DAT_<va8>, ...: a file-static of the source such as s16's `static int *DAT_007731f8`). The
+        original functions the body calls read and write that address, so the body must too. 0x00499400 read its own
+        zero copy of DAT_007731f8 after the original FUN_00498c00 (0x00498c00) had filled 0x007731f8."""
         u = undecorate(t.get("name", ""))
-        return t.get("sec", 0) != target_sec and re.fullmatch(r"FUN_[0-9a-fA-F]{8}", u) is not None and t.get("type") == 0x20
+        if t.get("sec", 0) <= 0:
+            return False
+        if t.get("type") == 0x20:
+            return t.get("sec", 0) != target_sec and re.fullmatch(r"FUN_[0-9a-fA-F]{8}", u) is not None
+        return t.get("cls") in (2, 3) and RE_ADDRNAME.match(u) is not None and not u.startswith(("FUN_", "LAB_", "thunk_"))
 
-    # .bss-style sections (no raw data) would need zero fill with their size: not expected in match sources
     place(target_sec)
     for si in order:
         sec = secs[si - 1]
