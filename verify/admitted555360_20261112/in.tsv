@@ -1,0 +1,2 @@
+rva	source	best_pct	bytes_bad	bytes_n	subsystem	hooks_conf	verdict	classes	regs	callers_all_ignore	kind	detail	rules	local_callees
+0x00555360	re/match/s24/00555360.c	100.0	0	0	gameplay	C2	EQUIV							
