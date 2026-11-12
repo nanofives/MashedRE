@@ -1,0 +1,3 @@
+rva	source	best_pct	bytes_bad	bytes_n	subsystem	hooks_conf	verdict	classes	regs	callers_all_ignore	kind	detail	rules	local_callees
+0x005be9f0	re/match/s28/005be9f0.c	80.0	46	111	audio	C2	EQUIV	ORDER,LAYOUT,FRAME,VALUE-FLOW					A6-paired-pop,A6-pinned-pop	
+0x005bf8a0	re/match/s28/005bf8a0.c	95.7	11	73	audio	C2	EQUIV	ORDER					A6-paired-pop,A6-pinned-pop,call-args-all	

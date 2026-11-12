@@ -1,0 +1,92 @@
+== ours
+  20000000  push ebx
+  20000001  push esi
+  20000002  mov esi, dword ptr [esp + 0xc]
+  20000006  mov ebx, dword ptr [esp + 0x10]
+  2000000a  push edi
+  2000000b  xor edi, edi
+  2000000d  mov eax, dword ptr [esi + 0xc]
+  20000010  mov ecx, dword ptr [esi + 0x10]
+  20000013  cmp ecx, dword ptr [eax + 0x120]
+  20000019  jae 0x20000059
+  2000001b  push ebp
+  2000001c  mov ebp, dword ptr [eax + 0x11c]
+  20000022  test ebx, ebx
+  20000024  je 0x20000058
+  20000026  mov edx, dword ptr [esi + 0x10]
+  20000029  mov ecx, dword ptr [esp + 0x1c]
+  2000002d  dec ebx
+  2000002e  mov eax, dword ptr [ebp + edx*4]
+  20000032  mov dword ptr [ecx + edi*4], eax
+  20000035  push eax
+  20000036  mov edx, dword ptr [eax]
+  20000038  call dword ptr [edx + 4]
+  2000003b  mov eax, dword ptr [esi + 0x10]
+  2000003e  mov ecx, dword ptr [esi + 0xc]
+  20000041  inc edi
+  20000042  inc eax
+  20000043  mov dword ptr [esi + 0x10], eax
+  20000046  mov edx, dword ptr [ecx + 0x120]
+  2000004c  cmp eax, edx
+  2000004e  je 0x20000054
+  20000050  test ebx, ebx
+  20000052  jne 0x20000026
+  20000054  mov ebx, dword ptr [esp + 0x18]
+  20000058  pop ebp
+  20000059  mov eax, dword ptr [esp + 0x1c]
+  2000005d  test eax, eax
+  2000005f  je 0x20000063
+  20000061  mov dword ptr [eax], edi
+  20000063  cmp edi, ebx
+  20000065  pop edi
+  20000066  sbb eax, eax
+  20000068  pop esi
+  20000069  neg eax
+  2000006b  pop ebx
+  2000006c  ret 0x10
+== orig
+  005be9f0  push ebx
+  005be9f1  push ebp
+  005be9f2  push esi
+  005be9f3  mov esi, dword ptr [esp + 0x10]
+  005be9f7  mov ebx, dword ptr [esp + 0x14]
+  005be9fb  push edi
+  005be9fc  mov eax, dword ptr [esi + 0xc]
+  005be9ff  mov ecx, dword ptr [esi + 0x10]
+  005bea02  xor edi, edi
+  005bea04  cmp ecx, dword ptr [eax + 0x120]
+  005bea0a  jae 0x5bea48
+  005bea0c  mov ebp, dword ptr [eax + 0x11c]
+  005bea12  test ebx, ebx
+  005bea14  je 0x5bea48
+  005bea16  mov edx, dword ptr [esi + 0x10]
+  005bea19  mov ecx, dword ptr [esp + 0x1c]
+  005bea1d  dec ebx
+  005bea1e  mov eax, dword ptr [ebp + edx*4]
+  005bea22  mov dword ptr [ecx + edi*4], eax
+  005bea25  push eax
+  005bea26  mov edx, dword ptr [eax]
+  005bea28  call dword ptr [edx + 4]
+  005bea2b  mov eax, dword ptr [esi + 0x10]
+  005bea2e  mov ecx, dword ptr [esi + 0xc]
+  005bea31  inc edi
+  005bea32  inc eax
+  005bea33  mov dword ptr [esi + 0x10], eax
+  005bea36  mov edx, dword ptr [ecx + 0x120]
+  005bea3c  cmp eax, edx
+  005bea3e  je 0x5bea44
+  005bea40  test ebx, ebx
+  005bea42  jne 0x5bea16
+  005bea44  mov ebx, dword ptr [esp + 0x18]
+  005bea48  mov eax, dword ptr [esp + 0x20]
+  005bea4c  test eax, eax
+  005bea4e  je 0x5bea52
+  005bea50  mov dword ptr [eax], edi
+  005bea52  cmp edi, ebx
+  005bea54  pop edi
+  005bea55  sbb eax, eax
+  005bea57  pop esi
+  005bea58  pop ebp
+  005bea59  pop ebx
+  005bea5a  neg eax
+  005bea5c  ret 0x10
