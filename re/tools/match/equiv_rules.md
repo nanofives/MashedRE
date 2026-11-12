@@ -6,7 +6,7 @@ is not applied. The tool never changes a C-level. Its verdict is a port-axis fac
 ## 1. What a verdict means
 
 `EQUIV` means the two bodies are proven to produce the same observables for every entry state, under assumptions
-A1 to A5 below. The bodies are our DDK compile of a `// MATCH:` source and `original/MASHED.exe.unpatched` at the
+A1 to A7 below. The bodies are our DDK compile of a `// MATCH:` source and `original/MASHED.exe.unpatched` at the
 RVA. The observables, all compared as values:
 
 - Every call, in order: the target, every stack argument the callee reads, every register the callee reads, the
@@ -159,6 +159,28 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
   at the next table entry `0x004a338d`) was summarised no-return, so was `0x00408b00`, and `0x00448220` came out
   EQUIV with every instruction after its first `0x00408b00` call (`0x00448475`) unchecked, the tag absent. The
   replay diverged at tick 1116 (`verify/provinsitu_20261111/RESULT_PROV-DIVERGED-18.md`).
+  - **Reported per path** (EQUIV-NORETURN-RECHECK, 2026-11-12): every path that ends at a no-return callee or at a
+    trap (`int3`, `hlt`, `ud2`) is listed in the verdict's `halts` field (JSON; the text line appends
+    `unchecked after no-return: ...`; `equiv_measure.py` writes it as the last TSV column). Each entry names the
+    side, the call site, the callee and the summary's reason (`nr_why`): the callee's own path ends, nested callees'
+    reasons inline, for example `orig 0x00448475 call 0x408b00: no-return, call 0x004a3384 @0x00408bcf (...)`.
+  - **Tail jump to an unknown callee** (`r12`): a summary whose only path ends are tail jumps to callees with no
+    summary (no pop count, not no-return) is not no-return either. Before, such a body reached no `ret`, so it was
+    summarised no-return, the same failure as `r11`. It now gives an unknown pop count.
+- **A7, the stack is not inside the image** (`A7-stack-image`, EQUIV-NORETURN-RECHECK, 2026-11-12). An address
+  `esp0 + k` and a constant address whose whole access lies inside the mapped image of `MASHED.exe` never overlap,
+  so a load of a global passes stores into the frame (and the reverse), also when the frame is exposed (A1'). The
+  thread stack is not mapped inside the PE image. Before, a load of `DAT_00773408` scheduled before or after the
+  zero fill of an escaped `char line[64]` gave two different terms (`0x00499400`). Constants outside the image
+  (heap pointers written as literals) are not covered.
+- **Summary precision** (EQUIV-NORETURN-RECHECK, 2026-11-12). Both make a callee's live-in set smaller, so fewer
+  register arguments are compared. Each one only removes a register the callee provably does not read:
+  - `or r, -1` and `and r, 0` write a constant (result and flags), so `r` is not read. Before, they counted as a read:
+    false live-ins (`0x0040e187`, `0x0040e18f`: EDI / EBP for `0x00441c80`) and false `call-regargs`.
+  - Frame alignment `and esp, imm` under a frame pointer: ESP moves to a virtual base, so a register saved by a
+    later `push` is still a save, not a read. Arguments are then reached through EBP only, and ESP must come back
+    through EBP (`mov esp, ebp` / `leave`): a `ret` with ESP not at the entry is still `r7`. Before, `0x00498a00`
+    (`push ebp; mov ebp, esp; and esp, -8; ...; push esi; push edi`) had false live-ins ESI / EDI.
 
 ## 5. Excluded on purpose
 

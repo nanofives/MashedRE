@@ -158,6 +158,26 @@ def test_references():
     assert not bad, bad
 
 
+def test_summary_precision():
+    """EQUIV-NORETURN-RECHECK: the no-return reason, r11 / r12, the constant idioms, frame alignment, A7."""
+    s = equiv.summary(0x00408b00)                       # 6 rets; it calls CRT acos 0x004a3384 (r11, not no-return)
+    assert not s["noreturn"], s
+    a = equiv.summary(0x004a3384)
+    assert not a["noreturn"] and a.get("why") == "r11", a
+    al = equiv.summary(0x00498a00)                      # push ebp; mov ebp,esp; and esp,-8; ...; push esi; push edi
+    assert "edi" not in al["livein"] and "ebx" in al["livein"], al
+    md = equiv._MD
+    for code, want in ((b"\x83\xc9\xff", True), (b"\x83\xe1\x00", True), (b"\x83\xc9\x01", False),
+                       (b"\x0c\xff", True), (b"\x83\xe1\xfe", False)):
+        cs = next(md.disasm(code, 0x1000))
+        assert equiv.const_idiom(cs) is want, (code, cs.op_str)
+    esp0 = equiv.S("esp0")
+    stk = equiv.add(esp0, equiv.C(-0x64 & 0xffffffff))
+    assert equiv.disjoint(equiv.C(0x00773408), 4, stk, 4)            # A7: image constant vs frame slot
+    assert not equiv.disjoint(equiv.C(0x10000000), 4, stk, 4)        # outside the image: no claim
+    assert not equiv.disjoint(equiv.S("eax_in"), 4, stk, 4)           # unknown pointer: no claim
+
+
 def main():
     items = [("case", n) for n in CASES] + [("ref", a) for a in REFERENCES]
     fails = 0
