@@ -1,4 +1,136 @@
-# RESULT MATCH-RT2D-RESID (2026-11-11, second attempt 2026-11-12)
+# RESULT MATCH-RT2D-RESID (2026-11-11, second attempt 2026-11-12, third attempt 2026-11-12)
+
+## Third attempt (roadmap run 40, 2026-11-12, Fable high on claude3, gate 1)
+
+Verdict: GREEN, 2 of 3. 0x00554390 and 0x00555360 are byte-identical under rw9044 with relocheck OK. 0x00554200
+stays at 99.3% with one store out of place. The source text of 0x00554200 is unchanged. Its header comment now
+carries the findings below.
+
+| RVA | run 39 (rw9044) | run 40 (rw9044) | bytes | relocheck | source |
+|---|---|---|---|---|---|
+| 0x00554390 | 92.5% | **100.0%** (439/439 ins) | BYTE-IDENTICAL, 1110 B | OK, checked=39 unchecked=0 | re/match/rwl05/00554390.c |
+| 0x00555360 | 98.9% | **100.0%** (90/90 ins) | BYTE-IDENTICAL, 353 B | OK, checked=33 unchecked=0 | re/match/s24/00555360.c |
+| 0x00554200 | 99.3% | 99.3% (141/141 ins, regs 99.3%, ops 100%) | not identical | not run | re/match/s24/00554200.c |
+
+Commands: `py -3.12 re/tools/match/match.py <src> --bytes` and `py -3.12 re/tools/match/relocheck.py <src>`. Flags
+`/O2 /Ob1 /G5`, C, toolchain rw9044 (VC6 SP5 cl 12.00.8804 + Processor Pack c2 13.00.9044, L-131) from the
+`// TOOLCHAIN` line of each file. Neither matched body is naked or inline asm. `0x00553e80` in
+re/match/s24/00554200.c stays 100% under rw9044 and under the DDK.
+
+Promotions: `re/promotions/MATCH-RT2D-RESID.tsv` (2 rows, route match). Dry run
+`py -3.12 re/tools/c4_reclass.py batch --tsv re/promotions/MATCH-RT2D-RESID.tsv`: `2 pass, 0 refused, 0 skipped`,
+both C2 -> C4. No `--apply`, `hooks.csv` and CHANGELOG untouched. The dry run used this branch's `c4_reclass.py`
+(base bf44aae7d). The train applies with the tool at the integration head.
+
+### 0x00554390 (Rt2d font stream read): 92.5% to 100%
+
+One change. The outline loop indexes the glyph array with the same counter as the bitmap loops
+(`&g[i].code`, `g[i].path = path`, `for (i = 0; i < font->count; i++)`) instead of walking a pointer (`g->code`,
+`g++`) with a second counter. c2 strength-reduces `g[i]` to a pointer that it creates in the loop preheader, after
+the guard: `mov ebp,eax` at 0x005545be follows the `jle` at 0x005545b8. Until then ebp is free and holds the
+constant 0, which the original uses for `cmp [ebx],ebp` (0x00554595), the guard `cmp ecx,ebp` (0x005545b2) and
+the counter store `mov [esp+0x10],ebp` (0x005545b4). The hoisted `i = 0` and the counter `j` of runs 38 and 39 are
+removed. They were not needed: four spellings of the loop heads give the same code.
+
+Kept from run 39: `char name[36]`. With `name[32]` the same source is 93.8% (frame 0x2c, every `[esp+N]` above
+the name shifted by 4). [UNCERTAIN: what the original declares in the 4 bytes at [esp+0x3c]. No instruction of
+0x00554390 references them. Evidence missing: the original source.] A dead store of 0 to an extra local (scalar,
+one-element array, through a pointer, 9 forms) is removed by c2 together with its slot and does not give the
+0x30 frame.
+
+### 0x00555360 (Rt2d font-system init): 98.9% to 100%
+
+One change besides the toolchain line. The index loop takes a pointer to the quad each iteration and stores
+through it in index order:
+
+```c
+p = &DAT_00912700[i * 6];
+p[0] = v; p[1] = v + 2; p[2] = v + 3; p[3] = v; p[4] = v + 3; p[5] = v + 1;
+```
+
+Why the direct form could not match: with `DAT_00912700[i * 6 + k] = ...` c2 9044 bases its pointer on the
+address of the second store statement. All 720 statement orders were compiled and the zero-displacement store is
+statement 2 in every one. The original's base is index 2 (`mov eax,0x912704` at 0x00555451, `mov [eax],cx` at
+0x0055546b) and its store order is 0,3,1,2,4,5, which the direct form gives only when index 1 is statement 2
+(base 0x00912702). The two exclude each other. 15 loop spellings were compiled in index order: the per-iteration
+pointer with a `short v` is the only one at 100%.
+
+Consequences outside re/match, for the lead:
+
+- **The file now carries `// TOOLCHAIN rw9044`.** The DDK scores the new text 95.6%.
+- **`re/match/ADMITTED.tsv` still has the 0x00555360 row** (DDK compile of commit 1ea4e247a,
+  EQUIV-IF-CALLERS-IGNORE). It describes the old text. Not edited here: equiv.py was not re-run on the new
+  text and the function leaves the admitted class once the promotion applies. Removing the row is a lead call.
+- **`re/tools/match/test_equiv.py` used the live file as its L-117 reference** and expected
+  EQUIV-IF-CALLERS-IGNORE. The old text is frozen at `re/tools/match/equiv_tests/refs/00555360_held.c`
+  (byte copy of the blob at 05c15dd85) and the reference points there, the same handling as 0x005c4ad0.
+  `py -3.12 re/tools/match/test_equiv.py`: 55/55 passed.
+- **`mashedmod/src/mashed_re/Match/PortTop_00555360.cpp` on orch/integration includes this source** (NEARMATCH-555360,
+  knob path only). That file is not on this branch and was not touched. The new text compiles as C++ with
+  VS2022 cl 19.44 under the wrapper's five defines (`/c /W3 /O2 /TP`, exit 0, no warning, scratch TU, not
+  committed). The loop computes the same 384 values, so the body's behaviour is unchanged. The wrapper's header
+  still says "unedited 94.4% near-match". Rebinding it as a matched body, and the object-build check, is a
+  top-down row.
+
+### 0x00554200 (Rt2d path stream read): 99.3%, not matched
+
+The residual is the one of run 39: the original stores obj+0x10 after the obj+0x18 and obj+8 stores
+(`mov [esi+0x10],eax` at 0x005542a2, after 0x0055429c and 0x0055429f), ours right after the lea. Run 39 cited
+0x005542a7 for that store. The listing gives 0x005542a2.
+
+What c2 9044 does in this block (0x0055427d to 0x005542b4), measured on this file:
+
+1. **hdr is aliased by every store through obj.** With `hdr.count` and `hdr.flags` read in place instead of
+   through the two locals, each read is reloaded after the store before it (78.2%). No variant moved a hdr load
+   across a store. So in the original's source the `hdr.extra` load (0x00554295) sits after the count and flagB
+   stores and before the parent and flagA stores, and the extra store comes after them.
+2. **A direct `obj->extra = hdr.extra` is always load, `lea ecx,[ecx+ecx*2]`, store**, adjacent, in all 120
+   statement orders. That is why no order of the five statements reaches the original.
+3. **A single-use temporary does not separate them.** With `extra = hdr.extra; ...; obj->extra = extra;` c2
+   moves the store up to the load, past the parent and flagA stores, and the lea follows in eax (93.6%). Dead
+   second uses of the temporary are removed before that (10 forms). A second use that stays
+   (`hdr.extra = extra`) keeps load, parent, flagA, extra, at the price of one instruction (82.4%).
+4. **New lever: a store through `obj->parent`.** Written right after `obj->parent = obj`, c2 forwards the
+   pointer, so the store is still `[esi+0x10]`, but it stays behind the parent store.
+   `extra = hdr.extra; obj->parent = obj; obj->flagA = flags & 1; obj->parent->extra = extra;` gives the
+   original's order of all six memory operations: 94.3%, regs 99.3%, ops 99.3%. Left over in that form: the lea
+   is `lea eax,[ecx+ecx*2]` after the extra store, not `lea ecx,[ecx+ecx*2]` at 0x00554299, and eax / ecx / edx
+   are renamed from there to the call at 0x005542b4.
+
+[UNCERTAIN: which source form makes c2 compute count * 3 between the hdr.extra load and the parent store while
+the extra store stays last. Evidence missing: a variant that does it. Form 4 is the closest.]
+
+Tried in run 40, none above 99.3%:
+
+| Batch | Variants | Best |
+|---|---|---|
+| Generated bodies: store order x temporary and its position x one store through obj->parent x size from count / obj->count / hdr.count / obj->parent->count | 6,000 | 99.3% (6 variants, all the committed order) |
+| Stores through `result` instead of `obj`, 5 orders x 32 masks x 2 parent values | 320 | 99.3% |
+| Float `extra` in both structs x 120 orders | 120 | 99.3% |
+| `/Oa` and `/Ow` x 120 orders (probe only, not the recorded flags) | 240 | 97.9% |
+| Temporary for extra x 6 orders x 2 head orders x 2 size forms | 24 | 99.3% |
+| `__inline` / `__forceinline` setters for parent, flagA, extra | 40 | 99.3% |
+| Typed temporaries (float, cast, register, three loads first, struct copy, second use) | 8 | 93.6% |
+| Dead second uses of the temporary | 10 | 93.6% |
+| Store through obj->parent x temporary x flagA through parent | 12 | 98.6% |
+| Size temporary at 5 positions in form 4, `obj->count * 0x18` in the call, flagA before parent | 26 | 94.3% |
+| `size = obj->count * 0x18` pinned before the stores, 4 forms | 30 | 95.7% |
+| Comma expressions (side effects are emitted first) | 9 | 98.6% |
+| 4-byte memcpy and struct copy for extra x 12 orders | 24 | 99.3% |
+| match_permute.py started from form 4 | 1,480 compiles (6 rounds, walk 150) | 99.3% (round 1 moves back to the committed order) |
+
+Next step for whoever picks this up: start from form 4 and look for what places the multiply. The split in the
+original (`lea` at 0x00554299, `shl ecx,3` at 0x005542b0) says the multiply is not pinned as a whole. A pinned
+`size` temporary moves both parts up.
+
+### Files (run 40)
+
+- `re/match/rwl05/00554390.c`, `re/match/s24/00555360.c`: the two 100% sources.
+- `re/match/s24/00554200.c`: comment only.
+- `re/promotions/MATCH-RT2D-RESID.tsv`: 2 rows.
+- `re/tools/match/test_equiv.py`, `re/tools/match/equiv_tests/refs/00555360_held.c`: the frozen L-117 reference.
+- Variant generators and per-variant outputs stayed in the session scratchpad. They are not evidence for a
+  status change. The tables above describe each batch in enough detail to rebuild it.
 
 ## Second attempt (roadmap run 39, 2026-11-12, Opus high on claude3)
 

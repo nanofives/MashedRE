@@ -1,5 +1,31 @@
 // TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RT2D-RESID run 40 (2026-11-12): still 99.3%, source text unchanged, one store out of place. Correction to
+   the run 39 note below: the original's `mov [esi+0x10],eax` is at 0x005542a2 (0x005542a5 is the next instruction).
+   What c2 9044 does in this block (0x0055427d..0x005542b4), measured on this file:
+   (a) it treats hdr as aliased by every store through obj: with hdr.count / hdr.flags read in place instead of
+       through the locals, each read is reloaded after the store before it (78.2%). No variant moved a hdr load
+       across a store. So in the original's source the hdr.extra load (0x00554295) sits after the count and flagB
+       stores and before the parent and flagA stores (0x0055429c, 0x0055429f), and the extra store (0x005542a2) after.
+   (b) `obj->extra = hdr.extra` written directly always comes out as load, `lea ecx,[ecx+ecx*2]`, store, in that
+       order with nothing else between (all 120 statement orders).
+   (c) through a single-use temporary (`extra = hdr.extra; ...; obj->extra = extra;`) c2 moves the store up to the
+       load, past the parent and flagA stores, and the lea follows in eax (93.6%). Dead second uses of the
+       temporary are removed first (10 forms). A second use that stays (`hdr.extra = extra`) keeps the original's
+       load, parent, flagA, extra order, at the price of one instruction (82.4%).
+   (d) a store written through obj->parent right after `obj->parent = obj` is forwarded to [esi+0x10] but stays
+       behind the parent store: `extra = hdr.extra; obj->parent = obj; obj->flagA = flags & 1;
+       obj->parent->extra = extra;` gives the original's order of all six memory operations (94.3%, regs 99.3%,
+       ops 99.3%). Left over in that form: the lea is `lea eax,[ecx+ecx*2]` after the extra store instead of
+       `lea ecx,[ecx+ecx*2]` at 0x00554299, and eax / ecx / edx are renamed from there to the call at 0x005542b4.
+   [UNCERTAIN: which source form makes c2 compute count * 3 between the hdr.extra load and the parent store while
+   the extra store stays last. Evidence missing: a variant that does it. Form (d) is the closest.] Tried in run 40
+   on top of runs 38 and 39, none above 99.3%: 6,000 generated bodies (store order x temporary and its position x
+   one store through obj->parent x size from count / obj->count / hdr.count / obj->parent->count), stores through
+   `result` (320), float fields x 120 orders, a float temporary (fld / fstp, 92.9%), `/Oa` and `/Ow` x 120 orders
+   (best 97.9%), __inline / __forceinline setters (40), comma expressions (9, side effects come first, 98.6%),
+   4-byte memcpy and struct copy (24), a size temporary at 5 positions in form (d), `size = obj->count * 0x18`
+   pinned before the stores (30, the whole multiply moves up and extra goes to edi, 75.9%). */
 /* MATCH-RT2D-RESID run 39 (2026-11-12): 0x00554200 69.5% -> 99.3% under rw9044 (regs 99.3%, ops 100%, 141/141 ins);
    0x00553e80 stays 100% under rw9044 and the DDK. Three source changes, each read off the original listing:
    (1) a second variable `ret` joined at the end of the else: header failure `ret = 0` (the original's
