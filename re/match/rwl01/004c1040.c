@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWC-NEAR (2026-11-12): 100%. The list search walks a pointer to the +0x9c link field (link = &cur->next, cur = *link) instead of the node pointer, so the load after `mov edx,eax` stays on edx as in the original (0x004c1076). */
 /* MATCH-RWL01 0x004c1040: best 99.2% (regs 100%, ops 100%), class (a). Holds the static callee 0x004c0ad0 (100%, same helper as in 004c1210.c) so ecx/edx stay live across the call; uint flag byte for the xor/mov al pattern. Only the base register of one [+0x9c] load in the list-search loop differs (3 spellings tried). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -53,8 +54,12 @@ int FUN_004c1040(int param_1,int param_2)
       *(undefined4 *)(iVar2 + 0x98) = *(undefined4 *)(param_2 + 0x9c);
     }
     else {
-      for (iVar2 = *(int *)(iVar3 + 0x9c); iVar2 != param_2; iVar2 = *(int *)(iVar2 + 0x9c)) {
-        iVar3 = iVar2;
+      {
+        int *link = (int *)(iVar3 + 0x9c);
+        while (*link != param_2) {
+          iVar3 = *link;
+          link = (int *)(iVar3 + 0x9c);
+        }
       }
       *(undefined4 *)(iVar3 + 0x9c) = *(undefined4 *)(param_2 + 0x9c);
     }

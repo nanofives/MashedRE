@@ -1,5 +1,6 @@
 // TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWC-NEAR (2026-11-12): 100%, BYTE-IDENTICAL 433 B under rw9044, relocheck OK. See the note above FL_004cc820. */
 /* RWC-MATCH run 40 (2026-11-12): 99.3% (regs 99.3%) under rw9044. The tail is the rwLinkListAddLLLink order
    (next = head, prev = &list, head->prev = link, head = link) written on param_5 + 7 directly, which reloads the
    head into edx as the original does (load-before-store order kept). Residual: the param_4 test sits above the four
@@ -44,6 +45,11 @@ MGLOBAL(int, DAT_006182b0, 0x006182b0);
 MGLOBAL(uint *, DAT_007d45fc, 0x007d45fc);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(undefined4, DAT_007d45cc, 0x007d45cc);
+/* MATCH-RWC-NEAR (2026-11-12): the header stores go through a struct of the 0x24-byte block (fields named by offset),
+   which lets c2 schedule the param_4 test after `shr ebp,3` as at 0x004cc8c8. With uint * indexing the test stays
+   last before the jbe (99.3%). */
+typedef struct LL_004cc820 { struct LL_004cc820 *next; struct LL_004cc820 *prev; } LL_004cc820;
+typedef struct FL_004cc820 { uint f0; uint f4; uint f8; uint fc; LL_004cc820 f10; uint f18; LL_004cc820 f1c; } FL_004cc820;
 // MATCH: 0x004cc820 FUN_004cc820
 uint * FUN_004cc820(int param_1,uint param_2,uint param_3,uint param_4,uint *param_5,uint param_6)
 
@@ -77,13 +83,13 @@ uint * FUN_004cc820(int param_1,uint param_2,uint param_3,uint param_4,uint *par
   }
   uVar2 = param_1 + -1 + param_3 & ~(param_3 - 1);
   puVar1 = param_5 + 4;
-  *param_5 = uVar2;
-  param_5[1] = param_2;
+  ((FL_004cc820 *)param_5)->f0 = uVar2;
+  ((FL_004cc820 *)param_5)->f4 = param_2;
   uVar5 = param_2 + 7 >> 3;
-  param_5[3] = param_3;
-  param_5[2] = uVar5;
-  *puVar1 = (uint)puVar1;
-  param_5[5] = (uint)puVar1;
+  ((FL_004cc820 *)param_5)->fc = param_3;
+  ((FL_004cc820 *)param_5)->f8 = uVar5;
+  ((FL_004cc820 *)param_5)->f10.next = (LL_004cc820 *)puVar1;
+  ((FL_004cc820 *)param_5)->f10.prev = (LL_004cc820 *)puVar1;
   if (param_4 > 0) {
     do {
       puVar3 = (uint *)(**(code **)(DAT_007d3ff8 + 0x108))
