@@ -1135,6 +1135,15 @@ static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
     return DIENUM_CONTINUE;   // 0x00495fd0: always 1
 }
 
+// [PORT-TOP-08] MASHED_ORIG_TOP only (set in WinMain before PortTop_WinMain): store the slot types where the original
+// keeps them, dword 0x007e96fc + i*0x200 (= [0x007e96c8 + i*0x200 + 0x34]). 0x00498510 writes that word in its
+// fill loop: 1 at 0x0049861a (i < pad count), 2 at 0x0049865f (i == pad count), 0 at 0x004986cd. Without it the
+// matched pause arm 0x0042c220 sees 0x00497450(id) == 0 for the human slot, 0x0042c280 posts modal 0x27f /
+// 0xff210000 through 0x0042bf30 (DAT_0067eab0 0 -> 1, 0x0043d7c0 steps it to 2) and 0x004929d0 case 3 goes to 7 on
+// the first race frame (verify/porttop08_20261112/RESULT_PORT-TOP-08.md). MASHED_TOP08_NO_SLOTSTORE=1 opts out.
+// The default path never writes it (unchanged).
+static bool g_top08_slot_store = false;
+
 // FUN_00498510's slot types (no contcfg<i>.bin override, see the note) and
 // FUN_004967e0's active count.
 static void DeriveInputSlots() {
@@ -1149,10 +1158,15 @@ static void DeriveInputSlots() {
     }
     g_input_active_slots = n;
     g_input_slots_derived = true;
+    if (g_top08_slot_store) {
+        for (int i = 0; i < 4; ++i)   // 0x0049861a / 0x0049865f / 0x004986cd: [esi + 0x34], esi = 0x007e96c8 + i*0x200
+            *reinterpret_cast<std::int32_t*>(0x007e96fcu + static_cast<std::uintptr_t>(i) * 0x200u) = g_input_slot_type[i];
+    }
     if (std::FILE* log = std::fopen(kLogPath, "a")) {
-        std::fprintf(log, "\ninput slots: game controllers %d, types %d %d %d %d, active %d\n",
+        std::fprintf(log, "\ninput slots: game controllers %d, types %d %d %d %d, active %d%s\n",
                      j, g_input_slot_type[0], g_input_slot_type[1],
-                     g_input_slot_type[2], g_input_slot_type[3], n);
+                     g_input_slot_type[2], g_input_slot_type[3], n,
+                     g_top08_slot_store ? ", stored at 0x007e96fc (PORT-TOP-08)" : "");
         std::fclose(log);
     }
 }
@@ -10626,6 +10640,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         {
             // PORT-OT-SEED-CODEPTR: the code-pointer entries the seed leaves out, bound to exe bodies or stop thunks.
             mashed_re::Compat::PortTopCodePtr_Apply(kLogPath);
+            char ns[8] = {};   // [PORT-TOP-08] slot-type store at 0x007e96fc, knob path only
+            g_top08_slot_store = !(GetEnvironmentVariableA("MASHED_TOP08_NO_SLOTSTORE", ns, sizeof(ns)) > 0 && ns[0] && ns[0] != '0');
             return PortTop_WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
         }
     }
