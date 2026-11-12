@@ -1,4 +1,4 @@
-# RESULT HUDINIT-B (2026-11-10): GREEN before the restack: the 0x00427ca0 body runs on its matched source under the RWMOD selector, and 0x00556e40 runs on four non-zero brush handles. The re-gate on the restacked tree waits for HUDINIT-A to land
+# RESULT HUDINIT-B (run 38, 2026-11-11): GREEN on the restack onto orch/integration bf44aae7d: 0x00427ca0 runs its matched body under RWMOD and 0x00556e40 runs on four non-zero brush handles
 
 L2 worker `cmwb4f8nh18ymsc1bf03upqca` for lead `cmw7xu1960f37p41557tefpnd`, L-111 step 1, chain 2 of the PORT-OT-HUDINIT split.
 
@@ -134,3 +134,33 @@ Port column (pre-restack build): 4 rows changed. 0x00427ca0 and 0x00556cc0 go bo
 | gates_run.log | bf3fe6addf27d750f0643270c425524f32d829ea98297d57d4b46586228fe57e |
 | arms/H_DEF step / gates / ptrace | 8284be46b3c692f3... / 6793183492e0c082... / 31fe043e261d2df9... |
 | arms/B_DEF_K0 / K1 / K26 step | 1d5bf4f980bf7eb4... (all three) |
+
+## Run 38 restack and re-gate (worker on claude3)
+
+Branch `orch/HUDINIT-B` was recreated on `orch/integration` `bf44aae7d` (HUDINIT-A, RWC-BIND-4C5890 and L115-HUDINIT-PROOFS are all merged there). The old branch is kept as `orch/HUDINIT-B-old`. The two HUDINIT-B commits (`cc43f4bd9`, `cda774328`) were cherry-picked. One conflict, `re/tools/dual_copy_allowlist.txt` (both sides append lines): both sets kept. No librw binding for 0x004c5890 is added (L-129).
+
+| check | result |
+|---|---|
+| default build (`MASHED_NO_DEPLOY=1`, VS2022) | `=== Build OK ===`. rva-lint OK, no NEW duplicate bodies (95 known). asm-lint OK |
+| object build (`MASHED_DDKOBJ=1`) | `=== Build OK ===` |
+| `ddkobj.py check` | IDENTICAL 712, DIFFERENT 80, not-in-map 3. The DIFFERENT set is the same 80-row set RWC-BIND-4C5890 reported on the rebase. 0x00427ca0, 0x00556cc0, 0x00556d70, 0x00557110 and 0x00556e40 are all IDENTICAL |
+| knob boot, VS2022 exe, RWMOD off | rc 0 after 46.4 s, 3000 frames. `RWMOD off: stand-in only`, no matched-body line |
+| knob boot, VS2022 exe, RWMOD on | rc 0 after 79.7 s, 3000 frames. `RWMOD on: matched body`, `rva 0x00427ca0 ran` with brushes 0x0067d83c=08ED55A0 0x0067d840=08ED5800 0x0067d844=08ED62B0 0x0067d848=08ED6180 (all non-zero), `0x00556e40(0x08ED62B0): matched body (RWMOD on, handle set)`, no 0x00556e40 stand-in line, `returned 0 after 3000 frames` |
+| knob boot, object exe, RWMOD off / on | rc 0 after 38.2 s / 32.5 s. Same lines as the VS2022 exe. Brushes 090C8AF0 090C7F10 090C8170 090C8A60 non-zero, 0x00556e40 matched body |
+| self-test | The knob boot's own checks (seed 39/39, bring-up returns) pass in all four logs. No separate self-test run |
+| not run | G-CTRL, B, 12 captures x 4, port column on the restacked build (top-down row, WORKER_RULES). The pre-restack run above carries those, unchanged code |
+
+Remaining stand-ins: 0x00556e90 (97.5%, residual outside L-115) and 0x00427880 (chain C), as in the Verdict.
+
+Raw files (D:/MashedWT/HUDINIT-B_data2, not committed), SHA-256:
+
+| file | sha256 |
+|---|---|
+| vs_rwmod_off.log | 851F43F793E4EC7CCE828CBFDB8B374910AA307D6FAA62FB4D75E1475EC07D3E |
+| vs_rwmod_on.log | 055F7D0ED17B3B294D192FEC9FE17DA4EEC83622C6615D59CDD42D69B1422687 |
+| ddk_rwmod_off.log | B666888AE554F5BB5E27517B10808C4979A8D578FA3FD87B3695DF2E12121EF2 |
+| ddk_rwmod_on.log | 4308983AD66104E5B63C0C6440B5A9F9150B40E5866E29D2916C6F8A20A03697 |
+| mashed_re_vs.exe | FC2E8D32F940B0FC5870C15153A1699288FBDCBF019F21DD447465D394A6D1EC |
+| mashed_re_ddk.exe | A208FD18A8F269A8F61C3822A138719849E8C29E7BDDD41D8BD2C6DC251686A4 |
+| BYTECHECK.tsv | 2C697F3CAEF07078E01D0440C999798B8FD94F82385C6484D92E5B0421C3001C |
+| build.log / build_ddkobj.log | FD2C1D3A... / 6C92F4DB... |
