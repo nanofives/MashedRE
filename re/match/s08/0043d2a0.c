@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S08 0x0043d2a0: 54.0% (regs 64.7%), raw g2s did not compile (C2708). By hand. The file holds the register-arg static callees FUN_0042ac00 (edx; 76.2% by Ghidra size, but our 21 instructions equal the original listing through 0x0042ac43, Ghidra size stops before the loop tail), FUN_0042ac50 (eax,ecx; 100%) and FUN_0042ad90 (ebx,edx,edi; 100%): defining them static before the caller gives the original ebx/edx/edi arg registers. Menu-level stack 0x0067ed78 (0x40-byte MenuLevel) and the 0x34-byte MenuItem array at 0x00898ac0 are typed. Tried: switch/if order of the mode branches (mode!=0 first matches the block order, +4%), item index form instead of a pointer (38%, worse: the original strength-reduces to a pointer biased to item+0x18). Residual (b)+(c): FUN_00432b30 (1327 B) takes mode in eax and nItems in esi plus two stack args, a register convention that needs its body in this file (not reconstructed in budget; declared cdecl here), and the register allocation of the loop (s1/s2 in ebp/ebx, zero in ebx) follows from it. */
+/* MATCH-S08 0x0043d2a0: 54.3% (regs 65.3%) since RO-MENU-DIV-43DFD0 (2026-11-12), was 54.0% (regs 64.7%), raw g2s did not compile (C2708). By hand. The file holds the register-arg static callees FUN_0042ac00 (edx; 76.2% by Ghidra size, but our 21 instructions equal the original listing through 0x0042ac43, Ghidra size stops before the loop tail), FUN_0042ac50 (eax,ecx; 100%) and FUN_0042ad90 (ebx,edx,edi; 100%): defining them static before the caller gives the original ebx/edx/edi arg registers. Menu-level stack 0x0067ed78 (0x40-byte MenuLevel) and the 0x34-byte MenuItem array at 0x00898ac0 are typed. Tried: switch/if order of the mode branches (mode!=0 first matches the block order, +4%), item index form instead of a pointer (38%, worse: the original strength-reduces to a pointer biased to item+0x18). Residual (b)+(c): FUN_00432b30 (1327 B) takes mode in eax and nItems in esi plus two stack args, a register convention that needs its body in this file (RO-MENU-DIV-43DFD0: now defined static here, copied from 00432b30.c; the cdecl extern it replaced made the provisional body diverge at menu tick 16), and the register allocation of the loop (s1/s2 in ebp/ebx, zero in ebx) follows from it. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -141,7 +141,412 @@ static int FUN_0042ad90(int key, int *p, int idx)
   }
   return -1;
 }
-void FUN_00432b30(int mode, int *pn, int s, int menu);
+/* RO-MENU-DIV-43DFD0 (2026-11-12): FUN_00432b30 and its two static callees, copied verbatim from
+   re/match/s08/00432b30.c, so the DDK emits the original call convention at 0x0043d77b..0x0043d797
+   (mode in EAX, &nItems in ESI, stack args sel and menu). A cdecl extern declaration here pushed four stack
+   args and left EAX/ESI unset when the provisional body called the original 0x00432b30. */
+MGLOBALA(MenuLevel, DAT_0067ed38, 17, 0x0067ed38);
+int FUN_0042a9c0(void);
+int FUN_0042b920(void);
+// MATCH: 0x0042ad10 FUN_0042ad10
+static void FUN_0042ad10(int *cnt, int type, int x, int y, int z)
+{
+  DAT_00898ac0[*cnt].type = type;
+  DAT_00898ac0[*cnt].rgba[0] = 0xff;
+  DAT_00898ac0[*cnt].rgba[1] = 0xff;
+  DAT_00898ac0[*cnt].rgba[2] = 0xff;
+  DAT_00898ac0[*cnt].rgba[3] = 0xff;
+  DAT_00898ac0[*cnt].scale = 0.6f;
+  DAT_00898ac0[*cnt].x = (float)x;
+  DAT_00898ac0[*cnt].y = (float)y;
+  DAT_00898ac0[*cnt].f24 = z;
+}
+// MATCH: 0x0042add0 FUN_0042add0
+static int FUN_0042add0(int key, int idx)
+{
+  int *p;
+  int i;
+  int k;
+  p = DAT_0067ed38[DAT_0067e9f8].def;
+  k = 0;
+  for (i = 0; p[i] != (int)0xff070000; i++) {
+    if (p[i] == key) {
+      if (idx == k) {
+        return p[i + 1];
+      }
+      k++;
+    }
+  }
+  return -1;
+}
+// MATCH: 0x00432b30 FUN_00432b30
+static void FUN_00432b30(int mode, int *cnt, int sel, int menu)
+{
+  int r;
+
+  r = 0;
+  if (mode != 0) {
+    if (mode == 2) {
+      sel = 0;
+      r = FUN_0042add0(0xff080000, r);
+    }
+    else {
+      DAT_0067e9f8++;
+      r = FUN_0042add0(0xff080000, r);
+      if (r == -1) {
+        r = 0;
+      }
+      DAT_0067e9f8--;
+    }
+  }
+  else if (DAT_0067e9f8 != 0) {
+    r = FUN_0042add0(0xff080000, r);
+    if (r == -1) {
+      r = 0;
+    }
+  }
+  switch (sel) {
+  case 1:
+    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x42;
+    if (menu == FUN_0042b920()) {
+      DAT_00898ac0[*cnt].s1 = -1;
+    }
+    switch (r) {
+    case 1:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 0x1000;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 2:
+      DAT_00898ac0[*cnt].s2 = 0x43;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 4:
+      DAT_00898ac0[*cnt].s2 = 0x225;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 5:
+      DAT_00898ac0[*cnt].s2 = 0x48;
+      DAT_00898ac0[*cnt].s2 = 0x13;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 6:
+      DAT_00898ac0[*cnt].s2 = 0x58;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 8:
+      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 10:
+      DAT_00898ac0[*cnt].s2 = 0x133;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    default:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 1;
+      DAT_00898ac0[*cnt].f10 = 0;
+      break;
+    }
+    (*cnt)++;
+    break;
+  case 2:
+    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x43;
+    switch (r) {
+    case 2:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 0x1000;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 1:
+      DAT_00898ac0[*cnt].s2 = 0x42;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 4:
+      DAT_00898ac0[*cnt].s2 = 0x225;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 5:
+      DAT_00898ac0[*cnt].s2 = 0x48;
+      DAT_00898ac0[*cnt].s2 = 0x13;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 6:
+      DAT_00898ac0[*cnt].s2 = 0x58;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 8:
+      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 10:
+      DAT_00898ac0[*cnt].s2 = 0x133;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    default:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 1;
+      DAT_00898ac0[*cnt].f10 = 0;
+      break;
+    }
+    (*cnt)++;
+    break;
+  case 4:
+    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x225;
+    switch (r) {
+    case 4:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 0x1000;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 1:
+      DAT_00898ac0[*cnt].s2 = 0x42;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 2:
+      DAT_00898ac0[*cnt].s2 = 0x43;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 5:
+      DAT_00898ac0[*cnt].s2 = 0x48;
+      DAT_00898ac0[*cnt].s2 = 0x13;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 6:
+      DAT_00898ac0[*cnt].s2 = 0x58;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 8:
+      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 10:
+      DAT_00898ac0[*cnt].s2 = 0x133;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    default:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 1;
+      DAT_00898ac0[*cnt].f10 = 0;
+      break;
+    }
+    (*cnt)++;
+    break;
+  case 5:
+    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x48;
+    DAT_00898ac0[*cnt].s1 = 0x13;
+    switch (r) {
+    case 5:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 0x1000;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 1:
+      DAT_00898ac0[*cnt].s2 = 0x42;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 2:
+      DAT_00898ac0[*cnt].s2 = 0x43;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 4:
+      DAT_00898ac0[*cnt].s2 = 0x225;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 6:
+      DAT_00898ac0[*cnt].s2 = 0x58;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 8:
+      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 10:
+      DAT_00898ac0[*cnt].s2 = 0x133;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    default:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 1;
+      DAT_00898ac0[*cnt].f10 = 0;
+      break;
+    }
+    (*cnt)++;
+    break;
+  case 6:
+    FUN_0042ad10(cnt, 0xff110000, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x58;
+    switch (r) {
+    case 6:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 0x1000;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 1:
+      DAT_00898ac0[*cnt].s2 = 0x42;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 2:
+      DAT_00898ac0[*cnt].s2 = 0x43;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 4:
+      DAT_00898ac0[*cnt].s2 = 0x225;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 5:
+      DAT_00898ac0[*cnt].s2 = 0x48;
+      DAT_00898ac0[*cnt].s2 = 0x13;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 8:
+      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 10:
+      DAT_00898ac0[*cnt].s2 = 0x133;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    default:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 1;
+      DAT_00898ac0[*cnt].f10 = 0;
+      break;
+    }
+    (*cnt)++;
+    break;
+  case 8:
+    FUN_0042ad10(cnt, 0xff230000, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = FUN_0042a9c0();
+    switch (r) {
+    case 8:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 0x1000;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 1:
+      DAT_00898ac0[*cnt].s2 = 0x42;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 2:
+      DAT_00898ac0[*cnt].s2 = 0x43;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 4:
+      DAT_00898ac0[*cnt].s2 = 0x225;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 5:
+      DAT_00898ac0[*cnt].s2 = 0x48;
+      DAT_00898ac0[*cnt].s2 = 0x13;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 6:
+      DAT_00898ac0[*cnt].s2 = 0x58;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 10:
+      DAT_00898ac0[*cnt].s2 = 0x133;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    default:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 1;
+      DAT_00898ac0[*cnt].f10 = 0;
+      break;
+    }
+    (*cnt)++;
+    break;
+  case 10:
+    FUN_0042ad10(cnt, 0xff100000, 0x40, 0x1ac, 0);
+    DAT_00898ac0[*cnt].s1 = 0x133;
+    switch (r) {
+    case 10:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 0x1000;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 1:
+      DAT_00898ac0[*cnt].s2 = 0x42;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 2:
+      DAT_00898ac0[*cnt].s2 = 0x43;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 4:
+      DAT_00898ac0[*cnt].s2 = 0x225;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 5:
+      DAT_00898ac0[*cnt].s2 = 0x48;
+      DAT_00898ac0[*cnt].s2 = 0x13;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 6:
+      DAT_00898ac0[*cnt].s2 = 0x58;
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    case 8:
+      DAT_00898ac0[*cnt].s2 = FUN_0042a9c0();
+      DAT_00898ac0[*cnt].f4 = 0;
+      DAT_00898ac0[*cnt].f10 = 0x1ff;
+      break;
+    default:
+      DAT_00898ac0[*cnt].s2 = -1;
+      DAT_00898ac0[*cnt].f4 = 1;
+      DAT_00898ac0[*cnt].f10 = 0;
+      break;
+    }
+    (*cnt)++;
+    break;
+  }
+}
 
 // MATCH: 0x0043d2a0 FUN_0043d2a0
 void FUN_0043d2a0(int menu, int mode)
