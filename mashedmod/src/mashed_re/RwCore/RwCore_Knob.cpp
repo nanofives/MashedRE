@@ -60,6 +60,20 @@ bool RwCore_Enabled(void) {
     return s == 1;
 }
 
+// RWC-PLUGIN-ATTACH run 40: MASHED_RWC_FRAME=1 (only with MASHED_RWC_CORE=1, default OFF). RwEngineStart returns its
+// result instead of the probe's 0, the librw bindings with a core body call it (LibRw/RwApiBind.cpp lines tagged
+// [RWC-FRAME], verify/rwccorerun_20261111/route_bindings.py), and the boot ends after the first RwRasterShowRaster on
+// the core (RwCore_FrameShowRaster). Without it the knob behaves as in RWC-CORE-RUN.
+bool RwCore_FrameRoute(void) {
+    static int s = -1;
+    if (s < 0) {
+        char v[8] = {};
+        s = (RwCore_Enabled() && GetEnvironmentVariableA("MASHED_RWC_FRAME", v, sizeof(v)) > 0 && v[0] && v[0] != '0')
+                ? 1 : 0;
+    }
+    return s == 1;
+}
+
 // A missing body was called (RwCore_Missing.cpp): log it and end the process with its code.
 void RwCore_Stop(unsigned rva, unsigned code) {
     RwCore_Log("STOP: rva 0x%08X called, no body on the RW core path (no source, no hand body); exit 0x%08X", rva, code);
@@ -185,6 +199,10 @@ int RwCore_EngineStart(void) {
     RwCore_Log("RwEngineStart 0x004c2fb0() = %d", r);
     RwCore_Probe();
     if (!r) return 0;
+    if (RwCore_FrameRoute()) {
+        RwCore_Log("MASHED_RWC_FRAME: RwEngineStart returns %d; the top-down path continues with the bindings on the core", r);
+        return r;
+    }
     RwCore_Log("calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)");
     const int s = RwCore_004c2f60();
     RwCore_Log("bring-up probe done: RwEngineStop 0x004c2f60() = %d; returning 0 from RwEngineStart so 0x00493710 runs "
@@ -195,6 +213,22 @@ int RwCore_EngineStart(void) {
 int RwCore_EngineStop(void) { const int r = RwCore_004c2f60(); RwCore_Log("RwEngineStop 0x004c2f60() = %d", r); return r; }
 int RwCore_EngineClose(void) { const int r = RwCore_004c3040(); RwCore_Log("RwEngineClose 0x004c3040() = %d", r); return r; }
 int RwCore_EngineTerm(void) { const int r = RwCore_004c3270(); RwCore_Log("RwEngineTerm 0x004c3270() = %d", r); return r; }
+// RwRasterShowRaster 0x004c7730 on the core under MASHED_RWC_FRAME. After the first call: log the frame, stop, close
+// and terminate the engine on the core, and end the process with 0x5257F000 | (result != 0).
+extern "C" int RwCore_004c7730(int raster, int dev, int flags);
+extern "C" int RwCore_FrameShowRaster(int raster, int dev, int flags) {
+    const int r = RwCore_004c7730(raster, dev, flags);
+    RwCore_Log("RwRasterShowRaster 0x004c7730(raster %08X, dev %08X, flags 0x%X) = %08X on the RW core: first frame "
+               "presented; device [0x007d4110] %08X", static_cast<unsigned>(raster), static_cast<unsigned>(dev), flags,
+               static_cast<unsigned>(r), U32(0x007d4110));
+    RwCore_Probe();
+    RwCore_EngineStop();
+    RwCore_EngineClose();
+    RwCore_EngineTerm();
+    RwCore_Log("MASHED_RWC_FRAME: boot ends after the first frame on the RW core (exit 0x%08X)", 0x5257F000u | (r ? 1u : 0u));
+    ExitProcess(0x5257F000u | (r ? 1u : 0u));
+    return r;
+}
 int RwCore_Set7d4134(int v) { return RwCore_004c9f50(v); }
 int RwCore_SetRefresh(int v) { return RwCore_004c9eb0(v); }
 int RwCore_Set7d413c(int v) { return RwCore_004c9f60(v); }

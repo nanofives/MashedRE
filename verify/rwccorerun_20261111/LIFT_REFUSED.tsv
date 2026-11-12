@@ -4,8 +4,6 @@ rva	reason
 0x004c48ef	inside a known function (a label, not a function start)
 0x004c48fb	inside a known function (a label, not a function start)
 0x004c5eef	inside a known function (a label, not a function start)
-0x004c9290	indirect call dword ptr [0x5cc21c] at 0x004c92fd
-0x004ca160	indirect call dword ptr [0x5cc21c] at 0x004ca2e4
 0x004d15f0	inside a known function (a label, not a function start)
 0x004d1630	inside a known function (a label, not a function start)
 0x004d3112	inside a known function (a label, not a function start)
@@ -16,7 +14,6 @@ rva	reason
 0x004d33ef	inside a known function (a label, not a function start)
 0x004d6dfb	inside a known function (a label, not a function start)
 0x004d8922	inside a known function (a label, not a function start)
-0x004dbc90	indirect jmp dword ptr [eax*4 + 0x4dc144] at 0x004dbcb5
 0x004dc602	inside a known function (a label, not a function start)
 0x004dc6d7	inside a known function (a label, not a function start)
 0x004dcb2f	inside a known function (a label, not a function start)
@@ -28,8 +25,6 @@ rva	reason
 0x004deb20	inside a known function (a label, not a function start)
 0x004deede	inside a known function (a label, not a function start)
 0x004defc4	inside a known function (a label, not a function start)
-0x004df030	indirect jmp dword ptr [edi*4 + 0x4df0fc] at 0x004df064
-0x004e0b70	indirect jmp dword ptr [eax*4 + 0x4e1244] at 0x004e0d1e
 0x004e18c8	inside a known function (a label, not a function start)
 0x004e1bf5	inside a known function (a label, not a function start)
 0x004e219f	inside a known function (a label, not a function start)
@@ -49,9 +44,11 @@ rva	reason
 0x004e2df6	inside a known function (a label, not a function start)
 0x004e2f00	inside a known function (a label, not a function start)
 0x004e3267	inside a known function (a label, not a function start)
-0x004e3850	indirect jmp dword ptr [eax + 0x10] at 0x004e3877
-0x004e3880	indirect jmp dword ptr [ecx + 0x14] at 0x004e389d
 0x004e60e6	inside a known function (a label, not a function start)
+0x004e71de	inside a known function (a label, not a function start)
+0x004e72fe	inside a known function (a label, not a function start)
+0x004e77de	inside a known function (a label, not a function start)
+0x004e7bd5	inside a known function (a label, not a function start)
 0x004e838b	inside a known function (a label, not a function start)
 0x004e83be	inside a known function (a label, not a function start)
 0x004e8cdc	inside a known function (a label, not a function start)
@@ -61,26 +58,29 @@ rva	reason
 0x004e9640	inside a known function (a label, not a function start)
 0x004e96bf	inside a known function (a label, not a function start)
 0x004e97a4	inside a known function (a label, not a function start)
-0x004ebd00	indirect jmp dword ptr [eax*4 + 0x4ec114] at 0x004ec043
-0x004ef726	indirect jmp dword ptr [eax*4 + 0x4ef893] at 0x004ef765
-0x004ef8b3	indirect jmp dword ptr [eax*4 + 0x4efa93] at 0x004ef8f5
-0x004efab3	indirect jmp dword ptr [eax*4 + 0x4efc39] at 0x004efaf0
-0x004efc59	indirect jmp dword ptr [eax*4 + 0x4efe6a] at 0x004efc99
 0x004f3610	inside a known function (a label, not a function start)
 0x004f3616	inside a known function (a label, not a function start)
 0x004f3619	inside a known function (a label, not a function start)
-0x004f5ec0	indirect jmp dword ptr [ebp*4 + 0x4f682c] at 0x004f5ed4
 0x004f87a0	unresolved call target 0x004acd00 at 0x004f890f
-0x004f8980	indexed .text operand at 0x004f8c2f
-0x004fb9aa	inside a known function (a label, not a function start)
-0x004fbd78	indirect call dword ptr [0x5cc00c] at 0x004fbd8e
 0x004fbdd5	unresolved code-pointer immediate target 0x005ca695 at 0x004fbdd5
-0x0050f1c4	indirect jmp dword ptr [eax*4 + 0x50f32c] at 0x0050f1ff
-0x0050f34c	indirect jmp dword ptr [eax*4 + 0x50f552] at 0x0050f386
-0x0050f572	indirect jmp dword ptr [eax*4 + 0x50f6a4] at 0x0050f5a8
+0x004fcb96	unresolved call target 0x004a3bda at 0x004fcbc2
+0x004fcbca	unresolved call target 0x004a3bda at 0x004fcbda
+0x004fcc00	unresolved call target 0x004a3bda at 0x004fcc10
+0x004fcc18	unresolved call target 0x004a3bda at 0x004fcc28
+0x004fcc67	unresolved call target 0x004a3bda at 0x004fcc88
+0x004fccbc	unresolved call target 0x004a3bda at 0x004fcccc
+0x004fceb8	unresolved call target 0x004a3bda at 0x004fcec8
+0x004fced0	unresolved call target 0x004a3bda at 0x004fcee0
+0x004fceec	unresolved call target 0x004aec1d at 0x004fcf36
+0x004fcf91	unresolved call target 0x004aec1d at 0x004fcff6
+0x004ff554	unresolved call target 0x004a3c1c at 0x004ff559
+0x005033ba	unresolved call target 0x004a3bda at 0x005033de
+0x00504008	unresolved call target 0x004a3bda at 0x0050404d
+0x0050456c	unresolved call target 0x004a3c1c at 0x00504580
+0x00513f90	unresolved call target 0x00516da0 at 0x0051401f
+0x00514330	unresolved call target 0x005173f0 at 0x00514385
+0x00514d00	unresolved call target 0x005207c0 at 0x00514d11
 0x0052eaf5	inside a known function (a label, not a function start)
-0x005302e0	indirect jmp dword ptr [eax*4 + 0x53063c] at 0x00530431
-0x00530c00	inside a known function (a label, not a function start)
 0x00532190	inside a known function (a label, not a function start)
 0x00532fa0	inside a known function (a label, not a function start)
 0x0053db75	inside a known function (a label, not a function start)
@@ -90,19 +90,15 @@ rva	reason
 0x0053ff05	inside a known function (a label, not a function start)
 0x0054005c	inside a known function (a label, not a function start)
 0x0054029b	inside a known function (a label, not a function start)
-0x00543500	indirect jmp dword ptr [edx*4 + 0x5436f8] at 0x0054366f
 0x00543758	inside a known function (a label, not a function start)
 0x0054375a	inside a known function (a label, not a function start)
 0x005437e1	inside a known function (a label, not a function start)
 0x0054a36b	inside a known function (a label, not a function start)
 0x0054a452	inside a known function (a label, not a function start)
 0x0054a575	inside a known function (a label, not a function start)
+0x005508ee	inside a known function (a label, not a function start)
 0x00551770	unresolved call target 0x0052df40 at 0x005517be
 0x005518f0	unresolved call target 0x0052de60 at 0x005519da
 0x0057c3a0	unresolved call target 0x0055b030 at 0x0057c3c4
 0x0057c3f0	unresolved call target 0x0055b060 at 0x0057c3fc
 0x0057c590	unresolved tail jmp target 0x0057c420 at 0x0057c590
-0x005cb07f	inside a known function (a label, not a function start)
-0x005cb0ef	inside a known function (a label, not a function start)
-0x005cb160	inside a known function (a label, not a function start)
-0x005cb432	inside a known function (a label, not a function start)

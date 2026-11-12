@@ -13,5 +13,8 @@ for a in $ARMS; do
     vs_core)  py -3.12 verify/porttop_20261108/knob_boot.py vs_core $ROOT 120 $COMMON MASHED_RWC_CORE=1 ;;
     ddk_off)  KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_off $ROOT 180 $COMMON ;;
     ddk_core) KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_core $ROOT 120 $COMMON MASHED_RWC_CORE=1 ;;
+    # run 40: MASHED_RWC_FRAME (bindings on the core, boot ends after the first Present on the core); not in the default four
+    vs_frame)  py -3.12 verify/porttop_20261108/knob_boot.py vs_frame $ROOT 120 $COMMON MASHED_RWC_CORE=1 MASHED_RWC_FRAME=1 ;;
+    ddk_frame) KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_frame $ROOT 120 $COMMON MASHED_RWC_CORE=1 MASHED_RWC_FRAME=1 ;;
   esac
 done

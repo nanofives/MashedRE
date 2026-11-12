@@ -44,6 +44,11 @@ LIFT_INSTEAD = {
     # run 40 (node-definition callbacks joined the closure): C++ type errors under VS2022 (build_vs9.log)
     're/match/rwl03/00530650.c', 're/match/rwl03/00530c00.c', 're/match/rwl04/0054ba20.c', 're/match/rwl04/0054bda0.c',
 }
+# run 40 (librw binding RVAs as roots): sources that failed VS2022 C++ in a build, one per line (collected from the
+# build logs by the build loop, see RESULT 3.2)
+_LI = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'LIFT_INSTEAD_RUN40.txt')
+if os.path.exists(_LI):
+    LIFT_INSTEAD |= {ln.strip() for ln in open(_LI, encoding='utf-8') if ln.strip() and not ln.startswith('#')}
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
@@ -56,6 +61,7 @@ ROOTS = [
     '004c32b0', '004c30b0', '004c2fb0', '004c2f60', '004c3040', '004c3270',   # RwEngineInit/Open/Start/Stop/Close/Term
     '004c9f50', '004c9eb0', '004c9f60',                                        # driver setters 0x00493710 calls
     '00493640',                                                                # RenderwareAttachPlugins (run 38)
+    '004b3eb0',                                                                # run 40: TXD loader, frame knob
 ]
 # Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
 # re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
@@ -66,7 +72,11 @@ XFOLLOW = {0x493640, 0x472380, 0x472330, 0x472360, 0x52d8e0, 0x52d910, 0x52d950,
            # RWC-PLUGIN-ATTACH: callees of lifted plugin bodies just outside the RW bands (LIFT_REFUSED.tsv, first pass)
            0x4722e0, 0x52d980, 0x52ddc0, 0x52ddf0, 0x558c50, 0x558c80, 0x558cb0, 0x562560,
            0x4721e0, 0x52da20, 0x55dec0, 0x5c4ab0, 0x5c4ad0, 0x5c4d50, 0x5c4e10,
-           0x4a3370, 0x4a3907}   # two CRT leaves (20 / 21 bytes) the lifted d3dx bodies call
+           0x4a3370, 0x4a3907,   # two CRT leaves (20 / 21 bytes) the lifted d3dx bodies call
+           # run 40: callees of re/match/rwl02/004e7420.c (a binding root), sources in re/match/s28
+           0x5c4670, 0x5c47b0, 0x5c47e0,
+           # run 40 (MASHED_RWC_FRAME): the TXD-from-memory loader that DisplayInit calls (PortTop_Port_004b3eb0 is librw)
+           0x4b3eb0}
 # Not roots in this row: 0x00493710's calls after RwEngineStart (GetCurrentMode 0x004c2f00, GetModeInfo 0x004c2ed0,
 # 0x004cbc60..0x004cbc90, RwTexDictionarySetCurrent 0x004c5c80) are not reached, since the knob ends the boot at Start.
 # Data ranges of the RW core (file-backed, seeded from the anchored binary under the knob). Every dword in them whose
@@ -102,6 +112,7 @@ EXT = {
     'FUN_005c22bd': ('RwCoreCrt_sscanf', 'CRT sscanf'),
     'FUN_005aead0': ('RwCoreCrt_realloc', 'CRT realloc (RwGlobals +0x110)'),
     '_strncpy': ('RwCoreCrt_strncpy', 'CRT strncpy called by name (re/match/s24/00550b00.c, rwl04/00551ad0.c)'),
+    '_strstr': ('RwCoreCrt_strstr', 'CRT strstr called by name (re/match: 0x005507b0, run 40)'),
     'FUN_004a3440': ('_chkstk', 'CRT __chkstk (function_inventory 0x004a3440; eax = frame size), called by lifted bodies'),
     'FUN_005c24e0': ('RwCoreCrt_qsort', 'CRT qsort (RWC-PLUGIN-ATTACH; 4 args base, n, width, compare)'),
     'FUN_004a2d30': ('RwCoreCrt_pow', 'CRT pow (exe CRT, not the DDK libcmt body: L-120 b not yet available)'),
@@ -268,7 +279,11 @@ def defs_of(t):
 def body_text(t):
     # drop comments so names in prose are not callees
     t = re.sub(r'/\*.*?\*/', ' ', t, flags=re.S)
-    return re.sub(r'//[^\n]*', ' ', t)
+    t = re.sub(r'//[^\n]*', ' ', t)
+    # run 40: the port compiles sources as C++, so keep only the C++ branch of `#ifdef __cplusplus .. #else .. #endif`
+    # (re/match/rwl01/004c1d30.c defines a C stand-in of 0x004c1a70 in the #else branch and only declares it for C++)
+    t = re.sub(r'#ifdef\s+__cplusplus\b(.*?)#else\b.*?#endif', r'\1', t, flags=re.S)
+    return re.sub(r'#ifndef\s+__cplusplus\b.*?#endif', ' ', t, flags=re.S)
 
 
 def anchor_image():
@@ -359,6 +374,12 @@ def main(check):
             fh.write('slot\tvalue\tverdict\n' + '\n'.join(rule_rows) + '\n')
     # RWC_EXTRA_ROOTS (sizing only, with --check): extra closure roots, comma-separated 8-digit hex RVAs
     extra = [x.strip().lower() for x in os.environ.get('RWC_EXTRA_ROOTS', '').split(',') if x.strip()]
+    # RWC-PLUGIN-ATTACH run 40 (MASHED_RWC_FRAME): every RW-band RVA a librw binding (LibRw/*.cpp MashedRw_<Name>_<rva>)
+    # stands for is a root, so route_bindings.py can send the binding to its core body under the frame knob.
+    for f in glob.glob(os.path.join(ROOT, 'mashedmod', 'src', 'mashed_re', 'LibRw', '*.cpp')):
+        for m in re.finditer(r'MashedRw_\w+?_(00[0-9a-f]{6})\(', open(f, encoding='utf-8', errors='replace').read()):
+            if inrw(int(m.group(1), 16)) and m.group(1) not in extra and m.group(1) not in EXE_BODY:
+                extra.append(m.group(1))
     roots = list(ROOTS) + extra + [t for _, t in fixups]
 
     tu_of = {}      # rva -> source that defines it
@@ -386,10 +407,30 @@ def main(check):
             inside.append((v, v + int(r['bytes_n'])))
     known_starts |= {int(k, 16) for k in list(srcs) + list(HAND) + list(EXE_BODY)}
     known_starts |= {int(t, 16) for _, t in fixups}
+    # run 40: an extent ends at the next known function start. match_ledger's bytes_n is not always the original's
+    # extent: 0x004c2620 lists 1425 bytes (function_inventory 1040, ending at the start 0x004c2a30), which put the
+    # camera begin / end update callbacks 0x004c2bb0 / 0x004c2b80 (ret + nop before each, both open with
+    # mov eax, [0x007d3ff8]) "inside" it, so they were refused as labels.
+    starts_sorted = sorted(known_starts)
+    import bisect
+
+    def clip(lo, hi):
+        i = bisect.bisect_right(starts_sorted, lo)
+        return (lo, min(hi, starts_sorted[i])) if i < len(starts_sorted) else (lo, hi)
+    inside = [clip(lo, hi) for lo, hi in inside]
 
     def mid_function(v):
         return any(lo < v < hi for lo, hi in inside)
 
+    import pefile   # run 40: import slots for lift_rwcore (calls through the IAT)
+    _pe = pefile.PE(ANCHOR, fast_load=True)
+    _pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_IMPORT']])
+    lift_rwcore.IAT.clear()
+    lift_rwcore.IAT_USED.clear()
+    for _e in _pe.DIRECTORY_ENTRY_IMPORT:
+        for _i in _e.imports:
+            if _i.name:
+                lift_rwcore.IAT[_i.address] = (_e.dll.decode(), _i.name.decode())
     lifted = {}      # rva -> (text with @@SYM_<rva>@@ placeholders, refs)
     lift_refused = {}
 
@@ -571,12 +612,26 @@ def main(check):
     for f in glob.glob(os.path.join(OUT, 'RwCore_Lifted*.cpp')):
         os.remove(f)
     lifted_files = []
+    # run 40: the import slots lifted bodies call (RwCoreIat_<slot> = the exe's own import of that name)
+    if lift_rwcore.IAT_USED:
+        iat = ['// RWC-PLUGIN-ATTACH run 40: import slots of the anchored MASHED.exe that lifted RW core bodies call through',
+               '// (call dword ptr [RwCoreIat_<slot>]). Each points at the import of the same name in this exe: the OS is the',
+               '// declared platform boundary (ROADMAP v5 item 4). Generated by verify/rwccorerun_20261111/gen_rwcore_tus.py.',
+               '// RVA-LINT: ORIGTOP-ONLY', '#ifdef MASHED_STANDALONE', '#include <windows.h>', 'extern "C" {']
+        for slot in sorted(lift_rwcore.IAT_USED):
+            dll, nm = lift_rwcore.IAT[slot]
+            iat.append('void* RwCoreIat_%08x = reinterpret_cast<void*>(&::%s);   // 0x%08x %s' % (slot, nm, slot, dll))
+        iat += ['}', '#endif // MASHED_STANDALONE', '']
+        open(os.path.join(OUT, 'RwCore_Iat.cpp'), 'w', encoding='utf-8', newline='\n').write('\n'.join(iat))
+        lifted_files.append('RwCore\\RwCore_Iat.cpp')
     for ci in range(0, len(ltxt), LIFT_CHUNK):
         chunk = ltxt[ci:ci + LIFT_CHUNK]
         used = set(re.findall(r'(?:call|jmp|offset) ([A-Za-z_]\w*)', '\n'.join(chunk)))
         used |= set(re.findall(r'naked\) int (?:__\w+ )?(\w+)\(', '\n'.join(chunk)))
         decls = sorted(set(decl_sym(sym2rva[u]) for u in used if u in sym2rva))
         decls += ['extern "C" int %s();' % e for e in ext_used if e in used]
+        decls += ['extern "C" void* RwCoreIat_%s;' % x
+                  for x in sorted(set(re.findall(r'RwCoreIat_([0-9a-f]{8})', '\n'.join(chunk))))]
         fn = 'RwCore_Lifted_%02d.cpp' % (ci // LIFT_CHUNK)
         open(os.path.join(OUT, fn), 'w', encoding='utf-8', newline='\n').write(
             '\n'.join(lines + decls + [''] + chunk + ['#endif // MASHED_STANDALONE', '']))

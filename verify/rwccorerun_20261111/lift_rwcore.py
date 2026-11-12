@@ -19,6 +19,7 @@ Rules (a function the lifter cannot transcribe under them is refused and stays a
     refuse the function.
 """
 import re
+import struct
 
 import capstone
 
@@ -32,9 +33,60 @@ class Refused(Exception):
     pass
 
 
+# run 40: import slots of the anchored PE {slot va: (dll, name)}, set by the generator; slots a lifted body called
+IAT = {}
+IAT_USED = set()
+
+JT = re.compile(r'dword ptr \[(\w+)\*4 \+ 0x([0-9a-f]+)\]')
+
+
+def jump_table(read, insns, a, op):
+    """run 40: an MSVC switch `jmp dword ptr [R*4 + T]` (T in .text). Walks back over the instructions just before it
+    for the bound `cmp X, N` (then `ja`) and an optional index table `movzx R, byte ptr [X + B]`. Returns
+    (X, [target for X = 0..N], movzx_addr or None), or None when the shape is not this one."""
+    m = JT.fullmatch(op)
+    if not m:
+        return None
+    reg, tbl = m.group(1), int(m.group(2), 16)
+    if not (TEXT_LO <= tbl < TEXT_HI):
+        return None
+    prev = {i.address + i.size: i for i in insns.values()}
+    seq, cur = [], a
+    for _ in range(5):
+        p = prev.get(cur)
+        if p is None:
+            break
+        seq.append(p)
+        cur = p.address
+    movzx, idx, n = None, reg, None
+    for p in seq:
+        mz = re.fullmatch(r'(\w+), byte ptr \[(\w+) \+ 0x([0-9a-f]+)\]', p.op_str)
+        # `movzx R, byte ptr [X + B]`, or `xor R, R` then `mov <low byte of R>, byte ptr [X + B]` (0x004ca9c0)
+        low8 = {'eax': 'al', 'ebx': 'bl', 'ecx': 'cl', 'edx': 'dl'}.get(reg)
+        if mz and movzx is None and ((p.mnemonic == 'movzx' and mz.group(1) == reg) or
+                                     (p.mnemonic == 'mov' and mz.group(1) == low8)):
+            movzx, idx, btbl = p.address, mz.group(2), int(mz.group(3), 16)
+            continue
+        mc = re.fullmatch(r'(\w+), (0x[0-9a-f]+|\d+)', p.op_str)
+        if p.mnemonic == 'cmp' and mc and mc.group(1) == idx:
+            n = int(mc.group(2), 0)
+            break
+    if n is None or n > 512:
+        return None
+    if movzx is not None:
+        idxs = list(read(btbl, n + 1))
+        dw = read(tbl, 4 * (max(idxs) + 1))
+        tg = [struct.unpack_from('<I', dw, 4 * k)[0] for k in idxs]
+    else:
+        dw = read(tbl, 4 * (n + 1))
+        tg = [struct.unpack_from('<I', dw, 4 * k)[0] for k in range(n + 1)]
+    return idx, tg, movzx
+
+
 def extent(read, start, known_starts, limit=0x4000):
     """Recursive descent. Returns {addr: insn} of reached instructions and the set of intra-function branch targets."""
     insns, todo, labels = {}, [start], set()
+    extent.jt = {}
     while todo:
         a = todo.pop()
         while a not in insns:
@@ -51,7 +103,13 @@ def extent(read, start, known_starts, limit=0x4000):
             if mn == 'jmp':
                 m = re.fullmatch(r'0x([0-9a-f]+)', op)
                 if not m:
-                    break               # indirect jmp: refused at emit time
+                    j = jump_table(read, insns, a, op)
+                    if j:               # run 40: switch table, every case target is a branch target
+                        extent.jt[a] = j
+                        for t in j[1]:
+                            labels.add(t)
+                            todo.append(t)
+                    break               # other indirect jmp: refused at emit time
                 t = int(m.group(1), 16)
                 if t != start and t in known_starts:
                     break               # tail jump
@@ -73,6 +131,8 @@ def lift(read, start, name, known_starts, resolve, convdecl):
     """Return (text, refs, rdata) for one function. resolve(rva_hex8) -> symbol or None. convdecl = 'int __stdcall'
     style prefix + parameter list for the definition, e.g. ('__stdcall', 8)."""
     insns, labels = extent(read, start, known_starts)
+    jt = extent.jt
+    skip = {j[2] for j in jt.values() if j[2] is not None}   # movzx of an index table, folded into the chain
     refs, rdata, used = set(), set(), set()
 
     def sym(t, what, at):
@@ -89,11 +149,40 @@ def lift(read, start, name, known_starts, resolve, convdecl):
         if re.search(r'(movs|stos|lods|scas|cmps)[bwd]$', mn):
             body.append((a, mn))
             continue
+        if a in skip:
+            body.append((a, '// %s %s (index table read, folded into the switch chain below)' % (mn, op)))
+            continue
+        if a in jt:
+            # run 40: `jmp dword ptr [R*4 + T]` -> compare chain on the switch index (flags are dead across the jump)
+            idx, tg, _mz = jt[a]
+            for k, t in enumerate(tg):
+                if t not in insns:
+                    raise Refused('switch target 0x%08x outside the function at 0x%08x' % (t, a))
+                used.add(t)
+                body.append((a, 'cmp %s, %d' % (idx, k)))
+                body.append((a, 'je L_%x' % t))
+            body.append((a, 'int 3   // switch index out of the table bound'))
+            continue
         if mn == 'call' or mn == 'jmp' or (mn.startswith('j') and mn != 'jmp'):
             m = re.fullmatch(r'0x([0-9a-f]+)', op)
             if not m:
                 if mn == 'call' and not re.search(r'\[0x[0-9a-f]+\]', op):
                     body.append((a, '%s %s' % (mn, op)))      # call reg / call [reg+disp]
+                    continue
+                # run 40: tail jump through a run-time pointer, `jmp reg` / `jmp dword ptr [reg]` / `[reg + small disp]`
+                # (0x004e3850: jmp dword ptr [eax + 0x10], a module's callback). Same footing as call [reg+disp];
+                # a scaled index or an absolute .text address (a switch table) is not this form.
+                mj = re.fullmatch(r'(?:dword ptr \[(e[a-ds][xpi])(?: \+ 0x([0-9a-f]+))?\]|(e[a-ds][xpi]))', op)
+                if mn == 'jmp' and mj and (mj.group(2) is None or int(mj.group(2), 16) < 0x10000):
+                    body.append((a, '%s %s' % (mn, op)))
+                    continue
+                # run 40: a call through an import slot of the anchored PE (IAT, filled by the generator from pefile)
+                # goes through RwCoreIat_<slot>, which RwCore/RwCore_Iat.cpp sets to the exe's own import of that name
+                mi = re.fullmatch(r'dword ptr \[0x([0-9a-f]+)\]', op)
+                if mn == 'call' and mi and int(mi.group(1), 16) in IAT:
+                    slot = int(mi.group(1), 16)
+                    IAT_USED.add(slot)
+                    body.append((a, 'call dword ptr [RwCoreIat_%08x]   // %s!%s' % ((slot,) + IAT[slot])))
                     continue
                 # jmp / call through a pointer in .data (0x005ea000 ..): the RW dispatch slots 0x006187a8 .. (seeded and
                 # fixed up by the generator) or a pointer set at run time. The IAT (.rdata) stays refused.
@@ -155,8 +244,10 @@ def lift(read, start, name, known_starts, resolve, convdecl):
            % (start, name, len(insns)),
            'extern "C" __declspec(naked) int %s%s(%s) {' % (conv + ' ' if conv else '', name, params),
            '    __asm {']
+    emitted = set()
     for a, t in body:
-        if a in used:
+        if a in used and a not in emitted:
+            emitted.add(a)
             out.append('    L_%x:' % a)
         out.append('        %-40s // %08x' % (t, a))
     out += ['    }', '}', '']

@@ -9,14 +9,23 @@ extern "C" int Orig_004d7ff0();
 extern "C" int RwCoreLift_00472330();
 extern "C" int RwCoreLift_00472360();
 extern "C" int RwCoreLift_004a3907();
+extern "C" int RwCoreLift_004b3eb0();
+extern "C" int RwCoreLift_004c1de0();
+extern "C" int RwCoreLift_004c2620();
+extern "C" int RwCoreLift_004c2b80();
+extern "C" int RwCoreLift_004c2bb0();
 extern "C" int RwCoreLift_004c3670();
 extern "C" int RwCoreLift_004c37d0();
+extern "C" int RwCoreLift_004c3d90();
+extern "C" int RwCoreLift_004c3dc0();
 extern "C" int RwCoreLift_004c40e0();
 extern "C" int RwCoreLift_004c61b0();
 extern "C" int RwCoreLift_004c6580();
 extern "C" int RwCoreLift_004c6ba0();
 extern "C" int RwCoreLift_004c7200();
 extern "C" int RwCoreLift_004c7490();
+extern "C" int RwCoreLift_004c9290();
+extern "C" int RwCoreLift_004ca160();
 extern "C" int RwCoreLift_004cab30();
 extern "C" int RwCoreLift_004cac10();
 extern "C" int RwCoreLift_004cb6f0();
@@ -32,9 +41,11 @@ extern "C" int RwCoreLift_004d1000();
 extern "C" int RwCoreLift_004d3450();
 extern "C" int RwCoreLift_004d34d0();
 extern "C" int RwCoreLift_004d34e0();
+extern "C" int RwCoreLift_004d8090();
 extern "C" int RwCoreLift_004d8cc0();
 extern "C" int RwCoreLift_004db5b0();
 extern "C" int RwCoreLift_004db840();
+extern "C" int RwCoreLift_004dbc90();
 extern "C" int RwCoreLift_004dd2e0();
 extern "C" int RwCoreLift_004dd660();
 extern "C" int RwCoreLift_004deb50();
@@ -53,28 +64,22 @@ extern "C" int RwCoreLift_004ded90();
 extern "C" int RwCoreLift_004dedb0();
 extern "C" int RwCoreLift_004dedd0();
 extern "C" int RwCoreLift_004dee00();
+extern "C" int RwCoreLift_004df030();
+extern "C" int RwCoreLift_004e0b70();
 extern "C" int RwCoreLift_004e1270();
 extern "C" int RwCoreLift_004e1f60();
 extern "C" int RwCoreLift_004e3070();
 extern "C" int RwCoreLift_004e30f0();
-extern "C" int RwCoreLift_004e36a0();
-extern "C" int RwCoreLift_004e3790();
-extern "C" int RwCoreLift_004e3800();
-extern "C" int RwCoreLift_004e38a0();
-extern "C" int RwCoreLift_004e3b30();
-extern "C" int RwCoreLift_004e3b80();
-extern "C" int RwCoreLift_004e3bd0();
-extern "C" int RwCoreLift_004e3c00();
-extern "C" int RwCoreLift_004e3dc0();
-extern "C" int RwCoreLift_004e3e40();
-extern "C" int RwCoreLift_004e3e70();
-extern "C" int RwCoreLift_004e3ea0();
-extern "C" int RwCoreLift_004e3ec0();
-extern "C" int RwCoreMissing_004e3850();
-extern "C" int RwCoreMissing_004e3880();
+extern "C" int RwCoreLift_0054f8d0();
+extern "C" int RwCoreLift_005cb432();
 extern "C" int RwCore_004722e0();
-extern "C" int RwCore_004c0e50();
 extern "C" int RwCore_004c0ed0();
+extern "C" int RwCore_004c1740();
+extern "C" int RwCore_004c1f80();
+extern "C" int RwCore_004c2a30();
+extern "C" int RwCore_004c3b90();
+extern "C" int RwCore_004c4530();
+extern "C" int RwCore_004c4dc0();
 extern "C" int RwCore_004c5a00();
 extern "C" int RwCore_004c5ae0();
 extern "C" int RwCore_004c5b50();
@@ -87,12 +92,17 @@ extern "C" int RwCore_004c76f0();
 extern "C" int RwCore_004c77c0();
 extern "C" int RwCore_004c7860();
 extern "C" int RwCore_004c9ad0();
+extern "C" int RwCore_004c9fb0();
+extern "C" int RwCore_004cb130();
+extern "C" int RwCore_004cb2c0();
+extern "C" int RwCore_004cb330();
+extern "C" int RwCore_004cb4c0();
 extern "C" int RwCore_004cbd30();
 extern "C" int RwCore_004cbe80();
+extern "C" int RwCore_004cc160();
+extern "C" int RwCore_004cc230();
 extern "C" int RwCore_004cc580();
 extern "C" int RwCore_004cc5e0();
-extern "C" int RwCore_004cc9e0();
-extern "C" int RwCore_004cc9f0();
 extern "C" int RwCore_004cdca0();
 extern "C" int RwCore_004cdd00();
 extern "C" int RwCore_004cdd60();
@@ -100,6 +110,7 @@ extern "C" int RwCore_004cecb0();
 extern "C" int RwCore_004cefd0();
 extern "C" int RwCore_004d0660();
 extern "C" int RwCore_004d1020();
+extern "C" int RwCore_004d1d20();
 extern "C" int RwCore_004d1e30();
 extern "C" int RwCore_004d3510();
 extern "C" int RwCore_004d38b0();
@@ -107,8 +118,14 @@ extern "C" int RwCore_004d3a10();
 extern "C" int RwCore_004d3ab0();
 extern "C" int RwCore_004d52d0();
 extern "C" int RwCore_004d5310();
+extern "C" int RwCore_004d53b0();
+extern "C" int RwCore_004d5480();
+extern "C" int RwCore_004d54f0();
 extern "C" int RwCore_004d6200();
+extern "C" int RwCore_004d6e60();
+extern "C" int RwCore_004d7100();
 extern "C" int RwCore_004d8000();
+extern "C" int RwCore_004d80d0();
 extern "C" int RwCore_004d8480();
 extern "C" int RwCore_004d9050();
 extern "C" int RwCore_004d9530();
@@ -121,14 +138,22 @@ extern "C" int RwCore_004db770();
 extern "C" int RwCore_004dc8a0();
 extern "C" int RwCore_004dc970();
 extern "C" int RwCore_004dcbb0();
+extern "C" int RwCore_004dcd30();
 extern "C" int RwCore_004dd150();
+extern "C" int RwCore_004ddcb0();
+extern "C" int RwCore_004dee40();
 extern "C" int RwCore_004e0920();
 extern "C" int RwCore_004e12b0();
 extern "C" int RwCore_004e2ff0();
-extern "C" int RwCore_004e4450();
-extern "C" int RwCore_004e6100();
 extern "C" int RwCore_00550b00();
+extern "C" int RwInitNullStub();
 extern "C" int _chkstk();
+extern "C" void* RwCoreIat_005cc21c;
+extern "C" void* RwCoreIat_005cc234;
+extern "C" void* RwCoreIat_005cc23c;
+extern "C" void* RwCoreIat_005cc240;
+extern "C" void* RwCoreIat_005cc280;
+extern "C" void* RwCoreIat_005cc284;
 
 // HAND-LIFT 0x00472330 RwCoreLift_00472330  (15 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_00472330(void) {
@@ -173,6 +198,638 @@ extern "C" __declspec(naked) int RwCoreLift_004a3907(void) {
         setne cl                                 // 004a3916
         mov eax, ecx                             // 004a3919
         ret                                      // 004a391b
+    }
+}
+
+// HAND-LIFT 0x004b3eb0 RwCoreLift_004b3eb0  (45 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004b3eb0(void) {
+    __asm {
+        sub esp, 8                               // 004b3eb0
+        mov eax, dword ptr [esp + 0xc]           // 004b3eb3
+        mov ecx, dword ptr [esp + 0x10]          // 004b3eb7
+        push esi                                 // 004b3ebb
+        push edi                                 // 004b3ebc
+        lea edx, [esp + 8]                       // 004b3ebd
+        push edx                                 // 004b3ec1
+        push 1                                   // 004b3ec2
+        push 3                                   // 004b3ec4
+        xor edi, edi                             // 004b3ec6
+        mov dword ptr [esp + 0x14], eax          // 004b3ec8
+        mov dword ptr [esp + 0x18], ecx          // 004b3ecc
+        call RwCore_004cc230                    // 004b3ed0
+        mov esi, eax                             // 004b3ed5
+        add esp, 0xc                             // 004b3ed7
+        test esi, esi                            // 004b3eda
+        jne L_4b3ee4                             // 004b3edc
+        pop edi                                  // 004b3ede
+        pop esi                                  // 004b3edf
+        add esp, 8                               // 004b3ee0
+        ret                                      // 004b3ee3
+    L_4b3ee4:
+        mov eax, dword ptr [esp + 0x20]          // 004b3ee4
+        mov ecx, dword ptr [esp + 0x1c]          // 004b3ee8
+        push eax                                 // 004b3eec
+        push ecx                                 // 004b3eed
+        push 0x23                                // 004b3eee
+        push esi                                 // 004b3ef0
+        call RwCore_004cc5e0                    // 004b3ef1
+        add esp, 0x10                            // 004b3ef6
+        test eax, eax                            // 004b3ef9
+        je L_4b3f08                              // 004b3efb
+        push esi                                 // 004b3efd
+        call RwCoreLift_0054f8d0                    // 004b3efe
+        add esp, 4                               // 004b3f03
+        mov edi, eax                             // 004b3f06
+    L_4b3f08:
+        lea edx, [esp + 8]                       // 004b3f08
+        push edx                                 // 004b3f0c
+        push esi                                 // 004b3f0d
+        call RwCore_004cc160                    // 004b3f0e
+        add esp, 8                               // 004b3f13
+        mov eax, edi                             // 004b3f16
+        pop edi                                  // 004b3f18
+        pop esi                                  // 004b3f19
+        add esp, 8                               // 004b3f1a
+        ret                                      // 004b3f1d
+    }
+}
+
+// HAND-LIFT 0x004c1de0 RwCoreLift_004c1de0  (135 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004c1de0(void) {
+    __asm {
+        sub esp, 0xc                             // 004c1de0
+        push esi                                 // 004c1de3
+        mov esi, dword ptr [esp + 0x14]          // 004c1de4
+        cmp dword ptr [esi + 0x14], 1            // 004c1de8
+        jne L_4c1f43                             // 004c1dec
+        fld dword ptr [esi + 0x70]               // 004c1df2
+        mov eax, dword ptr [esi + 4]             // 004c1df5
+        lea ecx, [esi + 0x20]                    // 004c1df8
+        fmul dword ptr ds:[0x005cd50c]           // 004c1dfb
+        add eax, 0x50                            // 004c1e01
+        fld st                                   // 004c1e04
+        fmul dword ptr [eax]                     // 004c1e06
+        fld dword ptr [eax + 4]                  // 004c1e08
+        fmul st, st(2)                           // 004c1e0b
+        fstp dword ptr [esp + 8]                 // 004c1e0d
+        fld dword ptr [eax + 8]                  // 004c1e11
+        fmul st, st(2)                           // 004c1e14
+        fstp dword ptr [esp + 0xc]               // 004c1e16
+        fld dword ptr [esi + 0x78]               // 004c1e1a
+        fmul st, st(2)                           // 004c1e1d
+        fsubr dword ptr ds:[0x005cc32c]          // 004c1e1f
+        fstp dword ptr [esp + 0x14]              // 004c1e25
+        fld dword ptr [eax + 0x20]               // 004c1e29
+        fmul dword ptr [esp + 0x14]              // 004c1e2c
+        fadd st, st(1)                           // 004c1e30
+        fstp st(2)                               // 004c1e32
+        fstp st                                  // 004c1e34
+        fld dword ptr [eax + 0x24]               // 004c1e36
+        fmul dword ptr [esp + 0x14]              // 004c1e39
+        fadd dword ptr [esp + 8]                 // 004c1e3d
+        fld dword ptr [eax + 0x28]               // 004c1e41
+        fmul dword ptr [esp + 0x14]              // 004c1e44
+        fadd dword ptr [esp + 0xc]               // 004c1e48
+        fld st(2)                                // 004c1e4c
+        fstp dword ptr [ecx]                     // 004c1e4e
+        fld st(1)                                // 004c1e50
+        fstp dword ptr [ecx + 0x10]              // 004c1e52
+        fst dword ptr [ecx + 0x20]               // 004c1e55
+        fld dword ptr [eax + 0x34]               // 004c1e58
+        fmul st, st(2)                           // 004c1e5b
+        fld dword ptr [eax + 0x30]               // 004c1e5d
+        fmul st, st(4)                           // 004c1e60
+        faddp st(1), st                          // 004c1e62
+        fld dword ptr [eax + 0x38]               // 004c1e64
+        fmul st, st(2)                           // 004c1e67
+        faddp st(1), st                          // 004c1e69
+        fadd dword ptr [esp + 0x14]              // 004c1e6b
+        fsubr dword ptr ds:[0x005cc32c]          // 004c1e6f
+        fstp dword ptr [ecx + 0x30]              // 004c1e75
+        fstp st                                  // 004c1e78
+        fstp st                                  // 004c1e7a
+        fstp st                                  // 004c1e7c
+        fld dword ptr [esi + 0x74]               // 004c1e7e
+        fmul dword ptr ds:[0x005cd50c]           // 004c1e81
+        fld dword ptr [eax + 0x10]               // 004c1e87
+        fmul st, st(1)                           // 004c1e8a
+        fld dword ptr [eax + 0x14]               // 004c1e8c
+        fmul st, st(2)                           // 004c1e8f
+        fstp dword ptr [esp + 8]                 // 004c1e91
+        fld dword ptr [eax + 0x18]               // 004c1e95
+        fmul st, st(2)                           // 004c1e98
+        fstp dword ptr [esp + 0xc]               // 004c1e9a
+        fld dword ptr [esi + 0x7c]               // 004c1e9e
+        fmul st, st(2)                           // 004c1ea1
+        fadd dword ptr ds:[0x005cc32c]           // 004c1ea3
+        fstp dword ptr [esp + 0x14]              // 004c1ea9
+        fld dword ptr [eax + 0x20]               // 004c1ead
+        fmul dword ptr [esp + 0x14]              // 004c1eb0
+        fadd st, st(1)                           // 004c1eb4
+        fstp st(2)                               // 004c1eb6
+        fstp st                                  // 004c1eb8
+        fld dword ptr [eax + 0x24]               // 004c1eba
+        fmul dword ptr [esp + 0x14]              // 004c1ebd
+        fadd dword ptr [esp + 8]                 // 004c1ec1
+        fld dword ptr [eax + 0x28]               // 004c1ec5
+        fmul dword ptr [esp + 0x14]              // 004c1ec8
+        fadd dword ptr [esp + 0xc]               // 004c1ecc
+        fld st(2)                                // 004c1ed0
+        fstp dword ptr [ecx + 4]                 // 004c1ed2
+        fld st(1)                                // 004c1ed5
+        fstp dword ptr [ecx + 0x14]              // 004c1ed7
+        fst dword ptr [ecx + 0x24]               // 004c1eda
+        fld dword ptr [eax + 0x34]               // 004c1edd
+        fmul st, st(2)                           // 004c1ee0
+        fld dword ptr [eax + 0x30]               // 004c1ee2
+        fmul st, st(4)                           // 004c1ee5
+        faddp st(1), st                          // 004c1ee7
+        fld dword ptr [eax + 0x38]               // 004c1ee9
+        fmul st, st(2)                           // 004c1eec
+        faddp st(1), st                          // 004c1eee
+        fadd dword ptr [esp + 0x14]              // 004c1ef0
+        fsubr dword ptr ds:[0x005cc32c]          // 004c1ef4
+        fstp dword ptr [ecx + 0x34]              // 004c1efa
+        mov edx, dword ptr [eax + 0x20]          // 004c1efd
+        fstp st                                  // 004c1f00
+        fstp st                                  // 004c1f02
+        fstp st                                  // 004c1f04
+        mov dword ptr [ecx + 8], edx             // 004c1f06
+        mov edx, dword ptr [eax + 0x24]          // 004c1f09
+        push 0                                   // 004c1f0c
+        mov dword ptr [ecx + 0x18], edx          // 004c1f0e
+        mov edx, dword ptr [eax + 0x28]          // 004c1f11
+        mov dword ptr [ecx + 0x28], edx          // 004c1f14
+        push ecx                                 // 004c1f17
+        fld dword ptr [eax + 0x24]               // 004c1f18
+        fmul dword ptr [eax + 0x34]              // 004c1f1b
+        fld dword ptr [eax + 0x30]               // 004c1f1e
+        fmul dword ptr [eax + 0x20]              // 004c1f21
+        faddp st(1), st                          // 004c1f24
+        fld dword ptr [eax + 0x38]               // 004c1f26
+        fmul dword ptr [eax + 0x28]              // 004c1f29
+        faddp st(1), st                          // 004c1f2c
+        fchs                                     // 004c1f2e
+        fstp dword ptr [ecx + 0x38]              // 004c1f30
+        call RwCore_004c4530                    // 004c1f33
+        push esi                                 // 004c1f38
+        call RwCore_004c1f80                    // 004c1f39
+        add esp, 0xc                             // 004c1f3e
+        jmp L_4c1f52                             // 004c1f41
+    L_4c1f43:
+        push esi                                 // 004c1f43
+        call RwCore_004c2a30                    // 004c1f44
+        push esi                                 // 004c1f49
+        call RwCoreLift_004c2620                    // 004c1f4a
+        add esp, 8                               // 004c1f4f
+    L_4c1f52:
+        lea eax, [esi + 0x124]                   // 004c1f52
+        push 8                                   // 004c1f58
+        lea ecx, [esi + 0x10c]                   // 004c1f5a
+        push eax                                 // 004c1f60
+        push ecx                                 // 004c1f61
+        call RwCore_004c1740                    // 004c1f62
+        add esp, 0xc                             // 004c1f67
+        mov eax, esi                             // 004c1f6a
+        pop esi                                  // 004c1f6c
+        add esp, 0xc                             // 004c1f6d
+        ret                                      // 004c1f70
+    }
+}
+
+// HAND-LIFT 0x004c2620 RwCoreLift_004c2620  (374 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004c2620(void) {
+    __asm {
+        sub esp, 0x1c                            // 004c2620
+        mov eax, dword ptr [esp + 0x20]          // 004c2623
+        push ebx                                 // 004c2627
+        push esi                                 // 004c2628
+        push edi                                 // 004c2629
+        fld dword ptr [eax + 0x68]               // 004c262a
+        fld dword ptr [eax + 0x80]               // 004c262d
+        fld dword ptr [eax + 0x84]               // 004c2633
+        mov ebx, dword ptr [eax + 4]             // 004c2639
+        mov ecx, dword ptr [eax + 0x6c]          // 004c263c
+        fst dword ptr [esp + 0x14]               // 004c263f
+        fld dword ptr [eax + 0x78]               // 004c2643
+        mov edx, dword ptr [eax + 0x7c]          // 004c2646
+        lea edi, [eax + 0x124]                   // 004c2649
+        fchs                                     // 004c264f
+        fstp dword ptr [esp + 0xc]               // 004c2651
+        fld st(1)                                // 004c2655
+        mov dword ptr [esp + 0x18], edx          // 004c2657
+        mov dword ptr [esp + 0x2c], ecx          // 004c265b
+        fstp dword ptr [edi + 0x2c]              // 004c265f
+        fld st(1)                                // 004c2662
+        add ebx, 0x50                            // 004c2664
+        lea esi, [eax + 0x94]                    // 004c2667
+        fstp dword ptr [edi + 0x20]              // 004c266d
+        fld st(1)                                // 004c2670
+        push ebx                                 // 004c2672
+        push 8                                   // 004c2673
+        fstp dword ptr [edi + 0x14]              // 004c2675
+        fld st(1)                                // 004c2678
+        push edi                                 // 004c267a
+        push edi                                 // 004c267b
+        fstp dword ptr [edi + 8]                 // 004c267c
+        fst dword ptr [edi + 0x5c]               // 004c267f
+        fst dword ptr [edi + 0x50]               // 004c2682
+        fst dword ptr [edi + 0x44]               // 004c2685
+        fstp dword ptr [edi + 0x38]              // 004c2688
+        fld dword ptr ds:[0x005cc320]            // 004c268b
+        fsub st, st(1)                           // 004c2691
+        fstp dword ptr [esp + 0x20]              // 004c2693
+        fstp st                                  // 004c2697
+        fld dword ptr [esp + 0x20]               // 004c2699
+        fmul dword ptr [esp + 0x1c]              // 004c269d
+        fld st                                   // 004c26a1
+        fadd st, st(2)                           // 004c26a3
+        fst dword ptr [edi + 0x24]               // 004c26a5
+        fstp dword ptr [edi]                     // 004c26a8
+        fsub st, st(1)                           // 004c26aa
+        fst dword ptr [edi + 0x18]               // 004c26ac
+        fstp dword ptr [edi + 0xc]               // 004c26af
+        fld dword ptr ds:[0x005cc320]            // 004c26b2
+        fsub dword ptr [esp + 0x24]              // 004c26b8
+        fst dword ptr [esp + 0x24]               // 004c26bc
+        fmul dword ptr [esp + 0x1c]              // 004c26c0
+        fld st                                   // 004c26c4
+        fadd st, st(2)                           // 004c26c6
+        fst dword ptr [edi + 0x54]               // 004c26c8
+        fstp dword ptr [edi + 0x30]              // 004c26cb
+        fsubrp st(1), st                         // 004c26ce
+        fst dword ptr [edi + 0x48]               // 004c26d0
+        fstp dword ptr [edi + 0x3c]              // 004c26d3
+        fld dword ptr [esp + 0x20]               // 004c26d6
+        fmul dword ptr [esp + 0x28]              // 004c26da
+        fld dword ptr [esp + 0x3c]               // 004c26de
+        fadd st, st(1)                           // 004c26e2
+        fst dword ptr [edi + 0x10]               // 004c26e4
+        fstp dword ptr [edi + 4]                 // 004c26e7
+        fsub dword ptr [esp + 0x3c]              // 004c26ea
+        fst dword ptr [edi + 0x28]               // 004c26ee
+        fstp dword ptr [edi + 0x1c]              // 004c26f1
+        fld dword ptr [esp + 0x24]               // 004c26f4
+        fmul dword ptr [esp + 0x28]              // 004c26f8
+        fld dword ptr [esp + 0x3c]               // 004c26fc
+        fadd st, st(1)                           // 004c2700
+        fst dword ptr [edi + 0x40]               // 004c2702
+        fstp dword ptr [edi + 0x34]              // 004c2705
+        fsub dword ptr [esp + 0x3c]              // 004c2708
+        fst dword ptr [edi + 0x58]               // 004c270c
+        fstp dword ptr [edi + 0x4c]              // 004c270f
+        call RwCoreLift_004c3d90                    // 004c2712
+        add ebx, 0x20                            // 004c2717
+        mov eax, esi                             // 004c271a
+        mov ecx, dword ptr [ebx]                 // 004c271c
+        mov dword ptr [eax], ecx                 // 004c271e
+        mov edx, dword ptr [ebx + 4]             // 004c2720
+        mov dword ptr [eax + 4], edx             // 004c2723
+        mov ecx, dword ptr [ebx + 8]             // 004c2726
+        mov dword ptr [eax + 8], ecx             // 004c2729
+        mov edx, dword ptr [esi]                 // 004c272c
+        fld dword ptr [esi + 4]                  // 004c272e
+        fmul dword ptr [edi + 0x34]              // 004c2731
+        mov eax, dword ptr [esi + 4]             // 004c2734
+        mov ecx, dword ptr [esi + 8]             // 004c2737
+        sar edx, 0x1f                            // 004c273a
+        fld dword ptr [edi + 0x30]               // 004c273d
+        fmul dword ptr [esi]                     // 004c2740
+        sar eax, 0x1f                            // 004c2742
+        faddp st(1), st                          // 004c2745
+        inc dl                                   // 004c2747
+        inc al                                   // 004c2749
+        sar ecx, 0x1f                            // 004c274b
+        fld dword ptr [edi + 0x38]               // 004c274e
+        fmul dword ptr [esi + 8]                 // 004c2751
+        inc cl                                   // 004c2754
+        mov byte ptr [esi + 0x10], dl            // 004c2756
+        faddp st(1), st                          // 004c2759
+        mov byte ptr [esi + 0x11], al            // 004c275b
+        mov byte ptr [esi + 0x12], cl            // 004c275e
+        fstp dword ptr [esi + 0xc]               // 004c2761
+        fld dword ptr [esi]                      // 004c2764
+        fchs                                     // 004c2766
+        fst dword ptr [esi + 0x14]               // 004c2768
+        fld dword ptr [esi + 4]                  // 004c276b
+        fchs                                     // 004c276e
+        fst dword ptr [esi + 0x18]               // 004c2770
+        fld dword ptr [esi + 8]                  // 004c2773
+        fchs                                     // 004c2776
+        fst dword ptr [esi + 0x1c]               // 004c2778
+        fld dword ptr [edi + 4]                  // 004c277b
+        fmul st, st(2)                           // 004c277e
+        mov edx, dword ptr [esi + 0x14]          // 004c2780
+        mov eax, dword ptr [esi + 0x18]          // 004c2783
+        sar edx, 0x1f                            // 004c2786
+        fxch st(3)                               // 004c2789
+        fmul dword ptr [edi]                     // 004c278b
+        inc dl                                   // 004c278d
+        faddp st(3), st                          // 004c278f
+        sar eax, 0x1f                            // 004c2791
+        fld dword ptr [edi + 8]                  // 004c2794
+        fmul st, st(1)                           // 004c2797
+        mov byte ptr [esi + 0x24], dl            // 004c2799
+        inc al                                   // 004c279c
+        faddp st(3), st                          // 004c279e
+        fxch st(2)                               // 004c27a0
+        fstp dword ptr [esi + 0x20]              // 004c27a2
+        fstp st(1)                               // 004c27a5
+        fstp st                                  // 004c27a7
+        mov ecx, dword ptr [esi + 0x1c]          // 004c27a9
+        mov byte ptr [esi + 0x25], al            // 004c27ac
+        sar ecx, 0x1f                            // 004c27af
+        inc cl                                   // 004c27b2
+        mov byte ptr [esi + 0x26], cl            // 004c27b4
+        fld dword ptr [edi + 0xc]                // 004c27b7
+        fsub dword ptr [edi + 0x3c]              // 004c27ba
+        fstp dword ptr [esp + 0x2c]              // 004c27bd
+        fld dword ptr [edi + 0x10]               // 004c27c1
+        fsub dword ptr [edi + 0x40]              // 004c27c4
+        fstp dword ptr [esp + 0x30]              // 004c27c7
+        fld dword ptr [edi + 0x14]               // 004c27cb
+        fsub dword ptr [edi + 0x44]              // 004c27ce
+        fstp dword ptr [esp + 0x34]              // 004c27d1
+        fld dword ptr [edi + 0x48]               // 004c27d5
+        fsub dword ptr [edi + 0x3c]              // 004c27d8
+        fld dword ptr [edi + 0x4c]               // 004c27db
+        fsub dword ptr [edi + 0x40]              // 004c27de
+        fld dword ptr [edi + 0x50]               // 004c27e1
+        fsub dword ptr [edi + 0x44]              // 004c27e4
+        fld dword ptr [esp + 0x30]               // 004c27e7
+        fmul st, st(1)                           // 004c27eb
+        fld st(2)                                // 004c27ed
+        fmul dword ptr [esp + 0x34]              // 004c27ef
+        fsubp st(1), st                          // 004c27f3
+        fst dword ptr [esp + 0x28]               // 004c27f5
+        fstp dword ptr [esi + 0x28]              // 004c27f9
+        fld st(2)                                // 004c27fc
+        fmul dword ptr [esp + 0x34]              // 004c27fe
+        fxch st(1)                               // 004c2802
+        fmul dword ptr [esp + 0x2c]              // 004c2804
+        fsubp st(1), st                          // 004c2808
+        fst dword ptr [esp + 0x3c]               // 004c280a
+        fstp dword ptr [esi + 0x2c]              // 004c280e
+        fmul dword ptr [esp + 0x2c]              // 004c2811
+        fxch st(1)                               // 004c2815
+        fmul dword ptr [esp + 0x30]              // 004c2817
+        fsubp st(1), st                          // 004c281b
+        fst dword ptr [esi + 0x30]               // 004c281d
+        fld dword ptr [esp + 0x3c]               // 004c2820
+        fld dword ptr [esp + 0x28]               // 004c2824
+        fld st                                   // 004c2828
+        fmul st, st(1)                           // 004c282a
+        fld st(2)                                // 004c282c
+        fmul st, st(3)                           // 004c282e
+        faddp st(1), st                          // 004c2830
+        fld st(3)                                // 004c2832
+        fmul st, st(4)                           // 004c2834
+        faddp st(1), st                          // 004c2836
+        fstp dword ptr [esp + 0x3c]              // 004c2838
+        mov edx, dword ptr [esp + 0x3c]          // 004c283c
+        fstp st(2)                               // 004c2840
+        fstp st(1)                               // 004c2842
+        fstp st                                  // 004c2844
+        push edx                                 // 004c2846
+        call RwCore_004c3b90                    // 004c2847
+        fld dword ptr [esi + 0x28]               // 004c284c
+        fmul st, st(1)                           // 004c284f
+        fst dword ptr [esi + 0x28]               // 004c2851
+        fld dword ptr [esi + 0x2c]               // 004c2854
+        fmul st, st(2)                           // 004c2857
+        fst dword ptr [esi + 0x2c]               // 004c2859
+        fld dword ptr [esi + 0x30]               // 004c285c
+        fmul st, st(3)                           // 004c285f
+        fst dword ptr [esi + 0x30]               // 004c2861
+        fld dword ptr [edi + 0x10]               // 004c2864
+        fmul st, st(2)                           // 004c2867
+        fld dword ptr [edi + 0xc]                // 004c2869
+        fmul st, st(4)                           // 004c286c
+        mov eax, dword ptr [esi + 0x28]          // 004c286e
+        mov ecx, dword ptr [esi + 0x2c]          // 004c2871
+        faddp st(1), st                          // 004c2874
+        mov edx, dword ptr [esi + 0x30]          // 004c2876
+        sar eax, 0x1f                            // 004c2879
+        fld dword ptr [edi + 0x14]               // 004c287c
+        fmul st, st(2)                           // 004c287f
+        sar ecx, 0x1f                            // 004c2881
+        faddp st(1), st                          // 004c2884
+        inc al                                   // 004c2886
+        inc cl                                   // 004c2888
+        sar edx, 0x1f                            // 004c288a
+        fstp dword ptr [esi + 0x34]              // 004c288d
+        inc dl                                   // 004c2890
+        mov byte ptr [esi + 0x38], al            // 004c2892
+        fstp st                                  // 004c2895
+        fstp st                                  // 004c2897
+        fstp st                                  // 004c2899
+        fstp st                                  // 004c289b
+        mov byte ptr [esi + 0x39], cl            // 004c289d
+        mov byte ptr [esi + 0x3a], dl            // 004c28a0
+        fld dword ptr [edi + 0x30]               // 004c28a3
+        fsub dword ptr [edi + 0x3c]              // 004c28a6
+        fld dword ptr [edi + 0x34]               // 004c28a9
+        fsub dword ptr [edi + 0x40]              // 004c28ac
+        fld dword ptr [edi + 0x38]               // 004c28af
+        fsub dword ptr [edi + 0x44]              // 004c28b2
+        fld st(1)                                // 004c28b5
+        fmul dword ptr [esp + 0x38]              // 004c28b7
+        fld st(1)                                // 004c28bb
+        fmul dword ptr [esp + 0x34]              // 004c28bd
+        fsubp st(1), st                          // 004c28c1
+        fst dword ptr [esp + 0x2c]               // 004c28c3
+        fstp dword ptr [esi + 0x3c]              // 004c28c7
+        fmul dword ptr [esp + 0x30]              // 004c28ca
+        fld st(2)                                // 004c28ce
+        fmul dword ptr [esp + 0x38]              // 004c28d0
+        fsubp st(1), st                          // 004c28d4
+        fst dword ptr [esp + 0x40]               // 004c28d6
+        fstp dword ptr [esi + 0x40]              // 004c28da
+        fxch st(1)                               // 004c28dd
+        fmul dword ptr [esp + 0x34]              // 004c28df
+        fld st(1)                                // 004c28e3
+        fmul dword ptr [esp + 0x30]              // 004c28e5
+        fsubp st(1), st                          // 004c28e9
+        fxch st(1)                               // 004c28eb
+        fstp st                                  // 004c28ed
+        fst dword ptr [esi + 0x44]               // 004c28ef
+        fld dword ptr [esp + 0x40]               // 004c28f2
+        fld dword ptr [esp + 0x2c]               // 004c28f6
+        fld st                                   // 004c28fa
+        fmul st, st(1)                           // 004c28fc
+        fld st(2)                                // 004c28fe
+        fmul st, st(3)                           // 004c2900
+        faddp st(1), st                          // 004c2902
+        fld st(3)                                // 004c2904
+        fmul st, st(4)                           // 004c2906
+        faddp st(1), st                          // 004c2908
+        fstp dword ptr [esp + 0x40]              // 004c290a
+        mov eax, dword ptr [esp + 0x40]          // 004c290e
+        fstp st(2)                               // 004c2912
+        fstp st(1)                               // 004c2914
+        fstp st                                  // 004c2916
+        push eax                                 // 004c2918
+        call RwCore_004c3b90                    // 004c2919
+        fld dword ptr [esi + 0x3c]               // 004c291e
+        fmul st, st(1)                           // 004c2921
+        fst dword ptr [esi + 0x3c]               // 004c2923
+        fld dword ptr [esi + 0x40]               // 004c2926
+        add esp, 0x18                            // 004c2929
+        fmul st, st(2)                           // 004c292c
+        mov eax, dword ptr [esi + 0x3c]          // 004c292e
+        sar eax, 0x1f                            // 004c2931
+        fstp dword ptr [esp + 0x2c]              // 004c2934
+        fld dword ptr [esi + 0x44]               // 004c2938
+        mov ecx, dword ptr [esp + 0x2c]          // 004c293b
+        inc al                                   // 004c293f
+        fmul st, st(2)                           // 004c2941
+        mov dword ptr [esi + 0x40], ecx          // 004c2943
+        sar ecx, 0x1f                            // 004c2946
+        fstp dword ptr [esp + 0xc]               // 004c2949
+        mov edx, dword ptr [esp + 0xc]           // 004c294d
+        inc cl                                   // 004c2951
+        mov dword ptr [esi + 0x44], edx          // 004c2953
+        fld dword ptr [edi + 0x10]               // 004c2956
+        fmul dword ptr [esp + 0x2c]              // 004c2959
+        sar edx, 0x1f                            // 004c295d
+        inc dl                                   // 004c2960
+        fld dword ptr [edi + 0xc]                // 004c2962
+        fmul st, st(2)                           // 004c2965
+        faddp st(1), st                          // 004c2967
+        fld dword ptr [edi + 0x14]               // 004c2969
+        fmul dword ptr [esp + 0xc]               // 004c296c
+        mov byte ptr [esi + 0x4c], al            // 004c2970
+        mov byte ptr [esi + 0x4d], cl            // 004c2973
+        faddp st(1), st                          // 004c2976
+        mov byte ptr [esi + 0x4e], dl            // 004c2978
+        fstp dword ptr [esi + 0x48]              // 004c297b
+        fld dword ptr [esi + 0x28]               // 004c297e
+        fchs                                     // 004c2981
+        fst dword ptr [esi + 0x50]               // 004c2983
+        fld dword ptr [esi + 0x2c]               // 004c2986
+        fchs                                     // 004c2989
+        fst dword ptr [esi + 0x54]               // 004c298b
+        fld dword ptr [esi + 0x30]               // 004c298e
+        fchs                                     // 004c2991
+        fst dword ptr [esi + 0x58]               // 004c2993
+        fld dword ptr [edi + 0x24]               // 004c2996
+        fmul st, st(3)                           // 004c2999
+        mov eax, dword ptr [esi + 0x50]          // 004c299b
+        sar eax, 0x1f                            // 004c299e
+        fld dword ptr [edi + 0x28]               // 004c29a1
+        fmul st, st(3)                           // 004c29a4
+        faddp st(1), st                          // 004c29a6
+        fld dword ptr [edi + 0x2c]               // 004c29a8
+        fmul st, st(2)                           // 004c29ab
+        faddp st(1), st                          // 004c29ad
+        fstp dword ptr [esi + 0x5c]              // 004c29af
+        fstp st                                  // 004c29b2
+        fstp st                                  // 004c29b4
+        fstp st                                  // 004c29b6
+        mov ecx, dword ptr [esi + 0x54]          // 004c29b8
+        mov edx, dword ptr [esi + 0x58]          // 004c29bb
+        fchs                                     // 004c29be
+        fstp st(1)                               // 004c29c0
+        fst dword ptr [esi + 0x64]               // 004c29c2
+        fld dword ptr [esp + 0x2c]               // 004c29c5
+        fchs                                     // 004c29c9
+        fst dword ptr [esi + 0x68]               // 004c29cb
+        fld dword ptr [esp + 0xc]                // 004c29ce
+        sar ecx, 0x1f                            // 004c29d2
+        inc al                                   // 004c29d5
+        inc cl                                   // 004c29d7
+        sar edx, 0x1f                            // 004c29d9
+        inc dl                                   // 004c29dc
+        mov byte ptr [esi + 0x60], al            // 004c29de
+        fchs                                     // 004c29e1
+        fst dword ptr [esi + 0x6c]               // 004c29e3
+        mov byte ptr [esi + 0x61], cl            // 004c29e6
+        mov byte ptr [esi + 0x62], dl            // 004c29e9
+        fld dword ptr [edi + 0x24]               // 004c29ec
+        fmul st, st(3)                           // 004c29ef
+        mov eax, dword ptr [esi + 0x64]          // 004c29f1
+        mov ecx, dword ptr [esi + 0x68]          // 004c29f4
+        mov edx, dword ptr [esi + 0x6c]          // 004c29f7
+        fld dword ptr [edi + 0x28]               // 004c29fa
+        fmul st, st(3)                           // 004c29fd
+        sar eax, 0x1f                            // 004c29ff
+        faddp st(1), st                          // 004c2a02
+        sar ecx, 0x1f                            // 004c2a04
+        inc al                                   // 004c2a07
+        inc cl                                   // 004c2a09
+        fld dword ptr [edi + 0x2c]               // 004c2a0b
+        fmul st, st(2)                           // 004c2a0e
+        sar edx, 0x1f                            // 004c2a10
+        faddp st(1), st                          // 004c2a13
+        inc dl                                   // 004c2a15
+        mov byte ptr [esi + 0x74], al            // 004c2a17
+        mov byte ptr [esi + 0x75], cl            // 004c2a1a
+        mov byte ptr [esi + 0x76], dl            // 004c2a1d
+        fstp dword ptr [esi + 0x70]              // 004c2a20
+        pop edi                                  // 004c2a23
+        pop esi                                  // 004c2a24
+        fstp st                                  // 004c2a25
+        fstp st                                  // 004c2a27
+        fstp st                                  // 004c2a29
+        pop ebx                                  // 004c2a2b
+        add esp, 0x1c                            // 004c2a2c
+        ret                                      // 004c2a2f
+    }
+}
+
+// HAND-LIFT 0x004c2b80 RwCoreLift_004c2b80  (19 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004c2b80(void) {
+    __asm {
+        mov eax, dword ptr ds:[0x007d3ff8]       // 004c2b80
+        push esi                                 // 004c2b85
+        mov esi, dword ptr [esp + 8]             // 004c2b86
+        push 0                                   // 004c2b8a
+        mov eax, dword ptr [eax + 0x70]          // 004c2b8c
+        push esi                                 // 004c2b8f
+        push 0                                   // 004c2b90
+        call eax                                 // 004c2b92
+        add esp, 0xc                             // 004c2b94
+        test eax, eax                            // 004c2b97
+        je L_4c2bab                              // 004c2b99
+        mov ecx, dword ptr ds:[0x007d3ff8]       // 004c2b9b
+        mov eax, esi                             // 004c2ba1
+        pop esi                                  // 004c2ba3
+        mov dword ptr [ecx], 0                   // 004c2ba4
+        ret                                      // 004c2baa
+    L_4c2bab:
+        xor eax, eax                             // 004c2bab
+        pop esi                                  // 004c2bad
+        ret                                      // 004c2bae
+    }
+}
+
+// HAND-LIFT 0x004c2bb0 RwCoreLift_004c2bb0  (23 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004c2bb0(void) {
+    __asm {
+        mov eax, dword ptr ds:[0x007d3ff8]       // 004c2bb0
+        push esi                                 // 004c2bb5
+        mov esi, dword ptr [esp + 8]             // 004c2bb6
+        mov dword ptr [eax], esi                 // 004c2bba
+        call RwCore_004d80d0                    // 004c2bbc
+        mov ecx, dword ptr ds:[0x007d3ff8]       // 004c2bc1
+        push 0                                   // 004c2bc7
+        push esi                                 // 004c2bc9
+        push 0                                   // 004c2bca
+        mov eax, dword ptr [ecx + 0x4c]          // 004c2bcc
+        call eax                                 // 004c2bcf
+        add esp, 0xc                             // 004c2bd1
+        test eax, eax                            // 004c2bd4
+        je L_4c2be5                              // 004c2bd6
+        push esi                                 // 004c2bd8
+        call RwInitNullStub                      // 004c2bd9
+        add esp, 4                               // 004c2bde
+        mov eax, esi                             // 004c2be1
+        pop esi                                  // 004c2be3
+        ret                                      // 004c2be4
+    L_4c2be5:
+        xor eax, eax                             // 004c2be5
+        pop esi                                  // 004c2be7
+        ret                                      // 004c2be8
     }
 }
 
@@ -312,6 +969,48 @@ extern "C" __declspec(naked) int RwCoreLift_004c37d0(void) {
     L_4c3871:
         pop esi                                  // 004c3871
         ret                                      // 004c3872
+    }
+}
+
+// HAND-LIFT 0x004c3d90 RwCoreLift_004c3d90  (16 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004c3d90(void) {
+    __asm {
+        mov eax, dword ptr [esp + 0x10]          // 004c3d90
+        mov ecx, dword ptr [esp + 0xc]           // 004c3d94
+        mov edx, dword ptr [esp + 8]             // 004c3d98
+        push esi                                 // 004c3d9c
+        mov esi, dword ptr [esp + 8]             // 004c3d9d
+        push eax                                 // 004c3da1
+        mov eax, dword ptr ds:[0x007d3ff8]       // 004c3da2
+        push ecx                                 // 004c3da7
+        mov ecx, dword ptr ds:[0x007d3ffc]       // 004c3da8
+        push edx                                 // 004c3dae
+        push esi                                 // 004c3daf
+        call dword ptr [ecx + eax + 0xc]         // 004c3db0
+        add esp, 0x10                            // 004c3db4
+        mov eax, esi                             // 004c3db7
+        pop esi                                  // 004c3db9
+        ret                                      // 004c3dba
+    }
+}
+
+// HAND-LIFT 0x004c3dc0 RwCoreLift_004c3dc0  (14 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004c3dc0(void) {
+    __asm {
+        mov eax, dword ptr [esp + 0xc]           // 004c3dc0
+        mov ecx, dword ptr [esp + 8]             // 004c3dc4
+        mov edx, dword ptr ds:[0x007d3ff8]       // 004c3dc8
+        push esi                                 // 004c3dce
+        mov esi, dword ptr [esp + 8]             // 004c3dcf
+        push eax                                 // 004c3dd3
+        mov eax, dword ptr ds:[0x007d3ffc]       // 004c3dd4
+        push ecx                                 // 004c3dd9
+        push esi                                 // 004c3dda
+        call dword ptr [eax + edx + 0x10]        // 004c3ddb
+        add esp, 0xc                             // 004c3ddf
+        mov eax, esi                             // 004c3de2
+        pop esi                                  // 004c3de4
+        ret                                      // 004c3de5
     }
 }
 
@@ -1920,6 +2619,1532 @@ extern "C" __declspec(naked) int RwCoreLift_004c7490(void) {
     }
 }
 
+// HAND-LIFT 0x004c9290 RwCoreLift_004c9290  (657 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004c9290(void) {
+    __asm {
+        sub esp, 0x68                            // 004c9290
+        mov eax, dword ptr [esp + 0x74]          // 004c9293
+        mov dword ptr [esp], 0                   // 004c9297
+        and eax, 1                               // 004c929f
+        mov dword ptr [esp + 4], eax             // 004c92a2
+        je L_4c92cb                              // 004c92a6
+        mov eax, dword ptr [esp + 0x70]          // 004c92a8
+        xor ecx, ecx                             // 004c92ac
+        xor edx, edx                             // 004c92ae
+        mov ch, byte ptr [eax + 3]               // 004c92b0
+        mov dl, byte ptr [eax + 1]               // 004c92b3
+        mov cl, byte ptr [eax]                   // 004c92b6
+        shl ecx, 8                               // 004c92b8
+        or ecx, edx                              // 004c92bb
+        xor edx, edx                             // 004c92bd
+        mov dl, byte ptr [eax + 2]               // 004c92bf
+        shl ecx, 8                               // 004c92c2
+        or ecx, edx                              // 004c92c5
+        mov dword ptr [esp], ecx                 // 004c92c7
+    L_4c92cb:
+        push ebx                                 // 004c92cb
+        push ebp                                 // 004c92cc
+        push esi                                 // 004c92cd
+        mov eax, dword ptr ds:[0x00911ae4]       // 004c92ce
+        push edi                                 // 004c92d3
+        mov edi, dword ptr [esp + 0x7c]          // 004c92d4
+        mov ebp, dword ptr [edi + 0x60]          // 004c92d8
+        mov esi, dword ptr [ebp]                 // 004c92db
+        mov dword ptr [esp + 0x80], esi          // 004c92de
+        lea ebx, [eax + esi]                     // 004c92e5
+        mov eax, dword ptr [eax + esi + 0x1c]    // 004c92e8
+        test eax, eax                            // 004c92ec
+        je L_4c945d                              // 004c92ee
+        mov edx, dword ptr [ebx + 0x20]          // 004c92f4
+        lea ecx, [esp + 0x18]                    // 004c92f7
+        push ecx                                 // 004c92fb
+        push edx                                 // 004c92fc
+        call dword ptr [RwCoreIat_005cc21c]   // USER32.dll!GetClientRect // 004c92fd
+        mov eax, dword ptr [esp + 0x20]          // 004c9303
+        test eax, eax                            // 004c9307
+        je L_4c9ac1                              // 004c9309
+        mov ecx, dword ptr [esp + 0x24]          // 004c930f
+        test ecx, ecx                            // 004c9313
+        je L_4c9ac1                              // 004c9315
+        cmp eax, dword ptr [esi + 0x28]          // 004c931b
+        jne L_4c9368                             // 004c931e
+        cmp ecx, dword ptr [esi + 0x2c]          // 004c9320
+        jne L_4c9368                             // 004c9323
+        mov esi, dword ptr [edi + 0x64]          // 004c9325
+        test esi, esi                            // 004c9328
+        je L_4c9389                              // 004c932a
+        cmp esi, dword ptr [esi]                 // 004c932c
+        jne L_4c9389                             // 004c932e
+        cmp eax, dword ptr [esi + 0xc]           // 004c9330
+        jne L_4c933a                             // 004c9333
+        cmp ecx, dword ptr [esi + 0x10]          // 004c9335
+        je L_4c9389                              // 004c9338
+    L_4c933a:
+        push esi                                 // 004c933a
+        mov dword ptr [edi + 0x64], 0            // 004c933b
+        call RwCore_004c7650                    // 004c9342
+        mov eax, dword ptr [esp + 0x28]          // 004c9347
+        mov ecx, dword ptr [esp + 0x24]          // 004c934b
+        push 1                                   // 004c934f
+        push 0                                   // 004c9351
+        push eax                                 // 004c9353
+        push ecx                                 // 004c9354
+        call RwCore_004c77c0                    // 004c9355
+        mov esi, eax                             // 004c935a
+        add esp, 0x14                            // 004c935c
+        test esi, esi                            // 004c935f
+        je L_4c9389                              // 004c9361
+        mov dword ptr [edi + 0x64], esi          // 004c9363
+        jmp L_4c9389                             // 004c9366
+    L_4c9368:
+        cmp ebp, esi                             // 004c9368
+        jne L_4c9386                             // 004c936a
+        mov edx, dword ptr [ebx + 0x20]          // 004c936c
+        push edx                                 // 004c936f
+        push edi                                 // 004c9370
+        call RwCore_004c9fb0                    // 004c9371
+        mov ebp, dword ptr [edi + 0x60]          // 004c9376
+        mov eax, dword ptr ds:[0x00911ae4]       // 004c9379
+        add esp, 8                               // 004c937e
+        mov ebx, dword ptr [ebp]                 // 004c9381
+        add ebx, eax                             // 004c9384
+    L_4c9386:
+        mov esi, dword ptr [edi + 0x64]          // 004c9386
+    L_4c9389:
+        mov eax, dword ptr [ebx]                 // 004c9389
+        mov ecx, dword ptr ds:[0x007d4578]       // 004c938b
+        cmp ecx, eax                             // 004c9391
+        je L_4c93ac                              // 004c9393
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c9395
+        mov dword ptr ds:[0x007d4578], eax       // 004c939b
+        push eax                                 // 004c93a0
+        push 0                                   // 004c93a1
+        mov edx, dword ptr [ecx]                 // 004c93a3
+        push ecx                                 // 004c93a5
+        call dword ptr [edx + 0x94]              // 004c93a6
+    L_4c93ac:
+        test esi, esi                            // 004c93ac
+        je L_4c93dc                              // 004c93ae
+        mov eax, dword ptr [esi]                 // 004c93b0
+        mov ecx, dword ptr ds:[0x00911ae4]       // 004c93b2
+        mov eax, dword ptr [ecx + eax]           // 004c93b8
+        mov ecx, dword ptr ds:[0x007d4574]       // 004c93bb
+        cmp ecx, eax                             // 004c93c1
+        je L_4c93ff                              // 004c93c3
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c93c5
+        mov dword ptr ds:[0x007d4574], eax       // 004c93cb
+        push eax                                 // 004c93d0
+        push ecx                                 // 004c93d1
+        mov edx, dword ptr [ecx]                 // 004c93d2
+        call dword ptr [edx + 0x9c]              // 004c93d4
+        jmp L_4c93ff                             // 004c93da
+    L_4c93dc:
+        mov eax, dword ptr ds:[0x007d4574]       // 004c93dc
+        test eax, eax                            // 004c93e1
+        je L_4c93ff                              // 004c93e3
+        mov eax, dword ptr ds:[0x007d4110]       // 004c93e5
+        mov dword ptr ds:[0x007d4574], 0         // 004c93ea
+        push 0                                   // 004c93f4
+        push eax                                 // 004c93f6
+        mov ecx, dword ptr [eax]                 // 004c93f7
+        call dword ptr [ecx + 0x9c]              // 004c93f9
+    L_4c93ff:
+        xor esi, esi                             // 004c93ff
+        mov dword ptr [esp + 0x28], esi          // 004c9401
+        mov dword ptr [esp + 0x2c], esi          // 004c9405
+        mov edx, dword ptr [ebp + 0xc]           // 004c9409
+        mov dword ptr [esp + 0x30], edx          // 004c940c
+        mov eax, dword ptr [ebp + 0x10]          // 004c9410
+        mov dword ptr [esp + 0x34], eax          // 004c9413
+        mov eax, dword ptr ds:[0x007d4110]       // 004c9417
+        lea edx, [esp + 0x28]                    // 004c941c
+        mov dword ptr [esp + 0x38], esi          // 004c9420
+        mov dword ptr [esp + 0x3c], 0x3f800000   // 004c9424
+        mov ecx, dword ptr [eax]                 // 004c942c
+        push edx                                 // 004c942e
+        push eax                                 // 004c942f
+        call dword ptr [ecx + 0xbc]              // 004c9430
+        mov edx, dword ptr ds:[0x007d412c]       // 004c9436
+        push edx                                 // 004c943c
+        mov edx, dword ptr [esp + 0x14]          // 004c943d
+        push 0x3f800000                          // 004c9441
+        push edx                                 // 004c9446
+        mov edx, dword ptr [esp + 0x90]          // 004c9447
+        mov edx, dword ptr [edx*4 + 0x5d8bd0]    // 004c944e
+        push edx                                 // 004c9455
+        push esi                                 // 004c9456
+        push esi                                 // 004c9457
+        jmp L_4c9aa6                             // 004c9458
+    L_4c945d:
+        mov ecx, dword ptr ds:[0x007d4104]       // 004c945d
+        lea eax, [esp + 0x18]                    // 004c9463
+        push eax                                 // 004c9467
+        push ecx                                 // 004c9468
+        call dword ptr [RwCoreIat_005cc21c]   // USER32.dll!GetClientRect // 004c9469
+        mov eax, dword ptr [esp + 0x20]          // 004c946f
+        test eax, eax                            // 004c9473
+        je L_4c9ac1                              // 004c9475
+        mov eax, dword ptr [esp + 0x24]          // 004c947b
+        test eax, eax                            // 004c947f
+        je L_4c9ac1                              // 004c9481
+        mov edx, dword ptr ds:[0x007d4104]       // 004c9487
+        push edx                                 // 004c948d
+        call dword ptr [RwCoreIat_005cc234]   // USER32.dll!IsIconic // 004c948e
+        test eax, eax                            // 004c9494
+        jne L_4c9ac1                             // 004c9496
+        mov eax, dword ptr [esp + 0x20]          // 004c949c
+        mov ecx, dword ptr ds:[0x00911f84]       // 004c94a0
+        cmp eax, ecx                             // 004c94a6
+        jne L_4c94bb                             // 004c94a8
+        mov ecx, dword ptr [esp + 0x24]          // 004c94aa
+        mov eax, dword ptr ds:[0x00911f88]       // 004c94ae
+        cmp ecx, eax                             // 004c94b3
+        je L_4c97a1                              // 004c94b5
+    L_4c94bb:
+        call RwCore_004c9ad0                    // 004c94bb
+        mov eax, dword ptr ds:[0x007d4110]       // 004c94c0
+        push eax                                 // 004c94c5
+        mov edx, dword ptr [eax]                 // 004c94c6
+        call dword ptr [edx + 0xc]               // 004c94c8
+        test eax, eax                            // 004c94cb
+        jl L_4c94eb                              // 004c94cd
+        mov eax, dword ptr ds:[0x00912100]       // 004c94cf
+        test eax, eax                            // 004c94d4
+        je L_4c94eb                              // 004c94d6
+        mov eax, dword ptr [esp + 0x20]          // 004c94d8
+        mov ecx, dword ptr [esp + 0x24]          // 004c94dc
+        mov dword ptr ds:[0x009120e0], eax       // 004c94e0
+        mov dword ptr ds:[0x009120e4], ecx       // 004c94e5
+    L_4c94eb:
+        mov eax, dword ptr ds:[0x007d4110]       // 004c94eb
+        push 0x9120e0                            // 004c94f0
+        push eax                                 // 004c94f5
+        mov edx, dword ptr [eax]                 // 004c94f6
+        call dword ptr [edx + 0x40]              // 004c94f8
+        test eax, eax                            // 004c94fb
+        jl L_4c95dc                              // 004c94fd
+        mov eax, dword ptr ds:[0x007d4110]       // 004c9503
+        push 0x7d4118                            // 004c9508
+        push 0                                   // 004c950d
+        push eax                                 // 004c950f
+        mov ecx, dword ptr [eax]                 // 004c9510
+        call dword ptr [ecx + 0x98]              // 004c9512
+        mov eax, dword ptr ds:[0x007d4118]       // 004c9518
+        push eax                                 // 004c951d
+        mov edx, dword ptr [eax]                 // 004c951e
+        call dword ptr [edx + 8]                 // 004c9520
+        mov eax, dword ptr ds:[0x007d4110]       // 004c9523
+        push 0x7d4114                            // 004c9528
+        push eax                                 // 004c952d
+        mov ecx, dword ptr [eax]                 // 004c952e
+        call dword ptr [ecx + 0xa0]              // 004c9530
+        mov eax, dword ptr ds:[0x007d4114]       // 004c9536
+        push eax                                 // 004c953b
+        mov edx, dword ptr [eax]                 // 004c953c
+        call dword ptr [edx + 8]                 // 004c953e
+        call RwCore_004d1e30                    // 004c9541
+        test eax, eax                            // 004c9546
+        je L_4c95c2                              // 004c9548
+        call RwCore_004dc970                    // 004c954a
+        test eax, eax                            // 004c954f
+        je L_4c95c2                              // 004c9551
+        call RwCore_004d6200                    // 004c9553
+        mov eax, dword ptr ds:[0x007d456c]       // 004c9558
+        xor esi, esi                             // 004c955d
+        test eax, eax                            // 004c955f
+        jle L_4c95a9                             // 004c9561
+        xor edi, edi                             // 004c9563
+    L_4c9565:
+        mov edx, dword ptr ds:[0x007d4570]       // 004c9565
+        mov eax, dword ptr ds:[0x007d4110]       // 004c956b
+        add edx, edi                             // 004c9570
+        mov ecx, dword ptr [eax]                 // 004c9572
+        push edx                                 // 004c9574
+        push esi                                 // 004c9575
+        push eax                                 // 004c9576
+        call dword ptr [ecx + 0xcc]              // 004c9577
+        mov edx, dword ptr ds:[0x007d4570]       // 004c957d
+        mov eax, dword ptr ds:[0x007d4110]       // 004c9583
+        mov edx, dword ptr [edi + edx + 0x68]    // 004c9588
+        mov ecx, dword ptr [eax]                 // 004c958c
+        push edx                                 // 004c958e
+        push esi                                 // 004c958f
+        push eax                                 // 004c9590
+        call dword ptr [ecx + 0xd4]              // 004c9591
+        mov ecx, dword ptr ds:[0x007d456c]       // 004c9597
+        inc esi                                  // 004c959d
+        add edi, 0x6c                            // 004c959e
+        cmp esi, ecx                             // 004c95a1
+        jl L_4c9565                              // 004c95a3
+        test eax, eax                            // 004c95a5
+        jl L_4c95c2                              // 004c95a7
+    L_4c95a9:
+        call RwCore_004db3e0                    // 004c95a9
+        test eax, eax                            // 004c95ae
+        je L_4c95c2                              // 004c95b0
+        call RwCore_004e0920                    // 004c95b2
+        test eax, eax                            // 004c95b7
+        je L_4c95c2                              // 004c95b9
+        mov esi, 1                               // 004c95bb
+        jmp L_4c95c4                             // 004c95c0
+    L_4c95c2:
+        xor esi, esi                             // 004c95c2
+    L_4c95c4:
+        mov eax, dword ptr ds:[0x007d459c]       // 004c95c4
+        test eax, eax                            // 004c95c9
+        je L_4c95cf                              // 004c95cb
+        call eax                                 // 004c95cd
+    L_4c95cf:
+        test esi, esi                            // 004c95cf
+        jne L_4c978e                             // 004c95d1
+        call RwCore_004c9ad0                    // 004c95d7
+    L_4c95dc:
+        mov eax, dword ptr ds:[0x00912100]       // 004c95dc
+        test eax, eax                            // 004c95e1
+        je L_4c9ac1                              // 004c95e3
+        mov eax, dword ptr ds:[0x00911f84]       // 004c95e9
+        mov ecx, dword ptr ds:[0x00911f88]       // 004c95ee
+        mov dword ptr ds:[0x009120e0], eax       // 004c95f4
+        mov eax, dword ptr ds:[0x007d4110]       // 004c95f9
+        mov dword ptr ds:[0x009120e4], ecx       // 004c95fe
+        push 0x9120e0                            // 004c9604
+        mov edx, dword ptr [eax]                 // 004c9609
+        push eax                                 // 004c960b
+        call dword ptr [edx + 0x40]              // 004c960c
+        test eax, eax                            // 004c960f
+        jl L_4c9ac1                              // 004c9611
+        mov eax, dword ptr [esp + 0x18]          // 004c9617
+        mov ecx, dword ptr ds:[0x00911f84]       // 004c961b
+        mov edx, dword ptr [esp + 0x1c]          // 004c9621
+        mov esi, dword ptr ds:[0x005cc238]       // 004c9625
+        add ecx, eax                             // 004c962b
+        mov eax, dword ptr ds:[0x00911f88]       // 004c962d
+        mov dword ptr [esp + 0x20], ecx          // 004c9632
+        mov ecx, dword ptr ds:[0x007d4104]       // 004c9636
+        add eax, edx                             // 004c963c
+        push -0x10                               // 004c963e
+        push ecx                                 // 004c9640
+        mov dword ptr [esp + 0x2c], eax          // 004c9641
+        call esi                                 // 004c9645
+        test eax, 0x1000000                      // 004c9647
+        je L_4c966d                              // 004c964c
+        mov edx, dword ptr ds:[0x007d4104]       // 004c964e
+        push -0x10                               // 004c9654
+        push edx                                 // 004c9656
+        call esi                                 // 004c9657
+        and eax, 0xfeffffff                      // 004c9659
+        push eax                                 // 004c965e
+        mov eax, dword ptr ds:[0x007d4104]       // 004c965f
+        push -0x10                               // 004c9664
+        push eax                                 // 004c9666
+        call dword ptr [RwCoreIat_005cc280]   // USER32.dll!SetWindowLongA // 004c9667
+    L_4c966d:
+        mov ecx, dword ptr ds:[0x007d4104]       // 004c966d
+        push -0x14                               // 004c9673
+        push ecx                                 // 004c9675
+        call esi                                 // 004c9676
+        mov edx, dword ptr ds:[0x007d4104]       // 004c9678
+        push eax                                 // 004c967e
+        push edx                                 // 004c967f
+        call dword ptr [RwCoreIat_005cc23c]   // USER32.dll!GetMenu // 004c9680
+        neg eax                                  // 004c9686
+        sbb eax, eax                             // 004c9688
+        neg eax                                  // 004c968a
+        push eax                                 // 004c968c
+        mov eax, dword ptr ds:[0x007d4104]       // 004c968d
+        push -0x10                               // 004c9692
+        push eax                                 // 004c9694
+        call esi                                 // 004c9695
+        lea ecx, [esp + 0x20]                    // 004c9697
+        push eax                                 // 004c969b
+        push ecx                                 // 004c969c
+        call dword ptr [RwCoreIat_005cc240]   // USER32.dll!AdjustWindowRectEx // 004c969d
+        mov eax, dword ptr [esp + 0x24]          // 004c96a3
+        mov ecx, dword ptr [esp + 0x1c]          // 004c96a7
+        mov edx, eax                             // 004c96ab
+        push 6                                   // 004c96ad
+        sub edx, ecx                             // 004c96af
+        mov ecx, dword ptr [esp + 0x1c]          // 004c96b1
+        push edx                                 // 004c96b5
+        mov edx, dword ptr [esp + 0x28]          // 004c96b6
+        sub edx, ecx                             // 004c96ba
+        push edx                                 // 004c96bc
+        push eax                                 // 004c96bd
+        mov eax, dword ptr ds:[0x007d4104]       // 004c96be
+        push ecx                                 // 004c96c3
+        push 0                                   // 004c96c4
+        push eax                                 // 004c96c6
+        call dword ptr [RwCoreIat_005cc284]   // USER32.dll!SetWindowPos // 004c96c7
+        mov eax, dword ptr ds:[0x007d4110]       // 004c96cd
+        push 0x7d4118                            // 004c96d2
+        push 0                                   // 004c96d7
+        push eax                                 // 004c96d9
+        mov ecx, dword ptr [eax]                 // 004c96da
+        call dword ptr [ecx + 0x98]              // 004c96dc
+        mov eax, dword ptr ds:[0x007d4118]       // 004c96e2
+        push eax                                 // 004c96e7
+        mov edx, dword ptr [eax]                 // 004c96e8
+        call dword ptr [edx + 8]                 // 004c96ea
+        mov eax, dword ptr ds:[0x007d4110]       // 004c96ed
+        push 0x7d4114                            // 004c96f2
+        push eax                                 // 004c96f7
+        mov ecx, dword ptr [eax]                 // 004c96f8
+        call dword ptr [ecx + 0xa0]              // 004c96fa
+        mov eax, dword ptr ds:[0x007d4114]       // 004c9700
+        push eax                                 // 004c9705
+        mov edx, dword ptr [eax]                 // 004c9706
+        call dword ptr [edx + 8]                 // 004c9708
+        call RwCore_004d1e30                    // 004c970b
+        test eax, eax                            // 004c9710
+        je L_4c9781                              // 004c9712
+        call RwCore_004dc970                    // 004c9714
+        test eax, eax                            // 004c9719
+        je L_4c9781                              // 004c971b
+        call RwCore_004d6200                    // 004c971d
+        mov eax, dword ptr ds:[0x007d456c]       // 004c9722
+        xor esi, esi                             // 004c9727
+        test eax, eax                            // 004c9729
+        jle L_4c9773                             // 004c972b
+        xor edi, edi                             // 004c972d
+    L_4c972f:
+        mov edx, dword ptr ds:[0x007d4570]       // 004c972f
+        mov eax, dword ptr ds:[0x007d4110]       // 004c9735
+        add edx, edi                             // 004c973a
+        mov ecx, dword ptr [eax]                 // 004c973c
+        push edx                                 // 004c973e
+        push esi                                 // 004c973f
+        push eax                                 // 004c9740
+        call dword ptr [ecx + 0xcc]              // 004c9741
+        mov edx, dword ptr ds:[0x007d4570]       // 004c9747
+        mov eax, dword ptr ds:[0x007d4110]       // 004c974d
+        mov edx, dword ptr [edi + edx + 0x68]    // 004c9752
+        mov ecx, dword ptr [eax]                 // 004c9756
+        push edx                                 // 004c9758
+        push esi                                 // 004c9759
+        push eax                                 // 004c975a
+        call dword ptr [ecx + 0xd4]              // 004c975b
+        mov ecx, dword ptr ds:[0x007d456c]       // 004c9761
+        inc esi                                  // 004c9767
+        add edi, 0x6c                            // 004c9768
+        cmp esi, ecx                             // 004c976b
+        jl L_4c972f                              // 004c976d
+        test eax, eax                            // 004c976f
+        jl L_4c9781                              // 004c9771
+    L_4c9773:
+        call RwCore_004db3e0                    // 004c9773
+        test eax, eax                            // 004c9778
+        je L_4c9781                              // 004c977a
+        call RwCore_004e0920                    // 004c977c
+    L_4c9781:
+        mov eax, dword ptr ds:[0x007d459c]       // 004c9781
+        test eax, eax                            // 004c9786
+        je L_4c97a1                              // 004c9788
+        call eax                                 // 004c978a
+        jmp L_4c97a1                             // 004c978c
+    L_4c978e:
+        mov eax, dword ptr [esp + 0x20]          // 004c978e
+        mov ecx, dword ptr [esp + 0x24]          // 004c9792
+        mov dword ptr ds:[0x00911f84], eax       // 004c9796
+        mov dword ptr ds:[0x00911f88], ecx       // 004c979b
+    L_4c97a1:
+        mov edx, dword ptr [esp + 0x80]          // 004c97a1
+        cmp byte ptr [edx + 0x20], 5             // 004c97a8
+        jne L_4c99d7                             // 004c97ac
+        mov al, byte ptr [ebx + 9]               // 004c97b2
+        test al, 0xf                             // 004c97b5
+        je L_4c97d6                              // 004c97b7
+        mov ecx, dword ptr [ebx]                 // 004c97b9
+        lea esi, [esp + 0x80]                    // 004c97bb
+        and eax, 0xff                            // 004c97c2
+        push esi                                 // 004c97c7
+        mov edx, dword ptr [ecx]                 // 004c97c8
+        push 0                                   // 004c97ca
+        shr eax, 4                               // 004c97cc
+        push eax                                 // 004c97cf
+        push ecx                                 // 004c97d0
+        call dword ptr [edx + 0x48]              // 004c97d1
+        jmp L_4c97e8                             // 004c97d4
+    L_4c97d6:
+        mov eax, dword ptr [ebx]                 // 004c97d6
+        lea edx, [esp + 0x80]                    // 004c97d8
+        push edx                                 // 004c97df
+        push 0                                   // 004c97e0
+        mov ecx, dword ptr [eax]                 // 004c97e2
+        push eax                                 // 004c97e4
+        call dword ptr [ecx + 0x48]              // 004c97e5
+    L_4c97e8:
+        mov eax, dword ptr [esp + 0x80]          // 004c97e8
+        lea edx, [esp + 0x58]                    // 004c97ef
+        push edx                                 // 004c97f3
+        push eax                                 // 004c97f4
+        mov ecx, dword ptr [eax]                 // 004c97f5
+        call dword ptr [ecx + 0x30]              // 004c97f7
+        test byte ptr [esp + 0x60], 1            // 004c97fa
+        je L_4c98d4                              // 004c97ff
+        mov eax, dword ptr [esp + 0x80]          // 004c9805
+        mov ecx, dword ptr ds:[0x007d4578]       // 004c980c
+        cmp ecx, eax                             // 004c9812
+        je L_4c982d                              // 004c9814
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c9816
+        mov dword ptr ds:[0x007d4578], eax       // 004c981c
+        push eax                                 // 004c9821
+        push 0                                   // 004c9822
+        mov edx, dword ptr [ecx]                 // 004c9824
+        push ecx                                 // 004c9826
+        call dword ptr [edx + 0x94]              // 004c9827
+    L_4c982d:
+        mov eax, dword ptr [esp + 0x7c]          // 004c982d
+        mov eax, dword ptr [eax + 0x64]          // 004c9831
+        test eax, eax                            // 004c9834
+        je L_4c98ad                              // 004c9836
+        mov eax, dword ptr [eax]                 // 004c9838
+        mov ecx, dword ptr ds:[0x00911ae4]       // 004c983a
+        mov dl, byte ptr [eax + 0x20]            // 004c9840
+        mov eax, dword ptr [ecx + eax]           // 004c9843
+        and dl, 7                                // 004c9846
+        cmp dl, 1                                // 004c9849
+        jne L_4c986f                             // 004c984c
+        cmp dword ptr ds:[0x007d4574], eax       // 004c984e
+        je L_4c98d0                              // 004c9854
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c9856
+        mov dword ptr ds:[0x007d4574], eax       // 004c985c
+        push eax                                 // 004c9861
+        push ecx                                 // 004c9862
+        mov edx, dword ptr [ecx]                 // 004c9863
+        call dword ptr [edx + 0x9c]              // 004c9865
+        xor esi, esi                             // 004c986b
+        jmp L_4c98d9                             // 004c986d
+    L_4c986f:
+        mov ecx, dword ptr [eax]                 // 004c986f
+        lea edx, [esp + 0x14]                    // 004c9871
+        push edx                                 // 004c9875
+        push 0                                   // 004c9876
+        push eax                                 // 004c9878
+        call dword ptr [ecx + 0x48]              // 004c9879
+        mov eax, dword ptr [esp + 0x14]          // 004c987c
+        mov ecx, dword ptr ds:[0x007d4574]       // 004c9880
+        cmp ecx, eax                             // 004c9886
+        je L_4c98a3                              // 004c9888
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c988a
+        mov dword ptr ds:[0x007d4574], eax       // 004c9890
+        push eax                                 // 004c9895
+        push ecx                                 // 004c9896
+        mov edx, dword ptr [ecx]                 // 004c9897
+        call dword ptr [edx + 0x9c]              // 004c9899
+        mov eax, dword ptr [esp + 0x14]          // 004c989f
+    L_4c98a3:
+        mov ecx, dword ptr [eax]                 // 004c98a3
+        push eax                                 // 004c98a5
+        call dword ptr [ecx + 8]                 // 004c98a6
+        xor esi, esi                             // 004c98a9
+        jmp L_4c98d9                             // 004c98ab
+    L_4c98ad:
+        mov eax, dword ptr ds:[0x007d4574]       // 004c98ad
+        test eax, eax                            // 004c98b2
+        je L_4c98d0                              // 004c98b4
+        mov eax, dword ptr ds:[0x007d4110]       // 004c98b6
+        mov dword ptr ds:[0x007d4574], 0         // 004c98bb
+        push 0                                   // 004c98c5
+        push eax                                 // 004c98c7
+        mov edx, dword ptr [eax]                 // 004c98c8
+        call dword ptr [edx + 0x9c]              // 004c98ca
+    L_4c98d0:
+        xor esi, esi                             // 004c98d0
+        jmp L_4c98d9                             // 004c98d2
+    L_4c98d4:
+        mov esi, 0x80004005                      // 004c98d4
+    L_4c98d9:
+        movsx eax, word ptr [ebp + 0x1c]         // 004c98d9
+        movsx ecx, word ptr [ebp + 0x1e]         // 004c98dd
+        mov edx, dword ptr [ebp + 0xc]           // 004c98e1
+        mov dword ptr [esp + 0x40], eax          // 004c98e4
+        mov eax, dword ptr [ebp + 0x10]          // 004c98e8
+        mov dword ptr [esp + 0x48], edx          // 004c98eb
+        mov dword ptr [esp + 0x4c], eax          // 004c98ef
+        mov eax, dword ptr ds:[0x007d4110]       // 004c98f3
+        lea edx, [esp + 0x40]                    // 004c98f8
+        mov dword ptr [esp + 0x44], ecx          // 004c98fc
+        mov dword ptr [esp + 0x50], 0            // 004c9900
+        mov dword ptr [esp + 0x54], 0x3f800000   // 004c9908
+        mov ecx, dword ptr [eax]                 // 004c9910
+        push edx                                 // 004c9912
+        push eax                                 // 004c9913
+        call dword ptr [ecx + 0xbc]              // 004c9914
+        mov eax, dword ptr [esp + 0x84]          // 004c991a
+        mov eax, dword ptr [eax*4 + 0x5d8bd0]    // 004c9921
+        test al, 6                               // 004c9928
+        je L_4c9939                              // 004c992a
+        mov ecx, dword ptr [esp + 0x7c]          // 004c992c
+        mov edx, dword ptr [ecx + 0x64]          // 004c9930
+        test edx, edx                            // 004c9933
+        jne L_4c9939                             // 004c9935
+        and al, 0xf9                             // 004c9937
+    L_4c9939:
+        mov edi, dword ptr ds:[0x007d412c]       // 004c9939
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c993f
+        push edi                                 // 004c9945
+        mov edi, dword ptr [esp + 0x14]          // 004c9946
+        mov edx, dword ptr [ecx]                 // 004c994a
+        push 0x3f800000                          // 004c994c
+        push edi                                 // 004c9951
+        push eax                                 // 004c9952
+        push 0                                   // 004c9953
+        push 0                                   // 004c9955
+        push ecx                                 // 004c9957
+        call dword ptr [edx + 0xac]              // 004c9958
+        test esi, esi                            // 004c995e
+        jge L_4c99bd                             // 004c9960
+        movsx eax, word ptr [ebp + 0x1c]         // 004c9962
+        mov edx, dword ptr [ebp + 0xc]           // 004c9966
+        mov dword ptr [esp + 0x28], eax          // 004c9969
+        movsx ecx, word ptr [ebp + 0x1e]         // 004c996d
+        add edx, eax                             // 004c9971
+        mov eax, dword ptr [ebp + 0x10]          // 004c9973
+        add eax, ecx                             // 004c9976
+        mov dword ptr [esp + 0x2c], ecx          // 004c9978
+        mov dword ptr [esp + 0x34], eax          // 004c997c
+        mov eax, dword ptr ds:[0x00912094]       // 004c9980
+        test eax, 0x1000100                      // 004c9985
+        mov eax, dword ptr ds:[0x007d4110]       // 004c998a
+        mov dword ptr [esp + 0x30], edx          // 004c998f
+        lea edx, [esp + 0x28]                    // 004c9993
+        mov ecx, dword ptr [eax]                 // 004c9997
+        je L_4c999f                              // 004c9999
+        push 1                                   // 004c999b
+        jmp L_4c99a1                             // 004c999d
+    L_4c999f:
+        push 0                                   // 004c999f
+    L_4c99a1:
+        push edx                                 // 004c99a1
+        mov edx, dword ptr [esp + 0x88]          // 004c99a2
+        push edx                                 // 004c99a9
+        lea edx, [esp + 0x34]                    // 004c99aa
+        push edx                                 // 004c99ae
+        mov edx, dword ptr ds:[0x007d4118]       // 004c99af
+        push edx                                 // 004c99b5
+        push eax                                 // 004c99b6
+        call dword ptr [ecx + 0x88]              // 004c99b7
+    L_4c99bd:
+        mov eax, dword ptr [esp + 0x80]          // 004c99bd
+        push eax                                 // 004c99c4
+        mov ecx, dword ptr [eax]                 // 004c99c5
+        call dword ptr [ecx + 8]                 // 004c99c7
+        pop edi                                  // 004c99ca
+        pop esi                                  // 004c99cb
+        pop ebp                                  // 004c99cc
+        mov eax, 1                               // 004c99cd
+        pop ebx                                  // 004c99d2
+        add esp, 0x68                            // 004c99d3
+        ret                                      // 004c99d6
+    L_4c99d7:
+        mov eax, dword ptr ds:[0x007d4118]       // 004c99d7
+        mov ecx, dword ptr ds:[0x007d4578]       // 004c99dc
+        xor esi, esi                             // 004c99e2
+        cmp ecx, eax                             // 004c99e4
+        je L_4c99fe                              // 004c99e6
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c99e8
+        mov dword ptr ds:[0x007d4578], eax       // 004c99ee
+        push eax                                 // 004c99f3
+        push esi                                 // 004c99f4
+        mov edx, dword ptr [ecx]                 // 004c99f5
+        push ecx                                 // 004c99f7
+        call dword ptr [edx + 0x94]              // 004c99f8
+    L_4c99fe:
+        mov eax, dword ptr ds:[0x007d4114]       // 004c99fe
+        mov ecx, dword ptr ds:[0x007d4574]       // 004c9a03
+        cmp ecx, eax                             // 004c9a09
+        je L_4c9a22                              // 004c9a0b
+        mov ecx, dword ptr ds:[0x007d4110]       // 004c9a0d
+        mov dword ptr ds:[0x007d4574], eax       // 004c9a13
+        push eax                                 // 004c9a18
+        push ecx                                 // 004c9a19
+        mov edx, dword ptr [ecx]                 // 004c9a1a
+        call dword ptr [edx + 0x9c]              // 004c9a1c
+    L_4c9a22:
+        movsx eax, word ptr [ebp + 0x1c]         // 004c9a22
+        movsx ecx, word ptr [ebp + 0x1e]         // 004c9a26
+        mov edx, dword ptr [ebp + 0xc]           // 004c9a2a
+        mov dword ptr [esp + 0x40], eax          // 004c9a2d
+        mov eax, dword ptr [ebp + 0x10]          // 004c9a31
+        mov dword ptr [esp + 0x48], edx          // 004c9a34
+        mov dword ptr [esp + 0x4c], eax          // 004c9a38
+        mov eax, dword ptr ds:[0x007d4110]       // 004c9a3c
+        lea edx, [esp + 0x40]                    // 004c9a41
+        mov dword ptr [esp + 0x44], ecx          // 004c9a45
+        mov dword ptr [esp + 0x50], 0            // 004c9a49
+        mov dword ptr [esp + 0x54], 0x3f800000   // 004c9a51
+        mov ecx, dword ptr [eax]                 // 004c9a59
+        push edx                                 // 004c9a5b
+        push eax                                 // 004c9a5c
+        call dword ptr [ecx + 0xbc]              // 004c9a5d
+        mov eax, dword ptr [esp + 0x14]          // 004c9a63
+        test eax, eax                            // 004c9a67
+        je L_4c9a70                              // 004c9a69
+        mov esi, 1                               // 004c9a6b
+    L_4c9a70:
+        mov al, byte ptr [esp + 0x84]            // 004c9a70
+        test al, 2                               // 004c9a77
+        je L_4c9a80                              // 004c9a79
+        or esi, 2                                // 004c9a7b
+        jmp L_4c9a84                             // 004c9a7e
+    L_4c9a80:
+        test al, 4                               // 004c9a80
+        je L_4c9a90                              // 004c9a82
+    L_4c9a84:
+        mov eax, dword ptr ds:[0x007d4124]       // 004c9a84
+        test eax, eax                            // 004c9a89
+        je L_4c9a90                              // 004c9a8b
+        or esi, 4                                // 004c9a8d
+    L_4c9a90:
+        mov edx, dword ptr ds:[0x007d412c]       // 004c9a90
+        push edx                                 // 004c9a96
+        mov edx, dword ptr [esp + 0x14]          // 004c9a97
+        push 0x3f800000                          // 004c9a9b
+        push edx                                 // 004c9aa0
+        push esi                                 // 004c9aa1
+        push 0                                   // 004c9aa2
+        push 0                                   // 004c9aa4
+    L_4c9aa6:
+        mov eax, dword ptr ds:[0x007d4110]       // 004c9aa6
+        push eax                                 // 004c9aab
+        mov ecx, dword ptr [eax]                 // 004c9aac
+        call dword ptr [ecx + 0xac]              // 004c9aae
+        pop edi                                  // 004c9ab4
+        pop esi                                  // 004c9ab5
+        pop ebp                                  // 004c9ab6
+        mov eax, 1                               // 004c9ab7
+        pop ebx                                  // 004c9abc
+        add esp, 0x68                            // 004c9abd
+        ret                                      // 004c9ac0
+    L_4c9ac1:
+        pop edi                                  // 004c9ac1
+        pop esi                                  // 004c9ac2
+        pop ebp                                  // 004c9ac3
+        xor eax, eax                             // 004c9ac4
+        pop ebx                                  // 004c9ac6
+        add esp, 0x68                            // 004c9ac7
+        ret                                      // 004c9aca
+    }
+}
+
+// HAND-LIFT 0x004ca160 RwCoreLift_004ca160  (733 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ca160(void) {
+    __asm {
+        sub esp, 0x50                            // 004ca160
+        push ebx                                 // 004ca163
+        push ebp                                 // 004ca164
+        push esi                                 // 004ca165
+        push edi                                 // 004ca166
+        call RwCoreLift_005cb432                    // 004ca167
+        mov ebx, dword ptr [esp + 0x68]          // 004ca16c
+        mov dword ptr ds:[0x00911d60], ebx       // 004ca170
+        mov eax, dword ptr [ebx + 4]             // 004ca176
+        push eax                                 // 004ca179
+        call RwCore_004c0ed0                    // 004ca17a
+        push eax                                 // 004ca17f
+        push 0x911d20                            // 004ca180
+        call RwCore_004c4dc0                    // 004ca185
+        fld dword ptr ds:[0x00911d20]            // 004ca18a
+        fchs                                     // 004ca190
+        fstp dword ptr ds:[0x00911d20]           // 004ca192
+        fld dword ptr ds:[0x00911d30]            // 004ca198
+        fchs                                     // 004ca19e
+        fstp dword ptr ds:[0x00911d30]           // 004ca1a0
+        fld dword ptr ds:[0x00911d40]            // 004ca1a6
+        fchs                                     // 004ca1ac
+        fstp dword ptr ds:[0x00911d40]           // 004ca1ae
+        fld dword ptr ds:[0x00911d50]            // 004ca1b4
+        fchs                                     // 004ca1ba
+        fstp dword ptr ds:[0x00911d50]           // 004ca1bc
+        push 0x911d20                            // 004ca1c2
+        push 2                                   // 004ca1c7
+        mov dword ptr ds:[0x00911d2c], 0         // 004ca1c9
+        mov dword ptr ds:[0x00911d3c], 0         // 004ca1d3
+        mov dword ptr ds:[0x00911d4c], 0         // 004ca1dd
+        mov dword ptr ds:[0x00911d5c], 0x3f800000 // 004ca1e7
+        call RwCore_004cb330                    // 004ca1f1
+        mov ecx, dword ptr [ebx + 0x70]          // 004ca1f6
+        add esp, 0x14                            // 004ca1f9
+        mov dword ptr ds:[0x006181e0], ecx       // 004ca1fc
+        mov edx, dword ptr [ebx + 0x74]          // 004ca202
+        mov dword ptr ds:[0x006181f4], edx       // 004ca205
+        fld dword ptr [ebx + 0x78]               // 004ca20b
+        fmul dword ptr [ebx + 0x70]              // 004ca20e
+        fstp dword ptr ds:[0x00618200]           // 004ca211
+        fld dword ptr [ebx + 0x7c]               // 004ca217
+        fmul dword ptr [ebx + 0x74]              // 004ca21a
+        fstp dword ptr ds:[0x00618204]           // 004ca21d
+        fld dword ptr [ebx + 0x78]               // 004ca223
+        fmul dword ptr [ebx + 0x70]              // 004ca226
+        fchs                                     // 004ca229
+        fstp dword ptr ds:[0x00618210]           // 004ca22b
+        fld dword ptr [ebx + 0x7c]               // 004ca231
+        fmul dword ptr [ebx + 0x74]              // 004ca234
+        fchs                                     // 004ca237
+        fstp dword ptr ds:[0x00618214]           // 004ca239
+        fld dword ptr [ebx + 0x84]               // 004ca23f
+        fsub dword ptr [ebx + 0x80]              // 004ca245
+        cmp dword ptr [ebx + 0x14], 2            // 004ca24b
+        jne L_4ca26d                             // 004ca24f
+        fdivr dword ptr ds:[0x005cc320]          // 004ca251
+        mov dword ptr ds:[0x0061820c], 0         // 004ca257
+        mov dword ptr ds:[0x0061821c], 0x3f800000 // 004ca261
+        jmp L_4ca287                             // 004ca26b
+    L_4ca26d:
+        fdivr dword ptr [ebx + 0x84]             // 004ca26d
+        mov dword ptr ds:[0x0061820c], 0x3f800000 // 004ca273
+        mov dword ptr ds:[0x0061821c], 0         // 004ca27d
+    L_4ca287:
+        fstp dword ptr ds:[0x00618208]           // 004ca287
+        fld dword ptr ds:[0x00618208]            // 004ca28d
+        fmul dword ptr [ebx + 0x80]              // 004ca293
+        push 0x6181e0                            // 004ca299
+        push 3                                   // 004ca29e
+        fchs                                     // 004ca2a0
+        fstp dword ptr ds:[0x00618218]           // 004ca2a2
+        call RwCore_004cb330                    // 004ca2a8
+        mov eax, dword ptr ds:[0x00911ae4]       // 004ca2ad
+        mov dword ptr ds:[0x007d4150], 0         // 004ca2b2
+        mov edi, dword ptr [ebx + 0x60]          // 004ca2bc
+        add esp, 8                               // 004ca2bf
+        mov dword ptr [esp + 0x10], edi          // 004ca2c2
+        mov esi, dword ptr [edi]                 // 004ca2c6
+        mov dword ptr [esp + 0x68], esi          // 004ca2c8
+        lea ebp, [eax + esi]                     // 004ca2cc
+        mov eax, dword ptr [eax + esi + 0x1c]    // 004ca2cf
+        test eax, eax                            // 004ca2d3
+        je L_4ca3f6                              // 004ca2d5
+        mov edx, dword ptr [ebp + 0x20]          // 004ca2db
+        lea ecx, [esp + 0x18]                    // 004ca2de
+        push ecx                                 // 004ca2e2
+        push edx                                 // 004ca2e3
+        call dword ptr [RwCoreIat_005cc21c]   // USER32.dll!GetClientRect // 004ca2e4
+        mov eax, dword ptr [esp + 0x20]          // 004ca2ea
+        test eax, eax                            // 004ca2ee
+        je L_4cab08                              // 004ca2f0
+        mov ecx, dword ptr [esp + 0x24]          // 004ca2f6
+        test ecx, ecx                            // 004ca2fa
+        je L_4cab08                              // 004ca2fc
+        cmp eax, dword ptr [esi + 0x28]          // 004ca302
+        jne L_4ca34f                             // 004ca305
+        cmp ecx, dword ptr [esi + 0x2c]          // 004ca307
+        jne L_4ca34f                             // 004ca30a
+        mov esi, dword ptr [ebx + 0x64]          // 004ca30c
+        test esi, esi                            // 004ca30f
+        je L_4ca36f                              // 004ca311
+        cmp esi, dword ptr [esi]                 // 004ca313
+        jne L_4ca36f                             // 004ca315
+        cmp eax, dword ptr [esi + 0xc]           // 004ca317
+        jne L_4ca321                             // 004ca31a
+        cmp ecx, dword ptr [esi + 0x10]          // 004ca31c
+        je L_4ca36f                              // 004ca31f
+    L_4ca321:
+        push esi                                 // 004ca321
+        mov dword ptr [ebx + 0x64], 0            // 004ca322
+        call RwCore_004c7650                    // 004ca329
+        mov eax, dword ptr [esp + 0x28]          // 004ca32e
+        mov ecx, dword ptr [esp + 0x24]          // 004ca332
+        push 1                                   // 004ca336
+        push 0                                   // 004ca338
+        push eax                                 // 004ca33a
+        push ecx                                 // 004ca33b
+        call RwCore_004c77c0                    // 004ca33c
+        mov esi, eax                             // 004ca341
+        add esp, 0x14                            // 004ca343
+        test esi, esi                            // 004ca346
+        je L_4ca36f                              // 004ca348
+        mov dword ptr [ebx + 0x64], esi          // 004ca34a
+        jmp L_4ca36f                             // 004ca34d
+    L_4ca34f:
+        cmp edi, esi                             // 004ca34f
+        jne L_4ca36c                             // 004ca351
+        mov edx, dword ptr [ebp + 0x20]          // 004ca353
+        push edx                                 // 004ca356
+        push ebx                                 // 004ca357
+        call RwCore_004c9fb0                    // 004ca358
+        mov edi, dword ptr [ebx + 0x60]          // 004ca35d
+        mov eax, dword ptr ds:[0x00911ae4]       // 004ca360
+        add esp, 8                               // 004ca365
+        mov ebp, dword ptr [edi]                 // 004ca368
+        add ebp, eax                             // 004ca36a
+    L_4ca36c:
+        mov esi, dword ptr [ebx + 0x64]          // 004ca36c
+    L_4ca36f:
+        mov eax, dword ptr [ebp]                 // 004ca36f
+        mov ecx, dword ptr ds:[0x007d4578]       // 004ca372
+        cmp ecx, eax                             // 004ca378
+        je L_4ca393                              // 004ca37a
+        mov ecx, dword ptr ds:[0x007d4110]       // 004ca37c
+        mov dword ptr ds:[0x007d4578], eax       // 004ca382
+        push eax                                 // 004ca387
+        push 0                                   // 004ca388
+        mov edx, dword ptr [ecx]                 // 004ca38a
+        push ecx                                 // 004ca38c
+        call dword ptr [edx + 0x94]              // 004ca38d
+    L_4ca393:
+        test esi, esi                            // 004ca393
+        je L_4ca3ca                              // 004ca395
+        mov eax, dword ptr [esi]                 // 004ca397
+        mov ecx, dword ptr ds:[0x00911ae4]       // 004ca399
+        mov eax, dword ptr [ecx + eax]           // 004ca39f
+        mov ecx, dword ptr ds:[0x007d4574]       // 004ca3a2
+        cmp ecx, eax                             // 004ca3a8
+        je L_4ca8ec                              // 004ca3aa
+        mov ecx, dword ptr ds:[0x007d4110]       // 004ca3b0
+        mov dword ptr ds:[0x007d4574], eax       // 004ca3b6
+        push eax                                 // 004ca3bb
+        push ecx                                 // 004ca3bc
+        mov edx, dword ptr [ecx]                 // 004ca3bd
+        call dword ptr [edx + 0x9c]              // 004ca3bf
+        jmp L_4ca8ec                             // 004ca3c5
+    L_4ca3ca:
+        mov eax, dword ptr ds:[0x007d4574]       // 004ca3ca
+        test eax, eax                            // 004ca3cf
+        je L_4ca8ec                              // 004ca3d1
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca3d7
+        mov dword ptr ds:[0x007d4574], 0         // 004ca3dc
+        push 0                                   // 004ca3e6
+        push eax                                 // 004ca3e8
+        mov ecx, dword ptr [eax]                 // 004ca3e9
+        call dword ptr [ecx + 0x9c]              // 004ca3eb
+        jmp L_4ca8ec                             // 004ca3f1
+    L_4ca3f6:
+        mov eax, dword ptr ds:[0x007d4104]       // 004ca3f6
+        lea edx, [esp + 0x18]                    // 004ca3fb
+        push edx                                 // 004ca3ff
+        push eax                                 // 004ca400
+        call dword ptr [RwCoreIat_005cc21c]   // USER32.dll!GetClientRect // 004ca401
+        mov eax, dword ptr [esp + 0x20]          // 004ca407
+        test eax, eax                            // 004ca40b
+        je L_4cab08                              // 004ca40d
+        mov eax, dword ptr [esp + 0x24]          // 004ca413
+        test eax, eax                            // 004ca417
+        je L_4cab08                              // 004ca419
+        mov ecx, dword ptr ds:[0x007d4104]       // 004ca41f
+        push ecx                                 // 004ca425
+        call dword ptr [RwCoreIat_005cc234]   // USER32.dll!IsIconic // 004ca426
+        test eax, eax                            // 004ca42c
+        jne L_4cab08                             // 004ca42e
+        mov edx, dword ptr [esp + 0x20]          // 004ca434
+        mov eax, dword ptr ds:[0x00911f84]       // 004ca438
+        cmp edx, eax                             // 004ca43d
+        jne L_4ca453                             // 004ca43f
+        mov eax, dword ptr [esp + 0x24]          // 004ca441
+        mov ecx, dword ptr ds:[0x00911f88]       // 004ca445
+        cmp eax, ecx                             // 004ca44b
+        je L_4ca739                              // 004ca44d
+    L_4ca453:
+        call RwCore_004c9ad0                    // 004ca453
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca458
+        push eax                                 // 004ca45d
+        mov ecx, dword ptr [eax]                 // 004ca45e
+        call dword ptr [ecx + 0xc]               // 004ca460
+        test eax, eax                            // 004ca463
+        jl L_4ca483                              // 004ca465
+        mov eax, dword ptr ds:[0x00912100]       // 004ca467
+        test eax, eax                            // 004ca46c
+        je L_4ca483                              // 004ca46e
+        mov edx, dword ptr [esp + 0x20]          // 004ca470
+        mov eax, dword ptr [esp + 0x24]          // 004ca474
+        mov dword ptr ds:[0x009120e0], edx       // 004ca478
+        mov dword ptr ds:[0x009120e4], eax       // 004ca47e
+    L_4ca483:
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca483
+        push 0x9120e0                            // 004ca488
+        push eax                                 // 004ca48d
+        mov ecx, dword ptr [eax]                 // 004ca48e
+        call dword ptr [ecx + 0x40]              // 004ca490
+        test eax, eax                            // 004ca493
+        jl L_4ca574                              // 004ca495
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca49b
+        push 0x7d4118                            // 004ca4a0
+        push 0                                   // 004ca4a5
+        push eax                                 // 004ca4a7
+        mov edx, dword ptr [eax]                 // 004ca4a8
+        call dword ptr [edx + 0x98]              // 004ca4aa
+        mov eax, dword ptr ds:[0x007d4118]       // 004ca4b0
+        push eax                                 // 004ca4b5
+        mov ecx, dword ptr [eax]                 // 004ca4b6
+        call dword ptr [ecx + 8]                 // 004ca4b8
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca4bb
+        push 0x7d4114                            // 004ca4c0
+        push eax                                 // 004ca4c5
+        mov edx, dword ptr [eax]                 // 004ca4c6
+        call dword ptr [edx + 0xa0]              // 004ca4c8
+        mov eax, dword ptr ds:[0x007d4114]       // 004ca4ce
+        push eax                                 // 004ca4d3
+        mov ecx, dword ptr [eax]                 // 004ca4d4
+        call dword ptr [ecx + 8]                 // 004ca4d6
+        call RwCore_004d1e30                    // 004ca4d9
+        test eax, eax                            // 004ca4de
+        je L_4ca55a                              // 004ca4e0
+        call RwCore_004dc970                    // 004ca4e2
+        test eax, eax                            // 004ca4e7
+        je L_4ca55a                              // 004ca4e9
+        call RwCore_004d6200                    // 004ca4eb
+        mov eax, dword ptr ds:[0x007d456c]       // 004ca4f0
+        xor esi, esi                             // 004ca4f5
+        test eax, eax                            // 004ca4f7
+        jle L_4ca541                             // 004ca4f9
+        xor edi, edi                             // 004ca4fb
+    L_4ca4fd:
+        mov ecx, dword ptr ds:[0x007d4570]       // 004ca4fd
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca503
+        add ecx, edi                             // 004ca508
+        mov edx, dword ptr [eax]                 // 004ca50a
+        push ecx                                 // 004ca50c
+        push esi                                 // 004ca50d
+        push eax                                 // 004ca50e
+        call dword ptr [edx + 0xcc]              // 004ca50f
+        mov ecx, dword ptr ds:[0x007d4570]       // 004ca515
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca51b
+        mov ecx, dword ptr [edi + ecx + 0x68]    // 004ca520
+        mov edx, dword ptr [eax]                 // 004ca524
+        push ecx                                 // 004ca526
+        push esi                                 // 004ca527
+        push eax                                 // 004ca528
+        call dword ptr [edx + 0xd4]              // 004ca529
+        mov ecx, dword ptr ds:[0x007d456c]       // 004ca52f
+        inc esi                                  // 004ca535
+        add edi, 0x6c                            // 004ca536
+        cmp esi, ecx                             // 004ca539
+        jl L_4ca4fd                              // 004ca53b
+        test eax, eax                            // 004ca53d
+        jl L_4ca55a                              // 004ca53f
+    L_4ca541:
+        call RwCore_004db3e0                    // 004ca541
+        test eax, eax                            // 004ca546
+        je L_4ca55a                              // 004ca548
+        call RwCore_004e0920                    // 004ca54a
+        test eax, eax                            // 004ca54f
+        je L_4ca55a                              // 004ca551
+        mov esi, 1                               // 004ca553
+        jmp L_4ca55c                             // 004ca558
+    L_4ca55a:
+        xor esi, esi                             // 004ca55a
+    L_4ca55c:
+        mov eax, dword ptr ds:[0x007d459c]       // 004ca55c
+        test eax, eax                            // 004ca561
+        je L_4ca567                              // 004ca563
+        call eax                                 // 004ca565
+    L_4ca567:
+        test esi, esi                            // 004ca567
+        jne L_4ca726                             // 004ca569
+        call RwCore_004c9ad0                    // 004ca56f
+    L_4ca574:
+        mov eax, dword ptr ds:[0x00912100]       // 004ca574
+        test eax, eax                            // 004ca579
+        je L_4cab08                              // 004ca57b
+        mov eax, dword ptr ds:[0x00911f88]       // 004ca581
+        mov edx, dword ptr ds:[0x00911f84]       // 004ca586
+        mov dword ptr ds:[0x009120e4], eax       // 004ca58c
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca591
+        mov dword ptr ds:[0x009120e0], edx       // 004ca596
+        push 0x9120e0                            // 004ca59c
+        mov ecx, dword ptr [eax]                 // 004ca5a1
+        push eax                                 // 004ca5a3
+        call dword ptr [ecx + 0x40]              // 004ca5a4
+        test eax, eax                            // 004ca5a7
+        jl L_4cab08                              // 004ca5a9
+        mov edx, dword ptr [esp + 0x18]          // 004ca5af
+        mov eax, dword ptr ds:[0x00911f84]       // 004ca5b3
+        mov ecx, dword ptr [esp + 0x1c]          // 004ca5b8
+        mov esi, dword ptr ds:[0x005cc238]       // 004ca5bc
+        add eax, edx                             // 004ca5c2
+        mov edx, dword ptr ds:[0x00911f88]       // 004ca5c4
+        mov dword ptr [esp + 0x20], eax          // 004ca5ca
+        mov eax, dword ptr ds:[0x007d4104]       // 004ca5ce
+        add edx, ecx                             // 004ca5d3
+        push -0x10                               // 004ca5d5
+        push eax                                 // 004ca5d7
+        mov dword ptr [esp + 0x2c], edx          // 004ca5d8
+        call esi                                 // 004ca5dc
+        test eax, 0x1000000                      // 004ca5de
+        je L_4ca605                              // 004ca5e3
+        mov ecx, dword ptr ds:[0x007d4104]       // 004ca5e5
+        push -0x10                               // 004ca5eb
+        push ecx                                 // 004ca5ed
+        call esi                                 // 004ca5ee
+        mov edx, dword ptr ds:[0x007d4104]       // 004ca5f0
+        and eax, 0xfeffffff                      // 004ca5f6
+        push eax                                 // 004ca5fb
+        push -0x10                               // 004ca5fc
+        push edx                                 // 004ca5fe
+        call dword ptr [RwCoreIat_005cc280]   // USER32.dll!SetWindowLongA // 004ca5ff
+    L_4ca605:
+        mov eax, dword ptr ds:[0x007d4104]       // 004ca605
+        push -0x14                               // 004ca60a
+        push eax                                 // 004ca60c
+        call esi                                 // 004ca60d
+        mov ecx, dword ptr ds:[0x007d4104]       // 004ca60f
+        push eax                                 // 004ca615
+        push ecx                                 // 004ca616
+        call dword ptr [RwCoreIat_005cc23c]   // USER32.dll!GetMenu // 004ca617
+        mov edx, dword ptr ds:[0x007d4104]       // 004ca61d
+        neg eax                                  // 004ca623
+        sbb eax, eax                             // 004ca625
+        neg eax                                  // 004ca627
+        push eax                                 // 004ca629
+        push -0x10                               // 004ca62a
+        push edx                                 // 004ca62c
+        call esi                                 // 004ca62d
+        push eax                                 // 004ca62f
+        lea eax, [esp + 0x24]                    // 004ca630
+        push eax                                 // 004ca634
+        call dword ptr [RwCoreIat_005cc240]   // USER32.dll!AdjustWindowRectEx // 004ca635
+        mov eax, dword ptr [esp + 0x24]          // 004ca63b
+        mov edx, dword ptr [esp + 0x1c]          // 004ca63f
+        mov ecx, eax                             // 004ca643
+        push 6                                   // 004ca645
+        sub ecx, edx                             // 004ca647
+        mov edx, dword ptr [esp + 0x24]          // 004ca649
+        push ecx                                 // 004ca64d
+        mov ecx, dword ptr [esp + 0x20]          // 004ca64e
+        sub edx, ecx                             // 004ca652
+        push edx                                 // 004ca654
+        push eax                                 // 004ca655
+        mov eax, dword ptr ds:[0x007d4104]       // 004ca656
+        push ecx                                 // 004ca65b
+        push 0                                   // 004ca65c
+        push eax                                 // 004ca65e
+        call dword ptr [RwCoreIat_005cc284]   // USER32.dll!SetWindowPos // 004ca65f
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca665
+        push 0x7d4118                            // 004ca66a
+        push 0                                   // 004ca66f
+        push eax                                 // 004ca671
+        mov ecx, dword ptr [eax]                 // 004ca672
+        call dword ptr [ecx + 0x98]              // 004ca674
+        mov eax, dword ptr ds:[0x007d4118]       // 004ca67a
+        push eax                                 // 004ca67f
+        mov edx, dword ptr [eax]                 // 004ca680
+        call dword ptr [edx + 8]                 // 004ca682
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca685
+        push 0x7d4114                            // 004ca68a
+        push eax                                 // 004ca68f
+        mov ecx, dword ptr [eax]                 // 004ca690
+        call dword ptr [ecx + 0xa0]              // 004ca692
+        mov eax, dword ptr ds:[0x007d4114]       // 004ca698
+        push eax                                 // 004ca69d
+        mov edx, dword ptr [eax]                 // 004ca69e
+        call dword ptr [edx + 8]                 // 004ca6a0
+        call RwCore_004d1e30                    // 004ca6a3
+        test eax, eax                            // 004ca6a8
+        je L_4ca719                              // 004ca6aa
+        call RwCore_004dc970                    // 004ca6ac
+        test eax, eax                            // 004ca6b1
+        je L_4ca719                              // 004ca6b3
+        call RwCore_004d6200                    // 004ca6b5
+        mov eax, dword ptr ds:[0x007d456c]       // 004ca6ba
+        xor esi, esi                             // 004ca6bf
+        test eax, eax                            // 004ca6c1
+        jle L_4ca70b                             // 004ca6c3
+        xor edi, edi                             // 004ca6c5
+    L_4ca6c7:
+        mov edx, dword ptr ds:[0x007d4570]       // 004ca6c7
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca6cd
+        add edx, edi                             // 004ca6d2
+        mov ecx, dword ptr [eax]                 // 004ca6d4
+        push edx                                 // 004ca6d6
+        push esi                                 // 004ca6d7
+        push eax                                 // 004ca6d8
+        call dword ptr [ecx + 0xcc]              // 004ca6d9
+        mov edx, dword ptr ds:[0x007d4570]       // 004ca6df
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca6e5
+        mov edx, dword ptr [edi + edx + 0x68]    // 004ca6ea
+        mov ecx, dword ptr [eax]                 // 004ca6ee
+        push edx                                 // 004ca6f0
+        push esi                                 // 004ca6f1
+        push eax                                 // 004ca6f2
+        call dword ptr [ecx + 0xd4]              // 004ca6f3
+        mov ecx, dword ptr ds:[0x007d456c]       // 004ca6f9
+        inc esi                                  // 004ca6ff
+        add edi, 0x6c                            // 004ca700
+        cmp esi, ecx                             // 004ca703
+        jl L_4ca6c7                              // 004ca705
+        test eax, eax                            // 004ca707
+        jl L_4ca719                              // 004ca709
+    L_4ca70b:
+        call RwCore_004db3e0                    // 004ca70b
+        test eax, eax                            // 004ca710
+        je L_4ca719                              // 004ca712
+        call RwCore_004e0920                    // 004ca714
+    L_4ca719:
+        mov eax, dword ptr ds:[0x007d459c]       // 004ca719
+        test eax, eax                            // 004ca71e
+        je L_4ca739                              // 004ca720
+        call eax                                 // 004ca722
+        jmp L_4ca739                             // 004ca724
+    L_4ca726:
+        mov eax, dword ptr [esp + 0x20]          // 004ca726
+        mov ecx, dword ptr [esp + 0x24]          // 004ca72a
+        mov dword ptr ds:[0x00911f84], eax       // 004ca72e
+        mov dword ptr ds:[0x00911f88], ecx       // 004ca733
+    L_4ca739:
+        mov edx, dword ptr [esp + 0x68]          // 004ca739
+        cmp byte ptr [edx + 0x20], 5             // 004ca73d
+        jne L_4ca89e                             // 004ca741
+        mov al, byte ptr [ebp + 9]               // 004ca747
+        test al, 0xf                             // 004ca74a
+        je L_4ca769                              // 004ca74c
+        mov ecx, dword ptr [ebp]                 // 004ca74e
+        lea esi, [esp + 0x68]                    // 004ca751
+        and eax, 0xff                            // 004ca755
+        push esi                                 // 004ca75a
+        mov edx, dword ptr [ecx]                 // 004ca75b
+        push 0                                   // 004ca75d
+        shr eax, 4                               // 004ca75f
+        push eax                                 // 004ca762
+        push ecx                                 // 004ca763
+        call dword ptr [edx + 0x48]              // 004ca764
+        jmp L_4ca779                             // 004ca767
+    L_4ca769:
+        mov eax, dword ptr [ebp]                 // 004ca769
+        lea edx, [esp + 0x68]                    // 004ca76c
+        push edx                                 // 004ca770
+        push 0                                   // 004ca771
+        mov ecx, dword ptr [eax]                 // 004ca773
+        push eax                                 // 004ca775
+        call dword ptr [ecx + 0x48]              // 004ca776
+    L_4ca779:
+        mov eax, dword ptr [esp + 0x68]          // 004ca779
+        lea edx, [esp + 0x28]                    // 004ca77d
+        push edx                                 // 004ca781
+        push eax                                 // 004ca782
+        mov ecx, dword ptr [eax]                 // 004ca783
+        call dword ptr [ecx + 0x30]              // 004ca785
+        test byte ptr [esp + 0x30], 1            // 004ca788
+        je L_4ca840                              // 004ca78d
+        mov ecx, dword ptr [esp + 0x68]          // 004ca793
+        mov eax, dword ptr ds:[0x007d4578]       // 004ca797
+        cmp eax, ecx                             // 004ca79c
+        je L_4ca7b7                              // 004ca79e
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca7a0
+        mov dword ptr ds:[0x007d4578], ecx       // 004ca7a5
+        push ecx                                 // 004ca7ab
+        push 0                                   // 004ca7ac
+        mov edx, dword ptr [eax]                 // 004ca7ae
+        push eax                                 // 004ca7b0
+        call dword ptr [edx + 0x94]              // 004ca7b1
+    L_4ca7b7:
+        mov eax, dword ptr [ebx + 0x64]          // 004ca7b7
+        test eax, eax                            // 004ca7ba
+        je L_4ca821                              // 004ca7bc
+        mov eax, dword ptr [eax]                 // 004ca7be
+        mov esi, dword ptr ds:[0x00911ae4]       // 004ca7c0
+        mov cl, byte ptr [eax + 0x20]            // 004ca7c6
+        mov eax, dword ptr [esi + eax]           // 004ca7c9
+        and cl, 7                                // 004ca7cc
+        cmp cl, 1                                // 004ca7cf
+        je L_4ca875                              // 004ca7d2
+        mov ecx, dword ptr [eax]                 // 004ca7d8
+        lea edx, [esp + 0x14]                    // 004ca7da
+        push edx                                 // 004ca7de
+        push 0                                   // 004ca7df
+        push eax                                 // 004ca7e1
+        call dword ptr [ecx + 0x48]              // 004ca7e2
+        mov eax, dword ptr [esp + 0x14]          // 004ca7e5
+        mov ecx, dword ptr ds:[0x007d4574]       // 004ca7e9
+        cmp ecx, eax                             // 004ca7ef
+        je L_4ca80c                              // 004ca7f1
+        mov ecx, dword ptr ds:[0x007d4110]       // 004ca7f3
+        mov dword ptr ds:[0x007d4574], eax       // 004ca7f9
+        push eax                                 // 004ca7fe
+        push ecx                                 // 004ca7ff
+        mov edx, dword ptr [ecx]                 // 004ca800
+        call dword ptr [edx + 0x9c]              // 004ca802
+        mov eax, dword ptr [esp + 0x14]          // 004ca808
+    L_4ca80c:
+        mov ecx, dword ptr [eax]                 // 004ca80c
+        push eax                                 // 004ca80e
+        call dword ptr [ecx + 8]                 // 004ca80f
+        mov eax, dword ptr [esp + 0x68]          // 004ca812
+        push eax                                 // 004ca816
+        mov ecx, dword ptr [eax]                 // 004ca817
+        call dword ptr [ecx + 8]                 // 004ca819
+        jmp L_4ca8e8                             // 004ca81c
+    L_4ca821:
+        mov eax, dword ptr ds:[0x007d4574]       // 004ca821
+        test eax, eax                            // 004ca826
+        je L_4ca892                              // 004ca828
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca82a
+        mov dword ptr ds:[0x007d4574], 0         // 004ca82f
+        push 0                                   // 004ca839
+        push eax                                 // 004ca83b
+        mov edx, dword ptr [eax]                 // 004ca83c
+        jmp L_4ca88c                             // 004ca83e
+    L_4ca840:
+        mov eax, dword ptr ds:[0x007d4118]       // 004ca840
+        mov ecx, dword ptr ds:[0x007d4578]       // 004ca845
+        cmp ecx, eax                             // 004ca84b
+        mov dword ptr ds:[0x007d411c], 1         // 004ca84d
+        je L_4ca870                              // 004ca857
+        mov ecx, dword ptr ds:[0x007d4110]       // 004ca859
+        mov dword ptr ds:[0x007d4578], eax       // 004ca85f
+        push eax                                 // 004ca864
+        push 0                                   // 004ca865
+        mov edx, dword ptr [ecx]                 // 004ca867
+        push ecx                                 // 004ca869
+        call dword ptr [edx + 0x94]              // 004ca86a
+    L_4ca870:
+        mov eax, dword ptr ds:[0x007d4114]       // 004ca870
+    L_4ca875:
+        cmp dword ptr ds:[0x007d4574], eax       // 004ca875
+        je L_4ca892                              // 004ca87b
+        mov ecx, dword ptr ds:[0x007d4110]       // 004ca87d
+        mov dword ptr ds:[0x007d4574], eax       // 004ca883
+        push eax                                 // 004ca888
+        push ecx                                 // 004ca889
+        mov edx, dword ptr [ecx]                 // 004ca88a
+    L_4ca88c:
+        call dword ptr [edx + 0x9c]              // 004ca88c
+    L_4ca892:
+        mov eax, dword ptr [esp + 0x68]          // 004ca892
+        push eax                                 // 004ca896
+        mov ecx, dword ptr [eax]                 // 004ca897
+        call dword ptr [ecx + 8]                 // 004ca899
+        jmp L_4ca8e8                             // 004ca89c
+    L_4ca89e:
+        mov eax, dword ptr ds:[0x007d4118]       // 004ca89e
+        mov ecx, dword ptr ds:[0x007d4578]       // 004ca8a3
+        cmp ecx, eax                             // 004ca8a9
+        je L_4ca8c4                              // 004ca8ab
+        mov ecx, dword ptr ds:[0x007d4110]       // 004ca8ad
+        mov dword ptr ds:[0x007d4578], eax       // 004ca8b3
+        push eax                                 // 004ca8b8
+        push 0                                   // 004ca8b9
+        mov edx, dword ptr [ecx]                 // 004ca8bb
+        push ecx                                 // 004ca8bd
+        call dword ptr [edx + 0x94]              // 004ca8be
+    L_4ca8c4:
+        mov eax, dword ptr ds:[0x007d4114]       // 004ca8c4
+        mov ecx, dword ptr ds:[0x007d4574]       // 004ca8c9
+        cmp ecx, eax                             // 004ca8cf
+        je L_4ca8e8                              // 004ca8d1
+        mov ecx, dword ptr ds:[0x007d4110]       // 004ca8d3
+        mov dword ptr ds:[0x007d4574], eax       // 004ca8d9
+        push eax                                 // 004ca8de
+        push ecx                                 // 004ca8df
+        mov edx, dword ptr [ecx]                 // 004ca8e0
+        call dword ptr [edx + 0x9c]              // 004ca8e2
+    L_4ca8e8:
+        mov edi, dword ptr [esp + 0x10]          // 004ca8e8
+    L_4ca8ec:
+        movsx eax, word ptr [edi + 0x1c]         // 004ca8ec
+        mov dword ptr [esp + 0x48], eax          // 004ca8f0
+        movsx ecx, word ptr [edi + 0x1e]         // 004ca8f4
+        mov dword ptr [esp + 0x4c], ecx          // 004ca8f8
+        mov edx, dword ptr [edi + 0xc]           // 004ca8fc
+        mov dword ptr [esp + 0x50], edx          // 004ca8ff
+        mov eax, dword ptr [edi + 0x10]          // 004ca903
+        mov dword ptr [esp + 0x54], eax          // 004ca906
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca90a
+        lea edx, [esp + 0x48]                    // 004ca90f
+        mov dword ptr [esp + 0x58], 0            // 004ca913
+        mov dword ptr [esp + 0x5c], 0x3f800000   // 004ca91b
+        mov ecx, dword ptr [eax]                 // 004ca923
+        push edx                                 // 004ca925
+        push eax                                 // 004ca926
+        call dword ptr [ecx + 0xbc]              // 004ca927
+        mov eax, dword ptr [ebx + 0x88]          // 004ca92d
+        push eax                                 // 004ca933
+        push 0x24                                // 004ca934
+        call RwCore_004d5480                    // 004ca936
+        mov ecx, dword ptr [ebx + 0x84]          // 004ca93b
+        push ecx                                 // 004ca941
+        push 0x25                                // 004ca942
+        call RwCore_004d5480                    // 004ca944
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca949
+        add esp, 0x10                            // 004ca94e
+        mov edx, dword ptr [eax]                 // 004ca951
+        push eax                                 // 004ca953
+        call dword ptr [edx + 0xc]               // 004ca954
+        mov ebx, eax                             // 004ca957
+        cmp ebx, 0x88760869                      // 004ca959
+        jne L_4caabb                             // 004ca95f
+        call RwCore_004c9ad0                    // 004ca965
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca96a
+        push 0x9120e0                            // 004ca96f
+        push eax                                 // 004ca974
+        mov ecx, dword ptr [eax]                 // 004ca975
+        call dword ptr [ecx + 0x40]              // 004ca977
+        mov ebx, eax                             // 004ca97a
+        cmp ebx, 0x8876086c                      // 004ca97c
+        jne L_4ca9f4                             // 004ca982
+        mov eax, dword ptr ds:[0x00912100]       // 004ca984
+        test eax, eax                            // 004ca989
+        je L_4caaf1                              // 004ca98b
+        mov eax, dword ptr ds:[0x007d4108]       // 004ca991
+        lea ecx, [esp + 0x28]                    // 004ca996
+        push ecx                                 // 004ca99a
+        mov ecx, dword ptr ds:[0x007d410c]       // 004ca99b
+        mov edx, dword ptr [eax]                 // 004ca9a1
+        push ecx                                 // 004ca9a3
+        push eax                                 // 004ca9a4
+        call dword ptr [edx + 0x20]              // 004ca9a5
+        mov eax, dword ptr [esp + 0x34]          // 004ca9a8
+        mov dword ptr ds:[0x00911f90], eax       // 004ca9ac
+        mov dword ptr ds:[0x009120e8], eax       // 004ca9b1
+        add eax, -0x15                           // 004ca9b6
+        cmp eax, 0xe                             // 004ca9b9
+        ja L_4ca9db                              // 004ca9bc
+        xor edx, edx                             // 004ca9be
+        // mov dl, byte ptr [eax + 0x4cab20] (index table read, folded into the switch chain below) // 004ca9c0
+        cmp eax, 0                               // 004ca9c6
+        je L_4ca9cd                              // 004ca9c6
+        cmp eax, 1                               // 004ca9c6
+        je L_4ca9cd                              // 004ca9c6
+        cmp eax, 2                               // 004ca9c6
+        je L_4ca9d4                              // 004ca9c6
+        cmp eax, 3                               // 004ca9c6
+        je L_4ca9d4                              // 004ca9c6
+        cmp eax, 4                               // 004ca9c6
+        je L_4ca9d4                              // 004ca9c6
+        cmp eax, 5                               // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 6                               // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 7                               // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 8                               // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 9                               // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 10                              // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 11                              // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 12                              // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 13                              // 004ca9c6
+        je L_4ca9db                              // 004ca9c6
+        cmp eax, 14                              // 004ca9c6
+        je L_4ca9cd                              // 004ca9c6
+        int 3   // switch index out of the table bound // 004ca9c6
+    L_4ca9cd:
+        mov eax, 0x20                            // 004ca9cd
+        jmp L_4ca9dd                             // 004ca9d2
+    L_4ca9d4:
+        mov eax, 0x10                            // 004ca9d4
+        jmp L_4ca9dd                             // 004ca9d9
+    L_4ca9db:
+        xor eax, eax                             // 004ca9db
+    L_4ca9dd:
+        mov dword ptr ds:[0x00911f94], eax       // 004ca9dd
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca9e2
+        push 0x9120e0                            // 004ca9e7
+        push eax                                 // 004ca9ec
+        mov ecx, dword ptr [eax]                 // 004ca9ed
+        call dword ptr [ecx + 0x40]              // 004ca9ef
+        mov ebx, eax                             // 004ca9f2
+    L_4ca9f4:
+        test ebx, ebx                            // 004ca9f4
+        jl L_4caaf1                              // 004ca9f6
+        mov eax, dword ptr ds:[0x007d4110]       // 004ca9fc
+        push 0x7d4118                            // 004caa01
+        push 0                                   // 004caa06
+        push eax                                 // 004caa08
+        mov edx, dword ptr [eax]                 // 004caa09
+        call dword ptr [edx + 0x98]              // 004caa0b
+        mov eax, dword ptr ds:[0x007d4118]       // 004caa11
+        push eax                                 // 004caa16
+        mov ecx, dword ptr [eax]                 // 004caa17
+        call dword ptr [ecx + 8]                 // 004caa19
+        mov eax, dword ptr ds:[0x007d4110]       // 004caa1c
+        push 0x7d4114                            // 004caa21
+        push eax                                 // 004caa26
+        mov edx, dword ptr [eax]                 // 004caa27
+        call dword ptr [edx + 0xa0]              // 004caa29
+        mov eax, dword ptr ds:[0x007d4114]       // 004caa2f
+        push eax                                 // 004caa34
+        mov ecx, dword ptr [eax]                 // 004caa35
+        call dword ptr [ecx + 8]                 // 004caa37
+        call RwCore_004d1e30                    // 004caa3a
+        test eax, eax                            // 004caa3f
+        je L_4caab0                              // 004caa41
+        call RwCore_004dc970                    // 004caa43
+        test eax, eax                            // 004caa48
+        je L_4caab0                              // 004caa4a
+        call RwCore_004d6200                    // 004caa4c
+        mov eax, dword ptr ds:[0x007d456c]       // 004caa51
+        xor esi, esi                             // 004caa56
+        test eax, eax                            // 004caa58
+        jle L_4caaa2                             // 004caa5a
+        xor edi, edi                             // 004caa5c
+    L_4caa5e:
+        mov ecx, dword ptr ds:[0x007d4570]       // 004caa5e
+        mov eax, dword ptr ds:[0x007d4110]       // 004caa64
+        add ecx, edi                             // 004caa69
+        mov edx, dword ptr [eax]                 // 004caa6b
+        push ecx                                 // 004caa6d
+        push esi                                 // 004caa6e
+        push eax                                 // 004caa6f
+        call dword ptr [edx + 0xcc]              // 004caa70
+        mov ecx, dword ptr ds:[0x007d4570]       // 004caa76
+        mov eax, dword ptr ds:[0x007d4110]       // 004caa7c
+        mov ecx, dword ptr [edi + ecx + 0x68]    // 004caa81
+        mov edx, dword ptr [eax]                 // 004caa85
+        push ecx                                 // 004caa87
+        push esi                                 // 004caa88
+        push eax                                 // 004caa89
+        call dword ptr [edx + 0xd4]              // 004caa8a
+        mov ecx, dword ptr ds:[0x007d456c]       // 004caa90
+        inc esi                                  // 004caa96
+        add edi, 0x6c                            // 004caa97
+        cmp esi, ecx                             // 004caa9a
+        jl L_4caa5e                              // 004caa9c
+        test eax, eax                            // 004caa9e
+        jl L_4caab0                              // 004caaa0
+    L_4caaa2:
+        call RwCore_004db3e0                    // 004caaa2
+        test eax, eax                            // 004caaa7
+        je L_4caab0                              // 004caaa9
+        call RwCore_004e0920                    // 004caaab
+    L_4caab0:
+        mov eax, dword ptr ds:[0x007d459c]       // 004caab0
+        test eax, eax                            // 004caab5
+        je L_4caabb                              // 004caab7
+        call eax                                 // 004caab9
+    L_4caabb:
+        test ebx, ebx                            // 004caabb
+        jl L_4caaf1                              // 004caabd
+        mov eax, dword ptr ds:[0x007d4140]       // 004caabf
+        test eax, eax                            // 004caac4
+        jne L_4caafb                             // 004caac6
+        mov eax, dword ptr ds:[0x007d4110]       // 004caac8
+        push eax                                 // 004caacd
+        mov edx, dword ptr [eax]                 // 004caace
+        call dword ptr [edx + 0xa4]              // 004caad0
+        test eax, eax                            // 004caad6
+        jl L_4caafb                              // 004caad8
+        pop edi                                  // 004caada
+        pop esi                                  // 004caadb
+        mov dword ptr ds:[0x007d4140], 1         // 004caadc
+        mov eax, dword ptr ds:[0x007d4140]       // 004caae6
+        pop ebp                                  // 004caaeb
+        pop ebx                                  // 004caaec
+        add esp, 0x50                            // 004caaed
+        ret                                      // 004caaf0
+    L_4caaf1:
+        mov dword ptr ds:[0x007d4140], 0         // 004caaf1
+    L_4caafb:
+        mov eax, dword ptr ds:[0x007d4140]       // 004caafb
+        pop edi                                  // 004cab00
+        pop esi                                  // 004cab01
+        pop ebp                                  // 004cab02
+        pop ebx                                  // 004cab03
+        add esp, 0x50                            // 004cab04
+        ret                                      // 004cab07
+    L_4cab08:
+        pop edi                                  // 004cab08
+        pop esi                                  // 004cab09
+        pop ebp                                  // 004cab0a
+        xor eax, eax                             // 004cab0b
+        pop ebx                                  // 004cab0d
+        add esp, 0x50                            // 004cab0e
+        ret                                      // 004cab11
+    }
+}
+
 // HAND-LIFT 0x004cab30 RwCoreLift_004cab30  (75 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_004cab30(void) {
     __asm {
@@ -2656,6 +4881,41 @@ extern "C" __declspec(naked) int RwCoreLift_004d34e0(void) {
     }
 }
 
+// HAND-LIFT 0x004d8090 RwCoreLift_004d8090  (27 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004d8090(void) {
+    __asm {
+        push ebp                                 // 004d8090
+        mov ebp, dword ptr [esp + 8]             // 004d8091
+        push esi                                 // 004d8095
+        mov esi, dword ptr [ebp + 0x10]          // 004d8096
+        test esi, esi                            // 004d8099
+        je L_4d80bf                              // 004d809b
+        push ebx                                 // 004d809d
+        mov ebx, dword ptr [esp + 0x14]          // 004d809e
+        push edi                                 // 004d80a2
+        mov edi, dword ptr [esp + 0x1c]          // 004d80a3
+    L_4d80a7:
+        mov eax, dword ptr [esi + 4]             // 004d80a7
+        mov ecx, dword ptr [esi]                 // 004d80aa
+        push eax                                 // 004d80ac
+        push ecx                                 // 004d80ad
+        push edi                                 // 004d80ae
+        push ebx                                 // 004d80af
+        call dword ptr [esi + 0x28]              // 004d80b0
+        mov esi, dword ptr [esi + 0x30]          // 004d80b3
+        add esp, 0x10                            // 004d80b6
+        test esi, esi                            // 004d80b9
+        jne L_4d80a7                             // 004d80bb
+        pop edi                                  // 004d80bd
+        pop ebx                                  // 004d80be
+    L_4d80bf:
+        mov eax, ebp                             // 004d80bf
+        pop esi                                  // 004d80c1
+        pop ebp                                  // 004d80c2
+        ret                                      // 004d80c3
+    }
+}
+
 // HAND-LIFT 0x004d8cc0 RwCoreLift_004d8cc0  (147 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_004d8cc0(void) {
     __asm {
@@ -3135,6 +5395,432 @@ extern "C" __declspec(naked) int RwCoreLift_004db840(void) {
         pop esi                                  // 004dba4d
         add esp, 8                               // 004dba4e
         ret                                      // 004dba51
+    }
+}
+
+// HAND-LIFT 0x004dbc90 RwCoreLift_004dbc90  (383 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004dbc90(void) {
+    __asm {
+        sub esp, 8                               // 004dbc90
+        mov eax, dword ptr ds:[0x00911d60]       // 004dbc93
+        mov ecx, dword ptr [esp + 0xc]           // 004dbc98
+        push ebx                                 // 004dbc9c
+        push ebp                                 // 004dbc9d
+        push esi                                 // 004dbc9e
+        push edi                                 // 004dbc9f
+        mov ebx, dword ptr [esp + 0x2c]          // 004dbca0
+        xor edi, edi                             // 004dbca4
+        mov dword ptr [esp + 0x10], edi          // 004dbca6
+        mov esi, dword ptr [eax + 0x60]          // 004dbcaa
+        lea eax, [ecx - 1]                       // 004dbcad
+        cmp eax, 4                               // 004dbcb0
+        ja L_4dbcf8                              // 004dbcb3
+        cmp eax, 0                               // 004dbcb5
+        je L_4dbcbc                              // 004dbcb5
+        cmp eax, 1                               // 004dbcb5
+        je L_4dbcc9                              // 004dbcb5
+        cmp eax, 2                               // 004dbcb5
+        je L_4dbcd2                              // 004dbcb5
+        cmp eax, 3                               // 004dbcb5
+        je L_4dbce6                              // 004dbcb5
+        cmp eax, 4                               // 004dbcb5
+        je L_4dbcef                              // 004dbcb5
+        int 3   // switch index out of the table bound // 004dbcb5
+    L_4dbcbc:
+        mov eax, ebx                             // 004dbcbc
+        cdq                                      // 004dbcbe
+        sub eax, edx                             // 004dbcbf
+        sar eax, 1                               // 004dbcc1
+        mov dword ptr [esp + 0x2c], eax          // 004dbcc3
+        jmp L_4dbcfc                             // 004dbcc7
+    L_4dbcc9:
+        lea edx, [ebx - 1]                       // 004dbcc9
+        mov dword ptr [esp + 0x2c], edx          // 004dbccc
+        jmp L_4dbcfc                             // 004dbcd0
+    L_4dbcd2:
+        mov eax, 0x55555556                      // 004dbcd2
+        imul ebx                                 // 004dbcd7
+        mov eax, edx                             // 004dbcd9
+        shr eax, 0x1f                            // 004dbcdb
+        add edx, eax                             // 004dbcde
+        mov dword ptr [esp + 0x2c], edx          // 004dbce0
+        jmp L_4dbcfc                             // 004dbce4
+    L_4dbce6:
+        lea ecx, [ebx - 2]                       // 004dbce6
+        mov dword ptr [esp + 0x2c], ecx          // 004dbce9
+        jmp L_4dbcfc                             // 004dbced
+    L_4dbcef:
+        lea edx, [ebx - 2]                       // 004dbcef
+        mov dword ptr [esp + 0x2c], edx          // 004dbcf2
+        jmp L_4dbcfc                             // 004dbcf6
+    L_4dbcf8:
+        mov dword ptr [esp + 0x2c], edi          // 004dbcf8
+    L_4dbcfc:
+        mov ebp, dword ptr [esp + 0x24]          // 004dbcfc
+        mov eax, dword ptr ds:[0x007d7098]       // 004dbd00
+        cmp ebx, ebp                             // 004dbd05
+        jg L_4dbee7                              // 004dbd07
+        cmp eax, edi                             // 004dbd0d
+        je L_4dbd7e                              // 004dbd0f
+        mov eax, dword ptr ds:[0x007d709c]       // 004dbd11
+        lea ecx, [eax + ebx]                     // 004dbd16
+        cmp ecx, 0x2492                          // 004dbd19
+        jbe L_4dbd4c                             // 004dbd1f
+        mov eax, dword ptr ds:[0x007d70a0]       // 004dbd21
+        lea ecx, [esp + 0x10]                    // 004dbd26
+        push 0x2800                              // 004dbd2a
+        push ecx                                 // 004dbd2f
+        lea ecx, [ebx*8]                         // 004dbd30
+        mov dword ptr ds:[0x007d709c], edi       // 004dbd37
+        mov edx, dword ptr [eax]                 // 004dbd3d
+        sub ecx, ebx                             // 004dbd3f
+        shl ecx, 2                               // 004dbd41
+        push ecx                                 // 004dbd44
+        push edi                                 // 004dbd45
+        push eax                                 // 004dbd46
+        call dword ptr [edx + 0x2c]              // 004dbd47
+        jmp L_4dbd98                             // 004dbd4a
+    L_4dbd4c:
+        lea ebp, [esp + 0x10]                    // 004dbd4c
+        push 0x1800                              // 004dbd50
+        push ebp                                 // 004dbd55
+        lea ebp, [ebx*8]                         // 004dbd56
+        mov ecx, dword ptr ds:[0x007d70a0]       // 004dbd5d
+        sub ebp, ebx                             // 004dbd63
+        shl ebp, 2                               // 004dbd65
+        mov edx, dword ptr [ecx]                 // 004dbd68
+        push ebp                                 // 004dbd6a
+        lea ebp, [eax*8]                         // 004dbd6b
+        sub ebp, eax                             // 004dbd72
+        shl ebp, 2                               // 004dbd74
+        push ebp                                 // 004dbd77
+        push ecx                                 // 004dbd78
+        call dword ptr [edx + 0x2c]              // 004dbd79
+        jmp L_4dbd98                             // 004dbd7c
+    L_4dbd7e:
+        lea eax, [esp + 0x10]                    // 004dbd7e
+        push 0x7d709c                            // 004dbd82
+        push eax                                 // 004dbd87
+        push 0x7d70a0                            // 004dbd88
+        push ebx                                 // 004dbd8d
+        push 0x1c                                // 004dbd8e
+        call RwCore_004dcbb0                    // 004dbd90
+        add esp, 0x14                            // 004dbd95
+    L_4dbd98:
+        cmp dword ptr [esp + 0x10], edi          // 004dbd98
+        je L_4dc139                              // 004dbd9c
+        mov ax, word ptr [esi + 0x1c]            // 004dbda2
+        cmp ax, di                               // 004dbda6
+        jne L_4dbdf2                             // 004dbda9
+        cmp word ptr [esi + 0x1e], di            // 004dbdab
+        jne L_4dbdf2                             // 004dbdaf
+        xor edx, edx                             // 004dbdb1
+        cmp ebx, edi                             // 004dbdb3
+        jle L_4dbe92                             // 004dbdb5
+        xor ebp, ebp                             // 004dbdbb
+    L_4dbdbd:
+        mov ecx, dword ptr [esp + 0x28]          // 004dbdbd
+        xor eax, eax                             // 004dbdc1
+        mov ax, word ptr [ecx + edx*2]           // 004dbdc3
+        lea ecx, [eax*8]                         // 004dbdc7
+        sub ecx, eax                             // 004dbdce
+        mov eax, dword ptr [esp + 0x20]          // 004dbdd0
+        inc edx                                  // 004dbdd4
+        lea esi, [eax + ecx*4]                   // 004dbdd5
+        mov ecx, dword ptr [esp + 0x10]          // 004dbdd8
+        lea edi, [ecx + ebp]                     // 004dbddc
+        mov ecx, 7                               // 004dbddf
+        add ebp, 0x1c                            // 004dbde4
+        cmp edx, ebx                             // 004dbde7
+        rep movsd                                // 004dbde9
+        jl L_4dbdbd                              // 004dbdeb
+        jmp L_4dbe90                             // 004dbded
+    L_4dbdf2:
+        movsx edx, ax                            // 004dbdf2
+        movsx eax, word ptr [esi + 0x1e]         // 004dbdf5
+        mov dword ptr [esp + 0x24], edx          // 004dbdf9
+        xor edx, edx                             // 004dbdfd
+        fild dword ptr [esp + 0x24]              // 004dbdff
+        mov dword ptr [esp + 0x24], eax          // 004dbe03
+        cmp ebx, edi                             // 004dbe07
+        fstp dword ptr [esp + 0x14]              // 004dbe09
+        fild dword ptr [esp + 0x24]              // 004dbe0d
+        fstp dword ptr [esp + 0x24]              // 004dbe11
+        jle L_4dbe92                             // 004dbe15
+        mov esi, dword ptr [esp + 0x28]          // 004dbe17
+        xor ecx, ecx                             // 004dbe1b
+    L_4dbe1d:
+        xor eax, eax                             // 004dbe1d
+        add ecx, 0x1c                            // 004dbe1f
+        mov ax, word ptr [esi + edx*2]           // 004dbe22
+        fld dword ptr [esp + 0x14]               // 004dbe26
+        lea edi, [eax*8]                         // 004dbe2a
+        sub edi, eax                             // 004dbe31
+        mov eax, dword ptr [esp + 0x20]          // 004dbe33
+        inc edx                                  // 004dbe37
+        fadd dword ptr [eax + edi*4]             // 004dbe38
+        lea eax, [eax + edi*4]                   // 004dbe3b
+        mov edi, dword ptr [esp + 0x10]          // 004dbe3e
+        cmp edx, ebx                             // 004dbe42
+        fstp dword ptr [ecx + edi - 0x1c]        // 004dbe44
+        fld dword ptr [esp + 0x24]               // 004dbe48
+        fadd dword ptr [eax + 4]                 // 004dbe4c
+        mov edi, dword ptr [esp + 0x10]          // 004dbe4f
+        fstp dword ptr [ecx + edi - 0x18]        // 004dbe53
+        mov ebp, dword ptr [esp + 0x10]          // 004dbe57
+        mov edi, dword ptr [eax + 8]             // 004dbe5b
+        mov dword ptr [ecx + ebp - 0x14], edi    // 004dbe5e
+        mov ebp, dword ptr [esp + 0x10]          // 004dbe62
+        mov edi, dword ptr [eax + 0xc]           // 004dbe66
+        mov dword ptr [ecx + ebp - 0x10], edi    // 004dbe69
+        mov ebp, dword ptr [esp + 0x10]          // 004dbe6d
+        mov edi, dword ptr [eax + 0x10]          // 004dbe71
+        mov dword ptr [ecx + ebp - 0xc], edi     // 004dbe74
+        mov ebp, dword ptr [esp + 0x10]          // 004dbe78
+        mov edi, dword ptr [eax + 0x14]          // 004dbe7c
+        mov dword ptr [ecx + ebp - 8], edi       // 004dbe7f
+        mov edi, dword ptr [esp + 0x10]          // 004dbe83
+        mov eax, dword ptr [eax + 0x18]          // 004dbe87
+        mov dword ptr [ecx + edi - 4], eax       // 004dbe8a
+        jl L_4dbe1d                              // 004dbe8e
+    L_4dbe90:
+        xor edi, edi                             // 004dbe90
+    L_4dbe92:
+        mov eax, dword ptr ds:[0x007d70a0]       // 004dbe92
+        push eax                                 // 004dbe97
+        mov ecx, dword ptr [eax]                 // 004dbe98
+        call dword ptr [ecx + 0x30]              // 004dbe9a
+        call RwCore_004db770                    // 004dbe9d
+        mov ecx, dword ptr [esp + 0x2c]          // 004dbea2
+        mov eax, dword ptr ds:[0x007d4110]       // 004dbea6
+        push ecx                                 // 004dbeab
+        mov ecx, dword ptr ds:[0x007d709c]       // 004dbeac
+        mov edx, dword ptr [eax]                 // 004dbeb2
+        push ecx                                 // 004dbeb4
+        mov ecx, dword ptr [esp + 0x24]          // 004dbeb5
+        mov ecx, dword ptr [ecx*4 + 0x5d8d8c]    // 004dbeb9
+        push ecx                                 // 004dbec0
+        push eax                                 // 004dbec1
+        call dword ptr [edx + 0x144]             // 004dbec2
+        mov edx, dword ptr ds:[0x007d709c]       // 004dbec8
+        add edx, ebx                             // 004dbece
+        mov dword ptr ds:[0x007d709c], edx       // 004dbed0
+        xor edx, edx                             // 004dbed6
+        cmp eax, edi                             // 004dbed8
+        pop edi                                  // 004dbeda
+        setge dl                                 // 004dbedb
+        pop esi                                  // 004dbede
+        pop ebp                                  // 004dbedf
+        mov eax, edx                             // 004dbee0
+        pop ebx                                  // 004dbee2
+        add esp, 8                               // 004dbee3
+        ret                                      // 004dbee6
+    L_4dbee7:
+        cmp eax, edi                             // 004dbee7
+        je L_4dbf58                              // 004dbee9
+        mov eax, dword ptr ds:[0x007d709c]       // 004dbeeb
+        lea ecx, [eax + ebp]                     // 004dbef0
+        cmp ecx, 0x2492                          // 004dbef3
+        jbe L_4dbf26                             // 004dbef9
+        mov eax, dword ptr ds:[0x007d70a0]       // 004dbefb
+        lea ecx, [esp + 0x10]                    // 004dbf00
+        push 0x2800                              // 004dbf04
+        push ecx                                 // 004dbf09
+        lea ecx, [ebp*8]                         // 004dbf0a
+        mov dword ptr ds:[0x007d709c], edi       // 004dbf11
+        mov edx, dword ptr [eax]                 // 004dbf17
+        sub ecx, ebp                             // 004dbf19
+        shl ecx, 2                               // 004dbf1b
+        push ecx                                 // 004dbf1e
+        push edi                                 // 004dbf1f
+        push eax                                 // 004dbf20
+        call dword ptr [edx + 0x2c]              // 004dbf21
+        jmp L_4dbf72                             // 004dbf24
+    L_4dbf26:
+        lea edi, [esp + 0x10]                    // 004dbf26
+        push 0x1800                              // 004dbf2a
+        push edi                                 // 004dbf2f
+        lea edi, [ebp*8]                         // 004dbf30
+        mov ecx, dword ptr ds:[0x007d70a0]       // 004dbf37
+        sub edi, ebp                             // 004dbf3d
+        shl edi, 2                               // 004dbf3f
+        mov edx, dword ptr [ecx]                 // 004dbf42
+        push edi                                 // 004dbf44
+        lea edi, [eax*8]                         // 004dbf45
+        sub edi, eax                             // 004dbf4c
+        shl edi, 2                               // 004dbf4e
+        push edi                                 // 004dbf51
+        push ecx                                 // 004dbf52
+        call dword ptr [edx + 0x2c]              // 004dbf53
+        jmp L_4dbf72                             // 004dbf56
+    L_4dbf58:
+        lea eax, [esp + 0x10]                    // 004dbf58
+        push 0x7d709c                            // 004dbf5c
+        push eax                                 // 004dbf61
+        push 0x7d70a0                            // 004dbf62
+        push ebp                                 // 004dbf67
+        push 0x1c                                // 004dbf68
+        call RwCore_004dcbb0                    // 004dbf6a
+        add esp, 0x14                            // 004dbf6f
+    L_4dbf72:
+        mov edi, dword ptr [esp + 0x10]          // 004dbf72
+        test edi, edi                            // 004dbf76
+        je L_4dc139                              // 004dbf78
+        mov ax, word ptr [esi + 0x1c]            // 004dbf7e
+        test ax, ax                              // 004dbf82
+        jne L_4dbfb0                             // 004dbf85
+        cmp word ptr [esi + 0x1e], ax            // 004dbf87
+        jne L_4dbfb0                             // 004dbf8b
+        lea ecx, [ebp*8]                         // 004dbf8d
+        mov esi, dword ptr [esp + 0x20]          // 004dbf94
+        sub ecx, ebp                             // 004dbf98
+        shl ecx, 2                               // 004dbf9a
+        mov edx, ecx                             // 004dbf9d
+        shr ecx, 2                               // 004dbf9f
+        rep movsd                                // 004dbfa2
+        mov ecx, edx                             // 004dbfa4
+        and ecx, 3                               // 004dbfa6
+        rep movsb                                // 004dbfa9
+        jmp L_4dc03e                             // 004dbfab
+    L_4dbfb0:
+        movsx ecx, word ptr [esi + 0x1e]         // 004dbfb0
+        movsx eax, ax                            // 004dbfb4
+        mov dword ptr [esp + 0x24], eax          // 004dbfb7
+        fild dword ptr [esp + 0x24]              // 004dbfbb
+        mov dword ptr [esp + 0x24], ecx          // 004dbfbf
+        test ebp, ebp                            // 004dbfc3
+        fstp dword ptr [esp + 0x14]              // 004dbfc5
+        fild dword ptr [esp + 0x24]              // 004dbfc9
+        fstp dword ptr [esp + 0x24]              // 004dbfcd
+        jle L_4dc03e                             // 004dbfd1
+        mov edx, dword ptr [esp + 0x20]          // 004dbfd3
+        xor eax, eax                             // 004dbfd7
+        lea ecx, [edx + 8]                       // 004dbfd9
+        mov edx, ebp                             // 004dbfdc
+        jmp L_4dbfe4                             // 004dbfde
+    L_4dbfe0:
+        mov edi, dword ptr [esp + 0x10]          // 004dbfe0
+    L_4dbfe4:
+        fld dword ptr [esp + 0x14]               // 004dbfe4
+        fadd dword ptr [ecx - 8]                 // 004dbfe8
+        add eax, 0x1c                            // 004dbfeb
+        add ecx, 0x1c                            // 004dbfee
+        dec edx                                  // 004dbff1
+        fstp dword ptr [eax + edi - 0x1c]        // 004dbff2
+        fld dword ptr [esp + 0x24]               // 004dbff6
+        fadd dword ptr [ecx - 0x20]              // 004dbffa
+        mov esi, dword ptr [esp + 0x10]          // 004dbffd
+        fstp dword ptr [eax + esi - 0x18]        // 004dc001
+        mov edi, dword ptr [esp + 0x10]          // 004dc005
+        mov esi, dword ptr [ecx - 0x1c]          // 004dc009
+        mov dword ptr [eax + edi - 0x14], esi    // 004dc00c
+        mov edi, dword ptr [esp + 0x10]          // 004dc010
+        mov esi, dword ptr [ecx - 0x18]          // 004dc014
+        mov dword ptr [eax + edi - 0x10], esi    // 004dc017
+        mov edi, dword ptr [esp + 0x10]          // 004dc01b
+        mov esi, dword ptr [ecx - 0x14]          // 004dc01f
+        mov dword ptr [eax + edi - 0xc], esi     // 004dc022
+        mov edi, dword ptr [esp + 0x10]          // 004dc026
+        mov esi, dword ptr [ecx - 0x10]          // 004dc02a
+        mov dword ptr [eax + edi - 8], esi       // 004dc02d
+        mov edi, dword ptr [esp + 0x10]          // 004dc031
+        mov esi, dword ptr [ecx - 0xc]           // 004dc035
+        mov dword ptr [eax + edi - 4], esi       // 004dc038
+        jne L_4dbfe0                             // 004dc03c
+    L_4dc03e:
+        mov eax, dword ptr ds:[0x007d70a0]       // 004dc03e
+        push eax                                 // 004dc043
+        mov ecx, dword ptr [eax]                 // 004dc044
+        call dword ptr [ecx + 0x30]              // 004dc046
+        mov eax, dword ptr ds:[0x007d70a8]       // 004dc049
+        test eax, eax                            // 004dc04e
+        je L_4dc139                              // 004dc050
+        cmp ebx, 0x2710                          // 004dc056
+        jg L_4dc139                              // 004dc05c
+        mov ecx, dword ptr ds:[0x007d70a4]       // 004dc062
+        lea esi, [ebx + ebx]                     // 004dc068
+        lea edx, [ecx + ebx]                     // 004dc06b
+        cmp edx, 0x2710                          // 004dc06e
+        jbe L_4dc095                             // 004dc074
+        lea edx, [esp + 0x10]                    // 004dc076
+        push 0x2800                              // 004dc07a
+        push edx                                 // 004dc07f
+        mov dword ptr ds:[0x007d70a4], 0         // 004dc080
+        mov ecx, dword ptr [eax]                 // 004dc08a
+        push esi                                 // 004dc08c
+        push 0                                   // 004dc08d
+        push eax                                 // 004dc08f
+        call dword ptr [ecx + 0x2c]              // 004dc090
+        jmp L_4dc0a9                             // 004dc093
+    L_4dc095:
+        mov edx, dword ptr [eax]                 // 004dc095
+        lea edi, [esp + 0x10]                    // 004dc097
+        push 0x1800                              // 004dc09b
+        push edi                                 // 004dc0a0
+        add ecx, ecx                             // 004dc0a1
+        push esi                                 // 004dc0a3
+        push ecx                                 // 004dc0a4
+        push eax                                 // 004dc0a5
+        call dword ptr [edx + 0x2c]              // 004dc0a6
+    L_4dc0a9:
+        test eax, eax                            // 004dc0a9
+        jl L_4dc11a                              // 004dc0ab
+        mov edi, dword ptr [esp + 0x10]          // 004dc0ad
+        mov ecx, esi                             // 004dc0b1
+        mov esi, dword ptr [esp + 0x28]          // 004dc0b3
+        mov edx, ecx                             // 004dc0b7
+        shr ecx, 2                               // 004dc0b9
+        rep movsd                                // 004dc0bc
+        mov ecx, edx                             // 004dc0be
+        and ecx, 3                               // 004dc0c0
+        rep movsb                                // 004dc0c3
+        mov eax, dword ptr ds:[0x007d70a8]       // 004dc0c5
+        push eax                                 // 004dc0ca
+        mov ecx, dword ptr [eax]                 // 004dc0cb
+        call dword ptr [ecx + 0x30]              // 004dc0cd
+        call RwCore_004db770                    // 004dc0d0
+        mov edx, dword ptr ds:[0x007d70a8]       // 004dc0d5
+        push edx                                 // 004dc0db
+        call RwCore_004cb2c0                    // 004dc0dc
+        mov edx, dword ptr [esp + 0x30]          // 004dc0e1
+        add esp, 4                               // 004dc0e5
+        mov eax, dword ptr ds:[0x007d4110]       // 004dc0e8
+        push edx                                 // 004dc0ed
+        mov edx, dword ptr ds:[0x007d70a4]       // 004dc0ee
+        push edx                                 // 004dc0f4
+        mov edx, dword ptr ds:[0x007d709c]       // 004dc0f5
+        mov ecx, dword ptr [eax]                 // 004dc0fb
+        push ebp                                 // 004dc0fd
+        push 0                                   // 004dc0fe
+        push edx                                 // 004dc100
+        mov edx, dword ptr [esp + 0x30]          // 004dc101
+        mov edx, dword ptr [edx*4 + 0x5d8d8c]    // 004dc105
+        push edx                                 // 004dc10c
+        push eax                                 // 004dc10d
+        call dword ptr [ecx + 0x148]             // 004dc10e
+        add dword ptr ds:[0x007d70a4], ebx       // 004dc114
+    L_4dc11a:
+        mov esi, dword ptr ds:[0x007d709c]       // 004dc11a
+        xor ecx, ecx                             // 004dc120
+        add esi, ebp                             // 004dc122
+        pop edi                                  // 004dc124
+        test eax, eax                            // 004dc125
+        mov dword ptr ds:[0x007d709c], esi       // 004dc127
+        pop esi                                  // 004dc12d
+        setge cl                                 // 004dc12e
+        pop ebp                                  // 004dc131
+        mov eax, ecx                             // 004dc132
+        pop ebx                                  // 004dc134
+        add esp, 8                               // 004dc135
+        ret                                      // 004dc138
+    L_4dc139:
+        pop edi                                  // 004dc139
+        pop esi                                  // 004dc13a
+        pop ebp                                  // 004dc13b
+        xor eax, eax                             // 004dc13c
+        pop ebx                                  // 004dc13e
+        add esp, 8                               // 004dc13f
+        ret                                      // 004dc142
     }
 }
 
@@ -4320,6 +7006,750 @@ extern "C" __declspec(naked) int RwCoreLift_004dee00(void) {
     }
 }
 
+// HAND-LIFT 0x004df030 RwCoreLift_004df030  (82 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004df030(void) {
+    __asm {
+        sub esp, 8                               // 004df030
+        push ebx                                 // 004df033
+        mov ebx, dword ptr [esp + 0x10]          // 004df034
+        push ebp                                 // 004df038
+        mov ebp, dword ptr [esp + 0x18]          // 004df039
+        push esi                                 // 004df03d
+        mov esi, dword ptr [esp + 0x20]          // 004df03e
+        mov ecx, dword ptr [ebp + 4]             // 004df042
+        lea eax, [ebx + 0xc]                     // 004df045
+        push edi                                 // 004df048
+        mov edi, esi                             // 004df049
+        mov dword ptr [eax], ecx                 // 004df04b
+        mov edx, dword ptr [ebp + 8]             // 004df04d
+        lea ecx, [ebx + 0x10]                    // 004df050
+        and edi, 7                               // 004df053
+        cmp edi, 5                               // 004df056
+        mov dword ptr [ebx + 0x14], 0            // 004df059
+        mov dword ptr [ecx], edx                 // 004df060
+        ja L_4df0cf                              // 004df062
+        cmp edi, 0                               // 004df064
+        je L_4df06b                              // 004df064
+        cmp edi, 1                               // 004df064
+        je L_4df0bd                              // 004df064
+        cmp edi, 2                               // 004df064
+        je L_4df0bd                              // 004df064
+        cmp edi, 3                               // 004df064
+        je L_4df0cf                              // 004df064
+        cmp edi, 4                               // 004df064
+        je L_4df093                              // 004df064
+        cmp edi, 5                               // 004df064
+        je L_4df093                              // 004df064
+        int 3   // switch index out of the table bound // 004df064
+    L_4df06b:
+        push esi                                 // 004df06b
+        push ecx                                 // 004df06c
+        push eax                                 // 004df06d
+        call RwCore_004ddcb0                    // 004df06e
+        push ebp                                 // 004df073
+        call RwCore_004dee40                    // 004df074
+        and esi, 0xffff6fff                      // 004df079
+        or eax, esi                              // 004df07f
+        push eax                                 // 004df081
+        push ebx                                 // 004df082
+        call RwCore_004d1d20                    // 004df083
+        add esp, 0x18                            // 004df088
+        pop edi                                  // 004df08b
+        pop esi                                  // 004df08c
+        pop ebp                                  // 004df08d
+        pop ebx                                  // 004df08e
+        add esp, 8                               // 004df08f
+        ret                                      // 004df092
+    L_4df093:
+        push esi                                 // 004df093
+        push ecx                                 // 004df094
+        push eax                                 // 004df095
+        call RwCore_004ddcb0                    // 004df096
+        push ebp                                 // 004df09b
+        call RwCore_004dee40                    // 004df09c
+        and esi, 0x9000                          // 004df0a1
+        or eax, esi                              // 004df0a7
+        or edi, eax                              // 004df0a9
+        push edi                                 // 004df0ab
+        push ebx                                 // 004df0ac
+        call RwCore_004d1d20                    // 004df0ad
+        add esp, 0x18                            // 004df0b2
+        pop edi                                  // 004df0b5
+        pop esi                                  // 004df0b6
+        pop ebp                                  // 004df0b7
+        pop ebx                                  // 004df0b8
+        add esp, 8                               // 004df0b9
+        ret                                      // 004df0bc
+    L_4df0bd:
+        push esi                                 // 004df0bd
+        push ebx                                 // 004df0be
+        call RwCore_004d1d20                    // 004df0bf
+        add esp, 8                               // 004df0c4
+        pop edi                                  // 004df0c7
+        pop esi                                  // 004df0c8
+        pop ebp                                  // 004df0c9
+        pop ebx                                  // 004df0ca
+        add esp, 8                               // 004df0cb
+        ret                                      // 004df0ce
+    L_4df0cf:
+        push 0x8000000d                          // 004df0cf
+        mov dword ptr [esp + 0x14], 1            // 004df0d4
+        call Orig_004d7ff0                    // 004df0dc
+        mov dword ptr [esp + 0x18], eax          // 004df0e1
+        lea eax, [esp + 0x14]                    // 004df0e5
+        push eax                                 // 004df0e9
+        call RwCore_004d8480                    // 004df0ea
+        add esp, 8                               // 004df0ef
+        xor eax, eax                             // 004df0f2
+        pop edi                                  // 004df0f4
+        pop esi                                  // 004df0f5
+        pop ebp                                  // 004df0f6
+        pop ebx                                  // 004df0f7
+        add esp, 8                               // 004df0f8
+        ret                                      // 004df0fb
+    }
+}
+
+// HAND-LIFT 0x004e0b70 RwCoreLift_004e0b70  (565 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004e0b70(void) {
+    __asm {
+        sub esp, 0x1c                            // 004e0b70
+        mov eax, dword ptr ds:[0x007d70fc]       // 004e0b73
+        push ebx                                 // 004e0b78
+        push ebp                                 // 004e0b79
+        push esi                                 // 004e0b7a
+        push edi                                 // 004e0b7b
+        lea edi, [eax + 0xc]                     // 004e0b7c
+        mov eax, dword ptr [eax + 4]             // 004e0b7f
+        xor ebx, ebx                             // 004e0b82
+        mov dword ptr [esp + 0x18], eax          // 004e0b84
+        mov eax, dword ptr [edi]                 // 004e0b88
+        test al, 1                               // 004e0b8a
+        je L_4e0ba6                              // 004e0b8c
+        mov esi, dword ptr ds:[0x007d7114]       // 004e0b8e
+        mov dword ptr [esp + 0x28], 1            // 004e0b94
+        mov dword ptr [esp + 0x1c], 0x18         // 004e0b9c
+        jmp L_4e0bb8                             // 004e0ba4
+    L_4e0ba6:
+        mov esi, dword ptr ds:[0x007d7118]       // 004e0ba6
+        mov dword ptr [esp + 0x28], ebx          // 004e0bac
+        mov dword ptr [esp + 0x1c], 0x10         // 004e0bb0
+    L_4e0bb8:
+        test al, 2                               // 004e0bb8
+        je L_4e0bbf                              // 004e0bba
+        push ebx                                 // 004e0bbc
+        jmp L_4e0bc1                             // 004e0bbd
+    L_4e0bbf:
+        push 1                                   // 004e0bbf
+    L_4e0bc1:
+        call RwCore_004d7100                    // 004e0bc1
+        mov ecx, dword ptr [edi + 4]             // 004e0bc6
+        add esp, 4                               // 004e0bc9
+        push ecx                                 // 004e0bcc
+        call RwCore_004cb4c0                    // 004e0bcd
+        push ebx                                 // 004e0bd2
+        push 0x89                                // 004e0bd3
+        call RwCore_004d5480                    // 004e0bd8
+        push ebx                                 // 004e0bdd
+        push 0x8f                                // 004e0bde
+        call RwCore_004d5480                    // 004e0be3
+        mov al, byte ptr [edi]                   // 004e0be8
+        add esp, 0x14                            // 004e0bea
+        test al, 4                               // 004e0bed
+        je L_4e0bf4                              // 004e0bef
+        push ebx                                 // 004e0bf1
+        jmp L_4e0bf6                             // 004e0bf2
+    L_4e0bf4:
+        push 1                                   // 004e0bf4
+    L_4e0bf6:
+        push 0x88                                // 004e0bf6
+        call RwCore_004d5480                    // 004e0bfb
+        add esp, 8                               // 004e0c00
+        push ebx                                 // 004e0c03
+        call RwCore_004d6e60                    // 004e0c04
+        add esp, 4                               // 004e0c09
+        test eax, eax                            // 004e0c0c
+        jne L_4e0c3b                             // 004e0c0e
+        push 3                                   // 004e0c10
+        push 1                                   // 004e0c12
+        push ebx                                 // 004e0c14
+        call RwCore_004d54f0                    // 004e0c15
+        push ebx                                 // 004e0c1a
+        push 3                                   // 004e0c1b
+        push ebx                                 // 004e0c1d
+        call RwCore_004d54f0                    // 004e0c1e
+        push 3                                   // 004e0c23
+        push 4                                   // 004e0c25
+        push ebx                                 // 004e0c27
+        call RwCore_004d54f0                    // 004e0c28
+        push ebx                                 // 004e0c2d
+        push 6                                   // 004e0c2e
+        push ebx                                 // 004e0c30
+        call RwCore_004d54f0                    // 004e0c31
+        add esp, 0x30                            // 004e0c36
+        jmp L_4e0c78                             // 004e0c39
+    L_4e0c3b:
+        push 4                                   // 004e0c3b
+        push 1                                   // 004e0c3d
+        push ebx                                 // 004e0c3f
+        call RwCore_004d54f0                    // 004e0c40
+        push 2                                   // 004e0c45
+        push 2                                   // 004e0c47
+        push ebx                                 // 004e0c49
+        call RwCore_004d54f0                    // 004e0c4a
+        push ebx                                 // 004e0c4f
+        push 3                                   // 004e0c50
+        push ebx                                 // 004e0c52
+        call RwCore_004d54f0                    // 004e0c53
+        push 4                                   // 004e0c58
+        push 4                                   // 004e0c5a
+        push ebx                                 // 004e0c5c
+        call RwCore_004d54f0                    // 004e0c5d
+        push 2                                   // 004e0c62
+        push 5                                   // 004e0c64
+        push ebx                                 // 004e0c66
+        call RwCore_004d54f0                    // 004e0c67
+        push ebx                                 // 004e0c6c
+        push 6                                   // 004e0c6d
+        push ebx                                 // 004e0c6f
+        call RwCore_004d54f0                    // 004e0c70
+        add esp, 0x48                            // 004e0c75
+    L_4e0c78:
+        cmp dword ptr ds:[0x006181cc], esi       // 004e0c78
+        je L_4e0c9f                              // 004e0c7e
+        mov eax, dword ptr ds:[0x007d4110]       // 004e0c80
+        mov dword ptr ds:[0x006181cc], esi       // 004e0c85
+        mov dword ptr ds:[0x006181c8], 0xffffffff // 004e0c8b
+        push esi                                 // 004e0c95
+        mov edx, dword ptr [eax]                 // 004e0c96
+        push eax                                 // 004e0c98
+        call dword ptr [edx + 0x15c]             // 004e0c99
+    L_4e0c9f:
+        cmp dword ptr ds:[0x006181d0], ebx       // 004e0c9f
+        je L_4e0cbc                              // 004e0ca5
+        mov eax, dword ptr ds:[0x007d4110]       // 004e0ca7
+        mov dword ptr ds:[0x006181d0], ebx       // 004e0cac
+        push ebx                                 // 004e0cb2
+        push eax                                 // 004e0cb3
+        mov ecx, dword ptr [eax]                 // 004e0cb4
+        call dword ptr [ecx + 0x170]             // 004e0cb6
+    L_4e0cbc:
+        cmp dword ptr ds:[0x006181d4], ebx       // 004e0cbc
+        je L_4e0cd9                              // 004e0cc2
+        mov eax, dword ptr ds:[0x007d4110]       // 004e0cc4
+        mov dword ptr ds:[0x006181d4], ebx       // 004e0cc9
+        push ebx                                 // 004e0ccf
+        push eax                                 // 004e0cd0
+        mov edx, dword ptr [eax]                 // 004e0cd1
+        call dword ptr [edx + 0x1ac]             // 004e0cd3
+    L_4e0cd9:
+        mov eax, dword ptr [edi + 0x24]          // 004e0cd9
+        mov edx, dword ptr ds:[0x007d70fc]       // 004e0cdc
+        mov ecx, dword ptr [eax*4 + 0x5d8da8]    // 004e0ce2
+        xor eax, eax                             // 004e0ce9
+        mov ax, word ptr [edx]                   // 004e0ceb
+        mov dword ptr [esp + 0x24], ecx          // 004e0cee
+        cmp eax, ebx                             // 004e0cf2
+        mov dword ptr [esp + 0x14], eax          // 004e0cf4
+        jbe L_4e1237                             // 004e0cf8
+        mov ebp, dword ptr [edi + 0x28]          // 004e0cfe
+        cmp ebp, ebx                             // 004e0d01
+        je L_4e10c5                              // 004e0d03
+        mov ebx, dword ptr [edi + 0x2c]          // 004e0d09
+        test ebx, ebx                            // 004e0d0c
+        jbe L_4e10c5                             // 004e0d0e
+        mov eax, ecx                             // 004e0d14
+        add eax, -2                              // 004e0d16
+        cmp eax, 4                               // 004e0d19
+        ja L_4e0d52                              // 004e0d1c
+        cmp eax, 0                               // 004e0d1e
+        je L_4e0d25                              // 004e0d1e
+        cmp eax, 1                               // 004e0d1e
+        je L_4e0d2f                              // 004e0d1e
+        cmp eax, 2                               // 004e0d1e
+        je L_4e0d38                              // 004e0d1e
+        cmp eax, 3                               // 004e0d1e
+        je L_4e0d49                              // 004e0d1e
+        cmp eax, 4                               // 004e0d1e
+        je L_4e0d49                              // 004e0d1e
+        int 3   // switch index out of the table bound // 004e0d1e
+    L_4e0d25:
+        mov esi, ebx                             // 004e0d25
+        shr esi, 1                               // 004e0d27
+        mov dword ptr [esp + 0x10], esi          // 004e0d29
+        jmp L_4e0d56                             // 004e0d2d
+    L_4e0d2f:
+        lea esi, [ebx - 1]                       // 004e0d2f
+        mov dword ptr [esp + 0x10], esi          // 004e0d32
+        jmp L_4e0d56                             // 004e0d36
+    L_4e0d38:
+        mov eax, 0xaaaaaaab                      // 004e0d38
+        mul ebx                                  // 004e0d3d
+        mov esi, edx                             // 004e0d3f
+        shr esi, 1                               // 004e0d41
+        mov dword ptr [esp + 0x10], esi          // 004e0d43
+        jmp L_4e0d56                             // 004e0d47
+    L_4e0d49:
+        lea esi, [ebx - 2]                       // 004e0d49
+        mov dword ptr [esp + 0x10], esi          // 004e0d4c
+        jmp L_4e0d56                             // 004e0d50
+    L_4e0d52:
+        mov esi, dword ptr [esp + 0x10]          // 004e0d52
+    L_4e0d56:
+        mov edi, dword ptr [esp + 0x14]          // 004e0d56
+        cmp ebx, edi                             // 004e0d5a
+        ja L_4e0e6b                              // 004e0d5c
+        cmp ebx, 8                               // 004e0d62
+        ja L_4e0e6b                              // 004e0d65
+        mov edx, dword ptr [esp + 0x1c]          // 004e0d6b
+        lea ecx, [esp + 0x20]                    // 004e0d6f
+        push 0x7d7100                            // 004e0d73
+        push ecx                                 // 004e0d78
+        push 0x7d7104                            // 004e0d79
+        push ebx                                 // 004e0d7e
+        push edx                                 // 004e0d7f
+        call RwCore_004dcbb0                    // 004e0d80
+        add esp, 0x14                            // 004e0d85
+        test eax, eax                            // 004e0d88
+        je L_4e102d                              // 004e0d8a
+        mov eax, dword ptr [esp + 0x28]          // 004e0d90
+        xor edx, edx                             // 004e0d94
+        test eax, eax                            // 004e0d96
+        je L_4e0de7                              // 004e0d98
+        test ebx, ebx                            // 004e0d9a
+        jbe L_4e0e22                             // 004e0d9c
+        mov eax, dword ptr [esp + 0x20]          // 004e0da2
+        add eax, 8                               // 004e0da6
+    L_4e0da9:
+        mov edi, dword ptr [esp + 0x18]          // 004e0da9
+        xor ecx, ecx                             // 004e0dad
+        mov cx, word ptr [ebp + edx*2]           // 004e0daf
+        add eax, 0x18                            // 004e0db4
+        inc edx                                  // 004e0db7
+        lea ecx, [ecx + ecx*8]                   // 004e0db8
+        cmp edx, ebx                             // 004e0dbb
+        lea ecx, [edi + ecx*4]                   // 004e0dbd
+        mov edi, dword ptr [ecx]                 // 004e0dc0
+        mov dword ptr [eax - 0x20], edi          // 004e0dc2
+        mov edi, dword ptr [ecx + 4]             // 004e0dc5
+        mov dword ptr [eax - 0x1c], edi          // 004e0dc8
+        mov edi, dword ptr [ecx + 8]             // 004e0dcb
+        mov dword ptr [eax - 0x18], edi          // 004e0dce
+        mov edi, dword ptr [ecx + 0x18]          // 004e0dd1
+        mov dword ptr [eax - 0x14], edi          // 004e0dd4
+        mov edi, dword ptr [ecx + 0x1c]          // 004e0dd7
+        mov dword ptr [eax - 0x10], edi          // 004e0dda
+        mov ecx, dword ptr [ecx + 0x20]          // 004e0ddd
+        mov dword ptr [eax - 0xc], ecx           // 004e0de0
+        jb L_4e0da9                              // 004e0de3
+        jmp L_4e0e22                             // 004e0de5
+    L_4e0de7:
+        test ebx, ebx                            // 004e0de7
+        jbe L_4e0e22                             // 004e0de9
+        mov eax, dword ptr [esp + 0x20]          // 004e0deb
+        add eax, 8                               // 004e0def
+    L_4e0df2:
+        mov edi, dword ptr [esp + 0x18]          // 004e0df2
+        xor ecx, ecx                             // 004e0df6
+        mov cx, word ptr [ebp + edx*2]           // 004e0df8
+        add eax, 0x10                            // 004e0dfd
+        inc edx                                  // 004e0e00
+        lea ecx, [ecx + ecx*8]                   // 004e0e01
+        cmp edx, ebx                             // 004e0e04
+        lea ecx, [edi + ecx*4]                   // 004e0e06
+        mov edi, dword ptr [ecx]                 // 004e0e09
+        mov dword ptr [eax - 0x18], edi          // 004e0e0b
+        mov edi, dword ptr [ecx + 4]             // 004e0e0e
+        mov dword ptr [eax - 0x14], edi          // 004e0e11
+        mov edi, dword ptr [ecx + 8]             // 004e0e14
+        mov dword ptr [eax - 0x10], edi          // 004e0e17
+        mov ecx, dword ptr [ecx + 0x18]          // 004e0e1a
+        mov dword ptr [eax - 0xc], ecx           // 004e0e1d
+        jb L_4e0df2                              // 004e0e20
+    L_4e0e22:
+        mov edx, dword ptr ds:[0x007d7104]       // 004e0e22
+        push edx                                 // 004e0e28
+        call RwCore_004dcd30                    // 004e0e29
+        mov eax, dword ptr [esp + 0x20]          // 004e0e2e
+        mov ecx, dword ptr ds:[0x007d7104]       // 004e0e32
+        push eax                                 // 004e0e38
+        push 0                                   // 004e0e39
+        push ecx                                 // 004e0e3b
+        push 0                                   // 004e0e3c
+        call RwCore_004cb130                    // 004e0e3e
+        add esp, 0x14                            // 004e0e43
+        call RwCore_004d53b0                    // 004e0e46
+        mov ecx, dword ptr ds:[0x007d7100]       // 004e0e4b
+        mov eax, dword ptr ds:[0x007d4110]       // 004e0e51
+        push esi                                 // 004e0e56
+        push ecx                                 // 004e0e57
+        mov ecx, dword ptr [esp + 0x2c]          // 004e0e58
+        mov edx, dword ptr [eax]                 // 004e0e5c
+        push ecx                                 // 004e0e5e
+        push eax                                 // 004e0e5f
+        call dword ptr [edx + 0x144]             // 004e0e60
+        jmp L_4e101f                             // 004e0e66
+    L_4e0e6b:
+        mov eax, dword ptr ds:[0x007d710c]       // 004e0e6b
+        test eax, eax                            // 004e0e70
+        je L_4e1031                              // 004e0e72
+        cmp ebx, 0xffff                          // 004e0e78
+        ja L_4e1031                              // 004e0e7e
+        mov eax, dword ptr [esp + 0x1c]          // 004e0e84
+        lea edx, [esp + 0x20]                    // 004e0e88
+        push 0x7d7100                            // 004e0e8c
+        push edx                                 // 004e0e91
+        push 0x7d7104                            // 004e0e92
+        push edi                                 // 004e0e97
+        push eax                                 // 004e0e98
+        call RwCore_004dcbb0                    // 004e0e99
+        add esp, 0x14                            // 004e0e9e
+        test eax, eax                            // 004e0ea1
+        je L_4e102d                              // 004e0ea3
+        mov eax, dword ptr [esp + 0x28]          // 004e0ea9
+        mov edx, edi                             // 004e0ead
+        test eax, eax                            // 004e0eaf
+        je L_4e0eef                              // 004e0eb1
+        mov ecx, dword ptr [esp + 0x20]          // 004e0eb3
+        lea eax, [ecx + 8]                       // 004e0eb7
+        mov ecx, dword ptr [esp + 0x18]          // 004e0eba
+        add ecx, 8                               // 004e0ebe
+    L_4e0ec1:
+        mov esi, dword ptr [ecx - 8]             // 004e0ec1
+        add ecx, 0x24                            // 004e0ec4
+        mov dword ptr [eax - 8], esi             // 004e0ec7
+        mov esi, dword ptr [ecx - 0x28]          // 004e0eca
+        mov dword ptr [eax - 4], esi             // 004e0ecd
+        mov esi, dword ptr [ecx - 0x24]          // 004e0ed0
+        mov dword ptr [eax], esi                 // 004e0ed3
+        mov esi, dword ptr [ecx - 0x14]          // 004e0ed5
+        mov dword ptr [eax + 4], esi             // 004e0ed8
+        mov esi, dword ptr [ecx - 0x10]          // 004e0edb
+        mov dword ptr [eax + 8], esi             // 004e0ede
+        mov esi, dword ptr [ecx - 0xc]           // 004e0ee1
+        mov dword ptr [eax + 0xc], esi           // 004e0ee4
+        add eax, 0x18                            // 004e0ee7
+        dec edx                                  // 004e0eea
+        jne L_4e0ec1                             // 004e0eeb
+        jmp L_4e0f1d                             // 004e0eed
+    L_4e0eef:
+        mov eax, dword ptr [esp + 0x20]          // 004e0eef
+        mov ecx, dword ptr [esp + 0x18]          // 004e0ef3
+        add eax, 8                               // 004e0ef7
+        add ecx, 8                               // 004e0efa
+    L_4e0efd:
+        mov esi, dword ptr [ecx - 8]             // 004e0efd
+        add ecx, 0x24                            // 004e0f00
+        mov dword ptr [eax - 8], esi             // 004e0f03
+        mov esi, dword ptr [ecx - 0x28]          // 004e0f06
+        mov dword ptr [eax - 4], esi             // 004e0f09
+        mov esi, dword ptr [ecx - 0x24]          // 004e0f0c
+        mov dword ptr [eax], esi                 // 004e0f0f
+        mov esi, dword ptr [ecx - 0x14]          // 004e0f11
+        mov dword ptr [eax + 4], esi             // 004e0f14
+        add eax, 0x10                            // 004e0f17
+        dec edx                                  // 004e0f1a
+        jne L_4e0efd                             // 004e0f1b
+    L_4e0f1d:
+        mov edx, dword ptr ds:[0x007d7104]       // 004e0f1d
+        push edx                                 // 004e0f23
+        call RwCore_004dcd30                    // 004e0f24
+        mov ecx, dword ptr ds:[0x007d7108]       // 004e0f29
+        add esp, 4                               // 004e0f2f
+        lea esi, [ebx + ebx]                     // 004e0f32
+        lea eax, [ecx + ebx]                     // 004e0f35
+        cmp eax, 0xffff                          // 004e0f38
+        mov eax, dword ptr ds:[0x007d710c]       // 004e0f3d
+        jbe L_4e0f63                             // 004e0f42
+        lea edx, [esp + 0x20]                    // 004e0f44
+        push 0x2800                              // 004e0f48
+        push edx                                 // 004e0f4d
+        mov dword ptr ds:[0x007d7108], 0         // 004e0f4e
+        mov ecx, dword ptr [eax]                 // 004e0f58
+        push esi                                 // 004e0f5a
+        push 0                                   // 004e0f5b
+        push eax                                 // 004e0f5d
+        call dword ptr [ecx + 0x2c]              // 004e0f5e
+        jmp L_4e0f77                             // 004e0f61
+    L_4e0f63:
+        mov edx, dword ptr [eax]                 // 004e0f63
+        lea edi, [esp + 0x20]                    // 004e0f65
+        push 0x1800                              // 004e0f69
+        push edi                                 // 004e0f6e
+        add ecx, ecx                             // 004e0f6f
+        push esi                                 // 004e0f71
+        push ecx                                 // 004e0f72
+        push eax                                 // 004e0f73
+        call dword ptr [edx + 0x2c]              // 004e0f74
+    L_4e0f77:
+        test eax, eax                            // 004e0f77
+        jl L_4e1029                              // 004e0f79
+        mov edi, dword ptr [esp + 0x20]          // 004e0f7f
+        mov ecx, esi                             // 004e0f83
+        mov edx, ecx                             // 004e0f85
+        mov esi, ebp                             // 004e0f87
+        shr ecx, 2                               // 004e0f89
+        rep movsd                                // 004e0f8c
+        mov ecx, edx                             // 004e0f8e
+        and ecx, 3                               // 004e0f90
+        rep movsb                                // 004e0f93
+        mov eax, dword ptr ds:[0x007d710c]       // 004e0f95
+        push eax                                 // 004e0f9a
+        mov ecx, dword ptr [eax]                 // 004e0f9b
+        call dword ptr [ecx + 0x30]              // 004e0f9d
+        mov edx, dword ptr [esp + 0x1c]          // 004e0fa0
+        mov eax, dword ptr ds:[0x007d7104]       // 004e0fa4
+        push edx                                 // 004e0fa9
+        push 0                                   // 004e0faa
+        push eax                                 // 004e0fac
+        push 0                                   // 004e0fad
+        call RwCore_004cb130                    // 004e0faf
+        mov eax, dword ptr ds:[0x007d710c]       // 004e0fb4
+        mov ecx, dword ptr ds:[0x006181d8]       // 004e0fb9
+        add esp, 0x10                            // 004e0fbf
+        cmp ecx, eax                             // 004e0fc2
+        je L_4e0fdb                              // 004e0fc4
+        mov ecx, dword ptr ds:[0x007d4110]       // 004e0fc6
+        mov dword ptr ds:[0x006181d8], eax       // 004e0fcc
+        push eax                                 // 004e0fd1
+        push ecx                                 // 004e0fd2
+        mov edx, dword ptr [ecx]                 // 004e0fd3
+        call dword ptr [edx + 0x1a0]             // 004e0fd5
+    L_4e0fdb:
+        call RwCore_004d53b0                    // 004e0fdb
+        mov edx, dword ptr [esp + 0x10]          // 004e0fe0
+        mov eax, dword ptr ds:[0x007d4110]       // 004e0fe4
+        push edx                                 // 004e0fe9
+        mov edx, dword ptr ds:[0x007d7108]       // 004e0fea
+        push edx                                 // 004e0ff0
+        mov edx, dword ptr [esp + 0x1c]          // 004e0ff1
+        mov ecx, dword ptr [eax]                 // 004e0ff5
+        push edx                                 // 004e0ff7
+        mov edx, dword ptr ds:[0x007d7100]       // 004e0ff8
+        push 0                                   // 004e0ffe
+        push edx                                 // 004e1000
+        mov edx, dword ptr [esp + 0x38]          // 004e1001
+        push edx                                 // 004e1005
+        push eax                                 // 004e1006
+        call dword ptr [ecx + 0x148]             // 004e1007
+        mov ecx, dword ptr ds:[0x007d7108]       // 004e100d
+        mov esi, dword ptr [esp + 0x10]          // 004e1013
+        add ecx, ebx                             // 004e1017
+        mov dword ptr ds:[0x007d7108], ecx       // 004e1019
+    L_4e101f:
+        test eax, eax                            // 004e101f
+        jge L_4e1237                             // 004e1021
+        jmp L_4e102d                             // 004e1027
+    L_4e1029:
+        mov esi, dword ptr [esp + 0x10]          // 004e1029
+    L_4e102d:
+        mov edi, dword ptr [esp + 0x14]          // 004e102d
+    L_4e1031:
+        mov eax, dword ptr ds:[0x007d7110]       // 004e1031
+        mov ecx, dword ptr ds:[0x006181cc]       // 004e1036
+        cmp ecx, eax                             // 004e103c
+        je L_4e105f                              // 004e103e
+        mov ecx, dword ptr ds:[0x007d4110]       // 004e1040
+        mov dword ptr ds:[0x006181cc], eax       // 004e1046
+        mov dword ptr ds:[0x006181c8], 0xffffffff // 004e104b
+        push eax                                 // 004e1055
+        mov edx, dword ptr [ecx]                 // 004e1056
+        push ecx                                 // 004e1058
+        call dword ptr [edx + 0x15c]             // 004e1059
+    L_4e105f:
+        push 0                                   // 004e105f
+        push 0                                   // 004e1061
+        push 0                                   // 004e1063
+        push 0                                   // 004e1065
+        call RwCore_004cb130                    // 004e1067
+        mov eax, dword ptr ds:[0x006181d8]       // 004e106c
+        add esp, 0x10                            // 004e1071
+        test eax, eax                            // 004e1074
+        je L_4e1092                              // 004e1076
+        mov eax, dword ptr ds:[0x007d4110]       // 004e1078
+        mov dword ptr ds:[0x006181d8], 0         // 004e107d
+        push 0                                   // 004e1087
+        push eax                                 // 004e1089
+        mov ecx, dword ptr [eax]                 // 004e108a
+        call dword ptr [ecx + 0x1a0]             // 004e108c
+    L_4e1092:
+        call RwCore_004d53b0                    // 004e1092
+        mov ecx, dword ptr [esp + 0x18]          // 004e1097
+        mov eax, dword ptr ds:[0x007d4110]       // 004e109b
+        push 0x24                                // 004e10a0
+        push ecx                                 // 004e10a2
+        mov ecx, dword ptr [esp + 0x2c]          // 004e10a3
+        mov edx, dword ptr [eax]                 // 004e10a7
+        push 0x65                                // 004e10a9
+        push ebp                                 // 004e10ab
+        push esi                                 // 004e10ac
+        push edi                                 // 004e10ad
+        push 0                                   // 004e10ae
+        push ecx                                 // 004e10b0
+        push eax                                 // 004e10b1
+        call dword ptr [edx + 0x150]             // 004e10b2
+        pop edi                                  // 004e10b8
+        pop esi                                  // 004e10b9
+        pop ebp                                  // 004e10ba
+        mov eax, 1                               // 004e10bb
+        pop ebx                                  // 004e10c0
+        add esp, 0x1c                            // 004e10c1
+        ret                                      // 004e10c4
+    L_4e10c5:
+        mov ebp, dword ptr [esp + 0x24]          // 004e10c5
+        lea eax, [ebp - 2]                       // 004e10c9
+        cmp eax, 4                               // 004e10cc
+        ja L_4e1105                              // 004e10cf
+        cmp eax, 0                               // 004e10d1
+        je L_4e10d8                              // 004e10d1
+        cmp eax, 1                               // 004e10d1
+        je L_4e10e2                              // 004e10d1
+        cmp eax, 2                               // 004e10d1
+        je L_4e10eb                              // 004e10d1
+        cmp eax, 3                               // 004e10d1
+        je L_4e10fc                              // 004e10d1
+        cmp eax, 4                               // 004e10d1
+        je L_4e10fc                              // 004e10d1
+        int 3   // switch index out of the table bound // 004e10d1
+    L_4e10d8:
+        mov edi, dword ptr [esp + 0x14]          // 004e10d8
+        mov esi, edi                             // 004e10dc
+        shr esi, 1                               // 004e10de
+        jmp L_4e110d                             // 004e10e0
+    L_4e10e2:
+        mov edi, dword ptr [esp + 0x14]          // 004e10e2
+        lea esi, [edi - 1]                       // 004e10e6
+        jmp L_4e110d                             // 004e10e9
+    L_4e10eb:
+        mov edi, dword ptr [esp + 0x14]          // 004e10eb
+        mov eax, 0xaaaaaaab                      // 004e10ef
+        mul edi                                  // 004e10f4
+        mov esi, edx                             // 004e10f6
+        shr esi, 1                               // 004e10f8
+        jmp L_4e110d                             // 004e10fa
+    L_4e10fc:
+        mov edi, dword ptr [esp + 0x14]          // 004e10fc
+        lea esi, [edi - 2]                       // 004e1100
+        jmp L_4e110d                             // 004e1103
+    L_4e1105:
+        mov esi, dword ptr [esp + 0x10]          // 004e1105
+        mov edi, dword ptr [esp + 0x14]          // 004e1109
+    L_4e110d:
+        mov ebx, dword ptr [esp + 0x1c]          // 004e110d
+        lea edx, [esp + 0x24]                    // 004e1111
+        push 0x7d7100                            // 004e1115
+        push edx                                 // 004e111a
+        push 0x7d7104                            // 004e111b
+        push edi                                 // 004e1120
+        push ebx                                 // 004e1121
+        call RwCore_004dcbb0                    // 004e1122
+        add esp, 0x14                            // 004e1127
+        test eax, eax                            // 004e112a
+        je L_4e11dd                              // 004e112c
+        mov eax, dword ptr [esp + 0x28]          // 004e1132
+        mov ecx, dword ptr [esp + 0x18]          // 004e1136
+        test eax, eax                            // 004e113a
+        mov eax, dword ptr [esp + 0x24]          // 004e113c
+        mov edx, edi                             // 004e1140
+        je L_4e1178                              // 004e1142
+        add eax, 8                               // 004e1144
+        add ecx, 8                               // 004e1147
+    L_4e114a:
+        mov edi, dword ptr [ecx - 8]             // 004e114a
+        add ecx, 0x24                            // 004e114d
+        mov dword ptr [eax - 8], edi             // 004e1150
+        mov edi, dword ptr [ecx - 0x28]          // 004e1153
+        mov dword ptr [eax - 4], edi             // 004e1156
+        mov edi, dword ptr [ecx - 0x24]          // 004e1159
+        mov dword ptr [eax], edi                 // 004e115c
+        mov edi, dword ptr [ecx - 0x14]          // 004e115e
+        mov dword ptr [eax + 4], edi             // 004e1161
+        mov edi, dword ptr [ecx - 0x10]          // 004e1164
+        mov dword ptr [eax + 8], edi             // 004e1167
+        mov edi, dword ptr [ecx - 0xc]           // 004e116a
+        mov dword ptr [eax + 0xc], edi           // 004e116d
+        add eax, 0x18                            // 004e1170
+        dec edx                                  // 004e1173
+        jne L_4e114a                             // 004e1174
+        jmp L_4e119e                             // 004e1176
+    L_4e1178:
+        add eax, 8                               // 004e1178
+        add ecx, 8                               // 004e117b
+    L_4e117e:
+        mov edi, dword ptr [ecx - 8]             // 004e117e
+        add ecx, 0x24                            // 004e1181
+        mov dword ptr [eax - 8], edi             // 004e1184
+        mov edi, dword ptr [ecx - 0x28]          // 004e1187
+        mov dword ptr [eax - 4], edi             // 004e118a
+        mov edi, dword ptr [ecx - 0x24]          // 004e118d
+        mov dword ptr [eax], edi                 // 004e1190
+        mov edi, dword ptr [ecx - 0x14]          // 004e1192
+        mov dword ptr [eax + 4], edi             // 004e1195
+        add eax, 0x10                            // 004e1198
+        dec edx                                  // 004e119b
+        jne L_4e117e                             // 004e119c
+    L_4e119e:
+        mov edx, dword ptr ds:[0x007d7104]       // 004e119e
+        push edx                                 // 004e11a4
+        call RwCore_004dcd30                    // 004e11a5
+        mov eax, dword ptr ds:[0x007d7104]       // 004e11aa
+        push ebx                                 // 004e11af
+        push 0                                   // 004e11b0
+        push eax                                 // 004e11b2
+        push 0                                   // 004e11b3
+        call RwCore_004cb130                    // 004e11b5
+        add esp, 0x14                            // 004e11ba
+        call RwCore_004d53b0                    // 004e11bd
+        mov eax, dword ptr ds:[0x007d4110]       // 004e11c2
+        mov edx, dword ptr ds:[0x007d7100]       // 004e11c7
+        push esi                                 // 004e11cd
+        push edx                                 // 004e11ce
+        mov ecx, dword ptr [eax]                 // 004e11cf
+        push ebp                                 // 004e11d1
+        push eax                                 // 004e11d2
+        call dword ptr [ecx + 0x144]             // 004e11d3
+        test eax, eax                            // 004e11d9
+        jge L_4e1237                             // 004e11db
+    L_4e11dd:
+        mov eax, dword ptr ds:[0x007d7110]       // 004e11dd
+        mov ecx, dword ptr ds:[0x006181cc]       // 004e11e2
+        cmp ecx, eax                             // 004e11e8
+        je L_4e120b                              // 004e11ea
+        mov ecx, dword ptr ds:[0x007d4110]       // 004e11ec
+        mov dword ptr ds:[0x006181cc], eax       // 004e11f2
+        mov dword ptr ds:[0x006181c8], 0xffffffff // 004e11f7
+        push eax                                 // 004e1201
+        mov edx, dword ptr [ecx]                 // 004e1202
+        push ecx                                 // 004e1204
+        call dword ptr [edx + 0x15c]             // 004e1205
+    L_4e120b:
+        push 0                                   // 004e120b
+        push 0                                   // 004e120d
+        push 0                                   // 004e120f
+        push 0                                   // 004e1211
+        call RwCore_004cb130                    // 004e1213
+        add esp, 0x10                            // 004e1218
+        call RwCore_004d53b0                    // 004e121b
+        mov edx, dword ptr [esp + 0x18]          // 004e1220
+        mov eax, dword ptr ds:[0x007d4110]       // 004e1224
+        push 0x24                                // 004e1229
+        push edx                                 // 004e122b
+        mov ecx, dword ptr [eax]                 // 004e122c
+        push esi                                 // 004e122e
+        push ebp                                 // 004e122f
+        push eax                                 // 004e1230
+        call dword ptr [ecx + 0x14c]             // 004e1231
+    L_4e1237:
+        pop edi                                  // 004e1237
+        pop esi                                  // 004e1238
+        pop ebp                                  // 004e1239
+        mov eax, 1                               // 004e123a
+        pop ebx                                  // 004e123f
+        add esp, 0x1c                            // 004e1240
+        ret                                      // 004e1243
+    }
+}
+
 // HAND-LIFT 0x004e1270 RwCoreLift_004e1270  (5 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_004e1270(void) {
     __asm {
@@ -4522,915 +7952,6 @@ extern "C" __declspec(naked) int RwCoreLift_004e30f0(void) {
         mov dword ptr [eax], ecx                 // 004e314f
         pop esi                                  // 004e3151
         ret                                      // 004e3152
-    }
-}
-
-// HAND-LIFT 0x004e36a0 RwCoreLift_004e36a0  (57 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e36a0(void) {
-    __asm {
-        mov ecx, dword ptr ds:[0x00618620]       // 004e36a0
-        mov edx, dword ptr ds:[0x0061861c]       // 004e36a6
-        mov eax, dword ptr [esp + 8]             // 004e36ac
-        push 0x40507                             // 004e36b0
-        push 0x7d7140                            // 004e36b5
-        push ecx                                 // 004e36ba
-        push 4                                   // 004e36bb
-        push edx                                 // 004e36bd
-        push 0x18                                // 004e36be
-        mov dword ptr ds:[0x007d7164], eax       // 004e36c0
-        call RwCore_004cc9e0                    // 004e36c5
-        mov ecx, dword ptr ds:[0x007d3ff8]       // 004e36ca
-        mov edx, dword ptr ds:[0x007d7164]       // 004e36d0
-        add esp, 0x18                            // 004e36d6
-        mov dword ptr [ecx + edx], eax           // 004e36d9
-        mov eax, dword ptr ds:[0x007d7164]       // 004e36dc
-        mov ecx, dword ptr ds:[0x007d3ff8]       // 004e36e1
-        cmp dword ptr [ecx + eax], 0             // 004e36e7
-        jne L_4e36f0                             // 004e36eb
-        xor eax, eax                             // 004e36ed
-        ret                                      // 004e36ef
-    L_4e36f0:
-        mov edx, dword ptr ds:[0x00618628]       // 004e36f0
-        mov eax, dword ptr ds:[0x00618624]       // 004e36f6
-        push 0x40507                             // 004e36fb
-        push 0x7d711c                            // 004e3700
-        push edx                                 // 004e3705
-        push 4                                   // 004e3706
-        push eax                                 // 004e3708
-        push 0x18                                // 004e3709
-        call RwCore_004cc9e0                    // 004e370b
-        mov ecx, dword ptr ds:[0x007d3ff8]       // 004e3710
-        mov edx, dword ptr ds:[0x007d7164]       // 004e3716
-        add esp, 0x18                            // 004e371c
-        mov dword ptr [ecx + edx + 4], eax       // 004e371f
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e3723
-        mov ecx, dword ptr ds:[0x007d7164]       // 004e3728
-        mov edx, dword ptr [eax + ecx + 4]       // 004e372e
-        test edx, edx                            // 004e3732
-        jne L_4e3758                             // 004e3734
-        mov eax, dword ptr [eax + ecx]           // 004e3736
-        push eax                                 // 004e3739
-        call RwCore_004cc9f0                    // 004e373a
-        mov ecx, dword ptr ds:[0x007d7164]       // 004e373f
-        mov edx, dword ptr ds:[0x007d3ff8]       // 004e3745
-        add esp, 4                               // 004e374b
-        xor eax, eax                             // 004e374e
-        mov dword ptr [edx + ecx], 0             // 004e3750
-        ret                                      // 004e3757
-    L_4e3758:
-        mov word ptr [eax + 8], 1                // 004e3758
-        mov eax, dword ptr ds:[0x007d7164]       // 004e375e
-        mov ecx, dword ptr ds:[0x007d3ff8]       // 004e3763
-        mov dword ptr [ecx + eax + 8], 0         // 004e3769
-        mov eax, dword ptr ds:[0x007d7168]       // 004e3771
-        inc eax                                  // 004e3776
-        mov dword ptr ds:[0x007d7168], eax       // 004e3777
-        mov eax, dword ptr [esp + 4]             // 004e377c
-        ret                                      // 004e3780
-    }
-}
-
-// HAND-LIFT 0x004e3790 RwCoreLift_004e3790  (27 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3790(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007d7164]       // 004e3790
-        mov ecx, dword ptr ds:[0x007d3ff8]       // 004e3795
-        mov eax, dword ptr [eax + ecx + 4]       // 004e379b
-        test eax, eax                            // 004e379f
-        je L_4e37bf                              // 004e37a1
-        push eax                                 // 004e37a3
-        call RwCore_004cc9f0                    // 004e37a4
-        mov edx, dword ptr ds:[0x007d3ff8]       // 004e37a9
-        mov eax, dword ptr ds:[0x007d7164]       // 004e37af
-        add esp, 4                               // 004e37b4
-        mov dword ptr [eax + edx + 4], 0         // 004e37b7
-    L_4e37bf:
-        mov ecx, dword ptr ds:[0x007d7164]       // 004e37bf
-        mov edx, dword ptr ds:[0x007d3ff8]       // 004e37c5
-        mov eax, dword ptr [ecx + edx]           // 004e37cb
-        test eax, eax                            // 004e37ce
-        je L_4e37ed                              // 004e37d0
-        push eax                                 // 004e37d2
-        call RwCore_004cc9f0                    // 004e37d3
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e37d8
-        mov ecx, dword ptr ds:[0x007d7164]       // 004e37dd
-        add esp, 4                               // 004e37e3
-        mov dword ptr [ecx + eax], 0             // 004e37e6
-    L_4e37ed:
-        mov eax, dword ptr ds:[0x007d7168]       // 004e37ed
-        dec eax                                  // 004e37f2
-        mov dword ptr ds:[0x007d7168], eax       // 004e37f3
-        mov eax, dword ptr [esp + 4]             // 004e37f8
-        ret                                      // 004e37fc
-    }
-}
-
-// HAND-LIFT 0x004e3800 RwCoreLift_004e3800  (20 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3800(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 004e3800
-        mov ecx, dword ptr ds:[0x007d716c]       // 004e3804
-        add ecx, eax                             // 004e380a
-        xor edx, edx                             // 004e380c
-        push esi                                 // 004e380e
-        mov dword ptr [ecx], edx                 // 004e380f
-        mov dword ptr [ecx + 4], edx             // 004e3811
-        mov dword ptr [ecx + 8], edx             // 004e3814
-        mov esi, dword ptr [eax + 0x18]          // 004e3817
-        mov dword ptr [ecx + 0x10], esi          // 004e381a
-        mov esi, dword ptr [eax + 0x1c]          // 004e381d
-        mov dword ptr [ecx + 0x14], esi          // 004e3820
-        mov esi, dword ptr [eax + 0x10]          // 004e3823
-        mov dword ptr [ecx + 0x18], esi          // 004e3826
-        mov dword ptr [eax + 0x10], offset RwCoreLift_004e38a0 // 004e3829
-        mov dword ptr [eax + 0x18], offset RwCoreMissing_004e3850 // 004e3830
-        mov dword ptr [eax + 0x1c], offset RwCoreMissing_004e3880 // 004e3837
-        mov dword ptr [ecx + 0xc], edx           // 004e383e
-        pop esi                                  // 004e3841
-        ret                                      // 004e3842
-    }
-}
-
-// HAND-LIFT 0x004e38a0 RwCoreLift_004e38a0  (210 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e38a0(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007d716c]       // 004e38a0
-        sub esp, 0x144                           // 004e38a5
-        push esi                                 // 004e38ab
-        push edi                                 // 004e38ac
-        mov edi, dword ptr [esp + 0x150]         // 004e38ad
-        push edi                                 // 004e38b4
-        lea esi, [eax + edi]                     // 004e38b5
-        call dword ptr [esi + 0x18]              // 004e38b8
-        add esp, 4                               // 004e38bb
-        test eax, eax                            // 004e38be
-        je L_4e3b1f                              // 004e38c0
-        mov esi, dword ptr [esi + 0xc]           // 004e38c6
-        push ebx                                 // 004e38c9
-        xor ebx, ebx                             // 004e38ca
-        mov dword ptr [esp + 0x1c], esi          // 004e38cc
-        cmp esi, ebx                             // 004e38d0
-        je L_4e3adf                              // 004e38d2
-        mov ecx, dword ptr ds:[0x007d3ff8]       // 004e38d8
-        mov eax, dword ptr ds:[0x007d716c]       // 004e38de
-        push ebp                                 // 004e38e3
-        mov dword ptr [esp + 0x10], ebx          // 004e38e4
-        mov edx, dword ptr [ecx + 0xa0]          // 004e38e8
-        mov ecx, dword ptr [edi + 4]             // 004e38ee
-        push ecx                                 // 004e38f1
-        mov dword ptr [esp + 0x30], edx          // 004e38f2
-        lea ebp, [eax + edi]                     // 004e38f6
-        call RwCore_004c0ed0                    // 004e38f9
-        add eax, 0x30                            // 004e38fe
-        add esp, 4                               // 004e3901
-        mov edx, dword ptr [eax]                 // 004e3904
-        mov dword ptr [esp + 0x3c], edx          // 004e3906
-        mov ecx, dword ptr [eax + 4]             // 004e390a
-        mov dword ptr [esp + 0x40], ecx          // 004e390d
-        mov edx, dword ptr [eax + 8]             // 004e3911
-        lea eax, [edi + 0x118]                   // 004e3914
-        mov dword ptr [esp + 0x44], edx          // 004e391a
-        mov ecx, dword ptr [eax]                 // 004e391e
-        mov dword ptr [esp + 0x30], ecx          // 004e3920
-        lea ecx, [edi + 0x10c]                   // 004e3924
-        mov edx, dword ptr [eax + 4]             // 004e392a
-        mov dword ptr [esp + 0x34], edx          // 004e392d
-        mov edx, dword ptr [ecx]                 // 004e3931
-        mov eax, dword ptr [eax + 8]             // 004e3933
-        mov dword ptr [esp + 0x48], edx          // 004e3936
-        mov dword ptr [esp + 0x38], eax          // 004e393a
-        mov eax, dword ptr [ecx + 4]             // 004e393e
-        mov dword ptr [esp + 0x4c], eax          // 004e3941
-        mov eax, dword ptr [esi + 0xc]           // 004e3945
-        mov ecx, dword ptr [ecx + 8]             // 004e3948
-        xor edx, edx                             // 004e394b
-        cmp eax, 2                               // 004e394d
-        mov eax, dword ptr [ebp + 0xc]           // 004e3950
-        sete dl                                  // 004e3953
-        mov esi, dword ptr [eax + 0x1c]          // 004e3956
-        mov dword ptr [esp + 0x50], ecx          // 004e3959
-        mov dword ptr [esp + 0x18], edx          // 004e395d
-    L_4e3961:
-        mov eax, dword ptr [esi]                 // 004e3961
-        test eax, eax                            // 004e3963
-        jge L_4e3a3e                             // 004e3965
-        xor edx, edx                             // 004e396b
-        lea eax, [edi + 0xa5]                    // 004e396d
-    L_4e3973:
-        xor ecx, ecx                             // 004e3973
-        mov cl, byte ptr [eax - 1]               // 004e3975
-        lea ecx, [ecx + ecx*2]                   // 004e3978
-        fld dword ptr [esi + ecx*4 + 0x48]       // 004e397b
-        xor ecx, ecx                             // 004e397f
-        mov cl, byte ptr [eax]                   // 004e3981
-        lea ecx, [ecx + ecx*2]                   // 004e3983
-        fld dword ptr [esi + ecx*4 + 0x4c]       // 004e3986
-        xor ecx, ecx                             // 004e398a
-        mov cl, byte ptr [eax + 1]               // 004e398c
-        lea ecx, [ecx + ecx*2]                   // 004e398f
-        fld dword ptr [esi + ecx*4 + 0x50]       // 004e3992
-        fld dword ptr [eax - 0xd]                // 004e3996
-        fmul st, st(2)                           // 004e3999
-        xor ecx, ecx                             // 004e399b
-        fld dword ptr [eax - 0x11]               // 004e399d
-        fmul st, st(4)                           // 004e39a0
-        faddp st(1), st                          // 004e39a2
-        fld dword ptr [eax - 9]                  // 004e39a4
-        fmul st, st(2)                           // 004e39a7
-        faddp st(1), st                          // 004e39a9
-        fsub dword ptr [eax - 5]                 // 004e39ab
-        fstp dword ptr [esp + 0x28]              // 004e39ae
-        mov edi, dword ptr [esp + 0x28]          // 004e39b2
-        test edi, edi                            // 004e39b6
-        fstp st                                  // 004e39b8
-        setg cl                                  // 004e39ba
-        fstp st                                  // 004e39bd
-        test ecx, ecx                            // 004e39bf
-        fstp st                                  // 004e39c1
-        jne L_4e3a30                             // 004e39c3
-        inc edx                                  // 004e39c5
-        add eax, 0x14                            // 004e39c6
-        cmp edx, 6                               // 004e39c9
-        jl L_4e3973                              // 004e39cc
-        mov eax, dword ptr [ebp + 4]             // 004e39ce
-        mov ecx, dword ptr [esp + 0x10]          // 004e39d1
-        cmp ecx, eax                             // 004e39d5
-        jl L_4e3a21                              // 004e39d7
-        lea edi, [eax*4 + 0xc8]                  // 004e39d9
-        mov eax, dword ptr [ebp]                 // 004e39e0
-        push 0x1030507                           // 004e39e3
-        push edi                                 // 004e39e8
-        test eax, eax                            // 004e39e9
-        je L_4e39ff                              // 004e39eb
-        mov edx, dword ptr ds:[0x007d3ff8]       // 004e39ed
-        push eax                                 // 004e39f3
-        call dword ptr [edx + 0x110]             // 004e39f4
-        add esp, 0xc                             // 004e39fa
-        jmp L_4e3a0d                             // 004e39fd
-    L_4e39ff:
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e39ff
-        call dword ptr [eax + 0x108]             // 004e3a04
-        add esp, 8                               // 004e3a0a
-    L_4e3a0d:
-        test eax, eax                            // 004e3a0d
-        je L_4e3aeb                              // 004e3a0f
-        mov dword ptr [ebp], eax                 // 004e3a15
-        mov eax, dword ptr [ebp + 4]             // 004e3a18
-        add eax, 0x32                            // 004e3a1b
-        mov dword ptr [ebp + 4], eax             // 004e3a1e
-    L_4e3a21:
-        mov ecx, dword ptr [ebp]                 // 004e3a21
-        mov eax, dword ptr [esp + 0x10]          // 004e3a24
-        mov dword ptr [ecx + eax*4], esi         // 004e3a28
-        inc eax                                  // 004e3a2b
-        mov dword ptr [esp + 0x10], eax          // 004e3a2c
-    L_4e3a30:
-        mov esi, dword ptr [esp + ebx*4 + 0x54]  // 004e3a30
-        mov edi, dword ptr [esp + 0x158]         // 004e3a34
-        dec ebx                                  // 004e3a3b
-        jmp L_4e3ab6                             // 004e3a3c
-    L_4e3a3e:
-        fld dword ptr [esp + eax + 0x30]         // 004e3a3e
-        fsub dword ptr [esi + 0x10]              // 004e3a42
-        mov ecx, esi                             // 004e3a45
-        fstp dword ptr [esp + 0x14]              // 004e3a47
-        fld dword ptr [esp + eax + 0x48]         // 004e3a4b
-        mov edx, dword ptr [esp + 0x14]          // 004e3a4f
-        fsubr dword ptr [esi + 0x14]             // 004e3a53
-        test edx, edx                            // 004e3a56
-        fstp dword ptr [esp + 0x24]              // 004e3a58
-        jge L_4e3aa6                             // 004e3a5c
-        mov edx, dword ptr [esp + 0x24]          // 004e3a5e
-        test edx, edx                            // 004e3a62
-        jge L_4e3aa6                             // 004e3a64
-        fld dword ptr [esp + eax + 0x3c]         // 004e3a66
-        fcomp dword ptr [esi + 4]                // 004e3a6a
-        fnstsw ax                                // 004e3a6d
-        and eax, 0x4100                          // 004e3a6f
-        jne L_4e3a7d                             // 004e3a74
-        mov eax, 1                               // 004e3a76
-        jmp L_4e3a7f                             // 004e3a7b
-    L_4e3a7d:
-        xor eax, eax                             // 004e3a7d
-    L_4e3a7f:
-        mov edx, dword ptr [esp + 0x18]          // 004e3a7f
-        test edx, edx                            // 004e3a83
-        je L_4e3a95                              // 004e3a85
-        test eax, eax                            // 004e3a87
-        jne L_4e3a99                             // 004e3a89
-    L_4e3a8b:
-        mov eax, dword ptr [ecx + 8]             // 004e3a8b
-        inc ebx                                  // 004e3a8e
-        mov dword ptr [esp + ebx*4 + 0x54], eax  // 004e3a8f
-        jmp L_4e3ab3                             // 004e3a93
-    L_4e3a95:
-        test eax, eax                            // 004e3a95
-        jne L_4e3a8b                             // 004e3a97
-    L_4e3a99:
-        mov edx, dword ptr [ecx + 0xc]           // 004e3a99
-        mov esi, dword ptr [esi + 8]             // 004e3a9c
-        inc ebx                                  // 004e3a9f
-        mov dword ptr [esp + ebx*4 + 0x54], edx  // 004e3aa0
-        jmp L_4e3ab6                             // 004e3aa4
-    L_4e3aa6:
-        mov eax, dword ptr [esp + 0x14]          // 004e3aa6
-        test eax, eax                            // 004e3aaa
-        jge L_4e3ab3                             // 004e3aac
-        mov esi, dword ptr [esi + 8]             // 004e3aae
-        jmp L_4e3ab6                             // 004e3ab1
-    L_4e3ab3:
-        mov esi, dword ptr [esi + 0xc]           // 004e3ab3
-    L_4e3ab6:
-        test ebx, ebx                            // 004e3ab6
-        jge L_4e3961                             // 004e3ab8
-        mov eax, dword ptr [esp + 0x10]          // 004e3abe
-        mov dword ptr [ebp + 8], eax             // 004e3ac2
-    L_4e3ac5:
-        mov edx, dword ptr [esp + 0x20]          // 004e3ac5
-        xor ecx, ecx                             // 004e3ac9
-        cmp dword ptr [edx + 0xc], 1             // 004e3acb
-        sete cl                                  // 004e3acf
-        push ecx                                 // 004e3ad2
-        push 0                                   // 004e3ad3
-        push 0                                   // 004e3ad5
-        call dword ptr [esp + 0x38]              // 004e3ad7
-        add esp, 0xc                             // 004e3adb
-        pop ebp                                  // 004e3ade
-    L_4e3adf:
-        mov eax, edi                             // 004e3adf
-        pop ebx                                  // 004e3ae1
-        pop edi                                  // 004e3ae2
-        pop esi                                  // 004e3ae3
-        add esp, 0x144                           // 004e3ae4
-        ret                                      // 004e3aea
-    L_4e3aeb:
-        push edi                                 // 004e3aeb
-        push 0x80000013                          // 004e3aec
-        mov dword ptr [esp + 0x20], 2            // 004e3af1
-        call Orig_004d7ff0                    // 004e3af9
-        lea ecx, [esp + 0x20]                    // 004e3afe
-        mov dword ptr [esp + 0x24], eax          // 004e3b02
-        push ecx                                 // 004e3b06
-        call RwCore_004d8480                    // 004e3b07
-        mov edx, dword ptr [esp + 0x1c]          // 004e3b0c
-        mov edi, dword ptr [esp + 0x164]         // 004e3b10
-        add esp, 0xc                             // 004e3b17
-        mov dword ptr [ebp + 8], edx             // 004e3b1a
-        jmp L_4e3ac5                             // 004e3b1d
-    L_4e3b1f:
-        pop edi                                  // 004e3b1f
-        xor eax, eax                             // 004e3b20
-        pop esi                                  // 004e3b22
-        add esp, 0x144                           // 004e3b23
-        ret                                      // 004e3b29
-    }
-}
-
-// HAND-LIFT 0x004e3b30 RwCoreLift_004e3b30  (29 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3b30(void) {
-    __asm {
-        mov ecx, dword ptr ds:[0x007d716c]       // 004e3b30
-        mov edx, dword ptr [esp + 8]             // 004e3b36
-        push esi                                 // 004e3b3a
-        mov esi, dword ptr [esp + 8]             // 004e3b3b
-        push edi                                 // 004e3b3f
-        lea eax, [ecx + esi]                     // 004e3b40
-        add ecx, edx                             // 004e3b43
-        xor edx, edx                             // 004e3b45
-        mov dword ptr [eax], edx                 // 004e3b47
-        mov dword ptr [eax + 4], edx             // 004e3b49
-        mov dword ptr [eax + 8], edx             // 004e3b4c
-        mov edi, dword ptr [ecx + 0xc]           // 004e3b4f
-        cmp edi, edx                             // 004e3b52
-        je L_4e3b73                              // 004e3b54
-        mov eax, dword ptr ds:[0x007d716c]       // 004e3b56
-        push ebx                                 // 004e3b5b
-        lea ebx, [eax + esi]                     // 004e3b5c
-        mov eax, dword ptr [esi + 4]             // 004e3b5f
-        cmp eax, edx                             // 004e3b62
-        je L_4e3b6f                              // 004e3b64
-        push eax                                 // 004e3b66
-        call RwCore_004c0e50                    // 004e3b67
-        add esp, 4                               // 004e3b6c
-    L_4e3b6f:
-        mov dword ptr [ebx + 0xc], edi           // 004e3b6f
-        pop ebx                                  // 004e3b72
-    L_4e3b73:
-        mov eax, esi                             // 004e3b73
-        pop edi                                  // 004e3b75
-        pop esi                                  // 004e3b76
-        ret                                      // 004e3b77
-    }
-}
-
-// HAND-LIFT 0x004e3b80 RwCoreLift_004e3b80  (25 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3b80(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007d716c]       // 004e3b80
-        push esi                                 // 004e3b85
-        push edi                                 // 004e3b86
-        mov edi, dword ptr [esp + 0xc]           // 004e3b87
-        lea esi, [eax + edi]                     // 004e3b8b
-        mov eax, dword ptr [eax + edi]           // 004e3b8e
-        test eax, eax                            // 004e3b91
-        je L_4e3ba5                              // 004e3b93
-        mov ecx, dword ptr ds:[0x007d3ff8]       // 004e3b95
-        push eax                                 // 004e3b9b
-        call dword ptr [ecx + 0x10c]             // 004e3b9c
-        add esp, 4                               // 004e3ba2
-    L_4e3ba5:
-        mov edx, dword ptr [esi + 0x10]          // 004e3ba5
-        mov dword ptr [esi], 0                   // 004e3ba8
-        mov dword ptr [esi + 4], 0               // 004e3bae
-        mov dword ptr [esi + 8], 0               // 004e3bb5
-        mov dword ptr [edi + 0x18], edx          // 004e3bbc
-        mov eax, dword ptr [esi + 0x14]          // 004e3bbf
-        mov dword ptr [edi + 0x1c], eax          // 004e3bc2
-        mov ecx, dword ptr [esi + 0x18]          // 004e3bc5
-        mov dword ptr [edi + 0x10], ecx          // 004e3bc8
-        mov eax, edi                             // 004e3bcb
-        pop edi                                  // 004e3bcd
-        pop esi                                  // 004e3bce
-        ret                                      // 004e3bcf
-    }
-}
-
-// HAND-LIFT 0x004e3bd0 RwCoreLift_004e3bd0  (12 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3bd0(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 004e3bd0
-        mov ecx, dword ptr ds:[0x007d7170]       // 004e3bd4
-        add ecx, eax                             // 004e3bda
-        mov dword ptr [ecx], 0                   // 004e3bdc
-        mov edx, dword ptr ds:[0x007d3ff8]       // 004e3be2
-        mov dx, word ptr [edx + 8]               // 004e3be8
-        dec dx                                   // 004e3bec
-        mov word ptr [eax + 0x60], dx            // 004e3bee
-        mov edx, dword ptr [eax + 0x10]          // 004e3bf2
-        mov dword ptr [ecx + 4], edx             // 004e3bf5
-        mov dword ptr [eax + 0x10], offset RwCoreLift_004e3c00 // 004e3bf8
-        ret                                      // 004e3bff
-    }
-}
-
-// HAND-LIFT 0x004e3c00 RwCoreLift_004e3c00  (154 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3c00(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007d7170]       // 004e3c00
-        sub esp, 0x11c                           // 004e3c05
-        push ebp                                 // 004e3c0b
-        mov ebp, dword ptr [esp + 0x124]         // 004e3c0c
-        push esi                                 // 004e3c13
-        push ebp                                 // 004e3c14
-        lea esi, [eax + ebp]                     // 004e3c15
-        call dword ptr [esi + 4]                 // 004e3c18
-        add esp, 4                               // 004e3c1b
-        test eax, eax                            // 004e3c1e
-        je L_4e3db5                              // 004e3c20
-        mov esi, dword ptr [esi]                 // 004e3c26
-        test esi, esi                            // 004e3c28
-        mov dword ptr [esp + 0x20], esi          // 004e3c2a
-        je L_4e3d66                              // 004e3c2e
-        mov esi, dword ptr [ebp + 0x64]          // 004e3c34
-        push ebx                                 // 004e3c37
-        push edi                                 // 004e3c38
-        lea edi, [ebp + 0x64]                    // 004e3c39
-        cmp esi, edi                             // 004e3c3c
-        je L_4e3c90                              // 004e3c3e
-    L_4e3c40:
-        mov ecx, dword ptr [esi - 4]             // 004e3c40
-        lea eax, [esi - 0xc]                     // 004e3c43
-        mov esi, dword ptr [esi]                 // 004e3c46
-        test ecx, ecx                            // 004e3c48
-        je L_4e3c8c                              // 004e3c4a
-        mov ecx, dword ptr [eax + 0x14]          // 004e3c4c
-        test ecx, ecx                            // 004e3c4f
-        je L_4e3c8c                              // 004e3c51
-        mov ecx, dword ptr [eax + 0x10]          // 004e3c53
-        mov edx, dword ptr [eax + 0xc]           // 004e3c56
-        push eax                                 // 004e3c59
-        mov dword ptr [ecx], edx                 // 004e3c5a
-        mov ecx, dword ptr [eax + 0xc]           // 004e3c5c
-        mov edx, dword ptr [eax + 0x10]          // 004e3c5f
-        mov dword ptr [ecx + 4], edx             // 004e3c62
-        mov ecx, dword ptr [eax + 4]             // 004e3c65
-        mov edx, dword ptr [eax]                 // 004e3c68
-        mov dword ptr [ecx], edx                 // 004e3c6a
-        mov ecx, dword ptr [eax]                 // 004e3c6c
-        mov edx, dword ptr [eax + 4]             // 004e3c6e
-        mov dword ptr [ecx + 4], edx             // 004e3c71
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e3c74
-        mov ecx, dword ptr ds:[0x007d7164]       // 004e3c79
-        mov edx, dword ptr [ecx + eax]           // 004e3c7f
-        push edx                                 // 004e3c82
-        call dword ptr [eax + 0x11c]             // 004e3c83
-        add esp, 8                               // 004e3c89
-    L_4e3c8c:
-        cmp esi, edi                             // 004e3c8c
-        jne L_4e3c40                             // 004e3c8e
-    L_4e3c90:
-        push ebp                                 // 004e3c90
-        xor ebx, ebx                             // 004e3c91
-        call RwCore_004e6100                    // 004e3c93
-        mov ecx, eax                             // 004e3c98
-        add esp, 4                               // 004e3c9a
-        mov edx, dword ptr [ecx]                 // 004e3c9d
-        mov dword ptr [esp + 0x1c], edx          // 004e3c9f
-        fld dword ptr [esp + 0x1c]               // 004e3ca3
-        fsub dword ptr [eax + 0xc]               // 004e3ca7
-        mov edx, dword ptr [ecx + 4]             // 004e3caa
-        mov dword ptr [esp + 0x20], edx          // 004e3cad
-        mov edx, eax                             // 004e3cb1
-        mov ecx, dword ptr [ecx + 8]             // 004e3cb3
-        fstp dword ptr [esp + 0x1c]              // 004e3cb6
-        fld dword ptr [esp + 0x20]               // 004e3cba
-        fsub dword ptr [eax + 0xc]               // 004e3cbe
-        mov dword ptr [esp + 0x24], ecx          // 004e3cc1
-        mov ecx, dword ptr [edx]                 // 004e3cc5
-        mov dword ptr [esp + 0x10], ecx          // 004e3cc7
-        mov ecx, dword ptr [edx + 4]             // 004e3ccb
-        fstp dword ptr [esp + 0x20]              // 004e3cce
-        fld dword ptr [esp + 0x24]               // 004e3cd2
-        fsub dword ptr [eax + 0xc]               // 004e3cd6
-        mov edx, dword ptr [edx + 8]             // 004e3cd9
-        mov dword ptr [esp + 0x14], ecx          // 004e3cdc
-        mov dword ptr [esp + 0x18], edx          // 004e3ce0
-        fstp dword ptr [esp + 0x24]              // 004e3ce4
-        fld dword ptr [esp + 0x10]               // 004e3ce8
-        fadd dword ptr [eax + 0xc]               // 004e3cec
-        fstp dword ptr [esp + 0x10]              // 004e3cef
-        fld dword ptr [esp + 0x14]               // 004e3cf3
-        fadd dword ptr [eax + 0xc]               // 004e3cf7
-        fstp dword ptr [esp + 0x14]              // 004e3cfa
-        fld dword ptr [esp + 0x18]               // 004e3cfe
-        fadd dword ptr [eax + 0xc]               // 004e3d02
-        mov eax, dword ptr [esp + 0x28]          // 004e3d05
-        mov esi, dword ptr [eax + 0x1c]          // 004e3d09
-        fstp dword ptr [esp + 0x18]              // 004e3d0c
-    L_4e3d10:
-        mov ecx, dword ptr [esi]                 // 004e3d10
-        test ecx, ecx                            // 004e3d12
-        jge L_4e3d71                             // 004e3d14
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e3d16
-        mov ecx, dword ptr ds:[0x007d7164]       // 004e3d1b
-        push 0x30507                             // 004e3d21
-        mov edx, dword ptr [ecx + eax]           // 004e3d26
-        push edx                                 // 004e3d29
-        call dword ptr [eax + 0x118]             // 004e3d2a
-        lea ecx, [esi + 0x38]                    // 004e3d30
-        mov dword ptr [eax + 0x14], esi          // 004e3d33
-        mov dword ptr [eax + 8], ebp             // 004e3d36
-        add esp, 8                               // 004e3d39
-        mov edx, dword ptr [ecx]                 // 004e3d3c
-        mov dword ptr [eax + 4], ecx             // 004e3d3e
-        mov dword ptr [eax], edx                 // 004e3d41
-        mov edx, dword ptr [ecx]                 // 004e3d43
-        mov dword ptr [edx + 4], eax             // 004e3d45
-        mov dword ptr [ecx], eax                 // 004e3d48
-        mov edx, dword ptr [edi]                 // 004e3d4a
-        lea ecx, [eax + 0xc]                     // 004e3d4c
-        mov dword ptr [eax + 0x10], edi          // 004e3d4f
-        mov dword ptr [ecx], edx                 // 004e3d52
-        mov eax, dword ptr [edi]                 // 004e3d54
-        mov dword ptr [eax + 4], ecx             // 004e3d56
-        mov dword ptr [edi], ecx                 // 004e3d59
-    L_4e3d5b:
-        mov esi, dword ptr [esp + ebx*4 + 0x2c]  // 004e3d5b
-        dec ebx                                  // 004e3d5f
-    L_4e3d60:
-        test ebx, ebx                            // 004e3d60
-        jge L_4e3d10                             // 004e3d62
-        pop edi                                  // 004e3d64
-        pop ebx                                  // 004e3d65
-    L_4e3d66:
-        mov eax, ebp                             // 004e3d66
-        pop esi                                  // 004e3d68
-        pop ebp                                  // 004e3d69
-        add esp, 0x11c                           // 004e3d6a
-        ret                                      // 004e3d70
-    L_4e3d71:
-        fld dword ptr [esp + ecx + 0x1c]         // 004e3d71
-        fcomp dword ptr [esi + 0x10]             // 004e3d75
-        mov edx, esi                             // 004e3d78
-        fnstsw ax                                // 004e3d7a
-        test ah, 5                               // 004e3d7c
-        jp L_4e3da0                              // 004e3d7f
-        mov ecx, dword ptr [edx]                 // 004e3d81
-        mov esi, dword ptr [esi + 8]             // 004e3d83
-        fld dword ptr [esp + ecx + 0x10]         // 004e3d86
-        fcomp dword ptr [edx + 0x14]             // 004e3d8a
-        fnstsw ax                                // 004e3d8d
-        and eax, 0x4100                          // 004e3d8f
-        jne L_4e3d60                             // 004e3d94
-        mov edx, dword ptr [edx + 0xc]           // 004e3d96
-        inc ebx                                  // 004e3d99
-        mov dword ptr [esp + ebx*4 + 0x2c], edx  // 004e3d9a
-        jmp L_4e3d60                             // 004e3d9e
-    L_4e3da0:
-        fld dword ptr [esp + ecx + 0x10]         // 004e3da0
-        fcomp dword ptr [esi + 0x14]             // 004e3da4
-        fnstsw ax                                // 004e3da7
-        and eax, 0x4100                          // 004e3da9
-        jne L_4e3d5b                             // 004e3dae
-        mov esi, dword ptr [esi + 0xc]           // 004e3db0
-        jmp L_4e3d60                             // 004e3db3
-    L_4e3db5:
-        pop esi                                  // 004e3db5
-        xor eax, eax                             // 004e3db6
-        pop ebp                                  // 004e3db8
-        add esp, 0x11c                           // 004e3db9
-        ret                                      // 004e3dbf
-    }
-}
-
-// HAND-LIFT 0x004e3dc0 RwCoreLift_004e3dc0  (48 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3dc0(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007d7170]       // 004e3dc0
-        push ebx                                 // 004e3dc5
-        mov ebx, dword ptr [esp + 8]             // 004e3dc6
-        push ebp                                 // 004e3dca
-        push esi                                 // 004e3dcb
-        push edi                                 // 004e3dcc
-        mov esi, dword ptr [ebx + 0x64]          // 004e3dcd
-        lea edi, [ebx + 0x64]                    // 004e3dd0
-        cmp esi, edi                             // 004e3dd3
-        lea ebp, [eax + ebx]                     // 004e3dd5
-        je L_4e3e2a                              // 004e3dd8
-    L_4e3dda:
-        mov ecx, dword ptr [esi - 4]             // 004e3dda
-        lea eax, [esi - 0xc]                     // 004e3ddd
-        mov esi, dword ptr [esi]                 // 004e3de0
-        test ecx, ecx                            // 004e3de2
-        je L_4e3e26                              // 004e3de4
-        mov ecx, dword ptr [eax + 0x14]          // 004e3de6
-        test ecx, ecx                            // 004e3de9
-        je L_4e3e26                              // 004e3deb
-        mov ecx, dword ptr [eax + 0x10]          // 004e3ded
-        mov edx, dword ptr [eax + 0xc]           // 004e3df0
-        push eax                                 // 004e3df3
-        mov dword ptr [ecx], edx                 // 004e3df4
-        mov ecx, dword ptr [eax + 0xc]           // 004e3df6
-        mov edx, dword ptr [eax + 0x10]          // 004e3df9
-        mov dword ptr [ecx + 4], edx             // 004e3dfc
-        mov ecx, dword ptr [eax + 4]             // 004e3dff
-        mov edx, dword ptr [eax]                 // 004e3e02
-        mov dword ptr [ecx], edx                 // 004e3e04
-        mov ecx, dword ptr [eax]                 // 004e3e06
-        mov edx, dword ptr [eax + 4]             // 004e3e08
-        mov dword ptr [ecx + 4], edx             // 004e3e0b
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e3e0e
-        mov ecx, dword ptr ds:[0x007d7164]       // 004e3e13
-        mov edx, dword ptr [ecx + eax]           // 004e3e19
-        push edx                                 // 004e3e1c
-        call dword ptr [eax + 0x11c]             // 004e3e1d
-        add esp, 8                               // 004e3e23
-    L_4e3e26:
-        cmp esi, edi                             // 004e3e26
-        jne L_4e3dda                             // 004e3e28
-    L_4e3e2a:
-        mov eax, dword ptr [ebp + 4]             // 004e3e2a
-        pop edi                                  // 004e3e2d
-        mov dword ptr [ebx + 0x10], eax          // 004e3e2e
-        pop esi                                  // 004e3e31
-        mov eax, ebx                             // 004e3e32
-        pop ebp                                  // 004e3e34
-        pop ebx                                  // 004e3e35
-        ret                                      // 004e3e36
-    }
-}
-
-// HAND-LIFT 0x004e3e40 RwCoreLift_004e3e40  (11 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3e40(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 004e3e40
-        mov ecx, dword ptr ds:[0x007d7174]       // 004e3e44
-        add ecx, eax                             // 004e3e4a
-        push esi                                 // 004e3e4c
-        mov dword ptr [ecx], 0                   // 004e3e4d
-        mov edx, dword ptr ds:[0x007d3ff8]       // 004e3e53
-        mov esi, dword ptr ds:[0x007d7164]       // 004e3e59
-        mov edx, dword ptr [esi + edx + 8]       // 004e3e5f
-        pop esi                                  // 004e3e63
-        mov dword ptr [ecx + 4], edx             // 004e3e64
-        ret                                      // 004e3e67
-    }
-}
-
-// HAND-LIFT 0x004e3e70 RwCoreLift_004e3e70  (16 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3e70(void) {
-    __asm {
-        mov eax, dword ptr [esp + 8]             // 004e3e70
-        mov ecx, dword ptr ds:[0x007d7174]       // 004e3e74
-        mov eax, dword ptr [ecx + eax]           // 004e3e7a
-        test eax, eax                            // 004e3e7d
-        je L_4e3e94                              // 004e3e7f
-        push esi                                 // 004e3e81
-        mov esi, dword ptr [esp + 8]             // 004e3e82
-        push esi                                 // 004e3e86
-        push eax                                 // 004e3e87
-        call RwCore_004e4450                    // 004e3e88
-        add esp, 8                               // 004e3e8d
-        mov eax, esi                             // 004e3e90
-        pop esi                                  // 004e3e92
-        ret                                      // 004e3e93
-    L_4e3e94:
-        mov eax, dword ptr [esp + 4]             // 004e3e94
-        ret                                      // 004e3e98
-    }
-}
-
-// HAND-LIFT 0x004e3ea0 RwCoreLift_004e3ea0  (8 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3ea0(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 004e3ea0
-        mov ecx, dword ptr ds:[0x007d7178]       // 004e3ea4
-        add ecx, eax                             // 004e3eaa
-        mov dword ptr [ecx], 0                   // 004e3eac
-        mov edx, dword ptr [eax + 0x10]          // 004e3eb2
-        mov dword ptr [ecx + 4], edx             // 004e3eb5
-        mov dword ptr [eax + 0x10], offset RwCoreLift_004e3ec0 // 004e3eb8
-        ret                                      // 004e3ebf
-    }
-}
-
-// HAND-LIFT 0x004e3ec0 RwCoreLift_004e3ec0  (165 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e3ec0(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007d7178]       // 004e3ec0
-        sub esp, 0x128                           // 004e3ec5
-        push ebp                                 // 004e3ecb
-        mov ebp, dword ptr [esp + 0x130]         // 004e3ecc
-        push esi                                 // 004e3ed3
-        push ebp                                 // 004e3ed4
-        lea esi, [eax + ebp]                     // 004e3ed5
-        call dword ptr [esi + 4]                 // 004e3ed8
-        add esp, 4                               // 004e3edb
-        test eax, eax                            // 004e3ede
-        je L_4e4093                              // 004e3ee0
-        cmp byte ptr [ebp + 1], 0x80             // 004e3ee6
-        jb L_4e40b6                              // 004e3eea
-        mov esi, dword ptr [esi]                 // 004e3ef0
-        mov eax, dword ptr [ebp + 4]             // 004e3ef2
-        test esi, esi                            // 004e3ef5
-        mov dword ptr [esp + 0x24], esi          // 004e3ef7
-        mov dword ptr [esp + 0x2c], eax          // 004e3efb
-        je L_4e40b6                              // 004e3eff
-        test eax, eax                            // 004e3f05
-        je L_4e40b6                              // 004e3f07
-        mov esi, dword ptr [ebp + 0x2c]          // 004e3f0d
-        mov ecx, dword ptr [ebp + 0x14]          // 004e3f10
-        push ebx                                 // 004e3f13
-        push edi                                 // 004e3f14
-        lea edi, [ebp + 0x2c]                    // 004e3f15
-        xor ebx, ebx                             // 004e3f18
-        cmp esi, edi                             // 004e3f1a
-        mov dword ptr [esp + 0x10], ecx          // 004e3f1c
-        je L_4e3f68                              // 004e3f20
-    L_4e3f22:
-        mov edx, dword ptr [esi + 4]             // 004e3f22
-        mov ecx, dword ptr [esi]                 // 004e3f25
-        lea eax, [esi - 0xc]                     // 004e3f27
-        mov esi, dword ptr [esi]                 // 004e3f2a
-        mov dword ptr [edx], ecx                 // 004e3f2c
-        push eax                                 // 004e3f2e
-        mov edx, dword ptr [eax + 0xc]           // 004e3f2f
-        mov ecx, dword ptr [eax + 0x10]          // 004e3f32
-        mov dword ptr [edx + 4], ecx             // 004e3f35
-        mov edx, dword ptr [eax + 4]             // 004e3f38
-        mov ecx, dword ptr [eax]                 // 004e3f3b
-        mov dword ptr [edx], ecx                 // 004e3f3d
-        mov edx, dword ptr [eax]                 // 004e3f3f
-        mov ecx, dword ptr [eax + 4]             // 004e3f41
-        mov dword ptr [edx + 4], ecx             // 004e3f44
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e3f47
-        mov edx, dword ptr ds:[0x007d7164]       // 004e3f4c
-        mov ecx, dword ptr [edx + eax + 4]       // 004e3f52
-        push ecx                                 // 004e3f56
-        call dword ptr [eax + 0x11c]             // 004e3f57
-        add esp, 8                               // 004e3f5d
-        cmp esi, edi                             // 004e3f60
-        jne L_4e3f22                             // 004e3f62
-        mov eax, dword ptr [esp + 0x34]          // 004e3f64
-    L_4e3f68:
-        push eax                                 // 004e3f68
-        call RwCore_004c0ed0                    // 004e3f69
-        add esp, 4                               // 004e3f6e
-        add eax, 0x30                            // 004e3f71
-        mov edx, eax                             // 004e3f74
-        mov ecx, dword ptr [edx]                 // 004e3f76
-        mov dword ptr [esp + 0x20], ecx          // 004e3f78
-        mov ecx, dword ptr [edx + 4]             // 004e3f7c
-        mov dword ptr [esp + 0x24], ecx          // 004e3f7f
-        mov ecx, dword ptr [eax]                 // 004e3f83
-        mov edx, dword ptr [edx + 8]             // 004e3f85
-        mov dword ptr [esp + 0x14], ecx          // 004e3f88
-        fld dword ptr [esp + 0x14]               // 004e3f8c
-        fadd dword ptr [esp + 0x10]              // 004e3f90
-        mov dword ptr [esp + 0x28], edx          // 004e3f94
-        mov edx, dword ptr [eax + 4]             // 004e3f98
-        mov eax, dword ptr [eax + 8]             // 004e3f9b
-        mov dword ptr [esp + 0x18], edx          // 004e3f9e
-        mov dword ptr [esp + 0x1c], eax          // 004e3fa2
-        mov ecx, dword ptr [esp + 0x2c]          // 004e3fa6
-        fstp dword ptr [esp + 0x14]              // 004e3faa
-        fld dword ptr [esp + 0x18]               // 004e3fae
-        fadd dword ptr [esp + 0x10]              // 004e3fb2
-        mov esi, dword ptr [ecx + 0x1c]          // 004e3fb6
-        fstp dword ptr [esp + 0x18]              // 004e3fb9
-        fld dword ptr [esp + 0x1c]               // 004e3fbd
-        fadd dword ptr [esp + 0x10]              // 004e3fc1
-        fstp dword ptr [esp + 0x1c]              // 004e3fc5
-        fld dword ptr [esp + 0x20]               // 004e3fc9
-        fsub dword ptr [esp + 0x10]              // 004e3fcd
-        fstp dword ptr [esp + 0x20]              // 004e3fd1
-        fld dword ptr [esp + 0x24]               // 004e3fd5
-        fsub dword ptr [esp + 0x10]              // 004e3fd9
-        fstp dword ptr [esp + 0x24]              // 004e3fdd
-        fld dword ptr [esp + 0x28]               // 004e3fe1
-        fsub dword ptr [esp + 0x10]              // 004e3fe5
-        fstp dword ptr [esp + 0x28]              // 004e3fe9
-    L_4e3fed:
-        mov ecx, dword ptr [esi]                 // 004e3fed
-        test ecx, ecx                            // 004e3fef
-        jge L_4e404f                             // 004e3ff1
-        mov eax, dword ptr ds:[0x007d3ff8]       // 004e3ff3
-        mov edx, dword ptr ds:[0x007d7164]       // 004e3ff8
-        push 0x30507                             // 004e3ffe
-        mov ecx, dword ptr [edx + eax + 4]       // 004e4003
-        push ecx                                 // 004e4007
-        call dword ptr [eax + 0x118]             // 004e4008
-        lea ecx, [esi + 0x40]                    // 004e400e
-        mov dword ptr [eax + 0x14], esi          // 004e4011
-        mov dword ptr [eax + 8], ebp             // 004e4014
-        add esp, 8                               // 004e4017
-        mov edx, dword ptr [ecx]                 // 004e401a
-        mov dword ptr [eax + 4], ecx             // 004e401c
-        mov dword ptr [eax], edx                 // 004e401f
-        mov edx, dword ptr [ecx]                 // 004e4021
-        mov dword ptr [edx + 4], eax             // 004e4023
-        mov dword ptr [ecx], eax                 // 004e4026
-        mov edx, dword ptr [edi]                 // 004e4028
-        lea ecx, [eax + 0xc]                     // 004e402a
-        mov dword ptr [eax + 0x10], edi          // 004e402d
-        mov dword ptr [ecx], edx                 // 004e4030
-        mov eax, dword ptr [edi]                 // 004e4032
-        mov dword ptr [eax + 4], ecx             // 004e4034
-        mov dword ptr [edi], ecx                 // 004e4037
-    L_4e4039:
-        mov esi, dword ptr [esp + ebx*4 + 0x38]  // 004e4039
-        dec ebx                                  // 004e403d
-    L_4e403e:
-        test ebx, ebx                            // 004e403e
-        jge L_4e3fed                             // 004e4040
-        pop edi                                  // 004e4042
-        pop ebx                                  // 004e4043
-        mov eax, ebp                             // 004e4044
-        pop esi                                  // 004e4046
-        pop ebp                                  // 004e4047
-        add esp, 0x128                           // 004e4048
-        ret                                      // 004e404e
-    L_4e404f:
-        fld dword ptr [esp + ecx + 0x20]         // 004e404f
-        fcomp dword ptr [esi + 0x10]             // 004e4053
-        mov edx, esi                             // 004e4056
-        fnstsw ax                                // 004e4058
-        test ah, 5                               // 004e405a
-        jp L_4e407e                              // 004e405d
-        mov ecx, dword ptr [edx]                 // 004e405f
-        mov esi, dword ptr [esi + 8]             // 004e4061
-        fld dword ptr [esp + ecx + 0x14]         // 004e4064
-        fcomp dword ptr [edx + 0x14]             // 004e4068
-        fnstsw ax                                // 004e406b
-        and eax, 0x4100                          // 004e406d
-        jne L_4e403e                             // 004e4072
-        mov edx, dword ptr [edx + 0xc]           // 004e4074
-        inc ebx                                  // 004e4077
-        mov dword ptr [esp + ebx*4 + 0x38], edx  // 004e4078
-        jmp L_4e403e                             // 004e407c
-    L_4e407e:
-        fld dword ptr [esp + ecx + 0x14]         // 004e407e
-        fcomp dword ptr [esi + 0x14]             // 004e4082
-        fnstsw ax                                // 004e4085
-        and eax, 0x4100                          // 004e4087
-        jne L_4e4039                             // 004e408c
-        mov esi, dword ptr [esi + 0xc]           // 004e408e
-        jmp L_4e403e                             // 004e4091
-    L_4e4093:
-        push 0x80000016                          // 004e4093
-        mov dword ptr [esp + 0x28], 2            // 004e4098
-        call Orig_004d7ff0                    // 004e40a0
-        mov dword ptr [esp + 0x2c], eax          // 004e40a5
-        lea eax, [esp + 0x28]                    // 004e40a9
-        push eax                                 // 004e40ad
-        call RwCore_004d8480                    // 004e40ae
-        add esp, 8                               // 004e40b3
-    L_4e40b6:
-        mov eax, ebp                             // 004e40b6
-        pop esi                                  // 004e40b8
-        pop ebp                                  // 004e40b9
-        add esp, 0x128                           // 004e40ba
-        ret                                      // 004e40c0
     }
 }
 

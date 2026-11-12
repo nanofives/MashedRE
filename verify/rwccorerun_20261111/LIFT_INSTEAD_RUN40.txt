@@ -1,0 +1,13 @@
+# sources that fail VS2022 C++ (build_vs12.. logs); lifted instead (gen_rwcore_tus.py LIFT_INSTEAD)
+re/match/rwl02/004e5850.c
+re/match/rwl02/004e89a0.c
+re/match/rwl03/00534d00.c
+re/match/rwl03/00535330.c
+re/match/rwl03/005405c0.c
+re/match/rwl04/00541d40.c
+re/match/rwl04/0054f8d0.c
+re/match/rwl04/00550130.c
+re/match/s19/004c2620.c
+re/match/s19/004c3d90.c
+re/match/s19/004c3dc0.c
+re/match/s21/004d8090.c

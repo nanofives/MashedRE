@@ -6,8 +6,8 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_004c8e50 RwCore_004c8e50
-#define FUN_004c9290 RwCoreMissing_004c9290
-#define FUN_004ca160 RwCoreMissing_004ca160
+#define FUN_004c9290 RwCoreLift_004c9290
+#define FUN_004ca160 RwCoreLift_004ca160
 #define FUN_004cab30 RwCoreLift_004cab30
 #define FUN_004cac10 RwCoreLift_004cac10
 #define FUN_004cff20 RwCore_004cff20
@@ -31,7 +31,7 @@
 #define FUN_004ddd60 RwCore_004ddd60
 #define FUN_004ddfb0 RwCore_004ddfb0
 #define FUN_004de1b0 RwCore_004de1b0
-#define FUN_004df030 RwCoreMissing_004df030
+#define FUN_004df030 RwCoreLift_004df030
 #define FUN_004df120 RwCore_004df120
 #define FUN_005c9d00 GetRaceEndTrigger   // exe body, Util/GameStateGetters.cpp
 extern "C" {

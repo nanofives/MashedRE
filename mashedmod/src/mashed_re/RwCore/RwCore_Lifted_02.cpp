@@ -5,7 +5,28 @@
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #pragma warning(disable: 4035 4100)
-extern "C" int RwCoreLift_004a3907();
+extern "C" int RwCoreLift_004ec190();
+extern "C" int RwCoreLift_004ec760();
+extern "C" int RwCoreLift_004ec790();
+extern "C" int RwCoreLift_004ec79d();
+extern "C" int RwCoreLift_004ec82c();
+extern "C" int RwCoreLift_004ec8de();
+extern "C" int RwCoreLift_004ec8eb();
+extern "C" int RwCoreLift_004ec9a3();
+extern "C" int RwCoreLift_004eca7c();
+extern "C" int RwCoreLift_004ecaee();
+extern "C" int RwCoreLift_004ecafb();
+extern "C" int RwCoreLift_004ecb01();
+extern "C" int RwCoreLift_004ecb12();
+extern "C" int RwCoreLift_004ecb1f();
+extern "C" int RwCoreLift_004ecb25();
+extern "C" int RwCoreLift_004ecb36();
+extern "C" int RwCoreLift_004ecb43();
+extern "C" int RwCoreLift_004ecb49();
+extern "C" int RwCoreLift_004ecb5a();
+extern "C" int RwCoreLift_004ecb6d();
+extern "C" int RwCoreLift_004ecc45();
+extern "C" int RwCoreLift_004ecd40();
 extern "C" int RwCoreLift_004ecd6f();
 extern "C" int RwCoreLift_004ecdcc();
 extern "C" int RwCoreLift_004ecdd9();
@@ -13,6 +34,7 @@ extern "C" int RwCoreLift_004ece64();
 extern "C" int RwCoreLift_004ece75();
 extern "C" int RwCoreLift_004ecf1c();
 extern "C" int RwCoreLift_004ecf2f();
+extern "C" int RwCoreLift_004ecf40();
 extern "C" int RwCoreLift_004ecf46();
 extern "C" int RwCoreLift_004ecf59();
 extern "C" int RwCoreLift_004ecfbf();
@@ -42,36 +64,894 @@ extern "C" int RwCoreLift_004ed8f6();
 extern "C" int RwCoreLift_004ed909();
 extern "C" int RwCoreLift_004ed976();
 extern "C" int RwCoreLift_004ed989();
-extern "C" int RwCoreLift_004edbbf();
-extern "C" int RwCoreLift_004edbd2();
-extern "C" int RwCoreLift_004edf71();
-extern "C" int RwCoreLift_004edf9f();
-extern "C" int RwCoreLift_004edffb();
-extern "C" int RwCoreLift_004ee029();
-extern "C" int RwCoreLift_004ee085();
-extern "C" int RwCoreLift_004ee0a1();
-extern "C" int RwCoreLift_004ee11b();
-extern "C" int RwCoreLift_004ee137();
-extern "C" int RwCoreLift_004ee1b2();
-extern "C" int RwCoreLift_004ee1ce();
-extern "C" int RwCoreLift_004ee24a();
-extern "C" int RwCoreLift_004ee26a();
-extern "C" int RwCoreLift_004ee36c();
-extern "C" int RwCoreLift_004ee379();
-extern "C" int RwCoreLift_004ee37f();
-extern "C" int RwCoreLift_004ee461();
-extern "C" int RwCoreLift_004ee48f();
-extern "C" int RwCoreLift_004ee4a0();
-extern "C" int RwCoreLift_004ee4c7();
-extern "C" int RwCoreLift_004ee5ad();
-extern "C" int RwCoreLift_004ee5ba();
 extern "C" int RwCoreLift_004fbe7a();
-extern "C" int RwCore_004ecb67();
+extern "C" int RwCore_004cb190();
+extern "C" int RwCore_004cbb70();
+extern "C" int RwCore_004cbbd0();
+extern "C" int RwCore_004cfee0();
+extern "C" int RwCore_004d53b0();
+extern "C" int RwCore_004d5480();
+extern "C" int RwCore_004d54d0();
+extern "C" int RwCore_004d54f0();
+extern "C" int RwCore_004d55b0();
+extern "C" int RwCore_004d6e70();
+extern "C" int RwCore_004d7100();
+extern "C" int RwCore_004d71f0();
+extern "C" int RwCore_004e6100();
 extern "C" int __stdcall RwCoreLift_004ecf29(int, int, int);
 extern "C" int __stdcall RwCoreLift_004ecf53(int, int, int);
 extern "C" int __stdcall RwCoreLift_004ed6ba(int, int, int);
 extern "C" int __stdcall RwCoreLift_004ed903(int, int);
 extern "C" int __stdcall RwCoreLift_004ed983(int, int, int);
+
+// HAND-LIFT 0x004ec190 RwCoreLift_004ec190  (495 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec190(void) {
+    __asm {
+        mov eax, dword ptr ds:[0x006181d4]       // 004ec190
+        sub esp, 8                               // 004ec195
+        push ebx                                 // 004ec198
+        push ebp                                 // 004ec199
+        push esi                                 // 004ec19a
+        push edi                                 // 004ec19b
+        xor edi, edi                             // 004ec19c
+        cmp eax, edi                             // 004ec19e
+        je L_4ec1b7                              // 004ec1a0
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec1a2
+        mov dword ptr ds:[0x006181d4], edi       // 004ec1a7
+        push edi                                 // 004ec1ad
+        push eax                                 // 004ec1ae
+        mov ecx, dword ptr [eax]                 // 004ec1af
+        call dword ptr [ecx + 0x1ac]             // 004ec1b1
+    L_4ec1b7:
+        mov edx, dword ptr ds:[0x007d3ff8]       // 004ec1b7
+        mov al, byte ptr [esp + 0x24]            // 004ec1bd
+        cmp al, 1                                // 004ec1c1
+        mov esi, dword ptr [edx]                 // 004ec1c3
+        jne L_4ec1dd                             // 004ec1c5
+        mov eax, dword ptr [esp + 0x20]          // 004ec1c7
+        push eax                                 // 004ec1cb
+        call RwCore_004e6100                    // 004ec1cc
+        push eax                                 // 004ec1d1
+        push esi                                 // 004ec1d2
+        call RwCore_004cbb70                    // 004ec1d3
+        add esp, 0xc                             // 004ec1d8
+        jmp L_4ec1ee                             // 004ec1db
+    L_4ec1dd:
+        mov ecx, dword ptr [esp + 0x20]          // 004ec1dd
+        add ecx, 0x60                            // 004ec1e1
+        push ecx                                 // 004ec1e4
+        push esi                                 // 004ec1e5
+        call RwCore_004cbbd0                    // 004ec1e6
+        add esp, 8                               // 004ec1eb
+    L_4ec1ee:
+        xor edx, edx                             // 004ec1ee
+        cmp eax, edi                             // 004ec1f0
+        sete dl                                  // 004ec1f2
+        push edx                                 // 004ec1f5
+        push 0x88                                // 004ec1f6
+        call RwCore_004d5480                    // 004ec1fb
+        mov ebp, dword ptr [esp + 0x24]          // 004ec200
+        add esp, 8                               // 004ec204
+        mov eax, dword ptr [ebp + 0x20]          // 004ec207
+        cmp eax, edi                             // 004ec20a
+        je L_4ec22d                              // 004ec20c
+        cmp dword ptr ds:[0x006181d8], eax       // 004ec20e
+        je L_4ec22d                              // 004ec214
+        mov dword ptr ds:[0x006181d8], eax       // 004ec216
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec21b
+        mov edx, dword ptr [ebp + 0x20]          // 004ec220
+        mov ecx, dword ptr [eax]                 // 004ec223
+        push edx                                 // 004ec225
+        push eax                                 // 004ec226
+        call dword ptr [ecx + 0x1a0]             // 004ec227
+    L_4ec22d:
+        mov eax, dword ptr [ebp + 0x48]          // 004ec22d
+        lea ecx, [ebp + 0x28]                    // 004ec230
+        push eax                                 // 004ec233
+        push ecx                                 // 004ec234
+        call RwCore_004cb190                    // 004ec235
+        mov eax, dword ptr [ebp + 0x4c]          // 004ec23a
+        mov ecx, dword ptr ds:[0x006181cc]       // 004ec23d
+        add esp, 8                               // 004ec243
+        cmp ecx, eax                             // 004ec246
+        je L_4ec26b                              // 004ec248
+        mov dword ptr ds:[0x006181cc], eax       // 004ec24a
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec24f
+        mov dword ptr ds:[0x006181c8], 0xffffffff // 004ec254
+        mov ecx, dword ptr [ebp + 0x4c]          // 004ec25e
+        mov edx, dword ptr [eax]                 // 004ec261
+        push ecx                                 // 004ec263
+        push eax                                 // 004ec264
+        call dword ptr [edx + 0x15c]             // 004ec265
+    L_4ec26b:
+        lea edx, [esp + 0x10]                    // 004ec26b
+        push edx                                 // 004ec26f
+        push 0x89                                // 004ec270
+        call RwCore_004d54d0                    // 004ec275
+        mov eax, dword ptr [esp + 0x18]          // 004ec27a
+        add esp, 8                               // 004ec27e
+        cmp eax, edi                             // 004ec281
+        jne L_4ec437                             // 004ec283
+        mov ebx, dword ptr [esp + 0x28]          // 004ec289
+        test bl, 8                               // 004ec28d
+        jne L_4ec437                             // 004ec290
+        lea eax, [esp + 0x28]                    // 004ec296
+        push eax                                 // 004ec29a
+        push 0x1a                                // 004ec29b
+        call RwCore_004d54d0                    // 004ec29d
+        lea ecx, [esp + 0x28]                    // 004ec2a2
+        push ecx                                 // 004ec2a6
+        push 9                                   // 004ec2a7
+        call RwCore_004d54d0                    // 004ec2a9
+        push edi                                 // 004ec2ae
+        call RwCore_004d7100                    // 004ec2af
+        push 0xff000000                          // 004ec2b4
+        push 0x3c                                // 004ec2b9
+        call RwCore_004d5480                    // 004ec2bb
+        push edi                                 // 004ec2c0
+        push 0x1a                                // 004ec2c1
+        call RwCore_004d5480                    // 004ec2c3
+        push 1                                   // 004ec2c8
+        push 9                                   // 004ec2ca
+        call RwCore_004d5480                    // 004ec2cc
+        push 3                                   // 004ec2d1
+        push 1                                   // 004ec2d3
+        push edi                                 // 004ec2d5
+        call RwCore_004d54f0                    // 004ec2d6
+        push 2                                   // 004ec2db
+        push 2                                   // 004ec2dd
+        push edi                                 // 004ec2df
+        call RwCore_004d54f0                    // 004ec2e0
+        add esp, 0x44                            // 004ec2e5
+        push 3                                   // 004ec2e8
+        push 3                                   // 004ec2ea
+        push edi                                 // 004ec2ec
+        call RwCore_004d54f0                    // 004ec2ed
+        push 3                                   // 004ec2f2
+        push 4                                   // 004ec2f4
+        push edi                                 // 004ec2f6
+        call RwCore_004d54f0                    // 004ec2f7
+        push 2                                   // 004ec2fc
+        push 5                                   // 004ec2fe
+        push edi                                 // 004ec300
+        call RwCore_004d54f0                    // 004ec301
+        push 3                                   // 004ec306
+        push 6                                   // 004ec308
+        push edi                                 // 004ec30a
+        call RwCore_004d54f0                    // 004ec30b
+        push edi                                 // 004ec310
+        push edi                                 // 004ec311
+        call RwCore_004d6e70                    // 004ec312
+        mov eax, dword ptr [ebp + 0x1c]          // 004ec317
+        add esp, 0x38                            // 004ec31a
+        test eax, eax                            // 004ec31d
+        je L_4ec414                              // 004ec31f
+        and ebx, 0x84                            // 004ec325
+        lea esi, [ebp + 0x68]                    // 004ec32b
+        mov dword ptr [esp + 0x24], eax          // 004ec32e
+    L_4ec332:
+        test ebx, ebx                            // 004ec332
+        je L_4ec375                              // 004ec334
+        mov edx, dword ptr [esi - 8]             // 004ec336
+        mov eax, dword ptr [edx]                 // 004ec339
+        test eax, eax                            // 004ec33b
+        je L_4ec375                              // 004ec33d
+        push eax                                 // 004ec33f
+        call RwCore_004cfee0                    // 004ec340
+        add esp, 4                               // 004ec345
+        test eax, eax                            // 004ec348
+        je L_4ec375                              // 004ec34a
+        mov eax, dword ptr [esi - 8]             // 004ec34c
+        push 0                                   // 004ec34f
+        mov ecx, dword ptr [eax]                 // 004ec351
+        push ecx                                 // 004ec353
+        call RwCore_004d6e70                    // 004ec354
+        add esp, 8                               // 004ec359
+        test edi, edi                            // 004ec35c
+        jne L_4ec38f                             // 004ec35e
+        push 4                                   // 004ec360
+        push 4                                   // 004ec362
+        push 0                                   // 004ec364
+        mov edi, 1                               // 004ec366
+        call RwCore_004d54f0                    // 004ec36b
+        add esp, 0xc                             // 004ec370
+        jmp L_4ec38f                             // 004ec373
+    L_4ec375:
+        test edi, edi                            // 004ec375
+        je L_4ec38f                              // 004ec377
+        xor edi, edi                             // 004ec379
+        push 3                                   // 004ec37b
+        push 4                                   // 004ec37d
+        push edi                                 // 004ec37f
+        call RwCore_004d54f0                    // 004ec380
+        push edi                                 // 004ec385
+        push edi                                 // 004ec386
+        call RwCore_004d6e70                    // 004ec387
+        add esp, 0x14                            // 004ec38c
+    L_4ec38f:
+        mov eax, dword ptr [esi]                 // 004ec38f
+        mov ecx, dword ptr ds:[0x006181d0]       // 004ec391
+        cmp ecx, eax                             // 004ec397
+        je L_4ec3b1                              // 004ec399
+        mov dword ptr ds:[0x006181d0], eax       // 004ec39b
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec3a0
+        mov ecx, dword ptr [esi]                 // 004ec3a5
+        mov edx, dword ptr [eax]                 // 004ec3a7
+        push ecx                                 // 004ec3a9
+        push eax                                 // 004ec3aa
+        call dword ptr [edx + 0x170]             // 004ec3ab
+    L_4ec3b1:
+        mov eax, dword ptr [ebp + 0x20]          // 004ec3b1
+        test eax, eax                            // 004ec3b4
+        je L_4ec3e3                              // 004ec3b6
+        call RwCore_004d53b0                    // 004ec3b8
+        mov ecx, dword ptr [esi + 0x10]          // 004ec3bd
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec3c0
+        push ecx                                 // 004ec3c5
+        mov ecx, dword ptr [esi + 0xc]           // 004ec3c6
+        push ecx                                 // 004ec3c9
+        mov ecx, dword ptr [esi + 8]             // 004ec3ca
+        mov edx, dword ptr [eax]                 // 004ec3cd
+        push ecx                                 // 004ec3cf
+        mov ecx, dword ptr [esi + 4]             // 004ec3d0
+        push 0                                   // 004ec3d3
+        push ecx                                 // 004ec3d5
+        mov ecx, dword ptr [ebp + 0x24]          // 004ec3d6
+        push ecx                                 // 004ec3d9
+        push eax                                 // 004ec3da
+        call dword ptr [edx + 0x148]             // 004ec3db
+        jmp L_4ec402                             // 004ec3e1
+    L_4ec3e3:
+        call RwCore_004d53b0                    // 004ec3e3
+        mov ecx, dword ptr [esi + 0x10]          // 004ec3e8
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec3eb
+        push ecx                                 // 004ec3f0
+        mov ecx, dword ptr [esi + 4]             // 004ec3f1
+        mov edx, dword ptr [eax]                 // 004ec3f4
+        push ecx                                 // 004ec3f6
+        mov ecx, dword ptr [ebp + 0x24]          // 004ec3f7
+        push ecx                                 // 004ec3fa
+        push eax                                 // 004ec3fb
+        call dword ptr [edx + 0x144]             // 004ec3fc
+    L_4ec402:
+        mov eax, dword ptr [esp + 0x24]          // 004ec402
+        add esi, 0x24                            // 004ec406
+        dec eax                                  // 004ec409
+        mov dword ptr [esp + 0x24], eax          // 004ec40a
+        jne L_4ec332                             // 004ec40e
+    L_4ec414:
+        mov edx, dword ptr [esp + 0x28]          // 004ec414
+        push edx                                 // 004ec418
+        push 0x1a                                // 004ec419
+        call RwCore_004d5480                    // 004ec41b
+        mov eax, dword ptr [esp + 0x28]          // 004ec420
+        push eax                                 // 004ec424
+        push 9                                   // 004ec425
+        call RwCore_004d5480                    // 004ec427
+        add esp, 0x10                            // 004ec42c
+        pop edi                                  // 004ec42f
+        pop esi                                  // 004ec430
+        pop ebp                                  // 004ec431
+        pop ebx                                  // 004ec432
+        add esp, 8                               // 004ec433
+        ret                                      // 004ec436
+    L_4ec437:
+        call RwCore_004d71f0                    // 004ec437
+        mov ecx, eax                             // 004ec43c
+        mov eax, dword ptr [ebp + 0x1c]          // 004ec43e
+        cmp eax, edi                             // 004ec441
+        mov dword ptr [esp + 0x20], ecx          // 004ec443
+        mov dword ptr [esp + 0x24], 0x80000000   // 004ec447
+        je L_4ec70e                              // 004ec44f
+        add ebp, 0x68                            // 004ec455
+        mov dword ptr [esp + 0x14], eax          // 004ec458
+        jmp L_4ec462                             // 004ec45c
+    L_4ec45e:
+        mov ecx, dword ptr [esp + 0x20]          // 004ec45e
+    L_4ec462:
+        mov edi, dword ptr [ebp - 8]             // 004ec462
+        xor ebx, ebx                             // 004ec465
+        mov al, byte ptr [edi + 7]               // 004ec467
+        lea esi, [edi + 4]                       // 004ec46a
+        cmp al, 0xff                             // 004ec46d
+        jne L_4ec483                             // 004ec46f
+        mov eax, dword ptr [ebp - 4]             // 004ec471
+        test eax, eax                            // 004ec474
+        jne L_4ec483                             // 004ec476
+        test ecx, ecx                            // 004ec478
+        je L_4ec499                              // 004ec47a
+        mov dword ptr [esp + 0x20], ebx          // 004ec47c
+        push ebx                                 // 004ec480
+        jmp L_4ec491                             // 004ec481
+    L_4ec483:
+        test ecx, ecx                            // 004ec483
+        jne L_4ec499                             // 004ec485
+        mov dword ptr [esp + 0x20], 1            // 004ec487
+        push 1                                   // 004ec48f
+    L_4ec491:
+        call RwCore_004d7100                    // 004ec491
+        add esp, 4                               // 004ec496
+    L_4ec499:
+        mov eax, dword ptr [esp + 0x10]          // 004ec499
+        test eax, eax                            // 004ec49d
+        je L_4ec4b5                              // 004ec49f
+        mov ecx, dword ptr [esp + 0x28]          // 004ec4a1
+        lea edx, [edi + 0xc]                     // 004ec4a5
+        push ecx                                 // 004ec4a8
+        push esi                                 // 004ec4a9
+        push edx                                 // 004ec4aa
+        call RwCore_004d55b0                    // 004ec4ab
+        add esp, 0xc                             // 004ec4b0
+        jmp L_4ec4ec                             // 004ec4b3
+    L_4ec4b5:
+        test byte ptr [esp + 0x28], 0x40         // 004ec4b5
+        je L_4ec4ec                              // 004ec4ba
+        cmp dword ptr [esi], -1                  // 004ec4bc
+        je L_4ec4ec                              // 004ec4bf
+        xor eax, eax                             // 004ec4c1
+        xor ecx, ecx                             // 004ec4c3
+        mov ah, byte ptr [esi + 3]               // 004ec4c5
+        mov cl, byte ptr [esi + 1]               // 004ec4c8
+        mov al, byte ptr [esi]                   // 004ec4cb
+        xor edx, edx                             // 004ec4cd
+        mov dl, byte ptr [esi + 2]               // 004ec4cf
+        mov ebx, 2                               // 004ec4d2
+        shl eax, 8                               // 004ec4d7
+        or eax, ecx                              // 004ec4da
+        shl eax, 8                               // 004ec4dc
+        or eax, edx                              // 004ec4df
+        push eax                                 // 004ec4e1
+        push 0x3c                                // 004ec4e2
+        call RwCore_004d5480                    // 004ec4e4
+        add esp, 8                               // 004ec4e9
+    L_4ec4ec:
+        mov eax, dword ptr [edi]                 // 004ec4ec
+        test eax, eax                            // 004ec4ee
+        je L_4ec501                              // 004ec4f0
+        test byte ptr [esp + 0x28], 0x84         // 004ec4f2
+        je L_4ec501                              // 004ec4f7
+        push 0                                   // 004ec4f9
+        or ebx, 1                                // 004ec4fb
+        push eax                                 // 004ec4fe
+        jmp L_4ec505                             // 004ec4ff
+    L_4ec501:
+        push 0                                   // 004ec501
+        push 0                                   // 004ec503
+    L_4ec505:
+        call RwCore_004d6e70                    // 004ec505
+        mov eax, dword ptr [esp + 0x2c]          // 004ec50a
+        add esp, 8                               // 004ec50e
+        cmp ebx, eax                             // 004ec511
+        je L_4ec663                              // 004ec513
+        test bl, 1                               // 004ec519
+        je L_4ec5c2                              // 004ec51c
+        test al, 1                               // 004ec522
+        jne L_4ec56f                             // 004ec524
+        push 4                                   // 004ec526
+        push 1                                   // 004ec528
+        push 0                                   // 004ec52a
+        call RwCore_004d54f0                    // 004ec52c
+        push 2                                   // 004ec531
+        push 2                                   // 004ec533
+        push 0                                   // 004ec535
+        call RwCore_004d54f0                    // 004ec537
+        push 0                                   // 004ec53c
+        push 3                                   // 004ec53e
+        push 0                                   // 004ec540
+        call RwCore_004d54f0                    // 004ec542
+        push 4                                   // 004ec547
+        push 4                                   // 004ec549
+        push 0                                   // 004ec54b
+        call RwCore_004d54f0                    // 004ec54d
+        push 2                                   // 004ec552
+        push 5                                   // 004ec554
+        push 0                                   // 004ec556
+        call RwCore_004d54f0                    // 004ec558
+        push 0                                   // 004ec55d
+        push 6                                   // 004ec55f
+        push 0                                   // 004ec561
+        call RwCore_004d54f0                    // 004ec563
+        mov eax, dword ptr [esp + 0x6c]          // 004ec568
+        add esp, 0x48                            // 004ec56c
+    L_4ec56f:
+        test bl, 2                               // 004ec56f
+        je L_4ec641                              // 004ec572
+        push 4                                   // 004ec578
+        push 1                                   // 004ec57a
+        push 1                                   // 004ec57c
+        call RwCore_004d54f0                    // 004ec57e
+        push 1                                   // 004ec583
+        push 2                                   // 004ec585
+        push 1                                   // 004ec587
+        call RwCore_004d54f0                    // 004ec589
+        push 3                                   // 004ec58e
+        push 3                                   // 004ec590
+        push 1                                   // 004ec592
+        call RwCore_004d54f0                    // 004ec594
+        push 4                                   // 004ec599
+        push 4                                   // 004ec59b
+        push 1                                   // 004ec59d
+        call RwCore_004d54f0                    // 004ec59f
+        push 1                                   // 004ec5a4
+        push 5                                   // 004ec5a6
+        push 1                                   // 004ec5a8
+        call RwCore_004d54f0                    // 004ec5aa
+        push 3                                   // 004ec5af
+        push 6                                   // 004ec5b1
+        push 1                                   // 004ec5b3
+        call RwCore_004d54f0                    // 004ec5b5
+        add esp, 0x48                            // 004ec5ba
+        jmp L_4ec65f                             // 004ec5bd
+    L_4ec5c2:
+        test bl, 2                               // 004ec5c2
+        je L_4ec60e                              // 004ec5c5
+        push 4                                   // 004ec5c7
+        push 1                                   // 004ec5c9
+        push 0                                   // 004ec5cb
+        call RwCore_004d54f0                    // 004ec5cd
+        push 0                                   // 004ec5d2
+        push 2                                   // 004ec5d4
+        push 0                                   // 004ec5d6
+        call RwCore_004d54f0                    // 004ec5d8
+        push 3                                   // 004ec5dd
+        push 3                                   // 004ec5df
+        push 0                                   // 004ec5e1
+        call RwCore_004d54f0                    // 004ec5e3
+        push 4                                   // 004ec5e8
+        push 4                                   // 004ec5ea
+        push 0                                   // 004ec5ec
+        call RwCore_004d54f0                    // 004ec5ee
+        push 0                                   // 004ec5f3
+        push 5                                   // 004ec5f5
+        push 0                                   // 004ec5f7
+        call RwCore_004d54f0                    // 004ec5f9
+        push 3                                   // 004ec5fe
+        push 6                                   // 004ec600
+        push 0                                   // 004ec602
+        call RwCore_004d54f0                    // 004ec604
+        add esp, 0x48                            // 004ec609
+        jmp L_4ec63d                             // 004ec60c
+    L_4ec60e:
+        push 3                                   // 004ec60e
+        push 1                                   // 004ec610
+        push 0                                   // 004ec612
+        call RwCore_004d54f0                    // 004ec614
+        push 0                                   // 004ec619
+        push 3                                   // 004ec61b
+        push 0                                   // 004ec61d
+        call RwCore_004d54f0                    // 004ec61f
+        push 3                                   // 004ec624
+        push 4                                   // 004ec626
+        push 0                                   // 004ec628
+        call RwCore_004d54f0                    // 004ec62a
+        push 0                                   // 004ec62f
+        push 6                                   // 004ec631
+        push 0                                   // 004ec633
+        call RwCore_004d54f0                    // 004ec635
+        add esp, 0x30                            // 004ec63a
+    L_4ec63d:
+        mov eax, dword ptr [esp + 0x24]          // 004ec63d
+    L_4ec641:
+        cmp eax, 3                               // 004ec641
+        jne L_4ec65f                             // 004ec644
+        push 1                                   // 004ec646
+        push 1                                   // 004ec648
+        push 1                                   // 004ec64a
+        call RwCore_004d54f0                    // 004ec64c
+        push 1                                   // 004ec651
+        push 4                                   // 004ec653
+        push 1                                   // 004ec655
+        call RwCore_004d54f0                    // 004ec657
+        add esp, 0x18                            // 004ec65c
+    L_4ec65f:
+        mov dword ptr [esp + 0x24], ebx          // 004ec65f
+    L_4ec663:
+        mov eax, dword ptr [ebp]                 // 004ec663
+        mov ecx, dword ptr ds:[0x006181d0]       // 004ec666
+        cmp ecx, eax                             // 004ec66c
+        je L_4ec687                              // 004ec66e
+        mov dword ptr ds:[0x006181d0], eax       // 004ec670
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec675
+        mov edx, dword ptr [ebp]                 // 004ec67a
+        mov ecx, dword ptr [eax]                 // 004ec67d
+        push edx                                 // 004ec67f
+        push eax                                 // 004ec680
+        call dword ptr [ecx + 0x170]             // 004ec681
+    L_4ec687:
+        mov esi, dword ptr [esp + 0x1c]          // 004ec687
+        mov eax, dword ptr [esi + 0x20]          // 004ec68b
+        test eax, eax                            // 004ec68e
+        je L_4ec6bd                              // 004ec690
+        call RwCore_004d53b0                    // 004ec692
+        mov edx, dword ptr [ebp + 0x10]          // 004ec697
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec69a
+        push edx                                 // 004ec69f
+        mov edx, dword ptr [ebp + 0xc]           // 004ec6a0
+        push edx                                 // 004ec6a3
+        mov edx, dword ptr [ebp + 8]             // 004ec6a4
+        mov ecx, dword ptr [eax]                 // 004ec6a7
+        push edx                                 // 004ec6a9
+        mov edx, dword ptr [ebp + 4]             // 004ec6aa
+        push 0                                   // 004ec6ad
+        push edx                                 // 004ec6af
+        mov edx, dword ptr [esi + 0x24]          // 004ec6b0
+        push edx                                 // 004ec6b3
+        push eax                                 // 004ec6b4
+        call dword ptr [ecx + 0x148]             // 004ec6b5
+        jmp L_4ec6dc                             // 004ec6bb
+    L_4ec6bd:
+        call RwCore_004d53b0                    // 004ec6bd
+        mov edx, dword ptr [ebp + 0x10]          // 004ec6c2
+        mov eax, dword ptr ds:[0x007d4110]       // 004ec6c5
+        push edx                                 // 004ec6ca
+        mov edx, dword ptr [ebp + 4]             // 004ec6cb
+        mov ecx, dword ptr [eax]                 // 004ec6ce
+        push edx                                 // 004ec6d0
+        mov edx, dword ptr [esi + 0x24]          // 004ec6d1
+        push edx                                 // 004ec6d4
+        push eax                                 // 004ec6d5
+        call dword ptr [ecx + 0x144]             // 004ec6d6
+    L_4ec6dc:
+        mov eax, dword ptr [esp + 0x14]          // 004ec6dc
+        add ebp, 0x24                            // 004ec6e0
+        dec eax                                  // 004ec6e3
+        mov dword ptr [esp + 0x14], eax          // 004ec6e4
+        jne L_4ec45e                             // 004ec6e8
+        cmp dword ptr [esp + 0x24], 3            // 004ec6ee
+        jne L_4ec70e                             // 004ec6f3
+        push 1                                   // 004ec6f5
+        push 1                                   // 004ec6f7
+        push 1                                   // 004ec6f9
+        call RwCore_004d54f0                    // 004ec6fb
+        push 1                                   // 004ec700
+        push 4                                   // 004ec702
+        push 1                                   // 004ec704
+        call RwCore_004d54f0                    // 004ec706
+        add esp, 0x18                            // 004ec70b
+    L_4ec70e:
+        pop edi                                  // 004ec70e
+        pop esi                                  // 004ec70f
+        pop ebp                                  // 004ec710
+        pop ebx                                  // 004ec711
+        add esp, 8                               // 004ec712
+        ret                                      // 004ec715
+    }
+}
+
+// HAND-LIFT 0x004ec760 RwCoreLift_004ec760  (17 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec760(void) {
+    __asm {
+        fld dword ptr [esp + 4]                  // 004ec760
+        fsub dword ptr [esp + 8]                 // 004ec764
+        fld dword ptr ds:[0x005dae34]            // 004ec768
+        fcomp st(1)                              // 004ec76e
+        fnstsw ax                                // 004ec770
+        test ah, 0x41                            // 004ec772
+        jp L_4ec789                              // 004ec775
+        fcomp dword ptr ds:[0x005dae30]          // 004ec777
+        fnstsw ax                                // 004ec77d
+        test ah, 0x41                            // 004ec77f
+        jp L_4ec78b                              // 004ec782
+        xor eax, eax                             // 004ec784
+        inc eax                                  // 004ec786
+        jmp L_4ec78d                             // 004ec787
+    L_4ec789:
+        fstp st                                  // 004ec789
+    L_4ec78b:
+        xor eax, eax                             // 004ec78b
+    L_4ec78d:
+        ret 8                                    // 004ec78d
+    }
+}
+
+// HAND-LIFT 0x004ec790 RwCoreLift_004ec790  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec790(void) {
+    __asm {
+        push 1                                   // 004ec790
+        call RwCoreLift_004fbe7a                    // 004ec792
+        jmp dword ptr ds:[0x0061888c]            // 004ec797
+    }
+}
+
+// HAND-LIFT 0x004ec79d RwCoreLift_004ec79d  (47 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec79d(void) {
+    __asm {
+        mov eax, dword ptr [esp + 4]             // 004ec79d
+        push edi                                 // 004ec7a1
+        xor edi, edi                             // 004ec7a2
+        cmp dword ptr [esp + 0x10], edi          // 004ec7a4
+        jbe L_4ec828                             // 004ec7a8
+        push ebx                                 // 004ec7aa
+        push esi                                 // 004ec7ab
+    L_4ec7ac:
+        mov ecx, dword ptr [esp + 0x14]          // 004ec7ac
+        mov edx, dword ptr [ecx + edi*4]         // 004ec7b0
+        mov esi, edx                             // 004ec7b3
+        shr esi, 0x10                            // 004ec7b5
+        and edx, 0x7fffffff                      // 004ec7b8
+        and esi, 0x8000                          // 004ec7be
+        cmp edx, 0x47ffefff                      // 004ec7c4
+        jbe L_4ec7d6                             // 004ec7ca
+        or esi, 0x7fff                           // 004ec7cc
+        mov ecx, esi                             // 004ec7d2
+        jmp L_4ec81b                             // 004ec7d4
+    L_4ec7d6:
+        cmp edx, 0x38800000                      // 004ec7d6
+        jae L_4ec807                             // 004ec7dc
+        mov ebx, edx                             // 004ec7de
+        push 0x71                                // 004ec7e0
+        and edx, 0x7fffff                        // 004ec7e2
+        shr ebx, 0x17                            // 004ec7e8
+        pop ecx                                  // 004ec7eb
+        sub ecx, ebx                             // 004ec7ec
+        or edx, 0x800000                         // 004ec7ee
+        shr edx, cl                              // 004ec7f4
+        mov ecx, edx                             // 004ec7f6
+        shr ecx, 0xd                             // 004ec7f8
+        and ecx, 1                               // 004ec7fb
+        lea ecx, [ecx + edx + 0xfff]             // 004ec7fe
+        jmp L_4ec816                             // 004ec805
+    L_4ec807:
+        mov ecx, edx                             // 004ec807
+        shr ecx, 0xd                             // 004ec809
+        and ecx, 1                               // 004ec80c
+        lea ecx, [ecx + edx - 0x37fff001]        // 004ec80f
+    L_4ec816:
+        shr ecx, 0xd                             // 004ec816
+        or ecx, esi                              // 004ec819
+    L_4ec81b:
+        mov word ptr [eax + edi*2], cx           // 004ec81b
+        inc edi                                  // 004ec81f
+        cmp edi, dword ptr [esp + 0x18]          // 004ec820
+        jb L_4ec7ac                              // 004ec824
+        pop esi                                  // 004ec826
+        pop ebx                                  // 004ec827
+    L_4ec828:
+        pop edi                                  // 004ec828
+        ret 0xc                                  // 004ec829
+    }
+}
+
+// HAND-LIFT 0x004ec82c RwCoreLift_004ec82c  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec82c(void) {
+    __asm {
+        push 1                                   // 004ec82c
+        call RwCoreLift_004fbe7a                    // 004ec82e
+        jmp dword ptr ds:[0x00618890]            // 004ec833
+    }
+}
+
+// HAND-LIFT 0x004ec8de RwCoreLift_004ec8de  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec8de(void) {
+    __asm {
+        push 1                                   // 004ec8de
+        call RwCoreLift_004fbe7a                    // 004ec8e0
+        jmp dword ptr ds:[0x00618860]            // 004ec8e5
+    }
+}
+
+// HAND-LIFT 0x004ec8eb RwCoreLift_004ec8eb  (15 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec8eb(void) {
+    __asm {
+        push ebp                                 // 004ec8eb
+        mov ebp, esp                             // 004ec8ec
+        push 1                                   // 004ec8ee
+        call RwCoreLift_004fbe7a                    // 004ec8f0
+        fld dword ptr [ebp + 0x1c]               // 004ec8f5
+        push ecx                                 // 004ec8f8
+        fstp dword ptr [esp]                     // 004ec8f9
+        push dword ptr [ebp + 0x18]              // 004ec8fc
+        push dword ptr [ebp + 0x14]              // 004ec8ff
+        push dword ptr [ebp + 0x10]              // 004ec902
+        push dword ptr [ebp + 0xc]               // 004ec905
+        push dword ptr [ebp + 8]                 // 004ec908
+        call dword ptr ds:[0x006187ec]           // 004ec90b
+        pop ebp                                  // 004ec911
+        ret 0x18                                 // 004ec912
+    }
+}
+
+// HAND-LIFT 0x004ec9a3 RwCoreLift_004ec9a3  (15 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ec9a3(void) {
+    __asm {
+        push ebp                                 // 004ec9a3
+        mov ebp, esp                             // 004ec9a4
+        push 1                                   // 004ec9a6
+        call RwCoreLift_004fbe7a                    // 004ec9a8
+        fld dword ptr [ebp + 0x1c]               // 004ec9ad
+        push ecx                                 // 004ec9b0
+        fstp dword ptr [esp]                     // 004ec9b1
+        push dword ptr [ebp + 0x18]              // 004ec9b4
+        push dword ptr [ebp + 0x14]              // 004ec9b7
+        push dword ptr [ebp + 0x10]              // 004ec9ba
+        push dword ptr [ebp + 0xc]               // 004ec9bd
+        push dword ptr [ebp + 8]                 // 004ec9c0
+        call dword ptr ds:[0x00618864]           // 004ec9c3
+        pop ebp                                  // 004ec9c9
+        ret 0x18                                 // 004ec9ca
+    }
+}
+
+// HAND-LIFT 0x004eca7c RwCoreLift_004eca7c  (17 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004eca7c(void) {
+    __asm {
+        push ebp                                 // 004eca7c
+        mov ebp, esp                             // 004eca7d
+        push 1                                   // 004eca7f
+        call RwCoreLift_004fbe7a                    // 004eca81
+        fld dword ptr [ebp + 0x1c]               // 004eca86
+        push ecx                                 // 004eca89
+        push ecx                                 // 004eca8a
+        fstp dword ptr [esp + 4]                 // 004eca8b
+        fld dword ptr [ebp + 0x18]               // 004eca8f
+        fstp dword ptr [esp]                     // 004eca92
+        push dword ptr [ebp + 0x14]              // 004eca95
+        push dword ptr [ebp + 0x10]              // 004eca98
+        push dword ptr [ebp + 0xc]               // 004eca9b
+        push dword ptr [ebp + 8]                 // 004eca9e
+        call dword ptr ds:[0x00618868]           // 004ecaa1
+        pop ebp                                  // 004ecaa7
+        ret 0x18                                 // 004ecaa8
+    }
+}
+
+// HAND-LIFT 0x004ecaee RwCoreLift_004ecaee  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecaee(void) {
+    __asm {
+        push 1                                   // 004ecaee
+        call RwCoreLift_004fbe7a                    // 004ecaf0
+        jmp dword ptr ds:[0x006187a8]            // 004ecaf5
+    }
+}
+
+// HAND-LIFT 0x004ecafb RwCoreLift_004ecafb  (1 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecafb(void) {
+    __asm {
+        jmp dword ptr ds:[0x006187a8]            // 004ecafb
+    }
+}
+
+// HAND-LIFT 0x004ecb01 RwCoreLift_004ecb01  (6 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb01(void) {
+    __asm {
+        push ebp                                 // 004ecb01
+        mov ebp, esp                             // 004ecb02
+        push 1                                   // 004ecb04
+        call RwCoreLift_004fbe7a                    // 004ecb06
+        pop ebp                                  // 004ecb0b
+        jmp dword ptr ds:[0x00618894]            // 004ecb0c
+    }
+}
+
+// HAND-LIFT 0x004ecb12 RwCoreLift_004ecb12  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb12(void) {
+    __asm {
+        push 1                                   // 004ecb12
+        call RwCoreLift_004fbe7a                    // 004ecb14
+        jmp dword ptr ds:[0x006187cc]            // 004ecb19
+    }
+}
+
+// HAND-LIFT 0x004ecb1f RwCoreLift_004ecb1f  (1 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb1f(void) {
+    __asm {
+        jmp dword ptr ds:[0x006187cc]            // 004ecb1f
+    }
+}
+
+// HAND-LIFT 0x004ecb25 RwCoreLift_004ecb25  (6 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb25(void) {
+    __asm {
+        push ebp                                 // 004ecb25
+        mov ebp, esp                             // 004ecb26
+        push 1                                   // 004ecb28
+        call RwCoreLift_004fbe7a                    // 004ecb2a
+        pop ebp                                  // 004ecb2f
+        jmp dword ptr ds:[0x00618898]            // 004ecb30
+    }
+}
+
+// HAND-LIFT 0x004ecb36 RwCoreLift_004ecb36  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb36(void) {
+    __asm {
+        push 1                                   // 004ecb36
+        call RwCoreLift_004fbe7a                    // 004ecb38
+        jmp dword ptr ds:[0x006187bc]            // 004ecb3d
+    }
+}
+
+// HAND-LIFT 0x004ecb43 RwCoreLift_004ecb43  (1 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb43(void) {
+    __asm {
+        jmp dword ptr ds:[0x006187bc]            // 004ecb43
+    }
+}
+
+// HAND-LIFT 0x004ecb49 RwCoreLift_004ecb49  (6 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb49(void) {
+    __asm {
+        push ebp                                 // 004ecb49
+        mov ebp, esp                             // 004ecb4a
+        push 1                                   // 004ecb4c
+        call RwCoreLift_004fbe7a                    // 004ecb4e
+        pop ebp                                  // 004ecb53
+        jmp dword ptr ds:[0x0061889c]            // 004ecb54
+    }
+}
+
+// HAND-LIFT 0x004ecb5a RwCoreLift_004ecb5a  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb5a(void) {
+    __asm {
+        push 1                                   // 004ecb5a
+        call RwCoreLift_004fbe7a                    // 004ecb5c
+        jmp dword ptr ds:[0x006187c4]            // 004ecb61
+    }
+}
+
+// HAND-LIFT 0x004ecb6d RwCoreLift_004ecb6d  (15 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecb6d(void) {
+    __asm {
+        push ebp                                 // 004ecb6d
+        mov ebp, esp                             // 004ecb6e
+        push 1                                   // 004ecb70
+        call RwCoreLift_004fbe7a                    // 004ecb72
+        fld dword ptr [ebp + 0x1c]               // 004ecb77
+        push ecx                                 // 004ecb7a
+        fstp dword ptr [esp]                     // 004ecb7b
+        push dword ptr [ebp + 0x18]              // 004ecb7e
+        push dword ptr [ebp + 0x14]              // 004ecb81
+        push dword ptr [ebp + 0x10]              // 004ecb84
+        push dword ptr [ebp + 0xc]               // 004ecb87
+        push dword ptr [ebp + 8]                 // 004ecb8a
+        call dword ptr ds:[0x0061886c]           // 004ecb8d
+        pop ebp                                  // 004ecb93
+        ret 0x18                                 // 004ecb94
+    }
+}
+
+// HAND-LIFT 0x004ecc45 RwCoreLift_004ecc45  (15 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecc45(void) {
+    __asm {
+        push ebp                                 // 004ecc45
+        mov ebp, esp                             // 004ecc46
+        push 1                                   // 004ecc48
+        call RwCoreLift_004fbe7a                    // 004ecc4a
+        fld dword ptr [ebp + 0x1c]               // 004ecc4f
+        push ecx                                 // 004ecc52
+        fstp dword ptr [esp]                     // 004ecc53
+        push dword ptr [ebp + 0x18]              // 004ecc56
+        push dword ptr [ebp + 0x14]              // 004ecc59
+        push dword ptr [ebp + 0x10]              // 004ecc5c
+        push dword ptr [ebp + 0xc]               // 004ecc5f
+        push dword ptr [ebp + 8]                 // 004ecc62
+        call dword ptr ds:[0x00618870]           // 004ecc65
+        pop ebp                                  // 004ecc6b
+        ret 0x18                                 // 004ecc6c
+    }
+}
+
+// HAND-LIFT 0x004ecd40 RwCoreLift_004ecd40  (17 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecd40(void) {
+    __asm {
+        push ebp                                 // 004ecd40
+        mov ebp, esp                             // 004ecd41
+        push 1                                   // 004ecd43
+        call RwCoreLift_004fbe7a                    // 004ecd45
+        fld dword ptr [ebp + 0x1c]               // 004ecd4a
+        push ecx                                 // 004ecd4d
+        push ecx                                 // 004ecd4e
+        fstp dword ptr [esp + 4]                 // 004ecd4f
+        fld dword ptr [ebp + 0x18]               // 004ecd53
+        fstp dword ptr [esp]                     // 004ecd56
+        push dword ptr [ebp + 0x14]              // 004ecd59
+        push dword ptr [ebp + 0x10]              // 004ecd5c
+        push dword ptr [ebp + 0xc]               // 004ecd5f
+        push dword ptr [ebp + 8]                 // 004ecd62
+        call dword ptr ds:[0x00618874]           // 004ecd65
+        pop ebp                                  // 004ecd6b
+        ret 0x18                                 // 004ecd6c
+    }
+}
 
 // HAND-LIFT 0x004ecd6f RwCoreLift_004ecd6f  (37 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_004ecd6f(void) {
@@ -303,6 +1183,13 @@ extern "C" __declspec(naked) int RwCoreLift_004ecf2f(void) {
         call RwCoreLift_004fbe7a                    // 004ecf34
         pop ebp                                  // 004ecf39
         jmp dword ptr ds:[0x006188a4]            // 004ecf3a
+    }
+}
+
+// HAND-LIFT 0x004ecf40 RwCoreLift_004ecf40  (1 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004ecf40(void) {
+    __asm {
+        jmp dword ptr ds:[0x006188a4]            // 004ecf40
     }
 }
 
@@ -1738,1109 +2625,6 @@ extern "C" __declspec(naked) int RwCoreLift_004ed989(void) {
         pop esi                                  // 004edbba
         leave                                    // 004edbbb
         ret 0xc                                  // 004edbbc
-    }
-}
-
-// HAND-LIFT 0x004edbbf RwCoreLift_004edbbf  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004edbbf(void) {
-    __asm {
-        push 1                                   // 004edbbf
-        call RwCoreLift_004fbe7a                    // 004edbc1
-        jmp dword ptr ds:[0x006187f0]            // 004edbc6
-    }
-}
-
-// HAND-LIFT 0x004edbd2 RwCoreLift_004edbd2  (360 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004edbd2(void) {
-    __asm {
-        push ebp                                 // 004edbd2
-        mov ebp, esp                             // 004edbd3
-        sub esp, 0x54                            // 004edbd5
-        mov eax, dword ptr [ebp + 0x10]          // 004edbd8
-        mov ecx, dword ptr [eax + 0x10]          // 004edbdb
-        fld dword ptr [eax]                      // 004edbde
-        fld dword ptr [eax + 4]                  // 004edbe0
-        mov dword ptr [ebp - 0x1c], ecx          // 004edbe3
-        mov ecx, dword ptr [eax + 0x14]          // 004edbe6
-        mov dword ptr [ebp - 0x20], ecx          // 004edbe9
-        fld dword ptr [ebp - 0x20]               // 004edbec
-        mov ecx, dword ptr [eax + 0x20]          // 004edbef
-        fmul st, st(2)                           // 004edbf2
-        mov dword ptr [ebp - 0x18], ecx          // 004edbf4
-        fld dword ptr [ebp - 0x1c]               // 004edbf7
-        mov ecx, dword ptr [eax + 0x24]          // 004edbfa
-        fmul st, st(2)                           // 004edbfd
-        mov dword ptr [ebp - 4], ecx             // 004edbff
-        mov ecx, dword ptr [eax + 0x30]          // 004edc02
-        mov dword ptr [ebp - 0x14], ecx          // 004edc05
-        fsubp st(1), st                          // 004edc08
-        mov ecx, dword ptr [eax + 0x34]          // 004edc0a
-        mov dword ptr [ebp + 0x10], ecx          // 004edc0d
-        mov ecx, dword ptr [eax + 0x38]          // 004edc10
-        fstp dword ptr [ebp - 0xc]               // 004edc13
-        mov dword ptr [ebp - 0x10], ecx          // 004edc16
-        fld dword ptr [ebp - 4]                  // 004edc19
-        mov ecx, dword ptr [eax + 0x3c]          // 004edc1c
-        fmul st, st(2)                           // 004edc1f
-        fld dword ptr [ebp - 0x18]               // 004edc21
-        fmul st, st(2)                           // 004edc24
-        fsubp st(1), st                          // 004edc26
-        fstp dword ptr [ebp - 8]                 // 004edc28
-        fld dword ptr [ebp + 0x10]               // 004edc2b
-        fmul st, st(2)                           // 004edc2e
-        fld dword ptr [ebp - 0x14]               // 004edc30
-        fmul st, st(2)                           // 004edc33
-        fsubp st(1), st                          // 004edc35
-        fstp dword ptr [ebp - 0x2c]              // 004edc37
-        fstp st                                  // 004edc3a
-        fstp st                                  // 004edc3c
-        fld dword ptr [ebp - 4]                  // 004edc3e
-        fmul dword ptr [ebp - 0x1c]              // 004edc41
-        fld dword ptr [ebp - 0x18]               // 004edc44
-        fmul dword ptr [ebp - 0x20]              // 004edc47
-        fsubp st(1), st                          // 004edc4a
-        fstp dword ptr [ebp - 0x38]              // 004edc4c
-        fld dword ptr [ebp + 0x10]               // 004edc4f
-        fmul dword ptr [ebp - 0x1c]              // 004edc52
-        fld dword ptr [ebp - 0x14]               // 004edc55
-        fmul dword ptr [ebp - 0x20]              // 004edc58
-        fsubp st(1), st                          // 004edc5b
-        fstp dword ptr [ebp - 0x34]              // 004edc5d
-        fld dword ptr [ebp + 0x10]               // 004edc60
-        mov dword ptr [ebp + 0x10], ecx          // 004edc63
-        fmul dword ptr [ebp - 0x18]              // 004edc66
-        fld dword ptr [ebp - 0x14]               // 004edc69
-        fmul dword ptr [ebp - 4]                 // 004edc6c
-        fsubp st(1), st                          // 004edc6f
-        fstp dword ptr [ebp - 0x30]              // 004edc71
-        fld dword ptr [eax + 8]                  // 004edc74
-        fld dword ptr [eax + 0xc]                // 004edc77
-        fld dword ptr [eax + 0x18]               // 004edc7a
-        fst dword ptr [ebp - 0x28]               // 004edc7d
-        fld dword ptr [eax + 0x1c]               // 004edc80
-        fst dword ptr [ebp - 0x20]               // 004edc83
-        fld dword ptr [eax + 0x28]               // 004edc86
-        fst dword ptr [ebp - 0x24]               // 004edc89
-        fld dword ptr [eax + 0x2c]               // 004edc8c
-        fst dword ptr [ebp - 4]                  // 004edc8f
-        fld st(5)                                // 004edc92
-        fmul dword ptr [ebp - 0x38]              // 004edc94
-        fld st(4)                                // 004edc97
-        fmul dword ptr [ebp - 8]                 // 004edc99
-        fsubp st(1), st                          // 004edc9c
-        fld st(2)                                // 004edc9e
-        fmul dword ptr [ebp - 0xc]               // 004edca0
-        faddp st(1), st                          // 004edca3
-        fstp dword ptr [ebp - 0x54]              // 004edca5
-        fld st(3)                                // 004edca8
-        fmul dword ptr [ebp - 0x2c]              // 004edcaa
-        fld dword ptr [ebp - 0x10]               // 004edcad
-        fmul dword ptr [ebp - 0xc]               // 004edcb0
-        fsubp st(1), st                          // 004edcb3
-        fld st(6)                                // 004edcb5
-        fmul dword ptr [ebp - 0x34]              // 004edcb7
-        fsubp st(1), st                          // 004edcba
-        fstp dword ptr [ebp - 0x50]              // 004edcbc
-        fld st(5)                                // 004edcbf
-        fmul dword ptr [ebp - 0x30]              // 004edcc1
-        fld st(2)                                // 004edcc4
-        fmul dword ptr [ebp - 0x2c]              // 004edcc6
-        fsubp st(1), st                          // 004edcc9
-        fld dword ptr [ebp - 0x10]               // 004edccb
-        fmul dword ptr [ebp - 8]                 // 004edcce
-        faddp st(1), st                          // 004edcd1
-        fstp dword ptr [ebp - 0x4c]              // 004edcd3
-        fld st(1)                                // 004edcd6
-        fmul dword ptr [ebp - 0x34]              // 004edcd8
-        fld dword ptr [ebp - 0x10]               // 004edcdb
-        fmul dword ptr [ebp - 0x38]              // 004edcde
-        fsubp st(1), st                          // 004edce1
-        fld st(4)                                // 004edce3
-        fmul dword ptr [ebp - 0x30]              // 004edce5
-        fsubp st(1), st                          // 004edce8
-        fstp dword ptr [ebp - 0x48]              // 004edcea
-        fld dword ptr [ebp - 8]                  // 004edced
-        fmul st, st(3)                           // 004edcf0
-        fld dword ptr [ebp - 0xc]                // 004edcf2
-        fmul st, st(2)                           // 004edcf5
-        fsubp st(1), st                          // 004edcf7
-        fld dword ptr [ebp - 0x38]               // 004edcf9
-        fmul st, st(6)                           // 004edcfc
-        fsubp st(1), st                          // 004edcfe
-        fstp dword ptr [ebp - 0x44]              // 004edd00
-        fld dword ptr [ebp - 0x34]               // 004edd03
-        fmul st, st(5)                           // 004edd06
-        fld dword ptr [ebp - 0x2c]               // 004edd08
-        fmul st, st(4)                           // 004edd0b
-        fsubp st(1), st                          // 004edd0d
-        fld dword ptr [ebp - 0xc]                // 004edd0f
-        fmul dword ptr [ebp + 0x10]              // 004edd12
-        faddp st(1), st                          // 004edd15
-        fstp dword ptr [ebp - 0x40]              // 004edd17
-        fld dword ptr [ebp - 0x2c]               // 004edd1a
-        fmul st, st(1)                           // 004edd1d
-        fld dword ptr [ebp - 8]                  // 004edd1f
-        fmul dword ptr [ebp + 0x10]              // 004edd22
-        fsubp st(1), st                          // 004edd25
-        fld dword ptr [ebp - 0x30]               // 004edd27
-        fmul st, st(6)                           // 004edd2a
-        fsubp st(1), st                          // 004edd2c
-        fstp dword ptr [ebp - 0x3c]              // 004edd2e
-        fld dword ptr [ebp - 0x30]               // 004edd31
-        fmul st, st(3)                           // 004edd34
-        fld dword ptr [ebp - 0x34]               // 004edd36
-        fmul st, st(2)                           // 004edd39
-        fsubp st(1), st                          // 004edd3b
-        fld dword ptr [ebp - 0x38]               // 004edd3d
-        fmul dword ptr [ebp + 0x10]              // 004edd40
-        faddp st(1), st                          // 004edd43
-        fstp dword ptr [ebp - 0x2c]              // 004edd45
-        fstp st                                  // 004edd48
-        fstp st                                  // 004edd4a
-        fld st(3)                                // 004edd4c
-        fmul st, st(1)                           // 004edd4e
-        fld st(2)                                // 004edd50
-        fmul st, st(4)                           // 004edd52
-        fsubp st(1), st                          // 004edd54
-        fstp dword ptr [ebp - 0xc]               // 004edd56
-        fstp st                                  // 004edd59
-        fstp st                                  // 004edd5b
-        fld st(1)                                // 004edd5d
-        fmul dword ptr [ebp - 4]                 // 004edd5f
-        fld dword ptr [ebp - 0x24]               // 004edd62
-        fmul st, st(2)                           // 004edd65
-        fsubp st(1), st                          // 004edd67
-        fstp dword ptr [ebp - 8]                 // 004edd69
-        fld st(1)                                // 004edd6c
-        fmul dword ptr [ebp + 0x10]              // 004edd6e
-        fld dword ptr [ebp - 0x10]               // 004edd71
-        fmul st, st(2)                           // 004edd74
-        fsubp st(1), st                          // 004edd76
-        fstp st(2)                               // 004edd78
-        fstp st                                  // 004edd7a
-        fld dword ptr [ebp - 0x28]               // 004edd7c
-        mov ecx, dword ptr [eax]                 // 004edd7f
-        fmul dword ptr [ebp - 4]                 // 004edd81
-        mov dword ptr [ebp - 0x38], ecx          // 004edd84
-        fld dword ptr [ebp - 0x24]               // 004edd87
-        mov ecx, dword ptr [eax + 0x10]          // 004edd8a
-        fmul dword ptr [ebp - 0x20]              // 004edd8d
-        mov dword ptr [ebp - 0x1c], ecx          // 004edd90
-        mov ecx, dword ptr [eax + 0x20]          // 004edd93
-        mov dword ptr [ebp - 0x18], ecx          // 004edd96
-        fsubp st(1), st                          // 004edd99
-        mov ecx, dword ptr [eax + 0x24]          // 004edd9b
-        fld dword ptr [ebp - 0x28]               // 004edd9e
-        fmul dword ptr [ebp + 0x10]              // 004edda1
-        fld dword ptr [ebp - 0x10]               // 004edda4
-        fmul dword ptr [ebp - 0x20]              // 004edda7
-        fsubp st(1), st                          // 004eddaa
-        fld dword ptr [ebp - 0x24]               // 004eddac
-        fmul dword ptr [ebp + 0x10]              // 004eddaf
-        fld dword ptr [ebp - 0x10]               // 004eddb2
-        fmul dword ptr [ebp - 4]                 // 004eddb5
-        mov dword ptr [ebp - 4], ecx             // 004eddb8
-        mov ecx, dword ptr [eax + 0x30]          // 004eddbb
-        mov dword ptr [ebp - 0x14], ecx          // 004eddbe
-        fsubp st(1), st                          // 004eddc1
-        fld dword ptr [eax + 4]                  // 004eddc3
-        fld dword ptr [eax + 0x14]               // 004eddc6
-        mov eax, dword ptr [eax + 0x34]          // 004eddc9
-        fld dword ptr [ebp - 8]                  // 004eddcc
-        mov dword ptr [ebp + 0x10], eax          // 004eddcf
-        fmul st, st(1)                           // 004eddd2
-        fld dword ptr [ebp - 0xc]                // 004eddd4
-        fmul dword ptr [ebp - 4]                 // 004eddd7
-        fsubp st(1), st                          // 004eddda
-        fld st(5)                                // 004edddc
-        fmul st, st(3)                           // 004eddde
-        fsubp st(1), st                          // 004edde0
-        fstp dword ptr [ebp - 0x10]              // 004edde2
-        fld st(3)                                // 004edde5
-        fmul st, st(2)                           // 004edde7
-        fld st(6)                                // 004edde9
-        fmul st, st(2)                           // 004eddeb
-        fsubp st(1), st                          // 004edded
-        fld dword ptr [ebp - 0xc]                // 004eddef
-        fmul dword ptr [ebp + 0x10]              // 004eddf2
-        faddp st(1), st                          // 004eddf5
-        fstp dword ptr [ebp - 0x24]              // 004eddf7
-        fld st(5)                                // 004eddfa
-        fmul dword ptr [ebp - 4]                 // 004eddfc
-        fld dword ptr [ebp - 8]                  // 004eddff
-        fmul dword ptr [ebp + 0x10]              // 004ede02
-        fsubp st(1), st                          // 004ede05
-        fld st(3)                                // 004ede07
-        fmul st, st(3)                           // 004ede09
-        fsubp st(1), st                          // 004ede0b
-        fstp dword ptr [ebp - 0x28]              // 004ede0d
-        fld st(2)                                // 004ede10
-        fmul st, st(1)                           // 004ede12
-        fld st(4)                                // 004ede14
-        fmul dword ptr [ebp - 4]                 // 004ede16
-        fsubp st(1), st                          // 004ede19
-        fld st(5)                                // 004ede1b
-        fmul dword ptr [ebp + 0x10]              // 004ede1d
-        faddp st(1), st                          // 004ede20
-        fstp dword ptr [ebp - 0x34]              // 004ede22
-        fstp st                                  // 004ede25
-        fstp st                                  // 004ede27
-        fld st(2)                                // 004ede29
-        fmul dword ptr [ebp - 0x38]              // 004ede2b
-        fld dword ptr [ebp - 8]                  // 004ede2e
-        fmul dword ptr [ebp - 0x1c]              // 004ede31
-        fsubp st(1), st                          // 004ede34
-        fld dword ptr [ebp - 0xc]                // 004ede36
-        fmul dword ptr [ebp - 0x18]              // 004ede39
-        faddp st(1), st                          // 004ede3c
-        fstp dword ptr [ebp + 0x10]              // 004ede3e
-        fld st(3)                                // 004ede41
-        fmul dword ptr [ebp - 0x1c]              // 004ede43
-        fld dword ptr [ebp - 0xc]                // 004ede46
-        fmul dword ptr [ebp - 0x14]              // 004ede49
-        fsubp st(1), st                          // 004ede4c
-        fld st(2)                                // 004ede4e
-        mov eax, dword ptr [ebp + 0xc]           // 004ede50
-        test eax, eax                            // 004ede53
-        fmul dword ptr [ebp - 0x38]              // 004ede55
-        fsubp st(1), st                          // 004ede58
-        fstp dword ptr [ebp - 4]                 // 004ede5a
-        fld dword ptr [ebp - 0x38]               // 004ede5d
-        fmul st, st(1)                           // 004ede60
-        fld st(4)                                // 004ede62
-        fmul dword ptr [ebp - 0x18]              // 004ede64
-        fsubp st(1), st                          // 004ede67
-        fld dword ptr [ebp - 8]                  // 004ede69
-        fmul dword ptr [ebp - 0x14]              // 004ede6c
-        faddp st(1), st                          // 004ede6f
-        fstp dword ptr [ebp - 0x20]              // 004ede71
-        fld st(1)                                // 004ede74
-        fmul dword ptr [ebp - 0x18]              // 004ede76
-        fld st(3)                                // 004ede79
-        fmul dword ptr [ebp - 0x14]              // 004ede7b
-        fsubp st(1), st                          // 004ede7e
-        fld st(1)                                // 004ede80
-        fmul dword ptr [ebp - 0x1c]              // 004ede82
-        fsubp st(1), st                          // 004ede85
-        fstp dword ptr [ebp - 0x30]              // 004ede87
-        fstp st                                  // 004ede8a
-        fstp st                                  // 004ede8c
-        fstp st                                  // 004ede8e
-        fstp st                                  // 004ede90
-        fld dword ptr [ebp - 0x10]               // 004ede92
-        fmul dword ptr [ebp - 0x14]              // 004ede95
-        fld dword ptr [ebp - 0x24]               // 004ede98
-        fmul dword ptr [ebp - 0x18]              // 004ede9b
-        faddp st(1), st                          // 004ede9e
-        fld dword ptr [ebp - 0x28]               // 004edea0
-        fmul dword ptr [ebp - 0x1c]              // 004edea3
-        faddp st(1), st                          // 004edea6
-        fld dword ptr [ebp - 0x34]               // 004edea8
-        fmul dword ptr [ebp - 0x38]              // 004edeab
-        faddp st(1), st                          // 004edeae
-        je L_4edeb4                              // 004edeb0
-        fst dword ptr [eax]                      // 004edeb2
-    L_4edeb4:
-        fldz                                     // 004edeb4
-        fcomp st(1)                              // 004edeb6
-        fnstsw ax                                // 004edeb8
-        test ah, 0x44                            // 004edeba
-        jp L_4edec6                              // 004edebd
-        xor eax, eax                             // 004edebf
-        jmp L_4edf6b                             // 004edec1
-    L_4edec6:
-        fld1                                     // 004edec6
-        push ecx                                 // 004edec8
-        fdiv st, st(1)                           // 004edec9
-        push ecx                                 // 004edecb
-        fstp dword ptr [ebp - 8]                 // 004edecc
-        fstp st                                  // 004edecf
-        fld dword ptr [ebp - 8]                  // 004eded1
-        fstp qword ptr [esp]                     // 004eded4
-        call RwCoreLift_004a3907                    // 004eded7
-        test eax, eax                            // 004ededc
-        pop ecx                                  // 004edede
-        pop ecx                                  // 004ededf
-        je L_4edf6d                              // 004edee0
-        mov eax, dword ptr [ebp + 8]             // 004edee6
-        fld dword ptr [ebp - 8]                  // 004edee9
-        fld dword ptr [ebp - 0x34]               // 004edeec
-        fmul st, st(1)                           // 004edeef
-        fstp dword ptr [eax]                     // 004edef1
-        fld dword ptr [ebp - 0x28]               // 004edef3
-        fmul st, st(1)                           // 004edef6
-        fstp dword ptr [eax + 4]                 // 004edef8
-        fld dword ptr [ebp - 0x24]               // 004edefb
-        fmul st, st(1)                           // 004edefe
-        fstp dword ptr [eax + 8]                 // 004edf00
-        fld dword ptr [ebp - 0x10]               // 004edf03
-        fmul st, st(1)                           // 004edf06
-        fstp dword ptr [eax + 0xc]               // 004edf08
-        fld dword ptr [ebp - 0x30]               // 004edf0b
-        fmul st, st(1)                           // 004edf0e
-        fstp dword ptr [eax + 0x10]              // 004edf10
-        fld dword ptr [ebp - 0x20]               // 004edf13
-        fmul st, st(1)                           // 004edf16
-        fstp dword ptr [eax + 0x14]              // 004edf18
-        fld dword ptr [ebp - 4]                  // 004edf1b
-        fmul st, st(1)                           // 004edf1e
-        fstp dword ptr [eax + 0x18]              // 004edf20
-        fld dword ptr [ebp + 0x10]               // 004edf23
-        fmul st, st(1)                           // 004edf26
-        fstp dword ptr [eax + 0x1c]              // 004edf28
-        fld dword ptr [ebp - 0x2c]               // 004edf2b
-        fmul st, st(1)                           // 004edf2e
-        fstp dword ptr [eax + 0x20]              // 004edf30
-        fld dword ptr [ebp - 0x3c]               // 004edf33
-        fmul st, st(1)                           // 004edf36
-        fstp dword ptr [eax + 0x24]              // 004edf38
-        fld dword ptr [ebp - 0x40]               // 004edf3b
-        fmul st, st(1)                           // 004edf3e
-        fstp dword ptr [eax + 0x28]              // 004edf40
-        fld dword ptr [ebp - 0x44]               // 004edf43
-        fmul st, st(1)                           // 004edf46
-        fstp dword ptr [eax + 0x2c]              // 004edf48
-        fld dword ptr [ebp - 0x48]               // 004edf4b
-        fmul st, st(1)                           // 004edf4e
-        fstp dword ptr [eax + 0x30]              // 004edf50
-        fld dword ptr [ebp - 0x4c]               // 004edf53
-        fmul st, st(1)                           // 004edf56
-        fstp dword ptr [eax + 0x34]              // 004edf58
-        fld dword ptr [ebp - 0x50]               // 004edf5b
-        fmul st, st(1)                           // 004edf5e
-        fstp dword ptr [eax + 0x38]              // 004edf60
-        fld dword ptr [ebp - 0x54]               // 004edf63
-        fmul st, st(1)                           // 004edf66
-        fstp dword ptr [eax + 0x3c]              // 004edf68
-    L_4edf6b:
-        fstp st                                  // 004edf6b
-    L_4edf6d:
-        leave                                    // 004edf6d
-        ret 0xc                                  // 004edf6e
-    }
-}
-
-// HAND-LIFT 0x004edf71 RwCoreLift_004edf71  (12 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004edf71(void) {
-    __asm {
-        push 1                                   // 004edf71
-        call RwCoreLift_004fbe7a                    // 004edf73
-        fld dword ptr [esp + 0x10]               // 004edf78
-        sub esp, 0xc                             // 004edf7c
-        fstp dword ptr [esp + 8]                 // 004edf7f
-        fld dword ptr [esp + 0x18]               // 004edf83
-        fstp dword ptr [esp + 4]                 // 004edf87
-        fld dword ptr [esp + 0x14]               // 004edf8b
-        fstp dword ptr [esp]                     // 004edf8f
-        push dword ptr [esp + 0x10]              // 004edf92
-        call dword ptr ds:[0x0061882c]           // 004edf96
-        ret 0x10                                 // 004edf9c
-    }
-}
-
-// HAND-LIFT 0x004edf9f RwCoreLift_004edf9f  (34 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004edf9f(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 004edf9f
-        fldz                                     // 004edfa3
-        fstp dword ptr [eax + 0x38]              // 004edfa5
-        mov ecx, dword ptr [esp + 8]             // 004edfa8
-        fldz                                     // 004edfac
-        mov dword ptr [eax], ecx                 // 004edfae
-        fstp dword ptr [eax + 0x34]              // 004edfb0
-        mov ecx, dword ptr [esp + 0xc]           // 004edfb3
-        fldz                                     // 004edfb7
-        mov dword ptr [eax + 0x14], ecx          // 004edfb9
-        mov ecx, dword ptr [esp + 0x10]          // 004edfbc
-        fstp dword ptr [eax + 0x30]              // 004edfc0
-        mov dword ptr [eax + 0x28], ecx          // 004edfc3
-        fldz                                     // 004edfc6
-        fstp dword ptr [eax + 0x2c]              // 004edfc8
-        fldz                                     // 004edfcb
-        fstp dword ptr [eax + 0x24]              // 004edfcd
-        fldz                                     // 004edfd0
-        fstp dword ptr [eax + 0x20]              // 004edfd2
-        fldz                                     // 004edfd5
-        fstp dword ptr [eax + 0x1c]              // 004edfd7
-        fldz                                     // 004edfda
-        fstp dword ptr [eax + 0x18]              // 004edfdc
-        fldz                                     // 004edfdf
-        fstp dword ptr [eax + 0x10]              // 004edfe1
-        fldz                                     // 004edfe4
-        fstp dword ptr [eax + 0xc]               // 004edfe6
-        fldz                                     // 004edfe9
-        fstp dword ptr [eax + 8]                 // 004edfeb
-        fldz                                     // 004edfee
-        fstp dword ptr [eax + 4]                 // 004edff0
-        fld1                                     // 004edff3
-        fstp dword ptr [eax + 0x3c]              // 004edff5
-        ret 0x10                                 // 004edff8
-    }
-}
-
-// HAND-LIFT 0x004edffb RwCoreLift_004edffb  (12 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004edffb(void) {
-    __asm {
-        push 1                                   // 004edffb
-        call RwCoreLift_004fbe7a                    // 004edffd
-        fld dword ptr [esp + 0x10]               // 004ee002
-        sub esp, 0xc                             // 004ee006
-        fstp dword ptr [esp + 8]                 // 004ee009
-        fld dword ptr [esp + 0x18]               // 004ee00d
-        fstp dword ptr [esp + 4]                 // 004ee011
-        fld dword ptr [esp + 0x14]               // 004ee015
-        fstp dword ptr [esp]                     // 004ee019
-        push dword ptr [esp + 0x10]              // 004ee01c
-        call dword ptr ds:[0x00618810]           // 004ee020
-        ret 0x10                                 // 004ee026
-    }
-}
-
-// HAND-LIFT 0x004ee029 RwCoreLift_004ee029  (34 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee029(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 004ee029
-        fldz                                     // 004ee02d
-        fstp dword ptr [eax + 0x2c]              // 004ee02f
-        mov ecx, dword ptr [esp + 8]             // 004ee032
-        fldz                                     // 004ee036
-        mov dword ptr [eax + 0x30], ecx          // 004ee038
-        fstp dword ptr [eax + 0x24]              // 004ee03b
-        mov ecx, dword ptr [esp + 0xc]           // 004ee03e
-        fldz                                     // 004ee042
-        mov dword ptr [eax + 0x34], ecx          // 004ee044
-        mov ecx, dword ptr [esp + 0x10]          // 004ee047
-        fstp dword ptr [eax + 0x20]              // 004ee04b
-        mov dword ptr [eax + 0x38], ecx          // 004ee04e
-        fldz                                     // 004ee051
-        fstp dword ptr [eax + 0x1c]              // 004ee053
-        fldz                                     // 004ee056
-        fstp dword ptr [eax + 0x18]              // 004ee058
-        fldz                                     // 004ee05b
-        fstp dword ptr [eax + 0x10]              // 004ee05d
-        fldz                                     // 004ee060
-        fstp dword ptr [eax + 0xc]               // 004ee062
-        fldz                                     // 004ee065
-        fstp dword ptr [eax + 8]                 // 004ee067
-        fldz                                     // 004ee06a
-        fstp dword ptr [eax + 4]                 // 004ee06c
-        fld1                                     // 004ee06f
-        fstp dword ptr [eax + 0x3c]              // 004ee071
-        fld1                                     // 004ee074
-        fstp dword ptr [eax + 0x28]              // 004ee076
-        fld1                                     // 004ee079
-        fstp dword ptr [eax + 0x14]              // 004ee07b
-        fld1                                     // 004ee07e
-        fstp dword ptr [eax]                     // 004ee080
-        ret 0x10                                 // 004ee082
-    }
-}
-
-// HAND-LIFT 0x004ee085 RwCoreLift_004ee085  (8 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee085(void) {
-    __asm {
-        push 1                                   // 004ee085
-        call RwCoreLift_004fbe7a                    // 004ee087
-        fld dword ptr [esp + 8]                  // 004ee08c
-        push ecx                                 // 004ee090
-        fstp dword ptr [esp]                     // 004ee091
-        push dword ptr [esp + 8]                 // 004ee094
-        call dword ptr ds:[0x00618820]           // 004ee098
-        ret 8                                    // 004ee09e
-    }
-}
-
-// HAND-LIFT 0x004ee0a1 RwCoreLift_004ee0a1  (48 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee0a1(void) {
-    __asm {
-        push ebp                                 // 004ee0a1
-        mov ebp, esp                             // 004ee0a2
-        sub esp, 0x10                            // 004ee0a4
-        lea eax, [ebp - 8]                       // 004ee0a7
-        mov dword ptr [ebp - 0xc], eax           // 004ee0aa
-        lea eax, [ebp - 4]                       // 004ee0ad
-        mov dword ptr [ebp - 0x10], eax          // 004ee0b0
-        mov eax, dword ptr [ebp - 0x10]          // 004ee0b3
-        mov edx, dword ptr [ebp - 0xc]           // 004ee0b6
-        fld dword ptr [ebp + 0xc]                // 004ee0b9
-        fsincos                                  // 004ee0bc
-        fstp dword ptr [edx]                     // 004ee0be
-        fstp dword ptr [eax]                     // 004ee0c0
-        fld1                                     // 004ee0c2
-        mov eax, dword ptr [ebp + 8]             // 004ee0c4
-        fstp dword ptr [eax]                     // 004ee0c7
-        fldz                                     // 004ee0c9
-        mov ecx, dword ptr [ebp - 4]             // 004ee0cb
-        fstp dword ptr [eax + 4]                 // 004ee0ce
-        mov dword ptr [eax + 0x18], ecx          // 004ee0d1
-        fldz                                     // 004ee0d4
-        fstp dword ptr [eax + 8]                 // 004ee0d6
-        fldz                                     // 004ee0d9
-        fstp dword ptr [eax + 0xc]               // 004ee0db
-        fldz                                     // 004ee0de
-        fstp dword ptr [eax + 0x10]              // 004ee0e0
-        fld dword ptr [ebp - 8]                  // 004ee0e3
-        fst dword ptr [eax + 0x14]               // 004ee0e6
-        fldz                                     // 004ee0e9
-        fstp dword ptr [eax + 0x1c]              // 004ee0eb
-        fldz                                     // 004ee0ee
-        fstp dword ptr [eax + 0x20]              // 004ee0f0
-        fld dword ptr [ebp - 4]                  // 004ee0f3
-        fchs                                     // 004ee0f6
-        fstp dword ptr [eax + 0x24]              // 004ee0f8
-        fstp dword ptr [eax + 0x28]              // 004ee0fb
-        fldz                                     // 004ee0fe
-        fstp dword ptr [eax + 0x2c]              // 004ee100
-        fldz                                     // 004ee103
-        fstp dword ptr [eax + 0x30]              // 004ee105
-        fldz                                     // 004ee108
-        fstp dword ptr [eax + 0x34]              // 004ee10a
-        fldz                                     // 004ee10d
-        fstp dword ptr [eax + 0x38]              // 004ee10f
-        fld1                                     // 004ee112
-        fstp dword ptr [eax + 0x3c]              // 004ee114
-        leave                                    // 004ee117
-        ret 8                                    // 004ee118
-    }
-}
-
-// HAND-LIFT 0x004ee11b RwCoreLift_004ee11b  (8 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee11b(void) {
-    __asm {
-        push 1                                   // 004ee11b
-        call RwCoreLift_004fbe7a                    // 004ee11d
-        fld dword ptr [esp + 8]                  // 004ee122
-        push ecx                                 // 004ee126
-        fstp dword ptr [esp]                     // 004ee127
-        push dword ptr [esp + 8]                 // 004ee12a
-        call dword ptr ds:[0x00618824]           // 004ee12e
-        ret 8                                    // 004ee134
-    }
-}
-
-// HAND-LIFT 0x004ee137 RwCoreLift_004ee137  (49 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee137(void) {
-    __asm {
-        push ebp                                 // 004ee137
-        mov ebp, esp                             // 004ee138
-        sub esp, 0x10                            // 004ee13a
-        lea eax, [ebp - 4]                       // 004ee13d
-        mov dword ptr [ebp - 0xc], eax           // 004ee140
-        lea eax, [ebp - 8]                       // 004ee143
-        mov dword ptr [ebp - 0x10], eax          // 004ee146
-        mov eax, dword ptr [ebp - 0x10]          // 004ee149
-        mov edx, dword ptr [ebp - 0xc]           // 004ee14c
-        fld dword ptr [ebp + 0xc]                // 004ee14f
-        fsincos                                  // 004ee152
-        fstp dword ptr [edx]                     // 004ee154
-        fstp dword ptr [eax]                     // 004ee156
-        fld dword ptr [ebp - 4]                  // 004ee158
-        mov eax, dword ptr [ebp + 8]             // 004ee15b
-        fld st                                   // 004ee15e
-        fstp dword ptr [eax]                     // 004ee160
-        fldz                                     // 004ee162
-        fstp dword ptr [eax + 4]                 // 004ee164
-        fld dword ptr [ebp - 8]                  // 004ee167
-        fld st                                   // 004ee16a
-        fchs                                     // 004ee16c
-        fstp dword ptr [eax + 8]                 // 004ee16e
-        fldz                                     // 004ee171
-        fstp dword ptr [eax + 0xc]               // 004ee173
-        fldz                                     // 004ee176
-        fstp dword ptr [eax + 0x10]              // 004ee178
-        fld1                                     // 004ee17b
-        fstp dword ptr [eax + 0x14]              // 004ee17d
-        fldz                                     // 004ee180
-        fstp dword ptr [eax + 0x18]              // 004ee182
-        fldz                                     // 004ee185
-        fstp dword ptr [eax + 0x1c]              // 004ee187
-        fstp dword ptr [eax + 0x20]              // 004ee18a
-        fldz                                     // 004ee18d
-        fstp dword ptr [eax + 0x24]              // 004ee18f
-        fstp dword ptr [eax + 0x28]              // 004ee192
-        fldz                                     // 004ee195
-        fstp dword ptr [eax + 0x2c]              // 004ee197
-        fldz                                     // 004ee19a
-        fstp dword ptr [eax + 0x30]              // 004ee19c
-        fldz                                     // 004ee19f
-        fstp dword ptr [eax + 0x34]              // 004ee1a1
-        fldz                                     // 004ee1a4
-        fstp dword ptr [eax + 0x38]              // 004ee1a6
-        fld1                                     // 004ee1a9
-        fstp dword ptr [eax + 0x3c]              // 004ee1ab
-        leave                                    // 004ee1ae
-        ret 8                                    // 004ee1af
-    }
-}
-
-// HAND-LIFT 0x004ee1b2 RwCoreLift_004ee1b2  (8 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee1b2(void) {
-    __asm {
-        push 1                                   // 004ee1b2
-        call RwCoreLift_004fbe7a                    // 004ee1b4
-        fld dword ptr [esp + 8]                  // 004ee1b9
-        push ecx                                 // 004ee1bd
-        fstp dword ptr [esp]                     // 004ee1be
-        push dword ptr [esp + 8]                 // 004ee1c1
-        call dword ptr ds:[0x00618828]           // 004ee1c5
-        ret 8                                    // 004ee1cb
-    }
-}
-
-// HAND-LIFT 0x004ee1ce RwCoreLift_004ee1ce  (49 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee1ce(void) {
-    __asm {
-        push ebp                                 // 004ee1ce
-        mov ebp, esp                             // 004ee1cf
-        sub esp, 0x10                            // 004ee1d1
-        lea eax, [ebp - 8]                       // 004ee1d4
-        mov dword ptr [ebp - 0xc], eax           // 004ee1d7
-        lea eax, [ebp - 4]                       // 004ee1da
-        mov dword ptr [ebp - 0x10], eax          // 004ee1dd
-        mov eax, dword ptr [ebp - 0x10]          // 004ee1e0
-        mov edx, dword ptr [ebp - 0xc]           // 004ee1e3
-        fld dword ptr [ebp + 0xc]                // 004ee1e6
-        fsincos                                  // 004ee1e9
-        fstp dword ptr [edx]                     // 004ee1eb
-        fstp dword ptr [eax]                     // 004ee1ed
-        fld dword ptr [ebp - 8]                  // 004ee1ef
-        mov eax, dword ptr [ebp + 8]             // 004ee1f2
-        fld st                                   // 004ee1f5
-        fstp dword ptr [eax]                     // 004ee1f7
-        mov ecx, dword ptr [ebp - 4]             // 004ee1f9
-        fldz                                     // 004ee1fc
-        mov dword ptr [eax + 4], ecx             // 004ee1fe
-        fstp dword ptr [eax + 8]                 // 004ee201
-        fldz                                     // 004ee204
-        fstp dword ptr [eax + 0xc]               // 004ee206
-        fld dword ptr [ebp - 4]                  // 004ee209
-        fchs                                     // 004ee20c
-        fstp dword ptr [eax + 0x10]              // 004ee20e
-        fstp dword ptr [eax + 0x14]              // 004ee211
-        fldz                                     // 004ee214
-        fstp dword ptr [eax + 0x18]              // 004ee216
-        fldz                                     // 004ee219
-        fstp dword ptr [eax + 0x1c]              // 004ee21b
-        fldz                                     // 004ee21e
-        fstp dword ptr [eax + 0x20]              // 004ee220
-        fldz                                     // 004ee223
-        fstp dword ptr [eax + 0x24]              // 004ee225
-        fld1                                     // 004ee228
-        fstp dword ptr [eax + 0x28]              // 004ee22a
-        fldz                                     // 004ee22d
-        fstp dword ptr [eax + 0x2c]              // 004ee22f
-        fldz                                     // 004ee232
-        fstp dword ptr [eax + 0x30]              // 004ee234
-        fldz                                     // 004ee237
-        fstp dword ptr [eax + 0x34]              // 004ee239
-        fldz                                     // 004ee23c
-        fstp dword ptr [eax + 0x38]              // 004ee23e
-        fld1                                     // 004ee241
-        fstp dword ptr [eax + 0x3c]              // 004ee243
-        leave                                    // 004ee246
-        ret 8                                    // 004ee247
-    }
-}
-
-// HAND-LIFT 0x004ee24a RwCoreLift_004ee24a  (9 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee24a(void) {
-    __asm {
-        push 1                                   // 004ee24a
-        call RwCoreLift_004fbe7a                    // 004ee24c
-        fld dword ptr [esp + 0xc]                // 004ee251
-        push ecx                                 // 004ee255
-        fstp dword ptr [esp]                     // 004ee256
-        push dword ptr [esp + 0xc]               // 004ee259
-        push dword ptr [esp + 0xc]               // 004ee25d
-        call dword ptr ds:[0x00618850]           // 004ee261
-        ret 0xc                                  // 004ee267
-    }
-}
-
-// HAND-LIFT 0x004ee26a RwCoreLift_004ee26a  (106 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee26a(void) {
-    __asm {
-        push ebp                                 // 004ee26a
-        mov ebp, esp                             // 004ee26b
-        sub esp, 0x1c                            // 004ee26d
-        lea eax, [ebp - 4]                       // 004ee270
-        mov dword ptr [ebp - 0xc], eax           // 004ee273
-        push esi                                 // 004ee276
-        lea eax, [ebp - 8]                       // 004ee277
-        push edi                                 // 004ee27a
-        mov dword ptr [ebp - 0x10], eax          // 004ee27b
-        mov eax, dword ptr [ebp - 0x10]          // 004ee27e
-        mov edx, dword ptr [ebp - 0xc]           // 004ee281
-        fld dword ptr [ebp + 0x10]               // 004ee284
-        fsincos                                  // 004ee287
-        fstp dword ptr [edx]                     // 004ee289
-        fstp dword ptr [eax]                     // 004ee28b
-        fld1                                     // 004ee28d
-        mov esi, dword ptr [ebp + 0xc]           // 004ee28f
-        fsub dword ptr [ebp - 4]                 // 004ee292
-        lea edi, [ebp - 0x1c]                    // 004ee295
-        movsd                                    // 004ee298
-        lea eax, [ebp - 0x1c]                    // 004ee299
-        fstp dword ptr [ebp + 0x10]              // 004ee29c
-        movsd                                    // 004ee29f
-        push eax                                 // 004ee2a0
-        lea eax, [ebp - 0x1c]                    // 004ee2a1
-        push eax                                 // 004ee2a4
-        movsd                                    // 004ee2a5
-        call RwCore_004ecb67                    // 004ee2a6
-        mov eax, dword ptr [ebp + 8]             // 004ee2ab
-        fld dword ptr [ebp + 0x10]               // 004ee2ae
-        fld dword ptr [ebp - 0x18]               // 004ee2b1
-        fmul dword ptr [ebp - 0x1c]              // 004ee2b4
-        fmul st, st(1)                           // 004ee2b7
-        fstp dword ptr [ebp + 0x10]              // 004ee2b9
-        fld dword ptr [ebp - 0x14]               // 004ee2bc
-        fld dword ptr [ebp - 0x18]               // 004ee2bf
-        fmul st, st(1)                           // 004ee2c2
-        fmul st, st(2)                           // 004ee2c4
-        fld st(1)                                // 004ee2c6
-        fmul dword ptr [ebp - 0x1c]              // 004ee2c8
-        fmul st, st(3)                           // 004ee2cb
-        fld dword ptr [ebp - 0x1c]               // 004ee2cd
-        fmul dword ptr [ebp - 0x1c]              // 004ee2d0
-        fmul st, st(4)                           // 004ee2d3
-        fadd dword ptr [ebp - 4]                 // 004ee2d5
-        fstp dword ptr [eax]                     // 004ee2d8
-        fld st(2)                                // 004ee2da
-        fmul dword ptr [ebp - 8]                 // 004ee2dc
-        fld dword ptr [ebp + 0x10]               // 004ee2df
-        fadd st, st(1)                           // 004ee2e2
-        fstp dword ptr [eax + 4]                 // 004ee2e4
-        fld dword ptr [ebp - 0x18]               // 004ee2e7
-        fmul dword ptr [ebp - 8]                 // 004ee2ea
-        fst dword ptr [ebp + 0xc]                // 004ee2ed
-        fld st(2)                                // 004ee2f0
-        fsub st, st(1)                           // 004ee2f2
-        fstp dword ptr [eax + 8]                 // 004ee2f4
-        fstp st                                  // 004ee2f7
-        fldz                                     // 004ee2f9
-        fstp dword ptr [eax + 0xc]               // 004ee2fb
-        fld dword ptr [ebp + 0x10]               // 004ee2fe
-        fsub st, st(1)                           // 004ee301
-        fstp dword ptr [eax + 0x10]              // 004ee303
-        fstp st                                  // 004ee306
-        fld dword ptr [ebp - 0x18]               // 004ee308
-        fmul dword ptr [ebp - 0x18]              // 004ee30b
-        fmul st, st(4)                           // 004ee30e
-        fadd dword ptr [ebp - 4]                 // 004ee310
-        fstp dword ptr [eax + 0x14]              // 004ee313
-        fld dword ptr [ebp - 0x1c]               // 004ee316
-        fmul dword ptr [ebp - 8]                 // 004ee319
-        fld st                                   // 004ee31c
-        fadd st, st(3)                           // 004ee31e
-        fstp dword ptr [eax + 0x18]              // 004ee320
-        fldz                                     // 004ee323
-        fstp dword ptr [eax + 0x1c]              // 004ee325
-        fld dword ptr [ebp + 0xc]                // 004ee328
-        fadd st, st(2)                           // 004ee32b
-        fstp dword ptr [eax + 0x20]              // 004ee32d
-        fld st(2)                                // 004ee330
-        fsub st, st(1)                           // 004ee332
-        fstp dword ptr [eax + 0x24]              // 004ee334
-        fstp st                                  // 004ee337
-        fstp st                                  // 004ee339
-        fstp st                                  // 004ee33b
-        fld st                                   // 004ee33d
-        fmul st, st(1)                           // 004ee33f
-        fmul st, st(2)                           // 004ee341
-        fadd dword ptr [ebp - 4]                 // 004ee343
-        fstp dword ptr [eax + 0x28]              // 004ee346
-        pop edi                                  // 004ee349
-        pop esi                                  // 004ee34a
-        fstp st                                  // 004ee34b
-        fstp st                                  // 004ee34d
-        fldz                                     // 004ee34f
-        fstp dword ptr [eax + 0x2c]              // 004ee351
-        fldz                                     // 004ee354
-        fstp dword ptr [eax + 0x30]              // 004ee356
-        fldz                                     // 004ee359
-        fstp dword ptr [eax + 0x34]              // 004ee35b
-        fldz                                     // 004ee35e
-        fstp dword ptr [eax + 0x38]              // 004ee360
-        fld1                                     // 004ee363
-        fstp dword ptr [eax + 0x3c]              // 004ee365
-        leave                                    // 004ee368
-        ret 0xc                                  // 004ee369
-    }
-}
-
-// HAND-LIFT 0x004ee36c RwCoreLift_004ee36c  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee36c(void) {
-    __asm {
-        push 1                                   // 004ee36c
-        call RwCoreLift_004fbe7a                    // 004ee36e
-        jmp dword ptr ds:[0x00618840]            // 004ee373
-    }
-}
-
-// HAND-LIFT 0x004ee379 RwCoreLift_004ee379  (1 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee379(void) {
-    __asm {
-        jmp dword ptr ds:[0x00618840]            // 004ee379
-    }
-}
-
-// HAND-LIFT 0x004ee37f RwCoreLift_004ee37f  (87 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee37f(void) {
-    __asm {
-        push ebp                                 // 004ee37f
-        mov ebp, esp                             // 004ee380
-        sub esp, 0x10                            // 004ee382
-        mov eax, dword ptr [ebp + 0xc]           // 004ee385
-        fld dword ptr ds:[0x005cc574]            // 004ee388
-        fld dword ptr [eax]                      // 004ee38e
-        fmul st, st(1)                           // 004ee390
-        fstp dword ptr [ebp - 4]                 // 004ee392
-        fld dword ptr [eax + 4]                  // 004ee395
-        fmul st, st(1)                           // 004ee398
-        fstp dword ptr [ebp + 0xc]               // 004ee39a
-        fmul dword ptr [eax + 8]                 // 004ee39d
-        fld dword ptr [ebp - 4]                  // 004ee3a0
-        fmul dword ptr [eax + 0xc]               // 004ee3a3
-        fld dword ptr [ebp + 0xc]                // 004ee3a6
-        fmul dword ptr [eax + 0xc]               // 004ee3a9
-        fld st(2)                                // 004ee3ac
-        fmul dword ptr [eax + 0xc]               // 004ee3ae
-        fld dword ptr [ebp - 4]                  // 004ee3b1
-        fmul dword ptr [eax]                     // 004ee3b4
-        fstp dword ptr [ebp - 0x10]              // 004ee3b6
-        fld dword ptr [ebp + 0xc]                // 004ee3b9
-        fmul dword ptr [eax]                     // 004ee3bc
-        fstp dword ptr [ebp - 4]                 // 004ee3be
-        fld st(3)                                // 004ee3c1
-        fmul dword ptr [eax]                     // 004ee3c3
-        fstp dword ptr [ebp - 8]                 // 004ee3c5
-        fld dword ptr [ebp + 0xc]                // 004ee3c8
-        fmul dword ptr [eax + 4]                 // 004ee3cb
-        fstp dword ptr [ebp - 0xc]               // 004ee3ce
-        fld st(3)                                // 004ee3d1
-        fmul dword ptr [eax + 4]                 // 004ee3d3
-        fstp dword ptr [ebp + 0xc]               // 004ee3d6
-        fld st(3)                                // 004ee3d9
-        fmul dword ptr [eax + 8]                 // 004ee3db
-        mov eax, dword ptr [ebp + 8]             // 004ee3de
-        fld1                                     // 004ee3e1
-        fsub dword ptr [ebp - 0xc]               // 004ee3e3
-        fsub st, st(1)                           // 004ee3e6
-        fstp dword ptr [eax]                     // 004ee3e8
-        fld dword ptr [ebp - 4]                  // 004ee3ea
-        fadd st, st(2)                           // 004ee3ed
-        fstp dword ptr [eax + 4]                 // 004ee3ef
-        fld dword ptr [ebp - 8]                  // 004ee3f2
-        fsub st, st(3)                           // 004ee3f5
-        fstp dword ptr [eax + 8]                 // 004ee3f7
-        fldz                                     // 004ee3fa
-        fstp dword ptr [eax + 0xc]               // 004ee3fc
-        fld dword ptr [ebp - 4]                  // 004ee3ff
-        fsub st, st(2)                           // 004ee402
-        fstp dword ptr [eax + 0x10]              // 004ee404
-        fld1                                     // 004ee407
-        fsub dword ptr [ebp - 0x10]              // 004ee409
-        fst dword ptr [ebp + 8]                  // 004ee40c
-        fsub st, st(1)                           // 004ee40f
-        fstp dword ptr [eax + 0x14]              // 004ee411
-        fstp st                                  // 004ee414
-        fstp st                                  // 004ee416
-        fld dword ptr [ebp + 0xc]                // 004ee418
-        fadd st, st(2)                           // 004ee41b
-        fstp dword ptr [eax + 0x18]              // 004ee41d
-        fldz                                     // 004ee420
-        fstp dword ptr [eax + 0x1c]              // 004ee422
-        fld dword ptr [ebp - 8]                  // 004ee425
-        fadd st, st(1)                           // 004ee428
-        fstp dword ptr [eax + 0x20]              // 004ee42a
-        fstp st                                  // 004ee42d
-        fld dword ptr [ebp + 0xc]                // 004ee42f
-        fsub st, st(1)                           // 004ee432
-        fstp dword ptr [eax + 0x24]              // 004ee434
-        fstp st                                  // 004ee437
-        fstp st                                  // 004ee439
-        fld dword ptr [ebp + 8]                  // 004ee43b
-        fsub dword ptr [ebp - 0xc]               // 004ee43e
-        fstp dword ptr [eax + 0x28]              // 004ee441
-        fldz                                     // 004ee444
-        fstp dword ptr [eax + 0x2c]              // 004ee446
-        fldz                                     // 004ee449
-        fstp dword ptr [eax + 0x30]              // 004ee44b
-        fldz                                     // 004ee44e
-        fstp dword ptr [eax + 0x34]              // 004ee450
-        fldz                                     // 004ee453
-        fstp dword ptr [eax + 0x38]              // 004ee455
-        fld1                                     // 004ee458
-        fstp dword ptr [eax + 0x3c]              // 004ee45a
-        leave                                    // 004ee45d
-        ret 8                                    // 004ee45e
-    }
-}
-
-// HAND-LIFT 0x004ee461 RwCoreLift_004ee461  (12 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee461(void) {
-    __asm {
-        push 1                                   // 004ee461
-        call RwCoreLift_004fbe7a                    // 004ee463
-        fld dword ptr [esp + 0x10]               // 004ee468
-        sub esp, 0xc                             // 004ee46c
-        fstp dword ptr [esp + 8]                 // 004ee46f
-        fld dword ptr [esp + 0x18]               // 004ee473
-        fstp dword ptr [esp + 4]                 // 004ee477
-        fld dword ptr [esp + 0x14]               // 004ee47b
-        fstp dword ptr [esp]                     // 004ee47f
-        push dword ptr [esp + 0x10]              // 004ee482
-        call dword ptr ds:[0x00618848]           // 004ee486
-        ret 0x10                                 // 004ee48c
-    }
-}
-
-// HAND-LIFT 0x004ee48f RwCoreLift_004ee48f  (6 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee48f(void) {
-    __asm {
-        push ebp                                 // 004ee48f
-        mov ebp, esp                             // 004ee490
-        push 1                                   // 004ee492
-        call RwCoreLift_004fbe7a                    // 004ee494
-        pop ebp                                  // 004ee499
-        jmp dword ptr ds:[0x00618844]            // 004ee49a
-    }
-}
-
-// HAND-LIFT 0x004ee4a0 RwCoreLift_004ee4a0  (14 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee4a0(void) {
-    __asm {
-        push ebp                                 // 004ee4a0
-        mov ebp, esp                             // 004ee4a1
-        push 1                                   // 004ee4a3
-        call RwCoreLift_004fbe7a                    // 004ee4a5
-        fld dword ptr [ebp + 0xc]                // 004ee4aa
-        push dword ptr [ebp + 0x18]              // 004ee4ad
-        push dword ptr [ebp + 0x14]              // 004ee4b0
-        push dword ptr [ebp + 0x10]              // 004ee4b3
-        push ecx                                 // 004ee4b6
-        fstp dword ptr [esp]                     // 004ee4b7
-        push dword ptr [ebp + 8]                 // 004ee4ba
-        call dword ptr ds:[0x0061884c]           // 004ee4bd
-        pop ebp                                  // 004ee4c3
-        ret 0x14                                 // 004ee4c4
-    }
-}
-
-// HAND-LIFT 0x004ee4c7 RwCoreLift_004ee4c7  (89 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee4c7(void) {
-    __asm {
-        push ebp                                 // 004ee4c7
-        mov ebp, esp                             // 004ee4c8
-        and esp, 0xfffffff0                      // 004ee4ca
-        sub esp, 0x48                            // 004ee4cd
-        cmp dword ptr [ebp + 0x14], 0            // 004ee4d0
-        fldz                                     // 004ee4d4
-        push esi                                 // 004ee4d6
-        mov esi, dword ptr [ebp + 8]             // 004ee4d7
-        fstp dword ptr [esi + 0x38]              // 004ee4da
-        push edi                                 // 004ee4dd
-        fldz                                     // 004ee4de
-        fstp dword ptr [esi + 0x34]              // 004ee4e0
-        fldz                                     // 004ee4e3
-        fstp dword ptr [esi + 0x30]              // 004ee4e5
-        fldz                                     // 004ee4e8
-        fstp dword ptr [esi + 0x2c]              // 004ee4ea
-        fldz                                     // 004ee4ed
-        fstp dword ptr [esi + 0x24]              // 004ee4ef
-        fldz                                     // 004ee4f2
-        fstp dword ptr [esi + 0x20]              // 004ee4f4
-        fldz                                     // 004ee4f7
-        fstp dword ptr [esi + 0x1c]              // 004ee4f9
-        fldz                                     // 004ee4fc
-        fstp dword ptr [esi + 0x18]              // 004ee4fe
-        fldz                                     // 004ee501
-        fstp dword ptr [esi + 0x10]              // 004ee503
-        fldz                                     // 004ee506
-        fstp dword ptr [esi + 0xc]               // 004ee508
-        fldz                                     // 004ee50b
-        fstp dword ptr [esi + 8]                 // 004ee50d
-        fldz                                     // 004ee510
-        fstp dword ptr [esi + 4]                 // 004ee512
-        fld dword ptr [ebp + 0xc]                // 004ee515
-        fst dword ptr [esi]                      // 004ee518
-        fst dword ptr [esi + 0x14]               // 004ee51a
-        fstp dword ptr [esi + 0x28]              // 004ee51d
-        fld1                                     // 004ee520
-        fstp dword ptr [esi + 0x3c]              // 004ee522
-        je L_4ee582                              // 004ee525
-        push dword ptr [ebp + 0x14]              // 004ee527
-        lea eax, [esp + 0x14]                    // 004ee52a
-        push eax                                 // 004ee52e
-        call RwCoreLift_004ee379                    // 004ee52f
-        mov edi, dword ptr [ebp + 0x10]          // 004ee534
-        test edi, edi                            // 004ee537
-        lea eax, [esp + 0x10]                    // 004ee539
-        push eax                                 // 004ee53d
-        push esi                                 // 004ee53e
-        push esi                                 // 004ee53f
-        je L_4ee57d                              // 004ee540
-        fld dword ptr [esi + 0x30]               // 004ee542
-        fsub dword ptr [edi]                     // 004ee545
-        fstp dword ptr [esi + 0x30]              // 004ee547
-        fld dword ptr [esi + 0x34]               // 004ee54a
-        fsub dword ptr [edi + 4]                 // 004ee54d
-        fstp dword ptr [esi + 0x34]              // 004ee550
-        fld dword ptr [esi + 0x38]               // 004ee553
-        fsub dword ptr [edi + 8]                 // 004ee556
-        fstp dword ptr [esi + 0x38]              // 004ee559
-        call RwCoreLift_004ed6ba                    // 004ee55c
-        fld dword ptr [edi]                      // 004ee561
-        fadd dword ptr [esi + 0x30]              // 004ee563
-        fstp dword ptr [esi + 0x30]              // 004ee566
-        fld dword ptr [esi + 0x34]               // 004ee569
-        fadd dword ptr [edi + 4]                 // 004ee56c
-        fstp dword ptr [esi + 0x34]              // 004ee56f
-        fld dword ptr [edi + 8]                  // 004ee572
-        fadd dword ptr [esi + 0x38]              // 004ee575
-        fstp dword ptr [esi + 0x38]              // 004ee578
-        jmp L_4ee582                             // 004ee57b
-    L_4ee57d:
-        call RwCoreLift_004ed6ba                    // 004ee57d
-    L_4ee582:
-        mov eax, dword ptr [ebp + 0x18]          // 004ee582
-        test eax, eax                            // 004ee585
-        je L_4ee5a3                              // 004ee587
-        fld dword ptr [eax]                      // 004ee589
-        fadd dword ptr [esi + 0x30]              // 004ee58b
-        fstp dword ptr [esi + 0x30]              // 004ee58e
-        fld dword ptr [eax + 4]                  // 004ee591
-        fadd dword ptr [esi + 0x34]              // 004ee594
-        fstp dword ptr [esi + 0x34]              // 004ee597
-        fld dword ptr [eax + 8]                  // 004ee59a
-        fadd dword ptr [esi + 0x38]              // 004ee59d
-        fstp dword ptr [esi + 0x38]              // 004ee5a0
-    L_4ee5a3:
-        pop edi                                  // 004ee5a3
-        mov eax, esi                             // 004ee5a4
-        pop esi                                  // 004ee5a6
-        mov esp, ebp                             // 004ee5a7
-        pop ebp                                  // 004ee5a9
-        ret 0x14                                 // 004ee5aa
-    }
-}
-
-// HAND-LIFT 0x004ee5ad RwCoreLift_004ee5ad  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee5ad(void) {
-    __asm {
-        push 1                                   // 004ee5ad
-        call RwCoreLift_004fbe7a                    // 004ee5af
-        jmp dword ptr ds:[0x00618814]            // 004ee5b4
-    }
-}
-
-// HAND-LIFT 0x004ee5ba RwCoreLift_004ee5ba  (3 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004ee5ba(void) {
-    __asm {
-        push 1                                   // 004ee5ba
-        call RwCoreLift_004fbe7a                    // 004ee5bc
-        jmp dword ptr ds:[0x00618818]            // 004ee5c1
     }
 }
 
