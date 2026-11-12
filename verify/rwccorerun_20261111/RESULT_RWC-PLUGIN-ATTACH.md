@@ -48,7 +48,38 @@ the helper `GetFS` between its MATCH line and `FUN_00550b00`); `_strncpy` and `q
 
 ## 3. Lifted bodies: `lift_rwcore.py`
 
-@@LIFT@@
+`lift_rwcore.py` transcribes a closure RVA with no source verbatim from the anchored disassembly into a naked
+`__asm` body (`RwCore/RwCore_Lifted_NN.cpp`), callees and data bound like the generated TUs. Under L-137 (Mariano
+2026-11-12) a lifted body is scaffolding only: listed in `PROVISIONAL_RWC.tsv`, knob path only, never C4 and never
+`port=body`, and a matched or hand-written source must replace it. No frida-replay promotion is filed for any lifted
+body.
+
+Closure after run 40 (`RwCore_Bodies.tsv`): **1400 RVAs: 418 match100, 229 provisional sources, 620 lifted, 16 hand,
+10 exe bodies, 107 logged stops** (`LIFT_REFUSED.tsv`: 81 labels inside a known function, 19 indirect jumps or calls
+through tables, 7 unresolved targets). `PROVISIONAL_RWC.tsv` lists the 865 non-proven bodies (229 + 620 + 16).
+
+### 3.1 Run 40: code pointers Ghidra never made functions
+
+The first run-40 boot (pre-fix tree, `vs_core_run40_1.log`) passed RwEngineInit, the attach and RwEngineOpen, then in
+RwEngineStart:
+
+```
+[RWC_CORE] AV at 00532770 (exe+0x522770) write 00532770; eax 00532770 ... esi 00623C30
+```
+
+`mapsym.py` on the stack: `RwCore_EngineStart` -> 0x004c2fb0 -> 0x004d8000 -> lifted 0x0052e3d0 -> 0x0052ffd0 ->
+0x005327d0 -> 0x004d4380, which called 0x00532770 raw. 0x005327d0 passes `DAT_00623c30` (the RxNodeDefinition of
+`nodeD3D9SkinAtomicAllInOne.csl`) to 0x004d4f90, and the dword at 0x00623c40 holds 0x00532770, the node body. None of
+these callbacks is in `function_inventory.csv`, `match_ledger.tsv` or `re/match`, so the strict seed rule
+(fix-up only to a known function start) left them raw.
+
+Fix (`gen_rwcore_tus.py`): a strict-range dword also becomes a fix-up when its target is 16-byte aligned, the byte
+before it is 0x90 / 0xcc / 0xc3, it lies inside no known function body, and its low 16 bits are not zero.
+`CODEPTR_RULE.tsv` lists all 189 in-.text candidates: **27 accepted** (0x00623c34 .. 0x00624058: the node definitions
+and the PVS / world-sector / patch / UV-anim callback tables), 162 refused. The low-half rule refuses 0x0061b8d0 =
+0x004c0000, which sits in a table of 16-bit pairs (0x0070007f 0x00720071 ..). The new targets joined the closure
+(1273 -> 1400 rows). Four raw g2s sources they pulled in do not compile as C++ under VS2022 and are lifted instead
+(`LIFT_INSTEAD`: rwl03/00530650, rwl03/00530c00, rwl04/0054ba20, rwl04/0054bda0).
 
 ## 4. Builds
 
@@ -56,7 +87,28 @@ the helper `GetFS` between its MATCH line and `FUN_00550b00`); `_strncpy` and `q
 
 ## 5. Knob boots
 
-@@BOOTS@@
+Run 40 `vs_core` of 2cca29c6c (`vs_core.log`; data seed 44 ranges, 190 code-pointer fix-ups, 0 faults):
+
+```
+[RWC_CORE] RwEngineInit 0x004c32b0(0, 0, 0x200000) = 1; RwGlobals [0x007d3ff8] = 007D3EC8, engine status +0x124 = 1
+[RWC_CORE] RenderwareAttachPlugins 0x00493640() = 1 on the RW core; [0x007dc57c] (PTank plugin offset, 0x00534ac4) = 0x80
+[RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=001707F2) = 1; IDirect3D9 [0x007d4108] = 04691E00
+[RWC-DEVICE] CreateDevice(adapter 0, type 1, flags 0x00000054) -> 0x00000000
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 018C94AC; ... self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC_CORE] RwEngineStart 0x004c2fb0() = 1
+[RWC_CORE] bring-up probe done: RwEngineStop 0x004c2f60() = 25560712; returning 0 from RwEngineStart ...
+[RWC_CORE] RwEngineClose 0x004c3040() = 1
+[RWC_CORE] RwEngineTerm 0x004c3270() = 1
+```
+
+The module registry that RwEngineStart walks holds 38 nodes (dumped by the VEH in the AV log of the first run-40 boot,
+`vs_core_run40_1.log` lines 101-138: ids 0x40F, 0x401 .. 0x412 core, 0x501 .. 0x50F world, 0x102 .. 0x1B7 toolkits and
+plugins, 0x4 last). In the passing boot RwEngineStart returns 1 with all of them registered, and RwEngineStop returns
+0x01860688 (the RwGlobals block, nonzero) after the module destructors (0x004d8060). The knob ends the boot there by design
+(the rest of the top-down path still calls librw bindings and the hand frame). The full engine lifecycle with every
+plugin attached now runs on the RW core.
+
+@@BOOTS_ARMS@@
 
 ## 6. Self-test
 

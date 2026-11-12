@@ -357,7 +357,9 @@ def main(check):
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CODEPTR_RULE.tsv'), 'w',
                   encoding='utf-8', newline='\n') as fh:
             fh.write('slot\tvalue\tverdict\n' + '\n'.join(rule_rows) + '\n')
-    roots = list(ROOTS) + [t for _, t in fixups]
+    # RWC_EXTRA_ROOTS (sizing only, with --check): extra closure roots, comma-separated 8-digit hex RVAs
+    extra = [x.strip().lower() for x in os.environ.get('RWC_EXTRA_ROOTS', '').split(',') if x.strip()]
+    roots = list(ROOTS) + extra + [t for _, t in fixups]
 
     tu_of = {}      # rva -> source that defines it
     defined_by = {}  # source -> [(rva, name)]
