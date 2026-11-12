@@ -21,9 +21,10 @@ FIXED = {  # rva -> (name or None, kind, symbol, note, level, caller)
                  're/match/s24/00555360.c (94.4%, 55 differing bytes, all explained: return-block layout and its shift, '
                  'two-store order), port axis only, never C4: font freelists 0x00912a08 / 0x00912a14, path 0x00912a0c, index '
                  'table 0x00912700, dictionary 0x00912a1c / 0x00912a20, reader 0x00913100' + EV, 4, 0x00552b60),
-    0x004c5890: ('RwTexDictionaryCreate', 'bound', 'MashedRw_TexDictionaryCreate_004c5890',
-                 T + 'LibRw/RwApiBind.cpp: RwTexDictionaryCreate -> rw::TexDictionary::create (HUDINIT-A binding, reached now '
-                 'from 0x00555360). librw owns the exe dictionaries; no RW 3.x-layout dictionary' + EV, 5, 0x00555360),
+    0x004c5890: ('RwTexDictionaryCreate', 'bound', 'RwCoreBind_TexDictionaryCreate_004c5890',
+                 T + 'RwCore/RwCore_Bind_004c5890.cpp (RWC-BIND-4C5890, L-129 / L-130): the byte-matched body on the RW core '
+                 'under MASHED_RWC_CORE=1, returns 0 with it off. 0x00555360 stores the result at 0x00912a1c / 0x00912a20 and '
+                 'tests it nowhere. No librw binding (L-124)' + EV, 5, 0x00555360),
     0x00555910: (None, 'stand-in', 'PortTop_StandInNM_00555910',
                  T + 'Match/PortTop_00555360.cpp (logs, returns 0): the font-file reader 0x00555360 stores at 0x00913100, '
                  'not called on this path. re/match/s24/00555910.c is 100%, its callees are the font-read chain (HUDINIT-C)'

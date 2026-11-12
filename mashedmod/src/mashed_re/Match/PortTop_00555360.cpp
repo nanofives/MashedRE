@@ -12,7 +12,9 @@
 // MASHED_ORIG_TOP_RWMOD=1 (RwGlobals +0x118 and the +0xf4 string slot are bound only then).
 // Callees bind by name, no raw-address call:
 //  - 0x004cc9e0 = Orig_004cc9e0 (matched thunk, Match/PortTop_004cc9e0.cpp, onto the 0x004cc820 binding)
-//  - 0x004c5890 = MashedRw_TexDictionaryCreate_004c5890 (LibRw/RwApiBind.cpp, rw::TexDictionary::create)
+//  - 0x004c5890 = RwCoreBind_TexDictionaryCreate_004c5890 (RwCore/RwCore_Bind_004c5890.cpp, RWC-BIND-4C5890, L-129 / L-130).
+//    With MASHED_RWC_CORE off it returns 0, so 0x00912a1c / 0x00912a20 are stored as 0. This body stores the result and
+//    tests it nowhere (re/match/s24/00555360.c, last block), so a 0 result changes no return value of this function.
 //  - 0x00555910 is stored at 0x00913100, not called here: the named stand-in below (the font-file reader, chain C). Its
 //    source re/match/s24/00555910.c is 100%, but its callees are the font-read chain.
 #ifdef MASHED_STANDALONE
@@ -32,8 +34,8 @@ extern "C" int PortTop_StandInNM_00555910() {
 #define FUN_00555360 Orig_00555360
 // FUN_004cc9e0: the matched thunk, Match/PortTop_004cc9e0.cpp
 #define FUN_004cc9e0 Orig_004cc9e0
-// FUN_004c5890: RW: RwTexDictionaryCreate -> rw::TexDictionary::create (LibRw/RwApiBind.cpp)
-#define FUN_004c5890 MashedRw_TexDictionaryCreate_004c5890
+// FUN_004c5890: the RW core binding entry (RwCore/RwCore_Bind_004c5890.cpp), no librw binding (L-129 a, L-124)
+#define FUN_004c5890 RwCoreBind_TexDictionaryCreate_004c5890
 // FUN_00555910: stored at 0x00913100 only, the stand-in above
 #define FUN_00555910 PortTop_StandInNM_00555910
 extern "C" {
