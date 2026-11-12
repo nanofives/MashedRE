@@ -29,5 +29,5 @@ Not an inline-asm transcription: plain C with `static __forceinline` helpers.
 `[1/1] 0x00521520 match PASS byte-identical 1121 B, relocheck OK (7/0)`, `1 pass, 0 refused`. Then `--apply --result` this file.
 Rows promoted to C4 by `c4=match`: 1 (0x00521520, C2 -> C4). `c4=libid`: 0. `c4=frida-replay`: 0.
 
-Commit SHA: see the REPORT (the SHA is added in a follow-up commit on orch/MATCH-RELOC-521520).
+Commit SHA: 2e8c4cadc (source, hooks.csv and CHANGELOG change); a follow-up commit only records this line.
 Gates: not run: match-only.
