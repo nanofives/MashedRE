@@ -10,6 +10,16 @@ extern "C" int RwCoreLift_004ecb1f();
 extern "C" int RwCoreLift_004ecb43();
 extern "C" int RwCoreLift_00504947();
 extern "C" int RwCoreLift_00505f2c();
+extern "C" int RwCoreLift_005066b9();
+extern "C" int RwCoreLift_0050675e();
+extern "C" int RwCoreLift_00506811();
+extern "C" int RwCoreLift_005068ab();
+extern "C" int RwCoreLift_00506931();
+extern "C" int RwCoreLift_0050698e();
+extern "C" int RwCoreLift_005069d7();
+extern "C" int RwCoreLift_00506a29();
+extern "C" int RwCoreLift_00506ad7();
+extern "C" int RwCoreLift_00506bd7();
 extern "C" int RwCoreLift_00506ce3();
 extern "C" int RwCoreLift_00506db8();
 extern "C" int RwCoreLift_00506ea8();
@@ -64,17 +74,6 @@ extern "C" int RwCoreLift_0050b36f();
 extern "C" int RwCoreLift_0050b3d2();
 extern "C" int RwCoreLift_0050b430();
 extern "C" int RwCoreLift_0050b489();
-extern "C" int RwCoreLift_0050b4d0();
-extern "C" int RwCoreLift_0050b578();
-extern "C" int RwCoreLift_0050b64a();
-extern "C" int RwCoreLift_0050b6ff();
-extern "C" int RwCoreLift_0050c897();
-extern "C" int RwCoreLift_0050ca3c();
-extern "C" int RwCoreLift_0050cf70();
-extern "C" int RwCoreLift_0050d089();
-extern "C" int RwCoreLift_0050e1dd();
-extern "C" int RwCoreLift_0050e4bf();
-extern "C" int RwCoreLift_0050e8b7();
 extern "C" int RwCoreLift_0050ec78();
 extern "C" int RwCoreLift_0050ecdf();
 extern "C" int RwCoreLift_0050f1bf();
@@ -87,6 +86,581 @@ extern "C" int RwCoreLift_005130c0();
 extern "C" int RwCoreLift_005131c0();
 extern "C" int RwCoreLift_005137a0();
 extern "C" int RwCoreLift_005138a0();
+
+// HAND-LIFT 0x005066b9 RwCoreLift_005066b9  (47 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_005066b9(void) {
+    __asm {
+        push ebp                                 // 005066b9
+        mov ebp, esp                             // 005066ba
+        movss xmm0, dword ptr [ebp + 0x1c]       // 005066bc
+        movss xmm1, xmm0                         // 005066c1
+        mulss xmm1, xmm0                         // 005066c5
+        movss xmm2, xmm0                         // 005066c9
+        shufps xmm0, xmm0, 0                     // 005066cd
+        mulss xmm2, xmm1                         // 005066d1
+        shufps xmm1, xmm1, 0                     // 005066d5
+        mulps xmm0, xmmword ptr ds:[0x0061bdb0]  // 005066d9
+        shufps xmm2, xmm2, 0                     // 005066e0
+        mulps xmm1, xmmword ptr ds:[0x0061bda0]  // 005066e4
+        addps xmm0, xmmword ptr ds:[0x0061bdc0]  // 005066eb
+        mulps xmm2, xmmword ptr ds:[0x0061bd90]  // 005066f2
+        addps xmm0, xmm1                         // 005066f9
+        addps xmm0, xmm2                         // 005066fc
+        mov eax, dword ptr [ebp + 0xc]           // 005066ff
+        xorps xmm4, xmm4                         // 00506702
+        mov ecx, dword ptr [ebp + 0x10]          // 00506705
+        mov edx, dword ptr [ebp + 0x14]          // 00506708
+        movaps xmm1, xmm0                        // 0050670b
+        shufps xmm1, xmm0, 0x55                  // 0050670e
+        movaps xmm2, xmm0                        // 00506712
+        shufps xmm2, xmm0, 0xaa                  // 00506715
+        movaps xmm3, xmm0                        // 00506719
+        shufps xmm3, xmm0, 0xff                  // 0050671c
+        xorps xmm5, xmm5                         // 00506720
+        shufps xmm0, xmm0, 0                     // 00506723
+        movups xmm4, xmmword ptr [eax]           // 00506727
+        mov eax, dword ptr [ebp + 0x18]          // 0050672a
+        mulps xmm4, xmm0                         // 0050672d
+        xorps xmm6, xmm6                         // 00506730
+        movups xmm5, xmmword ptr [ecx]           // 00506733
+        mulps xmm5, xmm1                         // 00506736
+        xorps xmm7, xmm7                         // 00506739
+        movups xmm6, xmmword ptr [edx]           // 0050673c
+        addps xmm4, xmm5                         // 0050673f
+        mulps xmm6, xmm2                         // 00506742
+        addps xmm4, xmm6                         // 00506745
+        movups xmm7, xmmword ptr [eax]           // 00506748
+        mov ecx, dword ptr [ebp + 8]             // 0050674b
+        mulps xmm7, xmm3                         // 0050674e
+        addps xmm4, xmm7                         // 00506751
+        movups xmmword ptr [ecx], xmm4           // 00506754
+        mov eax, dword ptr [ebp + 8]             // 00506757
+        pop ebp                                  // 0050675a
+        ret 0x18                                 // 0050675b
+    }
+}
+
+// HAND-LIFT 0x0050675e RwCoreLift_0050675e  (48 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_0050675e(void) {
+    __asm {
+        push ebp                                 // 0050675e
+        mov ebp, esp                             // 0050675f
+        movss xmm0, dword ptr [ebp + 0x1c]       // 00506761
+        movss xmm1, xmm0                         // 00506766
+        mulss xmm1, xmm0                         // 0050676a
+        movss xmm2, xmm0                         // 0050676e
+        shufps xmm0, xmm0, 0                     // 00506772
+        mulss xmm2, xmm1                         // 00506776
+        shufps xmm1, xmm1, 0                     // 0050677a
+        mulps xmm0, xmmword ptr ds:[0x0061bd70]  // 0050677e
+        shufps xmm2, xmm2, 0                     // 00506785
+        mulps xmm1, xmmword ptr ds:[0x0061bd60]  // 00506789
+        addss xmm0, dword ptr ds:[0x0061bd80]    // 00506790
+        mulps xmm2, xmmword ptr ds:[0x0061bd50]  // 00506798
+        addps xmm0, xmm1                         // 0050679f
+        addps xmm0, xmm2                         // 005067a2
+        mov eax, dword ptr [ebp + 0xc]           // 005067a5
+        mov ecx, dword ptr [ebp + 0x10]          // 005067a8
+        mov edx, dword ptr [ebp + 0x14]          // 005067ab
+        movaps xmm1, xmm0                        // 005067ae
+        shufps xmm1, xmm0, 0x55                  // 005067b1
+        movaps xmm2, xmm0                        // 005067b5
+        shufps xmm2, xmm0, 0xaa                  // 005067b8
+        movaps xmm3, xmm0                        // 005067bc
+        shufps xmm3, xmm0, 0xff                  // 005067bf
+        shufps xmm0, xmm0, 0                     // 005067c3
+        movss xmm4, dword ptr [eax + 8]          // 005067c7
+        movhps xmm4, qword ptr [eax]             // 005067cc
+        mov eax, dword ptr [ebp + 0x18]          // 005067cf
+        mulps xmm4, xmm0                         // 005067d2
+        movss xmm5, dword ptr [ecx + 8]          // 005067d5
+        movhps xmm5, qword ptr [ecx]             // 005067da
+        mulps xmm5, xmm1                         // 005067dd
+        movss xmm6, dword ptr [edx + 8]          // 005067e0
+        movhps xmm6, qword ptr [edx]             // 005067e5
+        addps xmm4, xmm5                         // 005067e8
+        mulps xmm6, xmm2                         // 005067eb
+        addps xmm4, xmm6                         // 005067ee
+        movss xmm7, dword ptr [eax + 8]          // 005067f1
+        movhps xmm7, qword ptr [eax]             // 005067f6
+        mov ecx, dword ptr [ebp + 8]             // 005067f9
+        mulps xmm7, xmm3                         // 005067fc
+        addps xmm4, xmm7                         // 005067ff
+        movhps qword ptr [ecx], xmm4             // 00506802
+        movss dword ptr [ecx + 8], xmm4          // 00506805
+        mov eax, dword ptr [ebp + 8]             // 0050680a
+        pop ebp                                  // 0050680d
+        ret 0x18                                 // 0050680e
+    }
+}
+
+// HAND-LIFT 0x00506811 RwCoreLift_00506811  (43 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_00506811(void) {
+    __asm {
+        push ebp                                 // 00506811
+        mov ebp, esp                             // 00506812
+        movss xmm0, dword ptr [ebp + 0x1c]       // 00506814
+        movss xmm1, xmm0                         // 00506819
+        mulss xmm1, xmm0                         // 0050681d
+        movss xmm2, xmm0                         // 00506821
+        shufps xmm0, xmm0, 0                     // 00506825
+        mulss xmm2, xmm1                         // 00506829
+        shufps xmm1, xmm1, 0                     // 0050682d
+        mulps xmm0, xmmword ptr ds:[0x0061bd70]  // 00506831
+        shufps xmm2, xmm2, 0                     // 00506838
+        mulps xmm1, xmmword ptr ds:[0x0061bd60]  // 0050683c
+        addss xmm0, dword ptr ds:[0x0061bd80]    // 00506843
+        mulps xmm2, xmmword ptr ds:[0x0061bd50]  // 0050684b
+        addps xmm0, xmm1                         // 00506852
+        addps xmm0, xmm2                         // 00506855
+        mov eax, dword ptr [ebp + 0xc]           // 00506858
+        movaps xmm1, xmm0                        // 0050685b
+        shufps xmm1, xmm0, 0x55                  // 0050685e
+        movaps xmm2, xmm0                        // 00506862
+        mov ecx, dword ptr [ebp + 0x10]          // 00506865
+        shufps xmm2, xmm0, 0xaa                  // 00506868
+        movaps xmm3, xmm0                        // 0050686c
+        shufps xmm3, xmm0, 0xff                  // 0050686f
+        mov edx, dword ptr [ebp + 0x14]          // 00506873
+        shufps xmm0, xmm0, 0                     // 00506876
+        movups xmm4, xmmword ptr [eax]           // 0050687a
+        mov eax, dword ptr [ebp + 0x18]          // 0050687d
+        mulps xmm4, xmm0                         // 00506880
+        movups xmm5, xmmword ptr [ecx]           // 00506883
+        mulps xmm5, xmm1                         // 00506886
+        movups xmm6, xmmword ptr [edx]           // 00506889
+        addps xmm4, xmm5                         // 0050688c
+        mulps xmm6, xmm2                         // 0050688f
+        addps xmm4, xmm6                         // 00506892
+        movups xmm7, xmmword ptr [eax]           // 00506895
+        mov ecx, dword ptr [ebp + 8]             // 00506898
+        mulps xmm7, xmm3                         // 0050689b
+        addps xmm4, xmm7                         // 0050689e
+        movups xmmword ptr [ecx], xmm4           // 005068a1
+        mov eax, dword ptr [ebp + 8]             // 005068a4
+        pop ebp                                  // 005068a7
+        ret 0x18                                 // 005068a8
+    }
+}
+
+// HAND-LIFT 0x005068ab RwCoreLift_005068ab  (37 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_005068ab(void) {
+    __asm {
+        push ebp                                 // 005068ab
+        mov ebp, esp                             // 005068ac
+        movss xmm0, dword ptr [ebp + 0x1c]       // 005068ae
+        movss xmm1, xmm0                         // 005068b3
+        mulss xmm1, xmm0                         // 005068b7
+        movss xmm2, xmm0                         // 005068bb
+        shufps xmm0, xmm0, 0                     // 005068bf
+        mulss xmm2, xmm1                         // 005068c3
+        shufps xmm1, xmm1, 0                     // 005068c7
+        mulps xmm0, xmmword ptr ds:[0x0061bd70]  // 005068cb
+        shufps xmm2, xmm2, 0                     // 005068d2
+        mulps xmm1, xmmword ptr ds:[0x0061bd60]  // 005068d6
+        addss xmm0, dword ptr ds:[0x0061bd80]    // 005068dd
+        mulps xmm2, xmmword ptr ds:[0x0061bd50]  // 005068e5
+        addps xmm0, xmm1                         // 005068ec
+        addps xmm0, xmm2                         // 005068ef
+        mov eax, dword ptr [ebp + 0xc]           // 005068f2
+        movaps xmm2, xmm0                        // 005068f5
+        shufps xmm2, xmm0, 0xfa                  // 005068f8
+        shufps xmm0, xmm0, 0x50                  // 005068fc
+        mov ecx, dword ptr [ebp + 0x10]          // 00506900
+        mov edx, dword ptr [ebp + 0x14]          // 00506903
+        movlps xmm4, qword ptr [eax]             // 00506906
+        movhps xmm4, qword ptr [ecx]             // 00506909
+        mov eax, dword ptr [ebp + 0x18]          // 0050690c
+        mulps xmm4, xmm0                         // 0050690f
+        movlps xmm6, qword ptr [edx]             // 00506912
+        movhps xmm6, qword ptr [eax]             // 00506915
+        mulps xmm6, xmm2                         // 00506918
+        mov ecx, dword ptr [ebp + 8]             // 0050691b
+        addps xmm4, xmm6                         // 0050691e
+        movhlps xmm3, xmm4                       // 00506921
+        addps xmm4, xmm3                         // 00506924
+        movlps qword ptr [ecx], xmm4             // 00506927
+        mov eax, dword ptr [ebp + 8]             // 0050692a
+        pop ebp                                  // 0050692d
+        ret 0x18                                 // 0050692e
+    }
+}
+
+// HAND-LIFT 0x00506931 RwCoreLift_00506931  (24 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_00506931(void) {
+    __asm {
+        movss xmm0, dword ptr [esp + 0x14]       // 00506931
+        mov eax, dword ptr [esp + 8]             // 00506937
+        shufps xmm0, xmm0, 0                     // 0050693b
+        movss xmm2, dword ptr [eax + 8]          // 0050693f
+        mov ecx, dword ptr [esp + 0xc]           // 00506944
+        movhps xmm2, qword ptr [eax]             // 00506948
+        movss xmm1, dword ptr [esp + 0x18]       // 0050694b
+        movss xmm3, dword ptr [ecx + 8]          // 00506951
+        movhps xmm3, qword ptr [ecx]             // 00506956
+        shufps xmm1, xmm1, 0                     // 00506959
+        mov eax, dword ptr [esp + 0x10]          // 0050695d
+        subps xmm3, xmm2                         // 00506961
+        movss xmm4, dword ptr [eax + 8]          // 00506964
+        movhps xmm4, qword ptr [eax]             // 00506969
+        mulps xmm3, xmm0                         // 0050696c
+        subps xmm4, xmm2                         // 0050696f
+        mov eax, dword ptr [esp + 4]             // 00506972
+        addps xmm3, xmm2                         // 00506976
+        mulps xmm4, xmm1                         // 00506979
+        addps xmm3, xmm4                         // 0050697c
+        movss dword ptr [eax + 8], xmm3          // 0050697f
+        movhps qword ptr [eax], xmm3             // 00506984
+        mov eax, dword ptr [esp + 4]             // 00506987
+        ret 0x18                                 // 0050698b
+    }
+}
+
+// HAND-LIFT 0x0050698e RwCoreLift_0050698e  (20 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_0050698e(void) {
+    __asm {
+        movss xmm0, dword ptr [esp + 0x14]       // 0050698e
+        mov eax, dword ptr [esp + 8]             // 00506994
+        shufps xmm0, xmm0, 0                     // 00506998
+        mov ecx, dword ptr [esp + 0xc]           // 0050699c
+        movups xmm2, xmmword ptr [eax]           // 005069a0
+        movss xmm1, dword ptr [esp + 0x18]       // 005069a3
+        movups xmm3, xmmword ptr [ecx]           // 005069a9
+        shufps xmm1, xmm1, 0                     // 005069ac
+        mov eax, dword ptr [esp + 0x10]          // 005069b0
+        subps xmm3, xmm2                         // 005069b4
+        movups xmm4, xmmword ptr [eax]           // 005069b7
+        mulps xmm3, xmm0                         // 005069ba
+        subps xmm4, xmm2                         // 005069bd
+        mov eax, dword ptr [esp + 4]             // 005069c0
+        addps xmm3, xmm2                         // 005069c4
+        mulps xmm4, xmm1                         // 005069c7
+        addps xmm3, xmm4                         // 005069ca
+        movups xmmword ptr [eax], xmm3           // 005069cd
+        mov eax, dword ptr [esp + 4]             // 005069d0
+        ret 0x18                                 // 005069d4
+    }
+}
+
+// HAND-LIFT 0x005069d7 RwCoreLift_005069d7  (23 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_005069d7(void) {
+    __asm {
+        xorps xmm2, xmm2                         // 005069d7
+        movss xmm0, dword ptr [esp + 0x14]       // 005069da
+        mov eax, dword ptr [esp + 8]             // 005069e0
+        shufps xmm0, xmm0, 0                     // 005069e4
+        xorps xmm3, xmm3                         // 005069e8
+        mov ecx, dword ptr [esp + 0xc]           // 005069eb
+        movhps xmm2, qword ptr [eax]             // 005069ef
+        movss xmm1, dword ptr [esp + 0x18]       // 005069f2
+        movhps xmm3, qword ptr [ecx]             // 005069f8
+        xorps xmm4, xmm4                         // 005069fb
+        shufps xmm1, xmm1, 0                     // 005069fe
+        mov eax, dword ptr [esp + 0x10]          // 00506a02
+        subps xmm3, xmm2                         // 00506a06
+        movhps xmm4, qword ptr [eax]             // 00506a09
+        mulps xmm3, xmm0                         // 00506a0c
+        subps xmm4, xmm2                         // 00506a0f
+        mov eax, dword ptr [esp + 4]             // 00506a12
+        addps xmm3, xmm2                         // 00506a16
+        mulps xmm4, xmm1                         // 00506a19
+        addps xmm3, xmm4                         // 00506a1c
+        movhps qword ptr [eax], xmm3             // 00506a1f
+        mov eax, dword ptr [esp + 4]             // 00506a22
+        ret 0x18                                 // 00506a26
+    }
+}
+
+// HAND-LIFT 0x00506a29 RwCoreLift_00506a29  (50 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_00506a29(void) {
+    __asm {
+        push ebp                                 // 00506a29
+        mov ebp, esp                             // 00506a2a
+        mov eax, dword ptr [ebp + 8]             // 00506a2c
+        mov dword ptr [ebp + 8], eax             // 00506a2f
+        mov eax, dword ptr [ebp + 0xc]           // 00506a32
+        movups xmm0, xmmword ptr [eax]           // 00506a35
+        mov ecx, dword ptr [ebp + 0x10]          // 00506a38
+        movss xmm1, dword ptr [ecx + 8]          // 00506a3b
+        mov edx, dword ptr [ebp + 0x14]          // 00506a40
+        movhps xmm1, qword ptr [ecx]             // 00506a43
+        movss xmm2, dword ptr [edx + 8]          // 00506a46
+        movaps xmm4, xmm0                        // 00506a4b
+        shufps xmm0, xmm0, 0x4e                  // 00506a4e
+        movaps xmm3, xmm1                        // 00506a52
+        shufps xmm4, xmm4, 0xff                  // 00506a55
+        movhps xmm2, qword ptr [edx]             // 00506a59
+        mulps xmm3, xmm0                         // 00506a5c
+        mulps xmm0, xmm2                         // 00506a5f
+        movhlps xmm5, xmm3                       // 00506a62
+        movhlps xmm6, xmm0                       // 00506a65
+        addps xmm3, xmm5                         // 00506a68
+        addps xmm0, xmm6                         // 00506a6b
+        shufps xmm5, xmm3, 0x55                  // 00506a6e
+        shufps xmm6, xmm0, 0x55                  // 00506a72
+        addss xmm3, xmm5                         // 00506a76
+        addss xmm0, xmm6                         // 00506a7a
+        movss xmm5, xmm3                         // 00506a7e
+        subss xmm5, xmm0                         // 00506a82
+        addss xmm3, xmm4                         // 00506a86
+        comiss xmm5, dword ptr ds:[0x007db0cc]   // 00506a8a
+        je L_506ac9                              // 00506a91
+        rcpss xmm0, xmm5                         // 00506a93
+        movss xmm6, xmm0                         // 00506a97
+        addss xmm6, xmm6                         // 00506a9b
+        mulss xmm5, xmm0                         // 00506a9f
+        mulss xmm5, xmm0                         // 00506aa3
+        subss xmm6, xmm5                         // 00506aa7
+        mulss xmm3, xmm6                         // 00506aab
+        shufps xmm3, xmm3, 0                     // 00506aaf
+        subps xmm2, xmm1                         // 00506ab3
+        mulps xmm3, xmm2                         // 00506ab6
+        mov eax, dword ptr [ebp + 8]             // 00506ab9
+        addps xmm1, xmm3                         // 00506abc
+        movhps qword ptr [eax], xmm1             // 00506abf
+        movss dword ptr [eax + 8], xmm1          // 00506ac2
+        jmp L_506ad0                             // 00506ac7
+    L_506ac9:
+        mov dword ptr [ebp + 8], 0               // 00506ac9
+    L_506ad0:
+        mov eax, dword ptr [ebp + 8]             // 00506ad0
+        pop ebp                                  // 00506ad3
+        ret 0x10                                 // 00506ad4
+    }
+}
+
+// HAND-LIFT 0x00506ad7 RwCoreLift_00506ad7  (74 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_00506ad7(void) {
+    __asm {
+        push ebp                                 // 00506ad7
+        mov ebp, esp                             // 00506ad8
+        and esp, 0xfffffff0                      // 00506ada
+        sub esp, 0x10                            // 00506add
+        mov eax, dword ptr [ebp + 0xc]           // 00506ae0
+        lea ecx, [eax + 8]                       // 00506ae3
+        movss xmm2, dword ptr [ecx]              // 00506ae6
+        movhps xmm2, qword ptr [eax]             // 00506aea
+        mov eax, dword ptr [ebp + 0x10]          // 00506aed
+        lea ecx, [eax + 8]                       // 00506af0
+        movss xmm0, dword ptr [ecx]              // 00506af3
+        movhps xmm0, qword ptr [eax]             // 00506af7
+        mov eax, dword ptr [ebp + 0x14]          // 00506afa
+        movaps xmm1, xmm0                        // 00506afd
+        movaps xmm5, xmmword ptr ds:[0x0061be20] // 00506b00
+        lea ecx, [eax + 8]                       // 00506b07
+        movaps xmm0, xmm2                        // 00506b0a
+        subps xmm0, xmm1                         // 00506b0d
+        movss xmm1, dword ptr [ecx]              // 00506b10
+        movhps xmm1, qword ptr [eax]             // 00506b14
+        movaps xmm3, xmm1                        // 00506b17
+        movaps xmm4, xmm0                        // 00506b1a
+        shufps xmm4, xmm0, 0x78                  // 00506b1d
+        mov eax, dword ptr [ebp + 8]             // 00506b21
+        movaps xmm1, xmm2                        // 00506b24
+        subps xmm1, xmm3                         // 00506b27
+        movaps xmm3, xmm1                        // 00506b2a
+        shufps xmm3, xmm1, 0x63                  // 00506b2d
+        mulps xmm4, xmm3                         // 00506b31
+        movaps xmm3, xmm0                        // 00506b34
+        shufps xmm3, xmm0, 0x63                  // 00506b37
+        movaps xmm0, xmm1                        // 00506b3b
+        shufps xmm0, xmm1, 0x78                  // 00506b3e
+        mulps xmm0, xmm3                         // 00506b42
+        subps xmm0, xmm4                         // 00506b45
+        movaps xmm1, xmm0                        // 00506b48
+        mulps xmm1, xmm0                         // 00506b4b
+        movaps xmm3, xmm1                        // 00506b4e
+        movhlps xmm3, xmm1                       // 00506b51
+        addps xmm1, xmm3                         // 00506b54
+        movaps xmm3, xmm1                        // 00506b57
+        shufps xmm3, xmm1, 1                     // 00506b5a
+        addss xmm1, xmm3                         // 00506b5e
+        movaps xmmword ptr [esp], xmm1           // 00506b62
+        rsqrtss xmm3, xmm1                       // 00506b67
+        movss dword ptr [esp], xmm3              // 00506b6b
+        movaps xmm3, xmmword ptr [esp]           // 00506b71
+        movaps xmm4, xmm1                        // 00506b76
+        mulss xmm4, xmm3                         // 00506b79
+        mulss xmm4, xmm3                         // 00506b7d
+        subss xmm5, xmm4                         // 00506b81
+        movaps xmm4, xmmword ptr ds:[0x0061be10] // 00506b85
+        mulss xmm4, xmm3                         // 00506b8c
+        movaps xmm3, xmm4                        // 00506b90
+        mulss xmm3, xmm5                         // 00506b93
+        movaps xmm4, xmm3                        // 00506b97
+        shufps xmm4, xmm3, 0                     // 00506b9a
+        mulps xmm0, xmm4                         // 00506b9e
+        movups xmmword ptr [eax], xmm0           // 00506ba1
+        movaps xmm3, xmm2                        // 00506ba4
+        shufps xmm3, xmm2, 0xe                   // 00506ba7
+        movaps xmm2, xmmword ptr ds:[0x0061be00] // 00506bab
+        mulps xmm0, xmm3                         // 00506bb2
+        movaps xmm3, xmm0                        // 00506bb5
+        shufps xmm3, xmm0, 0x55                  // 00506bb8
+        movhlps xmm1, xmm0                       // 00506bbc
+        addss xmm1, xmm3                         // 00506bbf
+        addss xmm0, xmm1                         // 00506bc3
+        lea ecx, [eax + 0xc]                     // 00506bc7
+        xorps xmm0, xmm2                         // 00506bca
+        movss dword ptr [ecx], xmm0              // 00506bcd
+        mov esp, ebp                             // 00506bd1
+        pop ebp                                  // 00506bd3
+        ret 0x10                                 // 00506bd4
+    }
+}
+
+// HAND-LIFT 0x00506bd7 RwCoreLift_00506bd7  (74 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_00506bd7(void) {
+    __asm {
+        push ebp                                 // 00506bd7
+        mov ebp, esp                             // 00506bd8
+        and esp, 0xfffffff0                      // 00506bda
+        sub esp, 0x10                            // 00506bdd
+        mov eax, dword ptr [ebp + 0xc]           // 00506be0
+        movaps xmm1, xmmword ptr [esp]           // 00506be3
+        movaps xmm2, xmmword ptr ds:[0x0061bea0] // 00506be8
+        lea ecx, [eax + 8]                       // 00506bef
+        movhps xmm1, qword ptr [ecx]             // 00506bf2
+        movlps xmm1, qword ptr [eax]             // 00506bf5
+        movaps xmm0, xmm1                        // 00506bf8
+        andps xmm0, xmm2                         // 00506bfb
+        mulps xmm0, xmm0                         // 00506bfe
+        movaps xmm2, xmm0                        // 00506c01
+        movhlps xmm2, xmm0                       // 00506c04
+        addps xmm0, xmm2                         // 00506c07
+        movaps xmm2, xmm0                        // 00506c0a
+        shufps xmm2, xmm0, 1                     // 00506c0d
+        addss xmm0, xmm2                         // 00506c11
+        movaps xmmword ptr [esp], xmm0           // 00506c15
+        rsqrtss xmm2, xmm0                       // 00506c1a
+        movss dword ptr [esp], xmm2              // 00506c1e
+        movaps xmm2, xmmword ptr [esp]           // 00506c24
+        mulss xmm0, xmm2                         // 00506c29
+        mulss xmm0, xmm2                         // 00506c2d
+        mov eax, 0x61be90                        // 00506c31
+        movss xmm3, dword ptr [eax]              // 00506c36
+        subss xmm3, xmm0                         // 00506c3a
+        mov eax, 0x61be80                        // 00506c3e
+        movss xmm0, dword ptr [eax]              // 00506c43
+        mov eax, dword ptr [ebp + 8]             // 00506c47
+        mulss xmm0, xmm2                         // 00506c4a
+        mulss xmm0, xmm3                         // 00506c4e
+        movaps xmm3, xmmword ptr ds:[0x0061be70] // 00506c52
+        movaps xmm2, xmm0                        // 00506c59
+        shufps xmm2, xmm0, 0                     // 00506c5c
+        movaps xmm0, xmmword ptr ds:[0x0061be60] // 00506c60
+        mulps xmm1, xmm2                         // 00506c67
+        mulps xmm0, xmm1                         // 00506c6a
+        movaps xmm4, xmm0                        // 00506c6d
+        movaps xmm2, xmm1                        // 00506c70
+        shufps xmm2, xmm1, 0x55                  // 00506c73
+        mulps xmm4, xmm2                         // 00506c77
+        movaps xmm2, xmm4                        // 00506c7a
+        movaps xmm4, xmmword ptr ds:[0x0061be50] // 00506c7d
+        addps xmm2, xmm3                         // 00506c84
+        movaps xmm5, xmm0                        // 00506c87
+        movaps xmm3, xmm1                        // 00506c8a
+        shufps xmm3, xmm1, 0xaa                  // 00506c8d
+        mulps xmm5, xmm3                         // 00506c91
+        movaps xmm3, xmm5                        // 00506c94
+        movaps xmm5, xmmword ptr ds:[0x0061be40] // 00506c97
+        addps xmm3, xmm4                         // 00506c9e
+        movaps xmm6, xmm0                        // 00506ca1
+        movaps xmm4, xmm1                        // 00506ca4
+        shufps xmm4, xmm1, 0xff                  // 00506ca7
+        mulps xmm6, xmm4                         // 00506cab
+        movaps xmm4, xmm6                        // 00506cae
+        addps xmm4, xmm5                         // 00506cb1
+        movaps xmm5, xmmword ptr ds:[0x0061be30] // 00506cb4
+        movaps xmm6, xmm1                        // 00506cbb
+        shufps xmm6, xmm1, 0                     // 00506cbe
+        mulps xmm0, xmm6                         // 00506cc2
+        lea ecx, [eax + 0x10]                    // 00506cc5
+        addps xmm0, xmm5                         // 00506cc8
+        movups xmmword ptr [eax], xmm0           // 00506ccb
+        movups xmmword ptr [ecx], xmm2           // 00506cce
+        lea ecx, [eax + 0x20]                    // 00506cd1
+        movups xmmword ptr [ecx], xmm3           // 00506cd4
+        lea ecx, [eax + 0x30]                    // 00506cd7
+        movups xmmword ptr [ecx], xmm4           // 00506cda
+        mov esp, ebp                             // 00506cdd
+        pop ebp                                  // 00506cdf
+        ret 8                                    // 00506ce0
+    }
+}
+
+// HAND-LIFT 0x00506ce3 RwCoreLift_00506ce3  (65 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_00506ce3(void) {
+    __asm {
+        push ebp                                 // 00506ce3
+        mov ebp, esp                             // 00506ce4
+        and esp, 0xfffffff0                      // 00506ce6
+        sub esp, 0x20                            // 00506ce9
+        mov eax, dword ptr [ebp + 0x10]          // 00506cec
+        test al, 0xf                             // 00506cef
+        mov ecx, dword ptr [ebp + 0xc]           // 00506cf1
+        jne L_506d39                             // 00506cf4
+        movaps xmm1, xmmword ptr [esp + 0x10]    // 00506cf6
+        movlps xmm1, qword ptr [ecx]             // 00506cfb
+        mov ecx, dword ptr [ecx + 8]             // 00506cfe
+        movaps xmm2, xmmword ptr [eax + 0x20]    // 00506d01
+        mov dword ptr [esp + 0xc], ecx           // 00506d05
+        movss xmm0, dword ptr [esp + 0xc]        // 00506d09
+        shufps xmm0, xmm0, 0                     // 00506d0f
+        mulps xmm0, xmm2                         // 00506d13
+        movaps xmm2, xmm0                        // 00506d16
+        movaps xmm0, xmmword ptr [eax + 0x10]    // 00506d19
+        movaps xmm3, xmm1                        // 00506d1d
+        shufps xmm3, xmm1, 0x55                  // 00506d20
+        mulps xmm3, xmm0                         // 00506d24
+        movaps xmm0, xmmword ptr [eax]           // 00506d27
+        movaps xmm4, xmm1                        // 00506d2a
+        shufps xmm4, xmm1, 0                     // 00506d2d
+        mulps xmm4, xmm0                         // 00506d31
+        movaps xmm0, xmm4                        // 00506d34
+        jmp L_506d99                             // 00506d37
+    L_506d39:
+        movaps xmm0, xmmword ptr [esp + 0x10]    // 00506d39
+        movlps xmm0, qword ptr [ecx]             // 00506d3e
+        mov ecx, dword ptr [ecx + 8]             // 00506d41
+        movaps xmm2, xmmword ptr [esp + 0x10]    // 00506d44
+        movaps xmm3, xmmword ptr [esp + 0x10]    // 00506d49
+        mov dword ptr [esp + 0xc], ecx           // 00506d4e
+        movss xmm1, dword ptr [esp + 0xc]        // 00506d52
+        shufps xmm1, xmm1, 0                     // 00506d58
+        lea edx, [eax + 0x20]                    // 00506d5c
+        movlps xmm2, qword ptr [edx]             // 00506d5f
+        lea ecx, [eax + 0x28]                    // 00506d62
+        movhps xmm2, qword ptr [ecx]             // 00506d65
+        mulps xmm2, xmm1                         // 00506d68
+        movaps xmm1, xmm0                        // 00506d6b
+        shufps xmm1, xmm0, 0x55                  // 00506d6e
+        lea ecx, [eax + 0x18]                    // 00506d72
+        lea edx, [eax + 0x10]                    // 00506d75
+        movlps xmm3, qword ptr [edx]             // 00506d78
+        movhps xmm3, qword ptr [ecx]             // 00506d7b
+        mulps xmm3, xmm1                         // 00506d7e
+        movaps xmm1, xmm0                        // 00506d81
+        shufps xmm1, xmm0, 0                     // 00506d84
+        movaps xmm0, xmmword ptr [esp + 0x10]    // 00506d88
+        movlps xmm0, qword ptr [eax]             // 00506d8d
+        lea ecx, [eax + 8]                       // 00506d90
+        movhps xmm0, qword ptr [ecx]             // 00506d93
+        mulps xmm0, xmm1                         // 00506d96
+    L_506d99:
+        mov eax, dword ptr [ebp + 8]             // 00506d99
+        addps xmm0, xmm3                         // 00506d9c
+        addps xmm0, xmm2                         // 00506d9f
+        movaps xmm1, xmm0                        // 00506da2
+        lea ecx, [eax + 8]                       // 00506da5
+        movhlps xmm1, xmm0                       // 00506da8
+        movlps qword ptr [eax], xmm0             // 00506dab
+        movss dword ptr [ecx], xmm1              // 00506dae
+        mov esp, ebp                             // 00506db2
+        pop ebp                                  // 00506db4
+        ret 0xc                                  // 00506db5
+    }
+}
 
 // HAND-LIFT 0x00506db8 RwCoreLift_00506db8  (64 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_00506db8(void) {
@@ -5287,3559 +5861,6 @@ extern "C" __declspec(naked) int RwCoreLift_0050b489(void) {
         movq qword ptr [eax + 0x38], mm1         // 0050b4c7
         femms                                    // 0050b4cb
         ret 0x10                                 // 0050b4cd
-    }
-}
-
-// HAND-LIFT 0x0050b4d0 RwCoreLift_0050b4d0  (32 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050b4d0(void) {
-    __asm {
-        mov edx, dword ptr [esp + 8]             // 0050b4d0
-        movq mm0, qword ptr [edx]                // 0050b4d4
-        movq mm1, qword ptr [edx + 0x10]         // 0050b4d7
-        movq mm3, qword ptr [edx + 0x28]         // 0050b4db
-        movq mm4, qword ptr [edx + 0x38]         // 0050b4df
-        movq mm2, mm0                            // 0050b4e3
-        mov eax, dword ptr [esp + 4]             // 0050b4e6
-        punpckldq mm0, mm1                       // 0050b4ea
-        punpckhdq mm2, mm1                       // 0050b4ed
-        movq mm5, mm3                            // 0050b4f0
-        movq qword ptr [eax], mm0                // 0050b4f3
-        movq qword ptr [eax + 0x10], mm2         // 0050b4f6
-        movq mm6, qword ptr [edx + 8]            // 0050b4fa
-        punpckldq mm3, mm4                       // 0050b4fe
-        movq mm7, qword ptr [edx + 0x18]         // 0050b501
-        movq mm0, qword ptr [edx + 0x20]         // 0050b505
-        punpckhdq mm5, mm4                       // 0050b509
-        movq mm1, mm6                            // 0050b50c
-        movq qword ptr [eax + 0x28], mm3         // 0050b50f
-        movq qword ptr [eax + 0x38], mm5         // 0050b513
-        punpckldq mm6, mm7                       // 0050b517
-        movq mm4, qword ptr [edx + 0x30]         // 0050b51a
-        movq mm2, mm0                            // 0050b51e
-        punpckhdq mm1, mm7                       // 0050b521
-        movq qword ptr [eax + 0x20], mm6         // 0050b524
-        punpckhdq mm0, mm4                       // 0050b528
-        punpckldq mm2, mm4                       // 0050b52b
-        movq qword ptr [eax + 0x30], mm1         // 0050b52e
-        movq qword ptr [eax + 0x18], mm0         // 0050b532
-        movq qword ptr [eax + 8], mm2            // 0050b536
-        femms                                    // 0050b53a
-        ret 8                                    // 0050b53c
-    }
-}
-
-// HAND-LIFT 0x0050b578 RwCoreLift_0050b578  (58 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050b578(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 0050b578
-        mov ecx, dword ptr [esp + 8]             // 0050b57c
-        movq mm0, qword ptr [ecx]                // 0050b580
-        movq mm1, qword ptr [ecx + 8]            // 0050b583
-        movq mm2, mm0                            // 0050b587
-        movq mm3, mm0                            // 0050b58a
-        pfadd mm0, mm0                           // 0050b58d
-        movq mm4, mm1                            // 0050b591
-        movq mm7, mm1                            // 0050b594
-        pfadd mm1, mm1                           // 0050b597
-        punpckhdq mm2, mm2                       // 0050b59b
-        movq mm5, mm0                            // 0050b59e
-        punpckhdq mm4, mm4                       // 0050b5a1
-        pfmul mm3, mm0                           // 0050b5a4
-        punpckldq mm1, mm0                       // 0050b5a8
-        punpckldq mm7, mm7                       // 0050b5ab
-        pfmul mm5, mm4                           // 0050b5ae
-        movq mm6, mm1                            // 0050b5b2
-        pfmul mm7, mm1                           // 0050b5b5
-        pfmul mm1, mm2                           // 0050b5b9
-        pxor mm0, mm0                            // 0050b5bd
-        pfmul mm6, mm4                           // 0050b5c0
-        movq mm2, mm1                            // 0050b5c4
-        punpckhdq mm1, mm7                       // 0050b5c7
-        punpckldq mm7, mm7                       // 0050b5ca
-        punpckldq mm6, mm6                       // 0050b5cd
-        movq qword ptr [eax + 0x30], mm0         // 0050b5d0
-        pfadd mm7, mm3                           // 0050b5d4
-        pfacc mm3, mm3                           // 0050b5d8
-        movq mm4, mm1                            // 0050b5dc
-        punpckhdq mm6, mm5                       // 0050b5df
-        pfsubr mm3, qword ptr ds:[0x005db2a8]    // 0050b5e2
-        pfsubr mm7, qword ptr ds:[0x005db2a8]    // 0050b5ea
-        punpckldq mm3, mm0                       // 0050b5f2
-        pfadd mm1, mm6                           // 0050b5f5
-        movq qword ptr [eax + 0x28], mm3         // 0050b5f9
-        pfsub mm4, mm6                           // 0050b5fd
-        movq mm3, mm2                            // 0050b601
-        pfadd mm2, mm5                           // 0050b604
-        pfsub mm3, mm5                           // 0050b608
-        movq mm5, mm4                            // 0050b60c
-        punpckldq mm2, mm0                       // 0050b60f
-        movq mm6, mm1                            // 0050b612
-        punpckldq mm4, mm7                       // 0050b615
-        punpckldq mm1, mm1                       // 0050b618
-        movq qword ptr [eax + 0x18], mm2         // 0050b61b
-        punpckhdq mm5, mm0                       // 0050b61f
-        punpckldq mm0, dword ptr ds:[0x005db2a8] // 0050b622
-        movq qword ptr [eax + 8], mm5            // 0050b629
-        punpckhdq mm6, mm6                       // 0050b62d
-        movq qword ptr [eax + 0x10], mm4         // 0050b630
-        punpckhdq mm7, mm1                       // 0050b634
-        punpckldq mm6, mm3                       // 0050b637
-        movq qword ptr [eax], mm7                // 0050b63a
-        movq qword ptr [eax + 0x20], mm6         // 0050b63d
-        movq qword ptr [eax + 0x38], mm0         // 0050b641
-        femms                                    // 0050b645
-        ret 8                                    // 0050b647
-    }
-}
-
-// HAND-LIFT 0x0050b64a RwCoreLift_0050b64a  (48 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050b64a(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 0050b64a
-        mov ecx, dword ptr [esp + 8]             // 0050b64e
-        movq mm0, qword ptr [ecx]                // 0050b652
-        movq mm1, qword ptr [ecx + 8]            // 0050b655
-        pswapd mm3, mm0                          // 0050b659
-        movq mm6, mm0                            // 0050b65d
-        movq mm2, mm0                            // 0050b660
-        pfadd mm0, mm0                           // 0050b663
-        movq mm4, mm1                            // 0050b667
-        punpckhdq mm6, mm1                       // 0050b66a
-        pfadd mm1, mm1                           // 0050b66d
-        movq mm5, mm0                            // 0050b671
-        pfmul mm0, mm2                           // 0050b674
-        punpckldq mm5, mm1                       // 0050b678
-        pfmul mm2, mm1                           // 0050b67b
-        pfmul mm3, mm1                           // 0050b67f
-        pfmul mm1, mm4                           // 0050b683
-        pfmul mm6, mm5                           // 0050b687
-        movq mm4, mm0                            // 0050b68b
-        pfsubr mm0, qword ptr ds:[0x005db2a8]    // 0050b68e
-        movq mm5, mm1                            // 0050b696
-        punpckldq mm1, mm1                       // 0050b699
-        pfpnacc mm3, mm3                         // 0050b69c
-        pfacc mm4, mm4                           // 0050b6a0
-        pfpnacc mm6, mm6                         // 0050b6a4
-        pfpnacc mm2, mm2                         // 0050b6a8
-        pfsub mm0, mm1                           // 0050b6ac
-        pswapd mm5, mm2                          // 0050b6b0
-        pfsubr mm4, qword ptr ds:[0x005db2a8]    // 0050b6b4
-        pxor mm7, mm7                            // 0050b6bc
-        movq mm1, mm0                            // 0050b6bf
-        movq qword ptr [eax + 0x30], mm7         // 0050b6c2
-        punpckldq mm5, mm3                       // 0050b6c6
-        punpckldq mm2, mm7                       // 0050b6c9
-        punpckhdq mm4, mm7                       // 0050b6cc
-        punpckhdq mm0, mm6                       // 0050b6cf
-        movq qword ptr [eax + 0x20], mm5         // 0050b6d2
-        punpckhdq mm3, mm7                       // 0050b6d6
-        movq qword ptr [eax + 8], mm2            // 0050b6d9
-        punpckldq mm6, mm1                       // 0050b6dd
-        movq qword ptr [eax + 0x28], mm4         // 0050b6e0
-        punpckldq mm7, dword ptr ds:[0x005db2a8] // 0050b6e4
-        movq qword ptr [eax], mm0                // 0050b6eb
-        movq qword ptr [eax + 0x10], mm6         // 0050b6ee
-        movq qword ptr [eax + 0x18], mm3         // 0050b6f2
-        movq qword ptr [eax + 0x38], mm7         // 0050b6f6
-        femms                                    // 0050b6fa
-        ret 8                                    // 0050b6fc
-    }
-}
-
-// HAND-LIFT 0x0050b6ff RwCoreLift_0050b6ff  (1076 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050b6ff(void) {
-    __asm {
-        push ebp                                 // 0050b6ff
-        mov ebp, esp                             // 0050b700
-        sub esp, 0xc0                            // 0050b702
-        mov edx, dword ptr [ebp + 0x14]          // 0050b708
-        mov ecx, dword ptr [ebp + 0x10]          // 0050b70b
-        and esp, 0xfffffff8                      // 0050b70e
-        test edx, edx                            // 0050b711
-        mov eax, dword ptr [ebp + 8]             // 0050b713
-        je L_50c364                              // 0050b716
-        test ecx, ecx                            // 0050b71c
-        je L_50c326                              // 0050b71e
-        movq mm1, qword ptr ds:[0x005db288]      // 0050b724
-        movq mm2, qword ptr [edx]                // 0050b72b
-        movd mm4, dword ptr [edx + 8]            // 0050b72e
-        pxor mm5, mm5                            // 0050b732
-        movq mm3, mm2                            // 0050b735
-        punpckldq mm2, mm5                       // 0050b738
-        movq mm0, mm5                            // 0050b73b
-        punpckhdq mm5, mm3                       // 0050b73e
-        movq qword ptr [esp], mm2                // 0050b741
-        movq qword ptr [esp + 8], mm0            // 0050b745
-        movq qword ptr [esp + 0x10], mm5         // 0050b74a
-        movq qword ptr [esp + 0x18], mm0         // 0050b74f
-        movq qword ptr [esp + 0x20], mm0         // 0050b754
-        movq qword ptr [esp + 0x28], mm4         // 0050b759
-        movq qword ptr [esp + 0x30], mm0         // 0050b75e
-        movq qword ptr [esp + 0x38], mm1         // 0050b763
-        lea eax, [esp + 0x40]                    // 0050b768
-        movq mm0, qword ptr [ecx]                // 0050b76c
-        movq mm1, qword ptr [ecx + 8]            // 0050b76f
-        movq mm2, mm0                            // 0050b773
-        movq mm3, mm0                            // 0050b776
-        pfadd mm0, mm0                           // 0050b779
-        movq mm4, mm1                            // 0050b77d
-        movq mm7, mm1                            // 0050b780
-        pfadd mm1, mm1                           // 0050b783
-        punpckhdq mm2, mm2                       // 0050b787
-        movq mm5, mm0                            // 0050b78a
-        punpckhdq mm4, mm4                       // 0050b78d
-        pfmul mm3, mm0                           // 0050b790
-        punpckldq mm1, mm0                       // 0050b794
-        punpckldq mm7, mm7                       // 0050b797
-        pfmul mm5, mm4                           // 0050b79a
-        movq mm6, mm1                            // 0050b79e
-        pfmul mm7, mm1                           // 0050b7a1
-        pfmul mm1, mm2                           // 0050b7a5
-        pxor mm0, mm0                            // 0050b7a9
-        pfmul mm6, mm4                           // 0050b7ac
-        movq mm2, mm1                            // 0050b7b0
-        punpckhdq mm1, mm7                       // 0050b7b3
-        punpckldq mm7, mm7                       // 0050b7b6
-        punpckldq mm6, mm6                       // 0050b7b9
-        movq qword ptr [eax + 0x30], mm0         // 0050b7bc
-        pfadd mm7, mm3                           // 0050b7c0
-        pfacc mm3, mm3                           // 0050b7c4
-        movq mm4, mm1                            // 0050b7c8
-        punpckhdq mm6, mm5                       // 0050b7cb
-        pfsubr mm3, qword ptr ds:[0x005db2a8]    // 0050b7ce
-        pfsubr mm7, qword ptr ds:[0x005db2a8]    // 0050b7d6
-        punpckldq mm3, mm0                       // 0050b7de
-        pfadd mm1, mm6                           // 0050b7e1
-        movq qword ptr [eax + 0x28], mm3         // 0050b7e5
-        pfsub mm4, mm6                           // 0050b7e9
-        movq mm3, mm2                            // 0050b7ed
-        pfadd mm2, mm5                           // 0050b7f0
-        pfsub mm3, mm5                           // 0050b7f4
-        movq mm5, mm4                            // 0050b7f8
-        punpckldq mm2, mm0                       // 0050b7fb
-        movq mm6, mm1                            // 0050b7fe
-        punpckldq mm4, mm7                       // 0050b801
-        punpckldq mm1, mm1                       // 0050b804
-        movq qword ptr [eax + 0x18], mm2         // 0050b807
-        punpckhdq mm5, mm0                       // 0050b80b
-        punpckldq mm0, dword ptr ds:[0x005db2a8] // 0050b80e
-        movq qword ptr [eax + 8], mm5            // 0050b815
-        punpckhdq mm6, mm6                       // 0050b819
-        movq qword ptr [eax + 0x10], mm4         // 0050b81c
-        punpckhdq mm7, mm1                       // 0050b820
-        punpckldq mm6, mm3                       // 0050b823
-        movq qword ptr [eax], mm7                // 0050b826
-        movq qword ptr [eax + 0x20], mm6         // 0050b829
-        movq qword ptr [eax + 0x38], mm0         // 0050b82d
-        mov edx, dword ptr [ebp + 0xc]           // 0050b831
-        test edx, edx                            // 0050b834
-        je L_50bf0e                              // 0050b836
-        movq mm0, qword ptr [esp + 0x40]         // 0050b83c
-        movq mm1, qword ptr [esp + 0x50]         // 0050b841
-        movq mm3, qword ptr [esp + 0x68]         // 0050b846
-        movq mm4, qword ptr [esp + 0x78]         // 0050b84b
-        movq mm2, mm0                            // 0050b850
-        punpckldq mm0, mm1                       // 0050b853
-        punpckhdq mm2, mm1                       // 0050b856
-        movq mm5, mm3                            // 0050b859
-        movq qword ptr [esp + 0x80], mm0         // 0050b85c
-        movq qword ptr [esp + 0x90], mm2         // 0050b864
-        movq mm6, qword ptr [esp + 0x48]         // 0050b86c
-        punpckldq mm3, mm4                       // 0050b871
-        movq mm7, qword ptr [esp + 0x58]         // 0050b874
-        movq mm0, qword ptr [esp + 0x60]         // 0050b879
-        punpckhdq mm5, mm4                       // 0050b87e
-        movq mm1, mm6                            // 0050b881
-        movq qword ptr [esp + 0xa8], mm3         // 0050b884
-        movq qword ptr [esp + 0xb8], mm5         // 0050b88c
-        punpckldq mm6, mm7                       // 0050b894
-        movq mm4, qword ptr [esp + 0x70]         // 0050b897
-        movq mm2, mm0                            // 0050b89c
-        punpckhdq mm1, mm7                       // 0050b89f
-        movq qword ptr [esp + 0xa0], mm6         // 0050b8a2
-        punpckhdq mm0, mm4                       // 0050b8aa
-        punpckldq mm2, mm4                       // 0050b8ad
-        movq qword ptr [esp + 0xb0], mm1         // 0050b8b0
-        movq qword ptr [esp + 0x98], mm0         // 0050b8b8
-        movq qword ptr [esp + 0x88], mm2         // 0050b8c0
-        mov eax, dword ptr [ebp + 8]             // 0050b8c8
-        movq mm3, qword ptr [edx]                // 0050b8cb
-        movd mm4, dword ptr [edx + 8]            // 0050b8ce
-        movd mm1, dword ptr ds:[0x005db298]      // 0050b8d2
-        pxor mm0, mm0                            // 0050b8d9
-        movq mm2, mm1                            // 0050b8dc
-        punpckhdq mm2, mm2                       // 0050b8df
-        punpckldq mm2, mm1                       // 0050b8e2
-        movq qword ptr [eax], mm1                // 0050b8e5
-        movq qword ptr [eax + 8], mm0            // 0050b8e8
-        movq qword ptr [eax + 0x10], mm2         // 0050b8ec
-        movq qword ptr [eax + 0x18], mm0         // 0050b8f0
-        movq qword ptr [eax + 0x20], mm0         // 0050b8f4
-        movq qword ptr [eax + 0x28], mm1         // 0050b8f8
-        pfsub mm2, mm4                           // 0050b8fc
-        pfsub mm0, mm3                           // 0050b900
-        movq qword ptr [eax + 0x38], mm2         // 0050b904
-        movq qword ptr [eax + 0x30], mm0         // 0050b908
-        movq mm0, qword ptr [eax]                // 0050b90c
-        movq mm1, qword ptr [eax + 8]            // 0050b90f
-        movq mm4, qword ptr [esp + 0x80]         // 0050b913
-        punpckhdq mm2, mm0                       // 0050b91b
-        movq mm5, qword ptr [esp + 0x90]         // 0050b91e
-        punpckhdq mm3, mm1                       // 0050b926
-        movq mm6, qword ptr [esp + 0xa0]         // 0050b929
-        punpckldq mm0, mm0                       // 0050b931
-        punpckldq mm1, mm1                       // 0050b934
-        pfmul mm4, mm0                           // 0050b937
-        punpckhdq mm2, mm2                       // 0050b93b
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050b93e
-        movq mm7, qword ptr [esp + 0xb0]         // 0050b947
-        pfmul mm5, mm2                           // 0050b94f
-        punpckhdq mm3, mm3                       // 0050b953
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050b956
-        pfadd mm5, mm4                           // 0050b95f
-        pfmul mm6, mm1                           // 0050b963
-        pfadd mm2, mm0                           // 0050b967
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050b96b
-        pfadd mm6, mm5                           // 0050b974
-        pfmul mm7, mm3                           // 0050b978
-        pfadd mm2, mm1                           // 0050b97c
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050b980
-        pfadd mm7, mm6                           // 0050b989
-        movq mm0, qword ptr [eax + 0x10]         // 0050b98d
-        pfadd mm3, mm2                           // 0050b991
-        movq mm1, qword ptr [eax + 0x18]         // 0050b995
-        movq qword ptr [eax], mm7                // 0050b999
-        movq mm4, qword ptr [esp + 0x80]         // 0050b99c
-        movq qword ptr [eax + 8], mm3            // 0050b9a4
-        punpckhdq mm2, mm0                       // 0050b9a8
-        movq mm5, qword ptr [esp + 0x90]         // 0050b9ab
-        punpckhdq mm3, mm1                       // 0050b9b3
-        movq mm6, qword ptr [esp + 0xa0]         // 0050b9b6
-        punpckldq mm0, mm0                       // 0050b9be
-        punpckldq mm1, mm1                       // 0050b9c1
-        pfmul mm4, mm0                           // 0050b9c4
-        punpckhdq mm2, mm2                       // 0050b9c8
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050b9cb
-        movq mm7, qword ptr [esp + 0xb0]         // 0050b9d4
-        pfmul mm5, mm2                           // 0050b9dc
-        punpckhdq mm3, mm3                       // 0050b9e0
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050b9e3
-        pfadd mm5, mm4                           // 0050b9ec
-        pfmul mm6, mm1                           // 0050b9f0
-        pfadd mm2, mm0                           // 0050b9f4
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050b9f8
-        pfadd mm6, mm5                           // 0050ba01
-        pfmul mm7, mm3                           // 0050ba05
-        pfadd mm2, mm1                           // 0050ba09
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050ba0d
-        pfadd mm7, mm6                           // 0050ba16
-        movq mm0, qword ptr [eax + 0x20]         // 0050ba1a
-        pfadd mm3, mm2                           // 0050ba1e
-        movq mm1, qword ptr [eax + 0x28]         // 0050ba22
-        movq qword ptr [eax + 0x10], mm7         // 0050ba26
-        movq mm4, qword ptr [esp + 0x80]         // 0050ba2a
-        movq qword ptr [eax + 0x18], mm3         // 0050ba32
-        punpckhdq mm2, mm0                       // 0050ba36
-        movq mm5, qword ptr [esp + 0x90]         // 0050ba39
-        punpckhdq mm3, mm1                       // 0050ba41
-        movq mm6, qword ptr [esp + 0xa0]         // 0050ba44
-        punpckldq mm0, mm0                       // 0050ba4c
-        punpckldq mm1, mm1                       // 0050ba4f
-        pfmul mm4, mm0                           // 0050ba52
-        punpckhdq mm2, mm2                       // 0050ba56
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050ba59
-        movq mm7, qword ptr [esp + 0xb0]         // 0050ba62
-        pfmul mm5, mm2                           // 0050ba6a
-        punpckhdq mm3, mm3                       // 0050ba6e
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050ba71
-        pfadd mm5, mm4                           // 0050ba7a
-        pfmul mm6, mm1                           // 0050ba7e
-        pfadd mm2, mm0                           // 0050ba82
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050ba86
-        pfadd mm6, mm5                           // 0050ba8f
-        pfmul mm7, mm3                           // 0050ba93
-        pfadd mm2, mm1                           // 0050ba97
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050ba9b
-        pfadd mm7, mm6                           // 0050baa4
-        movq mm0, qword ptr [eax + 0x30]         // 0050baa8
-        pfadd mm3, mm2                           // 0050baac
-        movq mm1, qword ptr [eax + 0x38]         // 0050bab0
-        movq qword ptr [eax + 0x20], mm7         // 0050bab4
-        movq mm4, qword ptr [esp + 0x80]         // 0050bab8
-        movq qword ptr [eax + 0x28], mm3         // 0050bac0
-        punpckhdq mm2, mm0                       // 0050bac4
-        movq mm5, qword ptr [esp + 0x90]         // 0050bac7
-        punpckhdq mm3, mm1                       // 0050bacf
-        movq mm6, qword ptr [esp + 0xa0]         // 0050bad2
-        punpckldq mm0, mm0                       // 0050bada
-        punpckldq mm1, mm1                       // 0050badd
-        pfmul mm4, mm0                           // 0050bae0
-        punpckhdq mm2, mm2                       // 0050bae4
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050bae7
-        movq mm7, qword ptr [esp + 0xb0]         // 0050baf0
-        pfmul mm5, mm2                           // 0050baf8
-        punpckhdq mm3, mm3                       // 0050bafc
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050baff
-        pfadd mm5, mm4                           // 0050bb08
-        pfmul mm6, mm1                           // 0050bb0c
-        pfadd mm2, mm0                           // 0050bb10
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050bb14
-        pfadd mm6, mm5                           // 0050bb1d
-        pfmul mm7, mm3                           // 0050bb21
-        pfadd mm2, mm1                           // 0050bb25
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050bb29
-        pfadd mm7, mm6                           // 0050bb32
-        pfadd mm3, mm2                           // 0050bb36
-        movq qword ptr [eax + 0x30], mm7         // 0050bb3a
-        movq qword ptr [eax + 0x38], mm3         // 0050bb3e
-        movq mm0, qword ptr [eax]                // 0050bb42
-        movq mm1, qword ptr [eax + 8]            // 0050bb45
-        movq mm4, qword ptr [esp]                // 0050bb49
-        punpckhdq mm2, mm0                       // 0050bb4d
-        movq mm5, qword ptr [esp + 0x10]         // 0050bb50
-        punpckhdq mm3, mm1                       // 0050bb55
-        movq mm6, qword ptr [esp + 0x20]         // 0050bb58
-        punpckldq mm0, mm0                       // 0050bb5d
-        punpckldq mm1, mm1                       // 0050bb60
-        pfmul mm4, mm0                           // 0050bb63
-        punpckhdq mm2, mm2                       // 0050bb67
-        pfmul mm0, qword ptr [esp + 8]           // 0050bb6a
-        movq mm7, qword ptr [esp + 0x30]         // 0050bb70
-        pfmul mm5, mm2                           // 0050bb75
-        punpckhdq mm3, mm3                       // 0050bb79
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050bb7c
-        pfadd mm5, mm4                           // 0050bb82
-        pfmul mm6, mm1                           // 0050bb86
-        pfadd mm2, mm0                           // 0050bb8a
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050bb8e
-        pfadd mm6, mm5                           // 0050bb94
-        pfmul mm7, mm3                           // 0050bb98
-        pfadd mm2, mm1                           // 0050bb9c
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050bba0
-        pfadd mm7, mm6                           // 0050bba6
-        movq mm0, qword ptr [eax + 0x10]         // 0050bbaa
-        pfadd mm3, mm2                           // 0050bbae
-        movq mm1, qword ptr [eax + 0x18]         // 0050bbb2
-        movq qword ptr [eax], mm7                // 0050bbb6
-        movq mm4, qword ptr [esp]                // 0050bbb9
-        movq qword ptr [eax + 8], mm3            // 0050bbbd
-        punpckhdq mm2, mm0                       // 0050bbc1
-        movq mm5, qword ptr [esp + 0x10]         // 0050bbc4
-        punpckhdq mm3, mm1                       // 0050bbc9
-        movq mm6, qword ptr [esp + 0x20]         // 0050bbcc
-        punpckldq mm0, mm0                       // 0050bbd1
-        punpckldq mm1, mm1                       // 0050bbd4
-        pfmul mm4, mm0                           // 0050bbd7
-        punpckhdq mm2, mm2                       // 0050bbdb
-        pfmul mm0, qword ptr [esp + 8]           // 0050bbde
-        movq mm7, qword ptr [esp + 0x30]         // 0050bbe4
-        pfmul mm5, mm2                           // 0050bbe9
-        punpckhdq mm3, mm3                       // 0050bbed
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050bbf0
-        pfadd mm5, mm4                           // 0050bbf6
-        pfmul mm6, mm1                           // 0050bbfa
-        pfadd mm2, mm0                           // 0050bbfe
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050bc02
-        pfadd mm6, mm5                           // 0050bc08
-        pfmul mm7, mm3                           // 0050bc0c
-        pfadd mm2, mm1                           // 0050bc10
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050bc14
-        pfadd mm7, mm6                           // 0050bc1a
-        movq mm0, qword ptr [eax + 0x20]         // 0050bc1e
-        pfadd mm3, mm2                           // 0050bc22
-        movq mm1, qword ptr [eax + 0x28]         // 0050bc26
-        movq qword ptr [eax + 0x10], mm7         // 0050bc2a
-        movq mm4, qword ptr [esp]                // 0050bc2e
-        movq qword ptr [eax + 0x18], mm3         // 0050bc32
-        punpckhdq mm2, mm0                       // 0050bc36
-        movq mm5, qword ptr [esp + 0x10]         // 0050bc39
-        punpckhdq mm3, mm1                       // 0050bc3e
-        movq mm6, qword ptr [esp + 0x20]         // 0050bc41
-        punpckldq mm0, mm0                       // 0050bc46
-        punpckldq mm1, mm1                       // 0050bc49
-        pfmul mm4, mm0                           // 0050bc4c
-        punpckhdq mm2, mm2                       // 0050bc50
-        pfmul mm0, qword ptr [esp + 8]           // 0050bc53
-        movq mm7, qword ptr [esp + 0x30]         // 0050bc59
-        pfmul mm5, mm2                           // 0050bc5e
-        punpckhdq mm3, mm3                       // 0050bc62
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050bc65
-        pfadd mm5, mm4                           // 0050bc6b
-        pfmul mm6, mm1                           // 0050bc6f
-        pfadd mm2, mm0                           // 0050bc73
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050bc77
-        pfadd mm6, mm5                           // 0050bc7d
-        pfmul mm7, mm3                           // 0050bc81
-        pfadd mm2, mm1                           // 0050bc85
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050bc89
-        pfadd mm7, mm6                           // 0050bc8f
-        movq mm0, qword ptr [eax + 0x30]         // 0050bc93
-        pfadd mm3, mm2                           // 0050bc97
-        movq mm1, qword ptr [eax + 0x38]         // 0050bc9b
-        movq qword ptr [eax + 0x20], mm7         // 0050bc9f
-        movq mm4, qword ptr [esp]                // 0050bca3
-        movq qword ptr [eax + 0x28], mm3         // 0050bca7
-        punpckhdq mm2, mm0                       // 0050bcab
-        movq mm5, qword ptr [esp + 0x10]         // 0050bcae
-        punpckhdq mm3, mm1                       // 0050bcb3
-        movq mm6, qword ptr [esp + 0x20]         // 0050bcb6
-        punpckldq mm0, mm0                       // 0050bcbb
-        punpckldq mm1, mm1                       // 0050bcbe
-        pfmul mm4, mm0                           // 0050bcc1
-        punpckhdq mm2, mm2                       // 0050bcc5
-        pfmul mm0, qword ptr [esp + 8]           // 0050bcc8
-        movq mm7, qword ptr [esp + 0x30]         // 0050bcce
-        pfmul mm5, mm2                           // 0050bcd3
-        punpckhdq mm3, mm3                       // 0050bcd7
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050bcda
-        pfadd mm5, mm4                           // 0050bce0
-        pfmul mm6, mm1                           // 0050bce4
-        pfadd mm2, mm0                           // 0050bce8
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050bcec
-        pfadd mm6, mm5                           // 0050bcf2
-        pfmul mm7, mm3                           // 0050bcf6
-        pfadd mm2, mm1                           // 0050bcfa
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050bcfe
-        pfadd mm7, mm6                           // 0050bd04
-        pfadd mm3, mm2                           // 0050bd08
-        movq qword ptr [eax + 0x30], mm7         // 0050bd0c
-        movq qword ptr [eax + 0x38], mm3         // 0050bd10
-        movq mm0, qword ptr [eax]                // 0050bd14
-        movq mm1, qword ptr [eax + 8]            // 0050bd17
-        movq mm4, qword ptr [esp + 0x40]         // 0050bd1b
-        punpckhdq mm2, mm0                       // 0050bd20
-        movq mm5, qword ptr [esp + 0x50]         // 0050bd23
-        punpckhdq mm3, mm1                       // 0050bd28
-        movq mm6, qword ptr [esp + 0x60]         // 0050bd2b
-        punpckldq mm0, mm0                       // 0050bd30
-        punpckldq mm1, mm1                       // 0050bd33
-        pfmul mm4, mm0                           // 0050bd36
-        punpckhdq mm2, mm2                       // 0050bd3a
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050bd3d
-        movq mm7, qword ptr [esp + 0x70]         // 0050bd43
-        pfmul mm5, mm2                           // 0050bd48
-        punpckhdq mm3, mm3                       // 0050bd4c
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050bd4f
-        pfadd mm5, mm4                           // 0050bd55
-        pfmul mm6, mm1                           // 0050bd59
-        pfadd mm2, mm0                           // 0050bd5d
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050bd61
-        pfadd mm6, mm5                           // 0050bd67
-        pfmul mm7, mm3                           // 0050bd6b
-        pfadd mm2, mm1                           // 0050bd6f
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050bd73
-        pfadd mm7, mm6                           // 0050bd79
-        movq mm0, qword ptr [eax + 0x10]         // 0050bd7d
-        pfadd mm3, mm2                           // 0050bd81
-        movq mm1, qword ptr [eax + 0x18]         // 0050bd85
-        movq qword ptr [eax], mm7                // 0050bd89
-        movq mm4, qword ptr [esp + 0x40]         // 0050bd8c
-        movq qword ptr [eax + 8], mm3            // 0050bd91
-        punpckhdq mm2, mm0                       // 0050bd95
-        movq mm5, qword ptr [esp + 0x50]         // 0050bd98
-        punpckhdq mm3, mm1                       // 0050bd9d
-        movq mm6, qword ptr [esp + 0x60]         // 0050bda0
-        punpckldq mm0, mm0                       // 0050bda5
-        punpckldq mm1, mm1                       // 0050bda8
-        pfmul mm4, mm0                           // 0050bdab
-        punpckhdq mm2, mm2                       // 0050bdaf
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050bdb2
-        movq mm7, qword ptr [esp + 0x70]         // 0050bdb8
-        pfmul mm5, mm2                           // 0050bdbd
-        punpckhdq mm3, mm3                       // 0050bdc1
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050bdc4
-        pfadd mm5, mm4                           // 0050bdca
-        pfmul mm6, mm1                           // 0050bdce
-        pfadd mm2, mm0                           // 0050bdd2
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050bdd6
-        pfadd mm6, mm5                           // 0050bddc
-        pfmul mm7, mm3                           // 0050bde0
-        pfadd mm2, mm1                           // 0050bde4
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050bde8
-        pfadd mm7, mm6                           // 0050bdee
-        movq mm0, qword ptr [eax + 0x20]         // 0050bdf2
-        pfadd mm3, mm2                           // 0050bdf6
-        movq mm1, qword ptr [eax + 0x28]         // 0050bdfa
-        movq qword ptr [eax + 0x10], mm7         // 0050bdfe
-        movq mm4, qword ptr [esp + 0x40]         // 0050be02
-        movq qword ptr [eax + 0x18], mm3         // 0050be07
-        punpckhdq mm2, mm0                       // 0050be0b
-        movq mm5, qword ptr [esp + 0x50]         // 0050be0e
-        punpckhdq mm3, mm1                       // 0050be13
-        movq mm6, qword ptr [esp + 0x60]         // 0050be16
-        punpckldq mm0, mm0                       // 0050be1b
-        punpckldq mm1, mm1                       // 0050be1e
-        pfmul mm4, mm0                           // 0050be21
-        punpckhdq mm2, mm2                       // 0050be25
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050be28
-        movq mm7, qword ptr [esp + 0x70]         // 0050be2e
-        pfmul mm5, mm2                           // 0050be33
-        punpckhdq mm3, mm3                       // 0050be37
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050be3a
-        pfadd mm5, mm4                           // 0050be40
-        pfmul mm6, mm1                           // 0050be44
-        pfadd mm2, mm0                           // 0050be48
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050be4c
-        pfadd mm6, mm5                           // 0050be52
-        pfmul mm7, mm3                           // 0050be56
-        pfadd mm2, mm1                           // 0050be5a
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050be5e
-        pfadd mm7, mm6                           // 0050be64
-        movq mm0, qword ptr [eax + 0x30]         // 0050be68
-        pfadd mm3, mm2                           // 0050be6c
-        movq mm1, qword ptr [eax + 0x38]         // 0050be70
-        movq qword ptr [eax + 0x20], mm7         // 0050be74
-        movq mm4, qword ptr [esp + 0x40]         // 0050be78
-        movq qword ptr [eax + 0x28], mm3         // 0050be7d
-        punpckhdq mm2, mm0                       // 0050be81
-        movq mm5, qword ptr [esp + 0x50]         // 0050be84
-        punpckhdq mm3, mm1                       // 0050be89
-        movq mm6, qword ptr [esp + 0x60]         // 0050be8c
-        punpckldq mm0, mm0                       // 0050be91
-        punpckldq mm1, mm1                       // 0050be94
-        pfmul mm4, mm0                           // 0050be97
-        punpckhdq mm2, mm2                       // 0050be9b
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050be9e
-        movq mm7, qword ptr [esp + 0x70]         // 0050bea4
-        pfmul mm5, mm2                           // 0050bea9
-        punpckhdq mm3, mm3                       // 0050bead
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050beb0
-        pfadd mm5, mm4                           // 0050beb6
-        pfmul mm6, mm1                           // 0050beba
-        pfadd mm2, mm0                           // 0050bebe
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050bec2
-        pfadd mm6, mm5                           // 0050bec8
-        pfmul mm7, mm3                           // 0050becc
-        pfadd mm2, mm1                           // 0050bed0
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050bed4
-        pfadd mm7, mm6                           // 0050beda
-        pfadd mm3, mm2                           // 0050bede
-        movq qword ptr [eax + 0x30], mm7         // 0050bee2
-        movq qword ptr [eax + 0x38], mm3         // 0050bee6
-        movq mm0, qword ptr [edx]                // 0050beea
-        movq mm1, qword ptr [eax + 0x30]         // 0050beed
-        movd mm2, dword ptr [edx + 8]            // 0050bef1
-        movd mm3, dword ptr [eax + 0x38]         // 0050bef5
-        pfadd mm0, mm1                           // 0050bef9
-        pfadd mm2, mm3                           // 0050befd
-        movq qword ptr [eax + 0x30], mm0         // 0050bf01
-        movd dword ptr [eax + 0x38], mm2         // 0050bf05
-        jmp L_50c396                             // 0050bf09
-    L_50bf0e:
-        mov eax, dword ptr [ebp + 8]             // 0050bf0e
-        movq mm0, qword ptr [esp + 0x40]         // 0050bf11
-        movq mm1, qword ptr [esp + 0x50]         // 0050bf16
-        movq mm3, qword ptr [esp + 0x68]         // 0050bf1b
-        movq mm4, qword ptr [esp + 0x78]         // 0050bf20
-        movq mm2, mm0                            // 0050bf25
-        punpckldq mm0, mm1                       // 0050bf28
-        punpckhdq mm2, mm1                       // 0050bf2b
-        movq mm5, mm3                            // 0050bf2e
-        movq qword ptr [eax], mm0                // 0050bf31
-        movq qword ptr [eax + 0x10], mm2         // 0050bf34
-        movq mm6, qword ptr [esp + 0x48]         // 0050bf38
-        punpckldq mm3, mm4                       // 0050bf3d
-        movq mm7, qword ptr [esp + 0x58]         // 0050bf40
-        movq mm0, qword ptr [esp + 0x60]         // 0050bf45
-        punpckhdq mm5, mm4                       // 0050bf4a
-        movq mm1, mm6                            // 0050bf4d
-        movq qword ptr [eax + 0x28], mm3         // 0050bf50
-        movq qword ptr [eax + 0x38], mm5         // 0050bf54
-        punpckldq mm6, mm7                       // 0050bf58
-        movq mm4, qword ptr [esp + 0x70]         // 0050bf5b
-        movq mm2, mm0                            // 0050bf60
-        punpckhdq mm1, mm7                       // 0050bf63
-        movq qword ptr [eax + 0x20], mm6         // 0050bf66
-        punpckhdq mm0, mm4                       // 0050bf6a
-        punpckldq mm2, mm4                       // 0050bf6d
-        movq qword ptr [eax + 0x30], mm1         // 0050bf70
-        movq qword ptr [eax + 0x18], mm0         // 0050bf74
-        movq qword ptr [eax + 8], mm2            // 0050bf78
-        movq mm0, qword ptr [eax]                // 0050bf7c
-        movq mm1, qword ptr [eax + 8]            // 0050bf7f
-        movq mm4, qword ptr [esp]                // 0050bf83
-        punpckhdq mm2, mm0                       // 0050bf87
-        movq mm5, qword ptr [esp + 0x10]         // 0050bf8a
-        punpckhdq mm3, mm1                       // 0050bf8f
-        movq mm6, qword ptr [esp + 0x20]         // 0050bf92
-        punpckldq mm0, mm0                       // 0050bf97
-        punpckldq mm1, mm1                       // 0050bf9a
-        pfmul mm4, mm0                           // 0050bf9d
-        punpckhdq mm2, mm2                       // 0050bfa1
-        pfmul mm0, qword ptr [esp + 8]           // 0050bfa4
-        movq mm7, qword ptr [esp + 0x30]         // 0050bfaa
-        pfmul mm5, mm2                           // 0050bfaf
-        punpckhdq mm3, mm3                       // 0050bfb3
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050bfb6
-        pfadd mm5, mm4                           // 0050bfbc
-        pfmul mm6, mm1                           // 0050bfc0
-        pfadd mm2, mm0                           // 0050bfc4
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050bfc8
-        pfadd mm6, mm5                           // 0050bfce
-        pfmul mm7, mm3                           // 0050bfd2
-        pfadd mm2, mm1                           // 0050bfd6
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050bfda
-        pfadd mm7, mm6                           // 0050bfe0
-        movq mm0, qword ptr [eax + 0x10]         // 0050bfe4
-        pfadd mm3, mm2                           // 0050bfe8
-        movq mm1, qword ptr [eax + 0x18]         // 0050bfec
-        movq qword ptr [eax], mm7                // 0050bff0
-        movq mm4, qword ptr [esp]                // 0050bff3
-        movq qword ptr [eax + 8], mm3            // 0050bff7
-        punpckhdq mm2, mm0                       // 0050bffb
-        movq mm5, qword ptr [esp + 0x10]         // 0050bffe
-        punpckhdq mm3, mm1                       // 0050c003
-        movq mm6, qword ptr [esp + 0x20]         // 0050c006
-        punpckldq mm0, mm0                       // 0050c00b
-        punpckldq mm1, mm1                       // 0050c00e
-        pfmul mm4, mm0                           // 0050c011
-        punpckhdq mm2, mm2                       // 0050c015
-        pfmul mm0, qword ptr [esp + 8]           // 0050c018
-        movq mm7, qword ptr [esp + 0x30]         // 0050c01e
-        pfmul mm5, mm2                           // 0050c023
-        punpckhdq mm3, mm3                       // 0050c027
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050c02a
-        pfadd mm5, mm4                           // 0050c030
-        pfmul mm6, mm1                           // 0050c034
-        pfadd mm2, mm0                           // 0050c038
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050c03c
-        pfadd mm6, mm5                           // 0050c042
-        pfmul mm7, mm3                           // 0050c046
-        pfadd mm2, mm1                           // 0050c04a
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050c04e
-        pfadd mm7, mm6                           // 0050c054
-        movq mm0, qword ptr [eax + 0x20]         // 0050c058
-        pfadd mm3, mm2                           // 0050c05c
-        movq mm1, qword ptr [eax + 0x28]         // 0050c060
-        movq qword ptr [eax + 0x10], mm7         // 0050c064
-        movq mm4, qword ptr [esp]                // 0050c068
-        movq qword ptr [eax + 0x18], mm3         // 0050c06c
-        punpckhdq mm2, mm0                       // 0050c070
-        movq mm5, qword ptr [esp + 0x10]         // 0050c073
-        punpckhdq mm3, mm1                       // 0050c078
-        movq mm6, qword ptr [esp + 0x20]         // 0050c07b
-        punpckldq mm0, mm0                       // 0050c080
-        punpckldq mm1, mm1                       // 0050c083
-        pfmul mm4, mm0                           // 0050c086
-        punpckhdq mm2, mm2                       // 0050c08a
-        pfmul mm0, qword ptr [esp + 8]           // 0050c08d
-        movq mm7, qword ptr [esp + 0x30]         // 0050c093
-        pfmul mm5, mm2                           // 0050c098
-        punpckhdq mm3, mm3                       // 0050c09c
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050c09f
-        pfadd mm5, mm4                           // 0050c0a5
-        pfmul mm6, mm1                           // 0050c0a9
-        pfadd mm2, mm0                           // 0050c0ad
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050c0b1
-        pfadd mm6, mm5                           // 0050c0b7
-        pfmul mm7, mm3                           // 0050c0bb
-        pfadd mm2, mm1                           // 0050c0bf
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050c0c3
-        pfadd mm7, mm6                           // 0050c0c9
-        movq mm0, qword ptr [eax + 0x30]         // 0050c0cd
-        pfadd mm3, mm2                           // 0050c0d1
-        movq mm1, qword ptr [eax + 0x38]         // 0050c0d5
-        movq qword ptr [eax + 0x20], mm7         // 0050c0d9
-        movq mm4, qword ptr [esp]                // 0050c0dd
-        movq qword ptr [eax + 0x28], mm3         // 0050c0e1
-        punpckhdq mm2, mm0                       // 0050c0e5
-        movq mm5, qword ptr [esp + 0x10]         // 0050c0e8
-        punpckhdq mm3, mm1                       // 0050c0ed
-        movq mm6, qword ptr [esp + 0x20]         // 0050c0f0
-        punpckldq mm0, mm0                       // 0050c0f5
-        punpckldq mm1, mm1                       // 0050c0f8
-        pfmul mm4, mm0                           // 0050c0fb
-        punpckhdq mm2, mm2                       // 0050c0ff
-        pfmul mm0, qword ptr [esp + 8]           // 0050c102
-        movq mm7, qword ptr [esp + 0x30]         // 0050c108
-        pfmul mm5, mm2                           // 0050c10d
-        punpckhdq mm3, mm3                       // 0050c111
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050c114
-        pfadd mm5, mm4                           // 0050c11a
-        pfmul mm6, mm1                           // 0050c11e
-        pfadd mm2, mm0                           // 0050c122
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050c126
-        pfadd mm6, mm5                           // 0050c12c
-        pfmul mm7, mm3                           // 0050c130
-        pfadd mm2, mm1                           // 0050c134
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050c138
-        pfadd mm7, mm6                           // 0050c13e
-        pfadd mm3, mm2                           // 0050c142
-        movq qword ptr [eax + 0x30], mm7         // 0050c146
-        movq qword ptr [eax + 0x38], mm3         // 0050c14a
-        movq mm0, qword ptr [eax]                // 0050c14e
-        movq mm1, qword ptr [eax + 8]            // 0050c151
-        movq mm4, qword ptr [esp + 0x40]         // 0050c155
-        punpckhdq mm2, mm0                       // 0050c15a
-        movq mm5, qword ptr [esp + 0x50]         // 0050c15d
-        punpckhdq mm3, mm1                       // 0050c162
-        movq mm6, qword ptr [esp + 0x60]         // 0050c165
-        punpckldq mm0, mm0                       // 0050c16a
-        punpckldq mm1, mm1                       // 0050c16d
-        pfmul mm4, mm0                           // 0050c170
-        punpckhdq mm2, mm2                       // 0050c174
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c177
-        movq mm7, qword ptr [esp + 0x70]         // 0050c17d
-        pfmul mm5, mm2                           // 0050c182
-        punpckhdq mm3, mm3                       // 0050c186
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c189
-        pfadd mm5, mm4                           // 0050c18f
-        pfmul mm6, mm1                           // 0050c193
-        pfadd mm2, mm0                           // 0050c197
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c19b
-        pfadd mm6, mm5                           // 0050c1a1
-        pfmul mm7, mm3                           // 0050c1a5
-        pfadd mm2, mm1                           // 0050c1a9
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c1ad
-        pfadd mm7, mm6                           // 0050c1b3
-        movq mm0, qword ptr [eax + 0x10]         // 0050c1b7
-        pfadd mm3, mm2                           // 0050c1bb
-        movq mm1, qword ptr [eax + 0x18]         // 0050c1bf
-        movq qword ptr [eax], mm7                // 0050c1c3
-        movq mm4, qword ptr [esp + 0x40]         // 0050c1c6
-        movq qword ptr [eax + 8], mm3            // 0050c1cb
-        punpckhdq mm2, mm0                       // 0050c1cf
-        movq mm5, qword ptr [esp + 0x50]         // 0050c1d2
-        punpckhdq mm3, mm1                       // 0050c1d7
-        movq mm6, qword ptr [esp + 0x60]         // 0050c1da
-        punpckldq mm0, mm0                       // 0050c1df
-        punpckldq mm1, mm1                       // 0050c1e2
-        pfmul mm4, mm0                           // 0050c1e5
-        punpckhdq mm2, mm2                       // 0050c1e9
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c1ec
-        movq mm7, qword ptr [esp + 0x70]         // 0050c1f2
-        pfmul mm5, mm2                           // 0050c1f7
-        punpckhdq mm3, mm3                       // 0050c1fb
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c1fe
-        pfadd mm5, mm4                           // 0050c204
-        pfmul mm6, mm1                           // 0050c208
-        pfadd mm2, mm0                           // 0050c20c
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c210
-        pfadd mm6, mm5                           // 0050c216
-        pfmul mm7, mm3                           // 0050c21a
-        pfadd mm2, mm1                           // 0050c21e
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c222
-        pfadd mm7, mm6                           // 0050c228
-        movq mm0, qword ptr [eax + 0x20]         // 0050c22c
-        pfadd mm3, mm2                           // 0050c230
-        movq mm1, qword ptr [eax + 0x28]         // 0050c234
-        movq qword ptr [eax + 0x10], mm7         // 0050c238
-        movq mm4, qword ptr [esp + 0x40]         // 0050c23c
-        movq qword ptr [eax + 0x18], mm3         // 0050c241
-        punpckhdq mm2, mm0                       // 0050c245
-        movq mm5, qword ptr [esp + 0x50]         // 0050c248
-        punpckhdq mm3, mm1                       // 0050c24d
-        movq mm6, qword ptr [esp + 0x60]         // 0050c250
-        punpckldq mm0, mm0                       // 0050c255
-        punpckldq mm1, mm1                       // 0050c258
-        pfmul mm4, mm0                           // 0050c25b
-        punpckhdq mm2, mm2                       // 0050c25f
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c262
-        movq mm7, qword ptr [esp + 0x70]         // 0050c268
-        pfmul mm5, mm2                           // 0050c26d
-        punpckhdq mm3, mm3                       // 0050c271
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c274
-        pfadd mm5, mm4                           // 0050c27a
-        pfmul mm6, mm1                           // 0050c27e
-        pfadd mm2, mm0                           // 0050c282
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c286
-        pfadd mm6, mm5                           // 0050c28c
-        pfmul mm7, mm3                           // 0050c290
-        pfadd mm2, mm1                           // 0050c294
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c298
-        pfadd mm7, mm6                           // 0050c29e
-        movq mm0, qword ptr [eax + 0x30]         // 0050c2a2
-        pfadd mm3, mm2                           // 0050c2a6
-        movq mm1, qword ptr [eax + 0x38]         // 0050c2aa
-        movq qword ptr [eax + 0x20], mm7         // 0050c2ae
-        movq mm4, qword ptr [esp + 0x40]         // 0050c2b2
-        movq qword ptr [eax + 0x28], mm3         // 0050c2b7
-        punpckhdq mm2, mm0                       // 0050c2bb
-        movq mm5, qword ptr [esp + 0x50]         // 0050c2be
-        punpckhdq mm3, mm1                       // 0050c2c3
-        movq mm6, qword ptr [esp + 0x60]         // 0050c2c6
-        punpckldq mm0, mm0                       // 0050c2cb
-        punpckldq mm1, mm1                       // 0050c2ce
-        pfmul mm4, mm0                           // 0050c2d1
-        punpckhdq mm2, mm2                       // 0050c2d5
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c2d8
-        movq mm7, qword ptr [esp + 0x70]         // 0050c2de
-        pfmul mm5, mm2                           // 0050c2e3
-        punpckhdq mm3, mm3                       // 0050c2e7
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c2ea
-        pfadd mm5, mm4                           // 0050c2f0
-        pfmul mm6, mm1                           // 0050c2f4
-        pfadd mm2, mm0                           // 0050c2f8
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c2fc
-        pfadd mm6, mm5                           // 0050c302
-        pfmul mm7, mm3                           // 0050c306
-        pfadd mm2, mm1                           // 0050c30a
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c30e
-        pfadd mm7, mm6                           // 0050c314
-        pfadd mm3, mm2                           // 0050c318
-        movq qword ptr [eax + 0x30], mm7         // 0050c31c
-        movq qword ptr [eax + 0x38], mm3         // 0050c320
-        jmp L_50c396                             // 0050c324
-    L_50c326:
-        movq mm1, qword ptr ds:[0x005db288]      // 0050c326
-        movq mm2, qword ptr [edx]                // 0050c32d
-        movd mm4, dword ptr [edx + 8]            // 0050c330
-        pxor mm5, mm5                            // 0050c334
-        movq mm3, mm2                            // 0050c337
-        punpckldq mm2, mm5                       // 0050c33a
-        movq mm0, mm5                            // 0050c33d
-        punpckhdq mm5, mm3                       // 0050c340
-        movq qword ptr [eax], mm2                // 0050c343
-        movq qword ptr [eax + 8], mm0            // 0050c346
-        movq qword ptr [eax + 0x10], mm5         // 0050c34a
-        movq qword ptr [eax + 0x18], mm0         // 0050c34e
-        movq qword ptr [eax + 0x20], mm0         // 0050c352
-        movq qword ptr [eax + 0x28], mm4         // 0050c356
-        movq qword ptr [eax + 0x30], mm0         // 0050c35a
-        movq qword ptr [eax + 0x38], mm1         // 0050c35e
-        jmp L_50c396                             // 0050c362
-    L_50c364:
-        movd mm1, dword ptr ds:[0x005db298]      // 0050c364
-        pxor mm0, mm0                            // 0050c36b
-        movq mm2, mm1                            // 0050c36e
-        punpckhdq mm2, mm2                       // 0050c371
-        punpckldq mm2, mm1                       // 0050c374
-        movq qword ptr [eax], mm1                // 0050c377
-        movq qword ptr [eax + 8], mm0            // 0050c37a
-        movq qword ptr [eax + 0x10], mm2         // 0050c37e
-        movq qword ptr [eax + 0x18], mm0         // 0050c382
-        movq qword ptr [eax + 0x20], mm0         // 0050c386
-        movq qword ptr [eax + 0x28], mm1         // 0050c38a
-        movq qword ptr [eax + 0x30], mm0         // 0050c38e
-        movq qword ptr [eax + 0x38], mm2         // 0050c392
-    L_50c396:
-        mov ecx, dword ptr [ebp + 0x1c]          // 0050c396
-        mov edx, dword ptr [ebp + 0x18]          // 0050c399
-        test ecx, ecx                            // 0050c39c
-        je L_50c869                              // 0050c39e
-        movq mm0, qword ptr [ecx]                // 0050c3a4
-        movq mm1, qword ptr [ecx + 8]            // 0050c3a7
-        movq mm2, mm0                            // 0050c3ab
-        movq mm3, mm0                            // 0050c3ae
-        pfadd mm0, mm0                           // 0050c3b1
-        movq mm4, mm1                            // 0050c3b5
-        movq mm7, mm1                            // 0050c3b8
-        pfadd mm1, mm1                           // 0050c3bb
-        punpckhdq mm2, mm2                       // 0050c3bf
-        movq mm5, mm0                            // 0050c3c2
-        punpckhdq mm4, mm4                       // 0050c3c5
-        pfmul mm3, mm0                           // 0050c3c8
-        punpckldq mm1, mm0                       // 0050c3cc
-        punpckldq mm7, mm7                       // 0050c3cf
-        pfmul mm5, mm4                           // 0050c3d2
-        movq mm6, mm1                            // 0050c3d6
-        pfmul mm7, mm1                           // 0050c3d9
-        pfmul mm1, mm2                           // 0050c3dd
-        pxor mm0, mm0                            // 0050c3e1
-        pfmul mm6, mm4                           // 0050c3e4
-        movq mm2, mm1                            // 0050c3e8
-        punpckhdq mm1, mm7                       // 0050c3eb
-        punpckldq mm7, mm7                       // 0050c3ee
-        punpckldq mm6, mm6                       // 0050c3f1
-        movq qword ptr [esp + 0x70], mm0         // 0050c3f4
-        pfadd mm7, mm3                           // 0050c3f9
-        pfacc mm3, mm3                           // 0050c3fd
-        movq mm4, mm1                            // 0050c401
-        punpckhdq mm6, mm5                       // 0050c404
-        pfsubr mm3, qword ptr ds:[0x005db2a8]    // 0050c407
-        pfsubr mm7, qword ptr ds:[0x005db2a8]    // 0050c40f
-        punpckldq mm3, mm0                       // 0050c417
-        pfadd mm1, mm6                           // 0050c41a
-        movq qword ptr [esp + 0x68], mm3         // 0050c41e
-        pfsub mm4, mm6                           // 0050c423
-        movq mm3, mm2                            // 0050c427
-        pfadd mm2, mm5                           // 0050c42a
-        pfsub mm3, mm5                           // 0050c42e
-        movq mm5, mm4                            // 0050c432
-        punpckldq mm2, mm0                       // 0050c435
-        movq mm6, mm1                            // 0050c438
-        punpckldq mm4, mm7                       // 0050c43b
-        punpckldq mm1, mm1                       // 0050c43e
-        movq qword ptr [esp + 0x58], mm2         // 0050c441
-        punpckhdq mm5, mm0                       // 0050c446
-        punpckldq mm0, dword ptr ds:[0x005db2a8] // 0050c449
-        movq qword ptr [esp + 0x48], mm5         // 0050c450
-        punpckhdq mm6, mm6                       // 0050c455
-        movq qword ptr [esp + 0x50], mm4         // 0050c458
-        punpckhdq mm7, mm1                       // 0050c45d
-        punpckldq mm6, mm3                       // 0050c460
-        movq qword ptr [esp + 0x40], mm7         // 0050c463
-        movq qword ptr [esp + 0x60], mm6         // 0050c468
-        movq qword ptr [esp + 0x78], mm0         // 0050c46d
-        test edx, edx                            // 0050c472
-        je L_50c693                              // 0050c474
-        movq mm0, qword ptr [eax + 0x30]         // 0050c47a
-        movd mm1, dword ptr [eax + 0x38]         // 0050c47e
-        movq mm2, qword ptr [edx]                // 0050c482
-        movd mm3, dword ptr [edx + 8]            // 0050c485
-        pfsub mm0, mm2                           // 0050c489
-        pfsub mm1, mm3                           // 0050c48d
-        movq qword ptr [eax + 0x30], mm0         // 0050c491
-        movd dword ptr [eax + 0x38], mm1         // 0050c495
-        movq mm0, qword ptr [eax]                // 0050c499
-        movq mm1, qword ptr [eax + 8]            // 0050c49c
-        movq mm4, qword ptr [esp + 0x40]         // 0050c4a0
-        punpckhdq mm2, mm0                       // 0050c4a5
-        movq mm5, qword ptr [esp + 0x50]         // 0050c4a8
-        punpckhdq mm3, mm1                       // 0050c4ad
-        movq mm6, qword ptr [esp + 0x60]         // 0050c4b0
-        punpckldq mm0, mm0                       // 0050c4b5
-        punpckldq mm1, mm1                       // 0050c4b8
-        pfmul mm4, mm0                           // 0050c4bb
-        punpckhdq mm2, mm2                       // 0050c4bf
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c4c2
-        movq mm7, qword ptr [esp + 0x70]         // 0050c4c8
-        pfmul mm5, mm2                           // 0050c4cd
-        punpckhdq mm3, mm3                       // 0050c4d1
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c4d4
-        pfadd mm5, mm4                           // 0050c4da
-        pfmul mm6, mm1                           // 0050c4de
-        pfadd mm2, mm0                           // 0050c4e2
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c4e6
-        pfadd mm6, mm5                           // 0050c4ec
-        pfmul mm7, mm3                           // 0050c4f0
-        pfadd mm2, mm1                           // 0050c4f4
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c4f8
-        pfadd mm7, mm6                           // 0050c4fe
-        movq mm0, qword ptr [eax + 0x10]         // 0050c502
-        pfadd mm3, mm2                           // 0050c506
-        movq mm1, qword ptr [eax + 0x18]         // 0050c50a
-        movq qword ptr [eax], mm7                // 0050c50e
-        movq mm4, qword ptr [esp + 0x40]         // 0050c511
-        movq qword ptr [eax + 8], mm3            // 0050c516
-        punpckhdq mm2, mm0                       // 0050c51a
-        movq mm5, qword ptr [esp + 0x50]         // 0050c51d
-        punpckhdq mm3, mm1                       // 0050c522
-        movq mm6, qword ptr [esp + 0x60]         // 0050c525
-        punpckldq mm0, mm0                       // 0050c52a
-        punpckldq mm1, mm1                       // 0050c52d
-        pfmul mm4, mm0                           // 0050c530
-        punpckhdq mm2, mm2                       // 0050c534
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c537
-        movq mm7, qword ptr [esp + 0x70]         // 0050c53d
-        pfmul mm5, mm2                           // 0050c542
-        punpckhdq mm3, mm3                       // 0050c546
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c549
-        pfadd mm5, mm4                           // 0050c54f
-        pfmul mm6, mm1                           // 0050c553
-        pfadd mm2, mm0                           // 0050c557
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c55b
-        pfadd mm6, mm5                           // 0050c561
-        pfmul mm7, mm3                           // 0050c565
-        pfadd mm2, mm1                           // 0050c569
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c56d
-        pfadd mm7, mm6                           // 0050c573
-        movq mm0, qword ptr [eax + 0x20]         // 0050c577
-        pfadd mm3, mm2                           // 0050c57b
-        movq mm1, qword ptr [eax + 0x28]         // 0050c57f
-        movq qword ptr [eax + 0x10], mm7         // 0050c583
-        movq mm4, qword ptr [esp + 0x40]         // 0050c587
-        movq qword ptr [eax + 0x18], mm3         // 0050c58c
-        punpckhdq mm2, mm0                       // 0050c590
-        movq mm5, qword ptr [esp + 0x50]         // 0050c593
-        punpckhdq mm3, mm1                       // 0050c598
-        movq mm6, qword ptr [esp + 0x60]         // 0050c59b
-        punpckldq mm0, mm0                       // 0050c5a0
-        punpckldq mm1, mm1                       // 0050c5a3
-        pfmul mm4, mm0                           // 0050c5a6
-        punpckhdq mm2, mm2                       // 0050c5aa
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c5ad
-        movq mm7, qword ptr [esp + 0x70]         // 0050c5b3
-        pfmul mm5, mm2                           // 0050c5b8
-        punpckhdq mm3, mm3                       // 0050c5bc
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c5bf
-        pfadd mm5, mm4                           // 0050c5c5
-        pfmul mm6, mm1                           // 0050c5c9
-        pfadd mm2, mm0                           // 0050c5cd
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c5d1
-        pfadd mm6, mm5                           // 0050c5d7
-        pfmul mm7, mm3                           // 0050c5db
-        pfadd mm2, mm1                           // 0050c5df
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c5e3
-        pfadd mm7, mm6                           // 0050c5e9
-        movq mm0, qword ptr [eax + 0x30]         // 0050c5ed
-        pfadd mm3, mm2                           // 0050c5f1
-        movq mm1, qword ptr [eax + 0x38]         // 0050c5f5
-        movq qword ptr [eax + 0x20], mm7         // 0050c5f9
-        movq mm4, qword ptr [esp + 0x40]         // 0050c5fd
-        movq qword ptr [eax + 0x28], mm3         // 0050c602
-        punpckhdq mm2, mm0                       // 0050c606
-        movq mm5, qword ptr [esp + 0x50]         // 0050c609
-        punpckhdq mm3, mm1                       // 0050c60e
-        movq mm6, qword ptr [esp + 0x60]         // 0050c611
-        punpckldq mm0, mm0                       // 0050c616
-        punpckldq mm1, mm1                       // 0050c619
-        pfmul mm4, mm0                           // 0050c61c
-        punpckhdq mm2, mm2                       // 0050c620
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c623
-        movq mm7, qword ptr [esp + 0x70]         // 0050c629
-        pfmul mm5, mm2                           // 0050c62e
-        punpckhdq mm3, mm3                       // 0050c632
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c635
-        pfadd mm5, mm4                           // 0050c63b
-        pfmul mm6, mm1                           // 0050c63f
-        pfadd mm2, mm0                           // 0050c643
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c647
-        pfadd mm6, mm5                           // 0050c64d
-        pfmul mm7, mm3                           // 0050c651
-        pfadd mm2, mm1                           // 0050c655
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c659
-        pfadd mm7, mm6                           // 0050c65f
-        pfadd mm3, mm2                           // 0050c663
-        movq qword ptr [eax + 0x30], mm7         // 0050c667
-        movq qword ptr [eax + 0x38], mm3         // 0050c66b
-        movq mm0, qword ptr [eax + 0x30]         // 0050c66f
-        movd mm1, dword ptr [eax + 0x38]         // 0050c673
-        movq mm2, qword ptr [edx]                // 0050c677
-        movd mm3, dword ptr [edx + 8]            // 0050c67a
-        pfadd mm0, mm2                           // 0050c67e
-        pfadd mm1, mm3                           // 0050c682
-        movq qword ptr [eax + 0x30], mm0         // 0050c686
-        movd dword ptr [eax + 0x38], mm1         // 0050c68a
-        jmp L_50c869                             // 0050c68e
-    L_50c693:
-        movq mm0, qword ptr [eax]                // 0050c693
-        movq mm1, qword ptr [eax + 8]            // 0050c696
-        movq mm4, qword ptr [esp + 0x40]         // 0050c69a
-        punpckhdq mm2, mm0                       // 0050c69f
-        movq mm5, qword ptr [esp + 0x50]         // 0050c6a2
-        punpckhdq mm3, mm1                       // 0050c6a7
-        movq mm6, qword ptr [esp + 0x60]         // 0050c6aa
-        punpckldq mm0, mm0                       // 0050c6af
-        punpckldq mm1, mm1                       // 0050c6b2
-        pfmul mm4, mm0                           // 0050c6b5
-        punpckhdq mm2, mm2                       // 0050c6b9
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c6bc
-        movq mm7, qword ptr [esp + 0x70]         // 0050c6c2
-        pfmul mm5, mm2                           // 0050c6c7
-        punpckhdq mm3, mm3                       // 0050c6cb
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c6ce
-        pfadd mm5, mm4                           // 0050c6d4
-        pfmul mm6, mm1                           // 0050c6d8
-        pfadd mm2, mm0                           // 0050c6dc
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c6e0
-        pfadd mm6, mm5                           // 0050c6e6
-        pfmul mm7, mm3                           // 0050c6ea
-        pfadd mm2, mm1                           // 0050c6ee
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c6f2
-        pfadd mm7, mm6                           // 0050c6f8
-        movq mm0, qword ptr [eax + 0x10]         // 0050c6fc
-        pfadd mm3, mm2                           // 0050c700
-        movq mm1, qword ptr [eax + 0x18]         // 0050c704
-        movq qword ptr [eax], mm7                // 0050c708
-        movq mm4, qword ptr [esp + 0x40]         // 0050c70b
-        movq qword ptr [eax + 8], mm3            // 0050c710
-        punpckhdq mm2, mm0                       // 0050c714
-        movq mm5, qword ptr [esp + 0x50]         // 0050c717
-        punpckhdq mm3, mm1                       // 0050c71c
-        movq mm6, qword ptr [esp + 0x60]         // 0050c71f
-        punpckldq mm0, mm0                       // 0050c724
-        punpckldq mm1, mm1                       // 0050c727
-        pfmul mm4, mm0                           // 0050c72a
-        punpckhdq mm2, mm2                       // 0050c72e
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c731
-        movq mm7, qword ptr [esp + 0x70]         // 0050c737
-        pfmul mm5, mm2                           // 0050c73c
-        punpckhdq mm3, mm3                       // 0050c740
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c743
-        pfadd mm5, mm4                           // 0050c749
-        pfmul mm6, mm1                           // 0050c74d
-        pfadd mm2, mm0                           // 0050c751
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c755
-        pfadd mm6, mm5                           // 0050c75b
-        pfmul mm7, mm3                           // 0050c75f
-        pfadd mm2, mm1                           // 0050c763
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c767
-        pfadd mm7, mm6                           // 0050c76d
-        movq mm0, qword ptr [eax + 0x20]         // 0050c771
-        pfadd mm3, mm2                           // 0050c775
-        movq mm1, qword ptr [eax + 0x28]         // 0050c779
-        movq qword ptr [eax + 0x10], mm7         // 0050c77d
-        movq mm4, qword ptr [esp + 0x40]         // 0050c781
-        movq qword ptr [eax + 0x18], mm3         // 0050c786
-        punpckhdq mm2, mm0                       // 0050c78a
-        movq mm5, qword ptr [esp + 0x50]         // 0050c78d
-        punpckhdq mm3, mm1                       // 0050c792
-        movq mm6, qword ptr [esp + 0x60]         // 0050c795
-        punpckldq mm0, mm0                       // 0050c79a
-        punpckldq mm1, mm1                       // 0050c79d
-        pfmul mm4, mm0                           // 0050c7a0
-        punpckhdq mm2, mm2                       // 0050c7a4
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c7a7
-        movq mm7, qword ptr [esp + 0x70]         // 0050c7ad
-        pfmul mm5, mm2                           // 0050c7b2
-        punpckhdq mm3, mm3                       // 0050c7b6
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c7b9
-        pfadd mm5, mm4                           // 0050c7bf
-        pfmul mm6, mm1                           // 0050c7c3
-        pfadd mm2, mm0                           // 0050c7c7
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c7cb
-        pfadd mm6, mm5                           // 0050c7d1
-        pfmul mm7, mm3                           // 0050c7d5
-        pfadd mm2, mm1                           // 0050c7d9
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c7dd
-        pfadd mm7, mm6                           // 0050c7e3
-        movq mm0, qword ptr [eax + 0x30]         // 0050c7e7
-        pfadd mm3, mm2                           // 0050c7eb
-        movq mm1, qword ptr [eax + 0x38]         // 0050c7ef
-        movq qword ptr [eax + 0x20], mm7         // 0050c7f3
-        movq mm4, qword ptr [esp + 0x40]         // 0050c7f7
-        movq qword ptr [eax + 0x28], mm3         // 0050c7fc
-        punpckhdq mm2, mm0                       // 0050c800
-        movq mm5, qword ptr [esp + 0x50]         // 0050c803
-        punpckhdq mm3, mm1                       // 0050c808
-        movq mm6, qword ptr [esp + 0x60]         // 0050c80b
-        punpckldq mm0, mm0                       // 0050c810
-        punpckldq mm1, mm1                       // 0050c813
-        pfmul mm4, mm0                           // 0050c816
-        punpckhdq mm2, mm2                       // 0050c81a
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050c81d
-        movq mm7, qword ptr [esp + 0x70]         // 0050c823
-        pfmul mm5, mm2                           // 0050c828
-        punpckhdq mm3, mm3                       // 0050c82c
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050c82f
-        pfadd mm5, mm4                           // 0050c835
-        pfmul mm6, mm1                           // 0050c839
-        pfadd mm2, mm0                           // 0050c83d
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050c841
-        pfadd mm6, mm5                           // 0050c847
-        pfmul mm7, mm3                           // 0050c84b
-        pfadd mm2, mm1                           // 0050c84f
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050c853
-        pfadd mm7, mm6                           // 0050c859
-        pfadd mm3, mm2                           // 0050c85d
-        movq qword ptr [eax + 0x30], mm7         // 0050c861
-        movq qword ptr [eax + 0x38], mm3         // 0050c865
-    L_50c869:
-        mov ecx, dword ptr [ebp + 0x20]          // 0050c869
-        test ecx, ecx                            // 0050c86c
-        je L_50c88f                              // 0050c86e
-        movq mm0, qword ptr [eax + 0x30]         // 0050c870
-        movd mm1, dword ptr [eax + 0x38]         // 0050c874
-        movq mm2, qword ptr [ecx]                // 0050c878
-        movd mm3, dword ptr [ecx + 8]            // 0050c87b
-        pfadd mm0, mm2                           // 0050c87f
-        pfadd mm1, mm3                           // 0050c883
-        movq qword ptr [eax + 0x30], mm0         // 0050c887
-        movd dword ptr [eax + 0x38], mm1         // 0050c88b
-    L_50c88f:
-        mov esp, ebp                             // 0050c88f
-        pop ebp                                  // 0050c891
-        femms                                    // 0050c892
-        ret 0x1c                                 // 0050c894
-    }
-}
-
-// HAND-LIFT 0x0050c897 RwCoreLift_0050c897  (112 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050c897(void) {
-    __asm {
-        sub esp, 0x14                            // 0050c897
-        mov dword ptr [esp + 0x10], ebp          // 0050c89a
-        lea ebp, [esp + 0x10]                    // 0050c89e
-        movq mm0, qword ptr ds:[0x005db338]      // 0050c8a2
-        sub esp, 0x20                            // 0050c8a9
-        mov dword ptr [esp + 4], ebx             // 0050c8ac
-        mov dword ptr [esp], esi                 // 0050c8b0
-        movq mm1, mm0                            // 0050c8b3
-        pfmul mm0, qword ptr [ebp + 0x14]        // 0050c8b6
-        pfmul mm1, qword ptr [ebp + 0xc]         // 0050c8bb
-        movq qword ptr [esp + 0x18], mm1         // 0050c8c0
-        call RwCoreLift_005137a0                    // 0050c8c5
-        movq qword ptr [esp + 8], mm0            // 0050c8ca
-        movq mm0, qword ptr [esp + 0x18]         // 0050c8cf
-        punpckhdq mm0, mm0                       // 0050c8d4
-        call RwCoreLift_005137a0                    // 0050c8d7
-        movq qword ptr [esp + 0x10], mm0         // 0050c8dc
-        movq mm0, qword ptr [esp + 0x18]         // 0050c8e1
-        call RwCoreLift_005137a0                    // 0050c8e6
-        movq mm1, qword ptr [esp + 8]            // 0050c8eb
-        movq mm2, qword ptr [esp + 0x10]         // 0050c8f0
-        movq mm7, qword ptr ds:[0x005db2c8]      // 0050c8f5
-        movq mm3, mm0                            // 0050c8fc
-        movq mm4, mm0                            // 0050c8ff
-        movq mm5, mm0                            // 0050c902
-        punpckldq mm0, mm0                       // 0050c905
-        punpckldq mm3, mm3                       // 0050c908
-        punpckhdq mm4, mm4                       // 0050c90b
-        punpckhdq mm5, mm5                       // 0050c90e
-        pxor mm0, mm7                            // 0050c911
-        psrlq mm7, 0x20                          // 0050c914
-        movq mm6, mm2                            // 0050c918
-        punpckldq mm2, mm2                       // 0050c91b
-        punpckhdq mm6, mm6                       // 0050c91e
-        pxor mm5, mm7                            // 0050c921
-        pfmul mm0, mm6                           // 0050c924
-        pfmul mm3, mm2                           // 0050c928
-        pfmul mm4, mm2                           // 0050c92c
-        pfmul mm5, mm6                           // 0050c930
-        movq mm7, mm1                            // 0050c934
-        punpckhdq mm7, mm7                       // 0050c937
-        punpckldq mm7, mm1                       // 0050c93a
-        pfmul mm0, mm1                           // 0050c93d
-        pfmul mm3, mm7                           // 0050c941
-        pfmul mm4, mm7                           // 0050c945
-        pfmul mm5, mm1                           // 0050c949
-        pfadd mm0, mm4                           // 0050c94d
-        pfadd mm3, mm5                           // 0050c951
-        movq qword ptr [ebp - 0x10], mm0         // 0050c955
-        movq qword ptr [ebp - 8], mm3            // 0050c959
-        mov esi, dword ptr [esp]                 // 0050c95d
-        mov ebx, dword ptr [esp + 4]             // 0050c960
-        add esp, 0x20                            // 0050c964
-        mov eax, dword ptr [ebp + 8]             // 0050c967
-        movq mm0, qword ptr [esp]                // 0050c96a
-        movq mm1, qword ptr [esp + 8]            // 0050c96e
-        movq mm2, mm0                            // 0050c973
-        movq mm3, mm0                            // 0050c976
-        pfadd mm0, mm0                           // 0050c979
-        movq mm4, mm1                            // 0050c97d
-        movq mm7, mm1                            // 0050c980
-        pfadd mm1, mm1                           // 0050c983
-        punpckhdq mm2, mm2                       // 0050c987
-        movq mm5, mm0                            // 0050c98a
-        punpckhdq mm4, mm4                       // 0050c98d
-        pfmul mm3, mm0                           // 0050c990
-        punpckldq mm1, mm0                       // 0050c994
-        punpckldq mm7, mm7                       // 0050c997
-        pfmul mm5, mm4                           // 0050c99a
-        movq mm6, mm1                            // 0050c99e
-        pfmul mm7, mm1                           // 0050c9a1
-        pfmul mm1, mm2                           // 0050c9a5
-        pxor mm0, mm0                            // 0050c9a9
-        pfmul mm6, mm4                           // 0050c9ac
-        movq mm2, mm1                            // 0050c9b0
-        punpckhdq mm1, mm7                       // 0050c9b3
-        punpckldq mm7, mm7                       // 0050c9b6
-        punpckldq mm6, mm6                       // 0050c9b9
-        movq qword ptr [eax + 0x30], mm0         // 0050c9bc
-        pfadd mm7, mm3                           // 0050c9c0
-        pfacc mm3, mm3                           // 0050c9c4
-        movq mm4, mm1                            // 0050c9c8
-        punpckhdq mm6, mm5                       // 0050c9cb
-        pfsubr mm3, qword ptr ds:[0x005db2a8]    // 0050c9ce
-        pfsubr mm7, qword ptr ds:[0x005db2a8]    // 0050c9d6
-        punpckldq mm3, mm0                       // 0050c9de
-        pfadd mm1, mm6                           // 0050c9e1
-        movq qword ptr [eax + 0x28], mm3         // 0050c9e5
-        pfsub mm4, mm6                           // 0050c9e9
-        movq mm3, mm2                            // 0050c9ed
-        pfadd mm2, mm5                           // 0050c9f0
-        pfsub mm3, mm5                           // 0050c9f4
-        movq mm5, mm4                            // 0050c9f8
-        punpckldq mm2, mm0                       // 0050c9fb
-        movq mm6, mm1                            // 0050c9fe
-        punpckldq mm4, mm7                       // 0050ca01
-        punpckldq mm1, mm1                       // 0050ca04
-        movq qword ptr [eax + 0x18], mm2         // 0050ca07
-        punpckhdq mm5, mm0                       // 0050ca0b
-        punpckldq mm0, dword ptr ds:[0x005db2a8] // 0050ca0e
-        movq qword ptr [eax + 8], mm5            // 0050ca15
-        punpckhdq mm6, mm6                       // 0050ca19
-        movq qword ptr [eax + 0x10], mm4         // 0050ca1c
-        punpckhdq mm7, mm1                       // 0050ca20
-        punpckldq mm6, mm3                       // 0050ca23
-        movq qword ptr [eax], mm7                // 0050ca26
-        movq qword ptr [eax + 0x20], mm6         // 0050ca29
-        movq qword ptr [eax + 0x38], mm0         // 0050ca2d
-        lea esp, [ebp + 4]                       // 0050ca31
-        mov ebp, dword ptr [ebp]                 // 0050ca34
-        femms                                    // 0050ca37
-        ret 0x10                                 // 0050ca39
-    }
-}
-
-// HAND-LIFT 0x0050ca3c RwCoreLift_0050ca3c  (329 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050ca3c(void) {
-    __asm {
-        mov eax, dword ptr [esp + 4]             // 0050ca3c
-        movd mm6, dword ptr [esp + 8]            // 0050ca40
-        pxor mm7, mm7                            // 0050ca45
-        mov edx, dword ptr [esp + 0x10]          // 0050ca48
-        movq mm5, qword ptr ds:[0x005db288]      // 0050ca4c
-        mov ecx, dword ptr [esp + 0xc]           // 0050ca53
-        movq qword ptr [eax], mm6                // 0050ca57
-        movq qword ptr [eax + 8], mm7            // 0050ca5a
-        movd dword ptr [eax + 0x10], mm7         // 0050ca5e
-        sub esp, 0x40                            // 0050ca62
-        movd dword ptr [eax + 0x14], mm6         // 0050ca65
-        movq qword ptr [eax + 0x18], mm7         // 0050ca69
-        test edx, edx                            // 0050ca6d
-        movq qword ptr [eax + 0x20], mm7         // 0050ca6f
-        movq qword ptr [eax + 0x28], mm6         // 0050ca73
-        movq qword ptr [eax + 0x30], mm7         // 0050ca77
-        movq qword ptr [eax + 0x38], mm5         // 0050ca7b
-        je L_50cf41                              // 0050ca7f
-        movq mm0, qword ptr [edx]                // 0050ca85
-        movq mm1, qword ptr [edx + 8]            // 0050ca88
-        movq mm2, mm0                            // 0050ca8c
-        movq mm3, mm0                            // 0050ca8f
-        pfadd mm0, mm0                           // 0050ca92
-        movq mm4, mm1                            // 0050ca96
-        movq mm7, mm1                            // 0050ca99
-        pfadd mm1, mm1                           // 0050ca9c
-        punpckhdq mm2, mm2                       // 0050caa0
-        movq mm5, mm0                            // 0050caa3
-        punpckhdq mm4, mm4                       // 0050caa6
-        pfmul mm3, mm0                           // 0050caa9
-        punpckldq mm1, mm0                       // 0050caad
-        punpckldq mm7, mm7                       // 0050cab0
-        pfmul mm5, mm4                           // 0050cab3
-        movq mm6, mm1                            // 0050cab7
-        pfmul mm7, mm1                           // 0050caba
-        pfmul mm1, mm2                           // 0050cabe
-        pxor mm0, mm0                            // 0050cac2
-        pfmul mm6, mm4                           // 0050cac5
-        movq mm2, mm1                            // 0050cac9
-        punpckhdq mm1, mm7                       // 0050cacc
-        punpckldq mm7, mm7                       // 0050cacf
-        punpckldq mm6, mm6                       // 0050cad2
-        movq qword ptr [esp + 0x30], mm0         // 0050cad5
-        pfadd mm7, mm3                           // 0050cada
-        pfacc mm3, mm3                           // 0050cade
-        movq mm4, mm1                            // 0050cae2
-        punpckhdq mm6, mm5                       // 0050cae5
-        pfsubr mm3, qword ptr ds:[0x005db2a8]    // 0050cae8
-        pfsubr mm7, qword ptr ds:[0x005db2a8]    // 0050caf0
-        punpckldq mm3, mm0                       // 0050caf8
-        pfadd mm1, mm6                           // 0050cafb
-        movq qword ptr [esp + 0x28], mm3         // 0050caff
-        pfsub mm4, mm6                           // 0050cb04
-        movq mm3, mm2                            // 0050cb08
-        pfadd mm2, mm5                           // 0050cb0b
-        pfsub mm3, mm5                           // 0050cb0f
-        movq mm5, mm4                            // 0050cb13
-        punpckldq mm2, mm0                       // 0050cb16
-        movq mm6, mm1                            // 0050cb19
-        punpckldq mm4, mm7                       // 0050cb1c
-        punpckldq mm1, mm1                       // 0050cb1f
-        movq qword ptr [esp + 0x18], mm2         // 0050cb22
-        punpckhdq mm5, mm0                       // 0050cb27
-        punpckldq mm0, dword ptr ds:[0x005db2a8] // 0050cb2a
-        movq qword ptr [esp + 8], mm5            // 0050cb31
-        punpckhdq mm6, mm6                       // 0050cb36
-        movq qword ptr [esp + 0x10], mm4         // 0050cb39
-        punpckhdq mm7, mm1                       // 0050cb3e
-        punpckldq mm6, mm3                       // 0050cb41
-        movq qword ptr [esp], mm7                // 0050cb44
-        movq qword ptr [esp + 0x20], mm6         // 0050cb48
-        movq qword ptr [esp + 0x38], mm0         // 0050cb4d
-        test ecx, ecx                            // 0050cb52
-        je L_50cd6f                              // 0050cb54
-        movq mm0, qword ptr [eax + 0x30]         // 0050cb5a
-        movd mm1, dword ptr [eax + 0x38]         // 0050cb5e
-        movq mm2, qword ptr [ecx]                // 0050cb62
-        movd mm3, dword ptr [ecx + 8]            // 0050cb65
-        pfsub mm0, mm2                           // 0050cb69
-        pfsub mm1, mm3                           // 0050cb6d
-        movq qword ptr [eax + 0x30], mm0         // 0050cb71
-        movd dword ptr [eax + 0x38], mm1         // 0050cb75
-        movq mm0, qword ptr [eax]                // 0050cb79
-        movq mm1, qword ptr [eax + 8]            // 0050cb7c
-        movq mm4, qword ptr [esp]                // 0050cb80
-        punpckhdq mm2, mm0                       // 0050cb84
-        movq mm5, qword ptr [esp + 0x10]         // 0050cb87
-        punpckhdq mm3, mm1                       // 0050cb8c
-        movq mm6, qword ptr [esp + 0x20]         // 0050cb8f
-        punpckldq mm0, mm0                       // 0050cb94
-        punpckldq mm1, mm1                       // 0050cb97
-        pfmul mm4, mm0                           // 0050cb9a
-        punpckhdq mm2, mm2                       // 0050cb9e
-        pfmul mm0, qword ptr [esp + 8]           // 0050cba1
-        movq mm7, qword ptr [esp + 0x30]         // 0050cba7
-        pfmul mm5, mm2                           // 0050cbac
-        punpckhdq mm3, mm3                       // 0050cbb0
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050cbb3
-        pfadd mm5, mm4                           // 0050cbb9
-        pfmul mm6, mm1                           // 0050cbbd
-        pfadd mm2, mm0                           // 0050cbc1
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050cbc5
-        pfadd mm6, mm5                           // 0050cbcb
-        pfmul mm7, mm3                           // 0050cbcf
-        pfadd mm2, mm1                           // 0050cbd3
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050cbd7
-        pfadd mm7, mm6                           // 0050cbdd
-        movq mm0, qword ptr [eax + 0x10]         // 0050cbe1
-        pfadd mm3, mm2                           // 0050cbe5
-        movq mm1, qword ptr [eax + 0x18]         // 0050cbe9
-        movq qword ptr [eax], mm7                // 0050cbed
-        movq mm4, qword ptr [esp]                // 0050cbf0
-        movq qword ptr [eax + 8], mm3            // 0050cbf4
-        punpckhdq mm2, mm0                       // 0050cbf8
-        movq mm5, qword ptr [esp + 0x10]         // 0050cbfb
-        punpckhdq mm3, mm1                       // 0050cc00
-        movq mm6, qword ptr [esp + 0x20]         // 0050cc03
-        punpckldq mm0, mm0                       // 0050cc08
-        punpckldq mm1, mm1                       // 0050cc0b
-        pfmul mm4, mm0                           // 0050cc0e
-        punpckhdq mm2, mm2                       // 0050cc12
-        pfmul mm0, qword ptr [esp + 8]           // 0050cc15
-        movq mm7, qword ptr [esp + 0x30]         // 0050cc1b
-        pfmul mm5, mm2                           // 0050cc20
-        punpckhdq mm3, mm3                       // 0050cc24
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050cc27
-        pfadd mm5, mm4                           // 0050cc2d
-        pfmul mm6, mm1                           // 0050cc31
-        pfadd mm2, mm0                           // 0050cc35
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050cc39
-        pfadd mm6, mm5                           // 0050cc3f
-        pfmul mm7, mm3                           // 0050cc43
-        pfadd mm2, mm1                           // 0050cc47
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050cc4b
-        pfadd mm7, mm6                           // 0050cc51
-        movq mm0, qword ptr [eax + 0x20]         // 0050cc55
-        pfadd mm3, mm2                           // 0050cc59
-        movq mm1, qword ptr [eax + 0x28]         // 0050cc5d
-        movq qword ptr [eax + 0x10], mm7         // 0050cc61
-        movq mm4, qword ptr [esp]                // 0050cc65
-        movq qword ptr [eax + 0x18], mm3         // 0050cc69
-        punpckhdq mm2, mm0                       // 0050cc6d
-        movq mm5, qword ptr [esp + 0x10]         // 0050cc70
-        punpckhdq mm3, mm1                       // 0050cc75
-        movq mm6, qword ptr [esp + 0x20]         // 0050cc78
-        punpckldq mm0, mm0                       // 0050cc7d
-        punpckldq mm1, mm1                       // 0050cc80
-        pfmul mm4, mm0                           // 0050cc83
-        punpckhdq mm2, mm2                       // 0050cc87
-        pfmul mm0, qword ptr [esp + 8]           // 0050cc8a
-        movq mm7, qword ptr [esp + 0x30]         // 0050cc90
-        pfmul mm5, mm2                           // 0050cc95
-        punpckhdq mm3, mm3                       // 0050cc99
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050cc9c
-        pfadd mm5, mm4                           // 0050cca2
-        pfmul mm6, mm1                           // 0050cca6
-        pfadd mm2, mm0                           // 0050ccaa
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050ccae
-        pfadd mm6, mm5                           // 0050ccb4
-        pfmul mm7, mm3                           // 0050ccb8
-        pfadd mm2, mm1                           // 0050ccbc
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050ccc0
-        pfadd mm7, mm6                           // 0050ccc6
-        movq mm0, qword ptr [eax + 0x30]         // 0050ccca
-        pfadd mm3, mm2                           // 0050ccce
-        movq mm1, qword ptr [eax + 0x38]         // 0050ccd2
-        movq qword ptr [eax + 0x20], mm7         // 0050ccd6
-        movq mm4, qword ptr [esp]                // 0050ccda
-        movq qword ptr [eax + 0x28], mm3         // 0050ccde
-        punpckhdq mm2, mm0                       // 0050cce2
-        movq mm5, qword ptr [esp + 0x10]         // 0050cce5
-        punpckhdq mm3, mm1                       // 0050ccea
-        movq mm6, qword ptr [esp + 0x20]         // 0050cced
-        punpckldq mm0, mm0                       // 0050ccf2
-        punpckldq mm1, mm1                       // 0050ccf5
-        pfmul mm4, mm0                           // 0050ccf8
-        punpckhdq mm2, mm2                       // 0050ccfc
-        pfmul mm0, qword ptr [esp + 8]           // 0050ccff
-        movq mm7, qword ptr [esp + 0x30]         // 0050cd05
-        pfmul mm5, mm2                           // 0050cd0a
-        punpckhdq mm3, mm3                       // 0050cd0e
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050cd11
-        pfadd mm5, mm4                           // 0050cd17
-        pfmul mm6, mm1                           // 0050cd1b
-        pfadd mm2, mm0                           // 0050cd1f
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050cd23
-        pfadd mm6, mm5                           // 0050cd29
-        pfmul mm7, mm3                           // 0050cd2d
-        pfadd mm2, mm1                           // 0050cd31
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050cd35
-        pfadd mm7, mm6                           // 0050cd3b
-        pfadd mm3, mm2                           // 0050cd3f
-        movq qword ptr [eax + 0x30], mm7         // 0050cd43
-        movq qword ptr [eax + 0x38], mm3         // 0050cd47
-        movq mm0, qword ptr [eax + 0x30]         // 0050cd4b
-        movd mm1, dword ptr [eax + 0x38]         // 0050cd4f
-        movq mm2, qword ptr [ecx]                // 0050cd53
-        movd mm3, dword ptr [ecx + 8]            // 0050cd56
-        pfadd mm0, mm2                           // 0050cd5a
-        pfadd mm1, mm3                           // 0050cd5e
-        movq qword ptr [eax + 0x30], mm0         // 0050cd62
-        movd dword ptr [eax + 0x38], mm1         // 0050cd66
-        jmp L_50cf41                             // 0050cd6a
-    L_50cd6f:
-        movq mm0, qword ptr [eax]                // 0050cd6f
-        movq mm1, qword ptr [eax + 8]            // 0050cd72
-        movq mm4, qword ptr [esp]                // 0050cd76
-        punpckhdq mm2, mm0                       // 0050cd7a
-        movq mm5, qword ptr [esp + 0x10]         // 0050cd7d
-        punpckhdq mm3, mm1                       // 0050cd82
-        movq mm6, qword ptr [esp + 0x20]         // 0050cd85
-        punpckldq mm0, mm0                       // 0050cd8a
-        punpckldq mm1, mm1                       // 0050cd8d
-        pfmul mm4, mm0                           // 0050cd90
-        punpckhdq mm2, mm2                       // 0050cd94
-        pfmul mm0, qword ptr [esp + 8]           // 0050cd97
-        movq mm7, qword ptr [esp + 0x30]         // 0050cd9d
-        pfmul mm5, mm2                           // 0050cda2
-        punpckhdq mm3, mm3                       // 0050cda6
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050cda9
-        pfadd mm5, mm4                           // 0050cdaf
-        pfmul mm6, mm1                           // 0050cdb3
-        pfadd mm2, mm0                           // 0050cdb7
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050cdbb
-        pfadd mm6, mm5                           // 0050cdc1
-        pfmul mm7, mm3                           // 0050cdc5
-        pfadd mm2, mm1                           // 0050cdc9
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050cdcd
-        pfadd mm7, mm6                           // 0050cdd3
-        movq mm0, qword ptr [eax + 0x10]         // 0050cdd7
-        pfadd mm3, mm2                           // 0050cddb
-        movq mm1, qword ptr [eax + 0x18]         // 0050cddf
-        movq qword ptr [eax], mm7                // 0050cde3
-        movq mm4, qword ptr [esp]                // 0050cde6
-        movq qword ptr [eax + 8], mm3            // 0050cdea
-        punpckhdq mm2, mm0                       // 0050cdee
-        movq mm5, qword ptr [esp + 0x10]         // 0050cdf1
-        punpckhdq mm3, mm1                       // 0050cdf6
-        movq mm6, qword ptr [esp + 0x20]         // 0050cdf9
-        punpckldq mm0, mm0                       // 0050cdfe
-        punpckldq mm1, mm1                       // 0050ce01
-        pfmul mm4, mm0                           // 0050ce04
-        punpckhdq mm2, mm2                       // 0050ce08
-        pfmul mm0, qword ptr [esp + 8]           // 0050ce0b
-        movq mm7, qword ptr [esp + 0x30]         // 0050ce11
-        pfmul mm5, mm2                           // 0050ce16
-        punpckhdq mm3, mm3                       // 0050ce1a
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050ce1d
-        pfadd mm5, mm4                           // 0050ce23
-        pfmul mm6, mm1                           // 0050ce27
-        pfadd mm2, mm0                           // 0050ce2b
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050ce2f
-        pfadd mm6, mm5                           // 0050ce35
-        pfmul mm7, mm3                           // 0050ce39
-        pfadd mm2, mm1                           // 0050ce3d
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050ce41
-        pfadd mm7, mm6                           // 0050ce47
-        movq mm0, qword ptr [eax + 0x20]         // 0050ce4b
-        pfadd mm3, mm2                           // 0050ce4f
-        movq mm1, qword ptr [eax + 0x28]         // 0050ce53
-        movq qword ptr [eax + 0x10], mm7         // 0050ce57
-        movq mm4, qword ptr [esp]                // 0050ce5b
-        movq qword ptr [eax + 0x18], mm3         // 0050ce5f
-        punpckhdq mm2, mm0                       // 0050ce63
-        movq mm5, qword ptr [esp + 0x10]         // 0050ce66
-        punpckhdq mm3, mm1                       // 0050ce6b
-        movq mm6, qword ptr [esp + 0x20]         // 0050ce6e
-        punpckldq mm0, mm0                       // 0050ce73
-        punpckldq mm1, mm1                       // 0050ce76
-        pfmul mm4, mm0                           // 0050ce79
-        punpckhdq mm2, mm2                       // 0050ce7d
-        pfmul mm0, qword ptr [esp + 8]           // 0050ce80
-        movq mm7, qword ptr [esp + 0x30]         // 0050ce86
-        pfmul mm5, mm2                           // 0050ce8b
-        punpckhdq mm3, mm3                       // 0050ce8f
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050ce92
-        pfadd mm5, mm4                           // 0050ce98
-        pfmul mm6, mm1                           // 0050ce9c
-        pfadd mm2, mm0                           // 0050cea0
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050cea4
-        pfadd mm6, mm5                           // 0050ceaa
-        pfmul mm7, mm3                           // 0050ceae
-        pfadd mm2, mm1                           // 0050ceb2
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050ceb6
-        pfadd mm7, mm6                           // 0050cebc
-        movq mm0, qword ptr [eax + 0x30]         // 0050cec0
-        pfadd mm3, mm2                           // 0050cec4
-        movq mm1, qword ptr [eax + 0x38]         // 0050cec8
-        movq qword ptr [eax + 0x20], mm7         // 0050cecc
-        movq mm4, qword ptr [esp]                // 0050ced0
-        movq qword ptr [eax + 0x28], mm3         // 0050ced4
-        punpckhdq mm2, mm0                       // 0050ced8
-        movq mm5, qword ptr [esp + 0x10]         // 0050cedb
-        punpckhdq mm3, mm1                       // 0050cee0
-        movq mm6, qword ptr [esp + 0x20]         // 0050cee3
-        punpckldq mm0, mm0                       // 0050cee8
-        punpckldq mm1, mm1                       // 0050ceeb
-        pfmul mm4, mm0                           // 0050ceee
-        punpckhdq mm2, mm2                       // 0050cef2
-        pfmul mm0, qword ptr [esp + 8]           // 0050cef5
-        movq mm7, qword ptr [esp + 0x30]         // 0050cefb
-        pfmul mm5, mm2                           // 0050cf00
-        punpckhdq mm3, mm3                       // 0050cf04
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050cf07
-        pfadd mm5, mm4                           // 0050cf0d
-        pfmul mm6, mm1                           // 0050cf11
-        pfadd mm2, mm0                           // 0050cf15
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050cf19
-        pfadd mm6, mm5                           // 0050cf1f
-        pfmul mm7, mm3                           // 0050cf23
-        pfadd mm2, mm1                           // 0050cf27
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050cf2b
-        pfadd mm7, mm6                           // 0050cf31
-        pfadd mm3, mm2                           // 0050cf35
-        movq qword ptr [eax + 0x30], mm7         // 0050cf39
-        movq qword ptr [eax + 0x38], mm3         // 0050cf3d
-    L_50cf41:
-        mov edx, dword ptr [esp + 0x54]          // 0050cf41
-        test edx, edx                            // 0050cf45
-        je L_50cf68                              // 0050cf47
-        movq mm0, qword ptr [edx]                // 0050cf49
-        movd mm1, dword ptr [edx + 8]            // 0050cf4c
-        movq mm2, qword ptr [eax + 0x30]         // 0050cf50
-        movd mm3, dword ptr [eax + 0x38]         // 0050cf54
-        pfadd mm0, mm2                           // 0050cf58
-        pfadd mm1, mm3                           // 0050cf5c
-        movq qword ptr [eax + 0x30], mm0         // 0050cf60
-        movd dword ptr [eax + 0x38], mm1         // 0050cf64
-    L_50cf68:
-        add esp, 0x40                            // 0050cf68
-        femms                                    // 0050cf6b
-        ret 0x14                                 // 0050cf6d
-    }
-}
-
-// HAND-LIFT 0x0050cf70 RwCoreLift_0050cf70  (80 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050cf70(void) {
-    __asm {
-        push ebp                                 // 0050cf70
-        mov ebp, esp                             // 0050cf71
-        sub esp, 0x18                            // 0050cf73
-        mov edx, dword ptr [ebp + 0xc]           // 0050cf76
-        and esp, 0xfffffff8                      // 0050cf79
-        lea eax, [esp]                           // 0050cf7c
-        movq mm0, qword ptr [edx]                // 0050cf7f
-        movd mm1, dword ptr [edx + 8]            // 0050cf82
-        mov dword ptr [esp + 0x10], esi          // 0050cf86
-        mov dword ptr [esp + 0x14], ebx          // 0050cf8a
-        movq qword ptr [esp], mm0                // 0050cf8e
-        movd dword ptr [esp + 8], mm1            // 0050cf92
-        push eax                                 // 0050cf97
-        push eax                                 // 0050cf98
-        call RwCoreLift_0050ecdf                    // 0050cf99
-        movd mm0, dword ptr [ebp + 0x10]         // 0050cf9e
-        call RwCoreLift_005137a0                    // 0050cfa2
-        movq mm7, mm0                            // 0050cfa7
-        movq mm1, mm0                            // 0050cfaa
-        pfsubr mm0, qword ptr ds:[0x005db2a8]    // 0050cfad
-        punpckhdq mm7, mm7                       // 0050cfb5
-        movq mm2, qword ptr [esp]                // 0050cfb8
-        movd mm3, dword ptr [esp + 8]            // 0050cfbc
-        movq mm4, mm2                            // 0050cfc1
-        movq mm5, mm3                            // 0050cfc4
-        movd dword ptr [esp + 0xc], mm7          // 0050cfc7
-        movq mm7, mm3                            // 0050cfcc
-        punpckldq mm3, mm3                       // 0050cfcf
-        movq mm6, mm2                            // 0050cfd2
-        mov esi, dword ptr [esp + 0x10]          // 0050cfd5
-        punpckhdq mm2, mm3                       // 0050cfd9
-        pfmul mm3, mm4                           // 0050cfdc
-        punpckldq mm0, mm0                       // 0050cfe0
-        pfmul mm2, mm4                           // 0050cfe3
-        punpckldq mm1, mm1                       // 0050cfe7
-        pfmul mm2, mm0                           // 0050cfea
-        mov eax, dword ptr [ebp + 8]             // 0050cfee
-        pfmul mm3, mm0                           // 0050cff1
-        pfmul mm4, mm4                           // 0050cff5
-        pfmul mm5, mm5                           // 0050cff9
-        pfmul mm4, mm0                           // 0050cffd
-        mov ebx, dword ptr [esp + 0x14]          // 0050d001
-        pfmul mm5, mm0                           // 0050d005
-        pfadd mm4, mm1                           // 0050d009
-        pfadd mm5, mm1                           // 0050d00d
-        movd mm1, dword ptr [esp + 0xc]          // 0050d011
-        pxor mm0, mm0                            // 0050d016
-        punpckldq mm1, mm1                       // 0050d019
-        pfmul mm6, mm1                           // 0050d01c
-        punpckldq mm5, mm0                       // 0050d020
-        pfmul mm7, mm1                           // 0050d023
-        movq qword ptr [eax + 0x30], mm0         // 0050d027
-        punpckldq mm7, mm6                       // 0050d02b
-        movq mm1, mm2                            // 0050d02e
-        punpckhdq mm6, mm6                       // 0050d031
-        movq qword ptr [eax + 0x28], mm5         // 0050d034
-        pfsub mm2, mm7                           // 0050d038
-        pfadd mm1, mm7                           // 0050d03c
-        movq mm7, mm3                            // 0050d040
-        pfsub mm3, mm6                           // 0050d043
-        movq mm5, mm4                            // 0050d047
-        punpckldq mm4, mm1                       // 0050d04a
-        punpckldq mm3, mm0                       // 0050d04d
-        punpckhdq mm1, mm0                       // 0050d050
-        movq qword ptr [eax], mm4                // 0050d053
-        punpckldq mm7, mm7                       // 0050d056
-        movq qword ptr [eax + 8], mm3            // 0050d059
-        punpckhdq mm0, qword ptr ds:[0x005db2a8] // 0050d05d
-        pfadd mm7, mm6                           // 0050d064
-        movq qword ptr [eax + 0x18], mm1         // 0050d068
-        punpckhdq mm5, mm5                       // 0050d06c
-        movq qword ptr [eax + 0x38], mm0         // 0050d06f
-        punpckhdq mm7, mm2                       // 0050d073
-        punpckldq mm2, mm5                       // 0050d076
-        movq qword ptr [eax + 0x20], mm7         // 0050d079
-        movq qword ptr [eax + 0x10], mm2         // 0050d07d
-        mov esp, ebp                             // 0050d081
-        pop ebp                                  // 0050d083
-        femms                                    // 0050d084
-        ret 0xc                                  // 0050d086
-    }
-}
-
-// HAND-LIFT 0x0050d089 RwCoreLift_0050d089  (1052 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050d089(void) {
-    __asm {
-        push ebp                                 // 0050d089
-        mov ebp, esp                             // 0050d08a
-        sub esp, 0xc0                            // 0050d08c
-        mov edx, dword ptr [ebp + 0x14]          // 0050d092
-        mov ecx, dword ptr [ebp + 0x10]          // 0050d095
-        and esp, 0xfffffff8                      // 0050d098
-        test edx, edx                            // 0050d09b
-        mov eax, dword ptr [ebp + 8]             // 0050d09d
-        je L_50dccc                              // 0050d0a0
-        test ecx, ecx                            // 0050d0a6
-        je L_50dc8e                              // 0050d0a8
-        movq mm1, qword ptr ds:[0x005db288]      // 0050d0ae
-        movq mm2, qword ptr [edx]                // 0050d0b5
-        movd mm4, dword ptr [edx + 8]            // 0050d0b8
-        pxor mm5, mm5                            // 0050d0bc
-        movq mm3, mm2                            // 0050d0bf
-        punpckldq mm2, mm5                       // 0050d0c2
-        movq mm0, mm5                            // 0050d0c5
-        punpckhdq mm5, mm3                       // 0050d0c8
-        movq qword ptr [esp], mm2                // 0050d0cb
-        movq qword ptr [esp + 8], mm0            // 0050d0cf
-        movq qword ptr [esp + 0x10], mm5         // 0050d0d4
-        movq qword ptr [esp + 0x18], mm0         // 0050d0d9
-        movq qword ptr [esp + 0x20], mm0         // 0050d0de
-        movq qword ptr [esp + 0x28], mm4         // 0050d0e3
-        movq qword ptr [esp + 0x30], mm0         // 0050d0e8
-        movq qword ptr [esp + 0x38], mm1         // 0050d0ed
-        lea eax, [esp + 0x40]                    // 0050d0f2
-        movq mm0, qword ptr [ecx]                // 0050d0f6
-        movq mm1, qword ptr [ecx + 8]            // 0050d0f9
-        pswapd mm3, mm0                          // 0050d0fd
-        movq mm6, mm0                            // 0050d101
-        movq mm2, mm0                            // 0050d104
-        pfadd mm0, mm0                           // 0050d107
-        movq mm4, mm1                            // 0050d10b
-        punpckhdq mm6, mm1                       // 0050d10e
-        pfadd mm1, mm1                           // 0050d111
-        movq mm5, mm0                            // 0050d115
-        pfmul mm0, mm2                           // 0050d118
-        punpckldq mm5, mm1                       // 0050d11c
-        pfmul mm2, mm1                           // 0050d11f
-        pfmul mm3, mm1                           // 0050d123
-        pfmul mm1, mm4                           // 0050d127
-        pfmul mm6, mm5                           // 0050d12b
-        movq mm4, mm0                            // 0050d12f
-        pfsubr mm0, qword ptr ds:[0x005db2a8]    // 0050d132
-        movq mm5, mm1                            // 0050d13a
-        punpckldq mm1, mm1                       // 0050d13d
-        pfpnacc mm3, mm3                         // 0050d140
-        pfacc mm4, mm4                           // 0050d144
-        pfpnacc mm6, mm6                         // 0050d148
-        pfpnacc mm2, mm2                         // 0050d14c
-        pfsub mm0, mm1                           // 0050d150
-        pswapd mm5, mm2                          // 0050d154
-        pfsubr mm4, qword ptr ds:[0x005db2a8]    // 0050d158
-        pxor mm7, mm7                            // 0050d160
-        movq mm1, mm0                            // 0050d163
-        movq qword ptr [eax + 0x30], mm7         // 0050d166
-        punpckldq mm5, mm3                       // 0050d16a
-        punpckldq mm2, mm7                       // 0050d16d
-        punpckhdq mm4, mm7                       // 0050d170
-        punpckhdq mm0, mm6                       // 0050d173
-        movq qword ptr [eax + 0x20], mm5         // 0050d176
-        punpckhdq mm3, mm7                       // 0050d17a
-        movq qword ptr [eax + 8], mm2            // 0050d17d
-        punpckldq mm6, mm1                       // 0050d181
-        movq qword ptr [eax + 0x28], mm4         // 0050d184
-        punpckldq mm7, dword ptr ds:[0x005db2a8] // 0050d188
-        movq qword ptr [eax], mm0                // 0050d18f
-        movq qword ptr [eax + 0x10], mm6         // 0050d192
-        movq qword ptr [eax + 0x18], mm3         // 0050d196
-        movq qword ptr [eax + 0x38], mm7         // 0050d19a
-        mov edx, dword ptr [ebp + 0xc]           // 0050d19e
-        test edx, edx                            // 0050d1a1
-        je L_50d876                              // 0050d1a3
-        movq mm0, qword ptr [esp + 0x40]         // 0050d1a9
-        movq mm1, qword ptr [esp + 0x50]         // 0050d1ae
-        movq mm3, qword ptr [esp + 0x68]         // 0050d1b3
-        movq mm4, qword ptr [esp + 0x78]         // 0050d1b8
-        movq mm2, mm0                            // 0050d1bd
-        punpckldq mm0, mm1                       // 0050d1c0
-        punpckhdq mm2, mm1                       // 0050d1c3
-        movq mm5, mm3                            // 0050d1c6
-        movq qword ptr [esp + 0x80], mm0         // 0050d1c9
-        movq qword ptr [esp + 0x90], mm2         // 0050d1d1
-        movq mm6, qword ptr [esp + 0x48]         // 0050d1d9
-        punpckldq mm3, mm4                       // 0050d1de
-        movq mm7, qword ptr [esp + 0x58]         // 0050d1e1
-        movq mm0, qword ptr [esp + 0x60]         // 0050d1e6
-        punpckhdq mm5, mm4                       // 0050d1eb
-        movq mm1, mm6                            // 0050d1ee
-        movq qword ptr [esp + 0xa8], mm3         // 0050d1f1
-        movq qword ptr [esp + 0xb8], mm5         // 0050d1f9
-        punpckldq mm6, mm7                       // 0050d201
-        movq mm4, qword ptr [esp + 0x70]         // 0050d204
-        movq mm2, mm0                            // 0050d209
-        punpckhdq mm1, mm7                       // 0050d20c
-        movq qword ptr [esp + 0xa0], mm6         // 0050d20f
-        punpckhdq mm0, mm4                       // 0050d217
-        punpckldq mm2, mm4                       // 0050d21a
-        movq qword ptr [esp + 0xb0], mm1         // 0050d21d
-        movq qword ptr [esp + 0x98], mm0         // 0050d225
-        movq qword ptr [esp + 0x88], mm2         // 0050d22d
-        mov eax, dword ptr [ebp + 8]             // 0050d235
-        movq mm3, qword ptr [edx]                // 0050d238
-        movd mm4, dword ptr [edx + 8]            // 0050d23b
-        movd mm1, dword ptr ds:[0x005db298]      // 0050d23f
-        pxor mm0, mm0                            // 0050d246
-        pswapd mm2, mm1                          // 0050d249
-        movq qword ptr [eax], mm1                // 0050d24d
-        movq qword ptr [eax + 8], mm0            // 0050d250
-        movq qword ptr [eax + 0x10], mm2         // 0050d254
-        movq qword ptr [eax + 0x18], mm0         // 0050d258
-        movq qword ptr [eax + 0x20], mm0         // 0050d25c
-        movq qword ptr [eax + 0x28], mm1         // 0050d260
-        pfsub mm2, mm4                           // 0050d264
-        pfsub mm0, mm3                           // 0050d268
-        movq qword ptr [eax + 0x38], mm2         // 0050d26c
-        movq qword ptr [eax + 0x30], mm0         // 0050d270
-        movq mm0, qword ptr [eax]                // 0050d274
-        movq mm1, qword ptr [eax + 8]            // 0050d277
-        movq mm4, qword ptr [esp + 0x80]         // 0050d27b
-        punpckhdq mm2, mm0                       // 0050d283
-        movq mm5, qword ptr [esp + 0x90]         // 0050d286
-        punpckhdq mm3, mm1                       // 0050d28e
-        movq mm6, qword ptr [esp + 0xa0]         // 0050d291
-        punpckldq mm0, mm0                       // 0050d299
-        punpckldq mm1, mm1                       // 0050d29c
-        pfmul mm4, mm0                           // 0050d29f
-        punpckhdq mm2, mm2                       // 0050d2a3
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050d2a6
-        movq mm7, qword ptr [esp + 0xb0]         // 0050d2af
-        pfmul mm5, mm2                           // 0050d2b7
-        punpckhdq mm3, mm3                       // 0050d2bb
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050d2be
-        pfadd mm5, mm4                           // 0050d2c7
-        pfmul mm6, mm1                           // 0050d2cb
-        pfadd mm2, mm0                           // 0050d2cf
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050d2d3
-        pfadd mm6, mm5                           // 0050d2dc
-        pfmul mm7, mm3                           // 0050d2e0
-        pfadd mm2, mm1                           // 0050d2e4
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050d2e8
-        pfadd mm7, mm6                           // 0050d2f1
-        movq mm0, qword ptr [eax + 0x10]         // 0050d2f5
-        pfadd mm3, mm2                           // 0050d2f9
-        movq mm1, qword ptr [eax + 0x18]         // 0050d2fd
-        movq qword ptr [eax], mm7                // 0050d301
-        movq mm4, qword ptr [esp + 0x80]         // 0050d304
-        movq qword ptr [eax + 8], mm3            // 0050d30c
-        punpckhdq mm2, mm0                       // 0050d310
-        movq mm5, qword ptr [esp + 0x90]         // 0050d313
-        punpckhdq mm3, mm1                       // 0050d31b
-        movq mm6, qword ptr [esp + 0xa0]         // 0050d31e
-        punpckldq mm0, mm0                       // 0050d326
-        punpckldq mm1, mm1                       // 0050d329
-        pfmul mm4, mm0                           // 0050d32c
-        punpckhdq mm2, mm2                       // 0050d330
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050d333
-        movq mm7, qword ptr [esp + 0xb0]         // 0050d33c
-        pfmul mm5, mm2                           // 0050d344
-        punpckhdq mm3, mm3                       // 0050d348
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050d34b
-        pfadd mm5, mm4                           // 0050d354
-        pfmul mm6, mm1                           // 0050d358
-        pfadd mm2, mm0                           // 0050d35c
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050d360
-        pfadd mm6, mm5                           // 0050d369
-        pfmul mm7, mm3                           // 0050d36d
-        pfadd mm2, mm1                           // 0050d371
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050d375
-        pfadd mm7, mm6                           // 0050d37e
-        movq mm0, qword ptr [eax + 0x20]         // 0050d382
-        pfadd mm3, mm2                           // 0050d386
-        movq mm1, qword ptr [eax + 0x28]         // 0050d38a
-        movq qword ptr [eax + 0x10], mm7         // 0050d38e
-        movq mm4, qword ptr [esp + 0x80]         // 0050d392
-        movq qword ptr [eax + 0x18], mm3         // 0050d39a
-        punpckhdq mm2, mm0                       // 0050d39e
-        movq mm5, qword ptr [esp + 0x90]         // 0050d3a1
-        punpckhdq mm3, mm1                       // 0050d3a9
-        movq mm6, qword ptr [esp + 0xa0]         // 0050d3ac
-        punpckldq mm0, mm0                       // 0050d3b4
-        punpckldq mm1, mm1                       // 0050d3b7
-        pfmul mm4, mm0                           // 0050d3ba
-        punpckhdq mm2, mm2                       // 0050d3be
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050d3c1
-        movq mm7, qword ptr [esp + 0xb0]         // 0050d3ca
-        pfmul mm5, mm2                           // 0050d3d2
-        punpckhdq mm3, mm3                       // 0050d3d6
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050d3d9
-        pfadd mm5, mm4                           // 0050d3e2
-        pfmul mm6, mm1                           // 0050d3e6
-        pfadd mm2, mm0                           // 0050d3ea
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050d3ee
-        pfadd mm6, mm5                           // 0050d3f7
-        pfmul mm7, mm3                           // 0050d3fb
-        pfadd mm2, mm1                           // 0050d3ff
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050d403
-        pfadd mm7, mm6                           // 0050d40c
-        movq mm0, qword ptr [eax + 0x30]         // 0050d410
-        pfadd mm3, mm2                           // 0050d414
-        movq mm1, qword ptr [eax + 0x38]         // 0050d418
-        movq qword ptr [eax + 0x20], mm7         // 0050d41c
-        movq mm4, qword ptr [esp + 0x80]         // 0050d420
-        movq qword ptr [eax + 0x28], mm3         // 0050d428
-        punpckhdq mm2, mm0                       // 0050d42c
-        movq mm5, qword ptr [esp + 0x90]         // 0050d42f
-        punpckhdq mm3, mm1                       // 0050d437
-        movq mm6, qword ptr [esp + 0xa0]         // 0050d43a
-        punpckldq mm0, mm0                       // 0050d442
-        punpckldq mm1, mm1                       // 0050d445
-        pfmul mm4, mm0                           // 0050d448
-        punpckhdq mm2, mm2                       // 0050d44c
-        pfmul mm0, qword ptr [esp + 0x88]        // 0050d44f
-        movq mm7, qword ptr [esp + 0xb0]         // 0050d458
-        pfmul mm5, mm2                           // 0050d460
-        punpckhdq mm3, mm3                       // 0050d464
-        pfmul mm2, qword ptr [esp + 0x98]        // 0050d467
-        pfadd mm5, mm4                           // 0050d470
-        pfmul mm6, mm1                           // 0050d474
-        pfadd mm2, mm0                           // 0050d478
-        pfmul mm1, qword ptr [esp + 0xa8]        // 0050d47c
-        pfadd mm6, mm5                           // 0050d485
-        pfmul mm7, mm3                           // 0050d489
-        pfadd mm2, mm1                           // 0050d48d
-        pfmul mm3, qword ptr [esp + 0xb8]        // 0050d491
-        pfadd mm7, mm6                           // 0050d49a
-        pfadd mm3, mm2                           // 0050d49e
-        movq qword ptr [eax + 0x30], mm7         // 0050d4a2
-        movq qword ptr [eax + 0x38], mm3         // 0050d4a6
-        movq mm0, qword ptr [eax]                // 0050d4aa
-        movq mm1, qword ptr [eax + 8]            // 0050d4ad
-        movq mm4, qword ptr [esp]                // 0050d4b1
-        punpckhdq mm2, mm0                       // 0050d4b5
-        movq mm5, qword ptr [esp + 0x10]         // 0050d4b8
-        punpckhdq mm3, mm1                       // 0050d4bd
-        movq mm6, qword ptr [esp + 0x20]         // 0050d4c0
-        punpckldq mm0, mm0                       // 0050d4c5
-        punpckldq mm1, mm1                       // 0050d4c8
-        pfmul mm4, mm0                           // 0050d4cb
-        punpckhdq mm2, mm2                       // 0050d4cf
-        pfmul mm0, qword ptr [esp + 8]           // 0050d4d2
-        movq mm7, qword ptr [esp + 0x30]         // 0050d4d8
-        pfmul mm5, mm2                           // 0050d4dd
-        punpckhdq mm3, mm3                       // 0050d4e1
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050d4e4
-        pfadd mm5, mm4                           // 0050d4ea
-        pfmul mm6, mm1                           // 0050d4ee
-        pfadd mm2, mm0                           // 0050d4f2
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050d4f6
-        pfadd mm6, mm5                           // 0050d4fc
-        pfmul mm7, mm3                           // 0050d500
-        pfadd mm2, mm1                           // 0050d504
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050d508
-        pfadd mm7, mm6                           // 0050d50e
-        movq mm0, qword ptr [eax + 0x10]         // 0050d512
-        pfadd mm3, mm2                           // 0050d516
-        movq mm1, qword ptr [eax + 0x18]         // 0050d51a
-        movq qword ptr [eax], mm7                // 0050d51e
-        movq mm4, qword ptr [esp]                // 0050d521
-        movq qword ptr [eax + 8], mm3            // 0050d525
-        punpckhdq mm2, mm0                       // 0050d529
-        movq mm5, qword ptr [esp + 0x10]         // 0050d52c
-        punpckhdq mm3, mm1                       // 0050d531
-        movq mm6, qword ptr [esp + 0x20]         // 0050d534
-        punpckldq mm0, mm0                       // 0050d539
-        punpckldq mm1, mm1                       // 0050d53c
-        pfmul mm4, mm0                           // 0050d53f
-        punpckhdq mm2, mm2                       // 0050d543
-        pfmul mm0, qword ptr [esp + 8]           // 0050d546
-        movq mm7, qword ptr [esp + 0x30]         // 0050d54c
-        pfmul mm5, mm2                           // 0050d551
-        punpckhdq mm3, mm3                       // 0050d555
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050d558
-        pfadd mm5, mm4                           // 0050d55e
-        pfmul mm6, mm1                           // 0050d562
-        pfadd mm2, mm0                           // 0050d566
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050d56a
-        pfadd mm6, mm5                           // 0050d570
-        pfmul mm7, mm3                           // 0050d574
-        pfadd mm2, mm1                           // 0050d578
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050d57c
-        pfadd mm7, mm6                           // 0050d582
-        movq mm0, qword ptr [eax + 0x20]         // 0050d586
-        pfadd mm3, mm2                           // 0050d58a
-        movq mm1, qword ptr [eax + 0x28]         // 0050d58e
-        movq qword ptr [eax + 0x10], mm7         // 0050d592
-        movq mm4, qword ptr [esp]                // 0050d596
-        movq qword ptr [eax + 0x18], mm3         // 0050d59a
-        punpckhdq mm2, mm0                       // 0050d59e
-        movq mm5, qword ptr [esp + 0x10]         // 0050d5a1
-        punpckhdq mm3, mm1                       // 0050d5a6
-        movq mm6, qword ptr [esp + 0x20]         // 0050d5a9
-        punpckldq mm0, mm0                       // 0050d5ae
-        punpckldq mm1, mm1                       // 0050d5b1
-        pfmul mm4, mm0                           // 0050d5b4
-        punpckhdq mm2, mm2                       // 0050d5b8
-        pfmul mm0, qword ptr [esp + 8]           // 0050d5bb
-        movq mm7, qword ptr [esp + 0x30]         // 0050d5c1
-        pfmul mm5, mm2                           // 0050d5c6
-        punpckhdq mm3, mm3                       // 0050d5ca
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050d5cd
-        pfadd mm5, mm4                           // 0050d5d3
-        pfmul mm6, mm1                           // 0050d5d7
-        pfadd mm2, mm0                           // 0050d5db
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050d5df
-        pfadd mm6, mm5                           // 0050d5e5
-        pfmul mm7, mm3                           // 0050d5e9
-        pfadd mm2, mm1                           // 0050d5ed
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050d5f1
-        pfadd mm7, mm6                           // 0050d5f7
-        movq mm0, qword ptr [eax + 0x30]         // 0050d5fb
-        pfadd mm3, mm2                           // 0050d5ff
-        movq mm1, qword ptr [eax + 0x38]         // 0050d603
-        movq qword ptr [eax + 0x20], mm7         // 0050d607
-        movq mm4, qword ptr [esp]                // 0050d60b
-        movq qword ptr [eax + 0x28], mm3         // 0050d60f
-        punpckhdq mm2, mm0                       // 0050d613
-        movq mm5, qword ptr [esp + 0x10]         // 0050d616
-        punpckhdq mm3, mm1                       // 0050d61b
-        movq mm6, qword ptr [esp + 0x20]         // 0050d61e
-        punpckldq mm0, mm0                       // 0050d623
-        punpckldq mm1, mm1                       // 0050d626
-        pfmul mm4, mm0                           // 0050d629
-        punpckhdq mm2, mm2                       // 0050d62d
-        pfmul mm0, qword ptr [esp + 8]           // 0050d630
-        movq mm7, qword ptr [esp + 0x30]         // 0050d636
-        pfmul mm5, mm2                           // 0050d63b
-        punpckhdq mm3, mm3                       // 0050d63f
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050d642
-        pfadd mm5, mm4                           // 0050d648
-        pfmul mm6, mm1                           // 0050d64c
-        pfadd mm2, mm0                           // 0050d650
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050d654
-        pfadd mm6, mm5                           // 0050d65a
-        pfmul mm7, mm3                           // 0050d65e
-        pfadd mm2, mm1                           // 0050d662
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050d666
-        pfadd mm7, mm6                           // 0050d66c
-        pfadd mm3, mm2                           // 0050d670
-        movq qword ptr [eax + 0x30], mm7         // 0050d674
-        movq qword ptr [eax + 0x38], mm3         // 0050d678
-        movq mm0, qword ptr [eax]                // 0050d67c
-        movq mm1, qword ptr [eax + 8]            // 0050d67f
-        movq mm4, qword ptr [esp + 0x40]         // 0050d683
-        punpckhdq mm2, mm0                       // 0050d688
-        movq mm5, qword ptr [esp + 0x50]         // 0050d68b
-        punpckhdq mm3, mm1                       // 0050d690
-        movq mm6, qword ptr [esp + 0x60]         // 0050d693
-        punpckldq mm0, mm0                       // 0050d698
-        punpckldq mm1, mm1                       // 0050d69b
-        pfmul mm4, mm0                           // 0050d69e
-        punpckhdq mm2, mm2                       // 0050d6a2
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050d6a5
-        movq mm7, qword ptr [esp + 0x70]         // 0050d6ab
-        pfmul mm5, mm2                           // 0050d6b0
-        punpckhdq mm3, mm3                       // 0050d6b4
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050d6b7
-        pfadd mm5, mm4                           // 0050d6bd
-        pfmul mm6, mm1                           // 0050d6c1
-        pfadd mm2, mm0                           // 0050d6c5
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050d6c9
-        pfadd mm6, mm5                           // 0050d6cf
-        pfmul mm7, mm3                           // 0050d6d3
-        pfadd mm2, mm1                           // 0050d6d7
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050d6db
-        pfadd mm7, mm6                           // 0050d6e1
-        movq mm0, qword ptr [eax + 0x10]         // 0050d6e5
-        pfadd mm3, mm2                           // 0050d6e9
-        movq mm1, qword ptr [eax + 0x18]         // 0050d6ed
-        movq qword ptr [eax], mm7                // 0050d6f1
-        movq mm4, qword ptr [esp + 0x40]         // 0050d6f4
-        movq qword ptr [eax + 8], mm3            // 0050d6f9
-        punpckhdq mm2, mm0                       // 0050d6fd
-        movq mm5, qword ptr [esp + 0x50]         // 0050d700
-        punpckhdq mm3, mm1                       // 0050d705
-        movq mm6, qword ptr [esp + 0x60]         // 0050d708
-        punpckldq mm0, mm0                       // 0050d70d
-        punpckldq mm1, mm1                       // 0050d710
-        pfmul mm4, mm0                           // 0050d713
-        punpckhdq mm2, mm2                       // 0050d717
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050d71a
-        movq mm7, qword ptr [esp + 0x70]         // 0050d720
-        pfmul mm5, mm2                           // 0050d725
-        punpckhdq mm3, mm3                       // 0050d729
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050d72c
-        pfadd mm5, mm4                           // 0050d732
-        pfmul mm6, mm1                           // 0050d736
-        pfadd mm2, mm0                           // 0050d73a
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050d73e
-        pfadd mm6, mm5                           // 0050d744
-        pfmul mm7, mm3                           // 0050d748
-        pfadd mm2, mm1                           // 0050d74c
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050d750
-        pfadd mm7, mm6                           // 0050d756
-        movq mm0, qword ptr [eax + 0x20]         // 0050d75a
-        pfadd mm3, mm2                           // 0050d75e
-        movq mm1, qword ptr [eax + 0x28]         // 0050d762
-        movq qword ptr [eax + 0x10], mm7         // 0050d766
-        movq mm4, qword ptr [esp + 0x40]         // 0050d76a
-        movq qword ptr [eax + 0x18], mm3         // 0050d76f
-        punpckhdq mm2, mm0                       // 0050d773
-        movq mm5, qword ptr [esp + 0x50]         // 0050d776
-        punpckhdq mm3, mm1                       // 0050d77b
-        movq mm6, qword ptr [esp + 0x60]         // 0050d77e
-        punpckldq mm0, mm0                       // 0050d783
-        punpckldq mm1, mm1                       // 0050d786
-        pfmul mm4, mm0                           // 0050d789
-        punpckhdq mm2, mm2                       // 0050d78d
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050d790
-        movq mm7, qword ptr [esp + 0x70]         // 0050d796
-        pfmul mm5, mm2                           // 0050d79b
-        punpckhdq mm3, mm3                       // 0050d79f
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050d7a2
-        pfadd mm5, mm4                           // 0050d7a8
-        pfmul mm6, mm1                           // 0050d7ac
-        pfadd mm2, mm0                           // 0050d7b0
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050d7b4
-        pfadd mm6, mm5                           // 0050d7ba
-        pfmul mm7, mm3                           // 0050d7be
-        pfadd mm2, mm1                           // 0050d7c2
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050d7c6
-        pfadd mm7, mm6                           // 0050d7cc
-        movq mm0, qword ptr [eax + 0x30]         // 0050d7d0
-        pfadd mm3, mm2                           // 0050d7d4
-        movq mm1, qword ptr [eax + 0x38]         // 0050d7d8
-        movq qword ptr [eax + 0x20], mm7         // 0050d7dc
-        movq mm4, qword ptr [esp + 0x40]         // 0050d7e0
-        movq qword ptr [eax + 0x28], mm3         // 0050d7e5
-        punpckhdq mm2, mm0                       // 0050d7e9
-        movq mm5, qword ptr [esp + 0x50]         // 0050d7ec
-        punpckhdq mm3, mm1                       // 0050d7f1
-        movq mm6, qword ptr [esp + 0x60]         // 0050d7f4
-        punpckldq mm0, mm0                       // 0050d7f9
-        punpckldq mm1, mm1                       // 0050d7fc
-        pfmul mm4, mm0                           // 0050d7ff
-        punpckhdq mm2, mm2                       // 0050d803
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050d806
-        movq mm7, qword ptr [esp + 0x70]         // 0050d80c
-        pfmul mm5, mm2                           // 0050d811
-        punpckhdq mm3, mm3                       // 0050d815
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050d818
-        pfadd mm5, mm4                           // 0050d81e
-        pfmul mm6, mm1                           // 0050d822
-        pfadd mm2, mm0                           // 0050d826
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050d82a
-        pfadd mm6, mm5                           // 0050d830
-        pfmul mm7, mm3                           // 0050d834
-        pfadd mm2, mm1                           // 0050d838
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050d83c
-        pfadd mm7, mm6                           // 0050d842
-        pfadd mm3, mm2                           // 0050d846
-        movq qword ptr [eax + 0x30], mm7         // 0050d84a
-        movq qword ptr [eax + 0x38], mm3         // 0050d84e
-        movq mm0, qword ptr [edx]                // 0050d852
-        movq mm1, qword ptr [eax + 0x30]         // 0050d855
-        movd mm2, dword ptr [edx + 8]            // 0050d859
-        movd mm3, dword ptr [eax + 0x38]         // 0050d85d
-        pfadd mm0, mm1                           // 0050d861
-        pfadd mm2, mm3                           // 0050d865
-        movq qword ptr [eax + 0x30], mm0         // 0050d869
-        movd dword ptr [eax + 0x38], mm2         // 0050d86d
-        jmp L_50dcf9                             // 0050d871
-    L_50d876:
-        mov eax, dword ptr [ebp + 8]             // 0050d876
-        movq mm0, qword ptr [esp + 0x40]         // 0050d879
-        movq mm1, qword ptr [esp + 0x50]         // 0050d87e
-        movq mm3, qword ptr [esp + 0x68]         // 0050d883
-        movq mm4, qword ptr [esp + 0x78]         // 0050d888
-        movq mm2, mm0                            // 0050d88d
-        punpckldq mm0, mm1                       // 0050d890
-        punpckhdq mm2, mm1                       // 0050d893
-        movq mm5, mm3                            // 0050d896
-        movq qword ptr [eax], mm0                // 0050d899
-        movq qword ptr [eax + 0x10], mm2         // 0050d89c
-        movq mm6, qword ptr [esp + 0x48]         // 0050d8a0
-        punpckldq mm3, mm4                       // 0050d8a5
-        movq mm7, qword ptr [esp + 0x58]         // 0050d8a8
-        movq mm0, qword ptr [esp + 0x60]         // 0050d8ad
-        punpckhdq mm5, mm4                       // 0050d8b2
-        movq mm1, mm6                            // 0050d8b5
-        movq qword ptr [eax + 0x28], mm3         // 0050d8b8
-        movq qword ptr [eax + 0x38], mm5         // 0050d8bc
-        punpckldq mm6, mm7                       // 0050d8c0
-        movq mm4, qword ptr [esp + 0x70]         // 0050d8c3
-        movq mm2, mm0                            // 0050d8c8
-        punpckhdq mm1, mm7                       // 0050d8cb
-        movq qword ptr [eax + 0x20], mm6         // 0050d8ce
-        punpckhdq mm0, mm4                       // 0050d8d2
-        punpckldq mm2, mm4                       // 0050d8d5
-        movq qword ptr [eax + 0x30], mm1         // 0050d8d8
-        movq qword ptr [eax + 0x18], mm0         // 0050d8dc
-        movq qword ptr [eax + 8], mm2            // 0050d8e0
-        movq mm0, qword ptr [eax]                // 0050d8e4
-        movq mm1, qword ptr [eax + 8]            // 0050d8e7
-        movq mm4, qword ptr [esp]                // 0050d8eb
-        punpckhdq mm2, mm0                       // 0050d8ef
-        movq mm5, qword ptr [esp + 0x10]         // 0050d8f2
-        punpckhdq mm3, mm1                       // 0050d8f7
-        movq mm6, qword ptr [esp + 0x20]         // 0050d8fa
-        punpckldq mm0, mm0                       // 0050d8ff
-        punpckldq mm1, mm1                       // 0050d902
-        pfmul mm4, mm0                           // 0050d905
-        punpckhdq mm2, mm2                       // 0050d909
-        pfmul mm0, qword ptr [esp + 8]           // 0050d90c
-        movq mm7, qword ptr [esp + 0x30]         // 0050d912
-        pfmul mm5, mm2                           // 0050d917
-        punpckhdq mm3, mm3                       // 0050d91b
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050d91e
-        pfadd mm5, mm4                           // 0050d924
-        pfmul mm6, mm1                           // 0050d928
-        pfadd mm2, mm0                           // 0050d92c
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050d930
-        pfadd mm6, mm5                           // 0050d936
-        pfmul mm7, mm3                           // 0050d93a
-        pfadd mm2, mm1                           // 0050d93e
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050d942
-        pfadd mm7, mm6                           // 0050d948
-        movq mm0, qword ptr [eax + 0x10]         // 0050d94c
-        pfadd mm3, mm2                           // 0050d950
-        movq mm1, qword ptr [eax + 0x18]         // 0050d954
-        movq qword ptr [eax], mm7                // 0050d958
-        movq mm4, qword ptr [esp]                // 0050d95b
-        movq qword ptr [eax + 8], mm3            // 0050d95f
-        punpckhdq mm2, mm0                       // 0050d963
-        movq mm5, qword ptr [esp + 0x10]         // 0050d966
-        punpckhdq mm3, mm1                       // 0050d96b
-        movq mm6, qword ptr [esp + 0x20]         // 0050d96e
-        punpckldq mm0, mm0                       // 0050d973
-        punpckldq mm1, mm1                       // 0050d976
-        pfmul mm4, mm0                           // 0050d979
-        punpckhdq mm2, mm2                       // 0050d97d
-        pfmul mm0, qword ptr [esp + 8]           // 0050d980
-        movq mm7, qword ptr [esp + 0x30]         // 0050d986
-        pfmul mm5, mm2                           // 0050d98b
-        punpckhdq mm3, mm3                       // 0050d98f
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050d992
-        pfadd mm5, mm4                           // 0050d998
-        pfmul mm6, mm1                           // 0050d99c
-        pfadd mm2, mm0                           // 0050d9a0
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050d9a4
-        pfadd mm6, mm5                           // 0050d9aa
-        pfmul mm7, mm3                           // 0050d9ae
-        pfadd mm2, mm1                           // 0050d9b2
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050d9b6
-        pfadd mm7, mm6                           // 0050d9bc
-        movq mm0, qword ptr [eax + 0x20]         // 0050d9c0
-        pfadd mm3, mm2                           // 0050d9c4
-        movq mm1, qword ptr [eax + 0x28]         // 0050d9c8
-        movq qword ptr [eax + 0x10], mm7         // 0050d9cc
-        movq mm4, qword ptr [esp]                // 0050d9d0
-        movq qword ptr [eax + 0x18], mm3         // 0050d9d4
-        punpckhdq mm2, mm0                       // 0050d9d8
-        movq mm5, qword ptr [esp + 0x10]         // 0050d9db
-        punpckhdq mm3, mm1                       // 0050d9e0
-        movq mm6, qword ptr [esp + 0x20]         // 0050d9e3
-        punpckldq mm0, mm0                       // 0050d9e8
-        punpckldq mm1, mm1                       // 0050d9eb
-        pfmul mm4, mm0                           // 0050d9ee
-        punpckhdq mm2, mm2                       // 0050d9f2
-        pfmul mm0, qword ptr [esp + 8]           // 0050d9f5
-        movq mm7, qword ptr [esp + 0x30]         // 0050d9fb
-        pfmul mm5, mm2                           // 0050da00
-        punpckhdq mm3, mm3                       // 0050da04
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050da07
-        pfadd mm5, mm4                           // 0050da0d
-        pfmul mm6, mm1                           // 0050da11
-        pfadd mm2, mm0                           // 0050da15
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050da19
-        pfadd mm6, mm5                           // 0050da1f
-        pfmul mm7, mm3                           // 0050da23
-        pfadd mm2, mm1                           // 0050da27
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050da2b
-        pfadd mm7, mm6                           // 0050da31
-        movq mm0, qword ptr [eax + 0x30]         // 0050da35
-        pfadd mm3, mm2                           // 0050da39
-        movq mm1, qword ptr [eax + 0x38]         // 0050da3d
-        movq qword ptr [eax + 0x20], mm7         // 0050da41
-        movq mm4, qword ptr [esp]                // 0050da45
-        movq qword ptr [eax + 0x28], mm3         // 0050da49
-        punpckhdq mm2, mm0                       // 0050da4d
-        movq mm5, qword ptr [esp + 0x10]         // 0050da50
-        punpckhdq mm3, mm1                       // 0050da55
-        movq mm6, qword ptr [esp + 0x20]         // 0050da58
-        punpckldq mm0, mm0                       // 0050da5d
-        punpckldq mm1, mm1                       // 0050da60
-        pfmul mm4, mm0                           // 0050da63
-        punpckhdq mm2, mm2                       // 0050da67
-        pfmul mm0, qword ptr [esp + 8]           // 0050da6a
-        movq mm7, qword ptr [esp + 0x30]         // 0050da70
-        pfmul mm5, mm2                           // 0050da75
-        punpckhdq mm3, mm3                       // 0050da79
-        pfmul mm2, qword ptr [esp + 0x18]        // 0050da7c
-        pfadd mm5, mm4                           // 0050da82
-        pfmul mm6, mm1                           // 0050da86
-        pfadd mm2, mm0                           // 0050da8a
-        pfmul mm1, qword ptr [esp + 0x28]        // 0050da8e
-        pfadd mm6, mm5                           // 0050da94
-        pfmul mm7, mm3                           // 0050da98
-        pfadd mm2, mm1                           // 0050da9c
-        pfmul mm3, qword ptr [esp + 0x38]        // 0050daa0
-        pfadd mm7, mm6                           // 0050daa6
-        pfadd mm3, mm2                           // 0050daaa
-        movq qword ptr [eax + 0x30], mm7         // 0050daae
-        movq qword ptr [eax + 0x38], mm3         // 0050dab2
-        movq mm0, qword ptr [eax]                // 0050dab6
-        movq mm1, qword ptr [eax + 8]            // 0050dab9
-        movq mm4, qword ptr [esp + 0x40]         // 0050dabd
-        punpckhdq mm2, mm0                       // 0050dac2
-        movq mm5, qword ptr [esp + 0x50]         // 0050dac5
-        punpckhdq mm3, mm1                       // 0050daca
-        movq mm6, qword ptr [esp + 0x60]         // 0050dacd
-        punpckldq mm0, mm0                       // 0050dad2
-        punpckldq mm1, mm1                       // 0050dad5
-        pfmul mm4, mm0                           // 0050dad8
-        punpckhdq mm2, mm2                       // 0050dadc
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050dadf
-        movq mm7, qword ptr [esp + 0x70]         // 0050dae5
-        pfmul mm5, mm2                           // 0050daea
-        punpckhdq mm3, mm3                       // 0050daee
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050daf1
-        pfadd mm5, mm4                           // 0050daf7
-        pfmul mm6, mm1                           // 0050dafb
-        pfadd mm2, mm0                           // 0050daff
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050db03
-        pfadd mm6, mm5                           // 0050db09
-        pfmul mm7, mm3                           // 0050db0d
-        pfadd mm2, mm1                           // 0050db11
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050db15
-        pfadd mm7, mm6                           // 0050db1b
-        movq mm0, qword ptr [eax + 0x10]         // 0050db1f
-        pfadd mm3, mm2                           // 0050db23
-        movq mm1, qword ptr [eax + 0x18]         // 0050db27
-        movq qword ptr [eax], mm7                // 0050db2b
-        movq mm4, qword ptr [esp + 0x40]         // 0050db2e
-        movq qword ptr [eax + 8], mm3            // 0050db33
-        punpckhdq mm2, mm0                       // 0050db37
-        movq mm5, qword ptr [esp + 0x50]         // 0050db3a
-        punpckhdq mm3, mm1                       // 0050db3f
-        movq mm6, qword ptr [esp + 0x60]         // 0050db42
-        punpckldq mm0, mm0                       // 0050db47
-        punpckldq mm1, mm1                       // 0050db4a
-        pfmul mm4, mm0                           // 0050db4d
-        punpckhdq mm2, mm2                       // 0050db51
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050db54
-        movq mm7, qword ptr [esp + 0x70]         // 0050db5a
-        pfmul mm5, mm2                           // 0050db5f
-        punpckhdq mm3, mm3                       // 0050db63
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050db66
-        pfadd mm5, mm4                           // 0050db6c
-        pfmul mm6, mm1                           // 0050db70
-        pfadd mm2, mm0                           // 0050db74
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050db78
-        pfadd mm6, mm5                           // 0050db7e
-        pfmul mm7, mm3                           // 0050db82
-        pfadd mm2, mm1                           // 0050db86
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050db8a
-        pfadd mm7, mm6                           // 0050db90
-        movq mm0, qword ptr [eax + 0x20]         // 0050db94
-        pfadd mm3, mm2                           // 0050db98
-        movq mm1, qword ptr [eax + 0x28]         // 0050db9c
-        movq qword ptr [eax + 0x10], mm7         // 0050dba0
-        movq mm4, qword ptr [esp + 0x40]         // 0050dba4
-        movq qword ptr [eax + 0x18], mm3         // 0050dba9
-        punpckhdq mm2, mm0                       // 0050dbad
-        movq mm5, qword ptr [esp + 0x50]         // 0050dbb0
-        punpckhdq mm3, mm1                       // 0050dbb5
-        movq mm6, qword ptr [esp + 0x60]         // 0050dbb8
-        punpckldq mm0, mm0                       // 0050dbbd
-        punpckldq mm1, mm1                       // 0050dbc0
-        pfmul mm4, mm0                           // 0050dbc3
-        punpckhdq mm2, mm2                       // 0050dbc7
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050dbca
-        movq mm7, qword ptr [esp + 0x70]         // 0050dbd0
-        pfmul mm5, mm2                           // 0050dbd5
-        punpckhdq mm3, mm3                       // 0050dbd9
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050dbdc
-        pfadd mm5, mm4                           // 0050dbe2
-        pfmul mm6, mm1                           // 0050dbe6
-        pfadd mm2, mm0                           // 0050dbea
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050dbee
-        pfadd mm6, mm5                           // 0050dbf4
-        pfmul mm7, mm3                           // 0050dbf8
-        pfadd mm2, mm1                           // 0050dbfc
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050dc00
-        pfadd mm7, mm6                           // 0050dc06
-        movq mm0, qword ptr [eax + 0x30]         // 0050dc0a
-        pfadd mm3, mm2                           // 0050dc0e
-        movq mm1, qword ptr [eax + 0x38]         // 0050dc12
-        movq qword ptr [eax + 0x20], mm7         // 0050dc16
-        movq mm4, qword ptr [esp + 0x40]         // 0050dc1a
-        movq qword ptr [eax + 0x28], mm3         // 0050dc1f
-        punpckhdq mm2, mm0                       // 0050dc23
-        movq mm5, qword ptr [esp + 0x50]         // 0050dc26
-        punpckhdq mm3, mm1                       // 0050dc2b
-        movq mm6, qword ptr [esp + 0x60]         // 0050dc2e
-        punpckldq mm0, mm0                       // 0050dc33
-        punpckldq mm1, mm1                       // 0050dc36
-        pfmul mm4, mm0                           // 0050dc39
-        punpckhdq mm2, mm2                       // 0050dc3d
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050dc40
-        movq mm7, qword ptr [esp + 0x70]         // 0050dc46
-        pfmul mm5, mm2                           // 0050dc4b
-        punpckhdq mm3, mm3                       // 0050dc4f
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050dc52
-        pfadd mm5, mm4                           // 0050dc58
-        pfmul mm6, mm1                           // 0050dc5c
-        pfadd mm2, mm0                           // 0050dc60
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050dc64
-        pfadd mm6, mm5                           // 0050dc6a
-        pfmul mm7, mm3                           // 0050dc6e
-        pfadd mm2, mm1                           // 0050dc72
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050dc76
-        pfadd mm7, mm6                           // 0050dc7c
-        pfadd mm3, mm2                           // 0050dc80
-        movq qword ptr [eax + 0x30], mm7         // 0050dc84
-        movq qword ptr [eax + 0x38], mm3         // 0050dc88
-        jmp L_50dcf9                             // 0050dc8c
-    L_50dc8e:
-        movq mm1, qword ptr ds:[0x005db288]      // 0050dc8e
-        movq mm2, qword ptr [edx]                // 0050dc95
-        movd mm4, dword ptr [edx + 8]            // 0050dc98
-        pxor mm5, mm5                            // 0050dc9c
-        movq mm3, mm2                            // 0050dc9f
-        punpckldq mm2, mm5                       // 0050dca2
-        movq mm0, mm5                            // 0050dca5
-        punpckhdq mm5, mm3                       // 0050dca8
-        movq qword ptr [eax], mm2                // 0050dcab
-        movq qword ptr [eax + 8], mm0            // 0050dcae
-        movq qword ptr [eax + 0x10], mm5         // 0050dcb2
-        movq qword ptr [eax + 0x18], mm0         // 0050dcb6
-        movq qword ptr [eax + 0x20], mm0         // 0050dcba
-        movq qword ptr [eax + 0x28], mm4         // 0050dcbe
-        movq qword ptr [eax + 0x30], mm0         // 0050dcc2
-        movq qword ptr [eax + 0x38], mm1         // 0050dcc6
-        jmp L_50dcf9                             // 0050dcca
-    L_50dccc:
-        movd mm1, dword ptr ds:[0x005db298]      // 0050dccc
-        pxor mm0, mm0                            // 0050dcd3
-        pswapd mm2, mm1                          // 0050dcd6
-        movq qword ptr [eax], mm1                // 0050dcda
-        movq qword ptr [eax + 8], mm0            // 0050dcdd
-        movq qword ptr [eax + 0x10], mm2         // 0050dce1
-        movq qword ptr [eax + 0x18], mm0         // 0050dce5
-        movq qword ptr [eax + 0x20], mm0         // 0050dce9
-        movq qword ptr [eax + 0x28], mm1         // 0050dced
-        movq qword ptr [eax + 0x30], mm0         // 0050dcf1
-        movq qword ptr [eax + 0x38], mm2         // 0050dcf5
-    L_50dcf9:
-        mov ecx, dword ptr [ebp + 0x1c]          // 0050dcf9
-        mov edx, dword ptr [ebp + 0x18]          // 0050dcfc
-        test ecx, ecx                            // 0050dcff
-        je L_50e1af                              // 0050dd01
-        movq mm0, qword ptr [ecx]                // 0050dd07
-        movq mm1, qword ptr [ecx + 8]            // 0050dd0a
-        pswapd mm3, mm0                          // 0050dd0e
-        movq mm6, mm0                            // 0050dd12
-        movq mm2, mm0                            // 0050dd15
-        pfadd mm0, mm0                           // 0050dd18
-        movq mm4, mm1                            // 0050dd1c
-        punpckhdq mm6, mm1                       // 0050dd1f
-        pfadd mm1, mm1                           // 0050dd22
-        movq mm5, mm0                            // 0050dd26
-        pfmul mm0, mm2                           // 0050dd29
-        punpckldq mm5, mm1                       // 0050dd2d
-        pfmul mm2, mm1                           // 0050dd30
-        pfmul mm3, mm1                           // 0050dd34
-        pfmul mm1, mm4                           // 0050dd38
-        pfmul mm6, mm5                           // 0050dd3c
-        movq mm4, mm0                            // 0050dd40
-        pfsubr mm0, qword ptr ds:[0x005db2a8]    // 0050dd43
-        movq mm5, mm1                            // 0050dd4b
-        punpckldq mm1, mm1                       // 0050dd4e
-        pfpnacc mm3, mm3                         // 0050dd51
-        pfacc mm4, mm4                           // 0050dd55
-        pfpnacc mm6, mm6                         // 0050dd59
-        pfpnacc mm2, mm2                         // 0050dd5d
-        pfsub mm0, mm1                           // 0050dd61
-        pswapd mm5, mm2                          // 0050dd65
-        pfsubr mm4, qword ptr ds:[0x005db2a8]    // 0050dd69
-        pxor mm7, mm7                            // 0050dd71
-        movq mm1, mm0                            // 0050dd74
-        movq qword ptr [esp + 0x70], mm7         // 0050dd77
-        punpckldq mm5, mm3                       // 0050dd7c
-        punpckldq mm2, mm7                       // 0050dd7f
-        punpckhdq mm4, mm7                       // 0050dd82
-        punpckhdq mm0, mm6                       // 0050dd85
-        movq qword ptr [esp + 0x60], mm5         // 0050dd88
-        punpckhdq mm3, mm7                       // 0050dd8d
-        movq qword ptr [esp + 0x48], mm2         // 0050dd90
-        punpckldq mm6, mm1                       // 0050dd95
-        movq qword ptr [esp + 0x68], mm4         // 0050dd98
-        punpckldq mm7, dword ptr ds:[0x005db2a8] // 0050dd9d
-        movq qword ptr [esp + 0x40], mm0         // 0050dda4
-        movq qword ptr [esp + 0x50], mm6         // 0050dda9
-        movq qword ptr [esp + 0x58], mm3         // 0050ddae
-        movq qword ptr [esp + 0x78], mm7         // 0050ddb3
-        test edx, edx                            // 0050ddb8
-        je L_50dfd9                              // 0050ddba
-        movq mm0, qword ptr [eax + 0x30]         // 0050ddc0
-        movd mm1, dword ptr [eax + 0x38]         // 0050ddc4
-        movq mm2, qword ptr [edx]                // 0050ddc8
-        movd mm3, dword ptr [edx + 8]            // 0050ddcb
-        pfsub mm0, mm2                           // 0050ddcf
-        pfsub mm1, mm3                           // 0050ddd3
-        movq qword ptr [eax + 0x30], mm0         // 0050ddd7
-        movd dword ptr [eax + 0x38], mm1         // 0050dddb
-        movq mm0, qword ptr [eax]                // 0050dddf
-        movq mm1, qword ptr [eax + 8]            // 0050dde2
-        movq mm4, qword ptr [esp + 0x40]         // 0050dde6
-        punpckhdq mm2, mm0                       // 0050ddeb
-        movq mm5, qword ptr [esp + 0x50]         // 0050ddee
-        punpckhdq mm3, mm1                       // 0050ddf3
-        movq mm6, qword ptr [esp + 0x60]         // 0050ddf6
-        punpckldq mm0, mm0                       // 0050ddfb
-        punpckldq mm1, mm1                       // 0050ddfe
-        pfmul mm4, mm0                           // 0050de01
-        punpckhdq mm2, mm2                       // 0050de05
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050de08
-        movq mm7, qword ptr [esp + 0x70]         // 0050de0e
-        pfmul mm5, mm2                           // 0050de13
-        punpckhdq mm3, mm3                       // 0050de17
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050de1a
-        pfadd mm5, mm4                           // 0050de20
-        pfmul mm6, mm1                           // 0050de24
-        pfadd mm2, mm0                           // 0050de28
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050de2c
-        pfadd mm6, mm5                           // 0050de32
-        pfmul mm7, mm3                           // 0050de36
-        pfadd mm2, mm1                           // 0050de3a
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050de3e
-        pfadd mm7, mm6                           // 0050de44
-        movq mm0, qword ptr [eax + 0x10]         // 0050de48
-        pfadd mm3, mm2                           // 0050de4c
-        movq mm1, qword ptr [eax + 0x18]         // 0050de50
-        movq qword ptr [eax], mm7                // 0050de54
-        movq mm4, qword ptr [esp + 0x40]         // 0050de57
-        movq qword ptr [eax + 8], mm3            // 0050de5c
-        punpckhdq mm2, mm0                       // 0050de60
-        movq mm5, qword ptr [esp + 0x50]         // 0050de63
-        punpckhdq mm3, mm1                       // 0050de68
-        movq mm6, qword ptr [esp + 0x60]         // 0050de6b
-        punpckldq mm0, mm0                       // 0050de70
-        punpckldq mm1, mm1                       // 0050de73
-        pfmul mm4, mm0                           // 0050de76
-        punpckhdq mm2, mm2                       // 0050de7a
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050de7d
-        movq mm7, qword ptr [esp + 0x70]         // 0050de83
-        pfmul mm5, mm2                           // 0050de88
-        punpckhdq mm3, mm3                       // 0050de8c
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050de8f
-        pfadd mm5, mm4                           // 0050de95
-        pfmul mm6, mm1                           // 0050de99
-        pfadd mm2, mm0                           // 0050de9d
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050dea1
-        pfadd mm6, mm5                           // 0050dea7
-        pfmul mm7, mm3                           // 0050deab
-        pfadd mm2, mm1                           // 0050deaf
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050deb3
-        pfadd mm7, mm6                           // 0050deb9
-        movq mm0, qword ptr [eax + 0x20]         // 0050debd
-        pfadd mm3, mm2                           // 0050dec1
-        movq mm1, qword ptr [eax + 0x28]         // 0050dec5
-        movq qword ptr [eax + 0x10], mm7         // 0050dec9
-        movq mm4, qword ptr [esp + 0x40]         // 0050decd
-        movq qword ptr [eax + 0x18], mm3         // 0050ded2
-        punpckhdq mm2, mm0                       // 0050ded6
-        movq mm5, qword ptr [esp + 0x50]         // 0050ded9
-        punpckhdq mm3, mm1                       // 0050dede
-        movq mm6, qword ptr [esp + 0x60]         // 0050dee1
-        punpckldq mm0, mm0                       // 0050dee6
-        punpckldq mm1, mm1                       // 0050dee9
-        pfmul mm4, mm0                           // 0050deec
-        punpckhdq mm2, mm2                       // 0050def0
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050def3
-        movq mm7, qword ptr [esp + 0x70]         // 0050def9
-        pfmul mm5, mm2                           // 0050defe
-        punpckhdq mm3, mm3                       // 0050df02
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050df05
-        pfadd mm5, mm4                           // 0050df0b
-        pfmul mm6, mm1                           // 0050df0f
-        pfadd mm2, mm0                           // 0050df13
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050df17
-        pfadd mm6, mm5                           // 0050df1d
-        pfmul mm7, mm3                           // 0050df21
-        pfadd mm2, mm1                           // 0050df25
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050df29
-        pfadd mm7, mm6                           // 0050df2f
-        movq mm0, qword ptr [eax + 0x30]         // 0050df33
-        pfadd mm3, mm2                           // 0050df37
-        movq mm1, qword ptr [eax + 0x38]         // 0050df3b
-        movq qword ptr [eax + 0x20], mm7         // 0050df3f
-        movq mm4, qword ptr [esp + 0x40]         // 0050df43
-        movq qword ptr [eax + 0x28], mm3         // 0050df48
-        punpckhdq mm2, mm0                       // 0050df4c
-        movq mm5, qword ptr [esp + 0x50]         // 0050df4f
-        punpckhdq mm3, mm1                       // 0050df54
-        movq mm6, qword ptr [esp + 0x60]         // 0050df57
-        punpckldq mm0, mm0                       // 0050df5c
-        punpckldq mm1, mm1                       // 0050df5f
-        pfmul mm4, mm0                           // 0050df62
-        punpckhdq mm2, mm2                       // 0050df66
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050df69
-        movq mm7, qword ptr [esp + 0x70]         // 0050df6f
-        pfmul mm5, mm2                           // 0050df74
-        punpckhdq mm3, mm3                       // 0050df78
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050df7b
-        pfadd mm5, mm4                           // 0050df81
-        pfmul mm6, mm1                           // 0050df85
-        pfadd mm2, mm0                           // 0050df89
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050df8d
-        pfadd mm6, mm5                           // 0050df93
-        pfmul mm7, mm3                           // 0050df97
-        pfadd mm2, mm1                           // 0050df9b
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050df9f
-        pfadd mm7, mm6                           // 0050dfa5
-        pfadd mm3, mm2                           // 0050dfa9
-        movq qword ptr [eax + 0x30], mm7         // 0050dfad
-        movq qword ptr [eax + 0x38], mm3         // 0050dfb1
-        movq mm0, qword ptr [eax + 0x30]         // 0050dfb5
-        movd mm1, dword ptr [eax + 0x38]         // 0050dfb9
-        movq mm2, qword ptr [edx]                // 0050dfbd
-        movd mm3, dword ptr [edx + 8]            // 0050dfc0
-        pfadd mm0, mm2                           // 0050dfc4
-        pfadd mm1, mm3                           // 0050dfc8
-        movq qword ptr [eax + 0x30], mm0         // 0050dfcc
-        movd dword ptr [eax + 0x38], mm1         // 0050dfd0
-        jmp L_50e1af                             // 0050dfd4
-    L_50dfd9:
-        movq mm0, qword ptr [eax]                // 0050dfd9
-        movq mm1, qword ptr [eax + 8]            // 0050dfdc
-        movq mm4, qword ptr [esp + 0x40]         // 0050dfe0
-        punpckhdq mm2, mm0                       // 0050dfe5
-        movq mm5, qword ptr [esp + 0x50]         // 0050dfe8
-        punpckhdq mm3, mm1                       // 0050dfed
-        movq mm6, qword ptr [esp + 0x60]         // 0050dff0
-        punpckldq mm0, mm0                       // 0050dff5
-        punpckldq mm1, mm1                       // 0050dff8
-        pfmul mm4, mm0                           // 0050dffb
-        punpckhdq mm2, mm2                       // 0050dfff
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050e002
-        movq mm7, qword ptr [esp + 0x70]         // 0050e008
-        pfmul mm5, mm2                           // 0050e00d
-        punpckhdq mm3, mm3                       // 0050e011
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050e014
-        pfadd mm5, mm4                           // 0050e01a
-        pfmul mm6, mm1                           // 0050e01e
-        pfadd mm2, mm0                           // 0050e022
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050e026
-        pfadd mm6, mm5                           // 0050e02c
-        pfmul mm7, mm3                           // 0050e030
-        pfadd mm2, mm1                           // 0050e034
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050e038
-        pfadd mm7, mm6                           // 0050e03e
-        movq mm0, qword ptr [eax + 0x10]         // 0050e042
-        pfadd mm3, mm2                           // 0050e046
-        movq mm1, qword ptr [eax + 0x18]         // 0050e04a
-        movq qword ptr [eax], mm7                // 0050e04e
-        movq mm4, qword ptr [esp + 0x40]         // 0050e051
-        movq qword ptr [eax + 8], mm3            // 0050e056
-        punpckhdq mm2, mm0                       // 0050e05a
-        movq mm5, qword ptr [esp + 0x50]         // 0050e05d
-        punpckhdq mm3, mm1                       // 0050e062
-        movq mm6, qword ptr [esp + 0x60]         // 0050e065
-        punpckldq mm0, mm0                       // 0050e06a
-        punpckldq mm1, mm1                       // 0050e06d
-        pfmul mm4, mm0                           // 0050e070
-        punpckhdq mm2, mm2                       // 0050e074
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050e077
-        movq mm7, qword ptr [esp + 0x70]         // 0050e07d
-        pfmul mm5, mm2                           // 0050e082
-        punpckhdq mm3, mm3                       // 0050e086
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050e089
-        pfadd mm5, mm4                           // 0050e08f
-        pfmul mm6, mm1                           // 0050e093
-        pfadd mm2, mm0                           // 0050e097
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050e09b
-        pfadd mm6, mm5                           // 0050e0a1
-        pfmul mm7, mm3                           // 0050e0a5
-        pfadd mm2, mm1                           // 0050e0a9
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050e0ad
-        pfadd mm7, mm6                           // 0050e0b3
-        movq mm0, qword ptr [eax + 0x20]         // 0050e0b7
-        pfadd mm3, mm2                           // 0050e0bb
-        movq mm1, qword ptr [eax + 0x28]         // 0050e0bf
-        movq qword ptr [eax + 0x10], mm7         // 0050e0c3
-        movq mm4, qword ptr [esp + 0x40]         // 0050e0c7
-        movq qword ptr [eax + 0x18], mm3         // 0050e0cc
-        punpckhdq mm2, mm0                       // 0050e0d0
-        movq mm5, qword ptr [esp + 0x50]         // 0050e0d3
-        punpckhdq mm3, mm1                       // 0050e0d8
-        movq mm6, qword ptr [esp + 0x60]         // 0050e0db
-        punpckldq mm0, mm0                       // 0050e0e0
-        punpckldq mm1, mm1                       // 0050e0e3
-        pfmul mm4, mm0                           // 0050e0e6
-        punpckhdq mm2, mm2                       // 0050e0ea
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050e0ed
-        movq mm7, qword ptr [esp + 0x70]         // 0050e0f3
-        pfmul mm5, mm2                           // 0050e0f8
-        punpckhdq mm3, mm3                       // 0050e0fc
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050e0ff
-        pfadd mm5, mm4                           // 0050e105
-        pfmul mm6, mm1                           // 0050e109
-        pfadd mm2, mm0                           // 0050e10d
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050e111
-        pfadd mm6, mm5                           // 0050e117
-        pfmul mm7, mm3                           // 0050e11b
-        pfadd mm2, mm1                           // 0050e11f
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050e123
-        pfadd mm7, mm6                           // 0050e129
-        movq mm0, qword ptr [eax + 0x30]         // 0050e12d
-        pfadd mm3, mm2                           // 0050e131
-        movq mm1, qword ptr [eax + 0x38]         // 0050e135
-        movq qword ptr [eax + 0x20], mm7         // 0050e139
-        movq mm4, qword ptr [esp + 0x40]         // 0050e13d
-        movq qword ptr [eax + 0x28], mm3         // 0050e142
-        punpckhdq mm2, mm0                       // 0050e146
-        movq mm5, qword ptr [esp + 0x50]         // 0050e149
-        punpckhdq mm3, mm1                       // 0050e14e
-        movq mm6, qword ptr [esp + 0x60]         // 0050e151
-        punpckldq mm0, mm0                       // 0050e156
-        punpckldq mm1, mm1                       // 0050e159
-        pfmul mm4, mm0                           // 0050e15c
-        punpckhdq mm2, mm2                       // 0050e160
-        pfmul mm0, qword ptr [esp + 0x48]        // 0050e163
-        movq mm7, qword ptr [esp + 0x70]         // 0050e169
-        pfmul mm5, mm2                           // 0050e16e
-        punpckhdq mm3, mm3                       // 0050e172
-        pfmul mm2, qword ptr [esp + 0x58]        // 0050e175
-        pfadd mm5, mm4                           // 0050e17b
-        pfmul mm6, mm1                           // 0050e17f
-        pfadd mm2, mm0                           // 0050e183
-        pfmul mm1, qword ptr [esp + 0x68]        // 0050e187
-        pfadd mm6, mm5                           // 0050e18d
-        pfmul mm7, mm3                           // 0050e191
-        pfadd mm2, mm1                           // 0050e195
-        pfmul mm3, qword ptr [esp + 0x78]        // 0050e199
-        pfadd mm7, mm6                           // 0050e19f
-        pfadd mm3, mm2                           // 0050e1a3
-        movq qword ptr [eax + 0x30], mm7         // 0050e1a7
-        movq qword ptr [eax + 0x38], mm3         // 0050e1ab
-    L_50e1af:
-        mov ecx, dword ptr [ebp + 0x20]          // 0050e1af
-        test ecx, ecx                            // 0050e1b2
-        je L_50e1d5                              // 0050e1b4
-        movq mm0, qword ptr [eax + 0x30]         // 0050e1b6
-        movd mm1, dword ptr [eax + 0x38]         // 0050e1ba
-        movq mm2, qword ptr [ecx]                // 0050e1be
-        movd mm3, dword ptr [ecx + 8]            // 0050e1c1
-        pfadd mm0, mm2                           // 0050e1c5
-        pfadd mm1, mm3                           // 0050e1c9
-        movq qword ptr [eax + 0x30], mm0         // 0050e1cd
-        movd dword ptr [eax + 0x38], mm1         // 0050e1d1
-    L_50e1d5:
-        mov esp, ebp                             // 0050e1d5
-        pop ebp                                  // 0050e1d7
-        femms                                    // 0050e1d8
-        ret 0x1c                                 // 0050e1da
-    }
-}
-
-// HAND-LIFT 0x0050e1dd RwCoreLift_0050e1dd  (195 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050e1dd(void) {
-    __asm {
-        mov edx, dword ptr [esp + 0xc]           // 0050e1dd
-        sub esp, 0x40                            // 0050e1e1
-        movq mm1, qword ptr [edx + 0x10]         // 0050e1e4
-        movq mm2, qword ptr [edx + 0x20]         // 0050e1e8
-        pswapd mm5, mm1                          // 0050e1ec
-        movq mm3, qword ptr [edx + 0x30]         // 0050e1f0
-        pswapd mm4, mm2                          // 0050e1f4
-        movq mm0, qword ptr [edx]                // 0050e1f8
-        pswapd mm6, mm3                          // 0050e1fb
-        pswapd mm7, mm2                          // 0050e1ff
-        pfmul mm5, mm0                           // 0050e203
-        pfmul mm4, mm0                           // 0050e207
-        pfmul mm6, mm0                           // 0050e20b
-        pswapd mm0, mm3                          // 0050e20f
-        pfmul mm7, mm1                           // 0050e213
-        pfnacc mm5, mm4                          // 0050e217
-        pfmul mm1, mm0                           // 0050e21b
-        pfmul mm2, mm0                           // 0050e21f
-        pfnacc mm6, mm7                          // 0050e223
-        pfnacc mm1, mm2                          // 0050e227
-        movq mm0, qword ptr [edx + 0x38]         // 0050e22b
-        movq mm2, mm6                            // 0050e22f
-        movq mm4, mm1                            // 0050e232
-        movq mm7, qword ptr [edx + 0x28]         // 0050e235
-        punpckhdq mm2, mm2                       // 0050e239
-        movq mm3, mm1                            // 0050e23c
-        punpckhdq mm4, mm4                       // 0050e23f
-        pfmul mm2, mm0                           // 0050e242
-        punpckldq mm3, mm3                       // 0050e246
-        pfmul mm4, qword ptr [edx + 0x18]        // 0050e249
-        pfmul mm3, mm7                           // 0050e24e
-        pfadd mm2, mm4                           // 0050e252
-        movq mm4, mm6                            // 0050e256
-        pfsub mm2, mm3                           // 0050e259
-        movq mm3, mm1                            // 0050e25d
-        punpckldq mm4, mm4                       // 0050e260
-        movq qword ptr [esp + 8], mm2            // 0050e263
-        movq mm2, mm5                            // 0050e268
-        punpckhdq mm3, mm3                       // 0050e26b
-        punpckhdq mm2, mm2                       // 0050e26e
-        pfmul mm3, qword ptr [edx + 8]           // 0050e271
-        pfmul mm2, mm0                           // 0050e276
-        pfmul mm4, mm7                           // 0050e27a
-        pfsub mm2, mm4                           // 0050e27e
-        pfadd mm2, mm3                           // 0050e282
-        movq qword ptr [esp + 0x18], mm2         // 0050e286
-        movq mm2, mm5                            // 0050e28b
-        movq mm3, mm6                            // 0050e28e
-        punpckldq mm1, mm1                       // 0050e291
-        punpckldq mm2, mm2                       // 0050e294
-        punpckldq mm3, mm3                       // 0050e297
-        pfmul mm1, qword ptr [edx + 8]           // 0050e29a
-        pfmul mm0, mm2                           // 0050e29f
-        pfmul mm3, qword ptr [edx + 0x18]        // 0050e2a3
-        pfadd mm0, mm1                           // 0050e2a8
-        pfsub mm0, mm3                           // 0050e2ac
-        movq qword ptr [esp + 0x28], mm0         // 0050e2b0
-        punpckhdq mm5, mm5                       // 0050e2b5
-        punpckhdq mm6, mm6                       // 0050e2b8
-        pfmul mm2, mm7                           // 0050e2bb
-        pfmul mm5, qword ptr [edx + 0x18]        // 0050e2bf
-        movq mm0, qword ptr [edx + 8]            // 0050e2c4
-        pfmul mm6, qword ptr [edx + 8]           // 0050e2c8
-        pfsub mm2, mm5                           // 0050e2cd
-        pfadd mm2, mm6                           // 0050e2d1
-        movq qword ptr [esp + 0x38], mm2         // 0050e2d5
-        movq mm1, qword ptr [edx + 0x18]         // 0050e2da
-        movq mm2, qword ptr [edx + 0x28]         // 0050e2de
-        movq mm3, qword ptr [edx + 0x38]         // 0050e2e2
-        pswapd mm5, mm1                          // 0050e2e6
-        pswapd mm4, mm2                          // 0050e2ea
-        pfmul mm5, mm0                           // 0050e2ee
-        pswapd mm6, mm3                          // 0050e2f2
-        pfmul mm4, mm0                           // 0050e2f6
-        pswapd mm7, mm2                          // 0050e2fa
-        pfmul mm6, mm0                           // 0050e2fe
-        pswapd mm0, mm3                          // 0050e302
-        pfnacc mm5, mm4                          // 0050e306
-        pfmul mm7, mm1                           // 0050e30a
-        pfmul mm1, mm0                           // 0050e30e
-        pfmul mm2, mm0                           // 0050e312
-        pfnacc mm6, mm7                          // 0050e316
-        pfnacc mm1, mm2                          // 0050e31a
-        movq mm0, qword ptr [edx + 0x30]         // 0050e31e
-        movq mm4, mm1                            // 0050e322
-        movq mm3, mm1                            // 0050e325
-        movq mm7, qword ptr [edx + 0x20]         // 0050e328
-        movq mm2, mm6                            // 0050e32c
-        punpckhdq mm4, mm4                       // 0050e32f
-        punpckldq mm3, mm3                       // 0050e332
-        punpckhdq mm2, mm2                       // 0050e335
-        pfmul mm4, qword ptr [edx + 0x10]        // 0050e338
-        pfmul mm2, mm0                           // 0050e33d
-        pfmul mm3, mm7                           // 0050e341
-        pfadd mm2, mm4                           // 0050e345
-        pfsub mm2, mm3                           // 0050e349
-        movq qword ptr [esp], mm2                // 0050e34d
-        movq mm3, mm1                            // 0050e351
-        movq mm4, mm6                            // 0050e354
-        movq mm2, mm5                            // 0050e357
-        punpckhdq mm3, mm3                       // 0050e35a
-        punpckldq mm4, mm4                       // 0050e35d
-        punpckhdq mm2, mm2                       // 0050e360
-        pfmul mm3, qword ptr [edx]               // 0050e363
-        pfmul mm2, mm0                           // 0050e367
-        pfmul mm4, mm7                           // 0050e36b
-        pfsub mm2, mm4                           // 0050e36f
-        pfadd mm2, mm3                           // 0050e373
-        movq qword ptr [esp + 0x10], mm2         // 0050e377
-        movq mm4, mm0                            // 0050e37c
-        movq mm2, mm5                            // 0050e37f
-        movq mm3, mm6                            // 0050e382
-        punpckldq mm1, mm1                       // 0050e385
-        punpckldq mm2, mm2                       // 0050e388
-        punpckldq mm3, mm3                       // 0050e38b
-        pfmul mm1, qword ptr [edx]               // 0050e38e
-        pfmul mm0, mm2                           // 0050e392
-        pfmul mm3, qword ptr [edx + 0x10]        // 0050e396
-        pfadd mm0, mm1                           // 0050e39b
-        pfsub mm0, mm3                           // 0050e39f
-        movq qword ptr [esp + 0x20], mm0         // 0050e3a3
-        punpckhdq mm5, mm5                       // 0050e3a8
-        punpckhdq mm6, mm6                       // 0050e3ab
-        pfmul mm2, mm7                           // 0050e3ae
-        pfmul mm5, qword ptr [edx + 0x10]        // 0050e3b2
-        pfmul mm6, qword ptr [edx]               // 0050e3b7
-        pfsub mm2, mm5                           // 0050e3bb
-        pfadd mm2, mm6                           // 0050e3bf
-        movq qword ptr [esp + 0x30], mm2         // 0050e3c3
-        punpckhdq mm0, mm2                       // 0050e3c8
-        punpckldq mm7, mm4                       // 0050e3cb
-        movq mm3, qword ptr [edx]                // 0050e3ce
-        movq mm1, qword ptr [esp]                // 0050e3d1
-        punpckldq mm3, dword ptr [edx + 0x10]    // 0050e3d5
-        punpckhdq mm1, qword ptr [esp + 0x10]    // 0050e3d9
-        pfmul mm0, mm7                           // 0050e3de
-        pfmul mm3, mm1                           // 0050e3e2
-        pfnacc mm0, mm3                          // 0050e3e6
-        mov eax, dword ptr [esp + 0x48]          // 0050e3ea
-        pfacc mm0, mm0                           // 0050e3ee
-        test eax, eax                            // 0050e3f2
-        movq mm4, mm0                            // 0050e3f4
-        je L_50e3fc                              // 0050e3f7
-        movd dword ptr [eax], mm0                // 0050e3f9
-    L_50e3fc:
-        pfrcp mm1, mm0                           // 0050e3fc
-        pxor mm3, mm3                            // 0050e400
-        punpckldq mm0, mm0                       // 0050e403
-        pfcmpeq mm3, mm4                         // 0050e406
-        pfrcpit1 mm0, mm1                        // 0050e40a
-        pfrcpit2 mm0, mm1                        // 0050e40e
-        movd eax, mm3                            // 0050e412
-        pfmul mm0, qword ptr ds:[0x005db298]     // 0050e415
-        test eax, eax                            // 0050e41d
-        pswapd mm1, mm0                          // 0050e41f
-        jne L_50e4b7                             // 0050e423
-        mov eax, dword ptr [esp + 0x44]          // 0050e429
-        movq mm2, qword ptr [esp]                // 0050e42d
-        movq mm5, qword ptr [esp + 8]            // 0050e431
-        movq mm3, qword ptr [esp + 0x10]         // 0050e436
-        movq mm6, qword ptr [esp + 0x18]         // 0050e43b
-        pfmul mm2, mm1                           // 0050e440
-        pfmul mm3, mm0                           // 0050e444
-        pfmul mm5, mm1                           // 0050e448
-        pfmul mm6, mm0                           // 0050e44c
-        movq mm4, mm2                            // 0050e450
-        movq mm7, mm5                            // 0050e453
-        punpckhdq mm2, mm3                       // 0050e456
-        punpckldq mm4, mm3                       // 0050e459
-        punpckhdq mm5, mm6                       // 0050e45c
-        punpckldq mm7, mm6                       // 0050e45f
-        movq qword ptr [eax], mm2                // 0050e462
-        movq qword ptr [eax + 0x10], mm4         // 0050e465
-        movq qword ptr [eax + 0x20], mm5         // 0050e469
-        movq qword ptr [eax + 0x30], mm7         // 0050e46d
-        movq mm2, qword ptr [esp + 0x20]         // 0050e471
-        movq mm5, qword ptr [esp + 0x28]         // 0050e476
-        movq mm3, qword ptr [esp + 0x30]         // 0050e47b
-        movq mm6, qword ptr [esp + 0x38]         // 0050e480
-        pfmul mm2, mm1                           // 0050e485
-        pfmul mm3, mm0                           // 0050e489
-        pfmul mm5, mm1                           // 0050e48d
-        pfmul mm6, mm0                           // 0050e491
-        movq mm4, mm2                            // 0050e495
-        movq mm7, mm5                            // 0050e498
-        punpckhdq mm2, mm3                       // 0050e49b
-        punpckldq mm4, mm3                       // 0050e49e
-        punpckhdq mm5, mm6                       // 0050e4a1
-        punpckldq mm7, mm6                       // 0050e4a4
-        movq qword ptr [eax + 8], mm2            // 0050e4a7
-        movq qword ptr [eax + 0x18], mm4         // 0050e4ab
-        movq qword ptr [eax + 0x28], mm5         // 0050e4af
-        movq qword ptr [eax + 0x38], mm7         // 0050e4b3
-    L_50e4b7:
-        femms                                    // 0050e4b7
-        add esp, 0x40                            // 0050e4b9
-        ret 0xc                                  // 0050e4bc
-    }
-}
-
-// HAND-LIFT 0x0050e4bf RwCoreLift_0050e4bf  (253 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050e4bf(void) {
-    __asm {
-        femms                                    // 0050e4bf
-        sub esp, 0x44                            // 0050e4c1
-        mov edx, dword ptr [esp + 0x50]          // 0050e4c4
-        mov dword ptr [esp + 0x40], ebp          // 0050e4c8
-        mov ebp, esp                             // 0050e4cc
-        and esp, 0xfffffff8                      // 0050e4ce
-        movq mm0, qword ptr [edx]                // 0050e4d1
-        movq mm1, qword ptr [edx + 0x10]         // 0050e4d4
-        movq mm3, qword ptr [edx + 0x28]         // 0050e4d8
-        movq mm4, qword ptr [edx + 0x38]         // 0050e4dc
-        movq mm2, mm0                            // 0050e4e0
-        punpckldq mm0, mm1                       // 0050e4e3
-        punpckhdq mm2, mm1                       // 0050e4e6
-        movq mm5, mm3                            // 0050e4e9
-        movq qword ptr [esp], mm0                // 0050e4ec
-        movq qword ptr [esp + 0x10], mm2         // 0050e4f0
-        movq mm6, qword ptr [edx + 8]            // 0050e4f5
-        punpckldq mm3, mm4                       // 0050e4f9
-        movq mm7, qword ptr [edx + 0x18]         // 0050e4fc
-        movq mm0, qword ptr [edx + 0x20]         // 0050e500
-        punpckhdq mm5, mm4                       // 0050e504
-        movq mm1, mm6                            // 0050e507
-        movq qword ptr [esp + 0x28], mm3         // 0050e50a
-        movq qword ptr [esp + 0x38], mm5         // 0050e50f
-        mov ecx, dword ptr [ebp + 0x4c]          // 0050e514
-        cmp ecx, dword ptr [ebp + 0x48]          // 0050e517
-        punpckldq mm6, mm7                       // 0050e51a
-        movq mm4, qword ptr [edx + 0x30]         // 0050e51d
-        movq mm2, mm0                            // 0050e521
-        punpckhdq mm1, mm7                       // 0050e524
-        movq qword ptr [esp + 0x20], mm6         // 0050e527
-        punpckhdq mm0, mm4                       // 0050e52c
-        punpckldq mm2, mm4                       // 0050e52f
-        movq qword ptr [esp + 0x30], mm1         // 0050e532
-        movq qword ptr [esp + 0x18], mm0         // 0050e537
-        movq qword ptr [esp + 8], mm2            // 0050e53c
-        je L_50e6e2                              // 0050e541
-        mov eax, dword ptr [ebp + 0x48]          // 0050e547
-        movq mm0, qword ptr [esp]                // 0050e54a
-        movq mm1, qword ptr [esp + 8]            // 0050e54e
-        movq mm2, mm0                            // 0050e553
-        movq mm3, mm1                            // 0050e556
-        movq mm4, mm0                            // 0050e559
-        movq mm5, mm1                            // 0050e55c
-        pfmul mm0, qword ptr [ecx]               // 0050e55f
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e563
-        movq mm6, mm2                            // 0050e568
-        movq mm7, mm3                            // 0050e56b
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e56e
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e573
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e578
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e57d
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e582
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e587
-        pfacc mm0, mm2                           // 0050e58c
-        pfacc mm1, mm3                           // 0050e590
-        pfacc mm4, mm6                           // 0050e594
-        pfacc mm5, mm7                           // 0050e598
-        pfadd mm0, mm1                           // 0050e59c
-        pfadd mm4, mm5                           // 0050e5a0
-        movq qword ptr [eax], mm0                // 0050e5a4
-        movq qword ptr [eax + 8], mm4            // 0050e5a7
-        movq mm0, qword ptr [esp + 0x10]         // 0050e5ab
-        movq mm1, qword ptr [esp + 0x18]         // 0050e5b0
-        movq mm2, mm0                            // 0050e5b5
-        movq mm3, mm1                            // 0050e5b8
-        movq mm4, mm0                            // 0050e5bb
-        movq mm5, mm1                            // 0050e5be
-        pfmul mm0, qword ptr [ecx]               // 0050e5c1
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e5c5
-        movq mm6, mm2                            // 0050e5ca
-        movq mm7, mm3                            // 0050e5cd
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e5d0
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e5d5
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e5da
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e5df
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e5e4
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e5e9
-        pfacc mm0, mm2                           // 0050e5ee
-        pfacc mm1, mm3                           // 0050e5f2
-        pfacc mm4, mm6                           // 0050e5f6
-        pfacc mm5, mm7                           // 0050e5fa
-        pfadd mm0, mm1                           // 0050e5fe
-        pfadd mm4, mm5                           // 0050e602
-        movq qword ptr [eax + 0x10], mm0         // 0050e606
-        movq qword ptr [eax + 0x18], mm4         // 0050e60a
-        movq mm0, qword ptr [esp + 0x20]         // 0050e60e
-        movq mm1, qword ptr [esp + 0x28]         // 0050e613
-        movq mm2, mm0                            // 0050e618
-        movq mm3, mm1                            // 0050e61b
-        movq mm4, mm0                            // 0050e61e
-        movq mm5, mm1                            // 0050e621
-        pfmul mm0, qword ptr [ecx]               // 0050e624
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e628
-        movq mm6, mm2                            // 0050e62d
-        movq mm7, mm3                            // 0050e630
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e633
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e638
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e63d
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e642
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e647
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e64c
-        pfacc mm0, mm2                           // 0050e651
-        pfacc mm1, mm3                           // 0050e655
-        pfacc mm4, mm6                           // 0050e659
-        pfacc mm5, mm7                           // 0050e65d
-        pfadd mm0, mm1                           // 0050e661
-        pfadd mm4, mm5                           // 0050e665
-        movq qword ptr [eax + 0x20], mm0         // 0050e669
-        movq qword ptr [eax + 0x28], mm4         // 0050e66d
-        movq mm0, qword ptr [esp + 0x30]         // 0050e671
-        movq mm1, qword ptr [esp + 0x38]         // 0050e676
-        movq mm2, mm0                            // 0050e67b
-        movq mm3, mm1                            // 0050e67e
-        movq mm4, mm0                            // 0050e681
-        movq mm5, mm1                            // 0050e684
-        pfmul mm0, qword ptr [ecx]               // 0050e687
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e68b
-        movq mm6, mm2                            // 0050e690
-        movq mm7, mm3                            // 0050e693
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e696
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e69b
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e6a0
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e6a5
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e6aa
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e6af
-        pfacc mm0, mm2                           // 0050e6b4
-        pfacc mm1, mm3                           // 0050e6b8
-        pfacc mm4, mm6                           // 0050e6bc
-        pfacc mm5, mm7                           // 0050e6c0
-        pfadd mm0, mm1                           // 0050e6c4
-        pfadd mm4, mm5                           // 0050e6c8
-        movq qword ptr [eax + 0x30], mm0         // 0050e6cc
-        movq qword ptr [eax + 0x38], mm4         // 0050e6d0
-        mov esp, ebp                             // 0050e6d4
-        mov ebp, dword ptr [esp + 0x40]          // 0050e6d6
-        add esp, 0x44                            // 0050e6da
-        femms                                    // 0050e6dd
-        ret 0xc                                  // 0050e6df
-    L_50e6e2:
-        mov eax, dword ptr [ebp + 0x48]          // 0050e6e2
-        movq mm0, qword ptr [esp]                // 0050e6e5
-        movq mm1, qword ptr [esp + 8]            // 0050e6e9
-        movq mm2, mm0                            // 0050e6ee
-        movq mm3, mm1                            // 0050e6f1
-        movq mm4, mm0                            // 0050e6f4
-        movq mm5, mm1                            // 0050e6f7
-        pfmul mm0, qword ptr [ecx]               // 0050e6fa
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e6fe
-        movq mm6, mm2                            // 0050e703
-        movq mm7, mm3                            // 0050e706
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e709
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e70e
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e713
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e718
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e71d
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e722
-        pfacc mm0, mm2                           // 0050e727
-        pfacc mm1, mm3                           // 0050e72b
-        pfacc mm4, mm6                           // 0050e72f
-        pfacc mm5, mm7                           // 0050e733
-        pfadd mm0, mm1                           // 0050e737
-        pfadd mm4, mm5                           // 0050e73b
-        movq qword ptr [esp], mm0                // 0050e73f
-        movq qword ptr [esp + 8], mm4            // 0050e743
-        movq mm0, qword ptr [esp + 0x10]         // 0050e748
-        movq mm1, qword ptr [esp + 0x18]         // 0050e74d
-        movq mm2, mm0                            // 0050e752
-        movq mm3, mm1                            // 0050e755
-        movq mm4, mm0                            // 0050e758
-        movq mm5, mm1                            // 0050e75b
-        pfmul mm0, qword ptr [ecx]               // 0050e75e
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e762
-        movq mm6, mm2                            // 0050e767
-        movq mm7, mm3                            // 0050e76a
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e76d
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e772
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e777
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e77c
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e781
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e786
-        pfacc mm0, mm2                           // 0050e78b
-        pfacc mm1, mm3                           // 0050e78f
-        pfacc mm4, mm6                           // 0050e793
-        pfacc mm5, mm7                           // 0050e797
-        pfadd mm0, mm1                           // 0050e79b
-        pfadd mm4, mm5                           // 0050e79f
-        movq qword ptr [esp + 0x10], mm0         // 0050e7a3
-        movq qword ptr [esp + 0x18], mm4         // 0050e7a8
-        movq mm0, qword ptr [esp + 0x20]         // 0050e7ad
-        movq mm1, qword ptr [esp + 0x28]         // 0050e7b2
-        movq mm2, mm0                            // 0050e7b7
-        movq mm3, mm1                            // 0050e7ba
-        movq mm4, mm0                            // 0050e7bd
-        movq mm5, mm1                            // 0050e7c0
-        pfmul mm0, qword ptr [ecx]               // 0050e7c3
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e7c7
-        movq mm6, mm2                            // 0050e7cc
-        movq mm7, mm3                            // 0050e7cf
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e7d2
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e7d7
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e7dc
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e7e1
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e7e6
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e7eb
-        pfacc mm0, mm2                           // 0050e7f0
-        pfacc mm1, mm3                           // 0050e7f4
-        pfacc mm4, mm6                           // 0050e7f8
-        pfacc mm5, mm7                           // 0050e7fc
-        pfadd mm0, mm1                           // 0050e800
-        pfadd mm4, mm5                           // 0050e804
-        movq qword ptr [esp + 0x20], mm0         // 0050e808
-        movq qword ptr [esp + 0x28], mm4         // 0050e80d
-        movq mm0, qword ptr [esp + 0x30]         // 0050e812
-        movq mm1, qword ptr [esp + 0x38]         // 0050e817
-        movq mm2, mm0                            // 0050e81c
-        movq mm3, mm1                            // 0050e81f
-        movq mm4, mm0                            // 0050e822
-        movq mm5, mm1                            // 0050e825
-        pfmul mm0, qword ptr [ecx]               // 0050e828
-        pfmul mm1, qword ptr [ecx + 8]           // 0050e82c
-        movq mm6, mm2                            // 0050e831
-        movq mm7, mm3                            // 0050e834
-        pfmul mm2, qword ptr [ecx + 0x10]        // 0050e837
-        pfmul mm3, qword ptr [ecx + 0x18]        // 0050e83c
-        pfmul mm4, qword ptr [ecx + 0x20]        // 0050e841
-        pfmul mm5, qword ptr [ecx + 0x28]        // 0050e846
-        pfmul mm6, qword ptr [ecx + 0x30]        // 0050e84b
-        pfmul mm7, qword ptr [ecx + 0x38]        // 0050e850
-        pfacc mm0, mm2                           // 0050e855
-        pfacc mm1, mm3                           // 0050e859
-        pfacc mm4, mm6                           // 0050e85d
-        pfacc mm5, mm7                           // 0050e861
-        pfadd mm0, mm1                           // 0050e865
-        pfadd mm4, mm5                           // 0050e869
-        movq qword ptr [eax + 0x30], mm0         // 0050e86d
-        movq qword ptr [eax + 0x38], mm4         // 0050e871
-        movq mm0, qword ptr [esp]                // 0050e875
-        movq mm1, qword ptr [esp + 8]            // 0050e879
-        movq mm2, qword ptr [esp + 0x10]         // 0050e87e
-        movq mm3, qword ptr [esp + 0x18]         // 0050e883
-        movq mm4, qword ptr [esp + 0x20]         // 0050e888
-        movq mm5, qword ptr [esp + 0x28]         // 0050e88d
-        movq qword ptr [eax], mm0                // 0050e892
-        movq qword ptr [eax + 8], mm1            // 0050e895
-        movq qword ptr [eax + 0x10], mm2         // 0050e899
-        movq qword ptr [eax + 0x18], mm3         // 0050e89d
-        movq qword ptr [eax + 0x20], mm4         // 0050e8a1
-        movq qword ptr [eax + 0x28], mm5         // 0050e8a5
-        mov esp, ebp                             // 0050e8a9
-        mov ebp, dword ptr [esp + 0x40]          // 0050e8ab
-        add esp, 0x44                            // 0050e8af
-        femms                                    // 0050e8b2
-        ret 0xc                                  // 0050e8b4
-    }
-}
-
-// HAND-LIFT 0x0050e8b7 RwCoreLift_0050e8b7  (230 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0050e8b7(void) {
-    __asm {
-        push ebp                                 // 0050e8b7
-        mov ebp, esp                             // 0050e8b8
-        sub esp, 0x44                            // 0050e8ba
-        mov edx, dword ptr [ebp + 0x10]          // 0050e8bd
-        movq mm0, qword ptr [edx]                // 0050e8c0
-        movq mm1, qword ptr [edx + 0x10]         // 0050e8c3
-        movq mm2, qword ptr [edx + 0x20]         // 0050e8c7
-        movq mm4, mm0                            // 0050e8cb
-        movq mm5, mm0                            // 0050e8ce
-        movq mm6, mm1                            // 0050e8d1
-        movq mm7, mm1                            // 0050e8d4
-        punpckhdq mm4, mm4                       // 0050e8d7
-        punpckldq mm6, mm2                       // 0050e8da
-        punpckldq mm5, mm5                       // 0050e8dd
-        punpckhdq mm7, mm2                       // 0050e8e0
-        pfmul mm4, mm6                           // 0050e8e3
-        pfmul mm5, mm7                           // 0050e8e7
-        movq mm3, qword ptr [edx + 0x30]         // 0050e8eb
-        movq mm7, mm0                            // 0050e8ef
-        pfsub mm5, mm4                           // 0050e8f2
-        punpckldq mm0, mm1                       // 0050e8f6
-        punpckhdq mm7, mm1                       // 0050e8f9
-        movq mm6, mm3                            // 0050e8fc
-        movq mm4, mm3                            // 0050e8ff
-        punpckhdq mm3, mm3                       // 0050e902
-        punpckhdq mm6, mm2                       // 0050e905
-        punpckldq mm4, mm2                       // 0050e908
-        punpckhdq mm1, mm2                       // 0050e90b
-        pfmul mm6, mm0                           // 0050e90e
-        punpckhdq mm0, mm4                       // 0050e912
-        pfmul mm7, mm4                           // 0050e915
-        punpckldq mm4, mm4                       // 0050e919
-        pfmul mm0, mm3                           // 0050e91c
-        pfmul mm1, mm4                           // 0050e920
-        pfsub mm6, mm7                           // 0050e924
-        pfsubr mm1, mm0                          // 0050e928
-        movq mm0, qword ptr [edx + 0x38]         // 0050e92c
-        movq mm2, mm6                            // 0050e930
-        movq mm4, mm1                            // 0050e933
-        movq mm7, qword ptr [edx + 0x28]         // 0050e936
-        punpckhdq mm2, mm2                       // 0050e93a
-        movq mm3, mm1                            // 0050e93d
-        punpckhdq mm4, mm4                       // 0050e940
-        pfmul mm2, mm0                           // 0050e943
-        punpckldq mm3, mm3                       // 0050e947
-        pfmul mm4, qword ptr [edx + 0x18]        // 0050e94a
-        pfmul mm3, mm7                           // 0050e94f
-        pfadd mm2, mm4                           // 0050e953
-        movq mm4, mm6                            // 0050e957
-        pfsub mm2, mm3                           // 0050e95a
-        movq mm3, mm1                            // 0050e95e
-        punpckldq mm4, mm4                       // 0050e961
-        movq qword ptr [ebp - 0x3c], mm2         // 0050e964
-        movq mm2, mm5                            // 0050e968
-        punpckhdq mm3, mm3                       // 0050e96b
-        punpckhdq mm2, mm2                       // 0050e96e
-        pfmul mm3, qword ptr [edx + 8]           // 0050e971
-        pfmul mm2, mm0                           // 0050e976
-        pfmul mm4, mm7                           // 0050e97a
-        pfsub mm2, mm4                           // 0050e97e
-        pfadd mm2, mm3                           // 0050e982
-        movq qword ptr [ebp - 0x2c], mm2         // 0050e986
-        movq mm2, mm5                            // 0050e98a
-        movq mm3, mm6                            // 0050e98d
-        punpckldq mm1, mm1                       // 0050e990
-        punpckldq mm2, mm2                       // 0050e993
-        punpckldq mm3, mm3                       // 0050e996
-        pfmul mm1, qword ptr [edx + 8]           // 0050e999
-        pfmul mm0, mm2                           // 0050e99e
-        pfmul mm3, qword ptr [edx + 0x18]        // 0050e9a2
-        pfadd mm0, mm1                           // 0050e9a7
-        pfsub mm0, mm3                           // 0050e9ab
-        movq qword ptr [ebp - 0x1c], mm0         // 0050e9af
-        punpckhdq mm5, mm5                       // 0050e9b3
-        punpckhdq mm6, mm6                       // 0050e9b6
-        pfmul mm2, mm7                           // 0050e9b9
-        pfmul mm5, qword ptr [edx + 0x18]        // 0050e9bd
-        pfmul mm6, qword ptr [edx + 8]           // 0050e9c2
-        pfsub mm2, mm5                           // 0050e9c7
-        pfadd mm2, mm6                           // 0050e9cb
-        movq qword ptr [ebp - 0xc], mm2          // 0050e9cf
-        movq mm0, qword ptr [edx + 8]            // 0050e9d3
-        movq mm1, qword ptr [edx + 0x18]         // 0050e9d7
-        movq mm2, qword ptr [edx + 0x28]         // 0050e9db
-        movq mm4, mm0                            // 0050e9df
-        movq mm5, mm0                            // 0050e9e2
-        movq mm6, mm1                            // 0050e9e5
-        movq mm7, mm1                            // 0050e9e8
-        punpckhdq mm4, mm4                       // 0050e9eb
-        punpckldq mm6, mm2                       // 0050e9ee
-        punpckldq mm5, mm5                       // 0050e9f1
-        punpckhdq mm7, mm2                       // 0050e9f4
-        pfmul mm4, mm6                           // 0050e9f7
-        pfmul mm5, mm7                           // 0050e9fb
-        movq mm3, qword ptr [edx + 0x38]         // 0050e9ff
-        movq mm7, mm0                            // 0050ea03
-        pfsub mm5, mm4                           // 0050ea06
-        punpckldq mm0, mm1                       // 0050ea0a
-        punpckhdq mm7, mm1                       // 0050ea0d
-        movq mm6, mm3                            // 0050ea10
-        movq mm4, mm3                            // 0050ea13
-        punpckhdq mm3, mm3                       // 0050ea16
-        punpckhdq mm6, mm2                       // 0050ea19
-        punpckldq mm4, mm2                       // 0050ea1c
-        punpckhdq mm1, mm2                       // 0050ea1f
-        pfmul mm6, mm0                           // 0050ea22
-        punpckhdq mm0, mm4                       // 0050ea26
-        pfmul mm7, mm4                           // 0050ea29
-        punpckldq mm4, mm4                       // 0050ea2d
-        pfmul mm0, mm3                           // 0050ea30
-        pfmul mm1, mm4                           // 0050ea34
-        pfsub mm6, mm7                           // 0050ea38
-        pfsubr mm1, mm0                          // 0050ea3c
-        movq mm0, qword ptr [edx + 0x30]         // 0050ea40
-        movq mm4, mm1                            // 0050ea44
-        movq mm3, mm1                            // 0050ea47
-        movq mm7, qword ptr [edx + 0x20]         // 0050ea4a
-        movq mm2, mm6                            // 0050ea4e
-        punpckhdq mm4, mm4                       // 0050ea51
-        punpckldq mm3, mm3                       // 0050ea54
-        punpckhdq mm2, mm2                       // 0050ea57
-        pfmul mm4, qword ptr [edx + 0x10]        // 0050ea5a
-        pfmul mm2, mm0                           // 0050ea5f
-        pfmul mm3, mm7                           // 0050ea63
-        pfadd mm2, mm4                           // 0050ea67
-        pfsub mm2, mm3                           // 0050ea6b
-        movq qword ptr [ebp - 0x44], mm2         // 0050ea6f
-        movq mm3, mm1                            // 0050ea73
-        movq mm4, mm6                            // 0050ea76
-        movq mm2, mm5                            // 0050ea79
-        punpckhdq mm3, mm3                       // 0050ea7c
-        punpckldq mm4, mm4                       // 0050ea7f
-        punpckhdq mm2, mm2                       // 0050ea82
-        pfmul mm3, qword ptr [edx]               // 0050ea85
-        pfmul mm2, mm0                           // 0050ea89
-        pfmul mm4, mm7                           // 0050ea8d
-        pfsub mm2, mm4                           // 0050ea91
-        pfadd mm2, mm3                           // 0050ea95
-        movq qword ptr [ebp - 0x34], mm2         // 0050ea99
-        movq mm4, mm0                            // 0050ea9d
-        movq mm2, mm5                            // 0050eaa0
-        movq mm3, mm6                            // 0050eaa3
-        punpckldq mm1, mm1                       // 0050eaa6
-        punpckldq mm2, mm2                       // 0050eaa9
-        punpckldq mm3, mm3                       // 0050eaac
-        pfmul mm1, qword ptr [edx]               // 0050eaaf
-        pfmul mm0, mm2                           // 0050eab3
-        pfmul mm3, qword ptr [edx + 0x10]        // 0050eab7
-        pfadd mm0, mm1                           // 0050eabc
-        pfsub mm0, mm3                           // 0050eac0
-        movq qword ptr [ebp - 0x24], mm0         // 0050eac4
-        punpckhdq mm5, mm5                       // 0050eac8
-        punpckhdq mm6, mm6                       // 0050eacb
-        pfmul mm2, mm7                           // 0050eace
-        pfmul mm5, qword ptr [edx + 0x10]        // 0050ead2
-        pfmul mm6, qword ptr [edx]               // 0050ead7
-        pfsub mm2, mm5                           // 0050eadb
-        pfadd mm2, mm6                           // 0050eadf
-        movq qword ptr [ebp - 0x14], mm2         // 0050eae3
-        punpckldq mm7, mm4                       // 0050eae7
-        movq mm3, qword ptr [edx]                // 0050eaea
-        punpckhdq mm0, mm2                       // 0050eaed
-        pfmul mm7, qword ptr ds:[0x005db298]     // 0050eaf0
-        movq mm1, qword ptr [ebp - 0x44]         // 0050eaf8
-        punpckldq mm3, dword ptr [edx + 0x10]    // 0050eafc
-        punpckhdq mm1, qword ptr [ebp - 0x34]    // 0050eb00
-        pfmul mm3, qword ptr ds:[0x005db298]     // 0050eb04
-        pfmul mm0, mm7                           // 0050eb0c
-        pfmul mm3, mm1                           // 0050eb10
-        pfadd mm0, mm3                           // 0050eb14
-        mov eax, dword ptr [ebp + 0xc]           // 0050eb18
-        pfacc mm0, mm0                           // 0050eb1b
-        test eax, eax                            // 0050eb1f
-        movq mm4, mm0                            // 0050eb21
-        je L_50eb29                              // 0050eb24
-        movd dword ptr [eax], mm0                // 0050eb26
-    L_50eb29:
-        pfrcp mm1, mm0                           // 0050eb29
-        pxor mm3, mm3                            // 0050eb2d
-        punpckldq mm0, mm0                       // 0050eb30
-        pfcmpeq mm3, mm4                         // 0050eb33
-        pfrcpit1 mm0, mm1                        // 0050eb37
-        pfrcpit2 mm0, mm1                        // 0050eb3b
-        movd eax, mm3                            // 0050eb3f
-        pfmul mm0, qword ptr ds:[0x005db298]     // 0050eb42
-        test eax, eax                            // 0050eb4a
-        movq mm1, mm0                            // 0050eb4c
-        punpckldq mm2, mm1                       // 0050eb4f
-        punpckhdq mm1, mm2                       // 0050eb52
-        jne L_50ebe1                             // 0050eb55
-        mov eax, dword ptr [ebp + 8]             // 0050eb5b
-        movq mm2, qword ptr [ebp - 0x44]         // 0050eb5e
-        movq mm5, qword ptr [ebp - 0x3c]         // 0050eb62
-        movq mm3, qword ptr [ebp - 0x34]         // 0050eb66
-        movq mm6, qword ptr [ebp - 0x2c]         // 0050eb6a
-        pfmul mm2, mm1                           // 0050eb6e
-        pfmul mm3, mm0                           // 0050eb72
-        pfmul mm5, mm1                           // 0050eb76
-        pfmul mm6, mm0                           // 0050eb7a
-        movq mm4, mm2                            // 0050eb7e
-        movq mm7, mm5                            // 0050eb81
-        punpckhdq mm2, mm3                       // 0050eb84
-        punpckldq mm4, mm3                       // 0050eb87
-        punpckhdq mm5, mm6                       // 0050eb8a
-        punpckldq mm7, mm6                       // 0050eb8d
-        movq qword ptr [eax], mm2                // 0050eb90
-        movq qword ptr [eax + 0x10], mm4         // 0050eb93
-        movq qword ptr [eax + 0x20], mm5         // 0050eb97
-        movq qword ptr [eax + 0x30], mm7         // 0050eb9b
-        movq mm2, qword ptr [ebp - 0x24]         // 0050eb9f
-        movq mm5, qword ptr [ebp - 0x1c]         // 0050eba3
-        movq mm3, qword ptr [ebp - 0x14]         // 0050eba7
-        movq mm6, qword ptr [ebp - 0xc]          // 0050ebab
-        pfmul mm2, mm1                           // 0050ebaf
-        pfmul mm3, mm0                           // 0050ebb3
-        pfmul mm5, mm1                           // 0050ebb7
-        pfmul mm6, mm0                           // 0050ebbb
-        movq mm4, mm2                            // 0050ebbf
-        movq mm7, mm5                            // 0050ebc2
-        punpckhdq mm2, mm3                       // 0050ebc5
-        punpckldq mm4, mm3                       // 0050ebc8
-        punpckhdq mm5, mm6                       // 0050ebcb
-        punpckldq mm7, mm6                       // 0050ebce
-        movq qword ptr [eax + 8], mm2            // 0050ebd1
-        movq qword ptr [eax + 0x18], mm4         // 0050ebd5
-        movq qword ptr [eax + 0x28], mm5         // 0050ebd9
-        movq qword ptr [eax + 0x38], mm7         // 0050ebdd
-    L_50ebe1:
-        mov dword ptr [ebp - 4], eax             // 0050ebe1
-        mov eax, dword ptr [ebp - 4]             // 0050ebe4
-        leave                                    // 0050ebe7
-        ret 0xc                                  // 0050ebe8
     }
 }
 

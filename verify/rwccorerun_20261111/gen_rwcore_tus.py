@@ -41,6 +41,8 @@ LIFT_INSTEAD = {
     're/match/rwl01/004ce5d0.c', 're/match/rwl02/004ea9a0.c', 're/match/rwl03/004f1fb0.c', 're/match/rwl03/004f2570.c',
     're/match/rwl03/004f3e90.c', 're/match/rwl03/00532b80.c', 're/match/rwl03/0053e830.c', 're/match/rwl04/005493e0.c',
     're/match/s19/004c6580.c', 're/match/s19/004c6ba0.c',
+    # run 40 (node-definition callbacks joined the closure): C++ type errors under VS2022 (build_vs9.log)
+    're/match/rwl03/00530650.c', 're/match/rwl03/00530c00.c', 're/match/rwl04/0054ba20.c', 're/match/rwl04/0054bda0.c',
 }
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -314,17 +316,47 @@ def main(check):
     # code pointers in the seeded data ranges
     fixups = []
     strict_starts = {int(k, 16) for k in list(led) + list(srcs)}
+    extents0 = []
     for ln in open(os.path.join(ROOT, 're', 'analysis', 'function_inventory.csv'), encoding='utf-8'):
-        f = ln.split(',')
+        f = ln.strip().split(',')
         if re.fullmatch(r'[0-9a-f]{8}', f[0]):
             strict_starts.add(int(f[0], 16))
+            if len(f) >= 3 and f[2].isdigit():
+                extents0.append((int(f[0], 16), int(f[0], 16) + int(f[2])))
+
+    # RWC-PLUGIN-ATTACH run 40: code pointers Ghidra never made functions. The RxNodeDefinition records at
+    # 0x00623c30 .. (nodeD3D9SkinAtomicAllInOne.csl etc.) hold body / init callbacks reached only through data
+    # (0x00623c40 -> 0x00532770, called by 0x004d4380 from 0x005327d0: the run-40 boot AV at EIP 0x00532770).
+    # None is in function_inventory / match_ledger / re/match. A strict-range dword also becomes a fix-up when its
+    # target is 16-byte aligned, the byte before it is MSVC padding or a return (0x90 / 0xcc / 0xc3), and it lies
+    # inside no known function body, and its low 16 bits are not zero. The packed 16-bit pairs of the d3dx blocks fail
+    # at least one of these (0x0061b8d0 = 0x004c0000 sits in a table of pairs 0x0070007f 0x00720071 .., so a value
+    # whose low half is 0 is refused). CODEPTR_RULE.tsv lists every accepted and refused candidate.
+    def padded_start(v):
+        if v % 16 or not v & 0xffff or any(lo < v < hi for lo, hi in extents0):
+            return False
+        p = read(v - 1, 1)
+        return p is not None and p[0] in (0x90, 0xcc, 0xc3)
+
+    rule_rows = []
     for lo, hi in DATA_RANGES + DATA_RANGES_STRICT:
         b = read(lo, hi - lo)
         strict = (lo, hi) in DATA_RANGES_STRICT
         for o in range(0, hi - lo, 4):
             v = struct.unpack_from('<I', b, o)[0]
-            if 0x401000 <= v < 0x5cc000 and (not strict or v in strict_starts):
+            if not 0x401000 <= v < 0x5cc000:
+                continue
+            if not strict or v in strict_starts:
                 fixups.append((lo + o, '%08x' % v))
+            elif padded_start(v):
+                fixups.append((lo + o, '%08x' % v))
+                rule_rows.append('0x%08x\t0x%08x\taccepted' % (lo + o, v))
+            else:
+                rule_rows.append('0x%08x\t0x%08x\trefused' % (lo + o, v))
+    if not check:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CODEPTR_RULE.tsv'), 'w',
+                  encoding='utf-8', newline='\n') as fh:
+            fh.write('slot\tvalue\tverdict\n' + '\n'.join(rule_rows) + '\n')
     roots = list(ROOTS) + [t for _, t in fixups]
 
     tu_of = {}      # rva -> source that defines it

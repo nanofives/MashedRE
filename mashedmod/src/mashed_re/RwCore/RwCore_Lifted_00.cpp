@@ -20,6 +20,7 @@ extern "C" int RwCoreLift_004c7490();
 extern "C" int RwCoreLift_004cab30();
 extern "C" int RwCoreLift_004cac10();
 extern "C" int RwCoreLift_004cb6f0();
+extern "C" int RwCoreLift_004cb870();
 extern "C" int RwCoreLift_004ce5d0();
 extern "C" int RwCoreLift_004ce6f0();
 extern "C" int RwCoreLift_004d0520();
@@ -53,6 +54,7 @@ extern "C" int RwCoreLift_004dedb0();
 extern "C" int RwCoreLift_004dedd0();
 extern "C" int RwCoreLift_004dee00();
 extern "C" int RwCoreLift_004e1270();
+extern "C" int RwCoreLift_004e1f60();
 extern "C" int RwCoreLift_004e3070();
 extern "C" int RwCoreLift_004e30f0();
 extern "C" int RwCoreLift_004e36a0();
@@ -68,8 +70,6 @@ extern "C" int RwCoreLift_004e3e40();
 extern "C" int RwCoreLift_004e3e70();
 extern "C" int RwCoreLift_004e3ea0();
 extern "C" int RwCoreLift_004e3ec0();
-extern "C" int RwCoreLift_004e40d0();
-extern "C" int RwCoreLift_004e4190();
 extern "C" int RwCoreMissing_004e3850();
 extern "C" int RwCoreMissing_004e3880();
 extern "C" int RwCore_004722e0();
@@ -123,10 +123,10 @@ extern "C" int RwCore_004dc970();
 extern "C" int RwCore_004dcbb0();
 extern "C" int RwCore_004dd150();
 extern "C" int RwCore_004e0920();
+extern "C" int RwCore_004e12b0();
 extern "C" int RwCore_004e2ff0();
 extern "C" int RwCore_004e4450();
 extern "C" int RwCore_004e6100();
-extern "C" int RwCore_004f0dc0();
 extern "C" int RwCore_00550b00();
 extern "C" int _chkstk();
 
@@ -2263,6 +2263,30 @@ extern "C" __declspec(naked) int RwCoreLift_004cb6f0(void) {
     }
 }
 
+// HAND-LIFT 0x004cb870 RwCoreLift_004cb870  (18 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004cb870(void) {
+    __asm {
+        mov edx, dword ptr [esp + 8]             // 004cb870
+        mov eax, dword ptr ds:[0x007d4110]       // 004cb874
+        push 0                                   // 004cb879
+        push edx                                 // 004cb87b
+        mov edx, dword ptr [esp + 0xc]           // 004cb87c
+        mov ecx, dword ptr [eax]                 // 004cb880
+        push 1                                   // 004cb882
+        push 0x66                                // 004cb884
+        shl edx, 2                               // 004cb886
+        push 8                                   // 004cb889
+        push edx                                 // 004cb88b
+        push eax                                 // 004cb88c
+        call dword ptr [ecx + 0x6c]              // 004cb88d
+        xor ecx, ecx                             // 004cb890
+        test eax, eax                            // 004cb892
+        setge cl                                 // 004cb894
+        mov eax, ecx                             // 004cb897
+        ret                                      // 004cb899
+    }
+}
+
 // HAND-LIFT 0x004ce5d0 RwCoreLift_004ce5d0  (46 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_004ce5d0(void) {
     __asm {
@@ -4307,6 +4331,90 @@ extern "C" __declspec(naked) int RwCoreLift_004e1270(void) {
     }
 }
 
+// HAND-LIFT 0x004e1f60 RwCoreLift_004e1f60  (72 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_004e1f60(void) {
+    __asm {
+        mov eax, dword ptr [esp + 8]             // 004e1f60
+        mov ecx, dword ptr [esp + 0xc]           // 004e1f64
+        mov edx, dword ptr [eax + 8]             // 004e1f68
+        mov eax, dword ptr [edx + ecx*4]         // 004e1f6b
+        cmp eax, -1                              // 004e1f6e
+        je L_4e2026                              // 004e1f71
+        mov edx, dword ptr [esp + 4]             // 004e1f77
+        push ebx                                 // 004e1f7b
+        push esi                                 // 004e1f7c
+        lea eax, [eax + eax*4]                   // 004e1f7d
+        mov esi, dword ptr [edx + 8]             // 004e1f80
+        mov ebx, 1                               // 004e1f83
+        lea eax, [esi + eax*8]                   // 004e1f88
+        mov esi, dword ptr [edx + 0x10]          // 004e1f8b
+        cmp esi, ebx                             // 004e1f8e
+        mov dword ptr [esp + 0x10], eax          // 004e1f90
+        jle L_4e2023                             // 004e1f94
+        push ebp                                 // 004e1f9a
+        mov ebp, dword ptr [edx + 0x14]          // 004e1f9b
+        shl ebx, cl                              // 004e1f9e
+        mov ecx, dword ptr [ebp + 0xc]           // 004e1fa0
+        test dword ptr [ecx], ebx                // 004e1fa3
+        jne L_4e2009                             // 004e1fa5
+        push edi                                 // 004e1fa7
+        xor edi, edi                             // 004e1fa8
+        mov di, word ptr [ebp + 2]               // 004e1faa
+        lea eax, [edi*8]                         // 004e1fae
+        sub eax, edi                             // 004e1fb5
+        lea esi, [ebp + eax*4 - 4]               // 004e1fb7
+    L_4e1fbb:
+        mov ecx, dword ptr [ebp + 0xc]           // 004e1fbb
+        mov eax, dword ptr [ecx + edi*4]         // 004e1fbe
+        xor ecx, ecx                             // 004e1fc1
+        test ebx, eax                            // 004e1fc3
+        jne L_4e1ffc                             // 004e1fc5
+        cmp dword ptr [esi + 0x10], ecx          // 004e1fc7
+        je L_4e1ffc                              // 004e1fca
+        mov eax, dword ptr [esi]                 // 004e1fcc
+        cmp eax, ecx                             // 004e1fce
+        je L_4e1fee                              // 004e1fd0
+        test byte ptr [esi - 4], 2               // 004e1fd2
+        jne L_4e1fee                             // 004e1fd6
+        mov edx, dword ptr ds:[0x007d4710]       // 004e1fd8
+        push eax                                 // 004e1fde
+        push edx                                 // 004e1fdf
+        call RwCore_004e12b0                    // 004e1fe0
+        mov edx, dword ptr [esp + 0x1c]          // 004e1fe5
+        add esp, 8                               // 004e1fe9
+        xor ecx, ecx                             // 004e1fec
+    L_4e1fee:
+        mov dword ptr [esi - 4], ecx             // 004e1fee
+        mov dword ptr [esi], ecx                 // 004e1ff1
+        mov dword ptr [esi + 8], ecx             // 004e1ff3
+        mov dword ptr [esi + 0xc], ecx           // 004e1ff6
+        mov dword ptr [esi + 0x10], ecx          // 004e1ff9
+    L_4e1ffc:
+        dec edi                                  // 004e1ffc
+        sub esi, 0x1c                            // 004e1ffd
+        cmp edi, ecx                             // 004e2000
+        jne L_4e1fbb                             // 004e2002
+        mov eax, dword ptr [esp + 0x18]          // 004e2004
+        pop edi                                  // 004e2008
+    L_4e2009:
+        mov ecx, dword ptr [eax + 0x18]          // 004e2009
+        mov dword ptr [ebp + 8], ecx             // 004e200c
+        mov ecx, dword ptr [eax + 0x10]          // 004e200f
+        mov dword ptr [ebp + 0xc], ecx           // 004e2012
+        mov ecx, dword ptr [eax + 0xc]           // 004e2015
+        mov dword ptr [ebp + 0x10], ecx          // 004e2018
+        mov dword ptr [edx + 0x10], 3            // 004e201b
+        pop ebp                                  // 004e2022
+    L_4e2023:
+        pop esi                                  // 004e2023
+        pop ebx                                  // 004e2024
+        ret                                      // 004e2025
+    L_4e2026:
+        xor eax, eax                             // 004e2026
+        ret                                      // 004e2028
+    }
+}
+
 // HAND-LIFT 0x004e3070 RwCoreLift_004e3070  (50 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_004e3070(void) {
     __asm {
@@ -5323,69 +5431,6 @@ extern "C" __declspec(naked) int RwCoreLift_004e3ec0(void) {
         pop ebp                                  // 004e40b9
         add esp, 0x128                           // 004e40ba
         ret                                      // 004e40c0
-    }
-}
-
-// HAND-LIFT 0x004e40d0 RwCoreLift_004e40d0  (36 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e40d0(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007d7178]       // 004e40d0
-        mov ecx, dword ptr [esp + 8]             // 004e40d5
-        push esi                                 // 004e40d9
-        push edi                                 // 004e40da
-        mov edi, dword ptr [eax + ecx]           // 004e40db
-        test edi, edi                            // 004e40de
-        je L_4e411e                              // 004e40e0
-        mov esi, dword ptr [esp + 0xc]           // 004e40e2
-        mov dword ptr [eax + esi], edi           // 004e40e6
-        mov al, byte ptr [esi + 1]               // 004e40e9
-        cmp al, 0x80                             // 004e40ec
-        jae L_4e40f5                             // 004e40ee
-        lea eax, [edi + 0x3c]                    // 004e40f0
-        jmp L_4e4108                             // 004e40f3
-    L_4e40f5:
-        mov eax, dword ptr [esi + 4]             // 004e40f5
-        test eax, eax                            // 004e40f8
-        je L_4e4105                              // 004e40fa
-        push eax                                 // 004e40fc
-        call RwCore_004c0e50                    // 004e40fd
-        add esp, 4                               // 004e4102
-    L_4e4105:
-        lea eax, [edi + 0x34]                    // 004e4105
-    L_4e4108:
-        mov edx, dword ptr [eax]                 // 004e4108
-        lea ecx, [esi + 0x34]                    // 004e410a
-        mov dword ptr [esi + 0x38], eax          // 004e410d
-        pop edi                                  // 004e4110
-        mov dword ptr [ecx], edx                 // 004e4111
-        mov edx, dword ptr [eax]                 // 004e4113
-        mov dword ptr [edx + 4], ecx             // 004e4115
-        mov dword ptr [eax], ecx                 // 004e4118
-        mov eax, esi                             // 004e411a
-        pop esi                                  // 004e411c
-        ret                                      // 004e411d
-    L_4e411e:
-        mov eax, dword ptr [esp + 0xc]           // 004e411e
-        pop edi                                  // 004e4122
-        pop esi                                  // 004e4123
-        ret                                      // 004e4124
-    }
-}
-
-// HAND-LIFT 0x004e4190 RwCoreLift_004e4190  (11 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_004e4190(void) {
-    __asm {
-        mov eax, dword ptr [esp + 0xc]           // 004e4190
-        mov edx, dword ptr [esp + 4]             // 004e4194
-        lea ecx, [eax + 0x20]                    // 004e4198
-        push ecx                                 // 004e419b
-        push edx                                 // 004e419c
-        push eax                                 // 004e419d
-        mov eax, dword ptr [eax + 0x54]          // 004e419e
-        push eax                                 // 004e41a1
-        call RwCore_004f0dc0                    // 004e41a2
-        add esp, 0x10                            // 004e41a7
-        ret                                      // 004e41aa
     }
 }
 
