@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-11  0x00484310  FUN_00484310  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14fu/00484310.c; evidence: verify/matchs14fu_20261111/RESULT_MATCH-S14-FU.md
+2026-11-11  0x00488320  FUN_00488320  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s14fu/00488320.c; evidence: verify/matchs14fu_20261111/RESULT_MATCH-S14-FU.md
 2026-11-11  0x00414300  FUN_00414300  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md; evidence: verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md
 2026-11-11  0x0041d930  HudSlideBillboardTick  C3->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md; evidence: verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md
 2026-11-11  0x0041fcc0  TireMarkRender  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md; evidence: verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md

@@ -1,0 +1,3 @@
+rva	route	evidence	verdict	detail
+0x00484310	match	re/match/s14fu/00484310.c	PASS	byte-identical 68 B, relocheck OK (11/0)
+0x00488320	match	re/match/s14fu/00488320.c	PASS	byte-identical 108 B, relocheck OK (6/0)
