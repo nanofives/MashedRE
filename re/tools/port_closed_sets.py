@@ -14,7 +14,8 @@ re/console/pc_funcs.csv). Each callee is one of:
   bound     the exe has a C-linkage, non-static function for it: the body rva_body_scan / backfill_port resolve to
             a map symbol, or a `#define FUN_<rva> <Name>` in an exe-compiled TU whose Name is such a symbol, or a
             BINDINGS.tsv row (kind matched / port / bound / shim / rw / crt) whose exe_symbol is in the map, or one
-            of the 6 RVA thunks
+            of the 6 RVA thunks. BINDINGS kind `provisional` (L-126, 6a, rows in re/match/PROVISIONAL.tsv) is never
+            bound: such a callee is open
   rw        RenderWare core (L-98, librw) bound by name in the exe (LibRw/RwApiBind.cpp or BINDINGS.tsv): bound too
   open      anything else (C2/C3 or unmatched game code, unbound CRT or RW core, a callee only a stand-in binds).
             A unit with an open callee is removed, and the removal repeats to a fixpoint.
@@ -348,6 +349,9 @@ def analyse(build: pathlib.Path):
                 return ("rw" if lb == "renderware" else "bound"), nm
         if c in bindings:
             k, sym = bindings[c]
+            if k == "provisional":
+                # L-126 (6a): a provisional body is no port-column binding; the callee stays open here
+                return "open", "provisional"
             if k in ("matched", "port", "bound", "shim", "rw", "crt") and sym and name_bindable(sym) is not None:
                 return ("rw" if lb == "renderware" or k in ("rw", "bound", "shim") else "bound"), sym
         if c in cand:
