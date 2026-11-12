@@ -101,6 +101,19 @@ core, then the draw-call comparison at the RwGlobals Im2D slot (+0x30) against `
 - Raw data `D:/MashedWT/RWC-CORE-RUN_data` (sha256 in `RAW_SHA256.txt`): final arm logs, `r38a` / `r38b` / `r38c`
   intermediate boots, build logs, both final exes. Run-37 raw data moved to `run37/` in the same folder.
 
+### 38.7 Answer to the L0 steer (matching or bring-up)
+
+1. Bring-up work only. No source was reshaped toward a byte match in this row. The two edits to provisional sources
+   (0x004dcdc0 at 35.7%, 0x004d3090 at 32.8%) change one thing: the COM `Release` call through `[obj+8]` is declared
+   `__stdcall`, as the original calls it (no `add esp, 4` after 0x004dce28 / 0x004dcedd / 0x004d31f7). That is a calling
+   convention defect, not a value difference: with the cdecl type every Release left esp 4 bytes high, and 0x004dcdc0
+   returned to address 0 inside RwEngineStop. The score moves (35.7 -> 36.2, 32.8 -> 32.8) are side effects, measured only
+   to show the edit does not move the source away from the original.
+2. The module 0x40a fault (run 37, 0x004cd850 -> 0x004e18f0 -> 0x004d4380 -> 0x004d4bf0) is not in either of those
+   functions and is gone on the merged MOD40A bodies with no work in this row (38.1). The run-38 fault was in 0x004dcdc0,
+   and it now runs as a provisional body (`PROVISIONAL_RWC.tsv` row 0x004dcdc0, L-126 (6), never C4). No RWC-MATCH row is
+   needed for 0x004dcdc0 or 0x004d3090 to reach the frame.
+
 ---
 
 ## Run 37 (history, unchanged below)
