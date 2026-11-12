@@ -6,7 +6,7 @@ That is the EQUIV-NORETURN-RECHECK commit, already merged in `3ef5b2da2`.
 
 ## Verdict
 
-**GREEN on the source and tracker legs.** The finding is fixed in the source, so no wrapper needs recording.
+**GREEN on all legs: source, trackers, both builds, ddkobj and both knob boots.** The finding is fixed in the source, so no wrapper needs recording.
 
 | Check | Before (`orch/integration`, src sha256 `6e7679c6ffdf8c8b`) | After (src sha256 `ed6028bfda6e5298`) |
 |---|---|---|
@@ -70,9 +70,9 @@ That is the EQUIV-NORETURN-RECHECK commit, already merged in `3ef5b2da2`.
 | ddkobj, local 0x0048cee0 copy | The s15 unit keeps the static copy as `local_helpers: _FUN_0048cee0`. So the DDK 0x0048e820 calls its own DDK copy with the EDI convention. The copy's callees bound to `_Search40bb30`, `_Orig_004770c0` and `_Batch476cb0` through the wrapper defines. `ddkobj.py check` covers only MATCH definitions, so `verify/equivcheck_20261112/check_local_cee0.py` applies the same masking to that symbol: `0x0048cee0 _FUN_0048cee0 exe_va=0x0001cc10 size=144 relocs_masked=12 abs_data_refs_exact=2 diff_bytes=0 IDENTICAL` |
 | ddkobj totals | IDENTICAL 716/796, DIFFERENT 77, not-in-map 3, units linked 786/834, refusals 47. Neither RVA is in the DIFFERENT list. `re/match/s14/0048cee0.c` stays refused, `fail:static-register-convention` as before |
 | BINDINGS | `verify/equivcheck_20261112/update_bindings_equivfu48e820.py` (bindings_rows.apply): 0x0048e820 `near-match` -> `matched`, level 4 (near-match 3 -> 2 rows overall) |
-| Knob boots | **NOT RUN.** See the handoff |
+| Knob boots (2026-11-12, after the reboot, test-slot outside, mashed_lock inside, same exe hashes as above, no rebuild) | **PASS.** `knob_on` (default exe): rc=0 after 57.3 s, `knob_on.log:292` `0x0048cee0 built 17 of 17 records`, `:1111` 0x0048cf70 on 17 records, `:1337` WinMain returned 0 after 3000 frames (log sha256 `ab95b2daaceb22ce787ca3808fc879ce17529db252b36e043aa1ffb8a36f0435`). `knob_on_ddk` (DDK exe): rc=0 after 56.3 s, the same three lines at 292 / 1111 / 1337 (log sha256 `53dbe82662eefe7f5f3ccde28dc7c71f20862325db677692c68acf23b3e98fc3`). Logs in `D:/MashedWT/EQUIV-FU-48E820_data/`. The first DDK attempt failed in the harness before launch (relative `KNOB_EXE` with `Popen(cwd=root)`, FileNotFoundError); `run_boots.sh` now passes an absolute path |
 
-## HANDOFF (2026-11-12 ~11:55, LIVING-PC reboot coordinator: token leak, automatic reboot pending)
+## HANDOFF, closed after the reboot (2026-11-12 ~11:55, LIVING-PC reboot coordinator: token leak, automatic reboot pending)
 
 - **Done and committed:** the source fix, the port wrapper, both builds, ddkobj check, the local-copy check and the
   BINDINGS row.
