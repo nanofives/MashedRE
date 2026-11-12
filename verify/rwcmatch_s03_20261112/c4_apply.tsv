@@ -1,0 +1,6 @@
+rva	route	evidence	verdict	detail
+0x00543e50	match	re/match/rwl04/00543e50.c	PASS	byte-identical 619 B, relocheck OK (75/0)
+0x0054b740	match	re/match/rwl04/0054b740.c	PASS	byte-identical 376 B, relocheck OK (10/0)
+0x0053fa20	match	re/match/rwl03/0053fa20.c	PASS	byte-identical 80 B, relocheck OK (3/0)
+0x0053fb00	match	re/match/rwl03/0053fb00.c	PASS	byte-identical 80 B, relocheck OK (3/0)
+0x00543bb0	match	re/match/rwl04/00543bb0.c	PASS	byte-identical 392 B, relocheck OK (6/0)

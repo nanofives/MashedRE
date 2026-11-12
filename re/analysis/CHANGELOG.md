@@ -63,6 +63,11 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-12  0x004f3be0  FUN_004f3be0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/004f3be0.c; evidence: verify/rwcmatch_s02_20261112/RESULT_RWC-MATCH-S02.md
 2026-11-12  0x004e5d30  FUN_004e5d30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl02/004e5d30.c; evidence: verify/rwcmatch_s02_20261112/RESULT_RWC-MATCH-S02.md
 2026-11-12  0x004e66d0  RpClumpForAllAtomics  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004e66d0.c; evidence: verify/rwcmatch_s02_20261112/RESULT_RWC-MATCH-S02.md
+2026-11-12  0x00543e50  FUN_00543e50  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl04/00543e50.c; evidence: verify/rwcmatch_s03_20261112/RESULT_RWC-MATCH-S03.md
+2026-11-12  0x0054b740  FUN_0054b740  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl04/0054b740.c; evidence: verify/rwcmatch_s03_20261112/RESULT_RWC-MATCH-S03.md
+2026-11-12  0x0053fa20  FUN_0053fa20  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/0053fa20.c; evidence: verify/rwcmatch_s03_20261112/RESULT_RWC-MATCH-S03.md
+2026-11-12  0x0053fb00  FUN_0053fb00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/0053fb00.c; evidence: verify/rwcmatch_s03_20261112/RESULT_RWC-MATCH-S03.md
+2026-11-12  0x00543bb0  FUN_00543bb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl04/00543bb0.c; evidence: verify/rwcmatch_s03_20261112/RESULT_RWC-MATCH-S03.md
 2026-11-11  0x004b71c0  FUN_004b71c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b71c0.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md
 2026-11-11  0x004c18c0  FUN_004c18c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c18c0.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md
 2026-11-11  0x00516c40  png_sig_cmp  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00516c40.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md

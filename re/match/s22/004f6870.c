@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S22 0x004f6870 (h5): 23.9% (regs 37.6%, ops 95.0%) under /O2 /Ob1 /G5.
    Shape: same family as 0x004f71f0: 15-entry switch, each case lerps two RwV3d-sized source streams a, b by t
