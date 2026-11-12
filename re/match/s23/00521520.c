@@ -4,10 +4,9 @@
    (defined later in deflate.c) inlined, written as static __forceinline copies above the function. The zlib header
    expression is written pre-folded ((w_bits<<12) - 0x7800, same value): the official form gave
    sub 8 / shl 12 / add 0x800 where the original has shl 12 / sub 0x7800.
-   84.5% (regs 84.5, ops 94.3). Residual: block layout only. The original keeps three small return blocks
-   (ERR_RETURN Z_BUF_ERROR after the avail_out test, the two 'return Z_OK' after need_more/finish_started) inline
-   at the fall-through with their own epilogue copies; ours moves them to the end and shares one epilogue. Same
-   pattern as 0x00522b50 / 0x00521110. Tried: permuter 197 variants. Class (b). */
+   100% (regs 100, ops 100), whole symbol BYTE-IDENTICAL under match.py --bytes, relocheck OK (MATCH-RELOC-521520).
+   Callee binding: 0x00529050 is _tr_align (1 arg, flush == 1 branch, call at +0x286) and 0x00528ef0 is _tr_stored_block
+   (4 args, call at +0x297). The names were swapped before, which relocheck reported as BAD. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -66,8 +65,8 @@ void *memset(void *, int, unsigned int);
 void *memcpy(void *, const void *, unsigned int);
 #pragma intrinsic(memset)
 #pragma intrinsic(memcpy)
-void FUN_00528ef0(deflate_state *s); /* _tr_align */
-void FUN_00529050(deflate_state *s, charf *buf, ulg stored_len, int eof); /* _tr_stored_block */
+void FUN_00529050(deflate_state *s); /* _tr_align */
+void FUN_00528ef0(deflate_state *s, charf *buf, ulg stored_len, int eof); /* _tr_stored_block */
 #define ERR_RETURN(strm,err) return (strm->msg = DAT_00622840[2-(err)], (err))
 #define put_byte(s, c) {s->pending_buf[s->pending++] = (c);}
 
@@ -179,9 +178,9 @@ int FUN_00521520(z_streamp strm, int flush)
 	}
         if (bstate == 1) {
             if (flush == 1) {
-                FUN_00528ef0(s);
+                FUN_00529050(s);
             } else { 
-                FUN_00529050(s, (char*)0, 0L, 0);
+                FUN_00528ef0(s, (char*)0, 0L, 0);
                 
                 if (flush == 3) {
                     s->head[s->hash_size-1] = 0; memset((Bytef *)s->head, 0, (unsigned)(s->hash_size-1)*sizeof(*s->head));             
