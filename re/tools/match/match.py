@@ -76,7 +76,7 @@ def coff(path: pathlib.Path):
         n = name(d[o:o + 8])
         size, rawptr, relptr, _, nrel = struct.unpack_from("<IIIIH", d, o + 16)
         rels = [struct.unpack_from("<IIH", d, relptr + 10 * k) for k in range(nrel)]
-        secs.append({"name": n, "data": d[rawptr:rawptr + size] if rawptr else b"", "relocs": rels})
+        secs.append({"name": n, "data": d[rawptr:rawptr + size] if rawptr else b"", "relocs": rels, "size": size})
     syms, i = [], 0
     while i < nsym:
         o = symptr + 18 * i
