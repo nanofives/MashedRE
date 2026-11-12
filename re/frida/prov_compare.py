@@ -154,7 +154,21 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
             first["segment"] = segment_of(segs, first["tick"])
         rep["identical_by_segment"] = {name: max(0, min(b, rep["identical_for"] - 1) - a + 1) for name, a, b in segs}
         rep["ticks_by_segment"] = {name: b - a + 1 for name, a, b in segs}
+        # BOOT-CLASS (RO-MENU-REPLAY, measured 2026-11-12): unmodified boot runs fall into classes that stay apart for
+        # the whole run: the tick-0 value of 0x007f1030 (frame-timer block; 4 values seen in 25 runs, r5 vs r3 then
+        # diverges at race tick 1752 in 0x00618000 with the timer dwords masked) and 0x006147d8 (MASK:os; runs with 1
+        # against references with 0 differ in 0x00773c00 / 0x00911c00 from tick 0). Recorded, not scored: a run whose
+        # class differs from its reference's is re-run or scored against a same-class reference.
+        def cls(r):
+            return {hex(w): f"{r[0][rawpos[w]]:08x}" for w in BOOT_CLASS_DWORDS if w in rawpos} if r else {}
+        rep["boot_class"] = {"run": cls(rr), "ref": cls(ra), "ref2": cls(rb)}
+        rep["boot_class_match"] = rep["boot_class"]["run"] == rep["boot_class"]["ref"] == rep["boot_class"]["ref2"]
+        if not rep["boot_class_match"]:
+            notes.append(f"BOOT-CLASS mismatch {rep['boot_class']}: verdict not body evidence")
     return rep
+
+
+BOOT_CLASS_DWORDS = (0x007f1030, 0x006147d8)
 
 
 if __name__ == "__main__":
