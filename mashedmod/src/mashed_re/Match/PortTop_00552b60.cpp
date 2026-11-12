@@ -18,10 +18,10 @@
 // writes 0x00912bd8 / 0x00912bec as 0x00552750 does), Frontend/BatchAA_s6.cpp 0x00556cd0 (reads 0x00912a20); the one
 // other writer, Frontend/BatchAA_s3.cpp SetDat00912a20, is 0x00556cc0's own body, which 0x00427ca0 calls after this.
 //
-// Call site (until HUDINIT-B swaps 0x00427ca0 itself): the 0x00427ca0 call in the matched 0x00402750 binds to the
-// selector PortTop_00402750_Call00427ca0 below. MASHED_ORIG_TOP_RWMOD=1: this Rt2d open with camera 0 (0x00427ca0's first
-// call), then the stand-in PortTop_StandIn04E_00427ca0 for the rest. Without RWMOD: the stand-in alone (RwGlobals +0x118
-// and the +0xf4 string slot are 0 then, and 0x005540d0 calls +0x118 unconditionally).
+// Call site: the 0x00427ca0 call in the matched 0x00402750 binds to the selector PortTop_00402750_Call00427ca0 below.
+// MASHED_ORIG_TOP_RWMOD=1: the matched 0x00427ca0 body (HUDINIT-B), whose first call is this Rt2d open with camera 0.
+// Without RWMOD: the stand-in PortTop_StandIn04E_00427ca0 alone (RwGlobals +0x118 and the +0xf4 string slot are 0 then,
+// and 0x005540d0 calls +0x118 unconditionally).
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #include <cstdarg>
@@ -31,6 +31,7 @@
 extern "C" {
 int MashedRw_RwModKnob(void);
 int PortTop_StandIn04E_00427ca0();
+void FUN_00427ca0(void);              // matched, Match/MatchS06_00427ca0.cpp (exe callees bound since HUDINIT-B)
 unsigned int Orig_00557250(void);
 unsigned int Orig_005540d0(void);
 unsigned int Orig_00556d20(void);
@@ -108,16 +109,22 @@ void PortTop_FontSysInit_00552b60(int camera) {
            D(0x00912700u + 22) & 0xffffu);
 }
 
-// The 0x00427ca0 call of the matched 0x00402750 (Match/PortTop_00402750.cpp). HUDINIT-B replaces it with 0x00427ca0's body.
+// The 0x00427ca0 call of the matched 0x00402750 (Match/PortTop_00402750.cpp). [HUDINIT-B] RWMOD on: the matched body
+// of that RVA (Match/MatchS06_00427ca0.cpp, re/match/s06/00427ca0.c), whose first call is this Rt2d open with camera 0,
+// then the brushes and handles 0x0067d838..0x0067d848. RWMOD off: the stand-in (the body allocates through RwGlobals
+// +0x118, which is 0 without RWMOD).
 int PortTop_00402750_Call00427ca0() {
     const bool on = MashedRw_RwModKnob() != 0;
-    if (on) {
-        HiaLog("rva 0x00427ca0: RWMOD on: its first call, the Rt2d open 0x00552b60(0), runs; the rest is the stand-in");
-        PortTop_FontSysInit_00552b60(0);
-    } else {
-        HiaLog("rva 0x00427ca0: RWMOD off: stand-in only (the Rt2d open needs RwGlobals +0x118)");
+    if (!on) {
+        HiaLog("rva 0x00427ca0: RWMOD off: stand-in only (the body needs RwGlobals +0x118)");
+        return PortTop_StandIn04E_00427ca0();
     }
-    return PortTop_StandIn04E_00427ca0();
+    HiaLog("rva 0x00427ca0: RWMOD on: matched body (HUDINIT-B)");
+    FUN_00427ca0();
+    const std::uint32_t* const h = reinterpret_cast<const std::uint32_t*>(static_cast<std::uintptr_t>(0x0067d838u));
+    HiaLog("rva 0x00427ca0 ran: font 0x0067d838=%08X brushes 0x0067d83c=%08X 0x0067d840=%08X 0x0067d844=%08X 0x0067d848=%08X, "
+           "dictionary 0x00912a20=%08X", h[0], h[1], h[2], h[3], h[4], D(0x00912a20u));
+    return 0;
 }
 }  // extern "C"
 #endif  // MASHED_STANDALONE
