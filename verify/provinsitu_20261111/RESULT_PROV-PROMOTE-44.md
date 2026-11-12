@@ -61,7 +61,7 @@ write-set: empty or covered (static capstone store list over the DDK code, L-38 
 ## Outcome
 
 - Command: `py.exe -3.12 re/tools/c4_reclass.py batch --tsv verify/provinsitu_20261111/promote44_batch.tsv --result verify/provinsitu_20261111/RESULT_PROV-PROMOTE-44.md --apply` (dry run first: 43 pass, 0 refused, 1 skip).
-- **Replay-verified C4 (c4=frida-replay): 43 rows** (39 C2->C4, 1 C1->C4, 6 C3->C4 per the CHANGELOG lines). Write-set leg: 39 `empty` and the 4 `covered` rows (0x0041d930, 0x00429310, 0x004647f0, 0x00411ae0).
+- **Replay-verified C4 (c4=frida-replay): 43 rows** (37 C2->C4, 6 C3->C4: 0x0041d930, 0x00482ae0, 0x00428450, 0x00416060, 0x005acd10, 0x00411ae0). Write-set leg: 39 `empty` and the 4 `covered` rows (0x0041d930, 0x00429310, 0x004647f0, 0x00411ae0).
 - Byte-matched (c4=match / c4=libid) promoted in this row: **0**, reported apart.
 - Not promoted, listed with reason: 0x00546b10 stays as it was, already C4 by another route (hooks.csv row cites shadow_ab, no write). No row was refused by the gate; no STUB marker among the 43.
 - Thin rows (fewer than 10 calls in the race window, verdict covers only those calls): 0x0048a4e0 (1), 0x005aaac0 (4), 0x005ae3a0 (8).
