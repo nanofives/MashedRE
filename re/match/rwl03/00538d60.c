@@ -1,6 +1,11 @@
 // FLAGS: /O2 /Ob1 /G5
 /* RWC-MATCH run 40: compiles (was C2440 x8). Five float reads/writes of undefined1 * stack slots are bit reinterpretations
    (*(float *)&slot): odis.py 0x00538d60 shows no fild in the 756-instruction body. 12.3%, not worked further. */
+/* MATCH-RWC-NEAR-B (2026-11-12): the rest of the int/float mistyping fixed the same way. _DAT_005cc320, _DAT_005ce54c,
+   _DAT_005e4574, _DAT_005cea1c are float globals; 7 `(float)x[i]` reads are `*(float *)&x[i]`; 3 `x[i] = (int)(...)` writes
+   are float stores. Before: 10 fild and 5 calls (3 __ftol) in the compiled body against 0 fild and 2 calls in the
+   original. After: 0 fild, 2 calls. Score 12.3% -> 12.8% (746/755 ins): the residual is structure and register
+   allocation over the whole body (regs 21.9%), out of reach of local edits. */
 /* MATCH-RWL03 0x00538d60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -43,10 +48,10 @@ MGLOBAL(int, DAT_007dc5b4, 0x007dc5b4);
 MGLOBAL(undefined1, DAT_005e4574, 0x005e4574);
 MGLOBAL(undefined1, DAT_005cea1c, 0x005cea1c);
 float10 FUN_004c3b90(float p0);
-MGLOBAL(int, _DAT_005cc320, 0x005cc320);
-MGLOBAL(int, _DAT_005ce54c, 0x005ce54c);
-MGLOBAL(int, _DAT_005e4574, 0x005e4574);
-MGLOBAL(int, _DAT_005cea1c, 0x005cea1c);
+MGLOBAL(float, _DAT_005cc320, 0x005cc320);
+MGLOBAL(float, _DAT_005ce54c, 0x005ce54c);
+MGLOBAL(float, _DAT_005e4574, 0x005e4574);
+MGLOBAL(float, _DAT_005cea1c, 0x005cea1c);
 // MATCH: 0x00538d60 FUN_00538d60
 /* [C1 2026-05-20] Ray-vs-BVH-vs-triangle intersection over a RpWorld using the game's collision
    BVH. */
@@ -211,10 +216,10 @@ void FUN_00538d60(int param_1,float *param_2,code *param_3,undefined4 param_4)
       iVar8 = *piVar7;
       fVar1 = *(float *)((int)local_340 + iVar8 + 0xc);
       fVar2 = *(float *)((int)local_340 + iVar8 + 0x24);
-      fVar10 = fVar1 * (float)piVar24[2] + *(float *)((int)local_340 + iVar8);
-      fVar4 = fVar1 * (float)piVar24[1] + *(float *)((int)local_340 + iVar8);
-      fVar3 = (float)piVar7[5] - fVar2;
-      fVar2 = (float)piVar7[4] + fVar2;
+      fVar10 = fVar1 * *(float *)&piVar24[2] + *(float *)((int)local_340 + iVar8);
+      fVar4 = fVar1 * *(float *)&piVar24[1] + *(float *)((int)local_340 + iVar8);
+      fVar3 = *(float *)&piVar7[5] - fVar2;
+      fVar2 = *(float *)&piVar7[4] + fVar2;
       if (fVar1 <= DAT_005d757c) {
         if (fVar10 <= fVar2) {
           if (fVar3 <= fVar4) {
@@ -224,7 +229,7 @@ void FUN_00538d60(int param_1,float *param_2,code *param_3,undefined4 param_4)
             local_4[1] = local_4[-2];
             local_4[2] = local_4[-1];
             if (fVar10 < fVar3) {
-              local_4[2] = (int)((fVar3 - fVar10) * fVar1 + (float)local_4[2]);
+              *(float *)&local_4[2] = (fVar3 - fVar10) * fVar1 + *(float *)&local_4[2];
             }
             local_4[-3] = piVar7[2];
             fVar3 = fVar2;
@@ -246,12 +251,12 @@ void FUN_00538d60(int param_1,float *param_2,code *param_3,undefined4 param_4)
           local_4[1] = local_4[-2];
           local_4[2] = local_4[-1];
           if (fVar2 < fVar10) {
-            local_4[2] = (int)((fVar2 - fVar10) * fVar1 + (float)local_4[2]);
+            *(float *)&local_4[2] = (fVar2 - fVar10) * fVar1 + *(float *)&local_4[2];
           }
           local_4[-3] = piVar7[3];
           if (fVar4 < fVar3) {
 LAB_00539198:
-            local_4[-2] = (int)((fVar3 - fVar4) * fVar1 + (float)local_4[-2]);
+            *(float *)&local_4[-2] = (fVar3 - fVar4) * fVar1 + *(float *)&local_4[-2];
           }
         }
         else {
