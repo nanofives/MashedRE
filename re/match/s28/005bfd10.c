@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S28 h1 0x005bfd10 : 77.2% (regs 77, ops 86). By hand: cdecl 3 args; allocator call 0x005aea00(size,0x10800), init 0x005c0140 (cdecl 3), fail cleanup 0x004522d0, two vtable-pointer stores (0x635ab0 at +4, 0x635af8 at +0) and a rep stosd of 12 dwords (memset intrinsic). Remaining diff: the original pushes ebx/ebp/esi/edi and shares one epilogue between the two failure paths (the first fail jumps past the cleanup call); ours emits separate epilogues. Residual class (b). */
 

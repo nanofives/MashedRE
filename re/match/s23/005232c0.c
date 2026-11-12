@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x005232c0: libpng 1.0.12 pngrutil.c png_crc_error, png_get_uint_32 inlined.
    88.2% (regs 88.2, ops 96.1). Residual: the original loads png_ptr->flags (+0x6c) once before the chunk_name

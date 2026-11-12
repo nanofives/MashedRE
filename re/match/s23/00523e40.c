@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00523e40: libpng 1.0.12 pngrutil.c png_handle_gAMA (floating + fixed point, sRGB check, no
    console io). The original's compiler inlined png_crc_finish unevenly: the "Incorrect length" path and the

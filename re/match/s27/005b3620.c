@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S27 0x005b3620: 82.1% (regs 89.7%). Hand: intrusive list node (LN next at +4 of head, entry = node-0x20 bytes), loop in call-first form; FUN_005adf30 2-arg cdecl. Residual (a): original loads param_1 into eax first then lea ebx,[eax+4] and push order; typed struct, do/for/while forms, permuter 100 compiles did not change it. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

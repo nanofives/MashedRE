@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // best 90.6 (ops 95.3, regs 90.6). Fixes: FUN_005be4d0/790/870 are code addresses (prototypes, pushed as immediates, not MGLOBAL byte reads); vtable calls stdcall. Residual: original duplicates the success epilogue (mov eax,esi; pop x4; ret) after the FUN_005aef30 test, ours shares the first return. Permuter 194 compiles no gain. Class (b).
 /* MATCH-S28 0x005be260: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body

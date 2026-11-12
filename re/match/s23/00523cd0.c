@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00523cd0: libpng 1.0.12 pngrutil.c png_handle_IEND, with png_crc_finish (and its png_crc_read,
    png_crc_error) inlined, written as static __forceinline copies above the function.

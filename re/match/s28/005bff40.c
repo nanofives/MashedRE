@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // best 86.1 (ops 94.8; only diff is prologue: original pushes esi/edi before the first test, ours after the two early-return checks). Hand-written: stdcall COM-style method, QueryInterface out-param = &param_1 (address-taken), fields via p = this+0x148. Permuter variant (91.3) corrupted a vtable expression, rejected. Class (b).
 // hand-written from decomp (COM-style, out-param = &param_1)
