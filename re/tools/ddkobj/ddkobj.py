@@ -498,6 +498,11 @@ def main_build(a):
             if plain in u["info"]["ported"]:
                 exe_names[u["defs"].get(plain, plain)] = u
     wrapper_edits = collections.defaultdict(list)   # wrapper obj path -> [(exe plain name, rva)]
+    # PORT-TOP-08: `__ddkreg_<rva>` -> the source that took it. A second source that holds the same static
+    # register-convention body (re/match/s08/004332a0.c keeps 0x0042ac50 as a file-static local, re/match/s06/0042ac50.c
+    # is its own unit) takes `__ddkreg_<rva>_<source stem>`, so the link has one definition per name. The byte check
+    # looks each name up in its own object (main_check), so both copies are checked at the same RVA.
+    ddkreg_owner = {}
 
     def process_unit(co, u, rec_base, ext_statics):
         """Symbol rewrite of one DDK object (see the module docstring). ext_statics: also send port-excluded STATIC
@@ -549,7 +554,10 @@ def main_build(a):
                 if s.cls == CE.IMAGE_SYM_CLASS_STATIC and plain in regconv:
                     # DDKOBJ-REGCONV: the body keeps its private convention. It becomes an external under a unique
                     # name (the byte check finds it in the map); its in-object callers keep calling it directly.
-                    new = CE.redecorate(s.name, f"__ddkreg_{match_plain[plain]:08x}")
+                    regname = f"__ddkreg_{match_plain[plain]:08x}"
+                    if ddkreg_owner.setdefault(regname, str(u["src"])) != str(u["src"]):
+                        regname += "_" + pathlib.Path(u["src"]).stem
+                    new = CE.redecorate(s.name, regname)
                     rec.setdefault("static_promotions", []).append(
                         {"name": plain, "standard_convention": False,
                          "evidence": "register convention kept; " + ("adapter " + regconv[plain] if regconv[plain]
