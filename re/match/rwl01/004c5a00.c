@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH-S01 (2026-11-12): 100%, byte-identical under ddk and rw9044, relocheck OK. Store order f0, f4, f10, f30, f54, then +0x50 cleared as a dword, then two read-modify-write mask updates of that dword (& ~0xff00 | 0x1100, then & ~0xff | 1). Permuter first took it 89.7 -> 93.1. */
 /* MATCH-RWL01 0x004c5a00: best 89.7% (regs 89.7%, ops 100%), class (b). Struct view of the object; the remaining diff is only the order of the dword [+0x50] store and byte [+0x51]/[+0x30] stores (permuter, 254 compiles; manual store orders gave 72-86%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -53,13 +54,13 @@ undefined4 * FUN_004c5a00(undefined4 param_1)
   p = (S5A00 *)(**(code **)(DAT_007d3ff8 + 0x118))(*(undefined4 *)(DAT_007d4054 + 8 + DAT_007d3ff8),0x30006);
   if (p != (S5A00 *)0x0) {
     p->f0 = param_1;
-    p->f51 = 0x11;
-    *(undefined4 *)&p->f50 = 0;
     p->f4 = 0;
     p->f10 = 0;
-    p->f54 = 1;
     p->f30 = 0;
-    p->f50 = 1;
+    p->f54 = 1;
+    *(uint *)&p->f50 = 0;
+    *(uint *)&p->f50 = (*(uint *)&p->f50 & ~0xff00u) | 0x1100;
+    *(uint *)&p->f50 = (*(uint *)&p->f50 & ~0xffu) | 1;
     FUN_004d8000((int)&DAT_00618138,(undefined4)p);
   }
   return (undefined4 *)p;

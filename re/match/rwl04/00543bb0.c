@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL04 0x00543bb0 h1: best 72.3% (regs 72.3%, ops 90.6%). Residue: orig dec/dec/dec switch chain and unmerged epilogues (pop ecx..ret copies) and push ecx local slot; ours cross-jumps failure exits. Case-per-label switch, ents!=0 branch first, &fn108 member pointer. Class (a)/(b). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -41,9 +42,9 @@ int FUN_00543bb0(Arr *param_1,char *param_2,int param_3,int param_4)
   int local_4;
   Ent *e;
   
+  local_4 = -1;
   iVar4 = param_1->n;
   iVar2 = 0;
-  local_4 = -1;
   if (0 < iVar4) {
     e = param_1->ents;
     do {
@@ -110,8 +111,7 @@ LAB_00543c49:
   piVar5->name = 0;
   if (param_2 != 0) {
     code2 *pf = &DAT_007d3ff8->fn108;
-    iVar4 = DAT_007d3ff8->fnF4((int)param_2);
-    piVar5->name = (char *)(*pf)(iVar4 + 1, 0x30002);
+    piVar5->name = (char *)(*pf)(DAT_007d3ff8->fnF4((int)param_2) + 1, 0x30002);
     if (piVar5->name != 0) {
       DAT_007d3ff8->fnCC((int)piVar5->name,(int)param_2);
     }

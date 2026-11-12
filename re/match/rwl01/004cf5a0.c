@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL01 0x004cf5a0: best 59.4% (regs 70%, ops 79%), class (b). Header words as one uint[4] (flags, error word, size, type) so the frame is 0x110 as in the original, FUN_004d8810 returns int. The original reads byte [esp+0x12] into ebx before the calls and branches on it (test bl,1 then push 0/1); byte-access and ternary spellings of the 0x10000 test scored lower (55%). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

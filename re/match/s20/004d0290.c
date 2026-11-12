@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* RWC-DRIVER 2026-11-11: 73.4% -> 76.4%. Moved by: cases end in break with one 'return 1' after the switch (RW RWRETURN shape), +0xb = 0xff stored before the privateFlags clear in case 0/4 (permuter). Residual unchanged: the original saves ebp/edi in the prologue; ours sinks them past the cpPixels early exit (inverting the test to 'if (cpPixels != 0) {...}' gets the prologue right but moves the error block to the end, 67%). */
 /* MATCH-S20 0x004d0290 (h2): 73.4% (regs 81.5%). Raw 19.3%. D3D9 raster unlock shape: RwRaster / raster-extension

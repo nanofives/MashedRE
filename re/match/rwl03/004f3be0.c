@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
-// h3: 95.6% regs 95.6%. Struct local for the error record, iVar1 hoisted above the compare, count read as p[1]=p[1]+1; return p[1]-1. Residual: lea edi scheduled before cmp; class (a).
+// TOOLCHAIN rw9044
+// RWC-MATCH-S02: 100% under rw9044 with iVar1 computed after the grow test (the fail path is the only user; no store between the load and the use). Prior note: h3: 95.6% regs 95.6%. Struct local for the error record, iVar1 hoisted above the compare, count read as p[1]=p[1]+1; return p[1]-1. Residual: lea edi scheduled before cmp; class (a).
 /* MATCH-RWL03 0x004f3be0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -36,13 +37,13 @@ int FUN_004f3be0(int *param_1,int param_2)
   int iVar2;
   struct { int a; int b; } st;
 
-  iVar1 = param_1[2] * 4 + 0x50;
   if (param_1[2] > param_1[1]) {
     *(int *)(*param_1 + param_1[1] * 4) = param_2;
     *(short *)(param_2 + 0x18) = *(short *)(param_2 + 0x18) + 1;
     param_1[1] = param_1[1] + 1;
     return param_1[1] - 1;
   }
+  iVar1 = param_1[2] * 4 + 0x50;
   if (*param_1 != 0) {
     iVar2 = (*(Cb110_4f3be0 *)(DAT_007d3ff8 + 0x110))(*param_1,iVar1,0x1030008);
   }

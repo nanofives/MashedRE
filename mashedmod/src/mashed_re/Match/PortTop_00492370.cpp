@@ -219,23 +219,75 @@ int PortTop_MainLoopInit(void) {
     PortTop_Log("0x00492770 MainLoopInit returned %d", r);
     return r;
 }
-// rva 0x004929d0 game-mode machine: the port wrapper GameModeMachine_Tick (Race/GameModeMachine.cpp), the hand loop's
-// call for this job (default it is a no-op; MASHED_PORTSTATE_GAMEFLOW_FU=1 runs the matched 0x004929d0).
+// rva 0x004929d0 game-mode machine: the matched exe body Orig_004929d0 (Match/PortTop_004929d0.cpp, re/match/s15/004929d0.c
+// 100%) since PORT-TOP-05; case 2 calls the matched 0x0040d440 (Match/PortTop_0040d440.cpp). Each change of the phase word
+// DAT_00771968 is logged. Diagnostic switch MASHED_TOP05_HANDFRAME=1 runs the old stand-in (the hand loop's
+// GameModeMachine_Tick, a no-op unless MASHED_PORTSTATE_GAMEFLOW_FU=1) and the old 0x00492d30 stand-in.
+int Orig_004929d0(void);
+int Orig_00492d30(void);
+int  PortTop_HandFrameBegin(void);
+void PortTop_HandFrameInputGlobals(void);
+void PortTop_HandFrameGameFlow(void);
+extern unsigned g_PortTop05_FrontendCalls;
+extern unsigned g_PortTop05_RaceTickCalls;
 static unsigned s_frame = 0;
-int PortTop_Port_004929d0(void) {
+static int s_handFrame = -1;
+static int PortTop_HandFrameSwitch(void) {
+    if (s_handFrame < 0) {
+        const char* const v = std::getenv("MASHED_TOP05_HANDFRAME");
+        s_handFrame = (v && v[0] == '1') ? 1 : 0;
+        PortTop_Log("frame subtree: %s", s_handFrame ? "MASHED_TOP05_HANDFRAME=1, hand stand-ins for 0x004929d0 / 0x00492d30"
+                                                      : "matched 0x004929d0 and 0x00492d30 (PORT-TOP-05)");
+    }
+    return s_handFrame;
+}
+static int s_phaseSeen = -1;
+static void PortTop_LogPhase(const char* where) {
+    const int ph = *reinterpret_cast<volatile int*>(0x00771968u);
+    if (ph != s_phaseSeen) {
+        PortTop_Log("frame %u %s: DAT_00771968 %d -> %d (DAT_0067ecb0=%d DAT_0067eca4=%d DAT_0063ba7c=%d DAT_0063ba78=%d)",
+                    s_frame, where, s_phaseSeen, ph, *reinterpret_cast<volatile int*>(0x0067ecb0u),
+                    *reinterpret_cast<volatile int*>(0x0067eca4u), *reinterpret_cast<volatile int*>(0x0063ba7cu),
+                    *reinterpret_cast<volatile int*>(0x0063ba78u));
+        s_phaseSeen = ph;
+    }
+}
+int PortTop_Bound_004929d0(void) {
     if (s_frame == 0) PortTop_Log("first frame: run function 0x00492290 loop entered");
-    PortTop_HandGameModeMachine();
-    return 1;
+    if (PortTop_HandFrameSwitch()) {
+        PortTop_HandGameModeMachine();
+        return 1;
+    }
+    PortTop_LogPhase("before 0x004929d0");
+    const int r = Orig_004929d0();
+    PortTop_LogPhase("after 0x004929d0");
+    return r;
 }
 // rva 0x004967e0 (input poll, C2, no exe body) under the matched 0x00492d20: the hand keyboard poll.
 void PortTop_StandIn_004967e0(void) {
     PortTop_HandPollKeyboard();
 }
-// stand-in for 0x00492d30 GameTickStateMachine7 (7-case machine on DAT_00771968, unported tree): the hand frame update
-// (deterministic frame cap, harness steps, menu navigation, input globals, GameFlow_Update).
-int PortTop_StandIn_00492d30(void) {
-    PortTop_HandFrameUpdate();
-    return 1;
+// rva 0x00492d30 frame machine: the matched exe body Orig_00492d30 (Match/PortTop_00492d30.cpp, re/match/s15/00492d30.c
+// 100%) since PORT-TOP-05. The hand frame update is split around it (exe_main.cpp HandTop_Frame*):
+//   before  the deterministic frame cap and the dev harness steps (no original counterpart)
+//   inside  the frontend machine 0x0043dfd0 = the hand menu navigation + input globals (stand-in, cases 1/4/5/6)
+//   after   the input globals when 0x0043dfd0 did not run this frame (cases 2/3/7), then the hand session (GameFlow_Update,
+//           the race of the knob path; 0x004111c0 is a counting stand-in)
+int PortTop_Bound_00492d30(void) {
+    if (PortTop_HandFrameSwitch()) {
+        PortTop_HandFrameUpdate();
+        return 1;
+    }
+    if (!PortTop_HandFrameBegin()) return 1;   // frame cap reached: WM_QUIT is posted, the pump ends the loop
+    const unsigned fe = g_PortTop05_FrontendCalls;
+    const int r = Orig_00492d30();
+    if (g_PortTop05_FrontendCalls == fe) PortTop_HandFrameInputGlobals();
+    PortTop_HandFrameGameFlow();
+    if (s_frame < 600 ? (s_frame % 120) == 0 : (s_frame % 1800) == 0)
+        PortTop_Log("frame %u: 0x00492d30 (matched) returned %d, phase %d, 0x0043dfd0 stand-in calls %u, 0x004111c0 calls %u",
+                    s_frame, r, *reinterpret_cast<volatile int*>(0x00771968u), g_PortTop05_FrontendCalls,
+                    g_PortTop05_RaceTickCalls);
+    return r;
 }
 // stand-in for 0x00492e90 (frame render, 26 callees): the hand RenderFrame. A device loss posts WM_QUIT, which the
 // matched pump 0x00499690 turns into the loop exit (the hand loop breaks on it).
@@ -277,8 +329,8 @@ int PortTop_Missing_00493480(void) { return 0; }
 // run function 0x00492290
 #define FUN_00492770 PortTop_MainLoopInit
 #define FUN_00499690 WindowMsgPump                  // matched, Match/MatchS16_00499690.cpp
-#define FUN_004929d0 PortTop_Port_004929d0
-#define FUN_00492d30 PortTop_StandIn_00492d30
+#define FUN_004929d0 PortTop_Bound_004929d0     // matched, Match/PortTop_004929d0.cpp (PORT-TOP-05)
+#define FUN_00492d30 PortTop_Bound_00492d30     // matched, Match/PortTop_00492d30.cpp (PORT-TOP-05)
 #define FUN_00492e90 PortTop_StandIn_00492e90
 #define FUN_004926c0 PortTop_Missing_004926c0
 #define FUN_00493480 PortTop_Missing_00493480

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL03 0x00534b60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
@@ -47,8 +48,7 @@ void FUN_00534b60(undefined4 param_1,uint param_2,undefined4 param_3)
   f40000 = (param_2 & 0x40000) == 0x40000;
   f80000 = (param_2 & 0x80000) == 0x80000;
   f100000 = (param_2 & 0x100000) == 0x100000;
-  t = param_2 & 0x8000;
-  if (f8 == 1 && t == 0x8000) {
+  if (f8 == 1 && (t = param_2 & 0x8000) == 0x8000) {
     v = t;
   }
   if (f20 == 1 && f20000 == 1) {

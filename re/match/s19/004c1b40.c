@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /GS /Ob1 /G5
 /* MATCH-S19 0x004c1b40 (h2 hand form, h6): 92.7%, regs 95.1%, cxx ok. RwCameraFrustumTestSphere shape: typed camera/plane/sphere, dot as y,x,z accumulate (the RwV3dDotProduct macro form computes x first: 85.4). /G5 (h6) took it from 76.2 to 92.7 (fixes and eax,0x4100 and the loop pad). Residual (b): original loads cam into eax and does lea ecx,[eax+0x94] (ours mov ecx/add ecx), and dec esi is scheduled before the x product. Tried: do-while/for counters, unsigned counter, &planes[0], RW typed frustum plane, operand orders, permuter 166 compiles. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

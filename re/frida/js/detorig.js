@@ -326,7 +326,7 @@ function watchArm() {
   const addrs = (CFG.watch || []).slice(0, 2).map((va) => ga(va));
   if (!addrs.length) return 'no watch';
   Process.setExceptionHandler((det) => {
-    if (det.type !== 'single-step' && det.type !== 'breakpoint') return false;
+    if (det.type !== 'single-step' && det.type !== 'breakpoint') return CR_HANDLER ? CR_HANDLER(det) : false;
     try {
       const c = det.context;
       if (watchHits++ < 2000) {
@@ -664,6 +664,64 @@ function provReport() {
   send({ kind: 'prov', rows, installed: PV.installed });
 }
 
+// ---------------------------------------------------------------- PROV-CRASH-12 first-fault catcher (cfg.crash)
+// An exception handler (no Interceptor) records the first real fault: type, faulting address, memory op, all registers,
+// 64 stack dwords from esp, 32 code bytes from eip-16, and which --prov blob holds eip. A JS timer samples the main
+// thread's context 40 times when N (main-thread clock calls) has not moved for cfg.crash.stall seconds (a hang).
+// Each record is written to cfg.crash.file synchronously, then sent: the process can die before a send is delivered.
+let CR_FILE = null, CR_HANDLER = null, CR_DONE = 0;
+function crWrite(rec) {
+  try { if (!CR_FILE) CR_FILE = new File(CFG.crash.file, 'a'); CR_FILE.write(JSON.stringify(rec) + String.fromCharCode(10)); CR_FILE.flush(); } catch (e) { }
+  try { send(Object.assign({ kind: 'crash' }, rec)); } catch (e) { }
+}
+function crHex(p) { return '0x' + (p.toUInt32() >>> 0).toString(16); }
+function crWhere(v) {
+  v = v >>> 0;
+  if (PV && PV.installed) for (const b of PV.installed) {
+    if (!b.base) continue;
+    const lo = parseInt(b.base, 16), st = parseInt(b.stub, 16);
+    if (v >= lo && v < lo + b.size) return { rva: b.rva, off: '0x' + (v - lo).toString(16) };
+    if (v >= st && v < lo) return { rva: b.rva, stub: '0x' + (v - st).toString(16) };
+  }
+  const m = Process.findModuleByAddress(ptr(v));
+  return m ? { mod: m.name, off: '0x' + (v - (m.base.toUInt32() >>> 0)).toString(16) } : null;
+}
+function crCtx(c) {
+  const r = {};
+  for (const k of ['eip', 'esp', 'ebp', 'eax', 'ecx', 'edx', 'ebx', 'esi', 'edi']) r[k] = crHex(c[k]);
+  let stack = [];
+  try { const sp = c.esp; for (let i = 0; i < 64; i++) { const v = sp.add(i * 4).readU32() >>> 0; const w = crWhere(v); stack.push(w ? ['0x' + v.toString(16), w] : '0x' + v.toString(16)); } } catch (e) { stack.push('stack-err ' + e); }
+  let code = '';
+  try { code = Array.from(new Uint8Array(c.eip.sub(16).readByteArray(32))).map((x) => (x < 16 ? '0' : '') + x.toString(16)).join(' '); } catch (e) { code = 'code-err'; }
+  return { ctx: r, stack, code, eip: r.eip, eip_in: crWhere(c.eip.toUInt32()) };
+}
+function crashArm() {
+  if (!CFG.crash) return null;
+  CR_HANDLER = (d) => {
+    if (d.type === 'breakpoint' || d.type === 'single-step' || d.type === 'system') return false;
+    if (CR_DONE++ < 4) {
+      try { crWrite(Object.assign({ what: 'fault', tid: Process.getCurrentThreadId(), n: N(), type: d.type, address: '' + d.address, memory: d.memory ? { op: d.memory.operation, address: '' + d.memory.address } : null }, crCtx(d.context))); } catch (e) { crWrite({ what: 'fault-err', msg: '' + e }); }
+    }
+    return false;
+  };
+  Process.setExceptionHandler(CR_HANDLER);
+  let lastN = -1, since = Date.now(), sampled = false;
+  setInterval(() => {
+    const n = N();
+    if (n !== lastN) { lastN = n; since = Date.now(); return; }
+    if (sampled || Date.now() - since < CFG.crash.stall * 1000) return;
+    sampled = true;
+    for (let i = 0; i < 40; i++) {
+      try {
+        const t = Process.enumerateThreads().find((x) => x.id === CFG.main);
+        if (t) crWrite(Object.assign({ what: 'stall', k: i, n, tid: t.id, state: t.state }, crCtx(t.context)));
+      } catch (e) { crWrite({ what: 'stall-err', k: i, msg: '' + e }); }
+      Thread.sleep(0.05);
+    }
+  }, 250);
+  return 'crash catcher armed, stall ' + CFG.crash.stall + ' s';
+}
+
 // ---------------------------------------------------------------- install
 const SLOTS =[[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
 function install() {
@@ -683,6 +741,8 @@ function install() {
   // (14 patchCode calls, or 326 Interceptor attaches) moved the frame-timer phase by one tick in 2 of 4 runs
   PV_AT = provInstall();
   if (PV_AT) res.push(['prov', PV_AT]);
+  const CRA = crashArm();
+  if (CRA) res.push(['crash', CRA]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
   const doWarp = () => {
     warpN = N();

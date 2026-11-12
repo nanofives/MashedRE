@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL04 0x00543e50 h1: best 75.9% (regs 75.9%, ops 76.4%). Residue: orig keeps 14 unmerged 'xor eax,eax; ret' failure exits after each jge, ours cross-jumps them to one tail (148 vs 174 ins). Flags /Ot /Oy- /GF /Zi /Ow /Od do not change it. Callbacks as real functions, callees with real arity. Class (a). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -123,5 +124,5 @@ int FUN_00543e50(void)
     return 0;
   }
   DAT_007dc668 = FUN_004cf430(0x11f,FUN_005444a0,FUN_005446f0,FUN_005448f0);
-  return -1 < DAT_007dc668;
+  return 0 <= DAT_007dc668;
 }
