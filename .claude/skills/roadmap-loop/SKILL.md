@@ -102,15 +102,25 @@ Tell each lead the kind of every row it gets, and put the kind in the worker tas
 3. **Pickup check.** Within 5 minutes of sending the task, confirm the child picked it up:
    its `latestSeq` climbs past the READY turn (`read_session` limit 1 or 2), or its ledger row
    is `claimed` / `working`. If not, re-send the same task once with `yolo: true`. If it still
-   has not started, `stop_child` and respawn. (Run 1, 2026-10-24: the merge train answered
+   has not started, `stop_child` and respawn. The lead runs the same check within 5 minutes of
+   every `move_self`. (Run 1, 2026-10-24: the merge train answered
    READY, sat idle 23 min with its task unprocessed, and the queue stalled.)
 
-| role | account | model | effort |
+Model by row kind, standing rule L-136 (Mariano 2026-11-12, KICKOFF_run39). Always pass `model` and `effort`.
+
+| role / row kind | account | model | effort |
 |---|---|---|---|
-| L1 section lead | claude2 | sonnet | medium |
-| L2 worker, RE / port / Ghidra / Frida | claude3 | claude-opus-5-5 | high |
-| L2 worker, text-only / tracker leg | claude3 | claude-sonnet-5-5 | medium |
+| L1 section lead | claude2 | claude-sonnet-5-5 | medium |
 | L1 merge train | claude3 | claude-sonnet-5-5 | medium |
+| Wiring, restacks, tables, tracker batches | claude3 | claude-sonnet-5-5 | medium |
+| Port rows and bindings | claude3 | claude-opus-5-5 | medium |
+| First-divergence diagnosis, compiler shaping, RW core bring-up | claude3 | claude-opus-5-5 | high |
+| Last resort: Opus high failed twice | claude3 | claude-fable-5-2 | high |
+
+- Fable high on claude3 only after Opus high failed twice.
+- Read-only surveys go to the account2 worker (`delegate.ps1`), not to a child.
+- Step up one level only after a reported failed attempt.
+- A top-down RESULT names its self-test result before the lead enqueues it.
 
 Check the child's real model with `read_session` (limit 3) once after spawning; if it was
 clamped down, respawn with the alias.
@@ -125,7 +135,7 @@ spawn the worker on claude3 with the holding prompt, then send its task with yol
 "<step task: the row's title + next + evidence, its row kind (top-down / race-path / default-path / text) and what
 that kind runs per WORKER_RULES.md "Row kinds", the worktree/branch name orch/<id>, WORKER_RULES.md>".
 Row kinds: <id: kind, one per step>. Never claim a row whose note starts "FROZEN by ROADMAP v5".
-Model: claude-opus-5-5 high for RE/port work, claude-sonnet-5-5 medium for text-only steps.
+Model by row kind (L-136): Sonnet medium for wiring, restacks, tables and tracker batches; Opus medium for port rows and bindings; Opus high for first-divergence diagnosis, compiler shaping and RW core bring-up; Fable high on claude3 only after Opus high failed twice; step up one level only after a reported failed attempt. Before you enqueue a top-down RESULT, check that it names its self-test result. Check pickup within 5 minutes of every move_self.
 When a worker reports: GREEN -> read its RESULT file, accept it, roadmap.ps1 enqueue <id> -Branch orch/<id> -Sha <sha>.
 RED/BLOCKED -> set the row blocked with the reason. DECISION -> roadmap.ps1 decision <id> "<question/options/evidence/recommendation>".
 Answer a worker's question yourself when it follows from the task or a project rule (send with yolo:true); a

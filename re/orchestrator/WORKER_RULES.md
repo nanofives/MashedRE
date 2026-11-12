@@ -9,7 +9,12 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
 - Spawning a child: `spawn_child` with a holding prompt ("reply READY and stop"), then the
   task with `send_to_session ... yolo: true`. **Every** later message to it carries
   `yolo: true` too. Leads on `claude2` (model sonnet, effort medium), workers on `claude3`.
-- Pickup check (every tier): send the task only after the child's READY turn has gone idle.
+  Model by row kind, standing rule L-136 (Mariano 2026-11-12, KICKOFF_run39): Sonnet medium for wiring, restacks,
+  tables, tracker batches, merge trains and leads; Opus medium for port rows and bindings; Opus high for
+  first-divergence diagnosis, compiler shaping and RW core bring-up; Fable high on claude3 only after Opus high
+  failed twice; read-only surveys on the account2 worker; step up one level only after a reported failed attempt.
+  A top-down RESULT names its self-test result before the lead enqueues it.
+- Pickup check (every tier, and within 5 minutes of every `move_self`): send the task only after the child's READY turn has gone idle.
   Within 5 minutes confirm pickup: its `latestSeq` climbs past the READY turn
   (`read_session` with limit 1 or 2), or its ledger row is `claimed` / `working`. If not,
   re-send the same task once with `yolo: true`. If it still has not started, `stop_child` and
