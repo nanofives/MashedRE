@@ -179,6 +179,7 @@
 #include "Frontend/RowMovers.h"             // FrontendModeIndex / SplitScreenTrackAssignment: matched 0x004309b0 / 0x00430830
 #include "Frontend/PortStateFrontend.h"     // MASHED_PORTSTATE_FRONTEND + the DAT_0067e9fc bridge (PORT-STATE-01)
 #include "Compat/PortStateSeed.h"           // port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out): original file-backed bytes into the pad (PORT-STATE-02, L-99 a)
+#include "Compat/PortTopCodePtr.h"          // PORT-OT-SEED-CODEPTR: code-pointer bindings, MASHED_ORIG_TOP only
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
@@ -9611,6 +9612,7 @@ static void HandTop_Prelude() {
         if (clr) std::fclose(clr);
     }
     mashed_re::Compat::PortStateSeed_Log(kLogPath);   // ON only (PORT-STATE-02)
+    mashed_re::Compat::PortTopCodePtr_Log(kLogPath);  // PORT-OT-SEED-CODEPTR: the lines held since WinMain
 
     // Scripted nav-demo verification harness (in-process input only). Enabled
     // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.
@@ -10598,7 +10600,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     {
         char ot[8] = {};
         if (GetEnvironmentVariableA("MASHED_ORIG_TOP", ot, sizeof(ot)) > 0 && ot[0] && ot[0] != '0')
+        {
+            // PORT-OT-SEED-CODEPTR: the code-pointer entries the seed leaves out, bound to exe bodies or stop thunks.
+            mashed_re::Compat::PortTopCodePtr_Apply(kLogPath);
             return PortTop_WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+        }
     }
     int rc = 0;
     HandTop_Prelude();
