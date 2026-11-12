@@ -60,6 +60,9 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 2026-11-12  0x004c5f60  rwID_TEXTUREMODULE_ctor  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c5f60.c; evidence: verify/rwcmatch_s01_20261112/RESULT_RWC-MATCH-S01.md
 2026-11-12  0x004caea0  FUN_004caea0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004caea0.c; evidence: verify/rwcmatch_s01_20261112/RESULT_RWC-MATCH-S01.md
 2026-11-12  0x004c5a00  FUN_004c5a00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c5a00.c; evidence: verify/rwcmatch_s01_20261112/RESULT_RWC-MATCH-S01.md
+2026-11-12  0x004f3be0  FUN_004f3be0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/004f3be0.c; evidence: verify/rwcmatch_s02_20261112/RESULT_RWC-MATCH-S02.md
+2026-11-12  0x004e5d30  FUN_004e5d30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl02/004e5d30.c; evidence: verify/rwcmatch_s02_20261112/RESULT_RWC-MATCH-S02.md
+2026-11-12  0x004e66d0  RpClumpForAllAtomics  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004e66d0.c; evidence: verify/rwcmatch_s02_20261112/RESULT_RWC-MATCH-S02.md
 2026-11-11  0x004b71c0  FUN_004b71c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s18/004b71c0.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md
 2026-11-11  0x004c18c0  FUN_004c18c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c18c0.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md
 2026-11-11  0x00516c40  png_sig_cmp  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s23/00516c40.c; evidence: verify/match9044all_20261111/RESULT_MATCH-9044-ALL-OBJECTS.md
