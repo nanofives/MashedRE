@@ -112,6 +112,10 @@ def run(args):
             cfg["tick"] = {"va": int(args.tick_va, 16), "qtick": args.qtick if tick else 0, "ttick": args.ttick if tick else 0,
                            "cap": args.tick_cap, "block": args.tick_block, "pin": tick,
                            "raw": [[int(x, 16), int(y, 16)] for x, y in (r.split("-") for r in args.tick_raw.split(",") if r)]}
+        if args.crash_catch:
+            # PROV-CRASH-12: first-fault catcher (exception handler, no Interceptor) plus a main-thread EIP sampler when
+            # the clock-call count N stalls for --crash-catch seconds (detorig.js crashArm). Written to crash.jsonl.
+            cfg["crash"] = {"file": str(out / "crash.jsonl").replace("\\", "/"), "stall": args.crash_catch}
         if args.prov or args.prov_count:
             # PROV-INSITU: DDK bodies (re/tools/prov/provlink.py JSON) behind inline JMPs from the warp on, and/or
             # native call counters only (census). detorig.js provInstall.
@@ -182,6 +186,8 @@ def run(args):
                 meta["prov"] = {"file": "prov.json", "executed": sum(1 for r in p["rows"] if r["calls_total"]),
                                 "install_fail": sum(1 for x in p["installed"] if x.get("err") or x.get("jmp_ok") is False)}
                 print(f"  prov rows {len(p['rows'])} executed {meta['prov']['executed']} install_fail {meta['prov']['install_fail']}", flush=True)
+            elif p["kind"] == "crash":
+                print("  CRASH", json.dumps({k: p.get(k) for k in ("what", "type", "address", "memory", "n", "eip", "eip_in")}), flush=True)
             elif p["kind"] == "done":
                 state["done"] = True
             else:
@@ -336,6 +342,7 @@ if __name__ == "__main__":
     ap.add_argument("--prov", default="", help="PROV-INSITU bodies JSON (re/tools/prov/provlink.py): inline JMP to each DDK body from the warp on")
     ap.add_argument("--prov-rvas", default="", help="comma list: only these bodies of --prov")
     ap.add_argument("--prov-wlog", type=int, default=0, help="PROV-WRITESET: single-step log of the first N calls of every --prov body (detorig.js wsInstall)")
+    ap.add_argument("--crash-catch", type=float, default=0, help="PROV-CRASH-12: arm a first-fault exception handler at the install and sample the main thread's EIP once N stalls this many seconds (crash.jsonl)")
     ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--menu-wait", type=float, default=2.0)
