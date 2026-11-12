@@ -1,0 +1,365 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 4/8 after 600s
+51 bodies, 29 executed in the census
+  run t95_165948_001_14 (14 bodies) 77s
+     prov: 14 bodies, 0 counters
+     prov install 14 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe9a0000"],["5cc0c8","0x769fdc30","0xe9a00a0"],["5cc0c4","0x769f8640","0xe9a0140"],["tick","493390"],["prov",{"n":14,"bodies":14,"count":0,"fail":0}]]
+     prov rows 14 executed 14 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1108 / 2724
+  run t95_165948_002_7 (7 bodies) 73s
+     prov: 7 bodies, 0 counters
+     prov install 7 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdfa0000"],["5cc0c8","0x769fdc30","0xdfa00a0"],["5cc0c4","0x769f8640","0xdfa0140"],["tick","493390"],["prov",{"n":7,"bodies":7,"count":0,"fail":0}]]
+     prov rows 7 executed 7 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t95_165948_003_7 (7 bodies) 58s
+     prov: 7 bodies, 0 counters
+     prov install 7 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe990000"],["5cc0c8","0x769fdc30","0xe9900a0"],["5cc0c4","0x769f8640","0xe990140"],["tick","493390"],["prov",{"n":7,"bodies":7,"count":0,"fail":0}]]
+     prov rows 7 executed 7 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1108 / 2724
+  run t95_165948_004_3 (3 bodies) 78s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xea00000"],["5cc0c8","0x769fdc30","0xea000a0"],["5cc0c4","0x769f8640","0xea00140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+     prov rows 3 executed 3 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1108 / 2724
+  run t95_165948_005_1 (1 bodies) 60s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe9a0000"],["5cc0c8","0x769fdc30","0xe9a00a0"],["5cc0c4","0x769f8640","0xe9a0140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1108 / 2724
+  run t95_165948_006_2 (2 bodies) 64s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe8d0000"],["5cc0c8","0x769fdc30","0xe8d00a0"],["5cc0c4","0x769f8640","0xe8d0140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t95_165948_007_4 (4 bodies) 64s
+     prov: 4 bodies, 0 counters
+     prov install 4 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe970000"],["5cc0c8","0x769fdc30","0xe9700a0"],["5cc0c4","0x769f8640","0xe970140"],["tick","493390"],["prov",{"n":4,"bodies":4,"count":0,"fail":0}]]
+     prov rows 4 executed 4 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1116 / 2724
+  run t95_165948_008_2 (2 bodies) 62s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe940000"],["5cc0c8","0x769fdc30","0xe9400a0"],["5cc0c4","0x769f8640","0xe940140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1116 / 2724
+  run t95_165948_009_1 (1 bodies) 82s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe980000"],["5cc0c8","0x769fdc30","0xe9800a0"],["5cc0c4","0x769f8640","0xe980140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 0 / 2724
+  run t95_165948_010_1 (1 bodies) 165s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xed10000"],["5cc0c8","0x769fdc30","0xed100a0"],["5cc0c4","0x769f8640","0xed10140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t95_165948_011_2 (2 bodies) 69s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdf70000"],["5cc0c8","0x769fdc30","0xdf700a0"],["5cc0c4","0x769f8640","0xdf70140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t95_165948_012_15 (15 bodies) 63s
+     prov: 15 bodies, 0 counters
+     prov install 15 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe970000"],["5cc0c8","0x769fdc30","0xe9700a0"],["5cc0c4","0x769f8640","0xe970140"],["tick","493390"],["prov",{"n":15,"bodies":15,"count":0,"fail":0}]]
+     prov rows 15 executed 15 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+runs 12, verdicts 29, left 0
+110 bodies, 66 executed in the census
+  run t80_171707_001_6 (6 bodies) 64s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdf40000"],["5cc0c8","0x769fdc30","0xdf400a0"],["5cc0c4","0x769f8640","0xdf40140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_002_6 (6 bodies) 178s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdc20000"],["5cc0c8","0x769fdc30","0xdc200a0"],["5cc0c4","0x769f8640","0xdc20140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_003_6 (6 bodies) 60s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe980000"],["5cc0c8","0x769fdc30","0xe9800a0"],["5cc0c4","0x769f8640","0xe980140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_004_6 (6 bodies) 74s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe970000"],["5cc0c8","0x769fdc30","0xe9700a0"],["5cc0c4","0x769f8640","0xe970140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_005_6 (6 bodies) 67s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdf20000"],["5cc0c8","0x769fdc30","0xdf200a0"],["5cc0c4","0x769f8640","0xdf20140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 116 / 2724
+  run t80_171707_006_3 (3 bodies) 115s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe830000"],["5cc0c8","0x769fdc30","0xe8300a0"],["5cc0c4","0x769f8640","0xe830140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+     prov rows 3 executed 3 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_007_3 (3 bodies) 101s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe980000"],["5cc0c8","0x769fdc30","0xe9800a0"],["5cc0c4","0x769f8640","0xe980140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+     prov rows 3 executed 3 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 116 / 2724
+  run t80_171707_008_1 (1 bodies) 63s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe7e0000"],["5cc0c8","0x769fdc30","0xe7e00a0"],["5cc0c4","0x769f8640","0xe7e0140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_009_2 (2 bodies) 63s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xed10000"],["5cc0c8","0x769fdc30","0xed100a0"],["5cc0c4","0x769f8640","0xed10140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 116 / 2724
+  run t80_171707_010_1 (1 bodies) 60s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe960000"],["5cc0c8","0x769fdc30","0xe9600a0"],["5cc0c4","0x769f8640","0xe960140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 408 / 2724
+  run t80_171707_011_1 (1 bodies) 62s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe9e0000"],["5cc0c8","0x769fdc30","0xe9e00a0"],["5cc0c4","0x769f8640","0xe9e0140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 116 / 2724
+  run t80_171707_012_6 (6 bodies) 59s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe960000"],["5cc0c8","0x769fdc30","0xe9600a0"],["5cc0c4","0x769f8640","0xe960140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_013_6 (6 bodies) 58s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xf040000"],["5cc0c8","0x769fdc30","0xf0400a0"],["5cc0c4","0x769f8640","0xf040140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 2 / 2724
+  run t80_171707_014_3 (3 bodies) 84s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe9a0000"],["5cc0c8","0x769fdc30","0xe9a00a0"],["5cc0c4","0x769f8640","0xe9a0140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+     prov rows 3 executed 3 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_015_3 (3 bodies) 24s
+   error: attach failed
+  -> NO-TICKS 0 / 0
+  run t80_171707_016_1 (1 bodies) 59s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xee40000"],["5cc0c8","0x769fdc30","0xee400a0"],["5cc0c4","0x769f8640","0xee40140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_017_2 (2 bodies) 60s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe960000"],["5cc0c8","0x769fdc30","0xe9600a0"],["5cc0c4","0x769f8640","0xe960140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 2 / 2724
+  run t80_171707_018_1 (1 bodies) 58s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xf530000"],["5cc0c8","0x769fdc30","0xf5300a0"],["5cc0c4","0x769f8640","0xf530140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_019_1 (1 bodies) 22s
+   error: attach failed
+  -> NO-TICKS 0 / 0
+  run t80_171707_020_6 (6 bodies) 57s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xeb00000"],["5cc0c8","0x769fdc30","0xeb000a0"],["5cc0c4","0x769f8640","0xeb00140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_021_6 (6 bodies) 23s
+   error: attach failed
+  -> NO-TICKS 0 / 0
+  run t80_171707_022_3 (3 bodies) 63s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdf50000"],["5cc0c8","0x769fdc30","0xdf500a0"],["5cc0c4","0x769f8640","0xdf50140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+     prov rows 3 executed 3 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_023_3 (3 bodies) 71s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe9b0000"],["5cc0c8","0x769fdc30","0xe9b00a0"],["5cc0c4","0x769f8640","0xe9b0140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+     prov rows 3 executed 3 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_024_6 (6 bodies) 78s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xf900000"],["5cc0c8","0x769fdc30","0xf9000a0"],["5cc0c4","0x769f8640","0xf900140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+     prov rows 6 executed 6 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_025_6 (6 bodies) 442s
+     prov: 6 bodies, 0 counters
+     prov install 6 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdc00000"],["5cc0c8","0x769fdc30","0xdc000a0"],["5cc0c4","0x769f8640","0xdc00140"],["tick","493390"],["prov",{"n":6,"bodies":6,"count":0,"fail":0}]]
+   === rc=6 ckpts=0
+  -> NO-TICKS 0 / 0
+  run t80_171707_026_3 (3 bodies) 420s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xddb0000"],["5cc0c8","0x769fdc30","0xddb00a0"],["5cc0c4","0x769f8640","0xddb0140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+   === rc=6 ckpts=0
+  -> NO-TICKS 0 / 0
+  run t80_171707_027_1 (1 bodies) 118s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xde40000"],["5cc0c8","0x769fdc30","0xde400a0"],["5cc0c4","0x769f8640","0xde40140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_028_2 (2 bodies) 421s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xde40000"],["5cc0c8","0x769fdc30","0xde400a0"],["5cc0c4","0x769f8640","0xde40140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+   === rc=6 ckpts=0
+  -> NO-TICKS 0 / 0
+  run t80_171707_029_1 (1 bodies) 425s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdf60000"],["5cc0c8","0x769fdc30","0xdf600a0"],["5cc0c4","0x769f8640","0xdf60140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+   === rc=6 ckpts=0
+  -> NO-TICKS 0 / 0
+  run t80_171707_030_1 (1 bodies) 554s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe950000"],["5cc0c8","0x769fdc30","0xe9500a0"],["5cc0c4","0x769f8640","0xe950140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t80_171707_031_3 (3 bodies) 222s
+     prov: 3 bodies, 0 counters
+     prov install 3 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe9b0000"],["5cc0c8","0x769fdc30","0xe9b00a0"],["5cc0c4","0x769f8640","0xe9b0140"],["tick","493390"],["prov",{"n":3,"bodies":3,"count":0,"fail":0}]]
+     prov rows 3 executed 3 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+runs 31, verdicts 66, left 0
+94 bodies, 59 executed in the census
+  run t50_183506_001_2 (2 bodies) 60s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe030000"],["5cc0c8","0x769fdc30","0xe0300a0"],["5cc0c4","0x769f8640","0xe030140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t50_183506_002_2 (2 bodies) 119s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdcd0000"],["5cc0c8","0x769fdc30","0xdcd00a0"],["5cc0c4","0x769f8640","0xdcd0140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t50_183506_003_2 (2 bodies) 63s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe570000"],["5cc0c8","0x769fdc30","0xe5700a0"],["5cc0c4","0x769f8640","0xe570140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t50_183506_004_2 (2 bodies) 60s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xe990000"],["5cc0c8","0x769fdc30","0xe9900a0"],["5cc0c4","0x769f8640","0xe990140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t50_183506_005_2 (2 bodies) 58s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xf630000"],["5cc0c8","0x769fdc30","0xf6300a0"],["5cc0c4","0x769f8640","0xf630140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 2 / 2724
+  run t50_183506_006_1 (1 bodies) 60s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdee0000"],["5cc0c8","0x769fdc30","0xdee00a0"],["5cc0c4","0x769f8640","0xdee0140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t50_183506_007_1 (1 bodies) 66s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xde20000"],["5cc0c8","0x769fdc30","0xde200a0"],["5cc0c4","0x769f8640","0xde20140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 2 / 2724
+  run t50_183506_008_2 (2 bodies) 59s
+     prov: 2 bodies, 0 counters
+     prov install 2 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xed00000"],["5cc0c8","0x769fdc30","0xed000a0"],["5cc0c4","0x769f8640","0xed00140"],["tick","493390"],["prov",{"n":2,"bodies":2,"count":0,"fail":0}]]
+     prov rows 2 executed 2 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1132 / 2724
+  run t50_183506_009_1 (1 bodies) 76s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdc50000"],["5cc0c8","0x769fdc30","0xdc500a0"],["5cc0c4","0x769f8640","0xdc50140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t50_183506_010_1 (1 bodies) 557s
+     prov: 1 bodies, 0 counters
+     prov install 1 sites, 0 failed []
+     install [["5cc2b4","0x753b7b70","0xdf80000"],["5cc0c8","0x769fdc30","0xdf800a0"],["5cc0c4","0x769f8640","0xdf80140"],["tick","493390"],["prov",{"n":1,"bodies":1,"count":0,"fail":0}]]
+     prov rows 1 executed 1 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1132 / 2724
+  run t50_183506_011_2 (2 bodies) 187s
+   error: attach failed
+  -> NO-TICKS 0 / 0

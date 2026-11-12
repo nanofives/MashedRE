@@ -1,0 +1,51 @@
+[test-slot] waiting for memory (0s so far): memory: 24.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (30s so far): memory: 24.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (60s so far): memory: 24.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (90s so far): memory: 24.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (120s so far): memory: 25.1 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (150s so far): memory: 25.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (180s so far): memory: 25.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (210s so far): memory: 24.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (240s so far): memory: 24.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (270s so far): memory: 25.1 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (300s so far): memory: 25.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (330s so far): memory: 26.1 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (360s so far): memory: 26.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (390s so far): memory: 26.0 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (420s so far): memory: 23.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (450s so far): memory: 23.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (480s so far): memory: 23.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (510s so far): memory: 23.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (540s so far): memory: 23.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (570s so far): memory: 23.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 3/8 after 600s
+[mashed-lock] WAITING — 'mashed_machine' held by pid=22700 (RWC-CENSUS); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=16608 (PROV-INSITU)
+[1/4] ref_a start 13:22:26
+[ref_a] exit 0 13:24:09
+  warp at N=600 pins={'ptd': '0x2ab05c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf00', 'rw_cursors_before': [225492748, 225492736], 'timer': {'v': 969117647, 'before': [969117647, 1196943806, 149898, 323022, 399022]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 11000],
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[2/4] census start 13:24:10
+[census] exit 0 13:25:17
+  prov: 0 bodies, 326 counters
+  warp at N=600 pins={'ptd': '0x13805c0', 'holdrand_before': 1, 'rw_ring': '0xd74bf00', 'rw_cursors_before': [225754892, 225754880], 'timer': {'v': 969117647, 'before': [969117647, 1439492765, 149898, 323022, 479842]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 9050], 
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+  prov rows 326 executed 197 install_fail 0
+=== rc=0 ckpts=15
+[3/4] b95 start 13:25:17
+[b95] exit 6 13:25:29
+  prov: 51 bodies, 0 counters
+  warp at N=600 pins={'ptd': '0x2cb05c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf00', 'rw_cursors_before': [225492748, 225492736], 'timer': {'v': 969117647, 'before': [969117647, 1631787342, 149898, 323022, 543912]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8750], 
+  game exited rc=3221225622
+=== rc=6 ckpts=0
+[4/4] ref_b start 13:25:29
+[ref_b] exit 0 13:26:32
+  warp at N=600 pins={'ptd': '0x2cf05c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf00', 'rw_cursors_before': [225492748, 225492736], 'timer': {'v': 969117647, 'before': [969117647, 1672862765, 149898, 323022, 557629]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8400], 
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[mashed-lock] released 'mashed_machine' pid=16608

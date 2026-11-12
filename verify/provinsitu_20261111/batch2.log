@@ -1,0 +1,18 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 8/8 after 600s
+[mashed-lock] WAITING — 'mashed_machine' held by pid=22380 (RWC-CENSUS); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=18252 (PROV-INSITU)
+[1/2] s1_477e60 start 13:38:31
+[s1_477e60] exit 6 13:38:44
+  prov: 1 bodies, 0 counters
+  warp at N=600 pins={'ptd': '0x14305c0', 'holdrand_before': 1, 'rw_ring': '0xd73bf00', 'rw_cursors_before': [225689356, 225689344], 'timer': {'v': 969117647, 'before': [969117647, 4014203128, 149896, 323022, 1338069]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 103, 'sample': [['7f0ff0', 9000],
+  race anchor N=720 dn_warp=120 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  game exited rc=3221225477
+=== rc=6 ckpts=0
+[2/2] s1_4744a0 start 13:38:44
+[s1_4744a0] exit 6 13:38:56
+  prov: 1 bodies, 0 counters
+  warp at N=600 pins={'ptd': '0x2b705c0', 'holdrand_before': 1, 'rw_ring': '0xd70bf00', 'rw_cursors_before': [225492748, 225492736], 'timer': {'v': 969117647, 'before': [969117647, 4055331180, 149896, 323022, 1351792]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 8900],
+  game exited rc=3221225477
+=== rc=6 ckpts=0
+[mashed-lock] released 'mashed_machine' pid=18252
