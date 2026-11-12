@@ -1,0 +1,2 @@
+selftest ok=40 bad=0 skip=0
+0x00440bc0 committed source linked at its own RVA: 1063 B, 0 differing bytes outside 69 blob-internal DIR32 sites, entry 0

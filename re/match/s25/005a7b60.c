@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S25 0x005a7b60 (h2): best 53.5% (regs 59.0%), class b. 770 B, structure transcribed, locals as array and int flags; ran out of budget. relocheck BAD only because the code differs from the original. */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): hdr holds 5 dwords for the same FUN_005ab380 writer (original frame sub esp,0x24). Best now 60.9%. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -58,7 +59,7 @@ uint FUN_005a7b60(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 
   uint uVar8;
   int iStack_20;
   uint uStack_18;
-  int hdr[3];
+  int hdr[5];
 
   uVar1 = param_2;
   uVar8 = param_6 >> 4 & 1;
