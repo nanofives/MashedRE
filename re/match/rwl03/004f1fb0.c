@@ -1,4 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH run 40: compiles (was C2069). FUN_004f0970 declared void * (its body returns the allocator result in eax and
+   this caller uses it). 37.0% ddk, not worked further. */
 /* MATCH-RWL03 0x004f1fb0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -35,7 +37,7 @@ MGLOBAL(int, DAT_00912118, 0x00912118);
 MGLOBAL(undefined1, FUN_004f2420, 0x004f2420);
 undefined4 FUN_004cc7f0(undefined4 p0, undefined4 p1, undefined4 p2, undefined4 p3);
 undefined4 FUN_004cc9f0(int p0);
-void FUN_004f0970(undefined4 p0);
+void * FUN_004f0970(undefined4 p0);
 undefined4 FUN_004f2570(int p0, uint p1, int * p2, int p3);
 undefined4 FUN_004f3440(int * p0, int p1);
 void FUN_005c24e0(undefined1 * p0, uint p1, uint p2, undefined * p3);

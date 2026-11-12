@@ -1,4 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH run 40: compiles (was C2440 x8). Five float reads/writes of undefined1 * stack slots are bit reinterpretations
+   (*(float *)&slot): odis.py 0x00538d60 shows no fild in the 756-instruction body. 12.3%, not worked further. */
 /* MATCH-RWL03 0x00538d60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -300,8 +302,8 @@ LAB_00539198:
           uVar23 = *pbVar22 & 0xc;
           fVar1 = *(float *)((int)local_508 + uVar23 + 0xc);
           fVar2 = *(float *)((int)local_508 + uVar23 + 0x24);
-          fVar10 = fVar1 * (float)ppuVar25[2] + *(float *)((int)local_508 + uVar23);
-          fVar4 = fVar1 * (float)ppuVar25[1] + *(float *)((int)local_508 + uVar23);
+          fVar10 = fVar1 * *(float *)&ppuVar25[2] + *(float *)((int)local_508 + uVar23);
+          fVar4 = fVar1 * *(float *)&ppuVar25[1] + *(float *)((int)local_508 + uVar23);
           fVar3 = *(float *)(pbVar22 + 0xc) - fVar2;
           fVar2 = *(float *)(pbVar22 + 4) + fVar2;
           if (fVar1 <= DAT_005d757c) {
@@ -313,7 +315,7 @@ LAB_00539198:
                 local_344[1] = local_344[-2];
                 local_344[2] = local_344[-1];
                 if (fVar10 < fVar3) {
-                  local_344[2] = (undefined1 *)((fVar3 - fVar10) * fVar1 + (float)local_344[2]);
+                  *(float *)&local_344[2] = (fVar3 - fVar10) * fVar1 + *(float *)&local_344[2];
                 }
                 local_344[-3] = pbVar22;
                 fVar3 = fVar2;
@@ -335,12 +337,12 @@ LAB_00539198:
               local_344[1] = local_344[-2];
               local_344[2] = local_344[-1];
               if (fVar2 < fVar10) {
-                local_344[2] = (undefined1 *)((fVar2 - fVar10) * fVar1 + (float)local_344[2]);
+                *(float *)&local_344[2] = (fVar2 - fVar10) * fVar1 + *(float *)&local_344[2];
               }
               local_344[-3] = pbVar22 + 8;
               if (fVar4 < fVar3) {
 LAB_005394ca:
-                local_344[-2] = (undefined1 *)((fVar3 - fVar4) * fVar1 + (float)local_344[-2]);
+                *(float *)&local_344[-2] = (fVar3 - fVar4) * fVar1 + *(float *)&local_344[-2];
               }
             }
             else {
