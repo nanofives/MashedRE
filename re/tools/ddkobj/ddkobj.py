@@ -52,6 +52,7 @@ SRC = MOD / "src" / "mashed_re"
 BUILD = MOD / "build"
 DEF_OBJ = BUILD / "obj" / "exe"
 BINDINGS = ROOT / "verify" / "porttop_20261108" / "BINDINGS.tsv"
+PROVISIONAL = ROOT / "re" / "match" / "PROVISIONAL.tsv"
 VCVARS = r"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat"
 
 INC_RE = re.compile(r'^\s*#\s*include\s+"([./\\]*re[/\\]match[/\\][^"]+\.c)"', re.M)
@@ -269,6 +270,23 @@ def load_bindings():
     return rows
 
 
+def load_provisional():
+    """L-126 (6a): RVAs listed in re/match/PROVISIONAL.tsv (status provisional or refused). A provisional body is not
+    byte-matched, so its unit never joins the object build and never counts in the byte-check."""
+    out = set()
+    try:
+        with open(PROVISIONAL, newline="", encoding="utf-8") as fh:
+            rows = [l for l in fh if not l.startswith("#")]
+        for r in csv.DictReader(rows, delimiter="	"):
+            try:
+                out.add(int(r["rva"], 16))
+            except (ValueError, KeyError):
+                pass
+    except OSError:
+        pass
+    return out
+
+
 def parse_source(path: pathlib.Path):
     t = path.read_text(encoding="utf-8", errors="replace")
     m = FLAGS_RE.search(t)
@@ -405,6 +423,7 @@ def main_build(a):
         shutil.rmtree(objdir)
     objdir.mkdir(parents=True)
     B = load_bindings()
+    PROV = load_provisional()
     crt = vs_crt_symbols()
     # every external the default link can resolve: defined in a default object, or in a library on the link line
     defmap = default_link_symbols() | crt
@@ -632,6 +651,10 @@ def main_build(a):
                "status": "ok", "undef": [], "defs": []}
         if info["lang"] != "c":
             rec["status"] = "skip:lang-" + info["lang"]
+            report["units"].append(rec)
+            continue
+        if all(r in PROV or B.get(r, {}).get("kind") == "provisional" for r in u["rvas"]):
+            rec["status"] = "skip:provisional"      # L-126 (6a): VS2022 body on the knob path, no byte-check
             report["units"].append(rec)
             continue
         if "@mglobal" in defs:
@@ -970,6 +993,7 @@ def main_check(a):
     st = collections.Counter(u["status"] for u in rep["units"])
     summ = {"identical": c.get("IDENTICAL", 0), "different": c.get("DIFFERENT", 0),
             "not_in_map": c.get("not-in-map", 0), "functions": len(rows),
+            "provisional_units_skipped": st.get("skip:provisional", 0),
             "units": len(rep["units"]), "units_linked": st.get("ok", 0),
             "refusals": {k: v for k, v in sorted(st.items()) if k.startswith("fail:")},
             "skips": {k: v for k, v in sorted(st.items()) if k.startswith("skip:")},
