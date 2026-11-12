@@ -1,4 +1,61 @@
-# RESULT MATCH-RT2D-RESID (2026-11-11)
+# RESULT MATCH-RT2D-RESID (2026-11-11, second attempt 2026-11-12)
+
+## Second attempt (roadmap run 39, 2026-11-12, Opus high on claude3)
+
+Verdict: RED. 0 of 3 at 100%, nothing promoted (no `relocheck.py`, no `c4_reclass.py`, no tracker edit). Two sources
+improved and are committed. 0x00555360 was not worked: it is admitted by rule (`re/match/ADMITTED.tsv`, equiv.py) and
+needs no provisional row.
+
+| RVA | run 38 (rw9044) | run 39 (rw9044) | source |
+|---|---|---|---|
+| 0x00554200 | 69.5% | **99.3%** (regs 99.3%, ops 100%, 141/141 ins) | re/match/s24/00554200.c |
+| 0x00554390 | 90.2% | **92.5%** (regs 92.7%, ops 98.4%, 439/439 ins) | re/match/rwl05/00554390.c |
+| 0x00555360 | 98.9% | 98.9% (unchanged, admitted) | re/match/s24/00555360.c |
+
+`re/match/s24/00554200.c` now carries `// TOOLCHAIN rw9044`. `0x00553e80` in the same file stays 100% under rw9044
+and under the DDK (`--toolchain ddk --only 0x00553e80`).
+
+### 0x00554200: 69.5% to 99.3%
+
+Each change is read off the original listing (`odis.py 0x00554200`):
+
+1. **A second variable joined at the end of the else.** Header failure assigns `ret = 0` (the original jumps straight
+   to the destroy test: `xor ebx,ebx; jmp 0x00554335` at 0x00554265), the else ends with `ret = result`
+   (`mov ebx,ebp` at 0x0055432f), the tail is `if (ret == 0) Destroy(obj); return ret;`. With one variable c2
+   threaded every failure past the result test and removed result. With the join, result stays in ebp, the case
+   region has no zero register (`test reg,reg`, `push 0`), as in the original. 69.5 to 88.1.
+2. **Failure polarity and one goto.** The 0x1a1 chunk test with the call in the then arm and the failure in the else
+   arm, and the item-array read failure as `goto done` (label before `ret = result`). The chunk failure then
+   tail-merges into the malloc failure block, as the original's `je 0x005542c3`. 88.1 to 98.6.
+3. **`obj->buf = buf` in both arms of the flags & 4 test.** c2 hoists the common store above the branch, after the
+   condition load, giving the original's `mov al,[esp+0x18]` before `mov [esi],edi` (0x005542f0). 98.6 to 99.3.
+
+Residual: one store. The original stores obj->extra after the parent and flagA stores (`mov [esi+0x10],eax` at
+0x005542a7), ours right after the `lea`. Tried, none above 99.3%: all 120 orders of the five field stores (before
+and after change 3), extra through a temp (180 placements), a size temp
+(210 placements), float and unsigned field types, hdr as an int array, `/Oa`, `/Ow`, `/G6`, flag test spellings,
+match_permute.py from 88.1%, 98.6% and 99.3% (842, 1,323 and 1,325 compiles).
+
+### 0x00554390: 90.2% to 92.5%
+
+1. **Outline counter `j = i`, bitmap loop keeps i.** i is then in ebp for the first bitmap loop, the bitmap glyph
+   pointer shares [esp+0x10] (0x005546bf) and oldTxd is at [esp+0x18] (0x0055469e), as in the original.
+2. **`char name[36]`.** Gives the original's 0x30 frame with name at [esp+0x1c] (0x00554745) and the dword at
+   [esp+0x3c] that the original never references. The read stays 0x20 bytes. With name[32] this shape has a 0x2c
+   frame (86.3%).
+
+Residual: the zero register. The original sets ebp = 0 at 0x0055458b and uses it for `cmp [ebx],ebp` (0x00554595),
+both loop guards and the counter store (0x005545b4), then as the bitmap i. Ours keeps immediates. Probe: one extra
+store of 0 in either branch or before it makes c2 9044 create the zero register (in edi), so c2 creates it at four
+constant-0 uses in the region and the current source has three. Open: which source form gives the fourth use with no
+code of its own. Tried, none above 92.5%: dead initialisers (oldTxd, g, font, version, path, a spare int, 63
+variants), explicit `count > 0` guards (60), i = 0 at 7 points, two reaching definitions of i, i = 0 as the first
+statement of both arms, name sizes 33 to 40, t1 / n / j scope and declaration order (240 + 168), match_permute.py
+from 89.5% and 92.5% (1,059 and 1,353 compiles).
+
+Variant files and permute logs stayed in the session scratchpad. They are not evidence for a status change.
+
+## First attempt (run 38, 2026-11-11)
 
 Row: byte-match the Rt2d residuals 0x00554390, 0x00554200 and 0x00555360 under toolchain rw9044 (VC6 SP5 cl
 12.00.8804 + Processor Pack c2 13.00.9044, L-131 / L-133). Match-only row: no build, no gates. Branch

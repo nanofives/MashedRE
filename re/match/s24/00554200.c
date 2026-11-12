@@ -1,4 +1,20 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RT2D-RESID run 39 (2026-11-12): 0x00554200 69.5% -> 99.3% under rw9044 (regs 99.3%, ops 100%, 141/141 ins);
+   0x00553e80 stays 100% under rw9044 and the DDK. Three source changes, each read off the original listing:
+   (1) a second variable `ret` joined at the end of the else: header failure `ret = 0` (the original's
+   `xor ebx,ebx; jmp 0x00554335` at 0x00554265 skips the result test), else `ret = result` (`mov ebx,ebp` at
+   0x0055432f), tail `if (ret == 0) Destroy(obj); return ret;`. This keeps result in ebp, so c2 no longer threads
+   every failure to the return (69.5 -> 88.1). (2) The 0x1a1 chunk test with the success call in the then arm and
+   the failure in the else arm, and the item-array read failure as `goto done` (label before `ret = result`):
+   the chunk failure then tail-merges into the malloc failure block (`je 0x005542c3` at 0x00554316) (-> 98.6).
+   (3) `obj->buf = buf` written in both arms of the flags & 4 test: c2 hoists the common store above the
+   branch after the condition load (`mov al,[esp+0x18]` at 0x005542f0 before `mov [esi],edi`) (-> 99.3).
+   Residual: one store. The original stores obj->extra after parent and flagA (`mov [esi+0x10],eax` at
+   0x005542a7), ours right after the lea. Not reached by: all 120 orders of the five field stores (twice, before
+   and after (3)), extra through a temp at 20 x 5 positions, a size temp at 210 placements, float / unsigned
+   field types, hdr as an array, `/Oa` `/Ow` `/G6`, match_permute.py from 88.1 / 98.6 / 99.3 (842 + 1,323 +
+   1,325 compiles). */
 /* MATCH-S24 0x00554200 (h4): 69.5% (regs 75.9%, ops 86.5%). Stream read of a node: freelist alloc + init
    (Create, inlined), 16-byte header, case type 1: 0x18-byte item array, flag bit 2 reads a 0x1a1 child chunk
    recursively, parent links; on failure the node is destroyed. The file also holds 0x00553e80 (Destroy, 100%):
@@ -95,6 +111,7 @@ Obj554200 *FUN_00554200(void *param_1)
 {
   Obj554200 *obj;
   Obj554200 *result;
+  Obj554200 *ret;
   Obj554200 *c;
   void *buf;
   Hdr554200 hdr;
@@ -104,7 +121,7 @@ Obj554200 *FUN_00554200(void *param_1)
   obj = Create554200();
   result = obj;
   if (FUN_004cbd30(param_1, &hdr, 0x10) != 0x10) {
-    result = 0;
+    ret = 0;
   } else {
     switch (hdr.type) {
     case 1:
@@ -123,25 +140,29 @@ Obj554200 *FUN_00554200(void *param_1)
       }
       if (obj->count != 0 && FUN_004cbd30(param_1, buf, obj->count * 0x18) != (unsigned int)(obj->count * 0x18)) {
         result = 0;
-        break;
+        goto done;
       }
-      obj->buf = buf;
       if (hdr.flags & 4) {
-        if (!FUN_004cc5e0(param_1, 0x1a1, 0, 0)) {
+        obj->buf = buf;
+        if (FUN_004cc5e0(param_1, 0x1a1, 0, 0)) {
+          obj->child = FUN_00554200(param_1);
+        } else {
           result = 0;
           break;
         }
-        obj->child = FUN_00554200(param_1);
+      } else {
+        obj->buf = buf;
       }
       for (c = obj->child; c != 0; c = c->child) {
         c->parent = obj;
       }
       break;
     }
+done:
+    ret = result;
   }
-  if (result != 0) {
-    return result;
+  if (ret == 0) {
+    FUN_00553e80(obj);
   }
-  FUN_00553e80(obj);
-  return 0;
+  return ret;
 }

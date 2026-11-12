@@ -1,4 +1,16 @@
 // TOOLCHAIN rw9044
+/* MATCH-RT2D-RESID run 39 (2026-11-12): 92.5% under rw9044 (regs 92.7%, ops 98.4%, 439/439 ins), was 90.2%.
+   Two changes: (1) the outline loop counter is its own variable j = i (spilled at [esp+0x10] as in the original,
+   0x005545b4), the first bitmap loop keeps i, so i is in ebp for the bitmap loop and the bitmap glyph pointer shares
+   [esp+0x10] (0x005546bf) with oldTxd at [esp+0x18] (0x0055469e); (2) name is 36 bytes, which gives the original's
+   0x30 frame with name at [esp+0x1c] (0x00554745) and an unused dword at [esp+0x3c]. The read is still 0x20 bytes.
+   Residual: c2 does not make 0 a register before the isOutline test. The original's ebp = 0 (0x0055458b) is used by
+   `cmp [ebx],ebp`, both loop guards and the j store, then is the bitmap i. Probes show c2 9044 makes such a
+   zero register once four constant-0 uses share the region (one extra store of 0 in either branch is enough,
+   though it lands in edi, not ebp). The source has three. Open: which source form gives the fourth use with
+   no code of its own. Not reached by: dead initialisers of oldTxd, g, font, version, path, a spare int (63
+   variants), explicit `count > 0` guards (60), i = 0 at 7 points, two reaching defs of i, i = 0 as the first
+   statement of both arms, name sizes 33-40, match_permute.py from 89.5% and 92.5% (1,059 + 1,353 compiles). */
 /* MATCH-RT2D-RESID (2026-11-11): 90.2% under rw9044 (regs 91.1%, ops 98.2%, 440/439 ins), was 86.1%. Changes, each
    read off the original listing: (1) the read after FUN_00554200 goes into the same temporary t1 as the other outline
    reads (the original's `lea eax,[esp+0x48]` at 0x00554625 is [esp+0x44] plus the pushed arg of the 0x00554200 call);
@@ -83,6 +95,7 @@ Font *FUN_00554390(void *stream)
   Font *font;
   unsigned int version;
   int i;
+  int j;
   Glyph *g;
 
   font = FUN_005551d0();
@@ -140,7 +153,7 @@ Font *FUN_00554390(void *stream)
   if (font->isOutline) {
     int t1;
     g = FUN_005c4d30(font->glyphs);
-    for (; i < font->count; i++) {
+    for (j = i; j < font->count; j++) {
       void *path = 0;
       if (!FUN_004cc790(stream, &t1, 4)) {
         goto fail;
@@ -175,7 +188,7 @@ fail:
   } else {
     int n;
     void *oldTxd;
-    char name[32];
+    char name[36];
     oldTxd = FUN_004c5ca0();
     FUN_004c5c80(DAT_00912a20);
     g = FUN_005c4d30(font->glyphs);
