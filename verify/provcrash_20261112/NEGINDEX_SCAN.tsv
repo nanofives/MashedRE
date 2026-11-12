@@ -1,0 +1,5 @@
+rva	source	provinsitu_verdict	line	text
+0x005b3b80	re/match/s27/005b3b80.c	CRASH	114	FUN_005ac980(*(undefined4 *)(*(int *)local_38[(int)param_1 - 4] + 4),local_38,1);
+0x005b3b80	re/match/s27/005b3b80.c	CRASH	115	if (!((*(byte *)(*(int *)local_38[(int)param_1 - 4] + 8) & 1) == 0)) {
+0x005b3b80	re/match/s27/005b3b80.c	CRASH	120	local_38[2] = (*(code *)((int *)local_38[(int)param_1 - 4])[1])
+0x005b3b80	re/match/s27/005b3b80.c	CRASH	132	uVar6 = (**(code **)(local_38[(int)param_1 - 4] + 4))(local_1c,puVar9,0,local_38,puVar5,0);
