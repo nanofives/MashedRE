@@ -125,7 +125,7 @@ def run(args):
             if args.prov_count:
                 cnt = [x.strip() for x in (Path(args.prov_count).read_text().split() if Path(args.prov_count).exists()
                                            else args.prov_count.split(",")) if x.strip()]
-            cfg["prov"] = {"bodies": bodies, "count": cnt}
+            cfg["prov"] = {"bodies": bodies, "count": cnt, "wlog": args.prov_wlog, "wlive": (str(out / "wlive.jsonl").replace("\\", "/") if args.prov_wlog else "")}
             print(f"  prov: {len(bodies)} bodies, {len(cnt)} counters", flush=True)
         if args.warp_clock:
             cfg["warpClock"] = args.warp_clock
@@ -164,6 +164,15 @@ def run(args):
                 meta["ticks"] = {"total": p["total"], "nblk": p["nblk"], "recw": p["recw"], "block": p["block"], "raw": p.get("raw"), "file": "ticks.bin"}
                 if p["first"] + p["count"] >= p["total"]:
                     print(f"  ticks {p['total']} x {p['nblk']} blocks", flush=True)
+            elif p["kind"] == "wlog":
+                with open(out / "wlog.bin", "ab" if p["first"] else "wb") as f:
+                    f.write(data or b"")
+                meta["wlog"] = {"records": p["total"], "stats": p["stats"], "file": "wlog.bin"}
+                if p["first"] + p["count"] >= p["total"]:
+                    print(f"  wlog {p['total']} records stats(buf,cap,count,lo,hi,depth,overflow,traps,frames,strays,bpmiss,lastStrayIp,strayDepth,-,-,otherThreadSteps,tidFn,mainTid)={p['stats']}", flush=True)
+            elif p["kind"] == "wcrash":
+                (out / "wcrash.json").write_text(json.dumps(p, indent=0)); (out / "wcrash_tail.bin").write_bytes(data or b"")
+                print("  WCRASH", {k: p[k] for k in ("type", "address", "memory", "ctx", "stats", "blob", "n")}, flush=True)
             elif p["kind"] == "provinst":
                 (out / "prov_install.json").write_text(json.dumps(p, indent=0))
                 bad = [x for x in p["installed"] if x.get("err") or x.get("jmp_ok") is False]
@@ -326,6 +335,7 @@ if __name__ == "__main__":
     ap.add_argument("--warp-clock", type=int, default=0, help="tick clock: set the virtual T / Q to start + K ticks at the warp, before the timer pin (PROV-INSITU)")
     ap.add_argument("--prov", default="", help="PROV-INSITU bodies JSON (re/tools/prov/provlink.py): inline JMP to each DDK body from the warp on")
     ap.add_argument("--prov-rvas", default="", help="comma list: only these bodies of --prov")
+    ap.add_argument("--prov-wlog", type=int, default=0, help="PROV-WRITESET: single-step log of the first N calls of every --prov body (detorig.js wsInstall)")
     ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--menu-wait", type=float, default=2.0)

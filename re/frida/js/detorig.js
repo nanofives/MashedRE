@@ -458,12 +458,14 @@ function provInstall() {
   const cnt = K(Memory.alloc(pg(nb * 4 * 2)));   // [0..nb) live counters, [nb..2nb) snapshot at the anchor
   for (let i = 0; i < 2 * nb; i++) cnt.add(i * 4).writeU32(0);
   let total = 0;
-  const offs = bodies.map((b) => { const o = total; total += 16 + b.code.length / 2; total = (total + 15) & ~15; return o; });
+  // PROV-WRITESET: cfg.prov.wlog = N makes each stub single-step (TF) the first N calls of its body, see wsInstall
+  const WL = PROV.wlog || 0, SZ = WL ? 48 : 16;
+  const offs = bodies.map((b) => { const o = total; total += SZ + b.code.length / 2; total = (total + 15) & ~15; return o; });
   const mem = total ? K(Memory.alloc(pg(total))) : null;
   const installed = [];
   bodies.forEach((b, i) => {
     const stub = mem.add(offs[i]);
-    const body = stub.add(16);
+    const body = stub.add(SZ);
     const code = [];
     for (let k = 0; k < b.code.length; k += 2) code.push(parseInt(b.code.substr(k, 2), 16));
     const dv = new DataView(new ArrayBuffer(code.length)); code.forEach((x, k) => dv.setUint8(k, x));
@@ -472,11 +474,17 @@ function provInstall() {
     for (const [o, t] of Object.entries(b.ext)) { const p = base + Number(o) + 4; dv.setInt32(Number(o), (t - p) | 0, true); }
     const ca = cnt.add(i * 4).toUInt32() >>> 0;
     const ent = base + b.entry;
-    const s = [0xff, 0x05, ca & 0xff, (ca >>> 8) & 0xff, (ca >>> 16) & 0xff, (ca >>> 24) & 0xff, 0xe9, 0, 0, 0, 0];
-    const rj = (ent - ((stub.toUInt32() >>> 0) + 11)) | 0;
-    s[7] = rj & 0xff; s[8] = (rj >>> 8) & 0xff; s[9] = (rj >>> 16) & 0xff; s[10] = (rj >>> 24) & 0xff;
-    while (s.length < 16) s.push(0xcc);
-    Memory.protect(stub, 16 + code.length, 'rwx');
+    const le = (v) => [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff];
+    const s = [0xff, 0x05, ...le(ca)];
+    if (WL) {   // cmp [cnt], N+1 ; jae skip ; pushfd ; or dword [esp], 0x100 ; popfd ; skip:
+      s.push(0x81, 0x3d, ...le(ca), ...le(WL + 1), 0x73, 0x09, 0x9c, 0x81, 0x0c, 0x24, 0x00, 0x01, 0x00, 0x00, 0x9d);
+    }
+    const jat = s.length;
+    s.push(0xe9, 0, 0, 0, 0);
+    const rj = (ent - ((stub.toUInt32() >>> 0) + jat + 5)) | 0;
+    s.splice(jat + 1, 4, ...le(rj));
+    while (s.length < SZ) s.push(0xcc);
+    Memory.protect(stub, SZ + code.length, 'rwx');
     stub.writeByteArray(s);
     body.writeByteArray(dv.buffer);
     const site = ga(parseInt(b.rva, 16));
@@ -486,9 +494,9 @@ function provInstall() {
     const after = Array.from(new Uint8Array(site.readByteArray(5)));
     // install check: the site holds E9 to the stub, and the stub's jmp lands on the body entry
     const back = (site.toUInt32() >>> 0) + 5 + site.add(1).readS32();
-    const land = (stub.toUInt32() >>> 0) + 11 + stub.add(7).readS32();
+    const land = (stub.toUInt32() >>> 0) + jat + 5 + stub.add(jat + 1).readS32();
     installed.push({ rva: b.rva, site_before: before.map((x) => x.toString(16)).join(' '), site_after: after.map((x) => x.toString(16)).join(' '),
-                     jmp_ok: (back >>> 0) === (stub.toUInt32() >>> 0) && (land >>> 0) === (ent >>> 0), stub: stub.toString(), entry: '0x' + (ent >>> 0).toString(16) });
+                     jmp_ok: (back >>> 0) === (stub.toUInt32() >>> 0) && (land >>> 0) === (ent >>> 0), stub: stub.toString(), base: '0x' + (base >>> 0).toString(16), entry: '0x' + (ent >>> 0).toString(16), size: b.code.length / 2 });
   });
   let cm = null;
   if (count.length) {
@@ -503,8 +511,127 @@ void onEnter(GumInvocationContext *ic) { unsigned int *c = GUM_IC_GET_FUNC_DATA(
     });
   }
   PV = { cnt, nb, names: bodies.map((b) => b.rva).concat(count), installed };
+  if (WL && mem) wsInstall(mem, total, WL);
   send({ kind: 'provinst', installed });
   return { n: nb, bodies: bodies.length, count: count.length, fail: installed.filter((x) => x.err || x.jmp_ok === false).length };
+}
+// PROV-WRITESET-114: single-step log of the DDK bodies. A native vectored handler (CModule, no JS per step) logs
+// eip + registers before every instruction of a body (blob range [lo, hi)), steps over calls to code outside the blob
+// (int3 at the return address, back in the blob) and ends a frame at the body's own return. Records of 10 dwords:
+// eip, eax, ecx, edx, ebx, esp, ebp, esi, edi, base_esp | 1 on a frame's first record (base_esp = esp at body entry,
+// pointing at the return address). The store targets are computed offline (re/tools/prov/prov_writeset.py).
+let WS = null;
+function wsInstall(mem, total, WL) {
+  const CAP = 1 << 21;   // records
+  const buf = K(Memory.alloc(CAP * 40));
+  const stm = K(Memory.alloc(Process.pageSize));
+  for (let i = 0; i < 192; i++) stm.add(i * 4).writeU32(0);
+  const cm = K(new CModule(`
+extern unsigned int st[];   /* 0 buf, 1 cap, 2 count, 3 lo, 4 hi, 5 depth, 6 overflow, 7 traps, 8 frames, 9 foreign, 10 bp misses; plain memory from Memory.alloc, a CModule's own globals are not writable */
+#define fb (st + 64)   /* frame base esp */
+#define fs (st + 96)   /* frame suspended (return address patched) */
+#define fa (st + 128)  /* patched address */
+#define fo (st + 160)  /* original byte */
+static void rec(unsigned char *cx, unsigned int first) {
+  unsigned int n = st[2];
+  if (n >= st[1]) { st[6]++; return; }
+  unsigned int *r = (unsigned int *)(st[0] + n * 40);
+  r[0] = *(unsigned int *)(cx + 0xB8); r[1] = *(unsigned int *)(cx + 0xB0); r[2] = *(unsigned int *)(cx + 0xAC);
+  r[3] = *(unsigned int *)(cx + 0xA8); r[4] = *(unsigned int *)(cx + 0xA4); r[5] = *(unsigned int *)(cx + 0xC4);
+  r[6] = *(unsigned int *)(cx + 0xB4); r[7] = *(unsigned int *)(cx + 0xA0); r[8] = *(unsigned int *)(cx + 0x9C);
+  r[9] = fb[st[5] - 1] | first;
+  st[2] = n + 1;
+}
+int __attribute__((stdcall)) veh(unsigned int *ep) {   /* the OS calls a vectored handler stdcall */
+  unsigned int *er = (unsigned int *)ep[0];
+  unsigned char *cx = (unsigned char *)ep[1];
+  unsigned int code = er[0];
+  unsigned int *eip = (unsigned int *)(cx + 0xB8), *efl = (unsigned int *)(cx + 0xC0), *esp = (unsigned int *)(cx + 0xC4);
+  unsigned int ip = *eip, d = st[5];
+  unsigned int tid = ((unsigned int (__attribute__((stdcall)) *)(void))st[16])();
+  if (code == 0x80000004u) {
+    int inb = ip >= st[3] && ip < st[4];
+    st[7]++;
+    if (tid != st[17]) { *efl &= ~0x100u; st[15]++; return -1; }   /* only the main thread is logged: the frame state is global */
+    if (inb) {
+      if (d == 0 || fs[d - 1]) {
+        if (d >= 31) { st[9]++; *efl &= ~0x100u; return -1; }
+        fb[d] = *esp; fs[d] = 0; st[5] = d + 1; st[8]++;
+        rec(cx, 1);
+      } else rec(cx, 0);
+      *efl |= 0x100u; return -1;
+    }
+    if (d == 0 || fs[d - 1]) { st[9]++; st[11] = ip; st[12] = d; *efl &= ~0x100u; return -1; }   /* stray step: counted, TF cleared */
+    {
+      unsigned int top = *esp;
+      unsigned int rv = (top >= 0x10000u) ? *(unsigned int *)top : 0;
+      if (*esp < fb[d - 1] && rv >= st[3] && rv < st[4]) {
+        unsigned char *pa = (unsigned char *)rv;
+        fa[d - 1] = rv; fo[d - 1] = *pa; *pa = 0xCC; fs[d - 1] = 1;
+        *efl &= ~0x100u; return -1;
+      }
+      st[5] = d - 1; *efl &= ~0x100u; return -1;
+    }
+  }
+  if (code == 0x80000003u) {
+    unsigned int a = ip, i;
+    if (tid != st[17]) return 0;   /* Windows reports Eip at the int3 byte itself */
+    for (i = st[5]; i > 0; i--) {
+      if (fs[i - 1] && fa[i - 1] == a) {
+        *(unsigned char *)a = (unsigned char)fo[i - 1]; fs[i - 1] = 0;
+        st[5] = i;
+        *eip = a; *efl |= 0x100u; return -1;
+      }
+    }
+    st[10]++;
+  }
+  return 0;
+}
+`, { st: stm }));
+  const lo = mem.toUInt32() >>> 0;
+  const st = stm;
+  st.writePointer(buf); st.add(4).writeU32(CAP); st.add(8).writeU32(0);
+  st.add(12).writeU32(lo); st.add(16).writeU32(lo + total);
+  st.add(16 * 4).writeU32(Process.getModuleByName('kernel32.dll').getExportByName('GetCurrentThreadId').toUInt32());
+  st.add(17 * 4).writeU32(CFG.main >>> 0);
+  const add = new NativeFunction(Process.getModuleByName('kernel32.dll').getExportByName('AddVectoredExceptionHandler'), 'pointer', ['uint', 'pointer']);
+  const vk = Object.keys(cm).find((k) => /^_?veh/.test(k));   // stdcall may decorate the symbol (veh@4)
+  if (!vk) throw new Error('veh not exported: ' + Object.keys(cm));
+  const h = add(1, cm[vk]);
+  WS = { cm, buf, st, lo, hi: lo + total, handler: h.toString() };
+  if (CFG.prov.wlive) {   // live breadcrumbs: the process can die inside the handler, so a JS timer keeps the last state on disk
+    const lf = new File(CFG.prov.wlive, 'w');
+    let lastN = -1, lastT = -1;
+    setInterval(() => {
+      const n = st.add(8).readU32(), tr = st.add(28).readU32();
+      if (n === lastN && tr === lastT) return;
+      lastN = n; lastT = tr;
+      const stats = []; for (let i = 0; i < 18; i++) stats.push(st.add(i * 4).readU32());
+      const m = Math.min(n, 12), rows = [];
+      for (let i = n - m; i < n; i++) { const r = []; for (let k = 0; k < 10; k++) r.push(buf.add(i * 40 + k * 4).readU32().toString(16)); rows.push(r.join(' ')); }
+      lf.write(JSON.stringify({ stats, rows }) + String.fromCharCode(10)); lf.flush();
+    }, 25);
+  }
+  Process.setExceptionHandler((d) => {   // crash report: the fault, our counters and the last 400 records
+    const n = st.add(8).readU32(), m = Math.min(n, 400);
+    const stats = []; for (let i = 0; i < 18; i++) stats.push(st.add(i * 4).readU32());
+    const c = d.context;
+    send({ kind: 'wcrash', type: d.type, address: '' + d.address, memory: d.memory ? JSON.stringify(d.memory) : null,
+           ctx: { eip: '' + c.eip, esp: '' + c.esp, eax: '' + c.eax, ecx: '' + c.ecx, edx: '' + c.edx, ebx: '' + c.ebx, ebp: '' + c.ebp, esi: '' + c.esi, edi: '' + c.edi },
+           stats, blob: [lo, lo + total], n }, buf.add((n - m) * 40).readByteArray(m * 40));
+    return false;
+  });
+}
+function wsDump() {
+  if (!WS) return;
+  const n = WS.st.add(8).readU32();
+  const stats = []; for (let i = 0; i < 18; i++) stats.push(WS.st.add(i * 4).readU32());
+  const CH = 1 << 16;
+  for (let i = 0; i < n; i += CH) {
+    const m = Math.min(CH, n - i);
+    send({ kind: 'wlog', first: i, count: m, total: n, stats }, WS.buf.add(i * 40).readByteArray(m * 40));
+  }
+  if (!n) send({ kind: 'wlog', first: 0, count: 0, total: 0, stats }, new ArrayBuffer(0));
 }
 function provSnap() { if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
 function provReport() {
@@ -592,6 +719,7 @@ function install() {
         }
         tickDump();
         provReport();
+        wsDump();
         if (PZ) { PZ.st.writeU32(0); send({ kind: 'info', msg: 'poison listener calls ' + PZ.st.add(4).readU32() }); }
         send({ kind: 'done', n: N() });
       });
