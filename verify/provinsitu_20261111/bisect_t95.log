@@ -1,0 +1,47 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 2/8 after 600s
+51 bodies, 29 executed in the census
+  run t95_001_14 (14 bodies) 83s
+   error: attach failed
+  -> NO-TICKS 0 / 0
+  run t95_002_7 (7 bodies) 70s
+     prov: 7 bodies, 0 counters
+     prov install 7 sites, 0 failed []
+     prov rows 7 executed 7 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724
+  run t95_003_7 (7 bodies) 117s
+     prov: 7 bodies, 0 counters
+     prov install 7 sites, 0 failed []
+     prov rows 7 executed 7 install_fail 0
+   === rc=0 ckpts=15
+y: 22.1 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (180s so far): memory: 22.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (210s so far): memory: 22.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (240s so far): memory: 22.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (270s so far): memory: 22.4 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (300s so far): memory: 22.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (330s so far): memory: 23.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (360s so far): memory: 22.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (390s so far): memory: 22.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (420s so far): memory: 22.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (450s so far): memory: 22.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (480s so far): memory: 23.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (510s so far): memory: 23.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (540s so far): memory: 23.1 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (570s so far): memory: 22.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 1/8 after 600s
+51 bodies, 29 executed in the census
+  run t95_001_14 (14 bodies) 77s
+     prov: 14 bodies, 0 counters
+     prov install 14 sites, 0 failed []
+     prov rows 14 executed 14 install_fail 0
+   === rc=0 ckpts=15
+  -> DIVERGED 1108 / 2724
+  run t95_002_7 (7 bodies) 150s
+     prov: 7 bodies, 0 counters
+     prov install 7 sites, 0 failed []
+     prov rows 7 executed 7 install_fail 0
+   === rc=0 ckpts=15
+  -> IDENTICAL-FOR-N 2724 / 2724

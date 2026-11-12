@@ -1,0 +1,52 @@
+{
+ "run": "D:/MashedWT/PROV-INSITU_data/x_neg",
+ "ref": "D:/MashedWT/PROV-INSITU_data/x_ref",
+ "ref2": "D:/MashedWT/PROV-INSITU_data/x_ref2",
+ "ticks": 2724,
+ "ref_ticks": 2724,
+ "allowed_blocks": [
+  "0x614400",
+  "0x616000",
+  "0x68bc00",
+  "0x771800",
+  "0x772c00",
+  "0x7d4000",
+  "0x7d7000",
+  "0x7dc800",
+  "0x7dcc00",
+  "0x7dd000",
+  "0x7dd400",
+  "0x7de000",
+  "0x7e9400",
+  "0x912000"
+ ],
+ "complete": true,
+ "verdict": "DIVERGED",
+ "identical_for": 7,
+ "first": {
+  "tick": 7,
+  "blocks": [
+   [
+    "0x613000",
+    "other page 0x00613000"
+   ]
+  ],
+  "nblocks": 1,
+  "raw": [
+   [
+    "0x6147d8",
+    "00000000",
+    "00000001"
+   ]
+  ]
+ },
+ "rc": 0,
+ "exit": null,
+ "notes": [
+  "tick 0: ['0x7f1010'] differ with load lengths 118 / 119 (LOAD-LENGTH rule)"
+ ],
+ "dn_warp": [
+  118,
+  119
+ ]
+}

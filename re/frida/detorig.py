@@ -112,7 +112,26 @@ def run(args):
             cfg["tick"] = {"va": int(args.tick_va, 16), "qtick": args.qtick if tick else 0, "ttick": args.ttick if tick else 0,
                            "cap": args.tick_cap, "block": args.tick_block, "pin": tick,
                            "raw": [[int(x, 16), int(y, 16)] for x, y in (r.split("-") for r in args.tick_raw.split(",") if r)]}
-        meta["cfg"] = cfg
+        if args.prov or args.prov_count:
+            # PROV-INSITU: DDK bodies (re/tools/prov/provlink.py JSON) behind inline JMPs from the warp on, and/or
+            # native call counters only (census). detorig.js provInstall.
+            bodies = []
+            if args.prov:
+                allb = json.loads(Path(args.prov).read_text())["bodies"]
+                want = {x.strip().lower() for x in args.prov_rvas.split(",") if x.strip()} if args.prov_rvas else None
+                bodies = [{"rva": b["rva"], "code": b["code"], "abs": b["abs"], "ext": b["ext"], "entry": b["entry"]}
+                          for b in allb if b["status"] == "OK" and (want is None or b["rva"].lower() in want)]
+            cnt = []
+            if args.prov_count:
+                cnt = [x.strip() for x in (Path(args.prov_count).read_text().split() if Path(args.prov_count).exists()
+                                           else args.prov_count.split(",")) if x.strip()]
+            cfg["prov"] = {"bodies": bodies, "count": cnt}
+            print(f"  prov: {len(bodies)} bodies, {len(cnt)} counters", flush=True)
+        if args.warp_clock:
+            cfg["warpClock"] = args.warp_clock
+        meta["cfg"] = {k: v for k, v in cfg.items() if k != "prov"}
+        if "prov" in cfg:
+            meta["prov_cfg"] = {"bodies": [b["rva"] for b in cfg["prov"]["bodies"]], "count": cfg["prov"]["count"], "file": args.prov}
         src = "const DETORIG_CFG = " + json.dumps(cfg) + ";\n" + (HERE / "js" / "detorig.js").read_text(encoding="utf-8")
         state = {"done": False, "err": None}
 
@@ -145,6 +164,15 @@ def run(args):
                 meta["ticks"] = {"total": p["total"], "nblk": p["nblk"], "recw": p["recw"], "block": p["block"], "raw": p.get("raw"), "file": "ticks.bin"}
                 if p["first"] + p["count"] >= p["total"]:
                     print(f"  ticks {p['total']} x {p['nblk']} blocks", flush=True)
+            elif p["kind"] == "provinst":
+                (out / "prov_install.json").write_text(json.dumps(p, indent=0))
+                bad = [x for x in p["installed"] if x.get("err") or x.get("jmp_ok") is False]
+                print(f"  prov install {len(p['installed'])} sites, {len(bad)} failed {bad[:3]}", flush=True)
+            elif p["kind"] == "prov":
+                (out / "prov.json").write_text(json.dumps(p, indent=0))
+                meta["prov"] = {"file": "prov.json", "executed": sum(1 for r in p["rows"] if r["calls_total"]),
+                                "install_fail": sum(1 for x in p["installed"] if x.get("err") or x.get("jmp_ok") is False)}
+                print(f"  prov rows {len(p['rows'])} executed {meta['prov']['executed']} install_fail {meta['prov']['install_fail']}", flush=True)
             elif p["kind"] == "done":
                 state["done"] = True
             else:
@@ -295,6 +323,10 @@ if __name__ == "__main__":
     ap.add_argument("--audio-off", choices=["warp", "anchor"], default="", help="suspend every non-main thread whose start address is in MASHED.exe (the __beginthread audio workers) at the warp or the race anchor")
     ap.add_argument("--poison", choices=["stale", "pos"], default="", help="overwrite the unwritten event-ring fields at every ring consumer from the race anchor on (pos = also type-4 +0x24, a read field)")
     ap.add_argument("--poison-value", default="0x7fc0dead", help="poison dword (hex)")
+    ap.add_argument("--warp-clock", type=int, default=0, help="tick clock: set the virtual T / Q to start + K ticks at the warp, before the timer pin (PROV-INSITU)")
+    ap.add_argument("--prov", default="", help="PROV-INSITU bodies JSON (re/tools/prov/provlink.py): inline JMP to each DDK body from the warp on")
+    ap.add_argument("--prov-rvas", default="", help="comma list: only these bodies of --prov")
+    ap.add_argument("--prov-count", default="", help="comma list or file of RVAs that get a native call counter only (census)")
     ap.add_argument("--warp-at", type=int, default=600, help="N after install at which the warp runs")
     ap.add_argument("--menu-wait", type=float, default=2.0)
     ap.add_argument("--timeout", type=float, default=600)

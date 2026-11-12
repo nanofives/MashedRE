@@ -1,0 +1,308 @@
+rva	source	best_pct	equiv_v4	install	calls_census	calls_run	stores	write_set_leg	verdict	detail
+0x004039f0	re/match/s01/004039f0.c	97.1	NOT-PROVEN	-	0		frame 6 abs_in 10 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004046a0	re/match/s01/004046a0.c	96.8	NOT-PROVEN	-	0		frame 0 abs_in 11 abs_out 0 indirect 8	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00405920	re/match/s01/00405920.c	99.2	NOT-PROVEN	-	0		frame 13 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00405ab0	re/match/s01/00405920.c	96.9	NOT-PROVEN	-	0		frame 11 abs_in 0 abs_out 0 indirect 6	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004064c0	re/match/s01/004064c0.c	99.4	NOT-PROVEN	-	0		frame 17 abs_in 1 abs_out 0 indirect 8	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00408610	re/match/s01/00408610.c	95.8	NOT-PROVEN	ok	10876	10876	frame 8 abs_in 1 abs_out 0 indirect 25	not-covered	IDENTICAL-FOR-2724	run t95_165948_002_7 (group of 7, 10876 calls)
+0x00414300	re/match/s03/h4_00414300.c	97.8	NOT-PROVEN	ok	4048	3112	frame 1 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t95_165948_002_7 (group of 7, 3112 calls)
+0x0041af50	re/match/s03/h3_0041af50.c	96.3	NOT-PROVEN	ok	10876	10876	frame 25 abs_in 0 abs_out 0 indirect 11	not-covered	IDENTICAL-FOR-2724	run t95_165948_002_7 (group of 7, 10876 calls)
+0x0041c180	re/match/s04/0041c180.c	96.7	NOT-PROVEN	-	0		frame 21 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041c410	re/match/s04/0041c410.c	99.4	NOT-PROVEN	ok	10876	10876	frame 23 abs_in 0 abs_out 1 indirect 31	not-covered	IDENTICAL-FOR-2724	run t95_165948_002_7 (group of 7, 10876 calls)
+0x0041ce00	re/match/s04/0041ce00.c	98.7	NOT-PROVEN	-	0		frame 23 abs_in 0 abs_out 3 indirect 34	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041d930	re/match/s04/0041d930.c	97.0	NOT-PROVEN	ok	2719	2719	frame 19 abs_in 1 abs_out 0 indirect 0	covered	IDENTICAL-FOR-2724	run t95_165948_002_7 (group of 7, 2719 calls)
+0x0041e6c0	re/match/s04/0041e6c0.c	98.8	NOT-PROVEN	-	0		frame 22 abs_in 1 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041fcc0	re/match/s05/0041fcc0.c	98.9	NOT-PROVEN	ok	9620	8369	frame 14 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t95_165948_002_7 (group of 7, 8369 calls)
+0x00420050	re/match/s05/00420050.c	99.3	NOT-PROVEN	ok	10884	10884	frame 4 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t95_165948_002_7 (group of 7, 10884 calls)
+0x00424eb0	re/match/s05/00424eb0.c	98.6	NOT-PROVEN	ok	2719	2723	frame 16 abs_in 0 abs_out 0 indirect 12	not-covered	DIVERGED@1108	run rep2_203122_001_1 tick 1108: 45 blocks, first 0x613000, 0x624000, 0x63bc00; at that tick 0x7f0f64 body 447a4000 orig 447a0000; checkpoint tick 1270: 0x006130c4 body 4507c35c orig 45026285; 0x00624048 body 00000005 orig 00000004; 0x0063bc60 body 3f800000 orig 00000000 (confirmed in 2 runs)
+0x00426810	re/match/s06/00426810.c	97.9	NOT-PROVEN	ok	2719	2719	frame 32 abs_in 2 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t95_165948_006_2 (group of 2, 2719 calls)
+0x00429310	re/match/s06/00429310.c	98.3	EQUIV	ok	2719	2719	frame 9 abs_in 6 abs_out 0 indirect 0	covered	IDENTICAL-FOR-2724	run t95_165948_006_2 (group of 2, 2719 calls)
+0x00429bd0	re/match/s06/00429bd0.c	99.4	EQUIV	-	0		frame 17 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0042d5a0	re/match/s07/0042d5a0.c	98.1	NOT-PROVEN	-	0		frame 353 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004307a0	re/match/s07/004307a0.c	97.1	NOT-PROVEN	-	0		frame 1 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00431240	re/match/s07/00431240.c	98.9	NOT-PROVEN	-	0		frame 12 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004332a0	re/match/s08/004332a0.c	97.3	EQUIV	-	0		frame 4 abs_in 9 abs_out 0 indirect 13	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00433f40	re/match/s08/00433f40.c	99.3	NOT-PROVEN	-	0		frame 23 abs_in 2 abs_out 0 indirect 6	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay (54 calls in the menu before the warp)
+0x00448220	re/match/s08/00448220.c	97.0	EQUIV	ok	2722	2722	frame 6 abs_in 14 abs_out 0 indirect 9	not-covered	DIVERGED@1116	run rep2_203122_002_1 tick 1116: 4 blocks, first 0x68f400, 0x86ac00, 0x898000 (confirmed in 2 runs)
+0x00454350	re/match/s09/00454350.c	98.2	NOT-PROVEN	ok	21752	21752	frame 27 abs_in 0 abs_out 0 indirect 16	not-covered	IDENTICAL-FOR-2724	run t95_165948_010_1 (group of 1, 21752 calls)
+0x0045c030	re/match/s10/0045c030.c	98.6	NOT-PROVEN	ok	498	1048	frame 3 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t95_165948_011_2 (group of 2, 1048 calls)
+0x0045e990	re/match/s10/0045e990.c	99.5	NOT-PROVEN	-	0		frame 22 abs_in 0 abs_out 0 indirect 31	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00461e90	re/match/s10/00461e90.c	95.8	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 1 indirect 85	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004627f0	re/match/s10/004627f0.c	96.8	NOT-PROVEN	-	0		frame 1 abs_in 6 abs_out 0 indirect 5	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00467350	re/match/s11/00467350.c	97.5	NOT-PROVEN	ok	2719	2719	frame 0 abs_in 5 abs_out 0 indirect 18	not-covered	IDENTICAL-FOR-2724	run t95_165948_011_2 (group of 2, 2719 calls)
+0x00473c20	re/match/s11/00473c20.c	99.0	NOT-PROVEN	-	0		frame 4 abs_in 9 abs_out 0 indirect 4	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay (54 calls in the menu before the warp)
+0x004744a0	re/match/s11/004744a0.c	99.6	NOT-PROVEN	ok	107	118	frame 34 abs_in 11 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 118 calls)
+0x004752f0	re/match/s12/004752f0.c	95.0	NOT-PROVEN	ok	10876	10876	frame 11 abs_in 0 abs_out 0 indirect 4	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 10876 calls)
+0x00475f90	re/match/s12/00475f90.c	96.4	NOT-PROVEN	ok	1706	1706	frame 14 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 1706 calls)
+0x00477e60	re/match/s12/00477e60.c	98.3	NOT-PROVEN	ok	37617	35829	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 35829 calls)
+0x00477f00	re/match/s12/00477f00.c	96.4	NOT-PROVEN	ok	4722	4559	frame 0 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 4559 calls)
+0x0047a320	re/match/s12/0047a320.c	95.2	NOT-PROVEN	ok	4	4	frame 0 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 4 calls)
+0x004809e0	re/match/s13/004809e0.c	98.4	NOT-PROVEN	ok	10627	10627	frame 7 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 10627 calls)
+0x004818d0	re/match/s13/004818d0.c	98.9	NOT-PROVEN	ok	8589	10509	frame 7 abs_in 2 abs_out 0 indirect 0	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 10509 calls)
+0x00482ae0	re/match/s13/00482ae0.c	99.0	NOT-PROVEN	ok	10876	10876	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 10876 calls)
+0x00484de0	re/match/s14/00484de0.c	99.2	EQUIV	-	0		frame 7 abs_in 0 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00487020	re/match/s14/00487020.c	96.3	NOT-PROVEN	ok	13	14	frame 4 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 14 calls)
+0x0048a4e0	re/match/s14/0048a4e0.c	98.8	EQUIV	ok	1	1	frame 10 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 1 calls)
+0x004910c0	re/match/s15/004910c0.c	97.2	NOT-PROVEN	-	0		frame 8 abs_in 6 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00491340	re/match/s15/00491340.c	98.1	NOT-PROVEN	ok	2719	2719	frame 2 abs_in 0 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 2719 calls)
+0x00495870	re/match/s16/00495fe0.c	98.9	NOT-PROVEN	-	0		frame 15 abs_in 0 abs_out 0 indirect 43	not-covered	NOT-WIRED	SKIP-PATCH-OR-HARNESS
+0x004967e0	re/match/s16/004967e0.c	98.8	NOT-PROVEN	ok	2832	2897	frame 0 abs_in 12 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 2897 calls)
+0x004b61c0	re/match/s18/004b61c0.c	95.9	EQUIV	-	0		frame 13 abs_in 6 abs_out 0 indirect 20	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004d4f00	re/match/s21/004d4f00.c	98.5	EQUIV	-	0		frame 0 abs_in 0 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00556e90	re/match/s24/00556e90.c	97.5	NOT-PROVEN	ok	622	856	frame 16 abs_in 0 abs_out 0 indirect 9	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 856 calls)
+0x005ae920	re/match/s26/005ae920.c	96.8	EQUIV	ok	24	24	frame 1 abs_in 0 abs_out 0 indirect 11	not-covered	IDENTICAL-FOR-2724	run t95_165948_012_15 (group of 15, 24 calls)
+0x00401da0	re/match/s01/00401da0.c	93.5	NOT-PROVEN	ok	107	150	frame 8 abs_in 0 abs_out 0 indirect 13	not-covered	IDENTICAL-FOR-2724	run t80_171707_001_6 (group of 6, 150 calls)
+0x00404fa0	re/match/s01/00404fa0.c	94.6	NOT-PROVEN	-	0		frame 12 abs_in 6 abs_out 0 indirect 4	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00405540	re/match/s01/00405540.c	88.1	NOT-PROVEN	ok	1	1	frame 9 abs_in 0 abs_out 0 indirect 6	not-covered	IDENTICAL-FOR-2724	run t80_171707_001_6 (group of 6, 1 calls)
+0x00406160	re/match/s01/00406160.c	88.7	NOT-PROVEN	-	0		frame 4 abs_in 4 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004069d0	re/match/s01/004069d0.c	84.0	NOT-PROVEN	-	0		frame 1 abs_in 0 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00406ae0	re/match/s01/00405920.c	91.8	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 9	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00408590	re/match/s01/00408590.c	94.9	NOT-PROVEN	ok	10673	10673	frame 0 abs_in 0 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t80_171707_001_6 (group of 6, 10673 calls)
+0x00408b00	re/match/s01/00408b00.c	90.2	EQUIV	ok	416	416	frame 10 abs_in 4 abs_out 1 indirect 18	not-covered	IDENTICAL-FOR-2724	run t80_171707_001_6 (group of 6, 416 calls)
+0x0040b290	re/match/s02/0040b290.c	86.6	EQUIV	ok	8	8	frame 0 abs_in 9 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t80_171707_001_6 (group of 6, 8 calls)
+0x0040e590	re/match/t01g/0040e590.c	84.6	NOT-PROVEN	ok	4	4	frame 64 abs_in 4 abs_out 0 indirect 12	not-covered	IDENTICAL-FOR-2724	run t80_171707_001_6 (group of 6, 4 calls)
+0x00410d10	re/match/s02/00410d10.c	94.9	NOT-PROVEN	ok	2179	2279	frame 3 abs_in 1 abs_out 0 indirect 10	not-covered	IDENTICAL-FOR-2724	run t80_171707_002_6 (group of 6, 2279 calls)
+0x00412e30	re/match/s03/h2_00412e30.c	94.7	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 10	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00412f30	re/match/s03/h4_00412f30.c	83.9	NOT-PROVEN	ok	2719	2719	frame 26 abs_in 5 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t80_171707_002_6 (group of 6, 2719 calls)
+0x00413cb0	re/match/s03/h2_00413cb0.c	89.3	NOT-PROVEN	ok	2719	2719	frame 12 abs_in 0 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t80_171707_002_6 (group of 6, 2719 calls)
+0x00416250	re/match/t01g/00416250.c	88.9	NOT-PROVEN	ok	5529	5083	frame 21 abs_in 0 abs_out 0 indirect 48	not-covered	IDENTICAL-FOR-2724	run t80_171707_002_6 (group of 6, 5083 calls)
+0x00419100	re/match/s03/h3_00419100.c	85.9	NOT-PROVEN	-	0		frame 39 abs_in 0 abs_out 0 indirect 11	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041dca0	re/match/s04/0041dca0.c	83.2	NOT-PROVEN	-	0		frame 27 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041f770	re/match/s05/0041f770.c	91.5	EQUIV	ok	10876	10876	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_002_6 (group of 6, 10876 calls)
+0x0041faf0	re/match/s05/0041faf0.c	90.8	NOT-PROVEN	ok	9620	8369	frame 11 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_002_6 (group of 6, 8369 calls)
+0x00420290	re/match/s05/00420290.c	86.7	NOT-PROVEN	ok	10880	10880	frame 1 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t80_171707_003_6 (group of 6, 10880 calls)
+0x00421d20	re/match/s05/00421d20.c	94.5	NOT-PROVEN	ok	12	12	frame 9 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t80_171707_003_6 (group of 6, 12 calls)
+0x00422ba0	re/match/s05/00422ba0.c	92.2	NOT-PROVEN	ok	2719	2719	frame 27 abs_in 0 abs_out 0 indirect 10	not-covered	IDENTICAL-FOR-2724	run t80_171707_003_6 (group of 6, 2719 calls)
+0x00424b80	re/match/s05/00424b80.c	88.7	NOT-PROVEN	ok	2	2	frame 11 abs_in 0 abs_out 0 indirect 16	not-covered	IDENTICAL-FOR-2724	run t80_171707_003_6 (group of 6, 2 calls)
+0x004252c0	re/match/s05/004252c0.c	87.7	NOT-PROVEN	ok	2719	2719	frame 8 abs_in 28 abs_out 0 indirect 22	not-covered	IDENTICAL-FOR-2724	run t80_171707_003_6 (group of 6, 2719 calls)
+0x00425ca0	re/match/s05/00425ca0.c	86.5	NOT-PROVEN	ok	21752	21752	frame 3 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_003_6 (group of 6, 21752 calls)
+0x004273e0	re/match/s06/004273e0.c	90.4	NOT-PROVEN	-	0		frame 2 abs_in 0 abs_out 0 indirect 3	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00428450	re/match/s06/00428450.c	84.6	NOT-PROVEN	ok	107	107	frame 12 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_004_6 (group of 6, 107 calls)
+0x0042bcb0	re/match/s07/0042bcb0.c	84.9	NOT-PROVEN	-	0		frame 12 abs_in 0 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0042c510	re/match/s07/0042c510.c	84.2	NOT-PROVEN	-	0		frame 1 abs_in 9 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0042ed70	re/match/s07/0042ed70.c	89.4	NOT-PROVEN	-	0		frame 2 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0042f0c0	re/match/s07/0042f0c0.c	84.5	NOT-PROVEN	-	0		frame 20 abs_in 0 abs_out 0 indirect 5	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00430670	re/match/s07/00430670.c	81.6	EQUIV-IF-CALLERS-IGNORE	-	0		frame 6 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004314b0	re/match/s07/004314b0.c	94.4	NOT-PROVEN	-	0		frame 13 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00431710	re/match/s07/00431710.c	85.5	NOT-PROVEN	-	0		frame 33 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004414b0	re/match/s08/004414b0.c	89.8	NOT-PROVEN	-	0		frame 8 abs_in 1 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00441b30	re/match/s08/00441b30.c	86.7	NOT-PROVEN	ok	7	7	frame 9 abs_in 0 abs_out 0 indirect 33	not-covered	IDENTICAL-FOR-2724	run t80_171707_004_6 (group of 6, 7 calls)
+0x00450b10	re/match/s08/00450b10.c	86.6	NOT-PROVEN	ok	3149	3203	frame 1 abs_in 9 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t80_171707_004_6 (group of 6, 3203 calls)
+0x004584e0	re/match/s09/004584e0.c	87.8	NOT-PROVEN	ok	11803	12090	frame 3 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_004_6 (group of 6, 12090 calls)
+0x00458a40	re/match/s09/00458a40.c	87.8	NOT-PROVEN	ok	11983	12090	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_004_6 (group of 6, 12090 calls)
+0x00459000	re/match/s09/00459000.c	92.7	NOT-PROVEN	ok	2719	2719	frame 12 abs_in 0 abs_out 0 indirect 4	not-covered	IDENTICAL-FOR-2724	run t80_171707_004_6 (group of 6, 2719 calls)
+0x0045a190	re/match/s09/0045a190.c	93.0	NOT-PROVEN	ok	2719	2719	frame 11 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_006_3 (group of 3, 2719 calls)
+0x0045d460	re/match/s10/0045d460.c	94.2	NOT-PROVEN	-	0		frame 3 abs_in 13 abs_out 0 indirect 7	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0045efe0	re/match/s10/0045efe0.c	89.8	NOT-PROVEN	ok	2725	2725	frame 18 abs_in 3 abs_out 0 indirect 21	not-covered	IDENTICAL-FOR-2724	run t80_171707_006_3 (group of 3, 2725 calls)
+0x00463640	re/match/s10/00463640.c	94.3	NOT-PROVEN	ok	10900	10900	frame 2 abs_in 32 abs_out 0 indirect 26	not-covered	IDENTICAL-FOR-2724	run t80_171707_006_3 (group of 3, 10900 calls)
+0x004647f0	re/match/s10/004647f0.c	83.3	NOT-PROVEN	ok	2833	2885	frame 0 abs_in 2 abs_out 0 indirect 0	covered	IDENTICAL-FOR-2724	run t80_171707_008_1 (group of 1, 2885 calls)
+0x00464ca0	re/match/s10/00464ca0.c	92.7	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 7	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00468d80	re/match/s11/00468d80.c	82.1	NOT-PROVEN	ok	21449	20505	frame 29 abs_in 12 abs_out 0 indirect 22	not-covered	DIVERGED@408	run rep2_203122_003_1 tick 408: 1 blocks, first 0x881c00; checkpoint tick 543: 0x00881c64 body 3d82ea2a orig 3d82ea29 (confirmed in 2 runs)
+0x0046e9e0	re/match/s11/0046e9e0.c	81.7	NOT-PROVEN	ok	21449	21320	frame 11 abs_in 0 abs_out 0 indirect 2	not-covered	DIVERGED@116	run rep2_203122_004_1 tick 116: 3 blocks, first 0x881400, 0x881c00, 0x884400; checkpoint tick 180: 0x0063d928 body 3d126547 orig 3d126549; 0x0063d940 body bd12666e orig bd126670; 0x0063d950 body bfb08503 orig bfb08505 (confirmed in 2 runs)
+0x004704c0	re/match/s11/004704c0.c	91.0	NOT-PROVEN	ok	16	16	frame 2 abs_in 0 abs_out 0 indirect 36	not-covered	IDENTICAL-FOR-2724	run t80_171707_012_6 (group of 6, 16 calls)
+0x00474de0	re/match/s11/00474de0.c	94.7	NOT-PROVEN	ok	77956	92453	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_012_6 (group of 6, 92453 calls)
+0x00474e70	re/match/s12/00474e70.c	86.0	NOT-PROVEN	ok	686	699	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_012_6 (group of 6, 699 calls)
+0x00475a00	re/match/pilot/a3_00475a00.c	93.1	EQUIV	-	0		frame 0 abs_in 1 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004770a0	re/match/s12/004770a0.c	90.0	NOT-PROVEN	ok	127738	127501	frame 1 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_012_6 (group of 6, 127501 calls)
+0x00477be0	re/match/s12/00477be0.c	93.2	NOT-PROVEN	ok	136	128	frame 5 abs_in 0 abs_out 0 indirect 10	not-covered	IDENTICAL-FOR-2724	run t80_171707_012_6 (group of 6, 128 calls)
+0x00477f50	re/match/s12/00477f50.c	91.7	NOT-PROVEN	ok	305852	294798	frame 3 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_012_6 (group of 6, 294798 calls)
+0x0047cea0	re/match/s13/0047cea0.c	94.0	EQUIV	ok	40	145	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_014_3 (group of 3, 145 calls)
+0x0047d3c0	re/match/s13/0047d3c0.c	91.9	NOT-PROVEN	ok	1	1	frame 11 abs_in 2 abs_out 0 indirect 6	not-covered	IDENTICAL-FOR-2724	run t80_171707_014_3 (group of 3, 1 calls)
+0x0047def0	re/match/s13/0047def0.c	85.3	NOT-PROVEN	ok	2719	2719	frame 45 abs_in 38 abs_out 0 indirect 6	not-covered	IDENTICAL-FOR-2724	run t80_171707_014_3 (group of 3, 2719 calls)
+0x0047eb30	re/match/s13/0047eb30.c	92.8	NOT-PROVEN	ok	2719	2719	frame 21 abs_in 4 abs_out 0 indirect 14	not-covered	IDENTICAL-FOR-2724	run t80_171707_016_1 (group of 1, 2719 calls)
+0x00480b70	re/match/s13/00480b70.c	93.1	NOT-PROVEN	ok	238	238	frame 13 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_018_1 (group of 1, 238 calls)
+0x00481e00	re/match/s13/00481e00.c	86.5	NOT-PROVEN	ok	4	4	frame 1 abs_in 0 abs_out 1 indirect 1	not-covered	DIVERGED@2	run rep2_203122_005_1 tick 2: 1 blocks, first 0x6ce800; checkpoint tick 180: 0x006ce818 body 00000000 orig 00000075 (confirmed in 2 runs)
+0x00482c10	re/match/s13/00482c10.c	83.3	NOT-PROVEN	-	0		frame 33 abs_in 0 abs_out 0 indirect 108	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004864f0	re/match/s14/00486370.c	90.1	NOT-PROVEN	ok	13	12	frame 1 abs_in 3 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t80_171707_020_6 (group of 6, 12 calls)
+0x0048aa50	re/match/s14/0048aa50.c	85.4	NOT-PROVEN	ok	136	98	frame 2 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_020_6 (group of 6, 98 calls)
+0x0048d140	re/match/s15/0048d140.c	91.6	NOT-PROVEN	-	0		frame 12 abs_in 0 abs_out 0 indirect 9	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048d360	re/match/s15/0048d360.c	90.6	NOT-PROVEN	ok	1406	1561	frame 5 abs_in 0 abs_out 0 indirect 11	not-covered	IDENTICAL-FOR-2724	run t80_171707_020_6 (group of 6, 1561 calls)
+0x0048d540	re/match/s15/0048d540.c	90.6	NOT-PROVEN	ok	2182	2277	frame 5 abs_in 0 abs_out 0 indirect 11	not-covered	IDENTICAL-FOR-2724	run t80_171707_020_6 (group of 6, 2277 calls)
+0x0048d720	re/match/s15/0048d720.c	90.6	NOT-PROVEN	-	0		frame 5 abs_in 0 abs_out 0 indirect 11	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048d900	re/match/s15/0048d900.c	89.9	NOT-PROVEN	-	0		frame 9 abs_in 0 abs_out 0 indirect 9	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048db20	re/match/s15/0048db20.c	89.9	NOT-PROVEN	-	0		frame 9 abs_in 0 abs_out 0 indirect 9	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048dd40	re/match/s15/0048dd40.c	89.9	NOT-PROVEN	-	0		frame 9 abs_in 0 abs_out 0 indirect 9	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048df60	re/match/s15/0048df60.c	89.9	NOT-PROVEN	-	0		frame 9 abs_in 0 abs_out 0 indirect 9	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048e180	re/match/s15/0048e180.c	90.6	NOT-PROVEN	-	0		frame 5 abs_in 0 abs_out 0 indirect 11	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048e360	re/match/s15/0048e360.c	84.0	NOT-PROVEN	-	0		frame 8 abs_in 0 abs_out 0 indirect 11	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048e820	re/match/s15/0048e820.c	85.5	NOT-PROVEN	-	0		frame 2 abs_in 0 abs_out 0 indirect 74	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00490020	re/match/s15/00490020.c	90.9	EQUIV-IF-CALLERS-IGNORE	ok	86	66	frame 43 abs_in 0 abs_out 0 indirect 13	not-covered	IDENTICAL-FOR-2724	run t80_171707_020_6 (group of 6, 66 calls)
+0x004938e0	re/match/s15/004938e0.c	80.0	EQUIV	-	0		frame 0 abs_in 0 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay (54 calls in the menu before the warp)
+0x00493fd0	re/match/s15/00493fd0.c	80.1	NOT-PROVEN	-	0		frame 26 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00498810	re/match/s16/00498810.c	86.7	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00498ea0	re/match/s16/00498a00.c	91.1	EQUIV	-	0		frame 0 abs_in 7 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00499400	re/match/s16/00498a00.c	90.1	NOT-PROVEN	-	0		frame 6 abs_in 20 abs_out 0 indirect 3	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004b42c0	re/match/s18/004b42c0.c	89.0	NOT-PROVEN	ok	10306	9068	frame 3 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t80_171707_020_6 (group of 6, 9068 calls)
+0x004b4430	re/match/s18/004b4430.c	81.9	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004b5080	re/match/s18/004b5080.c	85.4	NOT-PROVEN	ok	13	12	frame 0 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t80_171707_022_3 (group of 3, 12 calls)
+0x004b55a0	re/match/s18/004b55a0.c	83.7	NOT-PROVEN	-	0		frame 14 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004b5750	re/match/s18/004b5750.c	81.6	NOT-PROVEN	-	0		frame 26 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004b5af0	re/match/s18/004b5af0.c	85.7	NOT-PROVEN	-	0		frame 31 abs_in 0 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004c1a70	re/match/s19/004c1a70.c	90.7	NOT-PROVEN	ok	8166	8166	frame 2 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_022_3 (group of 3, 8166 calls)
+0x004c1b40	re/match/s19/004c1b40.c	92.7	NOT-PROVEN	ok	202459	201522	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_022_3 (group of 3, 201522 calls)
+0x004c3910	re/match/s19/004c3910.c	91.5	NOT-PROVEN	-	0		frame 2 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004c4d20	re/match/s19/004c4d20.c	90.9	NOT-PROVEN	ok	237731	226168	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_023_3 (group of 3, 226168 calls)
+0x004c4dc0	re/match/s19/004c4dc0.c	91.2	NOT-PROVEN	ok	71161	62018	frame 0 abs_in 0 abs_out 0 indirect 11	not-covered	IDENTICAL-FOR-2724	run t80_171707_023_3 (group of 3, 62018 calls)
+0x004cf7d0	re/match/s20/004cf7d0.c	84.2	NOT-PROVEN	-	0		frame 9 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004d40d0	re/match/s20/004d40d0.c	89.1	NOT-PROVEN	ok	311174	287900	frame 0 abs_in 8 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t80_171707_023_3 (group of 3, 287900 calls)
+0x004d8480	re/match/s21/004d8480.c	85.7	EQUIV-IF-CALLERS-IGNORE	ok	83	84	frame 0 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t80_171707_024_6 (group of 6, 84 calls)
+0x00546b10	re/match/s24/00546b10.c	86.0	NOT-PROVEN	ok	12133	11743	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_024_6 (group of 6, 11743 calls)
+0x00546e70	re/match/s24/00546e70.c	87.0	NOT-PROVEN	ok	10876	10876	frame 4 abs_in 0 abs_out 0 indirect 12	not-covered	IDENTICAL-FOR-2724	run t80_171707_024_6 (group of 6, 10876 calls)
+0x00555360	re/match/s24/00555360.c	94.4	EQUIV-IF-CALLERS-IGNORE	-	0		frame 0 abs_in 12 abs_out 0 indirect 6	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00558b40	re/match/s24/00558b40.c	85.1	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005a6b70	re/match/s25/005a6b70.c	84.6	EQUIV	-	0		frame 6 abs_in 1 abs_out 0 indirect 11	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005a6cb0	re/match/s25/005a6cb0.c	88.9	NOT-PROVEN	-	0		frame 4 abs_in 0 abs_out 0 indirect 6	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005a8750	re/match/s25/005a8750.c	92.1	NOT-PROVEN	ok	2339	2339	frame 4 abs_in 0 abs_out 0 indirect 6	not-covered	IDENTICAL-FOR-2724	run t80_171707_024_6 (group of 6, 2339 calls)
+0x005a8890	re/match/s25/005a8890.c	88.2	EQUIV	ok	4	4	frame 0 abs_in 0 abs_out 0 indirect 12	not-covered	IDENTICAL-FOR-2724	run t80_171707_024_6 (group of 6, 4 calls)
+0x005aa7a0	re/match/s25/005aa7a0.c	82.1	EQUIV	ok	16	16	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_024_6 (group of 6, 16 calls)
+0x005aa7e0	re/match/s25/005aa7e0.c	91.7	EQUIV-IF-CALLERS-IGNORE	ok	20	20	frame 0 abs_in 0 abs_out 0 indirect 4	not-covered	IDENTICAL-FOR-2724	run t80_171707_027_1 (group of 1, 20 calls)
+0x005aba20	re/match/s25/005aba20.c	81.9	NOT-PROVEN	ok	32	None	frame 5 abs_in 0 abs_out 0 indirect 39	not-covered	HANG	run rep2_203122_006_1: timeout 400 s before the race anchor, main-thread clock calls stopped at N=676 (confirmed in 3 runs)
+0x005ace70	re/match/s26/005ace70.c	89.7	EQUIV	ok	10	10	frame 1 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t80_171707_030_1 (group of 1, 10 calls)
+0x005ae3a0	re/match/s26/005ae3a0.c	84.8	EQUIV	ok	8	8	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t80_171707_031_3 (group of 3, 8 calls)
+0x005b3a00	re/match/s27/005b3a00.c	84.7	NOT-PROVEN	ok	36	36	frame 4 abs_in 0 abs_out 0 indirect 4	not-covered	IDENTICAL-FOR-2724	run t80_171707_031_3 (group of 3, 36 calls)
+0x005baf00	re/match/s27/005baf00.c	82.6	NOT-PROVEN	ok	2833	2886	frame 0 abs_in 0 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t80_171707_031_3 (group of 3, 2886 calls)
+0x004019d0	re/match/s01/004019d0.c	76.0	NOT-PROVEN	-	0		frame 56 abs_in 0 abs_out 0 indirect 15	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004022a0	re/match/s01/004022a0.c	50.7	NOT-PROVEN	-	0		frame 25 abs_in 0 abs_out 0 indirect 56	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004036a0	re/match/s01/004036a0.c	77.4	NOT-PROVEN	-	0		frame 26 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00406ce0	re/match/s01/00406ce0.c	71.6	NOT-PROVEN	-	0		frame 19 abs_in 0 abs_out 0 indirect 10	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00407be0	re/match/s01/00407be0.c	67.6	EQUIV	ok	10836	10823	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_183506_001_2 (group of 2, 10823 calls)
+0x00407e20	re/match/s01/00407e20.c	76.6	NOT-PROVEN	ok	10673	10673	frame 49 abs_in 0 abs_out 0 indirect 7	not-covered	IDENTICAL-FOR-2724	run t50_183506_001_2 (group of 2, 10673 calls)
+0x00415220	re/match/s03/h4_00415220.c	79.4	NOT-PROVEN	ok	1859	1917	frame 2 abs_in 0 abs_out 0 indirect 34	not-covered	IDENTICAL-FOR-2724	run t50_183506_002_2 (group of 2, 1917 calls)
+0x00416060	re/match/s03/h2_00416060.c	63.6	NOT-PROVEN	ok	2097	1331	frame 1 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_183506_002_2 (group of 2, 1331 calls)
+0x00416a30	re/match/s03/h4_00416a30.c	62.6	NOT-PROVEN	-	0		frame 21 abs_in 0 abs_out 0 indirect 42	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00417180	re/match/s03/h4_00417180.c	76.8	EQUIV	ok	5529	5083	frame 0 abs_in 2 abs_out 0 indirect 19	not-covered	IDENTICAL-FOR-2724	run t50_183506_003_2 (group of 2, 5083 calls)
+0x00417450	re/match/s03/h2_00417450.c	73.6	EQUIV	-	0		frame 0 abs_in 1 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00417da0	re/match/s03/h4_00417da0.c	66.5	NOT-PROVEN	-	0		frame 20 abs_in 0 abs_out 0 indirect 45	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00419a00	re/match/s03/h3_00419a00.c	60.1	NOT-PROVEN	-	0		frame 35 abs_in 0 abs_out 0 indirect 14	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041a9d0	re/match/s03/h1_0041a4a0.c	73.0	NOT-PROVEN	-	0		frame 1 abs_in 0 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041ac60	re/match/s03/h1_0041a4a0.c	79.2	NOT-PROVEN	-	0		frame 2 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041de80	re/match/s04/0041ded0.c	65.5	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041f590	re/match/s04/0041f590.c	78.4	NOT-PROVEN	ok	10876	10876	frame 6 abs_in 0 abs_out 0 indirect 6	not-covered	IDENTICAL-FOR-2724	run t50_183506_003_2 (group of 2, 10876 calls)
+0x00420870	re/match/s05/00420870.c	72.1	NOT-PROVEN	ok	10876	10876	frame 8 abs_in 2 abs_out 0 indirect 26	not-covered	IDENTICAL-FOR-2724	run t50_183506_004_2 (group of 2, 10876 calls)
+0x004212b0	re/match/s05/004212b0.c	69.5	NOT-PROVEN	ok	2719	2719	frame 8 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t50_183506_004_2 (group of 2, 2719 calls)
+0x004228f0	re/match/s05/004228f0.c	79.2	NOT-PROVEN	ok	9620	8369	frame 2 abs_in 0 abs_out 0 indirect 12	not-covered	IDENTICAL-FOR-2724	run t50_183506_006_1 (group of 1, 8369 calls)
+0x0042aa00	re/match/s06/0042aa00.c	76.8	EQUIV	-	0		frame 0 abs_in 0 abs_out 0 indirect 5	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0042e5b0	re/match/s07/0042e5b0.c	54.3	NOT-PROVEN	-	0		frame 33 abs_in 6 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay (54 calls in the menu before the warp)
+0x0042e8b0	re/match/s07/0042e8b0.c	50.8	NOT-PROVEN	-	0		frame 42 abs_in 4 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004335f0	re/match/s08/004335f0.c	64.8	NOT-PROVEN	-	0		frame 109 abs_in 1 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00434720	re/match/s08/00434720.c	57.1	NOT-PROVEN	-	0		-	-	NOT-WIRED	UNRESOLVED _sprintf
+0x0043aa30	re/match/s08/0043aa30.c	50.5	NOT-PROVEN	-	0		frame 67 abs_in 2 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0043d2a0	re/match/s08/0043d2a0.c	54.0	NOT-PROVEN	-	0		frame 23 abs_in 32 abs_out 0 indirect 22	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00441d40	re/match/s08/00441d40.c	69.2	NOT-PROVEN	ok	1626	1329	frame 21 abs_in 0 abs_out 0 indirect 13	not-covered	DIVERGED@2	run rep2_203122_007_1 tick 2: 2 blocks, first 0x896400, 0x896800; checkpoint tick 180: 0x00896620 body 3e997982 orig 00000003; 0x00896888 body 00000001 orig 001afb3c; 0x00896898 body 001afb24 orig 00896748 (confirmed in 2 runs)
+0x00442440	re/match/s08/00442440.c	73.8	NOT-PROVEN	ok	1084	886	frame 9 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t50_183506_009_1 (group of 1, 886 calls)
+0x004427c0	re/match/s08/004427c0.c	52.7	NOT-PROVEN	-	0		frame 0 abs_in 7 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00442e00	re/match/s08/00442e00.c	65.1	NOT-PROVEN	ok	200	200	frame 1 abs_in 0 abs_out 0 indirect 10	not-covered	DIVERGED@1132	run rep2_203122_008_1 tick 1132: 2 blocks, first 0x898000, 0x912800 (confirmed in 2 runs)
+0x00443440	re/match/s08/00443440.c	58.4	NOT-PROVEN	ok	11058	10450	frame 31 abs_in 0 abs_out 0 indirect 0	empty	DIVERGED@196	run rep2_203122_009_1 tick 196: 2 blocks, first 0x803000, 0x89a400; checkpoint tick 362: 0x0089a568 body 000000b6 orig 000000ac; 0x0089a580 body 000000b6 orig 000000ac (confirmed in 2 runs)
+0x00443dc0	re/match/s08/00443dc0.c	57.5	NOT-PROVEN	ok	5529	4792	frame 34 abs_in 1 abs_out 0 indirect 8	not-covered	DIVERGED@2	run rep2_203122_010_1 tick 2: 1 blocks, first 0x803000; checkpoint tick 180: 0x008032ec body 43ac58f7 orig 43accce2; 0x008032f4 body bea20bc7 orig be111700; 0x00803304 body 4140abb0 orig 414f8460 (confirmed in 2 runs)
+0x00444b60	re/match/s08/00444b60.c	69.0	NOT-PROVEN	-	0		frame 19 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00445aa0	re/match/s08/00445aa0.c	67.4	NOT-PROVEN	ok	542	443	frame 18 abs_in 0 abs_out 0 indirect 20	not-covered	DIVERGED@2	run rep2_203122_011_1 tick 2: 1 blocks, first 0x896400; checkpoint tick 180: 0x0089650c body bf719745 orig bf719777; 0x00896510 body 3e997a88 orig 3e997982; 0x00896514 body be0f28dd orig be0f27e8 (confirmed in 2 runs)
+0x004568d0	re/match/s09/004568d0.c	76.1	NOT-PROVEN	ok	2719	2719	frame 24 abs_in 0 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t50_191034_006_1 (group of 1, 2719 calls)
+0x00458b10	re/match/s09/00458b10.c	69.1	NOT-PROVEN	ok	2721	2721	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_007_2 (group of 2, 2721 calls)
+0x00459620	re/match/s09/00459620.c	63.7	NOT-PROVEN	ok	686	699	frame 44 abs_in 0 abs_out 0 indirect 59	not-covered	IDENTICAL-FOR-2724	run t50_191034_007_2 (group of 2, 699 calls)
+0x0045c480	re/match/s10/0045c480.c	55.0	EQUIV	-	0		frame 0 abs_in 12 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay (55 calls in the menu before the warp)
+0x0045cd30	re/match/s10/0045cd30.c	62.8	NOT-PROVEN	ok	1	1	frame 9 abs_in 1 abs_out 0 indirect 35	not-covered	IDENTICAL-FOR-2724	run t50_191034_008_2 (group of 2, 1 calls)
+0x0045d7a0	re/match/s10/0045d7a0.c	52.6	NOT-PROVEN	ok	2833	2884	frame 19 abs_in 9 abs_out 0 indirect 26	not-covered	IDENTICAL-FOR-2724	run t50_191034_008_2 (group of 2, 2884 calls)
+0x0045dd60	re/match/s10/0045dd60.c	78.7	NOT-PROVEN	ok	2833	2885	frame 3 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t50_191034_010_1 (group of 1, 2885 calls)
+0x00469aa0	re/match/s11/00469aa0.c	60.0	NOT-PROVEN	ok	21449	21395	frame 17 abs_in 6 abs_out 0 indirect 36	not-covered	DIVERGED@385	run rep2_203122_012_1 tick 385: 2 blocks, first 0x7ea800, 0x7eac00; checkpoint tick 543: 0x007eabdc body 008822a4 orig 00469be2; 0x007eabe0 body 00828320 orig 008822a4; 0x007eabfc body 008822a4 orig 00469be2 (confirmed in 2 runs)
+0x0046cc40	re/match/s11/0046cc40.c	73.1	NOT-PROVEN	ok	21650	21596	frame 23 abs_in 17 abs_out 0 indirect 31	not-covered	IDENTICAL-FOR-2724	run t50_191034_012_2 (group of 2, 21596 calls)
+0x0046da80	re/match/s11/0046da80.c	61.2	NOT-PROVEN	ok	238	238	frame 8 abs_in 6 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t50_191034_012_2 (group of 2, 238 calls)
+0x004709a0	re/match/s11/004709a0.c	55.7	NOT-PROVEN	ok	5438	5438	frame 12 abs_in 2 abs_out 0 indirect 2	not-covered	DIVERGED@321	run rep2_203122_013_1 tick 321: 17 blocks, first 0x63d800, 0x63dc00, 0x641000; at that tick 0x6dcd44 body bff93c4f orig bff63b71; 0x6dcd48 body 3c065adf orig 3c05f1e5; 0x6dcd4c body c179d2e7 orig c179f0d3; checkpoint tick 362: 0x0063d8e0 body bf2f0c9e orig bf309e77; 0x0063d8e4 body 3af98dc8 orig 3accb7d2; 0x0063d8e8 body bf3acd7a orig bf394e5d (confirmed in 2 runs)
+0x00470c70	re/match/s11/00470c70.c	69.8	NOT-PROVEN	ok	2719	None	frame 19 abs_in 19 abs_out 0 indirect 13	not-covered	CRASH	run rep2_203122_014_1: exit 0xc0000005 after the race anchor (confirmed in 2 runs)
+0x00471780	re/match/s11/00471780.c	73.3	NOT-PROVEN	-	0		frame 8 abs_in 0 abs_out 0 indirect 6	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00475770	re/match/s12/00475770.c	54.4	NOT-PROVEN	-	0		frame 3 abs_in 0 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00479100	re/match/s12/00479100.c	69.1	NOT-PROVEN	ok	2719	2719	frame 6 abs_in 0 abs_out 0 indirect 2	not-covered	DIVERGED@161	run rep2_203122_015_1 tick 161: 1 blocks, first 0x63dc00 (confirmed in 2 runs)
+0x0047ba20	re/match/s13/0047ba20.c	60.8	NOT-PROVEN	ok	84996	82062	frame 0 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t50_191034_018_1 (group of 1, 82062 calls)
+0x0047bb10	re/match/s13/0047bb10.c	79.8	NOT-PROVEN	ok	4722	4559	frame 8 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t50_191034_019_2 (group of 2, 4559 calls)
+0x0047cf20	re/match/s13/0047cf20.c	56.5	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00480d60	re/match/s13/00480d60.c	72.8	NOT-PROVEN	ok	239	239	frame 82 abs_in 0 abs_out 0 indirect 8	not-covered	IDENTICAL-FOR-2724	run t50_191034_019_2 (group of 2, 239 calls)
+0x00481a30	re/match/s13/00481a30.c	63.3	NOT-PROVEN	ok	2719	None	frame 26 abs_in 3 abs_out 0 indirect 0	not-covered	CRASH	run rep2_203122_016_1: exit 0xc0000005 after the race anchor (confirmed in 2 runs)
+0x00482140	re/match/s13/00482140.c	76.8	NOT-PROVEN	ok	4	4	frame 29 abs_in 0 abs_out 0 indirect 28	not-covered	IDENTICAL-FOR-2724	run t50_191034_022_1 (group of 1, 4 calls)
+0x00484ac0	re/match/s14/00484ac0.c	70.3	NOT-PROVEN	-	0		frame 11 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00484f70	re/match/s14/00484f70.c	68.1	NOT-PROVEN	ok	2719	2719	frame 4 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_023_2 (group of 2, 2719 calls)
+0x00489a40	re/match/s14/00489a40.c	78.0	NOT-PROVEN	-	0		frame 10 abs_in 0 abs_out 0 indirect 16	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0048ebf0	re/match/s15/0048ebf0.c	71.8	NOT-PROVEN	-	0		frame 9 abs_in 1 abs_out 0 indirect 19	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00490500	re/match/s15/00490500.c	56.0	NOT-PROVEN	ok	5438	5438	frame 60 abs_in 9 abs_out 0 indirect 18	not-covered	IDENTICAL-FOR-2724	run t50_191034_023_2 (group of 2, 5438 calls)
+0x004969a0	re/match/s16/00496c10.c	66.0	NOT-PROVEN	-	0		frame 26 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004b4550	re/match/s18/004b4550.c	63.3	NOT-PROVEN	ok	74	74	frame 0 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t50_191034_024_2 (group of 2, 74 calls)
+0x004b5d90	re/match/s18/004b5d90.c	60.1	NOT-PROVEN	-	0		frame 36 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004c18c0	re/match/s19/004c18c0.c	65.2	EQUIV	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004c4a50	re/match/s19/004c4a50.c	77.8	NOT-PROVEN	ok	237731	226168	frame 7 abs_in 0 abs_out 0 indirect 6	not-covered	IDENTICAL-FOR-2724	run t50_191034_024_2 (group of 2, 226168 calls)
+0x004caea0	re/match/s20/004caea0.c	77.5	NOT-PROVEN	-	0		frame 0 abs_in 15 abs_out 0 indirect 6	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004cc050	re/match/s20/004cc050.c	78.5	NOT-PROVEN	-	0		frame 6 abs_in 0 abs_out 0 indirect 5	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00556ca0	re/match/s24/00556ca0.c	60.0	NOT-PROVEN	ok	622	832	frame 1 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_025_2 (group of 2, 832 calls)
+0x005a6d60	re/match/s25/005a6d60.c	50.0	NOT-PROVEN	ok	135947	135889	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_025_2 (group of 2, 135889 calls)
+0x005a6f30	re/match/s25/005a6f30.c	65.4	NOT-PROVEN	-	2833		-	-	NOT-WIRED	UNRESOLVED _ROUND
+0x005a75b0	re/match/s25/005a75b0.c	51.6	NOT-PROVEN	ok	54376	None	frame 8 abs_in 1 abs_out 0 indirect 19	not-covered	CRASH	run rep2_203122_017_1r1: exit 0xc0000005 after the race anchor (confirmed in 2 runs)
+0x005a7b60	re/match/s25/005a7b60.c	53.5	NOT-PROVEN	ok	1	None	frame 12 abs_in 6 abs_out 0 indirect 0	not-covered	CRASH	run rep2_203122_018_1r1: exit 0xc0000005 before the race anchor (confirmed in 2 runs)
+0x005a9e60	re/match/s25/005a9e60.c	75.4	NOT-PROVEN	ok	3	3	frame 0 abs_in 0 abs_out 0 indirect 5	not-covered	IDENTICAL-FOR-2724	run rep_202757_003_1 (group of 1, 3 calls); run rep2_203122_019_1 (group of 1, 3 calls)
+0x005a9f10	re/match/s25/005a9f10.c	73.9	NOT-PROVEN	ok	16	None	frame 2 abs_in 0 abs_out 0 indirect 0	empty	CRASH	run rep2_203122_020_1: exit 0xc0000005 after the race anchor (confirmed in 2 runs)
+0x005a9f60	re/match/s25/005a9f60.c	58.8	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005aa0c0	re/match/s25/005aa0c0.c	56.2	NOT-PROVEN	ok	276	None	frame 2 abs_in 0 abs_out 0 indirect 3	not-covered	CRASH	run rep2_203122_021_1: exit 0xc0000005 before the race anchor (confirmed in 2 runs)
+0x005aa560	re/match/s25/005aa560.c	79.8	NOT-PROVEN	ok	20	20	frame 5 abs_in 1 abs_out 0 indirect 10	not-covered	IDENTICAL-FOR-2724	run t50_191034_034_1 (group of 1, 20 calls)
+0x005aaac0	re/match/s25/005aaac0.c	77.3	EQUIV	ok	4	4	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_035_2 (group of 2, 4 calls)
+0x005aab00	re/match/s25/005aab00.c	77.8	EQUIV	ok	18415	18431	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_035_2 (group of 2, 18431 calls)
+0x005aab70	re/match/s25/005aab70.c	75.6	NOT-PROVEN	ok	18416	18396	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_036_2 (group of 2, 18396 calls)
+0x005aac20	re/match/s25/005aac20.c	69.7	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 8	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005ab380	re/match/s25/005ab380.c	75.0	NOT-PROVEN	ok	38	38	frame 0 abs_in 0 abs_out 0 indirect 8	not-covered	IDENTICAL-FOR-2724	run t50_191034_036_2 (group of 2, 38 calls)
+0x005ab410	re/match/s25/005ab410.c	75.4	EQUIV	ok	12	12	frame 0 abs_in 0 abs_out 0 indirect 2	not-covered	IDENTICAL-FOR-2724	run t50_191034_037_2 (group of 2, 12 calls)
+0x005abd30	re/match/s25/005abd30.c	52.3	NOT-PROVEN	ok	62	62	frame 7 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t50_191034_037_2 (group of 2, 62 calls)
+0x005abfa0	re/match/s25/005abfa0.c	62.9	NOT-PROVEN	ok	12	None	frame 6 abs_in 0 abs_out 0 indirect 0	empty	CRASH	run rep2_203122_022_1: exit 0xc0000005 before the race anchor (confirmed in 2 runs)
+0x005ac210	re/match/s25/005ac210.c	57.1	NOT-PROVEN	ok	12	None	frame 16 abs_in 0 abs_out 0 indirect 6	not-covered	CRASH	run rep2_203122_023_1r1: exit 0xc0000005 before the race anchor (confirmed in 2 runs)
+0x005acaa0	re/match/s26/005acaa0.c	60.4	NOT-PROVEN	ok	28	28	frame 5 abs_in 0 abs_out 0 indirect 11	not-covered	IDENTICAL-FOR-2724	run t50_191034_041_2 (group of 2, 28 calls)
+0x005acd10	re/match/s26/005acd10.c	78.0	EQUIV-IF-CALLERS-IGNORE	ok	32	32	frame 0 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_041_2 (group of 2, 32 calls)
+0x005ad0b0	re/match/s26/005ad0b0.c	56.2	NOT-PROVEN	ok	16	None	frame 11 abs_in 0 abs_out 0 indirect 15	not-covered	CRASH	run rep2_203122_024_1: exit 0xc0000005 after the race anchor (confirmed in 2 runs)
+0x005ad320	re/match/s26/005ad320.c	65.2	EQUIV	ok	92	92	frame 8 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t50_191034_044_1 (group of 1, 92 calls)
+0x005ae250	re/match/s26/005ae250.c	64.9	NOT-PROVEN	ok	2	2	frame 0 abs_in 1 abs_out 0 indirect 9	not-covered	IDENTICAL-FOR-2724	run t50_191034_045_2 (group of 2, 2 calls)
+0x005ae650	re/match/s26/005ae650.c	74.1	NOT-PROVEN	ok	1	1	frame 2 abs_in 1 abs_out 0 indirect 19	not-covered	IDENTICAL-FOR-2724	run t50_191034_045_2 (group of 2, 1 calls)
+0x005aec30	re/match/s26/005aec30.c	73.2	NOT-PROVEN	-	0		frame 1 abs_in 0 abs_out 0 indirect 2	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005aeca0	re/match/s26/005aeca0.c	78.4	NOT-PROVEN	-	0		frame 1 abs_in 0 abs_out 0 indirect 6	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005b3760	re/match/s27/005b3760.c	57.1	NOT-PROVEN	ok	10	10	frame 7 abs_in 2 abs_out 0 indirect 8	not-covered	IDENTICAL-FOR-2724	run t50_191034_046_1 (group of 1, 10 calls)
+0x00401fe0	re/match/s01/00401fe0.c	46.4	NOT-PROVEN	-	0		frame 22 abs_in 0 abs_out 0 indirect 44	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041aac0	re/match/s03/h1_0041a4a0.c	29.2	NOT-PROVEN	-	0		frame 1 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0041ded0	re/match/s04/0041ded0.c	27.3	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x004368e0	re/match/s08/004368e0.c	25.1	NOT-PROVEN	-	0		-	-	NOT-WIRED	UNRESOLVED _fsin
+0x00439210	re/match/s08/00439210.c	40.5	NOT-PROVEN	-	0		frame 113 abs_in 3 abs_out 0 indirect 0	covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0043a610	re/match/s08/0043a610.c	35.1	NOT-PROVEN	-	0		frame 64 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0043af10	re/match/s08/0043af10.c	22.9	NOT-PROVEN	-	0		-	-	NOT-WIRED	UNRESOLVED _fsin
+0x0043dfd0	re/match/s08/0043dfd0.c	17.7	NOT-PROVEN	-	0		frame 37 abs_in 390 abs_out 0 indirect 66	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay (54 calls in the menu before the warp)
+0x0045c550	re/match/s10/0045c550.c	37.3	NOT-PROVEN	ok	8801	8046	frame 7 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t0_195814_001_1 (group of 1, 8046 calls)
+0x004694e0	re/match/s11/004694e0.c	46.5	NOT-PROVEN	ok	21449	21395	frame 29 abs_in 0 abs_out 0 indirect 17	not-covered	IDENTICAL-FOR-2724	run t0_195814_002_1 (group of 1, 21395 calls)
+0x00469df0	re/match/s11/00469df0.c	30.1	NOT-PROVEN	ok	1553	678	frame 72 abs_in 10 abs_out 0 indirect 22	not-covered	DIVERGED@385	run rep2_203122_025_1 tick 385: 10 blocks, first 0x715800, 0x715c00, 0x716000; checkpoint tick 543: 0x00715a5c body 3a87418d orig 3a874191; 0x00715a64 body bbe523b6 orig bbe523b8; 0x00715a98 body bbfae52b orig bbfae52c (confirmed in 2 runs)
+0x0046ef70	re/match/s11/0046ef70.c	43.9	NOT-PROVEN	ok	154	96	frame 16 abs_in 0 abs_out 0 indirect 1	not-covered	DIVERGED@408	run rep2_203122_026_1 tick 408: 1 blocks, first 0x881c00 (confirmed in 2 runs)
+0x0046f6c0	re/match/s11/0046f6c0.c	44.3	NOT-PROVEN	ok	21650	14488	frame 44 abs_in 3 abs_out 0 indirect 41	not-covered	DIVERGED@1	run rep2_203122_027_1 tick 1: 11 blocks, first 0x881400, 0x881800, 0x881c00; checkpoint tick 180: 0x008815ac body 00001900 orig 00000000; 0x008815b4 body 00000001 orig 00000000; 0x008816e8 body 00000000 orig 3c7b7c2e (confirmed in 2 runs)
+0x00471ec0	re/match/s11/00471ec0.c	44.4	NOT-PROVEN	ok	2719	2719	frame 14 abs_in 0 abs_out 0 indirect 4	not-covered	IDENTICAL-FOR-2724	run t0_195814_006_1 (group of 1, 2719 calls)
+0x00474890	re/match/s11/00474890.c	45.2	NOT-PROVEN	-	0		frame 10 abs_in 20 abs_out 0 indirect 13	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay (54 calls in the menu before the warp)
+0x00475ab0	re/match/s12/00475ab0.c	32.4	NOT-PROVEN	-	0		frame 2 abs_in 0 abs_out 0 indirect 9	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x0047d640	re/match/s13/0047d640.c	45.7	NOT-PROVEN	ok	2719	2719	frame 36 abs_in 18 abs_out 0 indirect 43	not-covered	IDENTICAL-FOR-2724	run t0_195814_007_1 (group of 1, 2719 calls)
+0x004847d0	re/match/s14/004847d0.c	34.9	NOT-PROVEN	-	0		frame 5 abs_in 2 abs_out 0 indirect 7	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00485b30	re/match/s14/00485b30.c	46.9	EQUIV	-	0		frame 0 abs_in 0 abs_out 0 indirect 13	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x00485ef0	re/match/s14/00485ef0.c	19.8	NOT-PROVEN	ok	2719	2719	frame 22 abs_in 0 abs_out 0 indirect 7	not-covered	IDENTICAL-FOR-2724	run t0_195814_008_1 (group of 1, 2719 calls)
+0x0048a780	re/match/s14/0048a780.c	49.1	NOT-PROVEN	ok	2719	2719	frame 0 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t0_195814_009_1 (group of 1, 2719 calls)
+0x0048b7c0	re/match/s14/0048b7c0.c	46.4	NOT-PROVEN	ok	2719	2719	frame 21 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t0_195814_010_1 (group of 1, 2719 calls)
+0x00499d90	re/match/s16/00499d90.c	43.9	NOT-PROVEN	ok	1512	1717	frame 0 abs_in 2 abs_out 0 indirect 72	not-covered	IDENTICAL-FOR-2724	run t0_195814_011_1 (group of 1, 1717 calls)
+0x004c4eb0	re/match/s19/004c4eb0.c	47.7	NOT-PROVEN	ok	663	877	frame 0 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run t0_195814_012_1 (group of 1, 877 calls)
+0x004c51a0	re/match/s19/004c51a0.c	14.7	NOT-PROVEN	ok	212952	208746	frame 9 abs_in 0 abs_out 1 indirect 15	not-covered	DIVERGED@1	run rep2_203122_028_1 tick 1: 5 blocks, first 0x881c00, 0x882800, 0x882c00; checkpoint tick 180: 0x00881f24 body 00000000 orig 00000003; 0x00882c28 body 00000000 orig 00000003; 0x0088392c body 00000000 orig 00000003 (confirmed in 2 runs)
+0x004c52f0	re/match/s19/004c52f0.c	12.6	NOT-PROVEN	ok	89477	86396	frame 2 abs_in 0 abs_out 0 indirect 5	not-covered	IDENTICAL-FOR-2724	run t0_195814_014_1 (group of 1, 86396 calls)
+0x004c5470	re/match/s19/004c5470.c	25.2	NOT-PROVEN	-	0		-	-	NOT-WIRED	UNRESOLVED _fpatan
+0x004c5680	re/match/s19/004c5680.c	34.2	NOT-PROVEN	-	0		frame 0 abs_in 0 abs_out 0 indirect 0	empty	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005a6ea0	re/match/s25/005a6ea0.c	38.9	NOT-PROVEN	ok	2833	2887	frame 4 abs_in 2 abs_out 0 indirect 0	not-covered	IDENTICAL-FOR-2724	run t0_195814_015_1 (group of 1, 2887 calls)
+0x005a71f0	re/match/s25/005a71f0.c	47.9	NOT-PROVEN	-	0		frame 11 abs_in 6 abs_out 0 indirect 1	not-covered	NOT-EXECUTED	census: 0 calls from the warp to the end of the replay
+0x005acda0	re/match/s26/005acda0.c	44.3	NOT-PROVEN	ok	10	10	frame 3 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run t0_195814_016_1 (group of 1, 10 calls)
+0x005ae4c0	re/match/s26/005ae4c0.c	35.5	NOT-PROVEN	ok	8	8	frame 0 abs_in 0 abs_out 0 indirect 5	not-covered	IDENTICAL-FOR-2724	run t0_195814_017_1 (group of 1, 8 calls)
+0x005ae800	re/match/s26/005ae800.c	38.2	NOT-PROVEN	ok	67	67	frame 9 abs_in 0 abs_out 0 indirect 8	not-covered	IDENTICAL-FOR-2724	run t0_195814_018_1 (group of 1, 67 calls)
+0x005b0cf0	re/match/s26/005b0cf0.c	43.9	EQUIV-IF-CALLERS-IGNORE	ok	4674	4674	frame 8 abs_in 0 abs_out 0 indirect 3	not-covered	IDENTICAL-FOR-2724	run t0_195814_019_1 (group of 1, 4674 calls)
+0x005b3b80	re/match/s27/005b3b80.c	43.4	NOT-PROVEN	ok	2	None	frame 17 abs_in 0 abs_out 0 indirect 8	not-covered	CRASH	run rep2_203122_029_1: exit 0xc0000005 after the race anchor (confirmed in 2 runs)
+0x0040aef0	re/match/racepath/0040aef0.c	97.6	-	ok	10876	10876	frame 3 abs_in 0 abs_out 0 indirect 10	not-covered	IDENTICAL-FOR-2724	run new_210434_001_3 (group of 3, 10876 calls)
+0x0040c690	re/match/racepath/0040c690.c	80.5	-	ok	8573	8288	frame 22 abs_in 0 abs_out 0 indirect 0	empty	IDENTICAL-FOR-2724	run new_210434_001_3 (group of 3, 8288 calls)
+0x00411ae0	re/match/racepath/00411ae0.c	97.2	-	ok	2179	2279	frame 30 abs_in 2 abs_out 0 indirect 0	covered	IDENTICAL-FOR-2724	run new_210434_001_3 (group of 3, 2279 calls)
+0x00412620	re/match/racepath/00412620.c	49.4	-	ok	2719	2719	frame 16 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run new_210434_002_3 (group of 3, 2719 calls)
+0x00414570	re/match/racepath/00414570.c	93.0	-	ok	5529	5083	frame 8 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run new_210434_002_3 (group of 3, 5083 calls)
+0x00414c30	re/match/racepath/00414c30.c	96.5	-	ok	3929	3636	frame 14 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run new_210434_002_3 (group of 3, 3636 calls)
+0x00415880	re/match/racepath/00415880.c	40.3	-	ok	5177	4929	frame 9 abs_in 0 abs_out 0 indirect 9	not-covered	IDENTICAL-FOR-2724	run new_210434_004_1 (group of 1, 4929 calls)
+0x00440bc0	re/match/tlr/00440bc0.c	12.4	-	ok	2	None	frame 0 abs_in 0 abs_out 0 indirect 0	empty	CRASH	run newrep_211326_001_1: exit 0xc0000005 before the race anchor (confirmed in 2 runs)
+0x00486830	re/match/racepath/00486830.c	46.7	-	ok	2719	2719	frame 46 abs_in 0 abs_out 0 indirect 17	not-covered	IDENTICAL-FOR-2724	run new_210434_007_1 (group of 1, 2719 calls)
+0x00487180	re/match/tlr/00487180.c	11.7	-	ok	115	126	frame 2 abs_in 0 abs_out 0 indirect 14	not-covered	DIVERGED@0	run newrep_211326_002_1 tick 0: 4 blocks, first 0x6c3400, 0x6c3800, 0x6c3c00; at that tick 0x7f1010 body 43b29c71 orig 43b29a4f; checkpoint tick 180: 0x006c36b0 body bf01a0c7 orig bef817d6; 0x006c36b4 body bcd51189 orig bc049587; 0x006c36b8 body bf8e7da1 orig bf885aff (confirmed in 2 runs)
+0x00488e70	re/match/racepath/00488e70.c	99.6	-	ok	2719	2719	frame 9 abs_in 1 abs_out 0 indirect 10	not-covered	IDENTICAL-FOR-2724	run new_210434_010_2 (group of 2, 2719 calls)
+0x00489500	re/match/racepath/00489500.c	48.8	-	ok	1801	1260	frame 18 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run new_210434_010_2 (group of 2, 1260 calls)
+0x0048ab70	re/match/racepath/0048ab70.c	91.2	-	ok	2719	2719	frame 1 abs_in 2 abs_out 0 indirect 15	not-covered	IDENTICAL-FOR-2724	run new_210434_011_2 (group of 2, 2719 calls)
+0x005ac770	re/match/tlr/005ac770.c	79.3	-	ok	84	84	frame 0 abs_in 0 abs_out 0 indirect 1	not-covered	IDENTICAL-FOR-2724	run new_210434_011_2 (group of 2, 84 calls)

@@ -260,6 +260,18 @@ function warp() {
   const e480 = new NativeFunction(ga(0x0040e480), 'void', ['int', 'int'], 'mscdecl');
   for (let k = 0; k < 4; k++) e480(k, k === 0 ? 1 : (k < s.cars ? 2 : 0));
   const pins = pinRngs();
+  // PROV-INSITU (cfg.warpClock = K ticks): the virtual clock at the warp is the start value plus however many ticks the
+  // menu ran since the install, and that count is not a function of N (the warp is scheduled on clock calls). Runs one
+  // tick apart then pin the frame timer one 50,000-count step apart (0x007f102c / 0x007f1030), and the race reads it:
+  // blocks 0x0068f400 / 0x006c2400 differ from tick 2 in every such run. Setting T and Q to fixed values here, before
+  // pinTimer, makes the pinned timer the same in every run.
+  if (TICK && TICK.pin && CFG.warpClock) {
+    const k = BigInt(CFG.warpClock);
+    const q = BigInt(CFG.q0) + k * BigInt(TICK.qtick);
+    D.add(0x10).writeU32(Number(q & 0xffffffffn)); D.add(0x14).writeU32(Number(q >> 32n));
+    D.writeU32((CFG.t0 + CFG.warpClock * TICK.ttick) >>> 0);
+    pins.warpClock = { k: CFG.warpClock, q: q.toString() };
+  }
   if (TICK && TICK.pin) pins.timer = pinTimer();
   const nw = pinNorm('warp');
   if (nw) pins.norm = nw;
@@ -429,6 +441,78 @@ function tickDump() {
   }
 }
 
+// ---------------------------------------------------------------- PROV-INSITU
+// cfg.prov.bodies (re/tools/prov/provlink.py): DDK objects of match sources, linked against the original image. At the
+// warp each body is copied into executable memory behind a counting stub (`inc dword [cnt_i]` + `jmp body`), and an
+// inline JMP rel32 is written at its RVA. cfg.prov.count: RVAs that only get a native call counter (Interceptor +
+// CModule, no JS on the hot path), the census of which functions run in this scenario.
+const PROV = CFG.prov || null;
+let PV = null;
+let PV_AT = null;
+function provInstall() {
+  if (!PROV) return null;
+  const bodies = PROV.bodies || [], count = PROV.count || [];
+  const nb = bodies.length + count.length;
+  // counters and code on separate whole pages: a counter store on a code page costs a self-modifying-code clear per call
+  const pg = (n) => Math.ceil(Math.max(n, 1) / Process.pageSize) * Process.pageSize;
+  const cnt = K(Memory.alloc(pg(nb * 4 * 2)));   // [0..nb) live counters, [nb..2nb) snapshot at the anchor
+  for (let i = 0; i < 2 * nb; i++) cnt.add(i * 4).writeU32(0);
+  let total = 0;
+  const offs = bodies.map((b) => { const o = total; total += 16 + b.code.length / 2; total = (total + 15) & ~15; return o; });
+  const mem = total ? K(Memory.alloc(pg(total))) : null;
+  const installed = [];
+  bodies.forEach((b, i) => {
+    const stub = mem.add(offs[i]);
+    const body = stub.add(16);
+    const code = [];
+    for (let k = 0; k < b.code.length; k += 2) code.push(parseInt(b.code.substr(k, 2), 16));
+    const dv = new DataView(new ArrayBuffer(code.length)); code.forEach((x, k) => dv.setUint8(k, x));
+    const base = body.toUInt32() >>> 0;
+    for (const o of b.abs) dv.setUint32(o, (dv.getUint32(o, true) + base) >>> 0, true);
+    for (const [o, t] of Object.entries(b.ext)) { const p = base + Number(o) + 4; dv.setInt32(Number(o), (t - p) | 0, true); }
+    const ca = cnt.add(i * 4).toUInt32() >>> 0;
+    const ent = base + b.entry;
+    const s = [0xff, 0x05, ca & 0xff, (ca >>> 8) & 0xff, (ca >>> 16) & 0xff, (ca >>> 24) & 0xff, 0xe9, 0, 0, 0, 0];
+    const rj = (ent - ((stub.toUInt32() >>> 0) + 11)) | 0;
+    s[7] = rj & 0xff; s[8] = (rj >>> 8) & 0xff; s[9] = (rj >>> 16) & 0xff; s[10] = (rj >>> 24) & 0xff;
+    while (s.length < 16) s.push(0xcc);
+    Memory.protect(stub, 16 + code.length, 'rwx');
+    stub.writeByteArray(s);
+    body.writeByteArray(dv.buffer);
+    const site = ga(parseInt(b.rva, 16));
+    const before = Array.from(new Uint8Array(site.readByteArray(5)));
+    const rel = ((stub.toUInt32() >>> 0) - ((site.toUInt32() >>> 0) + 5)) | 0;
+    Memory.patchCode(site, 5, (w) => { w.writeU8(0xe9); w.add(1).writeS32(rel); });
+    const after = Array.from(new Uint8Array(site.readByteArray(5)));
+    // install check: the site holds E9 to the stub, and the stub's jmp lands on the body entry
+    const back = (site.toUInt32() >>> 0) + 5 + site.add(1).readS32();
+    const land = (stub.toUInt32() >>> 0) + 11 + stub.add(7).readS32();
+    installed.push({ rva: b.rva, site_before: before.map((x) => x.toString(16)).join(' '), site_after: after.map((x) => x.toString(16)).join(' '),
+                     jmp_ok: (back >>> 0) === (stub.toUInt32() >>> 0) && (land >>> 0) === (ent >>> 0), stub: stub.toString(), entry: '0x' + (ent >>> 0).toString(16) });
+  });
+  let cm = null;
+  if (count.length) {
+    cm = K(new CModule(`
+#include <gum/guminterceptor.h>
+void onEnter(GumInvocationContext *ic) { unsigned int *c = GUM_IC_GET_FUNC_DATA(ic, unsigned int *); (*c)++; }
+`));
+    count.forEach((rva, j) => {
+      const i = bodies.length + j;
+      try { Interceptor.attach(ga(parseInt(rva, 16)), cm, cnt.add(i * 4)); installed.push({ rva, count_only: true }); }
+      catch (e) { installed.push({ rva, count_only: true, err: '' + e }); }
+    });
+  }
+  PV = { cnt, nb, names: bodies.map((b) => b.rva).concat(count), installed };
+  send({ kind: 'provinst', installed });
+  return { n: nb, bodies: bodies.length, count: count.length, fail: installed.filter((x) => x.err || x.jmp_ok === false).length };
+}
+function provSnap() { if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
+function provReport() {
+  if (!PV) return;
+  const rows = PV.names.map((rva, i) => ({ rva, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
+  send({ kind: 'prov', rows, installed: PV.installed });
+}
+
 // ---------------------------------------------------------------- install
 const SLOTS =[[0x005cc2b4, 'tgt'], [0x005cc0c8, 'tgt'], [0x005cc0c4, 'qpc']];
 function install() {
@@ -444,10 +528,16 @@ function install() {
     res.push([va.toString(16), real.toString(), stub.toString()]);
   }
   if (TK) { Interceptor.attach(ga(TICK.va), TK.cm); res.push(['tick', TICK.va.toString(16)]); }
+  // PROV-INSITU bodies / counters go live here, at the menu, not at the warp: work done inside the warp's clock call
+  // (14 patchCode calls, or 326 Interceptor attaches) moved the frame-timer phase by one tick in 2 of 4 runs
+  PV_AT = provInstall();
+  if (PV_AT) res.push(['prov', PV_AT]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
   schedule(CFG.warpAt, () => {
     warpN = N();
     const pins = warp();
+    if (PV_AT) pins.prov = PV_AT;
+    if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
     if (CFG.callLog) D.add(0x34).writeU32(1);
     send({ kind: 'warp', n: warpN, pins });
     setActive(1);
@@ -463,6 +553,7 @@ function install() {
         schedule(N() + 1, watch); return;
       }
       raceN = N();
+      provSnap();
       if (TK) TK.st.writeU32(1);
       if (PZ) PZ.st.writeU32(1);
       if (CFG.callLog && !CFG.callLogRace) {
@@ -500,6 +591,7 @@ function install() {
           send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
         }
         tickDump();
+        provReport();
         if (PZ) { PZ.st.writeU32(0); send({ kind: 'info', msg: 'poison listener calls ' + PZ.st.add(4).readU32() }); }
         send({ kind: 'done', n: N() });
       });

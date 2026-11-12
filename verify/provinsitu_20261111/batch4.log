@@ -1,0 +1,28 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 2/8 after 600s
+[mashed-lock] HELD 'mashed_machine' pid=11932 (PROV-INSITU)
+[1/3] x_ref2 start 14:28:38
+[x_ref2] exit 0 14:31:07
+  warp at N=600 pins={'ptd': '0x2d105c0', 'holdrand_before': 1, 'rw_ring': '0xcc1bf00', 'rw_cursors_before': [214023948, 214023936], 'timer': {'v': 969117647, 'before': [969117647, 966566683, 149896, 323022, 322139]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 104, 'sample': [['7f0ff0', 8500], [
+  race anchor N=719 dn_warp=119 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+=== rc=0 ckpts=15
+[2/3] g95 start 14:31:07
+[g95] exit 0 14:32:55
+  prov: 29 bodies, 0 counters
+  prov install 29 sites, 0 failed []
+  warp at N=600 pins={'ptd': '0x2c705c0', 'holdrand_before': 1, 'rw_ring': '0xd47bf00', 'rw_cursors_before': [222805772, 222805760], 'timer': {'v': 969117647, 'before': [969117647, 966567639, 149896, 323022, 322139]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 7650], [
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+  prov rows 29 executed 29 install_fail 0
+=== rc=0 ckpts=15
+[3/3] x_b1b start 14:33:06
+[x_b1b] exit 0 14:34:42
+  prov: 1 bodies, 0 counters
+  prov install 1 sites, 0 failed []
+  warp at N=600 pins={'ptd': '0x2ac05c0', 'holdrand_before': 1, 'rw_ring': '0xd73bf00', 'rw_cursors_before': [225689356, 225689344], 'timer': {'v': 969117647, 'before': [969117647, 1027062336, 149898, 323022, 341352]}, 'norm': {'at': 'warp', 'rows': 299, 'changed': 105, 'sample': [['7f0ff0', 8650], 
+  race anchor N=718 dn_warp=118 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  ticks 2724 x 3245 blocks
+  prov rows 1 executed 1 install_fail 0
+=== rc=0 ckpts=15
+[mashed-lock] released 'mashed_machine' pid=11932
