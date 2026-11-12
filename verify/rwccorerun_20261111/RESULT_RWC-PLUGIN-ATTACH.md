@@ -5,7 +5,22 @@ on the core), so that branch's progress lands with this one. Same knob (`MASHED_
 `MASHED_ORIG_TOP=1`) and the same four arms as `PREREG_RWC-CORE-RUN.md`. Top-down row: G-CTRL / B / 12 captures not run
 (WORKER_RULES). No tracker edit.
 
-@@VERDICT@@
+**Verdict (run 40): GREEN for what landed, with the Im2D comparison not done.** Branch `orch/RWC-PLUGIN-ATTACH` @
+6e4430812 (plus the RESULT commit). Self-test: **PASS** in every core arm (RwTexDictionaryCreate binding self-test 0 of
+11 checks failed, in vs_core / ddk_core / vs_frame / ddk_frame), and the RWC-DEVICE self-test PASS (0 fail) in
+both frame arms.
+
+- Plugin attach 0x00493640 runs on the RW core and returns 1. **RwEngineStart now returns 1 on the core** with
+  every plugin attached (Init, Attach, Open, Start, Stop, Close, Term all succeed), in both builds.
+- New sub-knob `MASHED_RWC_FRAME` (only with `MASHED_RWC_CORE=1`, default OFF): the bring-up 0x00493710 returns 1
+  with its tail on the core, DisplayInit 0x004921d0 runs with 71 of 88 librw bindings sent to their core bodies,
+  and **the first frame is presented on the RW core** (RwRasterShowRaster 0x004c7730 = the raster, 1 Present), in
+  both builds (exit 0x5257F001).
+- Not done: the frame has no Im2D draw yet (the loading-disc draw 0x00428450 has no body on the top-down path), so
+  the Im2D comparison against the original and the matched frame render 0x00492e90 remain. See section 7 and the
+  Handoff.
+- Default and knob-OFF paths unchanged: vs_off vs ddk_off 1134 / 1134 lines, 0 differ, 600 frames each. Top-down
+  row, so G-CTRL / B / 12 captures not run (WORKER_RULES). No tracker edit.
 
 ## 1. Plugin attach 0x00493640 on the core
 
@@ -54,7 +69,7 @@ the helper `GetFS` between its MATCH line and `FUN_00550b00`); `_strncpy` and `q
 `port=body`, and a matched or hand-written source must replace it. No frida-replay promotion is filed for any lifted
 body.
 
-Closure after run 40 (`RwCore_Bodies.tsv`): **1400 RVAs: 418 match100, 229 provisional sources, 620 lifted, 16 hand,
+Closure at 2cca29c6c (RwEngineStart = 1, before the frame knob; final closure in 3.2): **1400 RVAs: 418 match100, 229 provisional sources, 620 lifted, 16 hand,
 10 exe bodies, 107 logged stops** (`LIFT_REFUSED.tsv`: 81 labels inside a known function, 19 indirect jumps or calls
 through tables, 7 unresolved targets). `PROVISIONAL_RWC.tsv` lists the 865 non-proven bodies (229 + 620 + 16).
 
@@ -81,9 +96,46 @@ and the PVS / world-sector / patch / UV-anim callback tables), 162 refused. The 
 (1273 -> 1400 rows). Four raw g2s sources they pulled in do not compile as C++ under VS2022 and are lifted instead
 (`LIFT_INSTEAD`: rwl03/00530650, rwl03/00530c00, rwl04/0054ba20, rwl04/0054bda0).
 
+### 3.2 Run 40: the librw binding RVAs, and four lifter forms
+
+For the frame knob every RW-band RVA a librw binding stands for (`LibRw/*.cpp` `MashedRw_<Name>_<rva>`) is a
+closure root, plus 0x004b3eb0 (the TXD-from-memory loader DisplayInit calls; `PortTop_Port_004b3eb0` is a librw
+path). Final closure (`RwCore_Bodies.tsv`): **1567 RVAs: 491 match100, 267 provisional sources, 680 lifted, 16 hand,
+10 exe bodies, 103 logged stops**. `PROVISIONAL_RWC.tsv`: 963 rows (267 + 680 + 16). `LIFT_REFUSED.tsv`: 76 labels
+inside a known function, 24 unresolved call targets, 3 other.
+
+Generator and lifter changes this needed, each from a named stop or build error:
+
+| change | evidence |
+|---|---|
+| extents end at the next known function start | match_ledger lists 0x004c2620 with 1425 bytes (function_inventory 1040, ending at the start 0x004c2a30), so the camera update callbacks 0x004c2bb0 / 0x004c2b80 (ret + nop before each, both open with `mov eax, [0x007d3ff8]`) were refused as labels |
+| only the C++ branch of `#ifdef __cplusplus` counts as a definition | re/match/rwl01/004c1d30.c defines a C stand-in of 0x004c1a70 under `#else`; the copy symbol was unresolved at link |
+| `_strstr` bound to `RwCoreCrt_strstr` | 0x005507b0 calls it by name (LNK2019) |
+| switch tables lifted as compare chains | stop at 0x004df030 (`jmp dword ptr [edi*4 + 0x4df0fc]`) and 0x004ca160 (`xor edx, edx; mov dl, byte ptr [eax + 0x4cab20]`): the bound `cmp X, N` / `ja` and the optional byte index table are read from the anchored image, the jump becomes `cmp X, k` / `je L_<target>`. 14 of the 15 jump-table refusals cleared; 0x0053ed20 (`jmp dword ptr [eax*4 + 0x53f134]` at 0x0053edc3) keeps a shape the walk-back does not match and stays a stop |
+| IAT calls through `RwCoreIat_<slot>` (`RwCore/RwCore_Iat.cpp`, 9 slots, each = this exe's import of the same name: GetClientRect, AdjustWindowRectEx, SetWindowLongA, SetWindowPos, RegOpenKeyA ..) | 0x004c9290 / 0x004ca160 / 0x004fbd78 called `[0x005cc21c]` / `[0x005cc00c]`; the OS is the declared platform boundary |
+| tail jumps through a run-time pointer (`jmp dword ptr [reg + small disp]`) emitted as is | stop at 0x004e3850 (`jmp dword ptr [eax + 0x10]`, a module callback), same footing as `call [reg + disp]` |
+| 12 raw g2s sources that fail VS2022 C++ lifted instead | `LIFT_INSTEAD_RUN40.txt` (build_vs12 .. build_vs25 logs) |
+| 3 callees of re/match/rwl02/004e7420.c (0x005c4670 / 0x005c47b0 / 0x005c47e0, sources in s28) in XFOLLOW | UNBOUND non-RW in the generator |
+
+`route_bindings.py` inserts one line per binding, `if (RwCore_FrameRoute()) return reinterpret_cast<ret (__cdecl*)(..)>
+(&<core symbol>)(args);` tagged `[RWC-FRAME]` (idempotent). `ROUTED.tsv`: **71 routed** (47 match100, 16 provisional,
+6 lifted, 2 logged stops), 17 not routed (10 the engine knob already routes, 7 game-side RVAs outside the closure:
+0x0052cb00 / 0x0052d530 BMP read / write, 0x004b3f90, 0x0048fef0, 0x004b5300, 0x004b5190, 0x004b52f0).
+RwRasterShowRaster 0x004c7730 goes through `RwCore_FrameShowRaster` (RwCore_Knob.cpp), which logs the frame, stops,
+closes and terminates the engine on the core and ends the process with 0x5257F000 | (result != 0).
+
+rva-lint: 180 known (D4 burn-down 5, ORIGTOP-ONLY 175). The growth added 21 ORIGTOP-ONLY pairs and one untagged
+D4 entry, `DUP-IN-TARGET:004c0ad0` (RwCore_004c0ad0 plus four renamed copies `RwCoreCopy_<src>_004c0ad0` the matched
+sources carry, distinct symbols, knob path only; five marked TUs is not of the ORIGTOP-ONLY class).
+
 ## 4. Builds
 
-@@BUILDS@@
+| build | result |
+|---|---|
+| default VS2022 (`build_vs29.log`, tree 6e4430812) | Build OK, rva-lint OK (180 known, 0 new) |
+| object build `MASHED_DDKOBJ=1` (`build_ddk3.log`) | Build OK, link rc 0, `mashed_re_ddk.exe` |
+| `ddkobj.py check` (`BYTECHECK.tsv`, 1319 rows) | **IDENTICAL 1090, DIFFERENT 215, not-in-map 14.** RwCore rows: match100 495 IDENTICAL (9 not-in-map), provisional 57 IDENTICAL / 208 DIFFERENT, exe 2 IDENTICAL. **No 100% source of the core is DIFFERENT.** Three 100% game sources are DIFFERENT, 0x00493900 (+0x13), 0x00493710 (+0x24) and 0x004929d0 (+0x3), at the same offsets in run 38 (e1205e9a2) and run 39 (dadd79960): not from this row. Against run 39's 787 rows: 0 changed. The run-40 midpoint file (fd0f8c33a, 1204 rows): 4 rows moved not-in-map -> result (0x004eb9e0, 0x004ebb00, 0x004ec130 IDENTICAL, 0x004cb330 DIFFERENT), 0 changed otherwise |
+| ddkobj refusals | 20 units `fail:static-register-convention` / `fail:wrapper-redefines-globals` (game sources, e.g. re/match/s13/0047c270.c, s12/004769f0.c), the same mechanism as before this row; they keep their VS2022 bodies |
 
 ## 5. Knob boots
 
@@ -108,15 +160,64 @@ plugins, 0x4 last). In the passing boot RwEngineStart returns 1 with all of them
 (the rest of the top-down path still calls librw bindings and the hand frame). The full engine lifecycle with every
 plugin attached now runs on the RW core.
 
-@@BOOTS_ARMS@@
+### 5.1 Final arms, tree 6e4430812 (`arms_run40_final.out`)
+
+| arm | exit | result |
+|---|---|---|
+| vs_off | 0 after 600 frames | knob off, librw path |
+| ddk_off | 0 after 600 frames | knob off; vs_off vs ddk_off **1134 / 1134 lines, 0 differ** (`logcmp.py`) |
+| vs_core | 0xFFFFFFFF (by design) | Init / Attach / Open / Start = 1 on the core, probe, Stop, failure path, Close = 1, Term = 1 |
+| ddk_core | 0xFFFFFFFF (by design) | same as vs_core on the object build |
+| vs_frame | **0x5257F001** | Start = 1, 0x00493710 returns 1, DisplayInit on the core, Reset forced windowed 640x480, RWC-DEVICE selftest PASS, RwRasterShowRaster 0x004c7730 = raster, `presents 1`, Stop / Close / Term on the core |
+| ddk_frame | **0x5257F001** | same as vs_frame on the object build |
+
+The frame-knob log (`vs_frame_firstframe.log`) between Start and the Present:
+
+```
+[ORIG_TOP] 0x00493710 RW engine bring-up (matched, RW calls on librw) returned 1
+[ORIG_TOP] 0x00428450 loading-disc draw (32, -32): missing body, not drawn
+[ORIG_TOP] 0x00493700 called: missing body
+[RWC-DEVICE] Reset: asked windowed 1 640x480 refresh 0 -> forced windowed 1 640x480 refresh 0
+[ORIG_TOP] 0x004936f0 called: missing body
+[RWC-DEVICE] selftest PASS (0 fail): backbuffer=640x480 windowed=1 getters=640x480 GetDirect3D=wrapper QI=wrapper client=640x480
+[RWC_CORE] RwRasterShowRaster 0x004c7730(raster 08F290B8, dev 00000000, flags 0x1) = 08F290B8 on the RW core: first frame presented
+[RWC_CORE] probe: ... presents 1
+```
+
+(The 0x00493710 log text still says "RW calls on librw": that string is fixed in PortTop_00493710.cpp. Under the frame
+knob the calls go to the core.) 0x00493700 and 0x004936f0 are the callbacks 0x00493710 registers through 0x004cbc60 /
+0x004cbc80. The librw shims only stored them. The core driver calls them around the device Reset, and the top-down
+path has no body for either (logged no-ops).
+
+Frame-knob iteration (`frame_iter.sh`, logs `vs_frame_<n>.log`): AV in librw `rw::TexDictionary::create` from
+`PortTop_Port_004b3eb0` (fixed: 0x004b3eb0 lifted and routed), then stops 0x004df030, 0x004c9290, 0x004e3850 and
+0x004ca160 (each fixed by the lifter row above), then the first Present.
 
 ## 6. Self-test
 
-@@SELFTEST@@
+**PASS.** `RwCoreBind_TexDictionaryCreate_004c5890` self-test "0 of 11 checks failed, 0 failing calls so far" in
+vs_core, ddk_core, vs_frame and ddk_frame. RWC-DEVICE self-test "PASS (0 fail)" in vs_frame and ddk_frame (backbuffer
+640x480, windowed, getters 640x480, GetDirect3D and QueryInterface return the wrapper, client 640x480). The knob-OFF
+arms do not run either self-test.
 
 ## 7. Next blocker and follow-up rows
 
-@@NEXT@@
+1. **Im2D on the first frame (the rest of this row's step 3).** 0x00428450 (loading-disc draw, source
+   `re/match/s06/00428450.c`) has no body on the top-down path. Under `MASHED_RWC_FRAME` it can join the closure
+   like 0x004b3eb0 and draw through the core's Im2D (RwGlobals device block +0x30 / +0x34). Then capture the
+   original's first-frame Im2D call for the same disc (`re/frida/menu_draw_burst.py` shape) and compare vertex for
+   vertex. Proposed row: `RWC-FIRST-FRAME-IM2D`.
+2. **The matched frame render 0x00492e90 on the core.** Its 26 callees run the title layer, menus and HUD through
+   hand stand-ins (`PortTop_StandIn_00492e90` is the hand RenderFrame). It needs the T1 stand-in rows first. Moving
+   the frame-knob endpoint from the first Present to frame N is the measure.
+3. **0x00493700 / 0x004936f0**, the callbacks the core driver calls around the device Reset, have no exe body.
+4. **17 bindings not routed**: 7 game-side RVAs outside the closure (BMP read / write 0x0052cb00 / 0x0052d530,
+   0x004b3f90, 0x0048fef0, 0x004b5300, 0x004b5190, 0x004b52f0) and 2 routed to logged stops (0x00513f90,
+   0x00514330). Each is a stop the frame knob names when it is reached.
+5. **Lifted bodies (L-137)**: 680 transcriptions are scaffolding. The 103 remaining stops (`LIFT_REFUSED.tsv`) are
+   mostly labels inside known functions (76) and unresolved call targets (24).
+6. `match_ledger.tsv` `bytes_n` overstates 0x004c2620's extent (1425 against 1040): a ledger note for whoever
+   reruns the match on that source.
 
 ## 8. Process notes
 
@@ -125,23 +226,22 @@ plugin attached now runs on the RW core.
   it stopped at the rva-lint step after a few seconds, before any compile. Every later build waited for the hold to clear.
 - Raw data `D:/MashedWT/RWC-PLUGIN-ATTACH_data` (sha256 in `RAW_SHA256_RWC-PLUGIN-ATTACH.txt`).
 
-## Handoff (2026-11-12 11:52, LIVING-PC reboot for the token leak)
+## Handoff (run 40 end, 2026-11-12)
 
-State at the safe point:
-- Branch `orch/RWC-PLUGIN-ATTACH` @ WIP commit 5e542495c plus this RESULT draft. Worktree
-  `C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\RWC-PLUGIN-ATTACH`. Private root `D:/MashedWT/RWC-PLUGIN-ATTACH_root`
-  (junction `original` -> `D:/MashedWT/PORT-TOP-04J_rootK/original`), raw data `D:/MashedWT/RWC-PLUGIN-ATTACH_data`.
-- Default VS2022 build of the committed tree: Build OK 11:51 (`build_vs8.log`), rva-lint OK (159 known, 0 new).
-- No knob boot of the lifted tree has run yet (the 11:06 attempt sat in the lock queue and was stopped by the tool's
-  background limit). The only boot so far is `vs_core.log` 07:20 (pre-lift tree): attach = 1, STOP at 0x004e7ef0.
+Run 39's handoff (reboot safe point at 5e542495c) is closed: every step it listed ran in run 40.
 
-Next, in order:
-1. `test-slot bash -c "py -3.12 ../orch-integration/re/orchestrator/mashed_lock.py run --label RWC-PLUGIN-ATTACH -- bash verify/rwccorerun_20261111/run_arms_attach.sh vs_core"`
-   (run_in_background, timeout >= 3 h because of the lock queue). Read the `[RWC_CORE]` lines of
-   `D:/MashedWT/RWC-PLUGIN-ATTACH_data/vs_core.log`: expected next step is RwEngineStart running the lifted module
-   constructors; the first failure is either a `STOP: rva` (one of the 94 stops, `LIFT_REFUSED.tsv` says why) or an AV
-   (the VEH logs fault + stack + registry).
-2. Fix forward (a stop: lift it by hand or bind it; an AV: resolve the frame with `mapsym.py`), rebuild, re-boot.
-3. Object build `set MASHED_DDKOBJ=1` (no build during a PRIORITY-HOLD), `py.exe -3.12 re/tools/ddkobj/ddkobj.py check`
-   (copy `BYTECHECK.tsv`), then all four arms (`run_arms_attach.sh` with no argument) and `logcmp.py` OFF vs OFF.
-4. Fill the @@ sections above, raw sha256 list, `roadmap.ps1 set RWC-PLUGIN-ATTACH review -Evidence verify/rwccorerun_20261111/RESULT_RWC-PLUGIN-ATTACH.md`.
+State: branch `orch/RWC-PLUGIN-ATTACH`, worktree `C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\RWC-PLUGIN-ATTACH`,
+private root `D:/MashedWT/RWC-PLUGIN-ATTACH_root`, raw data `D:/MashedWT/RWC-PLUGIN-ATTACH_data` (sha256 of the logs
+cited here: `RAW_SHA256_RWC-PLUGIN-ATTACH.txt`). The branch is mergeable as it stands: every change is on the knob
+path (`MASHED_ORIG_TOP=1` plus `MASHED_RWC_CORE=1`, and `MASHED_RWC_FRAME=1` for the routing), both builds pass, and the
+knob-OFF arms are unchanged.
+
+To continue (section 7, item 1):
+1. Add 0x00428450 to `ROOTS` / `XFOLLOW` in `gen_rwcore_tus.py` and route its top-down caller to the core body under
+   `RwCore_FrameRoute()` (as 0x004b3eb0: `route_bindings.py` matches `PortTop_Port_<rva>`; the missing-body stand-in in
+   the PortTop TU needs the same one-line route).
+2. `bash verify/rwccorerun_20261111/frame_iter.sh <next build number>` (regenerates, routes, builds until it passes
+   with lift-instead / ORIGTOP-ONLY handling, waits out merge-train holds, boots vs_frame and prints the end). Fix the
+   stop it names, repeat.
+3. When the disc draws: log the Im2D calls on the core (the device block +0x30 / +0x34 entries) and capture the
+   original's first-frame disc draw for a vertex-for-vertex comparison.
