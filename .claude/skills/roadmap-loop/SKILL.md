@@ -148,7 +148,9 @@ it does the autopilot step: `git merge --ff-only orch/integration` in the main c
 on index.lock), `git update-ref refs/heads/main <new> <old>`, a check that both equal orch/integration, then
 `release_due.py` and on DUE `publish.sh`, waited for before the next pass. It stops with one `REPORT merge-train-drain`
 on RED, INFRA, HASH (a hash or a ref moved), FLIP (a decided-flip row in the batch: nothing merged, run it alone with
-`-Full` per the flip protocol) or ERROR. It never pushes. Each pass keeps its own priority hold; the driver takes no
+`-Full` per the flip protocol) or ERROR. A drain that went to the end but set rows aside on a merge conflict (a
+conflict-only RED pass, which does not stop it) reports verdict PARTIAL and exits 2, with the set-aside ids at the end
+of `next:` (HB-DRAIN-VERDICT, 2026-11-12): hand-merge and re-queue them. It never pushes. Each pass keeps its own priority hold; the driver takes no
 lock (wrap it in test-slot if wanted: slot outside, mashed_lock inside). A drain run with `-Full` passes `-Full` to
 every pass. Driver log and `pass<N>.result.json` files: `D:/MashedWT/mtrain_data/drain_<ts>/`.
 
