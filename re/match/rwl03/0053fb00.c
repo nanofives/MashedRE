@@ -32,12 +32,13 @@ int FUN_0053fb00(int param_1,int param_2,int param_3)
 {
   int *puVar1;
   int iVar2;
+  int flag;
 
   iVar2 = param_1;
-  if (FUN_004cc790(iVar2,(undefined4)&param_2,4) == 0) {
+  if (FUN_004cc790(iVar2,(undefined4)&flag,4) == 0) {
     return 0;
   }
-  if (param_2 != 0) {
+  if (flag != 0) {
     puVar1 = (int *)(DAT_007dc5f0 + param_3);
     if (*(int *)(DAT_007dc5f0 + param_3) == 0) {
       if (FUN_00543b20(param_3) != 0) {
