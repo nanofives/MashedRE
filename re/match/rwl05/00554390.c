@@ -1,4 +1,18 @@
 // TOOLCHAIN rw9044
+/* MATCH-RT2D-RESID (2026-11-11): 90.2% under rw9044 (regs 91.1%, ops 98.2%, 440/439 ins), was 86.1%. Changes, each
+   read off the original listing: (1) the read after FUN_00554200 goes into the same temporary t1 as the other outline
+   reads (the original's `lea eax,[esp+0x48]` at 0x00554625 is [esp+0x44] plus the pushed arg of the 0x00554200 call);
+   (2) both branches end in one `return font` (the original duplicates `mov eax,ebx; pop..; ret` into the outline
+   success, the outline fail at 0x0055467e and the bitmap end), with each fail block placed after its success code
+   (`if (0) { fail: .. }`); (3) the glyph list pointer is fetched in its own statement before memset, so the count is
+   loaded after the call (0x00554575); (4) i = 0 before the isOutline test, shared by the outline loop and the first
+   bitmap loop, which gives the 0x30 frame; (5) t1 and n block-scoped so both take the stream parameter home [esp+0x44].
+   Residual: the original holds 0 in ebp from 0x0055458b (`xor ebp,ebp`) and uses it for the isOutline test
+   (0x00554595 `cmp [ebx],ebp`), both count > 0 tests and the outline i = 0 store (0x005545b4), with i in ebp for the first bitmap
+   loop and in [esp+0x10] for the outline loop. Ours keeps i in [esp+0x10] in both loops and uses immediate zeros.
+   Not reached by: i hoisted at 4 other points x outline/bitmap counter forms (51 variants), a separate outline
+   counter j (= 0 or = i), `register`, an init in the declaration, both branches as __inline/__forceinline helpers
+   (12 variants, best 87.8%), flag sets (/Os /O1 /Ox /G6 /Oy- /Op /Ob2), match_permute.py (1,345 compiles, walk 200). */
 /* MATCH-RW-COMPILER-9044 (2026-11-11): 86.1% under rw9044 (62.6% under the DDK). rw9044 gives one epilogue per return and the 0x30 frame; the outline-loop reads use two block-scoped temporaries (t1 at [esp+0x44], t2 at [esp+0x48], the original's param homes). Residual: the original zeroes ebp before the isOutline test and keeps i at [esp+0x10] in both loops, plus a separate outline fail tail. */
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RT2D-FONT 2026-11-11 0x00554390: 62.6% (regs 62.6%, ops 73.6%), 353/439 ins (was 33.5% raw g2s). Rewritten from the disassembly: Font (0x144 B) and Glyph (0x20 B) structs, memset intrinsics, outline branch (isOutline != 0, falls through first in the original) and bitmap branch with TXD save/restore. Residual (b): the original pushes ebx/ebp/esi/edi at entry and gives every early `return 0` its own epilogue that returns the zero already in eax; DDK 9176 here shrink-wraps ebp/esi/edi past the first return and cross-jumps the later returns into one block with xor eax,eax. Tried: read helper typed as returning a pointer, 7 flag sets (/G5 is right). Needs Opus-high shaping of the return structure. */
@@ -69,10 +83,7 @@ Font *FUN_00554390(void *stream)
   Font *font;
   unsigned int version;
   int i;
-  int n;
   Glyph *g;
-  void *oldTxd;
-  char name[32];
 
   font = FUN_005551d0();
   if (font == 0) {
@@ -123,12 +134,14 @@ Font *FUN_00554390(void *stream)
     return 0;
   }
   FUN_005c4c60(font->glyphs, font->count, 0x30190);
-  memset(FUN_005c4d30(font->glyphs), 0, font->count * sizeof(Glyph));
+  g = FUN_005c4d30(font->glyphs);
+  memset(g, 0, font->count * sizeof(Glyph));
+  i = 0;
   if (font->isOutline) {
+    int t1;
     g = FUN_005c4d30(font->glyphs);
-    for (i = 0; i < font->count; i++) {
+    for (; i < font->count; i++) {
       void *path = 0;
-      int t1, t2;
       if (!FUN_004cc790(stream, &t1, 4)) {
         goto fail;
       }
@@ -143,7 +156,7 @@ Font *FUN_00554390(void *stream)
           goto fail;
         }
         path = FUN_00554200(stream);
-        if (!FUN_004cc790(stream, &t2, 4)) {
+        if (!FUN_004cc790(stream, &t1, 4)) {
           goto fail;
         }
       }
@@ -154,49 +167,53 @@ Font *FUN_00554390(void *stream)
       g++;
     }
     font->cb = (void *)FUN_005547f0;
-    return font;
+    if (0) {
 fail:
-    FUN_00555830(font);
-    font = 0;
-    return font;
-  }
-  oldTxd = FUN_004c5ca0();
-  FUN_004c5c80(DAT_00912a20);
-  g = FUN_005c4d30(font->glyphs);
-  for (i = 0; i < font->count; i++) {
-    if (!FUN_004cc790(stream, g[i].uv, 0x10) ||
-        !FUN_004cc790(stream, &g[i].code, 4) ||
-        FUN_004cbd30(stream, &g[i].texIndex, 1) != 1) {
+      FUN_00555830(font);
+      font = 0;
+    }
+  } else {
+    int n;
+    void *oldTxd;
+    char name[32];
+    oldTxd = FUN_004c5ca0();
+    FUN_004c5c80(DAT_00912a20);
+    g = FUN_005c4d30(font->glyphs);
+    for (; i < font->count; i++) {
+      if (!FUN_004cc790(stream, g[i].uv, 0x10) ||
+          !FUN_004cc790(stream, &g[i].code, 4) ||
+          FUN_004cbd30(stream, &g[i].texIndex, 1) != 1) {
+        goto fail2;
+      }
+      g[i].path = 0;
+    }
+    if (!FUN_004cc790(stream, &n, 4)) {
       goto fail2;
     }
-    g[i].path = 0;
-  }
-  if (!FUN_004cc790(stream, &n, 4)) {
-    goto fail2;
-  }
-  for (i = 0; i < n; i++) {
-    if (FUN_004cbd30(stream, name, 0x20) != 0x20) {
-      goto fail2;
+    for (i = 0; i < n; i++) {
+      if (FUN_004cbd30(stream, name, 0x20) != 0x20) {
+        goto fail2;
+      }
+      font->tex[i] = FUN_004c5cb0(name, 0);
+      if (font->tex[i] == 0) {
+        goto fail2;
+      }
     }
-    font->tex[i] = FUN_004c5cb0(name, 0);
-    if (font->tex[i] == 0) {
-      goto fail2;
+    for (i = 0; i < font->count; i++) {
+      g[i].tex = font->tex[g[i].texIndex];
+      if (*g[i].tex == 0) {
+        goto fail2;
+      }
     }
-  }
-  for (i = 0; i < font->count; i++) {
-    g[i].tex = font->tex[g[i].texIndex];
-    if (*g[i].tex == 0) {
-      goto fail2;
-    }
-  }
-  font->f13c = 0;
-  font->f140 = 0;
-  font->cb = (void *)FUN_00554940;
-  goto done;
+    font->f13c = 0;
+    font->f140 = 0;
+    font->cb = (void *)FUN_00554940;
+    if (0) {
 fail2:
-  FUN_00555830(font);
-  font = 0;
-done:
-  FUN_004c5c80(oldTxd);
+      FUN_00555830(font);
+      font = 0;
+    }
+    FUN_004c5c80(oldTxd);
+  }
   return font;
 }
