@@ -102,4 +102,6 @@ rva	source	best_pct	exe_symbol	path	note
 0x004e2930	re/match/rwl02/004e2930.c	34.3	RwCore_004e2930	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x004e2bf0	re/match/rwl02/004e2bf0.c	38.2	RwCore_004e2bf0	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x004e3160	re/match/rwl02/004e3160.c	9.9	RwCore_004e3160	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
-0x005cb42b	re/match/rwl06/005cb42b.c	50.0	RwCore_005cb42b	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
+0x005cb2a0	RwCore/RwCore_Hand.cpp		RwCoreHand_005cb2a0	MASHED_ORIG_TOP + MASHED_RWC_CORE	hand body from the disassembly, knob path only
+0x005cb404	RwCore/RwCore_Hand.cpp		RwCoreHand_005cb404	MASHED_ORIG_TOP + MASHED_RWC_CORE	hand body from the disassembly, knob path only
+0x005cb42b	RwCore/RwCore_Hand.cpp		RwCoreHand_005cb42b	MASHED_ORIG_TOP + MASHED_RWC_CORE	hand body from the disassembly, knob path only

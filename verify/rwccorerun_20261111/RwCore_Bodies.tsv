@@ -135,11 +135,6 @@ rva	kind	source	best_pct	exe_symbol
 0x004d42b0	provisional	re/match/s21/004d42b0.c	77.8	RwCore_004d42b0
 0x004d4310	provisional	re/match/s21/004d4310.c	95.7	RwCore_004d4310
 0x004d4380	provisional	re/match/rwl01/004d4380.c	17.2	RwCore_004d4380
-0x004d45ea	missing			RwCoreMissing_004d45ea
-0x004d47f2	missing			RwCoreMissing_004d47f2
-0x004d4818	missing			RwCoreMissing_004d4818
-0x004d482b	missing			RwCoreMissing_004d482b
-0x004d486f	missing			RwCoreMissing_004d486f
 0x004d4910	provisional	re/match/rwl01/004d4910.c	55.4	RwCore_004d4910
 0x004d4a20	provisional	re/match/s21/004d4a20.c	99.4	RwCore_004d4a20
 0x004d4bf0	match100	re/match/s21/004d4bf0.c	100.0	RwCore_004d4bf0
@@ -344,6 +339,6 @@ rva	kind	source	best_pct	exe_symbol
 0x005cb07f	missing			RwCoreMissing_005cb07f
 0x005cb0ef	missing			RwCoreMissing_005cb0ef
 0x005cb160	missing			RwCoreMissing_005cb160
-0x005cb2a0	missing			RwCoreMissing_005cb2a0
-0x005cb404	missing			RwCoreMissing_005cb404
-0x005cb42b	provisional	re/match/rwl06/005cb42b.c	50.0	RwCore_005cb42b
+0x005cb2a0	hand	RwCore/RwCore_Hand.cpp		RwCoreHand_005cb2a0
+0x005cb404	hand	RwCore/RwCore_Hand.cpp		RwCoreHand_005cb404
+0x005cb42b	hand	RwCore/RwCore_Hand.cpp		RwCoreHand_005cb42b

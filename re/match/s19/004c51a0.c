@@ -27,7 +27,7 @@ typedef unsigned int undefined4;
 typedef unsigned int uint;
 extern char s_Invalid_combination_type_0061811c[];
 MGLOBAL(uint, UNK_0000000c, 0x0000000c);
-undefined4 FUN_004d7ff0(undefined4 p0);
+undefined4 FUN_004d7ff0(undefined4 p0, ...);
 undefined4 * FUN_004d8480(undefined4 * p0);
 MGLOBAL(int, uRam0000000c, 0x0000000c);
 // MATCH: 0x004c51a0 FUN_004c51a0

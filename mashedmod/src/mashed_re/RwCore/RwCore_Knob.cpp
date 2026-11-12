@@ -106,6 +106,31 @@ static LONG CALLBACK RwCore_Veh(EXCEPTION_POINTERS* ep) {
         if (v > base && v < base + 0x01000000u) n += std::snprintf(buf + n, sizeof(buf) - n, " +0x%X", static_cast<unsigned>(v - base));
     }
     RwCore_Log("AV stack exe offsets:%s", buf);
+    // run 38: the raw top of stack (an EIP-0 fault's caller is [esp]) with the module each word falls in.
+    n = 0;
+    for (int i = 0; i < 8 && n < 900; ++i) {
+        HMODULE hm = nullptr;
+        char mod[64] = "-";
+        if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                               reinterpret_cast<LPCSTR>(static_cast<std::uintptr_t>(sp[i])), &hm) && hm) {
+            char path[MAX_PATH];
+            if (GetModuleFileNameA(hm, path, MAX_PATH)) {
+                const char* s = std::strrchr(path, '\\');
+                std::snprintf(mod, sizeof(mod), "%s+0x%X", s ? s + 1 : path,
+                              static_cast<unsigned>(sp[i] - reinterpret_cast<std::uintptr_t>(hm)));
+            }
+        }
+        n += std::snprintf(buf + n, sizeof(buf) - n, " [esp+%X]=%08X(%s)", i * 4, sp[i], mod);
+    }
+    RwCore_Log("AV raw stack:%s", buf);
+    // run 38: the module registry RwEngineInit built. 0x00617fe0 is the registry itself (`push 0x617fe0` at
+    // 0x004c2f7e): +0x10 head, +0x14 tail; node +0x08 id, +0x20 ctor, +0x24 dtor, +0x30 next, +0x34 prev
+    // (0x004d7de0 / 0x004d8000 / 0x004d8060).
+    const std::uint32_t reg = 0x00617fe0u;
+    int k = 0;
+    for (std::uint32_t nd = U32(reg + 0x10); nd && k < 40; nd = U32(nd + 0x30), ++k)
+        RwCore_Log("registry node %d at %08X: id 0x%X ctor %08X dtor %08X next %08X prev %08X", k, nd, U32(nd + 8),
+                   U32(nd + 0x20), U32(nd + 0x24), U32(nd + 0x30), U32(nd + 0x34));
     RwCore_Probe();   // engine state at the fault (module constructors that ran before it)
     return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -149,6 +174,7 @@ int RwCore_EngineStart(void) {
     RwCore_Log("RwEngineStart 0x004c2fb0() = %d", r);
     RwCore_Probe();
     if (!r) return 0;
+    RwCore_Log("calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)");
     const int s = RwCore_004c2f60();
     RwCore_Log("bring-up probe done: RwEngineStop 0x004c2f60() = %d; returning 0 from RwEngineStart so 0x00493710 runs "
                "its failure path (the rest of the top-down path is not on the RW core yet)", s);
