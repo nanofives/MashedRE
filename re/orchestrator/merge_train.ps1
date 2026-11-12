@@ -271,11 +271,28 @@ function Merge-One([string]$wt, $item) {
   $o = Git -C $wt -c merge.autoStash=false merge --no-ff -m $msg $item.branch
   if ($script:GITRC -eq 0) { return @{ ok = $true } }
   $conf = @((Git -C $wt diff --name-only --diff-filter=U) | Where-Object { $_ })
-  $halt = @($conf | Where-Object { $_ -notin $CFG.conflict_union })
+  # HB-TRACKER-AT-MERGE: hooks.csv and the dual-copy allowlist are merged by key (tracker_merge3.py, 3-way on the RVA /
+  # entry), not by line union: two branches on different rows merge, the same row edited two ways is a real conflict.
+  $keyed = @{}; if ($CFG.conflict_keyed) { foreach ($pp in $CFG.conflict_keyed.PSObject.Properties) { $keyed[$pp.Name] = [string]$pp.Value } }
+  $halt = @($conf | Where-Object { $_ -notin $CFG.conflict_union -and -not $keyed.ContainsKey($_) })
   if ($halt.Count -gt 0) {
     Git -C $wt merge --abort | Out-Null
     return @{ ok = $false; why = "conflict needs a hand merge (frida-sweep recipe): $($halt -join ', ')" }
   }
+  $mergedKeyed = @{}
+  foreach ($f in @($conf | Where-Object { $keyed.ContainsKey($_) })) {
+    $tmp = Join-Path $DATA ("k_" + ($f -replace '[\\/]', '_'))
+    foreach ($st in 1, 2, 3) { Git-ShowBytes $wt ":${st}:$f" "$tmp.$st" }
+    $m3 = Join-Path $wt 're/tools/tracker_merge3.py'; if (-not (Test-Path -LiteralPath $m3)) { $m3 = Join-Path $HERE '../tools/tracker_merge3.py' }
+    $kout = & py.exe -3.12 $m3 $keyed[$f] "$tmp.2" "$tmp.1" "$tmp.3"; $krc = $LASTEXITCODE
+    if ($krc -ne 0) {
+      Git -C $wt merge --abort | Out-Null
+      return @{ ok = $false; why = "conflict needs a hand merge (same key edited on both sides): $f [$(@($kout) -join ' ')]" }
+    }
+    $mergedKeyed[$f] = "$tmp.2"
+  }
+  foreach ($f in $mergedKeyed.Keys) { Copy-Item $mergedKeyed[$f] (Join-Path $wt $f) -Force; Git -C $wt add -- $f | Out-Null }
+  $conf = @($conf | Where-Object { -not $keyed.ContainsKey($_) })
   foreach ($f in $conf) {   # frida-sweep rule for these files: keep both sides
     $tmp = Join-Path $DATA ("u_" + ($f -replace '[\\/]', '_'))
     foreach ($st in 1, 2, 3) { Git-ShowBytes $wt ":${st}:$f" "$tmp.$st" }
@@ -285,8 +302,37 @@ function Merge-One([string]$wt, $item) {
   }
   Git -C $wt -c core.editor=true commit --no-edit -q | Out-Null
   if ($script:GITRC -ne 0) { Git -C $wt merge --abort | Out-Null; return @{ ok = $false; why = "union-resolve commit failed" } }
-  Say "  union-resolved: $($conf -join ', ')"
+  Say "  union-resolved: $($conf -join ', ')$(if ($mergedKeyed.Count) { "; key-merged: $(@($mergedKeyed.Keys) -join ', ')" })"
   return @{ ok = $true }
+}
+# HB-TRACKER-AT-MERGE: a promotion row commits re/promotions/<ID>.tsv (columns rva, route, evidence, result; `result` =
+# the RESULT file the CHANGELOG cites) and never edits hooks.csv / CHANGELOG.md on its branch. Right after the row's merge
+# commit the train runs `c4_reclass.py batch --apply --strict` on the CURRENT head (so the hooks.csv it edits already has
+# every earlier row of the batch), commits hooks.csv + CHANGELOG + the TSV moved to re/promotions/applied/, and a refused
+# row sets the whole branch aside (strict: nothing written).
+function Apply-Promotions([string]$wt, $item) {
+  $new = @((Git -C $wt diff --name-only --diff-filter=A 'HEAD^1' 'HEAD') | Where-Object { $_ -match '^re/promotions/[^/]+\.tsv$' })
+  if (-not $new.Count) { return @{ ok = $true; n = 0 } }
+  $py = Join-Path $wt 're/tools/c4_reclass.py'
+  if (-not (Test-Path -LiteralPath $py)) { return @{ ok = $false; why = "promotions: no re/tools/c4_reclass.py in the merged tree" } }
+  foreach ($t in $new) {
+    $rows = @(Import-Csv -LiteralPath (Join-Path $wt $t) -Delimiter "`t")
+    $res = if ($rows.Count -and $rows[0].PSObject.Properties['result']) { ([string]$rows[0].result).Trim() } else { '' }
+    if (-not $res) { return @{ ok = $false; why = "promotions: $t has no `result` column (the RESULT path the CHANGELOG cites)" } }
+    $plog = Join-Path $DATA ("promo_" + ($t -replace '[\\/]', '_') + '.log')
+    Push-Location $wt
+    try { $po = & py.exe -3.12 $py batch --tsv $t --result $res --apply --strict 2>&1; $prc = $LASTEXITCODE } finally { Pop-Location }
+    $po | Set-Content $plog
+    if ($prc -ne 0) { return @{ ok = $false; why = "promotions: c4_reclass refused $t ($(($po | Where-Object { $_ -match 'REFUSED|refused' } | Select-Object -First 2) -join ' | ')) ($plog)" } }
+    $dest = $t -replace '^re/promotions/', 're/promotions/applied/'
+    New-Item -ItemType Directory -Force -Path (Join-Path $wt 're/promotions/applied') | Out-Null
+    Git -C $wt mv $t $dest | Out-Null
+    Git -C $wt add -- hooks.csv re/analysis/CHANGELOG.md | Out-Null
+    Git -C $wt commit -q -m "Apply promotions $($item.id) ($t) via merge train (c4_reclass batch on the current head)" | Out-Null
+    if ($script:GITRC -ne 0) { return @{ ok = $false; why = "promotions: commit failed for $t" } }
+    Say "  promotions applied: $t ($(($po | Select-Object -Last 1)))"
+  }
+  return @{ ok = $true; n = $new.Count }
 }
 function Ensure-Root([string]$root) {
   if (Test-Path (Join-Path $root 'original\MASHED.exe')) { return }
@@ -542,6 +588,8 @@ function Try-Batch($items) {
       $m = Merge-One $wt $it
       if (-not $m.ok) { $r.ok = $false; $r.why = $m.why; $r.bad = $it; $r.conflict = $true; return $r }   # HB-TRAIN-CONFLICT-SKIP: before build and gates
       Say "  merged $($it.id) ($($it.branch))"
+      $pr = Apply-Promotions $wt $it
+      if (-not $pr.ok) { $r.ok = $false; $r.why = $pr.why; $r.bad = $it; $r.conflict = $true; return $r }
     }
     $changed = @((Git -C $wt diff --name-only "$base..HEAD") | Where-Object { $_ })
     # HB-TRAIN-MATCH-TEXTONLY: re/match/** is text-only unless the build reads it; a flip pass (effective -Full) is
@@ -811,6 +859,51 @@ if ($SelfTest) {
   Say "  SELFTEST contrast: Set-Content writes $(@([IO.File]::ReadAllBytes($old) | Where-Object { $_ -eq 13 }).Count) CR byte(s) for 2 lines on this host"
   Git -C $fake merge --ff-only -q (Git -C $wt rev-parse HEAD | Select-Object -First 1) 2>&1 | Out-Null
   Remove-Temp $wt
+
+  # --- HB-TRACKER-AT-MERGE (real merges on a second fake repo): hooks.csv is key-merged, not line-unioned, and a
+  # promotions TSV is applied with c4_reclass.py batch at merge time on the current head.
+  $f2 = Join-Path ([IO.Path]::GetTempPath()) "mtrain_selftest_tracker_$TS"
+  New-Item -ItemType Directory -Force -Path (Join-Path $f2 're\tools'), (Join-Path $f2 're\analysis'), (Join-Path $f2 'verify\t') | Out-Null
+  function P2([string]$rel, [string]$text) { $fp = Join-Path $f2 $rel; New-Item -ItemType Directory -Force -Path (Split-Path $fp -Parent) | Out-Null; [IO.File]::WriteAllText($fp, $text, (New-Object Text.UTF8Encoding $false)) }
+  Copy-Item (Join-Path $HERE '..\tools\c4_reclass.py') (Join-Path $f2 're\tools\c4_reclass.py')
+  Copy-Item (Join-Path $HERE '..\tools\tracker_merge3.py') (Join-Path $f2 're\tools\tracker_merge3.py')
+  $h2 = "rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes,exe_file`n00401000,FunA,boot,C3,impl,a.cpp,,,na,a.cpp`n00401010,FunB,boot,C3,impl,b.cpp,,,nb,b.cpp`n00401020,FunC,boot,C3,impl,c.cpp,,,nc,c.cpp`n"
+  P2 'hooks.csv' $h2
+  P2 're/analysis/CHANGELOG.md' "# log`n<!-- ENTRIES -->`nold`n"
+  P2 'verify/t/RESULT_PA.md' "FunB 0x00401010`nIDENTICAL-FOR-120 ticks`ninstall-check: ok`nbody-executed: 120 calls`nwrite-set: covered`n"
+  P2 'verify/t/RESULT_PB.md' "FunC 0x00401020`nIDENTICAL-FOR-120 ticks`ninstall-check: ok`nbody-executed: 120 calls`nwrite-set: not-covered`n"
+  $null = Git -C $f2 init -q -b integration
+  Git -C $f2 config user.email t@t | Out-Null; Git -C $f2 config user.name t | Out-Null; Git -C $f2 config core.autocrlf false | Out-Null
+  Git -C $f2 add . | Out-Null; Git -C $f2 commit -q -m base | Out-Null
+  function Br([string]$n, [string]$rel, [string]$text) { Git -C $f2 checkout -q -b $n integration | Out-Null; P2 $rel $text; Git -C $f2 add . | Out-Null; Git -C $f2 commit -q -m $n | Out-Null; Git -C $f2 checkout -q integration | Out-Null }
+  Br 'k-a' 'hooks.csv' ($h2 -replace '00401000,FunA,boot,C3,impl,a.cpp,,,na', '00401000,FunA,boot,C3,impl,a.cpp,,,na edited by A')
+  Br 'k-b' 'hooks.csv' ($h2 -replace '00401020,FunC,boot,C3,impl,c.cpp,,,nc', '00401020,FunC,boot,C3,impl,c.cpp,,,nc edited by B')
+  Br 'k-c' 'hooks.csv' ($h2 -replace '00401000,FunA,boot,C3,impl,a.cpp,,,na', '00401000,FunA,boot,C3,impl,a.cpp,,,na edited by C')
+  $oldKeyed = $CFG.conflict_keyed
+  $wt2 = Join-Path $DATA 'wt_tracker'
+  Git -C $f2 worktree add -q $wt2 -b scratch integration | Out-Null
+  $mA = Merge-One $wt2 @{ id = 'K-A'; branch = 'k-a' }
+  $mB = Merge-One $wt2 @{ id = 'K-B'; branch = 'k-b' }
+  $hAfter = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv'))
+  Check ($mA.ok -and $mB.ok -and $hAfter -match 'na edited by A' -and $hAfter -match 'nc edited by B' -and ([regex]::Matches($hAfter, '(?m)^0040[0-9a-f]{4},')).Count -eq 3) "tracker: two branches on different hooks.csv rows both merge (key-merged), 3 rows, no duplicate RVA"
+  $mC = Merge-One $wt2 @{ id = 'K-C'; branch = 'k-c' }
+  $stClean = [string]((Git -C $wt2 status --porcelain) -join '')
+  Check ((-not $mC.ok) -and $mC.why -match 'same key edited on both sides' -and $mC.why -match '00401000' -and -not $stClean) "tracker: the same RVA edited two ways = set aside naming the RVA, merge aborted, tree clean ($($mC.why))"
+  Br 'k-d' 'hooks.csv' ($h2 -replace '00401010,FunB,boot,C3,impl,b.cpp,,,nb', '00401010,FunB,boot,C3,impl,b.cpp,,,nb edited by D')
+  Br 'p-a' 're/promotions/PA.tsv' "rva`troute`tevidence`tresult`n0x00401010`tfrida-replay`tverify/t/RESULT_PA.md`tverify/t/RESULT_PA.md`n"
+  Br 'p-b' 're/promotions/PB.tsv' "rva`troute`tevidence`tresult`n0x00401020`tfrida-replay`tverify/t/RESULT_PB.md`tverify/t/RESULT_PB.md`n"
+  $mD = Merge-One $wt2 @{ id = 'K-D'; branch = 'k-d' }
+  $mPA = Merge-One $wt2 @{ id = 'P-A'; branch = 'p-a' }
+  $aPA = Apply-Promotions $wt2 @{ id = 'P-A'; branch = 'p-a' }
+  $hP = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv')); $cP = [IO.File]::ReadAllText((Join-Path $wt2 're\analysis\CHANGELOG.md'))
+  Check ($mD.ok -and $mPA.ok -and $aPA.ok -and $aPA.n -eq 1 -and $hP -match '00401010,FunB,boot,C4,impl,b.cpp,,,nb edited by D \| .*c4=frida-replay' -and $cP -match '(?m)^<!-- ENTRIES -->\r?\n.*0x00401010  FunB  C3->C4' -and (Test-Path (Join-Path $wt2 're\promotions\applied\PA.tsv')) -and -not (Test-Path (Join-Path $wt2 're\promotions\PA.tsv'))) "tracker: promotions TSV applied at merge time on the current head: row C4 with the other branch's edit kept, CHANGELOG line written, TSV moved to applied/"
+  $hdBefore = (Git -C $wt2 rev-parse HEAD) | Select-Object -First 1
+  $mPB = Merge-One $wt2 @{ id = 'P-B'; branch = 'p-b' }
+  $aPB = Apply-Promotions $wt2 @{ id = 'P-B'; branch = 'p-b' }
+  $hP2 = [IO.File]::ReadAllText((Join-Path $wt2 'hooks.csv'))
+  Check ($mPB.ok -and (-not $aPB.ok) -and $aPB.why -match 'c4_reclass refused' -and $hP2 -match '00401020,FunC,boot,C3,' ) "tracker: a refused promotion row (write-set not covered) = whole branch set aside, hooks.csv left at C3 ($($aPB.why))"
+  Git -C $f2 worktree remove --force $wt2 2>&1 | Out-Null
+  Check ((Get-Content (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') -Raw) -and ((& py.exe -3.12 (Join-Path $HERE '..\tools\tracker_merge3_selftest.py') | Select-Object -Last 1) -match '\[11/11\].*PASS')) "tracker: tracker_merge3_selftest.py 11/11 PASS"
 
   # --- HB-V5-SKILL: a RED pass that merged nothing still writes INTEGRATION_LOG.md (one commit, that file only, newest first)
   $h0 = (Git -C $fake rev-parse HEAD) | Select-Object -First 1

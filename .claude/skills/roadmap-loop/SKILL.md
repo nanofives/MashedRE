@@ -78,7 +78,12 @@ Tell each lead the kind of every row it gets, and put the kind in the worker tas
   `re/CONFIDENCE.md`, "What C4 meant before 2026-11-07").
 - Promotion goes through `py -3.12 re/tools/c4_reclass.py batch` (dry run, then `--apply --result <RESULT>`): it
   recompiles each source, re-runs relocheck and writes all passing rows in one transaction. No per-slice reclass
-  scripts.
+  scripts. **On a worker branch, do not run `--apply`** (HB-TRACKER-AT-MERGE, 2026-11-12): commit `re/promotions/<ID>.tsv`
+  (tab-separated, header `rva`, `route`, `evidence`, `result`; `result` = the RESULT path the CHANGELOG cites) and leave
+  `hooks.csv` and `re/analysis/CHANGELOG.md` alone. After the row's merge commit the train runs `c4_reclass.py batch --apply
+  --strict` on the current head, commits the two trackers and moves the TSV to `re/promotions/applied/`. A refused row sets
+  the branch aside (dry-run it on the branch first). Other `hooks.csv` edits and the dual-copy allowlist are merged by key
+  (`re/tools/tracker_merge3.py`): only the same RVA edited two ways is still a hand merge.
 - Game-code slices (`MATCH-Snn`) are contiguous RVA ranges of about 100-150 functions: MSVC lays functions out per
   object file and Ghidra's register-passed args come from earlier static callees in the same file. One slice per
   worker: select, g2s, match, bounded permute, relocheck, re-classify C4 with the batch tool. A match-only slice needs
