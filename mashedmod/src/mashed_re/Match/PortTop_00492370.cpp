@@ -249,23 +249,36 @@ int PortTop_StandIn_00492e90(void) {
     return r;
 }
 // ---- RO-BIND-TIMER (replay oracle 2): the tick boundary and the clock globals, sub-knob MASHED_OT_TIMER ----
-// With MASHED_OT_TIMER=1 (default OFF) the matched run loop's last two calls run their matched exe bodies:
-// AudioTickAndAvg (Match/MatchS15_004926c0.cpp) and FpsDiscretise (Match/MatchS15_00493480.cpp),
-// whose callee 0x00493390 binds to Match/PortTop_00493390.cpp. Off, both stay the no-ops they were (the hand frame
-// pacing is the device present + limiter inside RenderFrame). Every call runs a self-test against an independent
-// model of the matched sources (re/match/s15/00493390.c, 00493480.c, 004926c0.c), from the globals read before it.
+// With MASHED_OT_TIMER=1 (default OFF) the matched run loop's last call runs its matched exe body FpsDiscretise
+// (Match/MatchS15_00493480.cpp), whose callee 0x00493390 binds to Match/PortTop_00493390.cpp. With
+// MASHED_OT_AUDIOTICK=1 (default OFF, own sub-knob) the call before it runs the matched AudioTickAndAvg
+// (Match/MatchS15_004926c0.cpp). Its audio branch runs whenever DAT_006147b8 != 0, and that word is file-initialised
+// to 1 (.data, seeded by Compat/PortStateSeed.inc), so on frame 0 it calls 0x0045d3f0, which has no exe body: a named
+// stop ends the process (verify/robindtimer_20261112/RESULT_RO-BIND-TIMER.md). Off, each stays the no-op it was (the
+// hand frame pacing is the device present + limiter inside RenderFrame). Every call runs a self-test against an
+// independent model of the matched sources (re/match/s15/00493390.c, 00493480.c, 004926c0.c), from the globals read
+// before it.
 int  FpsDiscretise(void);                      // Match/MatchS15_00493480.cpp
 void AudioTickAndAvg(void);                    // Match/MatchS15_004926c0.cpp
-static int s_otTimer = -1;
+static int s_otTimer = -1, s_otAudio = -1;
 static unsigned s_tmCalls480 = 0, s_tmCalls6c0 = 0, s_tmChecks = 0, s_tmFails = 0;
 static int OtTimerOn(void) {
     if (s_otTimer < 0) {
         const char* const v = std::getenv("MASHED_OT_TIMER");
         s_otTimer = (v && v[0] && v[0] != '0') ? 1 : 0;
-        PortTop_Log("[OT_TIMER] %s: 0x004926c0 / 0x00493480 (-> 0x00493390) %s", s_otTimer ? "on" : "off",
-                    s_otTimer ? "run their matched exe bodies" : "stay no-ops");
+        PortTop_Log("[OT_TIMER] MASHED_OT_TIMER %s: %s", s_otTimer ? "on" : "off",
+                    s_otTimer ? "0x00493480 (-> 0x00493390) runs its matched exe body" : "0x00493480 stays a no-op");
     }
     return s_otTimer;
+}
+static int OtAudioOn(void) {
+    if (s_otAudio < 0) {
+        const char* const v = std::getenv("MASHED_OT_AUDIOTICK");
+        s_otAudio = (v && v[0] && v[0] != '0') ? 1 : 0;
+        PortTop_Log("[OT_TIMER] MASHED_OT_AUDIOTICK %s: 0x004926c0 %s", s_otAudio ? "on" : "off",
+                    s_otAudio ? "runs its matched exe body" : "stays a no-op");
+    }
+    return s_otAudio;
 }
 static int&      MemI(unsigned a) { return *reinterpret_cast<int*>(static_cast<std::uintptr_t>(a)); }
 static unsigned& MemU(unsigned a) { return *reinterpret_cast<unsigned*>(static_cast<std::uintptr_t>(a)); }
@@ -290,7 +303,7 @@ unsigned PortTop_Stop_0045d430(void) { PortTop_Stop(0x0045d430u, _ReturnAddress(
 // Dispatcher (not a body) for the matched AudioTickAndAvg. Model (re/match/s15/004926c0.c): DAT_00771978 counts up and wraps to 0 at 60, where
 // DAT_0077197c = DAT_00771994 / 60 and DAT_00771994 = 0. Otherwise DAT_00771994 grows by a QPC delta (>= 0).
 void PortTop_Timer_004926c0(void) {
-    if (!OtTimerOn()) return;
+    if (!OtAudioOn()) return;
     const int cnt0 = MemI(0x00771978u), acc0 = MemI(0x00771994u);
     AudioTickAndAvg();
     ++s_tmCalls6c0;
@@ -344,7 +357,7 @@ int PortTop_Timer_00493480(void) {
     return ret;
 }
 static void PortTop_TimerSummary(void) {
-    if (s_otTimer != 1) return;
+    if (s_otTimer != 1 && s_otAudio != 1) return;
     PortTop_Log("[OT_TIMER] self-test %s (%u of %u checks failed), 0x00493480 calls %u, 0x004926c0 calls %u; bodies at "
                 "%p / %p / %p", s_tmFails ? "FAIL" : "PASS", s_tmFails, s_tmChecks, s_tmCalls480, s_tmCalls6c0,
                 reinterpret_cast<void*>(&FpsDiscretise), reinterpret_cast<void*>(&AudioTickAndAvg),
@@ -378,7 +391,7 @@ static void PortTop_TimerSummary(void) {
 #define FUN_004929d0 PortTop_Port_004929d0
 #define FUN_00492d30 PortTop_StandIn_00492d30
 #define FUN_00492e90 PortTop_StandIn_00492e90
-#define FUN_004926c0 PortTop_Timer_004926c0     // RO-BIND-TIMER: matched body under MASHED_OT_TIMER=1, else no-op
+#define FUN_004926c0 PortTop_Timer_004926c0     // RO-BIND-TIMER: matched body under MASHED_OT_AUDIOTICK=1, else no-op
 #define FUN_00493480 PortTop_Timer_00493480     // RO-BIND-TIMER: matched body under MASHED_OT_TIMER=1, else returns 0
 
 extern "C" {

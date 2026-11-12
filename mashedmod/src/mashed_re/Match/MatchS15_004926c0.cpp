@@ -12,7 +12,7 @@
 // [RO-BIND-TIMER] exe: 0x004950b0 and 0x00496930 bind by name to their matched exe bodies. 0x0045d3f0, 0x00466b50 and
 // 0x0045d430 (the audio branch, taken only while DAT_006147b8 != 0) have no exe body whose callees all bind: each binds
 // to a named stop (Match/PortTop_00492370.cpp) that logs and ends the process. Reached only under MASHED_ORIG_TOP with
-// MASHED_OT_TIMER=1. The .asi keeps the raw-address calls.
+// MASHED_OT_AUDIOTICK=1. The .asi keeps the raw-address calls.
 #ifdef MASHED_STANDALONE
 #define FUN_004950b0 QpcTimeScaledTo3Mhz          // matched, Match/MatchS16_004950b0.cpp
 #define FUN_00496930 Table773030Get               // matched, Match/MatchS16_00496930.cpp

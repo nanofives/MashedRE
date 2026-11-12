@@ -11,3 +11,4 @@ py -3.12 verify/porttop_20261108/knob_boot.py vs_on_knoboff $ROOT 180 $COMMON MA
 py -3.12 verify/porttop_20261108/knob_boot.py vs_on $ROOT 180 $COMMON MASHED_ORIG_TOP=1 MASHED_OT_TIMER=1
 KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_on $ROOT 180 $COMMON MASHED_ORIG_TOP=1 MASHED_OT_TIMER=1
 KNOB_EXE=$DDK py -3.12 verify/porttop_20261108/knob_boot.py ddk_on_knoboff $ROOT 180 $COMMON MASHED_ORIG_TOP=1
+py -3.12 verify/porttop_20261108/knob_boot.py vs_audio $ROOT 180 $COMMON MASHED_ORIG_TOP=1 MASHED_OT_TIMER=1 MASHED_OT_AUDIOTICK=1
