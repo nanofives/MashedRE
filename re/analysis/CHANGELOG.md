@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-12  0x0048e820  FUN_0048e820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s15/0048e820.c; evidence: verify/equivcheck_20261112/RESULT_EQUIV-FU-48E820.md
 2026-11-12  0x00550c50  FUN_00550c50  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550c50.c; evidence: verify/matchreclass_20261112/RESULT_MATCH-RECLASS-550C50.md
 2026-11-12  0x00550da0  FUN_00550da0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00550da0.c; evidence: verify/matchreclass_20261112/RESULT_MATCH-RECLASS-550C50.md
 2026-11-12  0x00550da0  FUN_00550da0  (none)->C1  added (MATCH-RECLASS-550C50): RtFS file handler in the RW file-system range 0x00550350..0x00551510 (match.py 100%, found by RWC-MATCH-S03); evidence: verify/matchreclass_20261112/RESULT_MATCH-RECLASS-550C50.md
