@@ -1,4 +1,6 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH-S01 (2026-11-12): 100%, byte-identical under rw9044, relocheck OK. The last diff (lea operand order) closed by naming the link address once: iVar2 = DAT_007d3ff8 + DAT_007d4054; *(int *)(iVar2 + 4) = iVar2. Older notes below describe the earlier DDK residual. */
 /* h3 hand-match: best 95.6% (regs 96.5%), class a. Function-pointer stores as immediates via real prototypes (FUN_004c6140, LAB_004c61b0/7200/7490 declared as void fn) took it from 90.4 to 95.6. Residual: original keeps three separate return-0 epilogues (xor eax,eax; pop esi; ret), ours cross-jumps them into one at the end, plus one lea operand order; no statement order moved it, permuter no gain. */
 /* MATCH-RWL01 0x004c5f60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl01_20261107/results.tsv. */
@@ -75,7 +77,7 @@ undefined4 FUN_004c5f60(undefined4 param_1,int param_2)
     return 0;
   }
   *(int *)iVar2 = iVar2;
-  *(int *)(DAT_007d3ff8 + DAT_007d4054 + 4) = DAT_007d3ff8 + DAT_007d4054;
+  iVar2 = DAT_007d3ff8 + DAT_007d4054; *(int *)(iVar2 + 4) = iVar2;
   DAT_007d4058 = DAT_007d4058 + 1;
   DAT_007d4080 = (undefined4)FUN_004c5890();
   *(undefined4 *)(DAT_007d3ff8 + 0x10 + DAT_007d4054) = DAT_007d4080;

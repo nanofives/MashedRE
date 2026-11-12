@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-MATCH-S01 (2026-11-12): 100%, byte-identical under ddk and rw9044, relocheck OK. DAT_007d4578..0x007d4587 are cleared as one 16-byte memset (the original zeroes them from eax), which closes residual (1) below and the rest with it. */
 /* MATCH-S20 0x004caea0 (h1): 77.5% (regs 86.2%). Residual: (1) the original zeroes DAT_007d4578/457c/4580/4584 from eax
    (the 16-byte-record loop counter's 0) and only DAT_007d4574 from ebx, ours uses ebx for all five; (2) the
    RwGlobals function pointer is loaded into ecx after the argument pushes (ours into eax between the pushes), three
@@ -40,10 +41,7 @@ typedef Blk64 *(*RwAlloc2)(int pool, int flags);
 typedef void (*RwFree1)(int p);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_007d4574, 0x007d4574);
-MGLOBAL(int, DAT_007d4578, 0x007d4578);
-MGLOBAL(int, DAT_007d457c, 0x007d457c);
-MGLOBAL(int, DAT_007d4580, 0x007d4580);
-MGLOBAL(int, DAT_007d4584, 0x007d4584);
+MGLOBALA(int, DAT_007d4578, 4, 0x007d4578);   /* 0x007d4578..0x007d4587, cleared as one 16-byte block */
 MGLOBAL(int, DAT_006181c8, 0x006181c8);
 MGLOBAL(int, DAT_006181cc, 0x006181cc);
 MGLOBAL(int, DAT_006181d0, 0x006181d0);
@@ -67,11 +65,8 @@ void *memset(void *, int, unsigned int);
 int FUN_004caea0(void)
 {
   unsigned int i;
-  DAT_007d4578 = 0;
-  DAT_007d457c = 0;
-  DAT_007d4580 = 0;
+  memset(DAT_007d4578, 0, sizeof(DAT_007d4578));
   DAT_007d4574 = 0;
-  DAT_007d4584 = 0;
   DAT_006181c8 = -1;
   DAT_006181cc = -1;
   DAT_006181d0 = -1;

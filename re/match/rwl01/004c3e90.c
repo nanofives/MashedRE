@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* h3 hand-match: best 44.3% (regs 45.0%), class b. Fast-sqrt LUT builder: float bits via union, sqrt intrinsic (fsqrt), fdivr of the double at 0x005cd0c8, real function-pointer stores, 2-dword record array. 13.2 -> 44.3. Residual: original loops are not optimised (value kept in [esp] and param_2's stack slot [esp+0x10] reused as the result temp, plain inc/cmp loop), ours strength-reduces and unrolls; tried param_2 as the temp, no change. */
 /* MATCH-RWL01 0x004c3e90: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
