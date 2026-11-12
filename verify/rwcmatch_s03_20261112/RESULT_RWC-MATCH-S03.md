@@ -1,5 +1,7 @@
 # RESULT RWC-MATCH-S03: RW match slice 3 (0x004f57e0..0x005cb404)
 
+Sources, trackers and evidence: commit `552338c32` on `orch/RWC-MATCH-S03`.
+
 Row kind: match-only (no build, no gates). Branch `orch/RWC-MATCH-S03` from `orch/integration` 0e277caaf.
 Input list: `log/orch/run39_rwcmatch/S03.tsv` (73 RVAs). Same method as RWC-MATCH-S01
 (`verify/rwcmatch_s01_20261112/RESULT_RWC-MATCH-S01.md`, branch `orch/RWC-MATCH-S01`).
