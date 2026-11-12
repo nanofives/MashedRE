@@ -483,7 +483,15 @@ function provInstall() {
   for (let i = 0; i < 2 * nb; i++) cnt.add(i * 4).writeU32(0);
   let total = 0;
   // PROV-WRITESET: cfg.prov.wlog = N makes each stub single-step (TF) the first N calls of its body, see wsInstall
-  const WL = PROV.wlog || 0, SZ = WL ? 48 : 16;
+  // PROV-WRITESET-SCENARIO: cfg.prov.wstride {rva: K} steps every K-th call (calls 1, K+1, 2K+1, ...) up to WL stepped
+  // calls, so the sample spans the whole race instead of its first ticks. Absent = the first WL calls (as before).
+  const WS_K = PROV.wstride || null;
+  // cfg.prov.warm = 'anchor': no call is stepped before the race anchor (provSnap sets the arm word). Stepping during the
+  // load shortened it (dn_warp 110 against 118 unstepped), so the stepped race was not the reference race.
+  const WS_ARM = !!(WS_K && PROV.warm === 'anchor');
+  const WL = PROV.wlog || 0, SZ = WL ? (WS_K ? 80 : 48) : 16;
+  const kdw = (WL && WS_K) ? K(Memory.alloc(pg(bodies.length * 8 + 4))) : null;   // [2i] countdown to the next stepped call, [2i+1] stepped calls, [2n] arm word
+  if (kdw) { kdw.add(bodies.length * 8).writeU32(WS_ARM ? 0 : 1); PV_ARM = kdw.add(bodies.length * 8); }
   const offs = bodies.map((b) => { const o = total; total += SZ + b.code.length / 2; total = (total + 15) & ~15; return o; });
   const mem = total ? K(Memory.alloc(pg(total))) : null;
   const installed = [];
@@ -500,7 +508,16 @@ function provInstall() {
     const ent = base + b.entry;
     const le = (v) => [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff];
     const s = [0xff, 0x05, ...le(ca)];
-    if (WL) {   // cmp [cnt], N+1 ; jae skip ; pushfd ; or dword [esp], 0x100 ; popfd ; skip:
+    if (WL && WS_K) {   // dec [kd] ; jnz skip ; mov [kd], K ; cmp [ws], N ; jae skip ; inc [ws] ; pushfd ; or dword [esp], 0x100 ; popfd ; skip:
+      const kv = Math.max(1, (WS_K[b.rva] || WS_K[b.rva.toLowerCase()] || 1) | 0);
+      const kd = kdw.add(i * 8), ws = kdw.add(i * 8 + 4);
+      kd.writeU32(1); ws.writeU32(0);
+      const kda = kd.toUInt32() >>> 0, wsa = ws.toUInt32() >>> 0;
+      const arma = PV_ARM.toUInt32() >>> 0;
+      s.push(0x83, 0x3d, ...le(arma), 0x00, 0x74, 0x2d);   // cmp dword [arm], 0 ; je skip
+      s.push(0xff, 0x0d, ...le(kda), 0x75, 0x25, 0xc7, 0x05, ...le(kda), ...le(kv),
+             0x81, 0x3d, ...le(wsa), ...le(WL), 0x73, 0x0f, 0xff, 0x05, ...le(wsa), 0x9c, 0x81, 0x0c, 0x24, 0x00, 0x01, 0x00, 0x00, 0x9d);
+    } else if (WL) {   // cmp [cnt], N+1 ; jae skip ; pushfd ; or dword [esp], 0x100 ; popfd ; skip:
       s.push(0x81, 0x3d, ...le(ca), ...le(WL + 1), 0x73, 0x09, 0x9c, 0x81, 0x0c, 0x24, 0x00, 0x01, 0x00, 0x00, 0x9d);
     }
     const jat = s.length;
@@ -546,7 +563,7 @@ void onEnter(GumInvocationContext *ic) { unsigned int *c = GUM_IC_GET_FUNC_DATA(
 // pointing at the return address). The store targets are computed offline (re/tools/prov/prov_writeset.py).
 let WS = null;
 function wsInstall(mem, total, WL) {
-  const CAP = 1 << 21;   // records
+  const CAP = (CFG.prov && CFG.prov.wcap) || (1 << 21);   // records (PROV-WRITESET-SCENARIO: --prov-wcap)
   const buf = K(Memory.alloc(CAP * 40));
   const stm = K(Memory.alloc(Process.pageSize));
   for (let i = 0; i < 192; i++) stm.add(i * 4).writeU32(0);
@@ -657,7 +674,8 @@ function wsDump() {
   }
   if (!n) send({ kind: 'wlog', first: 0, count: 0, total: 0, stats }, new ArrayBuffer(0));
 }
-function provSnap() { if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
+let PV_ARM = null;
+function provSnap() { if (PV_ARM) PV_ARM.writeU32(1); if (PV) for (let i = 0; i < PV.nb; i++) PV.cnt.add((PV.nb + i) * 4).writeU32(PV.cnt.add(i * 4).readU32()); }
 function provReport() {
   if (!PV) return;
   const rows = PV.names.map((rva, i) => ({ rva, calls_boot: PV.atTick1 ? PV.atTick1[i] : null, calls_before_warp: PV.atWarp ? PV.atWarp[i] : null, calls_to_anchor: PV.cnt.add((PV.nb + i) * 4).readU32(), calls_total: PV.cnt.add(i * 4).readU32() }));
