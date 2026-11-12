@@ -49,7 +49,7 @@ rva	route	evidence	verdict	detail
 0x005a62b0	match	re/match/s25/005a62b0.c	PASS	byte-identical 137 B, relocheck OK (14/0)
 0x005a8750	match	re/match/s25/005a8750.c	PASS	byte-identical 250 B, relocheck OK (4/2)
 0x005aa7e0	match	re/match/s25/005aa7e0.c	PASS	byte-identical 177 B, relocheck OK (2/0)
-0x005aaac0	match	re/match/s25/005aaac0.c	PASS	byte-identical 53 B, relocheck OK (3/0)
+0x005aaac0	match	re/match/s25/005aaac0.c	SKIP	already C4 (no write)
 0x005ac770	match	re/match/tlr/005ac770.c	PASS	byte-identical 59 B, relocheck OK (0/0)
 0x005ac930	match	re/match/tlr/005ac930.c	PASS	byte-identical 71 B, relocheck OK (1/0)
 0x005ace70	match	re/match/s26/005ace70.c	PASS	byte-identical 374 B, relocheck OK (22/0)
