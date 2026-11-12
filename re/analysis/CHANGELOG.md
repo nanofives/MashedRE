@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-12  0x004c1040  FUN_004c1040  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c1040.c; evidence: verify/match_20261112/RESULT_MATCH-RWC-NEAR.md
+2026-11-12  0x004cc820  FUN_004cc820  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004cc820.c; evidence: verify/match_20261112/RESULT_MATCH-RWC-NEAR.md
 2026-11-12  0x00554390  FUN_00554390  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl05/00554390.c; evidence: verify/rt2dresid_20261111/RESULT_MATCH-RT2D-RESID.md
 2026-11-12  0x00555360  FUN_00555360  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s24/00555360.c; evidence: verify/rt2dresid_20261111/RESULT_MATCH-RT2D-RESID.md
 2026-11-12  0x004d4f00  FUN_004d4f00  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d4f00.c; evidence: verify/rwcmatch_20261112/RESULT_RWC-MATCH.md
