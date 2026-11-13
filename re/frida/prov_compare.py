@@ -66,6 +66,47 @@ def loadlen_rule(x, y, bad, raw_va, nblk, blk, mr, ma, notes):
 PHASE_NAME = {0: "boot", 1: "menu", 2: "load", 3: "race"}
 
 
+# BOOT-VARIANT block (RO-BOOT-BLOCK-MASK, 2026-11-13; measured in RO-CONTROL-DRIFT): block 0x00773c00 holds two CRT-startup
+# values written before any hook or body runs: the exe path buffer 0x00773c40 (0x104 bytes, GetModuleFileNameA at
+# 0x004abeb0, it carries the private root folder name) and a kernel32 proc pointer at 0x00773d60 (GetProcAddress result
+# stored at 0x004ae2d8, fixed for one boot of the machine). The block is hash-only in the tick records, and a MASK row in a
+# hash-only block would drop the whole block, so the block is decided here: when its hash differs, the two runs' checkpoint
+# dumps (ckptNN.data.bin = .data 0x005ea000..) must agree on every dword of the block outside BOOT_WORDS, and the hash must
+# change at the same ticks in both runs. A run with a raw range over the block takes the per-dword path with BOOT_WORDS dropped.
+BOOT_BLOCK = 0x00773c00
+BOOT_WORDS = set(range(0x00773c40, 0x00773d44, 4)) | {0x00773d60}
+
+
+def _ckpt_blocks(rundir, lo, size):
+    """{ckpt index: bytes of [lo, lo+size) from ckptNN.data.bin}; {} when the run has none."""
+    out = {}
+    for f in sorted(Path(rundir).glob("ckpt*.data.bin")):
+        try:
+            k = int(f.name[4:6])
+            with open(f, "rb") as fh:
+                fh.seek(lo - DATA_LO)
+                b = fh.read(size)
+        except (ValueError, OSError):
+            continue
+        if len(b) == size:
+            out[k] = b
+    return out
+
+
+def boot_block_check(run, ref, blk):
+    """(ok, detail): block BOOT_BLOCK of run against ref outside BOOT_WORDS, over the checkpoint dumps both runs have."""
+    a, b = _ckpt_blocks(run, BOOT_BLOCK, blk), _ckpt_blocks(ref, BOOT_BLOCK, blk)
+    ks = sorted(set(a) & set(b))
+    if not ks:
+        return False, "no common checkpoint dump"
+    for k in ks:
+        for o in range(0, blk, 4):
+            w = BOOT_BLOCK + o
+            if w not in BOOT_WORDS and a[k][o:o + 4] != b[k][o:o + 4]:
+                return False, f"ckpt{k:02d} dword {w:#010x} differs {a[k][o:o+4][::-1].hex()} vs {b[k][o:o+4][::-1].hex()}"
+    return True, f"{len(ks)} checkpoints equal outside the {len(BOOT_WORDS)} boot words"
+
+
 def segments(meta):
     """RO-MENU-REPLAY boot mode: [[name, first record, last record], ...] from the tick phase bytes (detorig.py phase_runs).
     The warp tick ends the menu segment. Runs made without --boot have no phases: one 'race' segment."""
@@ -112,6 +153,7 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
     rawpos = {v: 2 + nblk + k for k, v in enumerate(raw_va)}
     first = None
     notes = []
+    boot_ok = None
     # TIMER-PHASE applies at the race's first tick: record 0 in a warp-at-menu run, the first phase-3 record in a boot run
     race0 = next((a for name, a, b in (segments(ma) or []) if name == "race"), 0)
     for i in range(n):
@@ -127,9 +169,19 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
             lo = DATA_LO + (j - 2) * blk
             if lo in rawpos and all(lo + 4 * k in rawpos for k in range(blk // 4)):
                 # block copied raw every tick: decided per dword, MASK / OS dwords dropped, heap-pointer pairs dropped
-                if any(x[rawpos[w]] != y[rawpos[w]] and w not in MASKED and not is_ptr_pair(x[rawpos[w]], y[rawpos[w]])
+                if any(x[rawpos[w]] != y[rawpos[w]] and w not in MASKED and w not in BOOT_WORDS and not is_ptr_pair(x[rawpos[w]], y[rawpos[w]])
                        for w in range(lo, lo + blk, 4)):
                     bad.append(j)
+            elif lo == BOOT_BLOCK:
+                if boot_ok is None:
+                    boot_ok = boot_block_check(run, ref_a, blk)
+                    notes.append(f"boot-variant block {BOOT_BLOCK:#010x}: {'masked' if boot_ok[0] else 'NOT masked'}, {boot_ok[1]}")
+                if not boot_ok[0] and j not in allowed:
+                    bad.append(j)
+                elif boot_ok[0]:
+                    # the hash must also move at the same ticks in both runs (a body writing the block elsewhere shows here)
+                    if i and ((x[j] != rr[i - 1][j]) != (y[j] != ra[i - 1][j])):
+                        bad.append(j)
             elif j not in allowed and not any(lo <= w < lo + blk for w in MASKED_LIST):
                 bad.append(j)
         if i == race0 and bad and loadlen_rule(x, y, bad, raw_va, nblk, blk, mr, ma, notes):
@@ -156,19 +208,27 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
         rep["ticks_by_segment"] = {name: b - a + 1 for name, a, b in segs}
         # BOOT-CLASS (RO-MENU-REPLAY, measured 2026-11-12): unmodified boot runs fall into classes that stay apart for
         # the whole run: the tick-0 value of 0x007f1030 (frame-timer block; 4 values seen in 25 runs, r5 vs r3 then
-        # diverges at race tick 1752 in 0x00618000 with the timer dwords masked) and 0x006147d8 (MASK:os; runs with 1
-        # against references with 0 differ in 0x00773c00 / 0x00911c00 from tick 0). Recorded, not scored: a run whose
+        # diverges at race tick 1752 in 0x00618000 with the timer dwords masked) and 0x00773d60 (kernel32 pointer, one value per boot of the machine;
+        # a run and a reference of different boots differ in 0x00773c00 from tick 0, RO-CONTROL-DRIFT pair test). Recorded, not scored: a run whose
         # class differs from its reference's is re-run or scored against a same-class reference.
-        def cls(r):
-            return {hex(w): f"{r[0][rawpos[w]]:08x}" for w in BOOT_CLASS_DWORDS if w in rawpos} if r else {}
-        rep["boot_class"] = {"run": cls(rr), "ref": cls(ra), "ref2": cls(rb)}
+        # RO-BOOT-BLOCK-MASK: the kernel32 pointer 0x00773d60 (changes per reboot) replaces 0x006147d8 (a MASK:os toggle that
+        # differs between two same-boot runs and caused no 0x00773c00 difference, RESULT_RO-CONTROL-DRIFT). It is in a
+        # hash-only block, so it is read from checkpoint 0 of the run.
+        def cls(r, d):
+            out = {hex(w): f"{r[0][rawpos[w]]:08x}" for w in BOOT_CLASS_DWORDS if w in rawpos} if r else {}
+            c0 = _ckpt_blocks(d, BOOT_BLOCK, blk).get(0)
+            if c0 is not None:
+                out[hex(BOOT_KEY)] = c0[BOOT_KEY - BOOT_BLOCK:BOOT_KEY - BOOT_BLOCK + 4][::-1].hex()
+            return out
+        rep["boot_class"] = {"run": cls(rr, run), "ref": cls(ra, ref_a), "ref2": cls(rb, ref_b)}
         rep["boot_class_match"] = rep["boot_class"]["run"] == rep["boot_class"]["ref"] == rep["boot_class"]["ref2"]
         if not rep["boot_class_match"]:
             notes.append(f"BOOT-CLASS mismatch {rep['boot_class']}: verdict not body evidence")
     return rep
 
 
-BOOT_CLASS_DWORDS = (0x007f1030, 0x006147d8)
+BOOT_CLASS_DWORDS = (0x007f1030,)
+BOOT_KEY = 0x00773d60
 
 
 if __name__ == "__main__":

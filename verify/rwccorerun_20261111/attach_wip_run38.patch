@@ -1,0 +1,83 @@
+diff --git a/mashedmod/src/mashed_re/LibRw/RwApiBind.cpp b/mashedmod/src/mashed_re/LibRw/RwApiBind.cpp
+index d29460489..ba032d9d9 100644
+--- a/mashedmod/src/mashed_re/LibRw/RwApiBind.cpp
++++ b/mashedmod/src/mashed_re/LibRw/RwApiBind.cpp
+@@ -96,6 +96,7 @@ bool RwCore_Enabled(void);
+ int  RwCore_EngineInit(int memFuncs, int initFlags);
+ int  RwCore_EngineOpen(int* params);
+ int  RwCore_EngineStart(void);
++int  RwCore_AttachPlugins(void);
+ int  RwCore_EngineStop(void);
+ int  RwCore_EngineClose(void);
+ int  RwCore_EngineTerm(void);
+@@ -131,9 +132,8 @@ int MashedRw_EngineInit_004c32b0(int memFuncs, int arenaSize) {
+ // too. Stand-in: librw's plugin set (RwBridge.cpp RegisterPlugins, the list the hand path registers). Returns 1 like the
+ // original on success.
+ int MashedRw_AttachPlugins_00493640(void) {
+-    if (RwCore_Enabled()) {   // [RWC-CORE-RUN] neither librw registration nor the matched 0x00493640 (67.9%) on the core path
+-        RwCore_Log("0x00493640 RenderwareAttachPlugins: not run on the RW core path (no plugin attaches; returns 1)");
+-        return 1;
++    if (RwCore_Enabled()) {   // [RWC-CORE-RUN run 38] the matched 0x00493640 (re/match/s15/00493640.c) on the RW core
++        return RwCore_AttachPlugins();
+     }
+     mashed_re::LibRw::EnginePhasePlugins();
+     // [PORT-TOP-04I] RpPTankPluginAttach is one of 0x00493640's calls. Its registration FUN_00534a80 stores the PTank
+diff --git a/verify/rwccorerun_20261111/gen_rwcore_tus.py b/verify/rwccorerun_20261111/gen_rwcore_tus.py
+index 05420811c..8f12f6e35 100644
+--- a/verify/rwccorerun_20261111/gen_rwcore_tus.py
++++ b/verify/rwccorerun_20261111/gen_rwcore_tus.py
+@@ -37,12 +37,22 @@ ANCHOR = os.environ.get('MASHED_UNPATCHED', os.path.normpath(os.path.join(ROOT,
+ ROOTS = [
+     '004c32b0', '004c30b0', '004c2fb0', '004c2f60', '004c3040', '004c3270',   # RwEngineInit/Open/Start/Stop/Close/Term
+     '004c9f50', '004c9eb0', '004c9f60',                                        # driver setters 0x00493710 calls
++    '00493640',                                                                # RenderwareAttachPlugins (run 38)
+ ]
++# Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
++# re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
++# 0x0057c270 / 0x00561ee0 and the callbacks they register, and four 100% callees the attach sources call
++# (0x004522d0, 0x0057c440, 0x005c4640, 0x005c4780).
++XFOLLOW = {0x493640, 0x472380, 0x472330, 0x472360, 0x52d8e0, 0x52d910, 0x52d950, 0x57c270, 0x57c2b0, 0x57c2e0,
++           0x561ee0, 0x561f40, 0x561f50, 0x561f80, 0x561ff0, 0x4522d0, 0x57c440, 0x5c4640, 0x5c4780}
+ # Not roots in this row: 0x00493710's calls after RwEngineStart (GetCurrentMode 0x004c2f00, GetModeInfo 0x004c2ed0,
+ # 0x004cbc60..0x004cbc90, RwTexDictionarySetCurrent 0x004c5c80) are not reached, since the knob ends the boot at Start.
+ # Data ranges of the RW core (file-backed, seeded from the anchored binary under the knob). Every dword in them whose
+ # value is a code address becomes a fix-up and its target joins the closure.
+-DATA_RANGES = [(0x00617f00, 0x00618600)]
++# Run 38: extended past 0x00618600 to 0x00618a00 for the plugin registries the attaches use (0x0061862c .. 0x006189e4,
++# 0x18-byte records as 0x00617fe0), plus the one-dword 0x00623fac (0xffffffff in the file; 0x00561ee0 returns 0 unless
++# it is -1 on entry).
++DATA_RANGES = [(0x00617f00, 0x00618a00), (0x00623fac, 0x00623fb0)]
+ # .rdata windows the closure's sources read (strings / constants); seeded verbatim, no code pointer is followed.
+ RDATA_WINDOW = 0x100
+ 
+@@ -92,7 +102,7 @@ CONV = {}
+ 
+ 
+ def inrw(v):
+-    return 0x4c0700 <= v < 0x516000 or 0x52df70 <= v < 0x558c50 or 0x5cb000 <= v < 0x5cc000
++    return v in XFOLLOW or 0x4c0700 <= v < 0x516000 or 0x52df70 <= v < 0x558c50 or 0x5cb000 <= v < 0x5cc000
+ 
+ 
+ def load_hand():
+# Knob hunk (run 38 attach WIP, removed from the tree): add above RwCore_EngineStart in RwCore/RwCore_Knob.cpp
+# and declare int RwCore_AttachPlugins(void); in LibRw/RwApiBind.cpp
++int RwCore_00493640(void);
++// run 38: RenderwareAttachPlugins 0x00493640 on the RW core, between RwEngineInit and RwEngineOpen as in the original
++// (0x00493710). Its 14 + 3 attaches register their plugins in the registries of the seeded data range; the constructors
++// run at RwEngineStart.
++int RwCore_AttachPlugins(void) {
++    const int r = RwCore_00493640();
++    RwCore_Log("RenderwareAttachPlugins 0x00493640() = %d on the RW core; [0x007dc57c] (PTank plugin offset, 0x00534ac4) = 0x%X",
++               r, U32(0x007dc57cu));
++    return r;
++}
++
+ int RwCore_EngineStart(void) {
+     const int r = RwCore_004c2fb0();
+     RwCore_Log("RwEngineStart 0x004c2fb0() = %d", r);
+     RwCore_Probe();
+     if (!r) return 0;
++    RwCore_Log("calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)");
+     const int s = RwCore_004c2f60();
+     RwCore_Log("bring-up probe done: RwEngineStop 0x004c2f60() = %d; returning 0 from RwEngineStart so 0x00493710 runs "
+                "its failure path (the rest of the top-down path is not on the RW core yet)", s);

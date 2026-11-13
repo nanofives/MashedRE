@@ -31,6 +31,6 @@ undefined4 FUN_004d7db0(int p0, int p1);
 void FUN_004c2dc0(undefined4 param_1)
 
 {
-  FUN_004d7db0(&DAT_00617fe0,param_1);
+  FUN_004d7db0((int)&DAT_00617fe0,param_1);
   return;
 }

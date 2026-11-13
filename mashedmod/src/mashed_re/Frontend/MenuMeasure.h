@@ -9,13 +9,10 @@
 extern "C" float __cdecl MenuMenusBA(int id, float scale);
 
 // The exe's binding (defined in exe_main.cpp, read only by Match/MatchS06_004282a0.cpp under MASHED_STANDALONE):
-//   MenuBa_ExeLookup   FUN_00427780's slot: returns the id itself as the "string pointer"
-//   MenuBa_ExeRemap    FUN_004277a0's slot: GetMenuMessage(id, dst, 0x200) over g_msg_dat (applies the remap)
+//   MenuBa_ExeLookup   FUN_00427780's slot: the [u16 len][len * u16] record of the id in g_msg_dat (the shape
+//                      FUN_00427780 returns), or a zero-length record when the id is outside the table
 //   MenuBa_ExeMeasure  FUN_005554d0's slot: the g_font glyph sum times size; the font argument is unused
-//   g_menuBa_FontCell  address of the dword the body reads as DAT_0067d838 (a zero dword)
-//   g_menuBa_DivCell   address of the float the body reads as DAT_0067d830 (DeriveMenuMeasureDiv)
+// FUN_004277a0 binds to the S06 body TextCtrlCodeRemapBody in both targets, and the globals DAT_0067d838 /
+// DAT_0067d830 / DAT_007d3ff8 to their original addresses (DDKOBJ-CELLS, 2026-11-12).
 extern "C" short* MenuBa_ExeLookup(int id);
-extern "C" void   MenuBa_ExeRemap(short* src, short* dst);
 extern "C" float  MenuBa_ExeMeasure(int font, short* text, float size);
-extern "C" const void*  g_menuBa_FontCell;
-extern "C" const float* g_menuBa_DivCell;

@@ -5,9 +5,9 @@
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
-#define FUN_004c3670 RwCoreMissing_004c3670
+#define FUN_004c3670 RwCoreLift_004c3670
 #define FUN_004c3730 RwV3dTransformPoint
-#define FUN_004c37d0 RwCoreMissing_004c37d0
+#define FUN_004c37d0 RwCoreLift_004c37d0
 #define FUN_004c3880 RwV3dTransformVector
 #define FUN_004c3e90 RwCore_004c3e90
 #define FUN_004d7ff0 Orig_004d7ff0

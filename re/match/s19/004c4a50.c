@@ -1,4 +1,6 @@
 // TOOLCHAIN rw9044
+// TOOLCHAIN rw9044
+/* MATCH-RWT-B 2026-11-12: 77.8 -> 97.2% under rw9044 (toolchain line added; ddk stays 77.8): comma rvalue (0, unitAxis->f) on the crossed and scaled products gives the original field-first fld order. Remaining: c2 schedules the pos=0 / flags=3 stores and the combineOp load after the x87 chain, the original interleaves them (11 statement positions tried, permuter 1003 compiles no gain). */
 // FLAGS: /O2 /GS /Ob1 /G5
 /* MATCH-S19 0x004c4a50 (h5): 77.8% (regs 77.8%). RwMatrixRotateOneMinusCosineSine: builds the rotation matrix from
    leading / crossed / scaled RwV3d temps (flags 3, pos 0), then switch (combineOp): 0 copy, 1 / 2 RwMatrixMultiply
@@ -61,6 +63,7 @@ static __forceinline RwMatrix *MatrixMultiply(RwMatrix *matrixOut, const RwMatri
 }
 
 // MATCH: 0x004c4a50 FUN_004c4a50
+
 RwMatrix *FUN_004c4a50(RwMatrix *matrix, const RwV3d *unitAxis, float oneMinusCosine, float sine, int combineOp)
 {
   RwMatrix mRotate;
@@ -73,15 +76,15 @@ RwMatrix *FUN_004c4a50(RwMatrix *matrix, const RwV3d *unitAxis, float oneMinusCo
   leading.x = leading.x * oneMinusCosine;
   leading.y = leading.y * oneMinusCosine;
   leading.z = leading.z * oneMinusCosine;
-  crossed.x = unitAxis->y * unitAxis->z;
-  crossed.y = unitAxis->z * unitAxis->x;
-  crossed.z = unitAxis->x * unitAxis->y;
+  crossed.x = (0, unitAxis->y) * unitAxis->z;
+  crossed.y = (0, unitAxis->z) * unitAxis->x;
+  crossed.z = unitAxis->x * (0, unitAxis->y);
   crossed.x = crossed.x * oneMinusCosine;
   crossed.y = crossed.y * oneMinusCosine;
   crossed.z = crossed.z * oneMinusCosine;
   scaled.x = unitAxis->x * sine;
-  scaled.y = unitAxis->y * sine;
-  scaled.z = unitAxis->z * sine;
+  scaled.y = (0, unitAxis->y) * sine;
+  scaled.z = (0, unitAxis->z) * sine;
 
   mRotate.right.x = 1.0f - leading.x;
   mRotate.right.y = crossed.z + scaled.z;

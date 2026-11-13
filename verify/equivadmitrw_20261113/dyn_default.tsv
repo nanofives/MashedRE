@@ -1,0 +1,7 @@
+rva	source	verdict_regs_ignored	same	inconclusive	differs	first_difference
+0x0052e5c0	re/match/g2seq/0052e5c0.c		16	0	0	
+0x00533900	re/match/g2seq/00533900.c		10	6	0	
+0x00534990	re/match/g2seq/00534990.c		0	16	0	
+0x00544100	re/match/g2seq/00544100.c		5	11	0	
+0x005516c0	re/match/g2seq/005516c0.c		16	0	0	
+0x00493640	re/match/s15/00493640.c		16	0	0	

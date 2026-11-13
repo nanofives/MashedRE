@@ -1,0 +1,332 @@
+va	subsystems
+0x006036c0	audio; util
+0x006036c4	audio; util
+0x00616038	ai; audio; boot; frontend; gameplay; hud; input; no-function; particle; render; save; third-party-library[msvc-crt-main]; track; util; vehicle
+0x006160c8	boot; third-party-library[msvc-crt-main]
+0x00616370	no-function; third-party-library[msvc-crt-main]
+0x006163d0	boot; no-function; third-party-library[msvc-crt-main]
+0x00616408	boot; third-party-library[msvc-crt-main]
+0x00616670	boot; third-party-library[msvc-crt-main]; third-party-library[msvc-crt-tail]
+0x006169cc	boot; render; third-party-library[lua-4.0]; third-party-library[msvc-crt-main]; third-party-library[msvc-crt-tail]
+0x006169e0	boot; third-party-library[lua-4.0]; third-party-library[msvc-crt-main]
+0x006169e4	boot; third-party-library[msvc-crt-main]
+0x00616a54	no-function; third-party-library[msvc-crt-main]
+0x00616a5c	no-function; third-party-library[msvc-crt-main]
+0x00616a6c	no-function; third-party-library[msvc-crt-main]
+0x00616a74	no-function; third-party-library[msvc-crt-main]
+0x00616be4	boot; third-party-library[msvc-crt-main]; third-party-library[msvc-crt-tail]
+0x00616d24	boot; third-party-library[msvc-crt-main]
+0x00616ecc	no-function; third-party-library[msvc-crt-main]
+0x006181a0	no-function; render; third-party-library[renderware]
+0x006181a4	no-function; render; third-party-library[renderware]
+0x006181a8	no-function; render; third-party-library[renderware]
+0x006181ac	no-function; third-party-library[renderware]
+0x006181c8	no-function; render; third-party-library[renderware]
+0x006181cc	no-function; render; third-party-library[renderware]
+0x006181d0	no-function; render; third-party-library[renderware]
+0x006181d4	no-function; render; third-party-library[renderware]
+0x006181d8	no-function; render; third-party-library[renderware]
+0x006182b0	render; third-party-library[renderware]
+0x006187c4	render; third-party-library[d3dx9-psgp]
+0x00620cd8	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d20	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d28	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d30	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d38	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d40	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d48	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d58	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d5c	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d68	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d6c	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d74	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d88	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d8c	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d90	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d94	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d98	no-function; third-party-library[d3dx9-backward-extension]
+0x00620d9c	no-function; third-party-library[d3dx9-backward-extension]
+0x00620da0	no-function; third-party-library[d3dx9-backward-extension]
+0x00620da4	no-function; third-party-library[d3dx9-backward-extension]
+0x00620da8	no-function; third-party-library[d3dx9-backward-extension]
+0x00620dac	no-function; third-party-library[d3dx9-backward-extension]
+0x00620db0	no-function; third-party-library[d3dx9-backward-extension]
+0x00620db4	no-function; third-party-library[d3dx9-backward-extension]
+0x00620e10	no-function; third-party-library[d3dx9-backward-extension]
+0x00623c88	no-function; third-party-library[renderware]
+0x00623fac	no-hooks-row; third-party-library[RenderWare-Physics-3.7]; third-party-library[renderware]
+0x006336f8	audio; no-function
+0x006336fc	audio; no-function
+0x0067e9f8	audio; frontend; vehicle
+0x0067f19c	audio; frontend; util; vehicle
+0x0067f1a0	audio; frontend; util
+0x0067f1a4	audio; frontend; util
+0x0068f4d0	audio; render
+0x0068f618	audio; render
+0x0068f61c	audio; util
+0x0068f62c	audio; render
+0x0068f640	audio; no-function; render
+0x0068fc84	audio; render
+0x0068fc8c	audio; util
+0x0068fcbc	audio; util
+0x006900d4	audio; util
+0x0069045c	audio; util
+0x00690478	audio; render
+0x00690490	audio; util
+0x00690494	audio; util
+0x00690498	audio; util
+0x0069049c	audio; render
+0x006904a4	audio; util
+0x006904e0	audio; util
+0x006904e4	audio; util
+0x006904e8	audio; util
+0x006ce274	audio; gameplay; no-function; physics; render; vehicle
+0x00771a20	audio; video
+0x00773920	audio; boot; gameplay; vehicle
+0x00773990	boot; third-party-library[msvc-crt-main]
+0x0077399c	boot; third-party-library[msvc-crt-main]
+0x007739a8	boot; third-party-library[msvc-crt-main]
+0x007739bc	boot; third-party-library[msvc-crt-main]
+0x007739f0	boot; third-party-library[msvc-crt-main]
+0x00773c34	boot; third-party-library[msvc-crt-main]
+0x00773d70	boot; third-party-library[msvc-crt-main]
+0x00773ddc	no-function; third-party-library[msvc-crt-main]
+0x007d3e70	render; third-party-library[renderware]
+0x007d3ec0	render; third-party-library[renderware]
+0x007d3fd4	render; third-party-library[renderware]
+0x007d3ff4	render; third-party-library[renderware]
+0x007d3ff8	ai; audio; boot; debug-overlay; frontend; gameplay; hud; no-function; no-hooks-row; particle; render; save; third-party-library[RenderWare-Physics-3.7]; third-party-library[d3dx9-backward-extension]; third-party-library[d3dx9-fx]; third-party-library[qhull-2002.1-continuation]; third-party-library[qhull-2002.1]; third-party-library[renderware]; track; util; vehicle
+0x007d3ffc	render; third-party-library[renderware]; util
+0x007d4028	render; third-party-library[renderware]; util
+0x007d4054	boot; no-function; render; third-party-library[renderware]
+0x007d40a8	render; third-party-library[renderware]
+0x007d4104	render; third-party-library[renderware]
+0x007d4108	render; third-party-library[renderware]
+0x007d410c	render; third-party-library[renderware]
+0x007d4110	no-function; render; third-party-library[renderware]
+0x007d4114	render; third-party-library[renderware]
+0x007d4118	render; third-party-library[renderware]
+0x007d4124	render; third-party-library[renderware]
+0x007d4128	render; third-party-library[renderware]
+0x007d4130	render; third-party-library[renderware]
+0x007d4140	render; third-party-library[renderware]
+0x007d4144	render; third-party-library[renderware]
+0x007d4148	render; third-party-library[renderware]
+0x007d414c	render; third-party-library[renderware]
+0x007d4150	render; third-party-library[renderware]
+0x007d4154	render; third-party-library[renderware]
+0x007d4158	render; third-party-library[renderware]
+0x007d4558	render; third-party-library[renderware]
+0x007d4568	render; third-party-library[renderware]
+0x007d456c	no-function; render; third-party-library[renderware]
+0x007d4570	no-function; render; third-party-library[renderware]
+0x007d4574	render; third-party-library[renderware]
+0x007d4578	render; third-party-library[renderware]
+0x007d459c	render; third-party-library[renderware]
+0x007d45c4	frontend; third-party-library[renderware]
+0x007d45cc	render; third-party-library[renderware]
+0x007d45f8	render; third-party-library[renderware]
+0x007d45fc	render; third-party-library[renderware]
+0x007d4628	render; third-party-library[renderware]
+0x007d46c8	render; third-party-library[renderware]
+0x007d46cc	render; third-party-library[renderware]
+0x007d46d0	render; third-party-library[renderware]
+0x007d46d4	render; third-party-library[renderware]
+0x007d46d8	render; third-party-library[renderware]
+0x007d46dc	render; third-party-library[renderware]
+0x007d46e0	render; third-party-library[renderware]
+0x007d46e4	render; third-party-library[renderware]
+0x007d470c	render; third-party-library[renderware]
+0x007d4710	no-function; render; third-party-library[renderware]
+0x007d4714	render; third-party-library[renderware]
+0x007d4718	render; third-party-library[renderware]
+0x007d6c50	render; third-party-library[renderware]
+0x007d6c54	render; third-party-library[renderware]
+0x007d6c58	render; third-party-library[renderware]
+0x007d6c64	render; third-party-library[renderware]
+0x007d6c68	render; third-party-library[renderware]
+0x007d7098	no-function; render; third-party-library[renderware]
+0x007d709c	no-function; render; third-party-library[renderware]
+0x007d70a0	no-function; render; third-party-library[renderware]
+0x007d70a4	no-function; third-party-library[renderware]
+0x007d70a8	no-function; render; third-party-library[renderware]
+0x007d70ac	render; third-party-library[renderware]
+0x007d7108	no-function; third-party-library[renderware]
+0x007d710c	no-function; third-party-library[renderware]
+0x007d7110	no-function; third-party-library[renderware]
+0x007d7114	no-function; third-party-library[renderware]
+0x007d7118	no-function; third-party-library[renderware]
+0x007d7164	no-function; third-party-library[renderware]
+0x007d716c	no-function; render; third-party-library[renderware]
+0x007d7170	no-function; third-party-library[renderware]
+0x007d7178	no-function; third-party-library[renderware]
+0x007d7290	no-hooks-row; third-party-library[renderware]
+0x007d7298	no-hooks-row; render; third-party-library[renderware]
+0x007d729c	render; third-party-library[renderware]
+0x007d72a4	no-function; third-party-library[renderware]
+0x007d72a8	no-function; third-party-library[renderware]
+0x007d72ac	no-function; third-party-library[renderware]
+0x007d730c	no-function; third-party-library[renderware]
+0x007d7310	no-function; third-party-library[renderware]
+0x007d7314	no-function; third-party-library[renderware]
+0x007d7348	no-function; third-party-library[renderware]
+0x007d734c	no-function; third-party-library[renderware]
+0x007d7350	no-function; third-party-library[renderware]
+0x007d7374	no-function; third-party-library[renderware]
+0x007d7378	no-function; no-hooks-row; render; third-party-library[renderware]
+0x007d737c	no-hooks-row; render; third-party-library[renderware]
+0x007d7380	no-function; no-hooks-row; render; third-party-library[renderware]
+0x007d7384	no-function; no-hooks-row; render; third-party-library[renderware]
+0x007d7388	no-function; render; third-party-library[renderware]
+0x007d738c	no-function; render; third-party-library[renderware]
+0x007d7390	no-function; render; third-party-library[renderware]
+0x007d7394	no-function; render; third-party-library[renderware]
+0x007d7398	no-function; render; third-party-library[renderware]
+0x007d739c	no-function; render; third-party-library[renderware]
+0x007dbcd8	no-hooks-row; third-party-library[renderware]; util
+0x007dc504	no-function; third-party-library[renderware]
+0x007dc508	no-function; third-party-library[renderware]
+0x007dc50c	no-function; third-party-library[renderware]
+0x007dc540	no-function; third-party-library[renderware]
+0x007dc544	no-function; third-party-library[renderware]
+0x007dc548	no-function; third-party-library[renderware]
+0x007dc54c	no-function; third-party-library[renderware]
+0x007dc578	third-party-library[renderware]; util
+0x007dc57c	boot; no-function; particle; render; sky; third-party-library[renderware]; util; vehicle
+0x007dc584	no-function; third-party-library[renderware]
+0x007dc588	no-function; third-party-library[renderware]
+0x007dc594	no-function; third-party-library[renderware]
+0x007dc5b4	third-party-library[RenderWare-Physics-3.7]; third-party-library[renderware]
+0x007dc66c	no-function; third-party-library[renderware]
+0x007dc67c	third-party-library[renderware]; track
+0x007dc720	no-function; third-party-library[renderware]
+0x007dc724	no-function; third-party-library[renderware]
+0x007dc750	no-function; third-party-library[renderware]
+0x007dc754	render; save; third-party-library[renderware]; util
+0x007dc758	third-party-library[renderware]; util
+0x007dc75c	render; save; third-party-library[renderware]; util
+0x007dc760	render; third-party-library[renderware]
+0x007dc768	save; third-party-library[renderware]; util
+0x007dc76c	save; third-party-library[renderware]; util
+0x007dc8ac	render; third-party-library[renderware]
+0x007dc8b8	render; third-party-library[renderware]
+0x007dc8bc	render; third-party-library[renderware]
+0x007dc954	audio; no-function; no-hooks-row
+0x007dc960	audio; no-function
+0x007dca0c	audio; no-function
+0x007dca18	audio; no-function
+0x007dca1c	audio; no-function
+0x007dca24	audio; no-function
+0x007dca7c	audio; no-function
+0x007dcaa8	audio; render
+0x007dcaac	audio; render
+0x007dcab8	audio; no-function
+0x007dcabc	audio; no-function; third-party-library[msvc-crt]
+0x007dcad8	audio; no-hooks-row
+0x007dcae0	audio; no-function; no-hooks-row
+0x007dcb4c	audio; no-function; no-hooks-row
+0x007dcb50	audio; no-function; no-hooks-row
+0x007dcb68	audio; no-hooks-row
+0x007dccc4	audio; no-function
+0x007dccf0	audio; no-function
+0x007dcd20	audio; no-function
+0x007dce00	audio; no-function; util
+0x007dd608	audio; no-function
+0x007dd60c	audio; no-function
+0x007dd610	audio; no-function
+0x007dd614	audio; no-function
+0x007dd618	audio; no-function
+0x007dd61c	audio; no-function
+0x007dd620	audio; no-function
+0x007dd624	audio; no-function
+0x007dd62c	audio; no-function
+0x007dd6a8	audio; no-function
+0x007dda74	audio; no-function
+0x007dda80	audio; no-function
+0x007ddab0	audio; no-function
+0x007de084	audio; no-hooks-row
+0x007de088	audio; no-hooks-row
+0x007de08c	audio; no-hooks-row
+0x007de090	audio; no-hooks-row
+0x007e9de0	ai; audio; frontend; gameplay; hud; no-hooks-row; vehicle
+0x007e9de4	ai; audio; frontend; gameplay; hud; no-hooks-row; vehicle
+0x007ea1e4	ai; audio; frontend; gameplay; hud; no-hooks-row; vehicle
+0x007ea5e4	ai; audio; frontend; gameplay; hud; no-hooks-row; vehicle
+0x007f0f00	audio; boot; frontend
+0x007f0f60	audio; frontend
+0x007f0fd0	ai; audio; boot; frontend; gameplay; hud; render; save; track; util; vehicle
+0x007f1030	ai; audio; frontend; gameplay; hud; no-hooks-row; util; vehicle
+0x0088e670	audio; no-function; render
+0x0088e674	audio; render
+0x0088f0a0	audio; gameplay; util
+0x0088f0c0	audio; gameplay; util
+0x0088f680	audio; gameplay
+0x0088f6a0	audio; gameplay; util
+0x0088fbc0	audio; util
+0x0088fbc4	audio; gameplay
+0x0088fbc8	audio; gameplay
+0x00894de0	audio; no-function
+0x008aa254	audio; gameplay; util
+0x008aa2e0	audio; util
+0x008aa300	audio; gameplay
+0x008aa330	boot; third-party-library[msvc-crt-main]
+0x008aa338	boot; third-party-library[msvc-crt-main]
+0x008aa444	boot; third-party-library[msvc-crt-main]
+0x008aa580	no-function; third-party-library[msvc-crt-main]; third-party-library[msvc-crt-tail]
+0x008aa68c	boot; third-party-library[msvc-crt-main]
+0x008aa69c	boot; third-party-library[msvc-crt-main]
+0x008aa6a0	boot; third-party-library[msvc-crt-main]
+0x008aa6a4	no-function; third-party-library[msvc-crt-main]; third-party-library[msvc-crt-tail]
+0x008aa6ac	no-function; third-party-library[msvc-crt-main]
+0x008ab6c0	no-function; third-party-library[msvc-crt-main]
+0x008ab6c4	boot; third-party-library[msvc-crt-main]
+0x008ab6c8	boot; third-party-library[msvc-crt-main]
+0x008ab6cc	boot; third-party-library[msvc-crt-main]
+0x008ab6d0	boot; third-party-library[msvc-crt-main]
+0x008ab6d4	boot; third-party-library[msvc-crt-main]
+0x00911ad8	frontend; no-function; render; third-party-library[renderware]
+0x00911adc	render; third-party-library[renderware]
+0x00911ae0	render; third-party-library[renderware]
+0x00911ae4	boot; render; third-party-library[renderware]; util
+0x00911b00	render; third-party-library[renderware]
+0x00911d00	render; third-party-library[renderware]
+0x00911d60	no-function; render; third-party-library[renderware]
+0x00911f80	render; third-party-library[renderware]
+0x00911f84	render; third-party-library[renderware]
+0x00911f88	render; third-party-library[renderware]
+0x00911f90	render; third-party-library[renderware]
+0x00911f94	render; third-party-library[renderware]
+0x00911fbc	render; third-party-library[renderware]
+0x00911fdc	render; third-party-library[renderware]
+0x00911ff8	render; third-party-library[renderware]
+0x00911ffc	render; third-party-library[renderware]
+0x00912074	render; third-party-library[renderware]
+0x0091208c	no-function; render; third-party-library[renderware]
+0x00912094	render; third-party-library[renderware]
+0x009120e0	render; third-party-library[renderware]
+0x009120e4	render; third-party-library[renderware]
+0x009120e8	render; third-party-library[renderware]
+0x00912100	render; third-party-library[renderware]
+0x00912114	render; third-party-library[renderware]
+0x00912118	no-function; no-hooks-row; render; third-party-library[renderware]
+0x00912468	no-function; third-party-library[renderware]
+0x00912480	no-function; third-party-library[renderware]
+0x00912484	no-function; third-party-library[renderware]
+0x00912488	no-function; third-party-library[renderware]
+0x00912a00	hud; third-party-library[renderware]
+0x00912a04	hud; third-party-library[renderware]
+0x00912a08	hud; third-party-library[renderware]
+0x00912a20	hud; third-party-library[renderware]
+0x00912a24	hud; third-party-library[renderware]
+0x00912a28	hud; third-party-library[renderware]
+0x00912b08	hud; third-party-library[renderware]
+0x00912b0c	hud; third-party-library[renderware]
+0x00912b10	hud; third-party-library[renderware]
+0x00912be0	hud; third-party-library[renderware]
+0x00912be4	hud; third-party-library[renderware]
+0x00912bec	hud; render; third-party-library[renderware]
+0x00912bf0	hud; third-party-library[renderware]
+0x00912c0c	hud; third-party-library[renderware]
+0x00912c58	hud; third-party-library[renderware]
+0x00913274	gameplay; no-function; third-party-library[renderware]
+0x009146fc	audio; no-function

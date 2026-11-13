@@ -5,7 +5,7 @@
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
-#define FUN_004c40e0 RwCoreMissing_004c40e0
+#define FUN_004c40e0 RwCoreLift_004c40e0
 #define FUN_004c4470 RwCore_004c4470
 #define FUN_004cc9e0 RwCore_004cc9e0
 extern "C" {

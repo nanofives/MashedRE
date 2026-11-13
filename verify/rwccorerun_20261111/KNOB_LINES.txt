@@ -1,42 +1,45 @@
-== vs_core.log
-[ORIG_TOP] cfglog: Calling RwEngineInit
-[RWC_CORE] data seed: 7 ranges, 9 code-pointer fix-ups, 0 faults (device block 0x00618224 -> 001A20F0)
+# RWC-CORE-RUN run 38: [RWC_CORE] lines of the final knob-ON arms (D:/MashedWT/RWC-CORE-RUN_data/vs_core.log, ddk_core.log)
+## vs_core
+[RWC_CORE] data seed: 7 ranges, 9 code-pointer fix-ups, 0 faults (device block 0x00618224 -> 001A3000)
 [RWC_CORE] RwEngineInit 0x004c32b0(0, 0, 0x200000) = 1; RwGlobals [0x007d3ff8] = 007D3EC8, engine status +0x124 = 1
-[ORIG_TOP] cfglog: Calling RtFSManagerOpen
-[ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
-[ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
 [RWC_CORE] 0x00493640 RenderwareAttachPlugins: not run on the RW core path (no plugin attaches; returns 1)
-[ORIG_TOP] cfglog: Calling RwEngineOpen
-[RWC-DEVICE] Direct3DCreate9(31) -> real 0163CEC0
-[RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=018B047E) = 1; IDirect3D9 [0x007d4108] = 046958C8
-[ORIG_TOP] cfglog: Calling HardwareSetVideoMode
-[ORIG_TOP] cfglog: Calling RwEngineStart
-[RWC-DEVICE] CreateDevice: asked windowed 1 0x0 refresh 0 -> forced windowed 1 640x480 refresh 0
-[RWC-DEVICE] CreateDevice(adapter 0, type 1, flags 0x00000054) -> 0x00000000
-[RWC-DEVICE] window: titled border, client 640x480 at 0,1472
-[RWC_CORE] AV at 001B0B7A (exe+0x1A0B7A) read 6E275940; eax 08EE3A38 ecx 65391F00 edx 00000001 ebx 08EE3A60 esi 08EE3A7C edi 00000000 esp 011EFD9C
-[RWC_CORE] AV stack exe offsets: +0x19F1FE +0x607FE0 +0x1A0F69 +0x608558 +0x901D00 +0x19E2AC +0x196CBD +0x979680 +0x19C7D2 +0x607FE0 +0x18F5D6 +0x159D4A +0x158CA7 +0x158F0F +0x159435 +0x212D9 +0x2472B7 +0x306C08 +0x247307 +0x226205 +0x226289 +0x226289 +0x227140 +0x226289
-[RWC_CORE] probe: RwGlobals 01623F58 (expect 007D3EC8), IDirect3D9 [0x007d4108] 046958C8, device [0x007d4110] 08E4E968, presents 0
-[RWC_CORE] probe: texture module offset [0x007d4054] = 0x3F4, instances [0x007d4058] = 1; texture freelist [RwGlobals+off+8] = 007D405C, texdict freelist [RwGlobals+off+0xc] = 007D4030, current texdict [+0x10] = 08E4128C, [0x007d4080] = 08E4128C
-[RWC_CORE] probe: device block in RwGlobals: +0x10 fpSystem 3F800000, +0x20 RenderStateSet 001A12B0, +0x30 Im2D prim 001A07B0, +0x34 Im2D indexed 001A00B0; curCamera +0x0 00000000
-== ddk_core.log
-[ORIG_TOP] cfglog: Calling RwEngineInit
-[RWC_CORE] data seed: 7 ranges, 9 code-pointer fix-ups, 0 faults (device block 0x00618224 -> 00022760)
+[RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=025A0662) = 1; IDirect3D9 [0x007d4108] = 04653AA8
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 01718B44; RwGlobals 0169CC18, module offset 0x3F4, texdict freelist 007D4030, list head 0169D00C -> 01718B54; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC_CORE] RwEngineStart 0x004c2fb0() = 1
+[RWC_CORE] probe: RwGlobals 0169CC18 (expect 007D3EC8), IDirect3D9 [0x007d4108] 04653AA8, device [0x007d4110] 08E0B000, presents 0
+[RWC_CORE] probe: texture module offset [0x007d4054] = 0x3F4, instances [0x007d4058] = 1; texture freelist [RwGlobals+off+8] = 007D405C, texdict freelist [RwGlobals+off+0xc] = 007D4030, current texdict [+0x10] = 01718B44, [0x007d4080] = 01718B44
+[RWC_CORE] probe: device block in RwGlobals: +0x10 fpSystem 3F800000, +0x20 RenderStateSet 001A21C0, +0x30 Im2D prim 001A16C0, +0x34 Im2D indexed 001A0E50; curCamera +0x0 00000000
+[RWC_CORE] calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)
+[RWC_CORE] bring-up probe done: RwEngineStop 0x004c2f60() = 23710744; returning 0 from RwEngineStart so 0x00493710 runs its failure path (the rest of the top-down path is not on the RW core yet)
+[RWC_CORE] RwEngineClose 0x004c3040() = 1
+[RWC_CORE] RwEngineTerm 0x004c3270() = 1
+[ORIG_TOP] WinMain 0x00492370 returned -1 after 0 frames
+## ddk_core
+[RWC_CORE] data seed: 7 ranges, 9 code-pointer fix-ups, 0 faults (device block 0x00618224 -> 00022A90)
 [RWC_CORE] RwEngineInit 0x004c32b0(0, 0, 0x200000) = 1; RwGlobals [0x007d3ff8] = 007D3EC8, engine status +0x124 = 1
-[ORIG_TOP] cfglog: Calling RtFSManagerOpen
-[ORIG_TOP] cfglog: Calling HardwareInstallFileSystem
-[ORIG_TOP] cfglog: Calling RenderwareAttachPlugins
 [RWC_CORE] 0x00493640 RenderwareAttachPlugins: not run on the RW core path (no plugin attaches; returns 1)
-[ORIG_TOP] cfglog: Calling RwEngineOpen
-[RWC-DEVICE] Direct3DCreate9(31) -> real 018594A0
-[RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=01FE0620) = 1; IDirect3D9 [0x007d4108] = 017D7338
-[ORIG_TOP] cfglog: Calling HardwareSetVideoMode
-[ORIG_TOP] cfglog: Calling RwEngineStart
-[RWC-DEVICE] CreateDevice: asked windowed 1 0x0 refresh 0 -> forced windowed 1 640x480 refresh 0
-[RWC-DEVICE] CreateDevice(adapter 0, type 1, flags 0x00000054) -> 0x00000000
-[RWC-DEVICE] window: titled border, client 640x480 at 0,1472
-[RWC_CORE] AV at 00030257 (exe+0x20257) read 6D59CB30; eax 00000000 ecx 64708540 edx 08E945E8 ebx 011EFDD4 esi 00000001 edi 08E93688 esp 011EFD64
-[RWC_CORE] AV stack exe offsets: +0x607FE0 +0x1E588 +0x1EAD7 +0x607FE0 +0x20639 +0x608558 +0x1DBF2 +0x1713D +0x1C35F +0x607FE0 +0x19FE96 +0x3E0D +0x176566 +0x33C7 +0x175FC6 +0x357D +0x176427 +0x40759 +0x246317 +0x305B88 +0x246367 +0x225235 +0x2252B9 +0x2252B9 +0x226170 +0x2252B9
-[RWC_CORE] probe: RwGlobals 01857F50 (expect 007D3EC8), IDirect3D9 [0x007d4108] 017D7338, device [0x007d4110] 08DE58B8, presents 0
-[RWC_CORE] probe: texture module offset [0x007d4054] = 0x3F4, instances [0x007d4058] = 1; texture freelist [RwGlobals+off+8] = 007D405C, texdict freelist [RwGlobals+off+0xc] = 007D4030, current texdict [+0x10] = 01886594, [0x007d4080] = 01886594
-[RWC_CORE] probe: device block in RwGlobals: +0x10 fpSystem 3F800000, +0x20 RenderStateSet 00021940, +0x30 Im2D prim 00020E40, +0x34 Im2D indexed 001B0970; curCamera +0x0 00000000
+[RWC_CORE] RwEngineOpen 0x004c30b0(hwnd=01F805A4) = 1; IDirect3D9 [0x007d4108] = 04643A60
+[RWC_CORE] RwTexDictionaryCreate 0x004c5890 call 1 on the RW core (RwCore_004c5890) = 08E4A7BC; RwGlobals 016C6518, module offset 0x3F4, texdict freelist 007D4030, list head 016C690C -> 08E4A7CC; self-test PASS (0 of 11 checks failed, 0 failing calls so far)
+[RWC_CORE] RwEngineStart 0x004c2fb0() = 1
+[RWC_CORE] probe: RwGlobals 016C6518 (expect 007D3EC8), IDirect3D9 [0x007d4108] 04643A60, device [0x007d4110] 08E1A128, presents 0
+[RWC_CORE] probe: texture module offset [0x007d4054] = 0x3F4, instances [0x007d4058] = 1; texture freelist [RwGlobals+off+8] = 007D405C, texdict freelist [RwGlobals+off+0xc] = 007D4030, current texdict [+0x10] = 08E4A7BC, [0x007d4080] = 08E4A7BC
+[RWC_CORE] probe: device block in RwGlobals: +0x10 fpSystem 3F800000, +0x20 RenderStateSet 00021C70, +0x30 Im2D prim 00021170, +0x34 Im2D indexed 001B20A0; curCamera +0x0 00000000
+[RWC_CORE] calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)
+[RWC_CORE] bring-up probe done: RwEngineStop 0x004c2f60() = 1; returning 0 from RwEngineStart so 0x00493710 runs its failure path (the rest of the top-down path is not on the RW core yet)
+[RWC_CORE] RwEngineClose 0x004c3040() = 1
+[RWC_CORE] RwEngineTerm 0x004c3270() = 1
+[ORIG_TOP] WinMain 0x00492370 returned -1 after 0 frames
+## r38c/vs_core.log (diagnostic boot before the 0x004dcdc0 stdcall fix: extended AV logger)
+[RWC_CORE] calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)
+[RWC_CORE] AV at 00000000 (exe+0xFFFF0000) write 00000000; eax 007D70B4 ecx 00000001 edx 01070000 ebx 00000000 esi 00001FA0 edi 001A3FAE esp 011EF968
+[RWC_CORE] AV stack exe offsets: +0x2D0065 +0x6E006C +0x19363B +0x9C3EC5 +0xFF07FF +0xFF0000
+[RWC_CORE] AV raw stack: [esp+0]=00000000(-) [esp+4]=00000000(-) [esp+8]=00000000(-) [esp+C]=002E0065(mashed_re.exe+0x2D0065) [esp+10]=006F006C(mashed_re.exe+0x6E006C) [esp+14]=00000067(-) [esp+18]=00000000(-) [esp+1C]=00000000(-)
+## r38b/vs_core.log (hand _rwcseg bodies, before the 0x004dcdc0 fix)
+[RWC_CORE] RwEngineStart 0x004c2fb0() = 1
+[RWC_CORE] probe: RwGlobals 01645218 (expect 007D3EC8), IDirect3D9 [0x007d4108] 04661470, device [0x007d4110] 08DB8E90, presents 0
+[RWC_CORE] probe: texture module offset [0x007d4054] = 0x3F4, instances [0x007d4058] = 1; texture freelist [RwGlobals+off+8] = 007D405C, texdict freelist [RwGlobals+off+0xc] = 007D4030, current texdict [+0x10] = 016D654C, [0x007d4080] = 016D654C
+[RWC_CORE] probe: device block in RwGlobals: +0x10 fpSystem 3F800000, +0x20 RenderStateSet 001A2000, +0x30 Im2D prim 001A1500, +0x34 Im2D indexed 001A0C90; curCamera +0x0 00000000
+[RWC_CORE] AV at 00000000 (exe+0xFFFF0000) write 00000000; eax 007D70B4 ecx 00000001 edx 01070000 ebx 00000000 esi 00001FA0 edi 001A3DEE esp 011EF96C
+[RWC_CORE] AV stack exe offsets: +0x19347B +0x5F0000 +0xFF07FF +0xFF0000
+## r38a/vs_core.log (integration bodies only, before the _rwcseg hand bodies)
+[RWC_CORE] STOP: rva 0x005CB404 called, no body on the RW core path (no source, no hand body); exit 0x52570056

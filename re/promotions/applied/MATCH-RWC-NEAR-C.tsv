@@ -1,0 +1,3 @@
+rva	route	evidence	result
+0x004d1e30	match	re/match/s20/004d1e30.c	verify/match_20261112/RESULT_MATCH-RWC-NEAR-C.md
+0x00534b60	match	re/match/rwl03/00534b60.c	verify/match_20261112/RESULT_MATCH-RWC-NEAR-C.md

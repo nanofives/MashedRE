@@ -4,6 +4,10 @@
    f8 == 1 arm past the second f8 test (an extra jmp the original does not have). Testing f1 first stops the threading
    (both tests are pure, same values). Residual: the original tests f8 then f1 there, without threading. 49 compare-form x
    flag-type variants and the permuter (425 compiles) did not reach it.
+   MATCH-RWC-NEAR-C (2026-11-12): 100%. The f8 == 1 block is a __forceinline helper taking the flags by value and
+   returning v, and the tail tests f8 then f1 as in the original. Through the inlined parameter copies cl no longer
+   threads the f8 == 1 arm past the tail test. A helper holding only the tail (87.4%, by value) or the block with an
+   early return (95.6%) does not do it.
    MATCH-RWL03 0x00534b60: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -34,6 +38,21 @@ typedef unsigned int uint;
 typedef unsigned char byte;
 MGLOBAL(undefined1, DAT_00623c78, 0x00623c78);
 int FUN_00534d00(int p0, uint p1, int p2, void * p3);
+static __forceinline uint FlagsClear_00534b60(uint v, int f8, int f1, int f4, int f20)
+{
+  if (f8 == 1) {
+    if (f1 == 1) {
+      v = v & 0xfffffffe;
+    }
+    if (f4 == 1) {
+      v = v & 0xfffffffb;
+    }
+    if (f20 == 1) {
+      v = v & 0xffffffdf;
+    }
+  }
+  return v;
+}
 // MATCH: 0x00534b60 FUN_00534b60
 void FUN_00534b60(undefined4 param_1,uint param_2,undefined4 param_3)
 {
@@ -67,18 +86,8 @@ void FUN_00534b60(undefined4 param_1,uint param_2,undefined4 param_3)
   if (f100 == 1 && f100000 == 1) {
     v = v & 0x100000;
   }
-  if (f8 == 1) {
-    if (f1 == 1) {
-      v = v & 0xfffffffe;
-    }
-    if (f4 == 1) {
-      v = v & 0xfffffffb;
-    }
-    if (f20 == 1) {
-      v = v & 0xffffffdf;
-    }
-  }
-  if (f1 == 0 && f8 == 0) {
+  v = FlagsClear_00534b60(v, f8, f1, f4, f20);
+  if (f8 == 0 && f1 == 0) {
     v = v | 1;
   }
   if ((v & 0x30000000) == 0) {

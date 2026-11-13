@@ -52,7 +52,7 @@ extern "C" {
 unsigned int  __cdecl QpcTimeScaledTo3Mhz(void);                // 0x004950b0, Match/MatchS16_004950b0.cpp
 void          __cdecl PortTop_Bound_00493390(void);              // 0x00493390, Match/PortTop_00493390.cpp
 unsigned char __cdecl PortTop_Bound_00497310(int player, int action);   // 0x00497310, Match/PortTop_00497310.cpp
-unsigned int  __cdecl PortTop_Bound_00534870(void);              // 0x00534870, Match/PortTop_00534870.cpp
+extern "C" int RwCore_00534870(void);                              // 0x00534870, RwCore/RwCore_00534870.cpp (the same byte-matched source re/match/rwl03/00534870.c; one body per target, merge with RWC-CORE-RUN)
 void          __cdecl CarSlotStateSet(int slot, unsigned int state);    // 0x0040e480, Match/MatchS02_0040e480.cpp
 unsigned char __cdecl PortTop_Replay_00497310(int player, int action);  // below
 }
@@ -219,7 +219,7 @@ extern "C" unsigned int PortTop_Replay_00534870(void) {
     const int base = *reinterpret_cast<volatile int*>(0x007d3ff8u);       // RwGlobals pointer
     const int saved = off;
     off = static_cast<int>(reinterpret_cast<std::uintptr_t>(&g_rw)) - base;
-    const unsigned r = PortTop_Bound_00534870();
+    const unsigned r = static_cast<unsigned>(RwCore_00534870());
     off = saved;
     ++g_rwCalls;
     return r;
@@ -546,7 +546,7 @@ void Replay_Summary(unsigned timerCalls480) {
          g_warpPhaseBefore, g_anchored ? "reached" : "not reached", g_anchorTick, g_normChanged[0], g_normChanged[1],
          g_inputApplied, g_pollSkipped, g_rwCalls, reinterpret_cast<void*>(&QpcTimeScaledTo3Mhz),
          reinterpret_cast<void*>(&PortTop_Bound_00493390), reinterpret_cast<void*>(&PortTop_Bound_00497310),
-         reinterpret_cast<void*>(&PortTop_Bound_00534870));
+         reinterpret_cast<void*>(&RwCore_00534870));
 }
 
 }  // extern "C"

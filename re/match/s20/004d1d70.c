@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWT-B 2026-11-12: 100% after declaring ext with its initializer before next (was 72.1%, regs 98.4%: DAT_00911ae4 load and lea placement). */
 /* MATCH-S20 0x004d1d70 (h4): 72.1% (regs 98.4%). Walks the raster list at 0x007d46e0 (node: raster, next); for each
    top-level raster (parent == self) releases the D3D object in the plugin extension (raster + DAT_00911ae4) by
    cType: 0/4 when ext+0x18 is in 0x46..0x50, 5 always, 1 unless it is DAT_007d4114 (each also NULLs ext+0),
@@ -52,9 +53,8 @@ void FUN_004d1d70(void)
   RasterLink *cur = DAT_007d46e0;
   while (cur) {
     RwRaster *raster = cur->raster;
+    RasterExt *ext = (RasterExt *)((unsigned char *)raster + DAT_00911ae4);
     RasterLink *next = cur->next;
-    RasterExt *ext;
-    ext = (RasterExt *)((unsigned char *)raster + DAT_00911ae4);
     if (raster->parent == raster) {
       switch (raster->cType) {
       case 0:
