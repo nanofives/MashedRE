@@ -1,0 +1,21 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 3/8 after 600s
+[RO_DEF-fdref2] exit 0 18:58:57
+[ORIG_TOP] [TRACE] watch armed (rc 0) on main thread 15964: 1 slot(s) 0x007F0FF0 0x00000000 0x00000000 0x00000000, dr7 0x000D0001, from tick 0
+[ORIG_TOP] [TRACE] watch: 603 hit(s), 3 distinct pc, 0 pc over the table, watch.jsonl written
+[ORIG_TOP] [TRACE] self-test PASS (0 of 44392 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 10, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reached at tick 300 (N 903)
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 00018800, 0x00493390 001A1450, 0x00497310 00018B30, 0x00534870 00034190
+[RO_RONEG-fdneg2] exit 0 18:59:11
+[ORIG_TOP] [TRACE] watch armed (rc 0) on main thread 11220: 1 slot(s) 0x007F0FF0 0x00000000 0x00000000 0x00000000, dr7 0x000D0001, from tick 0
+[ORIG_TOP] [TRACE] watch: 604 hit(s), 4 distinct pc, 0 pc over the table, watch.jsonl written
+[ORIG_TOP] [TRACE] self-test PASS (0 of 44392 checks failed): records 600 (dropped 0 over cap 6000), checkpoints 10, pages not readable at some tick 0 of 812, page map changes 0, warp ran at tick 300, anchor reached at tick 300 (N 903)
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 00018800, 0x00493390 001A1450, 0x00497310 00018B30, 0x00534870 00034190
+[RO_ROIMG-fdimg] exit 0 18:59:48
+[ORIG_TOP] [TRACE] watch armed (rc 0) on main thread 17728: 4 slot(s) 0x005EA004 0x00898C00 0x007F1004 0x0067ECA4, dr7 0xDDDD0055, from tick 0
+[o4] exit 0 19:01:28
+  [agent] {'kind': 'info', 'msg': 'warp watch armed (w) on 29 threads: 0x898c00=0x43340000'}
+  warp at N=3525 pins={'ptd': '0x44c05c0', 'holdrand_before': 1, 'rw_ring': '0xd88c5f8', 'rw_cursors_before': [227067396, 227067384], 'warpClock': {'k': 300, 'q': '1123741924'}, 'timer': {'v': 337122577, 'before': [338067077, 335366109, 48932, 112689, 111755]}, 'norm': {'at': 'warp', 'rows': 299, 'c
+  race anchor N=3634 dn_warp=109 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  [agent] {'kind': 'info', 'msg': 'watch armed (w) on 29 threads: 0x898c00=0x43340000'}
+  ticks 600 x 3245 blocks
+=== rc=0 ckpts=17

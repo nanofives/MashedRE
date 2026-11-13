@@ -1,0 +1,9 @@
+0x004c1980	_RwCore_004c1980	0x00036160	112	1	11	0	IDENTICAL		False	re/match/rwl01/004c1980.c
+0x004c78e0	_RwCore_004c78e0	0x00036bc0	272	1	30	0	IDENTICAL		False	re/match/rwl01/004c78e0.c
+0x004cbca0	_RwCore_004cbca0	0x000357c0	96	1	10	0	IDENTICAL		False	re/match/rwl01/004cbca0.c
+0x004d3db0	_RwCore_004d3db0	0x00035bf0	224	4	20	0	IDENTICAL		False	re/match/rwl01/004d3db0.c
+0x004d7c60	_RwCore_004d7c60	0x00035900	64	1	5	0	IDENTICAL		False	re/match/s21/004d7c60.c
+0x004d8fa0	_RwCore_004d8fa0	0x000361d0	96	1	10	0	IDENTICAL		False	re/match/s21/004d8fa0.c
+0x004c7a60	_RwCore_004c7a60	0x00036600	16	1	0	0	IDENTICAL		False	re/match/s20/004c7a60.c
+0x004cc9e0	_Orig_004cc9e0	0x00025a50	16	1	0	0	IDENTICAL		False	re/match/rwl01/004cc9e0.c
+0x004cc9e0	_RwCore_004cc9e0	0x00033060	16	1	0	0	IDENTICAL		False	re/match/rwl01/004cc9e0.c

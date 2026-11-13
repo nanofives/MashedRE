@@ -9,7 +9,7 @@
 #define FUN_004e1780 RwCore_004e1780
 #define FUN_004e17e0 RwCore_004e17e0
 #define FUN_004e1e70 RwCore_004e1e70
-#define thunk_FUN_004cc820 RwCore_004cc820
+#define thunk_FUN_004cc820 RwCore_004cc9e0
 extern "C" {
 #include "../../../../re/match/rwl01/004d3db0.c"
 }

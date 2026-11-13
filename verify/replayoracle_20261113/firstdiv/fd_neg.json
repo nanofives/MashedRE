@@ -1,0 +1,146 @@
+{
+ "ref": "D:\\MashedWT\\RO-FIRST-DIVERGENCE_data\\RO_DEF-fdref",
+ "run": "D:\\MashedWT\\RO-FIRST-DIVERGENCE_data\\RO_RONEG-fdneg",
+ "sides": [
+  "exe",
+  "exe"
+ ],
+ "records": 600,
+ "block": 1024,
+ "tick_counters_aligned": true,
+ "masks": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\RO-FIRST-DIVERGENCE\\re\\frida\\warp_normalize.tsv,C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\RO-FIRST-DIVERGENCE\\re\\frida\\replay_masks.tsv",
+ "ignore": "",
+ "blocks_fully_masked": 21,
+ "constant_blocks_explained": [
+  "0x772c00",
+  "0x7e9400"
+ ],
+ "explained_at_tick": 399,
+ "identical_for_n_new_blocks": 399,
+ "first_new_block": [
+  "0x7f0c00",
+  399
+ ],
+ "first_divergent_record": 399,
+ "record": 399,
+ "tick": 400,
+ "tick_run": 400,
+ "blocks_at_record": [
+  "0x7f0c00"
+ ],
+ "raw_words_at_record": 1,
+ "blocks_differing_per_record_first16": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "dumps": {
+  "ref@399": "OK",
+  "ref@400": "OK",
+  "run@399": "OK",
+  "run@400": "OK"
+ },
+ "dump_record_mismatch": {},
+ "dword_classes": {
+  "VALUE": 1
+ },
+ "value_dwords": 1,
+ "dwords": [
+  {
+   "va": "0x7f0ff0",
+   "ref_prev": 4900,
+   "ref": 4950,
+   "run_prev": 4900,
+   "run": 4951,
+   "new_this_tick": true,
+   "section": ".data (bss)",
+   "file_init": 0,
+   "static_writers": {
+    "0x004924f0 sub_004924f0 [boot]": [
+     "0x00492679"
+    ],
+    "0x00493390 FUN_00493390 [util]": [
+     "0x00493453"
+    ]
+   },
+   "static_readers": {
+    "0x00401340 CupSpinSpeedAndColor [hud]": [
+     "0x00401343"
+    ],
+    "0x00446520 FUN_00446520 [util]": [
+     "0x0044660b",
+     "0x0044687c",
+     "0x00446893"
+    ],
+    "0x00493390 FUN_00493390 [util]": [
+     "0x00493430"
+    ]
+   },
+   "region": "frame timer block 0x007f0ff0..0x007f1034"
+  }
+ ],
+ "value_census": [
+  {
+   "cat": "OTHER",
+   "section": ".data (bss)",
+   "dwords": 1,
+   "first": "0x7f0ff0",
+   "run_zero": 0
+  }
+ ],
+ "first_value_dword": "0x7f0ff0",
+ "writers": {
+  "ref:0x7f0ff0": {
+   "hits": 603,
+   "in_frame": 1,
+   "last": {
+    "kind": "watch",
+    "side": "exe",
+    "tick": 399,
+    "n": 1198,
+    "slot": 0,
+    "va": "0x7f0ff0",
+    "pc": "0x18b09",
+    "value": "0x1356",
+    "bt": "0x1a0255"
+   },
+   "last_label": "_PortTop_Body_00493390+0xc9",
+   "frame_pcs": [
+    "0x18b09"
+   ]
+  },
+  "run:0x7f0ff0": {
+   "hits": 604,
+   "in_frame": 1,
+   "last": {
+    "kind": "watch",
+    "side": "exe",
+    "tick": 399,
+    "n": 1198,
+    "slot": 0,
+    "va": "0x7f0ff0",
+    "pc": "0x18b09",
+    "value": "0x1356",
+    "bt": "0x1a0255"
+   },
+   "last_label": "_PortTop_Body_00493390+0xc9",
+   "frame_pcs": [
+    "0x18b09"
+   ]
+  }
+ },
+ "plan": []
+}

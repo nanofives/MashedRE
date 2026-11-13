@@ -287,6 +287,8 @@ def run(args):
                 raise SystemExit("--boot needs --clock tick")
             cfg["boot"] = True; cfg["warpTick"] = args.warp_tick; cfg["menuCkpt"] = args.menu_ckpt
             cfg["bootStep"] = args.boot_step; cfg["bootQstep"] = args.boot_qstep
+            if args.ckpt_ticks:
+                cfg["ckptTicks"] = [int(x) for x in args.ckpt_ticks.split(",") if x != ""]
             if args.neg_tick:
                 cfg["negTick"] = args.neg_tick
         meta["cfg"] = {k: v for k, v in cfg.items() if k != "prov"}
@@ -543,6 +545,9 @@ if __name__ == "__main__":
     ap.add_argument("--where", action="store_true", help="boot mode: print the main thread's backtrace with every stats line")
     ap.add_argument("--neg-tick", type=int, default=0, help="boot mode: apply --negctl at this tick instead of the race anchor")
     ap.add_argument("--menu-ckpt", action="store_true", help="boot mode: full-image checkpoint k=100 at the warp, before its writes")
+    ap.add_argument("--ckpt-ticks", default="", help="RO-FIRST-DIVERGENCE, boot mode: comma list of ticks with a full-image checkpoint "
+                                                       "(k = 200 + index; tick 0 = at the install, the PE entry point). Tick t's dump "
+                                                       "is taken after tick t's record (ticks.bin index t - 1; detorig_firstdiv.py checks it)")
     ap.add_argument("--rec", action="store_true", help="RO-INPUT-RECORD: log the FUN_00497310 player-0 return values from the race anchor on (inputrec.json / inputrec.bin), native, no Interceptor")
     ap.add_argument("--input-json", default="", help="RO-INPUT-RECORD: scripted input from a replay.json (rows [tick after anchor, player, control, value], player 0 only), keyed by tick instead of by clock call")
     ap.add_argument("--asi", action="store_true", help="RO-ORIG-ASI: run the boot-mode replay in mashed_re_dev.asi (MASHED_REPLAY_ASI), no Frida; needs --boot --clock tick")

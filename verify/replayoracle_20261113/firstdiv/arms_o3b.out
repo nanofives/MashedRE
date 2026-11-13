@@ -1,0 +1,9 @@
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 3/8 after 600s
+[o3b] exit 0 11:43:07
+  [agent] {'kind': 'info', 'msg': 'warp watch armed (w) on 28 threads: 0x5ea004=0x4a57e4,0x7f1030=0x14267e85'}
+  warp at N=3526 pins={'ptd': '0x43a05c0', 'holdrand_before': 1, 'rw_ring': '0x43aef08', 'rw_cursors_before': [70971156, 70971144], 'warpClock': {'k': 300, 'q': '1123741924'}, 'timer': {'v': 337122577, 'before': [338067077, 335366109, 48932, 112689, 111755]}, 'norm': {'at': 'warp', 'rows': 299, 'cha
+  race anchor N=3635 dn_warp=109 frames=0 clk=0/0 witness=[['468980', 217], ['470670', 81]]
+  [agent] {'kind': 'info', 'msg': 'watch armed (w) on 28 threads: 0x5ea004=0x4a57e4,0x7f1030=0x142741d5'}
+  ticks 600 x 3245 blocks
+=== rc=0 ckpts=19

@@ -16,7 +16,23 @@
    No source form tried keeps the folded compare under /G5: 18 loop shapes, 5 structural rewrites (no cache local,
    flag variable, break form, Mat16 pointer, cache read after the stores), volatile p or q, short/char counter,
    goto loops, and flags /Oa /Ow /Os /Gr /G3 /G4 /Og, rw9044 toolchain; permuter 1295 compiles on the counter form.
-   Open lever: what keeps c2 from taking ebx for the split in the original. Class (b). */
+   Open lever: what keeps c2 from taking ebx for the split in the original. Class (b).
+   MATCH-RWT-S1B (2026-11-13), still 90.2% under both ddk and rw9044 (this source kept). Mechanism measured on probes
+   (verify/match_20261113/RESULT_MATCH-RWT-S1B.md): under /G5 both c2 builds load both sides of a compare whose
+   register side is loaded in the same block, and fold the memory operand only when the register allocator has no
+   register left for the second load (an extra value live across the loop gives `cmp ebx,[ecx]`). The original
+   has no ebx reference in 0x004cb4c0..0x004cb5bd, and its neighbour 0x004cb330 (also an ebp frame) keeps its loop
+   counter in [ebp-4] (0x004cb353, 0x004cb363, 0x004cb36a) with no ebx reference in 0x004cb330..0x004cb48f. Both
+   compiles of ours give ebx to that value instead. No cl/c2 switch tried (32 cl and 4 /d2 c2 switches, each added to /O2 /Ob1 /G5
+   /Oy-, inline __asm in or beside the function) and no source shape reproduces the original.
+   MATCH-RWT-S1B attempt 2 (2026-11-13): 100.0%, 0 differing bytes, relocheck OK. The lever is the alignment of
+   DAT_00618258: declared with an 8-aligned type (Mat16A, __declspec(align(8))), and with the down-counter loop above.
+   A function that references a global of alignment > 4 takes the aligned-frame path in c2: an ebp frame with no
+   locals, and under the Processor Pack c2 (rw9044) ebx is left out of the allocation, so the compare folds
+   (probes t26.c / t27.c in verify/match_20261113/MATCH-RWT-S1B_probes/; align(4) or no align gives no frame).
+   Scores of this source: ddk /O2 /Ob1 /G5 /Oy- (the recorded header) 100.0%, rw9044 with or without /Oy- 100.0%,
+   ddk without /Oy- 83.5% (frame, but ebx taken). align(16) scores the same, align(8) is kept because
+   0x00618258 & 0xf = 8 (8-aligned, not 16-aligned). Index loop (old body) under the aligned type: 90.2%. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -43,14 +59,14 @@ typedef unsigned int undefined4;
 typedef struct { int m[16]; } Mat16;
 typedef long (__stdcall *setxf_fn)(int *, int, Mat16 *);
 MGLOBAL(Mat16 *, DAT_007d4558, 0x007d4558);
-MGLOBAL(Mat16, DAT_00618258, 0x00618258);
+typedef __declspec(align(8)) struct { int m[16]; } Mat16A;
+MGLOBAL(Mat16A, DAT_00618258, 0x00618258);
 MGLOBAL(int, DAT_007d4154, 0x007d4154);
 MGLOBAL(int *, DAT_007d4110, 0x007d4110);
 MGLOBAL(Mat16, DAT_005d8b90, 0x005d8b90);
 // MATCH: 0x004cb4c0 FUN_004cb4c0
 int FUN_004cb4c0(int *param_1)
 {
-  int i;
   long r;
   if (param_1 != 0 && (param_1[3] & 0x20000) == 0) {
     int *cache = DAT_007d4558->m;
@@ -67,14 +83,18 @@ int FUN_004cb4c0(int *param_1)
     DAT_00618258.m[13] = param_1[13];
     DAT_00618258.m[14] = param_1[14];
     if (DAT_007d4154 == 0) {
-      for (i = 0; i < 16; i++) {
-        if (DAT_00618258.m[i] != cache[i]) goto set;
-      }
+      const int *p = DAT_00618258.m, *q = cache;
+      int n = 16;
+      do {
+        if (*q != *p) goto set;
+        p++;
+        q++;
+      } while (--n);
       return 1;
     }
 set:
-    *(Mat16 *)cache = DAT_00618258;
-    r = (*(setxf_fn *)(*DAT_007d4110 + 0xb0))(DAT_007d4110, 0x100, &DAT_00618258);
+    *(Mat16A *)cache = DAT_00618258;
+    r = (*(setxf_fn *)(*DAT_007d4110 + 0xb0))(DAT_007d4110, 0x100, (Mat16 *)&DAT_00618258);
     DAT_007d4154 = 0;
     return r >= 0;
   }

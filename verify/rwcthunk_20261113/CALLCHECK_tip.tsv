@@ -1,0 +1,11 @@
+rva	exe_symbol	exe_va	thunk	stub	orig_sites	orig_targets	exe_calls_stub	exe_calls_thunk_target	result
+0x004c1980	_RwCore_004c1980	0x0021ab60	thunk_FUN_004cc820	0x004cc9e0	004c19a9	004cc9e0	1	0	OK
+0x004c5f60	_RwCore_004c5f60	0x00219e80	thunk_FUN_004cc820	0x004cc9e0	004c5f8a;004c5fd9	004cc9e0;004cc9e0	2	0	OK
+0x004c78e0	_RwCore_004c78e0	0x0021b5c0	thunk_FUN_004cc820	0x004cc9e0	004c79af	004cc9e0	1	0	OK
+0x004cbca0	_RwCore_004cbca0	0x00218af0	thunk_FUN_004cc820	0x004cc9e0	004cbcc5	004cc9e0	1	0	OK
+0x004cd900	_RwCore_004cd900	0x002197d0	thunk_FUN_004cc820	0x004cc9e0	004cd92a;004cd972	004cc9e0;004cc9e0	2	0	OK
+0x004d3db0	_RwCore_004d3db0	0x00219b90	thunk_FUN_004cc820	0x004cc9e0	004d3dec	004cc9e0	1	0	OK
+0x0052e3d0	_RwCore_0052e3d0	0x002137c0	thunk_FUN_004cc820	0x004cc9e0	0052e431	004cc9e0	1	0	OK
+0x004c32b0	_RwCore_004c32b0	0x00218710	thunk_FUN_004cfa00	0x004c7a60	004c3590	004c7a60	1	0	OK
+0x004d7c60	_RwCore_004d7c60	0x00218c50	thunk_FUN_004cc820	0x004cc9e0	004d7c7b	004cc9e0	1	0	OK
+0x004d8fa0	_RwCore_004d8fa0	0x0021abd0	thunk_FUN_004cc820	0x004cc9e0	004d8fc5	004cc9e0	1	0	OK
