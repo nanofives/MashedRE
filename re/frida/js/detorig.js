@@ -320,7 +320,8 @@ const onDue = K(new NativeCallback(() => {
 D.add(0x1c).writePointer(onDue);
 
 // ---------------------------------------------------------------- write watch (cfg.watch), port of scenario_launch.py's
-// --watch-write: debug-register write watchpoints, armed on every thread at the race anchor. No code patch.
+// --watch-write: debug-register write watchpoints, armed on every thread at the race anchor (and at the install and the
+// warp with cfg.watchFrom = 'install', RO-CTL-68BC0C). No code patch.
 let watchHits = 0;
 function watchArm() {
   const addrs = (CFG.watch || []).slice(0, 2).map((va) => ga(va));
@@ -342,7 +343,7 @@ function watchArm() {
   Process.enumerateThreads().forEach((t) => {
     addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, 'w'); if (k === 0) n++; } catch (e) { } });
   });
-  return 'watch armed on ' + n + ' threads: ' + addrs.map((a) => a.toString()).join(',');
+  return 'watch armed on ' + n + ' threads: ' + addrs.map((a) => a.toString() + '=0x' + (a.readU32() >>> 0).toString(16)).join(',');
 }
 
 // ---------------------------------------------------------------- tick clock + per-tick block hashes (REPLAY-ORACLE-DESIGN)
@@ -762,6 +763,9 @@ function install() {
   const CRA = crashArm();
   if (CRA) res.push(['crash', CRA]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
+  // RO-CTL-68BC0C: cfg.watchFrom = 'install' arms the write watch here too (boot mode: the PE entry point; else the menu),
+  // and re-arms it at the warp, so threads created after an arm are covered from the next one (anchor arm unchanged)
+  if (CFG.watchFrom === 'install' && CFG.watch && CFG.watch.length) res.push(['watch', watchArm()]);
   const doWarp = () => {
     warpN = N();
     if (CFG.boot) {
@@ -770,6 +774,7 @@ function install() {
       if (ph !== 1) { send({ kind: 'err', msg: `boot warp at tick ${tickNow()}: phase ${ph}, not the menu (1)` }); return; }
       if (CFG.menuCkpt) checkpoint(100);   // full image at the end of the menu segment, before the warp writes
     }
+    if (CFG.watchFrom === 'install' && CFG.watch && CFG.watch.length) send({ kind: 'info', msg: 'warp ' + watchArm() });
     const pins = warp();
     if (PV_AT) pins.prov = PV_AT;
     if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
