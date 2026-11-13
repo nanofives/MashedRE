@@ -1,0 +1,120 @@
+#define NULL_P ((void *)0)
+typedef struct H {
+  uint flags; S24 s; ushort n1; ushort n2; void *a16; void *a2;
+} H;
+@@ base
+// MATCH: 0x0053d5a0 FUN_0053d5a0
+H *FUN_0053d5a0(ushort param_1, ushort param_2, uint *param_3, uint param_4)
+{
+  H *h;
+  uchar *mem;
+  int size;
+  undefined4 loc[2];
+
+  size = 0x28;
+  if (param_2 > 0) size = (uint)param_2 * 0x10 + 0x37;
+  if ((param_4 & 1) != 0) size = size + 1 + (uint)param_1 * 2;
+  h = (H *)(**(codeptr *)(DAT_007d3ff8 + 0x108))(size, 0x3002c);
+  if (h == 0) {
+    loc[0] = 0x11d;
+    loc[1] = FUN_004d7ff0(0x80000013, size);
+    FUN_004d8480(loc);
+    return 0;
+  }
+  h->n1 = param_1;
+  h->flags = param_4;
+  h->n2 = param_2;
+  h->s = *(S24 *)param_3;
+  mem = (uchar *)(h + 1);
+  if (param_2 > 0) {
+    mem = (uchar *)(((uint)mem + 0xf) & ~0xf);
+    h->a16 = mem;
+    mem += param_2 * 16;
+  } else {
+    h->a16 = 0;
+  }
+  if (param_4 & 1) {
+    h->a2 = (void *)(((uint)mem + 1) & ~1);
+  } else {
+    h->a2 = 0;
+  }
+  return h;
+}
+@@ noret
+// MATCH: 0x0053d5a0 FUN_0053d5a0
+H *FUN_0053d5a0(ushort param_1, ushort param_2, uint *param_3, uint param_4)
+{
+  H *h;
+  uchar *mem;
+  int size;
+  undefined4 loc[2];
+
+  size = 0x28;
+  if (param_2 > 0) size = (uint)param_2 * 0x10 + 0x37;
+  if ((param_4 & 1) != 0) size = size + 1 + (uint)param_1 * 2;
+  h = (H *)(**(codeptr *)(DAT_007d3ff8 + 0x108))(size, 0x3002c);
+  if (!h) {
+    loc[0] = 0x11d;
+    loc[1] = FUN_004d7ff0(0x80000013, size);
+    FUN_004d8480(loc);
+    return 0;
+  }
+  h->n1 = param_1;
+  h->flags = param_4;
+  h->n2 = param_2;
+  h->s = *(S24 *)param_3;
+  mem = (uchar *)h + sizeof(H);
+  if (param_2 > 0) {
+    mem = (uchar *)(((uint)mem + 0xf) & ~0xf);
+    h->a16 = mem;
+    mem += param_2 * 16;
+  } else {
+    h->a16 = NULL_P;
+  }
+  if (param_4 & 1) {
+    h->a2 = (void *)(((uint)mem + 1) & ~1);
+  } else {
+    h->a2 = NULL_P;
+  }
+  return h;
+}
+@@ zlocal
+// MATCH: 0x0053d5a0 FUN_0053d5a0
+H *FUN_0053d5a0(ushort param_1, ushort param_2, uint *param_3, uint param_4)
+{
+  H *h;
+  H *res;
+  uchar *mem;
+  int size;
+  undefined4 loc[2];
+
+  size = 0x28;
+  if (param_2 > 0) size = (uint)param_2 * 0x10 + 0x37;
+  if ((param_4 & 1) != 0) size = size + 1 + (uint)param_1 * 2;
+  h = (H *)(**(codeptr *)(DAT_007d3ff8 + 0x108))(size, 0x3002c);
+  if (h == 0) {
+    loc[0] = 0x11d;
+    loc[1] = FUN_004d7ff0(0x80000013, size);
+    FUN_004d8480(loc);
+    return 0;
+  }
+  res = h;
+  h->n1 = param_1;
+  h->flags = param_4;
+  h->n2 = param_2;
+  h->s = *(S24 *)param_3;
+  mem = (uchar *)(h + 1);
+  if (param_2 > 0) {
+    mem = (uchar *)(((uint)mem + 0xf) & ~0xf);
+    res->a16 = mem;
+    mem += param_2 * 16;
+  } else {
+    res->a16 = 0;
+  }
+  if (param_4 & 1) {
+    res->a2 = (void *)(((uint)mem + 1) & ~1);
+  } else {
+    res->a2 = 0;
+  }
+  return res;
+}

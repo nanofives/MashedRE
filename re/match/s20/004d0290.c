@@ -1,5 +1,11 @@
 // TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWT-S4 2026-11-13: 79.8% (re-score) -> 100% BYTE-IDENTICAL under rw9044 (ddk 74.2%: the ddk c2 sinks the
+   ebp/edi pushes). Three source changes: case 0/4 clears privateFlags before storing lockedMipLevel = 0xff (the original
+   reuses al from the +0x22 test: and al,0xf9 at 0x004d033a, then the 0xff store at 0x004d033f); the cube branch loads topExt->texture inside each arm, so the cube byte is
+   read before the texture (0x004d03a5, 0x004d03a9); pt.x / pt.y re-read nOffsetX / nOffsetY instead of copying rect.left / rect.top
+   (stops c2 hoisting the surface load above the top == param_2 test and gives the original rect schedule from 0x004d041e).
+   Evidence: verify/match_20261113/RESULT_MATCH-RWT-S4.md. */
 /* RWC-DRIVER 2026-11-11: 73.4% -> 76.4%. Moved by: cases end in break with one 'return 1' after the switch (RW RWRETURN shape), +0xb = 0xff stored before the privateFlags clear in case 0/4 (permuter). Residual unchanged: the original saves ebp/edi in the prologue; ours sinks them past the cpPixels early exit (inverting the test to 'if (cpPixels != 0) {...}' gets the prologue right but moves the error block to the end, 67%). */
 /* MATCH-S20 0x004d0290 (h2): 73.4% (regs 81.5%). Raw 19.3%. D3D9 raster unlock shape: RwRaster / raster-extension
    structs (cube:4/face:4 and automipmapgen:4/compressed:4 bitfields), UnlockRect +0x38 / Release +8,
@@ -87,8 +93,8 @@ int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
     param_2->cpPixels = 0;
     if ((param_2->privateFlags & 4) && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0 &&
         ext->automipmapgen == 0) {
-      ext->lockedMipLevel = 0xff;
       param_2->privateFlags &= ~6;
+      ext->lockedMipLevel = 0xff;
       top = param_2;
       do {
         top = top->parent;
@@ -112,10 +118,11 @@ int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
       } while (top != top->parent);
       topExt = EXT(top);
       if ((param_2->cType & 7) == 5) {
-        tex = topExt->texture;
         if (topExt->cube) {
+          tex = topExt->texture;
           hr = (*(getcube_fn *)(*tex + 0x48))(tex, topExt->face, ext->lockedMipLevel, &surface);
         } else {
+          tex = topExt->texture;
           hr = (*(getsurf_fn *)(*tex + 0x48))(tex, ext->lockedMipLevel, &surface);
         }
       } else {
@@ -133,8 +140,8 @@ int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
           rect.top = param_2->nOffsetY;
           rect.right = rect.left + param_2->width;
           rect.bottom = rect.top + param_2->height;
-          pt.x = rect.left;
-          pt.y = rect.top;
+          pt.x = param_2->nOffsetX;
+          pt.y = param_2->nOffsetY;
           (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, &rect, surface, &pt);
         }
         if ((param_2->cType & 7) == 5) {
