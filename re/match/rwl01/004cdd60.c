@@ -1,5 +1,6 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL01 0x004cdd60: best 79.2% (regs 87%), class (b). Stack pair as an array, plain int flag, ternary for the +0x18 store, shift without the byte mask. Remaining: the shift block sits after the compare in the original and edx/ebp/edi are assigned differently (switch and if forms, permuter 141 compiles gave nothing). */
+/* MATCH-RWT-S2 0x004cdd60: 100% under rw9044 (also 100% under ddk). Was 79.2% (MATCH-RWL01). Lever: the flag is a boolean expression (d==4||d==8) and both the palette size and the +0x18 store are ternaries on it; an if/else gives 90.9% (then-block inline), zero-init + if gives 85.7%. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -39,34 +40,25 @@ typedef int code();
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 undefined4 FUN_004d7ff0(undefined4 p0, undefined4 p1);
 undefined4 * FUN_004d8480(undefined4 * p0);
+
 // MATCH: 0x004cdd60 FUN_004cdd60
 uint * FUN_004cdd60(uint *param_1)
-
 {
   int bVar1;
-  uint uVar2;
   int iVar3;
+  uint uVar2;
   int iVar4;
   undefined4 loc[2];
-  
-  uVar2 = param_1[3];
-  if ((uVar2 == 4) || (uVar2 == 8)) {
-    bVar1 = 1;
-    iVar3 = (1 << uVar2) << 2;
-  }
-  else {
-    bVar1 = 0;
-    iVar3 = 0;
-  }
-  uVar2 = ((int)(uVar2 + 7) >> 3) * param_1[1] + 3 & 0xfffffffc;
+  bVar1 = (param_1[3] == 4) || (param_1[3] == 8);
+  iVar3 = bVar1 ? (1 << param_1[3]) << 2 : 0;
+  uVar2 = ((int)(param_1[3] + 7) >> 3) * param_1[1] + 3 & 0xfffffffc;
   iVar4 = param_1[2] * uVar2;
   param_1[4] = uVar2;
-  iVar3 = iVar4 + iVar3;
-  uVar2 = (**(code **)(DAT_007d3ff8 + 0x108))(iVar3,0x30018);
+  uVar2 = (**(code **)(DAT_007d3ff8 + 0x108))(iVar4 + iVar3,0x30018);
   param_1[5] = uVar2;
   if (uVar2 == 0) {
     loc[0] = 1;
-    loc[1] = FUN_004d7ff0(0x80000013,iVar3);
+    loc[1] = FUN_004d7ff0(0x80000013,iVar4 + iVar3);
     FUN_004d8480(loc);
     return (uint *)0x0;
   }

@@ -1,0 +1,6 @@
+exe C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe.unpatched size 2846720 sha256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+range .rdata   va 0x005cc000 len 0x01d044 (118852) fnv1a32 0xee647e46
+range .data    va 0x005ea000 len 0x04d000 (315392) fnv1a32 0x935b1e30
+range _rwdseg  va 0x00915000 len 0x000008 (8) fnv1a32 0x9be17165
+payload bytes 434252
+wrote D:\MashedWT\IMG-1-EXTRACT_root\original\mashed_image.bin size 434400 sha256 81CC77758FFE93AC0B681EB1FED3D63912D25E7D059503AF6D4F871DEA9AFCD8

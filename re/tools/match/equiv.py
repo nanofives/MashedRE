@@ -1148,7 +1148,7 @@ CMOVCC = {"cmov" + k[1:]: v for k, v in CC_OF.items()}
 
 
 class Region:
-    __slots__ = ("events", "texts", "x87", "jmps", "end", "pcs", "pops", "paired")
+    __slots__ = ("events", "texts", "x87", "jmps", "end", "pcs", "pops", "paired", "fx")
 
 
 class State:
@@ -1866,9 +1866,74 @@ class Ctx:
         if rep:
             st.r["ecx"] = C(0)
 
+    def effects(self, side, st, cs):
+        """What one instruction touches, taken on the state before it runs (EQUIV-X87-INTEGER-MOTION, L-147 (a)):
+        (registers read, registers written, memory accesses). Registers are full names (ax/al/ah -> eax), EFLAGS is
+        "eflags", x87 registers keep capstone's names (st0.., fpsw). Explicit and implicit operands both count
+        (capstone regs_access: fnstsw ax writes eax, fcomi writes eflags, sahf reads eax and writes eflags).
+        A memory access is (address term, size, written); the address term None means "not modelled, any memory".
+        Address terms are values computed on this side's own state, so comparing two of them with `disjoint` is
+        sound whatever ran in between."""
+        mn = cs.mnemonic
+        def full(r):
+            n = cs.reg_name(r)
+            return SUB[n][0] if n in SUB else n
+        rr, ww = cs.regs_access()
+        rd = {full(r) for r in rr}
+        wt = {full(r) for r in ww}
+        mem = []
+        if mn not in ("lea", "nop") and not mn.startswith("prefetch"):
+            for op in cs.operands:
+                if op.type != X.X86_OP_MEM:
+                    continue
+                a = self.addr(side, st, cs, op)
+                for r in (op.mem.base, op.mem.index):
+                    if r:
+                        rd.add(full(r))
+                sz = op.size or 4
+                if mn in ("fnsave", "fsave", "frstor", "fnstenv", "fstenv", "fldenv"):
+                    sz = 108
+                acc = op.access
+                if mn.startswith("f"):
+                    # capstone 5 reports fstp m32 as a read: the x87 direction comes from X87_STORE
+                    acc = 2 if mn in X87_STORE else 1
+                if acc & 1:
+                    mem.append((a, sz, False))
+                if acc & 2:
+                    mem.append((a, sz, True))
+                if not acc & 3:
+                    mem.append((a, sz, True))
+        esp = st.r["esp"]
+        if mn == "push":
+            mem.append((add(esp, C(-4 & M32)), 4, True))
+            rd.add("esp"); wt.add("esp")
+        elif mn == "pop":
+            mem.append((esp, 4, False))
+            rd.add("esp"); wt.add("esp")
+        elif mn in ("pushal", "pushad", "popal", "popad", "pushfd", "pushf", "popfd", "popf", "leave", "enter") or \
+                re.fullmatch(r"(rep\w* )?(movs|stos|lods|scas|cmps|ins|outs)[bwdq]?", mn):
+            mem.append((None, 0, True))
+        return rd, wt, [(a, sz, w, self._private_slot(st, a)) for a, sz, w in mem]
+
+    def _private_slot(self, st, a):
+        """True when the access goes to a private frame or argument slot (A1), as memread / memwrite would route it,
+        without their side effects (no expose). Strict mode: never (the whole stack is ordinary memory)."""
+        if self.strict or a is None:
+            return False
+        try:
+            k = self.stack_off(a)
+        except Fallback:
+            return False
+        if k is None:
+            return False
+        return not (st.xf is not None and st.xf <= k < 0)
+
     def x87(self, side, st, cs, region):
         mn = cs.mnemonic
         region.x87 = True
+        if mn.startswith("fcmov"):
+            # reads EFLAGS, which the x87 state term below does not take in
+            raise NotProven("unsupported", f"{side.name} {mn} {cs.op_str}: x87 read of EFLAGS not modelled")
         desc = []
         memval = None
         storeop = None
@@ -1890,7 +1955,7 @@ class Ctx:
         elif storeop is not None:
             a, sz = storeop
             self.memwrite(side, st, a, mk("x87o", 8 * sz, before, mn), sz)
-        if mn in ("fcomi", "fcomip", "fucomi", "fucomip"):
+        if mn in ("fcomi", "fcomip", "fucomi", "fucomip", "fcompi", "fucompi"):   # capstone 5 spells the popping forms fcompi / fucompi
             st.f = F_("x87", before, mn, tuple(desc))
         st.x = mk("X", 0, before, mn, tuple(desc), memval)
         return None
@@ -1899,7 +1964,7 @@ class Ctx:
     def run_region(self, side, st, pc, paired=None):
         reg = Region()
         reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
-        reg.pops, reg.paired = [], paired
+        reg.pops, reg.paired, reg.fx = [], paired, []
         seen = set()
         while True:
             if pc in seen:
@@ -1911,11 +1976,16 @@ class Ctx:
             if self.trace:
                 print(f"    {side.name} {side.label(pc)}: {cs.mnemonic} {cs.op_str}")
             try:
+                fx = self.effects(side, st, cs)
+            except NotProven:
+                fx = None
+            try:
                 t = self.step(side, st, cs, reg)
             except (KeyError, AssertionError, IndexError, TypeError) as e:
                 raise NotProven("unsupported", f"{side.name} {side.label(pc)}: {cs.mnemonic} {cs.op_str} ({type(e).__name__})")
             if t is None:
                 reg.texts.append(self.text(side, cs))
+                reg.fx.append(fx)
                 pc = nxt
                 continue
             kind = t[0]
@@ -1923,6 +1993,7 @@ class Ctx:
                 op = cs.operands[0]
                 tgt = self.target(side, st, cs, op)
                 reg.texts.append("call " + show(tgt))
+                reg.fx.append(None)
                 h = self.do_call(side, st, tgt, cs, reg)
                 if h == "halt":
                     return reg
@@ -1940,6 +2011,7 @@ class Ctx:
                     tgt = self.target(side, st, cs, op)
                     reg.texts.append("call " + show(tgt))
                     reg.texts.append("ret")
+                    reg.fx += [None, None]
                     esp_before = st.r["esp"]
                     st.r["esp"] = add(esp_before, C(4))
                     h = self.do_call(side, st, tgt, cs, reg)
@@ -1970,6 +2042,7 @@ class Ctx:
                 return reg
             if kind == "ret":
                 reg.texts.append(f"ret {t[1]}")
+                reg.fx.append(None)
                 reg.end = ("ret", t[1])
                 return reg
             if kind == "halt":
@@ -2049,11 +2122,43 @@ def _is_x87(t):
     return m.startswith("f") or m == "wait"
 
 
-def x87_rule(ta, tb, here):
-    """x87 exclusion. The x87 instructions of the region must be the same instructions with the same operands in the
-    same order, and every other instruction must stay between the same two x87 instructions (segments compared as
-    mnemonic multisets: register renaming and reordering of integer code inside a segment are left to the proof).
-    Calls are segment boundaries too. --x87-strict: the whole region must be identical text."""
+def _x87_dep(fi, fx):
+    """Why integer instruction effects fi cannot cross x87 instruction effects fx (same side), or None.
+    Read-read is allowed; any write on either side that meets the other's read or write is a dependency."""
+    if fi is None or fx is None:
+        return "effects not modelled"
+    ri, wi, mi = fi
+    rx, wx, mx = fx
+    r = sorted((wi & (rx | wx)) | (ri & wx))
+    if r:
+        return "register " + "/".join(r)
+    for ai, si, wi_, pi in mi:
+        for ax, sx, wx_, px in mx:
+            if not (wi_ or wx_):
+                continue
+            if ai is None or ax is None:
+                return "memory access not modelled"
+            if pi != px:
+                # A1: a private frame / argument slot is reached by no other pointer (the proof keeps it in its own
+                # store); strict mode marks nothing private, so a FRAME tag comes from the strict rerun as usual
+                continue
+            if not disjoint(ai, si, ax, sx):
+                return f"memory {show(ai)}/{si} {'written' if wi_ else 'read'} against {show(ax)}/{sx} " \
+                       f"{'written' if wx_ else 'read'}"
+    return None
+
+
+def x87_rule(ta, tb, here, fa=None, fb=None):
+    """x87 exclusion (L-126) with integer motion (L-147 (a), EQUIV-X87-INTEGER-MOTION).
+
+    The x87 instructions of the region must be the same instructions with the same operands in the same order; that
+    is never relaxed. Calls are barriers too and nothing may cross one. Integer code may sit on different sides of an
+    x87 instruction only when each moved instruction is proven independent of every x87 instruction it crosses
+    (`_x87_dep`, effects taken on that side's own state). Moved instructions: per segment (the code between two
+    barriers), the instructions whose text is not in the other side's same segment (multiset difference). Each one is
+    checked against every barrier between its segment and the farthest segment where the other side has a surplus
+    instruction of the same mnemonic (its partner is one of those), on its own side. Returns True when some
+    instruction crossed an x87 instruction. --x87-strict: the whole region must be identical text."""
     def fail(i, why):
         xa = ta[i] if i < len(ta) else "(end)"
         xb = tb[i] if i < len(tb) else "(end)"
@@ -2061,27 +2166,59 @@ def x87_rule(ta, tb, here):
     if X87_STRICT:
         i = next((i for i, (x, y) in enumerate(zip(ta, tb)) if x != y), min(len(ta), len(tb)))
         fail(i, "differs")
-    def split(ts):
+    fa = fa if fa is not None and len(fa) == len(ta) else [None] * len(ta)
+    fb = fb if fb is not None and len(fb) == len(tb) else [None] * len(tb)
+
+    def split(ts, fs):
         segs, cur, bars = [], [], []
-        for t in ts:
+        for t, f in zip(ts, fs):
             if _is_x87(t) or t.startswith("call "):
-                segs.append(sorted(x.split(" ", 1)[0] for x in cur))
-                bars.append(t)
+                segs.append(cur)
+                bars.append((t, f))
                 cur = []
             else:
-                cur.append(t)
-        segs.append(sorted(x.split(" ", 1)[0] for x in cur))
+                cur.append((t, f))
+        segs.append(cur)
         return segs, bars
-    sa, ba = split(ta)
-    sb, bb = split(tb)
-    if ba != bb:
-        i = next((i for i, (x, y) in enumerate(zip(ba, bb)) if x != y), min(len(ba), len(bb)))
+    sa, ba = split(ta, fa)
+    sb, bb = split(tb, fb)
+    if [t for t, _ in ba] != [t for t, _ in bb]:
+        i = next((i for i, (x, y) in enumerate(zip(ba, bb)) if x[0] != y[0]), min(len(ba), len(bb)))
         raise NotProven("x87-region", f"region {here} x87 instruction {i} differs: "
-                        f"{ba[i] if i < len(ba) else '(end)'} | {bb[i] if i < len(bb) else '(end)'}")
-    for i, (x, y) in enumerate(zip(sa, sb)):
-        if x != y:
-            raise NotProven("x87-region", f"region {here}: integer code moved across x87 instruction {i} "
-                            f"({ba[i - 1] if i else '(region start)'}): {x} | {y}")
+                        f"{ba[i][0] if i < len(ba) else '(end)'} | {bb[i][0] if i < len(bb) else '(end)'}")
+    mn = lambda t: t.split(" ", 1)[0]  # noqa: E731
+    from collections import Counter
+    ca = Counter(mn(t) for s in sa for t, _ in s)
+    cb = Counter(mn(t) for s in sb for t, _ in s)
+    if ca != cb:
+        d = sorted(((ca - cb) + (cb - ca)).elements())
+        raise NotProven("x87-region", f"region {here}: integer code differs around x87 instructions: {' '.join(d)}")
+    sur = {"A": [], "B": []}
+    for k, (x, y) in enumerate(zip(sa, sb)):
+        tx, ty = Counter(t for t, _ in x), Counter(t for t, _ in y)
+        sur["A"].append(tx - ty)
+        sur["B"].append(ty - tx)
+    crossed = False
+    for side, segs, bars, other in (("A", sa, ba, "B"), ("B", sb, bb, "A")):
+        for j, seg in enumerate(segs):
+            if not sur[side][j]:
+                continue
+            for t, f in seg:
+                if t not in sur[side][j]:
+                    continue
+                js = [k for k, c in enumerate(sur[other]) if any(mn(u) == mn(t) for u in c)]
+                lo, hi = min([j] + js), max([j] + js)
+                for b in range(lo, hi):
+                    bt, bf = bars[b]
+                    if bt.startswith("call "):
+                        raise NotProven("x87-region", f"region {here}: integer instruction `{t}` moved across "
+                                                      f"barrier {b} `{bt}` (a call)")
+                    why = _x87_dep(f, bf)
+                    if why is not None:
+                        raise NotProven("x87-motion", f"region {here}: `{t}` ({'ours' if side == 'A' else 'orig'}) "
+                                                      f"moved across x87 instruction {b} `{bt}`: {why}")
+                    crossed = True
+    return crossed
 
 
 def esp_reset_any(side):
@@ -2502,7 +2639,8 @@ class Explorer:
                 if ea is not eb:
                     raise NotProven(*self.why_call(ea, eb, here))
             if (ra.x87 or rb.x87) and ra.texts != rb.texts:
-                x87_rule(ra.texts, rb.texts, here)
+                if x87_rule(ra.texts, rb.texts, here, ra.fx, rb.fx):
+                    ctx.used.add("x87-motion")
                 ctx.used.add("x87-barrier")
             ka, kb = ra.end[0], rb.end[0]
             if ka != kb:

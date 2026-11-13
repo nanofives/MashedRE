@@ -11,7 +11,7 @@
 #define FUN_00499710 Global7e9584Get   // matched, Match/MatchS16_00499710.cpp
 #define FUN_004960a0 PortTop_Port_004960a0   // port body from the decomp, Match/PortTop_InputPort.cpp (no matched source)
 #define FUN_004963b0 PortTop_Port_004963b0   // port body from the decomp, Match/PortTop_InputPort.cpp (no matched source)
-#define FUN_00498510 PortTop_Missing_00498510   // missing stub, Match/PortTop_InputPort.cpp (C2; see there)
+#define FUN_00498510 Orig_00498510   // provisional body (L-126, PROVISIONAL.tsv), Match/PortTop_00498510.cpp (BIND-CRT-498510)
 extern "C" {
 #include "../../../../re/match/s16/00495150.c"
 }

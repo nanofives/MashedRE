@@ -1,0 +1,5 @@
+4ea68373d1ba9aae2b2bb7367157e71e16c8b708bb5964d2741ec2f6f686b0ec *D:/MashedWT/RO-INPUT-RECORD_data/recA/inputrec.json
+4ea68373d1ba9aae2b2bb7367157e71e16c8b708bb5964d2741ec2f6f686b0ec *D:/MashedWT/RO-INPUT-RECORD_data/recB/inputrec.json
+5c889fa1f21aa5ba947256c8e70592fe78926a0abdfd902d49424bda940cc9b4 *D:/MashedWT/RO-INPUT-RECORD_data/recA.log
+9fdee622cf202416a8ed49e7da49911ecdba8f94c2d03fceca6970e8eaa8d4be *D:/MashedWT/RO-INPUT-RECORD_data/recB.log
+8051ec32906a48b4fdc114fcb73f7b7e546709fb034d4605045e5825d4091649 *D:/MashedWT/RO-INPUT-RECORD_data/recA/meta.json
