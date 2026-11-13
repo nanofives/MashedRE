@@ -95,7 +95,9 @@ two permuter passes (1224 + 1812 compiles; the first found the `iStack_8` step o
 ## Levers that worked (for the next lane)
 
 - g2s sources lose call arguments (Ghidra merges pushes across nested calls) and store through `unaff_retaddr`: a clean
-  rewrite from the original instruction stream closed 7 of 8 rows. Small g2s rows (< 300 B) are the cheap end.
+  rewrite from the original instruction stream closed 10 of the 13 g2s B50 rows (left: 0x005441f0 98.7, 0x005518f0 96.8,
+  0x0054f8d0 64.3). Rows under ~600 B took 5 to 15 minutes each.
+- Two identical calls the original keeps apart point at two source callees folded to one address (0x005444a0).
 - COM vtable calls through Ghidra's `code` type are cdecl; the original's are `__stdcall` (no `add esp` after).
 - Join variable for `return x ? p : 0` (0x00557e50), struct for an address-taken pair (0x00538c30), declaration
   initializer order (0x004d1d70), `(0, x)` comma rvalue for x87 operand order (0x00544e00, 0x004c4a50).
