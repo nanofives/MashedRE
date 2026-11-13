@@ -1208,7 +1208,7 @@ rva	kind	source	best_pct	exe_symbol
 0x0052ddc0	match100	re/match/s23/0052ddc0.c	100.0	RwCore_0052ddc0
 0x0052ddf0	match100	re/match/rwl03/0052ddf0.c	100.0	RwCore_0052ddf0
 0x0052e310	match100	re/match/rwl03/0052e310.c	100.0	RwCore_0052e310
-0x0052e3d0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_0052e3d0
+0x0052e3d0	match100	re/match/rwta/0052e3d0.c	100.0	RwCore_0052e3d0
 0x0052e490	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_0052e490
 0x0052e4e0	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_0052e4e0
 0x0052e500	lift	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_0052e500

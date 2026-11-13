@@ -48,7 +48,6 @@ extern "C" int RwCoreLift_0052d910();
 extern "C" int RwCoreLift_0052d950();
 extern "C" int RwCoreLift_0052dce0();
 extern "C" int RwCoreLift_0052dda0();
-extern "C" int RwCoreLift_0052e3d0();
 extern "C" int RwCoreLift_0052e490();
 extern "C" int RwCoreLift_0052e4e0();
 extern "C" int RwCoreLift_0052e500();
@@ -1707,68 +1706,6 @@ extern "C" __declspec(naked) int RwCoreLift_0052dda0(void) {
         add esp, 4                               // 0052ddaa
         add eax, 0x14                            // 0052ddad
         ret                                      // 0052ddb0
-    }
-}
-
-// HAND-LIFT 0x0052e3d0 RwCoreLift_0052e3d0  (53 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0052e3d0(void) {
-    __asm {
-        mov eax, dword ptr ds:[0x007dc520]       // 0052e3d0
-        test eax, eax                            // 0052e3d5
-        jne L_52e479                             // 0052e3d7
-        push esi                                 // 0052e3dd
-        push edi                                 // 0052e3de
-        push 0x120                               // 0052e3df
-        mov esi, 1                               // 0052e3e4
-        call RwCore_004c2dc0                    // 0052e3e9
-        add esp, 4                               // 0052e3ee
-        cmp eax, -1                              // 0052e3f1
-        je L_52e3fb                              // 0052e3f4
-        mov esi, 3                               // 0052e3f6
-    L_52e3fb:
-        push 0x12e                               // 0052e3fb
-        call RwCore_004c2dc0                    // 0052e400
-        add esp, 4                               // 0052e405
-        cmp eax, -1                              // 0052e408
-        je L_52e410                              // 0052e40b
-        or esi, 4                                // 0052e40d
-    L_52e410:
-        push esi                                 // 0052e410
-        call RwCore_0052ffd0                    // 0052e411
-        mov eax, dword ptr ds:[0x00623c08]       // 0052e416
-        mov ecx, dword ptr ds:[0x00623c04]       // 0052e41b
-        push 0x40116                             // 0052e421
-        push 0x7dbcdc                            // 0052e426
-        push eax                                 // 0052e42b
-        push 4                                   // 0052e42c
-        push ecx                                 // 0052e42e
-        push 0x40                                // 0052e42f
-        call RwCore_004cc9e0                    // 0052e431
-        mov edx, dword ptr ds:[0x007d3ff8]       // 0052e436
-        push 0x40116                             // 0052e43c
-        push 0x400f                              // 0052e441
-        mov dword ptr ds:[0x007dc518], eax       // 0052e446
-        call dword ptr [edx + 0x108]             // 0052e44b
-        mov edi, eax                             // 0052e451
-        mov ecx, 0x1003                          // 0052e453
-        xor eax, eax                             // 0052e458
-        mov dword ptr ds:[0x007dc510], edi       // 0052e45a
-        rep stosd                                // 0052e460
-        stosw                                    // 0052e462
-        stosb                                    // 0052e464
-        mov eax, dword ptr ds:[0x007dc510]       // 0052e465
-        add esp, 0x24                            // 0052e46a
-        add eax, 0xf                             // 0052e46d
-        and al, 0xf0                             // 0052e470
-        pop edi                                  // 0052e472
-        mov dword ptr ds:[0x007dc50c], eax       // 0052e473
-        pop esi                                  // 0052e478
-    L_52e479:
-        mov eax, dword ptr ds:[0x007dc520]       // 0052e479
-        inc eax                                  // 0052e47e
-        mov dword ptr ds:[0x007dc520], eax       // 0052e47f
-        mov eax, dword ptr [esp + 4]             // 0052e484
-        ret                                      // 0052e488
     }
 }
 
