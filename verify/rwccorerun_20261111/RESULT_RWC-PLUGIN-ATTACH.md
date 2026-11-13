@@ -245,3 +245,26 @@ To continue (section 7, item 1):
    stop it names, repeat.
 3. When the disc draws: log the Im2D calls on the core (the device block +0x30 / +0x34 entries) and capture the
    original's first-frame disc draw for a vertex-for-vertex comparison.
+
+## 9. Run 41 restack: PROVISIONAL.tsv (run-40 L0 L-137 check)
+
+`re/match/PROVISIONAL.tsv` did not exist on this branch (it was cut before PROV-DIVERGED-18 landed it on orch/integration).
+The file is now orch/integration's version (29 rows) plus the rows of `PROVISIONAL_RWC.tsv`, in its 12-column format
+(`status provisional`, `flags` `-`, replay columns `not run`, evidence = this RESULT). Text only: no build, no gate, no game run,
+`hooks.csv` untouched, no promotions TSV.
+
+| Added | Count | Marking |
+|---|---|---|
+| lifted (`RwCore/RwCore_Lifted_NN.cpp`) | 680 | `SCAFFOLDING (L-137)` in `diagnosis`, equiv `n/a (lifted)` |
+| generated provisional sources | 266 | equiv `NOT-PROVEN` |
+| hand (`RwCore/RwCore_Hand.cpp`) | 16 | equiv `n/a (hand)` |
+| total | 962 | file is 993 lines (comment, header, 29 + 962 rows) |
+
+Flags for reviewers:
+- 0x004c51a0 is in both lists. Kept integration's `refused` row (DIVERGED@1, 14.7%) and did not add the RWC `provisional` row
+  (963 - 1 = 962 added). The RWC core knob still routes `RwCore_004c51a0` to that source: a refused body may not run, so it needs a source
+  or a hand body (follow-up row).
+- Executed lifted members (L-141): the run keeps no per-function execution log. The AV stack in section 3.2 shows lifted 0x0052e3d0
+  executing on the EngineStart path, so it needs a matched or hand source. Which other lifted members executed is unmeasured.
+- Merge: `re/match/PROVISIONAL.tsv` is added on this branch and exists on integration, so the train sees add/add on that file. Integration's
+  29 rows are the common prefix; resolve by taking integration's file and appending the 962 added rows.
