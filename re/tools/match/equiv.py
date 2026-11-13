@@ -1,6 +1,7 @@
 """Tool-decided equivalence of a near-match body (EQUIV-CHECK, L-122 direction, 2026-11-11).
 
     py -3.12 re/tools/match/equiv.py re/match/s09/0045a3a0.c [--only 0x0045a3a0] [--json] [--trace]
+        [--max-steps N] [--max-terms N] [--show-budget N] [--stats]   work budgets: NOT-PROVEN budget past them
 
 Input: a `// MATCH:` source (compiled with the recorded DDK compiler through match.py) and the original's bytes
 (original/MASHED.exe.unpatched). Output per function:
@@ -50,6 +51,10 @@ M32 = 0xFFFFFFFF
 MASK = {1: 1, 8: 0xFF, 16: 0xFFFF, 32: M32, 64: (1 << 64) - 1, 80: (1 << 80) - 1}
 CALLEE_SAVED = ("ebx", "esi", "edi", "ebp")
 RELAX_ICALL = False
+STEP_BUDGET = 250000    # --max-steps: instructions one proof run may execute symbolically (EQUIV-5441F0-TIMEOUT)
+TERM_CAP = 1000000      # --max-terms: distinct hash-consed terms one function may create (EQUIV-5441F0-TIMEOUT)
+LAST_STATS: dict = {}   # steps / terms of the current check
+STATS_BY_ADDR: dict = {}  # addr -> LAST_STATS copy (--stats)
 LAST_PCS: dict = {}   # pcs executed by the last proof, per side (mutation harness)   # --relax-icall: assume A4' (a call through a pointer reads no register); reported separately
 GPR = ("eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi")
 SUB = {}
@@ -89,6 +94,7 @@ _TAB: dict = {}
 
 
 def reset_terms():
+    LAST_STATS.clear()
     LAST_PCS.clear()
     _TAB.clear()
     _HAS.clear()
@@ -116,9 +122,32 @@ def isc(t):
     return t.op == "c"
 
 
+SHOW_BUDGET = 100000      # --show-budget: term nodes one outermost show() may render (EQUIV-5441F0-TIMEOUT)
+_SHOW = [0, 0]            # [nesting level, nodes rendered by the current outermost show()]
+
+
 def show(t, depth=0):
+    """Text of a term. The depth cap below does not bound the work: a non-term argument (a tuple, e.g. a phi's
+    location key) is rendered through repr(), which renders the terms inside it through T.__repr__ from depth 0 again.
+    On a hash-consed DAG that is exponential (0x005441f0: one `call` text did not finish in 50 min). So every
+    outermost call carries a node budget; past it a term renders as `<#id>`, its hash-cons id, so the text stays a
+    function of the term (equal terms, equal text; the id is unique per term within one proof). Terms rendered under
+    the budget give the same text as before the budget existed."""
+    if _SHOW[0] == 0:
+        _SHOW[1] = 0
+    _SHOW[0] += 1
+    try:
+        return _show(t, depth)
+    finally:
+        _SHOW[0] -= 1
+
+
+def _show(t, depth=0):
     if not isinstance(t, T):
         return repr(t)
+    _SHOW[1] += 1
+    if _SHOW[1] > SHOW_BUDGET:
+        return f"<#{t.id}>"
     if depth > 6:
         return "..."
     if t.op == "c":
@@ -1183,6 +1212,7 @@ class Ctx:
         self.retdiff_detail = {}
         self.pairs_seen = []
         self._pins = {}
+        self.steps = 0              # instructions executed by this proof run (STEP_BUDGET)
 
     # ------------------------------------------------------------ constants
     def ro_fold(self, a, sz):
@@ -1971,6 +2001,15 @@ class Ctx:
                 raise NotProven("loop-without-branch", f"{side.name} {side.label(pc)}")
             seen.add(pc)
             reg.pcs.append(pc)
+            self.steps += 1
+            LAST_STATS["steps"] = max(LAST_STATS.get("steps", 0), self.steps)
+            if self.steps > STEP_BUDGET or len(_TAB) > TERM_CAP:
+                what = (f"step budget {STEP_BUDGET} (--max-steps)" if self.steps > STEP_BUDGET
+                        else f"term cap {TERM_CAP} (--max-terms)")
+                last = self.pairs_seen[-1] if self.pairs_seen else None
+                at = f"{self.sides[0].label(last[0])} / {self.sides[1].label(last[1])}" if last else "?"
+                raise NotProven("budget", f"{what} reached at {side.name} {side.label(pc)}, region pair {at}, "
+                                          f"{len(self.pairs_seen)} pair visits, {len(_TAB)} terms")
             cs = side.decode(pc)
             nxt = pc + cs.size
             if self.trace:
@@ -3175,7 +3214,10 @@ def check_function(src_text, secs, syms, addr, sym, trace=False, size=None, orig
         out["bytes_bad"] = len(bad)
     except BaseException:  # noqa: BLE001
         out["bytes_bad"] = None
-    return check_sides(A, B, res, addr, out, trace)
+    r = check_sides(A, B, res, addr, out, trace)
+    LAST_STATS["terms"] = len(_TAB)
+    STATS_BY_ADDR[addr] = dict(LAST_STATS)
+    return r
 
 
 def check_sides(A, B, res, addr, out=None, trace=False):
@@ -3338,6 +3380,7 @@ def fmt(r):
 
 
 def main():
+    global RELAX_ICALL, X87_STRICT, STEP_BUDGET, TERM_CAP, SHOW_BUDGET
     ap = argparse.ArgumentParser()
     ap.add_argument("src", nargs="+")
     ap.add_argument("--only", default="")
@@ -3345,10 +3388,17 @@ def main():
     ap.add_argument("--trace", action="store_true")
     ap.add_argument("--relax-icall", action="store_true")
     ap.add_argument("--x87-strict", action="store_true")
+    ap.add_argument("--max-steps", type=int, default=STEP_BUDGET,
+                    help="instructions one proof run may execute; past it NOT-PROVEN budget (default %(default)s)")
+    ap.add_argument("--max-terms", type=int, default=TERM_CAP,
+                    help="distinct terms one function may create; past it NOT-PROVEN budget (default %(default)s)")
+    ap.add_argument("--show-budget", type=int, default=SHOW_BUDGET,
+                    help="term nodes one rendered text may expand before <#id> (default %(default)s)")
+    ap.add_argument("--stats", action="store_true", help="print steps and terms per function to stderr")
     a = ap.parse_args()
-    global RELAX_ICALL, X87_STRICT
     RELAX_ICALL = a.relax_icall
     X87_STRICT = a.x87_strict
+    STEP_BUDGET, TERM_CAP, SHOW_BUDGET = a.max_steps, a.max_terms, a.show_budget
     only = {int(x, 16) for x in a.only.split(",")} if a.only else None
     allres = []
     for s in a.src:
@@ -3359,6 +3409,10 @@ def main():
             continue
         for r in rs:
             allres.append(r)
+            if a.stats:
+                st_ = STATS_BY_ADDR.get(r["addr"], {})
+                print(f"stats 0x{r['addr']:08x} steps={st_.get('steps', 0)} terms={st_.get('terms', 0)}",
+                      file=sys.stderr)
             if not a.json:
                 print(fmt(r))
     if a.json:
