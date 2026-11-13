@@ -1,0 +1,16 @@
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+[1] pointer table 0x00773098 = 0x006147e8 + k*0x400 PASS
+[2] 0x00773118 = table[lang 3] PASS
+    LoadStringA(exe module, 0x82a) -> 0x007730b4 "", (0x834) -> 0x007730f8 ""
+[3] rec0 keyboard: f0 6, type 2, name = 0x007730b4, 13 binds PASS
+[4] rec1..3 none: f0 6, type 0, rest zero PASS
+[5] contcfg name buffer 0x007730e4 = contcfg3.bin PASS
+[6] rec0 joypad 0: type 1, joy 0, name Pad A, 9 binds PASS
+[7] rec1 loaded from origtop_rw/contcfg1.bin and kept PASS
+[8] rec2 keyboard: loaded f0 7 != 6, defaults restored PASS
+[9] rec3 none: loaded name differs, defaults restored PASS
+[10] 0x00773118 = table[0] PASS
+[11] original/contcfg*.bin untouched, no write PASS
+[12] show 1 returns; 0x00498360 stand-in not reached PASS
+12/12 PASS
