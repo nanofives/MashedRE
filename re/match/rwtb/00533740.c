@@ -1,6 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 // TOOLCHAIN rw9044
-/* MATCH-RWT-B 2026-11-12: from g2s (57.9%) to 100%: plugin attach thunk_FUN_004cc820 (0x4cc9e0) (0x24, [0x623c70], 4, [0x623c74], &DAT_007dc554, 0x4011e) stored to DAT_0091246c, param_1 = 0 on failure, then a 12-dword registration record {1, 0x24, 0x24, 0x532a60, 0x532fa0, 0x532b80, 0x533600, 0x5334a0, 0x5333a0, 0x533420, 0x533490, 0} passed to FUN_0052d980; returns param_1. */ The five Ghidra LAB_ addresses are named FUN_<rva> so relocheck checks all 14 relocations.
+/* MATCH-RWT-B 2026-11-12: from g2s (57.9%) to 100%: plugin attach thunk_FUN_004cc820 (0x4cc9e0) (0x24, [0x623c70], 4, [0x623c74], &DAT_007dc554, 0x4011e) stored to DAT_0091246c, param_1 = 0 on failure, then a 12-dword registration record {1, 0x24, 0x24, 0x532a60, 0x532fa0, 0x532b80, 0x533600, 0x5334a0, 0x5333a0, 0x533420, 0x533490, 0} passed to FUN_0052d980; returns param_1. The five Ghidra LAB_ addresses are named FUN_<rva> so relocheck checks all 14 relocations. */
 typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
 typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
 typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
