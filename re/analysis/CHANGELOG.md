@@ -26,6 +26,16 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-12  0x004d1d70  FUN_004d1d70  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d1d70.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x004d3450  FUN_004d3450  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/004d3450.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x00538c30  FUN_00538c30  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/00538c30.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x004ce6f0  FUN_004ce6f0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/004ce6f0.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x004ce5d0  FUN_004ce5d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/004ce5d0.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x00544e00  FUN_00544e00  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/00544e00.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x00557e50  FUN_00557e50  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/00557e50.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x00533740  FUN_00533740  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/00533740.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x00543500  FUN_00543500  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/00543500.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
+2026-11-12  0x005493e0  FUN_005493e0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/005493e0.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-B.md
 2026-11-12  0x004d7100  FUN_004d7100  C3->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004d7100.c; evidence: verify/rwcim2d_20261113/RESULT_RWC-FIRST-FRAME-IM2D.md
 2026-11-12  0x004c2b80  FUN_004c2b80  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/004c2b80.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
 2026-11-12  0x004c2bb0  FUN_004c2bb0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/004c2bb0.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
