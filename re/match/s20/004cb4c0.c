@@ -7,7 +7,25 @@
    Residual (b): the original keeps a 16-step down-counter in edx and compares cache[i] (loaded) against the
    new matrix in memory; ours compares the pointer against end. Tried with /Oy-: both compare orders (89.1),
    pointer do-while / while(n--) / byte-offset forms (77.6-83.5), 16 - i index (88.0). Earlier (h2): float matrix
-   type, permuter. relocheck not run (below 100%). */
+   type, permuter. relocheck not run (below 100%).
+   MATCH-RWT-S1 (2026-11-13), still 90.2% (this source kept): a down-counter loop
+   `const int *p = new, *q = cache; int n = 16; do { if (*q != *p) goto set; p++; q++; } while (--n);` emits the
+   original's exact loop (eax = new, ecx = cache - new, edx = 16, `mov esi,[ecx+eax]` / `cmp esi,[eax]` / `dec edx`)
+   under /G6 /Oy- (loop identical, but the /G6 scheduler moves the prologue and store order: 87.0%). Under /G5 /Oy-
+   the same source splits the compare into `mov ebx,[eax]` / `cmp esi,ebx` and pushes ebx (83.5%, 97/92 ins).
+   No source form tried keeps the folded compare under /G5: 18 loop shapes, 5 structural rewrites (no cache local,
+   flag variable, break form, Mat16 pointer, cache read after the stores), volatile p or q, short/char counter,
+   goto loops, and flags /Oa /Ow /Os /Gr /G3 /G4 /Og, rw9044 toolchain; permuter 1295 compiles on the counter form.
+   Open lever: what keeps c2 from taking ebx for the split in the original. Class (b).
+   MATCH-RWT-S1B (2026-11-13), still 90.2% under both ddk and rw9044 (this source kept). Mechanism measured on probes
+   (verify/match_20261113/RESULT_MATCH-RWT-S1B.md): under /G5 both c2 builds load both sides of a compare whose
+   register side is loaded in the same block, and fold the memory operand only when the register allocator has no
+   register left for the second load (an extra value live across the loop gives `cmp ebx,[ecx]`). The original
+   has no ebx reference in 0x004cb4c0..0x004cb5bd, and its neighbour 0x004cb330 (also an ebp frame) keeps its loop
+   counter in [ebp-4] (0x004cb353, 0x004cb363, 0x004cb36a) with no ebx reference in 0x004cb330..0x004cb48f. Both
+   compiles of ours give ebx to that value instead. No cl/c2 switch tried (32 cl and 4 /d2 c2 switches, each added to /O2 /Ob1 /G5
+   /Oy-, inline __asm in or beside the function) and no source shape reproduces the original.
+   [UNCERTAIN: what keeps ebx out of the original's allocation in these two functions; no witness found]. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
