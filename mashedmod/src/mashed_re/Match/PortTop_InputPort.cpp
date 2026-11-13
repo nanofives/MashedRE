@@ -49,9 +49,12 @@ extern "C" {
 // DIDATAFORMAT points its object array at 0x0049b5d0, inside the original code range, which the exe does not map as
 // original data, so its bytes cannot be written back as they are. c_dfDIKeyboard is the same format (header checked
 // below) with pointers valid in the exe.
+int PortStateImage_AppliedC(void);   // Compat/PortStateImage.cpp (IMG-2-LOADER)
 void PortTop_SeedDInput(void) {
     unsigned done = 0;
+    const int image = PortStateImage_AppliedC();   // the two byte entries are in the image (witnessed there)
     for (const Seed& s : kSeed) {
+        if (image) { ++done; continue; }
         __try {
             std::memcpy(reinterpret_cast<void*>(static_cast<UINT_PTR>(s.va)), s.bytes, s.n);
             ++done;

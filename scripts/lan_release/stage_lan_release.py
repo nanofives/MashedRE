@@ -11,6 +11,9 @@ The folder is what a player PC keeps:
                               the staged PC\MOVIES\<name>.mpg of each is that backup copy, the real movie, L-63)
     gamesave.bin              the save the exe replays at boot (never written by the standalone); a seed file:
                               the updater installs it once and never replaces it
+    mashed_image.bin          data, not a binary: the file-backed .rdata/.data bytes of MASHED.exe.unpatched in the
+                              re/tools/image format, read only on the MASHED_ORIG_TOP + MASHED_PORTSTATE_IMAGE path
+                              (IMG-2-LOADER, L-149 a)
   Play Mashed.bat             starts the exe (the updater also makes a "Mashed (RE)" shortcut)
   mashed_update.ps1, update.bat   the updater (copies of the files beside this script)
   README.txt
@@ -108,6 +111,31 @@ def main():
     save = os.path.join(a.install, "gamesave.bin")
     if os.path.isfile(save):
         place(save, os.path.join(out, "original", "gamesave.bin")); wanted.add(os.path.join("original", "gamesave.bin"))
+
+    # IMG-2-LOADER (L-149 a): original\mashed_image.bin, the file-backed .rdata/.data image the MASHED_ORIG_TOP path
+    # loads under MASHED_PORTSTATE_IMAGE=1 (Compat/PortStateImage.cpp). Built from <install>\MASHED.exe.unpatched by
+    # re/tools/image/mashed_image.py (the extract_image.py format); a missing or non-anchor .unpatched is a hard stop.
+    # Only the stage's own copy is written; nothing in <install> is touched. The exe itself stays the only binary.
+    sys.path.insert(0, os.path.join(HERE, "..", "..", "re", "tools", "image"))
+    import mashed_image as mi
+    unp = os.path.join(a.install, "MASHED.exe.unpatched")
+    if not os.path.isfile(unp):
+        sys.exit("[!] missing %s (source of original\\mashed_image.bin)" % unp)
+    with open(unp, "rb") as fh:
+        ub = fh.read()
+    if hashlib.sha256(ub).hexdigest().upper() != mi.ANCHOR_SHA256 or len(ub) != mi.ANCHOR_SIZE:
+        sys.exit("[!] %s is not the anchor %s" % (unp, mi.ANCHOR_SHA256))
+    img = mi.build(ub)
+    mi.parse(img)
+    rel = os.path.join("original", "mashed_image.bin")
+    dst = os.path.join(out, rel)
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    if os.path.exists(dst):
+        os.remove(dst)          # the stage's previous copy (under mashedmod/build), never the install's
+    with open(dst, "xb") as fh:
+        fh.write(img)
+    wanted.add(rel)
+    print("[+] original\\mashed_image.bin %d bytes sha256 %s" % (len(img), hashlib.sha256(img).hexdigest().upper()))
 
     for f in CLIENT_FILES:
         place(os.path.join(HERE, f), os.path.join(out, f)); wanted.add(f)
