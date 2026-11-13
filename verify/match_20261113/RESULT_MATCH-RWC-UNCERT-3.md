@@ -107,7 +107,8 @@ rva	current	proposed	evidence
   edited rows read back `audio`, 0x0051085a reads `third-party-library[d3dx9-shader-compiler]`. `git diff --stat`:
   hooks.csv 2 rows changed (CRLF kept). A first pass put commas in the notes and gave the two rows 12 fields. That was
   fixed before the commit and re-checked.
-- `grep -c d3dx9-fx hooks.csv` after the edit: 2 rows remain, outside 0x005b8200..0x005b8680.
+- Subsystem cells equal to or containing `d3dx9-fx` after the edit: 0 in the whole file. The two `grep d3dx9-fx` hits are
+  the refile notes of 0x005b8200 / 0x005b8680 themselves.
 
 ## DECISIONS.md
 
