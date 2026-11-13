@@ -131,7 +131,7 @@ def run(args):
                "holdrand": 0x12345678, "witness": [0x00468980, 0x00470670],
                "negctl": int(args.negctl, 16) if args.negctl else 0, "rebase": args.rebase,
                "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
-               "watch": [int(x, 16) for x in args.watch.split(",") if x][:2],
+               "watch": [int(x, 16) for x in args.watch.split(",") if x][:2], "watchFrom": args.watch_from, "watchMode": args.watch_mode,
                "callLogRace": args.call_log_race}
         if args.audio_off:
             cfg["audioOff"] = args.audio_off   # RO-AUDIO-ISOLATION: suspend the __beginthread workers (detorig.js audioOff)
@@ -387,6 +387,11 @@ if __name__ == "__main__":
     ap.add_argument("--rebase", action="store_true", help="set T / Q at the race anchor (runs off_e/off_f/neg_b; made worse, see RESULT)")
     ap.add_argument("--load-sleep-ms", type=int, default=50, help="load hold: real ms slept per main-thread clock call until phase 3 (0 = off)")
     ap.add_argument("--watch", default="", help="comma list (max 2) of hex VAs: hardware write watchpoints from the race anchor on (watch.jsonl)")
+    ap.add_argument("--watch-from", choices=["anchor", "install"], default="anchor",
+                    help="RO-CTL-68BC0C: 'install' also arms --watch at the install (boot mode: PE entry; else the menu) and re-arms at the warp")
+    ap.add_argument("--watch-mode", choices=["w", "rw"], default="w",
+                    help="RO-CTL-68BC0C follow-up: 'rw' arms the --watch debug registers for read OR write (x86 has no read-only); "
+                         "hits are de-duplicated per pc (first 4 per pc sent, then counts at powers of two)")
     ap.add_argument("--call-log", action="store_true", help="log every main-thread clock call from the warp to the race anchor (calllog.bin, 64 B per call)")
     ap.add_argument("--qstep", type=int, default=15000, help="QPC counts per main-thread QPC call")
     ap.add_argument("--clock", choices=["n", "tick"], default="n",
