@@ -649,13 +649,8 @@ RH_ScopedInstall(Time41e150, 0x0041e150);
 // MATCH-S19: the body of 0x004c45f0 (And4c45f0) moved to Match/MatchS19_004c45f0.cpp,
 // which compiles the byte-matched source re/match/s19/004c45f0.c.
 
-// 0x004b52c0 — void fn(p,val,flag): e=*(u32*)(p+8); if(flag) e|=val; *(u32*)(p+8)=e
-extern "C" __declspec(dllexport) void __cdecl Or4b52c0(std::uint8_t* p, std::uint32_t val, std::uint32_t flag) {
-    std::uint32_t e = *reinterpret_cast<std::uint32_t*>(p + 8);
-    if (flag) e |= val;
-    *reinterpret_cast<std::uint32_t*>(p + 8) = e;
-}
-RH_ScopedInstall(Or4b52c0, 0x004b52c0);
+// PORT-TOP-04K: the body of 0x004b52c0 (Or4b52c0) moved to Match/MatchS18_004b52c0.cpp,
+// which compiles the byte-matched source re/match/s18/004b52c0.c (it has the clear arm this hand body lacked).
 
 // 0x004b5240 — void fn(p,flag): cl=p[2]; if(flag) p[2]=cl|4 else p[2]=cl&0xfb
 // [carlod 2026-10-16] the else arm was missing: `je 0x4b5256` (0x004b524d) -> `and cl,0xfb;
@@ -2657,21 +2652,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Thunk4b4130(void
 }
 RH_ScopedInstall(Thunk4b4130, 0x004b4130);
 
-// 0x004b52f0 FUN_004b52f0 (render, Thunk4b52f0) — NEAR-LEAF adjustor thunk to C3 0x4b52c0.
-// uint f(p, a2, a3): p = p[0x18]; tail-call 0x4b52c0(p, a2, a3). 0x4b52c0(s,a2,a3): eax=s[8];
-// if(a3!=0){ eax|=a2; s[8]=eax; } return eax. So f: s=p[0x18]; if(a3) s[8]|=a2; return s[8].
-// VERBATIM naked (b0=0x8b; rel32 jmp -> mov eax,abs; jmp eax).
-extern "C" __declspec(dllexport) __declspec(naked) unsigned __cdecl Thunk4b52f0(void)
-{
-    __asm {
-        mov   edx, dword ptr [esp+4]
-        mov   eax, dword ptr [edx+18h]
-        mov   dword ptr [esp+4], eax
-        mov   eax, 04B52C0h
-        jmp   eax
-    }
-}
-RH_ScopedInstall(Thunk4b52f0, 0x004b52f0);
+// PORT-TOP-04K: the body of 0x004b52f0 (Thunk4b52f0) moved to Match/MatchS18_004b52f0.cpp,
+// which compiles the byte-matched source re/match/s18/004b52f0.c.
 
 // 0x005a7af0 FUN_005a7af0 (audio, Thunk5a7af0) — NEAR-LEAF adjustor thunk to C3 0x5aded0.
 // int f(p): p += 0xc; tail-call AudioListNodeCount(p) = count nodes of the circular list
