@@ -11,6 +11,7 @@ STEP = os.environ.get('ARMS_STEP', STEP)   # PORT-TOP-AUDIO-RWA re-runs write to
 ROOT = os.environ.get('ARMS_ROOT', ROOT)   # PORT-TOP-AUDIO-HWINIT-4627F0: its own private root
 DDK = os.path.join(WT, 'mashedmod', 'build', 'ddkobj', 'mashed_re_ddk.exe')
 COMMON = ['MASHED_WIN_POS=primary-bl', 'MASHED_DET_FRAMES=600', 'MASHED_ORIG_TOP=1', 'MASHED_OT_TIMER=1']
+COMMON += os.environ.get('ARMS_EXTRA', '').split()   # PORT-TOP-RWAUDIO-TABLE-632BA8: image / trap knobs
 ARMS = [
     # name, object build?, extra knobs
     ('vs_audio', False, ['MASHED_OT_AUDIOTICK=1']),                              # control: tick only (gate closed)
