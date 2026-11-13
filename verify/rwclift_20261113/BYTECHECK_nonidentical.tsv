@@ -1,0 +1,35 @@
+rva	exe_symbol	exe_va	size	relocs_masked	abs_data_refs_exact	diff_bytes	result	first_diff	vs_copy_in_map	src
+0x00493900	_Orig_00493900	0x000138f0	480	15	24	392	DIFFERENT	+0x13	False	re/match/s15/00493900.c
+0x00493710	_Orig_00493710	0x00013fb0	432	41	11	236	DIFFERENT	+0x24	False	re/match/s15/00493710.c
+0x0042f530	_Orig_0042f530	0x00014ab0	304	8	7	6	DIFFERENT	+0x32	False	re/match/s07/0042f530.c
+0x00498810	___ddkreg_00498810	0x00016390	80	5	0	4	DIFFERENT	+0xc	False	re/match/s16/00498810.c
+0x004332a0	_Orig_004332a0	0x00017ee0	848	10	31	64	DIFFERENT	+0x18	False	re/match/s08/004332a0.c
+0x0041cb10	_FUN_0041cb10		112				not-in-map			re/match/s04/0041c320.c
+0x0041d6e0	_FUN_0041d6e0		80				not-in-map			re/match/s04/0041cd20.c
+0x00475a00	_Orig_00475a00	0x000213a0	96	2	7	2	DIFFERENT	+0x41	False	re/match/s12/00475a00.c
+0x0048cee0	___ddkreg_0048cee0		144				not-in-map			re/match/s14/0048cee0.c
+0x00401690	___ddkreg_00401690	0x00021d80	1280	9	0	713	DIFFERENT	+0x6	False	re/match/s01/00401690.c
+0x004929d0	_GameModeMachine_004929d0	0x00024590	832	53	22	47	DIFFERENT	+0x3	False	re/match/gffu/004929d0.c
+0x004053d0	_Orig_004053d0		48				not-in-map			re/match/s01/004053d0.c
+0x00405420	_Orig_00405420		16				not-in-map			re/match/s01/004053d0.c
+0x00405430	_Orig_00405430		48				not-in-map			re/match/s01/004053d0.c
+0x0045bac0	___ddkreg_0045bac0		32				not-in-map			re/match/s10/0045bae0.c
+0x0045bf30	_Orig_0045bf30		112				not-in-map			re/match/s10/0045bae0.c
+0x0045bba0	_Orig_0045bba0		752				not-in-map			re/match/s10/0045bae0.c
+0x0045a3a0	_Orig_0045a3a0	0x00026510	128	0	2	36	DIFFERENT	+0x1	False	re/match/s09/0045a3a0.c
+0x00458080	___ddkreg_00458080		624				not-in-map			re/match/s09/00458360.c
+0x004cbad0	_RwCore_004cbad0		48				not-in-map			re/match/s20/004cbad0.c
+0x004c57a0	_RwCore_004c57a0		96				not-in-map			re/match/rwl01/004c57a0.c
+0x004c0f00	_RwCore_004c0f00	0x000302d0	320	2	4	1	DIFFERENT	+0x35	False	re/match/s19/004c0f00.c
+0x004c0c20	_RwCore_004c0c20	0x00031150	336	2	7	1	DIFFERENT	+0x45	False	re/match/s19/004c0c20.c
+0x0052ddc0	_RwCore_0052ddc0		48				not-in-map			re/match/s23/0052ddc0.c
+0x005522e0	_RwCore_005522e0		96				not-in-map			re/match/rwl04/005522e0.c
+0x00552720	_RwCore_00552720		48				not-in-map			re/match/rwl04/00552720.c
+0x00552230	_RwCore_00552230		176				not-in-map			re/match/rwl04/00552230.c
+0x0052da20	_RwCore_0052da20		208				not-in-map			re/match/s23/0052da20.c
+0x0055dec0	_RwCore_0055dec0		16				not-in-map			re/match/s24/0055dec0.c
+0x005c4e10	_RwCore_005c4e10		16				not-in-map			re/match/s28/005c4e10.c
+0x004cc9e0	_Orig_004cc9e0	0x000258f0	16	1	0	0	IDENTICAL		False	re/match/rwl01/004cc9e0.c
+0x004cc9e0	_RwCore_004cc9e0	0x00032060	16	1	0	0	IDENTICAL		False	re/match/rwl01/004cc9e0.c
+0x0052e310	_RwCore_0052e310	0x00034fb0	192	23	3	0	IDENTICAL		False	re/match/rwl03/0052e310.c
+0x0052e3d0	_RwCore_0052e3d0	0x00035070	192	4	11	0	IDENTICAL		False	re/match/rwta/0052e3d0.c
