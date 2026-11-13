@@ -13,6 +13,7 @@ import importlib.util
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -95,6 +96,14 @@ def run_one(exe, root, out, t, knobs, att):
         # MASHED_SUBSTATE off; the knob argument MASHED_CAM_REPLAY_P3=0 turns it off.
         "MASHED_CAM_REPLAY_P3": "1",
     })
+    # [HB-RUN13-LIVE-INPUT] The exe reads the live keyboard (DISCL_BACKGROUND, exe_main.cpp:1207) and cooks Enter / joypad
+    # button 0 into the ctrl byte 0x007f1042 + i*0x4c every frame (CookCtrlByteAFromKeyboard, exe_main.cpp:3086-3121), which
+    # can end phase 3 early (CameraEntries.cpp:405-407). MASHED_NO_R7_INPUT=1 makes that function return at once
+    # (exe_main.cpp:3087, R7InputOn() at exe_main.cpp:1114-1117) and keeps no joypad device (exe_main.cpp:1122), so a
+    # key typed anywhere on the machine cannot change the table. RUN13_LIVE_INPUT=1 restores the old live-input run.
+    # A knob argument (MASHED_NO_R7_INPUT=0) is applied after this and wins.
+    if os.environ.get("RUN13_LIVE_INPUT", "") in ("", "0"):
+        env["MASHED_NO_R7_INPUT"] = "1"
     for k in knobs:
         a, _, b = k.partition("=")
         env[a] = b if b else "1"
@@ -107,6 +116,12 @@ def run_one(exe, root, out, t, knobs, att):
         p.kill()
         rc = p.wait(15)
     print(f"[{d}] exit={rc}", flush=True)
+    # [HB-RUN13-LIVE-INPUT] the private root's mashed_re.log is rewritten by the next track and by the next run; keep this
+    # track's copy beside its dumps so an `R7IN byte0xa ... test=0` line (a live input event) can be read after the fact.
+    try:
+        shutil.copyfile(root / "mashed_re.log", sd / "mashed_re.log")
+    except OSError as e:
+        print(f"[{d}] mashed_re.log not kept: {e}", flush=True)
     return sd, shots
 
 
