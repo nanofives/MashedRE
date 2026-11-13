@@ -33,6 +33,14 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import match  # noqa: E402
 
 
+def tree_of(path):
+    """Checkout (main or worktree) that holds `path`: nearest parent with a .git entry (file or dir); else ROOT."""
+    for d in pathlib.Path(path).resolve().parents:
+        if (d / ".git").exists():
+            return d
+    return ROOT
+
+
 # ------------------------------------------------------------------ locate the function
 def function_span(text: str, addr: int) -> tuple[int, int]:
     """(start, end) of the body braces of the function annotated with `// MATCH: <mod> 0x<addr>`."""
@@ -435,6 +443,8 @@ def main():
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--time", type=float, default=600, help="wall-clock budget in seconds (pilot: bounded per function)")
     ap.add_argument("--write", action="store_true", help="replace the function in src with the best variant")
+    ap.add_argument("--out-dir", default="", help="where the best variant goes (default: log/permute of the checkout "
+                    "that holds <file>, so a worktree run never writes into the shared main checkout)")
     a = ap.parse_args()
     path, addr = pathlib.Path(a.src), int(a.addr, 16)
     text = path.read_text()
@@ -483,10 +493,11 @@ def main():
                 stall += 1
                 if stall >= 8:                       # restart from the best point
                     cur, cur_sc, stall = text, best, 0
-    out = ROOT / "log" / "permute" / f"{addr:08x}{path.suffix}"
+    out = pathlib.Path(a.out_dir).resolve() if a.out_dir else tree_of(path) / "log" / "permute"
+    out = out / f"{addr:08x}{path.suffix}"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text)
-    print(f"best {fmt(best)} after {tried} compiles -> {out.relative_to(ROOT)}", flush=True)
+    print(f"best {fmt(best)} after {tried} compiles -> {out}", flush=True)
     if a.write and best > (score(path.read_text(), path, addr) or (0,)):
         path.write_text(text)
         print(f"wrote {path}", flush=True)
