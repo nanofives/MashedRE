@@ -9,7 +9,7 @@
 #define FUN_00402750 Orig_00402750
 // exe bodies
 #define FUN_004d8560 UtilReturnOne4d8560                     // exe body, Util/UtilLeaves_ab6.cpp (returns 1)
-#define FUN_004963e0 PortTop_CfgLogDebug                     // log stand-in, Match/PortTop_00492370.cpp
+#define FUN_004963e0 Orig_004963e0                           // matched, Match/PortTop_004963e0.cpp (BIND-CRT-STDIO-CALLERS)
 #define FUN_004c2ed0 MashedRw_EngineGetModeInfo_004c2ed0     // RW: RwEngineGetModeInfo -> librw
 #define FUN_004c2f00 MashedRw_EngineGetCurrentMode_004c2f00  // RW: RwEngineGetCurrentMode -> librw
 #define FUN_00498bc0 VideoGetRenderWidth                     // matched, Match/MatchS16_00498bc0.cpp

@@ -1,0 +1,2 @@
+# RO-EXE-TICK-TRACE: frontend.mpg backdrop frozen on frame 0 (MASHED_DET_MPG_PIN=0), tests the tick-181 vertex-buffer split
+MASHED_DET_MPG_PIN=0

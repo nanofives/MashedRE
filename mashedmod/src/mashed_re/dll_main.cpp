@@ -9,6 +9,9 @@
 #include <cstdlib>
 #include "Core/HookSystem.h"
 
+// RO-ORIG-ASI: replay mode on the original (Core/ReplayAsi.cpp), knob MASHED_REPLAY_ASI=<cfg.txt>, default OFF.
+bool ReplayAsi_Init();
+
 extern "C" __declspec(dllexport) void InjectHooks() {
     HookSystem::InstallAll();
 }
@@ -19,6 +22,8 @@ extern "C" __declspec(dllexport) void UninjectHooks() {
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID) {
     if (reason == DLL_PROCESS_ATTACH) {
+        // With the replay knob set no game hook is installed: the asi only replays the original (RO-ORIG-ASI).
+        if (ReplayAsi_Init()) return TRUE;
         const char* skip = std::getenv("MASHED_RE_NO_AUTO_HOOK");
         if (skip == nullptr || skip[0] == '\0' || skip[0] == '0') {
             InjectHooks();

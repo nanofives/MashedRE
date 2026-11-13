@@ -1,0 +1,90 @@
+{
+ "run": "D:/MashedWT/RO-ORIG-ASI_data/a2",
+ "ref": "D:/MashedWT/RO-ORIG-ASI_data/f1",
+ "ref2": "D:/MashedWT/RO-ORIG-ASI_data/f1",
+ "ticks": 3324,
+ "ref_ticks": 3324,
+ "allowed_blocks": [],
+ "complete": true,
+ "verdict": "DIVERGED",
+ "identical_for": 0,
+ "first": {
+  "tick": 0,
+  "blocks": [
+   [
+    "0x67d800",
+    "other page 0x0067d000"
+   ],
+   [
+    "0x7f1000",
+    "frame timer block 0x007f0ff0..0x007f1034"
+   ]
+  ],
+  "nblocks": 2,
+  "raw": [
+   [
+    "0x7f1030",
+    "39a82829",
+    "39a84b51"
+   ]
+  ],
+  "segment": "menu"
+ },
+ "rc": 0,
+ "exit": null,
+ "notes": [
+  "BOOT-CLASS mismatch {'run': {'0x7f1030': '39a82829', '0x773d60': '75b6e8c0'}, 'ref': {'0x7f1030': '39a84b51', '0x773d60': '75b6e8c0'}, 'ref2': {'0x7f1030': '39a84b51', '0x773d60': '75b6e8c0'}}: verdict not body evidence"
+ ],
+ "dn_warp": [
+  113,
+  109
+ ],
+ "segments": [
+  [
+   "menu",
+   0,
+   599
+  ],
+  [
+   "race",
+   600,
+   3323
+  ]
+ ],
+ "run_segments": [
+  [
+   "menu",
+   0,
+   599
+  ],
+  [
+   "race",
+   600,
+   3323
+  ]
+ ],
+ "segments_match": true,
+ "identical_by_segment": {
+  "menu": 0,
+  "race": 0
+ },
+ "ticks_by_segment": {
+  "menu": 600,
+  "race": 2724
+ },
+ "boot_class": {
+  "run": {
+   "0x7f1030": "39a82829",
+   "0x773d60": "75b6e8c0"
+  },
+  "ref": {
+   "0x7f1030": "39a84b51",
+   "0x773d60": "75b6e8c0"
+  },
+  "ref2": {
+   "0x7f1030": "39a84b51",
+   "0x773d60": "75b6e8c0"
+  }
+ },
+ "boot_class_match": false
+}

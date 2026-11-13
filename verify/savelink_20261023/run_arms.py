@@ -6,6 +6,7 @@ usage: py -3.12 run_arms.py <arm> [<arm> ...]
   D2_<tag>_<n>        D2 arm: a8_run_port.py base env (90 s), MEASURE_SOLO / TRACK_SEL=12 / STEER_HOLD_AFTER=0
   W_<tag>[-<rep>]     Warzone live (pontoon recipe): rule 8, 3600 frames, PONTOON_TRACE + SEEK_TRACE + AI_STEPDUMP
   WL_<tag>[-<rep>]    the same at 18000 frames (300 s, the length of the original's OP3 capture): full-race no-crash arm
+  RO_<tag>[-<rep>]    replay oracle exe arm: MASHED_ORIG_TOP + MASHED_REPLAY + MASHED_REPLAY_TRACE=<OUT>/<arm> (RO-EXE-TICK-TRACE)
 <tag> selects a knob stack from STACK. Tag DEF = the plain (new, dflip) default, no knob.
 To ADD a stack, write verify/savelink_20261023/stacks/<TAG>.txt (one knob per line, '@<TAG>' includes another stack,
 '#' comments), never a new STACK[...] line in this file: per-stack files keep two rows' additions out of each other's
@@ -607,6 +608,25 @@ for name in sys.argv[1:]:
         e['MASHED_CC_REPLAY'] = os.environ['A4_CC_IN']; e['MASHED_CC_REPLAY_OUT'] = os.path.join(OUT, name + '.ccreplay.tsv')
         knobs(e, STACK[tag])
         run(name, e, [e['MASHED_CC_REPLAY_OUT']], 300, exe_for(tag))
+    elif name.startswith('RO_'):
+        # RO-EXE-TICK-TRACE (replay oracle 8): the exe replay knob with the per-tick trace (detorig.py's meta.json /
+        # ticks.bin / ckptNN.data.bin) in OUT/<arm>. ORIG_TOP path. RO_<tag>[-<rep>]: <tag> = a knob stack, <rep> names
+        # the repeat. A4_REPLAY_JSON (default verify/replayoracle_20261113/replay_trace.json = replay_selftest.json with a normalisation path that exists), A4_RO_FRAMES (600),
+        # A4_RO_CKPT (MASHED_REPLAY_TRACE_CKPT, default 1,150,299,301,450,600). A4_EXE picks the exe (object build:
+        # mashedmod/build/ddkobj/mashed_re_ddk.exe). verify/replayoracle_20261113/RESULT_RO-EXE-TICK-TRACE.md
+        tag = tag_of(name[3:])
+        e = clean_env()
+        # MASHED_DETERMINISTIC=1: the hand path's menu timers (exe_main.cpp DetTicks) on the frame clock. Without it two
+        # runs split at tick 181 in the Im2D vertex scratch 0x00898a20 (RESULT_RO-EXE-TICK-TRACE.md, arms4 / arms5)
+        e.update(MASHED_WIN_POS='primary-bl', MASHED_ORIG_TOP='1', MASHED_DETERMINISTIC='1', MASHED_DET_FRAMES=os.environ.get('A4_RO_FRAMES', '600'),
+                 MASHED_REPLAY=os.environ.get('A4_REPLAY_JSON', os.path.join(W, 'verify', 'replayoracle_20261113', 'replay_trace.json')),
+                 MASHED_REPLAY_TRACE=os.path.join(OUT, name),
+                 MASHED_REPLAY_TRACE_CKPT=os.environ.get('A4_RO_CKPT', '1,150,299,301,450,600'))
+        td = e['MASHED_REPLAY_TRACE']
+        knobs(e, STACK[tag])   # a stack may remove the trace ('-MASHED_REPLAY_TRACE', stacks/ROOFF.txt)
+        if not os.environ.get('A4_PLAN') and os.path.isdir(td):
+            shutil.rmtree(td)
+        run(name, e, [os.path.join(td, 'ticks.bin'), os.path.join(td, 'meta.json')], 300, exe_for(tag))
     elif name.startswith('R_'):
         tag = tag_of(name[2:])
         e = base_env(120)

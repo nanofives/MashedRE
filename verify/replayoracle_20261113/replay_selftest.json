@@ -1,0 +1,8 @@
+{ "format": "mashed-replay-1",
+  "scenario": {"track": 0, "mode": 10, "rule": 0, "car": 0, "team": 0, "cars": 4},
+  "warp": {"after_ticks": 300, "clock": 300, "phase": 2},
+  "clock": {"q0": "0x40000000", "qtick": 166667, "t0": "0x01000000", "ttick": 17, "boot_qstep": 15000, "boot_step": 1},
+  "rng": {"crt_holdrand": "0x12345678", "rw_seed": "0x9a319039", "rw_draws": 310},
+  "input": [[0, 0, 4, 255], [545, 0, 0, 255], [600, 0, 0, 0]],
+  "normalize": {"file": "C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-EXE-REPLAY-KNOB/re/frida/warp_normalize.tsv", "at": "both"},
+  "raw_poll": "no-device" }

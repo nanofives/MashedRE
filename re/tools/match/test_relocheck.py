@@ -25,6 +25,9 @@ CASES = [
     ("swap_legacy_ok", "swap_00414060.c", False, "OK", []),
     ("control_strict_ok", "control_00413fa0.c", True, "OK", []),
     ("control_legacy_ok", "control_00413fa0.c", False, "OK", []),
+    # MATCH-RELOCHECK-5444A0: FUN_<va8>_site<N> is checked against the original operand at its own site
+    ("site2_ok", "site2_005444a0.c", True, "OK", []),
+    ("site2_wrong_target_bad", "site2_wrong_005444a0.c", True, "BAD", ["_FUN_004cc791_site2: ours 0x004cc791 vs orig 0x004cc790"]),
 ]
 
 

@@ -22,7 +22,7 @@
 extern "C" {
 #include "../../../../re/match/s20/004ce790.c"
 
-void PortTop_CfgLogDebug(const char* fmt, ...);                    // stand-in of 0x00496400, Match/PortTop_00492370.cpp
+void Orig_00496400(const char* fmt, ...);                          // 0x00496400 matched, Match/PortTop_00496400.cpp
 int MashedRw_TexDictionarySetCurrent_004c5c80(int dict);           // LibRw/RwApiBind.cpp
 void* MashedRw_RtBMPImageRead_0052cb00(const char* name);          // LibRw/RwApiBind.cpp -> rw::readBMP
 void* MashedRw_RtPNGImageRead_00514330(const char* name);          // LibRw/RwApiBind.cpp -> rw::readPNG
@@ -33,7 +33,7 @@ void* MashedRw_RtPNGImageRead_00514330(const char* name);          // LibRw/RwAp
 // after the last call, so the result of 0x0052cb00 is returned.
 // 0x004935a0 PortTop_ImgRead_004935a0 (the "bmp" read function)
 void* PortTop_ImgRead_004935a0(const char* name) {
-    PortTop_CfgLogDebug("Reading texture %s\n", name);
+    Orig_00496400("Reading texture %s\n", name);
     MashedRw_TexDictionarySetCurrent_004c5c80(0);
     return MashedRw_RtBMPImageRead_0052cb00(name);
 }
@@ -42,7 +42,7 @@ void* PortTop_ImgRead_004935a0(const char* name) {
 // call 0x00514330, at 0x004935ed add esp,0x10 / pop esi / ret.
 // 0x004935d0 PortTop_ImgRead_004935d0 (the "png" read function)
 void* PortTop_ImgRead_004935d0(const char* name) {
-    PortTop_CfgLogDebug("Reading texture %s\n", name);
+    Orig_00496400("Reading texture %s\n", name);
     MashedRw_TexDictionarySetCurrent_004c5c80(0);
     return MashedRw_RtPNGImageRead_00514330(name);
 }

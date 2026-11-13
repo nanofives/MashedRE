@@ -13,7 +13,7 @@
 #define FUN_004e8f50 RwCore_004e8f50
 #define FUN_004e8f80 RwCore_004e8f80
 #define FUN_0052e310 RwCore_0052e310
-#define FUN_0052e3d0 RwCoreLift_0052e3d0
+#define FUN_0052e3d0 RwCore_0052e3d0
 #define FUN_0052e490 RwCoreLift_0052e490
 #define FUN_0052e4e0 RwCoreLift_0052e4e0
 #define FUN_0052e500 RwCoreLift_0052e500

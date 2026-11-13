@@ -5,7 +5,6 @@ rva	reason
 0x004c48fb	inside a known function (a label, not a function start)
 0x004c5eef	inside a known function (a label, not a function start)
 0x004d15f0	inside a known function (a label, not a function start)
-0x004d1630	inside a known function (a label, not a function start)
 0x004d3112	inside a known function (a label, not a function start)
 0x004d3141	inside a known function (a label, not a function start)
 0x004d31bb	inside a known function (a label, not a function start)
@@ -22,7 +21,6 @@ rva	reason
 0x004ddd47	inside a known function (a label, not a function start)
 0x004de35a	inside a known function (a label, not a function start)
 0x004de3a6	inside a known function (a label, not a function start)
-0x004deb20	inside a known function (a label, not a function start)
 0x004deede	inside a known function (a label, not a function start)
 0x004defc4	inside a known function (a label, not a function start)
 0x004e18c8	inside a known function (a label, not a function start)
@@ -98,7 +96,6 @@ rva	reason
 0x0054a575	inside a known function (a label, not a function start)
 0x005508ee	inside a known function (a label, not a function start)
 0x00551770	unresolved call target 0x0052df40 at 0x005517be
-0x005518f0	unresolved call target 0x0052de60 at 0x005519da
 0x0057c3a0	unresolved call target 0x0055b030 at 0x0057c3c4
 0x0057c3f0	unresolved call target 0x0055b060 at 0x0057c3fc
 0x0057c590	unresolved tail jmp target 0x0057c420 at 0x0057c590

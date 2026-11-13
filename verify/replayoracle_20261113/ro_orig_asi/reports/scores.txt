@@ -1,0 +1,25 @@
+f1 class {'0x7f1030': '39a84b51', '0x773d60': '75b6e8c0'} rc 0 ticks 3324 segs [['menu', 0, 599], ['race', 600, 3323]]
+f2 class {'0x7f1030': '39a80501', '0x773d60': '75b6e8c0'} rc 0 ticks 3324 segs [['menu', 0, 599], ['race', 600, 3323]]
+a1 class {'0x7f1030': '39a80501', '0x773d60': '75b6e8c0'} rc 0 ticks 3324 segs [['menu', 0, 599], ['race', 600, 3323]]
+a2 class {'0x7f1030': '39a82829', '0x773d60': '75b6e8c0'} rc 0 ticks 3324 segs [['menu', 0, 599], ['race', 600, 3323]]
+a3 class {'0x7f1030': '39a80501', '0x773d60': '75b6e8c0'} rc 0 ticks 3324 segs [['menu', 0, 599], ['race', 600, 3323]]
+aneg class {'0x7f1030': '39a82829', '0x773d60': '75b6e8c0'} rc 0 ticks 3324 segs [['menu', 0, 599], ['race', 600, 3323]]
+
+a1 vs f2: IDENTICAL-FOR-N 3324/3324 class_match=True by_seg={'menu': 600, 'race': 2724} 
+a3 vs f2: IDENTICAL-FOR-N 3324/3324 class_match=True by_seg={'menu': 600, 'race': 2724} 
+a3 vs a1: IDENTICAL-FOR-N 3324/3324 class_match=True by_seg={'menu': 600, 'race': 2724} 
+a1 vs a3: IDENTICAL-FOR-N 3324/3324 class_match=True by_seg={'menu': 600, 'race': 2724} 
+a2 vs f1: DIVERGED 0/3324 class_match=False by_seg={'menu': 0, 'race': 0} first tick 0 seg menu blocks [['0x67d800', 'other page 0x0067d000'], ['0x7f1000', 'frame timer block 0x007f0ff0..0x007f1034']] raw [['0x7f1030', '39a82829', '39a84b51']]
+a2 vs a1: DIVERGED 0/3324 class_match=False by_seg={'menu': 0, 'race': 0} first tick 0 seg menu blocks [['0x67d800', 'other page 0x0067d000'], ['0x7f1000', 'frame timer block 0x007f0ff0..0x007f1034']] raw [['0x7f1030', '39a82829', '39a80501']]
+a1 vs f1: DIVERGED 0/3324 class_match=False by_seg={'menu': 0, 'race': 0} first tick 0 seg menu blocks [['0x67d800', 'other page 0x0067d000'], ['0x7f1000', 'frame timer block 0x007f0ff0..0x007f1034']] raw [['0x7f1030', '39a80501', '39a84b51']]
+f2 vs f1: DIVERGED 0/3324 class_match=False by_seg={'menu': 0, 'race': 0} first tick 0 seg menu blocks [['0x67d800', 'other page 0x0067d000'], ['0x7f1000', 'frame timer block 0x007f0ff0..0x007f1034']] raw [['0x7f1030', '39a80501', '39a84b51']]
+aneg vs a1: DIVERGED 0/3324 class_match=False by_seg={'menu': 0, 'race': 0} first tick 0 seg menu blocks [['0x67d800', 'other page 0x0067d000'], ['0x7f1000', 'frame timer block 0x007f0ff0..0x007f1034']] raw [['0x7f1030', '39a82829', '39a80501']]
+aneg vs f2: DIVERGED 0/3324 class_match=False by_seg={'menu': 0, 'race': 0} first tick 0 seg menu blocks [['0x67d800', 'other page 0x0067d000'], ['0x7f1000', 'frame timer block 0x007f0ff0..0x007f1034']] raw [['0x7f1030', '39a82829', '39a80501']]
+aneg vs a3: DIVERGED 0/3324 class_match=False by_seg={'menu': 0, 'race': 0} first tick 0 seg menu blocks [['0x67d800', 'other page 0x0067d000'], ['0x7f1000', 'frame timer block 0x007f0ff0..0x007f1034']] raw [['0x77398c', '0000c1fc', '00000000'], ['0x7f1030', '39a82829', '39a80501']]
+aneg vs a2: DIVERGED 300 class_match True first tick 300 menu [['0x67f000', 'other page 0x0067f000']] []
+a3 vs f2: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'MASK:os': 4, 'MASK:crt-cookie': 1, 'RESIDUE': 3, 'RULE:FILEPTR': 1, 'PTR': 3711, 'MASK:renderware': 2, 'RULE:RING4': 3, 'MASK:audio': 7, 'MASK:crt-clock': 2, 'RULE:WINMSG': 3} periods {}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+a3 vs a1: raw 0/15, normalized 15/15, race-state 15/15
+  classes {'MASK:os': 3, 'MASK:crt-cookie': 1, 'RULE:FILEPTR': 1, 'PTR': 3706, 'RULE:HWND': 4, 'MASK:renderware': 2, 'RULE:RING4': 3, 'MASK:audio': 7, 'MASK:crt-clock': 2, 'RULE:WINMSG': 4} periods {}
+  unexplained per checkpoint [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]

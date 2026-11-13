@@ -5,7 +5,14 @@
 typedef struct { unsigned char r, g, b, a; } RwRGBA;
 double sin(double);
 #pragma intrinsic(sin)
-extern float DAT_00636afc;
+#ifndef MGLOBAL   /* RWC-FRAME-492E90: port-includable globals (extern T n under C, as before) */
+#ifdef __cplusplus
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#endif
+#endif
+MGLOBAL(float, DAT_00636afc, 0x00636afc);
 void FUN_00427e00(int p0, float p1, float p2, RwRGBA p3, float p4, int p5);
 
 // MATCH: 0x00402fb0 FUN_00402fb0

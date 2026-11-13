@@ -1,0 +1,2 @@
+# RO-EXE-TICK-TRACE negative control: +1 on DAT_007f0ff0 at tick 400 before the trace hashes it (RO_RONEG arms)
+MASHED_REPLAY_TRACE_NEGCTL=400:0x007f0ff0

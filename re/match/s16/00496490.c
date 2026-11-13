@@ -23,18 +23,19 @@ typedef unsigned char bool;
 #endif
 #endif
 /* ---- end preamble ---- */
-typedef unsigned char undefined1;
+/* BIND-CRT-STDIO-CALLERS 2026-11-12: callee prototypes typed so the text also compiles as C++ (the knob path's
+   Match/PortTop_00496490.cpp): sprintf varargs, the 16-byte _ftime64 struct by address, char buffers, const strings.
+   match.py stays 100% (verify/portorigtop_20261112/RESULT_BIND-CRT-STDIO-CALLERS.md). */
 typedef unsigned int undefined4;
-typedef unsigned __int64 undefined8;
 typedef unsigned int uint;
 MGLOBAL(uint, DAT_00616038, 0x00616038);
-MGLOBAL(int, DAT_00772fbc, 0x00772fbc);
-MGLOBAL(undefined1, DAT_005d0004, 0x005d0004);
+MGLOBAL(void *, DAT_00772fbc, 0x00772fbc);
+MGLOBAL(char, DAT_005d0004, 0x005d0004);
 void FUN_004963e0(char * p0);
-undefined4 FUN_004a2b60(char * p0, undefined4 p1);
-undefined4 FUN_004a43b9(undefined4 p0);
-void FUN_004a43d2(undefined8 * p0);
-undefined4 FUN_004a4541(char * p0, char * p1);
+int FUN_004a2b60(char * p0, const char * p1, ...);
+char * FUN_004a43b9(void * p0);
+void FUN_004a43d2(void * p0);
+void * FUN_004a4541(const char * p0, const char * p1);
 // MATCH: 0x00496490 FUN_00496490
 /* [C1 2026-05-16] DAT_00772fbc = FUN_004a4541("mashed.log", &DAT_005d0004) - opens log file.
    WM_CREATE handler. */
@@ -42,10 +43,10 @@ undefined4 FUN_004a4541(char * p0, char * p1);
 undefined4 FUN_00496490(void)
 
 {
-  undefined4 uVar1;
+  char * uVar1;
   uint unaff_retaddr;
-  undefined1 local_114 [16];
-  undefined1 local_104 [256];
+  unsigned char local_114 [16];
+  char local_104 [256];
   uint local_4;
   
   local_4 = DAT_00616038 ^ unaff_retaddr;

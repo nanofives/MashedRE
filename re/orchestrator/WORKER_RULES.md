@@ -19,6 +19,11 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   (`read_session` with limit 1 or 2), or its ledger row is `claimed` / `working`. If not,
   re-send the same task once with `yolo: true`. If it still has not started, `stop_child` and
   respawn it with the same task.
+- **After `move_self` (HB-MOVE-CONTINUATION, 2026-11-13).** The moved session is a new process and its
+  continuation can go unread (run 38: cmwcvp5pm idle 79 min, cmwcylbz9 needed a resend). Standing rule: the
+  moved session's parent or lead checks `latestSeq` 5 minutes after the move. If it has not climbed, resend the
+  task once with `yolo: true`, then `stop_child` and respawn as above. A moved worker that reaches its own
+  continuation does nothing special: it just continues. Do not wait longer than 5 minutes for a silent move.
 - Never message your parent yourself. Your final message is delivered automatically.
 - Do not close yourself. Your parent closes you after it collects your REPORT.
 

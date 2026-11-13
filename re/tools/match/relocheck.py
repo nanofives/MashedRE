@@ -13,6 +13,7 @@ the target our object names and compares it with the operand the original holds 
               `BYTE_` ...) -> 0x<va8> + stored addend (MATCH-EXACT-DATA, 2026-11-11). Before this these were listed as
               unchecked, so a source that swapped two data operands (0x00414060: the fld / fmul constants) still
               passed; `--no-named-data` restores the old behaviour.
+  site alias   `FUN_<va8>_site<N>` -> 0x<va8> (second extern name for a repeated call site, MATCH-RELOCHECK-5444A0)
   same-section labels (jump tables) are already checked by match.py's byte compare and are skipped here.
 Everything else (imports, CRT helpers such as __ftol, file-static data) is listed as unchecked by name.
 
@@ -88,6 +89,11 @@ def check(src, named_data=True):
                 continue
             elif re.fullmatch(r"FUN_[0-9a-fA-F]{8}", u):
                 exp = int(u[-8:], 16) + (stored if typ == REL_DIR32 else 0)
+            elif re.fullmatch(r"FUN_[0-9a-fA-F]{8}_site[0-9]+", u):
+                # MATCH-RELOCHECK-5444A0: an extra extern name for one more call site of the same callee (c2 folds two
+                # identical call sites to one, so the second needs its own symbol). The suffix is only a label: the
+                # target is the 8-hex address, compared with the original's operand at this exact reloc offset, as for FUN_.
+                exp = int(u[4:12], 16) + (stored if typ == REL_DIR32 else 0)
             elif t.get("sec", 0) > 0:                      # our own constant / string
                 cs = secs[t["sec"] - 1]
                 csec = cs["data"]

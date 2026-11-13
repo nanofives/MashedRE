@@ -1,0 +1,7 @@
+rva	exe_symbol	exe_va	size	relocs_masked	abs_data_refs_exact	diff_bytes	result	first_diff	vs_copy_in_map	src
+0x0040e480	_CarSlotStateSet	0x00011050	32	0	1	0	IDENTICAL		False	re/match/s02/0040e480.c
+0x004950b0	_QpcTimeScaledTo3Mhz	0x00018910	96	3	2	0	IDENTICAL		False	re/match/s16/004950b0.c
+0x00493480	_FpsDiscretise	0x00018a90	192	2	7	0	IDENTICAL		False	re/match/s15/00493480.c
+0x00493390	_PortTop_Bound_00493390	0x00018b50	240	3	19	0	IDENTICAL		False	re/match/s15/00493390.c
+0x00497310	_PortTop_Bound_00497310	0x00018c40	320	13	5	0	IDENTICAL		False	re/match/s16/00497310.c
+0x00534870	_PortTop_Bound_00534870	0x00018d80	176	0	10	0	IDENTICAL		False	re/match/rwl03/00534870.c

@@ -7,15 +7,14 @@
 #define MATCH_PORT 1
 #define FUN_004c2d90 RwCore_004c2d90
 #define FUN_004e3470 RwCore_004e3470
-#define FUN_004e5d30 RwCore_004e5d30
-#define FUN_004e65c0 RwCore_004e65c0
-#define FUN_004f42d0 RwCore_004f42d0
 #define FUN_004e4e60 RwCoreLift_004e4e60
 #define FUN_004e4f00 RwCoreLift_004e4f00
+#define FUN_004e5d30 RwCore_004e5d30
 #define FUN_004e5e20 RwCoreLift_004e5e20
 #define FUN_004e5e70 RwCoreLift_004e5e70
 #define FUN_004e6250 RwCoreLift_004e6250
 #define FUN_004e64f0 RwCoreLift_004e64f0
+#define FUN_004e65c0 RwCore_004e65c0
 #define FUN_004e7ef0 RwCoreLift_004e7ef0
 #define FUN_004e7f60 RwCoreLift_004e7f60
 #define FUN_004e8540 RwCoreLift_004e8540
@@ -26,6 +25,7 @@
 #define FUN_004f08f0 RwCoreLift_004f08f0
 #define FUN_004f0990 RwCoreLift_004f0990
 #define FUN_004f09c0 RwCoreLift_004f09c0
+#define FUN_004f42d0 RwCore_004f42d0
 extern "C" {
 #include "../../../../re/match/rwl02/004e5d30.c"
 }

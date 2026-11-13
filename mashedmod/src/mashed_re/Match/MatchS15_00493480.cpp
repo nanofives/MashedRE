@@ -8,8 +8,10 @@
 #define FUN_00493480 FpsDiscretise
 // [RO-BIND-TIMER] exe: 0x00493390 binds by name to its matched exe body (Match/PortTop_00493390.cpp). Reached only
 // under MASHED_ORIG_TOP with MASHED_OT_TIMER=1 (Match/PortTop_00492370.cpp). The .asi keeps the raw-address call.
+// [RO-EXE-REPLAY-KNOB] exe: through the replay tick dispatcher (Match/PortTop_Replay.cpp), which calls that body
+// directly when MASHED_REPLAY is off, and advances the virtual clock first when it is on.
 #ifdef MASHED_STANDALONE
-#define FUN_00493390 PortTop_Bound_00493390
+#define FUN_00493390 PortTop_Replay_00493390
 #else
 #define FUN_00493390 MatchS15_00493480_Call00493390
 // Callees of the matched source: the old Boot/FrameDispatch.cpp body called each one through its original address, so these

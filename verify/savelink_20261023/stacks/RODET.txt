@@ -1,0 +1,2 @@
+# RO-EXE-TICK-TRACE: hand-path synthetic clock (exe_main.cpp DetTicks), tests the tick-181 vertex-buffer split
+MASHED_DETERMINISTIC=1

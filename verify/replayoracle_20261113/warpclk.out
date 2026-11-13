@@ -1,0 +1,48 @@
+7f0ff0@warp=2700 boot=False  values={0: 1}
+7f0ff0@warp=4200 boot=False  values={4: 1}
+7f0ff0@warp=4750 boot=False  values={0: 1}
+7f0ff0@warp=5900 boot=False  values={0: 1}
+7f0ff0@warp=5950 boot=False  values={0: 1}
+7f0ff0@warp=6050 boot=False  values={0: 3}
+7f0ff0@warp=6100 boot=False  values={0: 1}
+7f0ff0@warp=6150 boot=False  values={0: 1}
+7f0ff0@warp=6200 boot=False  values={0: 2}
+7f0ff0@warp=6250 boot=False  values={0: 2}
+7f0ff0@warp=6550 boot=False  values={4: 1}
+7f0ff0@warp=6950 boot=False  values={4: 1}
+7f0ff0@warp=7100 boot=False  values={4: 1}
+7f0ff0@warp=7150 boot=False  values={4: 1}
+7f0ff0@warp=7350 boot=False  values={0: 1}
+7f0ff0@warp=7600 boot=False  values={0: 1}
+7f0ff0@warp=7650 boot=False  values={4: 1}
+7f0ff0@warp=7750 boot=False  values={4: 1}
+7f0ff0@warp=8200 boot=False  values={4: 1}
+7f0ff0@warp=8300 boot=False  values={4: 1}
+7f0ff0@warp=8400 boot=False  values={4: 2}
+7f0ff0@warp=8500 boot=False  values={4: 2, 0: 1}
+7f0ff0@warp=8550 boot=False  values={4: 4, 0: 1}
+7f0ff0@warp=8600 boot=False  values={0: 6, 4: 4}
+7f0ff0@warp=8650 boot=False  values={4: 6, 0: 5}
+7f0ff0@warp=8700 boot=False  values={0: 7, 4: 9}
+7f0ff0@warp=8750 boot=False  values={0: 8, 4: 12}
+7f0ff0@warp=8800 boot=False  values={0: 6, 4: 8}
+7f0ff0@warp=8850 boot=False  values={4: 11, 0: 3}
+7f0ff0@warp=8900 boot=False  values={0: 4, 4: 8}
+7f0ff0@warp=8950 boot=False  values={0: 5, 4: 5}
+7f0ff0@warp=9000 boot=False  values={0: 3, 4: 9}
+7f0ff0@warp=9050 boot=False  values={0: 10, 4: 4}
+7f0ff0@warp=9100 boot=False  values={0: 12, 4: 10}
+7f0ff0@warp=9150 boot=False  values={0: 8, 4: 8}
+7f0ff0@warp=9200 boot=False  values={0: 9, 4: 9}
+7f0ff0@warp=9250 boot=False  values={0: 12, 4: 7}
+7f0ff0@warp=9300 boot=False  values={0: 8, 4: 10}
+7f0ff0@warp=9350 boot=False  values={0: 4, 4: 13}
+7f0ff0@warp=9400 boot=False  values={0: 4, 4: 5}
+7f0ff0@warp=9450 boot=False  values={0: 2, 4: 2}
+7f0ff0@warp=9500 boot=False  values={4: 1}
+7f0ff0@warp=9550 boot=False  values={4: 1}
+7f0ff0@warp=9700 boot=False  values={0: 1}
+7f0ff0@warp=9800 boot=False  values={4: 1}
+7f0ff0@warp=10100 boot=False  values={0: 1}
+7f0ff0@warp=11000 boot=False  values={0: 1}
+7f0ff0@warp=29950 boot=True  values={0: 85}

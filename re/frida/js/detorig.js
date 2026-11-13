@@ -41,7 +41,7 @@
 //   negctl          negative control at the race anchor: 1 = +1 on the RW RNG word at the cursor, else a VA bumped by one
 //   loadSleepMs     real ms slept in each main-thread clock call between the warp and phase 3 (load hold)
 //   rebase          set T / Q at the race anchor to the values of an anchor at N = warpAt + 200
-//   watch           [va, ...] (at most 2): hardware WRITE watchpoints on every thread from the race anchor on;
+//   watch           [va, ...] (at most 2): hardware WRITE (cfg.watchMode 'rw': read or write) watchpoints on every thread from the race anchor on;
 //                   each hit sends {kind:'watch', pc, bt, value, n} (pc = the instruction after the store)
 //   callLog         log every main-thread clock call from the warp to the race anchor (PROMOTE-DETORIG-LOADHOLD):
 //                   64 bytes per call = [N, kind (0 tgt, 1 qpc), esp[0..13]], sent with the race anchor
@@ -286,7 +286,7 @@ function witness() { return (CFG.witness || []).map((va) => [va.toString(16), ga
 
 function checkpoint(k) {
   const n = N();
-  const blob = ga(DATA_LO).readByteArray(DATA_HI - DATA_LO);
+  const blob = watchQuiet(() => ga(DATA_LO).readByteArray(DATA_HI - DATA_LO));   // rw watch: the agent's own read would trap
   const ptd = getptd();
   const P = rwRngPtr();
   const info = {
@@ -320,8 +320,21 @@ const onDue = K(new NativeCallback(() => {
 D.add(0x1c).writePointer(onDue);
 
 // ---------------------------------------------------------------- write watch (cfg.watch), port of scenario_launch.py's
-// --watch-write: debug-register write watchpoints, armed on every thread at the race anchor. No code patch.
+// --watch-write: debug-register write watchpoints, armed on every thread at the race anchor (and at the install and the
+// warp with cfg.watchFrom = 'install', RO-CTL-68BC0C). No code patch.
 let watchHits = 0;
+// rw watch only: run fn with this thread's debug-register slots cleared, then re-arm them (an agent read of a watched
+// word would otherwise trap inside Frida's guarded read and throw).
+function watchQuiet(fn) {
+  if (CFG.watchMode !== 'rw' || !(CFG.watch && CFG.watch.length) || !watchArmed) return fn();
+  const me = Process.getCurrentThreadId();
+  const t = Process.enumerateThreads().find((x) => x.id === me);
+  const addrs = CFG.watch.slice(0, 2).map((va) => ga(va));
+  if (t) addrs.forEach((a, k) => { try { t.unsetHardwareWatchpoint(k); } catch (e) { } });
+  try { return fn(); } finally { if (t) addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, 'rw'); } catch (e) { } }); }
+}
+let watchArmed = false;
+const watchPc = {};
 function watchArm() {
   const addrs = (CFG.watch || []).slice(0, 2).map((va) => ga(va));
   if (!addrs.length) return 'no watch';
@@ -329,20 +342,28 @@ function watchArm() {
     if (det.type !== 'single-step' && det.type !== 'breakpoint') return CR_HANDLER ? CR_HANDLER(det) : false;
     try {
       const c = det.context;
-      if (watchHits++ < 2000) {
+      const pcs = '0x' + (c.pc.toUInt32() >>> 0).toString(16);
+      const cnt = (watchPc[pcs] = (watchPc[pcs] || 0) + 1);
+      // 'w' mode keeps the old behaviour (every hit up to 2000); 'rw' sends the first 4 hits per pc, then the count at 2^k
+      const rw = CFG.watchMode === 'rw';
+      if (rw && cnt > 4 && (cnt & (cnt - 1)) !== 0) { watchHits++; return true; }
+      if (watchHits++ < 2000 || rw) {
         let bt = '';
         try { bt = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 12).map((p) => '0x' + (p.toUInt32() >>> 0).toString(16)).join('|'); } catch (e) { bt = 'bt-err'; }
-        send({ kind: 'watch', n: N(), tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
-               values: addrs.map((a) => '0x' + a.readU32().toString(16)) });
+        send({ kind: 'watch', n: N(), cnt, mode: CFG.watchMode || 'w', tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
+               values: rw ? [] : addrs.map((a) => '0x' + a.readU32().toString(16)) });  // rw: a read here would re-trap
       }
     } catch (e) { /* keep running */ }
     return true;
   });
+  if (CFG.watchMode === 'rw') Process.enumerateThreads().forEach((t) => { addrs.forEach((a, k) => { try { t.unsetHardwareWatchpoint(k); } catch (e) { } }); });
+  const pre = addrs.map((a) => a.toString() + '=0x' + (a.readU32() >>> 0).toString(16)).join(',');  // read before arming (rw traps reads)
   let n = 0;
   Process.enumerateThreads().forEach((t) => {
-    addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, 'w'); if (k === 0) n++; } catch (e) { } });
+    addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, CFG.watchMode === 'rw' ? 'rw' : 'w'); if (k === 0) n++; } catch (e) { } });
   });
-  return 'watch armed on ' + n + ' threads: ' + addrs.map((a) => a.toString()).join(',');
+  watchArmed = true;
+  return 'watch armed (' + (CFG.watchMode || 'w') + ') on ' + n + ' threads: ' + pre;
 }
 
 // ---------------------------------------------------------------- tick clock + per-tick block hashes (REPLAY-ORACLE-DESIGN)
@@ -762,6 +783,9 @@ function install() {
   const CRA = crashArm();
   if (CRA) res.push(['crash', CRA]);
   if (PZ) { for (const va of PZ.at) Interceptor.attach(ga(va), PZ.cm); res.push(['poison', POISON.mode, POISON.value]); }
+  // RO-CTL-68BC0C: cfg.watchFrom = 'install' arms the write watch here too (boot mode: the PE entry point; else the menu),
+  // and re-arms it at the warp, so threads created after an arm are covered from the next one (anchor arm unchanged)
+  if (CFG.watchFrom === 'install' && CFG.watch && CFG.watch.length) res.push(['watch', watchArm()]);
   const doWarp = () => {
     warpN = N();
     if (CFG.boot) {
@@ -770,6 +794,7 @@ function install() {
       if (ph !== 1) { send({ kind: 'err', msg: `boot warp at tick ${tickNow()}: phase ${ph}, not the menu (1)` }); return; }
       if (CFG.menuCkpt) checkpoint(100);   // full image at the end of the menu segment, before the warp writes
     }
+    if (CFG.watchFrom === 'install' && CFG.watch && CFG.watch.length) send({ kind: 'info', msg: 'warp ' + watchArm() });
     const pins = warp();
     if (PV_AT) pins.prov = PV_AT;
     if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());

@@ -94,6 +94,7 @@ extern "C" {
 // bring-up on the matched RW core bodies instead of librw. These bindings stay as the fallback (L-124).
 bool RwCore_Enabled(void);
 bool RwCore_FrameRoute(void);   // [RWC-FRAME]
+void* RwCore_GlobalsAtInit(void);   // RWC-FRAME-492E90
 extern "C" { void RwCoreLift_004b3eb0(void); void RwCoreLift_004c2b80(void); void RwCoreLift_004c2bb0(void); void RwCoreLift_004e5850(void); void RwCoreLift_004e89a0(void); void RwCoreLift_0054f8d0(void); void RwCoreMissing_00513f90(void); void RwCoreMissing_00514330(void); void RwCore_004c0740(void); void RwCore_004c0b30(void); void RwCore_004c0c20(void); void RwCore_004c0e50(void); void RwCore_004c0ed0(void); void RwCore_004c1040(void); void RwCore_004c1210(void); void RwCore_004c13e0(void); void RwCore_004c15c0(void); void RwCore_004c1a40(void); void RwCore_004c1b10(void); void RwCore_004c1bb0(void); void RwCore_004c1c80(void); void RwCore_004c1cf0(void); void RwCore_004c1d30(void); void RwCore_004c2bf0(void); void RwCore_004c2ed0(void); void RwCore_004c2f00(void); void RwCore_004c39b0(void); void RwCore_004c5930(void); void RwCore_004c5a60(void); void RwCore_004c5bc0(void); void RwCore_004c5c00(void); void RwCore_004c5c80(void); void RwCore_004c5cb0(void); void RwCore_004c7650(void); void RwCore_004c7760(void); void RwCore_004c77c0(void); void RwCore_004cbc60(void); void RwCore_004cbc70(void); void RwCore_004cbc80(void); void RwCore_004cbc90(void); void RwCore_004ce2d0(void); void RwCore_004d41e0(void); void RwCore_004d52d0(void); void RwCore_004de1b0(void); void RwCore_004e43b0(void); void RwCore_004e4440(void); void RwCore_004e4450(void); void RwCore_004e45b0(void); void RwCore_004e4800(void); void RwCore_004e4810(void); void RwCore_004e4860(void); void RwCore_004e4d90(void); void RwCore_004e4dd0(void); void RwCore_004e5700(void); void RwCore_004e66d0(void); void RwCore_004e6920(void); void RwCore_004e69a0(void); void RwCore_004e6ab0(void); void RwCore_004e6e00(void); void RwCore_004e7420(void); void RwCore_004e7e30(void); void RwCore_00534b60(void); void RwCore_0053fb70(void); void RwCore_0053fbb0(void); void RwCore_0053fd30(void); void RwCore_00550350(void); void RwCore_00550390(void); void RwCore_00558470(void); void RwCore_005584c0(void); void RwCore_FrameShowRaster(void); }   // [RWC-FRAME]
 int  RwCore_EngineInit(int memFuncs, int initFlags);
 int  RwCore_EngineOpen(int* params);
@@ -2075,6 +2076,16 @@ int MashedRw_RwModKnob(void) { return RwModKnob() ? 1 : 0; }
 int MashedRw_InstallRwGlobals(void) {
     void** const slot = reinterpret_cast<void**>(static_cast<std::uintptr_t>(0x007d3ff8u));
     void* const dev = *slot;
+    // [RWC-FRAME-492E90] under MASHED_RWC_FRAME the RW core's RwEngineInit built the RwGlobals at 0x007d3ff8; the librw
+    // record does not replace it (the core bodies read its string, memory and device slots). A hand install that put
+    // another pointer there since (the B15 device of piece 4) is undone.
+    if (RwCore_FrameRoute()) {
+        void* const core = RwCore_GlobalsAtInit();
+        if (dev != core) *slot = core;
+        BindLog("RwGlobals: MASHED_RWC_FRAME: 0x007d3ff8 %p -> the RW core's RwGlobals %p (librw record not installed)",
+                dev, core);
+        return 1;
+    }
     if (dev == static_cast<void*>(&s_rwGlobals)) {
         BindLog("RwGlobals: 0x007d3ff8 already points at the record %p", static_cast<void*>(&s_rwGlobals));
         return 1;

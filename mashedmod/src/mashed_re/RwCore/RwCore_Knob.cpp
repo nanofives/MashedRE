@@ -17,6 +17,7 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "../Compat/D3d9Wrap.h"
 
@@ -76,7 +77,8 @@ bool RwCore_FrameRoute(void) {
 
 // A missing body was called (RwCore_Missing.cpp): log it and end the process with its code.
 void RwCore_Stop(unsigned rva, unsigned code) {
-    RwCore_Log("STOP: rva 0x%08X called, no body on the RW core path (no source, no hand body); exit 0x%08X", rva, code);
+    RwCore_Log("STOP: rva 0x%08X called, no body on the RW core path (kind missing or stop in "
+               "verify/rwccorerun_20261111/RwCore_Bodies.tsv); exit 0x%08X", rva, code);
     ExitProcess(code);
 }
 
@@ -149,6 +151,10 @@ static LONG CALLBACK RwCore_Veh(EXCEPTION_POINTERS* ep) {
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
+// RWC-FRAME-492E90: [0x007d3ff8] after the core's RwEngineStart under MASHED_RWC_FRAME: the engine instance RwEngineOpen
+// allocated (0x007d3ec8 is only the static template RwEngineInit fills). Hand RwGlobals installs must not replace it.
+static void* s_coreGlobals = nullptr;
+void* RwCore_GlobalsAtInit(void) { return s_coreGlobals; }
 int RwCore_EngineInit(int memFuncs, int initFlags) {
     AddVectoredExceptionHandler(1, RwCore_Veh);
     RwCore_SeedData();
@@ -201,6 +207,7 @@ int RwCore_EngineStart(void) {
     if (!r) return 0;
     if (RwCore_FrameRoute()) {
         RwCore_Log("MASHED_RWC_FRAME: RwEngineStart returns %d; the top-down path continues with the bindings on the core", r);
+        s_coreGlobals = reinterpret_cast<void*>(static_cast<std::uintptr_t>(U32(0x007d3ff8u)));
         return r;
     }
     RwCore_Log("calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)");
@@ -213,11 +220,30 @@ int RwCore_EngineStart(void) {
 int RwCore_EngineStop(void) { const int r = RwCore_004c2f60(); RwCore_Log("RwEngineStop 0x004c2f60() = %d", r); return r; }
 int RwCore_EngineClose(void) { const int r = RwCore_004c3040(); RwCore_Log("RwEngineClose 0x004c3040() = %d", r); return r; }
 int RwCore_EngineTerm(void) { const int r = RwCore_004c3270(); RwCore_Log("RwEngineTerm 0x004c3270() = %d", r); return r; }
-// RwRasterShowRaster 0x004c7730 on the core under MASHED_RWC_FRAME. After the first call: log the frame, stop, close
-// and terminate the engine on the core, and end the process with 0x5257F000 | (result != 0).
+// RwRasterShowRaster 0x004c7730 on the core under MASHED_RWC_FRAME. After the Nth call (N = MASHED_RWC_FRAME_N, default 1,
+// RWC-FRAME-492E90): log the frame, stop, close and terminate the engine on the core, and end the process with
+// 0x5257F000 | (result != 0). Calls before the Nth return the result (the first one and every 60th are logged).
 extern "C" int RwCore_004c7730(int raster, int dev, int flags);
+static unsigned RwCore_FrameLimit(void) {
+    static unsigned n = 0;
+    if (!n) {
+        char v[16] = {};
+        if (GetEnvironmentVariableA("MASHED_RWC_FRAME_N", v, sizeof(v)) > 0) n = static_cast<unsigned>(std::strtoul(v, nullptr, 10));
+        if (!n) n = 1;
+        RwCore_Log("MASHED_RWC_FRAME_N: the boot ends after RwRasterShowRaster call %u on the RW core", n);
+    }
+    return n;
+}
 extern "C" int RwCore_FrameShowRaster(int raster, int dev, int flags) {
+    static unsigned calls = 0;
     const int r = RwCore_004c7730(raster, dev, flags);
+    if (++calls < RwCore_FrameLimit()) {
+        if (calls == 1 || calls % 60 == 0)
+            RwCore_Log("RwRasterShowRaster 0x004c7730(raster %08X, dev %08X, flags 0x%X) = %08X on the RW core: call %u, "
+                       "presents %ld", static_cast<unsigned>(raster), static_cast<unsigned>(dev), flags,
+                       static_cast<unsigned>(r), calls, MashedD3D9Wrap_PresentCount());
+        return r;
+    }
     RwCore_Log("RwRasterShowRaster 0x004c7730(raster %08X, dev %08X, flags 0x%X) = %08X on the RW core: first frame "
                "presented; device [0x007d4110] %08X", static_cast<unsigned>(raster), static_cast<unsigned>(dev), flags,
                static_cast<unsigned>(r), U32(0x007d4110));

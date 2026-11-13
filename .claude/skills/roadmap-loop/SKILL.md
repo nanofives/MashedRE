@@ -151,6 +151,11 @@ timeout kills it): pwsh -NoProfile -File <ORCH>\re\orchestrator\merge_train.ps1 
 Repeat until it prints "branch: (nothing queued)", a RED, or an INFRA (display asleep or locked, D3D9 hr=0x8876086A:
 nothing bounced, the rows stay queued, not a finding). Do not fix anything. Final message: the last REPORT block it printed.
 ```
+**`-Gate` is a check, not a launcher** (MERGE_TRAIN.md "start gate"). `merge_train.ps1 -Gate` reads the queue, prints
+one `GATE START` / `GATE WAIT` line and exits (0 START, 3 WAIT). It merges nothing and starts no drain. L0 runs it
+itself before spawning or re-sending the train; on START the train task is `-Drain [-Full]` (or a single pass), never
+`-Drain -Gate`. Run 42 lost two train turns to a kickoff that said "start trains with merge_train.ps1 -Gate". A kickoff
+names the gate as "check with -Gate, then run -Drain".
 On an INFRA report (HB-TRAIN-INFRA-PRECHECK), re-run the train once the display is awake. Do not re-run it in a loop.
 `re/orchestrator/INTEGRATION_LOG.md` gets one line per pass that merged or bounced a row (HB-V5-SKILL, 2026-11-11): a
 mixed pass names its bounced rows on the merged line, and a pass that bounced rows and merged nothing commits a
@@ -234,5 +239,5 @@ Detail: CLAUDE.md "LAN release of the standalone".
 ```
 /loop Roadmap loop run <N+1>. Read C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/orch-integration/.claude/skills/roadmap-loop/SKILL.md and act as the L0 conductor it describes.
 Last run: <merged ids> merged into orch/integration @ <sha>; <blocked/red ids>; decisions open: <ids>; rows moved: <list -Run N summary line>.
-Start with roadmap.ps1 run <N+1>, then roadmap.ps1 status. Sections to lead first: <sections with ready rows>. Caps 4 leads / 6 workers / 12 per run, 3 per lead.
+Start with roadmap.ps1 run <N+1>, then roadmap.ps1 status. Sections to lead first: <sections with ready rows>. Caps 4 leads / 6 workers / 12 per run, 3 per lead. Trains: check with merge_train.ps1 -Gate, then run -Drain.
 ```
