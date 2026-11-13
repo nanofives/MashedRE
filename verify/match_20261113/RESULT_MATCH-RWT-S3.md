@@ -112,8 +112,8 @@ c2 drops as redundant since idx was loaded from DAT_007d70c8). The original stor
 0x004dcc27 `mov ebp,ecx`, 0x004dcc2c `mov dword ptr [0x7d70c8],ebp`. Fixed to `idx = uVar4; DAT_007d70c8 = idx;` and
 the tail stores put back in the original order (DAT_007d70cc store at 0x004dcce9 before `div dword ptr [esp+0x14]`
 at 0x004dccf2). Our listing now emits the store (`mov dword ptr [DAT_007d70c8], ecx`). **The 77.5% listed in
-RANKED_MATCH-RWT-REFRESH.tsv, attempt 1's 77.5% and this attempt's permuter 77.5% (987 compiles, `log` at
-scratch, it reached 77.5 only by swapping the store back) all measured the store-dropping source and are void.**
+RANKED_MATCH-RWT-REFRESH.tsv, attempt 1's 77.5% and this attempt's permuter 77.5% (987 compiles, it
+reached 77.5 only by swapping the store back) all measured the store-dropping source and are void.**
 PROVISIONAL.tsv still lists 77.5 for this row; the knob-path provisional body now has the corrected semantics.
 
 Remaining (62.0%, regs 77.7%, ops 93.4%, 121/119 ins): register assignment. The original never gives param_1 a
