@@ -1,0 +1,65 @@
+[
+ {
+  "addr": 4323568,
+  "sym": "FUN_0041f8f0",
+  "bytes_bad": 0,
+  "pop_why": "5 free pops, 200640 candidate assignments",
+  "classes": [],
+  "mode": "strict",
+  "rules": [
+   "A4-indirect",
+   "A6-paired-pop",
+   "A7-stack-image"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 4324080,
+  "sym": "FUN_0041faf0",
+  "bytes_bad": 59,
+  "verdict": "NOT-PROVEN",
+  "kind": "x87-region",
+  "detail": "region ours +0x55 / orig 0x0041fb45 x87 instruction 7 differs: fld m4[esp+0xb4] | fld m4[esp+0xb0]"
+ },
+ {
+  "addr": 4324544,
+  "sym": "FUN_0041fcc0",
+  "bytes_bad": 7,
+  "classes": [
+   "ENC",
+   "ORDER",
+   "VALUE-FLOW"
+  ],
+  "mode": "frame",
+  "rules": [
+   "A1-exposed",
+   "A5-arity",
+   "call-args-all",
+   "x87-barrier",
+   "x87-motion"
+  ],
+  "verdict": "EQUIV"
+ },
+ {
+  "addr": 4325456,
+  "sym": "FUN_00420050",
+  "bytes_bad": 9,
+  "local_callees": [
+   "_FUN_0041f8f0",
+   "_FUN_0041faf0",
+   "_FUN_0041fcc0"
+  ],
+  "classes": [
+   "ORDER"
+  ],
+  "mode": "strict",
+  "rules": [
+   "A6-paired-pop",
+   "A6-pinned-pop",
+   "jmp-threading",
+   "x87-barrier",
+   "x87-motion"
+  ],
+  "verdict": "EQUIV"
+ }
+]
