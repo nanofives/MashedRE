@@ -4,6 +4,110 @@ Row: compiler shaping of 0x004cb4c0 toward a byte match. Match-only: no build, n
 Model: Opus 5.5, high effort. Branch `orch/MATCH-RWT-S1B` from `orch/integration`, source taken from `orch/MATCH-RWT-S1`
 (same body, longer notes).
 
+# Attempt 2 (second Opus-high attempt): GREEN, 100.0%, byte-identical, relocheck OK
+
+**Verdict: GREEN.** 0x004cb4c0 is byte-identical under the recorded header (`// FLAGS: /O2 /Ob1 /G5 /Oy-`, toolchain
+`ddk`, unchanged), and also under `rw9044`. relocheck OK. `c4_reclass.py batch` dry run PASS. Promotion TSV:
+`re/promotions/MATCH-RWT-S1B.tsv` (not applied on the branch).
+
+## The lever: an over-aligned global
+
+Attempt 1 showed the fold needs ebx out of the allocation. The construct that does that is a reference to a global
+whose type has `__declspec(align(N))` with N > 4. Such a function takes c2's aligned-frame path: an ebp frame, and
+under the Processor Pack c2 (rw9044) ebx is not allocated (the alternative aligned-frame scheme, used with `/Oy-` and
+a stack local, keeps the incoming esp in ebx). With no aligned stack local left, no `and esp` is emitted. The result
+is the original's prologue and loop.
+
+Source change in `re/match/s20/004cb4c0.c` (body otherwise unchanged):
+- `typedef __declspec(align(8)) struct { int m[16]; } Mat16A;` and `MGLOBAL(Mat16A, DAT_00618258, 0x00618258);`
+  (was `Mat16`). The copy is `*(Mat16A *)cache = DAT_00618258;`, the call passes `(Mat16 *)&DAT_00618258`.
+- The compare loop is the S1 down-counter: `const int *p = DAT_00618258.m, *q = cache; int n = 16;
+  do { if (*q != *p) goto set; p++; q++; } while (--n);`.
+- align(16) gives the same bytes. align(8) is kept because 0x00618258 & 0xf = 8: the original's object is
+  8-aligned and not 16-aligned.
+
+Probe evidence (`verify/match_20261113/MATCH-RWT-S1B_probes/`, listings `t26.rw9044.txt`, `t27.*.txt`):
+
+| probe | construct | rw9044 /O2 /Ob1 /G5 | ddk /O2 /Ob1 /G5 |
+|---|---|---|---|
+| t26 k8 / k16 | function-scope `static __declspec(align(8 / 16)) Mat16` | frame, no ebx, folded `cmp esi, [eax]`, no `and esp` | |
+| t26 k4 / kn | align(4) / none | no frame, `push ebx`, split | |
+| t27 m_blk / m_file | block-scope / file-scope `extern __declspec(align(8)) Mat16` | frame, no ebx, folded | frame, ebx taken, split |
+| t27 m_none | plain extern | no frame, ebx, split | no frame, ebx, split |
+| t23 f6, t24 g2..g7 | aligned stack local in a function with a parameter | frame + `and esp,-16` / `-8`, no ebx, folded | |
+| t25 h1..h6 | `__declspec(align(1 / 2 / 4))` | no frame, ebx | |
+
+The t26 `k8` listing (rw9044) is the original's shape instruction for instruction: `push ebp` / `mov ebp, esp` /
+`mov eax, [ebp+8]` / `push esi` / `push edi` ... `mov esi, [ecx+eax]` / `cmp esi, [eax]` / `dec edx` ... `pop edi` /
+`mov eax, 1` / `pop esi` / `pop ebp` / `ret` (original: 0x004cb4c0..0x004cb4c9, loop 0x004cb565..0x004cb570,
+exit 0x004cb572..0x004cb57a).
+
+## Scores of the committed source (`v14.py` sweep, `v14.log`)
+
+| loop | aligned type | ddk /Oy- | ddk no /Oy- | rw9044 /Oy- | rw9044 no /Oy- |
+|---|---|---|---|---|---|
+| down-counter (committed) | align(8) | **100.0** | 83.5 | **100.0** | **100.0** |
+| down-counter | align(16) | 100.0 | 83.5 | 100.0 | 100.0 |
+| down-counter, compare `*p != *q` | align(8) | 97.8 | 82.5 | 97.8 | 97.8 |
+| index (old body) | align(8) | 90.2 | 90.2 | 90.2 | 90.2 |
+| `while (n--)` | align(8) | 70.2 | 77.6 | 70.2 | 70.2 |
+
+The recorded header stays `/O2 /Ob1 /G5 /Oy-` with the default `ddk` toolchain: no flag change was needed. Note for the
+unit's flags: rw9044 reaches 100% with and without `/Oy-`, ddk only with `/Oy-`. The frame in the original is
+explained by the aligned global under rw9044 plain `/O2 /Ob1 /G5` (the flags of every frameless neighbour in this
+object). I did not change the recorded flags because the ddk + `/Oy-` result is also byte-identical.
+
+## Checks (run on the branch)
+
+```
+py -3.12 re/tools/match/match.py --bytes re/match/s20/004cb4c0.c
+  0x004cb4c0 _FUN_004cb4c0: 100.0% (regs 100.0%, ops 100.0%)  92/92 ins  flags=/O2 /Ob1 /G5 /Oy- tc=ddk
+  bytes: 320 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+py -3.12 re/tools/match/match.py --bytes --toolchain rw9044 re/match/s20/004cb4c0.c
+  0x004cb4c0 _FUN_004cb4c0: 100.0% (regs 100.0%, ops 100.0%)  92/92 ins  flags=/O2 /Ob1 /G5 /Oy- tc=rw9044
+  bytes: 320 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+py -3.12 re/tools/match/relocheck.py re/match/s20/004cb4c0.c
+  0x004cb4c0	OK	checked=25	unchecked=0	004cb4c0.c
+py -3.12 re/tools/c4_reclass.py batch --tsv re/promotions/MATCH-RWT-S1B.tsv      (dry run, no --apply)
+  [1/1] 0x004cb4c0 match PASS byte-identical 320 B, relocheck OK (25/0)
+  batch: 1 pass, 0 refused, 0 skipped (already C4), 1 rows  [by route: match=1]
+```
+- Not a naked or asm-only body: plain C, no `__asm`.
+- Port include `mashedmod/src/mashed_re/RwCore/RwCore_004cb4c0.cpp` (MATCH_PORT, C++): VS2022
+  `cl /nologo /Zs /TP /W3 /DMASHED_STANDALONE /std:c++17 RwCore_004cb4c0.cpp` -> no warning, exit 0. No build run
+  (match-only row). The body is listed as provisional for the RW core knob path
+  (`verify/rwccorerun_20261111/PROVISIONAL_RWC.tsv`); moving it off that list is port-axis work and is not done here.
+- Source SHA-256: `30f66202be37179cbddddb340171391be59edb976b885117d8319f0e1be5de37`.
+
+## Levers tried in attempt 2 before the hit (no change, kept for the record)
+
+- c2 switches with an argument via `/d2` (`v8.py`, `v12.py`): `-off0..64`, `-Loop0..16` (0..2 change the code, not
+  toward the original), `-vol0..255`, `-db0..255`, `-ef0..255`, `-stkfill0`, `-Gt0/100`, `-dslow#`/`-dshigh#`,
+  `-inlt#`/`-inls#`, plus `-noehopt -nolock -optref -NoLUR -Zvc6 -QIWMTemu -QIftol2 -cef -ehopt -bzalign -datasort
+  -EHa -EHs -Zd -Za -Zl -loopopt -nodlp -QIfpinit -QIdivrem64 -ide -cbstring` (`-isize0` and `-dlp` stop with C1001,
+  `-fastcap` adds profiling calls). c2 `-G` letters (`gscan.py`): only `-G6` folds (with the /G6 scheduler),
+  `-GZ` drops optimization.
+- Per-function `#pragma optimize` (`v9.py`): `y` off alone and with `t`/`s`/`p`/`a`/`w`/`i`: `y` off = `/Oy-`.
+- `/O` letters taken apart (`v10.py`): `/Og` with favor none / `/Ot` / `/Os`, `/Ob0..2`, `/Oi`, `/Op`: 90.2% at best.
+- CPU targets (`v11.py`): `/G3 /G4 /G5 /G6 /GB` and c2-only `/d2G3..6` on both toolchains.
+- VC6 c1 switches via `/d1` (`v13.py`): `-Ov -Oq -Ow -Oa -Bdlp -BnoWorkList -noexpinl -GM -int2enum -GI -Gi -Oy`.
+- Frame or reservation from inline asm (`t21.c`, `t22.c`): asm in dead code removed by c1, asm in a branch only c2
+  can prove dead, unreachable asm: no frame, ebx still allocated. Doubles, `__int64`, floats, struct copies (`t20.c`).
+- `framescan.py` / `framescan.log`: ebp-frame functions in 0x004c0000..0x005c8000 and their ebx use. Between
+  0x004c0330 and 0x004cf160 (both aligned frames with `and esp`) the only ebp-frame functions are 0x004cb330,
+  0x004cb490 and 0x004cb4c0. All three reference 0x005d8b90 (0x004cb3ef, 0x004cb4af, 0x004cb5ca), and 0x004cb4c0
+  also 0x00618258.
+
+## Follow-up for the lead (not done here)
+
+0x004cb330 (current source 64.9%): the same lever, `DAT_005d8b90` declared with an aligned type and no other change,
+scores 85.1% (regs 92.1%, ops 99.1%) under ddk `/Oy-` and under rw9044 with or without `/Oy-`
+(`cb330_a8.c`, `cb330_a16.c` in the probe folder, not applied to `re/match/rwl01/004cb330.c`). Its first-loop counter
+spill at [ebp-4] (0x004cb353, 0x004cb363, 0x004cb36a) fits the same ebx exclusion. 0x004cb490 (already 100% under
+rw9044 with `/Oy-`) references 0x005d8b90 too.
+
+# Attempt 1 (first Opus-high attempt): RED, history
+
 **Verdict: RED, still 90.2%.** No source or flag change reached a better score. The attempt did find out why the
 original's compare is folded: the register allocator. Under `/G5`, c2 splits the compare whenever a register is
 free, so the fold only appears when no register is left. In the original, ebx is never used in this function or in

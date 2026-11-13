@@ -1,0 +1,279 @@
+---- _d0
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L534:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$538
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L534
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$538:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d1
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L548:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$552
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L548
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$552:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d2
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L562:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$566
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L562
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$566:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d3
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L575:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$579
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L575
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$579:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d4
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L588:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$592
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L588
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$592:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d5
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L602:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$606
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L602
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$606:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d6
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L616:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$620
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L616
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$620:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d7
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L629:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$633
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L629
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$633:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
+---- _d8
+    push	ebx
+    push	esi
+    push	edi
+    mov	edi, DWORD PTR _C
+    mov	eax, OFFSET FLAT:_G
+    mov	ecx, edi
+    mov	edx, 16
+    sub	ecx, eax
+    $L643:
+    mov	esi, DWORD PTR [ecx+eax]
+    mov	ebx, DWORD PTR [eax]
+    cmp	esi, ebx
+    jne	SHORT $set$647
+    add	eax, 4
+    dec	edx
+    jne	SHORT $L643
+    pop	edi
+    pop	esi
+    mov	eax, 1
+    pop	ebx
+    ret	0
+    $set$647:
+    mov	ecx, 16
+    mov	esi, OFFSET FLAT:_G
+    rep movsd
+    pop	edi
+    pop	esi
+    xor	eax, eax
+    pop	ebx
+    ret	0
