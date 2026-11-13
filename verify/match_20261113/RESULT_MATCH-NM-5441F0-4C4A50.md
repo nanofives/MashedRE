@@ -41,3 +41,11 @@ NOT-PROVEN under any named rule, hence nothing admitted. It could be listed in P
 99.1% matched source in place of its current lifted-asm row (`RwCoreLift_005441f0`, line 887), but I did not do so
 unasked. Where the time goes is [UNCERTAIN]; a `--trace` run or a state cap in the explorer would show it.
 Run hygiene: only PIDs 6000, 8944 and 16356 (started by this session) were stopped.
+
+## Merge with orch/integration (2026-11-13)
+
+Merged orch/integration (e47e10795) into the branch with `git -c merge.autoStash=false`. One conflict, re/match/ADMITTED.tsv: this branch added the 0x004c4a50 row, integration added the 0x00536e90 row. Kept both (key-per-row). Result has 43 lines, no conflict markers, no duplicate keys in column 1.
+
+re/tools/match (equiv.py and the rest) is identical between branch and integration (`git diff orch/integration HEAD -- re/tools/match` is empty), so no equiv verdict was re-run. 0x005441f0 still has no verdict (EQUIV-5441F0-TIMEOUT).
+
+Check: `git merge-base --is-ancestor orch/integration HEAD` is true, so the branch fast-forwards into integration.
