@@ -6,7 +6,7 @@
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
 #define FUN_004d7c60 RwCore_004d7c60
-#define thunk_FUN_004cc820 RwCore_004cc820
+#define thunk_FUN_004cc820 RwCore_004cc9e0
 extern "C" {
 #include "../../../../re/match/s21/004d7c60.c"
 }
