@@ -87,10 +87,11 @@ rva	current	proposed	evidence
 
 ## Edits (applied, class P2)
 
-- `hooks.csv`: subsystem cell of 0x005b8200 and 0x005b8680 `third-party-library[d3dx9-fx]` -> `audio`, identity prepended
-  to notes. Confidence (C2), status, file unchanged. Same form as 8a5aa66d8 (re-classify edit leg; the skill has no
-  dedicated single-row refile helper for a game subsystem, `libid_reclass.py refile-lib` covers Lua / qhull only).
-- `re/analysis/CHANGELOG.md`: 2 lines below `<!-- ENTRIES -->`.
+- `hooks.csv` and `re/analysis/CHANGELOG.md` were changed through the re-classify skill (SKILL.md, "Side effects on success" steps 1 and 4), run 45 redo.
+  The first pass (870f7a5f8) edited both by hand and the train dequeued it. That edit was reverted to `orch/integration` and redone.
+  hooks.csv: only the subsystem cell of 0x005b8200 and 0x005b8680 changed, `third-party-library[d3dx9-fx]` -> `audio`. Notes, confidence (C2), status and file are untouched.
+  The skill has no single-row refile helper for a game subsystem (`libid_reclass.py refile-lib` covers Lua / qhull only, `c1_add.py` refuses existing rows), so the skill's own row update was applied directly.
+  CHANGELOG: 2 lines (`C2->C2  refile ... -> audio`) prepended below `<!-- ENTRIES -->`.
 - Plates `re/analysis/bucket_00565cd0/0x005b8200.md` and `0x005b8680.md`: their unfiled [UNCERTAIN] markers marked
   RESOLVED with a pointer here, old text kept as superseded.
 - P2 under L-127: a refile on identity evidence needs no decision row.
@@ -103,12 +104,10 @@ rva	current	proposed	evidence
 ## Checks
 
 - `py -3.12 scripts/lint_rva_bodies.py`: OK, NEW=0 (237 known allowlisted).
-- hooks.csv re-parsed with `csv.reader`: 6443 lines, widths {11: 6411, 9: 32}, identical to `orch/integration`. The two
+- hooks.csv re-parsed with `csv.reader`: 6443 lines, widths {11: 6411, 9: 32}, identical to `orch/integration` apart from the two subsystem cells. The two
   edited rows read back `audio`, 0x0051085a reads `third-party-library[d3dx9-shader-compiler]`. `git diff --stat`:
-  hooks.csv 2 rows changed (CRLF kept). A first pass put commas in the notes and gave the two rows 12 fields. That was
-  fixed before the commit and re-checked.
-- Subsystem cells equal to or containing `d3dx9-fx` after the edit: 0 in the whole file. The two `grep d3dx9-fx` hits are
-  the refile notes of 0x005b8200 / 0x005b8680 themselves.
+  hooks.csv 2 rows changed (4 lines), CHANGELOG 2 lines added. Both rows still 11 fields, line endings as in `orch/integration`.
+- Subsystem cells equal to or containing `d3dx9-fx` after the edit: 0 in the whole file.
 
 ## DECISIONS.md
 

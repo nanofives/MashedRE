@@ -26,8 +26,14 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
-2026-11-13  0x005b8200  FUN_005b8200  refile third-party-library[d3dx9-fx] -> audio  (P2, L-127, confidence unchanged C2)  evidence: verify/match_20261113/RESULT_MATCH-RWC-UNCERT-3.md
-2026-11-13  0x005b8680  FUN_005b8680  refile third-party-library[d3dx9-fx] -> audio  (P2, L-127, confidence unchanged C2)  evidence: verify/match_20261113/RESULT_MATCH-RWC-UNCERT-3.md
+2026-11-13  0x005b8200  FUN_005b8200  C2->C2  refile third-party-library[d3dx9-fx] -> audio (P2, L-127; re-classify subsystem leg, confidence unchanged); evidence: verify/match_20261113/RESULT_MATCH-RWC-UNCERT-3.md
+2026-11-13  0x005b8680  FUN_005b8680  C2->C2  refile third-party-library[d3dx9-fx] -> audio (P2, L-127; re-classify subsystem leg, confidence unchanged); evidence: verify/match_20261113/RESULT_MATCH-RWC-UNCERT-3.md
+2026-11-13  0x004cb330  FUN_004cb330  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004cb330.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S1C.md
+2026-11-13  0x004cb4c0  FUN_004cb4c0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cb4c0.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S1B.md
+2026-11-13  0x0053d5a0  FUN_0053d5a0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/0053d5a0.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S4.md
+2026-11-13  0x004d0290  FUN_004d0290  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d0290.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S4.md
+2026-11-13  0x004e5fc0  FUN_004e5fc0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl02/004e5fc0.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S3.md
+2026-11-13  0x004cbbd0  FUN_004cbbd0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004cbbd0.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S3.md
 2026-11-13  0x004d40d0  FUN_004d40d0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d40d0.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S1.md
 2026-11-13  0x004c6750  FUN_004c6750  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c6750.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S2.md
 2026-11-13  0x004cdd60  FUN_004cdd60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004cdd60.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S2.md
