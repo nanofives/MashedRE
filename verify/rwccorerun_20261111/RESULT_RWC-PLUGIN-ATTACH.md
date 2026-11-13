@@ -268,3 +268,8 @@ Flags for reviewers:
   executing on the EngineStart path, so it needs a matched or hand source. Which other lifted members executed is unmeasured.
 - Merge: `re/match/PROVISIONAL.tsv` is added on this branch and exists on integration, so the train sees add/add on that file. Integration's
   29 rows are the common prefix; resolve by taking integration's file and appending the 962 added rows.
+
+## Run 41 restack onto orch/integration 9ec6a15a2
+
+Merge bdb371782 plus a fix commit. Conflicts: PROVISIONAL.tsv (union, integration rows win, 0x004c51a0 stays refused, 0x004cba80 dropped because integration has it match100), PROVISIONAL_RWC.tsv and RwCore_Bodies.tsv (keyed 3-way union), dual_copy_allowlist.txt (union). Two build fixes: allowlist key DUP-IN-TARGET:004d52d0 (PortTop_00498860 vs RwCore_004d52d0, both ORIGTOP-ONLY marked, so a plain key), and RwCore_004e5d30.cpp defines now FUN_00xxxxxx (integration's rw9044 retag renamed the callees in re/match/rwl02/004e5d30.c). hooks.csv identical to integration.
+Checks: default build OK, MASHED_DDKOBJ=1 build OK, ddkobj.py check IDENTICAL 1136, DIFFERENT 11 (0x00401690 0x0042f530 0x004332a0 0x0045a3a0 0x00475a00 0x004929d0 0x00493710 0x00493900 0x00498810 0x004c0c20 0x004c0f00, all game units, none a RwCore row), not-in-map 19. Arms vs_core, ddk_core (exit 0xFFFFFFFF by design) and vs_frame, ddk_frame (exit 0x5257F001): RwTexDictionaryCreate self-test PASS 0 of 11 in all four, RWC-DEVICE created. Raw logs D:/MashedWT/RWC-PLUGIN-ATTACH_data (overwrote the run 40 arm logs there).
