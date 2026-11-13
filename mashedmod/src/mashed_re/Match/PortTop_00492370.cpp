@@ -18,6 +18,7 @@
 
 #ifdef MASHED_STANDALONE
 
+#include <cmath>
 #include <cstdarg>
 #include <cstdint>
 #include <cstdio>
@@ -49,6 +50,12 @@ void PortTop_HandGameModeMachine(void);
 void PortTop_SetHwnd(void* hwnd);
 void PortTop_Bound_00493390(void);             // Match/PortTop_00493390.cpp (RO-BIND-TIMER)
 int  MainLoopInit(void);                       // Match/MatchS15_00492770.cpp
+// RO-EXE-REPLAY-KNOB: MASHED_REPLAY=<replay.json> (default OFF), Match/PortTop_Replay.cpp
+void Replay_Init(void);
+int  Replay_On(void);
+int  Replay_RawPollNoDevice(void);
+void Replay_Summary(unsigned timerCalls480);
+unsigned Replay_WarpCount(void);
 __declspec(dllimport) void __stdcall PostQuitMessage(int nExitCode);
 
 // ---- logging: one line per knob-path step into mashed_re.log (the hand prelude truncated it) ----
@@ -266,7 +273,10 @@ int PortTop_Bound_004929d0(void) {
     return r;
 }
 // rva 0x004967e0 (input poll, C2, no exe body) under the matched 0x00492d20: the hand keyboard poll.
+// [RO-EXE-REPLAY-KNOB] with MASHED_REPLAY on the raw poll reports no device: the hand poll is skipped, so no real
+// keystroke reaches the game (the original side hooks the device read 0x00495fe0 the same way, DESIGN section 3).
 void PortTop_StandIn_004967e0(void) {
+    if (Replay_RawPollNoDevice()) return;
     PortTop_HandPollKeyboard();
 }
 // rva 0x00492d30 frame machine: the matched exe body Orig_00492d30 (Match/PortTop_00492d30.cpp, re/match/s15/00492d30.c
@@ -318,8 +328,10 @@ static int OtTimerOn(void) {
     if (s_otTimer < 0) {
         const char* const v = std::getenv("MASHED_OT_TIMER");
         s_otTimer = (v && v[0] && v[0] != '0') ? 1 : 0;
-        PortTop_Log("[OT_TIMER] MASHED_OT_TIMER %s: %s", s_otTimer ? "on" : "off",
-                    s_otTimer ? "0x00493480 (-> 0x00493390) runs its matched exe body" : "0x00493480 stays a no-op");
+        if (Replay_On()) s_otTimer = 1;   // RO-EXE-REPLAY-KNOB: the tick boundary is 0x00493390 under 0x00493480
+        PortTop_Log("[OT_TIMER] MASHED_OT_TIMER %s: %s%s", s_otTimer ? "on" : "off",
+                    s_otTimer ? "0x00493480 (-> 0x00493390) runs its matched exe body" : "0x00493480 stays a no-op",
+                    Replay_On() ? " (implied by MASHED_REPLAY)" : "");
     }
     return s_otTimer;
 }
@@ -336,6 +348,28 @@ static int&      MemI(unsigned a) { return *reinterpret_cast<int*>(static_cast<s
 static unsigned& MemU(unsigned a) { return *reinterpret_cast<unsigned*>(static_cast<std::uintptr_t>(a)); }
 static unsigned  FBits(float f) { unsigned u; std::memcpy(&u, &f, 4); return u; }
 static unsigned  MemFBits(unsigned a) { return MemU(a); }
+// [RO-EXE-REPLAY-KNOB] DAT_007f1010 = (float)now * 3.3333333e-07f has two legitimate roundings: the VS2022 body converts
+// now to float first (cvtsi2ss, a rounding when now >= 2^24) and then multiplies (mulss); the object build's DDK body,
+// the original's bytes, loads now exactly (fild), multiplies (fmul) and rounds once at the store (fstp). This is the
+// second form: the exact product now * mantissa (< 2^56) rounded to 24 bits, nearest-even, then scaled by the exponent.
+// The virtual clock (now ~ 3.2e8) shows the difference on about one call in three; the real clock of RO-BIND-TIMER did not.
+static unsigned F1010SingleRounding(unsigned now) {
+    const unsigned kb = FBits(3.3333333e-07f);
+    const unsigned long long m = (kb & 0x7fffffu) | 0x800000u;
+    const int e = static_cast<int>((kb >> 23) & 0xffu) - 127 - 23;
+    const unsigned long long prod = static_cast<unsigned long long>(now) * m;
+    if (!prod) return 0;
+    int sh = 0;
+    while ((prod >> sh) >= (1ull << 24)) ++sh;
+    unsigned long long q = prod >> sh;
+    if (sh) {
+        const unsigned long long rem = prod & ((1ull << sh) - 1), half = 1ull << (sh - 1);
+        if (rem > half || (rem == half && (q & 1))) ++q;
+        if (q == (1ull << 24)) { q >>= 1; ++sh; }
+    }
+    return FBits(std::ldexp(static_cast<float>(q), sh + e));
+}
+static unsigned s_tmX87Form = 0, s_tmWarpSkips = 0;
 static void TmCheck(bool ok, const char* what, unsigned got, unsigned want) {
     ++s_tmChecks;
     if (!ok && ++s_tmFails <= 8)
@@ -376,9 +410,17 @@ int PortTop_Timer_00493480(void) {
     const int r84 = MemI(0x00771984u), r1030 = MemI(0x007f1030u), rff0 = MemI(0x007f0ff0u);
     const unsigned r102c = MemU(0x007f102cu);
     const int r1024 = MemI(0x007f1024u), r1028 = MemI(0x007f1028u), r9d4 = MemI(0x007719d4u);
+    const unsigned warps0 = Replay_WarpCount();
     const int ret = FpsDiscretise();
     ++s_tmCalls480;
     const unsigned now = MemU(0x007f1030u);
+    if (Replay_WarpCount() != warps0) {
+        // [RO-EXE-REPLAY-KNOB] the replay warp ran inside this call's 0x00493390 (its clock read, the original's point too)
+        // and pinned 0x007f102c / 0x00771984 / 0x007f0ff0 there: the model from the globals before the call does not apply
+        ++s_tmWarpSkips;
+        PortTop_Log("[OT_TIMER] call %u: the replay warp ran inside 0x00493390, model checks skipped for this call", s_tmCalls480);
+        return ret;
+    }
     // 0x00493390
     const unsigned t = now + static_cast<unsigned>(r84);
     int ffc = static_cast<int>(t - static_cast<unsigned>(r1030));
@@ -387,8 +429,9 @@ int PortTop_Timer_00493480(void) {
     if (d > -64 && d < 64) d = 0; else { if (d < -2) d += 2; if (d > 2) d -= 2; }
     TmCheck(MemI(0x007f0ffcu) == ffc, "390 DAT_007f0ffc", MemI(0x007f0ffcu), ffc);
     TmCheck(MemI(0x00771984u) == d, "390 DAT_00771984", MemI(0x00771984u), d);
-    const unsigned f1010 = FBits(static_cast<float>(now) * 3.3333333e-07f);
-    TmCheck(MemFBits(0x007f1010u) == f1010, "390 DAT_007f1010", MemFBits(0x007f1010u), f1010);
+    const unsigned f1010 = FBits(static_cast<float>(now) * 3.3333333e-07f), f1010x = F1010SingleRounding(now);
+    TmCheck(MemFBits(0x007f1010u) == f1010 || MemFBits(0x007f1010u) == f1010x, "390 DAT_007f1010", MemFBits(0x007f1010u), f1010);
+    if (MemFBits(0x007f1010u) == f1010x && f1010x != f1010) ++s_tmX87Form;
     TmCheck(MemI(0x007f0ff0u) == rff0 + 50, "390 DAT_007f0ff0 += 50", MemI(0x007f0ff0u), rff0 + 50);
     const bool win = t > r102c + 3000000u;
     TmCheck(MemI(0x007f1028u) == (win ? r1024 : r1028), "390 DAT_007f1028", MemI(0x007f1028u), win ? r1024 : r1028);
@@ -410,8 +453,10 @@ int PortTop_Timer_00493480(void) {
 }
 static void PortTop_TimerSummary(void) {
     if (s_otTimer != 1 && s_otAudio != 1) return;
-    PortTop_Log("[OT_TIMER] self-test %s (%u of %u checks failed), 0x00493480 calls %u, 0x004926c0 calls %u; bodies at "
-                "%p / %p / %p", s_tmFails ? "FAIL" : "PASS", s_tmFails, s_tmChecks, s_tmCalls480, s_tmCalls6c0,
+    PortTop_Log("[OT_TIMER] self-test %s (%u of %u checks failed), 0x00493480 calls %u, 0x004926c0 calls %u, "
+                "DAT_007f1010 in the single-rounding form where the two forms differ %u, calls skipped for the replay warp %u; "
+                "bodies at %p / %p / %p", s_tmFails ? "FAIL" : "PASS", s_tmFails, s_tmChecks, s_tmCalls480, s_tmCalls6c0,
+                s_tmX87Form, s_tmWarpSkips,
                 reinterpret_cast<void*>(&FpsDiscretise), reinterpret_cast<void*>(&AudioTickAndAvg),
                 reinterpret_cast<void*>(&PortTop_Bound_00493390));
 }
@@ -457,12 +502,14 @@ int PortTop_WinMain(void* hInstance, void* hPrevInstance, char* lpCmdLine, int n
     PortTop_Log("MASHED_ORIG_TOP=1: WinMain 0x00492370 (matched) takes over");
     PortTop_SeedRdata();
     PortTop_NoFocusPause();
+    Replay_Init();                  // RO-EXE-REPLAY-KNOB: MASHED_REPLAY only (default off)
     ProvBody_0043dfd0_SelfTest();   // PROVISIONAL-BODIES: MASHED_PROV_43DFD0_SELFTEST=1 only (default off)
     const int r = Orig_00492370(static_cast<int>(reinterpret_cast<std::uintptr_t>(hInstance)),
                                 static_cast<int>(reinterpret_cast<std::uintptr_t>(hPrevInstance)),
                                 static_cast<int>(reinterpret_cast<std::uintptr_t>(lpCmdLine)), nCmdShow);
     PortTop_Log("WinMain 0x00492370 returned %d after %u frames", r, s_frame);
     PortTop_TimerSummary();
+    Replay_Summary(s_tmCalls480);
     return r;
 }
 } // extern "C"
