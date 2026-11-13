@@ -5,3 +5,5 @@ rva	route	evidence	result
 0x004ce6f0	match	re/match/rwtb/004ce6f0.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
 0x004ce5d0	match	re/match/rwtb/004ce5d0.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
 0x00544e00	match	re/match/rwtb/00544e00.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
+0x00557e50	match	re/match/rwtb/00557e50.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
+0x00533740	match	re/match/rwtb/00533740.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
