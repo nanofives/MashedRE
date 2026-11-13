@@ -1,0 +1,27 @@
+file ../../original/MASHED.exe.unpatched size 2846720 sha256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+e_lfanew 0x110 machine 0x14c nsec 6 timestamp 0x40cd80ea characteristics 0x010f (RELOCS_STRIPPED=1)
+optional magic 0x10b ImageBase 0x00400000 SectionAlignment 0x1000 FileAlignment 0x1000 SizeOfImage 0x595000
+  datadir IMPORT       rva 0x1e7ff4 size 0xc8  (VA 0x005e7ff4) [header field at file 0x190]
+  datadir RESOURCE     rva 0x516000 size 0x7eb18  (VA 0x00916000) [header field at file 0x198]
+  datadir DEBUG        rva 0x1cc2f0 size 0x1c  (VA 0x005cc2f0) [header field at file 0x1b8]
+  datadir IAT          rva 0x1cc000 size 0x2e8  (VA 0x005cc000) [header field at file 0x1e8]
+  section .text    hdr@file 0x208  VA 0x00401000..0x005ca8e0 vsize 0x1c98e0 raw 0x1ca000@0x001000 file-backed 0x1c98e0 BSS 0x000000 chars 0x60000020
+  section _rwcseg  hdr@file 0x230  VA 0x005cb000..0x005cb451 vsize 0x000451 raw 0x001000@0x1cb000 file-backed 0x000451 BSS 0x000000 chars 0x60000020
+  section .rdata   hdr@file 0x258  VA 0x005cc000..0x005e9044 vsize 0x01d044 raw 0x01e000@0x1cc000 file-backed 0x01d044 BSS 0x000000 chars 0x40000040
+  section .data    hdr@file 0x280  VA 0x005ea000..0x00914704 vsize 0x32a704 raw 0x04d000@0x1ea000 file-backed 0x04d000 BSS 0x2dd704 chars 0xc0000040
+  section _rwdseg  hdr@file 0x2a8  VA 0x00915000..0x00915008 vsize 0x000008 raw 0x001000@0x237000 file-backed 0x000008 BSS 0x000000 chars 0xc0000040
+  section .rsrc    hdr@file 0x2d0  VA 0x00916000..0x00994b18 vsize 0x07eb18 raw 0x07f000@0x238000 file-backed 0x07eb18 BSS 0x000000 chars 0x40000040
+.text range 0x00401000..0x005ca8e0
+base relocations HIGHLOW: 0
+.rdata file-backed 0x1d044: relocs 0 (into .text 0, elsewhere 0); aligned-dword scan into .text 893, scan-only (no reloc) 893, reloc-only (not in scan) 0
+   distinct .text targets via relocs: 0
+.data file-backed 0x4d000: relocs 0 (into .text 0, elsewhere 0); aligned-dword scan into .text 1231, scan-only (no reloc) 1231, reloc-only (not in scan) 0
+   .data BSS tail 0x00637000..0x00914704
+   distinct .text targets via relocs: 0
+PortStateSeed.inc: entries 272 bytes 3231 equal-to-file 272 other 0 sections {('.rdata', 'file'): 147, ('.data', 'file'): 125} entries overlapping a reloc code slot 0
+PortTop_RdataSeed.inc: entries 41 bytes 641 equal-to-file 41 other 0 sections {('.rdata', 'file'): 41} entries overlapping a reloc code slot 0
+PortTop_DInputSeed.inc: entries 2 bytes 32 equal-to-file 2 other 0 sections {('.rdata', 'file'): 2} entries overlapping a reloc code slot 0
+PortTopCodePtr.inc: CP_FIX slots 188 (in reloc code-slot set 0), CP_SEED blocks 72
+CP_FIX slots not in reloc set: ['0x5cf9d0', '0x5cf9d4', '0x5cf9d8', '0x5cf9dc', '0x5cf9e0', '0x5cfd30', '0x5cfd34', '0x5cfd38', '0x5cfd3c', '0x5cfd40', '0x5cfd44', '0x5cfd48', '0x5cfd4c', '0x5cfd50', '0x5cfd54', '0x5cfd58', '0x5cfd5c', '0x5cfd60', '0x5cfd64', '0x5cfd68']
+PortTopCodePtr.inc CP_SEED blocks equal-to-file 72 of 72, bytes 288
+PortTopCodePtr.inc CP_FIX slots whose image dword lies in .text: 188 of 188

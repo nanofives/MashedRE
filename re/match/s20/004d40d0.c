@@ -1,5 +1,9 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S20 0x004d40d0 (h4): 89.1% (regs 97.8%). Runs a job: optional flush FUN_004e1710(DAT_007d4710) when the
+/* MATCH-RWT-S1 (2026-11-13): 100% BYTE-IDENTICAL (ddk, /O2 /Ob1 /G5). Two moves: (1) the result goes to a local and
+   the store writes that local back (`if (!r) DAT_00911ac8 = r;`): the zero test becomes `cmp eax, edi` with edi = 0
+   (89.1 -> 91.3, regs 100%); (2) the vtable read goes to a local `t` before the call: vtable in ecx, the post-call
+   arg load (job+0x14) in edx, as in the original at 0x004d40d0 (91.3 -> 100). The h4 notes below are history.
+   MATCH-S20 0x004d40d0 (h4): 89.1% (regs 97.8%). Runs a job: optional flush FUN_004e1710(DAT_007d4710) when the
    flag and owner+0x18 are set; status 0x00911ac8 = 1, current job 0x00911ac0, context {data, owner} at 0x00911ad0;
    job+0x10 = 0; job->visitor->vt[1](visitor, &ctx) (cdecl), status = 0 on a zero result; when job+0x10 > 1 it is set
    to 2 and FUN_004e2030(job+0x14); clears the globals and returns status ? job : NULL.
@@ -52,8 +56,10 @@ Job *FUN_004d40d0(Job *job, void *data, int flush)
   DAT_00911ad0.data = data;
   DAT_00911ad0.owner = DAT_007d4710;
   job->state = 0;
-  if (job->visitor->vt->fn4(job->visitor, &DAT_00911ad0) == 0) {
-    DAT_00911ac8 = 0;
+  {
+    VisitorVtbl *t = job->visitor->vt;
+    int r = t->fn4(job->visitor, &DAT_00911ad0);
+    if (!r) DAT_00911ac8 = r;
   }
   if (job->state > 1) {
     job->state = 2;
