@@ -169,6 +169,142 @@ unsigned RdB(unsigned va) {
     return *reinterpret_cast<const volatile unsigned char*>(static_cast<std::uintptr_t>(va));
 }
 
+// ---------------------------------------------------------------- write watch (RO-FIRST-DIVERGENCE)
+// MASHED_REPLAY_TRACE_WATCH=<va>[,<va>...] (at most 4, dword-aligned, inside the image): x86 debug-register WRITE
+// watchpoints (DR0..DR3, length 4) on the main thread, armed at the trace init by a helper thread (SuspendThread,
+// SetThreadContext, ResumeThread; the main thread waits on it). A vectored handler takes the single-step trap that
+// follows each store: one hit = {tick, n, rec, eip, slot, value after the store, ebp-chain return addresses}. rec = the
+// ticks.bin records written before the store, so the writes between record r - 1 and record r are those with rec == r. eip is the
+// instruction after the store (the detorig.js watch convention); resolve it with mashed_re.map
+// (re/frida/detorig_firstdiv.py --exe-map). Hits go to watch.jsonl at the finish: the first 4096 in full, then per-eip
+// counts. Threads other than the main thread are not armed (listed as such in meta.json "watch").
+// MASHED_REPLAY_TRACE_WATCH_FROM=<tick>: keep hits only from that tick on (default 0 = all).
+struct WHit { unsigned tick, n, rec, eip, slot, value, bt[8]; };
+unsigned g_wVa[4] = {};
+unsigned g_wN = 0, g_wFrom = 0;
+bool g_wArmed = false;
+WHit g_wHits[4096];
+volatile LONG g_wCount = 0;
+struct WPc { unsigned eip, slot, count, firstTick, lastTick; };
+WPc g_wPc[256];
+unsigned g_wPcN = 0, g_wPcDrop = 0;
+HANDLE g_wMain = nullptr;
+DWORD g_wMainId = 0;
+PVOID g_wVeh = nullptr;
+
+LONG CALLBACK WatchVeh(PEXCEPTION_POINTERS ep) {
+    if (ep->ExceptionRecord->ExceptionCode != EXCEPTION_SINGLE_STEP) return EXCEPTION_CONTINUE_SEARCH;
+    CONTEXT* c = ep->ContextRecord;
+    const DWORD dr6 = c->Dr6;
+    if (!(dr6 & ((1u << g_wN) - 1u))) return EXCEPTION_CONTINUE_SEARCH;
+    for (unsigned s = 0; s < g_wN; ++s) {
+        if (!(dr6 & (1u << s))) continue;
+        if (g_lastTick < g_wFrom) continue;
+        unsigned i = 0;
+        for (; i < g_wPcN; ++i) if (g_wPc[i].eip == c->Eip && g_wPc[i].slot == s) break;
+        if (i == g_wPcN) {
+            if (g_wPcN < 256) g_wPc[g_wPcN++] = WPc{c->Eip, s, 0, g_lastTick, g_lastTick};
+            else { ++g_wPcDrop; i = 256; }
+        }
+        if (i < 256) { ++g_wPc[i].count; g_wPc[i].lastTick = g_lastTick; }
+        const LONG k = g_wCount;
+        if (k < 4096) {
+            WHit& h = g_wHits[k];
+            h = WHit{};
+            h.tick = g_lastTick; h.n = g_lastN; h.rec = g_records; h.eip = c->Eip; h.slot = s;
+            h.value = *reinterpret_cast<const volatile unsigned*>(static_cast<std::uintptr_t>(g_wVa[s]));
+            // frame-pointer chain, bounded by this thread's stack (best effort: a body without a frame pointer is skipped over)
+            const NT_TIB* tib = reinterpret_cast<const NT_TIB*>(NtCurrentTeb());
+            const std::uintptr_t lo = reinterpret_cast<std::uintptr_t>(tib->StackLimit), hi = reinterpret_cast<std::uintptr_t>(tib->StackBase);
+            std::uintptr_t fp = c->Ebp;
+            for (int d = 0; d < 8 && fp >= lo && fp + 8 <= hi && !(fp & 3); ++d) {
+                h.bt[d] = reinterpret_cast<const unsigned*>(fp)[1];
+                const std::uintptr_t nx = reinterpret_cast<const unsigned*>(fp)[0];
+                if (nx <= fp) break;
+                fp = nx;
+            }
+        }
+        g_wCount = k + 1;
+    }
+    c->Dr6 = 0;
+    return EXCEPTION_CONTINUE_EXECUTION;
+}
+
+DWORD WINAPI WatchArmProc(LPVOID) {
+    if (SuspendThread(g_wMain) == static_cast<DWORD>(-1)) return 1;
+    CONTEXT c{};
+    c.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+    DWORD rc = 2;
+    if (GetThreadContext(g_wMain, &c)) {
+        DWORD dr7 = c.Dr7;
+        DWORD* dr[4] = {&c.Dr0, &c.Dr1, &c.Dr2, &c.Dr3};
+        for (unsigned s = 0; s < g_wN; ++s) {
+            *dr[s] = g_wVa[s];
+            dr7 &= ~((3u << (16 + 4 * s)) | (3u << (18 + 4 * s)) | (3u << (2 * s)));
+            dr7 |= (1u << (2 * s)) | (1u << (16 + 4 * s)) | (3u << (18 + 4 * s));   // local enable, RW = write, LEN = 4
+        }
+        c.Dr7 = dr7;
+        c.Dr6 = 0;
+        rc = SetThreadContext(g_wMain, &c) ? 0 : 3;
+    }
+    ResumeThread(g_wMain);
+    return rc;
+}
+
+void WatchArm() {
+    const char* v = std::getenv("MASHED_REPLAY_TRACE_WATCH");
+    if (!v || !v[0]) return;
+    for (const char* p = v; *p && g_wN < 4;) {
+        char* e = nullptr;
+        const unsigned va = static_cast<unsigned>(std::strtoul(p, &e, 16));
+        if (e == p) break;
+        if (va >= kLo && va + 4 <= kHi && !(va & 3)) g_wVa[g_wN++] = va;
+        else TLog("watch 0x%08X refused (outside the image or not dword-aligned)", va);
+        p = (*e == ',') ? e + 1 : e;
+    }
+    if (const char* f = std::getenv("MASHED_REPLAY_TRACE_WATCH_FROM")) g_wFrom = static_cast<unsigned>(std::strtoul(f, nullptr, 0));
+    if (!g_wN) return;
+    g_wMainId = GetCurrentThreadId();
+    if (!DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &g_wMain,
+                         THREAD_SUSPEND_RESUME | THREAD_GET_CONTEXT | THREAD_SET_CONTEXT, FALSE, 0)) {
+        TLog("watch: DuplicateHandle failed (%lu), not armed", GetLastError());
+        g_wN = 0;
+        return;
+    }
+    g_wVeh = AddVectoredExceptionHandler(1, WatchVeh);
+    HANDLE t = CreateThread(nullptr, 0, WatchArmProc, nullptr, 0, nullptr);
+    DWORD rc = 9;
+    if (t) { WaitForSingleObject(t, 5000); GetExitCodeThread(t, &rc); CloseHandle(t); }
+    g_wArmed = rc == 0;
+    // read back from the main thread's own context: the registers must hold what was written
+    CONTEXT c{};
+    c.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+    GetThreadContext(GetCurrentThread(), &c);
+    TLog("watch %s (rc %lu) on main thread %lu: %u slot(s) 0x%08X 0x%08X 0x%08X 0x%08X, dr7 0x%08lX, from tick %u",
+         g_wArmed ? "armed" : "NOT armed", rc, g_wMainId, g_wN, g_wVa[0], g_wVa[1], g_wVa[2], g_wVa[3], c.Dr7, g_wFrom);
+}
+
+void WatchWrite() {
+    if (!g_wN) return;
+    const std::string path = g_dir + "/watch.jsonl";
+    std::FILE* f = std::fopen(path.c_str(), "w");
+    if (!f) { TLog("cannot write %s", path.c_str()); return; }
+    const LONG n = g_wCount < 4096 ? g_wCount : 4096;
+    for (LONG i = 0; i < n; ++i) {
+        const WHit& h = g_wHits[i];
+        std::fprintf(f, "{\"kind\": \"watch\", \"side\": \"exe\", \"tick\": %u, \"n\": %u, \"rec\": %u, \"slot\": %u, \"va\": \"0x%x\", "
+                        "\"pc\": \"0x%x\", \"value\": \"0x%x\", \"bt\": \"", h.tick, h.n, h.rec, h.slot, g_wVa[h.slot], h.eip, h.value);
+        for (int d = 0; d < 8 && h.bt[d]; ++d) std::fprintf(f, "%s0x%x", d ? "|" : "", h.bt[d]);
+        std::fputs("\"}\n", f);
+    }
+    for (unsigned i = 0; i < g_wPcN; ++i)
+        std::fprintf(f, "{\"kind\": \"watch_pc\", \"side\": \"exe\", \"slot\": %u, \"va\": \"0x%x\", \"pc\": \"0x%x\", \"count\": %u, "
+                        "\"first_tick\": %u, \"last_tick\": %u}\n", g_wPc[i].slot, g_wVa[g_wPc[i].slot], g_wPc[i].eip,
+                     g_wPc[i].count, g_wPc[i].firstTick, g_wPc[i].lastTick);
+    std::fclose(f);
+    TLog("watch: %ld hit(s), %u distinct pc, %u pc over the table, watch.jsonl written", static_cast<long>(g_wCount), g_wPcN, g_wPcDrop);
+}
+
 void WriteMeta(int rc);
 
 void Dump(unsigned k, unsigned tick, unsigned n, unsigned long long q, unsigned t) {
@@ -262,7 +398,11 @@ void WriteMeta(int rc) {
         std::fprintf(f, "%s[%u, %u]", first ? "" : ", ", base + i * kPage, base + (j + 1) * kPage);
         first = false; i = j + 1;
     }
-    std::fprintf(f, "],\n \"page_map_changes\": %u,\n \"selftest\": {\"checks\": %u, \"fails\": %u},\n \"rc\": %d\n}\n",
+    std::fputs("],\n \"watch\": {\"va\": [", f);
+    for (unsigned i = 0; i < g_wN; ++i) std::fprintf(f, "%s\"0x%x\"", i ? ", " : "", g_wVa[i]);
+    std::fprintf(f, "], \"armed\": %s, \"thread\": %lu, \"threads\": \"main only\", \"from_tick\": %u, \"hits\": %ld}",
+                 g_wArmed ? "true" : "false", g_wMainId, g_wFrom, static_cast<long>(g_wCount));
+    std::fprintf(f, ",\n \"page_map_changes\": %u,\n \"selftest\": {\"checks\": %u, \"fails\": %u},\n \"rc\": %d\n}\n",
                  g_mapChanges, g_checks, g_fails, rc < 0 ? 1 : rc);
     std::fclose(f);
 }
@@ -331,6 +471,10 @@ int ReplayTrace_Init(const unsigned* const* ring) {
     std::setvbuf(g_ticks, nullptr, _IOFBF, 1u << 20);
     g_on = 1;
     MapPages();
+    WatchArm();
+    // RO-FIRST-DIVERGENCE: tick 0 in MASHED_REPLAY_TRACE_CKPT = a checkpoint here, at the trace init (before the first tick)
+    for (size_t i = 0; i < g_ckptTicks.size(); ++i)
+        if (g_ckptTicks[i] == 0) Dump(static_cast<unsigned>(i), 0, 0, 0, 0);
     TLog("MASHED_REPLAY_TRACE=%s on: image 0x%08X..0x%08X, block %u B, %u blocks, %u raw words in %u ranges, record %u "
          "dwords, cap %u, %u checkpoint ticks, negctl %s",
          g_dir.c_str(), kLo, kHi, g_block, g_nblk, g_rawW, static_cast<unsigned>(g_raw.size()), g_recw, g_cap,
@@ -390,6 +534,7 @@ void ReplayTrace_Anchor(unsigned tick, unsigned n) {
 void ReplayTrace_Finish(void) {
     if (!g_on) return;
     if (g_ticks) { std::fclose(g_ticks); g_ticks = nullptr; }
+    WatchWrite();
     unsigned bad = 0;
     for (unsigned i = 0; i < kNPages; ++i) bad += g_pageEverBad[i];
     WriteMeta(0);

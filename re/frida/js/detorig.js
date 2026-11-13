@@ -287,17 +287,20 @@ function witness() { return (CFG.witness || []).map((va) => [va.toString(16), ga
 function checkpoint(k) {
   const n = N();
   const blob = watchQuiet(() => ga(DATA_LO).readByteArray(DATA_HI - DATA_LO));   // rw watch: the agent's own read would trap
-  const ptd = getptd();
-  const P = rwRngPtr();
+  // RO-FIRST-DIVERGENCE tick checkpoints can run before the CRT per-thread data or the RW globals exist (tick 0 = PE
+  // entry): those fields are then null instead of throwing.
+  const opt = (f) => { try { return f(); } catch (e) { return null; } };
+  const ptd = opt(getptd);
+  const P = opt(rwRngPtr);
   const info = {
-    kind: 'ckpt', k, n, dn: n - raceN, dn_warp: n - warpN,
+    kind: 'ckpt', k, n, dn: n - raceN, dn_warp: n - warpN, tick: tickNow(),
     T: D.readU32(), Qlo: D.add(0x10).readU32(), Qhi: D.add(0x14).readU32(),
     tgt: D.add(0x20).readU32(), qpc: D.add(0x24).readU32(), fwd: D.add(0x28).readU32(),
     phase: ga(0x00771968).readU8(), clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(),
     frames_7f101c: ga(0x007f101c).readU32(), witness: witness(),
-    holdrand: ptd.add(0x14).readU32(),
-    rw_ring: Array.from(new Uint32Array(P.readPointer().readByteArray(0x7c))),
-    rw_cur: [P.add(4).readU32() - P.readPointer().toUInt32(), P.add(8).readU32() - P.readPointer().toUInt32()],
+    holdrand: opt(() => ptd.add(0x14).readU32()),
+    rw_ring: opt(() => Array.from(new Uint32Array(P.readPointer().readByteArray(0x7c)))),
+    rw_cur: opt(() => [P.add(4).readU32() - P.readPointer().toUInt32(), P.add(8).readU32() - P.readPointer().toUInt32()]),
   };
   send(info, blob);
 }
@@ -326,12 +329,14 @@ let watchHits = 0;
 // rw watch only: run fn with this thread's debug-register slots cleared, then re-arm them (an agent read of a watched
 // word would otherwise trap inside Frida's guarded read and throw).
 function watchQuiet(fn) {
-  if (CFG.watchMode !== 'rw' || !(CFG.watch && CFG.watch.length) || !watchArmed) return fn();
+  // RO-FIRST-DIVERGENCE: also in 'w' mode, so the agent's own pins at the warp / anchor (pinTimer writes 0x007f1030) do
+  // not trap inside the agent (o3 failed with 'single-step triggered at pinTimer'). Those writes are then not hits.
+  if (!(CFG.watch && CFG.watch.length) || !watchArmed) return fn();
   const me = Process.getCurrentThreadId();
   const t = Process.enumerateThreads().find((x) => x.id === me);
   const addrs = CFG.watch.slice(0, 2).map((va) => ga(va));
   if (t) addrs.forEach((a, k) => { try { t.unsetHardwareWatchpoint(k); } catch (e) { } });
-  try { return fn(); } finally { if (t) addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, 'rw'); } catch (e) { } }); }
+  try { return fn(); } finally { if (t) addrs.forEach((a, k) => { try { t.setHardwareWatchpoint(k, a, 4, CFG.watchMode === 'rw' ? 'rw' : 'w'); } catch (e) { } }); }
 }
 let watchArmed = false;
 const watchPc = {};
@@ -350,7 +355,7 @@ function watchArm() {
       if (watchHits++ < 2000 || rw) {
         let bt = '';
         try { bt = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 12).map((p) => '0x' + (p.toUInt32() >>> 0).toString(16)).join('|'); } catch (e) { bt = 'bt-err'; }
-        send({ kind: 'watch', n: N(), cnt, mode: CFG.watchMode || 'w', tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
+        send({ kind: 'watch', n: N(), tick: tickNow(), rec: TK ? TK.st.add(4).readU32() : null, cnt, mode: CFG.watchMode || 'w', tid: Process.getCurrentThreadId(), pc: '0x' + (c.pc.toUInt32() >>> 0).toString(16), bt,
                values: rw ? [] : addrs.map((a) => '0x' + a.readU32().toString(16)) });  // rw: a read here would re-trap
       }
     } catch (e) { /* keep running */ }
@@ -795,7 +800,7 @@ function install() {
       if (CFG.menuCkpt) checkpoint(100);   // full image at the end of the menu segment, before the warp writes
     }
     if (CFG.watchFrom === 'install' && CFG.watch && CFG.watch.length) send({ kind: 'info', msg: 'warp ' + watchArm() });
-    const pins = warp();
+    const pins = watchQuiet(warp);
     if (PV_AT) pins.prov = PV_AT;
     if (PV) PV.atWarp = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32());
     if (CFG.callLog) D.add(0x34).writeU32(1);
@@ -821,8 +826,8 @@ function install() {
         const cnt = D.add(0x38).readU32();
         send({ kind: 'calllog', count: cnt, rec: LOGREC }, LOG.readByteArray(cnt * LOGREC));
       }
-      const pins3 = pinRngs();
-      const na = pinNorm('anchor');
+      const pins3 = watchQuiet(pinRngs);
+      const na = watchQuiet(() => pinNorm('anchor'));
       if (na) pins3.norm = na;
       const ao3 = audioOff('anchor');
       if (ao3) pins3.audioOff = ao3;
@@ -872,6 +877,13 @@ function install() {
     tickSchedule(CFG.warpTick, doWarp);
     // calls made before the first tick (CRT start to the main loop) = the boot segment of the census (provReport)
     if (PV) tickSchedule(1, () => { PV.atTick1 = PV.names.map((_, i) => PV.cnt.add(i * 4).readU32()); });
+    // RO-FIRST-DIVERGENCE: full-image checkpoints at ticks (k = 200 + i). Tick t's dump is taken in the first clock call
+    // of tick t, after that tick's record (the CModule onEnter); detorig_firstdiv.py re-hashes it against record t - 1.
+    // Tick 0 = here, at the install (PE entry point), before any instruction of MASHED.exe ran.
+    (CFG.ckptTicks || []).forEach((t, i) => {
+      if (t === 0) res.push(['ckpt-tick0', (checkpoint(200 + i), 'k ' + (200 + i))]);
+      else tickSchedule(t, () => checkpoint(200 + i));
+    });
     if (CFG.negTick) tickSchedule(CFG.negTick, () => {   // negative control inside the menu segment
       if (CFG.negctl === 1) { const c = rwRngPtr().add(4).readPointer(); c.writeU32((c.readU32() + 1) >>> 0); }
       else if (CFG.negctl) { const p = ga(CFG.negctl); p.writeU32((p.readU32() + 1) >>> 0); }
