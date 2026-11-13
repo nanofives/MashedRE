@@ -11,7 +11,6 @@ extern "C" int RwCoreLift_004cb870();
 extern "C" int RwCoreLift_004d8cc0();
 extern "C" int RwCoreLift_004ea4e0();
 extern "C" int RwCoreLift_004ec190();
-extern "C" int RwCoreLift_0053d230();
 extern "C" int RwCoreLift_0053d250();
 extern "C" int RwCoreLift_0053d2b0();
 extern "C" int RwCoreLift_0053d3e0();
@@ -75,6 +74,7 @@ extern "C" int RwCoreLift_0054a0d0();
 extern "C" int RwCoreLift_0054a0f0();
 extern "C" int RwCoreLift_0054aa30();
 extern "C" int RwCoreLift_0054ba20();
+extern "C" int RwCoreLift_0054bda0();
 extern "C" int RwCoreLift_0054d130();
 extern "C" int RwCore_004c0e50();
 extern "C" int RwCore_004c0ed0();
@@ -141,7 +141,6 @@ extern "C" int RwCore_004ec130();
 extern "C" int RwCore_004f3bc0();
 extern "C" int RwCore_004f7dc0();
 extern "C" int RwCore_004f81b0();
-extern "C" int RwCore_0053d690();
 extern "C" int RwCore_0053d6c0();
 extern "C" int RwCore_0053d820();
 extern "C" int RwCore_0053d920();
@@ -168,29 +167,12 @@ extern "C" int RwCore_0054b6d0();
 extern "C" int RwCore_0054b740();
 extern "C" int RwCore_0054b8c0();
 extern "C" int RwCore_0054d4d0();
+extern "C" int RwCore_0054dbd0();
 extern "C" int RwCore_0054e520();
+extern "C" int RwCore_0054eb90();
 extern "C" int RwCore_0054f410();
 extern "C" int UtilReturnOne4d8560();
 extern "C" int GetRaceEndTrigger();
-
-// HAND-LIFT 0x0053d230 RwCoreLift_0053d230  (12 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_0053d230(void) {
-    __asm {
-        mov eax, dword ptr [esp + 8]             // 0053d230
-        mov ecx, dword ptr [esp + 4]             // 0053d234
-        mov eax, dword ptr [ecx + eax]           // 0053d238
-        test eax, eax                            // 0053d23b
-        je L_53d24c                              // 0053d23d
-        push eax                                 // 0053d23f
-        call RwCore_0053d690                    // 0053d240
-        add esp, 4                               // 0053d245
-        add eax, 0x10                            // 0053d248
-        ret                                      // 0053d24b
-    L_53d24c:
-        xor eax, eax                             // 0053d24c
-        ret                                      // 0053d24e
-    }
-}
 
 // HAND-LIFT 0x0053d250 RwCoreLift_0053d250  (38 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_0053d250(void) {
@@ -8128,6 +8110,319 @@ extern "C" __declspec(naked) int RwCoreLift_0054ba20(void) {
         pop esi                                  // 0054bd98
         add esp, 0x334                           // 0054bd99
         ret                                      // 0054bd9f
+    }
+}
+
+// HAND-LIFT 0x0054bda0 RwCoreLift_0054bda0  (303 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_0054bda0(void) {
+    __asm {
+        sub esp, 0x364                           // 0054bda0
+        fild dword ptr [esp + 0x374]             // 0054bda6
+        mov eax, dword ptr [esp + 0x370]         // 0054bdad
+        push ebx                                 // 0054bdb4
+        lea ecx, [esp + 0x268]                   // 0054bdb5
+        push eax                                 // 0054bdbc
+        fdivr dword ptr ds:[0x005cc320]          // 0054bdbd
+        push ecx                                 // 0054bdc3
+        fstp dword ptr [esp + 0xc]               // 0054bdc4
+        call RwCore_0054f410                    // 0054bdc8
+        lea edx, [esp + 0x270]                   // 0054bdcd
+        lea eax, [esp + 0x170]                   // 0054bdd4
+        push edx                                 // 0054bddb
+        push eax                                 // 0054bddc
+        call RwCore_0054dbd0                    // 0054bddd
+        mov eax, dword ptr [esp + 0x14]          // 0054bde2
+        lea ecx, [esp + 0x178]                   // 0054bde6
+        push eax                                 // 0054bded
+        push eax                                 // 0054bdee
+        lea edx, [esp + 0x70]                    // 0054bdef
+        push ecx                                 // 0054bdf3
+        push edx                                 // 0054bdf4
+        call RwCore_0054eb90                    // 0054bdf5
+        mov eax, dword ptr [esp + 0x398]         // 0054bdfa
+        mov ebx, dword ptr [esp + 0x38c]         // 0054be01
+        add esp, 0x20                            // 0054be08
+        mov ecx, ebx                             // 0054be0b
+        test eax, eax                            // 0054be0d
+        jl L_54c3eb                              // 0054be0f
+        push ebp                                 // 0054be15
+        push esi                                 // 0054be16
+        push edi                                 // 0054be17
+        mov edi, dword ptr [esp + 0x37c]         // 0054be18
+        mov esi, eax                             // 0054be1f
+        lea ebp, [eax + 1]                       // 0054be21
+    L_54be24:
+        mov eax, dword ptr [esp + 0x64]          // 0054be24
+        mov edx, dword ptr [esp + 0x68]          // 0054be28
+        mov dword ptr [esp + 0x24], eax          // 0054be2c
+        mov eax, dword ptr [esp + 0x6c]          // 0054be30
+        mov dword ptr [esp + 0x28], edx          // 0054be34
+        mov edx, dword ptr [esp + 0x70]          // 0054be38
+        mov dword ptr [esp + 0x2c], eax          // 0054be3c
+        mov eax, dword ptr [esp + 0x74]          // 0054be40
+        mov dword ptr [esp + 0x30], edx          // 0054be44
+        mov edx, dword ptr [esp + 0x78]          // 0054be48
+        mov dword ptr [esp + 0x34], eax          // 0054be4c
+        mov eax, dword ptr [esp + 0x7c]          // 0054be50
+        mov dword ptr [esp + 0x38], edx          // 0054be54
+        mov edx, dword ptr [esp + 0x80]          // 0054be58
+        mov dword ptr [esp + 0x3c], eax          // 0054be5f
+        mov eax, dword ptr [esp + 0x84]          // 0054be63
+        mov dword ptr [esp + 0x40], edx          // 0054be6a
+        mov edx, dword ptr [esp + 0x88]          // 0054be6e
+        mov dword ptr [esp + 0x44], eax          // 0054be75
+        mov eax, dword ptr [esp + 0x8c]          // 0054be79
+        mov dword ptr [esp + 0x48], edx          // 0054be80
+        mov edx, dword ptr [esp + 0x90]          // 0054be84
+        mov dword ptr [esp + 0x4c], eax          // 0054be8b
+        mov eax, dword ptr [esp + 0x94]          // 0054be8f
+        mov dword ptr [esp + 0x50], edx          // 0054be96
+        mov edx, dword ptr [esp + 0x98]          // 0054be9a
+        mov dword ptr [esp + 0x54], eax          // 0054bea1
+        mov eax, dword ptr [esp + 0x9c]          // 0054bea5
+        mov dword ptr [esp + 0x58], edx          // 0054beac
+        mov edx, dword ptr [esp + 0xa0]          // 0054beb0
+        test esi, esi                            // 0054beb7
+        mov dword ptr [esp + 0x5c], eax          // 0054beb9
+        mov dword ptr [esp + 0x60], edx          // 0054bebd
+        jl L_54c01a                              // 0054bec1
+        lea edx, [esi + 1]                       // 0054bec7
+    L_54beca:
+        fnstcw word ptr [esp + 0x1c]             // 0054beca
+        fld dword ptr [esp + 0x24]               // 0054bece
+        mov ax, word ptr [esp + 0x1c]            // 0054bed2
+        or ah, 0xc                               // 0054bed7
+        mov word ptr [esp + 0x22], ax            // 0054beda
+        fldcw word ptr [esp + 0x22]              // 0054bedf
+        fistp dword ptr [esp + 0x164]            // 0054bee3
+        fldcw word ptr [esp + 0x1c]              // 0054beea
+        mov al, byte ptr [esp + 0x164]           // 0054beee
+        mov byte ptr [ecx], al                   // 0054bef5
+        fnstcw word ptr [esp + 0x1a]             // 0054bef7
+        fld dword ptr [esp + 0x28]               // 0054befb
+        mov ax, word ptr [esp + 0x1a]            // 0054beff
+        or ah, 0xc                               // 0054bf04
+        mov word ptr [esp + 0x18], ax            // 0054bf07
+        fldcw word ptr [esp + 0x18]              // 0054bf0c
+        fistp dword ptr [esp + 0x170]            // 0054bf10
+        fldcw word ptr [esp + 0x1a]              // 0054bf17
+        mov al, byte ptr [esp + 0x170]           // 0054bf1b
+        mov byte ptr [ecx + 1], al               // 0054bf22
+        fnstcw word ptr [esp + 0x16]             // 0054bf25
+        fld dword ptr [esp + 0x2c]               // 0054bf29
+        mov ax, word ptr [esp + 0x16]            // 0054bf2d
+        or ah, 0xc                               // 0054bf32
+        mov word ptr [esp + 0x20], ax            // 0054bf35
+        fldcw word ptr [esp + 0x20]              // 0054bf3a
+        fistp dword ptr [esp + 0x168]            // 0054bf3e
+        fldcw word ptr [esp + 0x16]              // 0054bf45
+        mov al, byte ptr [esp + 0x168]           // 0054bf49
+        mov byte ptr [ecx + 2], al               // 0054bf50
+        fnstcw word ptr [esp + 0x10]             // 0054bf53
+        fld dword ptr [esp + 0x30]               // 0054bf57
+        mov ax, word ptr [esp + 0x10]            // 0054bf5b
+        or ah, 0xc                               // 0054bf60
+        mov word ptr [esp + 0x1e], ax            // 0054bf63
+        fldcw word ptr [esp + 0x1e]              // 0054bf68
+        fistp dword ptr [esp + 0x16c]            // 0054bf6c
+        fldcw word ptr [esp + 0x10]              // 0054bf73
+        fld dword ptr [esp + 0x34]               // 0054bf77
+        fadd dword ptr [esp + 0x24]              // 0054bf7b
+        mov al, byte ptr [esp + 0x16c]           // 0054bf7f
+        mov byte ptr [ecx + 3], al               // 0054bf86
+        add ecx, edi                             // 0054bf89
+        dec edx                                  // 0054bf8b
+        fstp dword ptr [esp + 0x24]              // 0054bf8c
+        fld dword ptr [esp + 0x38]               // 0054bf90
+        fadd dword ptr [esp + 0x28]              // 0054bf94
+        fstp dword ptr [esp + 0x28]              // 0054bf98
+        fld dword ptr [esp + 0x3c]               // 0054bf9c
+        fadd dword ptr [esp + 0x2c]              // 0054bfa0
+        fstp dword ptr [esp + 0x2c]              // 0054bfa4
+        fld dword ptr [esp + 0x40]               // 0054bfa8
+        fadd dword ptr [esp + 0x30]              // 0054bfac
+        fstp dword ptr [esp + 0x30]              // 0054bfb0
+        fld dword ptr [esp + 0x44]               // 0054bfb4
+        fadd dword ptr [esp + 0x34]              // 0054bfb8
+        fstp dword ptr [esp + 0x34]              // 0054bfbc
+        fld dword ptr [esp + 0x48]               // 0054bfc0
+        fadd dword ptr [esp + 0x38]              // 0054bfc4
+        fstp dword ptr [esp + 0x38]              // 0054bfc8
+        fld dword ptr [esp + 0x4c]               // 0054bfcc
+        fadd dword ptr [esp + 0x3c]              // 0054bfd0
+        fstp dword ptr [esp + 0x3c]              // 0054bfd4
+        fld dword ptr [esp + 0x50]               // 0054bfd8
+        fadd dword ptr [esp + 0x40]              // 0054bfdc
+        fstp dword ptr [esp + 0x40]              // 0054bfe0
+        fld dword ptr [esp + 0x54]               // 0054bfe4
+        fadd dword ptr [esp + 0x44]              // 0054bfe8
+        fstp dword ptr [esp + 0x44]              // 0054bfec
+        fld dword ptr [esp + 0x58]               // 0054bff0
+        fadd dword ptr [esp + 0x48]              // 0054bff4
+        fstp dword ptr [esp + 0x48]              // 0054bff8
+        fld dword ptr [esp + 0x5c]               // 0054bffc
+        fadd dword ptr [esp + 0x4c]              // 0054c000
+        fstp dword ptr [esp + 0x4c]              // 0054c004
+        fld dword ptr [esp + 0x60]               // 0054c008
+        fadd dword ptr [esp + 0x50]              // 0054c00c
+        fstp dword ptr [esp + 0x50]              // 0054c010
+        jne L_54beca                             // 0054c014
+    L_54c01a:
+        fld dword ptr [esp + 0xa4]               // 0054c01a
+        fadd dword ptr [esp + 0x64]              // 0054c021
+        fstp dword ptr [esp + 0x64]              // 0054c025
+        fld dword ptr [esp + 0xa8]               // 0054c029
+        fadd dword ptr [esp + 0x68]              // 0054c030
+        fstp dword ptr [esp + 0x68]              // 0054c034
+        fld dword ptr [esp + 0xac]               // 0054c038
+        fadd dword ptr [esp + 0x6c]              // 0054c03f
+        fstp dword ptr [esp + 0x6c]              // 0054c043
+        fld dword ptr [esp + 0xb0]               // 0054c047
+        fadd dword ptr [esp + 0x70]              // 0054c04e
+        fstp dword ptr [esp + 0x70]              // 0054c052
+        fld dword ptr [esp + 0xb4]               // 0054c056
+        fadd dword ptr [esp + 0x74]              // 0054c05d
+        fstp dword ptr [esp + 0x74]              // 0054c061
+        fld dword ptr [esp + 0xb8]               // 0054c065
+        fadd dword ptr [esp + 0x78]              // 0054c06c
+        fstp dword ptr [esp + 0x78]              // 0054c070
+        fld dword ptr [esp + 0xbc]               // 0054c074
+        fadd dword ptr [esp + 0x7c]              // 0054c07b
+        fstp dword ptr [esp + 0x7c]              // 0054c07f
+        fld dword ptr [esp + 0xc0]               // 0054c083
+        fadd dword ptr [esp + 0x80]              // 0054c08a
+        fstp dword ptr [esp + 0x80]              // 0054c091
+        fld dword ptr [esp + 0xc4]               // 0054c098
+        fadd dword ptr [esp + 0x84]              // 0054c09f
+        fstp dword ptr [esp + 0x84]              // 0054c0a6
+        fld dword ptr [esp + 0xc8]               // 0054c0ad
+        fadd dword ptr [esp + 0x88]              // 0054c0b4
+        fstp dword ptr [esp + 0x88]              // 0054c0bb
+        fld dword ptr [esp + 0xcc]               // 0054c0c2
+        fadd dword ptr [esp + 0x8c]              // 0054c0c9
+        fstp dword ptr [esp + 0x8c]              // 0054c0d0
+        fld dword ptr [esp + 0xd0]               // 0054c0d7
+        fadd dword ptr [esp + 0x90]              // 0054c0de
+        fstp dword ptr [esp + 0x90]              // 0054c0e5
+        fld dword ptr [esp + 0xd4]               // 0054c0ec
+        fadd dword ptr [esp + 0x94]              // 0054c0f3
+        fstp dword ptr [esp + 0x94]              // 0054c0fa
+        fld dword ptr [esp + 0xd8]               // 0054c101
+        fadd dword ptr [esp + 0x98]              // 0054c108
+        fstp dword ptr [esp + 0x98]              // 0054c10f
+        fld dword ptr [esp + 0xdc]               // 0054c116
+        fadd dword ptr [esp + 0x9c]              // 0054c11d
+        fstp dword ptr [esp + 0x9c]              // 0054c124
+        fld dword ptr [esp + 0xe0]               // 0054c12b
+        fadd dword ptr [esp + 0xa0]              // 0054c132
+        fstp dword ptr [esp + 0xa0]              // 0054c139
+        fld dword ptr [esp + 0xe4]               // 0054c140
+        fadd dword ptr [esp + 0xa4]              // 0054c147
+        fstp dword ptr [esp + 0xa4]              // 0054c14e
+        fld dword ptr [esp + 0xe8]               // 0054c155
+        fadd dword ptr [esp + 0xa8]              // 0054c15c
+        fstp dword ptr [esp + 0xa8]              // 0054c163
+        fld dword ptr [esp + 0xec]               // 0054c16a
+        fadd dword ptr [esp + 0xac]              // 0054c171
+        fstp dword ptr [esp + 0xac]              // 0054c178
+        fld dword ptr [esp + 0xf0]               // 0054c17f
+        fadd dword ptr [esp + 0xb0]              // 0054c186
+        fstp dword ptr [esp + 0xb0]              // 0054c18d
+        fld dword ptr [esp + 0xf4]               // 0054c194
+        fadd dword ptr [esp + 0xb4]              // 0054c19b
+        fstp dword ptr [esp + 0xb4]              // 0054c1a2
+        fld dword ptr [esp + 0xf8]               // 0054c1a9
+        fadd dword ptr [esp + 0xb8]              // 0054c1b0
+        fstp dword ptr [esp + 0xb8]              // 0054c1b7
+        fld dword ptr [esp + 0xfc]               // 0054c1be
+        fadd dword ptr [esp + 0xbc]              // 0054c1c5
+        fstp dword ptr [esp + 0xbc]              // 0054c1cc
+        fld dword ptr [esp + 0x100]              // 0054c1d3
+        fadd dword ptr [esp + 0xc0]              // 0054c1da
+        fstp dword ptr [esp + 0xc0]              // 0054c1e1
+        fld dword ptr [esp + 0x104]              // 0054c1e8
+        fadd dword ptr [esp + 0xc4]              // 0054c1ef
+        fstp dword ptr [esp + 0xc4]              // 0054c1f6
+        fld dword ptr [esp + 0x108]              // 0054c1fd
+        fadd dword ptr [esp + 0xc8]              // 0054c204
+        fstp dword ptr [esp + 0xc8]              // 0054c20b
+        fld dword ptr [esp + 0x10c]              // 0054c212
+        fadd dword ptr [esp + 0xcc]              // 0054c219
+        fstp dword ptr [esp + 0xcc]              // 0054c220
+        fld dword ptr [esp + 0x110]              // 0054c227
+        fadd dword ptr [esp + 0xd0]              // 0054c22e
+        dec esi                                  // 0054c235
+        dec ebp                                  // 0054c236
+        fstp dword ptr [esp + 0xd0]              // 0054c237
+        fld dword ptr [esp + 0x114]              // 0054c23e
+        fadd dword ptr [esp + 0xd4]              // 0054c245
+        fstp dword ptr [esp + 0xd4]              // 0054c24c
+        fld dword ptr [esp + 0x118]              // 0054c253
+        fadd dword ptr [esp + 0xd8]              // 0054c25a
+        fstp dword ptr [esp + 0xd8]              // 0054c261
+        fld dword ptr [esp + 0x11c]              // 0054c268
+        fadd dword ptr [esp + 0xdc]              // 0054c26f
+        fstp dword ptr [esp + 0xdc]              // 0054c276
+        fld dword ptr [esp + 0x120]              // 0054c27d
+        fadd dword ptr [esp + 0xe0]              // 0054c284
+        fstp dword ptr [esp + 0xe0]              // 0054c28b
+        fld dword ptr [esp + 0x124]              // 0054c292
+        fadd dword ptr [esp + 0xe4]              // 0054c299
+        fstp dword ptr [esp + 0xe4]              // 0054c2a0
+        fld dword ptr [esp + 0x128]              // 0054c2a7
+        fadd dword ptr [esp + 0xe8]              // 0054c2ae
+        fstp dword ptr [esp + 0xe8]              // 0054c2b5
+        fld dword ptr [esp + 0x12c]              // 0054c2bc
+        fadd dword ptr [esp + 0xec]              // 0054c2c3
+        fstp dword ptr [esp + 0xec]              // 0054c2ca
+        fld dword ptr [esp + 0x130]              // 0054c2d1
+        fadd dword ptr [esp + 0xf0]              // 0054c2d8
+        fstp dword ptr [esp + 0xf0]              // 0054c2df
+        fld dword ptr [esp + 0x134]              // 0054c2e6
+        fadd dword ptr [esp + 0xf4]              // 0054c2ed
+        fstp dword ptr [esp + 0xf4]              // 0054c2f4
+        fld dword ptr [esp + 0x138]              // 0054c2fb
+        fadd dword ptr [esp + 0xf8]              // 0054c302
+        fstp dword ptr [esp + 0xf8]              // 0054c309
+        fld dword ptr [esp + 0x13c]              // 0054c310
+        fadd dword ptr [esp + 0xfc]              // 0054c317
+        fstp dword ptr [esp + 0xfc]              // 0054c31e
+        fld dword ptr [esp + 0x140]              // 0054c325
+        fadd dword ptr [esp + 0x100]             // 0054c32c
+        fstp dword ptr [esp + 0x100]             // 0054c333
+        fld dword ptr [esp + 0x144]              // 0054c33a
+        fadd dword ptr [esp + 0x104]             // 0054c341
+        fstp dword ptr [esp + 0x104]             // 0054c348
+        fld dword ptr [esp + 0x148]              // 0054c34f
+        fadd dword ptr [esp + 0x108]             // 0054c356
+        fstp dword ptr [esp + 0x108]             // 0054c35d
+        fld dword ptr [esp + 0x14c]              // 0054c364
+        fadd dword ptr [esp + 0x10c]             // 0054c36b
+        fstp dword ptr [esp + 0x10c]             // 0054c372
+        fld dword ptr [esp + 0x150]              // 0054c379
+        fadd dword ptr [esp + 0x110]             // 0054c380
+        fstp dword ptr [esp + 0x110]             // 0054c387
+        fld dword ptr [esp + 0x154]              // 0054c38e
+        fadd dword ptr [esp + 0x114]             // 0054c395
+        fstp dword ptr [esp + 0x114]             // 0054c39c
+        fld dword ptr [esp + 0x158]              // 0054c3a3
+        fadd dword ptr [esp + 0x118]             // 0054c3aa
+        fstp dword ptr [esp + 0x118]             // 0054c3b1
+        fld dword ptr [esp + 0x15c]              // 0054c3b8
+        fadd dword ptr [esp + 0x11c]             // 0054c3bf
+        fstp dword ptr [esp + 0x11c]             // 0054c3c6
+        fld dword ptr [esp + 0x160]              // 0054c3cd
+        fadd dword ptr [esp + 0x120]             // 0054c3d4
+        fstp dword ptr [esp + 0x120]             // 0054c3db
+        jne L_54be24                             // 0054c3e2
+        pop edi                                  // 0054c3e8
+        pop esi                                  // 0054c3e9
+        pop ebp                                  // 0054c3ea
+    L_54c3eb:
+        mov eax, ebx                             // 0054c3eb
+        pop ebx                                  // 0054c3ed
+        add esp, 0x364                           // 0054c3ee
+        ret                                      // 0054c3f4
     }
 }
 

@@ -37,6 +37,7 @@ int FUN_004c5c00(int p0, char * p1);
 int FUN_004c5ca0(void);
 int FUN_00543b30(int *p0, int *p1);
 MGLOBAL(int, _DAT_005cc320, 0x005cc320);
+/* RWC-FRAME-CLUMP 2026-11-13: the 32-byte texture name buffer at [esp+0x18] (0x0053ff84 byte 0, 0x0053ff89 rep stosd x7 + stosw + stosb from [esp+0x19], filled at 0x0053ffdd, passed at 0x00540006) is one char[32] in place of a char and a 4-byte local, which the port's VS2022 frame does not keep contiguous (the 31-byte clear and the name copy overran it: AV in the cup.dff material read, verify/rwcframeclump_20261113). Body otherwise unchanged. */
 // MATCH: 0x0053fec0 FUN_0053fec0
 /* [C1 2026-05-20] Material/texture pair installer. Finds stage with `+0x14 == 1` and rebuilds its
    texture binding from
@@ -56,8 +57,7 @@ int * FUN_0053fec0(int *param_1,int *param_2)
   int iVar9;
   undefined4 *puVar10;
   int *local_28 [2];
-  char local_20;
-  undefined4 local_1f;
+  char local_20[32];
   
   bVar7 = 0;
   *(byte *)&local_28[0] = 0;
@@ -91,8 +91,8 @@ LAB_0053ff05:
     if ((piVar4 != (int *)0x0) && (*(int *)(*piVar4 + 0xc) == 0)) {
       return param_1;
     }
-    local_20 = '\0';
-    puVar10 = &local_1f;
+    local_20[0] = '\0';
+    puVar10 = (undefined4 *)(local_20 + 1);
     for (iVar5 = 7; iVar5 != 0; iVar5 = iVar5 + -1) {
       *puVar10 = 0;
       puVar10 = puVar10 + 1;
@@ -100,7 +100,7 @@ LAB_0053ff05:
     *(undefined2 *)puVar10 = 0;
     *(undefined1 *)((int)puVar10 + 2) = 0;
     iVar5 = 0;
-    pcVar6 = &local_20;
+    pcVar6 = local_20;
     local_28[1] = param_2 + 4;
     if (piVar4 == (int *)0x0) {
       local_28[0] = param_2 + 4;
@@ -127,7 +127,7 @@ LAB_0053ff05:
     iVar5 = FUN_004c5ca0();
     *(undefined4 *)(iVar8 + 4) = 0;
     if (iVar5 != 0) {
-      uVar3 = FUN_004c5c00(iVar5,&local_20);
+      uVar3 = FUN_004c5c00(iVar5,local_20);
       *(undefined4 *)(iVar8 + 4) = uVar3;
     }
     if (*(int *)(iVar8 + 4) == 0) {

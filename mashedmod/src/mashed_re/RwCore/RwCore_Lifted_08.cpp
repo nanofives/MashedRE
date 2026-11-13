@@ -74,6 +74,7 @@ extern "C" int RwCoreLift_00538aa0();
 extern "C" int RwCoreLift_00538c30();
 extern "C" int RwCoreLift_0053d1c0();
 extern "C" int RwCoreLift_0053d1f0();
+extern "C" int RwCoreLift_0053d230();
 extern "C" int RwCoreMissing_00532fa0();
 extern "C" int RwCore_004522d0();
 extern "C" int RwCore_004c0ed0();
@@ -84,7 +85,6 @@ extern "C" int RwCore_004cb840();
 extern "C" int RwCore_004cbb60();
 extern "C" int RwCore_004cbd30();
 extern "C" int RwCore_004cbe80();
-extern "C" int RwCore_004cc6e0();
 extern "C" int RwCore_004cc770();
 extern "C" int RwCore_004cc790();
 extern "C" int RwCore_004cc9e0();
@@ -125,64 +125,7 @@ extern "C" int RwCore_00538310();
 extern "C" int RwCore_00538b70();
 extern "C" int RwCore_00538ba0();
 extern "C" int RwCore_00538bd0();
-
-// HAND-LIFT 0x00533420 RwCoreLift_00533420  (49 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
-extern "C" __declspec(naked) int RwCoreLift_00533420(void) {
-    __asm {
-        push ebx                                 // 00533420
-        push ebp                                 // 00533421
-        mov ebp, dword ptr [esp + 0xc]           // 00533422
-        push esi                                 // 00533426
-        push edi                                 // 00533427
-        xor edi, edi                             // 00533428
-        mov eax, dword ptr [ebp + 4]             // 0053342a
-        mov esi, dword ptr [ebp + 0x10]          // 0053342d
-        test eax, eax                            // 00533430
-        mov dword ptr [esp + 0x14], esi          // 00533432
-        jle L_53347a                             // 00533436
-        mov ebx, dword ptr [esp + 0x18]          // 00533438
-    L_53343c:
-        lea eax, [esi + 4]                       // 0053343c
-        push 0x20                                // 0053343f
-        push eax                                 // 00533441
-        push ebx                                 // 00533442
-        call RwCore_004cc6e0                    // 00533443
-        add esp, 0xc                             // 00533448
-        test eax, eax                            // 0053344b
-        je L_533484                              // 0053344d
-        mov ecx, dword ptr [esi]                 // 0053344f
-        mov eax, dword ptr [esp + 0x14]          // 00533451
-        lea edx, [esp + 0x18]                    // 00533455
-        push 4                                   // 00533459
-        sub ecx, eax                             // 0053345b
-        push edx                                 // 0053345d
-        push ebx                                 // 0053345e
-        mov dword ptr [esp + 0x24], ecx          // 0053345f
-        call RwCore_004cc770                    // 00533463
-        add esp, 0xc                             // 00533468
-        test eax, eax                            // 0053346b
-        je L_533484                              // 0053346d
-        mov eax, dword ptr [ebp + 4]             // 0053346f
-        inc edi                                  // 00533472
-        add esi, 0x24                            // 00533473
-        cmp edi, eax                             // 00533476
-        jl L_53343c                              // 00533478
-    L_53347a:
-        pop edi                                  // 0053347a
-        pop esi                                  // 0053347b
-        pop ebp                                  // 0053347c
-        mov eax, 1                               // 0053347d
-        pop ebx                                  // 00533482
-        ret                                      // 00533483
-    L_533484:
-        pop edi                                  // 00533484
-        pop esi                                  // 00533485
-        pop ebp                                  // 00533486
-        xor eax, eax                             // 00533487
-        pop ebx                                  // 00533489
-        ret                                      // 0053348a
-    }
-}
+extern "C" int RwCore_0053d690();
 
 // HAND-LIFT 0x00533490 RwCoreLift_00533490  (5 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
 extern "C" __declspec(naked) int RwCoreLift_00533490(void) {
@@ -5955,6 +5898,25 @@ extern "C" __declspec(naked) int RwCoreLift_0053d1f0(void) {
         mov dword ptr ds:[0x007dc5a4], eax       // 0053d1f6
         mov eax, dword ptr [esp + 4]             // 0053d1fb
         ret                                      // 0053d1ff
+    }
+}
+
+// HAND-LIFT 0x0053d230 RwCoreLift_0053d230  (12 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_0053d230(void) {
+    __asm {
+        mov eax, dword ptr [esp + 8]             // 0053d230
+        mov ecx, dword ptr [esp + 4]             // 0053d234
+        mov eax, dword ptr [ecx + eax]           // 0053d238
+        test eax, eax                            // 0053d23b
+        je L_53d24c                              // 0053d23d
+        push eax                                 // 0053d23f
+        call RwCore_0053d690                    // 0053d240
+        add esp, 4                               // 0053d245
+        add eax, 0x10                            // 0053d248
+        ret                                      // 0053d24b
+    L_53d24c:
+        xor eax, eax                             // 0053d24c
+        ret                                      // 0053d24e
     }
 }
 

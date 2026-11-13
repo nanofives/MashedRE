@@ -64,6 +64,10 @@ ROOTS = [
     '004b3eb0',                                                                # run 40: TXD loader, frame knob
     '00428450',                                                                # RWC-FIRST-FRAME-IM2D: loading-disc draw
     '00492e90',                                                                # RWC-FRAME-492E90: frame render
+    # RWC-FRAME-CLUMP: game-side RW helpers the knob path calls through librw bindings (LibRw/RwApiBind.cpp
+    # MashedRw_ClumpFirstAtomic_004b3f90 / _AtomicPartCode_004b5190 / _AtomicGeometryFlags_004b52f0 / _004b5300); on
+    # the core they run their re/match sources (route_bindings.py routes a binding whose RVA is in the closure)
+    '004b3f90', '004b5190', '004b52f0', '004b5300',
 ]
 # Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
 # re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
@@ -82,7 +86,9 @@ XFOLLOW = {0x493640, 0x472380, 0x472330, 0x472360, 0x52d8e0, 0x52d910, 0x52d950,
            # RWC-FIRST-FRAME-IM2D (MASHED_RWC_FRAME): ViewportInit 0x00428590's loading-disc draw 0x00428450
            # (re/match/s06, 84.6%), its Im2D quad 0x00450b10 (re/match/s08, 86.6%) and the two screen-dim getters
            # (exe bodies, EXE_BODY below)
-           0x428450, 0x450b10, 0x42b8b0, 0x42b8c0}
+           0x428450, 0x450b10, 0x42b8b0, 0x42b8c0,
+           # RWC-FRAME-CLUMP: the game-side RW helper roots above and their game callees (re/match/rwfc, re/match/s18)
+           0x4b3f90, 0x4b4070, 0x4b5190, 0x4b52f0, 0x4b52c0, 0x4b5300, 0x55deb0}
 # RWC-FRAME-492E90 (MASHED_RWC_FRAME): the frame render 0x00492e90 and the game functions of its menu-executed slice
 # (verify/rwcframe_20261113/SLICE_EXEC_reach_menu.tsv: reachable from 0x00492e90 through functions the INT3 census
 # re/coverage/reach.tsv marks reached_menu = 1) are followed like RW code and compiled from their re/match sources. A game

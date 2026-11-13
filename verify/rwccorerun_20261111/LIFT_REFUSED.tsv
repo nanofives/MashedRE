@@ -45,8 +45,6 @@ rva	reason
 0x004e60e6	inside a known function (a label, not a function start)
 0x004e71de	inside a known function (a label, not a function start)
 0x004e72fe	inside a known function (a label, not a function start)
-0x004e77de	inside a known function (a label, not a function start)
-0x004e7bd5	inside a known function (a label, not a function start)
 0x004e838b	inside a known function (a label, not a function start)
 0x004e83be	inside a known function (a label, not a function start)
 0x004e8cdc	inside a known function (a label, not a function start)

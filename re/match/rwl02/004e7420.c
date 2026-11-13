@@ -1,379 +1,306 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL02 h1 0x004e7420: best 37.9% (regs 29.2%), residual class c. structure only (2207 B). Ghidra artifact `&stack0x0 != 0x2c` replaced by `local_2c != 0` (UNVERIFIED, not the port body as is); orig frame 0x38 vs 0xc. */
-/* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
-   C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
+/* RWC-FRAME-CLUMP 2026-11-13 0x004e7420 (RpClumpStreamRead core): rewritten from the disassembly, 52.3% under rw9044
+   (regs 70.7%, ops 72.9%, 753/715 ins), was 37.9% (DDK) for the Ghidra-structure source. The old source read the
+   12-byte clump header (0x004cbd30(stream, buf, 0xc) at 0x004e7493, buffer [esp+0x48] = frame+0x38) into one
+   4-byte local and passed a 4-byte local as the geometry list, which overran the port's frame: the AV at EIP 1 in the
+   cup.dff load (RESULT_RWC-FRAME-492E90.md section 5, item 3). This form has the original's 0x44 frame: version
+   +4, frame-chunk version +8, size +0xc, geometry header size +0x10 / version +0, geometry list +0x18 (8 B), frame
+   list +0x20 (8 B), header +0x38 (12 B), the geometry count and the light / camera frame index in the stream
+   parameter home (+0x48, 0x004e76f0 / 0x004e798d), one RwError per error site. The geometry list read is an inlined
+   helper (rw9044 inlines it and reuses the parameter home as the original does); the geometry list free is inlined at
+   0x004e786d / 0x004e7a15 / 0x004e7a41 / 0x004e7bb2 / 0x004e7b1c and called at 0x004e78be / 0x004e78d0 (0x004e7010).
+   Residual: (1) the original holds 0 / the loop counter in ebx and the stream in edi, ours swaps them; (2) after the
+   inlined read the original tests the returned pointer (0x004e77d2 lea eax,[esp+0x28]; test; jne 0x004e7901) and
+   places the failure block first, ours folds the test and places the atomics loop first. The same source with all six
+   geometry list frees inlined scores 63.2% (721 ins). Not reached by: declaration order of i / count / stream copy,
+   register, == 0 forms, single-exit helper, int / bool helper returns, flag sets (/Ob2 /Ox /O1 /G6 /Op). equiv.py:
+   NOT-PROVEN call-regargs (the ebx / edi swap is visible to the callees). Provisional (L-126), not C4. */
 #ifndef MATCH_PREAMBLE
 #define MATCH_PREAMBLE
-typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
-typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
-typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
-typedef unsigned long ulong; typedef __int64 longlong; typedef unsigned __int64 ulonglong; typedef signed char sbyte;
-typedef unsigned short word; typedef unsigned int dword; typedef long double float10;
-#ifndef __cplusplus
-typedef unsigned char bool;
-#endif
 #ifdef __cplusplus
-/* port: a global is a reference to its original address (the exe maps the original data range) */
 #define MGLOBAL(T, n, a) static T &n = *(T *)(a)
-#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
 #else
 #define MGLOBAL(T, n, a) extern T n
-#define MGLOBALA(T, n, N, a) extern T n[N]
 #endif
 #endif
-/* ---- end preamble ---- */
-typedef unsigned char undefined;
-typedef unsigned char undefined1;
-typedef unsigned int undefined4;
-typedef unsigned int uint;
-void FUN_004e6d00(void);
-void FUN_004e7cc0(void);
-MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
+typedef struct { int pluginID; int errorCode; } RwError;
+typedef struct { int numAtomics; int numLights; int numCameras; } ClumpInfo;
+typedef struct { void **frames; int numFrames; } FrameList;
+typedef struct { void **geometries; int numGeoms; } GeomList;
+typedef struct LLLink { struct LLLink *next; struct LLLink *prev; } LLLink;
+typedef struct { void *clump; LLLink lInClump; } ClumpExt;
+typedef struct Clump {
+    unsigned char type, subType, flags, privateFlags;
+    void *parent;
+    LLLink atomicList;
+    LLLink lightList;
+    LLLink cameraList;
+} Clump;
+typedef struct Atomic { unsigned char pad[0x3c]; Clump *clump; LLLink inClumpLink; } Atomic;
+typedef void *(*FreeFn)(void *);
+typedef void *(*MallocFn)(unsigned int, unsigned int);
+typedef void (*FlFreeFn)(void *, void *);
+
+MGLOBAL(char *, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int, DAT_007d7200, 0x007d7200);
 MGLOBAL(int, DAT_007d7230, 0x007d7230);
 MGLOBAL(int, DAT_007d722c, 0x007d722c);
-MGLOBAL(undefined4, DAT_0061867c, 0x0061867c);
+MGLOBAL(int, DAT_0061867c, 0x0061867c);
+
+int FUN_004cc5e0(void *stream, int type, unsigned int *size, unsigned int *version);
+unsigned int FUN_004cbd30(void *stream, void *buf, unsigned int len);
+void *FUN_004cc790(void *stream, void *buf, unsigned int len);
+int FUN_004d7ff0(int code, ...);
+void FUN_004d8480(RwError *err);
+int FUN_004d8060(void *reg, void *obj);
+void *FUN_004e1b60(void *reg, void *stream, void *obj);
+Clump *FUN_004e6d80(void);
+void FUN_004e6920(Atomic *atomic);
+void FUN_004e66d0(Clump *clump, void (*cb)(void), void *data);
+void FUN_004e6760(Clump *clump, void (*cb)(void), void *data);
+void FUN_004e6710(Clump *clump, void (*cb)(void), void *data);
+void FUN_004c0de0(void *frame);
+void FUN_004e6d00(void);
 void FUN_004e6d40(void);
-void FUN_004c0740(int p0, int p1);
-undefined4 FUN_004c0de0(int p0);
-uint FUN_004cbd30(uint p0, void * p1, uint p2);
-undefined4 FUN_004cc5e0(uint p0, int p1, void * p2, void * p3);
-undefined4 FUN_004cc790(undefined4 p0, void * p1, undefined4 p2);
-undefined4 FUN_004d7ff0(undefined4 p0, ...);
-int FUN_004d8060(void * p0, void * p1);
-undefined4 * FUN_004d8480(void * p0);
-int FUN_004e1b60(void * p0, int p1, int p2);
-int FUN_004e6710(int p0, void (*p1)(void), undefined4 p2);
-undefined4 FUN_004e6920(void * p0);
-int FUN_004e6d80(void);
-int * FUN_004e7010(int * p0);
-undefined4 FUN_004e8ea0(int p0);
-int FUN_004e9330(uint p0);
-int FUN_005c4670(int p0);
-undefined4 * FUN_005c47b0(void * p0);
-int * FUN_005c47e0(undefined4 p0, void * p1);
-int FUN_004e7060(undefined4 p0, void * p1, void * p2);
-undefined4 FUN_004e6e00(int p0);
-int FUN_004e66d0(int p0, void (*p1)(void), undefined4 p2);
-int FUN_004e6760(int p0, void (*p1)(void), undefined4 p2);
-uint FUN_004e4c30(int p0);
-// MATCH: 0x004e7420 FUN_004e7420
+void FUN_004e7cc0(void);
+void FUN_004e8ea0(void *geom);
+void *FUN_004e9330(void *stream);
+Atomic *FUN_004e7060(void *stream, FrameList *fl, GeomList *gl);
+void *FUN_004e4c30(void *stream);
+void *FUN_005c4670(void *stream);
+void FUN_004c0740(void *object, void *frame);
+FrameList *FUN_005c47e0(void *stream, FrameList *fl);
+FrameList *FUN_005c47b0(FrameList *fl);
+void FUN_004e6e00(Clump *clump);
 
-int FUN_004e7420(int param_1)
+#define RWERR(code) { RwError err; err.pluginID = 2; err.errorCode = FUN_004d7ff0 code; FUN_004d8480(&err); }
+#define CLUMP_FREE(c) ((FlFreeFn)*(void **)(DAT_007d3ff8 + 0x11c))(*(void **)(DAT_007d3ff8 + DAT_007d7200 + 4), (c))
+#define RWFREE(p) ((FreeFn)*(void **)(DAT_007d3ff8 + 0x10c))(p)
+#define RWMALLOC(n, h) ((MallocFn)*(void **)(DAT_007d3ff8 + 0x108))((n), (h))
 
+GeomList *FUN_004e7010(GeomList *gl);
+static __inline GeomList *GeomListDeinit(GeomList *gl)
 {
-  undefined4 *puVar1;
-  int *piVar2;
-  undefined4 *puVar3;
-  int *piVar4;
-  int *piVar5;
-  undefined4 *puVar6;
-  int iVar7;
-  int iVar8;
-  undefined4 uVar9;
-  int iVar10;
-  int iVar11;
-  uint local_44;
-  uint local_40;
-  undefined1 local_3c [4];
-  undefined1 local_38 [4];
-  undefined4 local_34;
-  undefined4 local_30;
-  int local_2c;
-  int local_28;
-  undefined4 *local_24;
-  undefined4 local_20;
-  undefined4 uStack_1c;
-  undefined4 uStack_18;
-  undefined4 local_14;
-  undefined4 local_10;
-  int local_c;
-  int iStack_8;
-  int iStack_4;
-  
-  iVar10 = param_1;
-  iVar7 = FUN_004cc5e0(param_1,1,local_38,&local_40);
-  if (iVar7 == 0) {
-    local_24 = (undefined4 *)0x2;
-    local_20 = FUN_004d7ff0(0x8000001a);
-    FUN_004d8480(&local_24);
+    int i;
+    for (i = 0; i < gl->numGeoms; i++) FUN_004e8ea0(gl->geometries[i]);
+    if (gl->geometries) { RWFREE(gl->geometries); gl->geometries = 0; }
+    return gl;
+}
+
+static __inline GeomList *GeomListRead(void *stream, GeomList *gl)
+{
+    unsigned int size, version;
+    int count, i;
+    if (!FUN_004cc5e0(stream, 1, &size, &version)) return 0;
+    if (version < 0x35000 || version > 0x37002) {
+        RWERR((0x80000004));
+        return 0;
+    }
+    if (FUN_004cbd30(stream, &count, 4) != 4) return 0;
+    gl->numGeoms = 0;
+    if (count > 0) {
+        gl->geometries = (void **)RWMALLOC(count * 4, 0x3000f);
+        if (!gl->geometries) {
+            RWERR((0x80000013, count * 4));
+            return 0;
+        }
+    }
+    else gl->geometries = 0;
+    for (i = 0; i < count; i++) {
+        if (!FUN_004cc5e0(stream, 0xf, 0, &version)) {
+            GeomListDeinit(gl);
+            return 0;
+        }
+        if (version < 0x35000 || version > 0x37002) {
+            FUN_004e7010(gl);
+            return 0;
+        }
+        gl->geometries[i] = FUN_004e9330(stream);
+        if (!gl->geometries[i]) {
+            FUN_004e7010(gl);
+            return 0;
+        }
+        gl->numGeoms++;
+    }
+    return gl;
+}
+
+// MATCH: 0x004e7420 FUN_004e7420
+Clump *FUN_004e7420(void *stream)
+{
+    unsigned int size, version;
+
+    if (!FUN_004cc5e0(stream, 1, &size, &version)) {
+        RWERR((0x8000001a));
+        return 0;
+    }
+    if (version >= 0x35000 && version <= 0x37002) {
+        Clump *clump;
+        ClumpInfo cl;
+        FrameList fl;
+        GeomList gl;
+        unsigned int fversion;
+        int i;
+
+        if (FUN_004cbd30(stream, &cl, sizeof(cl)) != sizeof(cl)) {
+            RWERR((0x8000001a));
+            return 0;
+        }
+        clump = FUN_004e6d80();
+        if (!clump) return 0;
+
+        if (!FUN_004cc5e0(stream, 0xe, 0, &fversion)) {
+            LLLink *cur, *next;
+            Atomic *atomic;
+            FUN_004d8060(&DAT_0061867c, clump);
+            for (cur = clump->atomicList.next; cur != &clump->atomicList; cur = next) {
+                next = cur->next;
+                atomic = (Atomic *)((char *)cur - 0x40);
+                FUN_004e6920(atomic);
+                if (!atomic) break;
+            }
+            FUN_004e6760(clump, FUN_004e6d00, 0);
+            FUN_004e6710(clump, FUN_004e6d40, 0);
+            if (clump->parent) FUN_004c0de0(clump->parent);
+            CLUMP_FREE(clump);
+            RWERR((0x8000001a));
+            return 0;
+        }
+        if (!FUN_005c47e0(stream, &fl)) {
+            LLLink *cur, *next;
+            Atomic *atomic;
+            FUN_004d8060(&DAT_0061867c, clump);
+            for (cur = clump->atomicList.next; cur != &clump->atomicList; cur = next) {
+                next = cur->next;
+                atomic = (Atomic *)((char *)cur - 0x40);
+                FUN_004e6920(atomic);
+                if (!atomic) break;
+            }
+            FUN_004e6760(clump, FUN_004e6d00, 0);
+            FUN_004e6710(clump, FUN_004e6d40, 0);
+            if (clump->parent) FUN_004c0de0(clump->parent);
+            CLUMP_FREE(clump);
+            RWERR((0x8000001a));
+            return 0;
+        }
+        clump->parent = fl.frames[0];
+        if (!FUN_004cc5e0(stream, 0x1a, 0, &fversion)) {
+            LLLink *cur, *next;
+            Atomic *atomic;
+            FUN_005c47b0(&fl);
+            FUN_004d8060(&DAT_0061867c, clump);
+            for (cur = clump->atomicList.next; cur != &clump->atomicList; cur = next) {
+                next = cur->next;
+                atomic = (Atomic *)((char *)cur - 0x40);
+                FUN_004e6920(atomic);
+                if (!atomic) break;
+            }
+            FUN_004e6760(clump, FUN_004e6d00, 0);
+            FUN_004e6710(clump, FUN_004e6d40, 0);
+            if (clump->parent) FUN_004c0de0(clump->parent);
+            CLUMP_FREE(clump);
+            RWERR((0x8000001a));
+            return 0;
+        }
+
+        if (!GeomListRead(stream, &gl)) {
+            FUN_005c47b0(&fl);
+            FUN_004d8060(&DAT_0061867c, clump);
+            FUN_004e66d0(clump, FUN_004e7cc0, 0);
+            FUN_004e6760(clump, FUN_004e6d00, 0);
+            FUN_004e6710(clump, FUN_004e6d40, 0);
+            if (clump->parent) FUN_004c0de0(clump->parent);
+            CLUMP_FREE(clump);
+            RWERR((0x8000001a));
+            return 0;
+        }
+
+        for (i = 0; i < cl.numAtomics; i++) {
+            Atomic *atomic;
+            if (!FUN_004cc5e0(stream, 0x14, 0, &version) ||
+                !(atomic = FUN_004e7060(stream, &fl, &gl))) {
+                GeomListDeinit(&gl);
+                FUN_005c47b0(&fl);
+                FUN_004d8060(&DAT_0061867c, clump);
+                FUN_004e66d0(clump, FUN_004e7cc0, 0);
+                FUN_004e6760(clump, FUN_004e6d00, 0);
+                FUN_004e6710(clump, FUN_004e6d40, 0);
+                if (clump->parent) FUN_004c0de0(clump->parent);
+                CLUMP_FREE(clump);
+                RWERR((0x8000001a));
+                return 0;
+            }
+            atomic->inClumpLink.next = clump->atomicList.next;
+            atomic->inClumpLink.prev = &clump->atomicList;
+            clump->atomicList.next->prev = &atomic->inClumpLink;
+            clump->atomicList.next = &atomic->inClumpLink;
+            atomic->clump = clump;
+        }
+        for (i = 0; i < cl.numLights; i++) {
+            void *light;
+            int frameIndex;
+            ClumpExt *ext;
+            if (!FUN_004cc5e0(stream, 1, 0, 0) ||
+                !FUN_004cc790(stream, &frameIndex, 4) ||
+                !FUN_004cc5e0(stream, 0x12, 0, 0) ||
+                !(light = FUN_004e4c30(stream))) {
+                GeomListDeinit(&gl);
+                FUN_005c47b0(&fl);
+                FUN_004d8060(&DAT_0061867c, clump);
+                FUN_004e66d0(clump, FUN_004e7cc0, 0);
+                FUN_004e6760(clump, FUN_004e6d00, 0);
+                FUN_004e6710(clump, FUN_004e6d40, 0);
+                if (clump->parent) FUN_004c0de0(clump->parent);
+                CLUMP_FREE(clump);
+                RWERR((0x8000001a));
+                return 0;
+            }
+            FUN_004c0740(light, fl.frames[frameIndex]);
+            ext = (ClumpExt *)((char *)light + DAT_007d7230);
+            ext->lInClump.next = clump->lightList.next;
+            ext->lInClump.prev = &clump->lightList;
+            clump->lightList.next->prev = &ext->lInClump;
+            clump->lightList.next = &ext->lInClump;
+            ext->clump = clump;
+        }
+        for (i = 0; i < cl.numCameras; i++) {
+            void *camera;
+            int frameIndex;
+            ClumpExt *ext;
+            if (!FUN_004cc5e0(stream, 1, 0, 0) ||
+                !FUN_004cc790(stream, &frameIndex, 4) ||
+                !FUN_004cc5e0(stream, 5, 0, 0) ||
+                !(camera = FUN_005c4670(stream))) {
+                GeomListDeinit(&gl);
+                FUN_005c47b0(&fl);
+                FUN_004d8060(&DAT_0061867c, clump);
+                FUN_004e66d0(clump, FUN_004e7cc0, 0);
+                FUN_004e6760(clump, FUN_004e6d00, 0);
+                FUN_004e6710(clump, FUN_004e6d40, 0);
+                if (clump->parent) FUN_004c0de0(clump->parent);
+                CLUMP_FREE(clump);
+                RWERR((0x8000001a));
+                return 0;
+            }
+            FUN_004c0740(camera, fl.frames[frameIndex]);
+            ext = (ClumpExt *)((char *)camera + DAT_007d722c);
+            ext->lInClump.next = clump->cameraList.next;
+            ext->lInClump.prev = &clump->cameraList;
+            clump->cameraList.next->prev = &ext->lInClump;
+            clump->cameraList.next = &ext->lInClump;
+            ext->clump = clump;
+        }
+        GeomListDeinit(&gl);
+        FUN_005c47b0(&fl);
+        if (!FUN_004e1b60(&DAT_0061867c, stream, clump)) {
+            FUN_004e6e00(clump);
+            RWERR((0x8000001a));
+            return 0;
+        }
+        return clump;
+
+    }
+    RWERR((0x80000004));
     return 0;
-  }
-  if ((local_40 < 0x35000) || (0x37002 < local_40)) {
-    local_14 = 2;
-    local_10 = FUN_004d7ff0(0x80000004);
-    FUN_004d8480(&local_14);
-  }
-  else {
-    iVar7 = FUN_004cbd30(iVar10,&local_c,0xc);
-    if (iVar7 != 0xc) {
-      local_34 = 2;
-      local_30 = FUN_004d7ff0(0x8000001a);
-      FUN_004d8480(&local_34);
-      return 0;
-    }
-    iVar7 = FUN_004e6d80();
-    iVar11 = 0;
-    if (iVar7 != 0) {
-      iVar8 = FUN_004cc5e0(iVar10,0xe,0,local_3c);
-      if (iVar8 == 0) {
-        FUN_004d8060(&DAT_0061867c,(void *)iVar7);
-        puVar3 = *(undefined4 **)(iVar7 + 8);
-        do {
-          if (puVar3 == (undefined4 *)(iVar7 + 8)) break;
-          puVar6 = (undefined4 *)*puVar3;
-          puVar1 = puVar3 + -0x10;
-          FUN_004e6920(puVar1);
-          puVar3 = puVar6;
-        } while (puVar1 != (undefined4 *)0x0);
-      }
-      else {
-        iVar8 = (int)FUN_005c47e0(iVar10,&local_24);
-        if (iVar8 == 0) {
-          FUN_004d8060(&DAT_0061867c,(void *)iVar7);
-          puVar3 = *(undefined4 **)(iVar7 + 8);
-          do {
-            if (puVar3 == (undefined4 *)(iVar7 + 8)) break;
-            puVar6 = (undefined4 *)*puVar3;
-            puVar1 = puVar3 + -0x10;
-            FUN_004e6920(puVar1);
-            puVar3 = puVar6;
-          } while (puVar1 != (undefined4 *)0x0);
-          FUN_004e6760(iVar7,FUN_004e6d00,0);
-          FUN_004e6710(iVar7,FUN_004e6d40,0);
-          if (*(int *)(iVar7 + 4) != 0) {
-            FUN_004c0de0(*(int *)(iVar7 + 4));
-          }
-          (**(void (**)(int,int))(DAT_007d3ff8 + 0x11c))
-                    (*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8),iVar7);
-          local_34 = 2;
-          local_30 = FUN_004d7ff0(0x8000001a);
-          FUN_004d8480(&local_34);
-          return 0;
-        }
-        *(undefined4 *)(iVar7 + 4) = *local_24;
-        iVar8 = FUN_004cc5e0(iVar10,0x1a,0,local_3c);
-        if (iVar8 != 0) {
-          iVar8 = FUN_004cc5e0(iVar10,1,&local_34,&local_44);
-          if (iVar8 != 0) {
-            if ((local_44 < 0x35000) || (0x37002 < local_44)) {
-              local_14 = 2;
-              local_10 = FUN_004d7ff0(0x80000004);
-              FUN_004d8480(&local_14);
-            }
-            else {
-              iVar8 = FUN_004cbd30(iVar10,&param_1,4);
-              if (iVar8 == 4) {
-                local_28 = 0;
-                if (param_1 < 1) {
-                  local_2c = 0;
-                }
-                else {
-                  local_2c = (**(int (**)(int,int))(DAT_007d3ff8 + 0x108))(param_1 * 4,0x3000f);
-                  if (local_2c == 0) {
-                    uStack_1c = 2;
-                    uStack_18 = FUN_004d7ff0(0x80000013,param_1 * 4);
-                    FUN_004d8480(&uStack_1c);
-                    goto LAB_004e77de;
-                  }
-                }
-                if (0 < param_1) {
-                  do {
-                    iVar8 = FUN_004cc5e0(iVar10,0xf,0,&local_44);
-                    if (iVar8 == 0) {
-                      iVar10 = 0;
-                      if (0 < local_28) {
-                        do {
-                          FUN_004e8ea0(*(undefined4 *)(local_2c + iVar10 * 4));
-                          iVar10 = iVar10 + 1;
-                        } while (iVar10 < local_28);
-                      }
-                      if (local_2c != 0) {
-                        (**(void (**)(int))(DAT_007d3ff8 + 0x10c))(local_2c);
-                        local_2c = 0;
-                      }
-                      goto LAB_004e77de;
-                    }
-                    if ((local_44 < 0x35000) || (0x37002 < local_44)) {
-                      FUN_004e7010(&local_2c);
-                      goto LAB_004e77de;
-                    }
-                    uVar9 = FUN_004e9330(iVar10);
-                    *(undefined4 *)(local_2c + iVar11 * 4) = uVar9;
-                    if (*(int *)(local_2c + iVar11 * 4) == 0) {
-                      FUN_004e7010(&local_2c);
-                      goto LAB_004e77de;
-                    }
-                    local_28 = local_28 + 1;
-                    iVar11 = iVar11 + 1;
-                  } while (iVar11 < param_1);
-                }
-                if (local_2c != 0) {
-                  iVar11 = 0;
-                  if (0 < local_c) {
-                    do {
-                      iVar8 = FUN_004cc5e0(iVar10,0x14,0,&local_40);
-                      if ((iVar8 == 0) ||
-                         (iVar8 = FUN_004e7060(iVar10,&local_24,&local_2c), iVar8 == 0)) {
-                        iVar10 = 0;
-                        if (0 < local_28) {
-                          do {
-                            FUN_004e8ea0(*(undefined4 *)(local_2c + iVar10 * 4));
-                            iVar10 = iVar10 + 1;
-                          } while (iVar10 < local_28);
-                        }
-                        goto LAB_004e7bd5;
-                      }
-                      uVar9 = *(undefined4 *)(iVar7 + 8);
-                      piVar2 = (int *)(iVar7 + 8);
-                      puVar3 = (undefined4 *)(iVar8 + 0x40);
-                      *(int **)(iVar8 + 0x44) = piVar2;
-                      iVar11 = iVar11 + 1;
-                      *puVar3 = uVar9;
-                      *(undefined4 **)(*piVar2 + 4) = puVar3;
-                      *piVar2 = (int)puVar3;
-                      *(int *)(iVar8 + 0x3c) = iVar7;
-                    } while (iVar11 < local_c);
-                  }
-                  iVar11 = 0;
-                  if (0 < iStack_8) {
-                    do {
-                      iVar8 = FUN_004cc5e0(iVar10,1,0,0);
-                      if ((((iVar8 == 0) || (iVar8 = FUN_004cc790(iVar10,&param_1,4), iVar8 == 0))
-                          || (iVar8 = FUN_004cc5e0(iVar10,0x12,0,0), iVar8 == 0)) ||
-                         (iVar8 = FUN_004e4c30(iVar10), iVar8 == 0)) {
-                        iVar10 = 0;
-                        if (0 < local_28) {
-                          do {
-                            FUN_004e8ea0(*(undefined4 *)(local_2c + iVar10 * 4));
-                            iVar10 = iVar10 + 1;
-                          } while (iVar10 < local_28);
-                        }
-                        goto LAB_004e7bd5;
-                      }
-                      FUN_004c0740(iVar8,local_24[param_1]);
-                      piVar2 = (int *)(iVar7 + 0x10);
-                      iVar11 = iVar11 + 1;
-                      piVar5 = (int *)(iVar8 + DAT_007d7230);
-                      iVar8 = *piVar2;
-                      piVar4 = piVar5 + 1;
-                      piVar5[2] = (int)piVar2;
-                      *piVar4 = iVar8;
-                      *(int **)(*piVar2 + 4) = piVar4;
-                      *piVar2 = (int)piVar4;
-                      *piVar5 = iVar7;
-                    } while (iVar11 < iStack_8);
-                  }
-                  iVar11 = 0;
-                  if (0 < iStack_4) {
-                    do {
-                      iVar8 = FUN_004cc5e0(iVar10,1,0,0);
-                      if (((iVar8 == 0) || (iVar8 = FUN_004cc790(iVar10,&param_1,4), iVar8 == 0)) ||
-                         ((iVar8 = FUN_004cc5e0(iVar10,5,0,0), iVar8 == 0 ||
-                          (iVar8 = FUN_005c4670(iVar10), iVar8 == 0)))) {
-                        iVar10 = 0;
-                        if (0 < local_28) {
-                          do {
-                            FUN_004e8ea0(*(undefined4 *)(local_2c + iVar10 * 4));
-                            iVar10 = iVar10 + 1;
-                          } while (iVar10 < local_28);
-                        }
-LAB_004e7bd5:
-                        if (local_2c != 0) {
-                          (**(void (**)(int))(DAT_007d3ff8 + 0x10c))(local_2c);
-                          local_2c = 0;
-                        }
-                        FUN_005c47b0(&local_24);
-                        FUN_004d8060(&DAT_0061867c,(void *)iVar7);
-                        FUN_004e66d0(iVar7,FUN_004e7cc0,0);
-                        FUN_004e6760(iVar7,FUN_004e6d00,0);
-                        FUN_004e6710(iVar7,FUN_004e6d40,0);
-                        if (*(int *)(iVar7 + 4) != 0) {
-                          FUN_004c0de0(*(int *)(iVar7 + 4));
-                        }
-                        (**(void (**)(int,int))(DAT_007d3ff8 + 0x11c))
-                                  (*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8),iVar7);
-                        local_14 = 2;
-                        local_10 = FUN_004d7ff0(0x8000001a);
-                        FUN_004d8480(&local_14);
-                        return 0;
-                      }
-                      FUN_004c0740(iVar8,local_24[param_1]);
-                      piVar2 = (int *)(iVar7 + 0x18);
-                      iVar11 = iVar11 + 1;
-                      piVar5 = (int *)(iVar8 + DAT_007d722c);
-                      iVar8 = *piVar2;
-                      piVar4 = piVar5 + 1;
-                      piVar5[2] = (int)piVar2;
-                      *piVar4 = iVar8;
-                      *(int **)(*piVar2 + 4) = piVar4;
-                      *piVar2 = (int)piVar4;
-                      *piVar5 = iVar7;
-                    } while (iVar11 < iStack_4);
-                  }
-                  iVar11 = 0;
-                  if (0 < local_28) {
-                    do {
-                      FUN_004e8ea0(*(undefined4 *)(local_2c + iVar11 * 4));
-                      iVar11 = iVar11 + 1;
-                    } while (iVar11 < local_28);
-                  }
-                  if (local_2c != 0) {
-                    (**(void (**)(int))(DAT_007d3ff8 + 0x10c))(local_2c);
-                    local_2c = 0;
-                  }
-                  FUN_005c47b0(&local_24);
-                  iVar10 = FUN_004e1b60(&DAT_0061867c,iVar10,iVar7);
-                  if (iVar10 == 0) {
-                    FUN_004e6e00(iVar7);
-                    local_14 = 2;
-                    local_10 = FUN_004d7ff0(0x8000001a);
-                    FUN_004d8480(&local_14);
-                    return 0;
-                  }
-                  return iVar7;
-                }
-              }
-            }
-          }
-LAB_004e77de:
-          FUN_005c47b0(&local_24);
-          FUN_004d8060(&DAT_0061867c,(void *)iVar7);
-          FUN_004e66d0(iVar7,FUN_004e7cc0,0);
-          FUN_004e6760(iVar7,FUN_004e6d00,0);
-          FUN_004e6710(iVar7,FUN_004e6d40,0);
-          if (*(int *)(iVar7 + 4) != 0) {
-            FUN_004c0de0(*(int *)(iVar7 + 4));
-          }
-          (**(void (**)(int,int))(DAT_007d3ff8 + 0x11c))
-                    (*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8),iVar7);
-          local_14 = 2;
-          local_10 = FUN_004d7ff0(0x8000001a);
-          FUN_004d8480(&local_14);
-          return 0;
-        }
-        FUN_005c47b0(&local_24);
-        FUN_004d8060(&DAT_0061867c,(void *)iVar7);
-        puVar3 = *(undefined4 **)(iVar7 + 8);
-        do {
-          if (puVar3 == (undefined4 *)(iVar7 + 8)) break;
-          puVar6 = (undefined4 *)*puVar3;
-          puVar1 = puVar3 + -0x10;
-          FUN_004e6920(puVar1);
-          puVar3 = puVar6;
-        } while (puVar1 != (undefined4 *)0x0);
-      }
-      FUN_004e6760(iVar7,FUN_004e6d00,0);
-      FUN_004e6710(iVar7,FUN_004e6d40,0);
-      if (*(int *)(iVar7 + 4) != 0) {
-        FUN_004c0de0(*(int *)(iVar7 + 4));
-      }
-      (**(void (**)(int,int))(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d7200 + 4 + DAT_007d3ff8),iVar7);
-      local_34 = 2;
-      local_30 = FUN_004d7ff0(0x8000001a);
-      FUN_004d8480(&local_34);
-      return 0;
-    }
-  }
-  return 0;
 }
