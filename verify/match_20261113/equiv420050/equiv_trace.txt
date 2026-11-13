@@ -1,0 +1,1436 @@
+  pair +0x0 / 0x00420050
+    orig 0x00420050: sub esp, 0x20
+    orig 0x00420053: push ebp
+    orig 0x00420054: mov ebp, dword ptr [esp + 0x28]
+    orig 0x00420058: push esi
+    orig 0x00420059: mov esi, ebp
+    orig 0x0042005b: imul esi, esi, 0x2ac
+    orig 0x00420061: add esi, 0x63d9e0
+    orig 0x00420067: test byte ptr [esi + 0x294], 8
+    orig 0x0042006e: je 0x420224
+    ours +0x0: sub esp, 0x20
+    ours +0x3: push ebp
+    ours +0x4: mov ebp, dword ptr [esp + 0x28]
+    ours +0x8: push esi
+    ours +0x9: mov esi, ebp
+    ours +0xb: imul esi, esi, 0x2ac
+    ours +0x11: add esi, 0
+    ours +0x17: test byte ptr [esi + 0x294], 8
+    ours +0x1e: je 0x1d4
+  pair +0x24 / 0x00420074
+    orig 0x00420074: push ebx
+    orig 0x00420075: mov ebx, dword ptr [esp + 0x34]
+    orig 0x00420079: lea eax, [esi + 0x258]
+    orig 0x0042007f: push eax
+    orig 0x00420080: push ebx
+    orig 0x00420081: call 0x4c1b40
+    orig 0x00420086: add esp, 8
+    orig 0x00420089: test eax, eax
+    orig 0x0042008b: je 0x420223
+    ours +0x24: push ebx
+    ours +0x25: mov ebx, dword ptr [esp + 0x34]
+    ours +0x29: lea eax, [esi + 0x258]
+    ours +0x2f: push eax
+    ours +0x30: push ebx
+    ours +0x31: call 0x36
+    ours +0x36: add esp, 8
+    ours +0x39: test eax, eax
+    ours +0x3b: je 0x1d3
+  pair +0x41 / 0x00420091
+    orig 0x00420091: push ebx
+    orig 0x00420092: mov dword ptr [esi + 0x29c], ebx
+    orig 0x00420098: call 0x4c19f0
+    orig 0x0042009d: add esp, 4
+    orig 0x004200a0: push ebx
+    orig 0x004200a1: call 0x426060
+    orig 0x004200a6: push eax
+    orig 0x004200a7: call 0x4e4350
+    orig 0x004200ac: mov eax, dword ptr [0x636acc]
+    orig 0x004200b1: add esp, 8
+    orig 0x004200b4: test eax, eax
+    orig 0x004200b6: jne 0x4200c6
+    ours +0x41: push ebx
+    ours +0x42: mov dword ptr [esi + 0x29c], ebx
+    ours +0x48: call 0x4d
+    ours +0x4d: add esp, 4
+    ours +0x50: push ebx
+    ours +0x51: call 0x56
+    ours +0x56: push eax
+    ours +0x57: call 0x5c
+    ours +0x5c: mov eax, dword ptr [0]
+    ours +0x61: add esp, 8
+    ours +0x64: test eax, eax
+    ours +0x66: jne 0x76
+  pair +0x68 / 0x004200b8
+    orig 0x004200b8: call 0x4260c0
+    orig 0x004200bd: test eax, eax
+    orig 0x004200bf: je 0x4200c6
+    ours +0x68: call 0x6d
+    ours +0x6d: test eax, eax
+    ours +0x6f: je 0x76
+  pair +0x71 / 0x004200c1
+    orig 0x004200c1: call 0x41f8f0
+    orig 0x004200c6: push edi
+    orig 0x004200c7: push ebx
+    orig 0x004200c8: call 0x41faf0
+    orig 0x004200cd: push ebx
+    orig 0x004200ce: mov edi, esi
+    orig 0x004200d0: call 0x41fcc0
+    orig 0x004200d5: add esp, 8
+    orig 0x004200d8: push ebx
+    orig 0x004200d9: call 0x426060
+    orig 0x004200de: push eax
+    orig 0x004200df: call 0x4e4320
+    orig 0x004200e4: push ebx
+    orig 0x004200e5: call 0x4c1a00
+    orig 0x004200ea: mov eax, dword ptr [0x63d850]
+    orig 0x004200ef: add esp, 0xc
+    orig 0x004200f2: test eax, eax
+    orig 0x004200f4: pop edi
+    orig 0x004200f5: je 0x42015b
+    ours +0x71: call 0x76
+    ours +0x76: push edi
+    ours +0x77: push ebx
+    ours +0x78: call 0x7d
+    ours +0x7d: push ebx
+    ours +0x7e: mov edi, esi
+    ours +0x80: call 0x85
+    ours +0x85: add esp, 8
+    ours +0x88: push ebx
+    ours +0x89: call 0x8e
+    ours +0x8e: push eax
+    ours +0x8f: call 0x94
+    ours +0x94: push ebx
+    ours +0x95: call 0x9a
+    ours +0x9a: mov eax, dword ptr [0]
+    ours +0x9f: add esp, 0xc
+    ours +0xa2: test eax, eax
+    ours +0xa4: pop edi
+    ours +0xa5: je 0x10b
+  pair +0xa7 / 0x004200f7
+    orig 0x004200f7: lea ecx, [eax + 0x18]
+    orig 0x004200fa: mov edx, dword ptr [ecx]
+    orig 0x004200fc: mov dword ptr [esp + 0xc], edx
+    orig 0x00420100: fld dword ptr [esp + 0xc]
+    orig 0x00420104: fmul dword ptr [esi + 0x284]
+    orig 0x0042010a: mov edx, dword ptr [ecx + 4]
+    orig 0x0042010d: mov dword ptr [esp + 0x10], edx
+    orig 0x00420111: mov edx, dword ptr [ecx + 8]
+    orig 0x00420114: mov dword ptr [esp + 0x14], edx
+    orig 0x00420118: mov ecx, dword ptr [ecx + 0xc]
+    orig 0x0042011b: fstp dword ptr [esp + 0x1c]
+    orig 0x0042011f: fld dword ptr [esp + 0x10]
+    orig 0x00420123: mov dword ptr [esp + 0x18], ecx
+    orig 0x00420127: fmul dword ptr [esi + 0x284]
+    orig 0x0042012d: lea edx, [esp + 0x1c]
+    orig 0x00420131: push edx
+    orig 0x00420132: push eax
+    orig 0x00420133: fstp dword ptr [esp + 0x28]
+    orig 0x00420137: fld dword ptr [esp + 0x1c]
+    orig 0x0042013b: fmul dword ptr [esi + 0x284]
+    orig 0x00420141: fstp dword ptr [esp + 0x2c]
+    orig 0x00420145: fld dword ptr [esp + 0x20]
+    orig 0x00420149: fmul dword ptr [esi + 0x284]
+    orig 0x0042014f: fstp dword ptr [esp + 0x30]
+    orig 0x00420153: call 0x4e4900
+    orig 0x00420158: add esp, 8
+    orig 0x0042015b: mov eax, dword ptr [esi + 0x26c]
+    orig 0x00420161: push eax
+    orig 0x00420162: call 0x4e6680
+    orig 0x00420167: mov eax, dword ptr [esi + 0x294]
+    orig 0x0042016d: add esp, 4
+    orig 0x00420170: test ah, 4
+    orig 0x00420173: jne 0x4201d7
+    ours +0xa7: lea ecx, [eax + 0x18]
+    ours +0xaa: mov edx, dword ptr [ecx]
+    ours +0xac: mov dword ptr [esp + 0xc], edx
+    ours +0xb0: fld dword ptr [esp + 0xc]
+    ours +0xb4: mov edx, dword ptr [ecx + 4]
+    ours +0xb7: fmul dword ptr [esi + 0x284]
+    ours +0xbd: mov dword ptr [esp + 0x10], edx
+    ours +0xc1: mov edx, dword ptr [ecx + 8]
+    ours +0xc4: mov dword ptr [esp + 0x14], edx
+    ours +0xc8: mov ecx, dword ptr [ecx + 0xc]
+    ours +0xcb: fstp dword ptr [esp + 0x1c]
+    ours +0xcf: fld dword ptr [esp + 0x10]
+    ours +0xd3: mov dword ptr [esp + 0x18], ecx
+    ours +0xd7: fmul dword ptr [esi + 0x284]
+    ours +0xdd: lea edx, [esp + 0x1c]
+    ours +0xe1: push edx
+    ours +0xe2: push eax
+    ours +0xe3: fstp dword ptr [esp + 0x28]
+    ours +0xe7: fld dword ptr [esp + 0x1c]
+    ours +0xeb: fmul dword ptr [esi + 0x284]
+    ours +0xf1: fstp dword ptr [esp + 0x2c]
+    ours +0xf5: fld dword ptr [esp + 0x20]
+    ours +0xf9: fmul dword ptr [esi + 0x284]
+    ours +0xff: fstp dword ptr [esp + 0x30]
+    ours +0x103: call 0x108
+    ours +0x108: add esp, 8
+    ours +0x10b: mov eax, dword ptr [esi + 0x26c]
+    ours +0x111: push eax
+    ours +0x112: call 0x117
+    ours +0x117: mov eax, dword ptr [esi + 0x294]
+    ours +0x11d: add esp, 4
+    ours +0x120: test ah, 4
+    ours +0x123: jne 0x187
+  pair +0x125 / 0x00420175
+    orig 0x00420175: test al, 0x10
+    orig 0x00420177: jne 0x4201a3
+    ours +0x125: test al, 0x10
+    ours +0x127: jne 0x153
+  pair +0x129 / 0x00420179
+    orig 0x00420179: test ah, 0x10
+    orig 0x0042017c: jne 0x4201a3
+    ours +0x129: test ah, 0x10
+    ours +0x12c: jne 0x153
+  pair +0x12e / 0x0042017e
+    orig 0x0042017e: mov eax, dword ptr [esi + 0x298]
+    orig 0x00420184: test eax, eax
+    orig 0x00420186: jne 0x42018d
+    ours +0x12e: mov eax, dword ptr [esi + 0x298]
+    ours +0x134: test eax, eax
+    ours +0x136: jne 0x13d
+  pair +0x138 / 0x00420188
+    orig 0x00420188: mov eax, dword ptr [esi + 0x38]
+    orig 0x0042018b: jmp 0x420198
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x138: mov eax, dword ptr [esi + 0x38]
+    ours +0x13b: jmp 0x148
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x14c / 0x0042019c
+    orig 0x0042019c: push eax
+    orig 0x0042019d: call dword ptr [eax + 0x48]
+  pair +0x0 / 0x00420050
+    orig 0x00420050: sub esp, 0x20
+    orig 0x00420053: push ebp
+    orig 0x00420054: mov ebp, dword ptr [esp + 0x28]
+    orig 0x00420058: push esi
+    orig 0x00420059: mov esi, ebp
+    orig 0x0042005b: imul esi, esi, 0x2ac
+    orig 0x00420061: add esi, 0x63d9e0
+    orig 0x00420067: test byte ptr [esi + 0x294], 8
+    orig 0x0042006e: je 0x420224
+    ours +0x0: sub esp, 0x20
+    ours +0x3: push ebp
+    ours +0x4: mov ebp, dword ptr [esp + 0x28]
+    ours +0x8: push esi
+    ours +0x9: mov esi, ebp
+    ours +0xb: imul esi, esi, 0x2ac
+    ours +0x11: add esi, 0
+    ours +0x17: test byte ptr [esi + 0x294], 8
+    ours +0x1e: je 0x1d4
+  pair +0x24 / 0x00420074
+    orig 0x00420074: push ebx
+    orig 0x00420075: mov ebx, dword ptr [esp + 0x34]
+    orig 0x00420079: lea eax, [esi + 0x258]
+    orig 0x0042007f: push eax
+    orig 0x00420080: push ebx
+    orig 0x00420081: call 0x4c1b40
+    orig 0x00420086: add esp, 8
+    orig 0x00420089: test eax, eax
+    orig 0x0042008b: je 0x420223
+    ours +0x24: push ebx
+    ours +0x25: mov ebx, dword ptr [esp + 0x34]
+    ours +0x29: lea eax, [esi + 0x258]
+    ours +0x2f: push eax
+    ours +0x30: push ebx
+    ours +0x31: call 0x36
+    ours +0x36: add esp, 8
+    ours +0x39: test eax, eax
+    ours +0x3b: je 0x1d3
+  pair +0x41 / 0x00420091
+    orig 0x00420091: push ebx
+    orig 0x00420092: mov dword ptr [esi + 0x29c], ebx
+    orig 0x00420098: call 0x4c19f0
+    orig 0x0042009d: add esp, 4
+    orig 0x004200a0: push ebx
+    orig 0x004200a1: call 0x426060
+    orig 0x004200a6: push eax
+    orig 0x004200a7: call 0x4e4350
+    orig 0x004200ac: mov eax, dword ptr [0x636acc]
+    orig 0x004200b1: add esp, 8
+    orig 0x004200b4: test eax, eax
+    orig 0x004200b6: jne 0x4200c6
+    ours +0x41: push ebx
+    ours +0x42: mov dword ptr [esi + 0x29c], ebx
+    ours +0x48: call 0x4d
+    ours +0x4d: add esp, 4
+    ours +0x50: push ebx
+    ours +0x51: call 0x56
+    ours +0x56: push eax
+    ours +0x57: call 0x5c
+    ours +0x5c: mov eax, dword ptr [0]
+    ours +0x61: add esp, 8
+    ours +0x64: test eax, eax
+    ours +0x66: jne 0x76
+  pair +0x68 / 0x004200b8
+    orig 0x004200b8: call 0x4260c0
+    orig 0x004200bd: test eax, eax
+    orig 0x004200bf: je 0x4200c6
+    ours +0x68: call 0x6d
+    ours +0x6d: test eax, eax
+    ours +0x6f: je 0x76
+  pair +0x71 / 0x004200c1
+    orig 0x004200c1: call 0x41f8f0
+    orig 0x004200c6: push edi
+    orig 0x004200c7: push ebx
+    orig 0x004200c8: call 0x41faf0
+    orig 0x004200cd: push ebx
+    orig 0x004200ce: mov edi, esi
+    orig 0x004200d0: call 0x41fcc0
+    orig 0x004200d5: add esp, 8
+    orig 0x004200d8: push ebx
+    orig 0x004200d9: call 0x426060
+    orig 0x004200de: push eax
+    orig 0x004200df: call 0x4e4320
+    orig 0x004200e4: push ebx
+    orig 0x004200e5: call 0x4c1a00
+    orig 0x004200ea: mov eax, dword ptr [0x63d850]
+    orig 0x004200ef: add esp, 0xc
+    orig 0x004200f2: test eax, eax
+    orig 0x004200f4: pop edi
+    orig 0x004200f5: je 0x42015b
+    ours +0x71: call 0x76
+    ours +0x76: push edi
+    ours +0x77: push ebx
+    ours +0x78: call 0x7d
+    ours +0x7d: push ebx
+    ours +0x7e: mov edi, esi
+    ours +0x80: call 0x85
+    ours +0x85: add esp, 8
+    ours +0x88: push ebx
+    ours +0x89: call 0x8e
+    ours +0x8e: push eax
+    ours +0x8f: call 0x94
+    ours +0x94: push ebx
+    ours +0x95: call 0x9a
+    ours +0x9a: mov eax, dword ptr [0]
+    ours +0x9f: add esp, 0xc
+    ours +0xa2: test eax, eax
+    ours +0xa4: pop edi
+    ours +0xa5: je 0x10b
+  pair +0xa7 / 0x004200f7
+    orig 0x004200f7: lea ecx, [eax + 0x18]
+    orig 0x004200fa: mov edx, dword ptr [ecx]
+    orig 0x004200fc: mov dword ptr [esp + 0xc], edx
+    orig 0x00420100: fld dword ptr [esp + 0xc]
+    orig 0x00420104: fmul dword ptr [esi + 0x284]
+    orig 0x0042010a: mov edx, dword ptr [ecx + 4]
+    orig 0x0042010d: mov dword ptr [esp + 0x10], edx
+    orig 0x00420111: mov edx, dword ptr [ecx + 8]
+    orig 0x00420114: mov dword ptr [esp + 0x14], edx
+    orig 0x00420118: mov ecx, dword ptr [ecx + 0xc]
+    orig 0x0042011b: fstp dword ptr [esp + 0x1c]
+    orig 0x0042011f: fld dword ptr [esp + 0x10]
+    orig 0x00420123: mov dword ptr [esp + 0x18], ecx
+    orig 0x00420127: fmul dword ptr [esi + 0x284]
+    orig 0x0042012d: lea edx, [esp + 0x1c]
+    orig 0x00420131: push edx
+    orig 0x00420132: push eax
+    orig 0x00420133: fstp dword ptr [esp + 0x28]
+    orig 0x00420137: fld dword ptr [esp + 0x1c]
+    orig 0x0042013b: fmul dword ptr [esi + 0x284]
+    orig 0x00420141: fstp dword ptr [esp + 0x2c]
+    orig 0x00420145: fld dword ptr [esp + 0x20]
+    orig 0x00420149: fmul dword ptr [esi + 0x284]
+    orig 0x0042014f: fstp dword ptr [esp + 0x30]
+    orig 0x00420153: call 0x4e4900
+    orig 0x00420158: add esp, 8
+    orig 0x0042015b: mov eax, dword ptr [esi + 0x26c]
+    orig 0x00420161: push eax
+    orig 0x00420162: call 0x4e6680
+    orig 0x00420167: mov eax, dword ptr [esi + 0x294]
+    orig 0x0042016d: add esp, 4
+    orig 0x00420170: test ah, 4
+    orig 0x00420173: jne 0x4201d7
+    ours +0xa7: lea ecx, [eax + 0x18]
+    ours +0xaa: mov edx, dword ptr [ecx]
+    ours +0xac: mov dword ptr [esp + 0xc], edx
+    ours +0xb0: fld dword ptr [esp + 0xc]
+    ours +0xb4: mov edx, dword ptr [ecx + 4]
+    ours +0xb7: fmul dword ptr [esi + 0x284]
+    ours +0xbd: mov dword ptr [esp + 0x10], edx
+    ours +0xc1: mov edx, dword ptr [ecx + 8]
+    ours +0xc4: mov dword ptr [esp + 0x14], edx
+    ours +0xc8: mov ecx, dword ptr [ecx + 0xc]
+    ours +0xcb: fstp dword ptr [esp + 0x1c]
+    ours +0xcf: fld dword ptr [esp + 0x10]
+    ours +0xd3: mov dword ptr [esp + 0x18], ecx
+    ours +0xd7: fmul dword ptr [esi + 0x284]
+    ours +0xdd: lea edx, [esp + 0x1c]
+    ours +0xe1: push edx
+    ours +0xe2: push eax
+    ours +0xe3: fstp dword ptr [esp + 0x28]
+    ours +0xe7: fld dword ptr [esp + 0x1c]
+    ours +0xeb: fmul dword ptr [esi + 0x284]
+    ours +0xf1: fstp dword ptr [esp + 0x2c]
+    ours +0xf5: fld dword ptr [esp + 0x20]
+    ours +0xf9: fmul dword ptr [esi + 0x284]
+    ours +0xff: fstp dword ptr [esp + 0x30]
+    ours +0x103: call 0x108
+    ours +0x108: add esp, 8
+    ours +0x10b: mov eax, dword ptr [esi + 0x26c]
+    ours +0x111: push eax
+    ours +0x112: call 0x117
+    ours +0x117: mov eax, dword ptr [esi + 0x294]
+    ours +0x11d: add esp, 4
+    ours +0x120: test ah, 4
+    ours +0x123: jne 0x187
+  pair +0x125 / 0x00420175
+    orig 0x00420175: test al, 0x10
+    orig 0x00420177: jne 0x4201a3
+    ours +0x125: test al, 0x10
+    ours +0x127: jne 0x153
+  pair +0x129 / 0x00420179
+    orig 0x00420179: test ah, 0x10
+    orig 0x0042017c: jne 0x4201a3
+    ours +0x129: test ah, 0x10
+    ours +0x12c: jne 0x153
+  pair +0x12e / 0x0042017e
+    orig 0x0042017e: mov eax, dword ptr [esi + 0x298]
+    orig 0x00420184: test eax, eax
+    orig 0x00420186: jne 0x42018d
+    ours +0x12e: mov eax, dword ptr [esi + 0x298]
+    ours +0x134: test eax, eax
+    ours +0x136: jne 0x13d
+  pair +0x138 / 0x00420188
+    orig 0x00420188: mov eax, dword ptr [esi + 0x38]
+    orig 0x0042018b: jmp 0x420198
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x138: mov eax, dword ptr [esi + 0x38]
+    ours +0x13b: jmp 0x148
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x14c / 0x0042019c
+    orig 0x0042019c: push eax
+    orig 0x0042019d: call dword ptr [eax + 0x48]
+    orig 0x004201a0: add esp, 4
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x14c: push eax
+    ours +0x14d: call dword ptr [eax + 0x48]
+    ours +0x150: add esp, 4
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x15d / 0x004201ad
+    orig 0x004201ad: test ah, 0x20
+    orig 0x004201b0: jne 0x4201d7
+    ours +0x15d: test ah, 0x20
+    ours +0x160: jne 0x187
+  pair +0x162 / 0x004201b2
+    orig 0x004201b2: mov eax, dword ptr [esi + 0x298]
+    orig 0x004201b8: test eax, eax
+    orig 0x004201ba: jne 0x4201c1
+    ours +0x162: mov eax, dword ptr [esi + 0x298]
+    ours +0x168: test eax, eax
+    ours +0x16a: jne 0x171
+  pair +0x16c / 0x004201bc
+    orig 0x004201bc: mov esi, dword ptr [esi + 0x3c]
+    orig 0x004201bf: jmp 0x4201cc
+    orig 0x004201cc: test esi, esi
+    orig 0x004201ce: je 0x4201d7
+    ours +0x16c: mov esi, dword ptr [esi + 0x3c]
+    ours +0x16f: jmp 0x17c
+    ours +0x17c: test esi, esi
+    ours +0x17e: je 0x187
+  pair +0x180 / 0x004201d0
+    orig 0x004201d0: push esi
+    orig 0x004201d1: call dword ptr [esi + 0x48]
+    orig 0x004201d4: add esp, 4
+    orig 0x004201d7: mov eax, dword ptr [0x63d850]
+    orig 0x004201dc: test eax, eax
+    orig 0x004201de: je 0x4201ee
+    ours +0x180: push esi
+    ours +0x181: call dword ptr [esi + 0x48]
+    ours +0x184: add esp, 4
+    ours +0x187: mov eax, dword ptr [0]
+    ours +0x18c: test eax, eax
+    ours +0x18e: je 0x19e
+  pair +0x190 / 0x004201e0
+    orig 0x004201e0: lea ecx, [esp + 0xc]
+    orig 0x004201e4: push ecx
+    orig 0x004201e5: push eax
+    orig 0x004201e6: call 0x4e4900
+    orig 0x004201eb: add esp, 8
+    orig 0x004201ee: mov eax, dword ptr [0x636acc]
+    orig 0x004201f3: test eax, eax
+    orig 0x004201f5: jne 0x420223
+    ours +0x190: lea ecx, [esp + 0xc]
+    ours +0x194: push ecx
+    ours +0x195: push eax
+    ours +0x196: call 0x19b
+    ours +0x19b: add esp, 8
+    ours +0x19e: mov eax, dword ptr [0]
+    ours +0x1a3: test eax, eax
+    ours +0x1a5: jne 0x1d3
+  pair +0x1a7 / 0x004201f7
+    orig 0x004201f7: call 0x4260c0
+    orig 0x004201fc: test eax, eax
+    orig 0x004201fe: je 0x420223
+    ours +0x1a7: call 0x1ac
+    ours +0x1ac: test eax, eax
+    ours +0x1ae: je 0x1d3
+  pair +0x1b0 / 0x00420200
+    orig 0x00420200: mov edx, dword ptr [0x7d3ff8]
+    orig 0x00420206: push 0
+    orig 0x00420208: push 8
+    orig 0x0042020a: call dword ptr [edx + 0x20]
+    orig 0x0042020d: push ebx
+    orig 0x0042020e: push ebp
+    orig 0x0042020f: call 0x4228f0
+    orig 0x00420214: mov eax, dword ptr [0x7d3ff8]
+    orig 0x00420219: push 1
+    orig 0x0042021b: push 8
+    orig 0x0042021d: call dword ptr [eax + 0x20]
+    orig 0x00420220: add esp, 0x18
+    orig 0x00420223: pop ebx
+    orig 0x00420224: pop esi
+    orig 0x00420225: pop ebp
+    orig 0x00420226: add esp, 0x20
+    orig 0x00420229: ret 
+    ours +0x1b0: mov edx, dword ptr [0]
+    ours +0x1b6: push 0
+    ours +0x1b8: push 8
+    ours +0x1ba: call dword ptr [edx + 0x20]
+    ours +0x1bd: push ebx
+    ours +0x1be: push ebp
+    ours +0x1bf: call 0x1c4
+    ours +0x1c4: mov eax, dword ptr [0]
+    ours +0x1c9: push 1
+    ours +0x1cb: push 8
+    ours +0x1cd: call dword ptr [eax + 0x20]
+    ours +0x1d0: add esp, 0x18
+    ours +0x1d3: pop ebx
+    ours +0x1d4: pop esi
+    ours +0x1d5: pop ebp
+    ours +0x1d6: add esp, 0x20
+    ours +0x1d9: ret 
+  pair +0x0 / 0x00420050
+    orig 0x00420050: sub esp, 0x20
+    orig 0x00420053: push ebp
+    orig 0x00420054: mov ebp, dword ptr [esp + 0x28]
+    orig 0x00420058: push esi
+    orig 0x00420059: mov esi, ebp
+    orig 0x0042005b: imul esi, esi, 0x2ac
+    orig 0x00420061: add esi, 0x63d9e0
+    orig 0x00420067: test byte ptr [esi + 0x294], 8
+    orig 0x0042006e: je 0x420224
+    ours +0x0: sub esp, 0x20
+    ours +0x3: push ebp
+    ours +0x4: mov ebp, dword ptr [esp + 0x28]
+    ours +0x8: push esi
+    ours +0x9: mov esi, ebp
+    ours +0xb: imul esi, esi, 0x2ac
+    ours +0x11: add esi, 0
+    ours +0x17: test byte ptr [esi + 0x294], 8
+    ours +0x1e: je 0x1d4
+  pair +0x24 / 0x00420074
+    orig 0x00420074: push ebx
+    orig 0x00420075: mov ebx, dword ptr [esp + 0x34]
+    orig 0x00420079: lea eax, [esi + 0x258]
+    orig 0x0042007f: push eax
+    orig 0x00420080: push ebx
+    orig 0x00420081: call 0x4c1b40
+    orig 0x00420086: add esp, 8
+    orig 0x00420089: test eax, eax
+    orig 0x0042008b: je 0x420223
+    ours +0x24: push ebx
+    ours +0x25: mov ebx, dword ptr [esp + 0x34]
+    ours +0x29: lea eax, [esi + 0x258]
+    ours +0x2f: push eax
+    ours +0x30: push ebx
+    ours +0x31: call 0x36
+    ours +0x36: add esp, 8
+    ours +0x39: test eax, eax
+    ours +0x3b: je 0x1d3
+  pair +0x41 / 0x00420091
+    orig 0x00420091: push ebx
+    orig 0x00420092: mov dword ptr [esi + 0x29c], ebx
+    orig 0x00420098: call 0x4c19f0
+    orig 0x0042009d: add esp, 4
+    orig 0x004200a0: push ebx
+    orig 0x004200a1: call 0x426060
+    orig 0x004200a6: push eax
+    orig 0x004200a7: call 0x4e4350
+    orig 0x004200ac: mov eax, dword ptr [0x636acc]
+    orig 0x004200b1: add esp, 8
+    orig 0x004200b4: test eax, eax
+    orig 0x004200b6: jne 0x4200c6
+    ours +0x41: push ebx
+    ours +0x42: mov dword ptr [esi + 0x29c], ebx
+    ours +0x48: call 0x4d
+    ours +0x4d: add esp, 4
+    ours +0x50: push ebx
+    ours +0x51: call 0x56
+    ours +0x56: push eax
+    ours +0x57: call 0x5c
+    ours +0x5c: mov eax, dword ptr [0]
+    ours +0x61: add esp, 8
+    ours +0x64: test eax, eax
+    ours +0x66: jne 0x76
+  pair +0x68 / 0x004200b8
+    orig 0x004200b8: call 0x4260c0
+    orig 0x004200bd: test eax, eax
+    orig 0x004200bf: je 0x4200c6
+    ours +0x68: call 0x6d
+    ours +0x6d: test eax, eax
+    ours +0x6f: je 0x76
+  pair +0x71 / 0x004200c1
+    orig 0x004200c1: call 0x41f8f0
+    orig 0x004200c6: push edi
+    orig 0x004200c7: push ebx
+    orig 0x004200c8: call 0x41faf0
+    orig 0x004200cd: push ebx
+    orig 0x004200ce: mov edi, esi
+    orig 0x004200d0: call 0x41fcc0
+    orig 0x004200d5: add esp, 8
+    orig 0x004200d8: push ebx
+    orig 0x004200d9: call 0x426060
+    orig 0x004200de: push eax
+    orig 0x004200df: call 0x4e4320
+    orig 0x004200e4: push ebx
+    orig 0x004200e5: call 0x4c1a00
+    orig 0x004200ea: mov eax, dword ptr [0x63d850]
+    orig 0x004200ef: add esp, 0xc
+    orig 0x004200f2: test eax, eax
+    orig 0x004200f4: pop edi
+    orig 0x004200f5: je 0x42015b
+    ours +0x71: call 0x76
+    ours +0x76: push edi
+    ours +0x77: push ebx
+    ours +0x78: call 0x7d
+    ours +0x7d: push ebx
+    ours +0x7e: mov edi, esi
+    ours +0x80: call 0x85
+    ours +0x85: add esp, 8
+    ours +0x88: push ebx
+    ours +0x89: call 0x8e
+    ours +0x8e: push eax
+    ours +0x8f: call 0x94
+    ours +0x94: push ebx
+    ours +0x95: call 0x9a
+    ours +0x9a: mov eax, dword ptr [0]
+    ours +0x9f: add esp, 0xc
+    ours +0xa2: test eax, eax
+    ours +0xa4: pop edi
+    ours +0xa5: je 0x10b
+  pair +0xa7 / 0x004200f7
+    orig 0x004200f7: lea ecx, [eax + 0x18]
+    orig 0x004200fa: mov edx, dword ptr [ecx]
+    orig 0x004200fc: mov dword ptr [esp + 0xc], edx
+    orig 0x00420100: fld dword ptr [esp + 0xc]
+    orig 0x00420104: fmul dword ptr [esi + 0x284]
+    orig 0x0042010a: mov edx, dword ptr [ecx + 4]
+    orig 0x0042010d: mov dword ptr [esp + 0x10], edx
+    orig 0x00420111: mov edx, dword ptr [ecx + 8]
+    orig 0x00420114: mov dword ptr [esp + 0x14], edx
+    orig 0x00420118: mov ecx, dword ptr [ecx + 0xc]
+    orig 0x0042011b: fstp dword ptr [esp + 0x1c]
+    orig 0x0042011f: fld dword ptr [esp + 0x10]
+    orig 0x00420123: mov dword ptr [esp + 0x18], ecx
+    orig 0x00420127: fmul dword ptr [esi + 0x284]
+    orig 0x0042012d: lea edx, [esp + 0x1c]
+    orig 0x00420131: push edx
+    orig 0x00420132: push eax
+    orig 0x00420133: fstp dword ptr [esp + 0x28]
+    orig 0x00420137: fld dword ptr [esp + 0x1c]
+    orig 0x0042013b: fmul dword ptr [esi + 0x284]
+    orig 0x00420141: fstp dword ptr [esp + 0x2c]
+    orig 0x00420145: fld dword ptr [esp + 0x20]
+    orig 0x00420149: fmul dword ptr [esi + 0x284]
+    orig 0x0042014f: fstp dword ptr [esp + 0x30]
+    orig 0x00420153: call 0x4e4900
+    orig 0x00420158: add esp, 8
+    orig 0x0042015b: mov eax, dword ptr [esi + 0x26c]
+    orig 0x00420161: push eax
+    orig 0x00420162: call 0x4e6680
+    orig 0x00420167: mov eax, dword ptr [esi + 0x294]
+    orig 0x0042016d: add esp, 4
+    orig 0x00420170: test ah, 4
+    orig 0x00420173: jne 0x4201d7
+    ours +0xa7: lea ecx, [eax + 0x18]
+    ours +0xaa: mov edx, dword ptr [ecx]
+    ours +0xac: mov dword ptr [esp + 0xc], edx
+    ours +0xb0: fld dword ptr [esp + 0xc]
+    ours +0xb4: mov edx, dword ptr [ecx + 4]
+    ours +0xb7: fmul dword ptr [esi + 0x284]
+    ours +0xbd: mov dword ptr [esp + 0x10], edx
+    ours +0xc1: mov edx, dword ptr [ecx + 8]
+    ours +0xc4: mov dword ptr [esp + 0x14], edx
+    ours +0xc8: mov ecx, dword ptr [ecx + 0xc]
+    ours +0xcb: fstp dword ptr [esp + 0x1c]
+    ours +0xcf: fld dword ptr [esp + 0x10]
+    ours +0xd3: mov dword ptr [esp + 0x18], ecx
+    ours +0xd7: fmul dword ptr [esi + 0x284]
+    ours +0xdd: lea edx, [esp + 0x1c]
+    ours +0xe1: push edx
+    ours +0xe2: push eax
+    ours +0xe3: fstp dword ptr [esp + 0x28]
+    ours +0xe7: fld dword ptr [esp + 0x1c]
+    ours +0xeb: fmul dword ptr [esi + 0x284]
+    ours +0xf1: fstp dword ptr [esp + 0x2c]
+    ours +0xf5: fld dword ptr [esp + 0x20]
+    ours +0xf9: fmul dword ptr [esi + 0x284]
+    ours +0xff: fstp dword ptr [esp + 0x30]
+    ours +0x103: call 0x108
+    ours +0x108: add esp, 8
+    ours +0x10b: mov eax, dword ptr [esi + 0x26c]
+    ours +0x111: push eax
+    ours +0x112: call 0x117
+    ours +0x117: mov eax, dword ptr [esi + 0x294]
+    ours +0x11d: add esp, 4
+    ours +0x120: test ah, 4
+    ours +0x123: jne 0x187
+  pair +0x125 / 0x00420175
+    orig 0x00420175: test al, 0x10
+    orig 0x00420177: jne 0x4201a3
+    ours +0x125: test al, 0x10
+    ours +0x127: jne 0x153
+  pair +0x129 / 0x00420179
+    orig 0x00420179: test ah, 0x10
+    orig 0x0042017c: jne 0x4201a3
+    ours +0x129: test ah, 0x10
+    ours +0x12c: jne 0x153
+  pair +0x12e / 0x0042017e
+    orig 0x0042017e: mov eax, dword ptr [esi + 0x298]
+    orig 0x00420184: test eax, eax
+    orig 0x00420186: jne 0x42018d
+    ours +0x12e: mov eax, dword ptr [esi + 0x298]
+    ours +0x134: test eax, eax
+    ours +0x136: jne 0x13d
+  pair +0x138 / 0x00420188
+    orig 0x00420188: mov eax, dword ptr [esi + 0x38]
+    orig 0x0042018b: jmp 0x420198
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x138: mov eax, dword ptr [esi + 0x38]
+    ours +0x13b: jmp 0x148
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x14c / 0x0042019c
+    orig 0x0042019c: push eax
+    orig 0x0042019d: call dword ptr [eax + 0x48]
+    orig 0x004201a0: add esp, 4
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x14c: push eax
+    ours +0x14d: call dword ptr [eax + 0x48]
+    ours +0x150: add esp, 4
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x15d / 0x004201ad
+    orig 0x004201ad: test ah, 0x20
+    orig 0x004201b0: jne 0x4201d7
+    ours +0x15d: test ah, 0x20
+    ours +0x160: jne 0x187
+  pair +0x162 / 0x004201b2
+    orig 0x004201b2: mov eax, dword ptr [esi + 0x298]
+    orig 0x004201b8: test eax, eax
+    orig 0x004201ba: jne 0x4201c1
+    ours +0x162: mov eax, dword ptr [esi + 0x298]
+    ours +0x168: test eax, eax
+    ours +0x16a: jne 0x171
+  pair +0x16c / 0x004201bc
+    orig 0x004201bc: mov esi, dword ptr [esi + 0x3c]
+    orig 0x004201bf: jmp 0x4201cc
+    orig 0x004201cc: test esi, esi
+    orig 0x004201ce: je 0x4201d7
+    ours +0x16c: mov esi, dword ptr [esi + 0x3c]
+    ours +0x16f: jmp 0x17c
+    ours +0x17c: test esi, esi
+    ours +0x17e: je 0x187
+  pair +0x180 / 0x004201d0
+    orig 0x004201d0: push esi
+    orig 0x004201d1: call dword ptr [esi + 0x48]
+    orig 0x004201d4: add esp, 4
+    orig 0x004201d7: mov eax, dword ptr [0x63d850]
+    orig 0x004201dc: test eax, eax
+    orig 0x004201de: je 0x4201ee
+    ours +0x180: push esi
+    ours +0x181: call dword ptr [esi + 0x48]
+    ours +0x184: add esp, 4
+    ours +0x187: mov eax, dword ptr [0]
+    ours +0x18c: test eax, eax
+    ours +0x18e: je 0x19e
+  pair +0x190 / 0x004201e0
+    orig 0x004201e0: lea ecx, [esp + 0xc]
+    orig 0x004201e4: push ecx
+    orig 0x004201e5: push eax
+    orig 0x004201e6: call 0x4e4900
+    orig 0x004201eb: add esp, 8
+    orig 0x004201ee: mov eax, dword ptr [0x636acc]
+    orig 0x004201f3: test eax, eax
+    orig 0x004201f5: jne 0x420223
+    ours +0x190: lea ecx, [esp + 0xc]
+    ours +0x194: push ecx
+    ours +0x195: push eax
+    ours +0x196: call 0x19b
+    ours +0x19b: add esp, 8
+    ours +0x19e: mov eax, dword ptr [0]
+    ours +0x1a3: test eax, eax
+    ours +0x1a5: jne 0x1d3
+  pair +0x1a7 / 0x004201f7
+    orig 0x004201f7: call 0x4260c0
+    orig 0x004201fc: test eax, eax
+    orig 0x004201fe: je 0x420223
+    ours +0x1a7: call 0x1ac
+    ours +0x1ac: test eax, eax
+    ours +0x1ae: je 0x1d3
+  pair +0x1b0 / 0x00420200
+    orig 0x00420200: mov edx, dword ptr [0x7d3ff8]
+    orig 0x00420206: push 0
+    orig 0x00420208: push 8
+    orig 0x0042020a: call dword ptr [edx + 0x20]
+    orig 0x0042020d: push ebx
+    orig 0x0042020e: push ebp
+    orig 0x0042020f: call 0x4228f0
+    orig 0x00420214: mov eax, dword ptr [0x7d3ff8]
+    orig 0x00420219: push 1
+    orig 0x0042021b: push 8
+    orig 0x0042021d: call dword ptr [eax + 0x20]
+    orig 0x00420220: add esp, 0x18
+    orig 0x00420223: pop ebx
+    orig 0x00420224: pop esi
+    orig 0x00420225: pop ebp
+    orig 0x00420226: add esp, 0x20
+    orig 0x00420229: ret 
+    ours +0x1b0: mov edx, dword ptr [0]
+    ours +0x1b6: push 0
+    ours +0x1b8: push 8
+    ours +0x1ba: call dword ptr [edx + 0x20]
+    ours +0x1bd: push ebx
+    ours +0x1be: push ebp
+    ours +0x1bf: call 0x1c4
+    ours +0x1c4: mov eax, dword ptr [0]
+    ours +0x1c9: push 1
+    ours +0x1cb: push 8
+    ours +0x1cd: call dword ptr [eax + 0x20]
+    ours +0x1d0: add esp, 0x18
+    ours +0x1d3: pop ebx
+    ours +0x1d4: pop esi
+    ours +0x1d5: pop ebp
+    ours +0x1d6: add esp, 0x20
+    ours +0x1d9: ret 
+  pair +0x1d3 / 0x00420223
+    orig 0x00420223: pop ebx
+    orig 0x00420224: pop esi
+    orig 0x00420225: pop ebp
+    orig 0x00420226: add esp, 0x20
+    orig 0x00420229: ret 
+    ours +0x1d3: pop ebx
+    ours +0x1d4: pop esi
+    ours +0x1d5: pop ebp
+    ours +0x1d6: add esp, 0x20
+    ours +0x1d9: ret 
+  pair +0x19e / 0x004201ee
+    orig 0x004201ee: mov eax, dword ptr [0x636acc]
+    orig 0x004201f3: test eax, eax
+    orig 0x004201f5: jne 0x420223
+    ours +0x19e: mov eax, dword ptr [0]
+    ours +0x1a3: test eax, eax
+    ours +0x1a5: jne 0x1d3
+  pair +0x1a7 / 0x004201f7
+    orig 0x004201f7: call 0x4260c0
+    orig 0x004201fc: test eax, eax
+    orig 0x004201fe: je 0x420223
+    ours +0x1a7: call 0x1ac
+    ours +0x1ac: test eax, eax
+    ours +0x1ae: je 0x1d3
+  pair +0x1b0 / 0x00420200
+    orig 0x00420200: mov edx, dword ptr [0x7d3ff8]
+    orig 0x00420206: push 0
+    orig 0x00420208: push 8
+    orig 0x0042020a: call dword ptr [edx + 0x20]
+    orig 0x0042020d: push ebx
+    orig 0x0042020e: push ebp
+    orig 0x0042020f: call 0x4228f0
+    orig 0x00420214: mov eax, dword ptr [0x7d3ff8]
+    orig 0x00420219: push 1
+    orig 0x0042021b: push 8
+    orig 0x0042021d: call dword ptr [eax + 0x20]
+    orig 0x00420220: add esp, 0x18
+    orig 0x00420223: pop ebx
+    orig 0x00420224: pop esi
+    orig 0x00420225: pop ebp
+    orig 0x00420226: add esp, 0x20
+    orig 0x00420229: ret 
+    ours +0x1b0: mov edx, dword ptr [0]
+    ours +0x1b6: push 0
+    ours +0x1b8: push 8
+    ours +0x1ba: call dword ptr [edx + 0x20]
+    ours +0x1bd: push ebx
+    ours +0x1be: push ebp
+    ours +0x1bf: call 0x1c4
+    ours +0x1c4: mov eax, dword ptr [0]
+    ours +0x1c9: push 1
+    ours +0x1cb: push 8
+    ours +0x1cd: call dword ptr [eax + 0x20]
+    ours +0x1d0: add esp, 0x18
+    ours +0x1d3: pop ebx
+    ours +0x1d4: pop esi
+    ours +0x1d5: pop ebp
+    ours +0x1d6: add esp, 0x20
+    ours +0x1d9: ret 
+  pair +0x187 / 0x004201d7
+    orig 0x004201d7: mov eax, dword ptr [0x63d850]
+    orig 0x004201dc: test eax, eax
+    orig 0x004201de: je 0x4201ee
+    ours +0x187: mov eax, dword ptr [0]
+    ours +0x18c: test eax, eax
+    ours +0x18e: je 0x19e
+  pair +0x190 / 0x004201e0
+    orig 0x004201e0: lea ecx, [esp + 0xc]
+    orig 0x004201e4: push ecx
+    orig 0x004201e5: push eax
+    orig 0x004201e6: call 0x4e4900
+    orig 0x004201eb: add esp, 8
+    orig 0x004201ee: mov eax, dword ptr [0x636acc]
+    orig 0x004201f3: test eax, eax
+    orig 0x004201f5: jne 0x420223
+    ours +0x190: lea ecx, [esp + 0xc]
+    ours +0x194: push ecx
+    ours +0x195: push eax
+    ours +0x196: call 0x19b
+    ours +0x19b: add esp, 8
+    ours +0x19e: mov eax, dword ptr [0]
+    ours +0x1a3: test eax, eax
+    ours +0x1a5: jne 0x1d3
+  pair +0x1a7 / 0x004201f7
+    orig 0x004201f7: call 0x4260c0
+    orig 0x004201fc: test eax, eax
+    orig 0x004201fe: je 0x420223
+    ours +0x1a7: call 0x1ac
+    ours +0x1ac: test eax, eax
+    ours +0x1ae: je 0x1d3
+  pair +0x1b0 / 0x00420200
+    orig 0x00420200: mov edx, dword ptr [0x7d3ff8]
+    orig 0x00420206: push 0
+    orig 0x00420208: push 8
+    orig 0x0042020a: call dword ptr [edx + 0x20]
+    orig 0x0042020d: push ebx
+    orig 0x0042020e: push ebp
+    orig 0x0042020f: call 0x4228f0
+    orig 0x00420214: mov eax, dword ptr [0x7d3ff8]
+    orig 0x00420219: push 1
+    orig 0x0042021b: push 8
+    orig 0x0042021d: call dword ptr [eax + 0x20]
+    orig 0x00420220: add esp, 0x18
+    orig 0x00420223: pop ebx
+    orig 0x00420224: pop esi
+    orig 0x00420225: pop ebp
+    orig 0x00420226: add esp, 0x20
+    orig 0x00420229: ret 
+    ours +0x1b0: mov edx, dword ptr [0]
+    ours +0x1b6: push 0
+    ours +0x1b8: push 8
+    ours +0x1ba: call dword ptr [edx + 0x20]
+    ours +0x1bd: push ebx
+    ours +0x1be: push ebp
+    ours +0x1bf: call 0x1c4
+    ours +0x1c4: mov eax, dword ptr [0]
+    ours +0x1c9: push 1
+    ours +0x1cb: push 8
+    ours +0x1cd: call dword ptr [eax + 0x20]
+    ours +0x1d0: add esp, 0x18
+    ours +0x1d3: pop ebx
+    ours +0x1d4: pop esi
+    ours +0x1d5: pop ebp
+    ours +0x1d6: add esp, 0x20
+    ours +0x1d9: ret 
+  pair +0x19e / 0x004201ee
+    orig 0x004201ee: mov eax, dword ptr [0x636acc]
+    orig 0x004201f3: test eax, eax
+    orig 0x004201f5: jne 0x420223
+    ours +0x19e: mov eax, dword ptr [0]
+    ours +0x1a3: test eax, eax
+    ours +0x1a5: jne 0x1d3
+  pair +0x171 / 0x004201c1
+    orig 0x004201c1: cmp eax, 1
+    orig 0x004201c4: jne 0x4201d7
+    ours +0x171: cmp eax, 1
+    ours +0x174: jne 0x187
+  pair +0x176 / 0x004201c6
+    orig 0x004201c6: mov esi, dword ptr [esi + 0xc0]
+    orig 0x004201cc: test esi, esi
+    orig 0x004201ce: je 0x4201d7
+    ours +0x176: mov esi, dword ptr [esi + 0xc0]
+    ours +0x17c: test esi, esi
+    ours +0x17e: je 0x187
+  pair +0x180 / 0x004201d0
+    orig 0x004201d0: push esi
+    orig 0x004201d1: call dword ptr [esi + 0x48]
+    orig 0x004201d4: add esp, 4
+    orig 0x004201d7: mov eax, dword ptr [0x63d850]
+    orig 0x004201dc: test eax, eax
+    orig 0x004201de: je 0x4201ee
+    ours +0x180: push esi
+    ours +0x181: call dword ptr [esi + 0x48]
+    ours +0x184: add esp, 4
+    ours +0x187: mov eax, dword ptr [0]
+    ours +0x18c: test eax, eax
+    ours +0x18e: je 0x19e
+  pair +0x153 / 0x004201a3
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x15d / 0x004201ad
+    orig 0x004201ad: test ah, 0x20
+    orig 0x004201b0: jne 0x4201d7
+    ours +0x15d: test ah, 0x20
+    ours +0x160: jne 0x187
+  pair +0x162 / 0x004201b2
+    orig 0x004201b2: mov eax, dword ptr [esi + 0x298]
+    orig 0x004201b8: test eax, eax
+    orig 0x004201ba: jne 0x4201c1
+    ours +0x162: mov eax, dword ptr [esi + 0x298]
+    ours +0x168: test eax, eax
+    ours +0x16a: jne 0x171
+  pair +0x16c / 0x004201bc
+    orig 0x004201bc: mov esi, dword ptr [esi + 0x3c]
+    orig 0x004201bf: jmp 0x4201cc
+    orig 0x004201cc: test esi, esi
+    orig 0x004201ce: je 0x4201d7
+    ours +0x16c: mov esi, dword ptr [esi + 0x3c]
+    ours +0x16f: jmp 0x17c
+    ours +0x17c: test esi, esi
+    ours +0x17e: je 0x187
+  pair +0x180 / 0x004201d0
+    orig 0x004201d0: push esi
+    orig 0x004201d1: call dword ptr [esi + 0x48]
+    orig 0x004201d4: add esp, 4
+    orig 0x004201d7: mov eax, dword ptr [0x63d850]
+    orig 0x004201dc: test eax, eax
+    orig 0x004201de: je 0x4201ee
+    ours +0x180: push esi
+    ours +0x181: call dword ptr [esi + 0x48]
+    ours +0x184: add esp, 4
+    ours +0x187: mov eax, dword ptr [0]
+    ours +0x18c: test eax, eax
+    ours +0x18e: je 0x19e
+  pair +0x171 / 0x004201c1
+    orig 0x004201c1: cmp eax, 1
+    orig 0x004201c4: jne 0x4201d7
+    ours +0x171: cmp eax, 1
+    ours +0x174: jne 0x187
+  pair +0x176 / 0x004201c6
+    orig 0x004201c6: mov esi, dword ptr [esi + 0xc0]
+    orig 0x004201cc: test esi, esi
+    orig 0x004201ce: je 0x4201d7
+    ours +0x176: mov esi, dword ptr [esi + 0xc0]
+    ours +0x17c: test esi, esi
+    ours +0x17e: je 0x187
+  pair +0x13d / 0x0042018d
+    orig 0x0042018d: cmp eax, 1
+    orig 0x00420190: jne 0x4201a3
+    ours +0x13d: cmp eax, 1
+    ours +0x140: jne 0x153
+  pair +0x142 / 0x00420192
+    orig 0x00420192: mov eax, dword ptr [esi + 0xbc]
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x142: mov eax, dword ptr [esi + 0xbc]
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x14c / 0x0042019c
+    orig 0x0042019c: push eax
+    orig 0x0042019d: call dword ptr [eax + 0x48]
+    orig 0x004201a0: add esp, 4
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x14c: push eax
+    ours +0x14d: call dword ptr [eax + 0x48]
+    ours +0x150: add esp, 4
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x10b / 0x0042015b
+    orig 0x0042015b: mov eax, dword ptr [esi + 0x26c]
+    orig 0x00420161: push eax
+    orig 0x00420162: call 0x4e6680
+    orig 0x00420167: mov eax, dword ptr [esi + 0x294]
+    orig 0x0042016d: add esp, 4
+    orig 0x00420170: test ah, 4
+    orig 0x00420173: jne 0x4201d7
+    ours +0x10b: mov eax, dword ptr [esi + 0x26c]
+    ours +0x111: push eax
+    ours +0x112: call 0x117
+    ours +0x117: mov eax, dword ptr [esi + 0x294]
+    ours +0x11d: add esp, 4
+    ours +0x120: test ah, 4
+    ours +0x123: jne 0x187
+  pair +0x125 / 0x00420175
+    orig 0x00420175: test al, 0x10
+    orig 0x00420177: jne 0x4201a3
+    ours +0x125: test al, 0x10
+    ours +0x127: jne 0x153
+  pair +0x129 / 0x00420179
+    orig 0x00420179: test ah, 0x10
+    orig 0x0042017c: jne 0x4201a3
+    ours +0x129: test ah, 0x10
+    ours +0x12c: jne 0x153
+  pair +0x12e / 0x0042017e
+    orig 0x0042017e: mov eax, dword ptr [esi + 0x298]
+    orig 0x00420184: test eax, eax
+    orig 0x00420186: jne 0x42018d
+    ours +0x12e: mov eax, dword ptr [esi + 0x298]
+    ours +0x134: test eax, eax
+    ours +0x136: jne 0x13d
+  pair +0x138 / 0x00420188
+    orig 0x00420188: mov eax, dword ptr [esi + 0x38]
+    orig 0x0042018b: jmp 0x420198
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x138: mov eax, dword ptr [esi + 0x38]
+    ours +0x13b: jmp 0x148
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x14c / 0x0042019c
+    orig 0x0042019c: push eax
+    orig 0x0042019d: call dword ptr [eax + 0x48]
+    orig 0x004201a0: add esp, 4
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x14c: push eax
+    ours +0x14d: call dword ptr [eax + 0x48]
+    ours +0x150: add esp, 4
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x153 / 0x004201a3
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x13d / 0x0042018d
+    orig 0x0042018d: cmp eax, 1
+    orig 0x00420190: jne 0x4201a3
+    ours +0x13d: cmp eax, 1
+    ours +0x140: jne 0x153
+  pair +0x142 / 0x00420192
+    orig 0x00420192: mov eax, dword ptr [esi + 0xbc]
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x142: mov eax, dword ptr [esi + 0xbc]
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x76 / 0x004200c6
+    orig 0x004200c6: push edi
+    orig 0x004200c7: push ebx
+    orig 0x004200c8: call 0x41faf0
+    orig 0x004200cd: push ebx
+    orig 0x004200ce: mov edi, esi
+    orig 0x004200d0: call 0x41fcc0
+    orig 0x004200d5: add esp, 8
+    orig 0x004200d8: push ebx
+    orig 0x004200d9: call 0x426060
+    orig 0x004200de: push eax
+    orig 0x004200df: call 0x4e4320
+    orig 0x004200e4: push ebx
+    orig 0x004200e5: call 0x4c1a00
+    orig 0x004200ea: mov eax, dword ptr [0x63d850]
+    orig 0x004200ef: add esp, 0xc
+    orig 0x004200f2: test eax, eax
+    orig 0x004200f4: pop edi
+    orig 0x004200f5: je 0x42015b
+    ours +0x76: push edi
+    ours +0x77: push ebx
+    ours +0x78: call 0x7d
+    ours +0x7d: push ebx
+    ours +0x7e: mov edi, esi
+    ours +0x80: call 0x85
+    ours +0x85: add esp, 8
+    ours +0x88: push ebx
+    ours +0x89: call 0x8e
+    ours +0x8e: push eax
+    ours +0x8f: call 0x94
+    ours +0x94: push ebx
+    ours +0x95: call 0x9a
+    ours +0x9a: mov eax, dword ptr [0]
+    ours +0x9f: add esp, 0xc
+    ours +0xa2: test eax, eax
+    ours +0xa4: pop edi
+    ours +0xa5: je 0x10b
+  pair +0xa7 / 0x004200f7
+    orig 0x004200f7: lea ecx, [eax + 0x18]
+    orig 0x004200fa: mov edx, dword ptr [ecx]
+    orig 0x004200fc: mov dword ptr [esp + 0xc], edx
+    orig 0x00420100: fld dword ptr [esp + 0xc]
+    orig 0x00420104: fmul dword ptr [esi + 0x284]
+    orig 0x0042010a: mov edx, dword ptr [ecx + 4]
+    orig 0x0042010d: mov dword ptr [esp + 0x10], edx
+    orig 0x00420111: mov edx, dword ptr [ecx + 8]
+    orig 0x00420114: mov dword ptr [esp + 0x14], edx
+    orig 0x00420118: mov ecx, dword ptr [ecx + 0xc]
+    orig 0x0042011b: fstp dword ptr [esp + 0x1c]
+    orig 0x0042011f: fld dword ptr [esp + 0x10]
+    orig 0x00420123: mov dword ptr [esp + 0x18], ecx
+    orig 0x00420127: fmul dword ptr [esi + 0x284]
+    orig 0x0042012d: lea edx, [esp + 0x1c]
+    orig 0x00420131: push edx
+    orig 0x00420132: push eax
+    orig 0x00420133: fstp dword ptr [esp + 0x28]
+    orig 0x00420137: fld dword ptr [esp + 0x1c]
+    orig 0x0042013b: fmul dword ptr [esi + 0x284]
+    orig 0x00420141: fstp dword ptr [esp + 0x2c]
+    orig 0x00420145: fld dword ptr [esp + 0x20]
+    orig 0x00420149: fmul dword ptr [esi + 0x284]
+    orig 0x0042014f: fstp dword ptr [esp + 0x30]
+    orig 0x00420153: call 0x4e4900
+    orig 0x00420158: add esp, 8
+    orig 0x0042015b: mov eax, dword ptr [esi + 0x26c]
+    orig 0x00420161: push eax
+    orig 0x00420162: call 0x4e6680
+    orig 0x00420167: mov eax, dword ptr [esi + 0x294]
+    orig 0x0042016d: add esp, 4
+    orig 0x00420170: test ah, 4
+    orig 0x00420173: jne 0x4201d7
+    ours +0xa7: lea ecx, [eax + 0x18]
+    ours +0xaa: mov edx, dword ptr [ecx]
+    ours +0xac: mov dword ptr [esp + 0xc], edx
+    ours +0xb0: fld dword ptr [esp + 0xc]
+    ours +0xb4: mov edx, dword ptr [ecx + 4]
+    ours +0xb7: fmul dword ptr [esi + 0x284]
+    ours +0xbd: mov dword ptr [esp + 0x10], edx
+    ours +0xc1: mov edx, dword ptr [ecx + 8]
+    ours +0xc4: mov dword ptr [esp + 0x14], edx
+    ours +0xc8: mov ecx, dword ptr [ecx + 0xc]
+    ours +0xcb: fstp dword ptr [esp + 0x1c]
+    ours +0xcf: fld dword ptr [esp + 0x10]
+    ours +0xd3: mov dword ptr [esp + 0x18], ecx
+    ours +0xd7: fmul dword ptr [esi + 0x284]
+    ours +0xdd: lea edx, [esp + 0x1c]
+    ours +0xe1: push edx
+    ours +0xe2: push eax
+    ours +0xe3: fstp dword ptr [esp + 0x28]
+    ours +0xe7: fld dword ptr [esp + 0x1c]
+    ours +0xeb: fmul dword ptr [esi + 0x284]
+    ours +0xf1: fstp dword ptr [esp + 0x2c]
+    ours +0xf5: fld dword ptr [esp + 0x20]
+    ours +0xf9: fmul dword ptr [esi + 0x284]
+    ours +0xff: fstp dword ptr [esp + 0x30]
+    ours +0x103: call 0x108
+    ours +0x108: add esp, 8
+    ours +0x10b: mov eax, dword ptr [esi + 0x26c]
+    ours +0x111: push eax
+    ours +0x112: call 0x117
+    ours +0x117: mov eax, dword ptr [esi + 0x294]
+    ours +0x11d: add esp, 4
+    ours +0x120: test ah, 4
+    ours +0x123: jne 0x187
+  pair +0x125 / 0x00420175
+    orig 0x00420175: test al, 0x10
+    orig 0x00420177: jne 0x4201a3
+    ours +0x125: test al, 0x10
+    ours +0x127: jne 0x153
+  pair +0x129 / 0x00420179
+    orig 0x00420179: test ah, 0x10
+    orig 0x0042017c: jne 0x4201a3
+    ours +0x129: test ah, 0x10
+    ours +0x12c: jne 0x153
+  pair +0x12e / 0x0042017e
+    orig 0x0042017e: mov eax, dword ptr [esi + 0x298]
+    orig 0x00420184: test eax, eax
+    orig 0x00420186: jne 0x42018d
+    ours +0x12e: mov eax, dword ptr [esi + 0x298]
+    ours +0x134: test eax, eax
+    ours +0x136: jne 0x13d
+  pair +0x138 / 0x00420188
+    orig 0x00420188: mov eax, dword ptr [esi + 0x38]
+    orig 0x0042018b: jmp 0x420198
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x138: mov eax, dword ptr [esi + 0x38]
+    ours +0x13b: jmp 0x148
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x14c / 0x0042019c
+    orig 0x0042019c: push eax
+    orig 0x0042019d: call dword ptr [eax + 0x48]
+    orig 0x004201a0: add esp, 4
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x14c: push eax
+    ours +0x14d: call dword ptr [eax + 0x48]
+    ours +0x150: add esp, 4
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x15d / 0x004201ad
+    orig 0x004201ad: test ah, 0x20
+    orig 0x004201b0: jne 0x4201d7
+    ours +0x15d: test ah, 0x20
+    ours +0x160: jne 0x187
+  pair +0x162 / 0x004201b2
+    orig 0x004201b2: mov eax, dword ptr [esi + 0x298]
+    orig 0x004201b8: test eax, eax
+    orig 0x004201ba: jne 0x4201c1
+    ours +0x162: mov eax, dword ptr [esi + 0x298]
+    ours +0x168: test eax, eax
+    ours +0x16a: jne 0x171
+  pair +0x16c / 0x004201bc
+    orig 0x004201bc: mov esi, dword ptr [esi + 0x3c]
+    orig 0x004201bf: jmp 0x4201cc
+    orig 0x004201cc: test esi, esi
+    orig 0x004201ce: je 0x4201d7
+    ours +0x16c: mov esi, dword ptr [esi + 0x3c]
+    ours +0x16f: jmp 0x17c
+    ours +0x17c: test esi, esi
+    ours +0x17e: je 0x187
+  pair +0x180 / 0x004201d0
+    orig 0x004201d0: push esi
+    orig 0x004201d1: call dword ptr [esi + 0x48]
+    orig 0x004201d4: add esp, 4
+    orig 0x004201d7: mov eax, dword ptr [0x63d850]
+    orig 0x004201dc: test eax, eax
+    orig 0x004201de: je 0x4201ee
+    ours +0x180: push esi
+    ours +0x181: call dword ptr [esi + 0x48]
+    ours +0x184: add esp, 4
+    ours +0x187: mov eax, dword ptr [0]
+    ours +0x18c: test eax, eax
+    ours +0x18e: je 0x19e
+  pair +0x190 / 0x004201e0
+    orig 0x004201e0: lea ecx, [esp + 0xc]
+    orig 0x004201e4: push ecx
+    orig 0x004201e5: push eax
+    orig 0x004201e6: call 0x4e4900
+    orig 0x004201eb: add esp, 8
+    orig 0x004201ee: mov eax, dword ptr [0x636acc]
+    orig 0x004201f3: test eax, eax
+    orig 0x004201f5: jne 0x420223
+    ours +0x190: lea ecx, [esp + 0xc]
+    ours +0x194: push ecx
+    ours +0x195: push eax
+    ours +0x196: call 0x19b
+    ours +0x19b: add esp, 8
+    ours +0x19e: mov eax, dword ptr [0]
+    ours +0x1a3: test eax, eax
+    ours +0x1a5: jne 0x1d3
+  pair +0x1a7 / 0x004201f7
+    orig 0x004201f7: call 0x4260c0
+    orig 0x004201fc: test eax, eax
+    orig 0x004201fe: je 0x420223
+    ours +0x1a7: call 0x1ac
+    ours +0x1ac: test eax, eax
+    ours +0x1ae: je 0x1d3
+  pair +0x1b0 / 0x00420200
+    orig 0x00420200: mov edx, dword ptr [0x7d3ff8]
+    orig 0x00420206: push 0
+    orig 0x00420208: push 8
+    orig 0x0042020a: call dword ptr [edx + 0x20]
+    orig 0x0042020d: push ebx
+    orig 0x0042020e: push ebp
+    orig 0x0042020f: call 0x4228f0
+    orig 0x00420214: mov eax, dword ptr [0x7d3ff8]
+    orig 0x00420219: push 1
+    orig 0x0042021b: push 8
+    orig 0x0042021d: call dword ptr [eax + 0x20]
+    orig 0x00420220: add esp, 0x18
+    orig 0x00420223: pop ebx
+    orig 0x00420224: pop esi
+    orig 0x00420225: pop ebp
+    orig 0x00420226: add esp, 0x20
+    orig 0x00420229: ret 
+    ours +0x1b0: mov edx, dword ptr [0]
+    ours +0x1b6: push 0
+    ours +0x1b8: push 8
+    ours +0x1ba: call dword ptr [edx + 0x20]
+    ours +0x1bd: push ebx
+    ours +0x1be: push ebp
+    ours +0x1bf: call 0x1c4
+    ours +0x1c4: mov eax, dword ptr [0]
+    ours +0x1c9: push 1
+    ours +0x1cb: push 8
+    ours +0x1cd: call dword ptr [eax + 0x20]
+    ours +0x1d0: add esp, 0x18
+    ours +0x1d3: pop ebx
+    ours +0x1d4: pop esi
+    ours +0x1d5: pop ebp
+    ours +0x1d6: add esp, 0x20
+    ours +0x1d9: ret 
+  pair +0x19e / 0x004201ee
+    orig 0x004201ee: mov eax, dword ptr [0x636acc]
+    orig 0x004201f3: test eax, eax
+    orig 0x004201f5: jne 0x420223
+    ours +0x19e: mov eax, dword ptr [0]
+    ours +0x1a3: test eax, eax
+    ours +0x1a5: jne 0x1d3
+  pair +0x187 / 0x004201d7
+    orig 0x004201d7: mov eax, dword ptr [0x63d850]
+    orig 0x004201dc: test eax, eax
+    orig 0x004201de: je 0x4201ee
+    ours +0x187: mov eax, dword ptr [0]
+    ours +0x18c: test eax, eax
+    ours +0x18e: je 0x19e
+  pair +0x171 / 0x004201c1
+    orig 0x004201c1: cmp eax, 1
+    orig 0x004201c4: jne 0x4201d7
+    ours +0x171: cmp eax, 1
+    ours +0x174: jne 0x187
+  pair +0x176 / 0x004201c6
+    orig 0x004201c6: mov esi, dword ptr [esi + 0xc0]
+    orig 0x004201cc: test esi, esi
+    orig 0x004201ce: je 0x4201d7
+    ours +0x176: mov esi, dword ptr [esi + 0xc0]
+    ours +0x17c: test esi, esi
+    ours +0x17e: je 0x187
+  pair +0x153 / 0x004201a3
+    orig 0x004201a3: mov eax, dword ptr [esi + 0x294]
+    orig 0x004201a9: test al, 0x20
+    orig 0x004201ab: jne 0x4201d7
+    ours +0x153: mov eax, dword ptr [esi + 0x294]
+    ours +0x159: test al, 0x20
+    ours +0x15b: jne 0x187
+  pair +0x13d / 0x0042018d
+    orig 0x0042018d: cmp eax, 1
+    orig 0x00420190: jne 0x4201a3
+    ours +0x13d: cmp eax, 1
+    ours +0x140: jne 0x153
+  pair +0x142 / 0x00420192
+    orig 0x00420192: mov eax, dword ptr [esi + 0xbc]
+    orig 0x00420198: test eax, eax
+    orig 0x0042019a: je 0x4201a3
+    ours +0x142: mov eax, dword ptr [esi + 0xbc]
+    ours +0x148: test eax, eax
+    ours +0x14a: je 0x153
+  pair +0x10b / 0x0042015b
+    orig 0x0042015b: mov eax, dword ptr [esi + 0x26c]
+    orig 0x00420161: push eax
+    orig 0x00420162: call 0x4e6680
+    orig 0x00420167: mov eax, dword ptr [esi + 0x294]
+    orig 0x0042016d: add esp, 4
+    orig 0x00420170: test ah, 4
+    orig 0x00420173: jne 0x4201d7
+    ours +0x10b: mov eax, dword ptr [esi + 0x26c]
+    ours +0x111: push eax
+    ours +0x112: call 0x117
+    ours +0x117: mov eax, dword ptr [esi + 0x294]
+    ours +0x11d: add esp, 4
+    ours +0x120: test ah, 4
+    ours +0x123: jne 0x187
+  pair +0x1d4 / 0x00420224
+    orig 0x00420224: pop esi
+    orig 0x00420225: pop ebp
+    orig 0x00420226: add esp, 0x20
+    orig 0x00420229: ret 
+    ours +0x1d4: pop esi
+    ours +0x1d5: pop ebp
+    ours +0x1d6: add esp, 0x20
+    ours +0x1d9: ret 
+0x00420050	EQUIV	[ORDER]
