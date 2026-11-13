@@ -129,3 +129,17 @@ Before this row, RO-BIND-TIMER's vs_audio arm stopped with `rc 0x0045D3F0 after 
   `mashed_lock.py run`. Neither build overlapped a HOLD or SOLO (status checked before each).
 - Turning `MASHED_OT_AUDIOTICK` on by default on the knob path is a P1-class flip (L-127). It needs the OFF/ON/OFF/ON
   capture comparison, which was not run here.
+
+## Run 41 re-merge (2026-11-12)
+Run-40 merge-train pass hit a conflict in `re/tools/dual_copy_allowlist.txt`. The branch was hand-merged with
+`git -c merge.autoStash=false merge orch/integration` (a616fcc3b). The only conflict was that file: both sides appended
+after the PORT-TOP-05 lines, and both sides' lines are kept (this row's `0045d3f0` line plus the four PORT-TOP-08 lines).
+Checks re-run on the merged tree, no PRIORITY-HOLD or SOLO at any start:
+- VS2022 build OK (`D:/MashedWT/RO-AUDIOTICK-BODIES_build_vs3.log`), rva-lint OK, no NEW duplicates (104 known).
+- Object build OK (`D:/MashedWT/RO-AUDIOTICK-BODIES_build_ddk3.log`). `ddkobj.py check`: IDENTICAL 812/900, DIFFERENT 78,
+  not-in-map 10, units linked 857/867, 9 refusals (all `wrapper-redefines-globals`). None of 0x0045d3f0 / 0x0045d430 /
+  0x00466b50 / 0x004926c0 is in the DIFFERENT list (the DIFFERENT entries 0x004332a0 and 0x004929d0 belong to PORT-TOP-08 /
+  PORT-TOP-05, not to this row). Log: `D:/MashedWT/RO-AUDIOTICK-BODIES_ddkcheck3.log`.
+- Knob boots (`audiotick_arms.sh`, output `arms_run3.out`), self-test result: **`[OT_TIMER] self-test PASS`** on all four arms:
+  vs_timer 0/6000, vs_audio 0/8413 (audio branch 600), ddk_timer 0/6000 (x87-only 112), ddk_audio 0/8413 (audio branch 600, x87-only 109).
+- Menu walk not run (no menu code changed). No G-CTRL, no B, no captures (top-down row).
