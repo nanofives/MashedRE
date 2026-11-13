@@ -1,3 +1,4 @@
 rva	route	evidence	result
 0x004d1d70	match	re/match/s20/004d1d70.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
 0x004d3450	match	re/match/rwtb/004d3450.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
+0x00538c30	match	re/match/rwtb/00538c30.c	verify/match_20261112/RESULT_MATCH-RWT-B.md
