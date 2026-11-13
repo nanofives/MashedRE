@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-13  0x00514330  FUN_00514330  refile third-party-library[d3dx9-backward-extension] -> third-party-library[renderware]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
+2026-11-13  0x00515e50  FUN_00515e50  refile third-party-library[d3dx9-backward-extension] -> third-party-library[libpng-1.0.12]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
+2026-11-13  0x00515fd0  FUN_00515fd0  refile third-party-library[d3dx9-backward-extension] -> third-party-library[libpng-1.0.12]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
+2026-11-13  0x005163a0  FUN_005163a0  refile third-party-library[d3dx9-backward-extension] -> third-party-library[libpng-1.0.12]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
+2026-11-13  0x00516870  FUN_00516870  refile third-party-library[d3dx9-backward-extension] -> third-party-library[libpng-1.0.12]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
 2026-11-13  0x005444a0  FUN_005444a0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/005444a0.c; evidence: verify/matchrelocheck_20261113/RESULT_MATCH-RELOCHECK-5444A0.md
 2026-11-13  0x005518f0  FUN_005518f0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/005518f0.c; evidence: verify/match_20261112/RESULT_MATCH-NM-5518F0-4CAC10.md
 2026-11-13  0x004cac10  FUN_004cac10  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwtb/004cac10.c; evidence: verify/match_20261112/RESULT_MATCH-NM-5518F0-4CAC10.md
