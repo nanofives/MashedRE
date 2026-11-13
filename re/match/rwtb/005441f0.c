@@ -1,6 +1,12 @@
 // FLAGS: /O2 /Ob1 /G5
 // TOOLCHAIN rw9044
-/* MATCH-RWT-B 2026-11-12: from g2s (70.2% rw9044) to 98.7%: user-data plugin copy (offset param_3, block {count, arrays}, 16-byte arrays {name, format, numElements, data}): destroy the dst arrays (free name, free each string when format 3, free data, free arrays), then copy count, malloc count*16 hint 0x3011f, per array copy format and count, strdup name as RwMalloc(rwstrlen(s) + 1, 0x30002) + rwstrcpy, element size 4 for formats 1/2/3 else 0 (switch with three case bodies), strings strdup-ed for format 3, memcpy otherwise. Block-scoped first loop counter, iStack_8 step after iStack_c (permuter). Remaining: the lea of param_2 + param_3 + 4 is scheduled before xor ebp in the original, and the pointer difference is formed as mov ebp,eax; sub ebp,esi. */
+/* MATCH-RWT-B 2026-11-12: from g2s (70.2% rw9044) to 98.7%: user-data plugin copy (offset param_3, block {count, arrays}, 16-byte arrays {name, format, numElements, data}): destroy the dst arrays (free name, free each string when format 3, free data, free arrays), then copy count, malloc count*16 hint 0x3011f, per array copy format and count, strdup name as RwMalloc(rwstrlen(s) + 1, 0x30002) + rwstrcpy, element size 4 for formats 1/2/3 else 0 (switch with three case bodies), strings strdup-ed for format 3, memcpy otherwise. Block-scoped first loop counter, iStack_8 step after iStack_c (permuter). Remaining: the lea of param_2 + param_3 + 4 is scheduled before xor ebp in the original, and the pointer difference is formed as mov ebp,eax; sub ebp,esi.
+   MATCH-NM-5441F0-4C4A50 2026-11-13: 98.7 -> 99.1% (regs 99.1, ops 99.6) under rw9044: the format-3 string copy as an
+   index loop `for (param_2 = 0; param_2 < piVar8[2]; ...)` over piVar5[param_2] / piVar9[param_2] closes the
+   `mov ebp,eax; sub ebp,esi` pointer-difference residue (c2 strength-reduces the two bases itself). One residue
+   left: `lea edx,[esi+edi+4]` (param_2 + param_3 + 4, the src array base) before `xor ebp,ebp` in the original,
+   after it here. Writing the full sum as its own variable puts it first but turns on the zero register (68.9);
+   10 split forms x 5 positions, index-form outer loop (62.7), permuter 2606 compiles: no change. */
 typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
 typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
 typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
@@ -135,23 +141,17 @@ int FUN_005441f0(int param_1,int param_2,int param_3)
           piVar8[3] = (int)piVar5;
           piVar9 = (int *)piVar9[3];
           if (piVar8[1] == 3) {
-            param_2 = 0;
-            if (0 < piVar8[2]) {
-              iVar4 = (int)piVar5 - (int)piVar9;
-              do {
-                iVar10 = *piVar9;
-                *(undefined4 *)((int)piVar9 + iVar4) = 0;
-                if ((iVar10 != 0) && (*piVar9 != 0)) {
+            for (param_2 = 0; param_2 < piVar8[2]; param_2 = param_2 + 1) {
+                iVar10 = piVar9[param_2];
+                piVar5[param_2] = 0;
+                if ((iVar10 != 0) && (piVar9[param_2] != 0)) {
                   puVar1 = (undefined4 *)(DAT_007d3ff8 + 0x108);
-                  iVar10 = (*(code *)*puVar1)((**(code **)(DAT_007d3ff8 + 0xf4))(*piVar9) + 1,0x30002);
-                  *(int *)((int)piVar9 + iVar4) = iVar10;
+                  iVar10 = (*(code *)*puVar1)((**(code **)(DAT_007d3ff8 + 0xf4))(piVar9[param_2]) + 1,0x30002);
+                  piVar5[param_2] = iVar10;
                   if (iVar10 != 0) {
-                    (**(code **)(DAT_007d3ff8 + 0xcc))(iVar10,*piVar9);
+                    (**(code **)(DAT_007d3ff8 + 0xcc))(iVar10,piVar9[param_2]);
                   }
                 }
-                param_2 = param_2 + 1;
-                piVar9 = piVar9 + 1;
-              } while (param_2 < piVar8[2]);
             }
           }
           else {
