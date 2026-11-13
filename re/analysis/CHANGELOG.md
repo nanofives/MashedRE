@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-12  0x004d1e30  FUN_004d1e30  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s20/004d1e30.c; evidence: verify/match_20261112/RESULT_MATCH-RWC-NEAR-C.md
+2026-11-12  0x00534b60  FUN_00534b60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/00534b60.c; evidence: verify/match_20261112/RESULT_MATCH-RWC-NEAR-C.md
 2026-11-12  0x00422ba0  FUN_00422ba0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
 2026-11-12  0x004568d0  FUN_004568d0  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
 2026-11-12  0x004809e0  VehicleRespawnTeleport  C2->C4  route frida-replay (L-128): replay IDENTICAL-FOR-N, JMP live, verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md; evidence: verify/provwritesetscen_20261112/RESULT_PROV-WRITESET-SCENARIO.md
