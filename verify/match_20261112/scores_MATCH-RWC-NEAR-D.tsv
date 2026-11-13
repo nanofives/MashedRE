@@ -1,0 +1,3 @@
+rva	source	toolchain	before	after	regs_after	note
+0x004f1fb0	re/match/rwl03/004f1fb0.c	rw9044	83.1	100.0	100.0	BYTE-IDENTICAL 1134 B, relocheck OK 30/0; strips at function scope, i-counted run loop, shared size variable; ddk 91.9
+0x0053dea0	re/match/rwl03/0053dea0.c	rw9044	71.9	76.6	82.9	no maxSize pointer, n <= 0xef, tri++ in for header, permuter compare swap + bestAxis move

@@ -1,4 +1,13 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWC-NEAR-D (2026-11-12): 100%, BYTE-IDENTICAL under rw9044 (VC6 SP5 cl 12.00.8804 + PP c2 13.00.9044, L-131).
+   This file had no TOOLCHAIN line, so earlier scores ran under the DDK default. Three edits from 83.1%:
+   (1) the strip list "strips" is a function-scope variable (address-taken, so it pins the bmesh parameter slot for the
+   whole function: the run-split counter then gets its own local and the frame becomes 0x1c, 83.1 -> 93.8 ddk / 95.5 rw9044);
+   (2) the per-run loop is counted by "i" (for i < numRuns, reversed by the compiler to a count-down), which turns the
+   loop-entry test into jbe; (3) the mesh allocation size goes through the function-scope "size" that the header pass
+   also uses (fixes the eax/edx swap at 0x004f21f8 and the header slots: idx in the param_2 slot, the bound in param_3,
+   the result in the local at frame +0x10). Under ddk the same source scores 91.9%. */
 /* MATCH-RWC-NEAR-B (2026-11-12): rewritten from the raw g2s body as typed C (mesh/run/strip structs, the RW memory
    macros through RwGlobals 0x007d3ff8 +0x108/+0x10c/+0x11c, the mesh-module globals at DAT_00912118). 37.0% -> 83.1% ddk and rw9044,
    355/355 instructions (81.7% by hand, then match_permute.py 1964 compiles: 83.4% with the three RwFree calls reordered;
@@ -67,6 +76,8 @@ MeshHeader *FUN_004f1fb0(BMesh *bmesh, void *param_2, unsigned int param_3)
   unsigned short numMeshes;
   unsigned int numRuns;
   int cur;
+  unsigned int size;
+  Strip *strips;
 
   numMeshes = 0;
   sorted = (BTri **)RwMalloc(bmesh->numTriangles * sizeof(BTri *), 0x10502);
@@ -111,11 +122,10 @@ MeshHeader *FUN_004f1fb0(BMesh *bmesh, void *param_2, unsigned int param_3)
     {
       BTri **sp;
       Strip *s;
-      unsigned int k;
-      Strip *strips = 0;
+      strips = 0;
       sp = sorted;
       run = runs;
-      for (k = numRuns; k; k--) {
+      for (i = 0; i < numRuns; i++) {
         BTri *tris;
         unsigned int j;
         tris = (BTri *)RwMalloc(run->num * sizeof(BTri), 0x10502);
@@ -127,7 +137,8 @@ MeshHeader *FUN_004f1fb0(BMesh *bmesh, void *param_2, unsigned int param_3)
         FUN_004f3440(&strips, param_3);
         for (s = strips; s; s = s->next) {
           Mesh *m;
-          m = (Mesh *)RwMalloc(sizeof(Mesh) + s->num * sizeof(unsigned short), 0x10502);
+          size = sizeof(Mesh) + s->num * sizeof(unsigned short);
+          m = (Mesh *)RwMalloc(size, 0x10502);
           m->material = run->mat;
           m->numIndices = s->num;
           m->indices = (unsigned short *)(1 + m);
@@ -152,7 +163,6 @@ MeshHeader *FUN_004f1fb0(BMesh *bmesh, void *param_2, unsigned int param_3)
     {
       int total;
       Mesh *dst;
-      unsigned int size;
       unsigned short *idx;
       total = 0;
       size = sizeof(MeshHeader);
