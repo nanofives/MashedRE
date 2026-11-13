@@ -291,7 +291,22 @@ int PortTop_Bound_00492d30(void) {
 }
 // stand-in for 0x00492e90 (frame render, 26 callees): the hand RenderFrame. A device loss posts WM_QUIT, which the
 // matched pump 0x00499690 turns into the loop exit (the hand loop breaks on it).
+// RWC-FRAME-492E90: under MASHED_RWC_FRAME (RwCore_FrameRoute, RwCore/RwCore_Knob.cpp) the frame render is the matched
+// source re/match/s15/00492e90.c compiled as the RW core closure body RwCore_00492e90 (RwCore/RwCore_00492e90.cpp): its
+// menu-executed slice runs from re/match sources on the RW core, every other game callee is a logged stop
+// (verify/rwcframe_20261113/RESULT_RWC-FRAME-492E90.md). Its Present is RwRasterShowRaster on the core, and the boot ends
+// at MASHED_RWC_FRAME_N presents.
+bool RwCore_FrameRoute(void);
+int  RwCore_00492e90(void);
 int PortTop_StandIn_00492e90(void) {
+    if (RwCore_FrameRoute()) {
+        const int rc = RwCore_00492e90();
+        if (s_frame == 0 || (s_frame < 600 && (s_frame % 120) == 0))
+            PortTop_Log("frame %u rendered by 0x00492e90 (matched, RW core) = %d, phase %d", s_frame, rc,
+                        *reinterpret_cast<volatile int*>(0x00771968u));
+        ++s_frame;
+        return rc;
+    }
     const int r = PortTop_HandRenderFrame();
     if (s_frame == 0 || (s_frame < 600 && (s_frame % 120) == 0))
         PortTop_Log("frame %u rendered (%d)", s_frame, r);
