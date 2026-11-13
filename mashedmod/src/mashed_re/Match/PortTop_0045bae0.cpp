@@ -174,6 +174,11 @@ static void (*const s_pwiInit[9])(void) = {
 
 static unsigned PortTop_PWI_Dw(unsigned a) { return *reinterpret_cast<const volatile unsigned*>(static_cast<unsigned long>(a)); }
 
+// IMG-2-LOADER: the original +0x14 value of each entry (the rvas of s_pwiInit, read from MASHED.exe.unpatched at
+// 0x005f99ac + 0x40*i). With MASHED_PORTSTATE_IMAGE=1 the slots hold these instead of 0, so a slot equal to its own
+// entry's original target is rebound too. With the image off the slots are 0 and this changes nothing.
+static const unsigned s_pwiOrig[9] = {0x00456760u, 0x004548e0u, 0x00455400u, 0x004583a0u, 0x0045a6b0u,
+                                      0x0045b830u, 0x00454e70u, 0x004576f0u, 0x00452f70u};
 // Call site of rva 0x0045bae0 (from the matched 0x00402750): fill the type table's +0x14 slots, then the matched body.
 void PortTop_PWI_Call0045bae0(void) {
     const int n = static_cast<int>(PortTop_PWI_Dw(0x005f9bd8u));
@@ -184,7 +189,7 @@ void PortTop_PWI_Call0045bae0(void) {
     unsigned seeded = 0, kept = 0;
     for (int i = 0; i < 9; ++i) {
         unsigned* const slot = reinterpret_cast<unsigned*>(static_cast<unsigned long>(0x005f9998u + 0x40u * i + 0x14u));
-        if (*slot == 0) {
+        if (*slot == 0 || *slot == s_pwiOrig[i]) {
             *slot = static_cast<unsigned>(reinterpret_cast<unsigned long>(s_pwiInit[i]));
             ++seeded;
         } else {

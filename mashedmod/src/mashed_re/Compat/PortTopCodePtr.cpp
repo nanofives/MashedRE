@@ -13,6 +13,7 @@
 // Generated table: Compat/PortTopCodePtr.inc (verify/portorigtop_20261109/codeptr_inventory.py --write).
 // Knob: MASHED_ORIG_TOP=1 and the sub-knob MASHED_OT_CODEPTR=1 (default OFF). The default path never calls this, so its bytes and gates cannot move.
 #include "PortTopCodePtr.h"
+#include "PortStateImage.h"
 
 #include <windows.h>
 #include <intrin.h>
@@ -94,8 +95,12 @@ unsigned PortTopCodePtr_Apply(const char* logPath) {
     unsigned fixes = 0, bound = 0, stops = 0, seeds = 0, seedBytes = 0, outside = 0, failed = 0;
 
     // Seeds first: a slot never overlaps a seed (the generator takes seeds only from non-code dwords).
+    // IMG-2-LOADER: with the whole image loaded the seed bytes are already there; the write is skipped and the
+    // self-test below still compares them.
+    const bool image = PortStateImage_AppliedC() != 0;
 #define CP_SEED(va, n, bytes)                                                                       \
     if ((va) < lo || (va) + (n) > hi) { ++outside; }                                                \
+    else if (image) { ++seeds; seedBytes += (n); }                                                  \
     else { std::memcpy(reinterpret_cast<void*>(static_cast<std::uintptr_t>(va)), bytes, n); ++seeds; seedBytes += (n); }
 #define CP_FIX(slot, sym, orig)                                                                     \
     if ((slot) < lo || (slot) + 4 > hi) { ++outside; }                                              \

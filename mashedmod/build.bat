@@ -269,6 +269,28 @@ popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
 REM ===========================================================================
+REM IMG-2-LOADER (L-149 a, 2026-11-13): build\mashed_image.bin beside mashed_re.exe, the whole file-backed
+REM .rdata/.data image the MASHED_ORIG_TOP path loads under MASHED_PORTSTATE_IMAGE=1 (Compat\PortStateImage.cpp,
+REM exe-folder candidate of its lookup). Written only when missing: the source is the version anchor, which never
+REM changes, and the loader refuses a file whose recorded source SHA-256 is not the anchor. Source:
+REM %MASHED_ROOT%\original\MASHED.exe.unpatched, else ..\original\. Read only; nothing in original\ is written.
+REM Skipped with a note when the extractor (a git-archive tree) or the .unpatched is absent.
+REM ===========================================================================
+if not exist "%OUT%\mashed_image.bin" if exist "%ROOT%..\re\tools\image\extract_image.py" (
+    set "IMG_SRC=%ROOT%..\original\MASHED.exe.unpatched"
+    if defined MASHED_ROOT if exist "%MASHED_ROOT%\original\MASHED.exe.unpatched" set "IMG_SRC=%MASHED_ROOT%\original\MASHED.exe.unpatched"
+    call :img_extract
+    if errorlevel 1 exit /b 1
+)
+goto :img_done
+:img_extract
+if not exist "%IMG_SRC%" (echo [skip] mashed_image.bin: no %IMG_SRC% & goto :eof)
+py -3.12 "%ROOT%..\re\tools\image\extract_image.py" --exe "%IMG_SRC%" --out "%OUT%\mashed_image.bin"
+if errorlevel 1 (echo [ERROR] mashed_image.bin extract failed & exit /b 1)
+goto :eof
+:img_done
+
+REM ===========================================================================
 REM DDKOBJ variant (DDKOBJ-SPIKE, 2026-11-11). OPT-IN ONLY: set MASHED_DDKOBJ=1. Builds a SECOND exe,
 REM build\ddkobj\mashed_re_ddk.exe, that links the XP DDK objects of the byte-matched sources the exe wrappers include (the certified
 REM bytes) in place of the VS2022 compile of the same text. Reads the default exe's objects and link.rsp, writes only
