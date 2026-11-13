@@ -364,8 +364,9 @@ static void TmCheck(bool ok, const char* what, unsigned got, unsigned want) {
 }
 static void PortTop_TimerSummary(void);
 // RO-AUDIOTICK-BODIES: named stop for a callee of the matched 0x0045d3f0 / 0x00466b50 / 0x0045d430 exe bodies. Those
-// bodies reach a callee only while DAT_006904e8 != 0, and the exe never sets that word (its only writer is 0x004669b0,
-// run in the exe as the hand stand-in piece 3). A stop here means that gate changed.
+// bodies reach a callee only while DAT_006904e8 != 0 (set by the matched 0x004669b0 under MASHED_OT_AUDIOINIT=1).
+// PORT-TOP-AUDIOTICK-STOPS: the closure's matched / admitted callees now run their bodies; the remaining stops
+// (Match/PortTop_AudioStops.cpp, caller 0 = any) are callees with no such body. A stop names the next body to bind.
 void PortTop_AudioCalleeStop(unsigned rva, unsigned caller, void* ret) {
     PortTop_Log("[OT_TIMER] STOP: the matched 0x%08X called original 0x%08X (DAT_006904e8 = %d, DAT_006904ec = %d); the "
                 "exe has no body for it. Return address %p", caller, rva, MemI(0x006904e8u), MemI(0x006904ecu), ret);
@@ -395,8 +396,12 @@ void PortTop_Timer_004926c0(void) {
         // their callees (named stops) inside AudioTickAndAvg, before this check.
         TmCheck(e8 == PortTop_AudioInit_Ran(), "6c0 DAT_006904e8 gate on the exe path", static_cast<unsigned>(e8),
                 static_cast<unsigned>(PortTop_AudioInit_Ran()));
+        // PORT-TOP-AUDIOTICK-STOPS: with the gate open, 0x0045d3f0 sets DAT_006904ec 0 -> 1 and 0x0045d430 sets it back
+        // 1 -> 0 inside the same call, so the word is unchanged across the call in both cases.
         TmCheck(MemI(0x006904ecu) == ec0, "6c0 DAT_006904ec unchanged", MemU(0x006904ecu), static_cast<unsigned>(ec0));
-        if (s_tmAudioBranch == 1) {
+        // The direct calls below run only while the gate is closed: with it open they would call 0x00550be0 /
+        // 0x005a60b0 / 0x005a60e0 once more than the original does.
+        if (s_tmAudioBranch == 1 && e8 == 0) {
             const unsigned r3f0 = PortTop_Bound_0045d3f0(0), r430 = PortTop_Bound_0045d430();
             TmCheck(r3f0 == 1, "0045d3f0 return", r3f0, 1);
             TmCheck(r430 == 1, "0045d430 return", r430, 1);

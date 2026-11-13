@@ -7,17 +7,15 @@
 // Match/PortTop_00402750_Pieces.cpp) that never writes it. So on the exe path no callee below is reached. Each callee
 // binds to a named stop (log + exit code = rva, PortTop_AudioCalleeStop in Match/PortTop_00492370.cpp): the exe has
 // no body for them, and a stop makes any change of that gate visible instead of calling into unmapped code.
+// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops
+// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
-#include <intrin.h>
 #define MATCH_PORT 1
 #define FUN_0045d3f0 PortTop_Bound_0045d3f0
-#define FUN_00550be0 PortTop_AStop_00550be0
-#define FUN_005a60b0 PortTop_AStop_005a60b0
+#define FUN_00550be0 PortTop_Bound_00550be0
+#define FUN_005a60b0 PortTop_Bound_005a60b0
 extern "C" {
 #include "../../../../re/match/s10/0045d3f0.c"
-void PortTop_AudioCalleeStop(unsigned rva, unsigned caller, void* ret);   // Match/PortTop_00492370.cpp
-void PortTop_AStop_00550be0(void) { PortTop_AudioCalleeStop(0x00550be0u, 0x0045d3f0u, _ReturnAddress()); }
-void PortTop_AStop_005a60b0(void) { PortTop_AudioCalleeStop(0x005a60b0u, 0x0045d3f0u, _ReturnAddress()); }
 }
 #endif // MASHED_STANDALONE
