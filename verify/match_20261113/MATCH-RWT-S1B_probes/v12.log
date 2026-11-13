@@ -1,0 +1,142 @@
+dn                   rw9044  /O2 /Ob1 /G5 /Oy-         83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Oq  FAIL compile failed (rw9044):
+v_dn.c
+fatal error C1007: unrecognized flag '-Oq' in 'p2'
+
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2u5  FAIL compile failed (rw9044):
+v_dn.c
+fatal error C1007: unrecognized flag '-u5' in 'p2'
+
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2P   FAIL compile failed (rw9044):
+v_dn.c
+fatal error C1007: unrecognized flag '-P' in 'p2'
+
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2qt  FAIL compile failed (rw9044):
+v_dn.c
+fatal error C1007: unrecognized flag '-qt' in 'p2'
+
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2nolock  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2noehopt  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2ehopt  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2bzalign  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2datasort  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2dslow0  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2dshigh0  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2dslow100  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2dshigh100  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2EHa  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2EHs  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Zd   83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Za   83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Zl   83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2inlt0  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2inls0  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2inlt100  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2inls100  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2isize0 FAIL compile failed (rw9044):
+v_dn.c
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-RWT-S1B\verify\match_20261113\MATCH-RWT-S1B_probes\v_dn.c(95) : fatal error C1001: INTERNAL COMPILER ERROR
+		(c
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2loopopt  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2nodlp  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2dlp FAIL compile failed (rw9044):
+v_dn.c
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-RWT-S1B\verify\match_20261113\MATCH-RWT-S1B_probes\v_dn.c(64) : fatal error C1001: INTERNAL COMPILER ERROR
+		(c
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2QIfpinit  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2QIdivrem64  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2ide  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2cbstring  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2fastcap  65.8 regs  73.9 ops  82.0 111/92 badbytes 240
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2off100  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2off255  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2off1000  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2off65535  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2db4  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2db8  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2db16  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2db255  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2vol4  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2vol8  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2vol255  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2ef3  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2ef8  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2ef255  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop5  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop6  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop7  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop16  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2stkfill0  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Gt0  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /O2 /Ob1 /G5 /Oy- /d2Gt100  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+idx                  rw9044  /O2 /Ob1 /G5 /Oy-         90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Oq  FAIL compile failed (rw9044):
+v_idx.c
+fatal error C1007: unrecognized flag '-Oq' in 'p2'
+
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2u5  FAIL compile failed (rw9044):
+v_idx.c
+fatal error C1007: unrecognized flag '-u5' in 'p2'
+
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2P   FAIL compile failed (rw9044):
+v_idx.c
+fatal error C1007: unrecognized flag '-P' in 'p2'
+
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2qt  FAIL compile failed (rw9044):
+v_idx.c
+fatal error C1007: unrecognized flag '-qt' in 'p2'
+
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2nolock  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2noehopt  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2ehopt  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2bzalign  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2datasort  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2dslow0  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2dshigh0  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2dslow100  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2dshigh100  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2EHa  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2EHs  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Zd   90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Za   90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Zl   90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2inlt0  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2inls0  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2inlt100  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2inls100  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2isize0 FAIL compile failed (rw9044):
+v_idx.c
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-RWT-S1B\verify\match_20261113\MATCH-RWT-S1B_probes\v_idx.c(94) : fatal error C1001: INTERNAL COMPILER ERROR
+		
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2loopopt  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2nodlp  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2dlp FAIL compile failed (rw9044):
+v_idx.c
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-RWT-S1B\verify\match_20261113\MATCH-RWT-S1B_probes\v_idx.c(64) : fatal error C1001: INTERNAL COMPILER ERROR
+		
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2QIfpinit  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2QIdivrem64  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2ide  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2cbstring  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2fastcap  70.8 regs  76.4 ops  84.0 106/92 badbytes 143
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2off100  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2off255  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2off1000  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2off65535  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2db4  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2db8  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2db16  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2db255  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2vol4  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2vol8  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2vol255  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2ef3  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2ef8  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2ef255  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop5  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop6  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop7  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Loop16  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2stkfill0  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Gt0  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /O2 /Ob1 /G5 /Oy- /d2Gt100  90.2 regs  90.2 ops  96.7 92/92 badbytes 105

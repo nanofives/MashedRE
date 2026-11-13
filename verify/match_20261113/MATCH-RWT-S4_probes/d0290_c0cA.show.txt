@@ -1,0 +1,237 @@
+0x004d0290 _FUN_004d0290: 82.8% (regs 91.4%, ops 98.3%)  231/233 ins  flags=/O2 /Ob1 /G5 tc=rw9044
+   = sub esp, 0x18                                | sub esp, 0x18
+   = push ebx                                     | push ebx
+   = push ebp                                     | push ebp
+   = push esi                                     | push esi
+   = mov esi, dword ptr [esp + 0x2c]              | mov esi, dword ptr [esp + 0x2c]
+   = xor ebx, ebx                                 | xor ebx, ebx
+   = push edi                                     | push edi
+   = cmp dword ptr [esi + 4], ebx                 | cmp dword ptr [esi + 4], ebx
+   = jne 0x3f                                     | jne 0x4d02cf
+   = push 0x80000011                              | push 0x80000011
+   = mov dword ptr [esp + 0x14], 1                | mov dword ptr [esp + 0x14], 1
+   = call 0x24                                    | call 0x4d7ff0
+   = mov dword ptr [esp + 0x18], eax              | mov dword ptr [esp + 0x18], eax
+   = lea eax, [esp + 0x14]                        | lea eax, [esp + 0x14]
+   = push eax                                     | push eax
+   = call 0x32                                    | call 0x4d8480
+   = add esp, 8                                   | add esp, 8
+   = xor eax, eax                                 | xor eax, eax
+   = pop edi                                      | pop edi
+   = pop esi                                      | pop esi
+   = pop ebp                                      | pop ebp
+   = pop ebx                                      | pop ebx
+   = add esp, 0x18                                | add esp, 0x18
+   = ret                                          | ret 
+   = mov al, byte ptr [esi + 0x20]                | mov al, byte ptr [esi + 0x20]
+   = mov ecx, dword ptr [0]                       | mov ecx, dword ptr [0x911ae4]
+   = and eax, 7                                   | and eax, 7
+   = cmp eax, 5                                   | cmp eax, 5
+   = lea edi, [ecx + esi]                         | lea edi, [ecx + esi]
+   ! ja 0x247                                     | ja 0x4d04db
+   = jmp dword ptr [eax*4]                        | jmp dword ptr [eax*4 + 0x4d0508]
+   = mov eax, dword ptr [edi + 0xc]               | mov eax, dword ptr [edi + 0xc]
+   = push eax                                     | push eax
+   = mov edx, dword ptr [eax]                     | mov edx, dword ptr [eax]
+   = call dword ptr [edx + 0x38]                  | call dword ptr [edx + 0x38]
+   = mov eax, dword ptr [edi + 0xc]               | mov eax, dword ptr [edi + 0xc]
+   = push eax                                     | push eax
+   = mov ecx, dword ptr [eax]                     | mov ecx, dword ptr [eax]
+   = call dword ptr [ecx + 8]                     | call dword ptr [ecx + 8]
+   = mov eax, dword ptr [esi + 0x2c]              | mov eax, dword ptr [esi + 0x2c]
+   = mov edx, dword ptr [esi + 0x28]              | mov edx, dword ptr [esi + 0x28]
+   = mov dword ptr [esi + 0x10], eax              | mov dword ptr [esi + 0x10], eax
+   = mov al, byte ptr [esi + 0x22]                | mov al, byte ptr [esi + 0x22]
+   = test al, 4                                   | test al, 4
+   = mov dword ptr [esi + 0xc], edx               | mov dword ptr [esi + 0xc], edx
+   = mov dword ptr [esi + 0x18], ebx              | mov dword ptr [esi + 0x18], ebx
+   = mov dword ptr [esi + 4], ebx                 | mov dword ptr [esi + 4], ebx
+   ! je 0x235                                     | je 0x4d04c9
+   = test byte ptr [esi + 0x23], 0x10             | test byte ptr [esi + 0x23], 0x10
+   ! je 0x235                                     | je 0x4d04c9
+   = cmp byte ptr [edi + 0xb], bl                 | cmp byte ptr [edi + 0xb], bl
+   ! jne 0x235                                    | jne 0x4d04c9
+   = test byte ptr [edi + 0xa], 0xf               | test byte ptr [edi + 0xa], 0xf
+   ! jne 0x235                                    | jne 0x4d04c9
+   = and al, 0xf9                                 | and al, 0xf9
+   = mov byte ptr [esi + 0x22], al                | mov byte ptr [esi + 0x22], al
+   = mov byte ptr [edi + 0xb], 0xff               | mov byte ptr [edi + 0xb], 0xff
+   = mov esi, dword ptr [esi]                     | mov esi, dword ptr [esi]
+   = mov eax, esi                                 | mov eax, esi
+   = mov esi, dword ptr [eax]                     | mov esi, dword ptr [eax]
+   = cmp eax, esi                                 | cmp eax, esi
+   = jne 0xb5                                     | jne 0x4d0345
+   = push ebx                                     | push ebx
+   = push eax                                     | push eax
+   = call 0xc4                                    | call 0x4c5dd0
+   = add esp, 8                                   | add esp, 8
+   = mov eax, 1                                   | mov eax, 1
+   = pop edi                                      | pop edi
+   = pop esi                                      | pop esi
+   = pop ebp                                      | pop ebp
+   = pop ebx                                      | pop ebx
+   = add esp, 0x18                                | add esp, 0x18
+   = ret                                          | ret 
+   = mov ecx, dword ptr [esi + 0x28]              | mov ecx, dword ptr [esi + 0x28]
+   = mov edx, dword ptr [esi + 0x2c]              | mov edx, dword ptr [esi + 0x2c]
+   = mov dword ptr [esi + 0xc], ecx               | mov dword ptr [esi + 0xc], ecx
+   = mov dword ptr [esi + 0x10], edx              | mov dword ptr [esi + 0x10], edx
+   = mov dword ptr [esi + 0x18], ebx              | mov dword ptr [esi + 0x18], ebx
+   = mov dword ptr [esi + 4], ebx                 | mov dword ptr [esi + 4], ebx
+   = mov eax, dword ptr [edi + 0xc]               | mov eax, dword ptr [edi + 0xc]
+   = push eax                                     | push eax
+   = mov ecx, dword ptr [eax]                     | mov ecx, dword ptr [eax]
+   = call dword ptr [ecx + 0x38]                  | call dword ptr [ecx + 0x38]
+   = test byte ptr [esi + 0x22], 4                | test byte ptr [esi + 0x22], 4
+   ! je 0x229                                     | je 0x4d04bd
+   = mov eax, dword ptr [esi]                     | mov eax, dword ptr [esi]
+   = mov ebp, eax                                 | mov ebp, eax
+   = mov eax, dword ptr [ebp]                     | mov eax, dword ptr [ebp]
+   = cmp ebp, eax                                 | cmp ebp, eax
+   = jne 0xfb                                     | jne 0x4d038b
+   = mov dl, byte ptr [esi + 0x20]                | mov dl, byte ptr [esi + 0x20]
+   = mov ecx, dword ptr [0]                       | mov ecx, dword ptr [0x911ae4]
+   = and dl, 7                                    | and dl, 7
+   = cmp dl, 5                                    | cmp dl, 5
+   = jne 0x173                                    | jne 0x4d0403
+   = mov al, byte ptr [ecx + ebp + 9]             | mov al, byte ptr [ecx + ebp + 9]
+   = mov ecx, dword ptr [ecx + ebp]               | mov ecx, dword ptr [ecx + ebp]
+   = test al, 0xf                                 | test al, 0xf
+   = je 0x160                                     | je 0x4d03f0
+   = mov edx, dword ptr [ecx]                     | mov edx, dword ptr [ecx]
+   = lea ebx, [esp + 0x30]                        | lea ebx, [esp + 0x30]
+   = push ebx                                     | push ebx
+   = xor ebx, ebx                                 | xor ebx, ebx
+   = mov bl, byte ptr [edi + 0xb]                 | mov bl, byte ptr [edi + 0xb]
+   = and eax, 0xff                                | and eax, 0xff
+   = shr eax, 4                                   | shr eax, 4
+   = push ebx                                     | push ebx
+   = push eax                                     | push eax
+   = push ecx                                     | push ecx
+   = call dword ptr [edx + 0x48]                  | call dword ptr [edx + 0x48]
+   = xor ebx, ebx                                 | xor ebx, ebx
+   = cmp eax, ebx                                 | cmp eax, ebx
+   ! jl 0x1e9                                     | jl 0x4d047d
+   ! mov ecx, dword ptr [esp + 0x30]              | 
+   = cmp ebp, esi                                 | cmp ebp, esi
+   = jne 0x18e                                    | jne 0x4d041e
+   !                                              | mov ecx, dword ptr [esp + 0x30]
+   = mov eax, dword ptr [0]                       | mov eax, dword ptr [0x7d4110]
+   = push ebx                                     | push ebx
+   = push ecx                                     | push ecx
+   = mov ecx, dword ptr [edi + 0xc]               | mov ecx, dword ptr [edi + 0xc]
+   = mov edx, dword ptr [eax]                     | mov edx, dword ptr [eax]
+   = push ebx                                     | push ebx
+   = push ecx                                     | push ecx
+   = push eax                                     | push eax
+   = call dword ptr [edx + 0x78]                  | call dword ptr [edx + 0x78]
+   ! jmp 0x1d4                                    | jmp 0x4d046a
+   = mov eax, dword ptr [ecx]                     | mov eax, dword ptr [ecx]
+   = lea edx, [esp + 0x30]                        | lea edx, [esp + 0x30]
+   = push edx                                     | push edx
+   = xor edx, edx                                 | xor edx, edx
+   = mov dl, byte ptr [edi + 0xb]                 | mov dl, byte ptr [edi + 0xb]
+   = push edx                                     | push edx
+   = push ecx                                     | push ecx
+   = call dword ptr [eax + 0x48]                  | call dword ptr [eax + 0x48]
+   = jmp 0x13c                                    | jmp 0x4d03cc
+   = cmp dword ptr [ecx + ebp + 0x1c], ebx        | cmp dword ptr [ecx + ebp + 0x1c], ebx
+   = je 0x182                                     | je 0x4d0412
+   ! mov ecx, dword ptr [ecx + ebp]               | mov eax, dword ptr [ecx + ebp]
+   ! mov dword ptr [esp + 0x30], ecx              | mov dword ptr [esp + 0x30], eax
+   ! jmp 0x148                                    | jmp 0x4d03d4
+   = mov ecx, dword ptr [0]                       | mov ecx, dword ptr [0x7d4118]
+   = mov dword ptr [esp + 0x30], ecx              | mov dword ptr [esp + 0x30], ecx
+   ! jmp 0x148                                    | jmp 0x4d03d4
+   = movsx eax, word ptr [esi + 0x1c]             | movsx eax, word ptr [esi + 0x1c]
+   ! mov ebx, dword ptr [esi + 0xc]               | mov edx, dword ptr [esi + 0xc]
+   = mov dword ptr [esp + 0x18], eax              | mov dword ptr [esp + 0x18], eax
+   ! movsx edx, word ptr [esi + 0x1e]             | movsx ecx, word ptr [esi + 0x1e]
+   ! add ebx, eax                                 | add edx, eax
+   !                                              | mov ebx, ecx
+   !                                              | mov dword ptr [esp + 0x20], edx
+   !                                              | mov edx, dword ptr [esi + 0x10]
+   !                                              | add edx, ebx
+   = mov dword ptr [esp + 0x10], eax              | mov dword ptr [esp + 0x10], eax
+   ! mov dword ptr [esp + 0x20], ebx              | mov dword ptr [esp + 0x24], edx
+   ! mov ebx, dword ptr [esi + 0x10]              | 
+   ! add ebx, edx                                 | 
+   = mov eax, dword ptr [0]                       | mov eax, dword ptr [0x7d4110]
+   ! mov dword ptr [esp + 0x24], ebx              | lea edx, [esp + 0x10]
+   ! lea ebx, [esp + 0x10]                        | mov dword ptr [esp + 0x1c], ecx
+   ! push ebx                                     | push edx
+   ! push ecx                                     | mov edx, dword ptr [esp + 0x34]
+   ! lea ecx, [esp + 0x20]                        | push edx
+   ! mov dword ptr [esp + 0x24], edx              | lea edx, [esp + 0x20]
+   ! push ecx                                     | push edx
+   ! mov ecx, dword ptr [edi + 0xc]               | mov edx, dword ptr [edi + 0xc]
+   ! mov dword ptr [esp + 0x20], edx              | mov dword ptr [esp + 0x20], ecx
+   ! mov edx, dword ptr [eax]                     | mov ecx, dword ptr [eax]
+   ! push ecx                                     | push edx
+   = push eax                                     | push eax
+   ! call dword ptr [edx + 0x78]                  | call dword ptr [ecx + 0x78]
+   = xor ebx, ebx                                 | xor ebx, ebx
+   ! mov dl, byte ptr [esi + 0x20]                | mov al, byte ptr [esi + 0x20]
+   ! and dl, 7                                    | and al, 7
+   ! cmp dl, 5                                    | cmp al, 5
+   ! jne 0x1e9                                    | jne 0x4d047d
+   = mov eax, dword ptr [esp + 0x30]              | mov eax, dword ptr [esp + 0x30]
+   = push eax                                     | push eax
+   = mov ecx, dword ptr [eax]                     | mov ecx, dword ptr [eax]
+   = call dword ptr [ecx + 8]                     | call dword ptr [ecx + 8]
+   = mov eax, dword ptr [edi + 0xc]               | mov eax, dword ptr [edi + 0xc]
+   = push eax                                     | push eax
+   = mov edx, dword ptr [eax]                     | mov edx, dword ptr [eax]
+   = call dword ptr [edx + 8]                     | call dword ptr [edx + 8]
+   = mov al, byte ptr [esi + 0x22]                | mov al, byte ptr [esi + 0x22]
+   = and al, 0xf9                                 | and al, 0xf9
+   = mov byte ptr [esi + 0x22], al                | mov byte ptr [esi + 0x22], al
+   = mov al, byte ptr [esi + 0x20]                | mov al, byte ptr [esi + 0x20]
+   = and al, 7                                    | and al, 7
+   = cmp al, 5                                    | cmp al, 5
+   ! jne 0x23a                                    | jne 0x4d04ce
+   = test byte ptr [esi + 0x23], 0x10             | test byte ptr [esi + 0x23], 0x10
+   ! je 0x23a                                     | je 0x4d04ce
+   = cmp byte ptr [edi + 0xb], bl                 | cmp byte ptr [edi + 0xb], bl
+   ! jne 0x23a                                    | jne 0x4d04ce
+   = push ebx                                     | push ebx
+   = push ebp                                     | push ebp
+   = mov byte ptr [edi + 0xb], 0xff               | mov byte ptr [edi + 0xb], 0xff
+   = call 0x219                                   | call 0x4c5dd0
+   = add esp, 8                                   | add esp, 8
+   = mov eax, 1                                   | mov eax, 1
+   = pop edi                                      | pop edi
+   = pop esi                                      | pop esi
+   = pop ebp                                      | pop ebp
+   = pop ebx                                      | pop ebx
+   = add esp, 0x18                                | add esp, 0x18
+   = ret                                          | ret 
+   = mov edi, dword ptr [edi + 0xc]               | mov edi, dword ptr [edi + 0xc]
+   = push edi                                     | push edi
+   = mov ecx, dword ptr [edi]                     | mov ecx, dword ptr [edi]
+   = call dword ptr [ecx + 8]                     | call dword ptr [ecx + 8]
+   = mov al, byte ptr [esi + 0x22]                | mov al, byte ptr [esi + 0x22]
+   = and al, 0xf9                                 | and al, 0xf9
+   = mov byte ptr [esi + 0x22], al                | mov byte ptr [esi + 0x22], al
+   = pop edi                                      | pop edi
+   = pop esi                                      | pop esi
+   = pop ebp                                      | pop ebp
+   = mov eax, 1                                   | mov eax, 1
+   = pop ebx                                      | pop ebx
+   = add esp, 0x18                                | add esp, 0x18
+   = ret                                          | ret 
+   = push 0x80000011                              | push 0x80000011
+   = mov dword ptr [esp + 0x14], 1                | mov dword ptr [esp + 0x14], 1
+   = call 0x259                                   | call 0x4d7ff0
+   = lea edx, [esp + 0x14]                        | lea edx, [esp + 0x14]
+   = mov dword ptr [esp + 0x18], eax              | mov dword ptr [esp + 0x18], eax
+   = push edx                                     | push edx
+   = call 0x267                                   | call 0x4d8480
+   = add esp, 8                                   | add esp, 8
+   = xor eax, eax                                 | xor eax, eax
+   = pop edi                                      | pop edi
+   = pop esi                                      | pop esi
+   = pop ebp                                      | pop ebp
+   = pop ebx                                      | pop ebx
+   = add esp, 0x18                                | add esp, 0x18
+   = ret                                          | ret 

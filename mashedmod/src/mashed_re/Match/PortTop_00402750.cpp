@@ -59,7 +59,7 @@
 #define FUN_0041cb10 PortTop_StandIn04E_0041cb10
 #define FUN_0041d6e0 PortTop_StandIn04E_0041d6e0
 #define FUN_0041def0 PortTop_StandIn04E_0041def0
-#define FUN_0041d8b0 PortTop_StandIn04E_0041d8b0
+#define FUN_0041d8b0 Orig_0041d8b0                           // matched, Match/PortTop_0041d8b0.cpp (startlights.dff -> DAT_0063d57c), since PORT-TOP-04K
 #define FUN_0041c100 PortTop_StandIn04E_0041c100
 #define FUN_0041db90 PortTop_StandIn04E_0041db90
 #define FUN_0041a1e0 PortTop_StandIn04E_0041a1e0

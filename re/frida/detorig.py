@@ -236,6 +236,13 @@ def run(args):
                "loadSleepMs": args.load_sleep_ms, "callLog": args.call_log,
                "watch": [int(x, 16) for x in args.watch.split(",") if x][:2], "watchFrom": args.watch_from, "watchMode": args.watch_mode,
                "callLogRace": args.call_log_race}
+        if args.rec:
+            cfg["rec"] = True
+        if args.input_json:
+            rj = json.loads(Path(args.input_json).read_text(encoding="utf-8"))
+            cfg["input"] = [[int(r[0]), int(r[2]), int(r[3])] for r in rj["input"] if int(r[1]) == 0]
+            cfg["inputTick"] = True
+            meta["input_json"] = str(args.input_json)
         if args.audio_off:
             cfg["audioOff"] = args.audio_off   # RO-AUDIO-ISOLATION: suspend the __beginthread workers (detorig.js audioOff)
         if args.poison:
@@ -344,6 +351,12 @@ def run(args):
                 print(f"  prov rows {len(p['rows'])} executed {meta['prov']['executed']} install_fail {meta['prov']['install_fail']}", flush=True)
             elif p["kind"] == "crash":
                 print("  CRASH", json.dumps({k: p.get(k) for k in ("what", "type", "address", "memory", "n", "eip", "eip_in")}), flush=True)
+            elif p["kind"] == "inputrec":
+                import struct
+                rows = [list(struct.unpack_from("<III", data, 12 * i)) for i in range(p["rows"])]
+                (out / "inputrec.json").write_text(json.dumps({"format": "mashed-inputrec-1", "tick_anchor": p["tick_anchor"],
+                                                               "overflow": p["overflow"], "rows": rows}), encoding="utf-8")
+                print(f"  inputrec: {p['rows']} rows, anchor tick {p['tick_anchor']}, overflow {p['overflow']}", flush=True)
             elif p["kind"] == "done":
                 state["done"] = True
             else:
@@ -535,6 +548,8 @@ if __name__ == "__main__":
     ap.add_argument("--ckpt-ticks", default="", help="RO-FIRST-DIVERGENCE, boot mode: comma list of ticks with a full-image checkpoint "
                                                        "(k = 200 + index; tick 0 = at the install, the PE entry point). Tick t's dump "
                                                        "is taken after tick t's record (ticks.bin index t - 1; detorig_firstdiv.py checks it)")
+    ap.add_argument("--rec", action="store_true", help="RO-INPUT-RECORD: log the FUN_00497310 player-0 return values from the race anchor on (inputrec.json / inputrec.bin), native, no Interceptor")
+    ap.add_argument("--input-json", default="", help="RO-INPUT-RECORD: scripted input from a replay.json (rows [tick after anchor, player, control, value], player 0 only), keyed by tick instead of by clock call")
     ap.add_argument("--asi", action="store_true", help="RO-ORIG-ASI: run the boot-mode replay in mashed_re_dev.asi (MASHED_REPLAY_ASI), no Frida; needs --boot --clock tick")
     ap.add_argument("--menu-wait", type=float, default=2.0)
     ap.add_argument("--timeout", type=float, default=600)

@@ -1,0 +1,144 @@
+dn                   rw9044  /Og /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ot /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ot /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ot /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ot /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ot /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ot /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Oi /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   rw9044  /Og /Os /Ob0 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Os /Ob0 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Oi /Os /Ob0 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Oi /Os /Ob0 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Os /Ob1 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Os /Ob1 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Oi /Os /Ob1 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Oi /Os /Ob1 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Os /Ob2 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Os /Ob2 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Oi /Os /Ob2 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   rw9044  /Og /Oi /Os /Ob2 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ot /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ot /Ob0 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ot /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ot /Ob1 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ot /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ot /Ob2 /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Oi /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  83.5 regs  86.6 ops  93.8 97/92 badbytes 211
+dn                   ddk     /Og /Os /Ob0 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Os /Ob0 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Oi /Os /Ob0 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Oi /Os /Ob0 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Os /Ob1 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Os /Ob1 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Oi /Os /Ob1 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Oi /Os /Ob1 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Os /Ob2 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Os /Ob2 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Oi /Os /Ob2 /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+dn                   ddk     /Og /Oi /Os /Ob2 /Op /Gs /GF /G5 /Oy-  33.7 regs  63.0 ops  76.1 88/92 badbytes 185
+idx                  rw9044  /Og /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ot /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ot /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ot /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ot /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ot /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ot /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Oi /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  rw9044  /Og /Os /Ob0 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Os /Ob0 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Oi /Os /Ob0 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Oi /Os /Ob0 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Os /Ob1 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Os /Ob1 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Oi /Os /Ob1 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Oi /Os /Ob1 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Os /Ob2 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Os /Ob2 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Oi /Os /Ob2 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  rw9044  /Og /Oi /Os /Ob2 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ot /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ot /Ob0 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ot /Ob0 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ot /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ot /Ob1 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ot /Ob1 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ot /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ot /Ob2 /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Oi /Ot /Ob2 /Op /Gs /GF /G5 /Oy-  90.2 regs  90.2 ops  96.7 92/92 badbytes 105
+idx                  ddk     /Og /Os /Ob0 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Os /Ob0 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Oi /Os /Ob0 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Oi /Os /Ob0 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Os /Ob1 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Os /Ob1 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Oi /Os /Ob1 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Oi /Os /Ob1 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Os /Ob2 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Os /Ob2 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Oi /Os /Ob2 /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175
+idx                  ddk     /Og /Oi /Os /Ob2 /Op /Gs /GF /G5 /Oy-  35.9 regs  60.9 ops  75.0 84/92 badbytes 175

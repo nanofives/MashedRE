@@ -1,0 +1,291 @@
+static __forceinline int ImgDestroy(RwImage *img)
+{
+  IMAGEDESTROY(img);
+  return 1;
+}
+
+@@ g1im
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (!image) goto ret0;
+  if (param_2 && *param_2) {
+    mask = FUN_004ce390(param_2);
+    if (!mask) { ImgDestroy(image); goto ret0; }
+    if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) { ImgDestroy(image); ImgDestroy(mask); goto ret0; }
+    ImgDestroy(mask);
+  }
+  return image;
+ret0:
+  return 0;
+}
+
+@@ g1mi
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *mask;
+  RwImage *image;
+
+  image = FUN_004ce390(param_1);
+  if (!image) goto ret0;
+  if (param_2 && *param_2) {
+    mask = FUN_004ce390(param_2);
+    if (!mask) { ImgDestroy(image); goto ret0; }
+    if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) { ImgDestroy(image); ImgDestroy(mask); goto ret0; }
+    ImgDestroy(mask);
+  }
+  return image;
+ret0:
+  return 0;
+}
+
+@@ g2im
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (!param_2 || !*param_2) return image;
+    mask = FUN_004ce390(param_2);
+    if (mask) {
+      if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) { ImgDestroy(mask); return image; }
+      ImgDestroy(image);
+      ImgDestroy(mask);
+    } else {
+      ImgDestroy(image);
+    }
+  }
+  return 0;
+}
+
+@@ g2mi
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *mask;
+  RwImage *image;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (!param_2 || !*param_2) return image;
+    mask = FUN_004ce390(param_2);
+    if (mask) {
+      if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) { ImgDestroy(mask); return image; }
+      ImgDestroy(image);
+      ImgDestroy(mask);
+    } else {
+      ImgDestroy(image);
+    }
+  }
+  return 0;
+}
+
+@@ g3im
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (!mask) {
+        ImgDestroy(image);
+        return 0;
+      }
+      if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) {
+        ImgDestroy(mask);
+        return image;
+      }
+      ImgDestroy(image);
+      ImgDestroy(mask);
+      return 0;
+    }
+    return image;
+  }
+  return 0;
+}
+
+@@ g3mi
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *mask;
+  RwImage *image;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (!mask) {
+        ImgDestroy(image);
+        return 0;
+      }
+      if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) {
+        ImgDestroy(mask);
+        return image;
+      }
+      ImgDestroy(image);
+      ImgDestroy(mask);
+      return 0;
+    }
+    return image;
+  }
+  return 0;
+}
+
+@@ g4im
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (mask) {
+        if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) {
+          ImgDestroy(image);
+          ImgDestroy(mask);
+          return 0;
+        }
+        ImgDestroy(mask);
+        return image;
+      }
+      ImgDestroy(image);
+      return 0;
+    }
+  }
+  return image;
+}
+
+@@ g4mi
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *mask;
+  RwImage *image;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (mask) {
+        if (!FUN_004cde50(mask) || !FUN_004cdf20(image, mask)) {
+          ImgDestroy(image);
+          ImgDestroy(mask);
+          return 0;
+        }
+        ImgDestroy(mask);
+        return image;
+      }
+      ImgDestroy(image);
+      return 0;
+    }
+  }
+  return image;
+}
+
+@@ g5im
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (mask) {
+        if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) {
+          ImgDestroy(mask);
+          return image;
+        }
+        ImgDestroy(image);
+        ImgDestroy(mask);
+      } else {
+        ImgDestroy(image);
+      }
+      return 0;
+    }
+  }
+  return image;
+}
+
+@@ g5mi
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *mask;
+  RwImage *image;
+
+  image = FUN_004ce390(param_1);
+  if (image) {
+    if (param_2 && *param_2) {
+      mask = FUN_004ce390(param_2);
+      if (mask) {
+        if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) {
+          ImgDestroy(mask);
+          return image;
+        }
+        ImgDestroy(image);
+        ImgDestroy(mask);
+      } else {
+        ImgDestroy(image);
+      }
+      return 0;
+    }
+  }
+  return image;
+}
+
+@@ g6im
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *image;
+  RwImage *mask;
+
+  image = FUN_004ce390(param_1);
+  if (image && param_2 && *param_2) {
+    mask = FUN_004ce390(param_2);
+    if (!mask) { ImgDestroy(image); return 0; }
+    if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) { ImgDestroy(mask); return image; }
+    ImgDestroy(image);
+    ImgDestroy(mask);
+    return 0;
+  }
+  return image;
+}
+
+@@ g6mi
+// MATCH: 0x004ce970 FUN_004ce970
+RwImage *FUN_004ce970(const char *param_1, const char *param_2)
+{
+  RwImage *mask;
+  RwImage *image;
+
+  image = FUN_004ce390(param_1);
+  if (image && param_2 && *param_2) {
+    mask = FUN_004ce390(param_2);
+    if (!mask) { ImgDestroy(image); return 0; }
+    if (FUN_004cde50(mask) && FUN_004cdf20(image, mask)) { ImgDestroy(mask); return image; }
+    ImgDestroy(image);
+    ImgDestroy(mask);
+    return 0;
+  }
+  return image;
+}

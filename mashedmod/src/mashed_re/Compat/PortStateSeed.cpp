@@ -76,7 +76,7 @@ unsigned PortStateSeed_Apply() {
 }
 
 void PortStateSeed_Log(const char* logPath) {
-    if (!PortStateSeed_On()) return;
+    if (!PortStateSeed_On() || !s_applied) return;   // IMG-2-LOADER: not applied = the image ran in its place
     std::FILE* f = std::fopen(logPath, "a");
     if (!f) return;
     std::fprintf(f, "[portstate-seed] on entries=%u/%u bytes=%u/%u outside_pad=%u fnv table=%08x want=%08x mem=%08x%s\n",

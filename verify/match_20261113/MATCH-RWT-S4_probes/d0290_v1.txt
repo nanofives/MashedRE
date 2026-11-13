@@ -1,0 +1,429 @@
+@@ base
+// MATCH: 0x004d0290 FUN_004d0290
+int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
+{
+  RasExt *ext;
+  RwRaster *top;
+  RasExt *topExt;
+  int *tex;
+  int *surface;
+  long hr;
+
+  if (param_2->cpPixels == 0) {
+    RwError err;
+    err.pluginID = 1;
+    err.errorCode = FUN_004d7ff0(0x80000011);
+    FUN_004d8480(&err);
+    return 0;
+  }
+  ext = EXT(param_2);
+  switch (param_2->cType & 7) {
+  case 0:
+  case 4:
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    if ((param_2->privateFlags & 4) && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0 &&
+        ext->automipmapgen == 0) {
+      ext->lockedMipLevel = 0xff;
+      param_2->privateFlags &= ~6;
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      FUN_004c5dd0(top, 0);
+      break;
+    }
+    param_2->privateFlags &= ~6;
+    break;
+  case 2:
+  case 5:
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    if (param_2->privateFlags & 4) {
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      topExt = EXT(top);
+      if ((param_2->cType & 7) == 5) {
+        tex = topExt->texture;
+        if (topExt->cube) {
+          hr = (*(getcube_fn *)(*tex + 0x48))(tex, topExt->face, ext->lockedMipLevel, &surface);
+        } else {
+          hr = (*(getsurf_fn *)(*tex + 0x48))(tex, ext->lockedMipLevel, &surface);
+        }
+      } else {
+        if (topExt->swapChain) surface = topExt->texture;
+        else surface = DAT_007d4118;
+        hr = 0;
+      }
+      if (hr >= 0) {
+        if (top == param_2) {
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, 0, surface, 0);
+        } else {
+          RECT_ rect;
+          POINT_ pt;
+          rect.left = param_2->nOffsetX;
+          rect.top = param_2->nOffsetY;
+          rect.right = rect.left + param_2->width;
+          rect.bottom = rect.top + param_2->height;
+          pt.x = rect.left;
+          pt.y = rect.top;
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, &rect, surface, &pt);
+        }
+        if ((param_2->cType & 7) == 5) {
+          (*(com0_fn *)(*surface + 8))(surface);
+        }
+      }
+      (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+      param_2->privateFlags &= ~6;
+      if ((param_2->cType & 7) == 5 && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0) {
+        ext->lockedMipLevel = 0xff;
+        FUN_004c5dd0(top, 0);
+      }
+      break;
+    }
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->privateFlags &= ~6;
+    break;
+  default:
+    {
+      RwError err;
+      err.pluginID = 1;
+      err.errorCode = FUN_004d7ff0(0x80000011);
+      FUN_004d8480(&err);
+    }
+    return 0;
+  }
+  return 1;
+}
+
+@@ c0
+// MATCH: 0x004d0290 FUN_004d0290
+int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
+{
+  RasExt *ext;
+  RwRaster *top;
+  RasExt *topExt;
+  int *tex;
+  int *surface;
+  long hr;
+
+  if (param_2->cpPixels == 0) {
+    RwError err;
+    err.pluginID = 1;
+    err.errorCode = FUN_004d7ff0(0x80000011);
+    FUN_004d8480(&err);
+    return 0;
+  }
+  ext = EXT(param_2);
+  switch (param_2->cType & 7) {
+  case 0:
+  case 4:
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    if ((param_2->privateFlags & 4) && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0 &&
+        ext->automipmapgen == 0) {
+      param_2->privateFlags &= ~6;
+      ext->lockedMipLevel = 0xff;
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      FUN_004c5dd0(top, 0);
+      break;
+    }
+    param_2->privateFlags &= ~6;
+    break;
+  case 2:
+  case 5:
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    if (param_2->privateFlags & 4) {
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      topExt = EXT(top);
+      if ((param_2->cType & 7) == 5) {
+        tex = topExt->texture;
+        if (topExt->cube) {
+          hr = (*(getcube_fn *)(*tex + 0x48))(tex, topExt->face, ext->lockedMipLevel, &surface);
+        } else {
+          hr = (*(getsurf_fn *)(*tex + 0x48))(tex, ext->lockedMipLevel, &surface);
+        }
+      } else {
+        if (topExt->swapChain) surface = topExt->texture;
+        else surface = DAT_007d4118;
+        hr = 0;
+      }
+      if (hr >= 0) {
+        if (top == param_2) {
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, 0, surface, 0);
+        } else {
+          RECT_ rect;
+          POINT_ pt;
+          rect.left = param_2->nOffsetX;
+          rect.top = param_2->nOffsetY;
+          rect.right = rect.left + param_2->width;
+          rect.bottom = rect.top + param_2->height;
+          pt.x = rect.left;
+          pt.y = rect.top;
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, &rect, surface, &pt);
+        }
+        if ((param_2->cType & 7) == 5) {
+          (*(com0_fn *)(*surface + 8))(surface);
+        }
+      }
+      (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+      param_2->privateFlags &= ~6;
+      if ((param_2->cType & 7) == 5 && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0) {
+        ext->lockedMipLevel = 0xff;
+        FUN_004c5dd0(top, 0);
+      }
+      break;
+    }
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->privateFlags &= ~6;
+    break;
+  default:
+    {
+      RwError err;
+      err.pluginID = 1;
+      err.errorCode = FUN_004d7ff0(0x80000011);
+      FUN_004d8480(&err);
+    }
+    return 0;
+  }
+  return 1;
+}
+
+@@ c0cA
+// MATCH: 0x004d0290 FUN_004d0290
+int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
+{
+  RasExt *ext;
+  RwRaster *top;
+  RasExt *topExt;
+  int *tex;
+  int *surface;
+  long hr;
+
+  if (param_2->cpPixels == 0) {
+    RwError err;
+    err.pluginID = 1;
+    err.errorCode = FUN_004d7ff0(0x80000011);
+    FUN_004d8480(&err);
+    return 0;
+  }
+  ext = EXT(param_2);
+  switch (param_2->cType & 7) {
+  case 0:
+  case 4:
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    if ((param_2->privateFlags & 4) && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0 &&
+        ext->automipmapgen == 0) {
+      param_2->privateFlags &= ~6;
+      ext->lockedMipLevel = 0xff;
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      FUN_004c5dd0(top, 0);
+      break;
+    }
+    param_2->privateFlags &= ~6;
+    break;
+  case 2:
+  case 5:
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    if (param_2->privateFlags & 4) {
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      topExt = EXT(top);
+      if ((param_2->cType & 7) == 5) {
+        if (topExt->cube) {
+          tex = topExt->texture;
+          hr = (*(getcube_fn *)(*tex + 0x48))(tex, topExt->face, ext->lockedMipLevel, &surface);
+        } else {
+          tex = topExt->texture;
+          hr = (*(getsurf_fn *)(*tex + 0x48))(tex, ext->lockedMipLevel, &surface);
+        }
+      } else {
+        if (topExt->swapChain) surface = topExt->texture;
+        else surface = DAT_007d4118;
+        hr = 0;
+      }
+      if (hr >= 0) {
+        if (top == param_2) {
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, 0, surface, 0);
+        } else {
+          RECT_ rect;
+          POINT_ pt;
+          rect.left = param_2->nOffsetX;
+          rect.top = param_2->nOffsetY;
+          rect.right = rect.left + param_2->width;
+          rect.bottom = rect.top + param_2->height;
+          pt.x = rect.left;
+          pt.y = rect.top;
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, &rect, surface, &pt);
+        }
+        if ((param_2->cType & 7) == 5) {
+          (*(com0_fn *)(*surface + 8))(surface);
+        }
+      }
+      (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+      param_2->privateFlags &= ~6;
+      if ((param_2->cType & 7) == 5 && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0) {
+        ext->lockedMipLevel = 0xff;
+        FUN_004c5dd0(top, 0);
+      }
+      break;
+    }
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->privateFlags &= ~6;
+    break;
+  default:
+    {
+      RwError err;
+      err.pluginID = 1;
+      err.errorCode = FUN_004d7ff0(0x80000011);
+      FUN_004d8480(&err);
+    }
+    return 0;
+  }
+  return 1;
+}
+
+@@ c0cB
+// MATCH: 0x004d0290 FUN_004d0290
+int FUN_004d0290(void *param_1,RwRaster *param_2,int param_3)
+{
+  RasExt *ext;
+  RwRaster *top;
+  RasExt *topExt;
+  int *tex;
+  int *surface;
+  long hr;
+
+  if (param_2->cpPixels == 0) {
+    RwError err;
+    err.pluginID = 1;
+    err.errorCode = FUN_004d7ff0(0x80000011);
+    FUN_004d8480(&err);
+    return 0;
+  }
+  ext = EXT(param_2);
+  switch (param_2->cType & 7) {
+  case 0:
+  case 4:
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    if ((param_2->privateFlags & 4) && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0 &&
+        ext->automipmapgen == 0) {
+      param_2->privateFlags &= ~6;
+      ext->lockedMipLevel = 0xff;
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      FUN_004c5dd0(top, 0);
+      break;
+    }
+    param_2->privateFlags &= ~6;
+    break;
+  case 2:
+  case 5:
+    param_2->width = param_2->originalWidth;
+    param_2->height = param_2->originalHeight;
+    param_2->stride = 0;
+    param_2->cpPixels = 0;
+    (*(com0_fn *)(*ext->lockedSurface + 0x38))(ext->lockedSurface);
+    if (param_2->privateFlags & 4) {
+      top = param_2;
+      do {
+        top = top->parent;
+      } while (top != top->parent);
+      topExt = EXT(top);
+      if ((param_2->cType & 7) == 5) {
+        uchar cube = topExt->cube;
+        tex = topExt->texture;
+        if (cube) {
+          hr = (*(getcube_fn *)(*tex + 0x48))(tex, topExt->face, ext->lockedMipLevel, &surface);
+        } else {
+          hr = (*(getsurf_fn *)(*tex + 0x48))(tex, ext->lockedMipLevel, &surface);
+        }
+      } else {
+        if (topExt->swapChain) surface = topExt->texture;
+        else surface = DAT_007d4118;
+        hr = 0;
+      }
+      if (hr >= 0) {
+        if (top == param_2) {
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, 0, surface, 0);
+        } else {
+          RECT_ rect;
+          POINT_ pt;
+          rect.left = param_2->nOffsetX;
+          rect.top = param_2->nOffsetY;
+          rect.right = rect.left + param_2->width;
+          rect.bottom = rect.top + param_2->height;
+          pt.x = rect.left;
+          pt.y = rect.top;
+          (*(upd_fn *)(*DAT_007d4110 + 0x78))(DAT_007d4110, ext->lockedSurface, &rect, surface, &pt);
+        }
+        if ((param_2->cType & 7) == 5) {
+          (*(com0_fn *)(*surface + 8))(surface);
+        }
+      }
+      (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+      param_2->privateFlags &= ~6;
+      if ((param_2->cType & 7) == 5 && (param_2->cFormat & 0x10) && ext->lockedMipLevel == 0) {
+        ext->lockedMipLevel = 0xff;
+        FUN_004c5dd0(top, 0);
+      }
+      break;
+    }
+    (*(com0_fn *)(*ext->lockedSurface + 8))(ext->lockedSurface);
+    param_2->privateFlags &= ~6;
+    break;
+  default:
+    {
+      RwError err;
+      err.pluginID = 1;
+      err.errorCode = FUN_004d7ff0(0x80000011);
+      FUN_004d8480(&err);
+    }
+    return 0;
+  }
+  return 1;
+}
