@@ -60,6 +60,20 @@ bool RwCore_Enabled(void) {
     return s == 1;
 }
 
+// RWC-PLUGIN-ATTACH run 40: MASHED_RWC_FRAME=1 (only with MASHED_RWC_CORE=1, default OFF). RwEngineStart returns its
+// result instead of the probe's 0, the librw bindings with a core body call it (LibRw/RwApiBind.cpp lines tagged
+// [RWC-FRAME], verify/rwccorerun_20261111/route_bindings.py), and the boot ends after the first RwRasterShowRaster on
+// the core (RwCore_FrameShowRaster). Without it the knob behaves as in RWC-CORE-RUN.
+bool RwCore_FrameRoute(void) {
+    static int s = -1;
+    if (s < 0) {
+        char v[8] = {};
+        s = (RwCore_Enabled() && GetEnvironmentVariableA("MASHED_RWC_FRAME", v, sizeof(v)) > 0 && v[0] && v[0] != '0')
+                ? 1 : 0;
+    }
+    return s == 1;
+}
+
 // A missing body was called (RwCore_Missing.cpp): log it and end the process with its code.
 void RwCore_Stop(unsigned rva, unsigned code) {
     RwCore_Log("STOP: rva 0x%08X called, no body on the RW core path (no source, no hand body); exit 0x%08X", rva, code);
@@ -106,6 +120,31 @@ static LONG CALLBACK RwCore_Veh(EXCEPTION_POINTERS* ep) {
         if (v > base && v < base + 0x01000000u) n += std::snprintf(buf + n, sizeof(buf) - n, " +0x%X", static_cast<unsigned>(v - base));
     }
     RwCore_Log("AV stack exe offsets:%s", buf);
+    // run 38: the raw top of stack (an EIP-0 fault's caller is [esp]) with the module each word falls in.
+    n = 0;
+    for (int i = 0; i < 8 && n < 900; ++i) {
+        HMODULE hm = nullptr;
+        char mod[64] = "-";
+        if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                               reinterpret_cast<LPCSTR>(static_cast<std::uintptr_t>(sp[i])), &hm) && hm) {
+            char path[MAX_PATH];
+            if (GetModuleFileNameA(hm, path, MAX_PATH)) {
+                const char* s = std::strrchr(path, '\\');
+                std::snprintf(mod, sizeof(mod), "%s+0x%X", s ? s + 1 : path,
+                              static_cast<unsigned>(sp[i] - reinterpret_cast<std::uintptr_t>(hm)));
+            }
+        }
+        n += std::snprintf(buf + n, sizeof(buf) - n, " [esp+%X]=%08X(%s)", i * 4, sp[i], mod);
+    }
+    RwCore_Log("AV raw stack:%s", buf);
+    // run 38: the module registry RwEngineInit built. 0x00617fe0 is the registry itself (`push 0x617fe0` at
+    // 0x004c2f7e): +0x10 head, +0x14 tail; node +0x08 id, +0x20 ctor, +0x24 dtor, +0x30 next, +0x34 prev
+    // (0x004d7de0 / 0x004d8000 / 0x004d8060).
+    const std::uint32_t reg = 0x00617fe0u;
+    int k = 0;
+    for (std::uint32_t nd = U32(reg + 0x10); nd && k < 40; nd = U32(nd + 0x30), ++k)
+        RwCore_Log("registry node %d at %08X: id 0x%X ctor %08X dtor %08X next %08X prev %08X", k, nd, U32(nd + 8),
+                   U32(nd + 0x20), U32(nd + 0x24), U32(nd + 0x30), U32(nd + 0x34));
     RwCore_Probe();   // engine state at the fault (module constructors that ran before it)
     return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -144,11 +183,27 @@ static void RwCore_Probe(void) {
     }
 }
 
+int RwCore_00493640(void);
+// RWC-PLUGIN-ATTACH: RenderwareAttachPlugins 0x00493640 on the RW core, between RwEngineInit and RwEngineOpen as in
+// the original (0x00493710). Its attaches register their plugins in the registries of the seeded data range; the
+// constructors run at RwEngineStart.
+int RwCore_AttachPlugins(void) {
+    const int r = RwCore_00493640();
+    RwCore_Log("RenderwareAttachPlugins 0x00493640() = %d on the RW core; [0x007dc57c] (PTank plugin offset, 0x00534ac4) = 0x%X",
+               r, U32(0x007dc57cu));
+    return r;
+}
+
 int RwCore_EngineStart(void) {
     const int r = RwCore_004c2fb0();
     RwCore_Log("RwEngineStart 0x004c2fb0() = %d", r);
     RwCore_Probe();
     if (!r) return 0;
+    if (RwCore_FrameRoute()) {
+        RwCore_Log("MASHED_RWC_FRAME: RwEngineStart returns %d; the top-down path continues with the bindings on the core", r);
+        return r;
+    }
+    RwCore_Log("calling RwEngineStop 0x004c2f60 (device call 0x12, module destructors 0x004d8060, device call 3)");
     const int s = RwCore_004c2f60();
     RwCore_Log("bring-up probe done: RwEngineStop 0x004c2f60() = %d; returning 0 from RwEngineStart so 0x00493710 runs "
                "its failure path (the rest of the top-down path is not on the RW core yet)", s);
@@ -158,6 +213,22 @@ int RwCore_EngineStart(void) {
 int RwCore_EngineStop(void) { const int r = RwCore_004c2f60(); RwCore_Log("RwEngineStop 0x004c2f60() = %d", r); return r; }
 int RwCore_EngineClose(void) { const int r = RwCore_004c3040(); RwCore_Log("RwEngineClose 0x004c3040() = %d", r); return r; }
 int RwCore_EngineTerm(void) { const int r = RwCore_004c3270(); RwCore_Log("RwEngineTerm 0x004c3270() = %d", r); return r; }
+// RwRasterShowRaster 0x004c7730 on the core under MASHED_RWC_FRAME. After the first call: log the frame, stop, close
+// and terminate the engine on the core, and end the process with 0x5257F000 | (result != 0).
+extern "C" int RwCore_004c7730(int raster, int dev, int flags);
+extern "C" int RwCore_FrameShowRaster(int raster, int dev, int flags) {
+    const int r = RwCore_004c7730(raster, dev, flags);
+    RwCore_Log("RwRasterShowRaster 0x004c7730(raster %08X, dev %08X, flags 0x%X) = %08X on the RW core: first frame "
+               "presented; device [0x007d4110] %08X", static_cast<unsigned>(raster), static_cast<unsigned>(dev), flags,
+               static_cast<unsigned>(r), U32(0x007d4110));
+    RwCore_Probe();
+    RwCore_EngineStop();
+    RwCore_EngineClose();
+    RwCore_EngineTerm();
+    RwCore_Log("MASHED_RWC_FRAME: boot ends after the first frame on the RW core (exit 0x%08X)", 0x5257F000u | (r ? 1u : 0u));
+    ExitProcess(0x5257F000u | (r ? 1u : 0u));
+    return r;
+}
 int RwCore_Set7d4134(int v) { return RwCore_004c9f50(v); }
 int RwCore_SetRefresh(int v) { return RwCore_004c9eb0(v); }
 int RwCore_Set7d413c(int v) { return RwCore_004c9f60(v); }

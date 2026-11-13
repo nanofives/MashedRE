@@ -9,9 +9,9 @@
 #define FUN_004c5f60 RwCore_004c5f60
 #define FUN_004c6140 RwCore_004c6140
 #define FUN_004cc9f0 RwCore_004cc9f0
-#define LAB_004c61b0 RwCoreMissing_004c61b0
-#define LAB_004c7200 RwCoreMissing_004c7200
-#define LAB_004c7490 RwCoreMissing_004c7490
+#define LAB_004c61b0 RwCoreLift_004c61b0
+#define LAB_004c7200 RwCoreLift_004c7200
+#define LAB_004c7490 RwCoreLift_004c7490
 #define thunk_FUN_004cc820 RwCore_004cc820
 extern "C" {
 #include "../../../../re/match/rwl01/004c5f60.c"
