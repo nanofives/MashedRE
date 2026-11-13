@@ -12,7 +12,7 @@
 #define LAB_004c61b0 RwCoreLift_004c61b0
 #define LAB_004c7200 RwCoreLift_004c7200
 #define LAB_004c7490 RwCoreLift_004c7490
-#define thunk_FUN_004cc820 RwCore_004cc820
+#define thunk_FUN_004cc820 RwCore_004cc9e0
 extern "C" {
 #include "../../../../re/match/rwl01/004c5f60.c"
 }

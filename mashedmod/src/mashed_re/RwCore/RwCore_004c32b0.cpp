@@ -47,7 +47,7 @@
 #define FUN_004d9000 RwCore_004d9000
 #define FUN_004d9030 RwCore_004d9030
 #define FUN_004d9040 RwCore_004d9040
-#define thunk_FUN_004cfa00 RwCore_004cfa00
+#define thunk_FUN_004cfa00 RwCore_004c7a60
 extern "C" {
 #include "../../../../re/match/s19/004c32b0.c"
 }

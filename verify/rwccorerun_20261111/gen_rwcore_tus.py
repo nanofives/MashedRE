@@ -275,6 +275,15 @@ def load_named():
 # itself, the source's call must reach the thunk's own body (ddkobj check compares call targets). Per source, so the
 # other ~75 sources that name thunk_FUN_ callees keep their current binding until a row checks each one.
 THUNK_BIND = {('re/match/rwta/0052e3d0.c', 'thunk_FUN_004cc820'): '004cc9e0'}
+# RWC-THUNK-BIND-AUDIT: verify/rwcthunk_20261113/THUNK_BIND.tsv (audit_thunk_bind.py, original bytes of each source's
+# own function: every direct call to the named target lands on a jmp stub of it). A row binds only where the stub is in
+# the RW band; non-RW stubs keep the old binding (they are not compiled here).
+_TB = os.path.join(HERE, '..', 'rwcthunk_20261113', 'THUNK_BIND.tsv')
+if os.path.exists(_TB):
+    for _ln in open(_TB, encoding='utf-8').read().splitlines()[1:]:
+        _s, _n, _r = _ln.split('\t')
+        if inrw(int(_r, 16)):
+            THUNK_BIND.setdefault((_s, _n), _r)
 MATCHLINE = re.compile(r'^// MATCH: 0x([0-9a-f]{8}) (\S+)', re.M)
 # 004c7a70 has no ledger row yet (RWC-DRIVER); its source is the RWC-DRIVER one.
 PIN = {'004c7a70': 're/match/rwd01/004c7a70.c'}
@@ -539,7 +548,7 @@ def main(check):
             for n in refs[src]:
                 if n in own or (n in EXT and not n.startswith('FUN_')):
                     continue
-                r = NAMED.get(n) or rva_of(n)
+                r = THUNK_BIND.get((src, n)) or NAMED.get(n) or rva_of(n)
                 if inrw(int(r, 16)):
                     st.append(r)
                 elif (n not in EXT and ('FUN_' + r) not in EXT and r not in EXE_BODY

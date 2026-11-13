@@ -80,6 +80,7 @@ extern "C" int RwCoreLift_005326c0();
 extern "C" int RwCoreLift_00532770();
 extern "C" int RwCoreLift_005328b0();
 extern "C" int RwCoreLift_00532b80();
+extern "C" int RwCoreLift_00533420();
 extern "C" int RwCoreMissing_00532190();
 extern "C" int RwCore_004c0ed0();
 extern "C" int RwCore_004c2dc0();
@@ -132,7 +133,6 @@ extern "C" int RwCore_0052fd60();
 extern "C" int RwCore_0052fdb0();
 extern "C" int RwCore_0052fe90();
 extern "C" int RwCore_0052ff00();
-extern "C" int RwCore_0052ffd0();
 extern "C" int RwCore_00530000();
 extern "C" int RwCore_00530010();
 extern "C" int RwCore_00530050();
@@ -7439,6 +7439,64 @@ extern "C" __declspec(naked) int RwCoreLift_00532b80(void) {
         fstp dword ptr [ebx + 0x14]              // 00532f8e
         pop ebx                                  // 00532f91
         ret                                      // 00532f92
+    }
+}
+
+// HAND-LIFT 0x00533420 RwCoreLift_00533420  (49 instructions, verbatim from the anchored disassembly; lift_rwcore.py)
+extern "C" __declspec(naked) int RwCoreLift_00533420(void) {
+    __asm {
+        push ebx                                 // 00533420
+        push ebp                                 // 00533421
+        mov ebp, dword ptr [esp + 0xc]           // 00533422
+        push esi                                 // 00533426
+        push edi                                 // 00533427
+        xor edi, edi                             // 00533428
+        mov eax, dword ptr [ebp + 4]             // 0053342a
+        mov esi, dword ptr [ebp + 0x10]          // 0053342d
+        test eax, eax                            // 00533430
+        mov dword ptr [esp + 0x14], esi          // 00533432
+        jle L_53347a                             // 00533436
+        mov ebx, dword ptr [esp + 0x18]          // 00533438
+    L_53343c:
+        lea eax, [esi + 4]                       // 0053343c
+        push 0x20                                // 0053343f
+        push eax                                 // 00533441
+        push ebx                                 // 00533442
+        call RwCore_004cc6e0                    // 00533443
+        add esp, 0xc                             // 00533448
+        test eax, eax                            // 0053344b
+        je L_533484                              // 0053344d
+        mov ecx, dword ptr [esi]                 // 0053344f
+        mov eax, dword ptr [esp + 0x14]          // 00533451
+        lea edx, [esp + 0x18]                    // 00533455
+        push 4                                   // 00533459
+        sub ecx, eax                             // 0053345b
+        push edx                                 // 0053345d
+        push ebx                                 // 0053345e
+        mov dword ptr [esp + 0x24], ecx          // 0053345f
+        call RwCore_004cc770                    // 00533463
+        add esp, 0xc                             // 00533468
+        test eax, eax                            // 0053346b
+        je L_533484                              // 0053346d
+        mov eax, dword ptr [ebp + 4]             // 0053346f
+        inc edi                                  // 00533472
+        add esi, 0x24                            // 00533473
+        cmp edi, eax                             // 00533476
+        jl L_53343c                              // 00533478
+    L_53347a:
+        pop edi                                  // 0053347a
+        pop esi                                  // 0053347b
+        pop ebp                                  // 0053347c
+        mov eax, 1                               // 0053347d
+        pop ebx                                  // 00533482
+        ret                                      // 00533483
+    L_533484:
+        pop edi                                  // 00533484
+        pop esi                                  // 00533485
+        pop ebp                                  // 00533486
+        xor eax, eax                             // 00533487
+        pop ebx                                  // 00533489
+        ret                                      // 0053348a
     }
 }
 
