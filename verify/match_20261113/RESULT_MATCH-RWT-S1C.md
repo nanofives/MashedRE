@@ -98,3 +98,22 @@ py -3.12 re/tools/c4_reclass.py batch --tsv re/promotions/MATCH-RWT-S1C.tsv     
 - `re/match/rwl01/004cb330.c`, `re/match/s20/004d40d0.c`: new bodies, a MATCH-RWT-S1C note above the preamble.
 - `re/promotions/MATCH-RWT-S1C.tsv`.
 - `verify/match_20261113/MATCH-RWT-S1C_probes/`: probe sources (264 KB, `.c` only).
+
+# Hand merge (run 44, 2026-11-13)
+
+orch/MATCH-RWT-S1B @ 3c7ace6d7 (S1B after its own hand merge of orch/integration) was merged into this branch with
+`git -c merge.autoStash=false` (merge commit 92e269ff2). Conflict: `re/match/s20/004d40d0.c`. MATCH-RWT-S1 (now on
+integration) and this row each reached 100% on 0x004d40d0 with different bodies (S1: one-line `t = job->visitor->vt`;
+S1C: locals `v` and `t`). The S1C body was kept, and the header keeps both notes (the S1 paragraph merged in with no
+conflict). 0x004d40d0 is already C4 on integration (MATCH-RWT-S1), so the dry run skips it. Checks after the merge:
+
+```
+match.py --bytes re/match/s20/004d40d0.c   100.0%  46/46 ins  159 B, 0 differing bytes  BYTE-IDENTICAL  tc=ddk
+relocheck.py re/match/s20/004d40d0.c       OK checked=14 unchecked=0
+match.py --bytes re/match/rwl01/004cb330.c 100.0% 114/114 ins 344 B, 0 differing bytes  BYTE-IDENTICAL  tc=ddk
+relocheck.py re/match/rwl01/004cb330.c     OK checked=16 unchecked=0
+match.py --bytes re/match/s20/004cb4c0.c   100.0%  92/92 ins  320 B, 0 differing bytes  BYTE-IDENTICAL  tc=ddk
+relocheck.py re/match/s20/004cb4c0.c       OK checked=25 unchecked=0
+c4_reclass.py batch --tsv re/promotions/MATCH-RWT-S1C.tsv (dry run)
+  batch: 1 pass, 0 refused, 1 skipped (already C4), 2 rows  [by route: match=1]
+```
