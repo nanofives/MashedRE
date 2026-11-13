@@ -30,7 +30,7 @@
 // hand pieces
 #define FUN_00496e40 PortTop_Piece_00496e40                  // piece 1: data wedge, boot chain, DirectInput
 #define FUN_00495350 PortTop_Piece_00495350                  // piece 2: dsound.dll guard, boot movies
-#define FUN_004669b0 PortTop_Piece_004669b0                  // piece 3: exe audio, permdict.rws, menu music
+#define FUN_004669b0 PortTop_AudioInit_004669b0              // PORT-TOP-4669B0: matched body under MASHED_OT_AUDIOINIT=1 (Match/PortTop_004669b0.cpp), else piece 3: exe audio, permdict.rws, menu music
 #define FUN_00403640 PortTop_Piece_00403640                  // piece 4: texture upload, B15 bridge, B16 thunks
 #define FUN_00428390 PortTop_Piece_00428390                  // piece 5: frontend assets
 // piz file system on the exe's piz reader
