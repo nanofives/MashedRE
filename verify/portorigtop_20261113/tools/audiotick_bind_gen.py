@@ -22,7 +22,7 @@ with open('re/match/PROVISIONAL.tsv', encoding='utf-8') as f:
             prov[r[0][2:].lower()] = r
 # PORT-TOP-AUDIO-RWA: L-126 provisional bodies bind on the knob path only for the rvas named here (kept narrow so the
 # closure grows one reached stop at a time); c4=frida-replay rows (L-128) bind from their one re/match source.
-PROV_BIND = {'005a6ea0', '005a6f30'}
+PROV_BIND = {'005a6ea0', '005a6f30', '004627f0', '005aa0c0'}   # 004627f0 + its reached callee 005aa0c0: PORT-TOP-AUDIO-HWINIT-4627F0
 def msrc(rva):
     r = rows.get(rva)
     if not r: return None, None
@@ -85,8 +85,13 @@ FORCE = {"00466b50", "0045d3f0", "0045d430"}
 # PORT-TOP-AUDIO-RWA: re-runs regenerate every wrapper this generator wrote before (the previous plan.json 'bind' rows),
 # so a callee that moved from stop to bind is rebound in all its callers instead of the old wrapper being reused.
 _pp = os.path.join(os.path.dirname(idxp), 'plan.json')
+OLD_PLAN = set()
 if os.path.exists(_pp):
+    OLD_PLAN = set(json.load(open(_pp)))
     FORCE |= {k for k, v in json.load(open(_pp)).items() if v and v[0] == 'bind'}
+# PORT-TOP-AUDIO-HWINIT-4627F0: 0x004627f0 is a root (reached from 0x004669b0 under MASHED_OT_AUDIOINIT); wrappers new to
+# its closure say so in their header, the older wrappers keep their text.
+INIT_ROOT = '004627f0'
 # PORT-TOP-AUDIO-RWA: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (re/match/s10/0045cb20.c has the other).
 # The copy sits under #ifndef MATCH_PORT_SHARED_0045c4e0 (DDK object unchanged, match.py --bytes BYTE-IDENTICAL), so the
 # port defines that macro and binds the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
@@ -150,6 +155,11 @@ for rva, p in sorted(plan.items()):
         L += [l for l in keep_hdr if not l.startswith('// RVA-LINT')]
         L.append('// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops')
         L.append('// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).')
+    elif rva not in OLD_PLAN:
+        L.append('// PORT-TOP-AUDIO-HWINIT-4627F0 (2026-11-13): exe-only port body of rva 0x%s = %s' % (rva, src))
+        L.append('// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOINIT' % ev)
+        L.append('// through the closure of 0x%s (sound engine HW init, called by 0x004669b0). Callees bind to exe bodies by name;' % INIT_ROOT)
+        L.append('// a callee with no matched or admitted body is a named stop (Match/PortTop_AudioStops.cpp).')
     else:
         L.append('// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): exe-only port body of rva 0x%s = %s' % (rva, src))
         L.append('// (%s). Reached on the exe only under MASHED_ORIG_TOP + MASHED_OT_AUDIOTICK' % ev)

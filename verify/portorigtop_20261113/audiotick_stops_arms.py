@@ -8,6 +8,7 @@ WT = os.path.normpath(os.path.join(HERE, '..', '..'))
 STEP = 'PORT-TOP-AUDIOTICK-STOPS'
 ROOT = 'D:/MashedWT/PORT-TOP-AUDIOTICK-STOPS_root'   # the handoff's private root (same branch)
 STEP = os.environ.get('ARMS_STEP', STEP)   # PORT-TOP-AUDIO-RWA re-runs write to its own data folder
+ROOT = os.environ.get('ARMS_ROOT', ROOT)   # PORT-TOP-AUDIO-HWINIT-4627F0: its own private root
 DDK = os.path.join(WT, 'mashedmod', 'build', 'ddkobj', 'mashed_re_ddk.exe')
 COMMON = ['MASHED_WIN_POS=primary-bl', 'MASHED_DET_FRAMES=600', 'MASHED_ORIG_TOP=1', 'MASHED_OT_TIMER=1']
 ARMS = [
