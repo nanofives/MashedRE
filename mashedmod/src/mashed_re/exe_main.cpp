@@ -3557,21 +3557,31 @@ static float DeriveMenuMeasureDiv() {
 
 // The exe's binding for the shared menu-width body (Match/MatchS06_004282a0.cpp, the byte-matched
 // source re/match/s06/004282a0.c since MATCH-S06-FU; Frontend/MenuMeasure.h). Plain cdecl C functions
-// standing in the body's three callee slots, and the addresses of its two globals:
-//   FUN_00427780 slot (MenuBa_ExeLookup): the message id itself; the text is read by the remap slot.
-//   FUN_004277a0 slot (MenuBa_ExeRemap): GetMenuMessage over g_msg_dat, which applies the
-//           control-code remap; an unknown id leaves an empty string.
+// standing in two of the body's callee slots (the third, FUN_004277a0, is the S06 body itself):
+//   FUN_00427780 slot (MenuBa_ExeLookup): the id's record in g_msg_dat, [u16 len][len * u16 chars],
+//           the shape FUN_00427780 returns from the table at 0x0066d828 (base + *(u32*)(base + id*4)).
+//           An id outside the table, or a record past its end, gives a zero-length record (the
+//           previous GetMenuMessage binding gave an empty string there too).
 //   FUN_005554d0 slot (MenuBa_ExeMeasure) over g_font: sum over 16-bit codes
 //           of (rec+0x00 width + [ctx+0x0c] tracking) for codes with a glyph (ASCII LUT ctx+0x24
 //           below 0x80, ext table ctx+0x12c for code-[ctx+0x124] < [ctx+0x128], no advance
 //           otherwise), times the size argument (0x0055559f). The font argument is unused.
-//   Font cell: a zero dword. Div cell: [0x0067d830] as derived by DeriveMenuMeasureDiv.
+//   Globals (DDKOBJ-CELLS, 2026-11-12): the body reads [0x0067d838] and [0x0067d830] at their
+//           original addresses (the exe's arena, BSS in the original). [0x0067d838] stays zero on
+//           the hand path. [0x0067d830] is stored by MeasureMenuMessage (DeriveMenuMeasureDiv) when
+//           it is zero. Before, both were exe-private cells, which the object build cannot bind.
 extern "C" short* MenuBa_ExeLookup(int id) {
-    return reinterpret_cast<short*>(static_cast<std::intptr_t>(id));
-}
-extern "C" void MenuBa_ExeRemap(short* src, short* dst) {
-    GetMenuMessage(static_cast<int>(reinterpret_cast<std::intptr_t>(src)),
-                   reinterpret_cast<wchar_t*>(dst), 0x200);
+    static short s_empty[2] = { 0, 0 };
+    if (!g_msg_dat || id < 0) return s_empty;
+    const std::uint32_t off_pos = static_cast<std::uint32_t>(id) * 4u;
+    if (off_pos + 4 > g_msg_dat_len) return s_empty;
+    std::uint32_t off;
+    std::memcpy(&off, g_msg_dat + off_pos, 4);
+    if (off + 2 > g_msg_dat_len || (off & 1u)) return s_empty;
+    std::uint16_t len;
+    std::memcpy(&len, g_msg_dat + off, 2);
+    if (off + 2 + static_cast<std::uint32_t>(len) * 2u > g_msg_dat_len) return s_empty;
+    return reinterpret_cast<short*>(g_msg_dat + off);
 }
 static float __cdecl ExeMenuMeasureGlyphs(const void* /*font*/, const wchar_t* buf, float size) {
     const float trk = g_font.tracking();
@@ -3585,14 +3595,10 @@ static float __cdecl ExeMenuMeasureGlyphs(const void* /*font*/, const wchar_t* b
     }
     return sum * size;                                    // 0x0055559f
 }
-static const std::uint32_t s_menuMeasureFont = 0;
-static float s_menuMeasureDiv = 0.f;
 extern "C" float MenuBa_ExeMeasure(int font, short* text, float size) {
     return ExeMenuMeasureGlyphs(reinterpret_cast<const void*>(static_cast<std::intptr_t>(font)),
                                 reinterpret_cast<const wchar_t*>(text), size);
 }
-extern "C" const void*  g_menuBa_FontCell = &s_menuMeasureFont;
-extern "C" const float* g_menuBa_DivCell  = &s_menuMeasureDiv;
 
 // The standalone's caller of the shared body. The original runs it at x87 PC_24 (every return
 // the 2026-10-12 probe read is float-exact), so the call is scoped to PC_24 and the x87 body
@@ -3600,8 +3606,8 @@ extern "C" const float* g_menuBa_DivCell  = &s_menuMeasureDiv;
 // return for ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (arrow_fix/measure_table.txt).
 float MeasureMenuMessage(int id, float scale) {
     if (!g_font.ready()) return 0.f;
-    static const bool s_div = (s_menuMeasureDiv = DeriveMenuMeasureDiv(), true);
-    (void)s_div;
+    float& div = *reinterpret_cast<float*>(static_cast<std::uintptr_t>(0x0067d830u));   // DDKOBJ-CELLS
+    if (div == 0.f) div = DeriveMenuMeasureDiv();
     unsigned int cw = 0, t = 0;
     _controlfp_s(&cw, 0, 0);
     _controlfp_s(&t, _PC_24, _MCW_PC);
