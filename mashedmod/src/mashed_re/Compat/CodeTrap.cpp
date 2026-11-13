@@ -139,11 +139,11 @@ struct Site { char form[48]; std::uint32_t slot; bool hasSlot; bool decoded; };
 // when its slot (or register) still holds the target, so overlapping byte patterns cannot name a wrong slot.
 Site DecodeCall(const CONTEXT* c, std::uintptr_t ret, std::uint32_t target) {
     Site s{};
-    unsigned char b[16];
-    if (ret < 16 || !Readable(ret - 16, 16)) return s;
-    std::memcpy(b, reinterpret_cast<const void*>(ret - 16), 16);
-    auto at = [&](int back) { return b[16 - back]; };   // at(1) = the byte just before ret
-    auto d32 = [&](int back) { std::int32_t v; std::memcpy(&v, &b[16 - back], 4); return v; };
+    unsigned char b[32];
+    if (ret < 32 || !Readable(ret - 32, 32)) return s;
+    std::memcpy(b, reinterpret_cast<const void*>(ret - 32), 32);
+    auto at = [&](int back) { return b[32 - back]; };   // at(1) = the byte just before ret
+    auto d32 = [&](int back) { std::int32_t v; std::memcpy(&v, &b[32 - back], 4); return v; };
     auto ok = [&](std::uint32_t slot) { std::uint32_t v = 0; return ReadU32(slot, &v) && v == target; };
     // E8 rel32
     if (at(5) == 0xE8 && static_cast<std::uint32_t>(ret + d32(4)) == target) {
@@ -197,20 +197,64 @@ Site DecodeCall(const CONTEXT* c, std::uintptr_t ret, std::uint32_t target) {
         const unsigned r = at(1) & 7u;
         s.decoded = true;
         std::snprintf(s.form, sizeof(s.form), "call %s", RegName(r));
-        if (r == 0 && at(7) == 0xA1 && ok(static_cast<std::uint32_t>(d32(6)))) {                 // mov eax,[abs32]
-            s.slot = static_cast<std::uint32_t>(d32(6)); s.hasSlot = true;
-            std::snprintf(s.form, sizeof(s.form), "mov eax,[abs32]; call eax");
-        } else if (at(8) == 0x8B && at(7) == (0x05 | (r << 3)) && ok(static_cast<std::uint32_t>(d32(6)))) {  // mov r,[abs32]
-            s.slot = static_cast<std::uint32_t>(d32(6)); s.hasSlot = true;
-            std::snprintf(s.form, sizeof(s.form), "mov %s,[abs32]; call %s", RegName(r), RegName(r));
-        } else if (at(8) == 0x8B && (at(7) & 0xF8) == (0x80 | (r << 3)) && (at(7) & 7) != 4 && (at(7) & 7) != r &&
-                   ok(Reg(c, at(7)) + static_cast<std::uint32_t>(d32(6)))) {                         // mov r,[b+disp32]
-            s.slot = Reg(c, at(7)) + static_cast<std::uint32_t>(d32(6)); s.hasSlot = true;
-            std::snprintf(s.form, sizeof(s.form), "mov %s,[%s+disp32]; call %s", RegName(r), RegName(at(7)), RegName(r));
-        } else if (at(5) == 0x8B && (at(4) & 0xF8) == (0x40 | (r << 3)) && (at(4) & 7) != 4 && (at(4) & 7) != r &&
-                   ok(Reg(c, at(4)) + static_cast<std::uint32_t>(static_cast<std::int8_t>(at(3))))) {  // mov r,[b+disp8]
-            s.slot = Reg(c, at(4)) + static_cast<std::uint32_t>(static_cast<std::int8_t>(at(3))); s.hasSlot = true;
-            std::snprintf(s.form, sizeof(s.form), "mov %s,[%s+disp8]; call %s", RegName(r), RegName(at(4)), RegName(r));
+        // The load of r ends `e` bytes before ret; `test r,r` (85 /r) and a short jcc between it and the call are skipped.
+        int e = 2;
+        if (at(e + 2) >= 0x70 && at(e + 2) <= 0x7F) e += 2;
+        if (at(e + 2) == 0x85 && at(e + 1) == (0xC0 | (r << 3) | r)) e += 2;
+        const char* skip = e > 2 ? "test/jcc; " : "";
+        // mov r,[abs32] ending at back-offset `end`: A1 imm32 (eax only) or 8B 05+r*8 imm32. Returns the length or 0.
+        auto absLoad = [&](int end, std::uint32_t* abs) -> int {
+            if (end + 5 <= 32 && r == 0 && at(end + 5) == 0xA1) { *abs = static_cast<std::uint32_t>(d32(end + 4)); return 5; }
+            if (end + 6 <= 32 && at(end + 6) == 0x8B && at(end + 5) == (0x05 | (r << 3))) {
+                *abs = static_cast<std::uint32_t>(d32(end + 4)); return 6;
+            }
+            return 0;
+        };
+        // Register x at the load: unchanged since then unless x == r; r is recovered when the instruction before the
+        // load is mov r,[abs32] (the dword is read now, so it must not have changed in between).
+        bool regOk = true;
+        auto regAt = [&](unsigned x, int loadEnd) -> std::uint32_t {
+            if ((x & 7u) != r) return Reg(c, x);
+            std::uint32_t abs = 0, v = 0;
+            if (absLoad(loadEnd, &abs) && ReadU32(abs, &v)) return v;
+            regOk = false;
+            return 0;
+        };
+        std::uint32_t abs = 0;
+        std::uint32_t slot = 0;
+        bool have = false;
+        const char* lf = "";
+        if (absLoad(e, &abs) && ok(abs)) {
+            slot = abs; have = true; lf = "mov r,[abs32]";
+        } else {
+            for (int len = 2; len <= 7 && !have; ++len) {   // 8B modrm [sib] [disp]
+                const int st = e + len;                         // back-offset of the 8B byte
+                if (st > 32 || at(st) != 0x8B || ((at(st - 1) >> 3) & 7u) != r) continue;
+                const unsigned char m = at(st - 1);
+                const unsigned mod = m >> 6, rm = m & 7u;
+                const bool sib = rm == 4 && mod != 3;
+                const int want = 2 + (sib ? 1 : 0) + (mod == 1 ? 1 : mod == 2 ? 4 : (mod == 0 && !sib && rm == 5) ? 4 : 0);
+                if (mod == 3 || want != len || (mod == 0 && !sib && rm == 5)) continue;
+                std::int32_t disp = mod == 1 ? static_cast<std::int8_t>(at(e + 1)) : mod == 2 ? d32(e + 4) : 0;
+                regOk = true;
+                std::uint32_t a = static_cast<std::uint32_t>(disp);
+                if (sib) {
+                    const unsigned char sb = at(st - 2);
+                    const unsigned scale = 1u << (sb >> 6), idx = (sb >> 3) & 7u, base = sb & 7u;
+                    if (mod == 0 && base == 5) continue;   // [idx*s+disp32] form not handled
+                    if (idx != 4) a += regAt(idx, st) * scale;
+                    a += regAt(base, st);
+                    lf = "mov r,[sib]";
+                } else {
+                    a += regAt(rm, st);
+                    lf = "mov r,[reg+disp]";
+                }
+                if (regOk && ok(a)) { slot = a; have = true; }
+            }
+        }
+        if (have && ok(slot)) {
+            s.slot = slot; s.hasSlot = true;
+            std::snprintf(s.form, sizeof(s.form), "%s; %scall %s", lf, skip, RegName(r));
         }
         return s;
     }
