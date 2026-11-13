@@ -23,6 +23,16 @@ branch it does not follow, a return or an indirect call. This verdict never beco
 
 `NOT-PROVEN <kind>: <detail>` names the first difference, or the first construct, that the rules below do not cover.
 
+`NOT-PROVEN budget: <detail>` (EQUIV-5441F0-TIMEOUT, 2026-11-13) means the proof ran out of work budget before a
+verdict: `--max-steps` (default 250000 instructions executed symbolically per proof run) or `--max-terms` (default
+1000000 distinct terms per function). The detail names the side and instruction where it stopped, the region pair
+last entered, the pair visits and the term count. It is a refusal, never evidence of a difference. The admitted rows
+use at most 3792 steps and 2670 terms (2026-11-13). `--stats` prints both counts per function. Separately, every
+rendered text (call texts, the x87 rule's instruction texts, details) expands at most `--show-budget` term nodes
+(default 100000); past it a term renders as `<#id>`, its hash-cons id, so the text stays a function of the term.
+Before this, `show()` re-entered at depth 0 through every tuple argument (`repr` -> `T.__repr__`), which is
+exponential on a shared term DAG: 0x005441f0 spent 50 min in one `call` text over 897 terms.
+
 ## 2. How the proof works (the part every class relies on)
 
 - **Terms.** Every register, flag, stack slot, memory state and x87 state is a hash-consed term over the shared
@@ -258,7 +268,11 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
   (`sahf` crosses `fnstsw ax`), `neg_x87_alias` (store to [G3] crosses `fstp [G3]`), `neg_x87_eflags`
   (`xor` crosses `fcomip`), `neg_x87_slot` (argument-slot load crosses `fstp` into that slot), all
   `x87-motion`, and `neg_x87_call` (load crosses a call in an x87 region, `x87-region`);
-- the six reference rows. `0x0048e820` runs on a frozen copy of the pre-EQUIV-FU-48E820 source
+- the seven reference rows (`0x005441f0`, frozen copy `equiv_tests/refs/005441f0_held.c`: must end NOT-PROVEN, it
+  hung before EQUIV-5441F0-TIMEOUT);
+- two budget checks: `show_budget` (64 levels of a doubled tuple render under the budget, a small term renders as
+  before) and `step_budget` (`reg_call` with a 3-step budget ends `NOT-PROVEN budget` with its place);
+- about the reference rows: `0x0048e820` runs on a frozen copy of the pre-EQUIV-FU-48E820 source
   (`equiv_tests/refs/0048e820_held.c`), because the live source is byte-identical since 58cc241be and no longer
   shows the EDI defect the row tests.
 
