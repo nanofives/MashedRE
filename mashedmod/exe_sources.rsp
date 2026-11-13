@@ -432,6 +432,7 @@
 "Match\PortTop_00493390.cpp"
 "Match\PortTop_00497310.cpp"
 "Match\PortTop_Replay.cpp"
+"Match\PortTop_ReplayTrace.cpp"
 "Match\PortTop_0045d3f0.cpp"
 "Match\PortTop_004669b0.cpp"
 "Match\PortTop_0045d430.cpp"

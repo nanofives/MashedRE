@@ -55,6 +55,12 @@ unsigned char __cdecl PortTop_Bound_00497310(int player, int action);   // 0x004
 extern "C" int RwCore_00534870(void);                              // 0x00534870, RwCore/RwCore_00534870.cpp (the same byte-matched source re/match/rwl03/00534870.c; one body per target, merge with RWC-CORE-RUN)
 void          __cdecl CarSlotStateSet(int slot, unsigned int state);    // 0x0040e480, Match/MatchS02_0040e480.cpp
 unsigned char __cdecl PortTop_Replay_00497310(int player, int action);  // below
+// RO-EXE-TICK-TRACE (Match/PortTop_ReplayTrace.cpp): MASHED_REPLAY_TRACE, read only while this knob is on
+int  ReplayTrace_Init(const unsigned* const* ring);
+void ReplayTrace_Tick(unsigned tick, unsigned n, unsigned long long q, unsigned t);
+void ReplayTrace_Warp(unsigned tick, unsigned n, unsigned phaseBefore, int before);
+void ReplayTrace_Anchor(unsigned tick, unsigned n);
+void ReplayTrace_Finish(void);
 }
 
 namespace {
@@ -263,6 +269,7 @@ void DoWarp() {
         RLog("warp REFUSED at tick %u: DAT_00771968 = %u, not the menu (1)", g_tick, ph);
         return;
     }
+    ReplayTrace_Warp(g_tick, g_wrapCalls, ph, 1);   // checkpoint k 100, before the warp's writes
     const Cfg& c = g_c;
     MemI(0x0063ba7cu) = c.track; MemI(0x0067f17cu) = c.track; MemI(0x0067e9fcu) = c.mode;
     MemI(0x007f0fd0u) = c.rule;  MemI(0x0067ea98u) = c.car;   MemI(0x0067ea64u) = c.team;
@@ -276,12 +283,14 @@ void DoWarp() {
     PinNorm("warp", 0);
     if (c.warpPhase >= 0) *reinterpret_cast<volatile unsigned char*>(0x00771968u) = static_cast<unsigned char>(c.warpPhase);
     g_warped = true; g_warpAt = g_tick; g_active = 1;
+    ReplayTrace_Warp(g_tick, g_wrapCalls, ph, 0);
     RLog("warp at tick %u: track %d mode %d rule %d car %d team %d cars %d, CarSlotStateSet x4, DAT_00771968 %u -> %d",
          g_tick, c.track, c.mode, c.rule, c.car, c.team, c.cars, ph, c.warpPhase);
 }
 void CheckAnchor() {
     if (*reinterpret_cast<volatile unsigned char*>(0x00771968u) != 3) return;
     g_anchored = true; g_anchorTick = g_tick;
+    ReplayTrace_Anchor(g_tick, g_wrapCalls);
     PinRngs("anchor");
     PinNorm("anchor", 1);
     // rows at anchor + 0 apply now (detorig.js schedules dn = 0 at the anchor's own N); later rows at the tick start
@@ -497,6 +506,7 @@ void PortTop_Replay_00493390(void) {
     const unsigned long long q = (g_warped && g_c.warpClock && g_tick > g_warpAt)
         ? g_c.q0 + static_cast<unsigned long long>(g_c.warpClock) * g_c.qtick + static_cast<unsigned long long>(g_tick - g_warpAt) * g_c.qtick
         : g_c.q0 + static_cast<unsigned long long>(g_bootCalls) * g_c.bootQstep + static_cast<unsigned long long>(g_tick) * g_c.qtick;
+    ReplayTrace_Tick(g_tick, g_wrapCalls, g_Q, g_T);   // per-tick record, before the body (detorig.js onEnter order)
     PortTop_Bound_00493390();
     const unsigned want = Scale3Mhz(q), got = MemU(0x007f1030u);
     ++g_tickChecks;
@@ -532,10 +542,12 @@ void Replay_Init(void) {
          static_cast<unsigned>(g_c.norm.size()), g_c.normAt.c_str(), g_c.rawNoDevice ? "no device" : "device");
     g_on = 1;
     InitSelfTest();
+    ReplayTrace_Init(reinterpret_cast<const unsigned* const*>(&g_rw));
 }
 
 void Replay_Summary(unsigned timerCalls480) {
     if (!g_on) return;
+    ReplayTrace_Finish();
     if (timerCalls480 != g_tick) Check(false, "ticks = 0x00493480 calls", g_tick, timerCalls480);
     RLog("self-test %s (%u of %u checks failed): ticks %u (0x00493480 calls %u), per-tick clock checks %u failed %u, "
          "wrapped QPC reads %u (boot %u), passed through %u, T %u; warp %s at tick %u (phase before %u), anchor %s at "
