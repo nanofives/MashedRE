@@ -7,18 +7,15 @@
 extern "C" {
 void PortTop_AudioCalleeStop(unsigned rva, unsigned caller, void* ret);   // Match/PortTop_00492370.cpp
 void PortTop_AStop_004075a0(void) { PortTop_AudioCalleeStop(0x004075a0u, 0u, _ReturnAddress()); }
+void PortTop_AStop_0042b8d0(void) { PortTop_AudioCalleeStop(0x0042b8d0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0042b900(void) { PortTop_AudioCalleeStop(0x0042b900u, 0u, _ReturnAddress()); }
-void PortTop_AStop_0042b930(void) { PortTop_AudioCalleeStop(0x0042b930u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0045caf0(void) { PortTop_AudioCalleeStop(0x0045caf0u, 0u, _ReturnAddress()); }
-void PortTop_AStop_0045cbe0(void) { PortTop_AudioCalleeStop(0x0045cbe0u, 0u, _ReturnAddress()); }
-void PortTop_AStop_0045cd30(void) { PortTop_AudioCalleeStop(0x0045cd30u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0045d7a0(void) { PortTop_AudioCalleeStop(0x0045d7a0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0045dd60(void) { PortTop_AudioCalleeStop(0x0045dd60u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0045e990(void) { PortTop_AudioCalleeStop(0x0045e990u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0045efe0(void) { PortTop_AudioCalleeStop(0x0045efe0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_00461e90(void) { PortTop_AudioCalleeStop(0x00461e90u, 0u, _ReturnAddress()); }
 void PortTop_AStop_00463640(void) { PortTop_AudioCalleeStop(0x00463640u, 0u, _ReturnAddress()); }
-void PortTop_AStop_004647f0(void) { PortTop_AudioCalleeStop(0x004647f0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_00464ca0(void) { PortTop_AudioCalleeStop(0x00464ca0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0046c7b0(void) { PortTop_AudioCalleeStop(0x0046c7b0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0046cbb0(void) { PortTop_AudioCalleeStop(0x0046cbb0u, 0u, _ReturnAddress()); }
@@ -27,13 +24,9 @@ void PortTop_AStop_004a34b0(void) { PortTop_AudioCalleeStop(0x004a34b0u, 0u, _Re
 void PortTop_AStop_004c3ac0(void) { PortTop_AudioCalleeStop(0x004c3ac0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005459c0(void) { PortTop_AudioCalleeStop(0x005459c0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_0057c210(void) { PortTop_AudioCalleeStop(0x0057c210u, 0u, _ReturnAddress()); }
-void PortTop_AStop_005a6d60(void) { PortTop_AudioCalleeStop(0x005a6d60u, 0u, _ReturnAddress()); }
-void PortTop_AStop_005a6ea0(void) { PortTop_AudioCalleeStop(0x005a6ea0u, 0u, _ReturnAddress()); }
-void PortTop_AStop_005a6f30(void) { PortTop_AudioCalleeStop(0x005a6f30u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005a75b0(void) { PortTop_AudioCalleeStop(0x005a75b0u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005a9f60(void) { PortTop_AudioCalleeStop(0x005a9f60u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005aa560(void) { PortTop_AudioCalleeStop(0x005aa560u, 0u, _ReturnAddress()); }
-void PortTop_AStop_005aab70(void) { PortTop_AudioCalleeStop(0x005aab70u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005aac20(void) { PortTop_AudioCalleeStop(0x005aac20u, 0u, _ReturnAddress()); }
 void PortTop_AStop_005b0cf0(void) { PortTop_AudioCalleeStop(0x005b0cf0u, 0u, _ReturnAddress()); }
 }

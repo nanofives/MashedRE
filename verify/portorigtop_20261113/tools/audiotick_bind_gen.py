@@ -15,9 +15,23 @@ with open('re/match/ADMITTED.tsv', encoding='utf-8') as f:
     for r in csv.reader((l for l in f if not l.startswith('#')), delimiter='\t'):
         if r and r[0].startswith('0x'):
             adm[r[0][2:].lower()] = r
+prov = {}
+with open('re/match/PROVISIONAL.tsv', encoding='utf-8') as f:
+    for r in csv.reader((l for l in f if not l.startswith('#')), delimiter='\t'):
+        if r and r[0].startswith('0x') and len(r) > 10 and r[10] == 'provisional':
+            prov[r[0][2:].lower()] = r
+# PORT-TOP-AUDIO-RWA: L-126 provisional bodies bind on the knob path only for the rvas named here (kept narrow so the
+# closure grows one reached stop at a time); c4=frida-replay rows (L-128) bind from their one re/match source.
+PROV_BIND = {'005a6ea0', '005a6f30'}
 def msrc(rva):
     r = rows.get(rva)
     if not r: return None, None
+    if r[3] == 'C4' and 'c4=frida-replay' in r[8] and 'c4=match' not in r[8]:
+        hits = glob.glob('re/match/*/%s.c' % rva)
+        if len(hits) == 1:
+            return hits[0].replace(os.sep, '/'), 'replay'
+    if rva in PROV_BIND and rva in prov and os.path.exists(prov[rva][2]):
+        return prov[rva][2], 'provisional'
     if 'c4=match' in r[8] and ('BYTE-IDENTICAL' in r[8] or 'match evidence: identical' in r[8] or ('100.0%' in r[8] and 'relocheck OK' in r[8])):
         for m in re.finditer(r'(re/match/[^\s;,()]+?\.c)', r[8]):
             if os.path.exists(m.group(1)):
@@ -65,13 +79,25 @@ EXTRA_PRE = {
     '00407600': ['// MASHED_RE_PORT drops the source extern block (same as Match/MatchS01.cpp); the table is read at its original address.',
                  '#define MASHED_RE_PORT 1', '#define DAT_00639d80 ((Rec639d80 *)0x00639d80u)'],
 }
+EXTRA_PRE['005ab040'] = ['#pragma comment(lib, "winmm.lib")   // timeGetTime (the original imports it from WINMM.dll)']
 EXTRA_IN = {'00407600': ['char *FUN_0047d150(int h);   // declared here: the source declares it only outside MASHED_RE_PORT']}
 FORCE = {"00466b50", "0045d3f0", "0045d430"}
-# re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (re/match/s10/0045cb20.c has the other): two exe bodies of one
-# rva that the ORIGTOP-ONLY lint class cannot take (both in marked TUs). Kept a named stop.
-STOP_FORCE = {"0045cbe0"}
+# PORT-TOP-AUDIO-RWA: re-runs regenerate every wrapper this generator wrote before (the previous plan.json 'bind' rows),
+# so a callee that moved from stop to bind is rebound in all its callers instead of the old wrapper being reused.
+_pp = os.path.join(os.path.dirname(idxp), 'plan.json')
+if os.path.exists(_pp):
+    FORCE |= {k for k, v in json.load(open(_pp)).items() if v and v[0] == 'bind'}
+# PORT-TOP-AUDIO-RWA: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (re/match/s10/0045cb20.c has the other).
+# The copy sits under #ifndef MATCH_PORT_SHARED_0045c4e0 (DDK object unchanged, match.py --bytes BYTE-IDENTICAL), so the
+# port defines that macro and binds the call to the one exe copy in the 0045cb20 TU (one exe body per rva).
+STOP_FORCE = set()
+LOCAL_SHARED = {("0045cbe0", "0045c4e0"): "PortTop_Local_0045cb20_0045c4e0"}
+EXTRA_PRE["0045cbe0"] = ["#define MATCH_PORT_SHARED_0045c4e0 1   // the exe copy of 0x0045c4e0 is the one in Match/PortTop_0045cb20.cpp"]
 # re/match/s10/0045c6b0.c carries 0x0045c640 (cast-only text difference from re/match/s10/0045c640.c): that copy is the exe body.
-ALIAS = {"0045c640": ("PortTop_Bound_0045c640", "Match/PortTop_0045c6b0.cpp")}
+ALIAS = {"0045c640": ("PortTop_Bound_0045c640", "Match/PortTop_0045c6b0.cpp"), "004671a0": ("RwCore_004671a0", "RwCore/RwCore_004671a0.cpp")}
+FORCE -= set(ALIAS)
+# PORT-TOP-AUDIO-RWA: 0x004671a0 reuses the RW core body (RWC-FRAME-492E90, same source re/match/s11/004671a0.c): two
+# ORIGTOP-only exe copies of one rva are not a class the lint takes.
 LOCAL_AS_BOUND = {("0045c6b0", "0045c640")}
 plan = {}   # rva -> ('reuse', sym, file) | ('bind', src, kind, callees, local) | ('stop',)
 q = list(roots)
@@ -116,7 +142,9 @@ for rva, p in sorted(plan.items()):
     r = rows.get(rva)
     m = None
     ev = 'match.py BYTE-IDENTICAL, hooks.csv C4 c4=match' if kind == 'match' else \
-         ('L-126 admitted (re/match/ADMITTED.tsv, %s)' % adm[rva][6] if kind == 'admitted' else kind)
+         ('L-126 admitted (re/match/ADMITTED.tsv, %s)' % adm[rva][6] if kind == 'admitted' else
+          'hooks.csv C4 c4=frida-replay (L-128)' if kind == 'replay' else
+          'L-126 provisional (re/match/PROVISIONAL.tsv), knob path only, not C4' if kind == 'provisional' else kind)
     L = []
     if keep_hdr and rva in ('00466b50', '0045d3f0', '0045d430'):
         L += [l for l in keep_hdr if not l.startswith('// RVA-LINT')]
@@ -137,7 +165,9 @@ for rva, p in sorted(plan.items()):
             note = '   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)'
         L.append('#define FUN_%s %s%s' % (c, sym(c), note))
     for c in local:
-        if (rva, c) in LOCAL_AS_BOUND:
+        if (rva, c) in LOCAL_SHARED:
+            L.append('#define FUN_%s %s   // the one exe copy (Match/PortTop_0045cb20.cpp); this source compiles its copy out' % (c, LOCAL_SHARED[(rva, c)]))
+        elif (rva, c) in LOCAL_AS_BOUND:
             L.append('#define FUN_%s PortTop_Bound_%s   // the exe body of 0x%s: this source carries its only exe copy' % (c, c, c))
         else:
             L.append('#define FUN_%s PortTop_Local_%s_%s   // file-local in this source' % (c, rva, c))

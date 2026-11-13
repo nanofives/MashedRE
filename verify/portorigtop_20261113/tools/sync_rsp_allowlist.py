@@ -25,9 +25,9 @@ for l in seed.splitlines():
     if not k or l.startswith('#') or k in have: continue
     if not k.startswith('ORIGTOP-ONLY '):
         bad.append(l); continue
-    new.append(k + '   # PORT-TOP-AUDIOTICK-STOPS (L-111 (a), L-126), 2026-11-13: the matched body runs only on MASHED_ORIG_TOP + '
+    new.append(k + '   # PORT-TOP-AUDIO-RWA (L-111 (a), L-126), 2026-11-13: the matched / replay-C4 / provisional body runs only on MASHED_ORIG_TOP + '
                'MASHED_OT_AUDIOTICK (audio-tick closure of 0x00466b50 / 0x0045d3f0 / 0x0045d430); deleted at the ORIG_TOP flip. '
-               'Evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIOTICK-STOPS.md.')
+               'Evidence: verify/portorigtop_20261113/RESULT_PORT-TOP-AUDIO-RWA.md.')
 if new:
     if not t.endswith(nl): t += nl
     t += nl.join(new) + nl

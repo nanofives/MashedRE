@@ -6,7 +6,8 @@ import os, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 WT = os.path.normpath(os.path.join(HERE, '..', '..'))
 STEP = 'PORT-TOP-AUDIOTICK-STOPS'
-ROOT = 'D:/MashedWT/%s_root' % STEP
+ROOT = 'D:/MashedWT/PORT-TOP-AUDIOTICK-STOPS_root'   # the handoff's private root (same branch)
+STEP = os.environ.get('ARMS_STEP', STEP)   # PORT-TOP-AUDIO-RWA re-runs write to its own data folder
 DDK = os.path.join(WT, 'mashedmod', 'build', 'ddkobj', 'mashed_re_ddk.exe')
 COMMON = ['MASHED_WIN_POS=primary-bl', 'MASHED_DET_FRAMES=600', 'MASHED_ORIG_TOP=1', 'MASHED_OT_TIMER=1']
 ARMS = [

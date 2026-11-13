@@ -7,7 +7,7 @@
 #define MATCH_PORT 1
 #define FUN_0045daf0 PortTop_Bound_0045daf0
 #define FUN_0046d4a0 PtrCompute881ec8   // exe body (Vehicle/VehicleRecordPtr.cpp)
-#define FUN_005a6d60 PortTop_AStop_005a6d60   // named stop
+#define FUN_005a6d60 PortTop_Bound_005a6d60
 extern "C" {
 #include "../../../../re/match/s10/0045daf0.c"
 }

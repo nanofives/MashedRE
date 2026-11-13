@@ -7,7 +7,7 @@
 #define MATCH_PORT 1
 #define FUN_0045cc50 PortTop_Bound_0045cc50
 #define FUN_0040e350 GetRenderSubMode   // exe body (Match/MatchS02_0040e350.cpp)
-#define FUN_0045cbe0 PortTop_AStop_0045cbe0   // named stop: re/match/s10/0045cbe0.c carries a second copy of 0x0045c4e0 (one exe body per rva)
+#define FUN_0045cbe0 PortTop_Bound_0045cbe0
 extern "C" {
 #include "../../../../re/match/s10/0045cc50.c"
 }

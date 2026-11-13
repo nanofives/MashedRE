@@ -9,6 +9,14 @@
 // no body for them, and a stop makes any change of that gate visible instead of calling into unmapped code.
 // PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops
 // (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).
+// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops
+// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).
+// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops
+// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).
+// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops
+// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).
+// PORT-TOP-AUDIOTICK-STOPS (2026-11-13): callees rebound to matched / admitted exe bodies; the rest stay named stops
+// (PortTop_AStop_<rva>, Match/PortTop_AudioStops.cpp).
 // RVA-LINT: ORIGTOP-ONLY
 #ifdef MASHED_STANDALONE
 #define MATCH_PORT 1
@@ -56,7 +64,7 @@
 #define FUN_004642f0 PortTop_Bound_004642f0
 #define FUN_004644a0 PortTop_Bound_004644a0
 #define FUN_004645c0 PortTop_Bound_004645c0
-#define FUN_004647f0 PortTop_AStop_004647f0   // named stop
+#define FUN_004647f0 PortTop_Bound_004647f0
 #define FUN_004648b0 PortTop_Bound_004648b0
 #define FUN_00464a50 PortTop_Bound_00464a50
 #define FUN_00464ca0 PortTop_AStop_00464ca0   // named stop
