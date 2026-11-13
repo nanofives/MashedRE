@@ -1,7 +1,7 @@
 [1] 0x00496490 returns 1 PASS  1
 [2] 0x00772fbc set PASS
 [3] 0x00496470 clears 0x00772fbc PASS
-[4] header = 19-char ctime + 2 text-mode newlines (CRLF), day zero-padded PASS  Thu Nov 12 22:46:57
+[4] header = 19-char ctime + 2 text-mode newlines (CRLF), day zero-padded PASS  Fri Nov 13 03:01:04
 [5] body = error line then debug line PASS  err line
 dbg 42 xy 1.50
 
