@@ -181,6 +181,7 @@
 #include "Compat/PortStateSeed.h"           // port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out): original file-backed bytes into the pad (PORT-STATE-02, L-99 a)
 #include "Compat/PortTopCodePtr.h"          // PORT-OT-SEED-CODEPTR: code-pointer bindings, MASHED_ORIG_TOP only
 #include "Compat/PortStateImage.h"          // IMG-2-LOADER: whole data image, MASHED_ORIG_TOP + MASHED_PORTSTATE_IMAGE only
+#include "Compat/CodeTrap.h"                // IMG-3-TEXT-TRAP: trap on the original code range, MASHED_ORIG_TOP + MASHED_CODE_TRAP only
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
@@ -9635,6 +9636,7 @@ static void HandTop_Prelude() {
     mashed_re::Compat::PortStateSeed_Log(kLogPath);   // ON only (PORT-STATE-02)
     mashed_re::Compat::PortStateImage_Log(kLogPath);  // IMG-2-LOADER: the lines held since WinMain (knob path only)
     mashed_re::Compat::PortTopCodePtr_Log(kLogPath);  // PORT-OT-SEED-CODEPTR: the lines held since WinMain
+    mashed_re::Compat::CodeTrap_Log(kLogPath);        // IMG-3-TEXT-TRAP: the lines held since WinMain (knob path only)
 
     // Scripted nav-demo verification harness (in-process input only). Enabled
     // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.
@@ -10653,6 +10655,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         {
             // PORT-OT-SEED-CODEPTR: the code-pointer entries the seed leaves out, bound to exe bodies or stop thunks.
             mashed_re::Compat::PortTopCodePtr_Apply(kLogPath);
+            // [IMG-3-TEXT-TRAP] MASHED_CODE_TRAP=1|2 (default OFF): 0x00401000..0x005cbfff PAGE_NOACCESS + reporting handler.
+            mashed_re::Compat::CodeTrap_Arm();
             char ns[8] = {};   // [PORT-TOP-08] slot-type store at 0x007e96fc, knob path only
             g_top08_slot_store = !(GetEnvironmentVariableA("MASHED_TOP08_NO_SLOTSTORE", ns, sizeof(ns)) > 0 && ns[0] && ns[0] != '0');
             return PortTop_WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);

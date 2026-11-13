@@ -2,6 +2,7 @@
 // See StandaloneRvaThunks.h for the rationale.
 
 #include "StandaloneRvaThunks.h"
+#include "CodeTrap.h"
 
 #include <windows.h>
 
@@ -30,6 +31,15 @@ bool StandaloneThunks_MapRange(std::uintptr_t base, std::size_t bytes) {
         } else if (mbi.State == MEM_RESERVE) {
             if (VirtualAlloc(reinterpret_cast<LPVOID>(a), kGran,
                              MEM_COMMIT, PAGE_EXECUTE_READWRITE)) any = true;
+        } else if (CodeTrap_Armed()) {
+            // IMG-3-TEXT-TRAP (MASHED_CODE_TRAP, ORIG_TOP only): the trapped original code range stays PAGE_NOACCESS;
+            // Install carves each thunk page (CodeTrap_AllowPage). Only the granule's pages outside the range get RWX
+            // (0x005c0000+0x10000 overlaps .rdata 0x005cc000..0x005cffff, which keeps its image bytes).
+            for (std::uintptr_t p = a; p < a + kGran; p += 0x1000u) {
+                if (CodeTrap_InRange(p)) { any = true; continue; }
+                DWORD old = 0;
+                if (VirtualProtect(reinterpret_cast<LPVOID>(p), 0x1000u, PAGE_EXECUTE_READWRITE, &old)) any = true;
+            }
         } else {  // MEM_COMMIT — already mapped; ensure RWX
             DWORD old = 0;
             if (VirtualProtect(reinterpret_cast<LPVOID>(a), kGran,
@@ -45,6 +55,9 @@ bool StandaloneThunks_Install(std::uintptr_t rva, const void* target) {
         mbi.State != MEM_COMMIT) {
         return false;
     }
+    // IMG-3-TEXT-TRAP: carve the thunk's page(s) out of the armed trap range (no-op when the trap is off).
+    CodeTrap_AllowPage(rva);
+    CodeTrap_AllowPage(rva + 4);
     DWORD old = 0;
     if (!VirtualProtect(reinterpret_cast<LPVOID>(rva), 5, PAGE_EXECUTE_READWRITE, &old)) {
         return false;
