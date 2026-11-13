@@ -1,0 +1,7 @@
+ctl_vs_r1r2: 0x773c00 reported=False blocks=['0x68bc00']
+   ['boot-variant block 0x00773c00: masked, 15 checkpoints equal outside the 66 boot words']
+plant_outside_0x773c10: 0x773c00 reported=True blocks=['0x68bc00', '0x773c00']
+   ['boot-variant block 0x00773c00: NOT masked, ckpt00 dword 0x00773c10 differs 5a5a5a5a vs 00000000']
+plant_inside_0x773c44_0x773c80_0x773d60: 0x773c00 reported=False blocks=['0x68bc00']
+   ['boot-variant block 0x00773c00: masked, 15 checkpoints equal outside the 66 boot words']
+PLANT TEST PASS
