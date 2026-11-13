@@ -547,6 +547,15 @@ def main_build(a):
             if ext_ok and s.is_func and plain in excluded and not is_port_match:
                 # a helper copy the port leaves out (`#ifndef MATCH_PORT`): the port calls the one exe body by name,
                 # so the DDK object does too. The local copy goes dead; its callers get an external reference.
+                # RWC-FRAME-CLUMP: a static copy the DDK gave a private register convention keeps that convention at
+                # its in-object call sites (re/match/s06/00427ca0.c: 0x00427880 takes the name in EAX, 0x00427d41), so
+                # the external it is repointed to would get its argument in a register. Refused like a MATCH static
+                # (static_convention_ok); the unit keeps its VS2022 body.
+                if s.cls == CE.IMAGE_SYM_CLASS_STATIC and mode != "promote":
+                    ok, why = static_convention_ok(u["src"], info, plain, co.section(s.sec))
+                    if not ok:
+                        rec.setdefault("externalized_regconv", []).append(f"{plain}: {why}")
+                        continue
                 deco = s.name if s.cls == CE.IMAGE_SYM_CLASS_EXTERNAL else "_" + plain
                 s.name = s.name + f"__ddkx{u['rvas'][0]:08x}"
                 s.cls = CE.IMAGE_SYM_CLASS_STATIC
@@ -761,6 +770,10 @@ def main_build(a):
             rec["evidence"] = "registers SEH handlers (" + ", ".join(sorted(
                 {s.name for s in co.syms if s.name.startswith(("__except_handler", "___except_handler"))} |
                 {x.name for x in co.sections if x.name == ".sxdata"})) + "): @feat.00 would be a false SafeSEH claim"
+        if rec["status"] == "ok" and rec.get("externalized_regconv"):
+            # RWC-FRAME-CLUMP: a helper copy with a private register convention cannot be repointed (process_unit)
+            rec["status"] = "fail:externalized-static-register-convention"
+            rec["evidence"] = "; ".join(rec["externalized_regconv"])
         if rec["status"] == "ok" and rec["unbindable"]:
             rec["status"] = "fail:unbindable-callee"   # stays on its VS2022 body in the variant
         edits = rec.pop("_edits", [])
