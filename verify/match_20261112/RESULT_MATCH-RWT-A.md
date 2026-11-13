@@ -115,10 +115,10 @@ No other edited source is included by `mashedmod/src` (grep for the source paths
 
 | RVA | best | residual | tried |
 |---|---|---|---|
-| 0x004db3e0 | 95.2 | the two COM `Release` calls take edx then ecx (ours ecx then edx), and the original returns `uVar3` from esi in the last block where ours knows it is 0 | 19 spellings (return shapes, join variable, inverted if/else, vtable struct, fn local, pointer local), both toolchains; `match_permute.py --walk 200`: 865 compiles, 0 gain |
+| 0x004db3e0 | 95.2 | the two COM `Release` calls take edx then ecx (ours ecx then edx), and the original returns `uVar3` from esi in the last block where ours knows it is 0 | 17 spellings (return shapes, join variable, inverted if/else, vtable struct, fn local, pointer local), both toolchains; `match_permute.py --walk 200`: 865 compiles, 0 gain |
 | 0x004c6750 | 93.5 (rw9044) | `image` lives in ebp at the final return (original esi), so the early `return image` on equal size cannot tail-merge into the shared exit | 4 shapes (block-scope source image, return palImage per branch, order of `image = palImage`); permuter 780 compiles, 0 gain |
-| 0x004cb4c0 | 90.2 | the 16-dword compare loop: original uses a down counter and folds the memory operand (`cmp esi, [eax]`); pointer and counter forms give the counter but load into ebx | 23 loop shapes incl. an inlined `MemEqual(b0, b1, size)` helper (best 83.5); permuter 699 compiles, 0 gain |
-| 0x004d40d0 | 89.1 | the result test is `cmp eax, edi` (edi = 0) in the original, `test eax, eax` in ours, plus an ecx/edx swap on the vtable temp | 14 spellings (zero variable, pointer return, local visitor, fn local), both toolchains. Below 90%, so no permuter |
+| 0x004cb4c0 | 90.2 | the 16-dword compare loop: original uses a down counter and folds the memory operand (`cmp esi, [eax]`); pointer and counter forms give the counter but load into ebx | 29 loop shapes incl. an inlined `MemEqual(b0, b1, size)` helper (best 83.5); permuter 699 compiles, 0 gain |
+| 0x004d40d0 | 89.1 | the result test is `cmp eax, edi` (edi = 0) in the original, `test eax, eax` in ours, plus an ecx/edx swap on the vtable temp | 11 spellings (zero variable, pointer return, local visitor, fn local), both toolchains. Below 90%, so no permuter |
 
 ## Raw data
 
