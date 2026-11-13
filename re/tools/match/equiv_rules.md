@@ -185,12 +185,50 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
 ## 5. Excluded on purpose
 
 - **x87.** In any region that contains an x87 instruction:
-  - The x87 instructions must be the same instructions, with the same operand text, in the same order.
-  - No other instruction may cross an x87 instruction: the instructions between two x87 instructions, and between
-    an x87 instruction and a call, must be the same mnemonic multiset on both sides.
+  - The x87 instructions must be the same instructions, with the same operand text, in the same order. x87
+    instruction order is never admitted (L-126). This part did not change with L-147.
+  - No instruction may cross a call in such a region (NOT-PROVEN `x87-region`).
+  - The region must hold the same integer mnemonic multiset on both sides (NOT-PROVEN `x87-region`).
+  - **Integer motion across x87 (EQUIV-X87-INTEGER-MOTION, L-147 (a), 2026-11-13).** An integer instruction may sit
+    on different sides of an x87 instruction in ours and in the original only when it is proven independent of every
+    x87 instruction it crosses. Otherwise NOT-PROVEN `x87-motion`, naming the instruction, the crossed x87
+    instruction and the dependency. The check:
+    - *Which instructions moved.* Barriers (x87 instructions and calls) cut the region into segments. In each
+      segment, an instruction whose exact text is not in the other side's same segment (multiset difference) is a
+      moved instruction. An instruction with the same text in the same segment on both sides counts as staying.
+    - *What it crosses.* Its partner is one of the other side's moved instructions with the same mnemonic. It is
+      checked against every barrier from its own segment to the farthest segment holding such a candidate, so a
+      wrong pairing only widens the check.
+    - *Independence,* each crossed x87 instruction against the moved instruction, on that side's own state:
+      - registers: the moved instruction writes no register the x87 instruction reads or writes, and reads none it
+        writes. Registers are full width (AX / AH / AL count as EAX), implicit operands included (capstone
+        `regs_access`): `fnstsw ax` writes EAX, `fcomi` / `fcomip` / `fucomi` / `fucomip` write EFLAGS, `sahf`
+        reads EAX and writes EFLAGS, `push` / `pop` read and write ESP, address registers are read. EFLAGS is one
+        register, so any flag writer (`add`, `sub`, `xor`, `test`, `cmp`) crossing `fcomi` is refused, and a flag
+        writer or reader crossing an x87 instruction that does not touch EFLAGS (`fld`, `fadd`, `fstp`) is allowed.
+      - memory: when either access writes, the two addresses must be provably disjoint (`disjoint`, the same test
+        the store chain uses). Address terms are values computed on that side's state at that instruction, so the
+        comparison holds whatever ran in between. Read-read is allowed. In default mode an access to a private
+        frame or argument slot (A1, routed as memread / memwrite route it, exposed slots excluded) and an access
+        that is not one never alias, the same split the proof makes. In the strict rerun no slot is private, so a
+        move that needs A1 is reported with FRAME. The x87 direction comes from the
+        mnemonic (`fst` / `fstp` / `fist*` / `fnstsw m` / `fnstcw` / `fnstenv` / `fnsave` write, the rest read),
+        not from capstone's access flag, which reports `fstp m32` as a read. `fnstenv` / `fnsave` / `frstor` /
+        `fldenv` count 108 bytes. String instructions, `pushad` / `popad` / `pushfd` / `popfd` / `leave` /
+        `enter` and any instruction whose address the model cannot form count as touching all memory.
+    - The values are still checked by the proof. The rule only decides whether a move may be left to it.
+    Rule tag `x87-motion` in the verdict's `rules` when some instruction crossed an x87 instruction. Admission is
+    still ADMITTED.tsv, never C4 by itself (L-128).
+  - `fcmov*` (an x87 read of EFLAGS the x87 term does not take in) is NOT-PROVEN `unsupported`. `fcompi` /
+    `fucompi` (capstone 5's spelling of the popping compares) now set the flags term like `fcomi` (before
+    2026-11-13 they left the flags untouched in the model).
   - With `--x87-strict`, the whole region must be identical text.
 
-  `0x00556e90`, where moves are scheduled across x87 instructions, is NOT-PROVEN under both rules.
+  `0x00556e90` (frozen 97.5% source) is NOT-PROVEN `x87-motion`: ours loads `mov esi,[esp+0x18]` (slot esp0+0xc)
+  after `fstp [esp+0x14]` writes that same slot in the original order, a real dependency. Before L-147 it was
+  NOT-PROVEN `x87-region`. The two rows L-147 named, re-run on their branches' sources with this tool
+  (2026-11-13): `0x00536e90` (orch/MATCH-EQUIV-536E90) EQUIV [ORDER, FRAME], `0x004c4a50`
+  (orch/MATCH-NM-5441F0-4C4A50) EQUIV [LAYOUT, VALUE-FLOW]. Their admission is those rows' work.
 - **Not modelled (NOT-PROVEN `unsupported`):**
   - `rep` string operations with a variable count;
   - `scas`, `cmps`, `lods`;
@@ -208,13 +246,21 @@ An `EQUIV` with no class means the two bodies are byte-identical today. The ledg
 
 `py -3.12 re/tools/match/test_equiv.py` runs the following, one `[N/M]` line each:
 
-- 49 synthetic pairs from `equiv_tests/cases.asm`, positives and negatives per class. The 11 A6 / MXCSR pairs
+- 57 synthetic pairs from `equiv_tests/cases.asm`, positives and negatives per class. The 11 A6 / MXCSR pairs
   (EQUIV-CALLEE-POPS): `com_ident` (byte-identical control), `com_stdcall` (a `__stdcall` COM call checked by an
   early return, then a cdecl call, then a second COM call), `com_cdecl` (caller cleanup), `com_loop` (a COM call in
   a loop), `com_ambiguous` (two calls the equations cannot separate, proven once per solution), `mxcsr`; negatives
   `neg_com_argcount` (wrong prototype argument count), `neg_com_order` (swapped call order), `neg_com_conv` (cdecl
-  against `__stdcall`), `neg_com_solution` (ours right under one pop solution only), `neg_mxcsr`;
-- the six reference rows.
+  against `__stdcall`), `neg_com_solution` (ours right under one pop solution only), `neg_mxcsr`. The 9 x87
+  motion pairs (EQUIV-X87-INTEGER-MOTION): `x87_move_indep` (load crosses `fld`, was `neg_x87_sched`),
+  `x87_move_rr` (load of [G1] crosses `fld [G1]`, read-read), `x87_move_frame` (frame-slot load crosses `fstp`
+  through a pointer, A1, FRAME); negatives `neg_x87_fnstsw` (`mov eax` crosses `fnstsw ax`), `neg_x87_sahf`
+  (`sahf` crosses `fnstsw ax`), `neg_x87_alias` (store to [G3] crosses `fstp [G3]`), `neg_x87_eflags`
+  (`xor` crosses `fcomip`), `neg_x87_slot` (argument-slot load crosses `fstp` into that slot), all
+  `x87-motion`, and `neg_x87_call` (load crosses a call in an x87 region, `x87-region`);
+- the six reference rows. `0x0048e820` runs on a frozen copy of the pre-EQUIV-FU-48E820 source
+  (`equiv_tests/refs/0048e820_held.c`), because the live source is byte-identical since 58cc241be and no longer
+  shows the EDI defect the row tests.
 
 `py -3.12 re/tools/match/equiv_mutate.py` mutates our side of every proven pair. Every mutant must come out
 NOT-PROVEN, or EQUIV-IF-CALLERS-IGNORE when it changed a return register. A mutant the tool proves EQUIV goes to the
