@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWT-B 2026-11-12: g2s source made to compile, then shaped 75.7 -> 92.6% (rw9044): COM vtable calls typed __stdcall, flag branches with the bit-set arm first, swap-chain Present with its 5 args, light array as 0x6c-byte records, return 0 <= hr. Remaining: the raster-extension pointer (*param_1 + DAT_00911ae4) is formed by add then [eax+0x1c] in the original, folded into [ecx+edx+0x1c] here (6 forms tried, permuter 798 compiles gave no real gain). */
+/* MATCH-NM-5518F0-4CAC10 2026-11-13: 92.6 -> 100% (rw9044): the raster extension is a named struct pointer (ext = (RX *)((char *)*param_1 + DAT_00911ae4)) read as ext->sc three times (test, vtable, this), as the COM call macro does. A single load into a local folds the add into [ecx+edx+0x1c]. */
 // TOOLCHAIN rw9044
 typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
 typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
@@ -52,11 +53,11 @@ undefined4 FUN_004dc970(void);
 undefined4 FUN_004e0920(void);
 typedef int __stdcall scode();
 typedef struct { char d[0x68]; int en; } L6c;
+typedef struct { char p[0x1c]; int *sc; } RX4cac10;
 // MATCH: 0x004cac10 FUN_004cac10
 
 bool FUN_004cac10(int *param_1,undefined4 param_2,byte param_3)
 {
-  int *piVar1;
   int iVar2;
   int iVar3;
   int iVar4;
@@ -110,12 +111,14 @@ LAB_004cad3d:
       }
     }
   }
-  piVar1 = *(int **)(*param_1 + DAT_00911ae4 + 0x1c);
-  if (piVar1 != (int *)0x0) {
-    iVar2 = (**(scode **)(*piVar1 + 0xc))(piVar1,0,0,0,0,0);
+  {
+  RX4cac10 *ext = (RX4cac10 *)((char *)*param_1 + DAT_00911ae4);
+  if (ext->sc) {
+    iVar2 = (**(scode **)(*ext->sc + 0xc))(ext->sc,0,0,0,0,0);
   }
   else {
     iVar2 = (**(scode **)(*DAT_007d4110 + 0x44))(DAT_007d4110,0,0,0,0);
+  }
   }
   if (iVar2 != -0x7789f798) goto LAB_004cae7f;
   iVar2 = (**(scode **)(*DAT_007d4110 + 0xc))(DAT_007d4110);
