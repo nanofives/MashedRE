@@ -1,0 +1,30 @@
+D:/MashedWT/RWC-THUNK-BIND-AUDIT_data/city13/base.map vs D:/MashedWT/RWC-THUNK-BIND-AUDIT_data/city13/tip.map: non-RwCore symbols 28865, same address 21889, moved 6976
+   TrackRenderer.obj: 686 moved, e.g. __ehhandler$??1?$vector@USector@Track@mashed_re@@V?$allocato 002cd3d0->002cd3e0
+   RwRaceSubmit_exe.obj: 426 moved, e.g. ?RaceSubmit_Active@LibRw@mashed_re@@YA_NXZ 0022cc90->0022cca0
+   exe_main.obj: 310 moved, e.g. __unwindfunclet$??$_Destroy_range@V?$allocator@UAnimCopter@T 002cd3a0->002cd3b0
+   RwRaceFx_exe.obj: 165 moved, e.g. ?RaceFx_BeginFrame@LibRw@mashed_re@@YAXPAX@Z 0023abe0->0023abf0
+   RwApiBind_exe.obj: 165 moved, e.g. _MashedRw_Alloc7dc8b8_005584c0 00241440->00241450
+   RwpSolverLeaves1.obj: 163 moved, e.g. __ehhandler$??1WorldGuard@?1???$Compare@V<lambda_14e0bd17aba 002cd820->002cd830
+   AiTargetClosest.obj: 148 moved, e.g. __ehhandler$??1?$_Tree@V?$_Tmap_traits@V?$basic_string@DU?$c 002cd820->002cd830
+   DffModel.obj: 125 moved, e.g. __unwindfunclet$??$_Emplace_reallocate@ABI@?$vector@IV?$allo 002cd420->002cd430
+   RwSceneBuild_exe.obj: 111 moved, e.g. ?BuildClump@LibRw@mashed_re@@YAPAXABVDffModel@Track@2@ABUTex 00223840->00223850
+   lodepng.obj: 110 moved, e.g. ?lodepng_add_text@@YAIPAULodePNGInfo@@PBD1@Z 0029b720->0029b730
+   input.obj: 107 moved, e.g. ??$make_input_adapter_character_source@V?$stream_input_adapt 002b3073->002b3083
+   output.obj: 106 moved, e.g. ??$count@D@formatting_buffer@__crt_stdio_output@@QBEIXZ 002ad310->002ad320
+    _CamEntryType0Step445aa0 0x1884d0 0x1884d0
+    _g_b17_low_arena_pad 0x39c220 0x39c220
+D:/MashedWT/RWC-THUNK-BIND-AUDIT_data/city13/base.map vs D:/MashedWT/RWC-THUNK-BIND-AUDIT_data/city13/base7a60.map: non-RwCore symbols 28865, same address 21889, moved 6976
+   TrackRenderer.obj: 686 moved, e.g. __ehhandler$??1?$vector@USector@Track@mashed_re@@V?$allocato 002cd3d0->002cd3e0
+   RwRaceSubmit_exe.obj: 426 moved, e.g. ?RaceSubmit_Active@LibRw@mashed_re@@YA_NXZ 0022cc90->0022cca0
+   exe_main.obj: 310 moved, e.g. __unwindfunclet$??$_Destroy_range@V?$allocator@UAnimCopter@T 002cd3a0->002cd3b0
+   RwRaceFx_exe.obj: 165 moved, e.g. ?RaceFx_BeginFrame@LibRw@mashed_re@@YAXPAX@Z 0023abe0->0023abf0
+   RwApiBind_exe.obj: 165 moved, e.g. _MashedRw_Alloc7dc8b8_005584c0 00241440->00241450
+   RwpSolverLeaves1.obj: 163 moved, e.g. __ehhandler$??1WorldGuard@?1???$Compare@V<lambda_14e0bd17aba 002cd820->002cd830
+   AiTargetClosest.obj: 148 moved, e.g. __ehhandler$??1?$_Tree@V?$_Tmap_traits@V?$basic_string@DU?$c 002cd820->002cd830
+   DffModel.obj: 125 moved, e.g. __unwindfunclet$??$_Emplace_reallocate@ABI@?$vector@IV?$allo 002cd420->002cd430
+   RwSceneBuild_exe.obj: 111 moved, e.g. ?BuildClump@LibRw@mashed_re@@YAPAXABVDffModel@Track@2@ABUTex 00223840->00223850
+   lodepng.obj: 110 moved, e.g. ?lodepng_add_text@@YAIPAULodePNGInfo@@PBD1@Z 0029b720->0029b730
+   input.obj: 107 moved, e.g. ??$make_input_adapter_character_source@V?$stream_input_adapt 002b3073->002b3083
+   output.obj: 106 moved, e.g. ??$count@D@formatting_buffer@__crt_stdio_output@@QBEIXZ 002ad310->002ad320
+    _CamEntryType0Step445aa0 0x1884d0 0x1884d0
+    _g_b17_low_arena_pad 0x39c220 0x39c220
