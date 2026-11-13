@@ -38,3 +38,18 @@ Order: BASE, TIP, BASE, TIP, then TIPRSP x2 (only if TIP differs from BASE).
    - TIPRSP x2 = RED rows -> the changed code content reaches the default path. Report DECISION / RED with the site.
 3. Any arm with mixed results within itself (BASE != BASE or TIP != TIP) -> the City run is not deterministic on this
    machine now. Report that and add arms before any verdict.
+
+## Amendment 1 (before any arm ran)
+
+Map comparison of the three builds (`mapcmp.py`, maps kept in the data folder): TIP and TIPRSP move the same 6,976 of
+28,865 non-RwCore symbols, each by +0x10, against BASE. The shift comes from the new 16-byte body
+`RwCore_004c7a60.cpp`, not from the order of `exe_sources.rsp`, so TIPRSP does not separate layout from code. It is
+dropped. New arm:
+
+| arm | exe |
+|---|---|
+| BASE7A60 | 69cd03777 sources plus `RwCore_004c7a60.cpp` from the tip, appended to the generated block of the base rsp (no caller binds it: the base `RwCore_004c32b0.cpp` still names `thunk_FUN_004cfa00`). Accepted only if its non-RwCore symbol addresses equal TIP's. |
+
+Order: BASE, TIP, BASE, TIP, then BASE7A60 x2 (only if TIP differs from BASE).
+Rule 2 now reads: BASE7A60 x2 = RED rows -> layout (default-path code shifted by 0x10) is the cause.
+BASE7A60 x2 = reference -> the rebound call targets themselves reach the default path.
