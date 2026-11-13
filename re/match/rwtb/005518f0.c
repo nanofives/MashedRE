@@ -1,6 +1,7 @@
 // FLAGS: /O2 /Ob1 /G5
 // TOOLCHAIN rw9044
-/* MATCH-RWT-B 2026-11-12: from g2s (68.8% rw9044) to 96.8% (regs 100%, ops 100%): unsigned i < 8 with 1 << i, dictionary lookup with the create call in both arms, interp = FUN_0052ddf0(FUN_0052ddc0(anim), (*anim)+4), refcount release as r = refs - 1; store; test, return FUN_00551a50(ext) ? stream : 0. Remaining: in the release block the original holds anim[5] in eax and the count in ecx, this source swaps them (6 forms, inline helper, permuter 657 compiles: no change). */
+/* MATCH-RWT-B 2026-11-12: from g2s (68.8% rw9044) to 96.8% (regs 100%, ops 100%): unsigned i < 8 with 1 << i, dictionary lookup with the create call in both arms, interp = FUN_0052ddf0(FUN_0052ddc0(anim), (*anim)+4), refcount release as r = refs - 1; store; test, return FUN_00551a50(ext) ? stream : 0. Release block eax/ecx swap left at 96.8%. */
+/* MATCH-NM-5518F0-4CAC10 2026-11-13: 96.8 -> 100% (rw9044): the release block reads anim[5] through a typed struct pointer (CD *cd = anim->cd; r = --cd->ref; if (r) return 0), which gives the original's eax = pointer, ecx = count. The int-offset forms all kept the swap. */
 typedef unsigned char undefined; typedef unsigned char undefined1; typedef unsigned short undefined2;
 typedef unsigned int undefined3; typedef unsigned int undefined4; typedef unsigned __int64 undefined8;
 typedef unsigned int uint; typedef unsigned short ushort; typedef unsigned char uchar; typedef unsigned char byte;
@@ -51,6 +52,8 @@ undefined4 FUN_00562560(undefined4 p0);
 // MATCH: 0x005518f0 FUN_005518f0
 
 typedef int (*memfn18f0)();
+typedef struct { char p[0x40]; int ref; } CD18f0;
+typedef struct { char p[0x14]; CD18f0 *cd; } AN18f0;
 uint FUN_005518f0(uint param_1,undefined4 param_2,uint param_3)
 {
   int ext = DAT_009124f8 + param_3;
@@ -89,12 +92,12 @@ uint FUN_005518f0(uint param_1,undefined4 param_2,uint param_3)
       interp = FUN_0052ddf0(FUN_0052ddc0(anim), *(int *)(*anim + 4));
       ((int *)(ext + 8))[i] = interp;
       if (!interp || !FUN_0052de60((undefined4 *)interp, anim)) {
-        int r = *(int *)(anim[5] + 0x40) - 1;
-        *(int *)(anim[5] + 0x40) = r;
-        if (r != 0) {
+        CD18f0 *cd = ((AN18f0 *)anim)->cd;
+        int r = --cd->ref;
+        if (r) {
           return 0;
         }
-        (*(memfn18f0 *)(DAT_007d3ff8 + 0x11c))(DAT_007dc770, anim[5]);
+        (*(memfn18f0 *)(DAT_007d3ff8 + 0x11c))(DAT_007dc770, ((AN18f0 *)anim)->cd);
         FUN_00562560((undefined4)anim);
         return 0;
       }

@@ -1,0 +1,97 @@
+== vs_off
+== vs_top
+[ORIG_TOP] frame 0 before 0x004929d0: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER off: 0x00493480 stays a no-op
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+== vs_timer
+[ORIG_TOP] frame 0 before 0x004929d0: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER on: 0x00493480 (-> 0x00493390) runs its matched exe body
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 6000 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, DAT_007f1010 in the single-rounding form where the two forms differ 0, calls skipped for the replay warp 0; bodies at 0017D100 / 0017D020 / 0017D1B0
+== vs_rep_a
+[ORIG_TOP] [REPLAY] 0x004950b0 body at 0017CF90: IAT call at +0x16, slot 002840D8, return address 0017CFAC
+[ORIG_TOP] [REPLAY] MASHED_REPLAY=C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-EXE-REPLAY-KNOB/verify/replayoracle_20261113/replay_selftest.json on: main thread 19460, QPC slot 002840D8 was 75B68640 (kernel32 export 75B68640), now Replay_QPC
+[ORIG_TOP] [REPLAY] scenario track 0 mode 10 rule 0 car 0 team 0 cars 4; warp tick 300 clock 300 phase 2; q0 0x40000000 qtick 166667 boot_qstep 15000 t0 0x1000000 ttick 17; holdrand 0x12345678 rw seed 0x9A319039 draws 310; 3 input rows; normalisation C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-EXE-REPLAY-KNOB/re/frida/warp_normalize.tsv (299 PIN dwords, at both); raw poll no device; timeGetTime / GetTickCount: no matched exe reader, not wrapped
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[ORIG_TOP] frame 0 before 0x004929d0: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER on: 0x00493480 (-> 0x00493390) runs its matched exe body (implied by MASHED_REPLAY)
+[ORIG_TOP] [REPLAY] tick 1: Q 0x4003756B, DAT_007f1030 322190547, phase 1, wrapped QPC reads 5 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 120: Q 0x41321788, DAT_007f1030 328140559, phase 1, wrapped QPC reads 362 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 240: Q 0x426344B0, DAT_007f1030 334140571, phase 1, wrapped QPC reads 722 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] pins at warp (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] timer pin: Q 0x42FAF0E4 -> 337122577 at 0x007f1030 / 0x007f102c, 0x00771984 = 0, 0x00771998 / 0x0077199c = 112374
+[ORIG_TOP] [REPLAY] normalisation at warp: 299 PIN dwords written, 3 changed
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] frame 300 before 0x004929d0: DAT_00771968 1 -> 2 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] frame 300 after 0x004929d0: DAT_00771968 2 -> 3 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [REPLAY] pins at anchor (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] normalisation at anchor: 299 PIN dwords written, 1 changed
+[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+[ORIG_TOP] [REPLAY] tick 360: Q 0x43938778, DAT_007f1030 340122583, phase 3, wrapped QPC reads 1082 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 480: Q 0x44C4B4A0, DAT_007f1030 346122595, phase 3, wrapped QPC reads 1442 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 600: Q 0x45F5E1C8, DAT_007f1030 352122607, phase 3, wrapped QPC reads 1800 (boot 4), passed 0
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, DAT_007f1010 in the single-rounding form where the two forms differ 0, calls skipped for the replay warp 1; bodies at 0017D100 / 0017D020 / 0017D1B0
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 0017CF90, 0x00493390 0017D1B0, 0x00497310 0017D2A0, 0x00534870 0017D3A0
+== vs_rep_b
+[ORIG_TOP] [REPLAY] 0x004950b0 body at 0017CF90: IAT call at +0x16, slot 002840D8, return address 0017CFAC
+[ORIG_TOP] [REPLAY] MASHED_REPLAY=C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-EXE-REPLAY-KNOB/verify/replayoracle_20261113/replay_selftest.json on: main thread 9824, QPC slot 002840D8 was 75B68640 (kernel32 export 75B68640), now Replay_QPC
+[ORIG_TOP] [REPLAY] scenario track 0 mode 10 rule 0 car 0 team 0 cars 4; warp tick 300 clock 300 phase 2; q0 0x40000000 qtick 166667 boot_qstep 15000 t0 0x1000000 ttick 17; holdrand 0x12345678 rw seed 0x9A319039 draws 310; 3 input rows; normalisation C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-EXE-REPLAY-KNOB/re/frida/warp_normalize.tsv (299 PIN dwords, at both); raw poll no device; timeGetTime / GetTickCount: no matched exe reader, not wrapped
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[ORIG_TOP] frame 0 before 0x004929d0: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER on: 0x00493480 (-> 0x00493390) runs its matched exe body (implied by MASHED_REPLAY)
+[ORIG_TOP] [REPLAY] tick 1: Q 0x4003756B, DAT_007f1030 322190547, phase 1, wrapped QPC reads 5 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 120: Q 0x41321788, DAT_007f1030 328140559, phase 1, wrapped QPC reads 362 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 240: Q 0x426344B0, DAT_007f1030 334140571, phase 1, wrapped QPC reads 722 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] pins at warp (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] timer pin: Q 0x42FAF0E4 -> 337122577 at 0x007f1030 / 0x007f102c, 0x00771984 = 0, 0x00771998 / 0x0077199c = 112374
+[ORIG_TOP] [REPLAY] normalisation at warp: 299 PIN dwords written, 3 changed
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] frame 300 before 0x004929d0: DAT_00771968 1 -> 2 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] frame 300 after 0x004929d0: DAT_00771968 2 -> 3 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [REPLAY] pins at anchor (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] normalisation at anchor: 299 PIN dwords written, 1 changed
+[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+[ORIG_TOP] [REPLAY] tick 360: Q 0x43938778, DAT_007f1030 340122583, phase 3, wrapped QPC reads 1082 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 480: Q 0x44C4B4A0, DAT_007f1030 346122595, phase 3, wrapped QPC reads 1442 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 600: Q 0x45F5E1C8, DAT_007f1030 352122607, phase 3, wrapped QPC reads 1800 (boot 4), passed 0
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, DAT_007f1010 in the single-rounding form where the two forms differ 0, calls skipped for the replay warp 1; bodies at 0017D100 / 0017D020 / 0017D1B0
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 0017CF90, 0x00493390 0017D1B0, 0x00497310 0017D2A0, 0x00534870 0017D3A0
+== ddk_top
+[ORIG_TOP] frame 0 before 0x004929d0: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER off: 0x00493480 stays a no-op
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+== ddk_timer
+[ORIG_TOP] frame 0 before 0x004929d0: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER on: 0x00493480 (-> 0x00493390) runs its matched exe body
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 6000 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, DAT_007f1010 in the single-rounding form where the two forms differ 104, calls skipped for the replay warp 0; bodies at 00018A90 / 000189B0 / 00018B50
+== ddk_rep
+[ORIG_TOP] [REPLAY] 0x004950b0 body at 00018910: IAT call at +0x18, slot 002830D8, return address 0001892E
+[ORIG_TOP] [REPLAY] MASHED_REPLAY=C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-EXE-REPLAY-KNOB/verify/replayoracle_20261113/replay_selftest.json on: main thread 15356, QPC slot 002830D8 was 75B68640 (kernel32 export 75B68640), now Replay_QPC
+[ORIG_TOP] [REPLAY] scenario track 0 mode 10 rule 0 car 0 team 0 cars 4; warp tick 300 clock 300 phase 2; q0 0x40000000 qtick 166667 boot_qstep 15000 t0 0x1000000 ttick 17; holdrand 0x12345678 rw seed 0x9A319039 draws 310; 3 input rows; normalisation C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/RO-EXE-REPLAY-KNOB/re/frida/warp_normalize.tsv (299 PIN dwords, at both); raw poll no device; timeGetTime / GetTickCount: no matched exe reader, not wrapped
+[ORIG_TOP] [REPLAY] init self-test: 66 checks, 0 failed (RW ring 822 draws, rand 8, input dispatcher)
+[ORIG_TOP] frame 0 before 0x004929d0: DAT_00771968 -1 -> 1 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [OT_TIMER] MASHED_OT_TIMER on: 0x00493480 (-> 0x00493390) runs its matched exe body (implied by MASHED_REPLAY)
+[ORIG_TOP] [REPLAY] tick 1: Q 0x4003756B, DAT_007f1030 322190547, phase 1, wrapped QPC reads 5 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 120: Q 0x41321788, DAT_007f1030 328140559, phase 1, wrapped QPC reads 362 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 240: Q 0x426344B0, DAT_007f1030 334140571, phase 1, wrapped QPC reads 722 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] pins at warp (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] timer pin: Q 0x42FAF0E4 -> 337122577 at 0x007f1030 / 0x007f102c, 0x00771984 = 0, 0x00771998 / 0x0077199c = 112374
+[ORIG_TOP] [REPLAY] normalisation at warp: 299 PIN dwords written, 3 changed
+[ORIG_TOP] [REPLAY] warp at tick 300: track 0 mode 10 rule 0 car 0 team 0 cars 4, CarSlotStateSet x4, DAT_00771968 1 -> 2
+[ORIG_TOP] [OT_TIMER] call 300: the replay warp ran inside 0x00493390, model checks skipped for this call
+[ORIG_TOP] frame 300 before 0x004929d0: DAT_00771968 1 -> 2 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] frame 300 after 0x004929d0: DAT_00771968 2 -> 3 (DAT_0067ecb0=33 DAT_0067eca4=1 DAT_0063ba7c=0 DAT_0063ba78=0)
+[ORIG_TOP] [REPLAY] pins at anchor (tick 300): srand(0x12345678) on the main thread, RW ring seeded 0x9A319039 + 310 draws, cursors rp 3 wp 0
+[ORIG_TOP] [REPLAY] normalisation at anchor: 299 PIN dwords written, 1 changed
+[ORIG_TOP] [REPLAY] race anchor at tick 300 (warp + 0), 1 input rows at anchor + 0
+[ORIG_TOP] [REPLAY] tick 360: Q 0x43938778, DAT_007f1030 340122583, phase 3, wrapped QPC reads 1082 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 480: Q 0x44C4B4A0, DAT_007f1030 346122595, phase 3, wrapped QPC reads 1442 (boot 4), passed 0
+[ORIG_TOP] [REPLAY] tick 600: Q 0x45F5E1C8, DAT_007f1030 352122607, phase 3, wrapped QPC reads 1800 (boot 4), passed 0
+[ORIG_TOP] WinMain 0x00492370 returned 0 after 600 frames
+[ORIG_TOP] [OT_TIMER] self-test PASS (0 of 5990 checks failed), 0x00493480 calls 600, 0x004926c0 calls 0, DAT_007f1010 in the single-rounding form where the two forms differ 207, calls skipped for the replay warp 1; bodies at 00018A90 / 000189B0 / 00018B50
+[ORIG_TOP] [REPLAY] self-test PASS (0 of 666 checks failed): ticks 600 (0x00493480 calls 600), per-tick clock checks 600 failed 0, wrapped QPC reads 1800 (boot 4), passed through 0, T 16787416; warp ran at tick 300 (phase before 1), anchor reached at tick 300, normalisation changed 3 / 1, input rows applied 1, raw polls skipped 600, RW draws 620; bodies 0x004950b0 00018910, 0x00493390 00018B50, 0x00497310 00018C40, 0x00534870 00018D80

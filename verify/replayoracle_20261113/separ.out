@@ -1,0 +1,18 @@
+== ckpt 00
+runs: 4=160 0=35
+0x0068bc0c  4-group=00000004  0-group=00000000
+disjoint (<=3 values each): 0
+zero-split 0x0068bc0c  4-group:nonzero  0-group:zero
+zero-split 0x0068bc1c  4-group:nonzero  0-group:zero
+== ckpt 07
+runs: 4=156 0=35
+0x0068bc0c  4-group=00000004  0-group=00000000
+disjoint (<=3 values each): 0
+zero-split 0x0068bc0c  4-group:nonzero  0-group:zero
+zero-split 0x0068bc1c  4-group:nonzero  0-group:zero
+== ckpt 14
+runs: 4=156 0=34
+0x0068bc0c  4-group=00000004  0-group=00000000
+disjoint (<=3 values each): 0
+zero-split 0x0068bc0c  4-group:nonzero  0-group:zero
+zero-split 0x0068bc1c  4-group:nonzero  0-group:zero

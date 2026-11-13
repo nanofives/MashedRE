@@ -8,7 +8,7 @@
 #
 #   py -3.12 re/frida/prov_compare.py RUN REF_A REF_B [--json OUT]
 # Verdict: IDENTICAL-FOR-N (N = ticks compared) or DIVERGED at tick t with the blocks (and raw words) that differ.
-import argparse, json, sys
+import argparse, json, struct, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -76,6 +76,21 @@ PHASE_NAME = {0: "boot", 1: "menu", 2: "load", 3: "race"}
 BOOT_BLOCK = 0x00773c00
 BOOT_WORDS = set(range(0x00773c40, 0x00773d44, 4)) | {0x00773d60}
 
+# PAD-VARIANT words (RO-CTL-68BC0C, 2026-11-13): FUN_0045a6b0 (C4 by match, re/match/s29/0045a6b0.c:73; the copy is the
+# rep movsd at 0x0045a736, ecx = 0x10 at 0x0045a72c) copies the 0x40-byte frame matrix FUN_004c0ed0 returns (frame +0x50)
+# into each of the four 0x68-byte records at 0x0068bb60, at record +0x28. 0x0068bc0c / 0x0068bc1c are record 1 (base
+# 0x0068bbc8) +0x44 / +0x54 = matrix words m[7] / m[11]. Across 195 recorded runs they are 4 / heap pointer in 160 and
+# 0 / 0 in 35, while no other .data dword splits the two groups at checkpoints 0, 7 or 14, and r1 / r2 hold different
+# pointers in m[11] (0x0f0e0038 / 0x0f0f0038). The block is hash-only; the tick hash already counts a heap-pointer dword
+# as 0 (detorig.js tick hash, detorig.is_ptr), so the check below takes pointer pairs as equal, like the hash does.
+PAD_BLOCK = 0x0068bc00
+PAD_WORDS = {0x0068bc0c, 0x0068bc1c}
+
+# hash-only block -> (words dropped, pointer pairs equal outside them)
+VARIANT_BLOCKS = {BOOT_BLOCK: (BOOT_WORDS, False), PAD_BLOCK: (PAD_WORDS, True)}
+VARIANT_WORDS = BOOT_WORDS | PAD_WORDS
+VARIANT_NAME = {BOOT_BLOCK: "boot-variant", PAD_BLOCK: "pad-variant"}
+
 
 def _ckpt_blocks(rundir, lo, size):
     """{ckpt index: bytes of [lo, lo+size) from ckptNN.data.bin}; {} when the run has none."""
@@ -93,18 +108,23 @@ def _ckpt_blocks(rundir, lo, size):
     return out
 
 
-def boot_block_check(run, ref, blk):
-    """(ok, detail): block BOOT_BLOCK of run against ref outside BOOT_WORDS, over the checkpoint dumps both runs have."""
-    a, b = _ckpt_blocks(run, BOOT_BLOCK, blk), _ckpt_blocks(ref, BOOT_BLOCK, blk)
+def boot_block_check(run, ref, blk, lo=BOOT_BLOCK):
+    """(ok, detail): VARIANT_BLOCKS block lo of run against ref outside its words, over the checkpoint dumps both runs have."""
+    words, ptr_eq = VARIANT_BLOCKS[lo]
+    a, b = _ckpt_blocks(run, lo, blk), _ckpt_blocks(ref, lo, blk)
     ks = sorted(set(a) & set(b))
     if not ks:
         return False, "no common checkpoint dump"
     for k in ks:
         for o in range(0, blk, 4):
-            w = BOOT_BLOCK + o
-            if w not in BOOT_WORDS and a[k][o:o + 4] != b[k][o:o + 4]:
-                return False, f"ckpt{k:02d} dword {w:#010x} differs {a[k][o:o+4][::-1].hex()} vs {b[k][o:o+4][::-1].hex()}"
-    return True, f"{len(ks)} checkpoints equal outside the {len(BOOT_WORDS)} boot words"
+            w = lo + o
+            if w in words or a[k][o:o + 4] == b[k][o:o + 4]:
+                continue
+            if ptr_eq and is_ptr_pair(struct.unpack_from("<I", a[k], o)[0], struct.unpack_from("<I", b[k], o)[0]):
+                continue
+            return False, f"ckpt{k:02d} dword {w:#010x} differs {a[k][o:o+4][::-1].hex()} vs {b[k][o:o+4][::-1].hex()}"
+    kind = "boot" if lo == BOOT_BLOCK else "pad"
+    return True, f"{len(ks)} checkpoints equal outside the {len(words)} {kind} words" + (" (pointer pairs equal)" if ptr_eq else "")
 
 
 def segments(meta):
@@ -153,7 +173,7 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
     rawpos = {v: 2 + nblk + k for k, v in enumerate(raw_va)}
     first = None
     notes = []
-    boot_ok = None
+    var_ok = {}
     # TIMER-PHASE applies at the race's first tick: record 0 in a warp-at-menu run, the first phase-3 record in a boot run
     race0 = next((a for name, a, b in (segments(ma) or []) if name == "race"), 0)
     for i in range(n):
@@ -169,13 +189,14 @@ def verdict(run, ref_a, ref_b, extra_pairs=()):
             lo = DATA_LO + (j - 2) * blk
             if lo in rawpos and all(lo + 4 * k in rawpos for k in range(blk // 4)):
                 # block copied raw every tick: decided per dword, MASK / OS dwords dropped, heap-pointer pairs dropped
-                if any(x[rawpos[w]] != y[rawpos[w]] and w not in MASKED and w not in BOOT_WORDS and not is_ptr_pair(x[rawpos[w]], y[rawpos[w]])
+                if any(x[rawpos[w]] != y[rawpos[w]] and w not in MASKED and w not in VARIANT_WORDS and not is_ptr_pair(x[rawpos[w]], y[rawpos[w]])
                        for w in range(lo, lo + blk, 4)):
                     bad.append(j)
-            elif lo == BOOT_BLOCK:
-                if boot_ok is None:
-                    boot_ok = boot_block_check(run, ref_a, blk)
-                    notes.append(f"boot-variant block {BOOT_BLOCK:#010x}: {'masked' if boot_ok[0] else 'NOT masked'}, {boot_ok[1]}")
+            elif lo in VARIANT_BLOCKS:
+                if lo not in var_ok:
+                    var_ok[lo] = boot_block_check(run, ref_a, blk, lo)
+                    notes.append(f"{VARIANT_NAME[lo]} block {lo:#010x}: {'masked' if var_ok[lo][0] else 'NOT masked'}, {var_ok[lo][1]}")
+                boot_ok = var_ok[lo]
                 if not boot_ok[0] and j not in allowed:
                     bad.append(j)
                 elif boot_ok[0]:
