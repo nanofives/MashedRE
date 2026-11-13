@@ -318,8 +318,10 @@ def main():
 
     # A block that differs at every record (detorig_ticks.py CONSTANT) is EXPLAINED, and not counted, when at the
     # earliest tick both runs dumped every dword that differs in it is a MASK / RULE row, a PTR pair or an IMGPTR pair.
+    # Run 44: only ticks >= 1 count. A tick-0 dump (boot entry / trace init) has no record, and on the original side it
+    # comes before the boot writes, so explaining at tick 0 hid record-0 VALUE dwords (0x00604604 with the image ON).
     always = hd.all(axis=0) & ~skip if n else np.zeros(nblk, bool)
-    common = sorted(set(A["dumps"]) & set(B["dumps"]))
+    common = sorted(t for t in set(A["dumps"]) & set(B["dumps"]) if t >= 1)
     explained, expl_tick = [], None
     if common and always.any():
         expl_tick = common[0]
