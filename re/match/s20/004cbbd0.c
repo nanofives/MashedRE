@@ -1,6 +1,7 @@
 // TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S20 0x004cbbd0 (h2): 75.5% (regs 77.4%). Raw 67.9%. Frustum/bbox test: per plane the closest corner
+/* MATCH-RWT-S3 2026-11-13: 79.2% under rw9044 (re-score before the edit: 77.4%, not the 75.5% listed); n = 6 moved after pl = (permuter swap, fixes the lea/mov order at 0x004cbbd8). Unchanged residual (b) below. Also tried: inline dot helper (ptr and by value), x/y/z inline one at a time, while/for loop forms, inner-scope V3d + dot local, compare forms, flags /G4 /G6 /Op /Oy- /Oi- (none above 79.2%).
+   MATCH-S20 0x004cbbd0 (h2): 75.5% (regs 77.4%). Raw 67.9%. Frustum/bbox test: per plane the closest corner
    coordinates are picked from the bbox with (&box->sup)[1 - closest] into a local V3d, then dot > distance returns
    0. Tried float locals, local V3d struct (+7.6), dot in 4 orders, separate dot statement, permuter (no gain).
    Residual (b): the original keeps the three corner values on the FPU stack and multiplies by register (fld n.y;
@@ -41,8 +42,8 @@ undefined4 FUN_004cbbd0(Camera *param_1,BBox *param_2)
   const FrustumPlane *pl;
   int n;
   V3d c;
-  n = 6;
   pl = param_1->planes;
+  n = 6;
   do {
     c.x = (&param_2->sup)[1 - pl->cx].x;
     c.y = (&param_2->sup)[1 - pl->cy].y;
