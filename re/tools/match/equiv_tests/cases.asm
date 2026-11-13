@@ -496,22 +496,161 @@ neg_x87_comm_b PROC
     ret
 neg_x87_comm_b ENDP
 
-neg_x87_sched_a PROC
+; integer motion across x87 (EQUIV-X87-INTEGER-MOTION, L-147 (a)): admitted only when independent
+x87_move_indep_a PROC                   ; was neg_x87_sched: the load crosses fld [G1], no shared reg/memory
     fld dword ptr ds:[G1]
     mov eax, [esp+4]
     fmul dword ptr ds:[G2]
     fstp dword ptr ds:[G3]
     mov dword ptr ds:[G1], eax
     ret
-neg_x87_sched_a ENDP
-neg_x87_sched_b PROC
+x87_move_indep_a ENDP
+x87_move_indep_b PROC
     mov eax, [esp+4]
     fld dword ptr ds:[G1]
     fmul dword ptr ds:[G2]
     fstp dword ptr ds:[G3]
     mov dword ptr ds:[G1], eax
     ret
-neg_x87_sched_b ENDP
+x87_move_indep_b ENDP
+
+x87_move_rr_a PROC                      ; integer load of [G1] crosses fld [G1]: read-read
+    fld dword ptr ds:[G1]
+    mov eax, dword ptr ds:[G1]
+    fstp dword ptr ds:[G3]
+    mov dword ptr ds:[G2], eax
+    ret
+x87_move_rr_a ENDP
+x87_move_rr_b PROC
+    mov eax, dword ptr ds:[G1]
+    fld dword ptr ds:[G1]
+    fstp dword ptr ds:[G3]
+    mov dword ptr ds:[G2], eax
+    ret
+x87_move_rr_b ENDP
+
+neg_x87_fnstsw_a PROC                   ; mov eax crosses fnstsw ax (both write AX/EAX)
+    fld dword ptr ds:[G1]
+    fcomp dword ptr ds:[G2]
+    fnstsw ax
+    mov eax, [esp+4]
+    mov dword ptr ds:[G3], eax
+    ret
+neg_x87_fnstsw_a ENDP
+neg_x87_fnstsw_b PROC
+    fld dword ptr ds:[G1]
+    fcomp dword ptr ds:[G2]
+    mov eax, [esp+4]
+    fnstsw ax
+    mov dword ptr ds:[G3], eax
+    ret
+neg_x87_fnstsw_b ENDP
+
+neg_x87_sahf_a PROC                     ; sahf crosses fnstsw ax (sahf reads AH)
+    fld dword ptr ds:[G1]
+    fcomp dword ptr ds:[G2]
+    sahf
+    fnstsw ax
+    seta al
+    movzx eax, al
+    ret
+neg_x87_sahf_a ENDP
+neg_x87_sahf_b PROC
+    fld dword ptr ds:[G1]
+    fcomp dword ptr ds:[G2]
+    fnstsw ax
+    sahf
+    seta al
+    movzx eax, al
+    ret
+neg_x87_sahf_b ENDP
+
+neg_x87_alias_a PROC                    ; integer store to [G3] crosses fstp [G3] (write-write alias)
+    fld dword ptr ds:[G1]
+    mov dword ptr ds:[G3], 0
+    fstp dword ptr ds:[G3]
+    ret
+neg_x87_alias_a ENDP
+neg_x87_alias_b PROC
+    fld dword ptr ds:[G1]
+    fstp dword ptr ds:[G3]
+    mov dword ptr ds:[G3], 0
+    ret
+neg_x87_alias_b ENDP
+
+neg_x87_eflags_a PROC                   ; xor (EFLAGS writer) crosses fcomip (EFLAGS writer)
+    fld dword ptr ds:[G1]
+    fld dword ptr ds:[G2]
+    fcomip st, st(1)
+    xor ecx, ecx
+    fstp st(0)
+    seta cl
+    mov eax, ecx
+    ret
+neg_x87_eflags_a ENDP
+neg_x87_eflags_b PROC
+    fld dword ptr ds:[G1]
+    fld dword ptr ds:[G2]
+    xor ecx, ecx
+    fcomip st, st(1)
+    fstp st(0)
+    seta cl
+    mov eax, ecx
+    ret
+neg_x87_eflags_b ENDP
+
+x87_move_frame_a PROC                   ; frame-slot load crosses fstp through an argument pointer (A1)
+    sub esp, 4
+    mov eax, [esp+8]
+    fld dword ptr ds:[G1]
+    fstp dword ptr [eax]
+    mov ecx, [esp]
+    mov dword ptr ds:[G2], ecx
+    add esp, 4
+    ret
+x87_move_frame_a ENDP
+x87_move_frame_b PROC
+    sub esp, 4
+    mov eax, [esp+8]
+    fld dword ptr ds:[G1]
+    mov ecx, [esp]
+    fstp dword ptr [eax]
+    mov dword ptr ds:[G2], ecx
+    add esp, 4
+    ret
+x87_move_frame_b ENDP
+
+neg_x87_slot_a PROC                     ; load of an argument slot crosses fstp into that same slot
+    fld dword ptr ds:[G1]
+    mov ecx, [esp+4]
+    fstp dword ptr [esp+4]
+    mov dword ptr ds:[G2], ecx
+    ret
+neg_x87_slot_a ENDP
+neg_x87_slot_b PROC
+    fld dword ptr ds:[G1]
+    fstp dword ptr [esp+4]
+    mov ecx, [esp+4]
+    mov dword ptr ds:[G2], ecx
+    ret
+neg_x87_slot_b ENDP
+
+neg_x87_call_a PROC                    ; integer load crosses a call inside an x87 region: never admitted
+    fld dword ptr ds:[G1]
+    mov ecx, dword ptr ds:[G2]
+    call FUN_0040bb30
+    fstp dword ptr ds:[G3]
+    mov dword ptr ds:[G2], ecx
+    ret
+neg_x87_call_a ENDP
+neg_x87_call_b PROC
+    fld dword ptr ds:[G1]
+    call FUN_0040bb30
+    mov ecx, dword ptr ds:[G2]
+    fstp dword ptr ds:[G3]
+    mov dword ptr ds:[G2], ecx
+    ret
+neg_x87_call_b ENDP
 
 ; ------------------------------------------------------------------ calls
 neg_call_arg_a PROC

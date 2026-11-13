@@ -1,0 +1,11 @@
+ctl_vs_r1r2: verdict=IDENTICAL-FOR-N 0x68bc00 reported=False blocks=[]
+   ['pad-variant block 0x0068bc00: masked, 15 checkpoints equal outside the 2 pad words (pointer pairs equal)', 'boot-variant block 0x00773c00: masked, 15 checkpoints equal outside the 66 boot words']
+plant_outside_0x68bc10: verdict=DIVERGED 0x68bc00 reported=True blocks=['0x68bc00']
+   ['pad-variant block 0x0068bc00: NOT masked, ckpt00 dword 0x0068bc10 differs 5a5a5a5a vs 00000000', 'boot-variant block 0x00773c00: masked, 15 checkpoints equal outside the 66 boot words']
+plant_outside_0x68bc04: verdict=DIVERGED 0x68bc00 reported=True blocks=['0x68bc00']
+   ['pad-variant block 0x0068bc00: NOT masked, ckpt00 dword 0x0068bc04 differs 65da5a5a vs 3f800000', 'boot-variant block 0x00773c00: masked, 15 checkpoints equal outside the 66 boot words']
+plant_inside_0x68bc0c_0x68bc1c: verdict=IDENTICAL-FOR-N 0x68bc00 reported=False blocks=[]
+   ['pad-variant block 0x0068bc00: masked, 15 checkpoints equal outside the 2 pad words (pointer pairs equal)', 'boot-variant block 0x00773c00: masked, 15 checkpoints equal outside the 66 boot words']
+r1_pads_zeroed_vs_r1r2: verdict=IDENTICAL-FOR-N 0x68bc00 reported=False blocks=[]
+   []
+PLANT TEST PASS

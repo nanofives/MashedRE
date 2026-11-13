@@ -63,6 +63,7 @@ ROOTS = [
     '00493640',                                                                # RenderwareAttachPlugins (run 38)
     '004b3eb0',                                                                # run 40: TXD loader, frame knob
     '00428450',                                                                # RWC-FIRST-FRAME-IM2D: loading-disc draw
+    '00492e90',                                                                # RWC-FRAME-492E90: frame render
 ]
 # Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
 # re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
@@ -82,6 +83,22 @@ XFOLLOW = {0x493640, 0x472380, 0x472330, 0x472360, 0x52d8e0, 0x52d910, 0x52d950,
            # (re/match/s06, 84.6%), its Im2D quad 0x00450b10 (re/match/s08, 86.6%) and the two screen-dim getters
            # (exe bodies, EXE_BODY below)
            0x428450, 0x450b10, 0x42b8b0, 0x42b8c0}
+# RWC-FRAME-492E90 (MASHED_RWC_FRAME): the frame render 0x00492e90 and the game functions of its menu-executed slice
+# (verify/rwcframe_20261113/SLICE_EXEC_reach_menu.tsv: reachable from 0x00492e90 through functions the INT3 census
+# re/coverage/reach.tsv marks reached_menu = 1) are followed like RW code and compiled from their re/match sources. A game
+# callee of a followed source outside the slice (the original does not execute it at the menu, or only from callers
+# outside this closure) is a logged stop (FRAME_STOP): never lifted (L-137 / L-141), so a boot names the first one the exe
+# reaches and the next slice.
+_SLICE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'rwcframe_20261113', 'SLICE_EXEC_reach_menu.tsv')
+FRAME_SLICE = set()
+if os.path.exists(_SLICE):
+    for _ln in open(_SLICE, encoding='utf-8').read().splitlines()[1:]:
+        _f = _ln.split('\t')
+        if len(_f) > 1 and _f[1] != 'RW':
+            FRAME_SLICE.add(int(_f[0], 16))
+XFOLLOW |= FRAME_SLICE
+XFOLLOW.add(0x5c4d30)   # RWC-FRAME-492E90: re/match/s28/005c4d30.c (100%), called by RtCharset sources 0x005554d0 / 0x005555b0
+FRAME_STOP = set()   # filled while walking: 8-digit hex RVAs
 # Not roots in this row: 0x00493710's calls after RwEngineStart (GetCurrentMode 0x004c2f00, GetModeInfo 0x004c2ed0,
 # 0x004cbc60..0x004cbc90, RwTexDictionarySetCurrent 0x004c5c80) are not reached, since the knob ends the boot at Start.
 # Data ranges of the RW core (file-backed, seeded from the anchored binary under the knob). Every dword in them whose
@@ -137,6 +154,10 @@ EXE_BODY = {
     # RWC-FIRST-FRAME-IM2D: callees of 0x00428450 (100% sources already compiled into the exe)
     '0042b8b0': ('ScreenWidthGet', 'Match/MatchS07_0042b8b0.cpp'),
     '0042b8c0': ('ScreenHeightGet', 'Match/MatchS07_0042b8c0.cpp'),
+    # RWC-FRAME-492E90: leaves of the frame-render slice whose 100% source is already an exe-only top-down body (a second
+    # ORIGTOP-ONLY copy of each is a DUP-IN-TARGET the lint does not pair)
+    '00552750': ('Orig_00552750', 'Match/PortTop_00552750.cpp'),
+    '005c4d30': ('Orig_005c4d30', 'Match/PortTop_005c4d30.cpp'),
 }
 # RWC-BIND-4C5890 (L-129 b): RW-band RVAs whose callers in other TUs bind to an exe binding entry instead of the body.
 # The body is still generated as RwCore_<rva> from its source; every top-down caller (RW core and game) reaches the
@@ -250,12 +271,19 @@ def load_named():
         n = (row.get('name') or '').strip()
         if re.fullmatch(r'R[wpt][A-Z]\w+', n) and not re.search(r'[0-9a-f]{6,8}', n):
             NAMED.setdefault(n, row['rva'].lower()[2:].zfill(8))
+# RWC-LIFT-EXEC-52E3D0: a `thunk_FUN_<target>` callee binds by default to <target>; where the original calls the thunk
+# itself, the source's call must reach the thunk's own body (ddkobj check compares call targets). Per source, so the
+# other ~75 sources that name thunk_FUN_ callees keep their current binding until a row checks each one.
+THUNK_BIND = {('re/match/rwta/0052e3d0.c', 'thunk_FUN_004cc820'): '004cc9e0'}
 MATCHLINE = re.compile(r'^// MATCH: 0x([0-9a-f]{8}) (\S+)', re.M)
 # 004c7a70 has no ledger row yet (RWC-DRIVER); its source is the RWC-DRIVER one.
 PIN = {'004c7a70': 're/match/rwd01/004c7a70.c'}
 PCT = {'004c7a70': 93.2,
        # RWC-FIRST-FRAME-IM2D: re/match/s21/004d7100.c now returns int 1 (100%, relocheck OK); the ledger row says 21.4
-       '004d7100': 100.0}
+       '004d7100': 100.0,
+       # RWC-LIFT-EXEC-52E3D0 (L-141): re/match/rwta/0052e3d0.c is 100% under rw9044 and ddk (MATCH-RWT-A, C4 by match,
+       # re/promotions/applied/MATCH-RWT-A.tsv); no match_ledger row yet
+       '0052e3d0': 100.0}
 
 
 DEFN = re.compile(r'\b([A-Za-z_]\w*)\s*\(([^;{}()]|\([^;{}()]*\))*\)\s*\{')
@@ -263,6 +291,11 @@ FUNDEF = re.compile(r'^[\w \t\*]*?\b((?:thunk_)?FUN_([0-9a-f]{8}))\s*\(([^;{}()]
 # _rwcseg 0x005cb000..0x005cc000: SSE routines the original carries as hand asm; their re/match sources are raw g2s
 # output at 6-24% (rwl06 / s28) with register-argument signatures. Treated as missing (a call stops the boot).
 FORCE_MISSING = {'005cb000', '005cb07f', '005cb0ef', '005cb160', '005cb2a0'}
+# RWC-FRAME-492E90: missing stops of the previous generation that gained raw g2sh / rwtb sources since; those sources do
+# not compile as C++ under VS2022 (C2632 on the preamble's bool / wchar_t typedefs, C2664 / C2197), so they stay stops,
+# not lifted either (their new sources moved them out of the lifter's "inside a known function" refusal).
+PIN_MISSING = {'004d1630', '004deb20', '005518f0'}
+FORCE_MISSING |= PIN_MISSING
 
 
 def defs_of(t):
@@ -334,7 +367,19 @@ def main(check):
         s = srcs.get(a)
         return s[0] if s else None
 
+    # RWC-FRAME-492E90: an RVA the previous generation lifted (RwCore_Bodies.tsv kind lift) stays lifted. Since
+    # RWC-FIRST-FRAME-IM2D the match lanes added sub-100% sources for 156 of them; taking those would swap verbatim
+    # transcriptions for NOT-PROVEN sources outside this row's scope. A later row may unpin them on evidence.
+    pin_lift = set()
+    _bt = os.path.join(HERE, 'RwCore_Bodies.tsv')
+    if os.path.exists(_bt):
+        for _r in csv.DictReader(open(_bt, encoding='utf-8'), delimiter='\t'):
+            if _r['kind'] == 'lift':
+                pin_lift.add(_r['rva'][2:].lower())
+
     def pick(a):
+        if a in pin_lift:
+            return None
         s = pick0(a)
         return None if s in LIFT_INSTEAD else s
 
@@ -459,10 +504,10 @@ def main(check):
         seen.add(a)
         if a in EXE_BODY or a in HAND or ('FUN_' + a) in EXT:
             continue
-        src = pick(a) if a not in FORCE_MISSING else None
+        src = pick(a) if a not in FORCE_MISSING and a not in FRAME_STOP else None
         if not src:
-            if not LIFT or mid_function(int(a, 16)):
-                if LIFT:
+            if not LIFT or mid_function(int(a, 16)) or a in FRAME_STOP or a in PIN_MISSING:
+                if LIFT and a not in FRAME_STOP and a not in PIN_MISSING:
                     lift_refused[a] = 'inside a known function (a label, not a function start)'
                 missing.append(a)
                 continue
@@ -496,6 +541,12 @@ def main(check):
                     continue
                 r = NAMED.get(n) or rva_of(n)
                 if inrw(int(r, 16)):
+                    st.append(r)
+                elif (n not in EXT and ('FUN_' + r) not in EXT and r not in EXE_BODY
+                      and any(int(x, 16) in FRAME_SLICE for x, _ in defined_by[src])):
+                    # RWC-FRAME-492E90: game callee of a slice source, outside the slice: a logged stop
+                    FRAME_STOP.add(r)
+                    XFOLLOW.add(int(r, 16))
                     st.append(r)
                 elif n not in EXT and ('FUN_' + r) not in EXT:
                     ext_unbound.setdefault(n, []).append(src)
@@ -535,11 +586,13 @@ def main(check):
             rows.append((a, kind, src, '' if p is None else '%.1f' % p, 'RwCore_' + a))
         elif a in lifted:
             rows.append((a, 'lift', 'RwCore/RwCore_Lifted_NN.cpp', '', 'RwCoreLift_' + a))
+        elif a in FRAME_STOP:
+            rows.append((a, 'stop', pick0(a) or '', '', 'RwCoreMissing_' + a))   # RWC-FRAME-492E90: outside the slice
         else:
             rows.append((a, 'missing', '', '', 'RwCoreMissing_' + a))
 
     print('closure %d: %s' % (len(rows), ', '.join('%s %d' % (k, sum(1 for r in rows if r[1] == k))
-                                                   for k in ('match100', 'provisional', 'hand', 'lift', 'exe', 'missing'))))
+                                                   for k in ('match100', 'provisional', 'hand', 'lift', 'exe', 'missing', 'stop'))))
     print('sources %d, fixups %d, rdata refs %d' % (len(order), len(fixups), len(rdata)))
     if ext_unbound:
         print('UNBOUND non-RW:', {k: sorted(set(v))[:3] for k, v in sorted(ext_unbound.items())})
@@ -563,7 +616,7 @@ def main(check):
         ownmap = {n: r_ for r_, n in own}
         names = set(refs[src]) | set(ownmap)
         for n in sorted(names):
-            r = ownmap.get(n) or NAMED.get(n) or rva_of(n)
+            r = ownmap.get(n) or THUNK_BIND.get((src, n)) or NAMED.get(n) or rva_of(n)
             if n in ownmap and tu_of.get(r) != src:
                 lines.append('#define %s RwCoreCopy_%s_%s   // second copy of 0x%s in this source; the body is in %s'
                              % (n, main_rva, r, r, tu_of.get(r)))

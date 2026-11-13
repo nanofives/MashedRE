@@ -1,0 +1,3 @@
+# RO-EXE-TICK-TRACE default-OFF control: the replay knob on, the trace knob removed (RO_ROOFF arms)
+-MASHED_REPLAY_TRACE
+-MASHED_REPLAY_TRACE_CKPT
