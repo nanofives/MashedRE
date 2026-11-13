@@ -250,12 +250,19 @@ def load_named():
         n = (row.get('name') or '').strip()
         if re.fullmatch(r'R[wpt][A-Z]\w+', n) and not re.search(r'[0-9a-f]{6,8}', n):
             NAMED.setdefault(n, row['rva'].lower()[2:].zfill(8))
+# RWC-LIFT-EXEC-52E3D0: a `thunk_FUN_<target>` callee binds by default to <target>; where the original calls the thunk
+# itself, the source's call must reach the thunk's own body (ddkobj check compares call targets). Per source, so the
+# other ~75 sources that name thunk_FUN_ callees keep their current binding until a row checks each one.
+THUNK_BIND = {('re/match/rwta/0052e3d0.c', 'thunk_FUN_004cc820'): '004cc9e0'}
 MATCHLINE = re.compile(r'^// MATCH: 0x([0-9a-f]{8}) (\S+)', re.M)
 # 004c7a70 has no ledger row yet (RWC-DRIVER); its source is the RWC-DRIVER one.
 PIN = {'004c7a70': 're/match/rwd01/004c7a70.c'}
 PCT = {'004c7a70': 93.2,
        # RWC-FIRST-FRAME-IM2D: re/match/s21/004d7100.c now returns int 1 (100%, relocheck OK); the ledger row says 21.4
-       '004d7100': 100.0}
+       '004d7100': 100.0,
+       # RWC-LIFT-EXEC-52E3D0 (L-141): re/match/rwta/0052e3d0.c is 100% under rw9044 and ddk (MATCH-RWT-A, C4 by match,
+       # re/promotions/applied/MATCH-RWT-A.tsv); no match_ledger row yet
+       '0052e3d0': 100.0}
 
 
 DEFN = re.compile(r'\b([A-Za-z_]\w*)\s*\(([^;{}()]|\([^;{}()]*\))*\)\s*\{')
@@ -563,7 +570,7 @@ def main(check):
         ownmap = {n: r_ for r_, n in own}
         names = set(refs[src]) | set(ownmap)
         for n in sorted(names):
-            r = ownmap.get(n) or NAMED.get(n) or rva_of(n)
+            r = ownmap.get(n) or THUNK_BIND.get((src, n)) or NAMED.get(n) or rva_of(n)
             if n in ownmap and tu_of.get(r) != src:
                 lines.append('#define %s RwCoreCopy_%s_%s   // second copy of 0x%s in this source; the body is in %s'
                              % (n, main_rva, r, r, tu_of.get(r)))
