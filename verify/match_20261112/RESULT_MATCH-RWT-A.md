@@ -19,12 +19,21 @@ Columns: rank, rva, size, executed, race_path, stage, best_pct, class, source (`
 
 Bands: A95 (>= 95%), A80 (80 to 95%), B50 (50 to 80%), B<50, B-cf (compile failure or no size).
 
-| band | race path | menu only | total | provisional only |
-|---|---|---|---|---|
-| A95 | 1 | 3 | 4 | 4 |
-| A80 | 19 | 5 | 24 | 18 |
-| B50 | 37 | 21 | 58 | 44 |
-| B<50 | 44 | 24 | 68 | 46 |
-| B-cf | 7 | 2 | 9 | 2 |
+**Stale inputs, filtered (second commit).** The review's composition predates later merges: rescoring the 22
+provisional band-A sources with `match.py` showed 10 already 100% under their file's `// TOOLCHAIN`, and hooks.csv on
+`orch/integration` a616fcc3b has **20 of the 163 rows at C4 already** (12 in band A). Two more (0x004d1e30, 0x00534b60)
+are closed at 100% on `orch/MATCH-RWC-NEAR-C`, and 0x004f1fb0 is being shaped on `orch/MATCH-RWC-NEAR-D`. Those 23 rows
+carry `status = skip: ...` and rank `-` at the end of the TSV. The 140 `open` rows are ranked 1..140.
+Columns added: `hooks_conf` (hooks.csv on orch/integration a616fcc3b), `status`.
 
-MATCH-RWT-A takes A95 + A80 (28 rows, 22 provisional + 6 g2s). MATCH-RWT-B takes from B50 down, rank order.
+| band | open, race path | open, menu only | open total | skipped |
+|---|---|---|---|---|
+| A95 | 0 | 1 | 1 | 3 |
+| A80 | 10 | 2 | 12 | 12 |
+| B50 | 34 | 18 | 52 | 6 |
+| B<50 | 43 | 24 | 67 | 1 |
+| B-cf | 7 | 1 | 8 | 1 |
+| total | 94 | 46 | 140 | 23 |
+
+MATCH-RWT-A takes the 13 open A95 + A80 rows (ranks 1-10 and 95-97). MATCH-RWT-B takes the open B-cf and B50 rows,
+race path first (ranks 11-33 B50 race path, then the B-cf rows), in rank order.
