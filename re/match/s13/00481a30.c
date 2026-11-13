@@ -2,6 +2,7 @@
 // h11: 63.3% (regs 65.4%, ops 95.4%). Hand from decomp: do-while loop with three strided record pointers, zone query struct, float acos result kept on the x87 stack (fcom form), parenthesized x/y/z subtractions fix the fld/fsubr order.
 /* MATCH-S13 0x00481a30: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchs13_20261102/results.tsv. */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): FUN_004c1b40(FUN_004671a0(0), &sph), as 0x00481bb5 (push &sph; push 0; call 0x4671a0; add esp,4; push eax; call 0x4c1b40); &sph was given to the wrong callee. Best now 69.7%. */
 /* ---- MATCH-S13 preamble (same text in every re/match/s13 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -65,8 +66,8 @@ int FUN_004c0ed0(int p0);
 int FUN_0057c210(int p0);
 Sphere *FUN_004e6100(int p0);
 CamFrame *FUN_00467210(int p0);
-int FUN_004671a0(int p0, Sphere *p1);
-int FUN_004c1b40(int p0);
+int FUN_004671a0(int p0);
+int FUN_004c1b40(int p0, Sphere *p1);
 void FUN_00484cf0(ZoneQuery *p0);
 void FUN_004818d0(int p0);
 int FUN_00487280(int p0, int p1, Rec18 *p2, Rec40 *p3, Rec28 *p4);
@@ -127,7 +128,7 @@ void FUN_00481a30(void)
     if (!(dx * dx + dy * dy + dz * dz < DAT_005cd098)) goto next;
     DAT_006c3030[i] = DAT_006c3350[i];
     if (same) {
-      DAT_006c3350[i] = FUN_004c1b40(FUN_004671a0(0, &sph));
+      DAT_006c3350[i] = FUN_004c1b40(FUN_004671a0(0), &sph);
     }
     if (DAT_006c3350[i] != 2 && DAT_006c3350[i] != 1) goto next;
     if (same) {

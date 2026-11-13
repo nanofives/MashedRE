@@ -1,0 +1,135 @@
+rva	kind	exe_symbol	exe_va	ref_kind	site	caller	caller_obj
+0x00401690	body	___ddkreg_00401690	0x0001f600	call	0x0001fb89	_Orig_004025f0	ddk_s01_00401690_PortTop_004025f0.obj
+0x0040fc00	adapter	_FUN_0040fc00	0x00017d30	none			
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017c6d	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017c8d	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017ca0	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017cb5	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017cc6	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017ce9	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017cf5	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x0040fc00	body	___ddkreg_0040fc00	0x00017840	call	0x00017d35	_FUN_0040fc00	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x004102f0	adapter	_FUN_004102f0	0x00017d40	none			
+0x004102f0	body	___ddkreg_004102f0	0x00017af0	call	0x00017c68	_FUN_004111c0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x004102f0	body	___ddkreg_004102f0	0x00017af0	call	0x00017d45	_FUN_004102f0	ddk_t01g_004111c0_MatchT01G_004111c0.obj
+0x00413bc0	adapter	_FUN_00413bc0	0x00013310	call	0x00191232	_HudUvRect413bc0	vs_ScenarioLeaves_sa1.obj
+0x00413bc0	body	___ddkreg_00413bc0	0x00013260	call	0x00013319	_FUN_00413bc0	ddk_s03_h2_00413bc0_ScenarioLeaves_sa1.obj
+0x0041ad60	adapter	_ParticleEmitterCtorA_impl	0x0001df10	call	0x001b8eb2	_ParticleEmitterCtorA	vs_ParticleEmitterCtors.obj
+0x0041ad60	body	___ddkreg_0041ad60	0x0001dec0	call	0x0001df19	_ParticleEmitterCtorA_impl	ddk_s03_h1_0041ad60_ParticleEmitterCtors.obj
+0x0041ae20	adapter	_FUN_0041ae20	0x00017830	call	0x0019a901	@Copy41ae20@4	vs_SubStateCallees.obj
+0x0041ae20	body	___ddkreg_0041ae20	0x000177d0	call	0x00017815	_Update41b520	ddk_s03_h1_0041ae20_SubStateCallees.obj
+0x0041ae20	body	___ddkreg_0041ae20	0x000177d0	jmp	0x00017834	_FUN_0041ae20	ddk_s03_h1_0041ae20_SubStateCallees.obj
+0x0041b770	adapter	@Copy41b770@4	0x00016f40	imm32	0x001981b7	??0AutoRegister_Copy41b770@@QAE@XZ	vs_MatchS04_0041b770.obj
+0x0041b770	body	___ddkreg_0041b770	0x00016e90	call	0x00016f12	_HudConstTableInitAndSweep	ddk_s04_0041b770_MatchS04_0041b770.obj
+0x0041b770	body	___ddkreg_0041b770	0x00016e90	jmp	0x00016f40	@Copy41b770@4	ddk_s04_0041b770_MatchS04_0041b770.obj
+0x0041bc50	adapter	_HudRec29DispatchBody	0x000171d0	call	0x00198231	_FUN_0041bc50	vs_MatchS04_0041bc50.obj
+0x0041bc50	body	___ddkreg_0041bc50	0x00016f50	call	0x000171b8	_HudDispatchSlot2	ddk_s04_0041bc50_MatchS04_0041bc50.obj
+0x0041bc50	body	___ddkreg_0041bc50	0x00016f50	jmp	0x000171d4	_HudRec29DispatchBody	ddk_s04_0041bc50_MatchS04_0041bc50.obj
+0x0041beb0	body	___ddkreg_0041beb0	0x00015560	call	0x00015578	_Orig_0041c0e0	ddk_s04_0041beb0_PortTop_0041c0e0.obj
+0x0041c2d0	adapter	_HudDispatchDraw4Body	0x00017230	call	0x00198281	_FUN_0041c2d0	vs_MatchS04_0041c2d0.obj
+0x0041c2d0	body	___ddkreg_0041c2d0	0x000171e0	jmp	0x0001721e	_HudDispatchMode5	ddk_s04_0041c2d0_MatchS04_0041c2d0.obj
+0x0041c2d0	body	___ddkreg_0041c2d0	0x000171e0	jmp	0x00017234	_HudDispatchDraw4Body	ddk_s04_0041c2d0_MatchS04_0041c2d0.obj
+0x0041c320	adapter	_ParticleEmitterCtorC_impl	0x000172a0	call	0x001982d2	_ParticleEmitterCtorC	vs_MatchS04_0041c320.obj
+0x0041c320	body	___ddkreg_0041c320	0x00017240	call	0x000172a9	_ParticleEmitterCtorC_impl	ddk_s04_0041c320_MatchS04_0041c320.obj
+0x0041c9a0	body	___ddkreg_0041c9a0	0x000172b0	call	0x00017422	_HudSlotLoopCcc0	ddk_s04_0041c9a0_MatchS04_0041c9a0.obj
+0x0041cb00	body	___ddkreg_0041cb00	0x000155a0	call	0x000155b8	_Orig_0041ccf0	ddk_s04_0041cb00_PortTop_0041ccf0.obj
+0x0041cd20	adapter	_ParticleEmitterCtorD_impl	0x00017560	call	0x00198352	_ParticleEmitterCtorD	vs_MatchS04_0041cd20.obj
+0x0041cd20	body	___ddkreg_0041cd20	0x000174d0	call	0x00017569	_ParticleEmitterCtorD_impl	ddk_s04_0041cd20_MatchS04_0041cd20.obj
+0x0041d410	body	___ddkreg_0041d410	0x00022150	call	0x00022418	_PortBatch_0041d870	ddk_s04_0041d410_PortBatch_HUD_0041d410.obj
+0x0041d6d0	body	___ddkreg_0041d6d0	0x000155e0	call	0x000155f8	_Orig_0041d890	ddk_s04_0041d6d0_PortTop_0041d890.obj
+0x0041e630	body	___ddkreg_0041e630	0x00022430	call	0x000224cf	_PortBatch_0041e850	ddk_s04_0041e850_PortBatch_HUD_0041e630.obj
+0x0041f710	adapter	_CR_41f710Body	0x00012540	call	0x00190981	_CR_41f710	vs_MatchS05_0041f710.obj
+0x0041f710	body	___ddkreg_0041f710	0x000124e0	jmp	0x00012544	_CR_41f710Body	ddk_s05_0041f710_MatchS05_0041f710.obj
+0x0041f710	body	___ddkreg_0041f710	0x000124e0	imm32	0x00212acc	?registerModule@Raster@rw@@SAXXZ	librw_d3d9:raster.obj
+0x00427680	adapter	_FUN_00427680	0x0001b270	call	0x0001b9ec	_FUN_00427e00	ddk_s06_00427e00_MatchS06_00427e00.obj
+0x00427680	adapter	_FUN_00427680	0x0001b270	call	0x0001bae0	_FUN_00427f00	ddk_s06_00427f00_MatchS06_00427f00.obj
+0x00427680	adapter	_FUN_00427680	0x0001b270	call	0x0001bbec	_FUN_00427ff0	ddk_s06_00427ff0_MatchS06_00427ff0.obj
+0x00427680	adapter	_FUN_00427680	0x0001b270	call	0x0001bd01	_FUN_00428140	ddk_s06_00428140_MatchS06_00428140.obj
+0x00427680	body	___ddkreg_00427680	0x0001b170	call	0x0001b28e	_FUN_00427680	ddk_s06_00427680_MatchS06_00427680.obj
+0x004277a0	adapter	_TextCtrlCodeRemapBody	0x0001b360	call	0x0001b97d	_FUN_00427e00	ddk_s06_00427e00_MatchS06_00427e00.obj
+0x004277a0	adapter	_TextCtrlCodeRemapBody	0x0001b360	call	0x0001bb7d	_FUN_00427ff0	ddk_s06_00427ff0_MatchS06_00427ff0.obj
+0x004277a0	adapter	_TextCtrlCodeRemapBody	0x0001b360	call	0x0001bcbd	_FUN_00428140	ddk_s06_00428140_MatchS06_00428140.obj
+0x004277a0	adapter	_TextCtrlCodeRemapBody	0x0001b360	call	0x001b7152	_TextCtrlCodeRemap	vs_MatchS06_004277a0.obj
+0x004277a0	body	___ddkreg_004277a0	0x0001b2c0	call	0x0001b369	_TextCtrlCodeRemapBody	ddk_s06_004277a0_MatchS06_004277a0.obj
+0x004277a0	body	___ddkreg_004277a0	0x0001b2c0	call	0x0001b44b	_FUN_004278d0	ddk_s06_004278d0_MatchS06_004278d0.obj
+0x004277a0	body	___ddkreg_004277a0	0x0001b2c0	call	0x0001b52f	_FUN_00427990	ddk_s06_00427990_MatchS06_00427990.obj
+0x004277a0	body	___ddkreg_004277a0	0x0001b2c0	call	0x0001b64b	_MenuMenusBB	ddk_s06_00427ad0_MatchS06_00427ad0.obj
+0x00427840	adapter	_FontText_UTF16WidenCopyBody	0x0001b3b0	call	0x0001ba82	_FUN_00427f00	ddk_s06_00427f00_MatchS06_00427f00.obj
+0x00427840	adapter	_FontText_UTF16WidenCopyBody	0x0001b3b0	call	0x001b7182	_FontText_UTF16WidenCopy	vs_MatchS06_00427840.obj
+0x00427840	body	___ddkreg_00427840	0x0001b370	jmp	0x0001b3b8	_FontText_UTF16WidenCopyBody	ddk_s06_00427840_MatchS06_00427840.obj
+0x00427840	body	___ddkreg_00427840	0x0001b370	call	0x0001b754	_FUN_00427be0	ddk_s06_00427be0_MatchS06_00427be0.obj
+0x00427840	body	___ddkreg_00427840	0x0001b370	call	0x0001be14	_TextWidthMeasureB	ddk_s06_00428320_MatchS06_00428320.obj
+0x00427880	adapter	_FUN_00427880	0x0001b410	none			
+0x00427880	body	___ddkreg_00427880	0x0001b3c0	jmp	0x0001b414	_FUN_00427880	ddk_s06_00427880_MatchS06_00427880.obj
+0x00429240	body	___ddkreg_00429240	0x0001ca00	call	0x0001ca64	_FUN_00429290	ddk_s06_00429290_MatchS06_00429290.obj
+0x00429240	body	___ddkreg_00429240	0x0001ca00	imm32	0x0004607b	?ModalGo@?A0xa99abfb4@@YAXH@Z	exe_main.obj
+0x0042aad0	adapter	_MenuDimSetBody	0x0001db50	call	0x001b7813	_MenuDimSet	vs_MatchS06_0042aad0.obj
+0x0042aad0	body	___ddkreg_0042aad0	0x0001db40	jmp	0x0001db54	_MenuDimSetBody	ddk_s06_0042aad0_MatchS06_0042aad0.obj
+0x0042ac00	adapter	_MenuGroupCountBody	0x0001dc80	call	0x001b7861	@MenuGroupCount@8	vs_MatchS06_0042ac00.obj
+0x0042ac00	adapter	_MenuGroupCountBody	0x0001dc80	imm32	0x001cec23	?RaceSubmit_Render@LibRw@mashed_re@@YAXABURaceSceneState@Race@2@@Z	RwRaceSubmit_exe.obj
+0x0042ac00	adapter	_MenuGroupCountBody	0x0001dc80	imm32	0x001cf14f	?RaceSubmit_Render@LibRw@mashed_re@@YAXABURaceSceneState@Race@2@@Z	RwRaceSubmit_exe.obj
+0x0042ac00	body	___ddkreg_0042ac00	0x000198e0	call	0x000199ac	_MenuSpriteDispatchB	ddk_s07_0042fb70_MatchS07_0042fb70.obj
+0x0042ac00	body	___ddkreg_0042ac00	0x000198e0	jmp	0x0001dc84	_MenuGroupCountBody	ddk_s06_0042ac00_MatchS06_0042ac00.obj
+0x0042ac50	adapter	_Calc42ac50	0x0001dc90	none			
+0x0042ac50	body	___ddkreg_0042ac50	0x00019930	call	0x000199b6	_MenuSpriteDispatchB	ddk_s07_0042fb70_MatchS07_0042fb70.obj
+0x0042ac50	body	___ddkreg_0042ac50	0x00019930	call	0x0001a62f	_MenuAnimTickTwin	ddk_s08_004325c0_MatchS08_004325c0.obj
+0x0042ac50	body	___ddkreg_0042ac50	0x00019930	call	0x0001a65e	_MenuAnimTickTwin	ddk_s08_004325c0_MatchS08_004325c0.obj
+0x0042ac50	body	___ddkreg_0042ac50	0x00019930	jmp	0x0001dc98	_Calc42ac50	ddk_s06_0042ac50_MatchS06_0042ac50.obj
+0x0042ad10	adapter	_FUN_0042ad10	0x0001dda0	jmp	0x001b7890	_PromptRowInit0042ad10	vs_MatchS06_0042ad10.obj
+0x0042ad10	body	___ddkreg_0042ad10	0x0001dd20	call	0x0001ddb7	_FUN_0042ad10	ddk_s06_0042ad10_MatchS06_0042ad10.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018e642	?BuildRecords@?A0xdcdc6feb@Frontend@mashed_re@@YAXABUNavSlot@23@@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018e70e	?BuildRecords@?A0xdcdc6feb@Frontend@mashed_re@@YAXABUNavSlot@23@@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018ebf2	?Nav@Frontend@mashed_re@@YAXHH@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018ec2a	?Nav@Frontend@mashed_re@@YAXHH@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018ec9e	?Nav@Frontend@mashed_re@@YAXHH@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018ecaf	?Nav@Frontend@mashed_re@@YAXHH@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018ed6b	?NavCountItems@?A0xdcdc6feb@Frontend@mashed_re@@YAHPBIH@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018f2e5	?Nav_DevGoto@Frontend@mashed_re@@YAXH@Z	MenuNavSM.obj
+0x0042ad90	adapter	_Find42ad90	0x0001de00	call	0x0018f74f	?Nav_Init@Frontend@mashed_re@@YAXXZ	MenuNavSM.obj
+0x0042ad90	body	___ddkreg_0042ad90	0x0001ddc0	call	0x0001de0e	_Find42ad90	ddk_s06_0042ad90_MatchS06_0042ad90.obj
+0x0042f020	adapter	_FUN_0042f020	0x000194d0	none			
+0x0042f020	body	___ddkreg_0042f020	0x00019440	jmp	0x000194d8	_FUN_0042f020	ddk_s07_0042f020_MatchS07_0042f020.obj
+0x00431b80	body	___ddkreg_00431b80	0x00019e50	call	0x0001a014	_CarSelectReset	ddk_s07_00431b80_MatchS07_00431d00.obj
+0x00431b80	body	___ddkreg_00431b80	0x00019e50	call	0x0001a01c	_CarSelectReset	ddk_s07_00431b80_MatchS07_00431d00.obj
+0x00431b80	body	___ddkreg_00431b80	0x00019e50	call	0x0001a028	_CarSelectReset	ddk_s07_00431b80_MatchS07_00431d00.obj
+0x00454170	body	___ddkreg_00454170	0x00024760	call	0x000247e1	___ddkreg_004547c0	ddk_s09_004548a0_PortTop_004548a0.obj
+0x00454170	body	___ddkreg_00454170	0x00024760	call	0x00024850	_Orig_004548a0	ddk_s09_004548a0_PortTop_004548a0.obj
+0x004547c0	body	___ddkreg_004547c0	0x000247d0	call	0x00024837	_Orig_004548a0	ddk_s09_004548a0_PortTop_004548a0.obj
+0x00457ba0	body	___ddkreg_00457ba0	0x000243c0	call	0x00024442	___ddkreg_00458020	ddk_s09_00458360_PortTop_00458360.obj
+0x00457ba0	body	___ddkreg_00457ba0	0x000243c0	call	0x000244b0	_Orig_00458360	ddk_s09_00458360_PortTop_00458360.obj
+0x00458020	body	___ddkreg_00458020	0x00024430	call	0x00024497	_Orig_00458360	ddk_s09_00458360_PortTop_00458360.obj
+0x0045ba10	body	___ddkreg_0045ba10	0x000227e0	call	0x00022886	_Orig_0045bae0	ddk_s10_0045bae0_PortTop_0045bae0.obj
+0x0045ba10	body	___ddkreg_0045ba10	0x000227e0	call	0x00022897	_Orig_0045bae0	ddk_s10_0045bae0_PortTop_0045bae0.obj
+0x004670a0	body	___ddkreg_004670a0	0x00014780	call	0x000147fd	_Orig_00467110	ddk_s11_00467110_PortTop_00467110.obj
+0x0046c5f0	adapter	_FUN_0046c5f0	0x00021410	imm32	0x00034412	_RwCore_004cdb60	ddk_rwl01_004cdb60_RwCore_004cdb60.obj
+0x0046c5f0	adapter	_FUN_0046c5f0	0x00021410	call	0x001bc670	?TriangleFaceNormal@Collision@mashed_re@@YAXPBM00PAM@Z	vs_MatchPilot_0046c5f0.obj
+0x0046c5f0	body	___ddkreg_0046c5f0	0x00021330	call	0x00021421	_FUN_0046c5f0	ddk_pilot_a5_0046c5f0_MatchPilot_0046c5f0.obj
+0x0047c1f0	body	___ddkreg_0047c1f0	0x000111d0	call	0x0001123e	_CameraPathAnyNodeNonzero	ddk_s13_0047c2d0_MatchS13_0047c2d0.obj
+0x0047c230	body	___ddkreg_0047c230	0x00011130	call	0x0001119e	_CameraPathAllNodesEq2	ddk_s13_0047c270_MatchS13_0047c270.obj
+0x00487150	body	___ddkreg_00487150	0x0001ed70	call	0x0001edad	_Orig_00487e00	ddk_s14_00487150_PortTop_00487e00.obj
+0x00498810	body	___ddkreg_00498810	0x00016370	call	0x0001644d	_Orig_00498860	ddk_s16_00498810_PortTop_00498860.obj
+	not-linked	_FUN_00401690					
+	not-linked	_FUN_0041beb0					
+	not-linked	_FUN_0041c9a0					
+	not-linked	_FUN_0041cb00					
+	not-linked	_FUN_0041d6d0					
+	not-linked	_FUN_00429240					
+	not-linked	_FUN_00431b80					
+	not-linked	_FUN_00454170					
+	not-linked	_FUN_004547c0					
+	not-linked	_FUN_00457ba0					
+	not-linked	_FUN_00458020					
+	not-linked	_FUN_00458080					
+	not-linked	_FUN_0045ba10					
+	not-linked	_FUN_0045bac0					
+	not-linked	_FUN_004670a0					
+	not-linked	_FUN_0047c1f0					
+	not-linked	_FUN_0047c230					
+	not-linked	_FUN_00498810					
+	not-linked	_Orig_00487150					
+	not-linked	_Orig_0048cee0					
+	not-linked	_PortBatch_0041d410					
+	not-linked	_PortBatch_0041e630					
+	not-linked	___ddkreg_00458080					
+	not-linked	___ddkreg_0045bac0					
+	not-linked	___ddkreg_0048cee0					

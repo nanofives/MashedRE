@@ -1,8 +1,8 @@
-// NEARMATCH-555360 (L-111 step 1, L-115 / L-117 = (a), 2026-11-10): exe-only NEAR-MATCH body of rva 0x00555360 = the
-// unedited source re/match/s24/00555360.c (94.4%, 89/90 instructions; not byte-identical). L-117 admits this function
-// under L-115 by name: every one of its 55 differing bytes is accounted for in
-// verify/portorigtop_20261109/RESULT_L115-HUDINIT-PROOFS.md (50 by the return-block layout and the shift it causes, 5 by
-// the order of two stores to non-overlapping addresses). It counts on the port axis only, never C4.
+// NEARMATCH-555360 (L-111 step 1, L-115 / L-117 = (a), 2026-11-10): exe-only body of rva 0x00555360 = the
+// source re/match/s24/00555360.c. Since MATCH-RT2D-RESID (4dd87899e) it is 100% (90/90 instructions) byte-identical under
+// toolchain rw9044, relocheck OK; the 94.4% near-match history (L-115 / L-117, verify/portorigtop_20261109/
+// RESULT_L115-HUDINIT-PROOFS.md) is superseded. ADMITTED.tsv row refreshed by ADMITTED-555360-REFRESH (equiv.py: EQUIV
+// [BYTE-IDENTICAL]). The wrapper includes the source, so the edit needs no change here. Port axis only, never C4 by this status.
 // Two freelists (0x144-byte entries, header 0x007dc7a0 -> DAT_00912a08; 0xc-byte, header 0x007dc7c4 -> DAT_00912a14), an
 // 0x51-byte RwGlobals +0x108 path buffer DAT_00912a0c grown with +0x110 to strlen (+0xf4) of the string at 0x00623ea4 plus 1
 // and filled with +0xcc, the 64-quad index table at 0x00912700, DAT_00912a18 = 0, DAT_00912a1c = DAT_00912a20 =

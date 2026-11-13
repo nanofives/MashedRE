@@ -1,5 +1,5 @@
 // FLAGS: /O2 /GS /Ob1
-/* MATCH-S08 0x0043dfd0: 17.7% (regs 46.9%), raw g2s 17.1%. Raw converter body with type fixes: the globals the listing touches with x87 instructions (0x0067f1ac, 0x0067e840, 0x007f1004, 0x007f0f00/04/08, 0x0067eaa8 and the .rdata constants) retyped float, FUN_00431b30 returns float and FUN_00495080 takes (float, float), arity of thunk_FUN_00493f70 / thunk_FUN_00494460 / thunk_FUN_00494480 / FUN_0042ae10 fixed to 1 arg, pointer casts for C++. Call sequence is close (190 calls vs 195 in the original). Residual (b): register allocation across the 10.9 KB body (ebx=0 / edi=1 pinned in the original, frame 0x2c vs 0x18 here) and the remaining Ghidra shape, out of budget. */
+/* MATCH-S08 0x0043dfd0: 19.2% (regs 31.7%, ops 59.1%) since RO-MENU-DIV-43DFD0 (2026-11-12), was 17.7% (regs 46.9%), raw g2s 17.1%. RO-MENU-DIV-43DFD0 fixed two converter defects: the four __ftol sites (0x0043e0a7, 0x0043e101, 0x00440a16, 0x00440a5e) called FUN_004a2c48() with nothing on the x87 stack, now (int)(DAT_007f1004 * constant); the key-scan edx flag (extraout_EDX) was read uninitialised, now set as at 0x0043e3f8 / 0x0043e427 / 0x0043e432. Raw converter body with type fixes: the globals the listing touches with x87 instructions (0x0067f1ac, 0x0067e840, 0x007f1004, 0x007f0f00/04/08, 0x0067eaa8 and the .rdata constants) retyped float, FUN_00431b30 returns float and FUN_00495080 takes (float, float), arity of thunk_FUN_00493f70 / thunk_FUN_00494460 / thunk_FUN_00494480 / FUN_0042ae10 fixed to 1 arg, pointer casts for C++. Call sequence is close (190 calls vs 195 in the original). Residual (b): register allocation across the 10.9 KB body (ebx=0 / edi=1 pinned in the original, frame 0x2c vs 0x18 here) and the remaining Ghidra shape, out of budget. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -250,6 +250,9 @@ MGLOBAL(int, _DAT_0067ed34, 0x0067ed34);
 MGLOBAL(int, _DAT_0067edf4, 0x0067edf4);
 MGLOBAL(float, _DAT_005cc328, 0x005cc328);
 MGLOBAL(float, _DAT_005cc320, 0x005cc320);
+MGLOBAL(float, _DAT_005cc9fc, 0x005cc9fc);
+MGLOBAL(float, _DAT_005cda88, 0x005cda88);
+MGLOBAL(float, _DAT_005cd8f8, 0x005cd8f8);
 // MATCH: 0x0043dfd0 FUN_0043dfd0
 /* [C1 2026-06-01] `void FUN_0043dfd0(void)` — large per-frame state-machine/tick (body
    0x0043dfd0.. */
@@ -272,7 +275,7 @@ void FUN_0043dfd0(void)
   int *piVar13;
   int iVar14;
   undefined4 *puVar15;
-  int extraout_EDX;
+  int extraout_EDX; /* edx flag of the key scan: 0 at 0x0043e3f8, 1 at 0x0043e427 / 0x0043e432, read at 0x0043e4a3 */
   int iVar16;
   int *piVar17;
   int *piVar18;
@@ -312,7 +315,7 @@ void FUN_0043dfd0(void)
   DAT_0067f1a0 = 0;
   DAT_0067f1a4 = 0;
   if (DAT_0067eca4 == 1) {
-    iVar8 = FUN_004a2c48();
+    iVar8 = (int)(DAT_007f1004 * _DAT_005cc9fc); /* 0x0043e0a7: fld [0x7f1004]; fmul [0x5cc9fc]; call 0x004a2c48 (__ftol) */
     if (DAT_0067eca8 + iVar8 < 0xff) {
       DAT_0067eca8 = DAT_0067eca8 + iVar8;
       return;
@@ -324,7 +327,7 @@ void FUN_0043dfd0(void)
   }
   if (DAT_0067eca4 == 2) {
     FUN_004325c0();
-    iVar8 = FUN_004a2c48();
+    iVar8 = (int)(DAT_007f1004 * _DAT_005cda88); /* 0x0043e101 */
     DAT_0067eca8 = DAT_0067eca8 + iVar8;
     if (-1 < DAT_0067eca8) {
       return;
@@ -466,8 +469,12 @@ void FUN_0043dfd0(void)
   bVar4 = false;
   bVar3 = false;
   bVar2 = false;
+  extraout_EDX = 0;
   while (iVar8 != -0xf60000) {
-    if ((iVar8 != -0xf00000) && (iVar8 != -0xdd0000)) {
+    if ((iVar8 == -0xf00000) || (iVar8 == -0xdd0000)) {
+      extraout_EDX = 1;
+    }
+    else {
       if (iVar8 == -0xef0000) {
         bVar2 = true;
       }
@@ -2086,7 +2093,7 @@ LAB_004409f2:
 LAB_00440a0c:
   if (DAT_0067eca4 == 4) {
     iVar8 = FUN_004325c0();
-    iVar9 = FUN_004a2c48();
+    iVar9 = (int)(DAT_007f1004 * _DAT_005cc9fc); /* 0x00440a16 */
     if (DAT_0067eca8 + iVar9 < 0xff) {
       DAT_0067eca8 = DAT_0067eca8 + iVar9;
       return;
@@ -2101,7 +2108,7 @@ LAB_00440a0c:
   else if (DAT_0067eca4 != 5) {
     return;
   }
-  iVar8 = FUN_004a2c48();
+  iVar8 = (int)(DAT_007f1004 * _DAT_005cd8f8); /* 0x00440a5e */
   DAT_0067eca8 = DAT_0067eca8 + iVar8;
   if (DAT_0067eca8 < 1) {
     iVar8 = thunk_FUN_00493f70(0);
