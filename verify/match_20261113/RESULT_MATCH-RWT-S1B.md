@@ -210,3 +210,23 @@ failures. This is the first Opus-high attempt.
 - `verify/match_20261113/MATCH-RWT-S1B_probes/`: probe sources and scripts (60 KB): `t*.c` probes, `asm.py`
   (listing helper), `gen.py` + `v*.py` (full-function variant sweeps), `scan.py` (load-then-`cmp reg,[mem]` scan of
   0x004c0000..0x005c8000 against `re/match` sources), `rich.py` (Rich header).
+
+# Hand merge (run 44, 2026-11-13)
+
+Merge train 20261113_155723 stopped on a conflict in `re/match/s20/004cb4c0.c` against `orch/integration` @ ce8575ef1
+(after MATCH-NM-5441F0-4C4A50 and IMG-1-EXTRACT). `orch/integration` was merged into this branch with
+`git -c merge.autoStash=false` (merge commit e99bdf89a). The conflict was in the header comment only: the
+integration side carries the MATCH-RWT-S1 paragraph, which the S1B header already contains word for word, so the
+S1B side was kept whole (body with the `__declspec(align(8))` Mat16A global unchanged, `git diff 01d854f23` on the
+file is empty). Tracker files (hooks.csv, CHANGELOG, dual_copy_allowlist) merged with no conflict. No other
+re/match source was in the conflict set (this branch only changed 004cb4c0.c). Checks after the merge:
+
+```
+py -3.12 re/tools/match/match.py --bytes re/match/s20/004cb4c0.c
+  0x004cb4c0 _FUN_004cb4c0: 100.0% (regs 100.0%, ops 100.0%)  92/92 ins  flags=/O2 /Ob1 /G5 /Oy- tc=ddk
+  bytes: 320 B whole symbol, 0 differing unmasked bytes -> BYTE-IDENTICAL (relocations masked)
+py -3.12 re/tools/match/relocheck.py re/match/s20/004cb4c0.c
+  0x004cb4c0	OK	checked=25	unchecked=0	004cb4c0.c
+py -3.12 re/tools/c4_reclass.py batch --tsv re/promotions/MATCH-RWT-S1B.tsv      (dry run)
+  batch: 1 pass, 0 refused, 0 skipped (already C4), 1 rows  [by route: match=1]
+```
