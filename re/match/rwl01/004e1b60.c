@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL01 0x004e1b60: best 86.5% (regs 90%, ops 98.2%), class (b). Unsigned count tested as 0 < n, param_3 copied after the range check, dead store dropped; remaining diff is which of eax/ecx/edx and esi/edx carry the first call's args (permuter 239 compiles). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -37,60 +38,46 @@ undefined4 FUN_004cc400(undefined4 p0, int * p1, int * p2, uint * p3, uint * p4)
 undefined4 FUN_004cc5e0(undefined4 p0, int p1, undefined4 * p2, uint * p3);
 undefined4 FUN_004d7ff0(undefined4 p0);
 undefined4 * FUN_004d8480(undefined4 * p0);
+/* MATCH-RWT-A 2026-11-12: 100% under rw9044. Rewritten from the Ghidra shape: stream/object stay in their params,
+   the chunk type and size are block-scope locals of the loop (c2 parks them in the dead param slots), and the
+   RwError pluginID store (=1) comes before the _rwerror call. verify/match_20261112/RESULT_MATCH-RWT-A.md */
 // MATCH: 0x004e1b60 FUN_004e1b60
 /* [C1 2026-05-07] FUN_004e1b60 (RW plugin extension stream reader) */
 
 int FUN_004e1b60(int param_1,int param_2,int param_3)
-
 {
   undefined4 *puVar1;
-  int iVar2;
   int iVar3;
-  int iVar4;
   uint local_10;
   uint local_c [3];
-  
-  iVar3 = FUN_004cc5e0(param_2,3,&local_10,local_c);
-  iVar4 = param_2;
-  if (iVar3 != 0) {
-    if ((local_c[0] < 0x35000) || (0x37002 < local_c[0])) {
-      local_c[2] = FUN_004d7ff0(0x80000004);
-      FUN_004d8480(local_c + 1);
-      local_c[1] = 1;
-    }
-    else {
-      iVar2 = param_3;
-      for (; 0 < local_10; local_10 = local_10 + (-0xc - param_2)) {
-        iVar3 = FUN_004cc400(iVar4,&param_3,&param_2,0,0);
-        if (iVar3 == 0) {
-          return 0;
-        }
-        for (puVar1 = *(undefined4 **)(param_1 + 0x10); puVar1 != (undefined4 *)0x0;
-            puVar1 = (undefined4 *)puVar1[0xc]) {
-          if (puVar1[2] == param_3) {
-            if ((code *)puVar1[3] != (code *)0x0) {
-              iVar3 = (*(code *)puVar1[3])(iVar4,param_2,iVar2,*puVar1,puVar1[1]);
-              goto LAB_004e1bf5;
-            }
-            break;
-          }
-        }
-        iVar3 = (int)FUN_004cc050(iVar4,param_2);
-LAB_004e1bf5:
-        if (iVar3 == 0) {
-          return 0;
-        }
-      }
-      puVar1 = *(undefined4 **)(param_1 + 0x10);
-      while( true ) {
-        if (puVar1 == (undefined4 *)0x0) {
-          return param_1;
-        }
-        if (((code *)puVar1[6] != (code *)0x0) &&
-           (iVar4 = (*(code *)puVar1[6])(iVar2,*puVar1,puVar1[1]), iVar4 == 0)) break;
-        puVar1 = (undefined4 *)puVar1[0xc];
-      }
-    }
+
+  if (FUN_004cc5e0(param_2,3,&local_10,local_c) == 0) return 0;
+  if ((local_c[0] < 0x35000) || (0x37002 < local_c[0])) {
+    local_c[1] = 1;
+    local_c[2] = FUN_004d7ff0(0x80000004);
+    FUN_004d8480(local_c + 1);
+    return 0;
   }
-  return 0;
+  while (0 < local_10) {
+    int type;
+    int size;
+    if (FUN_004cc400(param_2,&type,&size,0,0) == 0) return 0;
+    for (puVar1 = *(undefined4 **)(param_1 + 0x10); puVar1 != (undefined4 *)0x0; puVar1 = (undefined4 *)puVar1[0xc]) {
+      if (puVar1[2] == type) {
+        if ((code *)puVar1[3] != (code *)0x0) {
+          iVar3 = (*(code *)puVar1[3])(param_2,size,param_3,*puVar1,puVar1[1]);
+          goto LAB_004e1bf5;
+        }
+        break;
+      }
+    }
+    iVar3 = (int)FUN_004cc050(param_2,size);
+LAB_004e1bf5:
+    if (iVar3 == 0) return 0;
+    local_10 = local_10 + (-0xc - size);
+  }
+  for (puVar1 = *(undefined4 **)(param_1 + 0x10); puVar1 != (undefined4 *)0x0; puVar1 = (undefined4 *)puVar1[0xc]) {
+    if (((code *)puVar1[6] != (code *)0x0) && ((*(code *)puVar1[6])(param_3,*puVar1,puVar1[1]) == 0)) return 0;
+  }
+  return param_1;
 }
