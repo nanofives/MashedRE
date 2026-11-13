@@ -1,3 +1,21 @@
+/* MATCH-RWT-S5 (Opus high, attempt 2 on the corrected source) 2026-11-13: 62.0 -> 83.2% (regs 96.6%, ops 97.5%,
+   119/119 ins), same under ddk and rw9044. Semantics unchanged against the S3 source (each change below reads the
+   same value). Levers that moved the score:
+   (1) per-pass reload of param_1 in the search loop through a block-local temp read as `*(volatile uint *)&param_1`.
+       This takes param_1's register web out of the loop: param_1 now sits in ecx for the entry block only (load
+       before the pushes, as the original at 0x004dcbb0), the loop counter gets ecx, and the loop reloads the param
+       from [esp+0x14] each pass (original 0x004dcc00). The tail `div dword ptr [esp+0x14]` (0x004dccf2) follows with
+       plain param_1. 62.0 -> 82.4.
+   (2) the inner search key `key = DAT_007d70ec[idx]` hoisted before the pn loop (original loads it before the null
+       test, mov ecx,[ebp*4+0x7d70ec]), with `DAT_007d70dc[DAT_007d70c8]` in the first check. 82.4 -> 83.2.
+   Open residual (20 instructions, one cause): size (uVar7) and end (uVar5) have swapped callee-saved registers. Ours
+   size=ebx, end=edi; the original size=edi, end=ebx (0x004dcbcb mov edi,ecx / imul edi,[esp+0x18]; 0x004dcbe4 lea
+   ebx,[esi+edi]). c2 colours webs in priority order on esi, edi, ebx, ebp. The reload temp `a` outranks size and
+   takes edi, end follows into a's edi (they do not interfere), so size drops to ebx. In the original the reload is a
+   spill reload, not a web, and lands in end's dead ebx. Measured: two extra outside-loop stores of size (code
+   change, diagnostic only) move size to edi and a/end to ebx. No zero-code way to add that weight was found. Also
+   open: the found path copies `mov ebp,ecx` before `cmp ecx,4` and stores from ebp (0x004dcc27..0x004dcc2c); ours
+   stores from ecx. Probes: verify/match_20261113/MATCH-RWT-S5_probes/, RESULT: verify/match_20261113/RESULT_MATCH-RWT-S5.md */
 /* MATCH-RWT-S3 (Opus high) 2026-11-13: SEMANTIC FIX, score 77.5 -> 62.0% (ddk = rw9044). The found branch wrote
    `DAT_007d70c8 = idx; idx = uVar4;`, storing the OLD index; c2 drops that store as redundant (idx was loaded
    from DAT_007d70c8). The original stores the NEW index: 0x004dcc27 mov ebp,ecx / 0x004dcc2c mov [0x7d70c8],ebp.
@@ -47,22 +65,25 @@ int FUN_004dcbb0(uint param_1,int param_2,int **param_3,undefined4 param_4,uint 
   int *piVar2;
   int iVar3;
   int *pn;
+  int *key;
   uint idx;
   uint uVar4;
   uint uVar5;
   uint uVar6;
   uint uVar7;
+  uint a;
 
   idx = DAT_007d70c8;
   uVar7 = param_1 * param_2;
   if ((DAT_00911fbc & 0x10000) != 0) {
     uVar6 = ((DAT_007d70cc[idx] + param_1 - 1) / param_1) * param_1;
     uVar5 = uVar6 + uVar7;
-    if (uVar5 <= DAT_007d70dc[idx]) goto LAB_004dcc4c;
+    if (uVar5 <= DAT_007d70dc[DAT_007d70c8]) goto LAB_004dcc4c;
     uVar4 = 0;
     do {
       if (uVar4 != idx) {
-        uVar6 = ((DAT_007d70cc[uVar4] + param_1 - 1) / param_1) * param_1;
+        a = *(volatile uint *)&param_1;
+        uVar6 = ((DAT_007d70cc[uVar4] + a - 1) / a) * a;
         uVar5 = uVar6 + uVar7;
         if (uVar5 <= DAT_007d70dc[uVar4]) {
           idx = uVar4;
@@ -84,8 +105,9 @@ int FUN_004dcbb0(uint param_1,int param_2,int **param_3,undefined4 param_4,uint 
   uVar5 = uVar7;
 LAB_004dcc4c:
   if (uVar7 > DAT_007d70dc[idx]) {
+    key = DAT_007d70ec[idx];
     for (pn = DAT_007d70c0; pn != 0; pn = (int *)pn[4]) {
-      if ((int *)pn[2] == DAT_007d70ec[idx]) {
+      if ((int *)pn[2] == key) {
         pn[1] = 0;
         pn[3] = 0;
         idx = DAT_007d70c8;

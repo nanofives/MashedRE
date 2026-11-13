@@ -1,0 +1,3 @@
+start 82.4% (regs-renamed 82.3%, in place 74.8%)
+round 1: no improvement (93 variants)
+best 82.4% (regs-renamed 82.3%, in place 74.8%) after 733 compiles -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\MATCH-RWT-S5\verify\match_20261113\MATCH-RWT-S5_probes\perm1\004dcbb0.c
