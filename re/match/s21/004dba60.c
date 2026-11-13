@@ -1,5 +1,7 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-S21 0x004dba60 (h3): best 87.6% (regs 96.6%, ops 97.8%). Raw did not compile; written from odis.py + decomp.json.
+/* MATCH-RWT-A 2026-11-12: 100% under rw9044 (TOOLCHAIN line added, ox converted before oy). verify/match_20261112/RESULT_MATCH-RWT-A.md
+   MATCH-S21 0x004dba60 (h3): best 87.6% (regs 96.6%, ops 97.8%). Raw did not compile; written from odis.py + decomp.json.
    Im2D-style draw: camera from DAT_00911d60+0x60 or FUN_004c75c0, primitive count by switch (jump table
    at 0x004dbc78, past the Ghidra size), vertex buffer lock (slot 0x2c, __stdcall, 0x2800 discard / 0x1800
    nooverwrite at 0x2492 vertices) or FUN_004dcbb0, copy or offset by the camera's short x/y at +0x1c/+0x1e,
@@ -82,8 +84,8 @@ int FUN_004dba60(int param_1, Vtx_ba60 *param_2, int param_3)
     memcpy(p, param_2, n * sizeof(Vtx_ba60));
   } else {
     float ox, oy;
-    oy = (float)cam->oy;
     ox = (float)cam->ox;
+    oy = (float)cam->oy;
     for (i = 0; i < n; i++) {
       p[i].x = ox + param_2[i].x;
       p[i].y = oy + param_2[i].y;
