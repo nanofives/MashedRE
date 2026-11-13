@@ -1,0 +1,14 @@
+# Hand-written rows of the replay-oracle mask file (RO-MASKS, 2026-11-13). re/tools/gen_replay_masks.py appends them to
+# re/frida/replay_masks.tsv. Same columns as warp_normalize.tsv. Only MASK rows here: PIN rows stay in warp_normalize.tsv.
+# Families: os (OS-assigned or boot-time words), stale-stack (dwords holding leftover stack of the writer).
+# Boot residue (1.9) is not masked: warp_normalize.tsv pins it on both sides at the warp.
+va	count	stride	width	action	value	writer	readers	note
+0x00773c40	1	0	260	MASK:os	-	0x004abe86 CRT startup (push 0x104 at 0x004abe9d; the buffer receives the module file name)	-	exe path D:\MashedWT\<ROW>_root\original\MASHED.exe, 0x104 B, differs per private root folder (RESULT_RO-CONTROL-DRIFT, orch/RO-CONTROL-DRIFT @ 22695e174)
+0x00773d60	1	0	4	MASK:os	-	CRT startup, before any hook or body runs	-	kernel32 proc pointer, differs per boot (0x75b6e8c0 vs 0x769fe8c0 across the 2026-11-12 12:24 reboot; RESULT_RO-CONTROL-DRIFT)
+0x007e95a0	1	0	28	MASK:os	-	PeekMessageA 0x0049969d	-	MSG filled by Windows (0x007e95a0..0x007e95bb)
+0x006147d8	1	0	4	MASK:os	-	0x00493eeb 0x0049479a	0x00494485	window-message flag, values 0..1
+0x00771a00	1	0	4	MASK:os	-	0x00493ef0 0x00494794	0x00493c90 0x00493cb9 0x00493eb7 0x00493edf	flag written next to 0x006147d8, values 0..1
+0x007eca0c	256	0x40	20	MASK:stale-stack	-	0x00469d90..0x00469daa FUN_00469aa0	see RESULT_RO-STACKROW-READERS.md	ring 0x007ec9e4, 256 rows x 0x40: fields +0x28..+0x3c (0x14 B) hold stack leftovers (detorig_report.py RULE:STACKROW)
+0x006fe7dc	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370 (rep movsd of an RwMatrix into the particle ring 0x006fe790)	-	RwMatrix pad m[7], stale stack
+0x006fe7ec	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[11], held code address 0x004671a5 (run n3_w2)
+0x006fe7fc	150	0x7c	4	MASK:stale-stack	-	0x004863e4 FUN_00486370	-	RwMatrix pad m[15], stale stack

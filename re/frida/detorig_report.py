@@ -227,7 +227,7 @@ if __name__ == "__main__":
     ap.add_argument("a"); ap.add_argument("b")
     ap.add_argument("--list", type=int, default=20)
     ap.add_argument("--json", default="")
-    ap.add_argument("--norm", default="", help="re/frida/warp_normalize.tsv: score its MASK rows as MASK:<family>")
+    ap.add_argument("--norm", default="", help="mask/normalize file(s), comma-separated (re/frida/warp_normalize.tsv,re/frida/replay_masks.tsv): score their MASK rows as MASK:<family>")
     a = ap.parse_args()
     r = report(a.a, a.b, a.list, a.norm or None)
     if a.json:
