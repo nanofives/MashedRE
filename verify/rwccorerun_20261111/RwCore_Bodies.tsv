@@ -1,4 +1,8 @@
 rva	kind	source	best_pct	exe_symbol
+0x00428450	provisional	re/match/s06/00428450.c	84.6	RwCore_00428450
+0x0042b8b0	exe	Match/MatchS07_0042b8b0.cpp		ScreenWidthGet
+0x0042b8c0	exe	Match/MatchS07_0042b8c0.cpp		ScreenHeightGet
+0x00450b10	provisional	re/match/s08/00450b10.c	86.6	RwCore_00450b10
 0x004522d0	match100	re/match/s09/004522d0.c	100.0	RwCore_004522d0
 0x0045b350	exe	exe body, Match/MatchS09_0045b350.cpp		RwInitNullStub
 0x004721e0	missing			RwCoreMissing_004721e0
@@ -336,7 +340,7 @@ rva	kind	source	best_pct	exe_symbol
 0x004d6dfb	missing			RwCoreMissing_004d6dfb
 0x004d6e60	match100	re/match/s21/004d6e60.c	100.0	RwCore_004d6e60
 0x004d6e70	match100	re/match/s21/004d6e70.c	100.0	RwCore_004d6e70
-0x004d7100	provisional	re/match/s21/004d7100.c	21.4	RwCore_004d7100
+0x004d7100	match100	re/match/s21/004d7100.c	100.0	RwCore_004d7100
 0x004d71f0	match100	re/match/s21/004d71f0.c	100.0	RwCore_004d71f0
 0x004d7200	match100	re/match/s21/004d7200.c	100.0	RwCore_004d7200
 0x004d7250	match100	re/match/s21/004d7250.c	100.0	RwCore_004d7250

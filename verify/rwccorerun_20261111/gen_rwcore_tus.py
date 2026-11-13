@@ -62,6 +62,7 @@ ROOTS = [
     '004c9f50', '004c9eb0', '004c9f60',                                        # driver setters 0x00493710 calls
     '00493640',                                                                # RenderwareAttachPlugins (run 38)
     '004b3eb0',                                                                # run 40: TXD loader, frame knob
+    '00428450',                                                                # RWC-FIRST-FRAME-IM2D: loading-disc draw
 ]
 # Run 38: RVAs outside the RW bands that the plugin attaches reach and the closure follows like RW code (each has a
 # re/match source or becomes a logged stop): 0x00493640 itself, its non-band attaches 0x00472380 / 0x0052d8e0 /
@@ -76,7 +77,11 @@ XFOLLOW = {0x493640, 0x472380, 0x472330, 0x472360, 0x52d8e0, 0x52d910, 0x52d950,
            # run 40: callees of re/match/rwl02/004e7420.c (a binding root), sources in re/match/s28
            0x5c4670, 0x5c47b0, 0x5c47e0,
            # run 40 (MASHED_RWC_FRAME): the TXD-from-memory loader that DisplayInit calls (PortTop_Port_004b3eb0 is librw)
-           0x4b3eb0}
+           0x4b3eb0,
+           # RWC-FIRST-FRAME-IM2D (MASHED_RWC_FRAME): ViewportInit 0x00428590's loading-disc draw 0x00428450
+           # (re/match/s06, 84.6%), its Im2D quad 0x00450b10 (re/match/s08, 86.6%) and the two screen-dim getters
+           # (exe bodies, EXE_BODY below)
+           0x428450, 0x450b10, 0x42b8b0, 0x42b8c0}
 # Not roots in this row: 0x00493710's calls after RwEngineStart (GetCurrentMode 0x004c2f00, GetModeInfo 0x004c2ed0,
 # 0x004cbc60..0x004cbc90, RwTexDictionarySetCurrent 0x004c5c80) are not reached, since the knob ends the boot at Start.
 # Data ranges of the RW core (file-backed, seeded from the anchored binary under the knob). Every dword in them whose
@@ -129,6 +134,9 @@ EXE_BODY = {
     '004d7ff0': ('Orig_004d7ff0', 'Match/PortTop_004d7ff0.cpp'),
     '004c3730': ('RwV3dTransformPoint', 'Math/RwV3dTransform.cpp'),
     '004c3880': ('RwV3dTransformVector', 'Math/RwV3dTransform.cpp'),
+    # RWC-FIRST-FRAME-IM2D: callees of 0x00428450 (100% sources already compiled into the exe)
+    '0042b8b0': ('ScreenWidthGet', 'Match/MatchS07_0042b8b0.cpp'),
+    '0042b8c0': ('ScreenHeightGet', 'Match/MatchS07_0042b8c0.cpp'),
 }
 # RWC-BIND-4C5890 (L-129 b): RW-band RVAs whose callers in other TUs bind to an exe binding entry instead of the body.
 # The body is still generated as RwCore_<rva> from its source; every top-down caller (RW core and game) reaches the
@@ -245,7 +253,9 @@ def load_named():
 MATCHLINE = re.compile(r'^// MATCH: 0x([0-9a-f]{8}) (\S+)', re.M)
 # 004c7a70 has no ledger row yet (RWC-DRIVER); its source is the RWC-DRIVER one.
 PIN = {'004c7a70': 're/match/rwd01/004c7a70.c'}
-PCT = {'004c7a70': 93.2}
+PCT = {'004c7a70': 93.2,
+       # RWC-FIRST-FRAME-IM2D: re/match/s21/004d7100.c now returns int 1 (100%, relocheck OK); the ledger row says 21.4
+       '004d7100': 100.0}
 
 
 DEFN = re.compile(r'\b([A-Za-z_]\w*)\s*\(([^;{}()]|\([^;{}()]*\))*\)\s*\{')

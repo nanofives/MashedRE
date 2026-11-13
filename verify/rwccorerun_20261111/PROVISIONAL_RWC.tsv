@@ -1,4 +1,6 @@
 rva	source	best_pct	exe_symbol	path	note
+0x00428450	re/match/s06/00428450.c	84.6	RwCore_00428450	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
+0x00450b10	re/match/s08/00450b10.c	86.6	RwCore_00450b10	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x00472330	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00472330	MASHED_ORIG_TOP + MASHED_RWC_CORE	lifted naked-asm transcription (lift_rwcore.py), knob path only, never C4 by this status
 0x00472360	RwCore/RwCore_Lifted_NN.cpp		RwCoreLift_00472360	MASHED_ORIG_TOP + MASHED_RWC_CORE	lifted naked-asm transcription (lift_rwcore.py), knob path only, never C4 by this status
 0x00493640	re/match/s15/00493640.c	67.9	RwCore_00493640	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
@@ -133,7 +135,6 @@ rva	source	best_pct	exe_symbol	path	note
 0x004d5bc0	re/match/s21/004d5bc0.c	88.6	RwCore_004d5bc0	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x004d6200	re/match/s21/004d6200.c	90.5	RwCore_004d6200	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x004d6910	re/match/s21/004d6910.c	89.1	RwCore_004d6910	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
-0x004d7100	re/match/s21/004d7100.c	21.4	RwCore_004d7100	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x004d7480	re/match/s21/004d7480.c	96.2	RwCore_004d7480	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status
 0x004d7d70	RwCore/RwCore_Hand.cpp		RwCoreHand_004d7d70	MASHED_ORIG_TOP + MASHED_RWC_CORE	hand body from the disassembly, knob path only
 0x004d7de0	re/match/rwl01/004d7de0.c	61.5	RwCore_004d7de0	MASHED_ORIG_TOP + MASHED_RWC_CORE	NOT-PROVEN source (L-126 (6)), knob path only, never C4 by this status

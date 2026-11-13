@@ -4,7 +4,7 @@
 # is allowlisted (allow_origtop.py); anything else stops the loop. Then boot vs_frame and print where it ended.
 # Builds wait out merge-train PRIORITY-HOLD / SOLO. usage: frame_iter.sh <build number>
 cd "$(dirname "$0")/../.."
-D=D:/MashedWT/RWC-PLUGIN-ATTACH_data
+D=${RWC_DATA:-D:/MashedWT/RWC-PLUGIN-ATTACH_data}   # RWC-FIRST-FRAME-IM2D: RWC_DATA / RWC_LABEL override
 L=verify/rwccorerun_20261111/LIFT_INSTEAD_RUN40.txt
 N=$1
 for i in 1 2 3 4 5 6; do
@@ -26,7 +26,7 @@ for i in 1 2 3 4 5 6; do
   N=$((N+1))
 done
 grep -aq "Build OK" $D/build_vs$N.log || { echo "no passing build after 6 tries"; exit 1; }
-test-slot bash -c "py -3.12 ../orch-integration/re/orchestrator/mashed_lock.py run --label RWC-PLUGIN-ATTACH -- bash verify/rwccorerun_20261111/run_arms_attach.sh vs_frame" 2>&1 | grep -a "exited"
+test-slot bash -c "py -3.12 ../orch-integration/re/orchestrator/mashed_lock.py run --label ${RWC_LABEL:-RWC-PLUGIN-ATTACH} -- bash verify/rwccorerun_20261111/run_arms_attach.sh vs_frame" 2>&1 | grep -a "exited"
 cp $D/vs_frame.log $D/vs_frame_$N.log
 grep -a "RWC_CORE\|RWC-DEVICE" $D/vs_frame.log | grep -v "registry node\|probe:" | sed -n '/RwEngineStart returns/,$p' | cut -c1-300 | head -8
 echo "next build number: $((N+1))"
