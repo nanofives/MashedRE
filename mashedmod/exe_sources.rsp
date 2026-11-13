@@ -168,6 +168,7 @@
 "Compat\PortStateSeed.cpp"
 "Compat\PortTopCodePtr.cpp"
 "Compat\PortStateImage.cpp"
+"Compat\CodeTrap.cpp"
 "Compat\D3d9Wrap.cpp"
 "Stubs\HookSystemNoOp.cpp"
 "Frontend\MenuInit.cpp"
