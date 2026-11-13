@@ -7,8 +7,15 @@ typedef struct {
   void *s[8];
   int (*RenderStateSet)(int state, int value); /* +0x20, cdecl (caller clears) */
 } RwGlobalsT;
-extern int DAT_00771964;
-extern RwGlobalsT *DAT_007d3ff8;
+#ifndef MGLOBAL   /* RWC-FRAME-492E90: port-includable globals (extern T n under C, as before) */
+#ifdef __cplusplus
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#else
+#define MGLOBAL(T, n, a) extern T n
+#endif
+#endif
+MGLOBAL(int, DAT_00771964, 0x00771964);
+MGLOBAL(RwGlobalsT *, DAT_007d3ff8, 0x007d3ff8);
 void FUN_00402fb0(void);
 void FUN_00428760(int p0, float p1, float p2, float p3, float p4, int p5);
 

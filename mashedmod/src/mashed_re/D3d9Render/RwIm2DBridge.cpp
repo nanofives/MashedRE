@@ -314,8 +314,20 @@ static bool ProbeWritable(std::uintptr_t addr, std::size_t len) {
     }
 }
 
+}  // namespace D3d9Render
+}  // namespace mashed_re
+#ifdef MASHED_STANDALONE
+extern "C" bool RwCore_FrameRoute(void);   // RwCore/RwCore_Knob.cpp
+#endif
+namespace mashed_re {
+namespace D3d9Render {
 bool RwIm2DBridge_Install(IDirect3DDevice9* device) {
     g_device = device;
+#ifdef MASHED_STANDALONE
+    // [RWC-FRAME-492E90] under MASHED_RWC_FRAME 0x007d3ff8 is the RW core's RwGlobals: the fake device is not installed
+    // there, so every draw that reads the slot goes through the core's device block.
+    if (RwCore_FrameRoute()) return true;
+#endif
 
     std::memset(&g_fakeDevice, 0, sizeof(g_fakeDevice));
     g_fakeDevice.z_field      = 0;  // Z = 0.0f for screen-space pre-transformed verts
