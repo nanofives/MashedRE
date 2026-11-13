@@ -430,8 +430,11 @@ int PortTop_Timer_00493480(void) {
     TmCheck(MemI(0x007f0ffcu) == ffc, "390 DAT_007f0ffc", MemI(0x007f0ffcu), ffc);
     TmCheck(MemI(0x00771984u) == d, "390 DAT_00771984", MemI(0x00771984u), d);
     const unsigned f1010 = FBits(static_cast<float>(now) * 3.3333333e-07f), f1010x = F1010SingleRounding(now);
-    TmCheck(MemFBits(0x007f1010u) == f1010 || MemFBits(0x007f1010u) == f1010x, "390 DAT_007f1010", MemFBits(0x007f1010u), f1010);
-    if (MemFBits(0x007f1010u) == f1010x && f1010x != f1010) ++s_tmX87Form;
+    // Strict (run41 review): only the single-rounding form (the original's fild/fmul/fstp at 0x0049344b) is faithful. There is no
+    // compile-time or runtime indicator of the object build (both compile this TU with /DMASHED_STANDALONE only), so the check is
+    // strict on both builds and the VS2022 double-rounding body FAILS here honestly. s_tmX87Form counts those VS2022-form hits (logged).
+    TmCheck(MemFBits(0x007f1010u) == f1010x, "390 DAT_007f1010", MemFBits(0x007f1010u), f1010x);
+    if (MemFBits(0x007f1010u) == f1010 && f1010 != f1010x) ++s_tmX87Form;
     TmCheck(MemI(0x007f0ff0u) == rff0 + 50, "390 DAT_007f0ff0 += 50", MemI(0x007f0ff0u), rff0 + 50);
     const bool win = t > r102c + 3000000u;
     TmCheck(MemI(0x007f1028u) == (win ? r1024 : r1028), "390 DAT_007f1028", MemI(0x007f1028u), win ? r1024 : r1028);
@@ -454,7 +457,7 @@ int PortTop_Timer_00493480(void) {
 static void PortTop_TimerSummary(void) {
     if (s_otTimer != 1 && s_otAudio != 1) return;
     PortTop_Log("[OT_TIMER] self-test %s (%u of %u checks failed), 0x00493480 calls %u, 0x004926c0 calls %u, "
-                "DAT_007f1010 in the single-rounding form where the two forms differ %u, calls skipped for the replay warp %u; "
+                "DAT_007f1010 in the VS2022 double-rounding form %u, calls skipped for the replay warp %u; "
                 "bodies at %p / %p / %p", s_tmFails ? "FAIL" : "PASS", s_tmFails, s_tmChecks, s_tmCalls480, s_tmCalls6c0,
                 s_tmX87Form, s_tmWarpSkips,
                 reinterpret_cast<void*>(&FpsDiscretise), reinterpret_cast<void*>(&AudioTickAndAvg),

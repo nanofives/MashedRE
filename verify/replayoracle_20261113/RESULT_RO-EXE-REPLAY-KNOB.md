@@ -7,8 +7,9 @@ from `orch/integration` `a616fcc3b`. PREREG `PREREG_RO-EXE-REPLAY-KNOB.md` commi
 ## Verdict
 
 **GREEN.** **Self-test: `[REPLAY] self-test PASS (0 of 666 checks failed)` on the VS2022 build (vs_rep_a, vs_rep_b) and the
-object build (ddk_rep).** The OT_TIMER self-test under the knob is `PASS (0 of 5990 checks failed)` on both builds, after
-the model fix in "Run history".
+object build (ddk_rep).** The OT_TIMER self-test is now STRICT for `DAT_007f1010` (run 4, option a): object build `PASS (0 of 6000` / `0 of 5990)`,
+VS2022 build `FAIL (100 of 6000` real clock, `207 of 5990` virtual clock), see "Run 4". The earlier "PASS on both builds" came from a
+check that accepted both rounding forms and is superseded.
 
 - Default OFF: vs_off, vs_top, ddk_top exit rc 0 after 600 frames with 0 `[REPLAY]` lines and `MASHED_OT_TIMER` off.
 - Object build: `ddkobj.py check` IDENTICAL for every unit this row adds or touches (table below). Totals IDENTICAL
@@ -150,3 +151,29 @@ output, both exes and both build logs).
 
 Raw (not committed): `D:/MashedWT/RO-EXE-REPLAY-KNOB_data/` (run 3 logs at the top, `run1/`, `run2/`), the build logs
 `D:/MashedWT/RO-EXE-REPLAY-KNOB_build_{vs,ddk}{,2,3}.log`.
+
+## Run 4: strict OT_TIMER check for DAT_007f1010 (run41 review `log/orch/run41_knob_selftest_review.md`)
+
+Only the single-rounding form (x87 exact load of `now`, one rounding at `0x0049344b fstp [0x007f1010]`) is faithful, so
+`PortTop_00492370.cpp` now requires `MemFBits(0x007f1010) == F1010SingleRounding(now)` and counts VS2022-form hits
+(`== FBits((float)now * k)` and != single form) in `s_tmX87Form`, logged only.
+
+**Option (a) chosen.** No indicator of the object build exists: `ddkobj.py` and `build.bat` compile the wrapper TU with
+`/DMASHED_STANDALONE` only in both builds (`ddkobj.py:1114`), `MASHED_DDKOBJ` is a build-script variable that no source reads
+(`grep` in `mashedmod/src`: comment only), and no runtime flag distinguishes the exes. So the check is strict on both builds
+and the VS2022 arm fails honestly: its body is the double-rounding form, which the original never produces.
+
+| arm | exe | OT_TIMER | VS2022-form hits | REPLAY |
+|---|---|---|---|---|
+| vs_timer | VS2022 | FAIL 100 of 6000 | 100 | n/a |
+| ddk_timer | object build | PASS 0 of 6000 | 0 | n/a |
+| vs_rep_a | VS2022 | FAIL 207 of 5990 | 207 | PASS 0 of 666 |
+| ddk_rep | object build | PASS 0 of 5990 | 0 | PASS 0 of 666 |
+
+Object build failures 0. Rebuilt both builds; `ddkobj.py check` unchanged (IDENTICAL 811/899, DIFFERENT 78, not-in-map 10,
+refusals 9, none of them a unit of this row). All four arms rc 0, under test-slot -> `mashed_lock.py run`. Raw logs
+(`D:/MashedWT/RO-EXE-REPLAY-KNOB_data/`, SHA-256): vs_timer.log `81a6ba1b62048bf891f800cb0170353c69e8f88f65497971fc25aec61a747617`,
+ddk_timer.log `0a00c4c135551b753891eca64521b1fe2125938b1d2144c487a5b4e8d539f57d`, vs_rep_a.log
+`99cff8ab123f4eb51ed854e96d366b49bb58995de33fc04995628f01dae41085`, ddk_rep.log `3731cf34998f377c6d1fa77497cbb82b9287413661dfe3d53bd7cd0af6b35925`.
+The run 3 table above is historic (permissive check). [UNCERTAIN] unchanged from the review: x87 precision control during
+the runs, and `now >= 2^31` (runs reach about 3.2e8 to 3.5e8 only).
