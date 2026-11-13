@@ -1,5 +1,6 @@
 // TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWT-S2 0x004c6750: 100% under rw9044 (was 93.5% under rw9044, 83.3% recorded before L-131). Lever: the size-match test wraps the whole resample tail (if width != *width || height != *height { ... } return image;), so the size-match path joins the common exit and image stays in esi. The MATCH-S19 note below is history. */
 /* MATCH-S19 0x004c6750 (h5): 83.3% (regs 85.6%). Texture image read + resample: name / mask name copied through the
    RwGlobals string functions (+0xd0 strncpy, +0xf4 strlen, +0xd4 strcat) with the 0x8000001e truncation RWERROR,
    extension from FUN_004ce6c0, image read FUN_004ce970, raster-size lookup FUN_004d5340 when *width or *height is 0
@@ -112,64 +113,63 @@ RwImage *FUN_004c6750(const char *name, const char *maskName, int format, int *w
     FUN_004d8480(&err);
     return 0;
   }
-  if (image->width == *width && image->height == *height) {
-    return image;
-  }
-  origDepth = image->depth;
-  if (origDepth != 32) {
-    RwImage *oldImage = image;
-    image = FUN_004cdca0(oldImage->width, oldImage->height, 32);
-    if (!image) {
-      FUN_004cdd00(oldImage);
-      return 0;
-    }
-    if (!FUN_004cdd60(image)) {
-      FUN_004cdd00(image);
-      FUN_004cdd00(oldImage);
-      return 0;
-    }
-    FUN_004cecb0(image, oldImage);
-    FUN_004cdd00(oldImage);
-  }
-  newImage = FUN_004cdca0(*width, *height, 32);
-  if (!newImage) {
-    FUN_004cdd00(image);
-    return 0;
-  }
-  if (!FUN_004cdd60(newImage)) {
-    FUN_004cdd00(newImage);
-    FUN_004cdd00(image);
-    return 0;
-  }
-  FUN_004dabd0(newImage, image);
-  FUN_004cdd00(image);
-  image = newImage;
-  if (origDepth == 4) {
-    if (FUN_004daa40(&palq)) {
-      FUN_004d9050(&palq, image, 1.0f);
-      FUN_004d9530(palette, 16, &palq);
-      palImage = FUN_004cdca0(image->width, image->height, origDepth);
-      if (palImage) {
-        FUN_004cdd60(palImage);
-        FUN_004da4f0(palImage->cpPixels, palImage->stride, palImage->depth, 0, &palq, image);
-        *(Pal16 *)palImage->palette = *(Pal16 *)palette;
-        FUN_004cdd00(image);
-        image = palImage;
-        FUN_004daaf0(&palq);
+  if (image->width != *width || image->height != *height) {
+    origDepth = image->depth;
+    if (origDepth != 32) {
+      RwImage *oldImage = image;
+      image = FUN_004cdca0(oldImage->width, oldImage->height, 32);
+      if (!image) {
+        FUN_004cdd00(oldImage);
+        return 0;
       }
-    }
-  } else if (origDepth == 8) {
-    if (FUN_004daa40(&palq)) {
-      FUN_004d9050(&palq, image, 1.0f);
-      FUN_004d9530(palette, 256, &palq);
-      palImage = FUN_004cdca0(image->width, image->height, origDepth);
-      if (palImage) {
-        FUN_004cdd60(palImage);
-        FUN_004da4f0(palImage->cpPixels, palImage->stride, palImage->depth, 0, &palq, image);
-        *(Pal256 *)palImage->palette = *(Pal256 *)palette;
+      if (!FUN_004cdd60(image)) {
         FUN_004cdd00(image);
-        image = palImage;
-        FUN_004daaf0(&palq);
+        FUN_004cdd00(oldImage);
+        return 0;
+      }
+      FUN_004cecb0(image, oldImage);
+      FUN_004cdd00(oldImage);
+    }
+    newImage = FUN_004cdca0(*width, *height, 32);
+    if (!newImage) {
+      FUN_004cdd00(image);
+      return 0;
+    }
+    if (!FUN_004cdd60(newImage)) {
+      FUN_004cdd00(newImage);
+      FUN_004cdd00(image);
+      return 0;
+    }
+    FUN_004dabd0(newImage, image);
+    FUN_004cdd00(image);
+    image = newImage;
+    if (origDepth == 4) {
+      if (FUN_004daa40(&palq)) {
+        FUN_004d9050(&palq, image, 1.0f);
+        FUN_004d9530(palette, 16, &palq);
+        palImage = FUN_004cdca0(image->width, image->height, origDepth);
+        if (palImage) {
+          FUN_004cdd60(palImage);
+          FUN_004da4f0(palImage->cpPixels, palImage->stride, palImage->depth, 0, &palq, image);
+          *(Pal16 *)palImage->palette = *(Pal16 *)palette;
+          FUN_004cdd00(image);
+          image = palImage;
+          FUN_004daaf0(&palq);
+        }
+      }
+    } else if (origDepth == 8) {
+      if (FUN_004daa40(&palq)) {
+        FUN_004d9050(&palq, image, 1.0f);
+        FUN_004d9530(palette, 256, &palq);
+        palImage = FUN_004cdca0(image->width, image->height, origDepth);
+        if (palImage) {
+          FUN_004cdd60(palImage);
+          FUN_004da4f0(palImage->cpPixels, palImage->stride, palImage->depth, 0, &palq, image);
+          *(Pal256 *)palImage->palette = *(Pal256 *)palette;
+          FUN_004cdd00(image);
+          image = palImage;
+          FUN_004daaf0(&palq);
+        }
       }
     }
   }
