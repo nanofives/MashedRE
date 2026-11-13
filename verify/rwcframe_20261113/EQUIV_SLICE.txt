@@ -1,0 +1,24 @@
+== 0042f530
+0x0042f530	NOT-PROVEN	branch-condition: region ours +0x36 / orig 0x0042f564: P1('sle',0x1,(sar32(imulhi32(0x66666667,mul32((sar32(...,...)+shr32(...,...)+0x102),sx32(ext16(...,0)))),0x8)+shr32(sar32(imulhi32(0x66666667,mul32((...+...+0x102),sx32(...))),0x8),0x1f)+-0x4)) | P1('sle',0x1,(sar32(imulhi3
+== 0043c5b0
+0x0043c5b0	NOT-PROVEN	unsupported: orig conditional jump out of the function at 0x0043c616
+== 00433f40
+0x00433f40	NOT-PROVEN	switch-table: region ours +0x287 / orig 0x004341c7: no relocated entries at ours +0x3e4
+== 0042e5b0
+0x0042e5b0	NOT-PROVEN	call-regargs: region ours +0x0 / orig 0x0042e5b0 call 0x473c20: (('ebx', ebx_in), ('ecx', 0x0), ('edi', 0x2), ('edx', 0x0)) | (('ebx', ebx_in), ('ecx', 0x0), ('edi', 0x4), ('edx', 0x0))
+== 00473c20
+0x00473c20	NOT-PROVEN	x87-region: region ours +0x21 / orig 0x00473c41 x87 instruction 29 differs: fst m4[esp+0x8] | fst m4[esp+0x14]
+== 00473ee0
+0x00473ee0	NOT-PROVEN	loop-without-branch: orig 0x00473ff1
+== 00474890
+0x00474890	NOT-PROVEN	x87-region: region ours +0x0 / orig 0x00474890 x87 instruction 1 differs: fild m4[esp+0x8] | fild m4[esp+0x4]
+== 004733b0
+0x004733b0	EQUIV	[VALUE-FLOW]
+== 00473220
+0x00473220	EQUIV	[VALUE-FLOW]
+== 00556ca0
+0x00556ca0	NOT-PROVEN	indirect-jump: region ours +0x0 / orig 0x00556ca0: ours jmp ld32(M00(),(arg32(4)+0x138))
+== 00556e90
+0x00556e90	NOT-PROVEN	x87-region: region ours +0x0 / orig 0x00556e90: integer code moved across x87 instruction 26 (fld m4[ecx+0x24]): [] | ['mov']
+== 00551a50
+0x00551a50	EQUIV	[BYTE-IDENTICAL]

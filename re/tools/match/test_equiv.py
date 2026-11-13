@@ -54,7 +54,16 @@ CASES = {
     "neg_frame_escape": ("NOT-PROVEN", None),
     "x87_same": ("EQUIV", None),
     "neg_x87_comm": ("NOT-PROVEN", "x87-region"),
-    "neg_x87_sched": ("NOT-PROVEN", "x87-region"),
+    # EQUIV-X87-INTEGER-MOTION (L-147 (a)): integer motion across x87, admitted only when independent
+    "x87_move_indep": ("EQUIV", None),
+    "x87_move_rr": ("EQUIV", None),
+    "neg_x87_fnstsw": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_sahf": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_alias": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_eflags": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_call": ("NOT-PROVEN", "x87-region"),
+    "x87_move_frame": ("EQUIV", "FRAME"),
+    "neg_x87_slot": ("NOT-PROVEN", "x87-motion"),
     "neg_call_arg": ("NOT-PROVEN", "call-args"),
     "neg_call_order": ("NOT-PROVEN", "call-args"),
     "neg_call_storeorder": ("NOT-PROVEN", "call-memory"),
@@ -83,6 +92,10 @@ RULES = {
     "com_cdecl": ("A6-pinned-pop", True),
     "com_loop": ("A6-pinned-pop", True),
     "com_ambiguous": ("A6-pop-solution", True),
+    "x87_move_indep": ("x87-motion", True),
+    "x87_move_rr": ("x87-motion", True),
+    "x87_same": ("x87-motion", False),
+    "x87_move_frame": ("x87-motion", True),
 }
 
 # rva -> (source, expected verdict, note)
@@ -90,7 +103,7 @@ REFERENCES = {
     0x00475a00: ("re/match/pilot/a3_00475a00.c", "EQUIV", "L-115 admitted: SIB base/index order"),
     0x0045a3a0: ("re/match/s09/0045a3a0.c", "EQUIV-IF-CALLERS-IGNORE", "L-115 admitted: EAX differs at return"),
     0x00555360: ("re/tools/match/equiv_tests/refs/00555360_held.c", "EQUIV-IF-CALLERS-IGNORE", "L-117 admitted: return blocks + store order; frozen copy of the 94.4% DDK source, the live source is 100% under rw9044 since MATCH-RT2D-RESID run 40"),
-    0x0048e820: ("re/match/s15/0048e820.c", "NOT-PROVEN", "L-118 admitted with the PortTop EDI wrapper; the "
+    0x0048e820: ("re/tools/match/equiv_tests/refs/0048e820_held.c", "NOT-PROVEN", "L-118 admitted with the PortTop EDI wrapper; frozen copy of the pre-EQUIV-FU-48E820 source (the live one is byte-identical since 58cc241be); the "
                  "unedited source passes the wrong EDI to 0x0048cee0"),
     0x005c4ad0: ("re/tools/match/equiv_tests/refs/005c4ad0_held.c", "EQUIV", "held: imul operand order + a local whose address escapes (A1'); frozen copy, the live source is 100% since MATCH-RT2D-FONT"),
     0x00556e90: ("re/tools/match/equiv_tests/refs/00556e90_held.c", "NOT-PROVEN", "held: moves scheduled across x87 (excluded); frozen copy of the 97.5% source"),

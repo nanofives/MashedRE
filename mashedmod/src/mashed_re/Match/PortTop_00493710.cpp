@@ -136,7 +136,7 @@ void PortTop_Missing_00428450(int x, int y) {
 // ---- bindings of rva 0x00493710 ----
 #define FUN_00493710 Orig_00493710
 #define FUN_005c9d00 GetRaceEndTrigger                       // port, Util/GameStateGetters.cpp (xor eax,eax; ret)
-#define FUN_004963e0 PortTop_CfgLogError                     // stand-in, Match/PortTop_00492370.cpp (TOP-02)
+#define FUN_004963e0 Orig_004963e0                           // matched, Match/PortTop_004963e0.cpp (BIND-CRT-STDIO-CALLERS)
 #define FUN_004c32b0 MashedRw_EngineInit_004c32b0            // RW: RwEngineInit -> rw::Engine::init
 #define FUN_00550350 MashedRw_RtFSManagerOpen_00550350       // RW: RtFSManagerOpen -> shim
 #define thunk_FUN_00495780 PortTop_Missing_00495780          // missing

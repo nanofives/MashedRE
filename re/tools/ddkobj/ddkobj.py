@@ -564,8 +564,15 @@ def main_build(a):
                     # DDKOBJ-REGCONV: the body keeps its private convention. It becomes an external under a unique
                     # name (the byte check finds it in the map); its in-object callers keep calling it directly.
                     regname = f"__ddkreg_{match_plain[plain]:08x}"
-                    if ddkreg_owner.setdefault(regname, str(u["src"])) != str(u["src"]):
-                        regname += "_" + pathlib.Path(u["src"]).stem
+                    # RWC-FRAME-492E90: the owner is the unit (source + wrapper). Two wrappers of one source (the
+                    # MatchS06 body and its RW core closure copy RwCore_<rva>) take two names: + the wrapper stem.
+                    unit_key = str(u["src"]) + "|" + str(u["wrel"])
+                    owner = ddkreg_owner.setdefault(regname, unit_key)
+                    if owner != unit_key:
+                        if owner.split("|")[0] != str(u["src"]):
+                            regname += "_" + pathlib.Path(u["src"]).stem
+                        else:
+                            regname += "_" + pathlib.Path(u["wrel"]).stem
                     new = CE.redecorate(s.name, regname)
                     rec.setdefault("static_promotions", []).append(
                         {"name": plain, "standard_convention": False,

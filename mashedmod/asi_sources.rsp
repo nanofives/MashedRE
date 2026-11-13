@@ -1,5 +1,6 @@
 "dll_main.cpp"
 "Core\HookSystem.cpp"
+"Core\ReplayAsi.cpp"
 "Frontend\LogoOverlayTwin.cpp"
 "Frontend\MenuDrawLoopTwin.cpp"
 "Frontend\PromptStripTwin.cpp"
