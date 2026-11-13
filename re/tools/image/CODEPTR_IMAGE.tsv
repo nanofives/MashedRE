@@ -1,0 +1,1284 @@
+slot	target	ghidra_type	src_label	target_fn	in_codeptr_slots	exe_symbol	bind	evidence
+0x005ce74c	0x005c6e61	pointer	PTR_LAB_005ce74c	-	no		trap	ghidra-ref
+0x005ce760	0x005c6863	pointer	PTR_FUN_005ce760	FUN_005c6863	no		trap	ghidra-ref
+0x005cf9d0	0x0049dd00	undefined *	PTR_LAB_005cf9d0	-	yes		cp-slots	ghidra-ref
+0x005cf9d4	0x0049dd10	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cf9d8	0x0049dd20	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cf9dc	0x004a0460	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cf9e0	0x004a04d0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cf9e8	0x0049dc20	undefined *	PTR_LAB_005cf9e8	-	no		trap	ghidra-ref
+0x005cf9ec	0x004a1100	undefined *	-	FUN_004a1100	no		trap	ghidra-ref
+0x005cf9f0	0x004a1120	undefined *	-	-	no		trap	ghidra-ref
+0x005cf9f4	0x004943d0	undefined *	-	FUN_004943d0	no		trap	ghidra-ref
+0x005cf9f8	0x0049eed0	undefined *	-	-	no		trap	ghidra-ref
+0x005cf9fc	0x0049f080	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa00	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005cfa04	0x0049e4b0	undefined *	-	FUN_0049e4b0	no		trap	ghidra-ref
+0x005cfa08	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005cfa0c	0x0049df70	undefined *	-	FUN_0049df70	no		trap	ghidra-ref
+0x005cfa10	0x0049e0a0	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa14	0x0049e0d0	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa18	0x0049e190	undefined *	-	FUN_0049e190	no		trap	ghidra-ref
+0x005cfa1c	0x0049cc70	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa20	0x0049d240	undefined *	-	FUN_0049d240	no		trap	ghidra-ref
+0x005cfa24	0x0049d270	undefined *	-	FUN_0049d270	no		trap	ghidra-ref
+0x005cfa28	0x0049d070	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa2c	0x0049d080	undefined *	-	FUN_0049d080	no		trap	ghidra-ref
+0x005cfa30	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005cfa34	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005cfa38	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005cfa3c	0x0049d8f0	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa40	0x0049c790	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa44	0x0049d490	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa48	0x0049e9d0	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa4c	0x0049ea70	undefined *	-	FUN_0049ea70	no		trap	ghidra-ref
+0x005cfa50	0x0049e580	undefined *	-	FUN_0049e580	no		trap	ghidra-ref
+0x005cfa54	0x0049c810	undefined *	-	FUN_0049c810	no		trap	ghidra-ref
+0x005cfa58	0x0049c990	undefined *	-	FUN_0049c990	no		trap	ghidra-ref
+0x005cfa5c	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005cfa60	0x0049c770	undefined *	-	FUN_0049c770	no		trap	ghidra-ref
+0x005cfa64	0x0049cb20	undefined *	-	FUN_0049cb20	no		trap	ghidra-ref
+0x005cfa68	0x0049cbd0	undefined *	-	FUN_0049cbd0	no		trap	ghidra-ref
+0x005cfa6c	0x0049e5c0	undefined *	-	FUN_0049e5c0	no		trap	ghidra-ref
+0x005cfa70	0x0049c750	undefined *	-	FUN_0049c750	no		trap	ghidra-ref
+0x005cfa74	0x0049e640	undefined *	-	FUN_0049e640	no		trap	ghidra-ref
+0x005cfa78	0x00494820	undefined *	-	FUN_00494820	no		trap	ghidra-ref
+0x005cfa7c	0x0049e600	undefined *	-	FUN_0049e600	no		trap	ghidra-ref
+0x005cfa80	0x0049e6c0	undefined *	-	FUN_0049e6c0	no		trap	ghidra-ref
+0x005cfa84	0x0049e850	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa88	0x0049c900	undefined *	-	FUN_0049c900	no		trap	ghidra-ref
+0x005cfa8c	0x0049c930	undefined *	-	FUN_0049c930	no		trap	ghidra-ref
+0x005cfa90	0x0049c8c0	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa94	0x00493c90	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa98	0x00494b50	undefined *	-	-	no		trap	ghidra-ref
+0x005cfa9c	0x0049d0c0	undefined *	-	-	no		trap	ghidra-ref
+0x005cfaa0	0x0049d200	undefined *	-	FUN_0049d200	no		trap	ghidra-ref
+0x005cfaa4	0x0049cfb0	undefined *	-	FUN_0049cfb0	no		trap	ghidra-ref
+0x005cfaa8	0x0049d320	undefined *	-	-	no		trap	ghidra-ref
+0x005cfd30	0x0049de60	undefined *	PTR_FUN_005cfd30	FUN_0049de60	yes		cp-slots	ghidra-ref
+0x005cfd34	0x0049de70	undefined *	-	FUN_0049de70	yes		cp-slots	ghidra-ref
+0x005cfd38	0x0049de80	undefined *	-	FUN_0049de80	yes		cp-slots	ghidra-ref
+0x005cfd3c	0x0049ed70	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd40	0x0049e1f0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd44	0x0049e2c0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd48	0x0049e3b0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd4c	0x0049e140	undefined *	-	FUN_0049e140	yes		cp-slots	ghidra-ref
+0x005cfd50	0x0049edb0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd54	0x0049ee20	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd58	0x004a0f50	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd5c	0x0049c6e0	undefined *	-	FUN_0049c6e0	yes		cp-slots	ghidra-ref
+0x005cfd60	0x0049ef10	undefined *	-	FUN_0049ef10	yes		cp-slots	ghidra-ref
+0x005cfd64	0x0049dcb0	undefined *	-	FUN_0049dcb0	yes		cp-slots	ghidra-ref
+0x005cfd68	0x005bff30	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd70	0x0049dc20	undefined *	PTR_LAB_005cfd70	-	yes		cp-slots	ghidra-ref
+0x005cfd74	0x004a1100	undefined *	-	FUN_004a1100	yes		cp-slots	ghidra-ref
+0x005cfd78	0x004a1120	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd7c	0x00494c60	undefined *	-	FUN_00494c60	yes		cp-slots	ghidra-ref
+0x005cfd80	0x0049eed0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd84	0x0049f080	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd88	0x004d8560	undefined *	-	FUN_004d8560	yes	UtilReturnOne4d8560	cp-slots	ghidra-ref
+0x005cfd8c	0x0049e4b0	undefined *	-	FUN_0049e4b0	yes		cp-slots	ghidra-ref
+0x005cfd90	0x005c9d00	undefined *	-	FUN_005c9d00	yes	GetRaceEndTrigger	cp-slots	ghidra-ref
+0x005cfd94	0x0049df70	undefined *	-	FUN_0049df70	yes		cp-slots	ghidra-ref
+0x005cfd98	0x0049e0a0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfd9c	0x0049e0d0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfda0	0x0049e190	undefined *	-	FUN_0049e190	yes		cp-slots	ghidra-ref
+0x005cfda4	0x0049cc70	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfda8	0x0049d240	undefined *	-	FUN_0049d240	yes		cp-slots	ghidra-ref
+0x005cfdac	0x0049d270	undefined *	-	FUN_0049d270	yes		cp-slots	ghidra-ref
+0x005cfdb0	0x0049d070	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfdb4	0x0049d080	undefined *	-	FUN_0049d080	yes		cp-slots	ghidra-ref
+0x005cfdb8	0x0045b350	undefined *	-	FUN_0045b350	yes	RwInitNullStub	cp-slots	ghidra-ref
+0x005cfdbc	0x0045b350	undefined *	-	FUN_0045b350	yes	RwInitNullStub	cp-slots	ghidra-ref
+0x005cfdc0	0x0045b350	undefined *	-	FUN_0045b350	yes	RwInitNullStub	cp-slots	ghidra-ref
+0x005cfdc4	0x0049d8f0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfdc8	0x0049c790	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfdcc	0x0049d490	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfdd0	0x0049e9d0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfdd4	0x0049ea70	undefined *	-	FUN_0049ea70	yes		cp-slots	ghidra-ref
+0x005cfdd8	0x0049e580	undefined *	-	FUN_0049e580	yes		cp-slots	ghidra-ref
+0x005cfddc	0x0049c810	undefined *	-	FUN_0049c810	yes		cp-slots	ghidra-ref
+0x005cfde0	0x0049c990	undefined *	-	FUN_0049c990	yes		cp-slots	ghidra-ref
+0x005cfde4	0x005c9d00	undefined *	-	FUN_005c9d00	yes	GetRaceEndTrigger	cp-slots	ghidra-ref
+0x005cfde8	0x0049c770	undefined *	-	FUN_0049c770	yes		cp-slots	ghidra-ref
+0x005cfdec	0x0049cb20	undefined *	-	FUN_0049cb20	yes		cp-slots	ghidra-ref
+0x005cfdf0	0x0049cbd0	undefined *	-	FUN_0049cbd0	yes		cp-slots	ghidra-ref
+0x005cfdf4	0x0049e5c0	undefined *	-	FUN_0049e5c0	yes		cp-slots	ghidra-ref
+0x005cfdf8	0x0049c750	undefined *	-	FUN_0049c750	yes		cp-slots	ghidra-ref
+0x005cfdfc	0x0049e640	undefined *	-	FUN_0049e640	yes		cp-slots	ghidra-ref
+0x005cfe00	0x0049fa40	undefined *	-	FUN_0049fa40	yes		cp-slots	ghidra-ref
+0x005cfe04	0x0049e600	undefined *	-	FUN_0049e600	yes		cp-slots	ghidra-ref
+0x005cfe08	0x0049e6c0	undefined *	-	FUN_0049e6c0	yes		cp-slots	ghidra-ref
+0x005cfe0c	0x0049e850	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfe10	0x0049c900	undefined *	-	FUN_0049c900	yes		cp-slots	ghidra-ref
+0x005cfe14	0x0049c930	undefined *	-	FUN_0049c930	yes		cp-slots	ghidra-ref
+0x005cfe18	0x0049c8c0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfe1c	0x0049fa40	undefined *	-	FUN_0049fa40	yes		cp-slots	ghidra-ref
+0x005cfe20	0x00494b50	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfe24	0x0049d0c0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005cfe28	0x0049d200	undefined *	-	FUN_0049d200	yes		cp-slots	ghidra-ref
+0x005cfe2c	0x0049cfb0	undefined *	-	FUN_0049cfb0	yes		cp-slots	ghidra-ref
+0x005cfe30	0x0049d320	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0cc4	0x0049dd30	undefined *	PTR_LAB_005d0cc4	-	no		trap	ghidra-ref
+0x005d0cc8	0x0049dd40	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ccc	0x0049dd50	undefined *	-	-	no		trap	ghidra-ref
+0x005d0cd0	0x0049fb70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0cd4	0x0049fc00	undefined *	-	-	no		trap	ghidra-ref
+0x005d0cd8	0x005bff30	undefined *	-	-	no		trap	ghidra-ref
+0x005d0cdc	0x0049eae0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ce0	0x0049fe10	undefined *	-	FUN_0049fe10	no		trap	ghidra-ref
+0x005d0ce4	0x0049fe70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ce8	0x0049dd00	undefined *	PTR_LAB_005d0ce8	-	no		trap	ghidra-ref
+0x005d0cec	0x0049dd10	undefined *	-	-	no		trap	ghidra-ref
+0x005d0cf0	0x0049dd20	undefined *	-	-	no		trap	ghidra-ref
+0x005d0cf4	0x0049ff90	undefined *	-	-	no		trap	ghidra-ref
+0x005d0cf8	0x0049fa50	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d00	0x0049de60	undefined *	PTR_FUN_005d0d00	FUN_0049de60	no		trap	ghidra-ref
+0x005d0d04	0x0049de70	undefined *	-	FUN_0049de70	no		trap	ghidra-ref
+0x005d0d08	0x0049de80	undefined *	-	FUN_0049de80	no		trap	ghidra-ref
+0x005d0d0c	0x004a0910	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d10	0x0049f6e0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d14	0x004a0a20	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d18	0x0049f870	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d1c	0x0049f8a0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d20	0x0049f950	undefined *	-	FUN_0049f950	no		trap	ghidra-ref
+0x005d0d24	0x0049f9c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d28	0x0049cf00	undefined *	-	FUN_0049cf00	no		trap	ghidra-ref
+0x005d0d2c	0x0049f9e0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d30	0x004a0e00	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d34	0x0049cf50	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d38	0x0049ccd0	undefined *	-	FUN_0049ccd0	no		trap	ghidra-ref
+0x005d0d3c	0x0049cd70	undefined *	-	FUN_0049cd70	no		trap	ghidra-ref
+0x005d0d40	0x0049ce10	undefined *	-	FUN_0049ce10	no		trap	ghidra-ref
+0x005d0d44	0x0049fa80	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d48	0x0049fb20	undefined *	PTR_LAB_005d0d48	-	no		trap	ghidra-ref
+0x005d0d4c	0x0049f3e0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d50	0x0049f400	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d54	0x0049eab0	undefined *	-	FUN_0049eab0	no		trap	ghidra-ref
+0x005d0d58	0x0049fa20	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d5c	0x0049cf60	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d60	0x0049cf70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d64	0x0049fa30	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d68	0x0049cf40	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d6c	0x0049cf80	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d70	0x0049f6b0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d74	0x0049ceb0	undefined *	-	FUN_0049ceb0	no		trap	ghidra-ref
+0x005d0d78	0x0049ced0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d7c	0x0049fa10	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d80	0x0049ffb0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d84	0x0049de60	undefined *	PTR_FUN_005d0d84	FUN_0049de60	no		trap	ghidra-ref
+0x005d0d88	0x0049de70	undefined *	-	FUN_0049de70	no		trap	ghidra-ref
+0x005d0d8c	0x0049de80	undefined *	-	FUN_0049de80	no		trap	ghidra-ref
+0x005d0d90	0x0049ed70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d94	0x0049e1f0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d98	0x0049e2c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0d9c	0x0049e3b0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0da0	0x0049e140	undefined *	-	FUN_0049e140	no		trap	ghidra-ref
+0x005d0da4	0x0049edb0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0da8	0x0049ee20	undefined *	-	-	no		trap	ghidra-ref
+0x005d0dac	0x004a0f50	undefined *	-	-	no		trap	ghidra-ref
+0x005d0db0	0x0049c6e0	undefined *	-	FUN_0049c6e0	no		trap	ghidra-ref
+0x005d0db4	0x0049ef10	undefined *	-	FUN_0049ef10	no		trap	ghidra-ref
+0x005d0db8	0x0049ef60	undefined *	-	FUN_0049ef60	no		trap	ghidra-ref
+0x005d0dbc	0x005bff30	undefined *	-	-	no		trap	ghidra-ref
+0x005d0dc0	0x0049c5d0	undefined *	PTR_FUN_005d0dc0	FUN_0049c5d0	no		trap	ghidra-ref
+0x005d0dc4	0x004a1100	undefined *	-	FUN_004a1100	no		trap	ghidra-ref
+0x005d0dc8	0x004a1120	undefined *	-	-	no		trap	ghidra-ref
+0x005d0dcc	0x0049ebf0	undefined *	-	FUN_0049ebf0	no		trap	ghidra-ref
+0x005d0dd0	0x0049eed0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0dd4	0x0049f080	undefined *	-	-	no		trap	ghidra-ref
+0x005d0dd8	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005d0ddc	0x0049e4b0	undefined *	-	FUN_0049e4b0	no		trap	ghidra-ref
+0x005d0de0	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005d0de4	0x0049df70	undefined *	-	FUN_0049df70	no		trap	ghidra-ref
+0x005d0de8	0x0049e0a0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0dec	0x0049e0d0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0df0	0x0049e190	undefined *	-	FUN_0049e190	no		trap	ghidra-ref
+0x005d0df4	0x0049cc70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0df8	0x0049cc70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0dfc	0x0049cc70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e00	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005d0e04	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005d0e08	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005d0e0c	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005d0e10	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005d0e14	0x0049c840	undefined *	-	FUN_0049c840	no		trap	ghidra-ref
+0x005d0e18	0x0049c790	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e1c	0x0049c7f0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e20	0x0049e9d0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e24	0x0049ea70	undefined *	-	FUN_0049ea70	no		trap	ghidra-ref
+0x005d0e28	0x0049e580	undefined *	-	FUN_0049e580	no		trap	ghidra-ref
+0x005d0e2c	0x0049c810	undefined *	-	FUN_0049c810	no		trap	ghidra-ref
+0x005d0e30	0x0049c990	undefined *	-	FUN_0049c990	no		trap	ghidra-ref
+0x005d0e34	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005d0e38	0x0049c770	undefined *	-	FUN_0049c770	no		trap	ghidra-ref
+0x005d0e3c	0x0049cb20	undefined *	-	FUN_0049cb20	no		trap	ghidra-ref
+0x005d0e40	0x0049cbd0	undefined *	-	FUN_0049cbd0	no		trap	ghidra-ref
+0x005d0e44	0x0049e5c0	undefined *	-	FUN_0049e5c0	no		trap	ghidra-ref
+0x005d0e48	0x0049c750	undefined *	-	FUN_0049c750	no		trap	ghidra-ref
+0x005d0e4c	0x0049e640	undefined *	-	FUN_0049e640	no		trap	ghidra-ref
+0x005d0e50	0x0049fa40	undefined *	-	FUN_0049fa40	no		trap	ghidra-ref
+0x005d0e54	0x0049e600	undefined *	-	FUN_0049e600	no		trap	ghidra-ref
+0x005d0e58	0x0049e6c0	undefined *	-	FUN_0049e6c0	no		trap	ghidra-ref
+0x005d0e5c	0x0049e850	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e60	0x0049c900	undefined *	-	FUN_0049c900	no		trap	ghidra-ref
+0x005d0e64	0x0049c930	undefined *	-	FUN_0049c930	no		trap	ghidra-ref
+0x005d0e68	0x0049c8c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e6c	0x004a4d89	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e70	0x004a4d89	undefined *	-	-	no		trap	ghidra-ref
+0x005d0e74	0x00494280	undefined *	PTR_LAB_005d0e74	-	yes		cp-slots	ghidra-ref
+0x005d0e78	0x00494290	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0e7c	0x004942a0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0e80	0x0049d2e0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0e84	0x0049d2d0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0e88	0x00494250	undefined *	PTR_LAB_005d0e88	-	yes		cp-slots	ghidra-ref
+0x005d0e8c	0x00494260	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0e90	0x00494270	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0e94	0x0049d920	undefined *	-	FUN_0049d920	yes		cp-slots	ghidra-ref
+0x005d0e98	0x0049d960	undefined *	-	FUN_0049d960	yes		cp-slots	ghidra-ref
+0x005d0e9c	0x0049d9a0	undefined *	-	FUN_0049d9a0	yes		cp-slots	ghidra-ref
+0x005d0ea0	0x0049dbf0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0ea4	0x0049da20	undefined *	-	FUN_0049da20	yes		cp-slots	ghidra-ref
+0x005d0ea8	0x0049dbc0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005d0eb0	0x0049dc20	undefined *	PTR_LAB_005d0eb0	-	no		trap	ghidra-ref
+0x005d0eb4	0x004a1100	undefined *	-	FUN_004a1100	no		trap	ghidra-ref
+0x005d0eb8	0x004a1120	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ebc	0x0049ec80	undefined *	-	FUN_0049ec80	no		trap	ghidra-ref
+0x005d0ec0	0x0049eed0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ec4	0x0049f080	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ec8	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005d0ecc	0x0049e4b0	undefined *	-	FUN_0049e4b0	no		trap	ghidra-ref
+0x005d0ed0	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005d0ed4	0x0049df70	undefined *	-	FUN_0049df70	no		trap	ghidra-ref
+0x005d0ed8	0x0049e0a0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0edc	0x0049e0d0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ee0	0x0049e190	undefined *	-	FUN_0049e190	no		trap	ghidra-ref
+0x005d0ee4	0x0049cc70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ee8	0x0049d240	undefined *	-	FUN_0049d240	no		trap	ghidra-ref
+0x005d0eec	0x0049d270	undefined *	-	FUN_0049d270	no		trap	ghidra-ref
+0x005d0ef0	0x0049d070	undefined *	-	-	no		trap	ghidra-ref
+0x005d0ef4	0x0049d080	undefined *	-	FUN_0049d080	no		trap	ghidra-ref
+0x005d0ef8	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005d0efc	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005d0f00	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005d0f04	0x0049d8f0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f08	0x0049c790	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f0c	0x0049d490	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f10	0x0049e9d0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f14	0x0049ea70	undefined *	-	FUN_0049ea70	no		trap	ghidra-ref
+0x005d0f18	0x0049e580	undefined *	-	FUN_0049e580	no		trap	ghidra-ref
+0x005d0f1c	0x0049c810	undefined *	-	FUN_0049c810	no		trap	ghidra-ref
+0x005d0f20	0x0049c990	undefined *	-	FUN_0049c990	no		trap	ghidra-ref
+0x005d0f24	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005d0f28	0x0049c770	undefined *	-	FUN_0049c770	no		trap	ghidra-ref
+0x005d0f2c	0x0049cb20	undefined *	-	FUN_0049cb20	no		trap	ghidra-ref
+0x005d0f30	0x0049cbd0	undefined *	-	FUN_0049cbd0	no		trap	ghidra-ref
+0x005d0f34	0x0049e5c0	undefined *	-	FUN_0049e5c0	no		trap	ghidra-ref
+0x005d0f38	0x0049c750	undefined *	-	FUN_0049c750	no		trap	ghidra-ref
+0x005d0f3c	0x0049e640	undefined *	-	FUN_0049e640	no		trap	ghidra-ref
+0x005d0f40	0x0049fa40	undefined *	-	FUN_0049fa40	no		trap	ghidra-ref
+0x005d0f44	0x0049e600	undefined *	-	FUN_0049e600	no		trap	ghidra-ref
+0x005d0f48	0x0049e6c0	undefined *	-	FUN_0049e6c0	no		trap	ghidra-ref
+0x005d0f4c	0x0049e850	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f50	0x0049c900	undefined *	-	FUN_0049c900	no		trap	ghidra-ref
+0x005d0f54	0x0049c930	undefined *	-	FUN_0049c930	no		trap	ghidra-ref
+0x005d0f58	0x0049c8c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f5c	0x004a4d89	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f60	0x004a4d89	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f64	0x0049d0c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f68	0x0049d200	undefined *	-	FUN_0049d200	no		trap	ghidra-ref
+0x005d0f6c	0x0049cfb0	undefined *	-	FUN_0049cfb0	no		trap	ghidra-ref
+0x005d0f70	0x0049d320	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f74	0x0049f100	undefined *	PTR_LAB_005d0f74	-	no		trap	ghidra-ref
+0x005d0f78	0x0049f160	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f7c	0x0049f180	undefined *	-	FUN_0049f180	no		trap	ghidra-ref
+0x005d0f80	0x004a0570	undefined *	-	FUN_004a0570	no		trap	ghidra-ref
+0x005d0f84	0x004a0680	undefined *	-	FUN_004a0680	no		trap	ghidra-ref
+0x005d0f88	0x0049f1b0	undefined *	-	FUN_0049f1b0	no		trap	ghidra-ref
+0x005d0f8c	0x004a0b70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f90	0x004a0550	undefined *	-	FUN_004a0550	no		trap	ghidra-ref
+0x005d0f94	0x0049f230	undefined *	PTR_LAB_005d0f94	-	no		trap	ghidra-ref
+0x005d0f98	0x0049f290	undefined *	-	-	no		trap	ghidra-ref
+0x005d0f9c	0x0049f2b0	undefined *	-	FUN_0049f2b0	no		trap	ghidra-ref
+0x005d0fa0	0x004a06e0	undefined *	-	-	no		trap	ghidra-ref
+0x005d0fa4	0x004a0850	undefined *	-	-	no		trap	ghidra-ref
+0x005d0fa8	0x0049f2e0	undefined *	-	FUN_0049f2e0	no		trap	ghidra-ref
+0x005d0fac	0x004a0c70	undefined *	-	-	no		trap	ghidra-ref
+0x005d0fb0	0x004a06c0	undefined *	-	FUN_004a06c0	no		trap	ghidra-ref
+0x005d1010	0x004a1a10	undefined *	PTR_LAB_005d1010	-	no		trap	ghidra-ref
+0x005d1014	0x004a1100	undefined *	-	FUN_004a1100	no		trap	ghidra-ref
+0x005d1018	0x004a1120	undefined *	-	-	no		trap	ghidra-ref
+0x005d101c	0x004a25f0	undefined *	-	FUN_004a25f0	no		trap	ghidra-ref
+0x005d1020	0x004a25c0	undefined *	PTR_LAB_005d1020	-	no		trap	ghidra-ref
+0x005d1024	0x004a25d0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1028	0x004a25e0	undefined *	-	-	no		trap	ghidra-ref
+0x005d102c	0x004a1930	undefined *	-	-	no		trap	ghidra-ref
+0x005d1030	0x004a1940	undefined *	-	-	no		trap	ghidra-ref
+0x005d1034	0x004a1970	undefined *	-	-	no		trap	ghidra-ref
+0x005d1038	0x004a1990	undefined *	-	-	no		trap	ghidra-ref
+0x005d103c	0x004a1ec0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1040	0x004a1f40	undefined *	-	-	no		trap	ghidra-ref
+0x005d1044	0x004a1f00	undefined *	-	-	no		trap	ghidra-ref
+0x005d1048	0x004a1f80	undefined *	-	-	no		trap	ghidra-ref
+0x005d104c	0x004a1fc0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1050	0x004a2000	undefined *	-	-	no		trap	ghidra-ref
+0x005d1054	0x004a2040	undefined *	-	-	no		trap	ghidra-ref
+0x005d1058	0x004a20c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d105c	0x004a2080	undefined *	-	-	no		trap	ghidra-ref
+0x005d1060	0x004a2120	undefined *	-	-	no		trap	ghidra-ref
+0x005d1064	0x004a2160	undefined *	-	-	no		trap	ghidra-ref
+0x005d1068	0x004a2580	undefined *	PTR_LAB_005d1068	-	no		trap	ghidra-ref
+0x005d106c	0x004a2590	undefined *	-	-	no		trap	ghidra-ref
+0x005d1070	0x004a25a0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1074	0x004a1b20	undefined *	-	-	no		trap	ghidra-ref
+0x005d1078	0x004a1b60	undefined *	-	-	no		trap	ghidra-ref
+0x005d107c	0x004a1ba0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1080	0x004a1be0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1084	0x004a1c60	undefined *	-	-	no		trap	ghidra-ref
+0x005d1088	0x004a1ca0	undefined *	-	-	no		trap	ghidra-ref
+0x005d108c	0x004a1c20	undefined *	-	-	no		trap	ghidra-ref
+0x005d1090	0x004a24c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1094	0x004a24a0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1098	0x004a2460	undefined *	-	FUN_004a2460	no		trap	ghidra-ref
+0x005d109c	0x004a1ce0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10a0	0x004a1d30	undefined *	-	-	no		trap	ghidra-ref
+0x005d10a4	0x004a1d80	undefined *	-	-	no		trap	ghidra-ref
+0x005d10a8	0x004a1df0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10ac	0x004a1e70	undefined *	-	-	no		trap	ghidra-ref
+0x005d10b0	0x004a1e30	undefined *	-	-	no		trap	ghidra-ref
+0x005d10b4	0x004a24e0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10b8	0x004a25b0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10bc	0x004a1a10	undefined *	PTR_LAB_005d10bc	-	no		trap	ghidra-ref
+0x005d10c0	0x004a1100	undefined *	-	FUN_004a1100	no		trap	ghidra-ref
+0x005d10c4	0x004a1120	undefined *	-	-	no		trap	ghidra-ref
+0x005d10c8	0x004a2680	undefined *	-	FUN_004a2680	no		trap	ghidra-ref
+0x005d10d0	0x004a2580	undefined *	PTR_LAB_005d10d0	-	no		trap	ghidra-ref
+0x005d10d4	0x004a2590	undefined *	-	-	no		trap	ghidra-ref
+0x005d10d8	0x004a25a0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10dc	0x004a1b20	undefined *	-	-	no		trap	ghidra-ref
+0x005d10e0	0x004a1b60	undefined *	-	-	no		trap	ghidra-ref
+0x005d10e4	0x004a1ba0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10e8	0x004a1be0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10ec	0x004a1c60	undefined *	-	-	no		trap	ghidra-ref
+0x005d10f0	0x004a1ca0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10f4	0x004a1c20	undefined *	-	-	no		trap	ghidra-ref
+0x005d10f8	0x004a24c0	undefined *	-	-	no		trap	ghidra-ref
+0x005d10fc	0x004a24a0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1100	0x004a2460	undefined *	-	FUN_004a2460	no		trap	ghidra-ref
+0x005d1104	0x004a1ce0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1108	0x004a1d30	undefined *	-	-	no		trap	ghidra-ref
+0x005d110c	0x004a1d80	undefined *	-	-	no		trap	ghidra-ref
+0x005d1110	0x004a1df0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1114	0x004a1e70	undefined *	-	-	no		trap	ghidra-ref
+0x005d1118	0x004a1e30	undefined *	-	-	no		trap	ghidra-ref
+0x005d111c	0x004a24e0	undefined *	-	-	no		trap	ghidra-ref
+0x005d1120	0x004a2250	undefined *	-	FUN_004a2250	no		trap	ghidra-ref
+0x005d773c	0x004e4946	undefined *	-	-	no		trap	ghidra-ref
+0x005d7744	0x004e4946	undefined *	-	-	no		trap	ghidra-ref
+0x005d77c0	0x00455653	undefined *	-	-	no		trap	ghidra-ref
+0x005d77c8	0x00455753	undefined *	-	-	no		trap	ghidra-ref
+0x005d84f4	0x0050434f	pointer	PTR_LAB_005d84f4	-	no		trap	ghidra-ref
+0x005d84f8	0x00504341	pointer	PTR_LAB_005d84f8	-	no		trap	ghidra-ref
+0x005d8a74	0x004bfeb0	undefined *	-	FUN_004bfeb0	no		trap	ghidra-ref
+0x005d8a7c	0x004bfee0	undefined *	-	FUN_004bfee0	no		trap	ghidra-ref
+0x005d8a84	0x004bff10	undefined *	-	FUN_004bff10	no		trap	ghidra-ref
+0x005d8a8c	0x004bff40	undefined *	-	FUN_004bff40	no		trap	ghidra-ref
+0x005d8a94	0x004bff70	undefined *	-	FUN_004bff70	no		trap	ghidra-ref
+0x005d8a9c	0x004bffa0	undefined *	-	FUN_004bffa0	no		trap	ghidra-ref
+0x005d8aa4	0x004bffd0	undefined *	-	FUN_004bffd0	no		trap	ghidra-ref
+0x005d8aac	0x004c0000	undefined *	-	-	no		trap	ghidra-ref
+0x005d8ab4	0x004c0050	undefined *	-	FUN_004c0050	no		trap	ghidra-ref
+0x005d8abc	0x004c0080	undefined *	-	FUN_004c0080	no		trap	ghidra-ref
+0x005d8ac4	0x004c00b0	undefined *	-	-	no		trap	ghidra-ref
+0x005d8acc	0x004c0230	undefined *	-	-	no		trap	ghidra-ref
+0x005d8ad4	0x004c0280	undefined *	-	FUN_004c0280	no		trap	ghidra-ref
+0x005d8adc	0x004c0100	undefined *	-	FUN_004c0100	no		trap	ghidra-ref
+0x005d8ae4	0x004c02c0	undefined *	-	FUN_004c02c0	no		trap	ghidra-ref
+0x005d8aec	0x004c0330	undefined *	-	FUN_004c0330	no		trap	ghidra-ref
+0x005d8af4	0x004c0130	undefined *	-	FUN_004c0130	no		trap	ghidra-ref
+0x005d8afc	0x004c0160	undefined *	-	FUN_004c0160	no		trap	ghidra-ref
+0x005d8b04	0x004c0190	undefined *	-	FUN_004c0190	no		trap	ghidra-ref
+0x005d8b0c	0x004c01d0	undefined *	-	FUN_004c01d0	no		trap	ghidra-ref
+0x005d8b14	0x004c0200	undefined *	-	FUN_004c0200	no		trap	ghidra-ref
+0x005d8b1c	0x004c03b0	undefined *	-	-	no		trap	ghidra-ref
+0x005d8b24	0x004c04f0	undefined *	-	-	no		trap	ghidra-ref
+0x005dd980	0x00474f46	pointer	PTR_LAB_005dd980	-	no		trap	ghidra-ref
+0x005de4a0	0x0050450d	undefined *	PTR_FUN_005de4a0	FUN_0050450d	no		trap	ghidra-ref
+0x005de4a4	0x005044b0	undefined *	-	-	no		trap	ghidra-ref
+0x005de4a8	0x005044bd	undefined *	-	-	no		trap	ghidra-ref
+0x005de4ac	0x005044dd	undefined *	-	-	no		trap	ghidra-ref
+0x005de4b0	0x005044e7	undefined *	-	-	no		trap	ghidra-ref
+0x005de4b4	0x005044f1	undefined *	-	FUN_005044f1	no		trap	ghidra-ref
+0x005de4b8	0x00504489	undefined *	-	-	no		trap	ghidra-ref
+0x005de528	0x00510d27	undefined *	PTR_FUN_005de528	FUN_00510d27	no		trap	ghidra-ref
+0x005de52c	0x0051054e	undefined *	-	FUN_0051054e	no		trap	ghidra-ref
+0x005de530	0x00510564	undefined *	-	-	no		trap	ghidra-ref
+0x005de534	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005de538	0x00510d43	undefined *	PTR_FUN_005de538	FUN_00510d43	no		trap	ghidra-ref
+0x005de53c	0x0051061f	undefined *	-	FUN_0051061f	no		trap	ghidra-ref
+0x005de540	0x00510677	undefined *	-	FUN_00510677	no		trap	ghidra-ref
+0x005de544	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005de548	0x00510d65	undefined *	PTR_FUN_005de548	FUN_00510d65	no		trap	ghidra-ref
+0x005de54c	0x00510809	undefined *	-	-	no		trap	ghidra-ref
+0x005de550	0x0051082b	undefined *	-	-	no		trap	ghidra-ref
+0x005de554	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005de558	0x00510d87	undefined *	PTR_FUN_005de558	FUN_00510d87	no		trap	ghidra-ref
+0x005de55c	0x005108cd	undefined *	-	-	no		trap	ghidra-ref
+0x005de560	0x0051090d	undefined *	-	-	no		trap	ghidra-ref
+0x005de564	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005de568	0x00510da9	undefined *	PTR_FUN_005de568	FUN_00510da9	no		trap	ghidra-ref
+0x005de56c	0x005109e1	undefined *	-	-	no		trap	ghidra-ref
+0x005de570	0x00510a8a	undefined *	-	-	no		trap	ghidra-ref
+0x005de574	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005de578	0x00510dc5	undefined *	PTR_FUN_005de578	FUN_00510dc5	no		trap	ghidra-ref
+0x005de57c	0x00510c62	undefined *	-	FUN_00510c62	no		trap	ghidra-ref
+0x005de580	0x00510cad	undefined *	-	-	no		trap	ghidra-ref
+0x005de584	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005de67c	0x00511841	undefined *	PTR_FUN_005de67c	FUN_00511841	no		trap	ghidra-ref
+0x005de680	0x0051054e	undefined *	-	FUN_0051054e	no		trap	ghidra-ref
+0x005de684	0x0051167d	undefined *	-	FUN_0051167d	no		trap	ghidra-ref
+0x005de688	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005de68c	0x0051185d	undefined *	PTR_FUN_005de68c	FUN_0051185d	no		trap	ghidra-ref
+0x005de690	0x0051054e	undefined *	-	FUN_0051054e	no		trap	ghidra-ref
+0x005de694	0x005117d8	undefined *	-	-	no		trap	ghidra-ref
+0x005de698	0x0051085a	undefined *	-	FUN_0051085a	no		trap	ghidra-ref
+0x005e4f54	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e4f58	0x0055c560	undefined *	-	-	no		trap	ghidra-ref
+0x005e4f5c	0x0055c580	undefined *	-	-	no		trap	ghidra-ref
+0x005e4f60	0x0055c5d0	undefined *	-	-	no		trap	ghidra-ref
+0x005e4f64	0x0055c670	undefined *	-	-	no		trap	ghidra-ref
+0x005e4f68	0x0055c680	undefined *	-	-	no		trap	ghidra-ref
+0x005e4f6c	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e4f70	0x0055c6c0	undefined *	-	-	no		trap	ghidra-ref
+0x005e4f74	0x0057b9a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e4f78	0x0055c6e0	undefined *	-	-	no		trap	ghidra-ref
+0x005e4fe4	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e4fe8	0x0055c840	undefined *	-	-	no		trap	ghidra-ref
+0x005e4fec	0x0055c890	undefined *	-	-	no		trap	ghidra-ref
+0x005e4ff0	0x0055cbf0	undefined *	-	-	no		trap	ghidra-ref
+0x005e4ff4	0x0055cd40	undefined *	-	FUN_0055cd40	no		trap	ghidra-ref
+0x005e4ff8	0x0055cdd0	undefined *	-	-	no		trap	ghidra-ref
+0x005e4ffc	0x0055d1b0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5000	0x0055d2e0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5004	0x0055d270	undefined *	-	-	no		trap	ghidra-ref
+0x005e5008	0x0055d330	undefined *	-	-	no		trap	ghidra-ref
+0x005e51cc	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e51d0	0x0055e470	undefined *	-	-	no		trap	ghidra-ref
+0x005e51d4	0x0055e4a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e51d8	0x0055e510	undefined *	-	-	no		trap	ghidra-ref
+0x005e51dc	0x0055e6b0	undefined *	-	-	no		trap	ghidra-ref
+0x005e51e0	0x0055e7f0	undefined *	-	-	no		trap	ghidra-ref
+0x005e51e4	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e51e8	0x0055ebc0	undefined *	-	-	no		trap	ghidra-ref
+0x005e51ec	0x0055eb90	undefined *	-	-	no		trap	ghidra-ref
+0x005e51f0	0x0055ec20	undefined *	-	-	no		trap	ghidra-ref
+0x005e52ac	0x00562640	undefined *	-	-	no		trap	ghidra-ref
+0x005e52b0	0x00562660	undefined *	-	FUN_00562660	no		trap	ghidra-ref
+0x005e52b4	0x00562770	undefined *	-	-	no		trap	ghidra-ref
+0x005e52b8	0x005628a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e52bc	0x00562a10	undefined *	-	-	no		trap	ghidra-ref
+0x005e52c0	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e52c4	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e52c8	0x00562a60	undefined *	-	-	no		trap	ghidra-ref
+0x005e52cc	0x00562a20	undefined *	-	-	no		trap	ghidra-ref
+0x005e52d0	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e533c	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e5340	0x00563000	undefined *	-	-	no		trap	ghidra-ref
+0x005e5344	0x00563020	undefined *	-	-	no		trap	ghidra-ref
+0x005e5348	0x00563090	undefined *	-	-	no		trap	ghidra-ref
+0x005e534c	0x00563140	undefined *	-	-	no		trap	ghidra-ref
+0x005e5350	0x00563180	undefined *	-	-	no		trap	ghidra-ref
+0x005e5354	0x00563270	undefined *	-	-	no		trap	ghidra-ref
+0x005e5358	0x005632a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e535c	0x0057b9a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5360	0x005632d0	undefined *	-	-	no		trap	ghidra-ref
+0x005e54c4	0x005668e0	undefined *	-	FUN_005668e0	no		trap	ghidra-ref
+0x005e54c8	0x005669b0	undefined *	-	-	no		trap	ghidra-ref
+0x005e54cc	0x005669e0	undefined *	-	-	no		trap	ghidra-ref
+0x005e54d0	0x00566a60	undefined *	-	-	no		trap	ghidra-ref
+0x005e54d4	0x00562a10	undefined *	-	-	no		trap	ghidra-ref
+0x005e54d8	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e54dc	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e54e0	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e54e4	0x00566aa0	undefined *	-	FUN_00566aa0	no		trap	ghidra-ref
+0x005e54e8	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5904	0x00574110	undefined *	-	-	no		trap	ghidra-ref
+0x005e5908	0x00574130	undefined *	-	-	no		trap	ghidra-ref
+0x005e590c	0x00574170	undefined *	-	-	no		trap	ghidra-ref
+0x005e5910	0x005741e0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5914	0x00574220	undefined *	-	-	no		trap	ghidra-ref
+0x005e5918	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e591c	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5920	0x005742a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5924	0x00574230	undefined *	-	FUN_00574230	no		trap	ghidra-ref
+0x005e5928	0x005742b0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5db4	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e5db8	0x0057ae30	undefined *	-	FUN_0057ae30	no		trap	ghidra-ref
+0x005e5dbc	0x0057af90	undefined *	-	-	no		trap	ghidra-ref
+0x005e5dc0	0x0057b000	undefined *	-	-	no		trap	ghidra-ref
+0x005e5dc4	0x0057b340	undefined *	-	-	no		trap	ghidra-ref
+0x005e5dc8	0x0057b420	undefined *	-	-	no		trap	ghidra-ref
+0x005e5dcc	0x0057b750	undefined *	-	-	no		trap	ghidra-ref
+0x005e5dd0	0x0057b9b0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5dd4	0x0057b9a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5dd8	0x0057ba90	undefined *	-	-	no		trap	ghidra-ref
+0x005e5e54	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e5e58	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5e5c	0x0057c1d0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5e60	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5e64	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5e68	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5e6c	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5e70	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e5e74	0x0057b9a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e5e78	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e796c	0x005c5140	undefined *	-	-	no		trap	ghidra-ref
+0x005e7970	0x005c5160	undefined *	-	-	no		trap	ghidra-ref
+0x005e7974	0x005c51a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e7978	0x005c51f0	undefined *	-	-	no		trap	ghidra-ref
+0x005e797c	0x005c5280	undefined *	-	-	no		trap	ghidra-ref
+0x005e7980	0x005c52e0	undefined *	-	-	no		trap	ghidra-ref
+0x005e7984	0x005c9d00	undefined *	-	FUN_005c9d00	no	GetRaceEndTrigger	bound	ghidra-ref
+0x005e7988	0x005742a0	undefined *	-	-	no		trap	ghidra-ref
+0x005e798c	0x005c5730	undefined *	-	-	no		trap	ghidra-ref
+0x005e7990	0x005c5750	undefined *	-	-	no		trap	ghidra-ref
+0x005e79fc	0x004d8560	undefined *	-	FUN_004d8560	no	UtilReturnOne4d8560	bound	ghidra-ref
+0x005e7a00	0x005c67e0	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a04	0x005c6800	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a08	0x005c6840	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a0c	0x005c6920	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a10	0x005c6970	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a14	0x005c6990	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a18	0x005c6a00	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a1c	0x005c69f0	undefined *	-	-	no		trap	ghidra-ref
+0x005e7a20	0x005c6a70	undefined *	-	-	no		trap	ghidra-ref
+0x005e7b94	0x005ca2f0	action *	UnwindMapEntry_ARRAY_005e7b90	Unwind@005ca2f0	no		trap	ghidra-ref
+0x005e7b9c	0x005ca2f8	action *	UnwindMapEntry_ARRAY_005e7b90	Unwind@005ca2f8	no		trap	ghidra-ref
+0x005e7ba4	0x005ca300	action *	UnwindMapEntry_ARRAY_005e7b90	Unwind@005ca300	no		trap	ghidra-ref
+0x005e7bc8	0x005ca320	action *	UnwindMapEntry_005e7bc4	Unwind@005ca320	no		trap	ghidra-ref
+0x005e7bec	0x005ca340	action *	UnwindMapEntry_005e7be8	Unwind@005ca340	no		trap	ghidra-ref
+0x005e7c10	0x005ca360	action *	UnwindMapEntry_ARRAY_005e7c0c	Unwind@005ca360	no		trap	ghidra-ref
+0x005e7c18	0x005ca368	action *	UnwindMapEntry_ARRAY_005e7c0c	Unwind@005ca368	no		trap	ghidra-ref
+0x005e7c3c	0x005ca380	action *	UnwindMapEntry_005e7c38	Unwind@005ca380	no		trap	ghidra-ref
+0x005e7c60	0x005ca3a0	action *	UnwindMapEntry_ARRAY_005e7c5c	Unwind@005ca3a0	no		trap	ghidra-ref
+0x005e7c68	0x005ca3a8	action *	UnwindMapEntry_ARRAY_005e7c5c	Unwind@005ca3a8	no		trap	ghidra-ref
+0x005e7c70	0x005ca3b3	action *	UnwindMapEntry_ARRAY_005e7c5c	Unwind@005ca3b3	no		trap	ghidra-ref
+0x005e7c94	0x005ca3d0	action *	UnwindMapEntry_ARRAY_005e7c90	Unwind@005ca3d0	no		trap	ghidra-ref
+0x005e7c9c	0x005ca3d8	action *	UnwindMapEntry_ARRAY_005e7c90	Unwind@005ca3d8	no		trap	ghidra-ref
+0x005e7ca4	0x005ca3e3	action *	UnwindMapEntry_ARRAY_005e7c90	Unwind@005ca3e3	no		trap	ghidra-ref
+0x005e7cac	0x005ca3ee	action *	UnwindMapEntry_ARRAY_005e7c90	Unwind@005ca3ee	no		trap	ghidra-ref
+0x005e7cb4	0x005ca3f9	action *	UnwindMapEntry_ARRAY_005e7c90	Unwind@005ca3f9	no		trap	ghidra-ref
+0x005e7cbc	0x005ca404	action *	UnwindMapEntry_ARRAY_005e7c90	Unwind@005ca404	no		trap	ghidra-ref
+0x005e7cc4	0x005ca412	action *	UnwindMapEntry_ARRAY_005e7c90	Unwind@005ca412	no		trap	ghidra-ref
+0x005e7ce8	0x005ca450	action *	UnwindMapEntry_005e7ce4	Unwind@005ca450	no		trap	ghidra-ref
+0x005e7d0c	0x005ca430	action *	UnwindMapEntry_ARRAY_005e7d08	Unwind@005ca430	no		trap	ghidra-ref
+0x005e7d14	0x005ca438	action *	UnwindMapEntry_ARRAY_005e7d08	Unwind@005ca438	no		trap	ghidra-ref
+0x005e7d38	0x005ca470	action *	UnwindMapEntry_ARRAY_005e7d34	Unwind@005ca470	no		trap	ghidra-ref
+0x005e7d40	0x005ca478	action *	UnwindMapEntry_ARRAY_005e7d34	Unwind@005ca478	no		trap	ghidra-ref
+0x005e7d64	0x005ca490	action *	UnwindMapEntry_ARRAY_005e7d60	Unwind@005ca490	no		trap	ghidra-ref
+0x005e7d6c	0x005ca498	action *	UnwindMapEntry_ARRAY_005e7d60	Unwind@005ca498	no		trap	ghidra-ref
+0x005e7d74	0x005ca4a0	action *	UnwindMapEntry_ARRAY_005e7d60	Unwind@005ca4a0	no		trap	ghidra-ref
+0x005e7d7c	0x005ca4a8	action *	UnwindMapEntry_ARRAY_005e7d60	Unwind@005ca4a8	no		trap	ghidra-ref
+0x005e7da0	0x005ca4c0	action *	UnwindMapEntry_ARRAY_005e7d9c	Unwind@005ca4c0	no		trap	ghidra-ref
+0x005e7da8	0x005ca4c8	action *	UnwindMapEntry_ARRAY_005e7d9c	Unwind@005ca4c8	no		trap	ghidra-ref
+0x005e7dcc	0x005ca4e0	action *	UnwindMapEntry_005e7dc8	Unwind@005ca4e0	no		trap	ghidra-ref
+0x005e7df0	0x005ca500	action *	UnwindMapEntry_005e7dec	Unwind@005ca500	no		trap	ghidra-ref
+0x005e7e14	0x005ca5a0	action *	UnwindMapEntry_005e7e10	Unwind@005ca5a0	no		trap	ghidra-ref
+0x005e7e38	0x005ca520	action *	UnwindMapEntry_005e7e34	Unwind@005ca520	no		trap	ghidra-ref
+0x005e7e5c	0x005ca540	action *	UnwindMapEntry_005e7e58	Unwind@005ca540	no		trap	ghidra-ref
+0x005e7e80	0x005ca560	action *	UnwindMapEntry_005e7e7c	Unwind@005ca560	no		trap	ghidra-ref
+0x005e7ea4	0x005ca580	action *	UnwindMapEntry_005e7ea0	Unwind@005ca580	no		trap	ghidra-ref
+0x005e7ec8	0x005ca5c0	action *	UnwindMapEntry_ARRAY_005e7ec4	Unwind@005ca5c0	no		trap	ghidra-ref
+0x005e7ed0	0x005ca5c8	action *	UnwindMapEntry_ARRAY_005e7ec4	Unwind@005ca5c8	no		trap	ghidra-ref
+0x005e7ef4	0x005ca5e0	action *	UnwindMapEntry_005e7ef0	Unwind@005ca5e0	no		trap	ghidra-ref
+0x005e7f18	0x005ca600	action *	UnwindMapEntry_005e7f14	Unwind@005ca600	no		trap	ghidra-ref
+0x005e7f3c	0x005ca620	action *	UnwindMapEntry_005e7f38	Unwind@005ca620	no		trap	ghidra-ref
+0x005e7f60	0x005ca640	action *	UnwindMapEntry_005e7f5c	Unwind@005ca640	no		trap	ghidra-ref
+0x005e7f84	0x005ca680	action *	UnwindMapEntry_005e7f80	Unwind@005ca680	no		trap	ghidra-ref
+0x005e7fc0	0x004fbe0f	void *	HandlerType_005e7fb4	Catch@004fbe0f	no		trap	ghidra-ref
+0x005ea004	0x004a57e4	undefined *	PTR_FUN_005ea004	FUN_004a57e4	no		trap	ghidra-ref
+0x005ea008	0x005ca6a0	undefined *	-	-	no		trap	ghidra-ref
+0x005ea00c	0x005ca6c0	undefined *	-	-	no		trap	ghidra-ref
+0x005ea010	0x005ca6e0	undefined *	-	-	no		trap	ghidra-ref
+0x005ea014	0x005ca700	undefined *	-	-	no		trap	ghidra-ref
+0x005ea018	0x005ca720	undefined *	-	-	no		trap	ghidra-ref
+0x005ea01c	0x005ca740	undefined *	-	-	no		trap	ghidra-ref
+0x005ea020	0x005ca760	undefined *	-	-	no		trap	ghidra-ref
+0x005ea024	0x005ca780	undefined *	-	-	no		trap	ghidra-ref
+0x005ea028	0x005ca7a0	undefined *	-	-	no		trap	ghidra-ref
+0x005ea02c	0x005ca7c0	undefined *	-	-	no		trap	ghidra-ref
+0x005ea030	0x005ca7e0	undefined *	-	-	no		trap	ghidra-ref
+0x005ea034	0x005ca800	undefined *	-	-	no		trap	ghidra-ref
+0x005ea040	0x004a40fe	undefined *	PTR____onexitinit_005ea040	___onexitinit	no		trap	ghidra-ref
+0x005ea044	0x004a5e5e	undefined *	-	-	no		trap	ghidra-ref
+0x005ea048	0x004a60a6	undefined *	-	FUN_004a60a6	no		trap	ghidra-ref
+0x005ea04c	0x004af2b6	undefined *	-	___initmbctable	no		trap	ghidra-ref
+0x005ea050	0x005c2a0e	undefined *	-	___inittime	no		trap	ghidra-ref
+0x005ea054	0x004af31a	undefined *	-	FUN_004af31a	no		trap	ghidra-ref
+0x005ea060	0x004a5f07	pointer	PTR____endstdio_005ea060	___endstdio	no		trap	ghidra-ref
+0x005ea06c	0x004af32d	pointer	PTR_FUN_005ea06c	FUN_004af32d	no		trap	ghidra-ref
+0x005f349c	0x00448940	undefined *	-	-	no		trap	ghidra-ref
+0x005f34a0	0x00448ef0	undefined *	-	FUN_00448ef0	no		trap	ghidra-ref
+0x005f34a4	0x00449030	undefined *	-	-	no		trap	ghidra-ref
+0x005f34a8	0x00449010	undefined *	-	-	no		trap	ghidra-ref
+0x005f34ac	0x004492b0	undefined *	-	FUN_004492b0	no		trap	ghidra-ref
+0x005f34b0	0x004490d0	undefined *	-	-	no		trap	ghidra-ref
+0x005f34e4	0x0044cb60	undefined *	-	-	no		trap	ghidra-ref
+0x005f34e8	0x0044d3f0	undefined *	-	-	no		trap	ghidra-ref
+0x005f34ec	0x0044d6f0	undefined *	-	-	no		trap	ghidra-ref
+0x005f34f0	0x00449010	undefined *	-	-	no		trap	ghidra-ref
+0x005f353c	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f3540	0x00450a80	undefined *	-	-	no		trap	ghidra-ref
+0x005f3544	0x00450460	undefined *	-	-	no		trap	ghidra-ref
+0x005f3548	0x00450460	undefined *	-	-	no		trap	ghidra-ref
+0x005f3584	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f3588	0x00452e00	undefined *	-	-	no		trap	ghidra-ref
+0x005f358c	0x00452af0	undefined *	-	-	no		trap	ghidra-ref
+0x005f3590	0x00452ad0	undefined *	-	-	no		trap	ghidra-ref
+0x005f36a4	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f36a8	0x004495a0	undefined *	-	-	no		trap	ghidra-ref
+0x005f36ac	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f36b0	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f3734	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f3738	0x0044af90	undefined *	-	-	no		trap	ghidra-ref
+0x005f373c	0x0044aea0	undefined *	-	-	no		trap	ghidra-ref
+0x005f3740	0x0044aea0	undefined *	-	-	no		trap	ghidra-ref
+0x005f999c	0x00456040	undefined *	-	FUN_00456040	yes		cp-slots	ghidra-ref
+0x005f99a0	0x004561c0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005f99a4	0x004566d0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005f99a8	0x004566f0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x005f99ac	0x00456760	pointer	PTR_FUN_005f99ac	FUN_00456760	yes	Orig_00456760	cp-slots	ghidra-ref
+0x005f99b0	0x004568a0	pointer	PTR_FUN_005f99b0	FUN_004568a0	yes		cp-slots	ghidra-ref
+0x005f99b4	0x004568d0	pointer	PTR_FUN_005f99b4	FUN_004568d0	yes		cp-slots	ghidra-ref
+0x005f99b8	0x00456c30	pointer	PTR_FUN_005f99b8	FUN_00456c30	yes		cp-slots	ghidra-ref
+0x005f99bc	0x00456c90	pointer	PTR_thunk_FUN_00456c70_005f99bc	thunk_FUN_00456c70	yes		cp-slots	ghidra-ref
+0x005f99c0	0x0045b350	pointer	PTR_FUN_005f99c0	FUN_0045b350	yes	RwInitNullStub	cp-slots	ghidra-ref
+0x005f99c4	0x0045b350	pointer	PTR_FUN_005f99c4	FUN_0045b350	yes	RwInitNullStub	cp-slots	ghidra-ref
+0x005f99c8	0x0045b350	pointer	PTR_FUN_005f99c8	FUN_0045b350	yes	RwInitNullStub	cp-slots	ghidra-ref
+0x005f99cc	0x00456740	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x005f99dc	0x00453fe0	undefined *	-	-	no		trap	ghidra-ref
+0x005f99e0	0x00454740	undefined *	-	-	no		trap	ghidra-ref
+0x005f99e4	0x00457ab0	undefined *	-	-	no		trap	ghidra-ref
+0x005f99e8	0x00457ad0	undefined *	-	-	no		trap	ghidra-ref
+0x005f99ec	0x004548e0	pointer	PTR_FUN_005f99ec	FUN_004548e0	no	Orig_004548e0	excluded	ghidra-ref
+0x005f99f0	0x004540c0	pointer	PTR_FUN_005f99f0	FUN_004540c0	no		trap	ghidra-ref
+0x005f99f4	0x00454820	pointer	PTR_FUN_005f99f4	FUN_00454820	no		trap	ghidra-ref
+0x005f99f8	0x00454130	pointer	PTR_FUN_005f99f8	FUN_00454130	no		trap	ghidra-ref
+0x005f99fc	0x0045b350	pointer	PTR_FUN_005f99fc	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9a00	0x00454a20	pointer	PTR_thunk_FUN_004548a0_005f9a00	thunk_FUN_004548a0	no		trap	ghidra-ref
+0x005f9a04	0x00454790	pointer	PTR_FUN_005f9a04	FUN_00454790	no		trap	ghidra-ref
+0x005f9a08	0x00454a20	pointer	PTR_thunk_FUN_004548a0_005f9a08	thunk_FUN_004548a0	no		trap	ghidra-ref
+0x005f9a1c	0x00455060	undefined *	-	FUN_00455060	no		trap	ghidra-ref
+0x005f9a20	0x00455150	undefined *	-	FUN_00455150	no		trap	ghidra-ref
+0x005f9a24	0x00455360	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a28	0x00455390	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a2c	0x00455400	undefined *	-	-	no		excluded	ghidra-ref
+0x005f9a30	0x004555d0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a34	0x00455c90	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a38	0x00455f50	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a3c	0x00455fd0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a40	0x00455fd0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a44	0x00455fd0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a48	0x00455fd0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a4c	0x004553e0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a50	0x00455c40	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a5c	0x00457a30	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a60	0x00457ef0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a64	0x00457ab0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a68	0x00457ad0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a6c	0x004583a0	undefined *	-	-	no	Orig_004583a0	excluded	ghidra-ref
+0x005f9a70	0x00457b10	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a74	0x004582f0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a78	0x00457b70	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a7c	0x00457f30	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a80	0x004584d0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a84	0x00457ff0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a88	0x004584d0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a8c	0x00457af0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a90	0x00457e40	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a94	0x00457eb0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9a9c	0x0045a7c0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9aa0	0x0045a850	undefined *	-	-	no		trap	ghidra-ref
+0x005f9aa4	0x0045a890	undefined *	-	-	no		trap	ghidra-ref
+0x005f9aa8	0x0045a8b0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9aac	0x0045a6b0	undefined *	-	-	no	Orig_0045a6b0	excluded	ghidra-ref
+0x005f9ab0	0x0045a790	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ab4	0x0045ae80	undefined *	-	FUN_0045ae80	no		trap	ghidra-ref
+0x005f9ab8	0x0045abb0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9abc	0x0045ac20	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ac0	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9ac4	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9ac8	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9acc	0x0045a910	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ad0	0x0045ad70	undefined *	-	-	no		trap	ghidra-ref
+0x005f9adc	0x0045b200	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ae0	0x0045b6e0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ae4	0x0045b260	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ae8	0x0045b290	undefined *	-	-	no		trap	ghidra-ref
+0x005f9aec	0x0045b830	undefined *	-	-	no	Orig_0045b830	excluded	ghidra-ref
+0x005f9af0	0x0045b2d0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9af4	0x0045b700	undefined *	-	-	no		trap	ghidra-ref
+0x005f9af8	0x0045b300	undefined *	-	-	no		trap	ghidra-ref
+0x005f9afc	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9b00	0x0045b920	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b04	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9b08	0x0045b920	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b0c	0x0045b2b0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b1c	0x00454a40	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b20	0x00454db0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b24	0x00454a90	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b28	0x00454ab0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b2c	0x00454e70	undefined *	-	-	no	Orig_00454e70	excluded	ghidra-ref
+0x005f9b30	0x00454af0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b34	0x00454e00	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b38	0x00454b30	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b3c	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9b40	0x00454f70	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b44	0x00454f70	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b48	0x00454f70	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b4c	0x00454ad0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b5c	0x00456d80	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b60	0x00457800	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b64	0x00456dd0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b68	0x00456e00	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b6c	0x004576f0	undefined *	-	-	no	Orig_004576f0	excluded	ghidra-ref
+0x005f9b70	0x00456ca0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b74	0x004577b0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b78	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9b7c	0x00456ea0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b80	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9b84	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9b88	0x00456ea0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b8c	0x00456e50	undefined *	-	-	no		trap	ghidra-ref
+0x005f9b9c	0x00453350	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ba0	0x004533b0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ba4	0x00453610	undefined *	-	-	no		trap	ghidra-ref
+0x005f9ba8	0x00453630	undefined *	-	-	no		trap	ghidra-ref
+0x005f9bac	0x00452f70	undefined *	-	-	no	Orig_00452f70	excluded	ghidra-ref
+0x005f9bb0	0x004530b0	undefined *	-	-	no		trap	ghidra-ref
+0x005f9bb4	0x00453b80	undefined *	-	-	no		trap	ghidra-ref
+0x005f9bb8	0x00453690	undefined *	-	-	no		trap	ghidra-ref
+0x005f9bbc	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9bc0	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9bc4	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x005f9bc8	0x00453720	undefined *	-	-	no		trap	ghidra-ref
+0x005f9bcc	0x00453670	undefined *	-	-	no		trap	ghidra-ref
+0x006147dc	0x00493b50	pointer	PTR_FUN_006147dc	FUN_00493b50	yes		cp-slots	ghidra-ref
+0x00616044	0x004a2c2f	pointer	PTR_FUN_00616044	FUN_004a2c2f	no		trap	ghidra-ref
+0x00616048	0x0051085a	pointer	PTR_FUN_00616048	FUN_0051085a	no		trap	ghidra-ref
+0x0061604c	0x0051085a	pointer	PTR_FUN_0061604c	FUN_0051085a	no		trap	ghidra-ref
+0x006160c4	0x004a333c	pointer	PTR___exit_006160c4	__exit	no		trap	ghidra-ref
+0x006160d8	0x004ad1e0	pointer	PTR_FUN_006160d8	FUN_004ad1e0	no		trap	ghidra-ref
+0x006160dc	0x004ad1e0	pointer	PTR_FUN_006160dc	FUN_004ad1e0	no		trap	ghidra-ref
+0x006160e0	0x004ad1e0	pointer	PTR_FUN_006160e0	FUN_004ad1e0	no		trap	ghidra-ref
+0x006160e4	0x004ad1e0	pointer	PTR_FUN_006160e4	FUN_004ad1e0	no		trap	ghidra-ref
+0x006160e8	0x004ad1e0	pointer	PTR_FUN_006160e8	FUN_004ad1e0	no		trap	ghidra-ref
+0x006160ec	0x004ad1e0	pointer	PTR_FUN_006160ec	FUN_004ad1e0	no		trap	ghidra-ref
+0x00616400	0x004ae28c	pointer	PTR_FUN_00616400	FUN_004ae28c	no		trap	ghidra-ref
+0x00616660	0x004a92de	pointer	PTR_terminate_00616660	terminate	no		trap	ghidra-ref
+0x00616d40	0x004b1918	undefined *	-	FUN_004b1918	no		trap	ghidra-ref
+0x00616d4c	0x004b16d9	undefined *	-	___init_monetary	no		trap	ghidra-ref
+0x00616d58	0x004b1433	undefined *	-	___init_numeric	no		trap	ghidra-ref
+0x00618224	0x004c7a70	pointer	PTR_FUN_00618224	FUN_004c7a70	no		trap	ghidra-ref
+0x00618230	0x004d7480	undefined *	-	FUN_004d7480	no		trap	ghidra-ref
+0x00618234	0x004d6910	undefined *	-	FUN_004d6910	no		trap	ghidra-ref
+0x00618238	0x004db5b0	undefined *	-	-	no		trap	ghidra-ref
+0x0061823c	0x004db840	undefined *	-	-	no		trap	ghidra-ref
+0x00618240	0x004dba60	undefined *	-	FUN_004dba60	no		trap	ghidra-ref
+0x00618244	0x004dbc90	undefined *	-	-	no		trap	ghidra-ref
+0x006187a8	0x004ecaee	pointer	PTR_FUN_006187a8	FUN_004ecaee	no		trap	ghidra-ref
+0x006187ac	0x004ecdcc	pointer	PTR_LAB_006187ac	-	no		trap	ghidra-ref
+0x006187d0	0x004ecf1c	undefined *	PTR_FUN_006187d0	FUN_004ecf1c	no		trap	ghidra-ref
+0x006187d4	0x004ed5d6	undefined *	PTR_LAB_006187d4	-	no		trap	ghidra-ref
+0x006187d8	0x004eef3f	undefined *	PTR_LAB_006187d8	-	no		trap	ghidra-ref
+0x006187dc	0x004eef84	undefined *	PTR_LAB_006187dc	-	no		trap	ghidra-ref
+0x006187e0	0x004ed04e	undefined *	PTR_FUN_006187e0	FUN_004ed04e	no		trap	ghidra-ref
+0x006187e4	0x004ed070	undefined *	PTR_LAB_006187e4	-	no		trap	ghidra-ref
+0x006187e8	0x004ed092	undefined *	PTR_LAB_006187e8	-	no		trap	ghidra-ref
+0x006187ec	0x004ec8eb	undefined *	PTR_FUN_006187ec	FUN_004ec8eb	no		trap	ghidra-ref
+0x006187fc	0x004eeddc	undefined *	PTR_FUN_006187fc	FUN_004eeddc	no		trap	ghidra-ref
+0x00618800	0x004eee90	undefined *	PTR_LAB_00618800	-	no		trap	ghidra-ref
+0x00618804	0x004ee5c7	undefined *	PTR_LAB_00618804	-	no		trap	ghidra-ref
+0x00618808	0x004ee609	undefined *	PTR_LAB_00618808	-	no		trap	ghidra-ref
+0x0061880c	0x004ee7c6	pointer	PTR_FUN_0061880c	FUN_004ee7c6	no		trap	ghidra-ref
+0x00618810	0x004edffb	undefined *	PTR_FUN_00618810	FUN_004edffb	no		trap	ghidra-ref
+0x00618814	0x004ee5ad	undefined *	PTR_LAB_00618814	-	no		trap	ghidra-ref
+0x00618818	0x004ee5ba	undefined *	PTR_LAB_00618818	-	no		trap	ghidra-ref
+0x0061881c	0x004ee74a	undefined *	PTR_FUN_0061881c	FUN_004ee74a	no		trap	ghidra-ref
+0x00618820	0x004ee085	undefined *	PTR_FUN_00618820	FUN_004ee085	no		trap	ghidra-ref
+0x00618824	0x004ee11b	undefined *	PTR_FUN_00618824	FUN_004ee11b	no		trap	ghidra-ref
+0x00618828	0x004ee1b2	undefined *	PTR_FUN_00618828	FUN_004ee1b2	no		trap	ghidra-ref
+0x0061882c	0x004edf71	undefined *	PTR_FUN_0061882c	FUN_004edf71	no		trap	ghidra-ref
+0x00618830	0x004ef033	undefined *	PTR_LAB_00618830	-	no		trap	ghidra-ref
+0x00618834	0x004eeb86	pointer	PTR_FUN_00618834	FUN_004eeb86	no		trap	ghidra-ref
+0x00618844	0x004ee48f	undefined *	PTR_FUN_00618844	FUN_004ee48f	no		trap	ghidra-ref
+0x00618848	0x004ee461	undefined *	PTR_FUN_00618848	FUN_004ee461	no		trap	ghidra-ref
+0x0061884c	0x004ee4a0	undefined *	PTR_FUN_0061884c	FUN_004ee4a0	no		trap	ghidra-ref
+0x00618850	0x004ee24a	undefined *	PTR_FUN_00618850	FUN_004ee24a	no		trap	ghidra-ref
+0x00618854	0x004eec93	pointer	PTR_FUN_00618854	FUN_004eec93	no		trap	ghidra-ref
+0x00618864	0x004ec9a3	pointer	PTR_FUN_00618864	FUN_004ec9a3	no		trap	ghidra-ref
+0x00618868	0x004eca7c	pointer	PTR_FUN_00618868	FUN_004eca7c	no		trap	ghidra-ref
+0x00618870	0x004ecc45	pointer	PTR_FUN_00618870	FUN_004ecc45	no		trap	ghidra-ref
+0x00618874	0x004ecd40	pointer	PTR_FUN_00618874	FUN_004ecd40	no		trap	ghidra-ref
+0x0061887c	0x004ed297	pointer	PTR_FUN_0061887c	FUN_004ed297	no		trap	ghidra-ref
+0x00618880	0x004ed3b4	pointer	PTR_FUN_00618880	FUN_004ed3b4	no		trap	ghidra-ref
+0x00618888	0x004eeadb	undefined *	PTR_FUN_00618888	FUN_004eeadb	no		trap	ghidra-ref
+0x0061888c	0x004ec790	undefined *	PTR_LAB_0061888c	-	no		trap	ghidra-ref
+0x00618890	0x004ec82c	undefined *	PTR_LAB_00618890	-	no		trap	ghidra-ref
+0x00618894	0x004ecb01	undefined *	PTR_LAB_00618894	-	no		trap	ghidra-ref
+0x00618898	0x004ecb25	undefined *	PTR_LAB_00618898	-	no		trap	ghidra-ref
+0x0061889c	0x004ecb49	undefined *	PTR_LAB_0061889c	-	no		trap	ghidra-ref
+0x006188c8	0x004ef25b	pointer	PTR_FUN_006188c8	FUN_004ef25b	no		trap	ghidra-ref
+0x006188cc	0x004ecdd9	undefined *	PTR_FUN_006188cc	FUN_004ecdd9	no		trap	ghidra-ref
+0x006188d0	0x004ed467	undefined *	-	-	no		trap	ghidra-ref
+0x006188d4	0x004ed6c0	undefined *	-	-	no		trap	ghidra-ref
+0x006188d8	0x004ed989	undefined *	-	-	no		trap	ghidra-ref
+0x006188dc	0x004ef45e	undefined *	-	FUN_004ef45e	no		trap	ghidra-ref
+0x006188e0	0x004ecf59	undefined *	-	-	no		trap	ghidra-ref
+0x006188e4	0x004ef4ee	undefined *	-	FUN_004ef4ee	no		trap	ghidra-ref
+0x006188e8	0x004efe8a	undefined *	-	FUN_004efe8a	no		trap	ghidra-ref
+0x006188ec	0x004ef349	undefined *	-	FUN_004ef349	no		trap	ghidra-ref
+0x006188f0	0x004ef58b	undefined *	-	FUN_004ef58b	no		trap	ghidra-ref
+0x006188f4	0x004ed5e3	undefined *	-	-	no		trap	ghidra-ref
+0x006188f8	0x004eef4c	undefined *	-	-	no		trap	ghidra-ref
+0x006188fc	0x004eef91	undefined *	-	-	no		trap	ghidra-ref
+0x00618900	0x004ef726	undefined *	-	FUN_004ef726	no		trap	ghidra-ref
+0x00618904	0x004efab3	undefined *	-	FUN_004efab3	no		trap	ghidra-ref
+0x00618908	0x004ed09f	undefined *	-	-	no		trap	ghidra-ref
+0x0061890c	0x004ec915	undefined *	-	FUN_004ec915	no		trap	ghidra-ref
+0x00618910	0x004edbd2	undefined *	-	-	no		trap	ghidra-ref
+0x00618914	0x004ee8e6	undefined *	-	-	no		trap	ghidra-ref
+0x00618918	0x004efe8a	undefined *	-	FUN_004efe8a	no		trap	ghidra-ref
+0x0061891c	0x004eedef	undefined *	-	-	no		trap	ghidra-ref
+0x00618920	0x004eee9d	undefined *	-	-	no		trap	ghidra-ref
+0x00618924	0x004ee5d4	undefined *	-	-	no		trap	ghidra-ref
+0x00618928	0x004ee616	undefined *	-	-	no		trap	ghidra-ref
+0x0061892c	0x004ee7fa	undefined *	-	-	no		trap	ghidra-ref
+0x00618930	0x004ee029	undefined *	-	-	no		trap	ghidra-ref
+0x00618934	0x004f022d	undefined *	-	FUN_004f022d	no		trap	ghidra-ref
+0x00618938	0x004f0307	undefined *	-	FUN_004f0307	no		trap	ghidra-ref
+0x0061893c	0x004ee76a	undefined *	-	FUN_004ee76a	no		trap	ghidra-ref
+0x00618940	0x004ee0a1	undefined *	-	FUN_004ee0a1	no		trap	ghidra-ref
+0x00618944	0x004ee137	undefined *	-	FUN_004ee137	no		trap	ghidra-ref
+0x00618948	0x004ee1ce	undefined *	-	FUN_004ee1ce	no		trap	ghidra-ref
+0x0061894c	0x004edf9f	undefined *	-	-	no		trap	ghidra-ref
+0x00618950	0x004ef040	undefined *	-	-	no		trap	ghidra-ref
+0x00618954	0x004eebb0	undefined *	-	-	no		trap	ghidra-ref
+0x00618958	0x004eed54	undefined *	-	FUN_004eed54	no		trap	ghidra-ref
+0x0061895c	0x004ed909	undefined *	-	-	no		trap	ghidra-ref
+0x00618960	0x004ee37f	undefined *	-	-	no		trap	ghidra-ref
+0x00618964	0x004eff79	undefined *	-	FUN_004eff79	no		trap	ghidra-ref
+0x00618968	0x004eff40	undefined *	-	FUN_004eff40	no		trap	ghidra-ref
+0x0061896c	0x004ee4c7	undefined *	-	FUN_004ee4c7	no		trap	ghidra-ref
+0x00618970	0x004ee26a	undefined *	-	FUN_004ee26a	no		trap	ghidra-ref
+0x00618974	0x004eecbd	undefined *	-	FUN_004eecbd	no		trap	ghidra-ref
+0x00618978	0x004ee99c	undefined *	-	-	no		trap	ghidra-ref
+0x0061897c	0x004f03c6	undefined *	-	-	no		trap	ghidra-ref
+0x00618980	0x004ef1d1	undefined *	-	-	no		trap	ghidra-ref
+0x00618984	0x004ec9cd	undefined *	-	FUN_004ec9cd	no		trap	ghidra-ref
+0x00618988	0x004ecaab	undefined *	-	FUN_004ecaab	no		trap	ghidra-ref
+0x0061898c	0x004ecb97	undefined *	-	FUN_004ecb97	no		trap	ghidra-ref
+0x00618990	0x004ecc6f	undefined *	-	FUN_004ecc6f	no		trap	ghidra-ref
+0x00618994	0x004ecd6f	undefined *	-	FUN_004ecd6f	no		trap	ghidra-ref
+0x00618998	0x004ed1c6	undefined *	-	FUN_004ed1c6	no		trap	ghidra-ref
+0x0061899c	0x004ed2c1	undefined *	-	FUN_004ed2c1	no		trap	ghidra-ref
+0x006189a0	0x004ed3e3	undefined *	-	FUN_004ed3e3	no		trap	ghidra-ref
+0x006189a4	0x004eea60	undefined *	-	-	no		trap	ghidra-ref
+0x006189a8	0x004eeaee	undefined *	-	-	no		trap	ghidra-ref
+0x006189ac	0x004ec79d	undefined *	-	FUN_004ec79d	no		trap	ghidra-ref
+0x006189b0	0x004ec839	undefined *	-	FUN_004ec839	no		trap	ghidra-ref
+0x006189b4	0x004ef2c6	undefined *	-	FUN_004ef2c6	no		trap	ghidra-ref
+0x006189b8	0x004ef3c6	undefined *	-	FUN_004ef3c6	no		trap	ghidra-ref
+0x006189bc	0x004ef49a	undefined *	-	FUN_004ef49a	no		trap	ghidra-ref
+0x006189c0	0x004ece75	undefined *	-	-	no		trap	ghidra-ref
+0x006189c4	0x004ef647	undefined *	-	FUN_004ef647	no		trap	ghidra-ref
+0x006189c8	0x004ecfd0	undefined *	-	-	no		trap	ghidra-ref
+0x006189cc	0x004ed517	undefined *	-	-	no		trap	ghidra-ref
+0x006189d0	0x004ef8b3	undefined *	-	FUN_004ef8b3	no		trap	ghidra-ref
+0x006189d4	0x004efc59	undefined *	-	FUN_004efc59	no		trap	ghidra-ref
+0x006189d8	0x004ef0f0	undefined *	-	-	no		trap	ghidra-ref
+0x006189dc	0x004fb5a0	undefined *	-	FUN_004fb5a0	no		trap	ghidra-ref
+0x006189e0	0x004fba47	undefined *	-	-	no		trap	ghidra-ref
+0x00618a10	0x004f1f90	pointer	PTR_FUN_00618a10	FUN_004f1f90	no		trap	ghidra-ref
+0x00623e08	0x00551d30	undefined *	-	-	no		trap	ghidra-ref
+0x00623e0c	0x00551cf0	undefined *	-	FUN_00551cf0	no		trap	ghidra-ref
+0x00623e10	0x00551fd0	undefined *	-	FUN_00551fd0	no		trap	ghidra-ref
+0x00623e14	0x0052dda0	undefined *	-	-	no		trap	ghidra-ref
+0x00623e18	0x0052daf0	undefined *	-	FUN_0052daf0	no		trap	ghidra-ref
+0x00623e30	0x005524c0	undefined *	-	FUN_005524c0	no		trap	ghidra-ref
+0x00623e34	0x00552590	undefined *	-	-	no		trap	ghidra-ref
+0x00623e38	0x00552510	undefined *	-	-	no		trap	ghidra-ref
+0x00623e3c	0x005526b0	undefined *	-	-	no		trap	ghidra-ref
+0x00623e40	0x00552600	undefined *	-	-	no		trap	ghidra-ref
+0x00623e44	0x00552340	undefined *	-	-	no		trap	ghidra-ref
+0x00623e48	0x005523f0	undefined *	-	-	no		trap	ghidra-ref
+0x00623e4c	0x005524a0	undefined *	-	FUN_005524a0	no		trap	ghidra-ref
+0x00623e60	0x00552050	undefined *	-	FUN_00552050	no		trap	ghidra-ref
+0x00623e64	0x00552190	undefined *	-	-	no		trap	ghidra-ref
+0x00623e68	0x005520f0	undefined *	-	-	no		trap	ghidra-ref
+0x00623e6c	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x00623e70	0x0045b350	undefined *	-	FUN_0045b350	no	RwInitNullStub	bound	ghidra-ref
+0x00623e74	0x00552340	undefined *	-	-	no		trap	ghidra-ref
+0x00623e78	0x005523f0	undefined *	-	-	no		trap	ghidra-ref
+0x00623e7c	0x005524a0	undefined *	-	FUN_005524a0	no		trap	ghidra-ref
+0x00624058	0x0057c5a0	pointer	PTR_LAB_00624058	-	no		trap	ghidra-ref
+0x00632b78	0x005a5950	undefined *	-	-	no		trap	ghidra-ref
+0x00632b7c	0x005a5b30	undefined *	-	FUN_005a5b30	no		trap	ghidra-ref
+0x00632b80	0x005a5e50	undefined *	-	-	no		trap	ghidra-ref
+0x00632b84	0x005a5e60	undefined *	-	-	no		trap	ghidra-ref
+0x00632ba8	0x005a5e70	undefined *	PTR_LAB_00632ba8	-	no		trap	ghidra-ref
+0x00632bac	0x005a5ee0	undefined *	-	-	no		trap	ghidra-ref
+0x00632bb0	0x005ae5b0	undefined *	-	-	no		trap	ghidra-ref
+0x00632bb4	0x005ae610	undefined *	-	-	no		trap	ghidra-ref
+0x00632bb8	0x005ae1d0	undefined *	-	-	no		trap	ghidra-ref
+0x00632bbc	0x005ae210	undefined *	-	-	no		trap	ghidra-ref
+0x00632bc0	0x005adf90	undefined *	-	-	no		trap	ghidra-ref
+0x00632bc4	0x005adfc0	undefined *	-	-	no		trap	ghidra-ref
+0x00632bc8	0x005add80	undefined *	-	-	no		trap	ghidra-ref
+0x00632bcc	0x005addb0	undefined *	-	-	no		trap	ghidra-ref
+0x00632bd0	0x005ada90	undefined *	-	-	no		trap	ghidra-ref
+0x00632bd4	0x005adb70	undefined *	-	-	no		trap	ghidra-ref
+0x00632bd8	0x005a9970	undefined *	-	-	no		trap	ghidra-ref
+0x00632bdc	0x005a9a70	undefined *	-	-	no		trap	ghidra-ref
+0x00632be0	0x005aa480	undefined *	-	-	no		trap	ghidra-ref
+0x00632be4	0x005aa520	undefined *	-	-	no		trap	ghidra-ref
+0x00632be8	0x005acff0	undefined *	-	-	no		trap	ghidra-ref
+0x00632bec	0x005ad030	undefined *	-	-	no		trap	ghidra-ref
+0x00632bf0	0x005ac550	undefined *	-	-	no		trap	ghidra-ref
+0x00632bf4	0x005ac590	undefined *	-	-	no		trap	ghidra-ref
+0x00632bf8	0x005a7810	undefined *	-	-	no		trap	ghidra-ref
+0x00632bfc	0x005aba00	undefined *	-	-	no		trap	ghidra-ref
+0x00632c00	0x005ab9d0	undefined *	-	-	no		trap	ghidra-ref
+0x00632c04	0x005a78b0	undefined *	-	-	no		trap	ghidra-ref
+0x00632c08	0x005a6e50	undefined *	-	-	no		trap	ghidra-ref
+0x00632c0c	0x005a6e90	undefined *	-	-	no		trap	ghidra-ref
+0x00632c10	0x005ab4a0	undefined *	-	-	no		trap	ghidra-ref
+0x00632c14	0x005ab510	undefined *	-	-	no		trap	ghidra-ref
+0x00632c18	0x005a6af0	undefined *	-	-	no		trap	ghidra-ref
+0x00632c1c	0x005a6b30	undefined *	-	-	no		trap	ghidra-ref
+0x00632c20	0x005aafb0	undefined *	-	-	no		trap	ghidra-ref
+0x00632c24	0x005aafe0	undefined *	-	-	no		trap	ghidra-ref
+0x00632c28	0x005a8ea0	pointer	PTR_LAB_00632c28	-	yes		cp-slots	ghidra-ref
+0x00632c2c	0x005aaf50	pointer	PTR_LAB_00632c2c	-	yes		cp-slots	ghidra-ref
+0x00632c30	0x005aaef0	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x00632c34	0x005aae90	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x00632c38	0x005aad50	pointer	PTR_LAB_00632c38	-	yes		cp-slots	ghidra-ref
+0x00632c3c	0x005a9180	pointer	PTR_LAB_00632c3c	-	yes		cp-slots	ghidra-ref
+0x00632c40	0x005aafa0	pointer	PTR_LAB_00632c40	-	yes		cp-slots	ghidra-ref
+0x00632c44	0x005aaf40	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x00632c48	0x005aaee0	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x00632c4c	0x005aada0	pointer	PTR_LAB_00632c4c	-	yes		cp-slots	ghidra-ref
+0x00634274	0x005b0de0	pointer	PTR_LAB_00634274	-	no		trap	ghidra-ref
+0x00634554	0x005b4dd0	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x0063455c	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x00634564	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063456c	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00634574	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063457c	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x00634584	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x0063458c	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x00634594	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x0063459c	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006345a4	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006345ac	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006345b4	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x006345bc	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x006345c4	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x006345cc	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x006345d4	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006345dc	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006345e4	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006345ec	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x006345f4	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x006345fc	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x00634604	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x0063460c	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00634614	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063461c	0x005b4710	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00634624	0x005b4620	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063462c	0x005b4620	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00634634	0x005b5ad0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063463c	0x005b5ad0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00634644	0x005b5ad0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063464c	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x00634654	0x005b3e60	undefined *	-	FUN_005b3e60	yes		cp-slots	ghidra-ref
+0x0063465c	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x00634664	0x005b5ad0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063466c	0x005b4e70	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00634674	0x005b4e70	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063467c	0x005b4e70	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00634684	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x0063468c	0x005b41f0	undefined *	-	FUN_005b41f0	yes		cp-slots	ghidra-ref
+0x00634694	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063469c	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346a4	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346ac	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346b4	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346bc	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346c4	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346cc	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346d4	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346dc	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006346e4	0x005b6340	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00635170	0x005b9e60	undefined *	-	-	no		trap	ghidra-ref
+0x00635174	0x005b85a0	undefined *	-	-	no		trap	ghidra-ref
+0x00635178	0x005c79c0	undefined *	-	-	no		trap	ghidra-ref
+0x0063517c	0x005c6be0	undefined *	-	-	no		trap	ghidra-ref
+0x00635180	0x005a7fa0	undefined *	-	-	no		trap	ghidra-ref
+0x00635184	0x005c80a0	undefined *	-	-	no		trap	ghidra-ref
+0x00635188	0x005b7440	undefined *	-	-	no		trap	ghidra-ref
+0x0063518c	0x005b6b80	undefined *	-	-	no		trap	ghidra-ref
+0x00635190	0x005bce20	undefined *	-	-	no		trap	ghidra-ref
+0x00635194	0x005b9ea0	undefined *	PTR_LAB_00635194	-	yes		cp-slots	ghidra-ref
+0x00635198	0x005b85e0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x0063519c	0x005c7a00	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351a0	0x005c6c20	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351a4	0x005a7fe0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351a8	0x005c80a0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351ac	0x005b7440	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351b0	0x005b6b80	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351b4	0x005bce20	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351b8	0x005bcee0	undefined *	PTR_LAB_006351b8	-	yes		cp-slots	ghidra-ref
+0x006351bc	0x005b6e50	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351c0	0x005b7730	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351c4	0x005c8390	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351c8	0x005a8350	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351cc	0x005c6f20	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351d0	0x005c7d00	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351d4	0x005b88e0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351d8	0x005ba1a0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351dc	0x005bb850	pointer	PTR_LAB_006351dc	-	yes		cp-slots	ghidra-ref
+0x006351e0	0x005c9230	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x006351e4	0x005c92a0	pointer	PTR_LAB_006351e4	-	yes		cp-slots	ghidra-ref
+0x006351e8	0x005bb8f0	undefined1 (no Ghidra ref)	-	-	yes		cp-slots	codeptr-slots
+0x006351ec	0x005aee40	undefined *	PTR_LAB_006351ec	-	yes		cp-slots	ghidra-ref
+0x006351f0	0x005b7fe0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351f4	0x005b7f80	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351f8	0x005b7f20	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x006351fc	0x005b7f70	undefined *	PTR_LAB_006351fc	-	yes		cp-slots	ghidra-ref
+0x00635200	0x005b7fd0	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00635204	0x005b8030	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00635208	0x005aee90	undefined *	-	-	yes		cp-slots	ghidra-ref
+0x00635850	0x005be1b0	undefined *	PTR_FUN_00635850	FUN_005be1b0	no		trap	ghidra-ref
+0x00635854	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
+0x00635858	0x005be160	undefined *	-	FUN_005be160	no		trap	ghidra-ref
+0x0063585c	0x005be1f0	undefined *	-	-	no		trap	ghidra-ref
+0x00635860	0x005be210	undefined *	-	-	no		trap	ghidra-ref
+0x00635864	0x005be230	undefined *	-	-	no		trap	ghidra-ref
+0x00635868	0x005beba0	pointer	PTR_FUN_00635868	FUN_005beba0	no		trap	ghidra-ref
+0x00635870	0x005be450	pointer	PTR_FUN_00635870	FUN_005be450	no		trap	ghidra-ref
+0x00635874	0x005bec90	undefined *	-	-	no		trap	ghidra-ref
+0x00635878	0x005becd0	undefined *	-	-	no		trap	ghidra-ref
+0x0063587c	0x005bed00	undefined *	-	-	no		trap	ghidra-ref
+0x00635880	0x005bed30	undefined *	-	-	no		trap	ghidra-ref
+0x00635884	0x005beda0	undefined *	-	-	no		trap	ghidra-ref
+0x00635888	0x005bedc0	undefined *	-	FUN_005bedc0	no		trap	ghidra-ref
+0x0063588c	0x005bee10	undefined *	-	-	no		trap	ghidra-ref
+0x00635890	0x005bee50	undefined *	-	-	no		trap	ghidra-ref
+0x00635894	0x005bee80	undefined *	-	-	no		trap	ghidra-ref
+0x00635898	0x005bef20	undefined *	-	FUN_005bef20	no		trap	ghidra-ref
+0x0063589c	0x005bef60	undefined *	-	-	no		trap	ghidra-ref
+0x006358a0	0x005bf000	undefined *	-	FUN_005bf000	no		trap	ghidra-ref
+0x006358a4	0x005bf800	undefined *	PTR_LAB_006358a4	-	no		trap	ghidra-ref
+0x006358a8	0x005bf850	undefined *	-	-	no		trap	ghidra-ref
+0x006358ac	0x005bf870	undefined *	-	-	no		trap	ghidra-ref
+0x006358b0	0x005bfa40	undefined *	-	FUN_005bfa40	no		trap	ghidra-ref
+0x006358b4	0x005bfab0	undefined *	-	-	no		trap	ghidra-ref
+0x006358b8	0x005bfbb0	undefined *	-	-	no		trap	ghidra-ref
+0x006358bc	0x005bfc30	undefined *	-	-	no		trap	ghidra-ref
+0x006358c0	0x005bfc70	undefined *	-	-	no		trap	ghidra-ref
+0x006358c4	0x005be680	undefined *	-	-	no		trap	ghidra-ref
+0x006358c8	0x005bfd00	undefined *	-	-	no		trap	ghidra-ref
+0x006358cc	0x005bfd00	undefined *	-	-	no		trap	ghidra-ref
+0x006358e0	0x005be940	undefined *	PTR_FUN_006358e0	FUN_005be940	no		trap	ghidra-ref
+0x006358e4	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
+0x006358e8	0x005be990	undefined *	-	FUN_005be990	no		trap	ghidra-ref
+0x006358ec	0x005be9f0	undefined *	-	FUN_005be9f0	no		trap	ghidra-ref
+0x006358f0	0x005bea60	undefined *	-	-	no		trap	ghidra-ref
+0x006358f4	0x005bea90	undefined *	-	-	no		trap	ghidra-ref
+0x006358f8	0x005beaa0	undefined *	-	FUN_005beaa0	no		trap	ghidra-ref
+0x006358fc	0x005beba0	undefined *	PTR_FUN_006358fc	FUN_005beba0	no		trap	ghidra-ref
+0x00635900	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
+0x00635904	0x005bec10	undefined *	-	FUN_005bec10	no		trap	ghidra-ref
+0x00635908	0x005bec90	undefined *	-	-	no		trap	ghidra-ref
+0x0063590c	0x005becd0	undefined *	-	-	no		trap	ghidra-ref
+0x00635910	0x005bed00	undefined *	-	-	no		trap	ghidra-ref
+0x00635914	0x005bed30	undefined *	-	-	no		trap	ghidra-ref
+0x00635918	0x005beda0	undefined *	-	-	no		trap	ghidra-ref
+0x0063591c	0x005bedc0	undefined *	-	FUN_005bedc0	no		trap	ghidra-ref
+0x00635920	0x005bee10	undefined *	-	-	no		trap	ghidra-ref
+0x00635924	0x005bee50	undefined *	-	-	no		trap	ghidra-ref
+0x00635928	0x005bee80	undefined *	-	-	no		trap	ghidra-ref
+0x0063592c	0x005bef20	undefined *	-	FUN_005bef20	no		trap	ghidra-ref
+0x00635930	0x005bef60	undefined *	-	-	no		trap	ghidra-ref
+0x00635934	0x005bf000	undefined *	-	FUN_005bf000	no		trap	ghidra-ref
+0x00635970	0x005beba0	undefined *	PTR_FUN_00635970	FUN_005beba0	no		trap	ghidra-ref
+0x00635974	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
+0x00635978	0x005bf370	undefined *	-	FUN_005bf370	no		trap	ghidra-ref
+0x0063597c	0x005bec90	undefined *	-	-	no		trap	ghidra-ref
+0x00635980	0x005becd0	undefined *	-	-	no		trap	ghidra-ref
+0x00635984	0x005bed00	undefined *	-	-	no		trap	ghidra-ref
+0x00635988	0x005bed30	undefined *	-	-	no		trap	ghidra-ref
+0x0063598c	0x005beda0	undefined *	-	-	no		trap	ghidra-ref
+0x00635990	0x005bedc0	undefined *	-	FUN_005bedc0	no		trap	ghidra-ref
+0x00635994	0x005bee10	undefined *	-	-	no		trap	ghidra-ref
+0x00635998	0x005bee50	undefined *	-	-	no		trap	ghidra-ref
+0x0063599c	0x005bee80	undefined *	-	-	no		trap	ghidra-ref
+0x006359a0	0x005bef20	undefined *	-	FUN_005bef20	no		trap	ghidra-ref
+0x006359a4	0x005bef60	undefined *	-	-	no		trap	ghidra-ref
+0x006359a8	0x005bf000	undefined *	-	FUN_005bf000	no		trap	ghidra-ref
+0x006359b0	0x005bfdf0	undefined *	PTR_LAB_006359b0	-	no		trap	ghidra-ref
+0x006359b4	0x005c02a0	undefined *	-	FUN_005c02a0	no		trap	ghidra-ref
+0x006359b8	0x005bfe50	undefined *	-	-	no		trap	ghidra-ref
+0x006359bc	0x005c0360	undefined *	-	FUN_005c0360	no		trap	ghidra-ref
+0x006359c0	0x005c0600	undefined *	-	FUN_005c0600	no		trap	ghidra-ref
+0x006359c4	0x005c0730	undefined *	-	FUN_005c0730	no		trap	ghidra-ref
+0x006359c8	0x005c07b0	undefined *	-	-	no		trap	ghidra-ref
+0x006359cc	0x005c07f0	undefined *	-	FUN_005c07f0	no		trap	ghidra-ref
+0x006359d0	0x005c0870	undefined *	-	-	no		trap	ghidra-ref
+0x006359d4	0x005c08a0	undefined *	-	-	no		trap	ghidra-ref
+0x006359d8	0x005c08c0	undefined *	-	-	no		trap	ghidra-ref
+0x006359dc	0x005c0900	undefined *	-	-	no		trap	ghidra-ref
+0x006359e0	0x005c0b20	undefined *	-	-	no		trap	ghidra-ref
+0x006359e4	0x0049cf50	undefined *	-	-	no		trap	ghidra-ref
+0x006359e8	0x005c0b50	undefined *	-	-	no		trap	ghidra-ref
+0x006359ec	0x005bf4d0	undefined *	-	FUN_005bf4d0	no		trap	ghidra-ref
+0x006359f0	0x005c0bb0	undefined *	-	-	no		trap	ghidra-ref
+0x006359f4	0x005c0be0	undefined *	-	-	no		trap	ghidra-ref
+0x006359f8	0x005bfda0	undefined *	PTR_LAB_006359f8	-	no		trap	ghidra-ref
+0x006359fc	0x005bf850	undefined *	-	-	no		trap	ghidra-ref
+0x00635a00	0x005bfe00	undefined *	-	-	no		trap	ghidra-ref
+0x00635a04	0x005bfe60	undefined *	-	FUN_005bfe60	no		trap	ghidra-ref
+0x00635a08	0x005bf540	undefined *	-	-	no		trap	ghidra-ref
+0x00635a0c	0x005bf420	undefined *	-	-	no		trap	ghidra-ref
+0x00635a10	0x005bf3c0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a14	0x005c0070	undefined *	-	-	no		trap	ghidra-ref
+0x00635a18	0x005bfd00	undefined *	-	-	no		trap	ghidra-ref
+0x00635a28	0x005bf6d0	pointer	PTR_FUN_00635a28	FUN_005bf6d0	no		trap	ghidra-ref
+0x00635a38	0x005bf7f0	undefined *	PTR_LAB_00635a38	-	no		trap	ghidra-ref
+0x00635a3c	0x005c02a0	undefined *	-	FUN_005c02a0	no		trap	ghidra-ref
+0x00635a40	0x005bf860	undefined *	-	-	no		trap	ghidra-ref
+0x00635a44	0x005c0360	undefined *	-	FUN_005c0360	no		trap	ghidra-ref
+0x00635a48	0x005c0600	undefined *	-	FUN_005c0600	no		trap	ghidra-ref
+0x00635a4c	0x005bf8a0	undefined *	-	FUN_005bf8a0	no		trap	ghidra-ref
+0x00635a50	0x005c07b0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a54	0x005c07f0	undefined *	-	FUN_005c07f0	no		trap	ghidra-ref
+0x00635a58	0x005c0870	undefined *	-	-	no		trap	ghidra-ref
+0x00635a5c	0x005c08a0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a60	0x005c08c0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a64	0x005c0900	undefined *	-	-	no		trap	ghidra-ref
+0x00635a68	0x005c0b20	undefined *	-	-	no		trap	ghidra-ref
+0x00635a6c	0x0049cf50	undefined *	-	-	no		trap	ghidra-ref
+0x00635a70	0x005c0b50	undefined *	-	-	no		trap	ghidra-ref
+0x00635a74	0x005c0b80	undefined *	-	-	no		trap	ghidra-ref
+0x00635a78	0x005c0bb0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a7c	0x005c0be0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a80	0x005bf800	undefined *	PTR_LAB_00635a80	-	no		trap	ghidra-ref
+0x00635a84	0x005bf850	undefined *	-	-	no		trap	ghidra-ref
+0x00635a88	0x005bf870	undefined *	-	-	no		trap	ghidra-ref
+0x00635a8c	0x005bfa40	undefined *	-	FUN_005bfa40	no		trap	ghidra-ref
+0x00635a90	0x005bfab0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a94	0x005bfbb0	undefined *	-	-	no		trap	ghidra-ref
+0x00635a98	0x005bfc30	undefined *	-	-	no		trap	ghidra-ref
+0x00635a9c	0x005bfc70	undefined *	-	-	no		trap	ghidra-ref
+0x00635aa0	0x005bfcc0	undefined *	-	FUN_005bfcc0	no		trap	ghidra-ref
+0x00635aa4	0x005bfd00	undefined *	-	-	no		trap	ghidra-ref
+0x00635aa8	0x005bfd00	undefined *	-	-	no		trap	ghidra-ref
+0x00635ab0	0x005bfdf0	undefined *	PTR_LAB_00635ab0	-	no		trap	ghidra-ref
+0x00635ab4	0x005c02a0	undefined *	-	FUN_005c02a0	no		trap	ghidra-ref
+0x00635ab8	0x005bfe50	undefined *	-	-	no		trap	ghidra-ref
+0x00635abc	0x005c0360	undefined *	-	FUN_005c0360	no		trap	ghidra-ref
+0x00635ac0	0x005c0600	undefined *	-	FUN_005c0600	no		trap	ghidra-ref
+0x00635ac4	0x005c0730	undefined *	-	FUN_005c0730	no		trap	ghidra-ref
+0x00635ac8	0x005c07b0	undefined *	-	-	no		trap	ghidra-ref
+0x00635acc	0x005c07f0	undefined *	-	FUN_005c07f0	no		trap	ghidra-ref
+0x00635ad0	0x005c0870	undefined *	-	-	no		trap	ghidra-ref
+0x00635ad4	0x005c08a0	undefined *	-	-	no		trap	ghidra-ref
+0x00635ad8	0x005c08c0	undefined *	-	-	no		trap	ghidra-ref
+0x00635adc	0x005c0900	undefined *	-	-	no		trap	ghidra-ref
+0x00635ae0	0x005c0b20	undefined *	-	-	no		trap	ghidra-ref
+0x00635ae4	0x0049cf50	undefined *	-	-	no		trap	ghidra-ref
+0x00635ae8	0x005c0b50	undefined *	-	-	no		trap	ghidra-ref
+0x00635aec	0x005c0b80	undefined *	-	-	no		trap	ghidra-ref
+0x00635af0	0x005c0bb0	undefined *	-	-	no		trap	ghidra-ref
+0x00635af4	0x005c0be0	undefined *	-	-	no		trap	ghidra-ref
+0x00635af8	0x005bfda0	undefined *	PTR_LAB_00635af8	-	no		trap	ghidra-ref
+0x00635afc	0x005bf850	undefined *	-	-	no		trap	ghidra-ref
+0x00635b00	0x005bfe00	undefined *	-	-	no		trap	ghidra-ref
+0x00635b04	0x005bfe60	undefined *	-	FUN_005bfe60	no		trap	ghidra-ref
+0x00635b08	0x005bfed0	undefined *	-	FUN_005bfed0	no		trap	ghidra-ref
+0x00635b0c	0x005bff30	undefined *	-	-	no		trap	ghidra-ref
+0x00635b10	0x005bff40	undefined *	-	FUN_005bff40	no		trap	ghidra-ref
+0x00635b14	0x005c0070	undefined *	-	-	no		trap	ghidra-ref
+0x00635b18	0x005c00c0	undefined *	-	-	no		trap	ghidra-ref
+0x00635b20	0x005c0250	undefined *	PTR_FUN_00635b20	FUN_005c0250	no		trap	ghidra-ref
+0x00635b24	0x005c02a0	undefined *	-	FUN_005c02a0	no		trap	ghidra-ref
+0x00635b28	0x005c02c0	undefined *	-	FUN_005c02c0	no		trap	ghidra-ref
+0x00635b2c	0x005c0360	undefined *	-	FUN_005c0360	no		trap	ghidra-ref
+0x00635b30	0x005c0600	undefined *	-	FUN_005c0600	no		trap	ghidra-ref
+0x00635b34	0x005c0730	undefined *	-	FUN_005c0730	no		trap	ghidra-ref
+0x00635b38	0x005c07b0	undefined *	-	-	no		trap	ghidra-ref
+0x00635b3c	0x005c07f0	undefined *	-	FUN_005c07f0	no		trap	ghidra-ref
+0x00635b40	0x005c0870	undefined *	-	-	no		trap	ghidra-ref
+0x00635b44	0x005c08a0	undefined *	-	-	no		trap	ghidra-ref
+0x00635b48	0x005c08c0	undefined *	-	-	no		trap	ghidra-ref
+0x00635b4c	0x005c0900	undefined *	-	-	no		trap	ghidra-ref
+0x00635b50	0x005c0b20	undefined *	-	-	no		trap	ghidra-ref
+0x00635b54	0x0049cf50	undefined *	-	-	no		trap	ghidra-ref
+0x00635b58	0x005c0b50	undefined *	-	-	no		trap	ghidra-ref
+0x00635b5c	0x005c0b80	undefined *	-	-	no		trap	ghidra-ref
+0x00635b60	0x005c0bb0	undefined *	-	-	no		trap	ghidra-ref
+0x00635b64	0x005c0be0	undefined *	-	-	no		trap	ghidra-ref
+0x00635b68	0x005c0c90	undefined *	PTR_FUN_00635b68	FUN_005c0c90	no		trap	ghidra-ref
+0x00635b6c	0x005c02a0	undefined *	-	FUN_005c02a0	no		trap	ghidra-ref
+0x00635b70	0x005c0ce0	undefined *	-	-	no		trap	ghidra-ref
+0x00635b74	0x005c0d40	undefined *	-	FUN_005c0d40	no		trap	ghidra-ref
+0x00635b78	0x005bea60	undefined *	-	-	no		trap	ghidra-ref
+0x00635b7c	0x005bea90	undefined *	-	-	no		trap	ghidra-ref
+0x00635b80	0x005c0dc0	undefined *	-	FUN_005c0dc0	no		trap	ghidra-ref
+0x00635b88	0x005c0e70	undefined *	PTR_FUN_00635b88	FUN_005c0e70	no		trap	ghidra-ref
+0x00635b8c	0x005bf670	undefined *	-	FUN_005bf670	no		trap	ghidra-ref
+0x00635b90	0x005c0ec0	undefined *	-	FUN_005c0ec0	no		trap	ghidra-ref
+0x00635b94	0x005c0ef0	undefined *	-	FUN_005c0ef0	no		trap	ghidra-ref
+0x00635b98	0x005c0f60	undefined *	-	-	no		trap	ghidra-ref
+0x00635b9c	0x005c0f90	undefined *	-	-	no		trap	ghidra-ref
+0x00635ba0	0x005c1140	undefined *	-	FUN_005c1140	no		trap	ghidra-ref
+0x00635ba4	0x005c1230	undefined *	-	-	no		trap	ghidra-ref
+0x00635ba8	0x005c1380	undefined *	-	FUN_005c1380	no		trap	ghidra-ref
+0x00635bb0	0x005c14c0	undefined *	PTR_FUN_00635bb0	FUN_005c14c0	no		trap	ghidra-ref
+0x00635bb4	0x005c1520	undefined *	-	FUN_005c1520	no		trap	ghidra-ref
+0x00635bb8	0x005c1540	undefined *	-	FUN_005c1540	no		trap	ghidra-ref
+0x00635bbc	0x005c15a0	undefined *	-	-	no		trap	ghidra-ref
+0x00635bc0	0x005c15c0	undefined *	-	-	no		trap	ghidra-ref
+0x00635bc4	0x005c15d0	undefined *	-	-	no		trap	ghidra-ref
+0x00635bc8	0x005c1610	undefined *	-	-	no		trap	ghidra-ref
+0x00635bcc	0x005c1660	undefined *	-	-	no		trap	ghidra-ref
+0x00635bd0	0x005c1670	undefined *	-	-	no		trap	ghidra-ref
+0x00635bd4	0x005c16b0	undefined *	-	-	no		trap	ghidra-ref
+0x00635bd8	0x005c16d0	undefined *	-	-	no		trap	ghidra-ref
+0x00635bdc	0x005c1700	undefined *	-	-	no		trap	ghidra-ref
+0x00635be0	0x005c1710	undefined *	-	-	no		trap	ghidra-ref
+0x00635be4	0x005c1730	undefined *	-	-	no		trap	ghidra-ref
+0x00635be8	0x005c1770	undefined *	-	FUN_005c1770	no		trap	ghidra-ref
+0x00635bec	0x005c17d0	undefined *	-	FUN_005c17d0	no		trap	ghidra-ref
+0x00635bf0	0x005c17f0	undefined *	-	-	no		trap	ghidra-ref
+0x00635bf4	0x005c1830	undefined *	-	-	no		trap	ghidra-ref
+0x00635bf8	0x005c1870	undefined *	-	-	no		trap	ghidra-ref
+0x00635bfc	0x005c18c0	undefined *	-	-	no		trap	ghidra-ref
+0x00635c00	0x005c18f0	undefined *	-	-	no		trap	ghidra-ref
+0x00635c20	0x005c21c4	undefined *	-	-	no		trap	ghidra-ref
+0x00635c24	0x004a7006	undefined *	-	-	no		trap	ghidra-ref
+0x00635c28	0x004a6f9f	undefined *	-	-	no		trap	ghidra-ref
+0x00635c2c	0x004a7006	undefined *	-	-	no		trap	ghidra-ref
+0x00635c30	0x004a6f64	undefined *	-	-	no		trap	ghidra-ref
+0x00635c34	0x004a7006	undefined *	-	-	no		trap	ghidra-ref
+0x00635c38	0x004a6f9f	undefined *	-	-	no		trap	ghidra-ref
+0x00635c3c	0x004a7006	undefined *	-	-	no		trap	ghidra-ref
+0x00635c40	0x004a6f9d	undefined *	-	-	no		trap	ghidra-ref
+0x00635c44	0x004a6f9d	undefined *	-	-	no		trap	ghidra-ref
+0x00635c48	0x004a6fc7	undefined *	-	-	no		trap	ghidra-ref
+0x00635c4c	0x004a6f9d	undefined *	-	-	no		trap	ghidra-ref
+0x00635c50	0x004a7006	undefined *	-	-	no		trap	ghidra-ref
+0x00635c54	0x004a7006	undefined *	-	-	no		trap	ghidra-ref
+0x00635c58	0x004a6f9f	undefined *	-	-	no		trap	ghidra-ref
+0x00635c5c	0x004a7006	undefined *	-	-	no		trap	ghidra-ref
