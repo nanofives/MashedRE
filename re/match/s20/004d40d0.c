@@ -6,6 +6,12 @@
    Residual: the result test is `cmp eax, edi` (edi = 0) in the original, `test eax, eax` here, which also shifts the
    vtable and arg registers (ecx/edx vs edx/eax). Tried `== 0`, a visitor local, a result local, a pointer return
    type, 5 flag sets, permuter 111 compiles. Class (b). */
+/* MATCH-RWT-S1C (2026-11-13): 100.0%, 0 differing bytes (159 B), relocheck OK, ddk and rw9044 under the recorded
+   header. The S1B alignment lever does not apply (no frame here). Two changes: (1) the call result in a local r and
+   the store `DAT_00911ac8 = r` under `r == 0` gives the original's `cmp eax, edi` at 0x004d4124 (91.3%; the store of
+   a literal 0 gives `test eax, eax`); (2) the visitor and its vtable in locals v and t moves the scratch rotation so
+   the vtable load takes ecx (0x004d411e) and job+0x14 takes edx (0x004d4140), as in the original (100%). With (2)
+   alone and a literal-0 store: 97.8%. Probes: verify/match_20261113/MATCH-RWT-S1C_probes/ (d_*, e_*, f_*). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -52,8 +58,13 @@ Job *FUN_004d40d0(Job *job, void *data, int flush)
   DAT_00911ad0.data = data;
   DAT_00911ad0.owner = DAT_007d4710;
   job->state = 0;
-  if (job->visitor->vt->fn4(job->visitor, &DAT_00911ad0) == 0) {
-    DAT_00911ac8 = 0;
+  {
+    Visitor *v = job->visitor;
+    VisitorVtbl *t = v->vt;
+    int r = t->fn4(v, &DAT_00911ad0);
+    if (r == 0) {
+      DAT_00911ac8 = r;
+    }
   }
   if (job->state > 1) {
     job->state = 2;
