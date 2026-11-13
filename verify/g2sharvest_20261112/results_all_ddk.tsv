@@ -1,0 +1,537 @@
+rva	stage	acc	regs	ops	n_mine	n_orig	note
+0x004721e0	compile						C2064 term does not evaluate to a function
+0x00472330	ok	100.0	100.0	100.0	15	15	
+0x00472360	ok	16.7	100.0	100.0	6	6	
+0x004a3370	ok	30.0	30.0	50.0	10	6	in_* register value
+0x004a3907	ok	42.9	85.7	100.0	7	7	
+0x004b3eb0	ok	64.4	73.3	88.9	40	45	
+0x004c1de0	ok	20.7	20.7	51.9	121	135	
+0x004c2620	ok	19.0	23.8	57.0	352	374	
+0x004c2b80	ok	78.9	78.9	89.5	18	19	
+0x004c2bb0	ok	87.0	87.0	95.7	22	23	
+0x004c3670	ok	20.0	27.7	55.4	65	65	
+0x004c37d0	ok	16.7	25.0	36.7	60	58	
+0x004c3d90	ok	100.0	100.0	100.0	16	16	
+0x004c3dc0	ok	100.0	100.0	100.0	14	14	
+0x004c40e0	ok	71.3	71.3	99.1	115	115	
+0x004c6580	ok	32.7	53.1	71.0	162	159	
+0x004c6ba0	ok	14.9	51.8	34.9	458	504	
+0x004c9290	compile						C2146 syntax error : missing ')' before identifier 'p0'
+0x004ca160	compile						C2146 syntax error : missing ')' before identifier 'p0'
+0x004cab30	ok	18.7	48.0	62.7	71	75	
+0x004cac10	compile						C2100 illegal indirection
+0x004ce5d0	ok	54.3	67.4	84.8	42	46	
+0x004ce6f0	ok	73.7	82.5	89.5	56	57	
+0x004d0520	ok	51.2	56.1	80.5	36	41	
+0x004d05b0	ok	56.1	61.0	78.0	36	41	
+0x004d0640	ok	100.0	100.0	100.0	9	9	
+0x004d0fc0	ok	100.0	100.0	100.0	9	9	
+0x004d0fe0	ok	100.0	100.0	100.0	9	9	
+0x004d1000	ok	100.0	100.0	100.0	7	7	
+0x004d15f0	ok	18.8	25.0	37.5	9	16	
+0x004d1630	ok	100.0	100.0	100.0	4	4	
+0x004d3450	ok	57.1	46.9	85.7	49	45	unaff_* register value
+0x004d34d0	ok	80.0	80.0	100.0	5	5	
+0x004d34e0	ok	92.3	92.3	100.0	13	13	
+0x004d8090	ok	96.3	96.3	96.3	27	27	
+0x004dd2e0	compile						C2064 term does not evaluate to a function
+0x004dd660	ok	29.3	37.6	55.6	476	518	
+0x004deb20	ok	92.9	92.9	92.9	14	14	
+0x004deb50	ok	92.9	92.9	92.9	14	14	
+0x004deb80	ok	100.0	100.0	100.0	14	14	
+0x004debb0	ok	65.0	65.0	80.0	20	18	
+0x004debf0	ok	100.0	100.0	100.0	22	22	
+0x004dec40	ok	100.0	100.0	100.0	15	15	
+0x004dec70	ok	92.3	92.3	92.3	13	13	
+0x004deca0	ok	92.3	92.3	92.3	13	13	
+0x004decd0	ok	100.0	100.0	100.0	11	11	
+0x004decf0	ok	90.0	90.0	90.0	10	10	
+0x004ded10	ok	87.5	87.5	87.5	8	8	
+0x004ded30	ok	100.0	100.0	100.0	12	12	
+0x004ded60	ok	100.0	100.0	100.0	12	12	
+0x004ded90	ok	100.0	100.0	100.0	7	7	
+0x004dedb0	ok	100.0	100.0	100.0	8	8	
+0x004dedd0	ok	85.7	85.7	92.9	14	14	
+0x004dee00	ok	87.5	87.5	100.0	8	8	
+0x004df030	ok	45.1	52.4	69.5	70	82	
+0x004e36a0	ok	80.7	80.7	84.2	54	57	
+0x004e3790	ok	88.9	88.9	92.6	25	27	
+0x004e3800	ok	20.0	90.0	95.0	20	20	
+0x004e3b30	ok	65.5	93.1	93.1	29	29	
+0x004e3b80	ok	92.0	92.0	100.0	25	25	
+0x004e3bd0	ok	91.7	91.7	100.0	12	12	
+0x004e3dc0	ok	33.3	49.0	68.6	51	48	
+0x004e3e40	ok	27.3	72.7	81.8	9	11	
+0x004e3e70	ok	100.0	100.0	100.0	16	16	
+0x004e3ea0	ok	87.5	87.5	100.0	8	8	
+0x004e40d0	ok	66.7	66.7	86.1	34	36	
+0x004e4190	ok	100.0	100.0	100.0	11	11	
+0x004e41e0	ok	100.0	100.0	100.0	7	7	
+0x004e4200	ok	100.0	100.0	100.0	7	7	
+0x004e4220	ok	85.7	85.7	85.7	14	12	
+0x004e4240	ok	0.0	0.0	0.0	1	5	
+0x004e4250	ok	100.0	100.0	100.0	7	7	
+0x004e4270	ok	85.7	85.7	85.7	14	12	
+0x004e4290	ok	0.0	0.0	0.0	1	5	
+0x004e44e0	ok	91.3	91.3	91.3	23	23	
+0x004e4520	ok	75.9	75.9	86.2	28	29	
+0x004e4570	ok	91.3	91.3	91.3	23	23	
+0x004e4650	ok	41.0	57.4	82.0	61	59	
+0x004e46f0	ok	39.6	64.2	79.2	53	51	
+0x004e4780	ok	21.1	31.6	57.9	12	19	
+0x004e4e60	ok	50.0	86.4	90.9	22	21	
+0x004e4f00	ok	66.7	66.7	70.4	26	27	
+0x004e5850	compile						C2059 syntax error : ')'
+0x004e5e20	ok	82.4	82.4	88.2	15	17	
+0x004e5e70	ok	79.4	79.4	82.4	32	34	
+0x004e5f70	ok	100.0	100.0	100.0	11	11	
+0x004e6250	ok	26.3	86.8	92.1	38	36	
+0x004e64f0	ok	79.2	79.2	83.0	52	53	
+0x004e6610	ok	25.0	87.5	100.0	8	8	
+0x004e6630	ok	25.0	87.5	100.0	8	8	
+0x004e6d40	ok	85.0	85.0	90.0	20	20	
+0x004e7ed0	ok	100.0	100.0	100.0	11	11	
+0x004e7ef0	ok	66.7	66.7	70.4	26	27	
+0x004e7f60	ok	81.2	81.2	87.5	14	16	
+0x004e8540	ok	57.1	57.1	71.4	5	7	
+0x004e8560	ok	40.0	40.0	60.0	3	5	
+0x004e89a0	ok	53.3	70.0	86.7	27	30	
+0x004e9990	ok	100.0	100.0	100.0	11	11	
+0x004ea4c0	ok	40.0	40.0	60.0	3	5	
+0x004ea4d0	ok	40.0	40.0	60.0	3	5	
+0x004ea9a0	compile						C2440 'type cast' : cannot convert from 'float' to 'undefined4 *'
+0x004eb320	ok	43.8	43.8	50.0	12	16	
+0x004eba70	ok	17.1	47.1	48.6	67	70	
+0x004ec760	ok	18.2	18.2	34.1	44	17	
+0x004ec79d	ok	28.3	58.5	71.7	53	47	
+0x004ec8eb	ok	29.4	29.4	52.9	17	15	
+0x004ec9a3	ok	29.4	29.4	52.9	17	15	
+0x004eca7c	ok	35.3	35.3	52.9	17	17	
+0x004ecaee	ok	100.0	100.0	100.0	3	3	
+0x004ecafb	ok	100.0	100.0	100.0	1	1	
+0x004ecb12	compile						C2100 illegal indirection
+0x004ecb1f	compile						C2100 illegal indirection
+0x004ecb36	compile						C2100 illegal indirection
+0x004ecb43	compile						C2100 illegal indirection
+0x004ecb5a	compile						C2100 illegal indirection
+0x004ecc45	ok	29.4	29.4	52.9	17	15	
+0x004ecd40	ok	35.3	35.3	52.9	17	17	
+0x004ecd6f	ok	18.9	64.9	91.9	34	37	
+0x004ecdd9	ok	17.9	11.9	36.9	84	58	
+0x004ece64	compile						C2100 illegal indirection
+0x004ecf1c	ok	100.0	100.0	100.0	3	3	
+0x004ecf29	ok	100.0	100.0	100.0	1	1	
+0x004ecf2f	compile						C2100 illegal indirection
+0x004ecf40	compile						C2100 illegal indirection
+0x004ecf46	compile						C2100 illegal indirection
+0x004ecf53	compile						C2100 illegal indirection
+0x004ecfbf	compile						C2100 illegal indirection
+0x004ed04e	ok	50.0	50.0	50.0	3	6	
+0x004ed1c6	ok	26.7	43.0	77.9	81	86	
+0x004ed297	ok	29.4	29.4	52.9	17	15	
+0x004ed2c1	ok	37.9	48.4	81.1	93	95	
+0x004ed3b4	ok	35.3	35.3	52.9	17	17	
+0x004ed3e3	ok	19.6	67.4	93.5	43	46	
+0x004ed506	compile						C2100 illegal indirection
+0x004ed6ad	compile						C2100 illegal indirection
+0x004ed6ba	compile						C2100 illegal indirection
+0x004ed8f6	compile						C2100 illegal indirection
+0x004ed903	compile						C2100 illegal indirection
+0x004ed976	compile						C2100 illegal indirection
+0x004ed983	compile						C2100 illegal indirection
+0x004edbbf	compile						C2100 illegal indirection
+0x004edbcc	compile						C2100 illegal indirection
+0x004edf71	ok	30.8	30.8	38.5	13	12	
+0x004edffb	ok	30.8	30.8	38.5	13	12	
+0x004ee085	ok	55.6	55.6	66.7	9	8	
+0x004ee0a1	ok	4.2	8.3	16.7	47	48	
+0x004ee11b	ok	55.6	55.6	66.7	9	8	
+0x004ee137	ok	16.3	16.3	14.3	39	49	
+0x004ee1b2	ok	55.6	55.6	66.7	9	8	
+0x004ee1ce	ok	12.2	12.2	18.4	38	49	
+0x004ee24a	ok	45.5	45.5	63.6	11	9	
+0x004ee26a	ok	8.5	9.4	51.9	90	106	
+0x004ee36c	compile						C2100 illegal indirection
+0x004ee379	compile						C2100 illegal indirection
+0x004ee461	ok	30.8	30.8	38.5	13	12	
+0x004ee48f	ok	50.0	50.0	50.0	3	6	
+0x004ee4a0	ok	33.3	33.3	53.3	15	14	
+0x004ee4c7	ok	9.7	11.2	20.9	134	89	
+0x004ee74a	ok	45.5	45.5	63.6	11	9	
+0x004ee76a	ok	11.8	20.6	52.9	34	33	
+0x004ee7c6	ok	30.8	30.8	38.5	13	12	
+0x004ee7f4	ok	100.0	100.0	100.0	1	1	
+0x004ee8d3	compile						C2100 illegal indirection
+0x004ee8e0	compile						C2100 illegal indirection
+0x004ee989	compile						C2100 illegal indirection
+0x004ee996	compile						C2100 illegal indirection
+0x004eea4d	compile						C2100 illegal indirection
+0x004eea5a	compile						C2100 illegal indirection
+0x004eeadb	ok	100.0	100.0	100.0	3	3	
+0x004eeae8	ok	100.0	100.0	100.0	1	1	
+0x004eeb86	ok	38.5	38.5	61.5	13	10	
+0x004eebaa	ok	100.0	100.0	100.0	1	1	
+0x004eec93	ok	29.4	29.4	52.9	17	15	
+0x004eecbd	ok	13.0	26.1	50.0	46	34	
+0x004eed14	compile						C2100 illegal indirection
+0x004eed54	ok	11.6	15.9	39.1	69	57	
+0x004eeddc	ok	100.0	100.0	100.0	3	3	
+0x004eede9	ok	100.0	100.0	100.0	1	1	
+0x004ef0df	compile						C2100 illegal indirection
+0x004ef1af	compile						C2100 illegal indirection
+0x004ef25b	ok	14.3	14.3	38.1	63	46	
+0x004ef2c6	ok	14.3	16.7	44.0	84	57	
+0x004ef349	ok	13.7	27.5	52.9	49	51	
+0x004ef3c6	ok	18.7	26.7	54.7	75	64	extraout_* register value
+0x004ef45e	ok	16.0	24.0	40.0	22	25	
+0x004ef49a	ok	15.9	27.3	54.5	44	39	
+0x004ef4ee	compile						C2440 'type cast' : cannot convert from 'undefined *' to 'float'
+0x004ef58b	ok	8.9	17.8	32.2	90	75	
+0x004ef647	ok	13.9	21.3	54.6	108	88	extraout_* register value
+0x004ef726	ok	29.2	36.5	51.8	108	137	
+0x004ef8b3	ok	18.7	24.7	39.8	102	166	
+0x004efab3	ok	19.3	28.0	46.0	118	150	
+0x004efc59	ok	7.7	14.3	31.3	106	182	
+0x004efe8a	compile						C2440 'type cast' : cannot convert from 'undefined *' to 'float'
+0x004eff40	ok	14.8	22.2	37.0	27	20	
+0x004eff79	ok	12.6	9.1	20.9	252	253	
+0x004f08e0	ok	40.0	40.0	60.0	3	5	
+0x004f08f0	ok	40.0	40.0	60.0	3	5	
+0x004f0990	ok	61.5	61.5	84.6	11	13	
+0x004f09c0	ok	92.1	93.7	88.9	63	63	
+0x004f1f90	ok	100.0	100.0	100.0	7	7	
+0x004f1fb0	compile						C2069 cast of 'void' term to non-'void'
+0x004f2420	ok	20.3	40.6	73.4	128	115	
+0x004f2570	ok	12.0	43.4	74.7	773	774	
+0x004f38c0	ok	22.1	43.2	52.8	199	177	
+0x004f3e90	ok	26.1	42.8	61.1	261	283	
+0x004f4310	compile						C2064 term does not evaluate to a function
+0x004f4540	ok	83.3	83.3	91.7	12	12	
+0x004f4570	ok	32.8	50.7	56.7	66	67	
+0x004f4660	ok	15.0	75.0	85.0	18	20	
+0x004f8600	ok	16.7	100.0	100.0	6	6	
+0x004f8620	ok	40.0	40.0	60.0	3	5	
+0x004f8630	ok	40.0	40.0	60.0	3	5	
+0x004fb9aa	ok	37.9	34.8	57.6	60	66	
+0x004fbd78	compile						C2143 syntax error : missing '{' before '__stdcall'
+0x004fbdd5	ok	12.5	21.9	31.2	32	23	unaff_* register value
+0x004fbe7a	compile						C2146 syntax error : missing ')' before identifier 'p0'
+0x004fbf76	ok	40.4	40.4	51.9	48	52	
+0x004fc0b1	ok	4.4	6.7	51.1	90	48	
+0x004fc21f	ok	4.5	6.8	51.1	88	47	
+0x004fc383	compile						C2067 cast to array type is illegal
+0x004fc467	ok	3.1	4.4	47.5	160	85	extraout_* register value
+0x004fc6f5	ok	6.6	13.1	19.7	61	39	
+0x004fc75e	ok	22.7	27.3	45.5	22	19	
+0x004fc793	ok	4.7	9.3	23.3	86	52	
+0x004fc81e	ok	9.4	15.1	28.3	53	35	
+0x004fc87d	ok	4.0	7.0	25.0	100	57	
+0x004fc916	ok	4.0	25.7	38.6	101	73	
+0x004fc9e0	ok	12.2	13.7	26.7	131	89	
+0x004fcac3	ok	14.8	16.0	39.5	81	60	
+0x004fcb51	ok	20.0	20.0	55.0	20	12	
+0x004fcb96	compile						C2198 'FUN_004fcb96' : too few actual parameters
+0x004fcbca	compile						C4234 nonstandard extension used : '__thiscall' keyword reserved for future use
+0x004fcc00	compile						C2198 'FUN_004fcc00' : too few actual parameters
+0x004fcc18	compile						C4234 nonstandard extension used : '__thiscall' keyword reserved for future use
+0x004fcc67	compile						C2198 'FUN_004fcc67' : too few actual parameters
+0x004fccbc	compile						C4234 nonstandard extension used : '__thiscall' keyword reserved for future use
+0x004fceb8	compile						C2198 'FUN_004fceb8' : too few actual parameters
+0x004fced0	compile						C4234 nonstandard extension used : '__thiscall' keyword reserved for future use
+0x004fceec	ok	30.4	59.4	65.2	69	63	
+0x004fcf91	ok	15.8	50.0	59.2	76	66	thiscall (C++ method): compiled as __fastcall, tool limit
+0x004ff554	compile						C4234 nonstandard extension used : '__thiscall' keyword reserved for future use
+0x004ff913	ok	33.3	33.3	66.7	2	3	
+0x004ff958	ok	9.1	90.9	90.9	10	11	
+0x004ffb3e	compile						C4234 nonstandard extension used : '__thiscall' keyword reserved for future use
+0x004ffba7	ok	100.0	100.0	100.0	2	2	
+0x00500f76	ok	9.1	90.9	90.9	10	11	
+0x005033ba	ok	39.3	60.7	75.0	28	25	
+0x00504008	compile						C2143 syntax error : missing '{' before '__stdcall'
+0x0050456c	compile						C2069 cast of 'void' term to non-'void'
+0x005045ca	ok	1.2	2.9	4.1	243	36	
+0x00504643	compile						C2177 constant too big
+0x005046dd	compile						C2106 '=' : left operand must be l-value
+0x0050475b	ok	3.6	6.0	14.5	83	52	
+0x0050481d	ok	15.6	21.1	24.8	109	106	
+0x00504947	compile						C4234 nonstandard extension used : '__thiscall' keyword reserved for future use
+0x00504ac1	ok	4.4	7.3	11.0	427	150	
+0x00504cc7	ok	5.2	8.2	12.8	367	119	
+0x00504e55	compile						C2106 '=' : left operand must be l-value
+0x00504fbb	ok	6.7	11.1	16.7	270	92	
+0x005050cb	ok	3.1	5.4	8.2	572	162	
+0x00505309	ok	5.5	8.1	11.9	345	141	
+0x005054d9	compile						C2106 '=' : left operand must be l-value
+0x0050570a	compile						C2106 '=' : left operand must be l-value
+0x00505c62	ok	1.3	1.3	1.3	1	79	
+0x00505d8c	ok	15.8	24.2	44.2	95	75	in_* register value; extraout_* register value
+0x00505e60	ok	1.8	1.8	8.9	56	17	
+0x00505e9e	compile						C2106 '=' : left operand must be l-value
+0x00505ef5	ok	3.2	3.2	16.1	31	15	
+0x00505f2c	ok	2.5	2.8	3.4	321	66	
+0x00505ff8	ok	0.2	0.2	1.0	522	81	
+0x0050612c	compile						C2106 '=' : left operand must be l-value
+0x00506428	ok	2.2	2.6	4.0	273	58	
+0x005064e8	compile						C2177 constant too big
+0x00506582	ok	3.6	4.0	4.4	225	48	
+0x00506634	ok	3.4	4.3	4.8	208	37	
+0x005066b9	ok	0.8	4.0	7.1	126	47	
+0x0050675e	ok	3.6	4.1	4.5	222	48	
+0x00506811	ok	0.8	4.1	7.3	123	43	
+0x005068ab	ok	3.4	4.4	4.9	205	37	
+0x00506931	ok	0.7	0.7	4.5	134	24	
+0x0050698e	ok	3.3	3.3	10.0	60	20	
+0x005069d7	ok	0.8	0.8	5.0	121	23	
+0x00506a29	compile						C2177 constant too big
+0x00506ad7	compile						C2106 '=' : left operand must be l-value
+0x00506bd7	compile						C2106 '=' : left operand must be l-value
+0x00506ce3	ok	3.5	4.3	5.9	254	65	
+0x00506db8	compile						C2106 '=' : left operand must be l-value
+0x00506ea8	compile						C2106 '=' : left operand must be l-value
+0x0050706f	ok	4.4	7.3	11.0	427	150	
+0x00507275	ok	5.2	8.2	12.8	367	119	
+0x00507403	compile						C2106 '=' : left operand must be l-value
+0x00507569	ok	6.7	11.1	16.7	270	92	
+0x00507679	ok	3.1	5.4	8.2	572	162	
+0x005078b7	ok	5.5	8.1	11.9	345	141	
+0x00507a87	compile						C2106 '=' : left operand must be l-value
+0x00507cb8	compile						C2296 '>>' : illegal, left operand has type 'undefined1 [16]'
+0x00507da9	ok	15.8	27.4	45.3	95	74	in_* register value; extraout_* register value
+0x00507e7b	ok	2.2	2.6	4.0	273	58	
+0x00507f3b	ok	1.6	2.2	3.5	315	81	
+0x00508046	compile						C2106 '=' : left operand must be l-value
+0x00508146	compile						C2106 '=' : left operand must be l-value
+0x00508252	ok	2.7	3.3	4.5	331	66	
+0x00508326	compile						C2106 '=' : left operand must be l-value
+0x00508429	compile						C2106 '=' : left operand must be l-value
+0x0050853e	ok	1.3	1.5	3.8	527	157	
+0x00508772	compile						C2106 '=' : left operand must be l-value
+0x00508939	ok	3.6	6.0	14.5	83	52	
+0x005089fb	ok	15.6	21.1	24.8	109	106	
+0x00508b40	ok	0.9	1.7	12.2	115	42	
+0x00508c00	ok	0.9	1.7	12.2	115	42	
+0x00508cc0	ok	1.2	2.0	6.4	344	138	
+0x00508f20	compile						C2106 '=' : left operand must be l-value
+0x00509180	ok	1.4	2.7	9.5	294	104	
+0x00509340	ok	0.9	2.8	13.2	106	39	
+0x005093e0	compile						C2106 '=' : left operand must be l-value
+0x00509700	ok	1.1	2.4	7.5	375	143	
+0x0050997c	ok	0.5	0.5	1.9	216	39	
+0x00509a15	ok	0.8	0.8	2.4	127	25	in_* register value
+0x00509a72	ok	17.2	27.6	34.5	29	20	
+0x00509ab6	ok	0.4	0.8	1.4	715	140	
+0x00509cd2	ok	0.4	0.7	1.4	729	138	
+0x00509ee7	ok	4.0	4.0	4.6	174	54	
+0x00509fac	ok	8.1	9.7	17.7	62	31	
+0x0050a018	ok	1.6	2.0	4.3	305	77	
+0x0050a14f	ok	5.7	6.8	22.7	88	42	in_* register value
+0x0050a1dc	ok	8.3	5.0	28.3	60	37	
+0x0050a26e	ok	0.8	0.8	2.4	127	25	in_* register value
+0x0050a2d2	ok	3.1	3.1	11.5	130	44	in_* register value
+0x0050a379	ok	1.3	1.9	3.1	159	43	unaff_* register value
+0x0050a41e	ok	0.5	0.2	2.1	2697	596	unaff_* register value
+0x0050ae57	ok	0.2	0.4	1.2	805	137	
+0x0050b089	ok	0.3	0.3	0.6	316	55	
+0x0050b158	ok	2.4	2.4	4.8	42	20	
+0x0050b1a8	ok	1.2	1.2	5.2	248	67	
+0x0050b293	ok	1.4	1.4	4.3	210	57	
+0x0050b36f	ok	13.5	13.5	18.9	37	27	
+0x0050b3d2	ok	10.0	10.0	14.0	50	25	
+0x0050b430	ok	9.6	11.5	13.5	52	25	
+0x0050b489	ok	3.3	3.3	6.7	30	18	
+0x0050b4d0	ok	1.1	1.1	3.3	90	32	
+0x0050b53f	ok	5.0	5.0	5.0	20	16	
+0x0050b578	ok	0.4	0.4	1.2	254	58	
+0x0050b64a	ok	0.4	0.4	1.3	236	48	in_* register value
+0x0050b6ff	ok	0.0	0.2	0.2	6560	1076	
+0x0050c897	ok	0.7	0.7	2.5	408	112	
+0x0050ca3c	ok	0.1	0.1	0.4	1999	329	
+0x0050cf70	ok	2.2	2.6	4.7	274	80	
+0x0050d089	ok	0.1	0.2	0.2	6254	1052	in_* register value
+0x0050e1dd	ok	0.2	0.2	0.8	1100	195	in_* register value
+0x0050e4bf	ok	0.1	0.2	1.1	1437	253	
+0x0050e8b7	ok	0.4	0.4	0.4	1132	230	
+0x0050ebeb	ok	15.4	15.4	46.2	13	8	
+0x0050ec07	ok	0.6	0.6	2.9	174	30	
+0x0050ec78	ok	0.7	0.7	3.3	152	28	
+0x0050ecdf	ok	0.8	0.8	2.4	127	26	in_* register value
+0x0050ed3e	ok	1.3	1.3	3.1	159	30	
+0x0050edaf	ok	0.3	0.7	2.0	300	55	
+0x0050ee83	ok	0.3	0.7	2.0	297	61	
+0x0050ef6d	ok	0.4	0.4	2.2	224	37	
+0x0050eff8	ok	0.1	0.1	0.6	825	118	
+0x0050f1bf	ok	0.0	0.0	0.0	224	1	
+0x0050f1c4	ok	18.1	22.0	31.3	182	137	
+0x0050f34c	ok	12.7	18.7	23.7	300	195	in_* register value
+0x0050f572	ok	5.2	12.7	21.9	251	112	in_* register value
+0x0050f700	ok	0.9	3.0	6.0	233	83	
+0x0050f840	ok	1.1	3.2	6.3	284	104	
+0x0050f9bb	ok	0.8	0.8	4.2	120	23	
+0x0050fa10	ok	1.7	1.7	8.6	58	17	
+0x0050fa49	ok	0.7	0.7	3.3	150	27	
+0x0050faad	ok	0.5	0.5	2.9	205	39	
+0x0050fb45	ok	2.4	2.4	6.1	82	20	
+0x0050fb8e	ok	1.2	1.2	3.6	84	18	in_* register value
+0x0050fbd1	ok	0.5	0.5	2.8	211	44	
+0x0050fc7c	ok	0.5	0.5	2.4	207	35	
+0x0050fcfe	ok	0.8	0.8	2.3	128	26	in_* register value
+0x0050fd5d	ok	0.8	1.1	1.9	365	93	
+0x0050fe8f	ok	0.6	0.6	3.1	163	30	
+0x0050ff00	ok	0.3	0.7	2.0	305	51	
+0x0050ffc8	ok	0.3	0.7	2.0	303	57	
+0x005100a6	ok	1.6	1.6	6.5	62	18	
+0x005100e9	ok	0.3	0.3	1.7	298	63	
+0x005101cd	ok	1.4	1.0	2.4	290	53	
+0x0051028b	ok	0.8	0.8	2.3	129	26	in_* register value
+0x005102ef	ok	0.5	0.5	1.9	206	34	
+0x00512cbe	ok	1.4	1.4	7.6	484	128	
+0x00512ea7	ok	0.2	0.2	0.6	482	74	
+0x005130c0	ok	0.3	0.3	0.3	309	58	in_* register value
+0x005131c0	ok	0.3	0.3	0.3	286	59	in_* register value
+0x005137a0	ok	0.9	3.1	3.5	229	67	in_* register value
+0x005138a0	ok	0.9	3.1	3.5	229	67	in_* register value
+0x00513f90	compile						C2059 syntax error : 'bad suffix on number'
+0x005142d0	ok	100.0	100.0	100.0	7	7	
+0x005142f0	ok	100.0	100.0	100.0	6	6	
+0x00514330	compile						C2059 syntax error : 'bad suffix on number'
+0x00514d00	compile						C2133 '_v_00620e90' : unknown size
+0x0052d910	ok	68.8	68.8	75.0	16	16	
+0x0052d950	ok	90.0	90.0	90.0	10	10	
+0x0052e3d0	ok	81.1	81.1	92.5	53	53	
+0x0052e490	ok	76.5	76.5	88.2	15	17	
+0x0052e4e0	ok	100.0	100.0	100.0	4	4	
+0x0052e500	ok	100.0	100.0	100.0	31	31	
+0x0052e560	ok	60.0	60.0	80.0	4	5	
+0x0052e580	ok	16.7	83.3	100.0	6	6	
+0x0052e5a0	ok	16.7	100.0	100.0	6	6	
+0x0052e5c0	ok	97.8	100.0	100.0	45	45	
+0x0052e6c0	ok	42.9	39.3	50.0	28	27	
+0x0052e710	ok	68.2	63.6	67.3	91	110	
+0x0052e800	ok	36.4	53.1	61.9	177	239	
+0x0052ec50	ok	10.3	60.7	73.2	197	224	
+0x0052fd90	ok	37.5	50.0	50.0	6	8	
+0x00530650	ok	11.5	32.1	67.1	494	514	unaff_* register value
+0x00530c00	ok	23.7	33.7	50.7	552	550	
+0x00532b80	ok	27.5	28.4	55.3	331	289	
+0x00533740	ok	52.6	52.6	63.2	27	38	
+0x005337f0	ok	100.0	100.0	100.0	9	9	
+0x00533820	ok	33.3	83.3	100.0	6	6	
+0x00533840	ok	80.9	80.9	89.7	68	66	
+0x00533900	ok	80.6	80.6	90.3	62	60	
+0x005339a0	ok	46.4	57.9	67.1	119	140	
+0x00533ad0	ok	11.8	61.5	65.8	159	187	
+0x00533cc0	ok	31.6	63.2	78.9	19	19	
+0x00534950	ok	92.3	100.0	100.0	13	13	
+0x00534990	ok	79.3	87.9	93.1	58	58	
+0x00534ad0	ok	100.0	100.0	100.0	4	4	
+0x00534af0	ok	90.6	90.6	93.8	32	32	
+0x00534d00	ok	18.7	45.0	20.3	374	418	
+0x00535330	ok	27.3	51.2	48.4	256	256	
+0x00535690	ok	97.4	97.4	97.4	39	39	
+0x00536630	ok	33.3	66.7	66.7	9	9	
+0x00536660	ok	81.8	81.8	90.9	11	10	
+0x005386b0	ok	76.7	76.7	78.3	53	60	
+0x00538780	ok	60.4	66.7	79.2	48	44	
+0x00538800	ok	16.7	91.7	100.0	12	12	
+0x00538830	ok	84.2	84.2	94.7	19	19	
+0x00538870	ok	100.0	100.0	100.0	9	9	
+0x00538890	ok	75.0	86.1	88.9	36	36	
+0x005388f0	ok	48.9	75.6	80.0	44	45	
+0x00538960	ok	27.3	54.5	54.5	11	7	
+0x00538980	ok	95.2	95.2	95.2	21	21	
+0x005389c0	ok	71.9	71.9	75.4	50	57	
+0x00538c30	ok	57.1	57.1	81.0	17	21	
+0x0053d1c0	ok	100.0	100.0	100.0	8	8	
+0x0053d1f0	ok	40.0	40.0	60.0	3	5	
+0x0053d230	ok	100.0	100.0	100.0	12	12	
+0x0053d250	ok	34.2	44.7	68.4	33	38	
+0x0053d2b0	ok	33.3	48.6	67.6	109	111	
+0x0053d3e0	ok	100.0	100.0	100.0	4	4	
+0x0053e830	ok	25.8	59.0	75.1	226	229	
+0x0053ebb0	ok	64.3	64.3	85.7	12	14	
+0x0053ebf0	ok	69.2	69.2	80.8	24	26	
+0x0053ec40	ok	100.0	100.0	100.0	4	4	
+0x0053ec60	ok	100.0	100.0	100.0	21	21	
+0x0053ed20	ok	20.9	36.3	55.2	276	339	
+0x0053f1a0	ok	30.6	32.1	40.9	193	188	
+0x0053f3c0	ok	20.9	24.9	47.1	478	476	
+0x0053f920	ok	50.9	63.2	73.7	56	57	
+0x0053f9b0	ok	100.0	100.0	100.0	4	4	
+0x0053f9d0	ok	12.5	62.5	62.5	7	8	
+0x0053f9f0	ok	58.3	75.0	75.0	12	12	
+0x0053fa70	ok	27.3	54.5	54.5	11	7	
+0x0053fa90	ok	100.0	100.0	100.0	4	4	
+0x0053fab0	ok	12.5	62.5	62.5	7	8	
+0x0053fad0	ok	58.3	75.0	75.0	12	12	
+0x0053fb50	ok	27.3	54.5	54.5	11	7	
+0x005405c0	ok	23.5	29.1	39.1	1073	1129	unaff_* register value
+0x00541d40	compile						C2115 'function' : incompatible types
+0x005422c0	compile						C2440 'type cast' : cannot convert from 'float' to 'undefined4 *'
+0x00543500	ok	59.6	64.8	81.3	193	186	
+0x005440c0	ok	40.0	40.0	60.0	3	5	
+0x005440d0	ok	40.0	40.0	60.0	3	5	
+0x005440e0	ok	100.0	100.0	100.0	5	5	
+0x00544100	ok	76.9	76.9	91.0	77	78	
+0x005441f0	ok	58.6	67.8	86.3	227	225	
+0x005444a0	ok	43.7	61.4	76.6	193	197	
+0x005446f0	ok	43.1	45.3	71.8	180	181	
+0x005448f0	ok	15.6	43.3	75.6	90	89	
+0x00544dc0	ok	40.0	40.0	60.0	3	5	
+0x00544dd0	ok	40.0	40.0	60.0	3	5	
+0x00544de0	ok	25.0	87.5	100.0	8	8	
+0x00544e00	ok	54.6	45.4	80.4	95	97	
+0x00544f10	ok	83.3	83.3	94.4	18	18	
+0x00544f50	ok	46.7	66.7	73.3	45	44	
+0x00544fc0	ok	30.4	50.7	63.8	58	69	
+0x00545080	ok	44.3	53.9	60.9	112	115	
+0x005451d0	ok	80.0	100.0	100.0	10	10	
+0x005451f0	ok	28.6	85.7	100.0	7	7	
+0x00546560	ok	75.0	75.0	87.5	23	24	
+0x005465c0	ok	19.6	24.3	25.4	189	172	
+0x005492b0	ok	25.0	87.5	100.0	8	8	
+0x005492d0	ok	83.3	83.3	94.4	18	18	
+0x00549310	ok	90.5	90.5	90.5	21	21	
+0x00549350	ok	68.4	84.2	94.7	18	19	
+0x00549390	ok	60.0	85.0	95.0	19	20	
+0x005493e0	ok	64.2	70.3	78.4	136	148	
+0x00549710	ok	80.4	80.4	87.5	53	56	
+0x005497f0	ok	68.8	68.8	81.2	14	16	
+0x00549fe0	ok	33.3	83.3	100.0	6	6	
+0x0054a000	ok	82.4	82.4	94.1	17	17	
+0x0054a030	ok	91.3	91.3	91.3	23	23	
+0x0054a070	ok	60.0	60.0	60.0	9	10	
+0x0054a090	ok	95.2	95.2	95.2	21	21	
+0x0054a0d0	ok	44.4	77.8	88.9	9	9	
+0x0054a0f0	ok	100.0	100.0	100.0	11	11	
+0x0054ba20	ok	18.0	18.5	67.3	205	193	
+0x0054bda0	ok	9.9	10.6	78.9	282	303	
+0x0054f8d0	ok	52.4	69.1	90.4	386	395	
+0x00550130	ok	17.8	21.1	18.9	79	180	
+0x00551610	ok	96.8	96.8	96.8	31	31	
+0x00551680	ok	93.3	93.3	93.3	15	15	
+0x005516c0	ok	50.0	58.3	58.3	10	12	
+0x005516e0	ok	92.0	100.0	100.0	50	50	
+0x00551770	ok	70.8	77.5	89.9	89	86	
+0x005518f0	ok	56.4	69.9	85.7	133	125	
+0x00551bf0	ok	64.0	64.0	80.0	24	25	
+0x00552050	ok	64.7	76.5	74.5	49	51	
+0x005524c0	ok	88.9	88.9	88.9	27	27	
+0x00557920	ok	63.0	68.5	78.7	105	108	
+0x00557a60	ok	35.7	33.3	57.1	62	84	
+0x00557b70	ok	69.4	69.4	83.7	43	49	
+0x00557bf0	ok	87.0	87.0	95.7	46	45	
+0x00557c60	ok	78.8	78.8	90.9	33	32	
+0x00557cb0	ok	37.0	64.4	79.5	73	69	
+0x00557d90	ok	76.8	85.7	91.1	56	55	
+0x00557e50	ok	55.0	55.0	60.0	16	20	
+0x00557e90	ok	100.0	100.0	100.0	9	9	
+0x00561f40	ok	25.0	75.0	100.0	4	4	
+0x00561f50	ok	73.3	93.3	93.3	15	15	
+0x00561f80	ok	94.7	94.7	94.7	38	38	
+0x00561ff0	ok	87.5	87.5	87.5	8	8	
+0x0057c2e0	ok	100.0	100.0	100.0	4	4	
+0x005cb000	ok	5.4	21.6	39.2	74	58	
+0x005cb07f	ok	6.0	22.4	41.8	67	52	
+0x005cb0ef	ok	3.3	14.8	32.8	61	51	
+0x005cb160	ok	3.8	15.1	37.7	53	45	
+0x005cb432	ok	10.0	10.0	30.0	10	6	in_* register value

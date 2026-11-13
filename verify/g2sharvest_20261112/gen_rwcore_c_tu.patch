@@ -1,0 +1,74 @@
+diff --git a/mashedmod/build_objs.ps1 b/mashedmod/build_objs.ps1
+index 0b7f958..d770252 100644
+--- a/mashedmod/build_objs.ps1
++++ b/mashedmod/build_objs.ps1
+@@ -110,7 +110,7 @@ $objs  = @()
+ foreach ($s in $sources) {
+     $base = [System.IO.Path]::GetFileNameWithoutExtension($s)
+     $obj  = Join-Path $ObjDir ($base + '.obj')
+-    $dep  = Join-Path $ObjDir ($base + '.cpp.json')   # cl names it <basename>.cpp.json
++    $dep  = Join-Path $ObjDir ($base + [System.IO.Path]::GetExtension($s).ToLowerInvariant() + '.json')   # cl names it <basename>.<ext>.json (.cpp, or .c for the RwCore C TUs)
+     $objs += $obj
+     $srcAbs = Join-Path $SrcRoot $s
+     $objT = MTime $obj
+diff --git a/verify/rwccorerun_20261111/gen_rwcore_tus.py b/verify/rwccorerun_20261111/gen_rwcore_tus.py
+index 11b1cd1..43c9236 100644
+--- a/verify/rwccorerun_20261111/gen_rwcore_tus.py
++++ b/verify/rwccorerun_20261111/gen_rwcore_tus.py
+@@ -34,6 +34,7 @@ import lift_rwcore  # noqa: E402  (RWC-PLUGIN-ATTACH)
+ # --no-lift restores the run-38 behaviour.
+ LIFT = '--no-lift' not in sys.argv
+ LIFT_CHUNK = 64   # lifted bodies per generated file
++C_SOURCES = set()   # G2S-HARVEST: 100% sources in LIFT_INSTEAD, compiled as C (filled in main from the ledger)
+ # Provisional (NOT-PROVEN, raw g2s) sources that do not compile as C++ under VS2022 (C++ type strictness: argument
+ # conversions, call arity, extern "C" overloads; RESULT_RWC-PLUGIN-ATTACH.md lists the errors). Their functions are
+ # lifted from the disassembly instead. Only non-100% sources may be listed here: a 100% source gets a cast fix.
+@@ -313,6 +314,10 @@ def main(check):
+     load_hand()
+     load_named()
+     led = ledger()
++    # G2S-HARVEST: LIFT_INSTEAD sources the ledger scores at 100% (re/match/s19/004c3d90.c, s19/004c3dc0.c,
++    # s21/004d8090.c, rwl02/004e89a0.c at the time of writing) compile as C, one TU each.
++    C_SOURCES.clear()
++    C_SOURCES.update(s_ for p_, s_ in led.values() if p_ >= 100.0 and s_ in LIFT_INSTEAD)
+     srcs = all_sources()
+     read = anchor_image()
+ 
+@@ -326,7 +331,11 @@ def main(check):
+ 
+     def pick(a):
+         s = pick0(a)
+-        return None if s in LIFT_INSTEAD else s
++        # G2S-HARVEST: a LIFT_INSTEAD source at 100% is kept and compiled as C (RwCore_<rva>.c, no extern "C" wrapper)
++        # instead of lifted: it fails VS2022 C++ only, and is byte-identical under the DDK C compiler.
++        if s in LIFT_INSTEAD and s not in C_SOURCES:
++            return None
++        return s
+ 
+     # code pointers in the seeded data ranges
+     fixups = []
+@@ -541,6 +550,9 @@ def main(check):
+     for f in glob.glob(os.path.join(OUT, 'RwCore_*.cpp')):
+         if re.search(r'RwCore_[0-9a-f]{8}\.cpp$', f):
+             os.remove(f)
++    for f in glob.glob(os.path.join(OUT, 'RwCore_*.c')):   # G2S-HARVEST: the C TUs
++        if re.search(r'RwCore_[0-9a-f]{8}\.c$', f):
++            os.remove(f)
+     tus = []
+     for src in order:
+         own = defined_by[src]
+@@ -576,7 +588,13 @@ def main(check):
+                '// RVA-LINT: ORIGTOP-ONLY\n'
+                '#ifdef MASHED_STANDALONE\n#define MATCH_PORT 1\n%s\nextern "C" {\n#include "../../../../%s"\n}\n'
+                '#endif // MASHED_STANDALONE\n') % (src[len('re/match/'):], kinds, '\n'.join(lines), src)
+-        fn = 'RwCore_%s.cpp' % main_rva
++        if src in C_SOURCES:
++            # G2S-HARVEST: C TU. Same #define bindings; no MATCH_PORT (the source's preamble is C under the DDK) and no
++            # extern "C" wrapper (a C TU already has C linkage).
++            txt = txt.replace('compiled verbatim as C++ (MATCH_PORT)', 'compiled verbatim as C (G2S-HARVEST: fails VS2022 C++)')
++            txt = txt.replace('#define MATCH_PORT 1\n', '').replace('extern "C" {\n#include', '#include')
++            txt = txt.replace('\n}\n#endif', '\n#endif')
++        fn = 'RwCore_%s.%s' % (main_rva, 'c' if src in C_SOURCES else 'cpp')
+         open(os.path.join(OUT, fn), 'w', encoding='utf-8', newline='\n').write(txt)
+         tus.append('RwCore\\' + fn)
+ 
