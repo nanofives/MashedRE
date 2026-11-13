@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // h3: 42.5% regs 34.0%. Linear goto form for the two table lookups, 12-dword table struct, error record struct. Original saves all four callee-saved at entry and has 0x20 of locals; class (b).
 /* MATCH-RWL03 0x0052daf0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body

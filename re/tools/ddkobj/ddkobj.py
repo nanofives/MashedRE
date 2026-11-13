@@ -52,6 +52,7 @@ SRC = MOD / "src" / "mashed_re"
 BUILD = MOD / "build"
 DEF_OBJ = BUILD / "obj" / "exe"
 BINDINGS = ROOT / "verify" / "porttop_20261108" / "BINDINGS.tsv"
+PROVISIONAL = ROOT / "re" / "match" / "PROVISIONAL.tsv"
 VCVARS = r"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat"
 
 INC_RE = re.compile(r'^\s*#\s*include\s+"([./\\]*re[/\\]match[/\\][^"]+\.c)"', re.M)
@@ -269,6 +270,23 @@ def load_bindings():
     return rows
 
 
+def load_provisional():
+    """L-126 (6a): RVAs listed in re/match/PROVISIONAL.tsv (status provisional or refused). A provisional body is not
+    byte-matched, so its unit never joins the object build and never counts in the byte-check."""
+    out = set()
+    try:
+        with open(PROVISIONAL, newline="", encoding="utf-8") as fh:
+            rows = [l for l in fh if not l.startswith("#")]
+        for r in csv.DictReader(rows, delimiter="	"):
+            try:
+                out.add(int(r["rva"], 16))
+            except (ValueError, KeyError):
+                pass
+    except OSError:
+        pass
+    return out
+
+
 def parse_source(path: pathlib.Path):
     t = path.read_text(encoding="utf-8", errors="replace")
     m = FLAGS_RE.search(t)
@@ -405,6 +423,7 @@ def main_build(a):
         shutil.rmtree(objdir)
     objdir.mkdir(parents=True)
     B = load_bindings()
+    PROV = load_provisional()
     crt = vs_crt_symbols()
     # every external the default link can resolve: defined in a default object, or in a library on the link line
     defmap = default_link_symbols() | crt
@@ -479,6 +498,11 @@ def main_build(a):
             if plain in u["info"]["ported"]:
                 exe_names[u["defs"].get(plain, plain)] = u
     wrapper_edits = collections.defaultdict(list)   # wrapper obj path -> [(exe plain name, rva)]
+    # PORT-TOP-08: `__ddkreg_<rva>` -> the source that took it. A second source that holds the same static
+    # register-convention body (re/match/s08/004332a0.c keeps 0x0042ac50 as a file-static local, re/match/s06/0042ac50.c
+    # is its own unit) takes `__ddkreg_<rva>_<source stem>`, so the link has one definition per name. The byte check
+    # looks each name up in its own object (main_check), so both copies are checked at the same RVA.
+    ddkreg_owner = {}
 
     def process_unit(co, u, rec_base, ext_statics):
         """Symbol rewrite of one DDK object (see the module docstring). ext_statics: also send port-excluded STATIC
@@ -490,12 +514,25 @@ def main_build(a):
         match_plain = {CE.undecorate(n): r for r, n in info["matches"]}
         ported = info["ported"]
         excluded = info["port_excluded"]
+        regconv = u.get("regconv") or {}     # DDKOBJ-REGCONV: static MATCH name -> adapter cc (None: no VS2022 copy)
+        mode = os.environ.get("DDKOBJ_REGCONV", "adapter")
         keep_secs = set()
         # 1. definitions
         for s in list(co.syms):
             if s.sec <= 0 or s.name.startswith((".", "@feat", "@comp")):
                 continue
             plain = CE.undecorate(s.name)
+            if plain.startswith(ADAPT_PREFIX) and s.is_func and s.cls == CE.IMAGE_SYM_CLASS_EXTERNAL:
+                # DDKOBJ-REGCONV: the generated adapter (stack arguments in, the DDK body's own convention out) takes
+                # the exe name, so every VS2022 caller reaches the DDK body through it
+                target = plain[len(ADAPT_PREFIX):]
+                new = CE.redecorate(s.name, defs.get(target, target))
+                rec.setdefault("adapters", []).append({"rva": f"0x{match_plain[target]:08x}", "adapter": s.name,
+                                                       "exe": new})
+                s.name = new
+                keep_secs.add(s.sec)
+                rec["_edits"].append((new, match_plain[target]))
+                continue
             is_port_match = plain in match_plain and plain in ported
             ext_ok = s.cls == CE.IMAGE_SYM_CLASS_EXTERNAL or (ext_statics and s.cls == CE.IMAGE_SYM_CLASS_STATIC)
             if ext_ok and s.is_func and plain in excluded and not is_port_match:
@@ -514,14 +551,34 @@ def main_build(a):
             if s.cls not in (CE.IMAGE_SYM_CLASS_EXTERNAL, CE.IMAGE_SYM_CLASS_STATIC):
                 continue
             if is_port_match:
+                if s.cls == CE.IMAGE_SYM_CLASS_STATIC and plain in regconv:
+                    # DDKOBJ-REGCONV: the body keeps its private convention. It becomes an external under a unique
+                    # name (the byte check finds it in the map); its in-object callers keep calling it directly.
+                    regname = f"__ddkreg_{match_plain[plain]:08x}"
+                    if ddkreg_owner.setdefault(regname, str(u["src"])) != str(u["src"]):
+                        regname += "_" + pathlib.Path(u["src"]).stem
+                    new = CE.redecorate(s.name, regname)
+                    rec.setdefault("static_promotions", []).append(
+                        {"name": plain, "standard_convention": False,
+                         "evidence": "register convention kept; " + ("adapter " + regconv[plain] if regconv[plain]
+                                                                     else "no VS2022 copy, no adapter")})
+                    rec["defs"].append({"rva": f"0x{match_plain[plain]:08x}", "ddk": s.name, "exe": new, "sec": s.sec,
+                                        "regconv": True})
+                    s.name, s.cls = new, CE.IMAGE_SYM_CLASS_EXTERNAL
+                    keep_secs.add(s.sec)
+                    continue
                 if s.cls == CE.IMAGE_SYM_CLASS_STATIC:
-                    ok, why = static_convention_ok(u["src"], info, plain, co.section(s.sec))
+                    if mode == "promote":   # diagnostic only: the first DDKOBJ-SPIKE build (no guard), for bisects
+                        ok, why = True, "DDKOBJ_REGCONV=promote: not checked"
+                    else:
+                        ok, why = static_convention_ok(u["src"], info, plain, co.section(s.sec))
                     rec.setdefault("static_promotions", []).append({"name": plain, "standard_convention": ok,
                                                                     "evidence": why})
                     if not ok:
                         rec["status"] = "fail:static-register-convention"
                         rec["unbindable"] = []
-                        return rec
+                        rec.setdefault("regconv_needed", []).append(plain)
+                        continue    # collect every such static of the unit, then refuse below
                 s.cls = CE.IMAGE_SYM_CLASS_EXTERNAL   # MATCH_STATIC: static under C, external under the port
                 tgt = defs.get(plain, plain)
                 if tgt.startswith(("@unparsed:", "@samedata", "@portdata:")):   # DDKOBJ-TRAIN: no exe name to take
@@ -540,6 +597,8 @@ def main_build(a):
             else:
                 rec.setdefault("dropped_defs", []).append(s.name)
                 s.name = s.name + f"__ddk{u['rvas'][0]:08x}"
+        if rec["status"] == "fail:static-register-convention":
+            return rec
         if not keep_secs:
             rec["status"] = "skip:no-ported-match-function"
             rec["unbindable"] = []
@@ -634,6 +693,10 @@ def main_build(a):
             rec["status"] = "skip:lang-" + info["lang"]
             report["units"].append(rec)
             continue
+        if all(r in PROV or B.get(r, {}).get("kind") == "provisional" for r in u["rvas"]):
+            rec["status"] = "skip:provisional"      # L-126 (6a): VS2022 body on the knob path, no byte-check
+            report["units"].append(rec)
+            continue
         if "@mglobal" in defs:
             rec["status"] = "fail:wrapper-redefines-globals"
             rec["evidence"] = defs["@mglobal"]
@@ -646,6 +709,20 @@ def main_build(a):
             report["units"].append(rec)
             continue
         pristine = obj.read_bytes()
+        # DDKOBJ-REGCONV: a unit whose static MATCH function has a private register convention is recompiled once
+        # with generated adapters (regconv_recompile); DDKOBJ_REGCONV=refuse keeps the DDKOBJ-SPIKE refusal
+        probe = process_unit(CE.Coff(pristine), u, rec_base=dict(rec), ext_statics=False)
+        if probe["status"] == "fail:static-register-convention" and \
+                os.environ.get("DDKOBJ_REGCONV", "adapter") == "adapter":
+            rc, why = regconv_recompile(u, probe["regconv_needed"], pristine, obj)
+            if rc is None:
+                probe.pop("_edits", None)
+                probe["evidence"] = "adapter refused: " + why
+                report["units"].append(probe)
+                continue
+            u["regconv"] = rc
+            rec["regconv"] = {k: (v or "no-adapter") for k, v in rc.items()}
+            pristine = obj.read_bytes()
         attempt = None
         for ext_statics in (False, True):
             co = CE.Coff(pristine)
@@ -837,6 +914,180 @@ def static_convention_ok(src: pathlib.Path, info, plain: str, sec):
     return _SC_CACHE[key]
 
 
+# ------------------------------------------------------------------ DDKOBJ-REGCONV (2026-11-12)
+# A MATCH function that is `static` under C may get a private register convention from cl 13.00 (EAX/EBX/ECX args, no
+# stack args). VS2022 code calls the exe name with stack arguments. Recovery: the DDK compiles the same source with one
+# generated adapter per such function appended, `<ret> <cc> __ddkadapt_<name>(<params>) { return <name>(<args>); }`,
+# where <cc> is the convention the VS2022 wrapper object gives the exe name. The DDK itself emits the call into the
+# private convention, so no convention has to be read by hand. The adapter takes the exe name; the body keeps its
+# original bytes under `__ddkreg_<rva>` (byte-checked at its RVA). Refused when the appended adapter changes the bytes
+# of any function the plain compile emits, or when the declaration cannot be adapted (named here, not worked around).
+ADAPT_PREFIX = "__ddkadapt_"
+CC_KW = ("__cdecl", "__stdcall", "__fastcall")
+_TYPE_WORDS = {"int", "char", "short", "long", "float", "double", "void", "unsigned", "signed", "const", "volatile",
+               "struct", "union", "enum"}
+
+
+def _cc_drop_tokens(text: str):
+    """Tokens dropped from an adapter's return type: storage class, conventions, and macros #define'd (in any view) to
+    nothing, to `static` or to a convention keyword (MATCH_STATIC, MATCH_ECX)."""
+    out = {"static", "MATCH_STATIC", "__inline", "inline"} | set(CC_KW)
+    for m in re.finditer(r"^[ \t]*#[ \t]*define[ \t]+([A-Za-z_]\w*)[ \t]*(\w*)[ \t]*(?://.*|/\*.*)?$", text, re.M):
+        if m.group(2) in ("", "static") + CC_KW:
+            out.add(m.group(1))
+    return out
+
+
+def _c_view(text: str) -> str:
+    v = "\n".join(active_lines(text, {"_MSC_VER", "_WIN32"}))
+    v = re.sub(r"/\*.*?\*/", " ", v, flags=re.S)
+    return re.sub(r"//[^\n]*", "", v)
+
+
+def _definition(text: str, plain: str):
+    """(prefix, params) of plain's definition in the C view, or None."""
+    v = _c_view(text)
+    for m in re.finditer(r"(?:^|(?<=[;}\n]))([^;{}#]*?)\b" + re.escape(plain) + r"\s*\(", v):
+        i, depth = m.end(), 1
+        while i < len(v) and depth:
+            depth += {"(": 1, ")": -1}.get(v[i], 0)
+            i += 1
+        if v[i:].lstrip().startswith("{"):
+            return m.group(1), v[m.end():i - 1]
+    return None
+
+
+def _param_names(params: str):
+    p = " ".join(params.split())
+    if p in ("", "void"):
+        return []
+    parts, depth, cur = [], 0, ""
+    for ch in p:
+        depth += {"(": 1, ")": -1, "[": 1, "]": -1}.get(ch, 0)
+        if ch == "," and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    parts.append(cur)
+    names = []
+    for q in (x.strip() for x in parts):
+        if q == "...":
+            return None
+        m = re.search(r"\(\s*\*\s*([A-Za-z_]\w*)\s*\)", q)      # function pointer parameter
+        if m:
+            names.append(m.group(1))
+            continue
+        q2 = re.sub(r"(\s*\[[^\]]*\])+\s*$", "", q)
+        m = re.search(r"([A-Za-z_]\w*)\s*$", q2)
+        head = q2[:m.start()].strip() if m else ""
+        if not m or m.group(1) in _TYPE_WORDS or not head or head in ("struct", "union", "enum"):
+            return None                                          # unnamed parameter
+        names.append(m.group(1))
+    return names
+
+
+def cc_of_decoration(deco: str):
+    if deco.startswith("@"):
+        return "__fastcall"
+    if deco.startswith("_") and re.search(r"@\d+$", deco):
+        return "__stdcall"
+    if deco.startswith("_"):
+        return "__cdecl"
+    return None
+
+
+def wrapper_decoration(wstem: str, exe_plain: str):
+    """The decorated symbol the default VS2022 wrapper object uses for exe_plain (definition or reference), or None."""
+    p = DEF_OBJ / (wstem + ".obj")
+    if not p.exists():
+        return None
+    hits = {s.name for s in CE.Coff.load(p).syms if s.is_func and not s.name.startswith("?")
+            and CE.undecorate(s.name) == exe_plain}
+    return sorted(hits)[0] if len(hits) == 1 else None
+
+
+def regconv_adapter(text: str, plain: str, cc: str):
+    """C text of the adapter for plain, or (None, reason)."""
+    d = _definition(text, plain)
+    if d is None:
+        return None, "definition not found in the C view"
+    pre, params = d
+    drop = _cc_drop_tokens(text)
+    ret = " ".join(t for t in re.findall(r"[A-Za-z_]\w*|\*", pre) if t not in drop)
+    if not ret:
+        return None, "no return type"
+    names = _param_names(params)
+    if names is None:
+        return None, f"parameter list not adaptable ({' '.join(params.split())})"
+    call = f"{plain}({', '.join(names)})"
+    body = f"{call};" if ret == "void" else f"return {call};"
+    p = " ".join(params.split()) or "void"
+    return (f"\n/* DDKOBJ-REGCONV: generated adapter (ddkobj.py), not part of the matched source */\n"
+            f"{ret} {cc} {ADAPT_PREFIX}{plain}({p})\n{{\n    {body}\n}}\n"), "ok"
+
+
+def _masked_funcs(co):
+    out = {}
+    for s in co.syms:
+        if s.sec > 0 and s.is_func and not CE.undecorate(s.name).startswith(ADAPT_PREFIX):
+            sec = co.section(s.sec)
+            b = bytearray(sec.data)
+            rl = []
+            for off, si, ty in sec.relocs:
+                b[off:off + 4] = b"\0\0\0\0"
+                t = co.slots[si]
+                if t is None:
+                    key = None
+                elif t.sec == s.sec:
+                    key = ("self", t.value)          # a label in the function's own section (jump table, $L...)
+                elif t.name.startswith(("$", ".")):
+                    key = ("local", co.section(t.sec).name if t.sec > 0 else t.name, t.value)   # numbering shifts
+                else:
+                    key = t.name
+                rl.append((off, ty, key))
+            out[s.name] = (bytes(b), tuple(rl))
+    return out
+
+
+def regconv_recompile(u, needed, pristine: bytes, obj: pathlib.Path):
+    """Recompile u's source with adapters for the statics in `needed`. Returns (regconv map, None) after writing the
+    adapted object over obj, or (None, refusal reason)."""
+    import tempfile
+    info, defs = u["info"], u["defs"]
+    text = info["text"]
+    regconv, add = {}, ""
+    for plain in needed:
+        tgt = defs.get(plain, plain)
+        deco = wrapper_decoration(u["wrapper"].stem, tgt)
+        if deco is None:
+            # no single C-named VS2022 symbol of the exe name in the wrapper object: nothing outside the DDK object
+            # reaches the body by that name (the default link would need it), so no adapter
+            regconv[plain] = None
+            continue
+        cc = cc_of_decoration(deco)
+        a, why = regconv_adapter(text, plain, cc)
+        if a is None:
+            return None, f"{plain}: {why}"
+        regconv[plain] = cc
+        add += a
+    if not add:
+        return regconv, None
+    src = u["src"]
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="ddkrc_")) / src.name
+    tmp.write_text(text + add, encoding="utf-8")
+    r = M.compile_obj(tmp, info["flags"], info["lang"], info["toolchain"], errors_ok=True)
+    if r[0] is None:
+        return None, "adapter compile failed: " + " ".join(r[1].split())[-300:]
+    before = _masked_funcs(CE.Coff(pristine))
+    after = _masked_funcs(CE.Coff.load(r[0]))
+    for name, v in before.items():
+        if after.get(name) != v:
+            return None, f"the adapter changes {name}'s bytes" if name in after else f"the adapter drops {name}"
+    shutil.copyfile(r[0], obj)
+    return regconv, None
+
+
 def x87_set():
     s = set()
     for line in (MOD / "x87_tus.txt").read_text().splitlines():
@@ -970,6 +1221,7 @@ def main_check(a):
     st = collections.Counter(u["status"] for u in rep["units"])
     summ = {"identical": c.get("IDENTICAL", 0), "different": c.get("DIFFERENT", 0),
             "not_in_map": c.get("not-in-map", 0), "functions": len(rows),
+            "provisional_units_skipped": st.get("skip:provisional", 0),
             "units": len(rep["units"]), "units_linked": st.get("ok", 0),
             "refusals": {k: v for k, v in sorted(st.items()) if k.startswith("fail:")},
             "skips": {k: v for k, v in sorted(st.items()) if k.startswith("skip:")},
@@ -1003,6 +1255,15 @@ _ST_SRC = {
     "same": ("0x00400050", "#ifndef MATCH_PORT\nextern int DAT_00400054;\n#endif\nint FUN_00400050(void)\n{\n    return DAT_00400054 + 1;\n}\n",
              "static const std::uintptr_t k_00400054 = 0x00400054u;\n#define FUN_00400050 DdkSt_Same\n"
              "#define DAT_00400054 (*reinterpret_cast<const int*>(k_00400054))\n"),
+    # DDKOBJ-REGCONV: a static MATCH function cl 13.00 gives a private register convention (stand-in caller in C only).
+    # No VS2022 wrapper object exists for the fixture, so no adapter: the body links as __ddkreg_00400060.
+    "reg": ("0x00400060", "#ifdef __cplusplus\n#define MATCH_STATIC\n#else\n#define MATCH_STATIC static\n#endif\n"
+                          "MATCH_STATIC int FUN_00400060(int row, int id)\n{\n  switch (id) {\n"
+                          "  case 2: return row * 3;\n  case 3: return row + 7;\n  case 4: return row ^ 9;\n"
+                          "  case 6: return row - 5;\n  }\n  return 0;\n}\n"
+                          "#ifndef __cplusplus\nint ddkst_standin(int a, int b)\n{\n"
+                          "  return FUN_00400060(a, b) + FUN_00400060(b, a);\n}\n#endif\n",
+            "#define FUN_00400060 DdkSt_Reg\n"),
 }
 
 
@@ -1042,6 +1303,17 @@ def main_selftest(a):
           "variadic tail dropped (PortTop_004039c0.cpp form) -> parsed, binds FUN_0042a5d0")
     check(fnlike_target("a, ...", "T((a), __VA_ARGS__)") == "T", "variadic tail forwarded -> parsed")
     check(fnlike_target("a, b", "T((b), (a))") is None, "swapped arguments -> not parsed")
+    # DDKOBJ-REGCONV adapter generator (pure text)
+    src = ("#define MATCH_STATIC static\n#define MATCH_ECX\ntypedef struct E E;\n"
+           "MATCH_STATIC void MATCH_ECX FUN_00400070(E *e, float v[3])\n{\n}\n"
+           "static int FUN_00400074(int)\n{\n  return 0;\n}\nstatic int FUN_00400078(int a, ...)\n{\n  return a;\n}\n")
+    a7, _w = regconv_adapter(src, "FUN_00400070", "__fastcall")
+    check(a7 is not None and "void __fastcall __ddkadapt_FUN_00400070(E *e, float v[3])" in a7 and
+          "FUN_00400070(e, v);" in a7 and "return" not in a7, f"adapter: void fastcall, array param ({a7!r})")
+    check(regconv_adapter(src, "FUN_00400074", "__cdecl")[0] is None, "adapter: unnamed parameter -> refused")
+    check(regconv_adapter(src, "FUN_00400078", "__cdecl")[0] is None, "adapter: variadic -> refused")
+    check([cc_of_decoration(x) for x in ("_a", "_a@8", "@a@4")] == ["__cdecl", "__stdcall", "__fastcall"],
+          "decoration -> calling convention")
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="ddkst_"))
     os.environ["DDKOBJ_EXTRA_WRAPPERS"] = os.pathsep.join(_st_write(tmp))
     try:
@@ -1073,6 +1345,20 @@ def main_selftest(a):
         check(und.get("DAT_00400054", {}).get("class") == "data-abs" and
               und["DAT_00400054"]["name"] == "__ddkabs_00400054", f"same-address data binds to __ddkabs_00400054 ({und.get('DAT_00400054')})")
         check(by.get("same", {}).get("safeseh_marked") is True, "non-SEH object is marked @feat.00")
+        # DDKOBJ-REGCONV
+        rc, rep, by = run(["reg"], "reg")
+        r = by.get("reg", {})
+        check(r.get("status") == "ok" and r.get("regconv") == {"FUN_00400060": "no-adapter"},
+              f"register-convention static -> ok, kept as its own body ({r.get('status')}: {r.get('regconv')})")
+        check(any(d.get("exe") == "___ddkreg_00400060" and d.get("regconv") for d in r.get("defs", [])),
+              f"its body is defined as __ddkreg_00400060 for the byte check ({[d.get('exe') for d in r.get('defs', [])]})")
+        os.environ["DDKOBJ_REGCONV"] = "refuse"
+        try:
+            rc, rep, by = run(["reg"], "regref")
+        finally:
+            os.environ.pop("DDKOBJ_REGCONV", None)
+        check(by.get("reg", {}).get("status") == "fail:static-register-convention",
+              f"DDKOBJ_REGCONV=refuse -> the DDKOBJ-SPIKE refusal ({by.get('reg', {}).get('status')})")
     finally:
         os.environ.pop("DDKOBJ_EXTRA_WRAPPERS", None)
         if not a.keep:

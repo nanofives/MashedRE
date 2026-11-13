@@ -2,6 +2,10 @@
   "_doc": "merge_train.ps1 config. Gate references = pre-flip defaults (2026-10-24). The D3-CF-U9779 flip refs (G-CTRL ef5f2e10/57f7ff83/b4f4b55a, B c37d4c0c/0a8f9806/7013671d) were reverted when its train bounced on the 13-track table (train 20261024_220701, 8 RED rows vs 0 in the reference); they return with the flip merge per the decided-flip protocol. Script paths are relative to the merged tree. Sources: account2 survey 2026-10-24 (re/orchestrator/MERGE_TRAIN.md). 2026-10-28 run 17: B K1 e85ea6fb -> 9fcdbd3a for the D3-CF-SNAP-FLIP decided flip (L-43; verify/snapflip_20261028/RESULT_D3-CF-SNAP-FLIP.md, MASHED_SNAP_POST default ON, MASHED_NO_SNAP_POST=1 reproduces the old e85ea6fb). 2026-10-28 run 18: run13_reference hbtexanimrefs_20261027 -> hbfullcheck_20261028 (L-46 = a, SNAP_POST coverage move accepted; the file lands with orch/HB-FULLCHECK-R17 5ffdef24e, which merges first). 2026-10-29 run 22: D5-PREGO-CUBE-FLIP decided flip (L-56 = a, MASHED_PICKUPS_PREGO + MASHED_ICONCUBE default ON): G-CTRL gates.csv 364350ae -> 306186d4, run13_reference hbfullcheck_20261028 (a3c14c41) -> pregocubeflip_20261029/tracks_score.txt (the flip's 7770c056 draw table re-scored with cite C32-ICONCUBE-NONGO, 9 IconCube rows RED -> CITED, every draw count unchanged, file cf3307d2). Revert both if the flip pass bounces. 2026-10-30 run 23: D3-SUBSTATE-FLIP decided flip (L-59 = a, L-61 = a; MASHED_SUBSTATE default ON): G-CTRL 5943c5f1/306186d4/52052890 -> 8284be46/ba407a16/31fe043e, B 3a03670c/9fcdbd3a/53778664 -> 1d5bf4f9 x3, d2_arms D2_DEF_1..3 -> D2_DEFH_1..3 (MASHED_DRIVE_HOLD_MS=42000 stack, lands with the flip's run_arms.py), d2_score d2rebase_20261019 -> d2band42_20261029/score_d2_v2.py (O42 band), run13_reference pregocubeflip_20261029/tracks_score.txt (cf3307d2) -> run13p3_20261029/tracks_score_sub_p3.txt (2431afb1, stock budget, RUN13_PRE_FRAMES=0 = run13.py default on the flip branch). Revert all if the flip pass bounces. 2026-11-06 merge-to-main drain: MATCH-PORTSTATE-RECORDS decided flip (L-88 = a, MASHED_PORTSTATE_RECORDS default ON): G-CTRL gates.csv ba407a16 -> 67931834, step/ptrace and B unchanged (verify/matchrecords_flip_20261102/RESULT_MATCH-PORTSTATE-RECORDS.md; MASHED_NO_PORTSTATE_RECORDS=1 reproduces ba407a16). Revert if the flip pass bounces.",
   "integration_branch": "orch/integration",
   "batch_max": 3,
+  "start_gate": { "enabled": true, "min_rows": 3, "max_wait_min": 60 },
+  "start_gate_note": "HB-TRAIN-SOLO-WINDOW (a): `merge_train.ps1 -Gate` exits 0 (START) at min_rows queued rows or once the oldest queued row has waited max_wait_min minutes, else 3 (WAIT). -Override starts anyway. enabled=false makes -Gate always START. The L0 conductor calls it before a pass or -Drain.",
+  "priority_scope": "games",
+  "priority_scope_note": "HB-TRAIN-SOLO-WINDOW (b): 'games' = the mashed_lock priority hold starts after merge, archive/tracker lint, build and lint_rva_bodies, right before the game legs (G-CTRL, B, 13 tracks, D2). 'pass' = old behaviour, hold from before the first merge. Gate content is unchanged either way (L-138).",
   "root": "D:/MashedWT/mtrain_root",
   "root13": "D:/MashedWT/mtrain_root13",
   "data": "D:/MashedWT/mtrain_data",
@@ -21,9 +25,11 @@
     "run13_cites": "verify/rres_20261016/cites_rres.json",
     "run13_reference": "verify/run13p3_20261029/tracks_score_sub_p3.txt"
   },
-  "text_only_globs": ["*.md", "*.txt", "verify/*", "re/analysis/*", "hooks.csv"],
+  "text_only_globs": ["*.md", "*.txt", "verify/*", "re/analysis/*", "hooks.csv", "re/promotions/*"],
   "text_only_unless_built": ["re/match/"],
   "text_only_unless_built_note": "HB-TRAIN-MATCH-TEXTONLY 2026-11-10: a changed file under these roots is text-only unless the build reads it (listed in mashedmod/exe_sources.rsp or asi_sources.rsp, or #included from a mashedmod source, followed through includes inside the root; a build script naming re/match makes every file a build input). merge_train.ps1 Get-BuildMatchRefs.",
   "conflict_union": ["mashedmod/build.bat", "mashedmod/exe_sources.rsp", "mashedmod/asi_sources.rsp", "re/analysis/CHANGELOG.md"],
-  "conflict_halt_note": "every other conflicted file halts the branch (frida-sweep SKILL.md:61-64,107); hooks_registry.py, hooks.csv, STUBS.md, UNCERTAINTIES.md are resolved by hand"
+  "conflict_keyed": {"hooks.csv": "hooks", "re/tools/dual_copy_allowlist.txt": "allow"},
+  "conflict_keyed_note": "HB-TRACKER-AT-MERGE: 3-way merge by key (re/tools/tracker_merge3.py) before the halt check; a key edited differently on both sides still sets the branch aside. Promotion rows commit re/promotions/<ID>.tsv instead and the train applies it (merge_train.ps1 Apply-Promotions).",
+  "conflict_halt_note": "every other conflicted file halts the branch (frida-sweep SKILL.md:61-64,107); hooks_registry.py, STUBS.md, UNCERTAINTIES.md are resolved by hand (hooks.csv only when the same RVA is edited on both sides)"
 }

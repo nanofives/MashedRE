@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S28 0x005c4e20: 95.0% (regs 95.0%, ops 100%). AABB node test: float compares as n[4]<=a[0].. and n[1]>=a[3].., intrinsic memcpy(24) for the two rep movsd copies, ternary flag bits. Residual: orig keeps the two flag temps in the arg1/arg2 stack slots (esp+0x14/0x18), ours in fresh slots (0x18/0x1c); assigning to params (as ints) scored 41%. Class: b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

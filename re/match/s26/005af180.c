@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S26 0x005af180: 84.6% (regs 98.1%, ops 98.1%), all 52 instructions the same opcodes. Hand rewrite: while-loop over the circular list (not an if-guarded do), result in a stack local, hoisted load of *node. Residual: register choice for param_1/the loaded *node (edx/eax vs ecx/edx) and one load order. Tried statement orders, operand orders, int* param, permuter (116 compiles). Class (b). Callback typed cb_t, global via MGLOBALA(char array). cxx pending. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

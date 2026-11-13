@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x0051f4f0: libpng 1.0.12 pngwutil.c png_write_finish_row, png_write_IDAT (both calls) written inline
    in the 0x0051d0f0 form, png_memset = intrinsic memset.

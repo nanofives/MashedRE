@@ -1,0 +1,15 @@
+run	body	blob	compared_against	verdict	identical_for	ticks	diverging_ticks	first_blocks
+d18_r3	-	reference	d18_r2 only (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	-	-
+d18_r1	-	reference	d18_r2 / d18_r3 (+x_ref pair)	DIVERGED	0	2724	-	0x618000,0x623c00,0x63b800,0x641000,0x642000,0x643000
+o448220_b	0x00448220	PROV-INSITU bodies_95.json (old source)	d18_r2 / d18_r3 (+x_ref pair)	DIVERGED	1116	2724	47	0x68f400,0x86ac00,0x898000,0x898800
+f448220_b	0x00448220	b_448220_fix.json	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-
+fx_00448220	0x00448220	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-
+fx_00424eb0	0x00424eb0	b_fixed9.json (1-arg extern form)	d18_r2 / d18_r3 (+x_ref pair)	DIVERGED	151	2724	2100	0x63d800,0x881c00,0x882800,0x882c00,0x883800,0x884400
+sx_00424eb0	0x00424eb0	b_424_standin.json (final form)	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-
+fx_00481e00	0x00481e00	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-
+fx_0046e9e0	0x0046e9e0	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	DIVERGED	321	2724	2403	0x7ec800
+fx_00468d80	0x00468d80	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	DIVERGED	2162	2724	7	0x881800
+fx_00479100	0x00479100	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-
+fx_00443dc0	0x00443dc0	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-
+fx_00445aa0	0x00445aa0	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-
+fx_00442e00	0x00442e00	b_fixed9.json	d18_r2 / d18_r3 (+x_ref pair)	IDENTICAL-FOR-N	2724	2724	0	-

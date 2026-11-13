@@ -1,0 +1,3 @@
+rva	source	provinsitu_verdict	code_loads_from_text	byte_declared_code_symbols	first_sites
+0x005ac210	re/match/s25/005ac210.c	CRASH	2	2	+011d mov cl, byte ptr [0x5ac770] | +0203 mov al, byte ptr [0x5aaaa0]
+0x00440bc0	re/match/tlr/00440bc0.c	CRASH	66	68	+0000 movzx eax, byte ptr [0x47a180] | +0012 movzx ecx, byte ptr [0x47a540] | +0024 movzx edx, byte ptr [0x47a580]

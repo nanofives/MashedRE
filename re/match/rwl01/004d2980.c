@@ -1,4 +1,8 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* RWC-DRIVER-2 (2026-11-11): 100% under TOOLCHAIN rw9044 (L-131). The two RWERROR sites are written out, each with
+   its own message and `return 0`. VC6 + 9044 cross-jumps the common tail after the per-site push, as the original;
+   the DDK compiles the same text to 82.1% (first site shrink-wrapped). The `msg` local and the goto are gone. */
 /* RWC-DRIVER round 2: no change. Tried the shared RWERROR tail as a static __inline helper (82.1%, early-return shrink-wrap comes back), the helper called from the goto label (97.1%, same), a ternary message on a flag (94.7%), and both RWERROR sites with &width/&height pointer locals set at entry (95.8%: the compiler then cross-jumps the two tails with a per-site message push like the original, but the two lea's sit at entry instead of after the palette block). */
 /* RWC-DRIVER 2026-11-11: 53.3% -> 97.1% (regs 97.9%). Rewritten from the disassembly: RwRaster / raster-extension / format-table structs (as in s20/004d2c80), palette block +0x400 index and the ushort free-index stack, all IDirect3DDevice9 calls __stdcall (+0x64 CreateCubeTexture, +0x5c CreateTexture; the depth-format arm 0x46..0x50 uses levels 1, usage 2, pool 0 and links the raster), (fmt & 0xf00) in a local before the 0x6000 test, the palettized error as 'goto' into the shared RWERROR tail with the message in a local (the original pushes each string then jumps; one shared call site keeps ebx/ebp saved at entry). Residual: the two message pushes are 'mov eax, imm' + one 'push eax' in ours, and one register pick in the palette alloc call. */
 /* MATCH-RWL01 0x004d2980: best 53.3% (regs ~56%, ops 64%), class (b). Texture creation (IDirect3DDevice9 slots 0x5c/0x64 via cdecl-typed Ghidra pointers, still to be typed per call) with the flag byte read as byte<<8 (xor eax,eax; mov ah) and the format tests on that word; strings as MGLOBALA char arrays (26 and 72 bytes). Remaining: the original hoists (flags & 0xf00) into eax before the 0x6000 test, the cube-texture branch is placed out of line, and the call-cleanup (stdcall vs cdecl per slot) is not yet matched. */
@@ -72,7 +76,6 @@ int FUN_004d2980(RwRaster *param_1,RasExt *param_2)
   uint idx;
   long hr;
   int *node;
-  char *msg;
   uint mask;
   RwError err;
 
@@ -83,8 +86,10 @@ int FUN_004d2980(RwRaster *param_1,RasExt *param_2)
   }
   else {
     if (mask != 0x600 && mask != 0x500) {
-      msg = s_Palletized_texture_can_only_be_r_00618348;
-      goto fail;
+      err.pluginID = 1;
+      err.errorCode = FUN_004d7ff0(2, s_Palletized_texture_can_only_be_r_00618348);
+      FUN_004d8480(&err);
+      return 0;
     }
     if (DAT_007d46dc == 0) {
       DAT_007d46dc = FUN_004cc7f0(0x404,0x40,4,0x30411);
@@ -139,10 +144,8 @@ int FUN_004d2980(RwRaster *param_1,RasExt *param_2)
       (**(code **)(DAT_007d3ff8 + 0x11c))(DAT_007d46dc,param_2->palette);
       param_2->palette = 0;
     }
-    msg = s_Failed_to_create_texture__0061832c;
-fail:
     err.pluginID = 1;
-    err.errorCode = FUN_004d7ff0(2, msg);
+    err.errorCode = FUN_004d7ff0(2, s_Failed_to_create_texture__0061832c);
     FUN_004d8480(&err);
     return 0;
   }

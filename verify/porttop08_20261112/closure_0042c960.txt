@@ -1,0 +1,59 @@
+0 0x0042c960 CameraTransitionStateMachi gen   re/match/s07/0042c960.c
+1   0x004111c0 FUN_004111c0               exe   FUN_004111c0 MatchT01G_004111c0.cpp
+1   0x00429840 RaceStateLatchSet          asitu FUN_00429840 MatchS06_00429840.cpp
+1   0x0042c510 FUN_0042c510               none  -
+1   0x00429870 LapTimeALessThanB          exe   FUN_00429870 MatchS06_00429870.cpp
+1   0x00424270 FUN_00424270               gen   re/match/s05/00424270.c
+2     0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp
+2     0x00423b40 PlayerScoreAccA            asitu FUN_00423b40 MatchS05_00423b40.cpp
+2     0x00423b60 PlayerScoreAccB            asitu FUN_00423b60 MatchS05_00423b60.cpp
+2     0x00423b80 PlayerScoreAccC            asitu FUN_00423b80 MatchS05_00423b80.cpp
+2     0x00423ba0 PlayerScoreAccD            asitu FUN_00423ba0 MatchS05_00423ba0.cpp
+2     0x00423bc0 PlayerScoreTeamAccC        asitu FUN_00423bc0 MatchS05_00423bc0.cpp
+2     0x00423c40 PlayerScoreTeamAccBase     asitu FUN_00423c40 MatchS05_00423c40.cpp
+2     0x00423cc0 PlayerScoreTeamAccGatedB   exe   FUN_00423cc0 MatchS05_00423cc0.cpp
+2     0x00423d50 PlayerScoreTeamAccBaseB    exe   FUN_00423d50 MatchS05_00423d50.cpp
+2     0x00423dd0 PlayerScoreTeamAccGatedC   exe   FUN_00423dd0 MatchS05_00423dd0.cpp
+2     0x00423e60 PlayerScoreTeamAccCumB     exe   FUN_00423e60 MatchS05_00423e60.cpp
+2     0x00423ee0 PlayerBlock2Field00Get     exe   FUN_00423ee0 MatchS05_00423ee0.cpp
+2     0x00423f60 PlayerBlock2Field04Get     exe   FUN_00423f60 MatchS05_00423f60.cpp
+2     0x00423ff0 PlayerBlock2Field50Get     exe   FUN_00423ff0 MatchS05_00423ff0.cpp
+2     0x00424070 PlayerBlock2Field08Get     exe   FUN_00424070 MatchS05_00424070.cpp
+2     0x0042f500 GetDat0067ea64             exe   FUN_0042f500 MatchS07_0042f500.cpp
+1   0x0040e340 GetLiveCarCount            exe   FUN_0040e340 MatchS02_0040e340.cpp
+1   0x0042c7c0 FUN_0042c7c0               asitu FUN_0042c7c0 MatchS07_0042c7c0.cpp
+2     0x00427780 FontText_StringTableLookup exe   FUN_00427780 MatchS06_00427780.cpp
+1   0x004282a0 MenuMenusBA                exe   FUN_004282a0 MatchS06_004282a0.cpp
+1   0x00423b40 PlayerScoreAccA            asitu FUN_00423b40 MatchS05_00423b40.cpp
+2     0x0042f6a0 GetRaceSubMode             exe   FUN_0042f6a0 MatchS07_0042f6a0.cpp
+1   0x00423b60 PlayerScoreAccB            asitu FUN_00423b60 MatchS05_00423b60.cpp
+2     0x0042f6a0 GetRaceSubMode             exe   FUN_0042f6a0 MatchS07_0042f6a0.cpp
+1   0x00423b80 PlayerScoreAccC            asitu FUN_00423b80 MatchS05_00423b80.cpp
+2     0x0042f6a0 GetRaceSubMode             exe   FUN_0042f6a0 MatchS07_0042f6a0.cpp
+1   0x00423ba0 PlayerScoreAccD            asitu FUN_00423ba0 MatchS05_00423ba0.cpp
+2     0x0042f6a0 GetRaceSubMode             exe   FUN_0042f6a0 MatchS07_0042f6a0.cpp
+1   0x00423bc0 PlayerScoreTeamAccC        asitu FUN_00423bc0 MatchS05_00423bc0.cpp
+2     0x0042f500 GetDat0067ea64             exe   FUN_0042f500 MatchS07_0042f500.cpp
+1   0x00423c40 PlayerScoreTeamAccBase     asitu FUN_00423c40 MatchS05_00423c40.cpp
+2     0x0042f500 GetDat0067ea64             exe   FUN_0042f500 MatchS07_0042f500.cpp
+1   0x00423cc0 PlayerScoreTeamAccGatedB   exe   FUN_00423cc0 MatchS05_00423cc0.cpp
+1   0x00423d50 PlayerScoreTeamAccBaseB    exe   FUN_00423d50 MatchS05_00423d50.cpp
+1   0x00423dd0 PlayerScoreTeamAccGatedC   exe   FUN_00423dd0 MatchS05_00423dd0.cpp
+1   0x00423e60 PlayerScoreTeamAccCumB     exe   FUN_00423e60 MatchS05_00423e60.cpp
+1   0x00423ee0 PlayerBlock2Field00Get     exe   FUN_00423ee0 MatchS05_00423ee0.cpp
+1   0x00423f60 PlayerBlock2Field04Get     exe   FUN_00423f60 MatchS05_00423f60.cpp
+1   0x00423ff0 PlayerBlock2Field50Get     exe   FUN_00423ff0 MatchS05_00423ff0.cpp
+1   0x00424070 PlayerBlock2Field08Get     exe   FUN_00424070 MatchS05_00424070.cpp
+1   0x00424100 TeamBlockZeroGet           exe   FUN_00424100 MatchS05_00424100.cpp
+1   0x004241c0 FUN_004241c0               asitu FUN_004241c0 MatchS05_004241c0.cpp
+2     0x0042f500 GetDat0067ea64             exe   FUN_0042f500 MatchS07_0042f500.cpp
+1   0x0042c300 FUN_0042c300               asitu FUN_0042c300 MatchS07_0042c300.cpp
+2     0x00427780 FontText_StringTableLookup exe   FUN_00427780 MatchS06_00427780.cpp
+1   0x0042c3c0 FUN_0042c3c0               gen   re/match/s07/0042c3c0.c
+2     0x00427780 FontText_StringTableLookup exe   FUN_00427780 MatchS06_00427780.cpp
+2     0x004a2b60 sprintf                    none  -
+1   0x0040b460 MenuMenusBD                asitu MenuMenusBD MenuMenusB.cpp
+2     0x00417740 FUN_00417740               exe   FUN_00417740 MatchGFFU_00417740.cpp
+1   0x0040b540 PlayerScoreRankOrder       exe   FUN_0040b540 MatchS02_0040b540.cpp
+1   0x0040b6b0 ModeScoreGetBySlot         exe   FUN_0040b6b0 MatchS02_0040b6b0.cpp
+1   0x0040b6c0 FrontendArrayGet           exe   FUN_0040b6c0 MatchS02_0040b6c0.cpp

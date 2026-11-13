@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x0051f0e0: libpng 1.0.12 pngwutil.c png_write_sCAL_s (libpair: not paired), png_write_chunk_start /
    _data / _end written inline, png_strcpy / png_strlen = intrinsic strcpy / strlen.

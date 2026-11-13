@@ -2,6 +2,7 @@
 /* best 62.9% (regs 63.2%, ops ~97%): permuter result. Header struct SH (4 dwords) gives the 0x1c frame; residual = register allocation (ebx/ebp/edi
    roles) and hoisted loads at entry; 212 vs 211 insns. 5 callees re-prototyped to their real arity (FUN_005ab380 3, FUN_005aea00 2,
    FUN_004522d0 1, FUN_005aea40 1). Class (b). */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): SH holds 5 dwords: FUN_005ab380 writes [arg2+0x10] (0x005ab3cd / 0x005ab3e4); with 4 the 5th store hit the return address. Best now 67.1%. */
 /* MATCH-S25 0x005abfa0: hand-matched (h1). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -30,7 +31,7 @@ typedef unsigned char bool;
 #define true 1
 #define false 0
 #endif
-typedef struct { int id; uint size; int c; int d; } SH;
+typedef struct { int id; uint size; int c; int d; int e; } SH;
 MGLOBAL(int, DAT_007dcaa8, 0x007dcaa8);
 MGLOBAL(uint, DAT_007dcaac, 0x007dcaac);
 MGLOBAL(undefined1, DAT_005e6414, 0x005e6414);

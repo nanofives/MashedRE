@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S28 0x005bfa40: 82.2% (regs 82.2%). bool flag must be int (edi, not bl): 64.4->82.2; cdecl 4-arg fn-ptr call. Residual: orig keeps the two return 0x80004005 epilogues separate, ours tail-merges them; permuter (99 compiles) found nothing. Class: b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

@@ -8,7 +8,12 @@
    const globals in the scale (with literals the compiler folds 1.0f/len*0.75f into 0.75f/len).
    Residual (b): the last block (scale b, store DAT_00898064/0089804c/00898050, a = b + pos) schedules the
    fld/fmul around the arg pushes differently; every statement order of that block and the permuter
-   (538 compiles) give the same 97.0%. */
+   (538 compiles) give the same 97.0%.
+   PROV-DIVERGED-18 (2026-11-11): the scale was a VALUE difference. Written DAT_005cc320 / len * DAT_005cc950 *
+   DAT_005ce1ec, the DDK emitted fdivr DAT_005ce1ec, fmul DAT_005cc950, fmul DAT_005cc320 (1.175 / len * 0.75 * 1.0;
+   relocheck BAD at +0x37c / +0x38e), where the original computes 1.0 / len * 0.75 * 1.175 (0x0044859a fdivr
+   [0x005cc320], 0x004485ac fmul [0x005ce1ec]). The replay diverged at tick 1116. The operands are now written in the
+   other order, which the DDK swaps back to the original's: same 97.0%, relocheck OK at both sites. */
 /* ---- MATCH-S08 preamble (same text in every re/match/s08 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -192,7 +197,7 @@ skip:
   b.x = a.x - pos.x;
   b.y = a.y - pos.y;
   b.z = a.z - pos.z;
-  f = DAT_005cc320 / FUN_004c3ac0(&b) * DAT_005cc950 * DAT_005ce1ec;
+  f = DAT_005ce1ec / FUN_004c3ac0(&b) * DAT_005cc950 * DAT_005cc320;
   if (mode == -1 || flag != 0) {
     f = 1.0f;
   }

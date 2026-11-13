@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S19 0x004c6750 (h5): 83.3% (regs 85.6%). Texture image read + resample: name / mask name copied through the
    RwGlobals string functions (+0xd0 strncpy, +0xf4 strlen, +0xd4 strcat) with the 0x8000001e truncation RWERROR,

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00522b50: zlib 1.1.3 inflate.c inflateInit2_, with inflateEnd and inflateReset inlined
    (written here as static __forceinline copies above the function; plain static / __inline are not inlined

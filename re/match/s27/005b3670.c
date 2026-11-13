@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // MATCH-S27 0x005b3670: 75.0% (regs 79.2%). do-while list walk with peeled first check. Residual: param+4 computed as add edx / mov ecx,[edx] vs original mov ecx,[eax+4] / lea edx,[eax+4]; permuter no gain. Class: a.
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

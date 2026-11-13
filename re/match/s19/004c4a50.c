@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /GS /Ob1 /G5
 /* MATCH-S19 0x004c4a50 (h5): 77.8% (regs 77.8%). RwMatrixRotateOneMinusCosineSine: builds the rotation matrix from
    leading / crossed / scaled RwV3d temps (flags 3, pos 0), then switch (combineOp): 0 copy, 1 / 2 RwMatrixMultiply

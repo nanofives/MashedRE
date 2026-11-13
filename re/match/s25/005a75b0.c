@@ -2,6 +2,7 @@
 /* best 51.6% (regs 22.3% renamed, ops ~73%), 179 vs 186 insns: struct V typed from offsets (score at +0x58, list links +0/+4, sentinel
    &DAT_007dca18), FastSqrt-table path through a float/uint/ushort union, permuter swap/commute applied. Residual: x87 operand order and
    fcomp/fnstsw flag-test forms, register use; not tuned further for budget. Class (a)/(b): x87 compare+order residuals. */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): three statement orders follow the original: exponent read after u.f = fVar11 (0x005a7655..0x005a7664); node->prev takes the old prev first (0x005a777b..0x005a7788); old tail linked before DAT_007dca1c moves (0x005a77e6..0x005a77ee). Best now 43.5%. */
 /* MATCH-S25 0x005a75b0: hand-matched (h1). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
@@ -68,8 +69,8 @@ void FUN_005a75b0(V *param_1)
              (DAT_007dca48 - param_1->x1) * (DAT_007dca48 - param_1->x1);
     if (fVar2 * fVar2 <= fVar11) goto LAB_005a7705;
     if (fVar11 != DAT_005d757c) {
-      uVar10 = (u.u >> 0x17) - 0x7f;
       u.f = fVar11;
+      uVar10 = (u.u >> 0x17) - 0x7f;
       u.u = u.u & 0x7fffff;
       if ((uVar10 & 1) != 0) {
         u.u = u.u | 0x800000;
@@ -106,9 +107,9 @@ LAB_005a7705:
       piVar9->next->prev = piVar9->prev;
 LAB_005a777b:
       piVar9->next = piVar12;
+      piVar9->prev = piVar12->prev;
       *(V **)piVar12->prev = piVar9;
       piVar12->prev = piVar9;
-      piVar9->prev = piVar12->prev;
     }
     piVar9->flags = piVar9->flags | 1;
     return;
@@ -129,8 +130,8 @@ LAB_005a777b:
     }
     param_1->prev = puVar8;
     param_1->next = (V *)&DAT_007dca18;
-    DAT_007dca1c = param_1;
     *(V **)DAT_007dca1c = param_1;
+    DAT_007dca1c = param_1;
     param_1->flags = param_1->flags | 1;
   }
 }

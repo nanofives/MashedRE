@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S18 0x004b71c0 (h4): 54.2%, regs 66.7% with /O2 /Ob1 /G5 (52.0% with /O2 /GS /Ob1). By hand: if (s == NULL) FUN_004b7110(L) else FUN_004b7180(L, s, strlen(s)) (the Lua 4.0 lua_pushstring shape). Residual: the original inlines strlen as or ecx,-1 / xor eax,eax / repne scasb / not ecx / dec ecx. 9176 emits a byte loop under every flag set tried (/O2, /Ox, /O1, /Os, /Og /Oi /Os /Oy, /G3../G7, flagscan). The repne scasb strlen sequence occurs 16 times in .text, only here, in Lua (0x004b85fc, 0x004b9aa7) and in library code at 0x00516xxx..0x0059xxxx, never in game code (0x004b6940 in this slice inlines strcpy as the 9176 byte loop). Class (a): codegen of a different compiler build for the Lua TU. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S26 0x005ace70: 89.7% (regs 82.4%, ops 96.3%), 132 vs 136 insns. Hand rewrite: Fmt struct (7 dwords) copied by value (rep movsd), byte +0xd set to 1, uint division (not 64-bit), uVar3 = FUN_005ac650(&local)/uVar2 evaluated before FUN_005ace70, (iVar1 != 0 ? 0x180 : 0) gives neg/sbb/and. Residual: the DDK cross-jumps the first and third 'return 1' blocks into one, the original keeps 4 separate mov eax,imm/pop/add esp/ret exits; and original loads cl then 'mov al,1; cmp cl,al'. Relocheck BAD only from shifted offsets. Class (a). cxx pending. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

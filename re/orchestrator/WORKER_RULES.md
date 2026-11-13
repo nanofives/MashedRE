@@ -9,7 +9,12 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
 - Spawning a child: `spawn_child` with a holding prompt ("reply READY and stop"), then the
   task with `send_to_session ... yolo: true`. **Every** later message to it carries
   `yolo: true` too. Leads on `claude2` (model sonnet, effort medium), workers on `claude3`.
-- Pickup check (every tier): send the task only after the child's READY turn has gone idle.
+  Model by row kind, standing rule L-136 (Mariano 2026-11-12, KICKOFF_run39): Sonnet medium for wiring, restacks,
+  tables, tracker batches, merge trains and leads; Opus medium for port rows and bindings; Opus high for
+  first-divergence diagnosis, compiler shaping and RW core bring-up; Fable high on claude3 only after Opus high
+  failed twice; read-only surveys on the account2 worker; step up one level only after a reported failed attempt.
+  A top-down RESULT names its self-test result before the lead enqueues it.
+- Pickup check (every tier, and within 5 minutes of every `move_self`): send the task only after the child's READY turn has gone idle.
   Within 5 minutes confirm pickup: its `latestSeq` climbs past the READY turn
   (`read_session` with limit 1 or 2), or its ledger row is `claimed` / `working`. If not,
   re-send the same task once with `yolo: true`. If it still has not started, `stop_child` and
@@ -69,6 +74,12 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   DDK compiler and flags, `relocheck.py` OK, not naked or asm-only), or a library identity (`libid`). The static
   routes certify the RE only, need no exe body, caller or gate, and are applied with `re/tools/c4_reclass.py batch`.
   Master Ghidra only through ghidra-sweep.
+- **Promotions on a branch (HB-TRACKER-AT-MERGE, 2026-11-12).** A row that promotes functions to C4 does not edit
+  `hooks.csv` / `CHANGELOG.md`. It commits `re/promotions/<ID>.tsv` (tab-separated, header `rva`, `route`, `evidence`,
+  `result`; `result` = your RESULT path) and checks it with `c4_reclass.py batch --tsv <file>` (dry run, no `--apply`).
+  The merge train applies it with `--apply --strict` on the current head and moves it to `re/promotions/applied/`.
+  A refused row sets the branch aside. Other rows' `hooks.csv` and `dual_copy_allowlist.txt` edits are key-merged by the
+  train (`re/tools/tracker_merge3.py`), so they no longer conflict unless the same RVA/entry is edited on both sides.
 - Tracker edits go through the re-classify skill. A script is allowed only when it is the skill's
   own documented operation (e.g. re/tools/deferred_close.py). Ad-hoc scripts are not.
 - Do not edit `ROADMAP.md` or `re/NEXT_SESSION.md` unless the step's deliverable is that text

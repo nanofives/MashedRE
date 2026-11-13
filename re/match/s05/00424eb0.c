@@ -8,7 +8,15 @@
    `mov edx,[esp+0x18]; push edx` for `mov eax,[esp+0x18]; push esi`, and the sete register at the 0x0040eee0 call.
    With a plain extern 1-arg FUN_00422fd0 the count is dead and the caller drops to 79.8% (frame 0x34). FUN_004a2c48 is
    the CRT __ftol (the (int) cast). Residual (b): the source form that leaves the dead count load in EAX was not found
-   (tried both param orders, void/int return, sete spelling). */
+   (tried both param orders, void/int return, sete spelling).
+   PROV-DIVERGED-18 (2026-11-11): named FUN_00422fd0, the stand-in was a WRONG BODY when linked against the original:
+   provlink (and the object build) bind that name to the original 0x00422fd0, which reads its one argument from
+   [esp+8] (0x00422fd1), and this call site pushes the count (the original pushes the index, 0x00425279 push esi).
+   Replay DIVERGED@1108. Two fixes were replayed (verify/provinsitu_20261111/RESULT_PROV-DIVERGED-18.md):
+   (1) the real 1-arg extern: 79.8%, frame 0x34, DIVERGED@151 (a callee reads the caller's frame: 0x0046c7d0 has no
+   equiv summary and the frame slots move by 4); (2) this form: the stand-in renamed s_StandIn_00422fd0 so it is
+   linked as this file's own static helper and runs on the index, frame 0x38 as the original: 98.6%,
+   IDENTICAL-FOR-2724. The stand-in is a private copy of 0x00422fd0 (83.3%), not a binding of the original. */
 /* ---- MATCH-S05 preamble (same text in every re/match/s05 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -62,7 +70,7 @@ int FUN_0046c5c0(int p0);
 int FUN_0046c790(int p0, int p1);
 void thunk_FUN_00419760(int p0, int p1);
 /* stand-in for 0x00422fd0 (no MATCH line: not the real callee shape, see header) */
-static int FUN_00422fd0(int n, int param_1)
+static int s_StandIn_00422fd0(int n, int param_1)
 {
   if (param_1 < 0x10) {
     FUN_0046c5c0(param_1);
@@ -182,7 +190,7 @@ int FUN_00424eb0(int dt)
     last = 0;
     for (i = 0; i < 4; i++) {
       if (FUN_0040e370(i) && FUN_0046c7b0(i) == 1 && state[i] == 0xff) {
-        FUN_00422fd0(n, i);
+        s_StandIn_00422fd0(n, i);
         last = i + 1;
         if (nact > 1) {
           FUN_0040b290(i, 0);

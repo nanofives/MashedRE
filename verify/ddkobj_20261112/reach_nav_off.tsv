@@ -1,0 +1,116 @@
+exe_va	symbol	reached	first_ms
+0x00011130	___ddkreg_0047c230 (body 0x0047c230)	no	
+0x00011170	_CameraPathAllNodesEq2 (caller)	no	
+0x000111d0	___ddkreg_0047c1f0 (body 0x0047c1f0)	no	
+0x00011210	_CameraPathAnyNodeNonzero (caller)	no	
+0x000124e0	___ddkreg_0041f710 (body 0x0041f710)	yes	5341
+0x00012540	_CR_41f710Body (adapter 0x0041f710)	yes	5341
+0x00013260	___ddkreg_00413bc0 (body 0x00413bc0)	no	
+0x00013310	_FUN_00413bc0 (adapter 0x00413bc0)	no	
+0x00014780	___ddkreg_004670a0 (body 0x004670a0)	no	
+0x000147f0	_Orig_00467110 (caller)	no	
+0x00015560	___ddkreg_0041beb0 (body 0x0041beb0)	no	
+0x00015570	_Orig_0041c0e0 (caller)	no	
+0x000155a0	___ddkreg_0041cb00 (body 0x0041cb00)	no	
+0x000155b0	_Orig_0041ccf0 (caller)	no	
+0x000155e0	___ddkreg_0041d6d0 (body 0x0041d6d0)	no	
+0x000155f0	_Orig_0041d890 (caller)	no	
+0x00016370	___ddkreg_00498810 (body 0x00498810)	no	
+0x000163c0	_Orig_00498860 (caller)	no	
+0x00016e90	___ddkreg_0041b770 (body 0x0041b770)	no	
+0x00016ec0	_HudConstTableInitAndSweep (caller)	no	
+0x00016f40	@Copy41b770@4 (adapter 0x0041b770)	no	
+0x00016f50	___ddkreg_0041bc50 (body 0x0041bc50)	no	
+0x000171b0	_HudDispatchSlot2 (caller)	no	
+0x000171d0	_HudRec29DispatchBody (adapter 0x0041bc50)	no	
+0x000171e0	___ddkreg_0041c2d0 (body 0x0041c2d0)	no	
+0x00017210	_HudDispatchMode5 (caller)	no	
+0x00017230	_HudDispatchDraw4Body (adapter 0x0041c2d0)	no	
+0x00017240	___ddkreg_0041c320 (body 0x0041c320)	no	
+0x000172a0	_ParticleEmitterCtorC_impl (adapter 0x0041c320)	no	
+0x000172b0	___ddkreg_0041c9a0 (body 0x0041c9a0)	no	
+0x00017410	_HudSlotLoopCcc0 (caller)	no	
+0x000174d0	___ddkreg_0041cd20 (body 0x0041cd20)	no	
+0x00017560	_ParticleEmitterCtorD_impl (adapter 0x0041cd20)	no	
+0x000177d0	___ddkreg_0041ae20 (body 0x0041ae20)	no	
+0x00017810	_Update41b520 (caller)	no	
+0x00017830	_FUN_0041ae20 (adapter 0x0041ae20)	no	
+0x00017840	___ddkreg_0040fc00 (body 0x0040fc00)	no	
+0x00017af0	___ddkreg_004102f0 (body 0x004102f0)	no	
+0x00017ba0	_FUN_004111c0 (caller)	no	
+0x00017d30	_FUN_0040fc00 (adapter 0x0040fc00)	no	
+0x00017d40	_FUN_004102f0 (adapter 0x004102f0)	no	
+0x00019440	___ddkreg_0042f020 (body 0x0042f020)	no	
+0x000194d0	_FUN_0042f020 (adapter 0x0042f020)	no	
+0x000198e0	___ddkreg_0042ac00 (body 0x0042ac00)	no	
+0x00019930	___ddkreg_0042ac50 (body 0x0042ac50)	yes	3799
+0x00019970	_MenuSpriteDispatchB (caller)	no	
+0x00019e50	___ddkreg_00431b80 (body 0x00431b80)	yes	4141
+0x00019fd0	_CarSelectReset (caller)	yes	4141
+0x0001a520	_MenuAnimTickTwin (caller)	yes	2514
+0x0001b170	___ddkreg_00427680 (body 0x00427680)	no	
+0x0001b270	_FUN_00427680 (adapter 0x00427680)	no	
+0x0001b2c0	___ddkreg_004277a0 (body 0x004277a0)	no	
+0x0001b360	_TextCtrlCodeRemapBody (adapter 0x004277a0)	no	
+0x0001b370	___ddkreg_00427840 (body 0x00427840)	no	
+0x0001b3b0	_FontText_UTF16WidenCopyBody (adapter 0x00427840)	no	
+0x0001b3c0	___ddkreg_00427880 (body 0x00427880)	no	
+0x0001b410	_FUN_00427880 (adapter 0x00427880)	no	
+0x0001b420	_FUN_004278d0 (caller)	no	
+0x0001b4e0	_FUN_00427990 (caller)	no	
+0x0001b620	_MenuMenusBB (caller)	no	
+0x0001b730	_FUN_00427be0 (caller)	no	
+0x0001b950	_FUN_00427e00 (caller)	no	
+0x0001ba50	_FUN_00427f00 (caller)	no	
+0x0001bb40	_FUN_00427ff0 (caller)	no	
+0x0001bc90	_FUN_00428140 (caller)	no	
+0x0001bdf0	_TextWidthMeasureB (caller)	no	
+0x0001ca00	___ddkreg_00429240 (body 0x00429240)	no	
+0x0001ca50	_FUN_00429290 (caller)	no	
+0x0001db40	___ddkreg_0042aad0 (body 0x0042aad0)	no	
+0x0001db50	_MenuDimSetBody (adapter 0x0042aad0)	no	
+0x0001dc80	_MenuGroupCountBody (adapter 0x0042ac00)	no	
+0x0001dc90	_Calc42ac50 (adapter 0x0042ac50)	no	
+0x0001dd20	___ddkreg_0042ad10 (body 0x0042ad10)	no	
+0x0001dda0	_FUN_0042ad10 (adapter 0x0042ad10)	no	
+0x0001ddc0	___ddkreg_0042ad90 (body 0x0042ad90)	yes	1667
+0x0001de00	_Find42ad90 (adapter 0x0042ad90)	yes	1667
+0x0001dec0	___ddkreg_0041ad60 (body 0x0041ad60)	no	
+0x0001df10	_ParticleEmitterCtorA_impl (adapter 0x0041ad60)	no	
+0x0001ed70	___ddkreg_00487150 (body 0x00487150)	no	
+0x0001eda0	_Orig_00487e00 (caller)	no	
+0x0001f600	___ddkreg_00401690 (body 0x00401690)	no	
+0x0001fb00	_Orig_004025f0 (caller)	no	
+0x00021330	___ddkreg_0046c5f0 (body 0x0046c5f0)	no	
+0x00021410	_FUN_0046c5f0 (adapter 0x0046c5f0)	no	
+0x00022150	___ddkreg_0041d410 (body 0x0041d410)	no	
+0x00022410	_PortBatch_0041d870 (caller)	no	
+0x00022430	___ddkreg_0041e630 (body 0x0041e630)	no	
+0x000224c0	_PortBatch_0041e850 (caller)	no	
+0x000227e0	___ddkreg_0045ba10 (body 0x0045ba10)	no	
+0x00022870	_Orig_0045bae0 (caller)	no	
+0x000243c0	___ddkreg_00457ba0 (body 0x00457ba0)	no	
+0x00024430	___ddkreg_00458020 (body 0x00458020)	no	
+0x00024490	_Orig_00458360 (caller)	no	
+0x00024760	___ddkreg_00454170 (body 0x00454170)	no	
+0x000247d0	___ddkreg_004547c0 (body 0x004547c0)	no	
+0x00024830	_Orig_004548a0 (caller)	no	
+0x0018e570	?BuildRecords@?A0xdcdc6feb@Frontend@mashed_re@@YAXABUNavSlot@23@@Z (caller)	yes	1667
+0x0018ea90	?Nav@Frontend@mashed_re@@YAXHH@Z (caller)	yes	3676
+0x0018ed50	?NavCountItems@?A0xdcdc6feb@Frontend@mashed_re@@YAHPBIH@Z (caller)	yes	1667
+0x0018f1f0	?Nav_DevGoto@Frontend@mashed_re@@YAXH@Z (caller)	no	
+0x0018f6a0	?Nav_Init@Frontend@mashed_re@@YAXXZ (caller)	yes	1667
+0x00190980	_CR_41f710 (caller)	yes	5341
+0x00191230	_HudUvRect413bc0 (caller)	no	
+0x00198230	_FUN_0041bc50 (caller)	no	
+0x00198280	_FUN_0041c2d0 (caller)	no	
+0x001982d0	_ParticleEmitterCtorC (caller)	no	
+0x00198350	_ParticleEmitterCtorD (caller)	no	
+0x0019a900	@Copy41ae20@4 (caller)	no	
+0x001b7150	_TextCtrlCodeRemap (caller)	no	
+0x001b7180	_FontText_UTF16WidenCopy (caller)	no	
+0x001b7810	_MenuDimSet (caller)	no	
+0x001b7860	@MenuGroupCount@8 (caller)	no	
+0x001b7890	_PromptRowInit0042ad10 (caller)	no	
+0x001b8eb0	_ParticleEmitterCtorA (caller)	no	
+0x001bc660	?TriangleFaceNormal@Collision@mashed_re@@YAXPBM00PAM@Z (caller)	no	

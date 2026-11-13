@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* RWC-DRIVER 2026-11-11: 62.5% -> 62.5% (ops 91.9 -> 92.6%, 281 -> 283/283 ins). Behaviour fix only: both RWERROR blocks stored pluginID = 1 after the FUN_004d8480 call (a dead store the compiler dropped); it is now stored first, as the original does (mov [esp+0x20], 1 before the call). Prologue residual unchanged (same shrink-wrap class as 0x004d0290). */
 /* MATCH-S20 0x004cff20 (h1): 62.5% (regs 68.2%). Raw converter 25.8%. Structure is right (ops 92.9%):

@@ -1,4 +1,5 @@
 // FLAGS: /O2 /Ob1 /G5
+// RWC-MATCH-S02 semantic fix: the non-empty-A branch set a->prev to the old head of B; the original (else arm at 0x004d8c6d: mov edx,[eax+4]; mov [edx],ecx; mov [ecx+4],edx) sets a->prev = b->prev after b->prev->next = a, as the hand body in Util/PromoLoop_sessionB.cpp also shows. Score 69.4 -> 27.0% (37 vs 35 instructions; back to the raw form's 27.0%, which had the right splice; the two arms no longer tail-merge, eax/ecx swapped for a/b and esi+edi used for the globals where the original uses edx/eax and only esi).
 /* MATCH-S21 0x004d8c40 (h3): best 69.4% (regs 80.6%). Raw 27.0%. Two-list splice (lists at RwGlobals+[0x00911ad8]+0x20/+0x24)
    with a link struct; the permuter swapped the last two stores of the else branch (equivalent) for 27 -> 69.4.
    Residual: ours loads the two globals into esi/edi (extra push edi) where the original uses edx/eax with no
@@ -50,9 +51,9 @@ void FUN_004d8c40(void)
       p = a->prev;
       p->next = n;
       n->prev = p;
-      a->prev = n;
       n = b->prev;
       n->next = a;
+      a->prev = n;
     }
     b->next = b;
     b->prev = b;

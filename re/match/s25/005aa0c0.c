@@ -1,5 +1,6 @@
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S25 h3 0x005aa0c0: by hand + permuter. Best 56.2% (regs 76.2%, ops 91.2%, 80/80 ins). Residual (b): original keeps param_1 in esi with a write-back to its arg slot [esp+0x14], spills the list sentinel (param_1+0x10) into the dead param_5 slot [esp+0x24] and reloads it each iteration; ours holds param_1 in edi, keeps the sentinel arithmetic in a register. Permuter swapcmp (param_1 == puVar1 + 4 spelling, +30%) adopted; Ghidra goto-free while(1) form otherwise. */
+/* PROV-FIX-9 2026-11-12 (verify/provfix9_20261112/RESULT_PROV-FIX-9.md, diagnosis verify/provcrash_20261112/RESULT_PROV-CRASH-12.md): sentinel test is puVar1 == param_1 + 4, as the original (0x005aa108 lea eax,[esi+0x10]; 0x005aa10b cmp edi,eax); the permuter's swapped spelling compared the wrong pair and faulted. Best now 26.2%. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -42,7 +43,7 @@ undefined4 * FUN_005aa0c0(undefined4 *param_1,int *param_2,S25_cb param_3,undefi
   }
   puVar1 = (undefined4 *)param_1[4];
   while( 1 ) {
-    if (param_1 == puVar1 + 4) {
+    if (puVar1 == param_1 + 4) {
       if (param_2 != (int *)0x0) {
         *param_2 = 0;
       }

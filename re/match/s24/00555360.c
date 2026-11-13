@@ -1,3 +1,5 @@
+// TOOLCHAIN rw9044
+/* MATCH-RT2D-RESID run 40 (2026-11-12): 100.0% under rw9044, BYTE-IDENTICAL (353 B), relocheck OK (33 checked). Two changes from the 94.4% DDK form: (1) toolchain rw9044 (L-131), which gives each failed check its own `jne; ret` (residual 1 below); (2) the index loop takes a pointer to the quad each iteration (`p = &DAT_00912700[i * 6]`) and stores p[0]..p[5] in index order. With the direct form `DAT_00912700[i * 6 + k]` c2 9044 bases its pointer on the address of the second store statement (all 720 statement orders checked: the zero-displacement store is always statement 2), so the original's base 0x00912704 = index 2 (`mov eax,0x912704` at 0x00555451, `mov [eax],cx` at 0x0055546b) and its store order 0,3,1,2,4,5 exclude each other in that form. The DDK scores this source 95.6%. The 94.4% DDK text that ADMITTED.tsv and test_equiv.py describe is frozen at re/tools/match/equiv_tests/refs/00555360_held.c. */
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S24 0x00555360 (h2): 94.4% (regs 94.4%), 89/90 instructions. Font-system init: two FUN_004cc9e0
    free lists (0x144 and 0xc byte entries), an 0x51-byte RwMalloc path buffer grown with RwRealloc
@@ -89,14 +91,16 @@ int FUN_00555360(void)
   (*(rwstrcpy_t *)(DAT_007d3ff8 + 0xcc))(DAT_00912a0c, s_fonts__00623ea4);
 skip:
   {
+    short *p;
     short v = 0;
     for (i = 0; i < 0x40; i++) {
-      DAT_00912700[i * 6 + 0] = v;
-      DAT_00912700[i * 6 + 2] = v + 3;
-      DAT_00912700[i * 6 + 1] = v + 2;
-      DAT_00912700[i * 6 + 3] = v;
-      DAT_00912700[i * 6 + 4] = v + 3;
-      DAT_00912700[i * 6 + 5] = v + 1;
+      p = &DAT_00912700[i * 6];
+      p[0] = v;
+      p[1] = v + 2;
+      p[2] = v + 3;
+      p[3] = v;
+      p[4] = v + 3;
+      p[5] = v + 1;
       v += 4;
     }
   }

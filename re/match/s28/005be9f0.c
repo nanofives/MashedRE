@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S28 0x005be9f0: 80.0% (regs 82.2%). Loop rewritten to if(n)do{..}while(i!=lim && n) with n copied from param_2 at function top (64.4->80.0), stdcall vtbl call. Residual: ebp/ebx save placement (ours pushes ebp lazily inside the branch) and load order before xor edi,edi; permuter 153 compiles no gain. Class: b. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----

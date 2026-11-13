@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 // h2: 57.4% via match_permute (2480 compiles; Ghidra form 42.6%). RpWorldCreate, struct-initialisation heavy; not rebuilt with real World/Sector structs (budget). Class (b).
 /* MATCH-RWL02 0x004e5850: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body

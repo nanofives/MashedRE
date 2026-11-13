@@ -4,24 +4,31 @@
 // Compiled here as C++ with MATCH_PORT; globals bind to their original addresses (preamble MGLOBAL).
 
 #define MATCH_PORT 1
+#ifdef MASHED_STANDALONE
+// [HUDINIT-B] exe callees bind by name, no raw-address call. The exe runs this body only on the MASHED_ORIG_TOP path with
+// MASHED_ORIG_TOP_RWMOD=1, from the selector PortTop_00402750_Call00427ca0 (Match/PortTop_00552b60.cpp).
+//  - 0x00552b60: the Rt2d open, PortTop_FontSysInit_00552b60(camera) (Match/PortTop_00552b60.cpp, HUDINIT-A)
+//  - 0x00556cc0: the matched Orig_00556cc0 (Match/PortTop_00556cc0.cpp), not the hand SetDat00912a20
+//  - 0x00556d70: the matched brush create Orig_00556d70 (Match/PortTop_00556d70.cpp)
+//  - 0x00556e90: the stand-in PortTop_StandInHIB_00556e90 (97.5% source, residual outside L-115)
+//  - 0x00427880: the stand-in PortTop_StandInHIB_00427880 (the font-file loader stays a stand-in until HUDINIT-C)
+//  - 0x0042a6b0: the exe body FUN_0042a6b0 (Match/MatchS06_0042a6b0.cpp, PORT-TOP-04G)
+#define FUN_00552b60 PortTop_FontSysInit_00552b60
+#define FUN_00556cc0 Orig_00556cc0
+#define FUN_00556d70 Orig_00556d70
+#define FUN_00556e90 PortTop_StandInHIB_00556e90
+#define FUN_00427880 PortTop_StandInHIB_00427880
+#else
 #define FUN_00556cc0 SetDat00912a20
 #define FUN_00556d70 MatchS06_00427ca0_Call00556d70
 #define FUN_00556e90 MatchS06_00427ca0_Call00556e90
-// Callees with no port body in either target: raw-address forwarders (S04 rule), the call the original makes.
+// Callees with no port body in the .asi: raw-address forwarders (S04 rule), the call the original makes.
 extern "C" int MatchS06_00427ca0_Call00556d70(void) {
     return reinterpret_cast<int (__cdecl*)()>(0x00556d70u)();
 }
 extern "C" int MatchS06_00427ca0_Call00556e90(int font, void *c0, void *c1, void *c2, void *c3) {
     return reinterpret_cast<int (__cdecl*)(int, void *, void *, void *, void *)>(0x00556e90u)(font, c0, c1, c2, c3);
 }
-// FUN_00552b60: the port body FontSys_InitSeq (HUD/FontCtx.cpp) is .asi-only. The exe has no body of 0x00552b60,
-// so there it is a raw-address forwarder (S04 rule).
-#ifdef MASHED_STANDALONE
-extern "C" void MatchS06_00427ca0_Call00552b60(int p) {
-    reinterpret_cast<void (__cdecl*)(int)>(0x00552b60u)(p);
-}
-#define FUN_00552b60 MatchS06_00427ca0_Call00552b60
-#else
 #define FUN_00552b60 FontSys_InitSeq
 #endif
 #pragma comment(linker, "/EXPORT:FUN_00427ca0=_FUN_00427ca0")

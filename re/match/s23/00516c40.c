@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x00516c40: libpng 1.0.12 png.c png_sig_cmp. Official source, png_memcmp = intrinsic memcmp
    (repe cmpsb). Best 79.5% (regs 79.5%). Residual (a): the original keeps two separate `return 0` exits and

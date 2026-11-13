@@ -52,6 +52,8 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--tool", default="", help="a frozen copy of equiv.py in this directory (for long runs)")
     ap.add_argument("--proven-in", default="", help="only the rows proven (EQUIV / IF) in this earlier TSV")
+    ap.add_argument("--rows-from", default="", help="exactly the rows (rva + source) of this earlier TSV, so a re-run "
+                                                    "compares like with like when the ledger has moved since")
     a = ap.parse_args()
     global TOOL
     if a.tool:
@@ -65,6 +67,11 @@ def main():
         addr = int(r[0], 16)
         meta[addr] = r
         by_src[r[1]].append(addr)
+    if a.rows_from:
+        by_src = collections.defaultdict(list)
+        for ln in pathlib.Path(a.rows_from).read_text().splitlines()[1:]:
+            f = ln.split("\t")
+            by_src[f[1]].append(int(f[0], 16))
     if a.proven_in:
         keep = {int(ln.split("\t")[0], 16) for ln in pathlib.Path(a.proven_in).read_text().splitlines()[1:]
                 if ln.split("\t")[7] != "NOT-PROVEN"}
@@ -83,13 +90,14 @@ def main():
             for x in res:
                 m = meta.get(x["addr"])
                 out.append((x, src, m))
-    lines = ["rva\tsource\tbest_pct\tbytes_bad\tbytes_n\tsubsystem\thooks_conf\tverdict\tclasses\tregs\tcallers_all_ignore\tkind\tdetail\trules\tlocal_callees"]
+    lines = ["rva\tsource\tbest_pct\tbytes_bad\tbytes_n\tsubsystem\thooks_conf\tverdict\tclasses\tregs\tcallers_all_ignore\tkind\tdetail\trules\tlocal_callees\thalts"]
     for x, src, m in sorted(out, key=lambda t: t[0]["addr"]):
         lines.append("\t".join([
             f"0x{x['addr']:08x}", src, m[3] if m else "", m[4] if m else "", m[5] if m else "", m[13] if m else "",
             m[12] if m else "", x["verdict"], ",".join(x.get("classes", [])), ",".join(x.get("regs", [])),
             str(x.get("callers_all_ignore", "")), x.get("kind", ""), str(x.get("detail", "")).replace("\t", " ")[:300],
-            ",".join(x.get("rules", [])), ",".join(x.get("local_callees", []))]))
+            ",".join(x.get("rules", [])), ",".join(x.get("local_callees", [])),
+            " | ".join(x.get("halts", [])).replace("\t", " ")[:600]]))
     pathlib.Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     pathlib.Path(a.out).write_text("\n".join(lines) + "\n")
     c = collections.Counter(x["verdict"] for x, _, _ in out)

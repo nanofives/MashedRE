@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-S23 0x0051cb40: libpng 1.0.12 pngwutil.c png_write_chunk_data.
    82.6% (regs 87.0, ops 95.7). Official source. Only diff: original pushes esi in the prologue, ours after

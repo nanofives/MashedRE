@@ -1,0 +1,5 @@
+rva	source	toolchain	before	after	after_regs	note
+0x004f0ae0	re/match/rwl03/004f0ae0.c	ddk	81.8	100.0	100.0	BYTE-IDENTICAL 234 B under ddk and rw9044, relocheck OK 9/0
+0x004f1fb0	re/match/rwl03/004f1fb0.c	ddk	37.0	83.1	85.1	typed rewrite 81.7, permuter 1964 compiles 83.4 (free order changed), kept 83.1 with original order
+0x0053dea0	re/match/rwl03/0053dea0.c	rw9044	28.1	71.9	79.5	typed rewrite, depth<0x20 nest, compare/multiply operand order, two permuter edits (74.7 variant rejected: reads hi before set)
+0x00538d60	re/match/rwl03/00538d60.c	ddk	12.3	12.8	21.9	float retype: 10 fild and 3 __ftol removed (original has 0 fild, 2 calls)

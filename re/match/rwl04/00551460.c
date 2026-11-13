@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Os /Ob1 /G5
 /* MATCH-RWL04 0x00551460 (h2): 37.9% (regs 43.1). Hand form with intrinsic strlen x2 + for loop; flags /O2 /Os won (others 27-36). Residue: original strlen is repne scasb (ecx) which DDK 9176 emits as a byte loop (same as S23 png_check_keyword finding). class (a). Chars written as 47/92 decimals. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
