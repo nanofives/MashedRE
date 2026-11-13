@@ -375,6 +375,7 @@ void PortTop_AudioCalleeStop(unsigned rva, unsigned caller, void* ret) {
 unsigned PortTop_Bound_0045d3f0(int);    // Match/PortTop_0045d3f0.cpp
 void     PortTop_Bound_00466b50(void);   // Match/PortTop_00466b50.cpp
 unsigned PortTop_Bound_0045d430(void);   // Match/PortTop_0045d430.cpp
+int      PortTop_AudioInit_Ran(void);   // Match/PortTop_004669b0.cpp (PORT-TOP-4669B0): 1 once the matched 0x004669b0 ran
 
 // Dispatcher (not a body) for the matched AudioTickAndAvg. Model (re/match/s15/004926c0.c): DAT_00771978 counts up and wraps to 0 at 60, where
 // DAT_0077197c = DAT_00771994 / 60 and DAT_00771994 = 0. Otherwise DAT_00771994 grows by a QPC delta (>= 0).
@@ -390,7 +391,10 @@ void PortTop_Timer_004926c0(void) {
     // DAT_006904ec must be unchanged (re/match/s10/0045d3f0.c, 0045d430.c, 00466b50.c).
     if (MemI(0x006147b8u) != 0) {
         ++s_tmAudioBranch;
-        TmCheck(e8 == 0, "6c0 DAT_006904e8 gate is 0 on the exe path", static_cast<unsigned>(e8), 0);
+        // PORT-TOP-4669B0: under MASHED_OT_AUDIOINIT=1 the matched 0x004669b0 set the gate to 1; the bodies then reach
+        // their callees (named stops) inside AudioTickAndAvg, before this check.
+        TmCheck(e8 == PortTop_AudioInit_Ran(), "6c0 DAT_006904e8 gate on the exe path", static_cast<unsigned>(e8),
+                static_cast<unsigned>(PortTop_AudioInit_Ran()));
         TmCheck(MemI(0x006904ecu) == ec0, "6c0 DAT_006904ec unchanged", MemU(0x006904ecu), static_cast<unsigned>(ec0));
         if (s_tmAudioBranch == 1) {
             const unsigned r3f0 = PortTop_Bound_0045d3f0(0), r430 = PortTop_Bound_0045d430();
