@@ -3,6 +3,14 @@
 /* h3 hand-match: best 24.6% (regs 45.6%), class b. Not worked beyond raw output (budget spent on higher-yield rows). Two source copies are visible in the original (param_2 given vs default palette 0x005d8b90, different register allocation, flag 0x007d4154 = 0 vs 1 only when index 0x100): needs a hand rewrite as two specialised bodies; compare loop keeps its counter in [ebp-4] in the first copy. */
 /* MATCH-RWL01 0x004cb330: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
    unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl01_20261107/results.tsv. */
+/* MATCH-RWT-S1C (2026-11-13): 100.0%, 0 differing bytes (344 B), relocheck OK, ddk and rw9044 under the recorded
+   header. Three changes from the 64.9% source: (1) the S1B lever, DAT_005d8b90 declared with an 8-aligned type
+   (Mat16A, __declspec(align(8))), gives the ebp frame with no ebx and the [ebp-4] counter spill (85.1%, probe
+   cb330_a8.c); (2) one shared `return r >= 0;` after an if/else instead of a return per arm, which gives the
+   original's tail merge (the param_2 arm's jne 0x100 to the default arm's tail at 0x004cb479) and its register
+   choice (99.1%); (3) s_cmp takes the count first, s_cmp(16, a, b), which puts `mov eax, esi` before the counter
+   store at 0x004cb33f..0x004cb344 (100%). Without the align, the same body scores 58.8%. Probes:
+   verify/match_20261113/MATCH-RWT-S1C_probes/. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -40,9 +48,10 @@ MGLOBAL(undefined4, DAT_007d4568, 0x007d4568);
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 MGLOBAL(int *, DAT_007d4110, 0x007d4110);
 MGLOBAL(int, DAT_007d4154, 0x007d4154);
-MGLOBAL(Mat16, DAT_005d8b90, 0x005d8b90);
+typedef __declspec(align(8)) struct { int m[16]; } Mat16A;
+MGLOBAL(Mat16A, DAT_005d8b90, 0x005d8b90);
 MGLOBALA(Mat16 *, DAT_007d4158, 0x104, 0x007d4158);
-static __inline int s_cmp(const int *a, const int *b, unsigned int n)
+static __inline int s_cmp(unsigned int n, const int *a, const int *b)
 {
   while (n != 0) {
     if (*a != *b) return 1;
@@ -57,7 +66,7 @@ int FUN_004cb330(int param_1,Mat16 *param_2)
 {
   long r;
   if (param_2 != 0) {
-    if (DAT_007d4158[param_1] != 0 && s_cmp(DAT_007d4158[param_1]->m, param_2->m, 16) == 0) {
+    if (DAT_007d4158[param_1] != 0 && s_cmp(16, DAT_007d4158[param_1]->m, param_2->m) == 0) {
       return 1;
     }
     if (DAT_007d4158[param_1] == 0) {
@@ -68,18 +77,19 @@ int FUN_004cb330(int param_1,Mat16 *param_2)
     if (param_1 == 0x100) {
       DAT_007d4154 = 0;
     }
-    return r >= 0;
   }
-  if (DAT_007d4158[param_1] != 0 && s_cmp(DAT_007d4158[param_1]->m, DAT_005d8b90.m, 16) == 0) {
-    return 1;
-  }
-  if (DAT_007d4158[param_1] == 0) {
-    DAT_007d4158[param_1] = (Mat16 *)(**(code **)(DAT_007d3ff8 + 0x118))(DAT_007d4568,0x30411);
-  }
-  *DAT_007d4158[param_1] = DAT_005d8b90;
-  r = (*(setxf_fn *)(*DAT_007d4110 + 0xb0))(DAT_007d4110,param_1,&DAT_005d8b90);
-  if (param_1 == 0x100) {
-    DAT_007d4154 = 1;
+  else {
+    if (DAT_007d4158[param_1] != 0 && s_cmp(16, DAT_007d4158[param_1]->m, DAT_005d8b90.m) == 0) {
+      return 1;
+    }
+    if (DAT_007d4158[param_1] == 0) {
+      DAT_007d4158[param_1] = (Mat16 *)(**(code **)(DAT_007d3ff8 + 0x118))(DAT_007d4568,0x30411);
+    }
+    *(Mat16A *)DAT_007d4158[param_1] = DAT_005d8b90;
+    r = (*(setxf_fn *)(*DAT_007d4110 + 0xb0))(DAT_007d4110,param_1,(Mat16 *)&DAT_005d8b90);
+    if (param_1 == 0x100) {
+      DAT_007d4154 = 1;
+    }
   }
   return r >= 0;
 }
