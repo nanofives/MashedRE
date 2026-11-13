@@ -22,13 +22,12 @@
 // PORT-STATE-02 (L-101): DAT_00613290 binds to its original address in both targets; in the exe the port-state seed
 // (Compat/PortStateSeed.cpp, default ON) puts the file-backed 0xffffffff there. Before, the exe bound
 // g_rfxDefault00613290 (Render/RfxEmitter.cpp, removed).
-#define MATCH_CELL_DAT_00613290 (0x00613290u)
-#define MATCH_CELL_DAT_00692554 (0x00692554u)
-
-// This TU's preamble: the source's own preamble is skipped (MATCH_PREAMBLE), and MGLOBAL binds through the cells above.
-// The source uses no other preamble name (only unsigned int).
+// DDKOBJ-CELLS (2026-11-12): both globals are at their original addresses in both targets, so MGLOBAL is the preamble's
+// own original-address form (the object build accepts exactly that form; a cell indirection made it refuse the unit).
+// This TU's preamble: the source's own preamble is skipped (MATCH_PREAMBLE). The source uses no other preamble name
+// (only unsigned int).
 #define MATCH_PREAMBLE 1
-#define MGLOBAL(T, n, a) static T &n = *(T *)(MATCH_CELL_##n)
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
 extern "C" {
 #include "../../../../re/match/s12/004769f0.c"
 }
