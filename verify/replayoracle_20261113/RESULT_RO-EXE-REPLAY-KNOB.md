@@ -177,3 +177,36 @@ ddk_timer.log `0a00c4c135551b753891eca64521b1fe2125938b1d2144c487a5b4e8d539f57d`
 `99cff8ab123f4eb51ed854e96d366b49bb58995de33fc04995628f01dae41085`, ddk_rep.log `3731cf34998f377c6d1fa77497cbb82b9287413661dfe3d53bd7cd0af6b35925`.
 The run 3 table above is historic (permissive check). [UNCERTAIN] unchanged from the review: x87 precision control during
 the runs, and `now >= 2^31` (runs reach about 3.2e8 to 3.5e8 only).
+
+## Run 5: hand merge of orch/integration (run 42)
+
+Merge commit b06a5e790 on orch/RO-EXE-REPLAY-KNOB (parents c9e9c2a38 and orch/integration 145dec4d0's line). The merge train bounced run 41's
+branch on `PortTop_00492370.cpp`; `exe_sources.rsp` conflicted too. Resolution, both sides kept:
+
+- `exe_sources.rsp`: union of this row's `PortTop_00497310` / `PortTop_Replay` and integration's `PortTop_0045d3f0` / `004669b0` / `0045d430` / `00466b50`.
+- `PortTop_00492370.cpp` helpers: `F1010SingleRounding` and `s_tmWarpSkips` (this row) next to `X87MulExact` and `s_tmAudioBranch` (RO-AUDIOTICK-BODIES). Summary line carries the audio branch, the double-rounding count and the warp skips.
+- OT_TIMER stays strict for `DAT_007f1010`: one expected value per `now`, no "either form passes".
+- Duplicate body: integration's RWC-CORE-RUN added `RwCore/RwCore_00534870.cpp`, the same byte-matched source `re/match/rwl03/00534870.c` as this row's `Match/PortTop_00534870.cpp`. rva-lint refused it (DUP-IN-TARGET 0x00534870). `PortTop_00534870.cpp` is deleted and `PortTop_Replay_00534870` calls `RwCore_00534870`; no allowlist entry.
+
+**Model change found by the object-build arm.** The first merged object run (`ddk_timer`, real clock, `now` ~3.9e9) failed 109 of 6000 on `DAT_007f1010`, all in the
+double-rounding form, with `ddkobj.py check` IDENTICAL for `_PortTop_Bound_00493390`. Run 4 never saw it because its real-clock `now` was below 2^31.
+The source header of `re/match/s15/00493390.c` names the compiler's 2^32 fix-up at 0x005cc94c for `now >= 2^31`; the 24-bit control word rounds that add, so the
+original double-rounds there. The check is now `now < 0x80000000 ? single-rounding : (float)now * c`. [UNCERTAIN] the PC_24 rounding of the fix-up as the cause
+is inferred from the source note plus the 109/109 match; the fix-up bytes at 0x005cc94c were not disassembled in this run.
+
+### Merged-tree results (raw logs in D:/MashedWT/RO-EXE-REPLAY-KNOB_data, build logs D:/MashedWT/RO-EXE-REPLAY-KNOB_{objbuild2,vsbuild2}.log, arm output arms5.out / arms6.out)
+
+| arm | exe | result |
+|---|---|---|
+| ddk_top | object build | rc 0, 600 frames, 0 REPLAY lines |
+| ddk_rep | object build | **REPLAY PASS 0 of 666**, OT_TIMER PASS 0 of 5990 |
+| ddk_timer | object build | OT_TIMER **PASS 0 of 6000**, double-rounding form 0 |
+| vs_off, vs_top | VS2022 | rc 0, 600 frames |
+| vs_timer | VS2022 | OT_TIMER **FAIL 96 of 6000** (double-rounding body, honest) |
+| vs_rep_a, vs_rep_b | VS2022 | **REPLAY PASS 0 of 666**, OT_TIMER FAIL 207 of 5990 (honest) |
+
+Self-test result: REPLAY PASS 0 of 666 on both builds. Object build failures 0. The VS2022 build compiles and links ("Build OK", rva-lint clean) and its OT_TIMER
+check fails as designed: the VS2022 body is not the original's arithmetic.
+`ddkobj.py check` (merged tree): IDENTICAL 1146/1176, DIFFERENT 11, not-in-map 19, units linked 1127/1394, refusals 4 (wrapper-redefines-globals). None of the 11
+DIFFERENT is a unit of this row; this row's units (0x00497310, 0x00493390, 0x00493480, 0x004950b0, 0x0040e480, and 0x00534870 as `_RwCore_00534870`) are IDENTICAL.
+Gates: not run (top-down row, knob default OFF).
