@@ -1,14 +1,14 @@
 rank	rva	size	executed	race_path	stage	best_pct	class	source	band	equiv_kind	hooks_conf	status
-1	0x004cb4c0	320	y	y	race_run	90.2	prov-NOT-PROVEN	re/match/s20/004cb4c0.c	A80	branch-condition	C2	open
-2	0x004d40d0	159	y	y	race_run	89.1	prov-NOT-PROVEN	re/match/s20/004d40d0.c	A80	call-regargs	C2	open
-3	0x004dba60	534	y	y	race_run	87.6	prov-NOT-PROVEN	re/match/s21/004dba60.c	A80	switch-table	C2	open
-4	0x004c2bb0	56	y	y	race_run	87.0	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	open
-5	0x004e1b60	299	y	y	race_load	86.5	prov-NOT-PROVEN	re/match/rwl01/004e1b60.c	A80	call-args	C2	open
-6	0x004c2b80	46	y	y	race_run	84.2	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	open
-7	0x004c6750	1092	y	y	race_load	83.3	prov-NOT-PROVEN	re/match/s19/004c6750.c	A80	call-sequence	C2	open
-8	0x004c0910	334	y	y	race_load	82.0	prov-NOT-PROVEN	re/match/rwl01/004c0910.c	A80	call-regargs	C2	open
-9	0x005386b0	194	y	y	race_load	81.7	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	open
-10	0x00557d90	180	y	y	race_load	80.7	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	open
+1	0x004cb4c0	320	y	y	race_run	90.2	prov-NOT-PROVEN	re/match/s20/004cb4c0.c	A80	branch-condition	C2	open: MATCH-RWT-A parked at 90.2
+2	0x004d40d0	159	y	y	race_run	89.1	prov-NOT-PROVEN	re/match/s20/004d40d0.c	A80	call-regargs	C2	open: MATCH-RWT-A parked at 89.1
+3	0x004dba60	534	y	y	race_run	87.6	prov-NOT-PROVEN	re/match/s21/004dba60.c	A80	switch-table	C2	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
+4	0x004c2bb0	56	y	y	race_run	87.0	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
+5	0x004e1b60	299	y	y	race_load	86.5	prov-NOT-PROVEN	re/match/rwl01/004e1b60.c	A80	call-args	C2	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
+6	0x004c2b80	46	y	y	race_run	84.2	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
+7	0x004c6750	1092	y	y	race_load	83.3	prov-NOT-PROVEN	re/match/s19/004c6750.c	A80	call-sequence	C2	open: MATCH-RWT-A parked at 93.5 (rw9044)
+8	0x004c0910	334	y	y	race_load	82.0	prov-NOT-PROVEN	re/match/rwl01/004c0910.c	A80	call-regargs	C2	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
+9	0x005386b0	194	y	y	race_load	81.7	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
+10	0x00557d90	180	y	y	race_load	80.7	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
 11	0x004cdd60	188	y	y	race_load	79.2	prov-NOT-PROVEN	re/match/rwl01/004cdd60.c	B50	call-regargs	C2	open
 12	0x004c4a50	717	y	y	race_run	77.8	prov-NOT-PROVEN	re/match/s19/004c4a50.c	B50	x87-region	C3	open
 13	0x004dcbb0	369	y	y	race_run	77.5	prov-NOT-PROVEN	re/match/rwl01/004dcbb0.c	B50	call-regargs	C2	open
@@ -93,9 +93,9 @@ rank	rva	size	executed	race_path	stage	best_pct	class	source	band	equiv_kind	hoo
 92	0x00536fe0	530	y	y	race_run	compile-fail	g2s-compile-fail	-	B-cf	lift	C1	open
 93	0x00536780		y	y	race_load	compile-fail	prov-NOT-PROVEN	re/match/rwl03/00536780.c	B-cf	no-size	C1	open
 94	0x00536e90		y	y	race_run	compile-fail	prov-NOT-PROVEN	re/match/rwl03/00536e90.c	B-cf	no-size	C1	open
-95	0x004db3e0	368	y	n	menu	95.2	prov-NOT-PROVEN	re/match/rwl01/004db3e0.c	A95	call-regargs	C2	open
-96	0x0052e3d0	184	y	n	menu	87.3	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	open
-97	0x00549710	215	y	n	menu	82.1	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	open
+95	0x004db3e0	368	y	n	menu	95.2	prov-NOT-PROVEN	re/match/rwl01/004db3e0.c	A95	call-regargs	C2	open: MATCH-RWT-A parked at 95.2
+96	0x0052e3d0	184	y	n	menu	87.3	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
+97	0x00549710	215	y	n	menu	82.1	g2s-NOT-PROVEN	g2s:g2sall_ddk	A80	lift	C1	closed: MATCH-RWT-A 100% byte-identical (re/promotions/MATCH-RWT-A.tsv)
 98	0x004d5190	310	y	n	menu	79.0	prov-NOT-PROVEN	re/match/s21/004d5190.c	B50	call-memory	C2	open
 99	0x004cc050	250	y	n	menu	78.5	prov-NOT-PROVEN	re/match/s20/004cc050.c	B50	switch-table	C3	open
 100	0x004daff0	741	y	n	menu	77.8	prov-NOT-PROVEN	re/match/s21/004daff0.c	B50	x87-region	C2	open
