@@ -26,6 +26,15 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-12  0x004c2b80  FUN_004c2b80  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/004c2b80.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x004c2bb0  FUN_004c2bb0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/004c2bb0.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x0052e3d0  FUN_0052e3d0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/0052e3d0.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x005386b0  FUN_005386b0  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/005386b0.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x00549710  FUN_00549710  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/00549710.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x00557d90  FUN_00557d90  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwta/00557d90.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x004dba60  FUN_004dba60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s21/004dba60.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x004e1b60  FUN_004e1b60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004e1b60.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
+2026-11-12  0x004c0910  FUN_004c0910  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004c0910.c; evidence: verify/match_20261112/RESULT_MATCH-RWT-A.md
 2026-11-12  0x004f1fb0  FUN_004f1fb0  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl03/004f1fb0.c; evidence: verify/match_20261112/RESULT_MATCH-RWC-NEAR-D.md
 2026-11-12  0x00472330  FUN_00472330  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/g2sh/00472330.c; evidence: verify/g2sharvest_20261112/RESULT_RWC-G2S-HARVEST.md
 2026-11-12  0x004d0640  FUN_004d0640  C1->C4  route match (L-93): byte-identical + relocheck OK, re/match/g2sh/004d0640.c; evidence: verify/g2sharvest_20261112/RESULT_RWC-G2S-HARVEST.md
