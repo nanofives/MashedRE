@@ -1,3 +1,12 @@
+/* MATCH-RWT-S3 (Opus high) 2026-11-13: SEMANTIC FIX, score 77.5 -> 62.0% (ddk = rw9044). The found branch wrote
+   `DAT_007d70c8 = idx; idx = uVar4;`, storing the OLD index; c2 drops that store as redundant (idx was loaded
+   from DAT_007d70c8). The original stores the NEW index: 0x004dcc27 mov ebp,ecx / 0x004dcc2c mov [0x7d70c8],ebp.
+   Now `idx = uVar4; DAT_007d70c8 = idx;`. The tail stores are back in the original order (DAT_007d70cc store at
+   0x004dcce9 before the div at 0x004dccf2). The 77.5% listed in RANKED_MATCH-RWT-REFRESH.tsv and the
+   permuter's 77.5% on this row both measured the store-dropping source and are void. Open residual: the
+   original never gives param_1 a register (ecx copy at 0x004dcbb0, reload mov ebx,[esp+0x14] per loop pass at
+   0x004dcc00, div dword ptr [esp+0x14] at 0x004dccf2) and keeps the end offset uVar5 in ebx; ours enregisters
+   param_1 and spills uVar5 to param_1's home slot. */
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL01 0x004dcbb0: 77.5% regs 80%.  class (b) Real prototype is cdecl 5 args (align,size,out_obj**,p4,out_idx*), not Ghidra's unaff_* form; slot index kept in a local mirrored to DAT_007d70c8; vtable call is __stdcall. Permuter swapped two independent stores. Remaining: original keeps param_1 in ecx early and uVar5/uVar6 in ebx/esi (register assignment).. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -56,8 +65,8 @@ int FUN_004dcbb0(uint param_1,int param_2,int **param_3,undefined4 param_4,uint 
         uVar6 = ((DAT_007d70cc[uVar4] + param_1 - 1) / param_1) * param_1;
         uVar5 = uVar6 + uVar7;
         if (uVar5 <= DAT_007d70dc[uVar4]) {
-          DAT_007d70c8 = idx;
           idx = uVar4;
+          DAT_007d70c8 = idx;
           if (uVar4 < 4) goto LAB_004dcc4c;
           break;
         }
@@ -95,8 +104,8 @@ LAB_004dcc4c:
   }
   else {
     iVar3 = (*(vfn_t *)(*piVar2 + 0x2c))(piVar2,uVar6,uVar7,param_4,0x1800);
-    *param_5 = uVar6 / param_1;
     DAT_007d70cc[DAT_007d70c8] = uVar5;
+    *param_5 = uVar6 / param_1;
   }
   *param_3 = DAT_007d70ec[DAT_007d70c8];
   return iVar3 >= 0;
