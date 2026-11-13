@@ -1,3 +1,4 @@
+// TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
 /* MATCH-RWL01 0x004c0910: best 82.0% (regs 82%, ops 94.6%), class (b). 64-byte payload copy as a Blob64 struct assignment (rep movsd); residual is prologue/register scheduling of param_1/param_2 (permuter 219 compiles, no gain). */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
@@ -40,6 +41,10 @@ int FUN_004d8000(int p0, undefined1 * p1);
 int FUN_004d8060(int p0, undefined1 * p1);
 int FUN_004d8090(int p0, undefined1 * p1, undefined1 * p2);
 typedef struct Blob64 { undefined4 a[16]; } Blob64;
+/* MATCH-RWT-A 2026-11-12: 100% under rw9044 (TOOLCHAIN line added). Child loop rotated into a for loop with the
+   failure path after the success return, and the unlink written as the RW link-list macro (prev->next, next->prev).
+   verify/match_20261112/RESULT_MATCH-RWT-A.md */
+typedef struct LL { struct LL *next; struct LL *prev; } LL;
 // MATCH: 0x004c0910 FUN_004c0910
 undefined1 * FUN_004c0910(undefined1 *param_1,undefined1 *param_2)
 
@@ -72,19 +77,17 @@ undefined1 * FUN_004c0910(undefined1 *param_1,undefined1 *param_2)
   *(undefined1 **)(puVar2 + 0xa0) = param_2;
   iVar4 = *(int *)(param_1 + 0x98);
   *(undefined1 **)(param_1 + 0xa0) = puVar2;
-  while( true ) {
-    if (iVar4 == 0) {
-      FUN_004d8000((int)&DAT_00617f78,puVar2);
-      FUN_004d8090((int)&DAT_00617f78,puVar2,param_1);
-      return puVar2;
-    }
+  for (; iVar4 != 0; iVar4 = *(int *)(iVar4 + 0x9c)) {
     iVar3 = (int)FUN_004c0910((undefined1 *)iVar4,param_2);
-    if (iVar3 == 0) break;
+    if (iVar3 == 0) goto fail;
     *(undefined4 *)(iVar3 + 0x9c) = *(undefined4 *)(puVar2 + 0x98);
     *(int *)(puVar2 + 0x98) = iVar3;
     *(undefined1 **)(iVar3 + 4) = puVar2;
-    iVar4 = *(int *)(iVar4 + 0x9c);
   }
+  FUN_004d8000((int)&DAT_00617f78,puVar2);
+  FUN_004d8090((int)&DAT_00617f78,puVar2,param_1);
+  return puVar2;
+fail:
   iVar4 = *(int *)(puVar2 + 0x98);
   while (iVar4 != 0) {
     iVar3 = *(int *)(iVar4 + 0x9c);
@@ -93,8 +96,7 @@ undefined1 * FUN_004c0910(undefined1 *param_1,undefined1 *param_2)
   }
   FUN_004d8060((int)&DAT_00617f78,puVar2);
   if ((puVar2[3] & 3) != 0) {
-    **(undefined4 **)(puVar2 + 0xc) = *(undefined4 *)(puVar2 + 8);
-    *(undefined4 *)(*(int *)(puVar2 + 8) + 4) = *(undefined4 *)(puVar2 + 0xc);
+    { LL *l = (LL *)(puVar2 + 8); l->prev->next = l->next; l->next->prev = l->prev; }
   }
   (**(code **)(DAT_007d3ff8 + 0x11c))(*(undefined4 *)(DAT_007d3e70 + DAT_007d3ff8),puVar2);
   return (undefined1 *)0x0;

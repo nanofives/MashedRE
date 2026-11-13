@@ -7,3 +7,4 @@ rva	route	evidence	result
 0x00557d90	match	re/match/rwta/00557d90.c	verify/match_20261112/RESULT_MATCH-RWT-A.md
 0x004dba60	match	re/match/s21/004dba60.c	verify/match_20261112/RESULT_MATCH-RWT-A.md
 0x004e1b60	match	re/match/rwl01/004e1b60.c	verify/match_20261112/RESULT_MATCH-RWT-A.md
+0x004c0910	match	re/match/rwl01/004c0910.c	verify/match_20261112/RESULT_MATCH-RWT-A.md
