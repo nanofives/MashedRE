@@ -622,6 +622,12 @@ for name in sys.argv[1:]:
                  MASHED_REPLAY=os.environ.get('A4_REPLAY_JSON', os.path.join(W, 'verify', 'replayoracle_20261113', 'replay_trace.json')),
                  MASHED_REPLAY_TRACE=os.path.join(OUT, name),
                  MASHED_REPLAY_TRACE_CKPT=os.environ.get('A4_RO_CKPT', '1,150,299,301,450,600'))
+        # RO-FIRST-DIVERGENCE: A4_RO_WATCH = MASHED_REPLAY_TRACE_WATCH (debug-register write watch, comma list of hex VAs),
+        # A4_RO_WATCH_FROM = MASHED_REPLAY_TRACE_WATCH_FROM. Unset = no watch.
+        if os.environ.get('A4_RO_WATCH'):
+            e['MASHED_REPLAY_TRACE_WATCH'] = os.environ['A4_RO_WATCH']
+            if os.environ.get('A4_RO_WATCH_FROM'):
+                e['MASHED_REPLAY_TRACE_WATCH_FROM'] = os.environ['A4_RO_WATCH_FROM']
         td = e['MASHED_REPLAY_TRACE']
         knobs(e, STACK[tag])   # a stack may remove the trace ('-MASHED_REPLAY_TRACE', stacks/ROOFF.txt)
         if not os.environ.get('A4_PLAN') and os.path.isdir(td):
