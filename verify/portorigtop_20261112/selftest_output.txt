@@ -1,0 +1,18 @@
+[1] 0x00496490 returns 1 PASS  1
+[2] 0x00772fbc set PASS
+[3] 0x00496470 clears 0x00772fbc PASS
+[4] header = 19-char ctime + 2 text-mode newlines (CRLF), day zero-padded PASS  Thu Nov 12 22:46:57
+[5] body = error line then debug line PASS  err line
+dbg 42 xy 1.50
+
+[6] original/mashed.log not created PASS
+[7] writers after close leave the file unchanged PASS
+[8] second close is a no-op PASS
+[9] mirror holds the error and debug lines PASS
+[10] mirror holds nothing after close PASS
+[11] reopen returns 1 PASS
+[12] reopen truncates to the header PASS
+[13] off: 0x00496490 returns 0 PASS
+[14] off: 0x00772fbc stays 0 PASS
+[15] off: nothing written PASS
+15/15 PASS

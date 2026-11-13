@@ -90,21 +90,9 @@ static void PortTop_NoFocusPause(void) {
     if (!s_focusPause) *reinterpret_cast<volatile int*>(0x0077391cu) = 1;
 }
 
-// Config log 0x004963e0 / 0x00496400: the exe's bodies (ConfigLogErrorCore / ConfigLogDebugCore) sit in an anonymous
-// namespace in Save/SettingsConfig.cpp (a PORT-SAVE-01 file), so they cannot be bound by name yet. In the reference both
-// are no-ops (the disable_log patch: 0x004963e7 JMP, 0x00496400 RET). The stand-ins write nothing the game reads; they
-// mirror the text into mashed_re.log so the boot steps the matched WinMain logs are visible.
-void PortTop_CfgLogError(const char* msg) {
-    if (msg) PortTop_Log("cfglog: %.*s", static_cast<int>(std::strcspn(msg, "\n")), msg);
-}
-void PortTop_CfgLogDebug(const char* fmt, ...) {
-    char buf[0x200];
-    va_list ap;
-    va_start(ap, fmt);
-    std::vsnprintf(buf, sizeof(buf), fmt ? fmt : "", ap);
-    va_end(ap);
-    PortTop_Log("cfglog: %.*s", static_cast<int>(std::strcspn(buf, "\n")), buf);
-}
+// Config log 0x004963e0 / 0x00496400 (and log open / close 0x00496490 / 0x00496470): the matched bodies since
+// BIND-CRT-STDIO-CALLERS (Match/PortTop_004963e0.cpp, PortTop_00496400.cpp, PortTop_00496490.cpp, PortTop_00496470.cpp),
+// writing mashed.log in the origtop_rw overlay. Their fputs adapter mirrors each line into mashed_re.log ("cfglog:").
 
 // ---- WinMain 0x00492370 callees ----
 // rva 0x00493540 -> 0x00495150: the matched exe bodies since PORT-TOP-04A (Match/MatchS15_00493540.cpp ->
@@ -431,7 +419,7 @@ static void PortTop_TimerSummary(void) {
 #define FUN_00492270 PortTop_Bound_00492270       // matched, Match/MatchS15_00492270.cpp (PORT-TOP-03)
 #define FUN_005c9d00 GetRaceEndTrigger              // port, Util/GameStateGetters.cpp
 #define FUN_004996f0 WindowShow                     // matched, Match/MatchS16_004996f0.cpp
-#define FUN_004963e0 PortTop_CfgLogError           // stand-in (exe body not exe-visible, see above)
+#define FUN_004963e0 Orig_004963e0                // matched, Match/PortTop_004963e0.cpp (BIND-CRT-STDIO-CALLERS)
 #define FUN_00402750 PortTop_Bound_00402750       // matched, Match/PortTop_00402750.cpp (PORT-TOP-04E)
 #define FUN_00402a40 PortTop_Bound_00402a40       // matched, Match/PortTop_00402a40.cpp (PORT-TOP-04C)
 #define FUN_004c5930 MashedRw_TexDictionaryDestroy_004c5930  // RW: RwTexDictionaryDestroy -> librw (PORT-TOP-03)
