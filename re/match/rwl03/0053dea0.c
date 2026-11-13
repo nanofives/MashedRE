@@ -1,5 +1,15 @@
 // TOOLCHAIN rw9044
 // FLAGS: /O2 /Ob1 /G5
+/* MATCH-RWC-NEAR-D (2026-11-12): 71.9% -> 76.6% rw9044 (regs 82.9, 473/474 ins). Not 100%, not promoted.
+   Kept edits: the second FUN_0053e690 argument is GETCOORD(size, maxAxis) with no maxSize pointer variable (the
+   original loads it with fld/fstp at 0x0053dfec, a pointer variable gave mov/push; 71.9 -> 74.7); both leaf-count
+   tests spelled n <= 0xef (the original compares with 0xef and branches ja; 75.1); the triangle loop advances tri in the
+   for header (the counter inc then sits before add edx,8 as in the original; 75.3); match_permute.py (2102 compiles) found two semantics-preserving
+   edits: the final compare written DAT_005ceac0 > bestScore and bestAxis = 0 moved above the numLeft store (76.6).
+   Tried without gain: hoisting block-locals to function scope (all-but-Err neutral, all 70.3), merging split and
+   split2 (72.2), int i, pointer forms for the verts / idx indexing, six spellings of the median block (lo/hi/mid order and the lo = hi = mid branch).
+   Residual: stack-slot order (bestAxis at frame +0x28 in the original against +0x00 here, value/tries/scale/q
+   shifted), register choice in the median block (between the first qsort call and jp 0x0053e08a), and the BuildParam child copy. */
 /* RWC-MATCH run 40: compiles (was C2115/C2069). FUN_0053e430, FUN_0053e730, FUN_0053e760 prototypes copied from their own
    sources in re/match/rwl03. 28.1% rw9044, 24.1% ddk, not worked further. */
 /* MATCH-RWC-NEAR-B (2026-11-12): rewritten from the raw g2s body as typed C. Build-param struct (0x3c bytes) with the
@@ -77,7 +87,6 @@ void *FUN_0053dea0(BuildParam *p)
   float bestValue;
   float size[3];
   int maxAxis;
-  float *maxSize;
   float minExtent;
   Split split2;
   Node *node;
@@ -102,12 +111,11 @@ void *FUN_0053dea0(BuildParam *p)
   for (i = 0; i < p->numVerts; i++) {
     p->verts[i].flags = 0;
   }
-  for (i = 0; i < p->numTris; i++) {
+  for (i = 0; i < p->numTris; i++, tri++) {
     int j;
     for (j = 0; j < 3; j++) {
       p->verts[tri->idx[j]].flags++;
     }
-    tri++;
   }
   numSorted = 0;
   for (i = 0; i < p->numVerts; i++) {
@@ -129,7 +137,6 @@ void *FUN_0053dea0(BuildParam *p)
     }
   }
   minExtent = GETCOORD(size[0], maxAxis) * DAT_005cd03c;
-  maxSize = &GETCOORD(size[0], maxAxis);
   for (axis = 0; axis < 12; axis += 4) {
     float weight;
     float scale;
@@ -140,7 +147,7 @@ void *FUN_0053dea0(BuildParam *p)
     unsigned int j;
     int last;
     int tries;
-    weight = FUN_0053e690(GETCOORD(size[0], axis), *maxSize);
+    weight = FUN_0053e690(GETCOORD(size[0], axis), GETCOORD(size[0], maxAxis));
     for (i = 0; i < p->numSorted; i++) {
       p->sorted[i]->key = GETCOORD(*p->sorted[i]->pos, axis);
     }
@@ -204,7 +211,7 @@ void *FUN_0053dea0(BuildParam *p)
       }
     }
   }
-  if (bestScore < DAT_005ceac0) {
+  if (DAT_005ceac0 > bestScore) {
     unsigned int k;
     for (k = 0; k < p->numSorted; k++) {
       float d;
@@ -221,14 +228,14 @@ void *FUN_0053dea0(BuildParam *p)
     FUN_0053e6f0(p);
   } else {
     n = p->numTris;
-    if (n < 0xf0) {
+    if (n <= 0xef) {
       return FUN_0053e730(n, p->firstTri);
     }
     split2.leftValue = p->sup.x;
     split2.rightValue = p->inf.x;
+    bestAxis = 0;
     split2.numLeft = n >> 1;
     split2.numRight = n - split2.numLeft;
-    bestAxis = 0;
   }
   p->depth++;
   node = FUN_0053e760(bestAxis, split2.leftValue, split2.rightValue);
@@ -254,7 +261,7 @@ void *FUN_0053dea0(BuildParam *p)
   }
   return node;
   }
-  if (n < 0xf0) {
+  if (n <= 0xef) {
     return FUN_0053e730(n, p->firstTri);
   }
   {
