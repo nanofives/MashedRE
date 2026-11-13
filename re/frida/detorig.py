@@ -85,7 +85,110 @@ def phase_runs(ph):
     return out
 
 
+def run_asi(args):
+    """RO-ORIG-ASI: the boot-mode replay without Frida. mashed_re_dev.asi (Core/ReplayAsi.cpp, knob MASHED_REPLAY_ASI) does
+    in-process what detorig.js does in boot mode and writes asi_events.jsonl, ticks.bin, tick_phases.bin and
+    ckptNN.data.bin; this builds meta.json in the Frida run's shape. The asi must sit at <root>/original/mashed_re_dev.asi
+    (dinput8_shim.cpp loads it only when MASHED_RE_NO_AUTO_HOOK is unset). Kills only the pid it launched."""
+    if not (args.boot and args.clock == "tick"):
+        raise SystemExit("--asi needs --boot --clock tick (the RO-MENU-REPLAY configuration)")
+    out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
+    for f in ("asi_done", "asi_events.jsonl", "ticks.bin", "tick_phases.bin"):
+        (out / f).unlink(missing_ok=True)
+    raw = [[int(x, 16), int(y, 16)] for x, y in (r.split("-") for r in args.tick_raw.split(",") if r)]
+    norm = load_norm(args.normalize)["pin"] if args.normalize else []
+    cfg = {"main": 0, "t0": 0x01000000, "step": 0, "q0": int(args.q0, 16), "qstep": 0, "warpAt": args.warp_at, "scen": SCENARIO,
+           "input": INPUT, "ckpts": CKPTS, "holdrand": 0x12345678, "witness": [0x00468980, 0x00470670],
+           "negctl": int(args.negctl, 16) if args.negctl else 0, "rebase": False, "loadSleepMs": args.load_sleep_ms,
+           "callLog": False, "watch": [], "callLogRace": False,
+           "tick": {"va": int(args.tick_va, 16), "qtick": args.qtick, "ttick": args.ttick, "cap": args.tick_cap,
+                    "block": args.tick_block, "pin": True, "raw": raw},
+           "boot": True, "warpTick": args.warp_tick, "menuCkpt": False, "bootStep": args.boot_step, "bootQstep": args.boot_qstep}
+    if norm:
+        cfg["norm"] = norm; cfg["normAt"] = args.normalize_at
+    if args.neg_tick:
+        cfg["negTick"] = args.neg_tick
+    if int(args.tick_va, 16) != 0x00493390:
+        raise SystemExit("--asi: the tick listener is fixed at 0x00493390")
+    S = SCENARIO
+    lines = [f"out {out.as_posix()}", f"t0 {cfg['t0']}", f"q0 {cfg['q0']}", f"qtick {args.qtick}", f"ttick {args.ttick}",
+             f"bootstep {args.boot_step}", f"bootqstep {args.boot_qstep}", f"cap {args.tick_cap}", f"block {args.tick_block}",
+             f"warptick {args.warp_tick}", f"holdrand {cfg['holdrand']}", f"negctl {cfg['negctl']}", f"negtick {args.neg_tick}",
+             f"loadsleep {args.load_sleep_ms}", f"normat {args.normalize_at}",
+             f"scen {S['track']} {S['mode']} {S['rule']} {S['car']} {S['team']} {S['cars']}"]
+    lines += [f"raw {lo} {hi}" for lo, hi in raw]
+    lines += [f"input {dn} {c} {v}" for dn, c, v in INPUT]
+    lines += [f"ckpt {dn}" for dn in CKPTS]
+    lines += [f"norm {va} {w} {v}" for va, w, v in norm]
+    lines += [f"witness {va}" for va in cfg["witness"]]
+    cfgp = out / "asi_cfg.txt"
+    cfgp.write_text("\n".join(lines) + "\n")
+    env = dict(os.environ)
+    env["MASHED_FPS_CAP"] = str(args.fps)
+    env.setdefault("MASHED_MUTE", "1")
+    env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+    for k in ("MASHED_PHYS_C4_SELFTEST", "MASHED_SHADOW_AB", "MASHED_HOOK_ONLY", "MASHED_RE_DEV"):
+        env.pop(k, None)
+    env["MASHED_REPLAY_ASI"] = str(cfgp)
+    asi = EXE.parent / "mashed_re_dev.asi"
+    meta = {"label": args.label, "mode": "asi", "hooks": "", "exe": str(EXE), "fps": args.fps, "scenario": SCENARIO, "input": INPUT,
+            "ckpts": CKPTS, "ckpt": [], "cfg": cfg, "asi": {"file": str(asi), "sha256": hashlib.sha256(asi.read_bytes()).hexdigest() if asi.exists() else None}}
+    proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
+    meta["pid"] = proc.pid
+    print(f"=== detorig --asi {args.label} pid={proc.pid} exe={EXE} asi={meta['asi']['sha256']}", flush=True)
+    rc = 1
+    try:
+        t_end = time.time() + args.timeout
+        while time.time() < t_end and not (out / "asi_done").exists():
+            if proc.poll() is not None:
+                print(f"  game exited rc={proc.returncode}"); meta["exit"] = proc.returncode; break
+            time.sleep(0.5)
+        rc = 0 if (out / "asi_done").exists() else 6
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+        try:
+            proc.wait(timeout=30)   # the asi holds asi_events.jsonl open until the process is gone
+        except subprocess.TimeoutExpired:
+            print("  pid did not exit within 30 s of the kill", flush=True)
+        evp = out / "asi_events.jsonl"
+        for ln in (evp.read_text().splitlines() if evp.exists() else []):
+            try:
+                p = json.loads(ln)
+            except ValueError:
+                print("  bad event line", ln[:200]); continue
+            k = p.get("kind")
+            if k == "ckpt":
+                f = out / p["file"]
+                p["sha256"] = hashlib.sha256(f.read_bytes()).hexdigest() if f.exists() else None
+                meta["ckpt"].append(p)
+            elif k in ("boot",):
+                meta["boot"] = p["boot"]
+            elif k in ("warp", "race"):
+                meta[k] = p
+            elif k == "ticks":
+                ph = (out / "tick_phases.bin").read_bytes() if (out / "tick_phases.bin").exists() else b""
+                meta["tick_phases"] = phase_runs(list(ph))
+                meta["ticks"] = {"total": p["total"], "nblk": p["nblk"], "recw": p["recw"], "block": p["block"], "raw": raw,
+                                 "file": "ticks.bin", "phases": meta["tick_phases"]}
+            elif k == "err":
+                meta.setdefault("errors", []).append(p["msg"]); rc = rc or 8
+            else:
+                meta.setdefault("events", []).append(p)
+        for k in ("warp", "race"):
+            if k in meta:
+                print(f"  {k} {json.dumps(meta[k])}", flush=True)
+        if "ticks" in meta:
+            print(f"  ticks {meta['ticks']['total']} x {meta['ticks']['nblk']} blocks", flush=True)
+        meta["rc"] = rc
+        (out / "meta.json").write_text(json.dumps(meta, indent=1))
+    print(f"=== rc={rc} ckpts={len(meta['ckpt'])}", flush=True)
+    return rc
+
+
 def run(args):
+    if getattr(args, "asi", False):
+        return run_asi(args)
     import frida
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ)
@@ -422,6 +525,7 @@ if __name__ == "__main__":
     ap.add_argument("--where", action="store_true", help="boot mode: print the main thread's backtrace with every stats line")
     ap.add_argument("--neg-tick", type=int, default=0, help="boot mode: apply --negctl at this tick instead of the race anchor")
     ap.add_argument("--menu-ckpt", action="store_true", help="boot mode: full-image checkpoint k=100 at the warp, before its writes")
+    ap.add_argument("--asi", action="store_true", help="RO-ORIG-ASI: run the boot-mode replay in mashed_re_dev.asi (MASHED_REPLAY_ASI), no Frida; needs --boot --clock tick")
     ap.add_argument("--menu-wait", type=float, default=2.0)
     ap.add_argument("--timeout", type=float, default=600)
     ap.add_argument("--compare", nargs=2, metavar=("DIR_A", "DIR_B"))
