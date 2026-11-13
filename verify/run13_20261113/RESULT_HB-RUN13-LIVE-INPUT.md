@@ -7,7 +7,7 @@ gates (G-CTRL, B) are not run: the exe bytes cannot move. `merge_train.ps1` need
 
 ## Mechanism (source, branch tree)
 - `CookCtrlByteAFromKeyboard` (`mashedmod/src/mashed_re/exe_main.cpp:3086`) is the per-frame writer of ctrl byte
-  `0x007f1042 + i*0x4c`: 0xff while DIK 0x1c is down on a keyboard slot (`exe_main.cpp:3096`, `g_keys` filled by a
+  `0x007f1042 + i*0x4c`: 0xff while DIK 0x1c is down on a keyboard slot (`exe_main.cpp:3103`, `g_keys` filled by a
   keyboard opened `DISCL_BACKGROUND | DISCL_NONEXCLUSIVE`, `exe_main.cpp:1207`), or joypad button 0 on a pad slot.
 - Its first line is `if (!R7InputOn()) return;` (`exe_main.cpp:3087`). `R7InputOn()` (`exe_main.cpp:1114-1117`) is false when
   env `MASHED_NO_R7_INPUT` is set and its first char is not `0`. The same switch stops `CountGameCtrlCb` from keeping
