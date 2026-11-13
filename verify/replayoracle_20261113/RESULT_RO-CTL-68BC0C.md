@@ -89,11 +89,55 @@ ctl and today's fresh warp-at-menu run (w1, private root, current harness) both 
 so r1/r2 stay usable as the reference pair and new `c4=frida-replay` runs can be scored against them again. Re-recording is not needed
 for this word.
 
+## 6. Follow-up: read watch from boot to race end (run 42, the 0 case)
+
+The lead dequeued the mask because §3's reader evidence was static only (`sweep68.py` over the five `imul ..., 0x68` sites), and a
+pointer-based reader would not show there. This section records a live read-or-write watch.
+
+Harness change (default-off): `detorig.py --watch-mode {w,rw}`, default `w` (old behaviour unchanged). With `rw` the two debug
+registers are armed for read or write (x86 has no read-only data breakpoint). Hits are de-duplicated per pc: the first 4 per pc
+are sent, then one line at each power-of-two count (`cnt`). The agent's own reads would trap inside Frida's guarded read, so the
+`.data` checkpoint dump runs with this thread's two slots cleared and then re-armed (`watchQuiet` in `re/frida/js/detorig.js`).
+Re-arming clears the slots before it reads the current values. The first attempt `brw1` stopped at the install for this reason
+(`single-step triggered` from the arm message's own read, rc 6, no race).
+
+Run `brw2`: the boot configuration of `b1` (`run_watch_boot.sh brw2 --watch-mode rw`, private root, under test-slot and
+`mashed_lock.py run`). Armed at the PE entry 0x004a4bb7 on 6 threads (`meta.json` boot.install), re-armed at the warp (N = 10127)
+and at the race anchor (N = 10238) on 34 threads. rc 0, 15 checkpoints, 3624 ticks (menu 0..899, race 900..3623).
+
+**Value case: 0.** 0x0068bc0c = 0x0 and 0x0068bc1c = 0x0 at every arm message and in ckpt00 and ckpt14. The 4 / pointer case was not
+produced (§3: no run since 2026-11-11 22:51 holds it).
+
+Every hit (`brw2_watch.jsonl`, 16 lines):
+
+| pc | hits | thread | what it is |
+|---|---|---|---|
+| 0x0045a736 | 2 (N = 164) | main 6772 | the `rep movsd` in FUN_0045a6b0 that writes `mat` (§1, §2). Backtrace `0x5f9aac\|0x45a736`, as in `b1`. A write, not a read |
+| 0x04180259 | at least 4096 (count line 4096 at N = 22891) | main 6772 | outside MASHED.exe (image 0x00400000..0x00995000, SizeOfImage 0x595000). Every backtrace passes 0x00493485, the return address of `call 0x493390` at 0x00493480. 0x00493390 is the `--tick-va` the harness hooks (`detorig.py` default, `install` entry `['tick', '493390']`). So this pc is the harness's own per-tick block-hash CModule (`detorig.js` cfg.tick), which hashes block 0x0068bc00 once per tick. The count grows at 2 per tick (2048 crossed at N = 11617 ≈ tick 1090, 4096 at N = 22891) |
+
+**No pc inside MASHED.exe read 0x0068bc0c or 0x0068bc1c from the PE entry to the race end.** There is no reader, so there is no
+behaviour-changing reader. That includes a whole-matrix copy out of record +0x28: none was observed either. An x86 data breakpoint
+fires on any access that overlaps the watched dword, so wider reads (x87, `rep movs`, 16-byte moves) over the matrix are covered.
+
+Limits, stated as missing evidence:
+- **[UNCERTAIN] the 4 / pointer case.** Read sites are code, and no reader executed with value 0. A reader behind a branch that tests
+  one of these words or a neighbour would not run here. No run produced the nonzero value, so that case is not observed.
+- Threads created after the install arm and before the warp (6 threads at the install, 34 at the warp) carried no watch from the
+  install until the warp. The main thread was armed for the whole run. From the warp on, all 34 threads were armed.
+- The process itself: `brw2` against `b1` (same boot configuration, write-only watch) is DIVERGED at tick 0 on 0x0067d800 and the timer
+  block, with a BOOT-CLASS mismatch at 0x007f1030 (`prov_compare.py`: "verdict not body evidence"). Block 0x0068bc00 is not among the
+  differing blocks at any tick. Boot-mode runs are not scored against r1/r2 (warp-at-menu configuration); `b1` and `brw2` are both
+  DIVERGED at tick 0 there, on the same 559-block set.
+
+Verdict for the mask: **no behaviour-changing reader in the 0 case.** The mask in §4 stands. r1/r2 are not re-recorded.
+
 ## Files
 
 Committed (`verify/replayoracle_20261113/`): this RESULT, `run_watch.sh`, `run_watch_boot.sh`, `plant_test.py` / `.out`, `regress.py` /
 `.out`, `survey.py` / `survey.txt`, `separ.py` / `separ.out`, `warpclk.py` / `warpclk.out`, `sweep68.py`, `raw_sha256_RO-CTL-68BC0C.txt`.
-Code: `re/frida/prov_compare.py` (mask), `re/frida/detorig.py` + `re/frida/js/detorig.js` (`--watch-from`).
+Code: `re/frida/prov_compare.py` (mask), `re/frida/detorig.py` + `re/frida/js/detorig.js` (`--watch-from`, and `--watch-mode rw`
+from §6). §6 adds `brw2_watch.jsonl`. Raw: `D:/MashedWT/RO-CTL-68BC0C_data/brw2/` (watch.jsonl 1ef8da5a..., meta.json 6b845f03...,
+ticks.bin d79df8c0..., ckpt00 366fe1ce..., ckpt14 093937ae...), `brw2.log` 331a6a73..., the failed attempt `brw1.log` 2ca0afc0....
 
 Raw (not committed, SHA-256 in `raw_sha256_RO-CTL-68BC0C.txt`): `D:/MashedWT/RO-CTL-68BC0C_data/b1/watch.jsonl` 5c814135...,
 `b1/meta.json` b1c449c6..., `b1.log` 5f4f27fd..., `w1/meta.json` fe410d8c..., `w1/ticks.bin` 0dd2d731..., `w1/ckpt00.data.bin`
