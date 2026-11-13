@@ -1,0 +1,89 @@
+[test-slot] waiting for memory (0s so far): memory: 25.0 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (30s so far): memory: 24.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (60s so far): memory: 24.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (90s so far): memory: 24.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (120s so far): memory: 24.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (150s so far): memory: 23.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (180s so far): memory: 24.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (210s so far): memory: 24.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (240s so far): memory: 24.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (270s so far): memory: 24.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (300s so far): memory: 24.2 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (330s so far): memory: 24.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (360s so far): memory: 25.9 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (390s so far): memory: 25.5 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (420s so far): memory: 25.6 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (450s so far): memory: 25.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (480s so far): memory: 25.7 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (510s so far): memory: 25.8 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (540s so far): memory: 26.0 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] waiting for memory (570s so far): memory: 25.3 GB committed + 8 GB for this run > 24.0 GB budget
+[test-slot] memory still short after 10 min, starting anyway under the cap
+[test-slot] acquired slot 2/8 after 600s
+[1/66] enc_movrr PASS  got EQUIV [ENC]
+[2/66] enc_imm PASS  got EQUIV [ENC]
+[3/66] enc_jmp PASS  got EQUIV [ENC]
+[4/66] enc_nop PASS  got EQUIV [ENC]
+[5/66] neg_enc_imm PASS  got NOT-PROVEN ret-memory
+[6/66] sib PASS  got EQUIV [SIB]
+[7/66] neg_sib_scale PASS  got NOT-PROVEN ret-memory
+[8/66] reg_swap PASS  got EQUIV [REG,FRAME]
+[9/66] reg_call PASS  got EQUIV [REG,FRAME]
+[10/66] neg_reg_ret PASS  got EQUIV-IF-CALLERS-IGNORE [REG]
+[11/66] neg_reg_regarg PASS  got NOT-PROVEN call-regargs
+[12/66] neg_reg_nosave PASS  got NOT-PROVEN ret-callee-saved
+[13/66] neg_reg_one PASS  got NOT-PROVEN ret-memory
+[14/66] order_st PASS  got EQUIV [ORDER]
+[15/66] order_alu PASS  got EQUIV [ORDER]
+[16/66] order_ldst PASS  got EQUIV [ORDER]
+[17/66] neg_order_alias PASS  got NOT-PROVEN ret-memory
+[18/66] neg_order_overlap PASS  got NOT-PROVEN ret-memory
+[19/66] neg_order_ldst PASS  got NOT-PROVEN ret-memory
+[20/66] neg_order_flags PASS  got NOT-PROVEN branch-condition
+[21/66] layout_pol PASS  got EQUIV [LAYOUT]
+[22/66] layout_dup PASS  got EQUIV [LAYOUT]
+[23/66] neg_layout PASS  got NOT-PROVEN ret-memory
+[24/66] comm_add PASS  got EQUIV [COMM]
+[25/66] comm_imul PASS  got EQUIV [COMM]
+[26/66] neg_comm_sub PASS  got NOT-PROVEN ret-memory
+[27/66] frame_reload PASS  got EQUIV [FRAME,VALUE-FLOW]
+[28/66] neg_frame_escape PASS  got NOT-PROVEN call-args
+[29/66] x87_same PASS  got EQUIV []
+[30/66] neg_x87_comm PASS  got NOT-PROVEN x87-region
+[31/66] x87_move_indep PASS  got EQUIV [ORDER]
+[32/66] x87_move_rr PASS  got EQUIV [ORDER]
+[33/66] neg_x87_fnstsw PASS  got NOT-PROVEN x87-motion
+[34/66] neg_x87_sahf PASS  got NOT-PROVEN x87-motion
+[35/66] neg_x87_alias PASS  got NOT-PROVEN x87-motion
+[36/66] neg_x87_eflags PASS  got NOT-PROVEN x87-motion
+[37/66] neg_x87_call PASS  got NOT-PROVEN x87-region
+[38/66] x87_move_frame PASS  got EQUIV [ORDER,FRAME]
+[39/66] neg_x87_slot PASS  got NOT-PROVEN x87-motion
+[40/66] neg_call_arg PASS  got NOT-PROVEN call-args
+[41/66] neg_call_order PASS  got NOT-PROVEN call-args
+[42/66] neg_call_storeorder PASS  got NOT-PROVEN call-memory
+[43/66] loop_reg PASS  got EQUIV [REG]
+[44/66] neg_loop_bound PASS  got NOT-PROVEN branch-condition
+[45/66] loop_ptr PASS  got EQUIV [REG]
+[46/66] neg_loop_stride PASS  got NOT-PROVEN ret-memory
+[47/66] com_ident PASS  got EQUIV []
+[48/66] com_stdcall PASS  got EQUIV [ENC]
+[49/66] com_cdecl PASS  got EQUIV []
+[50/66] com_loop PASS  got EQUIV [ENC]
+[51/66] mxcsr PASS  got EQUIV-IF-CALLERS-IGNORE [REG,VALUE-FLOW]
+[52/66] neg_com_argcount PASS  got NOT-PROVEN call-args
+[53/66] neg_com_order PASS  got NOT-PROVEN call-target
+[54/66] neg_com_conv PASS  got NOT-PROVEN ret-esp
+[55/66] com_ambiguous PASS  got EQUIV [ENC]
+[56/66] neg_com_solution PASS  got NOT-PROVEN call-target
+[57/66] neg_mxcsr PASS  got NOT-PROVEN ret-x87
+[58/66] 0x00475a00 PASS  got EQUIV [SIB]
+[59/66] 0x0045a3a0 PASS  got EQUIV-IF-CALLERS-IGNORE [ENC,FRAME,VALUE-FLOW]
+[60/66] 0x00555360 PASS  got EQUIV-IF-CALLERS-IGNORE [ORDER,LAYOUT,VALUE-FLOW]
+[61/66] 0x0048e820 PASS  got NOT-PROVEN call-regargs
+[62/66] 0x005c4ad0 PASS  got EQUIV [FRAME,VALUE-FLOW]
+[63/66] 0x00556e90 PASS  got NOT-PROVEN x87-motion
+[64/66] 0x005441f0 PASS  got NOT-PROVEN unsupported
+[65/66] show_budget PASS  got EQUIV []
+[66/66] step_budget PASS  got NOT-PROVEN budget
+66/66 passed

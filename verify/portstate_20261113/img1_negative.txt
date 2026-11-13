@@ -1,0 +1,20 @@
+== T1 existing output, no --replace
+REFUSED: D:\MashedWT\IMG-1-EXTRACT_root\original\mashed_image.bin exists (never overwritten without --replace)
+exit 2
+== T2 --replace inside an original folder
+REFUSED: --replace of an existing file inside an "original" folder
+exit 2
+== T3 non-anchor exe (patched MASHED.exe)
+REFUSED: exe is not the anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E size 2846720
+exit 2
+ls: cannot access 'C:/Users/maria/AppData/Local/Temp/claude/2279e0b7f1f09563/e5a1eea2-ae89-4444-81ab-8bd35fa68cdf/scratchpad/t3': No such file or directory
+== T4 corrupted image (one payload byte flipped)
+FORMAT FAIL: trailer sha256 mismatch
+exit 1
+== T5 output is the input
+REFUSED: output is the input file
+exit 1
+== original/ untouched
+ls: cannot access '../../original/mashed_image.bin': No such file or directory
+bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e *../../original/MASHED.exe.unpatched
+81cc77758ffe93ac0b681eb1fed3d63912d25e7d059503af6d4f871dea9afcd8 *D:/MashedWT/IMG-1-EXTRACT_root/original/mashed_image.bin

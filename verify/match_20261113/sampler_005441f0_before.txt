@@ -1,0 +1,270 @@
+--- sample 1 t=20s depth=63 show_frames=51
+  <module> line 3370: sys.exit(main())
+  main line 3356: rs = check_source(s, only, a.trace)
+  check_source line 3315: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_function line 3178: return check_sides(A, B, res, addr, out, trace)
+  check_sides line 3217: o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+  _check_once line 3241: Explorer(ctx).run()
+  run line 2628: rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+  run_region line 1995: reg.texts.append("call " + show(tgt))
+--- sample 2 t=40s depth=66 show_frames=54
+  <module> line 3370: sys.exit(main())
+  main line 3356: rs = check_source(s, only, a.trace)
+  check_source line 3315: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_function line 3178: return check_sides(A, B, res, addr, out, trace)
+  check_sides line 3217: o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+  _check_once line 3241: Explorer(ctx).run()
+  run line 2628: rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+  run_region line 1995: reg.texts.append("call " + show(tgt))
+--- sample 3 t=60s depth=73 show_frames=61
+  <module> line 3370: sys.exit(main())
+  main line 3356: rs = check_source(s, only, a.trace)
+  check_source line 3315: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_function line 3178: return check_sides(A, B, res, addr, out, trace)
+  check_sides line 3217: o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+  _check_once line 3241: Explorer(ctx).run()
+  run line 2628: rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+  run_region line 1995: reg.texts.append("call " + show(tgt))
+--- sample 4 t=80s depth=76 show_frames=64
+  <module> line 3370: sys.exit(main())
+  main line 3356: rs = check_source(s, only, a.trace)
+  check_source line 3315: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_function line 3178: return check_sides(A, B, res, addr, out, trace)
+  check_sides line 3217: o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+  _check_once line 3241: Explorer(ctx).run()
+  run line 2628: rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+  run_region line 1995: reg.texts.append("call " + show(tgt))
+--- sample 5 t=100s depth=90 show_frames=78
+  <module> line 3370: sys.exit(main())
+  main line 3356: rs = check_source(s, only, a.trace)
+  check_source line 3315: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_function line 3178: return check_sides(A, B, res, addr, out, trace)
+  check_sides line 3217: o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+  _check_once line 3241: Explorer(ctx).run()
+  run line 2628: rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+  run_region line 1995: reg.texts.append("call " + show(tgt))
+--- sample 6 t=120s depth=81 show_frames=69
+  <module> line 3370: sys.exit(main())
+  main line 3356: rs = check_source(s, only, a.trace)
+  check_source line 3315: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_function line 3178: return check_sides(A, B, res, addr, out, trace)
+  check_sides line 3217: o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+  _check_once line 3241: Explorer(ctx).run()
+  run line 2628: rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+  run_region line 1995: reg.texts.append("call " + show(tgt))
+--- sample 7 t=140s depth=94 show_frames=82
+  <module> line 3370: sys.exit(main())
+  main line 3356: rs = check_source(s, only, a.trace)
+  check_source line 3315: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_function line 3178: return check_sides(A, B, res, addr, out, trace)
+  check_sides line 3217: o = _check_once(A, B, res, addr, dict(out), trace, sol, len(sols) == 1)
+  _check_once line 3241: Explorer(ctx).run()
+  run line 2628: rb = ctx.run_region(B, sb, pair[1])           # the original first: ours copies its pop counts
+  run_region line 1995: reg.texts.append("call " + show(tgt))
+--- sample 8 t=160s depth=83 show_frames=71
+  <module> line 3370: ap.add_argument("--x87-strict", action="store_true")
+  main line 3356: cl = r["callers"]
+  check_source line 3315: out["retdiff"] = ctx.retdiff_detail
+  check_function line 3178: 
+  check_sides line 3217: try:
+  _check_once line 3241: if o["verdict"] == "NOT-PROVEN":
+  run line 2628: sig = tuple(sorted(((l, val[part[l]].id) for l in locs), key=repr)) + (("cl", sa.cl, sb.cl),)
+  run_region line 1995: seen.add(pc)
+--- sample 9 t=180s depth=69 show_frames=57
+  <module> line 3370: ign = sum(1 for c in cl if all(v == "ignores" for k, v in c.items() if k != "site"))
+  main line 3356: 
+  check_source line 3315: if A7_HITS[0]:
+  check_function line 3178: pc = op.imm
+  check_sides line 3217: def check_sides(A, B, res, addr, out=None, trace=False):
+  _check_once line 3241: sols = pp.get("solutions")
+  run line 2628: st.r[k[1]] = v
+  run_region line 1995: seen = set()
+--- sample 10 t=200s depth=88 show_frames=76
+  <module> line 3370: if r["verdict"] == "EQUIV":
+  main line 3356: outs.append({"addr": addr, "sym": sym, "verdict": "NOT-PROVEN", "kind": e.kind, "detail": e.detail})
+  check_source line 3315: out["local_callees"] = loc     # bodies this source defines and calls: an admission must cover them too
+  check_function line 3178: if mn == "jmp":
+  check_sides line 3217: return r
+  _check_once line 3241: except NeedPops:
+  run line 2628: if k[0] == "r":
+  run_region line 1995: reg.pops, reg.paired, reg.fx = [], paired, []
+--- sample 11 t=220s depth=21 show_frames=9
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2628: v = val[part[(side,) + k]]
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 12 t=240s depth=51 show_frames=39
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2628: v = val[part[(side,) + k]]
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 13 t=260s depth=76 show_frames=64
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2628: v = val[part[(side,) + k]]
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 14 t=280s depth=57 show_frames=45
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2628: v = val[part[(side,) + k]]
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 15 t=300s depth=68 show_frames=56
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2628: v = val[part[(side,) + k]]
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 16 t=320s depth=75 show_frames=63
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 17 t=340s depth=76 show_frames=64
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 18 t=360s depth=68 show_frames=56
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 19 t=380s depth=81 show_frames=69
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 20 t=400s depth=74 show_frames=62
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 21 t=420s depth=82 show_frames=70
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 22 t=440s depth=90 show_frames=78
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 23 t=460s depth=65 show_frames=53
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 24 t=480s depth=76 show_frames=64
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 25 t=500s depth=83 show_frames=71
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 26 t=520s depth=71 show_frames=59
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 27 t=540s depth=77 show_frames=65
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 28 t=560s depth=78 show_frames=66
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2629: if k[0] == "r":
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 29 t=580s depth=58 show_frames=46
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2628: v = val[part[(side,) + k]]
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []
+--- sample 30 t=600s depth=88 show_frames=76
+  <module> line 3370: if r.get("halts"):
+  main line 3356: outs.append(check_function(text, secs, syms, addr, sym, trace))
+  check_source line 3315: and r[0].get("sec") != A.secidx})
+  check_function line 3178: return "unknown"
+  check_sides line 3217: LAST_STATS["terms"] = len(_TAB)
+  _check_once line 3241: try:
+  run line 2628: v = val[part[(side,) + k]]
+  run_region line 1995: reg.events, reg.texts, reg.x87, reg.jmps, reg.end, reg.pcs = [], [], False, 0, None, []

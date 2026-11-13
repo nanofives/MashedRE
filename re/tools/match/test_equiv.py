@@ -54,7 +54,16 @@ CASES = {
     "neg_frame_escape": ("NOT-PROVEN", None),
     "x87_same": ("EQUIV", None),
     "neg_x87_comm": ("NOT-PROVEN", "x87-region"),
-    "neg_x87_sched": ("NOT-PROVEN", "x87-region"),
+    # EQUIV-X87-INTEGER-MOTION (L-147 (a)): integer motion across x87, admitted only when independent
+    "x87_move_indep": ("EQUIV", None),
+    "x87_move_rr": ("EQUIV", None),
+    "neg_x87_fnstsw": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_sahf": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_alias": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_eflags": ("NOT-PROVEN", "x87-motion"),
+    "neg_x87_call": ("NOT-PROVEN", "x87-region"),
+    "x87_move_frame": ("EQUIV", "FRAME"),
+    "neg_x87_slot": ("NOT-PROVEN", "x87-motion"),
     "neg_call_arg": ("NOT-PROVEN", "call-args"),
     "neg_call_order": ("NOT-PROVEN", "call-args"),
     "neg_call_storeorder": ("NOT-PROVEN", "call-memory"),
@@ -83,6 +92,10 @@ RULES = {
     "com_cdecl": ("A6-pinned-pop", True),
     "com_loop": ("A6-pinned-pop", True),
     "com_ambiguous": ("A6-pop-solution", True),
+    "x87_move_indep": ("x87-motion", True),
+    "x87_move_rr": ("x87-motion", True),
+    "x87_same": ("x87-motion", False),
+    "x87_move_frame": ("x87-motion", True),
 }
 
 # rva -> (source, expected verdict, note)
@@ -90,10 +103,13 @@ REFERENCES = {
     0x00475a00: ("re/match/pilot/a3_00475a00.c", "EQUIV", "L-115 admitted: SIB base/index order"),
     0x0045a3a0: ("re/match/s09/0045a3a0.c", "EQUIV-IF-CALLERS-IGNORE", "L-115 admitted: EAX differs at return"),
     0x00555360: ("re/tools/match/equiv_tests/refs/00555360_held.c", "EQUIV-IF-CALLERS-IGNORE", "L-117 admitted: return blocks + store order; frozen copy of the 94.4% DDK source, the live source is 100% under rw9044 since MATCH-RT2D-RESID run 40"),
-    0x0048e820: ("re/match/s15/0048e820.c", "NOT-PROVEN", "L-118 admitted with the PortTop EDI wrapper; the "
+    0x0048e820: ("re/tools/match/equiv_tests/refs/0048e820_held.c", "NOT-PROVEN", "L-118 admitted with the PortTop EDI wrapper; frozen copy of the pre-EQUIV-FU-48E820 source (the live one is byte-identical since 58cc241be); the "
                  "unedited source passes the wrong EDI to 0x0048cee0"),
     0x005c4ad0: ("re/tools/match/equiv_tests/refs/005c4ad0_held.c", "EQUIV", "held: imul operand order + a local whose address escapes (A1'); frozen copy, the live source is 100% since MATCH-RT2D-FONT"),
     0x00556e90: ("re/tools/match/equiv_tests/refs/00556e90_held.c", "NOT-PROVEN", "held: moves scheduled across x87 (excluded); frozen copy of the 97.5% source"),
+    0x005441f0: ("re/tools/match/equiv_tests/refs/005441f0_held.c", "NOT-PROVEN", "EQUIV-5441F0-TIMEOUT: ran 50 min with no verdict "
+                 "(show() exponential on a call text); now NOT-PROVEN unsupported (rep movsd with a variable count) in seconds; "
+                 "frozen copy of the 99.1% rwtb source"),
 }
 
 _OBJ = None
@@ -178,13 +194,50 @@ def test_summary_precision():
     assert not equiv.disjoint(equiv.S("eax_in"), 4, stk, 4)           # unknown pointer: no claim
 
 
+def check_show_budget():
+    """EQUIV-5441F0-TIMEOUT: a term whose arguments hold terms inside a tuple used to render from depth 0 again at
+    every tuple (repr -> T.__repr__), exponential on a DAG. 64 levels of a doubled tuple must render under the budget."""
+    equiv.reset_terms()
+    t = equiv.S("x")
+    for _ in range(64):
+        t = equiv.mk("phi", 32, (t, t))
+    import time
+    t0 = time.time()
+    txt = equiv.show(t)
+    dt = time.time() - t0
+    small = equiv.show(equiv.add(equiv.S("eax_in"), equiv.C(4)))
+    ok = dt < 30 and "<#" in txt and small == "(eax_in+0x4)"
+    return ok, {"verdict": "EQUIV" if ok else "NOT-PROVEN", "kind": "show-budget",
+                "detail": f"{dt:.2f} s, {len(txt)} chars, small={small}"}
+
+
+def check_step_budget():
+    """EQUIV-5441F0-TIMEOUT: past --max-steps the proof ends NOT-PROVEN budget with the place it stopped."""
+    old = equiv.STEP_BUDGET
+    equiv.STEP_BUDGET = 3
+    try:
+        r = run_pair("reg_call")
+    finally:
+        equiv.STEP_BUDGET = old
+    ok = r["verdict"] == "NOT-PROVEN" and r.get("kind") == "budget" and "reached at" in r.get("detail", "")
+    return ok, r
+
+
+BUDGET_CHECKS = {"show_budget": check_show_budget, "step_budget": check_step_budget}
+
+
+def test_budgets():
+    bad = [n for n, f in BUDGET_CHECKS.items() if not f()[0]]
+    assert not bad, bad
+
+
 def main():
-    items = [("case", n) for n in CASES] + [("ref", a) for a in REFERENCES]
+    items = [("case", n) for n in CASES] + [("ref", a) for a in REFERENCES] + [("budget", n) for n in BUDGET_CHECKS]
     fails = 0
     for i, (kind, x) in enumerate(items, 1):
-        ok, r = check_case(x) if kind == "case" else check_reference(x)
+        ok, r = (check_case(x) if kind == "case" else check_reference(x) if kind == "ref" else BUDGET_CHECKS[x]())
         fails += not ok
-        label = x if kind == "case" else f"0x{x:08x}"
+        label = f"0x{x:08x}" if kind == "ref" else x
         got = r["verdict"] + (f" [{','.join(r.get('classes', []))}]" if r["verdict"] != "NOT-PROVEN" else
                               f" {r.get('kind')}")
         print(f"[{i}/{len(items)}] {label} {'PASS' if ok else 'FAIL'}  got {got}", flush=True)

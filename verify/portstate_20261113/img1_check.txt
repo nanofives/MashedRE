@@ -1,0 +1,12 @@
+image D:/MashedWT/IMG-1-EXTRACT_root/original/mashed_image.bin size 434400 source sha256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E format OK (magic, version, trailer sha256, 3 range fnv)
+  range .rdata   0x005cc000..0x005e9044 len 0x01d044 fnv1a32 0xee647e46
+  range .data    0x005ea000..0x00637000 len 0x04d000 fnv1a32 0x935b1e30
+  range _rwdseg  0x00915000..0x00915008 len 0x000008 fnv1a32 0x9be17165
+PortStateSeed.inc: entries 272 bytes 3231 equal 272 of 272 by range {'.rdata': 147, '.data': 125}
+PortTop_RdataSeed.inc: entries 46 bytes 767 equal 46 of 46 by range {'.rdata': 46}
+PortTop_DInputSeed.inc: entries 2 bytes 32 equal 2 of 2 by range {'.rdata': 2}
+PortTopCodePtr.inc CP_SEED: entries 72 bytes 288 equal 72 of 72 by range {'.data': 52, '.rdata': 20}
+PortTopCodePtr.inc CP_FIX: slots 188, image dword equals the original target 188 of 188
+B16 const 0x005cd5a8 image 0x3acccccd expected 0x3acccccd equal True
+B16 const 0x005cc560 image 0x3b088889 expected 0x3b088889 equal True
+TOTAL seed entries equal 392 of 392, IAT overlaps 0 -> PASS

@@ -1,0 +1,2 @@
+rows A 7 B 7, rows identical: True
+per-tick compare over 321 ticks: 321 identical, 0 differ

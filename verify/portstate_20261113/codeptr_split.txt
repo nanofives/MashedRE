@@ -1,0 +1,11 @@
+hits 2124
+  A entry                                  768
+  B inside a body, not an entry            86
+  B inside a body, not an entry (ascii)    88
+  C ascii, isolated                        330
+  D outside every pc_funcs body            756
+  D outside every pc_funcs body (ascii)    96
+  entry targets that are also table-shaped: 644
+CODEPTR_SLOTS (188) by class: entry 97, body-nonentry 0, ascii 41
+PortStateSeed entries containing a code-range dword: 3 [('0x5cfc2c', 65), ('0x5cfc70', 64), ('0x5f99c4', 4)]
+PortStateSeed entries containing a CODEPTR slot: 1

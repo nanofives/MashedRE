@@ -76,7 +76,12 @@ struct PortTopSeed { unsigned va; unsigned n; const char* bytes; };
 static const PortTopSeed kPortTopSeed[] = {
 #include "PortTop_RdataSeed.inc"
 };
+extern "C" int PortStateImage_AppliedC(void);   // Compat/PortStateImage.cpp (IMG-2-LOADER)
 static void PortTop_SeedRdata(void) {
+    if (PortStateImage_AppliedC()) {   // the whole image holds these bytes; witnessed in PortStateImage.cpp
+        PortTop_Log("rdata seed: skipped, MASHED_PORTSTATE_IMAGE loaded the image");
+        return;
+    }
     unsigned done = 0;
     for (const PortTopSeed& s : kPortTopSeed) {
         __try {

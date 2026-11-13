@@ -1,0 +1,12 @@
+stats 0x00420050 steps=850 terms=1310
+0x00420050	EQUIV	[ORDER]
+  wall 6 s
+stats 0x004d5bc0 steps=2792 terms=8389
+0x004d5bc0	EQUIV	[BYTE-IDENTICAL]
+  wall 3 s
+stats 0x004d6200 steps=3418 terms=12319
+0x004d6200	EQUIV	[BYTE-IDENTICAL]
+  wall 3 s
+stats 0x005441f0 steps=1035 terms=897
+0x005441f0	NOT-PROVEN	unsupported: rep movsd with a variable count
+  wall 3 s

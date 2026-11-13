@@ -180,6 +180,7 @@
 #include "Frontend/PortStateFrontend.h"     // MASHED_PORTSTATE_FRONTEND + the DAT_0067e9fc bridge (PORT-STATE-01)
 #include "Compat/PortStateSeed.h"           // port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out): original file-backed bytes into the pad (PORT-STATE-02, L-99 a)
 #include "Compat/PortTopCodePtr.h"          // PORT-OT-SEED-CODEPTR: code-pointer bindings, MASHED_ORIG_TOP only
+#include "Compat/PortStateImage.h"          // IMG-2-LOADER: whole data image, MASHED_ORIG_TOP + MASHED_PORTSTATE_IMAGE only
 #include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/GameModeState.h"             // [MATCH-PORTSTATE-GAMEFLOW] game-mode machine port-state (knob)
@@ -9632,6 +9633,7 @@ static void HandTop_Prelude() {
         if (clr) std::fclose(clr);
     }
     mashed_re::Compat::PortStateSeed_Log(kLogPath);   // ON only (PORT-STATE-02)
+    mashed_re::Compat::PortStateImage_Log(kLogPath);  // IMG-2-LOADER: the lines held since WinMain (knob path only)
     mashed_re::Compat::PortTopCodePtr_Log(kLogPath);  // PORT-OT-SEED-CODEPTR: the lines held since WinMain
 
     // Scripted nav-demo verification harness (in-process input only). Enabled
@@ -10637,12 +10639,17 @@ int  PortTop_WinMain(HINSTANCE, HINSTANCE, LPSTR, int);   // Match/PortTop_00492
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     // PORT-STATE-02 (L-99 a, L-101 flip): the port-state seed (default ON, MASHED_NO_PORTSTATE_SEED=1 opts out) copies the generated table of the original's
     // file-backed .rdata/.data values into the B17 pad before any game code runs, on both top-level paths. Opt-out = no write, no log.
-    mashed_re::Compat::PortStateSeed_Apply();
+    // [IMG-2-LOADER] L-149 (a): on the MASHED_ORIG_TOP branch only, MASHED_PORTSTATE_IMAGE=1 (default OFF) loads the
+    // whole file-backed .rdata/.data image from mashed_image.bin in place of the per-address seed
+    // (Compat/PortStateImage.cpp). A refused image falls back to the seed. The default path is unchanged.
+    char ot[8] = {};
+    const bool origTop = GetEnvironmentVariableA("MASHED_ORIG_TOP", ot, sizeof(ot)) > 0 && ot[0] && ot[0] != '0';
+    if (!(origTop && mashed_re::Compat::PortStateImage_Apply()))
+        mashed_re::Compat::PortStateSeed_Apply();
     // [PORT-TOP-02] MASHED_ORIG_TOP=1 (default OFF, read once here): the matched original WinMain 0x00492370
     // and run function 0x00492290 drive the process, with the pieces above bound as stand-ins.
     {
-        char ot[8] = {};
-        if (GetEnvironmentVariableA("MASHED_ORIG_TOP", ot, sizeof(ot)) > 0 && ot[0] && ot[0] != '0')
+        if (origTop)
         {
             // PORT-OT-SEED-CODEPTR: the code-pointer entries the seed leaves out, bound to exe bodies or stop thunks.
             mashed_re::Compat::PortTopCodePtr_Apply(kLogPath);

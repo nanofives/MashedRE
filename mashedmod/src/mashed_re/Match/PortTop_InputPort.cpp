@@ -49,9 +49,12 @@ extern "C" {
 // DIDATAFORMAT points its object array at 0x0049b5d0, inside the original code range, which the exe does not map as
 // original data, so its bytes cannot be written back as they are. c_dfDIKeyboard is the same format (header checked
 // below) with pointers valid in the exe.
+int PortStateImage_AppliedC(void);   // Compat/PortStateImage.cpp (IMG-2-LOADER)
 void PortTop_SeedDInput(void) {
     unsigned done = 0;
+    const int image = PortStateImage_AppliedC();   // the two byte entries are in the image (witnessed there)
     for (const Seed& s : kSeed) {
+        if (image) { ++done; continue; }
         __try {
             std::memcpy(reinterpret_cast<void*>(static_cast<UINT_PTR>(s.va)), s.bytes, s.n);
             ++done;
@@ -122,15 +125,8 @@ int __stdcall PortTop_Missing_00495ee0(void* inst, void* ctx) {
     return DIENUM_CONTINUE;
 }
 
-// rva 0x00498510 (C2, re/match/s16/00498510.c best 95.3%): default controller records at 0x007e95c0, contcfg%d.bin
-// load per record, language string table 0x00773118, optional dialog 0x67. Missing here: its two file-static callees
-// rva 0x00497190 / 0x004971b0 also have an asi-only wrapper (Match/MatchS16_004971b0.cpp), so compiling the source in the
-// exe makes a second body of those RVAs (rva-lint); that pair needs one shared TU first. Nothing in the exe reads
-// 0x007e95c0 or 0x00773118 (the hand path derives g_input_slot_type itself), and the dialog argument DAT_006147c0 is
-// 0 in the exe (the reference has the skip_controller_dialog patch at 0x004951aa).
-void PortTop_Missing_00498510(unsigned show, unsigned lang) {
-    Log("0x00498510 controller defaults: missing (show=%u lang=%u)", show, lang);
-}
+// rva 0x00498510: no longer a stub here. Provisional body from re/match/s16/00498510.c in Match/PortTop_00498510.cpp
+// (BIND-CRT-498510).
 
 }  // extern "C"
 

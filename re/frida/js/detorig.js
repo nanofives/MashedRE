@@ -143,21 +143,38 @@ const ORIG_CELL = K(Memory.alloc(8));
 const ACTIVE = K(Memory.alloc(4));
 ACTIVE.writeU32(0);
 const setActive = (v) => ACTIVE.writeU32(v);
+// RO-INPUT-RECORD (cfg.rec): the value FUN_00497310 returns for player 0 (the value the game consumes, scripted or
+// not) is logged as one row (tick, control, value) whenever it differs from the previous return for that control.
+// Native, no Interceptor: the logger sits in the replacement CModule. REC layout (u32): [0] on, [1] row count,
+// [2] address of the tick counter (TK.st + 8), [3] overflow count, [4..67] last value per control, [68 + 3 * i] rows.
+const REC_ROWS = 8192;
+const REC = K(Memory.alloc((68 + 3 * REC_ROWS) * 4));
+for (let i = 0; i < 68; i++) REC.add(i * 4).writeU32(0);
 const cm = K(new CModule(`
   typedef int (*fn_t)(int, int);
   extern fn_t orig_cell;
   extern volatile int ctl[64];
   extern volatile int active;
+  extern volatile unsigned int rec[];
   int repl(int p, int c) {
     int r = orig_cell(p, c);
-    if (active && p == 0 && c >= 0 && c < 64) return ctl[c];
+    if (active && p == 0 && c >= 0 && c < 64) r = ctl[c];
+    if (rec[0] && p == 0 && c >= 0 && c < 64 && (unsigned int)r != rec[4 + c]) {
+      unsigned int n = rec[1];
+      if (n < ${REC_ROWS}u) {
+        unsigned int *row = (unsigned int *)&rec[68 + 3 * n];
+        row[0] = *(const volatile unsigned int *)rec[2]; row[1] = (unsigned int)c; row[2] = (unsigned int)r;
+        rec[1] = n + 1;
+      } else rec[3]++;
+      rec[4 + c] = (unsigned int)r;
+    }
     return r;
   }
-`, { orig_cell: ORIG_CELL, ctl: CTL, active: ACTIVE }));
+`, { orig_cell: ORIG_CELL, ctl: CTL, active: ACTIVE, rec: REC }));
 
 // ---------------------------------------------------------------- events
 const events = [];   // {n, s, fn}
-let seq = 0, warpN = null, raceN = null;
+let seq = 0, warpN = null, raceN = null, recAnchor = null;
 function schedule(n, fn) { events.push({ n: n >>> 0, s: seq++, fn }); events.sort((a, b) => a.n - b.n || a.s - b.s); setDue(events.length ? events[0].n : 0xffffffff); }
 
 const DATA_LO = 0x005ea000, DATA_HI = 0x00915008;   // .data (0x32a704) + _rwdseg (8), contiguous with padding
@@ -842,7 +859,9 @@ function install() {
       send({ kind: 'race', n: raceN, dn_warp: raceN - warpN, tick: TK ? TK.st.add(8).readU32() : null, frames_7f101c: ga(0x007f101c).readU32(),
              clk_7f0ff0: ga(0x007f0ff0).readU32(), clk_7f0ff4: ga(0x007f0ff4).readU32(), pins: pins3, witness: witness() });
       if (CFG.watch && CFG.watch.length) send({ kind: 'info', msg: watchArm() });
-      for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
+      if (CFG.rec && TK) { recAnchor = tickNow(); REC.add(8).writeU32(TK.st.add(8).toUInt32()); REC.writeU32(1); }
+      if (CFG.inputTick) { const t0 = tickNow(); for (const [dt, c, v] of CFG.input) tickSchedule(t0 + dt, () => { CTL.add(c * 4).writeS32(v); }); }
+      else for (const [dn, c, v] of CFG.input) schedule(raceN + dn, () => { CTL.add(c * 4).writeS32(v); });
       CFG.ckpts.forEach((dn, k) => schedule(raceN + dn, () => checkpoint(k)));
       schedule(raceN + CFG.ckpts[CFG.ckpts.length - 1] + 1, () => {
         setDue(0xffffffff);
@@ -856,6 +875,11 @@ function install() {
         provReport();
         wsDump();
         if (PZ) { PZ.st.writeU32(0); send({ kind: 'info', msg: 'poison listener calls ' + PZ.st.add(4).readU32() }); }
+        if (CFG.rec) {
+          REC.writeU32(0);
+          const nr = REC.add(4).readU32();
+          send({ kind: 'inputrec', rows: nr, overflow: REC.add(12).readU32(), tick_anchor: recAnchor }, nr ? REC.add(68 * 4).readByteArray(nr * 12) : new ArrayBuffer(0));
+        }
         send({ kind: 'done', n: N() });
       });
     };

@@ -1,6 +1,9 @@
 // FLAGS: /O2 /Ob1 /G5
-/* MATCH-RWL03 0x0053d5a0: raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees), body
-   unchanged; globals moved to MGLOBAL. Score: see verify/matchrwl03_20261108/results.tsv. */
+/* MATCH-RWL03 0x0053d5a0: from raw g2s.py output (re/tools/match/g2s.py on decomp_pc.py --port --callees).
+   MATCH-RWT-S4 (2026-11-13): 75.3% -> 100% BYTE-IDENTICAL. Lever: the allocation result is held in one byte-pointer
+   variable (mem) that is then advanced past the 0x28-byte header, with the header pointer h a copy of it. c2 then
+   keeps the cursor in eax and h in edx (mov edx,eax at 0x0053d640), and the zero register starts after the copy (xor ecx,ecx at 0x0053d642)
+   (test eax,eax at the NULL check, 0x0053d5f6). Evidence: verify/match_20261113/RESULT_MATCH-RWT-S4.md. */
 /* ---- MATCH-S11 preamble (same text in every re/match/s11 source; not part of any function body) ----
    C under the DDK (match.py), C++ under VS2022 when the port includes this file (MATCH_PORT). */
 #ifndef MATCH_PREAMBLE
@@ -32,50 +35,45 @@ typedef int (*codeptr)(...);
 typedef int (*codeptr)();
 #endif
 typedef struct S24 { uint d[6]; } S24;
+typedef struct H { uint flags; S24 s; ushort n1; ushort n2; void *a16; void *a2; } H;  /* 0x28 bytes */
 MGLOBAL(int, DAT_007d3ff8, 0x007d3ff8);
 undefined4 FUN_004d7ff0(undefined4 p0, int p1);
 undefined4 * FUN_004d8480(undefined4 * p0);
 // MATCH: 0x0053d5a0 FUN_0053d5a0
 uint * FUN_0053d5a0(ushort param_1,ushort param_2,uint *param_3,uint param_4)
-
 {
-  uint *puVar1;
-  uint uVar2;
-  uint *puVar3;
-  int iVar4;
+  H *h;
+  uchar *mem;
+  int size;
   undefined4 loc[2];
-  
-  iVar4 = 0x28;
-  if (param_2 > 0) {
-    iVar4 = (uint)param_2 * 0x10 + 0x37;
-  }
-  if ((param_4 & 1) != 0) {
-    iVar4 = iVar4 + 1 + (uint)param_1 * 2;
-  }
-  puVar1 = (uint *)(**(codeptr *)(DAT_007d3ff8 + 0x108))(iVar4,0x3002c);
-  if (puVar1 == (uint *)0x0) {
+
+  size = 0x28;
+  if (param_2 > 0) size = (uint)param_2 * 0x10 + 0x37;
+  if ((param_4 & 1) != 0) size = size + 1 + (uint)param_1 * 2;
+  mem = (uchar *)(**(codeptr *)(DAT_007d3ff8 + 0x108))(size, 0x3002c);
+  if (mem == 0) {
     loc[0] = 0x11d;
-    loc[1] = FUN_004d7ff0(0x80000013,iVar4);
+    loc[1] = FUN_004d7ff0(0x80000013, size);
     FUN_004d8480(loc);
-    return (uint *)0x0;
+    return 0;
   }
-  *(ushort *)(puVar1 + 7) = param_1;
-  *puVar1 = param_4;
-  *(ushort *)((int)puVar1 + 0x1e) = param_2;
-  *(S24 *)(puVar1 + 1) = *(S24 *)param_3;
-  puVar3 = puVar1 + 10;
+  h = (H *)mem;
+  h->n1 = param_1;
+  h->flags = param_4;
+  h->n2 = param_2;
+  h->s = *(S24 *)param_3;
+  mem += sizeof(H);
   if (param_2 > 0) {
-    puVar3 = (uint *)(((uint)puVar3 + 0xf) & 0xfffffff0);
-    puVar1[8] = (uint)puVar3;
-    puVar3 = (uint *)((uint)puVar3 + (uint)param_2 * 0x10);
+    mem = (uchar *)(((uint)mem + 0xf) & ~0xf);
+    h->a16 = mem;
+    mem += param_2 * 16;
+  } else {
+    h->a16 = 0;
   }
-  else {
-    puVar1[8] = 0;
+  if (param_4 & 1) {
+    h->a2 = (void *)(((uint)mem + 1) & ~1);
+  } else {
+    h->a2 = 0;
   }
-  if ((param_4 & 1) != 0) {
-    puVar1[9] = (int)puVar3 + 1U & 0xfffffffe;
-    return puVar1;
-  }
-  puVar1[9] = 0;
-  return puVar1;
+  return (uint *)h;
 }

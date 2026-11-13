@@ -439,6 +439,29 @@ def main_build(a):
     abs_syms = {}
     abs_calls = {}
     data_copies = {}
+    # DDKOBJ-CRTMATH (L-120 final form): the XP DDK libc math objects (sin, cos and their libc closure cut at the error
+    # path) extracted and renamed `_ddkcrt<name>`. A DDK object's reference to one of those names is renamed the same
+    # way, so only DDK objects run the DDK bodies. VS2022 callers keep the VS2022 CRT.
+    sys.path.insert(0, str(HERE / "mathprobe"))
+    import ddkcrt_rename as DCR  # noqa: E402
+    ddkcrt_dir = out / "ddkcrt"
+    if ddkcrt_dir.exists():
+        shutil.rmtree(ddkcrt_dir)
+    ddkcrt_members, ddkcrt_defs, ddkcrt_left, ddkcrt_objs = DCR.build(ddkcrt_dir, DCR.MATH_MEMBERS, None, True)
+    ddkcrt_seh = []
+    for _p in ddkcrt_objs:
+        _co = CE.Coff.load(_p)
+        if any(s.name.startswith(("__except_handler", "___except_handler", "_ddkcrt__except_handler")) for s in _co.syms) \
+                or any(x.name == ".sxdata" for x in _co.sections):
+            ddkcrt_seh.append(pathlib.Path(_p).name)
+        elif not any(s.name == "@feat.00" for s in _co.syms):
+            _co.add_symbol("@feat.00", 1, CE.IMAGE_SYM_ABSOLUTE, 0, CE.IMAGE_SYM_CLASS_STATIC)
+            _co.save(_p)
+    # math names a DDK object calls that the extracted set does not define: they keep resolving in the VS2022 CRT
+    math_plain = {"sin", "cos", "tan", "atan", "atan2", "asin", "acos", "sqrt", "floor", "ceil", "pow", "exp", "log",
+                  "log10", "fmod", "fabs", "ldexp", "frexp", "modf", "sinh", "cosh", "tanh"}
+    ddkcrt_used = collections.Counter()
+    math_other = collections.Counter()
 
     def bind_to(s, target, label):
         """Rename undefined symbol s to what a wrapper binds its name to; returns the class label."""
@@ -681,8 +704,15 @@ def main_build(a):
                 cls = bind_to(s, defs[plain], "wrapper-bound")
             elif plain in exe_names:
                 cls = "in-set"
+            elif s.name in ddkcrt_defs:
+                ddkcrt_used[s.name] += 1
+                s.name = DCR.PREFIX + s.name
+                cls = "ddkcrt"
             elif s.name in crt:
                 cls = "crt"
+                _pl = plain.lstrip("_")
+                if _pl in math_plain or re.match(r"_*CI(sin|cos|tan|atan|atan2|asin|acos|sqrt|pow|exp|log|log10|fmod|floor|ceil)$", plain):
+                    math_other[s.name] += 1
             elif plain in gdefs:
                 cls = bind_to(s, gdefs[plain], "global-bound")
             else:
@@ -876,6 +906,17 @@ def main_build(a):
         lines.append(swap.get(str(pathlib.Path(l)).lower(), l))
     ddk_objs = [str(u["obj"]) for u in units if "obj" in u]
     lines += ddk_objs + [str(absobj), str(thunkobj), str(copyobj)]
+    report["ddkcrt"] = {"members": ddkcrt_members, "renamed_definitions": len(ddkcrt_defs),
+                        "externals_left": sorted(ddkcrt_left), "objs": [str(p) for p in ddkcrt_objs],
+                        "seh_unmarked": ddkcrt_seh, "referenced_by_ddk_objects": dict(ddkcrt_used),
+                        "crt_math_still_vs2022": dict(math_other)}
+    if ddkcrt_seh:
+        print(f"[ddkobj] FATAL ddkcrt objects register SEH handlers (unmarked SafeSEH): {ddkcrt_seh}")
+        (out / "ddkobj_build.json").write_text(json.dumps(report, indent=1, default=str))
+        return 3
+    lines += [str(p) for p in ddkcrt_objs]
+    print(f"[ddkobj] ddkcrt: {len(ddkcrt_defs)} renamed definitions in {len(ddkcrt_objs)} objects, referenced by DDK "
+          f"objects: {dict(ddkcrt_used) or 'none'}; crt math left on VS2022: {dict(math_other) or 'none'}")
     (out / "link_ddk.rsp").write_text("\n".join('"' + l + '"' for l in lines) + "\n")
     report["n_units"] = len(units)
     report["n_ddk_objs"] = len(ddk_objs)
@@ -1288,6 +1329,10 @@ _ST_SRC = {
                              "    return DAT_00400084 + 1;\n}\n",
                "#define FUN_00400080 DdkSt_MgAddr\n#define MATCH_PREAMBLE 1\n"
                "#define MGLOBAL(T, n, a) static T &n = *(T *)(a)\n"),
+    # DDKOBJ-CRTMATH: a DDK object that calls CRT math (/O2 emits the intrinsic forms __CIsin / __CIcos): its references
+    # are renamed to the renamed DDK libc objects (_ddkcrt__CIsin ...), not left to the VS2022 CRT
+    "math": ("0x004000a0", "double sin(double);\ndouble cos(double);\n#pragma function(sin, cos)\ndouble FUN_004000a0(double x)\n{\n    return sin(x) + cos(x);\n}\n",
+             "#define FUN_004000a0 DdkSt_Math\n"),
     # DDKOBJ-CELLS: a wrapper MGLOBAL through a cell indirection (the DDKOBJ-SPIKE refusal): still refused, not fatal
     "mgcell": ("0x00400090", _ST_MGPRE + "MGLOBAL(int, DAT_00400094, 0x00400094);\nint FUN_00400090(void)\n{\n"
                              "    return DAT_00400094 + 1;\n}\n",
@@ -1384,6 +1429,19 @@ def main_selftest(a):
         check(und.get("DAT_00400054", {}).get("class") == "data-abs" and
               und["DAT_00400054"]["name"] == "__ddkabs_00400054", f"same-address data binds to __ddkabs_00400054 ({und.get('DAT_00400054')})")
         check(by.get("same", {}).get("safeseh_marked") is True, "non-SEH object is marked @feat.00")
+        # DDKOBJ-CRTMATH
+        rc, rep, by = run(["math"], "math")
+        m = by.get("math", {})
+        mund = {x["orig"]: x for x in m.get("undef", [])}
+        renamed = sorted(x["name"] for x in m.get("undef", []) if x.get("class") == "ddkcrt")
+        check(m.get("status") == "ok" and bool(renamed) and all(n.startswith("_ddkcrt") for n in renamed),
+              f"CRT math reference -> ok, renamed to _ddkcrt* ({m.get('status')}: {renamed})")
+        mco = CE.Coff.load(m["obj"]) if m.get("obj") else None
+        left = sorted(s.name for s in mco.syms if s.sec == 0 and s.cls == CE.IMAGE_SYM_CLASS_EXTERNAL and
+                      re.match(r"_+(CI)?(sin|cos)$", s.name)) if mco else ["(no object)"]
+        check(not left, f"no un-renamed sin/cos reference left in the DDK object ({left})")
+        check(bool(rep.get("ddkcrt", {}).get("referenced_by_ddk_objects")),
+              f"build json counts the references ({rep.get('ddkcrt', {}).get('referenced_by_ddk_objects')})")
         # DDKOBJ-REGCONV
         rc, rep, by = run(["reg"], "reg")
         r = by.get("reg", {})
