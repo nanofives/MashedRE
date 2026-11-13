@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-11-13  0x004c6750  FUN_004c6750  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/s19/004c6750.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S2.md
+2026-11-13  0x004cdd60  FUN_004cdd60  C2->C4  route match (L-93): byte-identical + relocheck OK, re/match/rwl01/004cdd60.c; evidence: verify/match_20261113/RESULT_MATCH-RWT-S2.md
 2026-11-13  0x00514330  FUN_00514330  refile third-party-library[d3dx9-backward-extension] -> third-party-library[renderware]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
 2026-11-13  0x00515e50  FUN_00515e50  refile third-party-library[d3dx9-backward-extension] -> third-party-library[libpng-1.0.12]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
 2026-11-13  0x00515fd0  FUN_00515fd0  refile third-party-library[d3dx9-backward-extension] -> third-party-library[libpng-1.0.12]  (P2, L-127, confidence unchanged C2)  evidence: verify/rwc_20261113/RESULT_RWC-REFILE-514330.md
