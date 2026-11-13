@@ -155,5 +155,201 @@ std::uint32_t RwCoreHand_004cca80(std::uint32_t r, std::uint32_t hint) {
     return (blk + align + nbytes + 7) & ~(align - 1);
 }
 
+// ---- _rwcseg 0x005cb000..0x005cb451 (run 38): the original carries these as hand asm, so the body is the anchored
+// disassembly transcribed instruction for instruction (naked). Their re/match sources are raw g2s output that does not
+// reproduce them (0x005cb42b.c is an empty `return;`). The control-word scratch is the original's _rwdseg
+// 0x00915000..0x00915007, inside the exe's mapping of the original's data (g_b17_low_arena_pad covers it).
+
+// HAND 0x005cb404 RwCoreHand_005cb404
+// rva 0x005cb404..0x005cb42a: push eax; wait; fnstcw [0x915000]; eax = [0x915000]; [0x915004] = eax (the saved word);
+// eax &= 0xfffffcff (precision control 00 = 24-bit); eax |= 0x3f (all six exceptions masked); [0x915000] = eax;
+// fldcw [0x915000]; pop eax; ret. Called by the D3D9 device system function case 0x11 (re/match/rwd01/004c7a70.c:416).
+__declspec(naked) void RwCoreHand_005cb404(void) {
+    __asm {
+        push eax
+        wait
+        fnstcw word ptr ds:[0x00915000]
+        mov eax, dword ptr ds:[0x00915000]
+        mov dword ptr ds:[0x00915004], eax
+        and eax, 0xfffffcff
+        or eax, 0x3f
+        mov dword ptr ds:[0x00915000], eax
+        fldcw word ptr ds:[0x00915000]
+        pop eax
+        ret
+    }
+}
+
+// HAND 0x005cb42b RwCoreHand_005cb42b
+// rva 0x005cb42b..0x005cb431: fldcw [0x915004] (the word 0x005cb404 saved); ret. Called by the device close 0x004c8c70.
+__declspec(naked) void RwCoreHand_005cb42b(void) {
+    __asm {
+        fldcw word ptr ds:[0x00915004]
+        ret
+    }
+}
+
+// HAND 0x005cb2a0 RwCoreHand_005cb2a0
+// rva 0x005cb2a0..0x005cb402: cdecl (dst = [ebp+8], a = [ebp+0xc], b = [ebp+0x10]), saves eax / ebx / ecx. For each of
+// the 3 rows of a (+0x00 / +0x10 / +0x20) dst.row = a.row x b's 3x3 part, and dst+0x30 = a+0x30 x b + b+0x30, all x87
+// in the original's instruction order. Only dst +0x00..+0x08, +0x10..+0x18, +0x20..+0x28, +0x30..+0x38 are written.
+// Installed by case 0x11 through 0x004c40b0 (RwGlobals + [0x007d4028] + 8).
+__declspec(naked) void RwCoreHand_005cb2a0(void) {
+    __asm {
+        push ebp
+        mov ebp, esp
+        push eax
+        push ebx
+        push ecx
+        mov ebx, dword ptr [ebp + 0x10]
+        mov eax, dword ptr [ebp + 0xc]
+        mov ecx, dword ptr [ebp + 8]
+        fld dword ptr [eax + 8]
+        fld dword ptr [eax + 4]
+        fld dword ptr [eax]
+        fld dword ptr [ebx]
+        fmul st, st(1)
+        fld dword ptr [ebx + 0x10]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x20]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 4]
+        fmul st, st(2)
+        fxch st(1)
+        fstp dword ptr [ecx]
+        fld dword ptr [ebx + 0x14]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x24]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 8]
+        fmulp st(2), st
+        fstp dword ptr [ecx + 4]
+        fld dword ptr [ebx + 0x18]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [ebx + 0x28]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [eax + 0x18]
+        fxch st(1)
+        fld dword ptr [eax + 0x14]
+        fxch st(1)
+        fld dword ptr [eax + 0x10]
+        fxch st(1)
+        fstp dword ptr [ecx + 8]
+        fld dword ptr [ebx]
+        fmul st, st(1)
+        fld dword ptr [ebx + 0x10]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x20]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 4]
+        fmul st, st(2)
+        fxch st(1)
+        fstp dword ptr [ecx + 0x10]
+        fld dword ptr [ebx + 0x14]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x24]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 8]
+        fmulp st(2), st
+        fstp dword ptr [ecx + 0x14]
+        fld dword ptr [ebx + 0x18]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [ebx + 0x28]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [eax + 0x28]
+        fxch st(1)
+        fld dword ptr [eax + 0x24]
+        fxch st(1)
+        fld dword ptr [eax + 0x20]
+        fxch st(1)
+        fstp dword ptr [ecx + 0x18]
+        fld dword ptr [ebx]
+        fmul st, st(1)
+        fld dword ptr [ebx + 0x10]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x20]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 4]
+        fmul st, st(2)
+        fxch st(1)
+        fstp dword ptr [ecx + 0x20]
+        fld dword ptr [ebx + 0x14]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x24]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 8]
+        fmulp st(2), st
+        fstp dword ptr [ecx + 0x24]
+        fld dword ptr [ebx + 0x18]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [ebx + 0x28]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [eax + 0x38]
+        fxch st(1)
+        fld dword ptr [eax + 0x34]
+        fxch st(1)
+        fld dword ptr [eax + 0x30]
+        fxch st(1)
+        fstp dword ptr [ecx + 0x28]
+        fld dword ptr [ebx]
+        fmul st, st(1)
+        fld dword ptr [ebx + 0x10]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x20]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x30]
+        faddp st(1), st
+        fld dword ptr [ebx + 4]
+        fmul st, st(2)
+        fxch st(1)
+        fstp dword ptr [ecx + 0x30]
+        fld dword ptr [ebx + 0x14]
+        fmul st, st(3)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x24]
+        fmul st, st(4)
+        faddp st(1), st
+        fld dword ptr [ebx + 0x34]
+        faddp st(1), st
+        fld dword ptr [ebx + 8]
+        fmulp st(2), st
+        fstp dword ptr [ecx + 0x34]
+        fld dword ptr [ebx + 0x18]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [ebx + 0x28]
+        fmulp st(2), st
+        faddp st(1), st
+        fld dword ptr [ebx + 0x38]
+        faddp st(1), st
+        fstp dword ptr [ecx + 0x38]
+        pop ecx
+        pop ebx
+        pop eax
+        pop ebp
+        ret
+    }
+}
+
 } // extern "C"
 #endif // MASHED_STANDALONE

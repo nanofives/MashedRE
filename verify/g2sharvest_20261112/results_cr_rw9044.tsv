@@ -1,0 +1,177 @@
+rva	stage	acc	regs	ops	n_mine	n_orig	note
+0x004c61b0	score						no Ghidra size for 0x004c61b0; refusing to guess the original's length
+0x004c7200	score						no Ghidra size for 0x004c7200; refusing to guess the original's length
+0x004c7490	compile						C2143 syntax error : missing ';' before '}'
+0x004cb6f0	score						no Ghidra size for 0x004cb6f0; refusing to guess the original's length
+0x004cb870	score						no Ghidra size for 0x004cb870; refusing to guess the original's length
+0x004d8cc0	score						no Ghidra size for 0x004d8cc0; refusing to guess the original's length
+0x004db5b0	compile						C2100 illegal indirection
+0x004db840	compile						C2100 illegal indirection
+0x004dbc90	compile						C2143 syntax error : missing ';' before '}'
+0x004e0b70	compile						C2100 illegal indirection
+0x004e1270	score						no Ghidra size for 0x004e1270; refusing to guess the original's length
+0x004e1f60	score						no Ghidra size for 0x004e1f60; refusing to guess the original's length
+0x004e3070	score						no Ghidra size for 0x004e3070; refusing to guess the original's length
+0x004e30f0	score						no Ghidra size for 0x004e30f0; refusing to guess the original's length
+0x004e3850	score						no Ghidra size for 0x004e3850; refusing to guess the original's length
+0x004e3880	score						no Ghidra size for 0x004e3880; refusing to guess the original's length
+0x004e38a0	compile						C2143 syntax error : missing ';' before '}'
+0x004e3c00	score						no Ghidra size for 0x004e3c00; refusing to guess the original's length
+0x004e3ec0	score						no Ghidra size for 0x004e3ec0; refusing to guess the original's length
+0x004e4950	score						no Ghidra size for 0x004e4950; refusing to guess the original's length
+0x004e8570	score						no Ghidra size for 0x004e8570; refusing to guess the original's length
+0x004ea4e0	score						no Ghidra size for 0x004ea4e0; refusing to guess the original's length
+0x004ea6d0	score						no Ghidra size for 0x004ea6d0; refusing to guess the original's length
+0x004ea970	score						no Ghidra size for 0x004ea970; refusing to guess the original's length
+0x004eb350	score						no Ghidra size for 0x004eb350; refusing to guess the original's length
+0x004eb3d0	score						no Ghidra size for 0x004eb3d0; refusing to guess the original's length
+0x004eb520	score						no Ghidra size for 0x004eb520; refusing to guess the original's length
+0x004eb550	score						no Ghidra size for 0x004eb550; refusing to guess the original's length
+0x004eb5c0	score						no Ghidra size for 0x004eb5c0; refusing to guess the original's length
+0x004ebd00	score						no Ghidra size for 0x004ebd00; refusing to guess the original's length
+0x004ec190	score						no Ghidra size for 0x004ec190; refusing to guess the original's length
+0x004ec790	score						no Ghidra size for 0x004ec790; refusing to guess the original's length
+0x004ec82c	score						no Ghidra size for 0x004ec82c; refusing to guess the original's length
+0x004ec8de	compile						C2100 illegal indirection
+0x004ecb01	score						no Ghidra size for 0x004ecb01; refusing to guess the original's length
+0x004ecb25	score						no Ghidra size for 0x004ecb25; refusing to guess the original's length
+0x004ecb49	score						no Ghidra size for 0x004ecb49; refusing to guess the original's length
+0x004ecb6d	compile						C2100 illegal indirection
+0x004ecdcc	score						no Ghidra size for 0x004ecdcc; refusing to guess the original's length
+0x004ece75	ok	13.6	13.6	40.0	110	69	
+0x004ecf59	ok	5.7	18.9	39.6	53	44	
+0x004ecfd0	ok	12.8	17.9	41.0	78	55	
+0x004ed05f	compile						C2100 illegal indirection
+0x004ed070	score						no Ghidra size for 0x004ed070; refusing to guess the original's length
+0x004ed081	compile						C2100 illegal indirection
+0x004ed092	score						no Ghidra size for 0x004ed092; refusing to guess the original's length
+0x004ed09f	ok	18.0	18.8	51.1	133	97	
+0x004ed18f	compile						C2100 illegal indirection
+0x004ed19c	compile						C2100 illegal indirection
+0x004ed45a	compile						C2100 illegal indirection
+0x004ed467	ok	4.0	14.1	40.4	99	66	
+0x004ed517	ok	9.4	12.5	30.5	128	77	
+0x004ed5d6	score						no Ghidra size for 0x004ed5d6; refusing to guess the original's length
+0x004ed5e3	ok	0.0	0.0	1.2	1	80	
+0x004ed6c0	ok	12.5	79.6	94.4	215	216	
+0x004ed909	ok	2.6	56.4	59.0	39	37	
+0x004ed989	ok	11.1	85.2	94.4	215	216	
+0x004edbd2	ok	16.4	15.0	43.3	333	360	
+0x004edf9f	ok	5.9	23.5	11.8	22	34	
+0x004ee029	ok	5.9	23.5	11.8	23	34	
+0x004ee37f	ok	14.9	10.3	27.6	82	87	
+0x004ee5ad	score						no Ghidra size for 0x004ee5ad; refusing to guess the original's length
+0x004ee5ba	score						no Ghidra size for 0x004ee5ba; refusing to guess the original's length
+0x004ee5c7	score						no Ghidra size for 0x004ee5c7; refusing to guess the original's length
+0x004ee5d4	compile						C2069 cast of 'void' term to non-'void'
+0x004ee609	score						no Ghidra size for 0x004ee609; refusing to guess the original's length
+0x004ee616	ok	12.3	21.1	41.2	114	112	
+0x004ee7fa	ok	17.4	17.4	43.0	86	79	
+0x004ee8e6	ok	5.0	12.0	18.0	100	57	
+0x004ee97c	compile						C2100 illegal indirection
+0x004ee99c	ok	34.2	61.6	64.4	67	73	extraout_* register value
+0x004eea60	compile						C2069 cast of 'void' term to non-'void'
+0x004eeaee	ok	25.6	38.5	46.2	78	65	extraout_* register value
+0x004eebb0	compile						C2440 'type cast' : cannot convert from 'float *' to 'float '
+0x004eed25	compile						C2100 illegal indirection
+0x004eedef	compile						C2440 'type cast' : cannot convert from 'unsigned char *' to 'float '
+0x004eee90	score						no Ghidra size for 0x004eee90; refusing to guess the original's length
+0x004eee9d	ok	55.9	60.3	69.1	63	68	
+0x004eef3f	score						no Ghidra size for 0x004eef3f; refusing to guess the original's length
+0x004eef4c	ok	40.0	90.0	90.0	20	20	
+0x004eef84	score						no Ghidra size for 0x004eef84; refusing to guess the original's length
+0x004eef91	ok	7.8	20.8	50.6	77	69	
+0x004ef033	score						no Ghidra size for 0x004ef033; refusing to guess the original's length
+0x004ef040	ok	6.1	20.2	40.4	99	66	
+0x004ef0f0	ok	9.4	13.4	30.7	127	77	
+0x004ef1c0	compile						C2100 illegal indirection
+0x004ef1d1	compile						C2440 'type cast' : cannot convert from 'unsigned char *' to 'float '
+0x004f03c6	ok	18.4	23.9	44.0	336	414	
+0x004f4990	score						no Ghidra size for 0x004f4990; refusing to guess the original's length
+0x004f4b70	score						no Ghidra size for 0x004f4b70; refusing to guess the original's length
+0x004f4ca0	score						no Ghidra size for 0x004f4ca0; refusing to guess the original's length
+0x004f4f10	score						no Ghidra size for 0x004f4f10; refusing to guess the original's length
+0x004f5ec0	score						no Ghidra size for 0x004f5ec0; refusing to guess the original's length
+0x004f86a0	score						no Ghidra size for 0x004f86a0; refusing to guess the original's length
+0x004f87a0	compile						C2100 illegal indirection
+0x004f8980	compile						C2143 syntax error : missing '{' before '.'
+0x004fa6f0	score						no Ghidra size for 0x004fa6f0; refusing to guess the original's length
+0x004fa710	score						no Ghidra size for 0x004fa710; refusing to guess the original's length
+0x004fa850	compile						C2440 'type cast' : cannot convert from 'float ' to 'float *'
+0x004fae00	score						no Ghidra size for 0x004fae00; refusing to guess the original's length
+0x004faf00	score						no Ghidra size for 0x004faf00; refusing to guess the original's length
+0x004faf90	score						no Ghidra size for 0x004faf90; refusing to guess the original's length
+0x004fba47	ok	8.9	14.0	33.0	218	315	
+0x0052dce0	score						no Ghidra size for 0x0052dce0; refusing to guess the original's length
+0x0052dda0	score						no Ghidra size for 0x0052dda0; refusing to guess the original's length
+0x0052ef00	score						no Ghidra size for 0x0052ef00; refusing to guess the original's length
+0x0052ef10	score						no Ghidra size for 0x0052ef10; refusing to guess the original's length
+0x0052f200	score						no Ghidra size for 0x0052f200; refusing to guess the original's length
+0x0052f6d0	compile						C2106 '=' : left operand must be l-value
+0x0052fc20	score						no Ghidra size for 0x0052fc20; refusing to guess the original's length
+0x005302e0	score						no Ghidra size for 0x005302e0; refusing to guess the original's length
+0x00531320	score						no Ghidra size for 0x00531320; refusing to guess the original's length
+0x005317c0	score						no Ghidra size for 0x005317c0; refusing to guess the original's length
+0x005318b0	score						no Ghidra size for 0x005318b0; refusing to guess the original's length
+0x00531990	score						no Ghidra size for 0x00531990; refusing to guess the original's length
+0x00531c40	score						no Ghidra size for 0x00531c40; refusing to guess the original's length
+0x00531d80	score						no Ghidra size for 0x00531d80; refusing to guess the original's length
+0x00531f60	score						no Ghidra size for 0x00531f60; refusing to guess the original's length
+0x00532190	score						no Ghidra size for 0x00532190; refusing to guess the original's length
+0x00532480	score						no Ghidra size for 0x00532480; refusing to guess the original's length
+0x005326c0	score						no Ghidra size for 0x005326c0; refusing to guess the original's length
+0x00532770	score						no Ghidra size for 0x00532770; refusing to guess the original's length
+0x005328b0	score						no Ghidra size for 0x005328b0; refusing to guess the original's length
+0x00532fa0	score						no Ghidra size for 0x00532fa0; refusing to guess the original's length
+0x00533420	score						no Ghidra size for 0x00533420; refusing to guess the original's length
+0x00533490	score						no Ghidra size for 0x00533490; refusing to guess the original's length
+0x005334a0	score						no Ghidra size for 0x005334a0; refusing to guess the original's length
+0x00533600	score						no Ghidra size for 0x00533600; refusing to guess the original's length
+0x00535940	score						no Ghidra size for 0x00535940; refusing to guess the original's length
+0x00535950	compile						C2440 'type cast' : cannot convert from 'float ' to 'int *'
+0x00535bd0	score						no Ghidra size for 0x00535bd0; refusing to guess the original's length
+0x00535cb0	score						no Ghidra size for 0x00535cb0; refusing to guess the original's length
+0x00536170	compile						C2100 illegal indirection
+0x00536400	score						no Ghidra size for 0x00536400; refusing to guess the original's length
+0x00536460	score						no Ghidra size for 0x00536460; refusing to guess the original's length
+0x005364b0	score						no Ghidra size for 0x005364b0; refusing to guess the original's length
+0x00536520	score						no Ghidra size for 0x00536520; refusing to guess the original's length
+0x005365a0	score						no Ghidra size for 0x005365a0; refusing to guess the original's length
+0x005365e0	score						no Ghidra size for 0x005365e0; refusing to guess the original's length
+0x00536690	score						no Ghidra size for 0x00536690; refusing to guess the original's length
+0x00536940	score						no Ghidra size for 0x00536940; refusing to guess the original's length
+0x00536ad0	score						no Ghidra size for 0x00536ad0; refusing to guess the original's length
+0x00536c90	score						no Ghidra size for 0x00536c90; refusing to guess the original's length
+0x00536fe0	score						no Ghidra size for 0x00536fe0; refusing to guess the original's length
+0x005371f0	score						no Ghidra size for 0x005371f0; refusing to guess the original's length
+0x00537460	score						no Ghidra size for 0x00537460; refusing to guess the original's length
+0x00537610	score						no Ghidra size for 0x00537610; refusing to guess the original's length
+0x00537890	score						no Ghidra size for 0x00537890; refusing to guess the original's length
+0x005379c0	score						no Ghidra size for 0x005379c0; refusing to guess the original's length
+0x00537b80	score						no Ghidra size for 0x00537b80; refusing to guess the original's length
+0x00537c40	score						no Ghidra size for 0x00537c40; refusing to guess the original's length
+0x00537de0	score						no Ghidra size for 0x00537de0; refusing to guess the original's length
+0x00537ed0	score						no Ghidra size for 0x00537ed0; refusing to guess the original's length
+0x00537f40	score						no Ghidra size for 0x00537f40; refusing to guess the original's length
+0x00537fb0	compile						C2440 'type cast' : cannot convert from 'float ' to 'unsigned int *'
+0x00538300	score						no Ghidra size for 0x00538300; refusing to guess the original's length
+0x00538460	score						no Ghidra size for 0x00538460; refusing to guess the original's length
+0x00538aa0	score						no Ghidra size for 0x00538aa0; refusing to guess the original's length
+0x00545220	score						no Ghidra size for 0x00545220; refusing to guess the original's length
+0x00549840	score						no Ghidra size for 0x00549840; refusing to guess the original's length
+0x00549a20	score						no Ghidra size for 0x00549a20; refusing to guess the original's length
+0x0054aa30	score						no Ghidra size for 0x0054aa30; refusing to guess the original's length
+0x0054d130	score						no Ghidra size for 0x0054d130; refusing to guess the original's length
+0x00551d30	score						no Ghidra size for 0x00551d30; refusing to guess the original's length
+0x005520f0	score						no Ghidra size for 0x005520f0; refusing to guess the original's length
+0x00552190	score						no Ghidra size for 0x00552190; refusing to guess the original's length
+0x00552340	score						no Ghidra size for 0x00552340; refusing to guess the original's length
+0x005523f0	score						no Ghidra size for 0x005523f0; refusing to guess the original's length
+0x00552510	score						no Ghidra size for 0x00552510; refusing to guess the original's length
+0x00552590	score						no Ghidra size for 0x00552590; refusing to guess the original's length
+0x00552600	score						no Ghidra size for 0x00552600; refusing to guess the original's length
+0x005526b0	score						no Ghidra size for 0x005526b0; refusing to guess the original's length
+0x0057c3a0	score						no Ghidra size for 0x0057c3a0; refusing to guess the original's length
+0x0057c3f0	score						no Ghidra size for 0x0057c3f0; refusing to guess the original's length
+0x0057c590	score						no Ghidra size for 0x0057c590; refusing to guess the original's length
+0x0057c5a0	score						no Ghidra size for 0x0057c5a0; refusing to guess the original's length

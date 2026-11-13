@@ -38,6 +38,7 @@ def main():
     ap.add_argument("--json", default="")
     ap.add_argument("--ignore", default="", help="LO-HI hex VA ranges whose NEW blocks do not end IDENTICAL-FOR-N (named in the report)")
     ap.add_argument("--n-ok", action="store_true", help="do not end IDENTICAL-FOR-N at an N misalignment (per-tick clock-call count; --clock tick runs)")
+    ap.add_argument("--masks", default="", help="mask file(s), comma-separated (re/frida/replay_masks.tsv): a NEW block whose 1 KB range is entirely MASK dwords is ignored; --explain also scores with them")
     ap.add_argument("--explain", action="store_true", help="classify the NEW blocks' dwords from the 15 checkpoint dumps")
     a = ap.parse_args()
     ma, ta, ra = load(a.a)
@@ -73,6 +74,13 @@ def main():
     ign = [(int(x, 16), int(y, 16)) for x, y in (r.split("-") for r in a.ignore.split(",") if r)]
     va0 = lambda j: DATA_LO + (j - 2) * blk
     ignored = {j for j in first_new if any(lo < va0(j) + blk and va0(j) < hi for lo, hi in ign)}
+    masked_blocks = []
+    if a.masks:
+        from detorig import load_norm
+        mk = {v for v, c in load_norm(a.masks)["mask"].items() if c.startswith("MASK:")}
+        full = {j for j in first_new if all(va0(j) + 4 * w in mk for w in range(blk // 4))}
+        masked_blocks = [[hex(va0(j)), first_new[j]] for j in sorted(full - ignored)]
+        ignored |= full
     ident = n
     counted = [t for j, t in first_new.items() if j not in ignored]
     if counted:
@@ -84,6 +92,7 @@ def main():
         "a": str(a.a), "b": str(a.b), "ticks_compared": n, "block": blk,
         "dn_warp": [ma["race"].get("dn_warp"), mb["race"].get("dn_warp")],
         "identical_for_ticks": ident, "n_misalign_at": nmis, "ignored": a.ignore,
+        "masked_blocks": masked_blocks,
         "ignored_new_blocks": [[hex(va0(j)), first_new[j]] for j in sorted(ignored)],
         "constant_blocks": [[hex(va(j)), region_of(va(j))] for j in sorted(always)],
         "new_blocks": [[hex(va(j)), first_new[j], region_of(va(j))] for j in sorted(first_new, key=lambda j: (first_new[j], j))],
@@ -105,7 +114,7 @@ def main():
         # Name each NEW block's dwords with the checkpoint scorer's classes (detorig_report.report over the 15 full
         # dumps): a block whose differing dwords are all in explained classes is EXPLAINED, else it lists them.
         from detorig_report import report
-        cls = report(a.a, a.b, 0)["_cls"]
+        cls = report(a.a, a.b, 0, a.masks or None)["_cls"]
         expl = []
         for j in sorted(first_new, key=lambda j: (first_new[j], j)):
             lo = va(j)

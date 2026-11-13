@@ -22,8 +22,8 @@
 //     FUN_004a4368 (fclose) -> SettingsCfg* functions that call the host functions the replaced bodies called (game
 //     CRT thunks in the .asi, the exe's CRT in the exe). No absolute-address call is made from these bodies;
 //   * FUN_004963e0 -> ConfigLogError (by name);
-//   * globals (the preamble's MGLOBAL / MGLOBALA) -> SettingsCfgGlobal(address): the original address in the .asi, the
-//     replaced bodies' private storage and string copies in the exe (its .rdata mapping is zero-filled).
+//   * globals (the preamble's MGLOBAL / MGLOBALA) -> the original address in both targets (DDKOBJ-CELLS; before, the exe
+//     bound private storage and string copies through SettingsCfgGlobal).
 // x87 (x87_tus.txt): matched code is listed x87 like every Match/ wrapper (these bodies hold no float operation).
 // Evidence: verify/portsave_20261108/RESULT_PORT-SAVE-01.md.
 
@@ -31,11 +31,11 @@
 
 #include <cstdio>
 
-extern "C" void* SettingsCfgGlobal(unsigned int a);   // Save/SettingsConfig.cpp
-
+// DDKOBJ-CELLS (2026-11-12): every global is at its original address in both targets (Save/SettingsConfig.cpp), so
+// MGLOBAL / MGLOBALA are the preamble's own original-address form. The object build accepts exactly that form.
 #define MATCH_PREAMBLE
-#define MGLOBAL(T, n, a) static T &n = *(T *)SettingsCfgGlobal(a)
-#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])SettingsCfgGlobal(a)
+#define MGLOBAL(T, n, a) static T &n = *(T *)(a)
+#define MGLOBALA(T, n, N, a) static T (&n)[N] = *(T (*)[N])(a)
 
 extern "C" {
 

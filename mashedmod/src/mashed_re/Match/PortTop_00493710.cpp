@@ -72,7 +72,59 @@ int PortTop_Crt_004a2cbd(char* fmt, ...) {
 // DAT_0067d974 += 0.1 (re/match/s06/00428450.c, best 84.6%). Its only port body is the .asi-only naked-asm HudSpinCoinAnim
 // (HUD/TextCluster.cpp, raw-address calls), and an exe copy of the 84.6% source would be a second body of this RVA (rva-lint
 // CROSS-TARGET). Missing: nothing is drawn, DAT_0067d974 keeps the 1.5707964 ViewportInit stored.
+// RWC-FIRST-FRAME-IM2D: under MASHED_RWC_FRAME (RwCore_FrameRoute, RwCore/RwCore_Knob.cpp) the call goes to the RW core
+// closure's body RwCore_00428450 (the 84.6% source, provisional, PROVISIONAL.tsv), which draws through the matched
+// Im2D quad RwCore_00450b10 (86.6%, provisional) and the core's device block. The comparison against the original
+// (verify/rwcim2d_20261113) needs the call's inputs and the Im2D traffic, so for this one call the RwGlobals entries
+// +0x20 (fpRenderStateSet) and +0x30 (fpIm2DRenderPrimitive) are wrapped by logging thunks and restored after.
+bool RwCore_FrameRoute(void);
+void RwCore_00428450(int x, int y);
+typedef int(__cdecl* PortTop93_RsSet)(int state, unsigned value);
+typedef int(__cdecl* PortTop93_Im2DPrim)(int type, const unsigned* verts, int n);
+static PortTop93_RsSet s_im2dRs;
+static PortTop93_Im2DPrim s_im2dPrim;
+static int __cdecl PortTop93_LogRsSet(int state, unsigned value) {
+    const int r = s_im2dRs(state, value);
+    PortTop93_Log("[IM2D] RenderStateSet(%d, 0x%08X) = %d", state, value, r);
+    return r;
+}
+static int __cdecl PortTop93_LogIm2DPrim(int type, const unsigned* verts, int n) {
+    PortTop93_Log("[IM2D] Im2DRenderPrimitive(type %d, verts %08X, n %d)", type, static_cast<unsigned>(
+                  reinterpret_cast<unsigned long>(verts)), n);
+    for (int i = 0; i < n && i < 8; ++i) {
+        const unsigned* v = verts + i * 7;   // RwIm2DVertex, 0x1c bytes: x y z rhw color u v
+        float f[7];
+        std::memcpy(f, v, sizeof(f));
+        PortTop93_Log("[IM2D] v%d hex %08X %08X %08X %08X %08X %08X %08X = x %.9g y %.9g z %.9g rhw %.9g col %08X u %.9g "
+                      "v %.9g", i, v[0], v[1], v[2], v[3], v[4], v[5], v[6], f[0], f[1], f[2], f[3], v[4], f[5], f[6]);
+    }
+    const int r = s_im2dPrim(type, verts, n);
+    PortTop93_Log("[IM2D] Im2DRenderPrimitive = %d", r);
+    return r;
+}
 void PortTop_Missing_00428450(int x, int y) {
+    if (RwCore_FrameRoute()) {
+        unsigned char* const g = *reinterpret_cast<unsigned char**>(0x007d3ff8);   // RwGlobals
+        const unsigned tex = *reinterpret_cast<unsigned*>(0x00771960)
+                                 ? **reinterpret_cast<unsigned**>(0x00771960) : 0u;
+        float ang;
+        std::memcpy(&ang, reinterpret_cast<void*>(0x0067d974), 4);
+        PortTop93_Log("[IM2D] 0x00428450(%d, %d) on the RW core: [0x0067d974] %08X (%.9g), [0x00771960] %08X -> tex %08X, "
+                      "screen [0x0067ea54] %u x [0x0067ea56] %u, RwGlobals %08X", x, y,
+                      *reinterpret_cast<unsigned*>(0x0067d974), ang, *reinterpret_cast<unsigned*>(0x00771960), tex,
+                      *reinterpret_cast<unsigned short*>(0x0067ea54), *reinterpret_cast<unsigned short*>(0x0067ea56),
+                      static_cast<unsigned>(reinterpret_cast<unsigned long>(g)));
+        s_im2dRs = *reinterpret_cast<PortTop93_RsSet*>(g + 0x20);
+        s_im2dPrim = *reinterpret_cast<PortTop93_Im2DPrim*>(g + 0x30);
+        *reinterpret_cast<PortTop93_RsSet*>(g + 0x20) = PortTop93_LogRsSet;
+        *reinterpret_cast<PortTop93_Im2DPrim*>(g + 0x30) = PortTop93_LogIm2DPrim;
+        RwCore_00428450(x, y);
+        *reinterpret_cast<PortTop93_RsSet*>(g + 0x20) = s_im2dRs;
+        *reinterpret_cast<PortTop93_Im2DPrim*>(g + 0x30) = s_im2dPrim;
+        std::memcpy(&ang, reinterpret_cast<void*>(0x0067d974), 4);
+        PortTop93_Log("[IM2D] 0x00428450 returned; [0x0067d974] %08X (%.9g)", *reinterpret_cast<unsigned*>(0x0067d974), ang);
+        return;
+    }
     PortTop93_Log("0x00428450 loading-disc draw (%d, %d): missing body, not drawn", x, y);
 }
 

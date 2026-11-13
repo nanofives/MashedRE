@@ -293,15 +293,17 @@ int PortTop_StandIn_00492e90(void) {
 // (Match/MatchS15_00493480.cpp), whose callee 0x00493390 binds to Match/PortTop_00493390.cpp. With
 // MASHED_OT_AUDIOTICK=1 (default OFF, own sub-knob) the call before it runs the matched AudioTickAndAvg
 // (Match/MatchS15_004926c0.cpp). Its audio branch runs whenever DAT_006147b8 != 0, and that word is file-initialised
-// to 1 (.data, seeded by Compat/PortStateSeed.inc), so on frame 0 it calls 0x0045d3f0, which has no exe body: a named
-// stop ends the process (verify/robindtimer_20261112/RESULT_RO-BIND-TIMER.md). Off, each stays the no-op it was (the
+// to 1 (.data, seeded by Compat/PortStateSeed.inc), so it calls 0x0045d3f0, 0x00466b50 and 0x0045d430 every frame. Those
+// run their matched exe bodies (RO-AUDIOTICK-BODIES, Match/PortTop_0045d3f0.cpp / PortTop_00466b50.cpp /
+// PortTop_0045d430.cpp). Each returns at once while DAT_006904e8 == 0, and each of their callees binds to a named stop
+// (PortTop_AudioCalleeStop below) that logs and ends the process. Off, each stays the no-op it was (the
 // hand frame pacing is the device present + limiter inside RenderFrame). Every call runs a self-test against an
 // independent model of the matched sources (re/match/s15/00493390.c, 00493480.c, 004926c0.c), from the globals read
 // before it.
 int  FpsDiscretise(void);                      // Match/MatchS15_00493480.cpp
 void AudioTickAndAvg(void);                    // Match/MatchS15_004926c0.cpp
 static int s_otTimer = -1, s_otAudio = -1;
-static unsigned s_tmCalls480 = 0, s_tmCalls6c0 = 0, s_tmChecks = 0, s_tmFails = 0;
+static unsigned s_tmCalls480 = 0, s_tmCalls6c0 = 0, s_tmAudioBranch = 0, s_tmX87Form = 0, s_tmChecks = 0, s_tmFails = 0;
 static int OtTimerOn(void) {
     if (s_otTimer < 0) {
         const char* const v = std::getenv("MASHED_OT_TIMER");
@@ -324,30 +326,71 @@ static int&      MemI(unsigned a) { return *reinterpret_cast<int*>(static_cast<s
 static unsigned& MemU(unsigned a) { return *reinterpret_cast<unsigned*>(static_cast<std::uintptr_t>(a)); }
 static unsigned  FBits(float f) { unsigned u; std::memcpy(&u, &f, 4); return u; }
 static unsigned  MemFBits(unsigned a) { return MemU(a); }
+// (float)(u * c) with the product exact and one round-to-nearest-even to 24 bits: what x87 fild + fmul + fstp gives
+// under PC_24, and under PC_53 / PC_64 while the exact product fits (u < 2^32, c a float: 56 bits at most, one rounding).
+static unsigned  X87MulExact(unsigned u, float c) {
+    if (u == 0) return FBits(0.0f * c);
+    unsigned cb = FBits(c);
+    const int ce = static_cast<int>((cb >> 23) & 0xFF) - 127 - 23;
+    const unsigned long long cm = (cb & 0x7FFFFFu) | 0x800000u;
+    unsigned long long p = static_cast<unsigned long long>(u) * cm;   // value = p * 2^ce
+    int top = 63; while (!((p >> top) & 1ull)) --top;
+    int e = ce;
+    if (top > 23) {
+        const int sh = top - 23;
+        const unsigned long long rem = p & ((1ull << sh) - 1), half = 1ull << (sh - 1);
+        p >>= sh; e += sh;
+        if (rem > half || (rem == half && (p & 1ull))) { ++p; if (p >> 24) { p >>= 1; ++e; } }
+    } else { p <<= (23 - top); e -= (23 - top); }
+    const int be = e + 23 + 127;                                      // normal range only (the timer values are)
+    return (cb & 0x80000000u) | (static_cast<unsigned>(be) << 23) | (static_cast<unsigned>(p) & 0x7FFFFFu);
+}
 static void TmCheck(bool ok, const char* what, unsigned got, unsigned want) {
     ++s_tmChecks;
     if (!ok && ++s_tmFails <= 8)
         PortTop_Log("[OT_TIMER] self-test FAIL %s: got 0x%08X expected 0x%08X (call %u)", what, got, want, s_tmCalls480);
 }
 static void PortTop_TimerSummary(void);
-static void PortTop_Stop(unsigned rva, void* ret) {
-    PortTop_Log("[OT_TIMER] STOP: the matched 0x004926c0 called original 0x%08X (DAT_006147b8 = %d); the exe has no "
-                "body for it. Return address %p", rva, MemI(0x006147b8u), ret);
+// RO-AUDIOTICK-BODIES: named stop for a callee of the matched 0x0045d3f0 / 0x00466b50 / 0x0045d430 exe bodies. Those
+// bodies reach a callee only while DAT_006904e8 != 0, and the exe never sets that word (its only writer is 0x004669b0,
+// run in the exe as the hand stand-in piece 3). A stop here means that gate changed.
+void PortTop_AudioCalleeStop(unsigned rva, unsigned caller, void* ret) {
+    PortTop_Log("[OT_TIMER] STOP: the matched 0x%08X called original 0x%08X (DAT_006904e8 = %d, DAT_006904ec = %d); the "
+                "exe has no body for it. Return address %p", caller, rva, MemI(0x006904e8u), MemI(0x006904ecu), ret);
     PortTop_TimerSummary();
     std::exit(static_cast<int>(rva));
 }
-unsigned PortTop_Stop_0045d3f0(int) { PortTop_Stop(0x0045d3f0u, _ReturnAddress()); return 0; }
-void     PortTop_Stop_00466b50(int) { PortTop_Stop(0x00466b50u, _ReturnAddress()); }
-unsigned PortTop_Stop_0045d430(void) { PortTop_Stop(0x0045d430u, _ReturnAddress()); return 0; }
+unsigned PortTop_Bound_0045d3f0(int);    // Match/PortTop_0045d3f0.cpp
+void     PortTop_Bound_00466b50(void);   // Match/PortTop_00466b50.cpp
+unsigned PortTop_Bound_0045d430(void);   // Match/PortTop_0045d430.cpp
+int      PortTop_AudioInit_Ran(void);   // Match/PortTop_004669b0.cpp (PORT-TOP-4669B0): 1 once the matched 0x004669b0 ran
 
 // Dispatcher (not a body) for the matched AudioTickAndAvg. Model (re/match/s15/004926c0.c): DAT_00771978 counts up and wraps to 0 at 60, where
 // DAT_0077197c = DAT_00771994 / 60 and DAT_00771994 = 0. Otherwise DAT_00771994 grows by a QPC delta (>= 0).
 void PortTop_Timer_004926c0(void) {
     if (!OtAudioOn()) return;
     const int cnt0 = MemI(0x00771978u), acc0 = MemI(0x00771994u);
+    const int e8 = MemI(0x006904e8u), ec0 = MemI(0x006904ecu);
     AudioTickAndAvg();
     ++s_tmCalls6c0;
     const int cnt1 = MemI(0x00771978u), acc1 = MemI(0x00771994u);
+    // RO-AUDIOTICK-BODIES: DAT_006147b8 != 0 after the call <=> the audio branch ran (key 4 zeroes it and skips the
+    // branch). With DAT_006904e8 == 0, 0x0045d3f0 / 0x0045d430 return 1 and 0x00466b50 returns, writing nothing:
+    // DAT_006904ec must be unchanged (re/match/s10/0045d3f0.c, 0045d430.c, 00466b50.c).
+    if (MemI(0x006147b8u) != 0) {
+        ++s_tmAudioBranch;
+        // PORT-TOP-4669B0: under MASHED_OT_AUDIOINIT=1 the matched 0x004669b0 set the gate to 1; the bodies then reach
+        // their callees (named stops) inside AudioTickAndAvg, before this check.
+        TmCheck(e8 == PortTop_AudioInit_Ran(), "6c0 DAT_006904e8 gate on the exe path", static_cast<unsigned>(e8),
+                static_cast<unsigned>(PortTop_AudioInit_Ran()));
+        TmCheck(MemI(0x006904ecu) == ec0, "6c0 DAT_006904ec unchanged", MemU(0x006904ecu), static_cast<unsigned>(ec0));
+        if (s_tmAudioBranch == 1) {
+            const unsigned r3f0 = PortTop_Bound_0045d3f0(0), r430 = PortTop_Bound_0045d430();
+            TmCheck(r3f0 == 1, "0045d3f0 return", r3f0, 1);
+            TmCheck(r430 == 1, "0045d430 return", r430, 1);
+            TmCheck(MemI(0x006904ecu) == ec0, "006904ec unchanged after direct calls", MemU(0x006904ecu), static_cast<unsigned>(ec0));
+        }
+    }
     if (cnt0 + 1 == 60) {
         TmCheck(cnt1 == 0, "6c0 counter wrap", cnt1, 0);
         TmCheck(acc1 == 0, "6c0 accumulator reset", acc1, 0);
@@ -375,8 +418,14 @@ int PortTop_Timer_00493480(void) {
     if (d > -64 && d < 64) d = 0; else { if (d < -2) d += 2; if (d > 2) d -= 2; }
     TmCheck(MemI(0x007f0ffcu) == ffc, "390 DAT_007f0ffc", MemI(0x007f0ffcu), ffc);
     TmCheck(MemI(0x00771984u) == d, "390 DAT_00771984", MemI(0x00771984u), d);
+    // DAT_007f1010 = (float)now * 3.3333333e-07f. Two forms (RO-AUDIOTICK-BODIES): the VS2022 body converts now to float
+    // first (cvtsi2ss, then mulss); the object build's DDK body loads now exact (fild) and rounds the product once. They
+    // differ by 1 ulp once now >= 2^24. Either form passes; the summary counts the calls where only the x87 form held.
     const unsigned f1010 = FBits(static_cast<float>(now) * 3.3333333e-07f);
-    TmCheck(MemFBits(0x007f1010u) == f1010, "390 DAT_007f1010", MemFBits(0x007f1010u), f1010);
+    const unsigned x1010 = X87MulExact(now, 3.3333333e-07f);
+    const unsigned g1010 = MemFBits(0x007f1010u);
+    if (g1010 != f1010 && g1010 == x1010) ++s_tmX87Form;
+    TmCheck(g1010 == f1010 || g1010 == x1010, "390 DAT_007f1010", g1010, f1010);
     TmCheck(MemI(0x007f0ff0u) == rff0 + 50, "390 DAT_007f0ff0 += 50", MemI(0x007f0ff0u), rff0 + 50);
     const bool win = t > r102c + 3000000u;
     TmCheck(MemI(0x007f1028u) == (win ? r1024 : r1028), "390 DAT_007f1028", MemI(0x007f1028u), win ? r1024 : r1028);
@@ -398,10 +447,12 @@ int PortTop_Timer_00493480(void) {
 }
 static void PortTop_TimerSummary(void) {
     if (s_otTimer != 1 && s_otAudio != 1) return;
-    PortTop_Log("[OT_TIMER] self-test %s (%u of %u checks failed), 0x00493480 calls %u, 0x004926c0 calls %u; bodies at "
-                "%p / %p / %p", s_tmFails ? "FAIL" : "PASS", s_tmFails, s_tmChecks, s_tmCalls480, s_tmCalls6c0,
+    PortTop_Log("[OT_TIMER] self-test %s (%u of %u checks failed), 0x00493480 calls %u, 0x004926c0 calls %u, audio branch "
+                "%u, DAT_007f1010 x87-only form %u; bodies at %p / %p / %p; 0x0045d3f0 / 0x00466b50 / 0x0045d430 at %p / %p / %p",
+                s_tmFails ? "FAIL" : "PASS", s_tmFails, s_tmChecks, s_tmCalls480, s_tmCalls6c0, s_tmAudioBranch, s_tmX87Form,
                 reinterpret_cast<void*>(&FpsDiscretise), reinterpret_cast<void*>(&AudioTickAndAvg),
-                reinterpret_cast<void*>(&PortTop_Bound_00493390));
+                reinterpret_cast<void*>(&PortTop_Bound_00493390), reinterpret_cast<void*>(&PortTop_Bound_0045d3f0),
+                reinterpret_cast<void*>(&PortTop_Bound_00466b50), reinterpret_cast<void*>(&PortTop_Bound_0045d430));
 }
 
 } // extern "C"

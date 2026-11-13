@@ -36,7 +36,7 @@ void FUN_004d83d0(int param_1,uint param_2)
   for (; param_1 != 0; param_1 = *(int *)(param_1 + 0x9c)) {
     uVar1 = *(byte *)(param_1 + 3) | param_2;
     if ((uVar1 & 4) != 0) {
-      FUN_004c4600(param_1 + 0x50,param_1 + 0x10,*(int *)(param_1 + 4) + 0x50);
+      FUN_004c4600((undefined4 *)(param_1 + 0x50),(undefined4 *)(param_1 + 0x10),(undefined4 *)(*(int *)(param_1 + 4) + 0x50));
       *(byte *)(param_1 + 3) = *(byte *)(param_1 + 3) & 0xfb;
     }
     FUN_004d83d0(*(undefined4 *)(param_1 + 0x98),uVar1);

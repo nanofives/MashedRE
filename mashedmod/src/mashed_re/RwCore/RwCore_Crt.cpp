@@ -40,5 +40,7 @@ int RwCoreCrt_sscanf(const char* s, const char* f, ...) { va_list ap; va_start(a
 void* RwCoreCrt_realloc(void* p, size_t n) { return realloc(p, n); }
 // rva 0x004a2d30 pow
 double RwCoreCrt_pow(double x, double y) { return pow(x, y); }
+// rva 0x005c24e0 qsort (RWC-PLUGIN-ATTACH)
+void RwCoreCrt_qsort(void* b, size_t n, size_t w, int (__cdecl* c)(const void*, const void*)) { qsort(b, n, w, c); }
 } // extern "C"
 #endif // MASHED_STANDALONE

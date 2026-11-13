@@ -1,0 +1,713 @@
+rva	dir	acc	bucket	strict
+0x004721e0	g2sall_ddk	-1	compile-fail	
+0x00472330	g2sall_ddk	100.0	100	C4-strict
+0x00472360	g2sall_ddk	16.7	<50	
+0x004a3370	g2sall_ddk	30.0	<50	
+0x004a3907	g2sall_ddk	42.9	<50	
+0x004b3eb0	g2sall_ddk	64.4	50-80	
+0x004c1de0	g2sall_rw9044	22.2	<50	
+0x004c2620	g2sall_rw9044	19.8	<50	
+0x004c2b80	g2sall_rw9044	84.2	80-95	
+0x004c2bb0	g2sall_ddk	87.0	80-95	
+0x004c3670	g2sall_ddk	20.0	<50	
+0x004c37d0	g2sall_rw9044	24.1	<50	
+0x004c3d90	g2sall_ddk	100.0	100	bytes-only reloc:0x004c3d90 BAD checked=2 unchecked=0 004c3d90.c +0x13 _DAT_007d3ffc: ours 0x007d3ffc vs orig 0x007d3ff8; +0x1a _DAT_007d3ff8: ours 0x007d3ff
+0x004c3dc0	g2sall_ddk	100.0	100	bytes-only reloc:0x004c3dc0 BAD checked=2 unchecked=0 004c3dc0.c +0xa _DAT_007d3ffc: ours 0x007d3ffc vs orig 0x007d3ff8; +0x15 _DAT_007d3ff8: ours 0x007d3ff8
+0x004c40e0	g2sall_ddk	71.3	50-80	
+0x004c61b0	g2scr_ddk	-1	compile-fail	
+0x004c6580	g2sall_rw9044	40.4	<50	
+0x004c6ba0	g2sall_rw9044	22.4	<50	
+0x004c7200	g2scr_ddk	-1	compile-fail	
+0x004c7490	g2scr_ddk	-1	compile-fail	
+0x004c9290	g2sall_ddk	-1	compile-fail	
+0x004ca160	g2sall_ddk	-1	compile-fail	
+0x004cab30	g2sall_rw9044	21.3	<50	
+0x004cac10	g2sall_ddk	-1	compile-fail	
+0x004cb6f0	g2scr_ddk	-1	compile-fail	
+0x004cb870	g2scr_ddk	-1	compile-fail	
+0x004ce5d0	g2sall_ddk	54.3	50-80	
+0x004ce6f0	g2sall_ddk	73.7	50-80	
+0x004d0520	g2sall_rw9044	56.1	50-80	
+0x004d05b0	g2sall_rw9044	65.9	50-80	
+0x004d0640	g2sall_ddk	100.0	100	C4-strict
+0x004d0fc0	g2sall_ddk	100.0	100	C4-strict
+0x004d0fe0	g2sall_ddk	100.0	100	C4-strict
+0x004d1000	g2sall_ddk	100.0	100	C4-strict
+0x004d15f0	g2sall_rw9044	31.2	<50	
+0x004d1630	g2sall_ddk	100.0	100	C4-strict
+0x004d3450	g2sall_rw9044	71.7	50-80	
+0x004d34d0	g2sall_rw9044	100.0	100	C4-strict
+0x004d34e0	g2sall_rw9044	100.0	100	C4-strict
+0x004d8090	g2sall_rw9044	100.0	100	C4-strict
+0x004d8cc0	g2scr_ddk	-1	compile-fail	
+0x004db5b0	g2scr_ddk	-1	compile-fail	
+0x004db840	g2scr_ddk	-1	compile-fail	
+0x004dbc90	g2scr_ddk	-1	compile-fail	
+0x004dd2e0	g2sall_ddk	-1	compile-fail	
+0x004dd660	g2sall_rw9044	35.1	<50	
+0x004deb20	g2sall_rw9044	100.0	100	C4-strict
+0x004deb50	g2sall_rw9044	100.0	100	C4-strict
+0x004deb80	g2sall_ddk	100.0	100	C4-strict
+0x004debb0	g2sall_rw9044	75.0	50-80	
+0x004debf0	g2sall_ddk	100.0	100	C4-strict
+0x004dec40	g2sall_ddk	100.0	100	C4-strict
+0x004dec70	g2sall_rw9044	100.0	100	C4-strict
+0x004deca0	g2sall_rw9044	100.0	100	C4-strict
+0x004decd0	g2sall_ddk	100.0	100	C4-strict
+0x004decf0	g2sall_rw9044	100.0	100	C4-strict
+0x004ded10	g2sall_rw9044	100.0	100	C4-strict
+0x004ded30	g2sall_ddk	100.0	100	C4-strict
+0x004ded60	g2sall_ddk	100.0	100	C4-strict
+0x004ded90	g2sall_ddk	100.0	100	C4-strict
+0x004dedb0	g2sall_ddk	100.0	100	C4-strict
+0x004dedd0	g2sall_ddk	85.7	80-95	
+0x004dee00	g2sall_rw9044	100.0	100	C4-strict
+0x004df030	g2sall_rw9044	47.6	<50	
+0x004e0b70	g2scr_ddk	-1	compile-fail	
+0x004e1270	g2scr_ddk	-1	compile-fail	
+0x004e1f60	g2scr_ddk	-1	compile-fail	
+0x004e3070	g2scr_ddk	-1	compile-fail	
+0x004e30f0	g2scr_ddk	-1	compile-fail	
+0x004e36a0	g2sall_rw9044	100.0	100	C4-strict
+0x004e3790	g2sall_rw9044	100.0	100	bytes-only reloc:0x004e3790 BAD checked=12 unchecked=0 004e3790.c +0x1 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x007d7164; +0x7 _DAT_007d7164: ours 0x007d7164
+0x004e3800	g2sall_ddk	20.0	<50	
+0x004e3850	g2scr_ddk	-1	compile-fail	
+0x004e3880	g2scr_ddk	-1	compile-fail	
+0x004e38a0	g2scr_ddk	-1	compile-fail	
+0x004e3b30	g2sall_rw9044	72.4	50-80	
+0x004e3b80	g2sall_rw9044	100.0	100	C4-strict
+0x004e3bd0	g2sall_rw9044	100.0	100	C4-strict
+0x004e3c00	g2scr_ddk	-1	compile-fail	
+0x004e3dc0	g2sall_rw9044	34.0	<50	
+0x004e3e40	g2sall_rw9044	36.4	<50	
+0x004e3e70	g2sall_ddk	100.0	100	C4-strict
+0x004e3ea0	g2sall_rw9044	100.0	100	C4-strict
+0x004e3ec0	g2scr_ddk	-1	compile-fail	
+0x004e40d0	g2sall_rw9044	86.1	80-95	
+0x004e4190	g2sall_ddk	100.0	100	C4-strict
+0x004e41e0	g2sall_ddk	100.0	100	C4-strict
+0x004e4200	g2sall_ddk	100.0	100	C4-strict
+0x004e4220	g2sall_ddk	85.7	80-95	
+0x004e4240	g2sall_ddk	0.0	<50	
+0x004e4250	g2sall_ddk	100.0	100	C4-strict
+0x004e4270	g2sall_ddk	85.7	80-95	
+0x004e4290	g2sall_ddk	0.0	<50	
+0x004e44e0	g2sall_rw9044	100.0	100	C4-strict
+0x004e4520	g2sall_rw9044	100.0	100	C4-strict
+0x004e4570	g2sall_rw9044	100.0	100	C4-strict
+0x004e4650	g2sall_rw9044	44.3	<50	
+0x004e46f0	g2sall_rw9044	41.5	<50	
+0x004e4780	g2sall_rw9044	26.3	<50	
+0x004e4950	g2scr_ddk	-1	compile-fail	
+0x004e4e60	g2sall_rw9044	52.2	50-80	
+0x004e4f00	g2sall_rw9044	100.0	100	C4-strict
+0x004e5850	g2sall_ddk	-1	compile-fail	
+0x004e5e20	g2sall_rw9044	100.0	100	bytes-only reloc:0x004e5e20 BAD checked=8 unchecked=0 004e5e20.c +0x1 _DAT_007d71cc: ours 0x007d71cc vs orig 0x007d3ff8; +0x7 _DAT_007d3ff8: ours 0x007d3ff8 
+0x004e5e70	g2sall_rw9044	100.0	100	C4-strict
+0x004e5f70	g2sall_ddk	100.0	100	C4-strict
+0x004e6250	g2sall_ddk	26.3	<50	
+0x004e64f0	g2sall_rw9044	100.0	100	C4-strict
+0x004e6610	g2sall_rw9044	37.5	<50	
+0x004e6630	g2sall_rw9044	37.5	<50	
+0x004e6d40	g2sall_rw9044	100.0	100	C4-strict
+0x004e7ed0	g2sall_ddk	100.0	100	C4-strict
+0x004e7ef0	g2sall_rw9044	100.0	100	C4-strict
+0x004e7f60	g2sall_rw9044	100.0	100	bytes-only reloc:0x004e7f60 BAD checked=7 unchecked=0 004e7f60.c +0x1 _DAT_007d7260: ours 0x007d7260 vs orig 0x007d3ff8; +0x7 _DAT_007d3ff8: ours 0x007d3ff8 
+0x004e8540	g2sall_rw9044	100.0	100	C4-strict
+0x004e8560	g2sall_rw9044	100.0	100	C4-strict
+0x004e8570	g2scr_ddk	-1	compile-fail	
+0x004e89a0	g2sall_ddk	53.3	50-80	
+0x004e9990	g2sall_ddk	100.0	100	C4-strict
+0x004ea4c0	g2sall_rw9044	100.0	100	C4-strict
+0x004ea4d0	g2sall_rw9044	100.0	100	C4-strict
+0x004ea4e0	g2scr_ddk	-1	compile-fail	
+0x004ea6d0	g2scr_ddk	-1	compile-fail	
+0x004ea970	g2scr_ddk	-1	compile-fail	
+0x004ea9a0	g2sall_ddk	-1	compile-fail	
+0x004eb320	g2sall_rw9044	100.0	100	C4-strict
+0x004eb350	g2scr_ddk	-1	compile-fail	
+0x004eb3d0	g2scr_ddk	-1	compile-fail	
+0x004eb520	g2scr_ddk	-1	compile-fail	
+0x004eb550	g2scr_ddk	-1	compile-fail	
+0x004eb5c0	g2scr_ddk	-1	compile-fail	
+0x004eba70	g2sall_ddk	17.1	<50	
+0x004ebd00	g2scr_ddk	-1	compile-fail	
+0x004ec190	g2scr_ddk	-1	compile-fail	
+0x004ec760	g2sall_rw9044	18.6	<50	
+0x004ec790	g2scr_ddk	-1	compile-fail	
+0x004ec79d	g2sall_rw9044	28.8	<50	
+0x004ec82c	g2scr_ddk	-1	compile-fail	
+0x004ec8de	g2scr_ddk	-1	compile-fail	
+0x004ec8eb	g2sall_ddk	29.4	<50	
+0x004ec9a3	g2sall_ddk	29.4	<50	
+0x004eca7c	g2sall_ddk	35.3	<50	
+0x004ecaee	g2sall_ddk	100.0	100	C4-strict
+0x004ecafb	g2sall_ddk	100.0	100	C4-strict
+0x004ecb01	g2scr_ddk	-1	compile-fail	
+0x004ecb12	g2sall_ddk	-1	compile-fail	
+0x004ecb1f	g2sall_ddk	-1	compile-fail	
+0x004ecb25	g2scr_ddk	-1	compile-fail	
+0x004ecb36	g2sall_ddk	-1	compile-fail	
+0x004ecb43	g2sall_ddk	-1	compile-fail	
+0x004ecb49	g2scr_ddk	-1	compile-fail	
+0x004ecb5a	g2sall_ddk	-1	compile-fail	
+0x004ecb6d	g2scr_ddk	-1	compile-fail	
+0x004ecc45	g2sall_ddk	29.4	<50	
+0x004ecd40	g2sall_ddk	35.3	<50	
+0x004ecd6f	g2sall_ddk	18.9	<50	
+0x004ecdcc	g2scr_ddk	-1	compile-fail	
+0x004ecdd9	g2sall_ddk	17.9	<50	
+0x004ece64	g2sall_ddk	-1	compile-fail	
+0x004ece75	g2scr_ddk	13.8	<50	
+0x004ecf1c	g2sall_ddk	100.0	100	C4-strict
+0x004ecf29	g2sall_ddk	100.0	100	C4-strict
+0x004ecf2f	g2sall_ddk	-1	compile-fail	
+0x004ecf40	g2sall_ddk	-1	compile-fail	
+0x004ecf46	g2sall_ddk	-1	compile-fail	
+0x004ecf53	g2sall_ddk	-1	compile-fail	
+0x004ecf59	g2scr_ddk	5.7	<50	
+0x004ecfbf	g2sall_ddk	-1	compile-fail	
+0x004ecfd0	g2scr_ddk	12.8	<50	
+0x004ed04e	g2sall_ddk	50.0	50-80	
+0x004ed05f	g2scr_ddk	-1	compile-fail	
+0x004ed070	g2scr_ddk	-1	compile-fail	
+0x004ed081	g2scr_ddk	-1	compile-fail	
+0x004ed092	g2scr_ddk	-1	compile-fail	
+0x004ed09f	g2scr_rw9044	18.0	<50	
+0x004ed18f	g2scr_ddk	-1	compile-fail	
+0x004ed19c	g2scr_ddk	-1	compile-fail	
+0x004ed1c6	g2sall_ddk	26.7	<50	
+0x004ed297	g2sall_ddk	29.4	<50	
+0x004ed2c1	g2sall_ddk	37.9	<50	
+0x004ed3b4	g2sall_ddk	35.3	<50	
+0x004ed3e3	g2sall_ddk	19.6	<50	
+0x004ed45a	g2scr_ddk	-1	compile-fail	
+0x004ed467	g2scr_ddk	4.0	<50	
+0x004ed506	g2sall_ddk	-1	compile-fail	
+0x004ed517	g2scr_ddk	9.4	<50	
+0x004ed5d6	g2scr_ddk	-1	compile-fail	
+0x004ed5e3	g2scr_ddk	0.0	<50	
+0x004ed6ad	g2sall_ddk	-1	compile-fail	
+0x004ed6ba	g2sall_ddk	-1	compile-fail	
+0x004ed6c0	g2scr_ddk	12.5	<50	
+0x004ed8f6	g2sall_ddk	-1	compile-fail	
+0x004ed903	g2sall_ddk	-1	compile-fail	
+0x004ed909	g2scr_ddk	2.6	<50	
+0x004ed976	g2sall_ddk	-1	compile-fail	
+0x004ed983	g2sall_ddk	-1	compile-fail	
+0x004ed989	g2scr_ddk	11.6	<50	
+0x004edbbf	g2sall_ddk	-1	compile-fail	
+0x004edbcc	g2sall_ddk	-1	compile-fail	
+0x004edbd2	g2scr_rw9044	16.4	<50	
+0x004edf71	g2sall_ddk	30.8	<50	
+0x004edf9f	g2scr_ddk	5.9	<50	
+0x004edffb	g2sall_ddk	30.8	<50	
+0x004ee029	g2scr_ddk	5.9	<50	
+0x004ee085	g2sall_ddk	55.6	50-80	
+0x004ee0a1	g2sall_ddk	4.2	<50	
+0x004ee11b	g2sall_ddk	55.6	50-80	
+0x004ee137	g2sall_ddk	16.3	<50	
+0x004ee1b2	g2sall_ddk	55.6	50-80	
+0x004ee1ce	g2sall_ddk	12.2	<50	
+0x004ee24a	g2sall_ddk	45.5	<50	
+0x004ee26a	g2sall_ddk	8.5	<50	
+0x004ee36c	g2sall_ddk	-1	compile-fail	
+0x004ee379	g2sall_ddk	-1	compile-fail	
+0x004ee37f	g2scr_ddk	14.9	<50	
+0x004ee461	g2sall_ddk	30.8	<50	
+0x004ee48f	g2sall_ddk	50.0	50-80	
+0x004ee4a0	g2sall_ddk	33.3	<50	
+0x004ee4c7	g2sall_ddk	9.7	<50	
+0x004ee5ad	g2scr_ddk	-1	compile-fail	
+0x004ee5ba	g2scr_ddk	-1	compile-fail	
+0x004ee5c7	g2scr_ddk	-1	compile-fail	
+0x004ee5d4	g2scr_ddk	-1	compile-fail	
+0x004ee609	g2scr_ddk	-1	compile-fail	
+0x004ee616	g2scr_ddk	13.2	<50	
+0x004ee74a	g2sall_ddk	45.5	<50	
+0x004ee76a	g2sall_ddk	11.8	<50	
+0x004ee7c6	g2sall_ddk	30.8	<50	
+0x004ee7f4	g2sall_ddk	100.0	100	C4-strict
+0x004ee7fa	g2scr_ddk	17.4	<50	
+0x004ee8d3	g2sall_ddk	-1	compile-fail	
+0x004ee8e0	g2sall_ddk	-1	compile-fail	
+0x004ee8e6	g2scr_ddk	5.0	<50	
+0x004ee97c	g2scr_ddk	-1	compile-fail	
+0x004ee989	g2sall_ddk	-1	compile-fail	
+0x004ee996	g2sall_ddk	-1	compile-fail	
+0x004ee99c	g2scr_ddk	34.2	<50	
+0x004eea4d	g2sall_ddk	-1	compile-fail	
+0x004eea5a	g2sall_ddk	-1	compile-fail	
+0x004eea60	g2scr_ddk	-1	compile-fail	
+0x004eeadb	g2sall_ddk	100.0	100	C4-strict
+0x004eeae8	g2sall_ddk	100.0	100	C4-strict
+0x004eeaee	g2scr_ddk	26.9	<50	
+0x004eeb86	g2sall_ddk	38.5	<50	
+0x004eebaa	g2sall_ddk	100.0	100	C4-strict
+0x004eebb0	g2scr_ddk	-1	compile-fail	
+0x004eec93	g2sall_ddk	29.4	<50	
+0x004eecbd	g2sall_rw9044	17.5	<50	
+0x004eed14	g2sall_ddk	-1	compile-fail	
+0x004eed25	g2scr_ddk	-1	compile-fail	
+0x004eed54	g2sall_rw9044	15.0	<50	
+0x004eeddc	g2sall_ddk	100.0	100	C4-strict
+0x004eede9	g2sall_ddk	100.0	100	C4-strict
+0x004eedef	g2scr_ddk	-1	compile-fail	
+0x004eee90	g2scr_ddk	-1	compile-fail	
+0x004eee9d	g2scr_ddk	57.4	50-80	
+0x004eef3f	g2scr_ddk	-1	compile-fail	
+0x004eef4c	g2scr_ddk	40.0	<50	
+0x004eef84	g2scr_ddk	-1	compile-fail	
+0x004eef91	g2scr_rw9044	7.8	<50	
+0x004ef033	g2scr_ddk	-1	compile-fail	
+0x004ef040	g2scr_ddk	6.1	<50	
+0x004ef0df	g2sall_ddk	-1	compile-fail	
+0x004ef0f0	g2scr_ddk	9.5	<50	
+0x004ef1af	g2sall_ddk	-1	compile-fail	
+0x004ef1c0	g2scr_ddk	-1	compile-fail	
+0x004ef1d1	g2scr_ddk	-1	compile-fail	
+0x004ef25b	g2sall_ddk	14.3	<50	
+0x004ef2c6	g2sall_ddk	14.3	<50	
+0x004ef349	g2sall_ddk	13.7	<50	
+0x004ef3c6	g2sall_rw9044	18.9	<50	
+0x004ef45e	g2sall_ddk	16.0	<50	
+0x004ef49a	g2sall_ddk	15.9	<50	
+0x004ef4ee	g2sall_ddk	-1	compile-fail	
+0x004ef58b	g2sall_ddk	8.9	<50	
+0x004ef647	g2sall_rw9044	14.0	<50	
+0x004ef726	g2sall_ddk	29.2	<50	
+0x004ef8b3	g2sall_ddk	18.7	<50	
+0x004efab3	g2sall_ddk	19.3	<50	
+0x004efc59	g2sall_ddk	7.7	<50	
+0x004efe8a	g2sall_ddk	-1	compile-fail	
+0x004eff40	g2sall_rw9044	23.8	<50	
+0x004eff79	g2sall_ddk	12.6	<50	
+0x004f03c6	g2scr_ddk	19.3	<50	
+0x004f08e0	g2sall_rw9044	100.0	100	C4-strict
+0x004f08f0	g2sall_rw9044	100.0	100	C4-strict
+0x004f0990	g2sall_rw9044	100.0	100	C4-strict
+0x004f09c0	g2sall_rw9044	100.0	100	C4-strict
+0x004f1f90	g2sall_ddk	100.0	100	C4-strict
+0x004f1fb0	g2sall_ddk	-1	compile-fail	
+0x004f2420	g2sall_rw9044	23.0	<50	
+0x004f2570	g2sall_rw9044	14.2	<50	
+0x004f38c0	g2sall_ddk	22.1	<50	
+0x004f3e90	g2sall_ddk	26.1	<50	
+0x004f4310	g2sall_ddk	-1	compile-fail	
+0x004f4540	g2sall_rw9044	100.0	100	C4-strict
+0x004f4570	g2sall_ddk	32.8	<50	
+0x004f4660	g2sall_ddk	15.0	<50	
+0x004f4990	g2scr_ddk	-1	compile-fail	
+0x004f4b70	g2scr_ddk	-1	compile-fail	
+0x004f4ca0	g2scr_ddk	-1	compile-fail	
+0x004f4f10	g2scr_ddk	-1	compile-fail	
+0x004f5ec0	g2scr_ddk	-1	compile-fail	
+0x004f8600	g2sall_ddk	16.7	<50	
+0x004f8620	g2sall_rw9044	100.0	100	C4-strict
+0x004f8630	g2sall_rw9044	100.0	100	C4-strict
+0x004f86a0	g2scr_ddk	-1	compile-fail	
+0x004f87a0	g2scr_ddk	-1	compile-fail	
+0x004f8980	g2scr_ddk	-1	compile-fail	
+0x004fa6f0	g2scr_ddk	-1	compile-fail	
+0x004fa710	g2scr_ddk	-1	compile-fail	
+0x004fa850	g2scr_ddk	-1	compile-fail	
+0x004fae00	g2scr_ddk	-1	compile-fail	
+0x004faf00	g2scr_ddk	-1	compile-fail	
+0x004faf90	g2scr_ddk	-1	compile-fail	
+0x004fb9aa	g2sall_rw9044	39.4	<50	
+0x004fba47	g2scr_ddk	15.6	<50	
+0x004fbd78	g2sall_ddk	-1	compile-fail	
+0x004fbdd5	g2sall_ddk	12.5	<50	
+0x004fbe7a	g2sall_ddk	-1	compile-fail	
+0x004fbf76	g2sall_ddk	40.4	<50	
+0x004fc0b1	g2sall_ddk	4.4	<50	
+0x004fc21f	g2sall_ddk	4.5	<50	
+0x004fc383	g2sall_ddk	-1	compile-fail	
+0x004fc467	g2sall_ddk	3.1	<50	
+0x004fc6f5	g2sall_ddk	6.6	<50	
+0x004fc75e	g2sall_ddk	22.7	<50	
+0x004fc793	g2sall_ddk	4.7	<50	
+0x004fc81e	g2sall_ddk	9.4	<50	
+0x004fc87d	g2sall_ddk	4.0	<50	
+0x004fc916	g2sall_rw9044	4.1	<50	
+0x004fc9e0	g2sall_ddk	12.2	<50	
+0x004fcac3	g2sall_ddk	14.8	<50	
+0x004fcb51	g2sall_ddk	20.0	<50	
+0x004fcb96	g2sall_ddk	-1	compile-fail	
+0x004fcbca	g2sall_ddk	-1	compile-fail	
+0x004fcc00	g2sall_ddk	-1	compile-fail	
+0x004fcc18	g2sall_ddk	-1	compile-fail	
+0x004fcc67	g2sall_ddk	-1	compile-fail	
+0x004fccbc	g2sall_ddk	-1	compile-fail	
+0x004fceb8	g2sall_ddk	-1	compile-fail	
+0x004fced0	g2sall_ddk	-1	compile-fail	
+0x004fceec	g2sall_rw9044	31.3	<50	
+0x004fcf91	g2sall_ddk	15.8	<50	
+0x004ff554	g2sall_ddk	-1	compile-fail	
+0x004ff913	g2sall_ddk	33.3	<50	
+0x004ff958	g2sall_ddk	9.1	<50	
+0x004ffb3e	g2sall_ddk	-1	compile-fail	
+0x004ffba7	g2sall_ddk	100.0	100	C4-strict
+0x00500f76	g2sall_ddk	9.1	<50	
+0x005033ba	g2sall_ddk	39.3	<50	
+0x00504008	g2sall_ddk	-1	compile-fail	
+0x0050456c	g2sall_ddk	-1	compile-fail	
+0x005045ca	g2sall_rw9044	1.4	<50	
+0x00504643	g2sall_ddk	-1	compile-fail	
+0x005046dd	g2sall_ddk	-1	compile-fail	
+0x0050475b	g2sall_rw9044	3.7	<50	
+0x0050481d	g2sall_ddk	15.6	<50	
+0x00504947	g2sall_ddk	-1	compile-fail	
+0x00504ac1	g2sall_ddk	4.4	<50	
+0x00504cc7	g2sall_ddk	5.2	<50	
+0x00504e55	g2sall_ddk	-1	compile-fail	
+0x00504fbb	g2sall_ddk	6.7	<50	
+0x005050cb	g2sall_ddk	3.1	<50	
+0x00505309	g2sall_ddk	5.5	<50	
+0x005054d9	g2sall_ddk	-1	compile-fail	
+0x0050570a	g2sall_ddk	-1	compile-fail	
+0x00505c62	g2sall_ddk	1.3	<50	
+0x00505d8c	g2sall_ddk	15.8	<50	
+0x00505e60	g2sall_ddk	1.8	<50	
+0x00505e9e	g2sall_ddk	-1	compile-fail	
+0x00505ef5	g2sall_ddk	3.2	<50	
+0x00505f2c	g2sall_ddk	2.5	<50	
+0x00505ff8	g2sall_ddk	0.2	<50	
+0x0050612c	g2sall_ddk	-1	compile-fail	
+0x00506428	g2sall_ddk	2.2	<50	
+0x005064e8	g2sall_ddk	-1	compile-fail	
+0x00506582	g2sall_ddk	3.6	<50	
+0x00506634	g2sall_ddk	3.4	<50	
+0x005066b9	g2sall_ddk	0.8	<50	
+0x0050675e	g2sall_ddk	3.6	<50	
+0x00506811	g2sall_ddk	0.8	<50	
+0x005068ab	g2sall_ddk	3.4	<50	
+0x00506931	g2sall_ddk	0.7	<50	
+0x0050698e	g2sall_ddk	3.3	<50	
+0x005069d7	g2sall_ddk	0.8	<50	
+0x00506a29	g2sall_ddk	-1	compile-fail	
+0x00506ad7	g2sall_ddk	-1	compile-fail	
+0x00506bd7	g2sall_ddk	-1	compile-fail	
+0x00506ce3	g2sall_ddk	3.5	<50	
+0x00506db8	g2sall_ddk	-1	compile-fail	
+0x00506ea8	g2sall_ddk	-1	compile-fail	
+0x0050706f	g2sall_ddk	4.4	<50	
+0x00507275	g2sall_ddk	5.2	<50	
+0x00507403	g2sall_ddk	-1	compile-fail	
+0x00507569	g2sall_ddk	6.7	<50	
+0x00507679	g2sall_ddk	3.1	<50	
+0x005078b7	g2sall_ddk	5.5	<50	
+0x00507a87	g2sall_ddk	-1	compile-fail	
+0x00507cb8	g2sall_ddk	-1	compile-fail	
+0x00507da9	g2sall_rw9044	16.3	<50	
+0x00507e7b	g2sall_ddk	2.2	<50	
+0x00507f3b	g2sall_ddk	1.6	<50	
+0x00508046	g2sall_ddk	-1	compile-fail	
+0x00508146	g2sall_ddk	-1	compile-fail	
+0x00508252	g2sall_ddk	2.7	<50	
+0x00508326	g2sall_ddk	-1	compile-fail	
+0x00508429	g2sall_ddk	-1	compile-fail	
+0x0050853e	g2sall_ddk	1.3	<50	
+0x00508772	g2sall_ddk	-1	compile-fail	
+0x00508939	g2sall_rw9044	3.7	<50	
+0x005089fb	g2sall_ddk	15.6	<50	
+0x00508b40	g2sall_ddk	0.9	<50	
+0x00508c00	g2sall_ddk	0.9	<50	
+0x00508cc0	g2sall_ddk	1.2	<50	
+0x00508f20	g2sall_ddk	-1	compile-fail	
+0x00509180	g2sall_ddk	1.4	<50	
+0x00509340	g2sall_rw9044	1.0	<50	
+0x005093e0	g2sall_ddk	-1	compile-fail	
+0x00509700	g2sall_ddk	1.1	<50	
+0x0050997c	g2sall_ddk	0.5	<50	
+0x00509a15	g2sall_ddk	0.8	<50	
+0x00509a72	g2sall_rw9044	20.7	<50	
+0x00509ab6	g2sall_ddk	0.4	<50	
+0x00509cd2	g2sall_ddk	0.4	<50	
+0x00509ee7	g2sall_ddk	4.0	<50	
+0x00509fac	g2sall_ddk	8.1	<50	
+0x0050a018	g2sall_ddk	1.6	<50	
+0x0050a14f	g2sall_rw9044	6.1	<50	
+0x0050a1dc	g2sall_ddk	8.3	<50	
+0x0050a26e	g2sall_ddk	0.8	<50	
+0x0050a2d2	g2sall_ddk	3.1	<50	
+0x0050a379	g2sall_ddk	1.3	<50	
+0x0050a41e	g2sall_ddk	0.5	<50	
+0x0050ae57	g2sall_ddk	0.2	<50	
+0x0050b089	g2sall_ddk	0.3	<50	
+0x0050b158	g2sall_ddk	2.4	<50	
+0x0050b1a8	g2sall_ddk	1.2	<50	
+0x0050b293	g2sall_ddk	1.4	<50	
+0x0050b36f	g2sall_ddk	13.5	<50	
+0x0050b3d2	g2sall_ddk	10.0	<50	
+0x0050b430	g2sall_ddk	9.6	<50	
+0x0050b489	g2sall_ddk	3.3	<50	
+0x0050b4d0	g2sall_ddk	1.1	<50	
+0x0050b53f	g2sall_ddk	5.0	<50	
+0x0050b578	g2sall_ddk	0.4	<50	
+0x0050b64a	g2sall_ddk	0.4	<50	
+0x0050b6ff	g2sall_ddk	0.0	<50	
+0x0050c897	g2sall_ddk	0.7	<50	
+0x0050ca3c	g2sall_ddk	0.1	<50	
+0x0050cf70	g2sall_ddk	2.2	<50	
+0x0050d089	g2sall_ddk	0.1	<50	
+0x0050e1dd	g2sall_rw9044	0.3	<50	
+0x0050e4bf	g2sall_ddk	0.1	<50	
+0x0050e8b7	g2sall_ddk	0.4	<50	
+0x0050ebeb	g2sall_ddk	15.4	<50	
+0x0050ec07	g2sall_ddk	0.6	<50	
+0x0050ec78	g2sall_ddk	0.7	<50	
+0x0050ecdf	g2sall_ddk	0.8	<50	
+0x0050ed3e	g2sall_ddk	1.3	<50	
+0x0050edaf	g2sall_rw9044	0.7	<50	
+0x0050ee83	g2sall_rw9044	0.7	<50	
+0x0050ef6d	g2sall_ddk	0.4	<50	
+0x0050eff8	g2sall_ddk	0.1	<50	
+0x0050f1bf	g2sall_ddk	0.0	<50	
+0x0050f1c4	g2sall_ddk	18.1	<50	
+0x0050f34c	g2sall_rw9044	13.6	<50	
+0x0050f572	g2sall_rw9044	8.6	<50	
+0x0050f700	g2sall_ddk	0.9	<50	
+0x0050f840	g2sall_ddk	1.1	<50	
+0x0050f9bb	g2sall_ddk	0.8	<50	
+0x0050fa10	g2sall_ddk	1.7	<50	
+0x0050fa49	g2sall_ddk	0.7	<50	
+0x0050faad	g2sall_ddk	0.5	<50	
+0x0050fb45	g2sall_ddk	2.4	<50	
+0x0050fb8e	g2sall_ddk	1.2	<50	
+0x0050fbd1	g2sall_ddk	0.5	<50	
+0x0050fc7c	g2sall_ddk	0.5	<50	
+0x0050fcfe	g2sall_ddk	0.8	<50	
+0x0050fd5d	g2sall_ddk	0.8	<50	
+0x0050fe8f	g2sall_ddk	0.6	<50	
+0x0050ff00	g2sall_rw9044	0.7	<50	
+0x0050ffc8	g2sall_rw9044	0.7	<50	
+0x005100a6	g2sall_ddk	1.6	<50	
+0x005100e9	g2sall_ddk	0.3	<50	
+0x005101cd	g2sall_ddk	1.4	<50	
+0x0051028b	g2sall_ddk	0.8	<50	
+0x005102ef	g2sall_ddk	0.5	<50	
+0x00512cbe	g2sall_rw9044	1.5	<50	
+0x00512ea7	g2sall_ddk	0.2	<50	
+0x005130c0	g2sall_ddk	0.3	<50	
+0x005131c0	g2sall_ddk	0.3	<50	
+0x005137a0	g2sall_ddk	0.9	<50	
+0x005138a0	g2sall_ddk	0.9	<50	
+0x00513f90	g2sall_ddk	-1	compile-fail	
+0x005142d0	g2sall_ddk	100.0	100	C4-strict
+0x005142f0	g2sall_ddk	100.0	100	C4-strict
+0x00514330	g2sall_ddk	-1	compile-fail	
+0x00514d00	g2sall_ddk	-1	compile-fail	
+0x0052d910	g2sall_rw9044	75.0	50-80	
+0x0052d950	g2sall_rw9044	100.0	100	C4-strict
+0x0052dce0	g2scr_ddk	-1	compile-fail	
+0x0052dda0	g2scr_ddk	-1	compile-fail	
+0x0052e3d0	g2sall_rw9044	87.3	80-95	
+0x0052e490	g2sall_rw9044	100.0	100	C4-strict
+0x0052e4e0	g2sall_ddk	100.0	100	C4-strict
+0x0052e500	g2sall_ddk	100.0	100	C4-strict
+0x0052e560	g2sall_ddk	60.0	50-80	
+0x0052e580	g2sall_ddk	16.7	<50	
+0x0052e5a0	g2sall_ddk	16.7	<50	
+0x0052e5c0	g2sall_ddk	97.8	>=95	
+0x0052e6c0	g2sall_rw9044	46.4	<50	
+0x0052e710	g2sall_rw9044	100.0	100	C4-strict
+0x0052e800	g2sall_rw9044	69.0	50-80	
+0x0052ec50	g2sall_rw9044	55.8	50-80	
+0x0052ef00	g2scr_ddk	-1	compile-fail	
+0x0052ef10	g2scr_ddk	-1	compile-fail	
+0x0052f200	g2scr_ddk	-1	compile-fail	
+0x0052f6d0	g2scr_ddk	-1	compile-fail	
+0x0052fc20	g2scr_ddk	-1	compile-fail	
+0x0052fd90	g2sall_rw9044	100.0	100	C4-strict
+0x005302e0	g2scr_ddk	-1	compile-fail	
+0x00530650	g2sall_rw9044	17.9	<50	
+0x00530c00	g2sall_ddk	23.7	<50	
+0x00531320	g2scr_ddk	-1	compile-fail	
+0x005317c0	g2scr_ddk	-1	compile-fail	
+0x005318b0	g2scr_ddk	-1	compile-fail	
+0x00531990	g2scr_ddk	-1	compile-fail	
+0x00531c40	g2scr_ddk	-1	compile-fail	
+0x00531d80	g2scr_ddk	-1	compile-fail	
+0x00531f60	g2scr_ddk	-1	compile-fail	
+0x00532190	g2scr_ddk	-1	compile-fail	
+0x00532480	g2scr_ddk	-1	compile-fail	
+0x005326c0	g2scr_ddk	-1	compile-fail	
+0x00532770	g2scr_ddk	-1	compile-fail	
+0x005328b0	g2scr_ddk	-1	compile-fail	
+0x00532b80	g2sall_ddk	27.5	<50	
+0x00532fa0	g2scr_ddk	-1	compile-fail	
+0x00533420	g2scr_ddk	-1	compile-fail	
+0x00533490	g2scr_ddk	-1	compile-fail	
+0x005334a0	g2scr_ddk	-1	compile-fail	
+0x00533600	g2scr_ddk	-1	compile-fail	
+0x00533740	g2sall_rw9044	57.9	50-80	
+0x005337f0	g2sall_ddk	100.0	100	C4-strict
+0x00533820	g2sall_rw9044	50.0	50-80	
+0x00533840	g2sall_rw9044	100.0	100	C4-strict
+0x00533900	g2sall_rw9044	96.7	>=95	
+0x005339a0	g2sall_rw9044	75.0	50-80	
+0x00533ad0	g2sall_ddk	11.8	<50	
+0x00533cc0	g2sall_rw9044	36.8	<50	
+0x00534950	g2sall_ddk	92.3	80-95	
+0x00534990	g2sall_rw9044	82.8	80-95	
+0x00534ad0	g2sall_ddk	100.0	100	C4-strict
+0x00534af0	g2sall_rw9044	100.0	100	C4-strict
+0x00534d00	g2sall_rw9044	23.4	<50	
+0x00535330	g2sall_rw9044	30.1	<50	
+0x00535690	g2sall_rw9044	100.0	100	C4-strict
+0x00535940	g2scr_ddk	-1	compile-fail	
+0x00535950	g2scr_ddk	-1	compile-fail	
+0x00535bd0	g2scr_ddk	-1	compile-fail	
+0x00535cb0	g2scr_ddk	-1	compile-fail	
+0x00536170	g2scr_ddk	-1	compile-fail	
+0x00536400	g2scr_ddk	-1	compile-fail	
+0x00536460	g2scr_ddk	-1	compile-fail	
+0x005364b0	g2scr_ddk	-1	compile-fail	
+0x00536520	g2scr_ddk	-1	compile-fail	
+0x005365a0	g2scr_ddk	-1	compile-fail	
+0x005365e0	g2scr_ddk	-1	compile-fail	
+0x00536630	g2sall_ddk	33.3	<50	
+0x00536660	g2sall_ddk	81.8	80-95	
+0x00536690	g2scr_ddk	-1	compile-fail	
+0x00536940	g2scr_ddk	-1	compile-fail	
+0x00536ad0	g2scr_ddk	-1	compile-fail	
+0x00536c90	g2scr_ddk	-1	compile-fail	
+0x00536fe0	g2scr_ddk	-1	compile-fail	
+0x005371f0	g2scr_ddk	-1	compile-fail	
+0x00537460	g2scr_ddk	-1	compile-fail	
+0x00537610	g2scr_ddk	-1	compile-fail	
+0x00537890	g2scr_ddk	-1	compile-fail	
+0x005379c0	g2scr_ddk	-1	compile-fail	
+0x00537b80	g2scr_ddk	-1	compile-fail	
+0x00537c40	g2scr_ddk	-1	compile-fail	
+0x00537de0	g2scr_ddk	-1	compile-fail	
+0x00537ed0	g2scr_ddk	-1	compile-fail	
+0x00537f40	g2scr_ddk	-1	compile-fail	
+0x00537fb0	g2scr_ddk	-1	compile-fail	
+0x00538300	g2scr_ddk	-1	compile-fail	
+0x00538460	g2scr_ddk	-1	compile-fail	
+0x005386b0	g2sall_rw9044	81.7	80-95	
+0x00538780	g2sall_ddk	60.4	50-80	
+0x00538800	g2sall_rw9044	25.0	<50	
+0x00538830	g2sall_rw9044	100.0	100	C4-strict
+0x00538870	g2sall_ddk	100.0	100	C4-strict
+0x00538890	g2sall_rw9044	77.8	50-80	
+0x005388f0	g2sall_ddk	48.9	<50	
+0x00538960	g2sall_rw9044	37.5	<50	
+0x00538980	g2sall_rw9044	100.0	100	C4-strict
+0x005389c0	g2sall_rw9044	77.2	50-80	
+0x00538aa0	g2scr_ddk	-1	compile-fail	
+0x00538c30	g2sall_ddk	57.1	50-80	
+0x0053d1c0	g2sall_ddk	100.0	100	bytes-only reloc:0x0053d1c0 BAD checked=4 unchecked=0 0053d1c0.c +0x7 _DAT_007d3ff8: ours 0x007d3ff8 vs orig 0x007dc5a8; +0x12 _DAT_007dc5a8: ours 0x007dc5a8
+0x0053d1f0	g2sall_rw9044	100.0	100	C4-strict
+0x0053d230	g2sall_ddk	100.0	100	C4-strict
+0x0053d250	g2sall_rw9044	55.3	50-80	
+0x0053d2b0	g2sall_ddk	33.3	<50	
+0x0053d3e0	g2sall_ddk	100.0	100	C4-strict
+0x0053e830	g2sall_ddk	25.8	<50	
+0x0053ebb0	g2sall_rw9044	100.0	100	C4-strict
+0x0053ebf0	g2sall_rw9044	100.0	100	C4-strict
+0x0053ec40	g2sall_ddk	100.0	100	C4-strict
+0x0053ec60	g2sall_ddk	100.0	100	C4-strict
+0x0053ed20	g2sall_rw9044	23.3	<50	
+0x0053f1a0	g2sall_rw9044	37.8	<50	
+0x0053f3c0	g2sall_rw9044	26.9	<50	
+0x0053f920	g2sall_rw9044	56.1	50-80	
+0x0053f9b0	g2sall_ddk	100.0	100	C4-strict
+0x0053f9d0	g2sall_ddk	12.5	<50	
+0x0053f9f0	g2sall_rw9044	75.0	50-80	
+0x0053fa70	g2sall_rw9044	37.5	<50	
+0x0053fa90	g2sall_ddk	100.0	100	C4-strict
+0x0053fab0	g2sall_ddk	12.5	<50	
+0x0053fad0	g2sall_rw9044	75.0	50-80	
+0x0053fb50	g2sall_rw9044	37.5	<50	
+0x005405c0	g2sall_rw9044	23.8	<50	
+0x00541d40	g2sall_ddk	-1	compile-fail	
+0x005422c0	g2sall_ddk	-1	compile-fail	
+0x00543500	g2sall_ddk	59.6	50-80	
+0x005440c0	g2sall_rw9044	100.0	100	C4-strict
+0x005440d0	g2sall_rw9044	100.0	100	C4-strict
+0x005440e0	g2sall_ddk	100.0	100	C4-strict
+0x00544100	g2sall_rw9044	98.7	>=95	
+0x005441f0	g2sall_rw9044	70.2	50-80	
+0x005444a0	g2sall_rw9044	53.8	50-80	
+0x005446f0	g2sall_rw9044	44.8	<50	
+0x005448f0	g2sall_rw9044	22.5	<50	
+0x00544dc0	g2sall_rw9044	100.0	100	C4-strict
+0x00544dd0	g2sall_rw9044	100.0	100	C4-strict
+0x00544de0	g2sall_rw9044	37.5	<50	
+0x00544e00	g2sall_rw9044	59.8	50-80	
+0x00544f10	g2sall_rw9044	100.0	100	C4-strict
+0x00544f50	g2sall_rw9044	48.9	<50	
+0x00544fc0	g2sall_rw9044	42.0	<50	
+0x00545080	g2sall_rw9044	47.9	<50	
+0x005451d0	g2sall_rw9044	100.0	100	C4-strict
+0x005451f0	g2sall_rw9044	42.9	<50	
+0x00545220	g2scr_ddk	-1	compile-fail	
+0x00546560	g2sall_rw9044	91.7	80-95	
+0x005465c0	g2sall_rw9044	21.8	<50	
+0x005492b0	g2sall_rw9044	37.5	<50	
+0x005492d0	g2sall_rw9044	100.0	100	C4-strict
+0x00549310	g2sall_rw9044	100.0	100	C4-strict
+0x00549350	g2sall_ddk	68.4	50-80	
+0x00549390	g2sall_ddk	60.0	50-80	
+0x005493e0	g2sall_ddk	64.2	50-80	
+0x00549710	g2sall_rw9044	82.1	80-95	
+0x005497f0	g2sall_rw9044	100.0	100	C4-strict
+0x00549840	g2scr_ddk	-1	compile-fail	
+0x00549a20	g2scr_ddk	-1	compile-fail	
+0x00549fe0	g2sall_rw9044	50.0	50-80	
+0x0054a000	g2sall_rw9044	100.0	100	C4-strict
+0x0054a030	g2sall_rw9044	100.0	100	C4-strict
+0x0054a070	g2sall_rw9044	70.0	50-80	
+0x0054a090	g2sall_rw9044	100.0	100	C4-strict
+0x0054a0d0	g2sall_ddk	44.4	<50	
+0x0054a0f0	g2sall_ddk	100.0	100	C4-strict
+0x0054aa30	g2scr_ddk	-1	compile-fail	
+0x0054ba20	g2sall_rw9044	19.7	<50	
+0x0054bda0	g2sall_rw9044	10.2	<50	
+0x0054d130	g2scr_ddk	-1	compile-fail	
+0x0054f8d0	g2sall_rw9044	56.7	50-80	
+0x00550130	g2sall_ddk	17.8	<50	
+0x00551610	g2sall_rw9044	100.0	100	C4-strict
+0x00551680	g2sall_rw9044	100.0	100	C4-strict
+0x005516c0	g2sall_rw9044	58.3	50-80	
+0x005516e0	g2sall_ddk	92.0	80-95	
+0x00551770	g2sall_rw9044	77.9	50-80	
+0x005518f0	g2sall_rw9044	68.8	50-80	
+0x00551bf0	g2sall_ddk	64.0	50-80	
+0x00551d30	g2scr_ddk	-1	compile-fail	
+0x00552050	g2sall_rw9044	68.6	50-80	
+0x005520f0	g2scr_ddk	-1	compile-fail	
+0x00552190	g2scr_ddk	-1	compile-fail	
+0x00552340	g2scr_ddk	-1	compile-fail	
+0x005523f0	g2scr_ddk	-1	compile-fail	
+0x005524c0	g2sall_rw9044	100.0	100	C4-strict
+0x00552510	g2scr_ddk	-1	compile-fail	
+0x00552590	g2scr_ddk	-1	compile-fail	
+0x00552600	g2scr_ddk	-1	compile-fail	
+0x005526b0	g2scr_ddk	-1	compile-fail	
+0x00557920	g2sall_rw9044	65.7	50-80	
+0x00557a60	g2sall_rw9044	36.9	<50	
+0x00557b70	g2sall_rw9044	73.5	50-80	
+0x00557bf0	g2sall_rw9044	100.0	100	C4-strict
+0x00557c60	g2sall_rw9044	100.0	100	C4-strict
+0x00557cb0	g2sall_rw9044	38.4	<50	
+0x00557d90	g2sall_rw9044	80.7	80-95	
+0x00557e50	g2sall_rw9044	60.0	50-80	
+0x00557e90	g2sall_ddk	100.0	100	C4-strict
+0x00561f40	g2sall_ddk	25.0	<50	
+0x00561f50	g2sall_ddk	73.3	50-80	
+0x00561f80	g2sall_ddk	94.7	80-95	
+0x00561ff0	g2sall_rw9044	100.0	100	C4-strict
+0x0057c2e0	g2sall_ddk	100.0	100	C4-strict
+0x0057c3a0	g2scr_ddk	-1	compile-fail	
+0x0057c3f0	g2scr_ddk	-1	compile-fail	
+0x0057c590	g2scr_ddk	-1	compile-fail	
+0x0057c5a0	g2scr_ddk	-1	compile-fail	
+0x005cb000	g2sall_rw9044	5.5	<50	
+0x005cb07f	g2sall_rw9044	6.2	<50	
+0x005cb0ef	g2sall_ddk	3.3	<50	
+0x005cb160	g2sall_ddk	3.8	<50	
+0x005cb432	g2sall_ddk	10.0	<50	

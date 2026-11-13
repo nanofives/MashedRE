@@ -29,6 +29,9 @@ typedef int code(...);
 #else
 typedef int code();
 #endif
+/* RWC-CORE-RUN run 38: `call [ecx+8]` at 0x004d31f7 is COM Release, __stdcall (callee pops the argument; `pop edi`
+   follows with no `add esp, 4`). Typed through `code` (cdecl) the caller also popped it. */
+typedef unsigned long __stdcall fpRelease(void *self);
 MGLOBAL(int, DAT_00911ae4, 0x00911ae4);
 MGLOBAL(undefined4 *, DAT_007d46e0, 0x007d46e0);
 MGLOBAL(undefined4, DAT_007d46e4, 0x007d46e4);
@@ -233,6 +236,6 @@ LAB_004d31ec:
   if (piVar3 == (int *)0x0) {
     return 1;
   }
-  (**(code **)(*piVar3 + 8))(piVar3);
+  (**(fpRelease **)(*piVar3 + 8))(piVar3);
   return 1;
 }

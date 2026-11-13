@@ -1,0 +1,3 @@
+0x005cb2a0 _RwCoreHand_005cb2a0 exe 0x0013c9e0 len 355 IDENTICAL
+0x005cb404 _RwCoreHand_005cb404 exe 0x001a1340 len 39 DIFFERENT first@+0x2
+0x005cb42b _RwCoreHand_005cb42b exe 0x001a1370 len 7 DIFFERENT first@+0x0

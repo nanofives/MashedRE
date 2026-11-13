@@ -318,18 +318,21 @@ def load_norm(path):
     action PIN = write `value` at the warp / race anchor (both sides). MASK:<family> / RULE:<name> = not pinned, scored by
     detorig_report.py as that class. Returns {"pin": [[va, width, value], ...], "mask": {va: class}}."""
     pin, mask = [], {}
-    for line in Path(path).read_text(encoding="utf-8").splitlines():
-        if not line.strip() or line.startswith("#") or line.startswith("va\t"):
-            continue
-        f = line.split("\t")
-        va, cnt, stride, width, action = int(f[0], 16), int(f[1]), int(f[2], 16), int(f[3]), f[4]
-        for k in range(cnt):
-            a = va + k * stride
-            if action == "PIN":
-                pin.append([a, width, int(f[5], 16)])
-            else:
-                for j in range(0, max(width, 4), 4):
-                    mask[a + j] = action
+    # `path` may be several files joined by commas (RO-MASKS: warp_normalize.tsv,replay_masks.tsv); an earlier file's
+    # mask class wins at the same dword (list warp_normalize.tsv first: its names are more specific).
+    for one in str(path).split(","):
+        for line in Path(one).read_text(encoding="utf-8").splitlines():
+            if not line.strip() or line.startswith("#") or line.startswith("va\t"):
+                continue
+            f = line.split("\t")
+            va, cnt, stride, width, action = int(f[0], 16), int(f[1]), int(f[2], 16), int(f[3]), f[4]
+            for k in range(cnt):
+                a = va + k * stride
+                if action == "PIN":
+                    pin.append([a, width, int(f[5], 16)])
+                else:
+                    for j in range(0, max(width, 4), 4):
+                        mask.setdefault(a + j, action)
     return {"pin": pin, "mask": mask}
 
 

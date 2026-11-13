@@ -143,9 +143,12 @@ def exe_wrappers():
         defs, incs, ptrabs, kconst = {}, [], {}, {}
         for line in active_lines(txt, {"MASHED_STANDALONE", "__cplusplus", "_MSC_VER", "_WIN32"}):
             if re.match(r"^\s*#\s*define\s+MGLOBALA?\s*\(", line):
-                # the wrapper binds the source's globals to its own cells (MATCH_CELL_*, exe_main.cpp:3575), not to
-                # the original addresses: a DDK object cannot follow a runtime pointer, so its units are refused
-                defs["@mglobal"] = line.strip()
+                # DDKOBJ-CELLS: a wrapper MGLOBAL / MGLOBALA in the preamble's own original-address form binds every
+                # global where the DDK object's absolute symbols put it, so it is accepted. Any other form (a cell
+                # indirection MATCH_CELL_##n, a lookup function) binds the source's globals elsewhere: a DDK object
+                # cannot follow it, so the unit is refused
+                if not MGLOBAL_ADDR_RE.match(line):
+                    defs["@mglobal"] = line.strip()
                 continue
             m = DEF_RE.match(line)
             if m:
@@ -199,6 +202,12 @@ def exe_wrappers():
 #                      a port table): the DDK object cannot follow it. The unit is refused like MGLOBAL / MATCH_CELL.
 #   @unparsed:<line>   anything else. When a DDK object references the name, the object build FAILS.
 # A name nobody references (MATCH_PORT, SSC_REC, say(...)) costs nothing: the check runs per referenced symbol.
+# DDKOBJ-CELLS: the preamble's original-address MGLOBAL / MGLOBALA (re/match/*: `static T &n = *(T *)(a)`,
+# `static T (&n)[N] = *(T (*)[N])(a)`), whitespace-insensitive. Only these two exact forms are accepted.
+MGLOBAL_ADDR_RE = re.compile(
+    r"^\s*#\s*define\s+(?:MGLOBAL\s*\(\s*T\s*,\s*n\s*,\s*a\s*\)\s+static\s+T\s*&\s*n\s*=\s*\*\s*\(\s*T\s*\*\s*\)\s*\(\s*a\s*\)"
+    r"|MGLOBALA\s*\(\s*T\s*,\s*n\s*,\s*N\s*,\s*a\s*\)\s+static\s+T\s*\(\s*&\s*n\s*\)\s*\[\s*N\s*\]\s*=\s*\*\s*\(\s*T\s*\(\s*\*\s*\)\s*\[\s*N\s*\]\s*\)\s*\(\s*a\s*\))"
+    r"\s*(?://.*)?$")
 DEFANY_RE = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)(.*)$")
 KCONST_RE = re.compile(r"^\s*static\s+const\s+[\w:]+\s+([A-Za-z_]\w*)\s*=\s*0x(00[4-9a-fA-F][0-9a-fA-F]{5})u?\s*;")
 _ADDR_RE = re.compile(r"\b0x(00[4-9a-fA-F][0-9a-fA-F]{5})u?\b")
@@ -1239,6 +1248,9 @@ def main_check(a):
 # Four fixture units outside the tree (temp dir, wrappers fed through DDKOBJ_EXTRA_WRAPPERS, RVAs in the PE header
 # range 0x00400010..0x00400050 so no real unit is selected with them). Needs the default build's objects (link.rsp)
 # and tools\vc7ddk, like `build`.
+_ST_MGPRE = ("#ifndef MATCH_PREAMBLE\n#define MATCH_PREAMBLE\n#ifdef __cplusplus\n"
+             "#define MGLOBAL(T, n, a) static T &n = *(T *)(a)\n#else\n#define MGLOBAL(T, n, a) extern T n\n"
+             "#endif\n#endif\n")
 _ST_SRC = {
     # an object that registers an SEH handler (__try/__except -> __except_handler3 + .sxdata): fails the build
     "seh": ("0x00400010", "int FUN_00400010(int a)\n{\n    int r = 0;\n    __try { r = 100 / a; }\n"
@@ -1264,6 +1276,17 @@ _ST_SRC = {
                           "#ifndef __cplusplus\nint ddkst_standin(int a, int b)\n{\n"
                           "  return FUN_00400060(a, b) + FUN_00400060(b, a);\n}\n#endif\n",
             "#define FUN_00400060 DdkSt_Reg\n"),
+    # DDKOBJ-CELLS: a wrapper MGLOBAL in the preamble's original-address form: accepted, the global links as data-abs
+    "mgaddr": ("0x00400080", _ST_MGPRE + "MGLOBAL(int, DAT_00400084, 0x00400084);\nint FUN_00400080(void)\n{\n"
+                             "    return DAT_00400084 + 1;\n}\n",
+               "#define FUN_00400080 DdkSt_MgAddr\n#define MATCH_PREAMBLE 1\n"
+               "#define MGLOBAL(T, n, a) static T &n = *(T *)(a)\n"),
+    # DDKOBJ-CELLS: a wrapper MGLOBAL through a cell indirection (the DDKOBJ-SPIKE refusal): still refused, not fatal
+    "mgcell": ("0x00400090", _ST_MGPRE + "MGLOBAL(int, DAT_00400094, 0x00400094);\nint FUN_00400090(void)\n{\n"
+                             "    return DAT_00400094 + 1;\n}\n",
+               "#define FUN_00400090 DdkSt_MgCell\n#define MATCH_PREAMBLE 1\nstatic int g_ddkst_mgcell = 0;\n"
+               "#define MATCH_CELL_DAT_00400094 (&g_ddkst_mgcell)\n"
+               "#define MGLOBAL(T, n, a) static T &n = *(T *)(MATCH_CELL_##n)\n"),
 }
 
 
@@ -1339,8 +1362,17 @@ def main_selftest(a):
               "port-cell data #define -> fail:wrapper-redefines-globals, not fatal")
         check(by.get("same", {}).get("status") == "ok", f"k_ same-address data #define -> ok ({by.get('same', {}).get('status')})")
         check(len(rep.get("fatal", [])) == 2, f"build json lists 2 fatal units ({len(rep.get('fatal', []))})")
-        rc, rep, by = run(["port", "same"], "clean")
+        rc, rep, by = run(["port", "same", "mgaddr", "mgcell"], "clean")
         check(rc == 0, f"without the two fatal fixtures the build goes on (rc {rc})")
+        # DDKOBJ-CELLS
+        und = {x["orig"]: x for x in by.get("mgaddr", {}).get("undef", [])}
+        check(by.get("mgaddr", {}).get("status") == "ok" and
+              und.get("DAT_00400084", {}).get("name") == "__ddkabs_00400084",
+              f"original-address MGLOBAL -> ok, __ddkabs_00400084 ({by.get('mgaddr', {}).get('status')}: "
+              f"{und.get('DAT_00400084')})")
+        check(by.get("mgcell", {}).get("status") == "fail:wrapper-redefines-globals" and
+              not by["mgcell"].get("fatal"), f"cell MGLOBAL -> fail:wrapper-redefines-globals, not fatal "
+              f"({by.get('mgcell', {}).get('status')})")
         und = {x["orig"]: x for x in by.get("same", {}).get("undef", [])}
         check(und.get("DAT_00400054", {}).get("class") == "data-abs" and
               und["DAT_00400054"]["name"] == "__ddkabs_00400054", f"same-address data binds to __ddkabs_00400054 ({und.get('DAT_00400054')})")

@@ -10,7 +10,7 @@
 #define FUN_004cfe40 RwCore_004cfe40
 #define FUN_004db550 RwCore_004db550
 #define FUN_004dcdc0 RwCore_004dcdc0
-#define FUN_005cb42b RwCore_005cb42b
+#define FUN_005cb42b RwCoreHand_005cb42b
 extern "C" {
 #include "../../../../re/match/s20/004c8c70.c"
 }

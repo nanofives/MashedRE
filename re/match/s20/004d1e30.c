@@ -10,6 +10,10 @@
    pushes and runs `not / shr 0xf / and 1` on edi after them; ours runs them on edx before `push ebp`, then copies.
    Tried: levels as one expression, as a copy then in-place ops, a loop-scope format variable shared with case
    0/4, `!(f & 0x8000)` / `?:` / xor forms (88.4%), permuter 331 compiles. Class (b).
+   MATCH-RWC-NEAR-C (2026-11-12): 100%. The format goes through a 16-bit local, `unsigned short fmt`, and levels is
+   `(~(unsigned int)fmt >> 15) & 1`: the ushort-to-uint conversion is the `mov edi, edx` copy, and not / shr / and
+   then run on edi after the pushes. A plain `(unsigned short)` cast inside the expression and a
+   `short` local also give 100%; casting after the `~` gives 88.7%.
    Walks the video-memory raster list at DAT_007d46e0 ({raster, next}) and re-creates D3D resources for top-level rasters (parent == self), by raster type
    (+0x20): 0/4 palettised (format bits 0x6000) -> SetPaletteEntries (+0x11c) when ext+4 is set, else depth formats
    0x46..0x50 -> CreateTexture (+0x5c, levels 1, usage 2); 1 -> without ext+0 the depth-format probe of 0x004d2e30
@@ -124,7 +128,8 @@ int FUN_004d1e30(void)
         break;
       case 5:
         if (rasExt->texture == 0) {
-          unsigned int levels = (~RwRasterGetFormat(raster) >> 15) & 1;
+          unsigned short fmt = (unsigned short)RwRasterGetFormat(raster);
+          unsigned int levels = (~(unsigned int)fmt >> 15) & 1;
           if (rasExt->cube & 0xf) {
             hr = ((CreateCubeFn)DAT_007d4110->v[0x64 / 4])(DAT_007d4110, raster->width, levels, ((rasExt->automipmapgen & 0xf) ? 0x400 : 0) | 1, rasExt->d3dFormat, 0, &rasExt->texture, 0);
           } else {

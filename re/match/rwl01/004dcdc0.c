@@ -32,6 +32,10 @@ typedef int code();
 #ifndef __cplusplus
 #define true 1
 #endif
+/* RWC-CORE-RUN run 38: the two `call [reg+8]` at 0x004dce28 / 0x004dcedd are COM Release, __stdcall (the callee pops
+   the argument; no `add esp, 4` follows either call in the original). Typed through `code` (cdecl) both callers also
+   popped it, and 0x004dcdc0 returned through the wrong stack slot on the RW core path. */
+typedef unsigned long __stdcall fpRelease(void *self);
 MGLOBAL(int, DAT_007d70c0, 0x007d70c0);
 MGLOBAL(undefined4, DAT_007d70c8, 0x007d70c8);
 MGLOBAL(int, DAT_007d70c4, 0x007d70c4);
@@ -82,7 +86,7 @@ void FUN_004dcdc0(void)
         piVar1 = *(int **)(iVar4 + 8);
         iVar2 = *(int *)(iVar4 + 0x10);
         if (piVar1 != (int *)0x0) {
-          (**(code **)(*piVar1 + 8))(piVar1);
+          (**(fpRelease **)(*piVar1 + 8))(piVar1);
           *(undefined4 *)(DAT_007d70c0 + 8) = 0;
           iVar4 = DAT_007d70c0;
           if (*(undefined4 **)(DAT_007d70c0 + 0xc) != (undefined4 *)0x0) {
@@ -114,7 +118,7 @@ void FUN_004dcdc0(void)
           iVar4 = piVar1[1];
           piVar1 = (int *)*piVar1;
           if (piVar1 != (int *)0x0) {
-            (**(code **)(*piVar1 + 8))(piVar1);
+            (**(fpRelease **)(*piVar1 + 8))(piVar1);
           }
           (**(code **)(DAT_007d3ff8 + 0x11c))(DAT_007d70bc,*(undefined4 *)(DAT_007d70b0 + 8));
           *(int *)(DAT_007d70b0 + 8) = iVar4;
